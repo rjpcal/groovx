@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Fri Nov 10 17:03:58 2000
+// written: Wed Nov 29 13:00:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -109,15 +109,15 @@ DOTRACE("TlistUtils::createPreview");
 									  IdItem<Position>::Insert());
 	 double obj_x = -world_width/2.0 + (x_step+0.5)*parcel_side;
 	 double obj_y = world_height/2.0 - (y_step+0.45)*parcel_side;
-	 obj_pos->setTranslate(obj_x, obj_y, 0.0);
-	 obj_pos->setScale(parcel_side, parcel_side, 1.0);
+	 obj_pos->translation.vec().set(obj_x, obj_y, 0.0);
+	 obj_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
 
 	 IdItem<Position> label_pos(Position::make(),
 										 IdItem<Position>::Insert());
 	 double label_x = obj_x;
 	 double label_y = obj_y - 0.50*parcel_side;
-	 label_pos->setTranslate(label_x, label_y, 0.0);
-	 label_pos->setScale(parcel_side, parcel_side, 1.0);
+	 label_pos->translation.vec().set(label_x, label_y, 0.0);
+	 label_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
 
 	 preview->add(objids[i], obj_pos.id());
 	 preview->add(label_obj.id(), label_pos.id());
