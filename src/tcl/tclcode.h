@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jun 17 10:38:13 1999
-// written: Wed Jul 11 12:05:42 2001
+// written: Wed Jul 11 18:35:28 2001
 // $Id$
 //
 // TclEvalCmd serves as a wrapper for a Tcl command string that is to
@@ -25,6 +25,11 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLERROR_H_DEFINED)
 #include "tcl/tclerror.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCL_H_DEFINED)
+#include <tcl.h>
+#define TCL_H_DEFINED
 #endif
 
 namespace Tcl {
