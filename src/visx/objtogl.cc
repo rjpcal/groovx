@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Sep 11 14:33:23 2002
+// written: Wed Sep 11 14:56:22 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -16,11 +16,12 @@
 #ifndef OBJTOGL_CC_DEFINED
 #define OBJTOGL_CC_DEFINED
 
-#include "visx/application.h"
 #include "visx/toglet.h"
 #include "visx/trialbase.h"
 
 #include "gfx/gxnode.h"
+
+#include "grsh/grsh.h"
 
 #include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
@@ -49,10 +50,8 @@ namespace ObjTogl
     theWidget = toglet;
 
     // Install the experiment into the application
-    Application& app = Application::theApp();
-
     // FIXME should this call just go inside Toglet::makeCurrent() itself?
-    app.installCanvas(theWidget->getCanvas());
+    Grsh::installCanvas(theWidget->getCanvas());
 
     toglet->makeCurrent();
   }

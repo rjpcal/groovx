@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Sep 11 14:32:10 2002
+// written: Wed Sep 11 15:01:54 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -13,9 +13,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#include "visx/application.h"
+#include "grsh/grsh.h"
 
 #include "system/demangle.h"
+#include "system/system.h"
 
 #include "tcl/tclmain.h"
 #include "tcl/tclsafeinterp.h"
@@ -29,6 +30,7 @@
 #include <tk.h>
 #include <typeinfo>
 
+#include "util/debug.h"
 #include "util/trace.h"
 
 //
@@ -122,8 +124,62 @@ PackageInfo IMMEDIATE_PKGS[] =
 PackageInfo DELAYED_PKGS[] = {};
 #endif
 
+const char*  appLibEnvVar = "GRSH_LIB_DIR";
+int          appArgc      = 0;
+char**       appArgv      = 0;
+Gfx::Canvas* appCanvas    = 0;
+
 } // end anonymous namespace
 
+///////////////////////////////////////////////////////////////////////
+//
+// namespace Grsh function definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+int Grsh::argc()
+{
+DOTRACE("Grsh::argc");
+
+  if (appArgc == 0)
+    throw Util::Error("appArgc not inited");
+  return appArgc;
+}
+
+char** Grsh::argv()
+{
+DOTRACE("Grsh::argv");
+
+  if (appArgv == 0)
+    throw Util::Error("appArgv not inited");
+  return appArgv;
+}
+
+const char* Grsh::libraryDirectory()
+{
+DOTRACE("Grsh::libraryDirectory");
+
+  return System::theSystem().getenv(appLibEnvVar);
+}
+
+void Grsh::installCanvas(Gfx::Canvas& canvas)
+{
+DOTRACE("Grsh::installCanvas");
+
+  Assert(&canvas != 0);
+
+  appCanvas = &canvas;
+}
+
+Gfx::Canvas& Grsh::canvas()
+{
+DOTRACE("Grsh::canvas");
+
+  if (appCanvas == 0)
+    throw Util::Error("appCanvas not inited");
+
+  return *appCanvas;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -135,9 +191,10 @@ int main(int argc, char** argv)
 {
   try
     {
-      Tcl::Main app(argc, argv);
+      appArgc = argc;
+      appArgv = argv;
 
-      Application grshApp(argc, argv);
+      Tcl::Main app(argc, argv);
 
       Tcl::Interp& safeIntp = app.safeInterp();
 

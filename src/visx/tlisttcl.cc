@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Mon Sep  9 12:20:40 2002
+// written: Wed Sep 11 14:57:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,11 @@
 #ifndef TLISTTCL_CC_DEFINED
 #define TLISTTCL_CC_DEFINED
 
-#include "visx/application.h"
-#include "visx/tlistutils.h"
-#include "visx/trial.h"
-
 #include "gfx/canvas.h"
 #include "gfx/gxnode.h"
 #include "gfx/gxseparator.h"
+
+#include "grsh/grsh.h"
 
 #include "gx/rect.h"
 
@@ -33,6 +31,8 @@
 #include "visx/gtext.h"
 #include "visx/position.h"
 #include "visx/grobj.h"
+#include "visx/tlistutils.h"
+#include "visx/trial.h"
 
 #include <cmath>
 #include <fstream>
@@ -167,9 +167,7 @@ Util::UID TlistTcl::createPreview(Tcl::List objid_list,
   fixed_block<Util::UID> objids(objid_list.begin<Util::UID>(),
                                 objid_list.end<Util::UID>());
 
-  Gfx::Canvas& canvas = Application::theApp().getCanvas();
-
-  return doCreatePreview(canvas, &objids[0], objids.size(),
+  return doCreatePreview(Grsh::canvas(), &objids[0], objids.size(),
                          num_cols_hint, text_labels);
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Fri Jan 18 16:07:00 2002
+// written: Wed Sep 11 14:56:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,7 @@
 #ifndef SOUNDTCL_CC_DEFINED
 #define SOUNDTCL_CC_DEFINED
 
-#include "visx/application.h"
-#include "visx/sound.h"
+#include "grsh/grsh.h"
 
 #include "tcl/tclpkg.h"
 #include "tcl/tclsafeinterp.h"
@@ -22,6 +21,8 @@
 #include "util/error.h"
 #include "util/objfactory.h"
 #include "util/strings.h"
+
+#include "visx/sound.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -63,7 +64,7 @@ public:
       }
     else
       {
-        fstring lib_dir(Application::theApp().getLibraryDirectory());
+        fstring lib_dir(Grsh::libraryDirectory());
         DebugEvalNL(lib_dir);
 
         fstring full_ok_file(lib_dir);

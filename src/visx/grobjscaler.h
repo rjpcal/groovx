@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:00:57 2001
-// written: Sat Feb  2 16:50:36 2002
+// written: Wed Sep 11 14:55:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "visx/gmodes.h"
 #include "visx/gnode.h"
 
-#include "visx/application.h"
+#include "grsh/grsh.h"
 
 #include "gx/rect.h"
 
@@ -133,7 +133,7 @@ public:
 private:
   Gfx::Rect<double> childBBox()
   {
-    Gfx::Canvas& canvas = Application::theApp().getCanvas();
+    Gfx::Canvas& canvas = Grsh::canvas();
 
     return child()->gnodeBoundingBox(canvas);
   }

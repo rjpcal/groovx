@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Fri Jul  5 14:02:03 2002
+// written: Wed Sep 11 14:55:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,10 @@
 #ifndef GROBJTCL_CC_DEFINED
 #define GROBJTCL_CC_DEFINED
 
-#include "visx/application.h"
 #include "visx/grobj.h"
 #include "visx/recttcl.h"
+
+#include "grsh/grsh.h"
 
 #include "gx/rect.h"
 
@@ -30,21 +31,17 @@ namespace
 {
   Gfx::Rect<double> boundingBox(Util::Ref<GrObj> obj)
   {
-    Gfx::Canvas& canvas = Application::theApp().getCanvas();
-
-    return obj->getBoundingBox(canvas);
+    return obj->getBoundingBox(Grsh::canvas());
   }
 
   void saveBitmapCache(Util::Ref<GrObj> obj, const char* filename)
   {
-    Gfx::Canvas& canvas = Application::theApp().getCanvas();
-    obj->saveBitmapCache(canvas, filename);
+    obj->saveBitmapCache(Grsh::canvas(), filename);
   }
 
   void update(Util::Ref<GrObj> obj)
   {
-    Gfx::Canvas& canvas = Application::theApp().getCanvas();
-    obj->update(canvas);
+    obj->update(Grsh::canvas());
   }
 }
 

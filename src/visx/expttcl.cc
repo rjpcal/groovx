@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Sat Aug 10 14:39:45 2002
+// written: Wed Sep 11 14:54:30 2002
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -17,9 +17,10 @@
 #ifndef EXPTTCL_CC_DEFINED
 #define EXPTTCL_CC_DEFINED
 
-#include "visx/application.h"
 #include "visx/block.h"
 #include "visx/exptdriver.h"
+
+#include "grsh/grsh.h"
 
 #include "gwt/widget.h"
 
@@ -157,9 +158,7 @@ public:
     Tcl::Pkg(interp, "Exp", "$Revision$")
   {
     theExptDriver = Ref<ExptDriver>
-      (ExptDriver::make(Application::theApp().argc(),
-                        Application::theApp().argv(),
-                        interp));
+      (ExptDriver::make(Grsh::argc(), Grsh::argv(), interp));
 
     Tcl::defGenericObjCmds<ExptDriver>(this);
 
@@ -218,9 +217,7 @@ namespace
   {
     Assert(exptCreateInterp != 0);
 
-    return ExptDriver::make(Application::theApp().argc(),
-                            Application::theApp().argv(),
-                            exptCreateInterp);
+    return ExptDriver::make(Grsh::argc(), Grsh::argv(), exptCreateInterp);
   }
 }
 

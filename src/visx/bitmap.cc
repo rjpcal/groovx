@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Apr 25 09:50:20 2002
+// written: Wed Sep 11 14:52:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #include "visx/bitmap.h"
 
 #include "gfx/canvas.h"
+
+#include "grsh/grsh.h"
 
 #include "gx/bmapdata.h"
 #include "gx/imgfile.h"
@@ -30,7 +32,6 @@
 #include "util/strings.h"
 #include "util/pointers.h"
 
-#include "visx/application.h"
 #include "visx/bmaprenderer.h"
 
 #include "util/trace.h"
@@ -268,7 +269,7 @@ void Bitmap::grabScreenRect(const Gfx::Rect<int>& rect)
 {
 DOTRACE("Bitmap::grabScreenRect");
 
-  Gfx::Canvas& canvas = Application::theApp().getCanvas();
+  Gfx::Canvas& canvas = Grsh::canvas();
 
   canvas.grabPixels(rect, itsImpl->itsData);
 
@@ -285,7 +286,7 @@ void Bitmap::grabWorldRect(const Gfx::Rect<double>& world_rect)
 {
 DOTRACE("Bitmap::grabWorldRect");
 
-  Gfx::Canvas& canvas = Application::theApp().getCanvas();
+  Gfx::Canvas& canvas = Grsh::canvas();
 
   Gfx::Rect<int> screen_rect = canvas.screenFromWorld(world_rect);
 
