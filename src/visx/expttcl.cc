@@ -34,7 +34,6 @@
 
 #include "system/system.h"
 
-#include "tcl/iotcl.h"
 #include "tcl/itertcl.h"
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
