@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Mon Jan 21 14:32:56 2002
+// written: Tue Apr  2 11:57:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,7 +108,6 @@ DOTRACE("BitmapCacheNode::recacheBitmap");
 
   if (Gmodes::X11_BITMAP_CACHE == itsMode)
     {
-      itsBmapData->flipVertical();
       itsBmapData->flipContrast();
     }
 }

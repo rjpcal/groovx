@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Mar 27 11:19:53 2002
+// written: Tue Apr  2 11:52:00 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -359,6 +359,8 @@ void GLCanvas::drawPixels(const Gfx::BmapData& data,
 {
 DOTRACE("GLCanvas::drawPixels");
 
+  data.setRowOrder(Gfx::BmapData::BOTTOM_FIRST);
+
   glRasterPos2d(world_pos.x(), world_pos.y());
   glPixelZoom(zoom.x(), zoom.y());
 
@@ -409,6 +411,8 @@ void GLCanvas::drawBitmap(const Gfx::BmapData& data,
 {
 DOTRACE("GLCanvas::drawBitmap");
 
+  data.setRowOrder(Gfx::BmapData::BOTTOM_FIRST);
+
   glRasterPos2d(world_pos.x(), world_pos.y());
 
   glBitmap(data.width(), data.height(), 0.0, 0.0, 0.0, 0.0,
@@ -440,6 +444,8 @@ DOTRACE("GLCanvas::grabPixels");
                  GL_UNSIGNED_BYTE, new_data.bytesPtr());
   }
   glPopAttrib();
+
+  new_data.specifyRowOrder(Gfx::BmapData::BOTTOM_FIRST);
 
   data_out.swap(new_data);
 }
@@ -536,7 +542,7 @@ DOTRACE("GLCanvas::drawBezierFill4");
 
   glBegin(GL_TRIANGLE_FAN);
   vertex3(center);
-  for (int d = 0; d <= subdivisions; ++d)
+  for (unsigned int d = 0; d <= subdivisions; ++d)
     {
       glEvalCoord1d(double(d));
     }

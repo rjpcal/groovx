@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 16:41:07 1999
-// written: Fri Jan 18 16:07:07 2002
+// written: Tue Apr  2 11:55:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -133,7 +133,7 @@ DOTRACE("Pbm::save");
 
   // OpenGL bitmap data starts with the bottom row, but PBM files
   // should start with the top row.
-  data.flipVertical();
+  data.setRowOrder(Gfx::BmapData::TOP_FIRST);
 
   int mode = modeForBitDepth(data.bitsPerPixel());
 

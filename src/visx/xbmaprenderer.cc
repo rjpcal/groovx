@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:22:34 1999
-// written: Fri Jan 18 16:06:59 2002
+// written: Tue Apr  2 11:58:08 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -152,6 +152,8 @@ DOTRACE("XBmapRenderer::update");
     }
 
   int format = (data.bitsPerPixel() == 1) ? XYBitmap : ZPixmap;
+
+  data.setRowOrder(Gfx::BmapData::TOP_FIRST);
 
   itsImage = XCreateImage(display, visual,
                           data.bitsPerPixel(), /* bit depth */

@@ -44,7 +44,6 @@ test "BitmapTcl-Bitmap::loadPbm" "too many args" {
 } {^wrong \# args: should be}
 test "BitmapTcl-Bitmap::loadPbm" "normal use" {
 	 Bitmap::loadPbm $::BITMAP $::PBMFILE
-	 Bitmap::flipVertical $::BITMAP
 	 Bitmap::flipContrast $::BITMAP
 	 GrObj::alignmentMode $::BITMAP $GrObj::CENTER_ON_CENTER
 } {^$}

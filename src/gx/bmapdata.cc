@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 20 00:37:03 2000
-// written: Sat Feb  2 16:43:16 2002
+// written: Tue Apr  2 11:52:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,6 +38,7 @@ public:
     itsBitsPerPixel(bits_per_pixel),
     itsByteAlignment(byte_alignment),
     itsBytes(),
+    itsRowOrder(TOP_FIRST),
     itsUpdater(0)
   {
     Precondition(extent.x() >= 0); Precondition(extent.y() >= 0);
@@ -59,6 +60,7 @@ public:
   int itsBitsPerPixel;
   int itsByteAlignment;
   dynamic_block<unsigned char> itsBytes;
+  RowOrder itsRowOrder;
 
   mutable shared_ptr<UpdateFunc> itsUpdater;
 };
@@ -168,6 +170,12 @@ DOTRACE("Gfx::BmapData::bytesPerRow");
   return ( (itsImpl->itsExtent.x()*itsImpl->itsBitsPerPixel - 1)/8 + 1 );
 }
 
+Gfx::BmapData::RowOrder
+Gfx::BmapData::rowOrder() const
+{
+  return itsImpl->itsRowOrder;
+}
+
 void Gfx::BmapData::flipContrast()
 {
 DOTRACE("Gfx::BmapData::flipContrast");
@@ -258,6 +266,20 @@ void Gfx::BmapData::clearQueuedUpdate() const
 {
 DOTRACE("Gfx::BmapData::clearQueuedUpdate");
   itsImpl->itsUpdater.reset(0);
+}
+
+void Gfx::BmapData::setRowOrder(Gfx::BmapData::RowOrder order) const
+{
+  if (order != itsImpl->itsRowOrder)
+    {
+      const_cast<BmapData*>(this)->flipVertical();
+      itsImpl->itsRowOrder = order;
+    }
+}
+
+void Gfx::BmapData::specifyRowOrder(Gfx::BmapData::RowOrder order) const
+{
+  itsImpl->itsRowOrder = order;
 }
 
 static const char vcid_bmapdata_cc[] = "$Header$";

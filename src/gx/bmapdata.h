@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 19 17:25:51 2000
-// written: Fri Jan 18 16:06:58 2002
+// written: Tue Apr  2 11:51:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,6 +57,13 @@ public:
     virtual void update(BmapData& update_me) = 0;
   };
 
+  /// Specifies the order in which the rows are physically arranged in memory.
+  enum RowOrder
+    {
+      TOP_FIRST,
+      BOTTOM_FIRST
+    };
+
   //---------------------------------------------------------------------
   //
   // Creators
@@ -107,18 +114,21 @@ public:
   /// Returns the number of bits used per pixel in the bitmap.
   int bitsPerPixel() const;
 
-  /** Returns the byte alignment of the bitmap data. Each image row in
-      the data will begin on a multiple of this number of bytes. */
+  /// Returns the byte alignment of the bitmap data.
+  /** Each image row in the data will begin on a multiple of this number of
+      bytes. */
   int byteAlignment() const;
 
-  /** Returns the number of bytes used by the bitmap data. Some of
-      these bytes may be 'filler bytes' needed to meet the storage
+  /// Returns the number of bytes used by the bitmap data.
+  /** Some of these bytes may be 'filler bytes' needed to meet the storage
       alignment requirements. */
   unsigned int byteCount() const;
 
-  /** Returns the number of bytes used per image row in the bitmap data. */
+  /// Returns the number of bytes used per image row in the bitmap data.
   unsigned int bytesPerRow() const;
 
+  /// Get the current row order.
+  RowOrder rowOrder() const;
 
   //---------------------------------------------------------------------
   //
@@ -138,10 +148,10 @@ public:
   /// Swaps the internal representation with that of \a other.
   void swap(BmapData& other);
 
-  /** Queues the update given by \a updater. The \c update() function
-      will be called only when the bitmap data must be accessed. */
+  /// Queues the update given by \a updater.
+  /** The \c update() function will be called only when the bitmap data
+      must be accessed. */
   void queueUpdate(shared_ptr<UpdateFunc> updater) const;
-
 
   /// Forces any pending update to be called.
   void updateIfNeeded() const;
@@ -149,6 +159,13 @@ public:
   /// Cancels any pending update.
   void clearQueuedUpdate() const;
 
+  /// Set the row order, swapping rows around in memory if necessary.
+  /** This is a logical "const" operation since the image being represented
+      stays the same; only its representation changes. */
+  void setRowOrder(RowOrder order) const;
+
+  /// Specify the row order but leave the actual memory untouched.
+  void specifyRowOrder(RowOrder order) const;
 
 private:
   class Impl;
