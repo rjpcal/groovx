@@ -23,6 +23,10 @@ proc testList { packagename listname baseclass subclass1 subclass2 } {
 
     testResetCmd testObj
     testCountCmd testObj
+	 testRemoveCmd testObj
+	 testGetValidIdsCmd testObj
+	 testIsValidIdCmd testObj
+
     testStringifyCmd testObj
 	 testDestringifyCmd testObj
 }
@@ -68,6 +72,81 @@ proc testCountCmd { objname } {
         $cmdname
     "} {"^2$"}
 } 
+
+proc testRemoveCmd { objname } {
+    upvar $objname this
+
+    set cmdname "${this(listname)}::remove"
+    set usage "wrong \# args: should be \"$cmdname item_id\""
+    set testname "${this(packagename)}-${cmdname}"
+
+	 eval ::test $testname {"too few args"} {"
+	     $cmdname
+	 "} {$usage}
+
+	 eval ::test $testname {"too many args"} {"
+	     $cmdname junk junk
+	 "} {$usage}
+
+	 eval ::test $testname {"normal use"} {"
+        set id \[${this(subclass1)}::${this(subclass1)}\]
+	     $cmdname \$id
+	     ${this(listname)}::isValidId \$id
+ 	 "} {"^0$"}
+}
+
+proc testGetValidIdsCmd { objname } {
+    upvar $objname this
+
+    set cmdname "${this(listname)}::getValidIds"
+    set usage "wrong \# args: should be \"$cmdname\""
+    set testname "${this(packagename)}-${cmdname}"
+
+	 eval ::test $testname {"too many args"} {"
+	     $cmdname junk
+	 "} {$usage}
+
+	 eval ::test $testname {"normal use on filled list"} {"
+	     ${this(listname)}::reset
+        ${this(subclass1)}::${this(subclass1)}
+        ${this(subclass1)}::${this(subclass1)}
+        ${this(subclass2)}::${this(subclass2)}
+		  ${this(listname)}::remove 1
+		  $cmdname
+	 "} {"^0 2$"}
+
+	 eval ::test $testname {"normal use on empty list"} {"
+	     ${this(listname)}::reset
+		  $cmdname
+	 "} {"^$"}
+}
+
+proc testIsValidIdCmd { objname } {
+    upvar $objname this
+
+    set cmdname "${this(listname)}::isValidId"
+    set usage "wrong \# args: should be \"$cmdname item_id\""
+    set testname "${this(packagename)}-${cmdname}"
+
+	 eval ::test $testname {"too few args"} {"
+	     $cmdname
+	 "} {$usage}
+
+	 eval ::test $testname {"too many args"} {"
+	     $cmdname 0 junk
+	 "} {$usage}
+
+	 eval ::test $testname {"normal use on valid id"} {"
+        set id \[${this(subclass1)}::${this(subclass1)}\]
+	     $cmdname \$id
+	 "} {"^1$"}
+
+	 eval ::test $testname {"normal use on valid id"} {"
+        set id \[${this(subclass1)}::${this(subclass1)}\]
+	     ${this(listname)}::remove \$id
+	     $cmdname \$id
+	 "} {"^0$"}
+}
 
 proc testStringifyCmd { objname } {
     upvar $objname this
