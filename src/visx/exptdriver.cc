@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Fri Mar 10 00:38:12 2000
+// written: Mon Mar 13 19:33:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -163,8 +163,9 @@ public:
 
   void edBeginExpt();
   void edBeginTrial();
+  int  edElapsedTrialMsec() const;
   void edResponseSeen();
-  void edProcessResponse(int response);
+  void edProcessResponse(const Response& response);
   void edAbortTrial();
   void edEndTrial();
   void edHaltExpt() const;
@@ -723,6 +724,20 @@ DOTRACE("ExptDriver::Impl::edBeginExpt");
   edBeginTrial();
 }
 
+//---------------------------------------------------------------------
+//
+// ExptDriver::edElapsedTrialMsec --
+//
+//---------------------------------------------------------------------
+
+int ExptDriver::Impl::edElapsedTrialMsec() const {
+DOTRACE("ExptDriver::Impl::edElapsedTrialMsec");
+
+  if ( !assertIds() ) return -1;
+
+  return timingHdlr().getElapsedMsec();
+}
+
 //--------------------------------------------------------------------
 //
 // ExptDriver::edBeginTrial --
@@ -779,7 +794,7 @@ DOTRACE("ExptDriver::Impl::edResponseSeen");
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::Impl::edProcessResponse(int response) {
+void ExptDriver::Impl::edProcessResponse(const Response& response) {
 DOTRACE("ExptDriver::Impl::edProcessResponse");
   if ( !assertIds() ) return;
 
@@ -1072,10 +1087,13 @@ void ExptDriver::edBeginExpt()
 void ExptDriver::edBeginTrial() 
   { itsImpl->edBeginTrial(); }
 
+int ExptDriver::edElapsedTrialMsec() const
+  { return itsImpl->edElapsedTrialMsec(); }
+
 void ExptDriver::edResponseSeen() 
   { itsImpl->edResponseSeen(); }
 
-void ExptDriver::edProcessResponse(int response) 
+void ExptDriver::edProcessResponse(const Response& response) 
   { itsImpl->edProcessResponse(response); }
 
 void ExptDriver::edAbortTrial() 
