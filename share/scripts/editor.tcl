@@ -115,7 +115,7 @@ itcl::class FieldInfo {
 itcl::class StringController {
     private variable itsWidget
 
-    private common toBeAligned
+    private common toBeAligned [list]
 
     constructor {finfo parent command} {
 	set fname [$finfo name]
@@ -416,7 +416,7 @@ itcl::body Editor::standardSettings {objs} {
 
     GrObj::alignmentMode $grobjs $GrObj::CENTER_ON_CENTER
     GrObj::scalingMode $grobjs $GrObj::MAINTAIN_ASPECT_SCALING
-    GrObj::renderMode $grobjs $GrObj::DIRECT_RENDER
+    GrObj::renderMode $grobjs $GrObj::DIRECT
     GrObj::height $grobjs 1.0
 }
 
