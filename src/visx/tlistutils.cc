@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Tue Dec 14 19:40:33 1999
+// written: Sun Jan 16 23:07:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,8 +18,8 @@
 #include <iomanip.h>
 #include <cmath>
 
+#include "canvas.h"
 #include "error.h"
-#include "glcanvas.h"
 #include "gtext.h"
 #include "objlist.h"
 #include "position.h"
@@ -38,19 +38,18 @@ namespace {
 }
 
 int TlistUtils::createPreview(Tlist& tlist,
+										const Canvas& canvas,
 										const vector<int>& objids,
 										int pixel_width,
 										int pixel_height) {
 DOTRACE("TlistUtils::createPreview");
-  Point<double> world_origin =
-	 GLCanvas::theCanvas().getWorldFromScreen( Point<int>(0, 0) );
+  Point<double> world_origin = canvas.getWorldFromScreen( Point<int>(0, 0) );
 
   double world_origin_x = world_origin.x();
   double world_origin_y = world_origin.y();
 
   Point<double> world_extent =
-	 GLCanvas::theCanvas().getWorldFromScreen( Point<int>(pixel_width,
-																			pixel_height) );
+	 canvas.getWorldFromScreen( Point<int>(pixel_width, pixel_height) );
 
   double world_width = world_extent.x();
   double world_height = world_extent.y();
@@ -79,7 +78,7 @@ DOTRACE("TlistUtils::createPreview");
 	 if (x_step == num_cols) { x_step = 0; ++y_step; }
 
 	 GrObj* obj = ObjList::theObjList().getCheckedPtr(objids[i]);
-	 bool haveBB = obj->getBoundingBox(bbxs[i]);
+	 bool haveBB = obj->getBoundingBox(canvas, bbxs[i]);
 
 	 if ( !haveBB ) {
 		throw ErrorWithMsg("all objects must have bounding boxes");
