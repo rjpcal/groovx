@@ -81,8 +81,10 @@ namespace Util
     inline T* getCastedItem(Util::UID id)
     {
       Util::Object* obj = getCheckedItem(id);
-      T& t = dynamic_cast<T&>(*obj);
-      return &t;
+      T* t = dynamic_cast<T*>(obj);
+      if (t == 0)
+        throwBadCast(typeid(T), typeid(Util::Object));
+      return t;
     }
 
     template <>
