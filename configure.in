@@ -70,30 +70,27 @@ case ${CXX}-${OS} in
 	    STATLIB_CMD="ar rus"
 	    ;;
       esac
-      DEBUG_CXXFLAGS="-O1 -g"
-      PROD_CXXFLAGS="-O2"
+      cxxflags_debug="-O1 -g"
+      cxxflags_prod="-O2"
       ;;
    CC-IRIX)
       CPPFLAGS="$CPPFLAGS -I$(HOME)/local/$(ARCH)/include/cppheaders"
       CXXFLAGS="$CXXFLAGS -mips3 -n32 -ptused -no_prelink -no_auto_include"
       CXXFLAGS="$CXXFLAGS -LANG:std -LANG:exceptions=ON"
-      DEBUG_CXXFLAGS="-g -O0"
+      cxxflags_debug="-g -O0"
       # -O3 gave little improvement over -O2
-      PROD_CXXFLAGS="-O2"
+      cxxflags_prod="-O2"
       SHLIB_CMD="$CXX -shared -Wl,-check_registry,/usr/lib32/so_locations -o"
       STATLIB_CMD="$CXX -ar -o"
       ;;
    *)
       AC_MSG_WARN([unknown CXX-OS pair ${CXX}-${OS}])
-      DEBUG_CXXFLAGS="-g -O1"
-      PROD_CXXFLAGS="-O2"
+      cxxflags_debug="-g -O1"
+      cxxflags_prod="-O2"
       SHLIB_CMD="$CXX -shared -o"
       STATLIB_CMD="ar rus"
       ;;
 esac
-
-AC_SUBST(DEBUG_CXXFLAGS)
-AC_SUBST(PROD_CXXFLAGS)
 
 AC_SUBST(SHLIB_CMD)
 AC_SUBST(STATLIB_CMD)
@@ -432,11 +429,11 @@ AC_MSG_RESULT($enable_debug)
 
 if test $enable_debug = yes; then
    AC_DEFINE(PROF, 1)
-   CXXFLAGS="$CXXFLAGS $DEBUG_CXXFLAGS"
+   CXXFLAGS="$CXXFLAGS $cxxflags_debug"
    AC_SUBST(LIB_SUFFIX, .d.${PACKAGE_VERSION})
    AC_SUBST(EXECUTABLE, \${exec_prefix}/bin/testsh)
 else
-   CXXFLAGS="$CXXFLAGS $PROD_CXXFLAGS"
+   CXXFLAGS="$CXXFLAGS $cxxflags_prod"
    AC_SUBST(LIB_SUFFIX, ${PACKAGE_VERSION})
    AC_SUBST(EXECUTABLE, \${exec_prefix}/bin/grsh${PACKAGE_VERSION})
 fi
