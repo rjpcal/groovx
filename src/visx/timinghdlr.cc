@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Thu Nov 18 10:41:55 1999
+// written: Wed Dec  1 11:31:29 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ DOTRACE("TimingHdlr::serialize");
   
   os << itsAutosavePeriod << sep;
 
-  int i;
+  size_t i;
 
   os << itsImmediateEvents.size() << sep;
   for (i = 0; i < itsImmediateEvents.size(); ++i) {
@@ -148,12 +148,7 @@ DOTRACE("TimingHdlr::deserialize");
 int TimingHdlr::charCount() const {
 DOTRACE("TimingHdlr::charCount"); 
 
-  int i;
-  int ch_count = ioTag.length() + 1
-	 + gCharCount<int>(itsAutosavePeriod) + 1;
-
-  for (i = 0; i < itsImmediateEvents.size(); ++i) {
-  }
+  // XXX not implemented!
 
   return 256; 
 }
