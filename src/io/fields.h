@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Mon Jun 11 12:25:17 2001
+// written: Fri Jun 22 11:20:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,16 +91,16 @@ private:
 public:
   template <class C, class T, class F>
   FieldInfo(const fixed_string& name, F C::* member_ptr,
-				const T& def, const T& min_, const T& max_, const T& res_,
-				bool new_group=true) :
-	 itsName(name),
-	 itsMemberPtr(new CFieldMemberPtr<C,F>(member_ptr)),
-	 itsDefaultValue(new TValue<T>(def)),
-	 itsMin(new TValue<T>(min_)),
-	 itsMax(new TValue<T>(max_)),
-	 itsRes(new TValue<T>(res_)),
-	 itsStartsNewGroup(new_group)
-	 {}
+            const T& def, const T& min_, const T& max_, const T& res_,
+            bool new_group=false) :
+    itsName(name),
+    itsMemberPtr(new CFieldMemberPtr<C,F>(member_ptr)),
+    itsDefaultValue(new TValue<T>(def)),
+    itsMin(new TValue<T>(min_)),
+    itsMax(new TValue<T>(max_)),
+    itsRes(new TValue<T>(res_)),
+    itsStartsNewGroup(new_group)
+    {}
 
   const fixed_string& name() const { return itsName; }
   const Value& defaultValue() const { return *itsDefaultValue; }
@@ -112,7 +112,7 @@ public:
   bool startsNewGroup() const { return itsStartsNewGroup; }
 
   Field& dereference(FieldContainer* obj) const
-	 { return itsMemberPtr->dereference(obj); }
+    { return itsMemberPtr->dereference(obj); }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -159,8 +159,8 @@ class TField : public Field {
 protected:
   virtual void doSetValue(const Value& new_val);
 
-  TField(const TField&);		  // not implemented
-  TField& operator=(const TField&);	// not implemented
+  TField(const TField&);        // not implemented
+  TField& operator=(const TField&); // not implemented
 
 public:
   TField(FieldContainer* owner, const T& val = T());
@@ -197,7 +197,7 @@ protected:
 
 public:
   TBoundedField(FieldContainer* owner, const T& val,
-					 const T& min, const T& max);
+                const T& min, const T& max);
 
   virtual ~TBoundedField();
 
@@ -228,7 +228,7 @@ protected:
   virtual void doSetValue(const Value& new_val);
 
   TPtrField(const TPtrField&);  // not implemented
-  TPtrField& operator=(const TPtrField&);	// not implemented
+  TPtrField& operator=(const TPtrField&); // not implemented
 
 public:
   TPtrField(FieldContainer* owner, T& valRef);
@@ -267,7 +267,7 @@ private:
 
 public:
   FieldMap(const FieldInfo* begin, const FieldInfo* end,
-			  const FieldMap* parent=0);
+           const FieldMap* parent=0);
   ~FieldMap();
 
   static const FieldMap* emptyFieldMap();
@@ -282,19 +282,19 @@ public:
   // Iterates over the FieldInfo's in alphabetical order by name
   class Iterator {
   private:
-	 ItrImpl* const itsImpl;
+    ItrImpl* const itsImpl;
   public:
-	 Iterator(ItrImpl* impl) : itsImpl(impl) {}
-	 Iterator(const Iterator& other);
-	 Iterator& operator=(const Iterator& other);
-	 ~Iterator();
+    Iterator(ItrImpl* impl) : itsImpl(impl) {}
+    Iterator(const Iterator& other);
+    Iterator& operator=(const Iterator& other);
+    ~Iterator();
 
-	 const FieldInfo& operator*() const;
-	 const FieldInfo* operator->() const;
-	 Iterator& operator++();
-	 bool operator==(const Iterator& other);
-	 bool operator!=(const Iterator& other)
-		{ return !(operator==(other)); }
+    const FieldInfo& operator*() const;
+    const FieldInfo* operator->() const;
+    Iterator& operator++();
+    bool operator==(const Iterator& other);
+    bool operator!=(const Iterator& other)
+      { return !(operator==(other)); }
   };
 
   Iterator begin() const;
@@ -319,7 +319,7 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 class FieldContainer : public virtual IO::IoObject,
-							  public virtual Util::Observable
+                       public virtual Util::Observable
 {
 private:
   const FieldMap* itsFieldMap;
