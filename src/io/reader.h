@@ -3,7 +3,7 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Wed Mar 22 16:47:03 2000
+// written: Wed Mar 22 21:59:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,6 +95,13 @@ public:
       tag \a name. The \c Reader will not create a new object, but
       will use the IO* provided here. */
   virtual void readOwnedObject(const char* name, IO* obj) = 0;
+
+  /** Read the named base class into the IO object \a obj, which
+      should be arranged to point or refer to the appropriate base
+      class part of the object. In particular, \a obj's virtual
+      functions must NOT call the fully derived versions. This effect
+      can be best accomplished with an \c IOProxy. */
+  virtual void readBaseClass(const char* baseClassName, IO* basePart) = 0;
 
   /** Restore an entire object hierarchy, starting with the root
 		object. If \a root is non-null, the function will use \a root as
