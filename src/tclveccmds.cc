@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:16:22 1999
-// written: Wed Jul 11 14:20:29 2001
+// written: Wed Jul 11 20:57:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,19 +44,19 @@ DOTRACE("Tcl::VecGetterBaseCmd::VecGetterBaseCmd");
 
 Tcl::VecGetterBaseCmd::~VecGetterBaseCmd() {}
 
-void Tcl::VecGetterBaseCmd::invoke() {
+void Tcl::VecGetterBaseCmd::invoke(Context& ctx) {
 DOTRACE("Tcl::VecGetterBaseCmd::invoke");
   if (itsItemArgn) {
     Tcl::List::Iterator<int>
-      id_itr = beginOfArg(itsItemArgn, (int*)0),
-      end    =   endOfArg(itsItemArgn, (int*)0);
+      id_itr = ctx.beginOfArg(itsItemArgn, (int*)0),
+      end    =   ctx.endOfArg(itsItemArgn, (int*)0);
 
     // If there is only one item, we want to do a regular return
     // rather than a list-append to the return value.
     if ( 1 == (end - id_itr) )
       {
         void* item = itsPkg->getItemFromId(*id_itr);
-        doReturnValForItem(item);
+        doReturnValForItem(item, ctx);
       }
     else
       {
@@ -69,12 +69,12 @@ DOTRACE("Tcl::VecGetterBaseCmd::invoke");
             ++id_itr;
           }
 
-        returnVal(result);
+        ctx.setResult(result);
       }
   }
   else {
     void* item = itsPkg->getItemFromId(-1);
-    doReturnValForItem(item);
+    doReturnValForItem(item, ctx);
   }
 }
 
@@ -95,8 +95,9 @@ template <class ValType>
 Tcl::TVecGetterCmd<ValType>::~TVecGetterCmd() {}
 
 template <class ValType>
-void Tcl::TVecGetterCmd<ValType>::doReturnValForItem(void* item) {
-  returnVal(itsGetter->get(item));
+void Tcl::TVecGetterCmd<ValType>::doReturnValForItem(void* item,
+                                                     Context& ctx) {
+  ctx.setResult(itsGetter->get(item));
 }
 
 template <class ValType>
@@ -107,8 +108,9 @@ void Tcl::TVecGetterCmd<ValType>::doAppendValForItem(void* item,
 
 // Specializations for fixed_string
 template <>
-void Tcl::TVecGetterCmd<fixed_string>::doReturnValForItem(void* item) {
-  returnVal(itsGetter->get(item).c_str());
+void Tcl::TVecGetterCmd<fixed_string>::doReturnValForItem(void* item,
+                                                          Context& ctx) {
+  ctx.setResult(itsGetter->get(item).c_str());
 }
 
 template <>
@@ -117,13 +119,18 @@ void Tcl::TVecGetterCmd<fixed_string>::doAppendValForItem(void* item,
   listObj.append(itsGetter->get(item).c_str());
 }
 template <>
-void Tcl::TVecGetterCmd<const fixed_string&>::doReturnValForItem(void* item) {
-  returnVal(itsGetter->get(item).c_str());
+void Tcl::TVecGetterCmd<const fixed_string&>::doReturnValForItem(
+  void* item,
+  Context& ctx
+) {
+  ctx.setResult(itsGetter->get(item).c_str());
 }
 
 template <>
-void Tcl::TVecGetterCmd<const fixed_string&>::doAppendValForItem(void* item,
-                                                                 Tcl::List& listObj) {
+void Tcl::TVecGetterCmd<const fixed_string&>::doAppendValForItem(
+  void* item,
+  Tcl::List& listObj
+) {
   listObj.append(itsGetter->get(item).c_str());
 }
 
@@ -161,14 +168,14 @@ DOTRACE("Tcl::VecSetterBaseCmd::VecSetterBaseCmd");
 
 Tcl::VecSetterBaseCmd::~VecSetterBaseCmd() {}
 
-void Tcl::VecSetterBaseCmd::invoke() {
+void Tcl::VecSetterBaseCmd::invoke(Context& ctx) {
 DOTRACE("Tcl::VecSetterBaseCmd::invoke");
   if (itsItemArgn) {
-    invokeForItemArgn(itsItemArgn, itsValArgn);
+    invokeForItemArgn(ctx, itsItemArgn, itsValArgn);
   }
   else {
     void* item = itsPkg->getItemFromId(-1);
-    setSingleItem(item, itsValArgn);
+    setSingleItem(ctx, item, itsValArgn);
   }
 }
 
@@ -207,27 +214,29 @@ template <class Traits>
 Tcl::TrVecSetterCmd<Traits>::~TrVecSetterCmd() {}
 
 template <class Traits>
-void Tcl::TrVecSetterCmd<Traits>::setSingleItem(void* item, int val_argn) {
+void Tcl::TrVecSetterCmd<Traits>::setSingleItem(Context& ctx,
+                                                void* item, int val_argn) {
 DOTRACE("Tcl::TrVecSetterCmd<Traits>::setSingleItem");
-  stack_type val = getValFromArg(val_argn, (stack_type*)0);
+  stack_type val = ctx.getValFromArg(val_argn, (stack_type*)0);
   itsSetter->set(item, val);
 }
 
 template <class Traits>
-void Tcl::TrVecSetterCmd<Traits>::invokeForItemArgn(int item_argn, int val_argn) {
+void Tcl::TrVecSetterCmd<Traits>::invokeForItemArgn(Context& ctx,
+                                                    int item_argn, int val_argn) {
 DOTRACE("Tcl::TrVecSetterCmd<Traits>::invokeForItemArgn");
 
   Tcl::List::Iterator<int>
 #ifdef LOCAL_DEBUG
-    begin  = beginOfArg(item_argn, (int*)0),
+    begin  = ctx.beginOfArg(item_argn, (int*)0),
 #endif
-    id_itr = beginOfArg(item_argn, (int*)0),
-    end    =   endOfArg(item_argn, (int*)0);
+    id_itr = ctx.beginOfArg(item_argn, (int*)0),
+    end    =   ctx.endOfArg(item_argn, (int*)0);
 
   int num_ids = end-id_itr;  DebugEvalNL(num_ids);  Assert(num_ids >= 0);
 
   if (num_ids == 1) {
-    stack_type val = getValFromArg(val_argn, (stack_type*)0);
+    stack_type val = ctx.getValFromArg(val_argn, (stack_type*)0);
 
     while (id_itr != end)
       {
@@ -240,8 +249,8 @@ DOTRACE("Tcl::TrVecSetterCmd<Traits>::invokeForItemArgn");
   }
   else {
     iterator_type
-      val_itr = beginOfArg(val_argn, (stack_type*)0),
-      val_end =   endOfArg(val_argn, (stack_type*)0);
+      val_itr = ctx.beginOfArg(val_argn, (stack_type*)0),
+      val_end =   ctx.endOfArg(val_argn, (stack_type*)0);
 
     if (val_end-val_itr < 1) {
       throw TclError("the list of new values is empty");
@@ -301,11 +310,11 @@ template <class T>
 Tcl::TVecAttribCmd<T>::~TVecAttribCmd() {}
 
 template <class T>
-void Tcl::TVecAttribCmd<T>::invoke() {
+void Tcl::TVecAttribCmd<T>::invoke(Context& ctx) {
 DOTRACE("Tcl::TVecAttribCmd<>::invoke");
-  if      (TclCmd::objc() == itsObjcGet) { TVecGetterCmd<T>::invoke(); }
-  else if (TclCmd::objc() == itsObjcSet) { TVecSetterCmd<T>::invoke(); }
-  else    /* "can't happen" */           { Assert(0); }
+  if      (ctx.objc() == itsObjcGet) { TVecGetterCmd<T>::invoke(ctx); }
+  else if (ctx.objc() == itsObjcSet) { TVecSetterCmd<T>::invoke(ctx); }
+  else    /* "can't happen" */       { Assert(0); }
 }
 
 // Explicit instatiation requests
@@ -340,12 +349,12 @@ DOTRACE("Tcl::VecActionCmd::VecActionCmd");
 
 Tcl::VecActionCmd::~VecActionCmd() {}
 
-void Tcl::VecActionCmd::invoke() {
+void Tcl::VecActionCmd::invoke(Context& ctx) {
 DOTRACE("Tcl::VecActionCmd::invoke");
   if (itsItemArgn) {
     Tcl::List::Iterator<int>
-      id_itr = beginOfArg(itsItemArgn, (int*)0),
-      end    =   endOfArg(itsItemArgn, (int*)0);
+      id_itr = ctx.beginOfArg(itsItemArgn, (int*)0),
+      end    =   ctx.endOfArg(itsItemArgn, (int*)0);
 
     while (id_itr != end)
       {

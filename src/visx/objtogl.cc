@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jul 11 14:14:42 2001
+// written: Wed Jul 11 19:53:12 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -106,11 +106,11 @@ public:
                             "event_sequence binding_script",
                             pkg->itemArgn()+3) {}
 protected:
-  virtual void invoke() {
-    const char* event_sequence = getCstringFromArg(afterItemArg(1));
-    const char* binding_script = getCstringFromArg(afterItemArg(2));
+  virtual void invoke(Context& ctx) {
+    const char* event_sequence = ctx.getCstringFromArg(afterItemArg(1));
+    const char* binding_script = ctx.getCstringFromArg(afterItemArg(2));
 
-    getItem()->bind(event_sequence, binding_script);
+    getItem(ctx)->bind(event_sequence, binding_script);
   }
 };
 
@@ -126,14 +126,14 @@ public:
     Tcl::TclCmd(interp, cmd_name, "?item_id?", 1, 2) {}
 
 protected:
-  virtual void invoke() {
-    if (objc() < 2)
+  virtual void invoke(Context& ctx) {
+    if (ctx.objc() < 2)
       {
-        returnVal(theWidget.id());
+        ctx.setResult(theWidget.id());
       }
     else
       {
-        theWidget = WeakRef<Toglet>( getIntFromArg(1) );
+        theWidget = WeakRef<Toglet>( ctx.getIntFromArg(1) );
         theWidget->makeCurrent();
       }
   }
@@ -152,9 +152,9 @@ public:
                             "?start_index=0? ?end_index=255?",
                             pkg->itemArgn()+1, pkg->itemArgn()+3, false) {}
 protected:
-  virtual void invoke() {
-    int start = (objc() < 2) ? 0   : getIntFromArg(afterItemArg(1));
-    int end   = (objc() < 3) ? 255 : getIntFromArg(afterItemArg(2));
+  virtual void invoke(Context& ctx) {
+    int start = (ctx.objc() < 2) ? 0   : ctx.getIntFromArg(afterItemArg(1));
+    int end   = (ctx.objc() < 3) ? 255 : ctx.getIntFromArg(afterItemArg(2));
 
     if (start < 0 || end < 0 || start > 255 || end > 255) {
       static const char* const bad_index_msg = "colormap index out of range";
@@ -164,7 +164,7 @@ protected:
     const int BUF_SIZE = 64;
     char buf[BUF_SIZE];
 
-    Toglet* config = getItem();
+    Toglet* config = getItem(ctx);
     Toglet::Color color;
 
     Tcl::List result;
@@ -181,7 +181,7 @@ protected:
       result.append(buf);
     }
 
-    returnVal(result);
+    ctx.setResult(result);
   }
 };
 
@@ -196,8 +196,8 @@ public:
   InitedCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name, NULL, 1, 1) {}
 protected:
-  virtual void invoke() {
-    returnVal(ObjTogl::theWidget.isValid());
+  virtual void invoke(Context& ctx) {
+    ctx.setResult(ObjTogl::theWidget.isValid());
   }
 };
 
@@ -215,11 +215,11 @@ public:
   SeeCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "item_id", pkg->itemArgn()+2) {}
 protected:
-  virtual void invoke() {
+  virtual void invoke(Context& ctx) {
   DOTRACE("SeeCmd::invoke");
-    int id = getIntFromArg(afterItemArg(1));
+    int id = ctx.getIntFromArg(afterItemArg(1));
 
-    GWT::Widget* widg = getItem();
+    GWT::Widget* widg = getItem(ctx);
 
     widg->setDrawable(Ref<GxNode>(id));
     widg->setVisibility(true);
@@ -240,13 +240,13 @@ public:
     Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "index r g b", pkg->itemArgn()+5) {}
 
 protected:
-  virtual void invoke() {
-    int i = getIntFromArg(afterItemArg(1));
-    double r = getDoubleFromArg(afterItemArg(2));
-    double g = getDoubleFromArg(afterItemArg(3));
-    double b = getDoubleFromArg(afterItemArg(4));
+  virtual void invoke(Context& ctx) {
+    int i = ctx.getIntFromArg(afterItemArg(1));
+    double r = ctx.getDoubleFromArg(afterItemArg(2));
+    double g = ctx.getDoubleFromArg(afterItemArg(3));
+    double b = ctx.getDoubleFromArg(afterItemArg(4));
 
-    getItem()->setColor(Toglet::Color(i, r, g, b));
+    getItem(ctx)->setColor(Toglet::Color(i, r, g, b));
   }
 };
 
@@ -266,10 +266,10 @@ public:
   SetCurTrialCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "trial_id", pkg->itemArgn()+2) {}
 protected:
-  virtual void invoke() {
-    int trial = getIntFromArg(afterItemArg(1));
+  virtual void invoke(Context& ctx) {
+    int trial = ctx.getIntFromArg(afterItemArg(1));
 
-    Ref<TrialBase>(trial)->installSelf(*getItem());
+    Ref<TrialBase>(trial)->installSelf(*getItem(ctx));
   }
 };
 
@@ -285,18 +285,18 @@ public:
     Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "left top right bottom",
                             pkg->itemArgn()+5) {}
 protected:
-  virtual void invoke() {
-    double l = getDoubleFromArg(afterItemArg(1));
-    double t = getDoubleFromArg(afterItemArg(2));
-    double r = getDoubleFromArg(afterItemArg(3));
-    double b = getDoubleFromArg(afterItemArg(4));
+  virtual void invoke(Context& ctx) {
+    double l = ctx.getDoubleFromArg(afterItemArg(1));
+    double t = ctx.getDoubleFromArg(afterItemArg(2));
+    double r = ctx.getDoubleFromArg(afterItemArg(3));
+    double b = ctx.getDoubleFromArg(afterItemArg(4));
 
     // Test for valid rect: right > left && top > bottom. In
     // particular, we must not have right == left or top == bottom
     // since this collapses the space onto one dimension.
     if (r <= l || t <= b) { throw Tcl::TclError("invalid rect"); }
 
-    getItem()->setMinRectLTRB(l,t,r,b);
+    getItem(ctx)->setMinRectLTRB(l,t,r,b);
   }
 };
 
@@ -316,11 +316,11 @@ public:
     Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "trial_id", pkg->itemArgn()+2) {}
 
 protected:
-  virtual void invoke() {
+  virtual void invoke(Context& ctx) {
   DOTRACE("ShowCmd::invoke");
-    int id = getIntFromArg(afterItemArg(1));
+    int id = ctx.getIntFromArg(afterItemArg(1));
 
-    GWT::Widget* widg = getItem();
+    GWT::Widget* widg = getItem(ctx);
 
     Ref<TrialBase>(id)->installSelf(*widg);
     widg->setVisibility(true);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Jul 11 14:37:28 2001
+// written: Wed Jul 11 19:53:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -103,20 +103,20 @@ public:
   {}
 
 protected:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 };
 
-void IoTcl::LoadObjectsCmd::invoke() {
+void IoTcl::LoadObjectsCmd::invoke(Context& ctx) {
 DOTRACE("IoTcl::LoadObjectsCmd::invoke");
   static const int ALL = -1; // indicates to read all objects until eof
 
-  const char* file        =                             getCstringFromArg(1);
-  int         num_to_read =      (objc() < 3) ? ALL   : getIntFromArg(2);
+  const char* file        =                             ctx.getCstringFromArg(1);
+  int         num_to_read =      (ctx.objc() < 3) ? ALL   : ctx.getIntFromArg(2);
 
   STD_IO::ifstream ifs(file);
   if (ifs.fail()) { throw Tcl::TclError("unable to open file"); }
 
-  readBatch<IO::LegacyReader>(ifs, num_to_read, resultAppender((int*)0));
+  readBatch<IO::LegacyReader>(ifs, num_to_read, ctx.resultAppender((int*)0));
 }
 
 //---------------------------------------------------------------------
@@ -132,11 +132,11 @@ public:
                 "objids filename ?use_bases=yes?", 3, 4)
   {}
 protected:
-  virtual void invoke() {
+  virtual void invoke(Context& ctx) {
 
-    const char* filename = getCstringFromArg(2);
+    const char* filename = ctx.getCstringFromArg(2);
 
-    bool use_bases    = objc() < 4 ? true : getBoolFromArg(3);
+    bool use_bases    = ctx.objc() < 4 ? true : ctx.getBoolFromArg(3);
 
     STD_IO::ofstream ofs(filename);
     if (ofs.fail()) {
@@ -147,7 +147,7 @@ protected:
 
     IO::LegacyWriter writer(ofs, use_bases);
     writer.usePrettyPrint(false);
-    writeBatch(writer, beginOfArg(1, (int*)0), endOfArg(1, (int*)0));
+    writeBatch(writer, ctx.beginOfArg(1, (int*)0), ctx.endOfArg(1, (int*)0));
   }
 };
 
@@ -166,26 +166,26 @@ public:
     {}
 
 protected:
-  virtual void invoke() {
-    const char* type = getCstringFromArg(1);
+  virtual void invoke(Context& ctx) {
+    const char* type = ctx.getCstringFromArg(1);
 
-    if (objc() < 3)
+    if (ctx.objc() < 3)
       {
         WeakRef<Util::Object> item(Util::ObjMgr::newObj(type));
-        returnVal(item.id());
+        ctx.setResult(item.id());
       }
     else
       {
         Tcl::List result;
 
-        int array_size = getIntFromArg(2);
+        int array_size = ctx.getIntFromArg(2);
         while (array_size-- > 0)
           {
             WeakRef<Util::Object> item(Util::ObjMgr::newObj(type));
             result.append(item.id());
           }
 
-        returnVal(result);
+        ctx.setResult(result);
       }
   }
 };
@@ -203,11 +203,11 @@ public:
     {}
 
 protected:
-  virtual void invoke() {
+  virtual void invoke(Context& ctx) {
 #ifndef FUNCTIONAL_OK
     Tcl::List::Iterator<int>
-      itr = beginOfArg(1, (int*)0),
-      stop = endOfArg(1, (int*)0);
+      itr = ctx.beginOfArg(1, (int*)0),
+      stop = ctx.endOfArg(1, (int*)0);
     while (itr != stop)
       {
         ObjDb::theDb().remove(*itr);
@@ -215,7 +215,7 @@ protected:
       }
 
 #else
-    std::for_each(beginOfArg<int>(1), endOfArg<int>(1),
+    std::for_each(ctx.beginOfArg<int>(1), ctx.endOfArg<int>(1),
                   std::bind1st(std::mem_fun(&ObjDb::remove), &ObjDb::theDb()));
 #endif
   }

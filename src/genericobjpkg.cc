@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec 11 14:38:13 2000
-// written: Wed Jul 11 14:17:59 2001
+// written: Wed Jul 11 19:53:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,9 +51,9 @@ Tcl::IsCmd::IsCmd(Tcl_Interp* interp, ObjCaster* caster, const char* cmd_name) :
 
 Tcl::IsCmd::~IsCmd() {}
 
-void Tcl::IsCmd::invoke() {
-  int id = TclCmd::getIntFromArg(1);
-  returnVal(itsCaster->isIdMyType(id));
+void Tcl::IsCmd::invoke(Context& ctx) {
+  int id = ctx.getIntFromArg(1);
+  ctx.setResult(itsCaster->isIdMyType(id));
 }
 
 //---------------------------------------------------------------------
@@ -70,7 +70,7 @@ Tcl::CountAllCmd::CountAllCmd(Tcl_Interp* interp, ObjCaster* caster,
 
 Tcl::CountAllCmd::~CountAllCmd() {}
 
-void Tcl::CountAllCmd::invoke() {
+void Tcl::CountAllCmd::invoke(Context& ctx) {
   ObjDb& theDb = ObjDb::theDb();
 #ifndef FUNCTIONAL_OK
   int count = 0;
@@ -83,9 +83,9 @@ void Tcl::CountAllCmd::invoke() {
       if (itsCaster->isMyType(*itr))
         ++count;
     }
-  returnVal(count);
+  ctx.setResult(count);
 #else
-  returnVal(std::count_if(theDb.beginPtrs(), theDb.endPtrs(),
+  ctx.setResult(std::count_if(theDb.beginPtrs(), theDb.endPtrs(),
                           std::bind1st(std::mem_fun(&ObjCaster::isMyType),
                                        itsCaster)));
 #endif
@@ -105,7 +105,7 @@ Tcl::FindAllCmd::FindAllCmd(Tcl_Interp* interp, ObjCaster* caster,
 
 Tcl::FindAllCmd::~FindAllCmd() {}
 
-void Tcl::FindAllCmd::invoke() {
+void Tcl::FindAllCmd::invoke(Context& ctx) {
   ObjDb& theDb = ObjDb::theDb();
 
 #if 1
@@ -121,7 +121,7 @@ void Tcl::FindAllCmd::invoke() {
         result.append(itr.getId());
     }
 
-  returnVal(result);
+  ctx.setResult(result);
 
   /*
     STL-style functional implementation... unfortunately, this is
@@ -129,7 +129,7 @@ void Tcl::FindAllCmd::invoke() {
   */
 #else
     std::remove_copy_if(theDb.beginIds(), theDb.endIds(),
-                        resultAppender<int>(),
+                        ctx.resultAppender<int>(),
                         std::bind1st(std::mem_fun(&ObjCaster::isIdNotMyType),
                         itsCaster));
 #endif
@@ -149,7 +149,7 @@ Tcl::RemoveAllCmd::RemoveAllCmd(Tcl_Interp* interp, ObjCaster* caster,
 
 Tcl::RemoveAllCmd::~RemoveAllCmd() {}
 
-void Tcl::RemoveAllCmd::invoke() {
+void Tcl::RemoveAllCmd::invoke(Context& ctx) {
   ObjDb& theDb = ObjDb::theDb();
   for (ObjDb::IdIterator
          itr = theDb.beginIds(),

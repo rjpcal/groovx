@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Jul 11 18:24:41 2001
+// written: Wed Jul 11 19:53:12 2001
 // $Id$
 //
 // This package provides additional Tcl list manipulation functions
@@ -69,10 +69,10 @@ public:
     Tcl::TclCmd(interp, cmd_name, "source_list index_list", 3) {}
 
 protected:
-  virtual void invoke()
+  virtual void invoke(Context& ctx)
     {
-      Tcl::List source_list = getValFromArg(1, (Tcl::List*)0);
-      Tcl::List index_list = getValFromArg(2, (Tcl::List*)0);
+      Tcl::List source_list = ctx.getValFromArg(1, (Tcl::List*)0);
+      Tcl::List index_list = ctx.getValFromArg(2, (Tcl::List*)0);
 
       Tcl::List result;
 
@@ -85,7 +85,7 @@ protected:
           result.append(source_list.at(index));
         }
 
-      returnVal(result);
+      ctx.setResult(result);
     }
 };
 
@@ -103,9 +103,9 @@ public:
     Tcl::TclCmd(interp, cmd_name, "source_list", 2) {}
 
 protected:
-  virtual void invoke()
+  virtual void invoke(Context& ctx)
     {
-      Tcl::List source_list = getValFromArg(1, (Tcl::List*)0);
+      Tcl::List source_list = ctx.getValFromArg(1, (Tcl::List*)0);
 
       Tcl::ObjPtr one(Tcl::toTcl<int>(1));
       Tcl::ObjPtr zero(Tcl::toTcl<int>(0));
@@ -119,7 +119,7 @@ protected:
             result.append(zero);
         }
 
-      returnVal(result);
+      ctx.setResult(result);
     }
 };
 
@@ -136,14 +136,14 @@ public:
     Tcl::TclCmd(interp, cmd_name, "num_ones", 2) {}
 
 protected:
-  virtual void invoke()
+  virtual void invoke(Context& ctx)
     {
-      unsigned int num_ones = getValFromArg(1, (unsigned int*)0);
+      unsigned int num_ones = ctx.getValFromArg(1, (unsigned int*)0);
 
       Tcl::List result;
       result.append(1, num_ones);
 
-      returnVal(result);
+      ctx.setResult(result);
     }
 };
 
@@ -160,9 +160,9 @@ public:
     Tcl::TclCmd(interp, cmd_name, "source_list", 2) {}
 
 protected:
-  virtual void invoke()
+  virtual void invoke(Context& ctx)
     {
-      Tcl::List source_list = getValFromArg(1, (Tcl::List*)0);
+      Tcl::List source_list = ctx.getValFromArg(1, (Tcl::List*)0);
 
       if (source_list.length() == 0)
         {
@@ -173,7 +173,7 @@ protected:
       unsigned int randnum = (unsigned int)
         ( double(rand())/(double(RAND_MAX)+1.0) * source_list.length() );
 
-      returnVal(source_list.at(randnum));
+      ctx.setResult(source_list.at(randnum));
     }
 };
 
@@ -190,10 +190,10 @@ public:
     Tcl::TclCmd(interp, cmd_name, "begin end", 3) {}
 
 protected:
-  virtual void invoke()
+  virtual void invoke(Context& ctx)
     {
-      int begin = getValFromArg(1, (int*)0);
-      int end = getValFromArg(2, (int*)0);
+      int begin = ctx.getValFromArg(1, (int*)0);
+      int end = ctx.getValFromArg(2, (int*)0);
 
       Tcl::List result;
 
@@ -202,7 +202,7 @@ protected:
           result.append(i);
         }
 
-      returnVal(result);
+      ctx.setResult(result);
     }
 };
 
@@ -226,10 +226,10 @@ public:
     Tcl::TclCmd(interp, cmd_name, "source_list times_list", 3) {}
 
 protected:
-  virtual void invoke()
+  virtual void invoke(Context& ctx)
     {
-      Tcl::List source_list = getValFromArg(1, (Tcl::List*)0);
-      Tcl::List times_list = getValFromArg(2, (Tcl::List*)0);
+      Tcl::List source_list = ctx.getValFromArg(1, (Tcl::List*)0);
+      Tcl::List times_list = ctx.getValFromArg(2, (Tcl::List*)0);
 
       unsigned int src_len = source_list.length();
       unsigned int tim_len = times_list.length();
@@ -245,7 +245,7 @@ protected:
                         times_list.get<unsigned int>(t));
         }
 
-      returnVal(result);
+      ctx.setResult(result);
     }
 };
 
@@ -263,10 +263,10 @@ public:
     Tcl::TclCmd(interp, cmd_name, "source_list flags_list", 3) {}
 
 protected:
-  virtual void invoke()
+  virtual void invoke(Context& ctx)
     {
-      Tcl::List source_list = getValFromArg(1, (Tcl::List*)0);
-      Tcl::List flags_list = getValFromArg(2, (Tcl::List*)0);
+      Tcl::List source_list = ctx.getValFromArg(1, (Tcl::List*)0);
+      Tcl::List flags_list = ctx.getValFromArg(2, (Tcl::List*)0);
       unsigned int src_len = source_list.length();
       unsigned int flg_len = flags_list.length();
 
@@ -287,7 +287,7 @@ protected:
             }
         }
 
-      returnVal(result);
+      ctx.setResult(result);
     }
 };
 
@@ -305,9 +305,9 @@ public:
     Tcl::TclCmd(interp, cmd_name, "source_list", 2) {}
 
 protected:
-  virtual void invoke()
+  virtual void invoke(Context& ctx)
     {
-      Tcl::List source_list = getValFromArg(1, (Tcl::List*)0);
+      Tcl::List source_list = ctx.getValFromArg(1, (Tcl::List*)0);
 
       int isum=0;
       double dsum=0.0;
@@ -337,9 +337,9 @@ protected:
       }
 
       if ( !seen_double )
-        returnVal( isum );
+        ctx.setResult( isum );
       else
-        returnVal( dsum );
+        ctx.setResult( dsum );
     }
 };
 
@@ -356,14 +356,14 @@ public:
     Tcl::TclCmd(interp, cmd_name, "num_zeros", 2) {}
 
 protected:
-  virtual void invoke()
+  virtual void invoke(Context& ctx)
     {
-      unsigned int num_zeros = getValFromArg(1, (unsigned int*)0);
+      unsigned int num_zeros = ctx.getValFromArg(1, (unsigned int*)0);
 
       Tcl::List result;
       result.append(0, num_zeros);
 
-      returnVal(result);
+      ctx.setResult(result);
     }
 };
 

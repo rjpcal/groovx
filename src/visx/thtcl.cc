@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jul 11 11:01:52 2001
+// written: Wed Jul 11 19:53:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,13 +46,13 @@ public:
                            "th_id event_type msec_delay", 4, 4),
     itsTimePoint(time_point) {}
 protected:
-  virtual void invoke() {
-    TimingHdlr* th = getItem();
-    const char* event_type = getCstringFromArg(2);
-    int msec = getIntFromArg(3);
+  virtual void invoke(Context& ctx) {
+    TimingHdlr* th = getItem(ctx);
+    const char* event_type = ctx.getCstringFromArg(2);
+    int msec = ctx.getIntFromArg(3);
 
     int eventid = th->addEventByName(event_type, itsTimePoint, msec);
-    returnVal(eventid);
+    ctx.setResult(eventid);
   }
 private:
   TimingHdlr::TimePoint itsTimePoint;

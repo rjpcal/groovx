@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Wed Jul 11 14:37:39 2001
+// written: Wed Jul 11 19:53:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,9 +51,9 @@ Tcl::StringifyCmd::StringifyCmd(Tcl_Interp* interp, const char* cmd_name,
 
 Tcl::StringifyCmd::~StringifyCmd() {}
 
-void Tcl::StringifyCmd::invoke() {
+void Tcl::StringifyCmd::invoke(Context& ctx) {
 DOTRACE("Tcl::StringifyCmd::invoke");
-  IO::IoObject& io = getIO();
+  IO::IoObject& io = getIO(ctx);
 
   DebugEval(typeid(io).name());
 
@@ -79,7 +79,7 @@ DOTRACE("Tcl::StringifyCmd::invoke");
     throw;
   }
 
-  returnVal(ost.str());
+  ctx.setResult(ost.str());
 
   ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
 }
@@ -97,17 +97,17 @@ Tcl::DestringifyCmd::DestringifyCmd(Tcl_Interp* interp, const char* cmd_name,
 
 Tcl::DestringifyCmd::~DestringifyCmd() {}
 
-void Tcl::DestringifyCmd::invoke() {
+void Tcl::DestringifyCmd::invoke(Context& ctx) {
 DOTRACE("Tcl::DestringifyCmd::invoke");
 
   // We assume that the string is contained in the last argument in the command
-  const char* buf = getCstringFromArg(objc() - 1);
+  const char* buf = ctx.getCstringFromArg(ctx.objc() - 1);
   Assert(buf);
 
   istrstream ist(buf);
 
   IO::LegacyReader reader(ist);
-  reader.readRoot(&(getIO()));
+  reader.readRoot(&(getIO(ctx)));
 }
 
 
@@ -123,9 +123,9 @@ Tcl::WriteCmd::WriteCmd(Tcl_Interp* interp, const char* cmd_name,
 
 Tcl::WriteCmd::~WriteCmd() {}
 
-void Tcl::WriteCmd::invoke() {
+void Tcl::WriteCmd::invoke(Context& ctx) {
 DOTRACE("Tcl::WriteCmd::invoke");
-  IO::IoObject& io = getIO();
+  IO::IoObject& io = getIO(ctx);
 
   ostrstream ost;
 
@@ -151,7 +151,7 @@ DOTRACE("Tcl::WriteCmd::invoke");
     throw;
   }
 
-  returnVal(ost.str());
+  ctx.setResult(ost.str());
 
   ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
 }
@@ -169,11 +169,11 @@ Tcl::ReadCmd::ReadCmd(Tcl_Interp* interp, const char* cmd_name,
 
 Tcl::ReadCmd::~ReadCmd() {}
 
-void Tcl::ReadCmd::invoke() {
+void Tcl::ReadCmd::invoke(Context& ctx) {
 DOTRACE("Tcl::ReadCmd::invoke");
-  IO::IoObject& io = getIO();
+  IO::IoObject& io = getIO(ctx);
 
-  const char* str = getCstringFromArg(objc() - 1);
+  const char* str = ctx.getCstringFromArg(ctx.objc() - 1);
 
   istrstream ist(str);
 
@@ -194,10 +194,10 @@ Tcl::ASWSaveCmd::ASWSaveCmd(Tcl_Interp* interp, const char* cmd_name,
 
 Tcl::ASWSaveCmd::~ASWSaveCmd() {}
 
-void Tcl::ASWSaveCmd::invoke() {
+void Tcl::ASWSaveCmd::invoke(Context& ctx) {
 DOTRACE("Tcl::ASWSaveCmd::invoke");
-  IO::IoObject& io = getIO();
-  fixed_string filename = getFilename();
+  IO::IoObject& io = getIO(ctx);
+  fixed_string filename = getFilename(ctx);
 
   STD_IO::ofstream ofs(filename.c_str());
   if ( ofs.fail() ) {
@@ -242,13 +242,13 @@ Tcl::ASRLoadCmd::~ASRLoadCmd() {}
 void Tcl::ASRLoadCmd::beforeLoadHook() {}
 void Tcl::ASRLoadCmd::afterLoadHook() {}
 
-void Tcl::ASRLoadCmd::invoke() {
+void Tcl::ASRLoadCmd::invoke(Context& ctx) {
 DOTRACE("Tcl::ASRLoadCmd::invoke");
 
   beforeLoadHook();
 
-  IO::IoObject& io = getIO();
-  fixed_string filename = getFilename();
+  IO::IoObject& io = getIO(ctx);
+  fixed_string filename = getFilename(ctx);
 
   STD_IO::ifstream ifs(filename.c_str());
   if ( ifs.fail() ) {

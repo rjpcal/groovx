@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Jul 11 19:53:12 2001
+// written: Wed Jul 11 21:05:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -128,11 +128,7 @@ Tcl::TclCmd::TclCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage,
   itsObjcMin(objc_min),
   itsObjcMax( (objc_max > 0) ? objc_max : objc_min),
   itsExactObjc(exact_objc),
-//    itsInterp(0),
-//    itsObjc(0),
-//    itsObjv(0),
   itsImpl(new Impl(cmd_name))
-//    ,itsResult(TCL_OK)
 {
 DOTRACE("Tcl::TclCmd::TclCmd");
   Tcl_CreateObjCommand(interp,
@@ -165,12 +161,7 @@ DOTRACE("Tcl::TclCmd::invokeCallback");
 
   ++(theCmd->itsImpl->itsUseCount);
 
-  shared_ptr<Context> ctx( new Context(interp, objc, objv) );
-  theCmd->itsContext = ctx;
-//    theCmd->itsInterp = interp;
-//    theCmd->itsObjc = objc;
-//    theCmd->itsObjv = objv;
-//    theCmd->itsResult = TCL_OK;
+  Context ctx(interp, objc, objv);
 
   DebugEval(objc);
   DebugEval(theCmd->itsObjcMin);
@@ -182,13 +173,13 @@ DOTRACE("Tcl::TclCmd::invokeCallback");
         (objc != theCmd->itsObjcMin && objc != theCmd->itsObjcMax))
        ||
        ((theCmd->itsExactObjc == false) &&
-        (objc < theCmd->itsObjcMin || objc > theCmd->itsObjcMax)) ) {
-
-    Tcl_WrongNumArgs(ctx->itsInterp, 1, ctx->itsObjv,
-                     const_cast<char*>(theCmd->itsUsage));
-    ctx->itsResult = TCL_ERROR;
-    return TCL_ERROR;
-  }
+        (objc < theCmd->itsObjcMin || objc > theCmd->itsObjcMax)) )
+    {
+      Tcl_WrongNumArgs(ctx.itsInterp, 1, ctx.itsObjv,
+                       const_cast<char*>(theCmd->itsUsage));
+      ctx.itsResult = TCL_ERROR;
+      return TCL_ERROR;
+    }
   // ...otherwise if the argument count is OK, try the command and
   // catch all possible exceptions
   try {
@@ -198,60 +189,54 @@ DOTRACE("Tcl::TclCmd::invokeCallback");
   catch (TclError& err) {
     DebugPrintNL("catch (TclError&)");
     if ( !string_literal(err.msg_cstr()).empty() ) {
-      errMessage(interp, ctx->itsObjv, err.msg_cstr());
+      errMessage(interp, ctx.itsObjv, err.msg_cstr());
     }
-    ctx->itsResult = TCL_ERROR;
+    ctx.itsResult = TCL_ERROR;
   }
   catch (ErrorWithMsg& err) {
     DebugPrintNL("catch (ErrorWithMsg&)");
     if ( !string_literal(err.msg_cstr()).empty() ) {
-      errMessage(interp, ctx->itsObjv, err.msg_cstr());
+      errMessage(interp, ctx.itsObjv, err.msg_cstr());
     }
     else {
       dynamic_string msg = "an error of type ";
       msg += demangle_cstr(typeid(err).name());
       msg += " occurred";
-      errMessage(interp, ctx->itsObjv, msg.c_str());
+      errMessage(interp, ctx.itsObjv, msg.c_str());
     }
-    ctx->itsResult = TCL_ERROR;
+    ctx.itsResult = TCL_ERROR;
   }
   catch (Error& err) {
     DebugPrintNL("catch (Error&)");
     dynamic_string msg = "an error of type ";
     msg += demangle_cstr(typeid(err).name());
     msg += " occurred";
-    errMessage(interp, ctx->itsObjv, msg.c_str());
-    ctx->itsResult = TCL_ERROR;
+    errMessage(interp, ctx.itsObjv, msg.c_str());
+    ctx.itsResult = TCL_ERROR;
   }
   catch (std::exception& err) {
     dynamic_string msg = "an error of type ";
     msg += demangle_cstr(typeid(err).name());
     msg += " occurred: ";
     msg += err.what();
-    errMessage(interp, ctx->itsObjv, msg.c_str());
-    ctx->itsResult = TCL_ERROR;
+    errMessage(interp, ctx.itsObjv, msg.c_str());
+    ctx.itsResult = TCL_ERROR;
   }
   catch (const char* text) {
     dynamic_string msg = "an error occurred: ";
     msg += text;
-    errMessage(interp, ctx->itsObjv, msg.c_str());
-    ctx->itsResult = TCL_ERROR;
+    errMessage(interp, ctx.itsObjv, msg.c_str());
+    ctx.itsResult = TCL_ERROR;
   }
   catch (...) {
     DebugPrintNL("catch (...)");
-    errMessage(interp, ctx->itsObjv, "an error of unknown type occurred");
-    ctx->itsResult = TCL_ERROR;
+    errMessage(interp, ctx.itsObjv, "an error of unknown type occurred");
+    ctx.itsResult = TCL_ERROR;
   }
 
+  DebugEvalNL(ctx.itsResult == TCL_OK);
 
-  // cleanup
-//    theCmd->itsObjc = 0;
-
-  DebugEvalNL(ctx->itsResult == TCL_OK);
-
-  theCmd->itsContext.reset(0);
-
-  return ctx->itsResult;
+  return ctx.itsResult;
 }
 
 

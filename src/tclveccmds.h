@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:11:41 1999
-// written: Wed Jul 11 14:22:24 2001
+// written: Wed Jul 11 20:56:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,9 +67,9 @@ public:
   virtual ~VecGetterBaseCmd();
 
 protected:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 
-  virtual void doReturnValForItem(void* item) = 0;
+  virtual void doReturnValForItem(void* item, Context& ctx) = 0;
   virtual void doAppendValForItem(void* item, Tcl::List& listObj) = 0;
 
 private:
@@ -90,7 +90,7 @@ public:
   virtual ~TVecGetterCmd();
 
 protected:
-  virtual void doReturnValForItem(void* item);
+  virtual void doReturnValForItem(void* item, Context& ctx);
   virtual void doAppendValForItem(void* item, Tcl::List& listObj);
 
 private:
@@ -113,10 +113,10 @@ public:
   virtual ~VecSetterBaseCmd();
 
 protected:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 
-  virtual void invokeForItemArgn(int item_argn, int val_argn) = 0;
-  virtual void setSingleItem(void* item, int val_argn) = 0;
+  virtual void invokeForItemArgn(Context& ctx, int item_argn, int val_argn) = 0;
+  virtual void setSingleItem(Context& ctx, void* item, int val_argn) = 0;
 
   TclItemPkgBase* pkg() { return itsPkg; }
 
@@ -142,8 +142,8 @@ protected:
 
   virtual ~TrVecSetterCmd();
 
-  virtual void invokeForItemArgn(int item_argn, int val_argn);
-  virtual void setSingleItem(void* item, int val_argn);
+  virtual void invokeForItemArgn(Context& ctx, int item_argn, int val_argn);
+  virtual void setSingleItem(Context& ctx, void* item, int val_argn);
 
 private:
   shared_ptr< Setter<value_type> > itsSetter;
@@ -180,7 +180,7 @@ public:
   virtual ~TVecAttribCmd();
 
 protected:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 
 private:
   int itsObjcGet;
@@ -205,7 +205,7 @@ public:
   virtual ~VecActionCmd();
 
 protected:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 
 private:
   VecActionCmd(const VecActionCmd&);

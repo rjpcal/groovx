@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:43 1999
-// written: Mon Jun 11 15:08:15 2001
+// written: Wed Jul 11 19:44:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,92 +23,92 @@ namespace Tcl {
 
 class StringifyCmd : public TclCmd {
 public:
-  StringifyCmd(Tcl_Interp* interp, const char* cmd_name, 
-					const char* usage, int objc);
+  StringifyCmd(Tcl_Interp* interp, const char* cmd_name,
+               const char* usage, int objc);
 
   virtual ~StringifyCmd();
 
 protected:
-  virtual IO::IoObject& getIO() = 0;
+  virtual IO::IoObject& getIO(Context& ctx) = 0;
 
 private:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 };
 
 // It is assumed that the string is contained in the last argument
 class DestringifyCmd : public TclCmd {
 public:
-  DestringifyCmd(Tcl_Interp* interp, const char* cmd_name, 
-					  const char* usage, int objc);
+  DestringifyCmd(Tcl_Interp* interp, const char* cmd_name,
+                 const char* usage, int objc);
 
   virtual ~DestringifyCmd();
 
 protected:
-  virtual IO::IoObject& getIO() = 0;
+  virtual IO::IoObject& getIO(Context& ctx) = 0;
 
 private:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 };
 
 class WriteCmd : public TclCmd {
 public:
   WriteCmd(Tcl_Interp* interp, const char* cmd_name,
-			  const char* usage, int objc);
+           const char* usage, int objc);
 
   virtual ~WriteCmd();
 
 protected:
-  virtual IO::IoObject& getIO() = 0;
+  virtual IO::IoObject& getIO(Context& ctx) = 0;
 
 private:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 };
 
 class ReadCmd : public TclCmd {
 public:
   ReadCmd(Tcl_Interp* interp, const char* cmd_name,
-			 const char* usage, int objc);
+          const char* usage, int objc);
 
   virtual ~ReadCmd();
 
 protected:
-  virtual IO::IoObject& getIO() = 0;
+  virtual IO::IoObject& getIO(Context& ctx) = 0;
 
 private:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 };
 
 class ASWSaveCmd : public TclCmd {
 public:
   ASWSaveCmd(Tcl_Interp* interp, const char* cmd_name,
-				 const char* usage, int objc);
+             const char* usage, int objc);
 
   virtual ~ASWSaveCmd();
 
 protected:
-  virtual IO::IoObject& getIO() = 0;
-  virtual const char* getFilename() = 0;
+  virtual IO::IoObject& getIO(Context& ctx) = 0;
+  virtual const char* getFilename(Context& ctx) = 0;
 
 private:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 };
 
 class ASRLoadCmd : public TclCmd {
 public:
   ASRLoadCmd(Tcl_Interp* interp, const char* cmd_name,
-				 const char* usage, int objc);
+             const char* usage, int objc);
 
   virtual ~ASRLoadCmd();
 
 protected:
-  virtual IO::IoObject& getIO() = 0;
-  virtual const char* getFilename() = 0;
+  virtual IO::IoObject& getIO(Context& ctx) = 0;
+  virtual const char* getFilename(Context& ctx) = 0;
 
   virtual void beforeLoadHook();
   virtual void afterLoadHook();
 
 private:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 };
 
 } // end namespace Tcl

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Wed Jul 11 11:03:19 2001
+// written: Wed Jul 11 19:53:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,8 +54,8 @@ public:
     Tcl::TclCmd(interp, "memUsage", "", 1, 1, false) {}
 
 protected:
-  virtual void invoke() {
-    returnVal(TOTAL);
+  virtual void invoke(Context& ctx) {
+    ctx.setResult(TOTAL);
   }
 };
 
@@ -65,8 +65,8 @@ public:
     Tcl::TclCmd(interp, "hook", "", 0, 10000, false) {}
 
 protected:
-  virtual void invoke() {
-    returnVal("Hello, World!");
+  virtual void invoke(Context& ctx) {
+    ctx.setResult("Hello, World!");
   }
 };
 

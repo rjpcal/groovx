@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Fri Jun 15 15:54:06 2001
+// written: Wed Jul 11 19:36:33 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -99,13 +99,13 @@ public:
     Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, NULL, pkg->itemArgn()+1)
     {}
 protected:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 };
 
-void ExptTcl::BeginCmd::invoke() {
+void ExptTcl::BeginCmd::invoke(Context& ctx) {
 DOTRACE("ExptTcl::BeginCmd::beginCmd");
 
-  ExptDriver* ed = getItem();
+  ExptDriver* ed = getItem(ctx);
   GWT::Widget& widget = ed->getWidget();
 
   // Create the begin key binding
@@ -157,13 +157,13 @@ public:
   {}
 
 protected:
-  virtual void invoke() {
-    ExptDriver* ed = getItem();
+  virtual void invoke(Context& ctx) {
+    ExptDriver* ed = getItem(ctx);
     ed->edHaltExpt();
 
     ed->addLogInfo("Experiment paused.");
 
-    itsPauseMsgCmd.invoke(interp());
+    itsPauseMsgCmd.invoke(ctx.interp());
 
     // Clear the event queue
     while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
@@ -208,13 +208,13 @@ public:
     Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "start_command",
                                 pkg->itemArgn()+2) {}
 protected:
-  virtual void invoke() {
+  virtual void invoke(Context& ctx) {
     // Build the script to be executed when the start key is pressed
     dynamic_string start_command = "{ ";
-    start_command += getCstringFromArg(1);
+    start_command += ctx.getCstringFromArg(1);
     start_command += " }";
 
-    ExptDriver* ed = getItem();
+    ExptDriver* ed = getItem(ctx);
     GWT::Widget& widget = ed->getWidget();
 
     widget.bind("<KeyPress-s>", start_command.c_str());

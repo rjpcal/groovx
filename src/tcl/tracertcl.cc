@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Feb 17 13:34:40 2000
-// written: Thu May 10 12:04:42 2001
+// written: Wed Jul 11 19:53:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,14 +39,14 @@ template <class FuncType>
 class TraceCmd : public TclCmd {
 public:
   TraceCmd(TclPkg* pkg, const char* cmd_name,
-			  Util::Tracer& tracer, FuncType func) :
-	 TclCmd(pkg->interp(), pkg->makePkgCmdName(cmd_name), (char*) 0, 1, 1),
-	 itsTracer(tracer),
-	 itsFunc(func)
-	 {}
+           Util::Tracer& tracer, FuncType func) :
+    TclCmd(pkg->interp(), pkg->makePkgCmdName(cmd_name), (char*) 0, 1, 1),
+    itsTracer(tracer),
+    itsFunc(func)
+    {}
 
 protected:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 
 private:
   Util::Tracer& itsTracer;
@@ -62,15 +62,15 @@ private:
 
 // Specialization of TraceCmd::invoke for action functions
 template <>
-void TraceCmd<TraceActionFunc>::invoke() {
+void TraceCmd<TraceActionFunc>::invoke(Context& ctx) {
   (itsTracer.*itsFunc)();
 }
 
 
 // Specialization of TraceCmd::invoke for getter functions
 template <>
-void TraceCmd<TraceGetterFunc>::invoke() {
-  returnVal( (itsTracer.*itsFunc)() );
+void TraceCmd<TraceGetterFunc>::invoke(Context& ctx) {
+  ctx.setResult( (itsTracer.*itsFunc)() );
 }
 
 
@@ -80,7 +80,7 @@ namespace {
 
 template <class FuncType>
 inline Tcl::TclCmd* newTraceCmd(Tcl::TclPkg* pkg, const char* cmd_name,
-										  Util::Tracer& tracer, FuncType func)
+                                Util::Tracer& tracer, FuncType func)
 {
   return new Tcl::TraceCmd<FuncType>(pkg, cmd_name, tracer, func);
 }

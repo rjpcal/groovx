@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Wed Jul 11 11:02:56 2001
+// written: Wed Jul 11 19:53:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ public:
   HaveAudioCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name, NULL, 1, 1) {}
 protected:
-  virtual void invoke() { returnVal( Sound::haveSound() ); }
+  virtual void invoke(Context& ctx) { ctx.setResult( Sound::haveSound() ); }
 };
 
 //---------------------------------------------------------------------

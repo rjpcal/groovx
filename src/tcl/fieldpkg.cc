@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Wed Jul 11 14:21:43 2001
+// written: Wed Jul 11 19:53:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ public:
   virtual ~FieldVecCmd();
 
 protected:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ public:
   virtual ~FieldsCmd();
 
 protected:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 };
 
 } // end namespace Tcl
@@ -104,16 +104,16 @@ Tcl::FieldVecCmd::FieldVecCmd(TclItemPkg* pkg, const FieldInfo& finfo) :
 
 Tcl::FieldVecCmd::~FieldVecCmd() {}
 
-void Tcl::FieldVecCmd::invoke() {
+void Tcl::FieldVecCmd::invoke(Context& ctx) {
 DOTRACE("Tcl::FieldVecCmd::invoke");
 
-  DebugEvalNL(getCstringFromArg(0));
+  DebugEvalNL(ctx.getCstringFromArg(0));
 
   // Fetch the item ids
   dynamic_block<int> ids(1);
 
   if (itsItemArgn) {
-    ids.assign(beginOfArg(itsItemArgn, (int*)0), endOfArg(itsItemArgn, (int*)0));
+    ids.assign(ctx.beginOfArg(itsItemArgn, (int*)0), ctx.endOfArg(itsItemArgn, (int*)0));
   }
   else {
     // -1 is the cue to use the default item
@@ -121,14 +121,14 @@ DOTRACE("Tcl::FieldVecCmd::invoke");
   }
 
   // If we are getting...
-  if (TclCmd::objc() == itsObjcGet) {
+  if (ctx.objc() == itsObjcGet) {
     if ( ids.size() == 0 )
       /* return an empty Tcl result since the list of ids was empty */
       return;
     else if ( ids.size() == 1 )
       {
         Ref<FieldContainer> item(ids[0]);
-        returnVal<const Value&>( *(item->field(itsFinfo).value()) );
+        ctx.setResult<const Value&>( *(item->field(itsFinfo).value()) );
       }
     else
       {
@@ -137,16 +137,16 @@ DOTRACE("Tcl::FieldVecCmd::invoke");
           Ref<FieldContainer> item(ids[i]);
           result.append<const Value&>( *(item->field(itsFinfo).value()) );
         }
-        returnVal(result);
+        ctx.setResult(result);
       }
 
   }
   // ... or if we are setting
-  else if (TclCmd::objc() == itsObjcSet) {
+  else if (ctx.objc() == itsObjcSet) {
 
     if (ids.size() == 1)
       {
-        TclValue val = getValFromArg(itsValArgn, (TclValue*)0);
+        TclValue val = ctx.getValFromArg(itsValArgn, (TclValue*)0);
 
         Ref<FieldContainer> item(ids[0]);
         item->field(itsFinfo).setValue(val);
@@ -154,8 +154,8 @@ DOTRACE("Tcl::FieldVecCmd::invoke");
     else
       {
         Tcl::List::Iterator<Tcl::TclValue>
-          val_itr = beginOfArg(itsValArgn, (TclValue*)0),
-          val_end = endOfArg(itsValArgn, (TclValue*)0);
+          val_itr = ctx.beginOfArg(itsValArgn, (TclValue*)0),
+          val_end = ctx.endOfArg(itsValArgn, (TclValue*)0);
 
         TclValue val = *val_itr;
 
@@ -193,7 +193,7 @@ Tcl::FieldsCmd::FieldsCmd(TclPkg* pkg, const FieldMap& fields) :
 
 Tcl::FieldsCmd::~FieldsCmd() {}
 
-void Tcl::FieldsCmd::invoke() {
+void Tcl::FieldsCmd::invoke(Context& ctx) {
 DOTRACE("Tcl::FieldsCmd::invoke");
   if (itsFieldList == 0) {
 
@@ -236,7 +236,7 @@ DOTRACE("Tcl::FieldsCmd::invoke");
     Tcl_IncrRefCount(itsFieldList);
   }
 
-  returnVal<const Value&>(TclValue(itsFieldList));
+  ctx.setResult<const Value&>(TclValue(itsFieldList));
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Jul 11 12:52:22 2001
+// written: Wed Jul 11 19:49:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,14 +45,14 @@ public:
                      "block_id trial_id(s) ?repeat=1?",
                      3, 4, false) {}
 protected:
-  virtual void invoke() {
-    Block* block = getItem();
+  virtual void invoke(Context& ctx) {
+    Block* block = getItem(ctx);
 
-    int repeat = (objc() < 4)  ?  1 : getIntFromArg(3);
+    int repeat = (ctx.objc() < 4)  ?  1 : ctx.getIntFromArg(3);
 
     for (Tcl::List::Iterator<int>
-           itr = beginOfArg(2, (int*)0),
-           end = endOfArg(2, (int*)0);
+           itr = ctx.beginOfArg(2, (int*)0),
+           end = ctx.endOfArg(2, (int*)0);
          itr != end;
          ++itr)
       {

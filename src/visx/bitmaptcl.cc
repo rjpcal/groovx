@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Wed Jul 11 12:35:10 2001
+// written: Wed Jul 11 19:36:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,9 +49,9 @@ public:
   LoadPbmCmd(Tcl::CTclItemPkg<Bitmap>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id filename", 3, 3) {}
 protected:
-  virtual void invoke() {
-    Bitmap* bm = getItem();
-    const char* filename = getCstringFromArg(2);
+  virtual void invoke(Context& ctx) {
+    Bitmap* bm = getItem(ctx);
+    const char* filename = ctx.getCstringFromArg(2);
     bm->loadPbmFile(filename);
   }
 };
@@ -70,9 +70,9 @@ public:
                        3, 3)
     {}
 protected:
-  virtual void invoke() {
-    Bitmap* bm = getItem();
-    const char* filename = getCstringFromArg(2);
+  virtual void invoke(Context& ctx) {
+    Bitmap* bm = getItem(ctx);
+    const char* filename = ctx.getCstringFromArg(2);
 
     dynamic_string gzname(filename); gzname += ".gz";
 
@@ -91,9 +91,9 @@ public:
   WritePbmCmd(Tcl::CTclItemPkg<Bitmap>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id filename", 3, 3) {}
 protected:
-  virtual void invoke() {
-    Bitmap* bm = getItem();
-    const char* filename = getCstringFromArg(2);
+  virtual void invoke(Context& ctx) {
+    Bitmap* bm = getItem(ctx);
+    const char* filename = ctx.getCstringFromArg(2);
     bm->writePbmFile(filename);
   }
 };
@@ -111,9 +111,9 @@ public:
                        "bitmap_id filename(without .gz extension)", 3, 3)
     {}
 protected:
-  virtual void invoke() {
-    Bitmap* bm = getItem();
-    const char* filename = getCstringFromArg(2);
+  virtual void invoke(Context& ctx) {
+    Bitmap* bm = getItem(ctx);
+    const char* filename = ctx.getCstringFromArg(2);
 
     dynamic_string gzname(filename); gzname += ".gz";
 
@@ -133,13 +133,13 @@ public:
     Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
                             "bitmap_id left top right bottom", 6, 6) {}
 protected:
-  virtual void invoke() {
-    int l = getIntFromArg(2);
-    int t = getIntFromArg(3);
-    int r = getIntFromArg(4);
-    int b = getIntFromArg(5);
+  virtual void invoke(Context& ctx) {
+    int l = ctx.getIntFromArg(2);
+    int t = ctx.getIntFromArg(3);
+    int r = ctx.getIntFromArg(4);
+    int b = ctx.getIntFromArg(5);
 
-    Bitmap* bm = getItem();
+    Bitmap* bm = getItem(ctx);
     bm->grabScreenRect(l, t, r, b);
   }
 };
@@ -156,13 +156,13 @@ public:
     Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
                             "bitmap_id left top right bottom", 6, 6) {}
 protected:
-  virtual void invoke() {
-    double l = getDoubleFromArg(2);
-    double t = getDoubleFromArg(3);
-    double r = getDoubleFromArg(4);
-    double b = getDoubleFromArg(5);
+  virtual void invoke(Context& ctx) {
+    double l = ctx.getDoubleFromArg(2);
+    double t = ctx.getDoubleFromArg(3);
+    double r = ctx.getDoubleFromArg(4);
+    double b = ctx.getDoubleFromArg(5);
 
-    Bitmap* bm = getItem();
+    Bitmap* bm = getItem(ctx);
     bm->grabWorldRect(l, t, r, b);
   }
 };

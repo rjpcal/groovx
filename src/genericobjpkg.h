@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  7 13:17:04 1999
-// written: Fri Jun 15 15:26:33 2001
+// written: Wed Jul 11 19:06:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ public:
   virtual ~CountAllCmd();
 
 protected:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 
 private:
   CountAllCmd(const CountAllCmd&);
@@ -70,7 +70,7 @@ public:
   virtual ~FindAllCmd();
 
 protected:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 
 private:
   FindAllCmd(const FindAllCmd&);
@@ -87,7 +87,7 @@ public:
   virtual ~RemoveAllCmd();
 
 protected:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 
 private:
   RemoveAllCmd(const RemoveAllCmd&);
@@ -104,7 +104,7 @@ public:
   virtual ~IsCmd();
 
 protected:
-  virtual void invoke();
+  virtual void invoke(Context& ctx);
 
 private:
   IsCmd(const IsCmd&);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Fri Jun 15 06:46:03 2001
+// written: Wed Jul 11 19:35:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -385,10 +385,10 @@ public:
     TclCmd(pkg->interp(), cmd_name, usage, objc_min, objc_max, exact_objc),
     itsPkg(pkg) {}
 protected:
-  virtual void invoke() = 0;
+  virtual void invoke(Context& ctx) = 0;
 
-  C* getItem() {
-    int id = itsPkg->itemArgn() ? getIntFromArg(itsPkg->itemArgn()) : -1;
+  C* getItem(Context& ctx) {
+    int id = itsPkg->itemArgn() ? ctx.getIntFromArg(itsPkg->itemArgn()) : -1;
     return itsPkg->getCItemFromId(id);
   }
 

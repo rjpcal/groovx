@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Jul 11 14:16:43 2001
+// written: Wed Jul 11 19:53:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,11 +75,11 @@ public:
     Tcl::TclCmd(interp, cmd_name, "objids pixel_width pixel_height",
            4, 4, false) {}
 protected:
-  virtual void invoke() {
-    fixed_block<int> objids(beginOfArg(1, (int*)0), endOfArg(1, (int*)0));
+  virtual void invoke(Context& ctx) {
+    fixed_block<int> objids(ctx.beginOfArg(1, (int*)0), ctx.endOfArg(1, (int*)0));
 
-    int pixel_width = getIntFromArg(2);
-    int pixel_height = getIntFromArg(3);
+    int pixel_width = ctx.getIntFromArg(2);
+    int pixel_height = ctx.getIntFromArg(3);
 
     GWT::Canvas& canvas = Application::theApp().getCanvas();
 
@@ -87,7 +87,7 @@ protected:
                                               &objids[0], objids.size(),
                                               pixel_width, pixel_height);
 
-    returnVal(previewid);
+    ctx.setResult(previewid);
   }
 };
 
@@ -105,14 +105,14 @@ public:
   DealSinglesCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name, "objid(s) posid", 3, 3) {}
 protected:
-  virtual void invoke() {
-    int posid = getIntFromArg(2);
+  virtual void invoke(Context& ctx) {
+    int posid = ctx.getIntFromArg(2);
 
     Tcl::List result;
 
     for (Tcl::List::Iterator<int>
-           itr = beginOfArg(1, (int*)0),
-           end = endOfArg(1, (int*)0);
+           itr = ctx.beginOfArg(1, (int*)0),
+           end = ctx.endOfArg(1, (int*)0);
          itr != end;
          ++itr)
       {
@@ -126,7 +126,7 @@ protected:
         result.append(trial.id());
       }
 
-    returnVal(result);
+    ctx.setResult(result);
   }
 };
 
@@ -141,20 +141,20 @@ public:
   DealPairsCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name, "objids1 objids2 posid1 posid2", 5, 5) {}
 protected:
-  virtual void invoke() {
-    int posid1 = getIntFromArg(3);
-    int posid2 = getIntFromArg(4);
+  virtual void invoke(Context& ctx) {
+    int posid1 = ctx.getIntFromArg(3);
+    int posid2 = ctx.getIntFromArg(4);
 
     Tcl::List result;
 
     for (Tcl::List::Iterator<int>
-           itr1 = beginOfArg(1, (int*)0),
-           end1 = endOfArg(1, (int*)0);
+           itr1 = ctx.beginOfArg(1, (int*)0),
+           end1 = ctx.endOfArg(1, (int*)0);
          itr1 != end1;
          ++itr1)
       for (Tcl::List::Iterator<int>
-             itr2 = beginOfArg(2, (int*)0),
-             end2 = endOfArg(2, (int*)0);
+             itr2 = ctx.beginOfArg(2, (int*)0),
+             end2 = ctx.endOfArg(2, (int*)0);
            itr2 != end2;
            ++itr2)
         {
@@ -167,7 +167,7 @@ protected:
           result.append(trial.id());
         }
 
-    returnVal(result);
+    ctx.setResult(result);
   }
 };
 
@@ -183,8 +183,8 @@ public:
     Tcl::TclCmd(interp, cmd_name,
                 "objids posid1 posid2 posid3", 5, 5) {}
 protected:
-  virtual void invoke() {
-    int posids[3] = { getIntFromArg(2), getIntFromArg(3), getIntFromArg(4) };
+  virtual void invoke(Context& ctx) {
+    int posids[3] = { ctx.getIntFromArg(2), ctx.getIntFromArg(3), ctx.getIntFromArg(4) };
 
     const int NUM_PERMS = 18;
     static int permutations[NUM_PERMS][3] = {
@@ -208,8 +208,8 @@ protected:
       {2, 1, 0} };
 
     Tcl::List::Iterator<int>
-      itr = beginOfArg(1, (int*)0),
-      end = endOfArg(1, (int*)0);
+      itr = ctx.beginOfArg(1, (int*)0),
+      end = ctx.endOfArg(1, (int*)0);
 
     int id_count = end - itr;
 
@@ -247,7 +247,7 @@ protected:
       } // end itr2
     } // end itr1
 
-    returnVal(result);
+    ctx.setResult(result);
   }
 };
 
@@ -263,19 +263,19 @@ public:
     Tcl::TclCmd(interp, cmd_name, "objid_file objids posids ?num_lines=-1?",
                 4, 5, false) {}
 protected:
-  virtual void invoke() {
+  virtual void invoke(Context& ctx) {
   DOTRACE("TlistTcl::LoadObjidFileCmd::invoke");
 
-    const char* objid_file =                 getCstringFromArg(1);
-    int         num_lines  = (objc() >= 5) ? getIntFromArg(4) : -1;
+    const char* objid_file =                 ctx.getCstringFromArg(1);
+    int         num_lines  = (ctx.objc() >= 5) ? ctx.getIntFromArg(4) : -1;
 
     // Determine whether we will read to the end of the input stream, or
     // whether we will read only num_lines lines from the stream.
     bool read_to_eof = (num_lines < 0);
 
-    fixed_block<int> objids(beginOfArg(2, (int*)0), endOfArg(2, (int*)0));
+    fixed_block<int> objids(ctx.beginOfArg(2, (int*)0), ctx.endOfArg(2, (int*)0));
 
-    fixed_block<int> posids(beginOfArg(3, (int*)0), endOfArg(3, (int*)0));
+    fixed_block<int> posids(ctx.beginOfArg(3, (int*)0), ctx.endOfArg(3, (int*)0));
 
     STD_IO::ifstream ifs(objid_file);
 
@@ -322,7 +322,7 @@ protected:
         ++num_read;
       }
 
-    returnVal(result);
+    ctx.setResult(result);
   }
 };
 
@@ -337,8 +337,8 @@ public:
   WriteResponsesCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name, "filename", 2, 2) {}
 protected:
-  virtual void invoke() {
-    const char* filename = getCstringFromArg(1);
+  virtual void invoke(Context& ctx) {
+    const char* filename = ctx.getCstringFromArg(1);
 
     TlistUtils::writeResponses(filename);
   }
@@ -355,8 +355,8 @@ public:
   WriteIncidenceMatrixCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name, "filename", 2, 2) {}
 protected:
-  virtual void invoke() {
-    const char* filename = getCstringFromArg(1);
+  virtual void invoke(Context& ctx) {
+    const char* filename = ctx.getCstringFromArg(1);
     TlistUtils::writeIncidenceMatrix(filename);
   }
 };
@@ -372,8 +372,8 @@ public:
   WriteMatlabCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name, "filename", 2, 2) {}
 protected:
-  virtual void invoke() {
-    const char* filename = getCstringFromArg(1);
+  virtual void invoke(Context& ctx) {
+    const char* filename = ctx.getCstringFromArg(1);
     TlistUtils::writeMatlab(filename);
   }
 };

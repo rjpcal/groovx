@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 12:00:53 1999
-// written: Wed Jul 11 11:01:41 2001
+// written: Wed Jul 11 19:53:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,18 +31,18 @@ public:
   FishCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name, "spline_file coord_file index", 1, 4) {}
 protected:
-  virtual void invoke() {
-    if (objc() == 1) {
+  virtual void invoke(Context& ctx) {
+    if (ctx.objc() == 1) {
       Ref<Fish> obj(Fish::make());
-      returnVal(obj.id());
+      ctx.setResult(obj.id());
     }
-    else if (objc() == 4) {
-      const char* spline_file = getCstringFromArg(1);
-      const char* coord_file = getCstringFromArg(2);
-      int index = getIntFromArg(3);
+    else if (ctx.objc() == 4) {
+      const char* spline_file = ctx.getCstringFromArg(1);
+      const char* coord_file = ctx.getCstringFromArg(2);
+      int index = ctx.getIntFromArg(3);
 
       Ref<Fish> obj(Fish::makeFromFiles(spline_file, coord_file, index));
-      returnVal(obj.id());
+      ctx.setResult(obj.id());
     }
   }
 };

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Mon Jun 11 12:59:45 2001
+// written: Wed Jul 11 19:36:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,14 +42,14 @@ namespace TrialTcl {
 class TrialTcl::AddCmd : public Tcl::TclItemCmd<Trial> {
 public:
   AddCmd(Tcl::CTclItemPkg<Trial>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<Trial>(pkg, cmd_name, "trialid objid posid", 4, 4) {}
+    Tcl::TclItemCmd<Trial>(pkg, cmd_name, "trialid objid posid", 4, 4) {}
 protected:
-  virtual void invoke() {
-	 int objid = getIntFromArg(2);
-	 int posid = getIntFromArg(3);
+  virtual void invoke(Context& ctx) {
+    int objid = ctx.getIntFromArg(2);
+    int posid = ctx.getIntFromArg(3);
 
-	 Trial* t = getItem();
-	 t->add(objid, posid);
+    Trial* t = getItem(ctx);
+    t->add(objid, posid);
   }
 };
 
@@ -62,31 +62,31 @@ protected:
 class TrialTcl::TrialPkg : public Tcl::FieldCntrPkg<Trial> {
 public:
   TrialPkg(Tcl_Interp* interp) :
-	 Tcl::FieldCntrPkg<Trial>(interp, "Trial", "$Revision$")
+    Tcl::FieldCntrPkg<Trial>(interp, "Trial", "$Revision$")
   {
-	 Tcl::addTracing(this, Trial::tracer);
+    Tcl::addTracing(this, Trial::tracer);
 
-	 addCommand( new AddCmd(this, "Trial::add") );
+    addCommand( new AddCmd(this, "Trial::add") );
 
-	 declareCSetter("addNode", &Trial::addNode);
-	 declareCGetter("avgResponse", &Trial::avgResponse);
-	 declareCGetter("avgRespTime", &Trial::avgRespTime);
-	 declareCAction("clearObjs", &Trial::clearObjs);
-	 declareCAction("clearResponses", &Trial::clearResponses);
-	 declareCAttrib("correctResponse",
-						 &Trial::getCorrectResponse, &Trial::setCorrectResponse);
-	 declareCAttrib("currentNode",
-						 &Trial::getCurrentNode, &Trial::setCurrentNode);
-	 declareCGetter("description", &Trial::description);
-	 declareCGetter("lastResponse", &Trial::lastResponse);
-	 declareCAction("nextNode", &Trial::trNextNode);
-	 declareCGetter("numResponses", &Trial::numResponses);
-	 declareCAttrib("responseHdlr",
-						 &Trial::getResponseHandler, &Trial::setResponseHandler);
-	 declareCAttrib("timingHdlr",
-						&Trial::getTimingHdlr, &Trial::setTimingHdlr);
-	 declareCAttrib("type", &Trial::trialType, &Trial::setType);
-	 declareCAction("undoLastResponse", &Trial::undoLastResponse);
+    declareCSetter("addNode", &Trial::addNode);
+    declareCGetter("avgResponse", &Trial::avgResponse);
+    declareCGetter("avgRespTime", &Trial::avgRespTime);
+    declareCAction("clearObjs", &Trial::clearObjs);
+    declareCAction("clearResponses", &Trial::clearResponses);
+    declareCAttrib("correctResponse",
+                   &Trial::getCorrectResponse, &Trial::setCorrectResponse);
+    declareCAttrib("currentNode",
+                   &Trial::getCurrentNode, &Trial::setCurrentNode);
+    declareCGetter("description", &Trial::description);
+    declareCGetter("lastResponse", &Trial::lastResponse);
+    declareCAction("nextNode", &Trial::trNextNode);
+    declareCGetter("numResponses", &Trial::numResponses);
+    declareCAttrib("responseHdlr",
+                   &Trial::getResponseHandler, &Trial::setResponseHandler);
+    declareCAttrib("timingHdlr",
+                  &Trial::getTimingHdlr, &Trial::setTimingHdlr);
+    declareCAttrib("type", &Trial::trialType, &Trial::setType);
+    declareCAction("undoLastResponse", &Trial::undoLastResponse);
   }
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Wed Jul 11 10:20:17 2001
+// written: Wed Jul 11 19:44:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -161,8 +161,8 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO() {
-    int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
+  virtual IO::IoObject& getIO(Context& ctx) {
+    int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
 
@@ -184,8 +184,8 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO() {
-    int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
+  virtual IO::IoObject& getIO(Context& ctx) {
+    int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
 
@@ -207,8 +207,8 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO() {
-    int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
+  virtual IO::IoObject& getIO(Context& ctx) {
+    int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
 
@@ -230,8 +230,8 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO() {
-    int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
+  virtual IO::IoObject& getIO(Context& ctx) {
+    int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
 
@@ -253,13 +253,13 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO() {
-    int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
+  virtual IO::IoObject& getIO(Context& ctx) {
+    int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
 
-  virtual const char* getFilename() {
-    return getCstringFromArg(itsItemArgn+1);
+  virtual const char* getFilename(Context& ctx) {
+    return ctx.getCstringFromArg(itsItemArgn+1);
   }
 
 private:
@@ -280,13 +280,13 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO() {
-    int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
+  virtual IO::IoObject& getIO(Context& ctx) {
+    int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
 
-  virtual const char* getFilename() {
-    return getCstringFromArg(itsItemArgn+1);
+  virtual const char* getFilename(Context& ctx) {
+    return ctx.getCstringFromArg(itsItemArgn+1);
   }
 
 private:

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Fri Jun 22 09:11:38 2001
+// written: Wed Jul 11 19:53:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,9 +35,9 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke()
+    virtual void invoke(Context& ctx)
     {
-      returnVal(itsFunc());
+      ctx.setResult(itsFunc());
     }
 
   private:
@@ -48,7 +48,7 @@ namespace Tcl {
   };
 
   template <>
-  void CmdP0<void>::invoke() { itsFunc(); }
+  void CmdP0<void>::invoke(Context& ctx) { itsFunc(); }
 
 
 
@@ -68,10 +68,10 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke()
+    virtual void invoke(Context& ctx)
     {
-      P1 p1 = getValFromArg(1, (P1*)0);
-      returnVal(itsFunc(p1));
+      P1 p1 = ctx.getValFromArg(1, (P1*)0);
+      ctx.setResult(itsFunc(p1));
     }
 
   private:
@@ -93,9 +93,9 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke()
+    virtual void invoke(Context& ctx)
     {
-      P1 p1 = getValFromArg(1, (P1*)0);
+      P1 p1 = ctx.getValFromArg(1, (P1*)0);
       itsFunc(p1);
     }
 
@@ -123,11 +123,11 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke()
+    virtual void invoke(Context& ctx)
     {
-      P1 p1 = getValFromArg(1, (P1*)0);
-      P2 p2 = getValFromArg(2, (P2*)0);
-      returnVal(itsFunc(p1, p2));
+      P1 p1 = ctx.getValFromArg(1, (P1*)0);
+      P2 p2 = ctx.getValFromArg(2, (P2*)0);
+      ctx.setResult(itsFunc(p1, p2));
     }
 
   private:
@@ -149,10 +149,10 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke()
+    virtual void invoke(Context& ctx)
     {
-      P1 p1 = getValFromArg(1, (P1*)0);
-      P2 p2 = getValFromArg(2, (P2*)0);
+      P1 p1 = ctx.getValFromArg(1, (P1*)0);
+      P2 p2 = ctx.getValFromArg(2, (P2*)0);
       itsFunc(p1, p2);
     }
 
@@ -180,12 +180,12 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke()
+    virtual void invoke(Context& ctx)
     {
-      P1 p1 = getValFromArg(1, (P1*)0);
-      P2 p2 = getValFromArg(2, (P2*)0);
-      P3 p3 = getValFromArg(3, (P3*)0);
-      returnVal(itsFunc(p1, p2, p3));
+      P1 p1 = ctx.getValFromArg(1, (P1*)0);
+      P2 p2 = ctx.getValFromArg(2, (P2*)0);
+      P3 p3 = ctx.getValFromArg(3, (P3*)0);
+      ctx.setResult(itsFunc(p1, p2, p3));
     }
 
   private:
@@ -207,11 +207,11 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke()
+    virtual void invoke(Context& ctx)
     {
-      P1 p1 = getValFromArg(1, (P1*)0);
-      P2 p2 = getValFromArg(2, (P2*)0);
-      P3 p3 = getValFromArg(3, (P3*)0);
+      P1 p1 = ctx.getValFromArg(1, (P1*)0);
+      P2 p2 = ctx.getValFromArg(2, (P2*)0);
+      P3 p3 = ctx.getValFromArg(3, (P3*)0);
       itsFunc(p1, p2, p3);
     }
 
@@ -239,13 +239,13 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke()
+    virtual void invoke(Context& ctx)
     {
-      P1 p1 = getValFromArg(1, (P1*)0);
-      P2 p2 = getValFromArg(2, (P2*)0);
-      P3 p3 = getValFromArg(3, (P3*)0);
-      P4 p4 = getValFromArg(4, (P4*)0);
-      returnVal(itsFunc(p1, p2, p3, p4));
+      P1 p1 = ctx.getValFromArg(1, (P1*)0);
+      P2 p2 = ctx.getValFromArg(2, (P2*)0);
+      P3 p3 = ctx.getValFromArg(3, (P3*)0);
+      P4 p4 = ctx.getValFromArg(4, (P4*)0);
+      ctx.setResult(itsFunc(p1, p2, p3, p4));
     }
 
   private:
@@ -267,12 +267,12 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke()
+    virtual void invoke(Context& ctx)
     {
-      P1 p1 = getValFromArg(1, (P1*)0);
-      P2 p2 = getValFromArg(2, (P2*)0);
-      P3 p3 = getValFromArg(3, (P3*)0);
-      P4 p4 = getValFromArg(4, (P4*)0);
+      P1 p1 = ctx.getValFromArg(1, (P1*)0);
+      P2 p2 = ctx.getValFromArg(2, (P2*)0);
+      P3 p3 = ctx.getValFromArg(3, (P3*)0);
+      P4 p4 = ctx.getValFromArg(4, (P4*)0);
       itsFunc(p1, p2, p3, p4);
     }
 

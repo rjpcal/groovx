@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jul 10 12:16:44 2001
-// written: Wed Jul 11 11:03:23 2001
+// written: Wed Jul 11 19:53:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,10 +108,10 @@ public:
                                   pkg->itemArgn()+2) {}
 
 protected:
-  virtual void invoke() {
-    MatlabEngine* eng = getItem();
-    const char* cmd = getCstringFromArg(2);
-    returnVal(eng->evalString(cmd));
+  virtual void invoke(Context& ctx) {
+    MatlabEngine* eng = getItem(ctx);
+    const char* cmd = ctx.getCstringFromArg(2);
+    ctx.setResult(eng->evalString(cmd));
   }
 };
 
@@ -122,10 +122,10 @@ public:
                                   pkg->itemArgn()+2) {}
 
 protected:
-  virtual void invoke() {
-    MatlabEngine* eng = getItem();
-    const char* name = getCstringFromArg(2);
-    returnVal(eng->getMtx(name)->id());
+  virtual void invoke(Context& ctx) {
+    MatlabEngine* eng = getItem(ctx);
+    const char* name = ctx.getCstringFromArg(2);
+    ctx.setResult(eng->getMtx(name)->id());
   }
 };
 

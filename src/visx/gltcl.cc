@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jul 11 14:11:20 2001
+// written: Wed Jul 11 20:59:05 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -92,13 +92,13 @@ public:
   glFrustumCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
     Tcl::TclCmd(pkg->interp(), cmd_name, "left right bottom top zNear zFar", 7, 7) {}
 protected:
-  virtual void invoke() {
-    GLdouble left   = getDoubleFromArg(1);
-    GLdouble right  = getDoubleFromArg(2);
-    GLdouble bottom = getDoubleFromArg(3);
-    GLdouble top    = getDoubleFromArg(4);
-    GLdouble zNear  = getDoubleFromArg(5);
-    GLdouble zFar   = getDoubleFromArg(6);
+  virtual void invoke(Context& ctx) {
+    GLdouble left   = ctx.getDoubleFromArg(1);
+    GLdouble right  = ctx.getDoubleFromArg(2);
+    GLdouble bottom = ctx.getDoubleFromArg(3);
+    GLdouble top    = ctx.getDoubleFromArg(4);
+    GLdouble zNear  = ctx.getDoubleFromArg(5);
+    GLdouble zFar   = ctx.getDoubleFromArg(6);
 
     glFrustum(left, right, bottom, top, zNear, zFar);
     checkGL();
@@ -378,15 +378,16 @@ public:
     Tcl::TclCmd(pkg->interp(), cmd_name, "param_name", 2, 2) { initialize(pkg); }
 
 protected:
-  virtual void getValues(const AttribInfo* theInfo) = 0;
+  virtual void getValues(const AttribInfo* theInfo,
+                         Context& ctx) = 0;
 
-  virtual void invoke() {
-    GLenum param_tag = getIntFromArg(1);
+  virtual void invoke(Context& ctx) {
+    GLenum param_tag = ctx.getIntFromArg(1);
 
     const AttribInfo* theInfo = theirAttribs[param_tag];
     if ( theInfo == 0 ) { throw Tcl::TclError("invalid or unsupported enumerant"); }
 
-    getValues(theInfo);
+    getValues(theInfo, ctx);
   }
 };
 
@@ -413,10 +414,10 @@ public:
 protected:
   void extractValues(GLenum tag, T* vals_out);
 
-  virtual void getValues(const AttribInfo* theInfo) {
+  virtual void getValues(const AttribInfo* theInfo, Context& ctx) {
     fixed_block<T> theVals(theInfo->num_values);
     extractValues(theInfo->param_tag, &(theVals[0]));
-    returnSequence(theVals.begin(), theVals.end());
+    ctx.returnSequence(theVals.begin(), theVals.end());
   }
 };
 
@@ -447,13 +448,13 @@ public:
   glLoadMatrixCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
     Tcl::TclCmd(pkg->interp(), cmd_name, "4x4_column_major_matrix", 2, 2) {}
 protected:
-  virtual void invoke() {
+  virtual void invoke(Context& ctx) {
     fixed_block<GLdouble> matrix(16);
 
     unsigned int i = 0;
     for (Tcl::List::Iterator<GLdouble>
-           itr = beginOfArg(2, (GLdouble*)0),
-           end = endOfArg(2, (GLdouble*)0);
+           itr = ctx.beginOfArg(2, (GLdouble*)0),
+           end = ctx.endOfArg(2, (GLdouble*)0);
          itr != end && i < matrix.size();
          ++itr, ++i)
       {
@@ -480,13 +481,13 @@ public:
   glOrthoCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
     Tcl::TclCmd(pkg->interp(), cmd_name, "left right bottom top zNear zFar", 7, 7) {}
 protected:
-  virtual void invoke() {
-    GLdouble left   = getDoubleFromArg(1);
-    GLdouble right  = getDoubleFromArg(2);
-    GLdouble bottom = getDoubleFromArg(3);
-    GLdouble top    = getDoubleFromArg(4);
-    GLdouble zNear  = getDoubleFromArg(5);
-    GLdouble zFar   = getDoubleFromArg(6);
+  virtual void invoke(Context& ctx) {
+    GLdouble left   = ctx.getDoubleFromArg(1);
+    GLdouble right  = ctx.getDoubleFromArg(2);
+    GLdouble bottom = ctx.getDoubleFromArg(3);
+    GLdouble top    = ctx.getDoubleFromArg(4);
+    GLdouble zNear  = ctx.getDoubleFromArg(5);
+    GLdouble zFar   = ctx.getDoubleFromArg(6);
 
     glOrtho(left, right, bottom, top, zNear, zFar);
     checkGL();
@@ -505,16 +506,16 @@ public:
     Tcl::TclCmd(pkg->interp(), cmd_name, "eyeX eyeY eyeZ targX targY targZ upX upY upZ", 10, 10)
     {}
 protected:
-  virtual void invoke() {
-    GLdouble eyeX = getDoubleFromArg(1);
-    GLdouble eyeY = getDoubleFromArg(2);
-    GLdouble eyeZ = getDoubleFromArg(3);
-    GLdouble targX = getDoubleFromArg(4);
-    GLdouble targY = getDoubleFromArg(5);
-    GLdouble targZ = getDoubleFromArg(6);
-    GLdouble upX = getDoubleFromArg(7);
-    GLdouble upY = getDoubleFromArg(8);
-    GLdouble upZ = getDoubleFromArg(9);
+  virtual void invoke(Context& ctx) {
+    GLdouble eyeX = ctx.getDoubleFromArg(1);
+    GLdouble eyeY = ctx.getDoubleFromArg(2);
+    GLdouble eyeZ = ctx.getDoubleFromArg(3);
+    GLdouble targX = ctx.getDoubleFromArg(4);
+    GLdouble targY = ctx.getDoubleFromArg(5);
+    GLdouble targZ = ctx.getDoubleFromArg(6);
+    GLdouble upX = ctx.getDoubleFromArg(7);
+    GLdouble upY = ctx.getDoubleFromArg(8);
+    GLdouble upZ = ctx.getDoubleFromArg(9);
     gluLookAt(eyeX, eyeY, eyeZ, targX, targY, targZ, upX, upY, upZ);
   }
 };
@@ -536,9 +537,9 @@ public:
   {}
 
 protected:
-  virtual void invoke()
+  virtual void invoke(Context& ctx)
     {
-      bool on_off = getBoolFromArg(1);
+      bool on_off = ctx.getBoolFromArg(1);
 
       if (on_off) {            // turn antialiasing on
         glEnable(GL_BLEND);
@@ -570,12 +571,12 @@ public:
   {}
 
 protected:
-  virtual void invoke()
+  virtual void invoke(Context& ctx)
     {
       fixed_block<double> coord(4);
 
       for (int i = 0; i < 3; ++i)
-        coord.at(i) = getDoubleFromArg(i+1);
+        coord.at(i) = ctx.getDoubleFromArg(i+1);
 
       glBegin(GL_LINES);
       glVertex3d( coord[0], coord[1], 0.0);
@@ -601,12 +602,12 @@ public:
   {}
 
 protected:
-  virtual void invoke()
+  virtual void invoke(Context& ctx)
     {
       fixed_block<double> coord(5); // fill with x1 y1 x2 y2 thickness
 
       for (int i = 0; i < 4; ++i)
-        coord.at(i) = getDoubleFromArg(i+1);
+        coord.at(i) = ctx.getDoubleFromArg(i+1);
 
       // construct the normal vector
       double a, b, c, d, norm;
@@ -645,7 +646,7 @@ public:
   {}
 
 protected:
-  virtual void invoke()
+  virtual void invoke(Context& ctx)
     {
       GLdouble range[2] = {-1.0,-1.0};
       GLdouble gran=-1.0;
@@ -659,7 +660,7 @@ protected:
       result.append("granularity");
       result.append(gran);
 
-      returnVal(result);
+      ctx.setResult(result);
     }
 };
 
@@ -684,14 +685,14 @@ public:
   {}
 
 protected:
-  virtual void invoke()
+  virtual void invoke(Context& ctx)
     {
       int x,y,w,h;
-      if (objc() == 5) {
-        x = getIntFromArg(1);
-        y = getIntFromArg(2);
-        w = getIntFromArg(3);
-        h = getIntFromArg(4);
+      if (ctx.objc() == 5) {
+        x = ctx.getIntFromArg(1);
+        y = ctx.getIntFromArg(2);
+        w = ctx.getIntFromArg(3);
+        h = ctx.getIntFromArg(4);
       }
       else {
         GLint viewport[4];
@@ -719,7 +720,7 @@ protected:
           for (unsigned int i = 0; i < pixels.size(); ++i) {
             sum += pixels[i];
           }
-          returnVal(sum);
+          ctx.setResult(sum);
         }
       else
         {
@@ -735,7 +736,7 @@ protected:
           for (unsigned int i = 0; i < pixels.size(); ++i) {
             sum += pixels[i];
           }
-          returnVal(sum);
+          ctx.setResult(sum);
         }
     }
 };
