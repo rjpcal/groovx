@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Jan 30 16:07:58 2002
+// written: Wed Apr  3 17:29:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -580,6 +580,13 @@ void Trial::addNode(Util::Ref<GxNode> item)
 
 void Trial::trNextNode()
   { itsImpl->trNextNode(); }
+
+Util::FwdIter<Util::Ref<GxNode> > Trial::nodes() const
+{
+  return Util::FwdIter<Util::Ref<GxNode> >
+    (itsImpl->itsGxNodes.begin(),
+     itsImpl->itsGxNodes.end());
+}
 
 unsigned int Trial::getCurrentNode() const
   { return itsImpl->itsCurrentNode; }

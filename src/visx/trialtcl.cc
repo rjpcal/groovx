@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Fri Jan 18 16:06:59 2002
+// written: Wed Apr  3 17:30:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include "gfx/gxnode.h"
 
 #include "tcl/fieldpkg.h"
+#include "tcl/itertcl.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
@@ -50,6 +51,7 @@ DOTRACE("Trial_Init");
   pkg->defGetter("description", &Trial::description);
   pkg->defGetter("lastResponse", &Trial::lastResponse);
   pkg->defAction("nextNode", &Trial::trNextNode);
+  pkg->defGetter("nodes", &Trial::nodes);
   pkg->defGetter("numResponses", &Trial::numResponses);
   pkg->defAttrib("responseHdlr",
                  &Trial::getResponseHandler, &Trial::setResponseHandler);

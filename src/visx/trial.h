@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Fri Jan 25 13:58:28 2002
+// written: Wed Apr  3 17:28:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,7 @@
 
 namespace Util
 {
+  template <class T> class FwdIter;
   template <class T> class Ref;
 };
 
@@ -100,6 +101,9 @@ public:
   void addNode(Util::Ref<GxNode> item);
 
   void trNextNode();
+
+  /// Returns an iterator to all the nodes contained in the Trial.
+  Util::FwdIter<Util::Ref<GxNode> > nodes() const;
 
   unsigned int getCurrentNode() const;
   void setCurrentNode(unsigned int nodeNumber);
