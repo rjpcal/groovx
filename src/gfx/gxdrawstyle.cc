@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 29 10:19:31 2001
-// written: Fri Jul  5 13:39:20 2002
+// written: Fri Jul  5 14:11:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,14 +80,6 @@ void GxDrawStyle::getBoundingCube(Gfx::Box<double>&, Gfx::Canvas&) const
 }
 
 void GxDrawStyle::draw(Gfx::Canvas& canvas) const
-{
-  canvas.setPolygonFill(polygonFill);
-  canvas.setPointSize(pointSize);
-  canvas.setLineWidth(lineWidth);
-  canvas.setLineStipple((unsigned short)linePattern);
-}
-
-void GxDrawStyle::undraw(Gfx::Canvas& canvas) const
 {
   canvas.setPolygonFill(polygonFill);
   canvas.setPointSize(pointSize);

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr 17 15:53:53 2002
-// written: Fri Jul  5 13:41:14 2002
+// written: Fri Jul  5 14:11:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,9 +77,6 @@ public:
 
   /// Draw the line.
   virtual void draw(Gfx::Canvas&) const;
-
-  /// Undraw the line.
-  virtual void undraw(Gfx::Canvas&) const;
 
 private:
   GxLine(const GxLine&);

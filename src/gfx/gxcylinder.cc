@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul  5 12:46:27 2002
-// written: Fri Jul  5 13:57:04 2002
+// written: Fri Jul  5 14:11:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -106,12 +106,6 @@ DOTRACE("GxCylinder::draw");
 
   canvas.drawCylinder(itsBase, itsTop, itsHeight,
                       itsSlices, itsStacks, itsFilled);
-}
-
-void GxCylinder::undraw(Gfx::Canvas& canvas) const
-{
-DOTRACE("GxCylinder::undraw");
-  draw(canvas);
 }
 
 static const char vcid_gxcylinder_cc[] = "$Header$";

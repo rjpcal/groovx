@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 17:45:52 2001
-// written: Fri Jul  5 13:38:05 2002
+// written: Fri Jul  5 14:11:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,11 +75,6 @@ void GxColor::getBoundingCube(Gfx::Box<double>&, Gfx::Canvas&) const
 }
 
 void GxColor::draw(Gfx::Canvas& canvas) const
-{
-  canvas.setColor(rgbaColor);
-}
-
-void GxColor::undraw(Gfx::Canvas& canvas) const
 {
   canvas.setColor(rgbaColor);
 }

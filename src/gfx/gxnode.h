@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:26:45 2000
-// written: Fri Jul  5 14:06:59 2002
+// written: Fri Jul  5 14:11:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,7 +85,7 @@ public:
   virtual void draw(Gfx::Canvas& canvas) const = 0;
 
   /// Undraw the object from \a canvas by clearing the bounding box.
-  virtual void undraw(Gfx::Canvas& canvas) const;
+  void undraw(Gfx::Canvas& canvas) const;
 };
 
 static const char vcid_gxnode_h[] = "$Header$";

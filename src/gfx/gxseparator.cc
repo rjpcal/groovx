@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Fri Jul  5 13:59:49 2002
+// written: Fri Jul  5 14:11:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -304,26 +304,6 @@ DOTRACE("GxSeparator::draw");
           ++itr)
         {
           (*itr)->draw(canvas);
-        }
-    }
-}
-
-void GxSeparator::undraw(Gfx::Canvas& canvas) const
-{
-DOTRACE("GxSeparator::undraw");
-
-  if (!itsImpl->itsChildren.empty())
-    {
-      Gfx::MatrixSaver state(canvas);
-      Gfx::AttribSaver attribs(canvas);
-
-      for(Impl::VecType::iterator
-            itr = itsImpl->itsChildren.begin(),
-            end = itsImpl->itsChildren.end();
-          itr != end;
-          ++itr)
-        {
-          (*itr)->undraw(canvas);
         }
     }
 }

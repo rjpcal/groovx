@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 17:42:48 2001
-// written: Fri Jul  5 13:37:33 2002
+// written: Fri Jul  5 14:11:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,6 @@ public:
                                Gfx::Canvas& canvas) const;
 
   virtual void draw(Gfx::Canvas& canvas) const;
-  virtual void undraw(Gfx::Canvas& canvas) const;
 };
 
 static const char vcid_gxcolor_h[] = "$Header$";

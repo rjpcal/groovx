@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:20:15 2000
-// written: Fri Jul  5 13:59:57 2002
+// written: Fri Jul  5 14:11:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,9 +71,6 @@ public:
 
   /// Draw all of the contained objects on \a canvas.
   virtual void draw(Gfx::Canvas& canvas) const;
-
-  /// Undraw all of the contained objects from \a canvas.
-  virtual void undraw(Gfx::Canvas& canvas) const;
 
 private:
   GxSeparator(const GxSeparator&);

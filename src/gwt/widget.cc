@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Fri Jul  5 13:48:34 2002
+// written: Fri Jul  5 14:11:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,6 @@ public:
   virtual void getBoundingCube(Gfx::Box<double>&, Gfx::Canvas&) const {}
 
   virtual void draw(Gfx::Canvas&) const {}
-  virtual void undraw(Gfx::Canvas&) const {}
 
   static EmptyNode* make()
     {

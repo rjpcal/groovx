@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr 17 16:00:32 2002
-// written: Fri Jul  5 13:52:15 2002
+// written: Fri Jul  5 14:11:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -110,12 +110,6 @@ DOTRACE("GxLine::draw");
   Gfx::LinesBlock lb(canvas);
   canvas.vertex3(start.vec());
   canvas.vertex3(stop.vec());
-}
-
-void GxLine::undraw(Gfx::Canvas& canvas) const
-{
-DOTRACE("GxLine::undraw");
-  draw(canvas);
 }
 
 static const char vcid_gxline_cc[] = "$Header$";

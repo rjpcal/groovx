@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:40 1999
-// written: Wed Jun 26 12:53:54 2002
+// written: Fri Jul  5 14:11:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,10 +60,6 @@ public:
 
 public:
   virtual void draw(Gfx::Canvas&) const;
-  virtual void undraw(Gfx::Canvas&) const;
-  // The draw() inherited is fine to reuse for Jitter, but undraw must
-  // be redefined for Jitter so that we duplicate the previous
-  // jittering, rather than do a new jittering.
 
 private:
   void rejitter() const;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Fri Jul  5 14:06:51 2002
+// written: Fri Jul  5 14:11:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,17 +36,15 @@ class fstring;
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c GrObj is the abstract base class for graphic objects. GrObj*'s
- * may be stored and manipulated in ObjList's. Subclasses derived from
- * GrObj must specify the details of how their objects will be drawn,
- * by overriding the virtual function grRender(), and/or by choosing
- * an appropriate render mode with setRenderMode(). Public clients
- * call draw() or undraw() to display or hide the object. The caches
- * that mediate the various drawing modes are kept up to date by using
- * the Signal interface. Thus, whenever a manipulator changes a
- * parameter in a derived class, it should also call
- * GrObj::sigNodeChanged.emit() to indicate that an update is
- * needed.
+ * \c GrObj is the abstract base class for graphic objects. GrObj*'s may be
+ * stored and manipulated in ObjList's. Subclasses derived from GrObj must
+ * specify the details of how their objects will be drawn, by overriding
+ * the virtual function grRender(), and/or by choosing an appropriate
+ * render mode with setRenderMode(). Public clients call draw() to display
+ * the object. The caches that mediate the various drawing modes are kept
+ * up to date by using the Signal interface. Thus, whenever a manipulator
+ * changes a parameter in a derived class, it should also call
+ * GrObj::sigNodeChanged.emit() to indicate that an update is needed.
  *
  **/
 ///////////////////////////////////////////////////////////////////////

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul  5 12:43:20 2002
-// written: Fri Jul  5 13:28:22 2002
+// written: Fri Jul  5 14:11:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,9 +68,6 @@ public:
 
   /// Draw the cylinder.
   virtual void draw(Gfx::Canvas&) const;
-
-  /// Undraw the cylinder.
-  virtual void undraw(Gfx::Canvas&) const;
 
 private:
   GxCylinder(const GxCylinder&);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Fri Jul  5 14:02:11 2002
+// written: Fri Jul  5 14:11:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -271,14 +271,6 @@ DOTRACE("Position::draw");
       canvas.vertex3(Gfx::Vec3<double>(0.0, 0.0, -d));
       canvas.vertex3(Gfx::Vec3<double>(0.0, 0.0,  d));
     }
-}
-
-void Position::undraw(Gfx::Canvas& canvas) const
-{
-DOTRACE("Position::undraw");
-  canvas.translate(rep->tr);
-  canvas.scale(rep->sc);
-  canvas.rotate(rep->rt, rep->rt_ang);
 }
 
 void Position::onChange()

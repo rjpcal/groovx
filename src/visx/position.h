@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:14 1999
-// written: Fri Jul  5 14:02:22 2002
+// written: Fri Jul  5 14:11:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -103,10 +103,6 @@ public:
 
   /// Translate, scale, and rotate.
   virtual void draw(Gfx::Canvas&) const;
-
-  /** Redo most recent draw(). (This is useful if the behavior of
-      draw() changes from one call to the next.) */
-  virtual void undraw(Gfx::Canvas&) const;
 
 private:
   Position(const Position&);
