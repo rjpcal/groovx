@@ -53,7 +53,7 @@ void Tcl::TclItemPkg::declareGetter(const char* cmd_name,
                                     Getter<T>* getter, const char* usage)
 {
   addCommand(
-         new Tcl::TVecGetterCmd<T>(this, makePkgCmdName(cmd_name),
+         new Tcl::TVecGetterCmd<T>(interp(), this, makePkgCmdName(cmd_name),
 #ifndef ACC_COMPILER
                                    make_shared(getter),
 #else
@@ -68,7 +68,7 @@ void Tcl::TclItemPkg::declareSetter(const char* cmd_name,
                                     Setter<T>* setter, const char* usage)
 {
   addCommand(
-         new Tcl::TVecSetterCmd<T>(this, makePkgCmdName(cmd_name),
+         new Tcl::TVecSetterCmd<T>(interp(), this, makePkgCmdName(cmd_name),
 #ifndef ACC_COMPILER
                                    make_shared(setter),
 #else
@@ -85,7 +85,7 @@ void Tcl::TclItemPkg::declareAttrib(const char* attrib_name,
                                     const char* usage)
 {
   addCommand(
-         new Tcl::TVecAttribCmd<T>(this, makePkgCmdName(attrib_name),
+         new Tcl::TVecAttribCmd<T>(interp(), this, makePkgCmdName(attrib_name),
 #ifndef ACC_COMPILER
                                    make_shared(getter),
                                    make_shared(setter),
@@ -133,7 +133,7 @@ void Tcl::TclItemPkg::instantiate()
 void Tcl::TclItemPkg::declareAction(const char* action_name, Action* action,
                                     const char* usage)
 {
-  addCommand( new VecActionCmd(this, makePkgCmdName(action_name),
+  addCommand( new VecActionCmd(interp(), this, makePkgCmdName(action_name),
                                make_shared(action), usage, itemArgn()) );
 }
 
