@@ -415,6 +415,15 @@ docs: $(DOC)/DoxyConfig
 H_TAGS: $(ALL_SRCS)
 	find $(SRC) -name \*.h | etags - -o $@
 
+# Show how many translation units (i.e., *.cc files) depend on each header file
+headerdeps: $(DEP)/cppdepends
+	rm -f .headerdeps.temp
+	for f in `find $(SRC) -name \*.h`; do \
+		n=`fgrep $$f $(DEP)/cppdepends|wc -l`; \
+		echo "$$n $$f" >> .headerdeps.temp; \
+	done
+	sort -n .headerdeps.temp | tee $(LOGS)/headerdeps
+
 obj_sizes:
 	ls -lLR $(OBJ) | grep "\.$(OBJEXT)" | sort -n +4 | tee $(LOGS)/obj_sizes
 
