@@ -12,7 +12,7 @@ if { [info exists List::TEST_DEFINED] } return;
 
 namespace eval List {
 
-set TEST_DEFINED 1
+variable TEST_DEFINED 1
 
 proc testList { packagename listname baseclass subclass1 subclass2 } {
     set testObj(packagename) $packagename

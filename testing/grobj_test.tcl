@@ -7,104 +7,252 @@
 ###
 ##############################################################################
 
+# Multiple inclusion guard
+if { [info exists GrObj::TEST_DEFINED] } return;
+
 package require Objlist
 package require Grobj
-package require Face
-package require Fixpt
 
-set FACE [Face::Face]
-set FIXPT [Fixpt::Fixpt]
-
-### GrObj::typeCmd ###
-test "GrobjTcl-GrObj::type" "too few args" {
-    GrObj::type
-} {wrong \# args: should be "GrObj::type item_id"}
-test "GrobjTcl-GrObj::type" "too many args" {
-    GrObj::type j u
-} {wrong \# args: should be "GrObj::type item_id"}
-test "GrobjTcl-GrObj::type" "normal use on Face" {
-	 GrObj::type $::FACE
-} {Face}
-test "GrobjTcl-GrObj::type" "normal use on FixPt" {
-	 GrObj::type $::FIXPT
-} {FixPt}
-test "GrobjTcl-GrObj::type" "error from bad objid" {
-	 GrObj::type -1
-} {GrObj::type: an error of type InvalidIdError occurred}
-test "GrobjTcl-GrObj::type" "error from too large objid" {
-	 GrObj::type 10000
-} {GrObj::type: an error of type InvalidIdError occurred}
-
-### GrObj::stringifyCmd ###
-test "GrobjTcl-GrObj::stringify" "too few args" {
-	 GrObj::stringify
-} {^wrong \# args: should be "GrObj::stringify item_id"$}
-test "GrobjTcl-GrObj::stringify" "too many args" {
-	 GrObj::stringify $::FACE junk
-} {^wrong \# args: should be "GrObj::stringify item_id"$}
-test "GrobjTcl-GrObj::stringify" "normal use" {
-	 catch {GrObj::stringify $::FACE}
-} {^0$}
-test "GrobjTcl-GrObj::stringify" "error" {} {^$} $no_test
-
-### GrObj::destringifyCmd ###
-test "GrobjTcl-GrObj::destringify" "too few args" {
-	 GrObj::destringify
-} {^wrong \# args: should be "GrObj::destringify item_id string"$}
-test "GrobjTcl-GrObj::destringify" "too many args" {
-	 GrObj::destringify $::FACE junk junk
-} {^wrong \# args: should be "GrObj::destringify item_id string"$}
-test "GrobjTcl-GrObj::destringify" "normal use" {
-	 catch {GrObj::destringify $::FACE [GrObj::stringify $::FACE]}
-} {^0$}
-test "GrobjTcl-GrObj::destringify" "error" {
-	 catch {GrObj::destringify $::FACE junk}
-} {^1$}
-
-### GrObj::categoryCmd ###
-test "GrobjTcl-GrObj::category" "too few args" {
-	 GrObj::category
-} {^wrong \# args: should be "GrObj::category item_id\(s\) \?new_value\(s\)\?"$}
-test "GrobjTcl-GrObj::category" "too many args" {
-	 GrObj::category 0 0 junk
-} {^wrong \# args: should be "GrObj::category item_id\(s\) \?new_value\(s\)\?"$}
-test "GrobjTcl-GrObj::category" "normal use get" {
-	 GrObj::category $::FACE
-} "^$INT$"
-test "GrobjTcl-GrObj::category" "normal use set" {
-	 GrObj::category $::FACE 34
-	 GrObj::category $::FACE
-} {^34$}
-test "GrobjTcl-GrObj::category" "normal use vector get" {
-	 GrObj::category "$::FACE $::FIXPT"
-} "^${INT}${SP}${INT}$"
-test "GrobjTcl-GrObj::category" "normal use vector set with one value" {
-	 GrObj::category "$::FACE $::FIXPT" 49
-	 GrObj::category "$::FACE $::FIXPT"
-} "^${INT}${SP}${INT}$"
-test "GrobjTcl-GrObj::category" "normal use vector set with many values" {
-	 GrObj::category "$::FACE $::FIXPT" "3 7 11"
-	 GrObj::category "$::FACE $::FIXPT"
-} "^${INT}${SP}${INT}$"
-test "GrobjTcl-GrObj::category" "error" {} {^$} $no_test
+source ${::TEST_DIR}/io_test.tcl
 
 
-package require Objtogl
-if { ![Togl::inited] } { Togl::init "-rgba false"; update }
+namespace eval GrObj {
 
-### GrObj::updateCmd ###
-test "GrobjTcl-GrObj::update" "too few args" {
-	 GrObj::update
-} {^wrong \# args: should be "GrObj::update item_id\(s\)"$}
-test "GrobjTcl-GrObj::update" "too many args" {
-	 GrObj::update $::FACE junk
-} {^wrong \# args: should be "GrObj::update item_id\(s\)"$}
-test "GrobjTcl-GrObj::update" "normal use" {
-	 catch {GrObj::update $::FACE}
-} {^0$}
-test "GrobjTcl-GrObj::update" "error" {} {^$} $no_test
+variable TEST_DEFINED 1
+variable BASE_CLASS_TESTED 0
+
+namespace export testSubclass
+proc testSubclass { package {subclass "GrObj"} } {
+
+	 variable BASE_CLASS_TESTED
+
+	 set testObj(testbase) [expr !$BASE_CLASS_TESTED]
+	 set testObj(testsubclass) [expr ![string equal $subclass "GrObj"]]
+	 set testObj(package) $package
+	 set testObj(subclass) $subclass
+	 if { $testObj(testsubclass) } {
+		  set testObj(objid) [eval ${subclass}::${subclass} ]
+	 } else {
+		  set testObj(objid) -1
+	 }
+
+	 testTypeCmd testObj
+	 testStringifyCmd testObj
+	 testDestringifyCmd testObj
+	 testReadCmd testObj
+	 testWriteCmd testObj
+	 testCategoryCmd testObj
+	 testUpdateCmd testObj
+	 testBoundingBoxCmd testObj
+	 testAlignmentModeCmd testObj
+	 testAspectRatioCmd testObj
+	 testBBVisibilityCmd testObj
+	 testCenterXCmd testObj
+	 testCenterYCmd testObj
+	 testHeightCmd testObj
+	 testMaxDimensionCmd testObj
+	 testRenderModeCmd testObj
+	 testScalingModeCmd testObj
+	 testUnRenderModeCmd testObj
+	 testWidthCmd testObj
+
+	 if { $testObj(testsubclass) } {
+		  ObjList::remove $testObj(objid)
+	 }
+
+	 set BASE_CLASS_TESTED 1
+}
+
+proc testTypeCmd { objname } {
+	 upvar $objname this
+
+	 set cmdname "GrObj::type"
+	 set usage "wrong \# args: should be \"$cmdname item_id\""
+	 set testname "${this(package)}-${cmdname}"
+
+	 if { $this(testbase) } {
+		  eval ::test $testname {"too few args"} {"
+		      $cmdname
+		  "} {$usage}
+		  eval ::test $testname {"too many args"} {"
+		      $cmdname 0 junk
+		  "} {$usage}
+		  eval ::test $testname {"error from bad objid"} {"
+		      $cmdname -1
+		  "} {"${cmdname}: attempt to access invalid id in ObjList"}
+		  eval ::test $testname {"error from too large objid"} {"
+		      $cmdname 10000
+		  "} {"${cmdname}: attempt to access invalid id in ObjList"}
+	 }
+
+	 if { $this(testsubclass) } {
+		  eval ::test $testname {"normal use on $this(subclass)"} {"
+		      $cmdname $this(objid)
+		  "} {$this(subclass)}
+	 }
+}
+
+proc testStringifyCmd { objname } {
+	 upvar $objname this
+
+	 IO::testStringifyCmd $this(package) $this(subclass) 1 $this(objid)
+
+	 return
+
+	 set stringify "GrObj::stringify"
+	 set destringify "GrObj::destringify"
+	 set usage "wrong \# args: should be \"$stringify item_id\""
+	 set testname "${this(package)}-${stringify}"
+
+	 if { $this(testbase) } {
+		  eval ::test $testname {"too few args"} {"
+		      $stringify
+		  "} {$usage}
+		  eval ::test $testname {"too many args"} {"
+		      $stringify 0 junk
+		  "} {$usage}
+		  eval ::test $testname {"error from bad objid"} {"
+		      $stringify -1
+		  "} {"$stringify: attempt to access invalid id in ObjList"}
+	 }
+
+	 if { $this(testsubclass) } {
+		  eval ::test $testname {"normal use"} {"
+		      catch {$stringify $this(objid)}
+		  "} {^0$}
+	 }
+}
+
+proc testDestringifyCmd { objname } {
+	 upvar $objname this
+
+	 IO::testDestringifyCmd $this(package) $this(subclass) 1 $this(objid)
+}
+
+proc testReadCmd { objname } {
+	 upvar $objname this
+}
+
+proc testWriteCmd { objname } {
+	 upvar $objname this
+}
+
+proc testCategoryCmd { objname } {
+	 upvar $objname this
+
+	 set cmdname "GrObj::category"
+	 set usage "wrong \# args: should be \"$cmdname item_id\\(s\\) \\?new_value\\(s\\)\\?\""
+	 set testname "${this(package)}-${cmdname}"
+
+	 if { $this(testbase) } {
+		  eval ::test $testname {"too few args"} {"
+				$cmdname
+		  "} {$usage}
+		  eval ::test $testname {"too many args"} {"
+		      $cmdname 0 0 junk
+		  "} {$usage}
+	 }
+
+	 if { $this(testsubclass) } {
+		  eval ::test $testname {"normal use get"} {"
+				GrObj::category $this(objid)
+		  "} {"^$::INT$"}
+		  eval ::test $testname {"normal use set"} {"
+				GrObj::category $this(objid) 34
+		      GrObj::category $this(objid)
+		  "} {^34$}
+		  eval ::test $testname {"normal use vector get"} {"
+		      GrObj::category \"$this(objid) $this(objid)\"
+		  "} {"^${::INT}${::SP}${::INT}$"}
+		  eval ::test $testname {"normal use vector set with one value"} {"
+		      GrObj::category \"$this(objid) $this(objid)\" 49
+		      GrObj::category \"$this(objid) $this(objid)\"
+		  "} {"^${::INT}${::SP}${::INT}$"}
+		  eval ::test $testname {"normal use vector set with many values"} {"
+		      GrObj::category \"$this(objid) $this(objid)\" \"3 7 11\"
+		      GrObj::category \"$this(objid) $this(objid)\" 
+		  "} {"^${::INT}${::SP}${::INT}$"}
+	 }
+}
+
+proc testUpdateCmd { objname } {
+	 upvar $objname this
+
+	 set cmdname "GrObj::update"
+	 set usage "wrong \# args: should be \"$cmdname item_id\\(s\\)\""
+	 set testname "${this(package)}-${cmdname}"
+
+	 if { $this(testbase) } {
+		  eval ::test $testname {"too few args"} {"
+				$cmdname
+		  "} {$usage}
+
+		  eval ::test $testname {"too many args"} {"
+		      $cmdname 0 junk
+		  "} {$usage}
+	 }
+
+	 if { $this(testsubclass) } {
+		  package require Objtogl
+		  if { ![Togl::inited] } { Togl::init "-rgba false"; ::update }
 
 
-### Cleanup
-unset FACE
-unset FIXPT
+		  eval ::test $testname {"normal use"} {"
+		      catch {$cmdname $this(objid)}
+		  "} {"^0$"}
+	 }
+}
+
+proc testBoundingBoxCmd { objname } {
+	 upvar $objname this
+}
+
+proc testAlignmentModeCmd { objname } {
+	 upvar $objname this
+}
+
+proc testAspectRatioCmd { objname } {
+	 upvar $objname this
+}
+
+proc testBBVisibilityCmd { objname } {
+	 upvar $objname this
+}
+
+proc testCenterXCmd { objname } {
+	 upvar $objname this
+}
+
+proc testCenterYCmd { objname } {
+	 upvar $objname this
+}
+
+proc testHeightCmd { objname } {
+	 upvar $objname this
+}
+
+proc testMaxDimensionCmd { objname } {
+	 upvar $objname this
+}
+
+proc testRenderModeCmd { objname } {
+	 upvar $objname this
+}
+
+proc testScalingModeCmd { objname } {
+	 upvar $objname this
+}
+
+proc testUnRenderModeCmd { objname } {
+	 upvar $objname this
+}
+
+proc testWidthCmd { objname } {
+	 upvar $objname this
+}
+
+} 
+# end namespace GrObj
+
+GrObj::testSubclass Grobj
+

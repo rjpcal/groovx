@@ -3,6 +3,29 @@ $Id$
 
 *** FRONT of priority queue ***
 
+(3-Mar-2000) Ugh. I just now realized how much time it takes to
+compile STL headers. In the past, I didn't try to forward-declare STL
+templates since their declarations can vary by compiler... but I now
+realized (duh!) that (by using an extra level of indirection) I can
+use a "stringfwd.h" file that correctly declares string, depending on
+the compiler. On a tiny test file, this reduces the compilation time
+from about 15 sec to only 1-2 sec !!! So I've created "stringfwd.h"
+and "vectorfwd.h", and I'm going to try to use these exclusively when
+a declaration is needed in one of my header files. One issue is that
+of default arguments... these cannot be used unless the full class
+definition is known. This particularly affects uses like 'const
+string& s = ""', but I think the problem can be easily circumvented
+by removing the default argument, and adding instead an overloaded
+function version with no string argument.
+
+Who still #include's <string>? : bitmaprep.h, gtext.h, subject.h
+
+<vector>?: bezier.h block.h bmapdata.h iostl.h pbm.h
+ tcllink.h tlistutils.h trial.h
+
+Should be able to eliminate using <vector> in BmapData and Pbm
+interfaces by using iterators instead.
+
 (8-Feb-2000) Should think about doing dynamic tracing generically,
 perhaps with a mixin base class.
 

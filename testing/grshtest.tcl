@@ -20,30 +20,38 @@ set VERBOSE 0
 
 ### Run test procedures
 set files {
-	 objtogl_test.tcl
-	 gl_test.tcl
-	 kbdrh_test.tcl
-	 th_test.tcl
-	 expt_test.tcl
-	 tlist_test.tcl
-	 block_test.tcl
 	 bitmap_test.tcl
-	 gtext_test.tcl
-	 grobj_test.tcl
+	 block_test.tcl
+	 blocklist_test.tcl
+	 dlist_test.tcl
+	 expt_test.tcl
+	 eventrh_test.tcl
 	 face_test.tcl
 	 fixpt_test.tcl
+	 gabor_test.tcl
+	 gl_test.tcl
+	 grobj_test.tcl
+	 gtext_test.tcl
+	 house_test.tcl
 	 jitter_test.tcl
+	 kbdrh_test.tcl
+	 maskhatch_test.tcl
 	 misc_test.tcl
+	 morphyface_test.tcl
 	 objlist_test.tcl
+	 objtogl_test.tcl
 	 position_test.tcl
 	 poslist_test.tcl
-	 subject_test.tcl
-	 dlist_test.tcl
-	 trial_test.tcl
 	 rhlist_test.tcl
 	 sound_test.tcl
+	 subject_test.tcl
+	 th_test.tcl
+	 tlist_test.tcl
+	 trial_test.tcl
 }
 
+set others {
+}
 
 foreach file $files { testfile ${TEST_DIR}/$file }
 

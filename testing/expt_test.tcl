@@ -37,11 +37,9 @@ test "ExptTcl-Expt::begin" "too many args" {
 	 Expt::begin junk
 } {^wrong \# args: should be "Expt::begin"$}
 test "ExptTcl-Expt::begin" "normal use" {
-	 catch {
-		  Expt::begin
-		  Expt::stop
-	 }
-} {^0$}
+	 Expt::begin
+	 Expt::stop
+} {^$}
 test "ExptTcl-Expt::begin" "error" {} $BLANK $no_test
 
 ### Expt::pauseCmd ###
