@@ -3,7 +3,7 @@
 // iolegacy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 26 18:47:31 2000
-// written: Thu Sep 28 19:50:23 2000
+// written: Thu Oct 19 15:41:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,6 +32,22 @@ class ostream;
 #    define IOSFWD_DEFINED
 #  endif
 #endif
+
+namespace IO {
+  /** The symbolic constants of type \c IOFlag flags may be OR'ed
+   * together and passed to the flag argument of \c legacySrlz() or \c
+   * legacyDesrlz() to control different aspects of the formatting used
+   * to read and write objects. In general, the same flags must be
+   * used to read an object as were used to write it. */
+  typedef int IOFlag;
+
+  /// Neither the class's name or its bases will be written/read
+  const IOFlag NO_FLAGS   = 0;
+  /// The class's name is written/read
+  const IOFlag TYPENAME   = 1 << 0;
+  /// The class's bases are written/read
+  const IOFlag BASES      = 1 << 1;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
