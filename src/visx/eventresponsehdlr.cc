@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Fri Sep 29 08:40:18 2000
+// written: Mon Oct  9 18:25:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,6 +71,8 @@ public:
   Impl(EventResponseHdlr* owner, const char* input_response_map);
   ~Impl();
 
+  enum TrialState { ACTIVE, INACTIVE };
+
   // Delegand functions
 
   void oldLegacySrlz(IO::Writer* writer) const;
@@ -125,38 +127,57 @@ public:
 
   void rhBeginTrial(GWT::Widget& widget, TrialBase& trial) const
 	 {
-		itsWidget = &widget;
-		itsTrial = &trial;
+		becomeActive(widget, trial);
 		attend();
 	 }
 
   void rhAbortTrial() const;
 
   void rhEndTrial() const
-	 { ignore(); forgetWidget(); forgetTrial(); }
+	 { 
+		if (INACTIVE == itsState) return;
+		ignore();
+		becomeInactive();
+	 }
 
   void rhHaltExpt() const
-	 { if (itsWidget != 0) ignore(); forgetWidget(); forgetTrial(); }
+	 {
+		if (INACTIVE == itsState) return; 
+		ignore();
+		becomeInactive();
+	 }
 
   // Helper functions
 private:
 
-  void forgetWidget() const { itsWidget = 0; }
-  void forgetTrial() const { itsTrial = 0; }
+  void becomeActive(GWT::Widget& widget, TrialBase& trial) const
+    {
+		itsWidget = &widget; Assert(&widget != 0);
+		itsTrial = &trial;   Assert(&trial != 0);
+
+		itsState = ACTIVE;
+	 }
+
+  void becomeInactive() const
+    {
+		itsState = INACTIVE;
+		itsWidget = 0;
+		itsTrial = 0;
+	 }
 
   GWT::Widget& getWidget() const
 	 {
 		DebugEval((void*) itsWidget);
-		if (itsWidget == 0)
-		  { throw ErrorWithMsg("EventResponseHdlr::itsWidget is NULL"); }
+		Assert(itsState == ACTIVE);
+		Assert(itsWidget != 0);
 		return *itsWidget;
 	 }
 
 
   TrialBase& getTrial() const
 	 {
-		if (itsTrial == 0)
-		  { throw ErrorWithMsg("EventResponseHdlr::itsTrial is NULL"); }
+		Assert(itsState == ACTIVE);
+		Assert(itsTrial != 0);
 		return *itsTrial;
 	 }
 
@@ -176,8 +197,6 @@ private:
   // unintended key/button-press being interpreted as a response. The
   // effect is cancelled by calling attend().
   void ignore() const;
-
-  void safeIgnore() const;
 
   void raiseBackgroundError(const char* msg) const throw();
 
@@ -237,6 +256,8 @@ private:
   // data
 private:
   EventResponseHdlr* itsOwner;
+
+  mutable TrialState itsState;
 
   mutable GWT::Widget* itsWidget;
   mutable TrialBase* itsTrial;
@@ -402,6 +423,7 @@ Util::Tracer EventResponseHdlr::tracer;
 EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
 										const char* input_response_map) :
   itsOwner(owner),
+  itsState(INACTIVE),
   itsWidget(0),
   itsTrial(0),
   itsInterp(0),
@@ -434,8 +456,7 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
   if ( !Tcl_InterpDeleted(itsInterp) ) {
 	 try
 		{
-		  if (itsWidget != 0)
-			 ignore();
+		  if (ACTIVE == itsState) ignore();
 
 		  DebugPrint("deleting Tcl command "); DebugPrintNL(itsPrivateCmdName);
 
@@ -512,6 +533,8 @@ DOTRACE("EventResponseHdlr::Impl::oldLegacyDesrlz");
 void EventResponseHdlr::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("EventResponseHdlr::Impl::readFrom");
 
+  itsState = INACTIVE; 
+
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
 	 legacyDesrlz(lreader);
@@ -562,6 +585,8 @@ DOTRACE("EventResponseHdlr::Impl::rhAbortTrial");
 
   Assert(itsInterp != 0);
 
+  if (INACTIVE == itsState) return;
+
   ignore();
 
   const int ERR_INDEX = 1;
@@ -578,6 +603,12 @@ DOTRACE("EventResponseHdlr::Impl::rhAbortTrial");
 void EventResponseHdlr::Impl::attend() const {
 DOTRACE("EventResponseHdlr::Impl::attend");
   clearEventQueue();
+
+  // We need to check itsState here, since although itsState should
+  // always be active when we enter this call, clearEventQueue() may
+  // reenter this object and cause itsState to become active before
+  // returning.
+  if (itsState == INACTIVE) return;
 
   getWidget().bind(itsEventSequence.c_str(),
 						 getBindingScript().c_str());
