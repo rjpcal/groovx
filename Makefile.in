@@ -61,6 +61,8 @@ DOXYGEN_PROG    := @DOXYGEN_PROG@
 
 LIB_EXT         := $(LIB_SUFFIX).$(SHLIB_EXT)
 
+DEFS            += -DGROOVX_AUDIO_DIR=\"$(prefix)/share/audio\"
+
 #-------------------------------------------------------------------------
 #
 # Directories for different file types
@@ -352,10 +354,7 @@ $(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(STATIC_OBJS) $(ALL_STATLIBS)
 
 build: TAGS $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
 
-install_scripts: $(exec_prefix)/bin/.timestamp
-	cp share/scripts/*.tcl $(exec_prefix)/bin
-
-install: install_scripts build $(VISX_LIB_DIR)/pkgIndex.tcl
+install: install-scripts install-audio build $(VISX_LIB_DIR)/pkgIndex.tcl
 	ln -s -f groovx$(PACKAGE_VERSION) $(exec_prefix)/bin/groovx
 
 check: install
@@ -431,3 +430,48 @@ export:
 www_export: export
 	cp snapshots/$(DISTNAME).tar.gz $(HOME)/www/code/
 	chmod og+r $(HOME)/www/code/$(DISTNAME).tar.gz
+
+#-------------------------------------------------------------------------
+#
+# Installation targets
+#
+#-------------------------------------------------------------------------
+
+$(prefix)/share/audio/%.au: ./share/audio/%.au
+	cp $^ $@
+	chmod 444 $@
+
+install-scripts: $(exec_prefix)/bin/.timestamp
+	cp share/scripts/*.tcl $(exec_prefix)/bin
+
+install-audio: $(prefix)/share/audio/.timestamp	\
+$(prefix)/share/audio/saw100_200Hz_2x120ms.au	\
+$(prefix)/share/audio/saw100_200Hz_300ms.au	\
+$(prefix)/share/audio/saw100_350Hz_2x120ms.au	\
+$(prefix)/share/audio/saw100_350Hz_300ms.au	\
+$(prefix)/share/audio/saw100_500Hz_2x120ms.au	\
+$(prefix)/share/audio/saw100_500Hz_300ms.au	\
+$(prefix)/share/audio/saw25_200Hz_2x120ms.au	\
+$(prefix)/share/audio/saw25_200Hz_300ms.au	\
+$(prefix)/share/audio/saw25_350Hz_2x120ms.au	\
+$(prefix)/share/audio/saw25_350Hz_300ms.au	\
+$(prefix)/share/audio/saw25_500Hz_2x120ms.au	\
+$(prefix)/share/audio/saw25_500Hz_300ms.au	\
+$(prefix)/share/audio/saw50_200Hz_2x120ms.au	\
+$(prefix)/share/audio/saw50_200Hz_300ms.au	\
+$(prefix)/share/audio/saw50_350Hz_2x120ms.au	\
+$(prefix)/share/audio/saw50_350Hz_300ms.au	\
+$(prefix)/share/audio/saw50_500Hz_2x120ms.au	\
+$(prefix)/share/audio/saw50_500Hz_300ms.au	\
+$(prefix)/share/audio/saw75_200Hz_2x120ms.au	\
+$(prefix)/share/audio/saw75_200Hz_300ms.au	\
+$(prefix)/share/audio/saw75_350Hz_2x120ms.au	\
+$(prefix)/share/audio/saw75_350Hz_300ms.au	\
+$(prefix)/share/audio/saw75_500Hz_2x120ms.au	\
+$(prefix)/share/audio/saw75_500Hz_300ms.au	\
+$(prefix)/share/audio/sin_200Hz_2x120ms.au	\
+$(prefix)/share/audio/sin_200Hz_300ms.au	\
+$(prefix)/share/audio/sin_350Hz_2x120ms.au	\
+$(prefix)/share/audio/sin_350Hz_300ms.au	\
+$(prefix)/share/audio/sin_500Hz_2x120ms.au	\
+$(prefix)/share/audio/sin_500Hz_300ms.au
