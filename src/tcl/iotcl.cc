@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Fri May 18 18:05:09 2001
+// written: Sun May 20 21:58:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -155,16 +155,27 @@ namespace Tcl {
 class IoNewCmd : public TclCmd {
 public:
   IoNewCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "typename", 2, 2)
+	 TclCmd(interp, cmd_name, "typename ?array_size=1?", 2, 3)
 	 {}
 
 protected:
   virtual void invoke() {
 	 const char* type = getCstringFromArg(1);
 
-	 IdItem<IO::IoObject> item(IO::IoMgr::newIO(type));
-
-	 returnInt(item.id());
+	 if (objc() < 3)
+		{
+		  IdItem<IO::IoObject> item(IO::IoMgr::newIO(type));
+		  returnInt(item.id());
+		}
+	 else
+		{
+		  int array_size = getIntFromArg(2);
+		  while (array_size-- > 0)
+			 {
+				IdItem<IO::IoObject> item(IO::IoMgr::newIO(type));
+				lappendVal(item.id());
+			 }
+		}
   }
 };
 
