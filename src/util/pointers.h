@@ -5,7 +5,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  7 14:52:52 2000
-// written: Thu Jul 19 20:25:52 2001
+// written: Fri Jul 20 07:32:01 2001
 // $Id$
 //
 // -------------------------------------------------------------------
@@ -82,11 +82,9 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 /**
- *
  *  \c scoped_ptr mimics a built-in pointer except that it guarantees
  *  deletion of the object pointed to, either on destruction of the
  *  scoped_ptr or via an explicit \c reset().
- *
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -129,11 +127,9 @@ private:
 
 ///////////////////////////////////////////////////////////////////////
 /**
- *
  *  An enhanced relative of scoped_ptr with reference counted copy semantics.
  *  The object pointed to is deleted when the last shared_ptr pointing to it
  *  is destroyed or reset.
- *
  **/
 ///////////////////////////////////////////////////////////////////////
 
