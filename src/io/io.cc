@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Sun Oct 22 16:14:33 2000
+// written: Tue Oct 24 16:56:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 
 #include "io/io.h"
 
+#include "io/iomap.h"
 #include "io/writer.h"
 
 #include "system/demangle.h"
@@ -66,11 +67,15 @@ private:
 IO::IoObject::IoObject() : itsId(++idCounter) {
 DOTRACE("IO::IoObject::IoObject");
   DebugEvalNL(itsId);
+
+  IoMap::theIoMap().insertObject(this);
 }
 
 // Must be defined out of line to avoid duplication of IO's vtable
 IO::IoObject::~IoObject() {
 DOTRACE("IO::IoObject::~IoObject");
+
+  IoMap::theIoMap().removeObject(this);
 }
 
 unsigned int IO::IoObject::ioAttribCount() const {
