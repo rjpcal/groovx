@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 17 11:05:24 2001
-// written: Fri Aug 17 15:27:53 2001
+// written: Sun Aug 19 15:11:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,19 @@
 #include "util/pointers.h"
 
 #include "util/utilfwd.h"
+
+namespace Util
+{
+  template <class T> class FwdIterIfx;
+  template <class T> class BidirIterIfx;
+  template <class T> class RxsIterIfx;
+
+  template <class Iter, class T> class FwdIterAdapter;
+  template <class Iter, class T> class BidirIterAdapter;
+  template <class Iter, class T> class RxsIterAdapter;
+
+  template <class T, class Ifx> class ConcreteIter;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
