@@ -2,7 +2,7 @@
 // position.h
 // Rob Peters
 // created: Wed Mar 10 21:33:14 1999
-// written: Mon Apr 26 21:31:13 1999
+// written: Thu May 27 20:00:18 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -14,6 +14,12 @@
 #endif
 
 class PositionImpl;
+
+///////////////////////////////////////////////////////////////////////
+//
+// Position class definition
+//
+///////////////////////////////////////////////////////////////////////
 
 class Position : public virtual IO {
 public:
@@ -27,6 +33,7 @@ public:
 
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
+  virtual int charCount() const;
 
   ///////////////
   // accessors //
@@ -69,14 +76,19 @@ public:
   // actions //
   /////////////
 
+protected:
   virtual void translate() const;
   virtual void scale() const;
   virtual void rotate() const;
   // Apply the appropriate operations to the current model view
   // matrix.
 
-  void go() const;
+public:
+  virtual void go() const;
   // Translate, scale, and rotate.
+
+  virtual void rego() const;
+  // Redo previous go().
 
 private:
   bool check() const;
