@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Tue Nov  2 22:33:14 1999
+// written: Tue Nov 30 17:09:52 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -193,7 +193,7 @@ DOTRACE("Tlist::readFromObjidsOnly");
 	 istrstream ist(line);
 	 Trial* t = new Trial;
 	 t->readFromObjidsOnly(ist, offset);
-    int id = PtrList<Trial>::insert(t);
+    PtrList<Trial>::insert(t);
     ++trial;
   }                          
   if (is.bad()) throw InputError(ioTag);
