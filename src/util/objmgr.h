@@ -1,43 +1,39 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// iomgr.h
+// objmgr.h
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Apr 23 01:12:37 1999
-// written: Wed Jun  6 15:54:57 2001
+// written: Wed Jun  6 19:53:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IOMGR_H_DEFINED
-#define IOMGR_H_DEFINED
+#ifndef OBJMGR_H_DEFINED
+#define OBJMGR_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
 #include "util/iditem.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IODECLS_H_DEFINED)
-#include "io/iodecls.h"
-#endif
-
 class fixed_string;
 
-namespace IO {
-  namespace IoMgr {
+namespace Util {
+  namespace ObjMgr {
 	 /// Will not return 0; will throw an exception on failure.
-	 IdItem<IO::IoObject> newIO(const char* type);
+	 IdItem<Util::Object> newObj(const char* type);
 
 	 /// Will not return 0; will throw an exception on failure.
-	 IdItem<IO::IoObject> newIO(const fixed_string& type);
+	 IdItem<Util::Object> newObj(const fixed_string& type);
 
 	 template <class T, class S>
-	 IdItem<T> newTypedIO(S type)
+	 IdItem<T> newTypedObj(S type)
 	 {
-  		return dynamicCast<T>(newIO(type));
+  		return dynamicCast<T>(newObj(type));
 	 }
   }
 }
 
-static const char vcid_iomgr_h[] = "$Header$";
-#endif // !IOMGR_H_DEFINED
+static const char vcid_objmgr_h[] = "$Header$";
+#endif // !OBJMGR_H_DEFINED
