@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Wed May 16 17:52:12 2001
+// written: Thu May 17 07:04:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -201,10 +201,8 @@ DOTRACE("TimingHdlr::getElapsedMsec");
 // manipulators //
 //////////////////
 
-int TimingHdlr::addEvent(TrialEvent* event, TimePoint time_point) {
+int TimingHdlr::addEvent(IdItem<TrialEvent> event_item, TimePoint time_point) {
 DOTRACE("TimingHdlr::addEvent");
-
-  IdItem<TrialEvent> event_item(event, IdItem<TrialEvent>::Insert());
 
   switch (time_point) {
   case IMMEDIATE:
@@ -234,11 +232,16 @@ DOTRACE("TimingHdlr::addEvent");
 int TimingHdlr::addEventByName(const char* event_type, TimePoint timepoint,
 										 int msec_delay) {
 DOTRACE("TimingHdlr::addEventByName");
-  TrialEvent* e = dynamic_cast<TrialEvent*>(IO::IoMgr::newIO(event_type));
-  if (e == 0) { return -1; }
 
-  e->setDelay(msec_delay);
-  return addEvent(e, timepoint);
+  try { 
+	 IdItem<TrialEvent> event_item(
+                         IO::IoMgr::newTypedIO<TrialEvent>(event_type),
+								 IdItem<TrialEvent>::Insert());
+
+	 event_item->setDelay(msec_delay);
+	 return addEvent(event_item, timepoint);
+  }
+  catch(...) { return -1; }
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:55 1999
-// written: Wed May 16 17:50:00 2001
+// written: Thu May 17 07:04:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ public:
   // manipulators //
   //////////////////
 
-  int addEvent(TrialEvent* event, TimePoint time_point);
+  int addEvent(IdItem<TrialEvent> event, TimePoint time_point);
   int addEventByName(const char* event_type,
 							TimePoint time_point, int msec_delay);
 
