@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Wed Aug 15 11:41:05 2001
+// written: Wed Aug 15 14:07:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,33 +45,33 @@ namespace
   const IO::VersionId HOUSE_SERIAL_VERSION_ID = 2;
 
   const FieldInfo FINFOS[] = {
-    FieldInfo("storyAspectRatio",
+    FieldInfo("storyAspectRatio", FieldInfo::OldTag(),
               &House::storyAspectRatio, 3.0, 0.5, 10.0, 0.05, true),
-    FieldInfo("numStories", &House::numStories, 2, 1, 5, 1),
+    FieldInfo("numStories", FieldInfo::OldTag(), &House::numStories, 2, 1, 5, 1),
 
-    FieldInfo("doorPosition", &House::doorPosition, 2, 0, 5, 1, true),
-    FieldInfo("doorWidth", &House::doorWidth, 0.75, 0.05, 1.0, 0.05),
-    FieldInfo("doorHeight", &House::doorHeight, 0.75, 0.05, 1.0, 0.05),
-    FieldInfo("doorOrientation",
+    FieldInfo("doorPosition", FieldInfo::OldTag(), &House::doorPosition, 2, 0, 5, 1, true),
+    FieldInfo("doorWidth", FieldInfo::OldTag(), &House::doorWidth, 0.75, 0.05, 1.0, 0.05),
+    FieldInfo("doorHeight", FieldInfo::OldTag(), &House::doorHeight, 0.75, 0.05, 1.0, 0.05),
+    FieldInfo("doorOrientation", FieldInfo::OldTag(),
               &House::doorOrientation, false, false, true, true),
 
-    FieldInfo("numWindows", &House::numWindows, 5, 2, 6, 1, true),
-    FieldInfo("windowWidth", &House::windowWidth, 0.75, 0.05, 1.0, 0.05),
-    FieldInfo("windowHeight", &House::windowHeight, 0.5, 0.05, 1.0, 0.05),
-    FieldInfo("windowVertBars", &House::windowVertBars, 1, 0, 5, 1),
-    FieldInfo("windowHorizBars", &House::windowHorizBars, 1, 0, 5, 1),
+    FieldInfo("numWindows", FieldInfo::OldTag(), &House::numWindows, 5, 2, 6, 1, true),
+    FieldInfo("windowWidth", FieldInfo::OldTag(), &House::windowWidth, 0.75, 0.05, 1.0, 0.05),
+    FieldInfo("windowHeight", FieldInfo::OldTag(), &House::windowHeight, 0.5, 0.05, 1.0, 0.05),
+    FieldInfo("windowVertBars", FieldInfo::OldTag(), &House::windowVertBars, 1, 0, 5, 1),
+    FieldInfo("windowHorizBars", FieldInfo::OldTag(), &House::windowHorizBars, 1, 0, 5, 1),
 
-    FieldInfo("roofShape", &House::roofShape, 0, 0, 2, 1, true),
-    FieldInfo("roofHeight", &House::roofHeight, 0.05, 0.05, 2.0, 0.05),
-    FieldInfo("roofOverhang", &House::roofOverhang, 0.75, 0.0, 0.5, 0.05),
-    FieldInfo("roofColor", &House::roofColor, 1, 0, 1, 1),
+    FieldInfo("roofShape", FieldInfo::OldTag(), &House::roofShape, 0, 0, 2, 1, true),
+    FieldInfo("roofHeight", FieldInfo::OldTag(), &House::roofHeight, 0.05, 0.05, 2.0, 0.05),
+    FieldInfo("roofOverhang", FieldInfo::OldTag(), &House::roofOverhang, 0.75, 0.0, 0.5, 0.05),
+    FieldInfo("roofColor", FieldInfo::OldTag(), &House::roofColor, 1, 0, 1, 1),
 
-    FieldInfo("chimneyXPosition",
+    FieldInfo("chimneyXPosition", FieldInfo::OldTag(),
               &House::chimneyXPosition, 0.2, -0.5, 0.5, 0.05, true),
-    FieldInfo("chimneyYPosition",
+    FieldInfo("chimneyYPosition", FieldInfo::OldTag(),
               &House::chimneyYPosition, 0.5, 0.0, 1.0, 0.05),
-    FieldInfo("chimneyWidth", &House::chimneyWidth, 0.06, 0.01, 0.30, 0.01),
-    FieldInfo("chimneyHeight", &House::chimneyHeight, 0.5, 0.05, 2.0, 0.1)
+    FieldInfo("chimneyWidth", FieldInfo::OldTag(), &House::chimneyWidth, 0.06, 0.01, 0.30, 0.01),
+    FieldInfo("chimneyHeight", FieldInfo::OldTag(), &House::chimneyHeight, 0.5, 0.05, 2.0, 0.1)
   };
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);

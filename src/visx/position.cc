@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Wed Aug 15 11:26:12 2001
+// written: Wed Aug 15 14:07:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,10 +32,10 @@ namespace
 
   const FieldInfo FINFOS[] =
   {
-    FieldInfo("translation", &Position::translation, 0., 0., 0., 0., true),
-    FieldInfo("scaling", &Position::scaling, 0., 0., 0., 0.),
-    FieldInfo("rotationAxis", &Position::rotationAxis, 0., 0., 0., 0.),
-    FieldInfo("rotationAngle", &Position::rotationAngle, 0., 0., 360., 1.)
+    FieldInfo("translation", FieldInfo::OldTag(), &Position::translation, 0., 0., 0., 0., true),
+    FieldInfo("scaling", FieldInfo::OldTag(), &Position::scaling, 0., 0., 0., 0.),
+    FieldInfo("rotationAxis", FieldInfo::OldTag(), &Position::rotationAxis, 0., 0., 0., 0.),
+    FieldInfo("rotationAngle", FieldInfo::OldTag(), &Position::rotationAngle, 0., 0., 360., 1.)
   };
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);

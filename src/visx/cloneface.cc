@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 29 09:19:26 1999
-// written: Wed Aug 15 11:38:07 2001
+// written: Wed Aug 15 14:07:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,8 +29,8 @@ namespace
 {
   const FieldInfo FINFOS[] =
   {
-    FieldInfo("eyeAspect", &CloneFace::eyeAspect, 0.0, 0.0, 1.0, 0.05, true),
-    FieldInfo("vertOffset", &CloneFace::vertOffset, 0.0, -0.1, 0.1, 0.01)
+    FieldInfo("eyeAspect", FieldInfo::OldTag(), &CloneFace::eyeAspect, 0.0, 0.0, 1.0, 0.05, true),
+    FieldInfo("vertOffset", FieldInfo::OldTag(), &CloneFace::vertOffset, 0.0, -0.1, 0.1, 0.01)
   };
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Aug 15 11:41:05 2001
+// written: Wed Aug 15 14:07:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,8 +38,8 @@ namespace
 {
   const FieldInfo FIXPT_FINFOS[] =
   {
-    FieldInfo("length", &FixPt::length, 0.1, 0.0, 10.0, 0.1, true),
-    FieldInfo("width", &FixPt::width, 1, 1, 100, 1)
+    FieldInfo("length", FieldInfo::OldTag(), &FixPt::length, 0.1, 0.0, 10.0, 0.1, true),
+    FieldInfo("width", FieldInfo::OldTag(), &FixPt::width, 1, 1, 100, 1)
   };
 
   FieldMap FIXPT_FIELDS(FIXPT_FINFOS, FIXPT_FINFOS+2,

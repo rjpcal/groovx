@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Wed Aug 15 11:41:05 2001
+// written: Wed Aug 15 14:07:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,42 +55,42 @@ namespace
 
   const FieldInfo FINFOS[] =
   {
-    FieldInfo("category", &MF::mfaceCategory, 0, 0, 10, 1, true),
+    FieldInfo("category", FieldInfo::OldTag(), &MF::mfaceCategory, 0, 0, 10, 1, true),
 
-    FieldInfo("faceWidth", &MF::faceWidth, 2.75, 1.5, 3.5, 0.1),
-    FieldInfo("topWidth", &MF::topWidth, 1.15, 0.05, 2.0, 0.05),
-    FieldInfo("bottomWidth", &MF::bottomWidth, 1.0, 0.05, 2.0, 0.05),
-    FieldInfo("topHeight", &MF::topHeight, 3.8, 0.5, 5.0, 0.25),
-    FieldInfo("bottomHeight", &MF::bottomHeight, -3.0, -5.0, -0.5, 0.25),
+    FieldInfo("faceWidth", FieldInfo::OldTag(), &MF::faceWidth, 2.75, 1.5, 3.5, 0.1),
+    FieldInfo("topWidth", FieldInfo::OldTag(), &MF::topWidth, 1.15, 0.05, 2.0, 0.05),
+    FieldInfo("bottomWidth", FieldInfo::OldTag(), &MF::bottomWidth, 1.0, 0.05, 2.0, 0.05),
+    FieldInfo("topHeight", FieldInfo::OldTag(), &MF::topHeight, 3.8, 0.5, 5.0, 0.25),
+    FieldInfo("bottomHeight", FieldInfo::OldTag(), &MF::bottomHeight, -3.0, -5.0, -0.5, 0.25),
 
-    FieldInfo("hairWidth", &MF::hairWidth, 0.20, 0.00, 0.5, 0.02, true),
-    FieldInfo("hairStyle", &MF::hairStyle, 0, 0, 1, 1),
+    FieldInfo("hairWidth", FieldInfo::OldTag(), &MF::hairWidth, 0.20, 0.00, 0.5, 0.02, true),
+    FieldInfo("hairStyle", FieldInfo::OldTag(), &MF::hairStyle, 0, 0, 1, 1),
 
-    FieldInfo("eyeYpos", &MF::eyeYpos, 0.375, -2.0, 2.0, 0.1, true),
-    FieldInfo("eyeDistance", &MF::eyeDistance, 2.25, 0.0, 5.0, 0.25),
-    FieldInfo("eyeHeight", &MF::eyeHeight, 0.9, 0.0, 2.0, 0.1),
-    FieldInfo("eyeAspectRatio", &MF::eyeAspectRatio, 1.555556, 0.1, 5.0, 0.1),
+    FieldInfo("eyeYpos", FieldInfo::OldTag(), &MF::eyeYpos, 0.375, -2.0, 2.0, 0.1, true),
+    FieldInfo("eyeDistance", FieldInfo::OldTag(), &MF::eyeDistance, 2.25, 0.0, 5.0, 0.25),
+    FieldInfo("eyeHeight", FieldInfo::OldTag(), &MF::eyeHeight, 0.9, 0.0, 2.0, 0.1),
+    FieldInfo("eyeAspectRatio", FieldInfo::OldTag(), &MF::eyeAspectRatio, 1.555556, 0.1, 5.0, 0.1),
 
-    FieldInfo("pupilXpos", &MF::pupilXpos, 0.0, -0.5, 0.5, 0.05, true),
-    FieldInfo("pupilYpos", &MF::pupilYpos, 0.0, -0.5, 0.5, 0.05),
-    FieldInfo("pupilSize", &MF::pupilSize, 0.6, 0.0, 1.0, 0.05),
-    FieldInfo("pupilDilation", &MF::pupilDilation, 0.5, 0.0, 1.0, 0.05),
+    FieldInfo("pupilXpos", FieldInfo::OldTag(), &MF::pupilXpos, 0.0, -0.5, 0.5, 0.05, true),
+    FieldInfo("pupilYpos", FieldInfo::OldTag(), &MF::pupilYpos, 0.0, -0.5, 0.5, 0.05),
+    FieldInfo("pupilSize", FieldInfo::OldTag(), &MF::pupilSize, 0.6, 0.0, 1.0, 0.05),
+    FieldInfo("pupilDilation", FieldInfo::OldTag(), &MF::pupilDilation, 0.5, 0.0, 1.0, 0.05),
 
-    FieldInfo("eyebrowXpos", &MF::eyebrowXpos, 0.0, -0.5, 0.5, 0.02, true),
-    FieldInfo("eyebrowYpos", &MF::eyebrowYpos, 0.5, 0.0, 1.5, 0.05),
-    FieldInfo("eyebrowCurvature", &MF::eyebrowCurvature, 0.8, -2.0, 2.0, 0.1),
-    FieldInfo("eyebrowAngle", &MF::eyebrowAngle, -5, -50, 50, 1),
-    FieldInfo("eyebrowThickness", &MF::eyebrowThickness, 2.0, 0.1, 4.0, 0.1),
+    FieldInfo("eyebrowXpos", FieldInfo::OldTag(), &MF::eyebrowXpos, 0.0, -0.5, 0.5, 0.02, true),
+    FieldInfo("eyebrowYpos", FieldInfo::OldTag(), &MF::eyebrowYpos, 0.5, 0.0, 1.5, 0.05),
+    FieldInfo("eyebrowCurvature", FieldInfo::OldTag(), &MF::eyebrowCurvature, 0.8, -2.0, 2.0, 0.1),
+    FieldInfo("eyebrowAngle", FieldInfo::OldTag(), &MF::eyebrowAngle, -5, -50, 50, 1),
+    FieldInfo("eyebrowThickness", FieldInfo::OldTag(), &MF::eyebrowThickness, 2.0, 0.1, 4.0, 0.1),
 
-    FieldInfo("noseXpos", &MF::noseXpos, 0.0, -1.0, 1.0, 0.05, true),
-    FieldInfo("noseYpos", &MF::noseYpos, -0.825, -2.0, 2.0, 0.1),
-    FieldInfo("noseLength", &MF::noseLength, 0.75, 0.0, 2.0, 0.1),
-    FieldInfo("noseWidth", &MF::noseWidth, 1.5, 0.0, 3.0, 0.1),
+    FieldInfo("noseXpos", FieldInfo::OldTag(), &MF::noseXpos, 0.0, -1.0, 1.0, 0.05, true),
+    FieldInfo("noseYpos", FieldInfo::OldTag(), &MF::noseYpos, -0.825, -2.0, 2.0, 0.1),
+    FieldInfo("noseLength", FieldInfo::OldTag(), &MF::noseLength, 0.75, 0.0, 2.0, 0.1),
+    FieldInfo("noseWidth", FieldInfo::OldTag(), &MF::noseWidth, 1.5, 0.0, 3.0, 0.1),
 
-    FieldInfo("mouthXpos", &MF::mouthXpos, 0.0, -2.0, 2.0, 0.1, true),
-    FieldInfo("mouthYpos", &MF::mouthYpos, -2.0, -3.0, 1.0, 0.1),
-    FieldInfo("mouthWidth", &MF::mouthWidth, 2.5, 0.0, 5.0, 0.25),
-    FieldInfo("mouthCurvature", &MF::mouthCurvature, 0.6, -2.0, 2.0, 0.1)
+    FieldInfo("mouthXpos", FieldInfo::OldTag(), &MF::mouthXpos, 0.0, -2.0, 2.0, 0.1, true),
+    FieldInfo("mouthYpos", FieldInfo::OldTag(), &MF::mouthYpos, -2.0, -3.0, 1.0, 0.1),
+    FieldInfo("mouthWidth", FieldInfo::OldTag(), &MF::mouthWidth, 2.5, 0.0, 5.0, 0.25),
+    FieldInfo("mouthCurvature", FieldInfo::OldTag(), &MF::mouthCurvature, 0.6, -2.0, 2.0, 0.1)
   };
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);

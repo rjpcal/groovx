@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Aug 15 11:41:05 2001
+// written: Wed Aug 15 14:07:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,17 +46,17 @@ namespace
 
   const FieldInfo FINFOS[] =
   {
-    FieldInfo("category", &Fish::fishCategory, 0, 0, 10, 1, true),
-    FieldInfo("dorsalFinCoord", &Fish::dorsalFinCoord, 0.0, -2.0, 2.0, 0.1),
-    FieldInfo("tailFinCoord", &Fish::tailFinCoord, 0.0, -2.0, 2.0, 0.1),
-    FieldInfo("lowerFinCoord", &Fish::lowerFinCoord, 0.0, -2.0, 2.0, 0.1),
-    FieldInfo("mouthCoord", &Fish::mouthCoord, 0.0, -2.0, 2.0, 0.1),
+    FieldInfo("category", FieldInfo::OldTag(), &Fish::fishCategory, 0, 0, 10, 1, true),
+    FieldInfo("dorsalFinCoord", FieldInfo::OldTag(), &Fish::dorsalFinCoord, 0.0, -2.0, 2.0, 0.1),
+    FieldInfo("tailFinCoord", FieldInfo::OldTag(), &Fish::tailFinCoord, 0.0, -2.0, 2.0, 0.1),
+    FieldInfo("lowerFinCoord", FieldInfo::OldTag(), &Fish::lowerFinCoord, 0.0, -2.0, 2.0, 0.1),
+    FieldInfo("mouthCoord", FieldInfo::OldTag(), &Fish::mouthCoord, 0.0, -2.0, 2.0, 0.1),
 
-    FieldInfo("currentPart", &Fish::currentPart, 0, 0, 3, 1, true),
+    FieldInfo("currentPart", FieldInfo::OldTag(), &Fish::currentPart, 0, 0, 3, 1, true),
 
-    FieldInfo("currentEndPt", &Fish::currentEndPt, 0, 0, 3, 1, true),
-    FieldInfo("endPt_Part", &Fish::endPt_Part, 1, 1, 4, 1),
-    FieldInfo("endPt_Bkpt", &Fish::endPt_Bkpt, 1, 1, 10, 1)
+    FieldInfo("currentEndPt", FieldInfo::OldTag(), &Fish::currentEndPt, 0, 0, 3, 1, true),
+    FieldInfo("endPt_Part", FieldInfo::OldTag(), &Fish::endPt_Part, 1, 1, 4, 1),
+    FieldInfo("endPt_Bkpt", FieldInfo::OldTag(), &Fish::endPt_Bkpt, 1, 1, 10, 1)
   };
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);

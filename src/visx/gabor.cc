@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Aug 15 11:41:05 2001
+// written: Wed Aug 15 14:07:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,15 +41,15 @@ namespace
 {
   const FieldInfo FINFOS[] =
   {
-    FieldInfo("colorMode", &Gabor::colorMode, 2, 1, 4, 1, true),
-    FieldInfo("contrast", &Gabor::contrast, 1.0, 0.0, 1.0, 0.05),
-    FieldInfo("spatialFreq", &Gabor::spatialFreq, 3.5, 0.5, 10.0, 0.5),
-    FieldInfo("phase", &Gabor::phase, 0.0, -180.0, 179.0, 1.0),
-    FieldInfo("sigma", &Gabor::sigma, 0.15, 0.025, 0.5, 0.025),
-    FieldInfo("aspectRatio", &Gabor::aspectRatio, 1.0, 0.1, 10.0, 0.1),
-    FieldInfo("orientation", &Gabor::orientation, 0.0, -180.0, 179.0, 1.0),
-    FieldInfo("resolution", &Gabor::resolution, 60, 5, 500, 1),
-    FieldInfo("pointSize", &Gabor::pointSize, 1, 1, 25, 1)
+    FieldInfo("colorMode", FieldInfo::OldTag(), &Gabor::colorMode, 2, 1, 4, 1, true),
+    FieldInfo("contrast", FieldInfo::OldTag(), &Gabor::contrast, 1.0, 0.0, 1.0, 0.05),
+    FieldInfo("spatialFreq", FieldInfo::OldTag(), &Gabor::spatialFreq, 3.5, 0.5, 10.0, 0.5),
+    FieldInfo("phase", FieldInfo::OldTag(), &Gabor::phase, 0.0, -180.0, 179.0, 1.0),
+    FieldInfo("sigma", FieldInfo::OldTag(), &Gabor::sigma, 0.15, 0.025, 0.5, 0.025),
+    FieldInfo("aspectRatio", FieldInfo::OldTag(), &Gabor::aspectRatio, 1.0, 0.1, 10.0, 0.1),
+    FieldInfo("orientation", FieldInfo::OldTag(), &Gabor::orientation, 0.0, -180.0, 179.0, 1.0),
+    FieldInfo("resolution", FieldInfo::OldTag(), &Gabor::resolution, 60, 5, 500, 1),
+    FieldInfo("pointSize", FieldInfo::OldTag(), &Gabor::pointSize, 1, 1, 25, 1)
   };
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);

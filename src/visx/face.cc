@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Aug 15 11:40:15 2001
+// written: Wed Aug 15 14:07:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,11 +49,11 @@ namespace
 
   const FieldInfo FINFOS[] =
   {
-    FieldInfo("category", &Face::faceCategory, 0, 0, 10, 1, true),
-    FieldInfo("eyeHeight", &Face::eyeHeight, 0.6, -1.2, 1.2, 0.01),
-    FieldInfo("eyeDistance", &Face::eyeDistance, 0.4, 0.0, 1.8, 0.01),
-    FieldInfo("noseLength", &Face::noseLength, 0.4, -0.0, 3.0, 0.01),
-    FieldInfo("mouthHeight", &Face::mouthHeight, 0.8, -1.2, 1.2, 0.01)
+    FieldInfo("category", FieldInfo::OldTag(), &Face::faceCategory, 0, 0, 10, 1, true),
+    FieldInfo("eyeHeight", FieldInfo::OldTag(), &Face::eyeHeight, 0.6, -1.2, 1.2, 0.01),
+    FieldInfo("eyeDistance", FieldInfo::OldTag(), &Face::eyeDistance, 0.4, 0.0, 1.8, 0.01),
+    FieldInfo("noseLength", FieldInfo::OldTag(), &Face::noseLength, 0.4, -0.0, 3.0, 0.01),
+    FieldInfo("mouthHeight", FieldInfo::OldTag(), &Face::mouthHeight, 0.8, -1.2, 1.2, 0.01)
   };
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);

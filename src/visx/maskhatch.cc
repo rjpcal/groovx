@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Aug 15 11:41:05 2001
+// written: Wed Aug 15 14:07:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,8 @@ namespace
 {
   const FieldInfo MASK_FINFOS[] =
   {
-    FieldInfo("numLines", &MaskHatch::numLines, 5, 0, 25, 1, true),
-    FieldInfo("lineWidth", &MaskHatch::lineWidth, 1, 0, 25, 1)
+    FieldInfo("numLines", FieldInfo::OldTag(), &MaskHatch::numLines, 5, 0, 25, 1, true),
+    FieldInfo("lineWidth", FieldInfo::OldTag(), &MaskHatch::lineWidth, 1, 0, 25, 1)
   };
 
   const unsigned int NUM_FINFOS = sizeof(MASK_FINFOS)/sizeof(FieldInfo);
