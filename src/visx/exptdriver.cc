@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Sat Dec  4 03:52:11 1999
+// written: Sat Dec  4 15:12:11 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -889,15 +889,9 @@ DOTRACE("ExptDriver::Impl::edSetCurrentTrial");
 
 void ExptDriver::Impl::read(const char* filename) {
 DOTRACE("ExptDriver::Impl::read");
-  try {
-	 ifstream ifs(filename);
-	 if (ifs.fail()) throw IoFilenameError(filename);
-	 deserialize(ifs, IO::BASES|IO::TYPENAME);
-  }
-  catch (IoError& err) {
-	 DebugEvalNL(err.msg());
-	 throw TclError(err.msg());
-  }
+  ifstream ifs(filename);
+  if (ifs.fail()) throw IoFilenameError(filename);
+  deserialize(ifs, IO::BASES|IO::TYPENAME);
 }
 
 //--------------------------------------------------------------------
@@ -908,15 +902,9 @@ DOTRACE("ExptDriver::Impl::read");
 
 void ExptDriver::Impl::write(const char* filename) const {
 DOTRACE("ExptDriver::Impl::write");
-  try {
-    ofstream ofs(filename);
-    if (ofs.fail()) throw IoFilenameError(filename);
-	 serialize(ofs, IO::BASES|IO::TYPENAME);
-  }
-  catch (IoError& err) {
-	 DebugEvalNL(err.msg());
-	 throw TclError(err.msg());
-  }
+  ofstream ofs(filename);
+  if (ofs.fail()) throw IoFilenameError(filename);
+  serialize(ofs, IO::BASES|IO::TYPENAME);
 }
 
 //--------------------------------------------------------------------
