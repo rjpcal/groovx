@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 18:04:10 2001
-// written: Mon Mar 12 18:38:14 2001
+// written: Tue Mar 13 16:53:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,6 +43,8 @@ public:
 
   void incrRefCount() { ++itsRefCount; }
   void decrRefCount() { if (--itsRefCount <= 0) delete this; }
+
+  bool isUnique() { return itsRefCount <= 1; }
 
 private:
   int itsRefCount;
