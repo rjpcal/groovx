@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!-- GroovX XML 1 -->
+<object type="GxSeparator" id="1" name="root" version="0">
+	<int name="childrenCount" value="2"/>
+	<object type="GxTransform" id="2" name="children0" version="1">
+		<valobj type="GbVec3" name="translation" value="0 0 0"/>
+		<valobj type="GbVec3" name="scaling" value="1 1 1"/>
+		<valobj type="GbVec3" name="rotationAxis" value="0.8 0.8 1"/>
+		<double name="rotationAngle" value="22"/>
+	</object>
+	<object type="GxSeparator" id="3" name="children1" version="0">
+		<int name="childrenCount" value="2"/>
+		<object type="GxLighting" id="4" name="children0" version="0">
+			<valobj type="GbColor" name="specularColor" value="0.24 0.39 0.55 1"/>
+			<valobj type="GbColor" name="diffuseColor" value="1 1 1 1"/>
+			<valobj type="GbColor" name="ambientColor" value="0 0 0 1"/>
+			<valobj type="GbVec3" name="position" value="0.33 0.45 1"/>
+			<valobj type="GbVec3" name="spotDirection" value="0.52 0.97 0.45"/>
+			<double name="attenuation" value="0.2"/>
+			<double name="spotExponent" value="16"/>
+			<double name="spotCutoff" value="180"/>
+		</object>
+		<object type="GxSeparator" id="5" name="children1" version="0">
+			<int name="childrenCount" value="3"/>
+			<object type="GxTransform" id="6" name="children0" version="1">
+				<valobj type="GbVec3" name="translation" value="0 0 0"/>
+				<valobj type="GbVec3" name="scaling" value="1 1 1"/>
+				<valobj type="GbVec3" name="rotationAxis" value="0 0 1"/>
+				<double name="rotationAngle" value="120"/>
+			</object>
+			<object type="GxMaterial" id="7" name="children1" version="0">
+				<valobj type="GbColor" name="specularColor" value="1 1 1 1"/>
+				<valobj type="GbColor" name="diffuseColor" value="1 0.24 0.36 1"/>
+				<valobj type="GbColor" name="ambientColor" value="0 0 0.24 1"/>
+				<double name="shininess" value="54"/>
+			</object>
+			<object type="GxSphere" id="8" name="children2" version="0">
+				<double name="radius" value="1"/>
+				<int name="slices" value="50"/>
+				<int name="stacks" value="50"/>
+				<bool name="filled" value="1"/>
+			</object>
+		</object>
+	</object>
+</object>
