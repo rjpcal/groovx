@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Sun Jul 22 07:29:51 2001
+// written: Sun Aug  5 19:40:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,6 @@
 #include "util/errorhandler.h"
 #include "util/log.h"
 #include "util/minivec.h"
-#include "util/pointers.h"
 #include "util/ref.h"
 #include "util/strings.h"
 
