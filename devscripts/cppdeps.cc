@@ -83,7 +83,7 @@ namespace
     if (stat(fname, &statbuf) != 0)
       {
         cerr << strerror(errno) << "\n";
-        cerr << "stat failed " << fname << "\n";
+        cerr << "ERROR: in is_directory: stat failed " << fname << "\n";
         return false;
       }
 
@@ -224,16 +224,18 @@ namespace
 
       if (stat(filename, &m_statbuf) == -1)
         {
-          cerr << "stat() failed for file " << filename << ":\n";
-          cerr << strerror(errno) << "\n";
+          cerr << "in mapped_file(): stat() failed for file "
+               << filename << ":\n"
+               << strerror(errno) << "\n";
           exit(1);
         }
 
       m_fileno = open(filename, O_RDONLY);
       if (m_fileno == -1)
         {
-          cerr << "open() failed for file " << filename << ":\n";
-          cerr << strerror(errno) << "\n";
+          cerr << "in mapped_file(): open() failed for file "
+               << filename << ":\n"
+               << strerror(errno) << "\n";
           exit(1);
         }
 
@@ -242,8 +244,9 @@ namespace
 
       if (m_mem == (void*)-1)
         {
-          cerr << "mmap() failed for file " << filename << ":\n";
-          cerr << strerror(errno) << "\n";
+          cerr << "in mapped_file(): mmap() failed for file "
+               << filename << ":\n"
+               << strerror(errno) << "\n";
           exit(1);
         }
     }
@@ -308,6 +311,7 @@ public:
   const string                extension; // trailing .extension, including the "."
   const string                dirname_without_slash;
   bool                        literal; // if true, then don't try to look up nested includes
+  bool                        phantom; // if true, then only consider for link deps
   parse_state                 cdep_parse_state;
   bool                        direct_cdeps_done;
   dep_list_t                  direct_cdeps;
@@ -327,6 +331,7 @@ private:
     extension(fname.substr(dotpos, string::npos)),
     dirname_without_slash(get_dirname_of(t)),
     literal(false),
+    phantom(false),
     cdep_parse_state(NOT_STARTED),
     direct_cdeps_done(false),
     direct_cdeps(),
@@ -482,7 +487,9 @@ private:
   string                   m_cfg_obj_prefix;
   format_set               m_cfg_exe_formats;
   format_set               m_cfg_link_formats;
+  format_set               m_cfg_phantom_link_formats;
   bool                     m_cfg_check_sys_deps;
+  bool                     m_cfg_phantom_sys_deps;
   bool                     m_cfg_quiet;
   bool                     m_cfg_verbose;
   int                      m_cfg_output_mode;
@@ -492,6 +499,9 @@ private:
   string                   m_strip_prefix;
 
   int                      m_nest_level;
+  bool                     m_debug;
+  int                      m_argc;
+  char**                   m_argv;
 
   const time_t             m_start_time;  // so we can check to see if
                                           // any source files have
@@ -503,6 +513,10 @@ private:
 
 public:
   cppdeps(int argc, char** argv);
+
+  bool handle_option(const char* option, const char* optarg);
+
+  void load_options_file(const char* filename);
 
   void inspect(char** arg0, char** argn);
 
@@ -551,14 +565,16 @@ std::ostream& cppdeps::info()
 
 cppdeps::cppdeps(const int argc, char** const argv) :
   m_cfg_check_sys_deps(false),
+  m_cfg_phantom_sys_deps(true),
   m_cfg_quiet(false),
   m_cfg_verbose(false),
   m_cfg_output_mode(0),
   m_nest_level(0),
+  m_debug(false),
+  m_argc(argc),
+  m_argv(argv),
   m_start_time(time((time_t*) 0))
 {
-  bool debug = false;
-
   if (argc == 1)
     {
       printf
@@ -625,90 +641,10 @@ cppdeps::cppdeps(const int argc, char** const argv) :
 
   for ( ; *arg != 0; ++arg)
     {
-      if (strcmp(*arg, "--includedir") == 0)
-        {
-          m_cfg_user_ipath.push_back(*++arg);
-        }
-      else if (strncmp(*arg, "-I", 2) == 0)
-        {
-          m_cfg_user_ipath.push_back((*arg) + 2);
-        }
-      else if (strcmp(*arg, "--sysincludedir") == 0)
-        {
-          m_cfg_sys_ipath.push_back(*++arg);
-        }
-      else if (strcmp(*arg, "--objdir") == 0)
-        {
-          m_cfg_obj_prefix = trim_trailing_slashes(*++arg);
-        }
-      else if (strcmp(*arg, "--checksys") == 0)
-        {
-          m_cfg_check_sys_deps = true;
-        }
-      else if (strcmp(*arg, "--quiet") == 0)
-        {
-          m_cfg_quiet = true;
-        }
-      else if (strcmp(*arg, "--output-compile-deps") == 0)
-        {
-          m_cfg_output_mode |= MAKEFILE_CDEPS;
-        }
-      else if (strcmp(*arg, "--output-link-deps") == 0)
-        {
-          m_cfg_output_mode |= MAKEFILE_LDEPS;
-        }
-      else if (strcmp(*arg, "--literal") == 0)
-        {
-          m_cfg_literal_exts.push_back(*++arg);
-        }
-      else if (strcmp(*arg, "--objext") == 0)
-        {
-          m_cfg_obj_exts.push_back(*++arg);
-        }
-      else if (strcmp(*arg, "--exeformat") == 0)
-        {
-          m_cfg_exe_formats.add_format(*++arg);
-        }
-      else if (strcmp(*arg, "--exeformat-file") == 0)
-        {
-          m_cfg_exe_formats.load_file(*++arg);
-        }
-      else if (strcmp(*arg, "--linkformat") == 0)
-        {
-          m_cfg_link_formats.add_format(*++arg);
-        }
-      else if (strcmp(*arg, "--debug") == 0)
-        {
-          debug = true;
-        }
-      else if (strcmp(*arg, "--verbose") == 0)
-        {
-          m_cfg_verbose = true;
-        }
-      // treat any unrecognized arguments as src files
-      else if (strcmp(*arg, "--srcdir") == 0)
-        {
-          const string fname = trim_trailing_slashes(*++arg);
-          if (!file_exists(fname.c_str()))
-            {
-              cerr << "ERROR: no such source file: '" << fname << "'\n";
-              exit(1);
-            }
-          m_src_files.push_back(fname);
-          if (is_directory(fname.c_str()))
-            {
-              m_cfg_user_ipath.push_back(fname);
-              m_strip_prefix = fname;
-            }
-        }
-      else
-        {
-          cerr << "ERROR: unrecognized command-line option: "
-               << *arg << '\n';
-          exit(1);
-        }
+      if (handle_option(*arg, *(arg+1)))
+        ++arg;
 
-      if (debug)
+      if (m_debug)
         {
           inspect(argv, arg);
         }
@@ -728,9 +664,153 @@ cppdeps::cppdeps(const int argc, char** const argv) :
   if (m_cfg_obj_exts.size() == 0)
     m_cfg_obj_exts.push_back(".o");
 
-  if (debug)
+  if (m_debug)
     {
       inspect(argv, arg);
+    }
+}
+
+bool cppdeps::handle_option(const char* option, const char* optarg)
+{
+  if (strcmp(option, "--includedir") == 0)
+    {
+      m_cfg_user_ipath.push_back(optarg);
+      return true;
+    }
+  else if (strncmp(option, "-I", 2) == 0)
+    {
+      m_cfg_user_ipath.push_back(option + 2);
+      return false;
+    }
+  else if (strcmp(option, "--sysincludedir") == 0)
+    {
+      m_cfg_sys_ipath.push_back(optarg);
+      return true;
+    }
+  else if (strcmp(option, "--objdir") == 0)
+    {
+      m_cfg_obj_prefix = trim_trailing_slashes(optarg);
+      return true;
+    }
+  else if (strcmp(option, "--checksys") == 0)
+    {
+      m_cfg_check_sys_deps = true;
+      return false;
+    }
+  else if (strcmp(option, "--quiet") == 0)
+    {
+      m_cfg_quiet = true;
+      return false;
+    }
+  else if (strcmp(option, "--output-compile-deps") == 0)
+    {
+      m_cfg_output_mode |= MAKEFILE_CDEPS;
+      return false;
+    }
+  else if (strcmp(option, "--output-link-deps") == 0)
+    {
+      m_cfg_output_mode |= MAKEFILE_LDEPS;
+      return false;
+    }
+  else if (strcmp(option, "--literal") == 0)
+    {
+      m_cfg_literal_exts.push_back(optarg);
+      return true;
+    }
+  else if (strcmp(option, "--objext") == 0)
+    {
+      m_cfg_obj_exts.push_back(optarg);
+      return true;
+    }
+  else if (strcmp(option, "--exeformat") == 0)
+    {
+      m_cfg_exe_formats.add_format(optarg);
+      return true;
+    }
+  else if (strcmp(option, "--exeformat-file") == 0)
+    {
+      m_cfg_exe_formats.load_file(optarg);
+      return true;
+    }
+  else if (strcmp(option, "--options-file") == 0)
+    {
+      load_options_file(optarg);
+      return true;
+    }
+  else if (strcmp(option, "--linkformat") == 0)
+    {
+      m_cfg_link_formats.add_format(optarg);
+      return true;
+    }
+  else if (strcmp(option, "--phantomlinkformat") == 0)
+    {
+      m_cfg_phantom_link_formats.add_format(optarg);
+      return true;
+    }
+  else if (strcmp(option, "--debug") == 0)
+    {
+      m_debug = true;
+      return false;
+    }
+  else if (strcmp(option, "--verbose") == 0)
+    {
+      m_cfg_verbose = true;
+      return false;
+    }
+  // treat any unrecognized arguments as src files
+  else if (strcmp(option, "--srcdir") == 0)
+    {
+      const string fname = trim_trailing_slashes(optarg);
+      if (!file_exists(fname.c_str()))
+        {
+          cerr << "ERROR: no such source file: '" << fname << "'\n";
+          exit(1);
+        }
+      m_src_files.push_back(fname);
+      if (is_directory(fname.c_str()))
+        {
+          m_cfg_user_ipath.push_back(fname);
+          m_strip_prefix = fname;
+        }
+      return true;
+    }
+  else
+    {
+      cerr << "ERROR: unrecognized command-line option: "
+           << option << '\n';
+      exit(1);
+    }
+  return false; // can't happen
+}
+
+void cppdeps::load_options_file(const char* filename)
+{
+  if (!file_exists(filename))
+    {
+      cerr << "ERROR: couldn't open options file: " << filename << '\n';
+      exit(1);
+    }
+
+  std::ifstream in(filename);
+
+  if (!in.is_open())
+    {
+      cerr << "ERROR: couldn't open options file for reading: " << filename << '\n';
+      exit(1);
+    }
+
+  string line;
+  while (in)
+    {
+      std::getline(in, line);
+      if (line.length() > 0 && line[0] != '#')
+        {
+          string::size_type s = line.find_first_of(' ');
+          if (s == string::npos) s = line.length();
+          string option = line.substr(0, s);
+          string optarg = line.substr(s+1);
+          handle_option(option.c_str(), optarg.c_str());
+        }
     }
 }
 
@@ -818,6 +898,9 @@ bool cppdeps::is_cc_or_h_fname(const file_info* finfo) const
 
 file_info* cppdeps::find_source_for_header(file_info* header) const
 {
+  if (header->phantom)
+    return header;
+
   for (unsigned int i = 0; i < m_cfg_source_exts.size(); ++i)
     {
       const string result = header->rootname + m_cfg_source_exts[i];
@@ -978,7 +1061,8 @@ const dep_list_t& cppdeps::get_direct_cdeps(file_info* finfo)
 
       const bool is_valid_delimiter =
         (delimiter == '\"') ||
-        (delimiter == '<' && m_cfg_check_sys_deps == true);
+        (delimiter == '<' &&
+         (m_cfg_check_sys_deps == true || m_cfg_phantom_sys_deps == true));
 
       if (!is_valid_delimiter)
         continue;
@@ -1016,10 +1100,18 @@ const dep_list_t& cppdeps::get_direct_cdeps(file_info* finfo)
       const int include_length = fptr - include_start;
       const string include_name(include_start, include_length);
 
-      if (resolve_one(include_name, finfo,
+      if (delimiter == '\"' &&
+          resolve_one(include_name, finfo,
                       m_cfg_user_ipath,
                       m_cfg_literal_exts, vec))
         continue;
+
+      if (m_cfg_phantom_sys_deps && delimiter == '<')
+        {
+          vec.push_back(file_info::get(include_name));
+          vec.back()->phantom = true;
+          continue;
+        }
 
       if (m_cfg_check_sys_deps &&
           resolve_one(include_name, finfo,
@@ -1063,6 +1155,13 @@ const dep_list_t& cppdeps::get_nested_cdeps(file_info* finfo)
       exit(1);
     }
 
+  if (finfo->phantom)
+    {
+      cerr << "ERROR: get_nested_cdeps() called for phantom file: "
+           << finfo->fname << '\n';
+      exit(1);
+    }
+
   finfo->cdep_parse_state = IN_PROGRESS;
 
   // use a set to build up the list of #includes, so that
@@ -1087,6 +1186,17 @@ const dep_list_t& cppdeps::get_nested_cdeps(file_info* finfo)
       // Check for self-inclusion to avoid infinite recursion.
       if (*i == finfo)
         continue;
+
+      // Check if the included file is to be treated as a 'phantom'
+      // file -- these would be e.g. system headers (#include'd with
+      // angle brackets) that we don't to treat as compile
+      // dependencies, but for which we would like to compute link
+      // dependencies.
+      if ((*i)->phantom == true)
+        {
+          dep_set.insert(*i);
+          continue;
+        }
 
       // Check if the included file is to be treated as a 'literal' file,
       // meaning that we don't look for nested includes, and thus don't
@@ -1127,6 +1237,14 @@ const dep_list_t& cppdeps::get_direct_ldeps(file_info* finfo)
 {
   if (finfo->direct_ldeps_done)
     return finfo->direct_ldeps;
+
+  if (finfo->phantom)
+    {
+      assert(finfo->direct_ldeps.empty());
+      finfo->direct_ldeps.push_back(finfo);
+      finfo->direct_ldeps_done = true;
+      return finfo->direct_ldeps;
+    }
 
   std::set<file_info*, file_info_cmp> deps_set;
 
@@ -1274,6 +1392,9 @@ void cppdeps::print_makefile_dep(file_info* finfo)
        itr != stop;
        ++itr)
     {
+      if ((*itr)->phantom)
+        continue;
+
       printf(" %s", (*itr)->fname.c_str());
     }
 
@@ -1301,9 +1422,37 @@ void cppdeps::print_link_deps(file_info* finfo)
        itr != stop;
        ++itr)
     {
-      const string t = m_cfg_link_formats.transform((*itr)->fname);
-      if (!t.empty())
-        links.insert(t);
+      if (!(*itr)->phantom)
+        {
+          const string t = m_cfg_link_formats.transform((*itr)->fname);
+          if (!t.empty())
+            links.insert(t);
+        }
+    }
+
+  for (std::set<string>::iterator
+         itr = links.begin(),
+         stop = links.end();
+       itr != stop;
+       ++itr)
+    {
+      printf("%s: %s\n", exe.c_str(), (*itr).c_str());
+    }
+
+  links.clear();
+
+  for (dep_list_t::const_iterator
+         itr = ldeps.begin(),
+         stop = ldeps.end();
+       itr != stop;
+       ++itr)
+    {
+      if ((*itr)->phantom)
+        {
+          const string t = m_cfg_phantom_link_formats.transform((*itr)->fname);
+          if (!t.empty())
+            links.insert(t);
+        }
     }
 
   for (std::set<string>::iterator
