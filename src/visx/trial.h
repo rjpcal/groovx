@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Thu Mar 30 09:50:00 2000
+// written: Wed May 10 11:46:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,7 @@ namespace GWT {
   class Canvas;
 }
 
+class Experiment;
 class Response;
 
 ///////////////////////////////////////////////////////////////////////
@@ -81,6 +82,8 @@ public:
   // accessors //
   ///////////////
 
+  int getAutosavePeriod() const;
+
   int getResponseHandler() const;
   int getTimingHdlr() const;
 
@@ -122,6 +125,15 @@ public:
   /////////////
   // actions //
   /////////////
+
+  void trDoTrial(Experiment& expt);
+
+  int trElapsedMsec(Experiment& expt);
+
+  void trAbortTrial(Experiment& expt);
+  void trEndTrial(Experiment& expt);
+  void trHaltExpt(Experiment& expt);
+  void trResponseSeen(Experiment& expt);
 
   void trDraw(GWT::Canvas& canvas, bool flush) const;
   void trUndraw(GWT::Canvas& canvas, bool flush) const;

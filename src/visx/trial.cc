@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Mar 30 12:14:50 2000
+// written: Wed May 10 12:35:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,16 @@
 
 #include "trial.h"
 
+#include "experiment.h"
 #include "objlist.h"
 #include "poslist.h"
 #include "grobj.h"
 #include "position.h"
 #include "response.h"
+#include "responsehandler.h"
+#include "rhlist.h"
+#include "thlist.h"
+#include "timinghdlr.h"
 
 #include "io/reader.h"
 #include "io/readutils.h"
@@ -36,6 +41,8 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
+
+#define TIME_TRACE
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -65,6 +72,47 @@ public:
   int itsType;
   int itsRhId;
   int itsThId;
+
+  bool checkIds() const
+	 {
+		if ( RhList::theRhList().isValidId(itsRhId) &&
+			  ThList::theThList().isValidId(itsThId) ) {
+		  return true;
+		}
+		return false;
+	 }
+
+  bool assertIdsOrHalt(Experiment& expt) const
+	 {
+		if ( checkIds() ) return true;
+
+		// ...else halt any of the participants for which we have valid id's
+		expt.edHaltExpt();
+
+		return false;
+	 }
+
+  ResponseHandler& responseHandler() const
+	 {
+		Assert( RhList::theRhList().isValidId(itsRhId) );
+		return *(RhList::theRhList().getPtr(itsRhId));
+	 }
+
+  TimingHdlr& timingHdlr() const
+	 {
+		Assert( ThList::theThList().isValidId(itsThId) );
+		return *(ThList::theThList().getPtr(itsThId));
+	 }
+
+
+#ifdef TIME_TRACE
+  inline void timeTrace(const char* loc) {
+	 cerr << "in " << loc
+			<< ", elapsed time == " << timingHdlr().getElapsedMsec() << endl;
+  }
+#else
+  inline void timeTrace(const char*) {}
+#endif
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -281,6 +329,13 @@ DOTRACE("Trial::readFromObjidsOnly");
 // accessors //
 ///////////////
 
+int Trial::getAutosavePeriod() const {
+DOTRACE("Trial::getAutosavePeriod");
+  if ( itsImpl->checkIds() )
+	 return itsImpl->timingHdlr().getAutosavePeriod();
+  else return 0;
+}
+
 int Trial::getResponseHandler() const {
 DOTRACE("Trial::getResponseHandler");
   DebugEvalNL(itsImpl->itsRhId);
@@ -404,6 +459,7 @@ DOTRACE("setTimingHdlr");
 
 void Trial::recordResponse(const Response& response) {
 DOTRACE("Trial::recordResponse"); 
+  itsImpl->timeTrace("recordResponse");
   itsImpl->itsResponses.push_back(response);
 }
 
@@ -415,6 +471,67 @@ DOTRACE("Trial::clearResponses");
 /////////////
 // actions //
 /////////////
+
+void Trial::trDoTrial(Experiment& expt) {
+DOTRACE("Trial::trDoTrial");
+  if ( !itsImpl->assertIdsOrHalt(expt) ) return;
+
+  itsImpl->timeTrace("trDoTrial"); 
+
+  itsImpl->timingHdlr().thBeginTrial(&expt);
+  itsImpl->responseHandler().rhBeginTrial(&expt);
+}
+
+int Trial::trElapsedMsec(Experiment& expt) {
+DOTRACE("Trial::trElapsedMsec");
+  if ( !itsImpl->assertIdsOrHalt(expt) ) return -1;
+
+  return itsImpl->timingHdlr().getElapsedMsec();
+}
+
+void Trial::trAbortTrial(Experiment& expt) {
+DOTRACE("Trial::trAbortTrial");
+  if ( !itsImpl->assertIdsOrHalt(expt) ) return;
+
+  itsImpl->timeTrace("trAbortTrial");
+
+  itsImpl->responseHandler().rhAbortTrial(&expt);
+  itsImpl->timingHdlr().thAbortTrial(&expt);
+}
+
+void Trial::trEndTrial(Experiment& expt) {
+DOTRACE("Trial::trEndTrial");
+  if ( !itsImpl->assertIdsOrHalt(expt) ) return;
+
+  itsImpl->timeTrace("trEndTrial");
+
+  itsImpl->responseHandler().rhEndTrial(&expt);
+}
+
+void Trial::trHaltExpt(Experiment& expt) {
+DOTRACE("Trial::trHaltExpt");
+  if ( !itsImpl->assertIdsOrHalt(expt) ) return;
+
+  if ( ThList::theThList().isValidId(itsImpl->itsThId) ) { 
+	 itsImpl->timeTrace("edHaltExpt");
+  }
+
+  if ( RhList::theRhList().isValidId(itsImpl->itsRhId) ) {
+	 itsImpl->responseHandler().rhHaltExpt(&expt);
+  }
+  if ( ThList::theThList().isValidId(itsImpl->itsThId) ) {
+	 itsImpl->timingHdlr().thHaltExpt(&expt);
+  }
+}
+
+void Trial::trResponseSeen(Experiment& expt) {
+DOTRACE("Trial::trResponseSeen");
+  if ( !itsImpl->assertIdsOrHalt(expt) ) return;
+
+  itsImpl->timeTrace("trResponseSeen");
+
+  itsImpl->timingHdlr().thResponseSeen(&expt);
+}
 
 void Trial::trDraw(GWT::Canvas& canvas, bool flush) const {
 DOTRACE("Trial::trDraw");
