@@ -317,7 +317,7 @@ ALL_DEBUG_DEPENDS = \
 
 $(HOME)/bin/$(ARCH)/$(DEBUG_TARGET): $(ALL_DEBUG_DEPENDS)
 	$(CC) $(DEBUG_LINK_OPTIONS) -o $@ $(DEBUG_GRSH_STATIC_OBJS) /opt/langtools/lib/end.o \
-	$(LIB_DIRS) -lvisx.d -ltclworks.d $(LIBRARIES)
+	$(LIB_DIRS) -lvisx.d -ltclworks.d $(LIBRARIES) 
 
 grsh: TAGS $(HOME)/bin/$(ARCH)/$(PROD_TARGET)
 	$(PROD_TARGET) ./testing/grshtest.tcl
@@ -972,3 +972,7 @@ cdeps: *.h *.cc
 
 ldeps: cdeps
 	ldep -dCdepDeps -L > Ldeps
+
+backup:
+	tclsh Backup.tcl
+
