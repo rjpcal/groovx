@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:23:55 1999
-// written: Thu May 10 12:04:42 2001
+// written: Wed Jul 11 09:21:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,8 @@
 
 #include "tcl/tclvalue.h"
 
+#include "tcl/convert.h"
+
 #include "util/strings.h"
 
 #include <tcl.h>
@@ -23,30 +25,6 @@
 #define NO_TRACE
 #include "util/trace.h"
 #include "util/debug.h"
-
-extern Tcl_ObjType	tclBooleanType;
-extern Tcl_ObjType	tclDoubleType;
-extern Tcl_ObjType	tclIntType;
-extern Tcl_ObjType	tclListType;
-extern Tcl_ObjType	tclStringType;
-
-///////////////////////////////////////////////////////////////////////
-//
-// File scope definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace {
-  inline void checkSharing(Tcl_Obj*& obj, Tcl_ObjType* target_type)
-	 {
-		if ( (obj->typePtr != target_type) && Tcl_IsShared(obj) )
-		  {
-			 Tcl_DecrRefCount(obj);
-			 obj = Tcl_DuplicateObj(obj);
-			 Tcl_IncrRefCount(obj);
-		  }
-	 }
-}
 
 //---------------------------------------------------------------------
 //
@@ -113,26 +91,26 @@ DOTRACE("Tcl::TclValue::TclValue(Tcl_Interp*, const Value&)");
 
   switch (rhs_type) {
   case Value::INT:
-	 itsObj = Tcl_NewIntObj(rhs.getInt());
-	 break;
+    itsObj = Tcl_NewIntObj(rhs.getInt());
+    break;
   case Value::LONG:
-	 itsObj = Tcl_NewLongObj(rhs.getLong());
-	 break;
+    itsObj = Tcl_NewLongObj(rhs.getLong());
+    break;
   case Value::BOOL:
-	 itsObj = Tcl_NewBooleanObj(rhs.getBool());
-	 break;
+    itsObj = Tcl_NewBooleanObj(rhs.getBool());
+    break;
   case Value::DOUBLE:
-	 itsObj = Tcl_NewDoubleObj(rhs.getDouble());
-	 break;
+    itsObj = Tcl_NewDoubleObj(rhs.getDouble());
+    break;
   case Value::CSTRING:
-	 itsObj = Tcl_NewStringObj(rhs.getCstring(), -1);
-	 break;
+    itsObj = Tcl_NewStringObj(rhs.getCstring(), -1);
+    break;
 
   case Value::NONE:
   case Value::UNKNOWN:
   default:
-	 itsObj = Tcl_NewStringObj(rhs.getCstring(), -1);
-	 break;
+    itsObj = Tcl_NewStringObj(rhs.getCstring(), -1);
+    break;
   }
 
   DebugEval((void*) itsObj);
@@ -170,7 +148,7 @@ DOTRACE("Tcl::TclValue::getObj");
 
 void Tcl::TclValue::setObj(Tcl_Obj* obj) {
 DOTRACE("Tcl::TclValue::setObj");
-  if (itsObj == obj) return; 
+  if (itsObj == obj) return;
 
   Tcl_DecrRefCount(itsObj);
 
@@ -213,7 +191,7 @@ DOTRACE("Tcl::TclValue::printTo");
 
 void Tcl::TclValue::scanFrom(STD_IO::istream& is) {
 DOTRACE("Tcl::TclValue::scanFrom");
-  char buf[256]; 
+  char buf[256];
   is >> ws;
   is.get(buf, 256, '\n');
   Tcl_SetStringObj(itsObj, buf, -1);
@@ -227,40 +205,27 @@ DOTRACE("Tcl::TclValue::scanFrom");
 
 int Tcl::TclValue::getInt() const {
 DOTRACE("Tcl::TclValue::getInt");
-  int val;
-  get(val);
-  return val;
+  return Tcl::fromTcl<int>(itsObj);
 }
 
 long Tcl::TclValue::getLong() const {
 DOTRACE("Tcl::TclValue::getLong");
-  long val;
-  get(val);
-  return val;
+  return Tcl::fromTcl<long>(itsObj);
 }
 
 bool Tcl::TclValue::getBool() const {
 DOTRACE("Tcl::TclValue::getBool");
-  int val;
-  checkSharing(itsObj, &tclBooleanType);
-  if ( Tcl_GetBooleanFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
-	 fixed_string msg = Tcl_GetStringResult(itsInterp);
-	 Tcl_ResetResult(itsInterp);
-	 throw ValueError(msg.c_str());
-  }
-  return bool(val);
+  return Tcl::fromTcl<bool>(itsObj);
 }
 
 double Tcl::TclValue::getDouble() const {
 DOTRACE("Tcl::TclValue::getDouble");
-  double val;
-  get(val);
-  return val;
+  return Tcl::fromTcl<double>(itsObj);
 }
 
 const char* Tcl::TclValue::getCstring() const {
 DOTRACE("Tcl::TclValue::getCstring");
-  return Tcl_GetString(itsObj);
+  return Tcl::fromTcl<const char*>(itsObj);
 }
 
 //---------------------------------------------------------------------
@@ -271,22 +236,12 @@ DOTRACE("Tcl::TclValue::getCstring");
 
 void Tcl::TclValue::get(int& val) const {
 DOTRACE("Tcl::TclValue::get(int&)");
-  checkSharing(itsObj, &tclIntType);
-  if ( Tcl_GetIntFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
-	 fixed_string msg = Tcl_GetStringResult(itsInterp);
-	 Tcl_ResetResult(itsInterp);
-	 throw ValueError(msg.c_str());
-  }
+  val = getInt();
 }
 
 void Tcl::TclValue::get(long& val) const {
 DOTRACE("Tcl::TclValue::get(long&)");
-  checkSharing(itsObj, &tclIntType);
-  if ( Tcl_GetLongFromObj(itsInterp, itsObj, &val) != TCL_OK) {
-	 fixed_string msg = Tcl_GetStringResult(itsInterp);
-	 Tcl_ResetResult(itsInterp);
-	 throw ValueError(msg.c_str());
-  }
+  val = getLong();
 }
 
 void Tcl::TclValue::get(bool& val) const {
@@ -296,17 +251,12 @@ DOTRACE("Tcl::TclValue::get(bool&)");
 
 void Tcl::TclValue::get(double& val) const {
 DOTRACE("Tcl::TclValue::get(double&)");
-  checkSharing(itsObj, &tclDoubleType);
-  if ( Tcl_GetDoubleFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
-	 fixed_string msg = Tcl_GetStringResult(itsInterp);
-	 Tcl_ResetResult(itsInterp);
-	 throw ValueError(msg.c_str());
-  }
+  val = getDouble();
 }
 
 void Tcl::TclValue::get(const char*& val) const {
 DOTRACE("Tcl::TclValue::get(const char*&)");
-  val = Tcl_GetString(itsObj);
+  val = getCstring();
 }
 
 static const char vcid_tclvalue_cc[] = "$Header$";
