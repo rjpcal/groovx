@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Tue Oct 19 16:08:24 1999
+// written: Thu Nov  4 16:31:40 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +31,34 @@
 #define AsciiStreamReader ASR
 #endif
 
+namespace {
+  const char STRING_ENDER = '^';
+
+  void unEscape(string& text) {
+	 // un-escape any special characters
+	 for (int pos = 0; pos < text.length(); ++pos) {
+
+		if (text[pos] == '\\') {
+		  if ( (pos+1) >= text.length() ) {
+			 throw ReadError("missing character after trailing backslash");
+		  }
+		  switch (text[pos+1]) {
+		  case '\\':
+			 text.erase(pos+1, 1);
+			 break;
+		  case 'c':
+			 text.replace(pos, 2, "^");
+			 break;
+		  default:
+			 throw ReadError("invalid escape character");
+			 break;
+		  }
+		}
+	 }
+  }
+
+}
+
 class AsciiStreamReader::Impl {
 public:
   Impl(istream& is) :
@@ -43,6 +71,7 @@ public:
   struct Type_Value {
 	 Type_Value(const char* t=0, const char* v=0) :
 		type(t ? t : ""), value(v ? v : "") {}
+	 Type_Value(const string& t, const string& v) : type(t), value(v) {}
 	 string type;
 	 string value;
   };
@@ -200,7 +229,7 @@ DOTRACE("AsciitStreamReader::readRoot");
 
   while ( !itsImpl.itsBuf.eof() ) {
 	 IO* obj = NULL;
-	 char type[32], equal[4], bracket[4];
+	 string type, equal, bracket;
 	 unsigned long id;
 
 	 itsImpl.itsBuf >> type >> id >> equal >> bracket;
@@ -210,7 +239,7 @@ DOTRACE("AsciitStreamReader::readRoot");
 		obj = itsImpl.itsHandled[id];
 	 }
 	 else {
-		obj = IoMgr::newIO(type);
+		obj = IoMgr::newIO(type.c_str());
 		Assert(obj != 0);
 		itsImpl.itsHandled[id] = obj;
 		if (!root) root = obj;
@@ -239,11 +268,16 @@ DOTRACE("AsciiStreamReader::initAttributes");
   DebugEvalNL(attrib_count);
 
   for (int i = 0; i < attrib_count; ++i) {
-	 char type[32], name[32], equal[4], value[32];
+	 string type, name, equal, value;
 
-	 itsImpl.itsBuf >> type >> name >> equal >> value;
+	 itsImpl.itsBuf >> type >> name >> equal;
+	 getline(itsImpl.itsBuf, value, STRING_ENDER);
 
 	 DebugEval(type); DebugEval(name); DebugEvalNL(value);
+
+	 unEscape(value);
+
+	 DebugEvalNL(value);
 
 	 itsImpl.itsAttribs[name] = Impl::Type_Value(type, value);
   }
