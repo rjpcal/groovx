@@ -42,6 +42,8 @@ public:
 	 BACKGROUND_ERROR
   };
 
+  Code();
+
   Code(const char* tcl_cmd, ErrorHandlingMode mode = NONE);
 
   Code(Tcl_Obj* cmd_object, ErrorHandlingMode mode = NONE);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:29:16 2001
-// written: Mon Jul 16 13:53:54 2001
+// written: Mon Jul 16 13:59:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,12 @@ public:
   EvalError(const char* msg) :
     Tcl::TclError(msg) {}
 };
+
+Tcl::Code::Code() :
+  itsCodeObj(),
+  itsErrorMode(NONE),
+  itsFlags(TCL_EVAL_GLOBAL)
+{}
 
 Tcl::Code::Code(const char* tcl_cmd, ErrorHandlingMode mode = NONE) :
   itsCodeObj(Tcl_NewStringObj(tcl_cmd, -1)),
