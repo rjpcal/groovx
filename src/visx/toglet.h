@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Jun  6 20:23:41 2001
+// written: Mon Jun 11 18:36:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,17 +50,17 @@ typedef unsigned long Window;
 class Toglet : public virtual Util::Object, public GWT::Widget {
 protected:
   Toglet(Tcl_Interp* interp,
-				 int config_argc=0, char** config_argv=0,
-				 bool pack=true,
-				 double dist=30.0, double unit_angle=2.05);
+             int config_argc=0, char** config_argv=0,
+             bool pack=true,
+             double dist=30.0, double unit_angle=2.05);
 
 public:
   // types
   struct Color {
-	 Color(unsigned int p=0, double r=0.0, double g=0.0, double b=0.0):
-		pixel(p), red(r), green(g), blue(b) {}
-	 unsigned int pixel;
-	 double red, green, blue;
+    Color(unsigned int p=0, double r=0.0, double g=0.0, double b=0.0):
+      pixel(p), red(r), green(g), blue(b) {}
+    unsigned int pixel;
+    double red, green, blue;
   };
 
   static Toglet* make(Tcl_Interp* interp) { return new Toglet(interp); }
@@ -78,9 +78,9 @@ public:
   Tcl_Interp* getInterp() const;
   int getWidth() const;
   Color queryColor(unsigned int color_index) const {
-	 Color col;
-	 queryColor(color_index, col);
-	 return col;
+    Color col;
+    queryColor(color_index, col);
+    return col;
   }
   void queryColor(unsigned int color_index, Color& color) const;
   bool usingFixedScale() const;
@@ -89,7 +89,7 @@ public:
   int getX11ScreenNumber() const;
   Window getX11Window() const;
 
-  virtual GWT::Canvas* getCanvas();
+  virtual GWT::Canvas& getCanvas();
 
   // manipulators
   void destroyWidget();
@@ -104,8 +104,8 @@ public:
 
   class DestroyCallback {
   public:
-	 virtual ~DestroyCallback();
-	 virtual void onDestroy(Toglet* config) = 0;
+    virtual ~DestroyCallback();
+    virtual void onDestroy(Toglet* config) = 0;
   };
 
   void setDestroyCallback(DestroyCallback* callback);

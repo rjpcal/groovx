@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Mon Jun 11 14:50:22 2001
+// written: Mon Jun 11 18:36:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ public:
   /// Virtual destructor.
   virtual ~Widget();
 
-  virtual Canvas* getCanvas() = 0;
+  virtual Canvas& getCanvas() = 0;
 
   virtual void bind(const char* event_sequence, const char* script) = 0;
   virtual void takeFocus() = 0;

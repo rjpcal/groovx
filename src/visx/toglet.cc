@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Jun 11 15:08:16 2001
+// written: Mon Jun 11 18:36:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,11 +48,11 @@ namespace {
 
   const char* widgetName(Util::UID id)
   {
-	 ostrstream ost(buf, 63);
+    ostrstream ost(buf, 63);
 
-	 ost << ".togl_private" << id << '\0';
+    ost << ".togl_private" << id << '\0';
 
-	 return buf;
+    return buf;
   }
 }
 
@@ -84,15 +84,15 @@ namespace {
 
   void toglDestroyCallback(Togl* togl) {
   DOTRACE("toglDestroyCallback");
-	 DebugEvalNL((void*)togl);
-	 Toglet* config = static_cast<Toglet*>(togl->getClientData());
+    DebugEvalNL((void*)togl);
+    Toglet* config = static_cast<Toglet*>(togl->getClientData());
 
 
-	 // We have to test that config is non-null, because if this
-	 // callback was triggered out of Toglet's destructor, then it
-	 // will have already set the client data for the Togl* to null.
-	 DebugEvalNL((void*)config);
-	 if (config) config->onWindowClose();
+    // We have to test that config is non-null, because if this
+    // callback was triggered out of Toglet's destructor, then it
+    // will have already set the client data for the Togl* to null.
+    DebugEvalNL((void*)config);
+    if (config) config->onWindowClose();
   }
 
   void dummyEventProc(ClientData clientData, XEvent* eventPtr) {
@@ -101,14 +101,14 @@ namespace {
   }
 
   void setIntParam(Togl* togl, const char* param, int val) {
-	 const int BUF_SIZE = 256;
-	 char buf[BUF_SIZE];
-	 ostrstream ost(buf, BUF_SIZE);
-	 ost << togl->pathname();
-	 ost << " configure -" << param << ' ' << val << '\0';
+    const int BUF_SIZE = 256;
+    char buf[BUF_SIZE];
+    ostrstream ost(buf, BUF_SIZE);
+    ost << togl->pathname();
+    ost << " configure -" << param << ' ' << val << '\0';
 
-	 Tcl::TclEvalCmd cmd(buf, Tcl::TclEvalCmd::THROW_EXCEPTION);
-	 cmd.invoke(togl->interp());
+    Tcl::TclEvalCmd cmd(buf, Tcl::TclEvalCmd::THROW_EXCEPTION);
+    cmd.invoke(togl->interp());
   }
 }
 
@@ -119,20 +119,20 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 Toglet::Toglet(Tcl_Interp* interp,
-					int config_argc, char** config_argv,
-					bool pack,
-					double dist, double unit_angle) :
+               int config_argc, char** config_argv,
+               bool pack,
+               double dist, double unit_angle) :
   GWT::Widget(),
   itsCanvas(new GLCanvas),
   itsTogl(new Togl(interp, widgetName(id()), config_argc, config_argv)),
-  itsViewingDistance(dist), 
+  itsViewingDistance(dist),
   itsFixedScaleFlag(true),
   itsFixedScale(1.0),
   itsMinRect(),
   itsFontListBase(0),
   itsDestroyCallback(0)
 {
-DOTRACE("Toglet::Toglet"); 
+DOTRACE("Toglet::Toglet");
   DebugEvalNL((void*) this);
 
   itsTogl->setClientData(static_cast<ClientData>(this));
@@ -162,45 +162,45 @@ DOTRACE("Toglet::Toglet");
 
   Tk_Window tkwin = itsTogl->tkWin();
   Tk_CreateEventHandler(tkwin, ButtonPressMask, dummyEventProc,
-								static_cast<void*>(this));
+                        static_cast<void*>(this));
 
   XBmapRenderer::initClass(tkwin);
 
   if (pack) {
-	 dynamic_string pack_cmd_str = "pack ";
-	 pack_cmd_str += itsTogl->pathname();
-	 pack_cmd_str += " -expand 1 -fill both; update";
-	 Tcl::TclEvalCmd pack_cmd(pack_cmd_str.c_str(),
-									  Tcl::TclEvalCmd::THROW_EXCEPTION);
-	 pack_cmd.invoke(interp);
-  }  
+    dynamic_string pack_cmd_str = "pack ";
+    pack_cmd_str += itsTogl->pathname();
+    pack_cmd_str += " -expand 1 -fill both; update";
+    Tcl::TclEvalCmd pack_cmd(pack_cmd_str.c_str(),
+                             Tcl::TclEvalCmd::THROW_EXCEPTION);
+    pack_cmd.invoke(interp);
+  }
 }
 
 Toglet::~Toglet() {
 DOTRACE("Toglet::~Toglet");
 
   if (itsTogl)
-	 { 
-		itsTogl->setClientData(static_cast<ClientData>(0));
-		itsTogl->setReshapeFunc(0);
-		itsTogl->setDisplayFunc(0);
+    {
+      itsTogl->setClientData(static_cast<ClientData>(0));
+      itsTogl->setReshapeFunc(0);
+      itsTogl->setDisplayFunc(0);
 
-		Tk_Window tkwin = itsTogl->tkWin();
-		if (tkwin != 0) {
-		  Tk_DeleteEventHandler(tkwin, ButtonPressMask, dummyEventProc,
-										static_cast<void*>(this));
-		}
+      Tk_Window tkwin = itsTogl->tkWin();
+      if (tkwin != 0) {
+        Tk_DeleteEventHandler(tkwin, ButtonPressMask, dummyEventProc,
+                              static_cast<void*>(this));
+      }
 
-		itsTogl = 0;
-	 }
+      itsTogl = 0;
+    }
 }
 
 void Toglet::onWindowClose() {
 DOTRACE("Toglet::onWindowClose");
   if (itsDestroyCallback.get() != 0)
-	 itsDestroyCallback->onDestroy(this);
+    itsDestroyCallback->onDestroy(this);
 
-  itsTogl = 0; 
+  itsTogl = 0;
 }
 
 ///////////////
@@ -208,11 +208,11 @@ DOTRACE("Toglet::onWindowClose");
 ///////////////
 
 double Toglet::getFixedScale() const {
-DOTRACE("Toglet::getFixedScale"); 
-  return itsFixedScale; 
+DOTRACE("Toglet::getFixedScale");
+  return itsFixedScale;
 }
 
-Rect<double> Toglet::getMinRect() const { 
+Rect<double> Toglet::getMinRect() const {
 DOTRACE("Toglet::getMinRect");
   return itsMinRect;
 }
@@ -258,8 +258,8 @@ DOTRACE("Toglet::queryColor");
 }
 
 bool Toglet::usingFixedScale() const {
-DOTRACE("Toglet::usingFixedScale"); 
-  return itsFixedScaleFlag; 
+DOTRACE("Toglet::usingFixedScale");
+  return itsFixedScaleFlag;
 }
 
 Display* Toglet::getX11Display() const {
@@ -277,12 +277,12 @@ DOTRACE("getX11Window");
   return itsTogl ? itsTogl->windowId() : 0;
 }
 
-GWT::Canvas* Toglet::getCanvas() {
+GWT::Canvas& Toglet::getCanvas() {
 DOTRACE("Toglet::getCanvas");
 
   if (itsTogl) itsTogl->makeCurrent();
 
-  return itsCanvas.get();
+  return *itsCanvas;
 }
 
 //////////////////
@@ -294,12 +294,12 @@ DOTRACE("Toglet::destroyWidget");
 DebugPrintNL("Toglet::destroyWidget");
   // If we are exiting, don't bother destroying the widget; otherwise...
   if ( itsTogl && !Tcl_InterpDeleted(itsTogl->interp()) ) {
-	 dynamic_string destroy_cmd_str = "destroy ";
-	 destroy_cmd_str += itsTogl->pathname();
+    dynamic_string destroy_cmd_str = "destroy ";
+    destroy_cmd_str += itsTogl->pathname();
 
-	 Tcl::TclEvalCmd destroy_cmd(destroy_cmd_str.c_str(),
-										  Tcl::TclEvalCmd::BACKGROUND_ERROR);
-	 destroy_cmd.invoke(itsTogl->interp());
+    Tcl::TclEvalCmd destroy_cmd(destroy_cmd_str.c_str(),
+                                Tcl::TclEvalCmd::BACKGROUND_ERROR);
+    destroy_cmd.invoke(itsTogl->interp());
   }
 }
 
@@ -308,8 +308,8 @@ DOTRACE("Toglet::scaleRect");
 #ifdef ACC_COMPILER
   try {
 #endif
-	 if (factor <= 0.0)
-		throw ToglError("invalid scaling factor");
+    if (factor <= 0.0)
+      throw ToglError("invalid scaling factor");
 #ifdef ACC_COMPILER
   }
   catch (ToglError&) { throw; }
@@ -332,10 +332,10 @@ DOTRACE("Toglet::setColor");
 #ifdef ACC_COMPILER
   try {
 #endif
-	 if (                     color.pixel > 255) { throw ToglError(bad_index_msg); }
-	 if (color.red   < 0.0 || color.red   > 1.0) { throw ToglError(bad_val_msg); }
-	 if (color.green < 0.0 || color.green > 1.0) { throw ToglError(bad_val_msg); }
-	 if (color.blue  < 0.0 || color.blue  > 1.0) { throw ToglError(bad_val_msg); }
+    if (                     color.pixel > 255) { throw ToglError(bad_index_msg); }
+    if (color.red   < 0.0 || color.red   > 1.0) { throw ToglError(bad_val_msg); }
+    if (color.green < 0.0 || color.green > 1.0) { throw ToglError(bad_val_msg); }
+    if (color.blue  < 0.0 || color.blue  > 1.0) { throw ToglError(bad_val_msg); }
 #ifdef ACC_COMPILER
   }
   catch (ToglError&) { throw; }
@@ -345,12 +345,12 @@ DOTRACE("Toglet::setColor");
 }
 
 void Toglet::setFixedScale(double s) {
-DOTRACE("Toglet::setFixedScale"); 
+DOTRACE("Toglet::setFixedScale");
 #ifdef ACC_COMPILER
   try {
 #endif
-	 if (s <= 0.0)
-		throw ToglError("invalid scaling factor");
+    if (s <= 0.0)
+      throw ToglError("invalid scaling factor");
 #ifdef ACC_COMPILER
   }
   catch (ToglError&) { throw; }
@@ -370,8 +370,8 @@ DOTRACE("Toglet::setUnitAngle");
 #ifdef ACC_COMPILER
   try {
 #endif
-	 if (deg <= 0.0)
-		throw ToglError("unit angle must be positive");
+    if (deg <= 0.0)
+      throw ToglError("unit angle must be positive");
 #ifdef ACC_COMPILER
   }
   catch (ToglError&) { throw; }
@@ -388,7 +388,7 @@ DOTRACE("Toglet::setUnitAngle");
   int screen_mm_width = XWidthMMOfScreen(scr);
   double screen_inch_width = screen_mm_width / 25.4;
 
-  double screen_ppi = screen_pixel_width / screen_inch_width; 
+  double screen_ppi = screen_pixel_width / screen_inch_width;
   DebugEvalNL(screen_ppi);
   itsFixedScale = int(screen_unit_dist * screen_ppi);
 
@@ -396,12 +396,12 @@ DOTRACE("Toglet::setUnitAngle");
 }
 
 void Toglet::setViewingDistIn(double in) {
-DOTRACE("Toglet::setViewingDistIn"); 
+DOTRACE("Toglet::setViewingDistIn");
 #ifdef ACC_COMPILER
   try {
 #endif
-	 if (in <= 0.0)
-		{ throw ToglError("viewing distance must be positive (duh)"); }
+    if (in <= 0.0)
+      { throw ToglError("viewing distance must be positive (duh)"); }
 #ifdef ACC_COMPILER
   }
   catch (ToglError&) { throw; }
@@ -412,13 +412,13 @@ DOTRACE("Toglet::setViewingDistIn");
   //   new_dist / old_dist == new_scale / old_scale;
   double factor = in / itsViewingDistance;
   itsFixedScale *= factor;
-  itsViewingDistance = in; 
+  itsViewingDistance = in;
 
   reconfigure();
 }
 
 void Toglet::setMinRectLTRB(double L, double T, double R, double B) {
-DOTRACE("Toglet::setMinRectLTRB"); 
+DOTRACE("Toglet::setMinRectLTRB");
   itsFixedScaleFlag = false;
   itsMinRect.setRectLTRB(L,T,R,B);
 
@@ -449,7 +449,7 @@ Toglet::DestroyCallback::~DestroyCallback() {}
 
 void Toglet::setDestroyCallback(DestroyCallback* callback) {
 DOTRACE("Toglet::setDestroyCallback");
-  itsDestroyCallback.reset(callback); 
+  itsDestroyCallback.reset(callback);
 }
 
 /////////////
@@ -467,11 +467,11 @@ DOTRACE("Toglet::bind");
   cmd_str += script;
 
   Tcl::TclEvalCmd cmd(cmd_str.c_str(),
-							 Tcl::TclEvalCmd::THROW_EXCEPTION);
+                      Tcl::TclEvalCmd::THROW_EXCEPTION);
 #ifdef ACC_COMPILER
   try {
 #endif
-	 cmd.invoke(itsTogl->interp());
+    cmd.invoke(itsTogl->interp());
 #ifdef ACC_COMPILER
   }
   catch (Tcl::TclError&) { throw; }
@@ -490,13 +490,13 @@ DOTRACE("Toglet::loadFont");
 #ifdef ACC_COMPILER
   try {
 #endif
-	 // Check if font loading succeeded...
-	 if (newListBase == 0) {
-		DebugEval(fontname);
-		ToglError err("unable to load font ");
-		err.appendMsg(fontname);
-		throw err;
-	 }
+    // Check if font loading succeeded...
+    if (newListBase == 0) {
+      DebugEval(fontname);
+      ToglError err("unable to load font ");
+      err.appendMsg(fontname);
+      throw err;
+    }
 #ifdef ACC_COMPILER
   }
   catch (ToglError&) { throw; }
@@ -504,7 +504,7 @@ DOTRACE("Toglet::loadFont");
 
   // ... otherwise unload the current font
   if (itsFontListBase > 0) {
-	 itsTogl->unloadBitmapFont(itsFontListBase);
+    itsTogl->unloadBitmapFont(itsFontListBase);
   }
 
   // ... and point to the new font
@@ -522,9 +522,9 @@ DOTRACE("Toglet::loadFonti");
 #ifdef ACC_COMPILER
   try {
 #endif
-	 if (newListBase == 0) {
-		throw ToglError("unable to load font");
-	 }
+    if (newListBase == 0) {
+      throw ToglError("unable to load font");
+    }
 #ifdef ACC_COMPILER
   }
   catch (ToglError&) { throw; }
@@ -532,7 +532,7 @@ DOTRACE("Toglet::loadFonti");
 
   // ... otherwise unload the current font
   if (itsFontListBase > 0) {
-	 itsTogl->unloadBitmapFont(itsFontListBase);
+    itsTogl->unloadBitmapFont(itsFontListBase);
   }
 
   // ... and point to the new font
@@ -577,17 +577,17 @@ DOTRACE("Toglet::reconfigure");
     }
 
     glOrtho(therect.left(), therect.right(),
-				therect.bottom(), therect.top(), -1.0, 1.0);
+            therect.bottom(), therect.top(), -1.0, 1.0);
 
-	 DebugEval(itsMinRect.left());
-	 DebugEval(itsMinRect.right());
-	 DebugEval(itsMinRect.bottom());
-	 DebugEvalNL(itsMinRect.top());
+    DebugEval(itsMinRect.left());
+    DebugEval(itsMinRect.right());
+    DebugEval(itsMinRect.bottom());
+    DebugEvalNL(itsMinRect.top());
     DebugEval(itsMinRect.aspect());
     DebugEvalNL(getAspect());
 #ifdef LOCAL_DEBUG
-	 cerr << "glViewport(0, 0, " << itsTogl->width() << ", "
-			<< itsTogl->height() << ")" << endl;
+    cerr << "glViewport(0, 0, " << itsTogl->width() << ", "
+         << itsTogl->height() << ")" << endl;
     cerr << "glOrtho(l=" << therect.left() << ", r=" << therect.right()
          << ", b=" << therect.bottom() << ", t=" << therect.top() << ", -1.0, 1.0)" << endl;
 #endif
@@ -613,11 +613,11 @@ DOTRACE("Toglet::takeFocus");
   cmd_str += itsTogl->pathname();
 
   Tcl::TclEvalCmd cmd(cmd_str.c_str(),
-							 Tcl::TclEvalCmd::THROW_EXCEPTION);
+                      Tcl::TclEvalCmd::THROW_EXCEPTION);
 #ifdef ACC_COMPILER
   try {
 #endif
-	 cmd.invoke(itsTogl->interp());
+    cmd.invoke(itsTogl->interp());
 #ifdef ACC_COMPILER
   }
   catch (Tcl::TclError&) { throw; }
@@ -639,25 +639,25 @@ DOTRACE("Toglet::writeEpsFile");
 
   glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
   {
-	 // Set fore/background colors to extremes for the purposes of EPS
-	 // rendering
-	 if ( itsTogl->usesRgba() ) {
-		glColor4d(0.0, 0.0, 0.0, 1.0);
-		glClearColor(1.0, 1.0, 1.0, 1.0);
-	 }
-	 else {
-		glIndexi(0);
-		glClearIndex(255);
-	 }
+    // Set fore/background colors to extremes for the purposes of EPS
+    // rendering
+    if ( itsTogl->usesRgba() ) {
+      glColor4d(0.0, 0.0, 0.0, 1.0);
+      glClearColor(1.0, 1.0, 1.0, 1.0);
+    }
+    else {
+      glIndexi(0);
+      glClearIndex(255);
+    }
 
-	 // get a clear buffer
-	 glClear(GL_COLOR_BUFFER_BIT);
-	 swapBuffers();
+    // get a clear buffer
+    glClear(GL_COLOR_BUFFER_BIT);
+    swapBuffers();
 
-	 // do the EPS dump
-	 const int rgbFlag = 0;
-	 itsTogl->dumpToEpsFile(filename, rgbFlag,
-									Toglet_Impl::dummyEpsCallback);
+    // do the EPS dump
+    const int rgbFlag = 0;
+    itsTogl->dumpToEpsFile(filename, rgbFlag,
+                           Toglet_Impl::dummyEpsCallback);
   }
   glPopAttrib();
 
@@ -677,16 +677,16 @@ DOTRACE("Toglet_Impl::dummyReshapeCallback");
   DebugEvalNL((void*) config);
 
   try {
-	 config->reconfigure();
+    config->reconfigure();
   }
   catch (ErrorWithMsg& err) {
-	 Tcl_AppendResult(togl->interp(), err.msg_cstr(), (char*) 0);
-	 Tcl_BackgroundError(togl->interp());
+    Tcl_AppendResult(togl->interp(), err.msg_cstr(), (char*) 0);
+    Tcl_BackgroundError(togl->interp());
   }
   catch (...) {
-	 Tcl_AppendResult(togl->interp(), "an error of unknown type occurred "
-							"in dummyReshapeCallback", (char*) 0);
-	 Tcl_BackgroundError(togl->interp());
+    Tcl_AppendResult(togl->interp(), "an error of unknown type occurred "
+                     "in dummyReshapeCallback", (char*) 0);
+    Tcl_BackgroundError(togl->interp());
   }
 }
 
@@ -697,16 +697,16 @@ DOTRACE("Toglet_Impl::dummyDisplayCallback");
   DebugEvalNL((void*) config);
 
   try {
-	 config->refresh();
+    config->refresh();
   }
   catch (ErrorWithMsg& err) {
-	 Tcl_AppendResult(togl->interp(), err.msg_cstr(), (char*) 0);
-	 Tcl_BackgroundError(togl->interp());
+    Tcl_AppendResult(togl->interp(), err.msg_cstr(), (char*) 0);
+    Tcl_BackgroundError(togl->interp());
   }
   catch (...) {
-	 Tcl_AppendResult(togl->interp(), "an error of unknown type occurred "
-							"in dummyDisplayCallback", (char*) 0);
-	 Tcl_BackgroundError(togl->interp());
+    Tcl_AppendResult(togl->interp(), "an error of unknown type occurred "
+                     "in dummyDisplayCallback", (char*) 0);
+    Tcl_BackgroundError(togl->interp());
   }
 }
 
@@ -716,16 +716,16 @@ DOTRACE("Toglet_Impl::dummyEpsCallback");
   DebugEvalNL((void*) config);
 
   try {
-	 config->refresh();
+    config->refresh();
   }
   catch (ErrorWithMsg& err) {
-	 Tcl_AppendResult(togl->interp(), err.msg_cstr(), (char*) 0);
-	 Tcl_BackgroundError(togl->interp());
+    Tcl_AppendResult(togl->interp(), err.msg_cstr(), (char*) 0);
+    Tcl_BackgroundError(togl->interp());
   }
   catch (...) {
-	 Tcl_AppendResult(togl->interp(), "an error of unknown type occurred "
-							"in dummyEpsCallback", (char*) 0);
-	 Tcl_BackgroundError(togl->interp());
+    Tcl_AppendResult(togl->interp(), "an error of unknown type occurred "
+                     "in dummyEpsCallback", (char*) 0);
+    Tcl_BackgroundError(togl->interp());
   }
 }
 
