@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Thu Aug 30 16:19:50 2001
+// written: Thu Aug 30 16:34:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -873,7 +873,9 @@ void Gtext::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("Gtext::grRender");
 
-  Gfx::Canvas::AttribSaver saver(canvas);
+  Gfx::Canvas::MatrixSaver msaver(canvas);
+
+  Gfx::Canvas::AttribSaver asaver(canvas);
 
   canvas.setLineWidth(itsStrokeWidth);
   glListBase( itsListBase );
