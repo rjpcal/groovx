@@ -1,0 +1,13 @@
+* -*- outline -*-
+
+* ChangeLog 2004
+  $Id$
+
+* Rob Peters <rjpeters at klab dot caltech dot edu>
+
+* (17-Jul-2004, done 19-Jul-2004) Clean according to the way of UNIX!
+
+  [DONE] remove util/dlink_list.h (not used anywhere in project)
+  [DONE] remove util/hash.h (not used anywhere)
+  [DONE] remove util/slink_list.h (use autoconf test for #include <ext/slist> and __gnu_cxx::slist<> instead)
+  [DONE] remove util/randutils.h (use util/rand.h instead)
