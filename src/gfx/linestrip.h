@@ -52,7 +52,9 @@ namespace Gfx
 
     // default copy c-tor and destructor OK
 
-    void begin(Gfx::Canvas& c, double w, bool j);
+    void lineJoin(bool doJoin);
+
+    void begin(Gfx::Canvas& c, double w);
 
     void vertex(const Vec2<double>& pt);
 

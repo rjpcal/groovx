@@ -55,7 +55,13 @@ Gfx::LineStrip::LineStrip() :
 DOTRACE("Gfx::LineStrip::LineStrip");
 }
 
-void Gfx::LineStrip::begin(Gfx::Canvas& c, double w, bool j)
+void Gfx::LineStrip::lineJoin(bool doJoin)
+{
+DOTRACE("Gfx::LineStrip::lineJoin");
+  join = doJoin;
+}
+
+void Gfx::LineStrip::begin(Gfx::Canvas& c, double w)
 {
 DOTRACE("Gfx::LineStrip::begin");
 
@@ -68,7 +74,6 @@ DOTRACE("Gfx::LineStrip::begin");
 
   canvas = &c;
   width = w;
-  join = j;
 }
 
 void Gfx::LineStrip::vertex(const Vec2d& pt)
