@@ -58,18 +58,13 @@ test "$PACKAGE-Gtext::stringify" "stringify, destringify, and compare" {
 	 string equal $str1 $str2
 } {^1$}
 
-set POS [Obj::new Position]
-
 ### Gtext rendering ###
 test "$PACKAGE-rendering" "normal render" {
 	 clearscreen
-	 set trial [Tlist::dealSingles $::GTEXT $::POS]
-	 Togl::loadDefaultFont
-	 show $trial
+	 see $::GTEXT
 	 expr {[pixelCheckSum] != 0}
 } {^1$}
 
 ### cleanup
 unset PACKAGE
 unset GTEXT
-unset POS
