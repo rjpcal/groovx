@@ -193,6 +193,28 @@ $(DEP)/cppdepends: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
 $(DEP)/altdeps: $(DEVSCRIPTS)/cppdeps.tcl $(DEVSCRIPTS)/deps.tcl $(DEP)/.timestamp $(ALL_SRCS)
 	time $(DEVSCRIPTS)/cppdeps.tcl --include $(SRC)/pkgs --src $(SRC) --objdir $(OBJ)/ > $@
 
+
+sysdepends: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cppdeps --includedir $(SRC)/pkgs \
+		--objdir $(OBJ)/ --srcdir $(SRC) \
+		--checksys \
+		--sysincludedir /usr/lib/gcc/i386-redhat-linux/3.4.2/include \
+		--sysincludedir /usr/include/c++/3.4.2 \
+		--sysincludedir /usr/include/c++/3.4.2/backward \
+		--sysincludedir /usr/include/c++/3.4.2/i386-redhat-linux \
+		|sort> $@
+
+direct_cdeps: $(DEVSCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
+	time $(DEVSCRIPTS)/cppdeps --includedir $(SRC)/pkgs \
+		--objdir $(OBJ)/ --srcdir $(SRC) \
+		--checksys \
+		--sysincludedir /usr/lib/gcc/i386-redhat-linux/3.4.2/include \
+		--sysincludedir /usr/include/c++/3.4.2 \
+		--sysincludedir /usr/include/c++/3.4.2/backward \
+		--sysincludedir /usr/include/c++/3.4.2/i386-redhat-linux \
+		--output-direct-cdeps \
+		|sort> $@
+
 # Run the old Tcl script and compare its output against the new C++
 # dependency-computation script
 depcheck: $(DEP)/cppdepends $(DEP)/altdeps
@@ -369,7 +391,7 @@ $(VISX_LIB_DIR)/pkgIndex.tcl			\
 $(exec_prefix)/bin/groovx
 
 check: install
-	$(EXECUTABLE) ./testing/grshtest.tcl
+	export __GL_SYNC_TO_VBLANK=0; $(EXECUTABLE) ./testing/grshtest.tcl
 
 all: check
 
