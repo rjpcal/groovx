@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Mar 19 12:45:56 2003
+// written: Fri Mar 21 09:17:52 2003
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -169,9 +169,10 @@ DOTRACE("main");
 
       if (Tcl::Main::isInteractive())
         {
-          std::cerr << PACKAGE_STRING
-                    << "\nCopyright (c) 1998-2003 "
-                    << "Rob Peters <rjpeters at klab dot caltech dot edu>\n";
+          std::cerr << PACKAGE_STRING << " (" << __DATE__ << ")\n"
+                    << "Copyright (c) 1998-2003 Rob Peters <rjpeters at klab dot caltech dot edu>\n"
+                    << PACKAGE_NAME << " is free software, covered by the GNU General Public License, and you are\n"
+                    << "welcome to change it and/or distribute copies of it under certain conditions.\n";
         }
 
       Tcl::Interp& interp = app.interp();
