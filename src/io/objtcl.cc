@@ -113,32 +113,13 @@ namespace
   void dbClear() { ObjDb::theDb().clear(); }
   void dbPurge() { ObjDb::theDb().purge(); }
   void dbRelease(Util::UID id) { ObjDb::theDb().release(id); }
+  void dbClearOnExit() { ObjDb::theDb().clearOnExit(); }
 
-  class ObjDbPkg : public Tcl::Pkg
-  {
-  public:
-    ObjDbPkg(Tcl_Interp* interp) :
-      Tcl::Pkg(interp, "ObjDb", "$Revision$")
-    {
-      def( "clear", 0, &dbClear );
-      def( "purge", 0, &dbPurge );
-      def( "release", 0, &dbRelease );
-      def( "loadObjects", "filename num_to_read=-1", &loadObjects );
-      def( "loadObjects", "filename", Util::bindLast(&loadObjects, ALL) );
-      def( "saveObjects", "objids filename use_bases=yes", &saveObjects );
-      def( "saveObjects", "objids filename",
-           Util::bindLast(&saveObjects, true) );
-    }
-
-    virtual ~ObjDbPkg()
-    {
-      ObjDb::theDb().clearOnExit();
-    }
-  };
-
+  // This is just here to select between the const char* + fstring versions
+  // of newObj().
   SoftRef<Util::Object> objNew(const char* type)
   {
-    return SoftRef<Util::Object>(Util::ObjMgr::newObj(type));
+    return Util::ObjMgr::newObj(type);
   }
 
   SoftRef<Util::Object> objNewArgs(const char* type, Tcl::List init_args,
@@ -190,7 +171,18 @@ int Objdb_Init(Tcl_Interp* interp)
 {
 DOTRACE("Objdb_Init");
 
-  Tcl::Pkg* pkg = new ObjDbPkg(interp);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "ObjDb", "$Revision$");
+
+  pkg->onExit( &dbClearOnExit );
+
+  pkg->def( "clear", 0, &dbClear );
+  pkg->def( "purge", 0, &dbPurge );
+  pkg->def( "release", 0, &dbRelease );
+  pkg->def( "loadObjects", "filename num_to_read=-1", &loadObjects );
+  pkg->def( "loadObjects", "filename", Util::bindLast(&loadObjects, ALL) );
+  pkg->def( "saveObjects", "objids filename use_bases=yes", &saveObjects );
+  pkg->def( "saveObjects", "objids filename",
+            Util::bindLast(&saveObjects, true) );
 
   return pkg->initStatus();
 }

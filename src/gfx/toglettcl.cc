@@ -85,6 +85,18 @@ namespace
     widg->fullRender();
     return item->id();
   }
+
+  // We need to eagerly drop references to objects at shutdown time,
+  // because Tcl tends to prematurely unload dynamically-loaded
+  // packages... so we need to make sure we don't have any references to
+  // objects whose members are defined in such packages.
+  void clearOnExit()
+  {
+    if (Toglet::getCurrent().isValid())
+      {
+        Toglet::getCurrent()->setVisibility(false);
+      }
+  }
 }
 
 extern "C"
@@ -93,6 +105,8 @@ int Toglet_Init(Tcl_Interp* interp)
 DOTRACE("Toglet_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Toglet", "$Revision$");
+
+  pkg->onExit( &clearOnExit );
 
   pkg->inheritPkg("TkWidget");
   Tcl::defGenericObjCmds<Toglet>(pkg);
