@@ -232,5 +232,41 @@ test "GxPixmap::render" "partially off-window" {
     return "$didShow $wasOffWindow $c0 $c1 $c2 $c3 $c4 $c5"
 } {^1 1 }
 
+test "GxPixmap::scramble" "basic checks" {
+    set p [new GxPixmap]
+    -> $p loadImage testing/color_pngfile.png
+    see $p
+
+    set c0 [pixelCheckSum]
+
+    -> $p scramble 1 2 1
+    set c1 [pixelCheckSum]
+
+    -> $p loadImage testing/color_pngfile.png
+    -> $p scramble 2 1 1
+    set c2 [pixelCheckSum]
+
+    -> $p loadImage testing/color_pngfile.png
+    -> $p scramble 3 3 1
+    set c3 [pixelCheckSum]
+
+    -> $p loadImage testing/color_pngfile.png
+    -> $p scramble 4 4 1
+    set c4 [pixelCheckSum]
+
+    -> $p loadImage testing/color_pngfile.png
+    -> $p scramble 12 6 1
+    set c5 [pixelCheckSum]
+
+    set ok \
+	[expr $c0 == $c1 \
+	     && $c0 == $c2 \
+	     && $c0 == $c3 \
+	     && $c0 == $c4 \
+	     && $c0 == $c5 ]
+
+    return "$ok $c0 $c1 $c2 $c3 $c4 $c5"
+} {^1 }
+
 ### cleanup
 unset PIXMAP
