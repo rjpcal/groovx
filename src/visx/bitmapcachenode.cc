@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Thu Jul 19 13:33:35 2001
+// written: Thu Jul 19 13:48:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,6 +37,7 @@ GrObjRenderer::GrObjRenderer() :
 #else
   itsMode(GrObj::DIRECT_RENDER),
 #endif
+  itsUnMode(GrObj::SWAP_FORE_BACK),
   itsCacheFilename(""),
   itsIsCurrent(false),
   itsDisplayList(-1),
