@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue May 23 20:22:45 2000
+// written: Thu May 25 12:41:38 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -111,7 +111,7 @@ public:
   DOTRACE("ObjTogl::DestroyCmd::destroyCallback");
     DebugEvalNL((void*)togl);
     if ( (togl != 0) && (togl == ObjTogl::theTogl) ) {
-      ToglConfig* config = static_cast<ToglConfig*>(Togl_GetClientData(togl));
+      ToglConfig* config = static_cast<ToglConfig*>(togl->getClientData());
       DebugEvalNL((void*)config);
       delete config;
       ObjTogl::theWidget = 0;
@@ -284,7 +284,7 @@ DOTRACE("ObjTogl::InitCmd::invoke");
 
   toglCreated = true;
 
-  XBmapRenderer::initClass(Togl_TkWin(ObjTogl::theTogl));
+  XBmapRenderer::initClass(ObjTogl::theTogl->tkWin());
 
   returnVoid();
 }
