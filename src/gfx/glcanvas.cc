@@ -465,7 +465,7 @@ void GLCanvas::drawRect(const Gfx::Rect<double>& rect)
 {
 DOTRACE("GLCanvas::drawRect");
 
-  Gfx::Canvas::LineLoopBlock block(*this);
+  Gfx::LineLoopBlock block(*this);
 
   vertex2(rect.bottomLeft());
   vertex2(rect.bottomRight());
