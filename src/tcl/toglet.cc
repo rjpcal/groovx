@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Mar 19 17:58:04 2003
+// written: Thu May 15 16:48:58 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -107,15 +107,6 @@ Toglet::Impl::Impl(Toglet* p) :
   scene(new GxScene(canvas))
 {
 DOTRACE("Toglet::Impl::Impl");
-
-  //
-  // Get the window mapped onscreen
-  //
-
-  Tk_GeometryRequest(tkWin, owner->width(), owner->height());
-  Tk_SetClassProcs(tkWin, &toglProcs, static_cast<ClientData>(this));
-  Tk_MakeWindowExist(tkWin);
-  Tk_MapWindow(tkWin);
 }
 
 Window Toglet::Impl::cClassCreateProc(Tk_Window tkwin,
@@ -216,14 +207,45 @@ namespace
 ///////////////////////////////////////////////////////////////////////
 
 Toglet::Toglet(bool pack) :
-  Tcl::TkWidget(Tcl::Main::interp(), "Toglet", widgetName(id())),
+  Tcl::TkWidget(Tcl::Main::interp(), "Toglet", widgetName(id()), false),
   rep(new Impl(this))
 {
 DOTRACE("Toglet::Toglet");
 
   dbgEvalNL(3, (void*) this);
 
+  // Get the window mapped onscreen. NOTE -- we need to make these calls
+  // here, rather than in Impl's constructor. Why? Because some of these
+  // calls (e.g. Tk_MapWindow()) may trigger window-system callbacks (such
+  // as ConfigureNotify), which will end up calling Toglet's own functions,
+  // e.g. reshapeCallback(). Those functions require that "rep" be
+  // initialized. If we do this window set up in Impl's constructor, then
+  // it won't have returned yet, and so our "rep" variable won't be
+  // pointing anywhere meaningful (will be either NULL or garbage).
+
+  Tk_GeometryRequest(rep->tkWin, this->width(), this->height());
+  Tk_SetClassProcs(rep->tkWin, &toglProcs, static_cast<ClientData>(rep));
+  Tk_MakeWindowExist(rep->tkWin);
+  Tk_MapWindow(rep->tkWin);
+
   if (pack) Tcl::TkWidget::pack();
+}
+
+Toglet* Toglet::make()
+{
+DOTRACE("Toglet::make");
+
+  Toglet* p = new Toglet;
+
+  // Bump the ref count here since Toglet manages its own lifetime (it
+  // overrides isNotShareable() to return true). So we need to bump the ref
+  // count at some point. HOWEVER -- it's best not to bump the ref count
+  // inside the constructor chain... in that case, if an exception occurs,
+  // we'll end up running the RefCounted destructor with refcount != 0,
+  // which violates a fundamental invariant of RefCounted.
+  p->incrRefCount();
+
+  return p;
 }
 
 Toglet::~Toglet()

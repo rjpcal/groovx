@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Wed Mar 19 17:58:04 2003
+// written: Thu May 15 15:10:29 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -63,7 +63,11 @@ class TkWidgImpl;
 class Tcl::TkWidget : public GWT::Widget
 {
 public:
-  TkWidget(Tcl::Interp& interp, const char* classname, const char* pathname);
+  /// Build a TkWidget; calls Tk_CreateWindowFromPath() internally.
+  TkWidget(Tcl::Interp& interp,
+           const char* classname,
+           const char* pathname,
+           bool topLevel = false);
   virtual ~TkWidget();
 
   void destroyWidget();

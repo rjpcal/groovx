@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Mar 19 17:58:04 2003
+// written: Thu May 15 16:14:42 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -58,7 +58,10 @@ protected:
 
 public:
 
-  static Toglet* make() { return new Toglet; }
+  /// Returns a new Toglet object.
+  /** Note that the object will be "volatile" -- it manages its own
+      lifetime. */
+  static Toglet* make();
 
   virtual ~Toglet();
 

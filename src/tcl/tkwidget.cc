@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Wed Mar 19 17:58:05 2003
+// written: Thu May 15 16:43:31 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -65,7 +65,9 @@ class TkWidgImpl : public Util::VolatileObject
 
 public:
   TkWidgImpl(Tcl::TkWidget* o, Tcl::Interp& p,
-             const char* classname, const char* pathname);
+             const char* classname,
+             const char* pathname,
+             bool topLevel);
 
   ~TkWidgImpl();
 
@@ -127,13 +129,15 @@ public:
 };
 
 TkWidgImpl::TkWidgImpl(Tcl::TkWidget* o, Tcl::Interp& p,
-                       const char* classname, const char* pathname) :
+                       const char* classname,
+                       const char* pathname,
+                       bool topLevel) :
   owner(o),
   interp(p),
   tkWin(Tk_CreateWindowFromPath(interp.intp(),
                                 Tk_MainWindow(interp.intp()),
                                 const_cast<char*>(pathname),
-                                (char *) 0)),
+                                topLevel ? (char*) "" : (char*) 0)),
   width(400),
   height(400),
   updatePending(false),
@@ -258,12 +262,12 @@ DOTRACE("TkWidgImpl::cRenderCallback");
 ///////////////////////////////////////////////////////////////////////
 
 Tcl::TkWidget::TkWidget(Tcl::Interp& interp,
-                        const char* classname, const char* pathname) :
-  rep(new TkWidgImpl(this, interp, classname, pathname))
+                        const char* classname,
+                        const char* pathname,
+                        bool topLevel) :
+  rep(new TkWidgImpl(this, interp, classname, pathname, topLevel))
 {
 DOTRACE("Tcl::TkWidget::TkWidget");
-
-  incrRefCount();
 }
 
 Tcl::TkWidget::~TkWidget()
@@ -340,10 +344,13 @@ void Tcl::TkWidget::pack()
 {
 DOTRACE("Tcl::TkWidget::pack");
 
-  fstring pack_cmd = "pack ";
-  pack_cmd.append( pathname() );
-  pack_cmd.append( " -side left -expand 1 -fill both; update" );
-  rep->interp.eval(pack_cmd);
+  if (!Tk_IsTopLevel(rep->tkWin))
+    {
+      fstring pack_cmd = "pack ";
+      pack_cmd.append( pathname() );
+      pack_cmd.append( " -side left -expand 1 -fill both; update" );
+      rep->interp.eval(pack_cmd);
+    }
 }
 
 void Tcl::TkWidget::bind(const char* event_sequence, const char* script)
