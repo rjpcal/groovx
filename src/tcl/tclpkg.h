@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Dec 15 16:12:38 1999
+// written: Wed Dec 15 16:29:09 1999
 // $Id$
 //
 //
@@ -397,58 +397,42 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-template <class C>
-class CPropertiesCmd : public TclCmd {
-public:
-  CPropertiesCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, NULL, 1, 1),
-	 itsInterp(interp),
-	 itsPropertyList(0) {}
-protected:
-  virtual void invoke() {
-	 if (itsPropertyList == 0) {
-
-		const vector<PropertyInfo<C> >& vec = C::getPropertyInfos();
-		
-		vector<Tcl_Obj*> elements;
-		
-		for (size_t i = 0; i < vec.size(); ++i) {
-		  vector<Tcl_Obj*> sub_elements;
-		  
-		  // property name
-		  sub_elements.push_back(Tcl_NewStringObj(vec[i].name.c_str(), -1));
-		  
-		  // min value
-		  TclValue min(itsInterp, *(vec[i].min));
-		  sub_elements.push_back(min.getObj());
-		  
-		  // max value
-		  TclValue max(itsInterp, *(vec[i].max));
-		  sub_elements.push_back(max.getObj());
-		  
-		  // resolution value
-		  TclValue res(itsInterp, *(vec[i].res));
-		  sub_elements.push_back(res.getObj());
-		  
-		  // start new group flag
-		  sub_elements.push_back(Tcl_NewBooleanObj(vec[i].startNewGroup));
-		  
-		  elements.push_back(Tcl_NewListObj(sub_elements.size(),
-														&(sub_elements[0])));
-		}
-		
-		itsPropertyList = Tcl_NewListObj(elements.size(),
-											 &(elements[0]));
-		
-		Tcl_IncrRefCount(itsPropertyList);
-	 }
-	 
-	 returnVal(TclValue(itsInterp, itsPropertyList));
-  }
-
+class PropertiesCmdBase : public TclCmd {
 private:
   Tcl_Interp* itsInterp;
   Tcl_Obj* itsPropertyList;
+
+public:
+  PropertiesCmdBase(Tcl_Interp* interp, const char* cmd_name);
+
+protected:
+  virtual int numInfos() = 0;
+  virtual const char* getName(int i) = 0;
+  virtual const Value& getMin(int i) = 0;
+  virtual const Value& getMax(int i) = 0;
+  virtual const Value& getRes(int i) = 0;
+  virtual bool getStartNewGroup(int i) = 0;
+  
+  virtual void invoke();
+};
+
+template <class C>
+class CPropertiesCmd : public PropertiesCmdBase {
+private:
+  const vector<PropertyInfo<C> >& itsInfos;
+
+public:
+  CPropertiesCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 PropertiesCmdBase(interp, cmd_name),
+	 itsInfos(C::getPropertyInfos()) {}
+
+protected:
+  virtual int numInfos() { return itsInfos.size(); }
+  virtual const char* getName(int i) { return itsInfos[i].name.c_str(); }
+  virtual const Value& getMin(int i) { return *(itsInfos[i].min); }
+  virtual const Value& getMax(int i) { return *(itsInfos[i].max); }
+  virtual const Value& getRes(int i) { return *(itsInfos[i].res); }
+  virtual bool getStartNewGroup(int i) { return itsInfos[i].startNewGroup; }
 };
 
 ///////////////////////////////////////////////////////////////////////
