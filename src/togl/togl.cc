@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed May 24 08:58:45 2000
+// written: Wed May 24 09:31:47 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -96,11 +96,15 @@ public:
   Togl(Tcl_Interp* interp, Tk_Window mainwin, int argc, char** argv);
 
   int configure(Tcl_Interp* interp, int argc, char* argv[], int flags);
-  int makeWindowExist();
 
 private:
+  int makeWindowExist();
+
+  void destroyCurrentWindow();
+  int checkForGLX();
+  int setupVisInfoAndContext();
   void buildAttribList(int* attrib_list, int ci_depth, int dbl_flag);
-  void setupGLXContext(bool directCtx);
+  void setupGLXContext();
   void createWindow();
   Window findParent();
   Colormap findColormap();
@@ -2270,7 +2274,7 @@ DOTRACE("Togl::configure");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Togl_MakeWindowExist
+// Togl::makeWindowExist
 //
 //   Modified version of Tk_MakeWindowExist.
 //   Creates an OpenGL window for the Togl widget.
@@ -2279,18 +2283,64 @@ DOTRACE("Togl::configure");
 
 int Togl::makeWindowExist() {
 DOTRACE("Togl::makeWindowExist");
+
+  destroyCurrentWindow(); 
+
+  int status = checkForGLX();
+  if ( status != TCL_OK ) return status;
+
+  status = setupVisInfoAndContext();
+  if ( status != TCL_OK ) return status;
+
+  createWindow();
+
+  setupStackingOrder();
+
+  setupOverlayIfNeeded();
+
+  // Issue a ConfigureNotify event if there were deferred changes
+  issueConfigureNotify();
+
+  // Request the X window to be displayed
+  XMapWindow(itsDisplay, Tk_WindowId(itsTkWin));
+
+  // Bind the context to the window and make it the current context
+  Togl_MakeCurrent(this);
+
+  // Check for a single/double buffering snafu
+  checkDblBufferSnafu();
+
+  // for EPS Output
+  setupEpsMaps();
+
+  return TCL_OK;
+
+} // end Togl::makeWindowExist()
+
+void Togl::destroyCurrentWindow() {
+DOTRACE("Togl::destroyCurrentWindow");
   TkWindow *winPtr = (TkWindow *) itsTkWin;
 
   if (winPtr->window != None) {
 	 XDestroyWindow(itsDisplay, winPtr->window);
 	 winPtr->window = 0;
   }
+}
+
+int Togl::checkForGLX() {
+DOTRACE("Togl::checkForGLX");
 
   /* Make sure OpenGL's GLX extension supported */
   int dummy;
   if (!glXQueryExtension(itsDisplay, &dummy, &dummy)) {
 	 return TCL_ERR(itsInterp, "Togl: X server has no OpenGL GLX extension");
   }
+
+  return TCL_OK;
+}
+
+int Togl::setupVisInfoAndContext() {
+DOTRACE("Togl::setupVisInfoAndContext");
 
   if (itsShareContext && FindTogl(itsShareContext)) {
 	 /* share OpenGL context with existing Togl widget */
@@ -2331,8 +2381,7 @@ DOTRACE("Togl::makeWindowExist");
 	 }
 
 	 // Create a new OpenGL rendering context.
-	 int directCtx = itsIndirect ? GL_FALSE : GL_TRUE;
-	 setupGLXContext(directCtx);
+	 setupGLXContext();
 
 	 if (itsGLXContext == NULL) {
 		return TCL_ERR(itsInterp, "could not create rendering context");
@@ -2340,30 +2389,8 @@ DOTRACE("Togl::makeWindowExist");
 
   } // end else clause
 
-  createWindow();
-
-  setupStackingOrder();
-
-  setupOverlayIfNeeded();
-
-  // Issue a ConfigureNotify event if there were deferred changes
-  issueConfigureNotify();
-
-  // Request the X window to be displayed
-  XMapWindow(itsDisplay, Tk_WindowId(itsTkWin));
-
-  // Bind the context to the window and make it the current context
-  Togl_MakeCurrent(this);
-
-  // Check for a single/double buffering snafu
-  checkDblBufferSnafu();
-
-  // for EPS Output
-  setupEpsMaps();
-
   return TCL_OK;
-
-} // end Togl::makeWindowExist()
+}
 
 void Togl::buildAttribList(int* attrib_list, int ci_depth, int dbl_flag) {
 DOTRACE("Togl::buildAttribList");
@@ -2436,8 +2463,10 @@ DOTRACE("Togl::buildAttribList");
   attrib_list[attrib_count++] = None;
 }
 
-void Togl::setupGLXContext(bool directCtx) {
+void Togl::setupGLXContext() {
 DOTRACE("Togl::setupGLXContext");
+  int directCtx = itsIndirect ? GL_FALSE : GL_TRUE;
+
   if (itsShareList) {
 	 /* share display lists with existing this widget */
 	 Togl* shareWith = FindTogl(itsShareList);
