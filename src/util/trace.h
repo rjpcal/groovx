@@ -3,7 +3,7 @@
 // trace.h
 // Rob Peters
 // created: Jan-99
-// written: Mon Oct  9 19:04:49 2000
+// written: Thu Nov  2 08:54:16 2000
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -37,7 +37,7 @@
 #  endif
 #endif
 
-#if defined(LOCAL_TRACE) || defined(PROF)
+#if defined(LOCAL_TRACE) || (defined(PROF) && !defined(NO_PROF))
 #  ifndef LOCAL_PROF
 #    define LOCAL_PROF
 #  endif
