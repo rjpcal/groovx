@@ -21,16 +21,32 @@ EXTRA_STATISTICS := 0
 
 #-------------------------------------------------------------------------
 #
-# Directories for different file types
+# Platform selection
 #
 #-------------------------------------------------------------------------
 
 ifeq ($(ARCH),hp9000s700)
 	PLATFORM := hp9000s700
+	COMPILER := aCC
+	SHLIB_EXT := sl
+	STATLIB_EXT := a
+	DEFAULT_TARGET := testsh
+	ETAGS := echo "no etags"
 endif
 ifeq ($(ARCH),irix6)
 	PLATFORM := irix6
+	COMPILER := MIPSpro
+	SHLIB_EXT := so
+	STATLIB_EXT := a
+	DEFAULT_TARGET := grsh
+	ETAGS := etags
 endif
+
+#-------------------------------------------------------------------------
+#
+# Directories for different file types
+#
+#-------------------------------------------------------------------------
 
 PROJECT = $(HOME)/sorcery/grsh
 SRC := src
@@ -46,16 +62,11 @@ BIN_DIR := $(HOME)/local/$(ARCH)/bin
 
 #-------------------------------------------------------------------------
 #
-# C++ Compiler, Architecture flags
+# C++ Compiler options for compiling and linking
 #
 #-------------------------------------------------------------------------
 
-
-ARCH_FLAGS := 
-CC := 
-FILTER := 
-MAKEDEP := $(SCRIPTS)/makedep
-ifeq ($(PLATFORM),hp9000s700)
+ifeq ($(COMPILER),aCC)
 	CC := time aCC
 #	FILTER := |& sed -e '/Warning.*opt.aCC.include./,/\^\^*/d' \
 #		-e '/Warning.*usr.include./,/\^\^*/d'
@@ -66,8 +77,21 @@ ifeq ($(PLATFORM),hp9000s700)
 		-I/opt/aCC/include -I/usr -I/opt/aCC/include/iostream \
 		-I/opt/graphics/OpenGL/include -I/cit/rjpeters/include -I./src \
 		-I./scripts/spoofdep
+
+	DEBUG_OPTIONS := +O1 +Z +p
+	DEBUG_LINK_OPTIONS := -Wl,-B,immediate -Wl,+vallcompatwarnings
+
+	PROD_OPTIONS := +O2 +Z +p
+	PROD_LINK_OPTIONS := -Wl,+vallcompatwarnings
+
+	DEBUGLIB_EXT := $(SHLIB_EXT)
+	PRODLIB_EXT := $(SHLIB_EXT)
+
+	SHLIB_CMD := $(CC) -b -o
+	STATLIB_CMD := ar rus
 endif
-ifeq ($(PLATFORM),irix6)
+
+ifeq ($(COMPILER),MIPSpro)
 	CC := time /opt/MIPSpro/bin/CC
 	FILTER := 
 	ARCH_FLAGS := -n32 -DMIPSPRO_COMPILER -DIRIX6 -ptused -no_prelink \
@@ -76,8 +100,22 @@ ifeq ($(PLATFORM),irix6)
 	DEPOPTIONS := -DMIPSPRO_COMPILER -DIRIX6 -DPRESTANDARD_IOSTREAMS \
 		-I/usr/include/CC -I/cit/rjpeters/include/cppheaders \
 		-I/cit/rjpeters/include -I./src -I./scripts/spoofdep
+
+	DEBUG_OPTIONS := -g -O0
+	DEBUG_LINK_OPTIONS :=
+
+# Tests showed that -O3 provided little improvement over -O2 for this app
+	PROD_OPTIONS := -O2
+	PROD_LINK_OPTIONS :=
+
+	DEBUGLIB_EXT := $(SHLIB_EXT)
+	PRODLIB_EXT := $(SHLIB_EXT)
+
+	SHLIB_CMD := $(CC) -shared -Wl,-check_registry,/usr/lib32/so_locations -o
+	STATLIB_CMD := $(CC) -ar -o
 endif
-ifeq ($(PLATFORM),irix6-gcc)
+
+ifeq ($(COMPILER),g++)
 	CC := time /cit/rjpeters/gcc-2.95.1/bin/g++
 # This filter removes warnings that are triggered by standard library files
 	FILTER := |& sed \
@@ -90,59 +128,18 @@ ifeq ($(PLATFORM),irix6-gcc)
 	DEPOPTIONS := -DGCC_COMPILER -DIRIX6 \
 		-I/cit/rjpeters/gcc/include/g++-3 -I/cit/rjpeters/include -I./src \
 		-I./scripts/spoofdep
-endif
 
-#-------------------------------------------------------------------------
-#
-# Compilation Options
-#
-#-------------------------------------------------------------------------
-
-ifeq ($(PLATFORM),hp9000s700)
-	DEBUG_OPTIONS := +O1 +Z +p
-	DEBUG_LINK_OPTIONS := -Wl,-B,immediate -Wl,+vallcompatwarnings
-
-	PROD_OPTIONS := +O2 +Z +p
-	PROD_LINK_OPTIONS := -Wl,+vallcompatwarnings
-endif
-ifeq ($(PLATFORM),irix6)
-	DEBUG_OPTIONS := -g -O0
-	DEBUG_LINK_OPTIONS :=
-
-	PROD_OPTIONS := -O0
-	PROD_LINK_OPTIONS :=
-endif
-ifeq ($(PLATFORM),irix6-gcc)
 	DEBUG_OPTIONS := -g -O0
 	DEBUG_LINK_OPTIONS :=
 
 	PROD_OPTIONS := -O3
 	PROD_LINK_OPTIONS :=
-endif
 
-#-------------------------------------------------------------------------
-#
-# Linker Options
-#
-#-------------------------------------------------------------------------
+	DEBUGLIB_EXT := $(STATLIB_EXT)
+	PRODLIB_EXT := $(STATLIB_EXT)
 
-ifeq ($(PLATFORM),hp9000s700)
-	SHLIB_CMD := $(CC) -b -o
-	STATLIB_CMD := ar rus
-	SHLIB_EXT := sl
-	STATLIB_EXT := a
-endif
-ifeq ($(PLATFORM),irix6)
-	SHLIB_CMD := ld -n32 -shared -check_registry /usr/lib32/so_locations
-	STATLIB_CMD := /opt/MIPSpro/bin/CC -ar -o
-	SHLIB_EXT := so
-	STATLIB_EXT := a
-endif
-ifeq ($(PLATFORM),irix6-gcc)
 	SHLIB_CMD := ld -n32 -shared -check_registry /usr/lib32/so_locations
 	STATLIB_CMD := ar rus
-	SHLIB_EXT := so
-	STATLIB_EXT := a
 endif
 
 #-------------------------------------------------------------------------
@@ -152,35 +149,29 @@ endif
 #-------------------------------------------------------------------------
 
 
-ifeq ($(PLATFORM),irix6-gcc)
+STL_INCLUDE_DIR := 
+ifeq ($(COMPILER),g++)
 	STL_INCLUDE_DIR := -I$(HOME)/gcc/include/g++-3
 endif
-ifeq ($(PLATFORM),irix6)
+ifeq ($(COMPILER),MIPSpro)
 	STL_INCLUDE_DIR := -I$(HOME)/include/cppheaders
 endif
 
 INCLUDE_DIRS := -I$(HOME)/include -I$(SRC) $(STL_INCLUDE_DIR)
 
-ifeq ($(PLATFORM),hp9000s700)
+ifeq ($(ARCH),hp9000s700)
 	OPENGL_LIB_DIR := -L/opt/graphics/OpenGL/lib
 	AUDIO_LIB_DIR := -L/opt/audio/lib
 	AUDIO_LIB := -lAlib
 	RPATH_DIR := 
 	LOCAL_LIB_DIR := $(HOME)/lib/$(ARCH)
 endif
-ifeq ($(PLATFORM),irix6)
+ifeq ($(ARCH),irix6)
 	OPENGL_LIB_DIR :=
 	AUDIO_LIB_DIR :=
 	AUDIO_LIB := -laudio -laudiofile
 	RPATH_DIR := -Wl,-rpath,$(LIB)
 	LOCAL_LIB_DIR := $(HOME)/local/$(ARCH)/lib
-endif
-ifeq ($(PLATFORM),irix6-gcc)
-	OPENGL_LIB_DIR :=
-	AUDIO_LIB_DIR :=
-	AUDIO_LIB := -laudio -laudiofile
-	RPATH_DIR := -Wl,-rpath,$(LIB)
-	LOCAL_LIB_DIR := $(HOME)/lib/$(ARCH)
 endif
 
 LIB_DIRS :=  -L$(LIB) \
@@ -343,32 +334,18 @@ DEBUG_GRSH_DYNAMIC_OBJS := $(GRSH_DYNAMIC_OBJS)
 DEBUG_TCLWORKS_OBJS := $(TCLWORKS_OBJS)
 DEBUG_APPWORKS_OBJS := $(APPWORKS_OBJS)
 
-ifeq ($(PLATFORM),irix6)
-	DEBUG_LIBVISX := $(LIB)/libvisx.d.$(STATLIB_EXT)
-	DEBUG_LIBTCLWORKS := $(LIB)/libtclworks.d.$(STATLIB_EXT)
-	DEBUG_LIBAPPWORKS := $(LIB)/libappworks.d.$(STATLIB_EXT)
-	DEBUG_AUX_OBJ :=
-	ALL_DEBUG_STATLIBS := $(DEBUG_LIBVISX) $(DEBUG_LIBTCLWORKS) \
-		$(DEBUG_LIBAPPWORKS)
-	ALL_DEBUG_SHLIBS :=
-endif
-ifeq ($(PLATFORM),irix6-gcc)
-	DEBUG_LIBVISX := $(LIB)/libvisx.d.$(STATLIB_EXT)
-	DEBUG_LIBTCLWORKS := $(LIB)/libtclworks.d.$(STATLIB_EXT)
-	DEBUG_LIBAPPWORKS := $(LIB)/libappworks.d.$(STATLIB_EXT)
-	DEBUG_AUX_OBJ :=
-	ALL_DEBUG_STATLIBS := $(DEBUG_LIBVISX) $(DEBUG_LIBTCLWORKS) \
-		$(DEBUG_LIBAPPWORKS)
-	ALL_DEBUG_SHLIBS :=
-endif
-ifeq ($(PLATFORM),hp9000s700)
-	DEBUG_LIBVISX := $(LIB)/libvisx.d.$(SHLIB_EXT)
-	DEBUG_LIBTCLWORKS := $(LIB)/libtclworks.d.$(SHLIB_EXT)
-	DEBUG_LIBAPPWORKS := $(LIB)/libappworks.d.$(SHLIB_EXT)
+DEBUG_LIBVISX := $(LIB)/libvisx.d.$(DEBUGLIB_EXT)
+DEBUG_LIBTCLWORKS := $(LIB)/libtclworks.d.$(DEBUGLIB_EXT)
+DEBUG_LIBAPPWORKS := $(LIB)/libappworks.d.$(DEBUGLIB_EXT)
+
+ALL_DEBUG_LIBS := $(DEBUG_LIBVISX) $(DEBUG_LIBTCLWORKS) $(DEBUG_LIBAPPWORKS)
+
+ALL_DEBUG_STATLIBS := $(filter %.$(STATLIB_EXT),$(ALL_DEBUG_LIBS))
+ALL_DEBUG_SHLIBS   := $(filter %.$(SHLIB_EXT),$(ALL_DEBUG_LIBS))
+
+DEBUG_AUX_OBJ :=
+ifeq ($(ARCH),hp9000s700)
 	DEBUG_AUX_OBJ := /opt/langtools/lib/end.o
-	ALL_DEBUG_STATLIBS :=
-	ALL_DEBUG_SHLIBS := $(DEBUG_LIBVISX) $(DEBUG_LIBTCLWORKS) \
-		$(DEBUG_LIBAPPWORKS)
 endif
 
 #-------------------------------------------------------------------------
@@ -381,40 +358,32 @@ PROD_TARGET := $(BIN_DIR)/grsh$(VERSION)
 
 PROD_DEFS := -DASSERT -DINVARIANT
 
-# Note: exception handling does not work with shared libraries in the
-# current version of g++ (2.95.1), so on irix6 we must make the
-# libvisx library as an archive library.
-
-ifeq ($(PLATFORM),irix6)
-	PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(STATLIB_EXT)
-	PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(STATLIB_EXT)
-	PROD_LIBAPPWORKS := $(LIB)/libappworks$(VERSION).$(STATLIB_EXT)
-	ALL_PROD_STATLIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS) \
-		$(PROD_LIBAPPWORKS)
-	ALL_PROD_SHLIBS :=
-endif
-ifeq ($(PLATFORM),irix6-gcc)
-	PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(STATLIB_EXT)
-	PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(STATLIB_EXT)
-	PROD_LIBAPPWORKS := $(LIB)/libappworks$(VERSION).$(STATLIB_EXT)
-	ALL_PROD_STATLIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS) \
-		$(PROD_LIBAPPWORKS)
-	ALL_PROD_SHLIBS :=
-endif
-ifeq ($(PLATFORM),hp9000s700)
-	PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(SHLIB_EXT)
-	PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(SHLIB_EXT)
-	PROD_LIBAPPWORKS := $(LIB)/libappworks$(VERSION).$(SHLIB_EXT)
-	ALL_PROD_STATLIBS :=
-	ALL_PROD_SHLIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS) \
-		$(PROD_LIBAPPWORKS)
-endif
-
 PROD_GRSH_MAIN_OBJ := $(GRSH_MAIN_OBJ:.do=.o)
 PROD_GRSH_STATIC_OBJS := $(DEBUG_GRSH_STATIC_OBJS:.do=.o)
 PROD_GRSH_DYNAMIC_OBJS := $(DEBUG_GRSH_DYNAMIC_OBJS:.do=.o)
 PROD_TCLWORKS_OBJS := $(DEBUG_TCLWORKS_OBJS:.do=.o)
 PROD_APPWORKS_OBJS := $(DEBUG_APPWORKS_OBJS:.do=.o)
+
+# Note: exception handling does not work with shared libraries in the
+# current version of g++ (2.95.1), so on irix6 we must make the
+# libvisx library as an archive library.
+
+PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(PRODLIB_EXT)
+PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(PRODLIB_EXT)
+PROD_LIBAPPWORKS := $(LIB)/libappworks$(VERSION).$(PRODLIB_EXT)
+
+ALL_PROD_LIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS) $(PROD_LIBAPPWORKS)
+
+#ifeq ($(ARCH),irix6)
+#	ALL_PROD_STATLIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS) $(PROD_LIBAPPWORKS)
+#	ALL_PROD_SHLIBS :=
+#endif
+#ifeq ($(ARCH),hp9000s700)
+#	ALL_PROD_STATLIBS :=
+#	ALL_PROD_SHLIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS) $(PROD_LIBAPPWORKS)
+#endif
+ALL_PROD_STATLIBS := $(filter %.$(STATLIB_EXT),$(ALL_PROD_LIBS))
+ALL_PROD_SHLIBS   := $(filter %.$(SHLIB_EXT),$(ALL_PROD_LIBS))
 
 #-------------------------------------------------------------------------
 #
@@ -440,8 +409,6 @@ endif
 	echo $< >> $(LOG)/CompileStats
 	csh -fc "($(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)) $(FILTER)"
 
-#	$(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)
-
 $(SRC)/%.precc : $(SRC)/%.cc
 	$(CC) -E $< $(ALL_DEBUG_OPTIONS) > $@
 
@@ -455,12 +422,7 @@ $(SRC)/%.preh : $(SRC)/%.h
 #
 #-------------------------------------------------------------------------
 
-ifeq ($(ARCH),hp9000s700)
-default: testsh
-endif
-ifeq ($(ARCH),irix6)
-default: grsh
-endif
+default: $(DEFAULT_TARGET)
 
 testsh: $(SRC)/TAGS $(ALL_DEBUG_SHLIBS) $(DEBUG_TARGET)
 	$(DEBUG_TARGET) ./testing/grshtest.tcl
@@ -473,9 +435,6 @@ $(DEBUG_TARGET): $(DEBUG_GRSH_MAIN_OBJ) \
 
 grsh: $(SRC)/TAGS $(ALL_PROD_SHLIBS) $(PROD_TARGET)
 	$(PROD_TARGET) ./testing/grshtest.tcl
-
-#	echo "exit" | $(PROD_TARGET)
-
 
 $(PROD_TARGET): $(PROD_GRSH_MAIN_OBJ) \
 		$(PROD_GRSH_STATIC_OBJS) $(ALL_PROD_STATLIBS)
@@ -530,6 +489,8 @@ ALL_HEADERS := \
 DEP_TEMP := $(patsubst %.cc,%.d,$(ALL_SOURCES))
 ALL_DEPS := $(subst src/,dep/,$(DEP_TEMP))
 
+MAKEDEP := $(SCRIPTS)/makedep
+
 $(DEP)/%.d : $(SRC)/%.cc
 	$(MAKEDEP) -DNO_EXTERNAL_INCLUDE_GUARDS $(DEPOPTIONS) $< > $@
 
@@ -566,7 +527,7 @@ clean:
 
 # Make clean, and also remove all debug object files
 clean_do: clean
-	rm $(OBJ)/*.do $(OBJ)/*/*.do
+	rm -f $(OBJ)/*.do $(OBJ)/*/*.do
 
 # Make clean, and also remove all production object files
 clean_o: clean
@@ -577,18 +538,10 @@ clean_dep: clean
 
 # Generate TAGS file based on all source files
 $(SRC)/TAGS: $(ALL_SOURCES) $(ALL_HEADERS)
-ifeq ($(ARCH),hp9000s700)
-	echo 'etags not installed'
-else
-	etags -f$(SRC)/TAGS $(ALL_SOURCES) $(ALL_HEADERS)
-endif
+	$(ETAGS) -f$(SRC)/TAGS $(ALL_SOURCES) $(ALL_HEADERS)
 
 $(SRC)/H_TAGS: $(ALL_HEADERS)
-ifeq ($(ARCH),hp9000s700)
-	echo 'etags not installed'
-else
-	etags -f$(SRC)/H_TAGS $(ALL_HEADERS)
-endif
+	$(ETAGS) -f$(SRC)/H_TAGS $(ALL_HEADERS)
 
 # Count the lines in all source files
 count:
