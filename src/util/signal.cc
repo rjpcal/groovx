@@ -3,7 +3,7 @@
 // observable.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 25 18:39:27 1999
-// written: Wed May 26 11:00:30 1999
+// written: Wed May 26 11:07:32 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ DOTRACE("Observable::sendStateChangeMsg");
   }
 }
 
-void Observable::sendDestroyMsg() const {
+void Observable::sendDestroyMsg() {
 DOTRACE("Observable::sendDestroyMsg");
   for (list<Observer *>::iterator ii = itsImpl.itsObservers.begin();
 		 ii != itsImpl.itsObservers.end();

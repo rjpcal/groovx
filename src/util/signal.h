@@ -3,7 +3,7 @@
 // observable.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 25 18:29:04 1999
-// written: Wed May 26 11:01:34 1999
+// written: Wed May 26 11:07:34 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ protected:
   void sendStateChangeMsg() const;
 
 private:
-  void sendDestroyMsg() const;
+  void sendDestroyMsg();
 
   ObservableImpl& itsImpl;
 };
