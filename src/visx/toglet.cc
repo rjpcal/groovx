@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Jun  6 16:53:30 2001
+// written: Wed Jun  6 18:09:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,6 +42,19 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
+
+namespace {
+  char buf[64];
+
+  const char* widgetName(Util::UID id)
+  {
+	 ostrstream ost(buf, 63);
+
+	 ost << ".togl_private" << id << '\0';
+
+	 return buf;
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -111,7 +124,7 @@ ToglConfig::ToglConfig(Tcl_Interp* interp,
 							  double dist, double unit_angle) :
   GWT::Widget(),
   itsCanvas(new GLCanvas),
-  itsTogl(new Togl(interp, ".togl_private", config_argc, config_argv)),
+  itsTogl(new Togl(interp, widgetName(id()), config_argc, config_argv)),
   itsViewingDistance(dist), 
   itsFixedScaleFlag(true),
   itsFixedScale(1.0),
@@ -264,6 +277,9 @@ DOTRACE("getX11Window");
 
 GWT::Canvas* ToglConfig::getCanvas() {
 DOTRACE("ToglConfig::getCanvas");
+
+  if (itsTogl) itsTogl->makeCurrent();
+
   return itsCanvas.get();
 }
 
