@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Fri Jan 18 16:06:56 2002
+// written: Mon Jan 28 11:39:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,6 +71,12 @@ public:
   typename Cue::Type getResult(Cue) const
   {
     return Tcl::Convert<typename Cue::Type>::fromTcl(getObjResult());
+  }
+
+  template <class T>
+  T getResult() const
+  {
+    return Tcl::Convert<T>::fromTcl(getObjResult());
   }
 
   // Variables
