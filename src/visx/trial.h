@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mar-99
-// written: Wed Jun  6 09:38:30 2001
+// written: Wed Jun  6 09:48:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -110,14 +110,14 @@ public:
   double avgResponse() const;
   double avgRespTime() const;
 
-  void add(int objid, int posid);
+  void add(Util::UID objid, Util::UID posid);
 
   void addNode(Util::UID id);
 
   void trNextNode();
 
-  int getCurrentNode() const;
-  void setCurrentNode(int nodeNumber);
+  unsigned int getCurrentNode() const;
+  void setCurrentNode(unsigned int nodeNumber);
 
   void clearObjs();
 

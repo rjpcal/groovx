@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Jun  6 09:07:54 2001
+// written: Wed Jun  6 09:39:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ private:
   typedef minivec<IdItem<GxSeparator> > GxNodes;
   GxNodes itsGxNodes;
 
-  int itsCurrentNode;
+  unsigned int itsCurrentNode;
 
   minivec<Response> itsResponses;
   int itsType;
@@ -205,7 +205,7 @@ public:
   double avgResponse() const;
   double avgRespTime() const;
 
-  void add(int objid, int posid);
+  void add(Util::UID objid, Util::UID posid);
 
   void addNode(Util::UID id)
   {
@@ -223,10 +223,10 @@ public:
 
   void trNextNode() { setCurrentNode(itsCurrentNode+1); }
 
-  int getCurrentNode() const { return itsCurrentNode; }
-  void setCurrentNode(int nodeNumber)
+  unsigned int getCurrentNode() const { return itsCurrentNode; }
+  void setCurrentNode(unsigned int nodeNumber)
   {
-	 if (nodeNumber < 0 || nodeNumber >= itsGxNodes.size())
+	 if (nodeNumber >= itsGxNodes.size())
 		{
 		  ErrorWithMsg err("invalid node number ");
 		  err.appendNumber(nodeNumber);
@@ -246,6 +246,8 @@ public:
   void trHaltExpt();
   void trResponseSeen();
   void trRecordResponse(Response& response);
+  void trAllowResponses(Trial* self);
+  void trDenyResponses();
 
   void installSelf(GWT::Widget& widget) const;
 };
@@ -414,7 +416,7 @@ DOTRACE("Trial::Impl::avgRespTime");
 // manipulators //
 //////////////////
 
-void Trial::Impl::add(int objid, int posid) {
+void Trial::Impl::add(Util::UID objid, Util::UID posid) {
 DOTRACE("Trial::Impl::add");
 
   IdItem<GxSeparator> sepitem(GxSeparator::make());
@@ -573,10 +575,28 @@ DOTRACE("Trial::Impl::trRecordResponse");
   getBlock().processResponse(response);
 }
 
+void Trial::Impl::trAllowResponses(Trial* self) {
+DOTRACE("Trial::Impl::trAllowResponses");
+  if (INACTIVE == itsState) return;
+
+  timeTrace("trAllowResponses");
+
+  responseHandler().rhAllowResponses(getWidget(), *self);
+}
+
+void Trial::Impl::trDenyResponses() {
+DOTRACE("Trial::Impl::trDenyResponses");
+  if (INACTIVE == itsState) return;
+
+  timeTrace("trDenyResponses");
+
+  responseHandler().rhDenyResponses();
+}
+
 void Trial::Impl::installSelf(GWT::Widget& widget) const {
 DOTRACE("Trial::Impl::installSelf");
 
-  if (itsCurrentNode >= 0 && (unsigned int)itsCurrentNode < itsGxNodes.size())
+  if (itsCurrentNode < itsGxNodes.size())
 	 widget.setDrawable(IdItem<GxNode>(itsGxNodes[itsCurrentNode]));
 }
 
@@ -680,7 +700,7 @@ double Trial::avgRespTime() const
   { return itsImpl->avgRespTime(); }
 
 
-void Trial::add(int objid, int posid)
+void Trial::add(Util::UID objid, Util::UID posid)
   { itsImpl->add(objid, posid); }
 
 void Trial::addNode(Util::UID id)
@@ -689,10 +709,10 @@ void Trial::addNode(Util::UID id)
 void Trial::trNextNode()
   { itsImpl->trNextNode(); }
 
-int Trial::getCurrentNode() const
+unsigned int Trial::getCurrentNode() const
   { return itsImpl->getCurrentNode(); }
 
-void Trial::setCurrentNode(int nodeNumber)
+void Trial::setCurrentNode(unsigned int nodeNumber)
   { itsImpl->setCurrentNode(nodeNumber); }
 
 void Trial::clearObjs()
@@ -723,6 +743,12 @@ void Trial::trResponseSeen()
 
 void Trial::trRecordResponse(Response& response)
   { itsImpl->trRecordResponse(response); }
+
+void Trial::trAllowResponses()
+  { itsImpl->trAllowResponses(this); }
+
+void Trial::trDenyResponses()
+  { itsImpl->trDenyResponses(); }
 
 void Trial::installSelf(GWT::Widget& widget) const
   { itsImpl->installSelf(widget); }
