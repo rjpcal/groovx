@@ -36,7 +36,7 @@ test "ExptTcl-Expt::begin" "too many args" {
 } {^wrong \# args: should be "Expt::begin"$}
 test "ExptTcl-Expt::begin" "normal use" {
 	 Expt::clear
-	 set block [IO::new Block]
+	 set block [Obj::new Block]
 	 Expt::addBlock $block
 	 Expt::begin
 	 Expt::stop
@@ -106,20 +106,20 @@ test "ExptTcl-Expt::stop" "error" {} $BLANK $no_test
 
 ### General experiment tests ###
 test "ExptTcl-Expt::begin" "general sanity test" {
-	 set thid [IO::new TimingHdlr]
+	 set thid [Obj::new TimingHdlr]
 	 Th::addStartEvent $thid EndTrialEvent 100
 
-	 set rhid [IO::new NullResponseHdlr]
+	 set rhid [Obj::new NullResponseHdlr]
 
-	 set face [IO::new Face]
-	 set pos [IO::new Position]
-	 set trial [IO::new Trial]
+	 set face [Obj::new Face]
+	 set pos [Obj::new Position]
+	 set trial [Obj::new Trial]
 	 Trial::add $trial $face $pos
 
 	 Trial::timingHdlr $trial $thid
 	 Trial::responseHdlr $trial $rhid
 
-	 set block [IO::new Block]
+	 set block [Obj::new Block]
 	 Block::addTrialIds $block $trial
 
 	 Expt::clear
