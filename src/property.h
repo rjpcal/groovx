@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Sat Oct  2 21:17:32 1999
+// written: Mon Oct  4 11:56:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -222,6 +222,7 @@ public:
 	 min = auto_ptr<Value>(rhs.min->clone());
 	 max = auto_ptr<Value>(rhs.max->clone());
 	 res = auto_ptr<Value>(rhs.res->clone());
+	 startNewGroup = rhs.startNewGroup;
   }
 
   string name;
