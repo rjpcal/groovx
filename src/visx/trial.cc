@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Sat May 26 17:59:54 2001
+// written: Sat Jun  2 09:17:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -174,11 +174,23 @@ public:
   int getCorrectResponse() const { return itsCorrectResponse; }
   void setCorrectResponse(int response) { itsCorrectResponse = response; }
 
+#ifndef ACC_COMPILER
   IdItem<ResponseHandler> getResponseHandler() const { return itsRh; }
   void setResponseHandler(IdItem<ResponseHandler> rh) { itsRh = rh; }
 
   IdItem<TimingHdlr> getTimingHdlr() const { return itsTh; }
   void setTimingHdlr(IdItem<TimingHdlr> th) { itsTh = th; }
+#else
+  IdItem<ResponseHandler> getResponseHandler() const
+    { return IdItem<ResponseHandler>(itsRh); }
+  void setResponseHandler(IdItem<ResponseHandler> rh)
+    { itsRh = MaybeIdItem<ResponseHandler>(rh); }
+
+  IdItem<TimingHdlr> getTimingHdlr() const
+    { return IdItem<TimingHdlr>(itsTh); }
+  void setTimingHdlr(IdItem<TimingHdlr> th)
+    { itsTh = MaybeIdItem<TimingHdlr>(th); }
+#endif
 
   int trialType() const;
   void setType(int t);
