@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Thu Jul 19 21:05:54 2001
+// written: Sun Jul 22 18:05:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,26 +29,27 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c TclCmd is an abstract class that which provides a way to wrap
- * Tcl object commands in C++ classes. It allows commands that do
+ * \c Tcl::TclCmd is an abstract class that which provides a way to
+ * wrap Tcl object commands in C++ classes. It allows commands that do
  * similar things to be related through inheritance, and for common
  * behavior to be placed in base classes. The \c TclCmd class itself
  * takes care of such things as checking the argument count, and
  * issuing an error message if the argument count is incorrect.
  *
- * \c TclCmd uses class \c Context to represent the set of Tcl command
- * arguments and the interpreter's result.
+ * \c Tcl::TclCmd uses class \c Context to represent the set of Tcl
+ * command arguments and the interpreter's result.
  *
- * If more than one TclCmd is created with the same name, an
+ * If more than one Tcl::TclCmd is created with the same name, an
  * overloading sequence is created. Overloading is done by argument
  * counts. The first TclCmd in an overload sequence to match the
  * argument count of the context will be used.
  *
- * The only C++ clients of \c TclCmd should be those who make
- * subclasses to perform specific actions, and those who instantiate
- * these subclasses to get the commands running in a Tcl
- * interpreter. No general C++ client should ever need to invoke a \c
- * TclCmd member function.
+ * Most clients of Tcl::TclCmd will be able to simply use
+ * Tcl::makeCmd() or Tcl::makeVecCmd(), which detect the types of C++
+ * functions and build generic Tcl::TclCmd's that call the functions
+ * appropriately, or use Tcl::Pkg::def() and related functions, which
+ * call Tcl::makeCmd() but in addition help to relate the commands to
+ * a particular package.
  *
  **/
 ///////////////////////////////////////////////////////////////////////

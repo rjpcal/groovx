@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Tue Jun 19 15:08:08 2001
+// written: Sun Jul 22 17:57:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,10 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * ObjDb.
+ * ObjDb is a database for storing Util::Object's, which can be
+ * accessed by the objects' Util::UID's. Most clients will not need to
+ * use the ObjDb directly, but can instead manage Util::Object's
+ * indirectly with the Util::Ref and Util::WeakRef smart pointers.
  *
  **/
 ///////////////////////////////////////////////////////////////////////

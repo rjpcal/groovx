@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Fri Jun 22 11:20:33 2001
+// written: Sun Jul 22 18:01:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -118,7 +118,23 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Field base class.
+ * Field base class. Value's provide an interface between the untyped
+ * world of Tcl, and the strongly typed world of C++. The abstract
+ * Value interface provides operations such as getInt(), getDouble(),
+ * getCstring(), etc. for the basic value types. Field's are intended
+ * to be members of C++ classes, and expose value()/setValue()
+ * functions that take or return Value's. C++ classes can inherit from
+ * FieldContainer to maintain a list of FieldInfo's that act as
+ * pointer-to-members for the contained Field's. This FieldMap is then
+ * sufficient for a template to be able to generate all the necessary
+ * Tcl::TclCmd's to expose a class's fields to Tcl. A C++ class may
+ * actually store Value subclasses that provide efficient access to
+ * their native type to clients (such as the owner of the Value) who
+ * know the real type of the Value. For example, a simple template
+ * TValue stores an object of a basic type, provides access to that
+ * object via get/setNative() procedures, but also implements all of
+ * Value's virtual functions getInt(), getDouble(), etc. Any call to a
+ * get*() function of the wrong type will throw a run-time exception.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
