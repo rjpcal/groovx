@@ -2,7 +2,7 @@
 // iostl.h
 // Rob Peters
 // created: Sat Mar 13 15:20:43 1999
-// written: Thu Jun 24 19:11:32 1999
+// written: Thu Sep 16 13:43:52 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -44,6 +44,11 @@ public:
 private:
   T itsVal;
 };
+
+template<>
+void IoWrapper<bool, ' '>::deserialize(istream& is, IOFlag) {
+  int temp; is >> temp; itsVal = bool(temp);
+}
 
 template<class T>
 int gCharCountIoVec( const vector<T*>& vec ) {
