@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Mon Jul 16 11:02:12 2001
+// written: Mon Jul 16 13:38:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,30 +24,12 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::SafeInterface member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-Tcl::SafeInterface::SafeInterface(Tcl_Interp* interp) :
-  itsInterp(interp)
-{}
-
-Tcl::SafeInterface::~SafeInterface() {}
-
-void Tcl::SafeInterface::handleError(const char* msg) const {
-DOTRACE("Tcl::SafeInterface::handleError");
-
-  throw TclError(msg);
-}
-
-///////////////////////////////////////////////////////////////////////
-//
 // Tcl::SafeInterp member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
 Tcl::SafeInterp::SafeInterp(Tcl_Interp* interp) :
-  Tcl::SafeInterface(interp)
+  itsInterp(interp)
 {
 DOTRACE("Tcl::SafeInterp::SafeInterp");
   Invariant(itsInterp != 0);
@@ -123,6 +105,12 @@ DOTRACE("Tcl::SafeInterp::unsetGlobalVar");
     {
       handleError("couldn't unset global variable");
     }
+}
+
+void Tcl::SafeInterp::handleError(const char* msg) const {
+DOTRACE("Tcl::SafeInterp::handleError");
+
+  throw TclError(msg);
 }
 
 static const char vcid_tclutil_cc[] = "$Header$";

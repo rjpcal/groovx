@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Mon Jul 16 11:02:19 2001
+// written: Mon Jul 16 13:39:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,57 +22,26 @@ struct Tcl_Obj;
 
 namespace Tcl
 {
-  class SafeInterface;
   class SafeInterp;
 }
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Tcl::SafeInterface includes functionality that is safe even when
- * the embedded Tcl_Interp* is null.
+ * Tcl::SafeInterp provides a wrapper around calls to the Tcl
+ * interpreter.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::SafeInterface {
-private:
-  SafeInterface(const SafeInterface&);
-  SafeInterface& operator=(const SafeInterface&);
-
-protected:
-  Tcl_Interp* const itsInterp;
-
-  void handleError(const char* msg) const;
-
-public:
-  SafeInterface(Tcl_Interp* interp);
-  ~SafeInterface();
-
-  bool hasInterp() const { return itsInterp != 0; }
-  Tcl_Interp* intp() const { return itsInterp; }
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * Tcl::SafeInterp extends Tcl::SafeInterface with operations that are
- * allowed only with a valid Tcl_Interp*.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-class Tcl::SafeInterp : public Tcl::SafeInterface {
+class Tcl::SafeInterp {
 public:
 
   SafeInterp(Tcl_Interp* interp);
   ~SafeInterp();
 
-  ///////////////////////////////////////////////////////////////////////
-  //
-  // Tcl API wrappers
-  //
-  ///////////////////////////////////////////////////////////////////////
+  bool hasInterp() const { return itsInterp != 0; }
+  Tcl_Interp* intp() const { return itsInterp; }
 
   // Expressions
   bool evalBooleanExpr(Tcl_Obj* obj) const;
@@ -86,6 +55,11 @@ public:
   // Variables
   void setGlobalVar(const char* var_name, Tcl_Obj* var) const;
   void unsetGlobalVar(const char* var_name) const;
+
+private:
+  void handleError(const char* msg) const;
+
+  Tcl_Interp* const itsInterp;
 };
 
 static const char vcid_tclutil_h[] = "$Header$";
