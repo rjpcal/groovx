@@ -16,7 +16,7 @@
 #
 ##########################################################################
 
-VERSION := 0.8a3
+VERSION := 0.8a4
 EXTRA_STATISTICS := 0
 
 TCLTK_VERSION := 8.2
@@ -247,7 +247,6 @@ GRSH_DYNAMIC_OBJS := \
 VISX_OBJS := \
 	$(OBJ)/bitmaptcl.do \
 	$(OBJ)/block.do \
-	$(OBJ)/blocklist.do \
 	$(OBJ)/blocktcl.do \
 	$(OBJ)/bmapdata.do \
 	$(OBJ)/bmaprenderer.do \
@@ -271,26 +270,20 @@ VISX_OBJS := \
 	$(OBJ)/masktcl.do \
 	$(OBJ)/morphyfacetcl.do \
 	$(OBJ)/nullresponsehdlr.do \
-	$(OBJ)/objlist.do \
 	$(OBJ)/objlisttcl.do \
 	$(OBJ)/pbm.do \
 	$(OBJ)/positiontcl.do \
-	$(OBJ)/poslist.do \
 	$(OBJ)/poslisttcl.do \
 	$(OBJ)/response.do \
 	$(OBJ)/responsehandler.do \
-	$(OBJ)/rhlist.do \
 	$(OBJ)/rhtcl.do \
 	$(OBJ)/sound.do \
-	$(OBJ)/soundlist.do \
 	$(OBJ)/soundtcl.do \
 	$(OBJ)/subject.do \
 	$(OBJ)/subjecttcl.do \
-	$(OBJ)/thlist.do \
 	$(OBJ)/thtcl.do \
 	$(OBJ)/timinghandler.do \
 	$(OBJ)/timinghdlr.do \
-	$(OBJ)/tlist.do \
 	$(OBJ)/tlisttcl.do \
 	$(OBJ)/tlistutils.do \
 	$(OBJ)/trial.do \
@@ -301,8 +294,8 @@ VISX_OBJS := \
 APPWORKS_OBJS := \
 	$(OBJ)/application.do \
 	$(OBJ)/factory.do \
+	$(OBJ)/iditemutils.do \
 	$(OBJ)/ioptrlist.do \
-	$(OBJ)/ptrlistbase.do \
 	$(OBJ)/gwt/canvas.do \
 	$(OBJ)/gwt/widget.do \
 	$(OBJ)/io/asciistreamreader.do \
@@ -310,6 +303,7 @@ APPWORKS_OBJS := \
 	$(OBJ)/io/io.do \
 	$(OBJ)/io/iofactory.do \
 	$(OBJ)/io/iolegacy.do \
+	$(OBJ)/io/iomap.do \
 	$(OBJ)/io/iomgr.do \
 	$(OBJ)/io/property.do \
 	$(OBJ)/io/reader.do \
