@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Mon Jun 18 06:53:22 2001
+// written: Mon Jun 18 09:29:31 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -83,12 +83,12 @@ namespace GLTcl {
   //
 
   template <class R>
-  class GLCmdP0 : public Tcl::TclCmd {
+  class CmdP0 : public Tcl::TclCmd {
   public:
     typedef R (*Func)();
 
-    GLCmdP0(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-              const char* usage) :
+    CmdP0<R>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
+             const char* usage) :
       Tcl::TclCmd(pkg->interp(), cmd_name, usage, 1),
       itsFunc(f)
     {}
@@ -100,14 +100,14 @@ namespace GLTcl {
     }
 
   private:
-    GLCmdP0(const GLCmdP0&);
-    GLCmdP0& operator=(const GLCmdP0&);
+    CmdP0<R>(const CmdP0<R>&);
+    CmdP0<R>& operator=(const CmdP0<R>&);
 
     Func itsFunc;
   };
 
   template <>
-  void GLCmdP0<void>::invoke() { itsFunc(); }
+  void CmdP0<void>::invoke() { itsFunc(); }
 
 
 
@@ -116,12 +116,12 @@ namespace GLTcl {
   //
 
   template <class R, class P1>
-  class GLCmdP1 : public Tcl::TclCmd {
+  class CmdP1 : public Tcl::TclCmd {
   public:
     typedef R (*Func)(P1);
 
-    GLCmdP1(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-            const char* usage) :
+    CmdP1<R, P1>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
+                 const char* usage) :
       Tcl::TclCmd(pkg->interp(), cmd_name, usage, 2),
       itsFunc(f)
     {}
@@ -134,19 +134,19 @@ namespace GLTcl {
     }
 
   private:
-    GLCmdP1(const GLCmdP1&);
-    GLCmdP1& operator=(const GLCmdP1&);
+    CmdP1<R, P1>(const CmdP1<R, P1>&);
+    CmdP1<R, P1>& operator=(const CmdP1<R, P1>&);
 
     Func itsFunc;
   };
 
   template <class P1>
-  class GLCmdP1<void, P1> : public Tcl::TclCmd {
+  class CmdP1<void, P1> : public Tcl::TclCmd {
   public:
     typedef void (*Func)(P1);
 
-    GLCmdP1(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-            const char* usage) :
+    CmdP1<void, P1>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
+                    const char* usage) :
       Tcl::TclCmd(pkg->interp(), cmd_name, usage, 2),
       itsFunc(f)
     {}
@@ -159,8 +159,8 @@ namespace GLTcl {
     }
 
   private:
-    GLCmdP1(const GLCmdP1&);
-    GLCmdP1& operator=(const GLCmdP1&);
+    CmdP1<void, P1>(const CmdP1<void, P1>&);
+    CmdP1<void, P1>& operator=(const CmdP1<void, P1>&);
 
     Func itsFunc;
   };
@@ -171,12 +171,12 @@ namespace GLTcl {
   //
 
   template <class R, class P1, class P2>
-  class GLCmdP2 : public Tcl::TclCmd {
+  class CmdP2 : public Tcl::TclCmd {
   public:
     typedef R (*Func)(P1, P2);
 
-    GLCmdP2(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-            const char* usage) :
+    CmdP2<R, P1, P2>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
+                     const char* usage) :
       Tcl::TclCmd(pkg->interp(), cmd_name, usage, 3),
       itsFunc(f)
     {}
@@ -190,19 +190,19 @@ namespace GLTcl {
     }
 
   private:
-    GLCmdP2(const GLCmdP2&);
-    GLCmdP2& operator=(const GLCmdP2&);
+    CmdP2<R, P1, P2>(const CmdP2<R, P1, P2>&);
+    CmdP2<R, P1, P2>& operator=(const CmdP2<R, P1, P2>&);
 
     Func itsFunc;
   };
 
   template <class P1, class P2>
-  class GLCmdP2<void, P1, P2> : public Tcl::TclCmd {
+  class CmdP2<void, P1, P2> : public Tcl::TclCmd {
   public:
     typedef void (*Func)(P1, P2);
 
-    GLCmdP2(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-            const char* usage) :
+    CmdP2<void, P1, P2>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
+                        const char* usage) :
       Tcl::TclCmd(pkg->interp(), cmd_name, usage, 3),
       itsFunc(f)
     {}
@@ -216,8 +216,8 @@ namespace GLTcl {
     }
 
   private:
-    GLCmdP2(const GLCmdP2&);
-    GLCmdP2& operator=(const GLCmdP2&);
+    CmdP2<void, P1, P2>(const CmdP2<void, P1, P2>&);
+    CmdP2<void, P1, P2>& operator=(const CmdP2<void, P1, P2>&);
 
     Func itsFunc;
   };
@@ -228,12 +228,12 @@ namespace GLTcl {
   //
 
   template <class R, class P1, class P2, class P3>
-  class GLCmdP3 : public Tcl::TclCmd {
+  class CmdP3 : public Tcl::TclCmd {
   public:
     typedef R (*Func)(P1, P2, P3);
 
-    GLCmdP3(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-            const char* usage) :
+    CmdP3<R, P1, P2, P3>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
+                         const char* usage) :
       Tcl::TclCmd(pkg->interp(), cmd_name, usage, 4),
       itsFunc(f)
     {}
@@ -248,19 +248,19 @@ namespace GLTcl {
     }
 
   private:
-    GLCmdP3(const GLCmdP3&);
-    GLCmdP3& operator=(const GLCmdP3&);
+    CmdP3<R, P1, P2, P3>(const CmdP3<R, P1, P2, P3>&);
+    CmdP3<R, P1, P2, P3>& operator=(const CmdP3<R, P1, P2, P3>&);
 
     Func itsFunc;
   };
 
   template <class P1, class P2, class P3>
-  class GLCmdP3<void, P1, P2, P3> : public Tcl::TclCmd {
+  class CmdP3<void, P1, P2, P3> : public Tcl::TclCmd {
   public:
     typedef void (*Func)(P1, P2, P3);
 
-    GLCmdP3(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-            const char* usage) :
+    CmdP3<void, P1, P2, P3>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
+                            const char* usage) :
       Tcl::TclCmd(pkg->interp(), cmd_name, usage, 4),
       itsFunc(f)
     {}
@@ -275,8 +275,8 @@ namespace GLTcl {
     }
 
   private:
-    GLCmdP3(const GLCmdP3&);
-    GLCmdP3& operator=(const GLCmdP3&);
+    CmdP3<void, P1, P2, P3>(const CmdP3<void, P1, P2, P3>&);
+    CmdP3<void, P1, P2, P3>& operator=(const CmdP3<void, P1, P2, P3>&);
 
     Func itsFunc;
   };
@@ -287,12 +287,12 @@ namespace GLTcl {
   //
 
   template <class R, class P1, class P2, class P3, class P4>
-  class GLCmdP4 : public Tcl::TclCmd {
+  class CmdP4 : public Tcl::TclCmd {
   public:
     typedef R (*Func)(P1, P2, P3, P4);
 
-    GLCmdP4(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-            const char* usage) :
+    CmdP4<R, P1, P2, P3, P4>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
+                             const char* usage) :
       Tcl::TclCmd(pkg->interp(), cmd_name, usage, 5),
       itsFunc(f)
     {}
@@ -308,19 +308,19 @@ namespace GLTcl {
     }
 
   private:
-    GLCmdP4(const GLCmdP4&);
-    GLCmdP4& operator=(const GLCmdP4&);
+    CmdP4<R, P1, P2, P3, P4>(const CmdP4<R, P1, P2, P3, P4>&);
+    CmdP4<R, P1, P2, P3, P4>& operator=(const CmdP4<R, P1, P2, P3, P4>&);
 
     Func itsFunc;
   };
 
   template <class P1, class P2, class P3, class P4>
-  class GLCmdP4<void, P1, P2, P3, P4> : public Tcl::TclCmd {
+  class CmdP4<void, P1, P2, P3, P4> : public Tcl::TclCmd {
   public:
     typedef void (*Func)(P1, P2, P3, P4);
 
-    GLCmdP4(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
-            const char* usage) :
+    CmdP4<void, P1, P2, P3, P4>(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
+                                const char* usage) :
       Tcl::TclCmd(pkg->interp(), cmd_name, usage, 5),
       itsFunc(f)
     {}
@@ -336,8 +336,8 @@ namespace GLTcl {
     }
 
   private:
-    GLCmdP4(const GLCmdP4&);
-    GLCmdP4& operator=(const GLCmdP4&);
+    CmdP4<void, P1, P2, P3, P4>(const CmdP4<void, P1, P2, P3, P4>&);
+    CmdP4<void, P1, P2, P3, P4>& operator=(const CmdP4<void, P1, P2, P3, P4>&);
 
     Func itsFunc;
   };
@@ -352,15 +352,15 @@ namespace GLTcl {
                               R (*f)(),
                               const char* cmd_name, const char* usage)
   {
-    return new GLTcl::GLCmdP0<R>(pkg, f, cmd_name, usage);
+    return new GLTcl::CmdP0<R>(pkg, f, cmd_name, usage);
   }
 
   template <class R, class P1>
   inline Tcl::TclCmd* makeCmd(Tcl::TclPkg* pkg,
-                              R (*f)(P1), // typename GLCmdP1<P1>::Func
+                              R (*f)(P1), // typename CmdP1<P1>::Func
                               const char* cmd_name, const char* usage)
   {
-    return new GLTcl::GLCmdP1<R, P1>(pkg, f, cmd_name, usage);
+    return new GLTcl::CmdP1<R, P1>(pkg, f, cmd_name, usage);
   }
 
   template <class R, class P1, class P2>
@@ -368,7 +368,7 @@ namespace GLTcl {
                               R (*f)(P1, P2),
                               const char* cmd_name, const char* usage)
   {
-    return new GLTcl::GLCmdP2<R, P1, P2>(pkg, f, cmd_name, usage);
+    return new GLTcl::CmdP2<R, P1, P2>(pkg, f, cmd_name, usage);
   }
 
   template <class R, class P1, class P2, class P3>
@@ -376,7 +376,7 @@ namespace GLTcl {
                               R (*f)(P1, P2, P3),
                               const char* cmd_name, const char* usage)
   {
-    return new GLTcl::GLCmdP3<R, P1, P2, P3>(pkg, f, cmd_name, usage);
+    return new GLTcl::CmdP3<R, P1, P2, P3>(pkg, f, cmd_name, usage);
   }
 
   template <class R, class P1, class P2, class P3, class P4>
@@ -384,7 +384,7 @@ namespace GLTcl {
                               R (*f)(P1, P2, P3, P4),
                               const char* cmd_name, const char* usage)
   {
-    return new GLTcl::GLCmdP4<R, P1, P2, P3, P4>(pkg, f, cmd_name, usage);
+    return new GLTcl::CmdP4<R, P1, P2, P3, P4>(pkg, f, cmd_name, usage);
   }
 
 } // end namespace GLTcl
