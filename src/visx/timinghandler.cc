@@ -3,7 +3,7 @@
 // timinghandler.cc
 // Rob Peters
 // created: Wed May 19 21:39:51 1999
-// written: Fri Oct 20 17:46:15 2000
+// written: Fri Oct 20 17:54:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,12 +48,12 @@ TimingHandler::TimingHandler() :
   abortwait_abort_id(0)
 {
 DOTRACE("TimingHandler::TimingHandler");
-  addEvent(new DrawEvent(0), IMMEDIATE);
-  stimdur_start_id = addEvent(new UndrawEvent(2000), FROM_START);
-  timeout_start_id = addEvent(new AbortTrialEvent(4000), FROM_START);
-  addEvent(new UndrawEvent(0), FROM_RESPONSE);
-  iti_response_id = addEvent(new EndTrialEvent(1000), FROM_RESPONSE);
-  abortwait_abort_id = addEvent(new EndTrialEvent(1000), FROM_ABORT);
+  addEventByName("DrawEvent", IMMEDIATE, 0);
+  stimdur_start_id = addEventByName("UndrawEvent", FROM_START, 2000);
+  timeout_start_id = addEventByName("AbortTrialEvent", FROM_START, 4000);
+  addEventByName("UndrawEvent", FROM_RESPONSE, 0);
+  iti_response_id = addEventByName("EndTrialEvent", FROM_RESPONSE, 1000);
+  abortwait_abort_id = addEventByName("EndTrialEvent", FROM_ABORT, 1000);
 }
 
 TimingHandler::~TimingHandler() {
