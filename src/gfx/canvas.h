@@ -3,7 +3,7 @@
 // canvas.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Nov 15 18:00:27 1999
-// written: Mon Dec  6 21:22:31 1999
+// written: Mon Dec  6 22:23:03 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,8 +34,23 @@ public:
 
   virtual void swapForeBack() const = 0;
 
-//    virtual void pushState() const = 0;
-//    virtual void popState() const = 0;
+  virtual void flushOutput() const = 0;
+
+  virtual void pushState() const = 0;
+  virtual void popState() const = 0;
+
+  class StateSaver {
+  public:
+	 StateSaver(Canvas& canvas) : itsCanvas(canvas)
+		{ itsCanvas.pushState(); }
+	 ~StateSaver()
+		{ itsCanvas.popState(); }
+  private:
+	 StateSaver(const StateSaver&);
+	 StateSaver& operator=(const StateSaver&);
+
+	 Canvas& itsCanvas;
+  };
 
 //    virtual void translate(const Vector3<double>& v) const = 0;
 //    virtual void scale(const Vector3<double>& v) const = 0;
