@@ -147,18 +147,12 @@ public:
   // Functions to treat the arguments of the current invocation as Tcl
   // lists. There are two ways to handle arguments in such a way: one
   // is to transfer the whole list through an STL-style insert
-  // iterator, and the other is to use a \c Tcl::List::Iterator, which
-  // iterates through a Tcl list and converts each value to a type
-  // specified by the template argument of \c List::Iterator.
+  // iterator usinge getSequenceFromArg() , and the other is to use \c
+  // Tcl::List::Iterator's from beginOfArg() and endOfArg(), which
+  // iterate through a Tcl list and convert each value to a type
+  // specified by the template argument of \c Tcl::List::Iterator.
   //
   //---------------------------------------------------------------------
-
-  /** Attempts to convert argument number \a argn into a Tcl list, and
-      if successful, returns the number of elements in that list. */
-  unsigned int getSequenceLengthOfArg(int argn)
-    {
-      return safeListLength(itsObjv[argn]);
-    }
 
   /** Attempts to convert argument number \a argn into a sequence of
       elements of type \c T, and inserts these through the insert
@@ -315,8 +309,6 @@ private:
                             int objc, Tcl_Obj *const objv[]);
 
   int invokeTemplate();
-
-  static unsigned int safeListLength(Tcl_Obj* obj);
 
   void lappendValue(const Value& val);
   void lappendInt(int val);
