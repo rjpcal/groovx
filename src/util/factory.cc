@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 20 22:37:31 1999
-// written: Fri Jan 18 16:07:05 2002
+// written: Sat Aug 10 14:57:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,16 +21,6 @@
 #include "util/hash.h"
 
 #include "util/trace.h"
-
-void FactoryError::throwForType(const char* type)
-{
-  throw Util::Error(fstring("unknown object type '", type, "'"));
-}
-
-void FactoryError::throwForType(const fstring& type)
-{
-  throwForType(type.c_str());
-}
 
 struct CreatorMapBase::Impl
 {
@@ -52,6 +42,26 @@ DOTRACE("CreatorMapBase::CreatorMapBase");
 CreatorMapBase::~CreatorMapBase()
 {
 DOTRACE("CreatorMapBase::~CreatorMapBase");
+}
+
+void CreatorMapBase::throwForType(const char* type)
+{
+  fstring typelist("known types are:");
+
+  for (Impl::MapType::iterator ii = itsImpl->itsMap.begin();
+       ii != itsImpl->itsMap.end();
+       ++ii)
+    {
+      if (ii->value != 0)
+        typelist.append("\n\t", ii->key);
+    }
+
+  throw Util::Error(fstring("unknown object type '", type, "'\n", typelist));
+}
+
+void CreatorMapBase::throwForType(const fstring& type)
+{
+  throwForType(type.c_str());
 }
 
 void CreatorMapBase::clear()

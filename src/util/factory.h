@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:55 1999
-// written: Fri Jan 18 16:06:55 2002
+// written: Sat Aug 10 14:51:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,17 +27,6 @@
 #endif
 
 class fstring;
-
-/**
- *
- * Exception class for \c Factory's.
- *
- **/
-namespace FactoryError
-{
-  void throwForType(const char* type);
-  void throwForType(const fstring& type);
-};
 
 
 /**
@@ -105,6 +94,12 @@ public:
   /// Virtual destructor.
   virtual ~CreatorMapBase();
 
+  /// Raise an exception reporting an unknown type.
+  void throwForType(const char* type);
+
+  /// Raise an exception reporting an unknown type.
+  void throwForType(const fstring& type);
+
 protected:
   /// Retrieve the object associated with the tag \a name.
   void* getPtrForName(const fstring& name) const;
@@ -135,7 +130,7 @@ private:
  **/
 
 template<class BasePtr>
-class CreatorMap : private CreatorMapBase
+class CreatorMap : public CreatorMapBase
 {
 public:
   /// Virtual destructor calls \c clear() to free all memory.
@@ -233,7 +228,7 @@ public:
   BasePtr newCheckedObject(const fstring& type)
   {
     CreatorBase<BasePtr>* creator = itsMap.getPtrForName(type);
-    if (creator == 0) FactoryError::throwForType(type);
+    if (creator == 0) itsMap.throwForType(type);
     return creator->create();
   }
 };
