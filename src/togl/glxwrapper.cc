@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:07 2002
-// written: Mon Sep 16 11:54:09 2002
+// written: Mon Sep 16 18:36:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #include "togl/glxwrapper.h"
 
 #include "gfx/glcanvas.h"
+
+#include "grsh/grsh.h"
 
 #include "togl/glxattribs.h"
 #include "togl/glxopts.h"
@@ -118,6 +120,7 @@ DOTRACE("GlxWrapper::makeCurrent");
       glXMakeCurrent(itsDisplay, win, itsContext);
       currentGlxWrapper = this;
       currentWindow = win;
+      Grsh::installCanvas(*itsCanvas);
     }
 }
 
