@@ -2,7 +2,7 @@
 // expt.h
 // Rob Peters
 // created: Jan-99
-// written: Tue Mar 16 19:46:10 1999
+// written: Thu Apr 15 17:29:33 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -18,7 +18,8 @@ public:
   Expt () {}
   virtual ~Expt() {}
 
-  virtual IOResult serialize(ostream &os, IOFlag flag = NO_FLAGS) const = 0;
+  virtual void serialize(ostream &os, IOFlag flag = NO_FLAGS) const = 0;
+  virtual void deserialize(istream &is, IOFlag flag = NO_FLAGS) = 0;
 
   // accessors
   virtual int numTrials() const = 0;
@@ -31,6 +32,7 @@ public:
 
   // actions
   virtual void beginTrial() = 0;
+  virtual void abortTrial() = 0;
   virtual void recordResponse(int resp) = 0;
 };
 
