@@ -26,16 +26,14 @@ test "ObjTogl-Togl::undraw" "too many args" {
 } {wrong \# args: should be "Togl::undraw"}
 test "ObjTogl-Togl::undraw" "normal use" {
 	 set f [IO::new Face]
-	 set p [IO::new Position]
-	 set t [IO::new Trial]
-	 Trial::add $t $f $p
 	 setForeground 1
 	 setBackground 0
 	 clearscreen
-	 Togl::show $t
+	 Togl::see $f
 	 Togl::undraw
-	 pixelCheckSum
-} {^0$}
+	 set sum [pixelCheckSum]
+	 return "[expr $sum == 0] $sum]"
+} {^1 }
 test "ObjTogl-Togl::undraw" "no error" {} $BLANK $no_test
 
 ### Togl::refreshCmd ###
