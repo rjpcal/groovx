@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Fri Aug 10 10:56:09 2001
+// written: Mon Aug 13 16:33:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,17 +22,20 @@
 
 #include "util/error.h"
 #include "util/minivec.h"
+#include "util/observer.h"
 #include "util/ref.h"
 
 #include "util/trace.h"
 
-class GxSeparator::Impl {
+class GxSeparator::Impl : public Util::Observer {
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 
 public:
   Impl(GxSeparator* owner) : itsOwner(owner), itsChildren() {}
   ~Impl() {}
+
+  static Impl* make(GxSeparator* owner) { return new Impl(owner); }
 
   bool contains(GxNode* other) const
     {
@@ -58,6 +61,16 @@ public:
         }
     }
 
+  virtual void receiveStateChangeMsg(const Observable* obj)
+  {
+    DOTRACE("GxSeparator::Impl::receiveStateChangeMsg");
+    itsOwner->sendStateChangeMsg();
+  }
+
+  virtual void receiveDestroyMsg(const Observable*) {}
+
+  virtual bool isVolatile() const { return true; }
+
   GxSeparator* itsOwner;
 
   typedef minivec<Ref<GxNode> > VecType;
@@ -71,15 +84,16 @@ DOTRACE("GxSeparator::make");
 }
 
 GxSeparator::GxSeparator() :
-  itsImpl(new Impl(this))
+  itsImpl(Impl::make(this))
 {
 DOTRACE("GxSeparator::GxSeparator");
+  itsImpl->incrRefCount();
 }
 
 GxSeparator::~GxSeparator()
 {
 DOTRACE("GxSeparator::~GxSeparator");
-  delete itsImpl;
+  itsImpl->decrRefCount();
 }
 
 void GxSeparator::readFrom(IO::Reader* reader)
@@ -105,6 +119,9 @@ DOTRACE("GxSeparator::addChild");
   itsImpl->ensureNoCycle(item.get());
 
   itsImpl->itsChildren.push_back(item);
+
+  item->attach(itsImpl);
+
   return (itsImpl->itsChildren.size() - 1);
 }
 
@@ -119,13 +136,18 @@ DOTRACE("GxSeparator::insertChild");
 
   itsImpl->itsChildren.insert(itsImpl->itsChildren.begin()+at_index,
                               item);
+
+  item->attach(itsImpl);
 }
 
 void GxSeparator::removeChildAt(ChildId index)
 {
 DOTRACE("GxSeparator::removeChildAt");
   if (index < itsImpl->itsChildren.size())
-    itsImpl->itsChildren.erase(itsImpl->itsChildren.begin()+index);
+    {
+      itsImpl->itsChildren[index]->detach(itsImpl);
+      itsImpl->itsChildren.erase(itsImpl->itsChildren.begin()+index);
+    }
 }
 
 void GxSeparator::removeChild(Util::Ref<GxNode> item)
@@ -142,6 +164,7 @@ DOTRACE("GxSeparator::removeChild");
     {
       if ( (*itr)->id() == target )
         {
+          (*itr)->detach(itsImpl);
           itsImpl->itsChildren.erase(itr);
           break;
         }
