@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Mon Oct 30 11:24:19 2000
+// written: Mon Oct 30 15:57:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -166,6 +166,11 @@ public:
   /** Releases references to all unshared objects held by the
       list. Since the objects are unshared, they will be destroyed in
       the process. */
+  void purge();
+
+  /** Calls \c purge() repeatedly until no more items can be
+      removed. This will get rid of items that were only referenced by
+      other items in the list. */
   void clear();
 
   /** Return the \c IO::IoObject* at the index given by \a id. Checks

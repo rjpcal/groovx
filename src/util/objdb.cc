@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Mon Oct 30 11:53:55 2000
+// written: Mon Oct 30 15:57:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -159,9 +159,12 @@ public:
 		itsPtrMap.erase(itr);
 	 }
 
-  void clear()
+  // Return the number of items removed
+  int purge()
 	 {
 		MapType new_map;
+
+		int num_removed = 0;
 
 		for (MapType::const_iterator
 				 itr = itsPtrMap.begin(),
@@ -175,10 +178,15 @@ public:
 				{
 				  new_map.insert(*itr);
 				}
+			 else
+				{
+				  ++num_removed;
+				}
 		  }
 
 		// Now swap maps so that the old map gets cleared and everything erased
 		itsPtrMap.swap(new_map);
+		return num_removed;
 	 }
 
   IO::IoObject* getCheckedPtrBase(int id) const throw (InvalidIdError)
@@ -337,7 +345,7 @@ DOTRACE("IoPtrList::readFrom");
 
   Assert(svid >= 1);
 
-  clear();
+  purge();
   IO::ReadUtils::readObjectSeq<IO::IoObject>(reader, "itsVec", inserter());
 }
 
@@ -378,10 +386,17 @@ DOTRACE("IoPtrList::release");
   itsImpl->release(id);
 }
 
-void IoPtrList::clear() {
+void IoPtrList::purge() {
 DOTRACE("IoPtrList::clear");
   DebugEvalNL(typeid(*this).name());
-  itsImpl->clear();
+  itsImpl->purge();
+}
+
+void IoPtrList::clear() {
+DOTRACE("IoPtrList::clear");
+  // Call purge until no more items can be removed
+  while ( itsImpl->purge() != 0 )
+	 { ; }
 }
 
 IO::IoObject* IoPtrList::getCheckedPtrBase(int id) const throw (InvalidIdError) {
