@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:58:53 2001
-// written: Thu Aug  9 18:50:08 2001
+// written: Mon Aug 20 15:37:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -210,7 +210,13 @@ fstring Tcl::Convert<fstring>::fromTcl(Tcl_Obj* obj)
 {
 DOTRACE("Tcl::Convert<fstring>::fromTcl");
 
-  return fstring(Convert<const char*>::fromTcl(obj));
+  int length;
+
+  char* text = Tcl_GetStringFromObj(obj, &length);
+
+  Assert(length >= 0);
+
+  return fstring(Util::CharData(text, (unsigned int) length));
 }
 
 template <>
@@ -327,17 +333,7 @@ DOTRACE("Tcl::Convert<const char*>::toTcl");
 template <>
 Tcl::ObjPtr Tcl::Convert<char*>::toTcl(char* val)
 {
-DOTRACE("Tcl::Convert<char*>::toTcl");
-
   return Convert<const char*>::toTcl(val);
-}
-
-template <>
-Tcl::ObjPtr Tcl::Convert<fstring>::toTcl(fstring val)
-{
-DOTRACE("Tcl::Convert<fstring>::toTcl");
-
-  return Convert<const char*>::toTcl(val.c_str());
 }
 
 template <>
@@ -345,7 +341,13 @@ Tcl::ObjPtr Tcl::Convert<const fstring&>::toTcl(const fstring& val)
 {
 DOTRACE("Tcl::Convert<const fstring&>::toTcl");
 
-  return Convert<const char*>::toTcl(val.c_str());
+  return Tcl_NewStringObj(val.c_str(), val.length());
+}
+
+template <>
+Tcl::ObjPtr Tcl::Convert<fstring>::toTcl(fstring val)
+{
+  return Convert<const fstring&>::toTcl(val);
 }
 
 template <>
