@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Mon Feb 25 10:53:56 2002
+// written: Wed Mar 27 11:19:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -364,7 +364,12 @@ DOTRACE("GLCanvas::drawPixels");
 
   glPixelStorei(GL_UNPACK_ALIGNMENT, data.byteAlignment());
 
-  if (data.bitsPerPixel() == 24)
+  if (data.bitsPerPixel() == 32)
+    {
+      glDrawPixels(data.width(), data.height(), GL_RGBA, GL_UNSIGNED_BYTE,
+                   static_cast<GLvoid*>(data.bytesPtr()));
+    }
+  else if (data.bitsPerPixel() == 24)
     {
       glDrawPixels(data.width(), data.height(), GL_RGB, GL_UNSIGNED_BYTE,
                    static_cast<GLvoid*>(data.bytesPtr()));
