@@ -3,7 +3,7 @@
 // gxseparator.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Nov  2 11:20:15 2000
-// written: Thu Nov  2 11:47:58 2000
+// written: Thu Nov  2 13:20:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,8 +18,11 @@
 template <class T> class IdItem;
 
 class GxSeparator : public GxNode {
-public:
+protected:
   GxSeparator();
+
+public:
+  static GxSeparator* make();
 
   virtual ~GxSeparator();
 
