@@ -23,9 +23,8 @@ proc purgeAll {} {
 	 IoDb::clear
 }
 
-proc testList { packagename listname baseclass subclass1 subclass2 } {
-    set testObj(packagename) $packagename
-    set testObj(listname) $listname
+proc testList { baseclass subclass1 subclass2 } {
+    set testObj(packagename) Obj
     set testObj(baseclass) $baseclass
     set testObj(subclass1) $subclass1
     set testObj(subclass2) $subclass2
@@ -33,10 +32,10 @@ proc testList { packagename listname baseclass subclass1 subclass2 } {
 	 purgeAll
 
     testResetCmd testObj
-    testCountCmd testObj
+    testCountAllCmd testObj
 	 testDeleteCmd testObj
-	 testGetValidIdsCmd testObj
-	 testIsValidIdCmd testObj
+	 testFindAllCmd testObj
+	 testIsCmd testObj
 }
 
 proc testResetCmd { objname } {
@@ -60,7 +59,7 @@ proc testResetCmd { objname } {
     "} {"^0$"}
 }
 
-proc testCountCmd { objname } {
+proc testCountAllCmd { objname } {
     upvar $objname this
 
     set cmdname "${this(baseclass)}::countAll"
@@ -101,7 +100,7 @@ proc testDeleteCmd { objname } {
  	 "} {"^0$"}
 }
 
-proc testGetValidIdsCmd { objname } {
+proc testFindAllCmd { objname } {
     upvar $objname this
 
     set cmdname "${this(baseclass)}::findAll"
@@ -124,10 +123,10 @@ proc testGetValidIdsCmd { objname } {
 	 "} {"^0 -1$"}
 }
 
-proc testIsValidIdCmd { objname } {
+proc testIsCmd { objname } {
     upvar $objname this
 
-    set cmdname "IO::is"
+    set cmdname "${this(baseclass)}::is"
     set usage "wrong \# args: should be \"$cmdname item_id\""
     set testname "${this(packagename)}-${cmdname}"
 
