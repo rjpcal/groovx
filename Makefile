@@ -167,7 +167,7 @@ ifeq ($(COMPILER),MIPSpro)
 
 	CPP_DEFINES += -DMIPSPRO_COMPILER -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
-	INCLUDE_PATH += -I$(HOME)/include/cppheaders
+	INCLUDE_PATH += -I$(LOCAL_ARCH)/include/cppheaders
 
 	ifeq ($(MODE),debug)
 		CC_SWITCHES += -g -O0
