@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Thu Jul 12 13:23:44 2001
+// written: Fri Jul 13 15:14:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 #include "trialbase.h"
 
 #include "tcl/genericobjpkg.h"
-#include "tcl/tclcmd.h"
+#include "tcl/objfunctor.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
@@ -27,40 +27,27 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace BlockTcl {
-  class AddTrialIdsCmd;
-  class BlockPkg;
-}
-
-//---------------------------------------------------------------------
-//
-// BlockTcl::AddTrialIdsCmd --
-//
-//---------------------------------------------------------------------
-
-class BlockTcl::AddTrialIdsCmd : public Tcl::TclItemCmd<Block> {
-public:
-  AddTrialIdsCmd(Tcl::CTclItemPkg<Block>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<Block>(pkg, cmd_name,
-                     "block_id trial_id(s) ?repeat=1?",
-                     3, 4, false) {}
-protected:
-  virtual void invoke(Tcl::Context& ctx)
+namespace BlockTcl
+{
+  void addTrialIds2(Util::Ref<Block> block, Tcl::List trial_ids, int repeat)
   {
-    Block* block = getItem(ctx);
-
-    int repeat = (ctx.objc() < 4)  ?  1 : ctx.getIntFromArg(3);
-
     for (Tcl::List::Iterator<int>
-           itr = ctx.beginOfArg(2, (int*)0),
-           end = ctx.endOfArg(2, (int*)0);
+           itr = trial_ids.begin<int>(),
+           end = trial_ids.end<int>();
          itr != end;
          ++itr)
       {
         block->addTrial(Ref<TrialBase>(*itr), repeat);
       }
   }
-};
+
+  void addTrialIds1(Util::Ref<Block> block, Tcl::List trial_ids)
+  {
+    addTrialIds2(block, trial_ids, 1);
+  }
+
+  class BlockPkg;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -75,7 +62,10 @@ public:
   {
     Tcl::addTracing(this, Block::tracer);
 
-    addCommand( new AddTrialIdsCmd(this, "Block::addTrialIds") );
+    Tcl::defVec(this, &BlockTcl::addTrialIds1,
+                "Block::addTrialIds", "item_id(s) trial_id(s)");
+    Tcl::defVec(this, &BlockTcl::addTrialIds2,
+                "Block::addTrialIds", "item_id(s) trial_id(s) repeat=1");
 
     declareCGetter("currentTrial", &Block::currentTrial);
     declareCGetter("currentTrialType", &Block::currentTrialType);
