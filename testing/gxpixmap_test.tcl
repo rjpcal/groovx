@@ -265,10 +265,10 @@ test "GxPixmap::scramble" "basic checks" {
     return "$ok $c0 $c1 $c2 $c3 $c4 $c5"
 } {^1 }
 
-wm geometry . 402x402
-update idletasks
-
 test "GLCanvas::bitmap" "single-pixel accuracy" {
+    wm geometry . 402x402
+    update idletasks
+
     set p [new GxPixmap]
 
     glClearColor 0 0 0 0
@@ -306,6 +306,127 @@ test "GLCanvas::bitmap" "single-pixel accuracy" {
 	     $p4 == $expected ]
 
     return "$ok $c0 $c1 $c2 $c3 $c4 $p1 $p2 $p3 $p4"
+} {^1 0 }
+
+test "GLCanvas::bitmap" "single-pixel accuracy 2" {
+    wm geometry . 402x402
+    update idletasks
+
+    set oldcam [-> [Toglet::current] camera]
+
+    set newcam [new GxFixedScaleCamera]
+    -> $newcam pixelsPerUnit 1.0
+    -> [Toglet::current] camera $newcam
+
+    set p [new GxPixmap]
+
+    glClearColor 0 0 0 0
+
+    see $p
+
+    set c0 [-> [::cv] pixelCheckSum]
+
+    -> $p alignmentMode 7
+
+    -> $p loadImage testing/images/square_bottom_left.pgm.gz
+    -> $p centerX 0
+    -> $p centerY 0
+    set c1 [-> [::cv] pixelCheckSum]
+    set p10 [-> [::cv] pixelCheckSum 0 0 4 4]
+    -> $p centerX -1
+    -> $p centerY -1
+    set p11 [-> [::cv] pixelCheckSum 0 0 4 4]
+    -> $p centerX -2
+    -> $p centerY -2
+    set p12 [-> [::cv] pixelCheckSum 0 0 4 4]
+    -> $p centerX -3
+    -> $p centerY -3
+    set p13 [-> [::cv] pixelCheckSum 0 0 4 4]
+
+    -> $p loadImage testing/images/square_top_left.pgm.gz
+    -> $p centerX 0
+    -> $p centerY 0
+    set c2 [-> [::cv] pixelCheckSum]
+    set p20 [-> [::cv] pixelCheckSum 0 398 4 4]
+    -> $p centerX -1
+    -> $p centerY -1
+    set p21 [-> [::cv] pixelCheckSum 0 398 4 4]
+    -> $p centerX -2
+    -> $p centerY -2
+    set p22 [-> [::cv] pixelCheckSum 0 398 4 4]
+    -> $p centerX -3
+    -> $p centerY -3
+    set p23 [-> [::cv] pixelCheckSum 0 398 4 4]
+
+    -> $p loadImage testing/images/square_bottom_right.pgm.gz
+    -> $p centerX 0
+    -> $p centerY 0
+    set c3 [-> [::cv] pixelCheckSum]
+    set p30 [-> [::cv] pixelCheckSum 398 0 4 4]
+    -> $p centerX -1
+    -> $p centerY -1
+    set p31 [-> [::cv] pixelCheckSum 398 0 4 4]
+    -> $p centerX -2
+    -> $p centerY -2
+    set p32 [-> [::cv] pixelCheckSum 398 0 4 4]
+    -> $p centerX -3
+    -> $p centerY -3
+    set p33 [-> [::cv] pixelCheckSum 398 0 4 4]
+
+    -> $p loadImage testing/images/square_top_right.pgm.gz
+    -> $p centerX 0
+    -> $p centerY 0
+    set c4 [-> [::cv] pixelCheckSum]
+    set p40 [-> [::cv] pixelCheckSum 398 398 4 4]
+    -> $p centerX -1
+    -> $p centerY -1
+    set p41 [-> [::cv] pixelCheckSum 398 398 4 4]
+    -> $p centerX -2
+    -> $p centerY -2
+    set p42 [-> [::cv] pixelCheckSum 398 398 4 4]
+    -> $p centerX -3
+    -> $p centerY -3
+    set p43 [-> [::cv] pixelCheckSum 398 398 4 4]
+
+    set count16 [expr 16*255*3]
+    set count9 [expr 9*255*3]
+    set count4 [expr 4*255*3]
+    set count1 [expr 1*255*3]
+
+    -> [Toglet::current] camera $oldcam
+
+    set ok \
+	[expr \
+	     $c1 == $count16 && \
+	     $c2 == $count16 && \
+	     $c3 == $count16 && \
+	     $c4 == $count16 && \
+	     $p10 == $count16 && \
+	     $p20 == $count16 && \
+	     $p30 == $count16 && \
+	     $p40 == $count16 && \
+	     $p11 == $count9 && \
+	     $p21 == $count9 && \
+	     $p31 == $count9 && \
+	     $p41 == $count9 && \
+	     $p12 == $count4 && \
+	     $p22 == $count4 && \
+	     $p32 == $count4 && \
+	     $p42 == $count4 && \
+	     $p13 == $count1 && \
+	     $p23 == $count1 && \
+	     $p33 == $count1 && \
+	     $p43 == $count1 && \
+	     1
+	    ]
+
+    return "$ok $c0 \
+$c1 $c2 $c3 $c4 \
+$p10 $p20 $p30 $p40 \
+$p11 $p21 $p31 $p41 \
+$p12 $p22 $p32 $p42 \
+$p13 $p23 $p33 $p43 \
+"
 } {^1 0 }
 
 ### cleanup
