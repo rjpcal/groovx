@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue May 30 16:56:26 2000
+// written: Sat Sep 23 16:57:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -205,9 +205,9 @@ DOTRACE("ToglConfig::queryColor");
 
   color.pixel = (unsigned int)col.pixel;
 #ifndef NO_CPP_LIMITS
-  color.red   = double(col.red)   / numeric_limits<unsigned short>::max();
-  color.green = double(col.green) / numeric_limits<unsigned short>::max();
-  color.blue  = double(col.blue)  / numeric_limits<unsigned short>::max();
+  color.red   = double(col.red)   / std::numeric_limits<unsigned short>::max();
+  color.green = double(col.green) / std::numeric_limits<unsigned short>::max();
+  color.blue  = double(col.blue)  / std::numeric_limits<unsigned short>::max();
 #else
   color.red   = double(col.red)   / USHRT_MAX;
   color.green = double(col.green) / USHRT_MAX;
