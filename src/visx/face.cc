@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Tue May 30 19:02:54 2000
+// written: Sat Sep 23 14:27:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,12 @@
 #define LOCAL_INVARIANT
 #include "util/debug.h"
 
+#ifdef MIPSPRO_COMPILER
+#  define SGI_IDIOT_CAST(to, from) reinterpret_cast<to>(from)
+#else
+#  define SGI_IDIOT_CAST(to, from) (from)
+#endif
+
 ///////////////////////////////////////////////////////////////////////
 //
 // File scope data 
@@ -54,21 +60,26 @@ namespace {
   typedef Property Face::* IoMember;
 
   const IoMember IO_MEMBERS[] = {
-	 &Face::category,
-	 &Face::eyeHeight,
-	 &Face::eyeDistance,
-	 &Face::noseLength,
-	 &Face::mouthHeight
+	 SGI_IDIOT_CAST(Property Face::*, &Face::category),
+	 SGI_IDIOT_CAST(Property Face::*, &Face::eyeHeight),
+	 SGI_IDIOT_CAST(Property Face::*, &Face::eyeDistance),
+	 SGI_IDIOT_CAST(Property Face::*, &Face::noseLength),
+	 SGI_IDIOT_CAST(Property Face::*, &Face::mouthHeight)
   };
 
   const unsigned int NUM_IO_MEMBERS = sizeof(IO_MEMBERS)/sizeof(IoMember);
 
   const Face::PInfo PINFOS[] = {
-	 Face::PInfo("category", &Face::category, 0, 10, 1, true),
-	 Face::PInfo("eyeHeight", &Face::eyeHeight, -1.2, 1.2, 0.1),
-	 Face::PInfo("eyeDistance", &Face::eyeDistance, 0.0, 1.8, 0.1),
-	 Face::PInfo("noseLength", &Face::noseLength, -0.0, 3.0, 0.1),
-	 Face::PInfo("mouthHeight", &Face::mouthHeight, -1.2, 1.2, 0.1)
+	 Face::PInfo("category", SGI_IDIOT_CAST(Property Face::*, &Face::category)
+					 , 0, 10, 1, true),
+	 Face::PInfo("eyeHeight", SGI_IDIOT_CAST(Property Face::*, &Face::eyeHeight),
+					 -1.2, 1.2, 0.1),
+	 Face::PInfo("eyeDistance", SGI_IDIOT_CAST(Property Face::*, &Face::eyeDistance),
+					 0.0, 1.8, 0.1),
+	 Face::PInfo("noseLength", SGI_IDIOT_CAST(Property Face::*, &Face::noseLength),
+					 -0.0, 3.0, 0.1),
+	 Face::PInfo("mouthHeight", SGI_IDIOT_CAST(Property Face::*, &Face::mouthHeight),
+					 -1.2, 1.2, 0.1)
   };
 
   const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(Face::PInfo);
