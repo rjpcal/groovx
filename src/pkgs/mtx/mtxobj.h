@@ -36,6 +36,8 @@
 
 #include "nub/object.h"
 
+#include "util/fstring.h"
+
 /// Adapter class for fitting mtx to the Nub::Object interface.
 class MtxObj : public mtx, public Nub::Object
 {
@@ -55,6 +57,8 @@ public:
   virtual ~MtxObj() throw() {}
 
   static MtxObj* make() { return new MtxObj(mtx::empty_mtx()); }
+
+  virtual rutz::fstring objTypename() const { return "mtx"; }
 };
 
 static const char vcid_mtxobj_h[] = "$Id$ $URL$";

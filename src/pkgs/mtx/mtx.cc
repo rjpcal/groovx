@@ -190,14 +190,20 @@ DOTRACE("slice::operator");
                m_stride, rng.count());
 }
 
-void slice::print() const
+void slice::print(std::ostream& s) const
 {
 DOTRACE("slice::print");
-  for(mtx_const_iter iter = begin(); iter.has_more(); ++iter)
+  for (mtx_const_iter iter = begin(); iter.has_more(); ++iter)
     {
-      std::cout << std::setw(12) << std::setprecision(7) << double(*iter);
+      s << std::setw(12) << std::setprecision(7) << double(*iter);
     }
-  std::cout << std::endl;
+  s << std::endl;
+}
+
+void slice::print_stdout() const
+{
+DOTRACE("slice::print_stdout");
+  print(std::cout);
 }
 
 double slice::sum() const
@@ -555,22 +561,26 @@ DOTRACE("mtx::contig");
   return result;
 }
 
-void mtx::print() const
+void mtx::print(std::ostream& s, const char* mtx_name) const
 {
-  std::cout << "mrows = " << mrows() << ", ncols = " << ncols() << '\n';
+DOTRACE("mtx::print");
+  if (mtx_name != 0 && mtx_name[0] != '\0')
+    s << mtx_name << '\n';
+
+  s << "mrows = " << mrows() << ", ncols = " << ncols() << '\n';
   for(int i = 0; i < mrows(); ++i)
     {
       for(int j = 0; j < ncols(); ++j)
-        std::cout << std::setw(12) << std::setprecision(7) << at(i,j);
-      std::cout << '\n';
+        s << std::setw(12) << std::setprecision(7) << at(i,j);
+      s << '\n';
     }
-  std::cout << std::endl;
+  s << std::endl;
 }
 
-void mtx::print(const char* mtx_name) const
+void mtx::print_stdout() const
 {
-  std::cout << mtx_name << '\n';
-  print();
+DOTRACE("mtx::print_stdout");
+  print(std::cout);
 }
 
 void mtx::reorder_rows(const mtx& index_)

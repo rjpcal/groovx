@@ -36,6 +36,7 @@
 
 #include "arithfunctor.h"
 
+#include <iosfwd>
 #include <iterator>
 
 //  #######################################################
@@ -264,7 +265,11 @@ public:
 
   slice operator()(const index_range& rng) const;
 
-  void print() const;
+  /// Print the slice to the given stream
+  void print(std::ostream& s) const;
+
+  /// Print the slice to stdout
+  void print_stdout() const;
 
   //
   // Iteration
@@ -847,10 +852,11 @@ public:
   // I/O
   //
 
-  void print() const;
+  /// Print the mtx to the given ostream, including the matrix name if non-empty
+  void print(std::ostream& s, const char* mtx_name = "") const;
 
-  // This version will print the given name before printing the matrix contents
-  void print(const char* mtx_name) const;
+  /// Print the mtx to stdout
+  void print_stdout() const;
 
   //
   // Iteration

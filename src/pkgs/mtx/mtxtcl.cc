@@ -47,15 +47,17 @@ int Mtx_Init(Tcl_Interp* interp)
 DOTRACE("Mtx_Init");
 
   PKG_CREATE(interp, "mtx", "4.$Revision$");
+  pkg->inheritPkg("Obj");
   Tcl::defGenericObjCmds<MtxObj>(pkg, SRC_POS);
 
-  pkg->defAction<MtxObj>("print", &mtx::print, SRC_POS);
+  pkg->defAction<MtxObj>("print", &mtx::print_stdout, SRC_POS);
 
   pkg->defGetter<MtxObj, int>("mrows", &mtx::mrows, SRC_POS);
   pkg->defGetter<MtxObj, int>("ncols", &mtx::ncols, SRC_POS);
   pkg->defGetter<MtxObj, int>("nelems", &mtx::nelems, SRC_POS);
 
   Nub::ObjFactory::theOne().register_creator(&MtxObj::make);
+  Nub::ObjFactory::theOne().register_alias("MtxObj", "mtx");
 
   PKG_RETURN;
 }
