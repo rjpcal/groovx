@@ -1,4 +1,4 @@
-########################## -*- text -*- ##################################
+########################## -*- text -*- ##############################
 #
 # A framework for visual experiments
 #
@@ -6,25 +6,25 @@
 #
 # $Id$
 #
-##########################################################################
+######################################################################
 
 1. Overview
 
    This is a C++ toolkit for writing visual psychophysics
    experiments. Various abstractions relating to experiments (visual
-   objects, trials, observer responses, etc.) are implemented in C++, and
-   are exposed through a Tcl interface as scriptable objects.
+   objects, trials, observer responses, etc.) are implemented in C++,
+   and are exposed through a Tcl interface as scriptable objects.
 
 2. Organization of the files
 
    The src/ directory contains subdirectories for each of the various
-   components of the system. Packages that are configured to be loadable at
-   run-time are found in src/pkgs/.
+   components of the system. Packages that are configured to be
+   loadable at run-time are found in src/pkgs/.
 
-   When the system is built, the object files go into a hierarchy within
-   obj/$ARCH/ that parallels src/. That is, a source file src/foo/bar.cc
-   will be compiled to obj/i686/foo/bar.o if your system architecture is
-   i686.
+   When the system is built, the object files go into a hierarchy
+   within obj/$ARCH/ that parallels src/. That is, a source file
+   src/foo/bar.cc will be compiled to obj/i686/foo/bar.o if your
+   system architecture is i686.
 
 3. Dependencies
 
@@ -38,16 +38,16 @@
      * OpenGL
      * libz (gzip library)
 
-   The following additional packages are optional. The configure script
-   should generally be able to detect whether you have them installed or
-   not and set up the Makefile appropriately.
+   The following additional packages are optional. The configure
+   script should generally be able to detect whether you have them
+   installed or not and set up the Makefile appropriately.
 
      * libpng (portable network graphics library)
      * libjpeg (jpeg image handling library)
      * matlab (allows running a matlab engine inside the groovx shell)
 
-   The following packages are optional, but are used in some of the scripts
-   that use the groovx software.
+   The following packages are optional, but are used in some of the
+   scripts that use the groovx software.
 
      * itcl and itk (itcl3.2.1_src.tgz)
 
@@ -58,9 +58,9 @@
 
        # might need to do
        #   export SHLIB_LDFLAGS=-L/path/to/install/lib
-       # before running ./configure so that the configuration script looks
-       # for e.g. libtclstub8.x.a in the install directory rather than in
-       # the tcl's apparent build directory
+       # before running ./configure so that the configuration script
+       # looks for e.g. libtclstub8.x.a in the install directory
+       # rather than in the tcl's apparent build directory
 
        cd /path/to/source
        tar xfz itcl3.2.1_src.tgz
@@ -71,9 +71,10 @@
 
      * iwidgets (iwidgets4.0.1.tar.gz)
 
-       # again, note that iwidgets expects to still be able to find the
-         source code from the itcl/itk build, so don't remove the itcl+itk
-         sources until after you've configured and installed iwidgets
+       # again, note that iwidgets expects to still be able to find
+         the source code from the itcl/itk build, so don't remove the
+         itcl+itk sources until after you've configured and installed
+         iwidgets
 
        cd /path/to/source
        tar xfz iwidgets4.0.1.tar.gz
@@ -86,7 +87,8 @@
 
      * Mac OS X Tcl/Tk build notes
 
-       Used the following Makefile fragment for Tcl (in pathtosrc/tcl/macosx/Makefile)
+       Used the following Makefile fragment for Tcl (in
+       pathtosrc/tcl/macosx/Makefile)
 
 	DESTDIR			?= 
 	INSTALL_ROOT		?= ${DESTDIR}
@@ -103,7 +105,8 @@
 	BINDIR			?= ${PREFIX}/bin
 	MANDIR			?= ${PREFIX}/man
 
-       Used the following Makefile fragment for Tk (in pathtosrc/tk/macosx/Makefile)
+       Used the following Makefile fragment for Tk (in
+       pathtosrc/tk/macosx/Makefile)
 
 	DESTDIR			?=
 	INSTALL_ROOT		?= ${DESTDIR}
@@ -129,8 +132,8 @@
         version of chmod in /sw/bin/chmod doesn't recognize the '-H'
         option. So, need to point the installation to /bin/chmod
         instead. For now, just put a link from /bin/chmod to
-        ~/local/bin/chmod, since ~/local/bin is higher in $PATH than is
-        /sw/bin.
+        ~/local/bin/chmod, since ~/local/bin is higher in $PATH than
+        is /sw/bin.
 
 	Tk install expects to find 'Wish Shell.app' in
 	~/Library/Frameworks/Tk.Frame/Versions/8.5/Resources/. But, my
@@ -155,42 +158,59 @@
 
        --enable-debug={no|yes}
 
-           determines whether to include runtime debuggability into the
-           executable. If 'yes' (the default), then certain commands will
-           be available in the shell to control debug verbosity and stack
-           tracing.
+           determines whether to include runtime debuggability into
+           the executable. If 'yes' (the default), then certain
+           commands will be available in the shell to control debug
+           verbosity and stack tracing.
 
 5. Building
 
-   Once you have all package dependencies installed, and run the configure
-   script, just type "make" and everything should build and install. A
-   short test suite (takes ~10 seconds on a 1GHz Pentium III Linux machine)
-   is run at the end of every "make" invocation.
+   Once you have all package dependencies installed, and run the
+   configure script, just type "make" and everything should build and
+   install. A short test suite (takes ~10 seconds on a 1GHz Pentium
+   III Linux machine) is run at the end of every "make" invocation.
 
    * environment variables
 
      LD_LIBRARY_PATH
 
-     On Linux, you need to make sure that your LD_LIBRARY_PATH environment
-     variable includes the paths to wherever you have installed the
-     libraries associated with this package.
+     On Linux, you need to make sure that your LD_LIBRARY_PATH
+     environment variable includes the paths to wherever you have
+     installed the libraries associated with this package.
 
 6. Portability
 
-   This software in its current state is known to build successfully under
-   RedHat Linux 7.x, and under Mac OS X 10.1.x. Earlier versions of the
-   software have been built successfully under SGI's IRIX6 and HP's HPUX
-   10.x, but these configurations have not been tested recently.
+   This software has been built and run successfully under:
 
-   The software requires a reasonable C++ std-compliant compiler. Compilers
-   that have worked successfully in the past include:
+     RedHat Linux 7.x (i686)
+     RedHat Linux 8.x (i686)
+     RedHat Linux 9.x (i686)
+     Fedore Core 1 (i686)
+     Fedore Core 2 (i686)
+
+     YellowDog Linux 3.0.1 (ppc)
+
+     Mac OS X 10.1.x
+     Mac OS X 10.2.x
+     Mac OS X 10.3.x
+
+   Earlier versions of the software have been built successfully under
+   SGI's IRIX6 and HP's HPUX 10.x, but these configurations have not
+   been tested recently.
+
+   The software requires a reasonable C++ std-compliant
+   compiler. Compilers that have worked successfully in the past
+   include:
 
      g++ 2.95.x (linux, Mac OS X)
      g++ 3.0.x (linux)
      g++ 3.1.x (linux, Mac OS X)
      g++ 3.2.x (linux)
      g++ 3.3.x (linux, Mac OS X)
-     Intel's icc 6.0 (linux)
+     g++ 3.4.x (linux)
+     g++ 4.0-prerelease
+     HP's aCC (hpux)
+     Intel's icc 6.x/7.x/8.x (linux)
      SGI's MIPSpro (irix6)
 
 7. Contact information
