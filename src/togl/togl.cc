@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 17:21:23 2002
+// written: Tue Sep 17 17:53:11 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -35,7 +35,6 @@
 #include "togl/glutil.h"
 #include "togl/glxopts.h"
 #include "togl/glxwrapper.h"
-#include "togl/tkutil.h"
 #include "togl/x11util.h"
 
 #include "util/error.h"
@@ -48,6 +47,10 @@
 #include <GL/glx.h>
 #include <tcl.h>
 #include <tk.h>
+#ifndef _TKPORT
+#  define _TKPORT  // This eliminates need to include a bunch of Tk baggage
+#endif
+#include <tkInt.h>
 
 #ifdef HAVE_LIMITS
 #  include <limits>
@@ -205,6 +208,10 @@ public:
 
   // All callbacks cast to/from Togl::Impl*, _NOT_ Togl* !!!
   static void cTimerCallback(ClientData clientData) throw();
+
+  static Window cClassCreateProc(Tk_Window tkwin,
+                                 Window parent,
+                                 ClientData clientData);
 
   void swapBuffers() const;
 
@@ -440,13 +447,13 @@ DOTRACE("Togl::Impl::loadFontList");
   itsFontListBase = newListBase;
 }
 
-void Togl::Impl::makeWindowExist()
+Window Togl::Impl::cClassCreateProc(Tk_Window tkwin,
+                                    Window parent,
+                                    ClientData clientData)
 {
-DOTRACE("Togl::Impl::makeWindowExist");
+  Togl::Impl* rep = static_cast<Togl::Impl*>(clientData);
 
-  TkUtil::destroyWindow(itsTkWin);
-
-  Display* dpy = Tk_Display(itsTkWin);
+  Display* dpy = Tk_Display(tkwin);
 
   int dummy;
   if (!glXQueryExtension(dpy, &dummy, &dummy))
@@ -454,32 +461,89 @@ DOTRACE("Togl::Impl::makeWindowExist");
       throw Util::Error("Togl: X server has no OpenGL GLX extension");
     }
 
-  itsGlx.reset(GlxWrapper::make(dpy, itsOpts->glx));
+  rep->itsGlx.reset(GlxWrapper::make(dpy, rep->itsOpts->glx));
 
-  Colormap cmap = X11Util::findColormap(dpy, itsGlx->visInfo(),
-                                        itsOpts->privateCmapFlag);
+  XVisualInfo* visInfo = rep->itsGlx->visInfo();
 
-  TkUtil::createWindow(itsTkWin, itsGlx->visInfo(),
-                       itsOwner->width(), itsOwner->height(), cmap);
+  Colormap cmap = X11Util::findColormap(dpy, visInfo,
+                                        rep->itsOpts->privateCmapFlag);
 
-  if (!itsOpts->glx.rgbaFlag)
+  // Make sure Tk knows to switch to the new colormap when the cursor is over
+  // this window when running in color index mode.
+  Tk_SetWindowVisual(tkwin, visInfo->visual, visInfo->depth, cmap);
+
+#define ALL_EVENTS_MASK \
+KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask| \
+EnterWindowMask|LeaveWindowMask|PointerMotionMask|ExposureMask|   \
+VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
+
+  XSetWindowAttributes atts;
+
+  atts.colormap = cmap;
+  atts.border_pixel = 0;
+  atts.event_mask = ALL_EVENTS_MASK;
+
+  Window win = XCreateWindow(dpy,
+                             parent,
+                             0, 0,
+                             rep->itsOwner->width(),
+                             rep->itsOwner->height(),
+                             0, visInfo->depth,
+                             InputOutput, visInfo->visual,
+                             CWBorderPixel | CWColormap | CWEventMask,
+                             &atts);
+
+  Tk_ChangeWindowAttributes(tkwin,
+                            CWBorderPixel | CWColormap | CWEventMask,
+                            &atts);
+
+  XSelectInput(dpy, win, ALL_EVENTS_MASK);
+
+  if (!rep->itsOpts->glx.rgbaFlag)
     {
-      X11Util::hackInstallColormap(dpy, Tk_WindowId(itsTkWin), cmap);
+      X11Util::hackInstallColormap(dpy, Tk_WindowId(tkwin), cmap);
     }
 
-  Tk_MapWindow(itsTkWin);
-
   // Bind the context to the window and make it the current context
-  itsGlx->makeCurrent(Tk_WindowId(itsTkWin));
+  rep->itsGlx->makeCurrent(win);
 
   // Check for a single/double buffering snafu
-  if (itsOpts->glx.doubleFlag == 0 && itsGlx->isDoubleBuffered())
+  if (rep->itsOpts->glx.doubleFlag == 0 && rep->itsGlx->isDoubleBuffered())
     {
       // We requested single buffering but had to accept a double buffered
       // visual.  Set the GL draw buffer to be the front buffer to
       // simulate single buffering.
       glDrawBuffer(GL_FRONT);
     }
+
+  return win;
+}
+
+Tk_ClassProcs toglProcs =
+  {
+    sizeof(Tk_ClassProcs),
+    (Tk_ClassWorldChangedProc*) 0,
+    Togl::Impl::cClassCreateProc,
+    (Tk_ClassModalProc*) 0,
+  };
+
+void Togl::Impl::makeWindowExist()
+{
+DOTRACE("Togl::Impl::makeWindowExist");
+
+  TkWindow* winPtr = reinterpret_cast<TkWindow*>(itsTkWin);
+
+  if (winPtr->window != None)
+    {
+      XDestroyWindow(winPtr->display, winPtr->window);
+      winPtr->window = 0;
+    }
+
+  Tk_SetClassProcs(itsTkWin, &toglProcs, static_cast<ClientData>(this));
+
+  Tk_MakeWindowExist(itsTkWin);
+
+  Tk_MapWindow(itsTkWin);
 }
 
 ///////////////////////////////////////////////////////////////////////
