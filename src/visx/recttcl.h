@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug  9 17:24:29 2001
-// written: Thu Aug  9 17:25:29 2001
+// written: Thu Aug  9 17:37:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@
 namespace Tcl
 {
   template <class T>
-  struct Convert<Rect<T> >
+  struct Convert<const Rect<T>& >
   {
     typedef T Type;
     static Rect<T> fromTcl( Tcl_Obj* obj )
@@ -38,7 +38,7 @@ namespace Tcl
                      listObj.get(2, (T*)0), listObj.get(3, (T*)0));
     }
 
-    static Tcl_Obj* toTcl( Rect<T> rect )
+    static Tcl_Obj* toTcl( const Rect<T>& rect )
     {
       Tcl::List listObj;
       listObj.append(rect.left());
@@ -46,6 +46,21 @@ namespace Tcl
       listObj.append(rect.right());
       listObj.append(rect.bottom());
       return listObj.asObj();
+    }
+  };
+
+  template <class T>
+  struct Convert<Rect<T> >
+  {
+    typedef T Type;
+    static Rect<T> fromTcl( Tcl_Obj* obj )
+    {
+		return Convert<const Rect<T>&>::fromTcl(obj);
+	 }
+
+    static Tcl_Obj* toTcl( Rect<T> rect )
+    {
+		return Convert<const Rect<T>&>::toTcl(rect);
     }
   };
 }
