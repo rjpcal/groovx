@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jun  6 21:42:50 2001
+// written: Wed Jun  6 22:13:31 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -130,9 +130,14 @@ public:
 protected:
   virtual void invoke() {
 	 if (objc() < 2)
-		returnInt(theWidget.id());
+		{
+		  returnInt(theWidget.id());
+		}
 	 else
-		theWidget = IdItem<Toglet>( getIntFromArg(1) );
+		{
+		  theWidget = IdItem<Toglet>( getIntFromArg(1) );
+		  theWidget->makeCurrent();
+		}
   }
 };
 
