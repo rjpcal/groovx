@@ -3,7 +3,7 @@
 // pbm.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:07 1999
-// written: Mon Sep 20 09:51:11 1999
+// written: Fri Sep 24 19:12:23 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,6 +39,12 @@ DOTRACE("Pbm::init");
   itsBytes.resize(1);
 }
 
+Pbm::Pbm(const vector<unsigned char>& bytes,
+			int width, int height, int bits_per_pixel)
+{
+  setBytes(bytes, width, height, bits_per_pixel);
+}
+
 Pbm::Pbm(istream& is) {
 DOTRACE("Pbm::Pbm(istream&)");
   init();
@@ -68,6 +74,43 @@ DOTRACE("Pbm::grabBytes");
   width = itsImageWidth;
   height = itsImageHeight;
   bits_per_pixel = itsBitsPerPixel;
+}
+
+void Pbm::setBytes(const vector<unsigned char>& bytes,
+						 int width, int height, int bits_per_pixel) {
+  itsBytes = bytes;
+  itsNumBytes = bytes.size();
+  itsImageWidth = width;
+  itsImageHeight = height;
+  itsBitsPerPixel = bits_per_pixel;
+
+  switch (itsBitsPerPixel) {
+  case 1:
+	 itsMode = 4;
+	 break;
+  case 8:
+	 itsMode = 5;
+	 break;
+  case 24:
+	 itsMode = 6;
+	 break;
+  default:
+	 throw PbmError("invalid bits_per_pixel value");
+	 break;
+  }
+}
+
+void Pbm::write(const char* filename) const {
+DOTRACE("Pbm::write");
+  ofstream ofs(filename);
+  write(ofs);
+}
+
+void Pbm::write(ostream& os) const {
+DOTRACE("Pbm::write");
+  os << 'P' << itsMode << ' ' 
+	  << itsImageWidth << ' ' << itsImageHeight << '\n';
+  os.write(&itsBytes[0], itsBytes.size());
 }
 
 void Pbm::readStream(istream& is) {
