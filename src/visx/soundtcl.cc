@@ -47,81 +47,65 @@
 #include "util/debug.h"
 DBG_REGISTER;
 
-class SoundPkg : public Tcl::Pkg
-{
-public:
-  SoundPkg(const Tcl::Interp& interp) :
-    Tcl::Pkg(interp.intp(), "Sound", "$Revision$")
-  {
-    this->inheritPkg("IO");
-    Tcl::defGenericObjCmds<Sound>(this);
-
-    bool haveSound = Sound::initSound();
-
-    if (!haveSound)
-      {
-        interp.appendResult("SoundPkg: couldn't initialize sound system");
-        setInitStatusError();
-      }
-    else
-      {
-        fstring lib_dir(System::theSystem().getenv("GRSH_LIB_DIR"));
-        dbgEvalNL(3, lib_dir);
-
-        const fstring ok_file(lib_dir, "/audio/saw50_500Hz_300ms.au");
-        const fstring err_file(lib_dir, "/audio/saw50_350Hz_300ms.au");
-
-        static int OK = -1;
-        static int ERR = -1;
-
-        try
-          {
-            Util::Ref<Sound> ok_sound(Sound::makeFrom(ok_file.c_str()));
-            Sound::setOkSound(ok_sound);
-            OK = ok_sound.id();
-            linkConstVar("Sound::ok", OK);
-
-            Util::Ref<Sound> err_sound(Sound::makeFrom(err_file.c_str()));
-            Sound::setErrSound(err_sound);
-            ERR = err_sound.id();
-            linkConstVar("Sound::err", ERR);
-          }
-        catch (std::exception& err)
-          {
-            dbgPrintNL(3, "error creating sounds during startup");
-            interp.appendResult("SoundPkg: ");
-            interp.appendResult(err.what());
-            setInitStatusError();
-          }
-      }
-
-    def( "haveAudio", 0, &Sound::haveSound );
-
-    defAction("play", &Sound::play);
-    defAction("forceLoad", &Sound::forceLoad);
-    defAttrib("file", &Sound::getFile, &Sound::setFile);
-  }
-
-  ~SoundPkg()
-  {
-    Sound::closeSound();
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// Sound_Init --
-//
-//---------------------------------------------------------------------
-
-extern "C" int Sound_Init(Tcl_Interp* interp)
+extern "C"
+int Sound_Init(Tcl_Interp* interp)
 {
 DOTRACE("Sound_Init");
 
   Tcl::Interp intp(interp);
-  Tcl::Pkg* pkg = new SoundPkg(intp);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Sound", "$Revision$");
+
+  pkg->onExit(&Sound::closeSound);
+
+  pkg->inheritPkg("IO");
+  Tcl::defGenericObjCmds<Sound>(pkg);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Sound::make);
+
+  pkg->def( "haveAudio", 0, &Sound::haveSound );
+
+  pkg->defAction("play", &Sound::play);
+  pkg->defAction("forceLoad", &Sound::forceLoad);
+  pkg->defAttrib("file", &Sound::getFile, &Sound::setFile);
+
+  bool haveSound = Sound::initSound();
+
+  if (!haveSound)
+    {
+      intp.appendResult("SoundPkg: couldn't initialize sound system");
+      pkg->setInitStatusError();
+    }
+  else
+    {
+      fstring lib_dir(System::theSystem().getenv("GRSH_LIB_DIR"));
+      dbgEvalNL(3, lib_dir);
+
+      const fstring ok_file(lib_dir, "/audio/saw50_500Hz_300ms.au");
+      const fstring err_file(lib_dir, "/audio/saw50_350Hz_300ms.au");
+
+      static int OK = -1;
+      static int ERR = -1;
+
+      try
+        {
+          Util::Ref<Sound> ok_sound(Sound::makeFrom(ok_file.c_str()));
+          Sound::setOkSound(ok_sound);
+          OK = ok_sound.id();
+          pkg->linkConstVar("Sound::ok", OK);
+
+          Util::Ref<Sound> err_sound(Sound::makeFrom(err_file.c_str()));
+          Sound::setErrSound(err_sound);
+          ERR = err_sound.id();
+          pkg->linkConstVar("Sound::err", ERR);
+        }
+      catch (std::exception& err)
+        {
+          dbgPrintNL(3, "error creating sounds during startup");
+          intp.appendResult("SoundPkg: ");
+          intp.appendResult(err.what());
+          pkg->setInitStatusError();
+        }
+    }
 
   return pkg->initStatus();
 }
