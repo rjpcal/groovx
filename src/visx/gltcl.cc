@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon May 22 13:00:10 2000
+// written: Sat Sep 23 16:55:15 2000
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -547,7 +547,7 @@ protected:
 	 int num_values;
   };
 
-  static map<GLenum, const AttribInfo*> theirAttribs;
+  static std::map<GLenum, const AttribInfo*> theirAttribs;
 
   void initialize(Tcl::TclPkg* pkg) {
 	 static bool inited = false;
@@ -819,7 +819,7 @@ protected:
 };
 
 // Unique definition of static member of glGetCmd
-map<GLenum, const TclGL::glGetCmd::AttribInfo*> TclGL::glGetCmd::theirAttribs;
+std::map<GLenum, const TclGL::glGetCmd::AttribInfo*> TclGL::glGetCmd::theirAttribs;
 
 //---------------------------------------------------------------------
 //
