@@ -3,7 +3,7 @@
 // writer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:50 1999
-// written: Sat Sep 23 16:33:03 2000
+// written: Mon Oct  2 18:09:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,12 +70,6 @@ template<>
 void IO::Writer::writeValue<dynamic_string>(const char* name,
 													 const dynamic_string& val) {
   writeCstring(name, val.c_str());
-}
-
-template<>
-void IO::Writer::writeValue<const char*>(const char* name,
-												 const char* const& val) {
-  writeCstring(name, val);
 }
 
 template<>
