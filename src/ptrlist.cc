@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Tue Oct 24 17:20:45 2000
+// written: Wed Oct 25 07:47:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,8 @@ int PtrList<T>::capacity() const
 {
 #ifdef OLD_VERSION
   return PtrListBase::capacity();
+#else
+#error not supported
 #endif
 }
 
@@ -36,6 +38,8 @@ int PtrList<T>::count() const
 {
 #ifdef OLD_VERSION
   return PtrListBase::count();
+#else
+#error not supported
 #endif
 }
 
@@ -44,6 +48,8 @@ bool PtrList<T>::isValidId(int id) const
 {
 #ifdef OLD_VERSION
   return PtrListBase::isValidId(id);
+#else
+#error not supported
 #endif
 }
 
@@ -52,6 +58,8 @@ void PtrList<T>::remove(int id)
 {
 #ifdef OLD_VERSION
   PtrListBase::remove(id);
+#else
+#error not supported
 #endif
 }
 
@@ -60,6 +68,8 @@ void PtrList<T>::release(int id)
 {
 #ifdef OLD_VERSION
   PtrListBase::release(id);
+#else
+#error not supported
 #endif
 }
 
@@ -68,6 +78,8 @@ void PtrList<T>::clear()
 {
 #ifdef OLD_VERSION
   PtrListBase::clear();
+#else
+#error not supported
 #endif
 }
 
@@ -79,6 +91,8 @@ PtrList<T>::SharedPtr PtrList<T>::getCheckedPtr(int id) const
   // cast as reference to force an exception on error
   T& t = dynamic_cast<T&>(*voidPtr);
   return SharedPtr(&t, id);
+#else
+#error not supported
 #endif
 }
 
@@ -87,6 +101,38 @@ PtrList<T>::SharedPtr PtrList<T>::insert(T* master)
 {
 #ifdef OLD_VERSION
   return SharedPtr(master, PtrListBase::insertPtrBase(master));
+#else
+#error not supported
+#endif
+}
+
+template <class T>
+RefCounted* PtrList<T>::getPtrBase(int id) const throw ()
+{
+#ifdef OLD_VERSION
+  return PtrListBase::getPtrBase(id);
+#else
+#error not supported
+#endif
+}
+
+template <class T>
+RefCounted* PtrList<T>::getCheckedPtrBase(int id) const throw (InvalidIdError)
+{
+#ifdef OLD_VERSION
+  return PtrListBase::getCheckedPtrBase(id);
+#else
+#error not supported
+#endif
+}
+
+template <class T>
+int PtrList<T>::insertPtrBase(RefCounted* ptr)
+{
+#ifdef OLD_VERSION
+  return PtrListBase::insertPtrBase(ptr);
+#else
+#error not supported
 #endif
 }
 
