@@ -3,7 +3,7 @@
 // trialtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 09:51:54 1999
-// written: Tue Nov 30 19:09:00 1999
+// written: Tue Dec  7 19:05:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,19 +34,19 @@ namespace TrialTcl {
 //
 //---------------------------------------------------------------------
 
-class TrialTcl::AddCmd : public TclItemCmd<Trial> {
+class TrialTcl::AddCmd : public Tcl::TclItemCmd<Trial> {
 public:
-  AddCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<Trial>(pkg, cmd_name, "trialid objid posid", 4, 4) {}
+  AddCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Trial>(pkg, cmd_name, "trialid objid posid", 4, 4) {}
 protected:
   virtual void invoke() {
 	 Trial* t = getItem();
 
 	 int objid = getIntFromArg(2);
-	 if (objid < 0) { throw TclError("invalid id"); }
+	 if (objid < 0) { throw Tcl::TclError("invalid id"); }
 
 	 int posid = getIntFromArg(3);
-	 if (posid < 0) { throw TclError("invalid id"); }
+	 if (posid < 0) { throw Tcl::TclError("invalid id"); }
 
 	 t->add(objid, posid);
   }
@@ -58,10 +58,10 @@ protected:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class TrialTcl::TrialPkg : public ListItemPkg<Trial, Tlist> {
+class TrialTcl::TrialPkg : public Tcl::ListItemPkg<Trial, Tlist> {
 public:
   TrialPkg(Tcl_Interp* interp) :
-	 ListItemPkg<Trial, Tlist>(interp, Tlist::theTlist(), "Trial", "1.1")
+	 Tcl::ListItemPkg<Trial, Tlist>(interp, Tlist::theTlist(), "Trial", "1.1")
   {
 	 addCommand( new AddCmd(this, "Trial::add") );
 

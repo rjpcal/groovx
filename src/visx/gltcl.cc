@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Dec  6 21:52:41 1999
+// written: Tue Dec  7 18:56:48 1999
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -111,11 +111,11 @@ namespace TclGL {
 //
 //---------------------------------------------------------------------
 
-class TclGL::GLCmd : public TclCmd {
+class TclGL::GLCmd : public Tcl::TclCmd {
 public:
-  GLCmd(TclPkg* pkg, const char* cmd_name, const char* usage, 
+  GLCmd(Tcl::TclPkg* pkg, const char* cmd_name, const char* usage, 
 			  int objc_min=0, int objc_max=100000, bool exact_objc=false) :
-	 TclCmd(pkg->interp(), cmd_name, usage, objc_min, objc_max, exact_objc)
+	 Tcl::TclCmd(pkg->interp(), cmd_name, usage, objc_min, objc_max, exact_objc)
   {
  	 DebugEvalNL(cmd_name);
   }
@@ -137,7 +137,7 @@ protected:
 
 class TclGL::glBeginCmd : public TclGL::GLCmd {
 public:
-  glBeginCmd(TclPkg* pkg, const char* cmd_name) :
+  glBeginCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "mode", 2, 2)
   {
 	 pkg->linkVarCopy("GL_POINTS",         GL_POINTS);
@@ -168,7 +168,7 @@ protected:
 
 class TclGL::glBlendFuncCmd : public TclGL::GLCmd {
 public:
-  glBlendFuncCmd(TclPkg* pkg, const char* cmd_name) :
+  glBlendFuncCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "sfactor dfactor", 3, 3)
   {
 	 pkg->linkVarCopy("GL_ZERO", GL_ZERO);
@@ -202,7 +202,7 @@ protected:
 
 class TclGL::glCallListCmd : public TclGL::GLCmd {
 public:
-  glCallListCmd(TclPkg* pkg, const char* cmd_name) :
+  glCallListCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "list", 2, 2) {}
 protected:
   virtual void invoke() {
@@ -219,7 +219,7 @@ protected:
 
 class TclGL::glClearCmd : public TclGL::GLCmd {
 public:
-  glClearCmd(TclPkg* pkg, const char* cmd_name) :
+  glClearCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "mask_bits", 2, 2)
   {
 	 pkg->linkVarCopy("GL_COLOR_BUFFER_BIT", GL_COLOR_BUFFER_BIT);
@@ -243,7 +243,7 @@ protected:
 
 class TclGL::glClearColorCmd : public TclGL::GLCmd {
 public:
-  glClearColorCmd(TclPkg* pkg, const char* cmd_name) :
+  glClearColorCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "red green blue alpha", 5, 5) {}
 protected:
   virtual void invoke() {
@@ -265,7 +265,7 @@ protected:
 
 class TclGL::glClearIndexCmd : public TclGL::GLCmd {
 public:
-  glClearIndexCmd(TclPkg* pkg, const char* cmd_name) :
+  glClearIndexCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "index", 2, 2) {}
 protected:
   virtual void invoke() {
@@ -284,7 +284,7 @@ protected:
 
 class TclGL::glColorCmd : public TclGL::GLCmd {
 public:
-  glColorCmd(TclPkg* pkg, const char* cmd_name) :
+  glColorCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "red green blue ?alpha=1.0?", 4, 5) {}
 protected:
   virtual void invoke() {
@@ -305,7 +305,7 @@ protected:
 
 class TclGL::glDeleteListsCmd : public TclGL::GLCmd {
 public:
-  glDeleteListsCmd(TclPkg* pkg, const char* cmd_name) :
+  glDeleteListsCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "list_id range", 3, 3) {}
 protected:
   virtual void invoke() {
@@ -323,7 +323,7 @@ protected:
 
 class TclGL::glDrawBufferCmd : public TclGL::GLCmd {
 public:
-  glDrawBufferCmd(TclPkg* pkg, const char* cmd_name) :
+  glDrawBufferCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "mode", 2, 2)
   {
 	 pkg->linkVarCopy("GL_NONE", GL_NONE);
@@ -353,7 +353,7 @@ protected:
 
 class TclGL::glEnableCmd : public TclGL::GLCmd {
 private:
-  static void initEnums(TclPkg* pkg) {
+  static void initEnums(Tcl::TclPkg* pkg) {
 	 static bool inited = false;
 
 	 if (inited) return;
@@ -431,7 +431,7 @@ private:
   }
 
 public:
-  glEnableCmd(TclPkg* pkg, const char* cmd_name) :
+  glEnableCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "capability", 2, 2)
   {
 	 initEnums(pkg);
@@ -456,7 +456,7 @@ protected:
 
 class TclGL::glEndCmd : public TclGL::GLCmd {
 public:
-  glEndCmd(TclPkg* pkg, const char* cmd_name) :
+  glEndCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, NULL, 1, 1) {}
 protected:
   virtual void invoke() { glEnd(); }
@@ -470,7 +470,7 @@ protected:
 
 class TclGL::glEndListCmd : public TclGL::GLCmd {
 public:
-  glEndListCmd(TclPkg* pkg, const char* cmd_name) :
+  glEndListCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, NULL, 1, 1) {}
 protected:
   virtual void invoke() { glEndList(); checkGL(); }
@@ -484,7 +484,7 @@ protected:
 
 class TclGL::glFlushCmd : public TclGL::GLCmd {
 public:
-  glFlushCmd(TclPkg* pkg, const char* cmd_name) :
+  glFlushCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, NULL, 1, 1) {}
 protected:
   virtual void invoke() { glFlush(); }
@@ -498,7 +498,7 @@ protected:
 
 class TclGL::glFrustumCmd : public TclGL::GLCmd {
 public:
-  glFrustumCmd(TclPkg* pkg, const char* cmd_name) :
+  glFrustumCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "left right bottom top zNear zFar", 7, 7) {}
 protected:
   virtual void invoke() {
@@ -522,7 +522,7 @@ protected:
 
 class TclGL::glGenListsCmd : public TclGL::GLCmd {
 public:
-  glGenListsCmd(TclPkg* pkg, const char* cmd_name) :
+  glGenListsCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "range", 2, 2) {}
 protected:
   virtual void invoke() {
@@ -549,7 +549,7 @@ protected:
 
   static map<GLenum, const AttribInfo*> theirAttribs;
 
-  void initialize(TclPkg* pkg) {
+  void initialize(Tcl::TclPkg* pkg) {
 	 static bool inited = false;
 
 	 if ( inited ) return;
@@ -802,7 +802,7 @@ protected:
   }
 
 public:
-  glGetCmd(TclPkg* pkg, const char* cmd_name) :
+  glGetCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "param_name", 2, 2) { initialize(pkg); }
 
 protected:
@@ -812,7 +812,7 @@ protected:
 	 GLenum param_tag = getIntFromArg(1);
 	 
 	 const AttribInfo* theInfo = theirAttribs[param_tag];
-	 if ( theInfo == 0 ) { throw TclError("invalid or unsupported enumerant"); }
+	 if ( theInfo == 0 ) { throw Tcl::TclError("invalid or unsupported enumerant"); }
 
 	 getValues(theInfo);
   }
@@ -835,7 +835,7 @@ namespace TclGL {
 template <class T>
 class glGetTypeCmd : public glGetCmd {
 public:
-  glGetTypeCmd(TclPkg* pkg, const char* cmd_name) :
+  glGetTypeCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 glGetCmd(pkg, cmd_name) {}
 
 protected:
@@ -872,7 +872,7 @@ void TclGL::glGetTypeCmd<GLint>::extractValues(GLenum tag, GLint* vals_out)
 
 class TclGL::glGetErrorCmd : public TclGL::GLCmd {
 public:
-  glGetErrorCmd(TclPkg* pkg, const char* cmd_name) :
+  glGetErrorCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, NULL, 1, 1) {}
 protected:
   virtual void invoke() { checkGL(); }
@@ -886,7 +886,7 @@ protected:
 
 class TclGL::glIndexiCmd : public TclGL::GLCmd {
 public:
-  glIndexiCmd(TclPkg* pkg, const char* cmd_name) :
+  glIndexiCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "index", 2, 2) {}
 protected:
   virtual void invoke() { 
@@ -903,7 +903,7 @@ protected:
 
 class TclGL::glIsListCmd : public TclGL::GLCmd {
 public:
-  glIsListCmd(TclPkg* pkg, const char* cmd_name) :
+  glIsListCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "list_id", 2, 2) {}
 protected:
   virtual void invoke() {
@@ -923,7 +923,7 @@ protected:
 
 class TclGL::glLineWidthCmd : public TclGL::GLCmd {
 public:
-  glLineWidthCmd(TclPkg* pkg, const char* cmd_name) :
+  glLineWidthCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "width", 2, 2) {}
 protected:
   virtual void invoke() {
@@ -941,7 +941,7 @@ protected:
 
 class TclGL::glListBaseCmd : public TclGL::GLCmd {
 public:
-  glListBaseCmd(TclPkg* pkg, const char* cmd_name) :
+  glListBaseCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "base", 2, 2) {}
 protected:
   virtual void invoke() { 
@@ -959,7 +959,7 @@ protected:
 
 class TclGL::glLoadIdentityCmd : public TclGL::GLCmd {
 public:
-  glLoadIdentityCmd(TclPkg* pkg, const char* cmd_name) :
+  glLoadIdentityCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, NULL, 1, 1) {}
 protected:
   virtual void invoke() {
@@ -976,7 +976,7 @@ protected:
 
 class TclGL::glLoadMatrixCmd : public TclGL::GLCmd {
 public:
-  glLoadMatrixCmd(TclPkg* pkg, const char* cmd_name) :
+  glLoadMatrixCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "4x4_column_major_matrix", 2, 2) {}
 protected:
   virtual void invoke() {
@@ -985,7 +985,7 @@ protected:
 	 getSequenceFromArg(1, back_inserter(matrix), (GLdouble*) 0);
 
 	 if (matrix.size() != 16) {
-		throw TclError("matrix must have 16 entries in column-major order");
+		throw Tcl::TclError("matrix must have 16 entries in column-major order");
 	 }
 
 	 glLoadMatrixd(&matrix[0]);
@@ -1001,7 +1001,7 @@ protected:
 
 class TclGL::glMatrixModeCmd : public TclGL::GLCmd {
 public:
-  glMatrixModeCmd(TclPkg* pkg, const char* cmd_name) :
+  glMatrixModeCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "width", 2, 2)
   {
 	 pkg->linkVarCopy("GL_MODELVIEW",  GL_MODELVIEW);
@@ -1024,7 +1024,7 @@ protected:
 
 class TclGL::glNewListCmd : public TclGL::GLCmd {
 public:
-  glNewListCmd(TclPkg* pkg, const char* cmd_name) :
+  glNewListCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "list_id mode", 3, 3)
   {
 	 pkg->linkVarCopy("GL_COMPILE", GL_COMPILE);
@@ -1047,7 +1047,7 @@ protected:
 
 class TclGL::glOrthoCmd : public TclGL::GLCmd {
 public:
-  glOrthoCmd(TclPkg* pkg, const char* cmd_name) :
+  glOrthoCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "left right bottom top zNear zFar", 7, 7) {}
 protected:
   virtual void invoke() {
@@ -1071,7 +1071,7 @@ protected:
 
 class TclGL::glPolygonModeCmd : public TclGL::GLCmd {
 public:
-  glPolygonModeCmd(TclPkg* pkg, const char* cmd_name) :
+  glPolygonModeCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "face mode", 3, 3)
   {
 	 // Face enum's: these are already provided by glDrawBufferCmd
@@ -1100,7 +1100,7 @@ protected:
 
 class TclGL::glPopMatrixCmd : public TclGL::GLCmd {
 public:
-  glPopMatrixCmd(TclPkg* pkg, const char* cmd_name) :
+  glPopMatrixCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, NULL, 1, 1) {}
 protected:
   virtual void invoke() {
@@ -1117,7 +1117,7 @@ protected:
 
 class TclGL::glPushMatrixCmd : public TclGL::GLCmd {
 public:
-  glPushMatrixCmd(TclPkg* pkg, const char* cmd_name) :
+  glPushMatrixCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, NULL, 1, 1) {}
 protected:
   virtual void invoke() {
@@ -1134,7 +1134,7 @@ protected:
 
 class TclGL::glRotateCmd : public TclGL::GLCmd {
 public:
-  glRotateCmd(TclPkg* pkg, const char* cmd_name) :
+  glRotateCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "angle_in_degrees x y z", 5, 5) {}
 protected:
   virtual void invoke() {
@@ -1156,7 +1156,7 @@ protected:
 
 class TclGL::glScaleCmd : public TclGL::GLCmd {
 public:
-  glScaleCmd(TclPkg* pkg, const char* cmd_name) :
+  glScaleCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "x y z", 4, 4) {}
 protected:
   virtual void invoke() {
@@ -1177,7 +1177,7 @@ protected:
 
 class TclGL::glTranslateCmd : public TclGL::GLCmd {
 public:
-  glTranslateCmd(TclPkg* pkg, const char* cmd_name) :
+  glTranslateCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "x y z", 4, 4) {}
 protected:
   virtual void invoke() {
@@ -1198,7 +1198,7 @@ protected:
 
 class TclGL::glVertexCmd : public TclGL::GLCmd {
 public:
-  glVertexCmd(TclPkg* pkg, const char* cmd_name) :
+  glVertexCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "x y ?z=0? ?w=1?", 3, 5) {}
 protected:
   virtual void invoke() {
@@ -1221,7 +1221,7 @@ protected:
 
 class TclGL::gluLookAtCmd : public TclGL::GLCmd {
 public:
-  gluLookAtCmd(TclPkg* pkg, const char* cmd_name) :
+  gluLookAtCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "eyeX eyeY eyeZ targX targY targZ upX upY upZ", 10, 10)
 	 {}
 protected:
@@ -1247,7 +1247,7 @@ protected:
 
 class TclGL::gluPerspectiveCmd : public TclGL::GLCmd {
 public:
-  gluPerspectiveCmd(TclPkg* pkg, const char* cmd_name) :
+  gluPerspectiveCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
 	 GLCmd(pkg, cmd_name, "field_of_view_y aspect zNear zFar", 5, 5) {}
 protected:
   virtual void invoke() {
@@ -1581,10 +1581,10 @@ DOTRACE("TclGL::pixelCheckSumCmd");
 //
 //---------------------------------------------------------------------
 
-class TclGL::GLPkg : public TclPkg {
+class TclGL::GLPkg : public Tcl::TclPkg {
 public:
   GLPkg(Tcl_Interp* interp) :
-	 TclPkg(interp, "Tclgl", "2.0")
+	 Tcl::TclPkg(interp, "Tclgl", "2.0")
   {
 	 addCommand( new glBeginCmd        (this, "glBegin") );
 	 addCommand( new glBlendFuncCmd    (this, "glBlendFunc") );

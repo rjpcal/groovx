@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Tue Nov 30 19:08:41 1999
+// written: Tue Dec  7 19:05:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,11 +43,11 @@ namespace ThlistTcl {
 //
 //---------------------------------------------------------------------
 
-class ThTcl::AddEventCmd : public TclItemCmd<TimingHdlr> {
+class ThTcl::AddEventCmd : public Tcl::TclItemCmd<TimingHdlr> {
 public:
-  AddEventCmd(TclItemPkg* pkg, const char* cmd_name,
+  AddEventCmd(Tcl::TclItemPkg* pkg, const char* cmd_name,
 				  TimingHdlr::TimePoint time_point) :
-	 TclItemCmd<TimingHdlr>(pkg, cmd_name, 
+	 Tcl::TclItemCmd<TimingHdlr>(pkg, cmd_name, 
 									"th_id event_type msec_delay", 4, 4),
 	 itsTimePoint(time_point) {}
 protected:
@@ -69,11 +69,11 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ThTcl::ThPkg: public ListItemPkg<TimingHdlr, ThList> {
+class ThTcl::ThPkg: public Tcl::ListItemPkg<TimingHdlr, ThList> {
 public:
   ThPkg(Tcl_Interp* interp) :
-	 ListItemPkg<TimingHdlr, ThList>(interp, ThList::theThList(),
-												"Th", "1.1", "timingHdlr")
+	 Tcl::ListItemPkg<TimingHdlr, ThList>(interp, ThList::theThList(),
+													  "Th", "1.1", "timingHdlr")
   {
 	 addCommand( new AddEventCmd(this, "Th::addImmediateEvent",
 										  TimingHdlr::IMMEDIATE));
@@ -99,11 +99,11 @@ namespace SimpleThTcl {
   class SimpleThPkg;
 }
 
-class SimpleThTcl::SimpleThPkg : public ListItemPkg<TimingHandler, ThList> {
+class SimpleThTcl::SimpleThPkg : public Tcl::ListItemPkg<TimingHandler, ThList> {
 public:
   SimpleThPkg(Tcl_Interp* interp) :
-	 ListItemPkg<TimingHandler, ThList>(interp, ThList::theThList(),
-													"SimpleTh", "1.1", "timingHandler")
+	 Tcl::ListItemPkg<TimingHandler, ThList>(interp, ThList::theThList(),
+														  "SimpleTh", "1.1", "timingHandler")
   {
 	 declareCAttrib("abortWait",  
 						 &TimingHandler::getAbortWait,
@@ -126,10 +126,10 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ThlistTcl::ThListPkg : public ListPkg<ThList> {
+class ThlistTcl::ThListPkg : public Tcl::ListPkg<ThList> {
 public:
   ThListPkg(Tcl_Interp* interp) :
-	 ListPkg<ThList>(interp, ThList::theThList(), "ThList", "3.0")
+	 Tcl::ListPkg<ThList>(interp, ThList::theThList(), "ThList", "3.0")
   {
 	 ThList::theThList().insertAt(0, new TimingHandler());
   }

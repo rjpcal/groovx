@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Tue Dec  7 13:15:20 1999
+// written: Tue Dec  7 19:13:04 1999
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -71,10 +71,10 @@ namespace ExptTcl {
 //
 //--------------------------------------------------------------------
 
-class ExptTcl::BeginCmd : public TclItemCmd<ExptDriver> {
+class ExptTcl::BeginCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
-  BeginCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<ExptDriver>(pkg, cmd_name, NULL, 1, 1),
+  BeginCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, NULL, 1, 1),
 	 itsInterp(pkg->interp()) {}
 protected:
   virtual void invoke();
@@ -116,22 +116,22 @@ DOTRACE("BeginCmd::beginCmd");
 //
 //--------------------------------------------------------------------
 
-class ExptTcl::PauseCmd : public TclItemCmd<ExptDriver> {
+class ExptTcl::PauseCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
-  PauseCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<ExptDriver>(pkg, cmd_name, NULL, 1, 1),
+  PauseCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, NULL, 1, 1),
 	 itsInterp(pkg->interp()) {}
 protected:
   virtual void invoke() {
 	 ExptDriver* ed = getItem();
 	 ed->edHaltExpt();
 
-	 static TclEvalCmd pauseMsgCmd(
+	 static Tcl::TclEvalCmd pauseMsgCmd(
 				"tk_messageBox -default ok -icon info "
 				"-title \"Pause\" -type ok "
 				"-message \"Experiment paused. Click OK to continue.\";\n"
 				"after 1000",
-				TclEvalCmd::THROW_EXCEPTION);
+				Tcl::TclEvalCmd::THROW_EXCEPTION);
 
 	 pauseMsgCmd.invoke(itsInterp);
 
@@ -153,10 +153,10 @@ private:
 //
 //--------------------------------------------------------------------
 
-class ExptTcl::ReadCmd : public TclItemCmd<ExptDriver> {
+class ExptTcl::ReadCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
-  ReadCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<ExptDriver>(pkg, cmd_name, "filename", 2, 2) {}
+  ReadCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "filename", 2, 2) {}
 protected:
   virtual void invoke() {
 	 ExptDriver* ed = getItem();
@@ -173,10 +173,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ExptTcl::SetStartCommandCmd : public TclItemCmd<ExptDriver> {
+class ExptTcl::SetStartCommandCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
-  SetStartCommandCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<ExptDriver>(pkg, cmd_name, "start_command", 2, 2) {}
+  SetStartCommandCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "start_command", 2, 2) {}
 protected:
   virtual void invoke() {
 	 // Build the script to be executed when the start key is pressed
@@ -198,10 +198,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ExptTcl::WriteCmd : public TclItemCmd<ExptDriver> {
+class ExptTcl::WriteCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
-  WriteCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<ExptDriver>(pkg, cmd_name, "filename", 2, 2) {}
+  WriteCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "filename", 2, 2) {}
 protected:
   virtual void invoke() {
   DOTRACE("WriteCmd::invoke");
@@ -219,17 +219,17 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ExptTcl::LoadCmd : public TclItemCmd<ExptDriver> {
+class ExptTcl::LoadCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
-  LoadCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<ExptDriver>(pkg, cmd_name, "input_filename", 2, 2) {}
+  LoadCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "input_filename", 2, 2) {}
 protected:
   virtual void invoke() {
 	 ExptDriver* ed = getItem();
 	 const char* filename = getCstringFromArg(1);
 
 	 ifstream ifs(filename);
-	 if ( ifs.fail() ) { throw TclError("non-existent or unreadable file"); }
+	 if ( ifs.fail() ) { throw Tcl::TclError("non-existent or unreadable file"); }
 
 	 AsciiStreamReader reader(ifs);
 	 reader.readRoot(ed);
@@ -242,17 +242,17 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ExptTcl::SaveCmd : public TclItemCmd<ExptDriver> {
+class ExptTcl::SaveCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
-  SaveCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<ExptDriver>(pkg, cmd_name, "output_filename", 2, 2) {}
+  SaveCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "output_filename", 2, 2) {}
 protected:
   virtual void invoke() {
 	 ExptDriver* ed = getItem();
 	 const char* filename = getCstringFromArg(1);
 
 	 ofstream ofs(filename);
-	 if ( ofs.fail() ) { throw TclError("couldn't open file for writing"); }
+	 if ( ofs.fail() ) { throw Tcl::TclError("couldn't open file for writing"); }
 
 	 AsciiStreamWriter writer(ofs);
 	 writer.writeRoot(ed);
@@ -267,10 +267,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ExptTcl::ExptPkg : public CTclIoItemPkg<ExptDriver> {
+class ExptTcl::ExptPkg : public Tcl::CTclIoItemPkg<ExptDriver> {
 public:
   ExptPkg(Tcl_Interp* interp) :
-	 CTclIoItemPkg<ExptDriver>(interp, "Expt", "2.7", 0),
+	 Tcl::CTclIoItemPkg<ExptDriver>(interp, "Expt", "2.7", 0),
 	 itsExptDriver(interp)
   {
   DOTRACE("ExptPkg::ExptPkg");

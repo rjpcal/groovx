@@ -3,7 +3,7 @@
 // fishtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 12:00:53 1999
-// written: Tue Nov 30 19:06:04 1999
+// written: Tue Dec  7 19:02:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,10 +23,10 @@ namespace FishTcl {
   class FishPkg;
 }
 
-class FishTcl::FishCmd : public TclCmd {
+class FishTcl::FishCmd : public Tcl::TclCmd {
 public:
   FishCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "spline_file coord_file index", 1, 4) {}
+	 Tcl::TclCmd(interp, cmd_name, "spline_file coord_file index", 1, 4) {}
 protected:
   virtual void invoke() {
 	 if (objc() == 1) {
@@ -47,11 +47,11 @@ protected:
   }
 };
 
-class FishTcl::FishPkg : public AbstractListItemPkg<Fish, ObjList> {
+class FishTcl::FishPkg : public Tcl::AbstractListItemPkg<Fish, ObjList> {
 public:
   FishPkg(Tcl_Interp* interp) :
-	 AbstractListItemPkg<Fish, ObjList>(interp, ObjList::theObjList(),
-													"Fish", "1.1")
+	 Tcl::AbstractListItemPkg<Fish, ObjList>(interp, ObjList::theObjList(),
+														  "Fish", "1.1")
   {
 	 addCommand( new FishCmd(interp, "Fish::Fish") );
 	 declareAllProperties();

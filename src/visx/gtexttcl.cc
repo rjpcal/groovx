@@ -3,7 +3,7 @@
 // gtexttcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 12:30:38 1999
-// written: Tue Nov 30 19:06:23 1999
+// written: Tue Dec  7 19:05:51 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,10 +34,10 @@ namespace GtextTcl {
 //
 //---------------------------------------------------------------------
 
-class GtextTcl::GtextCmd : public TclCmd {
+class GtextTcl::GtextCmd : public Tcl::TclCmd {
 public:
   GtextCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "?text?", 1, 2, false) {}
+	 Tcl::TclCmd(interp, cmd_name, "?text?", 1, 2, false) {}
 protected:
   virtual void invoke() {
 	 const char* text = (objc() < 2) ? 0 : getCstringFromArg(1);
@@ -55,10 +55,11 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class GtextTcl::GtextPkg : public ListItemPkg<Gtext, ObjList> {
+class GtextTcl::GtextPkg : public Tcl::ListItemPkg<Gtext, ObjList> {
 public:
   GtextPkg(Tcl_Interp* interp) :
-	 ListItemPkg<Gtext, ObjList>(interp, ObjList::theObjList(), "Gtext", "1.1")
+	 Tcl::ListItemPkg<Gtext, ObjList>(interp, ObjList::theObjList(),
+												 "Gtext", "1.1")
   {
 	 addCommand( new GtextCmd(interp, "Gtext::Gtext") );
 	 declareCAttrib("text", &Gtext::getText, &Gtext::setText);

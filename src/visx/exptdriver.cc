@@ -267,10 +267,10 @@ DOTRACE("ExptDriver::Impl::recreateDoUponCompletionProc");
   try {
 	 string proc_cmd_str = "namespace eval Expt { proc doUponCompletion {} {"
 		+ itsDoUponCompletionBody + "} }";
-	 TclEvalCmd proc_cmd(proc_cmd_str, TclEvalCmd::THROW_EXCEPTION);
+	 Tcl::TclEvalCmd proc_cmd(proc_cmd_str, Tcl::TclEvalCmd::THROW_EXCEPTION);
 	 proc_cmd.invoke(itsInterp);
   }
-  catch (TclError& err) {
+  catch (Tcl::TclError& err) {
 	 throw InputError(err.msg());
   }
 }
@@ -293,7 +293,7 @@ DOTRACE("ExptDriver::Impl::doAutosave");
 	 DebugEvalNL(getAutosaveFile().c_str());
 	 write(getAutosaveFile().c_str());
   }
-  catch (TclError& err) {
+  catch (Tcl::TclError& err) {
 	 raiseBackgroundError(err.msg().c_str());
   }
 }
@@ -437,8 +437,8 @@ DOTRACE("ExptDriver::Impl::noteElapsedTime");
 
 void ExptDriver::Impl::getCurrentTimeDateString(string& date_out) const {
 DOTRACE("ExptDriver::Impl::getCurrentTimeDateString");
-  static TclEvalCmd dateStringCmd("clock format [clock seconds]",
-											 TclEvalCmd::THROW_EXCEPTION);
+  static Tcl::TclEvalCmd dateStringCmd("clock format [clock seconds]",
+											 Tcl::TclEvalCmd::THROW_EXCEPTION);
 
   dateStringCmd.invoke(itsInterp);
   date_out = Tcl_GetStringResult(itsInterp);
@@ -449,7 +449,7 @@ DOTRACE("ExptDriver::Impl::getHostname");
   char* temp = Tcl_GetVar2(itsInterp, "env", "HOST",
 									TCL_GLOBAL_ONLY|TCL_LEAVE_ERR_MSG);;
 
-  if (temp == 0) { throw TclError(); }
+  if (temp == 0) { throw Tcl::TclError(); }
   hostname_out = temp;
 }
 
@@ -457,8 +457,8 @@ void ExptDriver::Impl::getSubjectKey(string& subjectkey_out) const {
 DOTRACE("ExptDriver::Impl::getSubjectKey");
 
   // Get the subject's initials as the tail of the current directory
-  static TclEvalCmd subjectKeyCmd("file tail [pwd]",
-											 TclEvalCmd::THROW_EXCEPTION);
+  static Tcl::TclEvalCmd subjectKeyCmd("file tail [pwd]",
+											 Tcl::TclEvalCmd::THROW_EXCEPTION);
 
   subjectKeyCmd.invoke(itsInterp);
 
@@ -475,9 +475,9 @@ string ExptDriver::Impl::makeUniqueFileExtension() const {
 DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
 
   // Format the current time into a unique filename extension
-  static TclEvalCmd uniqueFilenameCmd(
+  static Tcl::TclEvalCmd uniqueFilenameCmd(
         "clock format [clock seconds] -format %H%M%d%b%Y",
-		  TclEvalCmd::THROW_EXCEPTION);
+		  Tcl::TclEvalCmd::THROW_EXCEPTION);
 
   uniqueFilenameCmd.invoke(itsInterp);
   return Tcl_GetStringResult(itsInterp);
@@ -678,7 +678,7 @@ DOTRACE("ExptDriver::Impl::edSwapBuffers");
   try { 
 	 getWidget()->swapBuffers();
   }
-  catch (TclError& err) {
+  catch (Tcl::TclError& err) {
 	 raiseBackgroundError(err.msg().c_str());
   }
 }
@@ -950,7 +950,7 @@ DOTRACE("ExptDriver::Impl::storeData");
 	 raiseBackgroundError(err.msg().c_str());
 	 return;
   }
-  catch (TclError& err) {
+  catch (Tcl::TclError& err) {
 	 raiseBackgroundError(err.msg().c_str());
 	 return;
   }

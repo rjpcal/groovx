@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Tue Nov 30 19:02:36 1999
+// written: Tue Dec  7 19:05:51 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,11 +41,11 @@ namespace FaceTcl {
 //
 //---------------------------------------------------------------------
 
-class FaceTcl::LoadFacesCmd : public TclCmd {
+class FaceTcl::LoadFacesCmd : public Tcl::TclCmd {
 public:
   LoadFacesCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name,
-			  "filename ?num_to_read? ?use_virtual_ctor?", 2, 4, false)
+	 Tcl::TclCmd(interp, cmd_name,
+					 "filename ?num_to_read? ?use_virtual_ctor?", 2, 4, false)
   {}
 
 protected:
@@ -62,7 +62,7 @@ void FaceTcl::LoadFacesCmd::invoke() {
   if (objc() >= 4) { use_virtual_ctor = getBoolFromArg(3); }
 
   ifstream ifs(file);
-  if (ifs.fail()) { throw TclError("unable to open file"); }
+  if (ifs.fail()) { throw Tcl::TclError("unable to open file"); }
   
   ObjList& olist = ObjList::theObjList();
 
@@ -115,7 +115,7 @@ void FaceTcl::LoadFacesCmd::invoke() {
   catch (ErrorWithMsg& err) {
 	 DebugEval(typeid(err).name());
 	 DebugEvalNL(err.msg());
-	 throw TclError(err.msg());
+	 throw Tcl::TclError(err.msg());
   }
 
   // Return the ids of all the faces created
@@ -128,10 +128,10 @@ void FaceTcl::LoadFacesCmd::invoke() {
 //
 ///////////////////////////////////////////////////////////////////////
 
-class FaceTcl::FacePkg : public ListItemPkg<Face, ObjList> {
+class FaceTcl::FacePkg : public Tcl::ListItemPkg<Face, ObjList> {
 public:
   FacePkg(Tcl_Interp* interp) :
-	 ListItemPkg<Face, ObjList>(interp, ObjList::theObjList(), "Face", "2.5")
+	 Tcl::ListItemPkg<Face, ObjList>(interp, ObjList::theObjList(), "Face", "2.5")
   {
 	 declareAllProperties();
 

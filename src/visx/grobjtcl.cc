@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Tue Dec  7 11:48:49 1999
+// written: Tue Dec  7 19:18:42 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,10 +37,10 @@ namespace GrobjTcl {
 //
 //---------------------------------------------------------------------
 
-class GrobjTcl::BoundingBoxCmd : public TclItemCmd<GrObj> {
+class GrobjTcl::BoundingBoxCmd : public Tcl::TclItemCmd<GrObj> {
 public:
-  BoundingBoxCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<GrObj>(pkg, cmd_name, "objid", 2, 2) {}
+  BoundingBoxCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<GrObj>(pkg, cmd_name, "objid", 2, 2) {}
 protected:
   virtual void invoke() {
 	 Rect<double> bbox;
@@ -75,15 +75,15 @@ public:
 //
 //---------------------------------------------------------------------
 
-class GrobjTcl::GrObjPkg : public AbstractListItemPkg<GrObj, ObjList> {
+class GrobjTcl::GrObjPkg : public Tcl::AbstractListItemPkg<GrObj, ObjList> {
 public:
   GrObjPkg(Tcl_Interp* interp) :
-	 AbstractListItemPkg<GrObj, ObjList>(interp, ObjList::theObjList(),
-													 "GrObj", "2.5")
+	 Tcl::AbstractListItemPkg<GrObj, ObjList>(interp, ObjList::theObjList(),
+															"GrObj", "2.5")
   {
 	 addCommand( new BoundingBoxCmd(this, "GrObj::boundingBox") );
-	 addCommand( new VecActionCmd(this, "GrObj::update",
-											new Updater, "item_id(s)", 1) );
+	 addCommand( new Tcl::VecActionCmd(this, "GrObj::update",
+												  new Updater, "item_id(s)", 1) );
 
 	 declareCAttrib("alignmentMode",
 						 &GrObj::getAlignmentMode, &GrObj::setAlignmentMode);

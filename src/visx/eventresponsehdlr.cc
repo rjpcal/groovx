@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Dec  1 14:42:30 1999
+// written: Tue Dec  7 19:01:28 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -256,7 +256,7 @@ private:
   public:
   	 Condition_Feedback(Tcl_Obj* cond, Tcl_Obj* res) :
   		itsCondition(cond),
- 		itsResultCmd(res, TclEvalCmd::THROW_EXCEPTION, TCL_EVAL_GLOBAL)
+ 		itsResultCmd(res, Tcl::TclEvalCmd::THROW_EXCEPTION, TCL_EVAL_GLOBAL)
 		{}
 
 	 bool isTrue(Tcl_Interp* interp) throw(ErrorWithMsg)
@@ -280,8 +280,8 @@ private:
 		}
 
   private:
-	 TclObjPtr itsCondition;
- 	 TclEvalCmd itsResultCmd;
+	 Tcl::TclObjPtr itsCondition;
+ 	 Tcl::TclEvalCmd itsResultCmd;
   };
 
   string itsFeedbackMap;
@@ -636,12 +636,12 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacks");
   try {
 	 Tcl_Obj** pairs;
 	 int num_pairs=0;
-	 TclObjPtr pairs_list(Tcl_NewStringObj(itsFeedbackMap.c_str(), -1));
+	 Tcl::TclObjPtr pairs_list(Tcl_NewStringObj(itsFeedbackMap.c_str(), -1));
 	 checkedSplitList(pairs_list, pairs, num_pairs);
 
 	 for (int i = 0; i < num_pairs; ++i) {
 
-		TclObjPtr current_pair = pairs[i];
+		Tcl::TclObjPtr current_pair = pairs[i];
 
 		// Check that the length of the "pair" is really 2
 		if (getCheckedListLength(current_pair) != 2) {
@@ -683,12 +683,12 @@ DOTRACE("EventResponseHdlr::updateRegexps");
   try {
 	 Tcl_Obj** pairs;
 	 int num_pairs=0;
-	 TclObjPtr pairs_list(Tcl_NewStringObj(itsInputResponseMap.c_str(), -1));
+	 Tcl::TclObjPtr pairs_list(Tcl_NewStringObj(itsInputResponseMap.c_str(), -1));
 	 checkedSplitList(pairs_list, pairs, num_pairs);
 
 	 for (int i = 0; i < num_pairs; ++i) {
 
-		TclObjPtr current_pair = pairs[i];
+		Tcl::TclObjPtr current_pair = pairs[i];
 
 		// Check that the length of the "pair" is really 2
 		if (getCheckedListLength(current_pair) != 2) {

@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Dec  6 18:02:54 1999
+// written: Tue Dec  7 18:55:52 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ namespace {
 	 ost << pathname(togl);
 	 ost << " configure -" << param << ' ' << val << '\0';
 	 
-	 TclEvalCmd cmd(buf, TclEvalCmd::THROW_EXCEPTION);
+	 Tcl::TclEvalCmd cmd(buf, Tcl::TclEvalCmd::THROW_EXCEPTION);
 	 cmd.invoke(Togl_Interp(togl));
   }
 }
@@ -148,7 +148,7 @@ DOTRACE("ToglConfig::getParamValue");
   cmd_str += " configure -";
   cmd_str += param;
 
-  TclEvalCmd cmd(cmd_str, TclEvalCmd::BACKGROUND_ERROR);
+  Tcl::TclEvalCmd cmd(cmd_str, Tcl::TclEvalCmd::BACKGROUND_ERROR);
 
   // Execute the command
   Tcl_Interp* interp = Togl_Interp(itsWidget);
@@ -258,7 +258,7 @@ DebugPrintNL("ToglConfig::destroyWidget");
   // If we are exiting, don't bother destroying the widget; otherwise...
   if ( !Tcl_InterpDeleted(Togl_Interp(itsWidget)) ) {
 	 string destroy_cmd_str = string("destroy ") + pathname(itsWidget);
-	 TclEvalCmd destroy_cmd(destroy_cmd_str, TclEvalCmd::BACKGROUND_ERROR);
+	 Tcl::TclEvalCmd destroy_cmd(destroy_cmd_str, Tcl::TclEvalCmd::BACKGROUND_ERROR);
 	 destroy_cmd.invoke(Togl_Interp(itsWidget));
   }
 }
@@ -370,9 +370,9 @@ void ToglConfig::bind(const char* event_sequence, const char* script) {
 DOTRACE("ToglConfig::bind");
   string cmd_str = string("bind ") + pathname(itsWidget) + " "
 	 + event_sequence + " " + script;
-  TclEvalCmd cmd(cmd_str, TclEvalCmd::THROW_EXCEPTION);
+  Tcl::TclEvalCmd cmd(cmd_str, Tcl::TclEvalCmd::THROW_EXCEPTION);
   try { cmd.invoke(Togl_Interp(itsWidget)); }
-  catch (TclError&) { throw; }
+  catch (Tcl::TclError&) { throw; }
 }
 
 void ToglConfig::loadFont(const char* fontname) {
@@ -487,10 +487,10 @@ DOTRACE("ToglConfig::swapBuffers");
 
 void ToglConfig::takeFocus() {
 DOTRACE("ToglConfig::takeFocus");
-  TclEvalCmd cmd(string("focus -force ") + pathname(itsWidget),
-					  TclEvalCmd::THROW_EXCEPTION);
+  Tcl::TclEvalCmd cmd(string("focus -force ") + pathname(itsWidget),
+					  Tcl::TclEvalCmd::THROW_EXCEPTION);
   try { cmd.invoke(Togl_Interp(itsWidget)); }
-  catch (TclError&) { throw; }
+  catch (Tcl::TclError&) { throw; }
 }
 
 void ToglConfig::writeEpsFile(const char* filename) {

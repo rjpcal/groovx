@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Tue Nov 30 19:05:39 1999
+// written: Tue Dec  7 19:05:51 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,10 +39,10 @@ namespace BlockTcl {
 //
 //---------------------------------------------------------------------
 
-class BlockTcl::AddTrialsCmd : public TclItemCmd<Block> {
+class BlockTcl::AddTrialsCmd : public Tcl::TclItemCmd<Block> {
 public:
-  AddTrialsCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<Block>(pkg, cmd_name, 
+  AddTrialsCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Block>(pkg, cmd_name, 
 							"block_id ?first_trial=-1 last_trial=-1 repeat=1?",
 							2, 5, false) {}
 protected:
@@ -63,10 +63,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class BlockTcl::AddTrialIdsCmd : public TclItemCmd<Block> {
+class BlockTcl::AddTrialIdsCmd : public Tcl::TclItemCmd<Block> {
 public:
-  AddTrialIdsCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<Block>(pkg, cmd_name, 
+  AddTrialIdsCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Block>(pkg, cmd_name, 
 							"block_id trial_id(s) ?repeat=1?",
 							3, 4, false) {}
 protected:
@@ -91,10 +91,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class BlockTcl::InitCmd : public TclItemCmd<Block> {
+class BlockTcl::InitCmd : public Tcl::TclItemCmd<Block> {
 public:
-  InitCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<Block>(pkg, cmd_name, "block_id repeat rand_seed", 4, 4) {}
+  InitCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Block>(pkg, cmd_name, "block_id repeat rand_seed", 4, 4) {}
 protected:
   virtual void invoke() {
 	 Block* block = getItem();
@@ -113,11 +113,11 @@ protected:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class BlockTcl::BlockPkg : public ListItemPkg<Block, BlockList> {
+class BlockTcl::BlockPkg : public Tcl::ListItemPkg<Block, BlockList> {
 public:
   BlockPkg(Tcl_Interp* interp) :
-	 ListItemPkg<Block, BlockList>(interp, BlockList::theBlockList(),
-											 "Block", "1.1")
+	 Tcl::ListItemPkg<Block, BlockList>(interp, BlockList::theBlockList(),
+													"Block", "1.1")
   {
 	 addCommand( new InitCmd(this, "Block::init") );
 	 addCommand( new AddTrialsCmd(this, "Block::addTrials") );
@@ -148,10 +148,10 @@ namespace BlockListTcl {
   class BlockListPkg;
 }
 
-class BlockListTcl::BlockListPkg : public ListPkg<BlockList> {
+class BlockListTcl::BlockListPkg : public Tcl::ListPkg<BlockList> {
 public:
   BlockListPkg(Tcl_Interp* interp) :
-	 ListPkg<BlockList>(interp, BlockList::theBlockList(), "BlockList", "3.0")
+	 Tcl::ListPkg<BlockList>(interp, BlockList::theBlockList(), "BlockList", "3.0")
   {
 	 BlockList::theBlockList().insertAt(0, new Block());
   }

@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Nov 30 17:08:33 1999
+// written: Tue Dec  7 18:58:34 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,11 +37,11 @@ namespace ObjlistTcl {
 //
 //---------------------------------------------------------------------
 
-class ObjlistTcl::LoadObjectsCmd : public TclCmd {
+class ObjlistTcl::LoadObjectsCmd : public Tcl::TclCmd {
 public:
   LoadObjectsCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name,
-			  "filename ?num_to_read? ?typename?", 2, 4, false)
+	 Tcl::TclCmd(interp, cmd_name,
+					 "filename ?num_to_read? ?typename?", 2, 4, false)
   {}
 
 protected:
@@ -58,7 +58,7 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
   if (objc() >= 4) { given_type = getCstringFromArg(3); }
 
   ifstream ifs(file);
-  if (ifs.fail()) { throw TclError("unable to open file"); }
+  if (ifs.fail()) { throw Tcl::TclError("unable to open file"); }
 
   
   ObjList& olist = ObjList::theObjList();
@@ -109,10 +109,10 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 //
 //---------------------------------------------------------------------
 
-class ObjlistTcl::SaveObjectsCmd : public TclCmd {
+class ObjlistTcl::SaveObjectsCmd : public Tcl::TclCmd {
 public:
   SaveObjectsCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "objids filename", 3, 3)
+	 Tcl::TclCmd(interp, cmd_name, "objids filename", 3, 3)
   {}
 protected:
   virtual void invoke() {
@@ -123,7 +123,7 @@ protected:
 
 	 ofstream ofs(filename);
 	 if (ofs.fail()) {
-		throw TclError(string("error opening file: ") + filename);
+		throw Tcl::TclError(string("error opening file: ") + filename);
 	 }
 
 	 for (size_t i = 0; i < objids.size(); ++i) {
@@ -140,10 +140,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ObjlistTcl::ObjListPkg : public ListPkg<ObjList> {
+class ObjlistTcl::ObjListPkg : public Tcl::ListPkg<ObjList> {
 public:
   ObjListPkg(Tcl_Interp* interp) :
-	 ListPkg<ObjList>(interp, ObjList::theObjList(), "ObjList", "3.0")
+	 Tcl::ListPkg<ObjList>(interp, ObjList::theObjList(), "ObjList", "3.0")
   {
 	 addCommand( new LoadObjectsCmd(interp, "ObjList::loadObjects") );
 	 addCommand( new SaveObjectsCmd(interp, "ObjList::saveObjects") );

@@ -3,7 +3,7 @@
 // fixpttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Nov 30 19:06:14 1999
+// written: Tue Dec  7 19:15:03 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,8 +27,8 @@ extern "C" Tcl_PackageInitProc Fixpt_Init;
 int Fixpt_Init(Tcl_Interp* interp) {
 DOTRACE("Fixpt_Init");
 
-  new PropertyListItemPkg<FixPt, ObjList>(interp, ObjList::theObjList(),
- 														"FixPt", "$Revision$");
+  new Tcl::PropertyListItemPkg<FixPt, ObjList>(interp, ObjList::theObjList(),
+															  "FixPt", "$Revision$");
 
   Tcl_Eval(interp,
 			  "namespace eval FixPt { namespace export * }\n"

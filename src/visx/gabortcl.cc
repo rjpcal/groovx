@@ -3,7 +3,7 @@
 // gabortcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 14:16:30 1999
-// written: Wed Oct  6 14:19:32 1999
+// written: Tue Dec  7 19:15:03 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,8 +25,8 @@ extern "C" Tcl_PackageInitProc Gabor_Init;
 int Gabor_Init(Tcl_Interp* interp) {
 DOTRACE("Gabor_Init");
 
-  new PropertyListItemPkg<Gabor, ObjList>(interp, ObjList::theObjList(),
-													  "Gabor", "1.1");
+  new Tcl::PropertyListItemPkg<Gabor, ObjList>(interp, ObjList::theObjList(),
+															  "Gabor", "1.1");
 
   return TCL_OK;
 }

@@ -3,7 +3,7 @@
 // poslisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:46:09 1999
-// written: Sun Oct  3 19:36:28 1999
+// written: Tue Dec  7 18:58:34 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,10 +37,10 @@ namespace PoslistTcl {
 //
 ///////////////////////////////////////////////////////////////////////
 
-class PoslistTcl::PosListPkg : public ListPkg<PosList> {
+class PoslistTcl::PosListPkg : public Tcl::ListPkg<PosList> {
 public:
   PosListPkg(Tcl_Interp* interp) :
-	 ListPkg<PosList>(interp, PosList::thePosList(), "PosList", "3.0") {}
+	 Tcl::ListPkg<PosList>(interp, PosList::thePosList(), "PosList", "3.0") {}
 };
 
 //---------------------------------------------------------------------

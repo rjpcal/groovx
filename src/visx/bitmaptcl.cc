@@ -3,7 +3,7 @@
 // bitmaptcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:43:45 1999
-// written: Wed Dec  1 10:28:44 1999
+// written: Tue Dec  7 19:05:51 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,10 +48,10 @@ namespace BitmapTcl {
 //
 //---------------------------------------------------------------------
 
-class BitmapTcl::LoadPbmCmd : public TclItemCmd<Bitmap> {
+class BitmapTcl::LoadPbmCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
-  LoadPbmCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id filename", 3, 3) {}
+  LoadPbmCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id filename", 3, 3) {}
 protected:
   virtual void invoke() {
 	 Bitmap* bm = getItem();
@@ -66,10 +66,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class BitmapTcl::LoadPbmGzCmd : public TclItemCmd<Bitmap> {
+class BitmapTcl::LoadPbmGzCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
-  LoadPbmGzCmd(TclItemPkg* pkg, const char* cmd_name, int method=0) :
-	 TclItemCmd<Bitmap>(pkg, cmd_name,
+  LoadPbmGzCmd(Tcl::TclItemPkg* pkg, const char* cmd_name, int method=0) :
+	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
 							  "bitmap_id filename(without .gz extension)"
 							  "?temp_filename=.temp.pbm?",
 							  3, 4),
@@ -116,19 +116,19 @@ DOTRACE("BitmapTcl::LoadPbmGzCmd::invoke");
   Tcl_Channel chan = Tcl_OpenCommandChannel(itsInterp, argc, 
 														  const_cast<char**>(argv),
 														  TCL_STDOUT);
-  if (chan == 0) { throw TclError("error opening command channel"); }
+  if (chan == 0) { throw Tcl::TclError("error opening command channel"); }
 
   // Read the output of the channel into a Tcl_Obj
-  TclObjPtr contents(Tcl_NewObj());
+  Tcl::TclObjPtr contents(Tcl_NewObj());
 
   while (1) {
 	 int chars_read = Tcl_ReadChars(chan, contents, 4096, 1 /* -> do append */);
-	 if ( chars_read == -1 ) { throw TclError("error reading from channel"); }
+	 if ( chars_read == -1 ) { throw Tcl::TclError("error reading from channel"); }
 	 if ( chars_read == 0 ) /* we are done, so... */ break;
   }
 
   int result = Tcl_Close(itsInterp, chan);
-  if (result != TCL_OK) { throw TclError("error closing command channel"); }
+  if (result != TCL_OK) { throw Tcl::TclError("error closing command channel"); }
   
   // Form a stream from the bytes and load the bitmap from that stream
   int num_bytes;
@@ -151,17 +151,17 @@ DOTRACE("BitmapTcl::LoadPbmGzCmd::invokeUsingTempFile");
   Tcl_Channel chan = Tcl_OpenCommandChannel(itsInterp, argc, 
 														  const_cast<char**>(argv),
 														  0 /* no flags */);
-  if (chan == 0) { throw TclError("error opening command channel"); }
+  if (chan == 0) { throw Tcl::TclError("error opening command channel"); }
 
   int result = Tcl_Close(itsInterp, chan);
-  if (result != TCL_OK) { throw TclError("error closing command channel"); }
+  if (result != TCL_OK) { throw Tcl::TclError("error closing command channel"); }
   
   // Read the temp file
   bm->loadPbmFile(tempfilename);
 
   // Remove the temp file
   result = System::theSystem().remove(tempfilename);
-  if (result != 0) { throw TclError("error removing temp file"); }
+  if (result != 0) { throw Tcl::TclError("error removing temp file"); }
 }
 
 //---------------------------------------------------------------------
@@ -170,10 +170,10 @@ DOTRACE("BitmapTcl::LoadPbmGzCmd::invokeUsingTempFile");
 //
 //---------------------------------------------------------------------
 
-class BitmapTcl::WritePbmCmd : public TclItemCmd<Bitmap> {
+class BitmapTcl::WritePbmCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
-  WritePbmCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id filename", 3, 3) {}
+  WritePbmCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id filename", 3, 3) {}
 protected:
   virtual void invoke() {
 	 Bitmap* bm = getItem();
@@ -188,10 +188,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class BitmapTcl::WritePbmGzCmd : public TclItemCmd<Bitmap> {
+class BitmapTcl::WritePbmGzCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
-  WritePbmGzCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<Bitmap>(pkg, cmd_name,
+  WritePbmGzCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
 							  "bitmap_id filename(without .gz extension)", 3, 3),
 	 itsInterp(pkg->interp()) {}
 protected:
@@ -210,7 +210,7 @@ protected:
 	 int result = Tcl_Eval(itsInterp, &cmd_cstr[0]);
 
 	 if (result != TCL_OK) {
-		throw TclError("error gzip-ing file");
+		throw Tcl::TclError("error gzip-ing file");
 	 }
   }
 
@@ -224,10 +224,10 @@ private:
 //
 //---------------------------------------------------------------------
 
-class BitmapTcl::GrabScreenRectCmd : public TclItemCmd<Bitmap> {
+class BitmapTcl::GrabScreenRectCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
-  GrabScreenRectCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id left top right bottom", 6, 6) {}
+  GrabScreenRectCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id left top right bottom", 6, 6) {}
 protected:
   virtual void invoke() {
 	 int l = getIntFromArg(2);
@@ -246,10 +246,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class BitmapTcl::GrabWorldRectCmd : public TclItemCmd<Bitmap> {
+class BitmapTcl::GrabWorldRectCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
-  GrabWorldRectCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id left top right bottom", 6, 6) {}
+  GrabWorldRectCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id left top right bottom", 6, 6) {}
 protected:
   virtual void invoke() {
 	 double l = getDoubleFromArg(2);
@@ -268,11 +268,11 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class BitmapTcl::BitmapPkg : public AbstractListItemPkg<Bitmap, ObjList> {
+class BitmapTcl::BitmapPkg : public Tcl::AbstractListItemPkg<Bitmap, ObjList> {
 public:
   BitmapPkg(Tcl_Interp* interp) :
-	 AbstractListItemPkg<Bitmap, ObjList>(interp, ObjList::theObjList(),
-													  "Bitmap", "1.1")
+	 Tcl::AbstractListItemPkg<Bitmap, ObjList>(interp, ObjList::theObjList(),
+															 "Bitmap", "1.1")
   {
 	 addCommand( new LoadPbmCmd(this, "Bitmap::loadPbm") );
 	 addCommand( new LoadPbmGzCmd(this, "Bitmap::loadPbmGz", 0) );
@@ -303,11 +303,11 @@ namespace GLBitmapTcl {
   class GLBitmapPkg;
 }
 
-class GLBitmapTcl::GLBitmapPkg : public ListItemPkg<GLBitmap, ObjList> {
+class GLBitmapTcl::GLBitmapPkg : public Tcl::ListItemPkg<GLBitmap, ObjList> {
 public:
   GLBitmapPkg(Tcl_Interp* interp) :
-	 ListItemPkg<GLBitmap, ObjList>(interp, ObjList::theObjList(),
-											  "GLBitmap", "1.1")
+	 Tcl::ListItemPkg<GLBitmap, ObjList>(interp, ObjList::theObjList(),
+													 "GLBitmap", "1.1")
   {
 	 declareCAttrib("usingGlBitmap",
 						 &GLBitmap::getUsingGlBitmap, &GLBitmap::setUsingGlBitmap);
@@ -324,11 +324,11 @@ namespace XBitmapTcl {
   class XBitmapPkg;
 }
 
-class XBitmapTcl::XBitmapPkg : public ListItemPkg<XBitmap, ObjList> {
+class XBitmapTcl::XBitmapPkg : public Tcl::ListItemPkg<XBitmap, ObjList> {
 public:
   XBitmapPkg(Tcl_Interp* interp) :
-	 ListItemPkg<XBitmap, ObjList>(interp, ObjList::theObjList(),
-											 "XBitmap", "$Revision$")
+	 Tcl::ListItemPkg<XBitmap, ObjList>(interp, ObjList::theObjList(),
+													"XBitmap", "$Revision$")
 	 {}
 };
 

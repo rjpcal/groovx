@@ -3,7 +3,7 @@
 // morphyfacetcl.cc
 // Rob Peters 
 // created: Wed Sep  8 15:42:36 1999
-// written: Mon Oct  4 15:55:47 1999
+// written: Tue Dec  7 19:15:02 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,8 +26,8 @@ extern "C" Tcl_PackageInitProc Morphyface_Init;
 int Morphyface_Init(Tcl_Interp* interp) {
 DOTRACE("Morphyface_Init");
 
-  new PropertyListItemPkg<MorphyFace, ObjList>(interp, ObjList::theObjList(),
-															  "MorphyFace", "1.2");
+  new Tcl::PropertyListItemPkg<MorphyFace, ObjList>(
+              interp, ObjList::theObjList(), "MorphyFace", "1.2");
 
   return TCL_OK;
 }

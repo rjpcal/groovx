@@ -2,7 +2,7 @@
 // jittertcl.cc
 // Rob Peters
 // created: Wed Apr  7 14:58:40 1999
-// written: Tue Nov 30 19:06:46 1999
+// written: Tue Dec  7 19:05:51 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -32,10 +32,10 @@ namespace JitterTcl {
 //
 //---------------------------------------------------------------------
 
-class JitterTcl::SetJitterCmd : public TclItemCmd<Jitter> {
+class JitterTcl::SetJitterCmd : public Tcl::TclItemCmd<Jitter> {
 public:
-  SetJitterCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<Jitter>(pkg, cmd_name,
+  SetJitterCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Jitter>(pkg, cmd_name,
 							  "posid x_jitter y_jitter r_jitter", 5, 5) {}
 protected:
   virtual void invoke() {
@@ -53,10 +53,11 @@ protected:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class JitterTcl::JitterPkg : public ListItemPkg<Jitter, PosList> {
+class JitterTcl::JitterPkg : public Tcl::ListItemPkg<Jitter, PosList> {
 public:
   JitterPkg(Tcl_Interp* interp) : 
-	 ListItemPkg<Jitter, PosList>(interp, PosList::thePosList(), "Jitter", "2.3")
+	 Tcl::ListItemPkg<Jitter, PosList>(interp, PosList::thePosList(),
+												  "Jitter", "2.3")
   {
 	 addCommand( new SetJitterCmd(this, "Jitter::setJitter") );
   }

@@ -3,7 +3,7 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Thu Oct 14 17:30:30 1999
+// written: Tue Dec  7 19:02:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,10 +46,10 @@ namespace SoundTcl {
 //
 //---------------------------------------------------------------------
 
-class SoundTcl::SoundCmd : public TclCmd {
+class SoundTcl::SoundCmd : public Tcl::TclCmd {
 public:
   SoundCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "filename", 2, 2) {}
+	 Tcl::TclCmd(interp, cmd_name, "filename", 2, 2) {}
 protected:
   virtual void invoke() {
 	 const char* filename = getCstringFromArg(1);
@@ -66,10 +66,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class SoundTcl::HaveAudioCmd : public TclCmd {
+class SoundTcl::HaveAudioCmd : public Tcl::TclCmd {
 public:
   HaveAudioCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, NULL, 1, 1) {}
+	 Tcl::TclCmd(interp, cmd_name, NULL, 1, 1) {}
 protected:
   virtual void invoke() { returnBool( Sound::haveSound() ); }
 };
@@ -81,10 +81,10 @@ protected:
 //---------------------------------------------------------------------
 
 class SoundTcl::SoundPkg :
-  public AbstractListItemPkg<Sound, SoundList> {
+  public Tcl::AbstractListItemPkg<Sound, SoundList> {
 public:
   SoundPkg(Tcl_Interp* interp) :
-	 AbstractListItemPkg<Sound, SoundList>(
+	 Tcl::AbstractListItemPkg<Sound, SoundList>(
 			 interp, SoundList::theSoundList(), "Sound", "1.3")
   {
 	 bool haveSound = Sound::initSound();
@@ -125,11 +125,11 @@ namespace SoundListTcl {
   class SoundListPkg;
 }
 
-class SoundListTcl::SoundListPkg : public ListPkg<SoundList> {
+class SoundListTcl::SoundListPkg : public Tcl::ListPkg<SoundList> {
 public:
   SoundListPkg(Tcl_Interp* interp) :
-	 ListPkg<SoundList>(interp, SoundList::theSoundList(),
-							  "SoundList", "1.3") {}
+	 Tcl::ListPkg<SoundList>(interp, SoundList::theSoundList(),
+									 "SoundList", "1.3") {}
 };
 
 //---------------------------------------------------------------------

@@ -3,7 +3,7 @@
 // housetcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 15:14:19 1999
-// written: Mon Oct  4 15:59:09 1999
+// written: Tue Dec  7 19:15:03 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,8 +26,8 @@ extern "C" Tcl_PackageInitProc House_Init;
 int House_Init(Tcl_Interp* interp) {
 DOTRACE("House_Init");
 
-  new PropertyListItemPkg<House, ObjList>(interp, ObjList::theObjList(),
-														"House", "1.3");
+  new Tcl::PropertyListItemPkg<House, ObjList>(interp, ObjList::theObjList(),
+															  "House", "1.3");
 
   return TCL_OK;
 }

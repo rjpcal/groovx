@@ -3,7 +3,7 @@
 // positiontcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:53:34 1999
-// written: Tue Nov 30 19:07:07 1999
+// written: Tue Dec  7 19:05:51 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,10 +36,10 @@ namespace PosTcl {
 //
 //---------------------------------------------------------------------
 
-class PosTcl::TranslateCmd : public TclItemCmd<Position> {
+class PosTcl::TranslateCmd : public Tcl::TclItemCmd<Position> {
 public:
-  TranslateCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<Position>(pkg, cmd_name, 
+  TranslateCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Position>(pkg, cmd_name, 
 								 "posid new_x new_y ?new_z?", 4, 5, false) {}
 protected:
   virtual void invoke() {
@@ -61,10 +61,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class PosTcl::ScaleCmd : public TclItemCmd<Position> {
+class PosTcl::ScaleCmd : public Tcl::TclItemCmd<Position> {
 public:
-  ScaleCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<Position>(pkg, cmd_name, 
+  ScaleCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Position>(pkg, cmd_name, 
 								 "posid scale_x ?scale_y? ?scale_z?", 3, 5, false) {}
 protected:
   virtual void invoke() {
@@ -86,10 +86,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class PosTcl::RotateCmd : public TclItemCmd<Position> {
+class PosTcl::RotateCmd : public Tcl::TclItemCmd<Position> {
 public:
-  RotateCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<Position>(pkg, cmd_name, 
+  RotateCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
+	 Tcl::TclItemCmd<Position>(pkg, cmd_name, 
 								 "posid angle ?rot_axis_x rot_axis_y rot_axis_z?",
 								 3, 6, true) {}
 protected:
@@ -117,10 +117,11 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class PosTcl::PosPkg : public ListItemPkg<Position, PosList> {
+class PosTcl::PosPkg : public Tcl::ListItemPkg<Position, PosList> {
 public:
   PosPkg(Tcl_Interp* interp) :
-	 ListItemPkg<Position, PosList>(interp, PosList::thePosList(), "Pos", "2.3")
+	 Tcl::ListItemPkg<Position, PosList>(interp, PosList::thePosList(),
+													 "Pos", "2.3")
   {
 	 addCommand( new RotateCmd(this, "Pos::rotate") );
 	 addCommand( new TranslateCmd(this, "Pos::translate") );

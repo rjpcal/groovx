@@ -3,7 +3,7 @@
 // expttesttcl.cc
 // Rob Peters
 // created: Tue May 11 13:13:41 1999
-// written: Tue Jul 20 15:04:26 1999
+// written: Tue Dec  7 19:16:02 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ extern "C" int Expttest_Init(Tcl_Interp* interp);
 int Expttest_Init(Tcl_Interp* interp) {
   static int haveTest=0;
 
-  Tcl_LinkBoolean(interp, "Expt::haveTest", &haveTest, TCL_LINK_READ_ONLY);
+  Tcl::Tcl_LinkBoolean(interp, "Expt::haveTest", &haveTest, TCL_LINK_READ_ONLY);
   
   return TCL_OK;
 }

@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Sat Dec  4 03:35:36 1999
+// written: Tue Dec  7 18:58:33 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,10 +68,10 @@ namespace {
 //
 //---------------------------------------------------------------------
 
-class TlistTcl::CreatePreviewCmd : public TclCmd {
+class TlistTcl::CreatePreviewCmd : public Tcl::TclCmd {
 public:
   CreatePreviewCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "objids pixel_width pixel_height",
+	 Tcl::TclCmd(interp, cmd_name, "objids pixel_width pixel_height",
 			  4, 4, false) {}
 protected:
   virtual void invoke() {
@@ -94,10 +94,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class TlistTcl::AddObjectCmd : public TclCmd {
+class TlistTcl::AddObjectCmd : public Tcl::TclCmd {
 public:
   AddObjectCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "trial objid posid", 4, 4) {}
+	 Tcl::TclCmd(interp, cmd_name, "trial objid posid", 4, 4) {}
 protected:
   virtual void invoke() {
     int trialid = getIntFromArg(1);
@@ -114,10 +114,10 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class TlistTcl::MakeSinglesCmd : public TclCmd {
+class TlistTcl::MakeSinglesCmd : public Tcl::TclCmd {
 public:
   MakeSinglesCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "posid", 2, 2) {}
+	 Tcl::TclCmd(interp, cmd_name, "posid", 2, 2) {}
 protected:
   virtual void invoke() {
 	 int posid = getIntFromArg(1);
@@ -131,10 +131,10 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class TlistTcl::MakePairsCmd : public TclCmd {
+class TlistTcl::MakePairsCmd : public Tcl::TclCmd {
 public:
   MakePairsCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "posid1 posid2", 3, 3) {}
+	 Tcl::TclCmd(interp, cmd_name, "posid1 posid2", 3, 3) {}
 protected:
   virtual void invoke() {
 	 int posid1 = getIntFromArg(1);
@@ -150,10 +150,10 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class TlistTcl::MakeTriadsCmd : public TclCmd {
+class TlistTcl::MakeTriadsCmd : public Tcl::TclCmd {
 public:
   MakeTriadsCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "posid1 posid2 posid3", 4, 4) {}
+	 Tcl::TclCmd(interp, cmd_name, "posid1 posid2 posid3", 4, 4) {}
 protected:
   virtual void invoke() {
 	 int posid[3] = { getIntFromArg(1), getIntFromArg(2), getIntFromArg(3) };
@@ -168,18 +168,18 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class TlistTcl::MakeSummaryTrialCmd : public TclCmd {
+class TlistTcl::MakeSummaryTrialCmd : public Tcl::TclCmd {
 public:
   MakeSummaryTrialCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "trialid num_cols scale ?xstep? ?ystep?",
+	 Tcl::TclCmd(interp, cmd_name, "trialid num_cols scale ?xstep? ?ystep?",
 			  4, 6, false) {}
 protected:
   virtual void invoke() {
 	 int trialid = getIntFromArg(1);
-	 if (trialid < 0) { throw TclError(bad_trial_msg); }
+	 if (trialid < 0) { throw Tcl::TclError(bad_trial_msg); }
 
 	 int num_cols = getIntFromArg(2);
-	 if (num_cols <= 0) { throw TclError("num_cols must be a positive integer"); }
+	 if (num_cols <= 0) { throw Tcl::TclError("num_cols must be a positive integer"); }
 
 	 double scale = getDoubleFromArg(3);
 	 double xstep = (objc() >= 5) ? getDoubleFromArg(4) : 2.0;
@@ -197,10 +197,10 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class TlistTcl::LoadObjidFileCmd : public TclCmd {
+class TlistTcl::LoadObjidFileCmd : public Tcl::TclCmd {
 public:
   LoadObjidFileCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "objid_file num_lines ?offset?", 3, 4, false) {}
+	 Tcl::TclCmd(interp, cmd_name, "objid_file num_lines ?offset?", 3, 4, false) {}
 protected:
   virtual void invoke() {
 	 const char* objid_file =                 getCstringFromArg(1);
@@ -213,7 +213,7 @@ protected:
 		returnInt(num_loaded);
 	 }
 	 catch (IoError& err) {
-		throw TclError(err.msg());
+		throw Tcl::TclError(err.msg());
 	 }
   }
 };
@@ -224,10 +224,10 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class TlistTcl::WriteResponsesCmd : public TclCmd {
+class TlistTcl::WriteResponsesCmd : public Tcl::TclCmd {
 public:
   WriteResponsesCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "filename", 2, 2) {}
+	 Tcl::TclCmd(interp, cmd_name, "filename", 2, 2) {}
 protected:
   virtual void invoke() {
 	 const char* filename = getCstringFromArg(1);
@@ -242,10 +242,10 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class TlistTcl::WriteIncidenceMatrixCmd : public TclCmd {
+class TlistTcl::WriteIncidenceMatrixCmd : public Tcl::TclCmd {
 public:
   WriteIncidenceMatrixCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "filename", 2, 2) {}
+	 Tcl::TclCmd(interp, cmd_name, "filename", 2, 2) {}
 protected:
   virtual void invoke() {
 	 const char* filename = getCstringFromArg(1);	 
@@ -259,10 +259,10 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class TlistTcl::WriteMatlabCmd : public TclCmd {
+class TlistTcl::WriteMatlabCmd : public Tcl::TclCmd {
 public:
   WriteMatlabCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "filename", 2, 2) {}
+	 Tcl::TclCmd(interp, cmd_name, "filename", 2, 2) {}
 protected:
   virtual void invoke() {
 	 const char* filename = getCstringFromArg(1);
@@ -276,10 +276,10 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class TlistTcl::TlistPkg : public ListPkg<Tlist> {
+class TlistTcl::TlistPkg : public Tcl::ListPkg<Tlist> {
 public:
   TlistPkg(Tcl_Interp* interp) :
-	 ListPkg<Tlist>(interp, Tlist::theTlist(), "Tlist", "3.0")
+	 Tcl::ListPkg<Tlist>(interp, Tlist::theTlist(), "Tlist", "3.0")
   {
   DOTRACE("TlistPkg::TlistPkg");
 	 addCommand( new AddObjectCmd(interp, "Tlist::addObject") );
