@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Thu Nov 21 09:37:40 2002
+// written: Thu Nov 21 12:58:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ public:
     glx(new GlxWrapper(dpy, *opts, share))
   {}
 
-  shared_ptr<GlxOpts> opts; // FIXME avoid duplication of GlxOpts in GlxWrapper?
+  shared_ptr<GlxOpts> opts;
   shared_ptr<GlxWrapper> glx;
 };
 
