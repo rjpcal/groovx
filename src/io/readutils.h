@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:25:40 1999
-// written: Thu May 17 10:50:19 2001
+// written: Thu May 17 14:36:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,12 +17,8 @@
 #include "io/reader.h"
 #endif
 
-#ifdef ACC_COMPILER
-// For some reason aCC wants to see the full definition of class IO
-// before parsing the dynamic_cast<C*>(IO*) in readObjectSeq
-#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
-#  include "io/io.h"
-#  endif
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
+#include "io/iditem.h"
 #endif
 
 namespace IO {
@@ -98,23 +94,8 @@ namespace ReadUtils {
 		  readSequenceCount(reader, seq_name) : known_count;
 
 		for (int i = 0; i < count; ++i) {
-		  IO::IoObject* io = reader->readObjectImpl(makeElementNameString(seq_name, i));
-
-		  if (io == 0) {
-			 *inserter = static_cast<C*>(0);
-		  }
-
-		  else {
-			 C* obj = dynamic_cast<C*>(io);
-			 if (obj == 0)
-				{
-				  IO::ReadError err("failed cast in readObjectSeq for sequence '");
-				  err.appendMsg(seq_name, "' on item number ");
-				  err.appendNumber(i);
-				  throw err;
-				}
-			 *inserter = obj;
-		  }
+		  *inserter = dynamicCast<C>(
+					  reader->readObject(makeElementNameString(seq_name, i)));
 
 		  ++inserter;
 		}
