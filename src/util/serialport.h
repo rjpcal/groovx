@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 29 13:45:35 2000
-// written: Mon Jan 13 11:08:25 2003
+// written: Tue Feb 25 14:06:58 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,11 @@
 #ifndef SERIALPORT_H_DEFINED
 #define SERIALPORT_H_DEFINED
 
-#ifdef HAVE_FSTREAM
-#  include <fstream>
+#ifdef HAVE_IOSFWD
+#  include <iosfwd>
 #else
-#  include <fstream.h>
+class iostream;
+class streambuf;
 #endif
 
 namespace Util
@@ -34,14 +35,7 @@ public:
 
   /** Returns the next character from the stream, or EOF (-1) if the
       stream is empty. */
-  int get()
-    {
-      if ( isClosed() ) return -1;
-
-      itsStream->clear();
-      itsStream->sync();
-      return itsStream->get();
-    }
+  int get();
 
   /// Returns the exit status of closing its stream
   int close();
@@ -57,13 +51,8 @@ private:
   SerialPort& operator=(const SerialPort&);
 
   int itsFiledes;
-
-#ifdef HAVE_EXT_STDIO_FILEBUF_H
-  std::filebuf* itsFilebuf;
-  std::iostream* itsStream;
-#else
-  STD_IO::fstream* itsStream;
-#endif
+  STD_IO::streambuf* itsFilebuf;
+  STD_IO::iostream* itsStream;
   int itsExitStatus;
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 29 13:46:11 2000
-// written: Mon Jan 13 11:08:25 2003
+// written: Tue Feb 25 14:06:54 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,23 +15,24 @@
 
 #include "util/serialport.h"
 
-#include <cstdio>
-#include <fcntl.h>
-#include <termios.h>
-#include <unistd.h>
-
 #ifdef HAVE_EXT_STDIO_FILEBUF_H
 #include <ext/stdio_filebuf.h>
+#else
+#include "util/stdiobuf.h"
 #endif
+
+#include <cstdio>
+#include <fcntl.h>
+#include <istream>
+#include <termios.h>
+#include <unistd.h>
 
 #include "util/trace.h"
 #include "util/debug.h"
 
 Util::SerialPort::SerialPort(const char* serial_device) :
   itsFiledes(::open(serial_device, O_RDONLY|O_NOCTTY|O_NONBLOCK)),
-#ifdef HAVE_EXT_STDIO_FILEBUF_H
   itsFilebuf(0),
-#endif
   itsStream(0),
   itsExitStatus(0)
 {
@@ -72,13 +73,21 @@ DOTRACE("Util::SerialPort::SerialPort");
 
 #ifdef HAVE_EXT_STDIO_FILEBUF_H
       typedef __gnu_cxx::stdio_filebuf<char> filebuf_t;
-      itsFilebuf = new filebuf_t(fdopen(filedes(), "r"), std::ios::in);
-      itsStream = new std::iostream(itsFilebuf);
+      itsFilebuf = new filebuf_t(fdopen(itsFiledes, "r"), std::ios::in);
 #else
-      itsStream = new STD_IO::fstream;
-      itsStream->attach(filedes());
+      itsFilebuf = new Util::stdiobuf(itsFiledes, std::ios::in, true);
 #endif
+      itsStream = new std::iostream(itsFilebuf);
     }
+}
+
+int Util::SerialPort::get()
+{
+  if ( isClosed() ) return -1;
+
+  itsStream->clear();
+  itsStream->sync();
+  return itsStream->get();
 }
 
 int Util::SerialPort::close()
@@ -89,10 +98,8 @@ DOTRACE("Util::SerialPort::close");
       delete itsStream;
       itsStream = 0;
 
-#ifdef HAVE_EXT_STDIO_FILEBUF_H
       delete itsFilebuf;
       itsFilebuf = 0;
-#endif
 
       itsExitStatus = ::close(itsFiledes);
     }
