@@ -63,15 +63,13 @@ private:
   // Class-specific operator delete.
   void operator delete(void* space);
 
-  friend class DummyFriend; // to eliminate compiler warning
-
   // Constructor builds a string_rep with ref-count 0. 'length' here
   // does NOT need to "+1" for a null-terminator
   string_rep(std::size_t length, const char* text, std::size_t capacity=0);
 
   ~string_rep() throw();
 
-  static string_rep* getEmptyRep();
+  static string_rep* get_empty_rep();
 
 public:
   static string_rep* make(std::size_t length, const char* text,
@@ -79,11 +77,11 @@ public:
 
   string_rep* clone() const;
 
-  static void makeUnique(string_rep*& rep);
+  static void make_unique(string_rep*& rep);
 
-  void incrRefCount() throw() { ++itsRefCount; }
+  void incr_ref_count() throw() { ++itsRefCount; }
 
-  std::size_t decrRefCount() throw()
+  std::size_t decr_ref_count() throw()
   {
     std::size_t c = --itsRefCount;
     if (c <= 0)
@@ -224,7 +222,7 @@ public:
   /// Get a pointer to the non-const underlying data array.
   char* data()
   {
-    string_rep::makeUnique(itsRep); return itsRep->data();
+    string_rep::make_unique(itsRep); return itsRep->data();
   }
 
   /// Get a pointer to the const underlying data array.
@@ -240,7 +238,7 @@ public:
   bool empty() const throw() { return is_empty(); }
 
   /// Reset to an empty string.
-  void clear() { string_rep::makeUnique(itsRep); itsRep->clear(); }
+  void clear() { string_rep::make_unique(itsRep); itsRep->clear(); }
 
   //
   // Substring operations

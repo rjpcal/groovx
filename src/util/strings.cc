@@ -87,13 +87,13 @@ DOTRACE("string_rep::~string_rep");
   itsText = (char*)0xdeadbeef;
 }
 
-string_rep* string_rep::getEmptyRep()
+string_rep* string_rep::get_empty_rep()
 {
   static string_rep* empty_rep = 0;
   if (empty_rep == 0)
     {
       empty_rep = new string_rep(0, 0);
-      empty_rep->incrRefCount();
+      empty_rep->incr_ref_count();
     }
 
   return empty_rep;
@@ -103,7 +103,7 @@ string_rep* string_rep::make(std::size_t length, const char* text,
                              std::size_t capacity)
 {
   if (length == 0)
-    return getEmptyRep();
+    return get_empty_rep();
 
   return new string_rep(length, text, capacity);
 }
@@ -113,14 +113,14 @@ string_rep* string_rep::clone() const
   return new string_rep(itsLength, itsText, itsCapacity);
 }
 
-void string_rep::makeUnique(string_rep*& rep)
+void string_rep::make_unique(string_rep*& rep)
 {
   if (rep->itsRefCount <= 1) return;
 
   string_rep* new_rep = rep->clone();
 
-  rep->decrRefCount();
-  new_rep->incrRefCount();
+  rep->decr_ref_count();
+  new_rep->incr_ref_count();
 
   rep = new_rep;
 
@@ -231,7 +231,7 @@ DOTRACE("fstring::init_empty");
 
   itsRep = string_rep::make(0, 0);
 
-  itsRep->incrRefCount();
+  itsRep->incr_ref_count();
 }
 
 void fstring::init(Util::CharData cdata)
@@ -241,7 +241,7 @@ DOTRACE("fstring::init");
 
   itsRep = string_rep::make(cdata.len, cdata.text);
 
-  itsRep->incrRefCount();
+  itsRep->incr_ref_count();
 }
 
 fstring::fstring() :
@@ -249,14 +249,14 @@ fstring::fstring() :
 {
 DOTRACE("fstring::fstring");
 
-  itsRep->incrRefCount();
+  itsRep->incr_ref_count();
 }
 
 fstring::fstring(const fstring& other) throw() :
   itsRep(other.itsRep)
 {
 DOTRACE("fstring::fstring(const fstring&)");
-  itsRep->incrRefCount();
+  itsRep->incr_ref_count();
 }
 
 fstring::~fstring() throw()
@@ -265,7 +265,7 @@ DOTRACE("fstring::~fstring");
 
   dbgDump(7, *this);
 
-  if (itsRep->decrRefCount() == 0)
+  if (itsRep->decr_ref_count() == 0)
     itsRep = (string_rep*)0xdeadbeef;
 }
 
@@ -345,7 +345,7 @@ DOTRACE("fstring::append_text");
 
   if (length > 0)
     {
-      string_rep::makeUnique(itsRep);
+      string_rep::make_unique(itsRep);
       itsRep->append(length, text);
     }
 }
@@ -381,7 +381,7 @@ DOTRACE("fstring::readsome");
 
   if (count > 0)
     {
-      string_rep::makeUnique(itsRep);
+      string_rep::make_unique(itsRep);
       itsRep->reserve(count+1);
 #ifndef PRESTANDARD_IOSTREAMS
       unsigned int numread = is.readsome(itsRep->data(), count);
