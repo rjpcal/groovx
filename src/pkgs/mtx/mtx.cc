@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Fri Apr  6 12:25:57 2001
+// written: Fri Apr  6 12:32:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -166,6 +166,15 @@ mxArray* Mtx::makeMxArray() const
     matdata[i] = itsImpl.at(itsImpl.offsetFromStart(i));
 
   return result_mx;
+}
+
+void Mtx::resize(int mrowsNew, int ncolsNew)
+{
+  if (mrows() == mrowsNew && ncols() == ncolsNew) return;
+
+  MtxImpl newImpl(mrowsNew, ncolsNew);
+
+  itsImpl.swap(newImpl);
 }
 
 Mtx Mtx::extractStructField(mxArray* structArray, const char* fieldName,

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Fri Apr  6 12:21:51 2001
+// written: Fri Apr  6 12:32:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -228,7 +228,7 @@ class Mtx {
 public:
 
   //
-  // Constructors
+  // Constructors + Conversion
   //
 
   enum StoragePolicy { COPY, BORROW, REFER };
@@ -254,6 +254,12 @@ public:
 	 this->itsImpl.swap(temp.itsImpl);
 	 return *this;
   }
+
+  // This will destroy any data in the process of changing the size of
+  // the Mtx to the specified dimensions; its only advantage over just
+  // declaring a new Mtx is that it will avoid a deallocate/allocate
+  // cycle if the new dimensions are the same as the current dimensions.
+  void resize(int mrowsNew, int ncolsNew);
 
   static Mtx extractStructField(mxArray* structArray, const char* fieldName,
 										  int indexIntoArray = 0);
