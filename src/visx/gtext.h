@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:47 1999
-// written: Wed Nov 13 14:20:20 2002
+// written: Wed Nov 13 19:56:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,7 +69,6 @@ private:
   GxFont* itsFont;
   fstring itsText;
   int itsStrokeWidth;
-  mutable unsigned int itsListBase;
 };
 
 static const char vcid_gtext_h[] = "$Header$";
