@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed Oct 13 20:17:18 1999
+// written: Thu Oct 14 15:48:41 1999
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -1279,8 +1279,8 @@ protected:
 int TclGL::setBackgroundCmd(ClientData, Tcl_Interp* interp,
                             int objc, Tcl_Obj* const objv[]) {
 DOTRACE("setBackgroundCmd");
-  if (objc != 2 && objc != 4) {
-    Tcl_WrongNumArgs(interp, 1, objv, "{ [index] or [R G B] }");
+  if (objc != 2 && objc != 5) {
+    Tcl_WrongNumArgs(interp, 1, objv, "{ [index] or [R G B A] }");
     return TCL_ERROR;
   }
   
@@ -1291,11 +1291,12 @@ DOTRACE("setBackgroundCmd");
     return TCL_OK;
   }
   else {
-    double r, g, b;
+    double r, g, b, a;
     if (Tcl_GetDoubleFromObj(interp, objv[1], &r) != TCL_OK) return TCL_ERROR;
     if (Tcl_GetDoubleFromObj(interp, objv[2], &g) != TCL_OK) return TCL_ERROR;
     if (Tcl_GetDoubleFromObj(interp, objv[3], &b) != TCL_OK) return TCL_ERROR;
-    glClearColor(r, g, b, 0.0);
+    if (Tcl_GetDoubleFromObj(interp, objv[4], &a) != TCL_OK) return TCL_ERROR;
+    glClearColor(r, g, b, a);
     return TCL_OK;
   }
 }
@@ -1319,8 +1320,8 @@ DOTRACE("setBackgroundCmd");
 int TclGL::setForegroundCmd(ClientData, Tcl_Interp* interp,
                             int objc, Tcl_Obj* const objv[]) {
 DOTRACE("setForegroundCmd");
-  if (objc != 2 && objc != 4) {
-    Tcl_WrongNumArgs(interp, 1, objv, "{ [index] or [R G B] }");
+  if (objc != 2 && objc != 5) {
+    Tcl_WrongNumArgs(interp, 1, objv, "{ [index] or [R G B A] }");
     return TCL_ERROR;
   }
   
@@ -1331,11 +1332,12 @@ DOTRACE("setForegroundCmd");
     return TCL_OK;
   }
   else {
-    double r, g, b;
+    double r, g, b, a;
     if (Tcl_GetDoubleFromObj(interp, objv[1], &r) != TCL_OK) return TCL_ERROR;
     if (Tcl_GetDoubleFromObj(interp, objv[2], &g) != TCL_OK) return TCL_ERROR;
     if (Tcl_GetDoubleFromObj(interp, objv[3], &b) != TCL_OK) return TCL_ERROR;
-    glColor3f(r, g, b);
+    if (Tcl_GetDoubleFromObj(interp, objv[4], &a) != TCL_OK) return TCL_ERROR;
+    glColor4d(r, g, b, a);
     return TCL_OK;
   }
 }
@@ -1465,7 +1467,7 @@ DOTRACE("antialiasCmd");
     glEnable(GL_BLEND);
     glEnable(GL_POLYGON_SMOOTH);
     glEnable(GL_LINE_SMOOTH);
-    glBlendFunc(GL_SRC_ALPHA_SATURATE, GL_ONE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
   else {                        // turn antialiasing off
     glDisable(GL_BLEND);
