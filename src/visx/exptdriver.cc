@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Oct 23 12:27:41 2000
+// written: Mon Oct 23 12:53:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -775,7 +775,7 @@ DOTRACE("ExptDriver::Impl::storeData");
 	 // Write the responses file
 	 dynamic_string resp_filename = "resp";
 	 resp_filename += unique_file_extension;
-	 TlistUtils::writeResponses(Tlist::theTlist(), resp_filename.c_str());
+	 TlistUtils::writeResponses(resp_filename.c_str());
 	 cout << "wrote file " << resp_filename << endl;
 
 	 // Change file access modes to allow read-only by all

@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Tue Oct 17 12:18:02 2000
+// written: Mon Oct 23 12:52:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,7 +111,7 @@ protected:
 	 int objid = getIntFromArg(2);
 	 int posid = getIntFromArg(3);
 
-	 TlistUtils::addObject(theTlist, trialid, objid, posid);
+	 TlistUtils::addObject(trialid, objid, posid);
   }
 };
 
@@ -128,7 +128,7 @@ public:
 protected:
   virtual void invoke() {
 	 int posid = getIntFromArg(1);
-	 returnInt(TlistUtils::makeSingles(theTlist, posid));
+	 returnInt(TlistUtils::makeSingles(posid));
   }
 };
 
@@ -147,7 +147,7 @@ protected:
 	 int posid1 = getIntFromArg(1);
 	 int posid2 = getIntFromArg(2);
 
-	 returnInt(TlistUtils::makePairs(theTlist, posid1, posid2));
+	 returnInt(TlistUtils::makePairs(posid1, posid2));
   }
 };
 
@@ -165,7 +165,7 @@ protected:
   virtual void invoke() {
 	 int posid[3] = { getIntFromArg(1), getIntFromArg(2), getIntFromArg(3) };
 
-	 returnInt(TlistUtils::makeTriads(theTlist, posid));
+	 returnInt(TlistUtils::makeTriads(posid));
   }
 };
 
@@ -192,8 +192,7 @@ protected:
 	 double xstep = (objc() >= 5) ? getDoubleFromArg(4) : 2.0;
 	 double ystep = (objc() >= 6) ? getDoubleFromArg(5) : 3.0;
 
-	 returnInt(TlistUtils::makeSummaryTrial(theTlist,
-														 trialid, num_cols, scale,
+	 returnInt(TlistUtils::makeSummaryTrial(trialid, num_cols, scale,
 														 xstep, ystep));
   }
 };
@@ -216,7 +215,7 @@ protected:
 
 	 try {
 		int num_loaded =
-		  TlistUtils::loadObjidFile(theTlist, objid_file, num_lines, offset);
+		  TlistUtils::loadObjidFile(objid_file, num_lines, offset);
 		returnInt(num_loaded);
 	 }
 	 catch (IO::IoError& err) {
@@ -239,7 +238,7 @@ protected:
   virtual void invoke() {
 	 const char* filename = getCstringFromArg(1);
 
-	 TlistUtils::writeResponses(theTlist, filename);
+	 TlistUtils::writeResponses(filename);
   }
 };
 
@@ -256,7 +255,7 @@ public:
 protected:
   virtual void invoke() {
 	 const char* filename = getCstringFromArg(1);	 
-	 TlistUtils::writeIncidenceMatrix(theTlist, filename);
+	 TlistUtils::writeIncidenceMatrix(filename);
   }
 };
 
@@ -273,7 +272,7 @@ public:
 protected:
   virtual void invoke() {
 	 const char* filename = getCstringFromArg(1);
-	 TlistUtils::writeMatlab(theTlist, filename);
+	 TlistUtils::writeMatlab(filename);
   }
 };
 
