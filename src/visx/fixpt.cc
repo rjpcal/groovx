@@ -94,29 +94,29 @@ DOTRACE("FixPt::serialVersionId");
   return FIXPT_SERIAL_VERSION_ID;
 }
 
-void FixPt::readFrom(IO::Reader* reader)
+void FixPt::readFrom(IO::Reader& reader)
 {
 DOTRACE("FixPt::readFrom");
 
-  reader->ensureReadVersionId("FixPt", 2, "Try grsh0.8a4");
+  reader.ensureReadVersionId("FixPt", 2, "Try grsh0.8a4");
 
   readFieldsFrom(reader, classFields());
 
   // FIXME change to "GxShapeKit" with next version
-  reader->readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+  reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
 }
 
-void FixPt::writeTo(IO::Writer* writer) const
+void FixPt::writeTo(IO::Writer& writer) const
 {
 DOTRACE("FixPt::writeTo");
 
-  writer->ensureWriteVersionId("FixPt", FIXPT_SERIAL_VERSION_ID, 2,
-                               "Try grsh0.8a4");
+  writer.ensureWriteVersionId("FixPt", FIXPT_SERIAL_VERSION_ID, 2,
+                              "Try grsh0.8a4");
 
   writeFieldsTo(writer, classFields());
 
   // FIXME change to "GxShapeKit" with next version
-  writer->writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
+  writer.writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 void FixPt::grGetBoundingBox(Gfx::Bbox& bbox) const

@@ -127,29 +127,29 @@ DOTRACE("Face::serialVersionId");
   return FACE_SERIAL_VERSION_ID;
 }
 
-void Face::readFrom(IO::Reader* reader)
+void Face::readFrom(IO::Reader& reader)
 {
 DOTRACE("Face::readFrom");
 
-  reader->ensureReadVersionId("Face", 1, "Try grsh0.8a4");
+  reader.ensureReadVersionId("Face", 1, "Try grsh0.8a4");
 
   readFieldsFrom(reader, classFields());
 
   // FIXME change to "GxShapeKit" with next version
-  reader->readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+  reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
 }
 
-void Face::writeTo(IO::Writer* writer) const
+void Face::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Face::writeTo");
 
-  writer->ensureWriteVersionId("Face", FACE_SERIAL_VERSION_ID, 1,
-                               "Try grsh0.8a4");
+  writer.ensureWriteVersionId("Face", FACE_SERIAL_VERSION_ID, 1,
+                              "Try grsh0.8a4");
 
   writeFieldsTo(writer, classFields());
 
   // FIXME change to "GxShapeKit" with next version
-  writer->writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
+  writer.writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -78,7 +78,7 @@ private:
 
   // Creators
 public:
-  Impl(AsciiStreamReader* /*owner*/, STD_IO::istream& is) :
+  Impl(STD_IO::istream& is) :
     itsBuf(is), itsObjects(), itsAttribs()
   {}
 
@@ -227,7 +227,7 @@ private:
       return *(itsAttribs.front());
     }
 
-  void inflateObject(IO::Reader* reader, STD_IO::istream& buf,
+  void inflateObject(IO::Reader& reader, STD_IO::istream& buf,
                      const fstring& obj_tag, Ref<IO::IoObject> obj);
 
   // Delegands -- this is the public interface that AsciiStreamReader
@@ -259,10 +259,10 @@ public:
 
   void readValueObj(const fstring& name, Value& value);
 
-  void readOwnedObject(IO::Reader* reader,
+  void readOwnedObject(IO::Reader& reader,
                        const fstring& name, Ref<IO::IoObject> obj);
 
-  Ref<IO::IoObject> readRoot(IO::Reader* reader, IO::IoObject* given_root);
+  Ref<IO::IoObject> readRoot(IO::Reader& reader, IO::IoObject* given_root);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -416,7 +416,7 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 ///////////////////////////////////////////////////////////////////////
 
 void AsciiStreamReader::Impl::inflateObject(
-  IO::Reader* reader, STD_IO::istream& buf,
+  IO::Reader& reader, STD_IO::istream& buf,
   const fstring& obj_tag, Ref<IO::IoObject> obj
 )
 {
@@ -499,7 +499,7 @@ DOTRACE("AsciiStreamReader::Impl::readValueObj");
 }
 
 void AsciiStreamReader::Impl::readOwnedObject(
-  IO::Reader* reader, const fstring& object_name, Ref<IO::IoObject> obj
+  IO::Reader& reader, const fstring& object_name, Ref<IO::IoObject> obj
   )
 {
 DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
@@ -516,7 +516,7 @@ DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
 }
 
 Ref<IO::IoObject> AsciiStreamReader::Impl::readRoot(
-  IO::Reader* reader, IO::IoObject* given_root
+  IO::Reader& reader, IO::IoObject* given_root
   )
 {
 DOTRACE("AsciiStreamReader::Impl::readRoot");
@@ -582,7 +582,7 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 ///////////////////////////////////////////////////////////////////////
 
 AsciiStreamReader::AsciiStreamReader (STD_IO::istream& is) :
-  rep( new Impl(this, is) )
+  rep( new Impl(is) )
 {
 DOTRACE("AsciiStreamReader::AsciiStreamReader");
   // nothing
@@ -658,7 +658,7 @@ void AsciiStreamReader::readOwnedObject(const fstring& name,
                                         Ref<IO::IoObject> obj)
 {
   dbgEvalNL(3, name);
-  rep->readOwnedObject(this, name, obj);
+  rep->readOwnedObject(*this, name, obj);
 }
 
 void AsciiStreamReader::readBaseClass(
@@ -667,12 +667,12 @@ void AsciiStreamReader::readBaseClass(
 {
 DOTRACE("AsciiStreamReader::readBaseClass");
   dbgEvalNL(3, baseClassName);
-  rep->readOwnedObject(this, baseClassName, basePart);
+  rep->readOwnedObject(*this, baseClassName, basePart);
 }
 
 Ref<IO::IoObject> AsciiStreamReader::readRoot(IO::IoObject* given_root)
 {
-  return rep->readRoot(this, given_root);
+  return rep->readRoot(*this, given_root);
 }
 
 #if defined(SHORTEN_SYMBOL_NAMES)

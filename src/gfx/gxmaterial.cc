@@ -83,13 +83,13 @@ GxMaterial::~GxMaterial() throw()
 DOTRACE("GxMaterial::~GxMaterial");
 }
 
-void GxMaterial::readFrom(IO::Reader* reader)
+void GxMaterial::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxMaterial::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
-void GxMaterial::writeTo(IO::Writer* writer) const
+void GxMaterial::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxMaterial::writeTo");
   writeFieldsTo(writer, classFields());

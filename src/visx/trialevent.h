@@ -71,8 +71,8 @@ public:
   /// Destructor cancels any pending callback to \c invoke().
   virtual ~TrialEvent() throw();
 
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
 
   /// Return the current requested delay time, in milliseconds.
   unsigned int getDelay() const { return itsRequestedDelay; }
@@ -413,8 +413,8 @@ public:
   /// Default creator.
   static GenericEvent* make() { return new GenericEvent; }
 
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
 
   /// Get a string containing the Tcl callback script.
   fstring getCallback() const;
@@ -452,8 +452,8 @@ public:
   /// Default creator.
   static MultiEvent* make() { return new MultiEvent; }
 
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
 
   /// Returns an iterator to all the events in the sequence.
   Util::FwdIter<const Util::Ref<TrialEvent> > getEvents() const;

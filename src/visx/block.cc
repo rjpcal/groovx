@@ -86,17 +86,17 @@ DOTRACE("Block::serialVersionId");
   return BLOCK_SERIAL_VERSION_ID;
 }
 
-void Block::readFrom(IO::Reader* reader)
+void Block::readFrom(IO::Reader& reader)
 {
 DOTRACE("Block::readFrom");
 
-  int svid = reader->ensureReadVersionId("Block", 1, "Try grsh0.8a3");
+  int svid = reader.ensureReadVersionId("Block", 1, "Try grsh0.8a3");
 
   IO::ReadUtils::readObjectSeq<Element>
     (reader, "trialSeq", std::back_inserter(iolegacyElements()));
 
-  reader->readValue("randSeed", iolegacyRandSeed());
-  reader->readValue("curTrialSeqdx", iolegacySequencePos());
+  reader.readValue("randSeed", iolegacyRandSeed());
+  reader.readValue("curTrialSeqdx", iolegacySequencePos());
   if (numCompleted() > numElements())
     {
       throw IO::ReadError("Block");
@@ -105,23 +105,23 @@ DOTRACE("Block::readFrom");
   if (svid < 2)
     {
       bool dummy;
-      reader->readValue("verbose", dummy);
+      reader.readValue("verbose", dummy);
     }
 }
 
-void Block::writeTo(IO::Writer* writer) const
+void Block::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Block::writeTo");
 
-  writer->ensureWriteVersionId("Block", BLOCK_SERIAL_VERSION_ID, 2,
-                               "Try grsh0.8a7");
+  writer.ensureWriteVersionId("Block", BLOCK_SERIAL_VERSION_ID, 2,
+                              "Try grsh0.8a7");
 
   IO::WriteUtils::writeObjectSeq(writer, "trialSeq",
                                  iolegacyElements().begin(),
                                  iolegacyElements().end());
 
-  writer->writeValue("randSeed", iolegacyRandSeed());
-  writer->writeValue("curTrialSeqdx", iolegacySequencePos());
+  writer.writeValue("randSeed", iolegacyRandSeed());
+  writer.writeValue("curTrialSeqdx", iolegacySequencePos());
 }
 
 ///////////////////////////////////////////////////////////////////////

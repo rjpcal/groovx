@@ -297,29 +297,29 @@ DOTRACE("Fish::serialVersionId");
   return FISH_SERIAL_VERSION_ID;
 }
 
-void Fish::readFrom(IO::Reader* reader)
+void Fish::readFrom(IO::Reader& reader)
 {
 DOTRACE("Fish::readFrom");
 
-  reader->ensureReadVersionId("Fish", 3, "Try grsh0.8a7");
+  reader.ensureReadVersionId("Fish", 3, "Try grsh0.8a7");
 
   readFieldsFrom(reader, classFields());
 
   // FIXME change to "GxShapeKit" with next version
-  reader->readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+  reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
 }
 
-void Fish::writeTo(IO::Writer* writer) const
+void Fish::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Fish::writeTo");
 
-  writer->ensureWriteVersionId("Fish", FISH_SERIAL_VERSION_ID, 3,
-                               "Try grsh0.8a7");
+  writer.ensureWriteVersionId("Fish", FISH_SERIAL_VERSION_ID, 3,
+                              "Try grsh0.8a7");
 
   writeFieldsTo(writer, classFields());
 
   // FIXME change to "GxShapeKit" with next version
-  writer->writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
+  writer.writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 void Fish::updatePtrs()

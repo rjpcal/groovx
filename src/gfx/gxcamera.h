@@ -86,8 +86,8 @@ public:
   /// Get GxPerspectiveCamera's fields.
   static const FieldMap& classFields();
 
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
 
   virtual void draw(Gfx::Canvas& canvas) const;
 
@@ -111,8 +111,8 @@ public:
   /// Virtual no-throw destructor.
   virtual ~GxFixedRectCamera() throw();
 
-  virtual void readFrom(IO::Reader* /*reader*/) {}
-  virtual void writeTo(IO::Writer* /*writer*/) const {}
+  virtual void readFrom(IO::Reader& /*reader*/) {}
+  virtual void writeTo(IO::Writer& /*writer*/) const {}
 
   /// Change the viewable rect area.
   void setRect(const Gfx::Rect<double>& rect) { itsRect = rect; }
@@ -139,8 +139,8 @@ public:
   /// Virtual no-throw destructor.
   virtual ~GxMinRectCamera() throw();
 
-  virtual void readFrom(IO::Reader* /*reader*/) {}
-  virtual void writeTo(IO::Writer* /*writer*/) const {}
+  virtual void readFrom(IO::Reader& /*reader*/) {}
+  virtual void writeTo(IO::Writer& /*writer*/) const {}
 
   /// Change the minimally-visible rect
   void setRect(const Gfx::Rect<double>& rect) { itsRect = rect; }
@@ -170,8 +170,8 @@ public:
   /// Get GxFixedScaleCamera's fields.
   static const FieldMap& classFields();
 
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
 
   /// Get the log-base-10 of the pixels-per-unit factor.
   double getLogPixelsPerUnit() const;
@@ -207,8 +207,8 @@ public:
   /// Get GxPsyphyCamera's fields.
   static const FieldMap& classFields();
 
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
 
   /// Get the degrees of visual angle corresponding to one OpenGL unit.
   double getUnitAngle() const { return itsDegreesPerUnit; }

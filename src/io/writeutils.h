@@ -46,21 +46,21 @@ public:
   /** A generic interface for handling containers, sequences, etc. of
       value types. */
   template <class Itr>
-  static void writeValueSeq(IO::Writer* writer, const fstring& name,
+  static void writeValueSeq(IO::Writer& writer, const fstring& name,
                             Itr begin, Itr end, bool skip_count=false)
     {
       if (!skip_count)
         {
-          writer->writeValue(makeSeqCountString(name).c_str(),
-                             computeCount(begin, end));
+          writer.writeValue(makeSeqCountString(name).c_str(),
+                            computeCount(begin, end));
         }
 
       int count = 0;
 
       while (begin != end)
         {
-          writer->writeValue(makeElementNameString(name, count).c_str(),
-                             *begin);
+          writer.writeValue(makeElementNameString(name, count).c_str(),
+                            *begin);
           ++begin;
           ++count;
         }
@@ -69,21 +69,21 @@ public:
   /** A generic interface for handling containers, sequences, etc. of
       objects of Value subtypes */
   template <class Itr>
-  static void writeValueObjSeq(IO::Writer* writer, const fstring& name,
+  static void writeValueObjSeq(IO::Writer& writer, const fstring& name,
                                Itr begin, Itr end, bool skip_count=false)
     {
       if (!skip_count)
         {
-          writer->writeValue(makeSeqCountString(name).c_str(),
-                             computeCount(begin, end));
+          writer.writeValue(makeSeqCountString(name).c_str(),
+                            computeCount(begin, end));
         }
 
       int count = 0;
 
       while (begin != end)
         {
-          writer->writeValueObj(makeElementNameString(name, count).c_str(),
-                                *begin);
+          writer.writeValueObj(makeElementNameString(name, count).c_str(),
+                               *begin);
           ++begin;
           ++count;
         }
@@ -92,13 +92,13 @@ public:
 
   /// A generic interface for handling containers, sequences, etc. of objects
   template <class Itr>
-  static void writeObjectSeq(IO::Writer* writer, const fstring& name,
+  static void writeObjectSeq(IO::Writer& writer, const fstring& name,
                              Itr begin, Itr end, bool skip_count=false)
     {
       if (!skip_count)
         {
-          writer->writeValue(makeSeqCountString(name).c_str(),
-                             computeCount(begin, end));
+          writer.writeValue(makeSeqCountString(name).c_str(),
+                            computeCount(begin, end));
         }
 
       int count = 0;
@@ -107,8 +107,8 @@ public:
         {
           dbgEval(4, count); dbgEvalNL(4, (*begin)->id());
 
-          writer->writeObject(makeElementNameString(name, count).c_str(),
-                              SoftRef<const IO::IoObject>(*begin));
+          writer.writeObject(makeElementNameString(name, count).c_str(),
+                             SoftRef<const IO::IoObject>(*begin));
           ++begin;
           ++count;
         }

@@ -95,13 +95,13 @@ GxLighting::~GxLighting() throw()
 DOTRACE("GxLighting::~GxLighting");
 }
 
-void GxLighting::readFrom(IO::Reader* reader)
+void GxLighting::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxLighting::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
-void GxLighting::writeTo(IO::Writer* writer) const
+void GxLighting::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxLighting::writeTo");
   writeFieldsTo(writer, classFields());

@@ -90,8 +90,8 @@ public:
   /// Set the alignment mode.
   void setMode(Mode new_mode) { itsMode = new_mode; }
 
-  virtual void readFrom(IO::Reader* /*reader*/) {};
-  virtual void writeTo(IO::Writer* /*writer*/) const {};
+  virtual void readFrom(IO::Reader& /*reader*/) {};
+  virtual void writeTo(IO::Writer& /*writer*/) const {};
 
   virtual void draw(Gfx::Canvas& canvas) const;
 

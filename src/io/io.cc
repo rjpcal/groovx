@@ -95,7 +95,7 @@ unsigned int IO::IoObject::ioAttribCount() const
 DOTRACE("IO::IoObject::ioAttribCount");
   static DummyCountingWriter counter;
   counter.reset();
-  this->writeTo(&counter);
+  this->writeTo(counter);
   return counter.attribCount();
 }
 

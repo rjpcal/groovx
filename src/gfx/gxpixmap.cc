@@ -210,24 +210,24 @@ DOTRACE("GxPixmap::serialVersionId");
   return BITMAP_SERIAL_VERSION_ID;
 }
 
-void GxPixmap::readFrom(IO::Reader* reader)
+void GxPixmap::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxPixmap::readFrom");
 
-  int svid = reader->ensureReadVersionId("GxPixmap", 2, "Try grsh0.8a7");
+  int svid = reader.ensureReadVersionId("GxPixmap", 2, "Try grsh0.8a7");
 
-  reader->readValue("filename", rep->itsFilename);
-  reader->readValue("zoomX", rep->itsZoom.x());
-  reader->readValue("zoomY", rep->itsZoom.y());
-  reader->readValue("usingZoom", rep->itsUsingZoom);
-  reader->readValue("contrastFlip", rep->itsContrastFlip);
-  reader->readValue("verticalFlip", rep->itsVerticalFlip);
+  reader.readValue("filename", rep->itsFilename);
+  reader.readValue("zoomX", rep->itsZoom.x());
+  reader.readValue("zoomY", rep->itsZoom.y());
+  reader.readValue("usingZoom", rep->itsUsingZoom);
+  reader.readValue("contrastFlip", rep->itsContrastFlip);
+  reader.readValue("verticalFlip", rep->itsVerticalFlip);
 
   if (svid >= 3)
-    reader->readValue("purgeable", rep->itsPurgeable);
+    reader.readValue("purgeable", rep->itsPurgeable);
 
   if (svid >= 4)
-    reader->readValue("asBitmap", rep->itsAsBitmap);
+    reader.readValue("asBitmap", rep->itsAsBitmap);
 
   if ( rep->itsFilename.is_empty() )
     {
@@ -239,28 +239,28 @@ DOTRACE("GxPixmap::readFrom");
     }
 
   if (svid >= 4)
-    reader->readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+    reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
   else
-    reader->readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+    reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
 }
 
-void GxPixmap::writeTo(IO::Writer* writer) const
+void GxPixmap::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxPixmap::writeTo");
 
-  writer->ensureWriteVersionId("GxPixmap", BITMAP_SERIAL_VERSION_ID, 4,
-                               "Try grsh0.8a7");
+  writer.ensureWriteVersionId("GxPixmap", BITMAP_SERIAL_VERSION_ID, 4,
+                              "Try grsh0.8a7");
 
-  writer->writeValue("filename", rep->itsFilename);
-  writer->writeValue("zoomX", rep->itsZoom.x());
-  writer->writeValue("zoomY", rep->itsZoom.y());
-  writer->writeValue("usingZoom", rep->itsUsingZoom);
-  writer->writeValue("contrastFlip", rep->itsContrastFlip);
-  writer->writeValue("verticalFlip", rep->itsVerticalFlip);
-  writer->writeValue("purgeable", rep->itsPurgeable);
-  writer->writeValue("asBitmap", rep->itsAsBitmap);
+  writer.writeValue("filename", rep->itsFilename);
+  writer.writeValue("zoomX", rep->itsZoom.x());
+  writer.writeValue("zoomY", rep->itsZoom.y());
+  writer.writeValue("usingZoom", rep->itsUsingZoom);
+  writer.writeValue("contrastFlip", rep->itsContrastFlip);
+  writer.writeValue("verticalFlip", rep->itsVerticalFlip);
+  writer.writeValue("purgeable", rep->itsPurgeable);
+  writer.writeValue("asBitmap", rep->itsAsBitmap);
 
-  writer->writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
+  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 /////////////

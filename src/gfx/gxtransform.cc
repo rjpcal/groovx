@@ -146,39 +146,39 @@ DOTRACE("GxTransform::serialVersionId");
   return POS_SERIAL_VERSION_ID;
 }
 
-void GxTransform::readFrom(IO::Reader* reader)
+void GxTransform::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxTransform::readFrom");
 
-  IO::VersionId svid = reader->readSerialVersionId();
+  IO::VersionId svid = reader.readSerialVersionId();
   if (svid == 0)
     {
-      reader->readValue("transX", translation.x());
-      reader->readValue("transY", translation.y());
-      reader->readValue("transZ", translation.z());
+      reader.readValue("transX", translation.x());
+      reader.readValue("transY", translation.y());
+      reader.readValue("transZ", translation.z());
 
-      reader->readValue("scaleX", scaling.x());
-      reader->readValue("scaleY", scaling.y());
-      reader->readValue("scaleZ", scaling.z());
+      reader.readValue("scaleX", scaling.x());
+      reader.readValue("scaleY", scaling.y());
+      reader.readValue("scaleZ", scaling.z());
 
-      reader->readValue("rotateX", rotationAxis.x());
-      reader->readValue("rotateY", rotationAxis.y());
-      reader->readValue("rotateZ", rotationAxis.z());
-      reader->readValue("rotateAngle", itsRotationAngle);
+      reader.readValue("rotateX", rotationAxis.x());
+      reader.readValue("rotateY", rotationAxis.y());
+      reader.readValue("rotateZ", rotationAxis.z());
+      reader.readValue("rotateAngle", itsRotationAngle);
     }
   else
     {
-      reader->ensureReadVersionId("GxTransform", 1, "Try grsh0.8a4");
+      reader.ensureReadVersionId("GxTransform", 1, "Try grsh0.8a4");
 
       readFieldsFrom(reader, classFields());
     }
 }
 
-void GxTransform::writeTo(IO::Writer* writer) const
+void GxTransform::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxTransform::writeTo");
 
-  writer->ensureWriteVersionId("GxTransform", POS_SERIAL_VERSION_ID, 1,
+  writer.ensureWriteVersionId("GxTransform", POS_SERIAL_VERSION_ID, 1,
                                "Try grsh0.8a4");
 
   writeFieldsTo(writer, classFields());

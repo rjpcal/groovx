@@ -294,51 +294,51 @@ EventResponseHdlr::~EventResponseHdlr() throw()
 IO::VersionId EventResponseHdlr::serialVersionId() const
   { return ERH_SERIAL_VERSION_ID; }
 
-void EventResponseHdlr::readFrom(IO::Reader* reader)
+void EventResponseHdlr::readFrom(IO::Reader& reader)
 {
 DOTRACE("EventResponseHdlr::readFrom");
 
-  const int svid = reader->ensureReadVersionId("EventResponseHdlr", 0,
-                                               "Try grsh0.8a7");
+  const int svid = reader.ensureReadVersionId("EventResponseHdlr", 0,
+                                              "Try grsh0.8a7");
 
   rep->becomeInactive();
 
   if (svid < 2)
     {
       fstring rmap;
-      reader->readValue("inputResponseMap", rmap);
+      reader.readValue("inputResponseMap", rmap);
       setInputResponseMap(rmap);
     }
 
   {
     fstring fmap;
-    reader->readValue("feedbackMap", fmap);
+    reader.readValue("feedbackMap", fmap);
     rep->itsFeedbackMap.set(fmap);
   }
 
-  reader->readValue("useFeedback", rep->itsFeedbackMap.itsUseFeedback);
-  reader->readValue("eventSequence", rep->itsEventSequence);
-  reader->readValue("bindingSubstitution", rep->itsBindingSubstitution);
+  reader.readValue("useFeedback", rep->itsFeedbackMap.itsUseFeedback);
+  reader.readValue("eventSequence", rep->itsEventSequence);
+  reader.readValue("bindingSubstitution", rep->itsBindingSubstitution);
 
   if (svid >= 2)
     {
-      reader->readOwnedObject("responseProc", rep->itsResponseProc);
+      reader.readOwnedObject("responseProc", rep->itsResponseProc);
     }
 }
 
-void EventResponseHdlr::writeTo(IO::Writer* writer) const
+void EventResponseHdlr::writeTo(IO::Writer& writer) const
 {
 DOTRACE("EventResponseHdlr::writeTo");
 
-  writer->ensureWriteVersionId("EventResponseHdlr", ERH_SERIAL_VERSION_ID, 2,
-                               "Try grsh0.8a7");
+  writer.ensureWriteVersionId("EventResponseHdlr", ERH_SERIAL_VERSION_ID, 2,
+                              "Try grsh0.8a7");
 
-  writer->writeValue("feedbackMap", rep->itsFeedbackMap.rep());
-  writer->writeValue("useFeedback", rep->itsFeedbackMap.itsUseFeedback);
-  writer->writeValue("eventSequence", rep->itsEventSequence);
-  writer->writeValue("bindingSubstitution", rep->itsBindingSubstitution);
+  writer.writeValue("feedbackMap", rep->itsFeedbackMap.rep());
+  writer.writeValue("useFeedback", rep->itsFeedbackMap.itsUseFeedback);
+  writer.writeValue("eventSequence", rep->itsEventSequence);
+  writer.writeValue("bindingSubstitution", rep->itsBindingSubstitution);
 
-  writer->writeOwnedObject("responseProc", rep->itsResponseProc);
+  writer.writeOwnedObject("responseProc", rep->itsResponseProc);
 }
 
 void EventResponseHdlr::setInputResponseMap(const fstring& s)

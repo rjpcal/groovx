@@ -196,13 +196,13 @@ DOTRACE("Trial::~Trial");
 IO::VersionId Trial::serialVersionId() const
   { return TRIAL_SERIAL_VERSION_ID; }
 
-void Trial::readFrom(IO::Reader* reader)
+void Trial::readFrom(IO::Reader& reader)
 {
 DOTRACE("Trial::readFrom");
 
   rep->becomeInactive();
 
-  reader->ensureReadVersionId("Trial", 4, "Try grsh0.8a4");
+  reader.ensureReadVersionId("Trial", 4, "Try grsh0.8a4");
 
   rep->gxNodes.clear();
   IO::ReadUtils::readObjectSeq<GxNode>
@@ -212,20 +212,20 @@ DOTRACE("Trial::readFrom");
   IO::ReadUtils::readValueObjSeq<Response>
     (reader, "responses", std::back_inserter(rep->responses));
 
-  reader->readValue("correctResponse", rep->correctResponse);
+  reader.readValue("correctResponse", rep->correctResponse);
 
-  reader->readValue("type", rep->trialType);
+  reader.readValue("type", rep->trialType);
 
-  rep->rh = dynamicCast<ResponseHandler>(reader->readMaybeObject("rh"));
-  rep->th = dynamicCast<TimingHdlr>(reader->readMaybeObject("th"));
+  rep->rh = dynamicCast<ResponseHandler>(reader.readMaybeObject("rh"));
+  rep->th = dynamicCast<TimingHdlr>(reader.readMaybeObject("th"));
 }
 
-void Trial::writeTo(IO::Writer* writer) const
+void Trial::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Trial::writeTo");
 
-  writer->ensureWriteVersionId("Trial", TRIAL_SERIAL_VERSION_ID, 3,
-                               "Try grsh0.8a3");
+  writer.ensureWriteVersionId("Trial", TRIAL_SERIAL_VERSION_ID, 3,
+                              "Try grsh0.8a3");
 
   IO::WriteUtils::writeObjectSeq(writer, "gxObjects",
                                  rep->gxNodes.begin(), rep->gxNodes.end());
@@ -233,12 +233,12 @@ DOTRACE("Trial::writeTo");
   IO::WriteUtils::writeValueObjSeq(writer, "responses",
                                    rep->responses.begin(), rep->responses.end());
 
-  writer->writeValue("correctResponse", rep->correctResponse);
+  writer.writeValue("correctResponse", rep->correctResponse);
 
-  writer->writeValue("type", rep->trialType);
+  writer.writeValue("type", rep->trialType);
 
-  writer->writeObject("rh", rep->rh);
-  writer->writeObject("th", rep->th);
+  writer.writeObject("rh", rep->rh);
+  writer.writeObject("th", rep->th);
 }
 
 const SoftRef<Toglet>& Trial::getWidget() const

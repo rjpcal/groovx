@@ -62,8 +62,8 @@ public:
 
   virtual ~ProcWrapper() throw();
 
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
 
   /** Redefine the code chunk with a new args and body, but keeping the same
       name as always. */

@@ -136,22 +136,22 @@ const FieldMap& GaborArray::classFields()
   return GABORARRAY_FIELDS;
 }
 
-void GaborArray::readFrom(IO::Reader* reader)
+void GaborArray::readFrom(IO::Reader& reader)
 {
 DOTRACE("GaborArray::readFrom");
 
   readFieldsFrom(reader, classFields());
 
-  reader->readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+  reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
 }
 
-void GaborArray::writeTo(IO::Writer* writer) const
+void GaborArray::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GaborArray::writeTo");
 
   writeFieldsTo(writer, classFields());
 
-  writer->writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
+  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 void GaborArray::saveImage(const char* filename) const

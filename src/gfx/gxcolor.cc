@@ -56,18 +56,18 @@ IO::VersionId GxColor::serialVersionId() const
   return GXCOLOR_SERIAL_VERSION_ID;
 }
 
-void GxColor::readFrom(IO::Reader* reader)
+void GxColor::readFrom(IO::Reader& reader)
 {
-  reader->ensureReadVersionId("GxColor", 1,
-                              "Try grsh0.8a7");
+  reader.ensureReadVersionId("GxColor", 1,
+                             "Try grsh0.8a7");
 
   readFieldsFrom(reader, classFields());
 }
 
-void GxColor::writeTo(IO::Writer* writer) const
+void GxColor::writeTo(IO::Writer& writer) const
 {
-  writer->ensureWriteVersionId("GxColor", GXCOLOR_SERIAL_VERSION_ID, 1,
-                               "Try grsh0.8a7");
+  writer.ensureWriteVersionId("GxColor", GXCOLOR_SERIAL_VERSION_ID, 1,
+                              "Try grsh0.8a7");
 
   writeFieldsTo(writer, classFields());
 }

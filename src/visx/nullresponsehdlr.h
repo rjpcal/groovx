@@ -42,8 +42,8 @@ public:
 
   virtual ~NullResponseHdlr() throw();
 
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
 
   // actions
   virtual void rhBeginTrial(Util::SoftRef<Toglet> widget, Trial& trial) const;

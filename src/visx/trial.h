@@ -68,8 +68,8 @@ public:
   virtual ~Trial () throw();
 
   virtual IO::VersionId serialVersionId() const;
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
 
   static const FieldMap& classFields();
 

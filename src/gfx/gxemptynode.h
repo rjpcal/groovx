@@ -44,8 +44,8 @@ private:
 public:
   virtual ~GxEmptyNode() throw();
 
-  virtual void readFrom(IO::Reader*);
-  virtual void writeTo(IO::Writer*) const;
+  virtual void readFrom(IO::Reader&);
+  virtual void writeTo(IO::Writer&) const;
 
   virtual void getBoundingCube(Gfx::Bbox&) const;
 

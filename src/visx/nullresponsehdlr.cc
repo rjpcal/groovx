@@ -54,12 +54,12 @@ NullResponseHdlr::~NullResponseHdlr() throw()
 DOTRACE("NullResponseHdlr::~NullResponseHdlr");
 }
 
-void NullResponseHdlr::readFrom(IO::Reader*)
+void NullResponseHdlr::readFrom(IO::Reader&)
 {
 DOTRACE("NullResponseHdlr::readFrom");
 }
 
-void NullResponseHdlr::writeTo(IO::Writer*) const
+void NullResponseHdlr::writeTo(IO::Writer&) const
 {
 DOTRACE("NullResponseHdlr::writeTo");
 }

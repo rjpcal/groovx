@@ -75,13 +75,13 @@ DOTRACE("GxPerspectiveCamera::classFields");
   return FIELD_MAP;
 }
 
-void GxPerspectiveCamera::readFrom(IO::Reader* reader)
+void GxPerspectiveCamera::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxPerspectiveCamera::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
-void GxPerspectiveCamera::writeTo(IO::Writer* writer) const
+void GxPerspectiveCamera::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxPerspectiveCamera::writeTo");
   writeFieldsTo(writer, classFields());
@@ -188,13 +188,13 @@ DOTRACE("GxFixedScaleCamera::classFields");
   return FIELD_MAP;
 }
 
-void GxFixedScaleCamera::readFrom(IO::Reader* reader)
+void GxFixedScaleCamera::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxFixedScaleCamera::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
-void GxFixedScaleCamera::writeTo(IO::Writer* writer) const
+void GxFixedScaleCamera::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxFixedScaleCamera::writeTo");
   writeFieldsTo(writer, classFields());
@@ -257,13 +257,13 @@ DOTRACE("GxPsyphyCamera::classFields");
   return FIELD_MAP;
 }
 
-void GxPsyphyCamera::readFrom(IO::Reader* reader)
+void GxPsyphyCamera::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxPsyphyCamera::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
-void GxPsyphyCamera::writeTo(IO::Writer* writer) const
+void GxPsyphyCamera::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxPsyphyCamera::writeTo");
   writeFieldsTo(writer, classFields());

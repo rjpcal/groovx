@@ -54,8 +54,8 @@ public:
   /// Virtual destructor.
   virtual ~GxLighting() throw();
 
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
 
   ////////////
   // fields //

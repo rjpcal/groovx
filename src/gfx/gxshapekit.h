@@ -76,8 +76,8 @@ public:
   virtual ~GxShapeKit() throw();
 
   virtual IO::VersionId serialVersionId() const;
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
 
   /// Get GxShapeKit's fields.
   static const FieldMap& classFields();

@@ -153,11 +153,11 @@ DOTRACE("TimingHdlr::serialVersionId");
   return TIMINGHDLR_SERIAL_VERSION_ID;
 }
 
-void TimingHdlr::readFrom(IO::Reader* reader)
+void TimingHdlr::readFrom(IO::Reader& reader)
 {
 DOTRACE("TimingHdlr::readFrom");
 
-  reader->ensureReadVersionId("TimingHdlr", 1, "Try grsh0.8a4");
+  reader.ensureReadVersionId("TimingHdlr", 1, "Try grsh0.8a4");
 
   rep->immediateEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "immediateEvents",
@@ -176,12 +176,12 @@ DOTRACE("TimingHdlr::readFrom");
             std::back_inserter(rep->abortEvents));
 }
 
-void TimingHdlr::writeTo(IO::Writer* writer) const
+void TimingHdlr::writeTo(IO::Writer& writer) const
 {
 DOTRACE("TimingHdlr::writeTo");
 
-  writer->ensureWriteVersionId("TimingHdlr", TIMINGHDLR_SERIAL_VERSION_ID, 1,
-                               "Try grsh0.8a4");
+  writer.ensureWriteVersionId("TimingHdlr", TIMINGHDLR_SERIAL_VERSION_ID, 1,
+                              "Try grsh0.8a4");
 
   IO::WriteUtils::writeObjectSeq(writer, "immediateEvents",
     rep->immediateEvents.begin(), rep->immediateEvents.end());

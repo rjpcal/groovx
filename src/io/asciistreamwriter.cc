@@ -214,7 +214,7 @@ DOTRACE("AsciiStreamWriter::Impl::flattenObject");
   itsBuf << obj->ioAttribCount() << '\n';
 
   //   ...write the object's <attributes>...
-  obj->writeTo(itsOwner);
+  obj->writeTo(*itsOwner);
 
   markObjectAsWritten(obj);
 

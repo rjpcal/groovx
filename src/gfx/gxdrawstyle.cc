@@ -59,18 +59,18 @@ IO::VersionId GxDrawStyle::serialVersionId() const
   return GXDRAWSTYLE_SERIAL_VERSION_ID;
 }
 
-void GxDrawStyle::readFrom(IO::Reader* reader)
+void GxDrawStyle::readFrom(IO::Reader& reader)
 {
-  reader->ensureReadVersionId("GxDrawStyle", 1,
-                              "Try grsh0.8a7");
+  reader.ensureReadVersionId("GxDrawStyle", 1,
+                             "Try grsh0.8a7");
 
   readFieldsFrom(reader, classFields());
 }
 
-void GxDrawStyle::writeTo(IO::Writer* writer) const
+void GxDrawStyle::writeTo(IO::Writer& writer) const
 {
-  writer->ensureWriteVersionId("GxDrawStyle", GXDRAWSTYLE_SERIAL_VERSION_ID, 1,
-                               "Try grsh0.8a7");
+  writer.ensureWriteVersionId("GxDrawStyle", GXDRAWSTYLE_SERIAL_VERSION_ID, 1,
+                              "Try grsh0.8a7");
 
   writeFieldsTo(writer, classFields());
 }

@@ -97,29 +97,29 @@ DOTRACE("MaskHatch::serialVersionId");
  return MASKHATCH_SERIAL_VERSION_ID;
 }
 
-void MaskHatch::readFrom(IO::Reader* reader)
+void MaskHatch::readFrom(IO::Reader& reader)
 {
 DOTRACE("MaskHatch::readFrom");
 
-  reader->ensureReadVersionId("MaskHatch", 2, "Try grsh0.8a4");
+  reader.ensureReadVersionId("MaskHatch", 2, "Try grsh0.8a4");
 
   readFieldsFrom(reader, classFields());
 
   // FIXME change to "GxShapeKit" with next version
-  reader->readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+  reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
 }
 
-void MaskHatch::writeTo(IO::Writer* writer) const
+void MaskHatch::writeTo(IO::Writer& writer) const
 {
 DOTRACE("MaskHatch::writeTo");
 
-  writer->ensureWriteVersionId("MaskHatch", MASKHATCH_SERIAL_VERSION_ID, 2,
-                               "Try grsh0.8a4");
+  writer.ensureWriteVersionId("MaskHatch", MASKHATCH_SERIAL_VERSION_ID, 2,
+                              "Try grsh0.8a4");
 
   writeFieldsTo(writer, classFields());
 
   // FIXME change to "GxShapeKit" with next version
-  writer->writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
+  writer.writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 void MaskHatch::update()

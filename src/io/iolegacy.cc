@@ -163,7 +163,7 @@ public:
     if (itsLegacyVersionId != -1)
       {
         grabLeftBrace();
-        obj->readFrom(itsOwner);
+        obj->readFrom(*itsOwner);
         grabRightBrace();
       }
 
@@ -492,7 +492,7 @@ public:
         {
           Indenter indent(this);
           requestWhitespace();
-          obj->writeTo(itsOwner);
+          obj->writeTo(*itsOwner);
         }
         requestWhitespace();
         stream() << "}";

@@ -84,13 +84,13 @@ GxDisk::~GxDisk() throw()
 DOTRACE("GxDisk::~GxDisk");
 }
 
-void GxDisk::readFrom(IO::Reader* reader)
+void GxDisk::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxDisk::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
-void GxDisk::writeTo(IO::Writer* writer) const
+void GxDisk::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxDisk::writeTo");
   writeFieldsTo(writer, classFields());

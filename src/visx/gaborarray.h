@@ -93,8 +93,8 @@ public:
   /// Get GaborArray's fields.
   static const FieldMap& classFields();
 
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
 
   void saveImage(const char* filename) const;
 

@@ -117,7 +117,7 @@ DOTRACE("GxSeparator::~GxSeparator");
   rep->destroy();
 }
 
-void GxSeparator::readFrom(IO::Reader* reader)
+void GxSeparator::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxSeparator::readFrom");
 
@@ -140,7 +140,7 @@ DOTRACE("GxSeparator::readFrom");
   this->sigNodeChanged.emit();
 }
 
-void GxSeparator::writeTo(IO::Writer* writer) const
+void GxSeparator::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxSeparator::writeTo");
   IO::WriteUtils::writeObjectSeq(writer, "children",

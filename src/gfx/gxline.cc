@@ -89,13 +89,13 @@ GxLine::~GxLine() throw()
 DOTRACE("GxLine::~GxLine");
 }
 
-void GxLine::readFrom(IO::Reader* reader)
+void GxLine::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxLine::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
-void GxLine::writeTo(IO::Writer* writer) const
+void GxLine::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxLine::writeTo");
   writeFieldsTo(writer, classFields());

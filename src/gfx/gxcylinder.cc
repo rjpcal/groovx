@@ -86,13 +86,13 @@ GxCylinder::~GxCylinder() throw()
 DOTRACE("GxCylinder::~GxCylinder");
 }
 
-void GxCylinder::readFrom(IO::Reader* reader)
+void GxCylinder::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxCylinder::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
-void GxCylinder::writeTo(IO::Writer* writer) const
+void GxCylinder::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxCylinder::writeTo");
   writeFieldsTo(writer, classFields());

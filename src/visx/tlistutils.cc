@@ -124,7 +124,7 @@ public:
       }
     else
       {
-        obj->writeTo(this);
+        obj->writeTo(*this);
       }
   }
 
@@ -139,13 +139,13 @@ public:
                               Util::Ref<const IO::IoObject> basePart)
   {
     DOTRACE("MatlabTrialWriter::writeBaseClass");
-    basePart->writeTo(this);
+    basePart->writeTo(*this);
   }
 
   virtual void writeRoot(const IO::IoObject* root)
   {
     DOTRACE("MatlabTrialWriter::writeRoot");
-    root->writeTo(this);
+    root->writeTo(*this);
   }
 };
 

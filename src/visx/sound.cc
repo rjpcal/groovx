@@ -122,21 +122,21 @@ Sound::~Sound() throw()
 DOTRACE("Sound::~Sound");
 }
 
-void Sound::readFrom(IO::Reader* reader)
+void Sound::readFrom(IO::Reader& reader)
 {
 DOTRACE("Sound::readFrom");
 
-  reader->readValue("filename", itsFilename);
+  reader.readValue("filename", itsFilename);
 
   if (!itsFilename.is_empty())
     setFile(itsFilename.c_str());
 }
 
-void Sound::writeTo(IO::Writer* writer) const
+void Sound::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Sound::writeTo");
 
-  writer->writeValue("filename", itsFilename);
+  writer.writeValue("filename", itsFilename);
 }
 
 void Sound::play()

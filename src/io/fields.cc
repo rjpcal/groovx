@@ -185,7 +185,7 @@ void FieldContainer::setField(const Field& field, const Tcl::ObjPtr& new_val)
     itsSignal->emit();
 }
 
-void FieldContainer::readFieldsFrom(IO::Reader* reader,
+void FieldContainer::readFieldsFrom(IO::Reader& reader,
                                     const FieldMap& fields)
 {
 DOTRACE("FieldContainer::readFieldsFrom");
@@ -200,7 +200,7 @@ DOTRACE("FieldContainer::readFieldsFrom");
     itsSignal->emit();
 }
 
-void FieldContainer::writeFieldsTo(IO::Writer* writer,
+void FieldContainer::writeFieldsTo(IO::Writer& writer,
                                    const FieldMap& fields) const
 {
 DOTRACE("FieldContainer::writeFieldsTo");

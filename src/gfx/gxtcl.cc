@@ -138,17 +138,17 @@ public:
 
   virtual fstring objTypename() const { return fstring("GxPixmap"); }
 
-  virtual void readFrom(IO::Reader* reader)
+  virtual void readFrom(IO::Reader& reader)
   {
-    int svid = reader->ensureReadVersionId("CompatBitmap", 2, "Try grsh0.8a4");
+    int svid = reader.ensureReadVersionId("CompatBitmap", 2, "Try grsh0.8a4");
 
     if (isGL && svid <= 2)
       {
         bool dummy;
-        reader->readValue("usingGlBitmap", dummy);
+        reader.readValue("usingGlBitmap", dummy);
       }
 
-    reader->readBaseClass("Bitmap", IO::makeProxy<GxPixmap>(this));
+    reader.readBaseClass("Bitmap", IO::makeProxy<GxPixmap>(this));
   }
 };
 

@@ -65,8 +65,8 @@ public:
 
   virtual ~GxShapeKitNode() throw() {}
 
-  virtual void readFrom(IO::Reader* /*reader*/) {};
-  virtual void writeTo(IO::Writer* /*writer*/) const {};
+  virtual void readFrom(IO::Reader& /*reader*/) {};
+  virtual void writeTo(IO::Writer& /*writer*/) const {};
 
   virtual void draw(Gfx::Canvas& canvas) const
   { itsObj->grRender(canvas); }
@@ -179,21 +179,21 @@ DOTRACE("GxShapeKit::serialVersionId");
   return GROBJ_SERIAL_VERSION_ID;
 }
 
-void GxShapeKit::readFrom(IO::Reader* reader)
+void GxShapeKit::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxShapeKit::readFrom");
 
-  reader->ensureReadVersionId("GxShapeKit", 3, "Try grsh0.8a7");
+  reader.ensureReadVersionId("GxShapeKit", 3, "Try grsh0.8a7");
 
   readFieldsFrom(reader, classFields());
 }
 
-void GxShapeKit::writeTo(IO::Writer* writer) const
+void GxShapeKit::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxShapeKit::writeTo");
 
-  writer->ensureWriteVersionId("GxShapeKit", GROBJ_SERIAL_VERSION_ID, 3,
-                               "Try grsh0.8a7");
+  writer.ensureWriteVersionId("GxShapeKit", GROBJ_SERIAL_VERSION_ID, 3,
+                              "Try grsh0.8a7");
 
   writeFieldsTo(writer, classFields());
 }

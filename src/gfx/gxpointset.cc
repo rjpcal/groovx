@@ -76,13 +76,13 @@ GxPointSet::~GxPointSet() throw()
 DOTRACE("GxPointSet::~GxPointSet");
 }
 
-void GxPointSet::readFrom(IO::Reader* reader)
+void GxPointSet::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxPointSet::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
-void GxPointSet::writeTo(IO::Writer* writer) const
+void GxPointSet::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxPointSet::writeTo");
   writeFieldsTo(writer, classFields());

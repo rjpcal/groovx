@@ -253,29 +253,29 @@ DOTRACE("House::serialVersionId");
   return HOUSE_SERIAL_VERSION_ID;
 }
 
-void House::readFrom(IO::Reader* reader)
+void House::readFrom(IO::Reader& reader)
 {
 DOTRACE("House::readFrom");
 
-  reader->ensureReadVersionId("House", 2, "Try grsh0.8a4");
+  reader.ensureReadVersionId("House", 2, "Try grsh0.8a4");
 
   readFieldsFrom(reader, classFields());
 
   // FIXME change to "GxShapeKit" with next version
-  reader->readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+  reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
 }
 
-void House::writeTo(IO::Writer* writer) const
+void House::writeTo(IO::Writer& writer) const
 {
 DOTRACE("House::writeTo");
 
-  writer->ensureWriteVersionId("House", HOUSE_SERIAL_VERSION_ID, 2,
-                               "Try grsh0.8a4");
+  writer.ensureWriteVersionId("House", HOUSE_SERIAL_VERSION_ID, 2,
+                              "Try grsh0.8a4");
 
   writeFieldsTo(writer, classFields());
 
   // FIXME change to "GxShapeKit" with next version
-  writer->writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
+  writer.writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 ///////////////////////////////////////////////////////////////////////

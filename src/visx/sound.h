@@ -94,8 +94,8 @@ public:
 
   virtual ~Sound() throw();
 
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
 
   /// Play the sound.
   /** This will load the sound file from disk if it has not yet been

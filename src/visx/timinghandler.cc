@@ -86,23 +86,23 @@ DOTRACE("TimingHandler::serialVersionId");
  return TIMINGHANDLER_SERIAL_VERSION_ID;
 }
 
-void TimingHandler::readFrom(IO::Reader* reader)
+void TimingHandler::readFrom(IO::Reader& reader)
 {
 DOTRACE("TimingHandler::readFrom");
 
-  reader->ensureReadVersionId("TimingHandler", 2, "Try grsh0.8a4");
+  reader.ensureReadVersionId("TimingHandler", 2, "Try grsh0.8a4");
 
-  reader->readBaseClass("TimingHdlr", IO::makeProxy<TimingHdlr>(this));
+  reader.readBaseClass("TimingHdlr", IO::makeProxy<TimingHdlr>(this));
 }
 
-void TimingHandler::writeTo(IO::Writer* writer) const
+void TimingHandler::writeTo(IO::Writer& writer) const
 {
 DOTRACE("TimingHandler::writeTo");
 
-  writer->ensureWriteVersionId("TimingHandler",
+  writer.ensureWriteVersionId("TimingHandler",
             TIMINGHANDLER_SERIAL_VERSION_ID, 2, "Try grsh0.8a4");
 
-  writer->writeBaseClass("TimingHdlr", IO::makeConstProxy<TimingHdlr>(this));
+  writer.writeBaseClass("TimingHdlr", IO::makeConstProxy<TimingHdlr>(this));
 }
 
 int TimingHandler::getAbortWait() const

@@ -81,7 +81,7 @@ DOTRACE("ElementContainer::~ElementContainer");
   delete rep;
 }
 
-void ElementContainer::readFrom(IO::Reader* reader)
+void ElementContainer::readFrom(IO::Reader& reader)
 {
 DOTRACE("ElementContainer::readFrom");
   clearElements();
@@ -89,23 +89,23 @@ DOTRACE("ElementContainer::readFrom");
   IO::ReadUtils::readObjectSeq<Element>
     (reader, "trialSeq", std::back_inserter(rep->elements));
 
-  reader->readValue("randSeed", rep->randSeed);
-  reader->readValue("curTrialSeqdx", rep->sequencePos);
+  reader.readValue("randSeed", rep->randSeed);
+  reader.readValue("curTrialSeqdx", rep->sequencePos);
   if (rep->sequencePos > rep->elements.size())
     {
       throw IO::ReadError("ElementContainer");
     }
 }
 
-void ElementContainer::writeTo(IO::Writer* writer) const
+void ElementContainer::writeTo(IO::Writer& writer) const
 {
 DOTRACE("ElementContainer::writeTo");
   IO::WriteUtils::writeObjectSeq(writer, "trialSeq",
                                  rep->elements.begin(),
                                  rep->elements.end());
 
-  writer->writeValue("randSeed", rep->randSeed);
-  writer->writeValue("curTrialSeqdx", rep->sequencePos);
+  writer.writeValue("randSeed", rep->randSeed);
+  writer.writeValue("curTrialSeqdx", rep->sequencePos);
 }
 
 ///////////////////////////////////////////////////////////////////////

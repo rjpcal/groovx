@@ -83,33 +83,33 @@ DOTRACE("Jitter::serialVersionId");
   return JITTER_SERIAL_VERSION_ID;
 }
 
-void Jitter::readFrom(IO::Reader* reader)
+void Jitter::readFrom(IO::Reader& reader)
 {
 DOTRACE("Jitter::readFrom");
 
-  reader->ensureReadVersionId("Jitter", 2, "Try grsh0.8a4");
+  reader.ensureReadVersionId("Jitter", 2, "Try grsh0.8a4");
 
-  reader->readValue("jitterX", itsXJitter);
-  reader->readValue("jitterY", itsYJitter);
-  reader->readValue("jitterR", itsRJitter);
+  reader.readValue("jitterX", itsXJitter);
+  reader.readValue("jitterY", itsYJitter);
+  reader.readValue("jitterR", itsRJitter);
 
   // FIXME change to "GxTransform" with next version
-  reader->readBaseClass("Position", IO::makeProxy<GxTransform>(this));
+  reader.readBaseClass("Position", IO::makeProxy<GxTransform>(this));
 }
 
-void Jitter::writeTo(IO::Writer* writer) const
+void Jitter::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Jitter::writeTo");
 
-  writer->ensureWriteVersionId("Jitter", JITTER_SERIAL_VERSION_ID, 2,
-                               "Try grsh0.8a4");
+  writer.ensureWriteVersionId("Jitter", JITTER_SERIAL_VERSION_ID, 2,
+                              "Try grsh0.8a4");
 
-  writer->writeValue("jitterX", itsXJitter);
-  writer->writeValue("jitterY", itsYJitter);
-  writer->writeValue("jitterR", itsRJitter);
+  writer.writeValue("jitterX", itsXJitter);
+  writer.writeValue("jitterY", itsYJitter);
+  writer.writeValue("jitterR", itsRJitter);
 
   // FIXME change to "GxTransform" with next version
-  writer->writeBaseClass("Position", IO::makeConstProxy<GxTransform>(this));
+  writer.writeBaseClass("Position", IO::makeConstProxy<GxTransform>(this));
 }
 
 /////////////

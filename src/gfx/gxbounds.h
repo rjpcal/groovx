@@ -58,8 +58,8 @@ public:
   /// Change the gap between the child object and the boundary.
   void setPercentBorder(int pixels) { itsPercentBorder = pixels; }
 
-  virtual void readFrom(IO::Reader* /*reader*/) {};
-  virtual void writeTo(IO::Writer* /*writer*/) const {};
+  virtual void readFrom(IO::Reader& /*reader*/) {};
+  virtual void writeTo(IO::Writer& /*writer*/) const {};
 
   virtual void draw(Gfx::Canvas& canvas) const;
 

@@ -55,8 +55,8 @@ public:
   static GxColor* make() { return new GxColor; }
 
   virtual IO::VersionId serialVersionId() const;
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
 
   /// Get GxColor's fields.
   static const FieldMap& classFields();

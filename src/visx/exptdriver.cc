@@ -160,21 +160,21 @@ DOTRACE("ExptDriver::serialVersionId");
   return EXPTDRIVER_SERIAL_VERSION_ID;
 }
 
-void ExptDriver::readFrom(IO::Reader* reader)
+void ExptDriver::readFrom(IO::Reader& reader)
 {
 DOTRACE("ExptDriver::readFrom");
 
-  int svid = reader->ensureReadVersionId("ExptDriver", 3, "Try grsh0.8a3");
+  int svid = reader.ensureReadVersionId("ExptDriver", 3, "Try grsh0.8a3");
 
-  reader->readValue("hostname", rep->hostname);
-  reader->readValue("subject", rep->subject);
-  reader->readValue("beginDate", rep->beginDate);
-  reader->readValue("endDate", rep->endDate);
-  reader->readValue("autosaveFile", rep->autosaveFile);
-  reader->readValue("autosavePeriod", rep->autosavePeriod);
-  reader->readValue("infoLog", rep->infoLog);
+  reader.readValue("hostname", rep->hostname);
+  reader.readValue("subject", rep->subject);
+  reader.readValue("beginDate", rep->beginDate);
+  reader.readValue("endDate", rep->endDate);
+  reader.readValue("autosaveFile", rep->autosaveFile);
+  reader.readValue("autosavePeriod", rep->autosavePeriod);
+  reader.readValue("infoLog", rep->infoLog);
 
-  reader->readValue("currentBlockIdx", iolegacySequencePos());
+  reader.readValue("currentBlockIdx", iolegacySequencePos());
 
   iolegacyElements().clear();
   IO::ReadUtils::readObjectSeq<Element>(
@@ -183,37 +183,37 @@ DOTRACE("ExptDriver::readFrom");
   if (svid < 4)
     {
       fstring proc_body;
-      reader->readValue("doUponCompletionScript", proc_body);
+      reader.readValue("doUponCompletionScript", proc_body);
       rep->doWhenComplete->define("", proc_body);
     }
   else
     {
-      reader->readOwnedObject("doWhenComplete", rep->doWhenComplete);
+      reader.readOwnedObject("doWhenComplete", rep->doWhenComplete);
     }
 }
 
-void ExptDriver::writeTo(IO::Writer* writer) const
+void ExptDriver::writeTo(IO::Writer& writer) const
 {
 DOTRACE("ExptDriver::writeTo");
 
-  writer->ensureWriteVersionId("ExptDriver", EXPTDRIVER_SERIAL_VERSION_ID, 4,
-                               "Try grsh0.8a7");
+  writer.ensureWriteVersionId("ExptDriver", EXPTDRIVER_SERIAL_VERSION_ID, 4,
+                              "Try grsh0.8a7");
 
-  writer->writeValue("hostname", rep->hostname);
-  writer->writeValue("subject", rep->subject);
-  writer->writeValue("beginDate", rep->beginDate);
-  writer->writeValue("endDate", rep->endDate);
-  writer->writeValue("autosaveFile", rep->autosaveFile);
-  writer->writeValue("autosavePeriod", rep->autosavePeriod);
-  writer->writeValue("infoLog", rep->infoLog);
+  writer.writeValue("hostname", rep->hostname);
+  writer.writeValue("subject", rep->subject);
+  writer.writeValue("beginDate", rep->beginDate);
+  writer.writeValue("endDate", rep->endDate);
+  writer.writeValue("autosaveFile", rep->autosaveFile);
+  writer.writeValue("autosavePeriod", rep->autosavePeriod);
+  writer.writeValue("infoLog", rep->infoLog);
 
-  writer->writeValue("currentBlockIdx", iolegacySequencePos());
+  writer.writeValue("currentBlockIdx", iolegacySequencePos());
 
   IO::WriteUtils::writeObjectSeq(writer, "blocks",
                                  iolegacyElements().begin(),
                                  iolegacyElements().end());
 
-  writer->writeOwnedObject("doWhenComplete", rep->doWhenComplete);
+  writer.writeOwnedObject("doWhenComplete", rep->doWhenComplete);
 }
 
 

@@ -86,20 +86,20 @@ DOTRACE("TrialEvent::~TrialEvent");
   dbgEvalNL(3, averageError);
 }
 
-void TrialEvent::readFrom(IO::Reader* reader)
+void TrialEvent::readFrom(IO::Reader& reader)
 {
 DOTRACE("TrialEvent::readFrom");
 
   cancel(); // cancel since the event is changing state
 
-  reader->readValue("requestedDelay", itsRequestedDelay);
+  reader.readValue("requestedDelay", itsRequestedDelay);
 }
 
-void TrialEvent::writeTo(IO::Writer* writer) const
+void TrialEvent::writeTo(IO::Writer& writer) const
 {
 DOTRACE("TrialEvent::writeTo");
 
-  writer->writeValue("requestedDelay", itsRequestedDelay);
+  writer.writeValue("requestedDelay", itsRequestedDelay);
 }
 
 unsigned int TrialEvent::schedule(Trial& trial, unsigned int minimum_msec)
@@ -336,18 +336,18 @@ GenericEvent::GenericEvent(unsigned int msec) :
 
 GenericEvent::~GenericEvent() throw() {}
 
-void GenericEvent::readFrom(IO::Reader* reader)
+void GenericEvent::readFrom(IO::Reader& reader)
 {
-  reader->readOwnedObject("callback", itsCallback);
+  reader.readOwnedObject("callback", itsCallback);
 
-  reader->readBaseClass("TrialEvent", IO::makeProxy<TrialEvent>(this));
+  reader.readBaseClass("TrialEvent", IO::makeProxy<TrialEvent>(this));
 }
 
-void GenericEvent::writeTo(IO::Writer* writer) const
+void GenericEvent::writeTo(IO::Writer& writer) const
 {
-  writer->writeOwnedObject("callback", itsCallback);
+  writer.writeOwnedObject("callback", itsCallback);
 
-  writer->writeBaseClass("TrialEvent", IO::makeConstProxy<TrialEvent>(this));
+  writer.writeBaseClass("TrialEvent", IO::makeConstProxy<TrialEvent>(this));
 }
 
 fstring GenericEvent::getCallback() const
@@ -381,7 +381,7 @@ void MultiEvent::invoke(Trial& trial)
     }
 }
 
-void MultiEvent::readFrom(IO::Reader* reader)
+void MultiEvent::readFrom(IO::Reader& reader)
 {
   minivec<Util::Ref<TrialEvent> > newEvents;
 
@@ -390,16 +390,16 @@ void MultiEvent::readFrom(IO::Reader* reader)
 
   itsEvents.swap(newEvents);
 
-  reader->readBaseClass("TrialEvent", IO::makeProxy<TrialEvent>(this));
+  reader.readBaseClass("TrialEvent", IO::makeProxy<TrialEvent>(this));
 }
 
-void MultiEvent::writeTo(IO::Writer* writer) const
+void MultiEvent::writeTo(IO::Writer& writer) const
 {
   IO::WriteUtils::writeObjectSeq(writer, "events",
                                  itsEvents.begin(),
                                  itsEvents.end());
 
-  writer->writeBaseClass("TrialEvent", IO::makeConstProxy<TrialEvent>(this));
+  writer.writeBaseClass("TrialEvent", IO::makeConstProxy<TrialEvent>(this));
 }
 
 Util::FwdIter<const Util::Ref<TrialEvent> > MultiEvent::getEvents() const

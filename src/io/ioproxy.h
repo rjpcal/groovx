@@ -63,10 +63,10 @@ public:
   static Util::Ref<IoObject> make(C* ref)
     { return Util::Ref<IoObject>( new IoProxy(ref), Util::PRIVATE ); }
 
-  virtual void readFrom(Reader* reader)
+  virtual void readFrom(Reader& reader)
     { itsReferand->C::readFrom(reader); }
 
-  virtual void writeTo(Writer* writer) const
+  virtual void writeTo(Writer& writer) const
     { itsReferand->C::writeTo(writer); }
 
   virtual VersionId serialVersionId() const
@@ -103,10 +103,10 @@ public:
   static Util::Ref<const IoObject> make(const C* ref)
     { return Util::Ref<IoObject>( new ConstIoProxy(ref), Util::PRIVATE ); }
 
-  virtual void readFrom(Reader* reader)
+  virtual void readFrom(Reader& reader)
     { itsReferand->C::readFrom(reader); }
 
-  virtual void writeTo(Writer* writer) const
+  virtual void writeTo(Writer& writer) const
     { itsReferand->C::writeTo(writer); }
 
   virtual VersionId serialVersionId() const

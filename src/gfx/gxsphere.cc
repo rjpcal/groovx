@@ -82,13 +82,13 @@ GxSphere::~GxSphere() throw()
 DOTRACE("GxSphere::~GxSphere");
 }
 
-void GxSphere::readFrom(IO::Reader* reader)
+void GxSphere::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxSphere::readFrom");
   readFieldsFrom(reader, classFields());
 }
 
-void GxSphere::writeTo(IO::Writer* writer) const
+void GxSphere::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxSphere::writeTo");
   writeFieldsTo(writer, classFields());

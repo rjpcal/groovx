@@ -92,31 +92,31 @@ DOTRACE("GxText::serialVersionId");
   return GTEXT_SERIAL_VERSION_ID;
 }
 
-void GxText::readFrom(IO::Reader* reader)
+void GxText::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxText::readFrom");
 
-  reader->ensureReadVersionId("GxText", 2, "Try grsh0.8a4");
+  reader.ensureReadVersionId("GxText", 2, "Try grsh0.8a4");
 
-  reader->readValue("text", itsText);
-  reader->readValue("strokeWidth", itsStrokeWidth);
+  reader.readValue("text", itsText);
+  reader.readValue("strokeWidth", itsStrokeWidth);
 
   // FIXME change to "GxShapeKit" with next version
-  reader->readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+  reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
 }
 
-void GxText::writeTo(IO::Writer* writer) const
+void GxText::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxText::writeTo");
 
-  writer->ensureWriteVersionId("GxText", GTEXT_SERIAL_VERSION_ID, 2,
-                               "Try grsh0.8a4");
+  writer.ensureWriteVersionId("GxText", GTEXT_SERIAL_VERSION_ID, 2,
+                              "Try grsh0.8a4");
 
-  writer->writeValue("text", itsText);
-  writer->writeValue("strokeWidth", itsStrokeWidth);
+  writer.writeValue("text", itsText);
+  writer.writeValue("strokeWidth", itsStrokeWidth);
 
   // FIXME change to "GxShapeKit" with next version
-  writer->writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
+  writer.writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 const FieldMap& GxText::classFields()

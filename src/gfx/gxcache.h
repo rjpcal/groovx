@@ -68,10 +68,10 @@ public:
   virtual ~GxCache() throw();
 
   /// FIXME
-  virtual void readFrom(IO::Reader* /*reader*/) {};
+  virtual void readFrom(IO::Reader& /*reader*/) {};
 
   /// FIXME
-  virtual void writeTo(IO::Writer* /*writer*/) const {};
+  virtual void writeTo(IO::Writer& /*writer*/) const {};
 
   /// Draw using the current draw mode.
   virtual void draw(Gfx::Canvas& canvas) const;

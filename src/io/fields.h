@@ -149,10 +149,10 @@ public:
 
   /// Read the value of the given object's referred-to field from the IO::Reader.
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader* reader, const fstring& name) const = 0;
+                             IO::Reader& reader, const fstring& name) const = 0;
   /// Write the value of the given object's referred-to field to the IO::Writer.
   virtual void writeValueTo(const FieldContainer* obj,
-                            IO::Writer* writer, const fstring& name) const = 0;
+                            IO::Writer& writer, const fstring& name) const = 0;
 };
 
 namespace
@@ -239,20 +239,20 @@ public:
 
   /// Read the value of the given object's pointed-to data member.
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader* reader, const fstring& name) const
+                             IO::Reader& reader, const fstring& name) const
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
-    reader->readValue(name, dereference(cobj, itsDataMember));
+    reader.readValue(name, dereference(cobj, itsDataMember));
   }
 
   /// Write the value of the given object's pointed-to data member.
   virtual void writeValueTo(const FieldContainer* obj,
-                            IO::Writer* writer, const fstring& name) const
+                            IO::Writer& writer, const fstring& name) const
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
-    writer->writeValue(name.c_str(), const_dereference(cobj, itsDataMember));
+    writer.writeValue(name.c_str(), const_dereference(cobj, itsDataMember));
   }
 
 private:
@@ -290,19 +290,19 @@ public:
   }
 
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader* reader, const fstring& name) const
+                             IO::Reader& reader, const fstring& name) const
   {
     C& cobj = FieldAux::cast<C>(*obj);
 
-    reader->readValueObj(name, dereference(cobj, itsValueMember));
+    reader.readValueObj(name, dereference(cobj, itsValueMember));
   }
 
   virtual void writeValueTo(const FieldContainer* obj,
-                            IO::Writer* writer, const fstring& name) const
+                            IO::Writer& writer, const fstring& name) const
   {
     const C& cobj = FieldAux::cast<const C>(*obj);
 
-    writer->writeValueObj(name.c_str(), const_dereference(cobj, itsValueMember));
+    writer.writeValueObj(name.c_str(), const_dereference(cobj, itsValueMember));
   }
 
 private:
@@ -350,7 +350,7 @@ public:
   }
 
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader* reader, const fstring& name) const
+                             IO::Reader& reader, const fstring& name) const
   {
     if (itsSetter == 0) FieldAux::throwNotAllowed("read");
 
@@ -359,18 +359,18 @@ public:
     typedef typename Util::TypeTraits<T>::StackT StackT;
 
     StackT temp;
-    reader->readValue(name, temp);
+    reader.readValue(name, temp);
     (cobj.*itsSetter)(temp);
   }
 
   virtual void writeValueTo(const FieldContainer* obj,
-                            IO::Writer* writer, const fstring& name) const
+                            IO::Writer& writer, const fstring& name) const
   {
     if (itsGetter == 0) FieldAux::throwNotAllowed("write");
 
     const C& cobj = FieldAux::cast<const C>(*obj);
 
-    writer->writeValue(name.c_str(), (cobj.*itsGetter)());
+    writer.writeValue(name.c_str(), (cobj.*itsGetter)());
   }
 };
 
@@ -567,14 +567,14 @@ public:
 
   /// Read this field for \a obj from \a reader.
   void readValueFrom(FieldContainer* obj,
-                     IO::Reader* reader, const fstring& name) const
+                     IO::Reader& reader, const fstring& name) const
   {
     itsFieldImpl->readValueFrom(obj, reader, name);
   }
 
   /// Write this field for \a obj to \a writer.
   void writeValueTo(const FieldContainer* obj,
-                    IO::Writer* writer, const fstring& name) const
+                    IO::Writer& writer, const fstring& name) const
   {
     itsFieldImpl->writeValueTo(obj, writer, name);
   }
@@ -689,9 +689,9 @@ public:
   void setField(const Field& field, const Tcl::ObjPtr& new_val);
 
   /// Read all fields from the IO::Reader.
-  void readFieldsFrom(IO::Reader* reader, const FieldMap& fields);
+  void readFieldsFrom(IO::Reader& reader, const FieldMap& fields);
   /// Write all fields to the IO::Writer.
-  void writeFieldsTo(IO::Writer* writer, const FieldMap& fields) const;
+  void writeFieldsTo(IO::Writer& writer, const FieldMap& fields) const;
 
   /// Get the FieldMap for this object.
   const FieldMap& fields() const { return *itsFieldMap; }

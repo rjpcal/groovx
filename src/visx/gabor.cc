@@ -133,29 +133,29 @@ DOTRACE("Gabor::serialVersionId");
   return GABOR_SERIAL_VERSION_ID;
 }
 
-void Gabor::readFrom(IO::Reader* reader)
+void Gabor::readFrom(IO::Reader& reader)
 {
 DOTRACE("Gabor::readFrom");
 
-  reader->ensureReadVersionId("Gabor", 1, "Try grsh0.8a4");
+  reader.ensureReadVersionId("Gabor", 1, "Try grsh0.8a4");
 
   readFieldsFrom(reader, classFields());
 
   // FIXME change to "GxShapeKit" with next version
-  reader->readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+  reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
 }
 
-void Gabor::writeTo(IO::Writer* writer) const
+void Gabor::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Gabor::writeTo");
 
-  writer->ensureWriteVersionId("Gabor", GABOR_SERIAL_VERSION_ID, 1,
-                               "Try grsh0.8a4");
+  writer.ensureWriteVersionId("Gabor", GABOR_SERIAL_VERSION_ID, 1,
+                              "Try grsh0.8a4");
 
   writeFieldsTo(writer, classFields());
 
   // FIXME change to "GxShapeKit" with next version
-  writer->writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
+  writer.writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 void Gabor::setLogContrast(double logContrast)

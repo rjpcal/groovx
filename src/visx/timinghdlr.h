@@ -56,8 +56,8 @@ public:
   virtual ~TimingHdlr() throw();
 
   virtual IO::VersionId serialVersionId() const;
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
 
   typedef int TimePoint;
   static const TimePoint IMMEDIATE=0;

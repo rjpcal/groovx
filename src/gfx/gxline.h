@@ -56,8 +56,8 @@ public:
   /// Virtual destructor.
   virtual ~GxLine() throw();
 
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  virtual void readFrom(IO::Reader& reader);
+  virtual void writeTo(IO::Writer& writer) const;
 
   ////////////
   // fields //

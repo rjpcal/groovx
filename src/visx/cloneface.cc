@@ -86,7 +86,7 @@ CloneFace::~CloneFace () throw()
 DOTRACE("CloneFace::~CloneFace");
 }
 
-void CloneFace::readFrom(IO::Reader* reader)
+void CloneFace::readFrom(IO::Reader& reader)
 {
 DOTRACE("CloneFace::readFrom");
 
@@ -95,10 +95,10 @@ DOTRACE("CloneFace::readFrom");
 
   readFieldsFrom(reader, classFields());
 
-  reader->readBaseClass("Face", IO::makeProxy<Face>(this));
+  reader.readBaseClass("Face", IO::makeProxy<Face>(this));
 }
 
-void CloneFace::writeTo(IO::Writer* writer) const
+void CloneFace::writeTo(IO::Writer& writer) const
 {
 DOTRACE("CloneFace::writeTo");
 
@@ -107,7 +107,7 @@ DOTRACE("CloneFace::writeTo");
 
   writeFieldsTo(writer, classFields());
 
-  writer->writeBaseClass("Face", IO::makeConstProxy<Face>(this));
+  writer.writeBaseClass("Face", IO::makeConstProxy<Face>(this));
 }
 
 const double* CloneFace::getCtrlPnts() const
