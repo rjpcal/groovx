@@ -146,6 +146,11 @@ case $OS in
       # find the "_start" symbol.
       LDFLAGS="$LDFLAGS -Wl,--export-dynamic"
 
+      # Use these strict options to (1) avoid circular dependencies among
+      # shared libraries, and (2) match Mac OS X's more strict linking
+      # requirements.
+      LDFLAGS="$LDFLAGS -Wl,--no-undefined -Wl,--warn-common"
+
       # May need this -Bsymbolic when using Intel's C++ compiler in order
       # to force our own shlib's to link against icc's C++ std lib rather than
       # against g++'s /usr/lib/libstdc++
