@@ -104,7 +104,7 @@ public:
   virtual void reshapeCallback(int width, int height) = 0;
 
   /// Bind the given script to the event_sequence.
-  void bind(const char* event_sequence, const char* script);
+  void bind(const fstring& event_sequence, const fstring& script);
 
   /// Overridden from GWT::Widget.
   virtual void takeFocus();

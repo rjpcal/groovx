@@ -493,7 +493,7 @@ DOTRACE("Tcl::TkWidget::minimize");
   setSize(Gfx::Vec2<int>(200, 200));
 }
 
-void Tcl::TkWidget::bind(const char* event_sequence, const char* script)
+void Tcl::TkWidget::bind(const fstring& event_sequence, const fstring& script)
 {
 DOTRACE("Tcl::TkWidget::bind");
 
