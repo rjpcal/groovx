@@ -1,26 +1,27 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// tclitempkg.cc
+// tclpkg.cc
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Mon Jul 16 13:01:23 2001
+// written: Wed Jul 18 11:25:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLITEMPKG_CC_DEFINED
-#define TCLITEMPKG_CC_DEFINED
+#ifndef TCLPKG_CC_DEFINED
+#define TCLPKG_CC_DEFINED
 
 #ifdef ACC_COMPILER // aCC needs this to be happy with the header
 #include "util/ref.h"
 #endif
 
+#include "tcl/tclpkg.h"
+
 #include "util/objdb.h"
 #include "util/object.h"
 
-#include "tcl/tclitempkg.h"
 #include "tcl/tcllistobj.h"
 #include "tcl/stringifycmd.h"
 
@@ -233,57 +234,36 @@ void Tcl::RemoveAllCmd::invoke(Tcl::Context& ctx)
     }
 }
 
-void Tcl::doAddGenericObjCmds(Tcl::TclPkg* pkg,
-                              shared_ptr<Tcl::ObjCaster> caster)
-{
-  pkg->addCommand( new IsCmd(pkg->interp(), caster,
-                             pkg->makePkgCmdName("is")));
-  pkg->addCommand( new CountAllCmd(pkg->interp(), caster,
-                                   pkg->makePkgCmdName("countAll")));
-  pkg->addCommand( new FindAllCmd(pkg->interp(), caster,
-                                  pkg->makePkgCmdName("findAll")));
-  pkg->addCommand( new RemoveAllCmd(pkg->interp(), caster,
-                                    pkg->makePkgCmdName("removeAll")));
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
-// TclItemPkg member definitions
+// Pkg member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::TclItemPkg::TclItemPkg(Tcl_Interp* interp,
-                            const char* name, const char* version) :
-  TclPkg(interp, name, version)
+Tcl::Pkg::Pkg(Tcl_Interp* interp, const char* name, const char* version) :
+  Tcl::PkgBase(interp, name, version)
 {}
 
-Tcl::TclItemPkg::~TclItemPkg() {}
+Tcl::Pkg::~Pkg() {}
 
-const char* Tcl::TclItemPkg::actionUsage(const char* usage)
+const char* Tcl::Pkg::actionUsage(const char* usage)
 {
   return usage ? usage : "item_id(s)";
 }
 
-const char* Tcl::TclItemPkg::getterUsage(const char* usage)
+const char* Tcl::Pkg::getterUsage(const char* usage)
 {
   return usage ? usage : "item_id(s)";
 }
 
-const char* Tcl::TclItemPkg::setterUsage(const char* usage)
+const char* Tcl::Pkg::setterUsage(const char* usage)
 {
   return usage ? usage : "item_id(s) new_value(s)";
 }
 
-
-///////////////////////////////////////////////////////////////////////
-//
-// IO command definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-void Tcl::TclItemPkg::addIoCommands()
+void Tcl::Pkg::addIoCommands()
 {
-DOTRACE("Tcl::TclItemPkg::addIoCommands");
+DOTRACE("Tcl::Pkg::addIoCommands");
   addCommand( new StringifyCmd(interp(), makePkgCmdName("stringify")) );
   addCommand( new DestringifyCmd(interp(), makePkgCmdName("destringify")) );
 
@@ -294,5 +274,13 @@ DOTRACE("Tcl::TclItemPkg::addIoCommands");
   addCommand( new ASRLoadCmd(interp(), makePkgCmdName("load")) );
 }
 
-static const char vcid_tclitempkg_cc[] = "$Header$";
-#endif // !TCLITEMPKG_CC_DEFINED
+void Tcl::Pkg::addGenericObjCmds(shared_ptr<Tcl::ObjCaster> caster)
+{
+  addCommand( new IsCmd(interp(), caster, makePkgCmdName("is")));
+  addCommand( new CountAllCmd(interp(), caster, makePkgCmdName("countAll")));
+  addCommand( new FindAllCmd(interp(), caster, makePkgCmdName("findAll")));
+  addCommand( new RemoveAllCmd(interp(), caster, makePkgCmdName("removeAll")));
+}
+
+static const char vcid_tclpkg_cc[] = "$Header$";
+#endif // !TCLPKG_CC_DEFINED

@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// tclpkg.cc
+// tclpkgbase.cc
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,10 +10,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLPKG_CC_DEFINED
-#define TCLPKG_CC_DEFINED
+#ifndef TCLPKGBASE_CC_DEFINED
+#define TCLPKGBASE_CC_DEFINED
 
-#include "tcl/tclpkg.h"
+#include "tcl/tclpkgbase.h"
 
 #include "tcl/tclcmd.h"
 #include "tcl/tclerror.h"
@@ -37,8 +37,8 @@ namespace
 {
   void exitHandler(ClientData clientData)
   {
-    DOTRACE("TclPkg-exitHandler");
-    Tcl::TclPkg* pkg = static_cast<Tcl::TclPkg*>(clientData);
+    DOTRACE("Tcl::PkgBase-exitHandler");
+    Tcl::PkgBase* pkg = static_cast<Tcl::PkgBase*>(clientData);
     DebugEvalNL(typeid(*pkg).name());
     delete pkg;
   }
@@ -52,37 +52,52 @@ namespace
 
 namespace Tcl
 {
-  inline int linkInt(Tcl_Interp* interp, const char* varName,
-                         int* addr, int flag) {
+  inline void linkInt(Tcl_Interp* interp, const char* varName,
+							 int* addr, int flag)
+  {
+	 DebugEvalNL(varName);
     fixed_string temp = varName;
     flag &= TCL_LINK_READ_ONLY;
-    return Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
-                       flag | TCL_LINK_INT);
+    if ( Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
+							flag | TCL_LINK_INT) != TCL_OK )
+		throw TclError("error while linking int variable");
   }
-  inline int linkDouble(Tcl_Interp* interp, const char* varName,
-                            double* addr, int flag) {
+
+  inline void linkDouble(Tcl_Interp* interp, const char* varName,
+								 double* addr, int flag)
+  {
+	 DebugEvalNL(varName);
     fixed_string temp = varName;
     flag &= TCL_LINK_READ_ONLY;
-    return Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
-                       flag | TCL_LINK_DOUBLE);
+    if ( Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
+							flag | TCL_LINK_DOUBLE) != TCL_OK )
+		throw TclError("error while linking double variable");
   }
-  inline int linkBoolean(Tcl_Interp* interp, const char* varName,
-                             int* addr, int flag) {
+
+  inline void linkBoolean(Tcl_Interp* interp, const char* varName,
+								  int* addr, int flag)
+  {
+	 DebugEvalNL(varName);
     fixed_string temp = varName;
     flag &= TCL_LINK_READ_ONLY;
-    return Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
-                       flag | TCL_LINK_BOOLEAN);
+    if ( Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
+							flag | TCL_LINK_BOOLEAN) != TCL_OK )
+		throw TclError("error while linking boolean variable");
   }
-  inline int linkString(Tcl_Interp* interp, const char* varName,
-                            char** addr, int flag) {
+
+  inline void linkString(Tcl_Interp* interp, const char* varName,
+								 char** addr, int flag)
+  {
+	 DebugEvalNL(varName);
     fixed_string temp = varName;
     flag &= TCL_LINK_READ_ONLY;
-    return Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
-                       flag | TCL_LINK_STRING);
+    if ( Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
+							flag | TCL_LINK_STRING) != TCL_OK )
+		throw TclError("error while linking string variable");
   }
 }
 
-struct Tcl::TclPkg::Impl {
+struct Tcl::PkgBase::Impl {
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
@@ -103,8 +118,8 @@ public:
   slink_list<shared_ptr<double> > ownedDoubles;
 };
 
-Tcl::TclPkg::Impl::Impl(Tcl_Interp* interp,
-                        const char* name, const char* version) :
+Tcl::PkgBase::Impl::Impl(Tcl_Interp* interp,
+								 const char* name, const char* version) :
   itsInterp(interp),
   itsCmds(),
   itsPkgName(name ? name : ""),
@@ -113,7 +128,7 @@ Tcl::TclPkg::Impl::Impl(Tcl_Interp* interp,
   ownedInts(),
   ownedDoubles()
 {
-DOTRACE("Tcl::TclPkg::Impl::Impl");
+DOTRACE("Tcl::PkgBase::Impl::Impl");
   if ( !itsPkgName.empty() && !itsVersion.empty() ) {
 
     // First we must construct a capitalization-correct version of
@@ -140,41 +155,39 @@ DOTRACE("Tcl::TclPkg::Impl::Impl");
   }
 }
 
-Tcl::TclPkg::Impl::~Impl() {
-DOTRACE("Tcl::TclPkg::Impl::~Impl");
+Tcl::PkgBase::Impl::~Impl()
+{
+DOTRACE("Tcl::PkgBase::Impl::~Impl");
 }
 
-Tcl::TclPkg::TclPkg(Tcl_Interp* interp,
-                    const char* name, const char* version) :
+Tcl::PkgBase::PkgBase(Tcl_Interp* interp,
+							 const char* name, const char* version) :
   itsImpl(new Impl(interp, name, version))
 {
-DOTRACE("TclPkg::TclPkg");
+DOTRACE("Tcl::PkgBase::PkgBase");
   Tcl_CreateExitHandler(exitHandler, static_cast<ClientData>(this));
 }
 
-Tcl::TclPkg::~TclPkg() {
-DOTRACE("TclPkg::~TclPkg");
+Tcl::PkgBase::~PkgBase()
+{
+DOTRACE("Tcl::PkgBase::~PkgBase");
   delete itsImpl;
 }
 
-int Tcl::TclPkg::initStatus() const {
-DOTRACE("Tcl::TclPkg::initStatus");
+int Tcl::PkgBase::initStatus() const
+{
+DOTRACE("Tcl::PkgBase::initStatus");
   return itsImpl->itsInitStatus;
 }
 
-int Tcl::TclPkg::okStatus()
+int Tcl::PkgBase::initStatus(PkgBase* pkg)
 {
-  return TCL_OK;
+  return pkg ? pkg->initStatus() : TCL_OK;
 }
 
-int Tcl::TclPkg::errStatus()
+int Tcl::PkgBase::combineStatus(int status1, int status2)
 {
-  return TCL_ERROR;
-}
-
-int Tcl::TclPkg::combineStatus(int status1, int status2)
-{
-DOTRACE("Tcl::TclPkg::combineStatus");
+DOTRACE("Tcl::PkgBase::combineStatus");
   if (TCL_ERROR == status1 || TCL_ERROR == status2)
     return TCL_ERROR;
   else if (TCL_OK != status1)
@@ -185,26 +198,25 @@ DOTRACE("Tcl::TclPkg::combineStatus");
   return TCL_OK;
 }
 
-bool Tcl::TclPkg::initedOk() const {
-DOTRACE("Tcl::TclPkg::initedOk");
-  return itsImpl->itsInitStatus == TCL_OK;
-}
-
-Tcl_Interp* Tcl::TclPkg::interp() {
-DOTRACE("Tcl::TclPkg::interp");
+Tcl_Interp* Tcl::PkgBase::interp()
+{
+DOTRACE("Tcl::PkgBase::interp");
  return itsImpl->itsInterp;
 }
 
-const char* Tcl::TclPkg::pkgName() {
+const char* Tcl::PkgBase::pkgName()
+{
   return itsImpl->itsPkgName.c_str();
 }
 
-const char* Tcl::TclPkg::version() {
+const char* Tcl::PkgBase::version()
+{
   return itsImpl->itsVersion.c_str();
 }
 
-const char* Tcl::TclPkg::makePkgCmdName(const char* cmd_name_cstr) {
-DOTRACE("Tcl::TclPkg::makePkgCmdName");
+const char* Tcl::PkgBase::makePkgCmdName(const char* cmd_name_cstr)
+{
+DOTRACE("Tcl::PkgBase::makePkgCmdName");
   std::string cmd_name(cmd_name_cstr);
 
   // Look for a namespace qualifier "::" -- if there is already one,
@@ -225,75 +237,64 @@ DOTRACE("Tcl::TclPkg::makePkgCmdName");
     }
 }
 
-void Tcl::TclPkg::eval(const char* script) {
-DOTRACE("Tcl::TclPkg::eval");
+void Tcl::PkgBase::eval(const char* script)
+{
+DOTRACE("Tcl::PkgBase::eval");
   fixed_string script_copy(script);
   Tcl_Eval(itsImpl->itsInterp, script_copy.data());
 }
 
-void Tcl::TclPkg::addCommand(TclCmd* cmd) {
-DOTRACE("Tcl::TclPkg::addCommand");
+void Tcl::PkgBase::addCommand(TclCmd* cmd)
+{
+DOTRACE("Tcl::PkgBase::addCommand");
   itsImpl->itsCmds.push_front(shared_ptr<TclCmd>(cmd));
 }
 
-void Tcl::TclPkg::linkVar(const char* varName, int& var) {
-DOTRACE("Tcl::TclPkg::linkVar int");
-  DebugEvalNL(varName);
-  if (linkInt(itsImpl->itsInterp, varName, &var, 0) != TCL_OK)
-    throw TclError();
+void Tcl::PkgBase::linkVar(const char* varName, int& var)
+{
+DOTRACE("Tcl::PkgBase::linkVar int");
+  linkInt(itsImpl->itsInterp, varName, &var, 0);
 }
 
-void Tcl::TclPkg::linkVar(const char* varName, double& var) {
-DOTRACE("Tcl::TclPkg::linkVar double");
-  DebugEvalNL(varName);
-  if (linkDouble(itsImpl->itsInterp, varName, &var, 0) != TCL_OK)
-    throw TclError();
+void Tcl::PkgBase::linkVar(const char* varName, double& var)
+{
+DOTRACE("Tcl::PkgBase::linkVar double");
+  linkDouble(itsImpl->itsInterp, varName, &var, 0);
 }
 
-void Tcl::TclPkg::linkVarCopy(const char* varName, int var) {
-DOTRACE("Tcl::TclPkg::linkVarCopy int");
-  DebugEvalNL(varName);
+void Tcl::PkgBase::linkVarCopy(const char* varName, int var)
+{
+DOTRACE("Tcl::PkgBase::linkVarCopy int");
   shared_ptr<int> copy(new int(var));
   itsImpl->ownedInts.push_front(copy);
-  if (linkInt(itsImpl->itsInterp, varName,
-                  copy.get(), TCL_LINK_READ_ONLY) != TCL_OK)
-    throw TclError();
+  linkInt(itsImpl->itsInterp, varName, copy.get(), TCL_LINK_READ_ONLY);
 }
 
-void Tcl::TclPkg::linkVarCopy(const char* varName, double var) {
-DOTRACE("Tcl::TclPkg::linkVarCopy double");
+void Tcl::PkgBase::linkVarCopy(const char* varName, double var)
+{
+DOTRACE("Tcl::PkgBase::linkVarCopy double");
   shared_ptr<double> copy(new double(var));
   itsImpl->ownedDoubles.push_front(copy);
-  if (linkDouble(itsImpl->itsInterp, varName,
-                     copy.get(), TCL_LINK_READ_ONLY) != TCL_OK)
-    throw TclError();
+  linkDouble(itsImpl->itsInterp, varName, copy.get(), TCL_LINK_READ_ONLY);
 }
 
-void Tcl::TclPkg::linkConstVar(const char* varName, int& var) {
-DOTRACE("Tcl::TclPkg::linkConstVar int");
-  DebugEvalNL(varName);
-  if (linkInt(itsImpl->itsInterp, varName, &var, TCL_LINK_READ_ONLY)
-      != TCL_OK)
-    throw TclError();
+void Tcl::PkgBase::linkConstVar(const char* varName, int& var)
+{
+DOTRACE("Tcl::PkgBase::linkConstVar int");
+  linkInt(itsImpl->itsInterp, varName, &var, TCL_LINK_READ_ONLY);
 }
 
-void Tcl::TclPkg::linkConstVar(const char* varName, double& var) {
-DOTRACE("Tcl::TclPkg::linkConstVar double");
-  DebugEvalNL(varName);
-  if (linkDouble(itsImpl->itsInterp, varName, &var, TCL_LINK_READ_ONLY)
-      != TCL_OK)
-    throw TclError();
+void Tcl::PkgBase::linkConstVar(const char* varName, double& var)
+{
+DOTRACE("Tcl::PkgBase::linkConstVar double");
+  linkDouble(itsImpl->itsInterp, varName, &var, TCL_LINK_READ_ONLY);
 }
 
-void Tcl::TclPkg::setInitStatusOk() {
-DOTRACE("Tcl::TclPkg::setInitStatusOk");
-  itsImpl->itsInitStatus = TCL_OK;
-}
-
-void Tcl::TclPkg::setInitStatusError() {
-DOTRACE("Tcl::TclPkg::setInitStatusOk");
+void Tcl::PkgBase::setInitStatusError()
+{
+DOTRACE("Tcl::PkgBase::setInitStatusError");
   itsImpl->itsInitStatus = TCL_ERROR;
 }
 
-static const char vcid_tclpkg_cc[] = "$Header$";
-#endif // !TCLPKG_CC_DEFINED
+static const char vcid_tclpkgbase_cc[] = "$Header$";
+#endif // !TCLPKGBASE_CC_DEFINED

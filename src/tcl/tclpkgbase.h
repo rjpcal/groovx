@@ -1,17 +1,17 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// tclpkg.h
+// tclpkgbase.h
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 11:50:23 1999
-// written: Wed Jul 18 09:50:01 2001
+// written: Wed Jul 18 11:23:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLPKG_H_DEFINED
-#define TCLPKG_H_DEFINED
+#ifndef TCLPKGBASE_H_DEFINED
+#define TCLPKGBASE_H_DEFINED
 
 struct Tcl_Interp;
 
@@ -19,72 +19,58 @@ namespace Tcl
 {
   class TclCmd;
   class TclError;
-  class TclPkg;
+  class PkgBase;
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// TclPkg class definition
+// Tcl::PkgBase class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c TclPkg is a class more managing groups of related \c
+ * \c Tcl::PkgBase is a class more managing groups of related \c
  * TclCmd's. It can be used alone, or as a base class for Tcl
  * packages. It provides several facilities:
  *
  *   -- stores a list of \c TclCmd's, and ensures that these are
  *   properly destroyed upon exit from Tcl
  *
- *   -- ensures that the package name is formally "provided" to Tcl so
- *   that other packages can query for its presence
+ *   -- ensures that the package is provided to Tcl so that other
+ *   packages can query for its presence
  *
- *   -- provides a function \c makePkgCmdName() to generate a
- *   namespace'd command name from a given command name: the result is
- *   of the form pkg_name::cmd_name (NOTE: the result of this command
- *   is only valid until the next call of \c makePkgCmdName())
+ *   -- provides a \c protected function \c makePkgCmdName() to
+ *   generate a namespace'd command name from a given command name:
+ *   the result is of the form pkg_name::cmd_name (NOTE: the result of
+ *   this command is only valid until the next call of \c
+ *   makePkgCmdName())
  *
- *   -- provides a function \c addCommand() that derived classes can
- *   use (most likely in their constructors) to add \c TclCmd's to the
- *   package
+ *   -- provides a \c protected function \c addCommand() that derived
+ *   classes can use (most likely in their constructors) to add \c
+ *   TclCmd's to the package
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::TclPkg {
+class Tcl::PkgBase {
 public:
-  /** Construct a \c TclPkg with a Tcl interpreter, package name, and
-      package version. The version string should be in the form MM.mm
-      where MM is major version, and mm is minor version. This
-      constructor can also correctly parse a version string such as
-      given by the RCS revision tag. */
-  TclPkg(Tcl_Interp* interp, const char* name, const char* version);
+  /** Construct a \c Tcl::PkgBase with a Tcl interpreter, package
+      name, and package version. The version string should be in the
+      form MM.mm where MM is major version, and mm is minor
+      version. This constructor can also correctly parse a version
+      string such as given by the RCS revision tag. */
+  PkgBase(Tcl_Interp* interp, const char* name, const char* version);
 
   /** Virtual destructor ensures proper destruction of base
       classes. This destructor will destroy all \c TclCmd's owned by
       the package. */
-  virtual ~TclPkg();
+  virtual ~PkgBase();
 
   /** Returns a Tcl status code indicating whether the package
       initialization was successful. */
   int initStatus() const;
-
-  /** Returns a Tcl status code representing the combination of the
-      current \c TclPkg's status along with \a other_status. If either
-      status represents failure, the result will also represent
-      failure, otherwise success. */
-  int combineStatus(int other_status) const
-  {
-    return combineStatus(this->initStatus(), other_status);
-  }
-
-  /// Return the symbolic constant indicating initialization was ok
-  static int okStatus();
-
-  /// Return the symbolic constant indicating initialization had an error
-  static int errStatus();
 
   /** Returns a Tcl status code representing the combination of the
       current \a status1 with \a status2. If either status represents
@@ -94,18 +80,12 @@ public:
 
   /** Return the init status of \a pkg, or return okStatus() if \a pkg
       is null */
-  static int initStatus(TclPkg* pkg)
-  {
-    return pkg ? pkg->initStatus() : okStatus();
-  }
+  static int initStatus(PkgBase* pkg);
 
   /// Combine the init statuses of several packages.
-  static int initStatus(TclPkg* pkg1,
-                        TclPkg* pkg2,
-                        TclPkg* pkg3=0,
-                        TclPkg* pkg4=0,
-                        TclPkg* pkg5=0,
-                        TclPkg* pkg6=0)
+  static int initStatus(PkgBase* pkg1, PkgBase* pkg2,
+                        PkgBase* pkg3=0, PkgBase* pkg4=0,
+                        PkgBase* pkg5=0, PkgBase* pkg6=0)
   {
     return combineStatus(initStatus(pkg1),
            combineStatus(initStatus(pkg2),
@@ -114,9 +94,6 @@ public:
            combineStatus(initStatus(pkg5),
                          initStatus(pkg6))))));
   }
-
-  /// Returns true if the package was initialized successfully.
-  bool initedOk() const;
 
   /// Returns the Tcl interpreter that was passed to the constructor.
   Tcl_Interp* interp();
@@ -127,17 +104,8 @@ public:
   /// Returns the package version string.
   const char* version();
 
-  /** Returns a namespace'd command name in the form of
-      pkg_name::cmd_name. The result of this function is valid only
-      until the next time it is called, so callers should make a copy
-      of the result. */
-  const char* makePkgCmdName(const char* cmd_name);
-
   /// Does a simple \c Tcl_Eval of \a script using the package's \c Tcl_Interp.
   void eval(const char* script);
-
-  /// Adds \a cmd to the commands managed by the package.
-  void addCommand(TclCmd* cmd);
 
   /// Links the \a var with the Tcl variable \a varName.
   void linkVar(const char* varName, int& var);
@@ -159,16 +127,24 @@ public:
   void linkConstVar(const char* varName, double& var);
 
 protected:
-  void setInitStatusOk();
+  /** Returns a namespace'd command name in the form of
+      pkg_name::cmd_name. The result of this function is valid only
+      until the next time it is called, so callers should make a copy
+      of the result. */
+  const char* makePkgCmdName(const char* cmd_name);
+
+  /// Adds \a cmd to the commands managed by the package.
+  void addCommand(TclCmd* cmd);
+
   void setInitStatusError();
 
 private:
-  TclPkg(const TclPkg&);
-  TclPkg& operator=(const TclPkg&);
+  PkgBase(const PkgBase&);
+  PkgBase& operator=(const PkgBase&);
 
   struct Impl;
   Impl* itsImpl;
 };
 
-static const char vcid_tclpkg_h[] = "$Header$";
-#endif // !TCLPKG_H_DEFINED
+static const char vcid_tclpkgbase_h[] = "$Header$";
+#endif // !TCLPKGBASE_H_DEFINED
