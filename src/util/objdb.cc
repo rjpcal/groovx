@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu May 17 11:57:20 2001
+// written: Sun May 27 07:31:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ public:
 
   typedef PtrHandle<IO::IoObject> IoPtrHandle;
 
-  typedef std::map<int, IoPtrHandle> MapType;
+  typedef std::map<IO::UID, IoPtrHandle> MapType;
   MapType itsPtrMap;
 
   Impl(IoDb* owner) :
@@ -63,40 +63,23 @@ public:
 	 {}
 
   int count() const
-	 {
-		// Count the number of null pointers. In the STL call count, we must
-		// cast the value (NULL) so that template deduction treats it as a
-		// pointer rather than an int. Then return the number of non-null
-		// pointers, i.e. the size of the container less the number of null
-		// pointers.
-		int num_non_null=0; 
-		for (MapType::const_iterator
-				 itr = itsPtrMap.begin(),
-				 end = itsPtrMap.end();
-			  itr != end;
-			  ++itr)
-		  {
-			 ++num_non_null;
-		  }
+	 { return itsPtrMap.size(); }
 
-		return num_non_null;
-	 }
-
-  bool isValidId(int id) const
+  bool isValidId(IO::UID id) const
 	 {
 		DebugEval(id);
 		MapType::const_iterator itr = itsPtrMap.find(id);
 		return ( (itr != itsPtrMap.end()) );
 	 }
 
-  void release(int id)
+  void release(IO::UID id)
 	 {
 		MapType::iterator itr = itsPtrMap.find(id);
 
 		itsPtrMap.erase(itr);
 	 }
 
-  void remove(int id)
+  void remove(IO::UID id)
 	 {
 		MapType::iterator itr = itsPtrMap.find(id);
 		if (itr == itsPtrMap.end()) return;
@@ -140,7 +123,7 @@ public:
   void clearAll()
     { itsPtrMap.clear(); }
 
-  IO::IoObject* getCheckedPtrBase(int id) throw (InvalidIdError)
+  IO::IoObject* getCheckedPtrBase(IO::UID id) throw (InvalidIdError)
 	 {
 		MapType::iterator itr = itsPtrMap.find(id);
 		if (itr == itsPtrMap.end()) {
@@ -153,9 +136,8 @@ public:
 		return (*itr).second.get();
 	 }
 
-  int insertPtrBase(IO::IoObject* ptr)
+  void insertPtrBase(IO::IoObject* ptr)
 	 {
-	 DOTRACE("IoDb::Impl::insertPtrBase");
 		Precondition(ptr != 0);
 
 		// Check if the object is already in the map
@@ -165,14 +147,10 @@ public:
 			 // Make sure the existing object is the same as the object
 			 // that we're trying to insert
 			 Assert( (*existing_site).second.get() == ptr );
-
-			 return ptr->id();
 		  }
 
 		const int new_id = ptr->id();
 		itsPtrMap.insert(MapType::value_type(new_id, IoPtrHandle(ptr)));
-
-		return new_id;
 	 }
 };
 
@@ -285,17 +263,17 @@ DOTRACE("IoDb::count");
   return itsImpl->count();
 }
 
-bool IoDb::isValidId(int id) const {
+bool IoDb::isValidId(IO::UID id) const {
 DOTRACE("IoDb::isValidId");
   return itsImpl->isValidId(id);
 }
 
-void IoDb::remove(int id) {
+void IoDb::remove(IO::UID id) {
 DOTRACE("IoDb::remove");
   itsImpl->remove(id);
 }
 
-void IoDb::release(int id) {
+void IoDb::release(IO::UID id) {
 DOTRACE("IoDb::release");
   itsImpl->release(id);
 }
@@ -318,15 +296,15 @@ DOTRACE("IoDb::clearOnExit");
   itsImpl->clearAll(); 
 }
 
-IO::IoObject* IoDb::getCheckedPtrBase(int id) throw (InvalidIdError) {
+IO::IoObject* IoDb::getCheckedPtrBase(IO::UID id) throw (InvalidIdError) {
 DOTRACE("IoDb::getCheckedPtrBase");
   return itsImpl->getCheckedPtrBase(id);
 }
 
-int IoDb::insertPtrBase(IO::IoObject* ptr) {
+void IoDb::insertPtrBase(IO::IoObject* ptr) {
 DOTRACE("IoDb::insertPtrBase");
 
-  return itsImpl->insertPtrBase(ptr);
+  itsImpl->insertPtrBase(ptr);
 }
 
 static const char vcid_iodb_cc[] = "$Header$";
