@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Thu Oct 21 18:08:44 1999
+// written: Thu Nov 18 10:35:15 1999
 // $Id$
 //
 // This file defines the class Block. Block holds a sequence of trial
@@ -32,9 +32,8 @@
 #define STRING_DEFINED
 #endif
 
-#ifndef TIME_H_DEFINED
-#include <sys/time.h>
-#define TIME_H_DEFINED
+#ifndef STOPWATCH_H_DEFINED
+#include "stopwatch.h"
 #endif
 
 class Trial;
@@ -150,7 +149,7 @@ private:
   int itsCurTrialSeqIdx;        // Index of the current trial
   bool itsVerbose;
 
-  mutable timeval itsBeginTime; // Used to record the start time of each Trial
+  mutable StopWatch itsTimer;	  // Used to record the start time of each Trial
 };
 
 static const char vcid_block_h[] = "$Header$";

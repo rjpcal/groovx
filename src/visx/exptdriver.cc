@@ -37,9 +37,9 @@
 #include "rhlist.h"
 #include "thlist.h"
 #include "tlist.h"
-#include "timeutils.h"
 #include "writer.h"
 #include "system.h"
+#include "stopwatch.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -179,7 +179,7 @@ private:
   int itsRhId;
   int itsThId;
 
-  mutable timeval itsBeginTime;
+  mutable StopWatch itsTimer;
 
   mutable string itsDoUponCompletionBody;
 };
@@ -420,7 +420,7 @@ DOTRACE("ExptDriver::Impl::doUponCompletion");
 void ExptDriver::Impl::noteElapsedTime() const {
 DOTRACE("ExptDriver::Impl::noteElapsedTime");
   cout << "expt completed in "
-		 << elapsedMsecSince(itsBeginTime)
+		 << itsTimer.elapsedMsec()
 		 << " milliseconds\n";
 }
 
@@ -692,7 +692,7 @@ DOTRACE("ExptDriver::Impl::edBeginExpt");
 
   init();
 
-  gettimeofday(&itsBeginTime, NULL);
+  itsTimer.restart();
 
   edBeginTrial();
 }

@@ -3,7 +3,7 @@
 // timinghdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:55 1999
-// written: Thu Oct 21 18:14:08 1999
+// written: Thu Nov 18 10:41:19 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,9 +20,8 @@
 #define VECTOR_DEFINED
 #endif
 
-#ifndef TIME_H_DEFINED
-#include <sys/time.h>
-#define TIME_H_DEFINED
+#ifndef STOPWATCH_H_DEFINED
+#include "stopwatch.h"
 #endif
 
 class TrialEvent;
@@ -97,7 +96,7 @@ private:
 
   int itsAutosavePeriod;
   
-  mutable timeval itsBeginTime;
+  mutable StopWatch itsTimer;
 };
 
 static const char vcid_timinghdlr_h[] = "$Header$";

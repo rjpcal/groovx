@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Thu Oct 21 19:10:28 1999
+// written: Thu Nov 18 10:41:55 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,6 @@
 #include "iomgr.h"
 #include "reader.h"
 #include "trialevent.h"
-#include "timeutils.h"
 #include "writer.h"
 
 #define NO_TRACE
@@ -224,7 +223,7 @@ DOTRACE("TimingHdlr::getEvent");
 
 int TimingHdlr::getElapsedMsec() const {
 DOTRACE("TimingHdlr::getElapsedMsec");
-  return elapsedMsecSince(itsBeginTime);
+  return itsTimer.elapsedMsec();
 }
 
 //////////////////
@@ -276,7 +275,7 @@ DOTRACE("TimingHdlr::addEventByName");
 void TimingHdlr::thBeginTrial() {
 DOTRACE("TimingHdlr::thBeginTrial");
 
-  gettimeofday(&itsBeginTime, NULL);
+  itsTimer.restart(); 
 
   cancelAll(itsResponseEvents);
   cancelAll(itsAbortEvents);

@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Thu Oct 21 19:15:41 1999
+// written: Thu Nov 18 10:44:13 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,6 @@
 #include "demangle.h"
 #include "exptdriver.h"
 #include "reader.h"
-#include "timeutils.h"
 #include "writer.h"
 
 #define NO_TRACE
@@ -111,7 +110,7 @@ DOTRACE("TrialEvent::schedule");
   cancel();
 
   // Note the time when the current scheduling request was made.
-  gettimeofday(&itsBeginTime, NULL);
+  itsTimer.restart();
 
   // If the requested time is zero or negative - i.e., immediate,
   // don't bother creating a timer handler. Instead, generate a direct
@@ -147,11 +146,11 @@ DOTRACE("TrialEvent::dummyInvoke");
   EventTraceNL(demangle(typeid(*event).name()));
 
 #ifdef EVENT_TRACE
-  cerr << "    before == " << elapsedMsecSince(event->itsBeginTime) << endl;
+  cerr << "    before == " << event->itsTimer.elapsedMsec() << endl;
 #endif
 
 #ifdef LOCAL_DEBUG
-  int msec = elapsedMsecSince(itsBeginTime);
+  int msec = event->itsTimer.elapsedMsec();
   int error = event->itsRequestedDelay - msec;
   event->itsTotalAbsError += abs(error);
   event->itsTotalError += error;
@@ -162,7 +161,7 @@ DOTRACE("TrialEvent::dummyInvoke");
   event->invoke();
   
 #ifdef EVENT_TRACE
-  cerr << "    after == " << elapsedMsecSince(event->itsBeginTime) << endl;
+  cerr << "    after == " << event->itsTimer.elapsedMsec() << endl;
 #endif
 }
 

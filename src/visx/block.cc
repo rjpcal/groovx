@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Oct 21 19:27:08 1999
+// written: Thu Nov 18 10:37:03 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,6 @@
 #include "reader.h"
 #include "tlist.h"
 #include "trial.h"
-#include "timeutils.h"
 #include "writer.h"
 
 #define NO_TRACE
@@ -303,7 +302,7 @@ DOTRACE("Block::beginTrial");
   // time.  We record the time *after* the drawTrial call since
   // rendering the trial can possibly take considerable time (order of
   // 100 - 1000ms).
-  gettimeofday(&itsBeginTime, NULL);
+  itsTimer.restart();
 }
 
 //--------------------------------------------------------------------
@@ -401,9 +400,7 @@ void Block::processResponse(int response) {
 DOTRACE("Block::processResponse");
   if (isComplete()) return;
 
-  int msec = elapsedMsecSince(itsBeginTime);
-
-  getCurTrial().recordResponse(response, msec);
+  getCurTrial().recordResponse(response, itsTimer.elapsedMsec());
 
   if (itsVerbose) {
     cerr << "response " << response << endl;

@@ -3,7 +3,7 @@
 // trialevent.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:45:05 1999
-// written: Thu Oct 21 18:14:51 1999
+// written: Thu Nov 18 10:42:42 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,9 +20,8 @@
 #define TCL_H_DEFINED
 #endif
 
-#ifndef TIME_H_DEFINED
-#include <sys/time.h>
-#define TIME_H_DEFINED
+#ifndef STOPWATCH_H_DEFINED
+#include "stopwatch.h"
 #endif
 
 class ExptDriver;
@@ -63,7 +62,7 @@ private:
   Tcl_TimerToken itsToken;
 
   // Diagnostic stuff
-  mutable timeval itsBeginTime;
+  mutable StopWatch itsTimer;
   mutable int itsTotalError;
   mutable int itsTotalAbsError;
   mutable int itsInvokeCount;
