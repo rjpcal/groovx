@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 30 11:41:47 2002
-// written: Wed Jan 30 15:07:54 2002
+// written: Thu Jan 31 10:15:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,6 +42,10 @@ private:
   fstring itsBody;
 
 public:
+  /// Define with a unique generic name.
+  ProcWrapper(const Tcl::Interp& intp);
+
+  /// Define with a given name.
   ProcWrapper(const Tcl::Interp& intp, const fstring& name);
 
   ~ProcWrapper();
