@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed May 24 14:45:31 2000
+// written: Wed May 24 14:53:00 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -197,7 +197,6 @@ public:
 /*
  * Prototypes for functions local to this file
  */
-static void Togl_EventProc(ClientData clientData, XEvent *eventPtr);
 #ifdef MESA_COLOR_HACK
 static int get_free_color_cells( Display *display, int screen,
                                  Colormap colormap);
@@ -861,7 +860,7 @@ DOTRACE("<togl.cc>::ToglCmdDeletedProc");
   if (togl && tkwin) {
 	 Tk_DeleteEventHandler(tkwin,
 								  ExposureMask | StructureNotifyMask,
-								  Togl_EventProc,
+								  Togl::dummyEventProc,
 								  (ClientData)togl);
   }
 
@@ -920,79 +919,6 @@ DOTRACE("<togl.cc>::Togl_Destroy");
   RemoveFromList(togl);
 
   delete togl;
-}
-
-
-
-/*
- * This gets called to handle Togl window configuration events
- */
-static void Togl_EventProc(ClientData clientData, XEvent *eventPtr)
-{
-DOTRACE("<togl.cc>::Togl_EventProc");
-  Togl* togl = (Togl*)clientData;
-
-  switch (eventPtr->type) {
-  case Expose:
-	 if (eventPtr->xexpose.count == 0) {
-		if (!togl->itsUpdatePending &&
-			 eventPtr->xexpose.window==Tk_WindowId(togl->itsTkWin)) {
-		  Togl_PostRedisplay(togl);
-		}
-		if (!togl->itsOverlayUpdatePending && togl->itsOverlayFlag
-			 && togl->itsOverlayIsMapped
-			 && eventPtr->xexpose.window==togl->itsOverlayWindow){
-		  Togl_PostOverlayRedisplay(togl);
-		}
-	 }
-	 break;
-  case ConfigureNotify:
-	 if (togl->itsWidth != Tk_Width(togl->itsTkWin) ||
-		  togl->itsHeight != Tk_Height(togl->itsTkWin)) {
-		togl->itsWidth = Tk_Width(togl->itsTkWin);
-		togl->itsHeight = Tk_Height(togl->itsTkWin);
-		XResizeWindow(Tk_Display(togl->itsTkWin), Tk_WindowId(togl->itsTkWin),
-						  togl->itsWidth, togl->itsHeight);
-		if (togl->itsOverlayFlag) {
-		  XResizeWindow( Tk_Display(togl->itsTkWin), togl->itsOverlayWindow,
-							  togl->itsWidth, togl->itsHeight );
-		  XRaiseWindow( Tk_Display(togl->itsTkWin), togl->itsOverlayWindow );
-		}
-		Togl_MakeCurrent(togl);
-		if (togl->itsReshapeProc) {
-		  togl->itsReshapeProc(togl);
-		}
-		else {
-		  glViewport(0, 0, togl->itsWidth, togl->itsHeight);
-		  if (togl->itsOverlayFlag) {
-			 Togl_UseLayer( togl,TOGL_OVERLAY );
-			 glViewport( 0, 0, togl->itsWidth, togl->itsHeight );
-			 Togl_UseLayer( togl, TOGL_NORMAL );
-		  }
-		}
-	 }
-	 break;
-  case MapNotify:
-	 break;
-  case DestroyNotify:
-	 if (togl->itsTkWin != NULL) {
-		togl->itsTkWin = NULL;
-		Tcl_DeleteCommandFromToken( togl->itsInterp, togl->itsWidgetCmd );
-	 }
-	 if (togl->itsTimerProc != NULL) {
-		Tcl_DeleteTimerHandler(togl->itsTimerHandler);
-	 }
-	 if (togl->itsUpdatePending) {
-		Tcl_CancelIdleCall(Togl_Render, (ClientData) togl);
-	 }
-
-	 Tcl_EventuallyFree( (ClientData) togl, Togl_Destroy );
-
-	 break;
-  default:
-	 /*nothing*/
-	 ;
-  }
 }
 
 
@@ -2096,7 +2022,7 @@ DOTRACE("Togl::Togl");
 
   Tk_CreateEventHandler(itsTkWin,
 								ExposureMask | StructureNotifyMask,
-								Togl_EventProc,
+								Togl::dummyEventProc,
 								static_cast<ClientData>(this));
 
   /* Configure Togl widget */
@@ -2229,6 +2155,67 @@ void Togl::dummyEventProc(ClientData clientData, XEvent* eventPtr) {
 
 void Togl::eventProc(XEvent* eventPtr) {
 DOTRACE("Togl::eventProc");
+
+  switch (eventPtr->type) {
+  case Expose:
+	 if (eventPtr->xexpose.count == 0) {
+		if (!itsUpdatePending && 
+			 eventPtr->xexpose.window==Tk_WindowId(itsTkWin)) {
+		  Togl_PostRedisplay(this);
+		}
+		if (!itsOverlayUpdatePending && itsOverlayFlag
+			 && itsOverlayIsMapped
+			 && eventPtr->xexpose.window==itsOverlayWindow){
+		  Togl_PostOverlayRedisplay(this);
+		}
+	 }
+	 break;
+  case ConfigureNotify:
+	 if (itsWidth != Tk_Width(itsTkWin) || itsHeight != Tk_Height(itsTkWin))
+		{
+		  itsWidth = Tk_Width(itsTkWin);
+		  itsHeight = Tk_Height(itsTkWin);
+		  XResizeWindow(itsDisplay, Tk_WindowId(itsTkWin), itsWidth, itsHeight);
+
+		  if (itsOverlayFlag) {
+			 XResizeWindow( itsDisplay, itsOverlayWindow, itsWidth, itsHeight );
+			 XRaiseWindow( itsDisplay, itsOverlayWindow );
+		  }
+		  makeCurrent();
+		  if (itsReshapeProc) {
+			 itsReshapeProc(this);
+		  }
+		  else {
+			 glViewport(0, 0, itsWidth, itsHeight);
+			 if (itsOverlayFlag) {
+				Togl_UseLayer( this, TOGL_OVERLAY );
+				glViewport( 0, 0, itsWidth, itsHeight );
+				Togl_UseLayer( this, TOGL_NORMAL );
+			 }
+		  }
+		}
+	 break;
+  case MapNotify:
+	 break;
+  case DestroyNotify:
+	 if (itsTkWin != NULL) {
+		itsTkWin = NULL;
+		Tcl_DeleteCommandFromToken( itsInterp, itsWidgetCmd );
+	 }
+	 if (itsTimerProc != NULL) {
+		Tcl_DeleteTimerHandler(itsTimerHandler);
+	 }
+	 if (itsUpdatePending) {
+		Tcl_CancelIdleCall(Togl_Render, static_cast<ClientData>(this));
+	 }
+
+	 Tcl_EventuallyFree( static_cast<ClientData>(this), Togl_Destroy );
+
+	 break;
+  default:
+	 /*nothing*/
+	 ;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
