@@ -32,6 +32,7 @@
 
 #include "tcl/tclpkg.h"
 
+#include "util/error.h"
 #include "util/strings.h"
 
 #include <sstream>
@@ -51,8 +52,22 @@ namespace
 
   void setOneLevel(int key, int level)
   {
-    if (key < Debug::MAX_KEYS)
-      Debug::keyLevels[key] = level;
+    if (key < 0 || key >= Debug::MAX_KEYS)
+      throw Util::Error(fstring("no such debug key '", key, "'"));
+
+    // else...
+    Debug::keyLevels[key] = level;
+  }
+
+  void setOneLevelc(const char* fname, int level)
+  {
+    const int key = Debug::lookupKey(fname);
+    if (key == -1)
+      throw Util::Error(fstring("no debug key for file '", fname, "'"));
+
+    Assert(key >= 0 && key < Debug::MAX_KEYS);
+
+    Debug::keyLevels[key] = level;
   }
 }
 
@@ -66,8 +81,9 @@ DOTRACE("Gtrace_Init");
   pkg->def("::gtrace", "", &Util::Trace::getGlobalTrace);
   pkg->def("maxDepth", "level", &Util::Trace::setMaxLevel);
   pkg->def("maxDepth", "", &Util::Trace::getMaxLevel);
-  pkg->def("::dbglevel", "level", &Debug::setGlobalLevel);
+  pkg->def("::dbglevelg", "global_level", &Debug::setGlobalLevel);
   pkg->def("::dbglevel", "key level", &setOneLevel);
+  pkg->def("::dbglevelc", "filename level", &setOneLevelc);
   pkg->def("::dbgkey", "filename", &Debug::lookupKey);
 
   PKG_RETURN;
