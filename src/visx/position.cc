@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Thu May 10 12:04:46 2001
+// written: Fri May 11 20:39:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,11 +76,11 @@ DOTRACE("Position::make");
 }
 
 Position::Position() : 
-  itsImpl(new PositionImpl),
   translation(this, 0.0, 0.0, 0.0),
   scaling(this, 1.0, 1.0, 1.0),
   rotationAxis(this, 0.0, 0.0, 1.0),
-  rotationAngle(this, 0.0)
+  rotationAngle(this, 0.0),
+  itsImpl(new PositionImpl)
 {
 DOTRACE("Position::Position()");
 
