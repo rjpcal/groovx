@@ -3,7 +3,7 @@
 // poslisttcl.h
 // Rob Peters
 // created: Sat Mar 13 12:43:01 1999
-// written: Thu May 27 11:37:45 1999
+// written: Sun Jun 20 18:05:56 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,9 +32,9 @@ namespace PoslistTcl {
                           const PosList& plist, int argn);
 
   const char* const bad_posid_msg = "posid out of range";
-
-  Tcl_PackageInitProc Poslist_Init;
 }
+
+extern "C" Tcl_PackageInitProc Poslist_Init;
 
 static const char vcid_poslisttcl_h[] = "$Header$";
 #endif // !POSLISTTCL_H_DEFINED

@@ -3,7 +3,7 @@
 // objtogl.h
 // Rob Peters
 // created: Nov-98
-// written: Thu May 27 19:59:32 1999
+// written: Sun Jun 20 18:04:52 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -17,9 +17,7 @@
 struct Tcl_Interp;
 typedef int (Tcl_PackageInitProc) (Tcl_Interp* interp);
 
-namespace ObjTogl {
-  Tcl_PackageInitProc Objtogl_Init;
-}
+extern "C" Tcl_PackageInitProc Objtogl_Init;
 
 static const char vcid_objtogl_h[] = "$Header$";
 #endif // !OBJTOGL_H_DEFINED
