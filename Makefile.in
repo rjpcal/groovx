@@ -210,10 +210,12 @@ include $(DEP)/cppdepends $(DEP)/pkgdepends $(DEP)/libdepends
 ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(PROJECT_LIBS))
 ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(PROJECT_LIBS))
 
-all: TAGS install_scripts $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE) check
+all: TAGS install_scripts build check
 
 GRSH_STATIC_OBJS := $(subst .cc,.$(OBJEXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/grsh/*.cc)))
+
+build: $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
 
 $(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
 	time $(CXX) -o $@ $(GRSH_STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
