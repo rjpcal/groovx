@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 31 11:01:16 2000
-// written: Fri Nov 10 17:03:48 2000
+// written: Thu Nov 16 12:00:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -115,12 +115,17 @@ public:
   typedef T*          iterator;
   typedef const T*    const_iterator;
 
-  typedef reverse_iterator<const_iterator, value_type, const_reference, 
-	                        const_pointer, difference_type>
-          const_reverse_iterator;
-  typedef reverse_iterator<iterator, value_type,
-	                        reference, pointer, difference_type>
+#ifdef ACC_COMPILER
+  typedef std::reverse_iterator<iterator, value_type,
+	                             reference, pointer, difference_type>
           reverse_iterator;
+  typedef std::reverse_iterator<const_iterator, value_type, const_reference, 
+	                             const_pointer, difference_type>
+          const_reverse_iterator;
+#else
+  typedef std::reverse_iterator<iterator>       reverse_iterator;
+  typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+#endif
 
 private:
   iterator start;
@@ -145,7 +150,7 @@ private:
 	 {
       void * tmp =
 		  static_cast<void*>(::operator new(static_cast<size_t>(n*sizeof(T))));
-		if (tmp == 0) throw bad_alloc();
+		if (tmp == 0) throw std::bad_alloc();
 		return static_cast<pointer>(tmp);
 	 }
 
