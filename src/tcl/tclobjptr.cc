@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 18:30:47 2001
-// written: Mon Jul 16 17:15:22 2001
+// written: Tue Aug  7 11:14:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,6 +42,13 @@ void Tcl::ObjPtr::ensureUnique()
       Tcl_Obj* newObj = Tcl_DuplicateObj(itsObj);
       assign(newObj);
     }
+}
+
+const char* Tcl::ObjPtr::typeName() const
+{
+  Tcl_ObjType* type = itsObj->typePtr;
+
+  return type ? type->name : "string";
 }
 
 void Tcl::ObjPtr::incrRef(Tcl_Obj* obj)

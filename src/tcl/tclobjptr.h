@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:44:19 1999
-// written: Tue Aug  7 11:02:24 2001
+// written: Tue Aug  7 11:12:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,6 +83,8 @@ public:
   bool isUnique() const { return !isShared(); }
 
   void ensureUnique();
+
+  const char* typeName() const;
 
 private:
   static void incrRef(Tcl_Obj* obj);
