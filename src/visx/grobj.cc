@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Wed Oct 20 10:12:44 1999
+// written: Tue Nov  2 10:07:03 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,6 +70,7 @@ class GrObjImpl {
 public:
   GrObjImpl(GrObj* obj) :
 	 self(obj),
+	 itsCategory(-1),
 	 itsIsCurrent(false),
 	 itsDisplayList(-1),
 	 itsRenderMode(GrObj::GROBJ_GL_COMPILE),
@@ -93,6 +94,8 @@ public:
   ~GrObjImpl() {}
 
   GrObj* self;
+
+  int itsCategory;
 
   mutable bool itsIsCurrent;    // true if displaylist is current
   mutable int itsDisplayList;   // OpenGL display list that draws the object
@@ -413,7 +416,7 @@ DOTRACE("GrObj::getCenterY");
 
 int GrObj::getCategory() const {
 DOTRACE("GrObj::getCategory");
-  return -1;
+  return itsImpl->itsCategory;
 }
 
 GrObj::GrObjRenderMode GrObj::getRenderMode() const {
@@ -640,8 +643,9 @@ DOTRACE("GrObj::setCenterY");
   sendStateChangeMsg();
 }
 
-void GrObj::setCategory(int) {
+void GrObj::setCategory(int val) {
 DOTRACE("GrObj::setCategory");
+  itsImpl->itsCategory = val;
 }
 
 void GrObj::setRenderMode(GrObjRenderMode mode) {
