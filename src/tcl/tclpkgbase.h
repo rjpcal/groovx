@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 11:50:23 1999
-// written: Thu Jan 31 13:29:47 2002
+// written: Wed Apr 17 16:14:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,6 +70,13 @@ public:
   /** Returns a Tcl status code indicating whether the package
       initialization was successful. */
   int initStatus() const;
+
+  /** Returns a Tcl status code reflecting the combination of this
+      package's initStatus() with \a otherStatus. */
+  int combineStatus(int otherStatus) const
+  {
+    return combineStatus(initStatus(), otherStatus);
+  }
 
   /** Returns a Tcl status code representing the combination of the
       current \a status1 with \a status2. If either status represents
