@@ -53,11 +53,15 @@ test "BitmapTcl-Bitmap::loadImage" "error on non-existent file" {
 } "^Bitmap::loadImage: couldn't open file "
 test "BitmapTcl-Bitmap::loadImage" "error on junk text file" {
     file copy -force $::TEST_DIR/junk_text_file $::TEST_DIR/junk_text_file.pbm
-    Bitmap::loadImage $::BITMAP $::TEST_DIR/junk_text_file.pbm
+    catch {Bitmap::loadImage $::BITMAP $::TEST_DIR/junk_text_file.pbm} result
+    file delete -force $::TEST_DIR/junk_text_file.pbm
+    return $result
 } "^Bitmap::loadImage: bad magic number while reading pbm file.*$"
 test "BitmapTcl-Bitmap::loadImage" "error on junk binary file" {
     file copy -force $::TEST_DIR/junk_bin_file $::TEST_DIR/junk_bin_file.pbm
-    Bitmap::loadImage $::BITMAP $::TEST_DIR/junk_bin_file.pbm
+    catch {Bitmap::loadImage $::BITMAP $::TEST_DIR/junk_bin_file.pbm} result
+    file delete -force $::TEST_DIR/junk_bin_file.pbm
+    return $result
 } "^Bitmap::loadImage: bad magic number while reading pbm file.*$"
 test "BitmapTcl-Bitmap::loadImage" "unknown format" {
     Bitmap::loadImage $::BITMAP $::TEST_DIR/junk_text_file
