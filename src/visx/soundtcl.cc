@@ -3,7 +3,7 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Thu Oct 14 12:12:23 1999
+// written: Thu Oct 14 17:30:30 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -88,22 +88,20 @@ public:
 			 interp, SoundList::theSoundList(), "Sound", "1.3")
   {
 	 bool haveSound = Sound::initSound();
-	 if ( haveSound ) {
-		try {
-		  static int OK = 0;
-		  theList().insertAt(OK, Sound::newPlatformSound(ok_sound_file));
-		  linkConstVar("Sound::ok", OK);
 
-		  static int ERR = 1;
-		  theList().insertAt(ERR, Sound::newPlatformSound(err_sound_file));
-		  linkConstVar("Sound::err", ERR);
-		}
-		catch (SoundError& err) {
-		  DebugPrintNL("error creating sounds during startup");
-		  Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
-										 "SoundPkg: ", err.msg().c_str(), NULL);
-		}
-
+	 try {
+		static int OK = 0;
+		theList().insertAt(OK, Sound::newPlatformSound(ok_sound_file));
+		linkConstVar("Sound::ok", OK);
+		
+		static int ERR = 1;
+		theList().insertAt(ERR, Sound::newPlatformSound(err_sound_file));
+		linkConstVar("Sound::err", ERR);
+	 }
+	 catch (SoundError& err) {
+		DebugPrintNL("error creating sounds during startup");
+		Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
+									  "SoundPkg: ", err.msg().c_str(), NULL);
 	 }
 
 	 addCommand( new SoundCmd(interp, "Sound::Sound") );
