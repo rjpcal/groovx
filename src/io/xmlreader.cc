@@ -396,7 +396,8 @@ namespace
   class ObjectElement : public GroupElement
   {
   public:
-    ObjectElement(const char** attr, const char* name, shared_ptr<IO::ObjectMap> objmap) :
+    ObjectElement(const char** attr, const char* name,
+                  shared_ptr<IO::ObjectMap> objmap) :
       GroupElement(attr, "object", name, objmap)
     {
       // Return the object for this id, creating a new object if necessary:
@@ -418,27 +419,6 @@ namespace
     ObjrefElement& olp = elementCast<ObjrefElement>(el.get(), name);
     return olp.getObject();
   }
-
-  class RootElement
-  {
-  public:
-    RootElement() : itsChild(0) {}
-
-    void addChild(const char*, ElPtr elp)
-    {
-      Assert(itsChild.get() == 0);
-      itsChild = elp;
-    }
-
-    void trace(std::ostream& os, int depth, const char* name) const
-    {
-      if (itsChild.get() == 0) return;
-      Assert(itsChild.get() != 0);
-      itsChild->trace(os, depth, name);
-    }
-
-    ElPtr itsChild;
-  };
 
   ElPtr makeElement(const char* el, const char** attr, const char* name,
                     shared_ptr<IO::ObjectMap> objmap)
@@ -495,7 +475,7 @@ namespace
   public:
     TreeBuilder(std::istream& is) :
       XmlParser(is),
-      itsRoot(new RootElement),
+      itsRoot(0),
       itsStack(),
       itsDepth(0),
       itsStartCount(0),
@@ -506,16 +486,14 @@ namespace
 
     virtual ~TreeBuilder() {}
 
-    shared_ptr<RootElement> getRoot() const
+    ObjectElement& getRoot() const
     {
-      if (itsStack.size() != 0)
+      if (itsRoot.get() == 0)
         {
-          dbgEvalNL(0, itsDepth);
-          dbgEvalNL(0, itsStack.size());
-          dbgEvalNL(0, typeid(*itsStack.back()).name());
+          throw Util::Error("no root element found");
         }
-      Assert(itsStack.size() == 0);
-      return itsRoot;
+
+      return elementCast<ObjectElement>(itsRoot.get(), "root");
     }
 
   protected:
@@ -524,7 +502,7 @@ namespace
     virtual void characterData(const char* text, int length);
 
   private:
-    shared_ptr<RootElement> itsRoot;
+    ElPtr itsRoot;
     std::vector<ElPtr> itsStack;
     int itsDepth;
     int itsStartCount;
@@ -545,10 +523,10 @@ namespace
 
     ElPtr elp = makeElement(el, attr, name, itsObjects);
 
-    if (itsStack.size() == 0)
-      itsRoot->addChild(name, elp);
-    else
+    if (itsStack.size() > 0)
       itsStack.back()->addChild(name, elp);
+    else
+      itsRoot = elp;
 
     itsStack.push_back(elp);
 
@@ -588,12 +566,8 @@ Util::Ref<IO::IoObject> IO::loadXML(const char* filename)
   TreeBuilder x(ifs);
   x.parse();
 
-  shared_ptr<RootElement> root = x.getRoot();
-  XmlElement* elp = root->itsChild.get();
-  if (elp == 0)
-    throw Util::Error("no child");
-  ObjectElement* olm = dynamic_cast<ObjectElement*>(elp);
-  return olm->itsObject;
+  ObjectElement& root = x.getRoot();
+  return root.itsObject;
 }
 
 void IO::xmlDebug(const char* filename)
@@ -602,8 +576,8 @@ void IO::xmlDebug(const char* filename)
   TreeBuilder x(ifs);
   x.parse();
 
-  shared_ptr<RootElement> root = x.getRoot();
-  root->trace(std::cout, 0, "root");
+  ObjectElement& root = x.getRoot();
+  root.trace(std::cout, 0, "root");
 }
 
 static const char vcid_xmlreader_cc[] = "$Header$";
