@@ -3,7 +3,7 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon May 22 11:50:16 2000
+// written: Wed May 24 07:15:45 2000
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -13,7 +13,6 @@
 
 #include <iostream.h>
 #include <tk.h>
-#include <togl.h>
 
 #include "grshapp.h"
 
@@ -48,6 +47,7 @@ extern "C" {
   Tcl_PackageInitProc Tclgl_Init;
   Tcl_PackageInitProc Th_Init;
   Tcl_PackageInitProc Tlist_Init;
+  Tcl_PackageInitProc Togl_Init;
   Tcl_PackageInitProc Trial_Init;
 }
 
