@@ -3,7 +3,7 @@
 // tclpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 12:55:27 1999
-// written: Mon Dec  6 15:05:26 1999
+// written: Tue Dec  7 18:10:46 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,8 @@
 #define NO_TRACE
 #include "trace.h"
 #include "debug.h"
+
+namespace Tcl {
 
 struct TclPkg::PrivateRep {
   vector<int*> ownedInts;
@@ -186,6 +188,8 @@ DOTRACE("TclPkg::exitHandler");
   TclPkg* pkg = static_cast<TclPkg*>(clientData);
   delete pkg;
 }
+
+} // end namespace Tcl
 
 static const char vcid_tclpkg_cc[] = "$Header$";
 #endif // !TCLPKG_CC_DEFINED

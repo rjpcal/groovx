@@ -3,7 +3,7 @@
 // tclpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 11:50:23 1999
-// written: Tue Jul 13 18:36:35 1999
+// written: Tue Dec  7 18:10:18 1999
 // $Id$
 //
 // This file defines a class TclPkg which can be used alone, or as a
@@ -42,6 +42,8 @@
 #include <vector>
 #define VECTOR_DEFINED
 #endif
+
+namespace Tcl {
 
 class TclCmd;
 class TclError;
@@ -88,6 +90,8 @@ private:
   struct PrivateRep;
   PrivateRep* itsPrivateRep;
 };
+
+} // end namespace Tcl
 
 static const char vcid_tclpkg_h[] = "$Header$";
 #endif // !TCLPKG_H_DEFINED
