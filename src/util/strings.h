@@ -123,7 +123,7 @@ public:
   fstring(const char* s) :
     itsRep(0)
   {
-    do_init(s);
+    init(Util::CharData(s));
   }
 
   template <class T1>
