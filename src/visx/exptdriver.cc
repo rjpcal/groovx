@@ -65,7 +65,7 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-Util::Tracer ExptDriver::tracer;
+rutz::tracer ExptDriver::tracer;
 
 ///////////////////////////////////////////////////////////////////////
 //

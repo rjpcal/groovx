@@ -50,9 +50,9 @@ namespace
 
     fstring command("c++filt ", mangled.c_str());
 
-    Util::ShellPipe pipe(command.c_str(), "r");
+    rutz::shell_pipe pipe(command.c_str(), "r");
 
-    if (pipe.isClosed())
+    if (pipe.is_closed())
       {
         throw rutz::error(fstring("while demangling '", mangled.c_str(),
                                   "': couldn't open pipe to c++filt"),

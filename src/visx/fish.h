@@ -91,7 +91,7 @@ public:
   static const FieldMap& classFields();
 
   /// This tracer dynamically controls the tracing of \c Fish member functions.
-  static Util::Tracer tracer;
+  static rutz::tracer tracer;
 
   ////////////////
   // properties //

@@ -32,6 +32,7 @@
 #ifndef FACTORY_H_DEFINED
 #define FACTORY_H_DEFINED
 
+#include "util/assocarray.h"
 #include "util/demangle.h"
 #include "util/fileposition.h"
 #include "util/traits.h"
@@ -90,57 +91,10 @@ private:
   FuncType itsFunc;
 };
 
-/**
- *
- * \c AssocArray provides a non-typesafe wrapper around \c
- * std::map. The use must provide a pointer to a function that knows how to
- * properly destroy the actual contained objects according to their true
- * type.
- *
- **/
-
-class AssocArray
-{
-public:
-  /// Function type for destroying elements.
-  typedef void (KillFunc) (void*);
-
-  /// Default constructor.
-  AssocArray(KillFunc* f);
-
-  /// Virtual destructor.
-  ~AssocArray();
-
-  /// Raise an exception reporting an unknown type.
-  void throwForType(const char* type, const rutz::file_pos& pos);
-
-  /// Raise an exception reporting an unknown type.
-  void throwForType(const fstring& type, const rutz::file_pos& pos);
-
-  /// Retrieve the object associated with the tag \a name.
-  void* getPtrForName(const fstring& name) const;
-
-  /// Retrieve the object associated with the tag \a name.
-  void* getPtrForName(const char* name) const;
-
-  /// Associate the object at \a ptr with the tag \a name.
-  void setPtrForName(const char* name, void* ptr);
-
-  /// Clear all entries, calling the kill function for each.
-  void clear();
-
-private:
-  AssocArray(const AssocArray&);
-  AssocArray& operator=(const AssocArray&);
-
-  struct Impl;
-  Impl* const rep;
-};
-
 
 /**
  *
- * \c CreatorMap provides a typesafe wrapper around \c AssocArray.
+ * \c CreatorMap provides a typesafe wrapper around \c rutz::assoc_array.
  *
  **/
 
@@ -156,26 +110,26 @@ public:
 
   /// Raise an exception reporting an unknown type.
   void throwForType(const char* type, const rutz::file_pos& pos)
-    { base.throwForType(type, pos); }
+    { base.throw_for_key(type, pos); }
 
   /// Raise an exception reporting an unknown type.
   void throwForType(const fstring& type, const rutz::file_pos& pos)
-    { base.throwForType(type, pos); }
+    { base.throw_for_key(type, pos); }
 
   /// Get the object associated with the tag \a name.
   CreatorType* getPtrForName(const fstring& name) const
-    { return static_cast<CreatorType*>(base.getPtrForName(name)); }
+    { return static_cast<CreatorType*>(base.get_value_for_key(name)); }
 
   /// Get the object associated with the tag \a name.
   CreatorType* getPtrForName(const char* name) const
-    { return static_cast<CreatorType*>(base.getPtrForName(name)); }
+    { return static_cast<CreatorType*>(base.get_value_for_key(name)); }
 
   /// Associate the object at \a ptr with the tag \a name.
   void setPtrForName(const char* name, CreatorType* ptr)
-    { base.setPtrForName(name, static_cast<void*>(ptr)); }
+    { base.set_value_for_key(name, static_cast<void*>(ptr)); }
 
 private:
-  AssocArray base;
+  rutz::assoc_array base;
 
   static void killPtr(void* ptr)
     { delete static_cast<CreatorType*>(ptr); }
@@ -198,13 +152,13 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c Factory can create objects from an inheritance hierarchy given only a
- * typename. \c Factory maintains a mapping from typenames to \c
- * CreatorBase's, and so given a typename can call the \c create() function
- * of the associated \c Creator. All of the product types of a factory must
- * be derived from \c Base. The constructor is protected because factories
- * for specific types should be implemented as singleton classes derived
- * from Factory.
+ * \c Factory can create objects from an inheritance hierarchy given
+ * only a typename. \c Factory maintains a mapping from typenames to
+ * \c CreatorBase's, and so given a typename can call the \c create()
+ * function of the associated \c Creator. All of the product types of
+ * a factory must be derived from \c Base. The constructor is
+ * protected because factories for specific types should be
+ * implemented as singleton classes derived from Factory.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -221,9 +175,9 @@ protected:
 
 public:
   /// Registers a creation function with the factory.
-  /** The default name associated with the creation function will be given
-      by the type's actual C++ name. The function returns the actual name
-      that was paired with the creation function.*/
+  /** The default name associated with the creation function will be
+      given by the type's actual C++ name. The function returns the
+      actual name that was paired with the creation function.*/
   template <class DerivedPtr>
   const char* registerCreatorFunc(DerivedPtr (*func) (), const char* name = 0)
   {

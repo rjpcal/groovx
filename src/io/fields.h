@@ -710,7 +710,7 @@ inline C& FieldAux::cast(F& p)
       if (child != 0)
         result = &(FieldAux::cast<C>(*child));
       else
-        Util::throwBadCast(typeid(C), typeid(F), SRC_POS);
+        rutz::throw_bad_cast(typeid(C), typeid(F), SRC_POS);
     }
 
   return *result;

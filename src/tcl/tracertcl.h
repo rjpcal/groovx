@@ -32,13 +32,16 @@
 #ifndef TRACERTCL_H_DEFINED
 #define TRACERTCL_H_DEFINED
 
-namespace Util { class Tracer; }
+namespace rutz
+{
+  class tracer;
+}
 
 namespace Tcl
 {
   class Pkg;
 
-  void defTracing(Tcl::Pkg* pkg, Util::Tracer& tracer);
+  void defTracing(Tcl::Pkg* pkg, rutz::tracer& tracer);
 }
 
 static const char vcid_tracertcl_h[] = "$Header$";

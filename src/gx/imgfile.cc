@@ -115,11 +115,11 @@ namespace
     fstring nm_copy(filename);
     char* const argv[] = { (char*) progname, nm_copy.data(), (char*) 0 };
 
-    Util::ExecPipe p("r", argv);
+    rutz::exec_pipe p("r", argv);
 
     Pbm::load(p.stream(), data);
 
-    if (p.exitStatus() != 0)
+    if (p.exit_status() != 0)
       throw rutz::error("child process exited abnormally", SRC_POS);
   }
 }

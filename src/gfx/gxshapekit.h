@@ -65,7 +65,7 @@ class GxShapeKit : public GxNode,
 public:
 
   /// This tracer dynamically controls the tracing of GxShapeKit member functions.
-  static Util::Tracer tracer;
+  static rutz::tracer tracer;
 
 
   //////////////

@@ -55,7 +55,7 @@ DBG_REGISTER
 //
 ///////////////////////////////////////////////////////////////////////
 
-Util::Tracer Block::tracer;
+rutz::tracer Block::tracer;
 
 namespace
 {

@@ -78,7 +78,7 @@ namespace
 
   private:
     Tcl_Interp* itsInterp;
-    Util::SerialPort itsPort;
+    rutz::serial_port itsPort;
 
     static void setupProc(ClientData /*clientData*/, int flags)
     {
@@ -97,7 +97,7 @@ namespace
 
       SerialEventSource* source = static_cast<SerialEventSource*>(clientData);
 
-      if ( !source->itsPort.isClosed() )
+      if ( !source->itsPort.is_closed() )
         {
           int n;
           while ( (n = source->itsPort.get()) != EOF)

@@ -141,7 +141,7 @@ namespace
   const IO::VersionId GROBJ_SERIAL_VERSION_ID = 3;
 }
 
-Util::Tracer GxShapeKit::tracer;
+rutz::tracer GxShapeKit::tracer;
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -40,65 +40,65 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-Util::ShellPipe::ShellPipe(const char* command, const char* mode) :
-  itsFile(popen(command, mode)),
-  itsStream(itsFile, std::ios::in|std::ios::out),
-  itsExitStatus(0)
+rutz::shell_pipe::shell_pipe(const char* command, const char* mode) :
+  m_file(popen(command, mode)),
+  m_stream(m_file, std::ios::in|std::ios::out),
+  m_exit_status(0)
 {}
 
-Util::ShellPipe::~ShellPipe()
+rutz::shell_pipe::~shell_pipe()
 { close(); }
 
-int Util::ShellPipe::close()
+int rutz::shell_pipe::close()
 {
-  if ( !isClosed() )
+  if ( !is_closed() )
     {
-      itsStream.close();
-      itsExitStatus = pclose(itsFile);
-      itsFile = 0;
+      m_stream.close();
+      m_exit_status = pclose(m_file);
+      m_file = 0;
     }
-  return itsExitStatus;
+  return m_exit_status;
 }
 
-Util::PipeFds::PipeFds()
+rutz::pipe_fds::pipe_fds()
 {
-  if (pipe(fds) != 0)
+  if (pipe(m_fds) != 0)
     throw rutz::error("couldn't create pipe", SRC_POS);
 }
 
-Util::PipeFds::~PipeFds() throw()
+rutz::pipe_fds::~pipe_fds() throw()
 {
-  closeReader();
-  closeWriter();
+  close_reader();
+  close_writer();
 }
 
-Util::ChildProcess::ChildProcess() :
-  itsChildStatus(0),
-  itsPid(fork())
+rutz::child_process::child_process() :
+  m_child_status(0),
+  m_pid(fork())
 {
-  if (itsPid == -1)
+  if (m_pid == -1)
     throw rutz::error("couldn't fork child process", SRC_POS);
 }
 
-Util::ChildProcess::~ChildProcess() throw()
+rutz::child_process::~child_process() throw()
 {
   wait();
 }
 
-int Util::ChildProcess::wait() throw()
+int rutz::child_process::wait() throw()
 {
-  if (itsPid != 0)
+  if (m_pid != 0)
     {
-      waitpid(itsPid, &itsChildStatus, /*options*/ 0);
-      itsPid = 0;
+      waitpid(m_pid, &m_child_status, /*options*/ 0);
+      m_pid = 0;
     }
 
-  return itsChildStatus;
+  return m_child_status;
 }
 
 namespace
 {
-  bool isReadMode(const char* m)
+  bool is_read_mode(const char* m)
   {
     if (m == 0) throw rutz::error("invalid read/write mode", SRC_POS);
     switch (m[0])
@@ -113,39 +113,41 @@ namespace
   }
 }
 
-Util::ExecPipe::ExecPipe(const char* m, char* const* argv) :
-  parentIsReader(isReadMode(m)),
-  fds(),
-  p(),
-  strm(0)
+rutz::exec_pipe::exec_pipe(const char* m, char* const* argv) :
+  m_parent_is_reader(is_read_mode(m)),
+  m_fds(),
+  m_child(),
+  m_stream(0)
 {
-  if (p.inParent())
+  if (m_child.in_parent())
     {
-      if (parentIsReader)
+      if (m_parent_is_reader)
         {
-          fds.closeWriter();
+          m_fds.close_writer();
 
-          strm = new rutz::stdiostream(fds.reader(),
-                                       std::ios::in|std::ios::binary);
+          m_stream =
+            new rutz::stdiostream(m_fds.reader(),
+                                  std::ios::in|std::ios::binary);
         }
       else // parent is writer
         {
-          fds.closeReader();
+          m_fds.close_reader();
 
-          strm = new rutz::stdiostream(fds.writer(),
-                                       std::ios::out|std::ios::binary);
+          m_stream =
+            new rutz::stdiostream(m_fds.writer(),
+                                  std::ios::out|std::ios::binary);
         }
 
-      if (strm == 0)
+      if (m_stream == 0)
         throw rutz::error("couldn't open stream in parent process", SRC_POS);
     }
   else // in child
     {
-      if (parentIsReader) // ==> child is writer
+      if (m_parent_is_reader) // ==> child is writer
         {
-          fds.closeReader();
+          m_fds.close_reader();
 
-          if (dup2(fds.writer(), STDOUT_FILENO) == -1)
+          if (dup2(m_fds.writer(), STDOUT_FILENO) == -1)
             {
               fprintf(stderr, "dup2 failed in child process\n");
               exit(-1);
@@ -153,9 +155,9 @@ Util::ExecPipe::ExecPipe(const char* m, char* const* argv) :
         }
       else // parent is writer, child is reader
         {
-          fds.closeWriter();
+          m_fds.close_writer();
 
-          if (dup2(fds.reader(), STDIN_FILENO) == -1)
+          if (dup2(m_fds.reader(), STDIN_FILENO) == -1)
             {
               fprintf(stderr, "dup2 failed in child process\n");
               exit(-1);
@@ -170,20 +172,20 @@ Util::ExecPipe::ExecPipe(const char* m, char* const* argv) :
 }
 
 
-Util::ExecPipe::~ExecPipe() throw()
+rutz::exec_pipe::~exec_pipe() throw()
 {
-  delete strm;
+  delete m_stream;
 }
 
-STD_IO::iostream& Util::ExecPipe::stream() throw()
+STD_IO::iostream& rutz::exec_pipe::stream() throw()
 {
-  ASSERT(strm != 0);
-  return *strm;
+  ASSERT(m_stream != 0);
+  return *m_stream;
 }
 
-int Util::ExecPipe::exitStatus() throw()
+int rutz::exec_pipe::exit_status() throw()
 {
-  const int child_status = p.wait();
+  const int child_status = m_child.wait();
 
   // Check if the child process exited abnormally
   if (WIFEXITED(child_status) == 0) return -1;

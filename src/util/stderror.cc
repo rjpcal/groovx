@@ -37,9 +37,9 @@
 #include "util/demangle.h"
 #include "util/error.h"
 
-void Util::throwBadCast(const std::type_info& to,
-                        const std::type_info& from,
-                        const rutz::file_pos& pos)
+void rutz::throw_bad_cast(const std::type_info& to,
+                          const std::type_info& from,
+                          const rutz::file_pos& pos)
 {
   throw rutz::error(fstring("failed cast to ", rutz::demangled_name(to),
                             " from ", rutz::demangled_name(from)), pos);

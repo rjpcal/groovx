@@ -91,7 +91,7 @@ class EventResponseHdlr : public ResponseHandler
 public:
   /** This tracer dynamically controls the tracing of \c
       EventResponseHdlr member functions. */
-  static Util::Tracer tracer;
+  static rutz::tracer tracer;
 
 protected:
   /// Default constructor.

@@ -54,7 +54,7 @@ DBG_REGISTER
 
 struct rutz::backtrace::impl
 {
-  static_stack<rutz::prof*, 256> vec;
+  rutz::static_stack<rutz::prof*, 256> vec;
 };
 
 rutz::backtrace::backtrace() throw() :

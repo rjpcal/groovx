@@ -32,93 +32,9 @@
 #ifndef FACTORY_CC_DEFINED
 #define FACTORY_CC_DEFINED
 
-#include "util/factory.h"
-
-#include "util/error.h"
-#include "util/strings.h"
-
-#include <map>
+#include "factory.h"
 
 #include "util/trace.h"
-
-struct AssocArray::Impl
-{
-  Impl(KillFunc* f) : funcMap(), killFunc(f) {}
-
-  typedef std::map<fstring, void*> MapType;
-
-  MapType funcMap;
-  KillFunc* killFunc;
-};
-
-AssocArray::AssocArray(KillFunc* f) :
-  rep(new Impl(f))
-{
-DOTRACE("AssocArray::AssocArray");
-}
-
-AssocArray::~AssocArray()
-{
-DOTRACE("AssocArray::~AssocArray");
-  clear();
-}
-
-void AssocArray::throwForType(const char* type,
-                              const rutz::file_pos& pos)
-{
-  fstring typelist("known types are:");
-
-  for (Impl::MapType::iterator ii = rep->funcMap.begin();
-       ii != rep->funcMap.end();
-       ++ii)
-    {
-      if (ii->second != 0)
-        typelist.append("\n\t", ii->first);
-    }
-
-  throw rutz::error(fstring(typelist, "\nunknown object type '",
-                            type, "'"), pos);
-}
-
-void AssocArray::throwForType(const fstring& type,
-                              const rutz::file_pos& pos)
-{
-  throwForType(type.c_str(), pos);
-}
-
-void AssocArray::clear()
-{
-DOTRACE("AssocArray::clear");
-  for (Impl::MapType::iterator ii = rep->funcMap.begin();
-       ii != rep->funcMap.end();
-       ++ii)
-    {
-      if (rep->killFunc != 0) rep->killFunc(ii->second);
-      ii->second = 0;
-    }
-
-  delete rep;
-}
-
-void* AssocArray::getPtrForName(const fstring& name) const
-{
-DOTRACE("AssocArray::getPtrForName");
-  return rep->funcMap[name];
-}
-
-void* AssocArray::getPtrForName(const char* name) const
-{
-  return getPtrForName(fstring(name));
-}
-
-void AssocArray::setPtrForName(const char* name, void* ptr)
-{
-DOTRACE("AssocArray::setPtrForName");
-  fstring sname(name);
-  void*& ptr_slot = rep->funcMap[sname];
-  if (rep->killFunc != 0) rep->killFunc(ptr_slot);
-  ptr_slot = ptr;
-}
 
 FactoryBase::~FactoryBase()
 {

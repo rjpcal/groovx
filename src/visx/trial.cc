@@ -60,7 +60,7 @@ DBG_REGISTER
 using Util::Ref;
 using Util::SoftRef;
 
-Util::Tracer Trial::tracer;
+rutz::tracer Trial::tracer;
 
 ///////////////////////////////////////////////////////////////////////
 //

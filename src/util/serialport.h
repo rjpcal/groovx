@@ -39,18 +39,18 @@ class iostream;
 class streambuf;
 #endif
 
-namespace Util
+namespace rutz
 {
-  class SerialPort;
+  class serial_port;
 }
 
-/// Util::SerialPort provides character-at-a-time access to a serial port.
-class Util::SerialPort
+/// rutz::serial_port provides character-at-a-time access to a serial port.
+class rutz::serial_port
 {
 public:
-  SerialPort(const char* serial_device);
+  serial_port(const char* serial_device);
 
-  ~SerialPort() { close(); }
+  ~serial_port() { close(); }
 
   /** Returns the next character from the stream, or EOF (-1) if the
       stream is empty. */
@@ -59,20 +59,20 @@ public:
   /// Returns the exit status of closing its stream
   int close();
 
-  bool isClosed() const { return (itsStream != 0); }
+  bool is_closed() const { return (m_stream != 0); }
 
-  int exitStatus() const { return itsExitStatus; }
+  int exit_status() const { return m_exit_status; }
 
 private:
-  int filedes() const { return itsFiledes; }
+  int filedes() const { return m_filedes; }
 
-  SerialPort(const SerialPort&);
-  SerialPort& operator=(const SerialPort&);
+  serial_port(const serial_port&);
+  serial_port& operator=(const serial_port&);
 
-  int itsFiledes;
-  STD_IO::streambuf* itsFilebuf;
-  STD_IO::iostream* itsStream;
-  int itsExitStatus;
+  int                m_filedes;
+  STD_IO::streambuf* m_filebuf;
+  STD_IO::iostream*  m_stream;
+  int                m_exit_status;
 };
 
 static const char vcid_serialport_h[] = "$Header$";

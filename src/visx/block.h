@@ -54,7 +54,7 @@ class Block : public ElementContainer
 public:
   /** This tracer dynamically controls the tracing of Block member
       functions. */
-  static Util::Tracer tracer;
+  static rutz::tracer tracer;
 
   //////////////
   // creators //

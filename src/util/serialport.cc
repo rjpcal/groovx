@@ -54,14 +54,14 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-Util::SerialPort::SerialPort(const char* serial_device) :
-  itsFiledes(::open(serial_device, O_RDONLY|O_NOCTTY|O_NONBLOCK)),
-  itsFilebuf(0),
-  itsStream(0),
-  itsExitStatus(0)
+rutz::serial_port::serial_port(const char* serial_device) :
+  m_filedes(::open(serial_device, O_RDONLY|O_NOCTTY|O_NONBLOCK)),
+  m_filebuf(0),
+  m_stream(0),
+  m_exit_status(0)
 {
-DOTRACE("Util::SerialPort::SerialPort");
-  if (itsFiledes != -1)
+DOTRACE("rutz::serial_port::serial_port");
+  if (m_filedes != -1)
     {
       struct termios ti;
 
@@ -97,37 +97,37 @@ DOTRACE("Util::SerialPort::SerialPort");
 
 #ifdef HAVE_EXT_STDIO_FILEBUF_H
       typedef __gnu_cxx::stdio_filebuf<char> filebuf_t;
-      itsFilebuf = new filebuf_t(fdopen(itsFiledes, "r"), std::ios::in);
+      m_filebuf = new filebuf_t(fdopen(m_filedes, "r"), std::ios::in);
 #else
-      itsFilebuf = new rutz::stdiobuf(itsFiledes, std::ios::in, true);
+      m_filebuf = new rutz::stdiobuf(m_filedes, std::ios::in, true);
 #endif
-      itsStream = new std::iostream(itsFilebuf);
+      m_stream = new std::iostream(m_filebuf);
     }
 }
 
-int Util::SerialPort::get()
+int rutz::serial_port::get()
 {
-  if ( isClosed() ) return -1;
+  if ( is_closed() ) return -1;
 
-  itsStream->clear();
-  itsStream->sync();
-  return itsStream->get();
+  m_stream->clear();
+  m_stream->sync();
+  return m_stream->get();
 }
 
-int Util::SerialPort::close()
+int rutz::serial_port::close()
 {
-DOTRACE("Util::SerialPort::close");
-  if ( !isClosed() )
+DOTRACE("rutz::serial_port::close");
+  if ( !is_closed() )
     {
-      delete itsStream;
-      itsStream = 0;
+      delete m_stream;
+      m_stream = 0;
 
-      delete itsFilebuf;
-      itsFilebuf = 0;
+      delete m_filebuf;
+      m_filebuf = 0;
 
-      itsExitStatus = ::close(itsFiledes);
+      m_exit_status = ::close(m_filedes);
     }
-  return itsExitStatus;
+  return m_exit_status;
 }
 
 static const char vcid_serialport_cc[] = "$Header$";

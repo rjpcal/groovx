@@ -79,7 +79,7 @@ namespace
   const int MA_3 = 3;
 }
 
-Util::Tracer Fish::tracer;
+rutz::tracer Fish::tracer;
 
 ///////////////////////////////////////////////////////////////////////
 //

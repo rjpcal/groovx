@@ -77,7 +77,7 @@ private:
 public:
 
   /// Dynamically controls the tracing of ExptDriver member functions.
-  static Util::Tracer tracer;
+  static rutz::tracer tracer;
 
   /// Factory function.
   static ExptDriver* make() { return new ExptDriver; }

@@ -45,112 +45,112 @@
 #  include <istream.h>
 #endif
 
-namespace Util
+namespace rutz
 {
-  class ShellPipe;
-  class PipeFds;
-  class ChildProcess;
-  class ExecPipe;
+  class shell_pipe;
+  class pipe_fds;
+  class child_process;
+  class exec_pipe;
 }
 
 /// Adapts UNIX-style process pipes to a std::iostream interface.
-class Util::ShellPipe
+class rutz::shell_pipe
 {
 public:
-  ShellPipe(const char* command, const char* mode);
+  shell_pipe(const char* command, const char* mode);
 
-  ~ShellPipe();
+  ~shell_pipe();
 
-  STD_IO::iostream& stream() { return itsStream; }
+  STD_IO::iostream& stream() { return m_stream; }
 
   int close();
 
-  bool isClosed() const { return (itsFile == 0) || !itsStream.is_open(); }
+  bool is_closed() const { return (m_file == 0) || !m_stream.is_open(); }
 
-  int exitStatus() const { return itsExitStatus; }
+  int exit_status() const { return m_exit_status; }
 
 private:
-  ShellPipe(const ShellPipe&);
-  ShellPipe& operator=(const ShellPipe&);
+  shell_pipe(const shell_pipe&);
+  shell_pipe& operator=(const shell_pipe&);
 
-  FILE* itsFile;
-  rutz::stdiostream itsStream;
-  int itsExitStatus;
+  FILE*             m_file;
+  rutz::stdiostream m_stream;
+  int               m_exit_status;
 };
 
 /// An exception-safe wrapper around a pair of file descriptors from pipe().
-class Util::PipeFds
+class rutz::pipe_fds
 {
 public:
   /// Create a pipe pair of file descriptors.
   /** Throws an exception if the pipe() call fails. */
-  PipeFds();
+  pipe_fds();
 
   /// Destructor closes both file descriptors.
-  ~PipeFds() throw();
+  ~pipe_fds() throw();
 
-  int reader() const throw() { return fds[0]; }
-  int writer() const throw() { return fds[1]; }
+  int reader() const throw() { return m_fds[0]; }
+  int writer() const throw() { return m_fds[1]; }
 
-  void closeReader() throw() { if (fds[0] >= 0) close(fds[0]); fds[0] = -1; }
-  void closeWriter() throw() { if (fds[0] >= 0) close(fds[1]); fds[1] = -1; }
+  void close_reader() throw() { if (m_fds[0] >= 0) close(m_fds[0]); m_fds[0] = -1; }
+  void close_writer() throw() { if (m_fds[0] >= 0) close(m_fds[1]); m_fds[1] = -1; }
 
 private:
-  PipeFds(const PipeFds&);
-  PipeFds& operator=(const PipeFds&);
+  pipe_fds(const pipe_fds&);
+  pipe_fds& operator=(const pipe_fds&);
 
-  int fds[2]; // reading == fds[0], writing == fds[1]
+  int m_fds[2]; // reading == m_fds[0], writing == m_fds[1]
 };
 
 /// An exception-safe wrapper around a child process from fork().
-class Util::ChildProcess
+class rutz::child_process
 {
 public:
   /// Fork a child process.
   /** Throws an exception if the fork() call fails. */
-  ChildProcess();
+  child_process();
 
   /// Destructor waits for child process to complete.
-  ~ChildProcess() throw();
+  ~child_process() throw();
 
   /// Check if we're in the parent or child process after the fork().
-  bool inParent() const throw() { return itsPid != 0; }
+  bool in_parent() const throw() { return m_pid != 0; }
 
   /// Wait for child process to complete, and return its status code.
   int wait() throw();
 
 private:
-  ChildProcess(const ChildProcess&);
-  ChildProcess& operator=(const ChildProcess&);
+  child_process(const child_process&);
+  child_process& operator=(const child_process&);
 
-  int itsChildStatus;
-  pid_t itsPid;
+  int m_child_status;
+  pid_t m_pid;
 };
 
 
 /// An exception-safe wrapper around a pipe-fork-exec sequence.
-class Util::ExecPipe
+class rutz::exec_pipe
 {
 public:
   /// Set up a pipe to a child process with the given argv array.
   /** The mode should be "r" if the parent is reading, and "w" if the
       parent is writing. */
-  ExecPipe(const char* m, char* const* argv);
+  exec_pipe(const char* m, char* const* argv);
 
   /// Destructor cleans up child process and the pipe's file descriptors.
-  ~ExecPipe() throw();
+  ~exec_pipe() throw();
 
   /// Get the stream that is linked to the child process.
   STD_IO::iostream& stream() throw();
 
   /// Wait for child process to complete, return 0 if all is OK, -1 if error.
-  int exitStatus() throw();
+  int exit_status() throw();
 
 private:
-  bool parentIsReader;
-  PipeFds fds;
-  ChildProcess p;
-  rutz::stdiostream* strm;
+  bool               m_parent_is_reader;
+  pipe_fds           m_fds;
+  child_process      m_child;
+  rutz::stdiostream* m_stream;
 };
 
 static const char vcid_pipe_h[] = "$Header$";

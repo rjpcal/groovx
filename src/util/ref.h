@@ -83,7 +83,7 @@ namespace Util
       Util::Object* obj = getCheckedItem(id);
       T* t = dynamic_cast<T*>(obj);
       if (t == 0)
-        throwBadCast(typeid(T), typeid(Util::Object), SRC_POS);
+        rutz::throw_bad_cast(typeid(T), typeid(Util::Object), SRC_POS);
       return t;
     }
 
@@ -282,7 +282,7 @@ Util::Ref<To> dynamicCast(Util::Ref<Fr> p)
   Fr* f = p.get();
   To* t = dynamic_cast<To*>(f);
   if (t == 0)
-    Util::throwBadCast(typeid(To), typeid(Fr), SRC_POS);
+    rutz::throw_bad_cast(typeid(To), typeid(Fr), SRC_POS);
   return Util::Ref<To>(t);
 }
 
@@ -495,7 +495,7 @@ Util::SoftRef<To> dynamicCast(Util::SoftRef<Fr> p)
       Fr* f = p.get();
       To* t = dynamic_cast<To*>(f);
       if (t == 0)
-        Util::throwBadCast(typeid(To), typeid(Fr), SRC_POS);
+        rutz::throw_bad_cast(typeid(To), typeid(Fr), SRC_POS);
       return Util::SoftRef<To>(t);
     }
   return Util::SoftRef<To>(p.id());

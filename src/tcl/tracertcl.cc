@@ -40,12 +40,12 @@
 
 using namespace Util;
 
-void Tcl::defTracing(Tcl::Pkg* pkg, Tracer& tracer)
+void Tcl::defTracing(Tcl::Pkg* pkg, rutz::tracer& tracer)
 {
-  pkg->def( "traceOn",     "", bindFirst(memFunc(&Tracer::on), &tracer), SRC_POS );
-  pkg->def( "traceOff",    "", bindFirst(memFunc(&Tracer::off), &tracer), SRC_POS );
-  pkg->def( "traceToggle", "", bindFirst(memFunc(&Tracer::toggle), &tracer), SRC_POS );
-  pkg->def( "traceStatus", "", bindFirst(memFunc(&Tracer::status), &tracer), SRC_POS );
+  pkg->def( "traceOn",     "", bindFirst(memFunc(&rutz::tracer::on), &tracer), SRC_POS );
+  pkg->def( "traceOff",    "", bindFirst(memFunc(&rutz::tracer::off), &tracer), SRC_POS );
+  pkg->def( "traceToggle", "", bindFirst(memFunc(&rutz::tracer::toggle), &tracer), SRC_POS );
+  pkg->def( "traceStatus", "", bindFirst(memFunc(&rutz::tracer::status), &tracer), SRC_POS );
 }
 
 static const char vcid_tracertcl_cc[] = "$Header$";

@@ -35,75 +35,78 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-template <typename T, unsigned int N>
-class static_stack
+namespace rutz
 {
-public:
-  static_stack() throw() : vec(), sz(0) {}
-
-  static_stack(const static_stack& other) throw() :
-    vec(), sz(0)
+  template <typename T, unsigned int N>
+  class static_stack
   {
-    *this = other;
-  }
+  public:
+    static_stack() throw() : vec(), sz(0) {}
 
-  static_stack& operator=(const static_stack& other) throw()
-  {
-    sz = other.sz;
+    static_stack(const static_stack& other) throw() :
+      vec(), sz(0)
+    {
+      *this = other;
+    }
 
-    for (unsigned int i = 0; i < sz; ++i)
-      {
-        vec[i] = other.vec[i];
-      }
+    static_stack& operator=(const static_stack& other) throw()
+    {
+      sz = other.sz;
 
-    return *this;
-  }
+      for (unsigned int i = 0; i < sz; ++i)
+        {
+          vec[i] = other.vec[i];
+        }
 
-  unsigned int size() const throw() { return sz; }
+      return *this;
+    }
 
-  static unsigned int capacity() throw() { return N; }
+    unsigned int size() const throw() { return sz; }
 
-  bool push(T p) throw()
-  {
-    if (sz >= N)
-      return false;
+    static unsigned int capacity() throw() { return N; }
 
-    vec[sz++] = p;
-    return true;
-  }
+    bool push(T p) throw()
+    {
+      if (sz >= N)
+        return false;
 
-  void pop() throw()
-  {
-    if (sz == 0)
-      PANIC("underflow in static_stack::pop");
-    --sz;
-  }
+      vec[sz++] = p;
+      return true;
+    }
 
-  T top() const throw()
-  {
-    return (sz > 0) ? vec[sz-1] : 0;
-  }
+    void pop() throw()
+    {
+      if (sz == 0)
+        PANIC("underflow in static_stack::pop");
+      --sz;
+    }
 
-  T at(unsigned int i) const throw()
-  {
-    return (i < sz) ? vec[i] : 0;
-  }
+    T top() const throw()
+    {
+      return (sz > 0) ? vec[sz-1] : 0;
+    }
 
-  T operator[](unsigned int i) const throw() { return at(i); }
+    T at(unsigned int i) const throw()
+    {
+      return (i < sz) ? vec[i] : 0;
+    }
 
-  typedef       T*       iterator;
-  typedef const T* const_iterator;
+    T operator[](unsigned int i) const throw() { return at(i); }
 
-  iterator begin() throw() { return &vec[0]; }
-  iterator end()   throw() { return &vec[0] + sz; }
+    typedef       T*       iterator;
+    typedef const T* const_iterator;
 
-  const_iterator begin() const throw() { return &vec[0]; }
-  const_iterator end()   const throw() { return &vec[0] + sz; }
+    iterator begin() throw() { return &vec[0]; }
+    iterator end()   throw() { return &vec[0] + sz; }
 
-private:
-  T vec[N];
-  unsigned int sz;
-};
+    const_iterator begin() const throw() { return &vec[0]; }
+    const_iterator end()   const throw() { return &vec[0] + sz; }
+
+  private:
+    T vec[N];
+    unsigned int sz;
+  };
+}
 
 static const char vcid_staticstack_h[] = "$Header$";
 #endif // !STATICSTACK_H_DEFINED

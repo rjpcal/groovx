@@ -97,7 +97,7 @@ namespace
       }
   }
 
-  typedef static_stack<rutz::prof*, 2048> prof_list;
+  typedef rutz::static_stack<rutz::prof*, 2048> prof_list;
 
   prof_list& all_profs() throw()
   {
