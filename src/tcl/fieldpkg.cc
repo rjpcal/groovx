@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Fri Jul 13 11:23:46 2001
+// written: Sun Jul 15 22:07:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -148,28 +148,25 @@ void Tcl::declareField(Tcl::TclItemPkg* pkg, const FieldInfo& finfo) {
 DOTRACE("Tcl::declareField");
 
   static shared_ptr<FieldContainerFetcher>
-    fetcher0(new FieldContainerFetcher(0));
-
-  static shared_ptr<FieldContainerFetcher>
     fetcher1(new FieldContainerFetcher(1));
 
   shared_ptr<FieldAttrib> attrib(new FieldAttrib(finfo));
 
   pkg->addCommand( new TVecGetterCmd<TclValue>(
                          pkg->interp(),
-                         pkg->itemArgn() == 0 ? fetcher0.get() : fetcher1.get(),
+                         fetcher1.get(),
                          pkg->makePkgCmdName(finfo.name().c_str()),
                          attrib,
                          0, /* for default usage string */
-                         pkg->itemArgn()) );
+                         1) );
 
   pkg->addCommand( new TVecSetterCmd<TclValue>(
                          pkg->interp(),
-                         pkg->itemArgn() == 0 ? fetcher0.get() : fetcher1.get(),
+                         fetcher1.get(),
                          pkg->makePkgCmdName(finfo.name().c_str()),
                          attrib,
                          0, /* for default usage string */
-                         pkg->itemArgn()) );
+                         1) );
 }
 
 void Tcl::declareAllFields(Tcl::TclItemPkg* pkg, const FieldMap& fmap){
