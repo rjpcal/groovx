@@ -35,6 +35,7 @@
 #include "util/algo.h"
 #include "util/object.h"
 #include "util/pointers.h"
+#include "util/stderror.h"
 #include "util/strings.h"
 #include "util/traits.h"
 #include "util/value.h"
@@ -123,7 +124,6 @@ namespace FieldAux
   inline C& cast(F& p);
 
   void throwNotAllowed(const char* what);
-  void throwBadCast();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -711,7 +711,7 @@ inline C& FieldAux::cast(F& p)
       if (child != 0)
         result = &(FieldAux::cast<C>(*child));
       else
-        FieldAux::throwBadCast();
+        Util::throwBadCast(typeid(C), typeid(F));
     }
 
   return *result;

@@ -32,6 +32,7 @@
 
 #include "util/algo.h"
 #include "util/object.h"
+#include "util/stderror.h"
 #include "util/traits.h"
 
 #include <typeinfo>
@@ -75,8 +76,6 @@ namespace Util
     void throwRefNull(const std::type_info& info);
     void throwRefUnshareable(const std::type_info& msg);
     void throwSoftRefInvalid(const std::type_info& info);
-    void throwBadCast(const std::type_info& to,
-                      const std::type_info& from);
 
     template <class T>
     inline T* getCastedItem(Util::UID id)
@@ -265,7 +264,7 @@ Ref<To> dynamicCast(Ref<Fr> p)
   Fr* f = p.get();
   To* t = dynamic_cast<To*>(f); // will throw bad_cast on failure
   if (t == 0)
-    Util::RefHelper::throwBadCast(typeid(To), typeid(Fr));
+    Util::throwBadCast(typeid(To), typeid(Fr));
   return Ref<To>(t);
 }
 
@@ -478,7 +477,7 @@ SoftRef<To> dynamicCast(SoftRef<Fr> p)
       Fr* f = p.get();
       To* t = dynamic_cast<To*>(f); // will throw bad_cast on failure
       if (t == 0)
-        Util::RefHelper::throwBadCast(typeid(To), typeid(Fr));
+        Util::throwBadCast(typeid(To), typeid(Fr));
       return SoftRef<To>(t);
     }
   return SoftRef<To>(p.id());
