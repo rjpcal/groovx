@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Thu May 10 12:04:38 2001
+// written: Fri May 11 20:42:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
 #include "util/error.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IODECLS_H_DEFINED)
+#include "io/iodecls.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEMUTILS_H_DEFINED)
@@ -53,7 +57,7 @@ private:
   PtrHandle<T> itsHandle;
 
 public:
-  IdItem(int id) :
+  IdItem(IO::UID id) :
 	 itsHandle(IdItemUtils::getCastedItem<T>(id))
   {}
 
@@ -99,7 +103,7 @@ public:
   const T* get()        const { return itsHandle.get(); }
 
   PtrHandle<T> handle() const { return itsHandle; }
-  int id() const { return itsHandle->id(); }
+  IO::UID id() const { return itsHandle->id(); }
 
 
   template <class Container>
@@ -141,19 +145,19 @@ template <class T>
 class MaybeIdItem {
 private:
   mutable NullablePtrHandle<T> itsHandle;
-  int itsId;
+  IO::UID itsId;
 
 public:
-  explicit MaybeIdItem(int id_) :
+  explicit MaybeIdItem(IO::UID id_) :
 	 itsHandle(0), itsId(id_) {}
 
-  MaybeIdItem(T* master, int id_) :
+  MaybeIdItem(T* master, IO::UID id_) :
 	 itsHandle(master), itsId(id_) {}
 
-  MaybeIdItem(PtrHandle<T> item_, int id_) :
+  MaybeIdItem(PtrHandle<T> item_, IO::UID id_) :
 	 itsHandle(item_), itsId(id_) {}
 
-  MaybeIdItem(NullablePtrHandle<T> item_, int id_) :
+  MaybeIdItem(NullablePtrHandle<T> item_, IO::UID id_) :
 	 itsHandle(item_), itsId(id_) {}
 
   MaybeIdItem(const IdItem<T> other) :
@@ -220,7 +224,7 @@ public:
   bool isValid() const { attemptRefresh(); return itsHandle.isValid(); }
 
   NullablePtrHandle<T> handle() const { refresh(); return itsHandle; }
-  int id() const { return itsId; }
+  IO::UID id() const { return itsId; }
 
 
   //
