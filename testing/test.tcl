@@ -115,6 +115,20 @@ proc finish {} {
 	 exit
 }
 
+proc testfile {file_arg} {
+	 set ::file_arg $file_arg
+	 namespace eval :: {
+		  
+		  puts "running test file ${file_arg}..."
+
+		  set result [ catch {source $file_arg} errmsg ]
+		  if { $result != 0 } {
+				puts "...an error occurred while evaluating ${file_arg}:"
+				puts $errmsg
+		  }
+	 }
+}
+
 # test the test procedure
 test test test { expr {2+2} } 4
 
