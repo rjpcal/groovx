@@ -3,7 +3,7 @@
 // strings.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:42:44 2000
-// written: Mon Mar  6 17:50:39 2000
+// written: Tue Mar  7 19:34:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -99,6 +99,10 @@ dynamic_string::dynamic_string(const char* text) :
   itsImpl(new Impl(text))
 {}
 
+dynamic_string::dynamic_string(const fixed_string& other) :
+  itsImpl(new Impl(other.c_str()))
+{}
+
 dynamic_string::dynamic_string(const dynamic_string& other) :
   itsImpl(new Impl(*(other.itsImpl)))
 {}
@@ -119,6 +123,12 @@ dynamic_string& dynamic_string::operator=(const char* text)
   return *this;
 }
 
+dynamic_string& dynamic_string::operator=(const fixed_string& other)
+{
+  itsImpl->text = other.c_str();
+  return *this;
+}
+
 dynamic_string& dynamic_string::operator=(const dynamic_string& other)
 {
   itsImpl->text = other.itsImpl->text;
@@ -128,6 +138,12 @@ dynamic_string& dynamic_string::operator=(const dynamic_string& other)
 dynamic_string& dynamic_string::operator+=(const char* text)
 {
   itsImpl->text += text;
+  return *this;
+}
+
+dynamic_string& dynamic_string::operator+=(const fixed_string& other)
+{
+  itsImpl->text += other.c_str();
   return *this;
 }
 
