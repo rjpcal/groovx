@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:11:19 2000
-// written: Thu Nov 16 01:19:23 2000
+// written: Tue Nov 28 18:32:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,9 @@ void GxVecLocal::raiseScanError() {
 
 template <class T>
 GxVec3<T>::GxVec3(FieldContainer* owner) :
-  Field(owner)
-{ itsData[0] = itsData[1] = itsData[2]; }
+  Field(owner),
+  itsData()
+{}
 
 template <class T>
 GxVec3<T>::~GxVec3() {}

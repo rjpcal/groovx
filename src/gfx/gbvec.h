@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:10:45 2000
-// written: Thu Nov 16 01:19:10 2000
+// written: Tue Nov 28 18:31:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,23 +17,30 @@
 #include "io/fields.h"
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VEC3_H_DEFINED)
+#include "gx/vec3.h"
+#endif
+
 template <class T>
 class GxVec3 : public Field, public Value {
 private:
-  T itsData[3];
+  Vec3<T> itsData;
 
 public:
   GxVec3(FieldContainer* owner);
   virtual ~GxVec3();
 
-        T& x()       { return itsData[0]; }
-  const T& x() const { return itsData[0]; }
+        T& x()       { return itsData.x(); }
+  const T& x() const { return itsData.x(); }
 
-        T& y()       { return itsData[1]; }
-  const T& y() const { return itsData[1]; }
+        T& y()       { return itsData.y(); }
+  const T& y() const { return itsData.y(); }
 
-        T& z()       { return itsData[2]; }
-  const T& z() const { return itsData[2]; }
+        T& z()       { return itsData.z(); }
+  const T& z() const { return itsData.z(); }
+
+        Vec3<T>& vec()       { return itsData; }
+  const Vec3<T>& vec() const { return itsData; }
 
   //
   // Value interface
