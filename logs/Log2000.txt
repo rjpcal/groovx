@@ -817,3 +817,98 @@ runtime in a test-suite run.
 | id's in the C++ side of things. Done.
 | 
 +------------------------------------------------------------------------
+
+(8-Jan-2000, done 27-Oct-2000) How to read/write CountedPtr's? This is
+the big barrier to establishing CountedPtr's as a better way to manage
+objects between C++ and Tcl. Probably Reader/Writer need a special
+method for CountedPtr's. The question is how to keep track of the
+pointers to the reference counts. Or... we could put the reference
+count right in IO... Aha! Instead of AsciiStreamReader maintaining a
+map<unsigned long, IO*> during deserialization, we could use a
+map<unsigned long, CountedPtr<IO> >. However, this introduces a split
+from the semantics of readOwnedObject()... this suggests that we need
+a separate map for owned objects. As this transition will require a
+nearly universal switch to CountedPtr's, we need to provide a feasible
+migration route, perhaps by providing the ability to short-circuit
+CountedPtr's ref-counting at first. ... This is not an issue
+anymore. Now IoObjects have a built in ref-count. Reader+Writer don't
+explicitly do anything with the refcount; instead, clients are
+responsible for grabbing the object if they need it.
+
+(10-Oct-2000, done 27-Oct-2000) Start reaping the benefits of my
+PtrList ref-counting refactoring by allowing clients to lock onto
+their resources using ItemWithId<T>. Done.
+
+(10-Oct-2000, done 27-Oct-2000) PtrList could do an "idiot check" on
+insert to make sure that we aren't storing the same pointer in two
+slots. If this happens with the same MasterPtr, we can just return the
+previous MasterPtr; however if it happens with two MasterPtr's
+pointing to the same object, then it is a bug which will result in
+memory corruption.
+
+(done 30-Oct-2000) iditem.h --> io/iditem.h & io/iditemutils.h
+
+(done 30-Oct-2000) ioptrlist.h+cc --> io/ioptrlist.h+cc
+
+(done 30-Oct-2000) Remove List template argument from ListItemPkg.
+
+(done 30-Oct-2000) Replace DefaultCreatorCmd with a single IO::new
+that uses IoFactory. Turn List::remove into IO::delete.
+
+(nix 30-Oct-2000, 24-Jun-1999) Would be nice to define some sort of
+appropriate inheritance semantics for CTclPkg's... so that CTclPkg<B>
+can inherit from CTclPkg<A> iff B inherits from A, and furthermore
+that this inheritance does "all the right things".
+
+(nix 30-Oct-2000, 30-Jun-1999) Really need to get an iterator working
+for PtrList's... and get rid of these pseudo-working Id's. OK, now
+have an iterator class implemented, but how to construct them?
+Specifically, I'll need to be able to construct iterators from int
+id's, but then what to do if the int is an invalid index? Throw an
+exception? Leave the iterator in a corrupted state? Also, basically
+all of the PtrList operations should use iterators... addPtr() should
+return an iterator, remove() should take an iterator.
+
+(nix 30-Oct-2000, 6-Oct-1999) Should Property's be Observable's? Is
+this worth the extra space? Perhaps only some properties should be
+Observable's. How would this be done?
+
+(nix 30-Oct-2000, 22-Nov-1999) Hey, I think I might be able to totally
+do away with PtrList's, at least in the public interface. I think that
+they could be wrapped into the base class, so that every GrObj created
+is automatically placed in the ObjList, and anytime a GrObj is
+destroyed it is removed from the PtrList. This would just entail
+overriding operator new + delete for that class. The class would have
+static operations that mimic the PtrList's operations.
+
+(done 30-Oct-2000, 1-Dec-1999) Unsavory dependencies:
+  EventResponseHdlr on ObjTogl -- axed via Widget abstraction!
+  EventResponseHdlr on SoundList
+  ObjTogl on Tlist -- compilation dep gone, but still link dep
+  Trial on ObjList, PosList?
+  Block on Tlist?
+  BitmapRep on GLCanvas::theCanvas()
+
+... I see that this whole PtrList business introduces some wacky
+  dependencies... I don't think C++ clients should be depending on the
+  PtrList's directly. Instead, maybe the PtrList's should manage
+  CountedPtr's or something similar, so that the integer indices are
+  only visible in Tcl. [Later 30-Oct-2000] With the whole IoPtrList
+  refactoring, we have now eliminated C++ client's dependencies on the
+  item ids.
+
+(nix 30-Oct-2000) Goal: ExptDriver shouldn't have to know about any
+lists except maybe BlockList. As for serializing, the lists should
+register themselves with ExptDriver at application startup. Experiment
+base class should declare an abstract manageObject(const char* name,
+IO* object) function. The lists should call this in in their
+Tcl_PkgInitProc's. The problem with this approach is that we lose the
+ability to control the order in which the lists are read/written
+through the IO interface. This is not so much a problem for the
+readFrom()/writeTo() interface, as this is designed to be
+order-independent, but it is a problem for the
+serialize()/deserialize() interface. Perhaps we could use some ad hoc
+strategy to make sure that the managed objects are written in the same
+order every time (based on their ioTypename() for instance?). [Later]
+This is obsolete since we no longer depend on PtrList's in the
+serialization process.
