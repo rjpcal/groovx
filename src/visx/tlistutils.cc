@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Tue Mar  7 11:01:23 2000
+// written: Thu Mar  9 10:34:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -411,7 +411,6 @@ DOTRACE("TlistUtils::writeMatlab");
   DebugEvalNL(trialids.size());
 
   ofstream ofs(filename);
-  const int wid = 8;
 	 
   ofs.setf(ios::fixed);
   ofs.precision(2);
