@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Sat Sep 23 15:32:24 2000
+// written: Sat Sep 23 16:02:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -217,7 +217,7 @@ DOTRACE("IO::IoError::IoError");
   appendMsg(str);
 }
 
-IO::IoError::IoError(const type_info& ti) :
+IO::IoError::IoError(const std::type_info& ti) :
   ErrorWithMsg(demangle_cstr(typeid(*this).name()))
 {
 DOTRACE("IO::IoError::IoError");
@@ -234,8 +234,8 @@ DOTRACE("IO::IoError::setMsg(const char*)");
   ErrorWithMsg::appendMsg(str);
 }
 
-void IO::IoError::setMsg(const type_info& ti) {
-DOTRACE("IO::IoError::setMsg(const type_info&)");
+void IO::IoError::setMsg(const std::type_info& ti) {
+DOTRACE("IO::IoError::setMsg(const std::type_info&)");
   IoError::setMsg(demangle_cstr(ti.name()));
 }
 
