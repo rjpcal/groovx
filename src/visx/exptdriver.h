@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Jun  9 13:43:43 1999
+// written: Wed Jun 16 19:12:28 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,9 +33,14 @@ class TimingHandler;
 ///////////////////////////////////////////////////////////////////////
 
 class ExptDriver : public virtual IO {
-public:
+protected:
   // Creators
-  ExptDriver(Tcl_Interp* interp);
+  ExptDriver();
+private:
+  static ExptDriver theInstance;
+public:
+  static ExptDriver& theExptDriver();
+
   virtual ~ExptDriver();
 
   void init(int repeat, int seed, const string& date,
@@ -45,34 +50,31 @@ public:
   virtual int charCount() const;
 
   // Accessors + Manipulators
-  Expt& expt() { return itsExpt; }
+  Tcl_Interp* getInterp();
+  void setInterp(Tcl_Interp* interp);
+
+  Expt& expt();
+  ResponseHandler& responseHandler();
+  TimingHandler& timingHandler();
+
+  const Expt& expt() const;
+  const ResponseHandler& responseHandler() const;
+  const TimingHandler& timingHandler() const;
 
   bool needAutosave() const;
 
+  void setBlock(int blockid) { itsBlockId = blockid; }
+  void setResponseHandler(int rhid);
+  void setTimingHandler(int thid);
+
   const string& getEndDate() const;
   const string& getAutosaveFile() const;
-  const string& getKeyRespPairs() const; // delegate to itsResponseHandler
-  bool getUseFeedback() const; // delegate to itsResponseHandler
   bool getVerbose() const;
-
-  int getAbortWait() const;
-  int getAutosavePeriod() const;
-  int getInterTrialInterval() const;
-  int getStimDur() const;
-  int getTimeout() const;
 
   void setEndDate(const string& str);
   void setAutosaveFile(const string& str);
-  void setUseFeedback(bool val); // delegate to itsResponseHandler
-  void setKeyRespPairs(const string& s); // delegate to itsResponseHandler
   void setVerbose(bool val);
 
-  void setAbortWait(int val);
-  void setAutosavePeriod(int val);
-  void setInterTrialInterval(int val);
-  void setStimDur(int val);
-  void setTimeout(int val);
-  
   // Actions
   void edBeginTrial();
   void draw();
@@ -87,15 +89,14 @@ public:
   int writeAndExit();
 
 private:
-  Expt& itsExpt;
   Tcl_Interp* itsInterp;
 
   string itsEndDate;				  // Date(+time) when Expt was stopped
   string itsAutosaveFile;		  // Filename used for autosaves
 
-  // These are event sources for ExptDriver
-  ResponseHandler& itsResponseHandler; // contained by ref to break dependency
-  TimingHandler& itsTimingHandler;
+  int itsBlockId;
+  int itsRhId;
+  int itsThId;
 };
 
 
