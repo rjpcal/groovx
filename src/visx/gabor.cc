@@ -194,9 +194,8 @@ DOTRACE("Gabor::grGetBoundingBox");
   bbox.drawRect(world_rect);
 }
 
-void Gabor::grRender(Gfx::Canvas& canvas) const
+void Gabor::getBmapData(Gfx::BmapData& dest) const
 {
-DOTRACE("Gabor::grRender");
   const double xsigma2 = itsSigma*itsAspectRatio * itsSigma*itsAspectRatio;
   const double ysigma2 = itsSigma * itsSigma;
 
@@ -285,6 +284,16 @@ DOTRACE("Gabor::grRender");
             }
         }
     }
+
+  data.swap(dest);
+}
+
+void Gabor::grRender(Gfx::Canvas& canvas) const
+{
+DOTRACE("Gabor::grRender");
+
+  Gfx::BmapData data;
+  getBmapData(data);
 
   canvas.drawPixels(data, Vec2d(0.0, 0.0),
                     Vec2d(itsPointSize, itsPointSize));

@@ -30,6 +30,11 @@
 #ifndef GABOR_H_DEFINED
 #define GABOR_H_DEFINED
 
+namespace Gfx
+{
+  class BmapData;
+}
+
 #include "gfx/gbcolor.h"
 #include "gfx/gxshapekit.h"
 
@@ -92,6 +97,9 @@ public:
 
   /// Returns \c log10(contrast).
   double getLogContrast() const;
+
+  /// Fill in the Gfx::BmapData object with the Gabor pixmap.
+  void getBmapData(Gfx::BmapData& bmap) const;
 
 private:
   /// The current \c ColorMode used for rendering.
