@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:29 2003
-// written: Mon May 12 11:15:31 2003
+// written: Mon May 12 13:26:55 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -34,18 +34,36 @@
 const int GABOR_MAX_ORIENT = 64;
 const int GABOR_MAX_PHASE = 8;
 
+class GaborPatch
+{
+public:
+  GaborPatch(int s) : itsSize(s), itsData(new double[s*s]) {}
+  ~GaborPatch() { delete [] itsData; }
+
+  int size() const { return itsSize; }
+
+  double operator[](int i) const { return itsData[i]; }
+
+  double at(int x, int y) const { return itsData[x + y*itsSize]; }
+
+  const int itsSize;
+  double* const itsData;
+
+private:
+  GaborPatch(const GaborPatch&);
+  GaborPatch& operator=(const GaborPatch&);
+};
+
 class GaborSet
 {
 public:
   GaborSet(double period, double sigma, int size);
   ~GaborSet();
 
-  int getPatchSize() const { return patchSize; }
-  const double* getPatch(double theta, double phi) const;
+  const GaborPatch& getPatch(double theta, double phi) const;
 
 private:
-  const int patchSize;
-  double* Patch[GABOR_MAX_ORIENT][GABOR_MAX_PHASE];
+  GaborPatch* Patch[GABOR_MAX_ORIENT][GABOR_MAX_PHASE];
 };
 
 static const char vcid_gaborset_h[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Mon May 12 12:55:13 2003
+// written: Mon May 12 13:25:57 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -283,20 +283,20 @@ void GaborArray::renderInto(BmapData& data) const
       const int xcenter = int(array[i].pos.x() + sizeX / 2.0 + 0.5);
       const int ycenter = int(array[i].pos.y() + sizeY / 2.0 + 0.5);
 
-      const double* p = gabors.getPatch(theta, phi);
+      const GaborPatch& p = gabors.getPatch(theta, phi);
 
       // bottom left:
-      const int x0 = xcenter - gabors.getPatchSize() / 2;
-      const int y0 = ycenter - gabors.getPatchSize() / 2;
+      const int x0 = xcenter - p.size() / 2;
+      const int y0 = ycenter - p.size() / 2;
       // top right:
-      const int x1 = x0 + gabors.getPatchSize();
-      const int y1 = y0 + gabors.getPatchSize();
+      const int x1 = x0 + p.size();
+      const int y1 = y0 + p.size();
 
       for (int y = y0; y < y1; ++y)
         for (int x = x0; x < x1; ++x)
           {
             if (x >= 0 && x < sizeX && y >=0 && y < sizeY)
-              win[x+y*sizeX] += p[x-x0+(y-y0)*gabors.getPatchSize()];
+              win[x+y*sizeX] += p.at(x-x0, y-y0);
           }
     }
 
