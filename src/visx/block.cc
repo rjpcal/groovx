@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Dec  4 19:10:09 2002
+// written: Thu Dec  5 14:11:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,51 +62,44 @@ private:
 
 public:
   Impl() :
-    itsElements(),
-    itsRandSeed(0),
-    itsSequencePos(0),
-    itsHasBegun(false),
-    itsParent(0)
-    {}
-
-  minivec<Ref<Element> > itsElements;
-
-  int itsRandSeed;              // Random seed used to create itsElements
-  int itsSequencePos;           // Index of the current element
-                                // Also functions as # of completed elements
-
-  mutable bool itsHasBegun;
-
-  void setParent(Element& expt)
-    {
-      Precondition( &expt != 0 );
-      itsParent = &expt;
-    }
+    elements(),
+    randSeed(0),
+    sequencePos(0),
+    hasBegun(false),
+    parent(0)
+  {}
 
   Element& getParent()
     {
-      Precondition( itsParent != 0 );
-      return *itsParent;
+      Precondition( parent != 0 );
+      return *parent;
     }
 
   Ref<Element> currentElement()
     {
       Precondition(hasCurrentElement());
 
-      return itsElements.at(itsSequencePos);
+      return elements.at(sequencePos);
     }
 
   bool hasCurrentElement()
     {
-      if ( itsSequencePos < 0 ||
-           (unsigned int) itsSequencePos >= itsElements.size() )
+      if ( sequencePos < 0 ||
+           (unsigned int) sequencePos >= elements.size() )
         return false;
       else
         return true;
     }
 
-private:
-  mutable Element* itsParent;
+  minivec<Ref<Element> > elements;
+
+  int randSeed;              // Random seed used to create elements
+  int sequencePos;           // Index of the current element
+                             // Also functions as # of completed elements
+
+  mutable bool hasBegun;
+
+  mutable Element* parent;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -126,14 +119,14 @@ DOTRACE("Block::make");
 }
 
 Block::Block() :
-  itsImpl( new Impl )
+  rep( new Impl )
 {
 DOTRACE("Block::Block");
 }
 
 Block::~Block()
 {
-  delete itsImpl;
+  delete rep;
 }
 
 void Block::addElement(Ref<Element> element, int repeat)
@@ -141,27 +134,27 @@ void Block::addElement(Ref<Element> element, int repeat)
 DOTRACE("Block::addElement");
   for (int i = 0; i < repeat; ++i)
     {
-      itsImpl->itsElements.push_back(element);
+      rep->elements.push_back(element);
     }
 };
 
 void Block::shuffle(int seed)
 {
 DOTRACE("Block::shuffle");
-  itsImpl->itsRandSeed = seed;
+  rep->randSeed = seed;
 
   Util::Urand generator(seed);
 
-  std::random_shuffle(itsImpl->itsElements.begin(),
-                      itsImpl->itsElements.end(),
+  std::random_shuffle(rep->elements.begin(),
+                      rep->elements.end(),
                       generator);
 }
 
 void Block::clearAllElements()
 {
 DOTRACE("Block::clearAllElements");
-  itsImpl->itsElements.clear();
-  itsImpl->itsSequencePos = 0;
+  rep->elements.clear();
+  rep->sequencePos = 0;
 }
 
 IO::VersionId Block::serialVersionId() const
@@ -176,14 +169,14 @@ DOTRACE("Block::readFrom");
 
   int svid = reader->ensureReadVersionId("Block", 1, "Try grsh0.8a3");
 
-  itsImpl->itsElements.clear();
+  rep->elements.clear();
   IO::ReadUtils::readObjectSeq<Element>(
-        reader, "trialSeq", std::back_inserter(itsImpl->itsElements));
+        reader, "trialSeq", std::back_inserter(rep->elements));
 
-  reader->readValue("randSeed", itsImpl->itsRandSeed);
-  reader->readValue("curTrialSeqdx", itsImpl->itsSequencePos);
-  if (itsImpl->itsSequencePos < 0 ||
-      size_t(itsImpl->itsSequencePos) > itsImpl->itsElements.size())
+  reader->readValue("randSeed", rep->randSeed);
+  reader->readValue("curTrialSeqdx", rep->sequencePos);
+  if (rep->sequencePos < 0 ||
+      size_t(rep->sequencePos) > rep->elements.size())
     {
       throw IO::ReadError("Block");
     }
@@ -203,11 +196,11 @@ DOTRACE("Block::writeTo");
                                "Try grsh0.8a7");
 
   IO::WriteUtils::writeObjectSeq(writer, "trialSeq",
-                                 itsImpl->itsElements.begin(),
-                                 itsImpl->itsElements.end());
+                                 rep->elements.begin(),
+                                 rep->elements.end());
 
-  writer->writeValue("randSeed", itsImpl->itsRandSeed);
-  writer->writeValue("curTrialSeqdx", itsImpl->itsSequencePos);
+  writer->writeValue("randSeed", rep->randSeed);
+  writer->writeValue("curTrialSeqdx", rep->sequencePos);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -219,13 +212,13 @@ DOTRACE("Block::writeTo");
 Util::ErrorHandler& Block::getErrorHandler() const
 {
 DOTRACE("Block::getErrorHandler");
-  return itsImpl->getParent().getErrorHandler();
+  return rep->getParent().getErrorHandler();
 }
 
 const Util::SoftRef<Toglet>& Block::getWidget() const
 {
 DOTRACE("Block::getWidget");
-  return itsImpl->getParent().getWidget();
+  return rep->getParent().getWidget();
 }
 
 int Block::trialType() const
@@ -233,9 +226,9 @@ int Block::trialType() const
 DOTRACE("Block::trialType");
   if (isComplete()) return -1;
 
-  dbgEvalNL(3, itsImpl->currentElement()->trialType());
+  dbgEvalNL(3, rep->currentElement()->trialType());
 
-  return itsImpl->currentElement()->trialType();
+  return rep->currentElement()->trialType();
 }
 
 fstring Block::status() const
@@ -245,51 +238,53 @@ DOTRACE("Block::status");
 
   fstring msg;
   msg.append("next element ", currentElement().id(), ", ")
-    .append(itsImpl->currentElement()->status())
+    .append(rep->currentElement()->status())
     .append(", completed ", numCompleted(), " of ", numElements());
 
   return msg;
 }
 
-void Block::vxRun(Element& parent)
+void Block::vxRun(Element& e)
 {
 DOTRACE("Block::vxRun");
 
+  Precondition( &e != 0 );
+
   if ( isComplete() ) return;
 
-  itsImpl->itsHasBegun = true;
+  rep->hasBegun = true;
 
   Util::log( status() );
 
-  itsImpl->setParent(parent);
+  rep->parent = &e;
 
-  itsImpl->currentElement()->vxRun(*this);
+  rep->currentElement()->vxRun(*this);
 }
 
 void Block::vxHalt() const
 {
 DOTRACE("Block::vxHalt");
 
-  if ( itsImpl->itsHasBegun && !isComplete() )
-    itsImpl->currentElement()->vxHalt();
+  if ( rep->hasBegun && !isComplete() )
+    rep->currentElement()->vxHalt();
 }
 
 void Block::vxUndo()
 {
 DOTRACE("Block::vxUndo");
 
-  dbgEval(3, itsImpl->itsSequencePos);
+  dbgEval(3, rep->sequencePos);
 
   // Check to make sure we've completed at least one element
-  if (itsImpl->itsSequencePos < 1) return;
+  if (rep->sequencePos < 1) return;
 
   // Move the counter back to the previous element...
-  --itsImpl->itsSequencePos;
+  --rep->sequencePos;
 
   // ...and erase the last response given to that element
-  if ( itsImpl->hasCurrentElement() )
+  if ( rep->hasCurrentElement() )
     {
-      itsImpl->currentElement()->vxUndo();
+      rep->currentElement()->vxUndo();
     }
 }
 
@@ -298,11 +293,11 @@ void Block::vxNext()
 DOTRACE("Block::vxNext");
   if ( !isComplete() )
     {
-      vxRun(itsImpl->getParent());
+      vxRun(rep->getParent());
     }
   else
     {
-      itsImpl->getParent().vxNext();
+      rep->getParent().vxNext();
     }
 }
 
@@ -315,20 +310,19 @@ DOTRACE("Block::vxNext");
 int Block::numElements() const
 {
 DOTRACE("Block::numElements");
-  return itsImpl->itsElements.size();
+  return rep->elements.size();
 }
 
 Util::FwdIter<Util::Ref<Element> > Block::getElements() const
 {
   return Util::FwdIter<Util::Ref<Element> >
-    (itsImpl->itsElements.begin(),
-     itsImpl->itsElements.end());
+    (rep->elements.begin(), rep->elements.end());
 }
 
 int Block::numCompleted() const
 {
 DOTRACE("Block::numCompleted");
-  return itsImpl->itsSequencePos;
+  return rep->sequencePos;
 }
 
 Util::SoftRef<Element> Block::currentElement() const
@@ -336,21 +330,21 @@ Util::SoftRef<Element> Block::currentElement() const
 DOTRACE("Block::currentElement");
   if (isComplete()) return Util::SoftRef<Element>();
 
-  return itsImpl->currentElement();
+  return rep->currentElement();
 }
 
 int Block::lastResponse() const
 {
 DOTRACE("Block::lastResponse");
 
-  dbgEval(9, itsImpl->itsSequencePos);
-  dbgEvalNL(9, itsImpl->itsElements.size());
+  dbgEval(9, rep->sequencePos);
+  dbgEvalNL(9, rep->elements.size());
 
-  if (itsImpl->itsSequencePos == 0 ||
-      itsImpl->itsElements.size() == 0) return -1;
+  if (rep->sequencePos == 0 ||
+      rep->elements.size() == 0) return -1;
 
   Ref<Element> prev_element =
-    itsImpl->itsElements.at(itsImpl->itsSequencePos-1);
+    rep->elements.at(rep->sequencePos-1);
   return prev_element->lastResponse();
 }
 
@@ -358,20 +352,19 @@ bool Block::isComplete() const
 {
 DOTRACE("Block::isComplete");
 
-  dbgEval(9, itsImpl->itsSequencePos);
-  dbgEvalNL(9, itsImpl->itsElements.size());
+  dbgEval(9, rep->sequencePos);
+  dbgEvalNL(9, rep->elements.size());
 
-  // This is 'tricky'. The problem is that itsImpl->itsSequencePos may
-  // temporarily be negative in between a vxAbort and the corresponding
-  // vxEndTrial. This means that we can't only compare
-  // itsImpl->itsSequencePos with itsImpl->itsElements.size(), because the
-  // former is signed and the latter is unsigned, forcing a 'promotion' to
-  // unsigned of the former... this makes it a huge positive number if it
-  // was actually negative. Thus, we must also check that
-  // itsImpl->itsSequencePos is actually non-negative before returning
-  // 'true' from this function.
-  return ((itsImpl->itsSequencePos >= 0) &&
-          (size_t(itsImpl->itsSequencePos) >= itsImpl->itsElements.size()));
+  // This is 'tricky'. The problem is that rep->sequencePos may temporarily
+  // be negative in between a vxAbort and the corresponding
+  // vxEndTrial. This means that we can't only compare rep->sequencePos
+  // with rep->elements.size(), because the former is signed and the latter
+  // is unsigned, forcing a 'promotion' to unsigned of the former... this
+  // makes it a huge positive number if it was actually negative. Thus, we
+  // must also check that rep->sequencePos is actually non-negative before
+  // returning 'true' from this function.
+  return ((rep->sequencePos >= 0) &&
+          (size_t(rep->sequencePos) >= rep->elements.size()));
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -387,20 +380,19 @@ DOTRACE("Block::vxAbort");
 
   // Remember the element that we are about to abort so we can store it
   // at the end of the sequence.
-  Ref<Element> aborted_element = itsImpl->currentElement();
+  Ref<Element> aborted_element = rep->currentElement();
 
   // Erase the aborted element from the sequence. Subsequent elements will
   // slide up to fill in the gap.
-  itsImpl->itsElements.erase(
-              itsImpl->itsElements.begin()+itsImpl->itsSequencePos);
+  rep->elements.erase(rep->elements.begin()+rep->sequencePos);
 
   // Add the aborted element to the back of the sequence.
-  itsImpl->itsElements.push_back(aborted_element);
+  rep->elements.push_back(aborted_element);
 
-  // We must decrement itsImpl->itsSequencePos, so that when it is
+  // We must decrement rep->sequencePos, so that when it is
   // incremented by vxEndTrial, the next element has slid into the
   // position where the aborted element once was.
-  --itsImpl->itsSequencePos;
+  --rep->sequencePos;
 }
 
 void Block::vxProcessResponse(Response& response)
@@ -415,10 +407,9 @@ DOTRACE("Block::vxProcessResponse");
     {
       // If the response was incorrect, add a repeat of the current
       // element to the block and reshuffle
-      addElement(itsImpl->currentElement(), 1);
-      std::random_shuffle(
-        itsImpl->itsElements.begin()+itsImpl->itsSequencePos+1,
-        itsImpl->itsElements.end());
+      addElement(rep->currentElement(), 1);
+      std::random_shuffle
+        (rep->elements.begin()+rep->sequencePos+1, rep->elements.end());
     }
 }
 
@@ -428,19 +419,19 @@ DOTRACE("Block::vxEndTrial");
   if (isComplete()) return;
 
   // Prepare to start next element.
-  ++itsImpl->itsSequencePos;
+  ++rep->sequencePos;
 
   dbgEval(3, numCompleted());
   dbgEval(3, numElements());
   dbgEvalNL(3, isComplete());
 
-  itsImpl->getParent().vxEndTrial();
+  rep->getParent().vxEndTrial();
 }
 
 void Block::resetBlock()
 {
 DOTRACE("Block::resetBlock");
-  while (itsImpl->itsSequencePos > 0)
+  while (rep->sequencePos > 0)
     {
       vxUndo();
     }
@@ -450,12 +441,12 @@ void Block::vxReset()
 {
 DOTRACE("Block::vxReset");
 
-  for (unsigned int i = 0; i < itsImpl->itsElements.size(); ++i)
+  for (unsigned int i = 0; i < rep->elements.size(); ++i)
     {
-      itsImpl->itsElements[i]->vxReset();
+      rep->elements[i]->vxReset();
     }
 
-  itsImpl->itsSequencePos = 0;
+  rep->sequencePos = 0;
 }
 
 static const char vcid_block_cc[] = "$Header$";

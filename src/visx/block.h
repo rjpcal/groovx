@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Wed Dec  4 18:58:25 2002
+// written: Thu Dec  5 14:04:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -174,7 +174,7 @@ private:
   Block& operator=(const Block&);
 
   class Impl;
-  Impl* const itsImpl;
+  Impl* const rep;
 };
 
 static const char vcid_block_h[] = "$Header$";
