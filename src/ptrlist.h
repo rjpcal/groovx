@@ -3,85 +3,52 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Tue Oct 19 14:25:48 1999
+// written: Sun Nov 21 02:58:19 1999
 // $Id$
-//
-// PtrList is type-parameterized container for pointers. PtrList is
-// responsible for the memory management of all the objects to which
-// it holds pointers. There are no operations on the capacity of
-// PtrList; any necessary resizing is done when necessary in an insert
-// call.
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef PTRLIST_H_DEFINED
 #define PTRLIST_H_DEFINED
 
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
-#endif
-
-#ifndef IO_H_DEFINED
-#include "io.h"
-#endif
-
-#ifndef ERROR_H_DEFINED
-#include "error.h"
+#ifndef IOPTRLIST_H_DEFINED
+#include "ioptrlist.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
-//
-// Error classes
-//
-///////////////////////////////////////////////////////////////////////
-
-class InvalidIdError : public ErrorWithMsg {
-public:
-  InvalidIdError(const string& msg="") : ErrorWithMsg(msg) {}
-};
-
-///////////////////////////////////////////////////////////////////////
-//
-// PtrList class
-//
+/**
+ *
+ * PtrList is templatized container for pointers. PtrList is
+ * responsible for the memory management of all the objects to which
+ * it holds pointers. The pointers are accessed by integer indices
+ * into the PtrList. There are no operations on the capacity of
+ * PtrList; any necessary resizing is done when necessary in an insert
+ * call.
+ *
+ * @memo A template container that stores and owns pointers.
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class PtrList : public virtual IO {
+class PtrList : public IoPtrList {
 public:
-  //////////////
-  // creators //
-  //////////////
-
+  ///
   PtrList (int size);
-  // Construct a PtrList with an initial capacity of 'size'. All of
-  // the contained T*'s will be initialized to NULL.
-
-  virtual ~PtrList ();
-
-  virtual void serialize(ostream &os, IOFlag flag) const;
-  virtual void deserialize(istream &is, IOFlag flag);
-  // These functions write/read the object's state from/to an
-  // output/input stream. All objects that are contained by pointer in
-  // the PtrList will be written and read. A PtrList that is written
-  // and then re-read will have all of the same objects available at
-  // the same indices as before the first serialize operation.
-
-  virtual int charCount() const;
-
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
 
   ///////////////
   // iterators //
   ///////////////
 
+  ///
   typedef T* pointer;
+  ///
   typedef T& reference;
+  ///
   typedef T* const_pointer;
+  ///
   typedef T& const_reference;
   
+  ///
   class iterator {
   private:
 	 int itsIndex;
@@ -106,81 +73,76 @@ public:
   public:
 	 friend class PtrList<T>;
 
+	 ///
 	 iterator (const iterator& rhs) :
 		itsList(rhs.itsList),
 		itsIndex(rhs.itsIndex) {}
 
+	 ///
 	 iterator& operator=(const iterator& rhs) 
 		{ itsList = rhs.itsList; itsIndex = rhs.itsIndex; }
 
+	 ///
 	 bool operator== (const iterator& x) const 
 		{ return (itsIndex == x.itsIndex) && (itsList == x.itsList); }
+	 ///
 	 bool operator!= (const iterator& x) const
 		{ return (itsIndex != x.itsIndex) || (itsList != x.itsList); }
 
+	 ///
 	 reference operator* () const { return *(itsList->getPtr(itsIndex)); } 
 
+	 ///
 	 pointer operator-> () const { return &(operator*()); }
 
+	 ///
 	 iterator& operator++ () { 
 		while ( (itsIndex<itsList->capacity()) 
 				  && !(itsList->isValidId(++itsIndex)) ) { }
 		return *this;
 	 }
 
+	 ///
 	 iterator operator++ (int)
 		{ iterator tmp = *this; ++*this; return tmp; }
 
+	 ///
 	 iterator& operator-- () {
 		while ( (itsIndex >= -1) 
 				  && !(itsList->isValidId(--itsIndex)) ) { }
 		return *this;
 	 }
 
+	 ///
 	 iterator operator-- (int)
 		{ iterator tmp = *this; --*this; return tmp; }
 
+	 ///
 	 int toInt() const { return itsIndex; }
   };
 
+  ///
   iterator begin() { return iterator(*this, 0); }
+  ///
   iterator end() { return iterator(*this, capacity()); }
+  ///
   iterator at(int index) { return iterator(*this, index, true); }
 
   ///////////////
   // accessors //
   ///////////////
 
-  int capacity() const;
-  // Returns the size of the internal array. The number returned also
-  // refers to the one-past-the-end index into the PtrList.
+public:
+  ///
+  T* getPtr(int id) const throw () 
+	 { return castToT(VoidPtrList::getVoidPtr(id)); }
 
-  int count() const;
-  // Returns the number of filled sites in the PtrList.
+  ///
+  T* getCheckedPtr(int id) const throw (InvalidIdError)
+	 { return castToT(VoidPtrList::getCheckedVoidPtr(id)); }
 
-  bool isValidId(int id) const;
-  // Returns true if 'id' is a valid index into a non-NULL T* in
-  // the PtrList, given its current size.
-
-  T* getPtr(int id) const throw () { return itsVec[id]; }
-  // Return the T* at the index given by 'id'.  There is no
-  // range-check performed; this must be done by the client with
-  // isValidId().
-
-  T* getCheckedPtr(int id) const throw (InvalidIdError);
-  // Like getPtr(), but checks first if 'id' is a valid index, and
-  // throws an InvalidIdError if it is not.
-
-  template <class Iterator>
-  void insertValidIds(Iterator itr) const {
-	 for (int i = 0; i < itsVec.size(); ++i) {
-		if (isValidId(i)) 
-		  *itr++ = i;
-	 }
-  }
-
-  // Puts a list of all valid (i.e. within-range and non-null) trial
-  // ids into the vector<int> that is passed in by reference.
+  /** Puts a list of all valid (i.e. within-range and non-null) trial
+		ids into the vector<int> that is passed in by reference. */
   void getValidIds(vector<int>& vec) const {
 	 vec.clear();
 	 insertValidIds(back_inserter(vec));
@@ -190,30 +152,31 @@ public:
   // manipulators //
   //////////////////
 
-  virtual int insert(T* ptr);
-  // Add ptr at the next available location, and return the index
-  // where it was inserted. If necessary, the list will be expanded to
-  // make room for the ptr. The PtrList now assumes control of the
-  // memory management for the object *ptr.
+  ///
+  int insert(T* ptr)
+	 { return VoidPtrList::insertVoidPtr(castFromT(ptr)); }
 
-  virtual void insertAt(int id, T* ptr);
-  // Add obj at index 'id', destroying any the object was previously
-  // pointed to from that that location. The list will be expanded if
-  // 'id' exceeds the size of the list. If id is < 0, the function
-  // returns without effect.
+  ///
+  void insertAt(int id, T* ptr)
+	 { VoidPtrList::insertVoidPtrAt(id, castFromT(ptr)); }
 
-  void remove(int id);
-  // delete the Ptr at index 'i', and reset the T* to NULL
+protected:
+  /**
+	* Casts
+	**/
+  //@{
+  ///
+  T* castToT(void* ptr) const;
+  ///
+  void* castFromT(T* ptr) const;
+  ///
+  virtual IO* fromVoidToIO(void* ptr) const;
+  ///
+  virtual void* fromIOToVoid(IO* ptr) const;
+  //@}
 
-  void clear();
-  // delete all Ptr's held by the list, and reset all T*'s to NULL
-
-private:
-  PtrList(const PtrList&);      // copy constructor not to be used
-  PtrList& operator=(const PtrList&); // assignment operator not to be used
-
-  int itsFirstVacant;           // smallest index of a vacant array site
-  vector<T *> itsVec;		  // array of T*'s
+  ///
+  virtual void destroyPtr(void* ptr);
 };
 
 static const char vcid_ptrlist_h[] = "$Header$";
