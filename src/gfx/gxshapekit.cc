@@ -143,7 +143,7 @@ public:
 
 namespace
 {
-  const IO::VersionId GXSHAPEKIT_SVID = 3;
+  const IO::VersionId GXSHAPEKIT_SVID = 4;
 }
 
 rutz::tracer GxShapeKit::tracer;
@@ -191,9 +191,14 @@ void GxShapeKit::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxShapeKit::readFrom");
 
-  reader.ensureReadVersionId("GxShapeKit", 3, "Try groovx0.8a7", SRC_POS);
+  const int svid =
+    reader.ensureReadVersionId("GxShapeKit", 3,
+                               "Try groovx0.8a7", SRC_POS);
 
   readFieldsFrom(reader, classFields());
+
+  if (svid >= 4)
+    reader.readOwnedObject("scaler", rep->scaler);
 }
 
 void GxShapeKit::writeTo(IO::Writer& writer) const
@@ -201,10 +206,12 @@ void GxShapeKit::writeTo(IO::Writer& writer) const
 DOTRACE("GxShapeKit::writeTo");
 
   writer.ensureWriteVersionId("GxShapeKit",
-                              GXSHAPEKIT_SVID, 3,
+                              GXSHAPEKIT_SVID, 4,
                               "Try groovx0.8a7", SRC_POS);
 
   writeFieldsTo(writer, classFields(), GXSHAPEKIT_SVID);
+
+  writer.writeOwnedObject("scaler", rep->scaler);
 }
 
 const FieldMap& GxShapeKit::classFields()
@@ -218,7 +225,7 @@ const FieldMap& GxShapeKit::classFields()
     Field("renderMode", GETSET(RenderMode), 1, 1, 4, 1),
     Field("bbVisibility", GETSET(BBVisibility),
           false, false, true, true, Field::BOOLEAN),
-    Field("scalingMode", GETSET(ScalingMode), 1, 1, 3, 1),
+    Field("scalingMode", GETSET(ScalingMode), 1, 1, 3, 1).versions(0, 3),
     Field("widthFactor", GETSET(WidthFactor), 1.0, 0.1, 10.0, 0.1,
           Field::PRIVATE).versions(0, 3),
     Field("heightFactor", GETSET(HeightFactor), 1.0, 0.1, 10.0, 0.1,

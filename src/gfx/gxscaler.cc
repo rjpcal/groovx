@@ -42,6 +42,9 @@
 #include "gfx/canvas.h"
 #include "gfx/toglet.h"
 
+#include "io/reader.h"
+#include "io/writer.h"
+
 #include "util/algo.h"
 #include "util/error.h"
 
@@ -53,14 +56,16 @@ GxScaler::GxScaler() :
   GxBin(),
   itsMode(NATIVE_SCALING),
   itsWidthFactor(1.0),
-  itsHeightFactor(1.0)
+  itsHeightFactor(1.0),
+  itsAspectRatio(1.0)
 {}
 
 GxScaler::GxScaler(Nub::Ref<GxNode> child) :
   GxBin(child),
   itsMode(NATIVE_SCALING),
   itsWidthFactor(1.0),
-  itsHeightFactor(1.0)
+  itsHeightFactor(1.0),
+  itsAspectRatio(1.0)
 {}
 
 GxScaler* GxScaler::make()
@@ -79,17 +84,18 @@ DOTRACE("GxScaler::setMode");
 void GxScaler::setWidth(double new_width)
 {
 DOTRACE("GxScaler::setWidth");
+  if (itsMode == NATIVE_SCALING) return;
+
   const rectd native_bbox =
     child()->getBoundingBox(*(Toglet::getCurrent()->getCanvas()));
 
-  double current_width = native_bbox.width() * itsWidthFactor;
+  const double current_width = native_bbox.width() * itsWidthFactor;
 
   if (new_width == 0.0 || new_width == current_width) return;
-  if (itsMode == NATIVE_SCALING) return;
 
-  double new_width_factor = new_width / native_bbox.width();
+  const double new_width_factor = new_width / native_bbox.width();
 
-  double change_factor = new_width_factor / itsWidthFactor;
+  const double change_factor = new_width_factor / itsWidthFactor;
 
   itsWidthFactor = new_width_factor;
 
@@ -104,17 +110,18 @@ DOTRACE("GxScaler::setWidth");
 void GxScaler::setHeight(double new_height)
 {
 DOTRACE("GxScaler::setHeight");
+  if (itsMode == NATIVE_SCALING) return;
+
   const rectd native_bbox =
     child()->getBoundingBox(*(Toglet::getCurrent()->getCanvas()));
 
-  double current_height = native_bbox.height() * itsHeightFactor;
+  const double current_height = native_bbox.height() * itsHeightFactor;
 
   if (new_height == 0.0 || new_height == current_height) return;
-  if (itsMode == NATIVE_SCALING) return;
 
-  double new_height_factor = new_height / native_bbox.height();
+  const double new_height_factor = new_height / native_bbox.height();
 
-  double change_factor = new_height_factor / itsHeightFactor;
+  const double change_factor = new_height_factor / itsHeightFactor;
 
   itsHeightFactor = new_height_factor;
 
@@ -129,17 +136,9 @@ DOTRACE("GxScaler::setHeight");
 void GxScaler::setAspectRatio(double new_aspect_ratio)
 {
 DOTRACE("GxScaler::setAspectRatio");
-  double current = aspectRatio();
-
-  if (new_aspect_ratio == 0.0 || new_aspect_ratio == current) return;
   if (itsMode != FREE_SCALING) return;
 
-  double change_factor = new_aspect_ratio / current;
-
-  // By convention, we change only the width to reflect the change in
-  // aspect ratio
-
-  itsWidthFactor *= change_factor;
+  itsAspectRatio = new_aspect_ratio;
 
   this->sigNodeChanged.emit();
 }
@@ -174,8 +173,7 @@ DOTRACE("GxScaler::setMaxDim");
 double GxScaler::aspectRatio() const
 {
 DOTRACE("GxScaler::aspectRatio");
-  return itsMode != FREE_SCALING ? 1.0 :
-    (itsHeightFactor != 0.0 ? itsWidthFactor/itsHeightFactor : 0.0);
+  return itsMode != FREE_SCALING ? 1.0 : itsAspectRatio;
 }
 
 double GxScaler::scaledWidth() const
@@ -183,7 +181,7 @@ double GxScaler::scaledWidth() const
 DOTRACE("GxScaler::scaledWidth");
   const rectd native_bbox =
     child()->getBoundingBox(*(Toglet::getCurrent()->getCanvas()));
-  return native_bbox.width() * itsWidthFactor;
+  return native_bbox.width() * itsWidthFactor * aspectRatio();
 }
 
 double GxScaler::scaledHeight() const
@@ -200,16 +198,22 @@ DOTRACE("GxScaler::scaledMaxDim");
   return rutz::max(scaledWidth(), scaledHeight());
 }
 
-void GxScaler::readFrom(IO::Reader&)
+void GxScaler::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxScaler::readFrom");
-  throw rutz::error("GxScaler::readFrom not implemented", SRC_POS);
+  reader.readValue("mode", itsMode);
+  reader.readValue("widthFactor", itsWidthFactor);
+  reader.readValue("heightFactor", itsHeightFactor);
+  reader.readValue("aspectRatio", itsAspectRatio);
 }
 
-void GxScaler::writeTo(IO::Writer&) const
+void GxScaler::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxScaler::writeTo");
-  throw rutz::error("GxScaler::writeTo not implemented", SRC_POS);
+  writer.writeValue("mode", itsMode);
+  writer.writeValue("widthFactor", itsWidthFactor);
+  writer.writeValue("heightFactor", itsHeightFactor);
+  writer.writeValue("aspectRatio", itsAspectRatio);
 }
 
 void GxScaler::draw(Gfx::Canvas& canvas) const
@@ -222,7 +226,9 @@ DOTRACE("GxScaler::draw");
   else
     {
       Gfx::MatrixSaver state(canvas);
-      canvas.scale(geom::vec3<double>(itsWidthFactor, itsHeightFactor, 1.0));
+      canvas.scale(geom::vec3<double>(itsWidthFactor * aspectRatio(),
+                                      itsHeightFactor,
+                                      1.0));
       child()->draw(canvas);
     }
 }
@@ -233,7 +239,9 @@ DOTRACE("GxScaler::getBoundingCube");
   bbox.push();
 
   if (NATIVE_SCALING != itsMode)
-    bbox.scale(geom::vec3<double>(itsWidthFactor, itsHeightFactor, 1.0));
+    bbox.scale(geom::vec3<double>(itsWidthFactor * aspectRatio(),
+                                  itsHeightFactor,
+                                  1.0));
 
   child()->getBoundingCube(bbox);
 

@@ -124,6 +124,7 @@ private:
 
   double itsWidthFactor;
   double itsHeightFactor;
+  double itsAspectRatio;
 };
 
 
