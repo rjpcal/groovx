@@ -258,7 +258,7 @@ ifeq ($(COMPILER),ppc-g++-2)
 endif
 
 ifeq ($(COMPILER),g++3)
-	CC := time g++302
+	CC := time g++-3
 # Filter the compiler output...
 	FILTER := |& $(SCRIPTS)/filter_gcc_v3
 
@@ -296,6 +296,7 @@ EXTERNAL_LIBS := \
 	-ltcl$(TCL_VERSION) -ltk$(TK_VERSION) \
 	-lXmu -lX11 -lXext \
 	-lz \
+	-lpng \
 	$(AUDIO_LIB) \
 	-lm
 
@@ -510,8 +511,8 @@ clean:
 
 # Make clean, and also remove all debug object files
 cleaner: clean
-	find $(OBJ) -name \*$(OBJ_EXT) -exec rm -f {} \;
-	find $(OBJ) -name \*.ii -exec rm -f {} \;
+	find $(OBJ) -follow -name \*$(OBJ_EXT) -exec rm -f {} \;
+	find $(OBJ) -follow -name \*.ii -exec rm -f {} \;
 
 # Count the lines in all source files
 count: $(ALL_SOURCES) $(ALL_HEADERS)
