@@ -116,23 +116,6 @@
      variable includes the paths to wherever you have installed the
      libraries associated with this package.
 
-     GRSH_LIB_DIR
-
-     Some components of the groovx software that are accessed at runtime
-     are found in the directory that is specified by the environment
-     variable GRSH_LIB_DIR. These components include the default audio
-     files, various accessory and demo scripts that can be run using the
-     groovx shell, and sample serialized object databases that can be
-     loaded into the program.
-
-     All of these components are found in the share/ subdirectory of the
-     source tree. If you plan to keep the source tree around, you can just
-     set your GRSH_LIB_DIR environment variable to
-     /path/to/source/share. If you delete the source tree, then you should
-     first copy the share/ subdirectory to a more permanent location, and
-     then set your GRSH_LIB_DIR environment variable to
-     /path/to/install/share.
-
 6. Portability
 
    This software in its current state is known to build successfully under

@@ -30,8 +30,6 @@
 #ifndef SOUNDTCL_CC_DEFINED
 #define SOUNDTCL_CC_DEFINED
 
-#include "system/system.h"
-
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tclsafeinterp.h"
@@ -77,11 +75,8 @@ DOTRACE("Sound_Init");
     }
   else
     {
-      fstring lib_dir(System::theSystem().getenv("GRSH_LIB_DIR"));
-      dbgEvalNL(3, lib_dir);
-
-      const fstring ok_file(lib_dir, "/audio/saw50_500Hz_300ms.au");
-      const fstring err_file(lib_dir, "/audio/saw50_350Hz_2x120ms.au");
+      const fstring ok_file(GROOVX_AUDIO_DIR "/saw50_500Hz_300ms.au");
+      const fstring err_file(GROOVX_AUDIO_DIR "/saw50_350Hz_2x120ms.au");
 
       static int OK = -1;
       static int ERR = -1;
