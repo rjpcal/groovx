@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 11 15:16:06 2002
-// written: Mon Nov 11 16:52:09 2002
+// written: Mon Nov 11 16:58:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,6 +70,11 @@ do {                                            \
 void Jpeg::load(const char* filename, Gfx::BmapData& data)
 {
 DOTRACE("Jpeg::load");
+
+  if (BITS_IN_JSAMPLE != 8)
+    {
+      throw Util::Error("jpeg library must be built for 8 bits-per-sample");
+    }
 
   jmp_buf state;
 
