@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 28 12:54:13 1999
-// written: Wed Sep 25 18:53:42 2002
+// written: Tue Dec 24 19:53:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,6 +43,9 @@ class Vec2
 {
 public:
   Vec2(V x=0, V y=0) : xx(x), yy(y) {}
+
+  template <class U>
+  Vec2(const Vec2<U>& other) : xx(other.x()), yy(other.y()) {}
 
   template <class U>
   Vec2& operator=(const Vec2<U>& other)
@@ -133,10 +136,12 @@ public:
   // Vec2-Vec2 math
   //
 
-  Vec2 operator+(const Vec2<V>& rhs) const
+  template <class U>
+  Vec2 operator+(const Vec2<U>& rhs) const
     { return Vec2<V>(xx + rhs.x(), yy + rhs.y()); }
 
-  Vec2 operator-(const Vec2<V>& rhs) const
+  template <class U>
+  Vec2 operator-(const Vec2<U>& rhs) const
     { return Vec2<V>(xx - rhs.x(), yy - rhs.y()); }
 
 
