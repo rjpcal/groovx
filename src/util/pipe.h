@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jan 14 17:33:24 2000
-// written: Wed Sep 25 18:59:41 2002
+// written: Fri Dec  6 15:35:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ public:
     itsFilebuf(file(),std::ios::in|std::ios::out),
     itsStream(&itsFilebuf),
 #else
-    itsStream(&itsFilebuf),
+    itsStream(filedes()),
 #endif
     itsClosed(false),
     itsExitStatus(0)
@@ -47,8 +47,10 @@ public:
         {
 #if defined(PRESTANDARD_IOSTREAMS)
           itsStream.attach(filedes());
-#elif !defined(__GNUC__) || __GNUC__ < 3
-          itsFilebuf.open(filedes());
+#elif defined(__GNUC__) && __GNUC__ >= 3
+          /* nothing */
+#else
+          /* nothing */
 #endif
         }
       else
@@ -68,6 +70,10 @@ public:
         {
 #ifdef PRESTANDARD_IOSTREAMS
           itsStream.close();
+#elif defined(__GNUC__) && __GNUC__ >= 3
+          /* nothing */
+#else
+          itsStream.close();
 #endif
           itsExitStatus = pclose(itsFile);
           itsClosed = true;
@@ -75,7 +81,7 @@ public:
       return itsExitStatus;
     }
 
-  bool isClosed() const { return itsClosed; }
+  bool isClosed() const { return itsClosed || !itsStream.is_open(); }
 
   int exitStatus() const { return itsExitStatus; }
 
@@ -89,9 +95,11 @@ private:
   FILE* itsFile;
 #ifdef PRESTANDARD_IOSTREAMS
   fstream itsStream;
-#else
+#elif defined(__GNUC__) && __GNUC__ >= 3
   std::filebuf itsFilebuf;
   STD_IO::iostream itsStream;
+#else
+  STD_IO::fstream itsStream;
 #endif
   bool itsClosed;
   int itsExitStatus;
