@@ -3,7 +3,7 @@
 // tclpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 12:55:27 1999
-// written: Wed Mar  8 16:09:47 2000
+// written: Wed Mar  8 16:24:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -130,9 +130,14 @@ DOTRACE("TclPkg::~TclPkg");
   delete itsImpl;
 }
 
-int Tcl::TclPkg::initStatus() {
+int Tcl::TclPkg::initStatus() const {
 DOTRACE("Tcl::TclPkg::initStatus");
   return itsImpl->itsInitStatus;
+}
+
+bool Tcl::TclPkg::initedOk() const {
+DOTRACE("Tcl::TclPkg::initedOk");
+  return itsImpl->itsInitStatus == TCL_OK;
 }
 
 Tcl_Interp* Tcl::TclPkg::interp() {

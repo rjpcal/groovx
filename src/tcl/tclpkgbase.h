@@ -3,7 +3,7 @@
 // tclpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 11:50:23 1999
-// written: Wed Mar  8 16:09:05 2000
+// written: Wed Mar  8 16:24:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,6 +67,9 @@ public:
   /** Returns a Tcl status code indicating whether the package
       initialization was successful. */
   int initStatus() const;
+
+  /// Returns true if the package was initialized successfully.
+  bool initedOk() const;
 
   /// Returns the Tcl interpreter that was passed to the constructor.
   Tcl_Interp* interp();
