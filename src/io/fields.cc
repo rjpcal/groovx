@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Wed Aug 15 07:07:44 2001
+// written: Wed Aug 15 11:36:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -191,7 +191,8 @@ FieldMap::FieldMap(const FieldInfo* begin, const FieldInfo* end,
 
 FieldMap::~FieldMap() { delete itsImpl; }
 
-const FieldMap* FieldMap::emptyFieldMap() {
+const FieldMap* FieldMap::emptyFieldMap()
+{
   static const FieldMap* emptyMap = 0;
   if (emptyMap == 0)
     emptyMap = new FieldMap((FieldInfo*)0, (FieldInfo*)0, (FieldMap*)0);
@@ -279,7 +280,9 @@ FieldContainer::FieldContainer(Util::Observable* obs) :
 FieldContainer::~FieldContainer() {}
 
 void FieldContainer::setFieldMap(const FieldMap& fields)
-{ itsFieldMap = &fields; }
+{
+  itsFieldMap = &fields;
+}
 
 shared_ptr<Value> FieldContainer::getField(const fstring& name) const
 {
