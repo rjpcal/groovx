@@ -37,7 +37,6 @@
 #include "io/readattribmap.h"
 #include "io/readobjectmap.h"
 
-#include "util/arrays.h"
 #include "util/cstrstream.h"
 #include "util/error.h"
 #include "util/gzstreambuf.h"
@@ -48,6 +47,7 @@
 #include "util/value.h"
 
 #include <istream>
+#include <vector>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -77,28 +77,17 @@ namespace
 
     static const char STRING_ENDER = '^';
 
-    static fixed_block<char> READ_BUFFER(4096);
+    static std::vector<char> buffer(4096);
+
+    buffer.resize(0);
 
     int brace_level = 0;
-
-    fixed_block<char>::iterator
-      itr = READ_BUFFER.begin(),
-      stop = READ_BUFFER.end();
 
     int ch = 0;
 
     while ( (ch = is.get()) != EOF &&
             !(brace_level == 0 && ch == STRING_ENDER) )
       {
-        if (itr >= stop)
-          {
-            READ_BUFFER[ READ_BUFFER.size() - 1 ] = '\0';
-            throw Util::Error(fstring("AsciiStreamReader exceeded "
-                                      "read buffer capacity\n"
-                                      "buffer contents: \n",
-                                      &(READ_BUFFER[0])));
-          }
-
         // We only substitute in the escape sequence if we are reading at the
         // zero-th brace level; otherwise, we leave the escape sequence in
         // since it will eventually be parsed when the brace-nested object
@@ -107,42 +96,36 @@ namespace
           {
             if (ch == '{') ++brace_level;
             if (ch == '}') --brace_level;
-            *itr++ = char(ch);
+            buffer.push_back(char(ch));
             continue;
           }
         else
           {
-            int ch2 = is.get();
+            const int ch2 = is.get();
+
             if (ch2 == EOF || ch2 == STRING_ENDER)
-              throw Util::Error("missing character after trailing backslash");
+              throw Util::Error("missing character "
+                                "after trailing backslash");
+
             switch (ch2)
               {
-              case '\\':
-                *itr++ = '\\';
-                break;
-              case 'c':
-                *itr++ = '^';
-                break;
-              case '{':
-                *itr++ = '{';
-                break;
-              case '}':
-                *itr++ = '}';
-                break;
+              case '\\': buffer.push_back('\\'); break;
+              case 'c':  buffer.push_back('^');  break;
+              case '{':  buffer.push_back('{');  break;
+              case '}':  buffer.push_back('}');  break;
+
               default:
-                *itr = '\0';
+                buffer.push_back('\0');
                 throw Util::Error
                   (fstring("invalid escape character '", char(ch2),
-                           "' with buffer contents: ", &READ_BUFFER[0]));
+                           "' with buffer contents: ", &buffer[0]));
                 break;
               }
           }
-      }
+      } // while loop
 
-    *itr = '\0';
-
-    return fstring(Util::CharData(READ_BUFFER.begin(),
-                                  itr - READ_BUFFER.begin()));
+    return fstring(Util::CharData(&buffer[0],
+                                  buffer.size()));
   }
 }
 
