@@ -231,6 +231,27 @@ void Face::grRender() const {
 DOTRACE("Face::grRender");
   Invariant(check());
 
+  const bool have_antialiasing = GfxAttribs::usingRgba();
+
+  //
+  // Drawing commands begin here...
+  //
+
+  // Enable antialiasing, if it is available
+  if (have_antialiasing) {
+	 glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_LINE_BIT);
+	 glEnable(GL_BLEND); // blend incoming RGBA values with old RGBA values
+	 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency 
+	 glEnable(GL_LINE_SMOOTH);   // use anti-aliasing 
+  }
+  
+  // Prepare to push and pop modelview matrices.
+  glMatrixMode(GL_MODELVIEW);
+  
+  //
+  // Set up for drawing eyes.
+  //
+
   // Create a quadric obj to use for calling gluDisk(). This disk will
   // be used to render the eyeballs and the pupils.
   GLUquadricObj* qobj = gluNewQuadric();
@@ -244,12 +265,6 @@ DOTRACE("Face::grRender");
   // right position always >= 0.0
   const double left_eye_x = -abs(eyeDistance())/2.0;
   const double right_eye_x = -left_eye_x;
-
-  // Calculate the y positions for the top and bottom of the nose
-  // bottom always <= 0.0
-  // top always >= 0.0
-  const double nose_bottom_y = -abs(noseLength())/2.0;
-  const double nose_top_y = -nose_bottom_y;
 
   // Generate the eyeball scales on the basis of the eye aspect. The
   // eye aspect should range from 0.0 to 1.0 to control the eyeball x
@@ -273,29 +288,6 @@ DOTRACE("Face::grRender");
   const GLdouble pupil_x_scale = pupil_x_scale_abs/eyeball_x_scale;
   const GLdouble pupil_y_scale = pupil_y_scale_abs/eyeball_y_scale;
 
-  // These parameters control the generation of the Bezier curve for
-  // the face outline.
-  static const int num_subdivisions = 30;
-  static const int nctrlsets = 2;
-  const double* const ctrlpnts = getCtrlPnts();
-  
-  const bool have_antialiasing = GfxAttribs::usingRgba();
-
-  //
-  // Drawing commands begin here...
-  //
-
-  // Enable antialiasing, if it is available
-  if (have_antialiasing) {
-	 glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_LINE_BIT);
-	 glEnable(GL_BLEND); // blend incoming RGBA values with old RGBA values
-	 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency 
-	 glEnable(GL_LINE_SMOOTH);   // use anti-aliasing 
-  }
-  
-  // Prepare to push and pop modelview matrices.
-  glMatrixMode(GL_MODELVIEW);
-  
   // Draw left eye.
   glPushMatrix();
   glTranslatef(left_eye_x, eyeHeight(), 0.0); 
@@ -314,7 +306,18 @@ DOTRACE("Face::grRender");
   gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
   glPopMatrix();
   
+  gluDeleteQuadric(qobj);
+
+  //
   // Draw face outline.
+  //
+
+  // These parameters control the generation of the Bezier curve for
+  // the face outline.
+  static const int num_subdivisions = 30;
+  static const int nctrlsets = 2;
+  const double* const ctrlpnts = getCtrlPnts();
+  
   glEnable(GL_MAP1_VERTEX_3);
   for (int i = 0; i < nctrlsets; ++i) {
 	 glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &ctrlpnts[i*12]);
@@ -326,7 +329,16 @@ DOTRACE("Face::grRender");
 	 glEnd();
   }
   
+  //
   // Draw nose and mouth.
+  //
+
+  // Calculate the y positions for the top and bottom of the nose
+  // bottom always <= 0.0
+  // top always >= 0.0
+  const double nose_bottom_y = -abs(noseLength())/2.0;
+  const double nose_top_y = -nose_bottom_y;
+
   glBegin(GL_LINES);
   glVertex2f(theirMouth_x[0], mouthHeight());
   glVertex2f(theirMouth_x[1], mouthHeight());
