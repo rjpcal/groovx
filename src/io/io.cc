@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Sat Mar  4 04:37:43 2000
+// written: Sat Mar  4 17:15:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,9 @@
 
 #include <cctype>
 #include <cstring>
-#include <typeinfo>
+#include <string>
 #include <strstream.h>
+#include <typeinfo>
 #include <vector>
 
 #include "demangle.h"
@@ -79,6 +80,10 @@ DOTRACE("IO::eatWhitespace");
   while ( isspace(is.peek()) )
 	 { is.get(); ++c; }
   return c;
+}
+
+void IO::readTypename(istream& is, const char* correctNames, bool doCheck) {
+  readTypename(is, string(correctNames), doCheck);
 }
 
 void IO::readTypename(istream& is, const string& correctNames, bool doCheck) {
@@ -204,6 +209,31 @@ void IoError::setMsg(const type_info& ti) {
 DOTRACE("IoError::setMsg(const type_info&)");
   ErrorWithMsg::setMsg(demangle(typeid(*this).name()) + ": " +
 							  demangle(ti.name()));
+}
+
+InputError::InputError(const char* str) {
+DOTRACE("InputError::InputError");
+  setMsg(str);
+}
+
+OutputError::OutputError(const char* str) {
+DOTRACE("OutputError::OutputError");
+  setMsg(str);
+}
+
+IoLogicError::IoLogicError(const char* str) {
+DOTRACE("IoLogicError::IoLogicError");
+  setMsg(str);
+}
+
+IoValueError::IoValueError(const char* str) {
+DOTRACE("IoValueError::IoValueError");
+  setMsg(str);
+}
+
+IoFilenameError::IoFilenameError(const char* str) {
+DOTRACE("IoFilenameError::IoFilenameError");
+  setMsg(str);
 }
 
 static const char vcid_io_cc[] = "$Header$";
