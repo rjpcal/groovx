@@ -3,7 +3,7 @@
 // iomap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 24 16:27:13 2000
-// written: Tue Oct 24 17:10:51 2000
+// written: Tue Oct 24 17:32:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -140,7 +140,13 @@ DOTRACE("IO::IoMap::objectExists");
 /// Will return 0 if no object exists for the given UID.
 IO::IoObject* IO::IoMap::getObject(IO::UID uid) const {
 DOTRACE("IO::IoMap::getObject");
-  return objectExists(uid) ? itsImpl->itsMap[uid] : 0;
+
+  if ( !objectExists(uid) )
+	 return 0;
+
+  Postcondition(itsImpl->itsMap[uid] != 0);
+  Invariant(itsImpl->itsMap[uid]->id() == uid);
+  return itsImpl->itsMap[uid];
 }
 
 /// Will throw an exception if no object exists for the given UID.
@@ -150,6 +156,7 @@ DOTRACE("IO::IoMap::getCheckedObject");
 	 throw InvalidUID(uid);
 
   Postcondition(itsImpl->itsMap[uid] != 0);
+  Invariant(itsImpl->itsMap[uid]->id() == uid);
   return itsImpl->itsMap[uid];
 }
 
