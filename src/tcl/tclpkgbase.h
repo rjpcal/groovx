@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 11:50:23 1999
-// written: Wed Apr 17 16:14:56 2002
+// written: Fri Nov 22 16:11:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -157,7 +157,7 @@ private:
   PkgBase& operator=(const PkgBase&);
 
   struct Impl;
-  Impl* itsImpl;
+  Impl* rep;
 };
 
 static const char vcid_tclpkgbase_h[] = "$Header$";
