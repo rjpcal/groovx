@@ -3,7 +3,7 @@
 // hpsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 12 13:03:47 1999
-// written: Thu Oct 14 11:49:08 1999
+// written: Fri Oct 15 11:17:30 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -181,6 +181,8 @@ DOTRACE("HpAudioSound::setFile");
 
 bool Sound::initSound() {
 DOTRACE("Sound::initSound");
+  if (theAudio != 0) return true;
+
   ASetErrorHandler(audioErrorHandler);
   
   bool retVal = false;
