@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Nov 11 17:16:15 1999
+// written: Thu Nov 11 19:30:01 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -245,6 +245,7 @@ DOTRACE("ExptDriver::ExptImpl::updateDoUponCompletionBody");
 	 }
 	 
 	 itsDoUponCompletionBody = Tcl_GetStringResult(itsInterp);
+	 Tcl_ResetResult(itsInterp);
   }
   else {
 	 itsDoUponCompletionBody = "";
