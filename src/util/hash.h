@@ -3,7 +3,7 @@
 // hash.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar 20 08:50:34 2000
-// written: Mon Mar 20 23:46:15 2000
+// written: Mon Mar 20 23:46:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,10 +18,6 @@
 #include <cstddef>
 #define CSTDDEF_DEFINED
 #endif
-
-// #define LOCAL_DEBUG
-// #include "util/debug.h"
-
 
 namespace {
   // Note: assumes long is at least 32 bits.
