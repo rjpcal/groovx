@@ -3,7 +3,7 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Sep  7 14:49:45 1999
+// written: Tue Sep  7 15:03:55 1999
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -76,6 +76,7 @@ PkgName_PkgProc Names_Procs[] = {
   , { "Th",       Th_Init        }
   , { "Tlist",    Tlist_Init     }
   , { "Trial",    Trial_Init     }
+  , { "XBitmap",  Xbitmap_Init   }
 };
 
 class TclApp {
