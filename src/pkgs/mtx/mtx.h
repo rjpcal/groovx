@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Sun Feb 17 17:57:19 2002
+// written: Mon Feb 18 08:11:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -355,6 +355,7 @@ public:
   // Reorders the Slice by applying *this[i] = *this[index[i]]
   void reorder(const Mtx& index);
 
+  void operator*=(double factor) { apply(Mul(factor)); }
   void operator/=(double div) { apply(Div(div)); }
 
   Slice& operator+=(const Slice& other);
