@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Thu May 15 16:43:31 2003
+// written: Thu May 15 17:20:12 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -106,12 +106,22 @@ public:
   {
     char buf[32];
 
-    bool controlPressed = eventPtr->state & ControlMask;
+    const bool controlPressed = eventPtr->state & ControlMask;
+    const bool shiftPressed = eventPtr->state & ShiftMask;
     eventPtr->state &= ~ControlMask;
 
-    int len = XLookupString(eventPtr, &buf[0], 30, 0, 0);
+    const int len = XLookupString(eventPtr, &buf[0], 30, 0, 0);
 
     buf[len] = '\0';
+
+    // This is an escape hatch for top-level frameless windows gone
+    // awry... need to always provide a reliable way to iconify the window
+    // since the title bar and "minimize" button might not exist.
+    if (controlPressed && shiftPressed &&
+        (buf[0] == 'z' || buf[0] == 'Z'))
+      {
+        widg->iconify();
+      }
 
     GWT::KeyPressEvent ev = {&buf[0], eventPtr->x, eventPtr->y, controlPressed};
     widg->sigKeyPressed.emit(ev);
@@ -351,6 +361,15 @@ DOTRACE("Tcl::TkWidget::pack");
       pack_cmd.append( " -side left -expand 1 -fill both; update" );
       rep->interp.eval(pack_cmd);
     }
+}
+
+void Tcl::TkWidget::iconify()
+{
+DOTRACE("Tcl::TkWidget::iconify");
+
+  XIconifyWindow(Tk_Display(rep->tkWin),
+                 Tk_WindowId(rep->tkWin),
+                 Tk_ScreenNumber(rep->tkWin));
 }
 
 void Tcl::TkWidget::bind(const char* event_sequence, const char* script)

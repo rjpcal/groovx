@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Thu May 15 15:10:29 2003
+// written: Thu May 15 17:09:18 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -84,6 +84,8 @@ public:
   double pixelsPerInch() const;
 
   void pack();
+
+  void iconify();
 
   virtual void displayCallback() = 0;
 

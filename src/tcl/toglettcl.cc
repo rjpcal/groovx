@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov  2 08:00:00 1998 (as objtogl.cc)
-// written: Wed Mar 19 17:58:04 2003
+// written: Thu May 15 16:57:52 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -53,13 +53,13 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace TogletTcl
+namespace
 {
   SoftRef<Toglet> theWidget;
 
   void setCurrentTogl(SoftRef<Toglet> toglet)
   {
-    DOTRACE("TogletTcl::setCurrentTogl");
+    DOTRACE("<toglettcl.cc>::setCurrentTogl");
 
     theWidget = toglet;
 
@@ -101,7 +101,7 @@ namespace TogletTcl
 
   bool inited()
   {
-    return TogletTcl::theWidget.isValid();
+    return theWidget.isValid();
   }
 
   // Make a specified GxNode the widget's current drawable, and draw
@@ -113,8 +113,6 @@ namespace TogletTcl
     widg->fullRender();
     return item->id();
   }
-
-  class TogletPkg;
 }
 
 //---------------------------------------------------------------------
@@ -123,7 +121,7 @@ namespace TogletTcl
 //
 //---------------------------------------------------------------------
 
-class TogletTcl::TogletPkg : public Tcl::Pkg
+class TogletPkg : public Tcl::Pkg
 {
 public:
   TogletPkg(Tcl_Interp* interp) :
@@ -132,13 +130,13 @@ public:
     Tcl::defGenericObjCmds<Toglet>(this);
 
     def( "bind", "event_sequence binding_script", &Toglet::bind );
-    def( "currentToglet", "toglet_id", &TogletTcl::setCurrentTogl );
-    def( "currentToglet", 0, &TogletTcl::getCurrentTogl );
+    def( "currentToglet", "toglet_id", &setCurrentTogl );
+    def( "currentToglet", 0, &getCurrentTogl );
     def( "defaultParent", "parent", &Toglet::defaultParent );
-    def( "dumpCmap", "toglet_id start_index end_index", &TogletTcl::dumpCmap );
-    def( "dumpCmap", "toglet_id", &TogletTcl::dumpCmapAll );
-    def( "inited", 0, &TogletTcl::inited );
-    def( "see", "gxnode_id", &TogletTcl::see );
+    def( "dumpCmap", "toglet_id start_index end_index", &dumpCmap );
+    def( "dumpCmap", "toglet_id", &dumpCmapAll );
+    def( "inited", 0, &inited );
+    def( "see", "gxnode_id", &see );
 
     defSetter("allowRefresh", &Toglet::allowRefresh);
     defSetter("animate", "item_id(s) frames_per_second", &Toglet::animate);
@@ -177,9 +175,9 @@ public:
 
   virtual ~TogletPkg()
   {
-    if (TogletTcl::theWidget.isValid())
+    if (theWidget.isValid())
       {
-        TogletTcl::theWidget->setVisibility(false);
+        theWidget->setVisibility(false);
       }
   }
 };
@@ -195,9 +193,11 @@ int Toglet_Init(Tcl_Interp* interp)
 {
 DOTRACE("Toglet_Init");
 
-  Tcl::Pkg* pkg = new TogletTcl::TogletPkg(interp);
+  Tcl::Pkg* pkg = new TogletPkg(interp);
 
   Util::ObjFactory::theOne().registerCreatorFunc( &Toglet::make );
+  Util::ObjFactory::theOne().registerCreatorFunc( &Toglet::makeToplevel,
+                                                  "TopToglet" );
 
   return pkg->initStatus();
 }

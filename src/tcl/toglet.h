@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu May 15 16:14:42 2003
+// written: Thu May 15 16:56:32 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -54,7 +54,7 @@ namespace Util
 class Toglet : public Tcl::TkWidget
 {
 protected:
-  Toglet(bool pack=true);
+  Toglet(bool pack=true, bool topLevel=false);
 
 public:
 
@@ -62,6 +62,11 @@ public:
   /** Note that the object will be "volatile" -- it manages its own
       lifetime. */
   static Toglet* make();
+
+  /// Returns a new top-level Toglet object.
+  /** Note that the object will be "volatile" -- it manages its own
+      lifetime. */
+  static Toglet* makeToplevel();
 
   virtual ~Toglet();
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu May 15 16:48:58 2003
+// written: Thu May 15 16:57:33 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -143,6 +143,14 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
   atts.border_pixel = 0;
   atts.event_mask = ALL_EVENTS_MASK;
 
+  unsigned long valuemask = CWBorderPixel | CWColormap | CWEventMask;
+
+  if (Tk_IsTopLevel(tkwin))
+    {
+      atts.override_redirect = true;
+      valuemask |= CWOverrideRedirect;
+    }
+
   Window win = XCreateWindow(dpy,
                              parent,
                              0, 0,
@@ -150,12 +158,10 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
                              rep->owner->height(),
                              0, depth,
                              InputOutput, visual,
-                             CWBorderPixel | CWColormap | CWEventMask,
+                             valuemask,
                              &atts);
 
-  Tk_ChangeWindowAttributes(tkwin,
-                            CWBorderPixel | CWColormap | CWEventMask,
-                            &atts);
+  Tk_ChangeWindowAttributes(tkwin, valuemask, &atts);
 
   XSelectInput(dpy, win, ALL_EVENTS_MASK);
 
@@ -206,8 +212,8 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-Toglet::Toglet(bool pack) :
-  Tcl::TkWidget(Tcl::Main::interp(), "Toglet", widgetName(id()), false),
+Toglet::Toglet(bool pack, bool topLevel) :
+  Tcl::TkWidget(Tcl::Main::interp(), "Toglet", widgetName(id()), topLevel),
   rep(new Impl(this))
 {
 DOTRACE("Toglet::Toglet");
@@ -244,6 +250,16 @@ DOTRACE("Toglet::make");
   // we'll end up running the RefCounted destructor with refcount != 0,
   // which violates a fundamental invariant of RefCounted.
   p->incrRefCount();
+
+  return p;
+}
+
+Toglet* Toglet::makeToplevel()
+{
+DOTRACE("Toglet::makeToplevel");
+  Toglet* p = new Toglet(true, true);
+
+  p->incrRefCount(); // see note in Toglet::make() above
 
   return p;
 }
