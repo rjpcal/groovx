@@ -31,23 +31,24 @@
 template <class T>
 class ItemWithId {
 private:
-  PtrHandle<T> itsItem;
+  PtrHandle<T> itsHandle;
   const int itsId;
 
 public:
-  ItemWithId(MasterPtr<T>* master, int id_) : itsItem(master), itsId(id_) {}
-  ItemWithId(PtrHandle<T> item_, int id_) : itsItem(item_), itsId(id_) {}
+  ItemWithId(MasterPtr<T>* master, int id_) : itsHandle(master), itsId(id_) {}
+  ItemWithId(PtrHandle<T> item_, int id_) : itsHandle(item_), itsId(id_) {}
 
   // Default destructor, copy constructor, operator=() are fine
 
-        T* operator->()       { return (itsItem.masterPtr()->getPtr()); }
-  const T* operator->() const { return (itsItem.masterPtr()->getPtr()); }
-        T& operator*()        { return *(itsItem.masterPtr()->getPtr()); }
-  const T& operator*()  const { return *(itsItem.masterPtr()->getPtr()); }
+        T* operator->()       { return (itsHandle.masterPtr()->getPtr()); }
+  const T* operator->() const { return (itsHandle.masterPtr()->getPtr()); }
+        T& operator*()        { return *(itsHandle.masterPtr()->getPtr()); }
+  const T& operator*()  const { return *(itsHandle.masterPtr()->getPtr()); }
 
-        T* get()              { return (itsItem.masterPtr()->getPtr()); }
-  const T* get()        const { return (itsItem.masterPtr()->getPtr()); }
+        T* get()              { return (itsHandle.masterPtr()->getPtr()); }
+  const T* get()        const { return (itsHandle.masterPtr()->getPtr()); }
 
+  PtrHandle<T> handle() const { return itsHandle; }
   int id() const { return itsId; }
 };
 
@@ -133,14 +134,23 @@ public:
   void insertAt(int id, MasterPtr<T>* master)
 	 { VoidPtrList::insertVoidPtrAt(id, master); }
 
-  /// Insert \a ptr into the list, and return its id.
+  /// Insert \a handle into the list, and return its id.
   int insert(PtrHandle<T> handle)
 	 { return VoidPtrList::insertVoidPtr(handle.masterPtr()); }
 
-  /** Insert \a ptr into the list at index \a id. An exception will be
+  /** Insert \a handle into the list at index \a id. An exception will be
       thrown if an object already exists at index \a id. */
   void insertAt(int id, PtrHandle<T> handle)
 	 { VoidPtrList::insertVoidPtrAt(id, handle.masterPtr()); }
+
+  /// Insert \a ptr into the list, and return its id.
+  int insert(ItemWithId<T> item)
+	 { return VoidPtrList::insertVoidPtr(item.handle().masterPtr()); }
+
+  /** Insert \a ptr into the list at index \a id. An exception will be
+      thrown if an object already exists at index \a id. */
+  void insertAt(int id, ItemWithId<T> item)
+	 { VoidPtrList::insertVoidPtrAt(id, item.handle().masterPtr()); }
 
 protected:
   /** Reimplemented from \c IoPtrList to include "PtrList<T>" with \c
