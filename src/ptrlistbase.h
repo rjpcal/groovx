@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Fri Oct  6 13:26:07 2000
+// written: Fri Oct  6 16:47:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
 #include "util/error.h"
 #endif
+
+class VoidPtrList;
 
 /**
  *
@@ -31,6 +33,45 @@ public:
   InvalidIdError(const char* msg);
   /// Virtual destructor.
   virtual ~InvalidIdError();
+};
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * MasterVoidPtr
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+class MasterVoidPtr {
+private:
+  VoidPtrList* itsList;
+  void* itsPtr;
+
+  void swap(MasterVoidPtr& other);
+
+protected:
+  virtual void destroy();
+
+public:
+  MasterVoidPtr(VoidPtrList* vpl);
+  MasterVoidPtr(const MasterVoidPtr& other);
+
+  MasterVoidPtr& operator=(const MasterVoidPtr& other);
+
+  virtual ~MasterVoidPtr();
+
+  virtual MasterVoidPtr* clone() const;
+
+  void* ptr() const;
+
+  /// Destroy current pointee, and set pointee to new_address
+  void reset(void* new_address);
+
+  bool isValid() const;
+
+  bool operator==(const void* other)
+  { return itsPtr == other; }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -98,11 +139,13 @@ protected:
 		and throws an \c InvalidIdError if it is not. */
   void* getCheckedVoidPtr(int id) const throw (InvalidIdError);
 
+#if 0
   /** Releases the \c void* at the given index from the management of
-      the \c VoidPtrList. Ownership of the pointed-to object is
-      transferred to the caller, and the \c void* is removed from the
-      \c VoidPtrList. */
+		the \c VoidPtrList. Ownership of the pointed-to object is
+		transferred to the caller, and the \c void* is removed from the
+		\c VoidPtrList. */
   void* releaseVoidPtr(int id) throw (InvalidIdError);
+#endif
 
   /** Add ptr at the next available location, and return the index
 		where it was inserted. If necessary, the list will be expanded
