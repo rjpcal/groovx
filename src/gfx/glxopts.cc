@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sun Aug  4 16:29:23 2002
-// written: Wed Mar 19 17:56:05 2003
+// written: Wed May 14 12:58:04 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -38,6 +38,40 @@
 #include "util/pointers.h"
 
 #include "util/trace.h"
+
+GlxOpts::GlxOpts() :
+#ifndef NO_RGBA
+  rgbaFlag( true ),
+#else
+  rgbaFlag( false ),
+#endif
+  rgbaRed( 1 ),
+  rgbaGreen( 1 ),
+  rgbaBlue( 1 ),
+  alphaFlag( false ),
+  alphaSize( 1 ),
+  colorIndexSize( 8 ),
+#ifndef NO_DOUBLE_BUFFER
+  doubleFlag( true ),
+#else
+  doubleFlag( false ),
+#endif
+  depthFlag( true ),
+  depthSize( 8 ),
+  accumFlag( false ),
+  accumRed( 1 ),
+  accumGreen( 1 ),
+  accumBlue( 1 ),
+  accumAlpha( 1 ),
+  stencilFlag( false ),
+  stencilSize( 1 ),
+  auxNumber( 0 ),
+  indirect( false ),
+  level( 0 ),
+  transparent( false )
+{
+DOTRACE("GlxOpts::GlxOpts");
+}
 
 shared_ptr<GlxAttribs> GlxOpts::buildAttribList()
 {
