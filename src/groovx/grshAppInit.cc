@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// grshAppInit.cc
+// $URL$
 //
 // Copyright (c) 1998-2004
 // Rob Peters <rjpeters at klab dot caltech dot edu>
@@ -402,4 +402,4 @@ DOTRACE("main");
   return 1;
 }
 
-static const char vcid_grshAppInit_cc[] = "$Header$";
+static const char vcid_grshAppInit_cc[] = "$URL$ $Id$";
