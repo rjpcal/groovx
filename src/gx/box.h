@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Jul  3 15:03:23 2002
-// written: Sat Mar 29 12:50:40 2003
+// written: Tue May 13 09:57:59 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -59,7 +59,7 @@ public:
   Rect<V> rect() const
   {
     Rect<V> result;
-    result.setRectLRBT(xx0, xx1, yy0, yy1);
+    result.setLRBT(xx0, xx1, yy0, yy1);
     return result;
   }
 
