@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Wed May 23 18:50:42 2001
+// written: Wed Jun  6 09:52:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -175,6 +175,34 @@ public:
   static NextNodeEvent* make() { return new NextNodeEvent; }
   /// Virtual destructor.
   virtual ~NextNodeEvent();
+protected:
+  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
+};
+
+/// TrialEvent subclass to call TrialBase::trAllowResponses().
+class AllowResponsesEvent : public TrialEvent {
+protected:
+  /// Construct with a requested delay of \a msec milliseconds.
+  AllowResponsesEvent(int msec = 0);
+public:
+  /// Default creator.
+  static AllowResponsesEvent* make() { return new AllowResponsesEvent; }
+  /// Virtual destructor.
+  virtual ~AllowResponsesEvent();
+protected:
+  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
+};
+
+/// TrialEvent subclass to call TrialBase::trDenyResponses().
+class DenyResponsesEvent : public TrialEvent {
+protected:
+  /// Construct with a requested delay of \a msec milliseconds.
+  DenyResponsesEvent(int msec = 0);
+public:
+  /// Default creator.
+  static DenyResponsesEvent* make() { return new DenyResponsesEvent; }
+  /// Virtual destructor.
+  virtual ~DenyResponsesEvent();
 protected:
   virtual void invoke(GWT::Widget& widget, TrialBase& trial);
 };

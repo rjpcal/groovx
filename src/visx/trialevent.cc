@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Thu May 24 17:15:25 2001
+// written: Wed Jun  6 09:54:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -246,6 +246,24 @@ NextNodeEvent::~NextNodeEvent() {}
 void NextNodeEvent::invoke(GWT::Widget&, TrialBase& trial) {
 DOTRACE("NextNodeEvent::invoke");
   trial.trNextNode();
+}
+
+AllowResponsesEvent::AllowResponsesEvent(int msec) : TrialEvent(msec) {}
+
+AllowResponsesEvent::~AllowResponsesEvent() {}
+
+void AllowResponsesEvent::invoke(GWT::Widget&, TrialBase& trial) {
+DOTRACE("AllowResponsesEvent::invoke");
+  trial.trAllowResponses();
+}
+
+DenyResponsesEvent::DenyResponsesEvent(int msec) : TrialEvent(msec) {}
+
+DenyResponsesEvent::~DenyResponsesEvent() {}
+
+void DenyResponsesEvent::invoke(GWT::Widget&, TrialBase& trial) {
+DOTRACE("DenyResponsesEvent::invoke");
+  trial.trDenyResponses();
 }
 
 UndrawEvent::UndrawEvent(int msec) : TrialEvent(msec) {}
