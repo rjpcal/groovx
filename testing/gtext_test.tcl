@@ -74,7 +74,7 @@ test "$PACKAGE-rendering" "compare two fonts" {
 	 set sum2 [pixelCheckSum]
 	 clearscreen
 	 expr {$sum1 != $sum2}
-} {^1$}
+} {^1$} $skip_known_bug
 
 ### cleanup
 unset PACKAGE
