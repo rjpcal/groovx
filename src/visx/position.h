@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:14 1999
-// written: Tue Nov 28 18:54:40 2000
+// written: Tue Nov 28 19:09:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,10 +70,17 @@ public:
 		parameters x, y, and z. */
   void getTranslate(double &x, double &y, double &z) const;
 
+protected:
+  const Vec3<double>& translation() const;
+  const Vec3<double>& scaling() const;
+  const Vec3<double>& rotationAxis() const;
+  double rotationAngle() const;
+
   //////////////////
   // manipulators //
   //////////////////
 
+public:
   /**  Set the angle of rotation to 'a' degrees. */
   void setAngle(double a);
 
@@ -91,12 +98,6 @@ public:
   /////////////
   // actions //
   /////////////
-
-protected:
-  const Vec3<double>& translation() const;
-  const Vec3<double>& scaling() const;
-  const Vec3<double>& rotationAxis() const;
-  double rotationAngle() const;
 
 public:
   /// Translate, scale, and rotate.
