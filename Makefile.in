@@ -303,8 +303,8 @@ TAGS: $(ALL_SRCS)
 	find $(SRC) -name \*.h -or -name \*.cc | etags - -o $@
 
 DISTNAME := $(PACKAGE_TARNAME)_$(shell date +%Y%m%d)
-CVS_ROOT := $(shell cat ./CVS/Root)
-CVS_REPO := $(shell cat ./CVS/Repository)
+CVS_ROOT := $(shell test -e ./CVS/Root && cat ./CVS/Root)
+CVS_REPO := $(shell test -e ./CVS/Root && cat ./CVS/Repository)
 
 export:
 	echo $(DISTNAME)
@@ -314,3 +314,7 @@ export:
 	  && rm -r $(DISTNAME)/logs/* \
 	  && (cd $(DISTNAME) && autoconf) \
 	  && tar cvfz $(DISTNAME).tar.gz $(DISTNAME)
+
+www_export: export
+	cp snapshots/$(DISTNAME).tar.gz $(HOME)/www/code/
+	chmod og+r $(HOME)/www/code/$(DISTNAME).tar.gz
