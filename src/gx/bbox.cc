@@ -37,7 +37,7 @@
 #include "gx/box.h"
 #include "gx/txform.h"
 
-#include "util/minivec.h"
+#include <vector>
 
 #include "util/debug.h"
 DBG_REGISTER;
@@ -50,7 +50,7 @@ struct Gfx::Bbox::Impl
 
   Canvas& canvas;
   Box<double> cube;
-  minivec<Txform> txforms;
+  std::vector<Txform> txforms;
   bool first;
 
   void merge(const Vec3d& v)
