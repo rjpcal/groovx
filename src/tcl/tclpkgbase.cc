@@ -3,7 +3,7 @@
 // tclpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 12:55:27 1999
-// written: Wed Dec 15 15:15:06 1999
+// written: Sat Dec 18 18:54:42 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,14 +29,14 @@
 #include "debug.h"
 
 namespace {
-  void exitHandler(ClientData clientData);
-}
 
 void exitHandler(ClientData clientData) {
 DOTRACE("exitHandler");
   Tcl::TclPkg* pkg = static_cast<Tcl::TclPkg*>(clientData);
   delete pkg;
 }
+
+} // end unnamed namespace
 
 struct Tcl::TclPkg::Impl {
   Impl(Tcl_Interp* interp, const char* name, const char* version);
