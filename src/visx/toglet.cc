@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Sep 15 19:05:16 1999
+// written: Tue Oct 12 10:09:13 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,9 +17,15 @@
 #include <tk.h>
 #include <togl.h>
 #include <cmath>
-#include <limits>
 #include <string>
 #include <strstream.h>
+
+#ifndef GCC_COMPILER
+#  include <limits>
+#else
+#  include <climits>
+#  define NO_CPP_LIMITS
+#endif
 
 #include "error.h"
 #include "gfxattribs.h"
@@ -209,9 +215,15 @@ DOTRACE("ToglConfig::queryColor");
   XQueryColor(display, cmap, &col);
 
   color.pixel = (unsigned int)col.pixel;
+#ifndef NO_CPP_LIMITS
   color.red   = double(col.red)   / numeric_limits<unsigned short>::max();
   color.green = double(col.green) / numeric_limits<unsigned short>::max();
   color.blue  = double(col.blue)  / numeric_limits<unsigned short>::max();
+#else
+  color.red   = double(col.red)   / USHRT_MAX;
+  color.green = double(col.green) / USHRT_MAX;
+  color.blue  = double(col.blue)  / USHRT_MAX;
+#endif
 }
 
 bool ToglConfig::usingFixedScale() const {
