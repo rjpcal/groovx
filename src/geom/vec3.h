@@ -56,8 +56,8 @@ namespace geom
     explicit vec3(const V* arr) { set(arr[0], arr[1], arr[2]); }
 
     template <class U>
-    vec3(const vec3<U>& other)
-    { set(other.x(), other.y(), other.z()); }
+    explicit vec3(const vec3<U>& other)
+    { set(V(other.x()), V(other.y()), V(other.z())); }
 
     static vec3<V> unit_x() { return vec3<V>(1.0, 0.0, 0.0); }
     static vec3<V> unit_y() { return vec3<V>(0.0, 1.0, 0.0); }
