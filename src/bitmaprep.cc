@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri Aug 10 11:05:57 2001
+// written: Fri Aug 10 12:19:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ public:
     itsContrastFlip(false),
     itsVerticalFlip(false),
     itsData()
-    {}
+  {}
 
   const Point<double>& getZoom() const
   {
@@ -153,14 +153,12 @@ BitmapRep::BitmapRep(shared_ptr<BmapRenderer> renderer) :
   itsImpl(new Impl(renderer))
 {
 DOTRACE("BitmapRep::BitmapRep");
-  init();
 }
 
 BitmapRep::BitmapRep(shared_ptr<BmapRenderer> renderer, const char* filename) :
   itsImpl(new Impl(renderer, filename))
 {
 DOTRACE("BitmapRep::BitmapRep");
-  init();
   loadPbmFile(filename);
 }
 
@@ -168,18 +166,6 @@ BitmapRep::~BitmapRep()
 {
 DOTRACE("BitmapRep::~BitmapRep");
   delete itsImpl;
-}
-
-void BitmapRep::init()
-{
-DOTRACE("BitmapRep::init");
-  itsImpl->itsRasterPos.set(0.0, 0.0);
-  itsImpl->itsZoom.set(1.0, 1.0);
-  itsImpl->itsUsingZoom = false;
-  itsImpl->itsContrastFlip = false;
-  itsImpl->itsVerticalFlip = false;
-
-  itsImpl->itsData.clear();
 }
 
 void BitmapRep::readFrom(IO::Reader* reader)
@@ -197,7 +183,8 @@ DOTRACE("BitmapRep::readFrom");
 
   if ( itsImpl->itsFilename.empty() )
     {
-      clearBytes();
+      itsImpl->itsData.clear();
+      itsImpl->itsRenderer->notifyBytesChanged();
     }
   else
     {
@@ -255,20 +242,16 @@ DOTRACE("BitmapRep::savePbmFile");
 void BitmapRep::grabScreenRect(const Rect<int>& rect)
 {
 DOTRACE("BitmapRep::grabScreenRect");
-  DebugEval(rect.left()); DebugEval(rect.right());
-  DebugEval(rect.bottom()); DebugEval(rect.top());
+
+  Gfx::Canvas& canvas = Application::theApp().getCanvas();
+
+  canvas.grabPixels(rect, itsImpl->itsData);
 
   itsImpl->itsFilename = "";
 
-  init();
-
-  Gfx::BmapData newData( rect.extent().abs(), 1, 1 );
-
-  glPixelStorei(GL_PACK_ALIGNMENT, 1);
-  glReadPixels(rect.left(), rect.bottom(), newData.width(), newData.height(),
-               GL_COLOR_INDEX, GL_BITMAP, newData.bytesPtr());
-
-  itsImpl->itsData.swap( newData );
+  itsImpl->itsContrastFlip = false;
+  itsImpl->itsVerticalFlip = false;
+  itsImpl->itsZoom = defaultZoom;
 
   itsImpl->itsRenderer->notifyBytesChanged();
 }
@@ -386,13 +369,6 @@ void BitmapRep::setUsingZoom(bool val)
 {
 DOTRACE("BitmapRep::setUsingZoom");
   itsImpl->itsUsingZoom = val;
-}
-
-void BitmapRep::clearBytes()
-{
-DOTRACE("BitmapRep::clearBytes");
-  itsImpl->itsData.clear();
-  itsImpl->itsRenderer->notifyBytesChanged();
 }
 
 static const char vcid_bitmaprep_cc[] = "$Header$";
