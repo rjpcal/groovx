@@ -39,7 +39,6 @@
 #include "util/arrays.h"
 #include "util/error.h"
 #include "util/rand.h"
-#include "util/randutils.h"
 
 #include "util/trace.h"
 #include "util/debug.h"

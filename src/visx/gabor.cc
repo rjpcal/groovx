@@ -46,7 +46,7 @@
 #include "io/writer.h"
 
 #include "util/algo.h"
-#include "util/randutils.h"
+#include "util/rand.h"
 
 #include <cmath>
 

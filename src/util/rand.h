@@ -33,9 +33,17 @@
 #ifndef RAND_H_DEFINED
 #define RAND_H_DEFINED
 
+#include <cstdlib> // for rand()
+
 namespace Util
 {
   class Urand;
+
+  template <class T>
+  inline T randRange(const T& min, const T& max)
+  {
+    return T( (double(rand()) / (double(RAND_MAX)+1.0)) * (max-min) + min );
+  }
 }
 
 /// Uniform random distribution
