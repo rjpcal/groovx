@@ -3,7 +3,7 @@
 // reader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:47:00 1999
-// written: Sat Sep 23 16:32:15 2000
+// written: Mon Oct  2 18:10:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,11 +73,6 @@ void IO::Reader::readValue<dynamic_string>(const char* name,
   char* temp = readCstring(name);
   return_value = temp;
   delete [] temp;
-}
-
-template <>
-void IO::Reader::readValue<const char*>(const char* name, const char*& return_value) {
-  return_value = readCstring(name);
 }
 
 template <>
