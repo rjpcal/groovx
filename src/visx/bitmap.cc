@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Mon Jan 21 13:09:24 2002
+// written: Mon Jan 21 14:33:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -144,7 +144,7 @@ public:
 
   void purge()
   {
-    if (!itsFilename.empty())
+    if (!itsFilename.is_empty())
       {
         // NOTE: it's important that this functionality be separate from
         // Bitmap's own version of queuePbmFile(), since that function
@@ -205,7 +205,7 @@ DOTRACE("Bitmap::readFrom");
   if (svid > 2)
     reader->readValue("purgeable", itsImpl->itsPurgeable);
 
-  if ( itsImpl->itsFilename.empty() )
+  if ( itsImpl->itsFilename.is_empty() )
     {
       itsImpl->itsData.clear();
     }

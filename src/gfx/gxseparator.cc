@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Fri Jan 18 16:07:07 2002
+// written: Mon Jan 21 14:29:08 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -232,7 +232,7 @@ public:
     return new GxSepIter(*this);
   }
 
-  virtual bool     atEnd()  const { return itsNodes.empty(); }
+  virtual bool     atEnd()  const { return itsNodes.is_empty(); }
   virtual ValType&   get()  const { return itsNodes.front(); }
   virtual void      next()        { if (!atEnd()) itsNodes.pop_front(); }
 

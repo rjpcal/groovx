@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 24 18:13:53 2001
-// written: Fri Jan 18 16:06:53 2002
+// written: Mon Jan 21 14:35:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,7 +84,7 @@ DOTRACE("EsdSound::readFrom");
 
   DebugEval(itsFilename.length()); DebugEvalNL(itsFilename);
 
-  if (!itsFilename.empty())
+  if (!itsFilename.is_empty())
     setFile(itsFilename.c_str());
 }
 
@@ -99,7 +99,7 @@ void EsdSound::play()
 {
 DOTRACE("EsdSound::play");
 
-  if (!itsFilename.empty())
+  if (!itsFilename.is_empty())
     {
       int res = esd_play_file("", itsFilename.c_str(), 0);
       if (res == 0)

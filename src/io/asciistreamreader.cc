@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Fri Jan 18 16:07:07 2002
+// written: Mon Jan 21 14:32:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -203,7 +203,7 @@ private:
   // Helper functions
   AttribMap& currentAttribs()
     {
-      if ( itsAttribs.empty() )
+      if ( itsAttribs.is_empty() )
         throw IO::ReadError("attempted to read attribute "
                             "when no attribute map was active");
       return *(itsAttribs.front());

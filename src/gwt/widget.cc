@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Fri Jan 18 16:07:07 2002
+// written: Mon Jan 21 14:30:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -243,12 +243,12 @@ void GWT::Widget::addKeyListener(Util::Ref<GWT::KeyListener> k)
 
 bool GWT::Widget::hasButtonListeners() const
 {
-  return !(itsImpl->itsButtonListeners.empty());
+  return !(itsImpl->itsButtonListeners.is_empty());
 }
 
 bool GWT::Widget::hasKeyListeners() const
 {
-  return !(itsImpl->itsKeyListeners.empty());
+  return !(itsImpl->itsKeyListeners.is_empty());
 }
 
 

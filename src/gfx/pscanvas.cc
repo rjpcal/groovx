@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:20:09 2001
-// written: Fri Jan 18 16:07:07 2002
+// written: Mon Jan 21 14:29:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -251,13 +251,13 @@ public:
 
       ps->moveto(*itr); ++itr;
 
-      while (!itsPts1.empty())
+      while (!itsPts1.is_empty())
         {
           ps->lineto(itsPts1.front());
           itsPts1.pop_front();
         }
 
-      while (!itsPts2.empty())
+      while (!itsPts2.is_empty())
         {
           ps->lineto(itsPts2.front());
           itsPts2.pop_front();

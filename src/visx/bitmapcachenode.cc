@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Mon Jan 21 11:56:19 2002
+// written: Mon Jan 21 14:32:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ DOTRACE("BitmapCacheNode::recacheBitmap");
 
   Assert(itsBmapRenderer.get() != 0);
 
-  if ( !itsCacheFilename.empty() )
+  if ( !itsCacheFilename.is_empty() )
     {
       itsBmapData.reset(new Gfx::BmapData());
       Pbm::load(fullCacheFilename().c_str(), *itsBmapData);

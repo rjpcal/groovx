@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Fri Jan 18 16:07:02 2002
+// written: Mon Jan 21 14:33:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -256,7 +256,7 @@ DOTRACE("ExptDriver::Impl::needAutosave");
 
   return ( (itsAutosavePeriod > 0) &&
            ((currentBlock()->numCompleted() % itsAutosavePeriod) == 0) &&
-           !(itsAutosaveFile.empty()) );
+           !(itsAutosaveFile.is_empty()) );
 }
 
 void ExptDriver::Impl::doUponCompletion() const
