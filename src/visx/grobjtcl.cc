@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Wed Jul 18 17:13:24 2001
+// written: Thu Aug  9 11:40:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,6 +42,7 @@ namespace Tcl
       listObj.append(rect.top());
       listObj.append(rect.right());
       listObj.append(rect.bottom());
+      return listObj.asObj();
     }
   };
 }
