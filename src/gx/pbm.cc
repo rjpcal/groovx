@@ -3,7 +3,7 @@
 // pbm.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:07 1999
-// written: Thu Mar 23 12:31:50 2000
+// written: Thu Mar 23 12:46:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,9 +22,8 @@
 #include <fstream.h>
 #include <cctype>
 
-#define LOCAL_TRACE
+#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_DEBUG
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
