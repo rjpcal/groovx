@@ -3,18 +3,13 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Mon Dec  6 20:05:17 1999
+// written: Tue Mar  7 10:42:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TRIAL_H_DEFINED
 #define TRIAL_H_DEFINED
-
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
-#endif
 
 #ifndef IO_H_DEFINED
 #include "io.h"
@@ -38,7 +33,7 @@ class Canvas;
 
 class TrialError : public ErrorWithMsg {
 public:
-  TrialError(const string& msg="") : ErrorWithMsg(msg) {}
+  TrialError(const char* msg) : ErrorWithMsg(msg) {}
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -85,7 +80,6 @@ public:
 	 int objid;
 	 int posid;
   };
-  typedef vector<IdPair> ObjGrp;
 
   //////////////
   // creators //
@@ -120,16 +114,18 @@ public:
   int getResponseHandler() const;
   int getTimingHdlr() const;
 
-  const ObjGrp& objs() const { return itsIdPairs; }
+  typedef const IdPair* IdPairItr;
+  IdPairItr beginIdPairs() const;
+  IdPairItr endIdPairs() const;
 
   // returns some info about relationship between objects in trial
-  int trialType() const { return itsType; } 
+  int trialType() const;
 
   const char* description() const;
 
-  int lastResponse() const { return itsResponses.back().val(); }
+  int lastResponse() const;
 
-  int numResponses() const { return itsResponses.size(); }
+  int numResponses() const;
 
   double avgResponse() const;
   double avgRespTime() const;
@@ -138,20 +134,16 @@ public:
   // manipulators //
   //////////////////
 
-  void add(int objid, int posid) {
-	 itsIdPairs.push_back(IdPair(objid, posid));
-  }
+  void add(int objid, int posid);
 
   void clearObjs();
 
-  void setType(int t) { itsType = t; }
+  void setType(int t);
 
   void setResponseHandler(int rhid);
   void setTimingHdlr(int thid);
 
-  void recordResponse(int val, int msec) { 
-	 itsResponses.push_back(Response(val, msec));
-  }
+  void recordResponse(int val, int msec);
 
   void undoLastResponse();
 
@@ -165,11 +157,8 @@ public:
   void trUndraw(Canvas& canvas, bool flush) const;
 
 private:
-  ObjGrp itsIdPairs;
-  vector<Response> itsResponses;
-  int itsType;
-  int itsRhId;
-  int itsThId;
+  class Impl;
+  Impl* const itsImpl;
 };
 
 static const char vcid_trial_h[] = "$Id$";

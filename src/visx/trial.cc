@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Sat Mar  4 16:33:03 2000
+// written: Tue Mar  7 10:43:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,12 +20,13 @@
 #include "position.h"
 #include "reader.h"
 #include "readutils.h"
+#include "util/strings.h"
 #include "writer.h"
 #include "writeutils.h"
 
 #include <iostream.h>
 #include <strstream.h>
-#include <cstring>
+#include <vector>
 
 #define NO_TRACE
 #include "trace.h"
@@ -39,8 +40,28 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const char* ioTag = "Trial";
+  const string_literal ioTag = "Trial";
 }
+
+///////////////////////////////////////////////////////////////////////
+//
+// Trial::Impl class definition
+//
+///////////////////////////////////////////////////////////////////////
+
+class Trial::Impl {
+public:
+  Impl() :
+	 itsIdPairs(), itsResponses(), itsType(-1),
+	 itsRhId(0), itsThId(0)
+	 {}
+
+  vector<IdPair> itsIdPairs;
+  vector<Response> itsResponses;
+  int itsType;
+  int itsRhId;
+  int itsThId;
+};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -115,15 +136,13 @@ DOTRACE("Trial::IdPair::scanFrom");
 //////////////
 
 Trial::Trial() : 
-  itsIdPairs(), itsResponses(), itsType(-1),
-  itsRhId(0), itsThId(0)
+  itsImpl( new Impl )
 {
 DOTRACE("Trial::Trial()");
 }
 
 Trial::Trial(istream &is, IOFlag flag) :
-  itsIdPairs(), itsResponses(), itsType(-1),
-  itsRhId(0), itsThId(0)
+  itsImpl( new Impl )
 {
 DOTRACE("Trial::Trial(istream&, IOFlag)");
   deserialize(is, flag);
@@ -131,6 +150,7 @@ DOTRACE("Trial::Trial(istream&, IOFlag)");
 
 Trial::~Trial() {
 DOTRACE("Trial::~Trial");
+  delete itsImpl;
 }
 
 void Trial::serialize(ostream &os, IOFlag flag) const {
@@ -140,40 +160,40 @@ DOTRACE("Trial::serialize");
   char sep = ' ';
   if (flag & TYPENAME) { os << ioTag << sep; }
 
-  // itsIdPairs
-  os << itsIdPairs.size() << sep;
-  for (ObjGrp::const_iterator ii = itsIdPairs.begin(); 
-       ii != itsIdPairs.end(); 
+  // itsImpl->itsIdPairs
+  os << itsImpl->itsIdPairs.size() << sep;
+  for (vector<IdPair>::const_iterator ii = itsImpl->itsIdPairs.begin(); 
+       ii != itsImpl->itsIdPairs.end(); 
        ++ii) {
     os << ii->objid << sep << ii->posid << sep << sep;
   }
-  // itsResponses
-  os << itsResponses.size() << sep << sep;
-  for (size_t i = 0; i < itsResponses.size(); ++i) {
-	 os << itsResponses[i].val() << sep << itsResponses[i].msec() << sep;
+  // itsImpl->itsResponses
+  os << itsImpl->itsResponses.size() << sep << sep;
+  for (size_t i = 0; i < itsImpl->itsResponses.size(); ++i) {
+	 os << itsImpl->itsResponses[i].val() << sep << itsImpl->itsResponses[i].msec() << sep;
   }
-  // itsType
-  os << itsType << sep;
+  // itsImpl->itsType
+  os << itsImpl->itsType << sep;
 
-  // itsRhId
-  os << itsRhId << sep;
-  // itsThId
-  os << itsThId << endl;
+  // itsImpl->itsRhId
+  os << itsImpl->itsRhId << sep;
+  // itsImpl->itsThId
+  os << itsImpl->itsThId << endl;
 
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw OutputError(ioTag.c_str());
 }
 
 void Trial::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Trial::deserialize");
   if (flag & BASES) { /* there are no bases to deserialize */ }
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
   
-  // itsIdPairs
-  itsIdPairs.clear();
+  // itsImpl->itsIdPairs
+  itsImpl->itsIdPairs.clear();
   int size;
   is >> size;
   if (size < 0) {
-	 throw IoValueError(ioTag);
+	 throw IoValueError(ioTag.c_str());
   }
   int objid;
   int posid;
@@ -181,74 +201,74 @@ DOTRACE("Trial::deserialize");
     is >> objid >> posid;
 	 if ( !ObjList::theObjList().isValidId(objid) ||
 			!PosList::thePosList().isValidId(posid) ) {
-		throw IoValueError(ioTag);
+		throw IoValueError(ioTag.c_str());
 	 }
     add(objid, posid);
   }
-  // itsResponses
+  // itsImpl->itsResponses
   int resp_size;
   is >> resp_size;
-  itsResponses.resize(resp_size);
+  itsImpl->itsResponses.resize(resp_size);
   for (int j = 0; j < resp_size; ++j) {
-	 is >> itsResponses[j].val() >> itsResponses[j].msec();
+	 is >> itsImpl->itsResponses[j].val() >> itsImpl->itsResponses[j].msec();
   }
-  // itsType
-  is >> itsType;
+  // itsImpl->itsType
+  is >> itsImpl->itsType;
 
-  // itsRhId
-  is >> itsRhId; DebugEvalNL(itsRhId);
-  // itsThId
-  is >> itsThId; DebugEvalNL(itsThId);
+  // itsImpl->itsRhId
+  is >> itsImpl->itsRhId; DebugEvalNL(itsImpl->itsRhId);
+  // itsImpl->itsThId
+  is >> itsImpl->itsThId; DebugEvalNL(itsImpl->itsThId);
 
-  if (is.fail()) { throw InputError(ioTag); }
+  if (is.fail()) { throw InputError(ioTag.c_str()); }
 }
 
 int Trial::charCount() const {
-  int count = (strlen(ioTag) + 1
-					+ gCharCount<int>(itsIdPairs.size()) + 1);
-  for (ObjGrp::const_iterator ii = itsIdPairs.begin(); 
-       ii != itsIdPairs.end(); 
+  int count = (ioTag.length() + 1
+					+ gCharCount<int>(itsImpl->itsIdPairs.size()) + 1);
+  for (vector<IdPair>::const_iterator ii = itsImpl->itsIdPairs.begin(); 
+       ii != itsImpl->itsIdPairs.end(); 
        ++ii) {
 	 count += (gCharCount<int>(ii->objid) + 1
 				  + gCharCount<int>(ii->posid) + 2);
   }
-  count += (gCharCount<int>(itsResponses.size()) + 2);
-  for (size_t i = 0; i < itsResponses.size(); ++i) {
-	 count += (gCharCount<int>(itsResponses[i].val()) + 1
-				  + gCharCount<int>(itsResponses[i].msec()) + 2);
+  count += (gCharCount<int>(itsImpl->itsResponses.size()) + 2);
+  for (size_t i = 0; i < itsImpl->itsResponses.size(); ++i) {
+	 count += (gCharCount<int>(itsImpl->itsResponses[i].val()) + 1
+				  + gCharCount<int>(itsImpl->itsResponses[i].msec()) + 2);
   }
   count += 
-	 gCharCount<int>(itsType) + 1
-	 + gCharCount<int>(itsRhId) + 1
-	 + gCharCount<int>(itsThId) + 1;
+	 gCharCount<int>(itsImpl->itsType) + 1
+	 + gCharCount<int>(itsImpl->itsRhId) + 1
+	 + gCharCount<int>(itsImpl->itsThId) + 1;
   return (count + 1);// fudge factor (1)
 }					
 
 void Trial::readFrom(Reader* reader) {
 DOTRACE("Trial::readFrom");
-  reader->readValue("type", itsType);
-  reader->readValue("rhId", itsRhId);
-  reader->readValue("thId", itsThId);
+  reader->readValue("type", itsImpl->itsType);
+  reader->readValue("rhId", itsImpl->itsRhId);
+  reader->readValue("thId", itsImpl->itsThId);
 
-  itsResponses.clear();
+  itsImpl->itsResponses.clear();
   ReadUtils::readValueObjSeq(reader, "responses",
-									  back_inserter(itsResponses), (Response*) 0);
+									  back_inserter(itsImpl->itsResponses), (Response*) 0);
 
-  itsIdPairs.clear();
+  itsImpl->itsIdPairs.clear();
   ReadUtils::readValueObjSeq(reader, "idPairs",
-									  back_inserter(itsIdPairs), (IdPair*) 0);
+									  back_inserter(itsImpl->itsIdPairs), (IdPair*) 0);
 }
 
 void Trial::writeTo(Writer* writer) const {
 DOTRACE("Trial::writeTo");
-  writer->writeValue("type", itsType);
-  writer->writeValue("rhId", itsRhId);
-  writer->writeValue("thId", itsThId);
+  writer->writeValue("type", itsImpl->itsType);
+  writer->writeValue("rhId", itsImpl->itsRhId);
+  writer->writeValue("thId", itsImpl->itsThId);
 
   WriteUtils::writeValueObjSeq(writer, "responses",
-										 itsResponses.begin(), itsResponses.end());
+										 itsImpl->itsResponses.begin(), itsImpl->itsResponses.end());
   WriteUtils::writeValueObjSeq(writer, "idPairs",
-										 itsIdPairs.begin(), itsIdPairs.end());
+										 itsImpl->itsIdPairs.begin(), itsImpl->itsIdPairs.end());
 }
 
 int Trial::readFromObjidsOnly(istream &is, int offset) {
@@ -258,7 +278,7 @@ DOTRACE("Trial::readFromObjidsOnly");
   if (offset == 0) {
     while (is >> objid) {
 		if ( objid < 0) {
-		  throw IoValueError(ioTag);
+		  throw IoValueError(ioTag.c_str());
 		}
       add(objid, posid);
       ++posid;
@@ -267,7 +287,7 @@ DOTRACE("Trial::readFromObjidsOnly");
   else { // offset != 0
     while (is >> objid) {
 		if ( (objid+offset) < 0 ) {
-		  throw IoValueError(ioTag);
+		  throw IoValueError(ioTag.c_str());
 		}
       add(objid+offset, posid);
       ++posid;
@@ -278,7 +298,7 @@ DOTRACE("Trial::readFromObjidsOnly");
   // istrstream's seem to always fail at eof, even if nothing went
   // wrong, we must only throw the exception if we have fail'ed with
   // out reaching eof. This should catch most mistakes.
-  if (is.fail() && !is.eof()) throw InputError(ioTag);
+  if (is.fail() && !is.eof()) throw InputError(ioTag.c_str());
 
   // return the number of objid's read
   return posid;
@@ -290,15 +310,30 @@ DOTRACE("Trial::readFromObjidsOnly");
 
 int Trial::getResponseHandler() const {
 DOTRACE("Trial::getResponseHandler");
-  DebugEvalNL(itsRhId);
-  return itsRhId;
+  DebugEvalNL(itsImpl->itsRhId);
+  return itsImpl->itsRhId;
 }
 
 int Trial::getTimingHdlr() const {
 DOTRACE("Trial::getTimingHdlr");
-  DebugEvalNL(itsThId);
-  return itsThId;
+  DebugEvalNL(itsImpl->itsThId);
+  return itsImpl->itsThId;
 }
+
+Trial::IdPairItr Trial::beginIdPairs() const {
+DOTRACE("Trial::beginIdPairs");
+  return &itsImpl->itsIdPairs[0];
+}
+
+Trial::IdPairItr Trial::endIdPairs() const {
+DOTRACE("Trial::endIdPairs");
+  return beginIdPairs() + itsImpl->itsIdPairs.size();
+}
+
+int Trial::trialType() const {
+DOTRACE("Trial::trialType");
+  return itsImpl->itsType;
+} 
 
 const char* Trial::description() const {
 DOTRACE("Trial::description");
@@ -309,14 +344,14 @@ DOTRACE("Trial::description");
   
   ost << "trial type == " << trialType()
       << ", objs ==";
-  for (size_t i = 0; i < itsIdPairs.size(); ++i) {
-    ost << " " << itsIdPairs[i].objid;
+  for (size_t i = 0; i < itsImpl->itsIdPairs.size(); ++i) {
+    ost << " " << itsImpl->itsIdPairs[i].objid;
   }
   ost << ", categories ==";
-  for (size_t j = 0; j < itsIdPairs.size(); ++j) {
-    DebugEvalNL(itsIdPairs[j].objid);
+  for (size_t j = 0; j < itsImpl->itsIdPairs.size(); ++j) {
+    DebugEvalNL(itsImpl->itsIdPairs[j].objid);
 
-    ObjList::Ptr obj = ObjList::theObjList().getCheckedPtr(itsIdPairs[j].objid);
+    ObjList::Ptr obj = ObjList::theObjList().getCheckedPtr(itsImpl->itsIdPairs[j].objid);
     Assert(obj != 0);
 
     ost << " " << obj->getCategory();
@@ -326,53 +361,78 @@ DOTRACE("Trial::description");
   return buf;
 }
 
+int Trial::lastResponse() const {
+DOTRACE("Trial::lastResponse");
+  return itsImpl->itsResponses.back().val();
+}
+
+int Trial::numResponses() const {
+DOTRACE("Trial::numResponses");
+  return itsImpl->itsResponses.size();
+}
+
 double Trial::avgResponse() const {
 DOTRACE("Trial::avgResponse");
   int sum = 0;
-  for (vector<Response>::const_iterator ii = itsResponses.begin();
-		 ii != itsResponses.end();
+  for (vector<Response>::const_iterator ii = itsImpl->itsResponses.begin();
+		 ii != itsImpl->itsResponses.end();
 		 ++ii) {
 	 sum += ii->val();
   }
-  return (itsResponses.size() > 0) ? double(sum)/itsResponses.size() : 0.0;
+  return (itsImpl->itsResponses.size() > 0) ? double(sum)/itsImpl->itsResponses.size() : 0.0;
 }
 
 double Trial::avgRespTime() const {
 DOTRACE("Trial::avgRespTime");
   int sum = 0;
-  for (vector<Response>::const_iterator ii = itsResponses.begin();
-		 ii != itsResponses.end();
+  for (vector<Response>::const_iterator ii = itsImpl->itsResponses.begin();
+		 ii != itsImpl->itsResponses.end();
 		 ++ii) {
 	 sum += ii->msec();
 
 	 DebugEval(sum);
-	 DebugEvalNL(sum/itsResponses.size());
+	 DebugEvalNL(sum/itsImpl->itsResponses.size());
   }
-  return (itsResponses.size() > 0) ? double(sum)/itsResponses.size() : 0.0;
+  return (itsImpl->itsResponses.size() > 0) ? double(sum)/itsImpl->itsResponses.size() : 0.0;
 }
 
 //////////////////
 // manipulators //
 //////////////////
 
+void Trial::add(int objid, int posid) {
+DOTRACE("Trial::add");
+  itsImpl->itsIdPairs.push_back(IdPair(objid, posid));
+}
+
 void Trial::clearObjs() {
 DOTRACE("Trial::clearObjs");
-  itsIdPairs.clear(); 
+  itsImpl->itsIdPairs.clear(); 
+}
+
+void Trial::setType(int t) {
+DOTRACE("Trial::setType");
+  itsImpl->itsType = t;
 }
 
 void Trial::setResponseHandler(int rhid) {
 DOTRACE("Trial::setResponseHandler");
-  itsRhId = rhid;
+  itsImpl->itsRhId = rhid;
 }
 
 void Trial::setTimingHdlr(int thid) {
 DOTRACE("setTimingHdlr");
-  itsThId = thid;
+  itsImpl->itsThId = thid;
+}
+
+void Trial::recordResponse(int val, int msec) {
+DOTRACE("Trial::recordResponse"); 
+  itsImpl->itsResponses.push_back(Response(val, msec));
 }
 
 void Trial::clearResponses() {
 DOTRACE("Trial::clearResponses");
-  itsResponses.clear();
+  itsImpl->itsResponses.clear();
 }
 
 /////////////
@@ -381,15 +441,15 @@ DOTRACE("Trial::clearResponses");
 
 void Trial::trDraw(Canvas& canvas, bool flush) const {
 DOTRACE("Trial::trDraw");
-  for (size_t i = 0; i < itsIdPairs.size(); ++i) {
+  for (size_t i = 0; i < itsImpl->itsIdPairs.size(); ++i) {
     ObjList::Ptr obj =
-		ObjList::theObjList().getCheckedPtr(itsIdPairs[i].objid);
+		ObjList::theObjList().getCheckedPtr(itsImpl->itsIdPairs[i].objid);
     PosList::Ptr pos =
-		PosList::thePosList().getCheckedPtr(itsIdPairs[i].posid);
+		PosList::thePosList().getCheckedPtr(itsImpl->itsIdPairs[i].posid);
 
-    DebugEval(itsIdPairs[i].objid);
+    DebugEval(itsImpl->itsIdPairs[i].objid);
     DebugEvalNL((void *) obj);
-    DebugEval(itsIdPairs[i].posid);
+    DebugEval(itsImpl->itsIdPairs[i].posid);
     DebugEvalNL((void *) pos);
 
 
@@ -405,11 +465,11 @@ DOTRACE("Trial::trDraw");
 
 void Trial::trUndraw(Canvas& canvas, bool flush) const {
 DOTRACE("Trial::trUndraw");
-  for (size_t i = 0; i < itsIdPairs.size(); ++i) {
+  for (size_t i = 0; i < itsImpl->itsIdPairs.size(); ++i) {
     ObjList::Ptr obj =
-		ObjList::theObjList().getCheckedPtr(itsIdPairs[i].objid);
+		ObjList::theObjList().getCheckedPtr(itsImpl->itsIdPairs[i].objid);
     PosList::Ptr pos =
-		PosList::thePosList().getCheckedPtr(itsIdPairs[i].posid);
+		PosList::thePosList().getCheckedPtr(itsImpl->itsIdPairs[i].posid);
 
 	 {
 		Canvas::StateSaver state(canvas);
@@ -423,8 +483,8 @@ DOTRACE("Trial::trUndraw");
 
 void Trial::undoLastResponse() {
 DOTRACE("Trial::undoLastResponse");
-  if ( !itsResponses.empty() )
-	 itsResponses.pop_back();
+  if ( !itsImpl->itsResponses.empty() )
+	 itsImpl->itsResponses.pop_back();
 }
 
 static const char vcid_trial_cc[] = "$Header$";
