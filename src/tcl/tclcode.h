@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jun 17 10:38:13 1999
-// written: Thu Jul 19 14:09:52 2001
+// written: Thu Jul 19 20:24:39 2001
 // $Id$
 //
 // Tcl::Code serves as a wrapper for a Tcl command string that is to
@@ -21,6 +21,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLOBJPTR_H_DEFINED)
 #include "tcl/tclobjptr.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
+#include "util/pointers.h"
 #endif
 
 struct Tcl_Obj;
@@ -64,7 +68,7 @@ private:
   Tcl::ObjPtr itsCodeObj;
   ErrorHandlingMode itsErrorMode;
   int itsFlags;
-  Util::ErrorHandler* itsErrHandler;
+  borrowed_ptr<Util::ErrorHandler> itsErrHandler;
 };
 
 static const char vcid_tclevalcmd_h[] = "$Header$";

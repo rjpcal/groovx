@@ -5,7 +5,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  7 14:52:52 2000
-// written: Mon May 14 15:57:22 2001
+// written: Thu Jul 19 20:25:52 2001
 // $Id$
 //
 // -------------------------------------------------------------------
@@ -24,6 +24,61 @@
 #ifndef POINTERS_H_DEFINED
 #define POINTERS_H_DEFINED
 
+template <class T>
+class borrowed_ptr {
+private:
+  T* ptr;
+
+public:
+  borrowed_ptr( T* p=0 ) throw() :
+    ptr(p)
+  {}
+
+  ~borrowed_ptr() throw() {}
+
+  template <class TT>
+  borrowed_ptr( TT* p ) throw() :
+    ptr(p)
+  {}
+
+  borrowed_ptr( const borrowed_ptr& other ) throw() :
+    ptr(other.ptr)
+  {}
+
+  template <class TT>
+  borrowed_ptr( const borrowed_ptr<TT>& other ) throw() :
+    ptr(other.ptr)
+  {}
+
+  borrowed_ptr& operator=( T* p ) throw()
+  { ptr = p; return *this; }
+
+  borrowed_ptr& operator=( const borrowed_ptr& other ) throw()
+  { ptr = other.ptr; return *this; }
+
+  template <class TT>
+  borrowed_ptr& operator=( const borrowed_ptr<TT>& other ) throw()
+  { ptr = other.ptr; return *this; }
+
+  bool operator==( T* p ) const throw()
+  { return ptr == p; }
+
+  bool operator==( const borrowed_ptr& other ) const throw()
+  { return ptr == other.ptr; }
+
+  template <class TT>
+  bool operator==( const borrowed_ptr<TT>& other ) const throw()
+  { return ptr == other.ptr; }
+
+  typedef T* pointer;
+  typedef T& reference;
+
+  reference operator*() const throw() { return *ptr; }
+
+  pointer operator->() const throw() { return ptr; }
+
+  operator pointer() const throw() { return ptr; }
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -39,31 +94,31 @@ template<class T>
 class scoped_ptr {
 public:
   explicit scoped_ptr( T* p=0 ) throw() :
-	 ptr(p)
-	 {}
+    ptr(p)
+    {}
 
   template <class TT>
   explicit scoped_ptr( TT* p ) throw() :
-	 ptr(p)
-	 {}
+    ptr(p)
+    {}
 
   ~scoped_ptr()
-	 { delete ptr; }
+    { delete ptr; }
 
   void reset( T* p=0 )
-	 {
-		if ( ptr != p )
-		  { delete ptr; ptr = p; }
-	 }
+    {
+      if ( ptr != p )
+        { delete ptr; ptr = p; }
+    }
 
   T& operator*() const throw()
-	 { return *ptr; }
+    { return *ptr; }
 
   T* operator->() const throw()
-	 { return ptr; }
+    { return ptr; }
 
   T* get() const throw()
-	 { return ptr; }
+    { return ptr; }
 
 private:
   scoped_ptr(const scoped_ptr& other);
@@ -88,80 +143,80 @@ public:
   typedef T element_type;
 
   explicit shared_ptr(T* p =0) :
-	 px(p), pn(0)
-	 {
-		try { pn = new long(1); }  // fix: prevent leak if new throws
-		catch (...) { delete p; throw; } 
-	 }
+    px(p), pn(0)
+    {
+      try { pn = new long(1); }  // fix: prevent leak if new throws
+      catch (...) { delete p; throw; }
+    }
 
   shared_ptr(const shared_ptr& r) throw() :
-	 px(r.px), pn(r.pn)
-	 {
-		++(*pn);
-	 }
+    px(r.px), pn(r.pn)
+    {
+      ++(*pn);
+    }
 
   ~shared_ptr() { dispose(); }
 
   shared_ptr& operator=(const shared_ptr& r)
-	 {
-		share(r.px,r.pn);
-		return *this;
-	 }
+    {
+      share(r.px,r.pn);
+      return *this;
+    }
 
   template<class TT>
   shared_ptr(const shared_ptr<TT>& r) throw() :
-	 px(r.px), pn(r.pn)
-	 { 
-		++(*pn); 
-	 }
+    px(r.px), pn(r.pn)
+    {
+      ++(*pn);
+    }
 
   template<class TT>
   shared_ptr& operator=(const shared_ptr<TT>& r)
-	 {
-		share(r.px,r.pn);
-		return *this;
-	 }
+    {
+      share(r.px,r.pn);
+      return *this;
+    }
 
   void reset(T* p=0)
-	 {
-		if ( px == p ) return;  // fix: self-assignment safe
-		if (--*pn == 0) { delete px; }
-		else { // allocate new reference counter
-		  try { pn = new long; }  // fix: prevent leak if new throws
-		  catch (...) {
-			 ++*pn;  // undo effect of --*pn above to meet effects guarantee 
-			 delete p;
-			 throw;
-		  } // catch
-		} // allocate new reference counter
-		*pn = 1;
-		px = p;
-	 }
+    {
+      if ( px == p ) return;  // fix: self-assignment safe
+      if (--*pn == 0) { delete px; }
+      else { // allocate new reference counter
+        try { pn = new long; }  // fix: prevent leak if new throws
+        catch (...) {
+          ++*pn;  // undo effect of --*pn above to meet effects guarantee
+          delete p;
+          throw;
+        } // catch
+      } // allocate new reference counter
+      *pn = 1;
+      px = p;
+    }
 
   T& operator*() const throw()
-	 { return *px; }
+    { return *px; }
 
   T* operator->() const throw()
-	 { return px; }
+    { return px; }
 
   T* get() const throw()
-	 { return px; }
+    { return px; }
 
   long use_count() const throw()
-	 { return *pn; }
+    { return *pn; }
 
   bool unique() const throw()
-	 { return *pn == 1; }
+    { return *pn == 1; }
 
   void swap(shared_ptr<T>& other) throw()
-	 {
-		T* other_px = other.px;
-		other.px = this->px;
-		this->px = other_px;
-		long* other_pn = other.pn;
-		other.pn = this->pn;
-		this->pn = other_pn;
-	 }
+    {
+      T* other_px = other.px;
+      other.px = this->px;
+      this->px = other_px;
+      long* other_pn = other.pn;
+      other.pn = this->pn;
+      this->pn = other_pn;
+    }
 
 private:
 
@@ -173,13 +228,13 @@ private:
   void dispose() { if (--*pn == 0) { delete px; delete pn; } }
 
   void share(T* rpx, long* rpn)
-	 {
-		if (pn != rpn) {
-		  dispose();
-		  px = rpx;
-		  ++*(pn = rpn);
-		}
-	 }
+    {
+      if (pn != rpn) {
+        dispose();
+        px = rpx;
+        ++*(pn = rpn);
+      }
+    }
 };
 
 template<class T, class U>

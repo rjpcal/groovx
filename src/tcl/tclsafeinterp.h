@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Mon Jul 16 13:46:56 2001
+// written: Thu Jul 19 20:27:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,12 +17,12 @@
 #include "tcl/convert.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLERROR_H_DEFINED)
-#include "tcl/tclerror.h"
-#endif
-
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLOBJPTR_H_DEFINED)
 #include "tcl/tclobjptr.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
+#include "util/pointers.h"
 #endif
 
 struct Tcl_Interp;
@@ -91,7 +91,7 @@ public:
 
   fixed_string getProcBody(const char* proc_name) const;
   void createProc(const char* namesp, const char* proc_name,
-						const char* args, const char* body);
+                  const char* args, const char* body);
 
 private:
   Tcl_Obj* getObjResult() const;
@@ -99,7 +99,7 @@ private:
 
   void handleError(const char* msg) const;
 
-  Tcl_Interp* const itsInterp;
+  borrowed_ptr<Tcl_Interp> const itsInterp;
 };
 
 static const char vcid_tclutil_h[] = "$Header$";
