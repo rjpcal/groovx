@@ -95,11 +95,17 @@ configure: configure.in
 config.status: configure
 	./config.status --recheck
 
-config.h.in: configure.in
+.config-h-in.stamp: configure.in
 	autoheader configure.in
+	touch $@
 
-config.h: config.h.in config.status
+config.h.in: .config-h-in.stamp
+
+.config-h.stamp: config.h.in config.status
 	./config.status --header=config.h:config.h.in
+	touch $@
+
+config.h: .config-h.stamp
 
 Makefile: Makefile.in config.status
 	./config.status --file=Makefile:Makefile.in
