@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Tue Jun 12 11:18:32 2001
+// written: Tue Jun 12 11:52:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,8 +18,6 @@
 #include "gwt/canvas.h"
 
 #include "gx/gxnode.h"
-
-#include "io/io.h"
 
 #include "util/observer.h"
 #include "util/ref.h"
@@ -90,8 +88,8 @@ public:
       if (itsVisibility == false)
         {
           undraw(itsOwner->getCanvas());
-          itsDrawNode = PtrHandle<GxNode>(EmptyNode::make());
-          itsUndrawNode = PtrHandle<GxNode>(EmptyNode::make());
+          itsDrawNode = Util::Ref<GxNode>(EmptyNode::make());
+          itsUndrawNode = Util::Ref<GxNode>(EmptyNode::make());
         }
     }
 
@@ -102,7 +100,7 @@ public:
     {
       itsDrawNode->detach(this);
 
-      itsDrawNode = node.handle();
+      itsDrawNode = node;
 
       itsDrawNode->attach(this);
     }
@@ -131,8 +129,8 @@ private:
   Impl& operator=(const Impl&);
 
   GWT::Widget* itsOwner;
-  PtrHandle<GxNode> itsDrawNode;
-  PtrHandle<GxNode> itsUndrawNode;
+  Util::Ref<GxNode> itsDrawNode;
+  Util::Ref<GxNode> itsUndrawNode;
   bool itsVisibility;
   bool itsHoldOn;
 };
