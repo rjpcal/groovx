@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Sep 18 13:12:19 2002
+// written: Sat Nov  9 21:18:00 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -25,6 +25,10 @@
 #define TOGL_CC_DEFINED
 
 #include "togl/togl.h"
+
+#include "gfx/canvas.h"
+
+#include "gx/rgbacolor.h"
 
 #include "tcl/tclsafeinterp.h"
 
@@ -221,6 +225,28 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
 
   // Bind the context to the window and make it the current context
   rep->itsGlx->makeCurrent(win);
+
+  if (rep->itsOpts->rgbaFlag)
+    {
+      DOTRACE("GlxWrapper::GlxWrapper::rgbaFlag");
+      rep->itsGlx->canvas().setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
+      rep->itsGlx->canvas().setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
+    }
+  else
+    {
+      // FIXME use XBlackPixel(), XWhitePixel() here?
+      rep->itsGlx->canvas().setColorIndex(0);
+      rep->itsGlx->canvas().setClearColorIndex(1);
+    }
+
+  // Check for a single/double buffering snafu
+  if (rep->itsOpts->doubleFlag == 0 && rep->itsGlx->isDoubleBuffered())
+    {
+      // We requested single buffering but had to accept a double buffered
+      // visual.  Set the GL draw buffer to be the front buffer to
+      // simulate single buffering.
+      glDrawBuffer(GL_FRONT);
+    }
 
   return win;
 }
