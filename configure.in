@@ -146,7 +146,28 @@ int main()
 }],
 [AC_MSG_RESULT(yes)],
 [AC_MSG_RESULT(no);
- AC_MSG_ERROR([$CXX has a broken implementation of virtual base classes])])
+ AC_MSG_ERROR([$CXX is broken: has a buggy implementation of virtual base classes])])
+
+### Check whether "return void" is allowed in templates
+
+AC_MSG_CHECKING([whether return void is allowed in templates])
+
+AC_TRY_COMPILE([
+template <class R>
+struct Foo
+{
+  template <class Func>
+  static R bar(Func f)
+  {
+    return f();
+  }
+};
+
+void baz() {}],
+[Foo<void>::bar(baz);],
+[AC_MSG_RESULT(yes)],
+[AC_MSG_RESULT(no);
+ AC_MSG_ERROR([$CXX is broken: does not allow return void in templates])])
 
 ### Check various template peculiarities
 
