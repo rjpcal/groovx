@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Sep 16 11:07:02 2002
+// written: Mon Sep 16 11:16:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -321,25 +321,6 @@ TogletImpl::TogletImpl(Toglet* owner, Util::UID uid)
   togl->setReshapeFunc(TogletImpl::reshapeCallback);
   togl->setDisplayFunc(TogletImpl::displayCallback);
   togl->setDestroyFunc(TogletImpl::destroyCallback);
-
-  if ( togl->isRgba() )
-    {
-      togl->getCanvas().setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
-      togl->getCanvas().setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
-    }
-  else
-    { // not using rgba
-      if ( togl->hasPrivateCmap() )
-        {
-          togl->getCanvas().setColorIndex(0);
-          togl->getCanvas().setClearColorIndex(1);
-        }
-      else
-        {
-          togl->getCanvas().setColorIndex(togl->allocColor(0.0, 0.0, 0.0));
-          togl->getCanvas().setClearColorIndex(togl->allocColor(1.0, 1.0, 1.0));
-        }
-    }
 }
 
 TogletImpl::~TogletImpl()
