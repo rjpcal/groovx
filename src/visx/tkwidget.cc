@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Tue Sep 17 12:00:29 2002
+// written: Tue Sep 17 12:09:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "tcl/tclcode.h"
 #include "tcl/tclsafeinterp.h"
 
+#include "util/error.h"
 #include "util/ref.h"
 #include "util/strings.h"
 
@@ -78,19 +79,28 @@ class TkWidgImpl
   TkWidgImpl& operator=(const TkWidgImpl&);
 
 public:
-  TkWidgImpl(Tcl::TkWidget* o, Tcl_Interp* p) :
+  TkWidgImpl(Tcl::TkWidget* o, Tcl_Interp* p, const char* pathname) :
     owner(o),
     interp(p),
-    tkWin(0),
+    tkWin(Tk_CreateWindowFromPath(interp, Tk_MainWindow(interp),
+                            const_cast<char*>(pathname),
+                            (char *) 0)),
     shutdownRequested(false)
-  {}
+  {
+    if (tkWin == 0)
+      {
+        throw Util::Error("TkWidget constructor couldn't create Tk_Window");
+      }
+  }
 
   ~TkWidgImpl()
-  {}
+  {
+    Tk_DestroyWindow(tkWin);
+  }
 
   Tcl::TkWidget* owner;
   Tcl_Interp* interp;
-  Tk_Window tkWin;
+  const Tk_Window tkWin;
 
   bool shutdownRequested;
 
@@ -176,13 +186,19 @@ DOTRACE("TkWidgImpl::cEventCallback");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::TkWidget::TkWidget(Tcl_Interp* interp) :
-  rep(new TkWidgImpl(this, interp))
+#define EVENT_MASK StructureNotifyMask|KeyPressMask|ButtonPressMask
+
+Tcl::TkWidget::TkWidget(Tcl_Interp* interp, const char* pathname) :
+  rep(new TkWidgImpl(this, interp, pathname))
 {
+  XBmapRenderer::initClass(rep->tkWin);
+
+  Tk_CreateEventHandler(rep->tkWin, EVENT_MASK,
+                        TkWidgImpl::cEventCallback,
+                        static_cast<void*>(this));
+
   incrRefCount();
 }
-
-#define EVENT_MASK StructureNotifyMask|KeyPressMask|ButtonPressMask
 
 Tcl::TkWidget::~TkWidget()
 {
@@ -190,17 +206,6 @@ Tcl::TkWidget::~TkWidget()
                         TkWidgImpl::cEventCallback,
                         static_cast<void*>(this));
   delete rep;
-}
-
-void Tcl::TkWidget::init(Tk_Window win)
-{
-  Assert(rep->tkWin == 0);
-  rep->tkWin = win;
-  XBmapRenderer::initClass(win);
-
-  Tk_CreateEventHandler(rep->tkWin, EVENT_MASK,
-                        TkWidgImpl::cEventCallback,
-                        static_cast<void*>(this));
 }
 
 void Tcl::TkWidget::destroyWidget()

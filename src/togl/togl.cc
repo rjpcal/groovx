@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 11:52:50 2002
+// written: Tue Sep 17 12:08:50 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -201,7 +201,7 @@ private:
 public:
   Togl* itsOwner;
   Tcl_Interp* itsInterp;
-  Tk_Window itsTkWin;
+  const Tk_Window itsTkWin;
   Display* itsDisplay;
   shared_ptr<ToglOpts> itsOpts;
   shared_ptr<GlxWrapper> itsGlx;
@@ -214,7 +214,7 @@ public:
 
   GlxOverlay* itsOverlay;
 
-  Impl(Togl* owner, Tcl_Interp* interp, const char* pathname);
+  Impl(Togl* owner, Tcl_Interp* interp);
   ~Impl() throw();
 
   Tcl_Obj* cget(Tcl_Obj* param) const;
@@ -265,25 +265,25 @@ private:
 //
 //---------------------------------------------------------------------
 
-namespace
-{
-  class TkWinGuard
-  {
-  private:
-    Tk_Window tkWin;
-    bool dismissed;
+// namespace
+// {
+//   class TkWinGuard
+//   {
+//   private:
+//     Tk_Window tkWin;
+//     bool dismissed;
 
-  public:
-    TkWinGuard(Tk_Window w) : tkWin(w), dismissed(false) {}
-    ~TkWinGuard() { if (!dismissed) Tk_DestroyWindow(tkWin); }
-    void dismiss() { dismissed = true; }
-  };
-}
+//   public:
+//     TkWinGuard(Tk_Window w) : tkWin(w), dismissed(false) {}
+//     ~TkWinGuard() { if (!dismissed) Tk_DestroyWindow(tkWin); }
+//     void dismiss() { dismissed = true; }
+//   };
+// }
 
-Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp, const char* pathname) :
+Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp) :
   itsOwner(owner),
   itsInterp(interp),
-  itsTkWin(0),
+  itsTkWin(owner->tkWin()),
   itsDisplay(0),
   itsOpts(new ToglOpts),
   itsGlx(0),
@@ -302,16 +302,12 @@ DOTRACE("Togl::Impl::Impl");
   // Create the window
   //
 
-  itsTkWin = Tk_CreateWindowFromPath(interp, Tk_MainWindow(interp),
-                                     const_cast<char*>(pathname),
-                                     (char *) 0);
+//   if (itsTkWin == 0)
+//     {
+//       throw Util::Error("Togl constructor couldn't create Tk_Window");
+//     }
 
-  if (itsTkWin == 0)
-    {
-      throw Util::Error("Togl constructor couldn't create Tk_Window");
-    }
-
-  TkWinGuard guard(itsTkWin); // destroys the widget in case of exception
+//   TkWinGuard guard(itsTkWin); // destroys the widget in case of exception
 
   itsDisplay = Tk_Display( itsTkWin );
 
@@ -361,7 +357,7 @@ DOTRACE("Togl::Impl::Impl");
                                 static_cast<ClientData>(this) );
     }
 
-  guard.dismiss();
+//   guard.dismiss();
 
   Tcl_AppendResult(itsInterp, Tk_PathName(itsTkWin), NULL);
 
@@ -407,8 +403,6 @@ DOTRACE("Togl::Impl::~Impl");
 
   Tk_FreeConfigOptions(reinterpret_cast<char*>(itsOpts.get()),
                        toglOptionTable, itsTkWin);
-
-  Tk_DestroyWindow(itsTkWin);
 }
 
 //---------------------------------------------------------------------
@@ -796,12 +790,10 @@ DOTRACE("Togl::Impl::setupOverlay");
 ///////////////////////////////////////////////////////////////////////
 
 Togl::Togl(Tcl_Interp* interp, const char* pathname) :
-  Tcl::TkWidget(interp),
-  rep(new Impl(this, interp, pathname))
+  Tcl::TkWidget(interp, pathname),
+  rep(new Impl(this, interp))
 {
 DOTRACE("Togl::Togl");
-
-  TkWidget::init(rep->itsTkWin);
 
   makeCurrent();
 }

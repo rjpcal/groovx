@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Tue Sep 17 12:00:23 2002
+// written: Tue Sep 17 12:05:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,11 +40,8 @@ class TkWidgImpl;
 
 class Tcl::TkWidget : public GWT::CanvasWidget
 {
-protected:
-  void init(Tk_Window win);
-
 public:
-  TkWidget(Tcl_Interp* interp);
+  TkWidget(Tcl_Interp* interp, const char* pathname);
   virtual ~TkWidget();
 
   void destroyWidget();
