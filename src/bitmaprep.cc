@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Tue Mar  7 15:59:52 2000
+// written: Thu Mar  9 10:18:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,6 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <cctype>
-#include <cmath>					  // for abs
 #include <iostream.h>
 
 #define NO_TRACE
@@ -43,6 +42,10 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
+  template <class T>
+  inline T abs(const T& val)
+	 { return (val < 0) ? -val : val; }
+
   const string_literal ioTag = "Bitmap";
 }
 
