@@ -3,7 +3,7 @@
 // timinghandler.h
 // Rob Peters
 // created: Wed May 19 10:56:20 1999
-// written: Fri Sep 29 14:36:05 2000
+// written: Thu Oct 19 14:47:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,7 @@ public:
 
   virtual ~TimingHandler();
 
+  virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
@@ -43,9 +44,6 @@ public:
   void setTimeout(int val); 
 
 private:
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
-
   int stimdur_start_id;
   int timeout_start_id;
   int iti_response_id;

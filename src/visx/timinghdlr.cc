@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Mon Oct  9 19:46:57 2000
+// written: Thu Oct 19 14:57:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,6 @@
 #include "trialevent.h"
 
 #include "io/iomgr.h"
-#include "io/iolegacy.h"
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
@@ -55,7 +54,6 @@ public:
 	 itsStartEvents(),
 	 itsResponseEvents(),
 	 itsAbortEvents(),
- 	 itsDummyAutosavePeriod(10),
 	 itsTimer(),
 	 itsWidget(0),
 	 itsErrorHandler(0),
@@ -67,8 +65,6 @@ public:
   std::vector<TrialEvent*> itsResponseEvents;
   std::vector<TrialEvent*> itsAbortEvents;
 
-  int itsDummyAutosavePeriod;
-  
   mutable StopWatch itsTimer;
 
 private:
@@ -122,46 +118,6 @@ DOTRACE("TimingHdlr::~TimingHdlr");
   delete itsImpl;
 }
 
-void TimingHdlr::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("TimingHdlr::legacySrlz");
-
-  lwriter->writeValue("autosavePeriod", itsImpl->itsDummyAutosavePeriod);
-
-  IO::WriteUtils::writeObjectSeq(lwriter, "immediateEvents",
-     itsImpl->itsImmediateEvents.begin(), itsImpl->itsImmediateEvents.end());
-
-  IO::WriteUtils::writeObjectSeq(lwriter, "startEvents",
-     itsImpl->itsStartEvents.begin(), itsImpl->itsStartEvents.end());
-
-  IO::WriteUtils::writeObjectSeq(lwriter, "responseEvents",
-     itsImpl->itsResponseEvents.begin(), itsImpl->itsResponseEvents.end());
-
-  IO::WriteUtils::writeObjectSeq(lwriter, "abortEvents",
-     itsImpl->itsAbortEvents.begin(), itsImpl->itsAbortEvents.end());
-}
-
-void TimingHdlr::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("TimingHdlr::legacyDesrlz");
-
-  lreader->readValue("autosavePeriod", itsImpl->itsDummyAutosavePeriod);
-
-  itsImpl->deleteAll(itsImpl->itsImmediateEvents);
-  IO::ReadUtils::template readObjectSeq<TrialEvent>(lreader, "immediateEvents",
-                        std::back_inserter(itsImpl->itsImmediateEvents));
-
-  itsImpl->deleteAll(itsImpl->itsStartEvents);
-  IO::ReadUtils::template readObjectSeq<TrialEvent>(lreader, "startEvents",
-                        std::back_inserter(itsImpl->itsStartEvents));
-
-  itsImpl->deleteAll(itsImpl->itsResponseEvents);
-  IO::ReadUtils::template readObjectSeq<TrialEvent>(lreader, "responseEvents",
-                        std::back_inserter(itsImpl->itsResponseEvents));
-
-  itsImpl->deleteAll(itsImpl->itsAbortEvents);
-  IO::ReadUtils::template readObjectSeq<TrialEvent>(lreader, "abortEvents",
-                        std::back_inserter(itsImpl->itsAbortEvents));
-}
-
 IO::VersionId TimingHdlr::serialVersionId() const {
 DOTRACE("TimingHdlr::serialVersionId");
   return TIMINGHDLR_SERIAL_VERSION_ID;
@@ -170,15 +126,12 @@ DOTRACE("TimingHdlr::serialVersionId");
 void TimingHdlr::readFrom(IO::Reader* reader) {
 DOTRACE("TimingHdlr::readFrom");
 
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
-
   IO::VersionId svid = reader->readSerialVersionId(); 
   if (svid == 0)
-	 reader->readValue("autosavePeriod", itsImpl->itsDummyAutosavePeriod);
+	 {
+		int dummy_autosave_period;
+		reader->readValue("autosavePeriod", dummy_autosave_period);
+	 }
 
   itsImpl->deleteAll(itsImpl->itsImmediateEvents);
   IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "immediateEvents",
@@ -200,14 +153,11 @@ DOTRACE("TimingHdlr::readFrom");
 void TimingHdlr::writeTo(IO::Writer* writer) const {
 DOTRACE("TimingHdlr::writeTo");
 
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
-
   if (TIMINGHDLR_SERIAL_VERSION_ID == 0)
-	 writer->writeValue("autosavePeriod", itsImpl->itsDummyAutosavePeriod);
+	 {
+		int dummy_autosave_period;
+		writer->writeValue("autosavePeriod", dummy_autosave_period);
+	 }
 
   IO::WriteUtils::writeObjectSeq(writer, "immediateEvents",
 								 itsImpl->itsImmediateEvents.begin(), itsImpl->itsImmediateEvents.end());

@@ -3,7 +3,7 @@
 // timinghandler.cc
 // Rob Peters
 // created: Wed May 19 21:39:51 1999
-// written: Fri Sep 29 16:11:15 2000
+// written: Thu Oct 19 14:52:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,11 @@
 
 #include "timinghandler.h"
 
-#include "io/iolegacy.h"
-#include "io/ioproxy.h"
 #include "trialevent.h"
+
+#include "io/ioproxy.h"
+#include "io/reader.h"
+#include "io/writer.h"
 
 #include <cstring>
 
@@ -23,6 +25,10 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
+
+namespace {
+  const IO::VersionId TIMINGHANDLER_SERIAL_VERSION_ID = 2;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -49,44 +55,34 @@ TimingHandler::~TimingHandler() {
 DOTRACE("TimingHandler::~TimingHandler");
 }
 
-void TimingHandler::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("TimingHandler::legacySrlz");
-
-  IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::BASES);
-  IO::ConstIoProxy<TimingHdlr> baseclass(this);
-  lwriter->writeBaseClass("TimingHdlr", &baseclass);
-}
-
-void TimingHandler::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("TimingHandler::legacyDesrlz");
-
-  IO::LRFlagJanitor(*lreader, lreader->flags() | IO::BASES);
-  IO::IoProxy<TimingHdlr> baseclass(this);
-  lreader->readBaseClass("TimingHdlr", &baseclass);
+IO::VersionId TimingHandler::serialVersionId() const {
+DOTRACE("TimingHandler::serialVersionId");
+ return TIMINGHANDLER_SERIAL_VERSION_ID;
 }
 
 void TimingHandler::readFrom(IO::Reader* reader) {
 DOTRACE("TimingHandler::readFrom");
 
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
-
-  TimingHdlr::readFrom(reader);
+  IO::VersionId svid = reader->readSerialVersionId();
+  if (svid < 2)
+	 TimingHdlr::readFrom(reader);
+  else if (svid == 2)
+	 {
+		IO::IoProxy<TimingHdlr> baseclass(this);
+		reader->readBaseClass("TimingHdlr", &baseclass);
+	 }
 }
 
 void TimingHandler::writeTo(IO::Writer* writer) const {
 DOTRACE("TimingHandler::writeTo");
 
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
-
-  TimingHdlr::writeTo(writer);
+  if (TIMINGHANDLER_SERIAL_VERSION_ID < 2)
+	 TimingHdlr::writeTo(writer);
+  else if (TIMINGHANDLER_SERIAL_VERSION_ID == 2)
+	 {
+		IO::ConstIoProxy<TimingHdlr> baseclass(this);
+		writer->writeBaseClass("TimingHdlr", &baseclass);
+	 }
 }
 
 int TimingHandler::getAbortWait() const { 

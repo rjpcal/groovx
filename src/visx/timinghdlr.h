@@ -3,7 +3,7 @@
 // timinghdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:55 1999
-// written: Fri Sep 29 14:36:05 2000
+// written: Thu Oct 19 14:53:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,9 +78,6 @@ public:
 private:
   TimingHdlr(const TimingHdlr&);
   TimingHdlr& operator=(const TimingHdlr&);
-
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
 
   class Impl;
   Impl* const itsImpl;

@@ -3,7 +3,7 @@
 // position.cc
 // Rob Peters
 // created: Wed Mar 10 21:33:15 1999
-// written: Mon Oct  9 18:44:28 2000
+// written: Thu Oct 19 14:43:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,6 @@
 
 #include "position.h"
 
-#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -70,53 +69,8 @@ DOTRACE("Position::~Position");
   delete itsImpl;
 }
 
-void Position::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("Position::legacySrlz");
-
-  Invariant(check());
-
-  lwriter->writeValue("transX", itsImpl->tr_x);
-  lwriter->writeValue("transY", itsImpl->tr_y);
-  lwriter->writeValue("transZ", itsImpl->tr_z);
-
-  lwriter->writeValue("scaleX", itsImpl->sc_x);
-  lwriter->writeValue("scaleY", itsImpl->sc_y);
-  lwriter->writeValue("scaleZ", itsImpl->sc_z);
-
-  lwriter->writeValue("rotateX", itsImpl->rt_x);
-  lwriter->writeValue("rotateY", itsImpl->rt_y);
-  lwriter->writeValue("rotateZ", itsImpl->rt_z);
-  lwriter->setFieldSeparator('\n');
-  lwriter->writeValue("rotateAngle", itsImpl->rt_ang);
-}
-
-void Position::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("Position::legacyDesrlz");
-
-  lreader->readValue("transX", itsImpl->tr_x);
-  lreader->readValue("transY", itsImpl->tr_y);
-  lreader->readValue("transZ", itsImpl->tr_z);
-
-  lreader->readValue("scaleX", itsImpl->sc_x);
-  lreader->readValue("scaleY", itsImpl->sc_y);
-  lreader->readValue("scaleZ", itsImpl->sc_z);
-
-  lreader->readValue("rotateX", itsImpl->rt_x);
-  lreader->readValue("rotateY", itsImpl->rt_y);
-  lreader->readValue("rotateZ", itsImpl->rt_z);
-  lreader->readValue("rotateAngle", itsImpl->rt_ang);
-
-  Invariant(check());
-}
-
 void Position::readFrom(IO::Reader* reader) {
 DOTRACE("Position::readFrom");
-
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
 
   reader->readValue("transX", itsImpl->tr_x);
   reader->readValue("transY", itsImpl->tr_y);
@@ -134,12 +88,6 @@ DOTRACE("Position::readFrom");
 
 void Position::writeTo(IO::Writer* writer) const {
 DOTRACE("Position::writeTo");
-
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
 
   writer->writeValue("transX", itsImpl->tr_x);
   writer->writeValue("transY", itsImpl->tr_y);

@@ -3,7 +3,7 @@
 // jitter.cc
 // Rob Peters
 // created: Wed Apr  7 13:46:41 1999
-// written: Fri Sep 29 16:10:07 2000
+// written: Thu Oct 19 14:32:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,6 @@
 
 #include "jitter.h"
 
-#include "io/iolegacy.h"
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
@@ -27,6 +26,10 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
+
+namespace {
+  const IO::VersionId JITTER_SERIAL_VERSION_ID = 2;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -48,68 +51,42 @@ DOTRACE("Jitter::~Jitter");
   // empty
 }
 
-
-// In legacySrlz/legacyDesrlz, the derived class (Jitter) is handled
-// before the base class (Position), since the first thing that the
-// PosMgr virtual constructor sees must be the name of the most fully
-// derived class, in order to invoke the proper constructor.
-void Jitter::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("Jitter::legacySrlz");
-
-  lwriter->writeValue("jitterX", itsXJitter);
-  lwriter->writeValue("jitterY", itsYJitter);
-  lwriter->setFieldSeparator('\n');
-  lwriter->writeValue("jitterR", itsRJitter);
-
-  // The base class (Position) is always legacySrlzd, regardless of flag.
-  IO::LWFlagJanitor(*lwriter, lwriter->flags() | IO::BASES);
-  IO::ConstIoProxy<Position> baseclass(this);
-  lwriter->writeBaseClass("Position", &baseclass);
-}
-
-void Jitter::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("Jitter::legacyDesrlz");
-
-  lreader->readValue("jitterX", itsXJitter);
-  lreader->readValue("jitterY", itsYJitter);
-  lreader->readValue("jitterR", itsRJitter);
-
-  // The base class (Position) is always legacyDesrlzd, regardless of flag.
-  IO::LRFlagJanitor(*lreader, lreader->flags() | IO::BASES);
-  IO::IoProxy<Position> baseclass(this);
-  lreader->readBaseClass("Position", &baseclass);
+IO::VersionId Jitter::serialVersionId() const {
+DOTRACE("Jitter::serialVersionId");
+  return JITTER_SERIAL_VERSION_ID;
 }
 
 void Jitter::readFrom(IO::Reader* reader) {
 DOTRACE("Jitter::readFrom");
 
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
-
-  Position::readFrom(reader);
-
   reader->readValue("jitterX", itsXJitter);
   reader->readValue("jitterY", itsYJitter);
   reader->readValue("jitterR", itsRJitter);
+
+  IO::VersionId svid = reader->readSerialVersionId();
+  if (svid < 2)
+	 Position::readFrom(reader);
+  else if (svid == 2)
+	 {
+		IO::IoProxy<Position> baseclass(this);
+		reader->readBaseClass("Position", &baseclass);
+	 }
 }
 
 void Jitter::writeTo(IO::Writer* writer) const {
 DOTRACE("Jitter::writeTo");
 
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
-
-  Position::writeTo(writer);
-
   writer->writeValue("jitterX", itsXJitter);
   writer->writeValue("jitterY", itsYJitter);
   writer->writeValue("jitterR", itsRJitter);
+
+  if (JITTER_SERIAL_VERSION_ID < 2)
+	 Position::writeTo(writer);
+  else if (JITTER_SERIAL_VERSION_ID == 2)
+	 {
+		IO::ConstIoProxy<Position> baseclass(this);
+		writer->writeBaseClass("Position", &baseclass);
+	 }
 }
 
 /////////////

@@ -2,7 +2,7 @@
 // subject.h
 // Rob Peters
 // created: Dec-98
-// written: Fri Sep 29 14:36:05 2000
+// written: Thu Oct 19 14:44:06 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -38,9 +38,6 @@ public:
 private:
   Subject(const Subject&);
   Subject& operator=(const Subject&);
-
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
 
   fixed_string itsName;
   fixed_string itsDirectory;

@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Fri Sep 29 16:10:20 2000
+// written: Thu Oct 19 14:37:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,6 @@
 
 #include "rect.h"
 
-#include "io/iolegacy.h"
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
@@ -44,6 +43,8 @@ namespace {
   };
 
   const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(MaskHatch::PInfo);
+
+  const IO::VersionId MASKHATCH_SERIAL_VERSION_ID = 2;
 }
 
 MaskHatch::MaskHatch () :
@@ -62,46 +63,27 @@ DOTRACE("MaskHatch::~MaskHatch ");
   
 }
 
-void MaskHatch::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("MaskHatch::legacySrlz");
-
-  for (size_t i = 0; i < numPropertyInfos(); ++i) {
-	 lwriter->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
-  }
-
-  IO::ConstIoProxy<GrObj> baseclass(this);
-  lwriter->writeBaseClass("GrObj", &baseclass);
-}
-
-void MaskHatch::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("MaskHatch::legacyDesrlz");
-
-  for (size_t i = 0; i < numPropertyInfos(); ++i) {
-	 lreader->readValueObj(PINFOS[i].name_cstr(),
-								  const_cast<Value&>(get(PINFOS[i].property())));
-  }
-
-  IO::IoProxy<GrObj> baseclass(this);
-  lreader->readBaseClass("GrObj", &baseclass);
-
-  sendStateChangeMsg();
+IO::VersionId MaskHatch::serialVersionId() const {
+DOTRACE("MaskHatch::serialVersionId");
+ return MASKHATCH_SERIAL_VERSION_ID;
 }
 
 void MaskHatch::readFrom(IO::Reader* reader) {
 DOTRACE("MaskHatch::readFrom");
-
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
 
   for (size_t i = 0; i < numPropertyInfos(); ++i) {
 	 reader->readValueObj(PINFOS[i].name_cstr(),
 								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 
-  GrObj::readFrom(reader);
+  IO::VersionId svid = reader->readSerialVersionId();
+  if (svid < 2)
+	 GrObj::readFrom(reader);
+  else if (svid == 2)
+	 {
+		IO::IoProxy<GrObj> baseclass(this);
+		reader->readBaseClass("GrObj", &baseclass);
+	 }
 
   sendStateChangeMsg();
 }
@@ -109,17 +91,17 @@ DOTRACE("MaskHatch::readFrom");
 void MaskHatch::writeTo(IO::Writer* writer) const {
 DOTRACE("MaskHatch::writeTo");
 
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
-
   for (size_t i = 0; i < numPropertyInfos(); ++i) {
 	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
   }
 
-  GrObj::writeTo(writer);
+  if (MASKHATCH_SERIAL_VERSION_ID < 2)
+	 GrObj::writeTo(writer);
+  else if (MASKHATCH_SERIAL_VERSION_ID == 2)
+	 {
+		IO::ConstIoProxy<GrObj> baseclass(this);
+		writer->writeBaseClass("GrObj", &baseclass);
+	 }
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Mon Oct  9 18:44:04 2000
+// written: Thu Oct 19 14:40:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,6 @@
 #include "rect.h"
 
 #include "io/ioproxy.h"
-#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -312,44 +311,6 @@ DOTRACE("MorphyFace::~MorphyFace");
   // nothing to do
 }
 
-// Writes the object's state to an output stream. The output stream
-// must already be open and connected to an appropriate file.
-void MorphyFace::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("MorphyFace::legacySrlz");
-  Invariant(check());
-
-  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-	 lwriter->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
-  }
-
-  lwriter->insertChar('\n');
-
-  IO::ConstIoProxy<GrObj> baseclass(this);
-  lwriter->writeBaseClass("GrObj", &baseclass);
-}
-
-void MorphyFace::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("MorphyFace::legacyDesrlz");
-
-  int version = lreader->getLegacyVersionId();
-
-  if (version == 1) lreader->grabLeftBrace();
-
-  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-	 lreader->readValueObj(PINFOS[i].name_cstr(),
-								  const_cast<Value&>(get(PINFOS[i].property())));
-  }
-
-  if (version == 1) lreader->grabRightBrace();
-
-  Invariant(check());
-
-  IO::IoProxy<GrObj> baseclass(this);
-  lreader->readBaseClass("GrObj", &baseclass);
-
-  sendStateChangeMsg();
-}
-
 IO::VersionId MorphyFace::serialVersionId() const {
 DOTRACE("MorphyFace::serialVersionId");
   return MFACE_SERIAL_VERSION_ID;
@@ -357,12 +318,6 @@ DOTRACE("MorphyFace::serialVersionId");
 
 void MorphyFace::readFrom(IO::Reader* reader) {
 DOTRACE("MorphyFace::readFrom");
-
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
 
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 reader->readValueObj(PINFOS[i].name_cstr(),
@@ -383,12 +338,6 @@ DOTRACE("MorphyFace::readFrom");
 
 void MorphyFace::writeTo(IO::Writer* writer) const {
 DOTRACE("MorphyFace::writeTo");
-
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
 
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));

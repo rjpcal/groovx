@@ -3,7 +3,7 @@
 // position.h
 // Rob Peters
 // created: Wed Mar 10 21:33:14 1999
-// written: Fri Sep 29 14:36:05 2000
+// written: Thu Oct 19 14:42:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,9 +105,6 @@ public:
 private:
   /// Check all invariants and return true if everything is OK.
   bool check() const;
-
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
 
   Position(const Position&);
   Position& operator=(const Position&);
