@@ -122,9 +122,7 @@ public:
     modelviewCache(),
     projectionCache(),
     viewportCache(),
-    depthrangeCache(0.0, 1.0),
-    checkFrequency(100),
-    checkCounter(0)
+    depthrangeCache(0.0, 1.0)
   {
     modelviewCache.push_back(txform::identity());
     projectionCache.push_back(txform::identity());
@@ -137,18 +135,11 @@ public:
     dbg_dump(4, modelviewCache.back());
   }
 
-  bool needCheck() const
-  {
-    DOTRACE("GLCanvas::needCheck");
-    if (checkFrequency == 0) return false;
-    return (checkCounter++ % checkFrequency) == 0;
-  }
-
   const txform& getModelview() const
   {
     DOTRACE("GLCanvas::getModelview");
     ASSERT(modelviewCache.size() > 0);
-    if (needCheck())
+    if (GET_DBG_LEVEL() >= 8)
       {
         const txform ref = rawGetModelview();
         const double sse = ref.debug_sse(modelviewCache.back());
@@ -167,7 +158,7 @@ public:
   {
     DOTRACE("GLCanvas::getProjection");
     ASSERT(projectionCache.size() > 0);
-    if (needCheck())
+    if (GET_DBG_LEVEL() >= 8)
       {
         const txform ref = rawGetProjection();
         const double sse = ref.debug_sse(projectionCache.back());
@@ -188,8 +179,6 @@ public:
   std::vector<txform> projectionCache;
   geom::rect<int> viewportCache;
   const geom::span<double> depthrangeCache;
-  int checkFrequency;
-  mutable int checkCounter;
 };
 
 GLCanvas::GLCanvas(shared_ptr<GlxOpts> opts,
@@ -314,22 +303,25 @@ DOTRACE("GLCanvas::worldFromScreen3");
   const txform p = rep->getProjection();
   const geom::rect<int> v = getScreenViewport();
 
-  const vec3d world1 = unproject1(m, p, v, screen_pos);
   const vec3d world2 = unproject2(m, p, v, screen_pos);
 
-  const vec3d diff = world2 - world1;
-
-  if (diff.length() > 1e-10)
+  if (GET_DBG_LEVEL() >= 8)
     {
-      dbg_eval_nl(0, diff.length());
-      dbg_dump(0, p);
-      dbg_dump(0, m);
-      dbg_dump(0, world1);
-      dbg_dump(0, world2);
-      PANIC("numerical error during screen->world reverse projection");
+      const vec3d world1 = unproject1(m, p, v, screen_pos);
+      const vec3d diff = world2 - world1;
+
+      if (diff.length() > 1e-10)
+        {
+          dbg_eval_nl(0, diff.length());
+          dbg_dump(0, p);
+          dbg_dump(0, m);
+          dbg_dump(0, world1);
+          dbg_dump(0, world2);
+          PANIC("numerical error during screen->world reverse projection");
+        }
     }
 
-  return world1;
+  return world2;
 }
 
 
