@@ -152,6 +152,8 @@ public:
   virtual void setColorIndex(unsigned int index) const = 0;
   virtual void setClearColorIndex(unsigned int index) const = 0;
 
+  virtual void setLineWidth(double width) const = 0;
+
   virtual void translate(const Gfx::Vec3<double>& v) const = 0;
   virtual void scale(const Gfx::Vec3<double>& v) const = 0;
   virtual void rotate(const Gfx::Vec3<double>& v, double degrees) const = 0;
@@ -160,20 +162,37 @@ public:
 
   virtual void drawRect(const Gfx::Rect<double>& rect) const = 0;
 
-//    virtual void beginPoints() const = 0;
-//    virtual void beginLines() const = 0;
-//    virtual void beginLineStrip() const = 0;
-//    virtual void beginLineLoop() const = 0;
-//    virtual void beginTriangles() const = 0;
-//    virtual void beginTriangleStrip() const = 0;
-//    virtual void beginTriangleFan() const = 0;
-//    virtual void beginQuads() const = 0;
-//    virtual void beginQuadStrip() const = 0;
-//    virtual void beginPolygon() const = 0;
+  virtual void beginPoints() const = 0;
+  virtual void beginLines() const = 0;
+  virtual void beginLineStrip() const = 0;
+  virtual void beginLineLoop() const = 0;
+  virtual void beginTriangles() const = 0;
+  virtual void beginTriangleStrip() const = 0;
+  virtual void beginTriangleFan() const = 0;
+  virtual void beginQuads() const = 0;
+  virtual void beginQuadStrip() const = 0;
+  virtual void beginPolygon() const = 0;
 
-//    virtual void end() const = 0;
+  virtual void end() const = 0;
 
-//    virtual void vertex(const Vector3<double>& v) const = 0;
+#define BLOCK_TYPEDEF(name) \
+  typedef Saver<&Gfx::Canvas::begin##name, &Gfx::Canvas::end> name##Block;
+
+  BLOCK_TYPEDEF(Points);
+  BLOCK_TYPEDEF(Lines);
+  BLOCK_TYPEDEF(LineStrip);
+  BLOCK_TYPEDEF(LineLoop);
+  BLOCK_TYPEDEF(Triangles);
+  BLOCK_TYPEDEF(TriangleStrip);
+  BLOCK_TYPEDEF(TriangleFan);
+  BLOCK_TYPEDEF(Quads);
+  BLOCK_TYPEDEF(QuadStrip);
+  BLOCK_TYPEDEF(Polygon);
+
+#undef BLOCK_TYPEDEF
+
+  virtual void vertex2(const Gfx::Vec2<double>& v) const = 0;
+  virtual void vertex3(const Gfx::Vec3<double>& v) const = 0;
 };
 
 static const char vcid_canvas_h[] = "$Header$";

@@ -84,6 +84,22 @@ public:
 
   virtual void drawRect(const Gfx::Rect<double>& rect) const;
 
+  virtual void beginPoints() const;
+  virtual void beginLines() const;
+  virtual void beginLineStrip() const;
+  virtual void beginLineLoop() const;
+  virtual void beginTriangles() const;
+  virtual void beginTriangleStrip() const;
+  virtual void beginTriangleFan() const;
+  virtual void beginQuads() const;
+  virtual void beginQuadStrip() const;
+  virtual void beginPolygon() const;
+
+  virtual void end() const;
+
+  virtual void vertex2(const Gfx::Vec2<double>& v) const;
+  virtual void vertex3(const Gfx::Vec3<double>& v) const;
+
 private:
   GLCanvas(const GLCanvas&);
   GLCanvas& operator=(const GLCanvas&);
