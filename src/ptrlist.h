@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Wed Jun 30 14:13:24 1999
+// written: Sat Jul  3 13:50:30 1999
 // $Id$
 //
 // PtrList is type-parameterized container for pointers. PtrList is
@@ -145,9 +145,22 @@ public:
   // range-check performed; this must be done by the client with
   // isValidId().
 
-  void getValidIds(vector<int>& vec) const;
-  // Puts a list of all valid (i.e. within-range and non-null) ptrid's
-  // into the vector<int> that is passed in by reference.
+  template <class Iterator>
+  void insertValidIds(Iterator itr) const {
+	 for (int i = 0; i < itsTrials.size(); ++i) {
+		if (isValidId(i)) {
+		  *itr = i;
+		  ++itr;
+		}
+	 }
+  }
+
+  // Puts a list of all valid (i.e. within-range and non-null) trial
+  // ids into the vector<int> that is passed in by reference.
+  void getValidIds(vector<int>& vec) const {
+	 vec.clear();
+	 insertValidIds(back_inserter(vec));
+  }
 
   //////////////////
   // manipulators //
