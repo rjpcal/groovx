@@ -258,11 +258,11 @@ ifeq ($(COMPILER),ppc-g++-2)
 endif
 
 ifeq ($(COMPILER),g++3)
-	CC := time g++-3
+	CC := time g++-3.1
 # Filter the compiler output...
-	FILTER := |& $(SCRIPTS)/filter_gcc_v3
+	FILTER := #|& $(SCRIPTS)/filter_gcc_v3
 
-	WARNINGS := -W -Wdeprecated -Wno-system-headers -Wall -Wsign-promo -Wwrite-strings -Weffc++
+	WARNINGS := -W -Wdeprecated -Wno-system-headers -Wall -Wsign-promo -Wwrite-strings
 	CC_SWITCHES += $(WARNINGS)
 	CPP_DEFINES += -DGCC_COMPILER=3 -DSTD_IO=std -DFUNCTIONAL_OK
 
