@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Tue Aug  3 13:16:40 1999
+// written: Mon Sep 27 10:32:10 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,7 +75,7 @@ public:
 
   Trial();
   Trial(istream &is, IOFlag flag); 
-  virtual ~Trial () {}
+  virtual ~Trial ();
 
   // write/read the object's state from/to an output/input stream
   virtual void serialize(ostream &os, IOFlag flag) const;
