@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Mon Nov 13 21:10:09 2000
+// written: Tue Nov 14 21:38:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,9 +28,10 @@ DOTRACE("Face_Init");
   Tcl::TclPkg* pkg =
 	 new Tcl::FieldCntrPkg<Face>(interp, "Face", "$Revision$"); 
 
-  IO::IoFactory::theOne().registerCreatorFunc(&CloneFace::make);
+  Tcl::TclPkg* pkg2 =
+	 new Tcl::FieldCntrPkg<CloneFace>(interp, "CloneFace", "$Revision$"); 
 
-  return pkg->initStatus();
+  return pkg->combineStatus(pkg2->initStatus());
 }
 
 static const char vcid_facetcl_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Tue Nov 14 21:13:43 2000
+// written: Wed Nov 15 07:42:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -267,7 +267,7 @@ DOTRACE("Fish::readFrom");
 
   reader->ensureReadVersionId("Fish", 2, "Try grsh0.8a4"); 
 
-  readFieldsFrom(reader);
+  readFieldsFrom(reader, classFields());
 
   IO::IoProxy<GrObj> baseclass(this);
   reader->readBaseClass("GrObj", &baseclass);
@@ -279,7 +279,7 @@ DOTRACE("Fish::writeTo");
   writer->ensureWriteVersionId("Fish", FISH_SERIAL_VERSION_ID, 2,
 										 "Try grsh0.8a4");
 
-  writeFieldsTo(writer);
+  writeFieldsTo(writer, classFields());
 
   IO::ConstIoProxy<GrObj> baseclass(this);
   writer->writeBaseClass("GrObj", &baseclass);

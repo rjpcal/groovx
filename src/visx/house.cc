@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Tue Nov 14 21:14:10 2000
+// written: Wed Nov 15 07:42:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -220,7 +220,7 @@ DOTRACE("House::readFrom");
 
   reader->ensureReadVersionId("House", 2, "Try grsh0.8a4");
 
-  readFieldsFrom(reader);
+  readFieldsFrom(reader, classFields());
 
   IO::IoProxy<GrObj> baseclass(this);
   reader->readBaseClass("GrObj", &baseclass);
@@ -232,7 +232,7 @@ DOTRACE("House::writeTo");
   writer->ensureWriteVersionId("House", HOUSE_SERIAL_VERSION_ID, 2,
 										 "Try grsh0.8a4");
 
-  writeFieldsTo(writer);
+  writeFieldsTo(writer, classFields());
 
   IO::ConstIoProxy<GrObj> baseclass(this);
   writer->writeBaseClass("GrObj", &baseclass);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Tue Nov 14 21:13:54 2000
+// written: Wed Nov 15 07:42:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ DOTRACE("FixPt::readFrom");
 
   reader->ensureReadVersionId("FixPt", 2, "Try grsh0.8a4");
 
-  readFieldsFrom(reader);
+  readFieldsFrom(reader, classFields());
 
   DebugEval(length());  DebugEvalNL(width());
 
@@ -91,7 +91,7 @@ DOTRACE("FixPt::writeTo");
   writer->ensureWriteVersionId("FixPt", FIXPT_SERIAL_VERSION_ID, 2,
 										 "Try grsh0.8a4");
 
-  writeFieldsTo(writer); 
+  writeFieldsTo(writer, classFields()); 
 
   IO::ConstIoProxy<GrObj> baseclass(this);
   writer->writeBaseClass("GrObj", &baseclass);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Tue Nov 14 21:14:27 2000
+// written: Wed Nov 15 07:42:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -271,7 +271,7 @@ DOTRACE("MorphyFace::readFrom");
 
   reader->ensureReadVersionId("MorphyFace", 1, "Try grsh0.8a4");
 
-  readFieldsFrom(reader);
+  readFieldsFrom(reader, classFields());
 
   IO::IoProxy<GrObj> baseclass(this);
   reader->readBaseClass("GrObj", &baseclass);
@@ -283,7 +283,7 @@ DOTRACE("MorphyFace::writeTo");
   writer->ensureWriteVersionId("MorphyFace", MFACE_SERIAL_VERSION_ID, 1,
 										 "Try grsh0.8a4");
 
-  writeFieldsTo(writer);
+  writeFieldsTo(writer, classFields());
 
   IO::IoProxy<GrObj> baseclass(const_cast<MorphyFace*>(this));
   writer->writeBaseClass("GrObj", &baseclass);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Tue Nov 14 21:13:25 2000
+// written: Wed Nov 15 07:42:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -110,7 +110,7 @@ DOTRACE("Face::readFrom");
 
   reader->ensureReadVersionId("Face", 1, "Try grsh0.8a4");
 
-  readFieldsFrom(reader);
+  readFieldsFrom(reader, classFields());
 
   IO::IoProxy<GrObj> baseclass(this);
   reader->readBaseClass("GrObj", &baseclass);
@@ -122,7 +122,7 @@ DOTRACE("Face::writeTo");
   writer->ensureWriteVersionId("Face", FACE_SERIAL_VERSION_ID, 1,
 										 "Try grsh0.8a4");
 
-  writeFieldsTo(writer);
+  writeFieldsTo(writer, classFields());
 
   IO::ConstIoProxy<GrObj> baseclass(this);
   writer->writeBaseClass("GrObj", &baseclass);
