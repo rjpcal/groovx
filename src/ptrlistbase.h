@@ -3,7 +3,7 @@
 // ptrlistbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Oct 25 13:48:07 2000
+// written: Wed Oct 25 13:59:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,18 +94,6 @@ public:
   /** Returns true if 'id' is a valid index into a non-NULL T* in
 		the PtrList, given its current size. */
   virtual bool isValidId(int id) const;
-
-  /** Insert all of the valid id's in the list using the insert
-      iterator \a itr. **/
-  template <class Iterator>
-  void insertValidIds(Iterator itr) const {
-	 for(IdIterator id_itr = beginIds(), end = endIds();
-		  id_itr != end;
-		  ++id_itr)
-		{
-		  *itr++ = *id_itr;
-		}
-  }
 
   /** If the object at \a id is unshared, removes reference to the
       object at index \a id, causing the object to be destroyed since
