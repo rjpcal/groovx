@@ -90,14 +90,23 @@ public:
   // scaling //
   /////////////
 private:
-  GrObj::ScalingMode itsScalingMode;
-  double itsWidthFactor;
-  double itsHeightFactor;
+  class Scaler {
+  public:
+	 Scaler() :
+		itsMode(GrObj::NATIVE_SCALING),
+		itsWidthFactor(1.0),
+		itsHeightFactor(1.0)
+		{}
+
+	 GrObj::ScalingMode itsMode;
+	 double itsWidthFactor;
+	 double itsHeightFactor;
+  };
 
   void doScaling() const;
 
 public:
-  GrObj::ScalingMode getScalingMode() const { return itsScalingMode; }
+  GrObj::ScalingMode getScalingMode() const { return itsScaler.itsMode; }
 
   void setScalingMode(GrObj::ScalingMode new_mode);
 
@@ -112,9 +121,18 @@ public:
   // alignment //
   ///////////////
 private:
-  GrObj::AlignmentMode itsAlignmentMode;
-  double itsCenterX;
-  double itsCenterY;
+  class Aligner {
+  public:
+	 Aligner() :
+		itsMode(GrObj::NATIVE_ALIGNMENT),
+		itsCenterX(0.0),
+		itsCenterY(0.0)
+		{}
+		
+	 GrObj::AlignmentMode itsMode;
+	 double itsCenterX;
+	 double itsCenterY;
+  };
 
   double nativeCenterX() const;
   double nativeCenterY() const;
@@ -123,29 +141,42 @@ private:
 
 public:
   void setAlignmentMode(GrObj::AlignmentMode new_mode);
-  GrObj::AlignmentMode getAlignmentMode() const { return itsAlignmentMode; }
+  GrObj::AlignmentMode getAlignmentMode() const { return itsAligner.itsMode; }
 
-  double getCenterX() const { return itsCenterX; }
-  double getCenterY() const { return itsCenterY; }
+  double getCenterX() const { return itsAligner.itsCenterX; }
+  double getCenterY() const { return itsAligner.itsCenterY; }
 
-  void setCenterX(double val) { itsCenterX = val; }
-  void setCenterY(double val) { itsCenterY = val; }
+  void setCenterX(double val) { itsAligner.itsCenterX = val; }
+  void setCenterY(double val) { itsAligner.itsCenterY = val; }
 
 
   //////////////////
   // bounding box //
   //////////////////
 private:
-  mutable bool itsRawBBIsCurrent;
+  class BoundingBox {
+  public:
+	 BoundingBox() :
+		itsHasBB(false),
+		itsIsVisible(false),
+		itsRawBBIsCurrent(false),
+		itsCachedRawBB(),
+		itsCachedPixelBorder(0),
+		itsFinalBBIsCurrent(false),
+		itsCachedFinalBB()
+		{}
+		
+	 mutable bool itsHasBB;
 
-  mutable bool itsHasBB;
-  mutable Rect<double> itsCachedRawBB;
-  mutable int itsCachedBBPixelBorder;
+	 bool itsIsVisible;
 
-  mutable bool itsFinalBBIsCurrent;
-  mutable Rect<double> itsCachedFinalBB;
+	 mutable bool itsRawBBIsCurrent;
+	 mutable Rect<double> itsCachedRawBB;
+	 mutable int itsCachedPixelBorder;
 
-  bool itsBBIsVisible;
+	 mutable bool itsFinalBBIsCurrent;
+	 mutable Rect<double> itsCachedFinalBB;
+  };
 
   const Rect<double>& getRawBB() const;
 
@@ -165,7 +196,7 @@ public:
   bool getBoundingBox(double& left, double& top,
 							 double& right, double& bottom) const;
 
-  bool getBBVisibility() const { return itsBBIsVisible; }
+  bool getBBVisibility() const { return itsBB.itsIsVisible; }
 
   void setBBVisibility(bool visibility);
 
@@ -174,11 +205,25 @@ public:
   // rendering //
   ///////////////
 private:
-  mutable int itsDisplayList;   // OpenGL display list that draws the object
+  class Renderer {
+  public:
+	 Renderer() :
+		itsMode(GrObj::GROBJ_GL_COMPILE),
+		itsIsCurrent(false),
+		itsDisplayList(-1),
+		itsBitmapCache(0)
+		{}
 
-  Bitmap* itsBitmapCache;
+	 virtual ~Renderer() {
+		glDeleteLists(itsDisplayList, 1);
+		delete itsBitmapCache;
+	 }
 
-  GrObj::GrObjRenderMode itsRenderMode;
+	 GrObj::GrObjRenderMode itsMode;
+	 mutable bool itsIsCurrent;    // true if displaylist is current
+	 mutable int itsDisplayList;   // OpenGL display list that draws the object
+	 Bitmap* itsBitmapCache;
+  };
 
   // This function updates the cached OpenGL display list.
   void recompile() const;
@@ -192,9 +237,9 @@ private:
 
 public:
 
-  int getDisplayList() const { return itsDisplayList; }
+  int getDisplayList() const { return itsRenderer.itsDisplayList; }
 
-  GrObj::GrObjRenderMode getRenderMode() const { return itsRenderMode; }
+  GrObj::GrObjRenderMode getRenderMode() const { return itsRenderer.itsMode; }
   void setRenderMode(GrObj::GrObjRenderMode new_mode);
 
   void update() const;
@@ -210,8 +255,15 @@ public:
   // unrendering //
   /////////////////
 private:
-  GrObj::GrObjRenderMode itsUnRenderMode;
-  
+  class UnRenderer {
+  public:
+	 UnRenderer() :
+		itsMode(GrObj::GROBJ_SWAP_FORE_BACK)
+		{}
+
+	 GrObj::GrObjRenderMode itsMode;
+  };
+
   void undrawDirectRender() const;
   void undrawSwapForeBack() const;
   void undrawClearBoundingBox() const;
@@ -220,7 +272,7 @@ private:
 
 public:
 
-  GrObj::GrObjRenderMode getUnRenderMode() const { return itsUnRenderMode; }
+  GrObj::GrObjRenderMode getUnRenderMode() const { return itsUnRenderer.itsMode; }
 
   void setUnRenderMode(GrObj::GrObjRenderMode new_mode);
 
@@ -229,16 +281,11 @@ public:
   ///////////////
   // ? other ? //
   ///////////////
-private:
-  int itsCategory;
-
-  mutable bool itsIsCurrent;    // true if displaylist is current
-
 public:
   double finalWidth() const;
   double finalHeight() const;
 
-  bool isCurrent() const { return itsIsCurrent; }
+  bool isCurrent() const { return itsRenderer.itsIsCurrent; }
 
   double getMaxDimension() const
 	 { return max(finalWidth(), finalHeight()); }
@@ -246,7 +293,7 @@ public:
   int getCategory() const { return itsCategory; }
   void setCategory(int val) { itsCategory = val; }
 
-  void postUpdated() const { itsIsCurrent = true; }
+  void postUpdated() const { itsRenderer.itsIsCurrent = true; }
 
   void invalidateCaches();
 
@@ -255,6 +302,13 @@ public:
   //////////////////
 private:
   GrObj* self;
+
+  int itsCategory;
+  Scaler itsScaler;
+  Aligner itsAligner;
+  BoundingBox itsBB;
+  Renderer itsRenderer;
+  UnRenderer itsUnRenderer;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -266,29 +320,15 @@ private:
 GrObjImpl::GrObjImpl(GrObj* obj) :
   self(obj),
   itsCategory(-1),
-  itsIsCurrent(false),
-  itsDisplayList(-1),
-  itsRenderMode(GrObj::GROBJ_GL_COMPILE),
-  itsUnRenderMode(GrObj::GROBJ_SWAP_FORE_BACK),
-  itsRawBBIsCurrent(false),
-  itsHasBB(false),
-  itsCachedRawBB(),
-  itsCachedBBPixelBorder(0),
-  itsFinalBBIsCurrent(false),
-  itsCachedFinalBB(),
-  itsBBIsVisible(false),
-  itsBitmapCache(0),
-  itsScalingMode(GrObj::NATIVE_SCALING),
-  itsWidthFactor(1.0),
-  itsHeightFactor(1.0),
-  itsAlignmentMode(GrObj::NATIVE_ALIGNMENT),
-  itsCenterX(0.0),
-  itsCenterY(0.0)
+  itsScaler(),
+  itsAligner(),
+  itsBB(),
+  itsRenderer(),
+  itsUnRenderer()
 {};
 
 GrObjImpl::~GrObjImpl() {
 DOTRACE("GrObjImpl::~GrObjImpl");
-  glDeleteLists(itsDisplayList, 1);
 }
 
 void GrObjImpl::serialize(ostream &os, IO::IOFlag flag) const {
@@ -300,18 +340,18 @@ DOTRACE("GrObjImpl::serialize");
 
   os << itsCategory << IO::SEP;
 
-  os << itsRenderMode << IO::SEP;
-  os << itsUnRenderMode << IO::SEP;
+  os << itsRenderer.itsMode << IO::SEP;
+  os << itsUnRenderer.itsMode << IO::SEP;
 
-  os << itsBBIsVisible << IO::SEP;
+  os << itsBB.itsIsVisible << IO::SEP;
 
-  os << itsScalingMode << IO::SEP;
-  os << itsWidthFactor << IO::SEP;
-  os << itsHeightFactor << IO::SEP;
+  os << itsScaler.itsMode << IO::SEP;
+  os << itsScaler.itsWidthFactor << IO::SEP;
+  os << itsScaler.itsHeightFactor << IO::SEP;
 
-  os << itsAlignmentMode << IO::SEP;
-  os << itsCenterX << IO::SEP;
-  os << itsCenterY << endl;  
+  os << itsAligner.itsMode << IO::SEP;
+  os << itsAligner.itsCenterX << IO::SEP;
+  os << itsAligner.itsCenterY << endl;  
 
   if (os.fail()) throw OutputError("GrObj");
 
@@ -327,19 +367,19 @@ DOTRACE("GrObjImpl::deserialize");
 
   is >> itsCategory; if (is.fail()) throw InputError("after GrObj::itsCategory");
 
-  is >> itsRenderMode; if (is.fail()) throw InputError("after GrObj::itsRenderMode");
-  is >> itsUnRenderMode; if (is.fail()) throw InputError("after GrObj::itsUnRenderMode");
+  is >> itsRenderer.itsMode; if (is.fail()) throw InputError("after GrObj::itsRenderer.itsMode");
+  is >> itsUnRenderer.itsMode; if (is.fail()) throw InputError("after GrObj::itsUnRenderer.itsMode");
 
   int temp;
-  is >> temp; if (is.fail()) throw InputError("after GrObj::temp"); itsBBIsVisible = bool(temp);
+  is >> temp; if (is.fail()) throw InputError("after GrObj::temp"); itsBB.itsIsVisible = bool(temp);
 
-  is >> itsScalingMode; if (is.fail()) throw InputError("after GrObj::itsScalingMode");
-  is >> itsWidthFactor; if (is.fail()) throw InputError("after GrObj::itsWidthFactor");
-  is >> itsHeightFactor; if (is.fail()) throw InputError("after GrObj::itsHeightFactor");
+  is >> itsScaler.itsMode; if (is.fail()) throw InputError("after GrObj::itsScaler.itsMode");
+  is >> itsScaler.itsWidthFactor; if (is.fail()) throw InputError("after GrObj::itsScaler.itsWidthFactor");
+  is >> itsScaler.itsHeightFactor; if (is.fail()) throw InputError("after GrObj::itsScaler.itsHeightFactor");
 
-  is >> itsAlignmentMode; if (is.fail()) throw InputError("after GrObj::itsAlignmentMode");
-  is >> itsCenterX; if (is.fail()) throw InputError("after GrObj::itsCenterX");
-  is >> itsCenterY; if (is.fail()) throw InputError("after GrObj::itsCenterY");
+  is >> itsAligner.itsMode; if (is.fail()) throw InputError("after GrObj::itsAligner.itsMode");
+  is >> itsAligner.itsCenterX; if (is.fail()) throw InputError("after GrObj::itsAligner.itsCenterX");
+  is >> itsAligner.itsCenterY; if (is.fail()) throw InputError("after GrObj::itsAligner.itsCenterY");
 
   invalidateCaches();
 
@@ -354,18 +394,18 @@ DOTRACE("GrObjImpl::charCount");
 	 gCharCount("GrObj") + 1
 	 + gCharCount(itsCategory) + 1
 	 
-	 + gCharCount(itsRenderMode) + 1
-	 + gCharCount(itsUnRenderMode) + 1
+	 + gCharCount(itsRenderer.itsMode) + 1
+	 + gCharCount(itsUnRenderer.itsMode) + 1
 	 
-	 + gCharCount(itsBBIsVisible) + 1
+	 + gCharCount(itsBB.itsIsVisible) + 1
 	 
-	 + gCharCount(itsScalingMode) + 1
-	 + gCharCount(itsWidthFactor) + 1
-	 + gCharCount(itsHeightFactor) + 1
+	 + gCharCount(itsScaler.itsMode) + 1
+	 + gCharCount(itsScaler.itsWidthFactor) + 1
+	 + gCharCount(itsScaler.itsHeightFactor) + 1
 	 
-	 + gCharCount(itsAlignmentMode) + 1
-	 + gCharCount(itsCenterX) + 1
-	 + gCharCount(itsCenterY) + 1
+	 + gCharCount(itsAligner.itsMode) + 1
+	 + gCharCount(itsAligner.itsCenterX) + 1
+	 + gCharCount(itsAligner.itsCenterY) + 1
 	 + 5; // fudge factor
   DebugEvalNL(count);
   return count;
@@ -388,50 +428,50 @@ DOTRACE("GrObjImpl::writeTo");
 
 inline const Rect<double>& GrObjImpl::getRawBB() const {
   updateBB();
-  return itsCachedRawBB;
+  return itsBB.itsCachedRawBB;
 }
 
 inline int GrObjImpl::getBBPixelBorder() const {
   updateBB();
-  return itsCachedBBPixelBorder;
+  return itsBB.itsCachedPixelBorder;
 }
 
 inline bool GrObjImpl::hasBB() const {
   updateBB();
-  return itsHasBB;
+  return itsBB.itsHasBB;
 }
 
 inline double GrObjImpl::aspectRatio() const {
   if ( !hasBB() ) return 1.0;
-  return (itsHeightFactor != 0.0 ? itsWidthFactor/itsHeightFactor : 0.0);
+  return (itsScaler.itsHeightFactor != 0.0 ? itsScaler.itsWidthFactor/itsScaler.itsHeightFactor : 0.0);
 }
 
 inline double GrObjImpl::finalWidth() const {
-  return nativeWidth()*itsWidthFactor;
+  return nativeWidth()*itsScaler.itsWidthFactor;
 }
 
 inline double GrObjImpl::finalHeight() const {
-  return nativeHeight()*itsHeightFactor;
+  return nativeHeight()*itsScaler.itsHeightFactor;
 }
 
 inline double GrObjImpl::nativeWidth() const {
   updateBB();
-  return itsCachedRawBB.width();
+  return itsBB.itsCachedRawBB.width();
 }
 
 inline double GrObjImpl::nativeHeight() const {
   updateBB();
-  return itsCachedRawBB.height();;
+  return itsBB.itsCachedRawBB.height();;
 }
 
 inline double GrObjImpl::nativeCenterX() const {
   updateBB();
-  return itsCachedRawBB.centerX();
+  return itsBB.itsCachedRawBB.centerX();
 }
 
 inline double GrObjImpl::nativeCenterY() const {
   updateBB();
-  return itsCachedRawBB.centerY();
+  return itsBB.itsCachedRawBB.centerY();
 }
 
 bool GrObjImpl::getBoundingBox(double& left, double& top,
@@ -441,7 +481,7 @@ DOTRACE("GrObjImpl::getBoundingBox");
   if ( !hasBB() ) return false;
 
   updateCachedFinalBB();
-  itsCachedFinalBB.getRectLTRB(left, top, right, bottom);
+  itsBB.itsCachedFinalBB.getRectLTRB(left, top, right, bottom);
   return true;
 }
 
@@ -453,19 +493,19 @@ DOTRACE("GrObjImpl::getBoundingBox");
 
 inline void GrObjImpl::setBBVisibility(bool visibility) {
 DOTRACE("GrObjImpl::setBBVisibility");
-  itsBBIsVisible = visibility;
+  itsBB.itsIsVisible = visibility;
 }
 
 void GrObjImpl::setScalingMode(GrObj::ScalingMode new_mode) {
 DOTRACE("GrObjImpl::setScalingMode");
-  if (itsScalingMode == new_mode) return;
+  if (itsScaler.itsMode == new_mode) return;
 
   switch (new_mode) {
   case GrObj::NATIVE_SCALING:
-	 itsScalingMode = new_mode;
+	 itsScaler.itsMode = new_mode;
 
-	 itsWidthFactor = 1.0;
-	 itsHeightFactor = 1.0;
+	 itsScaler.itsWidthFactor = 1.0;
+	 itsScaler.itsHeightFactor = 1.0;
 	 break;
 
   case GrObj::MAINTAIN_ASPECT_SCALING:
@@ -473,7 +513,7 @@ DOTRACE("GrObjImpl::setScalingMode");
 	 // These modes require a bounding box
 	 if ( !hasBB() ) return;
 
-	 itsScalingMode = new_mode;
+	 itsScaler.itsMode = new_mode;
 	 break;
 
   } // end switch
@@ -482,41 +522,41 @@ DOTRACE("GrObjImpl::setScalingMode");
 void GrObjImpl::setWidth(double new_width) {
 DOTRACE("GrObjImpl::setWidth");
   if (new_width == 0.0 || new_width == finalWidth()) return; 
-  if (itsScalingMode == GrObj::NATIVE_SCALING) return;
+  if (itsScaler.itsMode == GrObj::NATIVE_SCALING) return;
   if ( !hasBB() ) return;
 
   double new_width_factor = new_width / nativeWidth();
   
-  double change_factor = new_width_factor / itsWidthFactor;
+  double change_factor = new_width_factor / itsScaler.itsWidthFactor;
 	 
-  itsWidthFactor = new_width_factor;
+  itsScaler.itsWidthFactor = new_width_factor;
 
-  if (itsScalingMode == GrObj::MAINTAIN_ASPECT_SCALING) {
-	 itsHeightFactor *= change_factor;
+  if (itsScaler.itsMode == GrObj::MAINTAIN_ASPECT_SCALING) {
+	 itsScaler.itsHeightFactor *= change_factor;
   }
 }
 
 void GrObjImpl::setHeight(double new_height) {
 DOTRACE("GrObjImpl::setHeight");
   if (new_height == 0.0 || new_height == finalHeight()) return; 
-  if (itsScalingMode == GrObj::NATIVE_SCALING) return;
+  if (itsScaler.itsMode == GrObj::NATIVE_SCALING) return;
   if ( !hasBB() ) return;
 
   double new_height_factor = new_height / nativeHeight();
 
-  double change_factor = new_height_factor / itsHeightFactor;
+  double change_factor = new_height_factor / itsScaler.itsHeightFactor;
 
-  itsHeightFactor = new_height_factor;
+  itsScaler.itsHeightFactor = new_height_factor;
 
-  if (itsScalingMode == GrObj::MAINTAIN_ASPECT_SCALING) {
-	 itsWidthFactor *= change_factor;
+  if (itsScaler.itsMode == GrObj::MAINTAIN_ASPECT_SCALING) {
+	 itsScaler.itsWidthFactor *= change_factor;
   }
 }
 
 void GrObjImpl::setAspectRatio(double new_aspect_ratio) {
 DOTRACE("GrObjImpl::setAspectRatio");
   if (new_aspect_ratio == 0.0 || new_aspect_ratio == aspectRatio()) return; 
-  if (itsScalingMode == GrObj::NATIVE_SCALING) return;
+  if (itsScaler.itsMode == GrObj::NATIVE_SCALING) return;
   if ( !hasBB() ) return;
 
   double change_factor = new_aspect_ratio / (aspectRatio());
@@ -524,30 +564,30 @@ DOTRACE("GrObjImpl::setAspectRatio");
   // By convention, we change only the width to reflect the change in
   // aspect ratio
 
-  itsWidthFactor *= change_factor;
+  itsScaler.itsWidthFactor *= change_factor;
 }
 
 void GrObjImpl::setMaxDimension(double new_max_dimension) {
 DOTRACE("GrObjImpl::setMaxDimension");
-  if (itsScalingMode == GrObj::NATIVE_SCALING) return;
+  if (itsScaler.itsMode == GrObj::NATIVE_SCALING) return;
   if ( !hasBB() ) return;
 
   double scaling_factor = new_max_dimension / max(finalWidth(), finalHeight());
 
-  itsWidthFactor *= scaling_factor;
-  itsHeightFactor *= scaling_factor;
+  itsScaler.itsWidthFactor *= scaling_factor;
+  itsScaler.itsHeightFactor *= scaling_factor;
 }
 
 void GrObjImpl::setAlignmentMode(GrObj::AlignmentMode new_mode) {
 DOTRACE("GrObjImpl::setAlignmentMode");
   DebugEval(new_mode); 
-  DebugEvalNL(itsAlignmentMode); 
+  DebugEvalNL(itsAligner.itsMode); 
 
-  if (new_mode == itsAlignmentMode) return;
+  if (new_mode == itsAligner.itsMode) return;
 
   switch (new_mode) {
   case GrObj::NATIVE_ALIGNMENT:
-	 itsAlignmentMode = new_mode;
+	 itsAligner.itsMode = new_mode;
 	 break;
 
   case GrObj::CENTER_ON_CENTER:
@@ -559,24 +599,24 @@ DOTRACE("GrObjImpl::setAlignmentMode");
 	 // These modes require a bounding box
 	 if ( !hasBB() ) return;
 
-	 itsAlignmentMode = new_mode;
+	 itsAligner.itsMode = new_mode;
 	 break;
 
   } // end switch
 
-  DebugEvalNL(itsAlignmentMode); 
+  DebugEvalNL(itsAligner.itsMode); 
 }
 
 void GrObjImpl::setRenderMode(GrObj::GrObjRenderMode new_mode) {
 DOTRACE("GrObjImpl::setRenderMode");
   // If new_mode is the same as the current render mode, then return
   // immediately (and don't send a state change message)
-  if (new_mode == itsRenderMode) return; 
+  if (new_mode == itsRenderer.itsMode) return; 
 
   switch (new_mode) {
   case GrObj::GROBJ_DIRECT_RENDER:
   case GrObj::GROBJ_GL_COMPILE:
-	 itsRenderMode = new_mode;
+	 itsRenderer.itsMode = new_mode;
 	 break;
 
   case GrObj::GROBJ_GL_BITMAP_CACHE:
@@ -584,14 +624,14 @@ DOTRACE("GrObjImpl::setRenderMode");
 	 // These modes require a bounding box
 	 if ( !hasBB() ) return;
 
-	 itsRenderMode = new_mode;
-	 delete itsBitmapCache;
+	 itsRenderer.itsMode = new_mode;
+	 delete itsRenderer.itsBitmapCache;
 	 
 	 if (GrObj::GROBJ_GL_BITMAP_CACHE == new_mode) {
-		itsBitmapCache = new GLBitmap();
+		itsRenderer.itsBitmapCache = new GLBitmap();
 	 }
 	 if (GrObj::GROBJ_X11_BITMAP_CACHE == new_mode) {
-		itsBitmapCache = new XBitmap();
+		itsRenderer.itsBitmapCache = new XBitmap();
 	 }
 	 
 	 break;
@@ -603,19 +643,19 @@ void GrObjImpl::setUnRenderMode(GrObj::GrObjRenderMode new_mode) {
 DOTRACE("GrObjImpl::setUnRenderMode");
   // If new_mode is the same as the current unrender mode, then return
   // immediately (and don't send a state change message)
-  if (new_mode == itsUnRenderMode) return; 
+  if (new_mode == itsUnRenderer.itsMode) return; 
 
   switch (new_mode) {
   case GrObj::GROBJ_DIRECT_RENDER:
   case GrObj::GROBJ_SWAP_FORE_BACK:
-	 itsUnRenderMode = new_mode;
+	 itsUnRenderer.itsMode = new_mode;
 	 break;
 
   case GrObj::GROBJ_CLEAR_BOUNDING_BOX:
 	 // These modes require a bounding box
 	 if ( !hasBB() ) return;
 
-	 itsUnRenderMode = new_mode;
+	 itsUnRenderer.itsMode = new_mode;
 	 break;
 
   } // end switch
@@ -629,20 +669,20 @@ DOTRACE("GrObjImpl::setUnRenderMode");
 
 void GrObjImpl::updateBB() const {
 DOTRACE("GrObjImpl::updateBB");
-  DebugEval(itsRawBBIsCurrent);
-  if (!itsRawBBIsCurrent) {
-	 itsHasBB = self->grGetBoundingBox(itsCachedRawBB.l,
-												  itsCachedRawBB.t,
-												  itsCachedRawBB.r,
-												  itsCachedRawBB.b,
-												  itsCachedBBPixelBorder);
-	 if (!itsHasBB) {
-		itsCachedRawBB.setRectLTRB(0.0, 0.0, 0.0, 0.0);
-		itsCachedBBPixelBorder = 0;
+  DebugEval(itsBB.itsRawBBIsCurrent);
+  if (!itsBB.itsRawBBIsCurrent) {
+	 itsBB.itsHasBB = self->grGetBoundingBox(itsBB.itsCachedRawBB.l,
+												  itsBB.itsCachedRawBB.t,
+												  itsBB.itsCachedRawBB.r,
+												  itsBB.itsCachedRawBB.b,
+												  itsBB.itsCachedPixelBorder);
+	 if (!itsBB.itsHasBB) {
+		itsBB.itsCachedRawBB.setRectLTRB(0.0, 0.0, 0.0, 0.0);
+		itsBB.itsCachedPixelBorder = 0;
 	 }
-	 itsRawBBIsCurrent = true;
+	 itsBB.itsRawBBIsCurrent = true;
   }
-  DebugEvalNL(itsHasBB);
+  DebugEvalNL(itsBB.itsHasBB);
 }
 
 void GrObjImpl::update() const {
@@ -650,7 +690,7 @@ DOTRACE("GrObjImpl::update");
   checkForGlError("before GrObj::update");
   if ( !isCurrent() ) {
 
-	 switch (itsRenderMode) {
+	 switch (itsRenderer.itsMode) {
 	 case GrObj::GROBJ_GL_COMPILE:
 		recompile();
 		break;
@@ -668,11 +708,11 @@ void GrObjImpl::draw() const {
 DOTRACE("GrObjImpl::draw");
   checkForGlError("before GrObj::draw");
 
-  if ( itsBBIsVisible ) {
+  if ( itsBB.itsIsVisible ) {
 	 grDrawBoundingBox();
   }
 
-  switch (itsRenderMode) {
+  switch (itsRenderer.itsMode) {
 
   case GrObj::GROBJ_DIRECT_RENDER:      drawDirectRender(); break;
 
@@ -690,14 +730,14 @@ void GrObjImpl::undraw() const {
 DOTRACE("GrObjImpl::undraw");
   checkForGlError("before GrObj::undraw");
 
-  switch (itsUnRenderMode) {
+  switch (itsUnRenderer.itsMode) {
   case GrObj::GROBJ_DIRECT_RENDER:       undrawDirectRender();     break;
   case GrObj::GROBJ_SWAP_FORE_BACK:      undrawSwapForeBack();     break;
   case GrObj::GROBJ_CLEAR_BOUNDING_BOX:  undrawClearBoundingBox(); break;
   default:                                /* nothing */            break;
   }
 
-  if ( itsBBIsVisible ) {
+  if ( itsBB.itsIsVisible ) {
 	 undrawBoundingBox();
   }
 
@@ -728,16 +768,16 @@ DOTRACE("GrObjImpl::grDrawBoundingBox");
 
 void GrObjImpl::invalidateCaches() {
 DOTRACE("GrObjImpl::invalidateCaches");
-  itsIsCurrent = false;
-  itsRawBBIsCurrent = false;
-  itsFinalBBIsCurrent = false;
+  itsRenderer.itsIsCurrent = false;
+  itsBB.itsRawBBIsCurrent = false;
+  itsBB.itsFinalBBIsCurrent = false;
 }
 
 void GrObjImpl::newList() const {
 DOTRACE("GrObjImpl::newList");
-  glDeleteLists(itsDisplayList, 1);
-  itsDisplayList = glGenLists(1); 
-  if (itsDisplayList == 0) {     
+  glDeleteLists(itsRenderer.itsDisplayList, 1);
+  itsRenderer.itsDisplayList = glGenLists(1); 
+  if (itsRenderer.itsDisplayList == 0) {     
 	 cerr << "GrObj::newList: couldn't allocate display list\n";
 	 throw GrObjError();
   }
@@ -756,7 +796,7 @@ DOTRACE("GrObjImpl::recompile");
 
 void GrObjImpl::recacheBitmap() const {
 DOTRACE("GrObjImpl::recacheBitmap");
-  Assert(itsBitmapCache != 0);
+  Assert(itsRenderer.itsBitmapCache != 0);
   
   undraw();
   
@@ -775,18 +815,18 @@ DOTRACE("GrObjImpl::recacheBitmap");
 		
 		Assert(hasBB());
 		
-		itsBitmapCache->grabWorldRect(getRawBB().l, getRawBB().t,
+		itsRenderer.itsBitmapCache->grabWorldRect(getRawBB().l, getRawBB().t,
 												getRawBB().r, getRawBB().b);
-		itsBitmapCache->setRasterX(getRawBB().l);
-		itsBitmapCache->setRasterY(getRawBB().b);
+		itsRenderer.itsBitmapCache->setRasterX(getRawBB().l);
+		itsRenderer.itsBitmapCache->setRasterY(getRawBB().b);
 	 }
 	 glPopAttrib;
   }
   glPopMatrix();
   
-  if (GrObj::GROBJ_X11_BITMAP_CACHE == itsRenderMode) {
-	 itsBitmapCache->flipVertical();
-	 itsBitmapCache->flipContrast();
+  if (GrObj::GROBJ_X11_BITMAP_CACHE == itsRenderer.itsMode) {
+	 itsRenderer.itsBitmapCache->flipVertical();
+	 itsRenderer.itsBitmapCache->flipContrast();
   }
   
   postUpdated();
@@ -794,7 +834,7 @@ DOTRACE("GrObjImpl::recacheBitmap");
 
 void GrObjImpl::doAlignment() const {
 DOTRACE("GrObjImpl::doAlignment");
-  if (GrObj::NATIVE_ALIGNMENT == itsAlignmentMode) return;
+  if (GrObj::NATIVE_ALIGNMENT == itsAligner.itsMode) return;
 	 
   Assert(hasBB());
 	 
@@ -804,7 +844,7 @@ DOTRACE("GrObjImpl::doAlignment");
   // These indicate where the center of the object will go
   double centerX, centerY;
 	 
-  switch (itsAlignmentMode) {
+  switch (itsAligner.itsMode) {
   case GrObj::CENTER_ON_CENTER:
 	 centerX = 0.0; centerY = 0.0;
 	 break;
@@ -821,7 +861,7 @@ DOTRACE("GrObjImpl::doAlignment");
 	 centerX = -width/2.0; centerY = height/2.0;
 	 break;
   case GrObj::ARBITRARY_ON_CENTER:
-	 centerX = itsCenterX; centerY = itsCenterY;
+	 centerX = itsAligner.itsCenterX; centerY = itsAligner.itsCenterY;
 	 break;
   }
 	 
@@ -832,20 +872,20 @@ DOTRACE("GrObjImpl::doAlignment");
 
 void GrObjImpl::doScaling() const {
 DOTRACE("GrObjImpl::doScaling");
-  if (GrObj::NATIVE_SCALING == itsScalingMode) return;
+  if (GrObj::NATIVE_SCALING == itsScaler.itsMode) return;
 	 
-  switch (itsScalingMode) {
+  switch (itsScaler.itsMode) {
   case GrObj::MAINTAIN_ASPECT_SCALING:
   case GrObj::FREE_SCALING:
-	 glScaled(itsWidthFactor, itsHeightFactor, 1.0);
+	 glScaled(itsScaler.itsWidthFactor, itsScaler.itsHeightFactor, 1.0);
 	 break;
   }
 }
 
 void GrObjImpl::updateCachedFinalBB() const {
 DOTRACE("GrObjImpl::updateCachedFinalBB");
-  if ( !itsFinalBBIsCurrent ) {
-	 itsCachedFinalBB = getRawBB();
+  if ( !itsBB.itsFinalBBIsCurrent ) {
+	 itsBB.itsCachedFinalBB = getRawBB();
 	 
 	 int bp = getBBPixelBorder();  // border pixels
 	 
@@ -860,9 +900,9 @@ DOTRACE("GrObjImpl::updateCachedFinalBB");
 		doScaling();
 		doAlignment();
 		
-		GrObj::getScreenFromWorld(itsCachedFinalBB.l, itsCachedFinalBB.b,
+		GrObj::getScreenFromWorld(itsBB.itsCachedFinalBB.l, itsBB.itsCachedFinalBB.b,
 										  screen_pos.l, screen_pos.b);
-		GrObj::getScreenFromWorld(itsCachedFinalBB.r, itsCachedFinalBB.t,
+		GrObj::getScreenFromWorld(itsBB.itsCachedFinalBB.r, itsBB.itsCachedFinalBB.t,
 										  screen_pos.r, screen_pos.t, false);
 	 }
 	 glPopMatrix();
@@ -873,16 +913,16 @@ DOTRACE("GrObjImpl::updateCachedFinalBB");
 
 	 // ... and project back to world coordinates
 	 GrObj::getWorldFromScreen(screen_pos.l, screen_pos.b,
-										itsCachedFinalBB.l, itsCachedFinalBB.b);
+										itsBB.itsCachedFinalBB.l, itsBB.itsCachedFinalBB.b);
 	 GrObj::getWorldFromScreen(screen_pos.r, screen_pos.t,
-										itsCachedFinalBB.r, itsCachedFinalBB.t, false);
+										itsBB.itsCachedFinalBB.r, itsBB.itsCachedFinalBB.t, false);
 	 
 	 // This next line is commented out to disable the caching scheme
 	 // because I don't think it really works, since changes to the
 	 // OpenGL state will screw up a cached copy of the box. What we
 	 // need is a way to determine whether the OpenGL state has
 	 // changed... but this might be impractical.
-//  	 itsFinalBBIsCurrent = true;
+//  	 itsBB.itsFinalBBIsCurrent = true;
   }
 }
 
@@ -908,7 +948,7 @@ DOTRACE("GrObjImpl::drawGLCompile");
   glPushMatrix();
     doScaling();
 	 doAlignment();
-	 glCallList( itsDisplayList );
+	 glCallList( itsRenderer.itsDisplayList );
   glPopMatrix();
 }
 
@@ -923,11 +963,11 @@ DOTRACE("GrObjImpl::drawBitmapCache");
   // bitmap again since the object was rendered to the screen as
   // part of recacheBitmap().
   else {
-	 Assert(itsBitmapCache != 0);
+	 Assert(itsRenderer.itsBitmapCache != 0);
 	 glPushMatrix();
 	   doScaling();
 		doAlignment();
-		itsBitmapCache->draw();
+		itsRenderer.itsBitmapCache->draw();
 	 glPopMatrix();
   }
 }
@@ -959,14 +999,14 @@ DOTRACE("GrObjImpl::undrawSwapForeBack");
 		doScaling();
 		doAlignment();
 		  
-		if ( itsRenderMode == GrObj::GROBJ_GL_COMPILE ) {
+		if ( itsRenderer.itsMode == GrObj::GROBJ_GL_COMPILE ) {
 		  // Since we don't do a recompile of the display list here,
 		  // we must explicitly check that the display list is valid,
 		  // since it might be invalid if the object was recently
 		  // constructed, for example.
-		  if (glIsList(itsDisplayList) == GL_TRUE) {
-			 glCallList( itsDisplayList );
-			 DebugEvalNL(itsDisplayList);
+		  if (glIsList(itsRenderer.itsDisplayList) == GL_TRUE) {
+			 glCallList( itsRenderer.itsDisplayList );
+			 DebugEvalNL(itsRenderer.itsDisplayList);
 		  }
 		}
 		else {
