@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Jun 13 13:15:55 2001
+// written: Tue Jun 19 15:08:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,7 @@
 #include "util/minivec.h"
 #include "util/ref.h"
 
+#include <iostream>
 #include <strstream.h>
 
 #define DYNAMIC_TRACE_EXPR Trial::tracer.status()
@@ -159,8 +160,9 @@ private:
 
   inline void timeTrace(const char* loc) {
 #ifdef TIME_TRACE
-    cerr << "in " << loc
-         << "@ elapsed time == " << timingHdlr().getElapsedMsec() << endl;
+    std::cerr << "in " << loc
+              << "@ elapsed time == " << timingHdlr().getElapsedMsec()
+              << std::endl;
 #endif
   }
 
