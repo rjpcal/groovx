@@ -3,7 +3,7 @@
 // experiment.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 10:52:17 1999
-// written: Wed Dec  1 14:44:21 1999
+// written: Thu Dec  2 14:21:02 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 
 class Experiment {
 public:
-  virtual void draw() = 0;
-  virtual void undraw() = 0;
+  virtual void edDraw() = 0;
+  virtual void edUndraw() = 0;
   virtual void edSwapBuffers() = 0;
 
   virtual void edBeginExpt() = 0;

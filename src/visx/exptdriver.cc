@@ -144,8 +144,8 @@ public:
   const string& getAutosaveFile() const { return itsAutosaveFile; }
   void setAutosaveFile(const string& str) { itsAutosaveFile = str; }
 
-  void draw();
-  void undraw();
+  void edDraw();
+  void edUndraw();
   void edSwapBuffers();
 
   void edBeginExpt();
@@ -650,8 +650,8 @@ DOTRACE("ExptDriver::Impl::setInterp");
 //
 //---------------------------------------------------------------------
 
-void ExptDriver::Impl::draw() {
-DOTRACE("ExptDriver::Impl::draw");
+void ExptDriver::Impl::edDraw() {
+DOTRACE("ExptDriver::Impl::edDraw");
   if ( !assertIds() ) return;
 
   try {
@@ -662,8 +662,8 @@ DOTRACE("ExptDriver::Impl::draw");
   }
 }
 
-void ExptDriver::Impl::undraw() {
-DOTRACE("ExptDriver::Impl::undraw");
+void ExptDriver::Impl::edUndraw() {
+DOTRACE("ExptDriver::Impl::edUndraw");
   if ( !assertIds() ) return;
 
   try {
@@ -1008,11 +1008,11 @@ const string& ExptDriver::getAutosaveFile() const
 void ExptDriver::setAutosaveFile(const string& str) 
   { itsImpl->setAutosaveFile(str); }
 
-void ExptDriver::draw() 
-  { itsImpl->draw(); }
+void ExptDriver::edDraw() 
+  { itsImpl->edDraw(); }
 
-void ExptDriver::undraw() 
-  { itsImpl->undraw(); }
+void ExptDriver::edUndraw() 
+  { itsImpl->edUndraw(); }
 
 void ExptDriver::edSwapBuffers() 
   { itsImpl->edSwapBuffers(); }

@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Wed Dec  1 14:24:17 1999
+// written: Thu Dec  2 14:23:27 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -186,7 +186,7 @@ DOTRACE("AbortTrialEvent::invoke");
 
 void DrawEvent::invoke() {
 DOTRACE("DrawEvent::invoke");
-  getExperiment().draw();
+  getExperiment().edDraw();
 }
 
 void EndTrialEvent::invoke() {
@@ -196,7 +196,7 @@ DOTRACE("EndTrialEvent::invoke");
 
 void UndrawEvent::invoke() {
 DOTRACE("UndrawEvent::invoke");
-  getExperiment().undraw();
+  getExperiment().edUndraw();
 }
 
 void SwapBuffersEvent::invoke() {

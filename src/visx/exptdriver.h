@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Dec  1 15:40:21 1999
+// written: Thu Dec  2 14:21:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,9 +94,9 @@ public:
   /** @name Graphics Actions */
   //@{
   ///
-  virtual void draw();
+  virtual void edDraw();
   ///
-  virtual void undraw();
+  virtual void edUndraw();
   ///
   virtual void edSwapBuffers();
   //@}
