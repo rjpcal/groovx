@@ -349,34 +349,5 @@ DOTRACE("ElementContainer::isComplete");
   return (rep->sequencePos >= rep->elements.size());
 }
 
-void ElementContainer::legacyReadElements(IO::Reader& reader,
-                                          const char* name)
-{
-DOTRACE("ElementContainer::legacyReadElements");
-
-  std::vector<Ref<Element> > new_elements;
-
-  IO::ReadUtils::readObjectSeq<Element>
-    (reader, name, std::back_inserter(new_elements));
-
-  rep->elements.swap(new_elements);
-}
-
-// void ElementContainer::legacyWriteElements(IO::Writer& writer,
-//                                            const char* name) const
-// {
-// DOTRACE("ElementContainer::legacyWriteElements");
-
-//   IO::WriteUtils::writeObjectSeq(writer, name,
-//                                  rep->elements.begin(),
-//                                  rep->elements.end());
-// }
-
-int& ElementContainer::iolegacyRandSeed() const
-{ return rep->randSeed; }
-
-unsigned int& ElementContainer::iolegacySequencePos() const
-{ return rep->sequencePos; }
-
 static const char vcid_elementcontainer_cc[] = "$Header$";
 #endif // !ELEMENTCONTAINER_CC_DEFINED

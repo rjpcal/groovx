@@ -127,16 +127,6 @@ protected:
   /// Hook function to be called when all children have been run.
   virtual void vxAllChildrenFinished() = 0;
 
-  /// Read elements from reader.
-  void legacyReadElements(IO::Reader& reader, const char* name);
-  /// Write elements to writer.
-//   void legacyWriteElements(IO::Writer& writer, const char* name) const;
-
-  /// Raw data access needed to support the legacy IO format.
-  int& iolegacyRandSeed() const;
-  /// Raw data access needed to support the legacy IO format.
-  unsigned int& iolegacySequencePos() const;
-
 private:
   class Impl;
   Impl* const rep;
