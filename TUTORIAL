@@ -33,10 +33,13 @@ Table of contents:
 
 \section gettingsource 1. Getting the source
 
-   You can find a daily tarball of groovx here (substitute today's date
-   in YYYYMMDD format for "20041004"):
+   You can find a daily tarball of groovx here:
 
-     - http://www.klab.caltech.edu/rjpeters/code/groovx_20041004.tar.gz
+     - http://www.klab.caltech.edu/rjpeters/code/groovx_current.tar.gz
+
+   or here (substitute today's date for YYYYMMDD):
+
+     - http://www.klab.caltech.edu/rjpeters/code/groovx_YYYYMMDD.tar.gz
 
    Also, you'll need the latest alpha versions of tcl+tk in order to
    build groovx, so I've put those tarballs on my website as well:
