@@ -3,7 +3,7 @@
 // grobjimpl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:57 2000
-// written: Thu Mar 23 18:01:50 2000
+// written: Thu Mar 23 18:44:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -697,9 +697,10 @@ void GrObj::Impl::saveBitmapCache(
   ) {
 DOTRACE("GrObj::Impl::Renderer::saveBitmapCache");
 
-  using Util::Janitor; 
-  Janitor<Impl, int> rmj(*this, &Impl::getRenderMode, &Impl::setRenderMode);
-  Janitor<Impl, bool> bbj(*this, &Impl::getBBVisibility, &Impl::setBBVisibility);
+  Util::Janitor<Impl, int> rmj(*this, &Impl::getRenderMode,
+										 &Impl::setRenderMode);
+  Util::Janitor<Impl, bool> bbj(*this, &Impl::getBBVisibility,
+										  &Impl::setBBVisibility);
 
   setRenderMode(GrObj::GROBJ_X11_BITMAP_CACHE);
   setBBVisibility(false);
