@@ -76,6 +76,8 @@ public:
   virtual void setColorIndex(unsigned int index) const;
   virtual void setClearColorIndex(unsigned int index) const;
 
+  virtual void setLineWidth(double width) const;
+
   virtual void translate(const Gfx::Vec3<double>& v) const;
   virtual void scale(const Gfx::Vec3<double>& v) const;
   virtual void rotate(const Gfx::Vec3<double>& v, double degrees) const;
