@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri Jun 15 14:46:33 2001
+// written: Tue Jun 19 15:08:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ public:
   public:
     IdIterator(const Iterator& other) : Iterator(other) {}
 
-    typedef forward_iterator_tag iterator_category;
+    typedef std::forward_iterator_tag iterator_category;
     typedef int value_type;
     typedef ptrdiff_t difference_type;
     typedef void pointer;
@@ -111,7 +111,7 @@ public:
   public:
     PtrIterator(const Iterator& other) : Iterator(other) {}
 
-    typedef forward_iterator_tag iterator_category;
+    typedef std::forward_iterator_tag iterator_category;
     typedef Util::Object* value_type;
     typedef ptrdiff_t difference_type;
     typedef void pointer;
