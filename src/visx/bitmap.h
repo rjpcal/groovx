@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Mon Dec  6 21:31:17 1999
+// written: Fri Jan 14 17:03:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,6 +81,8 @@ public:
   void loadPbmFile(const char* filename);
   ///
   void loadPbmFile(istream& is);
+  ///
+  void loadPbmGzFile(const char* filename);
   ///
   void writePbmFile(const char* filename) const;
 
