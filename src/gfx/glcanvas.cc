@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Aug 22 18:37:22 2001
+// written: Mon Aug 27 16:25:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -179,6 +179,148 @@ DOTRACE("GLCanvas::bitsPerPixel");
   return 8;
 }
 
+void GLCanvas::throwIfError(const char* where) const
+{
+DOTRACE("GLCanvas::throwIfError");
+  GLenum status = glGetError();
+  if (status != GL_NO_ERROR)
+    {
+      const char* msg =
+        reinterpret_cast<const char*>(gluErrorString(status));
+      throw Util::Error(fstring("GL error: ", msg, " ", where));
+    }
+}
+
+
+void GLCanvas::pushAttribs() const
+{
+  glPushAttrib(GL_ALL_ATTRIB_BITS);
+}
+
+void GLCanvas::popAttribs() const
+{
+  glPopAttrib();
+}
+
+void GLCanvas::drawOnFrontBuffer() const
+{
+DOTRACE("GLCanvas::drawOnFrontBuffer");
+  glDrawBuffer(GL_FRONT);
+}
+
+void GLCanvas::drawOnBackBuffer() const
+{
+DOTRACE("GLCanvas::drawOnBackBuffer");
+  glDrawBuffer(GL_BACK);
+}
+
+void GLCanvas::setColor(const Gfx::RgbaColor& rgba) const
+{
+DOTRACE("GLCanvas::setColor");
+  glColor4dv(rgba.data());
+}
+
+void GLCanvas::setClearColor(const Gfx::RgbaColor& rgba) const
+{
+DOTRACE("GLCanvas::setClearColor");
+  glClearColor(rgba.r(), rgba.g(), rgba.b(), rgba.a());
+}
+
+void GLCanvas::setColorIndex(unsigned int index) const
+{
+DOTRACE("GLCanvas::setColorIndex");
+  glIndexi(index);
+}
+
+void GLCanvas::setClearColorIndex(unsigned int index) const
+{
+DOTRACE("GLCanvas::setClearColorIndex");
+  glClearIndex(index);
+}
+
+void GLCanvas::swapForeBack() const
+{
+DOTRACE("GLCanvas::swapForeBack");
+  if ( this->isRgba() )
+    {
+      GLdouble foreground[4];
+      GLdouble background[4];
+      glGetDoublev(GL_CURRENT_COLOR, &foreground[0]);
+      glGetDoublev(GL_COLOR_CLEAR_VALUE, &background[0]);
+
+      glColor4d(background[0],
+                background[1],
+                background[2],
+                foreground[3]); // <-- note we keep the foreground alpha value
+
+      glClearColor(foreground[0],
+                   foreground[1],
+                   foreground[2],
+                   background[3]); // <-- note we keep the background alpha value
+    }
+  else
+    {
+      GLint foreground, background;
+      glGetIntegerv(GL_CURRENT_INDEX, &foreground);
+      glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
+      glIndexi(background);
+      glClearIndex(foreground);
+    }
+}
+
+void GLCanvas::setLineWidth(double width) const
+{
+DOTRACE("GLCanvas::setLineWidth");
+  glLineWidth(width);
+}
+
+void GLCanvas::enableAntialiasing() const
+{
+DOTRACE("GLCanvas::enableAntialiasing");
+
+  if (isRgba()) // antialiasing does not work well except in RGBA mode
+    {
+      glEnable(GL_BLEND); // blend incoming RGBA values with old RGBA values
+
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency
+
+      glEnable(GL_LINE_SMOOTH);   // use anti-aliasing
+    }
+}
+
+
+
+void GLCanvas::pushMatrix() const
+{
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+}
+
+void GLCanvas::popMatrix() const
+{
+  glMatrixMode(GL_MODELVIEW);
+  glPopMatrix();
+}
+
+void GLCanvas::translate(const Gfx::Vec3<double>& v) const
+{
+DOTRACE("GLCanvas::translate");
+  glTranslated(v.x(), v.y(), v.z());
+}
+
+void GLCanvas::scale(const Gfx::Vec3<double>& v) const
+{
+DOTRACE("GLCanvas::scale");
+  glScaled(v.x(), v.y(), v.z());
+}
+
+void GLCanvas::rotate(const Gfx::Vec3<double>& v, double angle_in_degrees) const
+{
+DOTRACE("GLCanvas::rotate");
+  glRotated(angle_in_degrees, v.x(), v.y(), v.z());
+}
+
+
 void GLCanvas::drawPixels(const Gfx::BmapData& data,
                           const Gfx::Vec2<double>& world_pos,
                           const Gfx::Vec2<double>& zoom) const
@@ -258,42 +400,6 @@ DOTRACE("GLCanvas::grabPixels");
   data_out.swap(new_data);
 }
 
-void GLCanvas::swapForeBack() const
-{
-DOTRACE("GLCanvas::swapForeBack");
-  if ( this->isRgba() )
-    {
-      GLdouble foreground[4];
-      GLdouble background[4];
-      glGetDoublev(GL_CURRENT_COLOR, &foreground[0]);
-      glGetDoublev(GL_COLOR_CLEAR_VALUE, &background[0]);
-
-      glColor4d(background[0],
-                background[1],
-                background[2],
-                foreground[3]); // <-- note we keep the foreground alpha value
-
-      glClearColor(foreground[0],
-                   foreground[1],
-                   foreground[2],
-                   background[3]); // <-- note we keep the background alpha value
-    }
-  else
-    {
-      GLint foreground, background;
-      glGetIntegerv(GL_CURRENT_INDEX, &foreground);
-      glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
-      glIndexi(background);
-      glClearIndex(foreground);
-    }
-}
-
-void GLCanvas::flushOutput() const
-{
-DOTRACE("GLCanvas::flushOutput");
-  glFlush();
-}
-
 void GLCanvas::clearColorBuffer() const
 {
 DOTRACE("GLCanvas::clearColorBuffer");
@@ -315,101 +421,6 @@ DOTRACE("GLCanvas::clearColorBuffer(Gfx::Rect)");
     glDisable(GL_SCISSOR_TEST);
   }
   glPopAttrib();
-}
-
-void GLCanvas::drawOnFrontBuffer() const
-{
-DOTRACE("GLCanvas::drawOnFrontBuffer");
-  glDrawBuffer(GL_FRONT);
-}
-
-void GLCanvas::drawOnBackBuffer() const
-{
-DOTRACE("GLCanvas::drawOnBackBuffer");
-  glDrawBuffer(GL_BACK);
-}
-
-void GLCanvas::pushMatrix() const
-{
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-}
-
-void GLCanvas::popMatrix() const
-{
-  glMatrixMode(GL_MODELVIEW);
-  glPopMatrix();
-}
-
-void GLCanvas::pushAttribs() const
-{
-  glPushAttrib(GL_ALL_ATTRIB_BITS);
-}
-
-void GLCanvas::popAttribs() const
-{
-  glPopAttrib();
-}
-
-
-void GLCanvas::setColor(const Gfx::RgbaColor& rgba) const
-{
-DOTRACE("GLCanvas::setColor");
-  glColor4dv(rgba.data());
-}
-
-void GLCanvas::setClearColor(const Gfx::RgbaColor& rgba) const
-{
-DOTRACE("GLCanvas::setClearColor");
-  glClearColor(rgba.r(), rgba.g(), rgba.b(), rgba.a());
-}
-
-void GLCanvas::setColorIndex(unsigned int index) const
-{
-DOTRACE("GLCanvas::setColorIndex");
-  glIndexi(index);
-}
-
-void GLCanvas::setClearColorIndex(unsigned int index) const
-{
-DOTRACE("GLCanvas::setClearColorIndex");
-  glClearIndex(index);
-}
-
-void GLCanvas::setLineWidth(double width) const
-{
-DOTRACE("GLCanvas::setLineWidth");
-  glLineWidth(width);
-}
-
-void GLCanvas::translate(const Gfx::Vec3<double>& v) const
-{
-DOTRACE("GLCanvas::translate");
-  glTranslated(v.x(), v.y(), v.z());
-}
-
-void GLCanvas::scale(const Gfx::Vec3<double>& v) const
-{
-DOTRACE("GLCanvas::scale");
-  glScaled(v.x(), v.y(), v.z());
-}
-
-void GLCanvas::rotate(const Gfx::Vec3<double>& v, double angle_in_degrees) const
-{
-DOTRACE("GLCanvas::rotate");
-  glRotated(angle_in_degrees, v.x(), v.y(), v.z());
-}
-
-void GLCanvas::throwIfError(const char* where) const
-{
-DOTRACE("GLCanvas::throwIfError");
-  GLenum status = glGetError();
-  if (status != GL_NO_ERROR)
-    {
-      const char* msg =
-        reinterpret_cast<const char*>(gluErrorString(status));
-      throw Util::Error(fstring("GL error: ", msg, " ", where));
-    }
 }
 
 void GLCanvas::drawRect(const Gfx::Rect<double>& rect) const
@@ -474,13 +485,6 @@ void GLCanvas::beginPolygon() const
   glBegin(GL_POLYGON);
 }
 
-
-void GLCanvas::end() const
-{
-  glEnd();
-}
-
-
 void GLCanvas::vertex2(const Gfx::Vec2<double>& v) const
 {
   glVertex2d(v.x(), v.y());
@@ -491,6 +495,16 @@ void GLCanvas::vertex3(const Gfx::Vec3<double>& v) const
   glVertex3d(v.x(), v.y(), v.z());
 }
 
+void GLCanvas::end() const
+{
+  glEnd();
+}
+
+void GLCanvas::flushOutput() const
+{
+DOTRACE("GLCanvas::flushOutput");
+  glFlush();
+}
 
 static const char vcid_glcanvas_cc[] = "$Header$";
 #endif // !GLCANVAS_CC_DEFINED
