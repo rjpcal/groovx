@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:00:57 2001
-// written: Fri Jan 18 16:06:52 2002
+// written: Sat Feb  2 16:50:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -123,7 +123,7 @@ public:
 
   double scaledMaxDim()
   {
-    return max(scaledWidth(), scaledHeight());
+    return Util::max(scaledWidth(), scaledHeight());
   }
 
   virtual void gnodeDraw(Gfx::Canvas& canvas) const;
