@@ -3,7 +3,7 @@
 // property.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:57:34 1999
-// written: Tue Oct 31 22:51:42 2000
+// written: Fri Nov  3 15:06:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,6 +120,10 @@ DOTRACE("PropertyInfoBase::operator=");
 const char* PropertyInfoBase::name_cstr() const {
 DOTRACE("PropertyInfoBase::name_cstr");
   return itsImpl->name.c_str();
+}
+
+const fixed_string& PropertyInfoBase::name() const {
+  return itsImpl->name;
 }
 
 const Value& PropertyInfoBase::min() const {
