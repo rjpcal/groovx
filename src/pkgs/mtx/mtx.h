@@ -839,14 +839,6 @@ public:
   // Functions
   //
 
-  /// Functor for "set all elements to x" operation.
-  struct Setter
-  {
-    double v;
-    Setter(double v_) : v(v_) {}
-    double operator()(double) { return v; }
-  };
-
   void clear(double x = 0.0) { apply(Setter(x)); }
 };
 

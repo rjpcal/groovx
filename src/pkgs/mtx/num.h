@@ -157,5 +157,13 @@ struct Max
   { return (v1 > v2) ? v1 : v2; }
 };
 
+/// Functor for "set all elements to x" operation.
+struct Setter
+{
+  const double v;
+  Setter(double v_) : v(v_) {}
+  double operator()(double) { return v; }
+};
+
 static const char vcid_num_h[] = "$Header$";
 #endif // !NUM_H_DEFINED
