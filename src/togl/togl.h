@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Thu May 25 13:40:52 2000
+// written: Thu May 25 15:15:39 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -110,6 +110,7 @@ public:
   void makeCurrent() const;
   static void createCommand( char *cmd_name, Togl_CmdProc *cmd_proc );
   void postRedisplay();
+  void postReconfigure();
   void swapBuffers() const;
 
   // Query functions
