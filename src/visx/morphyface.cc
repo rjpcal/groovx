@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Thu Aug 23 09:49:30 2001
+// written: Fri Aug 24 18:14:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -283,6 +283,8 @@ DOTRACE("MorphyFace::grRender");
 
   if (have_antialiasing)
     {
+      DOTRACE("MorphyFace::grRender-enable antialiasing");
+
       glEnable(GL_BLEND); // blend incoming RGBA values with old RGBA values
 
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency
@@ -325,6 +327,8 @@ DOTRACE("MorphyFace::grRender");
       // Draw eye outline
       for (int top_bottom = -1; top_bottom < 2; top_bottom += 2)
         {
+          DOTRACE("MorphyFace::grRender-draw eye outline");
+
           Gfx::Canvas::MatrixSaver msaver2(canvas);
 
           glScalef(itsEyeHeight*itsEyeAspectRatio,
@@ -339,6 +343,8 @@ DOTRACE("MorphyFace::grRender");
 
       // Draw eyebrow
       {
+        DOTRACE("MorphyFace::grRender-draw eyebrow");
+
         Gfx::Canvas::MatrixSaver msaver3(canvas);
 
         glTranslatef(itsEyebrowXpos, itsEyebrowYpos, 0.0);
@@ -349,9 +355,8 @@ DOTRACE("MorphyFace::grRender");
 
         {
           Gfx::Canvas::AttribSaver asaver(canvas);
-          GLdouble line_width;
-          glGetDoublev(GL_LINE_WIDTH, &line_width);
-          glLineWidth(itsEyebrowThickness*line_width);
+
+          glLineWidth(itsEyebrowThickness);
           glEnable(GL_MAP1_VERTEX_3);
           glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, eye_ctrlpnts);
           // Evaluate the 1-d Bezier curve
@@ -362,6 +367,8 @@ DOTRACE("MorphyFace::grRender");
 
       // Draw pupil
       {
+        DOTRACE("MorphyFace::grRender-draw pupil");
+
         Gfx::Canvas::MatrixSaver msaver4(canvas);
 
         glTranslatef(left_right*itsPupilXpos, itsPupilYpos, 0.0);
@@ -398,19 +405,24 @@ DOTRACE("MorphyFace::grRender");
   };
 
   glEnable(GL_MAP1_VERTEX_3);
-  for (int i = 1; i < nctrlsets; ++i)
-    {
-      glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &ctrlpnts[i*12]);
-      // Evaluate the 1-d Bezier curve
-      glMapGrid1d(num_subdivisions, 0.0, 1.0);
-      glEvalMesh1(GL_LINE, 0, num_subdivisions);
-    }
+  {
+    DOTRACE("MorphyFace::grRender-draw face outline");
+    for (int i = 1; i < nctrlsets; ++i)
+      {
+        glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &ctrlpnts[i*12]);
+        // Evaluate the 1-d Bezier curve
+        glMapGrid1d(num_subdivisions, 0.0, 1.0);
+        glEvalMesh1(GL_LINE, 0, num_subdivisions);
+      }
+  }
 
   //
   // Draw nose.
   //
 
   {
+    DOTRACE("MorphyFace::grRender-draw nose");
+
     Gfx::Canvas::MatrixSaver msaver5(canvas);
 
     glTranslatef(itsNoseXpos, itsNoseYpos, 0.0);
@@ -441,6 +453,8 @@ DOTRACE("MorphyFace::grRender");
   };
 
   {
+    DOTRACE("MorphyFace::grRender-draw mouth");
+
     Gfx::Canvas::MatrixSaver msaver6(canvas);
 
     glTranslatef(itsMouthXpos, itsMouthYpos, 0.0);
@@ -457,6 +471,8 @@ DOTRACE("MorphyFace::grRender");
   //
 
   {
+    DOTRACE("MorphyFace::grRender-draw hair");
+
     Gfx::Canvas::AttribSaver saver(canvas);
 
     if (itsHairStyle == 0)
