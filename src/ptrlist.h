@@ -95,7 +95,7 @@ public:
       valid object, the pointer returned may be null. */
   SharedPtr getPtr(int id) const
     {
-		MasterPtrBase* voidPtr = VoidPtrList::getVoidPtr(id);
+		MasterPtrBase* voidPtr = PtrListBase::getPtrBase(id);
 		// cast as reference to force an exception on error
 		MasterPtr<T>& tPtr = dynamic_cast<MasterPtr<T>&>(*voidPtr);
 		return SharedPtr(&tPtr, id);
@@ -106,7 +106,7 @@ public:
       the check fails, an \c InvalidIdError exception is thrown. */
   SharedPtr getCheckedPtr(int id) const
 	 {
-		MasterPtrBase* voidPtr = VoidPtrList::getCheckedVoidPtr(id);
+		MasterPtrBase* voidPtr = PtrListBase::getCheckedPtrBase(id);
 		// cast as reference to force an exception on error
 		MasterPtr<T>& tPtr = dynamic_cast<MasterPtr<T>&>(*voidPtr);
 		return SharedPtr(&tPtr, id);
@@ -118,39 +118,39 @@ public:
 
   /// Insert \a ptr into the list, and return its id.
   int insert(T* ptr)
-	 { return VoidPtrList::insertVoidPtr(new MasterPtr<T>(ptr)); }
+	 { return PtrListBase::insertPtrBase(new MasterPtr<T>(ptr)); }
 
   /** Insert \a ptr into the list at index \a id. An exception will be
       thrown if an object already exists at index \a id. */
   void insertAt(int id, T* ptr)
-	 { VoidPtrList::insertVoidPtrAt(id, new MasterPtr<T>(ptr)); }
+	 { PtrListBase::insertPtrBaseAt(id, new MasterPtr<T>(ptr)); }
 
   /// Insert \a ptr into the list, and return its id.
   int insert(MasterPtr<T>* master)
-	 { return VoidPtrList::insertVoidPtr(master); }
+	 { return PtrListBase::insertPtrBase(master); }
 
   /** Insert \a ptr into the list at index \a id. An exception will be
       thrown if an object already exists at index \a id. */
   void insertAt(int id, MasterPtr<T>* master)
-	 { VoidPtrList::insertVoidPtrAt(id, master); }
+	 { PtrListBase::insertPtrBaseAt(id, master); }
 
   /// Insert \a handle into the list, and return its id.
   int insert(PtrHandle<T> handle)
-	 { return VoidPtrList::insertVoidPtr(handle.masterPtr()); }
+	 { return PtrListBase::insertPtrBase(handle.masterPtr()); }
 
   /** Insert \a handle into the list at index \a id. An exception will be
       thrown if an object already exists at index \a id. */
   void insertAt(int id, PtrHandle<T> handle)
-	 { VoidPtrList::insertVoidPtrAt(id, handle.masterPtr()); }
+	 { PtrListBase::insertPtrBaseAt(id, handle.masterPtr()); }
 
   /// Insert \a ptr into the list, and return its id.
   int insert(ItemWithId<T> item)
-	 { return VoidPtrList::insertVoidPtr(item.handle().masterPtr()); }
+	 { return PtrListBase::insertPtrBase(item.handle().masterPtr()); }
 
   /** Insert \a ptr into the list at index \a id. An exception will be
       thrown if an object already exists at index \a id. */
   void insertAt(int id, ItemWithId<T> item)
-	 { VoidPtrList::insertVoidPtrAt(id, item.handle().masterPtr()); }
+	 { PtrListBase::insertPtrBaseAt(id, item.handle().masterPtr()); }
 
 protected:
   /** Reimplemented from \c IoPtrList to include "PtrList<T>" with \c

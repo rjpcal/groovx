@@ -3,7 +3,7 @@
 // rhlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:28 1999
-// written: Sat Oct  7 20:03:13 2000
+// written: Tue Oct 10 09:14:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@ public:
   /// Returns a reference to the singleton instance.
   static RhList& theRhList();
 
-  /** Reimplemented from \c VoidPtrList to ensure that all owned
+  /** Reimplemented from \c PtrListBase to ensure that all owned
       ResposneHandler's have their \c Tcl_Interp* set properly. */
   virtual void afterInsertHook(int id, MasterPtrBase* ptr);
 

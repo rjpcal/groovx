@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Mon Oct  9 08:41:01 2000
+// written: Tue Oct 10 09:19:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@
 #include "util/debug.h"
 
 IoPtrList::IoPtrList(int size) :
-  VoidPtrList(size)
+  PtrListBase(size)
 {
 DOTRACE("IoPtrList::IoPtrList");
 }
@@ -49,24 +49,24 @@ DOTRACE("IoPtrList::legacySrlz");
   // resize later), as well as the number of non-null objects that we
   // legacySrlz (so that legacyDesrlz knows when to stop reading).
 
-  lwriter->writeValue("voidVecSize", voidVecSize());
+  lwriter->writeValue("voidVecSize", baseVecSize());
 
-  int num_non_null = VoidPtrList::count();
+  int num_non_null = PtrListBase::count();
   lwriter->setFieldSeparator('\n');
   lwriter->writeValue("num_non_null", num_non_null);
   lwriter->resetFieldSeparator();
 
   // Serialize all non-null ptr's.
   int c = 0;
-  for (size_t i = 0, end = voidVecSize();
+  for (size_t i = 0, end = baseVecSize();
 		 i < end;
 		 ++i) {
-	 if (getVoidPtr(i)->isValid()) {
+	 if (getPtrBase(i)->isValid()) {
 		lwriter->writeValue("i", i);
 
 		// we must legacySrlz the typename since legacyDesrlz requires a
 		// typename in order to call the virtual constructor
-		MasterIoPtr* ioPtr = dynamic_cast<MasterIoPtr*>(getVoidPtr(i));
+		MasterIoPtr* ioPtr = dynamic_cast<MasterIoPtr*>(getPtrBase(i));
 		IO::IoObject* obj = ioPtr ? ioPtr->ioPtr() : 0;
 
 		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
@@ -107,8 +107,8 @@ DOTRACE("IoPtrList::legacyDesrlz");
 	 throw IO::ValueError(ioTag.c_str());
   }
 
-  VoidPtrList::clear();
-  voidVecResize(size);
+  PtrListBase::clear();
+  baseVecResize(size);
 
   int ptrid;
 
@@ -121,7 +121,7 @@ DOTRACE("IoPtrList::legacyDesrlz");
 
 	 IO::IoObject* obj = lreader->readObject("ptrListItem");
 
-	 insertVoidPtrAt(ptrid, makeMasterIoPtr(obj));
+	 insertPtrBaseAt(ptrid, makeMasterIoPtr(obj));
   }
 
   firstVacant() = lreader->readInt("itsFirstVacant");
@@ -152,12 +152,12 @@ DOTRACE("IoPtrList::readFrom");
   IO::ReadUtils::template readObjectSeq<IO::IoObject>(
                    reader, "itsVec", ioBlock.begin(), count);
 
-  VoidPtrList::clear();
-  voidVecResize(uint_count);
+  PtrListBase::clear();
+  baseVecResize(uint_count);
 
   for (size_t i = 0; i < uint_count; ++i)
 	 if (ioBlock[i] != 0) {
-		insertVoidPtrAt(i, makeMasterIoPtr(ioBlock[i]));
+		insertPtrBaseAt(i, makeMasterIoPtr(ioBlock[i]));
 	 }
 }
 
@@ -173,7 +173,7 @@ DOTRACE("IoPtrList::writeTo");
 
   writer->writeInt("itsFirstVacant", firstVacant());
 
-  unsigned int count = voidVecSize();
+  unsigned int count = baseVecSize();
   DebugEvalNL(count);
 
   fixed_block<IO::IoObject*> ioBlock(count);
@@ -182,7 +182,7 @@ DOTRACE("IoPtrList::writeTo");
 	 {
 		DebugEval(i);
 
-		MasterIoPtr* ioPtr = dynamic_cast<MasterIoPtr*>(getVoidPtr(i));
+		MasterIoPtr* ioPtr = dynamic_cast<MasterIoPtr*>(getPtrBase(i));
 		IO::IoObject* obj = ioPtr ? ioPtr->ioPtr() : 0;
 		ioBlock[i] = obj;
 

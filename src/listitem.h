@@ -3,7 +3,7 @@
 // listitem.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct  5 18:03:41 2000
-// written: Thu Oct  5 18:34:07 2000
+// written: Tue Oct 10 09:14:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef LISTITEM_H_DEFINED
 #define LISTITEM_H_DEFINED
 
-class VoidPtrList;
+class PtrListBase;
 
 template <class T> class PtrList;
 
@@ -20,13 +20,13 @@ class ListItem {
 private:
   T* itsPtr;
   int itsId;
-  const VoidPtrList* itsList;
+  const PtrListBase* itsList;
 
 protected:
   friend class PtrList<T>;
 
   template <class TT>
-  ListItem(TT* ptr, const VoidPtrList& theList, int id) :
+  ListItem(TT* ptr, const PtrListBase& theList, int id) :
 	 itsPtr(ptr),
 	 itsId(id),
 	 itsList(&theList)

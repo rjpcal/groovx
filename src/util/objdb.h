@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Mon Oct  9 08:23:54 2000
+// written: Tue Oct 10 09:14:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,8 +11,8 @@
 #ifndef IOPTRLIST_H_DEFINED
 #define IOPTRLIST_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VOIDPTRLIST_H_DEFINED)
-#include "voidptrlist.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRLISTBASE_H_DEFINED)
+#include "ptrlistbase.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
@@ -24,7 +24,7 @@ class MasterIoPtr;
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c IoPtrList extends \c VoidPtrList by adding and implementing the
+ * \c IoPtrList extends \c PtrListBase by adding and implementing the
  * \c IO interface. This class remains abstract, however, because the
  * cast from \c void* to \c IO* is delegated to subclasses by way of
  * the pure virtual function \c fromVoidToIO().
@@ -32,7 +32,7 @@ class MasterIoPtr;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IoPtrList : public VoidPtrList, public virtual IO::IoObject {
+class IoPtrList : public PtrListBase, public virtual IO::IoObject {
 public:
   /// Construct and reserve space for \a size objects.
   IoPtrList(int size);
