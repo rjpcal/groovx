@@ -81,7 +81,11 @@ namespace
     if (lowername.ends_with(".pbm")
         || lowername.ends_with(".pgm")
         || lowername.ends_with(".ppm")
-        || lowername.ends_with(".pnm"))
+        || lowername.ends_with(".pnm")
+        || lowername.ends_with(".pbm.gz")
+        || lowername.ends_with(".pgm.gz")
+        || lowername.ends_with(".ppm.gz")
+        || lowername.ends_with(".pnm.gz"))
       {
         return PNM;
       }
