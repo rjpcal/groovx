@@ -142,6 +142,14 @@ DOTRACE("Util::RefCounts::releaseStrongNoDelete");
   --itsStrong;
 }
 
+void Util::RefCounts::debugDump() const
+{
+  dbgEvalNL(0, this);
+  dbgEvalNL(0, itsStrong);
+  dbgEvalNL(0, itsWeak);
+  dbgEvalNL(0, itsOwnerAlive);
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // RefCounted member definitions
@@ -172,7 +180,8 @@ Util::RefCounted::~RefCounted()
 {
 DOTRACE("Util::RefCounted::~RefCounted");
   dbgPrint(7, "RefCounted dtor");
-  dbgEval(7, (void*)this); dbgEvalNL(7, itsRefCounts->strongCount());
+  dbgEvalNL(7, this);
+  dbgDump(7, *itsRefCounts);
 
   // Must guarantee that (strong-count == 0) when the refcounted object is
   // destroyed. Without that guarantee, weak references will be messed up,
@@ -229,8 +238,7 @@ int Util::RefCounted::refCount() const
 {
 DOTRACE("Util::RefCounted::refCount");
 
-  dbgEval(7, itsRefCounts->weakCount());
-  dbgEvalNL(7, itsRefCounts->strongCount());
+  dbgDump(7, *itsRefCounts);
 
   return itsRefCounts->strongCount();
 }

@@ -93,8 +93,7 @@ namespace
          /* increment done in loop body */)
       {
         dbgEval(3, (*itr)->id());
-        dbgEval(3, (*itr)->refCounts()->strongCount());
-        dbgEvalNL(3, (*itr)->refCounts()->weakCount());
+        dbgDump(3, *(*itr)->refCounts());
 
         if (caster->isMyType((*itr).getWeak()) && (*itr)->isUnshared())
           {

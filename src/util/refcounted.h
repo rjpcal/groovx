@@ -76,18 +76,18 @@ public:
   void acquireWeak();
   Count releaseWeak();
 
-protected:
-  void acquireStrong();
-  Count releaseStrong();
-  void releaseStrongNoDelete();
-
-public:
-  Count strongCount() { return itsStrong; }
-  Count weakCount() { return itsWeak; }
+  void debugDump() const;
 
 private:
   RefCounts(const RefCounts&);
   RefCounts& operator=(const RefCounts&);
+
+  Count strongCount() { return itsStrong; }
+  Count weakCount() { return itsWeak; }
+
+  void acquireStrong();
+  Count releaseStrong();
+  void releaseStrongNoDelete();
 
   Count itsStrong;
   Count itsWeak;
