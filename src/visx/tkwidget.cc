@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Fri Jun 15 18:33:02 2001
+// written: Fri Jun 15 18:34:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,8 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
+#if 0
+#include <iostream.h>
 
 class DbgButtonListener : public Tcl::ButtonListener {
 public:
@@ -46,6 +48,7 @@ public:
          << " x " << x << " y " << y << endl;
   }
 };
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 //
