@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Sat Dec  4 02:00:05 1999
+// written: Sat Dec  4 02:23:11 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ namespace {
 //////////////
 
 Tlist::Tlist() : 
-  PtrList<Trial>(1), itsCurTrial(0), itsVisibility(false) 
+  PtrList<Trial>(1)
 {
 DOTRACE("Tlist::Tlist");
 }
@@ -81,10 +81,9 @@ DOTRACE("Tlist::serialize");
 	 PtrList<Trial>::serialize(os, flag | TYPENAME);
   }
 
-  // itsCurTrial
-  os << itsCurTrial << sep;
-  // itsVisibility
-  os << itsVisibility << sep;
+  // Here we are spoofing the obselete data members itsCurTrial and
+  // itsVisibility.
+  os << int(0) << sep << bool(false) << sep;
 
   if (os.fail()) throw OutputError(ioTag);
 }
@@ -104,63 +103,20 @@ DOTRACE("Tlist::deserialize");
 	 PtrList<Trial>::deserialize(is, flag | TYPENAME);
   }
 
-  // itsCurTrial
-  is >> itsCurTrial;  DebugEvalNL(itsCurTrial);
-
-  // If itsCurTrial is not a valid id...
-  if ( !isValidId(itsCurTrial) ) {
-	 // ...then we throw an exception, as long as we don't have the
-	 // special case where the current trial is zero because the list
-	 // is empty
-	 if ( itsCurTrial != 0 || count() != 0 ) {
-		itsVisibility = false;
-		throw IoValueError(ioTag);
-	 }
-  }
-
-  // itsVisibility
-  int vis;
-  is >> vis;
-  itsVisibility = bool(vis);    // can't read directly into the bool
+  // Here we are spoofing the obselete data members itsCurTrial and
+  // itsVisibility.
+  int dummy1, dummy2;
+  is >> dummy1 >> dummy2;
 
   if (is.fail()) throw InputError(ioTag);
 }
 
 int Tlist::charCount() const {
   return (ioTag.length() + 1
-			 + gCharCount<int>(itsCurTrial) + 1
-			 + gCharCount<bool>(itsVisibility) + 1
+			 + gCharCount<int>(0) + 1
+			 + gCharCount<bool>(false) + 1
 			 + PtrList<Trial>::charCount()
 			 + 5 ); // fudge factor 5
-}
-
-void Tlist::readFrom(Reader* reader) {
-DOTRACE("Tlist::readFrom");
-
-  PtrList<Trial>::readFrom(reader);
-  reader->readValue("curTrial", itsCurTrial);
-
-  reader->readValue("visibility", itsVisibility);
-
-  // If itsCurTrial is not a valid id...
-  if ( !isValidId(itsCurTrial) ) {
-	 // ...then we throw an exception, as long as we don't have the
-	 // special case where the current trial is zero because the list
-	 // is empty
-	 if ( itsCurTrial != 0 || count() != 0 ) {
-		itsVisibility = false;
-		throw IoValueError(ioTag);
-	 }
-  }
-}
-
-void Tlist::writeTo(Writer* writer) const {
-DOTRACE("Tlist::writeTo");
-
-  PtrList<Trial>::writeTo(writer);
-
-  writer->writeValue("curTrial", itsCurTrial);
-  writer->writeValue("visibility", itsVisibility);
 }
 
 //---------------------------------------------------------------------
@@ -200,58 +156,6 @@ DOTRACE("Tlist::readFromObjidsOnly");
 
   // Return the number of trials that were loaded.
   return trial;
-}
-
-//////////////////
-// manipulators //
-//////////////////
-
-void Tlist::clear() {
-DOTRACE("Tlist::clear");
-  PtrList<Trial>::clear();
-  itsCurTrial = 0;
-}
-
-/////////////
-// actions //
-/////////////
-
-void Tlist::drawTrial(int trial) {
-DOTRACE("Tlist::drawTrial");
-  if (isValidId(trial)) itsCurTrial = trial;
-  itsVisibility = true;
-  drawCurTrial();
-  glFlush();
-}
-
-void Tlist::undrawTrial(int trial) {
-DOTRACE("Tlist::undrawTrial");
-  if (isValidId(trial)) itsCurTrial = trial;
-  itsVisibility = false;
-  undrawCurTrial();
-  glFlush();
-}
-
-void Tlist::drawCurTrial() const {
-DOTRACE("Tlist::drawCurTrial");
-
-  DebugEval(itsCurTrial);
-  DebugEval(capacity());
-  DebugEvalNL((void *) getPtr(itsCurTrial));
-
-  if (itsVisibility) {
-    getCheckedPtr(itsCurTrial)->trDraw();
-  }
-}
-
-void Tlist::undrawCurTrial() const {
-DOTRACE("Tlist::undrawCurTrial");
-
-  DebugEval(itsCurTrial);
-  DebugEval(capacity());
-  DebugEvalNL((void *) getPtr(itsCurTrial));
-
-  getCheckedPtr(itsCurTrial)->trUndraw();
 }
 
 ///////////////////////////////////////////////////////////////////////

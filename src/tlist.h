@@ -3,7 +3,7 @@
 // tlist.h
 // Rob Peters
 // created: Fri Mar 12 13:23:02 1999
-// written: Sat Dec  4 02:00:12 1999
+// written: Sat Dec  4 02:19:59 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,10 +30,6 @@ class PosId;
 ///////////////////////////////////////////////////////////////////////
 
 class Tlist : public PtrList<Trial>, public virtual IO {
-private:
-  int itsCurTrial;
-  bool itsVisibility;
-
   //////////////
   // creators //
   //////////////
@@ -57,9 +53,6 @@ public:
 
   virtual int charCount() const;
 
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
-
   // Reads a list of 'simple' trial descriptions which contain objid's
   // only; posid's are inferred from position int the list. If
   // num_trials is passed as < 0, the function will read to the end of
@@ -67,21 +60,6 @@ public:
   // incoming objid before it is inserted into the Trial. Returns the
   // number of trials that were loaded.
   int readFromObjidsOnly(istream &is, int num_trials, int offset = 0);
-
-  //////////////////
-  // manipulators //
-  //////////////////
-
-  void clear();
-
-  /////////////
-  // actions //
-  /////////////
-
-  void drawTrial(int trial);
-  void undrawTrial(int trial);
-  void drawCurTrial() const;
-  void undrawCurTrial() const;
 };
 
 static const char vcid_tlist_h[] = "$Header$";
