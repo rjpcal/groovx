@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Tue Sep  7 17:18:11 1999
+// written: Wed Sep  8 13:14:11 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,11 +21,15 @@
 #endif
 
 class Bitmap : public GrObj {
+  // Creators
 public:
   Bitmap();
   Bitmap(const char* filename);
   Bitmap(istream& is, IOFlag flag);
 
+  private: void init();
+
+public:
   virtual ~Bitmap();
 
   virtual void serialize(ostream& os, IOFlag flag) const;
@@ -33,14 +37,40 @@ public:
 
   virtual int charCount() const;
 
-  void loadPbmFile(const char* filename);
+  // Actions
 
-  void flipContrast();
+  public:    void loadPbmFile(const char* filename);
 
-  void flipVertical();
+  protected: virtual void bytesChangeHook(unsigned char* /* theBytes */,
+														int /* width */,
+														int /* height */) {}
 
+  public:    void flipContrast();
+  protected: void doFlipContrast();
+
+  public:    void flipVertical();
+  protected: void doFlipVertical();
+
+  public:    void center();
+
+  protected: virtual void grRender() const;
+  protected: virtual void doRender(unsigned char* /* bytes */,
+											  double /* x_pos */,
+											  double /* y_pos */,
+											  int /* width */,
+											  int /* height */,
+											  int /* bits_per_pixel */,
+											  double /* zoom_x */,
+											  double /* zoom_y */) const = 0;
+
+  public:    virtual void undraw() const;
+  protected: virtual void doUndraw(
+					  int /*winRasterX*/, int /*winRasterY*/,
+					  int /*winWidthX*/, int /*winHeightY*/) const = 0;
+
+  // Accessors
+public:
   virtual int getCategory() const { return -1; }
-  virtual void setCategory(int) {}
 
   int byteCount() const;
   int bytesPerRow() const;
@@ -52,34 +82,32 @@ public:
   double getRasterY() const;
   double getZoomX() const;
   double getZoomY() const;
-  bool getUsingGlBitmap() const;
+
+  bool getUsingZoom() const;
+
+  // Manipulators
+
+  virtual void setCategory(int) {}
 
   void setRasterX(double val);
   void setRasterY(double val);
   void setZoomX(double val);
   void setZoomY(double val);
-  void setUsingGlBitmap(bool val);
+
+  void setUsingZoom(bool val);
   
-  void center();
-
-  virtual void undraw() const;
-
 protected:
-  virtual void grRender() const;
+  unsigned char* theBytes() const { return itsBytes; }
 
 private:
-  void init();
-  void doFlipContrast();
-  void doFlipVertical();
-
   string itsFilename;
   double itsRasterX;
   double itsRasterY;
   double itsZoomX;
   double itsZoomY;
+  bool itsUsingZoom;
   bool itsContrastFlip;
   bool itsVerticalFlip;
-  bool itsUsingGlBitmap;
 
   unsigned char* itsBytes;
   int itsHeight;

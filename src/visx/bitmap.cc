@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Tue Sep  7 17:19:08 1999
+// written: Wed Sep  8 13:05:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,7 @@
 #include "bitmap.h"
 
 #include <GL/gl.h>
-#include <GL/glu.h>				  // for gluProject()
-#include <cmath>					  // for abs()
+#include <GL/glu.h>
 #include <cstring>				  // for memcpy
 
 #include "pbm.h"
@@ -45,7 +44,7 @@ DOTRACE("Bitmap::Bitmap");
 }
 
 Bitmap::Bitmap(istream& is, IOFlag flag) :
-  GrObj(is, flag)
+  GrObj()
 {
 DOTRACE("Bitmap::Bitmap");
   init();
@@ -56,10 +55,10 @@ void Bitmap::init() {
 DOTRACE("Bitmap::init");
   itsRasterX = itsRasterY = 0.0;
   itsZoomX = itsZoomY = 1.0;
+  itsUsingZoom = false;
   itsBytes = 0;
   itsContrastFlip = false;
   itsVerticalFlip = false;
-  itsUsingGlBitmap = true;
 }
 
 Bitmap::~Bitmap() {
@@ -73,12 +72,12 @@ DOTRACE("Bitmap::serialize");
   char sep = ' ';
   if (flag & TYPENAME) { os << ioTag << sep; }
 
-  os << itsFilename << sep;
+  os << itsFilename << '\t';
   os << itsRasterX << sep << itsRasterY << sep;
   os << itsZoomX << sep << itsZoomY << sep;
+  os << itsUsingZoom << sep;
   os << itsContrastFlip << sep;
-  os << itsVerticalFlip << sep;
-  os << itsUsingGlBitmap << endl;
+  os << itsVerticalFlip << endl;
 
   if (os.fail()) throw OutputError(ioTag);
 
@@ -89,20 +88,23 @@ void Bitmap::deserialize(istream& is, IOFlag flag) {
 DOTRACE("Bitmap::deserialize");
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
-  is >> itsFilename;
+  getline(is, itsFilename, '\t');
   is >> itsRasterX >> itsRasterY;
   is >> itsZoomX >> itsZoomY;
   int val;
   is >> val;
+  itsUsingZoom = bool(val);
+  is >> val;
   itsContrastFlip = bool(val);
   is >> val;
   itsVerticalFlip = bool(val);
-  is >> val;
-  itsUsingGlBitmap = bool(val);
 
   if (is.fail()) throw InputError(ioTag);
 
   if (flag & BASES) { GrObj::deserialize(is, flag); }
+
+  itsBytes = 0;
+  bytesChangeHook(itsBytes, 0, 0);
 
   if ( !itsFilename.empty() ) {
 	 loadPbmFile(itsFilename.c_str());
@@ -114,25 +116,9 @@ DOTRACE("Bitmap::charCount");
   return 128;
 }
 
-int Bitmap::bytesPerRow() const {
-DOTRACE("Bitmap::bytesPerRow");
-  return ( (itsWidth*itsBitsPerPixel - 1)/8 + 1 );
-}
-
-int Bitmap::byteCount() const {
-DOTRACE("Bitmap::byteCount");
-  return bytesPerRow() * itsHeight;
-}
-
-int Bitmap::width() const {
-DOTRACE("Bitmap::width");
-  return itsWidth;
-}
-
-int Bitmap::height() const {
-DOTRACE("Bitmap::height");
-  return itsHeight; 
-}
+/////////////
+// actions //
+/////////////
 
 void Bitmap::loadPbmFile(const char* filename) {
 DOTRACE("Bitmap::loadPbmFile");
@@ -150,6 +136,8 @@ DOTRACE("Bitmap::loadPbmFile");
 
   if (itsContrastFlip) { doFlipContrast(); }
   if (itsVerticalFlip) { doFlipVertical(); }
+
+  bytesChangeHook(itsBytes, itsWidth, itsHeight);
   
   sendStateChangeMsg();
 }
@@ -181,6 +169,9 @@ DOTRACE("Bitmap::doFlipContrast");
 		itsBytes[i] = 0xff - itsBytes[i];
 	 }
   }
+
+  bytesChangeHook(itsBytes, itsWidth, itsHeight);
+
   sendStateChangeMsg();
 }
 
@@ -210,61 +201,8 @@ DOTRACE("Bitmap::doFlipVertical");
   delete [] itsBytes;
   itsBytes = new_bytes;
 
-  sendStateChangeMsg();
-}
+  bytesChangeHook(itsBytes, itsWidth, itsHeight);
 
-double Bitmap::getRasterX() const {
-DOTRACE("Bitmap::getRasterX");
-  return itsRasterX;
-}
-
-double Bitmap::getRasterY() const {
-DOTRACE("Bitmap::getRasterY");
-  return itsRasterY;
-}
-
-double Bitmap::getZoomX() const {
-DOTRACE("Bitmap::getZoomX");
-  return itsZoomX;
-}
-
-double Bitmap::getZoomY() const {
-DOTRACE("Bitmap::getZoomY");
-  return itsZoomY;
-}
-
-bool Bitmap::getUsingGlBitmap() const {
-DOTRACE("Bitmap::getUsingGlBitmap");
-  return itsUsingGlBitmap; 
-}
-
-void Bitmap::setRasterX(double val) {
-DOTRACE("Bitmap::setRasterX");
-  itsRasterX = val;
-  sendStateChangeMsg();
-}
-
-void Bitmap::setRasterY(double val) {
-DOTRACE("Bitmap::setRasterY");
-  itsRasterY = val;
-  sendStateChangeMsg();
-}
-
-void Bitmap::setZoomX(double val) {
-DOTRACE("Bitmap::setZoomX");
-  itsZoomX = val;
-  sendStateChangeMsg();
-}
-
-void Bitmap::setZoomY(double val) {
-DOTRACE("Bitmap::setZoomY");
-  itsZoomY = val;
-  sendStateChangeMsg();
-}
-
-void Bitmap::setUsingGlBitmap(bool val) {
-DOTRACE("Bitmap::setUsingGlBitmap");
-  itsUsingGlBitmap = val;
   sendStateChangeMsg();
 }
 
@@ -297,12 +235,19 @@ DOTRACE("Bitmap::center");
   itsRasterX = -win_width/2.0;
   itsRasterY = -win_height/2.0;
   
-  if (!itsUsingGlBitmap) {
-	 itsRasterX *= abs(itsZoomX);
-	 itsRasterY *= abs(itsZoomY);
-  }
+  itsRasterX *= abs(itsZoomX);
+  itsRasterY *= abs(itsZoomY);
 
   sendStateChangeMsg();
+}
+
+void Bitmap::grRender() const {
+DOTRACE("Bitmap::grRender");
+  doRender(itsBytes,
+			  itsRasterX, itsRasterY,
+			  itsWidth, itsHeight,
+			  itsBitsPerPixel,
+			  itsZoomX, itsZoomY);
 }
 
 void Bitmap::undraw() const {
@@ -350,42 +295,98 @@ DOTRACE("Bitmap::undraw");
 	 win_raster_y += itsHeight*itsZoomY;
   }
 
-  glPushAttrib(GL_SCISSOR_BIT);
-    glEnable(GL_SCISSOR_TEST);
-      glScissor( int(win_raster_x)-1, 
-					  int(win_raster_y)-1, 
-					  int(itsWidth*abs(itsZoomX))+2, 
-					  int(itsHeight*abs(itsZoomY))+2 );
-		glClear(GL_COLOR_BUFFER_BIT);
-	 glDisable(GL_SCISSOR_TEST);
-  glPopAttrib();	 
+  doUndraw( int(win_raster_x)-1, 
+				int(win_raster_y)-1, 
+				int(itsWidth*abs(itsZoomX))+2, 
+				int(itsHeight*abs(itsZoomY))+2 );
 }
 
-void Bitmap::grRender() const {
-DOTRACE("Bitmap::grRender");
-  glRasterPos2d(itsRasterX, itsRasterY);
-  glPixelZoom(itsZoomX, itsZoomY);
-  
-  if (itsBitsPerPixel == 24) {
-	 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	 glDrawPixels(itsWidth, itsHeight, GL_RGB, GL_UNSIGNED_BYTE,
-					  static_cast<GLvoid*>(itsBytes));
-  }
-  else if (itsBitsPerPixel == 8) {
-	 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	 glDrawPixels(itsWidth, itsHeight, GL_COLOR_INDEX, GL_UNSIGNED_BYTE,
-					  static_cast<GLvoid*>(itsBytes));
-  }
-  else if (itsBitsPerPixel == 1) {
-	 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	 if (itsUsingGlBitmap) {
-		glBitmap(itsWidth, itsHeight, 0.0, 0.0, 0.0, 0.0,
-					static_cast<GLubyte*>(itsBytes));
-	 }
-	 else {
-		glDrawPixels(itsWidth, itsHeight, GL_COLOR_INDEX, GL_BITMAP,
-						 static_cast<GLvoid*>(itsBytes));
-	 }
+///////////////
+// accessors //
+///////////////
+
+int Bitmap::byteCount() const {
+DOTRACE("Bitmap::byteCount");
+  return bytesPerRow() * itsHeight;
+}
+
+int Bitmap::bytesPerRow() const {
+DOTRACE("Bitmap::bytesPerRow");
+  return ( (itsWidth*itsBitsPerPixel - 1)/8 + 1 );
+}
+
+int Bitmap::width() const {
+DOTRACE("Bitmap::width");
+  return itsWidth;
+}
+
+int Bitmap::height() const {
+DOTRACE("Bitmap::height");
+  return itsHeight; 
+}
+
+double Bitmap::getRasterX() const {
+DOTRACE("Bitmap::getRasterX");
+  return itsRasterX;
+}
+
+double Bitmap::getRasterY() const {
+DOTRACE("Bitmap::getRasterY");
+  return itsRasterY;
+}
+
+double Bitmap::getZoomX() const {
+DOTRACE("Bitmap::getZoomX");
+  return itsZoomX;
+}
+
+double Bitmap::getZoomY() const {
+DOTRACE("Bitmap::getZoomY");
+  return itsZoomY;
+}
+
+bool Bitmap::getUsingZoom() const {
+DOTRACE("Bitmap::getUsingZoom");
+  return itsUsingZoom; 
+}
+
+//////////////////
+// manipulators //
+//////////////////
+
+void Bitmap::setRasterX(double val) {
+DOTRACE("Bitmap::setRasterX");
+  itsRasterX = val;
+  sendStateChangeMsg();
+}
+
+void Bitmap::setRasterY(double val) {
+DOTRACE("Bitmap::setRasterY");
+  itsRasterY = val;
+  sendStateChangeMsg();
+}
+
+void Bitmap::setZoomX(double val) {
+DOTRACE("Bitmap::setZoomX");
+  if (!itsUsingZoom) return;
+
+  itsZoomX = val;
+  sendStateChangeMsg();
+}
+
+void Bitmap::setZoomY(double val) {
+DOTRACE("Bitmap::setZoomY");
+  itsZoomY = val;
+  sendStateChangeMsg();
+}
+
+void Bitmap::setUsingZoom(bool val) {
+DOTRACE("Bitmap::setUsingZoom");
+  itsUsingZoom = val; 
+
+  if (!itsUsingZoom) {
+	 itsZoomX = 1.0;
+	 itsZoomY = 1.0;
   }
 }
 
