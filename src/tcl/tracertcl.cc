@@ -3,7 +3,7 @@
 // tracertcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 17 13:34:40 2000
-// written: Thu Feb 17 13:51:02 2000
+// written: Wed Mar  8 16:58:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ class TraceCmd : public Tcl::TclCmd {
 public:
   TraceCmd(Tcl::TclPkg* pkg, const char* cmd_name,
 			  Util::Tracer& tracer, FuncType func) :
-	 TclCmd(pkg->interp(), pkg->makePkgCmdName(cmd_name), NULL, 1, 1),
+	 TclCmd(pkg->interp(), pkg->makePkgCmdName(cmd_name), (char*) 0, 1, 1),
 	 itsTracer(tracer),
 	 itsFunc(func)
 	 {}
