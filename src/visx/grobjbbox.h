@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 09:06:14 2001
-// written: Fri Aug 24 17:41:35 2001
+// written: Sat Aug 25 12:54:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,8 @@
 
 #define ANIMATE_BBOX
 
-class GrObjBBox : public Gnode {
+class GrObjBBox : public Gnode
+{
 private:
   GrObjBBox(const GrObjBBox&);
   GrObjBBox& operator=(const GrObjBBox&);
@@ -31,7 +32,9 @@ public:
     Gnode(child),
     isItVisible(false),
     itsPixelBorder(4),
-    itsTimer(100, true)
+    itsTimer(100, true),
+    itsStipple(0x0F0F), // 0000111100001111
+    itsMask(0x3333)     // 0011001100110011
   {
     itsTimer.sigTimeOut.connect(sig.slot());
   }
@@ -64,6 +67,9 @@ private:
   mutable int itsPixelBorder;
 
   Tcl::Timer itsTimer;
+
+  mutable unsigned short itsStipple;
+  mutable unsigned short itsMask;
 };
 
 static const char vcid_grobjbbox_h[] = "$Header$";

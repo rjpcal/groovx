@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Fri Aug 24 18:36:00 2001
+// written: Sat Aug 25 12:55:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,25 +26,6 @@
 
 namespace
 {
-  void renderRect(Gfx::Canvas& canvas, const Gfx::Rect<double>& bounds)
-  {
-    static unsigned short stipple = 0x0F0F; // 0000111100001111
-
-    static unsigned short mask =    0x3333; // 0011001100110011
-
-    stipple ^= mask;
-
-    mask = ~mask;
-
-    Gfx::Canvas::AttribSaver saver(canvas);
-
-    canvas.setLineWidth(1.0);
-    glEnable(GL_LINE_STIPPLE);
-    glLineStipple(1, stipple);
-
-    canvas.drawRect(bounds);
-  }
-
   Gfx::Rect<double> addPixelBorder(Gfx::Canvas& canvas,
                                    const Gfx::Rect<double>& raw,
                                    int border_pixels)
@@ -84,7 +65,17 @@ DOTRACE("GrObjBBox::gnodeDraw");
                        child()->gnodeBoundingBox(canvas),
                        itsPixelBorder);
 
-      renderRect(canvas, bounds);
+		itsStipple ^= itsMask;
+
+		itsMask = ~itsMask;
+
+		Gfx::Canvas::AttribSaver saver(canvas);
+
+		canvas.setLineWidth(1.0);
+		glEnable(GL_LINE_STIPPLE);
+		glLineStipple(1, itsStipple);
+
+		canvas.drawRect(bounds);
     }
 
   child()->gnodeDraw(canvas);
