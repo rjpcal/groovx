@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Wed Dec  4 18:01:41 2002
+// written: Wed Dec  4 18:41:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "visx/trialevent.h"
 
-#include "visx/trialbase.h"
+#include "visx/trial.h"
 
 #include "gfx/canvas.h"
 
@@ -92,7 +92,7 @@ DOTRACE("TrialEvent::writeTo");
   writer->writeValue("requestedDelay", itsRequestedDelay);
 }
 
-int TrialEvent::schedule(TrialBase& trial,
+int TrialEvent::schedule(Trial& trial,
                          Util::ErrorHandler& errhdlr,
                          int minimum_msec)
 {
@@ -215,7 +215,7 @@ AbortTrialEvent::AbortTrialEvent(int msec) : TrialEvent(msec) {}
 
 AbortTrialEvent::~AbortTrialEvent() {}
 
-void AbortTrialEvent::invoke(TrialBase& trial)
+void AbortTrialEvent::invoke(Trial& trial)
 {
 DOTRACE("AbortTrialEvent::invoke");
   trial.vxAbort();
@@ -225,7 +225,7 @@ DrawEvent::DrawEvent(int msec) : TrialEvent(msec) {}
 
 DrawEvent::~DrawEvent() {}
 
-void DrawEvent::invoke(TrialBase& trial)
+void DrawEvent::invoke(Trial& trial)
 {
 DOTRACE("DrawEvent::invoke");
   Util::SoftRef<Toglet> widget = trial.getWidget();
@@ -241,7 +241,7 @@ RenderEvent::RenderEvent(int msec) : TrialEvent(msec) {}
 
 RenderEvent::~RenderEvent() {}
 
-void RenderEvent::invoke(TrialBase& trial)
+void RenderEvent::invoke(Trial& trial)
 {
 DOTRACE("RenderEvent::invoke");
   Util::SoftRef<Toglet> widget = trial.getWidget();
@@ -257,7 +257,7 @@ EndTrialEvent::EndTrialEvent(int msec) : TrialEvent(msec) {}
 
 EndTrialEvent::~EndTrialEvent() {}
 
-void EndTrialEvent::invoke(TrialBase& trial)
+void EndTrialEvent::invoke(Trial& trial)
 {
 DOTRACE("EndTrialEvent::invoke");
   trial.vxEndTrial();
@@ -268,7 +268,7 @@ NextNodeEvent::NextNodeEvent(int msec) : TrialEvent(msec) {}
 
 NextNodeEvent::~NextNodeEvent() {}
 
-void NextNodeEvent::invoke(TrialBase& trial)
+void NextNodeEvent::invoke(Trial& trial)
 {
 DOTRACE("NextNodeEvent::invoke");
   trial.trNextNode();
@@ -278,7 +278,7 @@ AllowResponsesEvent::AllowResponsesEvent(int msec) : TrialEvent(msec) {}
 
 AllowResponsesEvent::~AllowResponsesEvent() {}
 
-void AllowResponsesEvent::invoke(TrialBase& trial)
+void AllowResponsesEvent::invoke(Trial& trial)
 {
 DOTRACE("AllowResponsesEvent::invoke");
   trial.trAllowResponses();
@@ -288,7 +288,7 @@ DenyResponsesEvent::DenyResponsesEvent(int msec) : TrialEvent(msec) {}
 
 DenyResponsesEvent::~DenyResponsesEvent() {}
 
-void DenyResponsesEvent::invoke(TrialBase& trial)
+void DenyResponsesEvent::invoke(Trial& trial)
 {
 DOTRACE("DenyResponsesEvent::invoke");
   trial.trDenyResponses();
@@ -298,7 +298,7 @@ UndrawEvent::UndrawEvent(int msec) : TrialEvent(msec) {}
 
 UndrawEvent::~UndrawEvent() {}
 
-void UndrawEvent::invoke(TrialBase& trial)
+void UndrawEvent::invoke(Trial& trial)
 {
 DOTRACE("UndrawEvent::invoke");
   Util::SoftRef<Toglet> widget = trial.getWidget();
@@ -310,7 +310,7 @@ SwapBuffersEvent::SwapBuffersEvent(int msec) : TrialEvent(msec) {}
 
 SwapBuffersEvent::~SwapBuffersEvent() {}
 
-void SwapBuffersEvent::invoke(TrialBase& trial)
+void SwapBuffersEvent::invoke(Trial& trial)
 {
 DOTRACE("SwapBuffersEvent::invoke");
   Util::SoftRef<Toglet> widget = trial.getWidget();
@@ -322,7 +322,7 @@ RenderBackEvent::RenderBackEvent(int msec) : TrialEvent(msec) {}
 
 RenderBackEvent::~RenderBackEvent() {}
 
-void RenderBackEvent::invoke(TrialBase& trial)
+void RenderBackEvent::invoke(Trial& trial)
 {
 DOTRACE("RenderBackEvent::invoke");
   Util::SoftRef<Toglet> widget = trial.getWidget();
@@ -334,7 +334,7 @@ RenderFrontEvent::RenderFrontEvent(int msec) : TrialEvent(msec) {}
 
 RenderFrontEvent::~RenderFrontEvent() {}
 
-void RenderFrontEvent::invoke(TrialBase& trial)
+void RenderFrontEvent::invoke(Trial& trial)
 {
 DOTRACE("RenderFrontEvent::invoke");
   Util::SoftRef<Toglet> widget = trial.getWidget();
@@ -346,7 +346,7 @@ ClearBufferEvent::ClearBufferEvent(int msec) : TrialEvent(msec) {}
 
 ClearBufferEvent::~ClearBufferEvent() {}
 
-void ClearBufferEvent::invoke(TrialBase& trial)
+void ClearBufferEvent::invoke(Trial& trial)
 {
 DOTRACE("ClearBufferEvent::invoke");
   Util::SoftRef<Toglet> widget = trial.getWidget();
@@ -385,7 +385,7 @@ void GenericEvent::setCallback(const fstring& script)
   itsCallback->define("", script);
 }
 
-void GenericEvent::invoke(TrialBase& /*trial*/)
+void GenericEvent::invoke(Trial& /*trial*/)
 {
   itsCallback->invoke("");
 }

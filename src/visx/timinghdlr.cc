@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Sat Feb  2 17:12:07 2002
+// written: Wed Dec  4 18:41:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ public:
 
 private:
   Util::ErrorHandler* itsErrorHandler;
-  TrialBase* itsTrial;
+  Trial* itsTrial;
 
   void scheduleAll(EventGroup& events);
   void cancelAll(EventGroup& events);
@@ -102,7 +102,7 @@ public:
   void thHaltExpt();
   void thAbortTrial();
   void thResponseSeen();
-  void thBeginTrial(TrialBase& trial, Util::ErrorHandler& eh);
+  void thBeginTrial(Trial& trial, Util::ErrorHandler& eh);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -286,7 +286,7 @@ DOTRACE("TimingHdlr::Impl::cancelAll");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void TimingHdlr::Impl::thBeginTrial(TrialBase& trial, Util::ErrorHandler& eh)
+void TimingHdlr::Impl::thBeginTrial(Trial& trial, Util::ErrorHandler& eh)
 {
 DOTRACE("TimingHdlr::Impl::thBeginTrial");
 
@@ -345,7 +345,7 @@ void TimingHdlr::thAbortTrial()
 void TimingHdlr::thResponseSeen()
   { itsImpl->thResponseSeen(); }
 
-void TimingHdlr::thBeginTrial(TrialBase& trial, Util::ErrorHandler& eh)
+void TimingHdlr::thBeginTrial(Trial& trial, Util::ErrorHandler& eh)
   { itsImpl->thBeginTrial(trial, eh); }
 
 static const char vcid_timinghdlr_cc[] = "$Header$";

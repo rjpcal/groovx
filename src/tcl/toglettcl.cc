@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998 (as objtogl.cc)
-// written: Sat Nov 23 17:29:51 2002
+// written: Wed Dec  4 18:41:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@
 #include "util/objfactory.h"
 #include "util/ref.h"
 
-#include "visx/trialbase.h"
+#include "visx/trial.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -102,14 +102,14 @@ namespace TogletTcl
   // current trial is the one that will be displayed by a subsequent
   // call to "redraw", or by remap events sent to the screen
   // window. Returns an error if the specified trial id is not valid.
-  void setCurTrial(SoftRef<Toglet> toglet, Ref<TrialBase> trial)
+  void setCurTrial(SoftRef<Toglet> toglet, Ref<Trial> trial)
   {
     trial->installSelf(toglet);
   }
 
   // Make a specified trial the widget's current trial, and draw it in
   // the OpenGL window. The widget's visibility is set to true.
-  void show(SoftRef<Toglet> toglet, Ref<TrialBase> trial)
+  void show(SoftRef<Toglet> toglet, Ref<Trial> trial)
   {
     trial->installSelf(toglet);
     toglet->setVisibility(true);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:55 1999
-// written: Wed Sep 25 19:03:33 2002
+// written: Wed Dec  4 18:41:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@ namespace Util
   template <class T> class SoftRef;
 }
 
-class TrialBase;
+class Trial;
 class TrialEvent;
 
 ///////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ public:
   // actions //
   /////////////
 
-  virtual void thBeginTrial(TrialBase& trial, Util::ErrorHandler& eh);
+  virtual void thBeginTrial(Trial& trial, Util::ErrorHandler& eh);
   virtual void thResponseSeen();
   virtual void thAbortTrial();
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Wed Dec  4 18:25:02 2002
+// written: Wed Dec  4 18:41:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ namespace Util
   class ErrorHandler;
 };
 
-class TrialBase;
+class Trial;
 
 struct Tcl_TimerToken_;
 typedef struct Tcl_TimerToken_* Tcl_TimerToken;
@@ -81,7 +81,7 @@ public:
       The minimum_msec parameter specifies a minimum delay time; this may
       be used to ensure that proper relative ordering of TrialEvent's is
       maintained, even if the event loop is getting slowed down overall.  */
-  int schedule(TrialBase& trial, Util::ErrorHandler& errhdlr,
+  int schedule(Trial& trial, Util::ErrorHandler& errhdlr,
                int minimum_msec = 0);
 
   /** Cancels a pending event. That is, if \c cancel() is called after
@@ -97,7 +97,7 @@ protected:
       take whatever specific action is desired when the callback
       triggers. The function is called internally by \c TrialEvent, so
       subclasses should not call this function directly. */
-  virtual void invoke(TrialBase& trial) = 0;
+  virtual void invoke(Trial& trial) = 0;
 
 private:
   static void dummyInvoke(ClientData clientData);
@@ -110,7 +110,7 @@ private:
   Tcl_TimerToken itsToken;
 
   Util::ErrorHandler* itsErrorHandler;
-  TrialBase* itsTrial;
+  Trial* itsTrial;
 
   mutable bool itsIsPending;
 
@@ -129,7 +129,7 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-/// TrialEvent subclass to call TrialBase::vxAbort().
+/// TrialEvent subclass to call Trial::vxAbort().
 class AbortTrialEvent : public TrialEvent
 {
 protected:
@@ -141,10 +141,10 @@ public:
   /// Virtual destructor.
   virtual ~AbortTrialEvent();
 protected:
-  virtual void invoke(TrialBase& trial);
+  virtual void invoke(Trial& trial);
 };
 
-/** TrialEvent subclass to call TrialBase::installSelf() and
+/** TrialEvent subclass to call Trial::installSelf() and
     Widget::fullRender(). */
 class DrawEvent : public TrialEvent
 {
@@ -157,7 +157,7 @@ public:
   /// Virtual destructor.
   virtual ~DrawEvent();
 protected:
-  virtual void invoke(TrialBase& trial);
+  virtual void invoke(Trial& trial);
 };
 
 /// TrialEvent subclass to call Widget::render().
@@ -172,10 +172,10 @@ public:
   /// Virtual destructor.
   virtual ~RenderEvent();
 protected:
-  virtual void invoke(TrialBase& trial);
+  virtual void invoke(Trial& trial);
 };
 
-/// TrialEvent subclass to call TrialBase::vxEndTrial().
+/// TrialEvent subclass to call Trial::vxEndTrial().
 class EndTrialEvent : public TrialEvent
 {
 protected:
@@ -187,10 +187,10 @@ public:
   /// Virtual destructor.
   virtual ~EndTrialEvent();
 protected:
-  virtual void invoke(TrialBase& trial);
+  virtual void invoke(Trial& trial);
 };
 
-/// TrialEvent subclass to call TrialBase::trNextNode().
+/// TrialEvent subclass to call Trial::trNextNode().
 class NextNodeEvent : public TrialEvent
 {
 protected:
@@ -202,10 +202,10 @@ public:
   /// Virtual destructor.
   virtual ~NextNodeEvent();
 protected:
-  virtual void invoke(TrialBase& trial);
+  virtual void invoke(Trial& trial);
 };
 
-/// TrialEvent subclass to call TrialBase::trAllowResponses().
+/// TrialEvent subclass to call Trial::trAllowResponses().
 class AllowResponsesEvent : public TrialEvent
 {
 protected:
@@ -217,10 +217,10 @@ public:
   /// Virtual destructor.
   virtual ~AllowResponsesEvent();
 protected:
-  virtual void invoke(TrialBase& trial);
+  virtual void invoke(Trial& trial);
 };
 
-/// TrialEvent subclass to call TrialBase::trDenyResponses().
+/// TrialEvent subclass to call Trial::trDenyResponses().
 class DenyResponsesEvent : public TrialEvent
 {
 protected:
@@ -232,7 +232,7 @@ public:
   /// Virtual destructor.
   virtual ~DenyResponsesEvent();
 protected:
-  virtual void invoke(TrialBase& trial);
+  virtual void invoke(Trial& trial);
 };
 
 /// TrialEvent subclass to call Widget::undraw().
@@ -247,7 +247,7 @@ public:
   /// Virtual destructor.
   virtual ~UndrawEvent();
 protected:
-  virtual void invoke(TrialBase& trial);
+  virtual void invoke(Trial& trial);
 };
 
 /// TrialEvent subclass to call Canvas::drawOnBackBuffer().
@@ -262,7 +262,7 @@ public:
   /// Virtual destructor.
   virtual ~RenderBackEvent();
 protected:
-  virtual void invoke(TrialBase& trial);
+  virtual void invoke(Trial& trial);
 };
 
 /// TrialEvent subclass to call Canvas::drawOnFrontBuffer().
@@ -277,7 +277,7 @@ public:
   /// Virtual destructor.
   virtual ~RenderFrontEvent();
 protected:
-  virtual void invoke(TrialBase& trial);
+  virtual void invoke(Trial& trial);
 };
 
 /// TrialEvent subclass to call Widget::swapBuffers().
@@ -292,7 +292,7 @@ public:
   /// Virtual destructor.
   virtual ~SwapBuffersEvent();
 protected:
-  virtual void invoke(TrialBase& trial);
+  virtual void invoke(Trial& trial);
 };
 
 /// TrialEvent subclass to call Canvas::clearColorBuffer().
@@ -307,7 +307,7 @@ public:
   /// Virtual destructor.
   virtual ~ClearBufferEvent();
 protected:
-  virtual void invoke(TrialBase& trial);
+  virtual void invoke(Trial& trial);
 };
 
 /// TrialEvent subclass to call Canvas::clearColorBuffer().
@@ -331,7 +331,7 @@ public:
   void setCallback(const fstring& script);
 
 protected:
-  virtual void invoke(TrialBase& trial);
+  virtual void invoke(Trial& trial);
 };
 
 static const char vcid_trialevent_h[] = "$Header$";

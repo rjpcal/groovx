@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 18 16:21:09 1999
-// written: Sat Nov 23 13:47:06 2002
+// written: Wed Dec  4 18:41:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ namespace Util
 
 class Block;
 class Toglet;
-class TrialBase;
+class Trial;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -49,30 +49,30 @@ public:
   virtual void readFrom(IO::Reader* reader) = 0;
   virtual void writeTo(IO::Writer* writer) const = 0;
 
-  /** Will be called by a \c TrialBase at the beginning of a trial. \c
-      ResponseHandler subclasses implement this function to prepare
+  /// Called by a \c Trial at the beginning of a trial.
+  /** \c ResponseHandler subclasses implement this function to prepare
       listening for responses, etc. */
   virtual void rhBeginTrial(Util::SoftRef<Toglet> widget,
-                            TrialBase& trial) const = 0;
+                            Trial& trial) const = 0;
 
-  /** Will by called by a \c TrialBase if a trial is aborted. \c
-      ResponseHandler subclasses implement this function to quit
+  /// Called by a \c Trial if a trial is aborted.
+  /** \c ResponseHandler subclasses implement this function to quit
       listening for responses, etc. */
   virtual void rhAbortTrial() const = 0;
 
-  /** Will by called by a \c TrialBase when a trial is complete. \c
-      ResponseHandler subclasses implement this function to quit
+  /// Called by a \c Trial when a trial is complete.
+  /** \c ResponseHandler subclasses implement this function to quit
       listening for responses, etc. */
   virtual void rhEndTrial() const = 0;
 
-  /** Will by called by a \c TrialBase when the sequence of trials is
-      halted suddenly. \c ResponseHandler subclasses implement this
-      function to quit listening for responses, etc. */
+  /// Called by a \c Trial when the sequence of trials is halted suddenly.
+  /** \c ResponseHandler subclasses implement this function to quit
+      listening for responses, etc. */
   virtual void rhHaltExpt() const = 0;
 
   /// Subclasses implement this function to attend to responses.
   virtual void rhAllowResponses(Util::SoftRef<Toglet> widget,
-                                TrialBase& trial) const = 0;
+                                Trial& trial) const = 0;
 
   /// Subclasses implement this function to stop attending to responses.
   virtual void rhDenyResponses() const = 0;

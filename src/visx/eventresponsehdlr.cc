@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Dec  4 18:04:55 2002
+// written: Wed Dec  4 18:41:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@
 #include "visx/feedbackmap.h"
 #include "visx/sound.h"
 #include "visx/response.h"
-#include "visx/trialbase.h"
+#include "visx/trial.h"
 
 #define DYNAMIC_TRACE_EXPR EventResponseHdlr::tracer.status()
 #include "util/trace.h"
@@ -79,7 +79,7 @@ public:
   {
   private:
     Util::SoftRef<Toglet> itsWidget;
-    TrialBase& itsTrial;
+    Trial& itsTrial;
     fstring itsEventSequence;
     fstring itsBindingScript;
     unsigned int itsResponseCount;
@@ -100,7 +100,7 @@ public:
     ~ActiveState() { ignore(); }
 
     ActiveState(const EventResponseHdlr::Impl* erh,
-                Util::SoftRef<Toglet> widget, TrialBase& trial,
+                Util::SoftRef<Toglet> widget, Trial& trial,
                 const fstring& seq, const fstring& script) :
       itsWidget(widget),
       itsTrial(trial),
@@ -161,7 +161,7 @@ public:
     }
   };
 
-  void becomeActive(Util::SoftRef<Toglet> widget, TrialBase& trial) const
+  void becomeActive(Util::SoftRef<Toglet> widget, Trial& trial) const
   {
     Util::log( fstring("binding to ", itsCmdCallback->name()) );
 
@@ -410,7 +410,7 @@ unsigned int EventResponseHdlr::getMaxResponses() const
   { return itsImpl->itsMaxResponses; }
 
 void EventResponseHdlr::rhBeginTrial(Util::SoftRef<Toglet> widget,
-                                     TrialBase& trial) const
+                                     Trial& trial) const
 {
   Precondition( itsImpl->isInactive() );
 
@@ -450,7 +450,7 @@ void EventResponseHdlr::rhHaltExpt() const
 }
 
 void EventResponseHdlr::rhAllowResponses(Util::SoftRef<Toglet> widget,
-                                         TrialBase& trial) const
+                                         Trial& trial) const
 {
   itsImpl->becomeActive(widget, trial);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Wed Dec  4 18:35:55 2002
+// written: Wed Dec  4 18:40:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 #include "util/tracer.h"
 
-#include "visx/trialbase.h"
+#include "visx/element.h"
 
 namespace Util
 {
@@ -29,8 +29,8 @@ class GxNode;
 class ResponseHandler;
 class TimingHdlr;
 
-/// Trial collaborates with ResponseHandler+TimingHdlr to implement TrialBase.
-class Trial : public TrialBase, public FieldContainer
+/// Trial collaborates with ResponseHandler+TimingHdlr.
+class Trial : public Element, public FieldContainer
 {
 public:
 
