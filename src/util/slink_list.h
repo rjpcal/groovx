@@ -3,7 +3,7 @@
 // lists.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Mar 18 11:22:40 2000
-// written: Mon Mar 20 08:34:04 2000
+// written: Mon Mar 20 11:53:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@ public:
   typedef const T& const_reference;
 
   struct node {
-	 node(const T& v=T(), node* n=0) : val(v), next(n) {}
+	 node(const T& v, node* n) : val(v), next(n) {}
 
 	 T val;
 	 node* next;
