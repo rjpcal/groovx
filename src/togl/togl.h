@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Mon Aug  5 18:07:23 2002
+// written: Wed Aug  7 11:17:57 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -73,12 +73,12 @@ public:
   virtual ~Togl();
 
   // Default callback setup functions
-  void setDefaultCreateFunc(Togl_Callback* proc);
-  void setDefaultDisplayFunc(Togl_Callback* proc);
-  void setDefaultReshapeFunc(Togl_Callback* proc);
-  void setDefaultDestroyFunc(Togl_Callback* proc);
-  void setDefaultTimerFunc(Togl_Callback* proc);
-  void resetDefaultCallbacks();
+  static void setDefaultCreateFunc(Togl_Callback* proc);
+  static void setDefaultDisplayFunc(Togl_Callback* proc);
+  static void setDefaultReshapeFunc(Togl_Callback* proc);
+  static void setDefaultDestroyFunc(Togl_Callback* proc);
+  static void setDefaultTimerFunc(Togl_Callback* proc);
+  static void resetDefaultCallbacks();
 
   // Change callbacks for existing widget
   void setDisplayFunc(Togl_Callback* proc);
