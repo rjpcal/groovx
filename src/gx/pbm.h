@@ -3,7 +3,7 @@
 // pbm.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:06 1999
-// written: Fri Mar  3 15:07:40 2000
+// written: Mon Mar  6 10:28:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,24 +11,13 @@
 #ifndef PBM_H_DEFINED
 #define PBM_H_DEFINED
 
-#ifndef STRINGFWD_H_DEFINED
-#include "stringfwd.h"
-#endif
-
 #ifndef ERROR_H_DEFINED
 #include "error.h"
 #endif
 
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
-#endif
-
-#ifndef BMAPDATA_H_DEFINED
-#include "bmapdata.h"
-#endif
-
 class istream;
+class ostream;
+class BmapData;
 
 /** This exception class will be thrown by \c Pbm if there is an error
     during parsing of the bitmap data. */
@@ -37,16 +26,11 @@ public:
   /// Default constructor.
   PbmError();
   /// Construct with an appropriate error message \a msg.
-  PbmError(const string& msg);
+  PbmError(const char* msg);
 };
 
 class Pbm {
 public:
-  /** Construct from the specified parameters. This has the same
-      effect as calling \c setBytes() with the same arguments. */
-  Pbm(const vector<unsigned char>& bytes,
-		int width, int height, int bits_per_pixel);
-
   /** Construct by copying from of \a data. This has the same effect
       as calling \c setBytes() with the same argument. */
   Pbm(const BmapData& data);
@@ -59,18 +43,6 @@ public:
 
   /// Virtual destructor.
   virtual ~Pbm();
-
-  /** This function allows an external caller to take ownership of the
-      bitmap data help by the \c Pbm object. The internal bitmap data
-      are swapped into \a bytes, and the other reference parameters
-      are set appropriately. The \c Pbm's internal state is then
-      reinitialized, to contain an empty bitmap. */
-  void grabBytes(vector<unsigned char>& bytes,
- 					  int& width, int& height, int& bits_per_pixel);					  
-
-  /** The data are copied from \a bytes into the \c Pbm object. */
-  void setBytes(const vector<unsigned char>& bytes,
-					 int width, int height, int bits_per_pixel);
 
   /** Bitmap data are copied from \a data into the \c Pbm object. */
   void setBytes(const BmapData& data);
@@ -97,14 +69,8 @@ private:
   void parseMode5(istream& is);
   void parseMode6(istream& is);
 
-  int itsMode;
-  int itsImageWidth;
-  int itsImageHeight;
-  int itsMaxGrey;
-  int itsBitsPerPixel;
-
-  int itsNumBytes;
-  vector<unsigned char> itsBytes;
+  class Impl;
+  Impl* const itsImpl;
 };
 
 static const char vcid_pbm_h[] = "$Header$";

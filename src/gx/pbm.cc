@@ -3,7 +3,7 @@
 // pbm.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:07 1999
-// written: Fri Mar  3 15:07:24 2000
+// written: Mon Mar  6 10:30:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,15 +13,22 @@
 
 #include "pbm.h"
 
+#include "bmapdata.h"
+
 #include <fstream.h>
-#include <strstream.h>
 #include <cctype>
+#include <vector>
 
 #define NO_TRACE
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
+///////////////////////////////////////////////////////////////////////
+//
+// PbmError member definitions
+//
+///////////////////////////////////////////////////////////////////////
 
 PbmError::PbmError() :
   ErrorWithMsg()
@@ -29,68 +36,37 @@ PbmError::PbmError() :
 DOTRACE("PbmError::PbmError");
 }
 
-PbmError::PbmError(const string& str) :
+PbmError::PbmError(const char* str) :
   ErrorWithMsg(str)
 {
 DOTRACE("PbmError::PbmError");
 }
 
-void Pbm::init() {
-DOTRACE("Pbm::init");
-  itsMode = 0;
-  itsImageWidth = 0;
-  itsImageHeight = 0;
-  itsMaxGrey = 1;
-  itsBitsPerPixel = 1;
-  itsNumBytes = 0;
-  itsBytes.resize(1);
-}
+///////////////////////////////////////////////////////////////////////
+//
+// Pbm::Impl class definition
+//
+///////////////////////////////////////////////////////////////////////
 
-Pbm::Pbm(const vector<unsigned char>& bytes,
-			int width, int height, int bits_per_pixel)
-{
-  setBytes(bytes, width, height, bits_per_pixel);
-}
+class Pbm::Impl {
+public:
+  Impl();
 
-Pbm::Pbm(const BmapData& data)
-{
-  setBytes(data);
-}
+  void setBytes(const vector<unsigned char>& bytes,
+					 int width, int height, int bits_per_pixel);
 
-Pbm::Pbm(istream& is) {
-DOTRACE("Pbm::Pbm(istream&)");
-  init();
-  readStream(is);
-}
+  int itsMode;
+  int itsImageWidth;
+  int itsImageHeight;
+  int itsMaxGrey;
+  int itsBitsPerPixel;
 
-Pbm::Pbm(const char* filename) {
-DOTRACE("Pbm::Pbm(const char*)");
-  init();
+  int itsNumBytes;
+  vector<unsigned char> itsBytes;
+};
 
-  ifstream ifs(filename, ios::in|ios::binary);
-  if (ifs.fail()) {
-	 throw PbmError(string("couldn't open file: ") + filename);
-  }
-  readStream(ifs);
-}
-
-Pbm::~Pbm () {
-DOTRACE("Pbm::~Pbm ");
-}
-
-void Pbm::grabBytes(vector<unsigned char>& bytes,
-						  int& width, int& height, int& bits_per_pixel) {
-DOTRACE("Pbm::grabBytes");
-  itsBytes.swap(bytes);
-  width = itsImageWidth;
-  height = itsImageHeight;
-  bits_per_pixel = itsBitsPerPixel;
-
-  init();
-}
-
-void Pbm::setBytes(const vector<unsigned char>& bytes,
-						 int width, int height, int bits_per_pixel) {
+void Pbm::Impl::setBytes(const vector<unsigned char>& bytes,
+								 int width, int height, int bits_per_pixel) {
   itsBytes = bytes;
   itsNumBytes = bytes.size();
   itsImageWidth = width;
@@ -113,18 +89,68 @@ void Pbm::setBytes(const vector<unsigned char>& bytes,
   }
 }
 
+///////////////////////////////////////////////////////////////////////
+//
+// Pbm member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+void Pbm::init() {
+DOTRACE("Pbm::init");
+  itsImpl->itsMode = 0;
+  itsImpl->itsImageWidth = 0;
+  itsImpl->itsImageHeight = 0;
+  itsImpl->itsMaxGrey = 1;
+  itsImpl->itsBitsPerPixel = 1;
+  itsImpl->itsNumBytes = 0;
+  itsImpl->itsBytes.resize(1);
+}
+
+Pbm::Pbm(const BmapData& data) :
+  itsImpl( new Impl )
+{
+  setBytes(data);
+}
+
+Pbm::Pbm(istream& is) :
+  itsImpl( new Impl )
+{
+DOTRACE("Pbm::Pbm(istream&)");
+  init();
+  readStream(is);
+}
+
+Pbm::Pbm(const char* filename) :
+  itsImpl( new Impl )
+{
+DOTRACE("Pbm::Pbm(const char*)");
+  init();
+
+  ifstream ifs(filename, ios::in|ios::binary);
+  if (ifs.fail()) {
+	 PbmError err("couldn't open file: "); err.appendMsg(filename);
+	 throw err;
+  }
+  readStream(ifs);
+}
+
+Pbm::~Pbm() {
+DOTRACE("Pbm::~Pbm");
+  delete itsImpl;
+}
+
 void Pbm::setBytes(const BmapData& data) {
 DOTRACE("Pbm::setBytes");
-  setBytes(data.bytesVec(), data.width(), data.height(),
-			  data.bitsPerPixel());
+  itsImpl->setBytes(data.bytesVec(), data.width(), data.height(),
+						  data.bitsPerPixel());
 }
 
 void Pbm::swapInto(BmapData& data) {
 DOTRACE("Pbm::swapInto");
   int dummy_alignment = 1; 
 
-  data.swap(itsBytes, itsImageWidth, itsImageHeight,
-				itsBitsPerPixel, dummy_alignment);
+  data.swap(itsImpl->itsBytes, itsImpl->itsImageWidth, itsImpl->itsImageHeight,
+				itsImpl->itsBitsPerPixel, dummy_alignment);
 }
 
 void Pbm::write(const char* filename) const {
@@ -135,9 +161,9 @@ DOTRACE("Pbm::write");
 
 void Pbm::write(ostream& os) const {
 DOTRACE("Pbm::write");
-  os << 'P' << itsMode << ' ' 
-	  << itsImageWidth << ' ' << itsImageHeight << '\n';
-  os.write(&itsBytes[0], itsBytes.size());
+  os << 'P' << itsImpl->itsMode << ' ' 
+	  << itsImpl->itsImageWidth << ' ' << itsImpl->itsImageHeight << '\n';
+  os.write(&itsImpl->itsBytes[0], itsImpl->itsBytes.size());
 }
 
 void Pbm::readStream(istream& is) {
@@ -151,10 +177,10 @@ DOTRACE("Pbm::readStream");
 	 throw PbmError("bad magic number while reading pbm file");
   }
 
-  is >> itsMode;
-  DebugEvalNL(itsMode);
+  is >> itsImpl->itsMode;
+  DebugEvalNL(itsImpl->itsMode);
 
-  if (itsMode < 1 || itsMode > 6) {
+  if (itsImpl->itsMode < 1 || itsImpl->itsMode > 6) {
 	 throw PbmError("invalid mode seen while reading pbm file");
   }
 
@@ -165,20 +191,20 @@ DOTRACE("Pbm::readStream");
 	 is.ignore(1000, '\n');
   }
 
-  is >> itsImageWidth;
-  is >> itsImageHeight;
+  is >> itsImpl->itsImageWidth;
+  is >> itsImpl->itsImageHeight;
 
-  DebugEval(itsImageWidth);
-  DebugEvalNL(itsImageHeight);
+  DebugEval(itsImpl->itsImageWidth);
+  DebugEvalNL(itsImpl->itsImageHeight);
 
-  if (itsMode != 1 && itsMode != 4) {
-	 is >> itsMaxGrey;
+  if (itsImpl->itsMode != 1 && itsImpl->itsMode != 4) {
+	 is >> itsImpl->itsMaxGrey;
   }
   else {
-	 itsMaxGrey = 1;
+	 itsImpl->itsMaxGrey = 1;
   }
   
-  DebugEvalNL(itsMaxGrey);
+  DebugEvalNL(itsImpl->itsMaxGrey);
 
   // read one more character of whitespace from the stream after MaxGrey
   c = is.get();
@@ -186,23 +212,23 @@ DOTRACE("Pbm::readStream");
 	 throw PbmError("missing whitespace while reading pbm file");
   }
 
-  switch (itsMode) {
+  switch (itsImpl->itsMode) {
   case 1:
-  case 4: itsBitsPerPixel = 1; break;
+  case 4: itsImpl->itsBitsPerPixel = 1; break;
   case 2:
-  case 5: itsBitsPerPixel = 8; break;
+  case 5: itsImpl->itsBitsPerPixel = 8; break;
   case 3:
-  case 6: itsBitsPerPixel = 24; break;
+  case 6: itsImpl->itsBitsPerPixel = 24; break;
   default: Assert(false); break;
   }
   
-  int bytes_per_row = ( (itsImageWidth*itsBitsPerPixel - 1)/8 + 1 );
-  itsNumBytes = bytes_per_row * itsImageHeight;
-  DebugEvalNL(itsNumBytes);
+  int bytes_per_row = ( (itsImpl->itsImageWidth*itsImpl->itsBitsPerPixel - 1)/8 + 1 );
+  itsImpl->itsNumBytes = bytes_per_row * itsImpl->itsImageHeight;
+  DebugEvalNL(itsImpl->itsNumBytes);
 
-  itsBytes.resize(itsNumBytes);
+  itsImpl->itsBytes.resize(itsImpl->itsNumBytes);
 
-  switch (itsMode) {
+  switch (itsImpl->itsMode) {
   case 1: parseMode1(is); break;
   case 2: parseMode2(is); break;
   case 3: parseMode3(is); break;
@@ -217,15 +243,15 @@ void Pbm::parseMode1(istream& is) {
 DOTRACE("Pbm::parseMode1");
   int position = 0;
   int val = 0;
-  while (is.peek() != EOF && position < itsNumBytes) {
+  while (is.peek() != EOF && position < itsImpl->itsNumBytes) {
 	 DebugEval(position);
 
 	 is >> val;
 	 if (val == 0) {
-		itsBytes[position] = 0;
+		itsImpl->itsBytes[position] = 0;
 	 }
 	 else {
-		itsBytes[position] = 255;
+		itsImpl->itsBytes[position] = 255;
 	 }
 	 
 	 ++position;
@@ -234,15 +260,15 @@ DOTRACE("Pbm::parseMode1");
 
 void Pbm::parseMode2(istream& is) {
 DOTRACE("Pbm::parseMode2");
-  double conversion = 255.0/double(itsMaxGrey);
+  double conversion = 255.0/double(itsImpl->itsMaxGrey);
   
   int position = 0;
   int val = 0;
-  while (is.peek() != EOF && position < itsNumBytes) {
+  while (is.peek() != EOF && position < itsImpl->itsNumBytes) {
 	 DebugEval(position);
 
 	 is >> val;
-	 itsBytes[position] = static_cast<unsigned char>(val * conversion);
+	 itsImpl->itsBytes[position] = static_cast<unsigned char>(val * conversion);
 	 
 	 ++position;
   } 
@@ -255,17 +281,17 @@ DOTRACE("Pbm::parseMode3");
 
 void Pbm::parseMode4(istream& is) {
 DOTRACE("Pbm::parseMode4");
-  is.read(&(itsBytes[0]), itsNumBytes);
+  is.read(&(itsImpl->itsBytes[0]), itsImpl->itsNumBytes);
 }
 
 void Pbm::parseMode5(istream& is) {
 DOTRACE("Pbm::parseMode5");
-  is.read(&(itsBytes[0]), itsNumBytes);  
+  is.read(&(itsImpl->itsBytes[0]), itsImpl->itsNumBytes);  
 }
 
 void Pbm::parseMode6(istream& is) {
 DOTRACE("Pbm::parseMode6");
-  is.read(&(itsBytes[0]), itsNumBytes);
+  is.read(&(itsImpl->itsBytes[0]), itsImpl->itsNumBytes);
 }
 
 static const char vcid_pbm_cc[] = "$Header$";
