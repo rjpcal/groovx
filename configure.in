@@ -255,6 +255,7 @@ fi
 AC_PATH_XTRA
 
 CPPFLAGS="$CPPFLAGS $X_CFLAGS"
+LDFLAGS="$LDFLAGS $X_LIBS"
 
 AC_CHECK_HEADERS([limits iosfwd iostream fstream sstream \
 		  png.h fcntl.h termios.h sys/time.h unistd.h \
