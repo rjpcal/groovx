@@ -218,11 +218,15 @@ $(DEP)/pkgdepends $(VISX_LIB_DIR)/pkgIndex.tcl: \
 		--libdir $(VISX_LIB_DIR) \
 		--pkgdirs matlabengine,mtx,whitebox
 
-$(VISX_LIB_DIR)/dlinktest.$(SHLIB_EXT): \
+$(VISX_LIB_DIR)/fstringtest.$(SHLIB_EXT): \
 	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
 
-$(VISX_LIB_DIR)/fstringtest.$(SHLIB_EXT): \
+$(VISX_LIB_DIR)/signaltest.$(SHLIB_EXT): \
+	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
+	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
+
+$(VISX_LIB_DIR)/tcltimertest.$(SHLIB_EXT): \
 	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
 
