@@ -15,7 +15,9 @@ may overlap somewhat with the information in the toplevel README.
 Table of contents:
 1. Getting the source
 2. Building and installing the software and its dependencies
-3. Running a sample visual experiment
+3. Using the interactive shell 'groovx'
+4. Using the groovx shell from a script
+5. Running a sample visual experiment 'sample_expt.tcl'
 
 
 ######################################################################
@@ -94,7 +96,7 @@ Table of contents:
 
      cd $BUILD/groovx_20041004
      ./configure \
-       --prefix=$HOME/groovx \
+       --prefix=$INSTALL/groovx \
        --with-tcltk=$INSTALL/tcl8.5a1 \
        --disable-matlab
      # this will make+install everything, plus run a test suite:
@@ -107,13 +109,334 @@ Table of contents:
 
 
 ######################################################################
-3. Running a sample visual experiment
+3. Using the interactive shell 'groovx'
+
+   The main executable program that gets built is a shell called
+   'groovx'. This is essentially a custom Tcl+Tk shell, that includes
+   a large number of new commands that implement the graphical-object
+   and visual-experiment functionality of groovx.
+
+   You can start the shell interactively by calling
+   $INSTALL/groovx/bin/groovx (where $INSTALL is the install directory
+   you chose when configuring groovx). Of course, if
+   $INSTALL/groovx/bin is in your $PATH environment variable, then you
+   can just call 'groovx'.
+
+   Here's the obligatory "hello, world" example for groovx. Assuming
+   you start from a standard shell prompt ("$"), you start the groovx
+   shell, and then issue a series of commands. The groovx prompt ends
+   with ">>>", so everything following that prompt on a given line is
+   what you would type. Here, I've added comments following "#"
+   characters which you would not see or type during an actual shell
+   session.
+
+     [sideswipe 13:26 53]$ groovx
+
+     GroovX 1.0a1 (Oct  5 2004)
+     Copyright (c) 1998-2004 Rob Peters <rjpeters at klab dot caltech dot edu>
+     GroovX is free software, covered by the GNU General Public License, and you are
+     welcome to change it and/or distribute copies of it under certain conditions.
+             startup time (tcl+tk)  0.160s (user)  0.019s (sys)  0.198s (wall)
+             startup time (GroovX)  0.151s (user)  0.062s (sys)  0.395s (wall)
+
+     groovx>>> set g [new GxText]
+     19                               # 19 is the id of the new text object
+
+     groovx>>> -> $g text "Hello, World"
+
+     groovx>>> see $g
+
+   Now you should see the text "Hello, World" in your groovx window.
+
+   As an aside, one way to get a list of all the classnames known to
+   the "new" command is to call the "new" command with a bogus
+   classname (such as the ever-popular "foobar"):
+
+     groovx>>> new foobar
+     Obj::new: known types are:
+             AbortTrialEvent
+             AllowResponsesEvent
+             Bitmap
+             Block
+             ClearBufferEvent
+             CloneFace
+             DenyResponsesEvent
+             DrawEvent
+             EndTrialEvent
+             EventResponseHdlr
+             ExptDriver
+             Face
+             FileWriteEvent
+             FilledFace
+             FinishDrawingEvent
+             Fish
+             FixPt
+             Gabor
+             GaborArray
+             GenericEvent
+             Gtext
+             GxColor
+             GxCylinder
+             GxDisk
+             GxDrawStyle
+             GxEmptyNode
+             GxFixedScaleCamera
+             GxLighting
+             GxLine
+             GxMaterial
+             GxPerspectiveCamera
+             GxPixmap
+             GxPointSet
+             GxPsyphyCamera
+             GxScaler
+             GxSeparator
+             GxSphere
+             GxText
+             GxTransform
+             House
+             InnerFace
+             Jitter
+             KbdResponseHdlr
+             MaskHatch
+             MorphyFace
+             MultiEvent
+             NextNodeEvent
+             NullResponseHdlr
+             NullTrialEvent
+             OutputFile
+             RenderBackEvent
+             RenderEvent
+             RenderFrontEvent
+             Sound
+             SwapBuffersEvent
+             TimingHandler
+             TimingHdlr
+             Toglet
+             TopToglet
+             Trial
+             UndrawEvent
+     unknown object type 'foobar' (Util::Error)
+
+   Getting back to our "Hello, World" example, let's see how to
+   explore a little deeper. We are working in a roughly
+   object-oriented system here (after all groovx was originally
+   conceived as a GRaphical Object-Oriented Visual eXperiments). So,
+   what we have stored in the variable "g" is the unique object-id (or
+   UID) for a GxText object. UIDs in groovx are like raw addresses in
+   C or C++; they uniquely refer to a particular object. Groovx uses a
+   reference-counting system behind the scenes.
+
+   The arrow syntax with the pseudo-operator "->" is just a bit of
+   syntactic sugar (note that the order of arguments is different than
+   in C or C++ -- there, you might say "ptr->someFunction()", but in
+   groovx you'd say "-> $ptr someFunction"). In fact, with Tcl's
+   extremely simple and uniform syntax, "->" is just a command like
+   any other, only with a strange-looking name. So, the following two
+   commands are precisely equivalent:
+
+     -> $object command arg1   arg2 arg3 ...
+     Class::command $object   arg1 arg2 arg3 ...
+
+   where "Class" is the class of the given $object. What "->" does is
+   to look up the class of $object, and then call the command as shown
+   in the second form above.
+
+   OK, we've seen what "->" means, now we can use it to explore the
+   text object above.
+
+   First, let's see what its type is:
+
+     groovx>>> -> $g type
+     GxText
+
+   Good, that makes sense since we created it by calling "new GxText".
+
+   Given that its type is GxText, we know that calling "-> $g command"
+   is equivalent to calling "GxText::command $g". Now, when Tcl is
+   running in interactive mode, if you type a partial command name,
+   Tcl will try to make a complete command name out of the partial
+   name. If there is a unique match, Tcl will call it; otherwise, it
+   will helpfully list all possible matches. So in our case, we do the
+   following to get a list of all possible commands in the GxText::
+   namespace:
+
+     groovx>>> GxText::
+     ambiguous command name "GxText::": ::GxText::alignmentMode
+     ::GxText::allFields ::GxText::aspectRatio ::GxText::bbVisibility
+     ::GxText::boundingBox ::GxText::category ::GxText::centerX
+     ::GxText::centerY ::GxText::contains ::GxText::countAll
+     ::GxText::decrRefCount ::GxText::deepChildren ::GxText::delete
+     ::GxText::fields ::GxText::findAll ::GxText::font
+     ::GxText::height ::GxText::heightFactor ::GxText::incrRefCount
+     ::GxText::is ::GxText::loadASW ::GxText::loadGVX
+     ::GxText::maxDimension ::GxText::new ::GxText::newarr
+     ::GxText::readASW ::GxText::readLGX ::GxText::realType
+     ::GxText::refCount ::GxText::removeAll ::GxText::renderMode
+     ::GxText::retrieveASW ::GxText::saveASW ::GxText::saveGVX
+     ::GxText::savePS ::GxText::scalingMode ::GxText::strokeWidth
+     ::GxText::text ::GxText::traceOff ::GxText::traceOn
+     ::GxText::traceStatus ::GxText::traceToggle ::GxText::type
+     ::GxText::width ::GxText::widthFactor ::GxText::writeASW
+     ::GxText::writeGVX ::GxText::writeLGX ::GxText::xmlDebug
+
+   So this shows us all possible commands that we can call on a GxText
+   object. You'll notice that among them is ::GxText::type, the
+   command that we previously used to get the type of the object.
+
+   Groovx currently has a partially-working (hence,
+   partially-broken...)  self-documentation system. For some commands
+   (clarification to follow), you can use "?" to get information about
+   how to use the command. For example, for GxText::text, you can do
+   the following:
+
+     groovx>>> ? GxText::text
+             ::GxText::text objref(s)
+             ::GxText::text objref(s) new_val(s)
+
+   What that result tells you is that there are two syntaxes for
+   calling the GxText::text command: in the first, you just call it
+   with an objref (or object-id), in which case it returns the current
+   'text' value for that object; in the second, you call it with an
+   objref plus a new 'text' value (that's how we specified the "Hello,
+   World" value previously).
+
+   Now for the partially-broken part... with the way that
+   "inheritance" currently works in groovx, inherited commands cannot
+   be looked up with "?" under their inherited name(s), although they
+   CAN be looked up by their original command names (hopefully this
+   situation will improve at a future time). Thus:
+
+     groovx>>> ? GxText::type
+     ?: no such Tcl::CommandGroup (Util::Error)
+
+   fails, but using the original command name will work:
+
+     groovx>>> ? Obj::type
+           ::Obj::type objref(s)
+
+   Similarly with GxText::loadGVX, which is inherited from
+   IO::loadGVX:
+
+     groovx>>> ? GxText::loadGVX
+     ?: no such Tcl::CommandGroup (Util::Error)
+
+     groovx>>> ? IO::loadGVX
+             ::IO::loadGVX filename
+
+   A useful tool for inspecting objects involves using the persistence
+   layer built into the C++ framework. This is a generic serialization
+   API that allows objects to serialize and deserialize independent of
+   the "backend" -- that is, independent of the ultimate storage
+   medium and formatting.
+
+   One of the available formats is an XML format (called the GVX
+   format, using filenames with a .gvx extension). There are commands
+   to read/write GVX format from strings in the groovx shell, as well
+   as to read/write GVX format to files in the filesystem.
+
+   To dump an object's contents to a string in the groovx shell, do
+   the following (assuming you still have the $g object with "Hello,
+   World" still sitting around):
+
+     groovx>>> -> $g writeGVX
+     <?xml version="1.0"?>
+     <!-- GroovX XML 1 -->
+     <object type="GxText" id="1" name="root" version="3">
+             <string name="text">Hello, World</string>
+             <int name="strokeWidth" value="2"/>
+             <baseclass type="GxShapeKit" id="2" name="GxShapeKit" version="3">
+                     <int name="category" value="-1"/>
+                     <int name="renderMode" value="1"/>
+                     <bool name="bbVisibility" value="0"/>
+                     <int name="scalingMode" value="2"/>
+                     <double name="widthFactor" value="2.46548"/>
+                     <double name="heightFactor" value="2.46548"/>
+                     <int name="alignmentMode" value="2"/>
+                     <double name="centerX" value="0"/>
+                     <double name="centerY" value="0"/>
+             </baseclass>
+     </object>
+
+   This is a useful way to garner some insight into the internals of
+   the toolkit. You'll see that GxText has "GxShapeKit" as a
+   subclass. You'll also see that the text message "Hello, World" is
+   displayed as well. To capture these GVX contents in a string, do
+   the following (reminder: square brackets [] in Tcl are used to
+   evaluate the expression inside, and return its result):
+
+     groovx>>> set s [-> $g writeGVX]
+
+   Similarly, GVX output can be written to a file using saveGVX, like
+   this:
+
+     groovx>>> -> $g saveGVX foo.gvx
+
+   You can verify the contents of the file "foo.gvx" by doing "cat
+   foo.gvx" at the groovx shell prompt (in interactive mode, if Tcl
+   sees a command it doesn't recognize it will first look to see if
+   that command is an executable in the user's $PATH, which should be
+   the case for "cat").
+
+   Now, to restore the contents of the foo.gvx file at a later time,
+   use the IO::loadGVX command:
+
+     groovx>>> set g2 [IO::loadGVX foo.gvx]
+     40
+
+   You can verify that $g2 now holds the same values as $g by doing
+   "-> $g2 writeGVX".
+
+   Also note that groovx can transparently handle compressed files in
+   most cases. For saving files, groovx will apply gzip compression if
+   you give it a filename ending in .gz, like this:
+
+     groovx>>> -> $g saveGVX foo.gvx.gz
+
+   Verify that compression actually took place using Tcl's "file size"
+   command to get the size of each file in bytes:
+
+     groovx>>> file size foo.gvx
+     630
+     groovx>>> file size foo.gvx.gz
+     301
+
+   For loading files, compression is handled completely transparently:
+
+     groovx>>> set g3 [IO::loadGVX foo.gvx]
+     groovx>>> set g4 [IO::loadGVX foo.gvx.gz]
+
+
+
+######################################################################
+4. Using the groovx shell from a script
+
+   You can use the groovx shell in the "shbang" line of a
+   shell-script, i.e. the first line of a script starting with
+   "#!". Again, if $INSTALL/groovx/bin is in your $PATH, then you can
+   use
+
+     #!/usr/bin/env groovx
+
+   for the shbang line. Alternatively, you could use that same shbang
+   form if you have created a symbolic link in some directory that IS
+   in your $PATH, pointing to groovx's real location, e.g.:
+
+     ln -s $INSTALL/groovx/bin /usr/local/bin/groovx
+
+   Otherwise, you can specify the full path to the groovx executable
+   in the shbang line:
+
+     #!/path/to/installation/groovx/bin/groovx
+
+
+######################################################################
+5. Running a sample visual experiment 'sample_expt.tcl'
 
    Once you've built+installed groovx, you can run some of the sample
-   scripts that will now be located in $HOME/groovx/bin ... in
+   scripts that will now be located in $INSTALL/groovx/bin ... in
    particular, you can run this script
 
-     $HOME/groovx/bin/sample_expt.tcl
+     $INSTALL/groovx/bin/sample_expt.tcl
 
    to get a sample version of my free-viewing psychophysics
    experiment. The original source for that script would be found in
