@@ -91,10 +91,6 @@ public:
   //////////////////////
 
 private:
-  void updateDoUponCompletionBody() const;
-
-  void recreateDoUponCompletionProc() const;
-
   void doAutosave();
 
   bool haveValidBlock() const
@@ -248,8 +244,6 @@ private:
 
   mutable StopWatch itsTimer;
 
-  mutable dynamic_string itsDoUponCompletionBody;
-
   mutable Tcl::BkdErrorHandler itsErrHandler;
 };
 
@@ -280,7 +274,6 @@ ExptDriver::Impl::Impl(int argc, char** argv,
   itsBlocks(),
   itsCurrentBlockIdx(0),
   itsTimer(),
-  itsDoUponCompletionBody(),
   itsErrHandler(interp)
 {
 DOTRACE("ExptDriver::Impl::Impl");
@@ -298,48 +291,6 @@ DOTRACE("ExptDriver::Impl::Impl");
 ExptDriver::Impl::~Impl()
 {
 DOTRACE("ExptDriver::Impl::~Impl");
-}
-
-void ExptDriver::Impl::updateDoUponCompletionBody() const {
-DOTRACE("ExptDriver::Impl::updateDoUponCompletionBody");
-  if (itsInterp.hasCommand("Expt::doUponCompletion"))
-    {
-      itsInterp.resetResult();
-
-      Tcl::Code cmd("info body Expt::doUponCompletion", &itsErrHandler);
-
-      if (cmd.invoke(itsInterp))
-        {
-          itsDoUponCompletionBody = itsInterp.getResult(TypeCue<const char*>());
-          itsInterp.resetResult();
-        }
-      else
-        {
-          itsDoUponCompletionBody = "";
-          throw IO::OutputError("couldn't get the proc body "
-                                "for Expt::doUponCompletion");
-        }
-    }
-  else
-    {
-      itsDoUponCompletionBody = "";
-    }
-}
-
-void ExptDriver::Impl::recreateDoUponCompletionProc() const {
-DOTRACE("ExptDriver::Impl::recreateDoUponCompletionProc");
-  try {
-    dynamic_string proc_cmd_str =
-      "namespace eval Expt { proc doUponCompletion {} {";
-    proc_cmd_str += itsDoUponCompletionBody;
-    proc_cmd_str += "} }";
-
-    Tcl::Code proc_cmd(proc_cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
-    proc_cmd.invoke(itsInterp);
-  }
-  catch (Tcl::TclError& err) {
-    throw IO::InputError(err.msg_cstr());
-  }
 }
 
 void ExptDriver::Impl::doAutosave() {
@@ -515,8 +466,9 @@ DOTRACE("ExptDriver::Impl::readFrom");
   IO::ReadUtils::readObjectSeq<Block>(
            reader, "blocks", std::back_inserter(itsBlocks));
 
-  reader->readValue("doUponCompletionScript", itsDoUponCompletionBody);
-  recreateDoUponCompletionProc();
+  fixed_string proc_body;
+  reader->readValue("doUponCompletionScript", proc_body);
+  itsInterp.createProc("Expt", "doUponCompletion", "", proc_body.c_str());
 }
 
 void ExptDriver::Impl::writeTo(IO::Writer* writer) const {
@@ -538,8 +490,8 @@ DOTRACE("ExptDriver::Impl::writeTo");
   IO::WriteUtils::writeObjectSeq(writer, "blocks",
                                  itsBlocks.begin(), itsBlocks.end());
 
-  updateDoUponCompletionBody();
-  writer->writeValue("doUponCompletionScript", itsDoUponCompletionBody);
+  fixed_string proc_body = itsInterp.getProcBody("Expt::doUponCompletion");
+  writer->writeValue("doUponCompletionScript", proc_body);
 }
 
 ///////////////////////////////////////////////////////////////////////
