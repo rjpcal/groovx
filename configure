@@ -3869,6 +3869,8 @@ _ACEOF
 
 fi
 
+
+
 ###
 
 enable_readline=yes
@@ -4671,6 +4673,7 @@ s,@X_CFLAGS@,$X_CFLAGS,;t t
 s,@X_PRE_LIBS@,$X_PRE_LIBS,;t t
 s,@X_LIBS@,$X_LIBS,;t t
 s,@X_EXTRA_LIBS@,$X_EXTRA_LIBS,;t t
+s,@enable_matlab@,$enable_matlab,;t t
 s,@LIB_SUFFIX@,$LIB_SUFFIX,;t t
 s,@EXECUTABLE@,$EXECUTABLE,;t t
 CEOF
