@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Thu May 10 12:04:45 2001
+// written: Sun May 27 15:35:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -207,7 +207,6 @@ public:
   {
 	 Tcl_Eval(interp,
 				 "namespace eval KbdRh {\n"
-				 "  proc kbdResponseHdlr {} {return KbdRh}\n"
 				 "  proc useFeedback args {\n"
 				 "    return [eval EventRh::useFeedback $args]\n"
 				 "  }\n"
@@ -218,28 +217,6 @@ public:
 				 "    return [eval EventRh::feedbackMap $args]\n"
 				 "  }\n"
 				 "}\n");
-  }
-};
-
-
-///////////////////////////////////////////////////////////////////////
-//
-// NullRhPkg class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace NullRhTcl {
-  class NullRhPkg;
-}
-
-class NullRhTcl::NullRhPkg :
-  public Tcl::IoItemPkg<NullResponseHdlr> {
-public:
-  NullRhPkg(Tcl_Interp* interp) :
-	 Tcl::IoItemPkg<NullResponseHdlr>(interp, "NullRh", "$Revision$")
-  {
-	 Tcl_Eval(interp,
-			"namespace eval NullRh {proc nullResponseHdlr {} {return NullRh}}");
   }
 };
 
@@ -258,7 +235,7 @@ DOTRACE("Rh_Init");
 
   new EventRhTcl::EventRhPkg(interp);
   new KbdRhTcl::KbdRhPkg(interp);
-  new NullRhTcl::NullRhPkg(interp);
+  new Tcl::IoItemPkg<NullResponseHdlr>(interp, "NullRh", "$Revision$");
 
   new SerialRhTcl::SerialRhPkg(interp);
 
