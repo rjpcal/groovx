@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 17:25:48 2002
-// written: Wed Aug  7 11:32:22 2002
+// written: Wed Aug  7 11:44:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -113,6 +113,7 @@ DOTRACE("GLUtil::generateEPS");
   FILE* fp = fopen(filename, "w");
   if (fp == NULL)
     {
+      free(pixels);
       return 2;
     }
   fprintf(fp, "%%!PS-Adobe-2.0 EPSF-1.2\n");
