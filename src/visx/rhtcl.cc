@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Tue Oct 24 13:06:43 2000
+// written: Fri Oct 27 16:01:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -255,8 +255,8 @@ extern "C"
 int Rh_Init(Tcl_Interp* interp) {
 DOTRACE("Rh_Init");
 
-  new Tcl::IoPtrListPkg(interp, RhList::theRhList(),
-								"RhList", "$Revision$");
+  new Tcl::PtrListPkg<ResponseHandler>(interp, RhList::theRhList(),
+													"RhList", "$Revision$");
 
   new Tcl::AbstractListItemPkg<ResponseHandler, RhList>(
 		  interp, RhList::theRhList(), "Rh", "$Revision$");

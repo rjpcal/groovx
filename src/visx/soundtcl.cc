@@ -3,7 +3,7 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Thu Oct 26 17:48:18 2000
+// written: Fri Oct 27 16:02:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -154,11 +154,11 @@ namespace SoundListTcl {
   class SoundListPkg;
 }
 
-class SoundListTcl::SoundListPkg : public Tcl::IoPtrListPkg {
+class SoundListTcl::SoundListPkg : public Tcl::PtrListPkg<Sound> {
 public:
   SoundListPkg(Tcl_Interp* interp) :
-	 Tcl::IoPtrListPkg(interp, SoundList::theSoundList(),
-							 "SoundList", "1.3") {}
+	 Tcl::PtrListPkg<Sound>(interp, SoundList::theSoundList(),
+									"SoundList", "$Revision$") {}
 };
 
 //---------------------------------------------------------------------
