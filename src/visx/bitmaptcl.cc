@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Sat Jan 19 15:17:51 2002
+// written: Sat Jan 19 15:35:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,6 +47,7 @@ DOTRACE("Bitmap_Init");
   pkg1->defAction("flipVertical", &Bitmap::flipVertical);
   pkg1->defGetter("size", &Bitmap::size);
   pkg1->defAttrib("zoom", &Bitmap::getZoom, &Bitmap::setZoom);
+  pkg1->defAttrib("purgeable", &Bitmap::isPurgeable, &Bitmap::setPurgeable);
 
   // GLBitmap
   Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "GLBitmap", "$Revision$");

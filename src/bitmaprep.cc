@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri Jan 18 16:07:03 2002
+// written: Sat Jan 19 16:18:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,8 +41,6 @@
 namespace
 {
   Gfx::Vec2<double> defaultZoom(1.0, 1.0);
-
-  const IO::VersionId BITMAPREP_SERIAL_VERSION_ID = 1;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -65,6 +63,7 @@ public:
     itsUsingZoom(false),
     itsContrastFlip(false),
     itsVerticalFlip(false),
+    itsPurgeable(false),
     itsData()
   {}
 
@@ -80,6 +79,7 @@ public:
   bool itsUsingZoom;
   bool itsContrastFlip;
   bool itsVerticalFlip;
+  bool itsPurgeable;
 
   Gfx::BmapData itsData;
 };
@@ -164,7 +164,7 @@ void BitmapRep::readFrom(IO::Reader* reader)
 {
 DOTRACE("BitmapRep::readFrom");
 
-  reader->ensureReadVersionId("BitmapRep", 1, "Try grsh0.8a7");
+  int svid = reader->ensureReadVersionId("BitmapRep", 2, "Try grsh0.8a7");
 
   reader->readValue("filename", itsImpl->itsFilename);
   reader->readValue("zoomX", itsImpl->itsZoom.x());
@@ -172,6 +172,9 @@ DOTRACE("BitmapRep::readFrom");
   reader->readValue("usingZoom", itsImpl->itsUsingZoom);
   reader->readValue("contrastFlip", itsImpl->itsContrastFlip);
   reader->readValue("verticalFlip", itsImpl->itsVerticalFlip);
+
+  if (svid > 2)
+    reader->readValue("purgeable", itsImpl->itsPurgeable);
 
   if ( itsImpl->itsFilename.empty() )
     {
@@ -187,15 +190,13 @@ void BitmapRep::writeTo(IO::Writer* writer) const
 {
 DOTRACE("BitmapRep::writeTo");
 
-  writer->ensureWriteVersionId("BitmapRep", BITMAPREP_SERIAL_VERSION_ID, 1,
-                               "Try grsh0.8a7");
-
   writer->writeValue("filename", itsImpl->itsFilename);
   writer->writeValue("zoomX", itsImpl->itsZoom.x());
   writer->writeValue("zoomY", itsImpl->itsZoom.y());
   writer->writeValue("usingZoom", itsImpl->itsUsingZoom);
   writer->writeValue("contrastFlip", itsImpl->itsContrastFlip);
   writer->writeValue("verticalFlip", itsImpl->itsVerticalFlip);
+  writer->writeValue("purgeable", itsImpl->itsPurgeable);
 }
 
 /////////////
@@ -281,6 +282,16 @@ DOTRACE("BitmapRep::render");
                                  itsImpl->itsData,
                                  Gfx::Vec2<double>(),
                                  itsImpl->getZoom());
+
+  if (itsImpl->itsPurgeable)
+    {
+      itsImpl->itsData.clear();
+
+      // This const_cast is OK because we aren't changing the observable
+      // state; we're just re-queuing the current filename
+      const_cast<BitmapRep*>(this)->
+        queuePbmFile(itsImpl->itsFilename.c_str());
+    }
 }
 
 ///////////////
@@ -323,6 +334,12 @@ DOTRACE("BitmapRep::getUsingZoom");
   return itsImpl->itsUsingZoom;
 }
 
+bool BitmapRep::isPurgeable() const
+{
+DOTRACE("BitmapRep::isPurgeable");
+  return itsImpl->itsPurgeable;
+}
+
 //////////////////
 // manipulators //
 //////////////////
@@ -337,6 +354,12 @@ void BitmapRep::setUsingZoom(bool val)
 {
 DOTRACE("BitmapRep::setUsingZoom");
   itsImpl->itsUsingZoom = val;
+}
+
+void BitmapRep::setPurgeable(bool val)
+{
+DOTRACE("BitmapRep::setPurgeable");
+  itsImpl->itsPurgeable = val;
 }
 
 static const char vcid_bitmaprep_cc[] = "$Header$";

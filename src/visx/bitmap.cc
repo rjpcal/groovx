@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Sat Jan 19 15:18:48 2002
+// written: Sat Jan 19 15:43:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@
 
 namespace
 {
-  const IO::VersionId BITMAP_SERIAL_VERSION_ID = 2;
+  const IO::VersionId BITMAP_SERIAL_VERSION_ID = 3;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -133,6 +133,9 @@ Gfx::Vec2<double> Bitmap::getZoom() const
 bool Bitmap::getUsingZoom() const
   { return itsImpl->getUsingZoom(); }
 
+bool Bitmap::isPurgeable() const
+  { return itsImpl->isPurgeable(); }
+
 //////////////////
 // manipulators //
 //////////////////
@@ -142,6 +145,9 @@ void Bitmap::setZoom(Gfx::Vec2<double> zoom)
 
 void Bitmap::setUsingZoom(bool val)
   { itsImpl->setUsingZoom(val); this->sigNodeChanged.emit(); }
+
+void Bitmap::setPurgeable(bool val)
+  { itsImpl->setPurgeable(val); this->sigNodeChanged.emit(); }
 
 static const char vcid_bitmap_cc[] = "$Header$";
 #endif // !BITMAP_CC_DEFINED

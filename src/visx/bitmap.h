@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Sat Jan 19 15:17:32 2002
+// written: Sat Jan 19 15:33:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,6 +108,11 @@ public:
   /// Query whether zooming is currently to be used.
   bool getUsingZoom() const;
 
+  /// Query whether the image data are purgeable.
+  /** If the image data are purgeable, they will be unloaded after every
+      render, and then re-queued. */
+  bool isPurgeable() const;
+
   //////////////////
   // manipulators //
   //////////////////
@@ -117,6 +122,9 @@ public:
 
   /// Change whether zooming will be used.
   void setUsingZoom(bool val);
+
+  /// Change whether the image data are purgeable.
+  void setPurgeable(bool val);
 
 protected:
   /** Implements the \c GrObj rendering operation. The rendering is
