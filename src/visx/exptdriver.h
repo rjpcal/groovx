@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Nov 18 10:07:37 1999
+// written: Wed Dec  1 10:59:49 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,10 @@
 
 #ifndef ERROR_H_DEFINED
 #include "error.h"
+#endif
+
+#ifndef EXPERIMENT_H_DEFINED
+#include "experiment.h"
 #endif
 
 struct Tcl_Interp;
@@ -44,8 +48,9 @@ public:
  * @memo ExptDriver is a singleton that coordinates all objects
  * necessary to run an experiment.
  **/
+///////////////////////////////////////////////////////////////////////
 
-class ExptDriver : public virtual IO {
+class ExptDriver : public Experiment, public virtual IO {
 protected:
   /// Default constructor
   ExptDriver();
@@ -96,33 +101,33 @@ public:
   /** @name Graphics Actions */
   //@{
   ///
-  void draw();
+  virtual void draw();
   ///
-  void undraw();
+  virtual void undraw();
   ///
-  void edSwapBuffers();
+  virtual void edSwapBuffers();
   //@}
 
   /** @name Trial event sequence actions */
   //@{
   ///
-  void edBeginExpt();
+  virtual void edBeginExpt();
 
   ///
-  void edBeginTrial();
+  virtual void edBeginTrial();
   ///
-  void edResponseSeen();
+  virtual void edResponseSeen();
   ///
-  void edProcessResponse(int response);
+  virtual void edProcessResponse(int response);
   ///
-  void edAbortTrial();
+  virtual void edAbortTrial();
   ///
-  void edEndTrial();
+  virtual void edEndTrial();
   ///
-  void edHaltExpt() const;
+  virtual void edHaltExpt() const;
 
   ///
-  void edResetExpt();
+  virtual void edResetExpt();
   //@}
 
   ///
