@@ -48,7 +48,6 @@
 
 namespace ExptTcl
 {
-  class PauseCmd;
   class ExpPkg;
 
   WeakRef<ExptDriver> theExptDriver;
@@ -99,56 +98,23 @@ namespace ExptTcl
     expt->edBeginExpt();
   }
 
-  void setStartCommand(Ref<ExptDriver> expt, const char* command)
-  {
-    // Build the script to be executed when the start key is pressed
-    dynamic_string start_command = "{ ";
-    start_command += command;
-    start_command += " }";
-
-    GWT::Widget& widget = expt->getWidget();
-
-    widget.bind("<KeyPress-s>", start_command.c_str());
-    widget.takeFocus();
-  }
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// Expt Tcl definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-//--------------------------------------------------------------------
-//
-// PauseCmd --
-//
-// Tell the ExptDriver to halt the experiment, then pop up a pause
-// window. When the user dismisses the window, the experiment will
-// resume.
-//
-//--------------------------------------------------------------------
-
-class ExptTcl::PauseCmd : public Tcl::TclCmd {
-public:
-  PauseCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "expt_id", 2),
-    itsPauseMsgCmd(
+  Tcl::TclEvalCmd thePauseMsgCmd(
             "tk_messageBox -default ok -icon info "
             "-title \"Pause\" -type ok "
             "-message \"Experiment paused. Click OK to continue.\";\n",
-            Tcl::TclEvalCmd::THROW_EXCEPTION)
-  {}
+            Tcl::TclEvalCmd::THROW_EXCEPTION);
 
-protected:
-  virtual void invoke(Tcl::Context& ctx)
+  // Tell the ExptDriver to halt the experiment, then pop up a pause
+  // window. When the user dismisses the window, the experiment will
+  // resume.
+  void pause(Tcl::Context& ctx)
   {
     Ref<ExptDriver> ed(ctx.getValFromArg(1, TypeCue<unsigned int>()));
     ed->edHaltExpt();
 
     ed->addLogInfo("Experiment paused.");
 
-    itsPauseMsgCmd.invoke(ctx.interp());
+    thePauseMsgCmd.invoke(ctx.interp());
 
     // Clear the event queue
     while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
@@ -176,10 +142,19 @@ protected:
     ed->edResumeExpt();
   }
 
-private:
-  Tcl::TclEvalCmd itsPauseMsgCmd;
-};
+  void setStartCommand(Ref<ExptDriver> expt, const char* command)
+  {
+    // Build the script to be executed when the start key is pressed
+    dynamic_string start_command = "{ ";
+    start_command += command;
+    start_command += " }";
 
+    GWT::Widget& widget = expt->getWidget();
+
+    widget.bind("<KeyPress-s>", start_command.c_str());
+    widget.takeFocus();
+  }
+}
 
 //---------------------------------------------------------------------
 //
@@ -210,7 +185,7 @@ public:
     def( &ExptTcl::getCurrentExpt, "currentExp", 0 );
 
     def( &ExptTcl::begin, "begin", "expt_id" );
-    addCommand( new PauseCmd(this, "Exp::pause") );
+	 defRaw( &ExptTcl::pause, "pause", "expt_id", 1 );
     def( &ExptTcl::setStartCommand,
 			"setStartCommand", "expt_id start_command" );
 
