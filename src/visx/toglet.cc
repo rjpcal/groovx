@@ -243,7 +243,7 @@ DOTRACE("getX11Window");
   return Togl_Window(itsWidget);
 }
 
-Canvas* ToglConfig::getCanvas() const {
+Canvas* ToglConfig::getCanvas() {
 DOTRACE("ToglConfig::getCanvas");
   return &(GLCanvas::theCanvas());
 }
