@@ -3,7 +3,7 @@
 // timinghdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:55 1999
-// written: Wed Dec  1 14:18:06 1999
+// written: Sun Mar  5 18:57:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,6 @@
 
 #ifndef IO_H_DEFINED
 #include "io.h"
-#endif
-
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
 #endif
 
 #ifndef STOPWATCH_H_DEFINED
@@ -55,7 +50,7 @@ public:
   // accessors //
   ///////////////
 
-  int getAutosavePeriod() const { return itsAutosavePeriod; }
+  int getAutosavePeriod() const;
 
   TrialEvent* getEvent(TimePoint time_point, int index) const;
 
@@ -71,7 +66,7 @@ public:
   int addEventByName(const char* event_type,
 							TimePoint time_point, int msec_delay);
 
-  void setAutosavePeriod(int val) { itsAutosavePeriod = val; }
+  void setAutosavePeriod(int val);
 
   /////////////
   // actions //
@@ -84,14 +79,8 @@ public:
   virtual void thHaltExpt(Experiment* expt);
 
 private:
-  vector<TrialEvent*> itsImmediateEvents;
-  vector<TrialEvent*> itsStartEvents;
-  vector<TrialEvent*> itsResponseEvents;
-  vector<TrialEvent*> itsAbortEvents;
-
-  int itsAutosavePeriod;
-  
-  mutable StopWatch itsTimer;
+  class Impl;
+  Impl* const itsImpl;
 };
 
 static const char vcid_timinghdlr_h[] = "$Header$";

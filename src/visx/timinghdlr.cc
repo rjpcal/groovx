@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Sat Mar  4 16:32:09 2000
+// written: Sun Mar  5 18:59:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,11 +19,38 @@
 #include "writeutils.h"
 
 #include <cstring>
+#include <vector>
 
 #define NO_TRACE
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
+
+///////////////////////////////////////////////////////////////////////
+//
+// TimingHdlr::Impl definition
+//
+///////////////////////////////////////////////////////////////////////
+
+class TimingHdlr::Impl {
+public:
+  Impl() : itsAutosavePeriod(10) {}
+
+  vector<TrialEvent*> itsImmediateEvents;
+  vector<TrialEvent*> itsStartEvents;
+  vector<TrialEvent*> itsResponseEvents;
+  vector<TrialEvent*> itsAbortEvents;
+
+  int itsAutosavePeriod;
+  
+  mutable StopWatch itsTimer;
+};
+
+///////////////////////////////////////////////////////////////////////
+//
+// TimingHdlr definitions
+//
+///////////////////////////////////////////////////////////////////////
 
 const TimingHdlr::TimePoint TimingHdlr::IMMEDIATE;
 const TimingHdlr::TimePoint TimingHdlr::FROM_START;
@@ -71,17 +98,19 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 TimingHdlr::TimingHdlr() :
-  itsAutosavePeriod(10)
+  itsImpl(new Impl)
 {
 DOTRACE("TimingHdlr::TimingHdlr");
 }
 
 TimingHdlr::~TimingHdlr() {
 DOTRACE("TimingHdlr::~TimingHdlr");
-  deleteAll(itsImmediateEvents);
-  deleteAll(itsStartEvents);
-  deleteAll(itsResponseEvents);
-  deleteAll(itsAbortEvents);
+  deleteAll(itsImpl->itsImmediateEvents);
+  deleteAll(itsImpl->itsStartEvents);
+  deleteAll(itsImpl->itsResponseEvents);
+  deleteAll(itsImpl->itsAbortEvents);
+
+  delete itsImpl;
 }
 
 void TimingHdlr::serialize(ostream &os, IOFlag flag) const {
@@ -91,28 +120,28 @@ DOTRACE("TimingHdlr::serialize");
   char sep = ' ';
   if (flag & TYPENAME) { os << ioTag << sep; }
   
-  os << itsAutosavePeriod << sep;
+  os << itsImpl->itsAutosavePeriod << sep;
 
   size_t i;
 
-  os << itsImmediateEvents.size() << sep;
-  for (i = 0; i < itsImmediateEvents.size(); ++i) {
-	 itsImmediateEvents[i]->serialize(os, flag);
+  os << itsImpl->itsImmediateEvents.size() << sep;
+  for (i = 0; i < itsImpl->itsImmediateEvents.size(); ++i) {
+	 itsImpl->itsImmediateEvents[i]->serialize(os, flag);
   }
 
-  os << itsStartEvents.size() << sep;
-  for (i = 0; i < itsStartEvents.size(); ++i) {
-	 itsStartEvents[i]->serialize(os, flag);
+  os << itsImpl->itsStartEvents.size() << sep;
+  for (i = 0; i < itsImpl->itsStartEvents.size(); ++i) {
+	 itsImpl->itsStartEvents[i]->serialize(os, flag);
   }
 
-  os << itsResponseEvents.size() << sep;
-  for (i = 0; i < itsResponseEvents.size(); ++i) {
-	 itsResponseEvents[i]->serialize(os, flag);
+  os << itsImpl->itsResponseEvents.size() << sep;
+  for (i = 0; i < itsImpl->itsResponseEvents.size(); ++i) {
+	 itsImpl->itsResponseEvents[i]->serialize(os, flag);
   }
 
-  os << itsAbortEvents.size() << sep;
-  for (i = 0; i < itsAbortEvents.size(); ++i) {
-	 itsAbortEvents[i]->serialize(os, flag);
+  os << itsImpl->itsAbortEvents.size() << sep;
+  for (i = 0; i < itsImpl->itsAbortEvents.size(); ++i) {
+	 itsImpl->itsAbortEvents[i]->serialize(os, flag);
   }
 
   if (os.fail()) throw OutputError(ioTag);
@@ -123,55 +152,55 @@ DOTRACE("TimingHdlr::deserialize");
   if (flag & BASES) { /* no bases to deserialize */ }
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
-  is >> itsAutosavePeriod;
-  DebugEvalNL(itsAutosavePeriod);
+  is >> itsImpl->itsAutosavePeriod;
+  DebugEvalNL(itsImpl->itsAutosavePeriod);
 
   int size, i;
 
   const int SIZE_SANITY_CHECK = 1000;
 
-  deleteAll(itsImmediateEvents);
+  deleteAll(itsImpl->itsImmediateEvents);
   is >> size;
   DebugEvalNL(size);
   if (size < 0 || size > SIZE_SANITY_CHECK) throw IoLogicError(ioTag);
-  itsImmediateEvents.resize(size);
+  itsImpl->itsImmediateEvents.resize(size);
   for (i = 0; i < size; ++i) {
 	 TrialEvent* e = dynamic_cast<TrialEvent*>(IoMgr::newIO(is, flag));
 	 if (!e) throw InputError(ioTag);
-	 itsImmediateEvents[i] = e;
+	 itsImpl->itsImmediateEvents[i] = e;
   }
 
-  deleteAll(itsStartEvents);
+  deleteAll(itsImpl->itsStartEvents);
   is >> size;
   DebugEvalNL(size);
   if (size < 0 || size > SIZE_SANITY_CHECK) throw IoLogicError(ioTag);
-  itsStartEvents.resize(size);
+  itsImpl->itsStartEvents.resize(size);
   for (i = 0; i < size; ++i) {
 	 TrialEvent* e = dynamic_cast<TrialEvent*>(IoMgr::newIO(is, flag));
 	 if (!e) throw InputError(ioTag);
-	 itsStartEvents[i] = e;
+	 itsImpl->itsStartEvents[i] = e;
   }
 
-  deleteAll(itsResponseEvents);
+  deleteAll(itsImpl->itsResponseEvents);
   is >> size;
   DebugEvalNL(size);
   if (size < 0 || size > SIZE_SANITY_CHECK) throw IoLogicError(ioTag);
-  itsResponseEvents.resize(size);
+  itsImpl->itsResponseEvents.resize(size);
   for (i = 0; i < size; ++i) {
 	 TrialEvent* e = dynamic_cast<TrialEvent*>(IoMgr::newIO(is, flag));
 	 if (!e) throw InputError(ioTag);
-	 itsResponseEvents[i] = e;
+	 itsImpl->itsResponseEvents[i] = e;
   }
 
-  deleteAll(itsAbortEvents);
+  deleteAll(itsImpl->itsAbortEvents);
   is >> size;
   DebugEvalNL(size);
   if (size < 0 || size > SIZE_SANITY_CHECK) throw IoLogicError(ioTag);
-  itsAbortEvents.resize(size);
+  itsImpl->itsAbortEvents.resize(size);
   for (i = 0; i < size; ++i) {
 	 TrialEvent* e = dynamic_cast<TrialEvent*>(IoMgr::newIO(is, flag));
 	 if (!e) throw InputError(ioTag);
-	 itsAbortEvents[i] = e;
+	 itsImpl->itsAbortEvents[i] = e;
   }
 
   if (is.fail()) throw InputError(ioTag);
@@ -187,60 +216,65 @@ DOTRACE("TimingHdlr::charCount");
 
 void TimingHdlr::readFrom(Reader* reader) {
 DOTRACE("TimingHdlr::readFrom");
-  reader->readValue("autosavePeriod", itsAutosavePeriod);
+  reader->readValue("autosavePeriod", itsImpl->itsAutosavePeriod);
 
-  deleteAll(itsImmediateEvents);
+  deleteAll(itsImpl->itsImmediateEvents);
   ReadUtils::readObjectSeq(reader, "immediateEvents",
-								back_inserter(itsImmediateEvents), (TrialEvent*)0);
+								back_inserter(itsImpl->itsImmediateEvents), (TrialEvent*)0);
 
-  deleteAll(itsStartEvents);
+  deleteAll(itsImpl->itsStartEvents);
   ReadUtils::readObjectSeq(reader, "startEvents",
-								back_inserter(itsStartEvents), (TrialEvent*)0);
+								back_inserter(itsImpl->itsStartEvents), (TrialEvent*)0);
 
-  deleteAll(itsResponseEvents);
+  deleteAll(itsImpl->itsResponseEvents);
   ReadUtils::readObjectSeq(reader, "responseEvents",
-								back_inserter(itsResponseEvents), (TrialEvent*)0);
+								back_inserter(itsImpl->itsResponseEvents), (TrialEvent*)0);
 
-  deleteAll(itsAbortEvents);
+  deleteAll(itsImpl->itsAbortEvents);
   ReadUtils::readObjectSeq(reader, "abortEvents",
-								back_inserter(itsAbortEvents), (TrialEvent*)0);
+								back_inserter(itsImpl->itsAbortEvents), (TrialEvent*)0);
 }
 
 void TimingHdlr::writeTo(Writer* writer) const {
 DOTRACE("TimingHdlr::writeTo");
-  writer->writeValue("autosavePeriod", itsAutosavePeriod);
+  writer->writeValue("autosavePeriod", itsImpl->itsAutosavePeriod);
 
   WriteUtils::writeObjectSeq(writer, "immediateEvents",
-								 itsImmediateEvents.begin(), itsImmediateEvents.end());
+								 itsImpl->itsImmediateEvents.begin(), itsImpl->itsImmediateEvents.end());
 
   WriteUtils::writeObjectSeq(writer, "startEvents",
-								 itsStartEvents.begin(), itsStartEvents.end());
+								 itsImpl->itsStartEvents.begin(), itsImpl->itsStartEvents.end());
 
   WriteUtils::writeObjectSeq(writer, "responseEvents",
-								 itsResponseEvents.begin(), itsResponseEvents.end());
+								 itsImpl->itsResponseEvents.begin(), itsImpl->itsResponseEvents.end());
 
   WriteUtils::writeObjectSeq(writer, "abortEvents",
-								 itsAbortEvents.begin(), itsAbortEvents.end());
+								 itsImpl->itsAbortEvents.begin(), itsImpl->itsAbortEvents.end());
 }
 
 ///////////////
 // accessors //
 ///////////////
 
+int TimingHdlr::getAutosavePeriod() const {
+DOTRACE("TimingHdlr::getAutosavePeriod");
+  return itsImpl->itsAutosavePeriod;
+}
+
 TrialEvent* TimingHdlr::getEvent(TimePoint time_point, int index) const {
 DOTRACE("TimingHdlr::getEvent");
   switch (time_point) {
   case IMMEDIATE:
-	 return itsImmediateEvents[index];
+	 return itsImpl->itsImmediateEvents[index];
 	 break;
   case FROM_START:
-	 return itsStartEvents[index];
+	 return itsImpl->itsStartEvents[index];
 	 break;
   case FROM_RESPONSE:
-	 return itsResponseEvents[index];
+	 return itsImpl->itsResponseEvents[index];
 	 break;
   case FROM_ABORT:
-	 return itsAbortEvents[index];
+	 return itsImpl->itsAbortEvents[index];
 	 break;
   default:
 	 return 0;
@@ -250,7 +284,7 @@ DOTRACE("TimingHdlr::getEvent");
 
 int TimingHdlr::getElapsedMsec() const {
 DOTRACE("TimingHdlr::getElapsedMsec");
-  return itsTimer.elapsedMsec();
+  return itsImpl->itsTimer.elapsedMsec();
 }
 
 //////////////////
@@ -262,20 +296,20 @@ DOTRACE("TimingHdlr::addEvent");
   switch (time_point) {
   case IMMEDIATE:
 	 event->setDelay(0);
-	 itsImmediateEvents.push_back(event);
-	 return itsImmediateEvents.size() - 1;
+	 itsImpl->itsImmediateEvents.push_back(event);
+	 return itsImpl->itsImmediateEvents.size() - 1;
 	 break;
   case FROM_START:
-	 itsStartEvents.push_back(event);
-	 return itsStartEvents.size() - 1;
+	 itsImpl->itsStartEvents.push_back(event);
+	 return itsImpl->itsStartEvents.size() - 1;
 	 break;
   case FROM_RESPONSE:
-	 itsResponseEvents.push_back(event);
-	 return itsResponseEvents.size() - 1;
+	 itsImpl->itsResponseEvents.push_back(event);
+	 return itsImpl->itsResponseEvents.size() - 1;
 	 break;
   case FROM_ABORT:
-	 itsAbortEvents.push_back(event);
-	 return itsAbortEvents.size() - 1;
+	 itsImpl->itsAbortEvents.push_back(event);
+	 return itsImpl->itsAbortEvents.size() - 1;
 	 break;
   default:
 	 return -1;
@@ -293,6 +327,11 @@ DOTRACE("TimingHdlr::addEventByName");
   return addEvent(e, timepoint);
 }
 
+void TimingHdlr::setAutosavePeriod(int val) {
+DOTRACE("TimingHdlr::setAutosavePeriod");
+  itsImpl->itsAutosavePeriod = val;
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // TimingHdlr action method definitions
@@ -302,33 +341,33 @@ DOTRACE("TimingHdlr::addEventByName");
 void TimingHdlr::thBeginTrial(Experiment* expt) {
 DOTRACE("TimingHdlr::thBeginTrial");
 
-  itsTimer.restart(); 
+  itsImpl->itsTimer.restart(); 
 
-  cancelAll(itsResponseEvents);
-  cancelAll(itsAbortEvents);
-  scheduleAll(itsImmediateEvents, expt);
-  scheduleAll(itsStartEvents, expt);
+  cancelAll(itsImpl->itsResponseEvents);
+  cancelAll(itsImpl->itsAbortEvents);
+  scheduleAll(itsImpl->itsImmediateEvents, expt);
+  scheduleAll(itsImpl->itsStartEvents, expt);
 }
 
 void TimingHdlr::thResponseSeen(Experiment* expt) {
 DOTRACE("TimingHdlr::thResponseSeen");
-  if (itsResponseEvents.size() > 0) { 
-	 cancelAll(itsStartEvents);
-	 scheduleAll(itsResponseEvents, expt);
+  if (itsImpl->itsResponseEvents.size() > 0) { 
+	 cancelAll(itsImpl->itsStartEvents);
+	 scheduleAll(itsImpl->itsResponseEvents, expt);
   }
 }
 
 void TimingHdlr::thAbortTrial(Experiment* expt) {
 DOTRACE("TimingHdlr::thAbortTrial");
-  cancelAll(itsStartEvents);
-  scheduleAll(itsAbortEvents, expt);
+  cancelAll(itsImpl->itsStartEvents);
+  scheduleAll(itsImpl->itsAbortEvents, expt);
 }
 
 void TimingHdlr::thHaltExpt(Experiment* expt) {
 DOTRACE("TimingHdlr::thHaltExpt");
-  cancelAll(itsStartEvents);
-  cancelAll(itsResponseEvents);
-  cancelAll(itsAbortEvents);
+  cancelAll(itsImpl->itsStartEvents);
+  cancelAll(itsImpl->itsResponseEvents);
+  cancelAll(itsImpl->itsAbortEvents);
 }
 
 static const char vcid_timinghdlr_cc[] = "$Header$";
