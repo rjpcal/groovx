@@ -55,6 +55,7 @@ void Png::load(const char* /*filename*/, Gfx::BmapData& /*data*/)
 #include <png.h>
 
 #include "util/debug.h"
+DBG_REGISTER;
 #include "util/trace.h"
 
 /// This class provides exception-safe cleanup for libpng.

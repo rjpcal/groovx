@@ -119,6 +119,7 @@ namespace HookTcl
 }
 
 #include "util/debug.h"
+DBG_REGISTER;
 
 #include <cstring>
 #include <tcl.h>

@@ -33,6 +33,7 @@
 #include "util/freelist.h"
 
 #include "util/debug.h"
+DBG_REGISTER;
 
 void* FreeListBase::allocate(std::size_t bytes)
 {

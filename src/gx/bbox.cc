@@ -40,6 +40,7 @@
 #include "util/minivec.h"
 
 #include "util/debug.h"
+DBG_REGISTER;
 
 struct Gfx::Bbox::Impl
 {

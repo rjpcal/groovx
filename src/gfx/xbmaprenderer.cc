@@ -43,6 +43,7 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
+DBG_REGISTER;
 
 void XBmapRenderer::doRender(Display* display,
                              Window win,

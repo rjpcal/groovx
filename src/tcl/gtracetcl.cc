@@ -37,6 +37,7 @@
 #include <sstream>
 
 #include "util/debug.h"
+DBG_REGISTER;
 #include "util/trace.h"
 
 namespace
@@ -46,6 +47,12 @@ namespace
     std::ostringstream oss;
     Util::Prof::printAllProfData(oss);
     return fstring(oss.str().c_str());
+  }
+
+  void setOneLevel(int key, int level)
+  {
+    if (key < Debug::MAX_KEYS)
+      Debug::keyLevels[key] = level;
   }
 }
 
@@ -60,6 +67,8 @@ DOTRACE("Gtrace_Init");
   pkg->def("maxDepth", "level", &Util::Trace::setMaxLevel);
   pkg->def("maxDepth", "", &Util::Trace::getMaxLevel);
   pkg->def("::dbglevel", "level", &Debug::setGlobalLevel);
+  pkg->def("::dbglevel", "key level", &setOneLevel);
+  pkg->def("::dbgkey", "filename", &Debug::lookupKey);
 
   return pkg->initStatus();
 }

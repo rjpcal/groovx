@@ -43,6 +43,7 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
+DBG_REGISTER;
 
 void FieldAux::throwNotAllowed(const char* what)
 {

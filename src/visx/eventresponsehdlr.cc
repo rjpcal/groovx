@@ -55,6 +55,7 @@
 #define DYNAMIC_TRACE_EXPR EventResponseHdlr::tracer.status()
 #include "util/trace.h"
 #include "util/debug.h"
+DBG_REGISTER;
 
 ///////////////////////////////////////////////////////////////////////
 //

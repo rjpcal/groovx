@@ -33,6 +33,7 @@
 #include <GL/glx.h>
 
 #include "util/debug.h"
+DBG_REGISTER;
 
 /// Builds a formatted data array for constructing a GLX context.
 class GlxAttribs

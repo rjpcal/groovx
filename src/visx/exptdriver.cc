@@ -56,6 +56,7 @@
 #define DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
 #include "util/trace.h"
 #include "util/debug.h"
+DBG_REGISTER;
 
 Util::Tracer ExptDriver::tracer;
 

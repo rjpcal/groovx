@@ -60,6 +60,7 @@ std::string demangle_impl(const char* in) { return std::string(in); }
 #include <string>
 
 #include "util/debug.h"
+DBG_REGISTER;
 #include "util/trace.h"
 
 namespace

@@ -58,8 +58,11 @@ namespace Debug
   const int MAX_KEYS = 1024;
 
   extern unsigned char keyLevels[MAX_KEYS];
+  extern const char* keyFilenames[MAX_KEYS];
 
-  int nextKey();
+  int createKey(const char* filename);
+
+  int lookupKey(const char* filename);
 
   void setGlobalLevel(int lev);
 }
@@ -70,18 +73,62 @@ namespace Debug
 #define AbortIf(expr) \
       do { if ( expr ) { Debug::PanicImpl(#expr, __FILE__, __LINE__); } } while (0)
 
-static const int DEBUG_KEY = Debug::nextKey();
+#define CONCAT(x, y) x ## y
 
-static inline int dbgLevel() { return Debug::keyLevels[DEBUG_KEY]; }
+#define DO_DBG_REGISTER(ext)                                            \
+static const int CONCAT(DEBUG_KEY, ext) = Debug::createKey(__FILE__);   \
+                                                                        \
+static inline int CONCAT(dbgLevel, ext) ()                              \
+{                                                                       \
+  return Debug::keyLevels[CONCAT(DEBUG_KEY, ext)];                      \
+}
+
+#define DBG_REGISTER DO_DBG_REGISTER(1)
+#define GET_DBG_LEVEL dbgLevel1
 
 static const char vcid_debug_h[] = "$Id$";
 
 #else // DEBUG_H_DEFINED
 
 //
-// Everything below here might get processed multiple times if the file is
-// #include'd more than once
+// Everything here gets processed on the second and subsequent times that
+// this file is #include'ed.
 //
+
+#undef DBG_REGISTER
+#undef GET_DBG_LEVEL
+
+#if   !defined(DEBUG_H_2)
+#      define  DEBUG_H_2
+#      define  DBG_REGISTER DO_DBG_REGISTER(2)
+#      define  GET_DBG_LEVEL dbgLevel2
+#elif !defined(DEBUG_H_3)
+#      define  DEBUG_H_3
+#      define  DBG_REGISTER DO_DBG_REGISTER(3)
+#      define  GET_DBG_LEVEL dbgLevel3
+#elif !defined(DEBUG_H_4)
+#      define  DEBUG_H_4
+#      define  DBG_REGISTER DO_DBG_REGISTER(4)
+#      define  GET_DBG_LEVEL dbgLevel4
+#elif !defined(DEBUG_H_5)
+#      define  DEBUG_H_5
+#      define  DBG_REGISTER DO_DBG_REGISTER(5)
+#      define  GET_DBG_LEVEL dbgLevel5
+#elif !defined(DEBUG_H_6)
+#      define  DEBUG_H_6
+#      define  DBG_REGISTER DO_DBG_REGISTER(6)
+#      define  GET_DBG_LEVEL dbgLevel6
+#elif !defined(DEBUG_H_7)
+#      define  DEBUG_H_7
+#      define  DBG_REGISTER DO_DBG_REGISTER(7)
+#      define  GET_DBG_LEVEL dbgLevel7
+#elif !defined(DEBUG_H_8)
+#      define  DEBUG_H_8
+#      define  DBG_REGISTER DO_DBG_REGISTER(8)
+#      define  GET_DBG_LEVEL dbgLevel8
+#else
+#      error "debug.h included too many times!"
+#endif
 
 #undef dbgEval
 #undef dbgEvalNL
@@ -95,12 +142,16 @@ static const char vcid_debug_h[] = "$Id$";
 
 #endif // DEBUG_H_DEFINED
 
+//
+// Everything here gets re-processed every time that this file is #include'ed.
+//
+
 #if !defined(NO_DEBUG)
-#  define dbgEval(lev, x)    do { if (dbgLevel() >= lev) Debug::Eval(#x, lev, __FILE__, __LINE__, false, x); } while (0)
-#  define dbgEvalNL(lev, x)  do { if (dbgLevel() >= lev) Debug::Eval(#x, lev, __FILE__, __LINE__, true, x); } while (0)
-#  define dbgPrint(lev, x)   do { if (dbgLevel() >= lev) Debug::Eval(0, lev, __FILE__, __LINE__, false, x); } while (0)
-#  define dbgPrintNL(lev, x) do { if (dbgLevel() >= lev) Debug::Eval(0, lev, __FILE__, __LINE__, true, x); } while (0)
-#  define dbgDump(lev, x)    do { if (dbgLevel() >= lev) { Debug::Eval(#x, lev, __FILE__, __LINE__, true, "..."); (x).debugDump(); } } while (0)
+#  define dbgEval(lev, x)    do { if (GET_DBG_LEVEL() >= lev) Debug::Eval(#x, lev, __FILE__, __LINE__, false, x); } while (0)
+#  define dbgEvalNL(lev, x)  do { if (GET_DBG_LEVEL() >= lev) Debug::Eval(#x, lev, __FILE__, __LINE__, true, x); } while (0)
+#  define dbgPrint(lev, x)   do { if (GET_DBG_LEVEL() >= lev) Debug::Eval(0, lev, __FILE__, __LINE__, false, x); } while (0)
+#  define dbgPrintNL(lev, x) do { if (GET_DBG_LEVEL() >= lev) Debug::Eval(0, lev, __FILE__, __LINE__, true, x); } while (0)
+#  define dbgDump(lev, x)    do { if (GET_DBG_LEVEL() >= lev) { Debug::Eval(#x, lev, __FILE__, __LINE__, true, "..."); (x).debugDump(); } } while (0)
 
 #  define Assert(expr)        do { if ( !(expr) ) Debug::AssertImpl(#expr, __FILE__, __LINE__); } while(0)
 #  define Invariant(expr)     do { if ( !(expr) ) Debug::InvariantImpl(#expr, __FILE__, __LINE__); } while(0)

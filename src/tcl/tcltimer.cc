@@ -39,6 +39,7 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
+DBG_REGISTER;
 
 
 Tcl::Timer::Timer(unsigned int msec, bool repeat) :

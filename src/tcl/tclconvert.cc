@@ -43,6 +43,7 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
+DBG_REGISTER;
 
 extern Tcl_ObjType   tclBooleanType;
 extern Tcl_ObjType   tclDoubleType;

@@ -37,6 +37,8 @@
 #include "util/pointers.h"
 
 #include "util/trace.h"
+#include "util/debug.h"
+DBG_REGISTER;
 
 GlxOpts::GlxOpts() :
 #if defined(NO_RGBA) && NO_RGBA != 0

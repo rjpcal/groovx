@@ -50,6 +50,7 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
+DBG_REGISTER;
 
 Util::SerialPort::SerialPort(const char* serial_device) :
   itsFiledes(::open(serial_device, O_RDONLY|O_NOCTTY|O_NONBLOCK)),

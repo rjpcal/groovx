@@ -31,6 +31,7 @@
 #define DEBUG_CC_DEFINED
 
 #include "util/debug.h"
+DBG_REGISTER;
 
 #include "util/strings.h"
 
@@ -47,6 +48,7 @@ namespace
 }
 
 unsigned char Debug::keyLevels[Debug::MAX_KEYS];
+const char*   Debug::keyFilenames[Debug::MAX_KEYS];
 
 #define EVAL_IMPL(T)                                            \
 void Debug::Eval(const char* what, int level,                   \
@@ -123,12 +125,23 @@ void Debug::InvariantImpl(const char* what, const char* where, int line_no) thro
   abort();
 }
 
-int Debug::nextKey()
+int Debug::createKey(const char* filename)
 {
   int key = nextDebugKey;
+  keyFilenames[key] = filename;
   if (nextDebugKey < (MAX_KEYS-1))
     ++nextDebugKey;
   return key;
+}
+
+int Debug::lookupKey(const char* filename)
+{
+  for (int i = 0; i < nextDebugKey; ++i)
+    {
+      if (strcmp(keyFilenames[i], filename) == 0)
+        return i;
+    }
+  return -1;
 }
 
 void Debug::setGlobalLevel(int lev)

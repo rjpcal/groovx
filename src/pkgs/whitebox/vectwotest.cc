@@ -35,6 +35,7 @@
 #include "pkgs/testutils.h"
 
 #include "util/debug.h"
+DBG_REGISTER;
 #include "util/trace.h"
 
 namespace

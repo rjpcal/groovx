@@ -40,6 +40,8 @@
 #include "gx/txform.h"
 #include "gx/vec3.h"
 
+#include "util/debug.h"
+DBG_REGISTER;
 #include "util/trace.h"
 
 GxAligner::GxAligner(Util::SoftRef<GxNode> child) :

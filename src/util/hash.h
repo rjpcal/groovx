@@ -37,6 +37,7 @@
 #include <cstddef>
 
 #include "util/debug.h"
+DBG_REGISTER;
 
 namespace
 {

@@ -42,6 +42,7 @@
 #include <new>
 
 #include "util/debug.h"
+DBG_REGISTER;
 
 #define TRACE_WALL_CLOCK_TIME
 //  #define TRACE_CPU_TIME

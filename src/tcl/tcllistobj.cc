@@ -38,6 +38,7 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
+DBG_REGISTER;
 
 Tcl::List::List() :
   itsList(Tcl_NewListObj(0,0)),

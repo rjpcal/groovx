@@ -37,6 +37,7 @@
 #include <string>
 
 #include "util/debug.h"
+DBG_REGISTER;
 #include "util/trace.h"
 
 std::string demangle_impl(const std::string& mangled)

@@ -41,6 +41,7 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
+DBG_REGISTER;
 
 GxBounds::GxBounds(Util::SoftRef<GxNode> child) :
   GxBin(child),
