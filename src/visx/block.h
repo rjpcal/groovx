@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Mon Mar 13 18:50:26 2000
+// written: Mon Mar 13 19:05:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,6 @@
 
 #ifndef IO_H_DEFINED
 #include "io.h"
-#endif
-
-#ifndef STOPWATCH_H_DEFINED
-#include "stopwatch.h"
 #endif
 
 class Trial;
