@@ -34,6 +34,10 @@
 
 #include "gfx/gxbin.h"
 
+#include "nub/ref.h"
+
+class GLCanvas;
+
 /// A node for caching with OpenGL display lists.
 class GxCache : public GxBin
 {
@@ -93,6 +97,7 @@ private:
   Mode itsMode;
 
   mutable int itsDisplayList;
+  mutable Nub::SoftRef<GLCanvas> itsCanvas;
 };
 
 static const char vcid_gxcache_h[] = "$Id$ $URL$";

@@ -53,7 +53,8 @@ namespace
 GxCache::GxCache(Nub::SoftRef<GxNode> child) :
   GxBin(child),
   itsMode(DIRECT),
-  itsDisplayList(0)
+  itsDisplayList(0),
+  itsCanvas()
 {
 DOTRACE("GxCache::GxCache");
 }
@@ -97,7 +98,8 @@ DOTRACE("GxCache::draw");
     }
   else
     {
-      if (glcanvas->isList(itsDisplayList))
+      if (glcanvas == itsCanvas.getWeak() &&
+          glcanvas->isList(itsDisplayList))
         {
           glcanvas->callList(itsDisplayList);
           dbg_eval_nl(3, itsDisplayList);
@@ -105,6 +107,7 @@ DOTRACE("GxCache::draw");
       else
         {
           itsDisplayList = glcanvas->genLists(1);
+          itsCanvas = Nub::SoftRef<GLCanvas>(glcanvas);
 
           glcanvas->newList(itsDisplayList, true);
           child()->draw(canvas);
@@ -122,8 +125,12 @@ DOTRACE("GxCache::getBoundingCube");
 void GxCache::invalidate() throw()
 {
 DOTRACE("GxCache::invalidate");
-  GLCanvas::deleteLists(itsDisplayList, 1);
+  if (itsCanvas.isValid())
+    itsCanvas->deleteLists(itsDisplayList, 1);
+
+  // Now forget the display list and its owning canvas
   itsDisplayList = 0;
+  itsCanvas = Nub::SoftRef<GLCanvas>();
 }
 
 void GxCache::setMode(Mode new_mode) throw()
