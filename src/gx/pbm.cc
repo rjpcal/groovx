@@ -3,7 +3,7 @@
 // pbm.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:07 1999
-// written: Mon Mar  6 19:13:07 2000
+// written: Fri Mar 10 00:46:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,10 @@ DOTRACE("PbmError::PbmError");
 
 class Pbm::Impl {
 public:
-  Impl() {}
+  Impl() :
+	 itsMode(1), itsImageWidth(1), itsImageHeight(1), itsMaxGrey(255),
+	 itsBitsPerPixel(1), itsNumBytes(1), itsBytes(1)
+	 {}
 
   void setBytes(const dynamic_block<unsigned char>& bytes,
 					 int width, int height, int bits_per_pixel);

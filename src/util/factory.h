@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Thu Mar  9 17:04:22 2000
+// written: Fri Mar 10 00:44:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -168,7 +168,7 @@ private:
 
 protected:
   /// Default constructor.
-  Factory() {}
+  Factory() : itsMap() {}
 
 public:
   /** Registers a new type with the factory. The class Derived must be
