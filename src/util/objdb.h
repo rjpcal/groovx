@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Tue Dec  5 17:55:58 2000
+// written: Tue Dec  5 18:06:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -184,7 +184,7 @@ public:
   /** Return the \c IO::IoObject* at the index given by \a id. Checks
 		first if \a id is a valid index, and throws an \c InvalidIdError
 		if it is not. */
-  IO::IoObject* getCheckedPtrBase(int id) const throw (InvalidIdError);
+  IO::IoObject* getCheckedPtrBase(int id) throw (InvalidIdError);
 
   /** Add ptr at the next available location, and return the index
 		where it was inserted. If necessary, the list will be expanded
@@ -193,7 +193,7 @@ public:
   int insertPtrBase(IO::IoObject* ptr);
 
   template <class T>
-  IdItem<T> getCheckedIoPtr(int id) const
+  IdItem<T> getCheckedIoPtr(int id)
     {
 		IO::IoObject* voidPtr = getCheckedPtrBase(id);
 
