@@ -121,9 +121,18 @@ IO::AttribMap::Attrib IO::AttribMap::get(const fstring& attrib_name)
       ++itr;
     }
 
-  throw Util::Error(fstring("no attribute named '",
-                            attrib_name.c_str(), "' for ",
-                            itsObjTag.c_str()));
+  fstring msg("no attribute named '",
+              attrib_name.c_str(), "' for ",
+              itsObjTag.c_str(), "\nknown attributes are:\n");
+
+  itr = itsMap.begin();
+  while (itr != end)
+    {
+      msg.append("\t", (*itr).first, "\n");
+      ++itr;
+    }
+
+  throw Util::Error(msg);
 }
 
 inline
