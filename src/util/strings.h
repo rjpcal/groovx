@@ -3,7 +3,7 @@
 // strings.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:16:48 2000
-// written: Mon Mar  6 17:50:27 2000
+// written: Mon Mar  6 17:52:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ private:
 
 class fixed_string {
 public:
-  fixed_string(const char* text);
+  fixed_string(const char* text = "");
   fixed_string(const fixed_string& other);
   ~fixed_string();
 
@@ -85,7 +85,7 @@ private:
 
 class dynamic_string {
 public:
-  dynamic_string(const char* text);
+  dynamic_string(const char* text = "");
   dynamic_string(const dynamic_string& other);
   ~dynamic_string();
 
