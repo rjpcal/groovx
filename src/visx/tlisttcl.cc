@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Sun Oct  3 19:47:33 1999
+// written: Sun Oct  3 20:07:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -659,7 +659,7 @@ public:
 
 extern "C" Tcl_PackageInitProc Tlist_Init;
 
-nt Tlist_Init(Tcl_Interp* interp) {
+int Tlist_Init(Tcl_Interp* interp) {
 DOTRACE("Tlist_Init");
 
   new TlistTcl::TlistPkg(interp);
