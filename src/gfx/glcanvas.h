@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Sat Nov 23 14:03:57 2002
+// written: Sat Nov 23 14:41:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,12 @@
 
 #include "gfx/canvas.h"
 
+#include "util/volatileobject.h"
+
 #include <X11/Xlib.h>
 
 /// GLCanvas implements Gfx::Canvas using OpenGL.
-class GLCanvas : public Gfx::Canvas
+class GLCanvas : public Gfx::Canvas, public virtual Util::VolatileObject
 {
 protected:
   GLCanvas(Display* dpy);
