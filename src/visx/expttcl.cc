@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Thu Nov 11 19:25:21 1999
+// written: Wed Nov 17 18:25:36 1999
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -84,15 +84,14 @@ private:
 
 void ExptTcl::BeginCmd::invoke() {
 DOTRACE("BeginCmd::beginCmd");
-  int result = TCL_OK;
 
   ToglConfig* config = ObjTogl::theToglConfig();
 
   // Create the quit key binding
-  config->bind("<Control-KeyPress-q>", "{ Expt::writeAndExit yes}");
+  config->bind("<Control-KeyPress-q>", "{ Expt::storeData; exit }");
 
   // Create the save key binding
-  config->bind("<Control-KeyPress-s>", "{ Expt::writeAndExit no}");
+  config->bind("<Control-KeyPress-s>", "{ Expt::storeData }");
 
   // Create the pause key binding
   config->bind("<KeyPress-p>", "{ Expt::pause }");
@@ -103,11 +102,9 @@ DOTRACE("BeginCmd::beginCmd");
   // Force the focus to the Togl widget
   config->takeFocus();
 
+
   ExptDriver* ed = getItem();
-
   ed->edBeginExpt();
-
-  returnVoid();
 }
 
 //--------------------------------------------------------------------
@@ -292,7 +289,7 @@ public:
 						 &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
 	 declareCAction("reset", &ExptDriver::edResetExpt);
 	 declareCAction("stop", &ExptDriver::edHaltExpt);
-	 declareCSetter("writeAndExit", &ExptDriver::writeAndExit);
+	 declareCAction("storeData", &ExptDriver::storeData);
   }
 
   virtual IO& getIoFromId(int) { return ExptDriver::theExptDriver(); }

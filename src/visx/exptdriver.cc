@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Nov 17 17:25:18 1999
+// written: Wed Nov 17 18:24:39 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -159,7 +159,7 @@ public:
   void read(const char* filename);
   void write(const char* filename) const;
 
-  void writeAndExit(bool quitApplication);
+  void storeData();
   
   //////////////////
   // data members //
@@ -809,7 +809,7 @@ void ExptDriver::ExptImpl::edEndTrial() {
 
 	 if ( !haveMoreBlocks ) {
 		noteElapsedTime();
-		writeAndExit(false);		  // write (but don't exit)
+		storeData();
 		doUponCompletion();		  // Call the user-defined callback
 	 }
   }    
@@ -898,16 +898,15 @@ DOTRACE("ExptDriver::ExptImpl::write");
 
 //--------------------------------------------------------------------
 //
-// ExptDriver::writeAndExit --
+// ExptDriver::storeData --
 //
 // The experiment and a summary of the responses to it are written to
-// files with unique filenames, and then the program is gracefully
-// exited. This procedure will never return.
+// files with unique filenames.
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::ExptImpl::writeAndExit(bool quitApplication) {
-DOTRACE("ExptDriver::ExptImpl::writeAndExit");
+void ExptDriver::ExptImpl::storeData() {
+DOTRACE("ExptDriver::ExptImpl::storeData");
   Assert(itsInterp != 0);
 
   edHaltExpt();
@@ -946,11 +945,6 @@ DOTRACE("ExptDriver::ExptImpl::writeAndExit");
   catch (TclError& err) {
 	 raiseBackgroundError(err.msg().c_str());
 	 return;
-  }
-
-  // Gracefully exit the application (or not)
-  if (quitApplication) {
-	 Tcl_Exit(0);
   }
 }
 
@@ -1055,8 +1049,8 @@ void ExptDriver::read(const char* filename)
 void ExptDriver::write(const char* filename) const 
   { itsImpl->write(filename); }
 
-void ExptDriver::writeAndExit(bool quitApplication) 
-  { itsImpl->writeAndExit(quitApplication); }
+void ExptDriver::storeData() 
+  { itsImpl->storeData(); }
 
 static const char vcid_exptdriver_cc[] = "$Header$";
 #endif // !EXPTDRIVER_CC_DEFINED

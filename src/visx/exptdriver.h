@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Nov 10 13:42:20 1999
+// written: Wed Nov 17 18:22:44 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -136,9 +136,8 @@ public:
   void write(const char* filename) const;
 
   /** This saves the experiment file and a summary-of-responses file
-		under unique filenames, and optionally quits the application if
-		quitApplication is true. */
-  void writeAndExit(bool quitApplication=false);
+		under unique filenames. */
+  void storeData();
 
 private:
   class ExptImpl;
