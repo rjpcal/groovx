@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Mon Jun 11 18:36:40 2001
+// written: Tue Jun 12 16:54:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,6 +66,8 @@ public:
   static Toglet* make(Tcl_Interp* interp) { return new Toglet(interp); }
 
   virtual ~Toglet();
+
+  virtual bool isVolatile() const { return true; }
 
   void onWindowClose();
 

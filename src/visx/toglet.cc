@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Jun 11 18:36:55 2001
+// written: Tue Jun 12 21:27:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -174,6 +174,8 @@ DOTRACE("Toglet::Toglet");
                              Tcl::TclEvalCmd::THROW_EXCEPTION);
     pack_cmd.invoke(interp);
   }
+
+  incrRefCount();
 }
 
 Toglet::~Toglet() {
@@ -201,6 +203,8 @@ DOTRACE("Toglet::onWindowClose");
     itsDestroyCallback->onDestroy(this);
 
   itsTogl = 0;
+
+  decrRefCount();
 }
 
 ///////////////
