@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue Dec  7 18:55:52 1999
+// written: Sun Jan 16 23:13:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,6 +82,7 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 ToglConfig::ToglConfig(Togl* togl, double dist, double unit_angle) :
+  itsCanvas(new GLCanvas),
   itsWidget(togl),
   itsViewingDistance(dist), 
   itsFixedScaleFlag(true),
@@ -245,7 +246,7 @@ DOTRACE("getX11Window");
 
 Canvas* ToglConfig::getCanvas() {
 DOTRACE("ToglConfig::getCanvas");
-  return &(GLCanvas::theCanvas());
+  return itsCanvas.get();
 }
 
 //////////////////
