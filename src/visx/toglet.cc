@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Sep 16 18:30:20 2002
+// written: Mon Sep 16 18:50:28 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,8 +16,6 @@
 #include "visx/toglet.h"
 
 #include "gfx/canvas.h"
-
-#include "grsh/grsh.h"
 
 #include "gx/rect.h"
 #include "gx/rgbacolor.h"
@@ -387,30 +385,6 @@ DOTRACE("Toglet::~Toglet");
 // accessors //
 ///////////////
 
-Tcl_Interp* Toglet::getInterp() const
-{
-DOTRACE("Toglet::getInterp");
-  return Togl::interp();
-}
-
-int Toglet::getHeight() const
-{
-DOTRACE("Toglet::getHeight");
-  return Togl::height();
-}
-
-int Toglet::getWidth() const
-{
-DOTRACE("Toglet::getWidth");
-  return Togl::width();
-}
-
-const char* Toglet::pathname() const
-{
-DOTRACE("Toglet::pathname");
-  return Togl::pathname();
-}
-
 Toglet::Color Toglet::queryColor(unsigned int color_index) const
 {
   Color col;
@@ -465,26 +439,7 @@ double Toglet::pixelsPerInch() const
 Gfx::Canvas& Toglet::getCanvas()
 {
 DOTRACE("Toglet::getCanvas");
-  Togl::makeCurrent();
   return Togl::getCanvas();
-}
-
-///////////////////
-// configuration //
-///////////////////
-
-Tcl_Obj* Toglet::cget(Tcl_Obj* param) const
-{
-DOTRACE("Toglet::cget");
-
-  return Togl::cget(param);
-}
-
-void Toglet::configure(int objc, Tcl_Obj* const objv[])
-{
-DOTRACE("Toglet::configure");
-
-  Togl::configure(objc, objv);
 }
 
 //////////////////
@@ -580,24 +535,6 @@ DOTRACE("Toglet::setMinRectLTRB");
   rep->reconfigure();
 }
 
-void Toglet::setHeight(int val)
-{
-DOTRACE("Toglet::setHeight");
-
-  // This automatically triggers a ConfigureNotify/Expose event pair
-  // through the Togl/Tk machinery
-  Togl::setHeight(val);
-}
-
-void Toglet::setWidth(int val)
-{
-DOTRACE("Toglet::setWidth");
-
-  // This automatically triggers a ConfigureNotify/Expose event pair
-  // through the Togl/Tk machinery
-  Togl::setWidth(val);
-}
-
 /////////////
 // actions //
 /////////////
@@ -615,6 +552,8 @@ DOTRACE("Toglet::bind");
   cmd.invoke(Togl::interp());
 }
 
+void Toglet::swapBuffers() { Togl::swapBuffers(); }
+
 void Toglet::loadDefaultFont() { loadFont(0); }
 
 void Toglet::loadFont(const char* fontname)
@@ -631,12 +570,6 @@ DOTRACE("Toglet::loadFonti");
   rep->loadFontList(Togl::loadBitmapFonti(fontnumber));
 }
 
-void Toglet::swapBuffers()
-{
-DOTRACE("Toglet::swapBuffers");
-  Togl::swapBuffers();
-}
-
 void Toglet::takeFocus()
 {
 DOTRACE("Toglet::takeFocus");
@@ -648,43 +581,38 @@ DOTRACE("Toglet::takeFocus");
   cmd.invoke(Togl::interp());
 }
 
-void Toglet::makeCurrent()
-{
-DOTRACE("Toglet::makeCurrent");
-  Togl::makeCurrent();
-  Grsh::installCanvas(Togl::getCanvas());
-}
-
 void Toglet::writeEpsFile(const char* filename)
 {
 DOTRACE("Toglet::writeEpsFile");
   Togl::makeCurrent();
 
   {
-    Gfx::AttribSaver saver(getCanvas());
+    Gfx::Canvas& canvas = getCanvas();
+
+    Gfx::AttribSaver saver(canvas);
 
     // Set fore/background colors to extremes for the purposes of EPS
     // rendering
     if ( Togl::isRgba() )
       {
-        getCanvas().setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
-        getCanvas().setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
+        canvas.setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
+        canvas.setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
       }
     else
       {
-        getCanvas().setColorIndex(0);
-        getCanvas().setClearColorIndex(255);
+        canvas.setColorIndex(0);
+        canvas.setClearColorIndex(255);
       }
 
     // get a clear buffer
-    getCanvas().clearColorBuffer();
+    canvas.clearColorBuffer();
     swapBuffers();
 
     fullRender();
 
     // do the EPS dump
     const bool inColor = false;
-    GLUtil::generateEPS(filename, inColor, getWidth(), getHeight());
+    GLUtil::generateEPS(filename, inColor, width(), height());
   }
 
   // redisplay original image
@@ -695,28 +623,14 @@ void Toglet::displayCallback()
 {
 DOTRACE("Toglet::displayCallback");
 
-  try
-    {
-      fullRender();
-    }
-  catch (...)
-    {
-      Tcl::Interp(this->interp()).handleLiveException("displayCallback", true);
-    }
+  fullRender();
 }
 
 void Toglet::reshapeCallback()
 {
 DOTRACE("Toglet::reshapeCallback");
 
-  try
-    {
-      rep->reconfigure();
-    }
-  catch (...)
-    {
-      Tcl::Interp(this->interp()).handleLiveException("reshapeCallback", true);
-    }
+  rep->reconfigure();
 }
 
 static const char vcid_toglet_cc[] = "$Header$";

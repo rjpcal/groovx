@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Sep 16 18:32:34 2002
+// written: Mon Sep 16 18:40:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,20 +52,12 @@ public:
   virtual bool isNotShareable() const { return true; }
 
   // accessors
-  int getHeight() const;
-  Tcl_Interp* getInterp() const;
-  int getWidth() const;
-  const char* pathname() const;
   Color queryColor(unsigned int color_index) const;
   void queryColor(unsigned int color_index, Color& color) const;
   bool usingFixedScale() const;
   double pixelsPerInch() const;
 
   virtual Gfx::Canvas& getCanvas();
-
-  // configuration
-  Tcl_Obj* cget(Tcl_Obj* param) const;
-  void configure(int objc, Tcl_Obj* const objv[]);
 
   // manipulators
   static void defaultParent(const char* pathname);
@@ -76,8 +68,6 @@ public:
   void setPixelsPerUnit(double s);
   void setFixedRectLTRB(double L, double T, double R, double B);
   void setMinRectLTRB(double L, double T, double R, double B);
-  void setHeight(int val);
-  void setWidth(int val);
   void setUnitAngle(double deg);
   void setViewingDistIn(double in);
   void setPerspective(double fovy, double zNear, double zFar);
@@ -86,8 +76,6 @@ public:
   virtual void bind(const char* event_sequence, const char* script);
   virtual void swapBuffers();
   virtual void takeFocus();
-
-  void makeCurrent();
 
   // actions
   void loadDefaultFont();

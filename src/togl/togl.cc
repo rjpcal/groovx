@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 18:30:33 2002
+// written: Mon Sep 16 18:44:40 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -29,6 +29,8 @@
 #include "gfx/canvas.h"
 
 #include "gx/rgbacolor.h"
+
+#include "tcl/tclsafeinterp.h"
 
 #include "togl/glutil.h"
 #include "togl/glxopts.h"
@@ -211,10 +213,10 @@ public:
   void configure(int objc, Tcl_Obj* const objv[]);
 
   // All callbacks cast to/from Togl::Impl*, _NOT_ Togl* !!!
-  static void cEventuallyFreeCallback(char* clientData);
-  static void cEventCallback(ClientData clientData, XEvent* eventPtr);
-  static void cTimerCallback(ClientData clientData);
-  static void cRenderCallback(ClientData clientData);
+  static void cEventuallyFreeCallback(char* clientData) throw();
+  static void cEventCallback(ClientData clientData, XEvent* eventPtr) throw();
+  static void cTimerCallback(ClientData clientData) throw();
+  static void cRenderCallback(ClientData clientData) throw();
 
   void requestRedisplay();
   void requestReconfigure();
@@ -448,46 +450,67 @@ DOTRACE("Togl::Impl::configure");
 }
 
 // Gets called when an Togl widget is destroyed.
-void Togl::Impl::cEventuallyFreeCallback(char* clientData)
+void Togl::Impl::cEventuallyFreeCallback(char* clientData) throw()
 {
 DOTRACE("Togl::Impl::cEventuallyFreeCallback");
   Impl* rep = reinterpret_cast<Impl*>(clientData);
   delete rep->itsOwner;
 }
 
-void Togl::Impl::cEventCallback(ClientData clientData, XEvent* eventPtr)
+void Togl::Impl::cEventCallback(ClientData clientData, XEvent* eventPtr) throw()
 {
   Impl* rep = static_cast<Impl*>(clientData);
   Tcl_Preserve(clientData);
-  rep->eventProc(eventPtr);
+  try
+    {
+      rep->eventProc(eventPtr);
+    }
+  catch (...)
+    {
+      Tcl::Interp(rep->itsInterp).handleLiveException("cRenderCallback", true);
+    }
   Tcl_Release(clientData);
 }
 
-void Togl::Impl::cTimerCallback(ClientData clientData)
+void Togl::Impl::cTimerCallback(ClientData clientData) throw()
 {
 DOTRACE("Togl::Impl::cTimerCallback");
   Impl* rep = static_cast<Impl*>(clientData);
   Tcl_Preserve(clientData);
 
-  rep->itsOwner->timerCallback();
-  rep->itsTimerToken =
-    Tcl_CreateTimerHandler(rep->itsOpts->time, cTimerCallback,
-                           static_cast<ClientData>(rep));
+  try
+    {
+      rep->itsOwner->timerCallback();
+      rep->itsTimerToken =
+        Tcl_CreateTimerHandler(rep->itsOpts->time, cTimerCallback,
+                               static_cast<ClientData>(rep));
+    }
+  catch (...)
+    {
+      Tcl::Interp(rep->itsInterp).handleLiveException("cRenderCallback", true);
+    }
 
   Tcl_Release(clientData);
 }
 
 // Called when the widget's contents must be redrawn.
-void Togl::Impl::cRenderCallback(ClientData clientData)
+void Togl::Impl::cRenderCallback(ClientData clientData) throw()
 {
 DOTRACE("Togl::Impl::cRenderCallback");
   Impl* rep = static_cast<Impl*>(clientData);
 
   Tcl_Preserve(clientData);
 
-  rep->itsGlx->makeCurrent(rep->windowId());
-  rep->itsOwner->displayCallback();
-  rep->itsUpdatePending = false;
+  try
+    {
+      rep->itsGlx->makeCurrent(rep->windowId());
+      rep->itsOwner->displayCallback();
+      rep->itsUpdatePending = false;
+    }
+  catch (...)
+    {
+      Tcl::Interp(rep->itsInterp).handleLiveException("cRenderCallback", true);
+    }
 
   Tcl_Release(clientData);
 }
@@ -866,7 +889,12 @@ int Togl::screenNumber() const  { return Tk_ScreenNumber(rep->itsTkWin); }
 Colormap Togl::colormap() const { return Tk_Colormap(rep->itsTkWin); }
 Window Togl::windowId() const   { return Tk_WindowId(rep->itsTkWin); }
 
-Gfx::Canvas& Togl::getCanvas() const { return rep->itsGlx->canvas(); }
+Gfx::Canvas& Togl::getCanvas() const
+{
+DOTRACE("Togl::getCanvas");
+  makeCurrent();
+  return rep->itsGlx->canvas();
+}
 
 static const char vcid_togl_cc[] = "$Header$";
 #endif // !TOGL_CC_DEFINED

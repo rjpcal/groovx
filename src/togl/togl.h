@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Mon Sep 16 18:30:22 2002
+// written: Mon Sep 16 18:49:11 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -24,6 +24,10 @@
 #ifndef TOGL_H_DEFINED
 #define TOGL_H_DEFINED
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
+#include "util/object.h"
+#endif
+
 #include <tcl.h>
 #include <tk.h>
 #include <X11/Xlib.h>
@@ -39,7 +43,7 @@ namespace Gfx
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Togl
+class Togl : public virtual Util::Object
 {
 private:
   Togl(const Togl&);
