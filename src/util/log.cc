@@ -61,7 +61,7 @@ namespace
       std::cerr.setf(std::ios::showpoint | std::ios::fixed);
 
       std::cerr << std::setprecision(3)
-                << itsTimer.elapsedMsec(*now) << " / ";
+                << itsTimer.elapsedMsec(*now) << " | ";
     }
   };
 
