@@ -35,13 +35,13 @@
 #include "io/xmlwriter.h"
 
 #include "io/io.h"
-#include "io/ioerror.h"
 #include "io/writeidmap.h"
 #include "io/writer.h"
 
 #include "nub/ref.h"
 
 #include "util/arrays.h"
+#include "util/ioerror.h"
 #include "util/fstring.h"
 #include "util/gzstreambuf.h"
 #include "util/value.h"

@@ -34,21 +34,22 @@
 
 #include "util/error.h"
 
-namespace IO
+namespace rutz
 {
-  class FilenameError;
+  class filename_error;
+
+  /// An exception class for invalid filenames or inaccessible files.
+  class filename_error : public rutz::error
+  {
+  public:
+    /// Default constructor.
+    filename_error(const char* filename, const rutz::file_pos& pos);
+
+    /// Virtual destructor
+    virtual ~filename_error() throw();
+  };
+
 }
-
-/// An exception class for invalid filenames or inaccessible files.
-class IO::FilenameError : public rutz::error
-{
-public:
-  /// Default constructor.
-  FilenameError(const char* filename, const rutz::file_pos& pos);
-
-  /// Virtual destructor
-  virtual ~FilenameError() throw();
-};
 
 static const char vcid_ioerror_h[] = "$Header$";
 #endif // !IOERROR_H_DEFINED

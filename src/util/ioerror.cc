@@ -32,19 +32,19 @@
 #ifndef IOERROR_CC_DEFINED
 #define IOERROR_CC_DEFINED
 
-#include "io/ioerror.h"
+#include "ioerror.h"
 
 #include "util/trace.h"
 
-IO::FilenameError::FilenameError(const char* str,
-                                 const rutz::file_pos& pos)
+rutz::filename_error::filename_error(const char* str,
+                                     const rutz::file_pos& pos)
   :
   rutz::error(rutz::fstring("couldn't use file '", str, "'"), pos)
 {
-DOTRACE("IO::FilenameError::FilenameError");
+DOTRACE("IO::filename_error::filename_error");
 }
 
-IO::FilenameError::~FilenameError() throw() {}
+IO::filename_error::~filename_error() throw() {}
 
 static const char vcid_ioerror_cc[] = "$Header$";
 #endif // !IOERROR_CC_DEFINED
