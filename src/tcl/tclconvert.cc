@@ -16,6 +16,7 @@
 #include "tcl/convert.h"
 
 #include "tcl/tclerror.h"
+#include "tcl/tcllistobj.h"
 #include "tcl/tclvalue.h"
 
 #include <tcl.h>
@@ -322,6 +323,14 @@ DOTRACE("Tcl::toTcl<const Value&>");
   --(obj->refCount);
 
   return obj;
+}
+
+template <>
+Tcl_Obj* Tcl::toTcl<Tcl::List>(Tcl::List listObj)
+{
+DOTRACE("Tcl::toTcl<const Value&>");
+
+  return listObj.asObj();
 }
 
 template <>
