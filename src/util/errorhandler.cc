@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 11 10:17:31 2000
-// written: Thu May 10 12:04:42 2001
+// written: Mon Jul  2 15:11:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef ERRORHANDLER_CC_DEFINED
 #define ERRORHANDLER_CC_DEFINED
 
-#include "errorhandler.h"
+#include "util/errorhandler.h"
 
 Util::ErrorHandler::~ErrorHandler() {}
 
