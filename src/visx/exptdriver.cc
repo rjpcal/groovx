@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Aug  3 15:13:16 1999
+// written: Mon Sep 27 12:08:40 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -225,8 +225,8 @@ DOTRACE("ExptDriver::block");
 #endif
   }
   catch (InvalidIdError& err) {
+	 Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
 	 Tcl_BackgroundError(itsInterp);
-	 Tcl_AddObjErrorInfo(itsInterp, err.msg().c_str(), -1);
   }
 }
 
@@ -242,8 +242,8 @@ DOTRACE("ExptDriver::responseHandler");
 #endif
   }
   catch (InvalidIdError& err) {
+	 Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
 	 Tcl_BackgroundError(itsInterp);
-	 Tcl_AddObjErrorInfo(itsInterp, err.msg().c_str(), -1);
   }  
 }
 
@@ -259,8 +259,8 @@ DOTRACE("ExptDriver::timingHdlr");
 #endif
   }
   catch (InvalidIdError& err) {
+	 Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
 	 Tcl_BackgroundError(itsInterp);
-	 Tcl_AddObjErrorInfo(itsInterp, err.msg().c_str(), -1);
   }  
 }
 
@@ -286,8 +286,8 @@ DOTRACE("ExptDriver::assertIds");
   }
 
   // ...one of the validity checks failed, so generate an error+message
+  Tcl_AppendResult(itsInterp, "invalid item id", (char*) 0);
   Tcl_BackgroundError(itsInterp);
-  Tcl_AddObjErrorInfo(itsInterp, "invalid item id", -1);
 
   // ...and halt any of the participants for which we have valid id's
   edHaltExpt();
@@ -345,8 +345,8 @@ DOTRACE("ExptDriver::draw");
 	 block().drawTrial();
   }
   catch (InvalidIdError& err) {
+	 Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
 	 Tcl_BackgroundError(itsInterp);
-	 Tcl_AddObjErrorInfo(itsInterp, err.msg().c_str(), -1);
   }
 }
 
@@ -358,8 +358,8 @@ DOTRACE("ExptDriver::undraw");
 	 block().undrawTrial();
   }
   catch (InvalidIdError& err) {
+	 Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
 	 Tcl_BackgroundError(itsInterp);
-	 Tcl_AddObjErrorInfo(itsInterp, err.msg().c_str(), -1);
   }
 }
 
@@ -369,8 +369,8 @@ DOTRACE("ExptDriver::edSwapBuffers");
 	 ObjTogl::theToglConfig()->swapBuffers();
   }
   catch (TclError& err) {
+	 Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
 	 Tcl_BackgroundError(itsInterp);
-	 Tcl_AddObjErrorInfo(itsInterp, err.msg().c_str(), -1);
   }
 }
 
@@ -492,8 +492,8 @@ DOTRACE("ExptDriver::edEndTrial");
 		write(getAutosaveFile().c_str());
 	 }
 	 catch (TclError& err) {
+		Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
 		Tcl_BackgroundError(itsInterp);
-		Tcl_AddObjErrorInfo(itsInterp, err.msg().c_str(), -1);
 	 }
   }
 
@@ -535,7 +535,10 @@ DOTRACE("ExptDriver::edEndTrial");
 
 void ExptDriver::edHaltExpt() const {
 DOTRACE("ExptDriver::edHaltExpt");
-  TimeTraceNL("edHaltExpt", timingHdlr().getElapsedMsec());
+
+  if ( ThList::theThList().isValidId(itsThId) ) { 
+	 TimeTraceNL("edHaltExpt", timingHdlr().getElapsedMsec());
+  }
 
   if ( BlockList::theBlockList().isValidId(itsBlockId) ) {
 	 block().haltExpt();
@@ -558,10 +561,13 @@ void ExptDriver::edResetExpt() {
 DOTRACE("ExptDriver::edResetExpt");
   edHaltExpt();
 
-  while ( BlockList::theBlockList().isValidId(itsBlockId) &&
-			 itsBlockId >= 0 ) {
-	 block().resetBlock();
-	 --itsBlockId;
+  while (1) {
+	 if ( BlockList::theBlockList().isValidId(itsBlockId) ) {
+		block().resetBlock();
+	 }
+
+	 if (itsBlockId > 0) { --itsBlockId; }
+	 else return;
   }
 }
 
@@ -650,12 +656,12 @@ DOTRACE("ExptDriver::writeAndExit");
 
   }
   catch (IoError& err) {
+	 Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
 	 Tcl_BackgroundError(itsInterp);
-	 Tcl_AddObjErrorInfo(itsInterp, err.msg().c_str(), -1);
   }
   catch (TclError& err) {
+	 Tcl_AppendResult(itsInterp, err.msg().c_str(), (char*) 0);
 	 Tcl_BackgroundError(itsInterp);
-	 Tcl_AddObjErrorInfo(itsInterp, err.msg().c_str(), -1);
   }
 
   // Gracefully exit the application (or not)
