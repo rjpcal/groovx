@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Mon Aug 13 12:15:35 2001
+// written: Tue Aug 14 11:29:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -230,6 +230,9 @@ MorphyFace::MorphyFace() :
 DOTRACE("MorphyFace::MorphyFace");
 
   setFieldMap(MFACE_FIELDS);
+
+  setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
+  setMaxDimension(1.0);
 }
 
 MorphyFace::~MorphyFace()
