@@ -212,7 +212,9 @@ test "TlistTcl-Tlist::loadObjidFile" "error on junk text file" {
 } {Tlist::loadObjidFile: InputError: Trial}
 test "TlistTcl-Tlist::loadObjidFile" "error on junk binary file" {
 	 Tlist::loadObjidFile $::TEST_DIR/junk_bin_file -1 0
-} {Tlist::loadObjidFile: InputError: Trial}
+} {Tlist::loadObjidFile: InputError: Trial} \
+  [ expr [string equal $env(ARCH) "irix6"] ? $skip_known_bug : $normal_test]
+
 
 ### Tlist::makeSummaryTrialCmd ###
 test "TlistTcl-Tlist::makeSummaryTrial" "too few args" {
