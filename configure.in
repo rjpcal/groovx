@@ -6,6 +6,21 @@ dnl $Revision$
 
 AC_INIT(grsh, [0.8a8], [rjpeters@klab.caltech.edu])
 
+AC_MSG_CHECKING([for operating system])
+
+OS=`uname`
+
+AC_MSG_RESULT($OS)
+
+need_rpath=yes
+
+case $OS in
+   Linux) need_rpath=yes;;
+   IRIX) need_rpath=yes;;
+   Darwin) need_rpath=no;;
+   *) ;;
+esac
+
 # If CXXFLAGS was not already set, then set it now to keep autoconf from
 # adding "-g -O2".
 
@@ -90,7 +105,9 @@ dnl AC_CHECK_FUNCS(getcwd gettimeofday select strerror)
 
 dnl Setup linking options
 
-LDFLAGS="$LDFLAGS -Wl,-rpath,\${exec_prefix}/lib"
+if test $need_rpath = yes; then
+   LDFLAGS="$LDFLAGS -Wl,-rpath,\${exec_prefix}/lib"
+fi
 LDFLAGS="$LDFLAGS -L\${exec_prefix}/lib"
 
 ###
@@ -111,7 +128,10 @@ AC_MSG_RESULT($with_tcltk)
 
 CPPFLAGS="-I${with_tcltk}/include $CPPFLAGS"
 
-LDFLAGS="$LDFLAGS -Wl,-rpath,${with_tcltk}/lib -L${with_tcltk}/lib"
+if test $need_rpath = yes; then
+   LDFLAGS="$LDFLAGS -Wl,-rpath,${with_tcltk}/lib"
+fi
+LDFLAGS="$LDFLAGS -L${with_tcltk}/lib"
 
 ###
 
@@ -129,7 +149,9 @@ if test $enable_matlab = yes; then
    CPPFLAGS="$CPPFLAGS -I/usr/local/matlab/extern/include"
 dnl FIXME these lines are architecture-specific
    LDFLAGS="$LDFLAGS -L/usr/local/matlab/extern/lib/glnx86"
-   LDFLAGS="$LDFLAGS -Wl,-rpath,/usr/local/matlab/extern/lib/glnx86"
+   if test $need_rpath = yes; then
+      LDFLAGS="$LDFLAGS -Wl,-rpath,/usr/local/matlab/extern/lib/glnx86"
+   fi
    AC_DEFINE(WITH_MATLAB, 1)
 fi
 
