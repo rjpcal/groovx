@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Nov  3 07:55:43 1999
+// written: Wed Nov  3 09:55:23 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -116,6 +116,11 @@ protected:
   bool assertIds() const; 
 
 private:
+  class ExptImpl;
+  friend class ExptImpl;
+
+  ExptImpl* itsImpl;
+
   Tcl_Interp* itsInterp;
 
   string itsHostname;			  // Host computer on which Expt was begun
