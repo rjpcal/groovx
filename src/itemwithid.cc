@@ -3,7 +3,7 @@
 // itemwithid.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct 23 11:42:18 2000
-// written: Mon Oct 23 13:11:49 2000
+// written: Mon Oct 23 17:47:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,10 +42,8 @@ ItemWithId<T>::ItemWithId(PtrHandle<T> item, Insert /*dummy param*/) :
 template <class T>
 NullableItemWithId<T>::NullableItemWithId(T* master) :
   itsHandle(master),
-  itsId(ptrList().insert(master).id())
-{
-  if (master == 0) throw ErrorWithMsg("null pointer in NullableItemWithId()");
-}
+  itsId(master != 0 ? ptrList().insert(master).id() : -1)
+{}
 
 template <class T>
 NullableItemWithId<T>::NullableItemWithId(PtrHandle<T> item) :
