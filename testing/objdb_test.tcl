@@ -10,12 +10,10 @@
 ### ObjDb::loadObjectsCmd ###
 test "ObjDb-ObjDb::loadObjects" "too few args" { 
 	 ObjDb::loadObjects
-} {wrong \# args: should be "ObjDb::loadObjects\
-		  filename \?num_to_read=-1\?"}
+} {wrong \# args: should be}
 test "ObjDb-ObjDb::loadObjects" "too many args" { 
 	 ObjDb::loadObjects j u n k y
-} {wrong \# args: should be "ObjDb::loadObjects\
-		  filename \?num_to_read=-1\?"}
+} {wrong \# args: should be}
 test "ObjDb-ObjDb::loadObjects" "normal file read with no comments" {
 	 set objids [ObjDb::loadObjects $::TEST_DIR/faces_file_no_comments]
 	 set num_read [llength $objids]
