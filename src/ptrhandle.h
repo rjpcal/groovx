@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 15:56:41 2000
-// written: Thu May 17 06:55:46 2001
+// written: Sat May 19 15:23:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,24 +101,41 @@ public:
 		  itsMaster->incrRefCount();
 	 }
 
-  explicit NullablePtrHandle(PtrHandle<T> other) :
-	 itsMaster(other.get())
-    {
-		ensureValid();
-		itsMaster->incrRefCount();
-	 }
-
   ~NullablePtrHandle()
     {
 		if (itsMaster != 0)
 		  itsMaster->decrRefCount();
 	 }
 
+  //
+  // Copy constructors
+  //
+
   NullablePtrHandle(const NullablePtrHandle& other) : itsMaster(other.itsMaster)
     {
 		if (itsMaster != 0)
 		  itsMaster->incrRefCount();
 	 }
+
+  template <class U>
+  NullablePtrHandle(const NullablePtrHandle<U>& other) :
+	 itsMaster(other.isValid() ? other.get() : 0)
+    { 
+		if (itsMaster != 0)
+		  itsMaster->incrRefCount();
+	 }
+
+  template <class U>
+  explicit NullablePtrHandle(PtrHandle<U> other) :
+	 itsMaster(other.get())
+    {
+		ensureValid();
+		itsMaster->incrRefCount();
+	 }
+
+  //
+  // Assignment operators
+  //
 
   NullablePtrHandle& operator=(const NullablePtrHandle& other)
     {
@@ -133,6 +150,8 @@ public:
 		this->swap(otherCopy);
 		return *this;
 	 }
+
+
 
   bool isValid() const { return itsMaster != 0; }
 
