@@ -162,7 +162,7 @@ GRSH_STATIC_OBJS := \
 	$(OBJ)/glbitmap.do \
 	$(OBJ)/glcanvas.do \
 	$(OBJ)/glbmaprenderer.do \
-	$(OBJ)/grobj.do \
+	$(OBJ)/grobjimpl.do \
 	$(OBJ)/grshAppInit.do \
 	$(OBJ)/gtext.do \
 	$(OBJ)/house.do \
@@ -190,7 +190,6 @@ GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/canvas.do \
 	$(OBJ)/cloneface.do \
 	$(OBJ)/demangle.do \
-	$(OBJ)/util/error.do \
 	$(OBJ)/eventresponsehdlr.do \
 	$(OBJ)/experiment.do \
 	$(OBJ)/exptdriver.do \
@@ -201,6 +200,7 @@ GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/fishtcl.do \
 	$(OBJ)/fixpttcl.do \
 	$(OBJ)/gabortcl.do \
+	$(OBJ)/grobj.do \
 	$(OBJ)/grobjtcl.do \
 	$(OBJ)/grshapp.do \
 	$(OBJ)/gtexttcl.do \
@@ -232,7 +232,6 @@ GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/sound.do \
 	$(OBJ)/soundlist.do \
 	$(OBJ)/soundtcl.do \
-	$(OBJ)/util/strings.do \
 	$(OBJ)/subject.do \
 	$(OBJ)/subjecttcl.do \
 	$(OBJ)/system.do \
@@ -243,7 +242,6 @@ GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/tlist.do \
 	$(OBJ)/tlisttcl.do \
 	$(OBJ)/tlistutils.do \
-	$(OBJ)/util/trace.do \
 	$(OBJ)/trial.do \
 	$(OBJ)/trialevent.do \
 	$(OBJ)/trialtcl.do \
@@ -252,6 +250,10 @@ GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/widget.do \
 	$(OBJ)/writer.do \
 	$(OBJ)/writeutils.do \
+	$(OBJ)/util/error.do \
+	$(OBJ)/util/serialport.do \
+	$(OBJ)/util/strings.do \
+	$(OBJ)/util/trace.do \
 
 TCLWORKS_OBJS := \
 	$(OBJ)/tcl/listpkg.do \
