@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// tcldlist.cc
+// dlisttcl.cc
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -12,8 +12,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLDLIST_CC_DEFINED
-#define TCLDLIST_CC_DEFINED
+#ifndef DLISTTCL_CC_DEFINED
+#define DLISTTCL_CC_DEFINED
 
 #include "tcl/tclcmd.h"
 #include "tcl/tclerror.h"
@@ -392,5 +392,5 @@ DOTRACE("Dlist_Init");
   return pkg->initStatus();
 }
 
-static const char vcid_tcldlist_cc[] = "$Header$";
-#endif // !TCLDLIST_CC_DEFINED
+static const char vcid_dlisttcl_cc[] = "$Header$";
+#endif // !DLISTTCL_CC_DEFINED
