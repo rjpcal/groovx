@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Fri Jan 18 16:07:06 2002
+// written: Wed Jul 31 18:45:53 2002
 // $Id$
 //
 // this file contains the implementations for some simple Tcl functions
@@ -19,7 +19,9 @@
 
 #include "tcl/tclpkg.h"
 
+#include "util/error.h"
 #include "util/rand.h"
+#include "util/strings.h"
 
 #include <unistd.h>
 
@@ -33,6 +35,20 @@ namespace
   {
     for ( ; reps > 0; --reps)
       ::usleep(usecs);
+  }
+
+  fstring backTrace()
+  {
+    const Util::BackTrace& bt = Util::Error::lastBackTrace();
+
+    fstring result;
+
+    for (unsigned int i = bt.size(); i > 0; --i)
+      {
+        result.append(bt[i-1]->name(), "\n");
+      }
+
+    return result;
   }
 }
 
@@ -73,6 +89,8 @@ DOTRACE("Misc_Init");
   // here. It is typically an extra 10000usec per loop iteration, but
   // again, as in usleepCmd, there seemse to be a minimum of ~20000usec
   // per iteration, even if the specified delay is 1.
+
+  pkg->def( "::bt", "", &backTrace );
 
   return pkg->initStatus();
 }
