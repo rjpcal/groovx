@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Sep  7 15:07:16 2001
-// written: Sat Sep  8 13:48:18 2001
+// written: Mon Sep 10 12:38:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,16 +28,21 @@ namespace Util
 
   struct Null_t;
 
-  struct FuncTraitsBase
+  template <class R = void,
+            class A1 = Null_t, class A2 = Null_t, class A3 = Null_t,
+            class A4 = Null_t, class A5 = Null_t, class A6 = Null_t,
+            class A7 = Null_t, class A8 = Null_t>
+  struct FuncArgs
   {
-    typedef Null_t Arg1_t;
-    typedef Null_t Arg2_t;
-    typedef Null_t Arg3_t;
-    typedef Null_t Arg4_t;
-    typedef Null_t Arg5_t;
-    typedef Null_t Arg6_t;
-    typedef Null_t Arg7_t;
-    typedef Null_t Arg8_t;
+    typedef R  Retn_t;
+    typedef A1 Arg1_t;
+    typedef A2 Arg2_t;
+    typedef A3 Arg3_t;
+    typedef A4 Arg4_t;
+    typedef A5 Arg5_t;
+    typedef A6 Arg6_t;
+    typedef A7 Arg7_t;
+    typedef A8 Arg8_t;
   };
 
   template <class Func>
@@ -53,73 +58,59 @@ namespace Util
 ///////////////////////////////////////////////////////////////////////
 
   template <class R>
-  struct FuncTraits<R (*)()> : public FuncTraitsBase
+  struct FuncTraits<R (*)()>
+    :
+    public FuncArgs<R>
   {
     enum { numArgs = 0 };
-    typedef R Retn_t;
   };
 
   template <class R, class P1>
-  struct FuncTraits<R (*)(P1)> : public FuncTraitsBase
+  struct FuncTraits<R (*)(P1)>
+    :
+    public FuncArgs<R, P1>
   {
     enum { numArgs = 1 };
-    typedef R Retn_t;
-    typedef P1 Arg1_t;
   };
 
   template <class R, class P1, class P2>
-  struct FuncTraits<R (*)(P1, P2)> : public FuncTraitsBase
+  struct FuncTraits<R (*)(P1, P2)>
+    :
+    public FuncArgs<R, P1, P2>
   {
     enum { numArgs = 2 };
-    typedef R Retn_t;
-    typedef P1 Arg1_t;
-    typedef P2 Arg2_t;
   };
 
   template <class R, class P1, class P2, class P3>
-  struct FuncTraits<R (*)(P1, P2, P3)> : public FuncTraitsBase
+  struct FuncTraits<R (*)(P1, P2, P3)>
+    :
+    public FuncArgs<R, P1, P2, P3>
   {
     enum { numArgs = 3 };
-    typedef R Retn_t;
-    typedef P1 Arg1_t;
-    typedef P2 Arg2_t;
-    typedef P3 Arg3_t;
   };
 
   template <class R, class P1, class P2, class P3, class P4>
-  struct FuncTraits<R (*)(P1, P2, P3, P4)> : public FuncTraitsBase
+  struct FuncTraits<R (*)(P1, P2, P3, P4)>
+    :
+    public FuncArgs<R, P1, P2, P3, P4>
   {
     enum { numArgs = 4 };
-    typedef R Retn_t;
-    typedef P1 Arg1_t;
-    typedef P2 Arg2_t;
-    typedef P3 Arg3_t;
-    typedef P4 Arg4_t;
   };
 
   template <class R, class P1, class P2, class P3, class P4, class P5>
-  struct FuncTraits<R (*)(P1, P2, P3, P4, P5)> : public FuncTraitsBase
+  struct FuncTraits<R (*)(P1, P2, P3, P4, P5)>
+    :
+    public FuncArgs<R, P1, P2, P3, P4, P5>
   {
     enum { numArgs = 5 };
-    typedef R Retn_t;
-    typedef P1 Arg1_t;
-    typedef P2 Arg2_t;
-    typedef P3 Arg3_t;
-    typedef P4 Arg4_t;
-    typedef P5 Arg5_t;
   };
 
   template <class R, class P1, class P2, class P3, class P4, class P5, class P6>
-  struct FuncTraits<R (*)(P1, P2, P3, P4, P5, P6)> : public FuncTraitsBase
+  struct FuncTraits<R (*)(P1, P2, P3, P4, P5, P6)>
+    :
+    public FuncArgs<R, P1, P2, P3, P3, P4, P5, P6>
   {
     enum { numArgs = 6 };
-    typedef R Retn_t;
-    typedef P1 Arg1_t;
-    typedef P2 Arg2_t;
-    typedef P3 Arg3_t;
-    typedef P4 Arg4_t;
-    typedef P5 Arg5_t;
-    typedef P6 Arg6_t;
   };
 
 ///////////////////////////////////////////////////////////////////////
@@ -129,53 +120,48 @@ namespace Util
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class C>
-  struct FuncTraits<R (C::*)()> : public FuncTraitsBase
+  struct FuncTraits<R (C::*)()>
+    :
+    public FuncArgs<R, Null_t>
   {
     enum { numArgs = 1 };
     typedef C Class_t;
-    typedef R Retn_t;
   };
 
   template <class R, class C, class P1>
-  struct FuncTraits<R (C::*)(P1)> : public FuncTraitsBase
+  struct FuncTraits<R (C::*)(P1)>
+    :
+    public FuncArgs<R, Null_t, P1>
   {
     enum { numArgs = 2 };
     typedef C Class_t;
-    typedef R Retn_t;
-    typedef P1 Arg2_t;
   };
 
   template <class R, class C, class P1, class P2>
-  struct FuncTraits<R (C::*)(P1, P2)> : public FuncTraitsBase
+  struct FuncTraits<R (C::*)(P1, P2)>
+    :
+    public FuncArgs<R, Null_t, P1, P2>
   {
     enum { numArgs = 3 };
     typedef C Class_t;
-    typedef R Retn_t;
-    typedef P1 Arg2_t;
-    typedef P2 Arg3_t;
   };
 
   template <class R, class C, class P1, class P2, class P3>
-  struct FuncTraits<R (C::*)(P1, P2, P3)> : public FuncTraitsBase
+  struct FuncTraits<R (C::*)(P1, P2, P3)>
+    :
+    public FuncArgs<R, Null_t, P1, P2, P3>
   {
     enum { numArgs = 4 };
     typedef C Class_t;
-    typedef R Retn_t;
-    typedef P1 Arg2_t;
-    typedef P2 Arg3_t;
-    typedef P3 Arg4_t;
   };
 
   template <class R, class C, class P1, class P2, class P3, class P4>
-  struct FuncTraits<R (C::*)(P1, P2, P3, P4)> : public FuncTraitsBase
+  struct FuncTraits<R (C::*)(P1, P2, P3, P4)>
+    :
+    public FuncArgs<R, Null_t, P1, P2, P3, P4>
   {
     enum { numArgs = 5 };
     typedef C Class_t;
-    typedef R Retn_t;
-    typedef P1 Arg2_t;
-    typedef P2 Arg3_t;
-    typedef P3 Arg4_t;
-    typedef P4 Arg5_t;
   };
 
 ///////////////////////////////////////////////////////////////////////
