@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Aug  6 14:42:28 2002
+// written: Tue Aug  6 14:53:13 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -44,6 +44,7 @@
 
 #include <cstring>
 
+#define LOCAL_TRACE
 #include "util/trace.h"
 #include "util/debug.h"
 
@@ -222,7 +223,7 @@ public:
   Tcl_Command itsCmdToken;
 
   bool itsUpdatePending;
-  bool itsShutdownInProgress;
+  bool itsShutdownRequested;
   ClientData itsClientData;
   Togl_Callback* itsUserDisplayProc;
   Togl_Callback* itsUserReshapeProc;
@@ -234,7 +235,7 @@ public:
 
 
   Impl(Togl* owner, Tcl_Interp* interp, const char* pathname);
-  ~Impl();
+  ~Impl() throw();
 
   int configure(int objc, Tcl_Obj* const objv[]);
 
@@ -265,9 +266,9 @@ public:
 
 private:
   void eventProc(XEvent* eventPtr);
-  void shutdown();
   void makeWindowExist(); // throws a Util::Error on failure
   void setupOverlay(); // throws a Util::Error on failure
+  void requestShutdown() throw();
 };
 
 
@@ -308,7 +309,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp, const char* pathname) :
   itsCmdToken(0),
 
   itsUpdatePending(false),
-  itsShutdownInProgress(false),
+  itsShutdownRequested(false),
   itsClientData(DefaultClientData),
   itsUserDisplayProc(DefaultDisplayProc),
   itsUserReshapeProc(DefaultReshapeProc),
@@ -398,16 +399,33 @@ DOTRACE("Togl::Impl::Impl");
   Tcl_AppendResult(itsInterp, Tk_PathName(itsTkWin), NULL);
 }
 
-Togl::Impl::~Impl()
+Togl::Impl::~Impl() throw()
 {
 DOTRACE("Togl::Impl::~Impl");
 
-  Tk_FreeConfigOptions((char*) &itsOpts, toglOptionTable, itsTkWin);
+  Assert(itsCmdToken != 0);
+  Assert(itsTkWin != 0);
 
   if (itsUserDestroyProc)
     {
       itsUserDestroyProc(itsOwner);
     }
+
+  Tcl_DeleteTimerHandler(itsTimerToken);
+
+  Tcl_CancelIdleCall(cRenderCallback, static_cast<ClientData>(this));
+
+  if (itsOverlay)
+    {
+      TkUtil::forgetWindow(itsTkWin, itsOverlay->windowId());
+      delete itsOverlay;
+    }
+
+  Tcl_DeleteCommandFromToken(itsInterp, itsCmdToken);
+
+  Tk_FreeConfigOptions((char*) &itsOpts, toglOptionTable, itsTkWin);
+
+  Tk_DestroyWindow(itsTkWin);
 }
 
 //---------------------------------------------------------------------
@@ -476,7 +494,7 @@ void Togl::Impl::cWidgetCmdDeletedCallback(ClientData clientData)
 DOTRACE("Togl::Impl::cWidgetCmdDeletedCallback");
   Impl* rep = static_cast<Impl*>(clientData);
   Tcl_Preserve(clientData);
-  rep->shutdown();
+  rep->requestShutdown();
   Tcl_Release(clientData);
 }
 
@@ -671,54 +689,13 @@ DOTRACE("Togl::Impl::eventProc");
     case DestroyNotify:
       {
         DOTRACE("Togl::Impl::eventProc-DestroyNotify");
-        shutdown();
+        requestShutdown();
       }
       break;
     default:
       /*nothing*/
       ;
     }
-}
-
-void Togl::Impl::shutdown()
-{
-  // If we end up calling ourselves recursively here (which is like to
-  // happen via a chain of DestroyNotify and "command deleted" callbacks),
-  // then just return without doing anything.
-  if (itsShutdownInProgress)
-    return;
-
-DOTRACE("Togl::Impl::shutdown");
-
-  itsShutdownInProgress = true;
-
-  // Destroy Tcl widget command
-  Assert(itsCmdToken != 0);
-
-  Tcl_DeleteCommandFromToken(itsInterp, itsCmdToken);
-  itsCmdToken = 0;
-
-  if (itsOverlay)
-    {
-      TkUtil::forgetWindow(itsTkWin, itsOverlay->windowId());
-      delete itsOverlay;
-      itsOverlay = 0;
-    }
-
-  Assert(itsTkWin != 0);
-
-  Tk_DestroyWindow(itsTkWin);
-  itsTkWin = 0;
-
-  // Destroy timer handler
-  Tcl_DeleteTimerHandler(itsTimerToken);
-  itsUserTimerProc = 0;
-
-  // Kill pending updates
-  Tcl_CancelIdleCall(cRenderCallback, static_cast<ClientData>(this));
-  itsUpdatePending = false;
-
-  Tcl_EventuallyFree(static_cast<ClientData>(this), cEventuallyFreeCallback);
 }
 
 void Togl::Impl::makeWindowExist()
@@ -782,6 +759,21 @@ DOTRACE("Togl::Impl::setupOverlay");
   Assert(itsOverlay != 0);
 
   TkUtil::addWindow(itsTkWin, itsOverlay->windowId());
+}
+
+void Togl::Impl::requestShutdown() throw()
+{
+  // If we end up calling ourselves recursively here (which is like to
+  // happen via a chain of DestroyNotify and "command deleted" callbacks),
+  // then just return without doing anything.
+  if (itsShutdownRequested)
+    return;
+
+DOTRACE("Togl::Impl::requestShutdown");
+
+  itsShutdownRequested = true;
+
+  Tcl_EventuallyFree(static_cast<ClientData>(this), cEventuallyFreeCallback);
 }
 
 ///////////////////////////////////////////////////////////////////////
