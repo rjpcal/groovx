@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Sat Nov 11 10:16:16 2000
+// written: Mon Nov 13 21:05:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,8 @@
 #include "grobj.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H_DEFINED)
-#include "io/property.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
+#include "io/fields.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Face : public GrObj, public PropFriend<Face> {
+class Face : public GrObj, public FieldContainer {
 protected:
   /// Construct with initial values for the Brunswik face parameters.
   Face (double eh=0.6, double es=0.4, double nl=0.4, double mh=-0.8, int categ=0);
@@ -55,30 +55,23 @@ public:
   // properties //
   ////////////////
 
-  /// Info about a \c Face property.
-  typedef PropertyInfo<Face> PInfo;
-
-  /// Return the number of \c Face properties.
-  static unsigned int numPropertyInfos();
-
-  /// Return info on the i'th \c Face property.
-  static const PInfo& getPropertyInfo(unsigned int i);
-
   /** The category of the face. The semantics of \a category are
       defined by the client. */
-  TProperty<int> faceCategory;
+  TField<int> faceCategory;
 
   /// The height of the eyes above the vertical midline of the face.
-  TProperty<double> eyeHeight;
+  TField<double> eyeHeight;
 
   /// The distance between the centers of the eyes.
-  TProperty<double> eyeDistance;
+  TField<double> eyeDistance;
 
   /// The length of the nose.
-  TProperty<double> noseLength;
+  TField<double> noseLength;
 
   /// The (negative) height of the mouth below the vertical midline of the face.
-  TProperty<double> mouthHeight;
+  TField<double> mouthHeight;
+
+  static const FieldMap& classFields();
 
   ///////////////
   // accessors //

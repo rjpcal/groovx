@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Fri Nov 10 17:03:59 2000
+// written: Mon Nov 13 21:06:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,26 +28,20 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-#ifdef MIPSPRO_COMPILER
-#  define SGI_IDIOT_CAST(to, from) reinterpret_cast<to>(from)
-#else
-#  define SGI_IDIOT_CAST(to, from) (from)
-#endif
-
 namespace {
-  const MaskHatch::PInfo PINFOS[] = {
-	 MaskHatch::PInfo("numLines",
-							SGI_IDIOT_CAST(Property MaskHatch::*, &MaskHatch::numLines),
-							0, 25, 1, true),
-	 MaskHatch::PInfo("lineWidth",
-							SGI_IDIOT_CAST(Property MaskHatch::*, &MaskHatch::lineWidth),
-							0, 25, 1)
+  const FieldInfo MASK_FINFOS[] = {
+	 FieldInfo("numLines", &MaskHatch::numLines, 5, 0, 25, 1, true),
+	 FieldInfo("lineWidth", &MaskHatch::lineWidth, 1, 0, 25, 1)
   };
 
-  const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(MaskHatch::PInfo);
+  const unsigned int NUM_FINFOS = sizeof(MASK_FINFOS)/sizeof(FieldInfo);
+
+  const FieldMap MASK_FIELDS(MASK_FINFOS, MASK_FINFOS+NUM_FINFOS);
 
   const IO::VersionId MASKHATCH_SERIAL_VERSION_ID = 2;
 }
+
+const FieldMap& MaskHatch::classFields() { return MASK_FIELDS; }
 
 MaskHatch* MaskHatch::make() {
 DOTRACE("MaskHatch::make");
@@ -56,18 +50,18 @@ DOTRACE("MaskHatch::make");
 
 MaskHatch::MaskHatch () :
   GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX),
-  numLines(10),
-  lineWidth(1)
+  FieldContainer(MASK_FIELDS),
+  numLines(this, 10),
+  lineWidth(this, 1)
 {
-DOTRACE("MaskHatch::MaskHatch ");
+DOTRACE("MaskHatch::MaskHatch");
 
   GrObj::setAlignmentMode(GrObj::CENTER_ON_CENTER);
   DebugEval(getAlignmentMode());
 }
 
-MaskHatch::~MaskHatch () {
-DOTRACE("MaskHatch::~MaskHatch ");
-  
+MaskHatch::~MaskHatch() {
+DOTRACE("MaskHatch::~MaskHatch");
 }
 
 IO::VersionId MaskHatch::serialVersionId() const {
@@ -78,12 +72,10 @@ DOTRACE("MaskHatch::serialVersionId");
 void MaskHatch::readFrom(IO::Reader* reader) {
 DOTRACE("MaskHatch::readFrom");
 
-  for (size_t i = 0; i < numPropertyInfos(); ++i) {
-	 reader->readValueObj(PINFOS[i].name(),
-								 const_cast<Value&>(get(PINFOS[i].property())));
-  }
+  readFieldsFrom(reader); 
 
   IO::VersionId svid = reader->readSerialVersionId();
+
   if (svid < 2)
 	 GrObj::readFrom(reader);
   else if (svid == 2)
@@ -91,16 +83,12 @@ DOTRACE("MaskHatch::readFrom");
 		IO::IoProxy<GrObj> baseclass(this);
 		reader->readBaseClass("GrObj", &baseclass);
 	 }
-
-  sendStateChangeMsg();
 }
 
 void MaskHatch::writeTo(IO::Writer* writer) const {
 DOTRACE("MaskHatch::writeTo");
 
-  for (size_t i = 0; i < numPropertyInfos(); ++i) {
-	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
-  }
+  writeFieldsTo(writer);
 
   if (MASKHATCH_SERIAL_VERSION_ID < 2)
 	 GrObj::writeTo(writer);
@@ -109,24 +97,6 @@ DOTRACE("MaskHatch::writeTo");
 		IO::ConstIoProxy<GrObj> baseclass(this);
 		writer->writeBaseClass("GrObj", &baseclass);
 	 }
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// Properties
-//
-///////////////////////////////////////////////////////////////////////
-
-unsigned int MaskHatch::numPropertyInfos() {
-DOTRACE("MaskHatch::numPropertyInfos");
-//   return getPropertyInfos().size();
-  return NUM_PINFOS;
-}
-
-const MaskHatch::PInfo& MaskHatch::getPropertyInfo(unsigned int i) {
-DOTRACE("MaskHatch::getPropertyInfo");
-//   return getPropertyInfos()[i];
-  return PINFOS[i];
 }
 
 void MaskHatch::grGetBoundingBox(Rect<double>& bbox,
