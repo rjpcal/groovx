@@ -3,7 +3,7 @@
 // bitmaprep.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Tue Jan 11 17:13:19 2000
+// written: Thu Jan 20 01:28:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,10 @@
 #ifndef VECTOR_DEFINED
 #include <vector>
 #define VECTOR_DEFINED
+#endif
+
+#ifndef BMAPDATA_H_DEFINED
+#include "bmapdata.h"
 #endif
 
 class BmapRenderer;
@@ -51,6 +55,7 @@ public:
 	 itsFilename(filename)
   {
 	 init();
+	 loadPbmFile(filename);
   }
 
   ///
@@ -81,6 +86,9 @@ public:
 public:
   ///
   void loadPbmFile(const char* filename);
+  /** Queues a pbm file for loading. The file will not actually be
+      loaded until such time as the data from the file is needed. */
+  void queuePbmFile(const char* filename);
   ///
   void loadPbmFile(istream& is);
   ///
@@ -106,12 +114,12 @@ public:
       may depend on the format of the bitmap data. */
   void flipContrast();
 
-  void doFlipContrast();
+  void doFlipContrast() { itsData.flipVertical(); }
 
   /// Vertically inverts the image.
   void flipVertical();
 
-  void doFlipVertical();
+  void doFlipVertical() { itsData.flipVertical(); }
 
   /** Centers the image so that its center coincides with the origin
       in the graphics environment when it is rendered. */
@@ -134,14 +142,18 @@ public:
 								int& border_pixels) const;
 
   /// Get the number of bytes of image data.
-  int byteCount() const;
+  int byteCount() const
+	 { return itsData.byteCount(); }
   /// Get the number of bytes per row in the image data.
-  int bytesPerRow() const;
+  int bytesPerRow() const
+	 { return itsData.bytesPerRow(); }
 
   /// Get the image's width in pixels.
-  int width() const;
+  int width() const
+	 { return itsData.width(); }
   /// Get the image's height in pixels.
-  int height() const;
+  int height() const
+	 { return itsData.height(); }
 
   /** Manipulate the coordinates of the image's raster position (this
       specifies where the lower left corner of the image will
@@ -192,11 +204,7 @@ private:
   bool itsContrastFlip;
   bool itsVerticalFlip;
 
-  vector<unsigned char> itsBytes;
-  int itsHeight;
-  int itsWidth;
-  int itsBitsPerPixel;
-  int itsByteAlignment;
+  BmapData itsData;
 };
 
 static const char vcid_bitmaprep_h[] = "$Header$";
