@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Wed Nov 20 16:10:45 2002
+// written: Fri Dec 20 10:10:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -98,7 +98,10 @@ public:
   virtual void writeObject(const char*,
                            Util::SoftRef<const IO::IoObject> obj)
   {
-    if (obj.isValid() && dynamic_cast<const GxShapeKit*>(obj.get()) != 0)
+    DOTRACE("MatlabTrialWriter::writeObject");
+    if (!obj.isValid())
+      return;
+    if (dynamic_cast<const GxShapeKit*>(obj.get()) != 0)
       {
         itsOs << obj->id() << ' ';
       }
@@ -111,17 +114,20 @@ public:
   virtual void writeOwnedObject(const char* name,
                                 Util::Ref<const IO::IoObject> obj)
   {
+    DOTRACE("MatlabTrialWriter::writeOwnedObject");
     writeObject(name, obj);
   }
 
   virtual void writeBaseClass(const char*,
                               Util::Ref<const IO::IoObject> basePart)
   {
+    DOTRACE("MatlabTrialWriter::writeBaseClass");
     basePart->writeTo(this);
   }
 
   virtual void writeRoot(const IO::IoObject* root)
   {
+    DOTRACE("MatlabTrialWriter::writeRoot");
     root->writeTo(this);
   }
 };
