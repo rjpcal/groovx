@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug 23 11:42:34 2001
-// written: Fri Dec 13 10:06:55 2002
+// written: Fri Dec 13 10:57:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,6 +43,8 @@ public:
   void setRepeating(bool repeat) { isItRepeating = repeat; }
 
   bool isPending() const { return itsToken != 0; }
+
+  double elapsedMsec() const { return itsStopWatch.elapsedMsec(); }
 
 private:
   static void dummyCallback(ClientData clientData);
