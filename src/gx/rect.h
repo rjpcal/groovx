@@ -92,6 +92,19 @@ public:
   V centerX() const { return (rr+ll)/V(2); }
   V centerY() const { return (tt+bb)/V(2); }
 
+  V& left() { return ll; }
+  V& right() { return rr; }
+  V& bottom() { return bb; }
+  V& top() { return tt; }
+
+  const V& left() const { return ll; }
+  const V& right() const { return rr; }
+  const V& bottom() const { return bb; }
+  const V& top() const { return tt; }
+
+  bool contains(const Gfx::Vec2<V>& pt) const
+    { return pt.x()>=ll && pt.x()<=rr && pt.y()>=bb && pt.y()<=tt; }
+
   //
   // Manipulators
   //
@@ -200,16 +213,6 @@ public:
           }
       }
   }
-
-  V& left() { return ll; }
-  V& right() { return rr; }
-  V& bottom() { return bb; }
-  V& top() { return tt; }
-
-  const V& left() const { return ll; }
-  const V& right() const { return rr; }
-  const V& bottom() const { return bb; }
-  const V& top() const { return tt; }
 
 private:
   // Data members
