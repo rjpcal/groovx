@@ -1,0 +1,65 @@
+dnl Process this file with autoconf to produce a configure script.
+dnl
+dnl Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
+dnl
+dnl $Revision$
+
+AC_INIT(grsh, [0.8a8], [rjpeters@klab.caltech.edu])
+
+
+dnl Checks for programs.
+dnl AC_PROG_CXX
+dnl AC_PROG_CC
+
+dnl Checks for libraries.
+
+dnl Checks for header files.
+dnl AC_PATH_X
+dnl AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+dnl AC_C_CONST
+dnl AC_C_INLINE
+dnl AC_TYPE_MODE_T
+dnl AC_TYPE_SIZE_T
+dnl AC_HEADER_TIME
+dnl AC_STRUCT_TM
+
+dnl Checks for library functions.
+dnl AC_HEADER_STDC
+dnl AC_FUNC_STRFTIME
+dnl AC_CHECK_FUNCS(getcwd gettimeofday select strerror)
+
+dnl Specify the location of tcltk8.4
+
+AC_ARG_WITH(tcltk,
+	    AC_HELP_STRING([--with-tcltk=DIR],
+			   [specify where tcl/tk >= 8.4 are installed (default=/usr/local)]),
+	    ,
+	    with_tcltk=/usr/local)
+
+AC_SUBST(with_tcltk)
+
+dnl Check whether to enable matlab support
+
+AC_ARG_ENABLE(matlab,
+	      AC_HELP_STRING([--enable-matlab],
+			     [enable MATLAB support (default=yes)]),
+	      ,
+	      enable_matlab=yes)
+
+AC_SUBST(enable_matlab)
+
+dnl Check whether to enable GNU readline command editing for the shell interface
+
+AC_ARG_ENABLE(readline,
+	      AC_HELP_STRING([--enable-readline],
+	                     [enable GNU readline command editing (default=yes)]),
+	      ,
+	      enable_readline=yes)
+
+AC_SUBST(enable_readline)
+
+AC_CONFIG_FILES([Makedefs])
+
+AC_OUTPUT()
