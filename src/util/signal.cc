@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Sat Jun 23 13:02:00 2001
+// written: Mon Aug 13 16:39:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,12 +37,8 @@ namespace
   typedef dlink_list<ObsRef> ListType;
 }
 
-struct Util::Observable::ObsImpl {
-public:
-  ObsImpl() : itsObservers()
-    { }
-  ~ObsImpl()
-    { }
+struct Util::Observable::ObsImpl
+{
   ListType itsObservers;
 };
 
@@ -53,37 +49,40 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 Util::Observable::Observable() :
-  itsImpl(*(new ObsImpl))
+  itsImpl(new ObsImpl)
 {
 DOTRACE("Util::Observable::Observable");
 }
 
-Util::Observable::~Observable() {
+Util::Observable::~Observable()
+{
 DOTRACE("Util::Observable::~Observable");
-  sendDestroyMsg();
-  delete &itsImpl;
+  delete itsImpl;
 }
 
-void Util::Observable::attach(Util::Observer* obs) {
+void Util::Observable::attach(Util::Observer* obs)
+{
 DOTRACE("Util::Observable::attach");
   if (!obs) return;
-  itsImpl.itsObservers.push_back(ObsRef(obs, Util::WEAK));
-  DebugEvalNL(itsImpl.itsObservers.size());
+  itsImpl->itsObservers.push_back(ObsRef(obs, Util::WEAK));
+  DebugEvalNL(itsImpl->itsObservers.size());
 }
 
-void Util::Observable::detach(Util::Observer* obs) {
+void Util::Observable::detach(Util::Observer* obs)
+{
 DOTRACE("Util::Observable::detach");
   if (!obs) return;
-  itsImpl.itsObservers.remove(ObsRef(obs, Util::WEAK));
-  DebugEvalNL(itsImpl.itsObservers.size());
+  itsImpl->itsObservers.remove(ObsRef(obs, Util::WEAK));
+  DebugEvalNL(itsImpl->itsObservers.size());
 }
 
-void Util::Observable::sendStateChangeMsg() const {
+void Util::Observable::sendStateChangeMsg() const
+{
 DOTRACE("Util::Observable::sendStateChangeMsg");
 
   for (ListType::iterator
-         ii = itsImpl.itsObservers.begin(),
-         end = itsImpl.itsObservers.end();
+         ii = itsImpl->itsObservers.begin(),
+         end = itsImpl->itsObservers.end();
        ii != end;
        ++ii)
     {
@@ -91,34 +90,6 @@ DOTRACE("Util::Observable::sendStateChangeMsg");
       if ((*ii).isValid())
         (*ii)->receiveStateChangeMsg(this);
     }
-}
-
-void Util::Observable::sendDestroyMsg() {
-DOTRACE("Util::Observable::sendDestroyMsg");
-  ListType& theList = itsImpl.itsObservers;
-
-  DebugEval(itsImpl.itsObservers.size());
-
-  // WARNING! This loop _cannot_ be done with a simple for loop that
-  // iterates over the elements of theList, since theList is changed
-  // within the loop by detach() (which removes an element from
-  // theList), and therefore the loop iterator would be invalidated.
-  while (!theList.empty()) {
-    DebugEval(itsImpl.itsObservers.size());
-
-    WeakRef<Util::Observer> obs = theList.front();
-
-    DebugEval((void *) this);
-
-    // Let the observer know that 'this' is being destroyed ...
-    if (obs.isValid())
-      {
-        obs->receiveDestroyMsg(this);
-      }
-
-    // ... and remove it from the list of observers
-    theList.pop_front();
-  }
 }
 
 static const char vcid_observable_cc[] = "$Header$";

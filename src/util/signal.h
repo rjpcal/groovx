@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Tue Jun  5 10:53:03 2001
+// written: Mon Aug 13 16:39:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ namespace Util
 class Util::Observable {
 protected:
   /** Constructor is protected so that Observable cannot be directly
-		instantiated.  */
+      instantiated.  */
   Observable();
 
 public:
@@ -51,17 +51,13 @@ public:
   void detach(Observer* obs);
 
   /** Informs all this object's Observers that this Observable's state
-		has changed */
+      has changed */
   void sendStateChangeMsg() const;
 
 private:
-  /** Calls receiveDestroyMsg() on all of this object's
-      observers. This is done only in Observable's destructor. */
-  void sendDestroyMsg();
-
   class ObsImpl;
 
-  ObsImpl& itsImpl;
+  ObsImpl* itsImpl;
 };
 
 static const char vcid_observable_h[] = "$Header$";
