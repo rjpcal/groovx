@@ -422,18 +422,53 @@ public:
   void arc(double x, double y, double r, double start, double end,
            bool reverse=false)
   {
-    // A good cubic Bezier approximation for a unit circle 90 degree arc is:
-    //
-    //   (1,0) (1,a) (a,1) (0,1)
-    //
-    // where a = 4/3*(sqrt(2)-1).
-
     indent(); push1(x); push1(y); push1(r); push1(start); push1(end);
     if (reverse)
       itsFstream << "arcn\n";
     else
       itsFstream << "arc\n";
     //      indent(); itsFstream << "4 { pop } repeat\n";
+  }
+
+  void circle(double x, double y, double r, bool reverse=false)
+  {
+    // A good cubic Bezier approximation for a radius-r 90 degree arc is:
+    //
+    //   (r,0) (r,r*a) (r*a,r) (0,r)
+    //
+    // where a = 4/3*(sqrt(2)-1).
+
+    const double a = 4.0/3.0 * (sqrt(2.0)-1.0);
+
+    const Vec2d pt1 (x+r   , y);      // right
+    const Vec2d pt2 (x+r   , y+r*a);
+    const Vec2d pt3 (x+r*a , y+r);
+    const Vec2d pt4 (x     , y+r);    // top
+    const Vec2d pt5 (x-r*a , y+r);
+    const Vec2d pt6 (x-r   , y+r*a);
+    const Vec2d pt7 (x-r   , y);      // left
+    const Vec2d pt8 (x-r   , y-r*a);
+    const Vec2d pt9 (x-r*a , y-r);
+    const Vec2d pt10(x     , y-r);    // bottom
+    const Vec2d pt11(x+r*a , y-r);
+    const Vec2d pt12(x+r   , y-r*a);
+
+    if (!reverse)
+      {
+        moveto(pt1);
+        indent(); pushxy(pt2); pushxy(pt3); pushxy(pt4); itsFstream << "curveto\n";
+        indent(); pushxy(pt5); pushxy(pt6); pushxy(pt7); itsFstream << "curveto\n";
+        indent(); pushxy(pt8); pushxy(pt9); pushxy(pt10); itsFstream << "curveto\n";
+        indent(); pushxy(pt11); pushxy(pt12); pushxy(pt1); itsFstream << "curveto\n";
+      }
+    else
+      {
+        moveto(pt1);
+        indent(); pushxy(pt12); pushxy(pt11); pushxy(pt10); itsFstream << "curveto\n";
+        indent(); pushxy(pt9); pushxy(pt8); pushxy(pt7); itsFstream << "curveto\n";
+        indent(); pushxy(pt6); pushxy(pt5); pushxy(pt4); itsFstream << "curveto\n";
+        indent(); pushxy(pt3); pushxy(pt2); pushxy(pt1); itsFstream << "curveto\n";
+      }
   }
 
   void arcn(double x, double y, double r, double start, double end)
@@ -903,10 +938,11 @@ void Gfx::PSCanvas::drawCircle(double inner_radius, double outer_radius,
 DOTRACE("Gfx::PSCanvas::drawCircle");
 
   rep->newpath();
-  rep->arc(0.0, 0.0, outer_radius, 0.0, 360.0);
+  rep->circle(0.0, 0.0, outer_radius);
   if (fill)
     {
-      rep->arcn(0.0, 0.0, inner_radius, 360.0, 0.0);
+      if (inner_radius > 0)
+        rep->circle(0.0, 0.0, inner_radius, true);
       rep->fill();
     }
   else
