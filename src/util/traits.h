@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri May 18 16:13:27 2001
-// written: Tue Jul  2 13:10:18 2002
+// written: Mon Nov  4 10:19:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,13 +15,6 @@
 
 namespace Util
 {
-  /// Symbol class for specifying some type.
-  template <class T>
-  struct TypeCue
-  {
-    typedef T Type;
-  };
-
   /// Basic type traits class.
   template <class T>
   struct TypeTraits
@@ -50,6 +43,39 @@ namespace Util
   struct TypeTraits<const T&>
   {
     typedef T StackT;
+  };
+
+  /// Select between two types based on a compile-time constant boolean expression.
+  template <bool test, class IfTrue, class IfFalse>
+  struct SelectIf
+  {
+    typedef IfTrue Type;
+  };
+
+  /// Specialization of SelectIf for 'false'.
+  template <class IfTrue, class IfFalse>
+  struct SelectIf<false, IfTrue, IfFalse>
+  {
+    typedef IfFalse Type;
+  };
+
+  /// Helper class for IsSubSuper.
+  template <class T>
+  struct TypeMatch
+  {
+    struct s1 { char x; };
+    struct s2 { s1 x[2]; };
+
+    static s1 foo(T* p);
+    static s2 foo(...);
+  };
+
+  /// Determine whether Sub derives from Super.
+  template <class Sub, class Super>
+  struct IsSubSuper
+  {
+    enum { sz = sizeof(TypeMatch<Super>::foo((Sub*)0)) };
+    enum { result = (sz == sizeof(typename TypeMatch<Super>::s1)) ? 1 : 0 };
   };
 
   /// Basic string class.
