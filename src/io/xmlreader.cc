@@ -43,17 +43,21 @@
 #include "util/strings.h"
 #include "util/value.h"
 
-#include <cstring>
-#include <istream>
-#include <map>
-#include <ostream>
-#include <string>
-#include <typeinfo>
-#include <vector>
+#include <cstring>           // for strcmp()
+#include <fstream>           // for xmlDebug() and loadXML()
+#include <iostream>          // for cout in xmlDebug()
+#include <istream>           // for TreeBuilder constructor
+#include <map>               // for GroupElement
+#include <ostream>           // for XmlElement::trace()
+#include <typeinfo>          // for error reporting and XmlElement::trace()
+#include <vector>            // for stack in TreeBuilder
 
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
+
+using Util::Ref;
+using Util::SoftRef;
 
 namespace
 {
@@ -86,502 +90,497 @@ namespace
     Assert(0);
     return 0; // can't happen
   }
-}
 
-using Util::Ref;
-using Util::SoftRef;
+  class XmlElement;
 
-class XmlElement;
+  typedef shared_ptr<XmlElement> ElPtr;
 
-typedef shared_ptr<XmlElement> ElPtr;
-
-class XmlElement
-{
-public:
-  virtual ~XmlElement();
-
-  virtual void addChild(const char* /*name*/, ElPtr /*elp*/)
+  class XmlElement
   {
-    throw Util::Error(fstring("child elements not allowed "
-                              "within elements of type: ",
-                              demangled_name(typeid(*this))));
-  }
+  public:
+    virtual ~XmlElement();
 
-  virtual void characterData(const char* /*text*/, int /*len*/) { }
-
-  virtual void print(std::ostream& os,
-                     int depth, const char* name) const = 0;
-
-  virtual void finish() {}
-};
-
-XmlElement::~XmlElement() {}
-
-template <class T>
-T& elementCast(XmlElement* elp, const fstring& name)
-{
-  if (elp == 0)
-    throw Util::Error(fstring("no element with name: ", name));
-  T* t = dynamic_cast<T*>(elp);
-  if (t == 0)
-    throw Util::Error(fstring("wrong element type; expected ",
-                              demangled_name(typeid(T)),
-                              ", got ",
-                              demangled_name(typeid(*elp))));
-  return *t;
-}
-
-template <class T>
-class BasicElement : public XmlElement
-{
-public:
-  BasicElement(const char* str, const char* name);
-  virtual ~BasicElement() {}
-
-  virtual void print(std::ostream& os,
-                     int depth, const char* name) const
-  {
-    for (int i = 0; i < depth; ++i) os << "  ";
-    os << name << "(" << typeid(T).name() << ") value=" << itsVal << "\n";
-  }
-
-  T itsVal;
-};
-
-template <>
-BasicElement<double>::BasicElement(const char* str, const char* name) :
-  itsVal(0.0)
-{
-  int n = sscanf(str, "%lf", &itsVal);
-  if (n != 1)
+    virtual void addChild(const char* /*name*/, ElPtr /*elp*/)
     {
-      invalidAttr("value", "double", name);
+      throw Util::Error(fstring("child elements not allowed "
+                                "within elements of type: ",
+                                demangled_name(typeid(*this))));
     }
-}
 
-template <>
-BasicElement<int>::BasicElement(const char* str, const char* name) :
-  itsVal(0)
-{
-  int n = sscanf(str, "%d", &itsVal);
-  if (n != 1)
+    virtual void characterData(const char* /*text*/, int /*len*/) { }
+
+    virtual void trace(std::ostream& os,
+                       int depth, const char* name) const = 0;
+
+    virtual void finish() {}
+  };
+
+  XmlElement::~XmlElement() {}
+
+  template <class T>
+  T& elementCast(XmlElement* elp, const fstring& name)
+  {
+    if (elp == 0)
+      throw Util::Error(fstring("no element with name: ", name));
+    T* t = dynamic_cast<T*>(elp);
+    if (t == 0)
+      throw Util::Error(fstring("wrong element type; expected ",
+                                demangled_name(typeid(T)),
+                                ", got ",
+                                demangled_name(typeid(*elp))));
+    return *t;
+  }
+
+  template <class T>
+  class BasicElement : public XmlElement
+  {
+  public:
+    BasicElement(const char* str, const char* name);
+    virtual ~BasicElement() {}
+
+    virtual void trace(std::ostream& os,
+                       int depth, const char* name) const
     {
-      invalidAttr("value", "int", name);
+      for (int i = 0; i < depth; ++i) os << "  ";
+      os << name << "(" << typeid(T).name() << ") value=" << itsVal << "\n";
     }
-}
 
-template <>
-BasicElement<bool>::BasicElement(const char* str, const char* name) :
-  itsVal(true)
-{
-  int i = 0;
-  int n = sscanf(str, "%d", &i);
-  if (n != 1)
-    {
-      invalidAttr("value", "bool", name);
-    }
-  itsVal = bool(i);
-}
+    T itsVal;
+  };
 
-class StringElement : public XmlElement
-{
-public:
-  StringElement() : itsVal() {}
-  virtual ~StringElement() {}
-
-  virtual void print(std::ostream& os,
-                     int depth, const char* name) const
+  template <>
+  BasicElement<double>::BasicElement(const char* str, const char* name) :
+    itsVal(0.0)
   {
-    for (int i = 0; i < depth; ++i) os << "  ";
-    os << name << "(string) value=" << itsVal << "\n";
-  }
-
-  virtual void characterData(const char* text, int len)
-  {
-    Util::CharData cdata(text, len);
-    itsVal.append(cdata);
-  }
-
-  fstring itsVal;
-};
-
-typedef BasicElement<double> DoubleElement;
-typedef BasicElement<int> IntElement;
-typedef BasicElement<bool> BoolElement;
-
-class ValueElement : public XmlElement
-{
-public:
-  ValueElement(const char* val, const char* /*name*/) : itsVal(val) {}
-  virtual ~ValueElement() {}
-
-  virtual void print(std::ostream& os,
-                     int depth, const char* name) const
-  {
-    for (int i = 0; i < depth; ++i) os << "  ";
-    os << name << "(valobj) value=" << itsVal << "\n";
-  }
-
-  fstring itsVal;
-};
-
-class ObjrefElement : public XmlElement
-{
-public:
-  ObjrefElement(const char** attr, const char* eltype, const char* name,
-                shared_ptr<IO::ObjectMap> objmap) :
-    itsType(""),
-    itsId(-1),
-    itsObjects(objmap)
-  {
-    itsId = atoi(findAttr(attr, "id", eltype, name));
-    itsType = findAttr(attr, "type", eltype, name);
-
-    if (itsId < 0)
+    int n = sscanf(str, "%lf", &itsVal);
+    if (n != 1)
       {
-        invalidAttr("id", eltype, name);
-      }
-
-    Assert(itsId >= 0);
-
-    if (itsType.empty())
-      {
-        invalidAttr("type", eltype, name);
-      }
-
-    Assert(!itsType.empty());
-  }
-
-  virtual ~ObjrefElement() {}
-
-  virtual void print(std::ostream& os,
-                     int depth, const char* name) const
-  {
-    for (int i = 0; i < depth; ++i) os << "  ";
-    os << name << "(objref:" << itsType << ") id=" << itsId << "\n";
-  }
-
-  Ref<IO::IoObject> getObject()
-  {
-    return itsObjects->getObject(itsId);
-  }
-
-  fstring itsType;
-  int itsId;
-  shared_ptr<IO::ObjectMap> itsObjects;
-};
-
-class GroupElement : public ObjrefElement, public IO::Reader
-{
-public:
-  GroupElement(const char** attr, const char* eltype, const char* name,
-               shared_ptr<IO::ObjectMap> objmap) :
-    ObjrefElement(attr, eltype, name, objmap),
-    itsVersion(-1),
-    itsElems()
-  {
-    itsVersion = atoi(findAttr(attr, "version", eltype, name));
-
-    if (itsVersion < 0)
-      {
-        invalidAttr("version", eltype, name);
-      }
-    Assert(itsVersion >= 0);
-  }
-
-  virtual ~GroupElement() throw() {}
-
-  virtual void addChild(const char* name, ElPtr elp)
-  {
-    itsElems[name] = elp;
-  }
-
-  virtual void print(std::ostream& os,
-                     int depth, const char* name) const
-  {
-    for (int i = 0; i < depth; ++i) os << "  ";
-    os << name << "(object:" << itsType << "):\n";
-    for (MapType::const_iterator
-           itr = itsElems.begin(),
-           stop = itsElems.end();
-         itr != stop;
-         ++itr)
-      {
-        (*itr).second->print(os, depth+1, (*itr).first.c_str());
+        invalidAttr("value", "double", name);
       }
   }
 
-  virtual IO::VersionId readSerialVersionId()
+  template <>
+  BasicElement<int>::BasicElement(const char* str, const char* name) :
+    itsVal(0)
   {
-    return itsVersion;
-  }
-
-  virtual char readChar(const fstring& /*name*/) { Assert(0); return '\0'; }
-
-  virtual int readInt(const fstring& name)
-  {
-    ElPtr el = itsElems[name];
-    IntElement& ilp = elementCast<IntElement>(el.get(), name);
-    return ilp.itsVal;
-  }
-
-  virtual bool readBool(const fstring& name)
-  {
-    ElPtr el = itsElems[name];
-    BoolElement& blp = elementCast<BoolElement>(el.get(), name);
-    return blp.itsVal;
-  }
-
-  virtual double readDouble(const fstring& name)
-  {
-    ElPtr el = itsElems[name];
-    DoubleElement& dlp = elementCast<DoubleElement>(el.get(), name);
-    return dlp.itsVal;
-  }
-
-  virtual void readValueObj(const fstring& name, Value& value)
-  {
-    ElPtr el = itsElems[name];
-    ValueElement& vlp = elementCast<ValueElement>(el.get(), name);
-    value.setFstring(vlp.itsVal);
-  }
-
-  virtual Ref<IO::IoObject> readObject(const fstring& name)
-  {
-    return readMaybeObject(name);
-  }
-
-  virtual SoftRef<IO::IoObject> readMaybeObject(const fstring& name);
-
-  virtual void readOwnedObject(const fstring& name,
-                               Ref<IO::IoObject> obj)
-  {
-    ElPtr el = itsElems[name];
-    GroupElement& glp = elementCast<GroupElement>(el.get(), name);
-    glp.inflate(*obj);
-  }
-
-  virtual void readBaseClass(const fstring& name,
-                             Ref<IO::IoObject> basePart)
-  {
-    ElPtr el = itsElems[name];
-    GroupElement& glp = elementCast<GroupElement>(el.get(), name);
-    glp.inflate(*basePart);
-  }
-
-  virtual Ref<IO::IoObject> readRoot(IO::IoObject* /*root*/)
-  {
-    Assert(0); return Ref<IO::IoObject>((IO::IoObject*)0);
-  }
-
-  void inflate(IO::IoObject& obj)
-  {
-    obj.readFrom(*this);
-  }
-
-protected:
-  virtual fstring readStringImpl(const fstring& name)
-  {
-    ElPtr el = itsElems[name];
-    StringElement& slp = elementCast<StringElement>(el.get(), name);
-    return slp.itsVal;
-  }
-
-public:
-  int itsVersion;
-  typedef std::map<fstring, ElPtr> MapType;
-  MapType itsElems;
-};
-
-class ObjectElement : public GroupElement
-{
-public:
-  ObjectElement(const char** attr, const char* name, shared_ptr<IO::ObjectMap> objmap) :
-    GroupElement(attr, "object", name, objmap)
-  {
-    // Return the object for this id, creating a new object if necessary:
-    itsObject = objmap->fetchObject(itsType.c_str(), itsId);
-  }
-
-  SoftRef<IO::IoObject> itsObject;
-
-  virtual void finish()
-  {
-    if (itsObject.isValid())
-      inflate(*itsObject);
-  }
-};
-
-SoftRef<IO::IoObject> GroupElement::readMaybeObject(const fstring& name)
-{
-  ElPtr el = itsElems[name];
-  ObjrefElement& olp = elementCast<ObjrefElement>(el.get(), name);
-  return olp.getObject();
-}
-
-class RootElement
-{
-public:
-  RootElement() : itsChild(0) {}
-
-  void addChild(const char*, ElPtr elp)
-  {
-    Assert(itsChild.get() == 0);
-    itsChild = elp;
-  }
-
-  void print(std::ostream& os, int depth, const char* name) const
-  {
-    if (itsChild.get() == 0) return;
-    Assert(itsChild.get() != 0);
-    itsChild->print(os, depth, name);
-  }
-
-  ElPtr itsChild;
-};
-
-ElPtr makeElement(const char* el, const char** attr, const char* name,
-                  shared_ptr<IO::ObjectMap> objmap)
-{
-  if (strcmp(el, "object") == 0)
-    {
-      return ElPtr(new ObjectElement(attr, name, objmap));
-    }
-  else if (strcmp(el, "ownedobj") == 0)
-    {
-      return ElPtr(new GroupElement(attr, "ownedobj", name, objmap));
-    }
-  else if (strcmp(el, "baseclass") == 0)
-    {
-      return ElPtr(new GroupElement(attr, "baseclass", name, objmap));
-    }
-  else if (strcmp(el, "objref") == 0)
-    {
-      return ElPtr(new ObjrefElement(attr, "objref", name, objmap));
-    }
-  else if (strcmp(el, "string") == 0)
-    {
-      return ElPtr(new StringElement);
-    }
-  else
-    {
-      const char* val = findAttr(attr, "value", el, name);
-
-      if (strcmp(el, "double") == 0)
-        {
-          return ElPtr(new DoubleElement(val, name));
-        }
-      else if (strcmp(el, "int") == 0)
-        {
-          return ElPtr(new IntElement(val, name));
-        }
-      else if (strcmp(el, "bool") == 0)
-        {
-          return ElPtr(new BoolElement(val, name));
-        }
-      else if (strcmp(el, "valobj") == 0)
-        {
-          return ElPtr(new ValueElement(val, name));
-        }
-      else
-        {
-          throw Util::Error(fstring("unknown element type: ", el));
-        }
-    }
-}
-
-class TreeBuilder : public XmlParser
-{
-public:
-  TreeBuilder(std::istream& is) :
-    XmlParser(is),
-    itsRoot(new RootElement),
-    itsStack(),
-    itsDepth(0),
-    itsStartCount(0),
-    itsEndCount(0),
-    itsObjects(new IO::ObjectMap),
-    itsElCount(0)
-  {}
-
-  virtual ~TreeBuilder() {}
-
-  shared_ptr<RootElement> getRoot() const
-  {
-    if (itsStack.size() != 0)
+    int n = sscanf(str, "%d", &itsVal);
+    if (n != 1)
       {
-        dbgEvalNL(0, itsDepth);
-        dbgEvalNL(0, itsStack.size());
-        dbgEvalNL(0, typeid(*itsStack.back()).name());
+        invalidAttr("value", "int", name);
       }
-    Assert(itsStack.size() == 0);
-    return itsRoot;
   }
 
-protected:
-  virtual void elementStart(const char* el, const char** attr);
-  virtual void elementEnd(const char* el);
-  virtual void characterData(const char* text, int length);
+  template <>
+  BasicElement<bool>::BasicElement(const char* str, const char* name) :
+    itsVal(true)
+  {
+    int i = 0;
+    int n = sscanf(str, "%d", &i);
+    if (n != 1)
+      {
+        invalidAttr("value", "bool", name);
+      }
+    itsVal = bool(i);
+  }
 
-private:
-  shared_ptr<RootElement> itsRoot;
-  std::vector<ElPtr> itsStack;
-  int itsDepth;
-  int itsStartCount;
-  int itsEndCount;
-  shared_ptr<IO::ObjectMap> itsObjects;
-  int itsElCount;
-};
+  class StringElement : public XmlElement
+  {
+  public:
+    StringElement() : itsVal() {}
+    virtual ~StringElement() {}
 
-void TreeBuilder::elementStart(const char* el, const char** attr)
-{
-  ++itsElCount;
-  ++itsStartCount;
-  ++itsDepth;
-
-  const char* name = findAttr(attr, "name", el, "(noname)");
-
-  Assert(name != 0);
-
-  ElPtr elp = makeElement(el, attr, name, itsObjects);
-
-  if (itsStack.size() == 0)
-    itsRoot->addChild(name, elp);
-  else
-    itsStack.back()->addChild(name, elp);
-
-  itsStack.push_back(elp);
-
-  if (GET_DBG_LEVEL() >= 3)
+    virtual void trace(std::ostream& os,
+                       int depth, const char* name) const
     {
-      dbgEval(3, itsElCount);
-      dbgEval(3, el);
-      dbgEval(3, name);
-      dbgEval(3, elp.get());
-      dbgEvalNL(3, itsStack.size());
+      for (int i = 0; i < depth; ++i) os << "  ";
+      os << name << "(string) value=" << itsVal << "\n";
     }
-}
 
-void TreeBuilder::elementEnd(const char* /*el*/)
-{
-  --itsEndCount;
-  Assert(itsStack.size() > 0);
-  Assert(itsStack.back().get() != 0);
-  itsStack.back()->finish();
-  itsStack.pop_back();
-  --itsDepth;
-}
+    virtual void characterData(const char* text, int len)
+    {
+      Util::CharData cdata(text, len);
+      itsVal.append(cdata);
+    }
 
-void TreeBuilder::characterData(const char* text, int length)
-{
-  Assert(itsStack.size() > 0);
-  Assert(itsStack.back().get() != 0);
-  itsStack.back()->characterData(text, length);
-}
+    fstring itsVal;
+  };
 
+  typedef BasicElement<double> DoubleElement;
+  typedef BasicElement<int> IntElement;
+  typedef BasicElement<bool> BoolElement;
 
-#include <iostream>
-#include <fstream>
+  class ValueElement : public XmlElement
+  {
+  public:
+    ValueElement(const char* val, const char* /*name*/) : itsVal(val) {}
+    virtual ~ValueElement() {}
+
+    virtual void trace(std::ostream& os,
+                       int depth, const char* name) const
+    {
+      for (int i = 0; i < depth; ++i) os << "  ";
+      os << name << "(valobj) value=" << itsVal << "\n";
+    }
+
+    fstring itsVal;
+  };
+
+  class ObjrefElement : public XmlElement
+  {
+  public:
+    ObjrefElement(const char** attr, const char* eltype, const char* name,
+                  shared_ptr<IO::ObjectMap> objmap) :
+      itsType(""),
+      itsId(-1),
+      itsObjects(objmap)
+    {
+      itsId = atoi(findAttr(attr, "id", eltype, name));
+      itsType = findAttr(attr, "type", eltype, name);
+
+      if (itsId < 0)
+        {
+          invalidAttr("id", eltype, name);
+        }
+
+      Assert(itsId >= 0);
+
+      if (itsType.empty())
+        {
+          invalidAttr("type", eltype, name);
+        }
+
+      Assert(!itsType.empty());
+    }
+
+    virtual ~ObjrefElement() {}
+
+    virtual void trace(std::ostream& os,
+                       int depth, const char* name) const
+    {
+      for (int i = 0; i < depth; ++i) os << "  ";
+      os << name << "(objref:" << itsType << ") id=" << itsId << "\n";
+    }
+
+    Ref<IO::IoObject> getObject()
+    {
+      return itsObjects->getObject(itsId);
+    }
+
+    fstring itsType;
+    int itsId;
+    shared_ptr<IO::ObjectMap> itsObjects;
+  };
+
+  class GroupElement : public ObjrefElement, public IO::Reader
+  {
+  public:
+    GroupElement(const char** attr, const char* eltype, const char* name,
+                 shared_ptr<IO::ObjectMap> objmap) :
+      ObjrefElement(attr, eltype, name, objmap),
+      itsVersion(-1),
+      itsElems()
+    {
+      itsVersion = atoi(findAttr(attr, "version", eltype, name));
+
+      if (itsVersion < 0)
+        {
+          invalidAttr("version", eltype, name);
+        }
+      Assert(itsVersion >= 0);
+    }
+
+    virtual ~GroupElement() throw() {}
+
+    virtual void addChild(const char* name, ElPtr elp)
+    {
+      itsElems[name] = elp;
+    }
+
+    virtual void trace(std::ostream& os,
+                       int depth, const char* name) const
+    {
+      for (int i = 0; i < depth; ++i) os << "  ";
+      os << name << "(object:" << itsType << "):\n";
+      for (MapType::const_iterator
+             itr = itsElems.begin(),
+             stop = itsElems.end();
+           itr != stop;
+           ++itr)
+        {
+          (*itr).second->trace(os, depth+1, (*itr).first.c_str());
+        }
+    }
+
+    virtual IO::VersionId readSerialVersionId()
+    {
+      return itsVersion;
+    }
+
+    virtual char readChar(const fstring& /*name*/) { Assert(0); return '\0'; }
+
+    virtual int readInt(const fstring& name)
+    {
+      ElPtr el = itsElems[name];
+      IntElement& ilp = elementCast<IntElement>(el.get(), name);
+      return ilp.itsVal;
+    }
+
+    virtual bool readBool(const fstring& name)
+    {
+      ElPtr el = itsElems[name];
+      BoolElement& blp = elementCast<BoolElement>(el.get(), name);
+      return blp.itsVal;
+    }
+
+    virtual double readDouble(const fstring& name)
+    {
+      ElPtr el = itsElems[name];
+      DoubleElement& dlp = elementCast<DoubleElement>(el.get(), name);
+      return dlp.itsVal;
+    }
+
+    virtual void readValueObj(const fstring& name, Value& value)
+    {
+      ElPtr el = itsElems[name];
+      ValueElement& vlp = elementCast<ValueElement>(el.get(), name);
+      value.setFstring(vlp.itsVal);
+    }
+
+    virtual Ref<IO::IoObject> readObject(const fstring& name)
+    {
+      return readMaybeObject(name);
+    }
+
+    virtual SoftRef<IO::IoObject> readMaybeObject(const fstring& name);
+
+    virtual void readOwnedObject(const fstring& name,
+                                 Ref<IO::IoObject> obj)
+    {
+      ElPtr el = itsElems[name];
+      GroupElement& glp = elementCast<GroupElement>(el.get(), name);
+      glp.inflate(*obj);
+    }
+
+    virtual void readBaseClass(const fstring& name,
+                               Ref<IO::IoObject> basePart)
+    {
+      ElPtr el = itsElems[name];
+      GroupElement& glp = elementCast<GroupElement>(el.get(), name);
+      glp.inflate(*basePart);
+    }
+
+    virtual Ref<IO::IoObject> readRoot(IO::IoObject* /*root*/)
+    {
+      Assert(0); return Ref<IO::IoObject>((IO::IoObject*)0);
+    }
+
+    void inflate(IO::IoObject& obj)
+    {
+      obj.readFrom(*this);
+    }
+
+  protected:
+    virtual fstring readStringImpl(const fstring& name)
+    {
+      ElPtr el = itsElems[name];
+      StringElement& slp = elementCast<StringElement>(el.get(), name);
+      return slp.itsVal;
+    }
+
+  public:
+    int itsVersion;
+    typedef std::map<fstring, ElPtr> MapType;
+    MapType itsElems;
+  };
+
+  class ObjectElement : public GroupElement
+  {
+  public:
+    ObjectElement(const char** attr, const char* name, shared_ptr<IO::ObjectMap> objmap) :
+      GroupElement(attr, "object", name, objmap)
+    {
+      // Return the object for this id, creating a new object if necessary:
+      itsObject = objmap->fetchObject(itsType.c_str(), itsId);
+    }
+
+    SoftRef<IO::IoObject> itsObject;
+
+    virtual void finish()
+    {
+      if (itsObject.isValid())
+        inflate(*itsObject);
+    }
+  };
+
+  SoftRef<IO::IoObject> GroupElement::readMaybeObject(const fstring& name)
+  {
+    ElPtr el = itsElems[name];
+    ObjrefElement& olp = elementCast<ObjrefElement>(el.get(), name);
+    return olp.getObject();
+  }
+
+  class RootElement
+  {
+  public:
+    RootElement() : itsChild(0) {}
+
+    void addChild(const char*, ElPtr elp)
+    {
+      Assert(itsChild.get() == 0);
+      itsChild = elp;
+    }
+
+    void trace(std::ostream& os, int depth, const char* name) const
+    {
+      if (itsChild.get() == 0) return;
+      Assert(itsChild.get() != 0);
+      itsChild->trace(os, depth, name);
+    }
+
+    ElPtr itsChild;
+  };
+
+  ElPtr makeElement(const char* el, const char** attr, const char* name,
+                    shared_ptr<IO::ObjectMap> objmap)
+  {
+    if (strcmp(el, "object") == 0)
+      {
+        return ElPtr(new ObjectElement(attr, name, objmap));
+      }
+    else if (strcmp(el, "ownedobj") == 0)
+      {
+        return ElPtr(new GroupElement(attr, "ownedobj", name, objmap));
+      }
+    else if (strcmp(el, "baseclass") == 0)
+      {
+        return ElPtr(new GroupElement(attr, "baseclass", name, objmap));
+      }
+    else if (strcmp(el, "objref") == 0)
+      {
+        return ElPtr(new ObjrefElement(attr, "objref", name, objmap));
+      }
+    else if (strcmp(el, "string") == 0)
+      {
+        return ElPtr(new StringElement);
+      }
+    else
+      {
+        const char* val = findAttr(attr, "value", el, name);
+
+        if (strcmp(el, "double") == 0)
+          {
+            return ElPtr(new DoubleElement(val, name));
+          }
+        else if (strcmp(el, "int") == 0)
+          {
+            return ElPtr(new IntElement(val, name));
+          }
+        else if (strcmp(el, "bool") == 0)
+          {
+            return ElPtr(new BoolElement(val, name));
+          }
+        else if (strcmp(el, "valobj") == 0)
+          {
+            return ElPtr(new ValueElement(val, name));
+          }
+        else
+          {
+            throw Util::Error(fstring("unknown element type: ", el));
+          }
+      }
+  }
+
+  class TreeBuilder : public XmlParser
+  {
+  public:
+    TreeBuilder(std::istream& is) :
+      XmlParser(is),
+      itsRoot(new RootElement),
+      itsStack(),
+      itsDepth(0),
+      itsStartCount(0),
+      itsEndCount(0),
+      itsObjects(new IO::ObjectMap),
+      itsElCount(0)
+    {}
+
+    virtual ~TreeBuilder() {}
+
+    shared_ptr<RootElement> getRoot() const
+    {
+      if (itsStack.size() != 0)
+        {
+          dbgEvalNL(0, itsDepth);
+          dbgEvalNL(0, itsStack.size());
+          dbgEvalNL(0, typeid(*itsStack.back()).name());
+        }
+      Assert(itsStack.size() == 0);
+      return itsRoot;
+    }
+
+  protected:
+    virtual void elementStart(const char* el, const char** attr);
+    virtual void elementEnd(const char* el);
+    virtual void characterData(const char* text, int length);
+
+  private:
+    shared_ptr<RootElement> itsRoot;
+    std::vector<ElPtr> itsStack;
+    int itsDepth;
+    int itsStartCount;
+    int itsEndCount;
+    shared_ptr<IO::ObjectMap> itsObjects;
+    int itsElCount;
+  };
+
+  void TreeBuilder::elementStart(const char* el, const char** attr)
+  {
+    ++itsElCount;
+    ++itsStartCount;
+    ++itsDepth;
+
+    const char* name = findAttr(attr, "name", el, "(noname)");
+
+    Assert(name != 0);
+
+    ElPtr elp = makeElement(el, attr, name, itsObjects);
+
+    if (itsStack.size() == 0)
+      itsRoot->addChild(name, elp);
+    else
+      itsStack.back()->addChild(name, elp);
+
+    itsStack.push_back(elp);
+
+    if (GET_DBG_LEVEL() >= 3)
+      {
+        dbgEval(3, itsElCount);
+        dbgEval(3, el);
+        dbgEval(3, name);
+        dbgEval(3, elp.get());
+        dbgEvalNL(3, itsStack.size());
+      }
+  }
+
+  void TreeBuilder::elementEnd(const char* /*el*/)
+  {
+    --itsEndCount;
+    Assert(itsStack.size() > 0);
+    Assert(itsStack.back().get() != 0);
+    itsStack.back()->finish();
+    itsStack.pop_back();
+    --itsDepth;
+  }
+
+  void TreeBuilder::characterData(const char* text, int length)
+  {
+    Assert(itsStack.size() > 0);
+    Assert(itsStack.back().get() != 0);
+    itsStack.back()->characterData(text, length);
+  }
+
+} // end anonymous namespace
+
 
 Util::Ref<IO::IoObject> IO::loadXML(const char* filename)
 {
@@ -604,7 +603,7 @@ void IO::xmlDebug(const char* filename)
   x.parse();
 
   shared_ptr<RootElement> root = x.getRoot();
-  root->print(std::cout, 0, "root");
+  root->trace(std::cout, 0, "root");
 }
 
 static const char vcid_xmlreader_cc[] = "$Header$";
