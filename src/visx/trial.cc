@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue Nov 14 15:12:53 2000
+// written: Fri Nov 17 14:06:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ Util::Tracer Trial::tracer;
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const IO::VersionId TRIAL_SERIAL_VERSION_ID = 3;
+  const IO::VersionId TRIAL_SERIAL_VERSION_ID = 4;
 
   const char* ioTag = "Trial";
 }
@@ -74,6 +74,8 @@ public:
 
   Impl(Trial*) :
 	 itsCorrectResponse(Response::ALWAYS_CORRECT),
+	 itsGxNodes(),
+	 itsCurrentNode(0),
 	 itsResponses(),
 	 itsType(-1),
 	 itsRh(-1),
@@ -86,8 +88,10 @@ public:
 private:
   int itsCorrectResponse;
 
-  typedef minivec<IdItem<GxNode> > GxNodes;
+  typedef minivec<IdItem<GxSeparator> > GxNodes;
   GxNodes itsGxNodes;
+
+  int itsCurrentNode;
 
   minivec<Response> itsResponses;
   int itsType;
@@ -214,13 +218,40 @@ DOTRACE("Trial::Impl::readFrom");
 
   itsState = INACTIVE;
 
-  reader->ensureReadVersionId("Trial", 3, "Try grsh0.8a3");
+  int svid = reader->ensureReadVersionId("Trial", 3, "Try grsh0.8a3");
 
   itsGxNodes.clear();
 
-  IO::ReadUtils::readObjectSeq<GxNode>(
+  if (svid == 3) {
+	 minivec<IdItem<GxSeparator> > temp_nodes;
+
+	 IO::ReadUtils::readObjectSeq<GxSeparator>(
           reader, "gxObjects",
-			 IdItem<GxNode>::makeInserter(itsGxNodes));
+			 IdItem<GxSeparator>::makeInserter(temp_nodes));
+
+	 if (temp_nodes.size() == 0) {
+		/* do nothing, itsGxNodes stays empty */
+	 }
+	 else if (temp_nodes.size() == 1) {
+		itsGxNodes.push_back(temp_nodes[0]);
+	 }
+	 else {
+		IdItem<GxSeparator> sep(GxSeparator::make(),
+										IdItem<GxSeparator>::Insert());
+
+		for (int i = 0; i < temp_nodes.size(); ++i)
+		  {
+			 sep->addChild(temp_nodes[i].id());
+		  }
+
+		itsGxNodes.push_back(sep);
+	 }
+  }
+  else {
+	 IO::ReadUtils::readObjectSeq<GxSeparator>(
+          reader, "gxObjects",
+			 IdItem<GxSeparator>::makeInserter(itsGxNodes));
+  }
 
   itsResponses.clear();
   IO::ReadUtils::readValueObjSeq<Response>(reader, "responses",
@@ -425,12 +456,18 @@ DOTRACE("Trial::Impl::avgRespTime");
 void Trial::Impl::add(int objid, int posid) {
 DOTRACE("Trial::Impl::add");
 
-  GxSeparator* sep = GxSeparator::make();
+  IdItem<GxSeparator> sepitem(GxSeparator::make(),
+										IdItem<GxSeparator>::Insert());
 
-  sep->addChild(posid);
-  sep->addChild(objid);
+  sepitem->addChild(posid);
+  sepitem->addChild(objid);
 
-  itsGxNodes.push_back(IdItem<GxNode>(sep, IdItem<GxNode>::Insert()));
+  if (itsGxNodes.size() == 0) {
+	 itsGxNodes.push_back(sepitem);
+  }
+  else {
+	 itsGxNodes[0]->addChild(sepitem.id());
+  }
 }
 
 void Trial::Impl::clearObjs() {
@@ -609,9 +646,8 @@ DOTRACE("Trial::Impl::trUndrawTrial");
 void Trial::Impl::trDraw(GWT::Canvas& canvas, bool flush) const {
 DOTRACE("Trial::Impl::trDraw");
 
-  for (size_t i = 0; i < itsGxNodes.size(); ++i) {
-	 itsGxNodes[i]->draw(canvas);
-  } 
+  if (itsCurrentNode >= 0 && itsCurrentNode < itsGxNodes.size())
+	 itsGxNodes[itsCurrentNode]->draw(canvas);
 
   if (flush) canvas.flushOutput();
 }
@@ -619,9 +655,8 @@ DOTRACE("Trial::Impl::trDraw");
 void Trial::Impl::trUndraw(GWT::Canvas& canvas, bool flush) const {
 DOTRACE("Trial::Impl::trUndraw");
 
-  for (size_t i = 0; i < itsGxNodes.size(); ++i) {
-	 itsGxNodes[i]->undraw(canvas);
-  } 
+  if (itsCurrentNode >= 0 && itsCurrentNode < itsGxNodes.size())
+	 itsGxNodes[itsCurrentNode]->undraw(canvas);
 
   if (flush) canvas.flushOutput();
 }
