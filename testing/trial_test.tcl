@@ -23,8 +23,9 @@ test "TrialTcl-Trial::responseHdlr" "normal use" {
 	 Trial::responseHdlr $::TRIAL
 } {^0$}
 test "TrialTcl-Trial::responseHdlr" "error" {
-	 Trial::responseHdlr $::TRIAL -1
-} {^$} $skip_known_bug
+	 set result [catch {Trial::responseHdlr $::TRIAL -1} msg]
+	 return "$result $msg"
+} {^1 Trial::responseHdlr}
 
 ### Trial::timingHdlrCmd ###
 test "TrialTcl-Trial::timingHdlr" "too few args" {
@@ -38,8 +39,9 @@ test "TrialTcl-Trial::timingHdlr" "normal use" {
 	 Trial::timingHdlr $::TRIAL
 } {^0$}
 test "TrialTcl-Trial::timingHdlr" "error" {
-	 Trial::timingHdlr $::TRIAL -1
-} {^$} $skip_known_bug
+	 set result [catch {Trial::timingHdlr $::TRIAL -1} msg]
+	 return "$result $msg"
+} {^1 Trial::timingHdlr}
 
 ### Trial::typeCmd ###
 test "TrialTcl-Trial::type" "too few args" {
