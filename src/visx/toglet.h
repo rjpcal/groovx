@@ -1,19 +1,27 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // toglconfig.h
 // Rob Peters 
 // created: Jan-99
-// written: Fri Apr  2 16:27:01 1999
+// written: Thu May 27 20:22:52 1999
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TOGLCONFIG_H_DEFINED
 #define TOGLCONFIG_H_DEFINED
 
-#ifndef RECT_H_INCLUDED
+#ifndef RECT_H_DEFINED
 #include "rect.h"
 #endif
 
 class Tlist;
+
+///////////////////////////////////////////////////////////////////////
+//
+// ToglConfig class definition
+//
+///////////////////////////////////////////////////////////////////////
 
 class ToglConfig {
 public:
@@ -27,10 +35,10 @@ public:
   float getFixedScale() const;
   void setFixedScale(float s);
 
-  Rect getMinRect() const;
+  Rect<float> getMinRect() const;
   void setMinRectLTRB(float L, float T, float R, float B);
 
-  int usingFixedScale() const;
+  bool usingFixedScale() const;
 
   const Tlist& getTlist() const;
 
@@ -40,9 +48,9 @@ private:
 
   const Tlist& itsTlist;
   float itsViewingDistance;     // inches
-  int itsFixedScaleFlag;
+  bool itsFixedScaleFlag;
   float itsFixedScale;
-  Rect itsMinRect;
+  Rect<float> itsMinRect;
 };
 
 static const char vcid_toglconfig_h[] = "$Header$";
