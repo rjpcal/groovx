@@ -679,7 +679,18 @@ public:
 
     bool hasMore() const { return elem < mtx->nelems(); }
 
-    reference operator*() const { return mtx->at(elem); }
+  private:
+    // Need this pair of overloads to distinguish between const and
+    // non-const M types, so that we can call either at() or at_nc()
+    // as appropriate.
+    template <class MM>
+    static reference get_at(MM* m, int e) { return m->at_nc(e); }
+
+    template <class MM>
+    static reference get_at(const MM* m, int e) { return m->at(e); }
+
+  public:
+    reference operator*() const { return get_at(mtx, elem); }
 
     // Comparison
 
