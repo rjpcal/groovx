@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Fri Sep  6 11:08:59 2002
+// written: Fri Sep  6 12:28:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,17 +48,15 @@ private:
   const char* itsStartupFileName;
   const char* itsArgv0;
   Tcl_Channel itsInChannel;
-
-  fstring itsCommand;         /* Used to assemble lines of terminal input
-                               * into Tcl commands. */
-
+  fstring itsCommand;   // Build lines of terminal input into Tcl commands.
   bool itsGotPartial;
-
-  int isItInteractive;        /* Non-zero means standard input is a
-                               * terminal-like device.  Zero means it's
-                               * a file. */
+  bool isItInteractive; // True if input is a terminal-like device.
 
   MainImpl(int argc, char** argv);
+
+  int historyNext();
+
+  void doPrompt(const char* text, unsigned int length);
 
   void prompt(bool partial);
 
@@ -108,13 +106,12 @@ Tcl::MainImpl::MainImpl(int argc, char** argv) :
   itsArgv0(0),
   itsInChannel(0),
   itsCommand(),
-  itsGotPartial(false)
+  itsGotPartial(false),
+  isItInteractive(isatty(0))
 {
 DOTRACE("Tcl::MainImpl::MainImpl");
 
   Tcl_FindExecutable(argv[0]);
-
-  isItInteractive = isatty(0);
 
   // Parse command-line arguments.  If the next argument doesn't start with
   // a "-" then strip it off and use it as the name of a script file to
@@ -154,6 +151,57 @@ DOTRACE("Tcl::MainImpl::MainImpl");
 
 //---------------------------------------------------------------------
 //
+// Get the next number in the history count.
+//
+//---------------------------------------------------------------------
+
+int Tcl::MainImpl::historyNext()
+{
+DOTRACE("Tcl::MainImpl::historyNext");
+
+#ifdef USE_READLINE
+  return history_length+1;
+#else
+  Tcl::ObjPtr obj = itsSafeInterp.getResult<Tcl_Obj*>();
+
+  Tcl_GlobalEval(interp(), "history nextid");
+
+  int result = itsSafeInterp.getResult<int>();
+
+  itsSafeInterp.setResult(obj);
+
+  return result;
+#endif
+}
+
+//---------------------------------------------------------------------
+//
+// Actually write the prompt characters to the terminal.
+//
+//---------------------------------------------------------------------
+
+void Tcl::MainImpl::doPrompt(const char* text, unsigned int length)
+{
+DOTRACE("Tcl::MainImpl::doPrompt");
+
+#ifdef USE_READLINE
+  rl_callback_handler_install(text, readlineLineComplete);
+#else
+  if (length > 0)
+    {
+      // Check that outChannel is a real channel - it is possible that
+      // someone has transferred stdout out of this interpreter with
+      // "interp transfer".
+
+      Tcl_Channel outChannel = Tcl_GetChannel(interp(), "stdout", NULL);
+      Tcl_WriteChars(outChannel, text, length);
+      Tcl_Flush(outChannel);
+    }
+#endif
+}
+
+//---------------------------------------------------------------------
+//
 // Tcl::MainImpl::prompt()
 //
 //---------------------------------------------------------------------
@@ -164,25 +212,17 @@ DOTRACE("Tcl::MainImpl::prompt");
 
   if (partial)
     {
-#ifdef USE_READLINE
-      rl_callback_handler_install("", readlineLineComplete);
-#endif
+      doPrompt("", 0);
     }
   else
     {
-      fstring prompt("(", history_length+1, ") ", itsArgv0, "> ");
-
 #ifdef USE_READLINE
-      rl_callback_handler_install(prompt.c_str(), readlineLineComplete);
+      fstring text(itsArgv0, " ", historyNext(), ">>> ");
 #else
-      // Check that outChannel is a real channel - it is possible that
-      // someone has transferred stdout out of this interpreter with
-      // "interp transfer".
-
-      Tcl_Channel outChannel = Tcl_GetChannel(interp(), "stdout", NULL);
-      Tcl_WriteChars(outChannel, prompt.c_str(), prompt.length());
-      Tcl_Flush(outChannel);
+      fstring text(itsArgv0, " ", historyNext(), "> ");
 #endif
+
+      doPrompt(text.c_str(), text.length());
     }
 }
 
@@ -305,18 +345,20 @@ DOTRACE("Tcl::MainImpl::execCommand");
 
   Tcl_CreateChannelHandler(itsInChannel, 0, &stdinProc, (ClientData) 0);
 
-  char* expansion = 0;
-
   bool display_result = false;
 
+#ifdef USE_READLINE
+  char* expansion = 0;
   const int status = history_expand(const_cast<char*>(itsCommand.c_str()),
                                     &expansion);
+#else
+  char* expansion = itsCommand.data();
+  const int status = 0;
+#endif
 
   DebugEvalNL(itsCommand.c_str());
   DebugEvalNL(expansion);
   DebugEvalNL(status);
-
-  itsCommand = "";
 
   // status: -1 --> error
   //          0 --> no expansions occurred
@@ -382,7 +424,11 @@ DOTRACE("Tcl::MainImpl::execCommand");
                                &stdinProc, (ClientData) 0);
     }
 
+  itsCommand = "";
+
+#ifdef USE_READLINE
   free(expansion);
+#endif
 }
 
 //---------------------------------------------------------------------
@@ -429,7 +475,7 @@ DOTRACE("Tcl::MainImpl::run");
           Tcl_DeleteInterp(this->interp());
           Tcl_Exit(1);
         }
-      isItInteractive = 0;
+      isItInteractive = false;
     }
   else
     {
