@@ -24,10 +24,10 @@ default: all
 ###
 
 Makedefs: Makedefs.in config.status
-	config.status --file=Makedefs
+	./config.status --file=Makedefs
 
 config.status: configure
-	config.status --recheck
+	./config.status --recheck
 
 configure: configure.in
 	autoconf
