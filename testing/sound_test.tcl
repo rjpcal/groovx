@@ -74,7 +74,7 @@ test "SoundTcl-Sound::play" "normal play err sound" {
 } {^0$} $AUDIO
 test "SoundTcl-Sound::play" "error on bad sound id" {
 	 Sound::play -1
-} {Sound::play: attempted to access invalid object.*}
+} {Sound::play: signed/unsigned conversion failed}
 
 
 ### cleanup
