@@ -5,13 +5,15 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 17 15:05:41 1999
-// written: Thu Jul 19 14:52:34 2001
+// written: Thu Jul 19 15:34:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SYSTEM_H_DEFINED
 #define SYSTEM_H_DEFINED
+
+class fixed_string;
 
 ///
 class System {
@@ -146,6 +148,10 @@ public:
   /** Suspend execution of the calling process for the specified
       number of seconds. */
   void sleep(unsigned int seconds);
+
+  /** Return a formatted string representation of the current
+      time. See 'man strftime' for the formatting codes. */
+  fixed_string formattedTime(const char* format = "%a %b %d %H:%M:%S %Z %Y");
 };
 
 static const char vcid_system_h[] = "$Header$";

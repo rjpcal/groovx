@@ -17,6 +17,7 @@
 
 #include "util/arrays.h"
 #include "util/error.h"
+#include "util/strings.h"
 
 #include <cerrno>
 #include <cstdio>
@@ -24,6 +25,7 @@
 #include <cstring>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "util/trace.h"
@@ -110,6 +112,21 @@ DOTRACE("System::getenv");
 void System::sleep(unsigned int seconds) {
 DOTRACE("System::sleep");
   ::sleep(seconds);
+}
+
+fixed_string System::formattedTime(const char* format)
+{
+DOTRACE("System::formattedTime");
+
+  time_t t = time(0);
+
+  struct tm* tt = localtime(&t);
+
+  char buf[512];
+
+  strftime(buf, 512, format, tt);
+
+  return fixed_string(buf);
 }
 
 static const char vcid_system_cc[] = "$Header$";
