@@ -64,7 +64,7 @@ namespace Util
 {
   namespace RefHelper
   {
-    bool isValidId(Util::UID id);
+    bool isValidId(Util::UID id) throw();
     Util::Object* getCheckedItem(Util::UID id);
 
     void insertItem(Util::Object* obj);
@@ -92,17 +92,20 @@ namespace Util
     template <class T>
     struct DefaultUnrefPolicy
     {
-      static void unref(T* t) { t->decrRefCount(); }
+      static void unref(T* t) throw() { t->decrRefCount(); }
     };
 
     /// Policy class which decrements ref count without deletion.
     template <class T>
     struct NoDeleteUnrefPolicy
     {
-      static void unref(T* t) { t->decrRefCountNoDelete(); }
+      static void unref(T* t) throw() { t->decrRefCountNoDelete(); }
     };
 
     /// A shared implementation class for Util::FloatingRef and Util::Ref.
+    /** Note that the only operation that can throw is the constructor,
+        which throws in case it is passed a null or unshareable object
+        pointer .*/
     template <class T, class UnrefPolicy>
     class Handle
     {
@@ -118,32 +121,36 @@ namespace Util
         itsMaster->incrRefCount();
       }
 
-      ~Handle()
+      ~Handle() throw()
       { UnrefPolicy::unref(itsMaster); }
 
-      Handle(const Handle& other) : itsMaster(other.itsMaster)
-      { itsMaster->incrRefCount(); }
+      Handle(const Handle& other) throw()
+        :
+        itsMaster(other.itsMaster)
+      {
+        itsMaster->incrRefCount();
+      }
 
-      Handle& operator=(const Handle& other)
+      Handle& operator=(const Handle& other) throw()
       {
         Handle otherCopy(other);
         this->swap(otherCopy);
         return *this;
       }
 
-      T* get() const { return itsMaster; }
+      T* get() const throw()
+      { return itsMaster; }
 
-      bool operator==(const Handle& other) const
+      bool operator==(const Handle& other) const throw()
       { return itsMaster == other.itsMaster; }
 
     private:
-      void swap(Handle& other)
+      void swap(Handle& other) throw()
       {
         Util::swap2(itsMaster, other.itsMaster);
       }
 
       T* itsMaster;
-
     };
 
   }
@@ -185,10 +192,10 @@ public:
 
   explicit FloatingRef(T* ptr) : itsHandle(ptr) {}
 
-  T* operator->() const { return get(); }
-  T& operator*()  const { return *(get()); }
+  T* operator->() const throw() { return get(); }
+  T& operator*()  const throw() { return *(get()); }
 
-  T* get()        const { return itsHandle.get(); }
+  T* get()        const throw() { return itsHandle.get(); }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -234,18 +241,23 @@ public:
   template <class U>
   Ref(const SoftRef<U>& other);
 
-  T* operator->() const { return get(); }
-  T& operator*()  const { return *(get()); }
+  T* operator->() const throw() { return get(); }
+  T& operator*()  const throw() { return *(get()); }
 
-  T* get()        const { return itsHandle.get(); }
+  T* get()        const throw() { return itsHandle.get(); }
 
-  bool operator==(const Ref& other) const
+  bool operator==(const Ref& other) const throw()
   { return itsHandle == other.itsHandle; }
 
-  bool operator!=(const Ref& other) const
+  bool operator!=(const Ref& other) const throw()
   { return !(operator==(other)); }
 
-  Util::UID id() const { return get()->id(); }
+  Util::UID id() const throw()
+  { return get()->id(); }
+
+  /// Comparison operator for sorting, to insert in std::map or std::set, etc.
+  bool operator<(const Ref& other) const throw()
+  { return get() < other.get(); }
 };
 
 /// TypeTraits specialization for Util::Ref smart pointer
@@ -299,27 +311,29 @@ private:
   class WeakHandle
   {
   private:
-    static Util::RefCounts* getCounts(T* master, RefType tp)
+    static Util::RefCounts* getCounts(T* master, RefType tp) throw()
     {
       return (master && (tp == WEAK || master->isNotShareable())) ?
         master->refCounts() : 0;
     }
 
   public:
-    WeakHandle(T* master, RefType tp) :
-       itsMaster(master),
-       itsCounts(getCounts(master, tp))
+    WeakHandle(T* master, RefType tp) throw()
+      :
+      itsMaster(master),
+      itsCounts(getCounts(master, tp))
     { acquire(); }
 
-    ~WeakHandle()
+    ~WeakHandle() throw()
     { release(); }
 
-    WeakHandle(const WeakHandle& other) :
+    WeakHandle(const WeakHandle& other) throw()
+      :
       itsMaster(other.itsMaster),
       itsCounts(other.itsCounts)
     { acquire(); }
 
-    WeakHandle& operator=(const WeakHandle& other)
+    WeakHandle& operator=(const WeakHandle& other) throw()
     {
       WeakHandle otherCopy(other);
       this->swap(otherCopy);
@@ -341,19 +355,19 @@ private:
     T* get()     const         { ensureValid(); return itsMaster; }
     T* getWeak() const throw() { return isValid() ? itsMaster : 0; }
 
-    RefType refType() const
+    RefType refType() const throw()
     {
       return (itsMaster && !itsCounts) ? STRONG : WEAK;
     }
 
-    bool operator==(const WeakHandle& other) const
+    bool operator==(const WeakHandle& other) const throw()
     {
       this->isValid(); other.isValid(); // force update
       return itsMaster == other.itsMaster;
     }
 
   private:
-    void acquire() const
+    void acquire() const throw()
     {
       if (itsMaster)
         {
@@ -362,7 +376,7 @@ private:
         }
     }
 
-    void release() const
+    void release() const throw()
     {
       if (itsMaster)
         {
@@ -379,7 +393,7 @@ private:
         Util::RefHelper::throwSoftRefInvalid(typeid(T));
     }
 
-    void swap(WeakHandle& other)
+    void swap(WeakHandle& other) throw()
     {
       Util::swap2(itsMaster, other.itsMaster);
       Util::swap2(itsCounts, other.itsCounts);
@@ -402,7 +416,8 @@ private:
 public:
   SoftRef() : itsHandle(0, STRONG) {}
 
-  explicit SoftRef(Util::UID id, RefType tp = STRONG) :
+  explicit SoftRef(Util::UID id, RefType tp = STRONG)
+    :
     itsHandle(RefHelper::isValidId(id) ?
               RefHelper::getCastedItem<T>(id) : 0,
               tp)
@@ -414,7 +429,8 @@ public:
       RefHelper::insertItem(itsHandle.get());
   }
 
-  explicit SoftRef(T* master, RefType tp = STRONG, RefVis vis = PUBLIC) :
+  explicit SoftRef(T* master, RefType tp = STRONG, RefVis vis = PUBLIC)
+    :
     itsHandle(master,tp)
   {
     if (itsHandle.isValid())
@@ -433,30 +449,34 @@ public:
 
   // Default destructor, copy constructor, operator=() are fine
 
-  T* operator->()      const { return itsHandle.get(); }
-  T& operator*()       const { return *(itsHandle.get()); }
-
   /** Returns the pointee, or if throws an exception if there is not a
       valid pointee. */
-  T* get()     const         { return itsHandle.get(); }
+  T* get()         const { return itsHandle.get(); }
+
+  T* operator->()  const { return itsHandle.get(); }
+  T& operator*()   const { return *(itsHandle.get()); }
 
   /** Returns the pointee, or returns null if there is not a valid
       pointee. Will not throw an exception. */
   T* getWeak() const throw() { return itsHandle.getWeak(); }
 
-  RefType refType() const { return itsHandle.refType(); }
+  RefType refType() const throw() { return itsHandle.refType(); }
 
-  bool isValid() const { return itsHandle.isValid(); }
-  bool isInvalid() const { return !(isValid()); }
+  bool isValid()   const throw() { return itsHandle.isValid(); }
+  bool isInvalid() const throw() { return !(isValid()); }
 
-  bool operator==(const SoftRef& other) const
+  bool operator==(const SoftRef& other) const throw()
   { return itsHandle == other.itsHandle; }
 
-  bool operator!=(const SoftRef& other) const
+  bool operator!=(const SoftRef& other) const throw()
   { return !(operator==(other)); }
 
-  Util::UID id() const
-    { return itsHandle.isValid() ? itsHandle.get()->id() : 0; }
+  /// Comparison operator for sorting, to insert in std::map or std::set, etc.
+  bool operator<(const SoftRef& other) const throw()
+  { return getWeak() < other.getWeak(); }
+
+  Util::UID id() const throw()
+  { return itsHandle.isValid() ? itsHandle.get()->id() : 0; }
 };
 
 /// TypeTraits specialization for SoftRef smart pointer.
