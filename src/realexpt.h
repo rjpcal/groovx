@@ -2,8 +2,7 @@
 // realexpt.h
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 12:55:01 1999
-static const char vcid_realexpt_h[] = "$Id$";
+// written: Sat Mar 13 19:54:30 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef REALEXPT_H_DEFINED
@@ -83,4 +82,5 @@ private:
   vector<int> itsRemaining;
 };
 
+static const char vcid_realexpt_h[] = "$Id$";
 #endif // !REALEXPT_H_DEFINED
