@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 11:50:23 1999
-// written: Sun Aug 26 08:35:10 2001
+// written: Sun Sep  9 14:30:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@ struct Tcl_Interp;
 
 namespace Tcl
 {
-  class TclCmd;
+  class Command;
   class TclError;
   class PkgBase;
 }
@@ -32,9 +32,9 @@ namespace Tcl
 /**
  *
  * \c Tcl::PkgBase is a class more managing groups of related \c
- * Tcl::TclCmd's. It provides several facilities:
+ * Tcl::Command's. It provides several facilities:
  *
- *   -- stores a list of \c TclCmd's, and ensures that these are
+ *   -- stores a list of \c Command's, and ensures that these are
  *   properly destroyed upon exit from Tcl
  *
  *   -- ensures that the package is provided to Tcl so that other
@@ -47,7 +47,7 @@ namespace Tcl
  *   makePkgCmdName())
  *
  *   -- provides a \c protected function \c addCommand() that derived
- *   classes can use to add \c Tcl::TclCmd's to the package
+ *   classes can use to add \c Tcl::Command's to the package
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ public:
   PkgBase(Tcl_Interp* interp, const char* name, const char* version);
 
   /** Virtual destructor ensures proper destruction of base
-      classes. This destructor will destroy all \c TclCmd's owned by
+      classes. This destructor will destroy all \c Command's owned by
       the package. */
   virtual ~PkgBase();
 
@@ -133,7 +133,7 @@ protected:
   const char* makePkgCmdName(const char* cmd_name);
 
   /// Adds \a cmd to the commands managed by the package.
-  void addCommand(TclCmd* cmd);
+  void addCommand(Command* cmd);
 
   void setInitStatusError();
 

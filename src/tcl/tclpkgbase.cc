@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Thu Aug 30 10:31:13 2001
+// written: Sun Sep  9 14:30:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ public:
   ~Impl();
 
   Tcl_Interp* itsInterp;
-  slink_list<shared_ptr<TclCmd> > itsCmds;
+  slink_list<shared_ptr<Command> > itsCmds;
   std::string itsPkgName;
   std::string itsVersion;
 
@@ -235,10 +235,10 @@ DOTRACE("Tcl::PkgBase::eval");
   Tcl_Eval(itsImpl->itsInterp, script_copy.data());
 }
 
-void Tcl::PkgBase::addCommand(TclCmd* cmd)
+void Tcl::PkgBase::addCommand(Command* cmd)
 {
 DOTRACE("Tcl::PkgBase::addCommand");
-  itsImpl->itsCmds.push_front(shared_ptr<TclCmd>(cmd));
+  itsImpl->itsCmds.push_front(shared_ptr<Command>(cmd));
 }
 
 void Tcl::PkgBase::linkVar(const char* varName, int& var)

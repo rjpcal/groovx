@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Fri Sep  7 17:34:34 2001
+// written: Sun Sep  9 14:30:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,10 +75,10 @@ namespace Tcl
 // Functor<> template definitions. Each specialization takes a
 // C++-style functor (could be a free function, or struct with
 // operator()), and transforms it into a functor with an
-// operator()(Tcl::Context&) which can be called from a TclCmd. This
-// transformation requires extracting the appropriate parameters from
-// the Tcl::Context, passing them to the C++ functor, and returning
-// the result back to the Tcl::Context.
+// operator()(Tcl::Context&) which can be called from a
+// Tcl::Command. This transformation requires extracting the
+// appropriate parameters from the Tcl::Context, passing them to the
+// C++ functor, and returning the result back to the Tcl::Context.
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -315,12 +315,12 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Functor>
-  class GenericCmd : public TclCmd, private Util::FuncHolder<Functor>
+  class GenericCmd : public Command, private Util::FuncHolder<Functor>
   {
   public:
     GenericCmd<R, Functor>(Tcl_Interp* interp, Functor f, const char* cmd_name,
                            const char* usage, int nargs) :
-      TclCmd(interp, cmd_name, usage, nargs+1),
+      Command(interp, cmd_name, usage, nargs+1),
       Util::FuncHolder<Functor>(f)
     {}
 
@@ -332,14 +332,14 @@ namespace Tcl
   };
 
   template <class Functor>
-  class GenericCmd<void, Functor> : public TclCmd,
+  class GenericCmd<void, Functor> : public Command,
                                     private Util::FuncHolder<Functor>
   {
   public:
     GenericCmd<void, Functor>(Tcl_Interp* interp, Functor f,
                               const char* cmd_name, const char* usage,
                               int nargs) :
-      TclCmd(interp, cmd_name, usage, nargs+1),
+      Command(interp, cmd_name, usage, nargs+1),
       Util::FuncHolder<Functor>(f)
     {}
 
@@ -352,9 +352,9 @@ namespace Tcl
 
 
   template <class Functor>
-  inline TclCmd* makeGenericCmd(Tcl_Interp* interp, Functor f,
-                                const char* cmd_name, const char* usage,
-                                int nargs)
+  inline Command* makeGenericCmd(Tcl_Interp* interp, Functor f,
+                                 const char* cmd_name, const char* usage,
+                                 int nargs)
   {
     return new GenericCmd<typename Util::FuncTraits<Functor>::Retn_t, Functor>
       (interp, f, cmd_name, usage, nargs);
@@ -406,9 +406,9 @@ namespace Tcl
 
 
   template <class Functor>
-  inline TclCmd* makeGenericVecCmd(Tcl_Interp* interp, Functor f,
-                                   const char* cmd_name, const char* usage,
-                                   int nargs, unsigned int keyarg)
+  inline Command* makeGenericVecCmd(Tcl_Interp* interp, Functor f,
+                                    const char* cmd_name, const char* usage,
+                                    int nargs, unsigned int keyarg)
   {
     return new GenericVecCmd<typename Util::FuncTraits<Functor>::Retn_t, Functor>
       (interp, f, cmd_name, usage, nargs, keyarg);
@@ -421,17 +421,17 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class Func>
-  inline TclCmd* makeCmd(Tcl_Interp* interp, Func f,
-                         const char* cmd_name, const char* usage)
+  inline Command* makeCmd(Tcl_Interp* interp, Func f,
+                          const char* cmd_name, const char* usage)
   {
     return makeGenericCmd(interp, buildTclFunctor(f), cmd_name, usage,
                           Util::FuncTraits<Func>::numArgs);
   }
 
   template <class Func>
-  inline TclCmd* makeVecCmd(Tcl_Interp* interp, Func f,
-                            const char* cmd_name, const char* usage,
-                            unsigned int keyarg=1)
+  inline Command* makeVecCmd(Tcl_Interp* interp, Func f,
+                             const char* cmd_name, const char* usage,
+                             unsigned int keyarg=1)
   {
     return makeGenericVecCmd(interp, buildTclFunctor(f), cmd_name, usage,
                              Util::FuncTraits<Func>::numArgs, keyarg);

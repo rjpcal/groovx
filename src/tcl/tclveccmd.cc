@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 12 12:15:46 2001
-// written: Thu Aug 30 15:06:42 2001
+// written: Sun Sep  9 14:30:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ private:
 Tcl::VecCmd::VecCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage,
                     unsigned int key_argn,
                     int objc_min=0, int objc_max=-1, bool exact_objc=false) :
-  Tcl::TclCmd(interp, cmd_name, usage, objc_min, objc_max, exact_objc),
+  Tcl::Command(interp, cmd_name, usage, objc_min, objc_max, exact_objc),
   itsKeyArgn(key_argn)
 {}
 
@@ -119,7 +119,7 @@ DOTRACE("Tcl::VecCmd::rawInvoke");
     }
   else if (ncalls == 1)
     {
-      Tcl::TclCmd::rawInvoke(interp, objc, objv);
+      Tcl::Command::rawInvoke(interp, objc, objv);
     }
   else // (ncalls == 0)
     {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Sun Aug 26 08:35:11 2001
+// written: Sun Sep  9 14:30:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,31 +26,31 @@ struct Tcl_Obj;
 
 namespace Tcl
 {
-  class TclCmd;
+  class Command;
   class Context;
 }
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c Tcl::TclCmd is an abstract class that which provides a way to
+ * \c Tcl::Command is an abstract class that which provides a way to
  * wrap Tcl object commands in C++ classes. It allows commands that do
  * similar things to be related through inheritance, and for common
- * behavior to be placed in base classes. The \c TclCmd class itself
- * takes care of such things as checking the argument count, and
- * issuing an error message if the argument count is incorrect.
+ * behavior to be placed in base classes. The \c Tcl::Command class
+ * itself takes care of such things as checking the argument count,
+ * and issuing an error message if the argument count is incorrect.
  *
- * \c Tcl::TclCmd uses class \c Context to represent the set of Tcl
+ * \c Tcl::Command uses class \c Context to represent the set of Tcl
  * command arguments and the interpreter's result.
  *
- * If more than one Tcl::TclCmd is created with the same name, an
+ * If more than one Tcl::Command is created with the same name, an
  * overloading sequence is created. Overloading is done by argument
- * counts. The first TclCmd in an overload sequence to match the
+ * counts. The first Tcl::Command in an overload sequence to match the
  * argument count of the context will be used.
  *
- * Most clients of Tcl::TclCmd will be able to simply use
+ * Most clients of Tcl::Command will be able to simply use
  * Tcl::makeCmd() or Tcl::makeVecCmd(), which detect the types of C++
- * functions and build generic Tcl::TclCmd's that call the functions
+ * functions and build generic Tcl::Command's that call the functions
  * appropriately, or use Tcl::Pkg::def() and related functions, which
  * call Tcl::makeCmd() but in addition help to relate the commands to
  * a particular package.
@@ -58,7 +58,7 @@ namespace Tcl
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::TclCmd
+class Tcl::Command
 {
 public:
   /** Construct with basic properties for the command. If \a
@@ -68,11 +68,11 @@ public:
       objc_max, inclusive. If the value given for \a objc_max is
       negative, then the maximum objc will be set to the same value as
       \a objc_min. */
-  TclCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage,
-         int objc_min=0, int objc_max=-1, bool exact_objc=false);
+  Command(Tcl_Interp* interp, const char* cmd_name, const char* usage,
+          int objc_min=0, int objc_max=-1, bool exact_objc=false);
 
   /// Virtual destructor ensures proper destruction of subclasses.
-  virtual ~TclCmd();
+  virtual ~Command();
 
   /// Returns the command registered name.
   const char* name() const;
@@ -98,8 +98,8 @@ protected:
                          Tcl_Obj* const objv[]);
 
 private:
-  TclCmd(const TclCmd&);
-  TclCmd& operator=(const TclCmd&);
+  Command(const Command&);
+  Command& operator=(const Command&);
 
   class Impl;
   friend class Impl;
@@ -110,9 +110,10 @@ private:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c Tcl::Context, which is passed to \a TclCmd::invoke(), provides a
- * getValFromArg() for getting values from command arguments, and
- * provides setResult() for returning values to the Tcl interpreter.
+ * \c Tcl::Context, which is passed to \a Tcl::Command::invoke(),
+ * provides a getValFromArg() for getting values from command
+ * arguments, and provides setResult() for returning values to the Tcl
+ * interpreter.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -120,7 +121,7 @@ private:
 class Tcl::Context
 {
 public:
-  friend class TclCmd;
+  friend class Command;
 
   /// Construct with a Tcl interpreter and an argument list.
   Context(Tcl_Interp* interp, unsigned int objc, Tcl_Obj* const* objv);

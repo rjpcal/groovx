@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 12 12:14:43 2001
-// written: Sun Aug 26 08:35:10 2001
+// written: Sun Sep  9 14:30:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,12 +30,12 @@ namespace Tcl
  * provide access to slices across those lists, thus allowing
  * "vectorized" command invocations. Subclasses of \c Tcl::VecCmd
  * implement \a invoke() just as they would if inheriting from \c
- * Tcl::TclCmd.
+ * Tcl::Command.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::VecCmd : public Tcl::TclCmd
+class Tcl::VecCmd : public Tcl::Command
 {
 public:
   VecCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage,

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Fri Sep  7 15:39:15 2001
+// written: Sun Sep  9 14:30:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -182,7 +182,7 @@ public:
 
   Tcl::Interp itsInterp;
 
-  scoped_ptr<Tcl::TclCmd> itsCmdCallback;
+  scoped_ptr<Tcl::Command> itsCmdCallback;
 
   ResponseMap itsResponseMap;
   FeedbackMap itsFeedbackMap;

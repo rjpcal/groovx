@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Mon Sep  3 14:19:31 2001
+// written: Sun Sep  9 14:30:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ namespace
       errMessage(interp, cmd_name, msg.c_str());
     }
 
-  inline Tcl::TclCmd* lookupCmd(Tcl_Interp* interp, const char* cmd_name)
+  inline Tcl::Command* lookupCmd(Tcl_Interp* interp, const char* cmd_name)
     {
       Tcl_CmdInfo cmd_info;
       int result = Tcl_GetCommandInfo(interp, const_cast<char*>(cmd_name),
@@ -77,8 +77,8 @@ namespace
       if (result == 0)
         return 0;
 
-      return dynamic_cast<Tcl::TclCmd*>(
-              static_cast<Tcl::TclCmd*>(cmd_info.objClientData));
+      return dynamic_cast<Tcl::Command*>(
+              static_cast<Tcl::Command*>(cmd_info.objClientData));
     }
 
 #ifdef TRACE_USE_COUNT
@@ -95,21 +95,21 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-class HelpCmd : public Tcl::TclCmd
+class HelpCmd : public Tcl::Command
 {
 public:
   HelpCmd(Tcl_Interp* interp) :
-    Tcl::TclCmd(interp, "?", "commandName", 2, 2) {}
+    Tcl::Command(interp, "?", "commandName", 2, 2) {}
 
 protected:
   virtual void invoke(Tcl::Context& ctx)
   {
     const char* cmd_name = ctx.getCstringFromArg(1);
 
-    Tcl::TclCmd* cmd = lookupCmd(ctx.interp(), cmd_name);
+    Tcl::Command* cmd = lookupCmd(ctx.interp(), cmd_name);
 
     if (cmd == 0)
-      throw Util::Error("no such TclCmd");
+      throw Util::Error("no such Tcl::Command");
 
     ctx.setResult(cmd->usage());
   }
@@ -117,14 +117,14 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// TclCmd::Impl class definition
+// Tcl::Command::Impl class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::TclCmd::Impl
+class Tcl::Command::Impl
 {
 public:
-  Impl(Tcl::TclCmd* owner, Tcl_Interp* interp,
+  Impl(Tcl::Command* owner, Tcl_Interp* interp,
        const char* cmd_name, const char* usage,
        int objc_min, int objc_max, bool exact_objc) :
     itsOwner(owner),
@@ -214,7 +214,7 @@ public:
 private:
   void registerCmdProc(Tcl_Interp* interp)
   {
-    Tcl::TclCmd* previousCmd = lookupCmd(interp, itsCmdName.c_str());
+    Tcl::Command* previousCmd = lookupCmd(interp, itsCmdName.c_str());
 
     if ( previousCmd == 0 )
       {
@@ -244,7 +244,7 @@ private:
       return first;
     }
 
-  void addAsOverloadOf(TclCmd* other)
+  void addAsOverloadOf(Command* other)
   {
     Impl* last = other->itsImpl;
 
@@ -330,7 +330,7 @@ private:
   Impl& operator=(const Impl&);
 
   // These are set once per command object
-  Tcl::TclCmd* const itsOwner;
+  Tcl::Command* const itsOwner;
   Tcl_Interp* const itsInterp;
   const char* const itsUsage;
   const unsigned int itsObjcMin;
@@ -345,16 +345,16 @@ private:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::TclCmd::Impl member definitions
+// Tcl::Command::Impl member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-int Tcl::TclCmd::Impl::invokeCallback(ClientData clientData, Tcl_Interp* interp,
-                                      int s_objc, Tcl_Obj *const objv[])
+int Tcl::Command::Impl::invokeCallback(ClientData clientData, Tcl_Interp* interp,
+                                       int s_objc, Tcl_Obj *const objv[])
 {
-DOTRACE("Tcl::TclCmd::Impl::invokeCallback");
+DOTRACE("Tcl::Command::Impl::invokeCallback");
 
-  Impl* theImpl = static_cast<Tcl::TclCmd*>(clientData)->itsImpl;
+  Impl* theImpl = static_cast<Tcl::Command*>(clientData)->itsImpl;
 
   theImpl->onInvoke();
 
@@ -370,7 +370,7 @@ DOTRACE("Tcl::TclCmd::Impl::invokeCallback");
       // If we run out of potential overloads, abort the command.
       if ( theImpl == 0 )
         {
-          Impl* originalImpl = static_cast<Tcl::TclCmd*>(clientData)->itsImpl;
+          Impl* originalImpl = static_cast<Tcl::Command*>(clientData)->itsImpl;
           Tcl::Interp safeIntp(interp);
           safeIntp.resetResult();
           safeIntp.appendResult(originalImpl->warnUsage().c_str());
@@ -412,41 +412,41 @@ DOTRACE("Tcl::TclCmd::Impl::invokeCallback");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// TclCmd member definitions
+// Tcl::Command member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::TclCmd::~TclCmd()
+Tcl::Command::~Command()
 {
-DOTRACE("Tcl::TclCmd::~TclCmd");
+DOTRACE("Tcl::Command::~Command");
   delete itsImpl;
 }
 
-Tcl::TclCmd::TclCmd(Tcl_Interp* interp,
-                    const char* cmd_name, const char* usage,
-                    int objc_min, int objc_max, bool exact_objc) :
+Tcl::Command::Command(Tcl_Interp* interp,
+                      const char* cmd_name, const char* usage,
+                      int objc_min, int objc_max, bool exact_objc) :
   itsImpl(new Impl(this, interp, cmd_name, usage,
                    objc_min, objc_max, exact_objc))
 {
-DOTRACE("Tcl::TclCmd::TclCmd");
+DOTRACE("Tcl::Command::Command");
 }
 
-const char* Tcl::TclCmd::name() const
+const char* Tcl::Command::name() const
 {
-DOTRACE("Tcl::TclCmd::name");
+DOTRACE("Tcl::Command::name");
   return itsImpl->name();
 }
 
-const char* Tcl::TclCmd::usage() const
+const char* Tcl::Command::usage() const
 {
-DOTRACE("Tcl::TclCmd::usage");
+DOTRACE("Tcl::Command::usage");
   return itsImpl->usage();
 }
 
-void Tcl::TclCmd::rawInvoke(Tcl_Interp* interp,
-                            unsigned int objc, Tcl_Obj* const objv[])
+void Tcl::Command::rawInvoke(Tcl_Interp* interp,
+                             unsigned int objc, Tcl_Obj* const objv[])
 {
-DOTRACE("Tcl::TclCmd::rawInvoke");
+DOTRACE("Tcl::Command::rawInvoke");
   Context ctx(interp, objc, objv);
   invoke(ctx);
 }
