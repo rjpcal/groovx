@@ -593,6 +593,11 @@ public:
   /// Get the maximum serial version id for this field.
   IO::VersionId maxVersion() const { return itsMaxVersion; }
 
+  bool shouldSerialize(IO::VersionId svid) const
+  {
+    return (svid >= itsMinVersion && svid <= itsMaxVersion);
+  }
+
   /// Set the value of this field for \a obj.
   void setValue(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
   {
@@ -733,7 +738,8 @@ public:
   /// Read all fields from the IO::Reader.
   void readFieldsFrom(IO::Reader& reader, const FieldMap& fields);
   /// Write all fields to the IO::Writer.
-  void writeFieldsTo(IO::Writer& writer, const FieldMap& fields) const;
+  void writeFieldsTo(IO::Writer& writer, const FieldMap& fields,
+                     IO::VersionId svid) const;
 
   /// Get the FieldMap for this object.
   const FieldMap& fields() const { return *itsFieldMap; }
