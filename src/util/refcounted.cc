@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:28 2000
-// written: Sat May 19 08:48:22 2001
+// written: Sat May 19 11:28:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,24 +52,24 @@ DOTRACE("RefCounted::~RefCounted");
   Assert(itsRefCount <= 0 && itsRefCount2 <= 0);
 }
 
-void RefCounted::incrRefCount() {
+void RefCounted::incrRefCount() const {
 DOTRACE("RefCounted::incrRefCount");
   ++itsRefCount;
 }
 
-void RefCounted::decrRefCount() {
+void RefCounted::decrRefCount() const {
 DOTRACE("RefCounted::decrRefCount");
   --itsRefCount;
   if (itsRefCount <= 0 && itsRefCount2 <= 0)
 	 delete this;
 }
 
-void RefCounted::incrRefCount2() {
+void RefCounted::incrRefCount2() const {
 DOTRACE("RefCounted::incrRefCount2");
   ++itsRefCount2;
 }
 
-void RefCounted::decrRefCount2() {
+void RefCounted::decrRefCount2() const {
 DOTRACE("RefCounted::decrRefCount2");
   --itsRefCount2;
   if (itsRefCount <= 0 && itsRefCount2 <= 0)

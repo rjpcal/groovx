@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:19 2000
-// written: Sat May 19 08:44:03 2001
+// written: Sat May 19 11:27:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,8 +29,8 @@
 
 class RefCounted {
 private:
-  int itsRefCount;
-  int itsRefCount2;
+  mutable int itsRefCount;
+  mutable int itsRefCount2;
 
   // These are disallowed since RefCounted's should always be in
   // one-to-one correspondence with their pointee's.
@@ -66,17 +66,17 @@ protected:
 
 public:
   /// Increment the object's reference count.
-  void incrRefCount();
+  void incrRefCount() const;
 
   /** Decrement the object's reference count. If this causes the
       reference count to fall to zero or below, the pointee and the
       pointer will be destroyed by a call to 'delete this'. */
-  void decrRefCount();
+  void decrRefCount() const;
 
   /// Increment the second (debugging) reference count.
-  void incrRefCount2();
+  void incrRefCount2() const;
   /// Decrement the second (debugging) reference count.
-  void decrRefCount2();
+  void decrRefCount2() const;
 
   /// Returns true if the reference count is greater than one.
   bool isShared() const;
