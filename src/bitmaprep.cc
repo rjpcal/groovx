@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon Mar  6 17:26:03 2000
+// written: Mon Mar  6 19:25:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,6 @@
 #include <GL/glu.h>
 #include <cctype>
 #include <cmath>					  // for abs
-#include <string>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -65,7 +64,7 @@ public:
 
   BmapRenderer* itsRenderer;
 
-  string itsFilename;
+  fixed_string itsFilename;
   double itsRasterX;
   double itsRasterY;
   double itsZoomX;
@@ -107,7 +106,7 @@ public:
 	 }
 
 private:
-  string itsFilename;
+  fixed_string itsFilename;
   bool itsFlipContrast;
   bool itsFlipVertical;
 };
@@ -155,7 +154,7 @@ DOTRACE("BitmapRep::serialize");
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag.c_str() << sep; }
 
-  os << itsImpl->itsFilename << '\t';
+  os << itsImpl->itsFilename.c_str() << '\t';
   os << itsImpl->itsRasterX << sep << itsImpl->itsRasterY << sep;
   os << itsImpl->itsZoomX << sep << itsImpl->itsZoomY << sep;
   os << itsImpl->itsUsingZoom << sep;
