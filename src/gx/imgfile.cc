@@ -65,7 +65,8 @@ namespace
       UNKNOWN,
       JPEG,
       PNM,
-      PNG
+      PNG,
+      GIF
     };
 
 
@@ -91,29 +92,28 @@ namespace
       {
         return JPEG;
       }
+    else if (lowername.ends_with(".gif"))
+      {
+        return GIF;
+      }
     // else...
     return UNKNOWN;
   }
 
-  // A fallback function to try to read just about any image type, given
-  // that the program "anytopnm" is installed on the host machine. In that
-  // case, we can process the image file with anytopnm, and pipe the output
-  // via a stream into a pnm parser.
-  void genericLoad(const char* filename, Gfx::BmapData& data)
+  // A fallback function to try to read an image by filtering it
+  // through a pipe that will convert it to PNM format.
+  void pipeLoad(const char* progname,
+                const char* filename, Gfx::BmapData& data)
   {
-  DOTRACE("<imgfile.cc>::genericLoad");
+  DOTRACE("<imgfile.cc>::pipeLoad");
 
-#ifndef ANYTOPNM_PROG
-    throw Util::Error(fstring("unknown image file format: ", filename), SRC_POS);
-#else
-
-    if (access(ANYTOPNM_PROG, R_OK|X_OK) != 0)
-      throw Util::Error(fstring("couldn't access program '", ANYTOPNM_PROG, "'"), SRC_POS);
+    if (access(progname, R_OK|X_OK) != 0)
+      throw Util::Error(fstring("couldn't access program '", progname, "'"), SRC_POS);
     if (access(filename, R_OK)      != 0)
       throw Util::Error(fstring("couldn't read file '", filename, "'"), SRC_POS);
 
     fstring nm_copy(filename);
-    char* const argv[] = { (char*) ANYTOPNM_PROG, nm_copy.data(), (char*) 0 };
+    char* const argv[] = { (char*) progname, nm_copy.data(), (char*) 0 };
 
     Util::ExecPipe p("r", argv);
 
@@ -121,7 +121,6 @@ namespace
 
     if (p.exitStatus() != 0)
       throw Util::Error("child process exited abnormally", SRC_POS);
-#endif
   }
 }
 
@@ -134,7 +133,20 @@ DOTRACE("ImgFile::load");
     case PNM:  Pbm::load(filename, data); break;
     case PNG:  Png::load(filename, data); break;
     case JPEG: Jpeg::load(filename, data); break;
-    default:   genericLoad(filename, data); break;
+#ifdef GIFTOPNM_PROG
+    case GIF:  pipeLoad(GIFTOPNM_PROG, filename, data); break;
+#endif
+#ifdef ANYTOPNM_PROG
+      // A fallback to try to read just about any image type, given
+      // that the program "anytopnm" is installed on the host
+      // machine. In that case, we can process the image file with
+      // anytopnm, and pipe the output via a stream into a pnm parser.
+    default:   pipeLoad(ANYTOPNM_PROG, filename, data); break;
+#else
+    default:   throw Util::Error(fstring("unknown image file format: ",
+                                         filename), SRC_POS);
+      break;
+#endif
     }
 
   Util::log(fstring("loaded image file ", filename));
