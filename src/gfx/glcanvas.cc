@@ -415,6 +415,10 @@ void GLCanvas::orthographic(const geom::rect<double>& bounds,
 {
 DOTRACE("GLCanvas::orthographic");
 
+  dbg_eval(3, bounds.left()); dbg_eval_nl(3, bounds.right());
+  dbg_eval(3, bounds.bottom()); dbg_eval_nl(3, bounds.top());
+  dbg_eval(3, zNear); dbg_eval_nl(3, zFar);
+
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glOrtho(bounds.left(), bounds.right(),
@@ -508,6 +512,7 @@ DOTRACE("GLCanvas::rasterPos");
       // use the "xmove" and "ymove" arguments to adjust the raster
       // position.
       const vec2d lower_left = worldFromScreen(vec2i(0,0));
+      dbg_eval(3, lower_left.x()); dbg_eval_nl(3, lower_left.y());
       glRasterPos2d(lower_left.x(), lower_left.y());
       glBitmap(0, 0, 0.0f, 0.0f,
                screen_pos.x(),
