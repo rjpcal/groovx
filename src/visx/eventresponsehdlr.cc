@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Thu Oct 12 14:46:53 2000
+// written: Mon Oct 16 13:35:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -189,6 +189,7 @@ public:
 	 {
 		itsInputResponseMap = s;
 		itsRegexpsAreDirty = true;
+		updateRegexpsIfNeeded();
 	 }
 
   bool getUseFeedback() const
@@ -204,6 +205,7 @@ public:
 	 {
 		itsFeedbackMap = feedback_string;
 		itsFeedbacksAreDirty = true;
+		updateFeedbacksIfNeeded();
 	 }
 
   const fixed_string& getEventSequence() const
@@ -644,6 +646,8 @@ DOTRACE("EventResponseHdlr::Impl::readFrom");
 
   itsRegexpsAreDirty = true;
   itsFeedbacksAreDirty = true;
+  updateRegexpsIfNeeded();
+  updateFeedbacksIfNeeded();
 }
 
 void EventResponseHdlr::Impl::writeTo(IO::Writer* writer) const {
