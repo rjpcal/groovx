@@ -366,7 +366,8 @@ SYS_OBJS := $(subst .cc,$(OBJ_EXT),\
 
 DEEPUTIL_OBJS := $(SYS_OBJS) \
 	$(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/util/*.cc)))
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/util/*.cc))) \
+	$(LOCAL_LIB)/libzstream.a $(LOCAL_LIB)/libz.a
 
 LIBDEEPUTIL := $(LOCAL_LIB)/libDeepUtil$(LIB_EXT)
 
