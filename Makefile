@@ -234,6 +234,7 @@ GRSH_DYNAMIC_OBJS = \
 	$(ARCH)/writeutils.do \
 
 TCLWORKS_OBJS = \
+	$(ARCH)/listpkg.do \
 	$(ARCH)/misctcl.do \
 	$(ARCH)/stringifycmd.do \
 	$(ARCH)/tclcmd.do \
@@ -317,8 +318,9 @@ ALL_DEBUG_DEPENDS = \
 	$(DEBUG_LIBTCLWORKS)
 
 $(HOME)/bin/$(ARCH)/$(DEBUG_TARGET): $(ALL_DEBUG_DEPENDS)
-	$(CC) $(DEBUG_LINK_OPTIONS) -o $@ $(DEBUG_GRSH_STATIC_OBJS) /opt/langtools/lib/end.o \
+	$(CC) $(DEBUG_LINK_OPTIONS) -o $(HOME)/ftp/$@ $(DEBUG_GRSH_STATIC_OBJS) /opt/langtools/lib/end.o \
 	$(LIB_DIRS) -lvisx.d -ltclworks.d $(LIBRARIES) 
+	mv $(HOME)/ftp/$@ $@
 
 grsh: TAGS $(HOME)/bin/$(ARCH)/$(PROD_TARGET)
 	$(PROD_TARGET) ./testing/grshtest.tcl
@@ -404,6 +406,7 @@ PBM_H = $(ERROR_H) pbm.h
 READER_H = $(ERROR_H) reader.h
 RECT_H = $(POINT_H) rect.h
 TCLERROR_H = $(ERROR_H) tclerror.h
+TCLITEMPKGBASE_H = $(TCLPKG_H) tclitempkgbase.h
 VALUE_H = $(ERROR_H) value.h
 VOIDPTRLIST_H = $(ERROR_H) voidptrlist.h
 WRITER_H = $(ERROR_H) writer.h
@@ -473,7 +476,7 @@ SOUNDLIST_H = $(PTRLIST_H) soundlist.h
 STRINGIFYCMD_H = $(TCLCMD_H) stringifycmd.h
 THLIST_H = $(PTRLIST_H) thlist.h
 TLIST_H = $(PTRLIST_H) $(IO_H) tlist.h
-TCLITEMPKG_H = $(TCLPKG_H) $(TCLCMD_H) $(PROPERTY_H) tclitempkg.h
+TCLITEMPKG_H = $(TCLITEMPKGBASE_H) $(TCLCMD_H) $(PROPERTY_H) tclitempkg.h
 TCLVECCMDS_H = $(TCLCMD_H) tclveccmds.h
 XBITMAP_H = $(BITMAP_H) xbitmap.h
 
@@ -481,7 +484,7 @@ XBITMAP_H = $(BITMAP_H) xbitmap.h
 # level 5 headers
 #
 LISTITEMPKG_H = $(TCLITEMPKG_H) $(DEMANGLE_H) listitempkg.h
-LISTPKG_H = $(TCLITEMPKG_H) listpkg.h
+LISTPKG_H = $(TCLITEMPKG_H) $(IOPTRLIST_H) listpkg.h
 
 #
 # level 6 headers
@@ -631,6 +634,8 @@ JITTERTCL_CC = $(IOFACTORY_H) $(JITTER_H) $(POSLIST_H) \
 KBDRESPONSEHDLR_CC = $(KBDRESPONSEHDLR_H) \
 	$(TRACE_H) $(DEBUG_H) kbdresponsehdlr.cc
 
+LISTPKG_CC = $(LISTPKG_H) $(TRACE_H) listpkg.cc
+
 MASKHATCH_CC = $(MASKHATCH_H) $(READER_H) $(RECT_H) $(WRITER_H) \
 	$(TRACE_H) $(DEBUG_H) maskhatch.cc
 
@@ -675,8 +680,7 @@ POSITIONTCL_CC = $(IOFACTORY_H) $(POSITION_H) $(POSLIST_H) \
 POSLIST_CC = $(POSLIST_H) $(TRACE_H) $(DEBUG_H) \
 	$(POSITION_H) $(PTRLIST_CC) poslist.cc
 
-POSLISTTCL_CC = $(POSLIST_H) $(LISTPKG_H) \
-	$(TRACE_H) $(DEBUG_H) poslisttcl.cc
+POSLISTTCL_CC = $(POSLIST_H) $(LISTPKG_H) $(TRACE_H) poslisttcl.cc
 
 PROPERTY_CC = $(PROPERTY_H) property.cc
 
@@ -690,7 +694,7 @@ RHLIST_CC = $(RHLIST_H) $(TRACE_H) $(DEBUG_H) \
 	$(RESPONSEHANDLER_H) $(PTRLIST_CC) rhlist.cc
 
 RHTCL_CC = $(EVENTRESPONSEHDLR_H) $(IOFACTORY_H) $(RHLIST_H) \
-	$(RESPONSEHANDLER_H) $(TCLCMD_H) $(KBDRESPONSEHDLR_H) \
+	$(RESPONSEHANDLER_H) $(KBDRESPONSEHDLR_H) \
 	$(NULLRESPONSEHDLR_H) $(LISTITEMPKG_H) $(LISTPKG_H) \
 	$(TRACE_H) $(DEBUG_H) rhtcl.cc
 
@@ -737,8 +741,8 @@ TCLPKG_CC = $(TCLPKG_H) $(TCLLINK_H) $(TCLCMD_H) $(TCLERROR_H) \
 
 TCLVALUE_CC = $(TCLVALUE_H) $(TRACE_H) $(DEBUG_H) tclvalue.cc
 
-TCLVECCMDS_CC = $(TCLVECCMDS_H) $(TCLITEMPKG_H) $(DEBUG_H) $(TRACE_H) \
-	tclveccmds.cc
+TCLVECCMDS_CC = $(TCLVECCMDS_H) $(TCLITEMPKGBASE_H) \
+	$(DEBUG_H) $(TRACE_H) tclveccmds.cc
 
 THLIST_CC = $(THLIST_H) $(TRACE_H) $(DEBUG_H) \
 	$(TIMINGHDLR_H) $(PTRLIST_CC) thlist.cc
@@ -855,6 +859,7 @@ $(ARCH)/ioutils.*[ol]:           $(IOUTILS_CC)
 $(ARCH)/jitter.*[ol]:            $(JITTER_CC)
 $(ARCH)/jittertcl.*[ol]:         $(JITTERTCL_CC)
 $(ARCH)/kbdresponsehdlr.*[ol]:   $(KBDRESPONSEHDLR_CC)
+$(ARCH)/listpkg.*[ol]:           $(LISTPKG_CC)
 $(ARCH)/maskhatch.*[ol]:         $(MASKHATCH_CC)
 $(ARCH)/masktcl.*[ol]:           $(MASKTCL_CC)
 $(ARCH)/misctcl.*[ol]:           $(MISCTCL_CC)
