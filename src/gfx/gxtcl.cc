@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Fri Jul  5 14:24:52 2002
+// written: Fri Jul  5 16:10:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,9 @@
 #include "gfx/gxcolor.h"
 #include "gfx/gxcylinder.h"
 #include "gfx/gxdrawstyle.h"
+#include "gfx/gxlighting.h"
 #include "gfx/gxline.h"
+#include "gfx/gxmaterial.h"
 #include "gfx/gxnode.h"
 #include "gfx/gxseparator.h"
 #include "gfx/gxsphere.h"
@@ -126,6 +128,18 @@ DOTRACE("Gx_Init");
   Tcl::defCreator<GxSphere>(pkg7);
 
   status = pkg7->combineStatus(status);
+
+  Tcl::Pkg* pkg8 = new Tcl::Pkg(interp, "GxLighting", "$Revision$");
+  Tcl::defFieldContainer<GxLighting>(pkg8);
+  Tcl::defCreator<GxLighting>(pkg8);
+
+  status = pkg8->combineStatus(status);
+
+  Tcl::Pkg* pkg9 = new Tcl::Pkg(interp, "GxMaterial", "$Revision$");
+  Tcl::defFieldContainer<GxMaterial>(pkg9);
+  Tcl::defCreator<GxMaterial>(pkg9);
+
+  status = pkg9->combineStatus(status);
 
   return status;
 }
