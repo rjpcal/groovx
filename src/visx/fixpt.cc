@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Fri Aug 24 18:35:57 2001
+// written: Fri Aug 24 18:39:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,6 @@
 #include "io/writer.h"
 
 #include <cstring>
-#include <GL/gl.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -121,19 +120,15 @@ DOTRACE("FixPt::grRender");
 
   canvas.setLineWidth(itsWidth);
 
-  glBegin(GL_LINES);
-  glVertex3f(0.0, -itsLength/2.0, 0.0);
-  glVertex3f(0.0, itsLength/2.0, 0.0);
-  glEnd();
+  {
+    Gfx::Canvas::LinesBlock block(canvas);
 
-  glFlush();
+    canvas.vertex2(Gfx::Vec2<double>(0.0, -itsLength/2.0));
+    canvas.vertex2(Gfx::Vec2<double>(0.0, itsLength/2.0));
 
-  glBegin(GL_LINES);
-  glVertex3f(-itsLength/2.0, 0.0, 0.0);
-  glVertex3f(itsLength/2.0, 0.0, 0.0);
-  glEnd();
-
-  glPopAttrib();
+    canvas.vertex2(Gfx::Vec2<double>(-itsLength/2.0, 0.0));
+    canvas.vertex2(Gfx::Vec2<double>(itsLength/2.0, 0.0));
+  }
 }
 
 static const char vcid_fixpt_cc[] = "$Header$";
