@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Wed Nov 15 23:23:49 2000
+// written: Thu Dec  7 18:59:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -299,7 +299,9 @@ public:
 	 itsFSep(' '),
 	 itsIndentLevel(0),
 	 itsNeedsNewline(false),
-	 itsIsBeginning(true)
+	 itsNeedsWhitespace(false),
+	 itsIsBeginning(true),
+	 itsUsePrettyPrint(true)
   {}
 
   void throwIfError(const char* type) {
@@ -317,17 +319,21 @@ public:
   const char itsFSep;				  // field separator
   int itsIndentLevel;
   bool itsNeedsNewline;
+  bool itsNeedsWhitespace;
   bool itsIsBeginning;
+  bool itsUsePrettyPrint;
 
   STD_IO::ostream& stream()
 	 {
-		if (itsNeedsNewline)
-		  {
-			 doNewline();
-			 itsNeedsNewline = false;
-		  }
+		flushWhitespace();
 		itsIsBeginning = false;
 		return itsOutStream;
+	 }
+
+  void flushWhitespace()
+    {
+		updateNewline();
+		updateWhitespace();
 	 }
 
 private:
@@ -339,20 +345,55 @@ private:
 	 ~Indenter() { --(itsOwner->itsIndentLevel); }
   };
 
-  void doNewline()
-	 {
+  void doNewlineAndTabs()
+    {
 		itsOutStream << '\n';
 		for (int i = 0; i < itsIndentLevel; ++i)
 		  itsOutStream << '\t';
 	 }
 
-  void requestNewline() { if (!itsIsBeginning) itsNeedsNewline = true; }
+  void doWhitespace()
+    {
+		if (itsUsePrettyPrint)
+		  doNewlineAndTabs();
+		else
+		  itsOutStream << ' ';
+	 }
+
+  void updateNewline()
+	 {
+		if (itsNeedsNewline)
+		  {
+			 doNewlineAndTabs();
+			 noNewlineNeeded();
+			 noWhitespaceNeeded();
+		  }
+	 }
+
+  void updateWhitespace()
+    {
+		if (itsNeedsWhitespace)
+		  {
+			 doWhitespace();
+			 noWhitespaceNeeded();
+		  }
+	 }
 
 public:
+  void usePrettyPrint(bool yes) { itsUsePrettyPrint = yes; }
+
+  void requestNewline() { if (!itsIsBeginning) itsNeedsNewline = true; }
+  void requestWhitespace() { if (!itsIsBeginning) itsNeedsWhitespace = true; }
+  void noNewlineNeeded() { itsNeedsNewline = false; }
+  void noWhitespaceNeeded() { itsNeedsWhitespace = false; }
+
   void flattenObject(const char* obj_name, const IO::IoObject* obj,
 							bool stub_out = false)
   {
-	 requestNewline();
+	 if (itsIndentLevel > 0)
+		requestWhitespace();
+	 else
+		requestNewline();
 
 	 if (obj == 0)
 		{
@@ -377,14 +418,17 @@ public:
 		  stream() << obj->serialVersionId() << " {";
 		  {
 			 Indenter indent(this);
-			 requestNewline();
+			 requestWhitespace();
 			 obj->writeTo(itsOwner);
 		  }
-		  requestNewline();
+		  requestWhitespace();
 		  stream() << "}";
 		}
 
-	 requestNewline();
+	 if (itsIndentLevel > 0)
+		requestWhitespace();
+	 else
+		requestNewline();
 
 	 throwIfError(obj_name);
   }
@@ -405,7 +449,13 @@ DOTRACE("IO::LegacyWriter::LegacyWriter");
 
 IO::LegacyWriter::~LegacyWriter() {
 DOTRACE("IO::LegacyWriter::~LegacyWriter");
+  itsImpl->flushWhitespace();
   delete itsImpl;
+}
+
+void IO::LegacyWriter::usePrettyPrint(bool yes) {
+DOTRACE("IO::LegacyWriter::usePrettyPrint");
+  itsImpl->usePrettyPrint(yes); 
 }
 
 void IO::LegacyWriter::writeChar(const char* name, char val) {
@@ -435,7 +485,6 @@ DOTRACE("IO::LegacyWriter::writeDouble");
 void IO::LegacyWriter::writeCstring(const char* name, const char* val) {
 DOTRACE("IO::LegacyWriter::writeCstring");
 
-//   itsImpl->stream() << strlen(val) << '\n'
   itsImpl->stream() << strlen(val) << " "
 						  << val << itsImpl->itsFSep;
 
