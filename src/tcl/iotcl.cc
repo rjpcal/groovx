@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Tue Aug 21 15:22:43 2001
+// written: Tue Aug 21 16:19:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,8 @@
 
 #include "util/objdb.h"
 #include "util/objmgr.h"
+
+#include "system/demangle.h"
 
 #include <fstream.h>
 
@@ -130,6 +132,11 @@ namespace
       }
   }
 
+  fstring objType(Util::SoftRef<Util::Object> obj)
+  {
+    return demangle_cstr(typeid(*obj).name());
+  }
+
   void dbClear() { ObjDb::theDb().clear(); }
   void dbPurge() { ObjDb::theDb().purge(); }
   void dbRelease(Util::UID id) { ObjDb::theDb().release(id); }
@@ -176,6 +183,8 @@ DOTRACE("Io_Init");
   pkg2->defGetter("refCount", &Util::Object::refCount);
   pkg2->defAction("incrRefCount", &Util::Object::incrRefCount);
   pkg2->defAction("decrRefCount", &Util::Object::decrRefCount);
+
+  pkg2->defVec( "type", "item_id(s)", &objType );
 
   pkg2->def( "new", "typename array_size=1", &objNew );
   pkg2->def( "new", "typename", &objNewOne );
