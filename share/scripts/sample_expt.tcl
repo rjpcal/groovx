@@ -50,10 +50,10 @@ proc make_spacebar_responsehdlr {} {
 
     # Listen for spacebar presses, and ignore anything else
     -> $rh responseProc {k} {
-	switch $k {
-	    " " { return 0 }
-	    default { return -3 }
-	}
+        switch $k {
+            " " { return 0 }
+            default { return -3 }
+        }
     }
 
     return $rh
@@ -77,13 +77,13 @@ proc make_text_trial { msg {rgba {1 1 1 1}} } {
     # Create a timing-handler object that will wait indefinitely until
     # a user response is seen
     set th [new TimingHdlr]
-    -> $th addStartEvent [new ClearBufferEvent {delay 50}]
-    -> $th addStartEvent [new RenderEvent {delay 100}]
-    -> $th addStartEvent [new SwapBuffersEvent {delay 150}]
+    -> $th addStartEvent [new ClearBufferEvent "delay 50"]
+    -> $th addStartEvent [new RenderEvent "delay 100"]
+    -> $th addStartEvent [new SwapBuffersEvent "delay 150"]
 
-    -> $th addResponseEvent [new ClearBufferEvent {delay 1}]
-    -> $th addResponseEvent [new SwapBuffersEvent {delay 20}]
-    -> $th addResponseEvent [new EndTrialEvent {delay 1000}]
+    -> $th addResponseEvent [new ClearBufferEvent "delay 1"]
+    -> $th addResponseEvent [new SwapBuffersEvent "delay 20"]
+    -> $th addResponseEvent [new EndTrialEvent "delay 1000"]
 
     # Set up the trial object with the given text message, with the
     # given timing-handler object, and with a response-handler object
@@ -110,10 +110,10 @@ proc make_response_nodes {} {
     set text_2 [new Gtext {text "region (2)"}]
 
     set response_divider \
-	[new GxSeparator \
-	     [list addChildren \
-		  [list [new GxLine {start {0 -1000 0} stop {0 1000 0} width 1}] \
-		       [new GxLine {start {-10 0 0} stop {10 0 0} width 1}]]]]
+        [new GxSeparator \
+             [list addChildren \
+                  [list [new GxLine {start {0 -1000 0} stop {0 1000 0} width 1}] \
+                       [new GxLine {start {-10 0 0} stop {10 0 0} width 1}]]]]
 
     set response_col [new GxColor {rgba {0.6 1.0 0.7 1}}]
 
@@ -122,35 +122,35 @@ proc make_response_nodes {} {
     set response_nodes [list]
 
     foreach angle $angles {
-	set rotation [new GxTransform [list rotationAngle $angle]]
-	set node [new GxSeparator [list addChildren [list $rotation $response_col $response_divider]]]
+        set rotation [new GxTransform [list rotationAngle $angle]]
+        set node [new GxSeparator [list addChildren [list $rotation $response_col $response_divider]]]
 
-	set text_pos_1 [new GxTransform {translation {-200 0 0} scaling {0.25 0.25 0.25}}]
-	set text_pos_2 [new GxTransform {translation {200 0 0} scaling {0.25 0.25 0.25}}]
+        set text_pos_1 [new GxTransform {translation {-200 0 0} scaling {0.25 0.25 0.25}}]
+        set text_pos_2 [new GxTransform {translation {200 0 0} scaling {0.25 0.25 0.25}}]
 
-	set back_rotate [new GxTransform [list rotationAngle [expr -1 * $angle]]]
+        set back_rotate [new GxTransform [list rotationAngle [expr -1 * $angle]]]
 
-	if { $angle < 90 } {
-	    -> $node addChildren \
-		[new GxSeparator \
-		     [list addChildren \
-			  [list $text_pos_1 $back_rotate $text_1]]]
-	    -> $node addChildren \
-		[new GxSeparator \
-		     [list addChildren \
-			  [list $text_pos_2 $back_rotate $text_2]]]
-	} else {
-	    -> $node addChildren \
-		[new GxSeparator \
-		     [list addChildren \
-			  [list $text_pos_2 $back_rotate $text_1]]]
-	    -> $node addChildren \
-		[new GxSeparator \
-		     [list addChildren \
-			  [list $text_pos_1 $back_rotate $text_2]]]
-	}
+        if { $angle < 90 } {
+            -> $node addChildren \
+                [new GxSeparator \
+                     [list addChildren \
+                          [list $text_pos_1 $back_rotate $text_1]]]
+            -> $node addChildren \
+                [new GxSeparator \
+                     [list addChildren \
+                          [list $text_pos_2 $back_rotate $text_2]]]
+        } else {
+            -> $node addChildren \
+                [new GxSeparator \
+                     [list addChildren \
+                          [list $text_pos_2 $back_rotate $text_1]]]
+            -> $node addChildren \
+                [new GxSeparator \
+                     [list addChildren \
+                          [list $text_pos_1 $back_rotate $text_2]]]
+        }
 
-	lappend response_nodes $node
+        lappend response_nodes $node
     }
 
     return $response_nodes
@@ -166,28 +166,28 @@ proc get_file_list { src } {
     set files [list]
 
     if { [file isdirectory $src] } {
-	foreach ext {pgm ppm png jpg} {
-	    set files [concat $files [glob -nocomplain ${src}/*.${ext}]]
-	}
+        foreach ext {pgm ppm png jpg} {
+            set files [concat $files [glob -nocomplain ${src}/*.${ext}]]
+        }
     } elseif { [file isfile $src] } {
-	set chan [open $src r]
-	set files [read $chan]
-	close $chan
+        set chan [open $src r]
+        set files [read $chan]
+        close $chan
     } elseif { [string bytelength $src] == 0 } {
-	set b [file dirname [info script]]
-	if { [file isdirectory ${b}/../images] } {
-	    set d ${b}/../images/
-	} elseif { [file isdirectory ${b}/../share/images] } {
-	    set d ${b}/../share/images/
-	} else {
-	    error "couldn't find images/ directory for [info script]"
-	}
-	set files [list \
-		       ${d}nga01.jpg ${d}nga02.jpg ${d}nga03.jpg ${d}nga04.jpg \
-		       ${d}nga05.jpg ${d}nga06.jpg ${d}nga07.jpg ${d}nga08.jpg \
-		       ${d}nga09.jpg ${d}nga10.jpg]
+        set b [file dirname [info script]]
+        if { [file isdirectory ${b}/../images] } {
+            set d ${b}/../images/
+        } elseif { [file isdirectory ${b}/../share/images] } {
+            set d ${b}/../share/images/
+        } else {
+            error "couldn't find images/ directory for [info script]"
+        }
+        set files [list \
+                       ${d}nga01.jpg ${d}nga02.jpg ${d}nga03.jpg ${d}nga04.jpg \
+                       ${d}nga05.jpg ${d}nga06.jpg ${d}nga07.jpg ${d}nga08.jpg \
+                       ${d}nga09.jpg ${d}nga10.jpg]
     } else {
-	error "couldn't get image files from $src"
+        error "couldn't get image files from $src"
     }
 
     Log::log "found [llength $files] images in '$src'"
@@ -206,37 +206,37 @@ proc make_trials { image_files response_nodes } {
     set trials [list]
 
     set fixptnode [new GxSeparator \
-		       [list addChildren \
-			    [list [new GxColor {rgba {0.6 0.6 0.8 1.0}}] \
-				 [new FixPt {length 20 width 2}]]]]
+                       [list addChildren \
+                            [list [new GxColor {rgba {0.6 0.6 0.8 1.0}}] \
+                                 [new FixPt {length 20 width 2}]]]]
 
     set c 0
 
     foreach image_file $image_files {
-	set bmap [new GxPixmap]
-	-> $bmap queueImage $image_file
-	-> $bmap purgeable 1
+        set bmap [new GxPixmap]
+        -> $bmap queueImage $image_file
+        -> $bmap purgeable 1
 
-	# change this to "if {1}" to get some debug information
-	if {0} {
-	    set firstnode [new GxSeparator \
-			       [list addChildren \
-				    [list $fixptnode \
-					 [new GxTransform {translation {0 -50 0}}] \
-					 [new GxColor {rgba {0.7 0.7 0.7 1.0}}] \
-					 [new GxText "text $image_file font {helvetica 34}"] ]]]
-	}
+        # change this to "if {1}" to get some debug information
+        if {0} {
+            set firstnode [new GxSeparator \
+                               [list addChildren \
+                                    [list $fixptnode \
+                                         [new GxTransform {translation {0 -50 0}}] \
+                                         [new GxColor {rgba {0.7 0.7 0.7 1.0}}] \
+                                         [new GxText "text $image_file font {helvetica 34}"] ]]]
+        }
 
-	set trial [new Trial]
-	-> $trial info "image $image_file"
-	-> $trial addNode $fixptnode
-	#-> $trial addNode $firstnode
-	-> $trial addNode $bmap
-	-> $trial addNode [lindex $response_nodes [expr $c % [llength $response_nodes]]]
+        set trial [new Trial]
+        -> $trial info "image $image_file"
+        -> $trial addNode $fixptnode
+        #-> $trial addNode $firstnode
+        -> $trial addNode $bmap
+        -> $trial addNode [lindex $response_nodes [expr $c % [llength $response_nodes]]]
 
-	incr c
+        incr c
 
-	lappend trials $trial
+        lappend trials $trial
     }
 
     return $trials
@@ -255,11 +255,11 @@ proc make_responsehdlr {} {
     -> $rh bindingSubstitution "%A"
     -> $rh eventSequence <KeyPress>
     -> $rh responseProc {k} {
-	switch $k {
-	    1 {return 1}
-	    2 {return 2}
-	    default {return -3}
-	}
+        switch $k {
+            1 {return 1}
+            2 {return 2}
+            default {return -3}
+        }
     }
 
     return $rh
@@ -280,8 +280,8 @@ proc make_main_timinghdlr { image_duration } {
     -> $th addStartEvent [new RenderEvent "delay 50"]
     set sb [new MultiEvent "delay 100"]
     -> $sb addEvents [list \
-			  [new SwapBuffersEvent] \
-			  [new FinishDrawingEvent]]
+                          [new SwapBuffersEvent] \
+                          [new FinishDrawingEvent]]
     -> $th addStartEvent $sb
 
     # here's the image:
@@ -290,8 +290,8 @@ proc make_main_timinghdlr { image_duration } {
     -> $th addStartEvent [new RenderEvent "delay 600"]
     set sb [new MultiEvent "delay 1000"]
     -> $sb addEvents [list \
-			  [new SwapBuffersEvent] \
-			  [new FinishDrawingEvent]]
+                          [new SwapBuffersEvent] \
+                          [new FinishDrawingEvent]]
     -> $th addStartEvent $sb
 
     # here's the response array:
@@ -300,16 +300,16 @@ proc make_main_timinghdlr { image_duration } {
     -> $th addStartEvent [new RenderEvent "delay 1300"]
     set sb [new MultiEvent "delay [expr $image_duration + 1000]"]
     -> $sb addEvents [list \
-			  [new SwapBuffersEvent] \
-			  [new FinishDrawingEvent] \
-			  [new AllowResponsesEvent]]
+                          [new SwapBuffersEvent] \
+                          [new FinishDrawingEvent] \
+                          [new AllowResponsesEvent]]
     -> $th addStartEvent $sb
 
     set sb [new MultiEvent "delay 0"]
     -> $sb addEvents [list \
-			  [new ClearBufferEvent] \
-			  [new SwapBuffersEvent] \
-			  [new FinishDrawingEvent]]
+                          [new ClearBufferEvent] \
+                          [new SwapBuffersEvent] \
+                          [new FinishDrawingEvent]]
     -> $th addResponseEvent $sb
     -> $th addResponseEvent [new EndTrialEvent "delay 500"]
 
