@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Sep 25 18:53:38 2002
+// written: Wed Nov 13 10:29:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -118,8 +118,8 @@ public:
   void widenByFactor(V factor) { setWidth(width() * factor); }
   void heightenByFactor(V factor) { setHeight(height() * factor); }
 
-  void widenByStep(V step) { setWidth(width() + 2*factor); }
-  void heightenByStep(V step) { setHeight(height() + 2*factor); }
+  void widenByStep(V step) { setWidth(width() + 2*step); }
+  void heightenByStep(V step) { setHeight(height() + 2*step); }
 
   void translate(const Gfx::Vec2<V>& dist)
   {
