@@ -337,8 +337,13 @@ public:
   slice& operator+=(const slice& other);
   slice& operator-=(const slice& other);
 
-  // This is assignment of value, not reference
+  /// All entries in this slice get the specified value
+  slice& operator=(double val);
+
+  /// This is assignment of value, not reference
   slice& operator=(const slice& other);
+
+  /// This is assignment of value, not reference
   slice& operator=(const mtx& other);
 };
 

@@ -337,6 +337,15 @@ DOTRACE("slice::operator-=(const slice&)");
   return *this;
 }
 
+slice& slice::operator=(double val)
+{
+DOTRACE("slice::operator=(double)");
+  for (mtx_iter itr = begin_nc(); itr.has_more(); ++itr)
+    *itr = val;
+
+  return *this;
+}
+
 slice& slice::operator=(const slice& other)
 {
 DOTRACE("slice::operator=(const slice&)");
