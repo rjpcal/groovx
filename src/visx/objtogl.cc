@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Tue Sep 17 16:36:50 2002
+// written: Tue Sep 17 21:23:53 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -167,7 +167,6 @@ public:
     defSetter("animate", "item_id(s) frames_per_second", &Toglet::animate);
     defAction("clearscreen", &Toglet::fullClearscreen);
     defAction("destroy", &Tcl::TkWidget::destroyWidget);
-    defSetter("dumpEps", "item_id(s) filename", &Toglet::writeEpsFile);
     def("fixedRect", "uid left top right bottom", &Toglet::setFixedRectLTRB);
     defAttrib("height", &Tcl::TkWidget::height, &Tcl::TkWidget::setHeight);
     defSetter("hold", "item_id(s) hold_on?", &Toglet::setHold);

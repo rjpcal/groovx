@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Tue Sep 17 17:14:40 2002
+// written: Tue Sep 17 21:24:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,9 +47,6 @@ public:
   void setUnitAngle(double deg);
   void setViewingDistIn(double in);
   void setPerspective(double fovy, double zNear, double zFar);
-
-  // actions
-  void writeEpsFile(const char* filename);
 
   /// Overridden from Tcl::TkWidget.
   virtual void reshapeCallback();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue Sep 17 12:49:21 2002
+// written: Tue Sep 17 21:24:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -356,48 +356,6 @@ void Toglet::setMinRectLTRB(double L, double T, double R, double B)
 DOTRACE("Toglet::setMinRectLTRB");
   itsSizer->setMinRectLTRB(L,T,R,B);
   reshapeCallback();
-}
-
-/////////////
-// actions //
-/////////////
-
-void Toglet::writeEpsFile(const char* filename)
-{
-DOTRACE("Toglet::writeEpsFile");
-  Togl::makeCurrent();
-
-  {
-    Gfx::Canvas& canvas = getCanvas();
-
-    Gfx::AttribSaver saver(canvas);
-
-    // Set fore/background colors to extremes for the purposes of EPS
-    // rendering
-    if ( Togl::isRgba() )
-      {
-        canvas.setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
-        canvas.setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
-      }
-    else
-      {
-        canvas.setColorIndex(0);
-        canvas.setClearColorIndex(255);
-      }
-
-    // get a clear buffer
-    canvas.clearColorBuffer();
-    swapBuffers();
-
-    fullRender();
-
-    // do the EPS dump
-    const bool inColor = false;
-    GLUtil::generateEPS(filename, inColor, width(), height());
-  }
-
-  // redisplay original image
-  fullRender();
 }
 
 void Toglet::reshapeCallback()
