@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 11 13:21:57 2001
-// written: Mon Aug  6 18:07:29 2001
+// written: Tue Aug  7 10:26:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,9 +41,7 @@ class ReadWriteAttrib : public Field {
 protected:
   virtual void doSetValue(const Value& new_val)
   {
-    T temp;
-    new_val.get(temp);
-    (itsC->*itsSetter)(temp);
+    (itsC->*itsSetter)(new_val.get(Util::TypeCue<T>()));
   }
 
 public:

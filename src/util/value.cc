@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:21:32 1999
-// written: Thu May 10 12:04:41 2001
+// written: Tue Aug  7 10:43:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,24 +47,17 @@ DOTRACE("Value::~Value");
 void Value::printTo(STD_IO::ostream&) const { raiseValueError("printTo"); }
 void Value::scanFrom(STD_IO::istream&) { raiseValueError("scanFrom"); }
 
-int Value::getInt() const { raiseValueError("getInt"); return 0; }
-long Value::getLong() const { raiseValueError("getLong"); return 0; }
-bool Value::getBool() const { raiseValueError("getBool"); return false; }
-double Value::getDouble() const { raiseValueError("getDouble"); return 0.0; }
-const char* Value::getCstring() const { raiseValueError("getCstring"); return ""; }
+int Value::get(Util::TypeCue<int>) const { raiseValueError("getInt"); return 0; }
+long Value::get(Util::TypeCue<long>) const { raiseValueError("getLong"); return 0; }
+bool Value::get(Util::TypeCue<bool>) const { raiseValueError("getBool"); return false; }
+double Value::get(Util::TypeCue<double>) const { raiseValueError("getDouble"); return 0.0; }
+const char* Value::get(Util::TypeCue<const char*>) const { raiseValueError("getCstring"); return ""; }
 
-void Value::get(int&) const { raiseValueError("get(int&)"); }
-void Value::get(long&) const { raiseValueError("get(long&)"); }
-void Value::get(bool&) const { raiseValueError("get(bool&)"); }
-void Value::get(double&) const { raiseValueError("get(double&)"); }
-void Value::get(const char*&) const { raiseValueError("get(const char*&)"); }
-
-void Value::setInt(int) { raiseValueError("setInt"); }
-void Value::setLong(long) { raiseValueError("setLong"); }
-void Value::setBool(bool) { raiseValueError("setBool"); }
-void Value::setDouble(double) { raiseValueError("setDouble"); }
-void Value::setCstring(const char*) { raiseValueError("setCstring"); }
-
+void Value::set(int) { raiseValueError("set(int)"); }
+void Value::set(long) { raiseValueError("set(long)"); }
+void Value::set(bool) { raiseValueError("set(bool)"); }
+void Value::set(double) { raiseValueError("set(double)"); }
+void Value::set(const char*) { raiseValueError("set(const char*)"); }
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -120,38 +113,27 @@ const char* TValue<double>::getNativeTypeName() const { return "double"; }
 // matches the type of the template parameter.
 //
 
-template <class T> int TValue<T>::getInt() const { return Value::getInt(); }
-template <class T> long TValue<T>::getLong() const { return Value::getLong(); }
-template <class T> bool TValue<T>::getBool() const { return Value::getBool(); }
-template <class T> double TValue<T>::getDouble() const { return Value::getDouble(); }
-template <class T> const char* TValue<T>::getCstring() const { return Value::getCstring(); }
+template <class T> int TValue<T>::get(Util::TypeCue<int>) const { return Value::get(Util::TypeCue<int>()); }
+template <class T> long TValue<T>::get(Util::TypeCue<long>) const { return Value::get(Util::TypeCue<long>()); }
+template <class T> bool TValue<T>::get(Util::TypeCue<bool>) const { return Value::get(Util::TypeCue<bool>()); }
+template <class T> double TValue<T>::get(Util::TypeCue<double>) const { return Value::get(Util::TypeCue<double>()); }
+template <class T> const char* TValue<T>::get(Util::TypeCue<const char*>) const { return Value::get(Util::TypeCue<const char*>()); }
 
-template <> int TValue<int>::getInt() const { return itsVal; }
-template <> long TValue<long>::getLong() const { return itsVal; }
-template <> bool TValue<bool>::getBool() const { return itsVal; }
-template <> double TValue<double>::getDouble() const { return itsVal; }
+template <> int TValue<int>::get(Util::TypeCue<int>) const { return itsVal; }
+template <> long TValue<long>::get(Util::TypeCue<long>) const { return itsVal; }
+template <> bool TValue<bool>::get(Util::TypeCue<bool>) const { return itsVal; }
+template <> double TValue<double>::get(Util::TypeCue<double>) const { return itsVal; }
 
-template <class T> void TValue<T>::get(int& val) const { Value::get(val); }
-template <class T> void TValue<T>::get(long& val) const { Value::get(val); }
-template <class T> void TValue<T>::get(bool& val) const { Value::get(val); }
-template <class T> void TValue<T>::get(double& val) const { Value::get(val); }
-template <class T> void TValue<T>::get(const char*& val) const { Value::get(val); }
+template <class T> void TValue<T>::set(int val) { Value::set(val); }
+template <class T> void TValue<T>::set(long val) { Value::set(val); }
+template <class T> void TValue<T>::set(bool val) { Value::set(val); }
+template <class T> void TValue<T>::set(double val) { Value::set(val); }
+template <class T> void TValue<T>::set(const char* val) { Value::set(val); }
 
-template <> void TValue<int>::get(int& val) const { val = itsVal; }
-template <> void TValue<long>::get(long& val) const { val = itsVal; }
-template <> void TValue<bool>::get(bool& val) const { val = itsVal; }
-template <> void TValue<double>::get(double& val) const { val = itsVal; }
-
-template <class T> void TValue<T>::setInt(int val) { Value::setInt(val); }
-template <class T> void TValue<T>::setLong(long val) { Value::setLong(val); }
-template <class T> void TValue<T>::setBool(bool val) { Value::setBool(val); }
-template <class T> void TValue<T>::setDouble(double val) { Value::setDouble(val); }
-template <class T> void TValue<T>::setCstring(const char* val) { Value::setCstring(val); }
-
-template <> void TValue<int>::setInt(int val) { itsVal = val; }
-template <> void TValue<long>::setLong(long val) { itsVal = val; }
-template <> void TValue<bool>::setBool(bool val) { itsVal = val; }
-template <> void TValue<double>::setDouble(double val) { itsVal = val; }
+template <> void TValue<int>::set(int val) { itsVal = val; }
+template <> void TValue<long>::set(long val) { itsVal = val; }
+template <> void TValue<bool>::set(bool val) { itsVal = val; }
+template <> void TValue<double>::set(double val) { itsVal = val; }
 
 // Explicit instantiations
 template class TValue<int>;
@@ -213,38 +195,27 @@ const char* TValuePtr<double>::getNativeTypeName() const { return "double"; }
 // matches the type of the template parameter.
 //
 
-template <class T> int TValuePtr<T>::getInt() const { return Value::getInt(); }
-template <class T> long TValuePtr<T>::getLong() const { return Value::getLong(); }
-template <class T> bool TValuePtr<T>::getBool() const { return Value::getBool(); }
-template <class T> double TValuePtr<T>::getDouble() const { return Value::getDouble(); }
-template <class T> const char* TValuePtr<T>::getCstring() const { return Value::getCstring(); }
+template <class T> int TValuePtr<T>::get(Util::TypeCue<int>) const { return Value::get(Util::TypeCue<int>()); }
+template <class T> long TValuePtr<T>::get(Util::TypeCue<long>) const { return Value::get(Util::TypeCue<long>()); }
+template <class T> bool TValuePtr<T>::get(Util::TypeCue<bool>) const { return Value::get(Util::TypeCue<bool>()); }
+template <class T> double TValuePtr<T>::get(Util::TypeCue<double>) const { return Value::get(Util::TypeCue<double>()); }
+template <class T> const char* TValuePtr<T>::get(Util::TypeCue<const char*>) const { return Value::get(Util::TypeCue<const char*>()); }
 
-template <> int TValuePtr<int>::getInt() const { return *itsValPtr; }
-template <> long TValuePtr<long>::getLong() const { return *itsValPtr; }
-template <> bool TValuePtr<bool>::getBool() const { return *itsValPtr; }
-template <> double TValuePtr<double>::getDouble() const { return *itsValPtr; }
+template <> int TValuePtr<int>::get(Util::TypeCue<int>) const { return *itsValPtr; }
+template <> long TValuePtr<long>::get(Util::TypeCue<long>) const { return *itsValPtr; }
+template <> bool TValuePtr<bool>::get(Util::TypeCue<bool>) const { return *itsValPtr; }
+template <> double TValuePtr<double>::get(Util::TypeCue<double>) const { return *itsValPtr; }
 
-template <class T> void TValuePtr<T>::get(int& val) const { Value::get(val); }
-template <class T> void TValuePtr<T>::get(long& val) const { Value::get(val); }
-template <class T> void TValuePtr<T>::get(bool& val) const { Value::get(val); }
-template <class T> void TValuePtr<T>::get(double& val) const { Value::get(val); }
-template <class T> void TValuePtr<T>::get(const char*& val) const { Value::get(val); }
+template <class T> void TValuePtr<T>::set(int val) { Value::set(val); }
+template <class T> void TValuePtr<T>::set(long val) { Value::set(val); }
+template <class T> void TValuePtr<T>::set(bool val) { Value::set(val); }
+template <class T> void TValuePtr<T>::set(double val) { Value::set(val); }
+template <class T> void TValuePtr<T>::set(const char* val) { Value::set(val); }
 
-template <> void TValuePtr<int>::get(int& val) const { val = *itsValPtr; }
-template <> void TValuePtr<long>::get(long& val) const { val = *itsValPtr; }
-template <> void TValuePtr<bool>::get(bool& val) const { val = *itsValPtr; }
-template <> void TValuePtr<double>::get(double& val) const { val = *itsValPtr; }
-
-template <class T> void TValuePtr<T>::setInt(int val) { Value::setInt(val); }
-template <class T> void TValuePtr<T>::setLong(long val) { Value::setLong(val); }
-template <class T> void TValuePtr<T>::setBool(bool val) { Value::setBool(val); }
-template <class T> void TValuePtr<T>::setDouble(double val) { Value::setDouble(val); }
-template <class T> void TValuePtr<T>::setCstring(const char* val) { Value::setCstring(val); }
-
-template <> void TValuePtr<int>::setInt(int val) { *itsValPtr = val; }
-template <> void TValuePtr<long>::setLong(long val) { *itsValPtr = val; }
-template <> void TValuePtr<bool>::setBool(bool val) { *itsValPtr = val; }
-template <> void TValuePtr<double>::setDouble(double val) { *itsValPtr = val; }
+template <> void TValuePtr<int>::set(int val) { *itsValPtr = val; }
+template <> void TValuePtr<long>::set(long val) { *itsValPtr = val; }
+template <> void TValuePtr<bool>::set(bool val) { *itsValPtr = val; }
+template <> void TValuePtr<double>::set(double val) { *itsValPtr = val; }
 
 
 // Explicit instantiations

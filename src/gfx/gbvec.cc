@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:11:19 2000
-// written: Mon Aug  6 18:07:24 2001
+// written: Tue Aug  7 10:23:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ void GbVec3<T>::scanFrom(STD_IO::istream& is)
 }
 
 template <class T>
-const char* GbVec3<T>::getCstring() const
+const char* GbVec3<T>::get(Util::TypeCue<const char*>) const
 {
   static char buf[256];
   ostrstream ost(buf, 256);
@@ -88,8 +88,8 @@ const char* GbVec3<T>::getCstring() const
 template <class T>
 void GbVec3<T>::doSetValue(const Value& new_val)
 {
-  istrstream ist(new_val.getCstring());
-  DebugEvalNL(new_val.getCstring());
+  istrstream ist(new_val.get(Util::TypeCue<const char*>()));
+  DebugEvalNL(new_val.get(Util::TypeCue<const char*>()));
   scanFrom(ist);
 }
 

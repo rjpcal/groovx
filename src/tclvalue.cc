@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:23:55 1999
-// written: Thu Jul 19 21:05:22 2001
+// written: Tue Aug  7 10:32:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,23 +84,23 @@ DOTRACE("Tcl::TclValue::TclValue(const Value&)");
 
   switch (rhs_type) {
   case Value::INT:
-    itsObj = Tcl::Convert<int>::toTcl(rhs.getInt());
+    itsObj = Tcl::Convert<int>::toTcl(rhs.get(Util::TypeCue<int>()));
     break;
   case Value::LONG:
-    itsObj = Tcl::Convert<long>::toTcl(rhs.getLong());
+    itsObj = Tcl::Convert<long>::toTcl(rhs.get(Util::TypeCue<long>()));
     break;
   case Value::BOOL:
-    itsObj = Tcl::Convert<bool>::toTcl(rhs.getBool());
+    itsObj = Tcl::Convert<bool>::toTcl(rhs.get(Util::TypeCue<bool>()));
     break;
   case Value::DOUBLE:
-    itsObj = Tcl::Convert<double>::toTcl(rhs.getDouble());
+    itsObj = Tcl::Convert<double>::toTcl(rhs.get(Util::TypeCue<double>()));
     break;
 
   case Value::CSTRING:
   case Value::NONE:
   case Value::UNKNOWN:
   default:
-    itsObj = Tcl::Convert<const char*>::toTcl(rhs.getCstring());
+    itsObj = Tcl::Convert<const char*>::toTcl(rhs.get(Util::TypeCue<const char*>()));
     break;
   }
 
@@ -193,60 +193,29 @@ DOTRACE("Tcl::TclValue::scanFrom");
 //
 //---------------------------------------------------------------------
 
-int Tcl::TclValue::getInt() const {
-DOTRACE("Tcl::TclValue::getInt");
+int Tcl::TclValue::get(Util::TypeCue<int>) const {
+DOTRACE("Tcl::TclValue::get(Util::TypeCue<int>)");
   return Tcl::Convert<int>::fromTcl(itsObj);
 }
 
-long Tcl::TclValue::getLong() const {
-DOTRACE("Tcl::TclValue::getLong");
+long Tcl::TclValue::get(Util::TypeCue<long>) const {
+DOTRACE("Tcl::TclValue::get(Util::TypeCue<long>)");
   return Tcl::Convert<long>::fromTcl(itsObj);
 }
 
-bool Tcl::TclValue::getBool() const {
-DOTRACE("Tcl::TclValue::getBool");
+bool Tcl::TclValue::get(Util::TypeCue<bool>) const {
+DOTRACE("Tcl::TclValue::get(Util::TypeCue<bool>)");
   return Tcl::Convert<bool>::fromTcl(itsObj);
 }
 
-double Tcl::TclValue::getDouble() const {
-DOTRACE("Tcl::TclValue::getDouble");
+double Tcl::TclValue::get(Util::TypeCue<double>) const {
+DOTRACE("Tcl::TclValue::get(Util::TypeCue<double>)");
   return Tcl::Convert<double>::fromTcl(itsObj);
 }
 
-const char* Tcl::TclValue::getCstring() const {
-DOTRACE("Tcl::TclValue::getCstring");
+const char* Tcl::TclValue::get(Util::TypeCue<const char*>) const {
+DOTRACE("Tcl::TclValue::get(Util::TypeCue<const char*>)");
   return Tcl::Convert<const char*>::fromTcl(itsObj);
-}
-
-//---------------------------------------------------------------------
-//
-// Reference argument getters
-//
-//---------------------------------------------------------------------
-
-void Tcl::TclValue::get(int& val) const {
-DOTRACE("Tcl::TclValue::get(int&)");
-  val = getInt();
-}
-
-void Tcl::TclValue::get(long& val) const {
-DOTRACE("Tcl::TclValue::get(long&)");
-  val = getLong();
-}
-
-void Tcl::TclValue::get(bool& val) const {
-DOTRACE("Tcl::TclValue::get(bool&)");
-  val = getBool();
-}
-
-void Tcl::TclValue::get(double& val) const {
-DOTRACE("Tcl::TclValue::get(double&)");
-  val = getDouble();
-}
-
-void Tcl::TclValue::get(const char*& val) const {
-DOTRACE("Tcl::TclValue::get(const char*&)");
-  val = getCstring();
 }
 
 static const char vcid_tclvalue_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:23:55 1999
-// written: Wed Jul 11 09:35:35 2001
+// written: Tue Aug  7 10:32:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,17 +82,11 @@ public:
   virtual void printTo(STD_IO::ostream& os) const;
   virtual void scanFrom(STD_IO::istream& is);
 
-  virtual int getInt() const;
-  virtual long getLong() const;
-  virtual bool getBool() const;
-  virtual double getDouble() const;
-  virtual const char* getCstring() const;
-
-  virtual void get(int& val) const;
-  virtual void get(long& val) const;
-  virtual void get(bool& val) const;
-  virtual void get(double& val) const;
-  virtual void get(const char*& val) const;
+  virtual int get(Util::TypeCue<int>) const;
+  virtual long get(Util::TypeCue<long>) const;
+  virtual bool get(Util::TypeCue<bool>) const;
+  virtual double get(Util::TypeCue<double>) const;
+  virtual const char* get(Util::TypeCue<const char*>) const;
 
 private:
   mutable Tcl_Obj* itsObj;

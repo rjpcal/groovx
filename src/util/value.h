@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:19:17 1999
-// written: Mon Jun 11 15:08:14 2001
+// written: Tue Aug  7 10:43:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
 #include "util/error.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRAITS_H_DEFINED)
+#include "util/traits.h"
 #endif
 
 #ifdef PRESTANDARD_IOSTREAMS
@@ -91,58 +95,31 @@ public:
   /// Read the value from an \c STD_IO::istream.
   virtual void scanFrom(STD_IO::istream& is);
 
-  // Two sets of functions are provided to allow values to be
-  // retrieved either as the return value, or as a reference
-  // argument. Depending on a subclass's implementation, one or the
-  // other type of function may be more efficient.
-
   /// Attempt to get an \c int representation of the value.
-  virtual int getInt() const;
+  virtual int get(Util::TypeCue<int>) const;
   /// Attempt to get a \c long representation of the value.
-  virtual long getLong() const;
+  virtual long get(Util::TypeCue<long>) const;
   /// Attempt to get a \c bool representation of the value.
-  virtual bool getBool() const;
+  virtual bool get(Util::TypeCue<bool>) const;
   /// Attempt to get a \c double representation of the value.
-  virtual double getDouble() const;
+  virtual double get(Util::TypeCue<double>) const;
   /// Attempt to get a C-style string (\c char*) representation of the value.
-  virtual const char* getCstring() const;
-
-  /// Attempt to get an \c int representation of the value.
-  virtual void get(int& val) const;
-  /// Attempt to get a \c long representation of the value.
-  virtual void get(long& val) const;
-  /// Attempt to get a \c bool representation of the value.
-  virtual void get(bool& val) const;
-  /// Attempt to get a \c double representation of the value.
-  virtual void get(double& val) const;
-  /// Attempt to get a C-style string (\c char*) representation of the value.
-  virtual void get(const char*& val) const;
+  virtual const char* get(Util::TypeCue<const char*>) const;
 
   // The default implementations of the set functions all throw
   // exceptions, so that the default case is a read-only value.
 
   /// Attempt to set the value from an \c int representation.
-  virtual void setInt(int val);
+  virtual void set(int val);
   /// Attempt to set the value from a \c long representation.
-  virtual void setLong(long val);
+  virtual void set(long val);
   /// Attempt to set the value from a \c bool representation.
-  virtual void setBool(bool val);
+  virtual void set(bool val);
   /// Attempt to set the value from a \c double representation.
-  virtual void setDouble(double val);
+  virtual void set(double val);
   /// Attempt to set the value from a C-style string (\c char*) representation.
-  virtual void setCstring(const char* val);
-
-  /// Attempt to set the value from an \c int representation.
-  void set(int val) { setInt(val); }
-  /// Attempt to set the value from a \c long representation.
-  void set(long val) { setLong(val); }
-  /// Attempt to set the value from a \c bool representation.
-  void set(bool val) { setBool(val); }
-  /// Attempt to set the value from a \c double representation.
-  void set(double val) { setDouble(val); }
-  /// Attempt to set the value from a C-style string (\c char*) representation.
-  void set(const char* val) { setCstring(val); }
-}; 
+  virtual void set(const char* val);
+};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -181,11 +158,11 @@ public:
 
   /// Copy constructor.
   TValue(const TValue& other) :
-	 Value(other), itsVal(other.itsVal) {}
+    Value(other), itsVal(other.itsVal) {}
 
   /// Assignment operator.
   TValue& operator=(const TValue& other)
-	 { itsVal = other.itsVal; return *this; }
+    { itsVal = other.itsVal; return *this; }
 
   /// Virtual destructor.
   virtual ~TValue ();
@@ -199,23 +176,17 @@ public:
   virtual void printTo(STD_IO::ostream& os) const;
   virtual void scanFrom(STD_IO::istream& is);
 
-  virtual int getInt() const;
-  virtual long getLong() const;
-  virtual bool getBool() const;
-  virtual double getDouble() const;
-  virtual const char* getCstring() const;
+  virtual int get(Util::TypeCue<int>) const;
+  virtual long get(Util::TypeCue<long>) const;
+  virtual bool get(Util::TypeCue<bool>) const;
+  virtual double get(Util::TypeCue<double>) const;
+  virtual const char* get(Util::TypeCue<const char*>) const;
 
-  virtual void get(int& val) const;
-  virtual void get(long& val) const;
-  virtual void get(bool& val) const;
-  virtual void get(double& val) const;
-  virtual void get(const char*& val) const;
-
-  virtual void setInt(int val);
-  virtual void setLong(long val);
-  virtual void setBool(bool val);
-  virtual void setDouble(double val);
-  virtual void setCstring(const char* val);
+  virtual void set(int val);
+  virtual void set(long val);
+  virtual void set(bool val);
+  virtual void set(double val);
+  virtual void set(const char* val);
 
   /** Publicly accessible lone data member allows efficient access to
       those who know the true type of the object. */
@@ -244,11 +215,11 @@ public:
 
   /// Copy constructor.
   TValuePtr(const TValuePtr& other) :
-	 Value(other), itsValPtr(other.itsValPtr) {}
+    Value(other), itsValPtr(other.itsValPtr) {}
 
   /// Assignment operator.
   TValuePtr& operator=(const TValuePtr& other)
-	 { itsValPtr = other.itsValPtr; return *this; }
+    { itsValPtr = other.itsValPtr; return *this; }
 
   /// Virtual destructor.
   virtual ~TValuePtr();
@@ -265,23 +236,17 @@ public:
   virtual void printTo(STD_IO::ostream& os) const;
   virtual void scanFrom(STD_IO::istream& is);
 
-  virtual int getInt() const;
-  virtual long getLong() const;
-  virtual bool getBool() const;
-  virtual double getDouble() const;
-  virtual const char* getCstring() const;
+  virtual int get(Util::TypeCue<int>) const;
+  virtual long get(Util::TypeCue<long>) const;
+  virtual bool get(Util::TypeCue<bool>) const;
+  virtual double get(Util::TypeCue<double>) const;
+  virtual const char* get(Util::TypeCue<const char*>) const;
 
-  virtual void get(int& val) const;
-  virtual void get(long& val) const;
-  virtual void get(bool& val) const;
-  virtual void get(double& val) const;
-  virtual void get(const char*& val) const;
-
-  virtual void setInt(int val);
-  virtual void setLong(long val);
-  virtual void setBool(bool val);
-  virtual void setDouble(double val);
-  virtual void setCstring(const char* val);
+  virtual void set(int val);
+  virtual void set(long val);
+  virtual void set(bool val);
+  virtual void set(double val);
+  virtual void set(const char* val);
 
   /// Return a reference to the currently pointed-to \c T object.
   T& operator()() { return *itsValPtr; }

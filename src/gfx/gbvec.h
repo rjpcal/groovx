@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:10:45 2000
-// written: Mon Jun 11 12:10:27 2001
+// written: Tue Aug  7 10:24:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ public:
   virtual void printTo(STD_IO::ostream& os) const;
   virtual void scanFrom(STD_IO::istream& is);
 
-  virtual const char* getCstring() const;
+  virtual const char* get(Util::TypeCue<const char*>) const;
 
   //
   // Field interface

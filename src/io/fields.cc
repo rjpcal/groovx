@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Mon Aug  6 18:08:34 2001
+// written: Tue Aug  7 10:29:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ shared_ptr<Value> TField<T>::value() const
 
 template <class T>
 void TField<T>::doSetValue(const Value& new_val)
-{ new_val.get(itsVal); }
+{ itsVal = new_val.get(Util::TypeCue<T>()); }
 
 template class TField<int>;
 template class TField<bool>;
@@ -107,7 +107,7 @@ shared_ptr<Value> TBoundedField<T>::value() const
 
 template <class T>
 void TBoundedField<T>::doSetValue(const Value& new_val) {
-  T temp; new_val.get(temp);
+  T temp = new_val.get(Util::TypeCue<T>());
   if (temp >= itsMin && temp <= itsMax)
     itsVal = temp;
 }
@@ -143,7 +143,7 @@ void TPtrField<T>::writeValueTo(IO::Writer* writer, const fixed_string& name) co
 
 template <class T>
 void TPtrField<T>::doSetValue(const Value& new_val)
-{ new_val.get(itsVal()); }
+{ itsVal() = new_val.get(Util::TypeCue<T>()); }
 
 template <class T>
 shared_ptr<Value> TPtrField<T>::value() const
