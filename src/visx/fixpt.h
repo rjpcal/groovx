@@ -3,7 +3,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Tue Feb  8 15:31:13 2000
+// written: Fri Feb 18 08:50:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,58 +27,53 @@
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * FixPt implements a simple psychophysics fixation cross, with
- * attributes to control the length of the bars, and the pixel-width
- * of the bars.
+ * \c FixPt is a subclass of \c GrObj for drawing a simple
+ * psychophysics fixation cross. \c FixPt has attributes to control
+ * the length of the bars, and the pixel-width of the bars.
  *
- * @short Subclass of GrObj for drawing psychophysics fixation crosses.
  **/
 ///////////////////////////////////////////////////////////////////////
 
 class FixPt : public GrObj, public PropFriend<FixPt> {
 public:
-  /// Default constructor.
+  /// Construct with initial values for the cross length and pixel-width.
   FixPt (double len=0.1, int wid=1);
-  /// Stream constructor.
+
+  /// Construct from an \c istream using \c deserialize().
   FixPt (istream &is, IOFlag flag);
-  ///
+
+  /// Virtual destructor.
   virtual ~FixPt ();
 
-  ///
   virtual void serialize(ostream &os, IOFlag flag) const;
-  ///
   virtual void deserialize(istream &is, IOFlag flag);
-  ///
   virtual int charCount() const;
 
-  ///
   virtual void readFrom(Reader* reader);
-  ///
   virtual void writeTo(Writer* writer) const;
 
   ////////////////
   // properties //
   ////////////////
 
-  ///
+  /// Info about a \c FixPt property.
   typedef PropertyInfo<FixPt> PInfo;
-  ///
+
+  /// Return a collection of info about all \c FixPt properties.
   static const vector<PInfo>& getPropertyInfos();
 
-  /// Length of crosshairs in GL coordinates
+  /// Length of crosshairs in GL coordinates.
   CTProperty<FixPt, double> length;
-  /// width of crosshairs in pixels
+
+  /// Width of crosshairs in pixels.
   CTProperty<FixPt, int> width;
 
 protected:
-  ///
   virtual void grGetBoundingBox(Rect<double>& bbox,
 										  int& border_pixels) const;
 
-  ///
   virtual bool grHasBoundingBox() const;
 
-  ///
   virtual void grRender(Canvas& canvas) const;
 };
 
