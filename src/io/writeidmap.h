@@ -50,7 +50,7 @@ namespace IO
       itsNextId(1)
     {}
 
-    int get(Util::UID uid) const
+    int get(Nub::UID uid) const
     {
       if (uid == 0) return 0;
 
@@ -68,7 +68,7 @@ namespace IO
     }
 
   private:
-    typedef std::map<Util::UID, int> MapType;
+    typedef std::map<Nub::UID, int> MapType;
     mutable MapType itsMap;
     mutable int itsNextId;
   };

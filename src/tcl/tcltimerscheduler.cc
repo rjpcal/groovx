@@ -50,7 +50,7 @@ namespace Tcl
   class TimerSchedulerToken;
 }
 
-class Tcl::TimerSchedulerToken : public Util::TimerToken
+class Tcl::TimerSchedulerToken : public Nub::TimerToken
 {
 public:
   TimerSchedulerToken(int msec,
@@ -118,7 +118,7 @@ Tcl::TimerScheduler::~TimerScheduler() throw()
 DOTRACE("Tcl::TimerScheduler::~TimerScheduler");
 }
 
-rutz::shared_ptr<Util::TimerToken>
+rutz::shared_ptr<Nub::TimerToken>
 Tcl::TimerScheduler::schedule(int msec,
                               void (*callback)(void*),
                               void* clientdata)
@@ -133,10 +133,10 @@ DOTRACE("Tcl::TimerScheduler::schedule");
 
       // Return a null pointer, representing the fact that there is no
       // pending callback in this case.
-      return rutz::shared_ptr<Util::TimerToken>();
+      return rutz::shared_ptr<Nub::TimerToken>();
     }
 
-  return rutz::shared_ptr<Util::TimerToken>
+  return rutz::shared_ptr<Nub::TimerToken>
     (new Tcl::TimerSchedulerToken(msec, callback, clientdata));
 }
 

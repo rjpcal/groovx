@@ -46,7 +46,7 @@ namespace rutz
   template <class T> class shared_ptr;
 }
 
-namespace Util
+namespace Nub
 {
   class Scheduler;
 }
@@ -105,7 +105,7 @@ public:
       specifies a minimum delay time; this may be used to ensure that
       proper relative ordering of TrialEvent's is maintained, even if
       the event loop is getting slowed down overall.  */
-  unsigned int schedule(rutz::shared_ptr<Util::Scheduler> s,
+  unsigned int schedule(rutz::shared_ptr<Nub::Scheduler> s,
                         Trial& trial,
                         unsigned int minimum_msec = 0);
 
@@ -129,7 +129,7 @@ private:
   TrialEvent(const TrialEvent&);
   TrialEvent& operator=(const TrialEvent&);
 
-  Util::Timer itsTimer;
+  Nub::Timer itsTimer;
   unsigned int itsRequestedDelay;
   Trial* itsTrial;
 
@@ -260,13 +260,13 @@ public:
   void setByte(int b);
 
   /// Get the file object that will be written to.
-  Util::Ref<OutputFile> getFile() const;
+  Nub::Ref<OutputFile> getFile() const;
 
   /// Set the file object that will be written to.
-  void setFile(Util::Ref<OutputFile> file);
+  void setFile(Nub::Ref<OutputFile> file);
 
 private:
-  Util::Ref<OutputFile> itsFile;
+  Nub::Ref<OutputFile> itsFile;
   int itsByte;
 };
 
@@ -299,7 +299,7 @@ public:
   void setCallback(const rutz::fstring& script);
 
 private:
-  Util::Ref<Tcl::ProcWrapper> itsCallback;
+  Nub::Ref<Tcl::ProcWrapper> itsCallback;
 };
 
 //  #######################################################
@@ -330,10 +330,10 @@ public:
   virtual void writeTo(IO::Writer& writer) const;
 
   /// Returns an iterator to all the events in the sequence.
-  rutz::fwd_iter<const Util::Ref<TrialEvent> > getEvents() const;
+  rutz::fwd_iter<const Nub::Ref<TrialEvent> > getEvents() const;
 
   /// Add a new event and return its index in the sequence.
-  unsigned int addEvent(Util::Ref<TrialEvent> event);
+  unsigned int addEvent(Nub::Ref<TrialEvent> event);
 
   /// Erase the event at the given index.
   void eraseEventAt(unsigned int index);
@@ -342,7 +342,7 @@ public:
   void clearEvents();
 
 private:
-  std::vector<Util::Ref<TrialEvent> > itsEvents;
+  std::vector<Nub::Ref<TrialEvent> > itsEvents;
 };
 
 static const char vcid_trialevent_h[] = "$Header$";

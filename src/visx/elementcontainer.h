@@ -39,7 +39,7 @@ namespace rutz
   template <class T> class fwd_iter;
 }
 
-namespace Util
+namespace Nub
 {
   template <class T> class Ref;
   template <class T> class SoftRef;
@@ -97,7 +97,7 @@ public:
   //
 
   /// Add the specified element to the sequence, 'repeat' number of times.
-  void addElement(Util::Ref<Element> element, unsigned int repeat = 1);
+  void addElement(Nub::Ref<Element> element, unsigned int repeat = 1);
 
   /// Set the random seed for shuffling child elements.
   void setRandSeed(int s);
@@ -113,7 +113,7 @@ public:
   void clearElements();
 
   /// Get a reference to the current element.
-  Util::SoftRef<Element> currentElement() const;
+  Nub::SoftRef<Element> currentElement() const;
 
   /// Returns the total number of child elements in the container.
   unsigned int numElements() const;
@@ -124,7 +124,7 @@ public:
   unsigned int numCompleted() const;
 
   /// Returns an iterator to all the contained child elements.
-  rutz::fwd_iter<const Util::Ref<Element> > getElements() const;
+  rutz::fwd_iter<const Nub::Ref<Element> > getElements() const;
 
   /// Returns true if the all child elements are complete, false otherwise.
   bool isComplete() const;

@@ -46,22 +46,22 @@ DBG_REGISTER
 
 using rutz::shared_ptr;
 
-InvalidIdError::InvalidIdError(Util::UID id,
-                               const rutz::file_pos& pos)
+Nub::InvalidIdError::InvalidIdError(Nub::UID id,
+                                    const rutz::file_pos& pos)
   :
   rutz::error(rutz::fstring("attempted to access "
                             "invalid object '", id, "'"), pos)
 {}
 
-InvalidIdError::~InvalidIdError() throw() {}
+Nub::InvalidIdError::~InvalidIdError() throw() {}
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ObjDb::Impl definition
+// Nub::ObjDb::Impl definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ObjDb::Impl
+class Nub::ObjDb::Impl
 {
 private:
   Impl(const Impl&);
@@ -69,9 +69,9 @@ private:
 
 public:
 
-  typedef Util::SoftRef<Util::Object> ObjRef;
+  typedef Nub::SoftRef<Nub::Object> ObjRef;
 
-  typedef std::map<Util::UID, ObjRef> MapType;
+  typedef std::map<Nub::UID, ObjRef> MapType;
   mutable MapType itsPtrMap;
 
   Impl() : itsPtrMap() {}
@@ -92,7 +92,7 @@ public:
     return true;
   }
 
-  bool isValidId(Util::UID id) const throw()
+  bool isValidId(Nub::UID id) const throw()
     {
       MapType::iterator itr = itsPtrMap.find(id);
       return isValidItr(itr);
@@ -101,14 +101,14 @@ public:
   int count() const throw()
     { return itsPtrMap.size(); }
 
-  void release(Util::UID id)
+  void release(Nub::UID id)
     {
       MapType::iterator itr = itsPtrMap.find(id);
 
       itsPtrMap.erase(itr);
     }
 
-  void remove(Util::UID id)
+  void remove(Nub::UID id)
     {
       MapType::iterator itr = itsPtrMap.find(id);
       if (!isValidItr(itr)) return;
@@ -169,18 +169,18 @@ public:
 #endif
     }
 
-  Util::Object* getCheckedObj(Util::UID id) throw (InvalidIdError)
+  Nub::Object* getCheckedObj(Nub::UID id) throw (Nub::InvalidIdError)
     {
       MapType::iterator itr = itsPtrMap.find(id);
       if (!isValidItr(itr))
         {
-          throw InvalidIdError(id, SRC_POS);
+          throw Nub::InvalidIdError(id, SRC_POS);
         }
 
       return (*itr).second.get();
     }
 
-  void insertObj(Util::Object* ptr, bool strong)
+  void insertObj(Nub::Object* ptr, bool strong)
     {
       PRECONDITION(ptr != 0);
 
@@ -198,24 +198,24 @@ public:
       // Must create the ObjRef with "PRIVATE" to avoid endless recursion
       itsPtrMap.insert(MapType::value_type
                        (new_id, ObjRef(ptr,
-                                       strong ? Util::STRONG : Util::WEAK,
-                                       Util::PRIVATE)));
+                                       strong ? Nub::STRONG : Nub::WEAK,
+                                       Nub::PRIVATE)));
     }
 };
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ObjDb::Iterator definitions
+// Nub::ObjDb::Iterator definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
 namespace
 {
   class ObjDbIter :
-    public rutz::fwd_iter_ifx<const Util::SoftRef<Util::Object> >
+    public rutz::fwd_iter_ifx<const Nub::SoftRef<Nub::Object> >
   {
   public:
-    typedef ObjDb::Impl::MapType MapType;
+    typedef Nub::ObjDb::Impl::MapType MapType;
 
     void advanceToValid()
     {
@@ -264,101 +264,101 @@ namespace
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ObjDb member definitions
+// Nub::ObjDb member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-ObjDb& ObjDb::theDb()
+Nub::ObjDb& Nub::ObjDb::theDb()
 {
-  static ObjDb* instance = 0;
+  static Nub::ObjDb* instance = 0;
   if (instance == 0)
     {
-      instance = new ObjDb;
+      instance = new Nub::ObjDb;
     }
   return *instance;
 }
 
-ObjDb::Iterator ObjDb::objects() const
+Nub::ObjDb::Iterator Nub::ObjDb::objects() const
 {
-DOTRACE("ObjDb::children");
+DOTRACE("Nub::ObjDb::children");
 
- return shared_ptr<ObjDb::Iterator::ifx_t>
+ return shared_ptr<Nub::ObjDb::Iterator::ifx_t>
    (new ObjDbIter(rep->itsPtrMap, rep->itsPtrMap.begin()));
 }
 
-ObjDb::ObjDb() :
+Nub::ObjDb::ObjDb() :
   rep(new Impl)
 {
-DOTRACE("ObjDb::ObjDb");
+DOTRACE("Nub::ObjDb::ObjDb");
 }
 
-ObjDb::~ObjDb()
+Nub::ObjDb::~ObjDb()
 {
-DOTRACE("ObjDb::~ObjDb");
+DOTRACE("Nub::ObjDb::~ObjDb");
   delete rep;
 }
 
-int ObjDb::count() const throw()
+int Nub::ObjDb::count() const throw()
 {
-DOTRACE("ObjDb::count");
+DOTRACE("Nub::ObjDb::count");
 
   return rep->count();
 }
 
-bool ObjDb::isValidId(Util::UID id) const throw()
+bool Nub::ObjDb::isValidId(Nub::UID id) const throw()
 {
-DOTRACE("ObjDb::isValidId");
+DOTRACE("Nub::ObjDb::isValidId");
   return rep->isValidId(id);
 }
 
-void ObjDb::remove(Util::UID id)
+void Nub::ObjDb::remove(Nub::UID id)
 {
-DOTRACE("ObjDb::remove");
+DOTRACE("Nub::ObjDb::remove");
   rep->remove(id);
 }
 
-void ObjDb::release(Util::UID id)
+void Nub::ObjDb::release(Nub::UID id)
 {
-DOTRACE("ObjDb::release");
+DOTRACE("Nub::ObjDb::release");
   rep->release(id);
 }
 
-void ObjDb::purge()
+void Nub::ObjDb::purge()
 {
-DOTRACE("ObjDb::clear");
+DOTRACE("Nub::ObjDb::clear");
   dbg_eval_nl(3, typeid(*this).name());
   rep->purge();
 }
 
-void ObjDb::clear()
+void Nub::ObjDb::clear()
 {
-DOTRACE("ObjDb::clear");
+DOTRACE("Nub::ObjDb::clear");
   // Call purge until no more items can be removed
   while ( rep->purge() != 0 )
     { ; }
 }
 
-void ObjDb::clearOnExit()
+void Nub::ObjDb::clearOnExit()
 {
-DOTRACE("ObjDb::clearOnExit");
+DOTRACE("Nub::ObjDb::clearOnExit");
   rep->clearAll();
 }
 
-Util::Object* ObjDb::getCheckedObj(Util::UID id) throw (InvalidIdError)
+Nub::Object* Nub::ObjDb::getCheckedObj(Nub::UID id) throw (Nub::InvalidIdError)
 {
-DOTRACE("ObjDb::getCheckedObj");
+DOTRACE("Nub::ObjDb::getCheckedObj");
   return rep->getCheckedObj(id);
 }
 
-void ObjDb::insertObj(Util::Object* obj)
+void Nub::ObjDb::insertObj(Nub::Object* obj)
 {
-DOTRACE("ObjDb::insertObj");
+DOTRACE("Nub::ObjDb::insertObj");
   rep->insertObj(obj, true);
 }
 
-void ObjDb::insertObjWeak(Util::Object* obj)
+void Nub::ObjDb::insertObjWeak(Nub::Object* obj)
 {
-DOTRACE("ObjDb::insertObjWeak");
+DOTRACE("Nub::ObjDb::insertObjWeak");
   rep->insertObj(obj, false);
 }
 

@@ -49,23 +49,23 @@ namespace Gfx
 class GxBin : public GxNode
 {
 private:
-  Util::Ref<GxNode> itsChild;
+  Nub::Ref<GxNode> itsChild;
 
 public:
   /// Default constructor.
   GxBin();
 
   /// Construct with a given child node.
-  GxBin(Util::Ref<GxNode> child);
+  GxBin(Nub::Ref<GxNode> child);
 
   /// Virtual destructor.
   virtual ~GxBin() throw();
 
   /// Get the bin's child node.
-  const Util::Ref<GxNode>& child() const { return itsChild; }
+  const Nub::Ref<GxNode>& child() const { return itsChild; }
 
   /// Set the bin's child node.
-  void setChild(const Util::Ref<GxNode>& child);
+  void setChild(const Nub::Ref<GxNode>& child);
 };
 
 static const char vcid_gxbin_h[] = "$Header$";

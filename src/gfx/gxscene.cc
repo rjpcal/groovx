@@ -49,7 +49,7 @@ DBG_REGISTER
 //
 ///////////////////////////////////////////////////////////////////////
 
-GxScene::GxScene(Util::SoftRef<Gfx::Canvas> canvas) :
+GxScene::GxScene(Nub::SoftRef<Gfx::Canvas> canvas) :
   itsCanvas(canvas),
   itsDrawNode(GxEmptyNode::make()),
   itsUndrawNode(GxEmptyNode::make()),
@@ -62,7 +62,7 @@ GxScene::GxScene(Util::SoftRef<Gfx::Canvas> canvas) :
   isItRefreshed(false),
   itsScheduler(rutz::make_shared(new Tcl::TimerScheduler)),
   itsTimer(100, true),
-  slotNodeChanged(Util::Slot0::make(this, &GxScene::onNodeChange))
+  slotNodeChanged(Nub::Slot0::make(this, &GxScene::onNodeChange))
 {
 DOTRACE("GxScene::GxScene");
   itsTimer.sigTimeOut.connect(this, &GxScene::fullRender);
@@ -128,8 +128,8 @@ void GxScene::clearscreen()
 {
 DOTRACE("GxScene::clearscreen");
   itsCanvas->clearColorBuffer();
-  setDrawable(Util::Ref<GxNode>(GxEmptyNode::make()));
-  itsUndrawNode = Util::Ref<GxNode>(GxEmptyNode::make());
+  setDrawable(Nub::Ref<GxNode>(GxEmptyNode::make()));
+  itsUndrawNode = Nub::Ref<GxNode>(GxEmptyNode::make());
   isItVisible = false;
 }
 
@@ -150,7 +150,7 @@ DOTRACE("GxScene::setVisibility");
     }
 }
 
-void GxScene::setCamera(const Util::Ref<GxCamera>& cam)
+void GxScene::setCamera(const Nub::Ref<GxCamera>& cam)
 {
 DOTRACE("GxScene::setCamera");
   itsCamera->sigNodeChanged.disconnect(slotNodeChanged);
@@ -164,7 +164,7 @@ DOTRACE("GxScene::setCamera");
   fullRender();
 }
 
-void GxScene::setDrawable(const Util::Ref<GxNode>& node)
+void GxScene::setDrawable(const Nub::Ref<GxNode>& node)
 {
 DOTRACE("GxScene::setDrawable");
   itsDrawNode->sigNodeChanged.disconnect(slotNodeChanged);

@@ -34,7 +34,7 @@
 
 #include "io/io.h"
 
-namespace Util
+namespace Nub
 {
   template <class T> class Ref;
   template <class T> class SoftRef;
@@ -69,8 +69,8 @@ public:
   // accessors //
   ///////////////
 
-  Util::Ref<TrialEvent> getEvent(TimePoint time_point,
-                                 unsigned int index) const;
+  Nub::Ref<TrialEvent> getEvent(TimePoint time_point,
+                                unsigned int index) const;
 
   /** Returns the elapsed time in milliseconds since the start of the
       current trial */
@@ -80,7 +80,7 @@ public:
   // manipulators //
   //////////////////
 
-  unsigned int addEvent(Util::Ref<TrialEvent> event,
+  unsigned int addEvent(Nub::Ref<TrialEvent> event,
                         TimePoint time_point);
   unsigned int addEventByName(const char* event_type,
                               TimePoint time_point, int msec_delay);

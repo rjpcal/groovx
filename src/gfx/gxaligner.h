@@ -81,7 +81,7 @@ public:
 
 
   /// Construct with a given child object.
-  GxAligner(Util::SoftRef<GxNode> child);
+  GxAligner(Nub::SoftRef<GxNode> child);
 
   /// Get the center after aligning the given rect.
   Gfx::Vec2<double> getCenter(const Gfx::Rect<double>& bounds) const;

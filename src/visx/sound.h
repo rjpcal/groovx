@@ -37,7 +37,7 @@
 #include "util/fstring.h"
 #include "util/sharedptr.h"
 
-namespace Util
+namespace Nub
 {
   template <class T> class Ref;
 }
@@ -88,10 +88,10 @@ public:
   /** The caller is responsible for destroying the Sound object. */
   static SoundRep* newPlatformSoundRep(const char* soundfile);
 
-  static void setOkSound(Util::Ref<Sound> ok_sound);
-  static void setErrSound(Util::Ref<Sound> err_sound);
-  static Util::Ref<Sound> getOkSound();
-  static Util::Ref<Sound> getErrSound();
+  static void setOkSound(Nub::Ref<Sound> ok_sound);
+  static void setErrSound(Nub::Ref<Sound> err_sound);
+  static Nub::Ref<Sound> getOkSound();
+  static Nub::Ref<Sound> getErrSound();
 
   /// Construct with the given sound file.
   Sound(const char* filename = 0);

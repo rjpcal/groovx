@@ -34,16 +34,16 @@
 
 #include "util/object.h"
 
-namespace Util
+namespace Nub
 {
   class VolatileObject;
 }
 
-/// Subclass of Util::Object for inherently un-shareable objects.
+/// Subclass of Nub::Object for inherently un-shareable objects.
 /** This typically applies to objects who must control their own lifetime,
     or whose lifetime is controlled by some external mechanism (such as a
     windowing system, for example). */
-class Util::VolatileObject : public virtual Util::Object
+class Nub::VolatileObject : public virtual Nub::Object
 {
 public:
   VolatileObject();

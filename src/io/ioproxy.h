@@ -62,8 +62,8 @@ protected:
   virtual ~IoProxy() throw() {}
 
 public:
-  static Util::Ref<IoObject> make(C* ref)
-    { return Util::Ref<IoObject>( new IoProxy(ref), Util::PRIVATE ); }
+  static Nub::Ref<IoObject> make(C* ref)
+    { return Nub::Ref<IoObject>( new IoProxy(ref), Nub::PRIVATE ); }
 
   virtual void readFrom(Reader& reader)
     { itsReferand->C::readFrom(reader); }
@@ -81,11 +81,11 @@ private:
   IoProxy(const IoProxy&);
   IoProxy& operator=(const IoProxy&);
 
-  Util::Ref<C> itsReferand;
+  Nub::Ref<C> itsReferand;
 };
 
 template <class C>
-inline Util::Ref<IoObject> makeProxy(C* ref)
+inline Nub::Ref<IoObject> makeProxy(C* ref)
   { return IoProxy<C>::make(ref); }
 
 
@@ -102,8 +102,8 @@ protected:
   virtual ~ConstIoProxy() throw() {}
 
 public:
-  static Util::Ref<const IoObject> make(const C* ref)
-    { return Util::Ref<IoObject>( new ConstIoProxy(ref), Util::PRIVATE ); }
+  static Nub::Ref<const IoObject> make(const C* ref)
+    { return Nub::Ref<IoObject>( new ConstIoProxy(ref), Nub::PRIVATE ); }
 
   virtual void readFrom(Reader& reader)
     { itsReferand->C::readFrom(reader); }
@@ -121,11 +121,11 @@ private:
   ConstIoProxy(const ConstIoProxy&);
   ConstIoProxy& operator=(const ConstIoProxy&);
 
-  Util::Ref<C> itsReferand;
+  Nub::Ref<C> itsReferand;
 };
 
 template <class C>
-inline Util::Ref<const IoObject> makeConstProxy(const C* ref)
+inline Nub::Ref<const IoObject> makeConstProxy(const C* ref)
   { return ConstIoProxy<C>::make(ref); }
 
 

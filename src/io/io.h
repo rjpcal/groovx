@@ -47,14 +47,14 @@ namespace rutz
  * The IO::IoObject class defines the abstract interface for object
  * persistence. Classes which need these facilities should inherit
  * virtually from IO::IoObject. IO::IoObject is reference counted (by
- * subclassing Util::Object), providing automatic memory management
+ * subclassing Nub::Object), providing automatic memory management
  * when IO::IoObject's are managed with a smart pointer that manages
- * the reference count, such as PtrHandle or Util::Ref.
+ * the reference count, such as PtrHandle or Nub::Ref.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO::IoObject : public virtual Util::Object
+class IO::IoObject : public virtual Nub::Object
 {
 private:
   IoObject(const IoObject&);

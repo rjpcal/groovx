@@ -45,52 +45,52 @@ namespace rutz
   struct file_pos;
 
   template <class C>
-  C* extract_ptr(const Util::SoftRef<C>& c) { return c.get(); }
+  C* extract_ptr(const Nub::SoftRef<C>& c) { return c.get(); }
 
   /// Specialization of func_traits for mem_functor.
   template <class MF>
   struct func_traits<mem_functor<MF> > : public func_traits<MF>
   {
-    typedef Util::SoftRef<typename mem_functor<MF>::C> arg1_t;
+    typedef Nub::SoftRef<typename mem_functor<MF>::C> arg1_t;
   };
 }
 
 namespace Tcl
 {
-  /// Overload of fromTcl for Util::Ref.
-  /** This allows us to receive Util::Ref objects from Tcl via the
-      Util::UID's of the referred-to objects. */
+  /// Overload of fromTcl for Nub::Ref.
+  /** This allows us to receive Nub::Ref objects from Tcl via the
+      Nub::UID's of the referred-to objects. */
   template <class T>
-  inline Util::Ref<T> fromTcl(Tcl_Obj* obj, Util::Ref<T>*)
+  inline Nub::Ref<T> fromTcl(Tcl_Obj* obj, Nub::Ref<T>*)
   {
-    Util::UID uid = Tcl::toNative<Util::UID>(obj);
-    return Util::Ref<T>(uid);
+    Nub::UID uid = Tcl::toNative<Nub::UID>(obj);
+    return Nub::Ref<T>(uid);
   }
 
-  /// Overload of toTcl for Util::Ref.
-  /** This allows us to pass Util::Ref objects to Tcl via the Util::UID's
-      of the referred-to objects. */
+  /// Overload of toTcl for Nub::Ref.
+  /** This allows us to pass Nub::Ref objects to Tcl via the
+      Nub::UID's of the referred-to objects. */
   template <class T>
-  inline Tcl::ObjPtr toTcl(Util::Ref<T> obj)
+  inline Tcl::ObjPtr toTcl(Nub::Ref<T> obj)
   {
     return toTcl(obj.id());
   }
 
-  /// Overload of fromTcl for Util::SoftRef.
-  /** This allows us to receive Util::SoftRef objects from Tcl via the
-      Util::UID's of the referred-to objects. */
+  /// Overload of fromTcl for Nub::SoftRef.
+  /** This allows us to receive Nub::SoftRef objects from Tcl via the
+      Nub::UID's of the referred-to objects. */
   template <class T>
-  inline Util::SoftRef<T> fromTcl(Tcl_Obj* obj, Util::SoftRef<T>*)
+  inline Nub::SoftRef<T> fromTcl(Tcl_Obj* obj, Nub::SoftRef<T>*)
   {
-    Util::UID uid = Tcl::toNative<Util::UID>(obj);
-    return Util::SoftRef<T>(uid);
+    Nub::UID uid = Tcl::toNative<Nub::UID>(obj);
+    return Nub::SoftRef<T>(uid);
   }
 
-  /// Overload of toTcl for Util::SoftRef.
-  /** This allows us to pass Util::SoftRef objects to Tcl via the
-      Util::UID's of the referred-to objects. */
+  /// Overload of toTcl for Nub::SoftRef.
+  /** This allows us to pass Nub::SoftRef objects to Tcl via the
+      Nub::UID's of the referred-to objects. */
   template <class T>
-  inline Tcl::ObjPtr toTcl(Util::SoftRef<T> obj)
+  inline Tcl::ObjPtr toTcl(Nub::SoftRef<T> obj)
   {
     return toTcl(obj.id());
   }

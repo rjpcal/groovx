@@ -47,13 +47,13 @@ int Log_Init(Tcl_Interp* interp)
 DOTRACE("Log_Init");
 
   PKG_CREATE(interp, "Log", "$Revision 1.0$");
-  pkg->def("reset", "", &Util::Log::reset, SRC_POS);
-  pkg->def("addScope", "scopename", &::Util::Log::addScope, SRC_POS);
-  pkg->def("removeScope", "scopename", &::Util::Log::removeScope, SRC_POS);
-  pkg->def("logFilename", "filename", &Util::Log::setLogFilename, SRC_POS);
-  pkg->def("copyToStdout", "shouldcopy", &Util::Log::setCopyToStdout, SRC_POS);
+  pkg->def("reset", "", &Nub::Log::reset, SRC_POS);
+  pkg->def("addScope", "scopename", &::Nub::Log::addScope, SRC_POS);
+  pkg->def("removeScope", "scopename", &::Nub::Log::removeScope, SRC_POS);
+  pkg->def("logFilename", "filename", &Nub::Log::setLogFilename, SRC_POS);
+  pkg->def("copyToStdout", "shouldcopy", &Nub::Log::setCopyToStdout, SRC_POS);
 
-  pkg->def("log", "msg", (void (*)(const char*)) &Util::log, SRC_POS);
+  pkg->def("log", "msg", (void (*)(const char*)) &Nub::log, SRC_POS);
 
   PKG_RETURN;
 }

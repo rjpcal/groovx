@@ -109,7 +109,7 @@ DOTRACE("TrialEvent::writeTo");
   writer.writeValue("requestedDelay", itsRequestedDelay);
 }
 
-unsigned int TrialEvent::schedule(rutz::shared_ptr<Util::Scheduler> s,
+unsigned int TrialEvent::schedule(rutz::shared_ptr<Nub::Scheduler> s,
                                   Trial& trial,
                                   unsigned int minimum_msec)
 {
@@ -149,10 +149,10 @@ DOTRACE("TrialEvent::invokeTemplate");
   const double msec = itsTimer.elapsedMsec();
   const double error = itsTimer.delayMsec() - msec;
 
-  Util::Log::addObjScope(*this);
+  Nub::Log::addObjScope(*this);
 
-  Util::log( fstring("req ", itsRequestedDelay,
-                     " - ", -itsEstimatedOffset) );
+  Nub::log( fstring("req ", itsRequestedDelay,
+                    " - ", -itsEstimatedOffset) );
 
   itsTotalOffset += error;
   itsTotalError += (itsRequestedDelay - msec);
@@ -175,7 +175,7 @@ DOTRACE("TrialEvent::invokeTemplate");
       invoke(*itsTrial);
     }
 
-  Util::Log::removeObjScope(*this);
+  Nub::Log::removeObjScope(*this);
 }
 
 //---------------------------------------------------------------------
@@ -266,8 +266,8 @@ void FileWriteEvent::invoke(Trial& /*trial*/)
     {
       itsFile->stream().put(static_cast<char>(itsByte));
       itsFile->stream().flush();
-      Util::log( fstring("wrote '", itsByte, "' to '",
-                         itsFile->getFilename(), "'") );
+      Nub::log( fstring("wrote '", itsByte, "' to '",
+                        itsFile->getFilename(), "'") );
     }
 }
 
@@ -299,12 +299,12 @@ void FileWriteEvent::setByte(int b)
   itsByte = b;
 }
 
-Util::Ref<OutputFile> FileWriteEvent::getFile() const
+Nub::Ref<OutputFile> FileWriteEvent::getFile() const
 {
   return itsFile;
 }
 
-void FileWriteEvent::setFile(Util::Ref<OutputFile> file)
+void FileWriteEvent::setFile(Nub::Ref<OutputFile> file)
 {
   itsFile = file;
 }
@@ -377,7 +377,7 @@ void MultiEvent::invoke(Trial& trial)
 
 void MultiEvent::readFrom(IO::Reader& reader)
 {
-  std::vector<Util::Ref<TrialEvent> > newEvents;
+  std::vector<Nub::Ref<TrialEvent> > newEvents;
 
   IO::ReadUtils::readObjectSeq<TrialEvent>
     (reader, "events", std::back_inserter(newEvents));
@@ -397,16 +397,16 @@ void MultiEvent::writeTo(IO::Writer& writer) const
                         IO::makeConstProxy<TrialEvent>(this));
 }
 
-rutz::fwd_iter<const Util::Ref<TrialEvent> >
+rutz::fwd_iter<const Nub::Ref<TrialEvent> >
 MultiEvent::getEvents() const
 {
 DOTRACE("MultiEvent::getEvents");
 
-  return rutz::fwd_iter<const Util::Ref<TrialEvent> >
+  return rutz::fwd_iter<const Nub::Ref<TrialEvent> >
     (itsEvents.begin(), itsEvents.end());
 }
 
-unsigned int MultiEvent::addEvent(Util::Ref<TrialEvent> event)
+unsigned int MultiEvent::addEvent(Nub::Ref<TrialEvent> event)
 {
 DOTRACE("MultiEvent::addEvent");
   itsEvents.push_back(event);

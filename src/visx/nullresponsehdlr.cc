@@ -67,7 +67,7 @@ DOTRACE("NullResponseHdlr::writeTo");
 }
 
 // actions
-void NullResponseHdlr::rhBeginTrial(Util::SoftRef<Toglet>, Trial&) const
+void NullResponseHdlr::rhBeginTrial(Nub::SoftRef<Toglet>, Trial&) const
 {
 DOTRACE("NullResponseHdlr::rhBeginTrial");
 }
@@ -87,7 +87,7 @@ void NullResponseHdlr::rhHaltExpt() const
 DOTRACE("NullResponseHdlr::rhHaltExpt");
 }
 
-void NullResponseHdlr::rhAllowResponses(Util::SoftRef<Toglet>, Trial&) const
+void NullResponseHdlr::rhAllowResponses(Nub::SoftRef<Toglet>, Trial&) const
 {
 DOTRACE("NullResponseHdlr::rhAllowResponses");
 }

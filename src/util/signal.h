@@ -36,7 +36,7 @@
 #include "util/ref.h"
 #include "util/volatileobject.h"
 
-namespace Util
+namespace Nub
 {
 #if 0
   template <class R>
@@ -68,7 +68,7 @@ namespace Util
       that Signal. Thereafter, the slot will be called whenever that
       signal emits a message. */
 
-  class SlotBase : public virtual Util::Object
+  class SlotBase : public virtual Nub::Object
   {
   public:
     /// Default constructor.
@@ -102,9 +102,9 @@ namespace Util
     virtual ~Slot0() throw();
 
     template <class C, class MF>
-    static Util::SoftRef<Slot0> make(C* obj, MF mf);
+    static Nub::SoftRef<Slot0> make(C* obj, MF mf);
 
-    static Util::SoftRef<Slot0> make(void (*freeFunc)());
+    static Nub::SoftRef<Slot0> make(void (*freeFunc)());
 
     virtual void call() = 0;
 
@@ -121,11 +121,11 @@ namespace Util
   template <class C, class MF>
   class SlotAdapterMemFunc0 : public Slot0
   {
-    Util::SoftRef<C> itsObject;
+    Nub::SoftRef<C> itsObject;
     MF itsMemFunc;
 
     SlotAdapterMemFunc0(C* obj, MF mf) :
-      itsObject(obj, Util::WEAK, Util::PRIVATE), itsMemFunc(mf) {}
+      itsObject(obj, Nub::WEAK, Nub::PRIVATE), itsMemFunc(mf) {}
 
     virtual ~SlotAdapterMemFunc0() throw() {}
 
@@ -143,12 +143,12 @@ namespace Util
   };
 
   template <class C, class MF>
-  inline Util::SoftRef<Slot0> Slot0::make(C* obj, MF mf)
+  inline Nub::SoftRef<Slot0> Slot0::make(C* obj, MF mf)
   {
-    return Util::SoftRef<Slot0>
+    return Nub::SoftRef<Slot0>
       (SlotAdapterMemFunc0<C, MF>::make(obj, mf),
-       Util::STRONG,
-       Util::PRIVATE);
+       Nub::STRONG,
+       Nub::PRIVATE);
   }
 
   //  #######################################################
@@ -202,10 +202,10 @@ namespace Util
     virtual ~Slot1() throw() {}
 
     template <class C, class MF>
-    static Util::SoftRef<Slot1<P1> > make(C* obj, MF mf);
+    static Nub::SoftRef<Slot1<P1> > make(C* obj, MF mf);
 
     template <class FF>
-    static Util::SoftRef<Slot1<P1> > make(FF f);
+    static Nub::SoftRef<Slot1<P1> > make(FF f);
 
     virtual void call(P1 p1) = 0;
 
@@ -225,11 +225,11 @@ namespace Util
   template <class P1, class C, class MF>
   class SlotAdapterMemFunc1 : public Slot1<P1>
   {
-    Util::SoftRef<C> itsObject;
+    Nub::SoftRef<C> itsObject;
     MF itsMemFunc;
 
     SlotAdapterMemFunc1(C* obj, MF mf) :
-      itsObject(obj, Util::WEAK, Util::PRIVATE), itsMemFunc(mf) {}
+      itsObject(obj, Nub::WEAK, Nub::PRIVATE), itsMemFunc(mf) {}
 
     virtual ~SlotAdapterMemFunc1() throw() {}
 
@@ -248,12 +248,12 @@ namespace Util
 
   template <class P1>
   template <class C, class MF>
-  inline Util::SoftRef<Slot1<P1> > Slot1<P1>::make(C* obj, MF mf)
+  inline Nub::SoftRef<Slot1<P1> > Slot1<P1>::make(C* obj, MF mf)
   {
-    return Util::SoftRef<Slot1<P1> >
+    return Nub::SoftRef<Slot1<P1> >
       (SlotAdapterMemFunc1<P1, C, MF>::make(obj, mf),
-       Util::STRONG,
-       Util::PRIVATE);
+       Nub::STRONG,
+       Nub::PRIVATE);
   }
 
 
@@ -283,12 +283,12 @@ namespace Util
 
   template <class P1>
   template <class FF>
-  inline Util::SoftRef<Slot1<P1> > Slot1<P1>::make(FF f)
+  inline Nub::SoftRef<Slot1<P1> > Slot1<P1>::make(FF f)
   {
-    return Util::SoftRef<Slot1<P1> >
+    return Nub::SoftRef<Slot1<P1> >
       (SlotAdapterFreeFunc1<P1, FF>::make(f),
-       Util::STRONG,
-       Util::PRIVATE);
+       Nub::STRONG,
+       Nub::PRIVATE);
   }
 
 
@@ -303,7 +303,7 @@ namespace Util
       will \c call all of the Slot's that are observing this
       Signal. */
 
-  class SignalBase : public Util::VolatileObject
+  class SignalBase : public Nub::VolatileObject
   {
   protected:
     SignalBase();
@@ -312,10 +312,10 @@ namespace Util
     void doEmit(void* params) const;
 
     /// Add a Slot to the list of those watching this Signal.
-    void doConnect(Util::SoftRef<SlotBase> slot);
+    void doConnect(Nub::SoftRef<SlotBase> slot);
 
     /// Remove a Slot from the list of those watching this Signal.
-    void doDisconnect(Util::SoftRef<SlotBase> slot);
+    void doDisconnect(Nub::SoftRef<SlotBase> slot);
 
   private:
     SignalBase(const SignalBase&);
@@ -341,36 +341,36 @@ namespace Util
     virtual ~Signal0() throw();
 
     /// Add a Slot to the list of those watching this Signal.
-    Util::SoftRef<Slot0> connect(Util::SoftRef<Slot0> slot)
+    Nub::SoftRef<Slot0> connect(Nub::SoftRef<Slot0> slot)
     { SignalBase::doConnect(slot); return slot; }
 
     /// Connect a free function to this Signal0.
-    Util::SoftRef<Slot0> connect(void (*freeFunc)())
+    Nub::SoftRef<Slot0> connect(void (*freeFunc)())
     { return connect(Slot0::make(freeFunc)); }
 
     /// Connect an object to this Signal0.
     /** After connection, when the signal is triggered, \a mem_func
-        will be called on \a obj. \c connect() returns the Util::UID
-        of the connection object that is created. */
+        will be called on \a obj. \c connect() returns the Nub::UID of
+        the connection object that is created. */
     template <class C, class MF>
-    Util::SoftRef<Slot0> connect(C* obj, MF mem_func)
+    Nub::SoftRef<Slot0> connect(C* obj, MF mem_func)
     { return connect(Slot0::make(obj, mem_func)); }
 
     /// Remove a Slot from the list of those watching this Signal0.
-    void disconnect(Util::SoftRef<Slot0> slot)
+    void disconnect(Nub::SoftRef<Slot0> slot)
     { SignalBase::doDisconnect(slot); }
 
     /// Trigger all of this object's Slots.
     void emit() const { SignalBase::doEmit((void*)0); }
 
     /// Returns a slot which when called will cause this Signal to emit().
-    Util::SoftRef<Slot0> slot() const { return slotEmitSelf; }
+    Nub::SoftRef<Slot0> slot() const { return slotEmitSelf; }
 
   private:
     Signal0(const Signal0&);
     Signal0& operator=(const Signal0&);
 
-    Util::Ref<Util::Slot0> slotEmitSelf;
+    Nub::Ref<Nub::Slot0> slotEmitSelf;
   };
 
 
@@ -387,17 +387,17 @@ namespace Util
 
     virtual ~Signal1() throw() {}
 
-    Util::SoftRef<Slot1<P1> > connect(Util::SoftRef<Slot1<P1> > slot)
+    Nub::SoftRef<Slot1<P1> > connect(Nub::SoftRef<Slot1<P1> > slot)
     { SignalBase::doConnect(slot); return slot; }
 
-    Util::SoftRef<Slot1<P1> > connect(void (*free_func)(P1))
+    Nub::SoftRef<Slot1<P1> > connect(void (*free_func)(P1))
     { return connect(Slot1<P1>::make(free_func)); }
 
     template <class C, class MF>
-    Util::SoftRef<Slot1<P1> > connect(C* obj, MF mem_func)
+    Nub::SoftRef<Slot1<P1> > connect(C* obj, MF mem_func)
     { return connect(Slot1<P1>::make(obj, mem_func)); }
 
-    void disconnect(Util::SoftRef<Slot1<P1> > slot)
+    void disconnect(Nub::SoftRef<Slot1<P1> > slot)
     { SignalBase::doDisconnect(slot); }
 
     void emit(P1 p1) const
@@ -411,7 +411,7 @@ namespace Util
     Signal1& operator=(const Signal1&);
   };
 
-} // end namespace Util
+} // end namespace Nub
 
 static const char vcid_signal_h[] = "$Header$";
 #endif // !SIGNAL_H_DEFINED

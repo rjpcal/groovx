@@ -37,22 +37,22 @@
 #include "util/signal.h"
 #include "util/stopwatch.h"
 
-namespace Util
+namespace Nub
 {
   class Timer;
 }
 
 /// Wraps a signal/slot interface around a timer callback mechansim.
-class Util::Timer
+class Nub::Timer
 {
 public:
   Timer(unsigned int msec, bool repeat = false);
 
   virtual ~Timer();
 
-  Util::Signal0 sigTimeOut;
+  Nub::Signal0 sigTimeOut;
 
-  void schedule(rutz::shared_ptr<Util::Scheduler> s);
+  void schedule(rutz::shared_ptr<Nub::Scheduler> s);
   void cancel();
 
   unsigned int delayMsec() const { return itsMsecDelay; }
@@ -71,9 +71,9 @@ private:
   Timer(const Timer&);
   Timer& operator=(const Timer&);
 
-  rutz::shared_ptr<Util::Scheduler> itsScheduler;
+  rutz::shared_ptr<Nub::Scheduler> itsScheduler;
 
-  rutz::shared_ptr<Util::TimerToken> itsToken;
+  rutz::shared_ptr<Nub::TimerToken> itsToken;
   unsigned int itsMsecDelay;
   bool isItRepeating;
 

@@ -48,7 +48,7 @@
 
 #include <engine.h>
 
-class MatlabEngine : public Util::Object
+class MatlabEngine : public Nub::Object
 {
 private:
   MatlabEngine(const MatlabEngine&);
@@ -84,7 +84,7 @@ public:
     return (result == 0) ? (itsBuf+2) : "";
   }
 
-  Util::Ref<MtxObj> getMtx(const char* name)
+  Nub::Ref<MtxObj> getMtx(const char* name)
   {
     mxArray* arr = engGetVariable(itsEngine, name);
     if (arr == 0)
@@ -93,7 +93,7 @@ public:
                                         name, "'"), SRC_POS);
       }
 
-    Util::Ref<MtxObj> mtx(new MtxObj(arr, mtx::COPY));
+    Nub::Ref<MtxObj> mtx(new MtxObj(arr, mtx::COPY));
 
     mxDestroyArray(arr);
 
@@ -118,7 +118,7 @@ private:
 
 #else // !WITH_MATLAB
 
-class MatlabEngine : public Util::Object
+class MatlabEngine : public Nub::Object
 {
 public:
   virtual ~MatlabEngine() throw() {}
@@ -136,10 +136,10 @@ public:
     return "can't happen";
   }
 
-  Util::Ref<MtxObj> getMtx(const char*)
+  Nub::Ref<MtxObj> getMtx(const char*)
   {
     noSupport();
-    return Util::Ref<MtxObj>(new MtxObj(0,0));
+    return Nub::Ref<MtxObj>(new MtxObj(0,0));
   }
 };
 
@@ -159,7 +159,7 @@ DOTRACE("Matlabengine_Init");
   pkg->eval("proc meval {args} { return [eval MatlabEngine::eval $args] }");
   pkg->eval("proc getMtx {args} { return [eval MatlabEngine::get $args] }");
 
-  Util::ObjFactory::theOne().register_creator(&MatlabEngine::make);
+  Nub::ObjFactory::theOne().register_creator(&MatlabEngine::make);
 
   PKG_RETURN;
 }

@@ -41,7 +41,7 @@ namespace rutz
   class fstring;
 }
 
-namespace Util
+namespace Nub
 {
   template <class T> class Ref;
 }
@@ -53,7 +53,7 @@ namespace IO
   class ObjectMap
   {
   private:
-    typedef std::map<Util::UID, Util::Ref<IO::IoObject> > MapType;
+    typedef std::map<Nub::UID, Nub::Ref<IO::IoObject> > MapType;
     MapType itsMap;
 
   public:
@@ -63,15 +63,15 @@ namespace IO
     // This returns the object for the given id; the object must
     // already have been created, otherwise an exception will be thrown.
     inline
-    Util::Ref<IO::IoObject> getObject(Util::UID id);
+    Nub::Ref<IO::IoObject> getObject(Nub::UID id);
 
     // This will create an object for the id if one has not yet been
     // created, then return the object for that id.
     inline
-    Util::Ref<IO::IoObject> fetchObject(const rutz::fstring& type, Util::UID id);
+    Nub::Ref<IO::IoObject> fetchObject(const rutz::fstring& type, Nub::UID id);
 
     inline
-    void assignObjectForId(Util::UID id, Util::Ref<IO::IoObject> object);
+    void assignObjectForId(Nub::UID id, Nub::Ref<IO::IoObject> object);
 
     inline
     void clear();
@@ -89,8 +89,8 @@ inline
 IO::ObjectMap::ObjectMap() : itsMap() {}
 
 inline
-Util::Ref<IO::IoObject>
-IO::ObjectMap::getObject(Util::UID id)
+Nub::Ref<IO::IoObject>
+IO::ObjectMap::getObject(Nub::UID id)
 {
   MapType::const_iterator itr = itsMap.find(id);
   if ( itr == itsMap.end() )
@@ -104,15 +104,15 @@ IO::ObjectMap::getObject(Util::UID id)
 }
 
 inline
-Util::Ref<IO::IoObject>
-IO::ObjectMap::fetchObject(const rutz::fstring& type, Util::UID id)
+Nub::Ref<IO::IoObject>
+IO::ObjectMap::fetchObject(const rutz::fstring& type, Nub::UID id)
 {
   MapType::const_iterator itr = itsMap.find(id);
 
   if ( itr == itsMap.end() )
     {
-      Util::Ref<IO::IoObject> obj
-        (Util::ObjMgr::newTypedObj<IO::IoObject>(type));
+      Nub::Ref<IO::IoObject> obj
+        (Nub::ObjMgr::newTypedObj<IO::IoObject>(type));
 
       itsMap.insert(MapType::value_type(id, obj));
 
@@ -123,8 +123,8 @@ IO::ObjectMap::fetchObject(const rutz::fstring& type, Util::UID id)
 }
 
 inline
-void IO::ObjectMap::assignObjectForId(Util::UID id,
-                                      Util::Ref<IO::IoObject> object)
+void IO::ObjectMap::assignObjectForId(Nub::UID id,
+                                      Nub::Ref<IO::IoObject> object)
 {
   MapType::const_iterator itr = itsMap.find(id);
 

@@ -32,18 +32,18 @@
 #ifndef SCHEDULER_H_DEFINED
 #define SCHEDULER_H_DEFINED
 
-namespace Util
-{
-  class Scheduler;
-  class TimerToken;
-}
-
 namespace rutz
 {
   template <class T> class shared_ptr;
 }
 
-class Util::TimerToken
+namespace Nub
+{
+  class Scheduler;
+  class TimerToken;
+}
+
+class Nub::TimerToken
 {
 private:
   TimerToken(const TimerToken&);
@@ -56,12 +56,12 @@ public:
   virtual ~TimerToken() throw();
 };
 
-class Util::Scheduler
+class Nub::Scheduler
 {
 public:
   virtual ~Scheduler() throw();
 
-  virtual rutz::shared_ptr<Util::TimerToken>
+  virtual rutz::shared_ptr<Nub::TimerToken>
   schedule(int msec,
            void (*callback)(void*),
            void* clientdata) = 0;

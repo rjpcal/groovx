@@ -206,7 +206,7 @@ DOTRACE("Fish::Fish");
       restoreToDefault();
     }
 
-  Util::FloatingRef<Fish> ref(this);
+  Nub::FloatingRef<Fish> ref(this);
 
   this->sigNodeChanged.connect(this, &Fish::updatePtrs);
 

@@ -57,8 +57,8 @@ DBG_REGISTER
 using rutz::fstring;
 using rutz::shared_ptr;
 
-using Util::Ref;
-using Util::SoftRef;
+using Nub::Ref;
+using Nub::SoftRef;
 
 namespace
 {
@@ -126,13 +126,13 @@ public:
   { defaultWriteRawData(name, data, length); }
 
   virtual void writeObject(const char* name,
-                           Util::SoftRef<const IO::IoObject> obj);
+                           Nub::SoftRef<const IO::IoObject> obj);
 
   virtual void writeOwnedObject(const char* name,
-                                Util::Ref<const IO::IoObject> obj);
+                                Nub::Ref<const IO::IoObject> obj);
 
   virtual void writeBaseClass(const char* baseClassName,
-                              Util::Ref<const IO::IoObject> basePart);
+                              Nub::Ref<const IO::IoObject> basePart);
 
   virtual void writeRoot(const IO::IoObject* root);
 
@@ -261,7 +261,7 @@ void AsciiStreamWriter::writeObject(const char* name,
 DOTRACE("AsciiStreamWriter::writeObject");
 
   fstring type = "NULL";
-  Util::UID id = 0;
+  Nub::UID id = 0;
 
   if (obj.isValid())
     {
@@ -306,9 +306,9 @@ DOTRACE("AsciiStreamWriter::writeRoot");
   itsWrittenObjects.clear();
 
   // need the const_cast here because:
-  // (1) SoftRef constructor will optionally call RefHelper::insertItem()
-  // (2) insertItem() will put the object in the ObjDb
-  // (3) objects in the ObjDb are non-const since they can be
+  // (1) SoftRef constructor will optionally call Detail::insertItem()
+  // (2) insertItem() will put the object in the Nub::ObjDb
+  // (3) objects in the Nub::ObjDb are non-const since they can be
   //     retrieved and modified
   itsToHandleV.push_back
     (SoftRef<IO::IoObject>(const_cast<IO::IoObject*>(root)));

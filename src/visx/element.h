@@ -34,7 +34,7 @@
 
 #include "io/io.h"
 
-namespace Util
+namespace Nub
 {
   template <class T> class SoftRef;
 }
@@ -68,7 +68,7 @@ public:
     };
 
   /// Return the Widget in which the experiment is running.
-  virtual const Util::SoftRef<Toglet>& getWidget() const = 0;
+  virtual const Nub::SoftRef<Toglet>& getWidget() const = 0;
 
   /// Get the user-defined "trial type".
   virtual int trialType() const = 0;

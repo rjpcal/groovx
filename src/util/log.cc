@@ -89,23 +89,23 @@ namespace
   }
 }
 
-void Util::Log::reset()
+void Nub::Log::reset()
 {
-DOTRACE("Util::Log::reset");
+DOTRACE("Nub::Log::reset");
   scopes.clear();
 
   log(fstring("log reset ", rutz::time::wall_clock_now().format()));
 }
 
-void Util::Log::addScope(const fstring& name)
+void Nub::Log::addScope(const fstring& name)
 {
-DOTRACE("Util::Log::addScope");
+DOTRACE("Nub::Log::addScope");
   scopes.push_back(ScopeInfo(name));
 }
 
-void Util::Log::removeScope(const fstring& name)
+void Nub::Log::removeScope(const fstring& name)
 {
-DOTRACE("Util::Log::removeScope");
+DOTRACE("Nub::Log::removeScope");
   for (int i = int(scopes.size()); i > 0; /* decr in loop body */)
     {
       --i;
@@ -120,9 +120,9 @@ DOTRACE("Util::Log::removeScope");
     }
 }
 
-void Util::Log::addObjScope(const Util::Object& obj)
+void Nub::Log::addObjScope(const Nub::Object& obj)
 {
-DOTRACE("Util::Log::addObjScope");
+DOTRACE("Nub::Log::addObjScope");
 
   const fstring scopename(obj.uniqueName());
 
@@ -131,9 +131,9 @@ DOTRACE("Util::Log::addObjScope");
   log(fstring("entering ", scopename));
 }
 
-void Util::Log::removeObjScope(const Util::Object& obj)
+void Nub::Log::removeObjScope(const Nub::Object& obj)
 {
-DOTRACE("Util::Log::removeObjScope");
+DOTRACE("Nub::Log::removeObjScope");
 
   const fstring scopename = obj.uniqueName();
 
@@ -142,9 +142,9 @@ DOTRACE("Util::Log::removeObjScope");
   removeScope(scopename);
 }
 
-void Util::Log::setLogFilename(const fstring& filename)
+void Nub::Log::setLogFilename(const fstring& filename)
 {
-DOTRACE("Util::Log::setLogFilename");
+DOTRACE("Nub::Log::setLogFilename");
 
   rutz::shared_ptr<std::ofstream> newfile
     (new std::ofstream(filename.c_str(), std::ios::out | std::ios::app));
@@ -153,15 +153,15 @@ DOTRACE("Util::Log::setLogFilename");
     logFile.swap(newfile);
 }
 
-void Util::Log::setCopyToStdout(bool shouldcopy)
+void Nub::Log::setCopyToStdout(bool shouldcopy)
 {
-DOTRACE("Util::Log::setCopyToStdout");
+DOTRACE("Nub::Log::setCopyToStdout");
   copyToStdout = shouldcopy;
 }
 
-void Util::log(const char* msg)
+void Nub::log(const char* msg)
 {
-DOTRACE("Util::log");
+DOTRACE("Nub::log");
   if (copyToStdout)
     logImpl(std::cout, msg);
 
@@ -169,9 +169,9 @@ DOTRACE("Util::log");
     logImpl(*logFile, msg);
 }
 
-void Util::log(const fstring& msg)
+void Nub::log(const fstring& msg)
 {
-DOTRACE("Util::log");
+DOTRACE("Nub::log");
   if (copyToStdout)
     logImpl(std::cout, msg);
 

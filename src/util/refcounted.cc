@@ -52,10 +52,10 @@ DBG_REGISTER
 namespace
 {
 #ifdef HAVE_LIMITS
-  const Util::RefCounts::Count REFCOUNT_MAX =
-    std::numeric_limits<Util::RefCounts::Count>::max();
+  const Nub::RefCounts::Count REFCOUNT_MAX =
+    std::numeric_limits<Nub::RefCounts::Count>::max();
 #else
-  const Util::RefCounts::Count REFCOUNT_MAX = USHRT_MAX;
+  const Nub::RefCounts::Count REFCOUNT_MAX = USHRT_MAX;
 #endif
 }
 
@@ -65,45 +65,45 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-void* Util::RefCounts::operator new(size_t bytes)
+void* Nub::RefCounts::operator new(size_t bytes)
 {
   return ::operator new(bytes);
 }
 
-void Util::RefCounts::operator delete(void* space, size_t /*bytes*/)
+void Nub::RefCounts::operator delete(void* space, size_t /*bytes*/)
 {
   ::operator delete(space);
 }
 
-Util::RefCounts::RefCounts() throw() :
+Nub::RefCounts::RefCounts() throw() :
   itsStrong(0),
   itsWeak(0),
   itsOwnerAlive(true),
   itsVolatile(false)
 {
-DOTRACE("Util::RefCounts::RefCounts");
+DOTRACE("Nub::RefCounts::RefCounts");
 }
 
-Util::RefCounts::~RefCounts() throw()
+Nub::RefCounts::~RefCounts() throw()
 {
-DOTRACE("Util::RefCounts::~RefCounts");
+DOTRACE("Nub::RefCounts::~RefCounts");
 
   if (itsStrong > 0) PANIC("RefCounts object destroyed before strong refcount fell to 0");
   if (itsWeak > 0) PANIC("RefCounts object destroyed before weak refcount fell to 0");
 }
 
-void Util::RefCounts::acquireWeak() throw()
+void Nub::RefCounts::acquireWeak() throw()
 {
-DOTRACE("Util::RefCounts::acquireWeak");
+DOTRACE("Nub::RefCounts::acquireWeak");
 
   if (itsWeak == REFCOUNT_MAX) PANIC("weak refcount overflow");
 
   ++itsWeak;
 }
 
-Util::RefCounts::Count Util::RefCounts::releaseWeak() throw()
+Nub::RefCounts::Count Nub::RefCounts::releaseWeak() throw()
 {
-DOTRACE("Util::RefCounts::releaseWeak");
+DOTRACE("Nub::RefCounts::releaseWeak");
 
   if (itsWeak == 0) PANIC("weak refcount already 0 in releaseWeak()");
 
@@ -118,9 +118,9 @@ DOTRACE("Util::RefCounts::releaseWeak");
   return result;
 }
 
-void Util::RefCounts::acquireStrong() throw()
+void Nub::RefCounts::acquireStrong() throw()
 {
-DOTRACE("Util::RefCounts::acquireStrong");
+DOTRACE("Nub::RefCounts::acquireStrong");
 
   if (itsVolatile) PANIC("attempt to use strong refcount with volatile object");
   if (itsStrong == REFCOUNT_MAX) PANIC("strong refcount overflow");
@@ -128,9 +128,9 @@ DOTRACE("Util::RefCounts::acquireStrong");
   ++itsStrong;
 }
 
-Util::RefCounts::Count Util::RefCounts::releaseStrong() throw()
+Nub::RefCounts::Count Nub::RefCounts::releaseStrong() throw()
 {
-DOTRACE("Util::RefCounts::releaseStrong");
+DOTRACE("Nub::RefCounts::releaseStrong");
 
   if (itsVolatile) PANIC("attempt to use strong refcount with volatile object");
   if (itsStrong == 0) PANIC("strong refcount already 0 in releaseStrong()");
@@ -139,16 +139,16 @@ DOTRACE("Util::RefCounts::releaseStrong");
   return --itsStrong;
 }
 
-void Util::RefCounts::releaseStrongNoDelete() throw()
+void Nub::RefCounts::releaseStrongNoDelete() throw()
 {
-DOTRACE("Util::RefCounts::releaseStrongNoDelete");
+DOTRACE("Nub::RefCounts::releaseStrongNoDelete");
 
   if (itsStrong == 0) PANIC("strong refcount already 0 in releaseStrongNoDelete()");
 
   --itsStrong;
 }
 
-void Util::RefCounts::debug_dump() const throw()
+void Nub::RefCounts::debug_dump() const throw()
 {
   dbg_eval_nl(0, this);
   dbg_eval_nl(0, itsStrong);
@@ -162,30 +162,30 @@ void Util::RefCounts::debug_dump() const throw()
 //
 ///////////////////////////////////////////////////////////////////////
 
-void* Util::RefCounted::operator new(size_t bytes)
+void* Nub::RefCounted::operator new(size_t bytes)
 {
-DOTRACE("Util::RefCounted::operator new");
+DOTRACE("Nub::RefCounted::operator new");
   return ::operator new(bytes);
 }
 
-void Util::RefCounted::operator delete(void* space, size_t /*bytes*/)
+void Nub::RefCounted::operator delete(void* space, size_t /*bytes*/)
 {
-DOTRACE("Util::RefCounted::operator delete");
+DOTRACE("Nub::RefCounted::operator delete");
   ::operator delete(space);
 }
 
-Util::RefCounted::RefCounted() :
-  itsRefCounts(new Util::RefCounts)
+Nub::RefCounted::RefCounted() :
+  itsRefCounts(new Nub::RefCounts)
 {
-DOTRACE("Util::RefCounted::RefCounted");
+DOTRACE("Nub::RefCounted::RefCounted");
   dbg_print(7, "RefCounted ctor"); dbg_eval_nl(7, this);
 
   itsRefCounts->acquireWeak();
 }
 
-Util::RefCounted::~RefCounted() throw()
+Nub::RefCounted::~RefCounted() throw()
 {
-DOTRACE("Util::RefCounted::~RefCounted");
+DOTRACE("Nub::RefCounted::~RefCounted");
   dbg_print(7, "RefCounted dtor"); dbg_eval_nl(7, this);
   dbg_dump(7, *itsRefCounts);
 
@@ -200,9 +200,9 @@ DOTRACE("Util::RefCounted::~RefCounted");
   itsRefCounts->releaseWeak();
 }
 
-void Util::RefCounted::markAsVolatile() throw()
+void Nub::RefCounted::markAsVolatile() throw()
 {
-DOTRACE("Util::RefCounted::markAsVolatile");
+DOTRACE("Nub::RefCounted::markAsVolatile");
   if (itsRefCounts->itsStrong > 0)
     PANIC("can't make volatile object that already has strong refs");
 
@@ -212,12 +212,12 @@ DOTRACE("Util::RefCounted::markAsVolatile");
   itsRefCounts->itsVolatile = true;
 }
 
-void Util::RefCounted::incrRefCount() const throw()
+void Nub::RefCounted::incrRefCount() const throw()
 {
   itsRefCounts->acquireStrong();
 }
 
-void Util::RefCounted::decrRefCount() const throw()
+void Nub::RefCounted::decrRefCount() const throw()
 {
   if (itsRefCounts->releaseStrong() == 0)
     {
@@ -226,40 +226,40 @@ void Util::RefCounted::decrRefCount() const throw()
     }
 }
 
-void Util::RefCounted::decrRefCountNoDelete() const throw()
+void Nub::RefCounted::decrRefCountNoDelete() const throw()
 {
   itsRefCounts->releaseStrongNoDelete();
 }
 
-bool Util::RefCounted::isShared() const throw()
+bool Nub::RefCounted::isShared() const throw()
 {
-DOTRACE("Util::RefCounted::isShared");
+DOTRACE("Nub::RefCounted::isShared");
 
   return (itsRefCounts->itsStrong > 1) || isNotShareable();
   // We check isNotShareable() so that volatile objects always appear
-  // shared, so that they cannot be removed from the ObjDb until they
-  // become invalid.
+  // shared, so that they cannot be removed from the Nub::ObjDb until
+  // they become invalid.
 }
 
-bool Util::RefCounted::isUnshared() const throw()
+bool Nub::RefCounted::isUnshared() const throw()
 {
-DOTRACE("Util::RefCounted::isUnshared");
+DOTRACE("Nub::RefCounted::isUnshared");
   return !isShared();
 }
 
-bool Util::RefCounted::isNotShareable() const throw()
+bool Nub::RefCounted::isNotShareable() const throw()
 {
-DOTRACE("Util::RefCounted::isNotShareable");
+DOTRACE("Nub::RefCounted::isNotShareable");
   return itsRefCounts->itsVolatile;
 }
 
-Util::RefCounts* Util::RefCounted::refCounts() const throw()
+Nub::RefCounts* Nub::RefCounted::refCounts() const throw()
 {
-DOTRACE("Util::RefCounted::refCounts");
+DOTRACE("Nub::RefCounted::refCounts");
   return itsRefCounts;
 }
 
-int Util::RefCounted::dbg_RefCount() const throw()
+int Nub::RefCounted::dbg_RefCount() const throw()
 {
   return itsRefCounts->itsStrong;
 }

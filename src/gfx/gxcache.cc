@@ -50,7 +50,7 @@ namespace
   const IO::VersionId GXCACHE_SERIAL_VERSION_ID = 1;
 }
 
-GxCache::GxCache(Util::SoftRef<GxNode> child) :
+GxCache::GxCache(Nub::SoftRef<GxNode> child) :
   GxBin(child),
   itsMode(DIRECT),
   itsDisplayList(0)

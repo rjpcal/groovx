@@ -39,7 +39,7 @@ namespace Tcl
   class List;
 }
 
-namespace Util
+namespace Nub
 {
   template <class T> class Ref;
 }
@@ -48,7 +48,7 @@ namespace Util
 namespace TlistUtils
 {
   /** Write a file containing a summary of the responses to each Trial
-      in the ObjDb. */
+      in the Nub::ObjDb. */
   void writeResponses(const char* filename);
 
   void writeIncidenceMatrix(const char* filename);
@@ -58,16 +58,16 @@ namespace TlistUtils
       the average response given to that Trial. */
   void writeMatlab(const char* filename);
 
-  Util::UID createPreview(Tcl::List objid_list,
-                          int num_cols_hit, bool use_text_labels);
+  Nub::UID createPreview(Tcl::List objid_list,
+                         int num_cols_hit, bool use_text_labels);
 
-  Tcl::List dealSingles(Tcl::List objids, Util::UID posid);
+  Tcl::List dealSingles(Tcl::List objids, Nub::UID posid);
 
   Tcl::List dealPairs(Tcl::List objids1, Tcl::List objids2,
-                      Util::UID posid1, Util::UID posid2);
+                      Nub::UID posid1, Nub::UID posid2);
 
-  Tcl::List dealTriads(Tcl::List objids, Util::UID posid1,
-                       Util::UID posid2, Util::UID posid3);
+  Tcl::List dealTriads(Tcl::List objids, Nub::UID posid1,
+                       Nub::UID posid2, Nub::UID posid3);
 
   Tcl::List loadObjidFile(const char* objid_file, Tcl::List objids,
                           Tcl::List posids, int num_lines);

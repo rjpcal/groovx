@@ -36,20 +36,20 @@
 
 #include "util/trace.h"
 
-Util::VolatileObject::VolatileObject()
+Nub::VolatileObject::VolatileObject()
 {
-DOTRACE("Util::VolatileObject::VolatileObject");
+DOTRACE("Nub::VolatileObject::VolatileObject");
   this->markAsVolatile();
 }
 
-Util::VolatileObject::~VolatileObject() throw()
+Nub::VolatileObject::~VolatileObject() throw()
 {
-DOTRACE("Util::VolatileObject::~VolatileObject");
+DOTRACE("Nub::VolatileObject::~VolatileObject");
 }
 
-void Util::VolatileObject::destroy()
+void Nub::VolatileObject::destroy()
 {
-DOTRACE("Util::VolatileObject::destroy");
+DOTRACE("Nub::VolatileObject::destroy");
   delete this;
 }
 

@@ -43,39 +43,39 @@
 
 namespace
 {
-  Util::UID idCounter = 0;
+  Nub::UID idCounter = 0;
 }
 
-Util::Object::Object() throw() : itsId(++idCounter)
+Nub::Object::Object() throw() : itsId(++idCounter)
 {
-DOTRACE("Util::Object::Object");
+DOTRACE("Nub::Object::Object");
 }
 
-Util::Object::~Object() throw()
+Nub::Object::~Object() throw()
 {
-DOTRACE("Util::Object::~Object");
+DOTRACE("Nub::Object::~Object");
 }
 
-Util::UID Util::Object::id() const throw()
+Nub::UID Nub::Object::id() const throw()
 {
   return itsId;
 }
 
-rutz::fstring Util::Object::realTypename() const
+rutz::fstring Nub::Object::realTypename() const
 {
-DOTRACE("Util::Object::realTypename");
+DOTRACE("Nub::Object::realTypename");
   return rutz::demangled_name(typeid(*this));
 }
 
-rutz::fstring Util::Object::objTypename() const
+rutz::fstring Nub::Object::objTypename() const
 {
-DOTRACE("Util::Object::objTypename");
+DOTRACE("Nub::Object::objTypename");
   return realTypename();
 }
 
-rutz::fstring Util::Object::uniqueName() const
+rutz::fstring Nub::Object::uniqueName() const
 {
-DOTRACE("Util::Object::uniqueName");
+DOTRACE("Nub::Object::uniqueName");
   return rutz::fstring(objTypename(), "(", id(), ")");
 }
 

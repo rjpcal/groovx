@@ -40,7 +40,7 @@ namespace rutz
   class fstring;
 }
 
-namespace Util
+namespace Nub
 {
   class Object;
 }
@@ -48,18 +48,18 @@ namespace Util
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Util::Object is a base class for objects that are to be exposed to
- * a scripting language. Associates with each object a unique integer
- * identifier. Util::Object's are reference counted for automatic
- * memory management, and are generally passed around via Util::Ref's
- * or Util::SoftRef's, which automatically manage the reference
+ * Nub::Object is a base class for objects that are to be exposed to a
+ * scripting language. Associates with each object a unique integer
+ * identifier. Nub::Object's are reference counted for automatic
+ * memory management, and are generally passed around via Nub::Ref's
+ * or Nub::SoftRef's, which automatically manage the reference
  * count. Subclass IO::IoObject provides persistence facilities.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
 
-class Util::Object : public Util::RefCounted
+class Nub::Object : public Nub::RefCounted
 {
 protected:
   /// Default constructor.
@@ -71,7 +71,7 @@ protected:
 public:
   /** Returns the unique id for this object. The unique id will always
       be strictly positive; zero is always an invalid unique id. */
-  Util::UID id() const throw();
+  Nub::UID id() const throw();
 
   /// Returns the typename of the full object.
   /** The result is a demangled version of \c typeid(*this).name(), which
@@ -91,7 +91,7 @@ public:
   rutz::fstring uniqueName() const;
 
 private:
-  Util::UID itsId;
+  Nub::UID itsId;
 };
 
 static const char vcid_object_h[] = "$Header$";

@@ -54,8 +54,8 @@ DBG_REGISTER
 
 using rutz::shared_ptr;
 
-using Util::Ref;
-using Util::SoftRef;
+using Nub::Ref;
+using Nub::SoftRef;
 
 class XMLWriter : public IO::Writer
 {
@@ -77,13 +77,13 @@ public:
                             unsigned int length);
 
   virtual void writeObject(const char* name,
-                           Util::SoftRef<const IO::IoObject> obj);
+                           Nub::SoftRef<const IO::IoObject> obj);
 
   virtual void writeOwnedObject(const char* name,
-                                Util::Ref<const IO::IoObject> obj);
+                                Nub::Ref<const IO::IoObject> obj);
 
   virtual void writeBaseClass(const char* baseClassName,
-                              Util::Ref<const IO::IoObject> basePart);
+                              Nub::Ref<const IO::IoObject> basePart);
 
   virtual void writeRoot(const IO::IoObject* root);
 
@@ -124,7 +124,7 @@ private:
 
   shared_ptr<STD_IO::ostream> itsOwnedStream;
   STD_IO::ostream& itsBuf;
-  std::set<Util::UID> itsWrittenObjects;
+  std::set<Nub::UID> itsWrittenObjects;
   int itsNestLevel;
   IO::WriteIdMap itsIdMap;
 };

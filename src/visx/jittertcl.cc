@@ -54,7 +54,7 @@ DOTRACE("Jitter_Init");
                &Jitter::setJitter, 1,
                SRC_POS );
 
-  Util::ObjFactory::theOne().register_creator(&Jitter::make);
+  Nub::ObjFactory::theOne().register_creator(&Jitter::make);
 
   PKG_RETURN;
 }

@@ -38,28 +38,28 @@
 #include "util/objdb.h"
 #include "util/demangle.h"
 
-bool Util::RefHelper::isValidId(Util::UID id) throw()
+bool Nub::Detail::isValidId(Nub::UID id) throw()
 {
-  return ObjDb::theDb().isValidId(id);
+  return Nub::ObjDb::theDb().isValidId(id);
 }
 
-Util::Object* Util::RefHelper::getCheckedItem(Util::UID id)
+Nub::Object* Nub::Detail::getCheckedItem(Nub::UID id)
 {
-  return ObjDb::theDb().getCheckedObj(id);
+  return Nub::ObjDb::theDb().getCheckedObj(id);
 }
 
-void Util::RefHelper::insertItem(Util::Object* obj)
+void Nub::Detail::insertItem(Nub::Object* obj)
 {
-  ObjDb::theDb().insertObj(obj);
+  Nub::ObjDb::theDb().insertObj(obj);
 }
 
-void Util::RefHelper::insertItemWeak(Util::Object* obj)
+void Nub::Detail::insertItemWeak(Nub::Object* obj)
 {
-  ObjDb::theDb().insertObjWeak(obj);
+  Nub::ObjDb::theDb().insertObjWeak(obj);
 }
 
-void Util::RefHelper::throwRefNull(const std::type_info& info,
-                                   const rutz::file_pos& pos)
+void Nub::Detail::throwRefNull(const std::type_info& info,
+                               const rutz::file_pos& pos)
 {
   throw rutz::error(rutz::fstring("attempted to construct a Ref<",
                                   rutz::demangled_name(info),
@@ -67,8 +67,8 @@ void Util::RefHelper::throwRefNull(const std::type_info& info,
                     pos);
 }
 
-void Util::RefHelper::throwRefUnshareable(const std::type_info& info,
-                                          const rutz::file_pos& pos)
+void Nub::Detail::throwRefUnshareable(const std::type_info& info,
+                                      const rutz::file_pos& pos)
 {
   throw rutz::error(rutz::fstring("attempted to construct a Ref<",
                                   rutz::demangled_name(info),
@@ -76,8 +76,8 @@ void Util::RefHelper::throwRefUnshareable(const std::type_info& info,
                     pos);
 }
 
-void Util::RefHelper::throwSoftRefInvalid(const std::type_info& info,
-                                          const rutz::file_pos& pos)
+void Nub::Detail::throwSoftRefInvalid(const std::type_info& info,
+                                      const rutz::file_pos& pos)
 {
   throw rutz::error(rutz::fstring("attempted to access invalid object "
                                   "in SoftRef<", rutz::demangled_name(info), ">"),

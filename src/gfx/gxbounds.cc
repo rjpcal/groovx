@@ -45,7 +45,7 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-GxBounds::GxBounds(Util::SoftRef<GxNode> child) :
+GxBounds::GxBounds(Nub::SoftRef<GxNode> child) :
   GxBin(child),
   isItVisible(false),
   itsPercentBorder(4),

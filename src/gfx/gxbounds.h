@@ -43,7 +43,7 @@ private:
 
 public:
   /// Construct with a given child object.
-  GxBounds(Util::SoftRef<GxNode> child);
+  GxBounds(Nub::SoftRef<GxNode> child);
 
   /// Virtual destructor.
   virtual ~GxBounds() throw();

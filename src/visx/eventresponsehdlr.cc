@@ -103,7 +103,7 @@ public:
   class ActiveState
   {
   private:
-    Util::SoftRef<Toglet> itsWidget;
+    Nub::SoftRef<Toglet> itsWidget;
     Trial& itsTrial;
     fstring itsEventSequence;
     fstring itsBindingScript;
@@ -125,7 +125,7 @@ public:
     ~ActiveState() { ignore(); }
 
     ActiveState(const EventResponseHdlr::Impl* erh,
-                Util::SoftRef<Toglet> widget, Trial& trial,
+                Nub::SoftRef<Toglet> widget, Trial& trial,
                 const fstring& seq, const fstring& script) :
       itsWidget(widget),
       itsTrial(trial),
@@ -141,7 +141,7 @@ public:
     {
       ignore();
 
-      Util::Ref<Sound> p = Sound::getErrSound();
+      Nub::Ref<Sound> p = Sound::getErrSound();
       p->play();
     }
 
@@ -155,7 +155,7 @@ public:
 
       theResponse.setMsec(int(itsTrial.trElapsedMsec() + 0.5));
 
-      Util::log( fstring("event_info: ", event_info) );
+      Nub::log( fstring("event_info: ", event_info) );
 
       theResponse.setVal(Response::INVALID_VALUE);
 
@@ -166,7 +166,7 @@ public:
           } catch (...) {}
         }
 
-      Util::log( fstring("response val: ", theResponse.val()) );
+      Nub::log( fstring("response val: ", theResponse.val()) );
 
       if (theResponse.shouldIgnore())
         return;
@@ -187,9 +187,9 @@ public:
     }
   };
 
-  void becomeActive(Util::SoftRef<Toglet> widget, Trial& trial) const
+  void becomeActive(Nub::SoftRef<Toglet> widget, Trial& trial) const
   {
-    Util::log( fstring("binding to ", itsCallbackName) );
+    Nub::log( fstring("binding to ", itsCallbackName) );
 
     fstring script(itsCallbackName, ' ', (int)itsOwner->id());
     script.append(" [list ", itsBindingSubstitution, ']');
@@ -203,7 +203,7 @@ public:
   bool isActive() const   { return itsState.get() != 0; }
   bool isInactive() const { return itsState.get() == 0; }
 
-  static void handleResponseCallback(Util::Ref<EventResponseHdlr> erh,
+  static void handleResponseCallback(Nub::Ref<EventResponseHdlr> erh,
                                      const char* event_info)
   {
     EventResponseHdlr::Impl* rep = erh->rep;
@@ -232,7 +232,7 @@ public:
 
   bool itsAbortInvalidResponses;
 
-  Util::Ref<Tcl::ProcWrapper> itsResponseProc;
+  Nub::Ref<Tcl::ProcWrapper> itsResponseProc;
 
   unsigned int itsMaxResponses;
 };
@@ -417,7 +417,7 @@ void EventResponseHdlr::setMaxResponses(unsigned int count)
 unsigned int EventResponseHdlr::getMaxResponses() const
   { return rep->itsMaxResponses; }
 
-void EventResponseHdlr::rhBeginTrial(Util::SoftRef<Toglet> widget,
+void EventResponseHdlr::rhBeginTrial(Nub::SoftRef<Toglet> widget,
                                      Trial& trial) const
 {
   PRECONDITION( rep->isInactive() );
@@ -457,7 +457,7 @@ void EventResponseHdlr::rhHaltExpt() const
   POSTCONDITION( rep->isInactive() );
 }
 
-void EventResponseHdlr::rhAllowResponses(Util::SoftRef<Toglet> widget,
+void EventResponseHdlr::rhAllowResponses(Nub::SoftRef<Toglet> widget,
                                          Trial& trial) const
 {
   rep->becomeActive(widget, trial);

@@ -192,7 +192,7 @@ namespace
                               LeaveWindowMask);
 }
 
-class TkWidgImpl : public Util::VolatileObject
+class TkWidgImpl : public Nub::VolatileObject
 {
   TkWidgImpl(const TkWidgImpl&);
   TkWidgImpl& operator=(const TkWidgImpl&);

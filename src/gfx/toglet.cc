@@ -62,7 +62,7 @@ using rutz::shared_ptr;
 
 namespace
 {
-  Util::SoftRef<Toglet> theCurrentToglet;
+  Nub::SoftRef<Toglet> theCurrentToglet;
 
   const int DEFAULT_SIZE_X = 400;
   const int DEFAULT_SIZE_Y = 400;
@@ -86,7 +86,7 @@ public:
   const Tk_Window tkWin;
   shared_ptr<GlxOpts> opts;
   shared_ptr<GlWindowInterface> glx;
-  Util::SoftRef<GLCanvas> canvas;
+  Nub::SoftRef<GLCanvas> canvas;
   GxScene* scene;
 
   Impl(Toglet* p);
@@ -151,7 +151,7 @@ namespace
   // the main window can be specified with either PARENT = "" or "."
   rutz::fstring PARENT = "";
 
-  const char* widgetName(Util::UID id)
+  const char* widgetName(Nub::UID id)
   {
     static rutz::fstring buf;
     buf = PARENT;
@@ -237,13 +237,13 @@ DOTRACE("Toglet::makeToplevel");
   return p;
 }
 
-Util::SoftRef<Toglet> Toglet::getCurrent()
+Nub::SoftRef<Toglet> Toglet::getCurrent()
 {
 DOTRACE("Toglet::getCurrent");
   return theCurrentToglet;
 }
 
-void Toglet::setCurrent(Util::SoftRef<Toglet> toglet)
+void Toglet::setCurrent(Nub::SoftRef<Toglet> toglet)
 {
 DOTRACE("Toglet::setCurrent");
   dbg_eval(1, toglet.id());
@@ -276,7 +276,7 @@ void Toglet::makeCurrent() const
           rep->canvas->drawBufferFront();
         }
       Gfx::Canvas::setCurrent(*(rep->canvas));
-      theCurrentToglet = Util::SoftRef<Toglet>(const_cast<Toglet*>(this));
+      theCurrentToglet = Nub::SoftRef<Toglet>(const_cast<Toglet*>(this));
     }
 }
 
@@ -355,19 +355,19 @@ void Toglet::allowRefresh(bool allow)
   rep->scene->allowRefresh(allow);
 }
 
-const Util::Ref<GxCamera>& Toglet::getCamera() const
+const Nub::Ref<GxCamera>& Toglet::getCamera() const
 {
   makeCurrent();
   return rep->scene->getCamera();
 }
 
-void Toglet::setCamera(const Util::Ref<GxCamera>& cam)
+void Toglet::setCamera(const Nub::Ref<GxCamera>& cam)
 {
   makeCurrent();
   rep->scene->setCamera(cam);
 }
 
-void Toglet::setDrawable(const Util::Ref<GxNode>& node)
+void Toglet::setDrawable(const Nub::Ref<GxNode>& node)
 {
   makeCurrent();
   rep->scene->setDrawable(node);

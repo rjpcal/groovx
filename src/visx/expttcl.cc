@@ -55,9 +55,9 @@ namespace
   // current Expt. Record the time when the experiment
   // began. edBeginExpt is called, which displays a trial, and
   // generates the timer callbacks associated with a trial.
-  void beginExpt(Util::Ref<ExptDriver> xp)
+  void beginExpt(Nub::Ref<ExptDriver> xp)
   {
-    Util::SoftRef<Toglet> w = xp->getWidget();
+    Nub::SoftRef<Toglet> w = xp->getWidget();
 
     // Create the begin key binding
     w->bind("<Control-KeyPress-b>",
@@ -90,9 +90,9 @@ namespace
     xp->edBeginExpt();
   }
 
-  void waitStartKey(Util::Ref<ExptDriver> xp, const char* event)
+  void waitStartKey(Nub::Ref<ExptDriver> xp, const char* event)
   {
-    Util::SoftRef<Toglet> w = xp->getWidget();
+    Nub::SoftRef<Toglet> w = xp->getWidget();
 
     // This script does two things:
 
@@ -107,7 +107,7 @@ namespace
     w->takeFocus();
   }
 
-  void fakePause(Util::Ref<ExptDriver>) {}
+  void fakePause(Nub::Ref<ExptDriver>) {}
 }
 
 extern "C"

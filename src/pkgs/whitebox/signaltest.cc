@@ -51,7 +51,7 @@ namespace
 
   void testSlotAdapterFreeFunc0()
   {
-    Util::Signal0 sig0;
+    Nub::Signal0 sig0;
 
     v0 = 0;
     v1 = 0;
@@ -62,12 +62,12 @@ namespace
     TEST_REQUIRE_EQ(v0, 0);
     TEST_REQUIRE_EQ(v1, 0);
 
-    Util::SoftRef<Util::Slot0> s0 = sig0.connect(&v0_callback0);
+    Nub::SoftRef<Nub::Slot0> s0 = sig0.connect(&v0_callback0);
     sig0.emit();
     TEST_REQUIRE_EQ(v0, 1);
     TEST_REQUIRE_EQ(v1, 0);
 
-    Util::SoftRef<Util::Slot0> s1 = sig0.connect(&v1_callback0);
+    Nub::SoftRef<Nub::Slot0> s1 = sig0.connect(&v1_callback0);
     sig0.emit();
     TEST_REQUIRE_EQ(v0, 2);
     TEST_REQUIRE_EQ(v1, -1);
@@ -85,9 +85,9 @@ namespace
 
   void testSignalSlotChain()
   {
-    Util::Signal0 sig1;
-    Util::Signal0 sig2;
-    Util::Signal0 sig3;
+    Nub::Signal0 sig1;
+    Nub::Signal0 sig2;
+    Nub::Signal0 sig3;
 
     sig3.connect(&v0_callback0); // sig3 --> v0_callback0
 
@@ -122,13 +122,13 @@ namespace
     // This test is to make sure that we don't let ourselves get into
     // infinite loops even if there are cyclic patterns of connections
     // between signals and slots. This is implemented with
-    // Util::SignalBase::Impl::isItEmitting, which is locked by
-    // Util::SignalBase::Impl::Lock on entry to
-    // Util::SignalBase::doEmit().
+    // Nub::SignalBase::Impl::isItEmitting, which is locked by
+    // Nub::SignalBase::Impl::Lock on entry to
+    // Nub::SignalBase::doEmit().
 
-    Util::Signal0 sig1;
-    Util::Signal0 sig2;
-    Util::Signal0 sig3;
+    Nub::Signal0 sig1;
+    Nub::Signal0 sig2;
+    Nub::Signal0 sig3;
 
     sig3.connect(&v0_callback0); // sig3 --> v0_callback0
     sig2.connect(sig3.slot()); // sig2 --> sig3 --> v0_callback0
@@ -149,7 +149,7 @@ namespace
 
   void testSlotAdapterFreeFunc1()
   {
-    Util::Signal1<int> sig1;
+    Nub::Signal1<int> sig1;
 
     v0 = 0;
     v1 = 0;
@@ -160,12 +160,12 @@ namespace
     TEST_REQUIRE_EQ(v0, 0);
     TEST_REQUIRE_EQ(v1, 0);
 
-    Util::SoftRef<Util::Slot1<int> > s0 = sig1.connect(&v0_callback1);
+    Nub::SoftRef<Nub::Slot1<int> > s0 = sig1.connect(&v0_callback1);
     sig1.emit(2);
     TEST_REQUIRE_EQ(v0, 2);
     TEST_REQUIRE_EQ(v1, 0);
 
-    Util::SoftRef<Util::Slot1<int> > s1 = sig1.connect(&v1_callback1);
+    Nub::SoftRef<Nub::Slot1<int> > s1 = sig1.connect(&v1_callback1);
     sig1.emit(3);
     TEST_REQUIRE_EQ(v0, 5);
     TEST_REQUIRE_EQ(v1, -3);

@@ -151,7 +151,7 @@ DOTRACE("ImgFile::load");
 #endif
     }
 
-  Util::log(fstring("loaded image file ", filename));
+  Nub::log(fstring("loaded image file ", filename));
 }
 
 void ImgFile::save(const char* filename, const Gfx::BmapData& data)
@@ -164,7 +164,7 @@ void ImgFile::save(const char* filename, const Gfx::BmapData& data)
       throw rutz::error(fstring("unknown file format: ", filename), SRC_POS);
     }
 
-  Util::log(fstring("saved image file ", filename));
+  Nub::log(fstring("saved image file ", filename));
 }
 
 static const char vcid_imgfile_cc[] = "$Header$";

@@ -45,16 +45,16 @@
 
 namespace
 {
-  void addElementIds(Util::Ref<ElementContainer> container,
+  void addElementIds(Nub::Ref<ElementContainer> container,
                      Tcl::List trial_ids, int repeat)
   {
-    for (Tcl::List::Iterator<Util::UID>
-           itr = trial_ids.begin<Util::UID>(),
-           end = trial_ids.end<Util::UID>();
+    for (Tcl::List::Iterator<Nub::UID>
+           itr = trial_ids.begin<Nub::UID>(),
+           end = trial_ids.end<Nub::UID>();
          itr != end;
          ++itr)
       {
-        container->addElement(Util::Ref<Element>(*itr), repeat);
+        container->addElement(Nub::Ref<Element>(*itr), repeat);
       }
   }
 }

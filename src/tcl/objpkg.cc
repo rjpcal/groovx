@@ -55,9 +55,9 @@ Tcl::ObjCaster::ObjCaster() {}
 
 Tcl::ObjCaster::~ObjCaster() {}
 
-bool Tcl::ObjCaster::isIdMyType(Util::UID uid)
+bool Tcl::ObjCaster::isIdMyType(Nub::UID uid)
 {
-  Util::SoftRef<Util::Object> item(uid);
+  Nub::SoftRef<Nub::Object> item(uid);
   return (item.isValid() && isMyType(item.get()));
 }
 
@@ -65,9 +65,9 @@ namespace
 {
   int countAll(shared_ptr<Tcl::ObjCaster> caster)
   {
-    ObjDb& theDb = ObjDb::theDb();
+    Nub::ObjDb& theDb = Nub::ObjDb::theDb();
     int count = 0;
-    for (ObjDb::Iterator itr(theDb.objects()); itr.is_valid(); ++itr)
+    for (Nub::ObjDb::Iterator itr(theDb.objects()); itr.is_valid(); ++itr)
       {
         if (caster->isMyType((*itr).getWeak()))
           ++count;
@@ -77,11 +77,11 @@ namespace
 
   Tcl::List findAll(shared_ptr<Tcl::ObjCaster> caster)
   {
-    ObjDb& theDb = ObjDb::theDb();
+    Nub::ObjDb& theDb = Nub::ObjDb::theDb();
 
     Tcl::List result;
 
-    for (ObjDb::Iterator itr(theDb.objects()); itr.is_valid(); ++itr)
+    for (Nub::ObjDb::Iterator itr(theDb.objects()); itr.is_valid(); ++itr)
       {
         if (caster->isMyType((*itr).getWeak()))
           result.append((*itr).id());
@@ -92,8 +92,8 @@ namespace
 
   void removeAll(shared_ptr<Tcl::ObjCaster> caster)
   {
-    ObjDb& theDb = ObjDb::theDb();
-    for (ObjDb::Iterator itr(theDb.objects());
+    Nub::ObjDb& theDb = Nub::ObjDb::theDb();
+    for (Nub::ObjDb::Iterator itr(theDb.objects());
          itr.is_valid();
          /* increment done in loop body */)
       {
@@ -102,7 +102,7 @@ namespace
 
         if (caster->isMyType((*itr).getWeak()) && (*itr)->isUnshared())
           {
-            Util::UID remove_me = (*itr)->id();
+            Nub::UID remove_me = (*itr)->id();
             ++itr;
             theDb.remove(remove_me);
           }
@@ -113,7 +113,7 @@ namespace
       }
   }
 
-  bool isMyType(shared_ptr<Tcl::ObjCaster> caster, Util::UID id)
+  bool isMyType(shared_ptr<Tcl::ObjCaster> caster, Nub::UID id)
   {
     return caster->isIdMyType(id);
   }

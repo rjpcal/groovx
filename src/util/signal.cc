@@ -50,19 +50,19 @@ DBG_REGISTER
 //
 ///////////////////////////////////////////////////////////////////////
 
-Util::SlotBase::SlotBase()
+Nub::SlotBase::SlotBase()
 {
-DOTRACE("Util::SlotBase::SlotBase");
+DOTRACE("Nub::SlotBase::SlotBase");
 }
 
-Util::SlotBase::~SlotBase() throw()
+Nub::SlotBase::~SlotBase() throw()
 {
-DOTRACE("Util::SlotBase::~SlotBase");
+DOTRACE("Nub::SlotBase::~SlotBase");
 }
 
-bool Util::SlotBase::exists() const
+bool Nub::SlotBase::exists() const
 {
-DOTRACE("Util::SlotBase::exists");
+DOTRACE("Nub::SlotBase::exists");
   return true;
 }
 
@@ -72,36 +72,36 @@ DOTRACE("Util::SlotBase::exists");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Util::Slot0::Slot0()
+Nub::Slot0::Slot0()
 {
-DOTRACE("Util::Slot0::Slot0");
+DOTRACE("Nub::Slot0::Slot0");
 }
 
-Util::Slot0::~Slot0() throw()
+Nub::Slot0::~Slot0() throw()
 {
-DOTRACE("Util::Slot0::~Slot0");
+DOTRACE("Nub::Slot0::~Slot0");
 }
 
-Util::SoftRef<Util::Slot0> Util::Slot0::make(void (*freeFunc)())
+Nub::SoftRef<Nub::Slot0> Nub::Slot0::make(void (*freeFunc)())
 {
-DOTRACE("Util::Slot0::make");
+DOTRACE("Nub::Slot0::make");
 
-  return Util::SoftRef<Slot0>(SlotAdapterFreeFunc0::make(freeFunc));
+  return Nub::SoftRef<Slot0>(SlotAdapterFreeFunc0::make(freeFunc));
 }
 
-Util::SlotAdapterFreeFunc0::SlotAdapterFreeFunc0(FreeFunc* f)
+Nub::SlotAdapterFreeFunc0::SlotAdapterFreeFunc0(FreeFunc* f)
   : itsFreeFunc(f)
 {}
 
-Util::SlotAdapterFreeFunc0::~SlotAdapterFreeFunc0() throw() {}
+Nub::SlotAdapterFreeFunc0::~SlotAdapterFreeFunc0() throw() {}
 
-Util::SlotAdapterFreeFunc0*
-Util::SlotAdapterFreeFunc0::make(FreeFunc* f)
+Nub::SlotAdapterFreeFunc0*
+Nub::SlotAdapterFreeFunc0::make(FreeFunc* f)
 {
   return new SlotAdapterFreeFunc0(f);
 }
 
-void Util::SlotAdapterFreeFunc0::call()
+void Nub::SlotAdapterFreeFunc0::call()
 {
   (*itsFreeFunc)();
 }
@@ -114,10 +114,10 @@ void Util::SlotAdapterFreeFunc0::call()
 
 namespace
 {
-  typedef Util::Ref<Util::SlotBase> SlotRef;
+  typedef Nub::Ref<Nub::SlotBase> SlotRef;
 }
 
-struct Util::SignalBase::Impl
+struct Nub::SignalBase::Impl
 {
 public:
   Impl() :
@@ -155,19 +155,19 @@ public:
   };
 };
 
-Util::SignalBase::SignalBase() :
-  Util::VolatileObject(),
+Nub::SignalBase::SignalBase() :
+  Nub::VolatileObject(),
   rep(new Impl)
 {}
 
-Util::SignalBase::~SignalBase() throw()
+Nub::SignalBase::~SignalBase() throw()
 {
   delete rep;
 }
 
-void Util::SignalBase::doEmit(void* params) const
+void Nub::SignalBase::doEmit(void* params) const
 {
-DOTRACE("Util::SignalBase::doEmit");
+DOTRACE("Nub::SignalBase::doEmit");
   if (!rep->isItEmitting)
     {
       Impl::Lock lock(rep);
@@ -195,22 +195,22 @@ DOTRACE("Util::SignalBase::doEmit");
     }
 }
 
-void Util::SignalBase::doDisconnect(Util::SoftRef<Util::SlotBase> slot)
+void Nub::SignalBase::doDisconnect(Nub::SoftRef<Nub::SlotBase> slot)
 {
-DOTRACE("Util::SignalBase::doDisconnect");
+DOTRACE("Nub::SignalBase::doDisconnect");
   if (!slot.isValid()) return;
 
-  rep->slots.remove(SlotRef(slot.get(), Util::PRIVATE));
+  rep->slots.remove(SlotRef(slot.get(), Nub::PRIVATE));
 
   dbg_eval_nl(3, rep->slots.size());
 }
 
-void Util::SignalBase::doConnect(Util::SoftRef<Util::SlotBase> slot)
+void Nub::SignalBase::doConnect(Nub::SoftRef<Nub::SlotBase> slot)
 {
-DOTRACE("Util::SignalBase::doConnect");
+DOTRACE("Nub::SignalBase::doConnect");
   if (!slot.isValid()) return;
 
-  rep->slots.push_back(SlotRef(slot.get(), Util::PRIVATE));
+  rep->slots.push_back(SlotRef(slot.get(), Nub::PRIVATE));
 
   dbg_eval_nl(3, rep->slots.size());
 }
@@ -221,16 +221,16 @@ DOTRACE("Util::SignalBase::doConnect");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Util::Signal0::Signal0() :
+Nub::Signal0::Signal0() :
   SignalBase(),
-  slotEmitSelf(Slot0::make(this, &Util::Signal0::emit))
+  slotEmitSelf(Slot0::make(this, &Nub::Signal0::emit))
 {
-DOTRACE("Util::Signal0::Signal0");
+DOTRACE("Nub::Signal0::Signal0");
 }
 
-Util::Signal0::~Signal0() throw()
+Nub::Signal0::~Signal0() throw()
 {
-DOTRACE("Util::Signal0::~Signal0");
+DOTRACE("Nub::Signal0::~Signal0");
 }
 
 static const char vcid_signal_cc[] = "$Header$";

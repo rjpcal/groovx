@@ -62,15 +62,15 @@
 
 #include "util/trace.h"
 
-using Util::Ref;
+using Nub::Ref;
 
 namespace
 {
-  Util::UID doCreatePreview(Gfx::Canvas& canvas,
-                            Util::UID* objids,
-                            unsigned int objids_size,
-                            int num_cols_hint = -1,
-                            bool text_labels = true)
+  Nub::UID doCreatePreview(Gfx::Canvas& canvas,
+                           Nub::UID* objids,
+                           unsigned int objids_size,
+                           int num_cols_hint = -1,
+                           bool text_labels = true)
   {
     DOTRACE("<tlisttcl.cc>::doCreatePreview");
 
@@ -187,7 +187,7 @@ DOTRACE("TlistUtils::writeResponses");
   ofs.setf(std::ios::fixed);
   ofs.precision(2);
 
-  for (ObjDb::CastingIterator<Trial> itr(ObjDb::theDb().objects());
+  for (Nub::ObjDb::CastingIterator<Trial> itr(Nub::ObjDb::theDb().objects());
        itr.is_valid();
        ++itr)
     {
@@ -208,7 +208,7 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
 
   STD_IO::ofstream ofs(filename);
 
-  for (ObjDb::CastingIterator<Trial> itr(ObjDb::theDb().objects());
+  for (Nub::ObjDb::CastingIterator<Trial> itr(Nub::ObjDb::theDb().objects());
        itr.is_valid();
        ++itr)
     {
@@ -243,7 +243,7 @@ public:
                             unsigned int) {}
 
   virtual void writeObject(const char*,
-                           Util::SoftRef<const IO::IoObject> obj)
+                           Nub::SoftRef<const IO::IoObject> obj)
   {
     DOTRACE("MatlabTrialWriter::writeObject");
     if (!obj.isValid())
@@ -259,14 +259,14 @@ public:
   }
 
   virtual void writeOwnedObject(const char* name,
-                                Util::Ref<const IO::IoObject> obj)
+                                Nub::Ref<const IO::IoObject> obj)
   {
     DOTRACE("MatlabTrialWriter::writeOwnedObject");
     writeObject(name, obj);
   }
 
   virtual void writeBaseClass(const char*,
-                              Util::Ref<const IO::IoObject> basePart)
+                              Nub::Ref<const IO::IoObject> basePart)
   {
     DOTRACE("MatlabTrialWriter::writeBaseClass");
     basePart->writeTo(*this);
@@ -290,7 +290,7 @@ DOTRACE("TlistUtils::writeMatlab");
 
   MatlabTrialWriter writer(ofs);
 
-  for (ObjDb::CastingIterator<Trial> itr(ObjDb::theDb().objects());
+  for (Nub::ObjDb::CastingIterator<Trial> itr(Nub::ObjDb::theDb().objects());
        itr.is_valid();
        ++itr)
     {
@@ -305,14 +305,15 @@ DOTRACE("TlistUtils::writeMatlab");
 //
 //---------------------------------------------------------------------
 
-Util::UID TlistUtils::createPreview(Tcl::List objid_list,
-                                    int num_cols_hint = -1,
-                                    bool text_labels = true)
+Nub::UID TlistUtils::createPreview(Tcl::List objid_list,
+                                   int num_cols_hint = -1,
+                                   bool text_labels = true)
 {
-  rutz::fixed_block<Util::UID> objids(objid_list.begin<Util::UID>(),
-                                      objid_list.end<Util::UID>());
+  rutz::fixed_block<Nub::UID> objids(objid_list.begin<Nub::UID>(),
+                                     objid_list.end<Nub::UID>());
 
-  return doCreatePreview(Gfx::Canvas::current(), &objids[0], objids.size(),
+  return doCreatePreview(Gfx::Canvas::current(),
+                         &objids[0], objids.size(),
                          num_cols_hint, text_labels);
 }
 
@@ -325,15 +326,15 @@ Util::UID TlistUtils::createPreview(Tcl::List objid_list,
 //
 //--------------------------------------------------------------------
 
-Tcl::List TlistUtils::dealSingles(Tcl::List objids, Util::UID posid)
+Tcl::List TlistUtils::dealSingles(Tcl::List objids, Nub::UID posid)
 {
   Tcl::List result;
 
   Ref<GxNode> pos(posid);
 
-  for (Tcl::List::Iterator<Util::UID>
-         itr = objids.begin<Util::UID>(),
-         end = objids.end<Util::UID>();
+  for (Tcl::List::Iterator<Nub::UID>
+         itr = objids.begin<Nub::UID>(),
+         end = objids.end<Nub::UID>();
        itr != end;
        ++itr)
     {
@@ -356,24 +357,24 @@ Tcl::List TlistUtils::dealSingles(Tcl::List objids, Util::UID posid)
 //--------------------------------------------------------------------
 
 Tcl::List TlistUtils::dealPairs(Tcl::List objids1, Tcl::List objids2,
-                                Util::UID posid1, Util::UID posid2)
+                                Nub::UID posid1, Nub::UID posid2)
 {
   Tcl::List result;
 
   Ref<GxNode> pos1(posid1);
   Ref<GxNode> pos2(posid2);
 
-  for (Tcl::List::Iterator<Util::UID>
-         itr1 = objids1.begin<Util::UID>(),
-         end1 = objids1.end<Util::UID>();
+  for (Tcl::List::Iterator<Nub::UID>
+         itr1 = objids1.begin<Nub::UID>(),
+         end1 = objids1.end<Nub::UID>();
        itr1 != end1;
        ++itr1)
     {
       Ref<GxSeparator> sep1(makeSepPair(pos1, Ref<GxNode>(*itr1)));
 
-      for (Tcl::List::Iterator<Util::UID>
-             itr2 = objids2.begin<Util::UID>(),
-             end2 = objids2.end<Util::UID>();
+      for (Tcl::List::Iterator<Nub::UID>
+             itr2 = objids2.begin<Nub::UID>(),
+             end2 = objids2.end<Nub::UID>();
            itr2 != end2;
            ++itr2)
         {
@@ -397,8 +398,8 @@ Tcl::List TlistUtils::dealPairs(Tcl::List objids1, Tcl::List objids2,
 //
 //--------------------------------------------------------------------
 
-Tcl::List TlistUtils::dealTriads(Tcl::List objid_list, Util::UID posid1,
-                                 Util::UID posid2, Util::UID posid3)
+Tcl::List TlistUtils::dealTriads(Tcl::List objid_list, Nub::UID posid1,
+                                 Nub::UID posid2, Nub::UID posid3)
 {
   const unsigned int NUM_PERMS = 18;
   static int permutations[NUM_PERMS][3] =
@@ -423,10 +424,10 @@ Tcl::List TlistUtils::dealTriads(Tcl::List objid_list, Util::UID posid1,
     {2, 1, 0}
   };
 
-  rutz::fixed_block<Util::UID> objids(objid_list.begin<Util::UID>(),
-                                      objid_list.end<Util::UID>());
+  rutz::fixed_block<Nub::UID> objids(objid_list.begin<Nub::UID>(),
+                                     objid_list.end<Nub::UID>());
 
-  Util::UID base_triad[3];
+  Nub::UID base_triad[3];
 
   Tcl::List result;
 
@@ -484,11 +485,11 @@ Tcl::List TlistUtils::loadObjidFile(const char* objid_file,
   // whether we will read only num_lines lines from the stream.
   bool read_to_eof = (num_lines < 0);
 
-  rutz::fixed_block<Util::UID> objids(objid_list.begin<Util::UID>(),
-                                      objid_list.end<Util::UID>());
+  rutz::fixed_block<Nub::UID> objids(objid_list.begin<Nub::UID>(),
+                                     objid_list.end<Nub::UID>());
 
-  rutz::fixed_block<Util::UID> posids(posid_list.begin<Util::UID>(),
-                                      posid_list.end<Util::UID>());
+  rutz::fixed_block<Nub::UID> posids(posid_list.begin<Nub::UID>(),
+                                     posid_list.end<Nub::UID>());
 
   STD_IO::ifstream ifs(objid_file);
 

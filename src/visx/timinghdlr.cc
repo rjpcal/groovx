@@ -89,9 +89,9 @@ public:
     trial(0)
     {}
 
-  rutz::shared_ptr<Util::Scheduler> scheduler;
+  rutz::shared_ptr<Nub::Scheduler> scheduler;
 
-  typedef std::vector<Util::Ref<TrialEvent> > EventGroup;
+  typedef std::vector<Nub::Ref<TrialEvent> > EventGroup;
 
   EventGroup immediateEvents;
   EventGroup startEvents;
@@ -118,7 +118,7 @@ public:
   Trial* trial;
 
   static void scheduleAll(EventGroup& events,
-                          rutz::shared_ptr<Util::Scheduler> s,
+                          rutz::shared_ptr<Nub::Scheduler> s,
                           Trial* trial);
   static void cancelAll(EventGroup& events);
 };
@@ -212,8 +212,8 @@ DOTRACE("TimingHdlr::writeTo");
 // accessors //
 ///////////////
 
-Util::Ref<TrialEvent> TimingHdlr::getEvent(TimePoint time_point,
-                                           unsigned int index) const
+Nub::Ref<TrialEvent> TimingHdlr::getEvent(TimePoint time_point,
+                                          unsigned int index) const
 {
 DOTRACE("TimingHdlr::getEvent");
   return rep->eventsAt(time_point).at(index);
@@ -229,7 +229,7 @@ DOTRACE("TimingHdlr::getElapsedMsec");
 // manipulators //
 //////////////////
 
-unsigned int TimingHdlr::addEvent(Util::Ref<TrialEvent> event_item,
+unsigned int TimingHdlr::addEvent(Nub::Ref<TrialEvent> event_item,
                                   TimePoint time_point)
 {
 DOTRACE("TimingHdlr::addEvent");
@@ -244,8 +244,8 @@ unsigned int TimingHdlr::addEventByName(const char* event_type,
 {
 DOTRACE("TimingHdlr::addEventByName");
 
-  Util::Ref<TrialEvent> event_item(
-                    Util::ObjMgr::newTypedObj<TrialEvent>(event_type));
+  Nub::Ref<TrialEvent> event_item
+    (Nub::ObjMgr::newTypedObj<TrialEvent>(event_type));
 
   event_item->setDelay(msec_delay);
   return addEvent(event_item, timepoint);
@@ -259,15 +259,15 @@ DOTRACE("TimingHdlr::addEventByName");
 
 namespace
 {
-  bool cmp_delay_less(const Util::Ref<TrialEvent>& e1,
-                      const Util::Ref<TrialEvent>& e2)
+  bool cmp_delay_less(const Nub::Ref<TrialEvent>& e1,
+                      const Nub::Ref<TrialEvent>& e2)
   {
     return (e1->getDelay() < e2->getDelay());
   }
 }
 
 void TimingHdlr::Impl::scheduleAll(EventGroup& events,
-                                   rutz::shared_ptr<Util::Scheduler> s,
+                                   rutz::shared_ptr<Nub::Scheduler> s,
                                    Trial* trial)
 {
 DOTRACE("TimingHdlr::Impl::scheduleAll");
@@ -292,7 +292,7 @@ DOTRACE("TimingHdlr::Impl::scheduleAll");
 
       rutz::fstring info("scheduled @ ", scheduled_delay,
                          ": ", events[i]->uniqueName());
-      Util::log(info);
+      Nub::log(info);
     }
 }
 

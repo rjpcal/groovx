@@ -46,7 +46,7 @@
 DBG_REGISTER
 #include "util/trace.h"
 
-GxAligner::GxAligner(Util::SoftRef<GxNode> child) :
+GxAligner::GxAligner(Nub::SoftRef<GxNode> child) :
   GxBin(child),
   itsMode(NATIVE_ALIGNMENT),
   itsCenter(0.0, 0.0)

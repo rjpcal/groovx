@@ -57,7 +57,7 @@ namespace IO
   class Writer;
 }
 
-namespace Util
+namespace Nub
 {
   class Signal0;
 }
@@ -676,18 +676,18 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class FieldContainer : public virtual Util::Object
+class FieldContainer : public virtual Nub::Object
 {
 private:
   const FieldMap* itsFieldMap;
-  Util::Signal0* itsSignal;
+  Nub::Signal0* itsSignal;
 
   FieldContainer(const FieldContainer&);
   FieldContainer& operator=(const FieldContainer&);
 
 public:
   /// Construct with an optional signal to be triggered when a field changes.
-  FieldContainer(Util::Signal0* sig);
+  FieldContainer(Nub::Signal0* sig);
 
   /// Virtual destructor.
   virtual ~FieldContainer() throw();

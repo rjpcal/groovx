@@ -51,7 +51,7 @@ namespace
 {
   // Make a specified GxNode the widget's current drawable, and draw
   // it in the OpenGL window. The widget's visibility is set to true.
-  Util::UID see(Util::SoftRef<Toglet> widg, Util::Ref<GxNode> item)
+  Nub::UID see(Nub::SoftRef<Toglet> widg, Nub::Ref<GxNode> item)
   {
     widg->setDrawable(item);
     widg->setVisibility(true);
@@ -61,8 +61,8 @@ namespace
 
   // We need to eagerly drop references to objects at shutdown time,
   // because Tcl tends to prematurely unload dynamically-loaded
-  // packages... so we need to make sure we don't have any references to
-  // objects whose members are defined in such packages.
+  // packages... so we need to make sure we don't have any references
+  // to objects whose members are defined in such packages.
   void clearOnExit()
   {
     if (Toglet::getCurrent().isValid())
@@ -84,9 +84,9 @@ DOTRACE("Toglet_Init");
   pkg->inheritPkg("TkWidget");
   Tcl::defGenericObjCmds<Toglet>(pkg, SRC_POS);
 
-  Util::ObjFactory::theOne().register_creator( &Toglet::make );
-  Util::ObjFactory::theOne().register_creator( &Toglet::makeToplevel,
-                                               "TopToglet" );
+  Nub::ObjFactory::theOne().register_creator( &Toglet::make );
+  Nub::ObjFactory::theOne().register_creator( &Toglet::makeToplevel,
+                                              "TopToglet" );
 
   pkg->def( "current", "toglet_id", &Toglet::setCurrent, SRC_POS );
   pkg->def( "current", 0, &Toglet::getCurrent, SRC_POS );

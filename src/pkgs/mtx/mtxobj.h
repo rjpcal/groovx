@@ -36,8 +36,8 @@
 
 #include "util/object.h"
 
-/// Adapter class for fitting mtx to the Util::Object interface.
-class MtxObj : public mtx, public Util::Object
+/// Adapter class for fitting mtx to the Nub::Object interface.
+class MtxObj : public mtx, public Nub::Object
 {
 public:
   template <class T1>

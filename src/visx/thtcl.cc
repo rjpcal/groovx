@@ -45,7 +45,7 @@
 
 namespace
 {
-  unsigned int addNewEvent(Util::Ref<TimingHdlr> th, const char* event_type,
+  unsigned int addNewEvent(Nub::Ref<TimingHdlr> th, const char* event_type,
                            int msec, TimingHdlr::TimePoint time_point)
   {
     return th->addEventByName(event_type, time_point, msec);

@@ -64,7 +64,7 @@ public:
 
 
   /// Construct with a given child object.
-  GxCache(Util::SoftRef<GxNode> child);
+  GxCache(Nub::SoftRef<GxNode> child);
 
   /// Virtual destructor.
   virtual ~GxCache() throw();

@@ -52,7 +52,7 @@
 DBG_REGISTER
 #include "util/trace.h"
 
-using Util::Ref;
+using Nub::Ref;
 
 class ElementContainer::Impl
 {
@@ -221,7 +221,7 @@ DOTRACE("ExptDriver::vxReturn");
     }
   else
     {
-      Util::log( vxInfo() );
+      Nub::log( vxInfo() );
 
       currentElement()->vxRun(*this);
     }
@@ -252,11 +252,11 @@ void ElementContainer::vxReset()
 DOTRACE("ElementContainer::vxReset");
   vxHalt();
 
-  Util::log("ElementContainer::vxReset");
+  Nub::log("ElementContainer::vxReset");
 
   for (unsigned int i = 0; i < rep->elements.size(); ++i)
     {
-      Util::log(rutz::fstring("resetting element", i));
+      Nub::log(rutz::fstring("resetting element", i));
       rep->elements[i]->vxReset();
     }
 
@@ -314,11 +314,11 @@ DOTRACE("ElementContainer::clearElements");
   rep->sequencePos = 0;
 }
 
-Util::SoftRef<Element> ElementContainer::currentElement() const
+Nub::SoftRef<Element> ElementContainer::currentElement() const
 {
 DOTRACE("ElementContainer::currentElement");
   if (rep->sequencePos >= rep->elements.size())
-    return Util::SoftRef<Element>();
+    return Nub::SoftRef<Element>();
 
   return rep->elements.at(rep->sequencePos);
 }
@@ -335,11 +335,12 @@ DOTRACE("ElementContainer::numCompleted");
   return rep->sequencePos;
 }
 
-rutz::fwd_iter<const Util::Ref<Element> > ElementContainer::getElements() const
+rutz::fwd_iter<const Nub::Ref<Element> >
+ElementContainer::getElements() const
 {
 DOTRACE("ElementContainer::getElements");
 
-  return rutz::fwd_iter<const Util::Ref<Element> >
+  return rutz::fwd_iter<const Nub::Ref<Element> >
     (rep->elements.begin(), rep->elements.end());
 }
 

@@ -32,7 +32,7 @@
 #ifndef UID_H_DEFINED
 #define UID_H_DEFINED
 
-namespace Util
+namespace Nub
 {
   /// This type is used for IoObject unique identifiers
   typedef unsigned long UID;

@@ -55,7 +55,7 @@ DOTRACE("Mtx_Init");
   pkg->defGetter<MtxObj, int>("ncols", &mtx::ncols, SRC_POS);
   pkg->defGetter<MtxObj, int>("nelems", &mtx::nelems, SRC_POS);
 
-  Util::ObjFactory::theOne().register_creator(&MtxObj::make);
+  Nub::ObjFactory::theOne().register_creator(&MtxObj::make);
 
   PKG_RETURN;
 }

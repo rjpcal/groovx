@@ -184,11 +184,11 @@ public:
   // Actions //
   /////////////
 
-  virtual void rhBeginTrial(Util::SoftRef<Toglet> widget, Trial& trial) const;
+  virtual void rhBeginTrial(Nub::SoftRef<Toglet> widget, Trial& trial) const;
   virtual void rhAbortTrial() const;
   virtual void rhEndTrial() const;
   virtual void rhHaltExpt() const;
-  virtual void rhAllowResponses(Util::SoftRef<Toglet> widget,
+  virtual void rhAllowResponses(Nub::SoftRef<Toglet> widget,
                                 Trial& trial) const;
   virtual void rhDenyResponses() const;
 

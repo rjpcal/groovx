@@ -42,7 +42,7 @@ DBG_REGISTER
 
 using rutz::shared_ptr;
 
-Util::Timer::Timer(unsigned int msec, bool repeat)
+Nub::Timer::Timer(unsigned int msec, bool repeat)
   :
   sigTimeOut(),
   itsScheduler(0),
@@ -52,14 +52,14 @@ Util::Timer::Timer(unsigned int msec, bool repeat)
   itsStopWatch()
 {}
 
-Util::Timer::~Timer()
+Nub::Timer::~Timer()
 {
   cancel();
 }
 
-void Util::Timer::schedule(rutz::shared_ptr<Util::Scheduler> scheduler)
+void Nub::Timer::schedule(rutz::shared_ptr<Nub::Scheduler> scheduler)
 {
-DOTRACE("Util::Timer::schedule");
+DOTRACE("Nub::Timer::schedule");
 
   PRECONDITION(scheduler.get() != 0);
 
@@ -87,17 +87,17 @@ DOTRACE("Util::Timer::schedule");
                                     static_cast<void*>(this));
 }
 
-void Util::Timer::cancel()
+void Nub::Timer::cancel()
 {
-DOTRACE("Util::Timer::cancel");
+DOTRACE("Nub::Timer::cancel");
 
   itsToken.reset(0);
 }
 
-void Util::Timer::dummyCallback(void* clientData)
+void Nub::Timer::dummyCallback(void* clientData)
 {
-DOTRACE("Util::Timer::dummyCallback");
-  Util::Timer* timer = static_cast<Util::Timer*>(clientData);
+DOTRACE("Nub::Timer::dummyCallback");
+  Nub::Timer* timer = static_cast<Nub::Timer*>(clientData);
 
   ASSERT(timer != 0);
 

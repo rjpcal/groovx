@@ -79,7 +79,7 @@ public:
   // Element interface
   //
 
-  virtual const Util::SoftRef<Toglet>& getWidget() const;
+  virtual const Nub::SoftRef<Toglet>& getWidget() const;
 
   /// Starts the current element.
   /** This will be called by vxReturn() as needed. */

@@ -65,8 +65,8 @@ DBG_REGISTER
 
 namespace
 {
-  Util::SoftRef<Sound> theOkSound;
-  Util::SoftRef<Sound> theErrSound;
+  Nub::SoftRef<Sound> theOkSound;
+  Nub::SoftRef<Sound> theErrSound;
 }
 
 SoundRep::~SoundRep() throw() {}
@@ -86,24 +86,24 @@ DOTRACE("SoundRep::checkFilename");
     }
 }
 
-void Sound::setOkSound(Util::Ref<Sound> ok_sound)
+void Sound::setOkSound(Nub::Ref<Sound> ok_sound)
 {
   theOkSound = ok_sound;
 }
 
-void Sound::setErrSound(Util::Ref<Sound> err_sound)
+void Sound::setErrSound(Nub::Ref<Sound> err_sound)
 {
   theErrSound = err_sound;
 }
 
-Util::Ref<Sound> Sound::getOkSound()
+Nub::Ref<Sound> Sound::getOkSound()
 {
-  return Util::Ref<Sound>(theOkSound.get());
+  return Nub::Ref<Sound>(theOkSound.get());
 }
 
-Util::Ref<Sound> Sound::getErrSound()
+Nub::Ref<Sound> Sound::getErrSound()
 {
-  return Util::Ref<Sound>(theErrSound.get());
+  return Nub::Ref<Sound>(theErrSound.get());
 }
 
 Sound* Sound::make()

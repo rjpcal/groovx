@@ -39,13 +39,13 @@ namespace Tcl
   class TimerScheduler;
 }
 
-class Tcl::TimerScheduler : public Util::Scheduler
+class Tcl::TimerScheduler : public Nub::Scheduler
 {
 public:
   TimerScheduler();
   virtual ~TimerScheduler() throw();
 
-  virtual rutz::shared_ptr<Util::TimerToken>
+  virtual rutz::shared_ptr<Nub::TimerToken>
   schedule(int msec,
            void (*callback)(void*),
            void* clientdata);

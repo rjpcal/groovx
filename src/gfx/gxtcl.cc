@@ -75,23 +75,23 @@
 
 namespace GxTcl
 {
-  bool contains(Util::Ref<GxNode> item, Util::Ref<GxNode> other)
+  bool contains(Nub::Ref<GxNode> item, Nub::Ref<GxNode> other)
   {
     return item->contains(other.get());
   }
 
-  void savePS(Util::Ref<GxNode> item, const char* filename)
+  void savePS(Nub::Ref<GxNode> item, const char* filename)
   {
     Gfx::PSCanvas canvas(filename);
 
     item->draw(canvas);
   }
 
-  void addChildren(Util::Ref<GxSeparator> sep, Tcl::List objs)
+  void addChildren(Nub::Ref<GxSeparator> sep, Tcl::List objs)
   {
-    Tcl::List::Iterator<Util::Ref<GxNode> >
-      itr = objs.begin<Util::Ref<GxNode> >(),
-      end = objs.end<Util::Ref<GxNode> >();
+    Tcl::List::Iterator<Nub::Ref<GxNode> >
+      itr = objs.begin<Nub::Ref<GxNode> >(),
+      end = objs.end<Nub::Ref<GxNode> >();
 
     while (itr != end)
       {
@@ -100,7 +100,7 @@ namespace GxTcl
       }
   }
 
-  Gfx::Rect<double> boundingBox(Util::Ref<GxNode> obj)
+  Gfx::Rect<double> boundingBox(Nub::Ref<GxNode> obj)
   {
     return obj->getBoundingBox(Gfx::Canvas::current());
   }
@@ -120,7 +120,7 @@ namespace GxTcl
   // pretty easily, just by captuing the screen bounds into a BmapData
   // object and then saving that.
 #if 0
-  void saveBitmap(Util::Ref<GxNode> obj, const char* filename)
+  void saveBitmap(Nub::Ref<GxNode> obj, const char* filename)
   {
     obj->saveBitmapCache(Gfx::Canvas::current(), filename);
   }
@@ -201,7 +201,7 @@ DOTRACE("Gxseparator_Init");
   pkg->defGetter("numChildren", &GxSeparator::numChildren, SRC_POS);
   pkg->def("removeChildAt", "sep_id(s) child_indices", &GxSeparator::removeChildAt, SRC_POS);
   pkg->def("removeChild","sep_id(s) child_id(s)", &GxSeparator::removeChild, SRC_POS);
-  Util::ObjFactory::theOne().register_creator(&GxSeparator::make);
+  Nub::ObjFactory::theOne().register_creator(&GxSeparator::make);
 
   PKG_RETURN;
 }
@@ -393,13 +393,13 @@ DOTRACE("Gxshapekit_Init");
 
 namespace
 {
-  void scramble1(Util::Ref<GxPixmap> pixmap,
+  void scramble1(Nub::Ref<GxPixmap> pixmap,
                  int numsubcols, int numsubrows)
   {
     pixmap->scramble(numsubcols, numsubrows, 0);
   }
 
-  void scramble2(Util::Ref<GxPixmap> pixmap,
+  void scramble2(Nub::Ref<GxPixmap> pixmap,
                  int numsubcols, int numsubrows, int seed)
   {
     pixmap->scramble(numsubcols, numsubrows, seed);
@@ -408,7 +408,7 @@ namespace
   void loadImageStream(Tcl::Context& ctx)
   {
     using rutz::shared_ptr;
-    Util::Ref<GxPixmap> pixmap = ctx.getValFromArg<Util::Ref<GxPixmap> >(1);
+    Nub::Ref<GxPixmap> pixmap = ctx.getValFromArg<Nub::Ref<GxPixmap> >(1);
     const char* channame = ctx.getValFromArg<const char*>(2);
     Tcl_Interp* interp = ctx.interp().intp();
     shared_ptr<std::istream> ist(Tcl::ichanopen(interp, channame));

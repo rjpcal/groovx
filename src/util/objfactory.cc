@@ -36,15 +36,15 @@
 
 namespace
 {
-  Util::ObjFactory* instance = 0;
+  Nub::ObjFactory* instance = 0;
 }
 
-Util::ObjFactory::ObjFactory() :
-  rutz::factory<SoftRef<Util::Object> >() {}
+Nub::ObjFactory::ObjFactory() :
+  rutz::factory<SoftRef<Nub::Object> >() {}
 
-Util::ObjFactory::~ObjFactory() {}
+Nub::ObjFactory::~ObjFactory() {}
 
-Util::ObjFactory& Util::ObjFactory::theOne()
+Nub::ObjFactory& Nub::ObjFactory::theOne()
 {
   if (instance == 0)
     {

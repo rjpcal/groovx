@@ -60,8 +60,8 @@ DBG_REGISTER
 
 using rutz::fstring;
 
-using Util::Ref;
-using Util::SoftRef;
+using Nub::Ref;
+using Nub::SoftRef;
 
 rutz::tracer Trial::tracer;
 
@@ -88,12 +88,12 @@ namespace
       status(Element::CHILD_OK)
     {
       PRECONDITION(parent != 0);
-      Util::Log::addObjScope(*trial);
+      Nub::Log::addObjScope(*trial);
     }
 
     ~ActiveState()
     {
-      Util::Log::removeObjScope(*trial);
+      Nub::Log::removeObjScope(*trial);
     }
 
     Trial* trial;
@@ -168,8 +168,8 @@ public:
     if (activeState->widget.isValid() && currentNode < gxNodes.size())
       {
         activeState->widget->setDrawable(gxNodes[currentNode]);
-        Util::log(fstring("current node is ",
-                          gxNodes[currentNode]->uniqueName()));
+        Nub::log(fstring("current node is ",
+                         gxNodes[currentNode]->uniqueName()));
       }
   }
 };
@@ -480,7 +480,7 @@ DOTRACE("Trial::vxRun");
 
   rep->becomeActive(&parent, widget);
 
-  Util::log( vxInfo() );
+  Nub::log( vxInfo() );
 
   rep->currentNode = 0;
 
@@ -503,7 +503,7 @@ DOTRACE("Trial::trAbortTrial");
 
   PRECONDITION( rep->isActive() );
 
-  Util::log("trAbortTrial");
+  Nub::log("trAbortTrial");
 
   rep->activeState->status = CHILD_ABORTED;
   rep->activeState->rh->rhAbortTrial();
@@ -522,7 +522,7 @@ DOTRACE("Trial::trEndTrial");
 
   PRECONDITION( rep->isActive() );
 
-  Util::log("Trial::trEndTrial");
+  Nub::log("Trial::trEndTrial");
 
   rep->activeState->rh->rhEndTrial();
   rep->activeState->th->thEndTrial();
@@ -542,7 +542,7 @@ DOTRACE("Trial::vxHalt");
 
   if (!rep->isActive()) return;
 
-  Util::log("Trial::vxHalt");
+  Nub::log("Trial::vxHalt");
 
   if (rep->activeState->widget.isValid())
     rep->activeState->widget->undraw();
@@ -565,7 +565,7 @@ DOTRACE("Trial::trProcessResponse");
 
   PRECONDITION( rep->isActive() );
 
-  Util::log("trProcessResponse");
+  Nub::log("trProcessResponse");
 
   rep->responses.push_back(response);
 
@@ -661,7 +661,7 @@ DOTRACE("Trial::trAllowResponses");
 
   PRECONDITION( rep->isActive() );
 
-  Util::log("trAllowResponses");
+  Nub::log("trAllowResponses");
 
   rep->activeState->rh->rhAllowResponses
     (rep->activeState->widget, *this);
@@ -673,7 +673,7 @@ DOTRACE("Trial::trDenyResponses");
 
   PRECONDITION( rep->isActive() );
 
-  Util::log("trDenyResponses");
+  Nub::log("trDenyResponses");
 
   rep->activeState->rh->rhDenyResponses();
 }

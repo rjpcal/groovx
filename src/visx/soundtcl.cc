@@ -60,7 +60,7 @@ DOTRACE("Sound_Init");
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<Sound>(pkg, SRC_POS);
 
-  Util::ObjFactory::theOne().register_creator(&Sound::make);
+  Nub::ObjFactory::theOne().register_creator(&Sound::make);
 
   pkg->def( "haveAudio", 0, &Sound::haveSound, SRC_POS );
 
@@ -85,12 +85,12 @@ DOTRACE("Sound_Init");
 
       try
         {
-          Util::Ref<Sound> ok_sound(Sound::makeFrom(ok_file.c_str()));
+          Nub::Ref<Sound> ok_sound(Sound::makeFrom(ok_file.c_str()));
           Sound::setOkSound(ok_sound);
           OK = ok_sound.id();
           pkg->linkVarConst("Sound::ok", OK);
 
-          Util::Ref<Sound> err_sound(Sound::makeFrom(err_file.c_str()));
+          Nub::Ref<Sound> err_sound(Sound::makeFrom(err_file.c_str()));
           Sound::setErrSound(err_sound);
           ERR = err_sound.id();
           pkg->linkVarConst("Sound::err", ERR);

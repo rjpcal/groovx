@@ -39,14 +39,14 @@
 
 #include "util/trace.h"
 
-Util::SoftRef<Util::Object> Util::ObjMgr::newObj(const char* type)
+Nub::SoftRef<Nub::Object> Nub::ObjMgr::newObj(const char* type)
 {
   return newObj(rutz::fstring(type));
 }
 
-Util::SoftRef<Util::Object> Util::ObjMgr::newObj(const rutz::fstring& type)
+Nub::SoftRef<Nub::Object> Nub::ObjMgr::newObj(const rutz::fstring& type)
 {
-DOTRACE("Util::ObjMgr::newObj(const fstring&)");
+DOTRACE("Nub::ObjMgr::newObj(const fstring&)");
   return SoftRef<Object>(ObjFactory::theOne().new_checked_object(type));
 }
 

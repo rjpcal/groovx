@@ -37,7 +37,7 @@ namespace rutz
   class fstring;
 }
 
-namespace Util
+namespace Nub
 {
   class Object;
 
@@ -49,10 +49,10 @@ namespace Util
     void removeScope(const rutz::fstring& name);
 
     /// Add a scope named after the given object's type + id.
-    void addObjScope(const Util::Object& obj);
+    void addObjScope(const Nub::Object& obj);
 
     /// Remove the scope named after the given object's type + id.
-    void removeObjScope(const Util::Object& obj);
+    void removeObjScope(const Nub::Object& obj);
 
     /// Specify the name of a file to which log info should be appended.
     void setLogFilename(const rutz::fstring& filename);

@@ -61,8 +61,8 @@ DBG_REGISTER
 using rutz::fstring;
 using rutz::shared_ptr;
 
-using Util::Ref;
-using Util::SoftRef;
+using Nub::Ref;
+using Nub::SoftRef;
 
 namespace
 {
@@ -575,7 +575,7 @@ namespace
 } // end anonymous namespace
 
 
-Util::Ref<IO::IoObject> IO::loadGVX(const char* filename)
+Nub::Ref<IO::IoObject> IO::loadGVX(const char* filename)
 {
 DOTRACE("IO::loadGVX");
   shared_ptr<std::istream> ifs(rutz::igzopen(filename));

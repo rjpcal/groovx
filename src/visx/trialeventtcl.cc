@@ -55,17 +55,17 @@ namespace
                    const char* name)
   {
     PKG_CREATE(interp, name, "$Revision$");
-    Util::ObjFactory::theOne().register_creator(func, name);
+    Nub::ObjFactory::theOne().register_creator(func, name);
     pkg->inheritPkg("TrialEvent");
 
     PKG_RETURN;
   }
 
-  void addEvents(Util::Ref<MultiEvent> multi, Tcl::List event_ids)
+  void addEvents(Nub::Ref<MultiEvent> multi, Tcl::List event_ids)
   {
-    Tcl::List::Iterator<Util::Ref<TrialEvent> >
-      itr = event_ids.begin<Util::Ref<TrialEvent> >(),
-      end = event_ids.end<Util::Ref<TrialEvent> >();
+    Tcl::List::Iterator<Nub::Ref<TrialEvent> >
+      itr = event_ids.begin<Nub::Ref<TrialEvent> >(),
+      end = event_ids.end<Nub::Ref<TrialEvent> >();
 
     while (itr != end)
       {

@@ -52,7 +52,7 @@ namespace
   int v0 = 0;
   int v1 = 0;
   int v2 = 0;
-  Util::Timer* tp1 = 0;
+  Nub::Timer* tp1 = 0;
 
   void v0_callback()
   {
@@ -80,9 +80,9 @@ namespace
     rutz::shared_ptr<Tcl::TimerScheduler> s
       (rutz::make_shared(new Tcl::TimerScheduler));
 
-    Util::Timer t0(20, false);
-    Util::Timer t1(5,  true);
-    Util::Timer t2(0,  false);
+    Nub::Timer t0(20, false);
+    Nub::Timer t1(5,  true);
+    Nub::Timer t2(0,  false);
 
     tp1 = &t1;
 
@@ -133,7 +133,7 @@ namespace
     rutz::shared_ptr<Tcl::TimerScheduler> s
       (rutz::make_shared(new Tcl::TimerScheduler));
 
-    Util::Timer t0(10, false);
+    Nub::Timer t0(10, false);
 
     t0.sigTimeOut.connect(&v0_callback);
 
@@ -162,7 +162,7 @@ namespace
     rutz::shared_ptr<Tcl::TimerScheduler> s
       (rutz::make_shared(new Tcl::TimerScheduler));
 
-    Util::Timer t(0, true);
+    Nub::Timer t(0, true);
 
     bool caught = false;
 

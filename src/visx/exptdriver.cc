@@ -129,7 +129,7 @@ public:
 
   Tcl::Interp interp;
 
-  Util::SoftRef<Toglet> widget;
+  Nub::SoftRef<Toglet> widget;
 
   fstring hostname;     // Host computer on which Expt was begun
   fstring subject;      // Id of subject on whom Expt was performed
@@ -142,7 +142,7 @@ public:
 
   int autosavePeriod;
 
-  Util::Ref<Tcl::ProcWrapper> doWhenComplete;
+  Nub::Ref<Tcl::ProcWrapper> doWhenComplete;
 
   unsigned int numTrialsCompleted;
 
@@ -226,7 +226,7 @@ DOTRACE("ExptDriver::writeTo");
 //
 ///////////////////////////////////////////////////////////////////////
 
-const Util::SoftRef<Toglet>& ExptDriver::getWidget() const
+const Nub::SoftRef<Toglet>& ExptDriver::getWidget() const
 {
 DOTRACE("ExptDriver::getWidget");
   return rep->widget;
@@ -253,14 +253,14 @@ DOTRACE("ExptDriver::vxEndTrialHook");
     return;
 
   dbg_eval_nl(3, rep->autosaveFile.c_str());
-  IO::saveGVX(Util::Ref<IO::IoObject>(this), rep->autosaveFile);
+  IO::saveGVX(Nub::Ref<IO::IoObject>(this), rep->autosaveFile);
 }
 
 void ExptDriver::vxAllChildrenFinished()
 {
 DOTRACE("ExptDriver::vxAllChildrenFinished");
 
-  Util::log( "ExptDriver::vxAllChildrenFinished" );
+  Nub::log( "ExptDriver::vxAllChildrenFinished" );
 
   rep->addLogInfo("Experiment complete.");
 
@@ -268,11 +268,11 @@ DOTRACE("ExptDriver::vxAllChildrenFinished");
 
   storeData();
 
-  Util::Log::addObjScope(*rep->doWhenComplete);
+  Nub::Log::addObjScope(*rep->doWhenComplete);
   rep->doWhenComplete->invoke(""); // Call the user-defined callback
-  Util::Log::removeObjScope(*rep->doWhenComplete);
+  Nub::Log::removeObjScope(*rep->doWhenComplete);
 
-  Util::Log::removeObjScope(*this);
+  Nub::Log::removeObjScope(*this);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -308,8 +308,8 @@ DOTRACE("ExptDriver::setFilePrefix");
 void ExptDriver::claimLogFile() const
 {
 DOTRACE("ExptDriver::claimLogFile");
-  Util::Log::setLogFilename(fstring(rep->filePrefix, "_",
-                                    rep->fileTimestamp, ".log"));
+  Nub::Log::setLogFilename(fstring(rep->filePrefix, "_",
+                                   rep->fileTimestamp, ".log"));
 }
 
 int ExptDriver::getAutosavePeriod() const
@@ -342,7 +342,7 @@ DOTRACE("ExptDriver::setDoWhenComplete");
   rep->doWhenComplete->define("", script);
 }
 
-void ExptDriver::setWidget(const Util::SoftRef<Toglet>& widg)
+void ExptDriver::setWidget(const Nub::SoftRef<Toglet>& widg)
 {
 DOTRACE("ExptDriver::setWidget");
   rep->widget = widg;
@@ -373,15 +373,15 @@ DOTRACE("ExptDriver::edBeginExpt");
   rep->subject = cwd;
   rep->numTrialsCompleted = 0;
 
-  Util::Log::reset(); // to clear any existing timer scopes
-  Util::Log::addObjScope(*this);
+  Nub::Log::reset(); // to clear any existing timer scopes
+  Nub::Log::addObjScope(*this);
 
   claimLogFile();
 
-  Util::log(fstring("expt begin: ", rep->beginDate));
-  Util::log(fstring("hostname: ", rep->hostname));
-  Util::log(fstring("cwd: ", cwd));
-  Util::log(fstring("cmdline: ", Tcl::Main::commandLine()));
+  Nub::log(fstring("expt begin: ", rep->beginDate));
+  Nub::log(fstring("hostname: ", rep->hostname));
+  Nub::log(fstring("cwd: ", cwd));
+  Nub::log(fstring("cmdline: ", Tcl::Main::commandLine()));
 
   currentElement()->vxRun(*this);
 }
@@ -485,8 +485,8 @@ DOTRACE("ExptDriver::storeData");
   expt_filename.append("_", rep->fileTimestamp);
   expt_filename.append(".gvx");
   renameFileIfExists(expt_filename);
-  IO::saveGVX(Util::Ref<IO::IoObject>(this), expt_filename.c_str());
-  Util::log( fstring( "wrote file ", expt_filename.c_str()) );
+  IO::saveGVX(Nub::Ref<IO::IoObject>(this), expt_filename.c_str());
+  Nub::log( fstring( "wrote file ", expt_filename.c_str()) );
 
   // Write the responses file
   fstring resp_filename = rep->filePrefix;
@@ -494,7 +494,7 @@ DOTRACE("ExptDriver::storeData");
   resp_filename.append(".resp");
   renameFileIfExists(resp_filename);
   TlistUtils::writeResponses(resp_filename.c_str());
-  Util::log( fstring( "wrote file ", resp_filename.c_str()) );
+  Nub::log( fstring( "wrote file ", resp_filename.c_str()) );
 
   // Change file access modes to allow read-only by all
   const mode_t datafile_mode = S_IRUSR | S_IRGRP | S_IROTH;

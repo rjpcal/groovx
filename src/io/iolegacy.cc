@@ -50,8 +50,8 @@ DBG_REGISTER
 
 using rutz::fstring;
 
-using Util::Ref;
-using Util::SoftRef;
+using Nub::Ref;
+using Nub::SoftRef;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -313,7 +313,7 @@ DOTRACE("IO::LegacyReader::readMaybeObject");
       return SoftRef<IO::IoObject>();
     }
 
-  Ref<IO::IoObject> obj(Util::ObjMgr::newTypedObj<IO::IoObject>(type));
+  Ref<IO::IoObject> obj(Nub::ObjMgr::newTypedObj<IO::IoObject>(type));
   dbg_eval_nl(3, obj->objTypename());
 
   rep->inflateObject(name, obj);
@@ -637,8 +637,8 @@ DOTRACE("IO::LegacyWriter::writeRoot");
 
   rep->flattenObject
     ("rootObject", SoftRef<IO::IoObject>(const_cast<IO::IoObject*>(root),
-                                         Util::STRONG,
-                                         Util::PRIVATE));
+                                         Nub::STRONG,
+                                         Nub::PRIVATE));
 }
 
 static const char vcid_iolegacy_cc[] = "$Header$";

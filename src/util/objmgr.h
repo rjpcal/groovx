@@ -39,18 +39,18 @@ namespace rutz
   class fstring;
 }
 
-namespace Util
+namespace Nub
 {
   namespace ObjMgr
   {
     /// Will not return 0; will throw an exception on failure.
-    Util::SoftRef<Util::Object> newObj(const char* type);
+    Nub::SoftRef<Nub::Object> newObj(const char* type);
 
     /// Will not return 0; will throw an exception on failure.
-    Util::SoftRef<Util::Object> newObj(const rutz::fstring& type);
+    Nub::SoftRef<Nub::Object> newObj(const rutz::fstring& type);
 
     template <class T, class S>
-    Util::SoftRef<T> newTypedObj(S type)
+    Nub::SoftRef<T> newTypedObj(S type)
     {
       return dynamicCast<T>(newObj(type));
     }

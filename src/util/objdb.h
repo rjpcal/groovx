@@ -37,25 +37,27 @@
 #include "util/ref.h"
 #include "util/uid.h"
 
-namespace Util
+namespace Nub
 {
   class Object;
+  class ObjDb;
+  class InvalidIdError;
   template <class T> class SoftRef;
 }
 
 /**
  *
- * InvalidIdError is an exception class that will be thrown from
+ * Nub::InvalidIdError is an exception class that will be thrown from
  * ObjDb if an attempt to use an invalid id is made in a checked
  * function.
  *
  **/
 
-class InvalidIdError : public rutz::error
+class Nub::InvalidIdError : public rutz::error
 {
 public:
   /// Constructor.
-  InvalidIdError(Util::UID id, const rutz::file_pos& pos);
+  InvalidIdError(Nub::UID id, const rutz::file_pos& pos);
 
   /// Virtual destructor.
   virtual ~InvalidIdError() throw();
@@ -64,15 +66,15 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * ObjDb is a database for storing Util::Object's, which can be
- * accessed by the objects' Util::UID's. Most clients will not need to
- * use the ObjDb directly, but can instead manage Util::Object's
- * indirectly with the Util::Ref and Util::SoftRef smart pointers.
+ * ObjDb is a database for storing Nub::Object's, which can be
+ * accessed by the objects' Nub::UID's. Most clients will not need to
+ * use the ObjDb directly, but can instead manage Nub::Object's
+ * indirectly with the Nub::Ref and Nub::SoftRef smart pointers.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class ObjDb
+class Nub::ObjDb
 {
 protected:
   /// Default constructor makes an empty list.
@@ -92,7 +94,7 @@ public:
   // Iterators
   //
 
-  typedef rutz::fwd_iter<const Util::SoftRef<Util::Object> > Iterator;
+  typedef rutz::fwd_iter<const Nub::SoftRef<Nub::Object> > Iterator;
 
   Iterator objects() const;
 
@@ -130,15 +132,15 @@ public:
   int count() const throw();
 
   /// Returns true if 'id' is a valid uid.
-  bool isValidId(Util::UID id) const throw();
+  bool isValidId(Nub::UID id) const throw();
 
   /// Releases the object specified by \a id, but only if it is unshared.
   /** This causes the object to be destroyed since it was unshared. If
       the object is shared, this operation throws an exception. */
-  void remove(Util::UID id);
+  void remove(Nub::UID id);
 
   /// Removes reference to the object with uid \a id.
-  void release(Util::UID id);
+  void release(Nub::UID id);
 
   /// Releases all unshared objects held in the database.
   /** Since the objects are unshared, they will be destroyed in the
@@ -156,16 +158,16 @@ public:
       unshared objects. */
   void clearOnExit();
 
-  /// Return the \c Util::Object* with the uid given by \a id.
+  /// Return the \c Nub::Object* with the uid given by \a id.
   /** Checks first if \a id is a valid uid, and throws an \c
-      InvalidIdError if it is not. */
-  Util::Object* getCheckedObj(Util::UID id) throw (InvalidIdError);
+      Nub::InvalidIdError if it is not. */
+  Nub::Object* getCheckedObj(Nub::UID id) throw (Nub::InvalidIdError);
 
   /// Insert a strong reference to obj into the database.
-  void insertObj(Util::Object* obj);
+  void insertObj(Nub::Object* obj);
 
   /// Insert a weak reference to obj into the database.
-  void insertObjWeak(Util::Object* obj);
+  void insertObjWeak(Nub::Object* obj);
 
 private:
   ObjDb(const ObjDb&);

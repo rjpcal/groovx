@@ -70,16 +70,16 @@ public:
   virtual void readRawData(const rutz::fstring& name, rutz::byte_array& data)
   { defaultReadRawData(name, data); }
 
-  virtual Util::Ref    <IO::IoObject>      readObject(const rutz::fstring& name);
-  virtual Util::SoftRef<IO::IoObject> readMaybeObject(const rutz::fstring& name);
+  virtual Nub::Ref    <IO::IoObject>      readObject(const rutz::fstring& name);
+  virtual Nub::SoftRef<IO::IoObject> readMaybeObject(const rutz::fstring& name);
 
   virtual void readOwnedObject(const rutz::fstring& name,
-                               Util::Ref<IO::IoObject> obj);
+                               Nub::Ref<IO::IoObject> obj);
 
   virtual void readBaseClass(const rutz::fstring& baseClassName,
-                             Util::Ref<IO::IoObject> basePart);
+                             Nub::Ref<IO::IoObject> basePart);
 
-  virtual Util::Ref<IO::IoObject> readRoot(IO::IoObject* root=0);
+  virtual Nub::Ref<IO::IoObject> readRoot(IO::IoObject* root=0);
 
 protected:
   virtual rutz::fstring readStringImpl(const rutz::fstring& name);
@@ -118,13 +118,13 @@ public:
                             unsigned int length);
 
   virtual void writeObject(const char* name,
-                           Util::SoftRef<const IO::IoObject> obj);
+                           Nub::SoftRef<const IO::IoObject> obj);
 
   virtual void writeOwnedObject(const char* name,
-                                Util::Ref<const IO::IoObject> obj);
+                                Nub::Ref<const IO::IoObject> obj);
 
   virtual void writeBaseClass(const char* baseClassName,
-                              Util::Ref<const IO::IoObject> basePart);
+                              Nub::Ref<const IO::IoObject> basePart);
 
   virtual void writeRoot(const IO::IoObject* root);
 

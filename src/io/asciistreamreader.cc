@@ -57,8 +57,8 @@ DBG_REGISTER
 using rutz::fstring;
 using rutz::shared_ptr;
 
-using Util::Ref;
-using Util::SoftRef;
+using Nub::Ref;
+using Nub::SoftRef;
 
 using IO::AttribMap;
 
@@ -156,16 +156,16 @@ public:
   virtual void readRawData(const fstring& name, rutz::byte_array& data)
   { defaultReadRawData(name, data); }
 
-  virtual Util::Ref<IO::IoObject> readObject(const fstring& name);
-  virtual Util::SoftRef<IO::IoObject>
+  virtual Nub::Ref<IO::IoObject> readObject(const fstring& name);
+  virtual Nub::SoftRef<IO::IoObject>
     readMaybeObject(const fstring& name);
 
   virtual void readOwnedObject(const fstring& name,
-                               Util::Ref<IO::IoObject> obj);
+                               Nub::Ref<IO::IoObject> obj);
   virtual void readBaseClass(const fstring& baseClassName,
-                             Util::Ref<IO::IoObject> basePart);
+                             Nub::Ref<IO::IoObject> basePart);
 
-  virtual Util::Ref<IO::IoObject> readRoot(IO::IoObject* root=0);
+  virtual Nub::Ref<IO::IoObject> readRoot(IO::IoObject* root=0);
 
 protected:
   virtual fstring readStringImpl(const fstring& name);
@@ -324,7 +324,7 @@ DOTRACE("AsciiStreamReader::readMaybeObject");
   AttribMap::Attrib attrib = currentAttribs().get(name);
 
   rutz::icstrstream ist(attrib.value.c_str());
-  Util::UID id;
+  Nub::UID id;
   ist >> id;
 
   if (ist.fail())
@@ -368,12 +368,12 @@ DOTRACE("AsciiStreamReader::readRoot");
   itsObjects.clear();
 
   bool haveReadRoot = false;
-  Util::UID rootid = 0;
+  Nub::UID rootid = 0;
 
   fstring type;
   fstring equal;
   fstring bracket;
-  Util::UID id;
+  Nub::UID id;
 
   while ( itsBuf.peek() != EOF )
     {

@@ -69,7 +69,7 @@ namespace Gfx
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Canvas : public virtual Util::Object
+class Canvas : public virtual Nub::Object
 {
 public:
   /// Set the current Canvas.

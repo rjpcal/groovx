@@ -49,7 +49,7 @@ GxScaler::GxScaler() :
   itsHeightFactor(1.0)
 {}
 
-GxScaler::GxScaler(Util::Ref<GxNode> child) :
+GxScaler::GxScaler(Nub::Ref<GxNode> child) :
   GxBin(child),
   itsMode(NATIVE_SCALING),
   itsWidthFactor(1.0),

@@ -43,7 +43,7 @@ namespace rutz
   template <class T> class fwd_iter;
 }
 
-namespace Util
+namespace Nub
 {
   template <class T> class Ref;
   template <class T> class SoftRef;
@@ -133,16 +133,16 @@ namespace Tcl
   Tcl::ObjPtr toTcl(Tcl::ObjPtr val);
 
   template <class T>
-  Util::Ref<T> fromTcl(Tcl_Obj* obj, Util::Ref<T>*);
+  Nub::Ref<T> fromTcl(Tcl_Obj* obj, Nub::Ref<T>*);
 
   template <class T>
-  Tcl::ObjPtr toTcl(Util::Ref<T> obj);
+  Tcl::ObjPtr toTcl(Nub::Ref<T> obj);
 
   template <class T>
-  Util::SoftRef<T> fromTcl(Tcl_Obj* obj, Util::SoftRef<T>*);
+  Nub::SoftRef<T> fromTcl(Tcl_Obj* obj, Nub::SoftRef<T>*);
 
   template <class T>
-  Tcl::ObjPtr toTcl(Util::SoftRef<T> obj);
+  Tcl::ObjPtr toTcl(Nub::SoftRef<T> obj);
 
   template <class T>
   rutz::fwd_iter<T> fromTcl(Tcl_Obj* obj, rutz::fwd_iter<T>*);

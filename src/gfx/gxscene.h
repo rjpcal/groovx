@@ -42,17 +42,17 @@
 #include "util/timer.h"
 #include "util/volatileobject.h"
 
-namespace Util
+namespace Nub
 {
   class Scheduler;
 }
 
 /// Manages a graphics "scene" for a window object.
-class GxScene : public Util::VolatileObject
+class GxScene : public Nub::VolatileObject
 {
 public:
   /// Construct with a canvas in which to draw.
-  GxScene(Util::SoftRef<Gfx::Canvas> canvas);
+  GxScene(Nub::SoftRef<Gfx::Canvas> canvas);
 
   /// Virtual no-throw destructor.
   virtual ~GxScene() throw();
@@ -87,13 +87,13 @@ public:
   void setVisibility(bool val);
 
   /// Get the camera used to view the scene.
-  const Util::Ref<GxCamera>& getCamera() const { return itsCamera; }
+  const Nub::Ref<GxCamera>& getCamera() const { return itsCamera; }
 
   /// Set the camera to be used to view the scene.
-  void setCamera(const Util::Ref<GxCamera>& cam);
+  void setCamera(const Nub::Ref<GxCamera>& cam);
 
   /// Get the drawable object currently being viewed.
-  void setDrawable(const Util::Ref<GxNode>& node);
+  void setDrawable(const Nub::Ref<GxNode>& node);
 
   /// To be called when the associated window is resized.
   void reshape(int width, int height);
@@ -114,22 +114,22 @@ private:
   GxScene(const GxScene&);
   GxScene& operator=(const GxScene&);
 
-  Util::SoftRef<Gfx::Canvas> itsCanvas;
-  Util::Ref<GxNode> itsDrawNode;
-  Util::Ref<GxNode> itsUndrawNode;
+  Nub::SoftRef<Gfx::Canvas> itsCanvas;
+  Nub::Ref<GxNode> itsDrawNode;
+  Nub::Ref<GxNode> itsUndrawNode;
   bool isItVisible;
 
-  Util::Ref<GxCamera> itsCamera;
+  Nub::Ref<GxCamera> itsCamera;
   int itsWidth;
   int itsHeight;
   bool isItHolding;
   bool isItRefreshing;
   bool isItRefreshed;
 
-  const rutz::shared_ptr<Util::Scheduler> itsScheduler;
-  Util::Timer itsTimer;
+  const rutz::shared_ptr<Nub::Scheduler> itsScheduler;
+  Nub::Timer itsTimer;
 
-  Util::Ref<Util::Slot0> slotNodeChanged;
+  Nub::Ref<Nub::Slot0> slotNodeChanged;
 };
 
 static const char vcid_gxscene_h[] = "$Header$";

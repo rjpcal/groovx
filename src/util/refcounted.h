@@ -34,7 +34,7 @@
 
 #include <cstdlib>
 
-namespace Util
+namespace Nub
 {
   class RefCounts;
   class RefCounted;
@@ -45,22 +45,22 @@ namespace Util
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Util::RefCounts manages strong+weak reference counts for
- * Util::RefCounted objects. Its main purpose is to allow weak
- * ref-counting; a client who wants to do weak ref-counting can get a hold
- * of the Util::RefCounted object's Util::RefCounts, and then check whether
- * isOwnerAlive() to know whether the Util::RefCounted object is still
- * valid. This technique is implemented by Util::SoftRef. The
- * Util::RefCounts object will delete itself when both its strong and weak
- * counts go to 0.
+ * Nub::RefCounts manages strong+weak reference counts for
+ * Nub::RefCounted objects. Its main purpose is to allow weak
+ * ref-counting; a client who wants to do weak ref-counting can get a
+ * hold of the Nub::RefCounted object's Nub::RefCounts, and then check
+ * whether isOwnerAlive() to know whether the Nub::RefCounted object
+ * is still valid. This technique is implemented by Nub::SoftRef. The
+ * Nub::RefCounts object will delete itself when both its strong and
+ * weak counts go to 0.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-struct Util::RefCounts
+struct Nub::RefCounts
 {
 public:
-  friend class Util::RefCounted;
+  friend class Nub::RefCounted;
 
   typedef unsigned short Count;
 
@@ -101,21 +101,22 @@ private:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Util::RefCounted is a reference counting base class that allows both
- * strong and weak reference counting. Util::RefCounted objects use a
- * Util::RefCounts object to manage their reference counts, so clients that
- * need to know if a Util::RefCounted object is still around can check the
- * isOwnerAlive() from its Util::RefCounts object. Finally, subclasses of
- * Util::RefCounted can declare themselves volatile (by calling
- * markAsVolatile()) if their lifetime cannot be fully controlled by
- * reference-counting; clients of such volatile objects must use weak
- * reference counts only. No manipulation of the reference count is allowed
- * for volatile objects; only the weak reference count may be used.
+ * Nub::RefCounted is a reference counting base class that allows both
+ * strong and weak reference counting. Nub::RefCounted objects use a
+ * Nub::RefCounts object to manage their reference counts, so clients
+ * that need to know if a Nub::RefCounted object is still around can
+ * check the isOwnerAlive() from its Nub::RefCounts object. Finally,
+ * subclasses of Nub::RefCounted can declare themselves volatile (by
+ * calling markAsVolatile()) if their lifetime cannot be fully
+ * controlled by reference-counting; clients of such volatile objects
+ * must use weak reference counts only. No manipulation of the
+ * reference count is allowed for volatile objects; only the weak
+ * reference count may be used.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Util::RefCounted
+class Nub::RefCounted
 {
 private:
   RefCounts* const itsRefCounts;

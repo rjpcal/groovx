@@ -51,7 +51,7 @@ DBG_REGISTER
 
 namespace
 {
-  using namespace Util;
+  using namespace Nub;
 
   class DummyCountingWriter : public IO::Writer
   {

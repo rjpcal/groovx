@@ -118,7 +118,7 @@ DOTRACE("Block::writeTo");
 //
 ///////////////////////////////////////////////////////////////////////
 
-const Util::SoftRef<Toglet>& Block::getWidget() const
+const Nub::SoftRef<Toglet>& Block::getWidget() const
 {
 DOTRACE("Block::getWidget");
   PRECONDITION( itsParent != 0 );
@@ -133,7 +133,7 @@ DOTRACE("Block::vxRun");
 
   PRECONDITION( &e != 0 );
 
-  Util::log( vxInfo() );
+  Nub::log( vxInfo() );
 
   itsParent = &e;
 

@@ -46,16 +46,16 @@
 
 using rutz::shared_ptr;
 
-class GxNodeIter : public rutz::fwd_iter_ifx<const Util::Ref<GxNode> >
+class GxNodeIter : public rutz::fwd_iter_ifx<const Nub::Ref<GxNode> >
 {
-  Util::Ref<GxNode> itsNode;
+  Nub::Ref<GxNode> itsNode;
   bool isItValid;
 
 public:
   GxNodeIter(GxNode* node) :
     itsNode(node), isItValid(true) {}
 
-  typedef const Util::Ref<GxNode> ValType;
+  typedef const Nub::Ref<GxNode> ValType;
 
   virtual rutz::fwd_iter_ifx<ValType>* clone() const
   {
@@ -89,11 +89,11 @@ DOTRACE("GxNode::contains");
   return (this == other);
 }
 
-rutz::fwd_iter<const Util::Ref<GxNode> > GxNode::deepChildren()
+rutz::fwd_iter<const Nub::Ref<GxNode> > GxNode::deepChildren()
 {
 DOTRACE("GxNode::deepChildren");
 
-  return rutz::fwd_iter<const Util::Ref<GxNode> >
+  return rutz::fwd_iter<const Nub::Ref<GxNode> >
     (shared_ptr<GxNodeIter>(new GxNodeIter(this)));
 }
 

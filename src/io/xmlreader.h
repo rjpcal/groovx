@@ -32,7 +32,7 @@
 #ifndef XMLREADER_H_DEFINED
 #define XMLREADER_H_DEFINED
 
-namespace Util
+namespace Nub
 {
   template <class T> class Ref;
 }
@@ -42,7 +42,7 @@ namespace IO
   class IoObject;
   class Reader;
 
-  Util::Ref<IO::IoObject> loadGVX(const char* filename);
+  Nub::Ref<IO::IoObject> loadGVX(const char* filename);
 
   void xmlDebug(const char* filename);
 }

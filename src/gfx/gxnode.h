@@ -49,7 +49,7 @@ namespace Gfx
   template <class V> class Box;
 }
 
-namespace Util
+namespace Nub
 {
   template <class T> class Ref;
 }
@@ -77,7 +77,7 @@ public:
   virtual ~GxNode() throw();
 
   /// Signal that will be triggered whenever the node changes state.
-  Util::Signal0 sigNodeChanged;
+  Nub::Signal0 sigNodeChanged;
 
   /// Get the value of the user-defined category. Default returns -1.
   virtual int category() const;
@@ -92,7 +92,7 @@ public:
 
   /** Returns an iterator to all the children recursively contained in
       this object. */
-  virtual rutz::fwd_iter<const Util::Ref<GxNode> > deepChildren();
+  virtual rutz::fwd_iter<const Nub::Ref<GxNode> > deepChildren();
 
   /// Get the 2-D z-projection of the result of getBoundingCube().
   Gfx::Rect<double> getBoundingBox(Gfx::Canvas& canvas) const;

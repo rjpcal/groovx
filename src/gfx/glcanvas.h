@@ -45,7 +45,7 @@ namespace rutz
 }
 
 /// GLCanvas implements Gfx::Canvas using OpenGL.
-class GLCanvas : public Gfx::Canvas, public virtual Util::VolatileObject
+class GLCanvas : public Gfx::Canvas, public virtual Nub::VolatileObject
 {
 protected:
   /// Construct from windowsystem options and a windowsystem wrapper.

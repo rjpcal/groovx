@@ -36,15 +36,15 @@
 #include "util/object.h"
 #include "util/ref.h"
 
-namespace Util
+namespace Nub
 {
   class ObjFactory;
 }
 
 /// Singleton wrapper for Factor<IO>.
-class Util::ObjFactory
+class Nub::ObjFactory
   :
-  public rutz::factory<Util::SoftRef<Util::Object> >
+  public rutz::factory<Nub::SoftRef<Nub::Object> >
 {
 protected:
   /// Default constructor.
