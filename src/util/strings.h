@@ -236,6 +236,9 @@ public:
   /// Query whether the length of the string is 0.
   bool is_empty() const throw() { return (length() == 0); }
 
+  /// Same as is_empty(); for compatibility with std::string interface.
+  bool empty() const throw() { return is_empty(); }
+
   /// Reset to an empty string.
   void clear() { string_rep::makeUnique(itsRep); itsRep->clear(); }
 
