@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Oct 13 15:21:24 1999
+// written: Thu Oct 14 15:53:33 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,12 +28,6 @@
 
 namespace {
   const string ioTag = "Bitmap";
-
-  void eatWhitespace(istream& is) {
-	 while ( isspace(is.peek()) ) {
-		is.get();
-	 }
-  }
 }
 
 Bitmap::Bitmap() :
@@ -99,7 +93,7 @@ void Bitmap::deserialize(istream& is, IOFlag flag) {
 DOTRACE("Bitmap::deserialize");
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
-  eatWhitespace(is);
+  IO::eatWhitespace(is);
   getline(is, itsFilename, '\t');
 
   is >> itsRasterX >> itsRasterY;
