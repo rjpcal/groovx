@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Thu Feb 14 18:20:36 2002
+// written: Sun Feb 17 17:57:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -527,25 +527,29 @@ public:
     return res;
   }
 
-  double min() const
+  double min(int* min_pos = 0) const
   {
     double res = at(0);
+    int pos = 0;
     for (int i = 1; i < nelems(); ++i)
       {
         double v = at(i);
-        if (v < res) res = v;
+        if (v < res) { res = v; pos = i; }
       }
+    if (min_pos != 0) *min_pos = pos;
     return res;
   }
 
-  double max() const
+  double max(int* max_pos = 0) const
   {
     double res = at(0);
+    int pos = 0;
     for (int i = 1; i < nelems(); ++i)
       {
         double v = at(i);
-        if (v > res) res = v;
+        if (v > res) { res = v; pos = i; }
       }
+    if (max_pos != 0) *max_pos = pos;
     return res;
   }
 
