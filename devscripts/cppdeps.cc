@@ -446,9 +446,16 @@ cppdeps::get_nested_includes(const string& filename)
 
   m_parse_states[filename] = IN_PROGRESS;
 
-  include_list_t vec;
+  // use a set to build up the list of #includes, so that
+  //   (1) we automatically avoid duplicates
+  //   (2) we get sorting for free
+  //
+  // this turns out to be cheaper than building up the list in a
+  // std::vector and then doing a big std::sort, std::unique(), and
+  // vec.erase() at the end
+  std::set<string> includes_set;
 
-  vec.push_back(filename);
+  includes_set.insert(filename);
 
   const include_list_t& direct = get_direct_includes(filename);
 
@@ -472,17 +479,12 @@ cppdeps::get_nested_includes(const string& filename)
       else
         {
           const include_list_t& indirect = get_nested_includes(*i);
-          vec.insert(vec.end(), indirect.begin(), indirect.end());
+          includes_set.insert(indirect.begin(), indirect.end());
         }
     }
 
-  // do a sort and uniquify before storing the result
-  std::sort(vec.begin(), vec.end());
-  include_list_t::iterator it = std::unique(vec.begin(), vec.end());
-  vec.erase(it, vec.end());
-
   include_list_t& result = m_nested_includes[filename];
-  result.swap(vec);
+  result.insert(result.end(), includes_set.begin(), includes_set.end());
 
   m_parse_states[filename] = COMPLETE;
 
