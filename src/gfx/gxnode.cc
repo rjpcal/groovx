@@ -78,12 +78,6 @@ GxNode::~GxNode() throw()
 DOTRACE("GxNode::~GxNode");
 }
 
-int GxNode::category() const
-{
-DOTRACE("GxNode::category");
-  return -1;
-}
-
 bool GxNode::contains(GxNode* other) const
 {
 DOTRACE("GxNode::contains");

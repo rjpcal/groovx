@@ -83,9 +83,6 @@ public:
   /// Signal that will be triggered whenever the node changes state.
   Nub::Signal0 sigNodeChanged;
 
-  /// Get the value of the user-defined category. Default returns -1.
-  virtual int category() const;
-
   /** Returns true if \a other is contained within this node in the
       scene graph. The default implementation (for leaf nodes) returns
       true only if this == other. For composite nodes, the function
