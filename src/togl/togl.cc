@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Aug  5 17:17:37 2002
+// written: Mon Aug  5 17:41:18 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -34,8 +34,7 @@
 #include "togl/x11util.h"
 
 // Standard C headers
-#include <cstdio>
-#include <cstdlib>
+// #include <cstdlib>
 #include <cstring>
 
 // X Window System headers
@@ -52,7 +51,6 @@
 #include <tk.h>
 #include <tkInt.h> // needed to access "dispPtr->winTable" field of TkWindow
 
-#include "util/algo.h"
 #include "util/error.h"
 #include "util/pointers.h"
 
@@ -121,28 +119,26 @@ private:
 public:
   Togl* itsOwner;
 
-  shared_ptr<GlxWrapper> itsGlx; /* Normal planes GLX context */
-  Display* itsDisplay;          /* X's token for the window's display. */
-  Tk_Window itsTkWin;           /* Tk window structure */
-  Tcl_Interp* itsInterp;        /* Tcl interpreter */
-  Tcl_Command itsWidgetCmd;     /* Token for togl's widget command */
+  shared_ptr<GlxWrapper> itsGlx;
+  Display* itsDisplay;
+  Tk_Window itsTkWin;
+  Tcl_Interp* itsInterp;
+  Tcl_Command itsWidgetCmd;
 
-  Tcl_TimerToken itsTimerHandler; /* Token for togl's timer handler */
+  Tcl_TimerToken itsTimerHandler;
 
   ToglOpts itsOpts;
 
-  int itsBitsPerPixel;
+  ClientData itsClientData;
 
-  ClientData itsClientData;     /* Pointer to user data */
+  bool itsUpdatePending;
 
-  bool itsUpdatePending;        /* Should normal planes be redrawn? */
+  Togl_Callback* itsDisplayProc;
+  Togl_Callback* itsReshapeProc;
+  Togl_Callback* itsDestroyProc;
+  Togl_Callback* itsTimerProc;
 
-  Togl_Callback* itsDisplayProc; /* Callback when widget is rendered */
-  Togl_Callback* itsReshapeProc; /* Callback when window size changes */
-  Togl_Callback* itsDestroyProc; /* Callback when widget is destroyed */
-  Togl_Callback* itsTimerProc;  /* Callback when widget is idle */
-
-  GlxOverlay* itsOverlay;           /* Overlay stuff */
+  GlxOverlay* itsOverlay;
 
 
   Impl(Togl* owner, Tcl_Interp* interp, const char* pathname);
@@ -190,25 +186,22 @@ public:
   int height() const { return itsOpts.height; }
   bool isRgba() const { return itsOpts.glx.rgbaFlag; }
   bool isDoubleBuffered() const { return itsOpts.glx.doubleFlag; }
-  unsigned int bitsPerPixel() const { return itsBitsPerPixel; }
+  unsigned int bitsPerPixel() const { return itsGlx->visInfo()->depth; }
   bool hasPrivateCmap() const { return itsOpts.privateCmapFlag; }
   Tcl_Interp* interp() const { return itsInterp; }
   Tk_Window tkWin() const { return itsTkWin; }
-  const char* pathname() const
-  { return Tk_PathName(reinterpret_cast<Tk_FakeWin*>(itsTkWin)); }
+  const char* pathname() const { return Tk_PathName(itsTkWin); }
 
-  bool ensureSharedColormap(const char* where) const
+  void ensureSharedColormap(const char* what) const
   {
     if (itsOpts.glx.rgbaFlag)
       {
-        fprintf(stderr, "Error: %s illegal in RGBA mode.\n", where);
-        return false;
+        throw Util::Error(fstring(what, " not allowed in RGBA mode"));
       }
 
     if (itsOpts.privateCmapFlag)
       {
-        fprintf(stderr, "Error: %s illegal with private colormap\n", where);
-        return false;
+        throw Util::Error(fstring(what, " not allowed with private colormap"));
       }
   }
 
@@ -218,15 +211,6 @@ public:
                 float red, float green, float blue) const;
 
   void useLayer(int layer);
-  int existsOverlay() const { return itsOpts.overlayFlag; }
-  int getOverlayTransparentValue() const
-  { return itsOverlay ? itsOverlay->transparentPixel() : -1; }
-
-  bool isMappedOverlay() const
-  { return (itsOverlay && itsOverlay->isMapped()); }
-
-  unsigned long allocColorOverlay(float red, float green, float blue) const;
-  void freeColorOverlay(unsigned long pixel) const;
 
   ClientData getClientData() const { return itsClientData; }
   void setClientData(ClientData clientData) { itsClientData = clientData; }
@@ -243,8 +227,7 @@ public:
 private:
   void eventProc(XEvent* eventPtr);
   void widgetCmdDeletedProc();
-  int makeWindowExist();
-  bool checkForGLX();
+  void makeWindowExist(); // throws a Util::Error on failure
   void setupOverlay(); // throws a Util::Error on failure
 };
 
@@ -572,21 +555,38 @@ void Togl::requestOverlayRedisplay()
   { if (rep->itsOverlay) rep->itsOverlay->requestRedisplay(); }
 
 int Togl::existsOverlay() const
-  { return rep->existsOverlay(); }
+{
+DOTRACE("Togl::existsOverlay");
+  return rep->itsOpts.overlayFlag;
+}
 
 int Togl::getOverlayTransparentValue() const
-  { return rep->getOverlayTransparentValue(); }
+{
+DOTRACE("Togl::getOverlayTransparentValue");
+  return rep->itsOverlay ? rep->itsOverlay->transparentPixel() : -1;
+}
 
 bool Togl::isMappedOverlay() const
-  { return rep->isMappedOverlay(); }
+{
+DOTRACE("Togl::isMappedOverlay");
+  return (rep->itsOverlay && rep->itsOverlay->isMapped());
+}
 
 unsigned long Togl::allocColorOverlay( float red, float green,
                                        float blue ) const
-  { return rep->allocColorOverlay(red, green, blue); }
+{
+DOTRACE("Togl::allocColorOverlay");
+  return rep->itsOverlay
+    ? rep->itsOverlay->allocColor(red, green, blue)
+    : (unsigned long) -1;
+}
 
 void Togl::freeColorOverlay( unsigned long pixel ) const
-  { rep->freeColorOverlay(pixel); }
-
+{
+DOTRACE("Togl::freeColorOverlay");
+  if (rep->itsOverlay)
+    rep->itsOverlay->freeColor(pixel);
+}
 
 
 /*
@@ -666,7 +666,6 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp, const char* pathname) :
   itsInterp(interp),
   itsWidgetCmd(0),
   itsTimerHandler(0),
-  itsBitsPerPixel(-1),
   itsClientData(DefaultClientData),
   itsUpdatePending(false),
   itsDisplayProc(DefaultDisplayProc),
@@ -677,7 +676,10 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp, const char* pathname) :
 {
 DOTRACE("Togl::Impl::Impl");
 
-  /* Create the window. */
+  //
+  // Create the window
+  //
+
   Tk_Window mainwin = Tk_MainWindow(interp);
   itsTkWin = Tk_CreateWindowFromPath(itsInterp, mainwin,
                                      const_cast<char*>(pathname),
@@ -690,6 +692,10 @@ DOTRACE("Togl::Impl::Impl");
   itsDisplay = Tk_Display( itsTkWin );
 
   Tk_SetClass(itsTkWin, (char*)"Togl");
+
+  //
+  // Set up options
+  //
 
   if (toglOptionTable == 0)
     {
@@ -706,19 +712,27 @@ DOTRACE("Togl::Impl::Impl");
                                 Tcl_GetStringResult(itsInterp)));
     }
 
+  //
+  // Get the window mapped onscreen
+  //
+
   Tk_GeometryRequest(itsTkWin, itsOpts.width, itsOpts.height);
 
-  // If OpenGL window wasn't already created by configure() we
-  // create it now.  We can tell by checking if the GLX context has
-  // been initialized.
-  if (itsGlx.get() == 0)
+  Assert(itsGlx.get() == 0);
+
+  try
     {
-      if (makeWindowExist() == TCL_ERROR)
-        {
-          Tk_DestroyWindow(itsTkWin);
-          throw Util::Error("Togl constructor couldn't create window");
-        }
+      makeWindowExist();
     }
+  catch (...)
+    {
+      Tk_DestroyWindow(itsTkWin);
+      throw;
+    }
+
+  //
+  // Set up handlers
+  //
 
   itsWidgetCmd = Tcl_CreateObjCommand(itsInterp, Tk_PathName(itsTkWin),
                                       Togl_WidgetCmd,
@@ -781,11 +795,17 @@ DOTRACE("Togl::Impl::configure");
 
   Tk_GeometryRequest(itsTkWin, itsOpts.width, itsOpts.height);
 
+  // If any GLX options changed, then we have to recreate the window and
+  // GLX context
   if (mask & TOGL_GLX_OPTION)
     {
-      /* Have to recreate the window and GLX context */
-      if (makeWindowExist()==TCL_ERROR)
+      try
         {
+          makeWindowExist();
+        }
+      catch (Util::Error& err)
+        {
+          Tcl_AppendResult(itsInterp, err.msg_cstr(), NULL);
           return TCL_ERROR;
         }
     }
@@ -900,10 +920,7 @@ unsigned long Togl::Impl::allocColor(float red, float green, float blue) const
 {
 DOTRACE("Togl::Impl::allocColor");
 
-  if (!ensureSharedColormap("Togl::allocColor"))
-    {
-      return 0;
-    }
+  ensureSharedColormap("Togl::allocColor");
 
   return X11Util::noFaultXAllocColor(itsDisplay, colormap(),
                                      Tk_Visual(itsTkWin)->map_entries,
@@ -914,10 +931,9 @@ void Togl::Impl::freeColor(unsigned long pixel) const
 {
 DOTRACE("Togl::Impl::freeColor");
 
-  if (ensureSharedColormap("Togl::freeColor"))
-    {
-      XFreeColors(itsDisplay, colormap(), &pixel, 1, 0);
-    }
+  ensureSharedColormap("Togl::freeColor");
+
+  XFreeColors(itsDisplay, colormap(), &pixel, 1, 0);
 }
 
 void Togl::Impl::setColor(unsigned long index,
@@ -925,23 +941,18 @@ void Togl::Impl::setColor(unsigned long index,
 {
 DOTRACE("Togl::Impl::setColor");
 
-  if (ensureSharedColormap("Togl::allocColor"))
-    {
-      XColor xcol;
+  ensureSharedColormap("Togl::allocColor");
 
-      xcol.pixel = index;
-      xcol.red   = (short) (red   * 65535.0);
-      xcol.green = (short) (green * 65535.0);
-      xcol.blue  = (short) (blue  * 65535.0);
-      xcol.flags = DoRed | DoGreen | DoBlue;
+  XColor xcol;
 
-      XStoreColor( itsDisplay, colormap(), &xcol );
-    }
+  xcol.pixel = index;
+  xcol.red   = (short) (red   * 65535.0);
+  xcol.green = (short) (green * 65535.0);
+  xcol.blue  = (short) (blue  * 65535.0);
+  xcol.flags = DoRed | DoGreen | DoBlue;
+
+  XStoreColor( itsDisplay, colormap(), &xcol );
 }
-
-/*
- * Overlay functions
- */
 
 void Togl::Impl::useLayer(int layer)
 {
@@ -961,24 +972,6 @@ DOTRACE("Togl::Impl::useLayer");
           /* error */
         }
     }
-}
-
-unsigned long Togl::Impl::allocColorOverlay(float red, float green,
-                                            float blue) const
-{
-DOTRACE("Togl::Impl::allocColorOverlay");
-
-  return itsOverlay
-    ? itsOverlay->allocColor(red, green, blue)
-    : (unsigned long) -1;
-}
-
-void Togl::Impl::freeColorOverlay(unsigned long pixel) const
-{
-DOTRACE("Togl::Impl::freeColorOverlay");
-
-  if (itsOverlay)
-    itsOverlay->freeColor(pixel);
 }
 
 int Togl::Impl::dumpToEpsFile(const char* filename, int inColor,
@@ -1099,76 +1092,54 @@ DOTRACE("Togl::Impl::widgetCmdDeletedProc");
 //
 ///////////////////////////////////////////////////////////////////////
 
-int Togl::Impl::makeWindowExist()
+void Togl::Impl::makeWindowExist()
 {
 DOTRACE("Togl::Impl::makeWindowExist");
 
   TkUtil::destroyWindow(itsTkWin);
 
-  if ( !checkForGLX() )
-    return TCL_ERROR;
-
-  try
-    {
-      itsGlx.reset( GlxWrapper::make(itsDisplay, itsOpts.glx) );
-
-      Colormap cmap =
-        X11Util::findColormap(itsDisplay, itsGlx->visInfo(),
-                              itsOpts.glx.rgbaFlag, itsOpts.privateCmapFlag);
-
-      TkUtil::createWindow(itsTkWin, itsGlx->visInfo(),
-                           itsOpts.width, itsOpts.height, cmap);
-
-      if (!itsOpts.glx.rgbaFlag)
-        {
-          X11Util::hackInstallColormap(itsDisplay, windowId(), cmap);
-        }
-
-      TkUtil::setupStackingOrder(itsTkWin);
-
-      setupOverlay();
-
-      // Issue a ConfigureNotify event if there were deferred changes
-      TkUtil::issueConfigureNotify(itsTkWin);
-
-      TkUtil::selectAllInput(itsTkWin);
-
-      TkUtil::mapWindow(itsTkWin);
-
-      // Bind the context to the window and make it the current context
-      makeCurrent();
-
-      // Check for a single/double buffering snafu
-      if (itsOpts.glx.doubleFlag == 0 && itsGlx->isDoubleBuffered())
-        {
-          // We requested single buffering but had to accept a double buffered
-          // visual.  Set the GL draw buffer to be the front buffer to
-          // simulate single buffering.
-          glDrawBuffer( GL_FRONT );
-        }
-    }
-  catch (Util::Error& err)
-    {
-      return TCL_ERR(itsInterp, err.msg_cstr());
-    }
-
-
-  return TCL_OK;
-}
-
-bool Togl::Impl::checkForGLX()
-{
-DOTRACE("Togl::Impl::checkForGLX");
-
-  /* Make sure OpenGL's GLX extension supported */
   int dummy;
   if (!glXQueryExtension(itsDisplay, &dummy, &dummy))
     {
-      TCL_ERR(itsInterp, "Togl: X server has no OpenGL GLX extension");
-      return false;
+      throw Util::Error("Togl: X server has no OpenGL GLX extension");
     }
 
-  return true;
+  itsGlx.reset( GlxWrapper::make(itsDisplay, itsOpts.glx) );
+
+  Colormap cmap =
+    X11Util::findColormap(itsDisplay, itsGlx->visInfo(),
+                          itsOpts.glx.rgbaFlag, itsOpts.privateCmapFlag);
+
+  TkUtil::createWindow(itsTkWin, itsGlx->visInfo(),
+                       itsOpts.width, itsOpts.height, cmap);
+
+  if (!itsOpts.glx.rgbaFlag)
+    {
+      X11Util::hackInstallColormap(itsDisplay, windowId(), cmap);
+    }
+
+  TkUtil::setupStackingOrder(itsTkWin);
+
+  setupOverlay();
+
+  // Issue a ConfigureNotify event if there were deferred changes
+  TkUtil::issueConfigureNotify(itsTkWin);
+
+  TkUtil::selectAllInput(itsTkWin);
+
+  TkUtil::mapWindow(itsTkWin);
+
+  // Bind the context to the window and make it the current context
+  makeCurrent();
+
+  // Check for a single/double buffering snafu
+  if (itsOpts.glx.doubleFlag == 0 && itsGlx->isDoubleBuffered())
+    {
+      // We requested single buffering but had to accept a double buffered
+      // visual.  Set the GL draw buffer to be the front buffer to
+      // simulate single buffering.
+      glDrawBuffer( GL_FRONT );
+    }
 }
 
 void Togl::Impl::setupOverlay()
