@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Thu Oct 14 15:58:34 1999
+// written: Wed Oct 20 10:29:21 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,8 @@
 
 #include "bezier.h"
 #include "gfxattribs.h"
+#include "reader.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -299,6 +301,26 @@ DOTRACE("MorphyFace::charCount");
 			 + 128 // params
 			 + 2 // brace
 			 + 1);//fudge factor
+}
+
+void MorphyFace::readFrom(Reader* reader) {
+DOTRACE("MorphyFace::readFrom");
+  const vector<PInfo>& infos = getPropertyInfos();
+  for (int i = 0; i < infos.size(); ++i) {
+	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
+  }
+
+  GrObj::readFrom(reader);
+}
+
+void MorphyFace::writeTo(Writer* writer) const {
+DOTRACE("MorphyFace::writeTo");
+  const vector<PInfo>& infos = getPropertyInfos();
+  for (int i = 0; i < infos.size(); ++i) {
+	 writer->writeValueObj(infos[i].name, get(infos[i].property));
+  }
+
+  GrObj::writeTo(writer);
 }
 
 ///////////////////////////////////////////////////////////////////////

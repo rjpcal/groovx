@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu Oct 14 13:11:28 1999
+// written: Wed Oct 20 10:07:46 1999
 // $Id$
 //
 // This is the abstract base class for graphic objects. GrObj*'s may
@@ -130,6 +130,8 @@ public:
 
   virtual int charCount() const;
 
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   ///////////////
   // accessors //

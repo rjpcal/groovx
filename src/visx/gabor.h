@@ -3,7 +3,7 @@
 // gabor.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Oct  6 21:20:06 1999
+// written: Wed Oct 20 10:09:40 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,6 +33,9 @@ public:
   virtual void deserialize(istream &is, IOFlag flag);
 
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   typedef int ColorMode;
   static const ColorMode GRAYSCALE = 1;

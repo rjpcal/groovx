@@ -3,7 +3,7 @@
 // glbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:17 1999
-// written: Wed Sep 29 22:02:12 1999
+// written: Wed Oct 20 10:25:42 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,9 @@
 #include "glbitmap.h"
 
 #include <GL/gl.h>
+
+#include "reader.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -85,6 +88,20 @@ DOTRACE("GLBitmap::deserialize");
 int GLBitmap::charCount() const {
 DOTRACE("GLBitmap::charCount");
   return 128;
+}
+
+void GLBitmap::readFrom(Reader* reader) {
+DOTRACE("GLBitmap::readFrom");
+  reader->readValue("usingGlBitmap", itsUsingGlBitmap); 
+
+  Bitmap::readFrom(reader);
+}
+
+void GLBitmap::writeTo(Writer* writer) const {
+DOTRACE("GLBitmap::writeTo");
+  writer->writeValue("usingGlBitmap", itsUsingGlBitmap);
+
+  Bitmap::writeTo(writer);
 }
 
 bool GLBitmap::getUsingGlBitmap() const {

@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Thu Oct 14 15:55:03 1999
+// written: Wed Oct 20 10:16:15 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,8 @@
 
 #include "objtogl.h"
 #include "toglconfig.h"
+#include "reader.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -703,6 +705,22 @@ DOTRACE("Gtext::charCount");
   return (ioTag.length() + 1
 			 + itsText.length() + 1
 			 + 1); // fudge factor
+}
+
+void Gtext::readFrom(Reader* reader) {
+DOTRACE("Gtext::readFrom");
+  reader->readValue("text", itsText);
+  reader->readValue("strokeWidth", itsStrokeWidth);
+ 
+  GrObj::readFrom(reader); 
+}
+
+void Gtext::writeTo(Writer* writer) const {
+DOTRACE("Gtext::writeTo");
+  writer->writeValue("text", itsText);
+  writer->writeValue("strokeWidth", itsStrokeWidth);
+
+  GrObj::writeTo(writer);
 }
 
 void Gtext::setText(const char* text) {

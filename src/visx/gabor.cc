@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Tue Oct 12 19:15:15 1999
+// written: Wed Oct 20 10:14:02 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,8 @@
 #include <cmath>
 
 #include "randutils.h"
+#include "reader.h"
+#include "writer.h"
 
 #include "trace.h"
 #include "debug.h"
@@ -57,6 +59,26 @@ DOTRACE("Gabor::deserialize");
 
 int Gabor::charCount() const {
 DOTRACE("Gabor::charCount");
+}
+
+void Gabor::readFrom(Reader* reader) {
+DOTRACE("Gabor::readFrom");
+  const vector<PInfo>& infos = getPropertyInfos();
+  for (int i = 0; i < infos.size(); ++i) {
+	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
+  }
+
+  GrObj::readFrom(reader);
+}
+
+void Gabor::writeTo(Writer* writer) const {
+DOTRACE("Gabor::writeTo");
+  const vector<PInfo>& infos = getPropertyInfos();
+  for (int i = 0; i < infos.size(); ++i) {
+	 writer->writeValueObj(infos[i].name, get(infos[i].property));
+  }
+
+  GrObj::writeTo(writer);
 }
 
 const vector<Gabor::PInfo>& Gabor::getPropertyInfos() {

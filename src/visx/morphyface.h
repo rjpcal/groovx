@@ -3,7 +3,7 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Fri Oct  8 15:31:51 1999
+// written: Wed Oct 20 10:21:39 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,6 +49,9 @@ public:
   // [MorphyFace] category eyeHgt eyeDist noseLen mouthHgt
   
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   ////////////////
   // properties //

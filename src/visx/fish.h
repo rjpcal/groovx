@@ -3,7 +3,7 @@
 // fish.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:56 1999
-// written: Thu Oct  7 18:25:28 1999
+// written: Wed Oct 20 10:05:00 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,6 +47,9 @@ public:
   virtual void deserialize(istream &is, IOFlag flag);
 
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   virtual void receiveStateChangeMsg(const Observable* obj);
 

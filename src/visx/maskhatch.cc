@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Tue Oct  5 09:50:06 1999
+// written: Wed Oct 20 10:20:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,9 @@
 
 #include <GL/gl.h>
 #include <iostream.h>
+
+#include "reader.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -42,6 +45,26 @@ DOTRACE("MaskHatch::serialize");
 
 void MaskHatch::deserialize(istream &is, IOFlag flag) {
 DOTRACE("MaskHatch::deserialize");
+}
+
+void MaskHatch::readFrom(Reader* reader) {
+DOTRACE("MaskHatch::readFrom");
+  const vector<PInfo>& infos = getPropertyInfos();
+  for (int i = 0; i < infos.size(); ++i) {
+	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
+  }
+
+  GrObj::readFrom(reader);
+}
+
+void MaskHatch::writeTo(Writer* writer) const {
+DOTRACE("MaskHatch::writeTo");
+  const vector<PInfo>& infos = getPropertyInfos();
+  for (int i = 0; i < infos.size(); ++i) {
+	 writer->writeValueObj(infos[i].name, get(infos[i].property));
+  }
+
+  GrObj::writeTo(writer);
 }
 
 int MaskHatch::charCount() const { return 0; }

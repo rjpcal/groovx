@@ -3,7 +3,7 @@
 // maskhatch.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Mon Oct  4 13:26:09 1999
+// written: Wed Oct 20 10:19:30 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,6 +39,9 @@ public:
   virtual void deserialize(istream &is, IOFlag flag);
 
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   ////////////////
   // properties //

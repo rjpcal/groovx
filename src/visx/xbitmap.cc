@@ -3,7 +3,7 @@
 // xbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:37:04 1999
-// written: Tue Oct 12 18:35:00 1999
+// written: Wed Oct 20 10:31:00 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -131,6 +131,16 @@ DOTRACE("XBitmap::deserialize");
 int XBitmap::charCount() const {
 DOTRACE("XBitmap::charCount");
   return 128;
+}
+
+void XBitmap::readFrom(Reader* reader) {
+DOTRACE("XBitmap::readFrom");
+  Bitmap::readFrom(reader);
+}
+
+void XBitmap::writeTo(Writer* writer) const {
+DOTRACE("XBitmap::writeTo");
+  Bitmap::writeTo(writer);
 }
 
 /////////////

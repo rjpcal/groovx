@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Thu Oct  7 18:24:37 1999
+// written: Wed Oct 20 10:12:07 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,8 @@
 #include <strstream.h>
 
 #include "error.h"
+#include "reader.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -233,6 +235,26 @@ DOTRACE("Fish::charCount");
 
   result += 5;						  // fudge factor
   return result;
+}
+
+void Fish::readFrom(Reader* reader) {
+DOTRACE("Fish::readFrom");
+  const vector<PInfo>& infos = getPropertyInfos();
+  for (int i = 0; i < infos.size(); ++i) {
+	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
+  }
+
+  GrObj::readFrom(reader);
+}
+
+void Fish::writeTo(Writer* writer) const {
+DOTRACE("Fish::writeTo");
+  const vector<PInfo>& infos = getPropertyInfos();
+  for (int i = 0; i < infos.size(); ++i) {
+	 writer->writeValueObj(infos[i].name, get(infos[i].property));
+  }
+
+  GrObj::writeTo(writer);
 }
 
 void Fish::receiveStateChangeMsg(const Observable* obj) {

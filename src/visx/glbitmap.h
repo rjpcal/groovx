@@ -3,7 +3,7 @@
 // glbitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:30 1999
-// written: Mon Sep 20 17:56:58 1999
+// written: Wed Oct 20 10:23:38 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,6 +37,9 @@ public:
   virtual void deserialize(istream& is, IOFlag flag);
 
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   // Actions
   protected: virtual void doRender(unsigned char* /* bytes */,
