@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri Mar 24 18:40:44 2000
+// written: Sat Mar 25 11:18:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -114,9 +114,7 @@ DOTRACE("IoPtrList::deserialize");
 	 if (!obj) throw InputError(ioTag.c_str());
 
 	 insertVoidPtrAt(ptrid, fromIOToVoid(obj));
-
 	 obj->deserialize(is, flag & ~IO::TYPENAME);
-	 afterInsertHook(ptrid, fromIOToVoid(obj));
   }
   // itsFirstVacant
   is >> VoidPtrList::firstVacant();
