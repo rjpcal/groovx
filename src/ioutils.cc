@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // ioutils.cc
 // Rob Peters 
 // created: Jan-99
-// written: Mon Apr 19 13:45:34 1999
+// written: Tue May 25 13:56:59 1999
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef IOUTILS_CC_DEFINED
@@ -16,8 +18,12 @@
 #include <cstring>
 #include <string>
 
+#include "io.h"
+
 ///////////////////////////////////////////////////////////////////////
+//
 // IOUtils definitions
+//
 ///////////////////////////////////////////////////////////////////////
 
 void serializeCstring(ostream &os, const char* str, const char sep) {
@@ -34,12 +40,6 @@ void deserializeCstring(istream &is, char*& str) {
   str = new char[len+1];
   is.getline(str, len+1);
   if (is.fail()) throw InputError("Cstring");
-}
-
-void fatalInputError(const char* type) {
-  cerr << "fatal error: bad input while attempting to construct " 
-       << type << endl;
-  exit(-1);
 }
 
 static const char vcid_ioutils_cc[] = "$Header$";
