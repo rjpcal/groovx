@@ -3,7 +3,7 @@
 // iditem.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 26 17:50:59 2000
-// written: Thu Oct 26 17:51:11 2000
+// written: Fri Oct 27 11:27:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,10 +47,13 @@ private:
   PtrHandle<T> itsHandle;
   int itsId;
 
+  void check();
+
 public:
   IdItem(int id);
-  IdItem(T* master, int id_) : itsHandle(master), itsId(id_) {}
-  IdItem(PtrHandle<T> item_, int id_) : itsHandle(item_), itsId(id_) {}
+  IdItem(T* master, int id_) : itsHandle(master), itsId(id_) { check(); }
+  IdItem(PtrHandle<T> item_, int id_) : itsHandle(item_), itsId(id_)
+    { check(); }
 
   // Default destructor, copy constructor, operator=() are fine
 
@@ -120,21 +123,23 @@ private:
   mutable NullablePtrHandle<T> itsHandle;
   int itsId;
 
+  void check();
+
 public:
   explicit MaybeIdItem(int id_) :
-	 itsHandle(0), itsId(id_) {}
+	 itsHandle(0), itsId(id_) { check(); }
 
   MaybeIdItem(T* master, int id_) :
-	 itsHandle(master), itsId(id_) {}
+	 itsHandle(master), itsId(id_) { check(); }
 
   MaybeIdItem(PtrHandle<T> item_, int id_) :
-	 itsHandle(item_), itsId(id_) {}
+	 itsHandle(item_), itsId(id_) { check(); }
 
   MaybeIdItem(NullablePtrHandle<T> item_, int id_) :
-	 itsHandle(item_), itsId(id_) {}
+	 itsHandle(item_), itsId(id_) { check(); }
 
   MaybeIdItem(const IdItem<T> other) :
-	 itsHandle(other.handle()), itsId(other.id()) {}
+	 itsHandle(other.handle()), itsId(other.id()) { check(); }
 
   // These will cause the item to be inserted into the relevant list.
   MaybeIdItem(T* master);
