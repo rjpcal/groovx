@@ -3,7 +3,7 @@
 // trace.h
 // Rob Peters
 // created: Jan-99
-// written: Mon Oct  9 18:57:07 2000
+// written: Mon Oct  9 19:04:49 2000
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -53,6 +53,17 @@
 
 #ifdef LOCAL_PROF
 #  include <sys/time.h>
+
+
+#  ifdef PRESTANDARD_IOSTREAMS
+class ostream;
+#  else
+#    if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#      include <iosfwd>
+#      define IOSFWD_DEFINED
+#    endif
+#  endif
+
 
 extern int MAX_TRACE_LEVEL;
 
@@ -120,6 +131,8 @@ public:
 
   static void setMode(Mode new_mode);
   static Mode getMode();
+
+  static void printStackTrace(ostream& os);
 
   Trace(Prof& p, bool useMsg);
   ~Trace();
