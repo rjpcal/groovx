@@ -27,7 +27,7 @@ test "BlockTcl-Block::currentTrial" "normal use on complete expt" {
 }
 
 test "BlockTcl-Block::currentTrial" "normal use on empty block" {
-	 Block::reset 0
+	 Block::removeAllTrials 0
 	 Block::currentTrial 0
 } {^\-1$}
 test "BlockTcl-Block::currentTrial" "no error" {} $BLANK $no_test
@@ -53,7 +53,7 @@ test "BlockTcl-Block::currentTrialType" "normal use on completed expt" {
 }
 
 test "BlockTcl-Block::currentTrialType" "normal use on empty expt" {
-	 Block::reset 0
+	 Block::removeAllTrials 0
 	 Block::currentTrialType 0
 } {^-1$}
 test "BlockTcl-Block::currentTrialType" "error" {} $BLANK $no_test
@@ -78,7 +78,7 @@ test "BlockTcl-Block::isComplete" "normal use on complete expt" {
 }
 
 test "BlockTcl-Block::isComplete" "normal use on empty expt" {
-	 Block::reset 0
+	 Block::removeAllTrials 0
 	 Block::isComplete 0
 } {^1$}
 test "BlockTcl-Block::isComplete" "error" {} $BLANK $no_test
@@ -103,7 +103,7 @@ test "BlockTcl-Block::numCompleted" "normal use on complete expt" {
 }
 
 test "BlockTcl-Block::numCompleted" "use on empty expt" {
-	 Block::reset 0
+	 Block::removeAllTrials 0
 	 Block::numCompleted 0
 } {^0$}
 test "BlockTcl-Block::numCompleted" "no error" {} $BLANK $no_test
@@ -128,7 +128,7 @@ test "BlockTcl-Block::numTrials" "normal use on complete expt" {
 }
 
 test "BlockTcl-Block::numTrials" "use on empty expt" {
-	 Block::reset 0
+	 Block::removeAllTrials 0
 	 Block::numTrials	0 
 } {^0$}
 test "BlockTcl-Block::numTrials" "no error" {} $BLANK $no_test
@@ -153,7 +153,7 @@ test "BlockTcl-Block::prevResponse" "normal use on complete expt" {
 }
 
 test "BlockTcl-Block::prevResponse" "normal use on empty expt" {
-	 Block::reset 0
+	 Block::removeAllTrials 0
 	 Block::prevResponse 0
 } {^\-1$}
 test "BlockTcl-Block::prevResponse" "error" {} $BLANK $no_test
@@ -179,7 +179,7 @@ test "BlockTcl-Block::trialDescription" "normal use on complete expt" {
 }
 
 test "BlockTcl-Block::trialDescription" "normal use on empty expt" {
-	 Block::reset 0
+	 Block::removeAllTrials 0
 	 Block::trialDescription 0
 } {^block is complete$}
 test "BlockTcl-Block::trialDescription" "error" {} $BLANK $no_test
@@ -222,5 +222,3 @@ test "BlockTcl-Block::verbose" "normal use" {
 test "BlockTcl-Block::verbose" "error on non-boolean input" {
 	 Block::verbose 0 FLASE
 } {^expected boolean value but got "FLASE"$}
-
-
