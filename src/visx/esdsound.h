@@ -41,6 +41,7 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
+DBG_REGISTER
 
 /// EsdSound implementats the Sound interface using the ESD API.
 class EsdSoundRep : public SoundRep
@@ -103,7 +104,8 @@ DOTRACE("EsdSoundRep::play");
     {
       int res = esd_play_file("", itsFilename.c_str(), 0);
       if (res == 0)
-        throw IO::FilenameError(itsFilename.c_str());
+        throw Util::Error(fstring("error while attempting to play sound file:\n  '",
+                                  itsFilename.c_str(), "'"));
     }
 }
 
