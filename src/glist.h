@@ -2,7 +2,8 @@
 // glist.h
 // Rob Peters 
 // created: Nov-98
-// written: Wed Mar 10 11:47:39 1999
+// written: Fri Mar 12 11:31:52 1999
+static const char vcid[] = "$Id$";
 //
 // This class builds on the functionality provided by ObjList. It
 // manages small collections of objid's from an ObjList and allows

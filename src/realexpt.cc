@@ -2,7 +2,8 @@
 // realexpt.cc
 // Rob Peters
 // created: Thu Mar  4 13:07:45 1999
-// written: Wed Mar 10 14:10:05 1999
+// written: Fri Mar 12 11:27:22 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef REALEXPT_CC_DEFINED

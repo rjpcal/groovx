@@ -2,7 +2,8 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Tue Mar  9 21:36:26 1999
+// written: Fri Mar 12 11:30:39 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef IO_CC_DEFINED

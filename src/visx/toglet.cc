@@ -2,7 +2,8 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Mar 10 11:14:04 1999
+// written: Fri Mar 12 11:20:56 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TOGLCONFIG_CC_DEFINED

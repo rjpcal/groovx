@@ -2,7 +2,8 @@
 // randutils.h
 // Rob Peters
 // created: Mon Mar  8 02:35:53 1999
-// written: Wed Mar 10 11:08:11 1999
+// written: Fri Mar 12 11:27:35 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef RANDUTILS_H_DEFINED

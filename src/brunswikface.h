@@ -2,7 +2,8 @@
 // brunswikface.h
 // Rob Peters
 // created: Thu Jan 28 13:04:37 1999
-// written: Thu Feb  4 15:30:07 1999
+// written: Fri Mar 12 11:34:08 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef BRUNSWIKFACE_H_DEFINED

@@ -2,7 +2,8 @@
 // ioutils.cc
 // Rob Peters 
 // created: Jan-99
-// written: Tue Mar  9 20:20:48 1999
+// written: Fri Mar 12 11:30:18 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef IOUTILS_CC_DEFINED

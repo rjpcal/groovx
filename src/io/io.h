@@ -2,7 +2,8 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Tue Mar  9 21:36:51 1999
+// written: Fri Mar 12 11:30:28 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef IO_H_DEFINED

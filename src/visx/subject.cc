@@ -2,7 +2,8 @@
 // subject.cc
 // Rob Peters
 // created: Dec-98
-// written: Tue Mar  9 21:33:45 1999
+// written: Fri Mar 12 11:25:30 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SUBJECT_CC_DEFINED

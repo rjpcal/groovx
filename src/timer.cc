@@ -2,7 +2,8 @@
 // timer.cc
 // Rob Peters
 // created: Thu Feb  4 23:09:21 1999
-// written: Mon Mar  8 17:21:16 1999
+// written: Fri Mar 12 11:22:05 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TIMER_CC_DEFINED

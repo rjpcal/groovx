@@ -2,7 +2,8 @@
 // grobjtcl.h
 // Rob Peters
 // created: Wed Feb 10 19:30:37 1999
-// written: Mon Mar  8 17:13:13 1999
+// written: Fri Mar 12 11:30:51 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GROBJTCL_H_DEFINED

@@ -2,7 +2,8 @@
 // scaleable.h
 // Rob Peters
 // created: Tue Mar  2 17:17:29 1999
-// written: Tue Mar  9 21:33:45 1999
+// written: Fri Mar 12 11:26:14 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SCALEABLE_H_DEFINED

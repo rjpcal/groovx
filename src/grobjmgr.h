@@ -2,7 +2,8 @@
 // grobjmgr.h
 // Rob Peters
 // created: Mon Mar  8 00:33:26 1999
-// written: Mon Mar  8 17:29:38 1999
+// written: Fri Mar 12 11:31:15 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GROBJMGR_H_DEFINED

@@ -1,6 +1,9 @@
 ///////////////////////////////////////////////////////////////////////
 // misctcl.cc
-// Rob Peters Nov-98
+// Rob Peters
+// created: Nov-98
+// written: Fri Mar 12 11:29:52 1999
+static const char vcid[] = "$Id$";
 //
 // this file contains the implementations for some simple Tcl functions
 // that are basically wrappers for standard C library functions, such

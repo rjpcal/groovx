@@ -2,7 +2,8 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Fri Mar 12 10:50:46 1999
+// written: Fri Mar 12 11:17:35 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FACE_CC_DEFINED

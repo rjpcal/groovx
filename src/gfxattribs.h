@@ -2,7 +2,8 @@
 // gfxattribs.h
 // Rob Peters
 // created: Tue Mar  9 18:28:13 1999
-// written: Wed Mar 10 11:40:35 1999
+// written: Fri Mar 12 11:32:24 1999
+static const char vcid[] = "$Id$";
 //
 // This class containing only static members serves as a
 // platform-independent and low-level means for different parts of a

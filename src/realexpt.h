@@ -2,7 +2,8 @@
 // realexpt.h
 // Rob Peters
 // created: Jan-99
-// written: Wed Mar 10 14:08:52 1999
+// written: Fri Mar 12 11:27:12 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef REALEXPT_H_DEFINED

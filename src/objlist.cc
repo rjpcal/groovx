@@ -2,7 +2,8 @@
 // objlist.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Mar  9 20:22:14 1999
+// written: Fri Mar 12 11:29:06 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef OBJLIST_CC_DEFINED

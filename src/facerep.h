@@ -2,7 +2,8 @@
 // facerep.h
 // Rob Peters
 // created: Thu Jan 28 12:36:12 1999
-// written: Mon Mar  8 17:07:30 1999
+// written: Fri Mar 12 11:33:41 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FACEREP_H_DEFINED

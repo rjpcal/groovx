@@ -2,7 +2,8 @@
 // glisttcl.h
 // Rob Peters
 // created: Jan-99
-// written: Thu Mar  4 17:44:10 1999
+// written: Fri Mar 12 11:31:25 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GLISTTCL_H_DEFINED
