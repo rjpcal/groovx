@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Thu Jun  1 14:19:19 2000
+// written: Sat Sep 23 14:25:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,14 +32,14 @@ namespace Tcl {
   class VecActionCmd;
 
   template <class T>
-	 class SetterCmdTraits {
+	 struct SetterCmdTraits {
 		typedef T value_type;
 		typedef T stack_type;
 		typedef ListIterator<T> iterator_type;
 	 };
 
   template <>
-	 class SetterCmdTraits<const fixed_string&> {
+	 struct SetterCmdTraits<const fixed_string&> {
 		typedef const fixed_string& value_type;
 		typedef const char* stack_type;
 		typedef ListIterator<const char*> iterator_type;
