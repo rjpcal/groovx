@@ -760,12 +760,17 @@ namespace
     ldep_group& operator=(const ldep_group&);
 
   public:
-    ldep_group()             : m_members() { }
-    ldep_group(file_info* f) : m_members() { m_members.push_back(f); }
+    ldep_group()             : m_members(), m_level(-1) { }
+    ldep_group(file_info* f) : m_members(), m_level(-1) { m_members.push_back(f); }
 
     string bigname() const;
 
+    void get_all_nested_ldeps(dep_list_t& result) const;
+
+    int level();
+
     vector<file_info*>  m_members;
+    int                 m_level;
   };
 
   class file_info
@@ -880,6 +885,60 @@ namespace
         }
     }
 
+    static void dump_ldep_levels(bool verbose)
+    {
+      typedef set<shared_ptr<ldep_group> > all_groups_t;
+      all_groups_t all_groups;
+
+      for (info_map_t::const_iterator
+             itr = s_info_map.begin(),
+             stop = s_info_map.end();
+           itr != stop;
+           ++itr)
+        {
+          file_info* finfo = (*itr).second;
+
+          if (!finfo->is_cc_file())
+            continue;
+
+          all_groups.insert(finfo->m_ldep_group);
+        }
+
+      for (all_groups_t::const_iterator
+             itr = all_groups.begin(),
+             stop = all_groups.end();
+           itr != stop;
+           ++itr)
+        {
+          for (unsigned int i = 0; i < (*itr)->m_members.size(); ++i)
+            {
+              std::cout << std::setw(4) << (*itr)->level() << " "
+                        << std::setw(8) << (long int)(*itr).get()
+                        << "  Amember " << (*itr)->m_members[i]->name()
+                        << '[' << (*itr)->level() << ']'
+                        << '\n';
+            }
+
+          if (verbose)
+            {
+              dep_list_t deps;
+              (*itr)->get_all_nested_ldeps(deps);
+
+              for (unsigned int i = 0; i < deps.size(); ++i)
+                {
+                  if (deps[i]->is_phantom() || deps[i]->is_pruned())
+                    continue;
+
+                  std::cout << std::setw(4) << (*itr)->level() << " "
+                            << std::setw(8) << (long int)(*itr).get()
+                            << "  Bdepend     " << deps[i]->name()
+                            << '[' << deps[i]->m_ldep_group->level() << ']'
+                            << '\n';
+                }
+            }
+        }
+    }
+
   private:
     const string            m_fname;
     const string::size_type m_dotpos; // position of the final "."
@@ -899,8 +958,9 @@ namespace
     dep_list_t              m_direct_ldeps;
     bool                    m_nested_ldeps_done;
     dep_list_t              m_nested_ldeps;
+  public:
     shared_ptr<ldep_group>  m_ldep_group;
-
+  private:
     int                     m_epoch;
   };
 
@@ -928,6 +988,54 @@ namespace
           result += " + ";
       }
     return result;
+  }
+
+  void ldep_group::get_all_nested_ldeps(dep_list_t& result) const
+  {
+    typedef set<file_info*> all_deps_t;
+    all_deps_t all_deps;
+
+    for (unsigned int i = 0; i < m_members.size(); ++i)
+      {
+        const dep_list_t& d = m_members[i]->get_nested_ldeps();
+        all_deps.insert(d.begin(), d.end());
+      }
+
+    result.assign(all_deps.begin(), all_deps.end());
+  }
+
+  int ldep_group::level()
+  {
+    if (m_level >= 0)
+      return m_level;
+
+    dep_list_t deps;
+    get_all_nested_ldeps(deps);
+
+    if (deps.size() == 0)
+      {
+        m_level = 0;
+      }
+    else
+      {
+        m_level = 1;
+
+        for (unsigned int i = 0; i < deps.size(); ++i)
+          {
+            if (deps[i]->m_ldep_group.get() == this)
+              continue;
+
+            if (deps[i]->m_ldep_group.get() == 0)
+              continue;
+
+            const int lev = deps[i]->m_ldep_group->level();
+
+            if (lev >= m_level)
+              m_level = lev+1;
+          }
+      }
+
+    return m_level;
   }
 
   //----------------------------------------------------------
@@ -1540,6 +1648,8 @@ private:
   static const int MAKEFILE_LDEPS      = (1 << 1);
   static const int DIRECT_CDEPS        = (1 << 2);
   static const int LDEP_GROUPS         = (1 << 3);
+  static const int LDEP_LEVELS         = (1 << 4);
+  static const int LDEP_LEVELSV        = (1 << 5);
 
   // Member variables
 
@@ -1773,6 +1883,16 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
   else if (strcmp(option, "--output-ldep-groups") == 0)
     {
       cfg.output_mode |= LDEP_GROUPS;
+      return false;
+    }
+  else if (strcmp(option, "--output-ldep-levels") == 0)
+    {
+      cfg.output_mode |= LDEP_LEVELS;
+      return false;
+    }
+  else if (strcmp(option, "--output-ldep-levelsv") == 0)
+    {
+      cfg.output_mode |= LDEP_LEVELSV;
       return false;
     }
   else if (strcmp(option, "--literal") == 0)
@@ -2147,7 +2267,9 @@ void cppdeps::traverse_sources()
               print_link_deps(finfo);
             }
 
-          if (cfg.output_mode & LDEP_GROUPS)
+          if ((cfg.output_mode & LDEP_GROUPS) ||
+              (cfg.output_mode & LDEP_LEVELS) ||
+              (cfg.output_mode & LDEP_LEVELSV))
             {
               if (finfo->is_cc_file())
                 (void) finfo->get_nested_ldeps();
@@ -2165,6 +2287,14 @@ void cppdeps::traverse_sources()
   if (cfg.output_mode & LDEP_GROUPS)
     {
       file_info::dump_ldep_groups();
+    }
+  if (cfg.output_mode & LDEP_LEVELS)
+    {
+      file_info::dump_ldep_levels(false);
+    }
+  if (cfg.output_mode & LDEP_LEVELSV)
+    {
+      file_info::dump_ldep_levels(true);
     }
 }
 
