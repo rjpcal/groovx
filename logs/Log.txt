@@ -3,8 +3,34 @@ $Id$
 
 *** FRONT of priority queue ***
 
-(14-Jan-2000) Need to flesh out the Pipe class that has been
-introduced in Bitmap::loadPbmGzCmd().
+(20-Jan-2000) We should set up a way for Trial's to have a prepare()
+function which would do things like update its GrObj's (and flush
+pending requests like loading bitmap data). Then Block's could have a
+prepareNextTrial() function which could be called during the preceding
+trial.
+
+(19-Jan-2000) GLBitmap should use auto_ptr for itsRenderer and fix
+initialization order (eliminate tempRenderer). Same for XBitmap.
+
+(19-Jan-2000) Does BitmapRep really need to implement grUnRender(), or
+can we just use GrObj's GROBJ_CLEAR_BOUNDING_BOX mode?
+
+(19-Jan-2000) Auto-detect gzipped files? (Hint: how is Tcl's 'file
+extension' implemented?)
+
+(17-Jan-2000) We should have a TclVecItemCmd<C> template that parallels
+TclItemCmd<C> but can handle vectors of items. Mainly it would need a
+getItems() member that returns a reference to a vector<C*>. ... no,
+better would be to have getItems() take an insert iterator. Actually,
+there ought to be some way to get the base class to take care of most
+of the iteration, so that the subclasses just need to define what to
+do for each element. This would be similar to the way VecSetterBaseCmd
+provides a partial implementation for TVecSetterCmd.
+
+(15-Jan-2000) I think the executable shouldn't have to depend on the
+shared libraries, since these should be able to be change without
+forcing a relink on the main executable. ... Yes, but we need to be
+able to account for whether static or dynamic linking is being used.
 
 (11-Jan-2000) ObjList::saveObjects should not save base classes, perhaps?
 
@@ -13,11 +39,6 @@ Bitmap's are deserialized until when they are first used. This would
 require a way to for the files to be loaded on demand. It would have
 the added benefit that in an fMRI script, we would only have to load
 the bitmaps that are actually used in the experiment.
-
-(11-Jan-2000) Need to have a way for Bitmap's to store a .pbm.gz
-filename as their source, so that we avoid the problems with "can't
-find .temp.pbm" on reloading. This means that Bitmap's (and Pbm's)
-need to be able gzip-ed files on their own, without the help of Tcl.
 
 (8-Jan-2000) How to read/write CountedPtr's? This is the big barrier
 to establishing CountedPtr's as a better way to manage objects between
@@ -83,16 +104,9 @@ listitempkg.h:75: cannot dynamic_cast
 32)->__vtbl_ptr_type::__delta), id)' (of type `class XBitmap') to type
 `class Tcl::IO &'
 
-(7-Dec-1999) I guess I need to split tclitempkg into two componenets,
-one with TclItemPkg, Getter, Setter, Attrib, and Action, and another
-with CTclItemPkg, CTclIoItemPkg, etc.
-
 (6-Dec-1999) Replace GrObj::getScreenFromWorld etc. with
 Canvas::... in BitmapRep (how to get the Canvas& arguments where they
 need to be?)
-
-(6-Dec-1999) Do we also want Canvas& arguments in the bounding box
-call chain?
 
 (21-Nov-1999) Would like to split project into loosely coupled
 subprojects that can be used separately in other projects. Each
@@ -133,6 +147,10 @@ for future trial events in order to compensate.
 
 ========================================================================
 Subsection on refactoring ToglConfig into Widget, Camera, Canvas
+
+(15-Jan-2000) ExptDriver should really own the widget (actually a
+TlistWidget)... Then we can eventually have multiple Experiment's at
+once, each with its own widget??? is this right?
 
 (27-Nov-1999) Who uses theToglConfig()?
 EventResponseHdlr uses the Widget part in the attend() and ignore() methods
@@ -359,7 +377,10 @@ be added to the list of a subclass's attributes.
 (6-Oct-1999) GrObj needs a saveBitmapCache() function to dump a cached
 bitmap to file. Or maybe just a writeBitmap() function, that would
 apply even for objects whose mode is not one of the bitmap cache
-modes, and that would generate a temporary bitmap if necessary.
+modes, and that would generate a temporary bitmap if
+necessary. [Later] This stuff belongs outside of the GrObj class,
+since it needs only the public interface... perhaps it should just go
+in grobjtcl.cc file.
 
 (6-Oct-1999) Should Property's be Observable's? Is this worth the
 extra space? Perhaps only some properties should be Observable's. How
@@ -2490,6 +2511,12 @@ was able to restore the contents of my home directory from snowball2
 after some "hardcore scraping". Hopefully I've learned a lesson
 here... backup backup backup!
 
+(7-Dec-1999, done 16-Dec-1999) I guess I need to split tclitempkg into
+two componenets, one with TclItemPkg, Getter, Setter, Attrib, and
+Action, and another with CTclItemPkg, CTclIoItemPkg, etc. OK, this is
+done by creating "tclitempkgbase.h" to contain Getter, Setter, Attrib,
+Attrib, Action, and TclItemPkgBase.
+
 (30-Nov-1999, done 7-Jan-2000) What to do about 'control reaching end
 of non-void function' in ExptDriver::Impl::block(), responseHdlr(),
 and timingHdlr()? Probably the best is to eliminate the error checking
@@ -2505,4 +2532,18 @@ TlistWidget, perhaps?  Ah yes... first, we didn't initialize
 itsCurTrial and itsVisibility in the constructor, and second of all,
 we didn't check for itsVisibility in safeDrawTrial() before attempting
 to draw.
+
+(14-Jan-2000, done 14-Jan-2000) Need to flesh out the Pipe class that
+has been introduced in Bitmap::loadPbmGzCmd(). OK, this is done so now
+the Pipe class itself provides access to an fstream& that can be used
+to read/write from the Pipe as appropriate.
+
+(6-Dec-1999, done 16-Jan-2000) Do we also want Canvas& arguments in
+the bounding box call chain? I added a Canvas& argument to
+GrObj::getBoundingBox(), but not to the protected
+GrObj::grGetBoundingBox()... the only subclass that needed a Canvas in
+order to implement this function was Bitmap(Rep), so for this
+implementation I just retrieve the Canvas from the
+Application->Experiment->Canvas call chain. Thus GLCanvas::theCanvas()
+is eliminated.
 
