@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Dec 18 08:21:32 2002
+// written: Wed Dec 18 08:40:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,11 +89,13 @@ public:
   /// Check if the given argument count is unacceptable.
   bool rejectsObjc(unsigned int objc) const;
 
-  /** This is overridden by subclasses to implement the specific
-      functionality for the command that is represented. The \c
-      Context& argument allows Tcl command arguments to be retrieved,
-      and allows the interpreter's result to be set.*/
+  /// Abstract function performs this command's specific functionality.
+  /** The \c Context& argument allows Tcl command arguments to be
+      retrieved, and allows the interpreter's result to be set.*/
   virtual void invoke(Context& ctx) = 0;
+
+  /// Raw invocation.
+  int rawInvoke(int objc, Tcl_Obj* const objv[]);
 
   /// Get the current Tcl::Dispatcher for this command.
   shared_ptr<Dispatcher> getDispatcher() const;
@@ -110,7 +112,6 @@ private:
   Command& operator=(const Command&);
 
   class Impl;
-  friend class Impl;
   Impl* const rep;
 };
 

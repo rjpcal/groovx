@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Dec 18 08:32:42 2002
+// written: Wed Dec 18 08:42:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -173,12 +173,6 @@ public:
     overloads()
   {}
 
-  void onInvoke() { ++useCount; }
-
-  /// The procedure that is actually registered with the Tcl C API.
-  static int invokeCallback(ClientData clientData, Tcl_Interp* interp,
-                            int objc, Tcl_Obj *const objv[]);
-
   // These are set once per command object
   Tcl::Interp interp;
   shared_ptr<Tcl::Dispatcher> dispatcher;
@@ -191,65 +185,26 @@ public:
   shared_ptr<Overloads> overloads;
 };
 
-
-///////////////////////////////////////////////////////////////////////
-//
-// Tcl::Command::Impl member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-int Tcl::Command::Impl::invokeCallback(ClientData clientData,
-                                       Tcl_Interp*, /* use our own Tcl::Interp */
-                                       int s_objc,
-                                       Tcl_Obj *const objv[])
-{
-DOTRACE("Tcl::Command::Impl::invokeCallback");
-
-  Impl* rep = static_cast<Tcl::Command*>(clientData)->rep;
-
-  Assert(s_objc >= 0);
-
-  unsigned int objc = (unsigned int) s_objc;
-
-  Tcl::Interp& interp = rep->interp;
-
-  // catch all possible exceptions since this is a callback from C
-  try
-    {
-      rep->onInvoke();
-
-      for (Overloads::List::const_iterator
-             itr = rep->overloads->itsList.begin(),
-             end = rep->overloads->itsList.end();
-           itr != end;
-           ++itr)
-        {
-          if ((*itr)->rejectsObjc(objc))
-            continue;
-
-          // Found a matching overload, so try it:
-          (*itr)->getDispatcher()->dispatch(interp, objc, objv, **itr);
-          return TCL_OK;
-        }
-
-      // Here, we run out of potential overloads, so abort the command.
-      interp.resetResult();
-      interp.appendResult(rep->overloads->usageWarning().c_str());
-      return TCL_ERROR;
-    }
-  catch (...)
-    {
-      interp.handleLiveException(rep->cmdName.c_str(), false);
-    }
-
-  return TCL_ERROR;
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // Tcl::Command member definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+namespace
+{
+  int cInvokeCallback(ClientData clientData,
+                      Tcl_Interp*, /* use Tcl::Command's own Tcl::Interp */
+                      int s_objc,
+                      Tcl_Obj *const objv[])
+  {
+    Tcl::Command* cmd = static_cast<Tcl::Command*>(clientData);
+
+    Assert(cmd != 0);
+
+    return cmd->rawInvoke(s_objc, objv);
+  }
+}
 
 Tcl::Command::Command(Tcl::Interp& interp,
                       const char* cmd_name, const char* usage,
@@ -272,7 +227,7 @@ DOTRACE("Tcl::Command::Command");
     {
       Tcl_CreateObjCommand(interp.intp(),
                            rep->cmdName.c_str(),
-                           Impl::invokeCallback,
+                           cInvokeCallback,
                            static_cast<ClientData>(this),
                            (Tcl_CmdDeleteProc*) NULL);
 
@@ -345,6 +300,48 @@ DOTRACE("Tcl::Command::allowsObjc");
 bool Tcl::Command::rejectsObjc(unsigned int objc) const
 {
   return !allowsObjc(objc);
+}
+
+int Tcl::Command::rawInvoke(int s_objc, Tcl_Obj* const objv[])
+{
+DOTRACE("Tcl::Command::rawInvoke");
+
+  Assert(s_objc >= 0);
+
+  unsigned int objc = (unsigned int) s_objc;
+
+  Tcl::Interp& interp = rep->interp;
+
+  // catch all possible exceptions since this is a callback from C
+  try
+    {
+      ++rep->useCount;
+
+      for (Overloads::List::const_iterator
+             itr = rep->overloads->itsList.begin(),
+             end = rep->overloads->itsList.end();
+           itr != end;
+           ++itr)
+        {
+          if ((*itr)->rejectsObjc(objc))
+            continue;
+
+          // Found a matching overload, so try it:
+          (*itr)->getDispatcher()->dispatch(interp, objc, objv, **itr);
+          return TCL_OK;
+        }
+
+      // Here, we run out of potential overloads, so abort the command.
+      interp.resetResult();
+      interp.appendResult(rep->overloads->usageWarning().c_str());
+      return TCL_ERROR;
+    }
+  catch (...)
+    {
+      interp.handleLiveException(rep->cmdName.c_str(), false);
+    }
+
+  return TCL_ERROR;
 }
 
 fstring Tcl::Command::rawUsage() const
