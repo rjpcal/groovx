@@ -3,7 +3,7 @@
 // tclevalcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jun 17 10:38:13 1999
-// written: Tue Dec  7 18:14:50 1999
+// written: Tue Dec  7 23:45:54 1999
 // $Id$
 //
 // TclEvalCmd serves as a wrapper for a Tcl command string that is to
@@ -31,8 +31,10 @@
 #endif
 
 namespace Tcl {
+  class TclEvalCmd;
+}
 
-class TclEvalCmd {
+class Tcl::TclEvalCmd {
 public:
   enum ErrorHandlingMode { NONE, THROW_EXCEPTION, BACKGROUND_ERROR };
 
@@ -61,7 +63,7 @@ public:
 		  msg += Tcl_GetString(itsCmdObj);
 		  
 		  if (THROW_EXCEPTION == itsErrorMode) {
-			 throw TclError(msg);
+			 throw Tcl::TclError(msg);
 		  }
 		  else if (BACKGROUND_ERROR == itsErrorMode) {
 			 Tcl_AppendResult(interp, msg.c_str(), (char*) 0);
@@ -75,12 +77,10 @@ public:
 
 private:
   Tcl_Obj* itsCmdObj;
-  TclObjLock itsLock;
+  Tcl::TclObjLock itsLock;
   ErrorHandlingMode itsErrorMode;
   int itsFlags;
 };
-
-} // end namespace Tcl
 
 static const char vcid_tclevalcmd_h[] = "$Header$";
 #endif // !TCLEVALCMD_H_DEFINED
