@@ -259,6 +259,48 @@ namespace Tcl
     }
   };
 
+// ####################################################################
+/// Tcl::Functor<7> -- seven arguments
+
+  template <class R, class Func>
+  struct Functor<7, R, Func>
+  {
+  private:
+    Func itsHeldFunc;
+
+  public:
+    Functor<7, R, Func>(Func f) : itsHeldFunc(f) {}
+
+    R operator()(Tcl::Context& ctx)
+    {
+      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+      EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
+      EXTRACT_PARAM(7);
+      return itsHeldFunc(p1, p2, p3, p4, p5, p6, p7);
+    }
+  };
+
+// ####################################################################
+/// Tcl::Functor<8> -- eight arguments
+
+  template <class R, class Func>
+  struct Functor<8, R, Func>
+  {
+  private:
+    Func itsHeldFunc;
+
+  public:
+    Functor<8, R, Func>(Func f) : itsHeldFunc(f) {}
+
+    R operator()(Tcl::Context& ctx)
+    {
+      EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
+      EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
+      EXTRACT_PARAM(7); EXTRACT_PARAM(8);
+      return itsHeldFunc(p1, p2, p3, p4, p5, p6, p7, p8);
+    }
+  };
+
 #undef EXTRACT_PARAM
 
 // ####################################################################
