@@ -66,6 +66,10 @@ public:
 
   Util::FwdIter<Util::Ref<GxNode> > children() const;
 
+  /** Returns an iterator to all the children recursively contained in
+      this object. */
+  virtual Util::FwdIter<const Util::Ref<GxNode> > deepChildren();
+
   virtual bool contains(GxNode* other) const;
 
   /// Draw all of the contained objects on \a canvas.
