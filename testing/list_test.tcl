@@ -19,6 +19,7 @@ variable TEST_DEFINED 1
 
 proc purgeAll {} {
 	 Togl::setVisible 0
+	 Expt::clear
 	 BlockList::reset
 	 Tlist::reset
 	 RhList::reset
