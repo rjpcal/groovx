@@ -174,3 +174,8 @@ will be needed, and then they can be phased out.
   Make a new font class? Or move this stuff into Gtext? Yes, yes, yes. OK,
   GLUtil is history. We have a GxFont class now, with raster-font and
   vector-font implementations, which is used by Gtext.
+
+* (13-Nov-2002, done 20-Nov-2002) Cleanup GrObj once and for all
+  OK, replaced Gnode with GxBin. Changed all of the Gnode subclasses into
+  generic Gx* node subclasses. So now I feel better; all the stuff is
+  generic. In principle GrObj could become a Gx* class now itself.
