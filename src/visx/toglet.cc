@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue Sep  7 14:26:37 1999
+// written: Wed Sep 15 19:05:16 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -166,6 +166,11 @@ DOTRACE("ToglConfig::getParamValue");
   return obj;
 }
 
+Tcl_Interp* ToglConfig::getInterp() const {
+DOTRACE("ToglConfig::getInterp");
+  return Togl_Interp(itsWidget); 
+}
+
 int ToglConfig::getIntParam(const char* param) const {
 DOTRACE("ToglConfig::getIntParam");
   Tcl_Obj* obj = getParamValue(param);
@@ -176,6 +181,11 @@ DOTRACE("ToglConfig::getIntParam");
   }
   Tcl_DecrRefCount(obj);
   return value;
+}
+
+Togl* ToglConfig::getTogl() const {
+DOTRACE("ToglConfig::getTogl");
+  return itsWidget; 
 }
 
 int ToglConfig::getHeight() const {
