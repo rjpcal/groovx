@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Oct 13 09:24:25 1999
+// written: Wed Oct 13 15:21:24 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <cctype>
 #include <cstring>				  // for memcpy
 
 #include "error.h"
@@ -27,6 +28,12 @@
 
 namespace {
   const string ioTag = "Bitmap";
+
+  void eatWhitespace(istream& is) {
+	 while ( isspace(is.peek()) ) {
+		is.get();
+	 }
+  }
 }
 
 Bitmap::Bitmap() :
@@ -92,14 +99,19 @@ void Bitmap::deserialize(istream& is, IOFlag flag) {
 DOTRACE("Bitmap::deserialize");
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
+  eatWhitespace(is);
   getline(is, itsFilename, '\t');
+
   is >> itsRasterX >> itsRasterY;
   is >> itsZoomX >> itsZoomY;
+
   int val;
   is >> val;
   itsUsingZoom = bool(val);
+
   is >> val;
   itsContrastFlip = bool(val);
+
   is >> val;
   itsVerticalFlip = bool(val);
 
