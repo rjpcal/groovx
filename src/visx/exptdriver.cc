@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Sun Aug  5 19:06:57 2001
+// written: Tue Aug  7 14:53:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -107,8 +107,6 @@ private:
   void doAutosave();
 
   void doUponCompletion() const;
-
-  dynamic_string makeUniqueFileExtension() const;
 
   //////////////////////////
   // ExptDriver delegands //
@@ -263,30 +261,6 @@ DOTRACE("ExptDriver::Impl::doUponCompletion");
       Tcl::Code cmd("Expt::doUponCompletion", &itsErrorHandler);
       cmd.invoke(itsInterp);
     }
-}
-
-dynamic_string ExptDriver::Impl::makeUniqueFileExtension() const {
-DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
-
-  static dynamic_string previous_ext = "";
-  static char tag[2] = {'a', '\0'};
-
-  dynamic_string current_ext = System::theSystem().formattedTime("%H%M%d%b%Y");
-
-  if (current_ext.equals(previous_ext))
-    {
-      ++tag[0];
-      if (tag[0] > 'z') tag[0] = 'a';
-
-      current_ext.append(tag);
-    }
-  else
-    {
-      previous_ext = current_ext;
-      tag[0] = 'a';
-    }
-
-  return current_ext;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -464,7 +438,8 @@ DOTRACE("ExptDriver::Impl::storeData");
     {
       itsEndDate = System::theSystem().formattedTime();
 
-      dynamic_string unique_file_extension = makeUniqueFileExtension();
+      fixed_string unique_file_extension =
+        System::theSystem().formattedTime("%H%M%S%d%b%Y");
 
       // Write the main experiment file
       dynamic_string expt_filename = "expt";
@@ -491,7 +466,6 @@ DOTRACE("ExptDriver::Impl::storeData");
   catch (ErrorWithMsg& err)
     {
       itsErrorHandler.handleMsg(err.msg_cstr());
-      return;
     }
 }
 
