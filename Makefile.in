@@ -247,6 +247,7 @@ neat:
 cleaner: neat
 	find $(OBJ) -follow -name \*.$(OBJEXT) -exec rm -f {} \;
 	find $(OBJ) -follow -name \*.ii -exec rm -f {} \;
+	rm -f $(DEP)/*depends
 
 # Count the lines in all source files
 count:
