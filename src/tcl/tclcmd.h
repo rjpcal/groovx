@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Thu Sep 30 11:10:00 1999
+// written: Tue Oct 12 09:38:53 1999
 // $Id$
 //
 // This file defines the abstract class TclCmd, which provides
@@ -150,35 +150,6 @@ private:
   template <class T>
   void getValFromObj(Tcl_Obj* obj, T& val);
 
-  template <>
-  void getValFromObj<int>(Tcl_Obj* obj, int& val) {
-	 if ( Tcl_GetIntFromObj(itsInterp, obj, &val) != TCL_OK ) throw TclError();
-  }
-
-  template <>
-  void getValFromObj<bool>(Tcl_Obj* obj, bool& val) {
-	 int int_val;
-	 if ( Tcl_GetBooleanFromObj(itsInterp, obj, &int_val) != TCL_OK )
-		throw TclError();
-	 val = bool(int_val);
-  }
-
-  template <>
-  void getValFromObj<double>(Tcl_Obj* obj, double& val) {
-	 if ( Tcl_GetDoubleFromObj(itsInterp, obj, &val) != TCL_OK )
-		throw TclError();
-  }
-
-  template <>
-  void getValFromObj<const char*>(Tcl_Obj* obj, const char*& val) {
-	 val = Tcl_GetString(obj);
-  }
-
-  template <>
-  void getValFromObj<string>(Tcl_Obj* obj, string& val) {
-	 val = Tcl_GetString(obj);
-  }
-
   // These are set once per command object
   const char* const itsUsage;
   const int itsObjcMin;
@@ -193,6 +164,35 @@ private:
 
   int itsResult;
 };
+
+template <>
+inline void TclCmd::getValFromObj<int>(Tcl_Obj* obj, int& val) {
+  if ( Tcl_GetIntFromObj(itsInterp, obj, &val) != TCL_OK ) throw TclError();
+}
+
+template <>
+inline void TclCmd::getValFromObj<bool>(Tcl_Obj* obj, bool& val) {
+  int int_val;
+  if ( Tcl_GetBooleanFromObj(itsInterp, obj, &int_val) != TCL_OK )
+	 throw TclError();
+  val = bool(int_val);
+}
+
+template <>
+inline void TclCmd::getValFromObj<double>(Tcl_Obj* obj, double& val) {
+  if ( Tcl_GetDoubleFromObj(itsInterp, obj, &val) != TCL_OK )
+	 throw TclError();
+}
+
+template <>
+inline void TclCmd::getValFromObj<const char*>(Tcl_Obj* obj, const char*& val) {
+  val = Tcl_GetString(obj);
+}
+
+template <>
+inline void TclCmd::getValFromObj<string>(Tcl_Obj* obj, string& val) {
+  val = Tcl_GetString(obj);
+}
 
 static const char vcid_tclcmd_h[] = "$Header$";
 #endif // !TCLCMD_H_DEFINED
