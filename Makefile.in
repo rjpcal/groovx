@@ -182,6 +182,7 @@ $(VISX_LIB_DIR)/vectwotest.$(SHLIB_EXT): \
 	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
 
 $(VISX_LIB_DIR)/matlabengine.$(SHLIB_EXT): \
+	$(VISX_LIB_DIR)/mtx.$(SHLIB_EXT) \
 	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
 	$(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
 
