@@ -3,7 +3,7 @@
 // stopwatch.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Nov 18 10:24:59 1999
-// written: Thu Nov 18 10:38:22 1999
+// written: Thu Nov 18 10:50:26 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 
 class StopWatch {
 public:
-  StopWatch();
+  StopWatch() { restart(); }
   
   void restart()
 	 { gettimeofday(&itsStartTime, NULL); }
