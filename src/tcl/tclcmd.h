@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Fri May 11 21:21:55 2001
+// written: Fri May 11 21:58:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -321,6 +321,9 @@ public:
   /// Return satisfactorily with the \c int result \a val.
   void returnVal(int val) { returnInt(val); }
 
+  /// Return satisfactorily with the \c unsigned int result \a val.
+  void returnVal(unsigned int val) { returnLong(long(val)); }
+
   /// Return satisfactorily with the \c long result \a val.
   void returnVal(long val) { returnLong(val); }
 
@@ -345,6 +348,9 @@ public:
 
   /// Append to the result a list element with the \c int value \a val.
   void lappendVal(int val) { lappendInt(val); }
+
+  /// Append to the result a list element with the \c unsigned int value \a val.
+  void lappendVal(unsigned int val) { lappendLong(long(val)); }
 
   /// Append to the result a list element with the \c long value \a val.
   void lappendVal(long val) { lappendLong(val); }
