@@ -3,7 +3,7 @@
 // canvas.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Nov 15 18:00:27 1999
-// written: Mon Dec  6 22:40:40 1999
+// written: Thu Feb  3 13:09:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ public:
 
   class StateSaver {
   public:
-	 StateSaver(Canvas& canvas) : itsCanvas(canvas)
+	 StateSaver(const Canvas& canvas) : itsCanvas(canvas)
 		{ itsCanvas.pushState(); }
 	 ~StateSaver()
 		{ itsCanvas.popState(); }
@@ -54,7 +54,7 @@ public:
 	 StateSaver(const StateSaver&);
 	 StateSaver& operator=(const StateSaver&);
 
-	 Canvas& itsCanvas;
+	 const Canvas& itsCanvas;
   };
 
 //    virtual void translate(const Vector3<double>& v) const = 0;
