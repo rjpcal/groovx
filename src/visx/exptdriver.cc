@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Apr  3 17:51:19 2002
+// written: Tue Apr 30 10:12:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -400,14 +400,20 @@ void ExptDriver::Impl::edResetExpt()
 DOTRACE("ExptDriver::Impl::edResetExpt");
   edHaltExpt();
 
-  while (itsCurrentBlockIdx > 0)
+  Util::log("resetting experiment");
+
+  while (1)
     {
       if ( haveValidBlock() )
         {
+          Util::log(fstring("resetting block", itsCurrentBlockIdx));
           currentBlock()->resetBlock();
         }
 
-      --itsCurrentBlockIdx;
+      if (itsCurrentBlockIdx > 0)
+        --itsCurrentBlockIdx;
+      else
+        break;
     }
 }
 
