@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 14:48:32 2001
-// written: Thu Aug 16 10:55:58 2001
+// written: Tue Sep  4 10:38:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,11 +66,6 @@ namespace Gmodes
       rendered into the front buffer, regardless of whether OpenGL
       double-buffering is being used. */
   const RenderMode X11_BITMAP_CACHE = 4;
-
-  /** This mode may be used only as an unrendering mode. If selected,
-      unrendering will be done by clearing to the background color the
-      region enclosed by the object's bounding box. */
-  const RenderMode CLEAR_BOUNDING_BOX = 6;
 
 
 

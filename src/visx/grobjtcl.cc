@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Sat Aug 25 21:49:00 2001
+// written: Tue Sep  4 10:39:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,7 +83,6 @@ int Grobj_Init(Tcl_Interp* interp)
   pkg->linkVarCopy("GrObj::GLCOMPILE", Gmodes::GLCOMPILE);
   pkg->linkVarCopy("GrObj::GL_BITMAP_CACHE", Gmodes::GL_BITMAP_CACHE);
   pkg->linkVarCopy("GrObj::X11_BITMAP_CACHE", Gmodes::X11_BITMAP_CACHE);
-  pkg->linkVarCopy("GrObj::CLEAR_BOUNDING_BOX", Gmodes::CLEAR_BOUNDING_BOX);
 
   pkg->linkVarCopy("GrObj::NATIVE_SCALING", Gmodes::NATIVE_SCALING);
   pkg->linkVarCopy("GrObj::MAINTAIN_ASPECT_SCALING", Gmodes::MAINTAIN_ASPECT_SCALING);
