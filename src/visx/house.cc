@@ -421,7 +421,7 @@ DOTRACE("House::grRender");
     canvas.translate(vec3d(itsChimneyXPosition,
                            itsChimneyYPosition, 0.0));
     canvas.scale(vec3d(itsChimneyWidth,
-                       itsChimneyHeight, 0.0));
+                       itsChimneyHeight, 1.0));
 
     canvas.setPolygonFill(true);
     drawChimney(canvas);
