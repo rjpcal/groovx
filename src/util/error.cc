@@ -34,6 +34,7 @@
 
 #include "util/error.h"
 
+#include "util/backtrace.h"
 #include "util/strings.h"
 
 #include <cstdlib>

@@ -35,6 +35,7 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+#include "util/backtrace.h"
 #include "util/strings.h"
 
 #include <cstdlib>
