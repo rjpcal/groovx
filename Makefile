@@ -388,11 +388,11 @@ $(PKG_DEP_FILE): $(PKG_DEP_FILE).deps
 include $(PKG_DEP_FILE)
 
 
-$(INSTALL_DIR)/lib/visx/mtx.so: $(INSTALL_DIR)/lib/visx/.timestamp \
+$(INSTALL_DIR)/lib/visx/mtx.so: \
 	/usr/local/matlab/extern/lib/glnx86/libmx.so \
 	/usr/local/matlab/extern/lib/glnx86/libmatlb.so
 
-$(INSTALL_DIR)/lib/visx/matlabengine.so: $(INSTALL_DIR)/lib/visx/.timestamp \
+$(INSTALL_DIR)/lib/visx/matlabengine.so: \
 	/usr/local/matlab/extern/lib/glnx86/libeng.so \
 	/usr/local/matlab/extern/lib/glnx86/libmx.so \
 	/usr/local/matlab/extern/lib/glnx86/libut.so \
