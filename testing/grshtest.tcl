@@ -14,7 +14,7 @@
 ##############################################################################
 
 ### Load test procedures
-source /cit/rjpeters/sorcery/grsh/testing/test.tcl
+source $env(HOME)/sorcery/grsh/testing/test.tcl
 
 set VERBOSE 0
 
