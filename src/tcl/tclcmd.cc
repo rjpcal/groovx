@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Jul 11 21:05:52 2001
+// written: Thu Jul 12 09:45:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// File scope declarations
+// HelpCmd class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -69,14 +69,34 @@ protected:
   }
 };
 
+
+///////////////////////////////////////////////////////////////////////
+//
+// File scope definitions
+//
+///////////////////////////////////////////////////////////////////////
+
 namespace
 {
-  inline void errMessage(Tcl_Interp* interp, Tcl_Obj* const objv[],
+  inline void errMessage(Tcl_Interp* interp, const fixed_string& cmd_name,
                          const char* err_msg)
     {
-      Tcl_AppendObjToObj(Tcl_GetObjResult(interp), objv[0]);
       Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
-                             ": ", err_msg, (char *) NULL);
+                             cmd_name.c_str(), ": ", err_msg, (char *) NULL);
+    }
+
+  inline void errMessage(Tcl_Interp* interp, const fixed_string& cmd_name,
+                         const std::type_info& exc_type, const char* what=0)
+    {
+      dynamic_string msg = "an error of type ";
+      msg += demangle_cstr(exc_type.name());
+      msg += " occurred";
+      if (what)
+        {
+          msg += ": ";
+          msg += what;
+        }
+      errMessage(interp, cmd_name, msg.c_str());
     }
 
 #ifdef TRACE_USE_COUNT
@@ -95,7 +115,16 @@ namespace
 
 class Tcl::TclCmd::Impl {
 public:
-  Impl(const char* cmd_name) : itsCmdName(cmd_name), itsUseCount(0) {}
+  Impl(const char* cmd_name, const char* usage,
+       int objc_min, int objc_max, bool exact_objc) :
+    itsUsage(usage),
+    itsObjcMin(objc_min),
+    itsObjcMax( (objc_max > 0) ? objc_max : objc_min),
+    itsExactObjc(exact_objc),
+    itsCmdName(cmd_name),
+    itsUseCount(0)
+  {}
+
   ~Impl()
     {
 #ifdef TRACE_USE_COUNT
@@ -107,6 +136,33 @@ public:
 #endif
     }
 
+  const char* usage() const { return itsUsage; }
+
+  bool allowsObjc(int objc) const
+    {
+      if (itsExactObjc)
+        {
+          return (objc == itsObjcMin || objc == itsObjcMax);
+        }
+
+      return (objc >= itsObjcMin && objc <= itsObjcMax);
+    }
+
+  bool rejectsObjc(int objc) const { return !allowsObjc(objc); }
+
+  const fixed_string& cmdName() const { return itsCmdName; }
+
+  void onInvoke() { ++itsUseCount; }
+
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+
+  // These are set once per command object
+  const char* const itsUsage;
+  const int itsObjcMin;
+  const int itsObjcMax;
+  const bool itsExactObjc;
   fixed_string itsCmdName;
   int itsUseCount;
 };
@@ -122,13 +178,10 @@ DOTRACE("Tcl::TclCmd::~TclCmd");
   delete itsImpl;
 }
 
-Tcl::TclCmd::TclCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage,
-               int objc_min, int objc_max, bool exact_objc) :
-  itsUsage(usage),
-  itsObjcMin(objc_min),
-  itsObjcMax( (objc_max > 0) ? objc_max : objc_min),
-  itsExactObjc(exact_objc),
-  itsImpl(new Impl(cmd_name))
+Tcl::TclCmd::TclCmd(Tcl_Interp* interp,
+                    const char* cmd_name, const char* usage,
+                    int objc_min, int objc_max, bool exact_objc) :
+  itsImpl(new Impl(cmd_name, usage, objc_min, objc_max, exact_objc))
 {
 DOTRACE("Tcl::TclCmd::TclCmd");
   Tcl_CreateObjCommand(interp,
@@ -144,99 +197,79 @@ DOTRACE("Tcl::TclCmd::TclCmd");
     }
 }
 
-const char* Tcl::TclCmd::usage() {
+const char* Tcl::TclCmd::usage()
+{
 DOTRACE("Tcl::TclCmd::usage");
-  return itsUsage;
+  return itsImpl->usage();
 }
 
+void Tcl::TclCmd::rawInvoke(Tcl_Interp* interp,
+                            int objc, Tcl_Obj* const objv[])
+{
+DOTRACE("Tcl::TclCmd::rawInvoke");
+  Context ctx(interp, objc, objv);
+  invoke(ctx);
+}
 
 int Tcl::TclCmd::invokeCallback(ClientData clientData, Tcl_Interp* interp,
-                                int objc, Tcl_Obj *const objv[]) {
+                                int objc, Tcl_Obj *const objv[])
+{
 DOTRACE("Tcl::TclCmd::invokeCallback");
 
   TclCmd* theCmd = static_cast<TclCmd*>(clientData);
 
-  DebugEval((void *) theCmd);
-  DebugEvalNL(typeid(*theCmd).name());
-
-  ++(theCmd->itsImpl->itsUseCount);
-
-  Context ctx(interp, objc, objv);
-
-  DebugEval(objc);
-  DebugEval(theCmd->itsObjcMin);
-  DebugEvalNL(theCmd->itsObjcMax);
+  theCmd->itsImpl->onInvoke();
 
   // Check for bad argument count, if so abort the command and return
   // TCL_ERROR...
-  if ( ((theCmd->itsExactObjc == true) &&
-        (objc != theCmd->itsObjcMin && objc != theCmd->itsObjcMax))
-       ||
-       ((theCmd->itsExactObjc == false) &&
-        (objc < theCmd->itsObjcMin || objc > theCmd->itsObjcMax)) )
+  if ( theCmd->itsImpl->rejectsObjc(objc) )
     {
-      Tcl_WrongNumArgs(ctx.itsInterp, 1, ctx.itsObjv,
-                       const_cast<char*>(theCmd->itsUsage));
-      ctx.itsResult = TCL_ERROR;
+      Tcl_WrongNumArgs(interp, 1, objv,
+                       const_cast<char*>(theCmd->itsImpl->usage()));
       return TCL_ERROR;
     }
   // ...otherwise if the argument count is OK, try the command and
   // catch all possible exceptions
-  try {
-    Context ctx(interp, objc, objv);
-    theCmd->invoke(ctx);
-  }
-  catch (TclError& err) {
-    DebugPrintNL("catch (TclError&)");
-    if ( !string_literal(err.msg_cstr()).empty() ) {
-      errMessage(interp, ctx.itsObjv, err.msg_cstr());
+  try
+    {
+      theCmd->rawInvoke(interp, objc, objv);
+      return TCL_OK;
     }
-    ctx.itsResult = TCL_ERROR;
-  }
-  catch (ErrorWithMsg& err) {
-    DebugPrintNL("catch (ErrorWithMsg&)");
-    if ( !string_literal(err.msg_cstr()).empty() ) {
-      errMessage(interp, ctx.itsObjv, err.msg_cstr());
+  catch (ErrorWithMsg& err)
+    {
+      DebugPrintNL("catch (ErrorWithMsg&)");
+      if ( !string_literal(err.msg_cstr()).empty() )
+        {
+          errMessage(interp, theCmd->itsImpl->cmdName(), err.msg_cstr());
+        }
+      else
+        {
+          errMessage(interp, theCmd->itsImpl->cmdName(), typeid(err));
+        }
     }
-    else {
-      dynamic_string msg = "an error of type ";
-      msg += demangle_cstr(typeid(err).name());
-      msg += " occurred";
-      errMessage(interp, ctx.itsObjv, msg.c_str());
+  catch (Error& err)
+    {
+      DebugPrintNL("catch (Error&)");
+      errMessage(interp, theCmd->itsImpl->cmdName(), typeid(err));
     }
-    ctx.itsResult = TCL_ERROR;
-  }
-  catch (Error& err) {
-    DebugPrintNL("catch (Error&)");
-    dynamic_string msg = "an error of type ";
-    msg += demangle_cstr(typeid(err).name());
-    msg += " occurred";
-    errMessage(interp, ctx.itsObjv, msg.c_str());
-    ctx.itsResult = TCL_ERROR;
-  }
-  catch (std::exception& err) {
-    dynamic_string msg = "an error of type ";
-    msg += demangle_cstr(typeid(err).name());
-    msg += " occurred: ";
-    msg += err.what();
-    errMessage(interp, ctx.itsObjv, msg.c_str());
-    ctx.itsResult = TCL_ERROR;
-  }
-  catch (const char* text) {
-    dynamic_string msg = "an error occurred: ";
-    msg += text;
-    errMessage(interp, ctx.itsObjv, msg.c_str());
-    ctx.itsResult = TCL_ERROR;
-  }
-  catch (...) {
-    DebugPrintNL("catch (...)");
-    errMessage(interp, ctx.itsObjv, "an error of unknown type occurred");
-    ctx.itsResult = TCL_ERROR;
-  }
+  catch (std::exception& err)
+    {
+      errMessage(interp, theCmd->itsImpl->cmdName(), typeid(err), err.what());
+    }
+  catch (const char* text)
+    {
+      dynamic_string msg = "an error occurred: ";
+      msg += text;
+      errMessage(interp, theCmd->itsImpl->cmdName(), msg.c_str());
+    }
+  catch (...)
+    {
+      DebugPrintNL("catch (...)");
+      errMessage(interp, theCmd->itsImpl->cmdName(),
+                 "an error of unknown type occurred");
+    }
 
-  DebugEvalNL(ctx.itsResult == TCL_OK);
-
-  return ctx.itsResult;
+  return TCL_ERROR;
 }
 
 
@@ -251,14 +284,13 @@ Tcl::TclCmd::Context::Context(Tcl_Interp* interp,
                               Tcl_Obj* const* objv) :
   itsInterp(interp),
   itsObjc(objc),
-  itsObjv(objv),
-  itsResult(TCL_OK)
+  itsObjv(objv)
 {}
 
-void Tcl::TclCmd::Context::setObjResult(Tcl_Obj* obj) {
-DOTRACE("Tcl::TclCmd::setObjResult");
+void Tcl::TclCmd::Context::setObjResult(Tcl_Obj* obj)
+{
+DOTRACE("Tcl::TclCmd::Context::setObjResult");
   Tcl_SetObjResult(itsInterp, obj);
-  itsResult = TCL_OK;
 }
 
 static const char vcid_tclcmd_cc[] = "$Header$";
