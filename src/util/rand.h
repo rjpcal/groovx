@@ -35,9 +35,11 @@
 
 namespace Util
 {
+  class Urand;
+}
 
 /// Uniform random distribution
-class Urand
+class Util::Urand
 {
 private:
   unsigned long randx;
@@ -78,8 +80,6 @@ public:
   /// Uniform random distribution in the interval [0:n[
   int operator()(int n) { return idraw(n); }
 };
-
-}
 
 static const char vcid_rand_h[] = "$Header$";
 #endif // !RAND_H_DEFINED
