@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov  2 08:00:00 1998 (as objtogl.cc)
-// written: Fri May 16 08:39:41 2003
+// written: Fri May 16 10:41:01 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -143,6 +143,7 @@ public:
     defAttrib("camera", &Toglet::getCamera, &Toglet::setCamera);
     defAction("clearscreen", &Toglet::fullClearscreen);
     defAction("destroy", &Tcl::TkWidget::destroyWidget);
+    defAction("grabKeyboard", &Tcl::TkWidget::grabKeyboard);
     defAttrib("height", &Tcl::TkWidget::height, &Tcl::TkWidget::setHeight);
     defSetter("hold", "item_id(s) hold_on?", &Toglet::setHold);
     defGetter("pathname", &Tcl::TkWidget::pathname);

@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Fri May 16 08:41:08 2003
+// written: Fri May 16 11:03:31 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -216,7 +216,7 @@ DOTRACE("TkWidgImpl::cEventCallback");
             widg->reshapeCallback(rep->width, rep->height);
             widg->requestRedisplay();
           }
-       break;
+          break;
         case KeyPress:
           keyEventProc(widg, (XKeyEvent*) rawEvent);
           break;
@@ -383,6 +383,33 @@ DOTRACE("Tcl::TkWidget::iconify");
   XIconifyWindow(Tk_Display(rep->tkWin),
                  Tk_WindowId(rep->tkWin),
                  Tk_ScreenNumber(rep->tkWin));
+}
+
+void Tcl::TkWidget::grabKeyboard()
+{
+DOTRACE("Tcl::TkWidget::grabKeyboard");
+
+  const int result =
+    XGrabKeyboard(Tk_Display(rep->tkWin),
+                  Tk_WindowId(rep->tkWin),
+                  False /* don't send key events to their normal windows */,
+                  GrabModeAsync /* pointer mode */,
+                  GrabModeAsync /* keyboard mode */,
+                  CurrentTime /* when grab should take place */);
+
+  switch (result)
+    {
+    case AlreadyGrabbed:
+      throw Util::Error("couldn't grab keyboard: keyboard already grabbed");
+    case GrabNotViewable:
+      throw Util::Error("couldn't grab keyboard: grab window not viewable");
+    case GrabInvalidTime:
+      throw Util::Error("couldn't grab keyboard: grab time invalid");
+    case GrabFrozen:
+      throw Util::Error("couldn't grab keyboard: pointer already frozen");
+    }
+
+  takeFocus();
 }
 
 void Tcl::TkWidget::bind(const char* event_sequence, const char* script)

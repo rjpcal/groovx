@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Fri May 16 08:41:05 2003
+// written: Fri May 16 10:38:04 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -87,6 +87,8 @@ public:
   void pack();
 
   void iconify();
+
+  void grabKeyboard();
 
   virtual void displayCallback() = 0;
 
