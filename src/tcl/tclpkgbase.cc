@@ -3,7 +3,7 @@
 // tclpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 12:55:27 1999
-// written: Wed Mar  8 16:55:59 2000
+// written: Fri Mar 10 01:04:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,6 +39,11 @@ DOTRACE("exitHandler");
 } // end unnamed namespace
 
 struct Tcl::TclPkg::Impl {
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+
+public:
   Impl(Tcl_Interp* interp, const char* name, const char* version);
 
   ~Impl();
@@ -61,7 +66,10 @@ Tcl::TclPkg::Impl::Impl(Tcl_Interp* interp,
   itsCmds(),
   itsPkgName(name ? name : ""),
   itsVersion(version ? version : ""),
-  itsInitStatus(TCL_OK)
+  itsInitStatus(TCL_OK),
+  ownedInts(),
+  ownedDoubles(),
+  ownedCstrings()
 {
 DOTRACE("Tcl::TclPkg::Impl::Impl");
   if ( !itsPkgName.empty() && !itsVersion.empty() ) {
