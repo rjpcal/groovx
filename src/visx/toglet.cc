@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Nov 13 10:59:40 2002
+// written: Wed Nov 13 22:29:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,8 +21,6 @@
 #include "gx/rgbacolor.h"
 
 #include "tcl/tclmain.h"
-
-#include "togl/glutil.h"
 
 #include "util/error.h"
 #include "util/strings.h"
