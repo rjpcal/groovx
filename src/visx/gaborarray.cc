@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Wed May 14 15:16:59 2003
+// written: Wed May 14 16:47:54 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -88,9 +88,10 @@ GaborArray::GaborArray(double gaborPeriod, double gaborSigma,
 
   itsThetaSeed(0),
   itsPhaseSeed(0),
-  itsForegHidden(false),
+  itsThetaJitter(0.0),
   itsGaborPeriod(gaborPeriod),
   itsGaborSigma(gaborSigma),
+  itsContrastJitter(0.0),
 
   itsTotalNumber(0),
   itsArray(MAX_GABOR_NUMBER),
@@ -121,10 +122,10 @@ const FieldMap& GaborArray::classFields()
 
     Field("thetaSeed", &GaborArray::itsThetaSeed, 0, 0, 20000, 1),
     Field("phaseSeed", &GaborArray::itsPhaseSeed, 0, 0, 20000, 1),
-    Field("foregHidden", &GaborArray::itsForegHidden,
-          true, false, true, true, Field::BOOLEAN),
+    Field("thetaJitter", &GaborArray::itsThetaJitter, 0.0, 0.0, 1.0, 0.01),
     Field("gaborPeriod", &GaborArray::itsGaborPeriod, 15.0, 1.0, 50.0, 1.0),
     Field("gaborSigma", &GaborArray::itsGaborSigma, 7.5, 0.5, 25.0, 0.5),
+    Field("contrastJitter", &GaborArray::itsContrastJitter, 0.0, 0.0, 2.0, 0.01),
   };
 
   static FieldMap GABORARRAY_FIELDS(FIELD_ARRAY, &GxShapeKit::classFields());
@@ -209,10 +210,6 @@ DOTRACE("GaborArray::updateForeg");
       Element e = snake.getElement(n);
       e.pos.x() += itsForegPosX;
       e.pos.y() += itsForegPosY;
-
-      if (e.pos.x() < -0.5*itsSizeX || e.pos.x() > 0.5*itsSizeX ||
-          e.pos.y() < -0.5*itsSizeY || e.pos.y() > 0.5*itsSizeY)
-        continue;
 
       if (!tryPush(e))
         {
@@ -311,9 +308,10 @@ DOTRACE("GaborArray::updateBmap");
 
   if (itsThetaSeed.ok()
       && itsPhaseSeed.ok()
-      && itsForegHidden.ok()
+      && itsThetaJitter.ok()
       && itsGaborPeriod.ok()
-      && itsGaborSigma.ok())
+      && itsGaborSigma.ok()
+      && itsContrastJitter.ok())
     return;
 
   const int npix = itsSizeX*itsSizeY;
@@ -334,8 +332,9 @@ DOTRACE("GaborArray::updateBmap");
       const double rand_theta = 2*M_PI * thetas.fdraw();
 
       const double theta =
-        (itsArray[i].type == Element::CONTOUR && !itsForegHidden)
-        ? rad_0_2pi(itsArray[i].theta + M_PI_2)
+        (itsArray[i].type == Element::CONTOUR)
+        ? rad_0_2pi(itsThetaJitter * rand_theta +
+                    (1.0 - itsThetaJitter) * (itsArray[i].theta + M_PI_2))
         : rand_theta;
 
       const int xcenter = int(itsArray[i].pos.x() + itsSizeX / 2.0 + 0.5);
@@ -352,11 +351,13 @@ DOTRACE("GaborArray::updateBmap");
       const int x1 = x0 + p.size();
       const int y1 = y0 + p.size();
 
+      const double contrast = exp(-itsContrastJitter * phases.fdraw());
+
       for (int y = y0; y < y1; ++y)
         for (int x = x0; x < x1; ++x)
           {
             if (x >= 0 && x < itsSizeX && y >=0 && y < itsSizeY)
-              win[x+y*itsSizeX] += p.at(x-x0, y-y0);
+              win[x+y*itsSizeX] += contrast * p.at(x-x0, y-y0);
           }
     }
 
@@ -387,9 +388,10 @@ DOTRACE("GaborArray::updateBmap");
 
   itsThetaSeed.save();
   itsPhaseSeed.save();
-  itsForegHidden.save();
+  itsThetaJitter.save();
   itsGaborPeriod.save();
   itsGaborSigma.save();
+  itsContrastJitter.save();
 }
 
 void GaborArray::update() const

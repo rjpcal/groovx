@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Wed May 14 13:54:54 2003
+// written: Wed May 14 16:45:53 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -132,9 +132,10 @@ private:
 
   Cached<int> itsThetaSeed;
   Cached<int> itsPhaseSeed;
-  Cached<bool> itsForegHidden;
+  Cached<double> itsThetaJitter;
   Cached<double> itsGaborPeriod;
   Cached<double> itsGaborSigma;
+  Cached<double> itsContrastJitter;
 
   mutable int itsTotalNumber;
   mutable fixed_block<Element> itsArray;
