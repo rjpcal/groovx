@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sun Oct  8 16:58:27 2000
+// written: Sun Oct  8 21:48:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -98,7 +98,8 @@ public:
 		the PtrList, given its current size. */
   bool isValidId(int id) const;
 
-  ///
+  /** Insert all of the valid id's in the list using the insert
+      iterator \a itr. **/
   template <class Iterator>
   void insertValidIds(Iterator itr) const {
 	 for (unsigned int i = 0, end = voidVecSize();
@@ -109,14 +110,12 @@ public:
 	 }
   }
 
-  /** Destroys the object at index 'i', and resets the void* to NULL. */
+  /** Destroys the object at index 'i'. */
   void remove(int id);
 
-  /** Destroys all objects held by the list, and reset all void*'s to
-      NULL. NOTE: A concrete subclass MUST call clear() from its
-      destructor in order to avoid a memory leak. VoidPtrList cannot
-      call clear() in its own destructor because clear() calls
-      destroyPtr(), which is a pure virtual function. */
+  /** Releases references to all objects held by the list. If this
+      action reduces an object's reference count to zero, the object
+      will be destroyed. */
   void clear();
 
 protected:
