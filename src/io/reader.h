@@ -3,7 +3,7 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Thu Oct 21 18:39:02 1999
+// written: Thu Oct 21 19:26:49 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,12 +69,12 @@ public:
 
   virtual IO* readObject(const string& name) = 0;
 
-  template <class Inserter>
-  void readValueSeq(const string& name, Inserter inserter) {
+  template <class Inserter, class T>
+  void readValueSeq(const string& name, Inserter inserter, T* = 0) {
 	 int count = readInt(name+"Count");
 
 	 for (int i = 0; i < count; ++i) {
-		*inserter = Inserter::value_type();
+		*inserter = T();
 		readValue(name+makeNumberString(i), *inserter);
 		++inserter;
 	 }
