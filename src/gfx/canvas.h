@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Thu Jul 19 11:15:00 2001
+// written: Fri Aug 10 10:42:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,8 @@ template <class V> class Point;
 template <class V> class Rect;
 template <class V> class Vec3;
 
-namespace GWT {
+namespace Gfx
+{
   class Canvas;
 }
 
@@ -31,7 +32,7 @@ namespace GWT {
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class GWT::Canvas {
+class Gfx::Canvas {
 public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~Canvas();
