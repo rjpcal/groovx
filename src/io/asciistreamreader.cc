@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu Nov 11 17:45:42 1999
+// written: Thu Nov 11 18:45:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,7 +68,8 @@ namespace {
 class AsciiStreamReader::Impl {
 public:
   Impl(AsciiStreamReader* owner, istream& is) :
-	 itsOwner(owner), itsBuf(is), itsCreatedObjects(), itsAttribs() 
+	 itsOwner(owner), itsBuf(is), itsCreatedObjects(), itsAttribs(),
+	 itsValueBuffer(4096)
   {
 #ifndef NO_IOS_EXCEPTIONS
 	 itsOriginalExceptionState = itsBuf.exceptions();
@@ -100,6 +101,8 @@ public:
 
   map<string, Attrib> itsAttribs;
 
+  vector<char> itsValueBuffer;
+
 #ifndef NO_IOS_EXCEPTIONS
   ios::iostate itsOriginalExceptionState;
 #endif
@@ -120,8 +123,8 @@ public:
 	 return itsAttribs[attrib_name].type;
   }
 
-  void makeObjectFromTypeForId(const string& type, unsigned long id) {
-	 IO* obj = IoMgr::newIO(type.c_str());
+  void makeObjectFromTypeForId(const char* type, unsigned long id) {
+	 IO* obj = IoMgr::newIO(type);
 
 	 // If there was a problem within IoMgr::newIO(), it will throw an
 	 // exception, so we should never pass this point with a NULL obj.
@@ -195,7 +198,7 @@ DOTRACE("AsciiStreamReader::Impl::readObject");
 
   // Create a new object for this id, if necessary:
   if ( !hasBeenCreated(id) ) {
-	 makeObjectFromTypeForId(getTypeOfAttrib(attrib_name), id);
+	 makeObjectFromTypeForId(getTypeOfAttrib(attrib_name).c_str(), id);
   }
 
   return itsCreatedObjects[id];
@@ -230,17 +233,24 @@ DOTRACE("AsciiStreamReader::Impl::initAttributes");
 
   DebugEvalNL(attrib_count);
 
+  char type[64], name[64], equal[16];
+
   for (int i = 0; i < attrib_count; ++i) {
-	 char type[64], name[64], equal[16];
 
 	 itsBuf >> type >> name >> equal;
+	 DebugEval(type); DebugEval(name); 
 
 	 Attrib& attrib = itsAttribs[name];
 	 attrib.type = type;
 
-	 getline(itsBuf, attrib.value, STRING_ENDER);
+  	 itsBuf.getline(&itsValueBuffer[0], itsValueBuffer.size(), STRING_ENDER);
+	 if ( itsBuf.gcount() >= (itsValueBuffer.size() - 1) ) {
+		throw ReadError("value buffer overflow in "
+							 "AsciiStreamReader::initAttributes");
+	 }
 
-	 DebugEval(type); DebugEval(name); DebugEvalNL(attrib.value);
+	 attrib.value = &itsValueBuffer[0];
+	 DebugEvalNL(attrib.value);
 
 	 unEscape(attrib.value);
 	 DebugEvalNL(attrib.value);
@@ -257,7 +267,7 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 
   while ( itsBuf.peek() != EOF ) {
 	 IO* obj = NULL;
-  	 string type, equal, bracket;	 
+	 char type[64], equal[16], bracket[16];
 	 unsigned long id;
 
 	 itsBuf >> type >> id >> equal >> bracket;
@@ -265,7 +275,7 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 
 	 if ( !haveReadRoot ) {
 		rootid = id;
-
+		
 		if (given_root != 0) 
 		  { itsCreatedObjects[rootid] = given_root; }
 
