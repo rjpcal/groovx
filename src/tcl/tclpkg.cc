@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Wed Jul 11 19:44:08 2001
+// written: Thu Jul 12 13:13:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,8 +39,7 @@
 Tcl::TclItemPkg::TclItemPkg(Tcl_Interp* interp,
                             const char* name, const char* version,
                             int item_argn) :
-  TclItemPkgBase(interp, name, version),
-  itsItemArgn(item_argn)
+  TclItemPkgBase(interp, name, version, item_argn)
 {}
 
 Tcl::TclItemPkg::~TclItemPkg() {}
@@ -51,7 +50,8 @@ Tcl::TclItemPkg::~TclItemPkg() {}
 
 template <class T>
 void Tcl::TclItemPkg::declareGetter(const char* cmd_name,
-                                    Getter<T>* getter, const char* usage) {
+                                    Getter<T>* getter, const char* usage)
+{
   addCommand(
          new Tcl::TVecGetterCmd<T>(this, makePkgCmdName(cmd_name),
 #ifndef ACC_COMPILER
@@ -59,13 +59,14 @@ void Tcl::TclItemPkg::declareGetter(const char* cmd_name,
 #else
                                    shared_ptr<Getter<T> >(getter),
 #endif
-                                   usage, itsItemArgn)
+                                   usage, itemArgn())
          );
 }
 
 template <class T>
 void Tcl::TclItemPkg::declareSetter(const char* cmd_name,
-                                    Setter<T>* setter, const char* usage) {
+                                    Setter<T>* setter, const char* usage)
+{
   addCommand(
          new Tcl::TVecSetterCmd<T>(this, makePkgCmdName(cmd_name),
 #ifndef ACC_COMPILER
@@ -73,7 +74,7 @@ void Tcl::TclItemPkg::declareSetter(const char* cmd_name,
 #else
                                    shared_ptr<Setter<T> >(setter),
 #endif
-                                   usage, itsItemArgn)
+                                   usage, itemArgn())
          );
 }
 
@@ -81,8 +82,8 @@ template <class T>
 void Tcl::TclItemPkg::declareAttrib(const char* attrib_name,
                                     Getter<T>* getter,
                                     Setter<T>* setter,
-                                    const char* usage) {
-
+                                    const char* usage)
+{
   addCommand(
          new Tcl::TVecAttribCmd<T>(this, makePkgCmdName(attrib_name),
 #ifndef ACC_COMPILER
@@ -92,11 +93,12 @@ void Tcl::TclItemPkg::declareAttrib(const char* attrib_name,
                                    shared_ptr<Getter<T> >(getter),
                                    shared_ptr<Setter<T> >(setter),
 #endif
-                                   usage, itsItemArgn)
+                                   usage, itemArgn())
          );
 }
 
-void Tcl::TclItemPkg::instantiate() {
+void Tcl::TclItemPkg::instantiate()
+{
   declareGetter(0, (Getter<int>*) 0, 0);
   declareGetter(0, (Getter<unsigned int>*) 0, 0);
   declareGetter(0, (Getter<unsigned long>*) 0, 0);
@@ -129,9 +131,10 @@ void Tcl::TclItemPkg::instantiate() {
 }
 
 void Tcl::TclItemPkg::declareAction(const char* action_name, Action* action,
-                                    const char* usage) {
+                                    const char* usage)
+{
   addCommand( new VecActionCmd(this, makePkgCmdName(action_name),
-                               make_shared(action), usage, itsItemArgn) );
+                               make_shared(action), usage, itemArgn()) );
 }
 
 
@@ -141,15 +144,18 @@ void Tcl::TclItemPkg::declareAction(const char* action_name, Action* action,
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::IoFetcher::IoFetcher() {
+Tcl::IoFetcher::IoFetcher()
+{
 DOTRACE("Tcl::IoFetcher::IoFetcher");
 }
 
-Tcl::IoFetcher::~IoFetcher() {
+Tcl::IoFetcher::~IoFetcher()
+{
 DOTRACE("Tcl::IoFetcher::~IoFetcher");
 }
 
-namespace Tcl {
+namespace Tcl
+{
 
 class ItemStringifyCmd : public StringifyCmd {
 public:
@@ -161,7 +167,8 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx) {
+  virtual IO::IoObject& getIO(Context& ctx)
+  {
     int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
@@ -184,7 +191,8 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx) {
+  virtual IO::IoObject& getIO(Context& ctx)
+  {
     int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
@@ -207,7 +215,8 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx) {
+  virtual IO::IoObject& getIO(Context& ctx)
+  {
     int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
@@ -230,7 +239,8 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx) {
+  virtual IO::IoObject& getIO(Context& ctx)
+  {
     int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
@@ -253,12 +263,14 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx) {
+  virtual IO::IoObject& getIO(Context& ctx)
+  {
     int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
 
-  virtual const char* getFilename(Context& ctx) {
+  virtual const char* getFilename(Context& ctx)
+  {
     return ctx.getCstringFromArg(itsItemArgn+1);
   }
 
@@ -280,7 +292,8 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx) {
+  virtual IO::IoObject& getIO(Context& ctx)
+  {
     int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
@@ -299,7 +312,8 @@ private:
 
 } // end namespace Tcl
 
-void Tcl::TclItemPkg::addIoCommands(IoFetcher* fetcher) {
+void Tcl::TclItemPkg::addIoCommands(IoFetcher* fetcher)
+{
 DOTRACE("Tcl::TclItemPkg::addIoCommands");
   addCommand( new ItemStringifyCmd(this, fetcher, itemArgn()) );
   addCommand( new ItemDestringifyCmd(this, fetcher, itemArgn()) );
