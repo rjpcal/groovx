@@ -3,7 +3,7 @@
 // expttesttcl.cc
 // Rob Peters
 // created: Tue May 11 13:13:41 1999
-// written: Sun Jun 20 17:52:50 1999
+// written: Sun Jun 20 17:57:02 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -146,7 +146,6 @@ DOTRACE("ExptTestTcl::recordResponseCmd");
 #ifdef LOCAL_TEST
 int ExptTestTcl::undrawTrialCmd(ClientData, Tcl_Interp* interp,
 										  int objc, Tcl_Obj* const objv[]) {
-DOTRACE("ExptTestTcl::undrawTrialCmd");
 DOTRACE("ExptTestTcl::undrawTrialCmd");
   if (objc > 1) {
     Tcl_WrongNumArgs(interp, 1, objv, NULL);
