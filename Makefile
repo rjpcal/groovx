@@ -18,7 +18,8 @@
 
 VERSION := 0.8a7
 
-TCLTK_VERSION := 8.2
+TCL_VERSION := 8.3
+TK_VERSION := 8.3
 
 MAKEFLAGS += --warn-undefined-variables
 
@@ -232,7 +233,7 @@ endif
 
 EXTERNAL_LIBS := \
 	-lGLU -lGL \
-	$(LOCAL_ARCH)/lib/libtcl.$(SHLIB_EXT) $(LOCAL_ARCH)/lib/libtk.$(SHLIB_EXT) \
+	-ltcl$(TCL_VERSION) -ltk$(TK_VERSION) \
 	-lXmu -lX11 -lXext \
 	$(ZSTREAM_LIB) \
 	$(AUDIO_LIB) \
