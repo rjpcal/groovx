@@ -2,7 +2,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 12:55:47 1999
+// written: Fri Mar 12 17:24:09 1999
 static const char vcid_objlisttcl_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
@@ -46,19 +46,19 @@ DOTRACE("ObjlistTcl::getObjFromArg");
   // Make sure we have a valid objid
   if ( Tcl_GetIntFromObj(interp, objv[argn], &id) != TCL_OK ) return NULL;
 #ifdef LOCAL_DEBUG
-  DUMP_VAL1(olist->olNObjs());
+  DUMP_VAL1(olist->nobjs());
   DUMP_VAL2(id);
 #endif
-  if ( !olist->olIsValidId(id) ) {
+  if ( !olist->isValidObjid(id) ) {
     err_message(interp, objv, bad_objid_msg);
     return NULL;
   }
 
   // Get the object
-  return olist->olObj(id);
+  return olist->getObj(id);
 }
 
-// clear the ObjList of all GrObj's by calling ObjList::olClearList
+// clear the ObjList of all GrObj's by calling ObjList::clearObjs()
 int ObjlistTcl::resetObjListCmd(ClientData, Tcl_Interp *interp,
 										  int objc, Tcl_Obj *const objv[]) {
 DOTRACE("ObjlistTcl::resetObjListCmd");
@@ -68,7 +68,7 @@ DOTRACE("ObjlistTcl::resetObjListCmd");
   }
 
   ObjList *olist = getObjList();
-  olist->olClearList();
+  olist->clearObjs();
 
   return TCL_OK;
 }

@@ -2,7 +2,7 @@
 // poslist.h
 // Rob Peters
 // created: Fri Mar 12 17:13:53 1999
-// written: Fri Mar 12 17:21:11 1999
+// written: Fri Mar 12 17:30:05 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef POSLIST_H_DEFINED
@@ -42,7 +42,7 @@ public:
   int npos() const;
   // returns the number of (both filled and unfilled) sites in the PosList
 
-  bool isValidPos(int id) const;
+  bool isValidPosid(int id) const;
   // returns true if 'id' is a valid index into a non-NULL Position* in
   // the PosList, given its current size
 

@@ -2,7 +2,7 @@
 // objlist.h 
 // Rob Peters
 // Created: Nov-98
-// written: Fri Mar 12 13:21:17 1999
+// written: Fri Mar 12 17:57:01 1999
 //
 // The ObjList class implements a list of GrObj pointers. The
 // interface allows for management of a collection of GrObj's (i.e.,
@@ -73,38 +73,37 @@ public:
   // accessors //
   ///////////////
 
-  int olNObjs() const;
+  int nobjs() const;
   // returns the number of (both filled and unfilled) sites in the ObjList
 
-  bool olIsValidId(int id) const;
+  bool isValidObjid(int id) const;
   // returns true if 'id' is a valid index into a non-NULL GrObj* in
   // the ObjList, given its current size
 
-  GrObj* olObj (int id) const { return itsObjVec[id]; }
-  GrObj* operator[] (int id) const { return olObj(id); }
+  GrObj* getObj (int id) const { return itsObjVec[id]; }
   // both functions return the GrObj* at the index given by 'id'.
   // There is no range-checking--this must be done by the client with
-  // olIsValidId().
+  // isValidObjid().
 
   //////////////////
   // manipulators //
   //////////////////
 
-  int insert(GrObj *obj);
+  int addObj(GrObj *obj);
   // add obj at the next available location, and return the index
   // where it was inserted. If necessary, the list will be expanded to
   // make room for the obj
 
-  void insertAt(int id, GrObj *obj);
+  void addObjAt(int id, GrObj *obj);
   // add obj at index 'id', destroying any GrObj that previously
   // occupied that location. The list will be expanded if 'id' exceeds
   // the size of the list. If id is < 0, the function returns without
   // effect.
 
-  void remove(int id);
+  void removeObj(int id);
   // delete the GrObj at index 'i', and reset the GrObj* to NULL
 
-  void olClearList();
+  void clearObjs();
   // delete all GrObj's held by the list, and reset all GrObj*'s to NULL
 
   void scaleRangeObjs(int first, int count,
@@ -115,7 +114,7 @@ public:
   // actions //
   /////////////
 
-  void olDrawOne(int id) const { olObj(id)->grAction(); }
+  void drawObj(int id) const { getObj(id)->grAction(); }
   // call the action function for the GrObj at site 'id'
 
 private:

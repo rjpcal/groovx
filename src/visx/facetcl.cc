@@ -2,7 +2,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Fri Mar 12 12:58:04 1999
+// written: Fri Mar 12 17:10:46 1999
 static const char vcid_facetcl_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
@@ -68,7 +68,7 @@ DOTRACE("faceCmd");
   Face *p = new Face(eh, es, nl, mh);
   
   ObjList *olist = ObjlistTcl::getObjList();
-  int id = olist->insert(p);
+  int id = olist->addObj(p);
   if (id < 0) {
     err_message(interp, objv, cant_make_obj);
     delete p;

@@ -47,7 +47,7 @@ $(TARGET): tags $(ALL_OBJECTS) grshAppInit.o
 	$(CC) $(FLAGS) $(OPTIM) -o $(HOME)/bin/$(ARCH)/$@ \
 	$(ALL_OBJECTS) grshAppInit.o $(LIBRARIES)
 
-################
+########################
 # object files #
 ################
 
@@ -58,6 +58,9 @@ grobjmgr.o: grobjmgr.h grobjmgr.cc face.h fixpt.h grobj.h io.h
 io.o: io.h io.cc
 ioutils.o: io.h ioutils.h ioutils.cc
 position.o: io.h position.h position.cc
+poslist.o: io.h position.h poslist.h poslist.cc
+
+trial.o: trial.h trial.cc
 
 expttcl.o: io.h objlisttcl.h glisttcl.h glist.h expt.h realexpt.h \
 	expttcl.h expttcl.cc

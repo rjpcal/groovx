@@ -2,7 +2,7 @@
 // glist.cc
 // Rob Peters 
 // created: Nov-98
-// written: Fri Mar 12 12:57:18 1999
+// written: Fri Mar 12 17:18:01 1999
 static const char vcid_glist_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
@@ -243,7 +243,7 @@ DOTRACE("Glist::serialize");
 // is already full, the function does nothing, but returns without error.
 void Glist::addToGroup(int objid, int group) {
 DOTRACE("Glist::addToGroup");
-  if ( itsObjList.olIsValidId(objid) ) {
+  if ( itsObjList.isValidObjid(objid) ) {
 	 itsGroups[group].push_back(objid);
   }
 }
@@ -253,7 +253,7 @@ DOTRACE("Glist::addToGroup");
 /////////////
 
 // this function draws each object in the current group by calling
-// ObjList's olDrawOne memeber function, which scales and translates
+// ObjList's drawObj memeber function, which scales and translates
 // the objects appropriately. If the Glist's global visibility is
 // zero, this function does nothing but returns without error.
 void Glist::drawCurGroup() const {
@@ -261,7 +261,7 @@ DOTRACE("Glist::drawCurGroup");
   if (itsVisibility != 0) {
 	 for (Group::iterator ii = itsGroups[itsCurGroup].begin();
 			ii != itsGroups[itsCurGroup].end(); ii++) {
-		itsObjList.olDrawOne(*ii);
+		itsObjList.drawObj(*ii);
 #ifdef LOCAL_DEBUG
 		cerr << "drawing " << *ii << endl;
 #endif

@@ -2,7 +2,7 @@
 // grobjtcl.cc
 // Rob Peters
 // created: Wed Feb 10 19:30:37 1999
-// written: Fri Mar 12 12:56:45 1999
+// written: Fri Mar 12 17:10:45 1999
 static const char vcid_grobjtcl_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
@@ -30,7 +30,7 @@ int GrobjTcl::grobjCmd(ClientData clientData, Tcl_Interp *interp,
 
   if (objc == 1) {
 	 GrObj *theObj = theGrobjProc();
-	 if ( (id = olist->insert(theObj)) < 0) {
+	 if ( (id = olist->addObj(theObj)) < 0) {
 		err_message(interp, objv, ObjlistTcl::cant_make_obj);
 		delete theObj;
 		return TCL_ERROR;

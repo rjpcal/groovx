@@ -2,7 +2,7 @@
 // realexpt.cc
 // Rob Peters
 // created: Thu Mar  4 13:07:45 1999
-// written: Fri Mar 12 12:55:05 1999
+// written: Fri Mar 12 17:19:50 1999
 static const char vcid_realexpt_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
@@ -372,7 +372,7 @@ DOTRACE("RealExpt::trialDescription");
   for (list<int>::iterator jj = cur_group.begin();
        jj != cur_group.end();
        jj++) {
-    if ( (p = dynamic_cast<Face *>((*itsObjList_h)->olObj(*jj)))
+    if ( (p = dynamic_cast<Face *>((*itsObjList_h)->getObj(*jj)))
          != NULL ) {
       ost << " " << p->getCategory();
     }

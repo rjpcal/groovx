@@ -2,7 +2,7 @@
 // fixpttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 12:57:28 1999
+// written: Fri Mar 12 17:10:45 1999
 static const char vcid_fixpttcl_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
@@ -73,7 +73,7 @@ DOTRACE("FixptTcl::fixptCmd");
   if (objc == 1) {              // make new object
     FixPt *p = new FixPt(len, wid);
 
-    if ( (id = olist->insert(p)) < 0) {
+    if ( (id = olist->addObj(p)) < 0) {
       err_message(interp, objv, cant_make_obj);
       delete p;
       return TCL_ERROR;
