@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Jun 20 18:13:06 2001
+// written: Sat Jul 21 20:36:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,8 @@
 #include "experiment.h"
 #include "response.h"
 #include "trialbase.h"
+
+#include "gwt/widget.h"
 
 #include "io/reader.h"
 #include "io/readutils.h"
