@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Thu May 10 12:04:45 2001
+// written: Mon Jun 25 06:42:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-Subject::Subject(const char* name, const char* dir) : 
+Subject::Subject(const char* name, const char* dir) :
   itsName(name ? name : ""), itsDirectory(dir ? dir : "")
 {
 DOTRACE("Subject::Subject");
@@ -37,6 +37,8 @@ DOTRACE("Subject::Subject");
 Subject::~Subject() {
 DOTRACE("Subject::~Subject");
 }
+
+Subject* Subject::make() { return new Subject; }
 
 void Subject::readFrom(IO::Reader* reader) {
 DOTRACE("Subject::readFrom");
@@ -52,11 +54,11 @@ DOTRACE("Subject::writeTo");
   writer->writeValue("directory", itsDirectory);
 }
 
-void Subject::setName(const char* name) {
+void Subject::setName(const fixed_string& name) {
   itsName = name;
 }
 
-void Subject::setDirectory(const char* dir) {
+void Subject::setDirectory(const fixed_string& dir) {
   itsDirectory = dir;
 }
 

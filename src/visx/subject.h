@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Thu May 17 07:23:42 2001
+// written: Mon Jun 25 06:42:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,18 +26,21 @@
 // Subject class
 ///////////////////////////////////////////////////////////////////////
 
-class Subject /* : public virtual IO::IoObject */ {
-public:
-  Subject(const char* name, const char* dir);
+class Subject : public virtual IO::IoObject {
+protected:
+  Subject(const char* name="", const char* dir="");
   virtual ~Subject();
+
+public:
+  static Subject* make();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
-  const char* getName() const { return itsName.c_str(); }
-  void setName(const char* name);
-  const char* getDirectory() const { return itsDirectory.c_str(); }
-  void setDirectory(const char* dir);
+  const fixed_string& getName() const { return itsName; }
+  void setName(const fixed_string& name);
+  const fixed_string& getDirectory() const { return itsDirectory; }
+  void setDirectory(const fixed_string& dir);
 
 private:
   Subject(const Subject&);
