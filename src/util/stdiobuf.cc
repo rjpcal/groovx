@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Feb 25 13:52:11 2003
-// written: Wed Feb 26 08:54:55 2003
+// written: Wed Feb 26 09:04:47 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,12 +22,12 @@
 #include "util/debug.h"
 #include "util/trace.h"
 
-void Util::stdiobuf::init(FILE* f, int om, bool throw_exception)
+void Util::stdiobuf::init(int fd, int om, bool throw_exception)
 {
 DOTRACE("Util::stdiobuf::init");
-  itsFile = f;
+  itsFiledes = fd;
 
-  if (itsFile != NULL)
+  if (itsFiledes >= 0)
     {
       itsMode = om;
     }
@@ -39,47 +39,18 @@ DOTRACE("Util::stdiobuf::init");
 }
 
 Util::stdiobuf::stdiobuf(FILE* f, int om, bool throw_exception) :
-  itsMode(0), itsFile(0)
+  itsMode(0), itsFiledes(-1)
 {
 DOTRACE("Util::stdiobuf::stdiobuf(FILE*)");
-  init(f, om, throw_exception);
+  init(fileno(f), om, throw_exception);
 }
 
 Util::stdiobuf::stdiobuf(int fd, int om, bool throw_exception) :
-  itsMode(0), itsFile(0)
+  itsMode(0), itsFiledes(-1)
 {
 DOTRACE("Util::stdiobuf::stdiobuf(int)");
-  FILE* f = 0;
 
-  // no append nor read/write mode
-  if ( (om & std::ios::ate) || (om & std::ios::app)
-       || ((om & std::ios::in) && (om & std::ios::out)) )
-    {
-      /* do nothing -- opening fails */;
-    }
-  else
-    {
-      char fmode[10];
-      char* fmodeptr = fmode;
-
-      if (om & std::ios::in)
-        {
-          *fmodeptr++ = 'r';
-          setg(buffer+pbackSize, buffer+pbackSize, buffer+pbackSize);
-        }
-      else if (om & std::ios::out)
-        {
-          *fmodeptr++ = 'w';
-          setp(buffer, buffer+(bufSize-1));
-        }
-
-      *fmodeptr++ = 'b';
-      *fmodeptr = '\0';
-
-      f = fdopen(fd, fmode);
-    }
-
-  init(f, om, throw_exception);
+  init(fd, om, throw_exception);
 }
 
 void Util::stdiobuf::close()
@@ -88,9 +59,9 @@ DOTRACE("Util::stdiobuf::close");
   if (is_open())
     {
       sync();
-      // No fclose(itsFile) here since we leave that up to whoever
+      // No ::close(itsFiledes) here since we leave that up to whoever
       // instantiated this stdiobuf.
-      itsFile = 0;
+      itsFiledes = -1;
       itsMode = 0;
     }
 }
@@ -119,9 +90,9 @@ DOTRACE("Util::stdiobuf::underflow");
     }
 
   // read new characters
-  size_t num = fread(buffer+pbackSize, 1, bufSize-pbackSize, itsFile);
+  const int num = ::read(itsFiledes, buffer+pbackSize, bufSize-pbackSize);
 
-  if (num == 0 && (feof(itsFile) || ferror(itsFile)))
+  if (num <= 0)
     return EOF;
 
   // reset buffer pointers
@@ -171,9 +142,8 @@ int Util::stdiobuf::flushoutput()
   if (!(itsMode & std::ios::out) || !is_open()) return EOF;
 
   const int num = pptr()-pbase();
-  Assert(num >= 0);
 
-  if ( fwrite(pbase(), 1, num, itsFile) != (unsigned int)num )
+  if ( ::write(itsFiledes, pbase(), num) == -1 )
     {
       return EOF;
     }
