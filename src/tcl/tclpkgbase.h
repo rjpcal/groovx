@@ -82,7 +82,14 @@ public:
   /** Virtual destructor ensures proper destruction of base
       classes. This destructor will destroy all \c Command's owned by
       the package. */
-  virtual ~PkgBase();
+  virtual ~PkgBase() throw();
+
+  typedef void (ExitCallback)();
+
+  /// Specify a function to be called when the package is destroyed.
+  /** (Package destruction typically occurs at application exit, when the
+      Tcl interpreter and all associated objects are destroyed.) */
+  void onExit(ExitCallback* callback);
 
   /// Find a package given its name and version.
   /** If the package is not already loaded, this function will attempt to
