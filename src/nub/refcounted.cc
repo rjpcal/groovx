@@ -32,7 +32,7 @@
 #ifndef REFCOUNTED_CC_DEFINED
 #define REFCOUNTED_CC_DEFINED
 
-#include "util/refcounted.h"
+#include "refcounted.h"
 
 #include "util/error.h"
 

@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// volatileobject.cc
+// objfactory.h
 //
-// Copyright (c) 2001-2004
+// Copyright (c) 1999-2004
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Tue Aug 21 17:17:51 2001
+// created: Sat Jun 26 23:40:06 1999
 // commit: $Id$
 //
 // --------------------------------------------------------------------
@@ -29,29 +29,35 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef VOLATILEOBJECT_CC_DEFINED
-#define VOLATILEOBJECT_CC_DEFINED
+#ifndef OBJFACTORY_H_DEFINED
+#define OBJFACTORY_H_DEFINED
 
-#include "util/volatileobject.h"
+#include "nub/object.h"
+#include "nub/ref.h"
 
-#include "util/trace.h"
+#include "util/factory.h"
 
-Nub::VolatileObject::VolatileObject()
+namespace Nub
 {
-DOTRACE("Nub::VolatileObject::VolatileObject");
-  this->markAsVolatile();
+  class ObjFactory;
 }
 
-Nub::VolatileObject::~VolatileObject() throw()
+/// Singleton wrapper for Factor<IO>.
+class Nub::ObjFactory
+  :
+  public rutz::factory<Nub::SoftRef<Nub::Object> >
 {
-DOTRACE("Nub::VolatileObject::~VolatileObject");
-}
+protected:
+  /// Default constructor.
+  ObjFactory();
 
-void Nub::VolatileObject::destroy()
-{
-DOTRACE("Nub::VolatileObject::destroy");
-  delete this;
-}
+  /// Virtual destructor.
+  virtual ~ObjFactory();
 
-static const char vcid_volatileobject_cc[] = "$Header$";
-#endif // !VOLATILEOBJECT_CC_DEFINED
+public:
+  /// Return the singleton instance.
+  static ObjFactory& theOne();
+};
+
+static const char vcid_objfactory_h[] = "$Header$";
+#endif // !OBJFACTORY_H_DEFINED

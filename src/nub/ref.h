@@ -32,9 +32,10 @@
 #ifndef REF_H_DEFINED
 #define REF_H_DEFINED
 
+#include "nub/object.h"
+
 #include "util/algo.h"
 #include "util/fileposition.h"
-#include "util/object.h"
 #include "util/stderror.h"
 #include "util/traits.h"
 

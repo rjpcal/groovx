@@ -32,21 +32,22 @@
 #ifndef TIMINGHDLR_CC_DEFINED
 #define TIMINGHDLR_CC_DEFINED
 
-#include "visx/timinghdlr.h"
-
-#include "visx/trialevent.h"
+#include "timinghdlr.h"
 
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
+#include "nub/log.h"
+#include "nub/objmgr.h"
+#include "nub/ref.h"
+
 #include "tcl/tcltimerscheduler.h"
 
 #include "util/error.h"
-#include "util/log.h"
-#include "util/objmgr.h"
-#include "util/ref.h"
 #include "util/sharedptr.h"
 #include "util/stopwatch.h"
+
+#include "visx/trialevent.h"
 
 #include <algorithm>
 #include <vector>

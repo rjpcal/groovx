@@ -32,11 +32,11 @@
 #ifndef IOPROXY_H_DEFINED
 #define IOPROXY_H_DEFINED
 
-#include "util/fstring.h"
-#include "util/ref.h"
-
 #include "io/io.h"
 
+#include "nub/ref.h"
+
+#include "util/fstring.h"
 #include "util/demangle.h"
 
 #include <typeinfo>

@@ -47,7 +47,7 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include "util/volatileobject.h"
+#include "nub/volatileobject.h"
 
 #define DYNAMIC_TRACE_EXPR GxShapeKit::tracer.status()
 #include "util/trace.h"

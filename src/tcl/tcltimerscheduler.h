@@ -32,7 +32,7 @@
 #ifndef TCLTIMERSCHEDULER_H_DEFINED
 #define TCLTIMERSCHEDULER_H_DEFINED
 
-#include "util/scheduler.h"
+#include "nub/scheduler.h"
 
 namespace Tcl
 {

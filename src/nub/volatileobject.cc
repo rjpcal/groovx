@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// object.cc
+// volatileobject.cc
 //
 // Copyright (c) 2001-2004
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Tue Jun  5 10:26:14 2001
+// created: Tue Aug 21 17:17:51 2001
 // commit: $Id$
 //
 // --------------------------------------------------------------------
@@ -29,55 +29,29 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBJECT_CC_DEFINED
-#define OBJECT_CC_DEFINED
+#ifndef VOLATILEOBJECT_CC_DEFINED
+#define VOLATILEOBJECT_CC_DEFINED
 
-#include "util/object.h"
-
-#include "util/demangle.h"
-#include "util/fstring.h"
-
-#include <typeinfo>
+#include "volatileobject.h"
 
 #include "util/trace.h"
 
-namespace
+Nub::VolatileObject::VolatileObject()
 {
-  Nub::UID idCounter = 0;
+DOTRACE("Nub::VolatileObject::VolatileObject");
+  this->markAsVolatile();
 }
 
-Nub::Object::Object() throw() : itsId(++idCounter)
+Nub::VolatileObject::~VolatileObject() throw()
 {
-DOTRACE("Nub::Object::Object");
+DOTRACE("Nub::VolatileObject::~VolatileObject");
 }
 
-Nub::Object::~Object() throw()
+void Nub::VolatileObject::destroy()
 {
-DOTRACE("Nub::Object::~Object");
+DOTRACE("Nub::VolatileObject::destroy");
+  delete this;
 }
 
-Nub::UID Nub::Object::id() const throw()
-{
-  return itsId;
-}
-
-rutz::fstring Nub::Object::realTypename() const
-{
-DOTRACE("Nub::Object::realTypename");
-  return rutz::demangled_name(typeid(*this));
-}
-
-rutz::fstring Nub::Object::objTypename() const
-{
-DOTRACE("Nub::Object::objTypename");
-  return realTypename();
-}
-
-rutz::fstring Nub::Object::uniqueName() const
-{
-DOTRACE("Nub::Object::uniqueName");
-  return rutz::fstring(objTypename(), "(", id(), ")");
-}
-
-static const char vcid_object_cc[] = "$Header$";
-#endif // !OBJECT_CC_DEFINED
+static const char vcid_volatileobject_cc[] = "$Header$";
+#endif // !VOLATILEOBJECT_CC_DEFINED

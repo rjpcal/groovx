@@ -32,8 +32,8 @@
 #ifndef OBJECT_H_DEFINED
 #define OBJECT_H_DEFINED
 
-#include "util/refcounted.h"
-#include "util/uid.h"
+#include "nub/refcounted.h"
+#include "nub/uid.h"
 
 namespace rutz
 {

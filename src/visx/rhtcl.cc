@@ -32,13 +32,14 @@
 #ifndef RHTCL_CC_DEFINED
 #define RHTCL_CC_DEFINED
 
+#include "nub/objfactory.h"
+
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
 
 #include "util/error.h"
 #include "util/fstring.h"
-#include "util/objfactory.h"
 #include "util/sharedptr.h"
 #include "util/serialport.h"
 

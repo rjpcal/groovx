@@ -39,8 +39,9 @@
 #include "gx/bbox.h"
 #include "gx/box.h"
 
+#include "nub/ref.h"
+
 #include "util/iter.h"
-#include "util/ref.h"
 
 #include "util/trace.h"
 

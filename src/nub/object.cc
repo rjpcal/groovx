@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// objmgr.cc
+// object.cc
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 2001-2004
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Fri Apr 23 01:13:16 1999
+// created: Tue Jun  5 10:26:14 2001
 // commit: $Id$
 //
 // --------------------------------------------------------------------
@@ -29,26 +29,55 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBJMGR_CC_DEFINED
-#define OBJMGR_CC_DEFINED
+#ifndef OBJECT_CC_DEFINED
+#define OBJECT_CC_DEFINED
 
-#include "util/objmgr.h"
+#include "object.h"
 
+#include "util/demangle.h"
 #include "util/fstring.h"
-#include "util/objfactory.h"
+
+#include <typeinfo>
 
 #include "util/trace.h"
 
-Nub::SoftRef<Nub::Object> Nub::ObjMgr::newObj(const char* type)
+namespace
 {
-  return newObj(rutz::fstring(type));
+  Nub::UID idCounter = 0;
 }
 
-Nub::SoftRef<Nub::Object> Nub::ObjMgr::newObj(const rutz::fstring& type)
+Nub::Object::Object() throw() : itsId(++idCounter)
 {
-DOTRACE("Nub::ObjMgr::newObj(const fstring&)");
-  return SoftRef<Object>(ObjFactory::theOne().new_checked_object(type));
+DOTRACE("Nub::Object::Object");
 }
 
-static const char vcid_objmgr_cc[] = "$Header$";
-#endif // !OBJMGR_CC_DEFINED
+Nub::Object::~Object() throw()
+{
+DOTRACE("Nub::Object::~Object");
+}
+
+Nub::UID Nub::Object::id() const throw()
+{
+  return itsId;
+}
+
+rutz::fstring Nub::Object::realTypename() const
+{
+DOTRACE("Nub::Object::realTypename");
+  return rutz::demangled_name(typeid(*this));
+}
+
+rutz::fstring Nub::Object::objTypename() const
+{
+DOTRACE("Nub::Object::objTypename");
+  return realTypename();
+}
+
+rutz::fstring Nub::Object::uniqueName() const
+{
+DOTRACE("Nub::Object::uniqueName");
+  return rutz::fstring(objTypename(), "(", id(), ")");
+}
+
+static const char vcid_object_cc[] = "$Header$";
+#endif // !OBJECT_CC_DEFINED

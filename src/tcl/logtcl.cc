@@ -32,10 +32,11 @@
 #ifndef LOGTCL_CC_DEFINED
 #define LOGTCL_CC_DEFINED
 
+#include "nub/log.h"
+
 #include "tcl/tclpkg.h"
 
 #include "util/fstring.h"
-#include "util/log.h"
 
 #include "util/debug.h"
 DBG_REGISTER

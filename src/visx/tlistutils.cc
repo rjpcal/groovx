@@ -32,7 +32,7 @@
 #ifndef TLISTUTILS_CC_DEFINED
 #define TLISTUTILS_CC_DEFINED
 
-#include "visx/tlistutils.h"
+#include "tlistutils.h"
 
 #include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
@@ -46,14 +46,15 @@
 
 #include "io/writer.h"
 
+#include "nub/objdb.h"
+#include "nub/ref.h"
+
 #include "tcl/tcllistobj.h"
 
 #include "util/arrays.h"
 #include "util/cstrstream.h"
 #include "util/error.h"
 #include "util/iter.h"
-#include "util/objdb.h"
-#include "util/ref.h"
 
 #include "visx/trial.h"
 

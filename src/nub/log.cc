@@ -32,10 +32,11 @@
 #ifndef LOG_CC_DEFINED
 #define LOG_CC_DEFINED
 
-#include "util/log.h"
+#include "log.h"
+
+#include "nub/object.h"
 
 #include "util/fstring.h"
-#include "util/object.h"
 #include "util/sharedptr.h"
 #include "util/stopwatch.h"
 

@@ -32,12 +32,12 @@
 #ifndef JITTERTCL_CC_DEFINED
 #define JITTERTCL_CC_DEFINED
 
-#include "visx/jitter.h"
+#include "nub/objfactory.h"
 
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 
-#include "util/objfactory.h"
+#include "visx/jitter.h"
 
 #include "util/trace.h"
 

@@ -32,10 +32,10 @@
 #ifndef THTCL_CC_DEFINED
 #define THTCL_CC_DEFINED
 
+#include "nub/objfactory.h"
+
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
-
-#include "util/objfactory.h"
 
 #include "visx/timinghandler.h"
 #include "visx/timinghdlr.h"

@@ -32,10 +32,10 @@
 #ifndef OBJDB_CC_DEFINED
 #define OBJDB_CC_DEFINED
 
-#include "util/objdb.h"
+#include "objdb.h"
 
-#include "util/object.h"
-#include "util/ref.h"
+#include "nub/object.h"
+#include "nub/ref.h"
 
 #include <typeinfo>
 #include <map>

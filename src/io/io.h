@@ -32,9 +32,9 @@
 #ifndef IO_H_DEFINED
 #define IO_H_DEFINED
 
-#include "util/object.h"
-
 #include "io/iodecls.h"
+
+#include "nub/object.h"
 
 namespace rutz
 {

@@ -30,14 +30,15 @@
 #ifndef OBJPKG_CC_DEFINED
 #define OBJPKG_CC_DEFINED
 
-#include "tcl/objpkg.h"
+#include "objpkg.h"
+
+#include "nub/objdb.h"
+#include "nub/object.h"
 
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
 
 #include "util/iter.h"
-#include "util/objdb.h"
-#include "util/object.h"
 
 #include "util/trace.h"
 #include "util/debug.h"

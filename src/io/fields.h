@@ -35,12 +35,13 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+#include "nub/object.h"
+
 #include "tcl/tclobjptr.h"
 
 #include "util/algo.h"
 #include "util/fileposition.h"
 #include "util/fstring.h"
-#include "util/object.h"
 #include "util/sharedptr.h"
 #include "util/stderror.h"
 #include "util/traits.h"

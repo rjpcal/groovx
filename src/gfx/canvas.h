@@ -32,7 +32,7 @@
 #ifndef CANVAS_H_DEFINED
 #define CANVAS_H_DEFINED
 
-#include "util/object.h"
+#include "nub/object.h"
 
 namespace rutz
 {

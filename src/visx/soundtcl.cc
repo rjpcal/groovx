@@ -32,12 +32,13 @@
 #ifndef SOUNDTCL_CC_DEFINED
 #define SOUNDTCL_CC_DEFINED
 
+#include "nub/objfactory.h"
+
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tclsafeinterp.h"
 
 #include "util/fstring.h"
-#include "util/objfactory.h"
 
 #include "visx/sound.h"
 

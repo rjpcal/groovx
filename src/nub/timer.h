@@ -32,9 +32,10 @@
 #ifndef TIMER_H_DEFINED
 #define TIMER_H_DEFINED
 
-#include "util/scheduler.h"
+#include "nub/scheduler.h"
+#include "nub/signal.h"
+
 #include "util/sharedptr.h"
-#include "util/signal.h"
 #include "util/stopwatch.h"
 
 namespace Nub

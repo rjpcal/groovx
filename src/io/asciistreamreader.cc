@@ -39,11 +39,12 @@
 #include "io/readattribmap.h"
 #include "io/readobjectmap.h"
 
+#include "nub/ref.h"
+
 #include "util/cstrstream.h"
 #include "util/error.h"
 #include "util/fstring.h"
 #include "util/gzstreambuf.h"
-#include "util/ref.h"
 #include "util/sharedptr.h"
 #include "util/value.h"
 

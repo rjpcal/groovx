@@ -34,7 +34,7 @@
 
 #include "gfx/canvas.h"
 
-#include "util/volatileobject.h"
+#include "nub/volatileobject.h"
 
 class GlxOpts;
 class GlWindowInterface;

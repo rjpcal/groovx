@@ -34,7 +34,7 @@
 
 #include "mtx.h"
 
-#include "util/object.h"
+#include "nub/object.h"
 
 /// Adapter class for fitting mtx to the Nub::Object interface.
 class MtxObj : public mtx, public Nub::Object

@@ -42,6 +42,9 @@
 #include "io/tclprocwrapper.h"
 #include "io/writeutils.h"
 
+#include "nub/log.h"
+#include "nub/ref.h"
+
 #include "system/system.h"
 
 #include "tcl/tclmain.h"
@@ -50,8 +53,6 @@
 #include "util/error.h"
 #include "util/fstring.h"
 #include "util/iter.h"
-#include "util/log.h"
-#include "util/ref.h"
 
 #include "visx/tlistutils.h"
 

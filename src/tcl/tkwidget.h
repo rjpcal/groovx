@@ -32,8 +32,8 @@
 #ifndef TKWIDGET_H_DEFINED
 #define TKWIDGET_H_DEFINED
 
-#include "util/object.h"
-#include "util/signal.h"
+#include "nub/object.h"
+#include "nub/signal.h"
 
 struct Tcl_Interp;
 

@@ -32,9 +32,9 @@
 #ifndef SIGNAL_H_DEFINED
 #define SIGNAL_H_DEFINED
 
-#include "util/object.h"
-#include "util/ref.h"
-#include "util/volatileobject.h"
+#include "nub/object.h"
+#include "nub/ref.h"
+#include "nub/volatileobject.h"
 
 namespace Nub
 {

@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// objmgr.h
+// objfactory.cc
 //
 // Copyright (c) 1999-2004
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Fri Apr 23 01:12:37 1999
+// created: Wed Jun 30 15:01:02 1999
 // commit: $Id$
 //
 // --------------------------------------------------------------------
@@ -29,33 +29,29 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBJMGR_H_DEFINED
-#define OBJMGR_H_DEFINED
+#ifndef OBJFACTORY_CC_DEFINED
+#define OBJFACTORY_CC_DEFINED
 
-#include "util/ref.h"
+#include "objfactory.h"
 
-namespace rutz
+namespace
 {
-  class fstring;
+  Nub::ObjFactory* instance = 0;
 }
 
-namespace Nub
+Nub::ObjFactory::ObjFactory() :
+  rutz::factory<SoftRef<Nub::Object> >() {}
+
+Nub::ObjFactory::~ObjFactory() {}
+
+Nub::ObjFactory& Nub::ObjFactory::theOne()
 {
-  namespace ObjMgr
-  {
-    /// Will not return 0; will throw an exception on failure.
-    Nub::SoftRef<Nub::Object> newObj(const char* type);
-
-    /// Will not return 0; will throw an exception on failure.
-    Nub::SoftRef<Nub::Object> newObj(const rutz::fstring& type);
-
-    template <class T, class S>
-    Nub::SoftRef<T> newTypedObj(S type)
+  if (instance == 0)
     {
-      return dynamicCast<T>(newObj(type));
+      instance = new ObjFactory;
     }
-  }
+  return *instance;
 }
 
-static const char vcid_objmgr_h[] = "$Header$";
-#endif // !OBJMGR_H_DEFINED
+static const char vcid_objfactory_cc[] = "$Header$";
+#endif // !OBJFACTORY_CC_DEFINED

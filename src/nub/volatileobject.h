@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// objfactory.h
+// volatileobject.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 2001-2004
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Sat Jun 26 23:40:06 1999
+// created: Tue Aug 21 17:16:15 2001
 // commit: $Id$
 //
 // --------------------------------------------------------------------
@@ -29,34 +29,28 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBJFACTORY_H_DEFINED
-#define OBJFACTORY_H_DEFINED
+#ifndef VOLATILEOBJECT_H_DEFINED
+#define VOLATILEOBJECT_H_DEFINED
 
-#include "util/factory.h"
-#include "util/object.h"
-#include "util/ref.h"
+#include "nub/object.h"
 
 namespace Nub
 {
-  class ObjFactory;
+  class VolatileObject;
 }
 
-/// Singleton wrapper for Factor<IO>.
-class Nub::ObjFactory
-  :
-  public rutz::factory<Nub::SoftRef<Nub::Object> >
+/// Subclass of Nub::Object for inherently un-shareable objects.
+/** This typically applies to objects who must control their own lifetime,
+    or whose lifetime is controlled by some external mechanism (such as a
+    windowing system, for example). */
+class Nub::VolatileObject : public virtual Nub::Object
 {
-protected:
-  /// Default constructor.
-  ObjFactory();
-
-  /// Virtual destructor.
-  virtual ~ObjFactory();
-
 public:
-  /// Return the singleton instance.
-  static ObjFactory& theOne();
+  VolatileObject();
+  virtual ~VolatileObject() throw();
+
+  void destroy();
 };
 
-static const char vcid_objfactory_h[] = "$Header$";
-#endif // !OBJFACTORY_H_DEFINED
+static const char vcid_volatileobject_h[] = "$Header$";
+#endif // !VOLATILEOBJECT_H_DEFINED

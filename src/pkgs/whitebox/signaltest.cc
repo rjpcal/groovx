@@ -32,9 +32,9 @@
 #ifndef SIGNALTEST_CC_DEFINED
 #define SIGNALTEST_CC_DEFINED
 
-#include "pkgs/testutils.h"
+#include "nub/signal.h"
 
-#include "util/signal.h"
+#include "pkgs/testutils.h"
 
 #include "util/trace.h"
 

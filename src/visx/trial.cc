@@ -32,7 +32,7 @@
 #ifndef TRIAL_CC_DEFINED
 #define TRIAL_CC_DEFINED
 
-#include "visx/trial.h"
+#include "trial.h"
 
 #include "gfx/canvas.h"
 #include "gfx/gxshapekit.h"
@@ -41,10 +41,11 @@
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
+#include "nub/log.h"
+#include "nub/ref.h"
+
 #include "util/fstring.h"
 #include "util/iter.h"
-#include "util/log.h"
-#include "util/ref.h"
 #include "util/scopedptr.h"
 
 #include "visx/response.h"

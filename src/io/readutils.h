@@ -32,10 +32,11 @@
 #ifndef READUTILS_H_DEFINED
 #define READUTILS_H_DEFINED
 
-#include "util/error.h"
-#include "util/ref.h"    // for dynamicCast
-
 #include "io/reader.h"
+
+#include "nub/ref.h"    // for dynamicCast
+
+#include "util/error.h"
 
 namespace IO
 {

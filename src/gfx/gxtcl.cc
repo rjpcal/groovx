@@ -60,6 +60,8 @@
 
 #include "io/fieldpkg.h"
 
+#include "nub/objfactory.h"
+
 #include "tcl/itertcl.h"
 #include "tcl/objpkg.h"
 #include "tcl/tcllistobj.h"
@@ -69,7 +71,6 @@
 #include "tcl/tracertcl.h"
 
 #include "util/error.h"
-#include "util/objfactory.h"
 
 #include "util/trace.h"
 

@@ -41,14 +41,15 @@
 #include "io/writer.h"
 #include "io/writeutils.h"
 
+#include "nub/log.h"
+#include "nub/ref.h"
+
 #include "tcl/tclmain.h"
 #include "tcl/tcltimerscheduler.h"
 
 #include "util/algo.h"
 #include "util/error.h"
 #include "util/iter.h"
-#include "util/log.h"
-#include "util/ref.h"
 #include "util/sharedptr.h"
 
 #include "visx/trial.h"

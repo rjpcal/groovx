@@ -34,7 +34,7 @@
 
 #include "gfx/gxnode.h"
 
-#include "util/ref.h"
+#include "nub/ref.h"
 
 namespace Gfx
 {

@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// volatileobject.h
+// objmgr.h
 //
-// Copyright (c) 2001-2004
+// Copyright (c) 1999-2004
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Tue Aug 21 17:16:15 2001
+// created: Fri Apr 23 01:12:37 1999
 // commit: $Id$
 //
 // --------------------------------------------------------------------
@@ -29,28 +29,33 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef VOLATILEOBJECT_H_DEFINED
-#define VOLATILEOBJECT_H_DEFINED
+#ifndef OBJMGR_H_DEFINED
+#define OBJMGR_H_DEFINED
 
-#include "util/object.h"
+#include "nub/ref.h"
+
+namespace rutz
+{
+  class fstring;
+}
 
 namespace Nub
 {
-  class VolatileObject;
+  namespace ObjMgr
+  {
+    /// Will not return 0; will throw an exception on failure.
+    Nub::SoftRef<Nub::Object> newObj(const char* type);
+
+    /// Will not return 0; will throw an exception on failure.
+    Nub::SoftRef<Nub::Object> newObj(const rutz::fstring& type);
+
+    template <class T, class S>
+    Nub::SoftRef<T> newTypedObj(S type)
+    {
+      return dynamicCast<T>(newObj(type));
+    }
+  }
 }
 
-/// Subclass of Nub::Object for inherently un-shareable objects.
-/** This typically applies to objects who must control their own lifetime,
-    or whose lifetime is controlled by some external mechanism (such as a
-    windowing system, for example). */
-class Nub::VolatileObject : public virtual Nub::Object
-{
-public:
-  VolatileObject();
-  virtual ~VolatileObject() throw();
-
-  void destroy();
-};
-
-static const char vcid_volatileobject_h[] = "$Header$";
-#endif // !VOLATILEOBJECT_H_DEFINED
+static const char vcid_objmgr_h[] = "$Header$";
+#endif // !OBJMGR_H_DEFINED

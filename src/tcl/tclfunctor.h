@@ -32,12 +32,13 @@
 #ifndef TCLFUNCTOR_H_DEFINED
 #define TCLFUNCTOR_H_DEFINED
 
+#include "nub/ref.h"
+
 #include "tcl/tclconvert.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tclveccmd.h"
 
 #include "util/functors.h"
-#include "util/ref.h"
 #include "util/sharedptr.h"
 
 namespace rutz

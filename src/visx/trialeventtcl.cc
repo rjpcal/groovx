@@ -34,11 +34,11 @@
 
 #include "io/outputfile.h"
 
+#include "nub/objfactory.h"
+
 #include "tcl/itertcl.h"
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
-
-#include "util/objfactory.h"
 
 #include "visx/trialevent.h"
 

@@ -35,8 +35,8 @@
 #include "io/io.h"
 #include "io/tclprocwrapper.h"
 
-#include "util/ref.h"
-#include "util/timer.h"
+#include "nub/ref.h"
+#include "nub/timer.h"
 
 #include <vector>
 

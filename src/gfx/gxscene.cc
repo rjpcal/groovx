@@ -34,9 +34,10 @@
 
 #include "gxscene.h"
 
+#include "nub/scheduler.h"
+
 #include "tcl/tcltimerscheduler.h"
 
-#include "util/scheduler.h"
 #include "util/sharedptr.h"
 
 #include "util/trace.h"

@@ -32,10 +32,11 @@
 #ifndef SIGNAL_CC_DEFINED
 #define SIGNAL_CC_DEFINED
 
-#include "util/signal.h"
+#include "signal.h"
+
+#include "nub/ref.h"
 
 #include "util/demangle.h"
-#include "util/ref.h"
 
 #include <list>
 #include <typeinfo>

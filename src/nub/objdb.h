@@ -32,10 +32,11 @@
 #ifndef OBJDB_H_DEFINED
 #define OBJDB_H_DEFINED
 
+#include "nub/ref.h"
+#include "nub/uid.h"
+
 #include "util/error.h"
 #include "util/iter.h"
-#include "util/ref.h"
-#include "util/uid.h"
 
 namespace Nub
 {

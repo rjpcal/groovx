@@ -32,9 +32,9 @@
 #ifndef WRITEUTILS_H_DEFINED
 #define WRITEUTILS_H_DEFINED
 
-#include "util/ref.h"
-
 #include "io/writer.h"
+
+#include "nub/ref.h"
 
 #include "util/debug.h"
 DBG_REGISTER

@@ -38,8 +38,9 @@
 #include "gx/pbm.h"
 #include "gx/pngparser.h"
 
+#include "nub/log.h"
+
 #include "util/error.h"
-#include "util/log.h"
 #include "util/pipe.h"
 
 #include <cctype>

@@ -34,13 +34,14 @@
 
 #include "pkgs/mtx/mtxobj.h"
 
+#include "nub/object.h"
+#include "nub/objfactory.h"
+#include "nub/ref.h"
+
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 
 #include "util/error.h"
-#include "util/object.h"
-#include "util/objfactory.h"
-#include "util/ref.h"
 
 #include "util/trace.h"
 

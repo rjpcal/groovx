@@ -32,7 +32,8 @@
 #ifndef OBJPKG_H_DEFINED
 #define OBJPKG_H_DEFINED
 
-#include "util/objfactory.h"
+#include "nub/objfactory.h"
+
 #include "util/sharedptr.h"
 
 namespace rutz

@@ -32,7 +32,7 @@
 #ifndef READOBJECTMAP_H_DEFINED
 #define READOBJECTMAP_H_DEFINED
 
-#include "util/uid.h"
+#include "nub/uid.h"
 
 #include <map>
 
@@ -80,10 +80,11 @@ namespace IO
 
 #include "io/io.h"
 
+#include "nub/objmgr.h"
+#include "nub/ref.h"
+
 #include "util/error.h"
 #include "util/fstring.h"
-#include "util/objmgr.h"
-#include "util/ref.h"
 
 inline
 IO::ObjectMap::ObjectMap() : itsMap() {}

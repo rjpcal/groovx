@@ -32,12 +32,13 @@
 #ifndef TCLTIMERTEST_CC_DEFINED
 #define TCLTIMERTEST_CC_DEFINED
 
+#include "nub/timer.h"
+
 #include "pkgs/testutils.h"
 
 #include "tcl/tcltimerscheduler.h"
 
 #include "util/sharedptr.h"
-#include "util/timer.h"
 
 #include <cstdlib> // for abs()
 #include <tcl.h>

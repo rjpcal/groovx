@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// objfactory.cc
+// objmgr.cc
 //
 // Copyright (c) 1999-2004
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Wed Jun 30 15:01:02 1999
+// created: Fri Apr 23 01:13:16 1999
 // commit: $Id$
 //
 // --------------------------------------------------------------------
@@ -29,29 +29,27 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBJFACTORY_CC_DEFINED
-#define OBJFACTORY_CC_DEFINED
+#ifndef OBJMGR_CC_DEFINED
+#define OBJMGR_CC_DEFINED
 
-#include "util/objfactory.h"
+#include "objmgr.h"
 
-namespace
+#include "nub/objfactory.h"
+
+#include "util/fstring.h"
+
+#include "util/trace.h"
+
+Nub::SoftRef<Nub::Object> Nub::ObjMgr::newObj(const char* type)
 {
-  Nub::ObjFactory* instance = 0;
+  return newObj(rutz::fstring(type));
 }
 
-Nub::ObjFactory::ObjFactory() :
-  rutz::factory<SoftRef<Nub::Object> >() {}
-
-Nub::ObjFactory::~ObjFactory() {}
-
-Nub::ObjFactory& Nub::ObjFactory::theOne()
+Nub::SoftRef<Nub::Object> Nub::ObjMgr::newObj(const rutz::fstring& type)
 {
-  if (instance == 0)
-    {
-      instance = new ObjFactory;
-    }
-  return *instance;
+DOTRACE("Nub::ObjMgr::newObj(const fstring&)");
+  return SoftRef<Object>(ObjFactory::theOne().new_checked_object(type));
 }
 
-static const char vcid_objfactory_cc[] = "$Header$";
-#endif // !OBJFACTORY_CC_DEFINED
+static const char vcid_objmgr_cc[] = "$Header$";
+#endif // !OBJMGR_CC_DEFINED

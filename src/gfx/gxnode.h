@@ -34,7 +34,7 @@
 
 #include "io/io.h"
 
-#include "util/signal.h"
+#include "nub/signal.h"
 
 namespace rutz
 {

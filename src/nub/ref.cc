@@ -32,10 +32,11 @@
 #ifndef REF_CC_DEFINED
 #define REF_CC_DEFINED
 
-#include "util/ref.h"
+#include "ref.h"
+
+#include "nub/objdb.h"
 
 #include "util/error.h"
-#include "util/objdb.h"
 #include "util/demangle.h"
 
 bool Nub::Detail::isValidId(Nub::UID id) throw()

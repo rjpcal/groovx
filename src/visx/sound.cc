@@ -38,8 +38,9 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+#include "nub/ref.h"
+
 #include "util/error.h"
-#include "util/ref.h"
 
 #if defined(HAVE_ALIB_H)
 #  include "visx/hpsound.h"

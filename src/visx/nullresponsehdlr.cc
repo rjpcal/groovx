@@ -32,11 +32,11 @@
 #ifndef NULLRESPONSEHDLR_CC_DEFINED
 #define NULLRESPONSEHDLR_CC_DEFINED
 
-#include "visx/nullresponsehdlr.h"
-
 #include "gfx/toglet.h"
 
-#include "util/ref.h"
+#include "nub/ref.h"
+
+#include "visx/nullresponsehdlr.h"
 
 #include "util/trace.h"
 

@@ -36,10 +36,10 @@
 
 #include "gfx/gxnode.h"
 
+#include "nub/objfactory.h"
+
 #include "tcl/itertcl.h"
 #include "tcl/tracertcl.h"
-
-#include "util/objfactory.h"
 
 #include "visx/response.h"
 #include "visx/responsehandler.h"

@@ -37,10 +37,11 @@
 #include "gfx/gxemptynode.h"
 #include "gfx/gxnode.h"
 
-#include "util/ref.h"
+#include "nub/ref.h"
+#include "nub/timer.h"
+#include "nub/volatileobject.h"
+
 #include "util/sharedptr.h"
-#include "util/timer.h"
-#include "util/volatileobject.h"
 
 namespace Nub
 {

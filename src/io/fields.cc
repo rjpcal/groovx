@@ -37,9 +37,10 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+#include "nub/signal.h"
+
 #include "util/error.h"
 #include "util/iter.h"
-#include "util/signal.h"
 
 #include <map>
 

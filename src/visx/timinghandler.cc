@@ -32,15 +32,15 @@
 #ifndef TIMINGHANDLER_CC_DEFINED
 #define TIMINGHANDLER_CC_DEFINED
 
-#include "visx/timinghandler.h"
-
-#include "visx/trialevent.h"
+#include "timinghandler.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include "util/ref.h"
+#include "nub/ref.h"
+
+#include "visx/trialevent.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
