@@ -2,7 +2,7 @@
 //
 // expttcl.cc
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Mon Mar  8 03:18:40 1999

@@ -2,7 +2,7 @@
 //
 // reader.cc
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Mon Jun  7 12:47:00 1999

@@ -2,7 +2,7 @@
 //
 // testutils.h
 //
-// Copyright (c) 2001-2004
+// Copyright (c) 2001-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Mon Sep 10 18:57:59 2001

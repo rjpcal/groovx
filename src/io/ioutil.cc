@@ -2,7 +2,7 @@
 //
 // ioutil.cc
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Fri Jun 11 21:43:28 1999

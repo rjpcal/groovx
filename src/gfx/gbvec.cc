@@ -2,7 +2,7 @@
 //
 // gbvec.cc
 //
-// Copyright (c) 2000-2004
+// Copyright (c) 2000-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Nov 16 00:11:19 2000

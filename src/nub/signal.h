@@ -2,7 +2,7 @@
 //
 // signal.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue May 25 18:29:04 1999

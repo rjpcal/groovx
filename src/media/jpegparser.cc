@@ -2,7 +2,7 @@
 //
 // jpegparser.cc
 //
-// Copyright (c) 2002-2004
+// Copyright (c) 2002-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Mon Nov 11 15:16:06 2002

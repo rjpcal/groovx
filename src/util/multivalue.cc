@@ -2,7 +2,7 @@
 //
 // multivalue.cc
 //
-// Copyright (c) 2001-2004
+// Copyright (c) 2001-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Wed Aug 22 16:58:56 2001

@@ -2,7 +2,7 @@
 //
 // gabor.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Wed Oct  6 10:45:58 1999

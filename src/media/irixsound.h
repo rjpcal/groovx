@@ -2,7 +2,7 @@
 //
 // irixsound.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Oct 14 11:23:12 1999

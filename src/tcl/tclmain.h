@@ -2,7 +2,7 @@
 //
 // tclmain.h
 //
-// Copyright (c) 2002-2004
+// Copyright (c) 2002-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Mon Jul 22 16:32:01 2002

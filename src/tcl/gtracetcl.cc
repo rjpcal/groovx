@@ -2,7 +2,7 @@
 //
 // gtracetcl.cc
 //
-// Copyright (c) 2002-2004
+// Copyright (c) 2002-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Mon Jan 21 12:52:51 2002

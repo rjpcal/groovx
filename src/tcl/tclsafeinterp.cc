@@ -2,7 +2,7 @@
 //
 // tclsafeinterp.cc
 //
-// Copyright (c) 2000-2004
+// Copyright (c) 2000-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Wed Oct 11 10:27:35 2000

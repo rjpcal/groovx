@@ -2,7 +2,7 @@
 //
 // glxwrapper.h
 //
-// Copyright (c) 2002-2004
+// Copyright (c) 2002-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Sat Aug  3 16:38:03 2002

@@ -2,7 +2,7 @@
 //
 // traits.h
 //
-// Copyright (c) 2001-2004
+// Copyright (c) 2001-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Fri May 18 16:13:27 2001

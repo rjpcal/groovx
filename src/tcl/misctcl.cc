@@ -2,7 +2,7 @@
 //
 // misctcl.cc
 //
-// Copyright (c) 1998-2004
+// Copyright (c) 1998-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Mon Nov  2 08:00:00 1998

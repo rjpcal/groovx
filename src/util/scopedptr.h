@@ -2,7 +2,7 @@
 //
 // scopedptr.h
 //
-// Copyright (c) 2004-2004
+// Copyright (c) 2004-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Fri Oct 15 14:51:04 2004

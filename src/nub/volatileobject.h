@@ -2,7 +2,7 @@
 //
 // volatileobject.h
 //
-// Copyright (c) 2001-2004
+// Copyright (c) 2001-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue Aug 21 17:16:15 2001

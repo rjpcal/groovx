@@ -2,7 +2,7 @@
 //
 // object.cc
 //
-// Copyright (c) 2001-2004
+// Copyright (c) 2001-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue Jun  5 10:26:14 2001

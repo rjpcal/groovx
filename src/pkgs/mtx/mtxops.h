@@ -2,7 +2,8 @@
 //
 // mtxops.h
 //
-// Copyright (c) 2002-2004 Rob Peters <rjpeters at klab dot caltech dot edu>
+// Copyright (c) 2002-2005
+// Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Sat Mar  2 18:34:12 2002
 // commit: $Id$

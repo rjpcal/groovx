@@ -2,7 +2,7 @@
 //
 // gbcolor.h
 //
-// Copyright (c) 2000-2004
+// Copyright (c) 2000-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Sat Dec  2 13:09:31 2000

@@ -2,7 +2,7 @@
 //
 // objdb.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Sun Nov 21 00:26:29 1999

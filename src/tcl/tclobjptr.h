@@ -2,7 +2,7 @@
 //
 // tclobjptr.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue May 11 13:44:19 1999

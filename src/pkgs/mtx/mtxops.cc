@@ -2,7 +2,8 @@
 //
 // mtxops.cc
 //
-// Copyright (c) 2002-2004 Rob Peters <rjpeters at klab dot caltech dot edu>
+// Copyright (c) 2002-2005
+// Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Mon Mar  4 11:13:05 2002
 // commit: $Id$

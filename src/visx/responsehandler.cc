@@ -2,7 +2,7 @@
 //
 // responsehandler.cc
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue May 18 16:21:09 1999

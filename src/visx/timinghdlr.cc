@@ -2,7 +2,7 @@
 //
 // timinghdlr.cc
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Mon Jun 21 13:09:57 1999

@@ -2,7 +2,7 @@
 //
 // signal.cc
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue May 25 18:39:27 1999

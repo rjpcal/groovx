@@ -2,7 +2,7 @@
 //
 // soundtcl.cc
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue Apr 13 14:09:59 1999

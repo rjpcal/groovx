@@ -2,7 +2,7 @@
 //
 // maskhatch.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Sep 23 15:49:58 1999

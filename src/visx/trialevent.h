@@ -2,7 +2,7 @@
 //
 // trialevent.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Fri Jun 25 12:45:05 1999

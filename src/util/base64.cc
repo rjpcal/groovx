@@ -2,7 +2,7 @@
 //
 // base64.cc
 //
-// Copyright (c) 2004-2004
+// Copyright (c) 2004-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Fri Oct  8 13:44:09 2004

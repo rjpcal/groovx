@@ -2,7 +2,7 @@
 //
 // bytearray.h
 //
-// Copyright (c) 2004-2004
+// Copyright (c) 2004-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Fri Oct  8 16:43:32 2004

@@ -2,7 +2,7 @@
 //
 // gxnode.h
 //
-// Copyright (c) 2000-2004
+// Copyright (c) 2000-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Wed Nov  1 18:26:45 2000

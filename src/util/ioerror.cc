@@ -2,7 +2,7 @@
 //
 // ioerror.cc
 //
-// Copyright (c) 2001-2004
+// Copyright (c) 2001-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Wed Sep 12 21:43:15 2001

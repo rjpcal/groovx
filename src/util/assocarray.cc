@@ -2,7 +2,7 @@
 //
 // assocarray.cc
 //
-// Copyright (c) 2004-2004
+// Copyright (c) 2004-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Oct 14 18:42:05 2004

@@ -2,7 +2,7 @@
 //
 // morphyface.cc
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Wed Sep  8 15:38:42 1999

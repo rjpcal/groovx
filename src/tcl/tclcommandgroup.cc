@@ -2,7 +2,7 @@
 //
 // tclcommandgroup.cc
 //
-// Copyright (c) 2004-2004
+// Copyright (c) 2004-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Wed Jun  9 09:45:36 2004

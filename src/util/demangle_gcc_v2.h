@@ -2,7 +2,7 @@
 //
 // demangle_gcc_v2.h
 //
-// Copyright (c) 2002-2004
+// Copyright (c) 2002-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue Jun 19 16:58:19 2001 (as gcc_v2_demangle.h)

@@ -2,7 +2,7 @@
 //
 // mappedfile.h
 //
-// Copyright (c) 2004-2004
+// Copyright (c) 2004-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Fri Oct  8 13:50:14 2004

@@ -2,7 +2,7 @@
 //
 // block.cc
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Sat Jun 26 12:29:34 1999

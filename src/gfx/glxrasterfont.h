@@ -2,7 +2,7 @@
 //
 // glxrasterfont.h
 //
-// Copyright (c) 2004-2004
+// Copyright (c) 2004-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue Jul 20 20:09:41 2004

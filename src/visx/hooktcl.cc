@@ -2,7 +2,7 @@
 //
 // hooktcl.cc
 //
-// Copyright (c) 2000-2004
+// Copyright (c) 2000-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Oct  5 13:51:43 2000

@@ -2,7 +2,7 @@
 //
 // bmapdata.cc
 //
-// Copyright (c) 2000-2004
+// Copyright (c) 2000-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Jan 20 00:37:03 2000

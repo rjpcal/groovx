@@ -2,7 +2,7 @@
 //
 // gxdrawstyle.h
 //
-// Copyright (c) 2001-2004
+// Copyright (c) 2001-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Wed Aug 29 10:16:30 2001

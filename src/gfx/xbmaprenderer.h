@@ -2,7 +2,7 @@
 //
 // xbmaprenderer.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Wed Dec  1 17:19:23 1999

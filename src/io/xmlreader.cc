@@ -2,7 +2,7 @@
 //
 // xmlreader.cc
 //
-// Copyright (c) 2003-2004
+// Copyright (c) 2003-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Fri Jun 20 16:09:33 2003

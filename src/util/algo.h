@@ -2,7 +2,7 @@
 //
 // algo.h
 //
-// Copyright (c) 2001-2004
+// Copyright (c) 2001-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Sun Jul 22 23:31:48 2001

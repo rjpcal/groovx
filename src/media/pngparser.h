@@ -2,7 +2,7 @@
 //
 // pngparser.h
 //
-// Copyright (c) 2002-2004
+// Copyright (c) 2002-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Wed Apr 24 20:04:52 2002

@@ -2,7 +2,7 @@
 //
 // iolegacy.cc
 //
-// Copyright (c) 2000-2004
+// Copyright (c) 2000-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Wed Sep 27 08:40:04 2000

@@ -2,7 +2,7 @@
 //
 // base64.h
 //
-// Copyright (c) 2004-2004
+// Copyright (c) 2004-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Fri Oct  8 13:44:03 2004

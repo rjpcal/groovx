@@ -2,7 +2,7 @@
 //
 // pbm.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue Jun 15 16:41:06 1999

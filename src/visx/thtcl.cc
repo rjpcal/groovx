@@ -2,7 +2,7 @@
 //
 // thtcl.cc
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Wed Jun  9 20:39:46 1999

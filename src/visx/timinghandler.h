@@ -2,7 +2,7 @@
 //
 // timinghandler.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Wed May 19 10:56:20 1999

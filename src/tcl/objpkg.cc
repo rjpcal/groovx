@@ -2,7 +2,7 @@
 //
 // objpkg.cc
 //
-// Copyright (c) 2002-2004
+// Copyright (c) 2002-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Fri Nov 22 17:06:50 2002

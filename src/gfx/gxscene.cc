@@ -2,7 +2,7 @@
 //
 // gxscene.cc
 //
-// Copyright (c) 2002-2004
+// Copyright (c) 2002-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Sat Nov 23 17:42:51 2002

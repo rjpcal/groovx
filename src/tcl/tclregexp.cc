@@ -2,7 +2,7 @@
 //
 // tclregexp.cc
 //
-// Copyright (c) 2001-2004
+// Copyright (c) 2001-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Mon Jul 16 13:09:12 2001

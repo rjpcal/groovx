@@ -2,7 +2,7 @@
 //
 // sound.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Jul  8 11:43:07 1999

@@ -2,7 +2,7 @@
 //
 // quicktimesound.h
 //
-// Copyright (c) 2002-2004
+// Copyright (c) 2002-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Mon May 19 07:38:09 2003

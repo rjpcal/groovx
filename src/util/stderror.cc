@@ -2,7 +2,7 @@
 //
 // stderror.cc
 //
-// Copyright (c) 2003-2004
+// Copyright (c) 2003-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Sat May 24 13:02:28 2003

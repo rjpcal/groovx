@@ -2,7 +2,7 @@
 //
 // aglwrapper.h
 //
-// Copyright (c) 2004-2004
+// Copyright (c) 2004-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue Jul 20 10:18:14 2004

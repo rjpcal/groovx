@@ -2,7 +2,7 @@
 //
 // gxdisk.cc
 //
-// Copyright (c) 2002-2004
+// Copyright (c) 2002-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue Nov 26 18:44:29 2002

@@ -2,7 +2,7 @@
 //
 // xmlwriter.cc
 //
-// Copyright (c) 2003-2004
+// Copyright (c) 2003-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Jun 19 18:26:48 2003

@@ -2,7 +2,7 @@
 //
 // ref.h
 //
-// Copyright (c) 2000-2004
+// Copyright (c) 2000-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Oct 26 17:50:59 2000

@@ -2,7 +2,7 @@
 //
 // tkwidget.cc
 //
-// Copyright (c) 2001-2004
+// Copyright (c) 2001-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Fri Jun 15 17:05:12 2001

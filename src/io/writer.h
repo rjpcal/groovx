@@ -2,7 +2,7 @@
 //
 // writer.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Mon Jun  7 12:49:49 1999

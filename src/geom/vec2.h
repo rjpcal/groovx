@@ -2,7 +2,7 @@
 //
 // point.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Jan 28 12:54:13 1999

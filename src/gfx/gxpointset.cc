@@ -2,7 +2,7 @@
 //
 // gxpointset.cc
 //
-// Copyright (c) 2002-2004
+// Copyright (c) 2002-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Fri Jul  5 12:46:27 2002

@@ -2,7 +2,7 @@
 //
 // hpsound.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue Oct 12 13:03:47 1999

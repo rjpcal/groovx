@@ -2,7 +2,7 @@
 //
 // tclprocwrapper.cc
 //
-// Copyright (c) 2002-2004
+// Copyright (c) 2002-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Wed Jan 30 11:47:10 2002

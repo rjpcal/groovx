@@ -2,7 +2,7 @@
 //
 // time.cc
 //
-// Copyright (c) 2002-2004
+// Copyright (c) 2002-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Nov  7 16:58:26 2002

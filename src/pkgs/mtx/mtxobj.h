@@ -2,7 +2,7 @@
 //
 // mtxobj.h
 //
-// Copyright (c) 2001-2004
+// Copyright (c) 2001-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue Jul 10 13:07:53 2001

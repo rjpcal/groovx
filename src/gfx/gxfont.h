@@ -2,7 +2,7 @@
 //
 // gxfont.h
 //
-// Copyright (c) 2002-2004
+// Copyright (c) 2002-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue Nov 12 18:34:57 2002

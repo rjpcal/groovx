@@ -2,7 +2,7 @@
 //
 // asciistreamwriter.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Mon Jun  7 13:05:56 1999

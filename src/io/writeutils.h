@@ -2,7 +2,7 @@
 //
 // writeutils.h
 //
-// Copyright (c) 1999-2004
+// Copyright (c) 1999-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue Nov 16 14:18:36 1999

@@ -2,7 +2,7 @@
 //
 // linestrip.cc
 //
-// Copyright (c) 2004-2004
+// Copyright (c) 2004-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Thu Jun  3 17:03:05 2004

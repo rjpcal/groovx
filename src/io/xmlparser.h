@@ -2,7 +2,7 @@
 //
 // xmlparser.h
 //
-// Copyright (c) 2004-2004
+// Copyright (c) 2004-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Tue May 25 10:29:24 2004
