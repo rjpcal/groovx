@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:20:09 2001
-// written: Mon Jun 24 12:30:36 2002
+// written: Tue Jun 25 14:40:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -762,7 +762,7 @@ DOTRACE("Gfx::PSCanvas::rotate");
   itsImpl->rotate(angle_in_degrees);
 }
 
-void Gfx::PSCanvas::transform(const Gfx::Txform& tx)
+void Gfx::PSCanvas::transform(const Gfx::Txform& /*tx*/)
 {
 DOTRACE("Gfx::PSCanvas::transform");
   itsImpl->raiseError("transform() operation not supported");
