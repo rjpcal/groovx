@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Tue Dec  7 19:17:56 1999
+// written: Thu Dec 16 11:52:16 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,19 +39,34 @@ class TclItemPkg;
  **/
 ///////////////////////////////////////////////////////////////////////
 
+class VecGetterBaseCmd : public virtual TclCmd {
+public:
+  VecGetterBaseCmd(TclItemPkg* pkg, const char* cmd_name,
+						 const char* usage, int item_argn);
+
+  virtual void invoke();
+
+protected:
+  virtual void doReturnValForItem(void* item) = 0;
+  virtual void doAppendValForItem(void* item) = 0;
+
+private:
+  TclItemPkg* itsPkg;
+  int itsItemArgn;
+};
+
 template <class ValType>
-class TVecGetterCmd : public virtual TclCmd {
+class TVecGetterCmd : public VecGetterBaseCmd {
 public:
   TVecGetterCmd(TclItemPkg* pkg, const char* cmd_name, Getter<ValType>* getter,
                 const char* usage, int item_argn);
 
 protected:
-  virtual void invoke();
+  virtual void doReturnValForItem(void* item);
+  virtual void doAppendValForItem(void* item);
 
 private:
-  TclItemPkg* itsPkg;
   auto_ptr< Getter<ValType> > itsGetter;
-  int itsItemArgn;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -62,20 +77,37 @@ private:
  **/
 ///////////////////////////////////////////////////////////////////////
 
+class VecSetterBaseCmd : public virtual TclCmd {
+public:
+  VecSetterBaseCmd(TclItemPkg* pkg, const char* cmd_name,
+						 const char* usage, int item_argn);
+
+  virtual void invoke();
+
+protected:
+  virtual void* getValVec(int val_argn, size_t& num_vals) = 0;
+  virtual void setValForItem(void* item, void* val_vec, size_t valn) = 0;
+  virtual void destroyValVec(void* val_vec) = 0;
+
+private:
+  TclItemPkg* itsPkg;
+  int itsItemArgn;
+  int itsValArgn;
+};
+
 template <class T>
-class TVecSetterCmd : public virtual TclCmd {
+class TVecSetterCmd : public VecSetterBaseCmd {
 public:
   TVecSetterCmd(TclItemPkg* pkg, const char* cmd_name, Setter<T>* setter,
                 const char* usage, int item_argn);
 
 protected:
-  virtual void invoke();
+  virtual void* getValVec(int val_argn, size_t& num_vals);
+  virtual void setValForItem(void* item, void* val_vec, size_t valn);
+  virtual void destroyValVec(void* val_vec);
 
 private:
-  TclItemPkg* itsPkg;
   auto_ptr< Setter<T> > itsSetter;
-  int itsItemArgn;
-  int itsValArgn;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -91,8 +123,6 @@ class TVecAttribCmd : public TVecGetterCmd<T>, public TVecSetterCmd<T> {
 public:
   TVecAttribCmd(TclItemPkg* pkg, const char* cmd_name, Attrib<T>* attrib,
                 const char* usage, int item_argn);
-
-  ~TVecAttribCmd();
 
 protected:
   virtual void invoke();
