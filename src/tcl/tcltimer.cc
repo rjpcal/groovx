@@ -45,7 +45,17 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-Tcl::TimerSchedulerToken::~TimerSchedulerToken() {}
+Tcl::TimerSchedulerToken::TimerSchedulerToken(Tcl_TimerToken tok)
+  : itsToken(tok)
+{
+DOTRACE("Tcl::TimerSchedulerToken::TimerSchedulerToken");
+}
+
+Tcl::TimerSchedulerToken::~TimerSchedulerToken()
+{
+DOTRACE("Tcl::TimerSchedulerToken::~TimerSchedulerToken");
+  Tcl_DeleteTimerHandler(itsToken);
+}
 
 Tcl::TimerScheduler::TimerScheduler()
 {
@@ -57,13 +67,11 @@ Tcl::TimerScheduler::schedule(int msec, void (*callback)(void*),
                               void* clientdata)
 {
 DOTRACE("Tcl::TimerScheduler::schedule");
-  shared_ptr<Tcl::TimerSchedulerToken> result
-    (new Tcl::TimerSchedulerToken);
-
-  result->itsToken =
+  Tcl_TimerToken tok =
     Tcl_CreateTimerHandler(msec, callback, clientdata);
 
-  return result;
+  return shared_ptr<Tcl::TimerSchedulerToken>
+    (new Tcl::TimerSchedulerToken(tok));
 }
 
 Tcl::Timer::Timer(unsigned int msec, bool repeat) :
@@ -116,9 +124,6 @@ DOTRACE("Tcl::Timer::schedule");
 void Tcl::Timer::cancel()
 {
 DOTRACE("Tcl::Timer::cancel");
-
-  if (itsToken.get() != 0)
-    Tcl_DeleteTimerHandler(itsToken->itsToken);
 
   itsToken.reset(0);
 }

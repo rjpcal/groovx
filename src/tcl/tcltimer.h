@@ -52,8 +52,10 @@ namespace Tcl
 class Tcl::TimerSchedulerToken
 {
 public:
+  TimerSchedulerToken(Tcl_TimerToken tok);
   virtual ~TimerSchedulerToken();
 
+private:
   Tcl_TimerToken itsToken;
 };
 
