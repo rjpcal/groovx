@@ -38,13 +38,13 @@ proc testStringifyCmd { packagename classname item_argn {item_id -1} } {
 		  "} {$usage}
 		  eval ::test $testname {"error from negative id"} {"
 				$cmdname -1
-		  "} {"${cmdname}: attempted to access invalid object.*$"}
+		  "} {"${cmdname}: signed/unsigned conversion failed.*$"}
 		  eval ::test $testname {"error from too large id"} {"
 				$cmdname 10000
 		  "} {"${cmdname}: attempted to access invalid object.*$"}
 		  eval ::test $testname {"error from non-integral id"} {"
 				$cmdname 1.5
-		  "} {"expected integer but got \"1\.5\""}
+		  "} {"expected long value but got \"1\.5\""}
 
 		  if { $item_id >= 0 } {
 				eval ::test $testname {"normal use"} {"
@@ -87,13 +87,13 @@ proc testDestringifyCmd { packagename classname item_argn {item_id -1} } {
 		  "} {$usage}
 		  eval ::test $testname {"error from negative id"} {"
 		      $cmdname -1 junk
-		  "} {"${cmdname}: attempted to access invalid object.*$"}
+		  "} {"${cmdname}: signed/unsigned conversion failed.*$"}
 		  eval ::test $testname {"error from too large id"} {"
 		      $cmdname 10000 junk
 		  "} {"${cmdname}: attempted to access invalid object.*$"}
 		  eval ::test $testname {"error from non-integral id"} {"
 				$cmdname 1.5 junk
-		  "} {"expected integer but got \"1\.5\""}
+		  "} {"expected long value but got \"1\.5\""}
 
 		  if { $item_id >= 0 } {
 				eval ::test $testname {"normal use"} {"
@@ -145,13 +145,13 @@ proc testWriteCmd { packagename classname item_argn {item_id -1} } {
 		  "} {$usage}
 		  eval ::test $testname {"error from negative id"} {"
 				$cmdname -1
-		  "} {"${cmdname}: attempted to access invalid object.*$"}
+		  "} {"${cmdname}: signed/unsigned conversion failed.*$"}
 		  eval ::test $testname {"error from too large id"} {"
 				$cmdname 10000
 		  "} {"${cmdname}: attempted to access invalid object.*$"}
 		  eval ::test $testname {"error from non-integral id"} {"
 				$cmdname 1.5
-		  "} {"expected integer but got \"1\.5\""}
+		  "} {"expected long value but got \"1\.5\""}
 
 		  if { $item_id >= 0 } {
 				eval ::test $testname {"normal use"} {"
@@ -194,13 +194,13 @@ proc testReadCmd { packagename classname item_argn {item_id -1} } {
 		  "} {$usage}
 		  eval ::test $testname {"error from negative id"} {"
 		      $readcmd -1 junk
-		  "} {"${readcmd}: attempted to access invalid object.*$"}
+		  "} {"${readcmd}: signed/unsigned conversion failed.*$"}
 		  eval ::test $testname {"error from too large id"} {"
 		      $readcmd 10000 junk
 		  "} {"${readcmd}: attempted to access invalid object.*$"}
 		  eval ::test $testname {"error from non-integral id"} {"
 				$readcmd 1.5 junk
-		  "} {"expected integer but got \"1\.5\""}
+		  "} {"expected long value but got \"1\.5\""}
 
 		  if { $item_id >= 0 } {
 				eval ::test $testname {"normal use"} {"

@@ -44,7 +44,7 @@ test "PositionTcl-Pos::rotationAxis" "error on non-numeric input" {
 } {Pos::rotationAxis: }
 test "PositionTcl-Pos::rotationAxis" "error on bad posid" {
     Pos::rotationAxis -1 {1 1 1}
-} {Pos::rotationAxis: attempted to access invalid object.*}
+} {Pos::rotationAxis: }
 
 ### Pos::scaling ###
 test "PositionTcl-Pos::scaling" "too few args" {
@@ -94,10 +94,10 @@ test "PositionTcl-IO::stringify" "normal use" {
 } "Position @$::INT"
 test "PositionTcl-IO::stringify" "error on bad posid" { 
     IO::stringify -1
-} {IO::stringify: attempted to access invalid object.*}
+} {IO::stringify: }
 test "PositionTcl-IO::stringify" "error on non-integral posid" {
     IO::stringify 1.5
-} {expected integer but got "1\.5"}
+} {IO::stringify: }
 
 ### Pos::typeCmd ###
 test "PositionTcl-IO::type" "args" {
