@@ -3,7 +3,7 @@
 // fishtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 12:00:53 1999
-// written: Wed Mar 15 11:11:56 2000
+// written: Wed Mar 15 11:59:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ public:
 	 Tcl::AbstractListItemPkg<Fish, ObjList>(interp, ObjList::theObjList(),
 														  "Fish", "$Revision$")
   {
-	 addTracing(this, Fish::tracer);
+	 Tcl::addTracing(this, Fish::tracer);
 
 	 addCommand( new FishCmd(interp, "Fish::Fish") );
 	 declareAllProperties();

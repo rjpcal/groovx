@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Mar 15 11:13:28 2000
+// written: Wed Mar 15 12:00:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ public:
 	 Tcl::ListItemPkg<EventResponseHdlr, RhList>(interp, RhList::theRhList(),
 																"EventRh", "$Revision$")
   {
-	 addTracing(this, EventResponseHdlr::tracer);
+	 Tcl::addTracing(this, EventResponseHdlr::tracer);
 
 	 declareCAttrib("useFeedback",
 						 &EventResponseHdlr::getUseFeedback,

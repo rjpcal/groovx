@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Wed Mar 15 11:11:59 2000
+// written: Wed Mar 15 12:00:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ public:
 	 Tcl::AbstractListItemPkg<GrObj, ObjList>(interp, ObjList::theObjList(),
 															"GrObj", "$Revision$")
   {
-	 addTracing(this, GrObj::tracer);
+	 Tcl::addTracing(this, GrObj::tracer);
 
 	 addCommand( new BoundingBoxCmd(this, "GrObj::boundingBox") );
 	 addCommand( new Tcl::VecActionCmd(this, "GrObj::update",
