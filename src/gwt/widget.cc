@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Sat Nov 23 14:26:56 2002
+// written: Mon Nov 25 18:24:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,30 +94,30 @@ void GWT::Widget::removeKeyListeners()
 
 void GWT::Widget::dispatchButtonEvent(unsigned int button, int x, int y)
 {
+  ButtonPressEvent ev = { button, x, y };
+
   for (Impl::Buttons::iterator
          itr = itsImpl->itsButtonListeners.begin(),
          end = itsImpl->itsButtonListeners.end();
        itr != end;
        ++itr)
     {
-      EventStatus status = (*itr)->onButtonPress(button, x, y);
-      if (status == HANDLED)
-        break;
+      (*itr)->onButtonPress(ev);
     }
 }
 
 void GWT::Widget::dispatchKeyEvent(const char* keys, int x, int y,
                                    bool controlPressed)
 {
+  KeyPressEvent ev = { keys, x, y, controlPressed };
+
   for (Impl::Keys::iterator
          itr = itsImpl->itsKeyListeners.begin(),
          end = itsImpl->itsKeyListeners.end();
        itr != end;
        ++itr)
     {
-      EventStatus status = (*itr)->onKeyPress(keys, x, y, controlPressed);
-      if (status == HANDLED)
-        break;
+      (*itr)->onKeyPress(ev);
     }
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Mon Nov 25 15:42:43 2002
+// written: Mon Nov 25 18:22:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,21 @@ namespace GWT
   class KeyListener;
 
   enum EventStatus { HANDLED, NOT_HANDLED };
+
+  struct ButtonPressEvent
+  {
+    unsigned int button;
+    int x;
+    int y;
+  };
+
+  struct KeyPressEvent
+  {
+    const char* keys;
+    int x;
+    int y;
+    bool controlPressed;
+  };
 }
 
 namespace Util
@@ -39,15 +54,14 @@ namespace Util
 class GWT::ButtonListener : public Util::Object
 {
 public:
-  virtual EventStatus onButtonPress(unsigned int button, int x, int y) = 0;
+  virtual void onButtonPress(const ButtonPressEvent& ev) = 0;
 };
 
 /// Listener for key-press events.
 class GWT::KeyListener : public Util::Object
 {
 public:
-  virtual EventStatus onKeyPress(const char* keys, int x, int y,
-                                 bool controlPressed) = 0;
+  virtual void onKeyPress(const KeyPressEvent& ev) = 0;
 };
 
 

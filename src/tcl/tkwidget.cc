@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Sat Nov 23 17:30:37 2002
+// written: Mon Nov 25 18:27:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,15 +36,11 @@ class DbgButtonListener : public GWT::ButtonListener
 public:
   static DbgButtonListener* make() { return new DbgButtonListener; }
 
-  virtual GWT::EventStatus onButtonPress(unsigned int button, int x, int y)
+  virtual void onButtonPress(const GWT::ButtonPressEvent& ev)
   {
     std::cerr << "ButtonPress: "
-              << "button " << button
-              << " x " << x << " y " << y << std::endl;
-
-    if (button < 3)
-      return GWT::NOT_HANDLED;
-    return GWT::HANDLED;
+              << "button " << ev.button
+              << " x " << ev.x << " y " << ev.y << std::endl;
   }
 };
 
@@ -53,15 +49,12 @@ class DbgKeyListener : public GWT::KeyListener
 public:
   static DbgKeyListener* make() { return new DbgKeyListener; }
 
-  virtual GWT::EventStatus onKeyPress(const char* keys, int x, int y,
-                                      bool controlPressed)
+  virtual void onKeyPress(const GWT::KeyPressEvent& ev)
   {
     std::cerr << "KeyPress: "
-              << "keys " << keys
-              << " control " << controlPressed
-              << " x " << x << " y " << y << std::endl;
-
-    return GWT::HANDLED;
+              << "keys " << ev.keys
+              << " control " << ev.controlPressed
+              << " x " << ev.x << " y " << ev.y << std::endl;
   }
 };
 
