@@ -166,7 +166,7 @@ proc testDrawCmd { objname } {
             set pix1 \[pixelCheckSum\]
             see $this(objid)
             set pix2 \[pixelCheckSum\]
-            Togl::setVisible false
+            -> \[Toglet::current\] setVisible false
             return \"\[expr \$pix1 == \$pix2\] \$pix1 \$pix2\"
          "} {"^0 "}
     }

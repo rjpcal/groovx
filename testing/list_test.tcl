@@ -17,7 +17,7 @@ namespace eval List {
 variable TEST_DEFINED 1
 
 proc purgeAll {} {
-    Togl::setVisible 0
+    -> [Toglet::current] setVisible 0
     ObjDb::clear
 }
 

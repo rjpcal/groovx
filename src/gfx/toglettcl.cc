@@ -106,16 +106,9 @@ DOTRACE("Toglet_Init");
 
   Toglet::make();
 
-  pkg->eval("proc clearscreen {} { Togl::clearscreen }\n"
-            "proc see {id} { Togl::see $id }\n"
-            "proc undraw {} { Togl::undraw }\n"
-            "\n"
-            "foreach cmd [info commands ::Toglet::*] {\n"
-            "  namespace eval ::Togl {\n"
-            "    proc [namespace tail $cmd] {args} \" eval $cmd \\[Toglet::current\\] \\$args \""
-            "  }\n"
-            "}\n"
-            "namespace eval ::Togl { namespace export * }"
+  pkg->eval("proc ::clearscreen {} { Toglet::clearscreen [Toglet::current] }\n"
+            "proc ::see {id} { Toglet::see [Toglet::current] $id }\n"
+            "proc ::undraw {} { Toglet::undraw [Toglet::current] }\n"
             );
 
   PKG_RETURN;

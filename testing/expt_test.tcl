@@ -62,7 +62,7 @@ test "ExptDriver::loadASW" "too many args" {
     ExptDriver::loadASW a b c
 } {wrong \# args: should be}
 test "ExptDriver::loadASW" "fMRI sample" {
-    Togl::setVisible false
+    -> [Toglet::current] setVisible false
     ObjDb::clear
     set expt [new ExptDriver]
     set files {expt215302Aug1999.asw.gz expt215012Jan2000.asw.gz expt232423May2000.asw.gz}

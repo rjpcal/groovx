@@ -11,51 +11,51 @@ package require Toglet
 package require Face
 package require Tlist
 
-### Togl::undrawCmd ###
-test "Toglet-Togl::undraw" "too many args" {
-    Togl::undraw junk
+### Toglet::undrawCmd ###
+test "Toglet::undraw" "too many args" {
+    ::undraw junk
 } {wrong \# args: should be}
-test "Toglet-Togl::undraw" "normal use" {
+test "Toglet::undraw" "normal use" {
     set f [Obj::new Face]
     glIndexi 1; glColor 1.0 1.0 1.0 1.0
     glClearIndex 0; glClearColor 0.0 0.0 0.0 1.0
-    clearscreen
-    Togl::see $f
-    Togl::undraw
+    ::clearscreen
+    ::see $f
+    ::undraw
     set sum [pixelCheckSum]
     return "[expr $sum == 0] $sum"
 } {^1 }
-test "Toglet-Togl::undraw" "no error" {} $BLANK $no_test
+test "Toglet::undraw" "no error" {} $BLANK $no_test
 
-### Togl::clearscreenCmd ###
-test "Toglet-Togl::clearscreen" "too many args" {
-    Togl::clearscreen junk
+### Toglet::clearscreenCmd ###
+test "Toglet::clearscreen" "too many args" {
+    ::clearscreen junk
 } {wrong \# args: should be}
-test "Toglet-Togl::clearscreen" "normal use" {
+test "Toglet::clearscreen" "normal use" {
     glClearIndex 0; glClearColor 0.0 0.0 0.0 1.0
-    Togl::clearscreen
+    ::clearscreen
     set p [pixelCheckSum]
     return "[expr $p == 0] $p"
 } {^1}
 
-### Togl::setVisibleCmd ###
-test "Toglet-Togl::setVisible" "too few args" {
-    Togl::setVisible
+### Toglet::setVisibleCmd ###
+test "Toglet::setVisible" "too few args" {
+    Toglet::setVisible
 } {wrong \# args: should be}
-test "Toglet-Togl::setVisible" "too many args" {
-    Togl::setVisible j u
+test "Toglet::setVisible" "too many args" {
+    Toglet::setVisible j u n
 } {wrong \# args: should be}
-test "Toglet-Togl::setVisible" "normal set off" {
-    catch {Togl::setVisible 0}
+test "Toglet::setVisible" "normal set off" {
+    catch {Toglet::setVisible [Toglet::current] 0}
 } {^0$}
-test "Toglet-Togl::setVisible" "normal set on" {
-    catch {Togl::setVisible 1}
+test "Toglet::setVisible" "normal set on" {
+    catch {Toglet::setVisible [Toglet::current] 1}
 } {^0$}
-test "Toglet-Togl::setVisible" "unusual set on" {
-    catch {Togl::setVisible -1}
+test "Toglet::setVisible" "unusual set on" {
+    catch {Toglet::setVisible [Toglet::current] -1}
 } {^0$}
-test "Toglet-Togl::setVisible" "error on non-numeric input" {
-    Togl::setVisible junk
+test "Toglet::setVisible" "error on non-numeric input" {
+    Toglet::setVisible [Toglet::current] junk
 } {expected boolean value but got "junk"}
 
 ### pixelsPerUnitCmd ###
