@@ -12,7 +12,7 @@ import profile
 
 def go(n):
     for i in range(n):
-        b = cppdeps.DepBuilder(os.path.normpath(sys.argv[1]))
+        b = cppdeps.DepBuilder([os.path.normpath(sys.argv[1])])
         b.buildDepTree()
         b.printMakeDeps(sys.stdout)
 
