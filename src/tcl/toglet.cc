@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Sat Nov 23 17:52:41 2002
+// written: Sat Nov 23 18:14:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,9 +53,14 @@ public:
   Toglet* owner;
   const Tk_Window tkWin;
   Util::SoftRef<GLCanvas> canvas;
+  GxScene* scene;
 
   Impl(Toglet* p);
-  ~Impl() throw() { canvas->destroy(); }
+  ~Impl() throw()
+  {
+    scene->destroy();
+    canvas->destroy();
+  }
 
   static Window cClassCreateProc(Tk_Window tkwin,
                                  Window parent,
@@ -80,7 +85,8 @@ Tk_ClassProcs toglProcs =
 Toglet::Impl::Impl(Toglet* p) :
   owner(p),
   tkWin(owner->tkWin()),
-  canvas(GLCanvas::make(Tk_Display(tkWin)))
+  canvas(GLCanvas::make(Tk_Display(tkWin))),
+  scene(new GxScene(canvas))
 {
 DOTRACE("Toglet::Impl::Impl");
 
@@ -193,8 +199,7 @@ namespace
 
 Toglet::Toglet(bool pack) :
   Tcl::TkWidget(Tcl::Main::interp(), "Toglet", widgetName(id())),
-  rep(new Impl(this)),
-  itsScene(new GxScene(rep->canvas))
+  rep(new Impl(this))
 {
 DOTRACE("Toglet::Toglet");
 
@@ -209,7 +214,6 @@ DOTRACE("Toglet::~Toglet");
 
   dbgEvalNL(3, (void*)this);
 
-  itsScene->destroy();
   delete rep;
 }
 
@@ -234,8 +238,13 @@ void Toglet::makeCurrent() const
 void Toglet::displayCallback()
 {
 DOTRACE("Toglet::displayCallback");
-
   fullRender();
+}
+
+void Toglet::reshapeCallback(int width, int height)
+{
+DOTRACE("Toglet::reshapeCallback");
+  rep->scene->reshape(width, height);
 }
 
 void Toglet::swapBuffers()
@@ -245,77 +254,70 @@ DOTRACE("Toglet::swapBuffers");
   rep->canvas->flushOutput();
 }
 
+GxScene& Toglet::scene()
+{
+DOTRACE("Toglet::scene");
+  return *(rep->scene);
+}
+
 void Toglet::render()
 {
-  itsScene->render();
+  rep->scene->render();
 }
 
 void Toglet::fullRender()
 {
-  itsScene->fullRender();
+  rep->scene->fullRender();
 }
 
 void Toglet::clearscreen()
 {
-  itsScene->clearscreen();
+  rep->scene->clearscreen();
 }
 
 void Toglet::fullClearscreen()
 {
-  itsScene->fullClearscreen();
-}
-
-void Toglet::reshapeCallback(int width, int height)
-{
-  itsScene->reshape(width, height);
+  rep->scene->fullClearscreen();
 }
 
 void Toglet::undraw()
 {
-  itsScene->undraw();
+  rep->scene->undraw();
 }
 
 void Toglet::setVisibility(bool vis)
 {
-DOTRACE("Toglet::setVisibility");
-  itsScene->setVisibility(vis);
+  rep->scene->setVisibility(vis);
 }
 
 void Toglet::setHold(bool hold_on)
 {
-DOTRACE("Toglet::setHold");
-  itsScene->setHold(hold_on);
+  rep->scene->setHold(hold_on);
 }
 
 void Toglet::allowRefresh(bool allow)
 {
-DOTRACE("Toglet::allowRefresh");
-  itsScene->allowRefresh(allow);
+  rep->scene->allowRefresh(allow);
 }
 
 const Util::Ref<GxCamera>& Toglet::getCamera() const
 {
-DOTRACE("Toglet::getCamera");
-
-  return itsScene->getCamera();
+  return rep->scene->getCamera();
 }
 
 void Toglet::setCamera(const Util::Ref<GxCamera>& cam)
 {
-DOTRACE("Toglet::setCamera");
-
-  itsScene->setCamera(cam);
+  rep->scene->setCamera(cam);
 }
 
 void Toglet::setDrawable(const Ref<GxNode>& node)
 {
-DOTRACE("Toglet::setDrawable");
-  itsScene->setDrawable(node);
+  rep->scene->setDrawable(node);
 }
 
 void Toglet::animate(unsigned int framesPerSecond)
 {
-  itsScene->animate(framesPerSecond);
+  rep->scene->animate(framesPerSecond);
 }
 
 Toglet::Color Toglet::queryColor(unsigned int color_index) const

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 23 17:42:51 2002
-// written: Sat Nov 23 17:54:15 2002
+// written: Sat Nov 23 18:04:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,6 +36,7 @@ GxScene::GxScene(Util::SoftRef<Gfx::Canvas> canvas) :
   itsTimer(100, true),
   slotNodeChanged(Util::Slot::make(this, &GxScene::onNodeChange))
 {
+DOTRACE("GxScene::GxScene");
   itsTimer.sigTimeOut.connect(this, &GxScene::fullRender);
   itsCamera->sigNodeChanged.connect(slotNodeChanged);
 }
@@ -91,6 +92,7 @@ DOTRACE("GxScene::undraw");
 
 void GxScene::clearscreen()
 {
+DOTRACE("GxScene::clearscreen");
   itsCanvas->clearColorBuffer();
   setDrawable(Util::Ref<GxNode>(GxEmptyNode::make()));
   itsUndrawNode = Util::Ref<GxNode>(GxEmptyNode::make());
@@ -99,12 +101,14 @@ void GxScene::clearscreen()
 
 void GxScene::fullClearscreen()
 {
+DOTRACE("GxScene::fullClearscreen");
   clearscreen();
   itsCanvas->flushOutput();
 }
 
 void GxScene::setVisibility(bool val)
 {
+DOTRACE("GxScene::setVisibility");
   isItVisible = val;
   if ( !isItVisible )
     {
@@ -114,6 +118,7 @@ void GxScene::setVisibility(bool val)
 
 void GxScene::setCamera(const Ref<GxCamera>& cam)
 {
+DOTRACE("GxScene::setCamera");
   itsCamera->sigNodeChanged.disconnect(slotNodeChanged);
 
   itsCamera = cam;
@@ -125,6 +130,7 @@ void GxScene::setCamera(const Ref<GxCamera>& cam)
 
 void GxScene::setDrawable(const Ref<GxNode>& node)
 {
+DOTRACE("GxScene::setDrawable");
   itsDrawNode->sigNodeChanged.disconnect(slotNodeChanged);
 
   itsDrawNode = node;
@@ -134,18 +140,21 @@ void GxScene::setDrawable(const Ref<GxNode>& node)
 
 void GxScene::flushChanges()
 {
+DOTRACE("GxScene::flushChanges");
   if (isItRefreshing && !isItRefreshed)
     fullRender();
 }
 
 void GxScene::onNodeChange()
 {
+DOTRACE("GxScene::onNodeChange");
   isItRefreshed = false;
   flushChanges();
 }
 
 void GxScene::reshape(int width, int height)
 {
+DOTRACE("GxScene::reshape");
   itsCamera->reshape(width, height);
 }
 
