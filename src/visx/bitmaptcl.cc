@@ -3,7 +3,7 @@
 // bitmaptcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:43:45 1999
-// written: Wed Mar 15 11:11:40 2000
+// written: Thu Mar 23 12:43:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,15 +16,12 @@
 #include "xbitmap.h"
 #include "iofactory.h"
 #include "objlist.h"
-#include "system.h"
 
 #include "util/strings.h"
 
 #include "tcl/listitempkg.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tclobjlock.h"
-
-#include <tcl.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -67,64 +64,21 @@ protected:
 
 class BitmapTcl::LoadPbmGzCmd : public Tcl::TclItemCmd<Bitmap> {
 public:
-  LoadPbmGzCmd(Tcl::TclItemPkg* pkg, const char* cmd_name, int method=0) :
+  LoadPbmGzCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
 	 Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
-							  "bitmap_id filename(without .gz extension)"
-							  "?temp_filename=.temp.pbm?",
-							  3, 4),
-	 itsMethod(method)
+							  "bitmap_id filename(without .gz extension)",
+							  3, 3)
 	 {}
 protected:
   virtual void invoke() {
 	 Bitmap* bm = getItem();
 	 const char* filename = getCstringFromArg(2);
-	 const char* tempfilename =
-		(objc() >= 4) ? getCstringFromArg(3) : ".temp.pbm";
-  
-	 dynamic_string gzname(filename);
-	 gzname += ".gz";
 
-	 if (itsMethod == 0) {
-		bm->loadPbmGzFile(gzname.c_str());
-	 }
-	 else {
-		fixed_string gzname_copy(gzname.c_str());
+	 dynamic_string gzname(filename); gzname += ".gz";
 
-		invokeUsingTempFile(bm, gzname_copy.data(), tempfilename);
-	 }
+	 bm->loadPbmFile(gzname.c_str());
   }
-
-private:
-  void invokeUsingTempFile(Bitmap* bm,
-									const char* gzname, const char* tempfilename);
-  
-  int itsMethod;
 };
-
-void BitmapTcl::LoadPbmGzCmd::invokeUsingTempFile(
-  Bitmap* bm, const char* gzname, const char* tempfilename
-) {
-DOTRACE("BitmapTcl::LoadPbmGzCmd::invokeUsingTempFile");
-  // Form a command to gunzip the file into a temp file
-  const char* argv[] = { "gunzip", "-c", gzname, ">", tempfilename, 0 };
-  int argc = 5;
-
-  // Open a channel to execute the command
-  Tcl_Channel chan = Tcl_OpenCommandChannel(interp(), argc, 
-														  const_cast<char**>(argv),
-														  0 /* no flags */);
-  if (chan == 0) { throw Tcl::TclError("error opening command channel"); }
-
-  int result = Tcl_Close(interp(), chan);
-  if (result != TCL_OK) { throw Tcl::TclError("error closing command channel"); }
-  
-  // Read the temp file
-  bm->loadPbmFile(tempfilename);
-
-  // Remove the temp file
-  result = System::theSystem().remove(tempfilename);
-  if (result != 0) { throw Tcl::TclError("error removing temp file"); }
-}
 
 //---------------------------------------------------------------------
 //
@@ -161,19 +115,9 @@ protected:
 	 Bitmap* bm = getItem();
 	 const char* filename = getCstringFromArg(2);
 
-	 // write the file
-	 bm->writePbmFile(filename);
+	 dynamic_string gzname(filename); gzname += ".gz";
 
-	 // gzip the file
-	 dynamic_string cmd = "exec gzip ";
-	 cmd += filename;
-
-	 fixed_string cmd_copy(cmd.c_str());
-	 int result = Tcl_Eval(interp(), cmd_copy.data());
-
-	 if (result != TCL_OK) {
-		throw Tcl::TclError("error gzip-ing file");
-	 }
+	 bm->writePbmFile(gzname.c_str());
   }
 };
 
@@ -234,8 +178,7 @@ public:
 															 "Bitmap", "1.1")
   {
 	 addCommand( new LoadPbmCmd(this, "Bitmap::loadPbm") );
-	 addCommand( new LoadPbmGzCmd(this, "Bitmap::loadPbmGz", 0) );
-	 addCommand( new LoadPbmGzCmd(this, "Bitmap::loadPbmGzAlt", 1) );
+	 addCommand( new LoadPbmGzCmd(this, "Bitmap::loadPbmGz") );
 	 addCommand( new WritePbmCmd(this, "Bitmap::writePbm") );
 	 addCommand( new WritePbmGzCmd(this, "Bitmap::writePbmGz") );
 	 addCommand( new GrabScreenRectCmd(this, "Bitmap::grabScreenRect") );
@@ -297,8 +240,7 @@ public:
 //
 //---------------------------------------------------------------------
 
-extern "C" Tcl_PackageInitProc Bitmap_Init;
-
+extern "C"
 int Bitmap_Init(Tcl_Interp* interp) {
 DOTRACE("Bitmap_Init");
 
