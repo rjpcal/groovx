@@ -34,6 +34,7 @@ namespace Util
 namespace Tcl
 {
   class Code;
+  class SafeInterp;
 }
 
 class Tcl::Code {
@@ -56,6 +57,8 @@ public:
   Code(Tcl_Obj* cmd_object, Util::ErrorHandler* errHandler);
 
   int invoke(Tcl_Interp* interp);
+
+  int invoke(Tcl::SafeInterp& interp);
 
 private:
   Tcl::ObjPtr itsCodeObj;

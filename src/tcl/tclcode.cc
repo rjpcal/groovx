@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:29:16 2001
-// written: Mon Jul 16 14:13:17 2001
+// written: Mon Jul 16 14:18:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "tcl/tclcode.h"
 
 #include "tcl/tclerror.h"
+#include "tcl/tclutil.h"
 
 #include "util/errorhandler.h"
 
@@ -90,6 +91,11 @@ int Tcl::Code::invoke(Tcl_Interp* interp)
     }
 
   return TCL_OK;
+}
+
+int Tcl::Code::invoke(Tcl::SafeInterp& interp)
+{
+  invoke(interp.intp());
 }
 
 static const char vcid_tclcode_cc[] = "$Header$";
