@@ -3,7 +3,7 @@
 // tclveccmds.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:16:22 1999
-// written: Tue Dec  7 13:04:05 1999
+// written: Tue Dec  7 16:34:06 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -132,6 +132,10 @@ DOTRACE("TVecSetterCmd<>::invoke");
 	 getSequenceFromArg(itsValArgn, back_inserter(vals), (T*) 0);
   }
 
+  if (vals.size() < 1) {
+	 throw TclError("the list of new values is empty");
+  }
+
   size_t max_valn = vals.size()-1;
   DebugEvalNL(max_valn);
 
@@ -166,6 +170,10 @@ void TVecSetterCmd<const string&>::invoke() {
   }
   else {
 	 getSequenceFromArg(itsValArgn, back_inserter(vals), (string*) 0);
+  }
+
+  if (vals.size() < 1) {
+	 throw TclError("the list of new values is empty");
   }
 
   size_t max_valn = vals.size()-1;
