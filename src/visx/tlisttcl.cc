@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Mon Oct 30 10:12:30 2000
+// written: Thu Nov  2 08:49:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,10 @@
 
 #include "application.h"
 #include "experiment.h"
-#include "grobj.h"
 #include "tlistutils.h"
 #include "trial.h"
+
+#include "gx/gxnode.h"
 
 #include "tcl/listpkg.h"
 #include "tcl/tclcmd.h"
@@ -119,7 +120,7 @@ protected:
 		  IdItem<TrialBase> trial(t, IdItem<TrialBase>::Insert());
 
 		  t->add(*itr, posid);
-		  MaybeIdItem<GrObj> obj(*itr);
+		  IdItem<GxNode> obj(*itr);
 		  t->setType(obj->getCategory());
 
 		  lappendVal(trial.id());
