@@ -207,7 +207,7 @@ proc testDestringifyCmd { objname } {
 
     eval ::test $testname {"error on bad input"} {"
         $destringify {this is a bunch of bs}
-    "} {"${destringify}: InputError: ${this(listname)}"}
+    "} {"${destringify}: InputError: couldn't read typename for ${this(listname)}"}
 }
 
 namespace export testList
