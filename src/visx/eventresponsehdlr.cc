@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Jan 30 10:21:50 2002
+// written: Wed Jan 30 11:32:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,12 +15,10 @@
 
 #include "visx/eventresponsehdlr.h"
 
-#include "visx/experiment.h"
 #include "visx/feedbackmap.h"
 #include "visx/grshapp.h"
 #include "visx/sound.h"
 #include "visx/response.h"
-#include "visx/responsemap.h"
 #include "visx/trialbase.h"
 
 #include "io/reader.h"
@@ -54,7 +52,7 @@ namespace
   {
     static int cmdCounter = 0;
 
-    fstring name = "__ERHPrivate::";
+    fstring name = "::__ERHPrivate::";
     name.append(stem);
     name.append(++cmdCounter);
     return name;
@@ -149,7 +147,7 @@ private:
   Impl& operator=(const Impl&);
 
 public:
-  Impl(EventResponseHdlr* owner, const char* input_response_map);
+  Impl(EventResponseHdlr* owner);
   ~Impl();
 
   class ActiveState;
@@ -219,17 +217,13 @@ public:
 
       Util::log( fstring("event_info: ", event_info) );
 
-      if (impl->itsResponseProc->isNoop())
-        {
-          theResponse.setVal(impl->itsResponseMap.valueFor(event_info));
-        }
-      else
+      theResponse.setVal(Response::INVALID_VALUE);
+
+      if ( !impl->itsResponseProc->isNoop() )
         {
           try {
             theResponse.setVal(impl->itsResponseProc->call<int>(event_info));
-          } catch (...) {
-            theResponse.setVal(Response::INVALID_VALUE);
-          }
+          } catch (...) {}
         }
 
       Util::log( fstring("response val: ", theResponse.val()) );
@@ -290,7 +284,6 @@ public:
 
   scoped_ptr<Tcl::Command> itsCmdCallback;
 
-  ResponseMap itsResponseMap;
   FeedbackMap itsFeedbackMap;
 
   fstring itsEventSequence;
@@ -318,14 +311,12 @@ Util::Tracer EventResponseHdlr::tracer;
 //
 ///////////////////////////////////////////////////////////////////////
 
-EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
-                              const char* input_response_map) :
+EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner) :
   itsOwner(owner),
   itsState(0),
   itsInterp(dynamic_cast<GrshApp&>(Application::theApp()).getInterp()),
   itsCmdCallback(Tcl::makeCmd(itsInterp.intp(), &handleResponseCallback,
                               uniqCmdName("handler").c_str(), "<private>")),
-  itsResponseMap(input_response_map),
   itsFeedbackMap(),
   itsEventSequence("<KeyPress>"),
   itsBindingSubstitution("%K"),
@@ -355,11 +346,12 @@ DOTRACE("EventResponseHdlr::Impl::readFrom");
 
   becomeInactive();
 
-  {
-    fstring rep;
-    reader->readValue("inputResponseMap", rep);
-    itsResponseMap.set(rep);
-  }
+  if (svid < 2)
+    {
+      fstring rmap;
+      reader->readValue("inputResponseMap", rmap);
+      itsOwner->setInputResponseMap(rmap);
+    }
 
   {
     fstring rep;
@@ -384,7 +376,6 @@ DOTRACE("EventResponseHdlr::Impl::writeTo");
   writer->ensureWriteVersionId("EventResponseHdlr", ERH_SERIAL_VERSION_ID, 2,
                                "Try grsh0.8a7");
 
-  writer->writeValue("inputResponseMap", itsResponseMap.rep());
   writer->writeValue("feedbackMap", itsFeedbackMap.rep());
   writer->writeValue("useFeedback", itsFeedbackMap.itsUseFeedback);
   writer->writeValue("eventSequence", itsEventSequence);
@@ -408,12 +399,7 @@ DOTRACE("EventResponseHdlr::make");
 
 EventResponseHdlr::EventResponseHdlr() :
   ResponseHandler(),
-  itsImpl(new Impl(this, ""))
-{}
-
-EventResponseHdlr::EventResponseHdlr(const char* input_response_map) :
-  ResponseHandler(),
-  itsImpl(new Impl(this, input_response_map))
+  itsImpl(new Impl(this))
 {}
 
 EventResponseHdlr::~EventResponseHdlr()
@@ -428,16 +414,22 @@ void EventResponseHdlr::readFrom(IO::Reader* reader)
 void EventResponseHdlr::writeTo(IO::Writer* writer) const
   { itsImpl->writeTo(writer); }
 
-const fstring& EventResponseHdlr::getInputResponseMap() const
-{
-DOTRACE("EventResponseHdlr::getInputResponseMap");
-  return itsImpl->itsResponseMap.rep();
-}
-
 void EventResponseHdlr::setInputResponseMap(const fstring& s)
 {
 DOTRACE("EventResponseHdlr::setInputResponseMap");
-  itsImpl->itsResponseMap.set(s);
+
+  fstring args("inp");
+
+  fstring body;
+  body.append("set map {").append(s).append("}\n");
+  body.append("foreach pair $map {\n"
+              "  foreach {rx val} $pair {\n"
+              "    if [regexp $rx $inp] { return $val }\n"
+              "  }\n"
+              "}\n"
+              "return -1\n");
+
+  setResponseProc(args, body);
 }
 
 bool EventResponseHdlr::getUseFeedback() const
