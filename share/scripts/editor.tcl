@@ -280,6 +280,16 @@ itcl::class Editor {
 		  ObjDb::saveObjects $filename no
 		  return [llength $objs]
 	 }
+
+	 public method saveBitmaps {basename} {
+		  set objs [$itsControls.editobjlist get 0 end]
+		  foreach obj $objs {
+				GrObj::renderMode $obj $GrObj::GL_BITMAP_CACHE
+				GrObj::saveBitmapCache $obj "${basename}${obj}.pbm"
+				GrObj::renderMode $obj $GrObj::DIRECT_RENDER
+		  }
+		  return [llength $objs]
+	 }
 }
 
 # get rid of the default widget
@@ -293,7 +303,7 @@ itcl::class Menuapp {
 	 private variable itsLoadObjDialog ""
 	 private variable itsLoadExptDialog ""
 	 private variable itsSaveObjDialog ""
-
+	 private variable itsSaveBitmapsDialog ""
 
 	 public method loadExpt {} {
 		  if { [string length $itsLoadExptDialog] == 0 } {
@@ -352,6 +362,25 @@ itcl::class Menuapp {
 		  }
 	 }
 
+	 public method saveBitmaps {} {
+		  if { [string length $itsSaveBitmapsDialog] == 0 } {
+				set itsSaveBitmapsDialog [iwidgets::fileselectiondialog \
+						  ${itsFrame}.sbmapd -title "Save bitmaps" \
+						  -fileson no \
+						  -modality application]
+
+				saveBitmaps
+		  } else {
+				if {[$itsSaveBitmapsDialog activate]} {
+					 set fname [$itsSaveBitmapsDialog get]
+					 set num [$itsEditor saveBitmaps $fname]
+					 set ::statusInfo "Saved $num bitmaps to '$fname*'."
+				} else {
+					 set ::statusInfo "Save cancelled."
+				}
+		  }
+	 }
+
 	 constructor {} {
 		  set itsFrame [frame .fr]
 		  set itsHelpEntry [entry .ef -textvariable statusInfo]
@@ -368,6 +397,9 @@ itcl::class Menuapp {
 					 command saveObjects -label {Save objects...} \
 								-helpstr {Save a set of objects} \
 								-command {[itcl::code $this saveObjects]}
+					 command saveBitmaps -label {Save bitmaps...} \
+								-helpstr {Save a set of objects as bitmaps...} \
+								-command {[itcl::code $this saveBitmaps]}
 					 separator sep1
 					 command exit -label Exit -command {exit} \
 								-helpstr {Quit application}
