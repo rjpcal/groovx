@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Mon Dec 11 14:29:48 2000
+// written: Mon Dec 11 15:39:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,9 +17,9 @@
 #include "trialbase.h"
 
 #include "io/iofactory.h"
+#include "io/ioptrlist.h"
 
 #include "tcl/ioitempkg.h"
-#include "tcl/listpkg.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tracertcl.h"
 
@@ -177,13 +177,11 @@ extern "C"
 int Block_Init(Tcl_Interp* interp) {
 DOTRACE("Block_Init");
 
-  Tcl::TclPkg* pkg1 = new BlockTcl::BlockPkg(interp);
-  Tcl::TclPkg* pkg2 =
-	 new Tcl::PtrListPkg<Block>(interp, "BlockList", "$Revision$");
+  Tcl::TclPkg* pkg = new BlockTcl::BlockPkg(interp);
 
   IO::IoFactory::theOne().registerCreatorFunc(&Block::make);
 
-  return pkg1->initedOk() ? pkg2->initStatus() : pkg1->initStatus();
+  return pkg->initStatus();
 }
 
 static const char vcid_blocktcl_cc[] = "$Header$";
