@@ -45,7 +45,7 @@ namespace rutz
   class array_value : public rutz::value
   {
   public:
-    array_value() : itsArray() {}
+    array_value() : m_array() {}
     array_value(const rutz::fstring& s) { set_string(s); }
     virtual ~array_value() {}
 
@@ -56,8 +56,8 @@ namespace rutz
 
     virtual void print_to(STD_IO::ostream& os) const
     {
-      for (unsigned int i = 0; i < itsArray.size(); ++i)
-        os << itsArray[i] << "   ";
+      for (unsigned int i = 0; i < m_array.size(); ++i)
+        os << m_array[i] << "   ";
     }
 
     virtual void scan_from(STD_IO::istream& is)
@@ -70,16 +70,16 @@ namespace rutz
           is >> val >> std::ws;
           newarray.push_back(val);
         }
-      itsArray.swap(newarray);
+      m_array.swap(newarray);
     }
 
-    unsigned int arraySize() const { return itsArray.size(); }
+    unsigned int array_size() const { return m_array.size(); }
 
-    T& arrayAt(unsigned int i)       { return itsArray[i]; }
-    const T& arrayAt(unsigned int i) const { return itsArray[i]; }
+    T& array_at(unsigned int i)       { return m_array[i]; }
+    const T& array_at(unsigned int i) const { return m_array[i]; }
 
   private:
-    std::vector<T> itsArray;
+    std::vector<T> m_array;
   };
 }
 

@@ -305,7 +305,7 @@ namespace
 
   const rutz::array_value<GbVec3<double> >& getArray() { return arraydata; }
 
-  unsigned int getArraySize() { return arraydata.arraySize(); }
+  unsigned int getArraySize() { return arraydata.array_size(); }
 
   void setArray(const rutz::array_value<GbVec3<double> >& a) { arraydata = a; }
 
