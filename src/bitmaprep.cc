@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Tue Feb  8 15:27:41 2000
+// written: Mon Mar  6 10:14:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,26 +13,74 @@
 
 #include "bitmaprep.h"
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <cctype>
-#include <cmath>					  // for abs
-
 #include "application.h"
+#include "bmapdata.h"
 #include "experiment.h"
 #include "bmaprenderer.h"
 #include "canvas.h"
-#include "error.h"
 #include "io.h"
 #include "pbm.h"
 #include "reader.h"
 #include "rect.h"
 #include "writer.h"
 
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <cctype>
+#include <cmath>					  // for abs
+#include <string>
+
 #define NO_TRACE
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
+
+///////////////////////////////////////////////////////////////////////
+//
+// File scope declarations
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace {
+  const string ioTag = "Bitmap";
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// BitmapRep::Impl class definition
+//
+///////////////////////////////////////////////////////////////////////
+
+class BitmapRep::Impl {
+public:
+  Impl(BmapRenderer* renderer) :
+	 itsRenderer(renderer)
+	 {}
+
+  Impl(BmapRenderer* renderer, const char* filename) :
+	 itsRenderer(renderer),
+	 itsFilename(filename)
+	 {}
+
+  BmapRenderer* itsRenderer;
+
+  string itsFilename;
+  double itsRasterX;
+  double itsRasterY;
+  double itsZoomX;
+  double itsZoomY;
+  bool itsUsingZoom;
+  bool itsContrastFlip;
+  bool itsVerticalFlip;
+
+  BmapData itsData;
+};
+
+///////////////////////////////////////////////////////////////////////
+//
+// PbmUpdater class definition
+//
+///////////////////////////////////////////////////////////////////////
 
 class PbmUpdater : public BmapData::UpdateFunc {
 public:
@@ -65,29 +113,40 @@ private:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// File scope declarations
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace {
-  const string ioTag = "Bitmap";
-}
-
-///////////////////////////////////////////////////////////////////////
-//
 // BitmapRep member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
+BitmapRep::BitmapRep(BmapRenderer* renderer) :
+  itsImpl(new Impl(renderer))
+{
+DOTRACE("BitmapRep::BitmapRep");
+  init();
+}
+
+BitmapRep::BitmapRep(BmapRenderer* renderer, const char* filename) :
+  itsImpl(new Impl(renderer, filename))
+{
+DOTRACE("BitmapRep::BitmapRep");
+  init();
+  loadPbmFile(filename);
+}
+
+BitmapRep::~BitmapRep() 
+{
+DOTRACE("BitmapRep::~BitmapRep");
+  delete itsImpl;
+}
+
 void BitmapRep::init() {
 DOTRACE("BitmapRep::init");
-  itsRasterX = itsRasterY = 0.0;
-  itsZoomX = itsZoomY = 1.0;
-  itsUsingZoom = false;
-  itsContrastFlip = false;
-  itsVerticalFlip = false;
+  itsImpl->itsRasterX = itsImpl->itsRasterY = 0.0;
+  itsImpl->itsZoomX = itsImpl->itsZoomY = 1.0;
+  itsImpl->itsUsingZoom = false;
+  itsImpl->itsContrastFlip = false;
+  itsImpl->itsVerticalFlip = false;
 
-  itsData.clear();
+  itsImpl->itsData.clear();
 }
 
 void BitmapRep::serialize(ostream& os, int flag) const {
@@ -95,12 +154,12 @@ DOTRACE("BitmapRep::serialize");
   char sep = ' ';
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
-  os << itsFilename << '\t';
-  os << itsRasterX << sep << itsRasterY << sep;
-  os << itsZoomX << sep << itsZoomY << sep;
-  os << itsUsingZoom << sep;
-  os << itsContrastFlip << sep;
-  os << itsVerticalFlip << endl;
+  os << itsImpl->itsFilename << '\t';
+  os << itsImpl->itsRasterX << sep << itsImpl->itsRasterY << sep;
+  os << itsImpl->itsZoomX << sep << itsImpl->itsZoomY << sep;
+  os << itsImpl->itsUsingZoom << sep;
+  os << itsImpl->itsContrastFlip << sep;
+  os << itsImpl->itsVerticalFlip << endl;
 
   if (os.fail()) throw OutputError(ioTag);
 }
@@ -110,28 +169,28 @@ DOTRACE("BitmapRep::deserialize");
   if (flag & IO::TYPENAME) { IO::readTypename(is, ioTag); }
 
   IO::eatWhitespace(is);
-  getline(is, itsFilename, '\t');
+  getline(is, itsImpl->itsFilename, '\t');
 
-  is >> itsRasterX >> itsRasterY;
-  is >> itsZoomX >> itsZoomY;
+  is >> itsImpl->itsRasterX >> itsImpl->itsRasterY;
+  is >> itsImpl->itsZoomX >> itsImpl->itsZoomY;
 
   int val;
   is >> val;
-  itsUsingZoom = bool(val);
+  itsImpl->itsUsingZoom = bool(val);
 
   is >> val;
-  itsContrastFlip = bool(val);
+  itsImpl->itsContrastFlip = bool(val);
 
   is >> val;
-  itsVerticalFlip = bool(val);
+  itsImpl->itsVerticalFlip = bool(val);
 
   if (is.fail()) throw InputError(ioTag);
 
-  if ( itsFilename.empty() ) {
+  if ( itsImpl->itsFilename.empty() ) {
 	 clearBytes();
   }
   else {
-	 queuePbmFile(itsFilename.c_str());
+	 queuePbmFile(itsImpl->itsFilename.c_str());
   }
 }
 
@@ -142,33 +201,33 @@ DOTRACE("BitmapRep::charCount");
 
 void BitmapRep::readFrom(Reader* reader) {
 DOTRACE("BitmapRep::readFrom");
-  reader->readValue("filename", itsFilename);
-  reader->readValue("rasterX", itsRasterX);
-  reader->readValue("rasterY", itsRasterY);
-  reader->readValue("zoomX", itsZoomX);
-  reader->readValue("zoomY", itsZoomY);
-  reader->readValue("usingZoom", itsUsingZoom);
-  reader->readValue("contrastFlip", itsContrastFlip);
-  reader->readValue("verticalFlip", itsVerticalFlip);
+  reader->readValue("filename", itsImpl->itsFilename);
+  reader->readValue("rasterX", itsImpl->itsRasterX);
+  reader->readValue("rasterY", itsImpl->itsRasterY);
+  reader->readValue("zoomX", itsImpl->itsZoomX);
+  reader->readValue("zoomY", itsImpl->itsZoomY);
+  reader->readValue("usingZoom", itsImpl->itsUsingZoom);
+  reader->readValue("contrastFlip", itsImpl->itsContrastFlip);
+  reader->readValue("verticalFlip", itsImpl->itsVerticalFlip);
 
-  if ( itsFilename.empty() ) {
+  if ( itsImpl->itsFilename.empty() ) {
 	 clearBytes();
   }
   else {
-	 queuePbmFile(itsFilename.c_str());
+	 queuePbmFile(itsImpl->itsFilename.c_str());
   }
 }
 
 void BitmapRep::writeTo(Writer* writer) const {
 DOTRACE("BitmapRep::writeTo");
-  writer->writeValue("filename", itsFilename);
-  writer->writeValue("rasterX", itsRasterX);
-  writer->writeValue("rasterY", itsRasterY);
-  writer->writeValue("zoomX", itsZoomX);
-  writer->writeValue("zoomY", itsZoomY);
-  writer->writeValue("usingZoom", itsUsingZoom);
-  writer->writeValue("contrastFlip", itsContrastFlip);
-  writer->writeValue("verticalFlip", itsVerticalFlip);
+  writer->writeValue("filename", itsImpl->itsFilename);
+  writer->writeValue("rasterX", itsImpl->itsRasterX);
+  writer->writeValue("rasterY", itsImpl->itsRasterY);
+  writer->writeValue("zoomX", itsImpl->itsZoomX);
+  writer->writeValue("zoomY", itsImpl->itsZoomY);
+  writer->writeValue("usingZoom", itsImpl->itsUsingZoom);
+  writer->writeValue("contrastFlip", itsImpl->itsContrastFlip);
+  writer->writeValue("verticalFlip", itsImpl->itsVerticalFlip);
 }
 
 /////////////
@@ -180,29 +239,29 @@ DOTRACE("BitmapRep::loadPbmFile(const char*)");
 
   queuePbmFile(filename);
 
-  itsData.updateIfNeeded();
+  itsImpl->itsData.updateIfNeeded();
 }
 
 void BitmapRep::queuePbmFile(const char* filename) {
 DOTRACE("BitmapRep::queuePbmFile");
 
   auto_ptr<BmapData::UpdateFunc> updater(new PbmUpdater(filename,
-																		  itsContrastFlip,
-																		  itsVerticalFlip));
+																		  itsImpl->itsContrastFlip,
+																		  itsImpl->itsVerticalFlip));
 
-  itsData.queueUpdate(updater);
+  itsImpl->itsData.queueUpdate(updater);
 
   // If the first character of the new filename is '.', then we assume
   // it is a temp file, and therefore we don't save this filename in
-  // itsFilename.
+  // itsImpl->itsFilename.
   if ( filename[0] != '.' ) {
-	 itsFilename = filename;
+	 itsImpl->itsFilename = filename;
   }
   else {
-	 itsFilename = "";
+	 itsImpl->itsFilename = "";
   }
 
-  itsRenderer->notifyBytesChanged();
+  itsImpl->itsRenderer->notifyBytesChanged();
 }
 
 void BitmapRep::loadPbmFile(istream& is) {
@@ -210,21 +269,21 @@ DOTRACE("BitmapRep::loadPbmFile(istream&)");
   // Create a Pbm object by reading pbm data from 'filename'.
   Pbm pbm(is);
 
-  // Grab ownership of the bitmap data from pbm into this object's itsBytes.
-  pbm.swapInto( this->itsData );
+  // Grab ownership of the bitmap data from pbm into this object's itsImpl->itsBytes.
+  pbm.swapInto( this->itsImpl->itsData );
 
-  itsFilename = "";
+  itsImpl->itsFilename = "";
 
-  if (itsContrastFlip) { doFlipContrast(); }
-  if (itsVerticalFlip) { doFlipVertical(); }
+  if (itsImpl->itsContrastFlip) { doFlipContrast(); }
+  if (itsImpl->itsVerticalFlip) { doFlipVertical(); }
 
-  itsRenderer->notifyBytesChanged();
+  itsImpl->itsRenderer->notifyBytesChanged();
 }
 
 void BitmapRep::writePbmFile(const char* filename) const {
 DOTRACE("BitmapRep::writePbmFile");
-  Pbm pbm(itsData.bytesVec(), itsData.width(), itsData.height(),
-			 itsData.bitsPerPixel());
+  Pbm pbm(itsImpl->itsData.bytesVec(), itsImpl->itsData.width(), itsImpl->itsData.height(),
+			 itsImpl->itsData.bitsPerPixel());
 
   pbm.write(filename);
 }
@@ -238,7 +297,7 @@ DOTRACE("BitmapRep::grabScreenRect");
   DebugEval(rect.left()); DebugEval(rect.right());
   DebugEval(rect.bottom()); DebugEval(rect.top());
 
-  itsFilename = "";
+  itsImpl->itsFilename = "";
 
   init();
 
@@ -248,9 +307,9 @@ DOTRACE("BitmapRep::grabScreenRect");
   glReadPixels(rect.left(), rect.bottom(), newData.width(), newData.height(),
 					GL_COLOR_INDEX, GL_BITMAP, newData.bytesPtr());
 
-  itsData.swap( newData );
+  itsImpl->itsData.swap( newData );
 
-  itsRenderer->notifyBytesChanged();
+  itsImpl->itsRenderer->notifyBytesChanged();
 }
 
 void BitmapRep::grabWorldRect(double left, double top,
@@ -270,23 +329,33 @@ DOTRACE("BitmapRep::grabWorldRect");
 void BitmapRep::flipContrast() {
 DOTRACE("BitmapRep::flipContrast");
 
-  // Toggle itsContrastFlip so we keep track of whether the number of
+  // Toggle itsImpl->itsContrastFlip so we keep track of whether the number of
   // flips has been even or odd.
-  itsContrastFlip = !itsContrastFlip;
+  itsImpl->itsContrastFlip = !itsImpl->itsContrastFlip;
 
-  itsData.flipContrast();
+  itsImpl->itsData.flipContrast();
 
-  itsRenderer->notifyBytesChanged();
+  itsImpl->itsRenderer->notifyBytesChanged();
+}
+
+void BitmapRep::doFlipContrast() {
+DOTRACE("BitmapRep::doFlipContrast");
+  itsImpl->itsData.flipVertical();
 }
 
 void BitmapRep::flipVertical() {
 DOTRACE("BitmapRep::flipVertical");
 
-  itsVerticalFlip = !itsVerticalFlip;
+  itsImpl->itsVerticalFlip = !itsImpl->itsVerticalFlip;
 
-  itsData.flipVertical();
+  itsImpl->itsData.flipVertical();
 
-  itsRenderer->notifyBytesChanged();
+  itsImpl->itsRenderer->notifyBytesChanged();
+}
+
+void BitmapRep::doFlipVertical() {
+DOTRACE("BitmapRep::doFlipVertical");
+  itsImpl->itsData.flipVertical();
 }
 
 void BitmapRep::center() {
@@ -296,9 +365,9 @@ DOTRACE("BitmapRep::center");
 
   Rect<int> screen_pos;
   screen_pos.left() = viewport[0];
-  screen_pos.right() = viewport[0] + itsData.width();
+  screen_pos.right() = viewport[0] + itsImpl->itsData.width();
   screen_pos.bottom() = viewport[1];
-  screen_pos.top() = viewport[1] + itsData.height();
+  screen_pos.top() = viewport[1] + itsImpl->itsData.height();
 
   Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
 
@@ -309,22 +378,22 @@ DOTRACE("BitmapRep::center");
 
   DebugEval(screen_width); DebugEvalNL(screen_height);
 
-  itsRasterX = -screen_width/2.0;
-  itsRasterY = -screen_height/2.0;
+  itsImpl->itsRasterX = -screen_width/2.0;
+  itsImpl->itsRasterY = -screen_height/2.0;
   
-  itsRasterX *= abs(itsZoomX);
-  itsRasterY *= abs(itsZoomY);
+  itsImpl->itsRasterX *= abs(itsImpl->itsZoomX);
+  itsImpl->itsRasterY *= abs(itsImpl->itsZoomY);
 }
 
 void BitmapRep::grRender(Canvas& canvas) const {
 DOTRACE("BitmapRep::grRender");
-  itsRenderer->doRender(canvas,
-								itsData.bytesPtr(),
-								itsRasterX, itsRasterY,
-								itsData.width(), itsData.height(),
-								itsData.bitsPerPixel(),
-								itsData.byteAlignment(),
-								itsZoomX, itsZoomY);
+  itsImpl->itsRenderer->doRender(canvas,
+								itsImpl->itsData.bytesPtr(),
+								itsImpl->itsRasterX, itsImpl->itsRasterY,
+								itsImpl->itsData.width(), itsImpl->itsData.height(),
+								itsImpl->itsData.bitsPerPixel(),
+								itsImpl->itsData.byteAlignment(),
+								itsImpl->itsZoomX, itsImpl->itsZoomY);
 }
 
 void BitmapRep::grUnRender(Canvas& canvas) const {
@@ -338,7 +407,7 @@ DOTRACE("BitmapRep::grUnRender");
   screen_pos.widenByStep(border_pixels + 1);
   screen_pos.heightenByStep(border_pixels + 1);
 
-  itsRenderer->doUndraw( canvas,
+  itsImpl->itsRenderer->doUndraw( canvas,
 								 screen_pos.left(),
 								 screen_pos.bottom(),
 								 screen_pos.width(),
@@ -356,25 +425,25 @@ DOTRACE("BitmapRep::grGetBoundingBox");
   border_pixels = 2;
 
   // Object coordinates for the lower left corner
-  bbox.left() = itsRasterX;
-  bbox.bottom() = itsRasterY;
+  bbox.left() = itsImpl->itsRasterX;
+  bbox.bottom() = itsImpl->itsRasterY;
 
   // Get screen coordinates for the lower left corner
   Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
 
   Point<int> screen_point =
-	 canvas->getScreenFromWorld(Point<double>(itsRasterX, itsRasterY));
+	 canvas->getScreenFromWorld(Point<double>(itsImpl->itsRasterX, itsImpl->itsRasterY));
 
-  if (itsZoomX < 0.0) {
-	 screen_point.x() += int(width()*itsZoomX);
+  if (itsImpl->itsZoomX < 0.0) {
+	 screen_point.x() += int(width()*itsImpl->itsZoomX);
   }
-  if (itsZoomY < 0.0) {
-	 screen_point.y() += int(height()*itsZoomY);
+  if (itsImpl->itsZoomY < 0.0) {
+	 screen_point.y() += int(height()*itsImpl->itsZoomY);
   }
 
   // Move the point to the upper right corner
-  screen_point += Point<double>(width()*abs(itsZoomX),
-										  height()*abs(itsZoomY));
+  screen_point += Point<double>(width()*abs(itsImpl->itsZoomX),
+										  height()*abs(itsImpl->itsZoomY));
 
   bbox.setTopRight(canvas->getWorldFromScreen(screen_point));
 }
@@ -384,29 +453,49 @@ DOTRACE("BitmapRep::grHasBoundingBox");
   return true;
 }
 
+int BitmapRep::byteCount() const {
+DOTRACE("BitmapRep::byteCount");
+  return itsImpl->itsData.byteCount();
+}
+
+int BitmapRep::bytesPerRow() const {
+DOTRACE("BitmapRep::bytesPerRow");
+  return itsImpl->itsData.bytesPerRow();
+}
+
+int BitmapRep::width() const {
+DOTRACE("BitmapRep::width");
+  return itsImpl->itsData.width();
+}
+
+int BitmapRep::height() const {
+DOTRACE("BitmapRep::height");
+  return itsImpl->itsData.height();
+}
+
 double BitmapRep::getRasterX() const {
 DOTRACE("BitmapRep::getRasterX");
-  return itsRasterX;
+  return itsImpl->itsRasterX;
 }
 
 double BitmapRep::getRasterY() const {
 DOTRACE("BitmapRep::getRasterY");
-  return itsRasterY;
+  return itsImpl->itsRasterY;
 }
 
 double BitmapRep::getZoomX() const {
 DOTRACE("BitmapRep::getZoomX");
-  return itsZoomX;
+  return itsImpl->itsZoomX;
 }
 
 double BitmapRep::getZoomY() const {
 DOTRACE("BitmapRep::getZoomY");
-  return itsZoomY;
+  return itsImpl->itsZoomY;
 }
 
 bool BitmapRep::getUsingZoom() const {
 DOTRACE("BitmapRep::getUsingZoom");
-  return itsUsingZoom; 
+  return itsImpl->itsUsingZoom; 
 }
 
 //////////////////
@@ -415,40 +504,40 @@ DOTRACE("BitmapRep::getUsingZoom");
 
 void BitmapRep::setRasterX(double val) {
 DOTRACE("BitmapRep::setRasterX");
-  itsRasterX = val;
+  itsImpl->itsRasterX = val;
 }
 
 void BitmapRep::setRasterY(double val) {
 DOTRACE("BitmapRep::setRasterY");
-  itsRasterY = val;
+  itsImpl->itsRasterY = val;
 }
 
 void BitmapRep::setZoomX(double val) {
 DOTRACE("BitmapRep::setZoomX");
-  if (!itsUsingZoom) return;
+  if (!itsImpl->itsUsingZoom) return;
 
-  itsZoomX = val;
+  itsImpl->itsZoomX = val;
 }
 
 void BitmapRep::setZoomY(double val) {
 DOTRACE("BitmapRep::setZoomY");
-  itsZoomY = val;
+  itsImpl->itsZoomY = val;
 }
 
 void BitmapRep::setUsingZoom(bool val) {
 DOTRACE("BitmapRep::setUsingZoom");
-  itsUsingZoom = val; 
+  itsImpl->itsUsingZoom = val; 
 
-  if (!itsUsingZoom) {
-	 itsZoomX = 1.0;
-	 itsZoomY = 1.0;
+  if (!itsImpl->itsUsingZoom) {
+	 itsImpl->itsZoomX = 1.0;
+	 itsImpl->itsZoomY = 1.0;
   }
 }
 
 void BitmapRep::clearBytes() {
 DOTRACE("BitmapRep::clearBytes");
-  itsData.clear(); 
-  itsRenderer->notifyBytesChanged();
+  itsImpl->itsData.clear(); 
+  itsImpl->itsRenderer->notifyBytesChanged();
 }
 
 static const char vcid_bitmaprep_cc[] = "$Header$";

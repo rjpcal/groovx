@@ -3,22 +3,13 @@
 // bitmaprep.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri Mar  3 14:26:10 2000
+// written: Mon Mar  6 10:13:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef BITMAPREP_H_DEFINED
 #define BITMAPREP_H_DEFINED
-
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
-#endif
-
-#ifndef BMAPDATA_H_DEFINED
-#include "bmapdata.h"
-#endif
 
 class BmapRenderer;
 class Canvas;
@@ -45,21 +36,13 @@ template <class V> class Rect;
 class BitmapRep {
 public:
   /// Construct with empty bitmap data.
-  BitmapRep(BmapRenderer* renderer) :
-	 itsRenderer(renderer)
-	 { init(); }
+  BitmapRep(BmapRenderer* renderer);
 
   /// Construct and load bitmap data from \a filename.
-  BitmapRep(BmapRenderer* renderer, const char* filename) :
-	 itsRenderer(renderer),
-	 itsFilename(filename)
-  {
-	 init();
-	 loadPbmFile(filename);
-  }
+  BitmapRep(BmapRenderer* renderer, const char* filename);
 
   /// Non-virtual destructor implies this class is not polymorphic.
-  ~BitmapRep() {}
+  ~BitmapRep();
 
 private:
   void init();
@@ -125,7 +108,7 @@ public:
   void flipContrast();
 
   /// Does the actual bit-twiddling to flip the contrast.
-  void doFlipContrast() { itsData.flipVertical(); }
+  void doFlipContrast();
 
   /** Vertically inverts the image. The polarity of the orientation
       relative to its original value is computed and stored, so that
@@ -133,7 +116,7 @@ public:
   void flipVertical();
 
   /// Does the actual bit-twiddling to vertically flip the image.
-  void doFlipVertical() { itsData.flipVertical(); }
+  void doFlipVertical();
 
   /** Centers the image so that its center coincides with the origin
       in the graphics environment when it is rendered. */
@@ -159,20 +142,16 @@ public:
   bool grHasBoundingBox() const;
 
   /// Get the number of bytes of image data.
-  int byteCount() const 
-	 { return itsData.byteCount(); }
+  int byteCount() const;
 
   /// Get the number of bytes per row in the image data.
-  int bytesPerRow() const
-	 { return itsData.bytesPerRow(); }
+  int bytesPerRow() const;
 
   /// Get the image's width in pixels.
-  int width() const
-	 { return itsData.width(); }
+  int width() const;
 
   /// Get the image's height in pixels.
-  int height() const
-	 { return itsData.height(); }
+  int height() const;
 
   /// Get the x value of the location of the image's lower left corner.
   double getRasterX() const;
@@ -211,18 +190,8 @@ public:
 private:
   void clearBytes();
 
-  BmapRenderer* itsRenderer;
-
-  string itsFilename;
-  double itsRasterX;
-  double itsRasterY;
-  double itsZoomX;
-  double itsZoomY;
-  bool itsUsingZoom;
-  bool itsContrastFlip;
-  bool itsVerticalFlip;
-
-  BmapData itsData;
+  class Impl;
+  Impl* const itsImpl;
 };
 
 static const char vcid_bitmaprep_h[] = "$Header$";
