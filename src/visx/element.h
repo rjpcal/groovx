@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  4 15:35:37 2002
-// written: Thu Dec  5 14:35:16 2002
+// written: Thu Dec  5 15:13:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,8 +45,6 @@ public:
   virtual const Util::SoftRef<Toglet>& getWidget() const = 0;
 
   virtual int trialType() const = 0;
-
-  virtual int numCompleted() const = 0;
 
   virtual int lastResponse() const = 0;
 

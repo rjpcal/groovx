@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Dec  5 14:34:12 2002
+// written: Thu Dec  5 15:15:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,7 +83,8 @@ public:
     elements(),
     sequenceIdx(0),
     errorHandler(interp.intp()),
-    doWhenComplete(new Tcl::ProcWrapper(interp))
+    doWhenComplete(new Tcl::ProcWrapper(interp)),
+    numTrialsCompleted(0)
   {}
 
   ~Impl() {}
@@ -133,6 +134,8 @@ public:
   mutable Tcl::BkdErrorHandler errorHandler;
 
   Ref<Tcl::ProcWrapper> doWhenComplete;
+
+  unsigned int numTrialsCompleted;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -252,16 +255,6 @@ DOTRACE("ExptDriver::trialType");
   return currentElement()->trialType();
 }
 
-int ExptDriver::numCompleted() const
-{
-DOTRACE("ExptDriver::numCompleted");
-
-  int num = 0;
-  for (unsigned int i = 0; i < rep->elements.size(); ++i)
-    num += rep->elements[i]->numCompleted();
-  return num;
-}
-
 int ExptDriver::lastResponse() const
 {
 DOTRACE("ExptDriver::lastResponse");
@@ -304,14 +297,13 @@ void ExptDriver::vxEndTrialHook()
 {
 DOTRACE("ExptDriver::vxEndTrialHook");
 
-  if ( !rep->haveCurrentElement() )
-    return;
+  ++(rep->numTrialsCompleted);
 
   // Determine whether an autosave is necessary now. An autosave is
   // requested only if the autosave period is positive, and the number of
   // completed trials is evenly divisible by the autosave period.
   if ( rep->autosavePeriod <= 0 ||
-       (numCompleted() % rep->autosavePeriod) != 0 ||
+       (rep->numTrialsCompleted % rep->autosavePeriod) != 0 ||
        rep->autosaveFile.is_empty() )
     return;
 
@@ -491,6 +483,7 @@ DOTRACE("ExptDriver::edBeginExpt");
   rep->beginDate = System::theSystem().formattedTime();
   rep->hostname = System::theSystem().getenv("HOST");
   rep->subject = System::theSystem().getcwd();
+  rep->numTrialsCompleted = 0;
 
   Util::Log::reset(); // to clear any existing timer scopes
   Util::Log::addScope("Expt");

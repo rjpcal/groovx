@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Thu Dec  5 14:35:20 2002
+// written: Thu Dec  5 15:15:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,8 +100,6 @@ public:
 
   /// returns some user-defined info about relationship between objects in trial
   virtual int trialType() const;
-
-  virtual int numCompleted() const;
 
   virtual int lastResponse() const;
 

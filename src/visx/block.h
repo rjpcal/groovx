@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Thu Dec  5 15:04:46 2002
+// written: Thu Dec  5 15:16:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -88,11 +88,6 @@ public:
   /// Returns the trial type of the current element.
   virtual int trialType() const;
 
-  /// Returns the number of elements that have been successfully completed.
-  /** This number will not include elements that have been aborted either
-      due to an invalid response or due to a timeout. */
-  virtual int numCompleted() const;
-
   /// Returns the last valid response recorded in the Block.
   /** But note that "valid" does not necessarily mean "correct". */
   virtual int lastResponse() const;
@@ -149,6 +144,11 @@ public:
 
   /// Returns the total number of elements that will comprise the Block.
   int numElements() const;
+
+  /// Returns the number of elements that have been successfully completed.
+  /** This number will not include elements that have been aborted either
+      due to an invalid response or due to a timeout. */
+  int numCompleted() const;
 
   /// Returns an iterator to all the elements contained in the Block.
   Util::FwdIter<Util::Ref<Element> > getElements() const;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Dec  5 14:35:24 2002
+// written: Thu Dec  5 15:15:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -630,9 +630,6 @@ void Trial::trDenyResponses()
 
 void Trial::installSelf(SoftRef<Toglet> widget) const
   { rep->installSelf(widget); }
-
-int Trial::numCompleted() const
-  { return rep->itsResponses.size(); }
 
 static const char vcid_trial_cc[] = "$Header$";
 #endif // !TRIAL_CC_DEFINED

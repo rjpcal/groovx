@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Dec  5 15:09:04 2002
+// written: Thu Dec  5 15:16:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -224,12 +224,6 @@ DOTRACE("Block::trialType");
   return rep->currentElement()->trialType();
 }
 
-int Block::numCompleted() const
-{
-DOTRACE("Block::numCompleted");
-  return rep->sequencePos;
-}
-
 int Block::lastResponse() const
 {
 DOTRACE("Block::lastResponse");
@@ -417,6 +411,12 @@ int Block::numElements() const
 {
 DOTRACE("Block::numElements");
   return rep->elements.size();
+}
+
+int Block::numCompleted() const
+{
+DOTRACE("Block::numCompleted");
+  return rep->sequencePos;
 }
 
 Util::FwdIter<Util::Ref<Element> > Block::getElements() const
