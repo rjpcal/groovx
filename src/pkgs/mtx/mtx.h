@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Feb 27 22:03:47 2002
+// written: Thu Feb 28 17:13:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -648,6 +648,63 @@ public:
   const_colmaj_iter colmaj_end() const
   { return const_colmaj_iter(itsImpl.rowgap(), itsImpl.rowstride(),
                              itsImpl.address(0,ncols())); }
+
+
+  template <class T>
+  class rowmaj_iter_base
+  {
+    int itsStride;
+    T* itsCurrentStart;
+    T* itsPtr;
+    T* itsCurrentEnd;
+
+  public:
+    rowmaj_iter_base(int s, int ncols, T* ptr) :
+      itsStride(s),
+      itsCurrentStart(ptr),
+      itsPtr(ptr),
+      itsCurrentEnd(itsPtr+(ncols*s))
+    {}
+
+    T& operator*() const { return *itsPtr; }
+
+    rowmaj_iter_base& operator++()
+    {
+      itsPtr += itsStride;
+      if (itsPtr == itsCurrentEnd)
+        {
+          ++itsCurrentStart;
+          ++itsCurrentEnd;
+          itsPtr = itsCurrentStart;
+        }
+      return *this;
+    }
+
+    bool operator==(const rowmaj_iter_base& other) const
+    { return itsPtr == other.itsPtr; }
+
+    bool operator!=(const rowmaj_iter_base& other) const
+    { return itsPtr != other.itsPtr; }
+  };
+
+  typedef rowmaj_iter_base<double> rowmaj_iter;
+  typedef rowmaj_iter_base<const double> const_rowmaj_iter;
+
+  rowmaj_iter rowmaj_begin_nc()
+  { return rowmaj_iter(itsImpl.rowstride(), ncols(),
+                       itsImpl.address_nc(0,0)); }
+
+  rowmaj_iter rowmaj_end_nc()
+  { return rowmaj_iter(itsImpl.rowstride(), ncols(),
+                       itsImpl.address_nc(mrows(),0)); }
+
+  const_rowmaj_iter rowmaj_begin() const
+  { return const_rowmaj_iter(itsImpl.rowstride(), ncols(),
+                             itsImpl.address(0,0)); }
+
+  const_rowmaj_iter rowmaj_end() const
+  { return const_rowmaj_iter(itsImpl.rowstride(), ncols(),
+                             itsImpl.address(mrows(),0)); }
 
   //
   // Data access
