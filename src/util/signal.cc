@@ -3,7 +3,7 @@
 // observable.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 25 18:39:27 1999
-// written: Wed May 26 11:07:32 1999
+// written: Wed May 26 11:12:40 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 Observable::Observable() :
-  itsImpl(*(new ObservableImpl));
+  itsImpl(*(new ObservableImpl))
 {
 DOTRACE("Observable::Observable");
 }
