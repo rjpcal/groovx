@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Thu May 10 12:04:45 2001
+// written: Fri May 11 20:40:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -214,7 +214,7 @@ protected:
 
 	 fixed_block<int> objids(id_count);
 
-	 {for (int i = 0; i < objids.size(); ++i)
+	 {for (unsigned int i = 0; i < objids.size(); ++i)
 		{
 		  objids[i] = *itr;
 		  ++itr;
@@ -223,13 +223,13 @@ protected:
 
 	 int base_triad[3];
 
-	 for (int i = 0; i < objids.size(); ++i) {
+	 for (unsigned int i = 0; i < objids.size(); ++i) {
 		base_triad[0] = objids[i];
 
-		for (int j = i+1; j < objids.size(); ++j) {
+		for (unsigned int j = i+1; j < objids.size(); ++j) {
 		  base_triad[1] = objids[j];
 
-		  for (int k = j+1; k < objids.size(); ++k) {
+		  for (unsigned int k = j+1; k < objids.size(); ++k) {
 			 base_triad[2] = objids[k];
 
 			 // loops over p,e run through all permutations
