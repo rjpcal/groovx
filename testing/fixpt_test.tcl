@@ -10,6 +10,10 @@
 package require Fixpt
 package require Objlist
 
+source ${::TEST_DIR}/grobj_test.tcl
+
+GrObj::testSubclass Fixpt FixPt
+
 ### Fixpt::FixptCmd ###
 test "FixptTcl-Fixpt::Fixpt" "no args limit" {} $BLANK $no_test
 test "FixptTcl-Fixpt::Fixpt" "normal create" {

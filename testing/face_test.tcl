@@ -7,6 +7,12 @@
 ###
 ##############################################################################
 
+package require Face
+
+source ${::TEST_DIR}/grobj_test.tcl
+
+GrObj::testSubclass Face Face
+
 ### faceCmd ###
 test "FaceTcl-Face::Face" "too many args" {
 	 Face::Face junk
@@ -176,30 +182,12 @@ test "FaceTcl-Face::loadFaces" "error from junk binary file" {
   [ expr [string equal $env(ARCH) "irix6"] ? $skip_known_bug : $normal_test]
 
 ### Face::stringifyCmd ###
-test "FaceTcl-Face::stringify" "too few args" {
-    Face::stringify
-} {wrong \# args: should be "Face::stringify item_id"}
-test "FaceTcl-Face::stringify" "too many args" {
-    Face::stringify j u
-} {wrong \# args: should be "Face::stringify item_id"}
-test "FaceTcl-Face::stringify" "error from bad objid" {
-    Face::stringify -1
-} {Face::stringify: an error of type InvalidIdError occurred}
 test "FaceTcl-Face::stringify" "error from wrong type" {
     set fx [Fixpt::Fixpt]
 	 Face::stringify $fx
 } {Face::stringify: object not of correct type}
 
 ### Face::destringifyCmd ###
-test "FaceTcl-Face::destringify" "too few args" {
-    Face::destringify
-} {wrong \# args: should be "Face::destringify item_id string"}
-test "FaceTcl-Face::destringify" "too many args" {
-    Face::destringify j u n
-} {wrong \# args: should be "Face::destringify item_id string"}
-test "FaceTcl-Face::destringify" "error from bad objid" {
-    Face::destringify -1 junk
-} {Face::destringify: an error of type InvalidIdError occurred}
 test "FaceTcl-Face::destringify" "error from wrong type" {
     set fx [Fixpt::Fixpt]
 	 Face::destringify $fx junk

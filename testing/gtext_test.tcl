@@ -14,6 +14,12 @@ package require Tclgl
 package require Tlist
 package require Pos
 
+source ${::TEST_DIR}/grobj_test.tcl
+
+GrObj::testSubclass Gtext Gtext
+
+
+
 if { ![Togl::inited] } { Togl::init "-rgba false"; update }
 
 set GTEXT -1
