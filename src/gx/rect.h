@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Mar 19 17:55:56 2003
+// written: Tue May 13 10:02:11 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -93,13 +93,20 @@ public:
   V centerX() const { return (rr+ll)/V(2); }
   V centerY() const { return (tt+bb)/V(2); }
 
+  //
   // Manipulators
-  void setRectLTRB(V L, V T, V R, V B)
+  //
+
+  /// Set four corners from x-left/y-top/x-right/y-bottom values.
+  void setLTRB(V L, V T, V R, V B)
     { ll = L; tt = T; rr = R; bb = B; }
-  void setRectLRBT(V L, V R, V B, V T)
+
+  /// Set four corners from x-left/x-right/y-bottom/y-top values.
+  void setLRBT(V L, V R, V B, V T)
     { ll = L; rr = R; bb = B; tt = T; }
 
-  void setRectXYWH(V x, V y, V w, V h)
+  /// Set four corners from x-left/y-bottom/x-width/y-height values.
+  void setXYWH(V x, V y, V w, V h)
   {
     ll = x;
     bb = y;
@@ -107,6 +114,16 @@ public:
     tt = bb+Util::abs(h);
   }
 
+  /// Set four corners from lower-left corner and width+height values.
+  void setXYWH(const Gfx::Vec2<V>& xy, const Gfx::Vec2<V>& wh)
+  {
+    ll = xy.x();
+    bb = xy.y();
+    rr = ll+Util::abs(wh.x());
+    tt = bb+Util::abs(wh.y());
+  }
+
+  /// Set four corners from positions of two diagonally-opposed corners.
   void setCorners(const Gfx::Vec2<V>& p1, const Gfx::Vec2<V>& p2)
   {
     ll = Util::min(p1.x(), p2.x());
@@ -209,7 +226,7 @@ public:
   RectLTRB(V l, V t, V r, V b) :
     Rect<V>()
   {
-    setRectLTRB(l, t, r, b);
+    setLTRB(l, t, r, b);
   }
 };
 
@@ -221,7 +238,7 @@ public:
   RectLBWH(V l, V b, V w, V h) :
     Rect<V>()
   {
-    setRectXYWH(l, b, w, h);
+    setXYWH(l, b, w, h);
   }
 };
 

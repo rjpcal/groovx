@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Mar 19 18:00:55 2003
+// written: Tue May 13 10:06:23 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -52,6 +52,8 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
+
+using namespace Gfx;
 
 namespace
 {
@@ -178,18 +180,17 @@ void Gabor::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("Gabor::grGetBoundingBox");
 
-  Gfx::Vec2<double> world_origin;
+  const Vec2d world_origin(0.0, 0.0);
 
-  Gfx::Vec2<int> screen_origin = bbox.screenFromWorld(world_origin);
+  const Vec2i screen_origin = bbox.screenFromWorld(world_origin);
 
-  Gfx::Vec2<int> size(itsResolution * itsPointSize,
-                      itsResolution * itsPointSize);
+  const Vec2i size(itsResolution * itsPointSize,
+                   itsResolution * itsPointSize);
 
-  Gfx::Rect<int> screen_rect;
-  screen_rect.setRectXYWH(screen_origin.x(), screen_origin.y(),
-                          size.x(), size.y());
+  Rect<int> screen_rect;
+  screen_rect.setXYWH(screen_origin, size);
 
-  Gfx::Rect<double> world_rect = bbox.worldFromScreen(screen_rect);
+  Rect<double> world_rect = bbox.worldFromScreen(screen_rect);
 
   bbox.drawRect(world_rect);
 }
@@ -200,7 +201,7 @@ DOTRACE("Gabor::grRender");
   const double xsigma2 = itsSigma*itsAspectRatio * itsSigma*itsAspectRatio;
   const double ysigma2 = itsSigma * itsSigma;
 
-  const Gfx::Vec2<double> center(0.0, 0.0);
+  const Vec2d center(0.0, 0.0);
 
   static const double PI = acos(-1.0);
 
@@ -225,7 +226,7 @@ DOTRACE("Gabor::grRender");
 
   double res_step = 1.0/itsResolution;
 
-  Gfx::Vec2<int> size(itsResolution, itsResolution);
+  Vec2i size(itsResolution, itsResolution);
 
   int bits_per_pixel = (itsColorMode == GRAYSCALE) ? 32 : 8;
 
@@ -243,7 +244,7 @@ DOTRACE("Gabor::grRender");
         {
           const double unrotated_x = x_pos*res_step - 0.5;
 
-          Gfx::Vec2<double> point(unrotated_x, unrotated_y);
+          Vec2d point(unrotated_x, unrotated_y);
           point.rotateDeg(itsOrientation);
 
           point -= center;
@@ -286,8 +287,8 @@ DOTRACE("Gabor::grRender");
         }
     }
 
-  canvas.drawPixels(data, Gfx::Vec2<double>(0.0, 0.0),
-                    Gfx::Vec2<double>(itsPointSize, itsPointSize));
+  canvas.drawPixels(data, Vec2d(0.0, 0.0),
+                    Vec2d(itsPointSize, itsPointSize));
 }
 
 static const char vcid_gabor_cc[] = "$Header$";
