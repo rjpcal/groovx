@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Mar 14 18:54:37 2001
+// written: Thu Mar 15 13:35:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,8 +54,8 @@ public:
 
 class MtxConstIter {
   const double* data;
-  const double* stop;
   int stride;
+  const double* stop;
 
   MtxConstIter(const double* d, int s, int n) :
 	 data(d), stride(s), stop(d + s*n) {}
@@ -110,7 +110,7 @@ private:
   ConstSlice& operator=(const ConstSlice& other); // not implemented
 
 protected:
-  DataBlock*& itsStorage;
+  Mtx& itsOwner;
   ptrdiff_t itsOffset;
   int itsStride;
   int itsNelems;
@@ -121,7 +121,7 @@ protected:
 
   friend class Mtx;
 
-  ConstSlice(DataBlock* const& storage, const double* d, int s, int n);
+  ConstSlice(const Mtx& owner, const double* d, int s, int n);
 
 public:
 
@@ -129,7 +129,7 @@ public:
   ConstSlice();
 
   ConstSlice(const ConstSlice& other) :
-	 itsStorage(other.itsStorage),
+	 itsOwner(other.itsOwner),
 	 itsOffset(other.itsOffset),
 	 itsStride(other.itsStride),
 	 itsNelems(other.itsNelems)
@@ -148,12 +148,12 @@ public:
 	 int first = itsNelems - n;
 	 if (first < 0) first = 0;
 
-	 return ConstSlice(itsStorage, address(first), itsStride, n);
+	 return ConstSlice(itsOwner, address(first), itsStride, n);
   }
 
   ConstSlice leftmost(int n) const
   {
-	 return ConstSlice(itsStorage, data(), itsStride, n);
+	 return ConstSlice(itsOwner, data(), itsStride, n);
   }
 
   //
@@ -194,7 +194,7 @@ class Slice : public ConstSlice {
   double* data();
   double* address(int i) { return data() + itsStride*i; }
 
-  Slice(DataBlock*& m, double* d, int s, int n) :
+  Slice(Mtx& m, double* d, int s, int n) :
 	 ConstSlice(m,d,s,n) {}
 
 public:
@@ -206,12 +206,12 @@ public:
 	 int first = itsNelems - n;
 	 if (first < 0) first = 0;
 
-	 return Slice(itsStorage, address(first), itsStride, n);
+	 return Slice(itsOwner, address(first), itsStride, n);
   }
 
   Slice leftmost(int n)
   {
-	 return Slice(itsStorage, data(), itsStride, n);
+	 return Slice(itsOwner, data(), itsStride, n);
   }
 
   Slice& operator=(const ConstSlice& other);
@@ -323,11 +323,11 @@ public:
   //
 
   Slice row(int r)
-    { return Slice(itsImpl.storage_, itsImpl.address(r,0),
+    { return Slice(*this, itsImpl.address(r,0),
 						 itsImpl.rowstride(), itsImpl.ncols()); }
 
   ConstSlice row(int r) const
-    { return ConstSlice(itsImpl.storage_, itsImpl.address(r,0),
+    { return ConstSlice(*this, itsImpl.address(r,0),
 								itsImpl.rowstride(), itsImpl.ncols()); }
 
   MtxIter rowIter(int r)
@@ -343,11 +343,11 @@ public:
 
 
   Slice column(int c)
-    { return Slice(itsImpl.storage_, itsImpl.address(0,c),
+    { return Slice(*this, itsImpl.address(0,c),
 						 itsImpl.colstride(), mrows()); }
 
   ConstSlice column(int c) const
-    { return ConstSlice(itsImpl.storage_, itsImpl.address(0,c),
+    { return ConstSlice(*this, itsImpl.address(0,c),
 								itsImpl.colstride(), mrows()); }
 
   MtxIter colIter(int c)
@@ -374,6 +374,9 @@ public:
 
 private:
   void makeUnique() { itsImpl.makeUnique(); }
+
+  const double* dataStorage() const { return itsImpl.dataStorage(); }
+  double* dataStorage() { return itsImpl.dataStorage(); }
 
   friend class ConstSlice;
   friend class Slice;
@@ -508,8 +511,11 @@ private:
 		  }
 	 }
 
-	 DataBlock* storage_;
+	 const double* dataStorage() const { return storage_->itsData; }
+	 double* dataStorage() { return storage_->itsData; }
+
   private:
+	 DataBlock* storage_;
 	 int mrows_;
 	 int rowstride_;
 	 int ncols_;
@@ -549,16 +555,16 @@ inline ElemProxy::operator double() { return m.itsImpl.at(i); }
 
 
 inline const double* ConstSlice::data() const
-{ return itsStorage->itsData + itsOffset; }
+{ return itsOwner.dataStorage() + itsOffset; }
 
-inline ConstSlice::ConstSlice(DataBlock* const& storage,
+inline ConstSlice::ConstSlice(const Mtx& owner,
 										const double* d, int s, int n) :
-  itsStorage(const_cast<DataBlock*&>(storage)),
-  itsOffset(d - storage->itsData),
+  itsOwner(const_cast<Mtx&>(owner)),
+  itsOffset(d - owner.dataStorage()),
   itsStride(s),
   itsNelems(n) {}
 
-inline double* Slice::data() { return itsStorage->itsData + itsOffset; }
+inline double* Slice::data() { return itsOwner.dataStorage() + itsOffset; }
 
 
 

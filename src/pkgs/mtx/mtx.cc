@@ -27,7 +27,7 @@ namespace {
 }
 
 ConstSlice::ConstSlice() :
-  itsStorage(dummyMtx.itsImpl.storage_),
+  itsOwner(dummyMtx),
   itsOffset(0),
   itsStride(1),
   itsNelems(0)
