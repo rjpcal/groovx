@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Sun May 27 15:26:50 2001
+// written: Wed Jun  6 15:56:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,6 @@
 #include "trialbase.h"
 
 #include "io/iofactory.h"
-#include "io/iodb.h"
 
 #include "tcl/ioitempkg.h"
 #include "tcl/tclcmd.h"
