@@ -189,7 +189,7 @@ $(SCRIPTS)/cppdeps: $(SCRIPTS)/cppdeps.cc
 $(DEP)/cppdepends: $(SCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
 	time $(SCRIPTS)/cppdeps --objdir $(OBJ)/ $(SRC) |sort> $@
 
-$(DEP)/altdeps: $(SCRIPTS)/cppdeps.tcl $(DEP)/.timestamp $(ALL_SRCS)
+$(DEP)/altdeps: $(SCRIPTS)/cppdeps.tcl $(SCRIPTS)/deps.tcl $(DEP)/.timestamp $(ALL_SRCS)
 	time $(SCRIPTS)/cppdeps.tcl --src $(SRC) --objdir $(OBJ)/ > $@
 
 # Run the old Tcl script and compare its output against the new C++
