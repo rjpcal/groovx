@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Thu Oct 14 15:55:33 1999
+// written: Thu Oct 14 15:58:34 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -117,21 +117,20 @@ namespace {
 		  glEnd();
 		  
 		  // First hair line
-		  GLint foreground, background;
-		  glGetIntegerv(GL_CURRENT_INDEX, &foreground);
-		  glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
-		  
-		  glIndexi(background);
-		  glBegin(GL_LINE_STRIP);
+		  glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
 		  {
-			 glArrayElement(14);
-			 glArrayElement(15);
-			 glArrayElement(16);
-			 glArrayElement(17);
-		  }
-		  glEnd();
+			 GrObj::swapForeBack();
 		  
-		  glIndexi(foreground);
+			 glBegin(GL_LINE_STRIP);
+			 {
+				glArrayElement(14);
+				glArrayElement(15);
+				glArrayElement(16);
+				glArrayElement(17);
+			 }
+			 glEnd();
+		  }
+		  glPopAttrib();
 		  
 		}
 		glPopAttrib();
