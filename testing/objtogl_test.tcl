@@ -168,17 +168,6 @@ test "ObjTogl-scaleRect" "error on negative scale factor" {
     Togl::scaleRect -1.2
 } {^Toglet::scaleRect: invalid scaling factor$}
 
-### setColorCmd ###
-test "ObjTogl-setColor" "too few args" {
-    Togl::setColor
-} {^wrong \# args: should be}
-test "ObjTogl-setColor" "too few args" {
-    Togl::setColor j u n k y
-} {^wrong \# args: should be}
-test "ObjTogl-setColor" "error" {
-	 Togl::setColor -1 0.5 0.5 0.5
-} {^Toglet::setColor:}
-
 ### pixelsPerUnitCmd ###
 test "ObjTogl-pixelsPerUnit" "args" {
     Togl::pixelsPerUnit
