@@ -99,20 +99,20 @@ test "GxTransform-IO::stringify" "error on non-integral posid" {
 } {IO::stringify: }
 
 ### GxTransform::typeCmd ###
-test "GxTransform-IO::type" "args" {
-    IO::type
+test "GxTransform-Obj::type" "args" {
+    Obj::type
 } {wrong \# args: should be}
-test "GxTransform-IO::type" "normal use on GxTransform" { 
+test "GxTransform-Obj::type" "normal use on GxTransform" { 
 	 set f [Obj::new GxTransform]
-	 IO::type $f
+	 Obj::type $f
 } {GxTransform}
-test "GxTransform-IO::type" "normal use on Jitter" {
+test "GxTransform-Obj::type" "normal use on Jitter" {
 	 set f [Obj::new Jitter]
-	 IO::type $f
+	 Obj::type $f
 } {Jitter}
-test "GxTransform-IO::type" "error on too small posid" {
-	 IO::type -1
-} {IO::type: signed/unsigned.*}
+test "GxTransform-Obj::type" "error on too small posid" {
+	 Obj::type -1
+} {Obj::type: signed/unsigned.*}
 
 unset pos
 

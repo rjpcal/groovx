@@ -64,7 +64,7 @@ proc testSubclass { package {subclass "GxShapeKit"} {objid -1} } {
 proc testTypeCmd { objname } {
     upvar $objname this
 
-    set cmdname "IO::type"
+    set cmdname "Obj::type"
     set usage "wrong \# args: should be \"$cmdname item_id\\(s\\)\""
     set testname "${this(package)}-${cmdname}"
 
