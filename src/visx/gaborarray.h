@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Tue May 13 15:37:43 2003
+// written: Wed May 14 13:54:54 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -108,7 +108,7 @@ private:
 
   void dumpFrame() const;
 
-  void updateSnake() const;
+  void updateForeg() const;
   void updateBackg() const;
   void updateBmap() const;
   void update() const;
@@ -121,6 +121,8 @@ private:
   Cached<int> itsForegSeed;
   Cached<int> itsForegNumber;
   Cached<double> itsForegSpacing;
+  Cached<int> itsForegPosX;
+  Cached<int> itsForegPosY;
 
   Cached<int> itsBackgSeed;
   Cached<int> itsSizeX;

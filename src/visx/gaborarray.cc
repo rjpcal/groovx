@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Tue May 13 15:41:33 2003
+// written: Wed May 14 14:04:01 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -77,6 +77,8 @@ GaborArray::GaborArray(double gaborPeriod, double gaborSigma,
   itsForegSeed(0),
   itsForegNumber(foregNumber),
   itsForegSpacing(foregSpacing),
+  itsForegPosX(0),
+  itsForegPosY(0),
 
   itsBackgSeed(0),
   itsSizeX(sizeX),
@@ -108,11 +110,15 @@ const FieldMap& GaborArray::classFields()
     Field("foregNumber", &GaborArray::itsForegNumber, 24, 1, 100, 1),
     Field("foregSpacing", &GaborArray::itsForegSpacing,
           45.0, 1.0, 100.0, 1.0),
+    Field("foregPosX", &GaborArray::itsForegPosX, 0, -2048, 2048, 1),
+    Field("foregPosY", &GaborArray::itsForegPosY, 0, -2048, 2048, 1),
+
     Field("backgSeed", &GaborArray::itsBackgSeed, 0, 0, 20000, 1),
     Field("sizeX", &GaborArray::itsSizeX, 512, 16, 2048, 16),
     Field("sizeY", &GaborArray::itsSizeY, 512, 16, 2048, 16),
     Field("gridSpacing", &GaborArray::itsGridSpacing, 48., 1., 200., 1.),
     Field("minSpacing", &GaborArray::itsMinSpacing, 36., 1., 200., 1.),
+
     Field("thetaSeed", &GaborArray::itsThetaSeed, 0, 0, 20000, 1),
     Field("phaseSeed", &GaborArray::itsPhaseSeed, 0, 0, 20000, 1),
     Field("foregHidden", &GaborArray::itsForegHidden,
@@ -180,11 +186,15 @@ DOTRACE("GaborArray::grRender");
   canvas.drawPixels(*itsBmap, Vec2d(0.0, 0.0), Vec2d(1.0, 1.0));
 }
 
-void GaborArray::updateSnake() const
+void GaborArray::updateForeg() const
 {
-DOTRACE("GaborArray::updateSnake");
+DOTRACE("GaborArray::updateForeg");
 
-  if (itsForegSeed.ok() && itsForegNumber.ok() && itsForegSpacing.ok())
+  if (itsForegSeed.ok()
+      && itsForegNumber.ok()
+      && itsForegSpacing.ok()
+      && itsForegPosX.ok()
+      && itsForegPosY.ok())
     return;
 
   itsTotalNumber = 0;
@@ -196,15 +206,25 @@ DOTRACE("GaborArray::updateSnake");
   // pull in elements from the snake
   for (int n = 0; n < itsForegNumber; ++n)
     {
-      if (!tryPush(snake.getElement(n)))
+      Element e = snake.getElement(n);
+      e.pos.x() += itsForegPosX;
+      e.pos.y() += itsForegPosY;
+
+      if (e.pos.x() < -0.5*itsSizeX || e.pos.x() > 0.5*itsSizeX ||
+          e.pos.y() < -0.5*itsSizeY || e.pos.y() > 0.5*itsSizeY)
+        continue;
+
+      if (!tryPush(e))
         {
-          throw Util::Error("snake elements were too close together!\n");
+          throw Util::Error("foreground elements were too close together!\n");
         }
     }
 
   itsForegSeed.save();
   itsForegNumber.save();
   itsForegSpacing.save();
+  itsForegPosX.save();
+  itsForegPosY.save();
 
   itsBackgSeed.touch(); // to force a redo in updateBackg()
 
@@ -376,7 +396,7 @@ void GaborArray::update() const
 {
 DOTRACE("GaborArray::update");
 
-  updateSnake();
+  updateForeg();
 
   updateBackg();
 
