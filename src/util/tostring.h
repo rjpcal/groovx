@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Aug  5 20:00:26 2001
-// written: Fri Jan 18 16:06:54 2002
+// written: Fri Feb  1 10:56:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,12 @@ namespace Util
     unsigned int const len;
   };
 
-  template <class T>
-  const char* num2str(const T& x);
+  const char* num2str(bool x);
+  const char* num2str(int x);
+  const char* num2str(unsigned int x);
+  const char* num2str(long x);
+  const char* num2str(unsigned long x);
+  const char* num2str(double x);
 
   template <class T>
   struct Convert
