@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Thu Jul 19 12:00:48 2001
+// written: Thu Jul 19 13:25:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -188,6 +188,22 @@ DOTRACE("GrObjRenderer::render");
     break;
 
   } // end switch
+}
+
+void GrObjRenderer::unrender(const GrObjImpl* obj, GWT::Canvas& canvas) const
+{
+DOTRACE("GrObjRenderer::unrender");
+  glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
+  {
+    if (itsUnMode == GrObj::SWAP_FORE_BACK)
+      canvas.swapForeBack();
+
+    if (itsMode == GrObj::GLCOMPILE)
+      callList();
+    else
+      obj->grRender(canvas, GrObj::UNDRAW);
+  }
+  glPopAttrib();
 }
 
 bool GrObjRenderer::update(const GrObjImpl* obj, GWT::Canvas& canvas) const {
