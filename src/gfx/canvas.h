@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Wed Nov 20 11:43:53 2002
+// written: Wed Nov 20 11:48:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -235,7 +235,7 @@ public:
                                const Gfx::Vec3<double>& p2,
                                const Gfx::Vec3<double>& p3,
                                const Gfx::Vec3<double>& p4,
-                               unsigned int subdivisions) = 0;
+                               unsigned int subdivisions);
 
   /** Draw a NURBS curve. The default implementation splits the NURBS
       curve into 4-pt Bezier curve components, and then draws those
