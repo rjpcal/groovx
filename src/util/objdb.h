@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri Nov 10 17:03:50 2000
+// written: Tue Dec  5 17:55:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -175,6 +175,12 @@ public:
       other items in the list. */
   void clear();
 
+  /** WARNING: should only be called during program exit. Does a full
+      clear of all objects held by the IoPtrList. This breaks the
+      usual semantics of IoPtrList, since it removes both shared and
+      unshared objects. */
+  void clearOnExit();
+
   /** Return the \c IO::IoObject* at the index given by \a id. Checks
 		first if \a id is a valid index, and throws an \c InvalidIdError
 		if it is not. */
@@ -185,8 +191,6 @@ public:
 		to make room for the ptr. The PtrList now assumes control of the
 		memory management for the object *ptr. */
   int insertPtrBase(IO::IoObject* ptr);
-
-public:
 
   template <class T>
   IdItem<T> getCheckedIoPtr(int id) const
