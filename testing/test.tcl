@@ -21,6 +21,7 @@ set DATE [clock format [clock seconds] -format %H%M%d%b%Y]
 set num_tests 0
 set num_success 0
 
+set FAILED {}
 set TO_IMPLEMENT {}
 set KNOWN_BUGS {}
 set INTERMITTENT_BUGS {}
@@ -66,7 +67,8 @@ proc test {package_name test_name script expected_result_regexp {flags 1}} {
 		  puts "---- Result should have been:"
 		  puts $expected_result_regexp
 		  puts "---- $package_name $test_name FAILED\n"
-		  finish
+#		  finish
+		  lappend ::FAILED "$package_name $test_name"
 	 }
 }
 
@@ -77,6 +79,13 @@ proc finish {} {
 	 set per_test [expr $::num_tests ? ($elapsed_ms/$::num_tests) : 0]
 	 set msg "$::num_success tests succeeded of $::num_tests tests attempted.\n"
 	 append msg "Testing lasted $elapsed_ms msec, or $per_test msec per test.\n"
+
+	 if { [llength $::FAILED] > 0 } {
+		  append msg "[llength $::FAILED] tests FAILED:\n"
+		  foreach item $::FAILED {
+				append msg "\t${item}\n"
+		  }
+	 }
 
 	 if { [llength $::TO_IMPLEMENT] > 0 } {
 		  append msg "[llength $::TO_IMPLEMENT] tests remain to be implemented:\n"
