@@ -40,11 +40,12 @@
 #include "gfx/gxvectorfont.h"
 #include "gfx/rgbacolor.h"
 
-#include "gx/bmapdata.h"
 #include "gx/rect.h"
 #include "gx/txform.h"
 #include "gx/vec2.h"
 #include "gx/vec3.h"
+
+#include "media/bmapdata.h"
 
 #include "util/error.h"
 #include "util/sharedptr.h"

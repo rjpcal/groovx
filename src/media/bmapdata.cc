@@ -32,7 +32,7 @@
 #ifndef BMAPDATA_CC_DEFINED
 #define BMAPDATA_CC_DEFINED
 
-#include "gx/bmapdata.h"
+#include "bmapdata.h"
 
 #include "gx/vec2.h"
 

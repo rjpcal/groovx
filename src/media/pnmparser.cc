@@ -32,10 +32,11 @@
 #ifndef PBM_CC_DEFINED
 #define PBM_CC_DEFINED
 
-#include "gx/pbm.h"
+#include "pnmparser.h"
 
-#include "gx/bmapdata.h"
 #include "gx/vec2.h"
+
+#include "media/bmapdata.h"
 
 #include "util/error.h"
 #include "util/fstring.h"

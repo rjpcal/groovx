@@ -34,9 +34,9 @@
 
 #include "imgfile.h"
 
-#include "gx/jpegparser.h"
-#include "gx/pbm.h"
-#include "gx/pngparser.h"
+#include "media/jpegparser.h"
+#include "media/pngparser.h"
+#include "media/pnmparser.h"
 
 #include "nub/log.h"
 

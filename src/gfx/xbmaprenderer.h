@@ -61,8 +61,9 @@ namespace XBmapRenderer
 
 #include "gfx/canvas.h"
 
-#include "gx/bmapdata.h"
 #include "gx/vec2.h"
+
+#include "media/bmapdata.h"
 
 #include "util/error.h"
 

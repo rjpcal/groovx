@@ -52,8 +52,9 @@ void Png::save(const char* /*filename*/, const Gfx::BmapData& /*data*/)
 
 #else
 
-#include "gx/bmapdata.h"
 #include "gx/vec2.h"
+
+#include "media/bmapdata.h"
 
 #include "util/arrays.h"
 #include "util/error.h"

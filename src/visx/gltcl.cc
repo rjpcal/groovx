@@ -39,8 +39,9 @@
 
 #include "gfx/canvas.h"
 
-#include "gx/bmapdata.h"
 #include "gx/rect.h"
+
+#include "media/bmapdata.h"
 
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"

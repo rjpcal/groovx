@@ -38,14 +38,15 @@
 #include "gfx/canvas.h"
 #include "gfx/gxscaler.h"
 
-#include "gx/bmapdata.h"
-#include "gx/imgfile.h"
 #include "gx/rect.h"
 #include "gx/vec2.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
+
+#include "media/bmapdata.h"
+#include "media/imgfile.h"
 
 #include "util/algo.h"
 #include "util/rand.h"

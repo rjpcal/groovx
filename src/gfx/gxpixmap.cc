@@ -38,15 +38,16 @@
 #include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
 
-#include "gx/bmapdata.h"
-#include "gx/imgfile.h"
-#include "gx/pbm.h"
 #include "gx/rect.h"
 #include "gx/vec2.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
+
+#include "media/bmapdata.h"
+#include "media/imgfile.h"
+#include "media/pnmparser.h"
 
 #include "util/bytearray.h"
 #include "util/cstrstream.h"
