@@ -54,12 +54,12 @@ DBG_REGISTER
 
 namespace
 {
-  FreeList<string_rep>* rep_list;
+  free_list<string_rep>* rep_list;
 }
 
 void* string_rep::operator new(size_t bytes)
 {
-  if (rep_list == 0) rep_list = new FreeList<string_rep>;
+  if (rep_list == 0) rep_list = new free_list<string_rep>;
   return rep_list->allocate(bytes);
 }
 
