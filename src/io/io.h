@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Fri Oct 15 19:49:01 1999
+// written: Mon Oct 18 17:59:05 1999
 // $Id$
 //
 // This file defines the IO abstract interface. This interface
@@ -32,7 +32,12 @@
 #include "error.h"
 #endif
 
-class istream; class ostream;
+class istream;
+class ostream;
+
+class Reader;
+class Writer;
+
 class type_info;
 
 ///////////////////////////////////////////////////////////////////////
@@ -58,10 +63,18 @@ public:
 
   IO();
   virtual ~IO() = 0;
+
+  // "Old" IO functions
   virtual void serialize(ostream& os, IOFlag flag) const = 0;
   virtual void deserialize(istream& is, IOFlag flag) = 0;
 
   virtual int charCount() const = 0;
+
+  // "New" IO functions
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
+
+  virtual int attributeCount();
 
   // Returns a unique id for this object
   unsigned long id() const;
