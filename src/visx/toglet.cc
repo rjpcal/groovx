@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Sat Dec  2 09:59:59 2000
+// written: Sat Dec  2 11:41:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,6 +61,7 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 class ToglConfig_Impl {
+public:
   static void dummyReshapeCallback(Togl* togl);
   static void dummyDisplayCallback(Togl* togl);
   static void dummyEpsCallback(const Togl* togl);
