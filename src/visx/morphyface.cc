@@ -131,14 +131,29 @@ namespace
       }
   }
 
-  struct LineStrip
+  class LineStrip
   {
-    void begin(Gfx::Canvas& c, double w)
+  private:
+    Gfx::Canvas* canvas;
+    std::vector<Vec2d> pts;
+    double width;
+    bool join;
+
+  public:
+    LineStrip() :
+      canvas(0),
+      pts(0),
+      width(1.0),
+      join(false)
+    {}
+
+    void begin(Gfx::Canvas& c, double w, bool j)
     {
       Assert(pts.size() == 0);
 
       canvas = &c;
       width = w;
+      join = j;
     }
 
     void vertex(const Vec2d& pt)
@@ -146,102 +161,92 @@ namespace
       pts.push_back(pt);
     }
 
+    void drawBezier4(const Vec3d& p1,
+                     const Vec3d& p2,
+                     const Vec3d& p3,
+                     const Vec3d& p4,
+                     unsigned int subdivisions,
+                     unsigned int start = 0)
+    {
+      Bezier4 xb(p1.x(), p2.x(), p3.x(), p4.x());
+      Bezier4 yb(p1.y(), p2.y(), p3.y(), p4.y());
+      //     Bezier4 zb(p1.z(), p2.z(), p3.z(), p4.z());
+
+      for (unsigned int i = start; i < subdivisions; ++i)
+        {
+          double u = double(i) / double(subdivisions - 1);
+          this->vertex(Vec2d(xb.eval(u), yb.eval(u)));
+        }
+    }
+
     void end()
     {
       if (pts.size() == 0) return;
 
+      Assert(canvas != 0);
+
+      if (join)
+        drawJoinedLineStrip();
+      else
+        drawSimpleLineStrip();
+
+      canvas = 0;
+      pts.clear();
+    }
+
+  private:
+    void drawSimpleLineStrip()
+    {
+      canvas->beginLineStrip();
+      for (unsigned int i = 0; i < pts.size(); ++i)
+        {
+          canvas->vertex2(pts[i]);
+        }
+      canvas->end();
+    }
+
+    void drawJoinedLineStrip()
+    {
       canvas->beginQuadStrip();
-      double nx1 = 0.0;
-      double ny1 = 0.0;
-      double dx1 = 0.0;
-      double dy1 = 0.0;
+
+      Vec2d n1;
+      Vec2d d1;
+
       for (unsigned int i = 1; i < pts.size(); ++i)
         {
-          double dx2 = pts[i].x() - pts[i-1].x();
-          double dy2 = pts[i].y() - pts[i-1].y();
-          const double r = sqrt(dx2*dx2 + dy2*dy2);
-          if (r != 0.0)
-            {
-              dx2 /= r;
-              dy2 /= r;
-            }
-          const double nx2 = -dy2;
-          const double ny2 = dx2;
+          const Vec2d d2 = makeUnitLength(pts[i] - pts[i-1]);
+          const Vec2d n2 = normalTo(d2);
 
           if (i == 1)
             {
-              nx1 = nx2;
-              ny1 = ny2;
-              dx1 = dx2;
-              dy1 = dy2;
+              n1 = n2;
+              d1 = d2;
             }
 
           double c = 0.0;
-          if (dx1+dx2 != 0.0)
-            {
-              c = (nx2 - nx1) / (dx1 + dx2);
-            }
-          else if (dy1+dy2 != 0.0)
-            {
-              c = (ny2 - ny1) / (dy1 + dy2);
-            }
+          if      (d1.x()+d2.x() != 0.0) { c = (n2.x() - n1.x()) / (d1.x() + d2.x()); }
+          else if (d1.y()+d2.y() != 0.0) { c = (n2.y() - n1.y()) / (d1.y() + d2.y()); }
 
-          const double use_nx = nx2 - c * dx2;
-          const double use_ny = ny2 - c * dy2;
+          const Vec2d use_n(n2 - d2 * c);
 
-          const Vec2d pt1(pts[i-1].x() - width*use_nx,
-                          pts[i-1].y() - width*use_ny);
-          const Vec2d pt2(pts[i-1].x() + width*use_nx,
-                          pts[i-1].y() + width*use_ny);
+          canvas->vertex2(pts[i-1] - use_n*width);
+          canvas->vertex2(pts[i-1] + use_n*width);
 
-          canvas->vertex2(pt1);
-          canvas->vertex2(pt2);
-
-          nx1 = nx2;
-          ny1 = ny2;
-          dx1 = dx2;
-          dy1 = dy2;
+          n1 = n2;
+          d1 = d2;
         }
 
-      const Vec2d pt1(pts.back().x() - width*nx1,
-                      pts.back().y() - width*ny1);
-      const Vec2d pt2(pts.back().x() + width*nx1,
-                      pts.back().y() + width*ny1);
+      const Vec2d pt1(pts.back().x() - width*n1.x(),
+                      pts.back().y() - width*n1.y());
+      const Vec2d pt2(pts.back().x() + width*n1.x(),
+                      pts.back().y() + width*n1.y());
 
       canvas->vertex2(pt1);
       canvas->vertex2(pt2);
 
       canvas->end();
-      canvas = 0;
-      pts.clear();
     }
-
-    Gfx::Canvas* canvas;
-    std::vector<Vec2d> pts;
-    double width;
   };
-
-  void fancyBezier4(Gfx::Canvas& canvas,
-                    const Vec3d& p1,
-                    const Vec3d& p2,
-                    const Vec3d& p3,
-                    const Vec3d& p4,
-                    unsigned int subdivisions,
-                    double w)
-  {
-    Bezier4 xb(p1.x(), p2.x(), p3.x(), p4.x());
-    Bezier4 yb(p1.y(), p2.y(), p3.y(), p4.y());
-//     Bezier4 zb(p1.z(), p2.z(), p3.z(), p4.z());
-
-    LineStrip ls;
-    ls.begin(canvas, w);
-    for (unsigned int i = 0; i < subdivisions; ++i)
-      {
-        double u = double(i) / double(subdivisions - 1);
-        ls.vertex(Vec2d(xb.eval(u), yb.eval(u)));
-      }
-    ls.end();
-  }
 
 }
 
@@ -268,6 +273,8 @@ const FieldMap& MorphyFace::classFields()
     Field("bottomWidth", &MF::itsBottomWidth, 1.0, 0.05, 2.0, 0.05),
     Field("topHeight", &MF::itsTopHeight, 3.8, 0.5, 5.0, 0.25),
     Field("bottomHeight", &MF::itsBottomHeight, -3.0, -5.0, -0.5, 0.25),
+    Field("lineJoin", &MF::itsLineJoin, true, false, true, true,
+          Field::TRANSIENT | Field::BOOLEAN),
 
     Field("hairWidth", &MF::itsHairWidth, 0.20, 0.00, 0.5, 0.02, Field::NEW_GROUP),
     Field("hairStyle", &MF::itsHairStyle, 0, 0, 1, 1),
@@ -350,7 +357,9 @@ MorphyFace::MorphyFace() :
   itsMouthXpos(0.0),
   itsMouthYpos(-2.0),
   itsMouthWidth(2.5),
-  itsMouthCurvature(0.6)
+  itsMouthCurvature(0.6),
+
+  itsLineJoin(true)
 {
 DOTRACE("MorphyFace::MorphyFace");
 
@@ -409,6 +418,8 @@ DOTRACE("MorphyFace::grRender");
 
 //   canvas.enableAntialiasing();
 
+  LineStrip ls;
+
   //
   // Draw eyes
   //
@@ -435,31 +446,28 @@ DOTRACE("MorphyFace::grRender");
                              itsEyeYpos, 0.0));
 
       // Draw eye outline
-      for (int top_bottom = -1; top_bottom < 2; top_bottom += 2)
-        {
-          DOTRACE("MorphyFace::grRender-draw eye outline");
+      {
+        DOTRACE("MorphyFace::grRender-draw eye outline");
 
-          Gfx::MatrixSaver msaver2(canvas);
+        const Vec3d s1(itsEyeHeight*itsEyeAspectRatio,
+                       -itsEyeHeight,
+                       1.0);
+        const Vec3d s2(itsEyeHeight*itsEyeAspectRatio,
+                       itsEyeHeight,
+                       1.0);
 
-
-#if 0
-          canvas.scale(Vec3d(itsEyeHeight*itsEyeAspectRatio,
-                             itsEyeHeight*top_bottom,
-                             1.0));
-          canvas.drawBezier4(eye_ctrlpnts[0], eye_ctrlpnts[1],
-                             eye_ctrlpnts[2], eye_ctrlpnts[3],
-                             eye_subdivisions);
-#else
-          const Vec3d s(itsEyeHeight*itsEyeAspectRatio,
-                        itsEyeHeight*top_bottom,
-                        1.0);
-          fancyBezier4(canvas,
-                       s*eye_ctrlpnts[0], s*eye_ctrlpnts[1],
-                       s*eye_ctrlpnts[2], s*eye_ctrlpnts[3],
-                       eye_subdivisions,
-                       0.02);
-#endif
-        }
+        ls.begin(canvas, 0.02, itsLineJoin);
+        // Two bezier curves end to end, sharing a common vertex in the middle
+        ls.drawBezier4(s1*eye_ctrlpnts[3], s1*eye_ctrlpnts[2],
+                       s1*eye_ctrlpnts[1], s1*eye_ctrlpnts[0],
+                       eye_subdivisions);
+        ls.drawBezier4(s2*eye_ctrlpnts[0], s2*eye_ctrlpnts[1],
+                       s2*eye_ctrlpnts[2], s2*eye_ctrlpnts[3],
+                       eye_subdivisions, 1 /* skip the first vertex since
+                                              it was already covered by the
+                                              previous bezier curve */);
+        ls.end();
+      }
 
       // Draw eyebrow
       {
@@ -478,18 +486,11 @@ DOTRACE("MorphyFace::grRender");
                       itsEyeHeight*itsEyebrowCurvature,
                       1.0);
 
-#if 0
-        canvas.scale(s);
-        canvas.drawBezier4(eye_ctrlpnts[0], eye_ctrlpnts[1],
-                           eye_ctrlpnts[2], eye_ctrlpnts[3],
-                           eye_subdivisions);
-#else
-        fancyBezier4(canvas,
-                     s*eye_ctrlpnts[0], s*eye_ctrlpnts[1],
-                     s*eye_ctrlpnts[2], s*eye_ctrlpnts[3],
-                     eye_subdivisions,
-                     itsEyebrowThickness/100.0);
-#endif
+        ls.begin(canvas, itsEyebrowThickness/100.0, itsLineJoin);
+        ls.drawBezier4(s*eye_ctrlpnts[0], s*eye_ctrlpnts[1],
+                       s*eye_ctrlpnts[2], s*eye_ctrlpnts[3],
+                       eye_subdivisions);
+        ls.end();
       }
 
       // Draw pupil
@@ -515,25 +516,15 @@ DOTRACE("MorphyFace::grRender");
   // Draw face outline.
   //
 
-#if 0
-  canvas.drawBezier4(Vec3d(itsFaceWidth, 0.0, 0.0),
-                     Vec3d(itsBottomWidth*itsFaceWidth,
-                           itsBottomHeight*4.0/3.0, 0.0),
-                     Vec3d(-itsBottomWidth*itsFaceWidth,
-                           itsBottomHeight*4.0/3.0, 0.0),
-                     Vec3d(-itsFaceWidth, 0.0, 0.0),
-                     30);
-#else
-  fancyBezier4(canvas,
-               Vec3d(itsFaceWidth, 0.0, 0.0),
-               Vec3d(itsBottomWidth*itsFaceWidth,
-                     itsBottomHeight*4.0/3.0, 0.0),
-               Vec3d(-itsBottomWidth*itsFaceWidth,
-                     itsBottomHeight*4.0/3.0, 0.0),
-               Vec3d(-itsFaceWidth, 0.0, 0.0),
-               50,
-               0.03);
-#endif
+  ls.begin(canvas, 0.03, itsLineJoin);
+  ls.drawBezier4(Vec3d(itsFaceWidth, 0.0, 0.0),
+                 Vec3d(itsBottomWidth*itsFaceWidth,
+                       itsBottomHeight*4.0/3.0, 0.0),
+                 Vec3d(-itsBottomWidth*itsFaceWidth,
+                       itsBottomHeight*4.0/3.0, 0.0),
+                 Vec3d(-itsFaceWidth, 0.0, 0.0),
+                 50);
+  ls.end();
 
   //
   // Draw nose.
@@ -549,24 +540,7 @@ DOTRACE("MorphyFace::grRender");
     const Vec2d s(Util::abs(itsNoseWidth)/2.0,
                   Util::abs(itsNoseLength));
 
-#if 0
-    canvas.scale(Vec3d(Util::abs(itsNoseWidth)/2.0,
-                       Util::abs(itsNoseLength), 1.0));
-
-    Gfx::LineStripBlock block(canvas);
-
-    canvas.vertex2(Vec2d(-0.75, 0.5));
-    canvas.vertex2(Vec2d(-1.0,  0.0));
-    canvas.vertex2(Vec2d(-0.75, -0.333333));
-    canvas.vertex2(Vec2d(-0.25, -0.333333));
-    canvas.vertex2(Vec2d( 0.0, -0.5));   // CENTER
-    canvas.vertex2(Vec2d( 0.25, -0.333333));
-    canvas.vertex2(Vec2d( 0.75, -0.333333));
-    canvas.vertex2(Vec2d( 1.0,  0.0));
-    canvas.vertex2(Vec2d( 0.75, 0.5));
-#else
-    LineStrip ls;
-    ls.begin(canvas, 0.02);
+    ls.begin(canvas, 0.02, itsLineJoin);
     ls.vertex(s*Vec2d(-0.75, 0.5));
     ls.vertex(s*Vec2d(-1.0,  0.0));
     ls.vertex(s*Vec2d(-0.75, -0.333333));
@@ -577,7 +551,6 @@ DOTRACE("MorphyFace::grRender");
     ls.vertex(s*Vec2d( 1.0,  0.0));
     ls.vertex(s*Vec2d( 0.75, 0.5));
     ls.end();
-#endif
   }
 
   //
@@ -593,22 +566,13 @@ DOTRACE("MorphyFace::grRender");
 
     const Vec3d s(itsMouthWidth, itsMouthCurvature, 1.0);
 
-#if 0
-    canvas.scale(s);
-    canvas.drawBezier4(Vec3d(-0.5,  0.5,      0.0),
-                       Vec3d(-0.2, -0.833333, 0.0),
-                       Vec3d( 0.2, -0.833333, 0.0),
-                       Vec3d( 0.5,  0.5,      0.0),
-                       30);
-#else
-    fancyBezier4(canvas,
-                 s*Vec3d(-0.5,  0.5,      0.0),
-                 s*Vec3d(-0.2, -0.833333, 0.0),
-                 s*Vec3d( 0.2, -0.833333, 0.0),
-                 s*Vec3d( 0.5,  0.5,      0.0),
-                 30,
-                 0.02);
-#endif
+    ls.begin(canvas, 0.02, itsLineJoin);
+    ls.drawBezier4(s*Vec3d(-0.5,  0.5,      0.0),
+                   s*Vec3d(-0.2, -0.833333, 0.0),
+                   s*Vec3d( 0.2, -0.833333, 0.0),
+                   s*Vec3d( 0.5,  0.5,      0.0),
+                   30);
+    ls.end();
   }
 
   //
