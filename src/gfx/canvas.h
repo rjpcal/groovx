@@ -155,7 +155,7 @@ public:
   ///////////////////////////////////////////////////////////////////////
 
   /// Save the entire current attrib set.
-  virtual void pushAttribs() = 0;
+  virtual void pushAttribs(const char* comment="") = 0;
 
   /// Restore the previously saved entire attrib set.
   virtual void popAttribs() = 0;
@@ -219,7 +219,7 @@ public:
   ///////////////////////////////////////////////////////////////////////
 
   /// Save the current transformation matrix.
-  virtual void pushMatrix() = 0;
+  virtual void pushMatrix(const char* comment="") = 0;
 
   /// Restore the previously saved transformation matrix.
   virtual void popMatrix() = 0;
@@ -299,16 +299,16 @@ public:
   virtual void drawNurbsCurve(const dynamic_block<float>& knots,
                               const dynamic_block<Gfx::Vec3<float> >& pts);
 
-  virtual void beginPoints() = 0;         ///< Start a series of points vertices.
-  virtual void beginLines() = 0;          ///< Start a set of lines.
-  virtual void beginLineStrip() = 0;      ///< Start a continuous strip of lines.
-  virtual void beginLineLoop() = 0;       ///< Start a closed loop of lines.
-  virtual void beginTriangles() = 0;      ///< Start a set of triangles.
-  virtual void beginTriangleStrip() = 0;  ///< Start a continuous strip of triangles.
-  virtual void beginTriangleFan() = 0;    ///< Start a fan of triangles with a common anchor point.
-  virtual void beginQuads() = 0;          ///< Start a set of quadrilaterals.
-  virtual void beginQuadStrip() = 0;      ///< Start a continous strip of quadrilaterals.
-  virtual void beginPolygon() = 0;        ///< Start a convex polygon.
+  virtual void beginPoints(const char* comment="") = 0;         ///< Start a series of points vertices.
+  virtual void beginLines(const char* comment="") = 0;          ///< Start a set of lines.
+  virtual void beginLineStrip(const char* comment="") = 0;      ///< Start a continuous strip of lines.
+  virtual void beginLineLoop(const char* comment="") = 0;       ///< Start a closed loop of lines.
+  virtual void beginTriangles(const char* comment="") = 0;      ///< Start a set of triangles.
+  virtual void beginTriangleStrip(const char* comment="") = 0;  ///< Start a continuous strip of triangles.
+  virtual void beginTriangleFan(const char* comment="") = 0;    ///< Start a fan of triangles with a common anchor point.
+  virtual void beginQuads(const char* comment="") = 0;          ///< Start a set of quadrilaterals.
+  virtual void beginQuadStrip(const char* comment="") = 0;      ///< Start a continous strip of quadrilaterals.
+  virtual void beginPolygon(const char* comment="") = 0;        ///< Start a convex polygon.
 
   /// Symbolic tags for the vertex-series specified by the begin*() functions.
   enum VertexStyle
@@ -326,7 +326,7 @@ public:
     };
 
   /// Start a series of vertices according to the given Vertex Style.
-  void begin(VertexStyle s);
+  void begin(VertexStyle s, const char* comment="");
 
   /// Put a 2-D vertex (with z = 0) into the current vertex-series.
   virtual void vertex2(const Gfx::Vec2<double>& v) = 0;
