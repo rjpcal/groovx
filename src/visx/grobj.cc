@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Tue Dec 14 19:44:07 1999
+// written: Sun Jan 16 22:58:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,6 @@
 
 #include "bitmaprep.h"
 #include "canvas.h"
-#include "glcanvas.h"
 #include "glbmaprenderer.h"
 #include "error.h"
 #include "rect.h"
@@ -175,9 +174,9 @@ private:
 
 	 const Rect<double>& getRaw() const;
 
-	 const Rect<double>& getFinal() const
+	 const Rect<double>& getFinal(const Canvas& canvas) const
 		{
-		  updateFinal();
+		  updateFinal(canvas);
 		  return itsCachedFinalBB;
 		}
 
@@ -190,7 +189,7 @@ private:
   private:
 	 void updateRaw() const;
 
-	 void updateFinal() const;
+	 void updateFinal(const Canvas& canvas) const;
 
 	 int pixelBorder() const
 		{
@@ -227,7 +226,7 @@ public:
 
   bool hasBB() const { return itsBB.bbExists(); }
 
-  bool getBoundingBox(Rect<double>& bbox) const;
+  bool getBoundingBox(const Canvas& canvas, Rect<double>& bbox) const;
 
   bool getBBVisibility() const { return itsBB.itsIsVisible; }
 
@@ -290,7 +289,7 @@ public:
   void update(Canvas& canvas) const;
   void draw(Canvas& canvas) const;
 
-  void grDrawBoundingBox() const;
+  void grDrawBoundingBox(const Canvas& canvas) const;
 
   /////////////////
   // unrendering //
@@ -382,7 +381,7 @@ DOTRACE("GrObj::Impl::BoundingBox::updateRaw");
   DebugEvalNL(itsHasBB);
 }
 
-void GrObj::Impl::BoundingBox::updateFinal() const {
+void GrObj::Impl::BoundingBox::updateFinal(const Canvas& canvas) const {
 DOTRACE("GrObj::Impl::BoundingBox::updateFinal");
 
   if ( !itsFinalBBIsCurrent ) {
@@ -396,8 +395,7 @@ DOTRACE("GrObj::Impl::BoundingBox::updateFinal");
 		itsOwner->doScaling();
 		itsOwner->doAlignment();
 		
-		Rect<int> screen_pos =
-		  GLCanvas::theCanvas().getScreenFromWorld(getRaw());
+		Rect<int> screen_pos = canvas.getScreenFromWorld(getRaw());
 
 	 glPopMatrix();
 	 
@@ -408,8 +406,7 @@ DOTRACE("GrObj::Impl::BoundingBox::updateFinal");
 	 screen_pos.heightenByStep(bp);
 
 	 // ... and project back to world coordinates
-	 itsCachedFinalBB =
-		GLCanvas::theCanvas().getWorldFromScreen(screen_pos);
+	 itsCachedFinalBB = canvas.getWorldFromScreen(screen_pos);
 	 
 	 // This next line is commented out to disable the caching scheme
 	 // because I don't think it really works, since changes to the
@@ -787,12 +784,13 @@ inline double GrObj::Impl::nativeCenterY() const {
   return itsBB.getRaw().centerY();
 }
 
-bool GrObj::Impl::getBoundingBox(Rect<double>& bbox) const {
+bool GrObj::Impl::getBoundingBox(const Canvas& canvas,
+											Rect<double>& bbox) const {
 DOTRACE("GrObj::Impl::getBoundingBox");
 
   if ( !itsBB.bbExists() ) return false;
 
-  bbox = itsBB.getFinal();
+  bbox = itsBB.getFinal(canvas);
   return true;
 }
 
@@ -956,7 +954,7 @@ DOTRACE("GrObj::Impl::draw");
   checkForGlError("before GrObj::draw");
 
   if ( itsBB.itsIsVisible ) {
-	 grDrawBoundingBox();
+	 grDrawBoundingBox(canvas);
   }
 
   bool objectDrawn = itsRenderer.update(this, canvas);
@@ -993,10 +991,10 @@ DOTRACE("GrObj::Impl::undraw");
   checkForGlError("during GrObj::undraw");
 }
 
-void GrObj::Impl::grDrawBoundingBox() const {
+void GrObj::Impl::grDrawBoundingBox(const Canvas& canvas) const {
 DOTRACE("GrObj::Impl::grDrawBoundingBox");
   Rect<double> bbox;
-  if ( getBoundingBox(bbox) ) {
+  if ( getBoundingBox(canvas, bbox) ) {
 	 DebugPrintNL("drawing bounding box");
 	 glPushAttrib(GL_LINE_BIT);
 	 {
@@ -1115,7 +1113,7 @@ DOTRACE("GrObj::Impl::undrawClearBoundingBox");
   glMatrixMode(GL_MODELVIEW);
 
   Rect<double> world_pos;
-  if ( getBoundingBox(world_pos) ) {
+  if ( getBoundingBox(canvas, world_pos) ) {
 	 glPushAttrib(GL_SCISSOR_BIT);
 	 {
 		glEnable(GL_SCISSOR_TEST);
@@ -1149,7 +1147,7 @@ DOTRACE("GrObj::Impl::undrawBoundingBox");
 		doScaling();
 		doAlignment();
 		  
-		grDrawBoundingBox();
+		grDrawBoundingBox(canvas);
 	 }
 	 glPopMatrix();
   }
@@ -1271,10 +1269,10 @@ DOTRACE("GrObj::getBBVisibility");
   return itsImpl->getBBVisibility();
 }
 
-bool GrObj::getBoundingBox(Rect<double>& bbox) const {
+bool GrObj::getBoundingBox(const Canvas& canvas, Rect<double>& bbox) const {
 DOTRACE("GrObj::getBoundingBox");
 
-  return itsImpl->getBoundingBox(bbox);
+  return itsImpl->getBoundingBox(canvas, bbox);
 }
 
 bool GrObj::grGetBoundingBox(Rect<double>& /*bounding_box*/,
