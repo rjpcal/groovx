@@ -110,10 +110,12 @@ void media::esd_sound_rep::play()
 
   const char* const fname = m_filename.c_str();
 
+  dbg_eval_nl(3, fname);
+
   // open the audio file
   const AFfilehandle in_file = afOpenFile(fname, "rb", NULL);
 
-  if ( !in_file )
+  if (in_file == 0)
     throw rutz::error(rutz::fstring("couldn't open sound file '",
                                     fname, "'"), SRC_POS);
 
@@ -129,9 +131,9 @@ void media::esd_sound_rep::play()
 
   // convert audiofile parameters to EsounD parameters
   int out_bits;
-  if ( in_width == 8 )
+  if (in_width == 8)
     out_bits = ESD_BITS8;
-  else if ( in_width == 16 )
+  else if (in_width == 16)
     out_bits = ESD_BITS16;
   else
     {
@@ -144,9 +146,9 @@ void media::esd_sound_rep::play()
   const int bytes_per_frame = (in_width * in_channels) / 8;
 
   int out_channels;
-  if ( in_channels == 1 )
+  if (in_channels == 1)
     out_channels = ESD_MONO;
-  else if ( in_channels == 2 )
+  else if (in_channels == 2)
     out_channels = ESD_STEREO;
   else
     {
@@ -163,8 +165,6 @@ void media::esd_sound_rep::play()
     out_bits | out_channels | out_mode | out_func;
 
   const int out_rate = int(in_rate);
-
-  dbg_eval_nl(3, fname);
 
   // connect to server
   const int out_sock = esd_play_stream(out_format, out_rate, NULL, fname);
