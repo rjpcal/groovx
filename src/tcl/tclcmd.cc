@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Thu Jul 12 13:06:59 2001
+// written: Thu Jul 12 18:00:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -119,6 +119,7 @@ public:
        const char* cmd_name, const char* usage,
        int objc_min, int objc_max, bool exact_objc) :
     itsOwner(owner),
+    itsInterp(interp),
     itsUsage(usage),
     itsObjcMin(objc_min < 0 ? 0 : (unsigned int) objc_min),
     itsObjcMax( (objc_max > 0) ? (unsigned int) objc_max : itsObjcMin),
@@ -139,6 +140,27 @@ public:
                             << itsUseCount << STD_IO::endl;
         }
 #endif
+
+      // We must check if the Tcl_Interp* has been tagged for deletion
+      // already, since if it is then we must not attempt to use it to
+      // delete a Tcl command (this results in "called Tcl_HashEntry
+      // on deleted table"). Not deleting the command in that case
+      // does not cause a resource leak, however, since the Tcl_Interp
+      // as part if its own destruction will delete all commands
+      // associated with it.
+
+      if ( !Tcl_InterpDeleted(itsInterp) )
+        {
+          try
+            {
+              Tcl_DeleteCommand(itsInterp,
+                                const_cast<char*>(itsCmdName.c_str()));
+            }
+          catch (ErrorWithMsg& err)
+            { DebugEvalNL(err.msg_cstr()); }
+          catch (...)
+            { DebugPrintNL("an unknown error occurred"); }
+        }
     }
 
   const char* usage() const { return itsUsage; }
@@ -161,17 +183,17 @@ public:
 
   void addOverload(Tcl_Interp* interp, shared_ptr<TclCmd> other)
   {
-	 itsOverload = other;
+    itsOverload = other;
 
-	 // We need to re-register our own CmdProc, since the overload
-	 // probably blew ours away in its own constructor 
-	 registerCmdProc(interp);
+    // We need to re-register our own CmdProc, since the overload
+    // probably blew ours away in its own constructor
+    registerCmdProc(interp);
   }
 
   Impl* getOverload() const
   {
-	 Tcl::TclCmd* overload = itsOverload.get();
-	 return overload ? overload->itsImpl : 0;
+    Tcl::TclCmd* overload = itsOverload.get();
+    return overload ? overload->itsImpl : 0;
   }
 
   void registerCmdProc(Tcl_Interp* interp)
@@ -185,25 +207,25 @@ public:
 
   void warnUsage(Tcl_Interp* interp)
   {
-	 Tcl_Obj* result = Tcl_GetObjResult(interp);
+    Tcl_Obj* result = Tcl_GetObjResult(interp);
 
-	 Tcl_AppendToObj(result, "wrong # args: should be ", -1);
+    Tcl_AppendToObj(result, "wrong # args: should be ", -1);
 
-	 if ( getOverload()==0 )
-		{
-		  appendFullUsage(result);
-		}
-	 else
-		{
-		  Tcl_AppendToObj(result, "one of:", -1);
-		  Impl* cmd = this;
-		  while ( cmd != 0 )
-			 {
-				Tcl_AppendToObj(result, "\n\t", -1);
-				cmd->appendFullUsage(result);
-				cmd = cmd->getOverload();
-			 }
-		}
+    if ( getOverload()==0 )
+      {
+        appendFullUsage(result);
+      }
+    else
+      {
+        Tcl_AppendToObj(result, "one of:", -1);
+        Impl* cmd = this;
+        while ( cmd != 0 )
+          {
+            Tcl_AppendToObj(result, "\n\t", -1);
+            cmd->appendFullUsage(result);
+            cmd = cmd->getOverload();
+          }
+      }
   }
 
   /// The procedure that is actually registered with the Tcl C API.
@@ -212,26 +234,27 @@ public:
 
 private:
   void appendFullUsage(Tcl_Obj* result)
-	 {
-		if (itsUsage)
-		  {
-			 Tcl_AppendStringsToObj(result,
-											"\"", const_cast<char*>(itsCmdName.c_str()),
-											" ", itsUsage, "\"", (char*)0);
-		  }
-		else
-		  {
-			 Tcl_AppendStringsToObj(result,
-											"\"", const_cast<char*>(itsCmdName.c_str()),
-											"\"", (char*)0);
-		  }
-	 }
+    {
+      if (itsUsage)
+        {
+          Tcl_AppendStringsToObj(result,
+                                 "\"", const_cast<char*>(itsCmdName.c_str()),
+                                 " ", itsUsage, "\"", (char*)0);
+        }
+      else
+        {
+          Tcl_AppendStringsToObj(result,
+                                 "\"", const_cast<char*>(itsCmdName.c_str()),
+                                 "\"", (char*)0);
+        }
+    }
 
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 
   // These are set once per command object
   Tcl::TclCmd* const itsOwner;
+  Tcl_Interp* const itsInterp;
   const char* const itsUsage;
   const unsigned int itsObjcMin;
   const unsigned int itsObjcMax;
@@ -309,7 +332,7 @@ DOTRACE("Tcl::TclCmd::Impl::invokeCallback");
       if ( theImpl == 0 )
         {
           Impl* originalImpl = static_cast<Tcl::TclCmd*>(clientData)->itsImpl;
-			 originalImpl->warnUsage(interp);
+          originalImpl->warnUsage(interp);
           return TCL_ERROR;
         }
     }
