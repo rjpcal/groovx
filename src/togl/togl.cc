@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Aug  6 14:18:39 2002
+// written: Tue Aug  6 14:42:28 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -36,23 +36,14 @@
 #include "util/error.h"
 #include "util/pointers.h"
 
-#include <cstring>
-
-// X Window System headers
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
-
 #include <GL/glx.h>
-
-// Tcl/Tk headers
-#ifndef _TKPORT
-#  define _TKPORT  // This eliminates need to include a bunch of Tk baggage
-#endif
 #include <tcl.h>
 #include <tk.h>
 
-#define LOCAL_TRACE
-#define LOCAL_DEBUG
+#include <cstring>
+
 #include "util/trace.h"
 #include "util/debug.h"
 
@@ -231,6 +222,7 @@ public:
   Tcl_Command itsCmdToken;
 
   bool itsUpdatePending;
+  bool itsShutdownInProgress;
   ClientData itsClientData;
   Togl_Callback* itsUserDisplayProc;
   Togl_Callback* itsUserReshapeProc;
@@ -273,7 +265,7 @@ public:
 
 private:
   void eventProc(XEvent* eventPtr);
-  void cleanup();
+  void shutdown();
   void makeWindowExist(); // throws a Util::Error on failure
   void setupOverlay(); // throws a Util::Error on failure
 };
@@ -316,6 +308,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp, const char* pathname) :
   itsCmdToken(0),
 
   itsUpdatePending(false),
+  itsShutdownInProgress(false),
   itsClientData(DefaultClientData),
   itsUserDisplayProc(DefaultDisplayProc),
   itsUserReshapeProc(DefaultReshapeProc),
@@ -335,7 +328,7 @@ DOTRACE("Togl::Impl::Impl");
                                      const_cast<char*>(pathname),
                                      (char *) 0);
 
-  if (itsTkWin == NULL)
+  if (itsTkWin == 0)
     {
       throw Util::Error("Togl constructor couldn't create Tk_Window");
     }
@@ -415,8 +408,6 @@ DOTRACE("Togl::Impl::~Impl");
     {
       itsUserDestroyProc(itsOwner);
     }
-
-  delete itsOverlay;
 }
 
 //---------------------------------------------------------------------
@@ -475,26 +466,30 @@ DOTRACE("Togl::Impl::cEventuallyFreeCallback");
 void Togl::Impl::cEventCallback(ClientData clientData, XEvent* eventPtr)
 {
   Impl* rep = static_cast<Impl*>(clientData);
+  Tcl_Preserve(clientData);
   rep->eventProc(eventPtr);
+  Tcl_Release(clientData);
 }
 
 void Togl::Impl::cWidgetCmdDeletedCallback(ClientData clientData)
 {
 DOTRACE("Togl::Impl::cWidgetCmdDeletedCallback");
   Impl* rep = static_cast<Impl*>(clientData);
-
-  rep->cleanup();
+  Tcl_Preserve(clientData);
+  rep->shutdown();
+  Tcl_Release(clientData);
 }
 
 void Togl::Impl::cTimerCallback(ClientData clientData)
 {
 DOTRACE("Togl::Impl::cTimerCallback");
   Impl* rep = static_cast<Impl*>(clientData);
-
+  Tcl_Preserve(clientData);
   rep->itsUserTimerProc(rep->itsOwner);
   rep->itsTimerToken =
     Tcl_CreateTimerHandler(rep->itsOpts.time, cTimerCallback,
                            static_cast<ClientData>(rep));
+  Tcl_Release(clientData);
 }
 
 // Called when the widget's contents must be redrawn.
@@ -503,12 +498,14 @@ void Togl::Impl::cRenderCallback(ClientData clientData)
 DOTRACE("Togl::Impl::cRenderCallback");
   Impl* rep = static_cast<Impl*>(clientData);
 
+  Tcl_Preserve(clientData);
   if (rep->itsUserDisplayProc)
     {
       rep->itsGlx->makeCurrent(rep->windowId());
       rep->itsUserDisplayProc(rep->itsOwner);
     }
   rep->itsUpdatePending = false;
+  Tcl_Release(clientData);
 }
 
 void Togl::Impl::requestRedisplay()
@@ -674,11 +671,7 @@ DOTRACE("Togl::Impl::eventProc");
     case DestroyNotify:
       {
         DOTRACE("Togl::Impl::eventProc-DestroyNotify");
-
-        cleanup();
-
-        Tcl_EventuallyFree(static_cast<ClientData>(this),
-                           Togl::Impl::cEventuallyFreeCallback);
+        shutdown();
       }
       break;
     default:
@@ -687,44 +680,45 @@ DOTRACE("Togl::Impl::eventProc");
     }
 }
 
-void Togl::Impl::cleanup()
+void Togl::Impl::shutdown()
 {
-DOTRACE("Togl::Impl::cleanup");
+  // If we end up calling ourselves recursively here (which is like to
+  // happen via a chain of DestroyNotify and "command deleted" callbacks),
+  // then just return without doing anything.
+  if (itsShutdownInProgress)
+    return;
 
-  // This procedure could be invoked either because the window was
-  // destroyed and the command was then deleted (in which case itsTkWin is
-  // NULL) or because the command was deleted, and then this procedure
-  // destroys the widget.
+DOTRACE("Togl::Impl::shutdown");
 
-  if (itsCmdToken != 0)
+  itsShutdownInProgress = true;
+
+  // Destroy Tcl widget command
+  Assert(itsCmdToken != 0);
+
+  Tcl_DeleteCommandFromToken(itsInterp, itsCmdToken);
+  itsCmdToken = 0;
+
+  if (itsOverlay)
     {
-      Tcl_DeleteCommandFromToken(itsInterp, itsCmdToken);
-      itsCmdToken = 0;
+      TkUtil::forgetWindow(itsTkWin, itsOverlay->windowId());
+      delete itsOverlay;
+      itsOverlay = 0;
     }
 
-  if (itsTkWin != 0)
-    {
-      if (itsOverlay)
-        {
-          TkUtil::forgetWindow(itsTkWin, itsOverlay->windowId());
-        }
+  Assert(itsTkWin != 0);
 
-      Tk_DestroyWindow(itsTkWin);
-      itsTkWin = 0;
-    }
+  Tk_DestroyWindow(itsTkWin);
+  itsTkWin = 0;
 
-  if (itsUserTimerProc != 0)
-    {
-      Tcl_DeleteTimerHandler(itsTimerToken);
-      itsUserTimerProc = 0;
-    }
+  // Destroy timer handler
+  Tcl_DeleteTimerHandler(itsTimerToken);
+  itsUserTimerProc = 0;
 
-  if (itsUpdatePending)
-    {
-      Tcl_CancelIdleCall(Togl::Impl::cRenderCallback,
-                         static_cast<ClientData>(this));
-      itsUpdatePending = 0;
-    }
+  // Kill pending updates
+  Tcl_CancelIdleCall(cRenderCallback, static_cast<ClientData>(this));
+  itsUpdatePending = false;
+
+  Tcl_EventuallyFree(static_cast<ClientData>(this), cEventuallyFreeCallback);
 }
 
 void Togl::Impl::makeWindowExist()
@@ -969,7 +963,7 @@ namespace
         return TCL_ERROR;
       }
 
-    Tk_Preserve((ClientData)rep);
+    Tcl_Preserve(clientData);
 
     if (strcmp(Tcl_GetString(objv[1]), "configure") == 0)
       {
@@ -1041,7 +1035,7 @@ namespace
         result = TCL_ERROR;
       }
 
-    Tk_Release((ClientData)rep);
+    Tcl_Release(clientData);
     return result;
   }
 
