@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Mar  8 11:38:05 2000
+// written: Sun Mar 12 00:09:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,18 +14,16 @@
 #include "ioptrlist.h"
 
 #include <iostream.h>
-#include <typeinfo>
-#include <string>
-#include <vector>
 
-#include "demangle.h"
 #include "iomgr.h"
 #include "readutils.h"
+#include "util/arrays.h"
 #include "util/strings.h"
 #include "writeutils.h"
 
 #define NO_TRACE
 #include "trace.h"
+#define LOCAL_ASSERT
 #include "debug.h"
 
 IoPtrList::IoPtrList(int size) :
@@ -80,11 +78,13 @@ DOTRACE("IoPtrList::serialize");
 
 void IoPtrList::deserialize(istream &is, IOFlag flag) {
 DOTRACE("IoPtrList::deserialize");
-  string ioTag = IO::ioTypename().c_str();
+  fixed_string ioTag = IO::ioTypename();
 
   if (flag & BASES) { /* there are no bases to deserialize */ }
   if (flag & TYPENAME) { 
-	 string typename_list = ioTag + " " + alternateIoTags();
+	 dynamic_string typename_list = ioTag;
+	 typename_list += " ";
+	 typename_list += alternateIoTags();
 	 IO::readTypename(is, typename_list.c_str());
   }
 
@@ -100,7 +100,7 @@ DOTRACE("IoPtrList::deserialize");
   }
   voidVecResize(size);
   int ptrid;
-  string type;
+  fixed_string type;
   for (int i = 0; i < num_non_null; ++i) {
     is >> ptrid;
 	 if (ptrid < 0 || ptrid >= size) {
@@ -161,17 +161,21 @@ void IoPtrList::readFrom(Reader* reader) {
 DOTRACE("IoPtrList::readFrom");
   firstVacant() = reader->readInt("itsFirstVacant");
 
-  vector<IO*> ioVec;
+  int count = ReadUtils::readSequenceCount(reader, "itsVec");
 
-  ReadUtils::readObjectSeq(reader, "itsVec", back_inserter(ioVec), (IO*) 0);
+  Assert(count >= 0);
+  unsigned int uint_count = (unsigned int) count;
 
-  voidVecResize(ioVec.size());
+  fixed_block<IO*> ioBlock(uint_count);
 
-  for (size_t i = 0, end = ioVec.size();
-		 i < end;
-		 ++i)
-	 if (ioVec[i] != 0) {
-		insertVoidPtrAt(i, fromIOToVoid(ioVec[i]));
+  ReadUtils::readObjectSeq(reader, "itsVec", ioBlock.begin(),
+									(IO*) 0, count);
+
+  voidVecResize(uint_count);
+
+  for (size_t i = 0; i < uint_count; ++i)
+	 if (ioBlock[i] != 0) {
+		insertVoidPtrAt(i, fromIOToVoid(ioBlock[i]));
 	 }
 }
 
@@ -180,15 +184,18 @@ void IoPtrList::writeTo(Writer* writer) const {
 DOTRACE("IoPtrList::writeTo");
   writer->writeInt("itsFirstVacant", firstVacant());
 
-  vector<IO*> ioVec(voidVecSize());
+  unsigned int count = voidVecSize();
 
-  for (size_t i = 0, end = voidVecSize();
-		 i < end;
-		 ++i)
-	 if ( getVoidPtr(i) != 0 )
-		ioVec[i] = fromVoidToIO(getVoidPtr(i));
+  fixed_block<IO*> ioBlock(count);
 
-  WriteUtils::writeObjectSeq(writer, "itsVec", ioVec.begin(), ioVec.end());
+  for (size_t i = 0; i < count; ++i)
+	 {
+		if ( getVoidPtr(i) != 0 )
+		  ioBlock[i] = fromVoidToIO(getVoidPtr(i));
+	 }
+
+  WriteUtils::writeObjectSeq(writer, "itsVec",
+									  ioBlock.begin(), ioBlock.end());
 }
 
 const char* IoPtrList::alternateIoTags() const {
