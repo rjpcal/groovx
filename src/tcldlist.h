@@ -2,10 +2,10 @@
 //
 // tcldlist.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Nov 10 17:27:02 2000
+// written: Thu May 10 12:04:37 2001
 // $Id$
 //
 // This package provides additional list manipulation functions using

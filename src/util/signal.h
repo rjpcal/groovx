@@ -2,10 +2,10 @@
 //
 // observable.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Mon Nov 13 18:23:59 2000
+// written: Thu May 10 12:04:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

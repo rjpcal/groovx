@@ -2,10 +2,10 @@
 //
 // sound.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Thu May 10 11:49:28 2001
+// written: Thu May 10 12:04:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

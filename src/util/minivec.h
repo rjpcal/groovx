@@ -2,10 +2,10 @@
 //
 // minivec.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 31 11:01:16 2000
-// written: Thu Nov 16 12:00:05 2000
+// written: Thu May 10 12:04:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // tclevalcmd.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jun 17 10:38:13 1999
-// written: Fri Nov 10 17:03:49 2000
+// written: Thu May 10 12:04:37 2001
 // $Id$
 //
 // TclEvalCmd serves as a wrapper for a Tcl command string that is to

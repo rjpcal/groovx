@@ -2,10 +2,10 @@
 //
 // iodb.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Mon Dec 11 17:46:48 2000
+// written: Thu May 10 12:04:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

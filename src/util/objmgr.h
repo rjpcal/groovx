@@ -2,10 +2,10 @@
 //
 // iomgr.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Apr 23 01:12:37 1999
-// written: Fri Nov 10 17:27:02 2000
+// written: Thu May 10 12:04:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

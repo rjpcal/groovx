@@ -2,10 +2,10 @@
 //
 // hash.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 20 08:50:34 2000
-// written: Thu Nov 16 12:20:47 2000
+// written: Thu May 10 12:04:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // position.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:14 1999
-// written: Sat Dec  2 09:22:52 2000
+// written: Thu May 10 12:04:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // trial.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mar-99
-// written: Tue Nov 28 14:25:35 2000
+// written: Thu May 10 12:04:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // morphyface.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:37:45 1999
-// written: Tue Nov 14 11:48:13 2000
+// written: Thu May 10 12:04:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

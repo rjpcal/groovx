@@ -2,10 +2,10 @@
 //
 // kbdresponsehdlr.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:09:12 1999
-// written: Fri Nov 10 17:03:59 2000
+// written: Thu May 10 12:04:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // masktcl.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 18:19:05 1999
-// written: Mon Nov 13 18:58:17 2000
+// written: Thu May 10 12:04:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

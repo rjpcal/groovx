@@ -2,10 +2,10 @@
 //
 // tlistutils.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Mon Dec 11 17:46:45 2000
+// written: Thu May 10 12:04:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

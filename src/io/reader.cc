@@ -2,10 +2,10 @@
 //
 // reader.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:47:00 1999
-// written: Fri Nov 17 11:45:27 2000
+// written: Thu May 10 12:04:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

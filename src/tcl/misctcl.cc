@@ -2,10 +2,10 @@
 //
 // misctcl.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Fri Nov 10 17:27:03 2000
+// written: Thu May 10 12:04:42 2001
 // $Id$
 //
 // this file contains the implementations for some simple Tcl functions

@@ -2,10 +2,10 @@
 //
 // ptrhandle.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 15:56:41 2000
-// written: Tue Nov 28 14:34:05 2000
+// written: Thu May 10 12:04:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

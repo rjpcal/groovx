@@ -2,10 +2,10 @@
 //
 // iotcl.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Mon Dec 11 17:45:53 2000
+// written: Thu May 10 12:04:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

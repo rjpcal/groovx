@@ -2,10 +2,10 @@
 //
 // ioitempkg.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  7 13:17:04 1999
-// written: Sat Nov 11 15:16:33 2000
+// written: Thu May 10 12:04:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

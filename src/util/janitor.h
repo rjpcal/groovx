@@ -2,10 +2,10 @@
 //
 // janitor.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 17:35:40 2000
-// written: Fri Nov 10 17:03:48 2000
+// written: Thu May 10 12:04:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

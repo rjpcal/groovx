@@ -2,10 +2,10 @@
 //
 // soundtcl.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Mon Dec 11 15:41:09 2000
+// written: Thu May 10 12:04:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // tclgl.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Fri Nov 10 17:27:04 2000
+// written: Thu May 10 12:04:45 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers

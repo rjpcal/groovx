@@ -2,10 +2,10 @@
 //
 // tclpkg.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 11:50:23 1999
-// written: Tue Dec  5 15:59:23 2000
+// written: Thu May 10 12:04:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

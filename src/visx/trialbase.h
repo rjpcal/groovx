@@ -2,10 +2,10 @@
 //
 // trialbase.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jan 25 18:41:19 2000
-// written: Tue Nov 28 15:26:23 2000
+// written: Thu May 10 12:04:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

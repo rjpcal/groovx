@@ -2,10 +2,10 @@
 //
 // tracertcl.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Feb 17 13:34:40 2000
-// written: Fri Nov 10 17:03:55 2000
+// written: Thu May 10 12:04:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

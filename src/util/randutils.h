@@ -2,10 +2,10 @@
 //
 // randutils.h
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 02:35:53 1999
-// written: Fri Nov 10 17:27:02 2000
+// written: Thu May 10 12:04:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
