@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Thu May 10 12:04:37 2001
+// written: Sat May 26 17:52:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,9 +23,11 @@
 
 namespace IO { class IoObject; }
 
+template <class T> class IdItem;
+
 ///////////////////////////////////////////////////////////////////////
 //
-// Attrib template class definitions
+// Getter/Setter/Action template functor implentations
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -36,7 +38,7 @@ namespace IO { class IoObject; }
  *
  **/
 template <class C, class T>
-class CGetter : public virtual Getter<T> {
+class CGetter : public Getter<T> {
 public:
   /// The type of member function pointer that will be called in \c get().
   typedef T (C::* Getter_f) () const;
@@ -57,6 +59,29 @@ private:
   Getter_f itsGetter_f;
 };
 
+// Partial specialization of CGetter for T == IdItem<T>
+template <class C, class T>
+class CGetter<C, IdItem<T> > : public Getter<int> {
+public:
+  /// The type of member function pointer that will be called in \c get().
+  typedef IdItem<T> (C::* Getter_f) () const;
+
+  /// Construct with a member function pointer.
+  CGetter(Getter_f getter) : itsGetter_f(getter) {}
+
+  /// Casts \a item to type \c C* and calls the stored member function.
+  virtual int get(void *item) const {
+	 const C* p = static_cast<C*>(item);
+	 return (p->*itsGetter_f)()->id();
+  }
+
+private:
+  CGetter(const CGetter&);
+  CGetter& operator=(const CGetter&);
+
+  Getter_f itsGetter_f;
+};
+
 /**
  *
  * \c CSetter implements the \c Setter interface by calling a member
@@ -64,7 +89,7 @@ private:
  *
  **/
 template <class C, class T>
-class CSetter : public virtual Setter<T> {
+class CSetter : public Setter<T> {
 public:
   /// The type of member function pointer that will be called in \c set().
   typedef void (C::* Setter_f) (T);
@@ -85,29 +110,29 @@ private:
   Setter_f itsSetter_f;
 };
 
-/**
- *
- * \c CGetter implements the \c Attrib interface by calling member
- * functions of the template class \c C.
- *
- **/
+
+// Specialization of CSetter for T == IdItem<T>
 template <class C, class T>
-class CAttrib : public Attrib<T>, public CGetter<C,T>, public CSetter<C,T> {
+class CSetter<C, IdItem<T> > : public Setter<int> {
 public:
-  /// The type of member function pointer that will be called in \c get().
-  typedef T (C::* Getter_f) () const;
-
   /// The type of member function pointer that will be called in \c set().
-  typedef void (C::* Setter_f) (T);
+  typedef void (C::* Setter_f) (IdItem<T>);
 
-  /// Construct with a getter and setter member function pointers.
-  CAttrib(Getter_f getter, Setter_f setter);
+  /// Construct with a member function pointer.
+  CSetter(Setter_f setter) : itsSetter_f(setter) {}
+
+  /// Casts \a item to type \c C* and calls the stored member function.
+  virtual void set(void* item, int val) {
+	 C* p = static_cast<C*>(item);
+	 (p->*itsSetter_f)(IdItem<T>(val));
+  }
+
+private:
+  CSetter(const CSetter&);
+  CSetter& operator=(const CSetter&);
+
+  Setter_f itsSetter_f;
 };
-
-template <class C, class T>
-CAttrib<C,T>::CAttrib(Getter_f getter, Setter_f setter) :
-  CGetter<C,T>(getter),
-  CSetter<C,T>(setter) {}
 
 /**
  *
@@ -221,7 +246,8 @@ protected:
 							const char* usage = 0);
 
   template <class T>
-  void declareAttrib(const char* attrib_name, Attrib<T>* attrib,
+  void declareAttrib(const char* attrib_name,
+							Getter<T>* getter, Setter<T>* setter,
 							const char* usage = 0);
 
   void declareAction(const char* action_name, Action* action,
@@ -276,7 +302,9 @@ public:
   void declareCAttrib(const char* cmd_name,
 							 T (C::* getterFunc) () const, void (C::* setterFunc) (T),
 							 const char* usage = 0) {
-	 declareAttrib(cmd_name, new CAttrib<C,T>(getterFunc, setterFunc), usage);
+	 declareAttrib(cmd_name,
+						new CGetter<C,T>(getterFunc), new CSetter<C,T>(setterFunc),
+						usage);
   }
 
   virtual C* getCItemFromId(int id) = 0;
