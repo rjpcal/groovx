@@ -2,6 +2,6 @@
 # \
 exec tclsh $0 $argv
 
-cd ~/grsh
+cd ~/sorcery/grsh
 
 source scripts/Backup.tcl
