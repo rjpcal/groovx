@@ -3,7 +3,7 @@
 // iodecls.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 27 14:44:42 2000
-// written: Fri Sep 29 14:34:17 2000
+// written: Thu Oct 19 15:39:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,9 +16,6 @@ namespace IO {
 
   class Reader;
   class Writer;
-
-  class LegacyReader;
-  class LegacyWriter;
 
   class IoError;
   class InputError;
@@ -43,9 +40,6 @@ namespace IO {
 
   /// This type is used for verion ids during the read+write process.
   typedef signed long VersionId;
-
-  /// A default separator to be used between elements in a legacySrlzd object
-  const char SEP = ' ';
 }
 
 static const char vcid_iodecls_h[] = "$Header$";
