@@ -342,7 +342,8 @@ public:
 
   template <class C, class T>
   static shared_ptr<FieldImpl>
-  makeImpl(T C::* member_ptr, const T& min, const T& max, bool check)
+  makeImpl(T C::* member_ptr,
+			  const Deref<T>::Type& min, const Deref<T>::Type& max, bool check)
   {
     return shared_ptr<FieldImpl>
       (new DataMemberFieldImpl<C,T>
