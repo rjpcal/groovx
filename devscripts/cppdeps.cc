@@ -291,27 +291,27 @@ public:
 
   typedef map<string, file_info*> info_map_t;
 
-  const string fname;
-  const string dirname_without_slash;
-  string       source;
-  bool         literal; // if true, then we don't try to look up nested includes
-  parse_state  cdep_parse_state;
-  parse_state  ldep_parse_state;
-  bool         direct_cdeps_done;
-  dep_list_t   direct_cdeps;
-  bool         nested_cdeps_done;
-  dep_list_t   nested_cdeps;
-  bool         direct_ldeps_done;
-  dep_list_t   direct_ldeps;
-  bool         nested_ldeps_done;
-  dep_list_t   nested_ldeps;
+  const string     fname;
+  const string     dirname_without_slash;
+  const file_info* source;
+  bool             literal; // if true, then don't try to look up nested includes
+  parse_state      cdep_parse_state;
+  parse_state      ldep_parse_state;
+  bool             direct_cdeps_done;
+  dep_list_t       direct_cdeps;
+  bool             nested_cdeps_done;
+  dep_list_t       nested_cdeps;
+  bool             direct_ldeps_done;
+  dep_list_t       direct_ldeps;
+  bool             nested_ldeps_done;
+  dep_list_t       nested_ldeps;
 
 private:
   file_info(const string& t)
     :
     fname(make_normpath(t)),
     dirname_without_slash(get_dirname_of(t)),
-    source(),
+    source(0),
     literal(false),
     cdep_parse_state(NOT_STARTED),
     ldep_parse_state(NOT_STARTED),
@@ -500,8 +500,7 @@ public:
   string find_source_for_header(const string& header) const;
 
   static bool resolve_one(const string& include_name,
-                          const string& src_fname,
-                          const string& dirname,
+                          file_info* finfo,
                           const vector<string>& ipath,
                           const vector<string>& literal,
                           dep_list_t& vec);
@@ -830,8 +829,7 @@ string cppdeps::find_source_for_header(const string& header) const
 }
 
 bool cppdeps::resolve_one(const string& include_name,
-                          const string& src_fname,
-                          const string& dirname_without_slash,
+                          file_info* finfo,
                           const vector<string>& ipath,
                           const vector<string>& literal,
                           dep_list_t& vec)
@@ -843,23 +841,23 @@ bool cppdeps::resolve_one(const string& include_name,
       if (file_exists(fullpath.c_str()))
         {
           vec.push_back(file_info::get(fullpath));
-          vec.back()->source = src_fname;
+          vec.back()->source = finfo;
           return true;
         }
     }
 
-  assert(dirname_without_slash.length() > 0); // must be at least '.'
-  assert(dirname_without_slash[dirname_without_slash.length()-1] != '/');
+  assert(finfo->dirname_without_slash.length() > 0); // must be at least '.'
+  assert(finfo->dirname_without_slash[finfo->dirname_without_slash.length()-1] != '/');
 
   // Try resolving the include by using the directory containing the
   // source file currently being examined.
   const string fullpath =
-    join_filename(dirname_without_slash, include_name);
+    join_filename(finfo->dirname_without_slash, include_name);
 
   if (file_exists(fullpath.c_str()))
     {
       vec.push_back(file_info::get(fullpath));
-      vec.back()->source = src_fname;
+      vec.back()->source = finfo;
       return true;
     }
 
@@ -867,10 +865,10 @@ bool cppdeps::resolve_one(const string& include_name,
   // from which this program was invoked.
   if (file_exists(include_name.c_str()))
     {
-      if (src_fname != include_name)
+      if (finfo->fname != include_name)
         {
           vec.push_back(file_info::get(include_name));
-          vec.back()->source = src_fname;
+          vec.back()->source = finfo;
         }
       return true;
     }
@@ -898,8 +896,6 @@ const dep_list_t& cppdeps::get_direct_cdeps(file_info* finfo)
 {
   if (finfo->direct_cdeps_done)
     return finfo->direct_cdeps;
-
-  const string dirname_without_slash = finfo->dirname_without_slash;
 
   dep_list_t& vec = finfo->direct_cdeps;
 
@@ -1003,14 +999,14 @@ const dep_list_t& cppdeps::get_direct_cdeps(file_info* finfo)
       const int include_length = fptr - include_start;
       const string include_name(include_start, include_length);
 
-      if (resolve_one(include_name, finfo->fname,
-                      dirname_without_slash, m_cfg_user_ipath,
+      if (resolve_one(include_name, finfo,
+                      m_cfg_user_ipath,
                       m_cfg_literal_exts, vec))
         continue;
 
       if (m_cfg_check_sys_deps &&
-          resolve_one(include_name, finfo->fname,
-                      dirname_without_slash, m_cfg_sys_ipath,
+          resolve_one(include_name, finfo,
+                      m_cfg_sys_ipath,
                       m_cfg_literal_exts, vec))
         continue;
 
@@ -1072,8 +1068,7 @@ const dep_list_t& cppdeps::get_nested_cdeps(file_info* finfo)
        ++i)
     {
       // Check for self-inclusion to avoid infinite recursion.
-      // FIXME just do pointer comparison here:
-      if ((*i)->fname == finfo->fname)
+      if (*i == finfo)
         continue;
 
       // Check if the included file is to be treated as a 'literal' file,
@@ -1190,8 +1185,7 @@ const dep_list_t& cppdeps::get_nested_ldeps(file_info* finfo)
            itr != stop;
            ++itr)
         {
-          // FIXME do pointer comparison here:
-          if ((*itr)->fname == finfo->fname)
+          if (*itr == finfo)
             {
               if (!m_cfg_quiet)
                 warning() << " in " << finfo->fname
@@ -1296,7 +1290,7 @@ void cppdeps::print_include_tree(const string& fname)
     {
       printf(" %s:%s",
              (*itr)->fname.c_str(),
-             (*itr)->source.c_str());
+             (*itr)->source ? (*itr)->source->fname.c_str() : "(nil)");
     }
 
   printf("\n");
