@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Tue May 14 19:51:16 2002
+// written: Tue Aug  6 15:23:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,6 +55,10 @@ namespace Debug
   void PostconditionImpl (const char* what, const char* where, int line_no);
   void InvariantImpl     (const char* what, const char* where, int line_no);
 }
+
+// Like Assert(), but can't ever be turned off.
+#define AbortIf(expr) \
+      if ( expr ) { Debug::AssertImpl(#expr, __FILE__, __LINE__); }
 
 #if !defined(NO_ASSERT) || defined(LOCAL_DEBUG)
 
