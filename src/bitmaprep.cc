@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri May 18 16:52:30 2001
+// written: Fri Jun  1 14:26:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -358,8 +358,9 @@ DOTRACE("BitmapRep::center");
   itsImpl->itsRasterY *= abs(itsImpl->itsZoomY);
 }
 
-void BitmapRep::grRender(GWT::Canvas& canvas) const {
-DOTRACE("BitmapRep::grRender");
+void BitmapRep::render(GWT::Canvas& canvas) const {
+DOTRACE("BitmapRep::render");
+
   itsImpl->itsRenderer->doRender(canvas,
 								itsImpl->itsData.bytesPtr(),
 								itsImpl->itsRasterX, itsImpl->itsRasterY,
@@ -369,8 +370,9 @@ DOTRACE("BitmapRep::grRender");
 								itsImpl->itsZoomX, itsImpl->itsZoomY);
 }
 
-void BitmapRep::grUnRender(GWT::Canvas& canvas) const {
-DOTRACE("BitmapRep::grUnRender"); 
+void BitmapRep::unRender(GWT::Canvas& canvas) const {
+DOTRACE("BitmapRep::unRender");
+
   Rect<double> world_rect;
   int border_pixels;
   grGetBoundingBox(world_rect, border_pixels);
@@ -381,10 +383,10 @@ DOTRACE("BitmapRep::grUnRender");
   screen_pos.heightenByStep(border_pixels + 1);
 
   itsImpl->itsRenderer->doUndraw( canvas,
-								 screen_pos.left(),
-								 screen_pos.bottom(),
-								 screen_pos.width(),
-								 abs(screen_pos.height()) );
+											 screen_pos.left(),
+											 screen_pos.bottom(),
+											 screen_pos.width(),
+											 abs(screen_pos.height()) );
 }
 
 ///////////////

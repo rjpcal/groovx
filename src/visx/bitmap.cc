@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Sat May 19 11:39:33 2001
+// written: Fri Jun  1 15:55:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -131,11 +131,13 @@ void Bitmap::doFlipVertical()
 void Bitmap::center()
   { itsImpl->center(); sendStateChangeMsg(); }
 
-void Bitmap::grRender(GWT::Canvas& canvas) const
-  { itsImpl->grRender(canvas); }
-
-void Bitmap::grUnRender(GWT::Canvas& canvas) const
-  { itsImpl->grUnRender(canvas); }
+void Bitmap::grRender(GWT::Canvas& canvas, DrawMode mode) const
+{
+  if (mode == DRAW)
+	 itsImpl->render(canvas);
+  else
+	 itsImpl->unRender(canvas);
+}
 
 ///////////////
 // accessors //

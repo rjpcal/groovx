@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Sat May 19 11:44:07 2001
+// written: Fri Jun  1 14:17:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -415,7 +415,7 @@ DOTRACE("Fish::grHasBoundingBox");
   return true;
 }
 
-void Fish::grRender(GWT::Canvas&) const {
+void Fish::grRender(GWT::Canvas&, DrawMode) const {
 DOTRACE("Fish::grRender");
   // Create and configure the NURBS object
   GLUnurbsObj* theNurb = gluNewNurbsRenderer();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri May 18 16:53:10 2001
+// written: Fri Jun  1 14:18:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -125,26 +125,19 @@ public:
       in the graphics environment when it is rendered. */
   void center();
 
-  protected:
+protected:
   /** Implements the \c GrObj rendering operation. The rendering is
       delegated to the \c BmapRenderer passed to the
       constructor. Therefore, subclasses of \c Bitmap should not
       override \c grRender(), but should instead provide a specialized
       \c BmapRenderer. */
-  virtual void grRender(GWT::Canvas& canvas) const;
-
-  /** Implements the \c GrObj rendering operation. The rendering is
-      delegated to the \c BmapRenderer passed to the
-      constructor. Therefore, subclasses of \c Bitmap should not
-      override \c grUnRender(), but should instead provide a
-      specialized \c BmapRenderer. */
-  virtual void grUnRender(GWT::Canvas& canvas) const;
+  virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const;
 
   ///////////////
   // accessors //
   ///////////////
 
-  protected:
+protected:
   virtual void grGetBoundingBox(Rect<double>& bounding_box,
 										  int& border_pixels) const;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri May 18 16:51:43 2001
+// written: Fri Jun  1 14:26:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -133,11 +133,11 @@ public:
 
   /** Implements the rendering operation. This function delegates the
       work to itsRenderer. */
-  void grRender(GWT::Canvas& canvas) const;
+  void render(GWT::Canvas& canvas) const;
 
-  /** Implements the undrawing operation. This function delegates the
-      work to itsRenderer. */
-  void grUnRender(GWT::Canvas& canvas) const;
+  /** Implements the unrendering operation. This function delegates the
+      work to itsRenderer. */ 
+ void unRender(GWT::Canvas& canvas) const;
 
   ///////////////
   // accessors //

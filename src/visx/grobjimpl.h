@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Thu May 10 12:04:40 2001
+// written: Fri Jun  1 15:57:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -377,8 +377,8 @@ public:
   // Forwards to GrObj's protected members //
   ///////////////////////////////////////////
 
-  void grRender(GWT::Canvas& canvas) const { self->grRender(canvas); }
-  void grUnRender(GWT::Canvas& canvas) const { self->grUnRender(canvas); }
+  void grRender(GWT::Canvas& canvas, GrObj::DrawMode mode) const
+    { self->grRender(canvas, mode); }
 
   void grGetBoundingBox(Rect<double>& bbox, int& pixel_border) const
 	 { self->grGetBoundingBox(bbox, pixel_border); }

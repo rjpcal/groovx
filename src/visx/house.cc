@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Sat May 19 11:44:06 2001
+// written: Fri Jun  1 14:18:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -269,7 +269,7 @@ DOTRACE("House::grHasBoundingBox");
   return true;
 }
 
-void House::grRender(GWT::Canvas&) const {
+void House::grRender(GWT::Canvas&, DrawMode) const {
 DOTRACE("House::grRender");
   GLdouble total_width = storyAspectRatio();
   GLdouble total_height = numStories() + roofHeight();

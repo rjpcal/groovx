@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Sat May 19 11:44:07 2001
+// written: Fri Jun  1 14:17:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -130,7 +130,7 @@ DOTRACE("Gabor::grHasBoundingBox");
   return true;
 }
 
-void Gabor::grRender(GWT::Canvas&) const {
+void Gabor::grRender(GWT::Canvas&, DrawMode) const {
 DOTRACE("Gabor::grRender");
   double xsigma = sigma()*aspectRatio();
   double ysigma = sigma();

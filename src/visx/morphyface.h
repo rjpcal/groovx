@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:37:45 1999
-// written: Thu May 10 12:04:40 2001
+// written: Fri Jun  1 14:21:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -132,7 +132,7 @@ protected:
 
   virtual bool grHasBoundingBox() const;
 
-  virtual void grRender(GWT::Canvas& canvas) const; 
+  virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const; 
 
 private:
   /// Check all invariants and return true if everything is OK.

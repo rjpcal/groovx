@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Thu May 10 12:04:41 2001
+// written: Fri Jun  1 14:20:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ protected:
 
   virtual bool grHasBoundingBox() const;
 
-  virtual void grRender(GWT::Canvas& canvas) const;
+  virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const;
 };
 
 static const char vcid_fixpt_h[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Fri May 18 16:53:59 2001
+// written: Fri Jun  1 16:00:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -207,7 +207,7 @@ DOTRACE("GrObj::Impl::Renderer::recompileIfNeeded");
   newList();
   
   glNewList(itsDisplayList, GL_COMPILE);
-  obj->grRender(canvas);
+  obj->grRender(canvas, GrObj::DRAW);
   glEndList();
   
   postUpdated();
@@ -238,7 +238,7 @@ DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
 		obj->doScaling();
 		obj->doAlignment();
 		
-		obj->grRender(canvas);
+		obj->grRender(canvas, GrObj::DRAW);
 
 		glReadBuffer(GL_FRONT);
  		Rect<double> bmapbox_init = obj->getRawBB();
@@ -334,7 +334,7 @@ DOTRACE("GrObj::Impl::Renderer::render");
   switch (itsMode) {
 
   case GrObj::GROBJ_DIRECT_RENDER:
-	 obj->grRender(canvas);
+	 obj->grRender(canvas, GrObj::DRAW);
 	 break;
 
   case GrObj::GROBJ_GL_COMPILE:
@@ -344,7 +344,7 @@ DOTRACE("GrObj::Impl::Renderer::render");
   case GrObj::GROBJ_GL_BITMAP_CACHE:
   case GrObj::GROBJ_X11_BITMAP_CACHE:
 	 Assert(itsBitmapCache.get() != 0);
-	 itsBitmapCache->grRender(canvas);
+	 itsBitmapCache->render(canvas);
 	 break;
 
   } // end switch
@@ -730,7 +730,7 @@ DOTRACE("GrObj::Impl::undrawDirectRender");
   doScaling();
   doAlignment();
 	 
-  self->grUnRender(canvas);
+  self->grRender(canvas, GrObj::UNDRAW);
 }
 
 void GrObj::Impl::undrawSwapForeBack(GWT::Canvas& canvas) const {
@@ -751,7 +751,7 @@ DOTRACE("GrObj::Impl::undrawSwapForeBack");
 		  itsRenderer.callList();
 		}
 		else {
-		  self->grRender(canvas);
+		  self->grRender(canvas, GrObj::UNDRAW);
 		}
 	 }
   }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed May 16 09:25:54 2001
+// written: Fri Jun  1 14:21:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -322,11 +322,6 @@ void GrObj::draw(GWT::Canvas& canvas) const {
 
 void GrObj::undraw(GWT::Canvas& canvas) const {
   itsImpl->undraw(canvas);
-}
-
-void GrObj::grUnRender(GWT::Canvas&) const {
-DOTRACE("GrObj::grUnRender");
-  // Empty default implementation of this virtual function
 }
 
 static const char vcid_grobj_cc[] = "$Header$";

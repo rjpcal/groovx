@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Sat May 19 11:44:06 2001
+// written: Fri Jun  1 14:18:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -750,7 +750,7 @@ DOTRACE("Gtext::grHasBoundingBox");
   return true;
 }
 
-void Gtext::grRender(GWT::Canvas&) const {
+void Gtext::grRender(GWT::Canvas&, DrawMode) const {
 DOTRACE("Gtext::grRender");
 //   unsigned int fontListBase = ObjTogl::theToglConfig()->getFontListBase();
 //   if (itsListBase != fontListBase) { 

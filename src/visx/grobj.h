@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Tue May 15 17:35:46 2001
+// written: Fri Jun  1 15:59:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,15 +42,14 @@ namespace GWT {
  * \c GrObj is the abstract base class for graphic objects. GrObj*'s
  * may be stored and manipulated in ObjList's. Subclasses derived from
  * GrObj must specify the details of how their objects will be drawn,
- * by overriding the virtual functions grRender() and grUnRender(),
- * and/or by choosing appropriate render/unrender modes with
- * setRenderMode() and setUnRenderMode(). Public clients call draw()
- * or undraw() to display or hide the object. The caches that mediate
- * the various drawing modes are kept up to date by using the
- * Observable interface. Thus, whenever a manipulator changes a
- * parameter in a derived class, it should also call
- * Observable::sendStateChangeMsg() to indicate that an update is
- * needed.
+ * by overriding the virtual function grRender(), and/or by choosing
+ * appropriate render/unrender modes with setRenderMode() and
+ * setUnRenderMode(). Public clients call draw() or undraw() to
+ * display or hide the object. The caches that mediate the various
+ * drawing modes are kept up to date by using the Observable
+ * interface. Thus, whenever a manipulator changes a parameter in a
+ * derived class, it should also call Observable::sendStateChangeMsg()
+ * to indicate that an update is needed.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -81,8 +80,7 @@ public:
   typedef int GrObjRenderMode;
 
   /** In this mode, \c grRender() will be called every time the object
-		is drawn, and \c grUnRender() will be called every time the
-		object is undrawn.  */
+		is drawn or undrawn.  */
   static const GrObjRenderMode GROBJ_DIRECT_RENDER = 1;
 
   /** In this mode, \c grRender() is called on a draw request only if
@@ -392,15 +390,12 @@ public:
 		selected with setUnRenderMode(). */
   void undraw(GWT::Canvas& canvas) const;
 
+  enum DrawMode { DRAW, UNDRAW };
+
 protected:
   /** This function must be overridden in derived classes to execute
 		the actual OpenGL commands that render the object. */
-  virtual void grRender(GWT::Canvas& canvas) const = 0;
-
-  /** This function will be called if the unrendering mode is set to
-		GROBJ_DIRECT_RENDER or to any of the compile or cache modes. The
-		default implementation provided by GrObj does nothing. */
-  virtual void grUnRender(GWT::Canvas& canvas) const;
+  virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const = 0;
 
 private:
   GrObj(const GrObj&);
