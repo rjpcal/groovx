@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Wed Mar 19 18:00:55 2003
+// written: Thu Mar 20 15:37:46 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -189,7 +189,7 @@ DOTRACE("genericSetFromAnyProc");
 
 Tcl_ObjType genericObjType =
   {
-    "generic",
+    (char*)"generic",
     genericFreeInternalRepProc,
     genericDupInternalRepProc,
     genericUpdateStringProc,
