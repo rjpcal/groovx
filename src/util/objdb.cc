@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Tue Jun 12 11:55:04 2001
+// written: Wed Jun 13 10:25:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,15 +49,31 @@ private:
 
 public:
 
-  typedef Util::Ref<Util::Object> ObjRef;
+  typedef Util::MaybeRef<Util::Object> ObjRef;
 
   typedef std::map<Util::UID, ObjRef> MapType;
-  MapType itsPtrMap;
+  mutable MapType itsPtrMap;
 
   Impl(ObjDb* owner) :
     itsOwner(owner),
     itsPtrMap()
     {}
+
+  // Check whether the iterator points to a valid spot in the map, AND
+  // that it points to a still-living object. If the object has died,
+  // then we erase the iterator.
+  bool isValidItr(MapType::iterator itr) const
+  {
+	 if (itr == itsPtrMap.end()) return false;
+
+	 if ((*itr).second.isInvalid())
+		{
+  		  itsPtrMap.erase(itr);
+		  return false;
+		}
+
+	 return true;
+  }
 
   int count() const
     { return itsPtrMap.size(); }
@@ -65,8 +81,8 @@ public:
   bool isValidId(Util::UID id) const
     {
       DebugEval(id);
-      MapType::const_iterator itr = itsPtrMap.find(id);
-      return ( (itr != itsPtrMap.end()) );
+      MapType::iterator itr = itsPtrMap.find(id);
+      return isValidItr(itr);
     }
 
   void release(Util::UID id)
@@ -79,7 +95,7 @@ public:
   void remove(Util::UID id)
     {
       MapType::iterator itr = itsPtrMap.find(id);
-      if (itr == itsPtrMap.end()) return;
+      if (!isValidItr(itr)) return;
 
       if ( (*itr).second.get()->isShared() )
         throw ErrorWithMsg("can't remove a shared object");
@@ -94,7 +110,7 @@ public:
 
       int num_removed = 0;
 
-      for (MapType::const_iterator
+      for (MapType::iterator
              itr = itsPtrMap.begin(),
              end = itsPtrMap.end();
            itr != end;
@@ -102,7 +118,7 @@ public:
         {
           // If the object is shared, we'll be saving the object, so
           // copy it into the new_map,
-          if ( (*itr).second.get()->isShared() )
+          if ( isValidItr(itr) && (*itr).second.get()->isShared() )
             {
               new_map.insert(*itr);
             }
@@ -123,7 +139,7 @@ public:
   Util::Object* getCheckedPtrBase(Util::UID id) throw (InvalidIdError)
     {
       MapType::iterator itr = itsPtrMap.find(id);
-      if (itr == itsPtrMap.end()) {
+      if (!isValidItr(itr)) {
         InvalidIdError err("attempt to access invalid id '");
         err.appendNumber(id);
         err.appendMsg("' in ", demangle_cstr(typeid(*itsOwner).name()));
