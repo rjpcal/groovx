@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Jul 11 21:06:06 2001
+// written: Thu Jul 12 09:27:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,6 +86,16 @@ public:
       functionality for the command that is represented. */
   virtual void invoke(Context& ctx) = 0;
 
+protected:
+  /** This may be overridden by subclasses that need to provide a
+      different interface to the raw Tcl arguments (such as for
+      vectorizing a function over a set of arguments). The default
+      implementation just sets up a \c Context and calls \a invoke().
+      Errors should be signaled by throwing appropriate exceptions,
+      which will be caught and translated back to the Tcl interpreter
+      by \a invokeCallback(). */
+  virtual void rawInvoke(Tcl_Interp* interp, int objc, Tcl_Obj* const objv[]);
+
 private:
   /// The procedure that is actually registered with the Tcl C API.
   static int invokeCallback(ClientData clientData, Tcl_Interp* interp,
@@ -93,12 +103,6 @@ private:
 
   TclCmd(const TclCmd&);
   TclCmd& operator=(const TclCmd&);
-
-  // These are set once per command object
-  const char* const itsUsage;
-  const int itsObjcMin;
-  const int itsObjcMax;
-  const bool itsExactObjc;
 
   class Impl;
   Impl* const itsImpl;
@@ -286,7 +290,6 @@ private:
   Tcl_Interp* itsInterp;
   int itsObjc;
   Tcl_Obj* const* itsObjv;
-  int itsResult;
 };
 
 static const char vcid_tclcmd_h[] = "$Header$";
