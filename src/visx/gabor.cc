@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Fri Nov 10 17:04:01 2000
+// written: Mon Nov 13 22:07:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,44 +31,22 @@
 #include "util/debug.h"
 
 
-#ifdef MIPSPRO_COMPILER
-#  define SGI_IDIOT_CAST(to, from) reinterpret_cast<to>(from)
-#else
-#  define SGI_IDIOT_CAST(to, from) (from)
-#endif
-
 namespace {
-  const Gabor::PInfo PINFOS[] = {
-		Gabor::PInfo("colorMode",
-						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::colorMode),
-						 1, 3, 1, true),
-		Gabor::PInfo("contrast",
-						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::contrast),
-						 0.0, 1.0, 0.05),
-		Gabor::PInfo("spatialFreq",
-						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::spatialFreq),
-						 0.5, 10.0, 0.5),
-		Gabor::PInfo("phase",
-						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::phase),
-						 -180, 179, 1),
-		Gabor::PInfo("sigma",
-						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::sigma),
-						 0.025, 0.5, 0.025),
-		Gabor::PInfo("aspectRatio",
-						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::aspectRatio),
-						 0.1, 10.0, 0.1),
-		Gabor::PInfo("orientation",
-						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::orientation),
-						 -180, 179, 1),
-		Gabor::PInfo("resolution",
-						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::resolution),
-						 5, 500, 5),
-		Gabor::PInfo("pointSize",
-						 SGI_IDIOT_CAST(Property Gabor::*, &Gabor::pointSize),
-						 1, 25, 1)
+  const FieldInfo FINFOS[] = {
+		FieldInfo("colorMode", &Gabor::colorMode, 2, 1, 3, 1, true),
+		FieldInfo("contrast", &Gabor::contrast, 1.0, 0.0, 1.0, 0.05),
+		FieldInfo("spatialFreq", &Gabor::spatialFreq, 3.5, 0.5, 10.0, 0.5),
+		FieldInfo("phase", &Gabor::phase, 0.0, -180.0, 179.0, 1.0),
+		FieldInfo("sigma", &Gabor::sigma, 0.15, 0.025, 0.5, 0.025),
+		FieldInfo("aspectRatio", &Gabor::aspectRatio, 1.0, 0.1, 10.0, 0.1),
+		FieldInfo("orientation", &Gabor::orientation, 0.0, -180.0, 179.0, 1.0),
+		FieldInfo("resolution", &Gabor::resolution, 60, 5, 500, 5),
+		FieldInfo("pointSize", &Gabor::pointSize, 1, 1, 25, 1)
   };
 
-  const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(Gabor::PInfo);
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+
+  const FieldMap GABOR_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
 
   const IO::VersionId GABOR_SERIAL_VERSION_ID = 1;
 }
@@ -78,21 +56,24 @@ const Gabor::ColorMode Gabor::COLOR_INDEX;
 const Gabor::ColorMode Gabor::BW_DITHER_POINT;
 const Gabor::ColorMode Gabor::BW_DITHER_RECT;
 
+const FieldMap& Gabor::classFields() { return GABOR_FIELDS; }
+
 Gabor* Gabor::make() {
 DOTRACE("Gabor::make");
   return new Gabor;
 }
 
 Gabor::Gabor() :
-  colorMode(2),
-  contrast(1.0),
-  spatialFreq(3.5),
-  phase(0.0),
-  sigma(0.15),
-  aspectRatio(1.0), 
-  orientation(0.0),
-  resolution(60),
-  pointSize(1)
+  FieldContainer(GABOR_FIELDS),
+  colorMode(this, 2),
+  contrast(this, 1.0),
+  spatialFreq(this, 3.5),
+  phase(this, 0.0),
+  sigma(this, 0.15),
+  aspectRatio(this, 1.0), 
+  orientation(this, 0.0),
+  resolution(this, 60),
+  pointSize(this, 1)
 {
 DOTRACE("Gabor::Gabor");
   GrObj::setUnRenderMode(GrObj::GROBJ_CLEAR_BOUNDING_BOX);
@@ -112,11 +93,8 @@ DOTRACE("Gabor::serialVersionId");
 void Gabor::readFrom(IO::Reader* reader) {
 DOTRACE("Gabor::readFrom");
 
-  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-	 reader->readValueObj(PINFOS[i].name(),
-								 const_cast<Value&>(get(PINFOS[i].property())));
-  }
-  
+  readFieldsFrom(reader); 
+
   IO::VersionId svid = reader->readSerialVersionId();
   if (svid == 0)
 	 GrObj::readFrom(reader);
@@ -132,9 +110,7 @@ DOTRACE("Gabor::readFrom");
 void Gabor::writeTo(IO::Writer* writer) const {
 DOTRACE("Gabor::writeTo");
 
-  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
-  }
+  writeFieldsTo(writer);
 
   if (GABOR_SERIAL_VERSION_ID == 0)
 	 GrObj::writeTo(writer);
@@ -143,16 +119,6 @@ DOTRACE("Gabor::writeTo");
 		IO::ConstIoProxy<GrObj> baseclass(this);
 		writer->writeBaseClass("GrObj", &baseclass);
 	 }
-}
-
-unsigned int Gabor::numPropertyInfos() {
-DOTRACE("Gabor::numPropertyInfos");
-  return NUM_PINFOS;
-}
-
-const Gabor::PInfo& Gabor::getPropertyInfo(unsigned int i) {
-DOTRACE("Gabors::getPropertyInfo");
-  return PINFOS[i];
 }
 
 void Gabor::grGetBoundingBox(Rect<double>& bbox,
