@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Tue Nov 28 18:17:21 2000
+// written: Tue Nov 28 19:07:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,11 +15,12 @@
 
 #include "position.h"
 
+#include "gx/vec3.h"
+
+#include "gwt/canvas.h"
+
 #include "io/reader.h"
 #include "io/writer.h"
-
-#include <cstring>
-#include <GL/gl.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -28,14 +29,15 @@
 
 struct PositionData {
   PositionData() :
-	 tr_x(0.0), tr_y(0.0), tr_z(0.0),
-	 sc_x(1.0), sc_y(1.0), sc_z(1.0),
-	 rt_x(1.0), rt_y(1.0), rt_z(1.0), rt_ang(0.0)
+	 tr(0.0, 0.0, 0.0),
+	 sc(1.0, 1.0, 1.0),
+	 rt(0.0, 0.0, 1.0),
+	 rt_ang(0.0)
 	 {}
 
-  double tr_x, tr_y, tr_z;		  // x,y,z coord shift
-  double sc_x, sc_y, sc_z;		  // x,y,z scaling
-  double rt_x, rt_y, rt_z;		  // vector of rotation axis
+  Vec3<double> tr;				  // x,y,z coord shift
+  Vec3<double> sc;				  // x,y,z scaling
+  Vec3<double> rt;				  // vector of rotation axis
   double rt_ang;					  // angle in degrees of rotation around axis
 };
 
@@ -80,34 +82,34 @@ DOTRACE("Position::~Position");
 void Position::readFrom(IO::Reader* reader) {
 DOTRACE("Position::readFrom");
 
-  reader->readValue("transX", itsImpl->cur.tr_x);
-  reader->readValue("transY", itsImpl->cur.tr_y);
-  reader->readValue("transZ", itsImpl->cur.tr_z);
+  reader->readValue("transX", itsImpl->cur.tr.x());
+  reader->readValue("transY", itsImpl->cur.tr.y());
+  reader->readValue("transZ", itsImpl->cur.tr.z());
 
-  reader->readValue("scaleX", itsImpl->cur.sc_x);
-  reader->readValue("scaleY", itsImpl->cur.sc_y);
-  reader->readValue("scaleZ", itsImpl->cur.sc_z);
+  reader->readValue("scaleX", itsImpl->cur.sc.x());
+  reader->readValue("scaleY", itsImpl->cur.sc.y());
+  reader->readValue("scaleZ", itsImpl->cur.sc.z());
 
-  reader->readValue("rotateX", itsImpl->cur.rt_x);
-  reader->readValue("rotateY", itsImpl->cur.rt_y);
-  reader->readValue("rotateZ", itsImpl->cur.rt_z);
+  reader->readValue("rotateX", itsImpl->cur.rt.x());
+  reader->readValue("rotateY", itsImpl->cur.rt.y());
+  reader->readValue("rotateZ", itsImpl->cur.rt.z());
   reader->readValue("rotateAngle", itsImpl->cur.rt_ang);
 }
 
 void Position::writeTo(IO::Writer* writer) const {
 DOTRACE("Position::writeTo");
 
-  writer->writeValue("transX", itsImpl->cur.tr_x);
-  writer->writeValue("transY", itsImpl->cur.tr_y);
-  writer->writeValue("transZ", itsImpl->cur.tr_z);
+  writer->writeValue("transX", itsImpl->cur.tr.x());
+  writer->writeValue("transY", itsImpl->cur.tr.y());
+  writer->writeValue("transZ", itsImpl->cur.tr.z());
 
-  writer->writeValue("scaleX", itsImpl->cur.sc_x);
-  writer->writeValue("scaleY", itsImpl->cur.sc_y);
-  writer->writeValue("scaleZ", itsImpl->cur.sc_z);
+  writer->writeValue("scaleX", itsImpl->cur.sc.x());
+  writer->writeValue("scaleY", itsImpl->cur.sc.y());
+  writer->writeValue("scaleZ", itsImpl->cur.sc.z());
 
-  writer->writeValue("rotateX", itsImpl->cur.rt_x);
-  writer->writeValue("rotateY", itsImpl->cur.rt_y);
-  writer->writeValue("rotateZ", itsImpl->cur.rt_z);
+  writer->writeValue("rotateX", itsImpl->cur.rt.x());
+  writer->writeValue("rotateY", itsImpl->cur.rt.y());
+  writer->writeValue("rotateZ", itsImpl->cur.rt.z());
   writer->writeValue("rotateAngle", itsImpl->cur.rt_ang);
 }
 
@@ -119,26 +121,32 @@ void Position::getRotate(double &a, double &x, double &y, double &z) const {
 DOTRACE("Position::getRotate");
   Invariant(check());
   a = itsImpl->cur.rt_ang;
-  x = itsImpl->cur.rt_x;
-  y = itsImpl->cur.rt_y;
-  z = itsImpl->cur.rt_z;
+  itsImpl->cur.rt.get(x, y, z);
 }
 
 void Position::getTranslate(double &x, double &y, double &z) const {
 DOTRACE("Position::getTranslate");
   Invariant(check());
-  x = itsImpl->cur.tr_x;
-  y = itsImpl->cur.tr_y;
-  z = itsImpl->cur.tr_z;
+  itsImpl->cur.tr.get(x, y, z);
 }
 
 void Position::getScale(double &x, double &y, double &z) const {
 DOTRACE("Position::getScale");
   Invariant(check());
-  x = itsImpl->cur.sc_x;
-  y = itsImpl->cur.sc_y;
-  z = itsImpl->cur.sc_z;
+  itsImpl->cur.sc.get(x, y, z);
 }
+
+const Vec3<double>& Position::translation() const
+{ return itsImpl->cur.tr; }
+
+const Vec3<double>& Position::scaling() const
+{ return itsImpl->cur.sc; }
+
+const Vec3<double>& Position::rotationAxis() const
+{ return itsImpl->cur.rt; }
+
+double Position::rotationAngle() const
+{ return itsImpl->cur.rt_ang; }
 
 //////////////////
 // manipulators //
@@ -154,58 +162,31 @@ void Position::setRotate(double a, double x, double y, double z) {
 DOTRACE("Position::setRotate");
   Invariant(check());
   itsImpl->cur.rt_ang = a;
-  itsImpl->cur.rt_x = x;
-  itsImpl->cur.rt_y = y;
-  itsImpl->cur.rt_z = z;
+  itsImpl->cur.rt.set(x, y, z);
 }
 
 void Position::setScale(double x, double y, double z) {
 DOTRACE("Position::setScale");
   Invariant(check());
-  itsImpl->cur.sc_x = x;
-  itsImpl->cur.sc_y = y;
-  itsImpl->cur.sc_z = z;
+  itsImpl->cur.sc.set(x, y, z);
 }
 
 void Position::setTranslate(double x, double y, double z) {
 DOTRACE("Position::setTranslate");
   Invariant(check());
-  itsImpl->cur.tr_x = x;
-  itsImpl->cur.tr_y = y;
-  itsImpl->cur.tr_z = z;
+  itsImpl->cur.tr.set(x, y, z);
 }
 
 /////////////
 // actions //
 /////////////
 
-void Position::translate() const {
-DOTRACE("Position::translate");
-  DebugEvalNL((void *) itsImpl);
-
-  Invariant(check());
-  glTranslatef(itsImpl->cur.tr_x, itsImpl->cur.tr_y, itsImpl->cur.tr_z);
-}
-
-void Position::scale() const {
-DOTRACE("Position::scale");
-  Invariant(check());
-  glScalef(itsImpl->cur.sc_x, itsImpl->cur.sc_y, itsImpl->cur.sc_z);
-}
-
-void Position::rotate() const {
-DOTRACE("Position::rotate");
-  Invariant(check());
-  glRotatef(itsImpl->cur.rt_ang,
-				itsImpl->cur.rt_x, itsImpl->cur.rt_y, itsImpl->cur.rt_z);
-}
-
-void Position::draw(GWT::Canvas&) const {
+void Position::draw(GWT::Canvas& canvas) const {
 DOTRACE("Position::draw");
   Invariant(check());
-  translate();
-  scale();
-  rotate();
+  canvas.translate(itsImpl->cur.tr);
+  canvas.scale(itsImpl->cur.sc);
+  canvas.rotate(itsImpl->cur.rt, itsImpl->cur.rt_ang);
 
   itsImpl->last = itsImpl->cur;
 }
@@ -213,10 +194,9 @@ DOTRACE("Position::draw");
 void Position::undraw(GWT::Canvas& canvas) const {
 DOTRACE("Position::undraw");
 
-  glTranslatef(itsImpl->last.tr_x, itsImpl->last.tr_y, itsImpl->last.tr_z);
-  glScalef(itsImpl->last.sc_x, itsImpl->last.sc_y, itsImpl->last.sc_z);
-  glRotatef(itsImpl->last.rt_ang,
-				itsImpl->last.rt_x, itsImpl->last.rt_y, itsImpl->last.rt_z);
+  canvas.translate(itsImpl->last.tr);
+  canvas.scale(itsImpl->last.sc);
+  canvas.rotate(itsImpl->last.rt, itsImpl->last.rt_ang);
 }
 
 bool Position::check() const {

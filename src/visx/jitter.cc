@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:41 1999
-// written: Tue Nov 14 15:08:09 2000
+// written: Tue Nov 28 19:03:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,14 +15,15 @@
 
 #include "jitter.h"
 
+#include "gwt/canvas.h"
+
+#include "gx/vec3.h"
+
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
 #include "util/randutils.h"
-
-#include <cstring>
-#include <GL/gl.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -94,23 +95,6 @@ DOTRACE("Jitter::writeTo");
 // actions //
 /////////////
 
-void Jitter::translate() const {
-DOTRACE("Jitter::translate");
-  double x,y,z;
-  getTranslate(x,y,z);
-  glTranslatef(x+Util::randDoubleRange(-itsXJitter, itsXJitter),
-					y+Util::randDoubleRange(-itsYJitter, itsYJitter),
-					z);
-}
-
-void Jitter::rotate() const {
-DOTRACE("Jitter::rotate");
-  double a,x,y,z;
-  getRotate(a,x,y,z);
-  glRotatef(a+Util::randDoubleRange(-itsRJitter, itsRJitter),
-				x, y, z);
-}
-
 void Jitter::rejitter() const {
 DOTRACE("Jitter::rejitter");
   itsXShift = Util::randDoubleRange(-itsXJitter, itsXJitter);
@@ -124,20 +108,16 @@ DOTRACE("Jitter::draw");
   undraw(canvas);
 }
 
-void Jitter::undraw(GWT::Canvas&) const {
+void Jitter::undraw(GWT::Canvas& canvas) const {
 DOTRACE("Jitter::undraw");
   // Translate
-  double tx, ty, tz;
-  getTranslate(tx, ty, tz);
-  glTranslatef(tx+itsXShift, ty+itsYShift, tz);
+  canvas.translate(translation()+Vec3<double>(itsXShift, itsYShift, 0.0));
 
   // Scale
-  Position::scale();
+  canvas.scale(scaling());
 
   // Rotate
-  double ra, rx, ry, rz;
-  getRotate(ra, rx, ry, rz);
-  glRotatef(ra+itsRShift, rx, ry, rz);
+  canvas.rotate(rotationAxis(), rotationAngle()+itsRShift);
 }
 
 static const char vcid_jitter_cc[] = "$Header$";

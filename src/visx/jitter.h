@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:40 1999
-// written: Fri Nov 10 17:27:03 2000
+// written: Tue Nov 28 18:58:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,10 +53,6 @@ public:
   /////////////
   // actions //
   /////////////
-
-protected:
-  virtual void translate() const;
-  virtual void rotate() const;
 
 public:
   virtual void draw(GWT::Canvas&) const;
