@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Thu Aug 23 11:17:27 2001
+// written: Fri Aug 24 17:17:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -136,8 +136,8 @@ Toglet::Toglet(Tcl_Interp* interp,
                bool pack,
                double dist, double unit_angle) :
   Tcl::TkWidget(),
-  itsCanvas(new GLCanvas),
   itsTogl(new Togl(interp, widgetName(id()), config_argc, config_argv)),
+  itsCanvas(new GLCanvas(itsTogl->usesRgba(), itsTogl->isDoubleBuffered())),
   itsViewingDistance(dist),
   itsFixedScaleFlag(true),
   itsFixedScale(1.0),
