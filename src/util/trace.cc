@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Sep 12 15:12:01 2002
+// written: Thu Nov  7 17:20:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,6 @@
 #include <iostream>
 #include <iomanip>
 #include <new>
-#include <sys/resource.h>
 
 #include "util/debug.h"
 
@@ -34,17 +33,17 @@ template <typename T, unsigned int N>
 class static_stack
 {
 public:
-  static_stack() throw() : vec(), top(0) {}
+  static_stack() throw() : vec(), sz(0) {}
 
   static_stack(const static_stack& other) throw() :
-    vec(), top(0)
+    vec(), sz(0)
   {
     *this = other;
   }
 
   static_stack& operator=(const static_stack& other) throw()
   {
-    for (unsigned int i = 0; i < other.top; ++i)
+    for (unsigned int i = 0; i < other.sz; ++i)
       {
         vec[i] = other.vec[i];
       }
@@ -52,28 +51,33 @@ public:
     return *this;
   }
 
-  unsigned int size() const throw() { return top; }
+  unsigned int size() const throw() { return sz; }
 
   static unsigned int capacity() throw() { return N; }
 
   bool push(T p) throw()
   {
-    if (top >= N)
+    if (sz >= N)
       return false;
 
-    vec[top++] = p;
+    vec[sz++] = p;
     return true;
   }
 
   void pop() throw()
   {
-    AbortIf(top == 0);
-    --top;
+    AbortIf(sz == 0);
+    --sz;
+  }
+
+  T top() const throw()
+  {
+    return (sz > 0) ? vec[sz-1] : 0;
   }
 
   T at(unsigned int i) const throw()
   {
-    return (i < top) ? vec[i] : 0;
+    return (i < sz) ? vec[i] : 0;
   }
 
   T operator[](unsigned int i) const throw() { return at(i); }
@@ -89,7 +93,7 @@ public:
 
 private:
   T vec[N];
-  unsigned int top;
+  unsigned int sz;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -153,6 +157,11 @@ unsigned int Util::BackTrace::size() const throw()
   return rep->vec.size();
 }
 
+Util::Prof* Util::BackTrace::top() const throw()
+{
+  return rep->vec.top();
+}
+
 Util::Prof* Util::BackTrace::at(unsigned int i) const throw()
 {
   return rep->vec.at(i);
@@ -200,14 +209,12 @@ void Util::BackTrace::print(STD_IO::ostream& os) const throw()
 
 namespace
 {
-  inline void getTime(timeval& result) throw()
+  inline Util::Time getTime() throw()
   {
 #if defined(TRACE_WALL_CLOCK_TIME)
-    gettimeofday(&result, NULL);
+    return Util::Time::wallClockNow();
 #elif defined(TRACE_CPU_TIME)
-    rusage ru;
-    getrusage(RUSAGE_SELF, &ru);
-    result = ru.ru_utime;
+    return Util::Time::rusageNow();
 #endif
   }
 
@@ -258,10 +265,9 @@ namespace
 ///////////////////////////////////////////////////////////////////////
 
 Util::Prof::Prof(const char* s)  throw():
-  itsFuncName(s), itsCallCount(0), itsTotalTime()
+  itsFuncName(s)
 {
-  itsTotalTime.tv_sec = 0;
-  itsTotalTime.tv_usec = 0;
+  reset();
 
   allProfs().push(this);
 }
@@ -297,32 +303,24 @@ Util::Prof::~Prof() throw()
 void Util::Prof::reset() throw()
 {
   itsCallCount = 0;
-  itsTotalTime.tv_sec = 0;
-  itsTotalTime.tv_usec = 0;
+  itsTotalTime.reset();
+  itsChildrenTime.reset();
 }
 
-int Util::Prof::count() const throw()
+unsigned int Util::Prof::count() const throw()
 {
   return itsCallCount;
 }
 
-void Util::Prof::add(timeval t) throw()
+void Util::Prof::add(const Util::Time& t) throw()
 {
-  itsTotalTime.tv_sec += t.tv_sec;
-  itsTotalTime.tv_usec += t.tv_usec;
-  // avoid overflow
-  while (itsTotalTime.tv_usec >= 1000000)
-    {
-      ++(itsTotalTime.tv_sec);
-      itsTotalTime.tv_usec -= 1000000;
-    }
-  // avoid underflow
-  while (itsTotalTime.tv_usec <= -1000000)
-    {
-      --(itsTotalTime.tv_sec);
-      itsTotalTime.tv_usec += 1000000;
-    }
+  itsTotalTime += t;
   ++itsCallCount;
+}
+
+void Util::Prof::addChildTime(const Util::Time& t) throw()
+{
+  itsChildrenTime += t;
 }
 
 const char* Util::Prof::name() const throw()
@@ -332,7 +330,12 @@ const char* Util::Prof::name() const throw()
 
 double Util::Prof::totalTime() const throw()
 {
-  return (double(itsTotalTime.tv_sec)*1000000 + itsTotalTime.tv_usec);
+  return itsTotalTime.usec();
+}
+
+double Util::Prof::selfTime() const throw()
+{
+  return itsTotalTime.usec() - itsChildrenTime.usec();
 }
 
 double Util::Prof::avgTime() const throw()
@@ -344,9 +347,10 @@ void Util::Prof::printProfData(std::ostream& os) const throw()
 {
   os.exceptions(STD_IO::ios::goodbit);
 
-  os << std::setw(14) << long(avgTime()) << '\t'
-     << std::setw(5) << count() << '\t'
-     << std::setw(14) << long(totalTime()) << '\t'
+  os << std::setw(10) << long(avgTime()) << ' '
+     << std::setw(6) << count() << ' '
+     << std::setw(10) << long(selfTime()) << ' '
+     << std::setw(10) << long(totalTime()) << ' '
      << itsFuncName << std::endl;
 }
 
@@ -421,31 +425,35 @@ void Util::Trace::setMaxLevel(unsigned int lev) throw()
 }
 
 Util::Trace::Trace(Prof& p, bool useMsg) throw() :
-  prof(p),
-  start(),
-  giveTraceMsg(useMsg),
-  shouldPop(true)
+  itsProf(p),
+  itsStart(),
+  itsGiveTraceMsg(useMsg),
+  itsShouldPop(true)
 {
-  if (GLOBAL_TRACE || giveTraceMsg)
+  if (GLOBAL_TRACE || itsGiveTraceMsg)
     printIn();
 
-  shouldPop = Util::BackTrace::current().push(&p);
+  itsShouldPop = Util::BackTrace::current().push(&p);
 
-  getTime(start);
+  itsStart = getTime();
 }
 
 Util::Trace::~Trace() throw()
 {
-  timeval finish, elapsed;
-  getTime(finish);
-  elapsed.tv_sec = finish.tv_sec - start.tv_sec;
-  elapsed.tv_usec = finish.tv_usec - start.tv_usec;
-  prof.add(elapsed);
+  Util::Time finish = getTime();
+  Util::Time elapsed = finish - itsStart;
+  itsProf.add(elapsed);
 
-  if (shouldPop)
-    Util::BackTrace::current().pop();
+  if (itsShouldPop)
+    {
+      Util::BackTrace& c = Util::BackTrace::current();
+      c.pop();
+      Util::Prof* parent = c.top();
+      if (parent != 0)
+        parent->addChildTime(elapsed);
+    }
 
-  if (GLOBAL_TRACE || giveTraceMsg)
+  if (GLOBAL_TRACE || itsGiveTraceMsg)
     printOut();
 }
 
@@ -464,7 +472,7 @@ void Util::Trace::printIn() throw()
           STD_IO::cerr << "|- ";
         }
 
-      STD_IO::cerr << prof.name();
+      STD_IO::cerr << itsProf.name();
 
       if (Util::Trace::getMode() == STEP)
         {

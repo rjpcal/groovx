@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Sep 25 19:00:32 2002
+// written: Thu Nov  7 17:06:34 2002
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -33,39 +33,13 @@
 #ifndef TRACE_H_DEFINED
 #define TRACE_H_DEFINED
 
-#if (defined(TRACE) && !defined(NO_TRACE))
-#  ifndef LOCAL_TRACE
-#    define LOCAL_TRACE
-#  endif
-#endif
-
-#if defined(LOCAL_TRACE) || (defined(PROF) && !defined(NO_PROF))
-#  ifndef LOCAL_PROF
-#    define LOCAL_PROF
-#  endif
-#endif
-
-#if !defined(DYNAMIC_TRACE_EXPR)
-#  if defined(LOCAL_TRACE)
-#    define DYNAMIC_TRACE_EXPR true
-#  else
-#    define DYNAMIC_TRACE_EXPR false
-#  endif
-#endif
-
+#include "util/time.h"
 
 #ifdef HAVE_IOSFWD
 #  include <iosfwd>
 #else
 class ostream;
 #endif
-
-#include <sys/time.h>
-// struct timeval {
-//                unsigned long  tv_sec;   /* seconds since Jan. 1, 1970 */
-//                long           tv_usec;  /* and microseconds */
-//            };
-
 
 namespace Util
 {
@@ -84,26 +58,27 @@ public:
   /// Reset the call count and elapsed time to zero.
   void reset() throw();
 
-  /** Return the number of calls that have been made since the last
-      reset(). */
-  int count() const throw();
+  /// Returns the number of calls since the last reset().
+  unsigned int count() const throw();
 
-  void add(timeval t) throw();
+  void add(const Util::Time& t) throw();
+
+  void addChildTime(const Util::Time& t) throw();
 
   const char* name() const throw();
 
-  /** Return the total elapsed time in microseconds since the last
-      reset(). */
+  /// Returns the total elapsed time in microseconds since the last reset().
   double totalTime() const throw();
 
-  /** Return the per-call average of the elapsed time in microseconds since
-      the last reset(). */
+  /// Returns the total self time in microseconds since the last reset().
+  double selfTime() const throw();
+
+  /// Return the per-call average time in microseconds since the last reset().
   double avgTime() const throw();
 
   void printProfData(STD_IO::ostream& os) const throw();
 
-  /** Indicate whether profiling information should be written to the profile
-      file at program exit time. */
+  /// Whether to write a profiling summary file when the program exits.
   static void printAtExit(bool yes_or_no) throw();
 
   static void resetAllProfData() throw();
@@ -115,8 +90,9 @@ private:
   Prof& operator=(const Prof&) throw();
 
   const char* itsFuncName;
-  int itsCallCount;
-  timeval itsTotalTime;
+  unsigned int itsCallCount;
+  Util::Time itsTotalTime;
+  Util::Time itsChildrenTime;
 };
 
 /// Times and traces execution in and out of a lexical scope.
@@ -141,10 +117,10 @@ private:
   void printIn() throw();
   void printOut() throw();
 
-  Prof& prof;
-  timeval start;
-  const bool giveTraceMsg;
-  bool shouldPop;
+  Prof& itsProf;
+  Util::Time itsStart;
+  const bool itsGiveTraceMsg;
+  bool itsShouldPop;
 };
 
 /// Represents an instantaneous state of the call stack.
@@ -175,6 +151,9 @@ public:
   /// Get the number of elements in the call stack.
   unsigned int size() const throw();
 
+  /// Get the top stack frame, or null if the backtrace is empty.
+  Util::Prof* top() const throw();
+
   /// Will return a null pointer if i is out of range.
   Util::Prof* at(unsigned int i) const throw();
 
@@ -191,6 +170,26 @@ private:
   struct Impl;
   Impl* const rep;
 };
+
+#if (defined(TRACE) && !defined(NO_TRACE))
+#  ifndef LOCAL_TRACE
+#    define LOCAL_TRACE
+#  endif
+#endif
+
+#if defined(LOCAL_TRACE) || (defined(PROF) && !defined(NO_PROF))
+#  ifndef LOCAL_PROF
+#    define LOCAL_PROF
+#  endif
+#endif
+
+#if !defined(DYNAMIC_TRACE_EXPR)
+#  if defined(LOCAL_TRACE)
+#    define DYNAMIC_TRACE_EXPR true
+#  else
+#    define DYNAMIC_TRACE_EXPR false
+#  endif
+#endif
 
 #ifdef LOCAL_PROF
 #  define DOTRACE(x) static Util::Prof P_x_(x); \
