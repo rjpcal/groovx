@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 20 17:49:28 2001
-// written: Thu Jun  6 17:28:14 2002
+// written: Mon Sep  9 14:10:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,11 +40,9 @@ namespace
     void print(const timeval* now) const
     {
       std::cerr << itsName << " @ ";
-#ifdef PRESTANDARD_IOSTREAMS
+
       std::cerr.setf(std::ios::showpoint | std::ios::fixed);
-#else
-      std::cerr << std::showpoint << std::fixed;
-#endif
+
       std::cerr << std::setprecision(2)
                 << itsTimer.elapsedMsec(*now) << " / ";
     }
