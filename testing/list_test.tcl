@@ -15,6 +15,7 @@ namespace eval List {
 variable TEST_DEFINED 1
 
 proc purgeAll {} {
+	 Togl::setVisible 0
 	 BlockList::reset
 	 Tlist::reset
 	 RhList::reset
@@ -29,6 +30,8 @@ proc testList { packagename listname baseclass subclass1 subclass2 } {
     set testObj(baseclass) $baseclass
     set testObj(subclass1) $subclass1
     set testObj(subclass2) $subclass2
+
+	 purgeAll
 
     testResetCmd testObj
     testCountCmd testObj
