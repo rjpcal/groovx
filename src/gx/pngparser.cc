@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr 24 20:05:06 2002
-// written: Tue Nov 12 12:58:50 2002
+// written: Tue Nov 12 13:00:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -123,7 +123,9 @@ DOTRACE("PngParser::parse");
   if (bit_depth == 16)
     png_set_strip_16(itsPngPtr);
   else if (bit_depth != 8)
-    throw Util::Error("can only handle 8-bit and 16-bit PNG images");
+    throw Util::Error(fstring("bit-depth '", bit_depth,
+                              "' is not supported for PNG images "
+                              "(must be 8- or 16-bit)"));
 
   const png_byte color_type = png_get_color_type(itsPngPtr, itsInfoPtr);
 
