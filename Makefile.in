@@ -253,7 +253,7 @@ ncsl_sort:
 	@NCSL $(ALL_SRCS) | sort -n | tee $(LOGS)/ncsl_sort
 
 obj_sizes:
-	ls -lLR $(OBJ) | grep "\.$(OBJEXT)" | sort -n +4 > obj_sizes
+	ls -lLR $(OBJ) | grep "\.$(OBJEXT)" | sort -n +4 | tee $(LOGS)/obj_sizes
 
 .PHONY: showpid
 showpid:
