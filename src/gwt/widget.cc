@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Thu Aug 16 10:29:53 2001
+// written: Thu Aug 16 10:37:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,6 +111,7 @@ public:
   virtual void receiveStateChangeMsg(const Util::Observable*)
   {
     isItRefreshed = false;
+    flushChanges();
   }
 
 private:
