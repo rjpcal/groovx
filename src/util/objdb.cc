@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Sat Oct  7 20:04:12 2000
+// written: Sun Oct  8 16:04:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,8 +26,7 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-MasterIoPtr::MasterIoPtr(IO::IoObject* ptr) :
-  itsPtr(ptr)
+MasterIoPtr::MasterIoPtr()
 {
 DOTRACE("MasterIoPtr::MasterIoPtr");
 }
@@ -35,21 +34,6 @@ DOTRACE("MasterIoPtr::MasterIoPtr");
 MasterIoPtr::~MasterIoPtr()
 {
 DOTRACE("MasterIoPtr::~MasterIoPtr");
-  delete itsPtr;
-}
-
-bool MasterIoPtr::isValid() const
-{
-DOTRACE("MasterIoPtr::isValid");
-  return (itsPtr != 0);
-}
-
-bool MasterIoPtr::operator==(const MasterPtrBase& other)
-{
-  const MasterIoPtr* otherIo = dynamic_cast<const MasterIoPtr*>(&other);
-  if (otherIo == 0) return false;
-
-  return (otherIo->itsPtr == this->itsPtr);
 }
 
 IoPtrList::IoPtrList(int size) :
@@ -91,8 +75,7 @@ DOTRACE("IoPtrList::legacySrlz");
 		// we must legacySrlz the typename since legacyDesrlz requires a
 		// typename in order to call the virtual constructor
 		MasterIoPtr* ioPtr = dynamic_cast<MasterIoPtr*>(getVoidPtr(i));
-		if (ioPtr == 0) throw InvalidIdError("IO cast failed");
-		IO::IoObject* obj = ioPtr->ioPtr();
+		IO::IoObject* obj = ioPtr ? ioPtr->ioPtr() : 0;
 
 		IO::LWFlagJanitor jtr_(*lwriter, lwriter->flags() | IO::TYPENAME);
 		lwriter->writeObject("ptrListItem", obj);
@@ -146,7 +129,7 @@ DOTRACE("IoPtrList::legacyDesrlz");
 
 	 IO::IoObject* obj = lreader->readObject("ptrListItem");
 
-	 insertVoidPtrAt(ptrid, new MasterIoPtr(obj));
+	 insertVoidPtrAt(ptrid, makeMasterIoPtr(obj));
   }
 
   firstVacant() = lreader->readInt("itsFirstVacant");
@@ -182,7 +165,7 @@ DOTRACE("IoPtrList::readFrom");
 
   for (size_t i = 0; i < uint_count; ++i)
 	 if (ioBlock[i] != 0) {
-		insertVoidPtrAt(i, new MasterIoPtr(ioBlock[i]));
+		insertVoidPtrAt(i, makeMasterIoPtr(ioBlock[i]));
 	 }
 }
 
@@ -208,8 +191,8 @@ DOTRACE("IoPtrList::writeTo");
 		DebugEval(i);
 
 		MasterIoPtr* ioPtr = dynamic_cast<MasterIoPtr*>(getVoidPtr(i));
-		if (ioPtr == 0) throw InvalidIdError("IO cast failed");
-		ioBlock[i] = ioPtr->ioPtr();
+		IO::IoObject* obj = ioPtr ? ioPtr->ioPtr() : 0;
+		ioBlock[i] = obj;
 
 		DebugEvalNL(ioBlock[i]);
 	 }

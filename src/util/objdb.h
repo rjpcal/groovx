@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Sat Oct  7 20:05:55 2000
+// written: Sun Oct  8 15:46:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,18 +20,15 @@
 #endif
 
 class MasterIoPtr : public MasterPtrBase {
-private:
-  IO::IoObject* itsPtr;
-
 public:
-  MasterIoPtr(IO::IoObject* ptr);
+  MasterIoPtr();
   virtual ~MasterIoPtr();
 
-  IO::IoObject* ioPtr() const { return itsPtr; }
+  virtual IO::IoObject* ioPtr() const = 0;
 
-  virtual bool isValid() const;
+  virtual bool isValid() const = 0;
 
-  virtual bool operator==(const MasterPtrBase& other);
+  virtual bool operator==(const MasterPtrBase& other) = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -63,6 +60,8 @@ protected:
   virtual const char* alternateIoTags() const;
 
   virtual fixed_string legacyValidTypenames() const;
+
+  virtual MasterIoPtr* makeMasterIoPtr(IO::IoObject* obj) const = 0;
 
 private:
   IoPtrList(const IoPtrList&);
