@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 19 17:25:51 2000
-// written: Fri Aug 10 11:03:52 2001
+// written: Fri Aug 10 11:42:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -90,6 +90,9 @@ public:
 
   /// Returns a pointer to the raw image data.
   unsigned char* bytesPtr() const;
+
+  /// Returns a checksum of all the bytes in the image data.
+  long int checkSum() const;
 
   /// Returns the bitmap's width in pixels.
   int width() const;
