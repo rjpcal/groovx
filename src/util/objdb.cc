@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Tue Aug 21 15:22:43 2001
+// written: Wed Aug 22 11:17:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -152,8 +152,9 @@ public:
 
       const int new_id = ptr->id();
 
-      // Must create the ObjRef with "noInsert" to avoid endless recursion
-      itsPtrMap.insert(MapType::value_type(new_id, ObjRef(ptr, true)));
+      // Must create the ObjRef with "PRIVATE" to avoid endless recursion
+      itsPtrMap.insert(MapType::value_type
+                       (new_id, ObjRef(ptr, Util::STRONG, Util::PRIVATE)));
     }
 };
 
