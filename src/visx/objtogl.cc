@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed Dec  1 22:02:17 1999
+// written: Thu Dec  2 13:02:15 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -23,7 +23,6 @@
 #include <tk.h>
 #include <string>
 
-#include "gfxattribs.h"
 #include "tlist.h"
 #include "tclcmd.h"
 #include "tclevalcmd.h"
