@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Tue Aug 21 16:09:26 2001
+// written: Fri Aug 24 18:35:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "gtext.h"
 
+#include "gfx/canvas.h"
 #include "gfx/rect.h"
 
 #include "io/ioproxy.h"
@@ -754,14 +755,15 @@ DOTRACE("Gtext::grGetBoundingBox");
   return bbox;
 }
 
-void Gtext::grRender(Gfx::Canvas&) const
+void Gtext::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("Gtext::grRender");
-  glPushAttrib(GL_LIST_BIT|GL_LINE_BIT);
-    glListBase( itsListBase );
-    glLineWidth(itsStrokeWidth);
-    glCallLists( itsText.length(), GL_BYTE, itsText.c_str() );
-  glPopAttrib();
+
+  Gfx::Canvas::AttribSaver saver(canvas);
+
+  canvas.setLineWidth(itsStrokeWidth);
+  glListBase( itsListBase );
+  glCallLists( itsText.length(), GL_BYTE, itsText.c_str() );
 }
 
 static const char vcid_gtext_cc[] = "$Header$";

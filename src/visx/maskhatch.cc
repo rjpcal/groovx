@@ -128,7 +128,7 @@ DOTRACE("MaskHatch::grRender");
 
   Gfx::Canvas::AttribSaver attribSaver(canvas);
 
-  glLineWidth(itsLineWidth);
+  canvas.setLineWidth(itsLineWidth);
 
   glBegin(GL_LINES);
   {

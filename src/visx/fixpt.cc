@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Aug 22 15:29:53 2001
+// written: Fri Aug 24 18:35:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "fixpt.h"
 
+#include "gfx/canvas.h"
 #include "gfx/rect.h"
 
 #include "io/ioproxy.h"
@@ -112,11 +113,13 @@ DOTRACE("FixPt::grGetBoundingBox");
   return bbox;
 }
 
-void FixPt::grRender(Gfx::Canvas&) const
+void FixPt::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("FixPt::grRender");
-  glPushAttrib(GL_LINE_BIT);
-  glLineWidth(itsWidth);
+
+  Gfx::Canvas::AttribSaver saver(canvas);
+
+  canvas.setLineWidth(itsWidth);
 
   glBegin(GL_LINES);
   glVertex3f(0.0, -itsLength/2.0, 0.0);

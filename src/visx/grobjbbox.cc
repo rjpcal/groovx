@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Fri Aug 24 17:41:48 2001
+// written: Fri Aug 24 18:36:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ namespace
 
     Gfx::Canvas::AttribSaver saver(canvas);
 
-    glLineWidth(1.0);
+    canvas.setLineWidth(1.0);
     glEnable(GL_LINE_STIPPLE);
     glLineStipple(1, stipple);
 

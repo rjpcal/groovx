@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Fri Aug 24 18:14:53 2001
+// written: Fri Aug 24 18:35:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -356,7 +356,7 @@ DOTRACE("MorphyFace::grRender");
         {
           Gfx::Canvas::AttribSaver asaver(canvas);
 
-          glLineWidth(itsEyebrowThickness);
+          canvas.setLineWidth(itsEyebrowThickness);
           glEnable(GL_MAP1_VERTEX_3);
           glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, eye_ctrlpnts);
           // Evaluate the 1-d Bezier curve
