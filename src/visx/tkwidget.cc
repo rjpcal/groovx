@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Wed Sep 18 13:10:57 2002
+// written: Wed Sep 18 13:18:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -315,6 +315,25 @@ void Tcl::TkWidget::setHeight(int h)
   Tk_GeometryRequest(rep->tkWin, rep->width, rep->height);
 }
 
+int Tcl::TkWidget::timeOut() const
+{
+  return rep->timeout;
+}
+
+void Tcl::TkWidget::setTimeOut(int msec)
+{
+  Tcl_DeleteTimerHandler(rep->timerToken);
+
+  rep->timeout = msec;
+
+  if (rep->timeout > 0)
+    {
+      rep->timerToken =
+        Tcl_CreateTimerHandler(rep->timeout, &TkWidgImpl::cTimerCallback,
+                               static_cast<ClientData>(this));
+    }
+}
+
 void Tcl::TkWidget::destroyWidget()
 {
 DOTRACE("Tcl::TkWidget::destroyWidget");
@@ -375,6 +394,8 @@ DOTRACE("Tcl::TkWidget::pack");
 void Tcl::TkWidget::timerCallback()
 {
 DOTRACE("Tcl::TkWidget::timerCallback");
+
+  std::cout << "timer callback" << std::endl;
 }
 
 void Tcl::TkWidget::bind(const char* event_sequence, const char* script)

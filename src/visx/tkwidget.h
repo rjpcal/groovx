@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Wed Sep 18 13:06:55 2002
+// written: Wed Sep 18 13:16:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,6 +50,9 @@ public:
   int height() const;
   void setWidth(int w);
   void setHeight(int h);
+
+  int timeOut() const;
+  void setTimeOut(int msec);
 
   Tcl_Interp* interp() const;
   Tk_Window tkWin() const;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Tue Sep 17 22:02:06 2002
+// written: Wed Sep 18 13:18:51 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -167,6 +167,7 @@ public:
     defSetter("setVisible", "item_id(s) visibility", &Toglet::setVisibility);
     defAction("swapBuffers", &Togl::swapBuffers);
     defAction("takeFocus", &Togl::takeFocus);
+    defAttrib("timeOut", &Tcl::TkWidget::timeOut, &Tcl::TkWidget::setTimeOut);
     defAction("undraw", &Toglet::undraw);
     defGetter("usingFixedScale", &Toglet::usingFixedScale);
     defAttrib("width", &Tcl::TkWidget::width, &Tcl::TkWidget::setWidth);
