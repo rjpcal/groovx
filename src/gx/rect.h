@@ -27,6 +27,9 @@ public:
 
   Rect(const Rect<V>& i) : l(i.l), t(i.t), r(i.r), b(i.b) {}
   
+  Rect<V>& operator=(const Rect<V>& i)
+	 { l=i.l; t=i.t; r=i.r; b=i.b; return *this; }
+
   // Data members
   V l, t, r, b;
 
