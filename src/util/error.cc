@@ -3,7 +3,7 @@
 // error.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 22 14:59:48 1999
-// written: Wed Mar  8 11:07:43 2000
+// written: Wed Mar  8 11:33:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 
 #include "error.h"
 
-#include <string>
+#include "strings.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -29,26 +29,19 @@ DOTRACE("Error::~Error ");
 
 ErrorWithMsg::ErrorWithMsg() :
   Error(),
-  itsInfo(new string(""))
+  itsInfo(new dynamic_string(""))
 {}
 
 
 ErrorWithMsg::ErrorWithMsg(const char* str) :
-  itsInfo(new string(str))
-{
-DOTRACE("ErrorWithMsg::ErrorWithMsg");
-  DebugEvalNL(*str);
-}
-
-ErrorWithMsg::ErrorWithMsg(const string& str) :
-  itsInfo(new string(str))
+  itsInfo(new dynamic_string(str))
 {
 DOTRACE("ErrorWithMsg::ErrorWithMsg");
   DebugEvalNL(*str);
 }
 
 ErrorWithMsg::ErrorWithMsg(const ErrorWithMsg& other) :
-  itsInfo(new string(*(other.itsInfo)))
+  itsInfo(new dynamic_string(*(other.itsInfo)))
 {
 DOTRACE("ErrorWithMsg::ErrorWithMsg");
 }
@@ -62,7 +55,7 @@ ErrorWithMsg& ErrorWithMsg::operator=(const ErrorWithMsg& other) {
 DOTRACE("ErrorWithMsg::operator=");
   if (&other != this) { 
 	 delete itsInfo;
-	 itsInfo = new string(*(other.itsInfo));
+	 itsInfo = new dynamic_string(*(other.itsInfo));
   }
   return *this;
 }
@@ -77,12 +70,7 @@ DOTRACE("ErrorWithMsg::appendMsg");
   *itsInfo += addMsg; 
 }
 
-void ErrorWithMsg::appendMsg(const string& addMsg) {
-DOTRACE("ErrorWithMsg::appendMsg");
-  *itsInfo += addMsg;
-}
-
-void ErrorWithMsg::setMsg(const string& str) {
+void ErrorWithMsg::setMsg(const char* str) {
 DOTRACE("ErrorWithMsg::setMsg");
   *itsInfo = str;
 }
