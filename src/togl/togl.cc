@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 12:13:13 2002
+// written: Mon Sep 16 12:29:06 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -975,116 +975,51 @@ namespace
     Togl::Impl* rep = static_cast<Togl::Impl*>(clientData);
     int result = TCL_OK;
 
-    if (objc < 2)
-      {
-        Tcl_AppendResult(interp, "wrong # args: should be \"",
-                         Tcl_GetString(objv[0]), " ?options?\"", NULL);
-        return TCL_ERROR;
-      }
-
     Tcl_Preserve(clientData);
 
-    if (strcmp(Tcl_GetString(objv[1]), "configure") == 0)
+    if (objc == 1)
       {
-        if (objc == 2)
+        /* Return list of all configuration parameters */
+        Tcl_Obj* objResult =
+          Tk_GetOptionInfo(interp,
+                           reinterpret_cast<char*>(rep->itsOpts.get()),
+                           toglOptionTable,
+                           (Tcl_Obj*)NULL, rep->itsTkWin);
+        if (objResult != 0)
           {
-            /* Return list of all configuration parameters */
-            Tcl_Obj* objResult =
-              Tk_GetOptionInfo(interp,
-                               reinterpret_cast<char*>(rep->itsOpts.get()),
-                               toglOptionTable,
-                               (Tcl_Obj*)NULL, rep->itsTkWin);
-            if (objResult != 0)
-              {
-                Tcl_SetObjResult(interp, objResult);
-              }
-            else
-              {
-                result = TCL_ERROR;
-              }
-          }
-        else if (objc == 3)
-          {
-            if (strcmp(Tcl_GetString(objv[2]), "-extensions") == 0)
-              {
-                /* Return a list of OpenGL extensions available */
-                Tcl_SetResult(interp, (char*) glGetString(GL_EXTENSIONS),
-                              TCL_STATIC);
-                result = TCL_OK;
-              }
-            else
-              {
-                /* Return a specific configuration parameter */
-                Tcl_Obj* objResult =
-                  Tk_GetOptionInfo(interp,
-                                   reinterpret_cast<char*>(rep->itsOpts.get()),
-                                   toglOptionTable,
-                                   objv[2], rep->itsTkWin);
-                if (objResult != 0)
-                  {
-                    Tcl_SetObjResult(interp, objResult);
-                  }
-                else
-                  {
-                    result = TCL_ERROR;
-                  }
-              }
+            Tcl_SetObjResult(interp, objResult);
           }
         else
           {
-            /* Execute a configuration change */
-            result = rep->configure(objc-2, objv+2);
+            result = TCL_ERROR;
           }
       }
-    else if (strcmp(Tcl_GetString(objv[1]), "render") == 0)
+    else if (objc == 2)
       {
-        /* force the widget to be redrawn */
-        Togl::Impl::cRenderCallback(static_cast<ClientData>(rep));
-      }
-    else if (strcmp(Tcl_GetString(objv[1]), "swapbuffers") == 0)
-      {
-        /* force the widget to be redrawn */
-        rep->swapBuffers();
-      }
-    else if (strcmp(Tcl_GetString(objv[1]), "makecurrent") == 0)
-      {
-        /* force the widget to be redrawn */
-        rep->itsGlx->makeCurrent(rep->windowId());
+        /* Return a specific configuration parameter */
+        Tcl_Obj* objResult =
+          Tk_GetOptionInfo(interp,
+                           reinterpret_cast<char*>(rep->itsOpts.get()),
+                           toglOptionTable,
+                           objv[1], rep->itsTkWin);
+        if (objResult != 0)
+          {
+            Tcl_SetObjResult(interp, objResult);
+          }
+        else
+          {
+            result = TCL_ERROR;
+          }
       }
     else
       {
-        Tcl_AppendResult(interp, "Togl: Unknown option: ",
-                         Tcl_GetString(objv[1]), NULL);
-        result = TCL_ERROR;
+        /* Execute a configuration change */
+        result = rep->configure(objc-1, objv+1);
       }
 
     Tcl_Release(clientData);
     return result;
   }
-
-//   int ToglCmd(ClientData, Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
-//   {
-//     DOTRACE("ToglCmd");
-//     if (objc <= 1)
-//       {
-//         Tcl_AppendResult(interp, "wrong # args: should be "
-//                          "\"pathName command ?options?\"", NULL);
-//         return TCL_ERROR;
-//       }
-
-//     /* Create Togl data structure */
-//     try
-//       {
-//         Togl* p = new Togl(interp, Tcl_GetString(objv[1]));
-//         p->configure(objc-2, objv+2);
-//       }
-//     catch (...)
-//       {
-//         return TCL_ERROR;
-//       }
-
-//     return TCL_OK;
-//   }
 }
 
 extern "C" int Togl_Init(Tcl_Interp *interp)
@@ -1092,8 +1027,6 @@ extern "C" int Togl_Init(Tcl_Interp *interp)
 DOTRACE("Togl_Init");
 
   Tcl_PkgProvide(interp, "Togl", TOGL_VERSION);
-
-//   Tcl_CreateObjCommand(interp, "togl", ToglCmd, (ClientData) 0, NULL);
 
   return TCL_OK;
 }
