@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan 21 12:52:51 2002
-// written: Mon Jan 21 12:55:57 2002
+// written: Sun Nov  3 10:34:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,14 @@
 
 #include "tcl/tclpkg.h"
 
+#include "util/debug.h"
 #include "util/trace.h"
+
+namespace
+{
+  int getLevel() { return Debug::level; }
+  void setLevel(int v) { Debug::level = v; }
+}
 
 extern "C"
 int Gtrace_Init(Tcl_Interp* interp)
@@ -27,6 +34,8 @@ DOTRACE("Gtrace_Init");
   pkg->def("::gtrace", "", &Util::Trace::getGlobalTrace);
   pkg->def("maxDepth", "level", &Util::Trace::setMaxLevel);
   pkg->def("maxDepth", "", &Util::Trace::getMaxLevel);
+  pkg->def("::dbglevel", "", &getLevel);
+  pkg->def("::dbglevel", "level", &setLevel);
 
   return pkg->initStatus();
 }
