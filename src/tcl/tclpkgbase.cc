@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Mon Jul 16 11:30:19 2001
+// written: Mon Jul 16 15:18:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,6 @@
 
 #include "tcl/tclpkg.h"
 
-#include "tcl/tcllink.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tclerror.h"
 
@@ -34,16 +33,54 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace {
-
-void exitHandler(ClientData clientData) {
-DOTRACE("TclPkg-exitHandler");
-  Tcl::TclPkg* pkg = static_cast<Tcl::TclPkg*>(clientData);
-  DebugEvalNL(typeid(*pkg).name());
-  delete pkg;
+namespace
+{
+  void exitHandler(ClientData clientData)
+  {
+    DOTRACE("TclPkg-exitHandler");
+    Tcl::TclPkg* pkg = static_cast<Tcl::TclPkg*>(clientData);
+    DebugEvalNL(typeid(*pkg).name());
+    delete pkg;
+  }
 }
 
-} // end unnamed namespace
+///////////////////////////////////////////////////////////////////////
+//
+// Helper functions that provide typesafe access to Tcl_LinkVar
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace Tcl
+{
+  inline int linkInt(Tcl_Interp* interp, const char* varName,
+                         int* addr, int flag) {
+    fixed_string temp = varName;
+    flag &= TCL_LINK_READ_ONLY;
+    return Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
+                       flag | TCL_LINK_INT);
+  }
+  inline int linkDouble(Tcl_Interp* interp, const char* varName,
+                            double* addr, int flag) {
+    fixed_string temp = varName;
+    flag &= TCL_LINK_READ_ONLY;
+    return Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
+                       flag | TCL_LINK_DOUBLE);
+  }
+  inline int linkBoolean(Tcl_Interp* interp, const char* varName,
+                             int* addr, int flag) {
+    fixed_string temp = varName;
+    flag &= TCL_LINK_READ_ONLY;
+    return Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
+                       flag | TCL_LINK_BOOLEAN);
+  }
+  inline int linkString(Tcl_Interp* interp, const char* varName,
+                            char** addr, int flag) {
+    fixed_string temp = varName;
+    flag &= TCL_LINK_READ_ONLY;
+    return Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
+                       flag | TCL_LINK_STRING);
+  }
+}
 
 struct Tcl::TclPkg::Impl {
 private:
@@ -165,15 +202,15 @@ DOTRACE("Tcl::TclPkg::makePkgCmdName");
   // package name as a namespace qualifier.
   if (cmd_name.find("::") != std::string::npos)
     {
-		return cmd_name_cstr;
+      return cmd_name_cstr;
     }
   else
     {
-		static std::string name;
+      static std::string name;
       name = pkgName();
       name += "::";
       name += cmd_name;
-		return name.c_str();
+      return name.c_str();
     }
 }
 
@@ -191,14 +228,14 @@ DOTRACE("Tcl::TclPkg::addCommand");
 void Tcl::TclPkg::linkVar(const char* varName, int& var) {
 DOTRACE("Tcl::TclPkg::linkVar int");
   DebugEvalNL(varName);
-  if (Tcl_LinkInt(itsImpl->itsInterp, varName, &var, 0) != TCL_OK)
+  if (linkInt(itsImpl->itsInterp, varName, &var, 0) != TCL_OK)
     throw TclError();
 }
 
 void Tcl::TclPkg::linkVar(const char* varName, double& var) {
 DOTRACE("Tcl::TclPkg::linkVar double");
   DebugEvalNL(varName);
-  if (Tcl_LinkDouble(itsImpl->itsInterp, varName, &var, 0) != TCL_OK)
+  if (linkDouble(itsImpl->itsInterp, varName, &var, 0) != TCL_OK)
     throw TclError();
 }
 
@@ -207,7 +244,7 @@ DOTRACE("Tcl::TclPkg::linkVarCopy int");
   DebugEvalNL(varName);
   shared_ptr<int> copy(new int(var));
   itsImpl->ownedInts.push_front(copy);
-  if (Tcl_LinkInt(itsImpl->itsInterp, varName,
+  if (linkInt(itsImpl->itsInterp, varName,
                   copy.get(), TCL_LINK_READ_ONLY) != TCL_OK)
     throw TclError();
 }
@@ -216,7 +253,7 @@ void Tcl::TclPkg::linkVarCopy(const char* varName, double var) {
 DOTRACE("Tcl::TclPkg::linkVarCopy double");
   shared_ptr<double> copy(new double(var));
   itsImpl->ownedDoubles.push_front(copy);
-  if (Tcl_LinkDouble(itsImpl->itsInterp, varName,
+  if (linkDouble(itsImpl->itsInterp, varName,
                      copy.get(), TCL_LINK_READ_ONLY) != TCL_OK)
     throw TclError();
 }
@@ -224,7 +261,7 @@ DOTRACE("Tcl::TclPkg::linkVarCopy double");
 void Tcl::TclPkg::linkConstVar(const char* varName, int& var) {
 DOTRACE("Tcl::TclPkg::linkConstVar int");
   DebugEvalNL(varName);
-  if (Tcl_LinkInt(itsImpl->itsInterp, varName, &var, TCL_LINK_READ_ONLY)
+  if (linkInt(itsImpl->itsInterp, varName, &var, TCL_LINK_READ_ONLY)
       != TCL_OK)
     throw TclError();
 }
@@ -232,7 +269,7 @@ DOTRACE("Tcl::TclPkg::linkConstVar int");
 void Tcl::TclPkg::linkConstVar(const char* varName, double& var) {
 DOTRACE("Tcl::TclPkg::linkConstVar double");
   DebugEvalNL(varName);
-  if (Tcl_LinkDouble(itsImpl->itsInterp, varName, &var, TCL_LINK_READ_ONLY)
+  if (linkDouble(itsImpl->itsInterp, varName, &var, TCL_LINK_READ_ONLY)
       != TCL_OK)
     throw TclError();
 }
