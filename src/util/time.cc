@@ -32,6 +32,8 @@
 
 #include "util/time.h"
 
+#include "util/strings.h"
+
 #include <sys/resource.h>
 
 Util::Time Util::Time::wallClockNow() throw()
@@ -53,6 +55,19 @@ Util::Time Util::Time::rusageSysNow() throw()
   rusage ru;
   getrusage(RUSAGE_SELF, &ru);
   return Util::Time(ru.ru_stime);
+}
+
+fstring Util::Time::format(const char* formatcode) const
+{
+  const time_t t = time_t(itsTimeVal.tv_sec);
+
+  struct tm* tt = localtime(&t);
+
+  char buf[512];
+
+  std::size_t count = strftime(buf, 512, formatcode, tt);
+
+  return fstring(Util::CharData(&buf[0], count));
 }
 
 static const char vcid_time_cc[] = "$Header$";
