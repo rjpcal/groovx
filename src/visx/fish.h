@@ -3,7 +3,7 @@
 // fish.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:56 1999
-// written: Mon Nov 15 15:43:27 1999
+// written: Sat Nov 20 21:51:00 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,13 +25,21 @@
 #endif
 
 ///////////////////////////////////////////////////////////////////////
-//
-// Fish class definition
-//
+/**
+ *
+ * Fish is a subclass of GrObj that can render outline drawings of
+ * tropical fish (rendering algorithm designed by Fabrizio Gabbiani).
+ *
+ * @memo GrObj subclass for rendering outline drawings of fish.
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 class Fish : public GrObj, public PropFriend<Fish> {
 public:
+  /** Constructor can make a Fish by reading a spline file and a
+      coordinate file. If either of these filenames are null, the
+      constructor will use default values for the spline
+      coefficients. */
   Fish(const char* splinefile=0, const char* coordfile=0, int index=0);
 
 private:
@@ -41,38 +49,57 @@ private:
   void readCoordFile(const char* coordfile, int index);
 
 public:
+  ///
   virtual ~Fish();
 
+  ///
   virtual void serialize(ostream &os, IOFlag flag) const;
+  ///
   virtual void deserialize(istream &is, IOFlag flag);
 
+  ///
   virtual int charCount() const;
 
+  ///
   virtual void readFrom(Reader* reader);
+  ///
   virtual void writeTo(Writer* writer) const;
 
+  ///
   virtual void receiveStateChangeMsg(const Observable* obj);
 
   ////////////////
   // properties //
   ////////////////
 
+  ///
   typedef PropertyInfo<Fish> PInfo;
+  ///
   static const vector<PInfo>& getPropertyInfos();
 
+  ///
   CTProperty<Fish, int> category;
+  ///
   virtual int getCategory() const { return category.getNative(); }
+  ///
   virtual void setCategory(int val) { category.setNative(val); }
 
+  ///
   CTPtrProperty<Fish, double> coord0;
+  ///
   CTPtrProperty<Fish, double> coord1;
+  ///
   CTPtrProperty<Fish, double> coord2;
+  ///
   CTPtrProperty<Fish, double> coord3;
 
+  ///
   CTBoundedProperty<Fish, int, 0, 3, 1> currentPart;
-
+  ///
   CTBoundedProperty<Fish, int, 0, 3, 1> currentEndPt;
+  ///
   CTPtrProperty<Fish, int> endPt_Part;
+  ///
   CTPtrProperty<Fish, int> endPt_Bkpt;
 
   /////////////
@@ -80,9 +107,11 @@ public:
   /////////////
 
 protected:
+  ///
   virtual bool grGetBoundingBox(Rect<double>& bbox,
 										  int& border_pixels) const;
 
+  ///
   virtual void grRender() const;
 
 private:
