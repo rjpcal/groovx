@@ -1002,6 +1002,13 @@ cppdeps::get_nested_ldeps(const string& src_fname_orig)
 
   m_ldep_parse_states[src_fname] = IN_PROGRESS;
 
+#if 0
+  static int depth = 0;
+  for (int i = 0; i < depth; ++i) cerr << '\t';
+  cerr << "computing ldeps for " << src_fname << '\n';
+  ++depth;
+#endif
+
   std::set<dependency> deps_set;
 
   deps_set.insert(src_fname);
@@ -1027,6 +1034,8 @@ cppdeps::get_nested_ldeps(const string& src_fname_orig)
           if (!m_cfg_quiet)
             cerr << "WARNING: in " << src_fname
                  << ": recursive link-dep cycle with " << ccfile << "\n";
+
+          deps_set.insert(ccfile);
           continue;
         }
 
@@ -1040,6 +1049,12 @@ cppdeps::get_nested_ldeps(const string& src_fname_orig)
   result.assign(deps_set.begin(), deps_set.end());
 
   m_ldep_parse_states[src_fname] = COMPLETE;
+
+#if 0
+  --depth;
+  for (int i = 0; i < depth; ++i) cerr << '\t';
+  cerr << "...finished " << src_fname << '\n';
+#endif
 
   return result;
 }
