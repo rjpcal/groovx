@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Oct 11 14:57:49 2000
+// written: Wed Oct 11 16:29:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -407,28 +407,24 @@ private:
 			 itsIsValid = true;
 		}
 
-	 bool invokeIfTrue(Tcl_Interp* interp) throw (ErrorWithMsg)
+	 bool invokeIfTrue(const Tcl::SafeInterp& safeInterp) throw (ErrorWithMsg)
 		{
-		  if (isTrue(interp))
-			 { invoke(interp); return true; }
+		  if (isTrue(safeInterp))
+			 { invoke(safeInterp); return true; }
 		  return false;
 		}
 
   private:
-	 bool isTrue(Tcl_Interp* interp) throw(ErrorWithMsg)
+	 bool isTrue(const Tcl::SafeInterp& safeInterp) throw(ErrorWithMsg)
 		{
 		  Precondition(itsIsValid);
-		  int expr_result;
-		  if (Tcl_ExprBooleanObj(interp, itsCondition, &expr_result) != TCL_OK)
-			 {
-				throw ErrorWithMsg("error evaluating boolean expression "
-										 "for EventResponseHdlr");
-			 }
-		  return bool(expr_result);
+		  bool result = safeInterp.evalBooleanExpr(itsCondition);
+		  Assert(safeInterp.success());
+		  return result;
 		}
 
-	 void invoke(Tcl_Interp* interp) throw(ErrorWithMsg)
-		{ itsResultCmd.invoke(interp); }
+	 void invoke(const Tcl::SafeInterp& safeInterp) throw(ErrorWithMsg)
+		{ itsResultCmd.invoke(safeInterp.intp()); }
 
 	 bool itsIsValid;
 	 Tcl::TclObjPtr itsCondition;
@@ -521,7 +517,8 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
 										const char* input_response_map) :
   itsOwner(owner),
   itsState(ERHState::inactiveState()),
-  itsSafeIntp(0, Tcl::SafeInterp::IGNORE),
+  itsSafeIntp(dynamic_cast<GrshApp&>(Application::theApp()).getInterp(),
+				  Tcl::SafeInterp::THROW),
   itsTclCmdToken(0),
   itsPrivateCmdName(getUniqueCmdName().c_str()),
   itsInputResponseMap(input_response_map),
@@ -536,13 +533,6 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
   itsAbortInvalidResponses(true)
 {
 DOTRACE("EventResponseHdlr::Impl::Impl");
-
-  Application& app = Application::theApp();
-  GrshApp& grshapp = dynamic_cast<GrshApp&>(app);
-
-  itsSafeIntp.reset(grshapp.getInterp(), Tcl::SafeInterp::THROW);
-
-  Invariant(itsSafeIntp.hasInterp());
 
   itsTclCmdToken =
 	 Tcl_CreateObjCommand(itsSafeIntp.intp(),
@@ -561,7 +551,7 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
   // cause a resource leak, however, since the Tcl_Interp as part if
   // its own destruction will delete all commands associated with it.
 
-  if ( itsSafeIntp.hasInterp() && !Tcl_InterpDeleted(itsSafeIntp.intp()) ) {
+  if ( !itsSafeIntp.interpDeleted() ) {
 	 try
 		{
 		  itsState->onDestroy(this);
@@ -703,7 +693,7 @@ DOTRACE("EventResponseHdlr::Impl::ignore");
 //--------------------------------------------------------------------
 
 int EventResponseHdlr::Impl::privateHandleCmd(
-  ClientData clientData, Tcl_Interp* interp, int objc, Tcl_Obj *const objv[]
+  ClientData clientData, Tcl_Interp*/*interp*/, int objc, Tcl_Obj *const objv[]
   ) {
 DOTRACE("EventResponseHdlr::Impl::privateHandleCmd");
   // We assert that objc is 2 because this command should only ever
@@ -718,11 +708,11 @@ DOTRACE("EventResponseHdlr::Impl::privateHandleCmd");
 	 impl->itsState->handleResponse(impl, Tcl_GetString(objv[1]));
   }
   catch (ErrorWithMsg& err) {
-	 Tcl_AppendResult(interp, err.msg_cstr(), (char*) 0);
+	 impl->itsSafeIntp.appendResult(err.msg_cstr());
 	 return TCL_ERROR;
   }
   catch (...) {
-	 Tcl_AppendResult(interp, "an error of unknown type occurred", (char*) 0);
+	 impl->itsSafeIntp.appendResult("an error of unknown type occurred");
 	 return TCL_ERROR;
   }
 
@@ -779,7 +769,7 @@ DOTRACE("EventResponseHdlr::Impl::feedback");
 
   bool feedbackGiven = false;
   for (size_t i = 0; i<itsFeedbacks.size() && !feedbackGiven; ++i) {
-	 feedbackGiven = itsFeedbacks[i].invokeIfTrue(itsSafeIntp.intp());
+	 feedbackGiven = itsFeedbacks[i].invokeIfTrue(itsSafeIntp);
   }
 
   Tcl_UnsetVar(itsSafeIntp.intp(), "resp_val", 0);
