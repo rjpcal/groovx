@@ -71,74 +71,42 @@ Tcl::TclItemPkg::~TclItemPkg() {}
 
 template <class T>
 void Tcl::TclItemPkg::declareGetter(const char* cmd_name,
-                                    Getter<T>* getter, const char* usage)
+                                    shared_ptr<Getter<T> > getter,
+												const char* usage)
 {
-  addCommand(
-         new Tcl::TVecGetterCmd<T>(interp(), this, makePkgCmdName(cmd_name),
-#ifndef ACC_COMPILER
-                                   make_shared(getter),
-#else
-                                   shared_ptr<Getter<T> >(getter),
-#endif
-                                   usage, itemArgn())
-         );
+  addCommand(new Tcl::TVecGetterCmd<T>(interp(), this,
+													makePkgCmdName(cmd_name),
+													getter,
+													usage, itemArgn()));
 }
 
 template <class T>
 void Tcl::TclItemPkg::declareSetter(const char* cmd_name,
-                                    Setter<T>* setter, const char* usage)
+                                    shared_ptr<Setter<T> > setter,
+												const char* usage)
 {
-  addCommand(
-         new Tcl::TVecSetterCmd<T>(interp(), this, makePkgCmdName(cmd_name),
-#ifndef ACC_COMPILER
-                                   make_shared(setter),
-#else
-                                   shared_ptr<Setter<T> >(setter),
-#endif
-                                   usage, itemArgn())
-         );
+  addCommand(new Tcl::TVecSetterCmd<T>(interp(), this,
+													makePkgCmdName(cmd_name),
+													setter,
+													usage, itemArgn()));
 }
 
 template <class T>
 void Tcl::TclItemPkg::declareAttrib(const char* attrib_name,
-                                    Getter<T>* getter,
-                                    Setter<T>* setter,
+                                    shared_ptr<Getter<T> > getter,
+                                    shared_ptr<Setter<T> > setter,
                                     const char* usage)
 {
-  addCommand(
-         new Tcl::TVecAttribCmd<T>(interp(), this, makePkgCmdName(attrib_name),
-#ifndef ACC_COMPILER
-                                   make_shared(getter),
-                                   make_shared(setter),
-#else
-                                   shared_ptr<Getter<T> >(getter),
-                                   shared_ptr<Setter<T> >(setter),
-#endif
-                                   usage, itemArgn())
-         );
+  declareGetter<T>(attrib_name, getter, usage);
+  declareSetter<T>(attrib_name, setter, usage);
 }
 
 void Tcl::TclItemPkg::instantiate()
 {
-  declareGetter(0, (Getter<int>*) 0, 0);
-  declareGetter(0, (Getter<unsigned int>*) 0, 0);
-  declareGetter(0, (Getter<unsigned long>*) 0, 0);
-  declareGetter(0, (Getter<bool>*) 0, 0);
-  declareGetter(0, (Getter<double>*) 0, 0);
-  declareGetter(0, (Getter<const char*>*) 0, 0);
-  declareGetter(0, (Getter<fixed_string>*) 0, 0);
-  declareGetter(0, (Getter<const fixed_string&>*) 0, 0);
-
-  declareSetter(0, (Setter<int>*) 0, 0);
-  declareSetter(0, (Setter<unsigned int>*) 0, 0);
-  declareSetter(0, (Setter<unsigned long>*) 0, 0);
-  declareSetter(0, (Setter<bool>*) 0, 0);
-  declareSetter(0, (Setter<double>*) 0, 0);
-  declareSetter(0, (Setter<const char*>*) 0, 0);
-  declareSetter(0, (Setter<const fixed_string&>*) 0, 0);
-
 #define DUMMY_INST(type) \
-  declareAttrib(0, (Getter<type>*) 0, (Setter<type>*) 0, 0)
+  declareGetter(0,shared_ptr<Getter<type> >(0),0); \
+  declareSetter(0,shared_ptr<Setter<type> >(0),0); \
+  declareAttrib(0,shared_ptr<Getter<type> >(0),shared_ptr<Setter<type> >(0),0);
 
   DUMMY_INST(int);
   DUMMY_INST(unsigned int);
@@ -146,16 +114,17 @@ void Tcl::TclItemPkg::instantiate()
   DUMMY_INST(bool);
   DUMMY_INST(double);
   DUMMY_INST(const char*);
+  DUMMY_INST(fixed_string);
   DUMMY_INST(const fixed_string&);
-
 #undef DUMMY_INST
 }
 
-void Tcl::TclItemPkg::declareAction(const char* action_name, Action* action,
+void Tcl::TclItemPkg::declareAction(const char* action_name,
+												shared_ptr<Action> action,
                                     const char* usage)
 {
   addCommand( new VecActionCmd(interp(), this, makePkgCmdName(action_name),
-                               make_shared(action), usage, itemArgn()) );
+                               action, usage, itemArgn()) );
 }
 
 
