@@ -247,17 +247,15 @@ ifeq ($(COMPILER),ppc-g++-2)
 	CC_SWITCHES += -dynamic
 
 	ifeq ($(MODE),debug)
-		CC_SWITCHES += -g -O0
-		LD_OPTIONS +=
+		CC_SWITCHES += -g -O1
 	endif
 
 	ifeq ($(MODE),prod)
 		CC_SWITCHES += -O3
-		LD_OPTIONS +=
 	endif
 
 #	SHLIB_CMD := libtool -dynamic -flat_namespace -undefined suppress -o
-	SHLIB_CMD := cc -dynamiclib -flat_namespace -undefined suppress -o
+	SHLIB_CMD := c++ -dynamiclib -flat_namespace -undefined suppress -o
 # -install_name ${LIB_RUNTIME_DIR}/libname
 	STATLIB_CMD := libtool -static -o
 	LD_OPTIONS += -Wl,-m
@@ -366,7 +364,7 @@ endif
 
 ifeq ($(PLATFORM),ppc)
 %.$(SHLIB_EXT):
-	$(SHLIB_CMD) $@ $^
+	$(SHLIB_CMD) $@ $^ -lcc_dynamic
 endif
 
 %.$(STATLIB_EXT):
@@ -463,7 +461,11 @@ ldeps: $(ALL_SOURCES) $(ALL_HEADERS)
 #
 #-------------------------------------------------------------------------
 
-ifeq ($(PLATFORM),ppc)
+# ifeq ($(PLATFORM),ppc)
+#	LIBS_STYLE := none
+# endif
+
+ifeq ($(LIBS_STYLE),none)
 	PROJECT_LIBS := 
 endif
 
@@ -489,14 +491,14 @@ ifeq ($(MODE),debug)
 	endif
 endif
 
-ifneq ($(PLATFORM),ppc)
+ifneq ($(LIBS_STYLE),none)
 CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
 	$(PROJECT_LIBS) $(EXTERNAL_LIBS)
 $(EXECUTABLE): $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
 	$(CC) -o $(TMP_FILE) $(CMDLINE) && mv $(TMP_FILE) $@
 endif
 
-ifeq ($(PLATFORM),ppc)
+ifeq ($(LIBS_STYLE),none)
 CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(PROJECT_OBJS) \
 	$(LIB_PATH) $(EXTERNAL_LIBS)
 $(EXECUTABLE): $(GRSH_STATIC_OBJS) $(PROJECT_OBJS)
