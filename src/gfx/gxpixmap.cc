@@ -408,8 +408,8 @@ DOTRACE("GxPixmap::grGetBoundingBox");
   using Gfx::Vec2d;
 
   // Get the corners in screen coordinates
-  Vec2i bottom_left = bbox.screenFromWorld(Vec2d());
-  Vec2i top_right   = Vec2d(bottom_left) + (Vec2d(size()) * getZoom());
+  Vec2i bottom_left(bbox.screenFromWorld(Vec2d()));
+  Vec2i top_right  (Vec2d(bottom_left) + (Vec2d(size()) * getZoom()));
 
   bbox.vertex2(Vec2d());
   bbox.vertex2(bbox.worldFromScreen(top_right));
