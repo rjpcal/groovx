@@ -16,7 +16,7 @@
 #
 ##########################################################################
 
-VERSION := 0.8a6
+VERSION := 0.8a7
 EXTRA_STATISTICS := 0
 
 TCLTK_VERSION := 8.2
@@ -104,7 +104,8 @@ endif
 
 ifeq ($(COMPILER),MIPSpro)
 	CC := time /opt/MIPSpro/bin/CC
-	FILTER := 
+	FILTER := |& sed -e '/WARNING/,/vcid_.*_cc/d' \
+		-e '/static const char vcid_/,/^ *\^$$/d'
 	COMPILER_SWITCHES := -n32 -ptused -no_prelink \
 		-no_auto_include -LANG:std -LANG:exceptions=ON 
 	ARCH_CPP_DEFINES := -DMIPSPRO_COMPILER -DIRIX6 -DSTD_IO= \
@@ -271,11 +272,9 @@ VISX_OBJS := \
 	$(OBJ)/masktcl.do \
 	$(OBJ)/morphyfacetcl.do \
 	$(OBJ)/nullresponsehdlr.do \
-	$(OBJ)/objlisttcl.do \
 	$(OBJ)/pbm.do \
 	$(OBJ)/position.do \
 	$(OBJ)/positiontcl.do \
-	$(OBJ)/poslisttcl.do \
 	$(OBJ)/response.do \
 	$(OBJ)/responsehandler.do \
 	$(OBJ)/rhtcl.do \
@@ -308,11 +307,11 @@ APPWORKS_OBJS := \
 	$(OBJ)/io/fields.do \
 	$(OBJ)/io/iditemutils.do \
 	$(OBJ)/io/io.do \
+	$(OBJ)/io/iodb.do \
 	$(OBJ)/io/iofactory.do \
 	$(OBJ)/io/iolegacy.do \
 	$(OBJ)/io/iomap.do \
 	$(OBJ)/io/iomgr.do \
-	$(OBJ)/io/ioptrlist.do \
 	$(OBJ)/io/reader.do \
 	$(OBJ)/io/readutils.do \
 	$(OBJ)/io/writer.do \
@@ -335,8 +334,8 @@ APPWORKS_OBJS := \
 
 TCLWORKS_OBJS := \
 	$(OBJ)/tcl/fieldpkg.do \
+	$(OBJ)/tcl/ioitempkg.do \
 	$(OBJ)/tcl/iotcl.do \
-	$(OBJ)/tcl/listpkg.do \
 	$(OBJ)/tcl/misctcl.do \
 	$(OBJ)/tcl/stringifycmd.do \
 	$(OBJ)/tcl/tclcmd.do \
