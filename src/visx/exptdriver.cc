@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu May 10 12:04:48 2001
+// written: Fri May 11 20:35:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -102,7 +102,7 @@ private:
 	 {
 		DebugEval(itsCurrentBlockIdx); DebugEvalNL(itsBlocks.size());
 		if ( 0 <= itsCurrentBlockIdx &&
-			  itsCurrentBlockIdx < itsBlocks.size() )
+			  (unsigned int)itsCurrentBlockIdx < itsBlocks.size() )
 		  {
 			 return true;
 		  }
@@ -421,7 +421,7 @@ DOTRACE("ExptDriver::Impl::needAutosave");
 bool ExptDriver::Impl::gotoNextValidBlock() {
 DOTRACE("ExptDriver::Impl::gotoNextValidBlock");
   ++itsCurrentBlockIdx; 
-  if (itsCurrentBlockIdx < itsBlocks.size()) return true;
+  if ((unsigned int)itsCurrentBlockIdx < itsBlocks.size()) return true;
   return false;
 }
 
