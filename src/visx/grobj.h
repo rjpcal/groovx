@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Nov 13 13:47:00 2002
+// written: Wed Nov 13 13:47:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -193,10 +193,6 @@ public:
   // Actions
   //
   ///////////////////////////////////////////////////////////////////////
-
-  /** Recompiles the OpenGL display list, if there are changes pending,
-      otherwise does nothing. */
-  void update(Gfx::Canvas& canvas) const;
 
   /** This function draws the object according to the GrRenderMode
       selected with setRenderMode(). */
