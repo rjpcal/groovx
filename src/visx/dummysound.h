@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// intelsound.h
+// dummysound.h
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,8 +10,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef HPSOUND_H_DEFINED
-#define HPSOUND_H_DEFINED
+#ifndef DUMMYSOUND_H_DEFINED
+#define DUMMYSOUND_H_DEFINED
 
 #include "io/reader.h"
 #include "io/writer.h"
@@ -27,7 +27,7 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// IntelSound class definition --
+// DummySound class definition --
 //
 // This is an implementation of the Sound interface using HP's Audio
 // API.
@@ -45,10 +45,10 @@ public:
 	 }
 };
 
-class IntelSound : public Sound {
+class DummySound : public Sound {
 public:
-  IntelSound(const char* filename = 0);
-  virtual ~IntelSound();
+  DummySound(const char* filename = 0);
+  virtual ~DummySound();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
@@ -59,7 +59,7 @@ public:
 
   virtual fixed_string ioTypename() const { return "Sound"; }
 
-  void swap(IntelSound& other)
+  void swap(DummySound& other)
   {
 	 itsFilename.swap(other.itsFilename);
   }
@@ -70,14 +70,14 @@ private:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// IntelSound member definitions
+// DummySound member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-IntelSound::IntelSound(const char* filename) :
+DummySound::DummySound(const char* filename) :
   itsFilename("")
 {
-DOTRACE("IntelSound::IntelSound");
+DOTRACE("DummySound::DummySound");
   if (filename != 0 && filename[0] != '\0')
 	 {
 		STD_IO::ifstream ifs(filename);
@@ -90,12 +90,12 @@ DOTRACE("IntelSound::IntelSound");
 	 }
 }
 
-IntelSound::~IntelSound() {
-DOTRACE("IntelSound::~IntelSound");
+DummySound::~DummySound() {
+DOTRACE("DummySound::~DummySound");
 }
 
-void IntelSound::readFrom(IO::Reader* reader) {
-DOTRACE("IntelSound::readFrom");
+void DummySound::readFrom(IO::Reader* reader) {
+DOTRACE("DummySound::readFrom");
 
   reader->readValue("filename", itsFilename);
 
@@ -105,20 +105,20 @@ DOTRACE("IntelSound::readFrom");
 	 setFile(itsFilename.c_str());
 }
 
-void IntelSound::writeTo(IO::Writer* writer) const {
-DOTRACE("IntelSound::writeTo");
+void DummySound::writeTo(IO::Writer* writer) const {
+DOTRACE("DummySound::writeTo");
 
   writer->writeValue("filename", itsFilename); 
 }
 
-void IntelSound::play() {
-DOTRACE("IntelSound::play");
+void DummySound::play() {
+DOTRACE("DummySound::play");
 }
 	
-void IntelSound::setFile(const char* filename) {
-DOTRACE("IntelSound::setFile");
+void DummySound::setFile(const char* filename) {
+DOTRACE("DummySound::setFile");
 
-  IntelSound new_sound(filename); 
+  DummySound new_sound(filename); 
   this->swap(new_sound);
 }
 
@@ -146,13 +146,13 @@ DOTRACE("Sound::closeSound");
 
 Sound* Sound::make() {
 DOTRACE("Sound::make");
-  return new IntelSound();
+  return new DummySound();
 }
 
 Sound* Sound::newPlatformSound(const char* soundfile) {
 DOTRACE("Sound::newPlatformSound");
-  return new IntelSound(soundfile);
+  return new DummySound(soundfile);
 }
 
-static const char vcid_intelsound_h[] = "$Header$";
-#endif // !HPSOUND_H_DEFINED
+static const char vcid_dummysound_h[] = "$Header$";
+#endif // !DUMMYSOUND_H_DEFINED

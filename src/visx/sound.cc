@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Fri May 11 21:18:01 2001
+// written: Wed May 16 11:36:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,16 +17,12 @@
 
 #include "io/iditem.h"
 
-#ifdef HP9000S700
-#include "hpsound.h"
-#endif
-
-#ifdef IRIX6
-#include "irixsound.h"
-#endif
-
-#ifdef I686
-#include "intelsound.h"
+#if defined(HP9000S700)
+#  include "hpsound.h"
+#elif defined(IRIX6)
+#  include "irixsound.h"
+#else
+#  include "dummysound.h"
 #endif
 
 namespace {
