@@ -1,0 +1,93 @@
+/* $Id$ */
+/** 
+
+\mainpage The VisX framework
+
+\author Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+
+\version development
+
+\warning This software is under constant revision/
+
+This project is an experimental application framework for designing
+visual psychological experiments. It is based on a model that
+includes, experiments, blocks, trials, graphic objects, timing
+handlers, and response handlers. The framework is written in C++,
+but most componenets are scriptable in Tcl.  A new C++ API wraps
+around the Tcl C API to make it easy to add scriptability to new
+components.
+
+Others have used preprocessors and macros to expose C++ classes to
+Tcl, whereas I prefer to stay within the C++ language, using
+templates and inheritance to provide the meta-class information to
+Tcl, with very little additional code being required of client
+classes in order to provide this meta-level access.
+
+The key abstractions that I've used are these:
+<ul>
+
+<li><b>Tcl::TclCmd</b>: A abstract class that wraps the
+Tcl_ObjCmdProc API. Tcl::TclCmd provides a pure virtual function
+invoke(), which is overridden by subclasses to do the actual work
+for the Tcl command. Rather than directly receiving the objc and
+objv[] parameters, the Tcl::TclCmd class provides functions objc(),
+getIntFromArg(), getDoubleFromArg(), etc. to retrieve the values
+passed at the Tcl command line. All runtime error handling related
+to number of arguments, types of arguments, etc., is handled by the
+Tcl::TclCmd base class, so subclasses are not required to directly
+deal with the Tcl result. Instead, all calls to invoke() are
+wrapped in a try block that catches any exceptions, and returns a
+suitable error message to the Tcl command line.
+
+<li><b>IO::IoObject</b>: The base class for most domain-level
+objects. Provides persistence facilities, and provides a unique
+integer id for each object. IO::IoObject's are reference counted for
+automatic memory management, and are generally passed around via
+PtrHandle's, which automatically manage the reference count.
+
+<li><b>IoDb</b>: A database for storing IO::IoObject's, which can be
+accessed by the objects' unique id's. This association between unique
+id's and objects allows Tcl scripts to easily to refer to objects
+using the unique id's.
+
+<li><b>Tcl::TclPkg</b>: A base class that manages a set of
+Tcl::TclCmd's, stores a namespace name, and calls Tcl_PkgProvide
+appropriately. Most interesting are the subclasses of
+Tcl::TclPkg. These can handle many of the details of actually
+creating the Tcl::TclCmd's necessary to expose a class's operations
+and attributes to Tcl. For example, a template ListPkg can generate
+all the commands necessary to expose a PtrList to Tcl. The
+Tcl::ListItemPkg template provides some utility functionality for
+subclasses that handle a type stored in a PtrList. For example,
+Tcl::ListItemPkg provides a 'T* getItem()' function, which gets an
+int from the relevant Tcl commmand parameter, and returns a T* at
+that index from that index in the appropriate PtrList (or throws an
+exception if the id is invalid). In addition, item operations can
+be vectorized: a sequence of item id's can be passed in, and then
+either an operation can be applied to all the items, or a
+particular property can be fetched from all the items to return an
+sequence of values, or all of the items can have a property set to
+a new value at once. This greatly reduces the overhead involved in
+calling functions via the script interface.
+
+<li><b>Field/Value</b>: Value's provide an interface between the
+untyped world of Tcl, and the strongly typed world of C++. The
+abstract Value interface provides operations such as getInt(),
+getDouble(), getCstring(), etc. for the basic value types. Field's are
+intended to be members of C++ classes, and expose get()/set()
+functions that take or return Value's. C++ classes can inherit from
+FieldContainer to maintain a list of FieldInfo's that act as
+pointer-to-members for the contained Field's. This FieldMap is then
+sufficient for a template to be able to generate all the necessary
+Tcl::TclCmd's to expose a class's fields to Tcl. A C++ class may
+actually store Value subclasses that provide efficient access to their
+native type to clients (such as the owner of the Value) who know the
+real type of the Value. For example, a simple template TValue stores
+an object of a basic type, provides access to that object via
+get/setNative() procedures, but also implements all of Value's virtual
+functions getInt(), getDouble(), etc. Any call to a get*() function
+of the wrong type will throw a run-time exception.
+
+</ul>
+
+**/
