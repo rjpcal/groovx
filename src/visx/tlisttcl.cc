@@ -209,8 +209,7 @@ protected:
 
 	 try {
 		int num_loaded =
-		  TlistUtils::readFromObjidsOnly(theTlist, objid_file,
-													num_lines, offset);
+		  TlistUtils::loadObjidFile(theTlist, objid_file, num_lines, offset);
 		returnInt(num_loaded);
 	 }
 	 catch (IoError& err) {
