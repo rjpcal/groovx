@@ -3,7 +3,7 @@
 // position.cc
 // Rob Peters
 // created: Wed Mar 10 21:33:15 1999
-// written: Thu Oct 19 14:43:16 2000
+// written: Fri Oct 20 17:36:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,6 +52,11 @@ struct PositionImpl {
 // Position member functions
 //
 ///////////////////////////////////////////////////////////////////////
+
+Position* Position::make() {
+DOTRACE("Position::make");
+  return new Position;
+}
 
 Position::Position() : 
   itsImpl(new PositionImpl)
