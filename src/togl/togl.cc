@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Sat Dec  2 09:52:53 2000
+// written: Mon Dec  4 15:22:38 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -281,7 +281,6 @@ public:
 };
 
 
-/* NTNTNT need to change to handle Windows Data Types */
 /*
  * Prototypes for functions local to this file
  */
@@ -438,21 +437,12 @@ DOTRACE("<togl.cc>::get_rgb_colormap");
   /*
 	* Check if we're using Mesa.
 	*/
-  int using_mesa;
   if (strstr(glXQueryServerString( dpy, scrnum, GLX_VERSION ), "Mesa")) {
-	 using_mesa = 1;
-  }
-  else {
-	 using_mesa = 0;
-  }
 
-  /*
-	* Next, if we're using Mesa and displaying on an HP with the "Color
-	* Recovery" feature and the visual is 8-bit TrueColor, search for a
-	* special colormap initialized for dithering.  Mesa will know how to
-	* dither using this colormap.
-	*/
-  if (using_mesa) {
+	 /* Next, if we're using Mesa and displaying on an HP with the
+		 "Color Recovery" feature and the visual is 8-bit TrueColor,
+		 search for a special colormap initialized for dithering.  Mesa
+		 will know how to dither using this colormap. */
 	 Atom hp_cr_maps = XInternAtom( dpy, "_HP_RGB_SMOOTH_MAP_LIST", True );
 	 if (hp_cr_maps
 		  && visinfo->visual->c_class==TrueColor
@@ -705,10 +695,6 @@ noFaultXAllocColor( Display *dpy, Colormap cmap, int cmapSize,
                     XColor *color, int *exact )
 {
 DOTRACE("<togl.cc>::noFaultXAllocColor");
-  XColor *ctable, subColor;
-  int i, bestmatch;
-  double mindist;       /* 3*2^16^2 exceeds long int precision.
-								 */
 
   /* First try just using XAllocColor. */
   if (XAllocColor(dpy, cmap, color)) {
@@ -718,16 +704,17 @@ DOTRACE("<togl.cc>::noFaultXAllocColor");
 
   /* Retrieve color table entries. */
   /* XXX alloca candidate. */
-  ctable = (XColor *) malloc(cmapSize * sizeof(XColor));
-  for (i = 0; i < cmapSize; i++) {
+  XColor* ctable = (XColor *) malloc(cmapSize * sizeof(XColor));
+  {for (int i = 0; i < cmapSize; i++) {
 	 ctable[i].pixel = i;
-  }
+  }}
   XQueryColors(dpy, cmap, ctable, cmapSize);
 
   /* Find best match. */
-  bestmatch = -1;
-  mindist = 0.0;
-  for (i = 0; i < cmapSize; i++) {
+  int bestmatch = -1;
+  double mindist = 0.0; // 3*2^16^2 exceeds long int precision.
+
+  {for (int i = 0; i < cmapSize; i++) {
 	 double dr = (double) color->red - (double) ctable[i].red;
 	 double dg = (double) color->green - (double) ctable[i].green;
 	 double db = (double) color->blue - (double) ctable[i].blue;
@@ -736,13 +723,16 @@ DOTRACE("<togl.cc>::noFaultXAllocColor");
 		bestmatch = i;
 		mindist = dist;
 	 }
-  }
+  }}
 
   /* Return result. */
+  XColor subColor;
   subColor.red = ctable[bestmatch].red;
   subColor.green = ctable[bestmatch].green;
   subColor.blue = ctable[bestmatch].blue;
+
   free(ctable);
+
   /* Try to allocate the closest match color.  This should only
 	* fail if the cell is read/write.  Otherwise, we're incrementing
 	* the cell's reference count.
@@ -852,19 +842,6 @@ Window Togl::windowId() const
   { return itsImpl->windowId(); }
 
 #ifdef MESA_COLOR_HACK
-/*
- * Let's know how many free colors do we have
- */
-#if 0
-static unsigned char rojo[] = { 4, 39, 74, 110, 145, 181, 216, 251},
-  verde[] = { 4, 39, 74, 110, 145, 181, 216, 251},
-  azul[] = { 4, 39, 74, 110, 145, 181, 216, 251};
-
-unsigned char rojo[] = { 4, 36, 72, 109, 145, 182, 218, 251},
-	 verde[] = { 4, 36, 72, 109, 145, 182, 218, 251},
-  azul[] = { 4, 36, 72, 109, 145, 182, 218, 251};
-azul[] = { 0, 85, 170, 255};
-#endif
 
 #define RLEVELS     5
 #define GLEVELS     9
@@ -924,7 +901,8 @@ DOTRACE("<togl.cc>::free_default_color_cells");
 	 ToglMesaUsedFreeCells = 0;
   }
 }
-#endif
+
+#endif // MESA_COLOR_HACK
 
 
 /*
@@ -945,9 +923,6 @@ DOTRACE("<togl.cc>::free_default_color_cells");
 static GLvoid *grabPixels(int inColor, unsigned int width, unsigned int height)
 {
 DOTRACE("<togl.cc>::grabPixels");
-  GLvoid *buffer;
-  GLint swapbytes, lsbfirst, rowlength;
-  GLint skiprows, skippixels, alignment;
   GLenum format;
   unsigned int size;
 
@@ -961,17 +936,21 @@ DOTRACE("<togl.cc>::grabPixels");
 	 size = width * height * 1;
   }
 
-  buffer = (GLvoid *) malloc(size);
+  GLvoid* buffer = (GLvoid *) malloc(size);
   if (buffer == NULL)
 	 return NULL;
 
   /* Save current modes. */
+  GLint swapbytes, lsbfirst, rowlength;
+  GLint skiprows, skippixels, alignment;
+
   glGetIntegerv(GL_PACK_SWAP_BYTES, &swapbytes);
   glGetIntegerv(GL_PACK_LSB_FIRST, &lsbfirst);
   glGetIntegerv(GL_PACK_ROW_LENGTH, &rowlength);
   glGetIntegerv(GL_PACK_SKIP_ROWS, &skiprows);
   glGetIntegerv(GL_PACK_SKIP_PIXELS, &skippixels);
   glGetIntegerv(GL_PACK_ALIGNMENT, &alignment);
+
   /* Little endian machines (DEC Alpha for example) could
 	  benefit from setting GL_PACK_LSB_FIRST to GL_TRUE
 	  instead of GL_FALSE, but this would require changing the
@@ -1002,22 +981,14 @@ static int generateEPS(const char *filename, int inColor,
                        unsigned int width, unsigned int height)
 {
 DOTRACE("<togl.cc>::generateEPS");
-  FILE *fp;
-  GLvoid *pixels;
-  unsigned char *curpix;
-  unsigned int components, i;
-  int pos;
-  unsigned char bitpixel;
-
-  pixels = grabPixels(inColor, width, height);
+  GLvoid* pixels = grabPixels(inColor, width, height);
   if (pixels == NULL)
 	 return 1;
-  if (inColor)
-	 components = 3;     /* Red, green, blue. */
-  else
-	 components = 1;     /* Luminance. */
 
-  fp = fopen(filename, "w");
+  unsigned int components =
+	 inColor ? 3 /* Red, green, blue. */ : 1 /* Luminance. */;
+
+  FILE* fp = fopen(filename, "w");
   if (fp == NULL) {
 	 return 2;
   }
@@ -1026,13 +997,17 @@ DOTRACE("<togl.cc>::generateEPS");
   fprintf(fp, "%%%%BoundingBox: 0 0 %d %d\n", width, height);
   fprintf(fp, "%%%%EndComments\n");
 
-  i = ((( width * height) + 7) / 8 ) / 40; /* # of lines, 40 bytes per line */
-  fprintf(fp, "%%%%BeginPreview: %d %d %d %d\n%%", width, height, 1, i);
-  pos = 0;
-  curpix = ( unsigned char *)pixels;
-  for ( i = 0; i < width * height * components; ) {
-	 bitpixel = 0;
-	 if ( inColor) {
+  /* # of lines, 40 bytes per line */
+  unsigned int num_lines = ((( width * height) + 7) / 8 ) / 40;
+  fprintf(fp, "%%%%BeginPreview: %d %d %d %d\n%%",
+			 width, height, 1, num_lines);
+
+  int pos = 0;
+  unsigned char* curpix = (unsigned char*) pixels;
+
+  {for ( unsigned int i = 0; i < width * height * components; ) {
+	 unsigned char bitpixel = 0;
+	 if (inColor) {
 		double pix = 0.0;
 		pix = 0.30 * ( double)curpix[ i++] + 0.59 * ( double)curpix[ i++] + 0.11 * ( double)curpix[ i++];
 		if ( pix > 127.0) bitpixel |= 0x80;
@@ -1066,7 +1041,8 @@ DOTRACE("<togl.cc>::generateEPS");
 		fprintf(fp, "\n%%");
 		pos = 0;
 	 }
-  }
+  }}
+
   if (pos)
 	 fprintf(fp, "\n%%%%EndPreview\n");
   else
@@ -1102,13 +1078,14 @@ DOTRACE("<togl.cc>::generateEPS");
 
   curpix = (unsigned char *) pixels;
   pos = 0;
-  for (i = width * height * components; i > 0; i--) {
+  {for (unsigned int i = width * height * components; i > 0; i--) {
 	 fprintf(fp, "%02hx", *curpix++);
 	 if (++pos >= 40) {
 		fprintf(fp, "\n");
 		pos = 0;
 	 }
-  }
+  }}
+
   if (pos)
 	 fprintf(fp, "\n");
 
@@ -1639,23 +1616,22 @@ DOTRACE("Togl::Impl::postReconfigure");
 
 unsigned long Togl::Impl::allocColor(float red, float green, float blue) const {
 DOTRACE("Togl::Impl::allocColor");
-  XColor xcol;
-  int exact;
-
   if (itsRgbaFlag) {
 	 fprintf(stderr,"Error: Togl::allocColor illegal in RGBA mode.\n");
 	 return 0;
   }
   /* TODO: maybe not... */
   if (itsPrivateCmapFlag) {
-	 fprintf(stderr,"Error: Togl::freeColor illegal with private colormap\n");
+	 fprintf(stderr,"Error: Togl::allocColor illegal with private colormap\n");
 	 return 0;
   }
 
+  XColor xcol;
   xcol.red   = (short) (red   * 65535.0);
   xcol.green = (short) (green * 65535.0);
   xcol.blue  = (short) (blue  * 65535.0);
 
+  int exact;
   noFaultXAllocColor( itsDisplay, colormap(),
 							 Tk_Visual(itsTkWin)->map_entries, &xcol, &exact );
 
@@ -1671,7 +1647,7 @@ DOTRACE("Togl::Impl::allocColor");
 void Togl::Impl::freeColor(unsigned long pixel) const {
 DOTRACE("Togl::Impl::freeColor");
   if (itsRgbaFlag) {
-	 fprintf(stderr,"Error: Togl::allocColor illegal in RGBA mode.\n");
+	 fprintf(stderr,"Error: Togl::freeColor illegal in RGBA mode.\n");
 	 return;
   }
   /* TODO: maybe not... */
@@ -1685,18 +1661,18 @@ DOTRACE("Togl::Impl::freeColor");
 }
 
 void Togl::Impl::setColor(unsigned long index,
-						  float red, float green, float blue) const {
+								  float red, float green, float blue) const {
 DOTRACE("Togl::Impl::setColor");
-  XColor xcol;
-
   if (itsRgbaFlag) {
-	 fprintf(stderr,"Error: Togl::allocColor illegal in RGBA mode.\n");
+	 fprintf(stderr,"Error: Togl::setColor illegal in RGBA mode.\n");
 	 return;
   }
   if (!itsPrivateCmapFlag) {
 	 fprintf(stderr,"Error: Togl::setColor requires a private colormap\n");
 	 return;
   }
+
+  XColor xcol;
 
   xcol.pixel = index;
   xcol.red   = (short) (red   * 65535.0);
@@ -1880,7 +1856,7 @@ DOTRACE("Togl::Impl::postOverlayRedisplay");
 }
 
 unsigned long Togl::Impl::allocColorOverlay(float red, float green,
-												  float blue) const {
+														  float blue) const {
 DOTRACE("Togl::Impl::allocColorOverlay");
   if (itsOverlayFlag && itsOverlayCmap) {
 	 XColor xcol;
