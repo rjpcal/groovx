@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Mon Oct  9 19:45:06 2000
+// written: Wed Oct 11 10:48:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,9 +26,11 @@
 
 #include "tcl/tclevalcmd.h"
 #include "tcl/tclobjlock.h"
+#include "tcl/tclutil.h"
 
 #include "util/arrays.h"
 #include "util/error.h"
+#include "util/pointers.h"
 #include "util/strings.h"
 
 #include <tcl.h>
@@ -71,7 +73,104 @@ public:
   Impl(EventResponseHdlr* owner, const char* input_response_map);
   ~Impl();
 
-  enum TrialState { ACTIVE, INACTIVE };
+  class ERHState;
+  friend class ERHState;
+  class ERHInactiveState;
+  friend class ERHInactiveState;
+  class ERHActiveState;
+  friend class ERHActiveState;
+
+  class ERHState {
+  protected:
+	 ERHState() {}
+
+  public:
+	 virtual ~ERHState();
+
+	 virtual void rhAbortTrial(const EventResponseHdlr::Impl* erh) = 0;
+	 virtual void rhEndTrial(const EventResponseHdlr::Impl* erh) = 0;
+	 virtual void rhHaltExpt(const EventResponseHdlr::Impl* erh) = 0;
+
+	 virtual void handleResponse(const EventResponseHdlr::Impl* erh,
+										  const char* keysym) = 0;
+
+	 virtual void onDestroy(const EventResponseHdlr::Impl* erh) = 0;
+
+	 static shared_ptr<ERHState> activeState(const EventResponseHdlr::Impl* erh,
+														  GWT::Widget& widget,
+														  TrialBase& trial);
+	 static shared_ptr<ERHState> inactiveState();
+  };
+
+  class ERHInactiveState : public ERHState {
+  public:
+	 virtual ~ERHInactiveState();
+
+	 virtual void rhAbortTrial(const EventResponseHdlr::Impl*) {}
+	 virtual void rhEndTrial(const EventResponseHdlr::Impl*) {}
+	 virtual void rhHaltExpt(const EventResponseHdlr::Impl*) {}
+
+	 virtual void handleResponse(const EventResponseHdlr::Impl*,
+										  const char*) {}
+
+	 virtual void onDestroy(const EventResponseHdlr::Impl*) {};
+  };
+
+  class ERHActiveState : public ERHState {
+  private:
+	 GWT::Widget& itsWidget;
+	 TrialBase& itsTrial;
+
+	 bool check() { return (&itsWidget != 0) && (&itsTrial != 0); }
+
+  public:
+	 virtual ~ERHActiveState();
+
+	 ERHActiveState(const EventResponseHdlr::Impl* erh,
+						 GWT::Widget& widget, TrialBase& trial) :
+		itsWidget(widget),
+		itsTrial(trial)
+	 {
+		Invariant(check());
+		erh->attend(itsWidget);
+	 }
+
+	 virtual void rhAbortTrial(const EventResponseHdlr::Impl* erh)
+	 {
+		Invariant(check());
+		erh->ignore(itsWidget);
+
+		const int ERR_INDEX = 1;
+		SoundList::SharedPtr p = SoundList::theSoundList().getCheckedPtr(ERR_INDEX);
+		p->play();
+	 }
+
+	 virtual void rhEndTrial(const EventResponseHdlr::Impl* erh)
+	 {
+		Invariant(check());
+		erh->ignore(itsWidget);
+		erh->changeState(ERHState::inactiveState());
+	 }
+
+	 virtual void rhHaltExpt(const EventResponseHdlr::Impl* erh)
+	 {
+		Invariant(check());
+		erh->ignore(itsWidget);
+		erh->changeState(ERHState::inactiveState());
+	 }
+
+	 virtual void handleResponse(const EventResponseHdlr::Impl* erh,
+										  const char* keysym);
+
+	 virtual void onDestroy(const EventResponseHdlr::Impl* erh)
+	 {
+		Invariant(check());
+		erh->ignore(itsWidget);
+	 };
+  };
+
+  void changeState(shared_ptr<ERHState> new_state) const
+  { itsState = new_state; }
 
   // Delegand functions
 
@@ -127,60 +226,19 @@ public:
 
   void rhBeginTrial(GWT::Widget& widget, TrialBase& trial) const
 	 {
-		becomeActive(widget, trial);
-		attend();
+		clearEventQueue();
+
+		itsState = ERHState::activeState(this, widget, trial);
 	 }
 
-  void rhAbortTrial() const;
+  void rhAbortTrial() const { itsState->rhAbortTrial(this); }
 
-  void rhEndTrial() const
-	 { 
-		if (INACTIVE == itsState) return;
-		ignore();
-		becomeInactive();
-	 }
+  void rhEndTrial() const { itsState->rhEndTrial(this); }
 
-  void rhHaltExpt() const
-	 {
-		if (INACTIVE == itsState) return; 
-		ignore();
-		becomeInactive();
-	 }
+  void rhHaltExpt() const { itsState->rhHaltExpt(this); }
 
   // Helper functions
 private:
-
-  void becomeActive(GWT::Widget& widget, TrialBase& trial) const
-    {
-		Precondition(&widget != 0); Precondition(&trial != 0);
-		itsWidget = &widget;
-		itsTrial = &trial;
-
-		itsState = ACTIVE;
-	 }
-
-  void becomeInactive() const
-    {
-		itsState = INACTIVE;
-		itsWidget = 0;
-		itsTrial = 0;
-	 }
-
-  GWT::Widget& getWidget() const
-	 {
-		DebugEval((void*) itsWidget);
-		Precondition(itsState == ACTIVE);
-		Assert(itsWidget != 0);
-		return *itsWidget;
-	 }
-
-
-  TrialBase& getTrial() const
-	 {
-		Precondition(itsState == ACTIVE);
-		Assert(itsTrial != 0);
-		return *itsTrial;
-	 }
 
   // When this procedure is invoked, the program listens to the events
   // that are pertinent to the response policy. This procedure should
@@ -188,7 +246,7 @@ private:
   // ignore() when a response has been made so that events are not
   // received during response processing and during the inter-trial
   // period.
-  void attend() const;
+  void attend(GWT::Widget& widget) const;
 
   // When this procedure is invoked, the program ignores
   // user-generated events (mouse or keyboard) that would otherwise
@@ -197,26 +255,15 @@ private:
   // processed, and any other time when it is necessary to avoid an
   // unintended key/button-press being interpreted as a response. The
   // effect is cancelled by calling attend().
-  void ignore() const;
+  void ignore(GWT::Widget& widget) const;
 
   void raiseBackgroundError(const char* msg) const throw();
 
   static Tcl_ObjCmdProc privateHandleCmd;
-  void handleResponse(const char* keysym) const;
   int getRespFromKeysym(const char* keysym) const;
   void feedback(int response) const;
   void updateFeedbacksIfNeeded() const;
   void updateRegexpsIfNeeded() const;
-
-  int getCheckedListLength(Tcl_Obj* tcllist) const throw(ErrorWithMsg);
-
-  Tcl_Obj* getCheckedListElement(
-    Tcl_Obj* tcllist, int index) const throw(ErrorWithMsg);
-
-  void checkedSplitList(Tcl_Obj* tcllist,
-	 Tcl_Obj**& elements_out, int& length_out) const throw(ErrorWithMsg);
-
-  int getCheckedInt(Tcl_Obj* intObj) const throw(ErrorWithMsg);
 
   dynamic_string getBindingScript() const
 	 {
@@ -258,10 +305,7 @@ private:
 private:
   EventResponseHdlr* itsOwner;
 
-  mutable TrialState itsState;
-
-  mutable GWT::Widget* itsWidget;
-  mutable TrialBase* itsTrial;
+  mutable shared_ptr<ERHState> itsState;
 
   Tcl_Interp* itsInterp;
 
@@ -415,6 +459,61 @@ private:
 
 Util::Tracer EventResponseHdlr::tracer;
 
+
+///////////////////////////////////////////////////////////////////////
+//
+// ERHState member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+EventResponseHdlr::Impl::ERHState::~ERHState() {}
+EventResponseHdlr::Impl::ERHActiveState::~ERHActiveState() {}
+EventResponseHdlr::Impl::ERHInactiveState::~ERHInactiveState() {}
+
+shared_ptr<EventResponseHdlr::Impl::ERHState>
+EventResponseHdlr::Impl::ERHState::activeState(
+  const EventResponseHdlr::Impl* erh, GWT::Widget& widget, TrialBase& trial
+) {
+DOTRACE("EventResponseHdlr::Impl::ERHState::activeState");
+  return shared_ptr<ERHState>(new ERHActiveState(erh, widget, trial));
+}
+
+shared_ptr<EventResponseHdlr::Impl::ERHState>
+EventResponseHdlr::Impl::ERHState::inactiveState()
+{
+DOTRACE("EventResponseHdlr::Impl::ERHState::inactiveState");
+  return shared_ptr<ERHState>(new ERHInactiveState);
+}
+
+void EventResponseHdlr::Impl::ERHActiveState::handleResponse(
+  const EventResponseHdlr::Impl* erh, const char* keysym
+) {
+DOTRACE("EventResponseHdlr::Impl::ERHActiveState::handleResponse");
+
+  Invariant(check());
+
+  Response theResponse;
+
+  theResponse.setMsec(itsTrial.trElapsedMsec());
+
+  itsTrial.trResponseSeen();
+
+  erh->ignore(itsWidget);
+
+  theResponse.setVal(erh->getRespFromKeysym(keysym));
+  DebugEvalNL(theResponse.val());
+
+  if ( !theResponse.isValid() ) {
+	 if ( erh->itsAbortInvalidResponses )
+		itsTrial.trAbortTrial();
+  }
+
+  else {
+	 itsTrial.trRecordResponse(theResponse);
+	 erh->feedback(theResponse.val());
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // EventResponseHdlr::Impl method definitions
@@ -424,9 +523,7 @@ Util::Tracer EventResponseHdlr::tracer;
 EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
 										const char* input_response_map) :
   itsOwner(owner),
-  itsState(INACTIVE),
-  itsWidget(0),
-  itsTrial(0),
+  itsState(ERHState::inactiveState()),
   itsInterp(0),
   itsTclCmdToken(0),
   itsPrivateCmdName(getUniqueCmdName().c_str()),
@@ -457,7 +554,7 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
   if ( !Tcl_InterpDeleted(itsInterp) ) {
 	 try
 		{
-		  if (ACTIVE == itsState) ignore();
+		  itsState->onDestroy(this);
 
 		  DebugPrint("deleting Tcl command "); DebugPrintNL(itsPrivateCmdName);
 
@@ -534,7 +631,7 @@ DOTRACE("EventResponseHdlr::Impl::oldLegacyDesrlz");
 void EventResponseHdlr::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("EventResponseHdlr::Impl::readFrom");
 
-  itsState = INACTIVE; 
+  itsState = ERHState::inactiveState(); 
 
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
@@ -581,45 +678,22 @@ DOTRACE("EventResponseHdlr::Impl::setInterp");
   }
 }
 
-void EventResponseHdlr::Impl::rhAbortTrial() const {
-DOTRACE("EventResponseHdlr::Impl::rhAbortTrial");
-
-  Precondition(itsInterp != 0);
-
-  if (INACTIVE == itsState) return;
-
-  ignore();
-
-  const int ERR_INDEX = 1;
-  SoundList::SharedPtr p = SoundList::theSoundList().getCheckedPtr(ERR_INDEX);
-  p->play();
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // EventResponseHdlr::Impl helper method definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-void EventResponseHdlr::Impl::attend() const {
+void EventResponseHdlr::Impl::attend(GWT::Widget& widget) const {
 DOTRACE("EventResponseHdlr::Impl::attend");
-  clearEventQueue();
 
-  // We need to check itsState here, since although itsState should
-  // always be active when we enter this call, clearEventQueue() may
-  // reenter this object and cause itsState to become active before
-  // returning.
-  if (itsState == INACTIVE) return;
-
-  getWidget().bind(itsEventSequence.c_str(),
-						 getBindingScript().c_str());
+  widget.bind(itsEventSequence.c_str(), getBindingScript().c_str());
 }
 
-void EventResponseHdlr::Impl::ignore() const {
+void EventResponseHdlr::Impl::ignore(GWT::Widget& widget) const {
 DOTRACE("EventResponseHdlr::Impl::ignore");
 
-  getWidget().bind(itsEventSequence.c_str(),
-  						 nullScript.c_str());
+  widget.bind(itsEventSequence.c_str(), nullScript.c_str());
 }
 
 void EventResponseHdlr::Impl::raiseBackgroundError(const char* msg) const throw() {
@@ -652,7 +726,7 @@ DOTRACE("EventResponseHdlr::Impl::privateHandleCmd");
 	 static_cast<EventResponseHdlr::Impl *>(clientData);
 
   try {
-	 impl->handleResponse(Tcl_GetString(objv[1]));
+	 impl->itsState->handleResponse(impl, Tcl_GetString(objv[1]));
   }
   catch (ErrorWithMsg& err) {
 	 Tcl_AppendResult(interp, err.msg_cstr(), (char*) 0);
@@ -666,32 +740,6 @@ DOTRACE("EventResponseHdlr::Impl::privateHandleCmd");
   return TCL_OK;
 }
 
-
-void EventResponseHdlr::Impl::handleResponse(const char* keysym) const {
-DOTRACE("EventResponseHdlr::Impl::handleResponse");
-
-  Response theResponse;
-
-  TrialBase& trial = getTrial();
-
-  theResponse.setMsec(trial.trElapsedMsec());
-
-  trial.trResponseSeen();
-
-  ignore();
-
-  theResponse.setVal(getRespFromKeysym(keysym)); DebugEvalNL(theResponse.val());
-
-  if ( !theResponse.isValid() ) {
-	 if ( itsAbortInvalidResponses )
-		trial.trAbortTrial();
-  }
-
-  else {
-	 trial.trRecordResponse(theResponse);
-	 if (itsUseFeedback) { feedback(theResponse.val()); }
-  }
-}
 
 //--------------------------------------------------------------------
 //
@@ -729,6 +777,9 @@ DOTRACE("EventResponseHdlr::Impl::getRespFromKeysym");
 
 void EventResponseHdlr::Impl::feedback(int response) const {
 DOTRACE("EventResponseHdlr::Impl::feedback");
+
+  if (!itsUseFeedback) return;
+
   Precondition(itsInterp != 0);
 
   DebugEvalNL(response);
@@ -762,7 +813,8 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
   Tcl_Obj** pairs;
   int num_pairs=0;
   Tcl::TclObjPtr pairs_list(Tcl_NewStringObj(itsFeedbackMap.c_str(), -1));
-  checkedSplitList(pairs_list, pairs, num_pairs);
+
+  Tcl::Safe::splitList(itsInterp, pairs_list, pairs, num_pairs);
 
   Assert(num_pairs >= 0);
 
@@ -775,14 +827,14 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
 	 Tcl::TclObjPtr current_pair = pairs[i];
 
 	 // Check that the length of the "pair" is really 2
-	 if (getCheckedListLength(current_pair) != 2) {
+	 if (Tcl::Safe::listLength(itsInterp, current_pair) != 2) {
 		raiseBackgroundError("\"pair\" did not have length 2 "
 									"in EventResponseHdlr::updateFeedbacksIfNeeded");
 		return;
 	 }
 
-	 Tcl_Obj *condition = getCheckedListElement(current_pair, 0);
-	 Tcl_Obj *result = getCheckedListElement(current_pair, 1);
+  	 Tcl_Obj *condition = Tcl::Safe::listElement(itsInterp, current_pair, 0);
+  	 Tcl_Obj *result = Tcl::Safe::listElement(itsInterp, current_pair, 1);
 
 	 itsFeedbacks.at(i) = Impl::Condition_Feedback(condition, result);
   }
@@ -811,7 +863,8 @@ DOTRACE("EventResponseHdlr::updateRegexpsIfNeeded");
   Tcl_Obj** pairs;
   int num_pairs=0;
   Tcl::TclObjPtr pairs_list(Tcl_NewStringObj(itsInputResponseMap.c_str(), -1));
-  checkedSplitList(pairs_list, pairs, num_pairs);
+
+  Tcl::Safe::splitList(itsInterp, pairs_list, pairs, num_pairs);
 
   Assert(num_pairs >= 0);
   unsigned int uint_num_pairs = num_pairs;
@@ -823,16 +876,19 @@ DOTRACE("EventResponseHdlr::updateRegexpsIfNeeded");
 	 Tcl::TclObjPtr current_pair = pairs[i];
 
 	 // Check that the length of the "pair" is really 2
-	 if (getCheckedListLength(current_pair) != 2) {
+	 if (Tcl::Safe::listLength(itsInterp, current_pair) != 2) {
 		raiseBackgroundError("\"pair\" did not have length 2 "
 									"in EventResponseHdlr::updateRegexpsIfNeeded");
 		return;
 	 }
 
-	 Tcl::TclObjPtr patternObj = getCheckedListElement(current_pair, 0);
+	 Tcl::TclObjPtr patternObj =
+		Tcl::Safe::listElement(itsInterp, current_pair, 0);
 
-	 Tcl::TclObjPtr response_valObj = getCheckedListElement(current_pair, 1);
-	 int response_val = getCheckedInt(response_valObj);
+	 Tcl::TclObjPtr response_valObj =
+		Tcl::Safe::listElement(itsInterp, current_pair, 1);
+
+	 int response_val = Tcl::Safe::getInt(itsInterp, response_valObj);
 
 	 itsRegexps.at(i) = Impl::RegExp_ResponseVal(patternObj, response_val);
   }
@@ -840,53 +896,6 @@ DOTRACE("EventResponseHdlr::updateRegexpsIfNeeded");
   itsRegexpsAreDirty = false;
 
   DebugPrintNL("updateRegexpsIfNeeded success!");
-}
-
-int EventResponseHdlr::Impl::getCheckedListLength(
-  Tcl_Obj* tcllist
-) const throw(ErrorWithMsg) {
-DOTRACE("EventResponseHdlr::Impl::getCheckedListLength");
-  int length;
-  if (Tcl_ListObjLength(itsInterp, tcllist, &length) != TCL_OK) {
-	 throw ErrorWithMsg("error getting list length for EventResponseHdlr");
-  }
-  return length;
-}
-
-Tcl_Obj* EventResponseHdlr::Impl::getCheckedListElement(
-  Tcl_Obj* tcllist, int index
-) const throw(ErrorWithMsg) {
-DOTRACE("EventResponseHdlr::Impl::getCheckedListElement");
-
-  Tcl_Obj* element = NULL;
-  if (Tcl_ListObjIndex(itsInterp, tcllist, index, &element) != TCL_OK) {
-	 throw ErrorWithMsg("error getting list element for EventResponseHdlr");
-  }
-  return element;
-}
-
-void EventResponseHdlr::Impl::checkedSplitList(
-  Tcl_Obj* tcllist,
-  Tcl_Obj**& elements_out,
-  int& length_out
-) const throw(ErrorWithMsg) {
-DOTRACE("EventResponseHdlr::Impl::checkedSplitList");
-
-  if ( Tcl_ListObjGetElements(itsInterp, tcllist,
-										&length_out, &elements_out) != TCL_OK ) {
-	 throw ErrorWithMsg("error splitting list for EventResponseHdlr");
-  }
-}
-
-int EventResponseHdlr::Impl::getCheckedInt(
-  Tcl_Obj* intObj
-) const throw(ErrorWithMsg) {
-DOTRACE("EventResponseHdlr::Impl::getCheckedInt");
-  int return_val=-1;
-  if (Tcl_GetIntFromObj(itsInterp, intObj, &return_val) != TCL_OK) {
-	 throw ErrorWithMsg("error getting int from Tcl_Obj for EventResponseHdlr");
-  }
-  return return_val;
 }
 
 
