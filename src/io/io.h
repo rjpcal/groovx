@@ -68,13 +68,13 @@ public:
       format of the input is handled by the \c IO::Reader, so
       implementors of \c readFrom() of don't need to deal with
       formatting. */
-  virtual void readFrom(IO::Reader* reader) = 0;
+  virtual void readFrom(IO::Reader& reader) = 0;
 
   /** Subclasses implement this method to restore the object's state
       via the generic interface provided by \c IO::Writer. Formatting
       the output is handled by the \c IO::Writer, so implementors of
       \c writeTo() of don't need to deal with formatting. */
-  virtual void writeTo(IO::Writer* writer) const = 0;
+  virtual void writeTo(IO::Writer& writer) const = 0;
 
   /** Returns the number of attributes that are written in the
       object's \c writeTo() function. The default implementation
