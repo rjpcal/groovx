@@ -8,6 +8,7 @@
 ##############################################################################
 
 set pkgs {
+    Algotest
     Fstringtest
     Signaltest
     Vectwotest
