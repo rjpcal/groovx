@@ -3,7 +3,7 @@
 // fishtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 12:00:53 1999
-// written: Tue Dec  7 19:02:53 1999
+// written: Wed Dec 15 12:57:55 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 
 #include <tcl.h>
 
-#include "iomgr.h"
+#include "iofactory.h"
 #include "objlist.h"
 #include "listitempkg.h"
 #include "fish.h"

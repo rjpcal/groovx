@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Tue Dec  7 19:05:51 1999
+// written: Wed Dec 15 12:57:23 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #include <tcl.h>
 #include <vector>
 
-#include "iomgr.h"
+#include "iofactory.h"
 #include "blocklist.h"
 #include "block.h"
 #include "tclcmd.h"

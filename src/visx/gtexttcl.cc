@@ -3,7 +3,7 @@
 // gtexttcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 12:30:38 1999
-// written: Tue Dec  7 19:05:51 1999
+// written: Wed Dec 15 13:02:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 
 #include <tcl.h>
 
-#include "iomgr.h"
+#include "iofactory.h"
 #include "objlist.h"
 #include "gtext.h"
 #include "listitempkg.h"

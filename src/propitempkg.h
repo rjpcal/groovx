@@ -3,7 +3,7 @@
 // propitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct  4 15:42:59 1999
-// written: Tue Dec  7 18:34:09 1999
+// written: Wed Dec 15 12:59:41 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,8 @@
 #include "listitempkg.h"
 #endif
 
-#ifndef IOMGR_H_DEFINED
-#include "iomgr.h"
+#ifndef IOFACTORY_H_DEFINED
+#include "iofactory.h"
 #endif
 
 namespace Tcl {
