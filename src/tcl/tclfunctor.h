@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// functor.h
+// tclfunctor.h
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,8 +10,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef FUNCTOR_H_DEFINED
-#define FUNCTOR_H_DEFINED
+#ifndef TCLFUNCTOR_H_DEFINED
+#define TCLFUNCTOR_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLVECCMD_H_DEFINED)
 #include "tcl/tclveccmd.h"
@@ -522,5 +522,5 @@ namespace Tcl
 
 } // end namespace Tcl
 
-static const char vcid_functor_h[] = "$Header$";
-#endif // !FUNCTOR_H_DEFINED
+static const char vcid_tclfunctor_h[] = "$Header$";
+#endif // !TCLFUNCTOR_H_DEFINED

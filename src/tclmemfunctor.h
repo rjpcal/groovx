@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 13 09:07:00 2001
-// written: Thu Jul 19 21:05:54 2001
+// written: Thu Jul 19 21:08:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,8 +21,8 @@
 #include "tcl/tclconvert.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FUNCTOR_H_DEFINED)
-#include "tcl/functor.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLFUNCTOR_H_DEFINED)
+#include "tcl/tclfunctor.h"
 #endif
 
 namespace Tcl
