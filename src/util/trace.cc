@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Sat May 12 09:03:10 2001
+// written: Sat May 12 09:10:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -116,9 +116,14 @@ void Util::Prof::printAllProfData(ostream& os) {
 
 void Util::Trace::printStackTrace(ostream& os) {
   os << "stack trace:\n";
-  for (unsigned int i = 0; i < callStack.size(); ++i) {
-    os << "\t[" << i << "] " << callStack[i]->name() << '\n';
+
+  unsigned int i = 0;
+  unsigned int ri = callStack.size()-1;
+
+  for (; i < callStack.size(); ++i, --ri) {
+    os << "\t[" << i << "] " << callStack[ri]->name() << '\n';
   }
+
   os << flush;
 }
 
