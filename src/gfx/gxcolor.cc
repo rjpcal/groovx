@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 17:45:52 2001
-// written: Wed Aug 22 18:38:04 2001
+// written: Wed Aug 29 11:44:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,9 @@ namespace
 GxColor::GxColor() :
   FieldContainer(&sigNodeChanged),
   rgbaColor(1.0)
-{}
+{
+  setFieldMap(GxColor::classFields());
+}
 
 GxColor::~GxColor() {}
 

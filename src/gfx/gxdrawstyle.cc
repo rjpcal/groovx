@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 29 10:19:31 2001
-// written: Wed Aug 29 10:34:00 2001
+// written: Wed Aug 29 11:44:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,9 @@ GxDrawStyle::GxDrawStyle() :
   pointSize(1.0),
   lineWidth(1.0),
   linePattern(0xFFFF)
-{}
+{
+  setFieldMap(GxDrawStyle::classFields());
+}
 
 GxDrawStyle::~GxDrawStyle() {}
 
