@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Mon Jul 16 10:32:41 2001
+// written: Wed Jul 18 10:41:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ public:
   GrObjPkg(Tcl_Interp* interp) :
     Tcl::TclItemPkg(interp, "GrObj", "$Revision$")
   {
-    Tcl::addTracing(this, GrObj::tracer);
+    Tcl::defTracing(this, GrObj::tracer);
 
     Tcl::defGenericObjCmds<GrObj>(this);
 

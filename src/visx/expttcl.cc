@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Mon Jul 16 14:01:01 2001
+// written: Wed Jul 18 10:41:04 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -175,7 +175,7 @@ public:
 
     Tcl::TclItemPkg::addIoCommands();
 
-    Tcl::addTracing(this, ExptDriver::tracer);
+    Tcl::defTracing(this, ExptDriver::tracer);
 
     def( &ExptTcl::setCurrentExpt, "currentExp", "expt_id" );
     def( &ExptTcl::getCurrentExpt, "currentExp", 0 );

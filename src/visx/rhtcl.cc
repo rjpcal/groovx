@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Mon Jul 16 12:19:26 2001
+// written: Wed Jul 18 10:41:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -156,7 +156,7 @@ public:
   EventRhPkg(Tcl_Interp* interp) :
     Tcl::TclItemPkg(interp, "EventRh", "$Revision$")
   {
-    Tcl::addTracing(this, EventResponseHdlr::tracer);
+    Tcl::defTracing(this, EventResponseHdlr::tracer);
 
     Tcl::defGenericObjCmds<EventResponseHdlr>(this);
 

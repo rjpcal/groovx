@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 12:00:53 1999
-// written: Wed Jul 18 09:22:30 2001
+// written: Wed Jul 18 10:41:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ public:
   FishPkg(Tcl_Interp* interp) :
     Tcl::TclItemPkg(interp, "Fish", "$Revision$")
   {
-    Tcl::addTracing(this, Fish::tracer);
+    Tcl::defTracing(this, Fish::tracer);
 
     Tcl::defGenericObjCmds<Fish>(this);
 

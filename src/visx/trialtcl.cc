@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Wed Jul 18 09:56:39 2001
+// written: Wed Jul 18 10:41:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ public:
   TrialPkg(Tcl_Interp* interp) :
     Tcl::TclItemPkg(interp, "Trial", "$Revision$")
   {
-    Tcl::addTracing(this, Trial::tracer);
+    Tcl::defTracing(this, Trial::tracer);
 
     Tcl::defFieldContainer<Trial>(this);
 
