@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Wed Oct 20 17:57:52 1999
+// written: Thu Oct 21 18:02:29 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,6 +78,9 @@ public:
   virtual void deserialize(istream &is, IOFlag flag);
   virtual int charCount() const;
   
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
+
   // this function reads from an istream that is assumed to contain
   // objid's only; posid's are implied by the position in the input
   // NOTE: this function reads to the end of the input stream since it

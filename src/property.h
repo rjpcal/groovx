@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Tue Oct 12 09:29:10 1999
+// written: Thu Oct 21 18:07:33 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +31,14 @@
 
 #ifndef VALUE_H_DEFINED
 #include "value.h"
+#endif
+
+#ifndef READER_H_DEFINED
+#include "reader.h"
+#endif
+
+#ifndef WRITER_H_DEFINED
+#include "writer.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -76,7 +84,12 @@ public:
   virtual int charCount() const
 	 { return gCharCount<T>(itsVal.itsVal); }
 
+  virtual void readFrom(Reader* reader)
+	 { reader->readValue("value", itsVal.itsVal); }
 
+  virtual void writeTo(Writer* writer) const
+	 { writer->writeValue("value", itsVal.itsVal); }
+  
 #ifndef GCC_COMPILER
 protected:
 #else
@@ -184,6 +197,12 @@ public:
   virtual int charCount() const
 	 { return gCharCount<T>(itsVal()); }
 
+  virtual void readFrom(Reader* reader)
+	 { reader->readValue("value", itsVal()); }
+
+  virtual void writeTo(Writer* writer) const
+	 { writer->writeValue("value", itsVal()); }
+  
 
   virtual void set(const Value& new_val) { new_val.get(itsVal()); }
   virtual const Value& get() const { return itsVal; }

@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Tue Oct 12 10:31:57 1999
+// written: Thu Oct 21 18:08:44 1999
 // $Id$
 //
 // This file defines the class Block. Block holds a sequence of trial
@@ -73,6 +73,9 @@ public:
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   ///////////////
   // accessors //

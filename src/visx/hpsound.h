@@ -3,7 +3,7 @@
 // hpsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 12 13:03:47 1999
-// written: Fri Oct 15 11:17:30 1999
+// written: Thu Oct 21 18:10:41 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,6 +64,9 @@ public:
   virtual void deserialize(istream& is, IOFlag flag);
   virtual int charCount() const;
   
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
+
   virtual void play();
   virtual void setFile(const string& filename);
   virtual const string& getFile() const { return itsFilename; }

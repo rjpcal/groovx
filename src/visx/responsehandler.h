@@ -3,7 +3,7 @@
 // responsehandler.h
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Mon Jul 19 16:31:12 1999
+// written: Thu Oct 21 18:12:10 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,6 +32,9 @@ public:
   virtual void serialize(ostream &os, IOFlag flag) const = 0;
   virtual void deserialize(istream &is, IOFlag flag) = 0;
   virtual int charCount() const = 0;
+
+  virtual void readFrom(Reader* reader) = 0;
+  virtual void writeTo(Writer* writer) const = 0;
 
   // constants
   static const int INVALID_RESPONSE = -1;

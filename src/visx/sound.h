@@ -3,7 +3,7 @@
 // sound.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:43:07 1999
-// written: Thu Oct 14 11:16:35 1999
+// written: Thu Oct 21 18:12:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,9 +51,8 @@ public:
 
   virtual ~Sound();
 
-  virtual void serialize(ostream& os, IOFlag flag) const = 0;
-  virtual void deserialize(istream& is, IOFlag flag) = 0;
-  virtual int charCount() const = 0;
+  virtual void readFrom(Reader* reader) = 0;
+  virtual void writeTo(Writer* writer) const = 0;
 
   virtual void play() = 0;
   virtual void setFile(const string& filename) = 0;

@@ -3,7 +3,7 @@
 // kbdresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:11 1999
-// written: Thu Jul 22 10:02:59 1999
+// written: Thu Oct 21 18:11:26 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,6 +50,9 @@ public:
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   // manipulators/accessors
   virtual void setInterp(Tcl_Interp* interp);

@@ -3,7 +3,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Mon Oct  4 16:24:50 1999
+// written: Thu Oct 21 18:10:10 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,6 +39,9 @@ public:
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   ////////////////
   // properties //

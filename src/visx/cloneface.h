@@ -3,7 +3,7 @@
 // cloneface.h
 // Rob Peters
 // created: Thu Apr 29 09:19:25 1999
-// written: Tue Oct  5 14:08:01 1999
+// written: Thu Oct 21 18:09:27 1999
 // $Id$
 //
 // CloneFace is a modified version of Face that allows additional
@@ -32,8 +32,10 @@ public:
   
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
-
   virtual int charCount() const;
+
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
 
   virtual const double* getCtrlPnts() const;
   // Returns an array of Bezier control points for face outline

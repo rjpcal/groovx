@@ -3,7 +3,7 @@
 // irixsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 14 11:23:12 1999
-// written: Fri Oct 15 13:20:39 1999
+// written: Thu Oct 21 18:11:14 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,6 +58,9 @@ public:
   virtual void deserialize(istream& is, IOFlag flag);
   virtual int charCount() const;
   
+  virtual void readFrom(Reader* reader);
+  virtual void writeTo(Writer* writer) const;
+
   virtual void play();
   virtual void setFile(const string& filename);
   virtual const string& getFile() const { return itsFilename; }
