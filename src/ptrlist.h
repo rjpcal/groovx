@@ -183,7 +183,7 @@ private:
     {
 		if ( !itsHandle.isValid() )
 		  {
-			 PtrList<T>::SharedPtr p = theirPtrList.getCheckedPtr(itsId);
+			 typename PtrList<T>::SharedPtr p = theirPtrList.getCheckedPtr(itsId);
 			 itsHandle = p.handle();
 		  }
 	 }
