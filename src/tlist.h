@@ -3,7 +3,7 @@
 // tlist.h
 // Rob Peters
 // created: Fri Mar 12 13:23:02 1999
-// written: Fri Sep 29 14:53:39 2000
+// written: Thu Oct 19 14:58:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,14 +41,8 @@ protected:
   virtual ~Tlist();
 
 public:
-
   // Returns a reference to the singleton instance.
   static Tlist& theTlist();
-
-  /// Overridden from PtrList<TrialBase> to provide compatibility with old Tlist.
-  virtual void readFrom(IO::Reader* reader);
-  /// Overridden from PtrList<TrialBase> to provide compatibility with old Tlist.
-  virtual void writeTo(IO::Writer* writer) const;
 };
 
 static const char vcid_tlist_h[] = "$Header$";
