@@ -3,7 +3,7 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Wed Sep 29 20:34:14 1999
+// written: Wed Sep 29 20:53:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,24 +26,6 @@
 
 #ifndef PROPERTY_H_DEFINED
 #include "property.h"
-#endif
-
-#ifdef PROPERTY
-#error PROPERTY macro already defined
-#else
-#define PROPERTY(type, name) \
-  public: CTProperty<MorphyFace, type> its##name; \
-  public:  type get##name() const { return getNative(&MorphyFace::its##name); } \
-  public:  void set##name(type val) { setNative(&MorphyFace::its##name, val); }
-#endif
-
-#ifdef BOUNDED_PROPERTY
-#error BOUNDED_PROPERTY macro already defined
-#else
-#define BOUNDED_PROPERTY(type, name, min, max, div) \
-  public: CTBoundedProperty<MorphyFace, type, min, max, div> its##name; \
-  public:  type get##name() const { return getNative(&MorphyFace::its##name); } \
-  public:  void set##name(type val) { setNative(&MorphyFace::its##name, val); }
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -79,43 +61,42 @@ public:
   typedef PropertyInfo<MorphyFace> PInfo;
   static const vector<PInfo>& getPropertyInfos();
 
-  PROPERTY(int, Category);	  // holds an arbitrary category specification
+  CTProperty<MorphyFace, int> category; // holds an arbitrary category specification
 
-  PROPERTY(double, FaceWidth);
-  PROPERTY(double, TopWidth);
-  PROPERTY(double, BottomWidth);
-  PROPERTY(double, TopHeight);
-  PROPERTY(double, BottomHeight);
+  CTProperty<MorphyFace, double> faceWidth;
+  CTProperty<MorphyFace, double> topWidth;
+  CTProperty<MorphyFace, double> bottomWidth;
+  CTProperty<MorphyFace, double> topHeight;
+  CTProperty<MorphyFace, double> bottomHeight;
 
-  PROPERTY(double, HairWidth);
-  PROPERTY(int, HairStyle);
+  CTProperty<MorphyFace, double> hairWidth;
+  CTProperty<MorphyFace, int> hairStyle;
 
-  PROPERTY(double, EyeYpos);
-  PROPERTY(double, EyeDistance);
-  PROPERTY(double, EyeHeight);
-  PROPERTY(double, EyeAspectRatio);
+  CTProperty<MorphyFace, double> eyeYpos;
+  CTProperty<MorphyFace, double> eyeDistance;
+  CTProperty<MorphyFace, double> eyeHeight;
+  CTProperty<MorphyFace, double> eyeAspectRatio;
 
-  PROPERTY(double, PupilXpos);
-  PROPERTY(double, PupilYpos);
-  PROPERTY(double, PupilSize);
+  CTProperty<MorphyFace, double> pupilXpos;
+  CTProperty<MorphyFace, double> pupilYpos;
+  CTProperty<MorphyFace, double> pupilSize;
+  CTBoundedProperty<MorphyFace, double, 0, 999, 1000> pupilDilation;
 
-  BOUNDED_PROPERTY(double, PupilDilation, 0, 999, 1000);
+  CTProperty<MorphyFace, double> eyebrowXpos;
+  CTProperty<MorphyFace, double> eyebrowYpos;
+  CTProperty<MorphyFace, double> eyebrowCurvature;
+  CTProperty<MorphyFace, double> eyebrowAngle;
+  CTProperty<MorphyFace, double> eyebrowThickness;
 
-  PROPERTY(double, EyebrowXpos);
-  PROPERTY(double, EyebrowYpos);
-  PROPERTY(double, EyebrowCurvature);
-  PROPERTY(double, EyebrowAngle);
-  PROPERTY(double, EyebrowThickness);
+  CTProperty<MorphyFace, double> noseXpos;
+  CTProperty<MorphyFace, double> noseYpos;
+  CTProperty<MorphyFace, double> noseLength;
+  CTProperty<MorphyFace, double> noseWidth;
 
-  PROPERTY(double, NoseXpos);
-  PROPERTY(double, NoseYpos);
-  PROPERTY(double, NoseLength);
-  PROPERTY(double, NoseWidth);
-
-  PROPERTY(double, MouthXpos);
-  PROPERTY(double, MouthYpos);
-  PROPERTY(double, MouthWidth);
-  PROPERTY(double, MouthCurvature);
+  CTProperty<MorphyFace, double> mouthXpos;
+  CTProperty<MorphyFace, double> mouthYpos;
+  CTProperty<MorphyFace, double> mouthWidth;
+  CTProperty<MorphyFace, double> mouthCurvature;
 
 protected:
   virtual bool grGetBoundingBox(double& left, double& top,
