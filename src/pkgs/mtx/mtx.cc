@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Sat Mar 31 07:47:24 2001
+// written: Mon Apr  2 10:04:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,32 @@
 #include "libmatlb.h"
 
 #include "trace.h"
+
+namespace {
+  inline void domemswap(double* buf1, double* buf2,
+								double* tempbuf1, size_t nelems)
+  {
+	 memcpy(tempbuf1, buf1, nelems*sizeof(double));
+	 memcpy(buf1, buf2, nelems*sizeof(double));
+	 memcpy(buf2, tempbuf1, nelems*sizeof(double));
+  }
+
+  inline void memswap(double* buf1, double* buf2, size_t nelems)
+  {
+	 const size_t BUFSIZE = 512;
+	 if (nelems <= BUFSIZE)
+		{
+		  static double swapbuffer[BUFSIZE];
+		  domemswap(buf1, buf2, swapbuffer, nelems);
+		}
+	 else
+		{
+		  double* tempbuf1 = new double[nelems];
+		  domemswap(buf1, buf2, tempbuf1, nelems);
+		  delete [] tempbuf1;
+		}
+  }
+}
 
 void Slice::print() const
 {
@@ -170,6 +196,15 @@ Mtx Mtx::columns(int c, int nc) const
   result.itsImpl.selectColumnRange(c, nc);
 
   return result;
+}
+
+void Mtx::swapColumns(int c1, int c2)
+{
+  if (c1 == c2) return;
+
+  makeUnique();
+
+  memswap(itsImpl.address(0,c1), itsImpl.address(0,c2), mrows());
 }
 
 void Mtx::VMmul_assign(const Slice& vec, const Mtx& mtx,
