@@ -3,7 +3,7 @@
 // iolegacy.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 27 08:40:04 2000
-// written: Fri Sep 29 18:53:25 2000
+// written: Mon Oct  2 16:32:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,7 @@
 
 #define NO_TRACE
 #include "util/trace.h"
+#define LOCAL_ASSERT
 #include "util/debug.h"
 
 namespace IO {
@@ -34,14 +35,10 @@ namespace IO {
   // InputError is thrown with the last word in correctNames as its
   // info. If doCheck is false, the function does nothing except read
   // a word from theStream.
-  void readTypename(STD_IO::istream& is,
-						  const char* correctNames_cstr,
-						  bool doCheck);
+  void readTypename(STD_IO::istream& is, const char* correctNames_cstr);
 }
 
-void IO::readTypename(STD_IO::istream& is,
-							 const char* correctNames_cstr,
-							 bool doCheck) {
+void IO::readTypename(STD_IO::istream& is, const char* correctNames_cstr) {
 DOTRACE("IO::readTypename");
   std::string correctNames = correctNames_cstr;
 
@@ -51,11 +48,7 @@ DOTRACE("IO::readTypename");
   DebugEval(name); DebugPrintNL("");
   DebugEvalNL(is.peek());
 
-  // If we aren't checking, then we can skip the rest of the routine.
-  if (!doCheck) return;
-  
   DebugEval(correctNames);
-  DebugEvalNL(doCheck);
 
   std::string candidate;
 
@@ -78,6 +71,30 @@ DOTRACE("IO::readTypename");
 	 if (name == candidate) {
 		DebugEval(is.peek());
 		DebugPrintNL("found a name match");
+
+		// Due to a quirk where Tlist was sometimes written as "Tlist
+		// PtrList<Trial>" or "Tlist Tlist", we need to check if the
+		// next typename is a duplicate
+		if (name == "Tlist") {
+#ifdef PRESTANDARD_IOSTREAMS
+		  typedef streampos pos_type;
+#else
+		  typedef std::istream::pos_type pos_type;
+#endif
+		  pos_type pos = is.tellg();   DebugEvalNL(pos);
+		  std::string duplicate;
+		  is >> duplicate;   DebugEvalNL(duplicate);
+
+		  // If the string that we read was not actually a duplicate
+		  // typename, then reset the stream position so that someone
+		  // else can read that info from the stream
+		  if (duplicate != "PtrList<Trial>" &&
+				duplicate != "Tlist") {
+			 is.seekg(pos);
+			 DebugEvalNL(is.tellg());
+		  }
+		}
+
 		return;
 	 }
 
@@ -344,7 +361,7 @@ DOTRACE("IO::LegacyReader::readOwnedObject");
   DebugEvalNL(name);
   if (itsImpl->itsFlags & IO::TYPENAME) {
 	 IO::readTypename(itsImpl->itsInStream,
-							obj->legacyValidTypenames().c_str(), true);
+							obj->legacyValidTypenames().c_str());
   }
   obj->readFrom(this);
   itsImpl->throwIfError(name);
@@ -361,7 +378,7 @@ DOTRACE("IO::LegacyReader::readBaseClass");
 	 // include IO::TYPENAME with the FlagJanitor
 	 if (itsImpl->itsFlags & IO::TYPENAME) {
 		IO::readTypename(itsImpl->itsInStream,
-							  basePart->legacyValidTypenames().c_str(), true);
+							  basePart->legacyValidTypenames().c_str());
 	 }
 
 	 basePart->readFrom(this);
@@ -377,7 +394,7 @@ DOTRACE("IO::LegacyReader::readRoot");
   DebugEvalNL(root->ioTypename());
   if (itsImpl->itsFlags & IO::TYPENAME) {
 	 IO::readTypename(itsImpl->itsInStream,
-							root->legacyValidTypenames().c_str(), true);
+							root->legacyValidTypenames().c_str());
   }
   root->readFrom(this);
   return root;
