@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 19 17:25:51 2000
-// written: Thu Aug  9 17:09:03 2001
+// written: Fri Aug 10 11:03:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,11 @@
 
 template <class V> class Point;
 
+namespace Gfx
+{
+  class BmapData;
+}
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -38,7 +43,7 @@ template <class V> class Point;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class BmapData {
+class Gfx::BmapData {
 public:
   /// Nested class in allows \c BmapData objects to be updated lazily.
   class UpdateFunc {

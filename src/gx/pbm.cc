@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 16:41:07 1999
-// written: Thu Aug  9 16:58:13 2001
+// written: Fri Aug 10 11:05:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,9 @@
 
 #include "pbm.h"
 
-#include "bmapdata.h"
 #include "point.h"
+
+#include "gfx/bmapdata.h"
 
 #include "util/error.h"
 #include "util/gzstreambuf.h"
@@ -65,7 +66,7 @@ namespace
     Assert(0); return 0; // can't happen
   }
 
-  void parsePbmMode1(STD_IO::istream& is, BmapData& data)
+  void parsePbmMode1(STD_IO::istream& is, Gfx::BmapData& data)
   {
     DOTRACE("parsePbmMode1");
 
@@ -85,7 +86,7 @@ namespace
       }
   }
 
-  void parsePbmMode23(STD_IO::istream& is, BmapData& data, int max_grey)
+  void parsePbmMode23(STD_IO::istream& is, Gfx::BmapData& data, int max_grey)
   {
   DOTRACE("parsePbmMode23");
 
@@ -107,7 +108,7 @@ namespace
       }
   }
 
-  void parsePbmMode456(STD_IO::istream& is, BmapData& data)
+  void parsePbmMode456(STD_IO::istream& is, Gfx::BmapData& data)
   {
   DOTRACE("parsePbmMode456");
     is.read(reinterpret_cast<char*>(data.bytesPtr()), data.byteCount());
@@ -120,14 +121,14 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Pbm::save(const char* filename, const BmapData& data)
+void Pbm::save(const char* filename, const Gfx::BmapData& data)
 {
   shared_ptr<STD_IO::ostream> os(Util::ogzopen(filename));
 
   save(*os, data);
 }
 
-void Pbm::save(STD_IO::ostream& os, const BmapData& data)
+void Pbm::save(STD_IO::ostream& os, const Gfx::BmapData& data)
 {
 DOTRACE("Pbm::save");
   os << 'P' << modeForBitDepth(data.bitsPerPixel())
@@ -137,14 +138,14 @@ DOTRACE("Pbm::save");
   os.write(reinterpret_cast<char*>(data.bytesPtr()), data.byteCount());
 }
 
-void Pbm::load(const char* filename, BmapData& data)
+void Pbm::load(const char* filename, Gfx::BmapData& data)
 {
   shared_ptr<STD_IO::istream> is(Util::igzopen(filename));
 
   load(*is, data);
 }
 
-void Pbm::load(STD_IO::istream& is, BmapData& data)
+void Pbm::load(STD_IO::istream& is, Gfx::BmapData& data)
 {
 DOTRACE("Pbm::load");
   if (is.fail())
@@ -195,7 +196,7 @@ DOTRACE("Pbm::load");
       throw Util::Error("missing whitespace while reading pbm file");
     }
 
-  BmapData new_data(extent, bit_depth, 1);
+  Gfx::BmapData new_data(extent, bit_depth, 1);
 
   switch (mode)
     {

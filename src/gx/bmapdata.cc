@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 20 00:37:03 2000
-// written: Thu Aug  9 17:20:06 2001
+// written: Fri Aug 10 11:05:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef BMAPDATA_CC_DEFINED
 #define BMAPDATA_CC_DEFINED
 
-#include "bmapdata.h"
+#include "gfx/bmapdata.h"
 
 #include "point.h"
 
@@ -27,11 +27,11 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// BmapData::Impl definition
+// Gfx::BmapData::Impl definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class BmapData::Impl {
+class Gfx::BmapData::Impl {
 public:
   Impl(const Point<int>& extent, int bits_per_pixel, int byte_alignment) :
     itsExtent(extent),
@@ -69,77 +69,77 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-BmapData::UpdateFunc::~UpdateFunc() {}
+Gfx::BmapData::UpdateFunc::~UpdateFunc() {}
 
-BmapData::BmapData() :
+Gfx::BmapData::BmapData() :
   itsImpl(new Impl(Point<int>(0, 0), 1, 1))
 {
-DOTRACE("BmapData::BmapData");
+DOTRACE("Gfx::BmapData::BmapData");
 }
 
-BmapData::BmapData(const Point<int>& extent,
-                   int bits_per_pixel, int byte_alignment) :
+Gfx::BmapData::BmapData(const Point<int>& extent,
+                        int bits_per_pixel, int byte_alignment) :
   itsImpl(new Impl(extent, bits_per_pixel, byte_alignment))
 {
-DOTRACE("BmapData::BmapData");
+DOTRACE("Gfx::BmapData::BmapData");
 }
 
-BmapData::BmapData(const BmapData& other) :
+Gfx::BmapData::BmapData(const Gfx::BmapData& other) :
   itsImpl(new Impl(*(other.itsImpl)))
 {
-DOTRACE("BmapData::BmapData(copy)");
+DOTRACE("Gfx::BmapData::BmapData(copy)");
 }
 
-BmapData::~BmapData()
+Gfx::BmapData::~BmapData()
 {
   delete itsImpl;
 }
 
-unsigned char* BmapData::bytesPtr() const
+unsigned char* Gfx::BmapData::bytesPtr() const
 {
-DOTRACE("BmapData::bytesPtr");
+DOTRACE("Gfx::BmapData::bytesPtr");
   updateIfNeeded();
   return const_cast<unsigned char*>(&(itsImpl->itsBytes[0]));
 }
 
-int BmapData::width() const
+int Gfx::BmapData::width() const
 {
-DOTRACE("BmapData::width");
+DOTRACE("Gfx::BmapData::width");
   updateIfNeeded();
   return itsImpl->itsExtent.x();
 }
 
-int BmapData::height() const
+int Gfx::BmapData::height() const
 {
-DOTRACE("BmapData::height");
+DOTRACE("Gfx::BmapData::height");
   updateIfNeeded();
   return itsImpl->itsExtent.y();
 }
 
-Point<int> BmapData::extent() const
+Point<int> Gfx::BmapData::extent() const
 {
-DOTRACE("BmapData::height");
+DOTRACE("Gfx::BmapData::height");
   updateIfNeeded();
   return itsImpl->itsExtent;
 }
 
-int BmapData::bitsPerPixel() const
+int Gfx::BmapData::bitsPerPixel() const
 {
-DOTRACE("BmapData::bitsPerPixel");
+DOTRACE("Gfx::BmapData::bitsPerPixel");
   updateIfNeeded();
   return itsImpl->itsBitsPerPixel;
 }
 
-int BmapData::byteAlignment() const
+int Gfx::BmapData::byteAlignment() const
 {
-DOTRACE("BmapData::byteAlignment");
+DOTRACE("Gfx::BmapData::byteAlignment");
   updateIfNeeded();
   return itsImpl->itsByteAlignment;
 }
 
-unsigned int BmapData::byteCount() const
+unsigned int Gfx::BmapData::byteCount() const
 {
-DOTRACE("BmapData::byteCount");
+DOTRACE("Gfx::BmapData::byteCount");
   updateIfNeeded();
 
   Assert(itsImpl->itsBytes.size() == bytesPerRow() * itsImpl->itsExtent.y());
@@ -147,16 +147,16 @@ DOTRACE("BmapData::byteCount");
   return itsImpl->itsBytes.size();
 }
 
-unsigned int BmapData::bytesPerRow() const
+unsigned int Gfx::BmapData::bytesPerRow() const
 {
-DOTRACE("BmapData::bytesPerRow");
+DOTRACE("Gfx::BmapData::bytesPerRow");
   updateIfNeeded();
   return ( (itsImpl->itsExtent.x()*itsImpl->itsBitsPerPixel - 1)/8 + 1 );
 }
 
-void BmapData::flipContrast()
+void Gfx::BmapData::flipContrast()
 {
-DOTRACE("BmapData::flipContrast");
+DOTRACE("Gfx::BmapData::flipContrast");
   updateIfNeeded();
 
   unsigned int num_bytes = itsImpl->itsBytes.size();
@@ -182,9 +182,9 @@ DOTRACE("BmapData::flipContrast");
     }
 }
 
-void BmapData::flipVertical()
+void Gfx::BmapData::flipVertical()
 {
-DOTRACE("BmapData::flipVertical");
+DOTRACE("Gfx::BmapData::flipVertical");
   updateIfNeeded();
 
   int bytes_per_row = bytesPerRow();
@@ -203,30 +203,30 @@ DOTRACE("BmapData::flipVertical");
   itsImpl->itsBytes.swap(new_bytes);
 }
 
-void BmapData::clear()
+void Gfx::BmapData::clear()
 {
-DOTRACE("BmapData::clear");
+DOTRACE("Gfx::BmapData::clear");
 
-  BmapData empty;
+  Gfx::BmapData empty;
   swap(empty);
 }
 
-void BmapData::swap(BmapData& other)
+void Gfx::BmapData::swap(Gfx::BmapData& other)
 {
-DOTRACE("BmapData::swap");
+DOTRACE("Gfx::BmapData::swap");
 
   Util::swap(itsImpl, other.itsImpl);
 }
 
-void BmapData::queueUpdate(shared_ptr<UpdateFunc> updater) const
+void Gfx::BmapData::queueUpdate(shared_ptr<UpdateFunc> updater) const
 {
-DOTRACE("BmapData::queueUpdate");
+DOTRACE("Gfx::BmapData::queueUpdate");
   itsImpl->itsUpdater = updater;
 }
 
-void BmapData::updateIfNeeded() const
+void Gfx::BmapData::updateIfNeeded() const
 {
-DOTRACE("BmapData::updateIfNeeded");
+DOTRACE("Gfx::BmapData::updateIfNeeded");
   if (itsImpl->itsUpdater.get() != 0)
     {
       shared_ptr<UpdateFunc> tempUpdater(itsImpl->itsUpdater);
@@ -236,13 +236,13 @@ DOTRACE("BmapData::updateIfNeeded");
       // again during the updating.
       itsImpl->itsUpdater.reset(0);
 
-      tempUpdater->update(const_cast<BmapData&>(*this));
+      tempUpdater->update(const_cast<Gfx::BmapData&>(*this));
     }
 }
 
-void BmapData::clearQueuedUpdate() const
+void Gfx::BmapData::clearQueuedUpdate() const
 {
-DOTRACE("BmapData::clearQueuedUpdate");
+DOTRACE("Gfx::BmapData::clearQueuedUpdate");
   itsImpl->itsUpdater.reset(0);
 }
 

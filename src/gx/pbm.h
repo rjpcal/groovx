@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 16:41:06 1999
-// written: Thu Aug  9 16:58:50 2001
+// written: Fri Aug 10 11:05:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,22 +23,25 @@ class ostream;
 #  endif
 #endif
 
-class BmapData;
+namespace Gfx
+{
+  class BmapData;
+}
 
 
 namespace Pbm
 {
   /// Load \a data in PBM format from the file \a filename.
-  void load(const char* filename, BmapData& data);
+  void load(const char* filename, Gfx::BmapData& data);
 
   /// Load \a data in PBM format from the \c std::ostream \a os.
-  void load(STD_IO::istream& is, BmapData& data);
+  void load(STD_IO::istream& is, Gfx::BmapData& data);
 
   /// Save \a data in PBM format to the file \a filename.
-  void save(const char* filename, const BmapData& data);
+  void save(const char* filename, const Gfx::BmapData& data);
 
   /// Save \a data in PBM format to the \c std::ostream \a os.
-  void save(STD_IO::ostream& os, const BmapData& data);
+  void save(STD_IO::ostream& os, const Gfx::BmapData& data);
 };
 
 static const char vcid_pbm_h[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 16:51:34 1999
-// written: Fri Aug 10 10:50:05 2001
+// written: Fri Aug 10 11:05:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,9 @@
 
 namespace Gfx
 {
+  class BmapData;
   class Canvas;
 }
-
-class BmapData;
 
 template <class V> class Point;
 template <class V> class Rect;
@@ -42,7 +41,7 @@ public:
       needed to do the rendering is passed as arguments to the
       function. */
   virtual void doRender(Gfx::Canvas& canvas,
-                        const BmapData& data,
+                        const Gfx::BmapData& data,
                         const Point<double>& world_pos,
                         const Point<double>& zoom) const = 0;
 

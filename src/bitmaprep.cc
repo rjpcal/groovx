@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri Aug 10 10:55:04 2001
+// written: Fri Aug 10 11:05:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,12 +16,12 @@
 #include "bitmaprep.h"
 
 #include "application.h"
-#include "bmapdata.h"
 #include "bmaprenderer.h"
 #include "pbm.h"
 #include "point.h"
 #include "rect.h"
 
+#include "gfx/bmapdata.h"
 #include "gfx/canvas.h"
 
 #include "io/io.h"
@@ -83,7 +83,7 @@ public:
   bool itsContrastFlip;
   bool itsVerticalFlip;
 
-  BmapData itsData;
+  Gfx::BmapData itsData;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class PbmUpdater : public BmapData::UpdateFunc {
+class PbmUpdater : public Gfx::BmapData::UpdateFunc {
 public:
   PbmUpdater(const fstring& filename, fstring& owner_filename,
              bool contrast, bool vertical) :
@@ -114,7 +114,7 @@ public:
       }
   }
 
-  virtual void update(BmapData& update_me);
+  virtual void update(Gfx::BmapData& update_me);
 
 private:
   fstring itsFilename;
@@ -123,7 +123,7 @@ private:
   bool itsFlipVertical;
 };
 
-void PbmUpdater::update(BmapData& update_me)
+void PbmUpdater::update(Gfx::BmapData& update_me)
 {
 DOTRACE("PbmUpdater::update");
 
@@ -236,7 +236,7 @@ void BitmapRep::queuePbmFile(const char* filename)
 {
 DOTRACE("BitmapRep::queuePbmFile");
 
-  shared_ptr<BmapData::UpdateFunc> updater(
+  shared_ptr<Gfx::BmapData::UpdateFunc> updater(
     new PbmUpdater(filename, itsImpl->itsFilename,
                    itsImpl->itsContrastFlip, itsImpl->itsVerticalFlip));
 
@@ -262,7 +262,7 @@ DOTRACE("BitmapRep::grabScreenRect");
 
   init();
 
-  BmapData newData( rect.extent().abs(), 1, 1 );
+  Gfx::BmapData newData( rect.extent().abs(), 1, 1 );
 
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
   glReadPixels(rect.left(), rect.bottom(), newData.width(), newData.height(),

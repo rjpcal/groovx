@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:19:23 1999
-// written: Fri Aug 10 10:46:48 2001
+// written: Fri Aug 10 11:05:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ public:
   virtual ~XBmapRenderer();
 
   virtual void doRender(Gfx::Canvas& canvas,
-                        const BmapData& data,
+                        const Gfx::BmapData& data,
                         const Point<double>& world_pos,
                         const Point<double>& zoom) const;
 
@@ -54,7 +54,7 @@ public:
   virtual void notifyBytesChanged() const;
 
 private:
-  void update(const BmapData& data) const;
+  void update(const Gfx::BmapData& data) const;
 
   XBmapRenderer(const XBmapRenderer&);
   XBmapRenderer& operator=(const XBmapRenderer&);
