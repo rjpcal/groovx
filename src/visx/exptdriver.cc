@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Jan 27 14:01:29 2000
+// written: Tue Feb  1 10:54:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -964,8 +964,8 @@ DOTRACE("ExptDriver::Impl::storeData");
 	 TlistUtils::writeResponses(Tlist::theTlist(), resp_filename.c_str());
 	 cout << "wrote file " << resp_filename << endl;
 
-	 // Change file access modes to allow read-only by user and group
-	 System::mode_t datafile_mode = System::IRUSR | System::IRGRP;
+	 // Change file access modes to allow read-only by all
+	 System::mode_t datafile_mode = System::IRUSR | System::IRGRP | System::IROTH;
 
 	 int error1 =
 		System::theSystem().chmod(expt_filename.c_str(), datafile_mode);
