@@ -410,6 +410,7 @@ void fstring::read(STD_IO::istream& is)
 {
 DOTRACE("fstring::read");
   clear();
+  string_rep::make_unique(m_rep);
   is >> STD_IO::ws;
   while ( true )
     {
@@ -460,6 +461,7 @@ void fstring::readline(STD_IO::istream& is, char eol)
 {
 DOTRACE("fstring::readline");
   clear();
+  string_rep::make_unique(m_rep);
   while ( true )
     {
       int c = is.get();
