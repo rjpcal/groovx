@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Mar 19 17:59:09 2003
+// written: Wed May 14 14:31:40 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -99,8 +99,10 @@ public:
   /// Whether to write a profiling summary file when the program exits.
   static void printAtExit(bool yes_or_no) throw();
 
+  /// Reset all call counts and elapsed times to zero.
   static void resetAllProfData() throw();
 
+  /// Print all profile data on the given stream.
   static void printAllProfData(STD_IO::ostream& os) throw();
 
 private:
