@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Aug 10 13:48:04 2001
+// written: Fri Aug 10 14:35:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -359,10 +359,6 @@ public:
       setBitmapCacheDir(). The filename must refer to a format
       supported by \c Pbm. */
   void saveBitmapCache(Gfx::Canvas& canvas, const char* filename) const;
-
-  /** Restores the bitmap cache from the bitmap cache filename that
-      was most recently passed to \c saveBitmapCache(). */
-  void restoreBitmapCache() const;
 
   /** Recompiles the OpenGL display list or bitmap cache, if there are
       changes pending, otherwise does nothing. */

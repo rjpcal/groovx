@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Fri Aug 10 10:46:50 2001
+// written: Fri Aug 10 14:35:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -72,7 +72,6 @@ public:
     defVec( "boundingBox", "item_id(s)", &GrobjTcl::boundingBox );
     defVec( "saveBitmapCache", "item_id(s) filename(s)",
             &GrobjTcl::saveBitmapCache );
-    defAction("restoreBitmapCache", &GrObj::restoreBitmapCache);
     defVec( "update", "item_id(s)", &GrobjTcl::update );
 
     def( "setBitmapCacheDir", "filename", &GrObj::setBitmapCacheDir );
