@@ -36,6 +36,7 @@
 #include "geom/vec2.h"
 
 #include "util/algo.h"
+#include "util/error.h"
 
 #include "util/debug.h"
 DBG_REGISTER
@@ -133,11 +134,23 @@ namespace geom
 
     /// Set four corners from x-left/y-top/x-right/y-bottom values.
     rect<V>& set_ltrb(V L, V T, V R, V B)
-    { xx = span<V>(L,R); yy = span<V>(B,T); return *this; }
+    {
+      if (R > L)
+        throw rutz::error("invalid rect (right > left)", SRC_POS);
+
+      if (B > T)
+        throw rutz::error("invalid rect (bottom > top)", SRC_POS);
+
+      xx = span<V>(L,R);
+      yy = span<V>(B,T);
+      return *this;
+    }
 
     /// Set four corners from x-left/x-right/y-bottom/y-top values.
     rect<V>& set_lrbt(V L, V R, V B, V T)
-    { xx = span<V>(L,R); yy = span<V>(B,T); return *this; }
+    {
+      return this->set_ltrb(L,T,R,B);
+    }
 
     /// Set four corners from x-left/y-bottom/x-width/y-height values.
     rect<V>& set_lbwh(V x, V y, V w, V h)
