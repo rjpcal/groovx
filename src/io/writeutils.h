@@ -42,6 +42,12 @@ namespace IO
 /// Utilities for writing sequences to a \c IO::Writer.
 namespace WriteUtils
 {
+
+  fstring makeElementNameString(const fstring& seq_name,
+                                int element_num);
+
+  fstring makeSeqCountString(const fstring& seq_name);
+
   /** A generic interface for handling containers, sequences, etc. of
       value types. */
   template <class Itr>
@@ -119,11 +125,6 @@ namespace WriteUtils
       while (begin != end) { ++count; ++begin; }
       return count;
     }
-
-  fstring makeElementNameString(const fstring& seq_name,
-                                int element_num);
-
-  fstring makeSeqCountString(const fstring& seq_name);
 
 }} // end namespace IO::WriteUtils
 
