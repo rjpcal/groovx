@@ -47,7 +47,7 @@ test "ObjTogl-Togl::refresh" "normal use" {
 	 set p [Pos::Pos]
 	 set t [Trial::Trial]
 	 Trial::add $t $f $p
-	 Togl::setCurTrial 0
+	 Togl::setCurTrial $t
 	 setForeground 1
 	 setBackground 0
 	 Togl::setVisible 1
