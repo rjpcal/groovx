@@ -23,34 +23,39 @@ package require Iwidgets
 #     parent.itsPanes.itsControls.viewobjlist
 #   parent.itsToglet
 
+proc debug {msg} {
+	 if {0} { puts $msg }
+}
+
 itcl::class FieldControls {
 	 private variable itsObjType
 	 private variable itsNames
 	 private variable isItTransient
 	 private variable isItString
 	 private variable isItMulti
+	 private variable isItGettable
+	 private variable isItSettable
 	 private variable itsFrame
 	 private variable itsControls
 	 private variable itsCachedValues
 
-	 private method setControl {name val} {
-		  set control $itsControls($name)
-		  if { $isItString($name) || $isItMulti($name) } {
+	 private method setControl {fname val} {
+		  set control $itsControls($fname)
+		  if { $isItString($fname) || $isItMulti($fname) } {
 				$control delete 0 end
 				$control insert 0 $val
 		  } else {
 				$control set $val
 		  }
+		  set itsCachedValues($fname) $val
 	 }
 
-	 private method onControl {callback name {val {}}} {
-		  if { $isItString($name) || $isItMulti($name) } {
-				set control $itsControls($name)
-				$callback $name [$control get]
-				return 1
-		  } else {
-				$callback $name $val
+	 private method onControl {callback fname {val {}}} {
+		  if { $isItString($fname) || $isItMulti($fname) } {
+				set control $itsControls($fname)
+				set val [$control get]
 		  }
+		  $callback $fname $val
 	 }
 
 	 constructor {panes objtype setCallback} {
@@ -67,53 +72,55 @@ itcl::class FieldControls {
 
 		  set align_us [list]
 
-		  foreach field [${objtype}::allFields] {
-				set name [lindex $field 0]
-				set lower [lindex $field 1]
-				set upper [lindex $field 2]
-				set step [lindex $field 3]
-				set flags [lindex $field 4]
+		  foreach finfo [${objtype}::allFields] {
+				set fname [lindex $finfo 0]
+				set lower [lindex $finfo 1]
+				set upper [lindex $finfo 2]
+				set step [lindex $finfo 3]
+				set flags [lindex $finfo 4]
 
 				set startsnewgroup [expr [lsearch $flags NEW_GROUP] != -1]
-				set isItTransient($name) [expr [lsearch $flags TRANSIENT] != -1]
-				set isItString($name) [expr [lsearch $flags STRING] != -1]
-				set isItMulti($name) [expr [lsearch $flags MULTI] != -1]
+				set isItTransient($fname) [expr [lsearch $flags TRANSIENT] != -1]
+				set isItString($fname) [expr [lsearch $flags STRING] != -1]
+				set isItMulti($fname) [expr [lsearch $flags MULTI] != -1]
+				set isItGettable($fname) [expr [lsearch $flags NO_GET] == -1]
+				set isItSettable($fname) [expr [lsearch $flags NO_SET] == -1]
 
-				lappend itsNames [lindex $field 0]
-				set itsCachedValues($field) 0
+				lappend itsNames $fname
+				set itsCachedValues($fname) 0
 
 				if {$startsnewgroup} {
-					 set currentframe [frame $itsFrame.$name]
+					 set currentframe [frame $itsFrame.$fname]
 					 pack $currentframe -side left -fill y -expand yes
 				}
 
 				set pane $currentframe
 
-				if {$isItString($name) || $isItMulti($name)} {
-					 iwidgets::entryfield $pane.$name -labeltext $name -width 15 \
-								-command [itcl::code $this onControl $setCallback $name]
-					 lappend align_us $pane.$name
+				if {$isItString($fname) || $isItMulti($fname)} {
+					 iwidgets::entryfield $pane.$fname -labeltext $fname -width 15 \
+								-command [itcl::code $this onControl $setCallback $fname]
+					 lappend align_us $pane.$fname
 				} else {
 
-					 scale $pane.$name -label $name -from $lower -to $upper \
+					 scale $pane.$fname -label $fname -from $lower -to $upper \
 								-resolution $step -bigincrement $step \
 								-digits [string length $step] \
 								-repeatdelay 500 -repeatinterval 250 \
 								-orient horizontal \
-								-command [itcl::code $this onControl $setCallback $name]
+								-command [itcl::code $this onControl $setCallback $fname]
 				}
 
-				if {$isItTransient($name)} {
-					 $pane.$name configure -foreground blue
+				if {$isItTransient($fname)} {
+					 $pane.$fname configure -foreground blue
 				}
 
-				if {$isItMulti($name)} {
-					 $pane.$name configure -foreground darkgreen
+				if {$isItMulti($fname)} {
+					 $pane.$fname configure -foreground darkgreen
 				}
 
-				pack $pane.$name -side top
+				pack $pane.$fname -side top
 
-				set itsControls($name) $pane.$name
+				set itsControls($fname) $pane.$fname
 		  }
 
 		  eval iwidgets::Labeledwidget::alignlabels $align_us
@@ -121,19 +128,24 @@ itcl::class FieldControls {
 		  pack $itsFrame -fill y -side left		  
 	 }
 
-	 public method getCachedVal {name} {
-		  #puts "itsObjType $itsObjType, name $name"
-		  return $itsCachedValues($name)
+	 public method update {obj} {
+		  foreach fname $itsNames {
+				set val ""
+				if { $isItGettable($fname) } {
+					 set val [${itsObjType}::$fname $obj]
+				}
+				setControl $fname $val
+		  }
 	 }
 
-	 public method setCachedVal {name val} { set itsCachedValues($name) $val }
-
-	 public method update {obj} {
-		  foreach field $itsNames {
-				set val [${itsObjType}::$field $obj]
-				set control $itsControls($field)
-				setControl $field $val
-				set itsCachedValues($field) $val
+	 public method setAttribForObjs {objs fname val} {
+		  debug "setting $objs $fname to $val"
+		  if { $isItSettable($fname) } {
+				set val [subst $val]
+				if { $itsCachedValues($fname) != $val } {
+					 ${itsObjType}::$fname $objs $val
+					 set itsCachedValues($fname) $val
+				}
 		  }
 	 }
 }
@@ -141,13 +153,14 @@ itcl::class FieldControls {
 itcl::class Editor {
 	 private variable itsPanes
 	 private variable itsControls
+	 private variable itsButtons
 	 private variable itsToglet
 	 private variable itsControlSets
 	 private variable itsUpdateInProgress 0
 
-	 private method setObjType {type} { $itsControls.objtypes select $type }
+	 private method setObjType {type} { $itsButtons.objtypes select $type }
 
-	 private method curObjType {} { return [$itsControls.objtypes get] }
+	 private method curObjType {} { return [$itsButtons.objtypes get] }
 
 	 private method standardSettings {objs} {
 		  set grobjs [dlist_select $objs [GrObj::is $objs]]
@@ -165,43 +178,32 @@ itcl::class Editor {
 
 		  standardSettings $obj
 
-		  $itsControls.editobjlist insert end $obj
+		  addListObj $obj
+
 		  setEditSelection $obj
-
-		  addViewObj $obj
 		  setViewSelection $obj
 	 }
 
-	 private method addViewObj {obj} {
-		  $itsControls.viewobjlist insert end $obj
-	 }
-
-	 private method makePreviewObj {} {
-		  set obj [Tlist::createPreview [getEditSelection]]
-
-		  addViewObj $obj
-		  setViewSelection $obj
-	 }
+	 # The edit obj list
 
 	 private method getEditAll {} {
-		  return [$itsControls.editobjlist get 0 end]
-	 }
+		  set objs [list]
 
-	 private method getViewAll {} {
-		  return [$itsControls.viewobjlist get 0 end]
+		  foreach pair [$itsControls.editobjlist get 0 end] {
+				lappend objs [lindex $pair 0]
+		  }
+
+		  return $objs
 	 }
 
 	 private method getEditSelection {} {
-		  return [$itsControls.editobjlist getcurselection]
-	 }
+		  set objs [list]
 
-	 private method getViewSelection {} {
-		  set sel [$itsControls.viewobjlist getcurselection]
-		  if { [llength $sel] > 0 } {
-				return [lindex $sel 0]
-		  } else {
-				return 0
+		  foreach pair [$itsControls.editobjlist getcurselection] {
+				lappend objs [lindex $pair 0]
 		  }
+
+		  return $objs
 	 }
 
 	 private method setEditSelection {objs} {
@@ -213,6 +215,35 @@ itcl::class Editor {
 					 $itsControls.editobjlist selection set $index
 					 onEditObjSelect
 				}
+		  }
+	 }
+
+	 private method onEditObjSelect {} {
+		  set objs [getEditSelection]
+		  if { [llength $objs] > 0 } {
+				setObjType [IO::type [lindex $objs 0]]
+				updateControls [lindex $objs 0]
+		  }
+	 }
+
+	 # The view obj list
+
+	 private method getViewAll {} {
+		  set objs [list]
+
+		  foreach pair [$itsControls.viewobjlist get 0 end] {
+				lappend objs [lindex $pair 0]
+		  }
+
+		  return $objs
+	 }
+
+	 private method getViewSelection {} {
+		  set sel [$itsControls.viewobjlist getcurselection]
+		  if { [llength $sel] > 0 } {
+				return [lindex [lindex $sel 0] 0]
+		  } else {
+				return 0
 		  }
 	 }
 
@@ -230,16 +261,50 @@ itcl::class Editor {
 		  }
 	 }
 
-	 private method onEditObjSelect {} {
-		  set objs [getEditSelection]
-		  if { [llength $objs] > 0 } {
-				setObjType [IO::type [lindex $objs 0]]
-				updateControls [lindex $objs 0]
+	 private method onViewObjSelect {} {
+		  requestDraw
+	 }
+
+
+	 #
+	 # Both lists together
+	 #
+
+	 private method addListObj {obj} {
+		  $itsControls.editobjlist insert end "$obj [IO::type $obj]"	
+		  $itsControls.viewobjlist insert end "$obj [IO::type $obj]"
+	 }
+
+	 private method setListAll {objs} {
+		  $itsControls.editobjlist clear
+		  $itsControls.viewobjlist clear
+
+		  set objs [lsort -integer $objs]
+
+		  foreach obj $objs {
+				addListObj $obj
 		  }
 	 }
 
-	 private method onViewObjSelect {} {
-		  requestDraw
+	 private method refreshLists {} {
+		  set editsel [getEditSelection]
+		  set viewsel [getViewSelection]
+
+		  set all [GxNode::findAll]
+
+		  setListAll $all
+
+		  setEditSelection $editsel
+		  setViewSelection $viewsel
+	 }
+
+
+
+	 private method makePreviewObj {} {
+		  set obj [Tlist::createPreview [getEditSelection]]
+
+		  addListObj $obj
+		  setViewSelection $obj
 	 }
 
 	 private method requestDraw {} {
@@ -268,23 +333,31 @@ itcl::class Editor {
 		  Toglet::setViewingDistance $itsToglet $val
 	 }
 
-	 private method setAttrib {name val} {
+	 private method setAttrib {fname val} {
+		  debug "in setAttrib..."
+
 		  set objtype [curObjType]
+
+		  debug "objtype $objtype"
 
 		  set selection [getEditSelection]
 
+		  debug "selection $selection"
+
 		  set editobjs [dlist_select $selection [${objtype}::is $selection]]
+
+		  debug "editobjs $editobjs"
 
 		  set controls $itsControlSets($objtype)
 
+		  debug "controls $controls"
+
+		  debug "fname $fname val $val"
+
 		  if { !$itsUpdateInProgress && [llength $editobjs] > 0 } {
-				if { [$controls getCachedVal $name] != $val } {
-					 #puts "setting $editobjs $name to $val"
-					 Toglet::allowRefresh $itsToglet 0
-					 [curObjType]::$name $editobjs $val
-					 $controls setCachedVal $name $val
-					 Toglet::allowRefresh $itsToglet 1
-				}
+				Toglet::allowRefresh $itsToglet 0
+				$controls setAttribForObjs $editobjs $fname $val
+				Toglet::allowRefresh $itsToglet 1
 
 				updateControls [lindex $editobjs 0]
 		  }
@@ -294,7 +367,7 @@ itcl::class Editor {
 
 		  set objtype [curObjType]
 
-		  set alltypes [$itsControls.objtypes get 0 end]
+		  set alltypes [$itsButtons.objtypes get 0 end]
 
 		  foreach type $alltypes {
 				if { ![string equal $objtype $type] } {
@@ -335,26 +408,34 @@ itcl::class Editor {
 		  $itsControls.viewingdist set 60
 		  pack $itsControls.viewingdist -side top -fill x
 
-		  iwidgets::optionmenu $itsControls.objtypes -labeltext "Object type:" \
+		  set itsButtons [frame $itsControls.buttons]
+
+		  iwidgets::optionmenu $itsButtons.objtypes -labeltext "Object type:" \
 					 -command [itcl::code $this showFieldControls]
-		  $itsControls.objtypes insert 0 \
-					 Face Fish Gabor Gtext GxDrawStyle GxColor \
+		  $itsButtons.objtypes insert 0 \
+					 Face Fish Gabor Gtext GxDrawStyle GxColor GxSeparator \
 					 House MaskHatch MorphyFace Position
-		  $itsControls.objtypes sort ascending
+		  $itsButtons.objtypes sort ascending
 		  setObjType $objtype
-		  pack $itsControls.objtypes -side left -anchor nw
+		  pack $itsButtons.objtypes -side top -anchor nw
 
-		  button $itsControls.new -text "New Object" -relief raised \
+		  button $itsButtons.new -text "New Object" -relief raised \
 					 -command [itcl::code $this addNewObject]
-		  pack $itsControls.new -side left -anchor nw
+		  pack $itsButtons.new -side top -anchor nw
 
-		  button $itsControls.preview -text "Make Preview" -relief raised \
+		  button $itsButtons.preview -text "Make Preview" -relief raised \
 					 -command [itcl::code $this makePreviewObj]
-		  pack $itsControls.preview -side left -anchor nw
+		  pack $itsButtons.preview -side top -anchor nw
 
-		  button $itsControls.redraw -text "Redraw" -relief raised \
+		  button $itsButtons.redraw -text "Redraw" -relief raised \
 					 -command [itcl::code $this requestDraw]
-		  pack $itsControls.redraw -side left -anchor nw
+		  pack $itsButtons.redraw -side top -anchor nw
+
+		  button $itsButtons.refreshlist -text "Refresh list" -relief raised \
+					 -command [itcl::code $this refreshLists]
+		  pack $itsButtons.refreshlist -side top -anchor nw
+
+		  pack $itsButtons -side left -anchor nw
 
 		  iwidgets::scrolledlistbox $itsControls.editobjlist \
 					 -labeltext "Edit objects:" -hscrollmode dynamic \
@@ -383,38 +464,34 @@ itcl::class Editor {
 	 }
 
 	 public method loadObjects {filename} {
-		  set ids [ObjDb::loadObjects $filename]
+		  set objs [ObjDb::loadObjects $filename]
 
-		  $itsControls.editobjlist clear
-		  eval $itsControls.editobjlist insert end $ids
-		  $itsControls.editobjlist sort ascending
-		  standardSettings [$itsControls.editobjlist get 0 end]
+		  set all [GxNode::findAll]
 
-		  $itsControls.viewobjlist clear
-		  eval $itsControls.viewobjlist insert end [GxNode::findAll]
+		  setListAll $all
+		  standardSettings $all
 
-		  return [llength $ids]
+		  return [llength $objs]
 	 }
 
 	 public method loadExpt {filename} {
 		  Expt::load $filename
 
-		  $itsControls.editobjlist clear
-		  eval $itsControls.editobjlist insert end [[curObjType]::findAll]
-		  standardSettings [$itsControls.editobjlist get 0 end]
+		  set all [GxNode::findAll]
 
-		  $itsControls.viewobjlist clear
-		  eval $itsControls.viewobjlist insert end [GxNode::findAll]
+		  setListAll $all
+
+		  standardSettings $all
 	 }
 
 	 public method saveObjects {filename} {
-		  set objs [$itsControls.editobjlist get 0 end] 
+		  set objs [getEditAll] 
 		  ObjDb::saveObjects $filename no
 		  return [llength $objs]
 	 }
 
 	 public method saveBitmaps {basename} {
-		  set objs [$itsControls.editobjlist get 0 end]
+		  set objs [getEditAll]
 		  set grobjs [dlist_select $objs [GrObj::is $objs]]
 		  foreach obj $grobjs {
 				GrObj::renderMode $obj $GrObj::GL_BITMAP_CACHE
