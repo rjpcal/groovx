@@ -3,7 +3,7 @@
 // factory.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 22:37:31 1999
-// written: Tue Oct 31 13:41:05 2000
+// written: Tue Oct 31 13:49:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,8 +74,9 @@ DOTRACE("CreatorMapBase::getPtrForName");
 void CreatorMapBase::setPtrForName(const char* name, void* ptr) {
 DOTRACE("CreatorMapBase::setPtrForName");
   fixed_string sname(name);
-  killPtr(itsImpl->itsMap[sname]);
-  itsImpl->itsMap[sname] = ptr;
+  void*& ptr_slot = itsImpl->itsMap[sname];
+  killPtr(ptr_slot);
+  ptr_slot = ptr;
 }
 
 FactoryBase::~FactoryBase() {
