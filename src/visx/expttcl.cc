@@ -61,7 +61,7 @@ namespace
 
     // Create the quit key binding
     w->bind("<Control-KeyPress-q>",
-            fstring("-> ", xp.id(), " storeData; exit"));
+            fstring("-> ", xp.id(), " halt; -> ", xp.id(), " storeData; exit"));
 
     // Create the quit-without-save key binding
     w->bind("<Control-Alt-KeyPress-x>", "exit");
