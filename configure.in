@@ -113,13 +113,13 @@ case $OS in
       need_rpath=yes
       SHLIB_EXT=so
       STATLIB_EXT=a
-      AC_DEFINE(SHORTEN_SYMBOL_NAMES,1)
+      AC_DEFINE(SHORTEN_SYMBOL_NAMES,1,[shorten symbol names?])
       ;;
    Darwin)
       need_rpath=no
       SHLIB_EXT=dylib
       STATLIB_EXT=a
-      AC_DEFINE(ESD_WORKAROUND,1)
+      AC_DEFINE(ESD_WORKAROUND,1,[Darwin esd workaround])
       # The /sw/lib and /sw/include directories are managed by Fink
       CPPFLAGS="$CPPFLAGS -I/sw/include"
 
@@ -195,7 +195,9 @@ AC_TRY_COMPILE([namespace Q {
 template <class F> void bar(F) {}
 ],
 [bar(Q::foo<int>); bar(Q::foo<double>);],
-[AC_MSG_RESULT(yes)], [AC_DEFINE(BROKEN_TEMPLATE_FUNCTIONS) AC_MSG_RESULT(no)])
+[AC_MSG_RESULT(yes)],
+[AC_DEFINE(BROKEN_TEMPLATE_FUNCTIONS,1,[can take address of template funtions?])
+ AC_MSG_RESULT(no)])
 
 ### Check c++ name mangling
 
@@ -217,7 +219,7 @@ int main()
   return (strcmp("Q::foo<bar>", typeid(p).name()) == 0) ? 0 : 1;
 }
 ],
-[AC_DEFINE(NO_TYPENAME_MANGLING,1) AC_MSG_RESULT(no)],
+[AC_DEFINE(NO_TYPENAME_MANGLING,1,[is typeid().name() unmangled?]) AC_MSG_RESULT(no)],
 AC_MSG_RESULT(yes))
 
 ### Check support for c++ iostreams
@@ -226,7 +228,8 @@ AC_MSG_CHECKING([whether c++ compiler supports standard iostreams])
 
 AC_TRY_COMPILE([#include <iostream>], [std::ios_base* p;],
 		[AC_MSG_RESULT(yes)],
-		[AC_DEFINE(PRESTANDARD_IOSTREAMS, 1) AC_MSG_RESULT(no)])
+		[AC_DEFINE(PRESTANDARD_IOSTREAMS,1,[prestandard iostreams?])
+                 AC_MSG_RESULT(no)])
 
 have_std_io=no
 
@@ -243,9 +246,9 @@ fi
 AC_MSG_RESULT($have_std_io)
 
 if test $have_std_io = yes; then
-   AC_DEFINE(STD_IO, std)
+   AC_DEFINE(STD_IO,std,[iostreams are in std namespace])
 else
-   AC_DEFINE(STD_IO, [])
+   AC_DEFINE(STD_IO,[],[iostreams are in global namespace])
 fi
 
 ### Checks for header files.
@@ -258,14 +261,14 @@ AC_CHECK_HEADERS([limits iosfwd iostream fstream sstream \
 		  ext/stdio_filebuf.h],,,-)
 
 AC_CHECK_HEADER([dmedia/audio.h],
-		[AC_DEFINE(HAVE_DMEDIA_AUDIO_H,1)
+		[AC_DEFINE(HAVE_DMEDIA_AUDIO_H,1,[have dmedia/audio.h?])
 		 LIBS="$LIBS -laudio -laudiofile"],,-)
 
 AC_CHECK_HEADER([Alib.h],
-		[AC_DEFINE(HAVE_ALIB_H,1) LIBS="$LIBS -lAlib"],,-)
+		[AC_DEFINE(HAVE_ALIB_H,1,[have Alib.h?]) LIBS="$LIBS -lAlib"],,-)
 
 AC_CHECK_HEADER([esd.h],
-		[AC_DEFINE(HAVE_ESD_H,1)
+		[AC_DEFINE(HAVE_ESD_H,1,[have esd.h?])
 		 LIBS="$LIBS -lesd -laudiofile"],,-)
 
 ### Checks for libraries.
@@ -297,7 +300,8 @@ AC_MSG_CHECKING([whether OpenGL implementation is Mesa])
 # display lists don't work at present with i686/linux/mesa
 
 AC_EGREP_HEADER(MESA, [GL/gl.h],
-		[AC_DEFINE(BROKEN_GL_DISPLAY_LISTS,1) AC_MSG_RESULT(yes)],
+		[AC_DEFINE(BROKEN_GL_DISPLAY_LISTS,1,[broken OpenGL display lists?])
+                 AC_MSG_RESULT(yes)],
 		[AC_MSG_RESULT(no)])
 
 dnl Checks for typedefs, structures, and compiler characteristics.
@@ -388,7 +392,7 @@ if test -d $with_matlab; then
    if test $need_rpath = yes; then
       LDFLAGS="$LDFLAGS -Wl,-rpath,${matlab_lib}"
    fi
-   AC_DEFINE(WITH_MATLAB, 1)
+   AC_DEFINE(WITH_MATLAB,1,[with matlab support?])
 else
    AC_MSG_RESULT(no)
    matlab_lib=""
@@ -412,7 +416,8 @@ if test $enable_readline = yes; then
 		    [#include <stdio.h>
 		     #include <readline/readline.h>],
 		    [rl_callback_handler_install(0,0)],
-		    [LIBS="-lreadline $LIBS"; AC_DEFINE(WITH_READLINE,1)])
+		    [LIBS="-lreadline $LIBS";
+                     AC_DEFINE(WITH_READLINE,1,[with readline support?])])
 fi
 
 ###
@@ -428,7 +433,7 @@ AC_ARG_ENABLE(debug,
 AC_MSG_RESULT($enable_debug)
 
 if test $enable_debug = yes; then
-   AC_DEFINE(PROF, 1)
+   AC_DEFINE(PROF,1,[enable profiling?])
    CXXFLAGS="$CXXFLAGS $cxxflags_debug"
    AC_SUBST(LIB_SUFFIX, .d.${PACKAGE_VERSION})
    AC_SUBST(EXECUTABLE, \${exec_prefix}/bin/testsh)
