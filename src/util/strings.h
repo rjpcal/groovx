@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Fri Feb  1 10:47:41 2002
+// written: Fri Feb  1 11:09:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,8 +120,14 @@ public:
   fstring(const fstring& other);
   ~fstring();
 
+  fstring(const char* s) :
+    itsRep(0)
+  {
+    do_init(s);
+  }
+
   template <class T1>
-  fstring(const T1& part1) :
+  explicit fstring(const T1& part1) :
     itsRep(0)
   {
     do_init(part1);
