@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue Jun  5 13:50:54 2001
+// written: Wed Jun  6 16:12:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,12 +100,13 @@ namespace {
 //
 ///////////////////////////////////////////////////////////////////////
 
-ToglConfig::ToglConfig(Tcl_Interp* interp, const char* pathname,
+ToglConfig::ToglConfig(Tcl_Interp* interp,
 							  int config_argc, char** config_argv,
+							  bool pack,
 							  double dist, double unit_angle) :
   GWT::Widget(),
   itsCanvas(new GLCanvas),
-  itsTogl(new Togl(interp, pathname, config_argc, config_argv)),
+  itsTogl(new Togl(interp, ".togl_private", config_argc, config_argv)),
   itsViewingDistance(dist), 
   itsFixedScaleFlag(true),
   itsFixedScale(1.0),
@@ -144,6 +145,15 @@ DOTRACE("ToglConfig::ToglConfig");
 								static_cast<void*>(this));
 
   XBmapRenderer::initClass(tkwin);
+
+  if (pack) {
+	 dynamic_string pack_cmd_str = "pack ";
+	 pack_cmd_str += itsTogl->pathname();
+	 pack_cmd_str += " -expand 1 -fill both";
+	 Tcl::TclEvalCmd pack_cmd(pack_cmd_str.c_str(),
+									  Tcl::TclEvalCmd::THROW_EXCEPTION);
+	 pack_cmd.invoke(interp);
+  }  
 }
 
 ToglConfig::~ToglConfig() {

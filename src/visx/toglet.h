@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Tue Jun  5 13:36:04 2001
+// written: Wed Jun  6 16:11:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,9 +53,11 @@ public:
 	 double red, green, blue;
   };
 
-  ToglConfig(Tcl_Interp* interp, const char* pathname,
+  ToglConfig(Tcl_Interp* interp,
 				 int config_argc, char** config_argv,
-				 double dist, double unit_angle);
+				 bool pack=true,
+				 double dist=30.0, double unit_angle=2.05);
+
   virtual ~ToglConfig();
 
   void onWindowClose();

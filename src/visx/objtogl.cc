@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jun  6 15:54:58 2001
+// written: Wed Jun  6 16:10:59 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -230,9 +230,7 @@ protected:
 class ObjTogl::InitCmd : public Tcl::TclCmd {
 public:
   InitCmd(Tcl_Interp* interp, const char* cmd_name) :
-    Tcl::TclCmd(interp, cmd_name,
-					 "init_args ?viewing_dist=30?"
-					 "?gl_unit_angle=2.05? ?pack=yes?", 1, 5) {}
+    Tcl::TclCmd(interp, cmd_name, 0, 1, 1) {}
 
 protected:
   class WidgetDestroyCallback : public ToglConfig::DestroyCallback {
@@ -257,11 +255,7 @@ DOTRACE("ObjTogl::InitCmd::invoke");
   const char* dflt = "-stereo false";
 
   const char* init_args     =      (objc() < 2) ? dflt : getCstringFromArg(1);
-  int         viewing_dist  =      (objc() < 3) ? 30   : getIntFromArg(2);
-  double      gl_unit_angle =      (objc() < 4) ? 2.05 : getDoubleFromArg(3);
   bool        pack          = bool((objc() < 5) ? true : getBoolFromArg(4));
-
-  const char* pathname = ".togl_private";
 
   // Generate an argc/argv array of configuration options
   int config_argc = 0;
@@ -270,22 +264,13 @@ DOTRACE("ObjTogl::InitCmd::invoke");
 
   // Create a new ToglConfig object with the specified conguration
   // options, viewing distance, and visual angle per GL unit
-  ObjTogl::theWidget = new ToglConfig(interp(), pathname,
+  ObjTogl::theWidget = new ToglConfig(interp(),
 												  config_argc, config_argv,
-												  viewing_dist, gl_unit_angle);
+												  pack);
 
   Tcl_Free((char*) config_argv);
 
   ObjTogl::theWidget->setDestroyCallback(new WidgetDestroyCallback);
-
-  if (pack) {
-	 dynamic_string pack_cmd_str = "pack ";
-	 pack_cmd_str += pathname;
-	 pack_cmd_str += " -expand 1 -fill both";
-	 Tcl::TclEvalCmd pack_cmd(pack_cmd_str.c_str(),
-									  Tcl::TclEvalCmd::THROW_EXCEPTION);
-	 pack_cmd.invoke(interp());
-  }
 
   toglCreated = true;
 
