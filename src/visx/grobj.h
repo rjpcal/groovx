@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu Jul  1 13:45:29 1999
+// written: Fri Sep 17 09:29:51 1999
 // $Id$
 //
 // This is the abstract base class for graphic objects. GrObj*'s may
@@ -36,6 +36,8 @@
 #include "observer.h"
 #endif
 
+class GrObjImpl;
+
 ///////////////////////////////////////////////////////////////////////
 // GrObj abstract class definition
 ///////////////////////////////////////////////////////////////////////
@@ -45,6 +47,37 @@ class GrObj : public virtual Observable,
 				  public virtual IO 
 {
 public:
+
+  /////////////////////////
+  // flags and constants //
+  /////////////////////////
+  typedef int GrObjRenderMode;
+
+  static const GrObjRenderMode GROBJ_DIRECT_RENDER = 1;
+  // In this mode, grRender() will be called every time the object is
+  // drawn.
+
+  static const GrObjRenderMode GROBJ_GL_COMPILE = 2;
+  static const GrObjRenderMode GROBJ_GL_BITMAP_CACHE = 3;
+  static const GrObjRenderMode GROBJ_X11_BITMAP_CACHE = 4;
+  // In these mode, grRender() is called on an draw request only if
+  // the object's state has changed since the last draw request. If it
+  // has not changed, then the object is instead rendered from either
+  // 1) a cached OpenGL display list, 2) a cached OpenGL bitmap, or 3)
+  // a cached X11 bitmap. The GROBJ_GL_COMPILE will function exactly
+  // the same as GROBJ_DIRECT_RENDER, except that drawing should be
+  // faster when the object's state is unchanged. The bitmap cache
+  // modes may also yield a speed increase, but carry the following
+  // caveats: 1) the object's size will not respond to OpenGL scaling
+  // or rotation requests, but will be fixed at the screen size at
+  // which the object was most recently direct-rendered; note that
+  // OpenGL translation requests will still work properly, and 2) in
+  // the X11 bitmap mode, the object will always be rendered into the
+  // front buffer, regardless of whether OpenGL double-buffering is
+  // being used.
+
+
+
   //////////////
   // creators //
   //////////////
@@ -65,9 +98,12 @@ public:
 
   virtual int charCount() const = 0;
 
+
   ///////////////
   // accessors //
   ///////////////
+
+  GrObjRenderMode getRenderMode() const;
 
   bool getUsingCompile() const;
 
@@ -76,9 +112,20 @@ public:
   // user-defined categories that can be used to classify different
   // GrObj objects.
 
+  virtual bool getBoundingBox(double& left, double& top,
+										double& right, double& bottom);
+  // Subclasses may override this function to fill in the parameters
+  // with the bounding box in GL coordinates for the object's onscreen
+  // image. The function returns true if a bounding box has provided,
+  // or false if no bounding box is available. The default
+  // implementation provided by GrObj returns false.
+
+
   //////////////////
   // manipulators //
   //////////////////
+
+  void setRenderMode(GrObjRenderMode mode);
 
   void setUsingCompile(bool val);
 
@@ -144,6 +191,8 @@ private:
   mutable bool itsIsCurrent;    // true if displaylist is current
   mutable bool itsUsingCompile; // true if GrObj is to be compiled before draw
   mutable int itsDisplayList;   // OpenGL display list that draws the object
+
+  GrObjImpl* const itsImpl;	  // opaque pointer to implementation
 };
 
 static const char vcid_grobj_h[] = "$Header$";
