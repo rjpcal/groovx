@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Sun Aug 19 15:51:16 2001
+// written: Sun Aug 19 16:39:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -221,11 +221,6 @@ private:
         master->refCounts() : 0;
     }
 
-    RefType refType() const
-    {
-      return (itsMaster && itsCounts) ? WEAK : STRONG;
-    }
-
   public:
     WeakHandle(T* master, RefType tp) :
        itsMaster(master),
@@ -263,6 +258,11 @@ private:
 
     T* get()     const         { ensureValid(); return itsMaster; }
     T* getWeak() const throw() { return isValid() ? itsMaster : 0; }
+
+    RefType refType() const
+	 {
+		return (itsMaster && !itsCounts) ? STRONG : WEAK;
+	 }
 
     bool operator==(const WeakHandle& other) const
     {
@@ -360,6 +360,8 @@ public:
   /** Returns the pointee, or returns null if there is not a valid
       pointee. Will not throw an exception. */
   T* getWeak() const throw() { return itsHandle.getWeak(); }
+
+  RefType refType() const { return itsHandle.refType(); }
 
   bool isValid() const { return itsHandle.isValid(); }
   bool isInvalid() const { return !(isValid()); }
