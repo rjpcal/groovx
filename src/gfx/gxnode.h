@@ -5,13 +5,17 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:26:45 2000
-// written: Fri May 11 20:21:36 2001
+// written: Mon Jun  4 18:50:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GXNODE_H_DEFINED
 #define GXNODE_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBSERVABLE_H_DEFINED)
+#include "util/observable.h"
+#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
 #include "io/io.h"
@@ -27,7 +31,9 @@ namespace GWT { class Canvas; }
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class GxNode : public virtual IO::IoObject {
+class GxNode : public virtual IO::IoObject,
+					public virtual Observable
+{
 private:
   GxNode(const GxNode&);
   GxNode& operator=(const GxNode&);
