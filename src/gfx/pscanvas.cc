@@ -35,6 +35,7 @@
 #include "gx/bmapdata.h"
 #include "gx/rect.h"
 #include "gx/rgbacolor.h"
+#include "gx/txform.h"
 #include "gx/vec2.h"
 #include "gx/vec3.h"
 
@@ -62,12 +63,12 @@ public:
   struct State
   {
     State() :
-      scale(1.0, 1.0),
+      txform(),
       lineWidth(1.0),
       polygonFill(false)
     {}
 
-    Vec2d scale;
+    Txform txform;
     double lineWidth; // in points
     bool polygonFill;
   };
@@ -356,26 +357,22 @@ public:
   {
     itsStates.pop_back();
     indent(); itsFstream << "grestore\n";
-    setlinewidth(state().lineWidth);
   }
 
   void translate(const Vec3d& v)
   {
-    indent(); pushxy(v); itsFstream << "translate\n";
+    state().txform.translate(v);
   }
 
   void scale(const Vec3d& v)
   {
-    indent(); pushxy(v); itsFstream << "scale\n";
-
-    state().scale *= Vec2d(v.x(), v.y());
-
-    setlinewidth(state().lineWidth);
+    state().txform.scale(v);
   }
 
-  void rotate(double angle)
+  void rotate(const Vec3d& axis, double angle)
   {
-    indent(); itsFstream << angle << " rotate\n";
+    Txform rotation(Vec3d(0, 0, 0), Vec3d(1, 1, 1), axis, angle);
+    state().txform.transform(rotation);
   }
 
   // NOTE: these next four functions must be non-templates in order to avoid
@@ -419,6 +416,9 @@ public:
       stroke();
   }
 
+#if 0
+  // WARNING! The arc() and arcn() functions won't work properly with
+  // maintaining our own 3-D coordinate transformation.
   void arc(double x, double y, double r, double start, double end,
            bool reverse=false)
   {
@@ -429,6 +429,12 @@ public:
       itsFstream << "arc\n";
     //      indent(); itsFstream << "4 { pop } repeat\n";
   }
+
+  void arcn(double x, double y, double r, double start, double end)
+  {
+    arc(x, y, r, start, end, true);
+  }
+#endif
 
   void circle(double x, double y, double r, bool reverse=false)
   {
@@ -471,11 +477,6 @@ public:
       }
   }
 
-  void arcn(double x, double y, double r, double start, double end)
-  {
-    arc(x, y, r, start, end, true);
-  }
-
   void bezier(const Vec3d& p1,
               const Vec3d& p2,
               const Vec3d& p3,
@@ -498,22 +499,11 @@ public:
     indent(); itsFstream << "stroke\n\n";
   }
 
-  double getLineScaleFactor()
-  {
-    const double factor =
-      (state().scale.abs().x() +
-       state().scale.abs().y()) / 2.0;
-
-    dbgEvalNL(3, factor);
-
-    return factor;
-  }
-
   void setlinewidth(double w)
   {
     state().lineWidth = w;
 
-    indent(); push1(w/getLineScaleFactor()); itsFstream << "setlinewidth\n";
+    indent(); push1(w); itsFstream << "setlinewidth\n";
   }
 
   void setdash(unsigned short bit_pattern)
@@ -551,14 +541,12 @@ public:
         lengths[0] += offset;
       }
 
-    double factor = getLineScaleFactor();
-
     indent();
 
     push1("[");
     for (int i = 0; i < pos; ++i)
       {
-        push1(lengths[i] / factor);
+        push1(lengths[i]);
       }
     push1("]");
 
@@ -591,12 +579,14 @@ public:
 
   void pushxy(const Vec2d& v)
   {
-    itsFstream << v.x() << " " << v.y() << " ";
+    Vec3d t = state().txform.applyTo(Vec3d(v.x(), v.y(), 0.0));
+    itsFstream << t.x() << " " << t.y() << " ";
   }
 
   void pushxy(const Vec3d& v)
   {
-    itsFstream << v.x() << " " << v.y() << " ";
+    Vec3d t = state().txform.applyTo(v);
+    itsFstream << t.x() << " " << t.y() << " ";
   }
 
   void raiseError(const fstring& msg)
@@ -873,10 +863,10 @@ DOTRACE("Gfx::PSCanvas::scale");
   rep->scale(v);
 }
 
-void Gfx::PSCanvas::rotate(const Vec3d&, double angle_in_degrees)
+void Gfx::PSCanvas::rotate(const Vec3d& axis, double angle_in_degrees)
 {
 DOTRACE("Gfx::PSCanvas::rotate");
-  rep->rotate(angle_in_degrees);
+  rep->rotate(axis, angle_in_degrees);
 }
 
 void Gfx::PSCanvas::transform(const Txform& /*tx*/)
