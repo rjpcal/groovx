@@ -659,40 +659,40 @@ DOTRACE("Gfx::PSCanvas::~PSCanvas");
   delete rep;
 }
 
-vec2i Gfx::PSCanvas::screenFromWorld(
+vec2i Gfx::PSCanvas::screenFromWorld2(
   const vec2d& /*world_pos*/
   ) const
 {
-DOTRACE("Gfx::PSCanvas::screenFromWorld(vec2d)");
+DOTRACE("Gfx::PSCanvas::screenFromWorld2");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
   return vec2i();
 }
 
-vec2d Gfx::PSCanvas::worldFromScreen(
+vec2d Gfx::PSCanvas::worldFromScreen2(
   const vec2i& /*screen_pos*/
   ) const
 {
-DOTRACE("Gfx::PSCanvas::worldFromScreen(vec2i)");
+DOTRACE("Gfx::PSCanvas::worldFromScreen2");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
   return vec2d();
 }
 
 
-geom::rect<int> Gfx::PSCanvas::screenFromWorld(
+geom::rect<int> Gfx::PSCanvas::screenFromWorldRect(
   const geom::rect<double>& /*world_pos*/) const
 {
-DOTRACE("Gfx::PSCanvas::screenFromWorld(geom::rect)");
+DOTRACE("Gfx::PSCanvas::screenFromWorldRect");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
   return geom::rect<int>();
 }
 
-geom::rect<double> Gfx::PSCanvas::worldFromScreen(
+geom::rect<double> Gfx::PSCanvas::worldFromScreenRect(
   const geom::rect<int>& /*screen_pos*/) const
 {
-DOTRACE("Gfx::PSCanvas::worldFromScreen(geom::rect)");
+DOTRACE("Gfx::PSCanvas::worldFromScreenRect");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
   return geom::rect<double>();

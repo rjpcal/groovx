@@ -105,28 +105,28 @@ void Gfx::Bbox::pop()
   rep->txforms.pop_back();
 }
 
-vec2i Gfx::Bbox::screenFromWorld(const vec2d& world_pos) const
+vec2i Gfx::Bbox::screenFromWorld2(const vec2d& world_pos) const
 {
   // FIXME need to install our own modelview matrix here first...
-  return rep->canvas.screenFromWorld(world_pos);
+  return rep->canvas.screenFromWorld2(world_pos);
 }
 
-vec2d Gfx::Bbox::worldFromScreen(const vec2i& screen_pos) const
+vec2d Gfx::Bbox::worldFromScreen2(const vec2i& screen_pos) const
 {
   // FIXME need to install our own modelview matrix here first...
-  return rep->canvas.worldFromScreen(screen_pos);
+  return rep->canvas.worldFromScreen2(screen_pos);
 }
 
-geom::rect<int> Gfx::Bbox::screenFromWorld(const geom::rect<double>& world_pos) const
+geom::rect<int> Gfx::Bbox::screenFromWorldRect(const geom::rect<double>& world_pos) const
 {
   // FIXME need to install our own modelview matrix here first...
-  return rep->canvas.screenFromWorld(world_pos);
+  return rep->canvas.screenFromWorldRect(world_pos);
 }
 
-geom::rect<double> Gfx::Bbox::worldFromScreen(const geom::rect<int>& screen_pos) const
+geom::rect<double> Gfx::Bbox::worldFromScreenRect(const geom::rect<int>& screen_pos) const
 {
   // FIXME need to install our own modelview matrix here first...
-  return rep->canvas.worldFromScreen(screen_pos);
+  return rep->canvas.worldFromScreenRect(screen_pos);
 }
 
 void Gfx::Bbox::translate(const vec3d& v)

@@ -187,7 +187,7 @@ DOTRACE("Gabor::grGetBoundingBox");
 
   const vec2d world_origin(0.0, 0.0);
 
-  const vec2i screen_origin = bbox.screenFromWorld(world_origin);
+  const vec2i screen_origin = bbox.screenFromWorld2(world_origin);
 
   const vec2i size(itsResolution * itsPointSize,
                    itsResolution * itsPointSize);
@@ -195,7 +195,7 @@ DOTRACE("Gabor::grGetBoundingBox");
   const geom::rect<int> screen_rect =
     geom::rect<int>().set_lbwh(screen_origin, size);
 
-  const geom::rect<double> world_rect = bbox.worldFromScreen(screen_rect);
+  const geom::rect<double> world_rect = bbox.worldFromScreenRect(screen_rect);
 
   bbox.drawRect(world_rect);
 }

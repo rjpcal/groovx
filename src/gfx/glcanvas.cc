@@ -113,9 +113,9 @@ DOTRACE("GLCanvas::drawBufferBack");
   glDrawBuffer(GL_BACK);
 }
 
-vec2i GLCanvas::screenFromWorld(const vec2d& world_pos) const
+vec2i GLCanvas::screenFromWorld2(const vec2d& world_pos) const
 {
-DOTRACE("GLCanvas::screenFromWorld(geom::vec2)");
+DOTRACE("GLCanvas::screenFromWorld2");
 
   GLdouble current_mv_matrix[16];
   GLdouble current_proj_matrix[16];
@@ -135,15 +135,15 @@ DOTRACE("GLCanvas::screenFromWorld(geom::vec2)");
   dbg_eval_nl(3, status);
 
   if (status == GL_FALSE)
-    throw rutz::error("GLCanvas::screenFromWorld(): gluProject error",
+    throw rutz::error("GLCanvas::screenFromWorld2(): gluProject error",
                       SRC_POS);
 
   return vec2i(int(temp_screen_x), int(temp_screen_y));
 }
 
-vec2d GLCanvas::worldFromScreen(const vec2i& screen_pos) const
+vec2d GLCanvas::worldFromScreen2(const vec2i& screen_pos) const
 {
-DOTRACE("GLCanvas::worldFromScreen(geom::vec2)");
+DOTRACE("GLCanvas::worldFromScreen2");
 
   dbg_eval(3, screen_pos.x()); dbg_eval_nl(3, screen_pos.y());
 
@@ -167,31 +167,31 @@ DOTRACE("GLCanvas::worldFromScreen(geom::vec2)");
   dbg_eval_nl(3, status);
 
   if (status == GL_FALSE)
-    throw rutz::error("GLCanvas::worldFromScreen(): gluUnProject error",
+    throw rutz::error("GLCanvas::worldFromScreen2(): gluUnProject error",
                       SRC_POS);
 
   return world_pos;
 }
 
 
-geom::rect<int> GLCanvas::screenFromWorld(const geom::rect<double>& world_pos) const
+geom::rect<int> GLCanvas::screenFromWorldRect(const geom::rect<double>& world_pos) const
 {
-DOTRACE("GLCanvas::screenFromWorld(geom::rect)");
+DOTRACE("GLCanvas::screenFromWorldRect");
 
   geom::rect<int> screen_rect;
-  screen_rect.set_corners( screenFromWorld(world_pos.bottom_left()),
-                           screenFromWorld(world_pos.top_right()) +
+  screen_rect.set_corners( screenFromWorld2(world_pos.bottom_left()),
+                           screenFromWorld2(world_pos.top_right()) +
                            vec2i(1,1) );
   return screen_rect;
 }
 
-geom::rect<double> GLCanvas::worldFromScreen(const geom::rect<int>& screen_pos) const
+geom::rect<double> GLCanvas::worldFromScreenRect(const geom::rect<int>& screen_pos) const
 {
-DOTRACE("GLCanvas::worldFromScreen(geom::rect)");
+DOTRACE("GLCanvas::worldFromScreenRect");
 
   geom::rect<double> world_rect;
-  world_rect.set_corners( worldFromScreen(screen_pos.bottom_left()),
-                          worldFromScreen(screen_pos.top_right()) );
+  world_rect.set_corners( worldFromScreen2(screen_pos.bottom_left()),
+                          worldFromScreen2(screen_pos.top_right()) );
   return world_rect;
 }
 
@@ -206,7 +206,7 @@ geom::rect<int> GLCanvas::getScreenViewport() const
 
 geom::rect<double> GLCanvas::getWorldViewport() const
 {
-  return worldFromScreen(getScreenViewport());
+  return worldFromScreenRect(getScreenViewport());
 }
 
 
@@ -493,7 +493,7 @@ DOTRACE("GLCanvas::rasterPos");
 
   const geom::rect<int> viewport = getScreenViewport();
 
-  const vec2i screen_pos = screenFromWorld(world_pos);
+  const vec2i screen_pos = screenFromWorld2(world_pos);
 
   if (viewport.contains(screen_pos))
     {
@@ -511,7 +511,7 @@ DOTRACE("GLCanvas::rasterPos");
       // (0,0). Then we do a glBitmap() call whose only purpose is to
       // use the "xmove" and "ymove" arguments to adjust the raster
       // position.
-      const vec2d lower_left = worldFromScreen(vec2i(0,0));
+      const vec2d lower_left = worldFromScreen2(vec2i(0,0));
       dbg_eval(3, lower_left.x()); dbg_eval_nl(3, lower_left.y());
       glRasterPos2d(lower_left.x(), lower_left.y());
       glBitmap(0, 0, 0.0f, 0.0f,

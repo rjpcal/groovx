@@ -375,7 +375,7 @@ void GxPixmap::grabWorldRect(Nub::SoftRef<Gfx::Canvas> canvas,
 {
 DOTRACE("GxPixmap::grabWorldRect");
 
-  geom::rect<int> screen_rect = canvas->screenFromWorld(world_rect);
+  geom::rect<int> screen_rect = canvas->screenFromWorldRect(world_rect);
 
   grabScreenRect(canvas, screen_rect);
 
@@ -439,11 +439,11 @@ DOTRACE("GxPixmap::grGetBoundingBox");
   using geom::vec2d;
 
   // Get the corners in screen coordinates
-  vec2i bottom_left(bbox.screenFromWorld(vec2d()));
+  vec2i bottom_left(bbox.screenFromWorld2(vec2d()));
   vec2i top_right  (vec2d(bottom_left) + (vec2d(size()) * getZoom()));
 
   bbox.vertex2(vec2d());
-  bbox.vertex2(bbox.worldFromScreen(top_right));
+  bbox.vertex2(bbox.worldFromScreen2(top_right));
 }
 
 geom::vec2<int> GxPixmap::size() const

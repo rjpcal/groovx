@@ -372,13 +372,13 @@ DOTRACE("AglRasterFont::bboxOf");
   dbg_eval(2, desc);
   dbg_eval_nl(2, maxwid);
 
-  geom::rect<int> screen = bbox.screenFromWorld(geom::rect<double>());
+  geom::rect<int> screen = bbox.screenFromWorldRect(geom::rect<double>());
 
   screen.right() += maxwid;
   screen.bottom() -= itsFontInfo.descent + (lines - 1) * (rasterHeight());
   screen.top() += itsFontInfo.ascent;
 
-  bbox.drawRect(bbox.worldFromScreen(screen));
+  bbox.drawRect(bbox.worldFromScreenRect(screen));
 }
 
 void AglRasterFont::drawText(const char* text, Gfx::Canvas& canvas) const

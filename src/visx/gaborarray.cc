@@ -266,12 +266,12 @@ DOTRACE("GaborArray::grGetBoundingBox");
 
   const vec2d world_origin(0.0, 0.0);
 
-  const vec2i screen_origin = bbox.screenFromWorld(world_origin);
+  const vec2i screen_origin = bbox.screenFromWorld2(world_origin);
 
   geom::rect<int> screen_rect;
   screen_rect.set_lbwh(screen_origin, vec2i(itsSizeX, itsSizeY));
 
-  geom::rect<double> world_rect = bbox.worldFromScreen(screen_rect);
+  geom::rect<double> world_rect = bbox.worldFromScreenRect(screen_rect);
 
   bbox.drawRect(world_rect);
 }

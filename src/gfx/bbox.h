@@ -62,13 +62,13 @@ public:
   void push();
   void pop();
 
-  geom::vec2<int> screenFromWorld(const geom::vec2<double>& world_pos) const;
+  geom::vec2<int> screenFromWorld2(const geom::vec2<double>& world_pos) const;
 
-  geom::vec2<double> worldFromScreen(const geom::vec2<int>& screen_pos) const;
+  geom::vec2<double> worldFromScreen2(const geom::vec2<int>& screen_pos) const;
 
-  geom::rect<int> screenFromWorld(const geom::rect<double>& world_pos) const;
+  geom::rect<int> screenFromWorldRect(const geom::rect<double>& world_pos) const;
 
-  geom::rect<double> worldFromScreen(const geom::rect<int>& screen_pos) const;
+  geom::rect<double> worldFromScreenRect(const geom::rect<int>& screen_pos) const;
 
   void translate(const geom::vec3<double>& v);
   void scale(const geom::vec3<double>& v);
