@@ -3,7 +3,7 @@
 // poslist.h
 // Rob Peters
 // created: Fri Mar 12 17:13:53 1999
-// written: Mon May 15 19:32:20 2000
+// written: Mon May 15 22:26:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,10 @@ private:
 
 protected:
   /// Construct and reserve space for \a size objects.
-  PosList(int size) : Base(size) {}
+  PosList(int size);
+
+  /// Virtual destructor.
+  virtual ~PosList();
 
 public:
   /// Returns a reference to the singleton instance.

@@ -3,7 +3,7 @@
 // objlist.h 
 // Rob Peters
 // Created: Nov-98
-// written: Mon May 15 19:33:50 2000
+// written: Mon May 15 22:28:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,10 @@ private:
 
 protected:
   /// Construct and reserve space for \a size objects.
-  ObjList (int size) : Base(size) {}
+  ObjList (int size);
+
+  /// Virtual destructor.
+  virtual ~ObjList();
 
 public:
   /// Returns a reference to the singleton instance.
