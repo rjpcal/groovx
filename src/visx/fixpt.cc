@@ -2,7 +2,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 12:57:46 1999
+// written: Sat Mar 13 14:36:26 1999
 static const char vcid_fixpt_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
@@ -33,7 +33,7 @@ IOResult FixPt::serialize(ostream &os, IOFlag flag) const {
   if (flag & IO::BASES) { GrObj::serialize(os, flag); }
 
   char sep = ' ';
-  if (flag & IO::TYPENAME) { os << typeid(this).name() << sep; }
+  if (flag & IO::TYPENAME) { os << typeid(FixPt).name() << sep; }
 
   os << itsLength << sep;
   os << itsWidth << endl;
@@ -45,7 +45,7 @@ IOResult FixPt::deserialize(istream &is, IOFlag flag) {
   if (flag & IO::TYPENAME) {
 	 string name;
 	 is >> name;
-	 if (name != string(typeid(this).name())) { return IO_ERROR; }
+	 if (name != string(typeid(FixPt).name())) { return IO_ERROR; }
   }
   is >> itsLength;
   is >> itsWidth;
