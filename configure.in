@@ -1,6 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl Copyright (c) 2002-2004 Rob Peters rjpeters at klab dot caltech dot edu
+dnl Copyright (c) 2002-2005
+dnl Rob Peters rjpeters at klab dot caltech dot edu
 dnl
 dnl $Revision$
 dnl

@@ -6,7 +6,7 @@
 # "Makefile.in", then it is a template for the real Makefile, so to
 # generate the real Makefile, run the "configure" script.
 #
-# Copyright (c) 1998-2004 Rob Peters <rjpeters at klab dot caltech dot edu>
+# Copyright (c) 1998-2005 Rob Peters <rjpeters at klab dot caltech dot edu>
 #
 # $Id$
 #
@@ -409,10 +409,13 @@ benchmarks: $(EXECUTABLE)
 
 # Remove all backups, temporaries, and coredumps
 neat:
-	find . -name \*~ -exec rm -f {} \;
-	find . -name \#~ -exec rm -f {} \;
-	find . -name .\#\* -exec rm -f {} \;
-	rm -f ./expt_2004*.gvx ./expt_2004*.resp ./expt_2004*.log prof.out tclprof.out ./core*
+	find . -name \*~ -exec rm -fv {} \;
+	find . -name \#~ -exec rm -fv {} \;
+	find . -name .\#\* -exec rm -fv {} \;
+	rm -fv ./expt_2005*.{gvx,resp,log} \
+		prof.out \
+		tclprof.out \
+		./core*
 
 # Make neat, and also remove all intermediate build files
 cleaner: neat

@@ -2,7 +2,7 @@
 //
 // cppdeps.cc
 //
-// Copyright (c) 2003-2004 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2003-2005 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 16 15:47:10 2003
 // commit: $Id$

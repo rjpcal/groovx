@@ -2,7 +2,8 @@
 # \
     exec `dirname $0`/groovx "$0" "$@"
 
-# Copyright (c) 2002-2004 Rob Peters <rjpeters at klab dot caltech dot edu>
+# Copyright (c) 2002-2005
+# Rob Peters <rjpeters at klab dot caltech dot edu>
 
 # $Id$
 

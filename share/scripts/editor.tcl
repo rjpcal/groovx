@@ -2,7 +2,8 @@
 #
 # editor.tcl
 #
-# Copyright (c) 1999-2004 Rob Peters <rjpeters at klab dot caltech dot edu>
+# Copyright (c) 1999-2005
+# Rob Peters <rjpeters at klab dot caltech dot edu>
 #
 # $Id$
 #

@@ -2,7 +2,8 @@
 //
 // enumeration.h
 //
-// Copyright (c) 2004-2004 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2004-2005
+// Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon May 31 14:19:07 2004
 // commit: $Id$

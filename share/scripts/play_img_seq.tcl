@@ -1,6 +1,7 @@
 #!/usr/bin/env groovx
 
-# Copyright (c) 2004-2004 Rob Peters <rjpeters at klab dot caltech dot edu>
+# Copyright (c) 2004-2005
+# Rob Peters <rjpeters at klab dot caltech dot edu>
 
 # $Id$
 

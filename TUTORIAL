@@ -2,7 +2,7 @@
 #
 # Ad-hoc tutorial information
 #
-# Copyright (c) 1998-2004 Rob Peters rjpeters at klab dot caltech dot edu
+# Copyright (c) 1998-2005 Rob Peters rjpeters at klab dot caltech dot edu
 #
 # $Id$
 #
@@ -152,8 +152,8 @@ Table of contents:
 
      [sideswipe 13:26 53]$ groovx
 
-     GroovX 1.0a1 (Oct  5 2004)
-     Copyright (c) 1998-2004 Rob Peters <rjpeters at klab dot caltech dot edu>
+     GroovX 1.0a1 (Feb 22 2005)
+     Copyright (c) 1998-2005 Rob Peters <rjpeters at klab dot caltech dot edu>
      GroovX is free software, covered by the GNU General Public License, and you are
      welcome to change it and/or distribute copies of it under certain conditions.
              startup time (tcl+tk)  0.160s (user)  0.019s (sys)  0.198s (wall)
