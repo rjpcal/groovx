@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Tue Oct 24 18:07:16 2000
+// written: Tue Oct 24 18:53:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,7 +82,7 @@ public:
 protected:
   virtual void invoke() {
 	 C* p = TclItemCmd<C>::getItem();
-	 p->incrRefCount();
+	 p->incrRefCount2();
   }
 };
 
@@ -102,7 +102,7 @@ public:
 protected:
   virtual void invoke() {
 	 C* p = TclItemCmd<C>::getItem();
-	 p->decrRefCount();
+	 p->decrRefCount2();
   }
 };
 
