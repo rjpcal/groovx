@@ -584,7 +584,7 @@ GLBMAPRENDERER_CC = $(GLBMAPRENDERER_H) $(TRACE_H) glbmaprenderer.cc
 GLCANVAS_CC = $(GLCANVAS_H) $(ERROR_H) $(POINT_H) $(RECT_H) \
 	$(DEBUG_H) $(TRACE_H) glcanvas.cc
 
-GROBJ_CC = $(GROBJ_H) $(BITMAPREP_H) $(CANVAS_H) \
+GROBJ_CC = $(GROBJ_H) $(BITMAPREP_H) $(CANVAS_H) $(GLCANVAS_H) \
 	$(GLBMAPRENDERER_H) $(ERROR_H) $(RECT_H) $(READER_H) \
 	$(WRITER_H) $(XBMAPRENDERER_H) $(TRACE_H) $(DEBUG_H) grobj.cc
 
@@ -756,7 +756,8 @@ TLIST_CC = $(TLIST_H) $(TRIAL_H) $(TRACE_H) $(DEBUG_H) \
 TLISTTCL_CC = $(TLIST_H) $(TCLCMD_H) $(LISTPKG_H) \
 	$(TLISTUTILS_H) $(TRACE_H) $(DEBUG_H) tlisttcl.cc
 
-TLISTUTILS_CC = $(TLISTUTILS_H) $(ERROR_H) $(GTEXT_H) $(OBJLIST_H) \
+TLISTUTILS_CC = $(TLISTUTILS_H) $(ERROR_H) $(GLCANVAS_H) \
+	$(GTEXT_H) $(OBJLIST_H) \
 	$(POSITION_H) $(POSLIST_H) $(RECT_H) $(TRIAL_H) $(TLIST_H) \
 	$(TRACE_H) $(DEBUG_H) tlistutils.cc
 
@@ -941,11 +942,12 @@ cleaner: clean
 	rm -f *.o
 
 # Generate TAGS file based on all source files
-TAGS: *\.[ch]*
+TAGS_FILES = *\.[ch]* util/*\.[ch]*
+TAGS: $(TAGS_FILES)
 ifeq ($(ARCH),hp9000s700)
-	echo 'etags *\.[ch]*'
+	echo 'etags $(TAGS_FILES)'
 else
-	etags *\.[ch]*
+	etags $(TAGS_FILES)
 endif
 
 # Start emacs and load all source files and Makefile
