@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 20 09:12:51 2001
-// written: Wed Jun 20 17:14:26 2001
+// written: Wed Jun 20 17:57:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,9 @@ namespace Util
     bool opened;
     int mode;
     gzFile file;
+
+    gzstreambuf(const gzstreambuf&);
+    gzstreambuf& operator=(const gzstreambuf&);
 
     static const int bufSize = 4092;
     static const int pbackSize = 4;
