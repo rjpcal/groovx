@@ -23,6 +23,8 @@ dnl Checks for libraries.
 dnl Checks for header files.
 AC_PATH_XTRA
 
+### Check for audio header files and libraries
+
 AC_CHECK_HEADERS([limits iosfwd iostream fstream sstream])
 AC_CHECK_HEADER([dmedia/audio.h],
 		[AC_DEFINE(HAVE_DMEDIA_AUDIO_H,1)
@@ -34,6 +36,8 @@ AC_CHECK_HEADER([Alib.h],
 AC_CHECK_HEADER([esd.h],
 		[AC_DEFINE(HAVE_ESD_H,1)
 		 LIBS="$LIBS -lesd -laudiofile"])
+
+### Check support for c++ iostreams
 
 AC_MSG_CHECKING([whether c++ compiler supports standard iostreams])
 
@@ -60,6 +64,16 @@ if test $have_std_io = yes; then
 else
    AC_DEFINE(STD_IO, [])
 fi
+
+###
+
+AC_MSG_CHECKING([whether OpenGL implementation is Mesa])
+
+# display lists don't work at present with i686/linux/mesa
+
+AC_EGREP_HEADER(MESA, [GL/gl.h],
+		[AC_DEFINE(BROKEN_GL_DISPLAY_LISTS,1) AC_MSG_RESULT(yes)],
+		AC_MSG_RESULT(no))
 
 dnl AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h)
 
