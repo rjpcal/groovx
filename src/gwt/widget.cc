@@ -48,7 +48,11 @@ public:
 
 namespace
 {
-  Util::Ref<EmptyNode> theEmptyNode(EmptyNode::make());
+  Util::Ref<EmptyNode> getEmptyNode()
+  {
+    static Util::Ref<EmptyNode> node(EmptyNode::make());
+    return node;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -62,8 +66,8 @@ class GWT::Widget::Impl : public Util::VolatileObject
 public:
   Impl(GWT::Widget* owner) :
     itsOwner(owner),
-    itsDrawNode(theEmptyNode),
-    itsUndrawNode(theEmptyNode),
+    itsDrawNode(getEmptyNode()),
+    itsUndrawNode(getEmptyNode()),
     isItVisible(false),
     isItHolding(false),
     isItRefreshing(true),
@@ -87,8 +91,8 @@ public:
   void clearscreen(Gfx::Canvas& canvas)
   {
     canvas.clearColorBuffer();
-    setDrawable(theEmptyNode);
-    itsUndrawNode = theEmptyNode;
+    setDrawable(getEmptyNode());
+    itsUndrawNode = getEmptyNode();
     isItVisible = false;
   }
 
@@ -100,7 +104,6 @@ public:
 
   void setVisibility(bool val)
   {
-    DOTRACE("GWT::Widget::Impl::setVisibility");
     isItVisible = val;
     if ( !isItVisible )
       {
@@ -125,7 +128,6 @@ public:
 
   void onNodeChange()
   {
-    DOTRACE("GWT::Widget::Impl::onNodeChange");
     isItRefreshed = false;
     flushChanges();
   }
@@ -133,7 +135,6 @@ public:
 private:
   void doFlush(Gfx::Canvas& canvas)
   {
-    DOTRACE("GWT::Widget::Impl::doFlush");
     if (canvas.isDoubleBuffered())
       {
         itsOwner->swapBuffers();
