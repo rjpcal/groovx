@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Thu May 25 12:49:55 2000
+// written: Thu May 25 15:52:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "toglconfig.h"
 
 #include "glcanvas.h"
+#include "xbmaprenderer.h"
 
 #include "tcl/tclevalcmd.h"
 
@@ -65,6 +66,14 @@ namespace ToglConfig_Impl {
 
 namespace {
 
+  void toglDestroyCallback(Togl* togl) {
+  DOTRACE("toglDestroyCallback");
+	 DebugEvalNL((void*)togl);
+	 ToglConfig* config = static_cast<ToglConfig*>(togl->getClientData());
+	 DebugEvalNL((void*)config);
+	 delete config;
+  }
+
   void dummyEventProc(ClientData clientData, XEvent* eventPtr) {
   DOTRACE("dummyEventProc");
     DebugEvalNL(clientData);
@@ -92,9 +101,11 @@ namespace {
 //
 ///////////////////////////////////////////////////////////////////////
 
-ToglConfig::ToglConfig(Togl* togl, double dist, double unit_angle) :
+ToglConfig::ToglConfig(Tcl_Interp* interp, const char* pathname,
+							  int config_argc, char** config_argv,
+							  double dist, double unit_angle) :
   itsCanvas(new GLCanvas),
-  itsWidget(togl),
+  itsWidget(new Togl(interp, pathname, config_argc, config_argv)),
   itsViewingDistance(dist), 
   itsFixedScaleFlag(true),
   itsFixedScale(1.0),
@@ -102,7 +113,8 @@ ToglConfig::ToglConfig(Togl* togl, double dist, double unit_angle) :
   itsFontListBase(0),
   itsUsingRgba(false),
   itsHasPrivateCmap(false),
-  itsIsDoubleBuffered(false)
+  itsIsDoubleBuffered(false),
+  itsDestroyCallback(0)
 {
 DOTRACE("ToglConfig::ToglConfig"); 
   DebugEvalNL((void*) this);
@@ -111,6 +123,7 @@ DOTRACE("ToglConfig::ToglConfig");
 
   itsWidget->setReshapeFunc(ToglConfig_Impl::dummyReshapeCallback);
   itsWidget->setDisplayFunc(ToglConfig_Impl::dummyDisplayCallback);
+  itsWidget->setDestroyFunc(toglDestroyCallback);
   
   setUnitAngle(unit_angle);
 
@@ -128,18 +141,23 @@ DOTRACE("ToglConfig::ToglConfig");
       glIndexi(1);
     }
     else {
-      glClearIndex(togl->allocColor(0.0, 0.0, 0.0));
-      glIndexi(togl->allocColor(1.0, 1.0, 1.0));
+      glClearIndex(itsWidget->allocColor(0.0, 0.0, 0.0));
+      glIndexi(itsWidget->allocColor(1.0, 1.0, 1.0));
     }
   }
 
   Tk_Window tkwin = itsWidget->tkWin();
   Tk_CreateEventHandler(tkwin, ButtonPressMask, dummyEventProc,
 								static_cast<void*>(this));
+
+  XBmapRenderer::initClass(tkwin);
 }
 
 ToglConfig::~ToglConfig() {
 DOTRACE("ToglConfig::~ToglConfig");
+  if (itsDestroyCallback.get() != 0)
+	 itsDestroyCallback->onDestroy(this);
+
   itsWidget->setClientData(static_cast<ClientData>(0));
   itsWidget->setReshapeFunc(0);
   itsWidget->setDisplayFunc(0);
@@ -214,11 +232,6 @@ DOTRACE("ToglConfig::getIntParam");
   }
   Tcl_DecrRefCount(obj);
   return value;
-}
-
-Togl* ToglConfig::getTogl() const {
-DOTRACE("ToglConfig::getTogl");
-  return itsWidget; 
 }
 
 int ToglConfig::getHeight() const {
@@ -385,14 +398,23 @@ DOTRACE("ToglConfig::setMinRectLTRB");
 
 void ToglConfig::setHeight(int val) {
 DOTRACE("ToglConfig::setHeight");
+  // This automatically triggers a ConfigureNotify/Expose event pair
+  // through the Togl/Tk machinery
   setIntParam(itsWidget, "height", val);
-  reconfigure();
 }
 
 void ToglConfig::setWidth(int val) {
 DOTRACE("ToglConfig::setWidth");
+  // This automatically triggers a ConfigureNotify/Expose event pair
+  // through the Togl/Tk machinery
   setIntParam(itsWidget, "width", val);
-  reconfigure();
+}
+
+ToglConfig::DestroyCallback::~DestroyCallback() {}
+
+void ToglConfig::setDestroyCallback(DestroyCallback* callback) {
+DOTRACE("ToglConfig::setDestroyCallback");
+  itsDestroyCallback.reset(callback); 
 }
 
 /////////////
