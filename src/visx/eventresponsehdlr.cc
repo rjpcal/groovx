@@ -183,9 +183,9 @@ public:
 
   void becomeActive(Util::SoftRef<Toglet> widget, Trial& trial) const
   {
-    Util::log( fstring("binding to ", itsCmdCallback->name()) );
+    Util::log( fstring("binding to ", itsCallbackName) );
 
-    fstring script(itsCmdCallback->name(), ' ', (int)itsOwner->id());
+    fstring script(itsCallbackName, ' ', (int)itsOwner->id());
     script.append(" [list ", itsBindingSubstitution, ']');
 
     itsState.reset(new ActiveState(this, widget, trial,
@@ -216,6 +216,7 @@ public:
 
   Tcl::Interp itsInterp;
 
+  fstring itsCallbackName;
   shared_ptr<Tcl::Command> itsCmdCallback;
 
   FeedbackMap itsFeedbackMap;
@@ -249,8 +250,9 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner) :
   itsOwner(owner),
   itsState(0),
   itsInterp(Tcl::Main::interp()),
+  itsCallbackName(uniqCmdName("handler")),
   itsCmdCallback(Tcl::makeCmd(itsInterp, &handleResponseCallback,
-                              uniqCmdName("handler").c_str(), "<private>")),
+                              itsCallbackName.c_str(), "<private>")),
   itsFeedbackMap(),
   itsEventSequence("<KeyPress>"),
   itsBindingSubstitution("%K"),

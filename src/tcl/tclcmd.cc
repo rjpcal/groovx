@@ -104,8 +104,7 @@ public:
     usage(usg ? usg : ""),
     objcMin(objc_min < 0 ? 0 : (unsigned int) objc_min),
     objcMax( (objc_max > 0) ? (unsigned int) objc_max : objcMin),
-    exactObjc(exact_objc),
-    overloads(0)
+    exactObjc(exact_objc)
   {}
 
   ~Impl() throw() {}
@@ -117,7 +116,6 @@ public:
   const unsigned int objcMin;
   const unsigned int objcMax;
   const bool exactObjc;
-  CommandGroup* overloads;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -126,18 +124,13 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::Command::Command(Tcl::Interp& interp,
-                      shared_ptr<Tcl::Callback> callback,
+Tcl::Command::Command(shared_ptr<Tcl::Callback> callback,
                       const char* cmd_name, const char* usage,
                       int objc_min, int objc_max, bool exact_objc)
   :
   rep(new Impl(callback, cmd_name, usage, objc_min, objc_max, exact_objc))
 {
 DOTRACE("Tcl::Command::Command");
-
-  rep->overloads = Tcl::CommandGroup::make(interp, cmd_name);
-
-  Assert(rep->overloads != 0);
 }
 
 shared_ptr<Tcl::Command> Tcl::Command::make(
@@ -147,12 +140,25 @@ shared_ptr<Tcl::Command> Tcl::Command::make(
           int objc_min, int objc_max, bool exact_objc)
 {
 DOTRACE("Tcl::Command::make");
-  shared_ptr<Command> cmd( new Command(interp, callback,
+
+  CommandGroup* const group =
+    Tcl::CommandGroup::make(interp, cmd_name);
+
+  Assert(group != 0);
+
+  shared_ptr<Command> cmd( new Command(callback,
                                        cmd_name, usage,
                                        objc_min, objc_max,
                                        exact_objc) );
 
-  cmd->rep->overloads->add(cmd);
+  // We don't want to have to keep 'group' as a member of Tcl::Command
+  // since it involves circular references -- Tcl::CommandGroup keeps a
+  // list of Tcl::Command objects, so we'd prefer not to have a
+  // back-reference here. If it becomes necessary to keep a back-reference,
+  // then there needs to be a way for Tcl::CommandGroup to notify its
+  // Tcl::Command list that it is destructing, so that the Tcl::Command
+  // objects can "forget" their back-reference.
+  group->add(cmd);
 
   return cmd;
 }
@@ -161,17 +167,7 @@ Tcl::Command::~Command() throw()
 {
 DOTRACE("Tcl::Command::~Command");
 
-//   rep->overloads->remove(this);
-
-//   rep->overloads = 0;
-
   delete rep;
-}
-
-const fstring& Tcl::Command::name() const
-{
-DOTRACE("Tcl::Command::name");
-  return rep->overloads->cmdName();
 }
 
 bool Tcl::Command::allowsObjc(unsigned int objc) const
@@ -190,13 +186,10 @@ bool Tcl::Command::rejectsObjc(unsigned int objc) const
   return !allowsObjc(objc);
 }
 
-fstring Tcl::Command::rawUsage() const
+fstring Tcl::Command::usageString() const
 {
-DOTRACE("Tcl::Command::rawUsage");
-  fstring result(rep->overloads->cmdName());
-  if (!rep->usage.is_empty())
-    result.append(" ", rep->usage);
-  return result;
+DOTRACE("Tcl::Command::usageString");
+  return rep->usage;
 }
 
 void Tcl::Command::call(Tcl::Interp& interp,

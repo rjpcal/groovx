@@ -91,7 +91,6 @@ Tcl::CommandGroup::~CommandGroup() throw()
 {
 DOTRACE("Tcl::CommandGroup::~CommandGroup");
 
-//   Assert( rep->cmdList.empty() );
   Assert( rep->cmdToken == 0 );
 
   Tcl_DeleteExitHandler(&cExitCallback,
@@ -152,6 +151,15 @@ const fstring& Tcl::CommandGroup::cmdName() const
   return rep->cmdName;
 }
 
+namespace
+{
+  void appendUsage(fstring& dest, const fstring& usage)
+  {
+    if (!usage.is_empty())
+      dest.append(" ", usage);
+  }
+}
+
 fstring Tcl::CommandGroup::usage() const
 {
 DOTRACE("Tcl::CommandGroup::usage");
@@ -163,7 +171,8 @@ DOTRACE("Tcl::CommandGroup::usage");
 
   while (true)
     {
-      result.append("\t", (*itr)->rawUsage());
+      result.append("\t", rep->cmdName);
+      appendUsage(result, (*itr)->usageString());
       if (++itr != end)
         result.append("\n");
       else
@@ -180,7 +189,9 @@ DOTRACE("Tcl::CommandGroup::usageWarning");
 
   if (rep->cmdList.size() == 1)
     {
-      warning.append("\"", rep->cmdList.front()->rawUsage(), "\"");
+      warning.append("\"", rep->cmdName);
+      appendUsage(warning, rep->cmdList.front()->usageString());
+      warning.append("\"");
     }
   else
     {
@@ -191,7 +202,9 @@ DOTRACE("Tcl::CommandGroup::usageWarning");
            itr != end;
            ++itr)
         {
-          warning.append("\n\t\"", (*itr)->rawUsage(), "\"");
+          warning.append("\n\t\"", rep->cmdName);
+          appendUsage(warning, (*itr)->usageString());
+          warning.append("\"");
         }
     }
 

@@ -91,12 +91,6 @@ public:
 
 class Tcl::Command
 {
-protected:
-  Command(Tcl::Interp& interp,
-          shared_ptr<Tcl::Callback> callback,
-          const char* cmd_name, const char* usage,
-          int objc_min=0, int objc_max=-1, bool exact_objc=false);
-
 public:
   /// Construct with basic properties for the command.
   /** If \a exact_objc is true, then the \a objc of a command invocation is
@@ -113,11 +107,8 @@ public:
   /// Virtual destructor ensures proper destruction of subclasses.
   ~Command() throw();
 
-  /// Returns the command registered name.
-  const fstring& name() const;
-
-  /// Returns a string describing this single command's usage.
-  fstring rawUsage() const;
+  /// Returns a string describing the arguments expected by this command.
+  fstring usageString() const;
 
   /// Check if the given argument count is acceptable.
   bool allowsObjc(unsigned int objc) const;
@@ -136,6 +127,10 @@ public:
   void setDispatcher(shared_ptr<Dispatcher> dpx);
 
 private:
+  Command(shared_ptr<Tcl::Callback> callback,
+          const char* cmd_name, const char* usage,
+          int objc_min=0, int objc_max=-1, bool exact_objc=false);
+
   Command(const Command&); // not implemented
   Command& operator=(const Command&); // not implemented
 
