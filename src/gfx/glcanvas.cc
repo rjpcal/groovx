@@ -69,6 +69,23 @@ using geom::vec3d;
 
 using rutz::shared_ptr;
 
+namespace
+{
+  GLint attribStackDepth()
+  {
+    GLint d = -1;
+    glGetIntegerv(GL_ATTRIB_STACK_DEPTH, &d);
+    return d;
+  }
+
+  bool rasterPositionValid() throw()
+  {
+    GLboolean value = GL_FALSE;
+    glGetBooleanv(GL_CURRENT_RASTER_POSITION_VALID, &value);
+    return (value == GL_TRUE);
+  }
+}
+
 class GLCanvas::Impl
 {
 public:
@@ -225,17 +242,6 @@ DOTRACE("GLCanvas::throwIfError");
         reinterpret_cast<const char*>(gluErrorString(status));
       throw rutz::error(rutz::fstring("GL error: ", msg, " ", where), pos);
     }
-}
-
-
-namespace
-{
-  GLint attribStackDepth()
-  {
-    GLint d = -1;
-    glGetIntegerv(GL_ATTRIB_STACK_DEPTH, &d);
-    return d;
-  }
 }
 
 void GLCanvas::pushAttribs(const char* /*comment*/)
@@ -461,16 +467,6 @@ void GLCanvas::transform(const geom::txform& tx)
 {
 DOTRACE("GLCanvas::transform");
   glMultMatrixd(tx.col_major_data());
-}
-
-namespace
-{
-  bool rasterPositionValid() throw()
-  {
-    GLboolean value = GL_FALSE;
-    glGetBooleanv(GL_CURRENT_RASTER_POSITION_VALID, &value);
-    return (value == GL_TRUE);
-  }
 }
 
 void GLCanvas::rasterPos(const geom::vec3<double>& world_pos)
