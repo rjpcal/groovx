@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Sep 14 14:12:31 1999
+// written: Mon Sep 20 11:37:29 1999
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -1400,6 +1400,7 @@ DOTRACE("TclGL::pixelCheckSumCmd");
 
 
   GLubyte* pixels = new GLubyte[w*h];
+  glPixelStorei(GL_PACK_ALIGNMENT, 1);
   glReadPixels(x,y,w,h,GL_COLOR_INDEX, GL_UNSIGNED_BYTE, pixels);
 
   long int sum = 0;
