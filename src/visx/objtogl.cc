@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed Dec  8 00:37:34 1999
+// written: Tue Dec 14 17:31:10 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -373,9 +373,6 @@ protected:
   virtual void invoke() {
 	 int trial = getIntFromArg(1);
 
-	 if (!Tlist::theTlist().isValidId(trial))
-		{ throw Tcl::TclError("invalid trial id"); }
-	 
 	 TlistWidget* widg = dynamic_cast<TlistWidget*>(getItem());
 
 	 if (widg != 0) {
