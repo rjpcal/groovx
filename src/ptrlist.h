@@ -179,7 +179,7 @@ private:
   mutable NullablePtrHandle<T> itsHandle;
   int itsId;
 
-  void refreshPtr()
+  void refreshPtr() const
     {
 		if ( !itsHandle.isValid() )
 		  {
@@ -213,7 +213,7 @@ public:
 
   bool isValid() const { return itsHandle.isValid(); }
 
-  NullablePtrHandle<T> handle() const { return itsHandle; }
+  NullablePtrHandle<T> handle() const { refreshPtr(); return itsHandle; }
   int id() const { return itsId; }
 };
 
