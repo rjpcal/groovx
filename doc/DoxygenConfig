@@ -306,11 +306,15 @@ WARN_LOGFILE           =
 INPUT                  = /cit/rjpeters/sorcery/grsh/doc \
                          /cit/rjpeters/sorcery/grsh/src/gfx \
                          /cit/rjpeters/sorcery/grsh/src/gwt \
+                         /cit/rjpeters/sorcery/grsh/src/gx \
                          /cit/rjpeters/sorcery/grsh/src/io \
+                         /cit/rjpeters/sorcery/grsh/src/pkgs/matlabengine \
+                         /cit/rjpeters/sorcery/grsh/src/pkgs/mtx \
                          /cit/rjpeters/sorcery/grsh/src/system \
                          /cit/rjpeters/sorcery/grsh/src/tcl \
                          /cit/rjpeters/sorcery/grsh/src/togl \
-                         /cit/rjpeters/sorcery/grsh/src/util
+                         /cit/rjpeters/sorcery/grsh/src/util \
+                         /cit/rjpeters/sorcery/grsh/src/visx
 
 
 # If the value of the INPUT tag contains directories, you can use the 
