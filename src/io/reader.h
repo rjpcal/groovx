@@ -3,7 +3,7 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Tue Oct 19 16:12:41 1999
+// written: Thu Oct 21 18:39:02 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,6 +76,7 @@ public:
 	 for (int i = 0; i < count; ++i) {
 		*inserter = Inserter::value_type();
 		readValue(name+makeNumberString(i), *inserter);
+		++inserter;
 	 }
   }
 
