@@ -258,13 +258,13 @@ struct TypeTraits<Ref<T> >
 } // end namespace Util
 
 template <class To, class Fr>
-Ref<To> dynamicCast(Ref<Fr> p)
+Util::Ref<To> dynamicCast(Util::Ref<Fr> p)
 {
   Fr* f = p.get();
   To* t = dynamic_cast<To*>(f); // will throw bad_cast on failure
   if (t == 0)
     Util::throwBadCast(typeid(To), typeid(Fr));
-  return Ref<To>(t);
+  return Util::Ref<To>(t);
 }
 
 
@@ -469,7 +469,7 @@ struct TypeTraits<SoftRef<T> >
 } // end namespace Util
 
 template <class To, class Fr>
-SoftRef<To> dynamicCast(SoftRef<Fr> p)
+Util::SoftRef<To> dynamicCast(Util::SoftRef<Fr> p)
 {
   if (p.isValid())
     {
@@ -477,9 +477,9 @@ SoftRef<To> dynamicCast(SoftRef<Fr> p)
       To* t = dynamic_cast<To*>(f); // will throw bad_cast on failure
       if (t == 0)
         Util::throwBadCast(typeid(To), typeid(Fr));
-      return SoftRef<To>(t);
+      return Util::SoftRef<To>(t);
     }
-  return SoftRef<To>(p.id());
+  return Util::SoftRef<To>(p.id());
 }
 
 ///////////////////////////////////////////////////////////////////////
