@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Tue Oct 12 09:57:43 1999
+// written: Wed Oct 13 11:16:43 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 #include <typeinfo>
 #include <strstream.h>
 
+#include "demangle.h"
 #include "iomgr.h"
 
 #ifndef NULL
@@ -65,12 +66,12 @@ DOTRACE("PtrList<T>::~PtrList");
 template <class T>
 void PtrList<T>::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("PtrList<T>::serialize");
-  static string ioTag = typeid(PtrList).name();	 
+  static string ioTag = demangle(typeid(PtrList).name());
 
   if (flag & BASES) { /* there are no bases to deserialize */ }
 
   char sep = ' ';
-  if (flag & TYPENAME) { os << typeid(PtrList).name() << sep; }
+  if (flag & TYPENAME) { os << ioTag << sep; }
 
   // itsVec: we will serialize only the non-null T*'s in
   // itsVec. In order to correctly deserialize the object later, we
@@ -106,12 +107,12 @@ DOTRACE("PtrList<T>::serialize");
 template <class T>
 void PtrList<T>::deserialize(istream &is, IOFlag flag) {
 DOTRACE("PtrList<T>::deserialize");
-  static string ioTag = typeid(PtrList).name();	 
+  static string ioTag = demangle(typeid(PtrList).name());
 
   if (flag & BASES) { /* there are no bases to deserialize */ }
   if (flag & TYPENAME) { 
-	 IO::readTypename(is, string(typeid(PtrList).name()) + " " +
-							string(typeid(*this).name()));
+	 IO::readTypename(is, demangle(typeid(PtrList).name()) + " " +
+							demangle(typeid(*this).name()));
   }
 
   // itsVec
@@ -153,7 +154,7 @@ DOTRACE("PtrList<T>::deserialize");
 
 template <class T>
 int PtrList<T>::charCount() const {
-  static string ioTag = typeid(PtrList).name();	 
+  static string ioTag = demangle(typeid(PtrList).name());
   int ch_count = ioTag.size() + 1
 	 + gCharCount<int>(itsVec.size()) + 1;
   int num_non_null = PtrList<T>::count();
