@@ -207,5 +207,114 @@ int rutz::exec_pipe::exit_status() throw()
   return 0;
 }
 
+rutz::bidir_pipe::bidir_pipe(char* const* argv) :
+  m_in_pipe(),
+  m_out_pipe(),
+  m_child(),
+  m_in_stream(0),
+  m_out_stream(0)
+{
+  if (m_child.in_parent())
+    {
+      m_in_pipe.close_writer();
+
+      m_in_stream =
+        new rutz::stdiostream(m_in_pipe.reader(),
+                              std::ios::in|std::ios::binary);
+
+      if (m_in_stream == 0)
+        throw rutz::error("couldn't open input stream in parent process",
+                          SRC_POS);
+
+      m_out_pipe.close_reader();
+
+      m_out_stream =
+        new rutz::stdiostream(m_out_pipe.writer(),
+                              std::ios::out|std::ios::binary);
+
+      if (m_out_stream == 0)
+        throw rutz::error("couldn't open input stream in parent process",
+                          SRC_POS);
+    }
+  else // in child
+    {
+      m_in_pipe.close_reader();
+
+      if (dup2(m_in_pipe.writer(), STDOUT_FILENO) == -1)
+        {
+          fprintf(stderr, "dup2 failed in child process\n");
+          exit(-1);
+        }
+
+      m_out_pipe.close_writer();
+
+      if (dup2(m_out_pipe.reader(), STDIN_FILENO) == -1)
+        {
+          fprintf(stderr, "dup2 failed in child process\n");
+          exit(-1);
+        }
+
+      execv(argv[0], argv);
+
+      fprintf(stderr, "execv failed in child process\n");
+      exit(-1);
+    }
+}
+
+
+rutz::bidir_pipe::~bidir_pipe() throw()
+{
+  delete m_out_stream;
+  delete m_in_stream;
+}
+
+STD_IO::iostream& rutz::bidir_pipe::in_stream() throw()
+{
+  ASSERT(m_in_stream != 0);
+  return *m_in_stream;
+}
+
+STD_IO::iostream& rutz::bidir_pipe::out_stream() throw()
+{
+  ASSERT(m_out_stream != 0);
+  return *m_out_stream;
+}
+
+void rutz::bidir_pipe::close_in()
+{
+  if (m_in_stream != 0)
+    {
+      m_in_stream->close();
+    }
+
+  m_in_pipe.close_reader();
+  m_in_pipe.close_writer();
+}
+
+void rutz::bidir_pipe::close_out()
+{
+  if (m_out_stream != 0)
+    {
+      m_out_stream->close();
+    }
+
+  m_out_pipe.close_reader();
+  m_out_pipe.close_writer();
+}
+
+int rutz::bidir_pipe::exit_status() throw()
+{
+  const int child_status = m_child.wait();
+
+  // Check if the child process exited abnormally
+  if (WIFEXITED(child_status) == 0) return -1;
+
+  // Check if the child process gave an error exit code
+  if (WEXITSTATUS(child_status) != 0) return -1;
+
+  // OK, everything looks fine
+  return 0;
+}
+
 static const char vcid_pipe_cc[] = "$Header$";
 #endif // !PIPE_CC_DEFINED

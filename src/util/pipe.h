@@ -51,6 +51,7 @@ namespace rutz
   class pipe_fds;
   class child_process;
   class exec_pipe;
+  class bidir_pipe;
 }
 
 /// Adapts UNIX-style process pipes to a std::iostream interface.
@@ -154,6 +155,40 @@ private:
   pipe_fds           m_fds;
   child_process      m_child;
   rutz::stdiostream* m_stream;
+};
+
+
+/// An exception-safe wrapper around a pipe-fork-exec sequence.
+class rutz::bidir_pipe
+{
+public:
+  /// Set up a pipe to a child process with the given argv array.
+  bidir_pipe(char* const* argv);
+
+  /// Destructor cleans up child process and the pipe's file descriptors.
+  ~bidir_pipe() throw();
+
+  /// Get the stream that is receiving input from the child process.
+  STD_IO::iostream& in_stream() throw();
+
+  /// Get the stream that is sending output to the child process.
+  STD_IO::iostream& out_stream() throw();
+
+  /// Close the underlying input stream file descriptor.
+  void close_in();
+
+  /// Close the underlying output stream file descriptor.
+  void close_out();
+
+  /// Wait for child process to complete, return 0 if all is OK, -1 if error.
+  int exit_status() throw();
+
+private:
+  pipe_fds           m_in_pipe;
+  pipe_fds           m_out_pipe;
+  child_process      m_child;
+  rutz::stdiostream* m_in_stream;
+  rutz::stdiostream* m_out_stream;
 };
 
 static const char vcid_pipe_h[] = "$Header$";
