@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Mar 15 10:17:29 2000
+// written: Fri Mar 24 18:24:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -161,7 +161,7 @@ void IoPtrList::readFrom(Reader* reader) {
 DOTRACE("IoPtrList::readFrom");
   firstVacant() = reader->readInt("itsFirstVacant");
 
-  int count = ReadUtils::readSequenceCount(reader, "itsVec");
+  int count = ReadUtils::readSequenceCount(reader, "itsVec"); DebugEvalNL(count);
 
   Assert(count >= 0);
   unsigned int uint_count = (unsigned int) count;
@@ -185,17 +185,22 @@ DOTRACE("IoPtrList::writeTo");
   writer->writeInt("itsFirstVacant", firstVacant());
 
   unsigned int count = voidVecSize();
+  DebugEvalNL(count);
 
   fixed_block<IO*> ioBlock(count);
 
   for (size_t i = 0; i < count; ++i)
 	 {
-		if ( getVoidPtr(i) != 0 )
-		  ioBlock[i] = fromVoidToIO(getVoidPtr(i));
+		DebugEval(i);
+		void* voidptr = getVoidPtr(i);       DebugEval(voidptr);
+		if ( voidptr != 0 )
+		  {
+			 ioBlock[i] = fromVoidToIO(voidptr);
+		  }
+		DebugEvalNL(ioBlock[i]);
 	 }
 
-  WriteUtils::writeObjectSeq(writer, "itsVec",
-									  ioBlock.begin(), ioBlock.end());
+  WriteUtils::writeObjectSeq(writer, "itsVec", ioBlock.begin(), ioBlock.end());
 }
 
 const char* IoPtrList::alternateIoTags() const {
