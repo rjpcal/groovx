@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Mon Jun 11 14:49:17 2001
+// written: Fri Jul 20 17:59:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,12 +67,12 @@ public:
   virtual void writeTo(IO::Writer* writer) const = 0;
 
   /** Returns the number of attributes that are written in the
-		object's \c writeTo() function. The default implementation
-		simply calls writeTo() with a dummy Writer and counts how many
-		attributes are written. However, this is somewhat inefficient
-		since it defers the counting to runtime when the number may in
-		fact be known at compile time. Thus subclasses may wish to
-		override this function to return a compile-time constant. */
+      object's \c writeTo() function. The default implementation
+      simply calls writeTo() with a dummy Writer and counts how many
+      attributes are written. However, this is somewhat inefficient
+      since it defers the counting to runtime when the number may in
+      fact be known at compile time. Thus subclasses may wish to
+      override this function to return a compile-time constant. */
   virtual unsigned int ioAttribCount() const;
 
   /** Returns a serialization version id for the class. The default
@@ -86,9 +86,9 @@ public:
   virtual IO::VersionId serialVersionId() const;
 
   /** Returns the typename of the full object. The implementation
-		provided by \c IO returns a demangled version of \c
-		typeid(*this).name(), which should very closely resemble the way
-		the object was declared in source code. */
+      provided by \c IO returns a demangled version of \c
+      typeid(*this).name(), which should very closely resemble the way
+      the object was declared in source code. */
   virtual fixed_string ioTypename() const;
 };
 
@@ -96,25 +96,19 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 /**
- *
- * \defgroup IoExcept Input/OutputException Classes
- *
  * These exception classes represent the various types of errors that
  * may occur during IO operations. The base class for this group of
  * classes is IoError. All IO-related exception classes defined by
  * clients should also derive from IoError.
- *
  **/
 ///////////////////////////////////////////////////////////////////////
 
 
 ///////////////////////////////////////////////////////////////////////
 /**
- * \ingroup IoExcept
  * IoError is base class for the various exception types that may be
  * thrown in IO's input and output methods. All IO-related exception
  * classes defined by clients should also derive from IoError.
- *
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -132,9 +126,7 @@ protected:
 };
 
 /**
- * \ingroup IoExcept
- *
- * A subclass of IoError for general input errors. 
+ * A subclass of IoError for general input errors.
  **/
 class IO::InputError : public IO::IoError {
 public:
@@ -147,9 +139,7 @@ public:
 };
 
 /**
- * \ingroup IoExcept
- *
- * A subclass of IoError for general output errors. \ingroup IoExcept
+ * A subclass of IoError for general output errors.
  **/
 class IO::OutputError : public IO::IoError {
 public:
@@ -162,11 +152,9 @@ public:
 };
 
 /**
- * \ingroup IoExcept
- *
  * A subclass of IoError for "can't-happen" errors that are discovered
- * during input or output. This type of error suggests * that either
- * the object or its legacySrlzd description has been * corrupted.
+ * during input or output. This type of error suggests that either the
+ * object or its legacySrlzd description has been corrupted.
  **/
 class IO::LogicError : public IO::IoError {
 public:
@@ -179,8 +167,6 @@ public:
 };
 
 /**
- * \ingroup IoExcept
- *
  * A subclass of IoError for out-of-bounds values that are encountered
  * during input or output.
  **/
@@ -195,8 +181,6 @@ public:
 };
 
 /**
- * \ingroup IoExcept
- *
  * A subclass of IoError for invalid filenames or filenames referring
  * to inaccessible files.
  **/
