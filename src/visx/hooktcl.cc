@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Wed Jul 31 17:55:03 2002
+// written: Sun Aug  4 15:52:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -191,24 +191,17 @@ class MyObj : public GenericObj
 public:
   MyObj(int v) : value(v)
   {
-  DOTRACE("MyObj::MyObj");
-
-  ++counter;
+    ++counter;
   }
 
   virtual ~MyObj()
   {
-  DOTRACE("MyObj::~MyObj");
-
-  value = -12345678;
-
-  --counter;
+    value = -12345678;
+    --counter;
   }
 
   static void convert(Tcl_Obj* objPtr)
   {
-  DOTRACE("MyObj::convert");
-
     if (objPtr->typePtr == &genericObjType)
       return;
 
@@ -228,7 +221,6 @@ public:
 
   static Tcl_Obj* make(int v)
   {
-  DOTRACE("MyObj::make");
     Tcl_Obj* objPtr = Tcl_NewObj();
     objPtr->typePtr = &genericObjType;
     objPtr->internalRep.otherValuePtr = new MyObj(v);
@@ -240,8 +232,6 @@ public:
 
   static void info(Tcl_Obj* p)
   {
-  DOTRACE("MyObj::info");
-
     DebugEvalNL(p->typePtr ? p->typePtr->name : "");
     DebugEvalNL(p->refCount);
 
@@ -262,13 +252,11 @@ public:
 
   virtual MyObj* clone() const
   {
-  DOTRACE("MyObj::clone");
     return new MyObj(value);
   }
 
   virtual char* asString() const
   {
-  DOTRACE("MyObj::asString");
     char* space = stringAlloc(32);
 
     snprintf(space, 32, "%d", value);
