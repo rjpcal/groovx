@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Aug  3 13:12:24 1999
+// written: Tue Aug  3 15:13:16 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -558,7 +558,8 @@ void ExptDriver::edResetExpt() {
 DOTRACE("ExptDriver::edResetExpt");
   edHaltExpt();
 
-  while ( BlockList::theBlockList().isValidId(itsBlockId) ) {
+  while ( BlockList::theBlockList().isValidId(itsBlockId) &&
+			 itsBlockId >= 0 ) {
 	 block().resetBlock();
 	 --itsBlockId;
   }
