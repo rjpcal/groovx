@@ -16,10 +16,10 @@ package require Th
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd ExptTcl Expt -1
-IO::testDestringifyCmd ExptTcl Expt -1
-IO::testWriteCmd ExptTcl Expt -1
-IO::testReadCmd ExptTcl Expt -1
+IO::testStringifyCmd ExptTcl IO 1 [Exp::currentExp]
+IO::testDestringifyCmd ExptTcl IO 1 [Exp::currentExp]
+IO::testWriteCmd ExptTcl IO 1 [Exp::currentExp]
+IO::testReadCmd ExptTcl IO 1 [Exp::currentExp]
 
 if { ![Togl::inited] } { Togl::init; update }
 
