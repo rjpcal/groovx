@@ -1,8 +1,9 @@
 ##############################################################################
 #
 # editor.tcl
-# Rob Peters rjpeters@klab.caltech.edu
-# created: Apr-99
+#
+# Copyright (c) 1999-2002 Rob Peters <rjpeters@klab.caltech.edu>
+# 
 # $Id$
 #
 ##############################################################################
