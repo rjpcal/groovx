@@ -216,7 +216,6 @@ public:
 
   void addDeepChildren(Util::Ref<GxNode> node)
   {
-    DOTRACE("GxTraversal::GxSepIter::addDeepChildren");
     for (Util::FwdIter<const Util::Ref<GxNode> > itr(node->deepChildren());
          itr.isValid();
          ++itr)

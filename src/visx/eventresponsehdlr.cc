@@ -127,8 +127,6 @@ public:
 
     void handleResponse(EventResponseHdlr::Impl* impl, const char* event_info)
     {
-      DOTRACE("EventResponseHdlr::Impl::ActiveState::handleResponse");
-
       Response theResponse;
 
       theResponse.setMsec(int(itsTrial.trElapsedMsec()));

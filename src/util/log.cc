@@ -55,8 +55,6 @@ namespace
   template <class Str>
   inline void logImpl(Str msg)
   {
-    DOTRACE("Util::logImpl");
-
     timeval now; gettimeofday(&now, 0);
 
     std::for_each(scopes.begin(), scopes.end(),

@@ -92,8 +92,6 @@ public:
 
   static void buttonEventProc(ClientData clientData, XEvent* rawEvent)
   {
-    DOTRACE("Tcl::TkWidget::TkWidgImpl::buttonEventProc");
-
     Tcl::TkWidget* widg = static_cast<Tcl::TkWidget*>(clientData);
 
     Assert(rawEvent->type == ButtonPress);
@@ -105,15 +103,13 @@ public:
 
   static void keyEventProc(ClientData clientData, XEvent* rawEvent)
   {
-    DOTRACE("Tcl::TkWidget::TkWidgImpl::keyEventProc");
-
     Tcl::TkWidget* widg = static_cast<Tcl::TkWidget*>(clientData);
 
     Assert(rawEvent->type == KeyPress);
 
     XKeyEvent* eventPtr = (XKeyEvent*) rawEvent;
 
-    static char buf[32];
+    char buf[32];
 
     bool controlPressed = eventPtr->state & ControlMask;
     eventPtr->state &= ~ControlMask;

@@ -131,8 +131,6 @@ public:
 
   void queuePbmFile(const char* filename)
   {
-    DOTRACE("BitmapImpl::queuePbmFile");
-
     shared_ptr<Gfx::BmapData::UpdateFunc> updater
       (new PbmUpdater(filename,
                       itsFilename,

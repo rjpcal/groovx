@@ -59,14 +59,9 @@ struct Util::Signal::SigImpl : public Util::VolatileObject
     itsSlots(),
     slotEmitSelf(Util::Slot::make(this, & SigImpl::receive)),
     isItEmitting(false)
-  {
-    DOTRACE("Util::Signal::SigImpl::SigImpl");
-  }
+  {}
 
-  virtual ~SigImpl()
-  {
-    DOTRACE("Util::Signal::SigImpl::~SigImpl");
-  }
+  virtual ~SigImpl() {}
 
   static SigImpl* make() { return new SigImpl; }
 
@@ -85,7 +80,6 @@ struct Util::Signal::SigImpl : public Util::VolatileObject
 
   void emit()
   {
-    DOTRACE("Util::Signal::SigImpl::emit");
     if (!isItEmitting)
       {
         Lock lock(this);
@@ -105,7 +99,6 @@ struct Util::Signal::SigImpl : public Util::VolatileObject
               }
             else
               {
-                DOTRACE("Util::Signal::SigImpl::emit-erase");
                 ListType::iterator erase_me = ii;
                 ++ii;
                 itsSlots.erase(erase_me);

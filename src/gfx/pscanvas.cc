@@ -502,7 +502,6 @@ public:
 
   void raiseError(const fstring& msg)
   {
-    DOTRACE("Gfx::PSCanvas::Impl::raiseError");
     throw Util::Error(fstring("PSCanvas error: ", msg));
   }
 

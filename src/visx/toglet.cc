@@ -75,7 +75,6 @@ public:
 
   static void destroyCallback(Togl* togl)
   {
-  DOTRACE("Toglet_Impl::destroyCallback");
     DebugEvalNL((void*)togl);
     Toglet* config = static_cast<Toglet*>(togl->getClientData());
 
