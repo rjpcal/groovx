@@ -3,7 +3,7 @@
 // fish.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:56 1999
-// written: Fri Sep 29 14:36:06 2000
+// written: Thu Oct 19 13:28:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,6 +55,7 @@ public:
   /// Virtual destructor.
   virtual ~Fish();
 
+  virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
@@ -122,9 +123,6 @@ protected:
 private:
   Fish(const Fish&);
   Fish& operator=(const Fish&);
-
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
 
   struct EndPt;
   struct FishPart;
