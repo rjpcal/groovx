@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Aug  9 17:31:17 2001
+// written: Thu Aug  9 17:58:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,8 +101,8 @@ DOTRACE("Bitmap::loadPbmFile");
   sendStateChangeMsg();
 }
 
-void Bitmap::writePbmFile(const char* filename) const
-  { itsImpl->writePbmFile(filename); sendStateChangeMsg(); }
+void Bitmap::savePbmFile(const char* filename) const
+  { itsImpl->savePbmFile(filename); sendStateChangeMsg(); }
 
 void Bitmap::grabScreenRect(const Rect<int>& rect)
   { itsImpl->grabScreenRect(rect); sendStateChangeMsg(); }
@@ -140,23 +140,14 @@ int Bitmap::byteCount() const
 int Bitmap::bytesPerRow() const
   { return itsImpl->bytesPerRow(); }
 
-int Bitmap::width() const
-  { return itsImpl->width(); }
+Point<int> Bitmap::size() const
+  { return itsImpl->size(); }
 
-int Bitmap::height() const
-  { return itsImpl->height(); }
+Point<double> Bitmap::getRasterPos() const
+  { return itsImpl->getRasterPos(); }
 
-double Bitmap::getRasterX() const
-  { return itsImpl->getRasterX(); }
-
-double Bitmap::getRasterY() const
-  { return itsImpl->getRasterY(); }
-
-double Bitmap::getZoomX() const
-  { return itsImpl->getZoomX(); }
-
-double Bitmap::getZoomY() const
-  { return itsImpl->getZoomY(); }
+Point<double> Bitmap::getZoom() const
+  { return itsImpl->getZoom(); }
 
 bool Bitmap::getUsingZoom() const
   { return itsImpl->getUsingZoom(); }
@@ -165,17 +156,11 @@ bool Bitmap::getUsingZoom() const
 // manipulators //
 //////////////////
 
-void Bitmap::setRasterX(double val)
-  { itsImpl->setRasterX(val); sendStateChangeMsg(); }
+void Bitmap::setRasterPos(Point<double> pos)
+  { itsImpl->setRasterPos(pos); sendStateChangeMsg(); }
 
-void Bitmap::setRasterY(double val)
-  { itsImpl->setRasterY(val); sendStateChangeMsg(); }
-
-void Bitmap::setZoomX(double val)
-  { itsImpl->setZoomX(val); sendStateChangeMsg(); }
-
-void Bitmap::setZoomY(double val)
-  { itsImpl->setZoomY(val); sendStateChangeMsg(); }
+void Bitmap::setZoom(Point<double> zoom)
+  { itsImpl->setZoom(zoom); sendStateChangeMsg(); }
 
 void Bitmap::setUsingZoom(bool val)
   { itsImpl->setUsingZoom(val); sendStateChangeMsg(); }

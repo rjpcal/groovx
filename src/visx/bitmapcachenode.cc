@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Wed Aug  8 20:16:40 2001
+// written: Thu Aug  9 18:00:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,22 +97,23 @@ DOTRACE("GrObjRenderer::recacheBitmapIfNeeded");
       DebugEval(bmapbox.left()); DebugEval(bmapbox.top());
       DebugEval(bmapbox.right()); DebugEvalNL(bmapbox.bottom());
       itsBitmapCache->grabWorldRect(bmapbox);
-      itsBitmapCache->setRasterX(bmapbox.left());
-      itsBitmapCache->setRasterY(bmapbox.bottom());
+      itsBitmapCache->setRasterPos(bmapbox.bottomLeft());
     }
     glPopAttrib();
   }
 
   DebugEvalNL(itsMode);
 
-  if (GrObj::X11_BITMAP_CACHE == itsMode) {
-    itsBitmapCache->flipVertical();
-    itsBitmapCache->flipContrast();
-  }
+  if (GrObj::X11_BITMAP_CACHE == itsMode)
+    {
+      itsBitmapCache->flipVertical();
+      itsBitmapCache->flipContrast();
+    }
 
-  if (GrObj::GL_BITMAP_CACHE == itsMode) {
-    itsBitmapCache->flipContrast();
-  }
+  if (GrObj::GL_BITMAP_CACHE == itsMode)
+    {
+      itsBitmapCache->flipContrast();
+    }
 
   postUpdated();
 
@@ -243,7 +244,7 @@ void GrObjRenderer::saveBitmapCache(const GrObjImpl* obj, GWT::Canvas& canvas,
   recacheBitmapIfNeeded(obj, canvas);
   itsCacheFilename = filename;
 
-  itsBitmapCache->writePbmFile(fullCacheFilename().c_str());
+  itsBitmapCache->savePbmFile(fullCacheFilename().c_str());
 
   invalidate();
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Thu Aug  9 17:31:29 2001
+// written: Thu Aug  9 17:58:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "bitmap.h"
 #include "glbitmap.h"
+#include "pointtcl.h"
 #include "recttcl.h"
 #include "xbitmap.h"
 
@@ -38,7 +39,7 @@ DOTRACE("Bitmap_Init");
   Tcl::defGenericObjCmds<Bitmap>(pkg1);
 
   pkg1->defVec( "loadPbm", "item_id(s) filename(s)", &Bitmap::loadPbmFile );
-  pkg1->defVec( "writePbm", "item_id(s) filename(s)", &Bitmap::writePbmFile );
+  pkg1->defVec( "savePbm", "item_id(s) filename(s)", &Bitmap::savePbmFile );
   pkg1->defVec( "grabScreenRect", "item_id(s) {left top right bottom}",
                 &Bitmap::grabScreenRect );
   pkg1->defVec( "grabWorldRect", "item_id(s) {left top right bottom}",
@@ -46,12 +47,9 @@ DOTRACE("Bitmap_Init");
   pkg1->defAction("flipContrast", &Bitmap::flipContrast);
   pkg1->defAction("flipVertical", &Bitmap::flipVertical);
   pkg1->defAction("center", &Bitmap::center);
-  pkg1->defGetter("width", &Bitmap::width);
-  pkg1->defGetter("height", &Bitmap::height);
-  pkg1->defAttrib("rasterX", &Bitmap::getRasterX, &Bitmap::setRasterX);
-  pkg1->defAttrib("rasterY", &Bitmap::getRasterY, &Bitmap::setRasterY);
-  pkg1->defAttrib("zoomX", &Bitmap::getZoomX, &Bitmap::setZoomX);
-  pkg1->defAttrib("zoomY", &Bitmap::getZoomY, &Bitmap::setZoomY);
+  pkg1->defGetter("size", &Bitmap::size);
+  pkg1->defAttrib("rasterPos", &Bitmap::getRasterPos, &Bitmap::setRasterPos);
+  pkg1->defAttrib("zoom", &Bitmap::getZoom, &Bitmap::setZoom);
 
   // GLBitmap
   Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "GLBitmap", "$Revision$");

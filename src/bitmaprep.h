@@ -5,23 +5,13 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Aug  9 17:31:36 2001
+// written: Thu Aug  9 18:01:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef BITMAPREP_H_DEFINED
 #define BITMAPREP_H_DEFINED
-
-#ifdef PRESTANDARD_IOSTREAMS
-class istream;
-class ostream;
-#else
-#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#    include <iosfwd>
-#    define IOSFWD_DEFINED
-#  endif
-#endif
 
 template <class T> class shared_ptr;
 
@@ -90,7 +80,7 @@ public:
   void queuePbmFile(const char* filename);
 
   /// Writes PBM bitmap data to the file \a filename.
-  void writePbmFile(const char* filename) const;
+  void savePbmFile(const char* filename) const;
 
   /** Grabs pixels from a rectangulur area of the screen buffer into
       the Bitmap's pixel array. The coordinates of the rectangle are
@@ -130,45 +120,27 @@ public:
   /// Get the number of bytes per row in the image data.
   int bytesPerRow() const;
 
-  /// Get the image's width in pixels.
-  int width() const;
+  /// Get the image's size (x-width, y-height) in pixels.
+  Point<int> size() const;
 
-  /// Get the image's height in pixels.
-  int height() const;
+  /// Get the location of the image's lower left corner.
+  Point<double> getRasterPos() const;
 
-  /// Get the image's extent (x-width, y-height) in pixels.
-  Point<int> extent() const;
-
-  /// Get the x value of the location of the image's lower left corner.
-  double getRasterX() const;
-
-  /// Get the y value of the location of the image's lower left corner.
-  double getRasterY() const;
-
-  /** Change the x value of the location of the image's lower left
-      corner to \a val. */
-  void setRasterX(double val);
-
-  /** Change the y value of the location of the image's lower left
-      corner to \a val. */
-  void setRasterY(double val);
-
-  /// Get the factor by which the bitmap will be scaled in the x direction.
-  double getZoomX() const;
-
-  /// Get the factor by which the bitmap will be scaled in the y direction.
-  double getZoomY() const;
-
-  /** Change the factor by which the bitmap will be scaled in the x
-      direction to \a val. */
-  void setZoomX(double val);
-
-  /** Change the factor by which the bitmap will be scaled in the y
-      direction to \a val. */
-  void setZoomY(double val);
+  /// Get the (x,y) factors by which the bitmap will be scaled.
+  Point<double> getZoom() const;
 
   /// Query whether zooming is currently to be used.
   bool getUsingZoom() const;
+
+  //////////////////
+  // manipulators //
+  //////////////////
+
+  /** Change the location of the image's lower left corner to \a pos. */
+  void setRasterPos(Point<double> pos);
+
+  /** Change the (x,y) factors by which the bitmap will be scaled. */
+  void setZoom(Point<double> zoom);
 
   /// Change whether zooming will be used.
   void setUsingZoom(bool val);

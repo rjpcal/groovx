@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Aug  9 17:31:21 2001
+// written: Thu Aug  9 17:59:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -244,9 +244,9 @@ DOTRACE("BitmapRep::queuePbmFile");
   itsImpl->itsRenderer->notifyBytesChanged();
 }
 
-void BitmapRep::writePbmFile(const char* filename) const
+void BitmapRep::savePbmFile(const char* filename) const
 {
-DOTRACE("BitmapRep::writePbmFile");
+DOTRACE("BitmapRep::savePbmFile");
 
   Pbm::save(filename, itsImpl->itsData);
 }
@@ -330,7 +330,7 @@ DOTRACE("BitmapRep::grGetBoundingBox");
   Point<int> screen_point = canvas.getScreenFromWorld(itsImpl->itsRasterPos);
 
   // Move the point to the upper right corner
-  screen_point += extent() * itsImpl->getZoom();
+  screen_point += size() * itsImpl->getZoom();
 
   Rect<double> bbox;
 
@@ -353,46 +353,22 @@ DOTRACE("BitmapRep::bytesPerRow");
   return itsImpl->itsData.bytesPerRow();
 }
 
-int BitmapRep::width() const
+Point<int> BitmapRep::size() const
 {
-DOTRACE("BitmapRep::width");
-  return itsImpl->itsData.width();
-}
-
-int BitmapRep::height() const
-{
-DOTRACE("BitmapRep::height");
-  return itsImpl->itsData.height();
-}
-
-Point<int> BitmapRep::extent() const
-{
-DOTRACE("BitmapRep::extent");
+DOTRACE("BitmapRep::size");
   return itsImpl->itsData.extent();
 }
 
-double BitmapRep::getRasterX() const
+Point<double> BitmapRep::getRasterPos() const
 {
-DOTRACE("BitmapRep::getRasterX");
-  return itsImpl->itsRasterPos.x();
+DOTRACE("BitmapRep::getRasterPos");
+  return itsImpl->itsRasterPos;
 }
 
-double BitmapRep::getRasterY() const
+Point<double> BitmapRep::getZoom() const
 {
-DOTRACE("BitmapRep::getRasterY");
-  return itsImpl->itsRasterPos.y();
-}
-
-double BitmapRep::getZoomX() const
-{
-DOTRACE("BitmapRep::getZoomX");
-  return itsImpl->getZoom().x();
-}
-
-double BitmapRep::getZoomY() const
-{
-DOTRACE("BitmapRep::getZoomY");
-  return itsImpl->getZoom().y();
+DOTRACE("BitmapRep::getZoom");
+  return itsImpl->getZoom();
 }
 
 bool BitmapRep::getUsingZoom() const
@@ -405,28 +381,16 @@ DOTRACE("BitmapRep::getUsingZoom");
 // manipulators //
 //////////////////
 
-void BitmapRep::setRasterX(double val)
+void BitmapRep::setRasterPos(Point<double> pos)
 {
-DOTRACE("BitmapRep::setRasterX");
-  itsImpl->itsRasterPos.x() = val;
+DOTRACE("BitmapRep::setRasterPos");
+  itsImpl->itsRasterPos = pos;
 }
 
-void BitmapRep::setRasterY(double val)
-{
-DOTRACE("BitmapRep::setRasterY");
-  itsImpl->itsRasterPos.y() = val;
-}
-
-void BitmapRep::setZoomX(double val)
+void BitmapRep::setZoom(Point<double> zoom)
 {
 DOTRACE("BitmapRep::setZoomX");
-  itsImpl->itsZoom.x() = val;
-}
-
-void BitmapRep::setZoomY(double val)
-{
-DOTRACE("BitmapRep::setZoomY");
-  itsImpl->itsZoom.y() = val;
+  itsImpl->itsZoom = zoom;
 }
 
 void BitmapRep::setUsingZoom(bool val)
