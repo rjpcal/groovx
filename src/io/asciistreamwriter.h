@@ -3,7 +3,7 @@
 // asciistreamwriter.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:56 1999
-// written: Thu Nov 11 12:01:30 1999
+// written: Mon Dec  6 13:56:51 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ class ostream;
  * this data format, objects may read and write their attributes in
  * any order.
  *
- * @memo Implementation of Writer that uses nice human-readable ascii
+ * @short Implementation of Writer that uses nice human-readable ascii
  * formatting.
  **/
 ///////////////////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@
 // bezier.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 21 09:51:40 1999
-// written: Wed Dec  1 11:56:34 1999
+// written: Mon Dec  6 13:56:58 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@
  * Bezier is a general class for evaluating Bezier curves, their
  * derivatives, and their minimum and maximum values.
  *
- * @memo General class for evaluating Bezier curves.
+ * @short General class for evaluating Bezier curves.
  **/
 ///////////////////////////////////////////////////////////////////////
 
