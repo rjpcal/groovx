@@ -346,6 +346,8 @@ public:
 
   void print_include_tree(const string& current_file);
 
+  typedef void (cppdeps::* output_func)(const string&);
+
   void batch_build();
 };
 
@@ -958,6 +960,20 @@ void cppdeps::batch_build()
   // start off with a copy of m_src_files
   vector<string> files (m_src_files);
 
+  output_func handler = 0;
+
+  switch (m_output_mode)
+    {
+    case MAKEFILE_DEPS:
+      handler = &cppdeps::print_makefile_dep;
+      break;
+
+    case DIRECT_INCLUDE_TREE:
+    case NESTED_INCLUDE_TREE:
+      handler = &cppdeps::print_include_tree;
+      break;
+    }
+
   while (!files.empty())
     {
       const string current_file = files.back();
@@ -987,17 +1003,7 @@ void cppdeps::batch_build()
         }
       else
         {
-          switch (m_output_mode)
-            {
-            case MAKEFILE_DEPS:
-              print_makefile_dep(current_file);
-              break;
-
-            case DIRECT_INCLUDE_TREE:
-            case NESTED_INCLUDE_TREE:
-              print_include_tree(current_file);
-              break;
-            }
+          (this->*handler)(current_file);
         }
     }
 }
