@@ -44,39 +44,14 @@ proc print_makefile_output { } {
     puts [join $::PROJECT_OBJS " \\\n  "]
 }
 
-proc run { argv } {
+source [file dirname [info script]]/parse_cmdline.tcl
 
-    for {set i 0} {$i < [llength $argv]} { incr i } {
-	set arg [lindex $argv $i]
+# We are depending on the following command-line options:
+# --libdir, --libprefix, --libext, --srcroot, --objroot, --objext, --module
+parse_cmdline $argv
 
-	if { [string equal $arg "--libdir"] } {
-	    set ::LIBDIR [lindex $argv [incr i]]
-
-	} elseif { [string equal $arg "--libprefix"] } {
-	    set ::LIBPREFIX [lindex $argv [incr i]]
-
-	} elseif { [string equal $arg "--libext"] } {
-	    set ::LIBEXT [lindex $argv [incr i]]
-
-	} elseif { [string equal $arg "--srcroot"] } {
-	    set ::SRCROOT [lindex $argv [incr i]]
-
-	} elseif { [string equal $arg "--objroot"] } {
-	    set ::OBJROOT [lindex $argv [incr i]]
-
-	} elseif { [string equal $arg "--objext"] } {
-	    set ::OBJEXT [lindex $argv [incr i]]
-
-	} elseif { [string equal $arg "--module"] } {
-	    lappend ::MODULES [lindex $argv [incr i]]
-	}
-    }
-
-    foreach module $::MODULES {
-	process_module $module
-    }
-
-    print_makefile_output
+foreach module $::MODULES {
+    process_module $module
 }
 
-run $argv
+print_makefile_output
