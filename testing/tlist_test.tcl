@@ -56,14 +56,14 @@ test "TlistTcl-Tlist::loadObjidFile" "normal read with no offset" {
 	 ObjList::reset
 	 PosList::reset
 	 Tlist::loadObjidFile $::TEST_DIR/objid_file -1 0
-	 expr [regexp "^Trial 4 6 0  3 1  9 2  11 3  0  -1.*$"  [Trial::stringify 2]]\
-				&& [Tlist::count] == 3
+	 expr [regexp "^Trial +4 +6 +0 +3 +1 +9 +2 +11 +3 +0 +-1.*$" \
+				[Trial::stringify 2]] && [Tlist::count] == 3
 } {^1$}
 test "TlistTcl-Tlist::loadObjidFile" "read with fixed # lines, and offset" {
 	 ObjList::reset
 	 PosList::reset
 	 Tlist::loadObjidFile $::TEST_DIR/objid_file 2 1
-	 expr [regexp "^Trial 2 4 0  5 1  0  -1.*" [Trial::stringify 1]] \
+	 expr [regexp "^Trial +2 +4 +0 +5 +1 +0 +-1.*" [Trial::stringify 1]] \
 				&& [Tlist::count] == 2
 } {^1$}
 test "TlistTcl-Tlist::loadObjidFile" "read empty file" {
@@ -123,7 +123,7 @@ test "TlistTcl-Tlist::makeSingles" "normal use with several GrObj's" {
 	 Face::Face
 	 set p [Pos::Pos]
 	 Tlist::makeSingles $p
-	 expr [regexp "^Trial 1 2 0  0  0.*$" [Trial::stringify 2]] \
+	 expr [regexp "^Trial +1 +2 0 +0 +0.*$" [Trial::stringify 2]] \
 				&& [Tlist::count] == 3
 } {^1$}
 test "TlistTcl-Tlist::makeSingles" "normal use with empty ObjList" {
@@ -154,7 +154,7 @@ test "TlistTcl-Tlist::makePairs" "normal use on two GrObj's" {
 	 set p1 [Pos::Pos]
 	 set p2 [Pos::Pos]
 	 Tlist::makePairs $p1 $p2
-	 expr [regexp "^Trial 2 1 0  1 1  0  1.*$" [Trial::stringify 3]] \
+	 expr [regexp "^Trial +2 +1 +0 +1 +1 +0 +1.*$" [Trial::stringify 3]] \
 				&& [Tlist::count] == 4
 } {^1$}
 test "TlistTcl-Tlist::makePairs" "normal use with empty ObjList" {
