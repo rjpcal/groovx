@@ -33,9 +33,9 @@
 #include "util/signal.h"
 
 #include "util/demangle.h"
-#include "util/dlink_list.h"
 #include "util/ref.h"
 
+#include <list>
 #include <typeinfo>
 
 #include "util/trace.h"
@@ -95,7 +95,7 @@ public:
 
   virtual ~Impl() {}
 
-  typedef dlink_list<SlotRef> ListType;
+  typedef std::list<SlotRef> ListType;
 
   ListType slots;
   bool isItEmitting;

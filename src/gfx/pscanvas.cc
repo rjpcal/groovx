@@ -39,10 +39,10 @@
 #include "gx/vec2.h"
 #include "gx/vec3.h"
 
-#include "util/dlink_list.h"
 #include "util/error.h"
 
 #include <fstream>
+#include <list>
 #include <vector>
 
 #include "util/trace.h"
@@ -285,41 +285,41 @@ public:
 
   struct QuadStripPrim : public Primitive
   {
-    dlink_list<Vec2d> itsPts1;
-    dlink_list<Vec2d> itsPts2;
+    std::list<Vec2d> itsEvenPts;
+    std::list<Vec2d> itsOddPts;
 
-    QuadStripPrim() : itsPts1(), itsPts2() {}
+    QuadStripPrim() : itsEvenPts(), itsOddPts() {}
 
     virtual void onBegin(PS*)
     {
-      itsPts1.clear();
-      itsPts2.clear();
+      itsEvenPts.clear();
+      itsOddPts.clear();
     }
 
     virtual void onVertex(PS*, const Vec2d& v)
     {
       if ((vcount() % 2) == 0)
-        itsPts1.push_back(v);
+        itsEvenPts.push_back(v);
       else
-        itsPts2.push_front(v);
+        itsOddPts.push_front(v);
     }
 
     virtual void onEnd(PS* ps)
     {
       ps->newpath();
 
-      ps->moveto(itsPts1.front());
+      ps->moveto(itsEvenPts.front());
 
-      while (!itsPts1.is_empty())
+      while (!itsEvenPts.empty())
         {
-          ps->lineto(itsPts1.front());
-          itsPts1.pop_front();
+          ps->lineto(itsEvenPts.front());
+          itsEvenPts.pop_front();
         }
 
-      while (!itsPts2.is_empty())
+      while (!itsOddPts.empty())
         {
-          ps->lineto(itsPts2.front());
-          itsPts2.pop_front();
+          ps->lineto(itsOddPts.front());
+          itsOddPts.pop_front();
         }
 
       ps->closepath();
