@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Sat Sep  1 10:42:21 2001
+// written: Sat Sep  1 10:50:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,33 +86,27 @@ namespace
 
     for (int k = 0; k < nbz; ++k)
       {
+        float d1 = t[k+3] - t[k+2]; // == 0 when k == nbz-1 (last iteration)
+        float d2 = t[k+2] - t[k+1];
+        float d3 = t[k+1] - t[k];  // == 0 when k == 0 (first iteration)
+        float d = t[k+3] - t[k];
+
+        Pt3 txyz = ( (pts[k+2] * d3) + (pts[k+1] * (d1+d2)) ) / d;
+
+        bz[k].pt1 = txyz;
+
         if (k == 0)
           {
-            bz[0].pt0 = pts[0];
-            bz[0].pt1 = pts[1];
-
-            float d1 = t[3] - t[2];
-            float d2 = t[2] - t[1];
-            float d3 = t[1] - t[0];
-
-            float d = t[3] - t[0];
-
-            bz[0].pt2 = (pts[2] * d2 + pts[1] * d1) / d;
+            bz[k].pt0 = pts[k];
+//              bz[k].pt1 = pts[k+1];
           }
         else
           {
-            float d3 = t[k+1] - t[k];
-            float d2 = t[k+2] - t[k+1];
-            float d1 = t[k+3] - t[k+2];
-            float d = t[k+3] - t[k];
-
-            Pt3 txyz = ( (pts[k+2] * d3) + (pts[k+1] * (d1+d2)) ) / d;
-
             bz[k-1].pt3 = (bz[k-1].pt2 * d2 + txyz * d3) / (d2+d3);
             bz[k].pt0 = bz[k-1].pt3;
-            bz[k].pt1 = txyz;
-            bz[k].pt2 = (pts[k+2] * (d2+d3) + pts[k+1] * d1) / d;
           }
+
+        bz[k].pt2 = (pts[k+2] * (d2+d3) + pts[k+1] * d1) / d;
       }
 
     bz[nbz-1].pt2 = pts[nctrl-2];
