@@ -120,6 +120,33 @@ namespace
     tp1 = 0;
   }
 
+  void testTimerCancel()
+  {
+    v0 = 0;
+
+    Tcl::Timer t0(10, false);
+
+    t0.sigTimeOut.connect(&v0_callback);
+
+    TEST_REQUIRE(!t0.isPending());
+
+    t0.schedule();
+
+    TEST_REQUIRE(t0.isPending());
+    TEST_REQUIRE_EQ(v0, 0);
+
+    while (t0.elapsedMsec() < 15.0)
+      {
+        Tcl_DoOneEvent(TCL_TIMER_EVENTS|TCL_DONT_WAIT);
+
+        t0.cancel();
+        usleep(1000);
+      }
+
+    TEST_REQUIRE(!t0.isPending());
+    TEST_REQUIRE_EQ(v0, 0);
+  }
+
   // Make sure that we don't let ourselves get into an infinite loop
   void testTimerNoInfiniteLoop()
   {
@@ -154,6 +181,7 @@ DOTRACE("Tcltimertest_Init");
   PKG_CREATE(interp, "Tcltimertest", "$Revision$");
 
   DEF_TEST(pkg, testTimer1);
+  DEF_TEST(pkg, testTimerCancel);
   DEF_TEST(pkg, testTimerNoInfiniteLoop);
   DEF_TEST(pkg, testTimerCallbackError);
 
