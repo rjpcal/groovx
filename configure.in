@@ -258,7 +258,7 @@ CPPFLAGS="$CPPFLAGS $X_CFLAGS"
 LDFLAGS="$LDFLAGS $X_LIBS"
 
 AC_CHECK_HEADERS([limits iosfwd iostream fstream sstream \
-		  png.h fcntl.h termios.h sys/time.h unistd.h \
+		  png.h jpeglib.h fcntl.h termios.h sys/time.h unistd.h \
 		  ext/stdio_filebuf.h],,,-)
 
 AC_CHECK_HEADER([dmedia/audio.h],
@@ -279,6 +279,12 @@ AC_CHECK_LIB_CXX(m, [#include <cmath>], [sin(0.0)],
 
 AC_CHECK_LIB_CXX(png, [#include <png.h>], [png_destroy_read_struct(0,0,0)],
 		 [LIBS="-lpng $LIBS"], [AC_MSG_ERROR(libpng missing)])
+
+AC_CHECK_LIB_CXX(jpeg, [
+#include <cstdio>
+#include <jpeglib.h>],
+[jpeg_create_decompress(0)],
+[LIBS="-ljpeg $LIBS"], [AC_MSG_ERROR(libjpeg missing)])
 
 AC_CHECK_LIB_CXX(z, [#include <zlib.h>], [gzopen(0,0)],
 		 [LIBS="-lz $LIBS"], [AC_MSG_ERROR(libz missing)])
