@@ -316,15 +316,15 @@ class cppdeps
 
   string m_strip_prefix;
 
-  const time_t m_start_time;  // so we can check to see if any source files
-                              // have timestamps in the future
+  const time_t m_start_time;  // so we can check to see if any source
+                              // files have timestamps in the future
 
   vector<string> m_obj_exts;
 
 public:
   cppdeps(int argc, char** argv);
 
-  void inspect();
+  void inspect(char** arg0, char** argn);
 
   int is_cc_filename(const char* fname);
 
@@ -344,12 +344,14 @@ public:
   void batch_build();
 };
 
-cppdeps::cppdeps(int argc, char** argv) :
+cppdeps::cppdeps(const int argc, char** const argv) :
   m_check_sys_includes(false),
   m_quiet(false),
   m_output_mode(MAKEFILE_DEPS),
   m_start_time(time((time_t*) 0))
 {
+  bool debug = false;
+
   if (argc == 1)
     {
       printf
@@ -374,6 +376,7 @@ cppdeps::cppdeps(int argc, char** argv) :
          "                          as dependencies)\n"
          "    --literal [.ext]      treat files ending in \".ext\" as literal #include\'s\n"
          "    --quiet               suppress warnings\n"
+         "    --debug               show contents of internal variables\n"
          "\n"
          "any unrecognized command-line arguments are treated as source directories,\n"
          "which will be searched recursively for files with C/C++ filename extensions\n"
@@ -394,54 +397,58 @@ cppdeps::cppdeps(int argc, char** argv) :
   m_sys_ipath.push_back("/usr/include/linux");
   m_sys_ipath.push_back("/usr/local/matlab/extern/include");
 
-  ++argv; // skip to first command-line arg
+  char** arg = argv+1; // skip to first command-line arg
 
-  for ( ; *argv != 0; ++argv)
+  for ( ; *arg != 0; ++arg)
     {
-      if (strcmp(*argv, "--includedir") == 0)
+      if (strcmp(*arg, "--includedir") == 0)
         {
-          m_user_ipath.push_back(*++argv);
+          m_user_ipath.push_back(*++arg);
         }
-      if (strncmp(*argv, "-I", 2) == 0)
+      else if (strncmp(*arg, "-I", 2) == 0)
         {
-          m_user_ipath.push_back((*argv) + 2);
+          m_user_ipath.push_back((*arg) + 2);
         }
-      else if (strcmp(*argv, "--sysincludedir") == 0)
+      else if (strcmp(*arg, "--sysincludedir") == 0)
         {
-          m_sys_ipath.push_back(*++argv);
+          m_sys_ipath.push_back(*++arg);
         }
-      else if (strcmp(*argv, "--objdir") == 0)
+      else if (strcmp(*arg, "--objdir") == 0)
         {
-          m_objdir = trim_trailing_slashes(*++argv);
+          m_objdir = trim_trailing_slashes(*++arg);
         }
-      else if (strcmp(*argv, "--checksys") == 0)
+      else if (strcmp(*arg, "--checksys") == 0)
         {
           m_check_sys_includes = true;
         }
-      else if (strcmp(*argv, "--quiet") == 0)
+      else if (strcmp(*arg, "--quiet") == 0)
         {
           m_quiet = true;
         }
-      else if (strcmp(*argv, "--output-direct-includes") == 0)
+      else if (strcmp(*arg, "--output-direct-includes") == 0)
         {
           m_output_mode = DIRECT_INCLUDE_TREE;
         }
-      else if (strcmp(*argv, "--output-nested-includes") == 0)
+      else if (strcmp(*arg, "--output-nested-includes") == 0)
         {
           m_output_mode = NESTED_INCLUDE_TREE;
         }
-      else if (strcmp(*argv, "--literal") == 0)
+      else if (strcmp(*arg, "--literal") == 0)
         {
-          m_literal_exts.push_back(*++argv);
+          m_literal_exts.push_back(*++arg);
         }
-      else if (strcmp(*argv, "--objext") == 0)
+      else if (strcmp(*arg, "--objext") == 0)
         {
-          m_obj_exts.push_back(*++argv);
+          m_obj_exts.push_back(*++arg);
+        }
+      else if (strcmp(*arg, "--debug") == 0)
+        {
+          debug = true;
         }
       // treat any unrecognized arguments as src files
       else
         {
-          const string fname = trim_trailing_slashes(*argv);
+          const string fname = trim_trailing_slashes(*arg);
           if (!file_exists(fname.c_str()))
             {
               cerr << "ERROR: no such source file: '" << fname << "'\n";
@@ -454,24 +461,70 @@ cppdeps::cppdeps(int argc, char** argv) :
               m_strip_prefix = fname;
             }
         }
+
+      if (debug)
+        {
+          inspect(argv, arg);
+        }
+    }
+
+  // If the user didn't specify any object-filename extensions, then
+  // we just use the default '.o'.
+  if (m_obj_exts.size() == 0)
+    m_obj_exts.push_back(".o");
+
+  if (debug)
+    {
+      inspect(argv, arg);
     }
 }
 
-void cppdeps::inspect()
+namespace
 {
-  cerr << "user_ipath:\n";
-  for (unsigned int i = 0; i < m_user_ipath.size(); ++i)
-    cerr << '\t' << m_user_ipath[i] << '\n';
+  void print_stringvec(std::ostream& out, const vector<string>& v)
+  {
+    out << "[";
+    for (unsigned int i = 0; i < v.size(); ++i)
+      {
+        out << "'" << v[i] << "'";
 
-  cerr << "\nsys_ipath:\n";
-  for (unsigned int i = 0; i < m_sys_ipath.size(); ++i)
-    cerr << '\t' << m_sys_ipath[i] << '\n';
+        if (i+1 < v.size()) out << ", ";
+      }
+    out << "]";
+  }
+}
 
-  cerr << "\nsources:\n";
-  for (unsigned int i = 0; i < m_src_files.size(); ++i)
-    cerr << '\t' << m_src_files[i] << '\n';
+void cppdeps::inspect(char** arg0, char** argn)
+{
+  cerr << "command line: ";
+  while (arg0 <= argn)
+    {
+      cerr << *arg0 << " ";
+      ++arg0;
+    }
+  cerr << "\n";
 
-  cerr << "\nobjdir: " << m_objdir << '\n';
+  cerr << "user_ipath: ";
+  print_stringvec(cerr, m_user_ipath);
+  cerr << "\n";
+
+  cerr << "sys_ipath: ";
+  print_stringvec(cerr, m_sys_ipath);
+  cerr << "\n";
+
+  cerr << "sources: ";
+  print_stringvec(cerr, m_src_files);
+  cerr << "\n";
+
+  cerr << "literal_exts: ";
+  print_stringvec(cerr, m_literal_exts);
+  cerr << "\n";
+
+  cerr << "obj_exts: ";
+  print_stringvec(cerr, m_obj_exts);
+  cerr << "\n";
+
+  cerr << "objdir: '" << m_objdir << "'\n\n";
 }
 
 int cppdeps::is_cc_filename(const char* fname)
@@ -703,14 +756,10 @@ cppdeps::get_direct_includes(const string& src_fname)
           cerr << "WARNING: in " << src_fname
                << ": couldn\'t resolve #include \""
                << include_name << "\"\n";
-          cerr << "\twith search path: [";
-          for (unsigned int i = 0; i < m_user_ipath.size(); ++i)
-            {
-              cerr << "'" << m_user_ipath[i] << "'";
-              if (i+1 < m_user_ipath.size())
-                cerr << ", ";
-            }
-          cerr << "]\n";
+
+          cerr << "\twith search path: ";
+          print_stringvec(cerr, m_user_ipath);
+          cerr << "\n";
 
           if (m_check_sys_includes)
             {
@@ -869,35 +918,26 @@ void cppdeps::batch_build()
                         m_objdir += '/';
                       }
 
-                    // If the user didn't specify any object-filename
-                    // extensions, then we just use the default '.o'.
-                    if (m_obj_exts.size() == 0)
+                    assert(m_obj_exts.size() > 0);
+
+                    // Use C-style stdio here since it came out
+                    // running quite a bit faster than iostreams, at
+                    // least under g++-3.2.
+                    printf("%s%s%s",
+                           m_objdir.c_str(),
+                           stripped_filename.c_str(),
+                           m_obj_exts[0].c_str());
+
+                    for (unsigned int i = 1;
+                         i < m_obj_exts.size(); ++i)
                       {
-                        // Use C-style stdio here since it came out
-                        // running quite a bit faster than iostreams,
-                        // at least under g++-3.2.
-                        printf("%s%s.o: ",
-                               m_objdir.c_str(),
-                               stripped_filename.c_str());
-                      }
-                    else
-                      {
-                        printf("%s%s%s",
+                        printf(" %s%s%s",
                                m_objdir.c_str(),
                                stripped_filename.c_str(),
-                               m_obj_exts[0].c_str());
-
-                        for (unsigned int i = 1;
-                             i < m_obj_exts.size(); ++i)
-                          {
-                            printf(" %s%s%s",
-                                   m_objdir.c_str(),
-                                   stripped_filename.c_str(),
-                                   m_obj_exts[i].c_str());
-                          }
-
-                        printf(": ");
+                               m_obj_exts[i].c_str());
                       }
+
+                    printf(": ");
 
                     const include_list_t& includes =
                       get_nested_includes(current_file);
