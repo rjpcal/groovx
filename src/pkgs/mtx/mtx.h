@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 17:43:30 2002
+// written: Mon Mar  4 18:12:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -353,6 +353,16 @@ public:
   void selectRows(const RowRange& rng);
   void selectCols(const ColRange& rng);
 
+  MtxSpecs subRows(const RowRange& rng) const
+  {
+    MtxSpecs result(*this); result.selectRows(rng); return result;
+  }
+
+  MtxSpecs subCols(const ColRange& rng) const
+  {
+    MtxSpecs result(*this); result.selectCols(rng); return result;
+  }
+
   ptrdiff_t offset() const { return offset_; }
 
   int length() const { return (mrows_ > ncols_) ? mrows_ : ncols_; }
@@ -441,7 +451,7 @@ private:
 class DataHolderRef : public WithPolicies
 {
 public:
-  DataHolderRef(DataHolder& ref) : ref_(&ref) {}
+  DataHolderRef(DataHolder* ref) : ref_(ref) {}
 
   DataHolderRef(const DataHolderRef& other) : ref_(other.ref_) {}
 
@@ -513,6 +523,8 @@ protected:
 
 public:
 
+  const MtxSpecs& specs() const { return *this; }
+
 #ifdef APPLY_IMPL
 #  error macro error
 #endif // APPLY_IMPL
@@ -545,7 +557,7 @@ public:
         }
 
   template <class F>
-  void applyFF(F func)
+  void applyF(F func)
   {
     APPLY_IMPL;
   }
@@ -737,6 +749,22 @@ public:
 
   const_rowmaj_iter rowmaj_end() const
   { return const_rowmaj_iter(rowstride(), ncols(), address(mrows(),0)); }
+
+
+  //
+  // Functions
+  //
+
+  struct Setter
+  {
+    double v;
+    Setter(double v_) : v(v_) {}
+    double operator()(double) { return v; }
+  };
+
+  void setAll(double x) { applyF(Setter(x)); }
+
+  void clear(double x = 0.0) { applyF(Setter(x)); }
 };
 
 
@@ -748,11 +776,18 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-// class SubMtxRef : public MtxBase<DataHolderRef>
-// {
-// public:
+class SubMtxRef : public MtxBase<DataHolderRef>
+{
+public:
+  typedef MtxBase<DataHolderRef> Base;
 
-// };
+  SubMtxRef(const MtxSpecs& specs, DataHolder& ref) :
+    Base(specs, DataHolderRef(&ref))
+  {}
+
+  SubMtxRef& operator=(const SubMtxRef& other);
+  SubMtxRef& operator=(const Mtx& other);
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -773,6 +808,10 @@ public:
   //
 
   static const Mtx& emptyMtx();
+
+  Mtx(const MtxSpecs& specs, const DataHolder& data) :
+    Base(specs, data)
+  {}
 
   Mtx(mxArray* a, StoragePolicy s = COPY);
 
@@ -843,6 +882,38 @@ public:
   // Slices, submatrices
   //
 
+  SubMtxRef sub(const RowRange& rng)
+  {
+    return SubMtxRef(this->specs().subRows(rng), this->data_);
+  }
+
+  SubMtxRef sub(const ColRange& rng)
+  {
+    return SubMtxRef(this->specs().subCols(rng), this->data_);
+  }
+
+  SubMtxRef sub(const RowRange& rr, const ColRange& cc)
+  {
+    return SubMtxRef(this->specs().subRows(rr).subCols(cc), this->data_);
+  }
+
+
+  Mtx sub(const RowRange& rng) const
+  {
+    return Mtx(this->specs().subRows(rng), this->data_);
+  }
+
+  Mtx sub(const ColRange& rng) const
+  {
+    return Mtx(this->specs().subCols(rng), this->data_);
+  }
+
+  Mtx sub(const RowRange& rr, const ColRange& cc) const
+  {
+    return Mtx(this->specs().subRows(rr).subCols(cc), this->data_);
+  }
+
+
   Slice row(int r) const
     { return Slice(*this, offsetFromStorage(r,0), rowstride(), ncols()); }
 
@@ -897,20 +968,6 @@ public:
   double sum() const;
 
   double mean() const { return sum() / nelems(); }
-
-  template <class F>
-  void applyF(F func) { Base::applyFF(func); }
-
-  struct Setter
-  {
-    double v;
-    Setter(double v_) : v(v_) {}
-    double operator()(double) { return v; }
-  };
-
-  void setAll(double x) { applyF(Setter(x)); }
-
-  void clear(double x = 0.0) { applyF(Setter(x)); }
 
   Mtx& operator+=(double x) { applyF(Add(x)); return *this; }
   Mtx& operator-=(double x) { applyF(Sub(x)); return *this; }
