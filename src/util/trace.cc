@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Sat May 12 09:10:16 2001
+// written: Tue May 22 12:04:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 
 #include "util/minivec.h"
 
+#include <cstdio>
 #include <fstream.h>
 #include <iostream.h>
 #include <iomanip.h>
@@ -128,7 +129,14 @@ void Util::Trace::printStackTrace(ostream& os) {
 }
 
 void Util::Trace::printStackTrace() {
-  printStackTrace(cerr);
+  printf("stack trace:\n");
+
+  unsigned int i = 0;
+  unsigned int ri = callStack.size()-1;
+
+  for (; i < callStack.size(); ++i, --ri) {
+    printf("\t[%d] %s\n", int(i), callStack[ri]->name());
+  }
 }
 
 void Util::Trace::setMode(Mode new_mode) {
