@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Tue May 15 13:33:36 2001
+// written: Thu May 31 18:04:09 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -60,8 +60,6 @@ namespace ObjTogl {
   class DumpEpsCmd;
   class HoldCmd;
   class InitedCmd;
-  class LoadFontCmd;
-  class LoadFontiCmd;
   class SeeCmd;
   class SetColorCmd;
   class SetCurTrialCmd;
@@ -310,42 +308,6 @@ protected:
   }
 };
 
-//---------------------------------------------------------------------
-//
-// ObjTogl::LoadFontCmd --
-//
-//---------------------------------------------------------------------
-
-class ObjTogl::LoadFontCmd : public Tcl::TclItemCmd<ToglConfig> {
-public:
-  LoadFontCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "?fontname?", 1, 2) {}
-protected:
-  virtual void invoke() {
-    const char* fontname = (objc() < 2) ? 0 : getCstringFromArg(1);
-
-    getItem()->loadFont(fontname);
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// ObjTogl::LoadFontiCmd --
-//
-//---------------------------------------------------------------------
-
-class ObjTogl::LoadFontiCmd : public Tcl::TclItemCmd<ToglConfig> {
-public:
-  LoadFontiCmd(Tcl::CTclItemPkg<ToglConfig>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<ToglConfig>(pkg, cmd_name, "?fontnumber?", 1, 2) {}
-protected:
-  virtual void invoke() {
-    int fontnumber = (objc() < 2) ? 0 : getIntFromArg(1);
-
-    getItem()->loadFonti(fontnumber);
-  }
-};
-
 //--------------------------------------------------------------------
 //
 // ObjTogl::SeeCmd --
@@ -509,8 +471,6 @@ public:
 	 addCommand( new HoldCmd       (this, "Togl::hold") );
     addCommand( new InitCmd       (interp, "Togl::init") );
     addCommand( new InitedCmd     (interp, "Togl::inited") );
-    addCommand( new LoadFontCmd   (this, "Togl::loadFont") );
-    addCommand( new LoadFontiCmd  (this, "Togl::loadFonti") );
 	 addCommand( new SeeCmd        (this, "Togl::see") );
     addCommand( new SetColorCmd   (this, "Togl::setColor") );
 	 addCommand( new SetCurTrialCmd(this, "Togl::setCurTrial") );
@@ -521,10 +481,10 @@ public:
 	 declareCAction("clearscreen", &ToglConfig::clearscreen);
     declareCAttrib("height",
                    &ToglConfig::getHeight, &ToglConfig::setHeight);
+	 declareCAction("loadDefaultFont", &ToglConfig::loadDefaultFont);
+	 declareCSetter("loadFont", &ToglConfig::loadFont);
+	 declareCSetter("loadFonti", &ToglConfig::loadFonti);
 	 declareCAction("refresh", &ToglConfig::refresh);
-	 declareCAction("takeFocus", &ToglConfig::takeFocus);
-	 declareCAction("undraw", &ToglConfig::undraw);
-
     declareCSetter("scaleRect", &ToglConfig::scaleRect, "scale");
     declareCSetter("setFixedScale", &ToglConfig::setFixedScale, "scale");
     declareCSetter("setUnitAngle", &ToglConfig::setUnitAngle,
@@ -532,6 +492,8 @@ public:
     declareCSetter("setViewingDistance", &ToglConfig::setViewingDistIn,
                    "distance_in_inches");
     declareCAction("swapBuffers", &ToglConfig::swapBuffers);
+	 declareCAction("takeFocus", &ToglConfig::takeFocus);
+	 declareCAction("undraw", &ToglConfig::undraw);
     declareCGetter("usingFixedScale", &ToglConfig::usingFixedScale);
     declareCAttrib("width", &ToglConfig::getWidth, &ToglConfig::setWidth);
 
