@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Sep 13 11:32:13 2001
+// written: Thu Sep 13 14:02:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,10 +17,10 @@
 
 #include "visx/application.h"
 #include "visx/bmaprenderer.h"
-#include "visx/pbm.h"
 
 #include "gfx/bmapdata.h"
 #include "gfx/canvas.h"
+#include "gfx/pbm.h"
 #include "gfx/rect.h"
 #include "gfx/vec2.h"
 
