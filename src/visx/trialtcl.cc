@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Thu May 10 12:04:44 2001
+// written: Tue May 22 14:57:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,14 +69,18 @@ public:
 
 	 addCommand( new AddCmd(this, "Trial::add") );
 
+	 declareCSetter("addNode", &Trial::addNode);
 	 declareCGetter("avgResponse", &Trial::avgResponse);
 	 declareCGetter("avgRespTime", &Trial::avgRespTime);
 	 declareCAction("clearObjs", &Trial::clearObjs);
 	 declareCAction("clearResponses", &Trial::clearResponses);
 	 declareCAttrib("correctResponse",
 						 &Trial::getCorrectResponse, &Trial::setCorrectResponse);
+	 declareCAttrib("currentNode",
+						 &Trial::getCurrentNode, &Trial::setCurrentNode);
 	 declareCGetter("description", &Trial::description);
 	 declareCGetter("lastResponse", &Trial::lastResponse);
+	 declareCAction("nextNode", &Trial::nextNode);
 	 declareCGetter("numResponses", &Trial::numResponses);
 	 declareCAttrib("responseHdlr",
 						 &Trial::getResponseHandler, &Trial::setResponseHandler);

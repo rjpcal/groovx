@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mar-99
-// written: Thu May 10 12:04:39 2001
+// written: Tue May 22 14:56:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRACER_H_DEFINED)
 #include "util/tracer.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IODECLS_H_DEFINED)
+#include "io/iodecls.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRIALBASE_H_DEFINED)
@@ -84,45 +88,47 @@ public:
 
   void writeMatlab(STD_IO::ostream& os) const;
 
-  ///////////////
-  // accessors //
-  ///////////////
+  ////////////////////////////
+  // accessors+manipulators //
+  ////////////////////////////
 
   int getCorrectResponse() const;
+  void setCorrectResponse(int response);
 
   int getResponseHandler() const;
+  void setResponseHandler(int rhid);
+
   int getTimingHdlr() const;
+  void setTimingHdlr(int thid);
 
   // returns some info about relationship between objects in trial
   virtual int trialType() const;
+  void setType(int t);
 
   virtual const char* description() const;
 
   virtual int lastResponse() const;
 
+  virtual void undoLastResponse();
+
   int numResponses() const;
+
+  void clearResponses();
 
   double avgResponse() const;
   double avgRespTime() const;
 
-  //////////////////
-  // manipulators //
-  //////////////////
-
-  void setCorrectResponse(int response);
-
   void add(int objid, int posid);
+
+  void addNode(IO::UID id);
+
+  void nextNode();
+
+  int getCurrentNode() const;
+  void setCurrentNode(int nodeNumber);
 
   void clearObjs();
 
-  void setType(int t);
-
-  void setResponseHandler(int rhid);
-  void setTimingHdlr(int thid);
-
-  virtual void undoLastResponse();
-
-  void clearResponses();
 
   /////////////
   // actions //

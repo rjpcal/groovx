@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Sat May 19 15:52:49 2001
+// written: Tue May 22 15:00:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -172,23 +172,58 @@ public:
   void writeMatlab(STD_IO::ostream& os) const;
 
   int getCorrectResponse() const { return itsCorrectResponse; }
+  void setCorrectResponse(int response) { itsCorrectResponse = response; }
+
   int getResponseHandler() const;
+  void setResponseHandler(int rhid);
+
   int getTimingHdlr() const;
+  void setTimingHdlr(int thid);
 
   int trialType() const;
+  void setType(int t);
+
   const char* description() const;
+
   int lastResponse() const;
+  void undoLastResponse();
   int numResponses() const;
+  void clearResponses();
+
   double avgResponse() const;
   double avgRespTime() const;
 
-  void setCorrectResponse(int response) { itsCorrectResponse = response; }
   void add(int objid, int posid);
+
+  void addNode(IO::UID id)
+  {
+	 IdItem<GxNode> obj(id);
+	 try {
+		IdItem<GxSeparator> sep = dynamicCast<GxSeparator>(obj);
+		itsGxNodes.push_back(sep);		
+	 }
+	 catch (...) {
+		IdItem<GxSeparator> sep(GxSeparator::make());
+		sep->addChild(id);
+		itsGxNodes.push_back(sep);
+	 }
+  }
+
+  void nextNode() { setCurrentNode(itsCurrentNode+1); }
+
+  int getCurrentNode() const { return itsCurrentNode; }
+  void setCurrentNode(int nodeNumber)
+  {
+	 if (nodeNumber < 0 || nodeNumber >= itsGxNodes.size())
+		{
+		  ErrorWithMsg err("invalid node number ");
+		  err.appendNumber(nodeNumber);
+		  throw err;
+		}
+	 itsCurrentNode = nodeNumber;
+  }
+
   void clearObjs();
-  void setType(int t);
-  void setResponseHandler(int rhid);
-  void setTimingHdlr(int thid);
-  void clearResponses();
 
   void trDoTrial(Trial* self, GWT::Widget& widget,
 					  Util::ErrorHandler& errhdlr, Block& block);
@@ -201,8 +236,6 @@ public:
   void trRecordResponse(Response& response);
 
   void installSelf(GWT::Widget& widget) const;
-
-  void undoLastResponse();
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -649,17 +682,34 @@ int Trial::readFromObjidsOnly(STD_IO::istream &is, int offset)
 void Trial::writeMatlab(STD_IO::ostream& os) const
   { itsImpl->writeMatlab(os); }
 
+
 int Trial::getCorrectResponse() const
   { return itsImpl->getCorrectResponse(); }
+
+void Trial::setCorrectResponse(int response)
+  { itsImpl->setCorrectResponse(response); }
+
 
 int Trial::getResponseHandler() const
   { return itsImpl->getResponseHandler(); }
 
+void Trial::setResponseHandler(int rhid)
+  { itsImpl->setResponseHandler(rhid); }
+
+
 int Trial::getTimingHdlr() const
   { return itsImpl->getTimingHdlr(); }
 
+void Trial::setTimingHdlr(int thid)
+  { itsImpl->setTimingHdlr(thid); }
+
+
 int Trial::trialType() const
   { return itsImpl->trialType(); }
+
+void Trial::setType(int t)
+  { itsImpl->setType(t); }
+
 
 const char* Trial::description() const
   { return itsImpl->description(); }
@@ -667,8 +717,14 @@ const char* Trial::description() const
 int Trial::lastResponse() const
   { return itsImpl->lastResponse(); }
 
+void Trial::undoLastResponse()
+  { itsImpl->undoLastResponse(); }
+
 int Trial::numResponses() const
   { return itsImpl->numResponses(); }
+
+void Trial::clearResponses()
+  { itsImpl->clearResponses(); }
 
 double Trial::avgResponse() const
   { return itsImpl->avgResponse(); }
@@ -676,26 +732,25 @@ double Trial::avgResponse() const
 double Trial::avgRespTime() const
   { return itsImpl->avgRespTime(); }
 
-void Trial::setCorrectResponse(int response)
-  { itsImpl->setCorrectResponse(response); }
 
 void Trial::add(int objid, int posid)
   { itsImpl->add(objid, posid); }
 
+void Trial::addNode(IO::UID id)
+  { itsImpl->addNode(id); }
+
+void Trial::nextNode()
+  { itsImpl->nextNode(); }
+
+int Trial::getCurrentNode() const
+  { return itsImpl->getCurrentNode(); }
+
+void Trial::setCurrentNode(int nodeNumber)
+  { itsImpl->setCurrentNode(nodeNumber); }
+
 void Trial::clearObjs()
   { itsImpl->clearObjs(); }
 
-void Trial::setType(int t)
-  { itsImpl->setType(t); }
-
-void Trial::setResponseHandler(int rhid)
-  { itsImpl->setResponseHandler(rhid); }
-
-void Trial::setTimingHdlr(int thid)
-  { itsImpl->setTimingHdlr(thid); }
-
-void Trial::clearResponses()
-  { itsImpl->clearResponses(); }
 
 void Trial::trDoTrial(GWT::Widget& widget,
 							 Util::ErrorHandler& errhdlr, Block& block)
@@ -724,9 +779,6 @@ void Trial::trRecordResponse(Response& response)
 
 void Trial::installSelf(GWT::Widget& widget) const
   { itsImpl->installSelf(widget); }
-
-void Trial::undoLastResponse()
-  { itsImpl->undoLastResponse(); }
 
 static const char vcid_trial_cc[] = "$Header$";
 #endif // !TRIAL_CC_DEFINED
