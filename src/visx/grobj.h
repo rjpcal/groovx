@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Mon Dec  6 21:25:07 1999
+// written: Tue Dec 14 19:44:57 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -224,40 +224,6 @@ public:
   GrObjRenderMode getRenderMode() const;
   ///
   GrObjRenderMode getUnRenderMode() const;
-
-  /**@name Screen-World coordinate conversion
-	*
-   * These functions convert between world coordinates (OpenGL
-   * object coordinates) and screen/window coordinates. Normally the
-   * OpenGL state (modelview matrix, projection matrix, and viewport)
-   * is re-queried each time, but if it is known that the OpenGL state
-   * has not changed between calls to these functions, then some speed
-   * can be gained by passing recalculate_state as false.
-	*/
-  //@{
-  ///
-  static void getScreenFromWorld(double world_x, double world_y,
-											int& screen_x, int& screen_y,
-											bool recalculate_state = true);
-  ///
-  static void getWorldFromScreen(int screen_x, int screen_y,
-											double& world_x, double& world_y,
-											bool recalculate_state = true);
-
-  ///
-  static Point<int> getScreenFromWorld(const Point<double>& world_pos,
-													bool recalculate_state = true);
-  ///
-  static Point<double> getWorldFromScreen(const Point<int>& screen_pos,
-														bool recalculate_state = true);
-
-  ///
-  static Rect<int> getScreenFromWorld(const Rect<double>& world_pos);
-  ///
-  static Rect<double> getWorldFromScreen(const Rect<int>& screen_pos);
-
-
-  //@}
 
   //////////////////
   // manipulators //
