@@ -82,9 +82,6 @@ private:
   RefCounts(const RefCounts&);
   RefCounts& operator=(const RefCounts&);
 
-  Count strongCount() { return itsStrong; }
-  Count weakCount() { return itsWeak; }
-
   void acquireStrong();
   Count releaseStrong();
   void releaseStrongNoDelete();
@@ -92,6 +89,7 @@ private:
   Count itsStrong;
   Count itsWeak;
   bool itsOwnerAlive;
+  bool itsVolatile;
 };
 
 
@@ -119,7 +117,6 @@ class Util::RefCounted
 {
 private:
   RefCounts* const itsRefCounts;
-  bool itsVolatile;
 
   // These are disallowed since RefCounted's should always be in
   // one-to-one correspondence with their pointee's.
@@ -177,11 +174,12 @@ public:
       false. */
   bool isNotShareable() const;
 
-  /// Returns the object's (strong) reference count.
-  int refCount() const;
-
   /// Returns the object's strong+weak reference counts.
   RefCounts* refCounts() const;
+
+
+  /// FOR TEST/DEBUG ONLY! Returns the object's (strong) reference count.
+  int dbg_RefCount() const;
 };
 
 static const char vcid_refcounted_h[] = "$Header$";
