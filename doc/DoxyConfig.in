@@ -368,7 +368,7 @@ INPUT                  = ./doc/groovx.dxy \
                          ./TUTORIAL \
                          ./src/geom \
                          ./src/gfx \
-                         ./src/grsh \
+                         ./src/groovx \
                          ./src/io \
                          ./src/media \
                          ./src/pkgs \
