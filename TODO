@@ -7,6 +7,11 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
+* (19-Nov-2004) Fix redundancy of GxShapeKit::category() redundancy
+
+  This is duplicated (and serialized twice) in several base classes,
+  including Face, MorphyFace, and Fish.
+
 * (25-Oct-2004) Need to only export certain commands with pkg->inherit()
   As it is now we end up with strange results like
   [GxScaler::is [new Face]] == 1
@@ -26,7 +31,7 @@
 
 ** Tcl::Interp  (from Tcl::Main::interp())
    --> used in Toglet::Toglet (passed to Tcl::TkWidget)
-   --> used in Tcl::Timer::dummyCallback (passed to handleLiveException)
+   --> used in Tcl::TimerSchedulerToken::dummyCallback (passed to handleLiveException)
    --> used in EventResponseHdlr::Impl::Impl (saved as member variable)
    --> used in ExptDriver::Impl::Impl (saved as member variable)
    --> used in GenericEvent::GenericEvent (passed to Tcl::ProcWrapper)
@@ -65,7 +70,7 @@
 
 ** ObjFactory::theOne()
 
-   This one is a bit of a problem, because some object's rely in
+   This one is a bit of a problem, because some objects rely in
    principle on getting the global current Tcl::Interp. We can fix
    that by binding a particular Tcl::Interp to the construction
    routine that is registered with the factory, but then we have a
@@ -248,7 +253,7 @@
   all of the field implementations. We need to be able to cast from a
   FieldContainer* to a C*. This is easy with inheritance, since we can
   just use a dynamic cast. But, with containment, we need to be able
-  to "cast" to a subobject. Probably the easiest was is to provide a
+  to "cast" to a subobject. Probably the easiest way is to provide a
   virtual function in FieldContainer that provides access to a child,
   if any. Then we can have a wrapper cast function that first tries
   dynamic_cast, and if that fails, tries to cast a child subobject to
@@ -260,11 +265,12 @@
   FieldMap could change if its child object changes. How do we keep
   Tcl, for example, abreast of such changes?
 
-  Another approach... allowed FieldMap to be a recursive
-  structure. Then we could have named subobjects in a FieldMap, and
-  could specify subfields by using composite names with a hierarchical
-  part separator, such as "aligner.mode". How to pair the submaps with
-  the subobjects?
+  Another approach... allow FieldMap to be a recursive structure. Then
+  we could have named subobjects in a FieldMap, and could specify
+  subfields by using composite names with a hierarchical part
+  separator, such as "aligner.mode". How to pair the submaps with the
+  subobjects? Answer: have a special Field type that represents the
+  link to the submap.
 
 * (25-Jan-2002) Logging goodies
 
