@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Sat Dec  4 15:12:11 1999
+// written: Sat Dec  4 15:53:42 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -144,6 +144,9 @@ public:
 
   const string& getAutosaveFile() const { return itsAutosaveFile; }
   void setAutosaveFile(const string& str) { itsAutosaveFile = str; }
+
+  Widget* getWidget()
+	 { return ObjTogl::theToglConfig(); }
 
   void edDraw();
   void edUndraw();
@@ -679,7 +682,7 @@ DOTRACE("ExptDriver::Impl::edUndraw");
 void ExptDriver::Impl::edSwapBuffers() {
 DOTRACE("ExptDriver::Impl::edSwapBuffers");
   try { 
-	 ObjTogl::theToglConfig()->swapBuffers();
+	 getWidget()->swapBuffers();
   }
   catch (TclError& err) {
 	 raiseBackgroundError(err.msg().c_str());
@@ -874,7 +877,7 @@ DOTRACE("ExptDriver::Impl::edResetExpt");
 void ExptDriver::Impl::edSetCurrentTrial(int trial) {
 DOTRACE("ExptDriver::Impl::edSetCurrentTrial");
   TlistWidget* widg =
-	 dynamic_cast<TlistWidget*>(ObjTogl::theToglConfig());
+	 dynamic_cast<TlistWidget*>(getWidget());
 
   if (widg != 0) {
 	 widg->setCurTrial(trial);
@@ -1015,7 +1018,7 @@ void ExptDriver::setAutosaveFile(const string& str)
   { itsImpl->setAutosaveFile(str); }
 
 Widget* ExptDriver::getWidget()
-  { return ObjTogl::theToglConfig(); }
+  { return itsImpl->getWidget(); }
 
 void ExptDriver::edDraw() 
   { itsImpl->edDraw(); }
