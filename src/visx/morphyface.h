@@ -3,7 +3,7 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Tue Feb  8 15:35:14 2000
+// written: Fri Feb 18 09:30:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,9 +25,12 @@
 #endif
 
 ///////////////////////////////////////////////////////////////////////
-//
-// MorphyFace class declaration
-//
+/**
+ *
+ * \c MorphyFace is a subclass of \c GrObj for drawing
+ * highly-parameterized cartoon-style faces.
+ *
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 class MorphyFace : public GrObj, public PropFriend<MorphyFace> {
@@ -36,18 +39,17 @@ public:
   // creators //
   //////////////
 
+  /// Default constructor.
   MorphyFace();
+
+  /// Construct from an \c istream using \c deserialize().
   MorphyFace(istream &is, IOFlag flag);
+
+  /// Virtual destructor.
   virtual ~MorphyFace ();
 
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
-  // These functions write/read the object's state from/to an
-  // output/input stream. The stream must already be connected to an
-  // appropriate file or other source. The format used is:
-  //
-  // [MorphyFace] category eyeHgt eyeDist noseLen mouthHgt
-  
   virtual int charCount() const;
 
   virtual void readFrom(Reader* reader);
@@ -57,59 +59,88 @@ public:
   // properties //
   ////////////////
 
+  /// Info about a \c MorphyFace property.
   typedef PropertyInfo<MorphyFace> PInfo;
+
+  /// Return a collection of info about all \c MorphyFace properties.
   static const vector<PInfo>& getPropertyInfos();
 
+  /** The category of the face. The semantics of \a category are
+      defined by the client. */
   CTProperty<MorphyFace, int> category;
 
   virtual int getCategory() const { return category.getNative(); }
   virtual void setCategory(int val) { category.setNative(val); }
   
   CTProperty<MorphyFace, double> faceWidth;
+    ///< The width of the face.
   CTProperty<MorphyFace, double> topWidth;
+    ///< The width of the top of the face, as a fraction of \a faceWidth.
   CTProperty<MorphyFace, double> bottomWidth;
+    ///< The width of the bottom of the face, as a fraction of \a faceWidth.
   CTProperty<MorphyFace, double> topHeight;
+    ///< The height of the top of the face.
   CTProperty<MorphyFace, double> bottomHeight;
+    ///< The height of the bottom of the face.
 
   CTProperty<MorphyFace, double> hairWidth;
+    ///< The width of the hair.
   CTProperty<MorphyFace, int> hairStyle;
+    ///< The style of the hair.
 
   CTProperty<MorphyFace, double> eyeYpos;
+    ///< The y-position of the eyes, relative to the face midline.
   CTProperty<MorphyFace, double> eyeDistance;
+    ///< The distance between the centers of the eyes.
   CTProperty<MorphyFace, double> eyeHeight;
+    ///< The height of the eyes themselves.
   CTProperty<MorphyFace, double> eyeAspectRatio;
+    ///< The aspect ratio of the eyes (width over height).
 
   CTProperty<MorphyFace, double> pupilXpos;
+    ///< The x-position of the pupils, relative to the center of the eye.
   CTProperty<MorphyFace, double> pupilYpos;
+    ///< The y-position of the pupils, relative to the center of the eye.
   CTProperty<MorphyFace, double> pupilSize;
+    ///< The diameter of the pupils, relative to the height of the eye.
   CTBoundedProperty<MorphyFace, double, 0, 999, 1000> pupilDilation;
+    ///< The dilation of the pupil, on a scale of [0,1).
 
   CTProperty<MorphyFace, double> eyebrowXpos;
+    ///< The x-position of the eyebrows, relative to the eye.
   CTProperty<MorphyFace, double> eyebrowYpos;
+    ///< The y-position of the eyebrows, relative to the top of the eye.
   CTProperty<MorphyFace, double> eyebrowCurvature;
+    ///< The degree of eyebrow curvature, relative to that of the eye.
   CTProperty<MorphyFace, double> eyebrowAngle;
+    ///< The angle of image-plane rotation of the eyebrow.
   CTProperty<MorphyFace, double> eyebrowThickness;
+    ///< The thickness of the eyebrow, relative to the default thickness.
 
   CTProperty<MorphyFace, double> noseXpos;
+    ///< The x-position of the nose, relative to the face midline.
   CTProperty<MorphyFace, double> noseYpos;
+    ///< The y-position of the nose, relative to the face midline.
   CTProperty<MorphyFace, double> noseLength;
+    ///< The length of the nose.
   CTProperty<MorphyFace, double> noseWidth;
+    ///< The width of the nose.
 
   CTProperty<MorphyFace, double> mouthXpos;
+    ///< The x-position of the mouth, relative to the face midline.
   CTProperty<MorphyFace, double> mouthYpos;
+    ///< The y-position of the mouth, relative to the face midline.
   CTProperty<MorphyFace, double> mouthWidth;
+    ///< The width of the mouth.
   CTProperty<MorphyFace, double> mouthCurvature;
+    ///< The degree of curvature of the mouth.
 
 protected:
-  ///
   virtual void grGetBoundingBox(Rect<double>& bbox,
 										  int& border_pixels) const;
 
-  ///
   virtual bool grHasBoundingBox() const;
 
-  /** This overrides GrObj pure virtual function. It renders a face
-		with the appropriate parameters. */
   virtual void grRender(Canvas& canvas) const; 
 
 private:
