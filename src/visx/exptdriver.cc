@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Mon Jan 21 14:33:46 2002
+// written: Fri Jan 25 10:16:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,8 +42,6 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-#define TIME_TRACE
-
 Util::Tracer ExptDriver::tracer;
 
 ///////////////////////////////////////////////////////////////////////
@@ -55,15 +53,6 @@ Util::Tracer ExptDriver::tracer;
 namespace
 {
   const IO::VersionId EXPTDRIVER_SERIAL_VERSION_ID = 3;
-
-#ifdef TIME_TRACE
-  inline void TimeTraceNL(const char* loc, int msec)
-  {
-    Util::log() << "in " << loc << ", elapsed time == " << msec << '\n';
-  }
-#else
-  inline void TimeTraceNL(const char*, int) {}
-#endif
 };
 
 ///////////////////////////////////////////////////////////////////////
