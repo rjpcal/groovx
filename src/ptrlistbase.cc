@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed May 10 15:46:11 2000
+// written: Mon May 15 22:53:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ DOTRACE("VoidPtrList::isValidId");
 
   return ( id >= 0 &&
 			  size_t(id) < itsImpl->itsVec.size() &&
-			  itsImpl->itsVec[id] != NULL ); 
+			  itsImpl->itsVec[id] != NULL );
 }
 
 void VoidPtrList::remove(int id) {
@@ -122,9 +122,12 @@ DOTRACE("VoidPtrList::remove");
 
 void VoidPtrList::clear() {
 DOTRACE("VoidPtrList::clear");
+  DebugEvalNL(typeid(*this).name());
   for (size_t i = 0; i < itsImpl->itsVec.size(); ++i) {
-	 DebugEval(i); DebugEvalNL(itsImpl->itsVec.size());
+	 DebugEval(i);
+	 DebugEval(itsImpl->itsVec[i]);
 	 destroyPtr(itsImpl->itsVec[i]);
+	 DebugPrintNL("...destroyed");
 	 itsImpl->itsVec[i] = NULL;
   }
 
