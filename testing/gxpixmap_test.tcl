@@ -61,7 +61,7 @@ test "GxPixmap::loadImage" "error on junk binary file" {
 test "rendering" "normal render" {
     clearscreen
     see $::PIXMAP
-    set sum [pixelCheckSum]
+    set sum [-> [::cv] pixelCheckSum]
     return "[expr $sum != 0] $sum"
 } {^1}
 
@@ -76,12 +76,12 @@ test "GxPixmap::flipContrast" "normal use" {
     GxPixmap::flipContrast $::PIXMAP
     clearscreen
     see $::PIXMAP
-    set count1 [pixelCheckSum]
+    set count1 [-> [::cv] pixelCheckSum]
 
     GxPixmap::flipContrast $::PIXMAP
     clearscreen
     see $::PIXMAP
-    set count2 [pixelCheckSum]
+    set count2 [-> [::cv] pixelCheckSum]
 
     return "[expr $count1 != $count2] $count1 $count2"
 } {^1}
@@ -100,12 +100,12 @@ test "GxPixmap::flipVertical" "normal use" {
     GxPixmap::flipVertical $::PIXMAP
     clearscreen
     see $::PIXMAP
-    set count1 [pixelCheckSum]
+    set count1 [-> [::cv] pixelCheckSum]
 
     GxPixmap::flipVertical $::PIXMAP
     clearscreen
     see $::PIXMAP
-    set count2 [pixelCheckSum]
+    set count2 [-> [::cv] pixelCheckSum]
 
     return "[expr { $count1 == $count2 }] $count1 $count2"
 } {^1}
@@ -124,12 +124,12 @@ test "GxPixmap::zoom" "normal use" {
     GxPixmap::zoom $::PIXMAP {0.5 0.5}
     clearscreen
     see $::PIXMAP
-    set count1 [pixelCheckSum]
-    
+    set count1 [-> [::cv] pixelCheckSum]
+
     GxPixmap::zoom $::PIXMAP {1.0 1.0}
     clearscreen
     see $::PIXMAP
-    set count2 [pixelCheckSum]
+    set count2 [-> [::cv] pixelCheckSum]
 
     return "[expr { $count1 != $count2 }] $count1 $count2"
 } {^1}
@@ -206,20 +206,20 @@ test "GxPixmap::loadImage" "read GIF format" {
 test "GxPixmap::render" "partially off-window" {
     glClearColor 0.0 0.0 0.0 0.0
     clearscreen
-    set c0 [pixelCheckSum]
+    set c0 [-> [::cv] pixelCheckSum]
     set p [new GxPixmap]
     -> $p loadImage testing/jpegfile.jpg
     -> $p alignmentMode 7
     see $p
-    set c1 [pixelCheckSum]
+    set c1 [-> [::cv] pixelCheckSum]
     -> $p centerX -2.0
-    set c2 [pixelCheckSum]
+    set c2 [-> [::cv] pixelCheckSum]
     -> $p centerY -2.0
-    set c3 [pixelCheckSum]
+    set c3 [-> [::cv] pixelCheckSum]
     -> $p centerX 2.0
-    set c4 [pixelCheckSum]
+    set c4 [-> [::cv] pixelCheckSum]
     -> $p centerY 2.0
-    set c5 [pixelCheckSum]
+    set c5 [-> [::cv] pixelCheckSum]
 
     set didShow \
 	[expr $c0 != $c2 && $c0 != $c3 && $c0 != $c4 && $c0 != $c5]
@@ -234,26 +234,26 @@ test "GxPixmap::scramble" "basic checks" {
     -> $p loadImage testing/color_pngfile.png
     see $p
 
-    set c0 [pixelCheckSum]
+    set c0 [-> [::cv] pixelCheckSum]
 
     -> $p scramble 1 2 1
-    set c1 [pixelCheckSum]
+    set c1 [-> [::cv] pixelCheckSum]
 
     -> $p loadImage testing/color_pngfile.png
     -> $p scramble 2 1 1
-    set c2 [pixelCheckSum]
+    set c2 [-> [::cv] pixelCheckSum]
 
     -> $p loadImage testing/color_pngfile.png
     -> $p scramble 3 3 1
-    set c3 [pixelCheckSum]
+    set c3 [-> [::cv] pixelCheckSum]
 
     -> $p loadImage testing/color_pngfile.png
     -> $p scramble 4 4 1
-    set c4 [pixelCheckSum]
+    set c4 [-> [::cv] pixelCheckSum]
 
     -> $p loadImage testing/color_pngfile.png
     -> $p scramble 12 6 1
-    set c5 [pixelCheckSum]
+    set c5 [-> [::cv] pixelCheckSum]
 
     set ok \
 	[expr $c0 == $c1 \

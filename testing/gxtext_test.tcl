@@ -48,7 +48,7 @@ test "$PACKAGE-GxText::text" "error" {} {^$} $no_test
 test "$PACKAGE-rendering" "normal render" {
 	 clearscreen
 	 see $::TEXT
-	 expr {[pixelCheckSum] != 0}
+	 expr {[-> [::cv] pixelCheckSum] != 0}
 } {^1$}
 
 ### cleanup

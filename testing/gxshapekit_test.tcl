@@ -59,9 +59,9 @@ proc testGxshapekitSubclass { subclass {objid -1} } {
 	glClearColor 0 0 0 0
 	glColor 1 1 1 1
 	clearscreen
-	set pix1 [pixelCheckSum]
+	set pix1 [-> [::cv] pixelCheckSum]
 	see %s
-	set pix2 [pixelCheckSum]
+	set pix2 [-> [::cv] pixelCheckSum]
 	-> [Toglet::current] setVisible false
 	return "[expr $pix1 == $pix2] $pix1 $pix2"
     } $objid] {^0 }

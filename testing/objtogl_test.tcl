@@ -22,7 +22,7 @@ test "Toglet::undraw" "normal use" {
     ::clearscreen
     ::see $f
     ::undraw
-    set sum [pixelCheckSum]
+    set sum [-> [::cv] pixelCheckSum]
     return "[expr $sum == 0] $sum"
 } {^1 }
 test "Toglet::undraw" "no error" {} $BLANK $no_test
@@ -34,7 +34,7 @@ test "Toglet::clearscreen" "too many args" {
 test "Toglet::clearscreen" "normal use" {
     glClearIndex 0; glClearColor 0.0 0.0 0.0 1.0
     ::clearscreen
-    set p [pixelCheckSum]
+    set p [-> [::cv] pixelCheckSum]
     return "[expr $p == 0] $p"
 } {^1}
 
