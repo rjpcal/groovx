@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 29 09:19:26 1999
-// written: Thu Aug  9 11:59:14 2001
+// written: Wed Aug 15 11:21:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,16 +25,17 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-namespace {
-  const FieldInfo FINFOS[] = {
+namespace
+{
+  const FieldInfo FINFOS[] =
+  {
     FieldInfo("eyeAspect", &CloneFace::eyeAspect, 0.0, 0.0, 1.0, 0.05, true),
     FieldInfo("vertOffset", &CloneFace::vertOffset, 0.0, -0.1, 0.1, 0.01)
   };
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
 
-  const FieldMap CLONEFACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
-                                  &Face::classFields());
+  const FieldMap CLONEFACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -43,9 +44,13 @@ namespace {
 //
 ///////////////////////////////////////////////////////////////////////
 
-const FieldMap& CloneFace::classFields() { return CLONEFACE_FIELDS; }
+const FieldMap& CloneFace::classFields()
+{
+  return CLONEFACE_FIELDS;
+}
 
-CloneFace* CloneFace::make() {
+CloneFace* CloneFace::make()
+{
 DOTRACE("CloneFace::make");
   return new CloneFace;
 }
@@ -60,16 +65,19 @@ DOTRACE("CloneFace::CloneFace()");
   // Copy Face's control points into CloneFace's itsCtrlPnts member,
   // so that the default behavior of CloneFace is to mimic Face.
   const double* const face_pnts = Face::getCtrlPnts();
-  for (int i = 0; i < 24; ++i) {
-    itsCtrlPnts[i] = face_pnts[i];
-  }
+  for (int i = 0; i < 24; ++i)
+    {
+      itsCtrlPnts[i] = face_pnts[i];
+    }
 }
 
-CloneFace::~CloneFace () {
+CloneFace::~CloneFace ()
+{
 DOTRACE("CloneFace::~CloneFace");
 }
 
-void CloneFace::readFrom(IO::Reader* reader) {
+void CloneFace::readFrom(IO::Reader* reader)
+{
 DOTRACE("CloneFace::readFrom");
 
   IO::ReadUtils::readValueSeq<double>(reader, "ctrlPnts",
@@ -80,7 +88,8 @@ DOTRACE("CloneFace::readFrom");
   reader->readBaseClass("Face", IO::makeProxy<Face>(this));
 }
 
-void CloneFace::writeTo(IO::Writer* writer) const {
+void CloneFace::writeTo(IO::Writer* writer) const
+{
 DOTRACE("CloneFace::writeTo");
 
   IO::WriteUtils::writeValueSeq(writer, "ctrlPnts",
@@ -91,17 +100,20 @@ DOTRACE("CloneFace::writeTo");
   writer->writeBaseClass("Face", IO::makeConstProxy<Face>(this));
 }
 
-const double* CloneFace::getCtrlPnts() const {
+const double* CloneFace::getCtrlPnts() const
+{
 DOTRACE("CloneFace::getCtrlPnts");
   return itsCtrlPnts;
 }
 
-double CloneFace::getEyeAspect() const {
+double CloneFace::getEyeAspect() const
+{
 DOTRACE("CloneFace::getEyeAspect");
   return eyeAspect();
 }
 
-double CloneFace::getVertOffset() const {
+double CloneFace::getVertOffset() const
+{
 DOTRACE("CloneFace::getVertOffset");
   return vertOffset();
 }
