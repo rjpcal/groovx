@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Thu Oct 19 14:16:37 2000
+// written: Fri Oct 20 17:32:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -656,6 +656,11 @@ namespace {
 // Gtext member definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+Gtext* Gtext::make() {
+DOTRACE("Gtext::make");
+  return new Gtext;
+}
 
 Gtext::Gtext(const char* text) :
   GrObj(GROBJ_GL_COMPILE, GROBJ_SWAP_FORE_BACK),
