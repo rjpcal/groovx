@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Tue Aug 14 18:48:36 2001
+// written: Wed Aug 15 11:04:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,11 +66,13 @@ namespace Tcl
   {
     const FieldMap& itsFields;
     Tcl::List itsFieldList;
+    bool isItRecursive;
     bool isItInited;
 
-    FieldsLister(const FieldMap& fields) :
+    FieldsLister(const FieldMap& fields, bool recurse) :
       itsFields(fields),
       itsFieldList(),
+      isItRecursive(recurse),
       isItInited(false)
     {}
 
@@ -92,23 +94,28 @@ void Tcl::FieldsLister::operator()(Tcl::Context& ctx)
 DOTRACE("Tcl::FieldsLister::operator()");
   if (!isItInited)
     {
-      for (FieldMap::IoIterator
-             itr = itsFields.ioBegin(),
-             end = itsFields.ioEnd();
-           itr != end;
-           ++itr)
+      for (const FieldMap* fmap = &itsFields;
+           fmap != 0;
+           fmap = isItRecursive ? fmap->parent() : 0)
         {
-          const FieldInfo& finfo = *itr;
+          for (FieldMap::IoIterator
+                 itr = fmap->ioBegin(),
+                 end = fmap->ioEnd();
+               itr != end;
+               ++itr)
+            {
+              const FieldInfo& finfo = *itr;
 
-          Tcl::List sub_list;
+              Tcl::List sub_list;
 
-          sub_list.append(finfo.name());           // property name
-          sub_list.append<TclValue>(finfo.min());  // min value
-          sub_list.append<TclValue>(finfo.max());  // max value
-          sub_list.append<TclValue>(finfo.res());  // resolution value
-          sub_list.append(finfo.startsNewGroup()); // start new group flag
+              sub_list.append(finfo.name());           // property name
+              sub_list.append<TclValue>(finfo.min());  // min value
+              sub_list.append<TclValue>(finfo.max());  // max value
+              sub_list.append<TclValue>(finfo.res());  // resolution value
+              sub_list.append(finfo.startsNewGroup()); // start new group flag
 
-          itsFieldList.append(sub_list);
+              itsFieldList.append(sub_list);
+            }
         }
 
       isItInited = true;
@@ -133,17 +140,23 @@ DOTRACE("Tcl::defField");
                   FieldSetter(finfo) );
 }
 
-void Tcl::defAllFields(Tcl::Pkg* pkg, const FieldMap& fmap)
+void Tcl::defAllFields(Tcl::Pkg* pkg, const FieldMap& fieldmap)
 {
 DOTRACE("Tcl::defAllFields");
-  for (FieldMap::Iterator itr = fmap.begin(), end = fmap.end();
-       itr != end;
-       ++itr)
+
+  for (const FieldMap* fmap = &fieldmap; fmap != 0; fmap = fmap->parent())
     {
-      defField(pkg, *itr);
+      for (FieldMap::Iterator itr = fmap->begin(), end = fmap->end();
+           itr != end;
+           ++itr)
+        {
+          defField(pkg, *itr);
+        }
     }
 
-  pkg->defRaw( "fields", 0, "", FieldsLister(fmap) );
+  pkg->defRaw( "fields", 0, "", FieldsLister(fieldmap, false) );
+
+  pkg->defRaw( "allFields", 0, "", FieldsLister(fieldmap, true) );
 }
 
 static const char vcid_fieldpkg_cc[] = "$Header$";
