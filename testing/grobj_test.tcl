@@ -22,7 +22,7 @@ variable TEST_DEFINED 1
 variable BASE_CLASS_TESTED 0
 
 namespace export testSubclass
-proc testSubclass { package {subclass "GrObj"} } {
+proc testSubclass { package {subclass "GrObj"} {objid -1} } {
 
 	 variable BASE_CLASS_TESTED
 
@@ -31,7 +31,11 @@ proc testSubclass { package {subclass "GrObj"} } {
 	 set testObj(package) $package
 	 set testObj(subclass) $subclass
 	 if { $testObj(testsubclass) } {
-		  set testObj(objid) [eval ${subclass}::${subclass} ]
+		  if { $objid == -1 } {
+				set testObj(objid) [eval ${subclass}::${subclass} ]
+		  } else {
+				set testObj(objid) $objid
+		  }
 	 } else {
 		  set testObj(objid) -1
 	 }
@@ -43,6 +47,7 @@ proc testSubclass { package {subclass "GrObj"} } {
 	 testWriteCmd testObj
 	 testCategoryCmd testObj
 	 testUpdateCmd testObj
+	 testDrawCmd testObj
 	 testBoundingBoxCmd testObj
 	 testAlignmentModeCmd testObj
 	 testAspectRatioCmd testObj
@@ -178,6 +183,30 @@ proc testUpdateCmd { objname } {
 
 		  eval ::test $testname {"normal use"} {"
 		      catch {$cmdname $this(objid)}
+		  "} {"^0$"}
+	 }
+}
+
+proc testDrawCmd { objname } {
+	 upvar $objname this
+
+	 set testname "${this(package)}-draw"
+
+	 if { $this(testsubclass) } {
+		  package require Objtogl
+		  if { ![Togl::inited] } { Togl::init "-rgba false"; ::update }
+
+		  eval ::test $testname {"normal use"} {"
+		      set trial \[Trial::Trial\]
+		      set pos \[Pos::Pos\]
+		      Trial::add \$trial $this(objid) \$pos
+		      clearscreen
+		      set pix1 \[pixelCheckSum\]
+		      show \$trial
+		      set pix2 \[pixelCheckSum\]
+		      Tlist::remove \$trial
+		      PosList::remove \$pos
+		      expr \$pix1 == \$pix2
 		  "} {"^0$"}
 	 }
 }
