@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Fri Jan 18 16:07:00 2002
+// written: Mon Jan 28 11:09:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -168,6 +168,7 @@ int Rh_Init(Tcl_Interp* interp)
   pkg2->defAttrib("bindingSubstitution",
                   &EventResponseHdlr::getBindingSubstitution,
                   &EventResponseHdlr::setBindingSubstitution);
+  pkg2->def("responseProc", "args body", &EventResponseHdlr::setResponseProc);
 
   //
   // KbdRh

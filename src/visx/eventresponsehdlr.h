@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:30:54 1999
-// written: Fri Jan 18 16:06:53 2002
+// written: Mon Jan 28 13:18:08 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,6 +92,7 @@ public:
   /// Virtual destructor.
   virtual ~EventResponseHdlr();
 
+  virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
@@ -140,6 +141,11 @@ public:
       matches in the input response map to determine the integer
       response value. */
   void setBindingSubstitution(const fstring& sub);
+
+  /** Specify a Tcl proc-style code chunk that will translate its args (which
+      are the results of the binding substitution(s)) into an integer result
+      that can be stored in a Response. */
+  void setResponseProc(const fstring& args, const fstring& body);
 
   /** Causes the response handler to abort the trial if an invalid
       responses is seen. This is the default behavior. */
