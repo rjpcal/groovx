@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Sat Nov 20 20:54:51 1999
+// written: Sat Nov 20 22:43:18 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,11 +14,6 @@
 #ifndef STRING_DEFINED
 #include <string>
 #define STRING_DEFINED
-#endif
-
-#ifndef MAP_DEFINED
-#include <map>
-#define MAP_DEFINED
 #endif
 
 #ifndef TYPEINFO_DEFINED
@@ -82,6 +77,61 @@ public:
 };
 
 
+/**
+ *
+ * CreatorMapBase provides a non-typesafe wrapper around std::map. The
+ * destroy() function should be overridden to delete the pointer after
+ * casting it to its true type.
+ *
+ **/
+
+class CreatorMapBase {
+public:
+  ///
+  CreatorMapBase();
+  ///
+  virtual ~CreatorMapBase();
+
+protected:
+  ///
+  void* getPtrForName(const string& name) const;
+  ///
+  void setPtrForName(const string& name, void* ptr);
+
+  ///
+  virtual void destroy(void* ptr) = 0;
+
+private:
+  struct Impl;
+  Impl* const itsImpl;
+};
+
+
+/**
+ *
+ * CreatorMap provides a typesafe wrapper around CreatorMapBase.
+ *
+ **/
+
+template<class Base>
+class CreatorMap : private CreatorMapBase {
+public:
+  ///
+  typedef CreatorBase<Base> CreatorType;
+
+  ///
+  CreatorType* getPtrForName(const string& name) const
+	 { return static_cast<CreatorType*>(CreatorMapBase::getPtrForName(name)); }
+
+  ///
+  void setPtrForName(const string& name, CreatorType* ptr)
+	 { CreatorMapBase::setPtrForName(name, static_cast<void*>(ptr)); }
+
+  ///
+  virtual void destroy(void* ptr)
+	 { delete static_cast<CreatorType*>(ptr); }
+};
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -99,37 +149,25 @@ public:
 template <class Base>
 class Factory {
 private:
-  typedef map<string, CreatorBase<Base>* > MapType;
-
-  MapType itsMap;
-
-  void clear() {
-  	 for (typename MapType::iterator ii = itsMap.begin();
- 			ii != itsMap.end(); 
- 			++ii) {
-  		delete (ii->second);
-  		ii->second = 0;
-  	 }
-  }
+  CreatorMap<Base> itsMap;
 
 protected:
   ///
   Factory() {}
-  ///
-  virtual ~Factory() { clear(); }
 
 public:
   /** Registers a new type with the factory. The class Derived must be
       a subclass of Base. */
   template <class Derived>
   void registerType(Derived* dummy) {
-	 itsMap[demangle(typeid(Derived).name())] = new Creator<Base, Derived>;
+	 itsMap.setPtrForName(demangle(typeid(Derived).name()),
+								 new Creator<Base, Derived>);
   }
 
   /** Returns a new object of a given type. If the given type has not
       been registered with the factory, a null pointer is returned. */
   Base* newObject(const string& type) {
-	 CreatorBase<Base>* creator = itsMap[type];
+	 CreatorBase<Base>* creator = itsMap.getPtrForName(type);
 	 if (creator == 0) return 0;
 	 return creator->create();
   }
