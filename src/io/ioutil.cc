@@ -3,7 +3,7 @@
 // stringifycmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:28 1999
-// written: Thu Mar 23 19:34:58 2000
+// written: Thu Mar 23 20:46:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -131,8 +131,14 @@ DOTRACE("Tcl::ASWSaveCmd::invoke");
   writer.writeRoot(&io);
 }
 
+void Tcl::ASRLoadCmd::beforeLoadHook() {}
+void Tcl::ASRLoadCmd::afterLoadHook() {}
+
 void Tcl::ASRLoadCmd::invoke() {
 DOTRACE("Tcl::ASRLoadCmd::invoke");
+
+  beforeLoadHook(); 
+
   IO& io = getIO();
   const char* filename = getFilename();
 
@@ -146,6 +152,8 @@ DOTRACE("Tcl::ASRLoadCmd::invoke");
 
   AsciiStreamReader reader(ifs);
   reader.readRoot(&io);
+
+  afterLoadHook();
 }
 
 static const char vcid_stringifycmd_cc[] = "$Header$";

@@ -3,7 +3,7 @@
 // stringifycmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:43 1999
-// written: Thu Mar 23 19:26:41 2000
+// written: Thu Mar 23 20:45:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,6 +95,9 @@ public:
 protected:
   virtual IO& getIO() = 0;
   virtual const char* getFilename() = 0;
+
+  virtual void beforeLoadHook();
+  virtual void afterLoadHook();
 
 private:
   virtual void invoke();
