@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Tue Mar  7 19:11:32 2000
+// written: Fri Mar 10 00:39:40 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -73,12 +73,10 @@ namespace ExptTcl {
 class ExptTcl::BeginCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
   BeginCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, NULL, 1, 1),
-	 itsInterp(pkg->interp()) {}
+	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, NULL, 1, 1)
+	 {}
 protected:
   virtual void invoke();
-private:
-  Tcl_Interp* itsInterp;
 };
 
 void ExptTcl::BeginCmd::invoke() {
@@ -127,8 +125,8 @@ DOTRACE("BeginCmd::beginCmd");
 class ExptTcl::PauseCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
   PauseCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, NULL, 1, 1),
-	 itsInterp(pkg->interp()) {}
+	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, NULL, 1, 1)
+	 {}
 protected:
   virtual void invoke() {
 	 ExptDriver* ed = getItem();
@@ -141,12 +139,10 @@ protected:
 				"after 1000",
 				Tcl::TclEvalCmd::THROW_EXCEPTION);
 
-	 pauseMsgCmd.invoke(itsInterp);
+	 pauseMsgCmd.invoke(interp());
 
 	 ed->edBeginTrial();
   }
-private:
-  Tcl_Interp* itsInterp;
 };
 
 //--------------------------------------------------------------------
