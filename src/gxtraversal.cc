@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Nov  3 00:24:54 2000
-// written: Fri Aug 10 10:56:09 2001
+// written: Fri Aug 17 15:10:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "gfx/gxseparator.h"
 
 #include "util/dlink_list.h"
+#include "util/iter.h"
 #include "util/ref.h"
 
 #include "util/trace.h"
@@ -42,10 +43,8 @@ public:
         }
       else
         {
-          for(GxSeparator::ConstChildItr
-                itr = sep->beginChildren(),
-                end = sep->endChildren();
-              itr != end;
+          for(Util::FwdIter<Util::Ref<GxNode> > itr(sep->children());
+              !itr.atEnd();
               ++itr)
             {
               addNode(itr->get());

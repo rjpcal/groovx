@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Tue Aug 14 09:06:26 2001
+// written: Fri Aug 17 15:11:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include "io/writeutils.h"
 
 #include "util/error.h"
+#include "util/iter.h"
 #include "util/minivec.h"
 #include "util/observer.h"
 #include "util/ref.h"
@@ -61,7 +62,7 @@ public:
         }
     }
 
-  virtual void receiveStateChangeMsg(const Observable* obj)
+  virtual void receiveStateChangeMsg(const Observable*)
   {
     DOTRACE("GxSeparator::Impl::receiveStateChangeMsg");
     itsOwner->sendStateChangeMsg();
@@ -194,28 +195,12 @@ DOTRACE("GxSeparator::getChild");
   return itsImpl->itsChildren[index];
 }
 
-GxSeparator::ConstChildItr GxSeparator::beginChildren() const
+Util::FwdIter<Util::Ref<GxNode> > GxSeparator::children() const
 {
-DOTRACE("GxSeparator::beginChildren");
-  return itsImpl->itsChildren.begin();
-}
+DOTRACE("GxSeparator::children");
 
-GxSeparator::ConstChildItr GxSeparator::endChildren() const
-{
-DOTRACE("GxSeparator::endChildren");
-  return itsImpl->itsChildren.end();
-}
-
-GxSeparator::ChildItr GxSeparator::beginChildren()
-{
-DOTRACE("GxSeparator::beginChildren");
-  return itsImpl->itsChildren.begin();
-}
-
-GxSeparator::ChildItr GxSeparator::endChildren()
-{
-DOTRACE("GxSeparator::endChildren");
-  return itsImpl->itsChildren.end();
+  return Util::FwdIter<Util::Ref<GxNode> >(itsImpl->itsChildren.begin(),
+                                           itsImpl->itsChildren.end());
 }
 
 bool GxSeparator::contains(GxNode* other) const
@@ -230,7 +215,9 @@ DOTRACE("GxSeparator::draw");
 
   Gfx::Canvas::StateSaver state(canvas);
 
-  for(ConstChildItr itr = beginChildren(), end = endChildren();
+  for(Impl::VecType::iterator
+        itr = itsImpl->itsChildren.begin(),
+        end = itsImpl->itsChildren.end();
       itr != end;
       ++itr)
     {
@@ -244,7 +231,9 @@ DOTRACE("GxSeparator::undraw");
 
   Gfx::Canvas::StateSaver state(canvas);
 
-  for(ConstChildItr itr = beginChildren(), end = endChildren();
+  for(Impl::VecType::iterator
+        itr = itsImpl->itsChildren.begin(),
+        end = itsImpl->itsChildren.end();
       itr != end;
       ++itr)
     {

@@ -21,6 +21,10 @@
 #include "io/iodecls.h"
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILFWD_H_DEFINED)
+#include "util/utilfwd.h"
+#endif
+
 namespace Util
 {
   template <class T> class Ref;
@@ -60,15 +64,7 @@ public:
   unsigned int numChildren() const;
   Util::Ref<GxNode> getChild(ChildId index) const;
 
-  typedef const Util::Ref<GxNode>* ConstChildItr;
-
-  ConstChildItr beginChildren() const;
-  ConstChildItr endChildren() const;
-
-  typedef Util::Ref<GxNode>* ChildItr;
-
-  ChildItr beginChildren();
-  ChildItr endChildren();
+  Util::FwdIter<Util::Ref<GxNode> > children() const;
 
   virtual bool contains(GxNode* other) const;
 
