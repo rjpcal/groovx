@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Mar 29 22:13:22 2000
+// written: Thu Mar 30 00:09:14 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -15,8 +15,6 @@
 #ifndef EXPTTCL_CC_DEFINED
 #define EXPTTCL_CC_DEFINED
 
-#include "asciistreamreader.h"
-#include "asciistreamwriter.h"
 #include "grshapp.h"
 #include "exptdriver.h"
 
