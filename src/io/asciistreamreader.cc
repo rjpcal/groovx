@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Wed May 17 14:02:07 2000
+// written: Thu Jun  1 13:25:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,58 +57,60 @@ namespace {
   const char STRING_ENDER = '^';
 
   fixed_block<char> READ_BUFFER(4096);
+}
 
-  void readAndUnEscape(istream& is, string& text_out)
+namespace Escape {
+  void readAndUnEscape(istream& is, string& text_out);
+}
+
+void Escape::readAndUnEscape(istream& is, string& text_out) {
+DOTRACE("Escape::readAndUnEscape");
+
+  int brace_level = 0;
+
+  fixed_block<char>::iterator
+	 itr = READ_BUFFER.begin(),
+	 stop = READ_BUFFER.end();
+
+  int ch = 0;
+
+  while ( (ch = is.get()) != EOF &&
+			 !(brace_level == 0 && ch == STRING_ENDER) )
 	 {
-// 		DOTRACE("AsciiStreamReader::Impl::readAndUnEscape");
-
-		int brace_level = 0;
-
-	   fixed_block<char>::iterator
-		  itr = READ_BUFFER.begin(),
-		  stop = READ_BUFFER.end();
-
-		int ch = 0;
-
-		while ( (ch = is.get()) != EOF &&
-				  !(brace_level == 0 && ch == STRING_ENDER) )
+		if (itr >= stop)
+		  throw ("AsciiStreamReader exceeded read buffer capacity");
+		if (ch != '\\')
 		  {
-			 if (itr >= stop)
-				throw ("AsciiStreamReader exceeded read buffer capacity");
-			 if (ch != '\\')
-				{
-				  if (ch == '{') ++brace_level;
-				  if (ch == '}') --brace_level;
-				  *itr++ = ch;
-				  continue;
-				}
-			 else
-				{
-				  int ch2 = is.get();
-				  if (ch2 == EOF || ch2 == STRING_ENDER)
-					 throw IO::ReadError("missing character after trailing backslash");
-				  switch (ch2) {
-				  case '\\':
-					 *itr++ = '\\';
-					 break;
-				  case 'c':
-					 *itr++ = '^';
-					 break;
-				  case '{':
-					 *itr++ = '{';
-					 break;
-				  case '}':
-					 *itr++ = '}';
-					 break;
-				  default:
-					 throw IO::ReadError("invalid escape character");
-					 break;
-				  }
-				}
+			 if (ch == '{') ++brace_level;
+			 if (ch == '}') --brace_level;
+			 *itr++ = ch;
+			 continue;
 		  }
-		text_out.assign(READ_BUFFER.begin(), itr);
+		else
+		  {
+			 int ch2 = is.get();
+			 if (ch2 == EOF || ch2 == STRING_ENDER)
+				throw IO::ReadError("missing character after trailing backslash");
+			 switch (ch2) {
+			 case '\\':
+				*itr++ = '\\';
+				break;
+			 case 'c':
+				*itr++ = '^';
+				break;
+			 case '{':
+				*itr++ = '{';
+				break;
+			 case '}':
+				*itr++ = '}';
+				break;
+			 default:
+				throw IO::ReadError("invalid escape character");
+				break;
+			 }
+		  }
 	 }
-
+  text_out.assign(READ_BUFFER.begin(), itr);
 }
 
 class AsciiStreamReader::Impl {
@@ -346,7 +348,7 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 
 	 attrib.type = type;
 
-	 readAndUnEscape(buf, attrib.value);
+	 Escape::readAndUnEscape(buf, attrib.value);
   }
 }
 

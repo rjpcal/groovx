@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 11:05:52 1999
-// written: Wed Mar 15 10:17:32 2000
+// written: Thu Jun  1 13:41:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,12 @@
 namespace {
   Application* theSingleton = 0;
 }
+
+NoAppError::NoAppError() : ErrorWithMsg() {}
+
+NoAppError::NoAppError(const char* msg) : ErrorWithMsg(msg) {}
+
+NoAppError::~NoAppError() {}
 
 Application::Application() 
 {
