@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:47:00 1999
-// written: Tue Aug 14 18:12:18 2001
+// written: Wed Sep 12 21:57:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,12 +14,6 @@
 #define READER_CC_DEFINED
 
 #include "io/reader.h"
-
-#include "io/io.h"
-
-#include "util/ref.h"
-
-#include <cstddef>
 
 #include "util/trace.h"
 #define LOCAL_ASSERT
