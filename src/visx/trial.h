@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mar-99
-// written: Thu Jun 21 13:32:44 2001
+// written: Sat Jul 21 20:00:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,14 +29,11 @@
 #include "trialbase.h"
 #endif
 
-namespace Util { template <class T> class Ref; };
+namespace Util
+{
+  template <class T> class Ref;
+};
 
-namespace GWT { class Widget; }
-
-namespace Util { class ErrorHandler; }
-
-class Block;
-class Response;
 class ResponseHandler;
 class TimingHdlr;
 
@@ -118,7 +115,7 @@ public:
   // actions //
   /////////////
 
-  virtual void trDoTrial(GWT::Widget& widget,
+  virtual void trDoTrial(Util::WeakRef<GWT::Widget> widget,
                          Util::ErrorHandler& errhdlr, Block& block);
 
   virtual int trElapsedMsec();
@@ -132,7 +129,7 @@ public:
   virtual void trAllowResponses();
   virtual void trDenyResponses();
 
-  virtual void installSelf(GWT::Widget& widget) const;
+  virtual void installSelf(Util::WeakRef<GWT::Widget> widget) const;
 
 private:
   Trial(const Trial&);
