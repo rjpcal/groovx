@@ -471,10 +471,10 @@ DOTRACE("Trial::Impl::trDoTrial");
 
   itsCurrentNode = 0;
 
+  responseHandler().rhBeginTrial(widget, *self);
+
   timingHdlr().thBeginTrial(widget, errhdlr, *self);
   timeTrace("trDoTrial"); 
-
-  responseHandler().rhBeginTrial(widget, *self);
 }
 
 int Trial::Impl::trElapsedMsec() {
