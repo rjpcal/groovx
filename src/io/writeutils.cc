@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:21:32 1999
-// written: Thu May 10 12:04:43 2001
+// written: Wed Jun 20 18:30:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,34 +15,17 @@
 
 #include "io/writeutils.h"
 
-#include "util/strings.h"
-
-#include <strstream.h>
-
-namespace {
-
-const char* makeNumberString(int number) {
-  static char buf[32];
-  ostrstream ost(buf, 16);
-  ost << number << '\0';
-  return buf;
-}
-
-}
+#include "io/readutils.h"
 
 const char* IO::WriteUtils::makeElementNameString(const char* seq_name,
-															 int element_num) {
-  static dynamic_string result("");
-  result = seq_name;
-  result += makeNumberString(element_num);
-  return result.c_str();
+                                                  int element_num)
+{
+  return ReadUtils::makeElementNameString(seq_name, element_num);
 }
 
-const char* IO::WriteUtils::makeSeqCountString(const char* seq_name) {
-  static dynamic_string result("");
-  result = seq_name;
-  result += "Count";
-  return result.c_str();
+const char* IO::WriteUtils::makeSeqCountString(const char* seq_name)
+{
+  return ReadUtils::makeSeqCountString(seq_name);
 }
 
 static const char vcid_writeutils_cc[] = "$Header$";
