@@ -3,7 +3,7 @@
 // irixsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 14 11:23:12 1999
-// written: Thu Oct 21 18:44:26 1999
+// written: Wed Nov  3 08:23:49 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,6 +77,7 @@ private:
   int itsSampleFormat;
   int itsSampleWidth;
   int itsBytesPerSample;
+  double itsSamplingRate;
   vector<unsigned char> itsSamples;
 };
 
@@ -87,6 +88,7 @@ IrixAudioSound::IrixAudioSound(const string& filename) :
   itsSampleFormat(0),
   itsSampleWidth(0),
   itsBytesPerSample(0),
+  itsSamplingRate(0.0),
   itsSamples()
 {
 DOTRACE("IrixAudioSound::IrixAudioSound");
@@ -226,10 +228,20 @@ DOTRACE("IrixAudioSound::setFile");
 
   itsBytesPerSample = (itsSampleWidth + 7)/8;
 
+  // Sampling rate
+  itsSamplingRate = afGetRate(audiofile, AF_DEFAULT_TRACK);
+
+  ALpv pv;
+  pv.param = AL_RATE;
+  pv.value.ll = alDoubleToFixed(itsSamplingRate);
+
+  alSetParams(AL_DEFAULT_DEVICE, &pv, 1);
+
   DebugEval(itsNumChannels);
   DebugEval(itsFrameCount);
   DebugEval(itsSampleWidth);
   DebugEval(itsBytesPerSample);
+  DebugEval(itsSamplingRate);
 
   // Allocate space for the sound samples
   itsSamples.resize(itsFrameCount*itsNumChannels*itsBytesPerSample);
