@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Thu Jul 12 18:34:17 2001
+// written: Fri Jul 13 14:26:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,317 +13,398 @@
 #ifndef FUNCTOR_H_DEFINED
 #define FUNCTOR_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCMD_H_DEFINED)
-#include "tcl/tclcmd.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLVECCMD_H_DEFINED)
+#include "tcl/tclveccmd.h"
 #endif
 
-namespace Tcl {
+namespace Tcl
+{
 
-  //
-  // zero arguments
-  //
+///////////////////////////////////////////////////////////////////////
+//
+// FuncTraits
+//
+///////////////////////////////////////////////////////////////////////
+
+  template <class Func>
+  struct FuncTraits {};
 
   template <class R>
-  class CmdP0 : public TclCmd {
+  struct FuncTraits<R (*)()>
+  {
+    enum { numArgs = 0 };
+  };
+
+  template <class R, class P1>
+  struct FuncTraits<R (*)(P1)>
+  {
+    enum { numArgs = 1 };
+    typedef P1 Arg1_t;
+  };
+
+  template <class R, class P1, class P2>
+  struct FuncTraits<R (*)(P1, P2)>
+  {
+    enum { numArgs = 2 };
+    typedef P1 Arg1_t;
+    typedef P2 Arg2_t;
+  };
+
+  template <class R, class P1, class P2, class P3>
+  struct FuncTraits<R (*)(P1, P2, P3)>
+  {
+    enum { numArgs = 3 };
+    typedef P1 Arg1_t;
+    typedef P2 Arg2_t;
+    typedef P3 Arg3_t;
+  };
+
+  template <class R, class P1, class P2, class P3, class P4>
+  struct FuncTraits<R (*)(P1, P2, P3, P4)>
+  {
+    enum { numArgs = 4 };
+    typedef P1 Arg1_t;
+    typedef P2 Arg2_t;
+    typedef P3 Arg3_t;
+    typedef P4 Arg4_t;
+  };
+
+///////////////////////////////////////////////////////////////////////
+//
+// zero arguments -- Functor0
+//
+///////////////////////////////////////////////////////////////////////
+
+  template <class R, class Func>
+  class Functor0 {
   public:
-    typedef R (*Func)();
+    Functor0<R, Func>(Func f) : itsFunc(f) {}
 
-    CmdP0<R>(Tcl_Interp* interp, Func f, const char* cmd_name,
-             const char* usage) :
-      TclCmd(interp, cmd_name, usage, 1),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke(Tcl::Context& ctx)
+    void operator()(Tcl::Context& ctx)
     {
       ctx.setResult(itsFunc());
     }
 
   private:
-    CmdP0<R>(const CmdP0<R>&);
-    CmdP0<R>& operator=(const CmdP0<R>&);
-
     Func itsFunc;
   };
-
-  template <>
-  void CmdP0<void>::invoke(Tcl::Context& ctx) { itsFunc(); }
-
-
-
-  //
-  // one argument
-  //
-
-  template <class R, class P1, class Func>
-  class CmdP1 : public TclCmd {
-  public:
-
-    CmdP1<R, P1, Func>(Tcl_Interp* interp, Func f, const char* cmd_name,
-                       const char* usage) :
-      TclCmd(interp, cmd_name, usage, 2),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke(Tcl::Context& ctx)
-    {
-      P1 p1 = ctx.getValFromArg(1, (P1*)0);
-      ctx.setResult(itsFunc(p1));
-    }
-
-  private:
-    CmdP1<R, P1, Func>(const CmdP1<R, P1, Func>&);
-    CmdP1<R, P1, Func>& operator=(const CmdP1<R, P1, Func>&);
-
-    Func itsFunc;
-  };
-
-  template <class P1, class Func>
-  class CmdP1<void, P1, Func> : public TclCmd {
-  public:
-
-    CmdP1<void, P1, Func>(Tcl_Interp* interp, Func f, const char* cmd_name,
-                          const char* usage) :
-      TclCmd(interp, cmd_name, usage, 2),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke(Tcl::Context& ctx)
-    {
-      P1 p1 = ctx.getValFromArg(1, (P1*)0);
-      itsFunc(p1);
-    }
-
-  private:
-    CmdP1<void, P1, Func>(const CmdP1<void, P1, Func>&);
-    CmdP1<void, P1, Func>& operator=(const CmdP1<void, P1, Func>&);
-
-    Func itsFunc;
-  };
-
-
-  //
-  // two arguments
-  //
-
-  template <class R, class P1, class P2>
-  class CmdP2 : public TclCmd {
-  public:
-    typedef R (*Func)(P1, P2);
-
-    CmdP2<R, P1, P2>(Tcl_Interp* interp, Func f, const char* cmd_name,
-                     const char* usage) :
-      TclCmd(interp, cmd_name, usage, 3),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke(Tcl::Context& ctx)
-    {
-      P1 p1 = ctx.getValFromArg(1, (P1*)0);
-      P2 p2 = ctx.getValFromArg(2, (P2*)0);
-      ctx.setResult(itsFunc(p1, p2));
-    }
-
-  private:
-    CmdP2<R, P1, P2>(const CmdP2<R, P1, P2>&);
-    CmdP2<R, P1, P2>& operator=(const CmdP2<R, P1, P2>&);
-
-    Func itsFunc;
-  };
-
-  template <class P1, class P2>
-  class CmdP2<void, P1, P2> : public TclCmd {
-  public:
-    typedef void (*Func)(P1, P2);
-
-    CmdP2<void, P1, P2>(Tcl_Interp* interp, Func f, const char* cmd_name,
-                        const char* usage) :
-      TclCmd(interp, cmd_name, usage, 3),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke(Tcl::Context& ctx)
-    {
-      P1 p1 = ctx.getValFromArg(1, (P1*)0);
-      P2 p2 = ctx.getValFromArg(2, (P2*)0);
-      itsFunc(p1, p2);
-    }
-
-  private:
-    CmdP2<void, P1, P2>(const CmdP2<void, P1, P2>&);
-    CmdP2<void, P1, P2>& operator=(const CmdP2<void, P1, P2>&);
-
-    Func itsFunc;
-  };
-
-
-  //
-  // three arguments
-  //
-
-  template <class R, class P1, class P2, class P3>
-  class CmdP3 : public TclCmd {
-  public:
-    typedef R (*Func)(P1, P2, P3);
-
-    CmdP3<R, P1, P2, P3>(Tcl_Interp* interp, Func f, const char* cmd_name,
-                         const char* usage) :
-      TclCmd(interp, cmd_name, usage, 4),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke(Tcl::Context& ctx)
-    {
-      P1 p1 = ctx.getValFromArg(1, (P1*)0);
-      P2 p2 = ctx.getValFromArg(2, (P2*)0);
-      P3 p3 = ctx.getValFromArg(3, (P3*)0);
-      ctx.setResult(itsFunc(p1, p2, p3));
-    }
-
-  private:
-    CmdP3<R, P1, P2, P3>(const CmdP3<R, P1, P2, P3>&);
-    CmdP3<R, P1, P2, P3>& operator=(const CmdP3<R, P1, P2, P3>&);
-
-    Func itsFunc;
-  };
-
-  template <class P1, class P2, class P3>
-  class CmdP3<void, P1, P2, P3> : public TclCmd {
-  public:
-    typedef void (*Func)(P1, P2, P3);
-
-    CmdP3<void, P1, P2, P3>(Tcl_Interp* interp, Func f, const char* cmd_name,
-                            const char* usage) :
-      TclCmd(interp, cmd_name, usage, 4),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke(Tcl::Context& ctx)
-    {
-      P1 p1 = ctx.getValFromArg(1, (P1*)0);
-      P2 p2 = ctx.getValFromArg(2, (P2*)0);
-      P3 p3 = ctx.getValFromArg(3, (P3*)0);
-      itsFunc(p1, p2, p3);
-    }
-
-  private:
-    CmdP3<void, P1, P2, P3>(const CmdP3<void, P1, P2, P3>&);
-    CmdP3<void, P1, P2, P3>& operator=(const CmdP3<void, P1, P2, P3>&);
-
-    Func itsFunc;
-  };
-
-
-  //
-  // four arguments
-  //
-
-  template <class R, class P1, class P2, class P3, class P4>
-  class CmdP4 : public TclCmd {
-  public:
-    typedef R (*Func)(P1, P2, P3, P4);
-
-    CmdP4<R, P1, P2, P3, P4>(Tcl_Interp* interp, Func f, const char* cmd_name,
-                             const char* usage) :
-      TclCmd(interp, cmd_name, usage, 5),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke(Tcl::Context& ctx)
-    {
-      P1 p1 = ctx.getValFromArg(1, (P1*)0);
-      P2 p2 = ctx.getValFromArg(2, (P2*)0);
-      P3 p3 = ctx.getValFromArg(3, (P3*)0);
-      P4 p4 = ctx.getValFromArg(4, (P4*)0);
-      ctx.setResult(itsFunc(p1, p2, p3, p4));
-    }
-
-  private:
-    CmdP4<R, P1, P2, P3, P4>(const CmdP4<R, P1, P2, P3, P4>&);
-    CmdP4<R, P1, P2, P3, P4>& operator=(const CmdP4<R, P1, P2, P3, P4>&);
-
-    Func itsFunc;
-  };
-
-  template <class P1, class P2, class P3, class P4>
-  class CmdP4<void, P1, P2, P3, P4> : public TclCmd {
-  public:
-    typedef void (*Func)(P1, P2, P3, P4);
-
-    CmdP4<void, P1, P2, P3, P4>(Tcl_Interp* interp, Func f, const char* cmd_name,
-                                const char* usage) :
-      TclCmd(interp, cmd_name, usage, 5),
-      itsFunc(f)
-    {}
-
-  protected:
-    virtual void invoke(Tcl::Context& ctx)
-    {
-      P1 p1 = ctx.getValFromArg(1, (P1*)0);
-      P2 p2 = ctx.getValFromArg(2, (P2*)0);
-      P3 p3 = ctx.getValFromArg(3, (P3*)0);
-      P4 p4 = ctx.getValFromArg(4, (P4*)0);
-      itsFunc(p1, p2, p3, p4);
-    }
-
-  private:
-    CmdP4<void, P1, P2, P3, P4>(const CmdP4<void, P1, P2, P3, P4>&);
-    CmdP4<void, P1, P2, P3, P4>& operator=(const CmdP4<void, P1, P2, P3, P4>&);
-
-    Func itsFunc;
-  };
-
 
   template <class Func>
-  inline TclCmd* makeCmd(Tcl_Interp* interp, Func f,
-                         const char* cmd_name, const char* usage);
+  class Functor0<void, Func> {
+  public:
+    Functor0<void, Func>(Func f) : itsFunc(f) {}
+
+    void operator()(Tcl::Context& ctx)
+    {
+      itsFunc();
+    }
+
+  private:
+    Func itsFunc;
+  };
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// one argument -- Functor1
+//
+///////////////////////////////////////////////////////////////////////
+
+  template <class R, class Func>
+  class Functor1 {
+  public:
+    Functor1<R, Func>(Func f) : itsFunc(f) {}
+
+    void operator()(Tcl::Context& ctx)
+    {
+      ctx.setResult(itsFunc(
+          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0)
+          ));
+    }
+
+  private:
+    Func itsFunc;
+  };
+
+  template <class Func>
+  class Functor1<void, Func> {
+  public:
+    Functor1<void, Func>(Func f) : itsFunc(f) {}
+
+    void operator()(Tcl::Context& ctx)
+    {
+      itsFunc(
+          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0)
+          );
+    }
+
+  private:
+    Func itsFunc;
+  };
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// two arguments -- Functor2
+//
+///////////////////////////////////////////////////////////////////////
+
+  template <class R, class Func>
+  class Functor2 {
+  public:
+    Functor2<R, Func>(Func f) : itsFunc(f) {}
+
+    void operator()(Tcl::Context& ctx)
+    {
+      ctx.setResult(itsFunc(
+          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
+          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0)
+          ));
+    }
+
+  private:
+    Func itsFunc;
+  };
+
+  template <class Func>
+  class Functor2<void, Func> {
+  public:
+    Functor2<void, Func>(Func f) : itsFunc(f) {}
+
+    void operator()(Tcl::Context& ctx)
+    {
+      itsFunc(
+          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
+          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0)
+          );
+    }
+
+  private:
+    Func itsFunc;
+  };
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// three arguments -- Functor3
+//
+///////////////////////////////////////////////////////////////////////
+
+  template <class R, class Func>
+  class Functor3 {
+  public:
+    Functor3<R, Func>(Func f) : itsFunc(f) {}
+
+    void operator()(Tcl::Context& ctx)
+    {
+      ctx.setResult(itsFunc(
+          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
+          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0),
+          ctx.getValFromArg(3, (typename FuncTraits<Func>::Arg3_t*)0)
+          ));
+    }
+
+  private:
+    Func itsFunc;
+  };
+
+  template <class Func>
+  class Functor3<void, Func> {
+  public:
+    Functor3<void, Func>(Func f) : itsFunc(f) {}
+
+    void operator()(Tcl::Context& ctx)
+    {
+      itsFunc(
+          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
+          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0),
+          ctx.getValFromArg(3, (typename FuncTraits<Func>::Arg3_t*)0)
+          );
+    }
+
+  private:
+    Func itsFunc;
+  };
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// four arguments -- Functor4
+//
+///////////////////////////////////////////////////////////////////////
+
+  template <class R, class Func>
+  class Functor4 {
+  public:
+    Functor4<R, Func>(Func f) : itsFunc(f) {}
+
+    void operator()(Tcl::Context& ctx)
+    {
+      ctx.setResult(itsFunc(
+          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
+          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0),
+          ctx.getValFromArg(3, (typename FuncTraits<Func>::Arg3_t*)0),
+          ctx.getValFromArg(4, (typename FuncTraits<Func>::Arg4_t*)0)
+          ));
+    }
+
+  private:
+    Func itsFunc;
+  };
+
+  template <class Func>
+  class Functor4<void, Func> {
+  public:
+    Functor4<void, Func>(Func f) : itsFunc(f) {}
+
+    void operator()(Tcl::Context& ctx)
+    {
+      itsFunc(
+          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
+          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0),
+          ctx.getValFromArg(3, (typename FuncTraits<Func>::Arg3_t*)0),
+          ctx.getValFromArg(4, (typename FuncTraits<Func>::Arg4_t*)0)
+          );
+    }
+
+  private:
+    Func itsFunc;
+  };
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// Functor "generic constructors" for free functions
+//
+///////////////////////////////////////////////////////////////////////
 
   template <class R>
-  inline TclCmd* makeCmd(Tcl_Interp* interp,
-                         R (*f)(),
-                         const char* cmd_name, const char* usage)
+  inline Functor0<R, R (*)()> wrapFunc(R (*f)())
   {
-    return new CmdP0<R>(interp, f, cmd_name, usage);
+    return Functor0<R, R (*)()>(f);
   }
 
   template <class R, class P1>
-  inline TclCmd* makeCmd(Tcl_Interp* interp,
-                         R (*f)(P1), // typename CmdP1<P1>::Func
-                         const char* cmd_name, const char* usage)
+  inline Functor1<R, R (*)(P1)> wrapFunc(R (*f)(P1))
   {
-    return new CmdP1<R, P1, R(*)(P1)>(interp, f, cmd_name, usage);
+    return Functor1<R, R (*)(P1)>(f);
   }
 
   template <class R, class P1, class P2>
-  inline TclCmd* makeCmd(Tcl_Interp* interp,
-                         R (*f)(P1, P2),
-                         const char* cmd_name, const char* usage)
+  inline Functor2<R, R (*)(P1, P2)> wrapFunc(R (*f)(P1, P2))
   {
-    return new CmdP2<R, P1, P2>(interp, f, cmd_name, usage);
+    return Functor2<R, R (*)(P1, P2)>(f);
   }
 
   template <class R, class P1, class P2, class P3>
-  inline TclCmd* makeCmd(Tcl_Interp* interp,
-                         R (*f)(P1, P2, P3),
-                         const char* cmd_name, const char* usage)
+  inline Functor3<R, R (*)(P1, P2, P3)>
+  wrapFunc(R (*f)(P1, P2, P3))
   {
-    return new CmdP3<R, P1, P2, P3>(interp, f, cmd_name, usage);
+    return Functor3<R, R (*)(P1, P2, P3)>(f);
   }
 
   template <class R, class P1, class P2, class P3, class P4>
-  inline TclCmd* makeCmd(Tcl_Interp* interp,
-                         R (*f)(P1, P2, P3, P4),
+  inline Functor4<R, R (*)(P1, P2, P3, P4)>
+  wrapFunc(R (*f)(P1, P2, P3, P4))
+  {
+    return Functor4<R, R (*)(P1, P2, P3, P4)>(f);
+  }
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// GenericCmd
+//
+///////////////////////////////////////////////////////////////////////
+
+  template <class Functor>
+  class GenericCmd : public TclCmd {
+  public:
+
+    GenericCmd<Functor>(Tcl_Interp* interp, Functor f, const char* cmd_name,
+                        const char* usage, int nargs) :
+      TclCmd(interp, cmd_name, usage, nargs+1),
+      itsFunctor(f)
+    {}
+
+  protected:
+    virtual void invoke(Tcl::Context& ctx)
+    {
+      itsFunctor(ctx);
+    }
+
+  private:
+    Functor itsFunctor;
+  };
+
+
+  template <class Functor>
+  inline TclCmd* makeGenericCmd(Tcl_Interp* interp, Functor f,
+                                const char* cmd_name, const char* usage,
+                                int nargs)
+  {
+    return new GenericCmd<Functor>(interp, f, cmd_name, usage, nargs);
+  }
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// GenericVecCmd
+//
+///////////////////////////////////////////////////////////////////////
+
+  template <class Functor>
+  class GenericVecCmd : public VecCmd {
+  public:
+
+    GenericVecCmd<Functor>(Tcl_Interp* interp, Functor f, const char* cmd_name,
+                           const char* usage, int nargs, unsigned int keyarg)
+      :
+      VecCmd(interp, cmd_name, usage, keyarg, nargs+1),
+      itsFunctor(f)
+    {}
+
+  protected:
+    virtual void invoke(Tcl::Context& ctx)
+    {
+      itsFunctor(ctx);
+    }
+
+  private:
+    Functor itsFunctor;
+  };
+
+
+  template <class Functor>
+  inline TclCmd* makeGenericVecCmd(Tcl_Interp* interp, Functor f,
+                                   const char* cmd_name, const char* usage,
+                                   int nargs, unsigned int keyarg)
+  {
+    return new GenericVecCmd<Functor>(interp, f, cmd_name,
+                                      usage, nargs, keyarg);
+  }
+
+///////////////////////////////////////////////////////////////////////
+//
+// And finally... makeCmd
+//
+///////////////////////////////////////////////////////////////////////
+
+  template <class Func>
+  inline TclCmd* makeCmd(Tcl_Interp* interp, Func f,
                          const char* cmd_name, const char* usage)
   {
-    return new CmdP4<R, P1, P2, P3, P4>(interp, f, cmd_name, usage);
+    return makeGenericCmd(interp, wrapFunc(f), cmd_name, usage,
+                          FuncTraits<Func>::numArgs);
+  }
+
+  template <class Func>
+  inline TclCmd* makeVecCmd(Tcl_Interp* interp, Func f,
+                            const char* cmd_name, const char* usage,
+                            unsigned int keyarg=1)
+  {
+    return makeGenericVecCmd(interp, wrapFunc(f), cmd_name, usage,
+                             FuncTraits<Func>::numArgs, keyarg);
   }
 
 } // end namespace Tcl
