@@ -32,8 +32,8 @@
 
 #include "mtx.h"
 
+#include "util/arrays.h"
 #include "util/error.h"
-#include "util/minivec.h"
 #include "util/strings.h"
 
 #include <algorithm>
@@ -225,7 +225,7 @@ namespace
     double val;
     int index;
 
-    ValIndex(double v) : val(v), index(counter++) {}
+    ValIndex(double v=0.0) : val(v), index(counter++) {}
 
     bool operator<(const ValIndex& v2) const { return val < v2.val; }
   };
@@ -239,7 +239,8 @@ DOTRACE("Slice::getSortOrder");
 
   ValIndex::counter = 0;
 
-  minivec<ValIndex> buf(begin(), end());
+  dynamic_block<ValIndex> buf;
+  buf.assign(begin(), end());
 
   std::sort(buf.begin(), buf.end());
 
