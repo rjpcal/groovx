@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Mar 13 12:24:32 2001
+// written: Tue Mar 13 12:28:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +31,8 @@ Slice& Slice::operator=(const ConstSlice& other)
 
   for (Iterator lhs = begin(), stop = end(); lhs != stop; ++lhs, ++rhs)
 	 *lhs = *rhs;
+
+  return *this;
 }
 
 ///////////////////////////////////////////////////////////////////////
