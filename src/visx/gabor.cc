@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Mar 27 11:19:24 2002
+// written: Wed Nov 13 12:50:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,8 @@
 
 #include "util/algo.h"
 #include "util/randutils.h"
+
+#include "visx/gmodes.h"
 
 #include <cmath>
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Sep 25 19:02:28 2002
+// written: Wed Nov 13 12:47:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,8 +18,6 @@
 #include "io/fields.h"
 
 #include "util/tracer.h"
-
-#include "visx/gmodes.h"
 
 class GrObjImpl;
 
@@ -87,7 +85,7 @@ public:
   virtual Gfx::Rect<double> grGetBoundingBox(Gfx::Canvas& canvas) const = 0;
 
   /// Returns the current scaling mode.
-  Gmodes::ScalingMode getScalingMode() const;
+  int getScalingMode() const;
 
   /// Returns the object's onscreen width in OpenGL units.
   double getWidth() const;
@@ -107,7 +105,7 @@ public:
   double getMaxDimension() const;
 
   /// Returns the current alignment mode.
-  Gmodes::AlignmentMode getAlignmentMode() const;
+  int getAlignmentMode() const;
 
   /// Returns the x value of the location of the object's center.
   double getCenterX() const;
@@ -123,7 +121,7 @@ public:
   virtual int category() const;
 
   /// Returns the current rendering mode.
-  Gmodes::RenderMode getRenderMode() const;
+  int getRenderMode() const;
 
 
   ///////////////////////////////////////////////////////////////////////
@@ -144,7 +142,7 @@ public:
   /** Changes the current scaling mode to \a mode, unless the
       requirements of \a mode (for example, requiring a bounding box)
       are not met, in which case the scaling mode is unchanged. */
-  void setScalingMode(Gmodes::ScalingMode mode);
+  void setScalingMode(int mode);
 
   /** Changes the current width to \a val, unless the scaling mode is
       \c NATIVE_SCALING. If the scaling mode is \c
@@ -171,7 +169,7 @@ public:
   /** Changes the current alignment mode to \a mode, unless the
       requirements of \a mode (for example, requiring a bounding box)
       are not met, in which case the scaling mode is unchanged. */
-  void setAlignmentMode(Gmodes::AlignmentMode mode);
+  void setAlignmentMode(int mode);
 
   /** Change the x value for the location of the object's center to \a
       val. This value is used only if the alignment mode is \c
@@ -193,7 +191,7 @@ public:
   /** Changes the current rendering mode to \a mode, unless the
       requirements of \a mode (for example, requiring a bounding box)
       are not met, in which case the scaling mode is unchanged. */
-  void setRenderMode(Gmodes::RenderMode mode);
+  void setRenderMode(int mode);
 
 
   ///////////////////////////////////////////////////////////////////////

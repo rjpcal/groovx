@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Nov 13 10:55:11 2002
+// written: Wed Nov 13 12:48:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "visx/grobj.h"
 
+#include "visx/gmodes.h"
 #include "visx/grobjimpl.h"
 
 #include "gfx/canvas.h"
@@ -150,7 +151,7 @@ DOTRACE("GrObj::getBoundingCube");
   itsImpl->itsTopNode->getBoundingCube(cube, canvas);
 }
 
-Gmodes::ScalingMode GrObj::getScalingMode() const
+int GrObj::getScalingMode() const
 {
 DOTRACE("GrObj::getScalingMode");
   return itsImpl->itsScaler->getMode();
@@ -180,7 +181,7 @@ DOTRACE("GrObj::getMaxDimension");
   return itsImpl->itsScaler->scaledMaxDim(Grsh::canvas());
 }
 
-Gmodes::AlignmentMode GrObj::getAlignmentMode() const
+int GrObj::getAlignmentMode() const
 {
 DOTRACE("GrObj::getAlignmentMode");
   return itsImpl->itsAligner->getMode();
@@ -210,7 +211,7 @@ DOTRACE("GrObj::category");
   return itsImpl->itsCategory;
 }
 
-Gmodes::RenderMode GrObj::getRenderMode() const
+int GrObj::getRenderMode() const
 {
   return itsImpl->itsGLCache->getMode();
 }
@@ -231,7 +232,7 @@ void GrObj::setBBVisibility(bool visibility)
   this->sigNodeChanged.emit();
 }
 
-void GrObj::setScalingMode(Gmodes::ScalingMode val)
+void GrObj::setScalingMode(int val)
 {
 DOTRACE("GrObj::setScalingMode");
 
@@ -271,7 +272,7 @@ DOTRACE("GrObj::setMaxDimension");
   this->sigNodeChanged.emit();
 }
 
-void GrObj::setAlignmentMode(Gmodes::AlignmentMode val)
+void GrObj::setAlignmentMode(int val)
 {
 DOTRACE("GrObj::setAlignmentMode");
 
@@ -307,7 +308,7 @@ DOTRACE("GrObj::setCategory");
   itsImpl->itsCategory = val;
 }
 
-void GrObj::setRenderMode(Gmodes::RenderMode mode)
+void GrObj::setRenderMode(int mode)
 {
 DOTRACE("GrObj::setRenderMode");
 
