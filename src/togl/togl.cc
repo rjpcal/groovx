@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Nov 20 20:37:33 2002
+// written: Wed Nov 20 20:49:48 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -275,9 +275,9 @@ DOTRACE("Togl::displayCallback");
   fullRender();
 }
 
-void Togl::makeCurrent() const          { rep->itsCanvas->makeCurrent(Tk_WindowId(rep->itsTkWin)); }
-void Togl::swapBuffers()                { rep->swapBuffers(); }
-bool Togl::hasPrivateCmap() const       { return rep->itsPrivateCmapFlag; }
+void Togl::makeCurrent() const    { rep->itsCanvas->makeCurrent(Tk_WindowId(rep->itsTkWin)); }
+void Togl::swapBuffers()          { rep->swapBuffers(); }
+bool Togl::hasPrivateCmap() const { return rep->itsPrivateCmapFlag; }
 
 Togl::Color Togl::queryColor(unsigned int color_index) const
   { return rep->queryColor(color_index); }
