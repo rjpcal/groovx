@@ -123,12 +123,6 @@ geom::rect<int> Gfx::Bbox::screenFromWorldRect(const geom::rect<double>& world_p
   return rep->canvas.screenFromWorldRect(world_pos);
 }
 
-geom::rect<double> Gfx::Bbox::worldFromScreenRect(const geom::rect<int>& screen_pos) const
-{
-  // FIXME need to install our own modelview matrix here first...
-  return rep->canvas.worldFromScreenRect(screen_pos);
-}
-
 void Gfx::Bbox::translate(const vec3d& v)
 {
   rep->txforms.back().translate(v);

@@ -187,7 +187,9 @@ geom::rect<int> GLCanvas::getScreenViewport() const
 
 geom::rect<double> GLCanvas::getWorldViewport() const
 {
-  return worldFromScreenRect(getScreenViewport());
+  const geom::rect<int> screen_vp = getScreenViewport();
+  return geom::rect<double>( worldFromScreen2(screen_vp.bottom_left()),
+                             worldFromScreen2(screen_vp.top_right()) );
 }
 
 

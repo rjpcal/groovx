@@ -94,16 +94,6 @@ DOTRACE("Gfx::Canvas::screenFromWorldRect");
   return screen_rect;
 }
 
-geom::rect<double> Gfx::Canvas::worldFromScreenRect(const geom::rect<int>& screen_pos) const
-{
-DOTRACE("Gfx::Canvas::worldFromScreenRect");
-
-  geom::rect<double> world_rect;
-  world_rect.set_corners( worldFromScreen2(screen_pos.bottom_left()),
-                          worldFromScreen2(screen_pos.top_right()) );
-  return world_rect;
-}
-
 void Gfx::Canvas::drawRect(const geom::rect<double>& rect, bool filled)
 {
   Gfx::AttribSaver saver(*this);

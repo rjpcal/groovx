@@ -102,9 +102,6 @@ public:
   /// Convert a rect from screen coordinates to world coordinates.
   geom::rect<int> screenFromWorldRect(const geom::rect<double>& world_pos) const;
 
-  /// Convert a rect from world coordinates to screen coordinates.
-  geom::rect<double> worldFromScreenRect(const geom::rect<int>& screen_pos) const;
-
   /// Get the viewport rect in screen coordinates.
   virtual geom::rect<int> getScreenViewport() const = 0;
 
