@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Mon May 21 14:49:39 2001
+// written: Thu May 24 18:19:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,8 @@
 #  include "hpsound.h"
 #elif defined(IRIX6)
 #  include "irixsound.h"
+#elif defined(I686)
+#  include "esdsound.h"
 #else
 #  include "dummysound.h"
 #endif
