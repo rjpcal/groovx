@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Sun Jul 22 15:44:34 2001
+// written: Mon Aug  6 10:59:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,8 +42,7 @@
 
 namespace TlistTcl
 {
-  Util::UID createPreview(Tcl::List objid_list,
-                          int pixel_width, int pixel_height);
+  Util::UID createPreview(Tcl::List objid_list);
 
   Tcl::List dealSingles(Tcl::List objids, Util::UID posid);
 
@@ -77,16 +76,14 @@ namespace TlistTcl
 //
 //---------------------------------------------------------------------
 
-Util::UID TlistTcl::createPreview(Tcl::List objid_list,
-                                  int pixel_width, int pixel_height)
+Util::UID TlistTcl::createPreview(Tcl::List objid_list)
 {
   fixed_block<Util::UID> objids(objid_list.begin<Util::UID>(),
                                 objid_list.end<Util::UID>());
 
   GWT::Canvas& canvas = Application::theApp().getCanvas();
 
-  return TlistUtils::createPreview(canvas, &objids[0], objids.size(),
-                                   pixel_width, pixel_height);
+  return TlistUtils::createPreview(canvas, &objids[0], objids.size());
 }
 
 //--------------------------------------------------------------------
@@ -298,14 +295,14 @@ public:
   TlistPkg(Tcl_Interp* interp) :
     Tcl::Pkg(interp, "Tlist", "$Revision$")
   {
-    def( "createPreview", "objids pixel_width pixel_height",
-         &TlistTcl::createPreview );
+    def( "createPreview", "objids", &TlistTcl::createPreview );
 
     def( "dealSingles", "objid(s) posid", &TlistTcl::dealSingles );
     def( "dealPairs", "objids1 objids2 posid1 posid2", &TlistTcl::dealPairs );
     def( "dealTriads", "objids posid1 posid2 posid3", &TlistTcl::dealTriads );
 
-    def( "loadObjidFile", "objid_file objids posids", &TlistTcl::loadObjidFile );
+    def( "loadObjidFile", "objid_file objids posids",
+         &TlistTcl::loadObjidFile );
     def( "loadObjidFile", "objid_file objids posids num_lines=-1",
          &TlistTcl::loadObjidFileAll );
 

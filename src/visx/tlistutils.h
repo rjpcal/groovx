@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 02:58:20 1999
-// written: Sun Jul 22 15:51:26 2001
+// written: Mon Aug  6 10:57:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,8 +27,7 @@ template <class T> class dynamic_block;
 class TlistUtils {
 public:
   static Util::UID createPreview(GWT::Canvas& canvas,
-											Util::UID* objids, unsigned int objids_size,
-											int pixel_width, int pixel_height);
+                                 Util::UID* objids, unsigned int objids_size);
 
   /** Write a file containing a summary of the responses to each Trial
       in the Tlist. */
