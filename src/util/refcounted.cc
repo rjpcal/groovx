@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:28 2000
-// written: Mon Sep  9 11:29:24 2002
+// written: Sun Nov  3 13:41:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -144,7 +144,7 @@ DOTRACE("Util::RefCounted::operator delete");
 Util::RefCounted::RefCounted() : itsRefCounts(new Util::RefCounts)
 {
 DOTRACE("Util::RefCounted::RefCounted");
-  DebugPrint("RefCounted ctor"); DebugEvalNL((void*)this);
+  dbgPrint(3, "RefCounted ctor"); dbgEvalNL(3, (void*)this);
 
   itsRefCounts->acquireWeak();
 }
@@ -152,7 +152,7 @@ DOTRACE("Util::RefCounted::RefCounted");
 Util::RefCounted::~RefCounted()
 {
 DOTRACE("Util::RefCounted::~RefCounted");
-  DebugPrint("RefCounted dtor"); DebugEvalNL((void*)this);
+  dbgPrint(3, "RefCounted dtor"); dbgEvalNL(3, (void*)this);
 
   itsRefCounts->releaseWeak();
 }
@@ -199,8 +199,8 @@ int Util::RefCounted::refCount() const
 {
 DOTRACE("Util::RefCounted::refCount");
 
-  DebugEval(itsRefCounts->weakCount());
-  DebugEvalNL(itsRefCounts->strongCount());
+  dbgEval(3, itsRefCounts->weakCount());
+  dbgEvalNL(3, itsRefCounts->strongCount());
 
   return itsRefCounts->strongCount();
 }

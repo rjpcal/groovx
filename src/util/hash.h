@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 20 08:50:34 2000
-// written: Wed Sep 25 18:58:25 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,8 @@
 #include "util/slink_list.h"
 
 #include <cstddef>
+
+#include "util/debug.h"
 
 namespace
 {
@@ -185,10 +187,9 @@ public:
     reference operator*() { return list_itr.operator*(); }
     pointer operator->()
     {
-#ifdef LOCAL_DEBUG
-      DebugEval(table_itr - buckets_ptr->begin());
-      DebugEvalNL(&*list_itr);
-#endif
+      dbgEval(3, table_itr - buckets_ptr->begin());
+      dbgEvalNL(3, &*list_itr);
+
       return list_itr.operator->();
     }
 
@@ -291,9 +292,8 @@ public:
   iterator insert(const entry_type& entry, bool allow_resize = true)
     {
       size_t h = hasher(entry.key) % buckets.size();
-#ifdef LOCAL_DEBUG
-      DebugEvalNL(h);
-#endif
+
+      dbgEvalNL(3, h);
 
       table_iterator bucket_itr = buckets.begin()+h;
       list_iterator itr(bucket_itr->begin()), stop(bucket_itr->end());
@@ -333,9 +333,8 @@ public:
 
   value_type& operator[](const key_type& key)
     {
-#ifdef LOCAL_DEBUG
-      DebugEvalNL(key);
-#endif
+      dbgEvalNL(3, key);
+
       return insert(key, value_type())->value;
     }
 

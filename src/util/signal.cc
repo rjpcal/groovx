@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Fri Jan 18 16:07:04 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,10 +21,6 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
-
-#ifdef LOCAL_DEBUG
-#include <typeinfo>
-#endif
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -90,12 +86,9 @@ public:
              ii != end;
              /* incr in loop */)
           {
-            DebugEvalNL((*ii).getWeak());
             if ((*ii)->exists())
               {
-                DebugEval(typeid(*(*ii).getWeak()).name());
-                DebugEval((*ii)->refCount());
-                DebugEvalNL((*ii).refType());
+                dbgEval(3, (*ii)->refCount());
                 (*ii)->call();
                 ++ii;
               }
@@ -157,7 +150,7 @@ DOTRACE("Util::Signal::disconnect");
 
   itsImpl->itsSlots.remove(SlotRef(slot.get(), Util::PRIVATE));
 
-  DebugEvalNL(itsImpl->itsSlots.size());
+  dbgEvalNL(3, itsImpl->itsSlots.size());
 }
 
 void Util::Signal::connect(Util::SoftRef<Util::Slot> slot)
@@ -167,7 +160,7 @@ DOTRACE("Util::Signal::connect");
 
   itsImpl->itsSlots.push_back(SlotRef(slot.get(), Util::PRIVATE));
 
-  DebugEvalNL(itsImpl->itsSlots.size());
+  dbgEvalNL(3, itsImpl->itsSlots.size());
 }
 
 void Util::Signal::emit() const

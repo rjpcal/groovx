@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu Sep 12 15:01:24 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -279,7 +279,7 @@ DOTRACE("ObjDb::release");
 void ObjDb::purge()
 {
 DOTRACE("ObjDb::clear");
-  DebugEvalNL(typeid(*this).name());
+  dbgEvalNL(3, typeid(*this).name());
   itsImpl->purge();
 }
 

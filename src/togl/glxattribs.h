@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:36:13 2002
-// written: Sat Aug 10 15:16:12 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,15 +46,15 @@ public:
   {
     push( GLX_RGBA );
     push( GLX_RED_SIZE );
-    push( rbits );          DebugEval(rbits);
+    push( rbits );          dbgEval(3, rbits);
     push( GLX_GREEN_SIZE );
-    push( gbits );          DebugEval(gbits);
+    push( gbits );          dbgEval(3, gbits);
     push( GLX_BLUE_SIZE );
-    push( bbits );          DebugEvalNL(bbits);
+    push( bbits );          dbgEvalNL(3, bbits);
     if (abits > 0)
       {
         push( GLX_ALPHA_SIZE );
-        push( abits );      DebugEvalNL(abits);
+        push( abits );      dbgEvalNL(3, abits);
       }
   }
 

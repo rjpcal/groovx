@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug 23 14:50:36 2001
-// written: Fri Jan 18 16:07:05 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ void Tcl::Timer::dummyCallback(ClientData clientData)
 
   timer->itsToken = 0;
 
-  DebugEvalNL(timer->itsStopWatch.elapsedMsec());
+  dbgEvalNL(3, timer->itsStopWatch.elapsedMsec());
 
   timer->sigTimeOut.emit();
 

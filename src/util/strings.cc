@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Thu Feb  7 13:32:09 2002
+// written: Sun Nov  3 13:55:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -126,7 +126,10 @@ string_rep::string_rep(std::size_t length, const char* text,
 
 string_rep::~string_rep()
 {
+DOTRACE("string_rep::~string_rep");
+
   delete [] itsText;
+  itsText = (char*)0xdeadbeef;
 }
 
 string_rep* string_rep::getEmptyRep()
@@ -184,6 +187,18 @@ void string_rep::clear()
   add_terminator();
 }
 
+void string_rep::debugDump() const
+{
+  dbgEvalNL(0, (void*)this);
+  dbgEvalNL(0, itsRefCount);
+  dbgEvalNL(0, itsLength);
+  dbgEvalNL(0, (void*)itsText);
+  dbgEvalNL(0, itsText);
+  for (unsigned int i = 0; i < itsLength; ++i)
+    dbgPrint(0, (void*)itsText[i]);
+  dbgPrintNL(0, "");
+}
+
 //---------------------------------------------------------------------
 //
 // fstring member definitions
@@ -218,7 +233,11 @@ DOTRACE("fstring::fstring(const fstring&)");
 fstring::~fstring()
 {
 DOTRACE("fstring::~fstring");
-  itsRep->decrRefCount();
+
+  dbgDump(4, *this);
+
+  if (itsRep->decrRefCount() == 0)
+    itsRep = (string_rep*)0xdeadbeef;
 }
 
 void fstring::swap(fstring& other)
@@ -275,6 +294,7 @@ DOTRACE("fstring::ends_with");
 
 bool fstring::operator<(const char* other) const
 {
+DOTRACE("fstring::operator<");
   // Check if we are pointing to the same string
   if (c_str() == other) return false;
   // ...otherwise do a string compare
@@ -283,6 +303,7 @@ bool fstring::operator<(const char* other) const
 
 bool fstring::operator>(const char* other) const
 {
+DOTRACE("fstring::operator>");
   // Check if we are pointing to the same string
   if (c_str() == other) return false;
   // ...otherwise do a string compare
@@ -369,6 +390,12 @@ DOTRACE("fstring::readline");
     }
 
   itsRep->add_terminator();
+}
+
+void fstring::debugDump() const
+{
+  dbgEvalNL(0, (void*)this);
+  itsRep->debugDump();
 }
 
 static const char vcid_strings_cc[] = "$Header$";

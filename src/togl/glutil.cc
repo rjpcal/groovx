@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 17:25:48 2002
-// written: Tue Sep 17 21:24:53 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -136,11 +136,11 @@ DOTRACE("GLUtil::unloadBitmapFont");
 
   for (unsigned int i = 0; i < MAX_FONTS; ++i)
     {
-      DebugEvalNL(i);
+      dbgEvalNL(3, i);
       if (ListBase[i]==fontbase)
         {
-          DebugEvalNL(fontbase);
-          DebugEval(ListBase[i]); DebugEvalNL(ListCount[i]);
+          dbgEvalNL(3, fontbase);
+          dbgEval(3, ListBase[i]); dbgEvalNL(3, ListCount[i]);
           glDeleteLists( ListBase[i], ListCount[i] );
           ListBase[i] = ListCount[i] = 0;
           return;

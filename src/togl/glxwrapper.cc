@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:07 2002
-// written: Tue Sep 17 23:19:30 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,16 +74,16 @@ DOTRACE("GlxWrapper::GlxWrapper");
       throw Util::Error("couldn't find a matching visual");
     }
 
-  DebugEvalNL((void*)itsVisInfo->visualid);
-  DebugEvalNL(itsVisInfo->depth);
-  DebugEvalNL(itsVisInfo->bits_per_rgb);
+  dbgEvalNL(3, (void*)itsVisInfo->visualid);
+  dbgEvalNL(3, itsVisInfo->depth);
+  dbgEvalNL(3, itsVisInfo->bits_per_rgb);
 
   itsContext = glXCreateContext(itsDisplay,
                                 itsVisInfo,
                                 share ? share->itsContext : None,
                                 opts.indirect ? GL_FALSE : GL_TRUE);
 
-  DebugEvalNL(itsContext);
+  dbgEvalNL(3, itsContext);
 
   if (itsContext == 0)
     {

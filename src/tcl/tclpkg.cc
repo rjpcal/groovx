@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Fri Jan 18 16:07:05 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,9 +77,9 @@ namespace
          itr.isValid();
          /* increment done in loop body */)
       {
-        DebugEval((*itr)->id());
-        DebugEval((*itr)->refCounts()->strongCount());
-        DebugEvalNL((*itr)->refCounts()->weakCount());
+        dbgEval(3, (*itr)->id());
+        dbgEval(3, (*itr)->refCounts()->strongCount());
+        dbgEvalNL(3, (*itr)->refCounts()->weakCount());
 
         if (caster->isMyType((*itr).getWeak()) && (*itr)->isUnshared())
           {
