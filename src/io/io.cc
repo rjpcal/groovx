@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Wed Mar 15 10:17:29 2000
+// written: Wed Mar 22 15:24:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,7 +66,12 @@ int IO::charCount() const { return 0; }
 
 unsigned long IO::id() const {
 DOTRACE("IO::id");
- return itsId;
+  return itsId;
+}
+
+unsigned long IO::serialVersionId() const {
+DOTRACE("IO::serialVersionId");
+  return 0; 
 }
 
 fixed_string IO::ioTypename() const {

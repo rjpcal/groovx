@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Wed Mar  8 11:41:42 2000
+// written: Wed Mar 22 15:25:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -90,6 +90,16 @@ public:
   
   /// Returns a unique id for this object
   unsigned long id() const;
+
+  /** Returns a serialization version id for the class. The default
+      implementation returns zero. Classes should override this when
+      they make a change that requires a change to their serialization
+      protocol. Overriding versions of this function should follow the
+      convention that a higher id refers to a later version of the
+      class. Implementations of \c Reader and \c Writer will provide a
+      way for a class to store and retrieve the serialization version
+      of an object. */
+  virtual unsigned long serialVersionId() const;
 
   /** Returns a string specifying the typename of the actual
 		object. The implementation provided by \c IO returns a demangled
