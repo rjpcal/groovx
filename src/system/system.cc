@@ -51,11 +51,29 @@ namespace
   {
     throw Util::Error(fstring("in \"", where, "\": ", ::strerror(errno)));
   }
+
+  class ErrnoSaver
+  {
+  public:
+    ErrnoSaver() : saved(errno)
+    {
+      errno = 0;
+    }
+
+    ~ErrnoSaver()
+    {
+      errno = saved;
+    }
+
+    const int saved;
+  };
 }
 
 void unixcall::chmod(const char* path, mode_t mode)
 {
 DOTRACE("unixcall::chmod");
+
+  ErrnoSaver saver;
 
   if ( ::chmod(path, mode) != 0 )
     throwErrno("unixcall::chmod");
@@ -65,6 +83,8 @@ void unixcall::rename(const char* oldpath, const char* newpath)
 {
 DOTRACE("unixcall::rename");
 
+  ErrnoSaver saver;
+
   if ( ::rename(oldpath, newpath) != 0 )
     throwErrno("unixcall::rename");
 }
@@ -73,6 +93,8 @@ void unixcall::remove(const char* pathname)
 {
 DOTRACE("unixcall::remove");
 
+  errno = 0;
+
   if ( ::remove(pathname) != 0 )
     throwErrno("unixcall::remove");
 }
@@ -80,10 +102,12 @@ DOTRACE("unixcall::remove");
 fstring unixcall::getcwd()
 {
 DOTRACE("unixcall::getcwd");
+
+  ErrnoSaver saver;
+
   const int INIT_SIZE = 256;
   dynamic_block<char> buf(INIT_SIZE);
 
-  errno = 0;
   while ( ::getcwd(&buf[0], buf.size()) == 0 )
     {
       if (errno == ERANGE)
