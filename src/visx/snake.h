@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:02 2003
-// written: Mon May 12 11:15:16 2003
+// written: Mon May 12 11:58:34 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -31,13 +31,7 @@
 #ifndef SNAKE_H_DEFINED
 #define SNAKE_H_DEFINED
 
-struct Vector
-{
-  Vector(double x_ = 0.0, double y_ = 0.0) : x(x_), y(y_) {}
-
-  double x;
-  double y;
-};
+#include "gx/vec2.h"
 
 struct Element
 {
@@ -49,13 +43,13 @@ struct Element
     pos(x,y), theta(th), type(t)
   {}
 
-  Element(const Vector& v, double th, Type t) :
+  Element(const Gfx::Vec2<int>& v, double th, Type t) :
     pos(v), theta(th), type(t)
   {}
 
-  Vector pos;    /* position of node */
-  double theta;  /* angle to x-axis, 0 to TWOPI */
-  Type  type;
+  Gfx::Vec2d pos;    // position of node
+  double theta;      // angle to x-axis, 0 to TWOPI
+  Type type;
 };
 
 class Snake
@@ -71,9 +65,9 @@ public:
 private:
   const int itsLength;
   const double itsSpacing;
-  Vector* const itsElem;
+  Gfx::Vec2<double>* const itsElem;
 
-  Vector& elem(int i) const
+  Gfx::Vec2<double>& elem(int i) const
   {
     i = i % itsLength;
     if (i < 0) i += itsLength;
@@ -81,8 +75,8 @@ private:
   }
 
   void jiggle();
-  void transformPath(int i1, const Vector& new1,
-                     int i2, const Vector& new2);
+  void transformPath(int i1, const Gfx::Vec2<double>& new1,
+                     int i2, const Gfx::Vec2<double>& new2);
 };
 
 static const char vcid_snake_h[] = "$Header$";

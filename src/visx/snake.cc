@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:20 2003
-// written: Mon May 12 11:46:14 2003
+// written: Mon May 12 11:54:49 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -34,11 +34,14 @@
 #include "snake.h"
 
 #include "gx/geom.h"
+#include "gx/vec2.h"
 
 #include <algorithm>
 #include <assert.h>
 #include <math.h>
 #include <stdlib.h>
+
+using namespace Gfx;
 
 namespace
 {
@@ -81,14 +84,15 @@ namespace
     std::sort(i, i+4);
   }
 
-  double distance(const Vector& n1, const Vector& n2)
+  // FIXME put this elsewhere?
+  double distance(const Vec2d& n1, const Vec2d& n2)
   {
-    const double dx = n1.x - n2.x;
-    const double dy = n1.y - n2.y;
+    const double dx = n1.x() - n2.x();
+    const double dy = n1.y() - n2.y();
     return sqrt(dx*dx + dy*dy);
   }
 
-  Tuple4 getEdgeLengths(const Vector no[4])
+  Tuple4 getEdgeLengths(const Vec2d no[4])
   {
     return Tuple4(distance(no[0], no[1]),
                   distance(no[1], no[2]),
@@ -96,12 +100,12 @@ namespace
                   distance(no[3], no[0]));
   }
 
-  double getTheta(const Vector& n1, const Vector& n2)
+  double getTheta(const Vec2d& n1, const Vec2d& n2)
   {
-    return zerototwopi(atan2(n1.y - n2.y, n1.x - n2.x));
+    return zerototwopi(atan2(n1.y() - n2.y(), n1.x() - n2.x()));
   }
 
-  Tuple4 getThetas(const Vector no[4])
+  Tuple4 getThetas(const Vec2d no[4])
   {
     return Tuple4(getTheta(no[1], no[0]),
                   getTheta(no[2], no[1]),
@@ -118,10 +122,10 @@ namespace
   }
 
   // Must return "true" in order to proceed with new nodes in jiggle().
-  bool squashQuadrangle(const Vector& old_0, const Vector& old_1,
-                        const Vector& old_2, const Vector& old_3,
-                        Vector* new_0, Vector* new_1,
-                        Vector* new_2, Vector* new_3,
+  bool squashQuadrangle(const Vec2d& old_0, const Vec2d& old_1,
+                        const Vec2d& old_2, const Vec2d& old_3,
+                        Vec2d* new_0, Vec2d* new_1,
+                        Vec2d* new_2, Vec2d* new_3,
                         double new_theta)
   {
     {
@@ -130,8 +134,8 @@ namespace
 
       const double d = distance(old_0, old_1);
 
-      new_1->x = old_0.x + d * cos(new_theta);
-      new_1->y = old_0.y + d * sin(new_theta);
+      new_1->x() = old_0.x() + d * cos(new_theta);
+      new_1->y() = old_0.y() + d * sin(new_theta);
     }
 
     /*                                                     */
@@ -201,8 +205,8 @@ namespace
     const double b = distance(old_1, old_2);
     const double c = distance(old_2, old_3);
 
-    const double cos_ang = (old_3.x - new_1->x) / a;  // adjac / hypot
-    const double sin_ang = (old_3.y - new_1->y) / a;  // oppos / hypot
+    const double cos_ang = (old_3.x() - new_1->x()) / a;  // adjac / hypot
+    const double sin_ang = (old_3.y() - new_1->y()) / a;  // oppos / hypot
 
     const double a_sq = a*a;
     const double b_sq = b*b;
@@ -222,13 +226,13 @@ namespace
 
     // Here's the two candidate re-rotated coords:
 
-    const Vector new_2a
-      (new_1->x + xp*cos_ang - yp*sin_ang,
-       new_1->y + xp*sin_ang + yp*cos_ang);
+    const Vec2d new_2a
+      (new_1->x() + xp*cos_ang - yp*sin_ang,
+       new_1->y() + xp*sin_ang + yp*cos_ang);
 
-    const Vector new_2b
-      (new_1->x + xp*cos_ang + yp*sin_ang,
-       new_1->y + xp*sin_ang - yp*cos_ang);
+    const Vec2d new_2b
+      (new_1->x() + xp*cos_ang + yp*sin_ang,
+       new_1->y() + xp*sin_ang - yp*cos_ang);
 
     const double d_2_2a = distance(new_2a, old_2);
     const double d_2_2b = distance(new_2b, old_2);
@@ -263,23 +267,23 @@ namespace
     return drand48() <= probability;
   }
 
-  void recenter(Vector* nodes, const int length)
+  void recenter(Vec2d* nodes, const int length)
   {
-    Vector c;
+    Vec2d c;
 
     for (int n = 0; n < length; ++n)
       {
-        c.x += nodes[n].x;
-        c.y += nodes[n].y;
+        c.x() += nodes[n].x();
+        c.y() += nodes[n].y();
       }
 
-    c.x /= length;
-    c.y /= length;
+    c.x() /= length;
+    c.y() /= length;
 
     for (int n = 0; n < length; ++n)
       {
-        nodes[n].x -= c.x;
-        nodes[n].y -= c.y;
+        nodes[n].x() -= c.x();
+        nodes[n].y() -= c.y();
       }
   }
 }
@@ -287,7 +291,7 @@ namespace
 Snake::Snake(int l, double sp) :
   itsLength(l),
   itsSpacing(sp),
-  itsElem(new Vector[itsLength])
+  itsElem(new Vec2d[itsLength])
 {
   const double radius = (itsLength * itsSpacing) / (2*M_PI);
 
@@ -297,8 +301,8 @@ Snake::Snake(int l, double sp) :
     {
       const double alpha = 2 * M_PI * n / itsLength;
 
-      itsElem[n].x =  radius * cos(alpha+alpha_off);
-      itsElem[n].y = -radius * sin(alpha+alpha_off);
+      itsElem[n].x() =  radius * cos(alpha+alpha_off);
+      itsElem[n].y() = -radius * sin(alpha+alpha_off);
     }
 
   const int ITERS = 400;
@@ -323,8 +327,8 @@ Element Snake::getElement(int n) const
   Element result;
 
   result.type = Element::CONTOUR;
-  result.pos.x = 0.5 * (elem(n).x + elem(n+1).x);
-  result.pos.y = 0.5 * (elem(n).y + elem(n+1).y);
+  result.pos.x() = 0.5 * (elem(n).x() + elem(n+1).x());
+  result.pos.y() = 0.5 * (elem(n).y() + elem(n+1).y());
   result.theta = zerototwopi(-getTheta(elem(n+1), elem(n)));
 
   return result;
@@ -368,7 +372,7 @@ void Snake::jiggle()
   int i[4];
   pickRandom4(itsLength, i);
 
-  const Vector old_pos[4] =
+  const Vec2d old_pos[4] =
     {
       itsElem[i[0]], itsElem[i[1]], itsElem[i[2]], itsElem[i[3]]
     };
@@ -382,7 +386,7 @@ void Snake::jiggle()
      minuspitopi(getTheta(elem(i[2]+1), elem(i[2])) - getTheta(elem(i[2]), elem(i[2]-1))),
      minuspitopi(getTheta(elem(i[3]+1), elem(i[3])) - getTheta(elem(i[3]), elem(i[3]-1))));
 
-  Vector new_pos[4];
+  Vec2d new_pos[4];
 
   double increment = INITIAL_INCREMENT;
 
@@ -435,11 +439,11 @@ void Snake::jiggle()
     }
 }
 
-void Snake::transformPath(int i1, const Vector& new1,
-                          int i2, const Vector& new2)
+void Snake::transformPath(int i1, const Vec2d& new1,
+                          int i2, const Vec2d& new2)
 {
-  const Vector old1 = itsElem[i1];
-  const Vector old2 = itsElem[i2];
+  const Vec2d old1 = itsElem[i1];
+  const Vec2d old2 = itsElem[i2];
 
   // OK, our jiggling algorithm has determined new locations for node-1 and
   // node-2. Now, we want to adjust all the intermediate points
@@ -488,11 +492,11 @@ void Snake::transformPath(int i1, const Vector& new1,
       /*   y'      c2       a21   a12     y - b2      */
       /*                                              */
 
-      const double diffx = itsElem[n].x - old1.x;
-      const double diffy = itsElem[n].y - old1.y;
+      const double diffx = itsElem[n].x() - old1.x();
+      const double diffy = itsElem[n].y() - old1.y();
 
-      itsElem[n].x = new1.x + a11*diffx + a12*diffy;
-      itsElem[n].y = new1.y + a21*diffx + a22*diffy;
+      itsElem[n].x() = new1.x() + a11*diffx + a12*diffy;
+      itsElem[n].y() = new1.y() + a21*diffx + a22*diffy;
     }
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Mon May 12 11:46:26 2003
+// written: Mon May 12 12:00:12 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -50,6 +50,8 @@
 
 #include "util/trace.h"
 
+using namespace Gfx;
+
 namespace
 {
   const double SQRT3 = 1.7320508075;
@@ -73,12 +75,12 @@ bool GaborArray::tryPush(const Element& e)
   return true;
 }
 
-bool GaborArray::tooClose(const Vector& v, int except)
+bool GaborArray::tooClose(const Vec2d& v, int except)
 {
   for (int n = 0; n < totalNumber; ++n)
     {
-      const double dx = array[n].pos.x - v.x;
-      const double dy = array[n].pos.y - v.y;
+      const double dx = array[n].pos.x() - v.x();
+      const double dy = array[n].pos.y() - v.y();
 
       if (dx*dx+dy*dy <= backgMinSpacingSqr && n != except)
         return true;
@@ -102,11 +104,11 @@ void GaborArray::insideElements()
         {
           const int j = (i+1) % snake.getLength();
 
-          const double Yij = array[i].pos.x - array[j].pos.x;
-          const double Xij = array[j].pos.y - array[i].pos.y;
+          const double Yij = array[i].pos.x() - array[j].pos.x();
+          const double Xij = array[j].pos.y() - array[i].pos.y();
 
-          const double Xin = array[n].pos.x - array[i].pos.x;
-          const double Yin = array[n].pos.y - array[i].pos.y;
+          const double Xin = array[n].pos.x() - array[i].pos.x();
+          const double Yin = array[n].pos.y() - array[i].pos.y();
 
           const double vp = Xij*Xin + Yij*Yin;
 
@@ -181,14 +183,14 @@ void GaborArray::jitterElement()
           if (array[n].type == Element::CONTOUR)
             continue;
 
-          Vector v;
-          v.x = array[n].pos.x + jitter*(2*drand48() - 1);
-          v.y = array[n].pos.y + jitter*(2*drand48() - 1);
+          Vec2d v;
+          v.x() = array[n].pos.x() + jitter*(2*drand48() - 1);
+          v.y() = array[n].pos.y() + jitter*(2*drand48() - 1);
 
-          if (v.x < -halfX) v.x += 2.*halfX;
-          if (v.x >  halfX) v.x -= 2.*halfX;
-          if (v.y < -halfY) v.y += 2.*halfY;
-          if (v.y >  halfY) v.y -= 2.*halfY;
+          if (v.x() < -halfX) v.x() += 2.*halfX;
+          if (v.x() >  halfX) v.x() -= 2.*halfX;
+          if (v.y() < -halfY) v.y() += 2.*halfY;
+          if (v.y() >  halfY) v.y() -= 2.*halfY;
 
           if (!tooClose(v, n))
             {
@@ -285,8 +287,8 @@ void GaborArray::writeArray(const char* filestem, int displayCount) const
   for (int i = 0; i < totalNumber; ++i)
     {
       const int o = int(RAD2DEG * array[i].theta + 0.5);
-      const int x = int(array[i].pos.x + 0.5);
-      const int y = int(array[i].pos.y + 0.5);
+      const int x = int(array[i].pos.x() + 0.5);
+      const int y = int(array[i].pos.y() + 0.5);
       const int s = int(array[i].type);
 
       fprintf(fp, "%-5d %-5d %-5d %-5d\n", x, y, o, s);
@@ -295,7 +297,7 @@ void GaborArray::writeArray(const char* filestem, int displayCount) const
   fclose(fp);
 }
 
-void GaborArray::renderInto(Gfx::BmapData& data) const
+void GaborArray::renderInto(BmapData& data) const
 {
   std::vector<double> win(sizeX*sizeY);
 
@@ -312,8 +314,8 @@ void GaborArray::renderInto(Gfx::BmapData& data) const
         ? zerototwopi(array[i].theta + M_PI_2)
         : array[i].theta;
 
-      const int xcenter = int(array[i].pos.x + sizeX / 2.0 + 0.5);
-      const int ycenter = int(array[i].pos.y + sizeY / 2.0 + 0.5);
+      const int xcenter = int(array[i].pos.x() + sizeX / 2.0 + 0.5);
+      const int ycenter = int(array[i].pos.y() + sizeY / 2.0 + 0.5);
 
       const double* p = gabors.getPatch(theta, phi);
 
@@ -332,8 +334,8 @@ void GaborArray::renderInto(Gfx::BmapData& data) const
           }
     }
 
-  Gfx::BmapData dest(Gfx::Vec2<int>(sizeX, sizeY), // FIXME
-                     8, 1);
+  BmapData dest(Gfx::Vec2i(sizeX, sizeY), // FIXME
+                8, 1);
 
   unsigned char* bytes = dest.bytesPtr();
 
@@ -350,42 +352,42 @@ void GaborArray::renderInto(Gfx::BmapData& data) const
 
 void GaborArray::saveImage(const char* filename) const
 {
-  Gfx::BmapData data;
+  BmapData data;
 
   renderInto(data);
 
   ImgFile::save(filename, data);
 }
 
-void GaborArray::grGetBoundingBox(Gfx::Bbox& bbox) const
+void GaborArray::grGetBoundingBox(Bbox& bbox) const
 {
 DOTRACE("GaborArray::grGetBoundingBox");
 
   // FIXME this heavily duplicates Gabor::grGetBoundingBox()
 
-  Gfx::Vec2<double> world_origin;
+  Vec2d world_origin;
 
-  Gfx::Vec2<int> screen_origin = bbox.screenFromWorld(world_origin);
+  Vec2i screen_origin = bbox.screenFromWorld(world_origin);
 
-  Gfx::Rect<int> screen_rect;
+  Rect<int> screen_rect;
   screen_rect.setRectXYWH(screen_origin.x(), screen_origin.y(),
                           sizeX, sizeY);
 
-  Gfx::Rect<double> world_rect = bbox.worldFromScreen(screen_rect);
+  Rect<double> world_rect = bbox.worldFromScreen(screen_rect);
 
   bbox.drawRect(world_rect);
 }
 
-void GaborArray::grRender(Gfx::Canvas& canvas) const
+void GaborArray::grRender(Canvas& canvas) const
 {
 DOTRACE("GaborArray::grRender");
 
-  Gfx::BmapData data;
+  BmapData data;
 
   renderInto(data);
 
-  canvas.drawPixels(data, Gfx::Vec2<double>(0.0, 0.0),
-                    Gfx::Vec2<double>(1.0, 1.0));
+  canvas.drawPixels(data, Vec2d(0.0, 0.0),
+                    Vec2d(1.0, 1.0));
 }
 
 static const char vcid_gaborarray_cc[] = "$Header$";

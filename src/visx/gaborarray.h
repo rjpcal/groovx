@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Mon May 12 11:43:16 2003
+// written: Mon May 12 12:00:31 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -41,6 +41,7 @@
 namespace Gfx
 {
   class BmapData;
+  template <class T> class Vec2;
 }
 
 class GaborArray : public GxShapeKit
@@ -86,7 +87,7 @@ private:
   void dumpFrame() const;
 
   bool tryPush(const Element& e);
-  bool tooClose(const Vector& v, int except);
+  bool tooClose(const Gfx::Vec2<double>& v, int except);
   void insideElements();
   void hexGridElements();
   void fillElements();
