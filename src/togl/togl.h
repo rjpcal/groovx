@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Tue Jun 18 09:53:18 2002
+// written: Sat Aug  3 16:07:31 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -162,7 +162,7 @@ public:
   friend class Impl;
 
 private:
-  Impl* const itsImpl;
+  Impl* const rep;
 };
 
 static const char vcid_togl_h[] = "$Header$";
