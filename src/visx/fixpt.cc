@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Wed Mar 15 10:17:30 2000
+// written: Fri Mar 17 11:57:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 #include <iostream.h>
 #include <GL/gl.h>
 
+#define NO_TRACE
 #include "util/trace.h"
 #include "util/debug.h"
 
@@ -116,6 +117,7 @@ DOTRACE("FixPt::getPropertyInfo");
 
 void FixPt::grGetBoundingBox(Rect<double>& bbox,
 									  int& border_pixels) const {
+DOTRACE("FixPt::grGetBoundingBox");
   bbox.left()  = bbox.bottom() = -length()/2.0;
   bbox.right() = bbox.top()    =  length()/2.0;
   
@@ -128,12 +130,18 @@ DOTRACE("FixPt::grHasBoundingBox");
 }
 
 void FixPt::grRender(Canvas&) const {
+DOTRACE("FixPt::grRender");
   glPushAttrib(GL_LINE_BIT);
   glLineWidth(width());
-  
+
   glBegin(GL_LINES);
   glVertex3f(0.0, -length()/2.0, 0.0);
   glVertex3f(0.0, length()/2.0, 0.0);
+  glEnd();
+
+  glFlush();
+
+  glBegin(GL_LINES);
   glVertex3f(-length()/2.0, 0.0, 0.0);
   glVertex3f(length()/2.0, 0.0, 0.0);
   glEnd();
