@@ -97,7 +97,7 @@ else
 	STL_INCLUDE_DIR =
 endif
 
-INCLUDE_DIRS = -I$(HOME)/include $(STL_INCLUDE_DIR)
+INCLUDE_DIRS = -I$(HOME)/include -I$(HOME)/grsh/util $(STL_INCLUDE_DIR)
 
 ifeq ($(ARCH),hp9000s700)
 	OPENGL_LIB_DIR = -L/opt/graphics/OpenGL/lib
@@ -156,6 +156,7 @@ GRSH_STATIC_OBJS = \
 	$(ARCH)/xbitmap.do \
 	$(ARCH)/xbmaprenderer.do \
 
+UTIL = util/$(ARCH)
 
 GRSH_DYNAMIC_OBJS = \
 	$(ARCH)/application.do \
@@ -169,7 +170,7 @@ GRSH_DYNAMIC_OBJS = \
 	$(ARCH)/canvas.do \
 	$(ARCH)/cloneface.do \
 	$(ARCH)/demangle.do \
-	$(ARCH)/error.do \
+	$(UTIL)/error.do \
 	$(ARCH)/eventresponsehdlr.do \
 	$(ARCH)/experiment.do \
 	$(ARCH)/exptdriver.do \
@@ -222,7 +223,7 @@ GRSH_DYNAMIC_OBJS = \
 	$(ARCH)/tlist.do \
 	$(ARCH)/tlisttcl.do \
 	$(ARCH)/tlistutils.do \
-	$(ARCH)/trace.do \
+	$(UTIL)/trace.do \
 	$(ARCH)/trial.do \
 	$(ARCH)/trialevent.do \
 	$(ARCH)/trialtcl.do \
@@ -365,10 +366,10 @@ BEZIER_H = bezier.h
 BITMAPREP_H = bitmaprep.h
 BMAPRENDERER_H = bmaprenderer.h
 CANVAS_H = canvas.h
-DEBUG_H = debug.h
+DEBUG_H = util/debug.h
 DEMANGLE_H = demangle.h
 ERRMSG_H = errmsg.h
-ERROR_H = error.h
+ERROR_H = util/error.h
 EXPERIMENT_H = experiment.h
 IOUTILS_H = ioutils.h
 OBJLISTTCL_H = objlisttcl.h
@@ -386,7 +387,7 @@ TCLLINK_H = tcllink.h
 TCLOBJLOCK_H = tclobjlock.h
 TCLPKG_H = tclpkg.h
 TLISTUTILS_H = tlistutils.h
-TRACE_H = trace.h
+TRACE_H = util/trace.h
 WIDGET_H = widget.h
 
 #
@@ -529,7 +530,7 @@ CLONEFACE_CC = $(CLONEFACE_H) $(READUTILS_H) $(WRITEUTILS_H) \
 
 DEMANGLE_CC = $(DEMANGLE_H) $(GCCDEMANGLE_CC) demangle.cc
 
-ERROR_CC = $(ERROR_H) $(TRACE_H) $(DEBUG_H) error.cc
+ERROR_CC = $(ERROR_H) $(TRACE_H) $(DEBUG_H) util/error.cc
 
 EVENTRESPONSEHDLR_CC = $(EVENTRESPONSEHDLR_H) $(ERROR_H) $(EXPERIMENT_H) \
 	$(SOUND_H) $(SOUNDLIST_H) $(READER_H) \
@@ -766,7 +767,7 @@ TLISTWIDGET_CC = $(TLISTWIDGET_H) $(CANVAS_H) $(TLIST_H) $(TRIAL_H) \
 TOGLCONFIG_CC = $(TOGLCONFIG_H) $(ERROR_H) $(GLCANVAS_H) \
 	$(TCLEVALCMD_H) $(TRACE_H) $(DEBUG_H) toglconfig.cc
 
-TRACE_CC = $(TRACE_H) trace.cc
+TRACE_CC = $(TRACE_H) util/trace.cc
 
 TRIAL_CC = $(TRIAL_H) $(CANVAS_H) \
 	$(OBJLIST_H) $(POSLIST_H) $(GROBJ_H) $(POSITION_H) \
@@ -816,7 +817,7 @@ $(ARCH)/bmaprenderer.*[ol]:      $(BMAPRENDERER_CC)
 $(ARCH)/canvas.*[ol]:            $(CANVAS_CC)
 $(ARCH)/cloneface.*[ol]:         $(CLONEFACE_CC)
 $(ARCH)/demangle.*[ol]:          $(DEMANGLE_CC)
-$(ARCH)/error.*[ol]:             $(ERROR_CC)
+$(UTIL)/error.*[ol]:             $(ERROR_CC)
 $(ARCH)/eventresponsehdlr.*[ol]: $(EVENTRESPONSEHDLR_CC)
 $(ARCH)/experiment.*[ol]:        $(EXPERIMENT_CC)
 $(ARCH)/exptdriver.*[ol]:        $(EXPTDRIVER_CC)
@@ -897,7 +898,7 @@ $(ARCH)/tlisttcl.*[ol]:          $(TLISTTCL_CC)
 $(ARCH)/tlistutils.*[ol]:        $(TLISTUTILS_CC)
 $(ARCH)/tlistwidget.*[ol]:       $(TLISTWIDGET_CC)
 $(ARCH)/toglconfig.*[ol]:        $(TOGLCONFIG_CC)
-$(ARCH)/trace.*[ol]:             $(TRACE_CC)
+$(UTIL)/trace.*[ol]:             $(TRACE_CC)
 $(ARCH)/trial.*[ol]:             $(TRIAL_CC)
 $(ARCH)/trialevent.*[ol]:        $(TRIALEVENT_CC)
 $(ARCH)/trialtcl.*[ol]:          $(TRIALTCL_CC)
