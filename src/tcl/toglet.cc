@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Nov 21 17:16:44 2002
+// written: Thu Nov 21 17:59:39 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,6 @@
 #include "toglet.h"
 
 #include "gfx/glcanvas.h"
-#include "gfx/gxcamera.h"
 
 #include "gx/rgbacolor.h"
 
@@ -237,14 +236,6 @@ DOTRACE("Toglet::displayCallback");
 
   makeCurrent();
   fullRender();
-}
-
-void Toglet::reshapeCallback()
-{
-DOTRACE("Toglet::reshapeCallback");
-
-  getCamera()->reshape(width(), height());
-  requestRedisplay();
 }
 
 void Toglet::swapBuffers()

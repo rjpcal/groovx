@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Thu Nov 21 14:32:25 2002
+// written: Thu Nov 21 18:03:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -444,7 +444,7 @@ DOTRACE("Tcl::TkWidget::requestReconfigure");
                     rep->width, rep->height);
     }
 
-  reshapeCallback();
+  requestRedisplay();
 }
 
 void Tcl::TkWidget::hook()

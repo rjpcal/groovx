@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Nov 21 17:04:37 2002
+// written: Thu Nov 21 17:58:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,9 +52,6 @@ public:
 
   /// Overridden from Tcl::TkWidget.
   virtual void displayCallback();
-
-  /// Overridden from Tcl::TkWidget.
-  virtual void reshapeCallback();
 
   /// Overridden from GWT::Widget.
   virtual void swapBuffers();
