@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jul 11 18:14:42 2001
+// written: Mon Jul 16 15:10:13 2001
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -38,7 +38,6 @@ extern "C" {
   Tcl_PackageInitProc Block_Init;
   Tcl_PackageInitProc Dlist_Init;
   Tcl_PackageInitProc Expt_Init;
-  Tcl_PackageInitProc Expttest_Init;
   Tcl_PackageInitProc Face_Init;
   Tcl_PackageInitProc Fish_Init;
   Tcl_PackageInitProc Fixpt_Init;
@@ -86,7 +85,6 @@ PackageInfo IMMEDIATE_PKGS[] = {
   , { "Block",    Block_Init     }
   , { "Dlist",    Dlist_Init     }
   , { "Expt",     Expt_Init      }
-  , { "Expttest", Expttest_Init  }
   , { "Face",     Face_Init      }
   , { "Fish",     Fish_Init      }
   , { "Fixpt",    Fixpt_Init     }
