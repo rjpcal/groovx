@@ -38,18 +38,11 @@
 #include "util/strings.h"
 
 #include <Alib.h>
-#include <fstream.h>            // to check if files exist
 
 #include "util/trace.h"
 #include "util/debug.h"
 
-//  ===================================================================
-//
-//  File scope definitions
-//
-//  ===================================================================
-
-namespace HPSOUND_CC_LOCAL
+namespace
 {
   Audio* theAudio = 0;
 
@@ -69,8 +62,6 @@ namespace HPSOUND_CC_LOCAL
   }
 }
 
-using namespace HPSOUND_CC_LOCAL;
-
 //  ###################################################################
 //  ===================================================================
 //
@@ -87,19 +78,19 @@ public:
   virtual void play();
 
 private:
-  fstring itsFilename;
   SBucket* itsSBucket;
   SBPlayParams itsPlayParams;
 };
 
 HpAudioSoundRep::HpAudioSoundRep(const char* filename) :
-  itsFilename(""),
   itsSBucket(0),
   itsPlayParams()
 {
 DOTRACE("HpAudioSoundRep::HpAudioSoundRep");
   if ( !theAudio )
     throw Util::Error("invalid HP audio server connection");
+
+  SoundRep::checkFilename(filename);
 
   itsPlayParams.pause_first = 0;
   itsPlayParams.start_offset.type = ATTSamples;
@@ -112,27 +103,12 @@ DOTRACE("HpAudioSoundRep::HpAudioSoundRep");
   itsPlayParams.duration.type = ATTFullLength;
   itsPlayParams.event_mask = 0;
 
-  if (filename != 0 && filename[0] != '\0')
-    {
-      if ( !theAudio )
-        throw Util::Error("invalid audio server connection");
+  AFileFormat fileFormat = AFFUnknown;
+  AudioAttrMask AttribsMask = 0;
+  AudioAttributes Attribs;
 
-      STD_IO::ifstream ifs(filename);
-      if (ifs.fail())
-        {
-          throw IO::FilenameError(filename);
-        }
-      ifs.close();
-
-      AFileFormat fileFormat = AFFUnknown;
-      AudioAttrMask AttribsMask = 0;
-      AudioAttributes Attribs;
-
-      itsSBucket = ALoadAFile(theAudio, const_cast<char *>(filename),
-                              fileFormat, AttribsMask, &Attribs, NULL);
-
-      itsFilename = filename;
-    }
+  itsSBucket = ALoadAFile(theAudio, const_cast<char *>(filename),
+                          fileFormat, AttribsMask, &Attribs, NULL);
 }
 
 HpAudioSoundRep::~HpAudioSoundRep()

@@ -66,28 +66,28 @@ EsdSoundRep::EsdSoundRep(const char* filename) :
   itsFilename("")
 {
 DOTRACE("EsdSoundRep::EsdSoundRep");
-  if (filename != 0 && filename[0] != '\0')
+
+  SoundRep::checkFilename(filename);
+
+  // We just use afOpenFile to ensure that the filename refers to
+  // a readable+valid file
+  AFfilehandle audiofile = afOpenFile(filename, "r", (AFfilesetup) 0);
+
+  if (audiofile == AF_NULL_FILEHANDLE)
     {
-      // We just use afOpenFile to ensure that the filename refers to
-      // a readable+valid file
-      AFfilehandle audiofile = afOpenFile(filename, "r", (AFfilesetup) 0);
-
-      if (audiofile == AF_NULL_FILEHANDLE)
-        {
-          throw Util::Error(fstring("couldn't open sound file '",
-                                    filename, "'"));
-        }
-
-      int closeResult = afCloseFile(audiofile);
-
-      if (closeResult == -1)
-        {
-          throw Util::Error(fstring("error closing sound file '",
-                                    filename, "'"));
-        }
-
-      itsFilename = filename;
+      throw Util::Error(fstring("couldn't open sound file '",
+                                filename, "'"));
     }
+
+  int closeResult = afCloseFile(audiofile);
+
+  if (closeResult == -1)
+    {
+      throw Util::Error(fstring("error closing sound file '",
+                                filename, "'"));
+    }
+
+  itsFilename = filename;
 }
 
 void EsdSoundRep::play()

@@ -47,6 +47,11 @@ public:
   virtual ~SoundRep();
 
   virtual void play() = 0;
+
+protected:
+  /// Checks that the filename is non-empty and points to a readable file.
+  /** Throws an exception if any of the checks fail. */
+  static void checkFilename(const char* filename);
 };
 
 /// Sound is a platform-independent interface to playable sound snippets.

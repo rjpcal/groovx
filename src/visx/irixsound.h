@@ -39,7 +39,6 @@
 
 #include <dmedia/audio.h>
 #include <dmedia/audiofile.h>
-#include <fstream.h>            // to check if files exist
 #include <unistd.h>
 
 #include "util/trace.h"
@@ -76,16 +75,7 @@ DOTRACE("IrixAudioSoundRep::IrixAudioSoundRep");
   if (itsAudioConfig == 0)
     throw Util::Error("error creating an ALconfig while creating Sound");
 
-  if (filename == 0 || filename[0] == '\0')
-    throw Util::Error("invalid filename");
-
-  STD_IO::ifstream ifs(filename);
-
-  if (ifs.fail())
-    {
-      throw IO::FilenameError(filename);
-    }
-  ifs.close();
+  SoundRep::checkFilename(filename);
 
   // Open filename as an audio file for reading. We pass a NULL
   // AFfilesetup to indicate that file setup parameters should be

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 19 07:38:09 2003
-// written: Mon May 19 09:04:31 2003
+// written: Mon May 19 09:29:52 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,59 +25,73 @@
 class QuickTimeSoundRep : public SoundRep
 {
 public:
-  QuickTimeSoundRep(const char* filename)
-  {
-    FSRef ref;
+  QuickTimeSoundRep(const char* filename);
 
-    OSErr err = FSPathMakeRef(filename, &ref, 0);
+  virtual ~QuickTimeSoundRep();
 
-    if (noErr != err)
-      throw Util::Error(fstring("error in FSPathMakeRef: ", err));
-
-    FSSpec spec;
-
-    err = FSGetCatalogInfo(&ref, kFSCatInfoNone,
-                           NULL, NULL, &spec, NULL);
-
-    if (noErr != err)
-      throw Util::Error(fstring("error in FSGetCatalogInfo: ", err));
-
-    err = OpenMovieFile(&spec, &itsFileRefNum, fsRdPerm);
-
-    if (noErr != err)
-      throw Util::Error(fstring("error in OpenMovieFile: ", err));
-
-    err = NewMovieFromFile(&itsMovie, itsFileRefNum, 0, nil,
-                           newMovieActive, nil);
-
-    if (noErr != err)
-      {
-        CloseMovieFile(itsFileRefNum);
-        throw Util::Error(fstring("error in NewMovieFromFile: ", err));
-      }
-  }
-
-  ~QuickTimeSoundRep()
-  {
-    DisposeMovie(itsMovie);
-    CloseMovieFile(itsFileRefNum);
-  }
-
-  void play()
-  {
-    GoToBeginningOfMovie(itsMovie);
-
-    StartMovie(itsMovie);
-
-    while (!IsMovieDone (itsMovie))
-      {
-        MoviesTask(itsMovie, 0);
-      }
-  }
+  virtual void play();
 
   short itsFileRefNum;
   Movie itsMovie;
 };
+
+QuickTimeSoundRep::QuickTimeSoundRep(const char* filename)
+{
+DOTRACE("QuickTimeSoundRep::QuickTimeSoundRep");
+
+  // (1) Get an FSRef from the filename
+  FSRef ref;
+
+  OSErr err = FSPathMakeRef(filename, &ref, 0);
+
+  if (noErr != err)
+    throw Util::Error(fstring("error in FSPathMakeRef: ", err));
+
+  // (2) Get an FSSpec from the FSRef
+  FSSpec spec;
+
+  err = FSGetCatalogInfo(&ref, kFSCatInfoNone,
+                         NULL, NULL, &spec, NULL);
+
+  if (noErr != err)
+    throw Util::Error(fstring("error in FSGetCatalogInfo: ", err));
+
+  // (3) Get a movie file descriptor from the FSSpec
+  err = OpenMovieFile(&spec, &itsFileRefNum, fsRdPerm);
+
+  if (noErr != err)
+    throw Util::Error(fstring("error in OpenMovieFile: ", err));
+
+  // (4) Get a movie object from the movie file
+  err = NewMovieFromFile(&itsMovie, itsFileRefNum, 0, nil,
+                         newMovieActive, nil);
+
+  if (noErr != err)
+    {
+      CloseMovieFile(itsFileRefNum);
+      throw Util::Error(fstring("error in NewMovieFromFile: ", err));
+    }
+}
+
+QuickTimeSoundRep::~QuickTimeSoundRep()
+{
+DOTRACE("QuickTimeSoundRep::~QuickTimeSoundRep");
+  DisposeMovie(itsMovie);
+  CloseMovieFile(itsFileRefNum);
+}
+
+void QuickTimeSoundRep::play()
+{
+DOTRACE("QuickTimeSoundRep::play");
+  GoToBeginningOfMovie(itsMovie);
+
+  StartMovie(itsMovie);
+
+  while (!IsMovieDone (itsMovie))
+    {
+      MoviesTask(itsMovie, 0);
+    }
+}
 
 ///////////////////////////////////////////////////////////////////////
 //

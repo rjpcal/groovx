@@ -36,6 +36,7 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+#include "util/error.h"
 #include "util/ref.h"
 
 #if defined(HAVE_ALIB_H)
@@ -50,6 +51,8 @@
 #  include "visx/dummysound.h"
 #endif
 
+#include <fstream.h>            // to check if files exist
+
 #include "util/trace.h"
 #include "util/debug.h"
 
@@ -60,6 +63,21 @@ namespace
 }
 
 SoundRep::~SoundRep() {}
+
+void SoundRep::checkFilename(const char* filename)
+{
+DOTRACE("SoundRep::checkFilename");
+
+  if (filename == 0 || filename[0] == '\0')
+    throw Util::Error("invalid filename");
+
+  STD_IO::ifstream ifs(filename);
+
+  if (ifs.fail())
+    {
+      throw IO::FilenameError(filename);
+    }
+}
 
 void Sound::setOkSound(Ref<Sound> ok_sound)
 {

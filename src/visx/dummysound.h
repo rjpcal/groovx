@@ -36,8 +36,6 @@
 
 #include "util/strings.h"
 
-#include <fstream.h>            // to check if files exist
-
 #include "util/trace.h"
 #include "util/debug.h"
 
@@ -55,15 +53,7 @@ public:
 DummySoundRep::DummySoundRep(const char* filename)
 {
 DOTRACE("DummySoundRep::DummySoundRep");
-  if (filename != 0 && filename[0] != '\0')
-    {
-      STD_IO::ifstream ifs(filename);
-      if (ifs.fail())
-        {
-          throw IO::FilenameError(filename);
-        }
-      ifs.close();
-    }
+  SoundRep::checkFilename(filename);
 }
 
 void DummySoundRep::play()
