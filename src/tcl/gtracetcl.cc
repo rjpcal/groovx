@@ -41,9 +41,6 @@
 
 namespace
 {
-  int getLevel() { return Debug::level; }
-  void setLevel(int v) { Debug::level = v; }
-
   fstring profSummary()
   {
     std::ostringstream oss;
@@ -62,8 +59,7 @@ DOTRACE("Gtrace_Init");
   pkg->def("::gtrace", "", &Util::Trace::getGlobalTrace);
   pkg->def("maxDepth", "level", &Util::Trace::setMaxLevel);
   pkg->def("maxDepth", "", &Util::Trace::getMaxLevel);
-  pkg->def("::dbglevel", "", &getLevel);
-  pkg->def("::dbglevel", "level", &setLevel);
+  pkg->def("::dbglevel", "level", &Debug::setGlobalLevel);
 
   return pkg->initStatus();
 }

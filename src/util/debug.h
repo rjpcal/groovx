@@ -55,7 +55,13 @@ namespace Debug
   void PostconditionImpl (const char* what, const char* where, int line_no) throw();
   void InvariantImpl     (const char* what, const char* where, int line_no) throw();
 
-  extern int level;
+  const int MAX_KEYS = 1024;
+
+  extern unsigned char keyLevels[MAX_KEYS];
+
+  int nextKey();
+
+  void setGlobalLevel(int lev);
 }
 
 #define Panic(message) Debug::PanicImpl(message, __FILE__, __LINE__)
@@ -63,6 +69,10 @@ namespace Debug
 // Like Assert(), but can't ever be turned off.
 #define AbortIf(expr) \
       do { if ( expr ) { Debug::PanicImpl(#expr, __FILE__, __LINE__); } } while (0)
+
+static const int DEBUG_KEY = Debug::nextKey();
+
+static inline int dbgLevel() { return Debug::keyLevels[DEBUG_KEY]; }
 
 static const char vcid_debug_h[] = "$Id$";
 
@@ -86,11 +96,11 @@ static const char vcid_debug_h[] = "$Id$";
 #endif // DEBUG_H_DEFINED
 
 #if !defined(NO_DEBUG)
-#  define dbgEval(lev, x)    do { if (Debug::level >= lev) Debug::Eval(#x, lev, __FILE__, __LINE__, false, x); } while (0)
-#  define dbgEvalNL(lev, x)  do { if (Debug::level >= lev) Debug::Eval(#x, lev, __FILE__, __LINE__, true, x); } while (0)
-#  define dbgPrint(lev, x)   do { if (Debug::level >= lev) Debug::Eval(0, lev, __FILE__, __LINE__, false, x); } while (0)
-#  define dbgPrintNL(lev, x) do { if (Debug::level >= lev) Debug::Eval(0, lev, __FILE__, __LINE__, true, x); } while (0)
-#  define dbgDump(lev, x)    do { if (Debug::level >= lev) { Debug::Eval(#x, lev, __FILE__, __LINE__, true, "..."); (x).debugDump(); } } while (0)
+#  define dbgEval(lev, x)    do { if (dbgLevel() >= lev) Debug::Eval(#x, lev, __FILE__, __LINE__, false, x); } while (0)
+#  define dbgEvalNL(lev, x)  do { if (dbgLevel() >= lev) Debug::Eval(#x, lev, __FILE__, __LINE__, true, x); } while (0)
+#  define dbgPrint(lev, x)   do { if (dbgLevel() >= lev) Debug::Eval(0, lev, __FILE__, __LINE__, false, x); } while (0)
+#  define dbgPrintNL(lev, x) do { if (dbgLevel() >= lev) Debug::Eval(0, lev, __FILE__, __LINE__, true, x); } while (0)
+#  define dbgDump(lev, x)    do { if (dbgLevel() >= lev) { Debug::Eval(#x, lev, __FILE__, __LINE__, true, "..."); (x).debugDump(); } } while (0)
 
 #  define Assert(expr)        do { if ( !(expr) ) Debug::AssertImpl(#expr, __FILE__, __LINE__); } while(0)
 #  define Invariant(expr)     do { if ( !(expr) ) Debug::InvariantImpl(#expr, __FILE__, __LINE__); } while(0)

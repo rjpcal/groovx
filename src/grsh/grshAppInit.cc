@@ -221,7 +221,7 @@ DOTRACE("main");
           if (strcmp(argv[i], "-dbglevel") == 0)
             {
               if (argv[i+1] != 0)
-                Debug::level = atoi(argv[i+1]);
+                Debug::setGlobalLevel( atoi(argv[i+1]) );
             }
           else if (strcmp(argv[i], "-gtrace") == 0)
             {

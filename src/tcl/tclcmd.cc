@@ -317,7 +317,7 @@ DOTRACE("Tcl::Command::rawInvoke");
 
   Assert(s_objc >= 0);
 
-  if (Debug::level > 1)
+  if (dbgLevel() > 1)
     {
       for (int argi = 0; argi < s_objc; ++argi)
         {
@@ -349,7 +349,7 @@ DOTRACE("Tcl::Command::rawInvoke");
           // Found a matching overload, so try it:
           (*itr)->getDispatcher()->dispatch(interp, objc, objv, **itr);
 
-          if (Debug::level > 1)
+          if (dbgLevel() > 1)
             {
               const char* result = interp.getResult<const char*>();
               dbgEvalNL(1, result);
