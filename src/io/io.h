@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Mon Jun  7 13:35:46 1999
+// written: Mon Jun  7 14:10:50 1999
 // $Id$
 //
 // This file defines the IO abstract interface. This interface
@@ -57,7 +57,7 @@ public:
   virtual int charCount() const = 0;
 
   // Returns a unique id for this object
-  long id();
+  unsigned long id();
 
   // This function reads the next word from the istream is, and
   // compares it to the correct names in correctNames. correctNames
@@ -71,7 +71,7 @@ public:
 									bool doCheck = true);
 
 private:
-  long itsId;
+  unsigned long itsId;
 };
 
 // This template function returns the number of characters needed to
