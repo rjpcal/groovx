@@ -3,7 +3,7 @@
 // ptrlistbase.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Oct 25 13:28:22 2000
+// written: Wed Oct 25 14:21:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -285,57 +285,57 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// PtrListBase::IdIterator member definitions
+// PtrListBase::Iterator member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-PtrListBase::IdIterator::IdIterator(PtrListBase::ItrImpl* impl) :
+PtrListBase::Iterator::Iterator(PtrListBase::ItrImpl* impl) :
   itsImpl(impl)
 {
-DOTRACE("PtrListBase::IdIterator::IdIterator()");
+DOTRACE("PtrListBase::Iterator::Iterator()");
 }
 
-PtrListBase::IdIterator::~IdIterator()
+PtrListBase::Iterator::~Iterator()
 {
-DOTRACE("PtrListBase::IdIterator::~IdIterator");
+DOTRACE("PtrListBase::Iterator::~Iterator");
   delete itsImpl;
 }
 
-PtrListBase::IdIterator::IdIterator(const PtrListBase::IdIterator& other) :
+PtrListBase::Iterator::Iterator(const PtrListBase::Iterator& other) :
   itsImpl(new ItrImpl(other.itsImpl->itsIter))
 {
-DOTRACE("PtrListBase::IdIterator::IdIterator(copy)");
+DOTRACE("PtrListBase::Iterator::Iterator(copy)");
 }
 
-PtrListBase::IdIterator&
-PtrListBase::IdIterator::operator=(const PtrListBase::IdIterator& other)
+PtrListBase::Iterator&
+PtrListBase::Iterator::operator=(const PtrListBase::Iterator& other)
 {
-DOTRACE("PtrListBase::IdIterator::operator=");
+DOTRACE("PtrListBase::Iterator::operator=");
   ItrImpl* old_impl = itsImpl;
   itsImpl = new ItrImpl(other.itsImpl->itsIter);
   delete old_impl;
   return *this;
 }
 
-bool PtrListBase::IdIterator::operator==(
-      const PtrListBase::IdIterator& other) const
+bool PtrListBase::Iterator::operator==(
+      const PtrListBase::Iterator& other) const
 {
   return itsImpl->itsIter == other.itsImpl->itsIter;
 }
 
-PtrListBase::IdIterator&
-PtrListBase::IdIterator::operator++()
+PtrListBase::Iterator&
+PtrListBase::Iterator::operator++()
 {
   ++(itsImpl->itsIter);
   return *this;
 }
 
-int PtrListBase::IdIterator::operator*() const
+int PtrListBase::Iterator::getId() const
 {
   return (*(itsImpl->itsIter)).first;
 }
 
-IO::IoObject* PtrListBase::IdIterator::getObject() const
+IO::IoObject* PtrListBase::Iterator::getObject() const
 {
   return (*(itsImpl->itsIter)).second.ioObject();
 }
@@ -392,14 +392,14 @@ DOTRACE("PtrListBase::Impl::insertPtrBaseAt");
 //
 ///////////////////////////////////////////////////////////////////////
 
-PtrListBase::IdIterator PtrListBase::beginIds() const {
-DOTRACE("PtrListBase::beginIds");
-  return IdIterator(new ItrImpl(itsImpl->itsPtrMap.begin()));
+PtrListBase::Iterator PtrListBase::begin() const {
+DOTRACE("PtrListBase::begin");
+  return Iterator(new ItrImpl(itsImpl->itsPtrMap.begin()));
 }
 
-PtrListBase::IdIterator PtrListBase::endIds() const {
-DOTRACE("PtrListBase::ebdIds");
-  return IdIterator(new ItrImpl(itsImpl->itsPtrMap.end()));
+PtrListBase::Iterator PtrListBase::end() const {
+DOTRACE("PtrListBase::end");
+  return Iterator(new ItrImpl(itsImpl->itsPtrMap.end()));
 }
 
 PtrListBase::PtrListBase(int size) :
