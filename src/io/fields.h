@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Wed Aug 15 19:43:44 2001
+// written: Sat Aug 18 08:07:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -424,6 +424,13 @@ public:
     itsImpl(0)
   {
     init(begin, end, parent);
+  }
+
+  template<std::size_t N>
+  FieldMap(Field const (&array)[N], const FieldMap* parent=0) :
+    itsImpl(0)
+  {
+    init(&array[0], &array[0]+N, parent);
   }
 
   ~FieldMap();
