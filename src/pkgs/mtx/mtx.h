@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Jul  2 13:13:29 2002
+// written: Wed Jul 31 16:23:00 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,11 +35,14 @@ namespace RC // Range checking
   void leq(const void* x, const void* lim, const char* f, int ln);
   void inHalfOpen(const void* x, const void* llim, const void* ulim,
                   const char* f, int ln);
+  void inFullOpen(const void* x, const void* llim, const void* ulim,
+                  const char* f, int ln);
 
   void geq(int x, int lim, const char* f, int ln);
   void less(int x, int lim, const char* f, int ln);
   void leq(int x, int lim, const char* f, int ln);
   void inHalfOpen(int x, int llim, int ulim, const char* f, int ln);
+  void inFullOpen(int x, int llim, int ulim, const char* f, int ln);
 }
 
 #ifdef RANGE_CHECK
@@ -48,12 +51,14 @@ namespace RC // Range checking
 #  define RC_less(x,lim) RC::less((x),(lim),__FILE__,__LINE__)
 #  define RC_leq(x,lim) RC::leq((x),(lim),__FILE__,__LINE__)
 #  define RC_inHalfOpen(x,llim,ulim) RC::inHalfOpen((x),(llim),(ulim),__FILE__,__LINE__)
+#  define RC_inFullOpen(x,llim,ulim) RC::inFullOpen((x),(llim),(ulim),__FILE__,__LINE__)
 
 // Range check, and return the checked value
 #  define RCR_geq(x,lim) (RC::geq((x),(lim),__FILE__,__LINE__), x)
 #  define RCR_less(x,lim) (RC::less((x),(lim),__FILE__,__LINE__), x)
 #  define RCR_leq(x,lim) (RC::leq((x),(lim),__FILE__,__LINE__), x)
 #  define RCR_inHalfOpen(x,llim,ulim) (RC::inHalfOpen((x),(llim),(ulim),__FILE__,__LINE__), x)
+#  define RCR_inFullOpen(x,llim,ulim) (RC::inFullOpen((x),(llim),(ulim),__FILE__,__LINE__), x)
 
 #else // !RANGE_CHECK
 
@@ -61,11 +66,13 @@ namespace RC // Range checking
 #  define RC_less(x,lim)
 #  define RC_leq(x,lim)
 #  define RC_inHalfOpen(x,llim,ulim)
+#  define RC_inFullOpen(x,llim,ulim)
 
 #  define RCR_geq(x,lim) (x)
 #  define RCR_less(x,lim) (x)
 #  define RCR_leq(x,lim) (x)
 #  define RCR_inHalfOpen(x,llim,ulim) (x)
+#  define RCR_inFullOpen(x,llim,ulim) (x)
 #endif
 
 // ####################################################################
@@ -407,8 +414,13 @@ public:
 
   int offsetFromStart(int row, int col) const
   {
-    RC_inHalfOpen(row, 0, mrows());
-    RC_inHalfOpen(col, 0, ncols());
+    // Strictly speaking, the only valid offsets are those that pass
+    // RC_inHalfOpen(), but in order to allow "one-past-the-end" indexing
+    // for iterators etc., we use the more permissive RC_inFullOpen()
+    // instead:
+    RC_inFullOpen(row, 0, mrows());
+    RC_inFullOpen(col, 0, ncols());
+
     return row + (col*rowstride_);
   }
 
