@@ -392,7 +392,7 @@ DOTRACE("GaborArray::updateBackg");
   itsThetaSeed.touch(); // to force a redo in updateBmap()
 }
 
-shared_ptr<Gfx::BmapData> GaborArray::generateBmap() const
+shared_ptr<Gfx::BmapData> GaborArray::generateBmap(bool doTagLast) const
 {
 DOTRACE("GaborArray::generateBmap");
 
@@ -442,6 +442,27 @@ DOTRACE("GaborArray::generateBmap");
             if (x >= 0 && x < itsSizeX && y >=0 && y < itsSizeY)
               win[x+y*itsSizeX] += contrast * p.at(x-x0, y-y0);
           }
+
+      if (doTagLast && i == (itsTotalNumber-1))
+        {
+          const double outer = 0.4 * p.size();
+          const double inner = outer - 3;
+
+          for (int y = y0; y < y1; ++y)
+            for (int x = x0; x < x1; ++x)
+              {
+                if (x >= 0 && x < itsSizeX && y >=0 && y < itsSizeY)
+                  {
+                    const double r = sqrt((x-xcenter)*(x-xcenter) +
+                                          (y-ycenter)*(y-ycenter));
+
+                    if (r >= inner && r <= outer)
+                      {
+                        win[x+y*itsSizeX] = 1.0;
+                      }
+                  }
+              }
+        }
     }
 
   shared_ptr<BmapData> result(new BmapData(Vec2i(itsSizeX, itsSizeY),
@@ -483,7 +504,7 @@ DOTRACE("GaborArray::updateBmap");
       && itsContrastJitter.ok())
     return;
 
-  itsBmap = generateBmap();
+  itsBmap = generateBmap(false);
 
   itsThetaSeed.save();
   itsPhaseSeed.save();
@@ -521,7 +542,7 @@ bool GaborArray::tryPush(const GaborArrayElement& e) const
   // quite so quickly in the resulting movie
   if (itsDumpingFrames)
     {
-      shared_ptr<Gfx::BmapData> bmap = generateBmap();
+      shared_ptr<Gfx::BmapData> bmap = generateBmap(true);
 
       dumpFrame(bmap);
       dumpFrame(bmap);
@@ -630,7 +651,7 @@ DOTRACE("GaborArray::backgJitter");
       if (itsDumpingFrames &&
           niter % itsFrameDumpPeriod == 0)
         {
-          shared_ptr<Gfx::BmapData> bmap = generateBmap();
+          shared_ptr<Gfx::BmapData> bmap = generateBmap(true);
           dumpFrame(bmap);
         }
     }

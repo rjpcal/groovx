@@ -109,7 +109,7 @@ private:
   GaborArray(const GaborArray&);
   GaborArray& operator=(const GaborArray&);
 
-  shared_ptr<Gfx::BmapData> generateBmap() const;
+  shared_ptr<Gfx::BmapData> generateBmap(bool doTagLast = false) const;
 
   void updateForeg() const;
   void updateBackg() const;
