@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Thu May 17 10:48:17 2001
+// written: Thu May 17 10:56:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,6 +95,14 @@ public:
   static IdItemInserter<Container, T> makeInserter(Container& c)
 	 { return IdItemInserter<Container, T>(c); }
 };
+
+template <class To, class Fr>
+IdItem<To> dynamicCast(IdItem<class Fr> p)
+{
+  Fr* f = p.get();
+  To& t = dynamic_cast<To&>(*f); // will throw bad_cast on failure
+  return IdItem<To>(&t);
+}
 
 template <class Container, class T>
 inline IdItemInserter<Container, T>&
@@ -224,6 +232,14 @@ public:
   static MIdItemInserter<Container, T> makeInserter(Container& c)
 	 { return MIdItemInserter<Container, T>(c); }
 };
+
+template <class To, class Fr>
+MaybeIdItem<To> dynamicCast(MaybeIdItem<class Fr> p)
+{
+  Fr* f = p.get();
+  To& t = dynamic_cast<To&>(*f); // will throw bad_cast on failure
+  return MaybeIdItem<To>(&t);
+}
 
 template <class Container, class T>
 inline MIdItemInserter<Container, T>&
