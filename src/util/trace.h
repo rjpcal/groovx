@@ -1,8 +1,9 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // trace.h
 // Rob Peters
 // created: Jan-99
-// written: Tue Apr 27 11:16:33 1999
+// written: Thu May 27 20:24:24 1999
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -24,17 +25,22 @@
 // 2) if LOCAL_TRACE is defined, profiling AND tracing will always occur
 // 3) if TRACE is defined, profiling AND tracing will occur, EXCEPT:
 // 4) if NO_TRACE is defined, TRACE is ignored
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TRACE_H_DEFINED
 #define TRACE_H_DEFINED
 
 #if (defined(TRACE) && !defined(NO_TRACE))
-#define LOCAL_TRACE
+#  ifndef LOCAL_TRACE
+#    define LOCAL_TRACE
+#  endif
 #endif
 
-#ifdef LOCAL_TRACE
-#define LOCAL_PROF
+#if defined(LOCAL_TRACE) || defined(PROF)
+#  ifndef LOCAL_PROF
+#    define LOCAL_PROF
+#  endif
 #endif
 
 #ifdef LOCAL_PROF
@@ -44,7 +50,7 @@
 const int MAX_TRACE_LEVEL = 6;
 
 extern int TRACE_LEVEL;
-const char *const TRACE_TAB = "  ";
+const char* const TRACE_TAB = "  ";
 // struct timeval {
 //                unsigned long  tv_sec;   /* seconds since Jan. 1, 1970 */
 //                long           tv_usec;  /* and microseconds */
@@ -56,15 +62,12 @@ public:
 	 totalTime.tv_sec = 0;
 	 totalTime.tv_usec = 0;
   }
-  ~Prof() { 
-	 cerr << funcName << " called " << count() << " times, "
-			<< "average time == " << avgTime() << "usec\n";
-  }
+  ~Prof();
   int count() const { return callCount; }
   void add(timeval t) { 
 	 totalTime.tv_sec += t.tv_sec; 
 	 totalTime.tv_usec += t.tv_usec;
-	 callCount++; 
+	 ++callCount; 
   }
   const char* name() const { return funcName; }
   double avgTime() const { 
@@ -81,12 +84,12 @@ public:
   Trace(Prof& p) : prof(p) {
 #ifdef LOCAL_TRACE
 	 if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
-      for (int i=0; i < TRACE_LEVEL; i++)
+      for (int i=0; i < TRACE_LEVEL; ++i)
         cerr << TRACE_TAB;
-      cerr << "entering " << prof.name() << "...\n";
+      cerr << "entering " << prof.name() << "...\n" << flush;
     }
+    ++TRACE_LEVEL;
 #endif
-    TRACE_LEVEL++;
 	 gettimeofday(&start, NULL);
   }
   
@@ -96,11 +99,11 @@ public:
 	 elapsed.tv_usec = finish.tv_usec - start.tv_usec;
 	 prof.add(elapsed);
 #ifdef LOCAL_TRACE
-    TRACE_LEVEL--;
+    --TRACE_LEVEL;
     if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
-      for (int i=0; i < TRACE_LEVEL; i++)
+      for (int i=0; i < TRACE_LEVEL; ++i)
         cerr << TRACE_TAB;
-      cerr << "leaving " << prof.name() << ".\n";
+      cerr << "leaving " << prof.name() << ".\n" << flush;
     }
     if (TRACE_LEVEL == 0) cerr << endl;
 #endif
