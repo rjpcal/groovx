@@ -111,7 +111,7 @@ itcl::class RandSeq {
     private variable next
 
     constructor {} {
-	::srand [expr [clock clicks] / 2]
+	::srand [expr [clock seconds] / 2]
 
 	set current [::rand 0.0 1.0]
 	set next [::rand 0.0 1.0]
