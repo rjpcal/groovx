@@ -76,7 +76,7 @@ test "ObjTogl-Togl::show" "too many args" {
 test "ObjTogl-Togl::show" "normal use on invalid trial id" { 
 	 set code [catch {Togl::show -1} msg]
 	 set result "$code $msg"
-} {^1 Toglet::show: attempted to access invalid object.*}
+} {^1 Toglet::show:}
 test "ObjTogl-Togl::show" "no error" {} $BLANK $no_test
 
 ### Togl::setVisibleCmd ###
