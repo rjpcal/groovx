@@ -150,7 +150,7 @@ $(DEP)/pkgdepends: $(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
 
 include $(DEP)/pkgdepends
 
-ifeq ($(enable_matlab),yes)
+ifneq ($(matlab_lib),)
 $(exec_prefix)/lib/visx/mtx.so: \
 	$(matlab_lib)/libmx.so \
 	$(matlab_lib)/libmatlb.so
