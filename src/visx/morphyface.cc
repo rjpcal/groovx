@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Thu Mar  9 15:53:20 2000
+// written: Fri Mar 10 01:27:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -241,11 +241,13 @@ namespace {
 MorphyFace::MorphyFace() :
   GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX),
 
+  category(0),
+
   faceWidth(2.75),
-  topHeight(3.8),
-  bottomHeight(-3.0),
   topWidth(1.15),
   bottomWidth(1.0),
+  topHeight(3.8),
+  bottomHeight(-3.0),
 
   hairWidth(0.20),
   hairStyle(0),
@@ -285,11 +287,13 @@ DOTRACE("MorphyFace::MorphyFace");
 MorphyFace::MorphyFace(istream& is, IOFlag flag) :
   GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX),
 
+  category(0),
+
   faceWidth(2.75), 
-  topHeight(3.8),
-  bottomHeight(-3.0),
   topWidth(1.15),
   bottomWidth(1.0),
+  topHeight(3.8),
+  bottomHeight(-3.0),
 
   hairWidth(0.20),
   hairStyle(0),
