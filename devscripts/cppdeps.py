@@ -278,7 +278,7 @@ class DepBuilder:
                         self.printOneLdepLevel(dep, stream, marks,
                                                level+1, maxlevel)
 
-    def printLdepLevels(self, stream):
+    def printLdepLevels(self, stream, maxlevel):
         backmap = {}
 
         N = 0
@@ -295,9 +295,9 @@ class DepBuilder:
 
         for density in sort(backmap.keys()):
             for file in backmap[density]:
-                stream.write('\n\n<%d> ' % density)
+                stream.write('\n<%d> ' % density)
                 marks.clear()
-                self.printOneLdepLevel(file, stream, marks, 0, 1000)
+                self.printOneLdepLevel(file, stream, marks, 0, maxlevel)
                 CCD += density
 
         stream.write('\n')
