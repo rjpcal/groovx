@@ -107,7 +107,8 @@ namespace
     int loops = 0;
     int events = 0;
 
-    while (t0.elapsedMsec() < 45.0)
+    while (t0.elapsedMsec() < 500.0 &&
+           (t0.isPending() || t1.isPending()))
       {
         if (Tcl_DoOneEvent(TCL_TIMER_EVENTS|TCL_DONT_WAIT) != 0)
           ++events;
