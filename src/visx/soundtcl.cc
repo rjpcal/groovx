@@ -2,7 +2,7 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Tue Apr 27 11:27:13 1999
+// written: Tue Apr 27 13:29:29 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@
 
 #include "errmsg.h"
 
-#define LOCAL_TRACE
+#define LOCAL_PROF
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
@@ -45,6 +45,7 @@ namespace {
   class Sound {
   public:
 	 Sound(Audio* audio, const string& filename);
+	 virtual ~Sound();
 	 void play();
 	 void setFile(const string& filename);
 	 const string& getFile() const { return itsFilename; }
@@ -57,31 +58,7 @@ namespace {
 }
 
 ///////////////////////////////////////////////////////////////////////
-// Sound Tcl package
-///////////////////////////////////////////////////////////////////////
-
-namespace SoundTcl {
-  map< string, Sound* > theSoundMap;
-
-  Tcl_ObjCmdProc setCmd;
-  Tcl_ObjCmdProc playCmd;
-  Tcl_ObjCmdProc set_ok_soundCmd;
-  Tcl_ObjCmdProc set_err_soundCmd;
-  Tcl_ObjCmdProc play_ok_soundCmd;
-  Tcl_ObjCmdProc play_err_soundCmd;
-
-  string ok_sound_file =  "/cit/rjpeters/face/audio/saw50_500Hz_300ms.au";
-  string err_sound_file = "/cit/rjpeters/face/audio/saw50_350Hz_300ms.au";
-
-  Audio* audio;
-
-  // Error messages
-  const char* const bad_filename_msg = "sound file does not exist";
-  const char* const bad_sound_msg = "sound does not exist";
-}
-
-///////////////////////////////////////////////////////////////////////
-// SoundTcl::Sound member definitions
+// Sound member definitions
 ///////////////////////////////////////////////////////////////////////
 
 Sound::Sound(Audio* audio, const string& filename) :
@@ -102,6 +79,11 @@ DOTRACE("Sound::Sound");
   itsPlayParams.play_volume = AUnityGain;
   itsPlayParams.duration.type = ATTFullLength;
   itsPlayParams.event_mask = 0;
+}
+
+Sound::~Sound() {
+DOTRACE("Sound::~Sound");
+  ADestroySBucket( itsAudio, itsSBucket, NULL );
 }
 
 void Sound::play() {
@@ -135,13 +117,35 @@ DOTRACE("Sound::setFile");
 }
 
 ///////////////////////////////////////////////////////////////////////
+// Accessories of Sound Tcl package
+///////////////////////////////////////////////////////////////////////
+
+namespace {
+  map< string, Sound* > theSoundMap;
+
+  string ok_sound_file = "/cit/rjpeters/face/audio/saw50_500Hz_300ms.au";
+  string err_sound_file = "/cit/rjpeters/face/audio/saw50_350Hz_300ms.au";
+
+  Audio* audio;
+
+  // Error messages
+  const char* const bad_filename_msg = "sound file does not exist";
+  const char* const bad_sound_msg = "sound does not exist";
+  const char* const no_audio_msg = "audio is not enabled";
+}
+
+///////////////////////////////////////////////////////////////////////
 // Sound Tcl package definitions
 ///////////////////////////////////////////////////////////////////////
 
 int SoundTcl::setCmd(ClientData, Tcl_Interp *interp,
 							int objc, Tcl_Obj *const objv[]) {
 DOTRACE("SoundTcl::setCmd");
-  Assert(audio);
+  if ( !audio ) {
+	 err_message(interp, objv, no_audio_msg);
+	 return TCL_OK;
+  }
+
   if (objc < 2 || objc > 3) {
 	 Tcl_WrongNumArgs(interp, 1, objv, "sound_name [new_filename]");
 	 return TCL_ERROR;
@@ -177,7 +181,11 @@ DOTRACE("SoundTcl::setCmd");
 int SoundTcl::playCmd(ClientData, Tcl_Interp *interp,
 							 int objc, Tcl_Obj *const objv[]) {
 DOTRACE("SoundTcl::playCmd");
-  Assert(audio);
+  if ( !audio ) {
+	 err_message(interp, objv, no_audio_msg);
+	 return TCL_OK;
+  }
+
   if (objc != 2) {
 	 Tcl_WrongNumArgs(interp, 1, objv, "sound_name");
 	 return TCL_ERROR;
@@ -194,8 +202,20 @@ DOTRACE("SoundTcl::playCmd");
   return TCL_OK;
 }
 
-int SoundTcl::Sound_Init(Tcl_Interp *interp) {
-DOTRACE("SoundTcl::Sound_Init");
+int SoundTcl::haveAudioCmd(ClientData, Tcl_Interp *interp,
+									int objc, Tcl_Obj *const objv[]) {
+DOTRACE("SoundTcl::haveAudioCmd");
+  if ( !audio ) {
+	 Tcl_SetObjResult(interp, Tcl_NewIntObj(0));
+  }
+  else {
+	 Tcl_SetObjResult(interp, Tcl_NewIntObj(1));
+  }
+  return TCL_OK;
+}
+
+SoundTcl::SoundTcl(Tcl_Interp *interp) : itsStatus(TCL_OK) {
+DOTRACE("SoundTcl::SoundTcl");
   // Open an audio connection to the default audio server, then check
   // to make sure connection succeeded. If the connection fails,
   // 'audio' is set to NULL. In this case, all procedures in the
@@ -206,23 +226,6 @@ DOTRACE("SoundTcl::Sound_Init");
   audio = AOpenAudio( const_cast<char *>(ServerName), &status );
   if ( status != 0 ) {
 	 audio = NULL;
-	 return TCL_OK;
-  }
-  ASetCloseDownMode( audio, AKeepTransactions, NULL );
-#ifdef LOCAL_DEBUG
-  DUMP_VAL2(AAudioString(audio));
-#endif
-
-  // Try to initialize the default 'ok' and 'err' sounds.
-  // These will fail if the default sound files are missing.
-  try {
-	 theSoundMap["ok"] = new Sound(audio, ok_sound_file);
-	 theSoundMap["err"] = new Sound(audio, err_sound_file);
-  }
-  catch (SoundError& err) {
-	 Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
-									"Sound_Init: ", err.info().c_str(), NULL);
-	 return TCL_ERROR;
   }
 
   // Add commands to ::Sound namespace.
@@ -230,8 +233,39 @@ DOTRACE("SoundTcl::Sound_Init");
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   Tcl_CreateObjCommand(interp, "Sound::play", playCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+  Tcl_CreateObjCommand(interp, "Sound::haveAudio", haveAudioCmd,
+                       (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+
+  // If we had a successfull audio connection, set up some initial
+  // sounds.
+  if ( audio ) {
+	 ASetCloseDownMode( audio, AKeepTransactions, NULL );
+#ifdef LOCAL_DEBUG
+	 DUMP_VAL2(AAudioString(audio));
+#endif
+
+	 // Try to initialize the default 'ok' and 'err' sounds.
+	 // These will fail if the default sound files are missing.
+	 try {
+		theSoundMap["ok"] = new Sound(audio, ok_sound_file);
+		theSoundMap["err"] = new Sound(audio, err_sound_file);
+	 }
+	 catch (SoundError& err) {
+		Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
+									  "Sound_Init: ", err.info().c_str(), NULL);
+		itsStatus = TCL_ERROR;
+	 }
+  }
+
   Tcl_PkgProvide(interp, "Sound", "1.1");
-  return TCL_OK;
+  itsStatus = TCL_OK;
+}
+
+SoundTcl::~SoundTcl() {
+DOTRACE("SoundTcl::~SoundTcl");
+  if ( audio ) {
+	 ACloseAudio( audio, NULL );
+  }
 }
 
 static const char vcid_soundtcl_cc[] = "$Header$";
