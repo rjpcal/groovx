@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Mar  6 15:56:36 2000
-// written: Wed Mar 19 13:34:05 2003
+// written: Wed Mar 19 13:46:08 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -318,12 +318,12 @@ private:
 
 };  // shared_array
 
-/// Equality for shared_array objects; returns true if both have the same pointee.
+/// Equality for shared_array; returns true if both have the same pointee.
 template<typename T>
   inline bool operator==(const shared_array<T>& a, const shared_array<T>& b)
     { return a.get() == b.get(); }
 
-/// Inequality for shared_array objects; returns true if each has different pointees.
+/// Inequality for shared_array; returns true if each has different pointees.
 template<typename T>
   inline bool operator!=(const shared_array<T>& a, const shared_array<T>& b)
     { return a.get() != b.get(); }
