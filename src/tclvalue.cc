@@ -163,19 +163,25 @@ DOTRACE("TclValue::clone");
 
 Value::Type TclValue::getNativeType() const {
 DOTRACE("TclValue::getNativeType");
-  Tcl_ObjType* type = itsObj->typePtr;
 
-  if (type == 0) return Value::CSTRING;
-
-  string type_name(type->name);
-
-  DebugEvalNL(type_name);
+  string type_name(getNativeTypeName());
 
   if (type_name == "int") { return Value::INT; }
   else if (type_name == "double") { return Value::DOUBLE; }
   else if (type_name == "boolean") { return Value::BOOL; }
   else if (type_name == "string") { return Value::CSTRING; }
   else return Value::UNKNOWN;
+}
+
+const char* TclValue::getNativeTypeName() const {
+DOTRACE("TclValue::getNativeTypeName");
+  Tcl_ObjType* type = itsObj->typePtr;
+
+  if (type == 0) return "cstring";
+
+  DebugEvalNL(type->name);
+
+  return type->name;
 }
 
 void TclValue::printTo(ostream& os) const {
