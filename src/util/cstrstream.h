@@ -2,7 +2,7 @@
 //
 // cstrstream.h
 //
-// Copyright (c) 2002-2002 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2002-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Mar  7 13:12:33 2003
 // commit: $Id$

@@ -2,7 +2,7 @@
 //
 // outputfile.cc
 //
-// Copyright (c) 2003-2004 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2003-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri May 23 10:03:19 2003
 // commit: $Id$

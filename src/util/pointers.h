@@ -2,7 +2,7 @@
 //
 // pointers.h
 //
-// Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2000-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Mar  7 14:52:52 2000
 // commit: $Id$

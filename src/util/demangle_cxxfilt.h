@@ -2,7 +2,7 @@
 //
 // demangle_cxxfilt.h
 //
-// Copyright (c) 2002-2002 Rob Peters rjpeters at klab dot caltech dot edu
+// Copyright (c) 2002-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Feb 27 16:30:08 2003
 // commit: $Id$

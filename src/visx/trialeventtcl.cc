@@ -2,7 +2,7 @@
 //
 // trialeventtcl.cc
 //
-// Copyright (c) 2003-2004 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2003-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu May 22 14:37:17 2003
 // $Id$

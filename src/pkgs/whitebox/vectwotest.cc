@@ -2,7 +2,7 @@
 //
 // vectwotest.cc
 //
-// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2004 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon May 12 17:57:12 2003
 // commit: $Id$
