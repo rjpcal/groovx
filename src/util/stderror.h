@@ -30,8 +30,6 @@
 #ifndef STDERROR_H_DEFINED
 #define STDERROR_H_DEFINED
 
-#include "util/error.h"
-
 #include <typeinfo>
 
 // Provides a common interface for throwing some exceptions with
@@ -39,8 +37,7 @@
 
 namespace Util
 {
-  void throwBadCast(const std::type_info& to,
-                    const std::type_info& from);
+  void throwBadCast(const std::type_info& to, const std::type_info& from);
 }
 
 static const char vcid_stderror_h[] = "$Header$";
