@@ -132,7 +132,7 @@ DOTRACE("GLCanvas::screenFromWorld(geom::vec2)");
                current_mv_matrix, current_proj_matrix, current_viewport,
                &temp_screen_x, &temp_screen_y, &dummy_z);
 
-  dbg_eval(3, status);
+  dbg_eval_nl(3, status);
 
   if (status == GL_FALSE)
     throw rutz::error("GLCanvas::screenFromWorld(): gluProject error",
@@ -144,6 +144,8 @@ DOTRACE("GLCanvas::screenFromWorld(geom::vec2)");
 vec2d GLCanvas::worldFromScreen(const vec2i& screen_pos) const
 {
 DOTRACE("GLCanvas::worldFromScreen(geom::vec2)");
+
+  dbg_eval(3, screen_pos.x()); dbg_eval_nl(3, screen_pos.y());
 
   GLdouble current_mv_matrix[16];
   GLdouble current_proj_matrix[16];
@@ -162,7 +164,7 @@ DOTRACE("GLCanvas::worldFromScreen(geom::vec2)");
                  current_mv_matrix, current_proj_matrix, current_viewport,
                  &world_pos.x(), &world_pos.y(), &dummy_z);
 
-  dbg_eval(3, status);
+  dbg_eval_nl(3, status);
 
   if (status == GL_FALSE)
     throw rutz::error("GLCanvas::worldFromScreen(): gluUnProject error",
@@ -454,6 +456,18 @@ DOTRACE("GLCanvas::translate");
 void GLCanvas::scale(const vec3d& v)
 {
 DOTRACE("GLCanvas::scale");
+  if (v.x() == 0.0)
+    {
+      throw rutz::error("invalid x scaling factor", SRC_POS);
+    }
+  if (v.y() == 0.0)
+    {
+      throw rutz::error("invalid y scaling factor", SRC_POS);
+    }
+  if (v.z() == 0.0)
+    {
+      throw rutz::error("invalid z scaling factor", SRC_POS);
+    }
   glScaled(v.x(), v.y(), v.z());
 }
 
