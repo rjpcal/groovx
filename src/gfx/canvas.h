@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Tue Aug 28 11:36:05 2001
+// written: Wed Aug 29 09:11:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -138,11 +138,18 @@ public:
   /// Swap the foreground and background colors.
   virtual void swapForeBack() = 0;
 
-  virtual void setLineWidth(double width) = 0;
-
   /** Control whether polygons will be filled (if true), or outlined
       (if false). */
   virtual void setPolygonFill(bool on) = 0;
+
+  /// Set the radius of rendered points.
+  virtual void setPointSize(double size) = 0;
+
+  /// Set the current line width.
+  virtual void setLineWidth(double width) = 0;
+
+  /// Set the current line stipple pattern
+  virtual void setLineStipple(unsigned short bit_pattern = 0xFFFF) = 0;
 
   virtual void enableAntialiasing() = 0;
 

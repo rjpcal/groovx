@@ -64,9 +64,10 @@ public:
       appropriate to color-index/RGBA modes. */
   virtual void swapForeBack();
 
-  virtual void setLineWidth(double width);
-
   virtual void setPolygonFill(bool on);
+  virtual void setPointSize(double size);
+  virtual void setLineWidth(double width);
+  virtual void setLineStipple(unsigned short bit_pattern);
 
   virtual void enableAntialiasing();
 

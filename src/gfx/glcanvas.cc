@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Tue Aug 28 11:52:30 2001
+// written: Wed Aug 29 09:15:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -268,12 +268,6 @@ DOTRACE("GLCanvas::swapForeBack");
     }
 }
 
-void GLCanvas::setLineWidth(double width)
-{
-DOTRACE("GLCanvas::setLineWidth");
-  glLineWidth(width);
-}
-
 void GLCanvas::setPolygonFill(bool on)
 {
 DOTRACE("GLCanvas::setPolygonFill");
@@ -286,6 +280,26 @@ DOTRACE("GLCanvas::setPolygonFill");
     {
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
+}
+
+void GLCanvas::setPointSize(double size)
+{
+DOTRACE("GLCanvas::setPointSize");
+
+  glPointSize(size);
+}
+
+void GLCanvas::setLineWidth(double width)
+{
+DOTRACE("GLCanvas::setLineWidth");
+  glLineWidth(width);
+}
+
+void GLCanvas::setLineStipple(unsigned short bit_pattern)
+{
+DOTRACE("GLCanvas::setLineStipple");
+  glEnable(GL_LINE_STIPPLE);
+  glLineStipple(1, bit_pattern);
 }
 
 void GLCanvas::enableAntialiasing()

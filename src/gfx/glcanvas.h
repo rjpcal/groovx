@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Tue Aug 28 11:36:25 2001
+// written: Wed Aug 29 09:12:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,9 +59,10 @@ public:
       appropriate to color-index/RGBA modes. */
   virtual void swapForeBack();
 
-  virtual void setLineWidth(double width);
-
   virtual void setPolygonFill(bool on);
+  virtual void setPointSize(double size);
+  virtual void setLineWidth(double width);
+  virtual void setLineStipple(unsigned short bit_pattern);
 
   virtual void enableAntialiasing();
 
