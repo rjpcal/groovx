@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Fri Jun  1 14:09:06 2001
+// written: Thu Jul 19 11:16:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,14 +42,14 @@ Point<int> GLCanvas::getScreenFromWorld(const Point<double>& world_pos) const {
   double temp_screen_x, temp_screen_y, dummy_z;
 
   GLint status =
-	 gluProject(world_pos.x(), world_pos.y(), 0.0,
-					current_mv_matrix, current_proj_matrix, current_viewport,
-					&temp_screen_x, &temp_screen_y, &dummy_z);
+    gluProject(world_pos.x(), world_pos.y(), 0.0,
+               current_mv_matrix, current_proj_matrix, current_viewport,
+               &temp_screen_x, &temp_screen_y, &dummy_z);
 
   DebugEval(status);
 
   if (status == GL_FALSE)
-	 throw ErrorWithMsg("GrObj::getScreenFromWorld(): gluProject error");
+    throw ErrorWithMsg("GrObj::getScreenFromWorld(): gluProject error");
 
   return Point<int>(int(temp_screen_x), int(temp_screen_y));
 }
@@ -68,14 +68,14 @@ Point<double> GLCanvas::getWorldFromScreen(const Point<int>& screen_pos) const {
   Point<double> world_pos;
 
   GLint status =
-	 gluUnProject(screen_pos.x(), screen_pos.y(), 0,
-					  current_mv_matrix, current_proj_matrix, current_viewport,
-					  &world_pos.x(), &world_pos.y(), &dummy_z);
+    gluUnProject(screen_pos.x(), screen_pos.y(), 0,
+                 current_mv_matrix, current_proj_matrix, current_viewport,
+                 &world_pos.x(), &world_pos.y(), &dummy_z);
 
   DebugEval(status);
 
   if (status == GL_FALSE)
-	 throw ErrorWithMsg("GrObj::getWorldFromScreen(): gluUnProject error");
+    throw ErrorWithMsg("GrObj::getWorldFromScreen(): gluUnProject error");
 
   return world_pos;
 }
@@ -102,7 +102,7 @@ Rect<int> GLCanvas::getScreenViewport() const {
   Rect<int> screen_rect;
   screen_rect.setBottomLeft(Point<int>(viewport[0], viewport[1]));
   screen_rect.setTopRight(Point<int>(viewport[0]+viewport[2],
-												 viewport[1]+viewport[3]));
+                                     viewport[1]+viewport[3]));
 
   return screen_rect;
 }
@@ -136,27 +136,27 @@ DOTRACE("GLCanvas::isDoubleBuffered");
 void GLCanvas::swapForeBack() const {
 DOTRACE("GLCanvas::swapForeBack");
   if ( this->isRgba() ) {
-	 GLdouble foreground[4];
-	 GLdouble background[4];
-	 glGetDoublev(GL_CURRENT_COLOR, &foreground[0]);
-	 glGetDoublev(GL_COLOR_CLEAR_VALUE, &background[0]);
+    GLdouble foreground[4];
+    GLdouble background[4];
+    glGetDoublev(GL_CURRENT_COLOR, &foreground[0]);
+    glGetDoublev(GL_COLOR_CLEAR_VALUE, &background[0]);
 
-	 glColor4d(background[0],
-				  background[1],
-				  background[2],
-				  foreground[3]); // <-- note we keep the foreground alpha value
+    glColor4d(background[0],
+              background[1],
+              background[2],
+              foreground[3]); // <-- note we keep the foreground alpha value
 
-  	 glClearColor(foreground[0],
-  					  foreground[1],
-  					  foreground[2],
-  					  background[3]); // <-- note we keep the background alpha value
+    glClearColor(foreground[0],
+                 foreground[1],
+                 foreground[2],
+                 background[3]); // <-- note we keep the background alpha value
   }
   else {
-	 GLint foreground, background;
-	 glGetIntegerv(GL_CURRENT_INDEX, &foreground);
-	 glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
-	 glIndexi(background);
-	 glClearIndex(foreground);
+    GLint foreground, background;
+    glGetIntegerv(GL_CURRENT_INDEX, &foreground);
+    glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
+    glIndexi(background);
+    glClearIndex(foreground);
   }
 }
 
@@ -167,7 +167,23 @@ DOTRACE("GLCanvas::flushOutput");
 
 void GLCanvas::clearColorBuffer() const {
 DOTRACE("GLCanvas::clearColorBuffer");
-  glClear(GL_COLOR_BUFFER_BIT); 
+  glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void GLCanvas::clearColorBuffer(const Rect<int>& screen_rect) const {
+DOTRACE("GLCanvas::clearColorBuffer(Rect)");
+
+  glPushAttrib(GL_SCISSOR_BIT);
+  {
+    glEnable(GL_SCISSOR_TEST);
+
+    glScissor(screen_rect.left(), screen_rect.bottom(),
+              screen_rect.width(), screen_rect.height());
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glDisable(GL_SCISSOR_TEST);
+  }
+  glPopAttrib();
 }
 
 void GLCanvas::drawOnFrontBuffer() const {
