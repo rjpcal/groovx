@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:10:45 2000
-// written: Thu May 10 12:04:38 2001
+// written: Mon Jun 11 12:10:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ protected:
 public:
   virtual void readValueFrom(IO::Reader* reader, const fixed_string& name);
   virtual void writeValueTo(IO::Writer* writer, const fixed_string& name) const;
-  virtual const Value& value() const;
+  virtual shared_ptr<Value> value() const;
 };
 
 static const char vcid_gbvec_h[] = "$Header$";

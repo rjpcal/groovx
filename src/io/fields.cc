@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Sun Jun 10 15:50:40 2001
+// written: Mon Jun 11 12:12:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,7 +52,8 @@ void TField<T>::writeValueTo(IO::Writer* writer, const fixed_string& name) const
 { writer->writeValueObj(name.c_str(), itsVal); }
 
 template <class T>
-const Value& TField<T>::value() const { return itsVal; }
+shared_ptr<Value> TField<T>::value() const
+{ return shared_ptr<Value>(itsVal.clone()); }
 
 template <class T>
 void TField<T>::doSetValue(const Value& new_val)
@@ -85,8 +86,8 @@ void TBoundedField<T>::writeValueTo(IO::Writer* writer,
 { writer->writeValueObj(name.c_str(), itsVal); }
 
 template <class T>
-const Value& TBoundedField<T>::value() const
-{ return itsVal; }
+shared_ptr<Value> TBoundedField<T>::value() const
+{ return shared_ptr<Value>(itsVal.clone()); }
 
 template <class T>
 void TBoundedField<T>::doSetValue(const Value& new_val) {
@@ -121,8 +122,8 @@ void TPtrField<T>::doSetValue(const Value& new_val)
 { new_val.get(itsVal()); }
 
 template <class T>
-const Value& TPtrField<T>::value() const
-{ return itsVal; }
+shared_ptr<Value> TPtrField<T>::value() const
+{ return shared_ptr<Value>(itsVal.clone()); }
 
 template class TPtrField<int>;
 template class TPtrField<bool>;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Sun Jun 10 15:49:48 2001
+// written: Mon Jun 11 12:10:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -142,7 +142,7 @@ public:
   virtual void readValueFrom(IO::Reader* reader, const fixed_string& name) = 0;
   virtual void writeValueTo(IO::Writer* writer, const fixed_string& name) const = 0;
 
-  virtual const Value& value() const = 0;
+  virtual shared_ptr<Value> value() const = 0;
   void setValue(const Value& new_val);
 };
 
@@ -169,7 +169,7 @@ public:
   virtual void readValueFrom(IO::Reader* reader, const fixed_string& name);
   virtual void writeValueTo(IO::Writer* writer, const fixed_string& name) const;
 
-  virtual const Value& value() const;
+  virtual shared_ptr<Value> value() const;
 
   void setNative(T new_val) { itsVal.itsVal = new_val; }
 
@@ -204,7 +204,7 @@ public:
   virtual void readValueFrom(IO::Reader* reader, const fixed_string& name);
   virtual void writeValueTo(IO::Writer* writer, const fixed_string& name) const;
 
-  virtual const Value& value() const;
+  virtual shared_ptr<Value> value() const;
 
   const T& operator()() const { return itsVal.itsVal; }
 
@@ -239,7 +239,7 @@ public:
 
   void reseat(T& valRef) { itsVal.reseat(valRef); }
 
-  virtual const Value& value() const;
+  virtual shared_ptr<Value> value() const;
 
   const T& operator()() const { return itsVal(); }
 

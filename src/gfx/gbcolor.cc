@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:10:25 2000
-// written: Thu May 10 12:04:44 2001
+// written: Mon Jun 11 12:11:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -93,8 +93,8 @@ void GbColor::readValueFrom(IO::Reader* reader, const fixed_string& name)
 void GbColor::writeValueTo(IO::Writer* writer, const fixed_string& name) const
 { writer->writeValueObj(name.c_str(), *this); }
 
-const Value& GbColor::value() const
-{ return *this; }
+shared_ptr<Value> GbColor::value() const
+{ return shared_ptr<Value>(this->clone()); }
 
 static const char vcid_gbcolor_cc[] = "$Header$";
 #endif // !GBCOLOR_CC_DEFINED

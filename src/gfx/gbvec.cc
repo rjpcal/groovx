@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:11:19 2000
-// written: Thu May 10 12:04:44 2001
+// written: Mon Jun 11 12:11:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -103,8 +103,8 @@ void GbVec3<T>::writeValueTo(IO::Writer* writer,
 { writer->writeValueObj(name.c_str(), *this); }
 
 template <class T>
-const Value& GbVec3<T>::value() const
-{ return *this; }
+shared_ptr<Value> GbVec3<T>::value() const
+{ return shared_ptr<Value>(this->clone()); }
 
 template class GbVec3<int>;
 template class GbVec3<double>;
