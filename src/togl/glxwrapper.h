@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:03 2002
-// written: Wed Sep 25 18:57:41 2002
+// written: Tue Nov 12 16:08:39 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,6 +58,8 @@ public:
   XVisualInfo* visInfo() const { return itsVisInfo; }
 
   Gfx::Canvas& canvas() const;
+
+  GLXContext context() const { return itsContext; }
 
   /// Flushes or swaps buffers for single- or double-buffering, respectively.
   void flush(Window window) const;
