@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:57 1999
-// written: Fri Jan 18 16:07:07 2002
+// written: Tue Jan 29 19:12:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -144,9 +144,6 @@ public:
 
   void writeOwnedObject(const char* name, Ref<const IO::IoObject> obj);
 
-  void writeBaseClass(const char* baseClassName,
-                      Ref<const IO::IoObject> basePart);
-
   template <class T>
   void writeBasicType(const char* name, T val,
                       const char* string_typename)
@@ -271,19 +268,12 @@ void AsciiStreamWriter::Impl::writeOwnedObject(const char* name,
                                                Ref<const IO::IoObject> obj)
 {
 DOTRACE("AsciiStreamWriter::Impl::writeOwnedObject");
-  writeObject(name, obj);
-}
 
-void AsciiStreamWriter::Impl::writeBaseClass(const char* baseClassName,
-                                             Ref<const IO::IoObject> basePart)
-{
-DOTRACE("AsciiStreamWriter::Impl::writeBaseClass");
+  fstring type = obj->ioTypename().c_str();
 
-  fstring type = basePart->ioTypename().c_str();
+  itsBuf << type.c_str() << ' ' << name << " := ";
 
-  itsBuf << type.c_str() << ' ' << baseClassName << " := ";
-
-  flattenObject(basePart.get());
+  flattenObject(obj.get());
 
   itsBuf << ATTRIB_ENDER;
 }
@@ -362,7 +352,8 @@ void AsciiStreamWriter::writeOwnedObject(const char* name,
 void AsciiStreamWriter::writeBaseClass(const char* baseClassName,
                                        Ref<const IO::IoObject> basePart)
 {
-  itsImpl.writeBaseClass(baseClassName, basePart);
+DOTRACE("AsciiStreamWriter::writeBaseClass");
+  itsImpl.writeOwnedObject(baseClassName, basePart);
 }
 
 void AsciiStreamWriter::writeRoot(const IO::IoObject* root)
