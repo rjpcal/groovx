@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Nov 24 12:43:47 1999
+// written: Tue Nov 30 16:58:45 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -588,7 +588,7 @@ DOTRACE("EventResponseHdlr::Impl::getRespFromKeysym");
 
   const char* response_string = extractStringFromKeysym(keysym);
     
-  for (int i = 0; i < itsRegexps.size(); ++i) {
+  for (size_t i = 0; i < itsRegexps.size(); ++i) {
 	 if (itsRegexps[i].matchesString(itsInterp, response_string)) {
 		return itsRegexps[i].responseValue();
 	 }
@@ -607,7 +607,7 @@ DOTRACE("EventResponseHdlr::Impl::feedback");
 					 Tcl_NewIntObj(response), TCL_GLOBAL_ONLY);
 
   bool feedbackGiven = false;
-  for (int i = 0; i<itsFeedbacks.size() && !feedbackGiven; ++i) {
+  for (size_t i = 0; i<itsFeedbacks.size() && !feedbackGiven; ++i) {
 	 feedbackGiven = itsFeedbacks[i].invokeIfTrue(itsInterp);
   }
 
@@ -840,7 +840,7 @@ void EventResponseHdlr::setEventSequence(const string& seq) {
 }
 
 const string& EventResponseHdlr::getBindingSubstitution() const {
-  itsImpl->getBindingSubstitution();
+  return itsImpl->getBindingSubstitution();
 }
 
 void EventResponseHdlr::setBindingSubstitution(const string& sub) {
