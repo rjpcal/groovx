@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Jun 18 10:02:55 2002
+// written: Tue Jun 18 10:15:55 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -30,20 +30,15 @@
 #define X11
 
 // Standard C headers
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 // X Window System headers
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/Xatom.h>  /* for XA_RGB_DEFAULT_MAP atom */
-
-#if defined(__vms)
-#  include <X11/StdCmap.h>  /* for XmuLookupStandardColormap */
-#else
-#  include <X11/Xmu/StdCmap.h>  /* for XmuLookupStandardColormap */
-#endif
+#include <X11/Xmu/StdCmap.h>  /* for XmuLookupStandardColormap */
 
 #include <GL/glx.h>
 
@@ -407,41 +402,6 @@ DOTRACE("<togl.cc>::get_rgb_colormap");
       Colormap cmap;
       cmap = DefaultColormap( dpy, scrnum );
       return cmap;
-    }
-
-  /*
-   * Check if we're using Mesa.
-   */
-  if (strstr(glXQueryServerString( dpy, scrnum, GLX_VERSION ), "Mesa"))
-    {
-
-      /* Next, if we're using Mesa and displaying on an HP with the
-         "Color Recovery" feature and the visual is 8-bit TrueColor,
-         search for a special colormap initialized for dithering.  Mesa
-         will know how to dither using this colormap. */
-      Atom hp_cr_maps = XInternAtom( dpy, "_HP_RGB_SMOOTH_MAP_LIST", True );
-      if (hp_cr_maps
-          && visinfo->visual->c_class==TrueColor
-          && visinfo->depth==8)
-        {
-          int numCmaps;
-          XStandardColormap *standardCmaps;
-          Status status = XGetRGBColormaps( dpy, root, &standardCmaps,
-                                            &numCmaps, hp_cr_maps );
-          if (status)
-            {
-              for (int i=0; i<numCmaps; i++)
-                {
-                  if (standardCmaps[i].visualid == visinfo->visual->visualid)
-                    {
-                      Colormap cmap = standardCmaps[i].colormap;
-                      XFree( standardCmaps );
-                      return cmap;
-                    }
-                }
-              XFree(standardCmaps);
-            }
-        }
     }
 
   /*
