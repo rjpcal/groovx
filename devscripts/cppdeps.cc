@@ -1423,6 +1423,7 @@ cppdeps::cppdeps(const int argc, char** const argv) :
   cfg.prune_dirs.clear();
   cfg.prune_dirs.push_back("RCS");
   cfg.prune_dirs.push_back("CVS");
+  cfg.prune_dirs.push_back(".svn");
 
   char** arg = argv+1; // skip to first command-line arg
 
