@@ -70,7 +70,7 @@ public:
   struct State
   {
     State() :
-      txform(),
+      txform(geom::txform::identity()),
       lineWidth(1.0),
       polygonFill(false)
     {}

@@ -51,7 +51,10 @@ using geom::vec3d;
 
 struct Gfx::Bbox::Impl
 {
-  Impl(Canvas& c) : canvas(c), cube(), txforms(1), first(true) {}
+  Impl(Canvas& c) : canvas(c), cube(), txforms(), first(true)
+  {
+    txforms.push_back(geom::txform::identity());
+  }
 
   Canvas& canvas;
   geom::box<double> cube;

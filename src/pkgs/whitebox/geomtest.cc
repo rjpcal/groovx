@@ -54,7 +54,7 @@ namespace
 
   txform operator-(const txform& t1, const txform& t2)
   {
-    txform r;
+    txform r = txform::no_init();
     for (int i = 0; i < 16; ++i)
       r[i] = t1[i] - t2[i];
     return r;

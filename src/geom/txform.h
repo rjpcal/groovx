@@ -40,10 +40,15 @@ namespace geom
   /// Represents a 4x4 transformation matrix in homogenous coordinates.
   class txform
   {
-  public:
-    /// Build an identity transformation matrix.
-    txform();
+  private:
+    /// Default constructor; matrix entries are left uninitialized.
+    /** The dummy bool parameter is there just as a reminder that this
+        constructor leaves the matrix entries in an unspecified state;
+        i.e. so that we don't carelessly use an apparently "default"
+        constructor that doesn't set any special default. */
+    txform(bool) {}
 
+  public:
     txform(const vec3<double>& translation,
            const vec3<double>& scaling,
            const vec3<double>& rotation_axis,
@@ -56,15 +61,18 @@ namespace geom
     /** This is mainly intended for use in testing contexts. */
     static txform random();
 
+    /// Factory function to make a matrix with uninitialized entries.
+    static txform no_init() { return txform(true); }
+
+    /// Get the inverse of this transformation.
+    geom::txform inverted() const;
+
     void translate(const vec3<double>& t);
     void scale(const vec3<double>& s);
     void rotate(const vec3<double>& rotation_axis, double rotation_angle);
 
     /// Equivalent to this = this x other, where 'x' is matrix multiplication.
     void transform(const geom::txform& other);
-
-    /// Get the inverse of this transformation.
-    geom::txform inverted() const;
 
     vec2<double> apply_to(const vec2<double>& input) const;
     vec3<double> apply_to(const vec3<double>& input) const;

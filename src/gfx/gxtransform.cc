@@ -64,7 +64,7 @@ struct GxTransformImpl
 {
   GxTransformImpl(GxTransform* p) :
     owner(p),
-    txformCache()
+    txformCache(geom::txform::identity())
   {}
 
   GxTransform* owner;
