@@ -34,46 +34,41 @@
 
 #include "util/strings.h"
 
-#define INSTANTIATE(T)                                                  \
-                                                                        \
-template <>                                                             \
-GbVec2<T>::GbVec2(T x_, T y_) :                                         \
-  Gfx::Vec2<T>(x_, y_),                                                 \
-  TMultiValue<T>(2)                                                     \
-{}                                                                      \
-                                                                        \
-template <>                                                             \
-GbVec2<T>::~GbVec2() {}                                                 \
-                                                                        \
-template <>                                                             \
-fstring GbVec2<T>::getNativeTypeName() const                            \
-{                                                                       \
-  return fstring("GbVec2");                                             \
-}                                                                       \
-                                                                        \
-template <>                                                             \
-const T* GbVec2<T>::constBegin() const { return &Gfx::Vec2<T>::x(); }   \
-                                                                        \
-template <>                                                             \
-GbVec3<T>::GbVec3(T x_, T y_, T z_) :                                   \
-  Gfx::Vec3<T>(x_, y_, z_),                                             \
-  TMultiValue<T>(3)                                                     \
-{}                                                                      \
-                                                                        \
-template <>                                                             \
-GbVec3<T>::~GbVec3() {}                                                 \
-                                                                        \
-template <>                                                             \
-fstring GbVec3<T>::getNativeTypeName() const                            \
-{                                                                       \
-  return fstring("GbVec3");                                             \
-}                                                                       \
-                                                                        \
-template <>                                                             \
-const T* GbVec3<T>::constBegin() const { return Gfx::Vec3<T>::data(); }
+template <class T>
+GbVec2<T>::GbVec2(T x_, T y_) :
+  Gfx::Vec2<T>(x_, y_),
+  TMultiValue<T>(2)
+{}
 
-INSTANTIATE(int);
-INSTANTIATE(double);
+template <class T>
+GbVec2<T>::~GbVec2() {}
+
+template <class T>
+fstring GbVec2<T>::getNativeTypeName() const
+{
+  return fstring("GbVec2");
+}
+
+template <class T>
+const T* GbVec2<T>::constBegin() const { return &Gfx::Vec2<T>::x(); }
+
+template <class T>
+GbVec3<T>::GbVec3(T x_, T y_, T z_) :
+  Gfx::Vec3<T>(x_, y_, z_),
+  TMultiValue<T>(3)
+{}
+
+template <class T>
+GbVec3<T>::~GbVec3() {}
+
+template <class T>
+fstring GbVec3<T>::getNativeTypeName() const
+{
+  return fstring("GbVec3");
+}
+
+template <class T>
+const T* GbVec3<T>::constBegin() const { return Gfx::Vec3<T>::data(); }
 
 template class GbVec2<int>;
 template class GbVec2<double>;
