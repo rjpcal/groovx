@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Sun Aug 26 08:53:54 2001
+// written: Fri Sep  7 15:39:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@
 
 #include "gwt/widget.h"
 
-#include "tcl/tclmemfunctor.h"
+#include "tcl/tclfunctor.h"
 #include "tcl/tclsafeinterp.h"
 
 #include "util/pointers.h"
