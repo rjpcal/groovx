@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Thu May 25 14:01:34 2000
+// written: Thu May 25 15:47:55 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -18,13 +18,10 @@
 
 #include "tlistwidget.h"
 #include "toglconfig.h"
-#include "xbmaprenderer.h"
 
 #include "tcl/tclcmd.h"
 #include "tcl/tclevalcmd.h"
 #include "tcl/tclitempkg.h"
-
-#include "togl/togl.h"
 
 #include "util/strings.h"
 
@@ -44,7 +41,6 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace ObjTogl {
-  Togl* theTogl = 0;
   TlistWidget* theWidget = 0;
 
   bool toglCreated = false;
@@ -102,34 +98,17 @@ class ObjTogl::DestroyCmd : public Tcl::TclCmd {
 public:
   DestroyCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name, NULL, 1, 1)
-  {
-    Togl_DestroyFunc(destroyCallback);  
-  }
-
-  ~DestroyCmd() { try {invoke();} catch (...) {} }
-
-  static void destroyCallback(struct Togl* togl) {
-  DOTRACE("ObjTogl::DestroyCmd::destroyCallback");
-    DebugEvalNL((void*)togl);
-    if ( (togl != 0) && (togl == ObjTogl::theTogl) ) {
-      ToglConfig* config = static_cast<ToglConfig*>(togl->getClientData());
-      DebugEvalNL((void*)config);
-      delete config;
-      ObjTogl::theWidget = 0;
-      ObjTogl::theTogl = 0;
-      ObjTogl::toglCreated = false;
-    }
-  }
+  {}
 
 protected:
   virtual void invoke() {
   DOTRACE("ObjTogl::DestroyCmd::invoke");
 
     if (toglCreated) {
-      // This tells the ToglConfig to destroy theTogl, which in turn
+      // This tells the ToglConfig to destroy itsTogl, which in turn
       // generates a call to the destroyCallback, which in turn
       // delete's the toglConfig.
-      ObjTogl::theToglConfig()->destroyWidget();
+      theWidget->destroyWidget();
     }
   }
 };
@@ -225,20 +204,23 @@ public:
   InitCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name,
 					 "init_args ?viewing_dist=30?"
-					 "?gl_unit_angle=2.05? ?pack=yes?", 2, 5)
-  {
-    Togl_CreateFunc(createCallback);
-  }
+					 "?gl_unit_angle=2.05? ?pack=yes?", 2, 5) {}
+
 protected:
-  static void createCallback(struct Togl* togl) {
-  DOTRACE("ObjTogl::InitCmd::createCallback");
-    if (ObjTogl::toglCreated) { return; }
-    /* else */ ObjTogl::theTogl = togl;
-  }
+  class WidgetDestroyCallback : public ToglConfig::DestroyCallback {
+  public:
+	 virtual void onDestroy(ToglConfig* config)
+		{
+		  if (ObjTogl::theWidget == config)
+			 {
+				ObjTogl::theWidget = 0;
+				ObjTogl::toglCreated = false;
+			 }
+		}
+  };
 
   virtual void invoke();
 };
-
 
 void ObjTogl::InitCmd::invoke() {
 DOTRACE("ObjTogl::InitCmd::invoke");
@@ -251,26 +233,20 @@ DOTRACE("ObjTogl::InitCmd::invoke");
 
   const char* pathname = ".togl_private";
 
-  // Create the Togl widget. This will cause in turn call the
-  // createCallback as part of Togl's internal creation procedures.
+  // Generate an argc/argv array of configuration options
   int config_argc = 0;
   char** config_argv = 0;
   Tcl_SplitList(interp(), init_args, &config_argc, &config_argv);
 
-  new Togl(interp(), pathname, config_argc, config_argv);
+  // Create a new ToglConfig object with the specified conguration
+  // options, viewing distance, and visual angle per GL unit
+  ObjTogl::theWidget = new TlistWidget(interp(), pathname,
+													config_argc, config_argv,
+													viewing_dist, gl_unit_angle);
 
   Tcl_Free((char*) config_argv);
 
-    // Make sure that widget creation and the create callback
-    // successfully set ObjTogl::theTogl to point to a struct Togl
-  if (ObjTogl::theTogl == 0)
-	 { throw Tcl::TclError("widget creation failed"); }
-
-  // Create a new ToglConfig object with the specified viewing
-  // distance and visual angle per GL unit
-  ObjTogl::theWidget = new TlistWidget(ObjTogl::theTogl,
-													viewing_dist,
-													gl_unit_angle);
+  ObjTogl::theWidget->setDestroyCallback(new WidgetDestroyCallback);
 
   if (pack) {
 	 dynamic_string pack_cmd_str = "pack ";
@@ -282,8 +258,6 @@ DOTRACE("ObjTogl::InitCmd::invoke");
   }
 
   toglCreated = true;
-
-  XBmapRenderer::initClass(ObjTogl::theTogl->tkWin());
 
   returnVoid();
 }
