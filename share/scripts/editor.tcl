@@ -420,7 +420,7 @@ itcl::body Editor::standardSettings {objs} {
 
 itcl::body Editor::addNewObject {} {
     # create new object
-    eval set obj [new [curObjType]]
+    set obj [new [curObjType]]
 
     standardSettings $obj
 
