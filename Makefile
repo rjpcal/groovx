@@ -2,15 +2,15 @@
 #
 # Makefile 
 #
+# Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 #
 # This is the Makefile for the grsh shell. This shell provides the
 # following functionality:
 # 
 # 	1) Tcl/Tk 8.2.1 core
 # 	2) OpenGL graphics, via the Togl widget
-# 	3) A suite of major extensions that allow creation and execution of
-# 		arbitrary visual psychophysics experiments
-# 
+# 	3) A set of extensions for running visual psychophysics experiments
+#
 #
 # $Id$
 #
@@ -22,39 +22,19 @@ TCLTK_VERSION := 8.2
 
 MAKEFLAGS += --warn-undefined-variables
 
+CPP_DEFINES :=
+CC_SWITCHES :=
+LD_OPTIONS :=
+INCLUDE_PATH :=
+LIB_PATH :=
+
 #-------------------------------------------------------------------------
 #
 # Platform selection
 #
 #-------------------------------------------------------------------------
 
-ETAGS := etags
-
-ifeq ($(ARCH),hp9000s700)
-	PLATFORM := hp9000s700
-	COMPILER := aCC
-	SHLIB_EXT := sl
-	STATLIB_EXT := a
-
-	ifndef MODE
-		MODE := debug
-	endif
-
-	ETAGS := echo "no etags"
-endif
-
-ifeq ($(ARCH),irix6)
-	PLATFORM := irix6
-	COMPILER := MIPSpro
-	SHLIB_EXT := so
-	STATLIB_EXT := a
-
-	ifndef MODE
-		MODE := prod
-	endif
-endif
-
-
+PLATFORM := $(ARCH)
 
 #-------------------------------------------------------------------------
 #
@@ -64,7 +44,7 @@ endif
 
 PROJECT = $(HOME)/sorcery/grsh
 SRC := src
-DEP := ./dep/$(ARCH)
+DEP := ./dep/$(PLATFORM)
 OBJ := ./obj/$(PLATFORM)
 LIB := $(PROJECT)/lib/$(PLATFORM)
 LOGS := ./logs
@@ -72,7 +52,7 @@ DOC := ./doc
 IDEP := ./idep
 SCRIPTS := ./scripts
 
-LOCAL_ARCH := $(HOME)/local/$(ARCH)
+LOCAL_ARCH := $(HOME)/local/$(PLATFORM)
 
 BIN_DIR := $(LOCAL_ARCH)/bin
 
@@ -80,12 +60,66 @@ LOCAL_LIB_DIR := $(LOCAL_ARCH)/lib
 
 #-------------------------------------------------------------------------
 #
-# Options for compiling and linking
+# Platform selection
 #
 #-------------------------------------------------------------------------
 
-CPP_DEFINES :=
-CC_SWITCHES :=
+ETAGS := etags
+
+ifeq ($(PLATFORM),hp9000s700)
+	COMPILER := aCC
+	SHLIB_EXT := sl
+	STATLIB_EXT := a
+
+	CPP_DEFINES += -DHP9000S700 -DHAVE_ZSTREAM
+
+	DEFAULT_MODE := debug
+
+	ETAGS := echo "no etags"
+
+	AUDIO_LIB := -lAlib
+	ZSTREAM_LIB := -lzstream
+
+	LIB_PATH += -L/opt/graphics/OpenGL/lib -L/opt/audio/lib
+endif
+
+ifeq ($(PLATFORM),irix6)
+	COMPILER := MIPSpro
+	SHLIB_EXT := so
+	STATLIB_EXT := a
+
+	CPP_DEFINES += -DIRIX6 -DHAVE_ZSTREAM
+
+	DEFAULT_MODE := prod
+
+	AUDIO_LIB := -laudio -laudiofile
+	ZSTREAM_LIB := -lzstream
+
+	LIB_PATH += -Wl,-rpath,$(LIB)
+endif
+
+ifeq ($(PLATFORM),i686)
+	COMPILER := g++
+	SHLIB_EXT := so
+	STATLIB_EXT := a
+
+	CPP_DEFINES += -DI686 -D__restrict=
+
+	DEFAULT_MODE := debug
+
+	AUDIO_LIB :=
+	ZSTREAM_LIB :=
+endif
+
+ifndef MODE
+	MODE := $(DEFAULT_MODE)
+endif
+
+#-------------------------------------------------------------------------
+#
+# Options for compiling and linking
+#
+#-------------------------------------------------------------------------
 
 ifeq ($(MODE),debug)
 	OBJ_EXT := .do
@@ -105,20 +139,16 @@ ifeq ($(COMPILER),aCC)
 # 361 == wrongly complains about falling off end of non-void function
 # 392 == 'Conversion unnecessary; expression was already of type...'
 	CC_SWITCHES += +w +W361,392
-	CPP_DEFINES += -DACC_COMPILER -DHP9000S700 -DPRESTANDARD_IOSTREAMS \
-		-Dstd= -DSTD_IO= -DHAVE_ZSTREAM
-	ARCH_MAKEDEP_INCLUDES := -I/opt/aCC/include -I/usr -I/opt/aCC/include/iostream \
-		-I/opt/graphics/OpenGL/include -I./scripts/spoofdep
-	STL_INCLUDE_DIR := 
+	CPP_DEFINES += -DACC_COMPILER -DPRESTANDARD_IOSTREAMS -Dstd= -DSTD_IO=
 
 	ifeq ($(MODE),debug)
 		CC_SWITCHES += -g1 +Z +p
-		LD_OPTIONS := -Wl,-B,immediate -Wl,+vallcompatwarnings
+		LD_OPTIONS += -Wl,-B,immediate -Wl,+vallcompatwarnings
 	endif
 
 	ifeq ($(MODE),prod)
 		CC_SWITCHES += +O2 +Z +p
-		LD_OPTIONS := -Wl,+vallcompatwarnings
+		LD_OPTIONS += -Wl,+vallcompatwarnings
 	endif
 
 	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
@@ -133,23 +163,20 @@ ifeq ($(COMPILER),MIPSpro)
 		-e '/static const char vcid_/,/^ *\^$$/d'
 	CC_SWITCHES += -n32 -ptused -no_prelink \
 		-no_auto_include -LANG:std -LANG:exceptions=ON 
-	CPP_DEFINES += -DMIPSPRO_COMPILER -DIRIX6 -DSTD_IO= \
-		-DPRESTANDARD_IOSTREAMS -DHAVE_ZSTREAM
 
-	ARCH_MAKEDEP_INCLUDES := -I/usr/include/CC \
-		-I/cit/rjpeters/include/cppheaders
+	CPP_DEFINES += -DMIPSPRO_COMPILER -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
-	STL_INCLUDE_DIR := -I$(HOME)/include/cppheaders
+	INCLUDE_PATH += -I$(HOME)/include/cppheaders
 
 	ifeq ($(MODE),debug)
 		CC_SWITCHES += -g -O0
-		LD_OPTIONS :=
+		LD_OPTIONS +=
 	endif
 
 # Tests showed that -O3 provided little improvement over -O2 for this app
 	ifeq ($(MODE),prod)
 		CC_SWITCHES += -O2
-		LD_OPTIONS :=
+		LD_OPTIONS +=
 	endif
 
 	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
@@ -159,7 +186,7 @@ ifeq ($(COMPILER),MIPSpro)
 endif
 
 ifeq ($(COMPILER),g++)
-	CC := time /cit/rjpeters/gcc-2.95.1/bin/g++
+	CC := time g++
 # This filter removes warnings that are triggered by standard library files
 	FILTER := |& sed \
 		-e '/g++-3.*warning/d;' \
@@ -168,20 +195,18 @@ ifeq ($(COMPILER),g++)
 		-e '/g++-3.*At top level/d;' \
 		-e '/g++-3.*In instantiation of/,/instantiated from here/d'
 	CC_SWITCHES += -Wall -W -Wsign-promo -Weffc++
-	CPP_DEFINES += -DGCC_COMPILER -DIRIX6
+	CPP_DEFINES += -DGCC_COMPILER -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
-	ARCH_MAKEDEP_INCLUDES := -I/cit/rjpeters/gcc/include/g++-3
-
-	STL_INCLUDE_DIR := -I$(HOME)/gcc/include/g++-3
+	INCLUDE_PATH += -I$(HOME)/local/$(PLATFORM)/include/g++-3
 
 	ifeq ($(MODE),debug)
 		CC_SWITCHES += -g -O0
-		LD_OPTIONS :=
+		LD_OPTIONS +=
 	endif
 
 	ifeq ($(MODE),prod)
 		CC_SWITCHES += -O3
-		LD_OPTIONS :=
+		LD_OPTIONS +=
 	endif
 
 	LIB_EXT := $(LIB_SUFFIX).$(STATLIB_EXT)
@@ -190,39 +215,19 @@ ifeq ($(COMPILER),g++)
 	STATLIB_CMD := ar rus
 endif
 
-MAKEDEP_INCLUDES := $(ARCH_MAKEDEP_INCLUDES) -I./scripts/spoofdep
-
 #-------------------------------------------------------------------------
 #
 # Directories to search for include files and code libraries
 #
 #-------------------------------------------------------------------------
 
-INCLUDE_PATH := -I$(LOCAL_ARCH)/include -I$(HOME)/include -I$(SRC) \
-	$(STL_INCLUDE_DIR)
+INCLUDE_PATH += -I$(LOCAL_ARCH)/include -I$(SRC)
 
-ifeq ($(ARCH),hp9000s700)
-	AUDIO_LIB := -lAlib
-	ZSTREAM_LIB := -lzstream
+LIB_PATH += -L$(LIB) -L$(LOCAL_LIB_DIR)
 
-	OPENGL_LIB_DIR := -L/opt/graphics/OpenGL/lib
-	AUDIO_LIB_DIR := -L/opt/audio/lib
-	RPATH_DIR := 
+ifeq ($(PLATFORM),i686)
+	LIB_PATH += -L/usr/X11R6/lib
 endif
-ifeq ($(ARCH),irix6)
-	AUDIO_LIB := -laudio -laudiofile
-	ZSTREAM_LIB := -lzstream
-
-	OPENGL_LIB_DIR :=
-	AUDIO_LIB_DIR :=
-	RPATH_DIR := -Wl,-rpath,$(LIB)
-endif
-
-LIB_PATH :=  -L$(LIB) \
-	-L$(LOCAL_LIB_DIR) \
-	$(OPENGL_LIB_DIR) \
-	$(AUDIO_LIB_DIR) \
-	$(RPATH_DIR)
 
 EXTERNAL_LIBS := \
 	-lGLU -lGL \
@@ -336,7 +341,7 @@ ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(PROJECT_LIBS))
 ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(PROJECT_LIBS))
 
 ifeq ($(MODE),debug)
-	ifeq ($(ARCH),hp9000s700)
+	ifeq ($(PLATFORM),hp9000s700)
 		GRSH_STATIC_OBJS += /opt/langtools/lib/end.o
 	endif
 endif
@@ -381,16 +386,21 @@ $(SRC)/%.preh : $(SRC)/%.h
 #
 #-------------------------------------------------------------------------
 
-$(LIB)/lib%$(LIB_SUFFIX).$(SHLIB_EXT):
+%.$(SHLIB_EXT):
 	$(SHLIB_CMD) $@ $^
 
-$(LIB)/lib%$(LIB_SUFFIX).$(STATLIB_EXT):
+%.$(STATLIB_EXT):
 	$(STATLIB_CMD) $@ $^
 
 $(LIBDEEPVISION): $(DEEPVISION_OBJS)
 $(LIBDEEPTCL):    $(DEEPTCL_OBJS)
 $(LIBDEEPAPPL):   $(DEEPAPPL_OBJS)
 $(LIBDEEPUTIL):   $(DEEPUTIL_OBJS)
+
+# this is just a convenience target so that we don't have to specify
+# the entire pathnames of the different library targets
+lib%: $(LIB)/lib%$(LIB_EXT)
+	true
 
 #-------------------------------------------------------------------------
 #
@@ -401,13 +411,19 @@ $(LIBDEEPUTIL):   $(DEEPUTIL_OBJS)
 ALL_SOURCES := $(wildcard $(SRC)/*.cc) $(wildcard $(SRC)/[a-z]*/*.cc)
 ALL_HEADERS := $(wildcard $(SRC)/*.h)  $(wildcard $(SRC)/[a-z]*/*.h)
 
-DEPOPTIONS := $(CPP_DEFINES) $(INCLUDE_PATH) $(MAKEDEP_INCLUDES) \
-	-DNO_EXTERNAL_INCLUDE_GUARDS 
-
 DEP_FILE := $(DEP)/alldepends
 
+# (1) We don't need to give any -D options to mkdep.pl, since it is
+# conservative and assumes that all #include directives are actually
+# in effect, even if they might actually be conditionally compiled
+# away. (2) We don't need to give any -I options to mkdep.pl, since we
+# are only interested in dependencies within the current project (and
+# not on the standard headers, for example).
+
 $(DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS)
-	$(SCRIPTS)/makedep $(DEPOPTIONS) $(ALL_SOURCES) > $@
+	$(SCRIPTS)/splitnewlines $+ > make.files
+	mkdep.pl | $(SCRIPTS)/filterdep > $@
+	rm make.files make.ofiles
 
 include $(DEP_FILE)
 
