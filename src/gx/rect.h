@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Aug 22 15:29:52 2001
+// written: Fri Aug 24 17:50:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,6 +112,18 @@ public:
   void setTopRight(const Gfx::Vec2<V>& point)
     { rr = point.x(); tt = point.y(); }
 
+  void setWidth(V w)
+    { V diff = w - width(); ll -= 0.5*diff; rr += 0.5*diff; }
+
+  void setHeight(V h)
+    { V diff = h - height(); bb -= 0.5*diff; tt += 0.5*diff; }
+
+  void widenByFactor(V factor) { setWidth(width() * factor); }
+  void heightenByFactor(V factor) { setHeight(height() * factor); }
+
+  void widenByStep(V step) { setWidth(width() + 2*factor); }
+  void heightenByStep(V step) { setHeight(height() + 2*factor); }
+
   void translate(const Gfx::Vec2<V>& dist)
   {
     ll += dist.x(); rr += dist.x();
@@ -129,12 +141,6 @@ public:
     Gfx::Vec2<V> diff = point - center();
     translate(diff);
   }
-
-  void widenByFactor(V factor) { ll *= factor; rr *= factor; }
-  void heightenByFactor(V factor) { bb *= factor; tt *= factor; }
-
-  void widenByStep(V step) { ll -= step; rr += step; }
-  void heightenByStep(V step) { bb -= step; tt += step; }
 
   bool isVoid() const { return (tt <= bb) || (rr <= ll); }
 
