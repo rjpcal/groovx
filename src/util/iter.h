@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 17 11:05:24 2001
-// written: Fri Aug 17 13:59:39 2001
+// written: Fri Aug 17 14:11:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,27 +15,7 @@
 
 #include "util/pointers.h"
 
-namespace Util
-{
-  struct IterEnd_t {};
-
-  const IterEnd_t IterEnd = IterEnd_t();
-
-  template <class T> class FwdIterIfx;
-  template <class T> class BidirIterIfx;
-  template <class T> class RxsIterIfx;
-
-  template <class Iter, class T> class FwdIterAdapter;
-  template <class Iter, class T> class BidirIterAdapter;
-  template <class Iter, class T> class RxsIterAdapter;
-
-  template <class T> class FwdIter;
-  template <class T> class BidirIter;
-  template <class T> class RxsIter;
-
-  template <class T, class Ifx> class ConcreteIter;
-};
-
+#include "util/utilfwd.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
