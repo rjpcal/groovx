@@ -3,7 +3,7 @@
 // tclpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 11:50:23 1999
-// written: Tue Jul 13 18:31:27 1999
+// written: Tue Jul 13 18:36:35 1999
 // $Id$
 //
 // This file defines a class TclPkg which can be used alone, or as a
@@ -67,6 +67,9 @@ public:
   void linkVar(const char* varName, int& var) throw (TclError);
   void linkVar(const char* varName, double& var) throw (TclError);
   void linkVar(const char* varName, char*& var) throw (TclError);
+  void linkVarCopy(const char* varName, int var) throw (TclError);
+  void linkVarCopy(const char* varName, double var) throw (TclError);
+  void linkVarCopy(const char* varName, const char* var) throw (TclError);
   void linkConstVar(const char* varName, int& var) throw (TclError);
   void linkConstVar(const char* varName, double& var) throw (TclError);
   void linkConstVar(const char* varName, char*& var) throw (TclError);
@@ -81,6 +84,9 @@ private:
   vector<TclCmd *> itsCmds;
   string itsPkgName;
   string itsVersion;
+
+  struct PrivateRep;
+  PrivateRep* itsPrivateRep;
 };
 
 static const char vcid_tclpkg_h[] = "$Header$";
