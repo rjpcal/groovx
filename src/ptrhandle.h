@@ -55,13 +55,10 @@ public:
 		return *this;
 	 }
 
-        T* operator->()       { return itsMaster; }
-  const T* operator->() const { return itsMaster; }
-        T& operator*()        { return *itsMaster; }
-  const T& operator*()  const { return *itsMaster; }
-
-        T* get()              { return itsMaster; }
-  const T* get()        const { return itsMaster; }
+  T* operator->() const { return itsMaster; }
+  T& operator*()  const { return *itsMaster; }
+  
+  T* get()        const { return itsMaster; }
 
 private:
   void swap(PtrHandle& other)
@@ -146,25 +143,13 @@ public:
 		itsMaster = 0;
 	 }
 
-        T* operator->()       { return get(); }
-  const T* operator->() const { return get(); }
-        T& operator*()        { return *(get()); }
-  const T& operator*()  const { return *(get()); }
+  T* operator->() const { return get(); }
+  T& operator*()  const { return *(get()); }
 
-  T* get()
-  {
-	 ensureValid();
-	 return itsMaster;
-  }
-
-  const T* get() const
-  {
-	 ensureValid();
-	 return itsMaster;
-  }
+  T* get()        const { ensureValid(); return itsMaster; }
 
 private:
-  void ensureValid()
+  void ensureValid() const
   {
 	 if (itsMaster == 0)
 		PtrHandleUtil::throwErrorWithMsg(
