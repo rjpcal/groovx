@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:29:16 2001
-// written: Mon Jul 16 13:59:43 2001
+// written: Mon Jul 16 14:04:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ Tcl::Code::Code(Tcl_Obj* cmd_object, ErrorHandlingMode mode = NONE) :
   itsFlags(TCL_EVAL_GLOBAL)
 {}
 
-int invoke(Tcl_Interp* interp)
+int Tcl::Code::invoke(Tcl_Interp* interp)
 {
   if (interp == 0)
     throw EvalError("Tcl_Interp* was null in Tcl::Code::invoke");
