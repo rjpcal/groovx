@@ -3,7 +3,7 @@
 // xitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:39:09 1999
-// written: Fri Sep 29 14:36:05 2000
+// written: Tue Oct  3 16:30:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,6 +42,9 @@ public:
 public:
   /// Virtual destructor.
   virtual ~XBitmap();
+
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
 private:
   XBitmap(const XBitmap&);

@@ -3,7 +3,7 @@
 // xbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:37:04 1999
-// written: Fri Sep 29 16:12:44 2000
+// written: Tue Oct  3 16:32:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,6 +60,30 @@ DOTRACE("XBitmap::init");
 XBitmap::~XBitmap() {
 DOTRACE("XBitmap::~XBitmap");
   delete itsRenderer; 
+}
+
+void XBitmap::readFrom(IO::Reader* reader) {
+DOTRACE("XBitmap::readFrom");
+
+  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
+  if (lreader != 0) {
+	 legacyDesrlz(lreader);
+	 return;
+  }
+
+  Bitmap::readFrom(reader);
+}
+
+void XBitmap::writeTo(IO::Writer* writer) const {
+DOTRACE("XBitmap::writeTo");
+
+  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
+  if (lwriter != 0) {
+	 legacySrlz(lwriter);
+	 return;
+  }
+
+  Bitmap::writeTo(writer);
 }
 
 void XBitmap::legacySrlz(IO::LegacyWriter* lwriter) const {
