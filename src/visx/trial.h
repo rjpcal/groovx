@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mar-99
-// written: Sat Jul 21 20:00:51 2001
+// written: Sat Jul 21 20:52:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,6 +70,8 @@ public:
   ////////////////////////////
   // accessors+manipulators //
   ////////////////////////////
+
+  virtual Util::WeakRef<GWT::Widget> getWidget() const;
 
   int getCorrectResponse() const;
   void setCorrectResponse(int response);
