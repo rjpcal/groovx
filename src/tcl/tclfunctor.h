@@ -131,7 +131,7 @@ namespace Tcl
   public:
     Functor<0, R, Func>(Func f) : FunctorBase<Func>(f) {}
 
-    R operator()(Tcl::Context& ctx)
+    R operator()(Tcl::Context& /*ctx*/)
     {
       return (itsHeldFunc());
     }

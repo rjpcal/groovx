@@ -247,7 +247,7 @@ namespace GLTcl
   template <class T>
   Tcl::List get(GLenum param_tag
 #ifdef PPC
-		, T* dummy=0
+		, T* /*dummy*/=0
 #endif
 		)
   {
