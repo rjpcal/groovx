@@ -93,8 +93,19 @@ public:
       }
   }
 
-  virtual void readFrom(IO::Reader* reader) {}
-  virtual void writeTo(IO::Writer* writer) const {}
+  virtual void readFrom(IO::Reader* reader)
+  {
+    fstring args, body;
+    reader->readValue("args", args);
+    reader->readValue("body", body);
+    define(args, body);
+  }
+
+  virtual void writeTo(IO::Writer* writer) const
+  {
+    writer->writeValue("args", itsArgs);
+    writer->writeValue("body", itsBody);
+  }
 
   void define(const fstring& args, const fstring& body)
   {
@@ -362,11 +373,7 @@ DOTRACE("EventResponseHdlr::Impl::readFrom");
 
   if (svid >= 2)
     {
-      fstring args, body;
-      reader->readValue("responseProcArgs", args);
-      reader->readValue("responseProcBody", body);
-
-      itsResponseProc->define(args, body);
+      reader->readOwnedObject("responseProc", itsResponseProc);
     }
 }
 
@@ -383,8 +390,7 @@ DOTRACE("EventResponseHdlr::Impl::writeTo");
   writer->writeValue("eventSequence", itsEventSequence);
   writer->writeValue("bindingSubstitution", itsBindingSubstitution);
 
-  writer->writeValue("responseProcArgs", itsResponseProc->args());
-  writer->writeValue("responseProcBody", itsResponseProc->body());
+  writer->writeOwnedObject("responseProc", itsResponseProc);
 }
 
 
