@@ -33,6 +33,8 @@
 #include "toglet.h"
 
 #include "gfx/glcanvas.h"
+#include "gfx/glxopts.h"
+#include "gfx/glxwrapper.h"
 #include "gfx/gxscene.h"
 
 #include "gx/rgbacolor.h"
@@ -78,6 +80,8 @@ private:
 public:
   Toglet* owner;
   const Tk_Window tkWin;
+  shared_ptr<GlxOpts> opts;
+  shared_ptr<GlxWrapper> glx;
   Util::SoftRef<GLCanvas> canvas;
   GxScene* scene;
 
@@ -113,7 +117,9 @@ Tk_ClassProcs Toglet::Impl::classProcs =
 Toglet::Impl::Impl(Toglet* p) :
   owner(p),
   tkWin(owner->tkWin()),
-  canvas(GLCanvas::make(Tk_Display(tkWin))),
+  opts(new GlxOpts),
+  glx(new GlxWrapper(Tk_Display(tkWin), *opts, (GlxWrapper*)0 /*shared context*/)),
+  canvas(GLCanvas::make(opts, glx)),
   scene(new GxScene(canvas))
 {
 DOTRACE("Toglet::Impl::Impl");
@@ -126,12 +132,13 @@ Window Toglet::Impl::cClassCreateProc(Tk_Window tkwin,
 DOTRACE("Toglet::Impl::cClassCreateProc");
   Toglet* toglet = static_cast<Toglet*>(clientData);
   Toglet::Impl* rep = toglet->rep;
+  GLCanvas& canvas = *(rep->canvas);
 
   Display* dpy = Tk_Display(tkwin);
 
-  Visual* visual = rep->canvas->visual();
-  int screen = rep->canvas->screen();
-  int depth = rep->canvas->bitsPerPixel();
+  Visual* visual = rep->glx->visInfo()->visual;
+  int screen = rep->glx->visInfo()->screen;
+  int depth = canvas.bitsPerPixel();
 
   Colormap cmap =
     visual == DefaultVisual(dpy, screen)
@@ -305,7 +312,15 @@ void Toglet::makeCurrent() const
 {
   if (theCurrentToglet.id() != this->id())
     {
-      rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
+      rep->glx->makeCurrent(Tk_WindowId(rep->tkWin));
+      if (!rep->opts->doubleFlag && rep->canvas->isDoubleBuffered())
+        {
+          // We requested single buffering but had to accept a double buffered
+          // visual.  Set the GL draw buffer to be the front buffer to
+          // simulate single buffering.
+          rep->canvas->drawBufferFront();
+        }
+      Gfx::Canvas::setCurrent(*(rep->canvas));
       theCurrentToglet = Util::SoftRef<Toglet>(const_cast<Toglet*>(this));
     }
 }

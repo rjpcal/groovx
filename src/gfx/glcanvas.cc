@@ -59,25 +59,25 @@ using namespace Gfx;
 class GLCanvas::Impl
 {
 public:
-  Impl(Display* dpy, GlxWrapper* share) :
-    opts(new GlxOpts),
-    glx(new GlxWrapper(dpy, *opts, share))
+  Impl(shared_ptr<GlxOpts> opts_, shared_ptr<GlxWrapper> glx_) :
+    opts(opts_),
+    glx(glx_)
   {}
 
-  scoped_ptr<GlxOpts> opts;
-  scoped_ptr<GlxWrapper> glx;
+  shared_ptr<GlxOpts> opts;
+  shared_ptr<GlxWrapper> glx;
 };
 
-GLCanvas::GLCanvas(Display* dpy) :
-  rep(new Impl(dpy, (GlxWrapper*) 0))
+GLCanvas::GLCanvas(shared_ptr<GlxOpts> opts, shared_ptr<GlxWrapper> glx) :
+  rep(new Impl(opts, glx))
 {
 DOTRACE("GLCanvas::GLCanvas");
 }
 
-GLCanvas* GLCanvas::make(Display* dpy)
+GLCanvas* GLCanvas::make(shared_ptr<GlxOpts> opts, shared_ptr<GlxWrapper> glx)
 {
 DOTRACE("GLCanvas::make");
-  return new GLCanvas(dpy);
+  return new GLCanvas(opts, glx);
 }
 
 GLCanvas::~GLCanvas() throw()
@@ -87,32 +87,16 @@ DOTRACE("GLCanvas::~GLCanvas");
   rep = 0;
 }
 
-Visual* GLCanvas::visual() const
+void GLCanvas::drawBufferFront() throw()
 {
-  return rep->glx->visInfo()->visual;
+DOTRACE("GLCanvas::drawBufferFront");
+  glDrawBuffer(GL_FRONT);
 }
 
-int GLCanvas::screen() const
+void GLCanvas::drawBufferBack() throw()
 {
-  return rep->glx->visInfo()->screen;
-}
-
-void GLCanvas::makeCurrent(Window win)
-{
-DOTRACE("GLCanvas::makeCurrent");
-
-  rep->glx->makeCurrent(win);
-
-  // Check for a single/double buffering snafu
-  if (!rep->opts->doubleFlag && isDoubleBuffered())
-    {
-      // We requested single buffering but had to accept a double buffered
-      // visual.  Set the GL draw buffer to be the front buffer to
-      // simulate single buffering.
-      glDrawBuffer(GL_FRONT);
-    }
-
-  Gfx::Canvas::setCurrent(*this);
+DOTRACE("GLCanvas::drawBufferBack");
+  glDrawBuffer(GL_BACK);
 }
 
 Vec2i GLCanvas::screenFromWorld(const Vec2d& world_pos) const
@@ -233,7 +217,7 @@ unsigned int GLCanvas::bitsPerPixel() const
 {
 DOTRACE("GLCanvas::bitsPerPixel");
 
-  return rep->glx->visInfo()->depth;
+  return rep->glx->bitsPerPixel();
 }
 
 void GLCanvas::throwIfError(const char* where) const

@@ -63,23 +63,28 @@ public:
   /// Query whether the rendering context is double-buffered.
   bool isDoubleBuffered() const;
 
+  /// Get the bit depth of the draw buffer(s).
+  unsigned int bitsPerPixel() const;
+
   /// Bind the rendering context to the given window.
   void makeCurrent(Window win);
 
   /// Swaps buffers if in double-buffering mode.
   void swapBuffers() const;
 
+protected:
   /// Get the associated X11 Display.
   Display* display() const { return itsDisplay; }
 
   /// Get the currently associated X11 Window.
   Window window() const { return itsCurrentWin; }
 
-  /// Get the associated X11 XVisualInfo.
-  XVisualInfo* visInfo() const { return itsVisInfo; }
-
   /// Get the associated GLXContext.
   GLXContext context() const { return itsContext; }
+
+public:
+  /// Get the associated X11 XVisualInfo.
+  XVisualInfo* visInfo() const { return itsVisInfo; }
 };
 
 static const char vcid_glxwrapper_h[] = "$Header$";

@@ -155,6 +155,12 @@ DOTRACE("GlxWrapper::isDoubleBuffered");
   return bool(dbl_flag);
 }
 
+unsigned int GlxWrapper::bitsPerPixel() const
+{
+DOTRACE("GlxWrapper::bitsPerPixel");
+  return itsVisInfo->depth;
+}
+
 void GlxWrapper::swapBuffers() const
 {
   glXSwapBuffers(itsDisplay, itsCurrentWin);

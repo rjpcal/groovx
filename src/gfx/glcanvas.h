@@ -34,29 +34,26 @@
 
 #include "util/volatileobject.h"
 
-#include <X11/Xlib.h>
+class GlxOpts;
+class GlxWrapper;
+
+template <class T> class shared_ptr;
 
 /// GLCanvas implements Gfx::Canvas using OpenGL.
 class GLCanvas : public Gfx::Canvas, public virtual Util::VolatileObject
 {
 protected:
-  /// Construct with an associated X11 Display.
-  GLCanvas(Display* dpy);
+  /// Construct from windowsystem options and a windowsystem wrapper.
+  GLCanvas(shared_ptr<GlxOpts> opts, shared_ptr<GlxWrapper> glx);
 
 public:
   /// Factory function.
-  static GLCanvas* make(Display* dpy);
+  static GLCanvas* make(shared_ptr<GlxOpts> opts, shared_ptr<GlxWrapper> glx);
 
   virtual ~GLCanvas() throw();
 
-  /// Get the associated X11 Visual.
-  Visual* visual() const;
-
-  /// Get the number of the associated X11 screen.
-  int screen() const;
-
-  /// Bind the GLCanvas to the given X11 window.
-  void makeCurrent(Window win);
+  void drawBufferFront() throw();
+  void drawBufferBack() throw();
 
   virtual Gfx::Vec2<int> screenFromWorld(const Gfx::Vec2<double>& world_pos) const;
   virtual Gfx::Vec2<double> worldFromScreen(const Gfx::Vec2<int>& screen_pos) const;
