@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Mon Aug 13 12:15:36 2001
+// written: Thu Aug 16 11:03:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@ namespace
 ///////////////////////////////////////////////////////////////////////
 
 Bitmap::Bitmap(shared_ptr<BmapRenderer> renderer) :
-  GrObj(Gmodes::GLCOMPILE, Gmodes::CLEAR_BOUNDING_BOX),
+  GrObj(),
   itsImpl(new BitmapRep(renderer))
 {
 DOTRACE("Bitmap::Bitmap");
@@ -111,10 +111,9 @@ void Bitmap::flipContrast()
 void Bitmap::flipVertical()
   { itsImpl->flipVertical(); sendStateChangeMsg(); }
 
-void Bitmap::grRender(Gfx::Canvas& canvas, DrawMode mode) const
+void Bitmap::grRender(Gfx::Canvas& canvas) const
 {
-  if (mode == DRAW)
-    itsImpl->render(canvas);
+  itsImpl->render(canvas);
 }
 
 ///////////////

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Tue Aug 14 13:05:34 2001
+// written: Thu Aug 16 11:02:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,10 +37,7 @@ public:
   virtual ~GrObjNode() {}
 
   virtual void gnodeDraw(Gfx::Canvas& canvas) const
-  { itsObj->grRender(canvas, GrObj::DRAW); }
-
-  virtual void gnodeUndraw(Gfx::Canvas& canvas) const
-  { itsObj->grRender(canvas, GrObj::UNDRAW); }
+  { itsObj->grRender(canvas); }
 
   virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& /*canvas*/) const
   { return itsObj->grGetBoundingBox(); }
@@ -119,9 +116,8 @@ public:
     }
 
     {
-      int temp;
-      reader->readValue("GrObj::unRenderMode", temp);
-      itsGLCache->setUnMode(temp);
+      int dummy;
+      reader->readValue("GrObj::unRenderMode", dummy);
     }
 
     {
@@ -157,7 +153,7 @@ public:
 
     writer->writeValue("GrObj::cacheFilename", itsBitmapCache->getCacheFilename());
 
-    writer->writeValue("GrObj::unRenderMode", itsGLCache->getUnMode());
+    writer->writeValue("GrObj::unRenderMode", Gmodes::CLEAR_BOUNDING_BOX);
 
     writer->writeValue("GrObj::bbVisibility", itsBB->isVisible());
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Thu Aug 16 10:48:20 2001
+// written: Thu Aug 16 11:05:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,8 +67,7 @@ namespace
 //////////////
 
 // GrObj default constructor
-GrObj::GrObj(Gmodes::RenderMode render_mode,
-             Gmodes::RenderMode unrender_mode) :
+GrObj::GrObj() :
   FieldContainer(this),
   itsImpl(new GrObjImpl(this))
 {
@@ -79,9 +78,6 @@ DOTRACE("GrObj::GrObj");
   // The GrObj needs to observe itself in order to update its display
   // list according to state changes.
   attach(this);
-
-  setRenderMode(render_mode);
-  setUnRenderMode(unrender_mode);
 
   // This is necessary because any representations that have been
   // cached during the GrObj constructor will become invalid upon
@@ -133,11 +129,11 @@ DOTRACE("GrObj::getBBVisibility");
   return itsImpl->itsBB->isVisible();
 }
 
-void GrObj::getBoundingBox(Gfx::Canvas& canvas, Gfx::Rect<double>& bbox) const
+Gfx::Rect<double> GrObj::getBoundingBox(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObj::getBoundingBox");
 
-  bbox = itsImpl->itsTopNode->gnodeBoundingBox(canvas);
+  return itsImpl->itsTopNode->gnodeBoundingBox(canvas);
 }
 
 Gmodes::ScalingMode GrObj::getScalingMode() const
@@ -208,7 +204,7 @@ Gmodes::RenderMode GrObj::getRenderMode() const
 Gmodes::RenderMode GrObj::getUnRenderMode() const
 {
 DOTRACE("GrObj::getUnRenderMode");
-  return itsImpl->itsGLCache->getUnMode();
+  return Gmodes::CLEAR_BOUNDING_BOX;
 }
 
 //////////////////
@@ -312,12 +308,9 @@ DOTRACE("GrObj::setRenderMode");
   sendStateChangeMsg();
 }
 
-void GrObj::setUnRenderMode(Gmodes::RenderMode mode)
+void GrObj::setUnRenderMode(Gmodes::RenderMode)
 {
 DOTRACE("GrObj::setUnRenderMode");
-
-  itsImpl->itsGLCache->setUnMode(mode);
-  sendStateChangeMsg();
 }
 
 void GrObj::receiveStateChangeMsg(const Util::Observable* obj)
@@ -365,8 +358,7 @@ void GrObj::undraw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObj::undraw");
 
-  Gfx::Rect<double> world_box;
-  getBoundingBox(canvas, world_box);
+  Gfx::Rect<double> world_box = getBoundingBox(canvas);
 
   Gfx::Rect<int> screen_box = canvas.screenFromWorld(world_box);
 

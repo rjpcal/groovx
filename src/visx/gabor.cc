@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Aug 15 19:40:32 2001
+// written: Thu Aug 16 11:03:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -90,7 +90,6 @@ DOTRACE("Gabor::Gabor");
 
   setFieldMap(Gabor::classFields());
 
-  setUnRenderMode(Gmodes::CLEAR_BOUNDING_BOX);
   setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
 }
 
@@ -147,7 +146,7 @@ DOTRACE("Gabor::grGetBoundingBox");
   return canvas.worldFromScreen(screen_rect);
 }
 
-void Gabor::grRender(Gfx::Canvas& canvas, DrawMode) const
+void Gabor::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("Gabor::grRender");
   const double xsigma2 = itsSigma*itsAspectRatio * itsSigma*itsAspectRatio ;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 13:36:59 2001
-// written: Mon Aug 13 12:15:35 2001
+// written: Thu Aug 16 10:50:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,8 +38,6 @@ public:
   void setChild(shared_ptr<Gnode> child) { itsChild = child; }
 
   virtual void gnodeDraw(Gfx::Canvas& canvas) const = 0;
-
-  virtual void gnodeUndraw(Gfx::Canvas& canvas) const = 0;
 
   virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const = 0;
 };

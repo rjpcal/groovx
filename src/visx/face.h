@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Aug 15 14:26:14 2001
+// written: Thu Aug 16 11:03:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,7 +81,7 @@ protected:
 
   /** Reimplements the \c GrObj pure virtual function. It renders a
       face with the appropriate parameters. */
-  virtual void grRender(Gfx::Canvas& canvas, DrawMode mode) const;
+  virtual void grRender(Gfx::Canvas& canvas) const;
 
 private:
   /** The category of the face. The semantics of \a category are

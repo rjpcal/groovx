@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Aug 15 11:16:05 2001
+// written: Thu Aug 16 11:05:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,13 +49,13 @@ class GrObjImpl;
  * may be stored and manipulated in ObjList's. Subclasses derived from
  * GrObj must specify the details of how their objects will be drawn,
  * by overriding the virtual function grRender(), and/or by choosing
- * appropriate render/unrender modes with setRenderMode() and
- * setUnRenderMode(). Public clients call draw() or undraw() to
- * display or hide the object. The caches that mediate the various
- * drawing modes are kept up to date by using the Observable
- * interface. Thus, whenever a manipulator changes a parameter in a
- * derived class, it should also call Observable::sendStateChangeMsg()
- * to indicate that an update is needed.
+ * an appropriate render mode with setRenderMode(). Public clients
+ * call draw() or undraw() to display or hide the object. The caches
+ * that mediate the various drawing modes are kept up to date by using
+ * the Observable interface. Thus, whenever a manipulator changes a
+ * parameter in a derived class, it should also call
+ * Observable::sendStateChangeMsg() to indicate that an update is
+ * needed.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -75,8 +75,7 @@ public:
   //////////////
 
   /// Default constructor
-  GrObj(Gmodes::RenderMode render_mode = Gmodes::GLCOMPILE,
-        Gmodes::RenderMode unrender_mode = Gmodes::SWAP_FORE_BACK);
+  GrObj();
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~GrObj();
 
@@ -97,10 +96,9 @@ public:
   bool getBBVisibility() const;
 
   /** Returns the bounding box given by \c grGetBoundingBox(), with
-      additional modifications to reflect the scaling mode, alignment
-      mode, and pixel border values. */
-  void getBoundingBox(Gfx::Canvas& canvas,
-                      Gfx::Rect<double>& bounding_box) const;
+      additional transformations to reflect the scaling mode,
+      alignment mode, and pixel border values. */
+  Gfx::Rect<double> getBoundingBox(Gfx::Canvas& canvas) const;
 
   /** Subclasses must override this function to return the bounding
       box in GL coordinates for the object's onscreen image. */
@@ -249,11 +247,9 @@ public:
       selected with setUnRenderMode(). */
   void undraw(Gfx::Canvas& canvas) const;
 
-  enum DrawMode { DRAW, UNDRAW };
-
   /** This function must be overridden in derived classes to execute
-      the actual OpenGL commands that render the object. */
-  virtual void grRender(Gfx::Canvas& canvas, DrawMode mode) const = 0;
+      the actual drawing commands that render the object. */
+  virtual void grRender(Gfx::Canvas& canvas) const = 0;
 
 private:
   GrObj(const GrObj&);

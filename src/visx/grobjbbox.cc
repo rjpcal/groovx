@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Tue Aug 14 11:52:22 2001
+// written: Thu Aug 16 10:50:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,20 +73,6 @@ DOTRACE("GrObjBBox::gnodeDraw");
     }
 
   child()->gnodeDraw(canvas);
-}
-
-void GrObjBBox::gnodeUndraw(Gfx::Canvas& canvas) const
-{
-DOTRACE("GrObjBBox::gnodeUndraw");
-
-  if (itsIsVisible)
-    {
-      Gfx::Rect<double> bounds = gnodeBoundingBox(canvas);
-
-      renderRect(canvas, bounds);
-    }
-
-  child()->gnodeUndraw(canvas);
 }
 
 static const char vcid_grobjbbox_cc[] = "$Header$";

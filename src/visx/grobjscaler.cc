@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:01:45 2001
-// written: Wed Aug 15 13:27:35 2001
+// written: Thu Aug 16 10:50:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,15 +43,6 @@ void GrObjScaler::gnodeDraw(Gfx::Canvas& canvas) const
   doScaling(canvas);
 
   child()->gnodeDraw(canvas);
-}
-
-void GrObjScaler::gnodeUndraw(Gfx::Canvas& canvas) const
-{
-  Gfx::Canvas::StateSaver state(canvas);
-
-  doScaling(canvas);
-
-  child()->gnodeUndraw(canvas);
 }
 
 Gfx::Rect<double> GrObjScaler::gnodeBoundingBox(Gfx::Canvas& canvas) const

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:15 1999
-// written: Wed Aug 15 15:00:44 2001
+// written: Thu Aug 16 11:03:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -113,7 +113,7 @@ public:
 protected:
   virtual Gfx::Rect<double> grGetBoundingBox() const;
 
-  virtual void grRender(Gfx::Canvas& canvas, DrawMode mode) const;
+  virtual void grRender(Gfx::Canvas& canvas) const;
 
 private:
   House(const House&);

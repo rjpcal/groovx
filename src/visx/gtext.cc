@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Mon Aug 13 12:15:36 2001
+// written: Thu Aug 16 11:03:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -663,7 +663,7 @@ DOTRACE("Gtext::make");
 }
 
 Gtext::Gtext(const char* text) :
-  GrObj(Gmodes::GLCOMPILE, Gmodes::SWAP_FORE_BACK),
+  GrObj(),
   itsText(text ? text : ""),
   itsStrokeWidth(2),
   itsListBase(0)
@@ -673,6 +673,7 @@ DOTRACE("Gtext::Gtext(const char*)");
 
   setAlignmentMode(Gmodes::CENTER_ON_CENTER);
   setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
+  setRenderMode(Gmodes::GLCOMPILE);
   setHeight(1.0);
 }
 
@@ -753,7 +754,7 @@ DOTRACE("Gtext::grGetBoundingBox");
   return bbox;
 }
 
-void Gtext::grRender(Gfx::Canvas&, DrawMode) const
+void Gtext::grRender(Gfx::Canvas&) const
 {
 DOTRACE("Gtext::grRender");
   glPushAttrib(GL_LIST_BIT|GL_LINE_BIT);

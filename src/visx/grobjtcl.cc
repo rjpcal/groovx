@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Thu Aug 16 10:52:58 2001
+// written: Thu Aug 16 11:05:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,10 +35,7 @@ namespace GrobjTcl
   {
     Gfx::Canvas& canvas = Application::theApp().getCanvas();
 
-    Gfx::Rect<double> bbox;
-    obj->getBoundingBox(canvas, bbox);
-
-    return bbox;
+    return obj->getBoundingBox(canvas);
   }
 
   void saveBitmapCache(Util::Ref<GrObj> obj, const char* filename)

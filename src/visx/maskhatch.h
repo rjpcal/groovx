@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Aug 15 17:27:06 2001
+// written: Thu Aug 16 11:03:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ public:
 protected:
   virtual Gfx::Rect<double> grGetBoundingBox() const;
 
-  virtual void grRender(Gfx::Canvas& canvas, DrawMode mode) const;
+  virtual void grRender(Gfx::Canvas& canvas) const;
 };
 
 static const char vcid_maskhatch_h[] = "$Header$";

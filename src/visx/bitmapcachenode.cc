@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Tue Aug 14 12:57:11 2001
+// written: Thu Aug 16 10:50:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ void BitmapCacheNode::recacheBitmap(Gfx::Canvas& canvas) const
 DOTRACE("BitmapCacheNode::recacheBitmap");
 
   if (itsBitmapRep.get() != 0)
-	 return;
+    return;
 
   switch (itsMode)
     {
@@ -96,7 +96,7 @@ DOTRACE("BitmapCacheNode::recacheBitmap");
   {
     glDrawBuffer(GL_FRONT);
 
-	 canvas.clearColorBuffer(screen_rect);
+    canvas.clearColorBuffer(screen_rect);
 
     child()->gnodeDraw(canvas);
   }
@@ -147,18 +147,11 @@ DOTRACE("BitmapCacheNode::gnodeDraw");
       child()->gnodeDraw(canvas);
     }
   else
-	 {
-		recacheBitmap(canvas);
-		Assert(itsBitmapRep.get() != 0);
-		itsBitmapRep->render(canvas);
-	 }
-}
-
-void BitmapCacheNode::gnodeUndraw(Gfx::Canvas& canvas) const
-{
-DOTRACE("BitmapCacheNode::gnodeUndraw");
-
-  child()->gnodeUndraw(canvas);
+    {
+      recacheBitmap(canvas);
+      Assert(itsBitmapRep.get() != 0);
+      itsBitmapRep->render(canvas);
+    }
 }
 
 Gfx::Rect<double> BitmapCacheNode::gnodeBoundingBox(Gfx::Canvas& canvas) const

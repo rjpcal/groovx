@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Wed Aug 15 19:42:08 2001
+// written: Thu Aug 16 11:03:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -286,7 +286,7 @@ DOTRACE("House::grGetBoundingBox");
   return bbox;
 }
 
-void House::grRender(Gfx::Canvas&, DrawMode) const
+void House::grRender(Gfx::Canvas&) const
 {
 DOTRACE("House::grRender");
   GLdouble total_width = itsStoryAspectRatio;

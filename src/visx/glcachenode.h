@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:39:48 2001
-// written: Mon Aug 13 12:15:35 2001
+// written: Thu Aug 16 11:00:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,22 +16,17 @@
 #include "gmodes.h"
 #include "gnode.h"
 
-// this will handle GLCOMPILE, SWAP_FORE_BACK and CLEAR_BOUNDING_BOX
-
 class GLCacheNode : public Gnode {
 public:
   GLCacheNode(shared_ptr<Gnode> child) :
     Gnode(child),
     itsMode(Gmodes::DIRECT_RENDER),
-    itsUnMode(Gmodes::CLEAR_BOUNDING_BOX),
     itsDisplayList(0)
   {}
 
   virtual ~GLCacheNode();
 
   virtual void gnodeDraw(Gfx::Canvas& canvas) const;
-
-  virtual void gnodeUndraw(Gfx::Canvas& canvas) const;
 
   virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
 
@@ -40,12 +35,8 @@ public:
   Gmodes::RenderMode getMode() const { return itsMode; }
   void setMode(Gmodes::RenderMode new_mode);
 
-  Gmodes::RenderMode getUnMode() const { return itsUnMode; }
-  void setUnMode(Gmodes::RenderMode new_mode);
-
 private:
   Gmodes::RenderMode itsMode;
-  Gmodes::RenderMode itsUnMode;
 
   mutable int itsDisplayList;
 };

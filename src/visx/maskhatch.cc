@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Aug 15 19:44:23 2001
+// written: Thu Aug 16 11:03:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ DOTRACE("MaskHatch::make");
 }
 
 MaskHatch::MaskHatch () :
-  GrObj(Gmodes::GLCOMPILE, Gmodes::CLEAR_BOUNDING_BOX),
+  GrObj(),
   itsNumLines(10),
   itsLineWidth(1)
 {
@@ -121,7 +121,7 @@ DOTRACE("MaskHatch::grGetBoundingBox");
   return bbox;
 }
 
-void MaskHatch::grRender(Gfx::Canvas&, DrawMode) const
+void MaskHatch::grRender(Gfx::Canvas&) const
 {
 DOTRACE("MaskHatch::grRender");
 

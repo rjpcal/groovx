@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 14:48:32 2001
-// written: Fri Aug 10 14:50:06 2001
+// written: Thu Aug 16 10:55:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,11 +23,8 @@ namespace Gmodes
 
   /** The symbolic constants of type \c GrObj::RenderMode control the
       way the object is drawn to and undrawn from the screen. The
-      current modes can be get/set with \c getRenderMode(), \c
-      setRenderMode(), \c getUnRenderMode(), and \c
-      setUnRenderMode(). The default rendering mode is \c
-      GLCOMPILE, and the default unrendering mode is \c
-      SWAP_FORE_BACK. **/
+      current modes can be get/set with \c getRenderMode(), and \c
+      setRenderMode(). The default rendering mode is \c GLCOMPILE. **/
   typedef int RenderMode;
 
   /** In this mode, \c grRender() will be called every time the object
@@ -69,11 +66,6 @@ namespace Gmodes
       rendered into the front buffer, regardless of whether OpenGL
       double-buffering is being used. */
   const RenderMode X11_BITMAP_CACHE = 4;
-
-  /** This mode may be used only as an unrendering mode. If selected,
-      unrendering will be done by performing a normal render except
-      with the foreground and background colors swapped. */
-  const RenderMode SWAP_FORE_BACK = 5;
 
   /** This mode may be used only as an unrendering mode. If selected,
       unrendering will be done by clearing to the background color the

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Aug 15 19:40:32 2001
+// written: Thu Aug 16 11:03:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ DOTRACE("Face::writeTo");
 // Actions
 ///////////////////////////////////////////////////////////////////////
 
-void Face::grRender(Gfx::Canvas& canvas, DrawMode mode) const
+void Face::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("Face::grRender");
 
@@ -150,10 +150,7 @@ DOTRACE("Face::grRender");
       glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_LINE_BIT);
       glEnable(GL_BLEND); // blend incoming RGBA values with old RGBA values
 
-      if (mode == DRAW)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency
-      else
-        glBlendFunc(GL_ONE, GL_ZERO); // overwrite source into destination
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency
 
       glEnable(GL_LINE_SMOOTH);   // use anti-aliasing
     }

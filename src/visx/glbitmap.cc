@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:17 1999
-// written: Fri Aug 10 12:36:05 2001
+// written: Thu Aug 16 10:54:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,6 @@ GLBitmap::GLBitmap() :
 {
 DOTRACE("GLBitmap::GLBitmap");
   setRenderMode(Gmodes::GLCOMPILE);
-  setUnRenderMode(Gmodes::CLEAR_BOUNDING_BOX);
   setUsingZoom(true);
 }
 
@@ -103,9 +102,9 @@ DOTRACE("GLBitmap::setUsingGlBitmap");
 
   // glPixelZoom() does not work with glBitmap()
   if (itsRenderer->getUsingGlBitmap())
-	 {
-		setUsingZoom(false);
-	 }
+    {
+      setUsingZoom(false);
+    }
 
   sendStateChangeMsg();
 }

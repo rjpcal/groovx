@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:00:57 2001
-// written: Mon Aug 13 12:15:35 2001
+// written: Thu Aug 16 10:51:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -117,8 +117,6 @@ public:
   }
 
   virtual void gnodeDraw(Gfx::Canvas& canvas) const;
-
-  virtual void gnodeUndraw(Gfx::Canvas& canvas) const;
 
   virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Aug 15 19:40:32 2001
+// written: Thu Aug 16 11:03:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -428,7 +428,7 @@ DOTRACE("Fish::grGetBoundingBox");
   return bbox;
 }
 
-void Fish::grRender(Gfx::Canvas&, DrawMode) const
+void Fish::grRender(Gfx::Canvas&) const
 {
 DOTRACE("Fish::grRender");
   // Create and configure the NURBS object

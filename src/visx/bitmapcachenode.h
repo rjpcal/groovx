@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:19:59 2001
-// written: Tue Aug 14 12:59:25 2001
+// written: Thu Aug 16 10:50:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,8 +41,6 @@ public:
   void saveBitmapCache(Gfx::Canvas& canvas, const char* filename) const;
 
   virtual void gnodeDraw(Gfx::Canvas& canvas) const;
-
-  virtual void gnodeUndraw(Gfx::Canvas& canvas) const;
 
   virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
 

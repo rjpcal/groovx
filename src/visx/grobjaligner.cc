@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:48:47 2001
-// written: Tue Aug 14 12:48:31 2001
+// written: Thu Aug 16 10:50:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,15 +46,6 @@ void GrObjAligner::gnodeDraw(Gfx::Canvas& canvas) const
   doAlignment(canvas, child()->gnodeBoundingBox(canvas));
 
   child()->gnodeDraw(canvas);
-}
-
-void GrObjAligner::gnodeUndraw(Gfx::Canvas& canvas) const
-{
-  Gfx::Canvas::StateSaver state(canvas);
-
-  doAlignment(canvas, child()->gnodeBoundingBox(canvas));
-
-  child()->gnodeUndraw(canvas);
 }
 
 Gfx::Rect<double> GrObjAligner::gnodeBoundingBox(Gfx::Canvas& canvas) const
