@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 10:24:22 1999
-// written: Fri Nov 10 17:03:50 2000
+// written: Sat Nov 11 10:23:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,13 +38,8 @@ class fixed_string;
 
 class Property {
 public:
-  ///
-  template <class C> friend class PropFriend;
-
-  ///
+  /// Virtual destructor.
   virtual ~Property();
-
-public:
 
   ///
   virtual void set(const Value& val) = 0;
@@ -62,9 +57,7 @@ public:
  * and can therefor treat the value efficiently as a native type. On
  * the other hand, clients who do not want or need to know the real
  * static type of the TValue can access the value through the more
- * generic Property and Value interfaces. The native-type related
- * functions are protected, but CTProperty allows friendship to be
- * granted to one class (probably the owner of the property).
+ * generic Property and Value interfaces.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -77,11 +70,6 @@ public:
 
   /// Virtual destructor.
   virtual ~TProperty();
-
-  ///
-  template <class C> friend class PropFriend;
-
-public:
 
   virtual void set(const Value& new_val) { new_val.get(itsVal.itsVal); }
   virtual const Value& get() const { return itsVal; }
@@ -100,31 +88,6 @@ public:
   TValue<T> itsVal;
 };
 
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * CTProperty simply injects a friend declaration into the TProperty
- * interface, so that the class that owns a TProperty can access its
- * native-type interface.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class C, class T>
-class CTProperty : public TProperty<T> { 
-public:
-  ///
-  CTProperty(const T& init = T()) : TProperty<T>(init) {}
-
-  typedef C ContainingClass;
-
-#if !defined(GCC_COMPILER)
-  ///
-  friend class ContainingClass;
-#endif
-
-};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -152,44 +115,19 @@ public:
 		if (temp >= min/T(div) && temp <= max/T(div))
 		  TProperty<T>::itsVal.itsVal = temp;
 	 }
+
   ///
   virtual const Value& get() const { return TProperty<T>::itsVal; }
-  
+
   ///
   virtual void setNative(T new_val)
 	 {
 		if (new_val >= min/T(div) && new_val <= max/T(div))
 		  TProperty<T>::itsVal.itsVal = new_val;
 	 }
+
   ///
   virtual T getNative() const { return TProperty<T>::itsVal.itsVal; }
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * CTBoundedProperty simply injects a friend declaration into the
- * TBoundedProperty interface, so that the class that owns a TProperty
- * can access its native-type interface.
- *
- * @short Allows an owner class to have friendship of a TBoundedProperty.
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class C, class T, int min, int max, int div>
-class CTBoundedProperty : public TBoundedProperty<T, min, max, div> { 
-public:
-  ///
-  CTBoundedProperty(const T& init = T()) :
-	 TBoundedProperty<T, min, max, div>(init) {}
-
-  typedef C ContainingClass;
-
-#ifndef GCC_COMPILER
-  ///
-  friend class ContainingClass;
-#endif
-
 };
 
 
@@ -213,11 +151,6 @@ public:
   virtual ~TPtrProperty();
 
   ///
-  template <class C> friend class PropFriend;
-
-public:
-
-  ///
   void reseat(T& valRef) { itsVal.reseat(valRef); }
 
   virtual void set(const Value& new_val) { new_val.get(itsVal()); }
@@ -235,31 +168,6 @@ public:
 
 private:
   TValuePtr<T> itsVal;
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * CTPtrProperty simply injects a friend declaration into the
- * TPtrProperty interface, so that the class that owns a TProperty can
- * access its native-type interface.
- *
- * @short Allows an owner class to have friendship of a TPtrProperty.
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class C, class T>
-class CTPtrProperty : public TPtrProperty<T> {
-public:
-  ///
-  CTPtrProperty(T& valRef) : TPtrProperty<T>(valRef) {}
-
-  typedef C ContainingClass;
-
-#ifndef GCC_COMPILER
-  friend class ContainingClass;
-#endif
-
 };
 
 
