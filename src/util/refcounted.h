@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:19 2000
-// written: Sun Jul 15 09:41:07 2001
+// written: Sun Jul 22 23:22:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,15 @@ namespace Util
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * RefCounts is a class to hold a strong and weak ref count.
+ * Util::RefCounts is a class to hold a strong and weak ref *
+ * count. This is mainly a helper class for Util::RefCounted. Its
+ * purpose for existence is to allow weak ref-counting; a client who
+ * wants to do weak ref-counting can get a hold of the
+ * Util::RefCounted object's Util::RefCounts, and then check whether
+ * the strongCount() is greater than 0 to see if the Util::RefCounted
+ * object is still alive. This technique is implemented by
+ * Util::WeakRef. The Util::RefCounts object will delete itself when
+ * both its strong and weak counts go to 0.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -72,7 +80,19 @@ private:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * RefCounted is a reference counting base class.
+ * Util::RefCounted is a reference counting base class that allows
+ * both strong and weak reference counting. Util::RefCounted objects
+ * use a Util::RefCounts object to keep their reference counts, so
+ * clients that need to know if a Util::RefCounted object is still
+ * around can check the strong count of its Util::RefCounts
+ * object. Finally, subclasses of Util::RefCounted can declare
+ * themselves volatile (by overriding isVolatile() to return true), in
+ * which case it is assumed that their lifetime cannot be fully
+ * controlled by reference-counting, so clients of volatile objects
+ * should use weak reference counts only. A volatile objects should
+ * keep maintain the lone strong reference to itself; then, when some
+ * external signal requires the object to be deleted, it can achieve
+ * this by releasing the long strong reference.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -129,7 +149,7 @@ public:
   bool isUnshared() const;
 
   /** Returns true if the object should not be acquired by any strong
-      references, because it's lifespan is volatile (such as objects
+      references, because its lifespan is volatile (such as objects
       representing on-screen windows that can be dismissed by the
       user). The default implementation provided by RefCounted returns
       false. */
