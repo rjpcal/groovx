@@ -185,13 +185,13 @@ test "FaceTcl-Face::loadFaces" "error from junk binary file" {
 test "FaceTcl-Face::stringify" "error from wrong type" {
     set fx [Fixpt::Fixpt]
 	 Face::stringify $fx
-} {Face::stringify: an error of type bad_cast occurred: bad cast exception thrown}
+} {^Face::stringify: an error of type bad_cast occurred:.*$}
 
 ### Face::destringifyCmd ###
 test "FaceTcl-Face::destringify" "error from wrong type" {
     set fx [Fixpt::Fixpt]
 	 Face::destringify $fx junk
-} {Face::destringify: an error of type bad_cast occurred: bad cast exception thrown}
+} {^Face::destringify: an error of type bad_cast occurred:.*$}
 test "FaceTcl-Face::destringify" "stringify/destringify check" {
 	 set faceid [Face::Face]
 	 Face::noseLength $faceid -1.2
