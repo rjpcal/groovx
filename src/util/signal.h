@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Tue Aug 21 16:11:12 2001
+// written: Tue Aug 21 16:14:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,8 +33,8 @@ namespace Util
  *
  * Along with Signal, implements the Slot design pattern. An Slot can
  * be informed of changes in an Signal by calling connect() on that
- * Signal. Thereafter, the Slot will receive notifications of changes
- * in the Signal via call().
+ * Signal. Thereafter, the Slot will receive notifications of any
+ * emit()'ed Signal's via call().
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -54,13 +54,11 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Along with Slot, implements the Observer design pattern. Subclasses
- * of Signal do not have to override any virtual functions to become
- * an Signal: all of the machinery is provided in this base
- * class. However, to conform to the expected behavior, subclasses of
- * Signal must call emit() when any of their non-mutable properties
- * changes. This in turn will \c call() all of the Slot's that are
- * observing this Signal.
+ * Along with Slot, roughly implements the Observer design
+ * pattern. Classes that need to notify others of changes should hold
+ * a Util::Signal object by value, and call Signal::emit() when it is
+ * necessary to notify observers of the change. In turn, emit() will
+ * \c call() all of the Slot's that are observing this Signal.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
