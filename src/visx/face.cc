@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Tue Oct 19 16:20:57 1999
+// written: Tue Nov  2 21:42:49 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -175,6 +175,7 @@ DOTRACE("Face::charCount");
 			 + mouthHeight.charCount() + 1
 			 + eyeHeight.charCount() + 1
 			 + 2 // brace
+			 + GrObj::charCount()
 			 + 1);//fudge factor
 }
 

@@ -705,6 +705,7 @@ int Gtext::charCount() const {
 DOTRACE("Gtext::charCount");
   return (ioTag.length() + 1
 			 + itsText.length() + 1
+			 + GrObj::charCount()
 			 + 1); // fudge factor
 }
 

@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Wed Oct 20 10:29:21 1999
+// written: Tue Nov  2 21:45:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -300,6 +300,7 @@ DOTRACE("MorphyFace::charCount");
 			 + 2 // brace
 			 + 128 // params
 			 + 2 // brace
+			 + GrObj::charCount()
 			 + 1);//fudge factor
 }
 

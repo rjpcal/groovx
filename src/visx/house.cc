@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Wed Oct 20 10:18:52 1999
+// written: Tue Nov  2 21:44:58 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -220,7 +220,7 @@ DOTRACE("House::writeTo");
 
 int House::charCount() const {
 DOTRACE("House::charCount");
-  return 128; 
+  return 128 + GrObj::charCount();
 }
 
 ///////////////////////////////////////////////////////////////////////

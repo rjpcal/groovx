@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Oct 20 10:20:31 1999
+// written: Tue Nov  2 21:45:29 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,6 +47,8 @@ void MaskHatch::deserialize(istream &is, IOFlag flag) {
 DOTRACE("MaskHatch::deserialize");
 }
 
+int MaskHatch::charCount() const { return 0 + GrObj::charCount(); }
+
 void MaskHatch::readFrom(Reader* reader) {
 DOTRACE("MaskHatch::readFrom");
   const vector<PInfo>& infos = getPropertyInfos();
@@ -66,8 +68,6 @@ DOTRACE("MaskHatch::writeTo");
 
   GrObj::writeTo(writer);
 }
-
-int MaskHatch::charCount() const { return 0; }
 
 ///////////////////////////////////////////////////////////////////////
 //

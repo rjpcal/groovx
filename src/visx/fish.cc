@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Oct 20 10:12:07 1999
+// written: Tue Nov  2 21:43:37 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -234,6 +234,9 @@ DOTRACE("Fish::charCount");
   }
 
   result += 5;						  // fudge factor
+
+  result += GrObj::charCount();
+
   return result;
 }
 

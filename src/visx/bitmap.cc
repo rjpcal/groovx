@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Tue Oct 19 15:35:58 1999
+// written: Tue Nov  2 21:41:45 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -125,7 +125,7 @@ DOTRACE("Bitmap::deserialize");
 
 int Bitmap::charCount() const {
 DOTRACE("Bitmap::charCount");
-  return 128;
+  return 128 + GrObj::charCount();
 }
 
 void Bitmap::readFrom(Reader* reader) {

@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Wed Oct  6 10:44:05 1999
+// written: Tue Nov  2 21:43:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,12 @@
 #include <iostream.h>
 #include <string>
 #include <GL/gl.h>
+
+#include "reader.h"
+#include "writer.h"
+
+#include "trace.h"
+#include "debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -67,7 +73,26 @@ int FixPt::charCount() const {
   return (ioTag.length() + 1
 			 + gCharCount<double>(length()) + 1
 			 + gCharCount<int>(width()) + 1
+			 + GrObj::charCount()
 			 + 1);// fudge factor
+}
+
+void FixPt::readFrom(Reader* reader) {
+DOTRACE("FixPt::readFrom");
+  reader->readValue("length", length());
+  reader->readValue("width", width());
+
+  DebugEval(length());  DebugEvalNL(width());
+
+  GrObj::readFrom(reader);
+}
+
+void FixPt::writeTo(Writer* writer) const {
+DOTRACE("FixPt::writeTo");
+  writer->writeDouble("length", length());
+  writer->writeInt("width", width());
+
+  GrObj::writeTo(writer);
 }
 
 const vector<FixPt::PInfo>& FixPt::getPropertyInfos() {
