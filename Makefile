@@ -123,7 +123,7 @@ ifeq ($(PLATFORM),ppc)
 	COMPILER := g++2
 	SHLIB_EXT := dylib
 	STATLIB_EXT := a
-	CPP_DEFINES += -DESD_WORKAROUND -Dlrand48=rand
+	CPP_DEFINES += -DESD_WORKAROUND
 	DEFAULT_MODE := debug
 	ETAGS := etags
 	AUDIO_LIB := -lesd -laudiofile
