@@ -3,7 +3,7 @@
 // tlist.h
 // Rob Peters
 // created: Fri Mar 12 13:23:02 1999
-// written: Wed Jun  9 14:54:09 1999
+// written: Wed Jun  9 15:08:09 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,6 +42,9 @@ private:
 
 protected:
   Tlist();
+
+private:
+  static Tlist theInstance;
 
 public:
 
