@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Sep 29 16:47:19 1999
+// written: Wed Sep 29 17:08:44 1999
 // $Id$
 //
 // This file defines the abstract class TclCmd, which provides
@@ -69,7 +69,7 @@ protected:
   int objc() { return itsObjc; }
 
   void args(vector<Value*>& vec);
-  Value& arg(int argn);
+  TclValue& arg(int argn);
 
   int    getIntFromArg(int argn);
   long   getLongFromArg(int argn);
