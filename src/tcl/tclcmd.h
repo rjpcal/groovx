@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Tue Jul 10 18:43:49 2001
+// written: Wed Jul 11 09:55:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRAITS_H_DEFINED)
 #include "util/traits.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CONVERT_H_DEFINED)
+#include "tcl/convert.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLVALUE_H_DEFINED)
@@ -113,7 +117,10 @@ public:
 
   typedef T value_type;
 
-  T operator*() const;
+  T operator*() const
+  {
+    return Tcl::fromTcl<T>(current());
+  }
 };
 
 } // end namespace Tcl
@@ -218,7 +225,7 @@ public:
       copy the result into \a val. */
   template <class T>
   T getValFromArg(int argn, T* /*dummy*/=0)
-    { return getValFromObj(itsInterp, itsObjv[argn], (T*)0); }
+    { return Tcl::fromTcl<T>(itsObjv[argn]); }
 
   //---------------------------------------------------------------------
   //
@@ -248,7 +255,7 @@ public:
     safeSplitList(itsObjv[argn], &count, &elements);
 
     for (int i = 0; i < count; ++i) {
-      *itr = getValFromObj(itsInterp, elements[i], (T*)0);
+      *itr = Tcl::fromTcl<T>(elements[i]);
       ++itr;
     }
   }
@@ -462,9 +469,6 @@ private:
   void lappendDouble(double val);
   void lappendCstring(const char* val);
 
-  template <class T>
-  static T getValFromObj(Tcl_Interp* interp, Tcl_Obj* obj, T* /*dummy*/=0);
-
   TclCmd(const TclCmd&);
   TclCmd& operator=(const TclCmd&);
 
@@ -484,19 +488,6 @@ private:
 
   int itsResult;
 };
-
-
-///////////////////////////////////////////////////////////////////////
-//
-// Inline method definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-inline T Tcl::ListIterator<T>::operator*() const
-{
-  return TclCmd::getValFromObj(itsInterp, current(), (T*)0);
-}
 
 
 static const char vcid_tclcmd_h[] = "$Header$";
