@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Sun Aug  5 19:48:40 2001
+// written: Tue Aug 14 21:38:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ class Response;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Block : public virtual IO::IoObject {
+class Block : public IO::IoObject {
 public:
   /** This tracer dynamically controls the tracing of Block member
       functions. */

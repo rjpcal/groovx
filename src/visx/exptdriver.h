@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Fri Aug 10 10:46:49 2001
+// written: Tue Aug 14 21:38:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ namespace Util
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class ExptDriver : public Experiment, public virtual IO::IoObject {
+class ExptDriver : public Experiment, public IO::IoObject {
 private:
   /// Copy constructor not allowed
   ExptDriver(const ExptDriver&);

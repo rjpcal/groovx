@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:55 1999
-// written: Sat Jul 21 21:08:59 2001
+// written: Tue Aug 14 21:38:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ class TrialEvent;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class TimingHdlr : public virtual IO::IoObject {
+class TimingHdlr : public IO::IoObject {
 protected:
   TimingHdlr();
 public:

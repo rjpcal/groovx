@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Aug  8 20:16:38 2001
+// written: Tue Aug 14 21:38:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@
 // Subject class
 ///////////////////////////////////////////////////////////////////////
 
-class Subject : public virtual IO::IoObject {
+class Subject : public IO::IoObject {
 protected:
   Subject(const char* name=0, const char* dir=0);
   virtual ~Subject();

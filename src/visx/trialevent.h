@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Sat Jul 21 20:31:48 2001
+// written: Tue Aug 14 21:38:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ typedef void* ClientData;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class TrialEvent : public virtual IO::IoObject {
+class TrialEvent : public IO::IoObject {
 protected:
   /// Construct with a requested delay of \a msec.
   TrialEvent(int msec);

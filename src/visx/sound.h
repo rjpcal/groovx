@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Wed Aug  8 13:24:27 2001
+// written: Tue Aug 14 21:38:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@ namespace Util
   template <class T> class Ref;
 };
 
-class Sound : public virtual IO::IoObject {
+class Sound : public IO::IoObject {
 public:
   // This function will attempt to do any platform-dependent
   // initialization that is necessary to use Sound's, returning true
