@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Sat Nov 23 14:30:21 2002
+// written: Mon Nov 25 15:42:43 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,14 +68,14 @@ public:
   /// Virtual destructor.
   virtual ~Widget();
 
-  virtual void addButtonListener (Util::Ref<GWT::ButtonListener> b);
-  virtual void addKeyListener    (Util::Ref<GWT::KeyListener> k);
+  void addButtonListener (Util::Ref<GWT::ButtonListener> b);
+  void addKeyListener    (Util::Ref<GWT::KeyListener> k);
 
   bool hasButtonListeners() const;
   bool hasKeyListeners() const;
 
-  virtual void removeButtonListeners();
-  virtual void removeKeyListeners();
+  void removeButtonListeners();
+  void removeKeyListeners();
 
   virtual void takeFocus() = 0;
 
