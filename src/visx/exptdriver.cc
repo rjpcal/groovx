@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Mon Jul 16 15:00:42 2001
+// written: Thu Jul 19 15:06:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,15 +21,13 @@
 
 #include "gwt/widget.h"
 
-#include "io/asciistreamwriter.h"
+#include "io/ioutil.h"
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
 #include "system/system.h"
 
-#include "tcl/convert.h"
 #include "tcl/tclcode.h"
-#include "tcl/tclerror.h"
 #include "tcl/tclutil.h"
 
 #include "util/error.h"
@@ -39,8 +37,6 @@
 #include "util/ref.h"
 #include "util/stopwatch.h"
 #include "util/strings.h"
-
-#include <sys/time.h>
 
 #define DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
 #include "util/trace.h"
@@ -57,8 +53,8 @@ Util::Tracer ExptDriver::tracer;
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
-
+namespace
+{
   const IO::VersionId EXPTDRIVER_SERIAL_VERSION_ID = 3;
 
 #ifdef TIME_TRACE
@@ -90,53 +86,33 @@ public:
   //////////////////////
 
 private:
-  void doAutosave();
 
   bool haveValidBlock() const
     {
-      DebugEval(itsCurrentBlockIdx); DebugEvalNL(itsBlocks.size());
-      if ( 0 <= itsCurrentBlockIdx &&
-           (unsigned int)itsCurrentBlockIdx < itsBlocks.size() )
+      return ( itsCurrentBlockIdx < itsBlocks.size() );
+    }
+
+  // Ensure that there is a valid Block. If there is not, throw an
+  // exception.
+  void ensureHasBlock() const
+    {
+      if ( !haveValidBlock() )
         {
-          return true;
+          throw ErrorWithMsg("the experiment must have at least one Block "
+                             "before it can be started");
         }
-      return false;
     }
-
-  // This accessor will NOT recover if the corresponding id is
-  // invalid; clients must check validity before calling the accessor.
-  Block& block()
-    {
-      Precondition( haveValidBlock() );
-      return *(itsBlocks.at(itsCurrentBlockIdx).get());
-    }
-
-  const Block& block() const
-    {
-      Precondition( haveValidBlock() );
-      return *(itsBlocks.at(itsCurrentBlockIdx).get());
-    }
-
-  // Check the validity of all its id's, return true if all are ok,
-  // otherwise returns false, halts the experiment, and issues an
-  // error message to itsInterp.
-  bool assertIds() const;
 
   bool needAutosave() const;
-
-  // Switches itsCurrentBlockIdx to the next valid block and returns
-  // true, or returns false if there are no more valid blocks.
-  bool gotoNextValidBlock();
-
-  bool safeTclGlobalEval(const char* script) const;
+  void doAutosave();
 
   void doUponCompletion() const;
 
   void noteElapsedTime() const;
 
-  void getCurrentTimeDateString(fixed_string& date_out) const;
+  fixed_string getCurrentTimeDateString() const;
 
-  void getSubjectKey(fixed_string& subjectkey_out) const;
+  fixed_string getSubjectKey() const;
 
   dynamic_string makeUniqueFileExtension() const;
 
@@ -165,8 +141,7 @@ public:
 
   void addLogInfo(const char* message)
   {
-    fixed_string date_string;
-    getCurrentTimeDateString(date_string);
+    fixed_string date_string = getCurrentTimeDateString();
 
     itsInfoLog.append("@");
     itsInfoLog.append(date_string);
@@ -204,8 +179,6 @@ public:
 
   void edEndExpt();
 
-  void writeASW(const char* filename) const;
-
   void storeData();
 
   //////////////////
@@ -232,7 +205,7 @@ private:
   typedef minivec<Ref<Block> > BlocksType;
   BlocksType itsBlocks;
 
-  int itsCurrentBlockIdx;
+  unsigned int itsCurrentBlockIdx;
 
   mutable StopWatch itsTimer;
 
@@ -281,44 +254,15 @@ DOTRACE("ExptDriver::Impl::~Impl");
 
 void ExptDriver::Impl::doAutosave() {
 DOTRACE("ExptDriver::Impl::doAutosave");
-  try {
-    DebugEvalNL(getAutosaveFile().c_str());
-    writeASW(getAutosaveFile().c_str());
-  }
-  catch (Tcl::TclError& err) {
-    itsErrHandler.handleMsg(err.msg_cstr());
-  }
-}
-
-//---------------------------------------------------------------------
-//
-// ExptDriver::assertIds --
-//
-// This function checks that the ExptDriver's block id, response
-// handler id, and timing handler id, are all valid. If they all are,
-// the function returns true as quickly as possible. If one or more of
-// the id's is invalid, the function 1) generates a background error
-// in the ExptDriver's Tcl_Interp, 2) sends a 'halt' message to any of
-// the participants for which the id *is* valid, and 3) returns false.
-//
-//---------------------------------------------------------------------
-
-inline bool ExptDriver::Impl::assertIds() const {
-DOTRACE("ExptDriver::Impl::assertIds");
-
-  if ( haveValidBlock() ) {
-    return true;
-  }
-
-  DebugPrintNL("assertIds failed... raising background error");
-
-  // ...one of the validity checks failed, so generate an error+message
-  itsErrHandler.handleMsg("ExptDriver does not have a valid block");
-
-  // ...and halt any of the participants for which we have valid id's
-  edHaltExpt();
-
-  return false;
+  try
+    {
+      DebugEvalNL(getAutosaveFile().c_str());
+      IO::saveASW(Util::Ref<IO::IoObject>(itsOwner), getAutosaveFile());
+    }
+  catch (ErrorWithMsg& err)
+    {
+      itsErrHandler.handleMsg(err.msg_cstr());
+    }
 }
 
 //--------------------------------------------------------------------
@@ -333,18 +277,11 @@ DOTRACE("ExptDriver::Impl::assertIds");
 
 bool ExptDriver::Impl::needAutosave() const {
 DOTRACE("ExptDriver::Impl::needAutosave");
-  if ( !assertIds() ) return false;
+  if ( !haveValidBlock() ) return false;
 
   return ( (itsAutosavePeriod > 0) &&
-           ((block().numCompleted() % itsAutosavePeriod) == 0) &&
+           ((currentBlock()->numCompleted() % itsAutosavePeriod) == 0) &&
            !(itsAutosaveFile.empty()) );
-}
-
-bool ExptDriver::Impl::gotoNextValidBlock() {
-DOTRACE("ExptDriver::Impl::gotoNextValidBlock");
-  ++itsCurrentBlockIdx;
-  if ((unsigned int)itsCurrentBlockIdx < itsBlocks.size()) return true;
-  return false;
 }
 
 void ExptDriver::Impl::doUponCompletion() const {
@@ -363,16 +300,16 @@ DOTRACE("ExptDriver::Impl::noteElapsedTime");
               << " milliseconds\n";
 }
 
-void ExptDriver::Impl::getCurrentTimeDateString(fixed_string& date_out) const {
+fixed_string ExptDriver::Impl::getCurrentTimeDateString() const {
 DOTRACE("ExptDriver::Impl::getCurrentTimeDateString");
   static Tcl::Code dateStringCmd("clock format [clock seconds]",
                                  Tcl::Code::THROW_EXCEPTION);
 
   dateStringCmd.invoke(itsInterp);
-  date_out = itsInterp.getResult(TypeCue<const char*>());;
+  return fixed_string(itsInterp.getResult(TypeCue<const char*>()));
 }
 
-void ExptDriver::Impl::getSubjectKey(fixed_string& subjectkey_out) const {
+fixed_string ExptDriver::Impl::getSubjectKey() const {
 DOTRACE("ExptDriver::Impl::getSubjectKey");
 
   // Get the subject's initials as the tail of the current directory
@@ -384,11 +321,11 @@ DOTRACE("ExptDriver::Impl::getSubjectKey");
   // Get the result, and remove an optional leading 'human_', if present
   const char* key = itsInterp.getResult(TypeCue<const char*>());
   if ( strncmp(key, "human_", 6) == 0 )
-	 {
-		key += 6;
-	 }
+    {
+      key += 6;
+    }
 
-  subjectkey_out = key;
+  return fixed_string(key);
 }
 
 dynamic_string ExptDriver::Impl::makeUniqueFileExtension() const {
@@ -481,33 +418,23 @@ DOTRACE("ExptDriver::Impl::writeTo");
 //
 ///////////////////////////////////////////////////////////////////////
 
-//---------------------------------------------------------------------
-//
-// ExptDriver::edBeginExpt --
-//
-//---------------------------------------------------------------------
 
 void ExptDriver::Impl::edBeginExpt() {
 DOTRACE("ExptDriver::Impl::edBeginExpt");
 
+  ensureHasBlock();
+
   addLogInfo("Beginning experiment.");
 
-  getCurrentTimeDateString(itsBeginDate);
+  itsBeginDate = getCurrentTimeDateString();
   itsHostname = itsInterp.getGlobalVar(TypeCue<const char*>(), "env", "HOST");;
-  getSubjectKey(itsSubject);
+  itsSubject = getSubjectKey();
 
   itsTimer.restart();
 
-  if ( !assertIds() ) return;
-
-  block().beginTrial(*itsOwner);
+  currentBlock()->beginTrial(*itsOwner);
 }
 
-//---------------------------------------------------------------------
-//
-// ExptDriver::edEndTrial --
-//
-//---------------------------------------------------------------------
 
 void ExptDriver::Impl::edEndTrial() {
 DOTRACE("ExptDriver::Impl::edEndTrial");
@@ -515,59 +442,40 @@ DOTRACE("ExptDriver::Impl::edEndTrial");
   if ( needAutosave() ) { doAutosave(); }
 }
 
-//---------------------------------------------------------------------
-//
-// ExptDriver::edNextBlock --
-//
-//---------------------------------------------------------------------
 
 void ExptDriver::Impl::edNextBlock() {
 DOTRACE("ExptDriver::Impl::edNextBlock");
-  bool haveMoreBlocks = gotoNextValidBlock();
 
-  if ( !haveMoreBlocks ) {
-    edEndExpt();
-  }
-  else {
-    block().beginTrial(*itsOwner);
-  }
+  ++itsCurrentBlockIdx;
+
+  if ( !haveValidBlock() )
+    {
+      edEndExpt();
+    }
+  else
+    {
+      currentBlock()->beginTrial(*itsOwner);
+    }
 }
 
-//--------------------------------------------------------------------
-//
-// ExptDriver::edHaltExpt --
-//
-//--------------------------------------------------------------------
 
 void ExptDriver::Impl::edHaltExpt() const {
 DOTRACE("ExptDriver::Impl::edHaltExpt");
 
-  if ( haveValidBlock() ) {
-    // FIXME const-correctness problem -- should haltExpt be const or
-    // non-const throughout the system???
-    Block& nc_block = const_cast<Block&>(block());
-    nc_block.haltExpt();
-  }
+  if ( haveValidBlock() )
+    {
+      currentBlock()->haltExpt();
+    }
 }
 
-//--------------------------------------------------------------------
-//
-// ExptDriver::edResumeExpt --
-//
-//--------------------------------------------------------------------
 
 void ExptDriver::Impl::edResumeExpt() {
 DOTRACE("ExptDriver::Impl::edResumeExpt");
-  if ( !assertIds() ) return;
+  ensureHasBlock();
 
-  block().beginTrial(*itsOwner);
+  currentBlock()->beginTrial(*itsOwner);
 }
 
-//---------------------------------------------------------------------
-//
-// ExptDriver::edClearExpt --
-//
-//---------------------------------------------------------------------
 
 void ExptDriver::Impl::edClearExpt() {
 DOTRACE("ExptDriver::Impl::edClearExpt");
@@ -577,31 +485,22 @@ DOTRACE("ExptDriver::Impl::edClearExpt");
   itsCurrentBlockIdx = 0;
 }
 
-//---------------------------------------------------------------------
-//
-// ExptDriver::edResetExpt() --
-//
-//---------------------------------------------------------------------
 
 void ExptDriver::Impl::edResetExpt() {
 DOTRACE("ExptDriver::Impl::edResetExpt");
   edHaltExpt();
 
   while (1) {
-    if ( haveValidBlock() ) {
-      block().resetBlock();
-    }
+    if ( haveValidBlock() )
+      {
+        currentBlock()->resetBlock();
+      }
 
     if (itsCurrentBlockIdx > 0) { --itsCurrentBlockIdx; }
     else return;
   }
 }
 
-//---------------------------------------------------------------------
-//
-// ExptDriver::edEndExpt() --
-//
-//---------------------------------------------------------------------
 
 void ExptDriver::Impl::edEndExpt() {
 DOTRACE("ExptDriver::Impl::edEndExpt");
@@ -613,17 +512,6 @@ DOTRACE("ExptDriver::Impl::edEndExpt");
   doUponCompletion();        // Call the user-defined callback
 }
 
-//--------------------------------------------------------------------
-//
-// ExptDriver::writeASW --
-//
-//--------------------------------------------------------------------
-
-void ExptDriver::Impl::writeASW(const char* filename) const {
-DOTRACE("ExptDriver::Impl::write");
-  AsciiStreamWriter writer(filename);
-  writer.writeRoot(itsOwner);
-}
 
 //--------------------------------------------------------------------
 //
@@ -639,48 +527,40 @@ DOTRACE("ExptDriver::Impl::storeData");
 
   edHaltExpt();
 
-  try {
-    getCurrentTimeDateString(itsEndDate);
+  try
+    {
+      itsEndDate = getCurrentTimeDateString();
 
-    dynamic_string unique_file_extension = makeUniqueFileExtension();
+      dynamic_string unique_file_extension = makeUniqueFileExtension();
 
-    // Write the main experiment file
-    dynamic_string expt_filename = "expt";
-    expt_filename += unique_file_extension;
-    expt_filename += ".asw";
-    writeASW(expt_filename.c_str());
-    Util::log() << "wrote file " << expt_filename.c_str() << '\n';
+      // Write the main experiment file
+      dynamic_string expt_filename = "expt";
+      expt_filename += unique_file_extension;
+      expt_filename += ".asw";
+      IO::saveASW(Util::Ref<IO::IoObject>(itsOwner), expt_filename.c_str());
+      Util::log() << "wrote file " << expt_filename.c_str() << '\n';
 
-    // Write the responses file
-    dynamic_string resp_filename = "resp";
-    resp_filename += unique_file_extension;
-    TlistUtils::writeResponses(resp_filename.c_str());
-    Util::log() << "wrote file " << resp_filename.c_str() << '\n';
+      // Write the responses file
+      dynamic_string resp_filename = "resp";
+      resp_filename += unique_file_extension;
+      TlistUtils::writeResponses(resp_filename.c_str());
+      Util::log() << "wrote file " << resp_filename.c_str() << '\n';
 
-    // Change file access modes to allow read-only by all
-    System::mode_t datafile_mode = System::IRUSR | System::IRGRP | System::IROTH;
+      // Change file access modes to allow read-only by all
+      System::mode_t datafile_mode =
+        System::IRUSR | System::IRGRP | System::IROTH;
 
-    int error1 =
       System::theSystem().chmod(expt_filename.c_str(), datafile_mode);
-    int error2 =
       System::theSystem().chmod(resp_filename.c_str(), datafile_mode);
-    if (error1 != 0 || error2 != 0) {
-      itsErrHandler.handleMsg("error during System::chmod");
+
+      addLogInfo("Experiment saved.");
+    }
+  catch (ErrorWithMsg& err)
+    {
+      itsErrHandler.handleMsg(err.msg_cstr());
       return;
     }
-
-    addLogInfo("Experiment saved.");
-  }
-  catch (IO::IoError& err) {
-    itsErrHandler.handleMsg(err.msg_cstr());
-    return;
-  }
-  catch (Tcl::TclError& err) {
-    itsErrHandler.handleMsg(err.msg_cstr());
-    return;
-  }
 }
-
 
 
 
