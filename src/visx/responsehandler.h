@@ -2,15 +2,16 @@
 // responsehandler.h
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Thu May 20 11:44:57 1999
+// written: Wed May 26 15:55:08 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef RESPONSEHANDLER_H_DEFINED
 #define RESPONSEHANDLER_H_DEFINED
 
-#ifndef TCL_H_DEFINED
-#include <tcl.h>
+#ifndef TK_H_DEFINED
+#include <tk.h>
+#define TK_H_DEFINED
 #define TCL_H_DEFINED
 #endif
 
@@ -24,6 +25,10 @@
 #define STRING_DEFINED
 #endif
 
+#ifndef IO_H_DEFINED
+#include "io.h"
+#endif
+
 class ExptDriver;
 
 ///////////////////////////////////////////////////////////////////////
@@ -32,15 +37,15 @@ class ExptDriver;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ResponseHandler {
+class ResponseHandler : public virtual IO {
 public:
   // creators
   ResponseHandler(ExptDriver& ed, Tcl_Interp* interp, const string& s="");
   virtual ~ResponseHandler();
 
-  // actions
-  virtual int attend() const;
-  virtual int ignore() const;
+  virtual void serialize(ostream &os, IOFlag flag) const;
+  virtual void deserialize(istream &is, IOFlag flag);
+  virtual int charCount() const;
 
   // manipulators/accessors
   void setKeyRespPairs(const string& s) { 
@@ -52,24 +57,35 @@ public:
   bool getUseFeedback() const { return itsUseFeedback; }
   void setUseFeedback(bool val) { itsUseFeedback = val; }
 
-private:
-  int handleResponse(const char* keysym);
-  virtual int getRespFromKeysym(const char* keysym) const;
-  int feedback(int response);
-  static Tcl_ObjCmdProc handleCmd;
-  int updateRegexps();
+  // actions
+  virtual void rhBeginTrial() const;
+  virtual void rhAbortTrial() const;
+  virtual void rhHaltExpt() const;
 
+protected:
+  virtual void attend() const;
+  virtual void ignore() const;
+
+private:
+  static Tcl_ObjCmdProc handleCmd;
+  static Tk_EventProc eventProc;
+  int handleResponse(const char* keysym) const;
+  virtual int getRespFromKeysym(const char* keysym) const;
+  int feedback(int response) const;
+  int updateRegexps();
   struct RegExp_ResponseVal {
     RegExp_ResponseVal(Tcl_RegExp rx, int rv) : regexp(rx), resp_val(rv) {}
     Tcl_RegExp regexp;
     int resp_val;
   };
 
-  ExptDriver& itsExptDriver;
-  Tcl_Interp* itsInterp;
+  mutable ExptDriver& itsExptDriver;
+  mutable Tcl_Interp* itsInterp;
   string itsKeyRespPairs;
   vector<RegExp_ResponseVal> itsRegexps;
   bool itsUseFeedback;
+
+  mutable const char* itsRawResponse;
 };
 
 static const char vcid_responsehandler_h[] = "$Header$";
