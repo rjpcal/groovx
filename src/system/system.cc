@@ -3,7 +3,7 @@
 // system.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Nov 17 15:05:41 1999
-// written: Wed Nov 17 15:42:25 1999
+// written: Tue Nov 23 16:00:19 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,11 @@
 
 #include "system.h"
 
+#include <cstdio>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <unistd.h>
+#include <vector>
 
 #include "trace.h"
 #include "debug.h"
@@ -52,6 +55,28 @@ const System::mode_t System::IXOTH;
 int System::chmod(const char* path, mode_t mode) {
 DOTRACE("System::chmod");
   return ::chmod(path, mode);
+}
+
+int System::rename(const char* oldpath, const char* newpath) {
+DOTRACE("System::rename");
+  return ::rename(oldpath, newpath);
+}
+
+int System::remove(const char* pathname) {
+DOTRACE("System::remove");
+  return ::remove(pathname);
+}
+
+string System::getcwd() {
+DOTRACE("System::getcwd");
+  int size = 256;
+  vector<char> buf(size);
+
+  while ( !::getcwd(&buf[0], buf.size()) ) {
+	 buf.resize(buf.size() * 2);
+  }
+
+  return &buf[0];
 }
 
 static const char vcid_system_cc[] = "$Header$";
