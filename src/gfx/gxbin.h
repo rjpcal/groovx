@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 12:31:35 2002
-// written: Thu Nov 14 17:34:11 2002
+// written: Thu Nov 14 17:54:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ public:
 
   const Util::Ref<GxNode>& child() const { return itsChild; }
 
-  void setChild(const Util::Ref<GxNode>& child) { itsChild = child; }
+  void setChild(const Util::Ref<GxNode>& child);
 };
 
 static const char vcid_gxbin_h[] = "$Header$";
