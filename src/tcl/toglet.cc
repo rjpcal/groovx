@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Nov 21 14:37:15 2002
+// written: Thu Nov 21 14:42:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,22 +15,233 @@
 
 #include "toglet.h"
 
-#include "gfx/canvas.h"
+#include "gfx/glcanvas.h"
 
 #include "gx/rect.h"
 #include "gx/rgbacolor.h"
 
 #include "tcl/tclmain.h"
+#include "tcl/tclsafeinterp.h"
 
 #include "util/error.h"
+#include "util/ref.h"
 #include "util/strings.h"
+
+#include <cmath>
+#include <tcl.h>
+#include <tk.h>
 
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <cmath>
+#include <X11/Xlib.h>
+
+#ifdef HAVE_LIMITS
+#  include <limits>
+#else
+#  include <climits>
+#endif
 
 #include "util/trace.h"
 #include "util/debug.h"
+
+///////////////////////////////////////////////////////////////////////
+//
+// Togl::Impl class definition
+//
+///////////////////////////////////////////////////////////////////////
+
+class Togl::Impl
+{
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+
+public:
+  Togl* owner;
+  const Tk_Window tkWin;
+  Util::SoftRef<GLCanvas> canvas;
+
+  Impl(Togl* owner);
+  ~Impl() throw() {}
+
+  static Window cClassCreateProc(Tk_Window tkwin,
+                                 Window parent,
+                                 ClientData clientData);
+};
+
+
+Tk_ClassProcs toglProcs =
+  {
+    sizeof(Tk_ClassProcs),
+    (Tk_ClassWorldChangedProc*) 0,
+    Togl::Impl::cClassCreateProc,
+    (Tk_ClassModalProc*) 0,
+  };
+
+//---------------------------------------------------------------------
+//
+// Togl::Impl::Impl
+//
+//---------------------------------------------------------------------
+
+Togl::Impl::Impl(Togl* p) :
+  owner(p),
+  tkWin(owner->tkWin()),
+  canvas()
+{
+DOTRACE("Togl::Impl::Impl");
+
+  //
+  // Get the window mapped onscreen
+  //
+
+  Tk_GeometryRequest(tkWin, owner->width(), owner->height());
+
+  Tk_SetClassProcs(tkWin, &toglProcs, static_cast<ClientData>(this));
+
+  Tk_MakeWindowExist(tkWin);
+
+  Tk_MapWindow(tkWin);
+}
+
+Window Togl::Impl::cClassCreateProc(Tk_Window tkwin,
+                                    Window parent,
+                                    ClientData clientData)
+{
+  Togl::Impl* rep = static_cast<Togl::Impl*>(clientData);
+
+  Display* dpy = Tk_Display(tkwin);
+
+  rep->canvas = Util::SoftRef<GLCanvas>(GLCanvas::make(dpy));
+
+  Visual* visual = rep->canvas->visual();
+  int screen = rep->canvas->screen();
+  int depth = rep->canvas->bitsPerPixel();
+
+  Colormap cmap =
+    visual == DefaultVisual(dpy, screen)
+    ? DefaultColormap(dpy, screen)
+    : XCreateColormap(dpy,
+                      RootWindow(dpy, screen),
+                      visual, AllocNone);
+
+  // Make sure Tk knows to switch to the new colormap when the cursor is over
+  // this window when running in color index mode.
+  Tk_SetWindowVisual(tkwin, visual, depth, cmap);
+
+#define ALL_EVENTS_MASK \
+KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask| \
+EnterWindowMask|LeaveWindowMask|PointerMotionMask|ExposureMask|   \
+VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
+
+  XSetWindowAttributes atts;
+
+  atts.colormap = cmap;
+  atts.border_pixel = 0;
+  atts.event_mask = ALL_EVENTS_MASK;
+
+  Window win = XCreateWindow(dpy,
+                             parent,
+                             0, 0,
+                             rep->owner->width(),
+                             rep->owner->height(),
+                             0, depth,
+                             InputOutput, visual,
+                             CWBorderPixel | CWColormap | CWEventMask,
+                             &atts);
+
+  Tk_ChangeWindowAttributes(tkwin,
+                            CWBorderPixel | CWColormap | CWEventMask,
+                            &atts);
+
+  XSelectInput(dpy, win, ALL_EVENTS_MASK);
+
+  // Bind the context to the window and make it the current context
+  rep->canvas->makeCurrent(win);
+
+  if (rep->canvas->isRgba())
+    {
+      DOTRACE("GlxWrapper::GlxWrapper::rgbaFlag");
+      rep->canvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
+      rep->canvas->setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
+    }
+  else
+    {
+      // FIXME use XBlackPixel(), XWhitePixel() here?
+      rep->canvas->setColorIndex(0);
+      rep->canvas->setClearColorIndex(1);
+    }
+
+  return win;
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// Togl member function definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+Togl::Togl(Tcl_Interp* interp, const char* pathname) :
+  Tcl::TkWidget(interp, "Togl", pathname),
+  rep(new Impl(this))
+{
+DOTRACE("Togl::Togl");
+}
+
+Togl::~Togl()
+{
+DOTRACE("Togl::~Togl");
+  delete rep;
+}
+
+void Togl::displayCallback()
+{
+DOTRACE("Togl::displayCallback");
+
+  rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
+  fullRender();
+}
+
+void Togl::makeCurrent() const
+{
+  rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
+}
+
+void Togl::swapBuffers()
+{
+  rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
+  rep->canvas->glxFlush();
+}
+
+Togl::Color Togl::queryColor(unsigned int color_index) const
+{
+  XColor col;
+
+  col.pixel = color_index;
+  XQueryColor(Tk_Display(rep->tkWin), Tk_Colormap(rep->tkWin), &col);
+
+  Togl::Color color;
+
+  color.pixel = (unsigned int)col.pixel;
+#ifdef HAVE_LIMITS
+  const unsigned short usmax = std::numeric_limits<unsigned short>::max();
+#else
+  const unsigned short usmax = USHRT_MAX;
+#endif
+
+  color.red   = double(col.red)   / usmax;
+  color.green = double(col.green) / usmax;
+  color.blue  = double(col.blue)  / usmax;
+
+  return color;
+}
+
+Gfx::Canvas& Togl::getCanvas() const
+{
+DOTRACE("Togl::getCanvas");
+  makeCurrent();
+  return *(rep->canvas);
+}
 
 namespace
 {
