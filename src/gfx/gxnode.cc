@@ -15,11 +15,32 @@
 
 #include "gfx/gxnode.h"
 
-#include "gfx/gxtraversal.h"
+#include "util/iter.h"
 
 #include "util/ref.h"
 
 #include "util/trace.h"
+
+class GxNodeIter : public Util::FwdIterIfx<const Util::Ref<GxNode> >
+{
+  Util::Ref<GxNode> itsNode;
+  bool isItValid;
+
+public:
+  GxNodeIter(GxNode* node) :
+    itsNode(node), isItValid(true) {}
+
+  typedef const Util::Ref<GxNode> ValType;
+
+  virtual Util::FwdIterIfx<ValType>* clone() const
+  {
+    return new GxNodeIter(*this);
+  }
+
+  virtual bool     atEnd()  const { return !isItValid; }
+  virtual ValType&   get()  const { return itsNode; }
+  virtual void      next()        { isItValid = false; }
+};
 
 GxNode::GxNode()
 {
@@ -47,7 +68,8 @@ Util::FwdIter<const Util::Ref<GxNode> > GxNode::deepChildren()
 {
 DOTRACE("GxNode::deepChildren");
 
-  return GxTraversal(Util::Ref<GxNode>(this));
+  return Util::FwdIter<const Util::Ref<GxNode> >
+    (shared_ptr<GxNodeIter>(new GxNodeIter(this)));
 }
 
 void GxNode::getBoundingBox(Gfx::Rect<double>&, Gfx::Canvas&) const

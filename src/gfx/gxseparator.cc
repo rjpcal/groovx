@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Fri Aug 17 15:11:34 2001
+// written: Fri Aug 17 16:38:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
+#include "util/dlink_list.h"
 #include "util/error.h"
 #include "util/iter.h"
 #include "util/minivec.h"
@@ -201,6 +202,55 @@ DOTRACE("GxSeparator::children");
 
   return Util::FwdIter<Util::Ref<GxNode> >(itsImpl->itsChildren.begin(),
                                            itsImpl->itsChildren.end());
+}
+
+class GxSepIter : public Util::FwdIterIfx<const Util::Ref<GxNode> >
+{
+public:
+  GxSepIter(GxSeparator* root) :
+    itsNodes()
+  {
+    for (Util::FwdIter<Util::Ref<GxNode> > itr(root->children());
+         itr.isValid();
+         ++itr)
+      {
+        addDeepChildren(*itr);
+      }
+  }
+
+  void addDeepChildren(Util::Ref<GxNode> node)
+  {
+    DOTRACE("GxTraversal::GxSepIter::addDeepChildren");
+    for (Util::FwdIter<const Util::Ref<GxNode> > itr(node->deepChildren());
+         itr.isValid();
+         ++itr)
+      {
+        itsNodes.push_back(*itr);
+      }
+  }
+
+  typedef const Util::Ref<GxNode> ValType;
+
+  virtual Util::FwdIterIfx<ValType>* clone() const
+  {
+    return new GxSepIter(*this);
+  }
+
+  virtual bool     atEnd()  const { return itsNodes.empty(); }
+  virtual ValType&   get()  const { return itsNodes.front(); }
+  virtual void      next()        { if (!atEnd()) itsNodes.pop_front(); }
+
+private:
+  mutable dlink_list<Util::Ref<GxNode> > itsNodes;
+};
+
+Util::FwdIter<const Util::Ref<GxNode> > GxSeparator::deepChildren()
+{
+DOTRACE("GxSeparator::deepChildren");
+
+
+  return Util::FwdIter<const Util::Ref<GxNode> >
+    (shared_ptr<GxSepIter>(new GxSepIter(this)));
 }
 
 bool GxSeparator::contains(GxNode* other) const
