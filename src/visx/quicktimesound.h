@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 19 07:38:09 2003
-// written: Mon May 19 08:37:48 2003
+// written: Mon May 19 08:50:27 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,6 @@
 #ifndef QUICKTIMESOUND_H_DEFINED
 #define QUICKTIMESOUND_H_DEFINED
 
-#include "io/ioerror.h"
-#include "io/reader.h"
-#include "io/writer.h"
-
-#include "util/pointers.h"
 #include "util/strings.h"
 
 #include <Carbon/Carbon.h>
@@ -26,7 +21,8 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-class QuickTimeSoundRep
+/// QuickTimeSoundRep plays sound files synchronously using Apple's QuickTime.
+class QuickTimeSoundRep : public SoundRep
 {
 public:
   QuickTimeSoundRep(const char* filename)
@@ -83,89 +79,6 @@ public:
   Movie itsMovie;
 };
 
-/// QuickTimeSound plays sound files synchronously using Apple's QuickTime.
-class QuickTimeSound : public Sound
-{
-public:
-  /// Construct with a named sound file.
-  QuickTimeSound(const char* filename = 0);
-
-  /// Virtual destructor.
-  virtual ~QuickTimeSound();
-
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
-
-  /// Play the sound.
-  virtual void play();
-
-  /// Set to refer to a different sound file.
-  virtual void setFile(const char* filename);
-
-  /// Get the name of the associated sound file.
-  virtual const char* getFile() const { return itsFilename.c_str(); }
-
-  virtual fstring objTypename() const { return "Sound"; }
-
-private:
-  fstring itsFilename;
-  shared_ptr<QuickTimeSoundRep> itsRep;
-};
-
-///////////////////////////////////////////////////////////////////////
-//
-// QuickTimeSound member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-QuickTimeSound::QuickTimeSound(const char* filename) :
-  itsFilename(""),
-  itsRep(0)
-{
-DOTRACE("QuickTimeSound::QuickTimeSound");
-  setFile(filename);
-}
-
-QuickTimeSound::~QuickTimeSound()
-{
-DOTRACE("QuickTimeSound::~QuickTimeSound");
-}
-
-void QuickTimeSound::readFrom(IO::Reader* reader)
-{
-DOTRACE("QuickTimeSound::readFrom");
-
-  reader->readValue("filename", itsFilename);
-
-  if (!itsFilename.is_empty())
-    setFile(itsFilename.c_str());
-}
-
-void QuickTimeSound::writeTo(IO::Writer* writer) const
-{
-DOTRACE("QuickTimeSound::writeTo");
-
-  writer->writeValue("filename", itsFilename);
-}
-
-void QuickTimeSound::play()
-{
-DOTRACE("QuickTimeSound::play");
-  if (itsRep.get() != 0)
-    itsRep->play();
-}
-
-void QuickTimeSound::setFile(const char* filename)
-{
-DOTRACE("QuickTimeSound::setFile");
-  if (filename != 0 && filename[0] != '\0')
-    {
-      itsRep.reset(new QuickTimeSoundRep(filename));
-      itsFilename = filename;
-    }
-}
-
-
 ///////////////////////////////////////////////////////////////////////
 //
 // Sound static member definitions
@@ -209,13 +122,19 @@ DOTRACE("Sound::closeSound");
 Sound* Sound::make()
 {
 DOTRACE("Sound::make");
-  return new QuickTimeSound();
+  return new StdSound;
 }
 
 Sound* Sound::newPlatformSound(const char* soundfile)
 {
 DOTRACE("Sound::newPlatformSound");
-  return new QuickTimeSound(soundfile);
+  return new StdSound(soundfile);
+}
+
+SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
+{
+DOTRACE("Sound::newPlatformSoundRep");
+  return new QuickTimeSoundRep(soundfile);
 }
 
 static const char vcid_quicktimesound_h[] = "$Header$";

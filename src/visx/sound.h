@@ -32,9 +32,21 @@
 
 #include "io/io.h"
 
+#include "util/pointers.h"
+#include "util/strings.h"
+
 namespace Util
 {
   template <class T> class Ref;
+};
+
+/// SoundRep is an abstract class encapsulating platform-dependent sound APIs.
+class SoundRep
+{
+public:
+  virtual ~SoundRep();
+
+  virtual void play() = 0;
 };
 
 /// Sound is a platform-independent interface to playable sound snippets.
@@ -62,6 +74,8 @@ public:
       caller is responsible for destroying the Sound object. */
   static Sound* newPlatformSound(const char* soundfile);
 
+  static SoundRep* newPlatformSoundRep(const char* soundfile);
+
   static void setOkSound(Util::Ref<Sound> ok_sound);
   static void setErrSound(Util::Ref<Sound> err_sound);
   static Util::Ref<Sound> getOkSound();
@@ -75,6 +89,27 @@ public:
   virtual void play() = 0;
   virtual void setFile(const char* filename) = 0;
   virtual const char* getFile() const = 0;
+};
+
+class StdSound : public Sound
+{
+public:
+  StdSound(const char* filename = 0);
+
+  virtual ~StdSound();
+
+  virtual fstring objTypename() const { return "Sound"; }
+
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
+
+  virtual void play();
+  virtual void setFile(const char* filename);
+  virtual const char* getFile() const;
+
+private:
+  fstring itsFilename;
+  shared_ptr<SoundRep> itsRep;
 };
 
 static const char vcid_sound_h[] = "$Header$";

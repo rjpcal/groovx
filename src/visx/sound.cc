@@ -32,6 +32,10 @@
 
 #include "visx/sound.h"
 
+#include "io/ioerror.h"
+#include "io/reader.h"
+#include "io/writer.h"
+
 #include "util/ref.h"
 
 #if defined(HAVE_ALIB_H)
@@ -46,13 +50,18 @@
 #  include "visx/dummysound.h"
 #endif
 
+#include "util/trace.h"
+#include "util/debug.h"
+
 namespace
 {
   SoftRef<Sound> OK_SOUND;
   SoftRef<Sound> ERR_SOUND;
 }
 
-Sound::~Sound () {}
+SoundRep::~SoundRep() {}
+
+Sound::~Sound() {}
 
 void Sound::setOkSound(Ref<Sound> ok_sound)
 {
@@ -72,6 +81,59 @@ Ref<Sound> Sound::getOkSound()
 Ref<Sound> Sound::getErrSound()
 {
   return Ref<Sound>(ERR_SOUND.get());
+}
+
+StdSound::StdSound(const char* filename) :
+  itsFilename(""),
+  itsRep(0)
+{
+DOTRACE("StdSound::StdSound");
+  setFile(filename);
+}
+
+StdSound::~StdSound()
+{
+DOTRACE("StdSound::~StdSound");
+}
+
+void StdSound::readFrom(IO::Reader* reader)
+{
+DOTRACE("StdSound::readFrom");
+
+  reader->readValue("filename", itsFilename);
+
+  if (!itsFilename.is_empty())
+    setFile(itsFilename.c_str());
+}
+
+void StdSound::writeTo(IO::Writer* writer) const
+{
+DOTRACE("StdSound::writeTo");
+
+  writer->writeValue("filename", itsFilename);
+}
+
+void StdSound::play()
+{
+DOTRACE("StdSound::play");
+  if (itsRep.get() != 0)
+    itsRep->play();
+}
+
+void StdSound::setFile(const char* filename)
+{
+DOTRACE("StdSound::setFile");
+  if (filename != 0 && filename[0] != '\0')
+    {
+      itsRep.reset(newPlatformSoundRep(filename));
+      itsFilename = filename;
+    }
+}
+
+const char* StdSound::getFile() const
+{
+DOTRACE("StdSound::getFile");
+  return itsFilename.c_str();
 }
 
 static const char vcid_sound_cc[] = "$Header$";
