@@ -511,6 +511,7 @@ DOTRACE("Gl_Init");
   pkg->def( "::glNewList", "list_id mode", glNewList );
   pkg->def( "::glOrtho", "left right bottom top zNear zFar", glOrtho );
   pkg->def( "::glPolygonMode", "face mode", glPolygonMode );
+  pkg->def( "::glPointSize", "size", glPointSize );
   pkg->def( "::glPopMatrix", 0, glPopMatrix );
   pkg->def( "::glPushMatrix", 0, glPushMatrix );
   pkg->def( "::glRasterPos2d", "x y", glRasterPos2d );
