@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Wed Nov 10 11:21:37 1999
+// written: Mon Nov 15 15:42:29 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@
 
 #include "gfxattribs.h"
 #include "reader.h"
+#include "rect.h"
 #include "writer.h"
 
 #define NO_TRACE
@@ -342,14 +343,13 @@ DOTRACE("Face::grRender");
 // Accessors
 ///////////////////////////////////////////////////////////////////////
 
-bool Face::grGetBoundingBox(double& left, double& top,
-									 double& right, double& bottom,
+bool Face::grGetBoundingBox(Rect<double>& bounding_box,
 									 int& border_pixels) const {
 DOTRACE("Face::grGetBoundingBox");
-  left = -0.7;
-  right = 0.7;
-  bottom = 0.2 + 0.75*(-1.7-0.2);
-  top = 0.2 + 0.75*(1.4-0.2);
+  bounding_box.left() = -0.7;
+  bounding_box.right() = 0.7;
+  bounding_box.bottom() = 0.2 + 0.75*(-1.7-0.2);
+  bounding_box.top() = 0.2 + 0.75*(1.4-0.2);
   border_pixels = 4;
   
   return true;
