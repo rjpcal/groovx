@@ -3,7 +3,7 @@
 // strings.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:16:48 2000
-// written: Mon Mar  6 12:02:03 2000
+// written: Mon Mar  6 17:50:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,6 +104,28 @@ private:
   struct Impl;
   Impl* const itsImpl;
 };
+
+///////////////////////////////////////////////////////////////////////
+//
+// Input/Output functions
+//
+///////////////////////////////////////////////////////////////////////
+
+class istream;
+class ostream;
+
+istream& operator>>(istream& is, fixed_string& str);
+istream& operator>>(istream& is, dynamic_string& str);
+
+ostream& operator<<(ostream& os, const string_literal& str);
+ostream& operator<<(ostream& os, const fixed_string& str);
+ostream& operator<<(ostream& os, const dynamic_string& str);
+
+istream& getline(istream& is, fixed_string& str);
+istream& getline(istream& is, dynamic_string& str);
+
+istream& getline(istream& is, fixed_string& str, char eol);
+istream& getline(istream& is, dynamic_string& str, char eol);
 
 static const char vcid_strings_h[] = "$Header$";
 #endif // !STRINGS_H_DEFINED

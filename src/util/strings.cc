@@ -3,7 +3,7 @@
 // strings.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:42:44 2000
-// written: Mon Mar  6 11:43:02 2000
+// written: Mon Mar  6 17:50:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "strings.h"
 
 #include <cstring>
+#include <iostream.h>
 #include <string>
 
 //---------------------------------------------------------------------
@@ -144,6 +145,76 @@ const char* dynamic_string::c_str() const
 unsigned int dynamic_string::length() const
 {
   return itsImpl->text.length();
+}
+
+//---------------------------------------------------------------------
+//
+// Input/Output function definitions
+//
+//---------------------------------------------------------------------
+
+istream& operator>>(istream& is, fixed_string& str)
+{
+  string temp; is >> temp;
+  str = temp.c_str();
+  return is;
+}
+
+istream& operator>>(istream& is, dynamic_string& str)
+{
+  string temp; is >> temp;
+  str = temp.c_str();
+  return is;
+}
+
+ostream& operator<<(ostream& os, const string_literal& str)
+{
+  os << str.c_str();
+  return os;
+}
+
+ostream& operator<<(ostream& os, const fixed_string& str)
+{
+  os << str.c_str();
+  return os;
+}
+
+ostream& operator<<(ostream& os, const dynamic_string& str)
+{
+  os << str.c_str();
+  return os;
+}
+
+istream& getline(istream& is, fixed_string& str)
+{
+  string temp;
+  getline(is, temp);
+  str = temp.c_str();
+  return is;
+}
+
+istream& getline(istream& is, dynamic_string& str)
+{
+  string temp;
+  getline(is, temp);
+  str = temp.c_str();
+  return is;
+}
+
+istream& getline(istream& is, fixed_string& str, char eol)
+{
+  string temp;
+  getline(is, temp, eol);
+  str = temp.c_str();
+  return is;
+}
+
+istream& getline(istream& is, dynamic_string& str, char eol)
+{
+  string temp;
+  getline(is, temp, eol);
+  str = temp.c_str();
+  return is;
 }
 
 static const char vcid_strings_cc[] = "$Header$";
