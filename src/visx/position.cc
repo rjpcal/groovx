@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Fri Jul  5 14:11:34 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ Position::Position() :
 {
 DOTRACE("Position::Position()");
 
-  DebugEvalNL((void *) rep);
+  dbgEvalNL(3, (void *) rep);
 
   setFieldMap(Position::classFields());
 

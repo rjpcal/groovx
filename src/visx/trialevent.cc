@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Wed Sep 11 14:13:25 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,14 +69,12 @@ DOTRACE("TrialEvent::~TrialEvent");
 
   cancel();
 
-  DebugEval(itsTotalOffset);
-  DebugEval(itsTotalError);
-  DebugEval(itsInvokeCount);
-#ifdef LOCAL_DEBUG
+  dbgEval(3, itsTotalOffset);
+  dbgEval(3, itsTotalError);
+  dbgEval(3, itsInvokeCount);
   double averageError =
     itsInvokeCount ? itsTotalError/itsInvokeCount : 0.0;
-#endif
-  DebugEvalNL(averageError);
+  dbgEvalNL(3, averageError);
 }
 
 void TrialEvent::readFrom(IO::Reader* reader)

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Tue May 14 19:43:52 2002
+// written: Sun Nov  3 13:38:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ DOTRACE("GrObjBBox::gnodeBoundingBox");
   // Add extra pixels if the box itself will be visible.
   int border_pixels = isItVisible ? itsPixelBorder+4 : itsPixelBorder;
 
-  DebugEval(itsPixelBorder); DebugEval(border_pixels);
+  dbgEval(3, itsPixelBorder); dbgEval(3, border_pixels);
 
   return addPixelBorder(child()->gnodeBoundingBox(canvas),
                         border_pixels);

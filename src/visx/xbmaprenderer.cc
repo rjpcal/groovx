@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:22:34 1999
-// written: Tue Apr  2 11:58:08 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -118,8 +118,8 @@ DOTRACE("XBmapRenderer::doRender");
   // Calculate GL window coordinates of lower left corner of image
   Gfx::Vec2<int> screen_pos = canvas.screenFromWorld(world_pos);
 
-  DebugEval(world_pos.x()); DebugEval(world_pos.y());
-  DebugEval(screen_pos.x()); DebugEvalNL(screen_pos.y());
+  dbgEval(3, world_pos.x()); dbgEval(3, world_pos.y());
+  dbgEval(3, screen_pos.x()); dbgEvalNL(3, screen_pos.y());
 
   // Calculate GL window coordinates for upper left corner of image
   screen_pos.y() += data.height();

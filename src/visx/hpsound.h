@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Wed Jun 26 13:13:49 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@ namespace HPSOUND_CC_LOCAL
     static char buf[128];
     AGetErrorText(audio, errEvent->error_code, buf, 127);
 
-    DebugEvalNL(buf);
+    dbgEvalNL(3, buf);
 
     throw Util::Error(fstring("HP Audio Error: ", buf));
 
@@ -135,7 +135,7 @@ DOTRACE("HpAudioSound::readFrom");
 
   reader->readValue("filename", itsFilename);
 
-  DebugEval(itsFilename.length()); DebugEvalNL(itsFilename);
+  dbgEval(3, itsFilename.length()); dbgEvalNL(3, itsFilename);
 
   if (!itsFilename.empty())
     setFile(itsFilename.c_str());

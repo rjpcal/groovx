@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Fri Jan 18 16:07:01 2002
+// written: Sun Nov  3 13:38:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ DOTRACE("MaskHatch::MaskHatch");
   setFieldMap(MaskHatch::classFields());
 
   setAlignmentMode(Gmodes::CENTER_ON_CENTER);
-  DebugEval(getAlignmentMode());
+  dbgEval(3, getAlignmentMode());
 }
 
 MaskHatch::~MaskHatch()

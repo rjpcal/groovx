@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:42:39 2001
-// written: Mon Sep  9 11:58:18 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ void GLCacheNode::gnodeDraw(Gfx::Canvas& canvas) const
       if (itsDisplayList != 0 && glIsList(itsDisplayList) == GL_TRUE)
         {
           glCallList(itsDisplayList);
-          DebugEvalNL(itsDisplayList);
+          dbgEvalNL(3, itsDisplayList);
         }
       else
         {

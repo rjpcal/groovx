@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Tue Mar 26 13:34:09 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -643,7 +643,7 @@ namespace
 
     listBase = glGenLists(128);
 
-    DebugEvalNL(listBase);
+    dbgEvalNL(3, listBase);
 
     glNewList(listBase + 'A', GL_COMPILE); drawLetter(Adata); glEndList();
     glNewList(listBase + 'B', GL_COMPILE); drawLetter(Bdata); glEndList();

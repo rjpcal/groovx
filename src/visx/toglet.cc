@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue Sep 17 21:24:10 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -268,7 +268,7 @@ Toglet::Toglet(bool pack) :
   itsSizer(new TogletSizer)
 {
 DOTRACE("Toglet::Toglet");
-  DebugEvalNL((void*) this);
+  dbgEvalNL(3, (void*) this);
 
   const double default_unit_angle = 2.05;
 
@@ -281,8 +281,8 @@ Toglet::~Toglet()
 {
 DOTRACE("Toglet::~Toglet");
 
-  DebugEvalNL((void*)this);
-  DebugEvalNL((void*)itsSizer);
+  dbgEvalNL(3, (void*)this);
+  dbgEvalNL(3, (void*)itsSizer);
 
   delete itsSizer;
 }

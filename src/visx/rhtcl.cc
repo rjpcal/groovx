@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Thu Jan 31 14:12:09 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,7 +84,7 @@ namespace
             {
               if ( n >= 'A' && n <= 'H' )
                 {
-                  DebugEvalNL((n-'A'));
+                  dbgEvalNL(3, (n-'A'));
 
                   Tk_FakeWin* tkwin = reinterpret_cast<Tk_FakeWin*>(
                                          Tk_MainWindow(source->itsInterp));

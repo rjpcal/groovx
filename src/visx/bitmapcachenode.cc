@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Mon Sep  9 11:58:02 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -139,7 +139,7 @@ void BitmapCacheNode::saveBitmapCache(Gfx::Canvas& /*canvas*/,
 void BitmapCacheNode::gnodeDraw(Gfx::Canvas& canvas) const
 {
 DOTRACE("BitmapCacheNode::gnodeDraw");
-  DebugEvalNL(itsMode);
+  dbgEvalNL(3, itsMode);
 
   if (itsMode != Gmodes::GL_BITMAP_CACHE &&
       itsMode != Gmodes::X11_BITMAP_CACHE)

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Fri Jan 18 16:07:00 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -447,11 +447,11 @@ DOTRACE("MorphyFace::grGetBoundingBox");
   double top_width = xbezier_top.evalMax();
   double bottom_width = xbezier_bottom.evalMax();
 
-  DebugEval(top_width);   DebugEvalNL(bottom_width);
+  dbgEval(3, top_width);   dbgEvalNL(3, bottom_width);
 
   double max_width = Util::max(1.0, Util::max(top_width, bottom_width));
 
-  DebugEvalNL(max_width);
+  dbgEvalNL(3, max_width);
 
   bbox.left()   = -max_width      * itsFaceWidth * (1 + itsHairWidth);
   bbox.right()  =  max_width      * itsFaceWidth * (1 + itsHairWidth);

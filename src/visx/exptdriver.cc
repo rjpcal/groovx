@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Sep 11 15:16:46 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -229,7 +229,7 @@ void ExptDriver::Impl::doAutosave()
 DOTRACE("ExptDriver::Impl::doAutosave");
   try
     {
-      DebugEvalNL(itsAutosaveFile.c_str());
+      dbgEvalNL(3, itsAutosaveFile.c_str());
       IO::saveASW(Util::Ref<IO::IoObject>(itsOwner), itsAutosaveFile);
     }
   catch (Util::Error& err)

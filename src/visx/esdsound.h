@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 24 18:13:53 2001
-// written: Mon Sep  9 12:04:37 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ DOTRACE("EsdSound::readFrom");
 
   reader->readValue("filename", itsFilename);
 
-  DebugEval(itsFilename.length()); DebugEvalNL(itsFilename);
+  dbgEval(3, itsFilename.length()); dbgEvalNL(3, itsFilename);
 
   if (!itsFilename.is_empty())
     setFile(itsFilename.c_str());

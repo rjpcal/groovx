@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Wed Sep 11 14:56:47 2002
+// written: Sun Nov  3 13:41:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,13 +65,13 @@ public:
     else
       {
         fstring lib_dir(Grsh::libraryDirectory());
-        DebugEvalNL(lib_dir);
+        dbgEvalNL(3, lib_dir);
 
         fstring full_ok_file(lib_dir);
-        full_ok_file.append(ok_sound_file);     DebugEvalNL(full_ok_file);
+        full_ok_file.append(ok_sound_file);     dbgEvalNL(3, full_ok_file);
 
         fstring full_err_file(lib_dir);
-        full_err_file.append(err_sound_file);     DebugEvalNL(full_err_file);
+        full_err_file.append(err_sound_file);     dbgEvalNL(3, full_err_file);
 
         static int OK = -1;
         static int ERR = -1;
@@ -90,7 +90,7 @@ public:
           }
         catch (Util::Error& err)
           {
-            DebugPrintNL("error creating sounds during startup");
+            dbgPrintNL(3, "error creating sounds during startup");
             interp.appendResult("SoundPkg: ");
             interp.appendResult(err.msg_cstr());
             setInitStatusError();

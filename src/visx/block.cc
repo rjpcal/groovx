@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Apr  3 17:23:13 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -252,7 +252,7 @@ int Block::currentTrialType() const
 DOTRACE("Block::currentTrialType");
   if (isComplete()) return -1;
 
-  DebugEvalNL(itsImpl->currentTrial()->trialType());
+  dbgEvalNL(3, itsImpl->currentTrial()->trialType());
 
   return itsImpl->currentTrial()->trialType();
 }
@@ -261,10 +261,8 @@ int Block::prevResponse() const
 {
 DOTRACE("Block::prevResponse");
 
-#ifdef PICKY_DEBUG
-  DebugEval(itsImpl->itsCurTrialSeqIdx);
-  DebugEvalNL(itsImpl->itsTrialSequence.size());
-#endif
+  dbgEval(9, itsImpl->itsCurTrialSeqIdx);
+  dbgEvalNL(9, itsImpl->itsTrialSequence.size());
 
   if (itsImpl->itsCurTrialSeqIdx == 0 ||
       itsImpl->itsTrialSequence.size() == 0) return -1;
@@ -278,10 +276,8 @@ bool Block::isComplete() const
 {
 DOTRACE("Block::isComplete");
 
-#ifdef PICKY_DEBUG
-  DebugEval(itsImpl->itsCurTrialSeqIdx);
-  DebugEvalNL(itsImpl->itsTrialSequence.size());
-#endif
+  dbgEval(9, itsImpl->itsCurTrialSeqIdx);
+  dbgEvalNL(9, itsImpl->itsTrialSequence.size());
 
   // This is 'tricky'. The problem is that itsImpl->itsCurTrialSeqIdx may
   // temporarily be negative in between an abortTrial and the
@@ -359,8 +355,8 @@ void Block::processResponse(const Response& response)
 DOTRACE("Block::processResponse");
   if (isComplete()) return;
 
-  DebugEval(response.correctVal());
-  DebugEvalNL(response.val());
+  dbgEval(3, response.correctVal());
+  dbgEvalNL(3, response.val());
 
   if (!response.isCorrect())
     {
@@ -381,9 +377,9 @@ DOTRACE("Block::endTrial");
   // Prepare to start next trial.
   ++itsImpl->itsCurTrialSeqIdx;
 
-  DebugEval(numCompleted());
-  DebugEval(numTrials());
-  DebugEvalNL(isComplete());
+  dbgEval(3, numCompleted());
+  dbgEval(3, numTrials());
+  dbgEvalNL(3, isComplete());
 
   itsImpl->getExpt().edEndTrial();
 }
@@ -413,7 +409,7 @@ void Block::undoPrevTrial()
 {
 DOTRACE("Block::undoPrevTrial");
 
-  DebugEval(itsImpl->itsCurTrialSeqIdx);
+  dbgEval(3, itsImpl->itsCurTrialSeqIdx);
 
   // Check to make sure we've completed at least one trial
   if (itsImpl->itsCurTrialSeqIdx < 1) return;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 14 11:23:12 1999
-// written: Wed Jun 26 13:15:15 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -115,7 +115,7 @@ DOTRACE("IrixAudioSound::play");
   if (itsSamples.size() == 0) return;
 
   ALport audioPort = alOpenPort("Sound::play", "w", itsAudioConfig);
-  DebugEvalNL((void*) audioPort);
+  dbgEvalNL(3, (void*) audioPort);
   if (audioPort == 0)
     {
       throw Util::Error("error opening an audio port during Sound::play");
@@ -204,11 +204,11 @@ DOTRACE("IrixAudioSound::setFile");
 
   alSetParams(AL_DEFAULT_DEVICE, &pv, 1);
 
-  DebugEval(itsNumChannels);
-  DebugEval(itsFrameCount);
-  DebugEval(itsSampleWidth);
-  DebugEval(itsBytesPerSample);
-  DebugEval(itsSamplingRate);
+  dbgEval(3, itsNumChannels);
+  dbgEval(3, itsFrameCount);
+  dbgEval(3, itsSampleWidth);
+  dbgEval(3, itsBytesPerSample);
+  dbgEval(3, itsSamplingRate);
 
   // Allocate space for the sound samples
   itsSamples.resize(itsFrameCount*itsNumChannels*itsBytesPerSample);
@@ -216,7 +216,7 @@ DOTRACE("IrixAudioSound::setFile");
   int readResult = afReadFrames(audiofile, AF_DEFAULT_TRACK,
                                 static_cast<void*>(&itsSamples[0]),
                                 itsFrameCount);
-  DebugEvalNL(readResult);
+  dbgEvalNL(3, readResult);
 
   int closeResult = afCloseFile(audiofile);
 

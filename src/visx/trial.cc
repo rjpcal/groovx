@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Apr  3 17:29:48 2002
+// written: Thu Nov  7 18:55:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ namespace
       itsRh(rh),
       itsTh(th)
     {
-      Precondition(block != 0)
+      Precondition(block != 0);
     }
 
     Block* itsBlock;
@@ -287,8 +287,8 @@ DOTRACE("Trial::Impl::avgRespTime");
     {
       sum += ii->msec();
 
-      DebugEval(sum);
-      DebugEvalNL(sum/itsResponses.size());
+      dbgEval(3, sum);
+      dbgEvalNL(3, sum/itsResponses.size());
     }
   return (itsResponses.size() > 0) ? double(sum)/itsResponses.size() : 0.0;
 }
