@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Feb 19 15:03:08 2002
+// written: Tue Feb 19 15:18:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,8 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-namespace {
+namespace
+{
   inline void domemswap(double* buf1, double* buf2,
                         double* tempbuf1, size_t nelems)
   {
@@ -117,7 +118,7 @@ void Slice::print() const
 {
   for(MtxConstIter iter = begin(); iter.hasMore(); ++iter)
     {
-      std::cout << setw(12) << setprecision(7) << double(*iter);
+      std::cout << std::setw(12) << std::setprecision(7) << double(*iter);
     }
   std::cout << std::endl;
 }
@@ -235,6 +236,59 @@ Slice& Slice::operator=(const Mtx& other)
 //
 ///////////////////////////////////////////////////////////////////////
 
+void MtxImpl::init(double* data, int mrows, int ncols, StoragePolicy s)
+{
+  switch (s)
+    {
+    case BORROW:
+      datablock_ = DataBlock::makeBorrowed(data, mrows*ncols);
+      break;
+    case REFER:
+      datablock_ = DataBlock::makeReferred(data, mrows*ncols);
+      break;
+    case COPY:
+    default:
+      datablock_ = DataBlock::makeDataCopy(data, mrows*ncols);
+      break;
+    }
+
+  datablock_->incrRefCount();
+
+  mrows_ = mrows;
+  rowstride_ = mrows;
+  ncols_ = ncols;
+  offset_ = 0;
+}
+
+void MtxImpl::swap(MtxImpl& other)
+{
+  doswap(datablock_, other.datablock_);
+  doswap(mrows_, other.mrows_);
+  doswap(rowstride_, other.rowstride_);
+  doswap(ncols_, other.ncols_);
+  doswap(offset_, other.offset_);
+}
+
+MtxImpl::MtxImpl(const MtxImpl& other) :
+  datablock_(other.datablock_),
+  mrows_(other.mrows_),
+  rowstride_(other.rowstride_),
+  ncols_(other.ncols_),
+  offset_(other.offset_)
+{
+  datablock_->incrRefCount();
+}
+
+MtxImpl::MtxImpl(int mrows, int ncols) :
+  datablock_(DataBlock::makeBlank(mrows*ncols)),
+  mrows_(mrows),
+  rowstride_(mrows),
+  ncols_(ncols),
+  offset_(0)
+{
+  datablock_->incrRefCount();
+}
+
 #ifdef HAVE_MATLAB
 MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
 {
@@ -244,6 +298,8 @@ MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
   init(mxGetPr(a), mxGetM(a), mxGetN(a), s);
 }
 #endif
+
+MtxImpl::~MtxImpl() { datablock_->decrRefCount(); }
 
 void MtxImpl::reshape(int mr, int nc)
 {
@@ -343,7 +399,7 @@ void Mtx::print() const
   for(int i = 0; i < mrows(); ++i)
     {
       for(int j = 0; j < ncols(); ++j)
-        std::cout << setw(12) << setprecision(7) << at(i,j);
+        std::cout << std::setw(12) << std::setprecision(7) << at(i,j);
       std::cout << '\n';
     }
   std::cout << std::endl;
