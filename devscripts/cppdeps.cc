@@ -134,17 +134,17 @@ namespace
       {
         cerr << strerror(errno) << "\n";
         cerr << "stat failed " << fname << "\n";
-        exit(1);
+        return false;
       }
 
     return S_ISDIR(statbuf.st_mode);
   }
 
-  bool ignore_directory(const char* dirname)
+  bool should_ignore_file(const char* fname)
   {
-    return (dirname[0] == '.' ||
-            strcmp(dirname, "RCS") == 0 ||
-            strcmp(dirname, "CVS") == 0);
+    return (fname[0] == '.' ||
+            strcmp(fname, "RCS") == 0 ||
+            strcmp(fname, "CVS") == 0);
   }
 
   class mapped_file
@@ -542,99 +542,100 @@ cppdeps::get_nested_includes(const string& filename)
 
 void cppdeps::batch_build()
 {
-  vector<string> dirs;
+  vector<string> files;
 
-  dirs.push_back(m_srcdir);
+  files.push_back(m_srcdir);
 
   const unsigned int offset = m_srcdir.length() + 1;
 
-  while (!dirs.empty())
+  while (!files.empty())
     {
-      const string dirname = dirs.back();
-      dirs.pop_back();
+      const string current_file = files.back();
+      files.pop_back();
 
-      errno = 0;
-      DIR* d = opendir(dirname.c_str());
-      if (d == 0)
+      if (is_directory(current_file.c_str()))
         {
-          cerr << strerror(errno) << "\n";
-          cerr << "not a directory: " << dirname.c_str() << "\n";
-          exit(1);
-        }
+          errno = 0;
+          DIR* d = opendir(current_file.c_str());
+          if (d == 0)
+            {
+              cerr << strerror(errno) << "\n"
+                   << "ERROR: couldn't read directory: "
+                   << current_file.c_str() << "\n";
+              exit(1);
+            }
 
-      for (dirent* e = readdir(d); e != 0; e = readdir(d))
+          for (dirent* e = readdir(d); e != 0; e = readdir(d))
+            {
+              if (should_ignore_file(e->d_name))
+                continue;
+
+              string pathname = current_file;
+              pathname += '/';
+              pathname += e->d_name;
+              files.push_back(pathname);
+            }
+
+          closedir(d);
+        }
+      else
         {
-          if (ignore_directory(e->d_name))
-            continue;
-
-          string fullname = dirname;
-          fullname += '/';
-          fullname += e->d_name;
-
-          if (is_directory(fullname.c_str()))
+          switch (m_output_mode)
             {
-              dirs.push_back(fullname);
-            }
-          else
-            {
-              switch (m_output_mode)
-                {
-                case MAKEFILE_DEPS:
+            case MAKEFILE_DEPS:
+              {
+                const int ext_len = is_cc_filename(current_file.c_str());
+                if (ext_len > 0)
                   {
-                    const int ext_len = is_cc_filename(e->d_name);
-                    if (ext_len > 0)
+                    const include_list_t& includes = get_nested_includes(current_file);
+
+                    // Use C-style stdio here since it came out running quite
+                    // a bit faster than iostreams, at least under g++-3.2.
+                    printf("%s/%s.o: ",
+                           m_objdir.c_str(),
+                           current_file.substr(offset, current_file.length()-ext_len-offset).c_str());
+
+                    for (include_list_t::const_iterator
+                           itr = includes.begin(),
+                           stop = includes.end();
+                         itr != stop;
+                         ++itr)
                       {
-                        const include_list_t& includes = get_nested_includes(fullname);
-
-                        // Use C-style stdio here since it came out running quite
-                        // a bit faster than iostreams, at least under g++-3.2.
-                        printf("%s/%s.o: ",
-                               m_objdir.c_str(),
-                               fullname.substr(offset, fullname.length()-ext_len-offset).c_str());
-
-                        for (include_list_t::const_iterator
-                               itr = includes.begin(),
-                               stop = includes.end();
-                             itr != stop;
-                             ++itr)
-                          {
-                            printf(" %s", (*itr).c_str());
-                          }
-
-                        printf("\n");
+                        printf(" %s", (*itr).c_str());
                       }
+
+                    printf("\n");
                   }
-                  break;
-                case DIRECT_INCLUDE_TREE:
-                case NESTED_INCLUDE_TREE:
+              }
+              break;
+            case DIRECT_INCLUDE_TREE:
+            case NESTED_INCLUDE_TREE:
+              {
+                const int ext_len = is_cc_or_h_filename(current_file.c_str());
+                if (ext_len > 0)
                   {
-                    const int ext_len = is_cc_or_h_filename(e->d_name);
-                    if (ext_len > 0)
+                    const include_list_t& includes =
+                      m_output_mode == DIRECT_INCLUDE_TREE
+                      ? get_direct_includes(current_file)
+                      : get_nested_includes(current_file);
+
+                    printf("%s: ", current_file.c_str());
+
+                    for (include_list_t::const_iterator
+                           itr = includes.begin(),
+                           stop = includes.end();
+                         itr != stop;
+                         ++itr)
                       {
-                        const include_list_t& includes =
-                          m_output_mode == DIRECT_INCLUDE_TREE
-                          ? get_direct_includes(fullname)
-                          : get_nested_includes(fullname);
-
-                        printf("%s: ", fullname.c_str());
-
-                        for (include_list_t::const_iterator
-                               itr = includes.begin(),
-                               stop = includes.end();
-                             itr != stop;
-                             ++itr)
-                          {
-                            printf(" %s", (*itr).c_str());
-                          }
-
-                        printf("\n");
+                        printf(" %s", (*itr).c_str());
                       }
+
+                    printf("\n");
                   }
-                  break;
-                }
+              }
+              break;
             }
         }
-      closedir(d);
     }
 }
 
