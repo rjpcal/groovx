@@ -403,6 +403,10 @@ docs: $(DOC)/DoxyConfig
 H_TAGS: $(ALL_SRCS)
 	find $(SRC) -name \*.h | etags - -o $@
 
+# Generate tags file based only on implementation files
+CC_TAGS: $(ALL_SRCS)
+	find $(SRC) -name \*.cc | etags - -o $@
+
 # Show how many translation units (i.e., *.cc files) depend on each header file
 headerdeps: $(DEP)/cppdepends
 	rm -f .headerdeps.temp
