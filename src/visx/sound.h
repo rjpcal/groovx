@@ -42,7 +42,9 @@ namespace Util
   template <class T> class Ref;
 }
 
-/// SoundRep is an abstract class encapsulating platform-dependent sound APIs.
+/// SoundRep is provides a trivial platform-independent sound interface.
+/** Different concrete subclasses are defined elsewhere to encapsulate
+    different platform-dependent sound APIs. */
 class SoundRep
 {
 public:
@@ -51,39 +53,39 @@ public:
   virtual void play() = 0;
 
 protected:
-  /// Checks that the filename is non-empty and points to a readable file.
-  /** Throws an exception if any of the checks fail. */
+  /// Checks that the filename points to a readable file.
+  /** Throws an exception in case of any failure. */
   static void checkFilename(const char* filename);
 };
 
-/// Sound is a platform-independent interface to playable sound snippets.
+/// Sound is a generic interface to playable sound snippets.
 class Sound : public IO::IoObject
 {
 public:
-  /** Attempts to do any platform-dependent initialization that is
-      necessary to use Sound's, returning true on success, or false on
-      failure. */
+  /// Attempts to do any platform-dependent initialization
+  /** Returns true on success, or false on failure. */
   static bool initSound();
 
-  /** Returns true if the necessary initSound() has been previously called
-      with success, and returns false if initSound() has not been called,
-      or if initSound() failed. */
+  /// Check whether the sound system has been successfully initialized.
+  /** Returns true if the necessary initSound() has been previously
+      called with success, and returns false if initSound() has not
+      been called, or if initSound() failed. */
   static bool haveSound();
 
-  /** Shuts down sound capability in a platform-appropriate way. */
+  /// Shuts down sound capability in a platform-appropriate way.
   static void closeSound();
 
-  /** Returns a pointer to a new platform-appropriate Sound object. The
-      caller is responsible for destroying the Sound object. */
+  /// Returns a pointer to a new platform-appropriate Sound object.
+  /** The caller is responsible for destroying the Sound object. */
   static Sound* make();
 
-  /** Returns a pointer to a new platform-appropriate Sound object with the
-      named sound file pre-loaded. The caller is responsible for destroying
-      the Sound object. */
-  static Sound* makeFrom(const char* filename) { return new Sound(filename); }
-
-  /** Returns a pointer to a new platform-appropriate SoundRep object. The
+  /// Returns a pointer to a new platform-appropriate Sound object.
+  /** The new object will have the named sound file pre-loaded. The
       caller is responsible for destroying the Sound object. */
+  static Sound* makeFrom(const char* filename);
+
+  /// Returns a pointer to a new platform-appropriate SoundRep object.
+  /** The caller is responsible for destroying the Sound object. */
   static SoundRep* newPlatformSoundRep(const char* soundfile);
 
   static void setOkSound(Util::Ref<Sound> ok_sound);
@@ -101,7 +103,7 @@ public:
 
   /// Play the sound.
   /** This will load the sound file from disk if it has not yet been
-      loaded; forceLoad() can be called first to avoid this additional
+      loaded; forceLoad() can be called first to avoid this initial
       latency. */
   void play();
 
