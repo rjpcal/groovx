@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Mon Mar  6 17:02:05 2000
+// written: Wed Mar  8 17:11:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -365,6 +365,7 @@ DOTRACE("AsciiStreamReader::readString");
   return return_val;
 }
 
+// XXX this may leak!
 char* AsciiStreamReader::readCstring(const char* name) {
   return itsImpl.readStringType(name);
 }
