@@ -109,16 +109,11 @@ private:
   RefCounted(const RefCounted& other);
   RefCounted& operator=(const RefCounted& other);
 
-protected:
+public:
   /** Class-specific operator new; protected to ensure that clients
       use factory functions. */
   void* operator new(size_t bytes);
 
-#ifndef GCC_COMPILER
-protected:
-#else
-public:
-#endif
   /** Class-specific operator delete; private since deletion should
       only happen in RefCounted::decrRefCount. */
   void operator delete(void* space, size_t bytes);
