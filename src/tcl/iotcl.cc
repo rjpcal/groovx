@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Sun Aug  5 08:15:30 2001
+// written: Tue Aug  7 15:22:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,10 +23,6 @@
 #include "util/objdb.h"
 #include "util/objmgr.h"
 
-#ifdef FUNCTIONAL_OK
-#  include <algorithm>
-#  include <functional>
-#endif
 #include <fstream.h>
 
 #define NO_TRACE
@@ -34,60 +30,41 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace IoTcl
+namespace
 {
   const int ALL = -1; // indicates to read all objects until eof
-
-  template <class ReaderType, class Inserter>
-  void readBatch(STD_IO::istream& is, int num_to_read,
-                 Inserter result_inserter)
-    {
-      int num_read = 0;
-
-      is >> STD_IO::ws;
-
-      while ( (num_to_read == ALL || num_read < num_to_read)
-              && (is.peek() != EOF) ) {
-
-        // allow for whole-line comments between objects beginning with '#'
-        if (is.peek() == '#') {
-          is.ignore(10000000, '\n');
-          continue;
-        }
-
-        ReaderType reader(is);
-
-        Ref<IO::IoObject> obj(reader.readRoot(0));
-
-        *result_inserter = obj.id();
-        ++result_inserter;
-
-        ++num_read;
-
-        is >> STD_IO::ws;
-      }
-    }
-
-  template <class WriterType, class Iterator>
-  void writeBatch(WriterType& writer, Iterator obj_itr, Iterator end)
-    {
-      while (obj_itr != end)
-        {
-          Ref<IO::IoObject> item(*obj_itr);
-          writer.writeRoot(item.get());
-
-          ++obj_itr;
-        }
-    }
 
   Tcl::List loadObjects(const char* file, int num_to_read)
   {
     STD_IO::ifstream ifs(file);
     if (ifs.fail()) { throw Tcl::TclError("unable to open file"); }
 
+    int num_read = 0;
+
+    ifs >> STD_IO::ws;
+
     Tcl::List result;
 
-    readBatch<IO::LegacyReader>(ifs, num_to_read, result.appender());
+    while ( (num_to_read == ALL || num_read < num_to_read)
+            && (ifs.peek() != EOF) )
+      {
+        // allow for whole-line comments between objects beginning with '#'
+        if (ifs.peek() == '#')
+          {
+            ifs.ignore(10000000, '\n');
+            continue;
+          }
+
+        IO::LegacyReader reader(ifs);
+
+        Ref<IO::IoObject> obj(reader.readRoot(0));
+
+        result.append(obj.id());
+
+        ++num_read;
+
+        ifs >> STD_IO::ws;
+      }
 
     return result;
   }
@@ -109,21 +86,21 @@ namespace IoTcl
 
     IO::LegacyWriter writer(ofs, use_bases);
     writer.usePrettyPrint(false);
-    writeBatch(writer, objids.begin<Util::UID>(), objids.end<Util::UID>());
+
+    for (Tcl::List::Iterator<Ref<IO::IoObject> >
+           itr = objids.begin<Ref<IO::IoObject> >(),
+           end = objids.end<Ref<IO::IoObject> >();
+         itr != end;
+         ++itr)
+      {
+        writer.writeRoot((*itr).get());
+      }
   }
 
   void saveObjectsDefault(Tcl::List objids, const char* filename)
   {
     saveObjects(objids, filename, true);
   }
-}
-
-namespace Tcl
-{
-
-  //
-  // objNew
-  //
 
   Tcl::List objNew(const char* type, unsigned int array_size)
   {
@@ -143,10 +120,6 @@ namespace Tcl
     return objNew(type, 1);
   }
 
-  //
-  // objDelete
-  //
-
   void objDelete(Tcl::List item_ids)
   {
     Tcl::List::Iterator<Util::UID>
@@ -159,75 +132,69 @@ namespace Tcl
       }
   }
 
-class IoObjectPkg : public Pkg
+  void dbClear() { ObjDb::theDb().clear(); }
+  void dbPurge() { ObjDb::theDb().purge(); }
+  void dbRelease(Util::UID id) { ObjDb::theDb().release(id); }
+}
+
+namespace IoTcl
 {
-public:
-  IoObjectPkg(Tcl_Interp* interp) :
-    Pkg(interp, "IO", "$Revision$")
-  {
-    Pkg::defIoCommands();
+  class ObjDbPkg : public Tcl::Pkg {
 
-    Tcl::defGenericObjCmds<IO::IoObject>(this);
+  public:
+    ObjDbPkg(Tcl_Interp* interp) :
+      Tcl::Pkg(interp, "ObjDb", "$Revision$")
+    {
+      def( "clear", 0, &dbClear );
+      def( "purge", 0, &dbPurge );
+      def( "release", 0, &dbRelease );
+      def( "loadObjects", "filename num_to_read=-1", &loadObjects );
+      def( "loadObjects", "filename", &loadAllObjects );
+      def( "saveObjects", "objids filename use_bases=yes", &saveObjects );
+      def( "saveObjects", "objids filename", &saveObjectsDefault );
+    }
 
-    defGetter("type", &IO::IoObject::ioTypename);
-  }
-};
-
-class ObjectPkg : public Pkg
-{
-public:
-  ObjectPkg(Tcl_Interp* interp) :
-    Pkg(interp, "Obj", "$Revision$")
-  {
-    Tcl::defGenericObjCmds<Util::Object>(this);
-
-    defGetter("refCount", &Util::Object::refCount);
-    defAction("incrRefCount", &Util::Object::incrRefCount);
-    defAction("decrRefCount", &Util::Object::decrRefCount);
-
-    def( "new", "typename array_size=1", &Tcl::objNew );
-    def( "new", "typename", &Tcl::objNewOne );
-    def( "delete", "item_id(s)", &Tcl::objDelete );
-
-    Pkg::eval("proc new {args} { eval Obj::new $args }");
-    Pkg::eval("proc delete {args} { eval Obj::delete $args }");
-  }
-};
-
-class ObjDbPkg : public Pkg {
-  static void clear() { ObjDb::theDb().clear(); }
-  static void purge() { ObjDb::theDb().purge(); }
-  static void release(Util::UID id) { ObjDb::theDb().release(id); }
-
-public:
-  ObjDbPkg(Tcl_Interp* interp) :
-    Pkg(interp, "ObjDb", "$Revision$")
-  {
-    def( "clear", 0, &ObjDbPkg::clear );
-    def( "purge", 0, &ObjDbPkg::purge );
-    def( "release", 0, &ObjDbPkg::release );
-    def( "loadObjects", "filename num_to_read=-1", &IoTcl::loadObjects );
-    def( "loadObjects", "filename", &IoTcl::loadAllObjects );
-    def( "saveObjects", "objids filename use_bases=yes", &IoTcl::saveObjects );
-    def( "saveObjects", "objids filename", &IoTcl::saveObjectsDefault );
-  }
-
-  virtual ~ObjDbPkg()
+    virtual ~ObjDbPkg()
     {
       ObjDb::theDb().clearOnExit();
     }
-};
-
-} // end namespace Tcl
+  };
+}
 
 extern "C"
 int Io_Init(Tcl_Interp* interp)
 {
 DOTRACE("Io_Init");
 
-  Tcl::Pkg* pkg1 = new Tcl::ObjDbPkg(interp);
-  Tcl::Pkg* pkg2 = new Tcl::ObjectPkg(interp);
-  Tcl::Pkg* pkg3 = new Tcl::IoObjectPkg(interp);
+  Tcl::Pkg* pkg1 = new IoTcl::ObjDbPkg(interp);
+
+  //
+  // Obj Package
+  //
+
+  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "Obj", "$Revision$");
+  Tcl::defGenericObjCmds<Util::Object>(pkg2);
+
+  pkg2->defGetter("refCount", &Util::Object::refCount);
+  pkg2->defAction("incrRefCount", &Util::Object::incrRefCount);
+  pkg2->defAction("decrRefCount", &Util::Object::decrRefCount);
+
+  pkg2->def( "new", "typename array_size=1", &objNew );
+  pkg2->def( "new", "typename", &objNewOne );
+  pkg2->def( "delete", "item_id(s)", &objDelete );
+
+  pkg2->eval("proc new {args} { eval Obj::new $args }");
+  pkg2->eval("proc delete {args} { eval Obj::delete $args }");
+
+  //
+  // IO package
+  //
+
+  Tcl::Pkg* pkg3 = new Tcl::Pkg(interp, "IO", "$Revision$");
+
+  Tcl::defGenericObjCmds<IO::IoObject>(pkg3);
+  pkg3->defIoCommands();
+  pkg3->defGetter("type", &IO::IoObject::ioTypename);
 
   return Tcl::Pkg::initStatus(pkg1, pkg2, pkg3);
 }
