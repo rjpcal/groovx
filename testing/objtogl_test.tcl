@@ -26,8 +26,8 @@ test "ObjTogl-Togl::undraw" "too many args" {
 } {wrong \# args: should be}
 test "ObjTogl-Togl::undraw" "normal use" {
 	 set f [Obj::new Face]
-	 glIndexi 1
-	 glClearIndex 0
+	 glIndexi 1; glColor 1.0 1.0 1.0 1.0
+	 glClearIndex 0; glClearColor 0.0 0.0 0.0 1.0
 	 clearscreen
 	 Togl::see $f
 	 Togl::undraw
@@ -41,7 +41,7 @@ test "ObjTogl-Togl::clearscreen" "too many args" {
     Togl::clearscreen junk
 } {wrong \# args: should be}
 test "ObjTogl-Togl::clearscreen" "normal use" {
-	 glClearIndex 0
+	 glClearIndex 0; glClearColor 0.0 0.0 0.0 1.0
 	 Togl::clearscreen
 	 set p [pixelCheckSum]
 	 return "[expr $p == 0] $p"
