@@ -209,6 +209,7 @@ ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(PROJECT_LIBS))
 all:
 	make dir_structure
 	make TAGS
+	make install_scripts
 ifneq "$(strip $(ALL_SHLIBS))" ""
 	make $(ALL_SHLIBS)
 endif
@@ -221,6 +222,9 @@ GRSH_STATIC_OBJS := $(subst .cc,.$(OBJEXT),\
 
 $(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
 	time $(CXX) -o $@ $(GRSH_STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
+
+install_scripts:
+	cp share/scripts/*.tcl $(exec_prefix)/bin
 
 check:
 	$(EXECUTABLE) ./testing/grshtest.tcl
