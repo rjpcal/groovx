@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998 (as objtogl.cc)
-// written: Thu Dec  5 13:58:32 2002
+// written: Sat Dec 21 11:45:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -160,11 +160,7 @@ public:
   {
     if (TogletTcl::theWidget.isValid())
       {
-        try
-          {
-            TogletTcl::theWidget->setVisibility(false);
-          }
-        catch (...) { /* nothing */ }
+        TogletTcl::theWidget->setVisibility(false);
       }
   }
 };

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Dec 18 08:42:16 2002
+// written: Sat Dec 21 11:49:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -196,7 +196,7 @@ namespace
   int cInvokeCallback(ClientData clientData,
                       Tcl_Interp*, /* use Tcl::Command's own Tcl::Interp */
                       int s_objc,
-                      Tcl_Obj *const objv[])
+                      Tcl_Obj *const objv[]) throw()
   {
     Tcl::Command* cmd = static_cast<Tcl::Command*>(clientData);
 
@@ -253,22 +253,14 @@ DOTRACE("Tcl::Command::~Command");
 
   rep->overloads->remove(this);
 
-  try
+  CmdTable::iterator pos = commandTable().find(rep->cmdName);
+
+  Assert( pos != commandTable().end() );
+
+  if ((*pos).second == this)
     {
+      commandTable().erase(pos);
       rep->interp.deleteCommand(rep->cmdName.c_str());
-
-      CmdTable::iterator pos = commandTable().find(rep->cmdName);
-
-      if ((*pos).second == this)
-        commandTable().erase(pos);
-    }
-  catch (Util::Error& err)
-    {
-      dbgEvalNL(3, err.msg_cstr());
-    }
-  catch (...)
-    {
-      dbgPrintNL(3, "an unknown error occurred");
     }
 
   delete rep;
@@ -302,7 +294,7 @@ bool Tcl::Command::rejectsObjc(unsigned int objc) const
   return !allowsObjc(objc);
 }
 
-int Tcl::Command::rawInvoke(int s_objc, Tcl_Obj* const objv[])
+int Tcl::Command::rawInvoke(int s_objc, Tcl_Obj* const objv[]) throw()
 {
 DOTRACE("Tcl::Command::rawInvoke");
 

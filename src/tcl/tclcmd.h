@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Dec 18 08:40:32 2002
+// written: Sat Dec 21 11:49:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,7 +95,7 @@ public:
   virtual void invoke(Context& ctx) = 0;
 
   /// Raw invocation.
-  int rawInvoke(int objc, Tcl_Obj* const objv[]);
+  int rawInvoke(int objc, Tcl_Obj* const objv[]) throw();
 
   /// Get the current Tcl::Dispatcher for this command.
   shared_ptr<Dispatcher> getDispatcher() const;

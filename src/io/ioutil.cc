@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Tue Jul  9 16:27:07 2002
+// written: Sat Dec 21 11:33:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,7 @@
 #include "util/strings.h"
 
 #include <iostream>
+#include <sstream>
 #include <strstream.h>
 
 #include "util/trace.h"
@@ -51,35 +52,21 @@ namespace
   template <class Writer>
   fstring stringWrite(Util::Ref<IO::IoObject> obj)
   {
-    ostrstream ost;
+    std::ostringstream ost;
 
     try
       {
         streamWrite<Writer>(obj, ost);
-        ost << '\0';
       }
     catch (Util::Error& err)
       {
-        err.msg().append(" with buffer contents ==\n");
-
-        ost << '\0';
-        err.msg().append(ost.str());
-
-        ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
+        err.msg().append(" with buffer contents ==\n",
+                         ost.str().c_str());
 
         throw;
       }
-    catch (...)
-      {
-        ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
-        throw;
-      }
 
-    fstring result(ost.str());
-
-    ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
-
-    return result;
+    return fstring(ost.str().c_str());
   }
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 23 17:42:51 2002
-// written: Tue Nov 26 19:10:01 2002
+// written: Sat Dec 21 11:28:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,6 +62,7 @@ DOTRACE("GxScene::render");
     {
       // Here, something failed during rendering, so just go invisible
       setVisibility(false);
+      throw;
     }
 }
 
