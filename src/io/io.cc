@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Tue Oct 24 16:56:20 2000
+// written: Thu Oct 26 16:28:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,6 +63,16 @@ private:
 // IO member definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+void* IO::IoObject::operator new(size_t bytes) {
+DOTRACE("IO::IoObject::operator new");
+  return ::operator new(bytes);
+}
+
+void IO::IoObject::operator delete(void* space, size_t bytes) {
+DOTRACE("IO::IoObject::operator delete");
+  ::operator delete(space);
+}
 
 IO::IoObject::IoObject() : itsId(++idCounter) {
 DOTRACE("IO::IoObject::IoObject");
