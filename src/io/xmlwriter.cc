@@ -200,7 +200,7 @@ DOTRACE("XMLWriter::writeObject");
       if (alreadyWritten(obj))
         {
           indent();
-          itsBuf << "<" << obj->objTypename()
+          itsBuf << "<objref type=\"" << obj->objTypename() << "\""
                  << " id=\"" << obj->id() << "\""
                  << " name=\"" << name << "\"/>\n";
         }
@@ -212,7 +212,7 @@ DOTRACE("XMLWriter::writeObject");
   else
     {
       indent();
-      itsBuf << "<NULL id=\"0\" name=\"" << name << "\"";
+      itsBuf << "<objref type=\"NULL\" id=\"0\" name=\"" << name << "\"";
     }
 }
 
@@ -253,7 +253,7 @@ void XMLWriter::flattenObject(SoftRef<const IO::IoObject> obj,
 DOTRACE("XMLWriter::flattenObject");
 
   indent();
-  itsBuf << "<" << obj->objTypename()
+  itsBuf << "<object type=\"" << obj->objTypename() << "\""
          << " id=\"" << obj->id() << "\""
          << " name=\"" << name << "\""
          << " version=\"" << obj->serialVersionId() << "\""
@@ -266,7 +266,7 @@ DOTRACE("XMLWriter::flattenObject");
   markObjectAsWritten(obj);
 
   indent();
-  itsBuf << "</" << obj->objTypename() << ">\n";
+  itsBuf << "</object>\n";
 }
 
 void XMLWriter::writeEscaped(const char* p)
