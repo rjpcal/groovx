@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Mon May 22 12:16:26 2000
+// written: Wed May 31 13:06:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,6 +84,12 @@ private:
 public:
   void deleteAll(vector<TrialEvent*>& events);
 
+  void serializeVec(ostream& os, IO::IOFlag flag,
+						  const vector<TrialEvent*>& vec);
+
+  void deserializeVec(istream& is, IO::IOFlag flag,
+							 vector<TrialEvent*>& vec);
+
   // Delegand functions
   void thHaltExpt();
   void thAbortTrial();
@@ -128,32 +134,14 @@ void TimingHdlr::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("TimingHdlr::serialize");
   if (flag & IO::BASES) { /* no bases to serialize */ }
 
-  char sep = ' ';
-  if (flag & IO::TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
   
-  os << itsImpl->itsDummyAutosavePeriod << sep;
+  os << itsImpl->itsDummyAutosavePeriod << IO::SEP;
 
-  size_t i;
-
-  os << itsImpl->itsImmediateEvents.size() << sep;
-  for (i = 0; i < itsImpl->itsImmediateEvents.size(); ++i) {
-	 itsImpl->itsImmediateEvents[i]->serialize(os, flag);
-  }
-
-  os << itsImpl->itsStartEvents.size() << sep;
-  for (i = 0; i < itsImpl->itsStartEvents.size(); ++i) {
-	 itsImpl->itsStartEvents[i]->serialize(os, flag);
-  }
-
-  os << itsImpl->itsResponseEvents.size() << sep;
-  for (i = 0; i < itsImpl->itsResponseEvents.size(); ++i) {
-	 itsImpl->itsResponseEvents[i]->serialize(os, flag);
-  }
-
-  os << itsImpl->itsAbortEvents.size() << sep;
-  for (i = 0; i < itsImpl->itsAbortEvents.size(); ++i) {
-	 itsImpl->itsAbortEvents[i]->serialize(os, flag);
-  }
+  itsImpl->serializeVec(os, flag, itsImpl->itsImmediateEvents);
+  itsImpl->serializeVec(os, flag, itsImpl->itsStartEvents);
+  itsImpl->serializeVec(os, flag, itsImpl->itsResponseEvents);
+  itsImpl->serializeVec(os, flag, itsImpl->itsAbortEvents);
 
   if (os.fail()) throw IO::OutputError(ioTag);
 }
@@ -166,53 +154,10 @@ DOTRACE("TimingHdlr::deserialize");
   is >> itsImpl->itsDummyAutosavePeriod;
   DebugEvalNL(itsImpl->itsDummyAutosavePeriod);
 
-  int size, i;
-
-  const int SIZE_SANITY_CHECK = 1000;
-
-  itsImpl->deleteAll(itsImpl->itsImmediateEvents);
-  is >> size;
-  DebugEvalNL(size);
-  if (size < 0 || size > SIZE_SANITY_CHECK) throw IO::LogicError(ioTag);
-  itsImpl->itsImmediateEvents.resize(size);
-  for (i = 0; i < size; ++i) {
-	 TrialEvent* e = dynamic_cast<TrialEvent*>(IO::IoMgr::newIO(is, flag));
-	 if (!e) throw IO::InputError(ioTag);
-	 itsImpl->itsImmediateEvents[i] = e;
-  }
-
-  itsImpl->deleteAll(itsImpl->itsStartEvents);
-  is >> size;
-  DebugEvalNL(size);
-  if (size < 0 || size > SIZE_SANITY_CHECK) throw IO::LogicError(ioTag);
-  itsImpl->itsStartEvents.resize(size);
-  for (i = 0; i < size; ++i) {
-	 TrialEvent* e = dynamic_cast<TrialEvent*>(IO::IoMgr::newIO(is, flag));
-	 if (!e) throw IO::InputError(ioTag);
-	 itsImpl->itsStartEvents[i] = e;
-  }
-
-  itsImpl->deleteAll(itsImpl->itsResponseEvents);
-  is >> size;
-  DebugEvalNL(size);
-  if (size < 0 || size > SIZE_SANITY_CHECK) throw IO::LogicError(ioTag);
-  itsImpl->itsResponseEvents.resize(size);
-  for (i = 0; i < size; ++i) {
-	 TrialEvent* e = dynamic_cast<TrialEvent*>(IO::IoMgr::newIO(is, flag));
-	 if (!e) throw IO::InputError(ioTag);
-	 itsImpl->itsResponseEvents[i] = e;
-  }
-
-  itsImpl->deleteAll(itsImpl->itsAbortEvents);
-  is >> size;
-  DebugEvalNL(size);
-  if (size < 0 || size > SIZE_SANITY_CHECK) throw IO::LogicError(ioTag);
-  itsImpl->itsAbortEvents.resize(size);
-  for (i = 0; i < size; ++i) {
-	 TrialEvent* e = dynamic_cast<TrialEvent*>(IO::IoMgr::newIO(is, flag));
-	 if (!e) throw IO::InputError(ioTag);
-	 itsImpl->itsAbortEvents[i] = e;
-  }
+  itsImpl->deserializeVec(is, flag, itsImpl->itsImmediateEvents);
+  itsImpl->deserializeVec(is, flag, itsImpl->itsStartEvents);
+  itsImpl->deserializeVec(is, flag, itsImpl->itsResponseEvents);
+  itsImpl->deserializeVec(is, flag, itsImpl->itsAbortEvents);
 
   if (is.fail()) throw IO::InputError(ioTag);
 }
@@ -349,6 +294,33 @@ DOTRACE("TimingHdlr::addEventByName");
 //
 ///////////////////////////////////////////////////////////////////////
 
+
+void TimingHdlr::Impl::serializeVec(ostream& os, IO::IOFlag flag,
+												const vector<TrialEvent*>& vec) {
+  os << vec.size() << IO::SEP;
+  for (size_t i = 0; i < vec.size(); ++i) {
+	 vec[i]->serialize(os, flag);
+  }
+}
+
+void TimingHdlr::Impl::deserializeVec(istream& is, IO::IOFlag flag,
+												  vector<TrialEvent*>& vec) {
+  deleteAll(vec);
+
+  size_t size; is >> size; DebugEvalNL(size);
+
+  const int SIZE_SANITY_CHECK = 1000;
+
+  if (size > SIZE_SANITY_CHECK) throw IO::LogicError(ioTag);
+
+  vec.resize(size);
+
+  for (size_t i = 0; i < size; ++i) {
+	 TrialEvent* e = dynamic_cast<TrialEvent*>(IO::IoMgr::newIO(is, flag));
+	 if (!e) throw IO::InputError(ioTag);
+	 vec[i] = e;
+  }
+}
 
 void TimingHdlr::Impl::scheduleAll(vector<TrialEvent*>& events) {
 DOTRACE("TimingHdlr::Impl::scheduleAll");
