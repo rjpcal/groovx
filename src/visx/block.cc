@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed May 17 13:52:42 2000
+// written: Wed May 17 13:54:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,8 +97,8 @@ public:
 	 itsCurTrialSeqIdx(0),
 	 itsVerbose(false),
 	 itsCurrentTrialId(-1),
-	 itsExperiment(0),
-	 itsHasBegun(false)
+	 itsHasBegun(false),
+	 itsExperiment(0)
 	 {}
 
   vector<int> itsTrialSequence; // Ordered sequence of indexes into the Tlist
@@ -115,7 +115,7 @@ public:
   void updateCurrentTrial()
 	 {
 		if ( itsCurTrialSeqIdx < 0 || 
-			  itsCurTrialSeqIdx >= itsTrialSequence.size() )
+			  (unsigned int) itsCurTrialSeqIdx >= itsTrialSequence.size() )
 		  itsCurrentTrialId = -1;
 		else
 		  itsCurrentTrialId = itsTrialSequence.at(itsCurTrialSeqIdx);
