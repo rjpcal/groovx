@@ -166,7 +166,7 @@ $(DEP)/pkgdepends: $(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
 
 include $(DEP)/pkgdepends
 
-
+ifeq ($(enable_matlab),yes)
 $(exec_prefix)/lib/visx/mtx.so: \
 	/usr/local/matlab/extern/lib/glnx86/libmx.so \
 	/usr/local/matlab/extern/lib/glnx86/libmatlb.so
@@ -178,7 +178,7 @@ $(exec_prefix)/lib/visx/matlabengine.so: \
 	/usr/local/matlab/extern/lib/glnx86/libmat.so \
 	/usr/local/matlab/extern/lib/glnx86/libmi.so \
 	/usr/local/matlab/extern/lib/glnx86/libmatlb.so
-
+endif
 
 # dependencies of main project shlib's on object files
 
