@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Wed Mar 14 16:38:17 2001
+// written: Wed Mar 28 09:35:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,15 @@
 #include "libmatlb.h"
 
 #include "trace.h"
+
+void Slice::print() const
+{
+  for(MtxConstIter iter = begin(); iter.hasMore(); ++iter)
+    {
+		mexPrintf("%7.4f   ", double(*iter));
+    }
+  mexPrintf("\n");
+}
 
 Slice& Slice::operator=(const Slice& other)
 {
