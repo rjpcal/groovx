@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 18 16:21:09 1999
-// written: Thu May 10 12:04:39 2001
+// written: Wed Jun  6 09:28:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,6 +69,13 @@ public:
       halted suddenly. \c ResponseHandler subclasses implement this
       function to quit listening for responses, etc. */
   virtual void rhHaltExpt() const = 0;
+
+  /// Subclasses implement this function to attend to responses.
+  virtual void rhAllowResponses(GWT::Widget& widget,
+										  TrialBase& trial) const = 0;
+
+  /// Subclasses implement this function to stop attending to responses.
+  virtual void rhDenyResponses() const = 0;
 
 private:
   ResponseHandler(const ResponseHandler&);

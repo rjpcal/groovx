@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:30:54 1999
-// written: Thu May 10 12:04:41 2001
+// written: Wed Jun  6 09:29:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -156,6 +156,8 @@ public:
   virtual void rhAbortTrial() const;
   virtual void rhEndTrial() const;
   virtual void rhHaltExpt() const;
+  virtual void rhAllowResponses(GWT::Widget& widget, TrialBase& trial) const;
+  virtual void rhDenyResponses() const;
 
 private:
   EventResponseHdlr(const EventResponseHdlr&);
