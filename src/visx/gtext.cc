@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Fri Jun  1 14:18:12 2001
+// written: Wed Jun  6 20:25:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -752,11 +752,6 @@ DOTRACE("Gtext::grHasBoundingBox");
 
 void Gtext::grRender(GWT::Canvas&, DrawMode) const {
 DOTRACE("Gtext::grRender");
-//   unsigned int fontListBase = ObjTogl::theToglConfig()->getFontListBase();
-//   if (itsListBase != fontListBase) { 
-// 	 itsListBase = fontListBase;
-// 	 sendStateChangeMsg();
-//   }
   glPushAttrib(GL_LIST_BIT|GL_LINE_BIT);
     glListBase( itsListBase );
 	 glLineWidth(itsStrokeWidth);
