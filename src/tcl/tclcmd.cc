@@ -174,17 +174,6 @@ DOTRACE("Tcl::TclCmd::arg");
   return TclValue(itsObjv[argn]);
 }
 
-unsigned int Tcl::TclCmd::safeListLength(Tcl_Obj* obj) {
-DOTRACE("Tcl::TclCmd::safeListLength");
-  int length;
-  if ( Tcl_ListObjLength(0, obj, &length) != TCL_OK)
-    {
-      throw TclError("couldn't get length of Tcl list");
-    }
-  Postcondition(length >= 0);
-  return (unsigned int) length;
-}
-
 void Tcl::TclCmd::returnVoid() {
 DOTRACE("Tcl::TclCmd::returnVoid");
   Tcl_ResetResult(itsInterp);
