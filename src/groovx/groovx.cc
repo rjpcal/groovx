@@ -141,81 +141,82 @@ struct PackageInfo
   const char* pkgName;
   Tcl_PackageInitProc *pkgInitProc;
   const char* pkgVersion;
+  bool skipIfNoWindow;
 };
 
 PackageInfo IMMEDIATE_PKGS[] =
   {
-    { "Tcl",      Tcl_Init,  ""       },
-    { "Tk",       Tk_Init,   ""       },
+    { "Tcl",      Tcl_Init,  "", false },
+    { "Tk",       Tk_Init,   "", true },
   };
 
 PackageInfo DELAYED_PKGS[] =
   {
-    { "Block",               Block_Init,               "4.0" },
-    { "Canvas",              Canvas_Init,              "4.0" },
-    { "Cloneface",           Cloneface_Init,           "4.0" },
-    { "Dlist",               Dlist_Init,               "4.0" },
-    { "Element",             Element_Init,             "4.0" },
-    { "Elementcontainer",    Elementcontainer_Init,    "4.0" },
-    { "Eventresponsehdlr",   Eventresponsehdlr_Init,   "4.0" },
-    { "Exptdriver",          Exptdriver_Init,          "4.0" },
-    { "Face",                Face_Init,                "4.0" },
-    { "Filewriteevent",      Filewriteevent_Init,      "4.0" },
-    { "Fish",                Fish_Init,                "4.0" },
-    { "Fixpt",               Fixpt_Init,               "4.0" },
-    { "Gabor",               Gabor_Init,               "4.0" },
-    { "Gaborarray",          Gaborarray_Init,          "4.0" },
-    { "Genericevent",        Genericevent_Init,        "4.0" },
-    { "Gl",                  Gl_Init,                  "4.0" },
-    { "Glcanvas",            Glcanvas_Init,            "4.0" },
-    { "Gtrace",              Gtrace_Init,              "4.0" },
-    { "Gx",                  Gx_Init,                  "4.0" },
-    { "Gxcolor",             Gxcolor_Init,             "4.0" },
-    { "Gxcylinder",          Gxcylinder_Init,          "4.0" },
-    { "Gxdisk",              Gxdisk_Init,              "4.0" },
-    { "Gxdrawstyle",         Gxdrawstyle_Init,         "4.0" },
-    { "Gxemptynode",         Gxemptynode_Init,         "4.0" },
-    { "Gxfixedscalecamera",  Gxfixedscalecamera_Init,  "4.0" },
-    { "Gxlighting",          Gxlighting_Init,          "4.0" },
-    { "Gxline",              Gxline_Init,              "4.0" },
-    { "Gxmaterial",          Gxmaterial_Init,          "4.0" },
-    { "Gxnode",              Gxnode_Init,              "4.0" },
-    { "Gxperspectivecamera", Gxperspectivecamera_Init, "4.0" },
-    { "Gxpixmap",            Gxpixmap_Init,            "4.0" },
-    { "Gxpointset",          Gxpointset_Init,          "4.0" },
-    { "Gxpsyphycamera",      Gxpsyphycamera_Init,      "4.0" },
-    { "Gxscaler",            Gxscaler_Init,            "4.0" },
-    { "Gxseparator",         Gxseparator_Init,         "4.0" },
-    { "Gxshapekit",          Gxshapekit_Init,          "4.0" },
-    { "Gxsphere",            Gxsphere_Init,            "4.0" },
-    { "Gxtext",              Gxtext_Init,              "4.0" },
-    { "Gxtransform",         Gxtransform_Init,         "4.0" },
-    { "Hook",                Hook_Init,                "4.0" },
-    { "House",               House_Init,               "4.0" },
-    { "Io",                  Io_Init,                  "4.0" },
-    { "Jitter",              Jitter_Init,              "4.0" },
-    { "Log",                 Log_Init,                 "4.0" },
-    { "Kbdresponsehdlr",     Kbdresponsehdlr_Init,     "4.0" },
-    { "Maskhatch",           Maskhatch_Init,           "4.0" },
-    { "Misc",                Misc_Init,                "4.0" },
-    { "Morphyface",          Morphyface_Init,          "4.0" },
-    { "Multievent",          Multievent_Init,          "4.0" },
-    { "Nullresponsehdlr",    Nullresponsehdlr_Init,    "4.0" },
-    { "Nulltrialevent",      Nulltrialevent_Init,      "4.0" },
-    { "Obj",                 Obj_Init,                 "4.0" },
-    { "Objdb",               Objdb_Init,               "4.0" },
-    { "Outputfile",          Outputfile_Init,          "4.0" },
-    { "Prof",                Prof_Init,                "4.0" },
-    { "Responsehandler",     Responsehandler_Init,     "4.0" },
-    { "Serialrh",            Serialrh_Init,            "4.0" },
-    { "Sound",               Sound_Init,               "4.0" },
-    { "Timinghandler",       Timinghandler_Init,       "4.0" },
-    { "Timinghdlr",          Timinghdlr_Init,          "4.0" },
-    { "Tkwidget",            Tkwidget_Init,            "4.0" },
-    { "Tlist",               Tlist_Init,               "4.0" },
-    { "Toglet",              Toglet_Init,              "4.0" },
-    { "Trial",               Trial_Init,               "4.0" },
-    { "Trialevent",          Trialevent_Init,          "4.0" },
+    { "Block",               Block_Init,               "4.0", false },
+    { "Canvas",              Canvas_Init,              "4.0", false },
+    { "Cloneface",           Cloneface_Init,           "4.0", false },
+    { "Dlist",               Dlist_Init,               "4.0", false },
+    { "Element",             Element_Init,             "4.0", false },
+    { "Elementcontainer",    Elementcontainer_Init,    "4.0", false },
+    { "Eventresponsehdlr",   Eventresponsehdlr_Init,   "4.0", false },
+    { "Exptdriver",          Exptdriver_Init,          "4.0", false },
+    { "Face",                Face_Init,                "4.0", false },
+    { "Filewriteevent",      Filewriteevent_Init,      "4.0", false },
+    { "Fish",                Fish_Init,                "4.0", false },
+    { "Fixpt",               Fixpt_Init,               "4.0", false },
+    { "Gabor",               Gabor_Init,               "4.0", false },
+    { "Gaborarray",          Gaborarray_Init,          "4.0", false },
+    { "Genericevent",        Genericevent_Init,        "4.0", false },
+    { "Gl",                  Gl_Init,                  "4.0", false },
+    { "Glcanvas",            Glcanvas_Init,            "4.0", false },
+    { "Gtrace",              Gtrace_Init,              "4.0", false },
+    { "Gx",                  Gx_Init,                  "4.0", false },
+    { "Gxcolor",             Gxcolor_Init,             "4.0", false },
+    { "Gxcylinder",          Gxcylinder_Init,          "4.0", false },
+    { "Gxdisk",              Gxdisk_Init,              "4.0", false },
+    { "Gxdrawstyle",         Gxdrawstyle_Init,         "4.0", false },
+    { "Gxemptynode",         Gxemptynode_Init,         "4.0", false },
+    { "Gxfixedscalecamera",  Gxfixedscalecamera_Init,  "4.0", false },
+    { "Gxlighting",          Gxlighting_Init,          "4.0", false },
+    { "Gxline",              Gxline_Init,              "4.0", false },
+    { "Gxmaterial",          Gxmaterial_Init,          "4.0", false },
+    { "Gxnode",              Gxnode_Init,              "4.0", false },
+    { "Gxperspectivecamera", Gxperspectivecamera_Init, "4.0", false },
+    { "Gxpixmap",            Gxpixmap_Init,            "4.0", false },
+    { "Gxpointset",          Gxpointset_Init,          "4.0", false },
+    { "Gxpsyphycamera",      Gxpsyphycamera_Init,      "4.0", false },
+    { "Gxscaler",            Gxscaler_Init,            "4.0", false },
+    { "Gxseparator",         Gxseparator_Init,         "4.0", false },
+    { "Gxshapekit",          Gxshapekit_Init,          "4.0", false },
+    { "Gxsphere",            Gxsphere_Init,            "4.0", false },
+    { "Gxtext",              Gxtext_Init,              "4.0", false },
+    { "Gxtransform",         Gxtransform_Init,         "4.0", false },
+    { "Hook",                Hook_Init,                "4.0", false },
+    { "House",               House_Init,               "4.0", false },
+    { "Io",                  Io_Init,                  "4.0", false },
+    { "Jitter",              Jitter_Init,              "4.0", false },
+    { "Log",                 Log_Init,                 "4.0", false },
+    { "Kbdresponsehdlr",     Kbdresponsehdlr_Init,     "4.0", false },
+    { "Maskhatch",           Maskhatch_Init,           "4.0", false },
+    { "Misc",                Misc_Init,                "4.0", false },
+    { "Morphyface",          Morphyface_Init,          "4.0", false },
+    { "Multievent",          Multievent_Init,          "4.0", false },
+    { "Nullresponsehdlr",    Nullresponsehdlr_Init,    "4.0", false },
+    { "Nulltrialevent",      Nulltrialevent_Init,      "4.0", false },
+    { "Obj",                 Obj_Init,                 "4.0", false },
+    { "Objdb",               Objdb_Init,               "4.0", false },
+    { "Outputfile",          Outputfile_Init,          "4.0", false },
+    { "Prof",                Prof_Init,                "4.0", false },
+    { "Responsehandler",     Responsehandler_Init,     "4.0", false },
+    { "Serialrh",            Serialrh_Init,            "4.0", false },
+    { "Sound",               Sound_Init,               "4.0", false },
+    { "Timinghandler",       Timinghandler_Init,       "4.0", false },
+    { "Timinghdlr",          Timinghdlr_Init,          "4.0", false },
+    { "Tkwidget",            Tkwidget_Init,            "4.0", false },
+    { "Tlist",               Tlist_Init,               "4.0", false },
+    { "Toglet",              Toglet_Init,              "4.0", true },
+    { "Trial",               Trial_Init,               "4.0", false },
+    { "Trialevent",          Trialevent_Init,          "4.0", false },
   };
 
   void sigHandler(int signum)
@@ -258,6 +259,7 @@ DOTRACE("main");
   signal(SIGBUS, &sigHandler);
 
   bool minimal = false;
+  bool nowindow = false;
 
   try
     {
@@ -285,6 +287,10 @@ DOTRACE("main");
             {
               minimal = true;
             }
+          else if (strcmp(argv[i], "-nw") == 0)
+            {
+              nowindow = true;
+            }
         }
 
       Tcl::Main app(argc, argv);
@@ -307,6 +313,9 @@ DOTRACE("main");
 
       for (size_t i = 0; i < sizeof(IMMEDIATE_PKGS)/sizeof(PackageInfo); ++i)
         {
+          if (nowindow && IMMEDIATE_PKGS[i].skipIfNoWindow)
+            continue;
+
           int result = IMMEDIATE_PKGS[i].pkgInitProc(interp.intp());
           if (result != TCL_OK)
             {
@@ -361,6 +370,9 @@ DOTRACE("main");
         {
           for (size_t i = 0; i < sizeof(DELAYED_PKGS)/sizeof(PackageInfo); ++i)
             {
+              if (nowindow && DELAYED_PKGS[i].skipIfNoWindow)
+                continue;
+
               const char* ver =
                 Tcl_PkgRequire(interp.intp(),
                                DELAYED_PKGS[i].pkgName,

@@ -79,10 +79,15 @@ namespace
   }
 }
 
+#include <tcl.h>
+
 extern "C"
 int Toglet_Init(Tcl_Interp* interp)
 {
 DOTRACE("Toglet_Init");
+
+  if (Tcl_PkgRequire(interp, "Tk", 0, 0) == 0)
+    return 1;
 
   PKG_CREATE(interp, "Toglet", "4.$Revision$");
 

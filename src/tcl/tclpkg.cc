@@ -490,12 +490,17 @@ DOTRACE("Tcl::Pkg::verboseInit");
   VERBOSE_INIT = verbose;
 }
 
-void Tcl::Pkg::finishInit() const
+int Tcl::Pkg::finishInit() const
 {
 DOTRACE("Tcl::Pkg::finishInit");
 
-  if (VERBOSE_INIT)
-    std::cerr << pkgName() << " initialized.\n";
+  if (rep->initStatus == TCL_OK)
+    {
+      if (VERBOSE_INIT)
+        std::cerr << pkgName() << " initialized.\n";
+    }
+
+  return rep->initStatus;
 }
 
 const char* const Tcl::Pkg::actionUsage = "objref(s)";

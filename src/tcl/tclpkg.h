@@ -276,7 +276,10 @@ public:
   static void verboseInit(bool verbose) throw();
 
   /// Called just prior to returning from the *_Init function.
-  void finishInit() const;
+  /** If the package's status is OK, then this does the relevant
+      Tcl_PkgProvide and returns TCL_OK. Otherwise, it returns
+      TCL_ERROR. */
+  int finishInit() const;
 
 private:
   Pkg(const Pkg&); // not implemented
@@ -322,14 +325,12 @@ try                                                                 \
 
 /// This macro should go at the end of each *_Init() function.
 #define PKG_RETURN                              \
-  pkg->finishInit();                            \
-  return pkg->initStatus();                     \
 }                                               \
 catch(...)                                      \
 {                                               \
   pkg->handleLiveException(SRC_POS);            \
 }                                               \
-return 1;
+return pkg->finishInit();
 
 
 static const char vcid_tclpkg_h[] = "$Id$ $URL$";
