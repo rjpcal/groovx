@@ -28,9 +28,12 @@
 template <class V> class Point;
 template <class V> class Rect;
 
-namespace GWT {
+namespace GWT
+{
   class Canvas;
 }
+
+class GrObjImpl;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -386,9 +389,8 @@ private:
   GrObj(const GrObj&);
   GrObj& operator=(const GrObj&);
 
-  class Impl;
-  friend class Impl;
-  Impl* const itsImpl;    // opaque pointer to implementation
+  friend class GrObjImpl;
+  GrObjImpl* const itsImpl;    // opaque pointer to implementation
 };
 
 static const char vcid_grobj_h[] = "$Header$";
