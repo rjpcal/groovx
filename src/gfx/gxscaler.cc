@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 13:04:32 2002
-// written: Wed Nov 13 13:13:25 2002
+// written: Wed Nov 13 13:24:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,15 +28,6 @@ GxScaler::GxScaler(Util::SoftRef<GxNode> child) :
   itsWidthFactor(1.0),
   itsHeightFactor(1.0)
 {}
-
-void GxScaler::doScaling(Gfx::Canvas& canvas) const
-{
-DOTRACE("GxScaler::doScaling");
-  if (NATIVE_SCALING == itsMode) return;
-
-  Gfx::Vec3<double> vec(itsWidthFactor, itsHeightFactor, 1.0);
-  canvas.scale(vec);
-}
 
 void GxScaler::setMode(Mode new_mode)
 {
@@ -137,11 +128,16 @@ double GxScaler::scaledMaxDim(Gfx::Canvas& canvas)
 
 void GxScaler::draw(Gfx::Canvas& canvas) const
 {
-  Gfx::MatrixSaver state(canvas);
-
-  doScaling(canvas);
-
-  child()->draw(canvas);
+  if (NATIVE_SCALING == itsMode)
+    {
+      child()->draw(canvas);
+    }
+  else
+    {
+      Gfx::MatrixSaver state(canvas);
+      canvas.scale(Gfx::Vec3<double>(itsWidthFactor, itsHeightFactor, 1.0));
+      child()->draw(canvas);
+    }
 }
 
 void GxScaler::getBoundingCube(Gfx::Box<double>& cube,
