@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Mar  9 10:18:32 2000
+// written: Thu Mar  9 11:36:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,8 +91,8 @@ public:
   PbmUpdater(const char* filename,
 				  bool contrast = false, bool vertical = false) :
 	 itsFilename(filename),
-	 itsFlipContrast(false),
-	 itsFlipVertical(false)
+	 itsFlipContrast(contrast),
+	 itsFlipVertical(vertical)
 	 {}
 
   virtual void update(BmapData& update_me)
