@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Mar 29 14:07:32 2000
+// written: Wed May 17 13:45:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -374,7 +374,7 @@ public:
 	 /// Pre-increment.
 	 ResultAppender& operator++() { return *this; }
 	 /// Post-increment.
-	 ResultAppender& operator++(int) { return *this; }
+	 ResultAppender operator++(int) { return *this; }
 
   private:
 	 TclCmd* itsCmd;
