@@ -424,3 +424,164 @@ break into a command-line on trace-in and trace-out. Then this
 command-line can either reset the mode to RUN, or continue
 stepping. We could easily allow step-in or step-over as well, by
 putting a limit on the stack depth for which tracing is allowed.
+
+========================================================================
+| GOAL #3  --  done 9-Oct-2000
+| 
+| Implement reference counting so that smart pointers can be used within
+| C++ instead of integer id's.
+| 
+| 1-done) Add a SharedPtr to PtrList that starts the provides reference
+|    counting skeleton.
+| 
+| 2-done) Add a MasterVoidPtr to VoidPtrList, and turn over the control of
+|    object destruction to it.
+| 
+| 3-done) Add a VoidPtrHandle.
+| 
+| 4-done) VoidPtrHandle should become ref-counting.
+| 
+| 5-done) MasterVoidPtr should become abstract, and we should use MasterIoPtr
+|    as a concret subclass instead. Then we can dynamic_cast to/from
+|    IO*'s, rather than static_cast'ing to/from void*. MasterVoidPtr
+|    should not need the ptr() function anymore. 
+| 
+| 6-done) MasterVoidPtr can be renamed MasterPtrBase.
+| 
+| 7-done) We can remove destroyPtr() from the PtrList specification, since
+|    the destruction of raw pointers can now be handled in the MasterPtr
+|    hierarchy. 
+| 
+| 8-done) Make MasterIoPtr abstract and derive a template MasterPtr<T>
+|    from it
+| 
+| 9-done) Move the ref-counting implementation into MasterPtrBase. Then
+|    we can have different handle classes that are allowed to manage the
+|    ref-counted objects. VoidPtrList can use VoidPtrHandle's, but
+|    PtrList might use PtrHandle<T>.
+| 
+| 10-done) Add ItemWithId<T> that is basically a pair<int,SharedPtr>.
+| 
+| 11-done) Add isShared() to MasterPtrBase.
+| 
+| 12-done) Add the policy that VoidPtrList::remove() is not allowed unless the
+|    object at that id is currently unshared. This should apply to
+|    clear() as well.
+| 
+| 13-done) VoidPtrList can be renamed PtrListBase (!).
+| 
+| (very early) figure way for ObjList and PosList to notify Trials or
+| Tlist when GrObj or Position is deleted. Then Trial should remove that
+| (objid, posid) pair from its list. Possibility: have GrObj and
+| Position implement a Notifier interface, where clients subscribe to
+| the object, then the object has a notify() procedure that sends a
+| message to each of its clients. Contents of message might be "I've
+| changed" or "I'm destructed". Or... have ObjList control the
+| notification since Trials only know about objids and posids. PtrList
+| could maintain an array of info that is parallel to the stored
+| pointers. This array could contain sets of clients for each id. Have
+| to think carefully about how this structure could be maintained
+| through serialization.
+| 
+| Or... do pseudo-smart pointer stuff within PtrList. Whenever some
+| client is going to hold on to an id within the PtrList, it must "check
+| out" the id. This would increment a reference count within the
+| PtrList. Ptr's with a non-zero ref count are not allowed to be
+| delete'd or overwritten. This is I guess just a simpler version of
+| maintaining a list of clients--it doesn't allow for any messages to be
+| sent back to the clients.
+| 
+| On third thought, this is a deep design issue. The question is, who
+| owns the GrObj's and Position's? Who can delete them?
+| 
+| (19-Oct-1999) I'm suddenly turned off by PtrList's: 1) I just fixed a
+| bug in insertAt that is equivalent to the 'check for assignment to
+| self' in assignment operators, and 2) even worse, I just realized that
+| it would be disastrous if the same pointer were stored at two
+| locations in a PtrList... double deletion would result. This suggests
+| to me that we need a more flexible and robust memory-management
+| scheme, probably using reference-counted smart pointers. This will
+| also eliminate a lot of "dangling id" problems that necessitated
+| getCheckedPtr(id). But what sort of Tcl interface should the
+| ref-counted smart-pointers have?
+| 
+| (24-Jan-2000) OK, forget the traditional ref-counted
+| pointers. Instead, we'll put the reference counting right into the
+| list. This will avoid the problems with maintaining the VoidPtrList <-
+| IoPtrList <- PtrList hierarchy. VoidPtrList will be able to hold the
+| ref counts, and maintain the ref counting logic; it will just have to
+| forward object destruction to a derived class via a virtual function,
+| as it does now.
+| 
+| Clients will use a ListItem, containing an integer id and a pointer to
+| a PtrList. The ListItem's constructors and destructor will manage the
+| ref counts via calls to PtrList member functions. ListItem will offer
+| an operator-> so it can be used as a smart pointer.
+| 
+| In order to hide PtrList from clients, we can define the necessary
+| functions out of line.
+| 
+| At the expense of some size, we can cache a C* inside ListItem so that
+| we don't have to call a PtrList member function every time ListItem is
+| used. Basically, PtrList would keep a counter that is incremented
+| every time the list is modified. ListItems would maintain a const* to
+| this count, and would also store the value of the counter from the
+| last time their C* was cached. Then checking that the cache is current
+| just involves dereferencing the const* counter and comparing it to the
+| stored counter value.
+| 
+| Problem: how to handle derived classes with a ListItem?
+| 
+| (10-May-2000) In lieu of true reference counting with PtrList's, we
+| could allow locks that clients could take that would temporarily
+| prevent objects from being deleted.
+| 
+| (5-Oct-2000) What do I want out of an improved memory management
+| system?
+| 
+|   *) be able to associate C++ objects with unique integers, and
+|    retrieve the object from somewhere given the integer
+|   *) ensure that the object is not destroyed until all references to
+|    it and to its integer identifier are gone
+|   *) provide some way for Tcl to control which objects are referenced
+|    from Tcl and which are unreferenced... this probably requires a new
+|    Tcl_Obj type
+|   *) allow some of the conveniences of the current PtrList system,
+|    like being able to retrieve a list of all valid objects of a given
+|    type
+| 
+| Is the current system fatally flawed with respect to these goals? The
+| hardest part is controlling references from Tcl.
+| 
+| One solution would just be to have the Tcl objects be typed, rather
+| than just plain integers. The internal rep would be something that
+| refers to the PtrList with an integer id, and disallows conversions to
+| other Tcl_Obj types. However, then we wouldn't be able to do integer
+| math with the id's, although we could view the id's as strings. This
+| system requires a dependency on the Tcl ref-counting system.
+| 
+| Another solution would be to require explicit control of a Tcl
+| reference count from the Tcl side, with functions like
+| PtrList::incrRef and PtrList::decrRef. This might require us to have
+| two ref counts, one for the C++ side and one for the Tcl side, in
+| order to keep things safe and sensible.
+| 
+| ... I think the first option is more sound, although it is a bit less
+| convenient in the sense that it will require some changes to existing
+| scripts. If I had itcl up and running, I could build an equally safe
+| solution out of itcl code using the second implementation.
+| 
+| ... I tried a bit at implementing the first option, playing around
+| with a new Tcl_ObjType. It seems like I don't have a good way to
+| control exactly when objects are ref'd, unref'd, and when they switch
+| types. So, I think I'm going to try for option two for now, by added
+| two reference counts to the PtrList's, one for C++ and one for
+| Tcl. Tcl scripts will have to manually control the reference counts
+| for now.
+| 
+| ... Need to focus on getting more behavior into the smart pointers,
+| and less in the PtrList. The PtrList has two functions: one is to
+| control how id's are doled out, and the other is to maintain knowledge
+| of all existing pointers of a certain type.
+| 
++-------------------------------------------------------------------------
