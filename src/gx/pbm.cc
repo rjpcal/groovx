@@ -3,7 +3,7 @@
 // pbm.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:07 1999
-// written: Fri Mar 10 00:46:07 2000
+// written: Thu Mar 23 12:31:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,15 +14,29 @@
 #include "pbm.h"
 
 #include "bmapdata.h"
+
 #include "util/arrays.h"
+#include "util/filename.h"
+#include "util/pipe.h"
 
 #include <fstream.h>
 #include <cctype>
 
-#define NO_TRACE
+#define LOCAL_TRACE
 #include "util/trace.h"
+#define LOCAL_DEBUG
 #define LOCAL_ASSERT
 #include "util/debug.h"
+
+///////////////////////////////////////////////////////////////////////
+//
+// File scope stuff
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace {
+  const string_literal GZ_EXT(".gz");
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -51,8 +65,8 @@ DOTRACE("PbmError::PbmError");
 class Pbm::Impl {
 public:
   Impl() :
-	 itsMode(1), itsImageWidth(1), itsImageHeight(1), itsMaxGrey(255),
-	 itsBitsPerPixel(1), itsNumBytes(1), itsBytes(1)
+	 itsMode(0), itsImageWidth(0), itsImageHeight(0), itsMaxGrey(1),
+	 itsBitsPerPixel(1), itsNumBytes(0), itsBytes(1)
 	 {}
 
   void setBytes(const dynamic_block<unsigned char>& bytes,
@@ -98,21 +112,9 @@ void Pbm::Impl::setBytes(const dynamic_block<unsigned char>& bytes,
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Pbm::init() {
-DOTRACE("Pbm::init");
-  itsImpl->itsMode = 0;
-  itsImpl->itsImageWidth = 0;
-  itsImpl->itsImageHeight = 0;
-  itsImpl->itsMaxGrey = 1;
-  itsImpl->itsBitsPerPixel = 1;
-  itsImpl->itsNumBytes = 0;
-  itsImpl->itsBytes.resize(1);
-}
-
 Pbm::Pbm(const BmapData& data) :
   itsImpl( new Impl )
 {
-  init();
   setBytes(data);
 }
 
@@ -120,22 +122,40 @@ Pbm::Pbm(istream& is) :
   itsImpl( new Impl )
 {
 DOTRACE("Pbm::Pbm(istream&)");
-  init();
   readStream(is);
 }
 
-Pbm::Pbm(const char* filename) :
+Pbm::Pbm(const char* filename_cstr) :
   itsImpl( new Impl )
 {
 DOTRACE("Pbm::Pbm(const char*)");
-  init();
 
-  ifstream ifs(filename, ios::in|ios::binary);
-  if (ifs.fail()) {
-	 PbmError err("couldn't open file: "); err.appendMsg(filename);
-	 throw err;
-  }
-  readStream(ifs);
+  Filename filename(filename_cstr); 
+
+  if (filename.last_extension() == GZ_EXT)
+	 {
+		dynamic_string cmd("gunzip -c ");
+		cmd += filename;
+
+		Util::Pipe pipe(cmd.c_str(), "r");
+
+		if (pipe.isClosed()) {
+		  PbmError err("couldn't execute command: ");
+		  err.appendMsg("'", cmd.c_str(), "'");
+		  throw err;
+		}
+
+		readStream(pipe.stream());
+	 }
+  else
+	 {
+		ifstream ifs(filename.c_str(), ios::in|ios::binary);
+		if (ifs.fail()) {
+		  PbmError err("couldn't open file: "); err.appendMsg(filename.c_str());
+		  throw err;
+		}
+		readStream(ifs);
+	 }
 }
 
 Pbm::~Pbm() {
@@ -152,15 +172,36 @@ DOTRACE("Pbm::setBytes");
 void Pbm::swapInto(BmapData& data) {
 DOTRACE("Pbm::swapInto");
   int dummy_alignment = 1; 
-
+  
   data.swap(itsImpl->itsBytes, itsImpl->itsImageWidth, itsImpl->itsImageHeight,
 				itsImpl->itsBitsPerPixel, dummy_alignment);
 }
 
-void Pbm::write(const char* filename) const {
+void Pbm::write(const char* filename_cstr) const {
 DOTRACE("Pbm::write");
-  ofstream ofs(filename);
-  write(ofs);
+
+  Filename filename(filename_cstr);
+
+  if (filename.last_extension() == GZ_EXT)
+	 {
+		dynamic_string cmd("gzip - > ");
+		cmd += filename;
+
+		Util::Pipe pipe(cmd.c_str(), "w");
+
+		if (pipe.isClosed()) {
+		  PbmError err("couldn't execute command: ");
+		  err.appendMsg("'", cmd.c_str(), "'");
+		  throw err;
+		}
+
+		write(pipe.stream());
+	 }
+  else
+	 {
+		ofstream ofs(filename.c_str());
+		write(ofs);
+	 }
 }
 
 void Pbm::write(ostream& os) const {
