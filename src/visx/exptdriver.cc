@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Fri May 12 17:04:42 2000
+// written: Wed May 17 13:55:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -212,6 +212,10 @@ private:
 
   class EDErrorHandler : public Util::ErrorHandler
   {
+  private:
+	 EDErrorHandler(const EDErrorHandler&);
+	 EDErrorHandler& operator=(const EDErrorHandler&);
+
   public:
 	 EDErrorHandler(ExptDriver::Impl* edi) : itsEDI(edi) {}
 
