@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Tue Aug 21 19:08:31 2001
+// written: Thu Aug 23 15:02:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,22 +49,28 @@ void operator delete(void* space)
 }
 #endif
 
-#include "itertcl.h"
-
-#include "util/slink_list.h"
+#include "tcl/tcltimer.h"
+#include <iostream>
 
 namespace HookTcl
 {
-  slink_list<int> vec;
+  Tcl::Timer aTimer(1000);
 
-  Util::FwdIter<int> hook()
+  class H : public Util::Object
   {
-    vec.clear();
+  public:
+    H() { aTimer.setRepeating(true); aTimer.sigTimeOut.connect(this, &H::doit); }
 
-    for (int i = 0; i < 20; ++i)
-      vec.push_front(i);
+    static H* make() { return new H; }
 
-    return Util::FwdIter<int>(vec.begin(), vec.end());
+    void doit() { std::cout << "H::doit!" << std::endl; }
+  };
+
+  Util::Ref<H> anH(H::make());
+
+  void hook()
+  {
+    aTimer.schedule();
   }
 
   size_t memUsage() { return TOTAL; }
