@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Aug  5 14:04:09 2002
+// written: Mon Aug  5 17:17:37 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -28,6 +28,7 @@
 
 #include "togl/glutil.h"
 #include "togl/glxopts.h"
+#include "togl/glxoverlay.h"
 #include "togl/glxwrapper.h"
 #include "togl/tkutil.h"
 #include "togl/x11util.h"
@@ -67,6 +68,13 @@ namespace
   const char*  DEFAULT_IDENT     = "";
   const char*  DEFAULT_FONTNAME  = "fixed";
   const char*  DEFAULT_TIME      = "1";
+
+  Togl_Callback* DefaultCreateProc = NULL;
+  Togl_Callback* DefaultDisplayProc = NULL;
+  Togl_Callback* DefaultReshapeProc = NULL;
+  Togl_Callback* DefaultDestroyProc = NULL;
+  Togl_Callback* DefaultTimerProc = NULL;
+  ClientData DefaultClientData = NULL;
 
   inline int TCL_ERR(Tcl_Interp* interp, const char* msg)
     {
@@ -111,6 +119,32 @@ private:
   Impl& operator=(const Impl&);
 
 public:
+  Togl* itsOwner;
+
+  shared_ptr<GlxWrapper> itsGlx; /* Normal planes GLX context */
+  Display* itsDisplay;          /* X's token for the window's display. */
+  Tk_Window itsTkWin;           /* Tk window structure */
+  Tcl_Interp* itsInterp;        /* Tcl interpreter */
+  Tcl_Command itsWidgetCmd;     /* Token for togl's widget command */
+
+  Tcl_TimerToken itsTimerHandler; /* Token for togl's timer handler */
+
+  ToglOpts itsOpts;
+
+  int itsBitsPerPixel;
+
+  ClientData itsClientData;     /* Pointer to user data */
+
+  bool itsUpdatePending;        /* Should normal planes be redrawn? */
+
+  Togl_Callback* itsDisplayProc; /* Callback when widget is rendered */
+  Togl_Callback* itsReshapeProc; /* Callback when window size changes */
+  Togl_Callback* itsDestroyProc; /* Callback when widget is destroyed */
+  Togl_Callback* itsTimerProc;  /* Callback when widget is idle */
+
+  GlxOverlay* itsOverlay;           /* Overlay stuff */
+
+
   Impl(Togl* owner, Tcl_Interp* interp, const char* pathname);
   ~Impl();
 
@@ -124,7 +158,6 @@ public:
   static void dummyWidgetCmdDeletedProc(ClientData clientData);
   static void dummyTimerCallback(ClientData clientData);
   static void dummyRenderCallback(ClientData clientData);
-  static void dummyOverlayRenderCallback(ClientData clientData);
 
   void setDisplayFunc(Togl_Callback* proc) { itsDisplayProc = proc; }
   void setReshapeFunc(Togl_Callback* proc) { itsReshapeProc = proc; }
@@ -185,12 +218,13 @@ public:
                 float red, float green, float blue) const;
 
   void useLayer(int layer);
-  void showOverlay();
-  void hideOverlay();
-  void requestOverlayRedisplay();
   int existsOverlay() const { return itsOpts.overlayFlag; }
-  int getOverlayTransparentValue() const { return itsOverlayTransparentPixel; }
-  int isMappedOverlay() const { return (itsOpts.overlayFlag && itsOverlayIsMapped); }
+  int getOverlayTransparentValue() const
+  { return itsOverlay ? itsOverlay->transparentPixel() : -1; }
+
+  bool isMappedOverlay() const
+  { return (itsOverlay && itsOverlay->isMapped()); }
+
   unsigned long allocColorOverlay(float red, float green, float blue) const;
   void freeColorOverlay(unsigned long pixel) const;
 
@@ -211,43 +245,7 @@ private:
   void widgetCmdDeletedProc();
   int makeWindowExist();
   bool checkForGLX();
-  void setupOverlayIfNeeded();
-  int setupOverlay();
-
-public:
-
-  Togl* itsOwner;
-
-  shared_ptr<GlxWrapper> itsGlx; /* Normal planes GLX context */
-  Display* itsDisplay;          /* X's token for the window's display. */
-  Tk_Window itsTkWin;           /* Tk window structure */
-  Tcl_Interp* itsInterp;        /* Tcl interpreter */
-  Tcl_Command itsWidgetCmd;     /* Token for togl's widget command */
-
-  Tcl_TimerToken itsTimerHandler; /* Token for togl's timer handler */
-
-  ToglOpts itsOpts;
-
-  int itsBitsPerPixel;
-
-  ClientData itsClientData;     /* Pointer to user data */
-
-  bool itsUpdatePending;        /* Should normal planes be redrawn? */
-
-  Togl_Callback* itsDisplayProc; /* Callback when widget is rendered */
-  Togl_Callback* itsReshapeProc; /* Callback when window size changes */
-  Togl_Callback* itsDestroyProc; /* Callback when widget is destroyed */
-  Togl_Callback* itsTimerProc;  /* Callback when widget is idle */
-
-  /* Overlay stuff */
-  // FIXME move overlay stuff into a separate struct
-  shared_ptr<GlxWrapper> itsOverlayGlx; /* Overlay planes OpenGL context */
-  Window itsOverlayWindow;      /* The overlay window, or 0 */
-  Togl_Callback* itsOverlayDisplayProc; /* Overlay redraw proc */
-  bool itsOverlayUpdatePending; /* Should overlay be redrawn? */
-  Colormap itsOverlayCmap;      /* colormap for overlay is created */
-  int itsOverlayTransparentPixel; /* transparent pixel */
-  int itsOverlayIsMapped;
+  void setupOverlay(); // throws a Util::Error on failure
 };
 
 
@@ -358,14 +356,6 @@ namespace
 }
 
 
-static Togl_Callback *DefaultCreateProc = NULL;
-static Togl_Callback *DefaultDisplayProc = NULL;
-static Togl_Callback *DefaultReshapeProc = NULL;
-static Togl_Callback *DefaultDestroyProc = NULL;
-static Togl_Callback *DefaultOverlayDisplayProc = NULL;
-static Togl_Callback *DefaultTimerProc = NULL;
-static ClientData DefaultClientData = NULL;
-
 
 
 void Togl_CreateFunc( Togl_Callback *proc )
@@ -394,7 +384,6 @@ DOTRACE("<togl.cc>::Togl_ResetDefaultCallbacks");
   DefaultDisplayProc = NULL;
   DefaultReshapeProc = NULL;
   DefaultDestroyProc = NULL;
-  DefaultOverlayDisplayProc = NULL;
   DefaultTimerProc = NULL;
   DefaultClientData = NULL;
 }
@@ -563,23 +552,24 @@ void Togl::unloadBitmapFont( GLuint fontbase ) const
   { GLUtil::unloadBitmapFont(fontbase); }
 
 
-void Togl::overlayDisplayFunc( Togl_Callback *proc )
+void Togl::overlayDisplayFunc( Togl_OverlayCallback *proc )
 {
 DOTRACE("Togl::OverlayDisplayFunc");
-  DefaultOverlayDisplayProc = proc;
+  if (rep->itsOverlay)
+    rep->itsOverlay->setDisplayProc(proc, static_cast<void*>(this));
 }
 
 void Togl::useLayer( int layer )
   { rep->useLayer(layer); }
 
 void Togl::showOverlay()
-  { rep->showOverlay(); }
+  { if (rep->itsOverlay) rep->itsOverlay->show(); }
 
 void Togl::hideOverlay()
-  { rep->hideOverlay(); }
+  { if (rep->itsOverlay) rep->itsOverlay->hide(); }
 
 void Togl::requestOverlayRedisplay()
-  { rep->requestOverlayRedisplay(); }
+  { if (rep->itsOverlay) rep->itsOverlay->requestRedisplay(); }
 
 int Togl::existsOverlay() const
   { return rep->existsOverlay(); }
@@ -587,7 +577,7 @@ int Togl::existsOverlay() const
 int Togl::getOverlayTransparentValue() const
   { return rep->getOverlayTransparentValue(); }
 
-int Togl::isMappedOverlay() const
+bool Togl::isMappedOverlay() const
   { return rep->isMappedOverlay(); }
 
 unsigned long Togl::allocColorOverlay( float red, float green,
@@ -683,13 +673,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp, const char* pathname) :
   itsReshapeProc(DefaultReshapeProc),
   itsDestroyProc(DefaultDestroyProc),
   itsTimerProc(DefaultTimerProc),
-  itsOverlayGlx(0),
-  itsOverlayWindow(0),
-  itsOverlayDisplayProc(DefaultOverlayDisplayProc),
-  itsOverlayUpdatePending(false),
-  itsOverlayCmap(),
-  itsOverlayTransparentPixel(),
-  itsOverlayIsMapped(0)
+  itsOverlay(0)
 {
 DOTRACE("Togl::Impl::Impl");
 
@@ -770,6 +754,8 @@ DOTRACE("Togl::Impl::~Impl");
     {
       itsDestroyProc(itsOwner);
     }
+
+  delete itsOverlay;
 }
 
 //---------------------------------------------------------------------
@@ -879,20 +865,6 @@ DOTRACE("Togl::Impl::dummyRenderCallback");
   impl->itsUpdatePending = false;
 }
 
-void Togl::Impl::dummyOverlayRenderCallback(ClientData clientData)
-{
-DOTRACE("Togl::Impl::dummyOverlayRenderCallback");
-  Impl* impl = static_cast<Impl*>(clientData);
-
-  if (impl->itsOpts.overlayFlag && impl->itsOverlayDisplayProc)
-    {
-      impl->itsOverlayGlx->makeCurrent(impl->itsOverlayWindow);
-      impl->itsOverlayDisplayProc(impl->itsOwner);
-    }
-  impl->itsOverlayUpdatePending = false;
-}
-
-
 void Togl::Impl::requestReconfigure()
 {
 DOTRACE("Togl::Impl::requestReconfigure");
@@ -902,11 +874,9 @@ DOTRACE("Togl::Impl::requestReconfigure");
       itsOpts.height = Tk_Height(itsTkWin);
       XResizeWindow(itsDisplay, windowId(), itsOpts.width, itsOpts.height);
 
-      if (itsOpts.overlayFlag)
-      {
-        XResizeWindow( itsDisplay, itsOverlayWindow, itsOpts.width, itsOpts.height );
-        XRaiseWindow( itsDisplay, itsOverlayWindow );
-      }
+      if (itsOverlay)
+        itsOverlay->reconfigure(itsOpts.width, itsOpts.height);
+
       makeCurrent();
     }
 
@@ -976,11 +946,11 @@ DOTRACE("Togl::Impl::setColor");
 void Togl::Impl::useLayer(int layer)
 {
 DOTRACE("Togl::Impl::useLayer");
-  if (itsOverlayWindow)
+  if (itsOverlay)
     {
       if (layer==TOGL_OVERLAY)
         {
-          itsOverlayGlx->makeCurrent(itsOverlayWindow);
+          itsOverlay->makeCurrent();
         }
       else if (layer==TOGL_NORMAL)
         {
@@ -993,67 +963,22 @@ DOTRACE("Togl::Impl::useLayer");
     }
 }
 
-void Togl::Impl::showOverlay()
-{
-DOTRACE("Togl::Impl::showOverlay");
-  if (itsOverlayWindow)
-    {
-      XMapWindow( itsDisplay, itsOverlayWindow );
-      XInstallColormap(itsDisplay, itsOverlayCmap);
-      itsOverlayIsMapped = 1;
-    }
-}
-
-void Togl::Impl::hideOverlay()
-{
-DOTRACE("Togl::Impl::hideOverlay");
-  if (itsOverlayWindow && itsOverlayIsMapped)
-    {
-      XUnmapWindow( itsDisplay, itsOverlayWindow );
-      itsOverlayIsMapped = 0;
-    }
-}
-
-void Togl::Impl::requestOverlayRedisplay()
-{
-DOTRACE("Togl::Impl::requestOverlayRedisplay");
-  if (!itsOverlayUpdatePending && itsOverlayWindow && itsOverlayDisplayProc)
-    {
-      Tk_DoWhenIdle( Togl::Impl::dummyOverlayRenderCallback,
-                     static_cast<ClientData>(this) );
-      itsOverlayUpdatePending = true;
-    }
-}
-
 unsigned long Togl::Impl::allocColorOverlay(float red, float green,
                                             float blue) const
 {
 DOTRACE("Togl::Impl::allocColorOverlay");
-  if (itsOpts.overlayFlag && itsOverlayCmap)
-    {
-      XColor xcol;
-      xcol.red   = (short) (red* 65535.0);
-      xcol.green = (short) (green* 65535.0);
-      xcol.blue  = (short) (blue* 65535.0);
 
-      if ( !XAllocColor(itsDisplay,itsOverlayCmap,&xcol) )
-        return (unsigned long) -1;
-      return xcol.pixel;
-    }
-  else
-    {
-      return (unsigned long) -1;
-    }
+  return itsOverlay
+    ? itsOverlay->allocColor(red, green, blue)
+    : (unsigned long) -1;
 }
 
 void Togl::Impl::freeColorOverlay(unsigned long pixel) const
 {
 DOTRACE("Togl::Impl::freeColorOverlay");
 
-  if (itsOpts.overlayFlag && itsOverlayCmap)
-    {
-      XFreeColors( itsDisplay, itsOverlayCmap, &pixel, 1, 0 );
-    }
+  if (itsOverlay)
+    itsOverlay->freeColor(pixel);
 }
 
 int Togl::Impl::dumpToEpsFile(const char* filename, int inColor,
@@ -1082,10 +1007,10 @@ DOTRACE("Togl::Impl::eventProc");
             {
               requestRedisplay();
             }
-          if (itsOpts.overlayFlag && itsOverlayIsMapped
-              && eventPtr->xexpose.window==itsOverlayWindow)
+          if (itsOverlay
+              && eventPtr->xexpose.window==itsOverlay->windowId())
             {
-              requestOverlayRedisplay();
+              itsOverlay->requestRedisplay();
             }
         }
       break;
@@ -1129,15 +1054,10 @@ DOTRACE("Togl::Impl::eventProc");
 //
 // Togl::Impl::widgetCmdDeletedProc
 //
-//      This procedure is invoked when a widget command is deleted.  If
-//      the widget isn't already in the process of being destroyed,
-//      this command destroys it.
-//
-// Results:
-//      None.
-//
-// Side effects:
-//      The widget is destroyed.
+// This procedure could be invoked either because the window was destroyed
+// and the command was then deleted (in which case itsTkWin is NULL) or
+// because the command was deleted, and then this procedure destroys the
+// widget.
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -1145,10 +1065,6 @@ void Togl::Impl::widgetCmdDeletedProc()
 {
 DOTRACE("Togl::Impl::widgetCmdDeletedProc");
   /*
-   * This procedure could be invoked either because the window was
-   * destroyed and the command was then deleted (in which case itsTkWin
-   * is NULL) or because the command was deleted, and then this procedure
-   * destroys the widget.
    */
 
   if (itsTkWin != 0)
@@ -1158,13 +1074,13 @@ DOTRACE("Togl::Impl::widgetCmdDeletedProc");
                             Togl::Impl::dummyEventProc,
                             static_cast<ClientData>(this));
 
-      if (itsOverlayWindow != 0)
+      if (itsOverlay)
         {
           TkWindow* winPtr = reinterpret_cast<TkWindow*>(itsTkWin);
 
           Tcl_HashEntry* entryPtr =
             Tcl_FindHashEntry(&winPtr->dispPtr->winTable,
-                              (char*) itsOverlayWindow );
+                              (char*) itsOverlay->windowId() );
 
           Tcl_DeleteHashEntry(entryPtr);
         }
@@ -1210,7 +1126,7 @@ DOTRACE("Togl::Impl::makeWindowExist");
 
       TkUtil::setupStackingOrder(itsTkWin);
 
-      setupOverlayIfNeeded();
+      setupOverlay();
 
       // Issue a ConfigureNotify event if there were deferred changes
       TkUtil::issueConfigureNotify(itsTkWin);
@@ -1255,113 +1171,29 @@ DOTRACE("Togl::Impl::checkForGLX");
   return true;
 }
 
-void Togl::Impl::setupOverlayIfNeeded()
-{
-DOTRACE("Togl::Impl::setupOverlayIfNeeded");
-  if (itsOpts.overlayFlag)
-    {
-      if (setupOverlay() == TCL_ERROR)
-        {
-          fprintf(stderr,"Warning: couldn't setup overlay.\n");
-          itsOpts.overlayFlag = 0;
-        }
-    }
-}
-
-/*
- * Do all the setup for overlay planes
- * Return:   TCL_OK or TCL_ERROR
- */
-int Togl::Impl::setupOverlay()
+void Togl::Impl::setupOverlay()
 {
 DOTRACE("Togl::Impl::setupOverlay");
 
-#ifdef GLX_TRANSPARENT_TYPE_EXT
-  static int ovAttributeList[] =
-    {
-      GLX_BUFFER_SIZE, 2,
-      GLX_LEVEL, 1,
-      GLX_TRANSPARENT_TYPE_EXT, GLX_TRANSPARENT_INDEX_EXT,
-      None
-    };
-#else
-  static int ovAttributeList[] =
-    {
-      GLX_BUFFER_SIZE, 2,
-      GLX_LEVEL, 1,
-      None
-    };
-#endif
+  if (!itsOpts.overlayFlag)
+    return;
+
+  if (itsOverlay) { delete itsOverlay; itsOverlay = 0; }
+
+  itsOverlay = new GlxOverlay(itsDisplay, this->windowId(),
+                              !itsOpts.glx.indirect, itsGlx.get(),
+                              itsOpts.width, itsOpts.height);
+
+  Assert(itsOverlay != 0);
 
   TkWindow* winPtr = reinterpret_cast<TkWindow*>(itsTkWin);
-
-  XVisualInfo* visinfo = glXChooseVisual( itsDisplay,
-                                          DefaultScreen(itsDisplay),
-                                          ovAttributeList );
-
-  if (!visinfo)
-    {
-      Tcl_AppendResult(itsInterp,Tk_PathName(winPtr),
-                       ": No suitable overlay index visual available",
-                       (char *) NULL);
-      itsOverlayGlx.reset( 0 );
-      itsOverlayWindow = 0;
-      itsOverlayCmap = 0;
-      return TCL_ERROR;
-    }
-
-#ifdef GLX_TRANSPARENT_INDEX_EXT
-  {
-    int fail = glXGetConfig(itsDisplay, visinfo,
-                            GLX_TRANSPARENT_INDEX_VALUE_EXT,
-                            &itsOverlayTransparentPixel);
-    if (fail)
-      itsOverlayTransparentPixel=0; /* maybe, maybe ... */
-  }
-#else
-  itsOverlayTransparentPixel=0; /* maybe, maybe ... */
-#endif
-
-  /* NEW in Togl 1.5 beta 3 */
-  /* share display lists with normal layer context */
-
-  itsOverlayGlx.reset( new GlxWrapper(itsDisplay, visinfo,
-                                      !itsOpts.glx.indirect, itsGlx.get()) );
-
-  XSetWindowAttributes swa;
-  swa.colormap = XCreateColormap( itsDisplay,
-                                  RootWindow(itsDisplay, visinfo->screen),
-                                  visinfo->visual, AllocNone );
-  itsOverlayCmap = swa.colormap;
-
-#define ALL_EVENTS_MASK \
-KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask| \
-EnterWindowMask|LeaveWindowMask|PointerMotionMask|ExposureMask|   \
-VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
-
-  swa.border_pixel = 0;
-  swa.event_mask = ALL_EVENTS_MASK;
-  itsOverlayWindow = XCreateWindow( itsDisplay, windowId(),
-                                    0, 0,
-                                    itsOpts.width, itsOpts.height, 0,
-                                    visinfo->depth, InputOutput,
-                                    visinfo->visual,
-                                    CWBorderPixel|CWColormap|CWEventMask,
-                                    &swa );
 
   int new_flag;
   Tcl_HashEntry* hPtr =
     Tcl_CreateHashEntry( &winPtr->dispPtr->winTable,
-                         (char *) itsOverlayWindow, &new_flag );
+                         (char *) itsOverlay->windowId(), &new_flag );
 
   Tcl_SetHashValue( hPtr, winPtr );
-
-  itsOverlayIsMapped = 0;
-
-  /* Make sure window manager installs our colormap */
-  XSetWMColormapWindows( itsDisplay, itsOverlayWindow, &itsOverlayWindow, 1 );
-
-  return TCL_OK;
 }
 
 ///////////////////////////////////////////////////////////////////////
