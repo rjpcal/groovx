@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Fri Dec  3 16:00:08 1999
+// written: Mon Dec  6 18:02:54 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 
 #include "toglconfig.h"
 
+#include <X11/Xlib.h>
 #include <GL/gl.h>
 #include <tk.h>
 #include <togl.h>
@@ -308,7 +309,15 @@ DOTRACE("ToglConfig::setUnitAngle");
   // tan(deg) == screen_unit_dist/viewing_dist;
   // screen_unit_dist == 1.0 * itsFixedScale / screepPpi;
   double screen_unit_dist = tan(deg*deg_to_rad) * itsViewingDistance;
-  itsFixedScale = int(screen_unit_dist * GfxAttribs::getScreenPpi());
+
+  Screen* scr = Tk_Screen(reinterpret_cast<Tk_FakeWin*>(Togl_TkWin(itsWidget)));
+  int screen_pixel_width = XWidthOfScreen(scr);
+  int screen_mm_width = XWidthMMOfScreen(scr);
+  double screen_inch_width = screen_mm_width / 25.4;
+
+  double screen_ppi = screen_pixel_width / screen_inch_width; 
+  DebugEvalNL(screen_ppi);
+  itsFixedScale = int(screen_unit_dist * screen_ppi);
 
   reconfigure();
 }
