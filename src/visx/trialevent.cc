@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Thu Jan 27 16:21:34 2000
+// written: Tue Feb 15 15:42:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,6 +52,7 @@ TrialEvent::TrialEvent(int msec) :
   itsRequestedDelay(msec),
   itsToken(NULL),
   itsExperiment(0),
+  itsIsPending(false),
   itsTotalError(0),
   itsTotalAbsError(0),
   itsInvokeCount(0)
@@ -81,10 +82,10 @@ DOTRACE("TrialEvent::serialize");
 void TrialEvent::deserialize(istream& is, IOFlag flag) {
 DOTRACE("TrialEvent::deserialize");
 
+  cancel(); // cancel since the event is changing state
+
   if (flag&TYPENAME) { IO::readTypename(is, demangle(typeid(*this).name())); }
-  DebugEval(demangle(typeid(*this).name()));
   is >> itsRequestedDelay;
-  DebugEvalNL(itsRequestedDelay);
   if (is.fail()) throw InputError(typeid(*this));
 }
 
@@ -97,6 +98,8 @@ DOTRACE("TrialEvent::charCount");
 
 void TrialEvent::readFrom(Reader* reader) {
 DOTRACE("TrialEvent::readFrom");
+
+  cancel(); // cancel since the event is changing state
 
   reader->readValue("requestedDelay", itsRequestedDelay);
 }
@@ -121,6 +124,7 @@ DOTRACE("TrialEvent::schedule");
   // don't bother creating a timer handler. Instead, generate a direct
   // invocation.
   if (itsRequestedDelay <= 0) {
+	 itsIsPending = true;
 	 dummyInvoke(static_cast<ClientData>(this));
   }
   // Otherwise, set up a timer that will call the invocation after the
@@ -128,6 +132,7 @@ DOTRACE("TrialEvent::schedule");
   else {
 	 itsToken = Tcl_CreateTimerHandler(itsRequestedDelay, dummyInvoke, 
 												  static_cast<ClientData>(this));
+	 itsIsPending = true;
   }
 }
 
@@ -136,6 +141,9 @@ DOTRACE("TrialEvent::cancel");
   // Cancel the timer handler associated with itsToken. This is a safe
   // no-op if itsToken is NULL.
   Tcl_DeleteTimerHandler(itsToken);
+
+  itsIsPending = false;
+  itsToken = 0;
 }
 
 Experiment& TrialEvent::getExperiment() {
@@ -150,6 +158,9 @@ DOTRACE("TrialEvent::getExperiment");
 void TrialEvent::dummyInvoke(ClientData clientData) {
 DOTRACE("TrialEvent::dummyInvoke");
   TrialEvent* event = static_cast<TrialEvent *>(clientData);
+
+  event->itsIsPending = false;
+  event->itsToken = 0;
 
   EventTraceNL(demangle(typeid(*event).name()));
 
