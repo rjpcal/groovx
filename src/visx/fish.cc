@@ -67,7 +67,9 @@ namespace
 
   const IO::VersionId FISH_SERIAL_VERSION_ID = 4;
 
-  typedef Gfx::Vec3<float> Pt3;
+  using Gfx::Vec2d;
+  using Gfx::Vec3f;
+  using Gfx::Vec3d;
 
   const int DF_0 = 0;
   const int TF_1 = 1;
@@ -97,7 +99,7 @@ struct Fish::Part
 
   dynamic_block<float> itsKnots;
 
-  dynamic_block<Pt3> itsCtrlPnts;
+  dynamic_block<Vec3f> itsCtrlPnts;
 
   // -- end points --
 
@@ -105,13 +107,13 @@ struct Fish::Part
   // in this structure as well as the x and y coordinates of the two
   // points which define the boundaries of the endpoint line
   int itsBkpt;
-  Pt3 itsPt0;
-  Pt3 itsPt1;
+  Vec3f itsPt0;
+  Vec3f itsPt1;
 
   double itsCoord;
 
   template <std::size_t N1, std::size_t N2>
-  void reset(float const (&knots)[N1], Pt3 const (&points)[N2])
+  void reset(float const (&knots)[N1], Vec3f const (&points)[N2])
   {
     itsKnots.assign(array_begin(knots), array_end(knots));
     itsCtrlPnts.assign(array_begin(points), array_end(points));
@@ -222,56 +224,56 @@ DOTRACE("Fish::restoreToDefault");
     1.0, 1.0, 1.0, 1.0
   };
 
-  static const Pt3 DF_coefs[] =
+  static const Vec3f DF_coefs[] =
   {
-    Pt3(-0.2856,  0.2915,  0.2856),
-    Pt3(-0.2140,  0.2866,  0.2140),
-    Pt3(-0.2176,  0.2863,  0.2176),
-    Pt3(-0.0735,  0.4670,  0.0735),
-    Pt3( 0.0168,  0.3913,  0.0168),
-    Pt3( 0.1101,  0.3071,  0.1101),
-    Pt3( 0.3049,  0.1048,  0.3049),
-    Pt3( 0.0953,  0.1800,  0.0953),
-    Pt3( 0.1597,  0.1538,  0.1597),
+    Vec3f(-0.2856,  0.2915,  0.2856),
+    Vec3f(-0.2140,  0.2866,  0.2140),
+    Vec3f(-0.2176,  0.2863,  0.2176),
+    Vec3f(-0.0735,  0.4670,  0.0735),
+    Vec3f( 0.0168,  0.3913,  0.0168),
+    Vec3f( 0.1101,  0.3071,  0.1101),
+    Vec3f( 0.3049,  0.1048,  0.3049),
+    Vec3f( 0.0953,  0.1800,  0.0953),
+    Vec3f( 0.1597,  0.1538,  0.1597),
   };
 
-  static const Pt3 TF_coefs[] =
+  static const Vec3f TF_coefs[] =
   {
-    Pt3( 0.1597,  0.1538,  0.1597),
-    Pt3( 0.2992,  0.1016,  0.2992),
-    Pt3( 0.2864,  0.1044,  0.2864),
-    Pt3( 0.7837,  0.1590,  0.7837),
-    Pt3( 0.4247,  0.0155,  0.4247),
-    Pt3( 0.6362, -0.3203,  0.6362),
-    Pt3( 0.3379, -0.0706,  0.3379),
-    Pt3( 0.3137,  0.0049,  0.3137),
-    Pt3( 0.1573, -0.0401,  0.1573),
+    Vec3f( 0.1597,  0.1538,  0.1597),
+    Vec3f( 0.2992,  0.1016,  0.2992),
+    Vec3f( 0.2864,  0.1044,  0.2864),
+    Vec3f( 0.7837,  0.1590,  0.7837),
+    Vec3f( 0.4247,  0.0155,  0.4247),
+    Vec3f( 0.6362, -0.3203,  0.6362),
+    Vec3f( 0.3379, -0.0706,  0.3379),
+    Vec3f( 0.3137,  0.0049,  0.3137),
+    Vec3f( 0.1573, -0.0401,  0.1573),
   };
 
-  static const Pt3 LF_coefs[] =
+  static const Vec3f LF_coefs[] =
   {
-    Pt3( 0.1573, -0.0401,  0.1573),
-    Pt3( 0.2494, -0.0294,  0.2494),
-    Pt3( 0.1822, -0.0877,  0.1822),
-    Pt3(-0.0208, -0.3236,  0.0208),
-    Pt3(-0.0632, -0.3412,  0.0632),
-    Pt3(-0.1749, -0.1120,  0.1749),
-    Pt3(-0.1260, -0.4172,  0.1260),
-    Pt3(-0.3242, -0.1818,  0.3242),
-    Pt3(-0.2844, -0.1840,  0.2844),
+    Vec3f( 0.1573, -0.0401,  0.1573),
+    Vec3f( 0.2494, -0.0294,  0.2494),
+    Vec3f( 0.1822, -0.0877,  0.1822),
+    Vec3f(-0.0208, -0.3236,  0.0208),
+    Vec3f(-0.0632, -0.3412,  0.0632),
+    Vec3f(-0.1749, -0.1120,  0.1749),
+    Vec3f(-0.1260, -0.4172,  0.1260),
+    Vec3f(-0.3242, -0.1818,  0.3242),
+    Vec3f(-0.2844, -0.1840,  0.2844),
   };
 
-  static const Pt3 MA_coefs[] =
+  static const Vec3f MA_coefs[] =
   {
-    Pt3(-0.2844, -0.1840,  0.2844),
-    Pt3(-0.3492, -0.1834,  0.3492),
-    Pt3(-0.4554, -0.1489,  0.4554),
-    Pt3(-0.6135, -0.0410,  0.6135),
-    Pt3(-0.7018,  0.0346,  0.7018),
-    Pt3(-0.5693,  0.1147,  0.5693),
-    Pt3(-0.4507,  0.2227,  0.4507),
-    Pt3(-0.3393,  0.2737,  0.3393),
-    Pt3(-0.2856,  0.2915,  0.2856),
+    Vec3f(-0.2844, -0.1840,  0.2844),
+    Vec3f(-0.3492, -0.1834,  0.3492),
+    Vec3f(-0.4554, -0.1489,  0.4554),
+    Vec3f(-0.6135, -0.0410,  0.6135),
+    Vec3f(-0.7018,  0.0346,  0.7018),
+    Vec3f(-0.5693,  0.1147,  0.5693),
+    Vec3f(-0.4507,  0.2227,  0.4507),
+    Vec3f(-0.3393,  0.2737,  0.3393),
+    Vec3f(-0.2856,  0.2915,  0.2856),
   };
 
   itsParts[DF_0].reset(knots, DF_coefs);
@@ -462,8 +464,8 @@ void Fish::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("Fish::grGetBoundingBox");
 
-  bbox.vertex2(Gfx::Vec2<double>(-0.75, -0.5));
-  bbox.vertex2(Gfx::Vec2<double>(+0.75, +0.5));
+  bbox.vertex2(Vec2d(-0.75, -0.5));
+  bbox.vertex2(Vec2d(+0.75, +0.5));
 }
 
 void Fish::grRender(Gfx::Canvas& canvas) const
@@ -487,7 +489,7 @@ DOTRACE("Fish::grRender");
       if (inColor)
         canvas.setColor(colors[i]);
 
-      dynamic_block<Pt3> ctrlpnts(itsParts[i].itsCtrlPnts);
+      dynamic_block<Vec3f> ctrlpnts(itsParts[i].itsCtrlPnts);
 
       // Set the coefficients at the break point to a linear sum of
       // the two corresponding endpoints
@@ -495,7 +497,7 @@ DOTRACE("Fish::grRender");
       float alpha = 0.5*(1-itsParts[i].itsCoord);
       float beta  = 0.5*(1+itsParts[i].itsCoord);
 
-      Pt3 pt = itsParts[i].itsPt0 * alpha + itsParts[i].itsPt1 * beta;
+      Vec3f pt = itsParts[i].itsPt0 * alpha + itsParts[i].itsPt1 * beta;
 
       // indexing in the coefs array starts at 0
       unsigned int bkpt = itsParts[i].itsBkpt - 1;
@@ -537,14 +539,16 @@ DOTRACE("Fish::grRender");
               Gfx::Rect<double> rect;
               for (unsigned int i = 0; i < ctrlpnts.size(); ++i)
                 {
+                  Gfx::MatrixSaver msaver(canvas);
+                  canvas.translate(Vec3d(0.0, 0.0, ctrlpnts[i].z()));
                   rect.setXYWH(ctrlpnts[i].x(), ctrlpnts[i].y(), 0.03, 0.03);
                   canvas.drawRect(rect);
                 }
             }
           {
             Gfx::LinesBlock block(canvas);
-            canvas.vertex3(itsParts[i].itsPt0);
-            canvas.vertex3(itsParts[i].itsPt1);
+            canvas.vertex2(Vec2d(itsParts[i].itsPt0.vec2()));
+            canvas.vertex2(Vec2d(itsParts[i].itsPt1.vec2()));
           }
         }
     }
