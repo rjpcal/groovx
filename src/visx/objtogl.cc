@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Jan 23 11:13:04 2002
+// written: Tue Apr  2 16:20:25 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -187,6 +187,7 @@ public:
     defSetter("loadFont", &Toglet::loadFont);
     defSetter("loadFonti", &Toglet::loadFonti);
     defGetter("pathname", &Toglet::pathname);
+    defGetter("pixelsPerInch", &Toglet::pixelsPerInch);
     defSetter("scaleRect", "item_id(s) scale", &Toglet::scaleRect);
     defSetter("setFixedScale", "item_id(s) scale", &Toglet::setFixedScale);
     defSetter("setUnitAngle", "item_id(s) angle_in_degrees",

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Tue Apr  2 15:49:27 2002
+// written: Tue Apr  2 16:12:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,6 +63,7 @@ public:
   Color queryColor(unsigned int color_index) const;
   void queryColor(unsigned int color_index, Color& color) const;
   bool usingFixedScale() const;
+  double pixelsPerInch() const;
 
   virtual Gfx::Canvas& getCanvas();
 
@@ -106,7 +107,6 @@ private:
 
   Togl* const itsTogl;
   scoped_ptr<Gfx::Canvas> itsCanvas;
-
   scoped_ptr<Sizer> itsSizer;
   unsigned int itsFontListBase;
 };
