@@ -8,3 +8,4 @@ prof.out
 reconfigure
 tclprof.out
 test.cc
+snapshots
