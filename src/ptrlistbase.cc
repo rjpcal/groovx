@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sun Oct  8 16:26:15 2000
+// written: Sun Oct  8 18:42:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -190,6 +190,7 @@ DOTRACE("VoidPtrList::VoidPtrList");
 
 VoidPtrList::~VoidPtrList() {
 DOTRACE("VoidPtrList::~VoidPtrList");
+  clear();
   delete itsImpl; 
 }
 
