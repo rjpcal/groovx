@@ -25,7 +25,6 @@
 #include "tlist.h"
 #include "tlistwidget.h"
 
-#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/asciistreamwriter.h"
 
@@ -187,9 +186,6 @@ public:
   void edSetCurrentTrial(int trial);
 
   void edEndExpt();
-
-  void read(const char* filename);
-  void write(const char* filename) const;
 
   void writeASW(const char* filename) const;
 
@@ -751,37 +747,6 @@ DOTRACE("ExptDriver::Impl::edEndExpt");
 
 //--------------------------------------------------------------------
 //
-// ExptDriver::read --
-//
-//--------------------------------------------------------------------
-
-void ExptDriver::Impl::read(const char* filename) {
-DOTRACE("ExptDriver::Impl::read");
-  STD_IO::ifstream ifs(filename);
-  if (ifs.fail()) throw IO::FilenameError(filename);
-  IO::LegacyReader reader(ifs, IO::BASES|IO::TYPENAME);
-  reader.readRoot(itsOwner);
-}
-
-//--------------------------------------------------------------------
-//
-// ExptDriver::write --
-//
-//--------------------------------------------------------------------
-
-void ExptDriver::Impl::write(const char* filename) const {
-DOTRACE("ExptDriver::Impl::write");
-  cerr << "warning: this file format is deprecated, "
-		 << "and may not properly store all attributes\n";
-
-  STD_IO::ofstream ofs(filename);
-  if (ofs.fail()) throw IO::FilenameError(filename);
-  IO::LegacyWriter writer(ofs, IO::BASES|IO::TYPENAME);
-  writer.writeRoot(itsOwner);
-}
-
-//--------------------------------------------------------------------
-//
 // ExptDriver::writeASW --
 //
 //--------------------------------------------------------------------
@@ -940,12 +905,6 @@ void ExptDriver::edSetCurrentTrial(int trial)
 
 int ExptDriver::edGetCurrentTrial() const
   { return itsImpl->edGetCurrentTrial(); }
-
-void ExptDriver::read(const char* filename)
-  { itsImpl->read(filename); }
-
-void ExptDriver::write(const char* filename) const
-  { itsImpl->write(filename); }
 
 void ExptDriver::storeData()
   { itsImpl->storeData(); }
