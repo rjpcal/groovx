@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Sun Nov  3 09:10:46 2002
+// written: Sat Dec  7 18:05:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -163,7 +163,8 @@ DOTRACE("Tcl::Interp::setGlobalVar");
   if (Tcl_SetVar2Ex(intp(), const_cast<char*>(var_name), /*name2*/0,
                     var.obj(), TCL_GLOBAL_ONLY) == 0)
     {
-      handleError("couldn't set global variable");
+      throw TclError(fstring("couldn't set global variable'",
+                             var_name, "'"));
     }
 }
 
@@ -174,7 +175,8 @@ DOTRACE("Tcl::Interp::unsetGlobalVar");
   if (Tcl_UnsetVar(intp(), const_cast<char*>(var_name),
                    TCL_GLOBAL_ONLY) != TCL_OK)
     {
-      handleError("couldn't unset global variable");
+      throw TclError(fstring("couldn't unset global variable'",
+                             var_name, "'"));
     }
 }
 
@@ -189,7 +191,8 @@ DOTRACE("Tcl::Interp::getObjGlobalVar");
 
   if (obj == 0)
     {
-      handleError("couldn't get the Tcl variable");
+      throw TclError(fstring("couldn't get global variable '",
+                             name1, "'"));
     }
 
   return obj;
