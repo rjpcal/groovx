@@ -61,9 +61,6 @@ struct GlxOpts
   bool indirect;         ///< whether to request an indirect rendering context
    int level;            ///< stacking level of GL context
   bool transparent;      ///< whether to request transparency
-
-  /// Create an attribute list from the current option set.
-  shared_ptr<GlxAttribs> buildAttribList();
 };
 
 static const char vcid_glxopts_h[] = "$Header$";

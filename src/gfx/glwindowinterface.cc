@@ -32,12 +32,29 @@
 
 #include "glwindowinterface.h"
 
+#include "util/pointers.h"
+
 #include "util/trace.h"
 
 GlWindowInterface::~GlWindowInterface()
 {
 DOTRACE("GlWindowInterface::~GlWindowInterface");
 }
+
+#define GL_PLATFORM_X11
+
+#ifdef GL_PLATFORM_X11
+#  include "gfx/glxwrapper.h"
+shared_ptr<GlWindowInterface>
+GlWindowInterface::make(Display* dpy, GlxOpts& opts)
+{
+DOTRACE("GlWindowInterface::make");
+  return shared_ptr<GlWindowInterface>
+    (GlxWrapper::make(dpy, opts, (GlxWrapper*)0 /*shared context*/));
+}
+#else
+#  error no GL_PLATFORM macro defined!
+#endif
 
 static const char vcid_glwindowinterface_cc[] = "$Header$";
 #endif // !GLWINDOWINTERFACE_CC_DEFINED

@@ -30,6 +30,8 @@
 #ifndef GLXATTRIBS_H_DEFINED
 #define GLXATTRIBS_H_DEFINED
 
+#include "gfx/glxopts.h"
+
 #include <GL/glx.h>
 
 #include "util/debug.h"
@@ -57,9 +59,29 @@ private:
 
 public:
   /// Default constructor.
-  GlxAttribs() : next(0)
+  GlxAttribs(const GlxOpts& opts) : next(0)
   {
     push( GLX_USE_GL );
+
+    if (opts.rgbaFlag)        this->rgba(opts.rgbaRed, opts.rgbaGreen, opts.rgbaBlue,
+                                         opts.alphaFlag ? opts.alphaSize : -1);
+
+    else                      this->colorIndex( opts.colorIndexSize );
+
+    if (opts.depthFlag)       this->depthBuffer( opts.depthSize );
+
+    if (opts.doubleFlag)      this->doubleBuffer();
+
+    if (opts.stencilFlag)     this->stencilBuffer( opts.stencilSize );
+
+    if (opts.accumFlag)       this->accum(opts.accumRed, opts.accumGreen, opts.accumBlue,
+                                          opts.alphaFlag ? opts.accumAlpha : -1);
+
+    if (opts.auxNumber > 0)   this->auxBuffers( opts.auxNumber );
+
+    if (opts.level != 0)      this->level( opts.level );
+
+    if (opts.transparent)     this->transparent();
   }
 
   /// Get the underlying data array to use to construct a GLXContext.

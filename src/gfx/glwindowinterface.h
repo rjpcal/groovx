@@ -32,6 +32,10 @@
 
 #include <tk.h>
 
+class GlxOpts;
+
+template <class T> class shared_ptr;
+
 class GlWindowInterface
 {
 public:
@@ -56,6 +60,9 @@ public:
   /// Instantiate an actual window-system window for the given Tk_Window.
   virtual Window makeTkRealWindow(Tk_Window tkwin, Window parent,
                                   int width, int height) throw() = 0;
+
+  /// Make a concrete GlWindowInterface of a platform-dependent type.
+  static shared_ptr<GlWindowInterface> make(Display* dpy, GlxOpts& opts);
 };
 
 static const char vcid_glwindowinterface_h[] = "$Header$";

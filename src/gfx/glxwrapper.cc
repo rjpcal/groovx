@@ -62,20 +62,20 @@ DOTRACE("GlxWrapper::GlxWrapper");
       throw Util::Error("GlxWrapper: X server has no OpenGL GLX extension");
     }
 
-  shared_ptr<GlxAttribs> attribs = opts.buildAttribList();
+  GlxAttribs attribs(opts);
 
   itsVisInfo = glXChooseVisual(itsDisplay,
                                DefaultScreen(itsDisplay),
-                               attribs->get());
+                               attribs.get());
 
   // If we had requested single-buffering, then now try for
   // double-buffering, since that can emulate single-buffering
   if (itsVisInfo == 0)
     {
-      attribs->doubleBuffer();
+      attribs.doubleBuffer();
       itsVisInfo = glXChooseVisual(itsDisplay,
                                    DefaultScreen(itsDisplay),
-                                   attribs->get());
+                                   attribs.get());
     }
 
   // If we still didn't get a matching visual, then bail out
@@ -109,19 +109,19 @@ DOTRACE("GlxWrapper::~GlxWrapper");
   XFree(itsVisInfo);
 }
 
-GlxWrapper* GlxWrapper::make(Display* dpy, GlxOpts& opts)
+GlxWrapper* GlxWrapper::make(Display* dpy, GlxOpts& opts, GlxWrapper* share)
 {
 DOTRACE("GlxWrapper::make");
 
   // Create a new OpenGL rendering context.
-  GlxWrapper* glx = new GlxWrapper(dpy, opts);
+  GlxWrapper* glx = new GlxWrapper(dpy, opts, share);
 
   // Make sure we don't try to use a depth buffer with indirect rendering
   if ( !glx->isDirect() && opts.depthFlag )
     {
       delete glx;
       opts.depthFlag = false;
-      return make(dpy, opts);
+      return make(dpy, opts, share);
     }
 
   opts.indirect = !glx->isDirect();

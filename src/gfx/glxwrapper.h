@@ -49,12 +49,12 @@ private:
   GlxWrapper(const GlxWrapper&);
   GlxWrapper& operator=(const GlxWrapper&);
 
-public:
   /// Construct.
   GlxWrapper(Display* dpy, GlxOpts& opts, GlxWrapper* share = 0);
 
+public:
   /// Factory function.
-  static GlxWrapper* make(Display* dpy, GlxOpts& opts);
+  static GlxWrapper* make(Display* dpy, GlxOpts& opts, GlxWrapper* share = 0);
 
   /// Destructor.
   virtual ~GlxWrapper();

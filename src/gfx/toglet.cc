@@ -33,8 +33,8 @@
 #include "toglet.h"
 
 #include "gfx/glcanvas.h"
+#include "gfx/glwindowinterface.h"
 #include "gfx/glxopts.h"
-#include "gfx/glxwrapper.h"
 #include "gfx/gxscene.h"
 
 #include "gx/rgbacolor.h"
@@ -118,7 +118,7 @@ Toglet::Impl::Impl(Toglet* p) :
   owner(p),
   tkWin(owner->tkWin()),
   opts(new GlxOpts),
-  glx(new GlxWrapper(Tk_Display(tkWin), *opts, (GlxWrapper*)0 /*shared context*/)),
+  glx(GlWindowInterface::make(Tk_Display(tkWin), *opts)),
   canvas(GLCanvas::make(opts, glx)),
   scene(new GxScene(canvas))
 {
