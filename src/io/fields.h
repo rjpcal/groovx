@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Wed Jun 26 11:27:23 2002
+// written: Thu Sep 12 17:53:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -137,27 +137,31 @@ public:
 namespace
 {
   template <class C, class T>
-  T& dereference(C& obj, T C::* memptr)
+  struct deref
   {
-    return (obj.*memptr);
+    static       T& get(      C& obj, T C::* mptr) { return (obj.*memptr); }
+    static const T& get(const C& obj, T C::* mptr) { return (obj.*memptr); }
+  };
+
+  template <class C, class T>
+  struct deref<C, T*>
+  {
+    static       T& get(      C& obj, T* C::* mptr) { return *(obj.*memptr); }
+    static const T& get(const C& obj, T* C::* mptr) { return *(obj.*memptr); }
+  };
+
+  template <class C, class T>
+  typename Util::TypeTraits<T>::DerefT&
+  dereference(C& obj, T C::* memptr)
+  {
+    return deref<C,T>::get(obj, memptr);
   }
 
   template <class C, class T>
-  const T& dereference(const C& obj, T C::* memptr)
+  const typename Util::TypeTraits<T>::DerefT&
+  dereference(const C& obj, T C::* memptr)
   {
-    return (obj.*memptr);
-  }
-
-  template <class C, class T>
-  T& dereference(C& obj, T* C::* memptr)
-  {
-    return *(obj.*memptr);
-  }
-
-  template <class C, class T>
-  const T& dereference(const C& obj, T* C::* memptr)
-  {
-    return *(obj.*memptr);
+    return deref<C,T>::get(obj, memptr);
   }
 }
 
@@ -216,6 +220,17 @@ private:
   T C::* itsDataMember;
   shared_ptr<BoundsChecker<T> > itsChecker;
 };
+
+// FIXME FIXME FIXME !!!
+
+namespace Tcl
+{
+  template <>
+  struct Return<const Value&>
+  {
+    typedef void Type;
+  };
+}
 
 /** ValueFieldImpl */
 template <class C, class V>
