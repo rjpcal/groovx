@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Fri Jan 25 13:57:41 2002
+// written: Mon Jan 28 12:18:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -292,9 +292,12 @@ DOTRACE("TimingHdlr::Impl::thResponseSeen");
 void TimingHdlr::Impl::thAbortTrial()
 {
 DOTRACE("TimingHdlr::Impl::thAbortTrial");
-  cancelAll(itsStartEvents);
-  cancelAll(itsResponseEvents);
-  scheduleAll(itsAbortEvents);
+  if (itsAbortEvents.size() > 0)
+    {
+      cancelAll(itsStartEvents);
+      cancelAll(itsResponseEvents);
+      scheduleAll(itsAbortEvents);
+    }
 }
 
 void TimingHdlr::Impl::thHaltExpt()
