@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Aug 13 12:15:35 2001
+// written: Thu Aug 16 10:05:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -581,7 +581,7 @@ DOTRACE("Toglet::writeEpsFile");
   glPopAttrib();
 
   // redisplay original image
-  refresh();
+  display();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -615,7 +615,7 @@ DOTRACE("Toglet_Impl::displayCallback");
 
   try
     {
-      config->refresh();
+      config->display();
     }
   catch (...)
     {
