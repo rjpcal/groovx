@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Oct 26 17:48:19 2000
+// written: Fri Oct 27 09:05:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "exptdriver.h"
 
 #include "block.h"
+#include "iditem.h"
 #include "tlistutils.h"
 #include "objtogl.h"
 #include "toglconfig.h"

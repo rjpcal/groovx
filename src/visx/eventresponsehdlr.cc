@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Thu Oct 26 17:48:19 2000
+// written: Fri Oct 27 09:04:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "eventresponsehdlr.h"
 
 #include "experiment.h"
+#include "iditem.h"
 #include "grshapp.h"
 #include "sound.h"
 #include "response.h"
