@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Wed Dec  1 22:24:19 1999
+// written: Mon Dec  6 19:33:41 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@
 #include <memory>
 
 #include "bitmaprep.h"
-#include "gfxattribs.h"
+#include "canvas.h"
 #include "glbmaprenderer.h"
 #include "error.h"
 #include "rect.h"
@@ -1527,7 +1527,7 @@ DOTRACE("GrObj::receiveDestroyMsg");
 
 void GrObj::swapForeBack() {
 DOTRACE("GrObj::swapForeBack");
-  if ( GfxAttribs::usingRgba() ) {
+  if ( Canvas::theCanvas().isRgba() ) {
 	 GLdouble foreground[4];
 	 GLdouble background[4];
 	 glGetDoublev(GL_CURRENT_COLOR, &foreground[0]);

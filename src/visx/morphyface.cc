@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Wed Dec  1 11:53:12 1999
+// written: Mon Dec  6 19:34:39 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@
 #include <cmath>
 
 #include "bezier.h"
-#include "gfxattribs.h"
+#include "canvas.h"
 #include "reader.h"
 #include "rect.h"
 #include "writer.h"
@@ -390,7 +390,7 @@ DOTRACE("MorphyFace::grRender");
   Invariant(check());
 
   // Enable antialiasing, if it is available
-  const bool have_antialiasing = GfxAttribs::usingRgba();
+  const bool have_antialiasing = Canvas::theCanvas().isRgba();
 
   if (have_antialiasing) {
 	 glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_LINE_BIT);

@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Tue Nov 30 16:48:45 1999
+// written: Mon Dec  6 19:32:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "gfxattribs.h"
+#include "canvas.h"
 #include "reader.h"
 #include "rect.h"
 #include "writer.h"
@@ -231,7 +231,7 @@ void Face::grRender() const {
 DOTRACE("Face::grRender");
   Invariant(check());
 
-  const bool have_antialiasing = GfxAttribs::usingRgba();
+  const bool have_antialiasing = Canvas::theCanvas().isRgba();
 
   //
   // Drawing commands begin here...
