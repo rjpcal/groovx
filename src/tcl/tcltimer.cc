@@ -74,19 +74,12 @@ DOTRACE("Tcl::Timer::schedule");
 
   dbgEvalNL(3, itsMsecDelay);
 
-  // If the requested delay is zero -- i.e., immediate -- then don't
-  // bother creater a timer handler. Instead, generate a direct
-  // invocation; this saves a trip into the event loop and back.
-  if (itsMsecDelay == 0)
-    {
-      dummyCallback(static_cast<void*>(this));
-    }
-  else
-    {
-      itsToken = itsScheduler->schedule(itsMsecDelay,
-                                        dummyCallback,
-                                        static_cast<void*>(this));
-    }
+  // Note that the returned token might be null for one reason or
+  // another (e.g. if the scheduler decides to run the callback
+  // immediately rather than scheduling a deferred callback).
+  itsToken = itsScheduler->schedule(itsMsecDelay,
+                                    dummyCallback,
+                                    static_cast<void*>(this));
 }
 
 void Tcl::Timer::cancel()

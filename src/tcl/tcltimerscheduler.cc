@@ -124,6 +124,18 @@ Tcl::TimerScheduler::schedule(int msec,
                               void* clientdata)
 {
 DOTRACE("Tcl::TimerScheduler::schedule");
+  // If the requested delay is zero -- i.e., immediate -- then don't
+  // bother creating a timer handler. Instead, generate a direct
+  // invocation; this saves a trip into the event loop and back.
+  if (msec == 0)
+    {
+      (*callback)(clientdata);
+
+      // Return a null pointer, representing the fact that there is no
+      // pending callback in this case.
+      return shared_ptr<Util::TimerToken>();
+    }
+
   return shared_ptr<Util::TimerToken>
     (new Tcl::TimerSchedulerToken(msec, callback, clientdata));
 }
