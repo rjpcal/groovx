@@ -74,46 +74,7 @@ public:
       string such as given by the RCS revision tag. */
   Pkg(Tcl_Interp* interp, const char* name, const char* version);
 
-  /// Function type to be passed to Tcl::Pkg::create.
-  typedef void (SetupCallback)(Tcl::Pkg*);
-
   typedef void (ExitCallback)();
-
-  /// Creates a new Tcl::Pkg, then calls the setup callback with that argument.
-  /** There are several advantages of this scheme over just creating a
-      Tcl::Pkg directly. First of all, Tcl::Pkg objects are typically
-      created within *_Init() functions. These functions are called from
-      within the Tcl library, and therefore must not transmit any
-      exceptions. But, putting a try/catch block in every *_Init() function
-      is a lot of unneeded boilerplate. In constrast, this create()
-      function takes care of catching all exceptions and translating them
-      into an appropriate return code. For example:
-
-      \code
-      namespace
-      {
-        void Foo_Setup(Tcl::Pkg* pkg)
-        {
-          pkg->def( ... );
-        }
-      }
-
-      extern "C" int Foo_Init(Tcl_Interp* interp)
-      {
-        return Tcl::Pkg::create(interp, "Foo", "1.1", &Foo_Setup);
-      }
-
-      \endcode
-
-      Normally, create() will assume that package initialization succeeded
-      and return TCL_OK.
-
-      However, if either (1) an exception is caught, or (2) the
-      Tcl_Interp's result is non-empty, then create() will assume that
-      package initialization failed, and will return TCL_ERROR.
-  */
-  static int create(Tcl_Interp* interp, const char* name, const char* version,
-                    SetupCallback* setup, ExitCallback* ex = 0);
 
 private:
   /** Virtual destructor ensures proper destruction of base
