@@ -37,7 +37,6 @@
 #include "util/strings.h"
 
 #include <list>
-#include <map>
 #include <tcl.h>
 
 #include "util/trace.h"
@@ -52,21 +51,6 @@ DBG_REGISTER
 
 namespace
 {
-  class Overloads;
-
-  // Holds the the addresses of all valid Overload objects (this is
-  // managed in Overload's constructor+destructor)
-  typedef std::map<fstring, Overloads*> CmdTable;
-
-  CmdTable* commandTable_ = 0;
-
-  CmdTable& commandTable()
-  {
-    if (commandTable_ == 0)
-      commandTable_ = new CmdTable;
-    return *commandTable_;
-  }
-
   class Overloads
   {
   private:
@@ -76,7 +60,6 @@ namespace
     const fstring itsCmdName;
     Tcl_Command itsCmdToken;
     List itsList;
-    int itsRefCount;
     const fstring itsProfName;
     Util::Prof itsProf;
 
@@ -87,13 +70,14 @@ namespace
     Overloads& operator=(const Overloads&); // not implemented
 
     static int cInvokeCallback(ClientData clientData,
-                               Tcl_Interp*, /* use Overloads's own Tcl::Interp */
+                               Tcl_Interp* interp,
                                int s_objc,
                                Tcl_Obj *const objv[]) throw()
     {
       Overloads* ov = static_cast<Overloads*>(clientData);
 
       Assert(ov != 0);
+      Assert(interp == ov->itsInterp.intp());
 
       return ov->rawInvoke(s_objc, objv);
     }
@@ -119,6 +103,8 @@ namespace
     }
 
   public:
+    static Overloads* lookup(Tcl::Interp& interp, const char* name);
+
     static Overloads* make(Tcl::Interp& interp, const fstring& cmd_name);
 
     void add(Tcl::Command* p)
@@ -167,7 +153,6 @@ Overloads::Overloads(Tcl::Interp& interp, const fstring& cmd_name) :
   itsCmdName(cmd_name),
   itsCmdToken(0),
   itsList(),
-  itsRefCount(0),
   itsProfName("tcl/", cmd_name),
   itsProf(itsProfName.c_str())
 {
@@ -183,14 +168,6 @@ DOTRACE("Overloads::Overloads");
 
   Tcl_CreateExitHandler(&cExitCallback,
                         static_cast<ClientData>(this));
-
-  ++itsRefCount;
-
-  // Make sure there isn't already an Overloads object for this cmdname
-  CmdTable::iterator pos = commandTable().find(itsCmdName);
-  Assert( pos == commandTable().end() );
-  // Register this Overloads object with the given cmdname
-  commandTable().insert(CmdTable::value_type(itsCmdName, this));
 }
 
 // A destruction sequence can get triggered in a number of ways:
@@ -219,27 +196,47 @@ DOTRACE("Overloads::~Overloads");
   Assert( itsList.empty() );
   Assert( itsCmdToken == 0 );
 
-  CmdTable::iterator pos = commandTable().find(cmdName());
-  Assert( pos != commandTable().end() );
-  Assert( (*pos).second == this );
-  commandTable().erase(pos);
-
   Tcl_DeleteExitHandler(&cExitCallback,
                         static_cast<ClientData>(this));
+}
+
+Overloads* Overloads::lookup(Tcl::Interp& interp, const char* name)
+{
+DOTRACE("Overloads::lookup");
+  /*
+     typedef struct Tcl_CmdInfo {
+       int isNativeObjectProc;
+       Tcl_ObjCmdProc *objProc;
+       ClientData objClientData;
+       Tcl_CmdProc *proc;
+       ClientData clientData;
+       Tcl_CmdDeleteProc *deleteProc;
+       ClientData deleteData;
+       Tcl_Namespace *namespacePtr;
+     } Tcl_CmdInfo;
+  */
+  Tcl_CmdInfo info;
+  const int result = Tcl_GetCommandInfo(interp.intp(), name, &info);
+  if (result == 1 &&
+      info.isNativeObjectProc == 1 &&
+      info.objProc == cInvokeCallback &&
+      info.deleteProc == cDeleteCallback)
+    {
+      return static_cast<Overloads*>(info.objClientData);
+    }
+  return 0;
 }
 
 Overloads* Overloads::make(Tcl::Interp& interp, const fstring& cmd_name)
 {
 DOTRACE("Overloads::make");
-  CmdTable::iterator pos = commandTable().find(cmd_name);
-  if (pos != commandTable().end())
-    {
-      return (*pos).second;
-    }
-  else
-    {
-      return new Overloads(interp, cmd_name);
-    }
+  Overloads* const ov = Overloads::lookup(interp, cmd_name.c_str());
+
+  if (ov != 0)
+    return ov;
+
+  // else...
+  return new Overloads(interp, cmd_name);
 }
 
 fstring Overloads::usage() const
@@ -494,10 +491,10 @@ DOTRACE("Tcl::Command::setDispatcher");
   rep->dispatcher = dpx;
 }
 
-Tcl::Command* Tcl::Command::lookup(Tcl::Interp&, const char* name)
+Tcl::Command* Tcl::Command::lookup(Tcl::Interp& interp, const char* name)
 {
 DOTRACE("Tcl::Command::lookup");
-  Overloads* const ov = commandTable()[name];
+  Overloads* const ov = Overloads::lookup(interp, name);
 
   if (ov == 0)
     return 0;
