@@ -3,7 +3,7 @@
 // iditemutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Oct 27 17:07:31 2000
-// written: Fri Oct 27 18:45:17 2000
+// written: Mon Oct 30 11:20:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,7 @@
 
 #include "ioptrlist.h"
 
-namespace IdItemUtils {
-  bool isValidId(int id);
-  void insertItem(IO::IoObject* obj);
-  IO::IoObject* getCheckedItem(int id);
-}
+#include "io/iditemutils.h"
 
 bool IdItemUtils::isValidId(int id) {
   return IoPtrList::theList().isValidId(id);

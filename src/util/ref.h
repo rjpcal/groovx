@@ -3,7 +3,7 @@
 // iditem.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 26 17:50:59 2000
-// written: Fri Oct 27 18:43:57 2000
+// written: Mon Oct 30 11:21:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,23 +19,9 @@
 #include "util/error.h"
 #endif
 
-namespace IO { class IoObject; }
-
-class IoPtrList;
-
-namespace IdItemUtils {
-  bool isValidId(int id);
-  void insertItem(IO::IoObject* obj);
-  IO::IoObject* getCheckedItem(int id);
-
-  template <class T>
-  inline T* getCastedItem(int id)
-  {
-	 IO::IoObject* obj = getCheckedItem(id);
-	 T& t = dynamic_cast<T&>(*obj);
-	 return &t;
-  }
-}
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEMUTILS_H_DEFINED)
+#include "io/iditemutils.h"
+#endif
 
 template <class Container, class T>
 class IdItemInserter {
