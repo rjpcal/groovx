@@ -3,7 +3,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Thu Jul  1 13:48:28 1999
+// written: Thu Sep 23 14:19:15 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,6 +40,10 @@ public:
   int getWidth() const { return itsWidth; }
 
 protected:
+  virtual bool grGetBoundingBox(double& left, double& top,
+										  double& right, double& bottom,
+										  int& border_pixels) const;
+
   virtual void grRender() const;
 
 private:

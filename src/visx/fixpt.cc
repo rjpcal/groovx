@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Sat Jul  3 16:34:47 1999
+// written: Thu Sep 23 14:21:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,6 +68,17 @@ int FixPt::charCount() const {
 			 + gCharCount<double>(itsLength) + 1
 			 + gCharCount<int>(itsWidth) + 1
 			 + 1);// fudge factor
+}
+
+bool FixPt::grGetBoundingBox(double& left, double& top,
+									  double& right, double& bottom,
+									  int& border_pixels) const {
+  left  = bottom = -itsLength/2.0;
+  right = top    =  itsLength/2.0;
+  
+  border_pixels = itsWidth+2;
+
+  return true;
 }
 
 void FixPt::grRender() const {
