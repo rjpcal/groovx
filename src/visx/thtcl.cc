@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jan 30 21:22:09 2002
+// written: Thu Jan 31 14:36:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,8 @@
 
 #include "util/objfactory.h"
 
+#include <typeinfo>
+
 #include "util/trace.h"
 
 namespace
@@ -29,6 +31,19 @@ namespace
                            int msec, TimingHdlr::TimePoint time_point)
   {
     return th->addEventByName(event_type, time_point, msec);
+  }
+
+  template <class EventType>
+  Tcl::Pkg* initEventType(Tcl_Interp* interp)
+  {
+    Util::ObjFactory::theOne().registerCreatorFunc(&EventType::make);
+
+    Tcl::Pkg* pkg = new Tcl::Pkg(interp,
+                                 demangle_cstr(typeid(EventType).name()),
+                                 "$Revision$");
+    pkg->inherit("TrialEvent");
+
+    return pkg;
   }
 }
 
@@ -40,7 +55,8 @@ DOTRACE("Th_Init");
   Util::ObjFactory::theOne().registerCreatorFunc(&TimingHdlr::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&TimingHandler::make);
 
-  Tcl::Pkg* pkg1 = new Tcl::Pkg(interp, "Th", "$Revision$");
+  Tcl::Pkg* pkg1 = new Tcl::Pkg(interp, "TimingHdlr", "$Revision$");
+  pkg1->inherit("IO");
   Tcl::defGenericObjCmds<TimingHdlr>(pkg1);
 
   pkg1->def( "addImmediateEvent", "th_id event_type msec_delay",
@@ -69,9 +85,10 @@ DOTRACE("Th_Init");
              "    proc autosavePeriod {id args} { "
              "        error {use Expt::autosavePeriod instead} } }");
 
+  pkg1->namespaceAlias("Th");
 
-
-  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "SimpleTh", "$Revision$");
+  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "TimingHandler", "$Revision$");
+  pkg2->inherit("IO");
   Tcl::defGenericObjCmds<TimingHandler>(pkg2);
 
   pkg2->defAttrib("abortWait",
@@ -87,27 +104,27 @@ DOTRACE("Th_Init");
                   &TimingHandler::getTimeout,
                   &TimingHandler::setTimeout);
 
+  pkg2->namespaceAlias("SimpleTh");
+
   Tcl::Pkg* pkg3 = new Tcl::Pkg(interp, "TrialEvent", "$Revision$");
   Tcl::defGenericObjCmds<TrialEvent>(pkg3);
 
   pkg3->defAttrib("delay", &TrialEvent::getDelay, &TrialEvent::setDelay);
 
-  Util::ObjFactory::theOne().registerCreatorFunc(&AbortTrialEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&DrawEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&RenderEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&UndrawEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&EndTrialEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&NextNodeEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&AllowResponsesEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&DenyResponsesEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&SwapBuffersEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&RenderBackEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&RenderFrontEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&ClearBufferEvent::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&GenericEvent::make);
+  initEventType<AbortTrialEvent>(interp);
+  initEventType<DrawEvent>(interp);
+  initEventType<RenderEvent>(interp);
+  initEventType<UndrawEvent>(interp);
+  initEventType<EndTrialEvent>(interp);
+  initEventType<NextNodeEvent>(interp);
+  initEventType<AllowResponsesEvent>(interp);
+  initEventType<DenyResponsesEvent>(interp);
+  initEventType<SwapBuffersEvent>(interp);
+  initEventType<RenderBackEvent>(interp);
+  initEventType<RenderFrontEvent>(interp);
+  initEventType<ClearBufferEvent>(interp);
 
-  Tcl::Pkg* pkg4 = new Tcl::Pkg(interp, "GenericEvent", "$Revision$");
-  Tcl::defGenericObjCmds<GenericEvent>(pkg4);
+  Tcl::Pkg* pkg4 = initEventType<GenericEvent>(interp);
 
   pkg4->defGetter("callback", &GenericEvent::getCallback);
   pkg4->defSetter("callback", &GenericEvent::setCallback);
