@@ -131,8 +131,14 @@ DOTRACE("Tcl::CommandGroup::usageWarning");
         }
     }
 
+  warning.append("\n(");
+
   if (argv0 != initialCmdName)
-    warning.append("\n(resolves to ", initialCmdName, ")");
+    warning.append("resolves to ", initialCmdName, ", ");
+
+  warning.append("defined at ",
+                 prof.srcFileName(), ":",
+                 prof.srcLineNo(), ")");
 
   return warning;
 }
@@ -262,11 +268,14 @@ DOTRACE("Tcl::CommandGroup::usage");
     {
       result.append("\t", cmdName());
       appendUsage(result, (*itr)->usageString());
-      if (++itr != end)
-        result.append("\n");
-      else
+      result.append("\n");
+      if (++itr == end)
         break;
     }
+
+  result.append("\t(defined at ",
+                rep->prof.srcFileName(), ":",
+                rep->prof.srcLineNo(), ")");
 
   return result;
 }
