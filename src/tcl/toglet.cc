@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Nov 21 16:42:13 2002
+// written: Thu Nov 21 16:57:43 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -240,61 +240,6 @@ DOTRACE("Toglet::setCamera");
   rep->camera = cam;
   reshapeCallback();
 }
-
-// void Toglet::setPixelsPerUnit(double s)
-// {
-// DOTRACE("Toglet::setPixelsPerUnit");
-
-//   rep->camera = Util::Ref<GxFixedScaleCamera>(new GxFixedScaleCamera(s));
-
-//   reshapeCallback();
-// }
-
-// void Toglet::setUnitAngle(double deg)
-// {
-// DOTRACE("Toglet::setUnitAngle");
-
-//   Util::Ref<GxFixedScaleCamera> cam(new GxFixedScaleCamera);
-//   cam->setUnitAngle(deg, pixelsPerInch());
-
-//   rep->camera = cam;
-
-//   reshapeCallback();
-// }
-
-// void Toglet::setViewingDistIn(double inches)
-// {
-// DOTRACE("Toglet::setViewingDistIn");
-
-
-//   Util::Ref<GxFixedScaleCamera> cam(new GxFixedScaleCamera);
-//   cam->setViewingDistIn(inches);
-
-//   rep->camera = cam;
-
-//   reshapeCallback();
-// }
-
-// void Toglet::setPerspective(double fovy, double zNear, double zFar)
-// {
-// DOTRACE("Toglet::setPerspective");
-//   rep->camera->setPerspective(fovy, zNear, zFar);
-//   reshapeCallback();
-// }
-
-// void Toglet::setFixedRectLTRB(double L, double T, double R, double B)
-// {
-// DOTRACE("Toglet::setFixedRectLTRB");
-//   rep->camera->setFixedRectLTRB(L,T,R,B);
-//   reshapeCallback();
-// }
-
-// void Toglet::setMinRectLTRB(double L, double T, double R, double B)
-// {
-// DOTRACE("Toglet::setMinRectLTRB");
-//   rep->camera->setMinRectLTRB(L,T,R,B);
-//   reshapeCallback();
-// }
 
 void Toglet::makeCurrent() const
 {
