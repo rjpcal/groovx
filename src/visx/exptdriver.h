@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Nov 17 19:22:01 1999
+// written: Thu Nov 18 10:07:37 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -135,10 +135,10 @@ public:
   void storeData();
 
 private:
-  class ExptImpl;
-  friend class ExptImpl;
+  class Impl;
+  friend class Impl;
 
-  ExptImpl* const itsImpl;
+  Impl* const itsImpl;
 };
 
 static const char vcid_exptdriver_h[] = "$Header$";
