@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:55 1999
-// written: Mon Jun 11 15:08:15 2001
+// written: Fri Jun 15 15:55:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,6 +58,9 @@ public:
 template <class BasePtr>
 class CreatorBase {
 public:
+  /// Return a clone of this Creator
+  virtual CreatorBase* clone() const = 0;
+
   /// Return a new pointer (or smart pointer) to type \c Base.
   virtual BasePtr create() = 0;
 };
@@ -74,12 +77,17 @@ class CreatorFromFunc : public CreatorBase<BasePtr> {
 public:
   typedef DerivedPtr (*FuncType) ();
 
-  CreatorFromFunc(FuncType func) : itsFunc(func) {}
+  CreatorFromFunc(FuncType func) :
+    CreatorBase<BasePtr>(), itsFunc(func) {}
 
-  CreatorFromFunc(const CreatorFromFunc& other) : itsFunc(other.itsFunc) {}
+  CreatorFromFunc(const CreatorFromFunc& other) :
+    CreatorBase<BasePtr>(), itsFunc(other.itsFunc) {}
 
   CreatorFromFunc& operator=(const CreatorFromFunc& other)
     { itsFunc = other.itsFunc; return *this; }
+
+  virtual CreatorBase<BasePtr>* clone() const
+    { return new CreatorFromFunc<BasePtr, DerivedPtr>(*this); }
 
   virtual BasePtr create() { return BasePtr(itsFunc()); }
 
@@ -143,16 +151,16 @@ public:
 
   /// Get the object associated with the tag \a name.
   CreatorType* getPtrForName(const fixed_string& name) const
-	 { return static_cast<CreatorType*>(CreatorMapBase::getPtrForName(name)); }
+    { return static_cast<CreatorType*>(CreatorMapBase::getPtrForName(name)); }
 
   /// Associate the object at \a ptr with the tag \a name.
   void setPtrForName(const char* name, CreatorType* ptr)
-	 { CreatorMapBase::setPtrForName(name, static_cast<void*>(ptr)); }
+    { CreatorMapBase::setPtrForName(name, static_cast<void*>(ptr)); }
 
 protected:
   /// Deletes the object at \a ptr.
   virtual void killPtr(void* ptr)
-	 { delete static_cast<CreatorType*>(ptr); }
+    { delete static_cast<CreatorType*>(ptr); }
 };
 
 /**
@@ -186,35 +194,55 @@ class Factory : public FactoryBase {
 private:
   CreatorMap<BasePtr> itsMap;
 
+  template <class DerivedPtr>
+  static const char* defaultName()
+  {
+    return demangle_cstr(typeid(
+      typename Util::TypeTraits<DerivedPtr>::Pointee).name());
+  }
+
 protected:
   /// Default constructor.
   Factory() : itsMap() {}
 
 public:
-  /** Registers a creation function with the factory. The factory will
-      assume ownership of the \c Creator. */
+  /** Registers a creation function with the factory. The default name
+      associated with the creation function will be given by the
+      type's actual C++ name. */
   template <class DerivedPtr>
   void registerCreatorFunc(DerivedPtr (*func) ())
   {
-	 itsMap.setPtrForName(
-       demangle_cstr(typeid(typename Util::TypeTraits<DerivedPtr>::Pointee).name()),
-		 new CreatorFromFunc<BasePtr, DerivedPtr>(func));
+    itsMap.setPtrForName(
+       defaultName<DerivedPtr>(),
+       new CreatorFromFunc<BasePtr, DerivedPtr>(func));
+  }
+
+  /** Introduces an alternate type name which can be used to create
+      products of type \a Derived. There must already have been a
+      creation function registered for the default name. */
+  void registerAlias(const char* origName, const char* aliasName)
+  {
+    CreatorBase<BasePtr>* creator = itsMap.getPtrForName(origName);
+    if (creator != 0)
+      {
+        itsMap.setPtrForName(aliasName, creator->clone());
+      }
   }
 
   /** Returns a new object of a given type. If the given type has not
       been registered with the factory, a null pointer is returned. */
   BasePtr newObject(const fixed_string& type) {
-	 CreatorBase<BasePtr>* creator = itsMap.getPtrForName(type);
-	 if (creator == 0) return BasePtr();
-	 return creator->create();
+    CreatorBase<BasePtr>* creator = itsMap.getPtrForName(type);
+    if (creator == 0) return BasePtr();
+    return creator->create();
   }
 
   /** Returns a new object of a given type. If the given type has not
       been registered with the factory, a FactorError is thrown. */
   BasePtr newCheckedObject(const fixed_string& type) {
-	 CreatorBase<BasePtr>* creator = itsMap.getPtrForName(type);
-	 if (creator == 0) FactoryError::throwForType(type);
-	 return creator->create();
+    CreatorBase<BasePtr>* creator = itsMap.getPtrForName(type);
+    if (creator == 0) FactoryError::throwForType(type);
+    return creator->create();
   }
 };
 
