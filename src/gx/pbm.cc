@@ -216,8 +216,8 @@ DOTRACE("Pbm::load");
 
   Gfx::Vec2<int> extent;
 
-  is >> extent.x();
-  is >> extent.y();
+  is >> extent.x(); dbgEval(3, extent.x());
+  is >> extent.y(); dbgEvalNL(3, extent.y());
 
   int max_grey = 1;
 
