@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:46:08 1999
-// written: Wed Jun 13 13:15:42 2001
+// written: Tue Aug  7 15:08:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ public:
 
   /** This generic function reads a value attribute of any basic type,
       of type \c Value, or of several supported string types (\c
-      std::string, \c fixed_string, and \c dyanmic_string). The value
+      std::string, \c fixed_string, and \c dynamic_string). The value
       associated with tag \a name will be copied into \a
       returnValue. */
   template <class T>
