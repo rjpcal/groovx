@@ -116,9 +116,8 @@ namespace ReadUtils
           ++inserter;
         }
     }
-}
 
-} // end namespace IO
+}} // end namespace IO::ReadUtils
 
 static const char vcid_readutils_h[] = "$Header$";
 #endif // !READUTILS_H_DEFINED
