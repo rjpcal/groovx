@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Tue Nov  2 21:43:37 1999
+// written: Tue Nov  2 22:30:29 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -197,7 +197,7 @@ DOTRACE("Fish::serialize");
 
   if (os.fail()) throw OutputError(ioTag);
 
-  if (flag & BASES) { GrObj::serialize(os, flag); }  
+  if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }  
 }
 
 void Fish::deserialize(istream& is, IOFlag flag) {
@@ -217,7 +217,7 @@ DOTRACE("Fish::deserialize");
 	 throw;
   }
 
-  if (flag & BASES) { GrObj::deserialize(is, flag); }
+  if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
 
   sendStateChangeMsg();
 }

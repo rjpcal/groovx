@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Nov  2 21:43:53 1999
+// written: Tue Nov  2 22:30:47 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ void FixPt::serialize(ostream &os, IOFlag flag) const {
   os << width() << endl;
   if (os.fail()) throw OutputError(ioTag);
 
-  if (flag & BASES) { GrObj::serialize(os, flag); }
+  if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }
 }
 
 void FixPt::deserialize(istream &is, IOFlag flag) {
@@ -66,7 +66,7 @@ void FixPt::deserialize(istream &is, IOFlag flag) {
   is >> width();
   if (is.fail()) throw InputError(ioTag);
 
-  if (flag & BASES) { GrObj::deserialize(is, flag); }
+  if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
 }
 
 int FixPt::charCount() const {

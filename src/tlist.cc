@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Thu Oct 21 19:12:33 1999
+// written: Tue Nov  2 22:33:14 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ DOTRACE("Tlist::serialize");
 
   // Always serialize the PtrList base
   if (true || flag & BASES) { 
-	 PtrList<Trial>::serialize(os, flag);
+	 PtrList<Trial>::serialize(os, flag | TYPENAME);
   }
 
   // itsCurTrial
@@ -101,7 +101,7 @@ DOTRACE("Tlist::deserialize");
 
   // Always deserialize its PtrList<Trial> base
   if (true || flag & BASES) {
-	 PtrList<Trial>::deserialize(is, flag);
+	 PtrList<Trial>::deserialize(is, flag | TYPENAME);
   }
 
   // itsCurTrial

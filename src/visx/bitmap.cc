@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Tue Nov  2 21:41:45 1999
+// written: Tue Nov  2 22:28:52 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ DOTRACE("Bitmap::serialize");
 
   if (os.fail()) throw OutputError(ioTag);
 
-  if (flag & BASES) { GrObj::serialize(os, flag); }
+  if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }
 }
 
 void Bitmap::deserialize(istream& is, IOFlag flag) {
@@ -113,7 +113,7 @@ DOTRACE("Bitmap::deserialize");
 
   if (is.fail()) throw InputError(ioTag);
 
-  if (flag & BASES) { GrObj::deserialize(is, flag); }
+  if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
 
   itsBytes.resize(1);
   bytesChangeHook(0, 0, 0, 1, 1);

@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Tue Nov  2 21:42:49 1999
+// written: Tue Nov  2 22:30:11 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,7 +100,7 @@ DOTRACE("Face::serialize");
   os << '}' << endl;
   if (os.fail()) throw OutputError(ioTag);
 
-  if (flag & BASES) { GrObj::serialize(os, flag); }
+  if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }
 }
 
 void Face::deserialize(istream &is, IOFlag flag) {
@@ -159,7 +159,7 @@ DOTRACE("Face::deserialize");
   }
   Invariant(check());
 
-  if (flag & BASES) { GrObj::deserialize(is, flag); }
+  if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
 
   sendStateChangeMsg();
 }

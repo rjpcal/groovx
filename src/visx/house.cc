@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Tue Nov  2 21:44:58 1999
+// written: Tue Nov  2 22:32:04 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -173,7 +173,7 @@ DOTRACE("House::serialize");
 
   if (os.fail()) throw OutputError(ioTag);
 
-  if (flag & BASES) { GrObj::serialize(os, flag); }  
+  if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }
 }
 
 void House::deserialize(istream& is, IOFlag flag) {
@@ -193,7 +193,7 @@ DOTRACE("House::deserialize");
 	 throw;
   }
 
-  if (flag & BASES) { GrObj::deserialize(is, flag); }
+  if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
 
   sendStateChangeMsg();
 }

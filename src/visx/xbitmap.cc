@@ -3,7 +3,7 @@
 // xbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:37:04 1999
-// written: Wed Oct 20 10:31:00 1999
+// written: Tue Nov  2 22:33:28 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -116,7 +116,7 @@ DOTRACE("XBitmap::serialize");
 
   if (os.fail()) throw OutputError(ioTag);
 
-  if (flag & BASES) { Bitmap::serialize(os, flag); }
+  if (flag & BASES) { Bitmap::serialize(os, flag | TYPENAME); }
 }
 
 void XBitmap::deserialize(istream& is, IOFlag flag) {
@@ -125,7 +125,7 @@ DOTRACE("XBitmap::deserialize");
 
   if (is.fail()) throw InputError(ioTag);
 
-  if (flag & BASES) { Bitmap::deserialize(is, flag); }
+  if (flag & BASES) { Bitmap::deserialize(is, flag | TYPENAME); }
 }
 
 int XBitmap::charCount() const {

@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Tue Nov  2 21:45:53 1999
+// written: Tue Nov  2 22:32:28 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -233,7 +233,7 @@ DOTRACE("MorphyFace::serialize");
   os << '}' << endl;
   if (os.fail()) throw OutputError(ioTag);
 
-  if (flag & BASES) { GrObj::serialize(os, flag); }
+  if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }
 }
 
 void MorphyFace::deserialize(istream &is, IOFlag flag) {
@@ -288,7 +288,7 @@ DOTRACE("MorphyFace::deserialize");
   }
   Invariant(check());
 
-  if (flag & BASES) { GrObj::deserialize(is, flag); }
+  if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
 
   sendStateChangeMsg();
 }

@@ -685,7 +685,7 @@ DOTRACE("Gtext::serialize");
 
   os << itsText << endl;
 
-  if (flag & BASES) { GrObj::serialize(os, flag); }
+  if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }
 }
 
 void Gtext::deserialize(istream &is, IOFlag flag) {
@@ -698,7 +698,7 @@ DOTRACE("Gtext::deserialize");
 
   if (is.fail()) throw InputError(ioTag);
 
-  if (flag & BASES) { GrObj::deserialize(is, flag); }
+  if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
 }
 
 int Gtext::charCount() const {
