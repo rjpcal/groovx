@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Tue Nov  9 15:58:38 1999
+// written: Tue Nov  9 16:25:59 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,6 +64,10 @@ public:
   void serialize(ostream &os, IOFlag flag) const;
   void deserialize(istream &is, IOFlag flag);
   int charCount() const;
+
+  void oldSerialize(ostream &os, IOFlag flag) const;
+  void oldDeserialize(istream &is, IOFlag flag);
+  int oldCharCount() const;
 
   void readFrom(Reader* reader);
   void writeTo(Writer* writer) const;
@@ -334,13 +338,14 @@ DOTRACE("EventResponseHdlr::Impl::serialize");
 
   if (flag & TYPENAME) { os << ioTag << IO::SEP; }
 
-  os << itsInputResponseMap << endl;
-  os << itsFeedbackMap << endl;
-  os << itsUseFeedback << endl;
+  oldSerialize(os, flag);
 
-  if (flag & BASES) { /* no bases to serialize */ }
+  os << itsEventSequence << endl;
+  os << itsBindingSubstitution << endl;
 
   if (os.fail()) throw OutputError(ioTag);
+
+  if (flag & BASES) { /* no bases to serialize */ }
 }
 
 void EventResponseHdlr::Impl::deserialize(istream &is, IOFlag flag) {
@@ -348,6 +353,33 @@ DOTRACE("EventResponseHdlr::Impl::deserialize");
 
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
+  oldDeserialize(is, flag);
+
+  getline(is, itsEventSequence, '\n');
+  getline(is, itsBindingSubstitution, '\n');
+
+  if (is.fail()) throw InputError(ioTag);
+
+  if (flag & BASES) { /* no bases to deserialize */ }
+}
+
+int EventResponseHdlr::Impl::charCount() const {
+DOTRACE("EventResponseHdlr::Impl::charCount");
+  return(ioTag.length() + 1
+			+ oldCharCount()
+			+ itsEventSequence.length() + 1
+			+ itsBindingSubstitution.length() + 1);
+}
+
+void EventResponseHdlr::Impl::oldSerialize(ostream &os, IOFlag) const {
+DOTRACE("EventResponseHdlr::Impl::oldSerialize");
+  os << itsInputResponseMap << endl;
+  os << itsFeedbackMap << endl;
+  os << itsUseFeedback << endl;
+}
+
+void EventResponseHdlr::Impl::oldDeserialize(istream &is, IOFlag flag) {
+DOTRACE("EventResponseHdlr::Impl::oldDeserialize");
   // XXX This is some sort of strange platform dependency..if the next
   // character in the stream is a space (the separator following the
   // typename), then we must pull it off the stream; however, in some
@@ -368,16 +400,12 @@ DOTRACE("EventResponseHdlr::Impl::deserialize");
   int val;
   is >> val;
   itsUseFeedback = bool(val);
-
-  if (flag & BASES) { /* no bases to deserialize */ }
-
-  if (is.fail()) throw InputError(ioTag);
 }
 
-int EventResponseHdlr::Impl::charCount() const {
-DOTRACE("EventResponseHdlr::Impl::charCount");
-  return (ioTag.length() + 1
-			 + itsInputResponseMap.length() + 1
+int EventResponseHdlr::Impl::oldCharCount() const {
+DOTRACE("EventResponseHdlr::Impl::oldCharCount");
+  return (itsInputResponseMap.length() + 1
+			 + itsFeedbackMap.length() + 1
 			 + gCharCount<bool>(itsUseFeedback) + 1
 			 + 1); // fudge factor
 }
@@ -388,6 +416,8 @@ DOTRACE("EventResponseHdlr::Impl::readFrom");
   reader->readValue("inputResponseMap", itsInputResponseMap);
   reader->readValue("feedbackMap", itsFeedbackMap);
   reader->readValue("useFeedback", itsUseFeedback);
+  reader->readValue("eventSequence", itsEventSequence);
+  reader->readValue("bindingSubstitution", itsBindingSubstitution);
 
   updateRegexps();
   updateFeedbacks();
@@ -399,6 +429,8 @@ DOTRACE("EventResponseHdlr::Impl::writeTo");
   writer->writeValue("inputResponseMap", itsInputResponseMap);
   writer->writeValue("feedbackMap", itsFeedbackMap);
   writer->writeValue("useFeedback", itsUseFeedback);
+  writer->writeValue("eventSequence", itsEventSequence);
+  writer->writeValue("bindingSubstitution", itsBindingSubstitution);
 }
 
 void EventResponseHdlr::Impl::setInterp(Tcl_Interp* interp) {
@@ -821,6 +853,17 @@ void EventResponseHdlr::rhAbortTrial() const
 void EventResponseHdlr::rhHaltExpt() const
   { itsImpl->rhHaltExpt(); }
 
+void EventResponseHdlr::oldSerialize(ostream &os, IOFlag flag) const {
+  itsImpl->oldSerialize(os, flag);
+}
+
+void EventResponseHdlr::oldDeserialize(istream &is, IOFlag flag) {
+  itsImpl->oldDeserialize(is, flag);
+}
+
+int EventResponseHdlr::oldCharCount() const {
+  return itsImpl->oldCharCount();
+}
 
 static const char vcid_eventresponsehdlr_cc[] = "$Header$";
 #endif // !EVENTRESPONSEHDLR_CC_DEFINED
