@@ -47,10 +47,6 @@
 
 #include <tk.h>
 
-#if defined(GL_PLATFORM_GLX)
-#  include <X11/Xlib.h>
-#endif
-
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
