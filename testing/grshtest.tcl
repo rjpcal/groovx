@@ -23,9 +23,9 @@ set RUN_IF_EQUAL 1
 ### Run test procedures
 set files {
     { bitmap_test.tcl 1 }
+    { blackbox_test.tcl 1 }
     { block_test.tcl 1 }
     { dlist_test.tcl 1 }
-    { dlink_test.tcl 1 }
     { eventrh_test.tcl 1 }
     { expt_test.tcl 1 }
     { face_test.tcl 1 }
