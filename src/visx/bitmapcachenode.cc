@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Wed Nov 13 10:25:09 2002
+// written: Wed Nov 13 10:45:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -157,14 +157,16 @@ DOTRACE("BitmapCacheNode::draw");
     }
 }
 
-Gfx::Box<double> BitmapCacheNode::gnodeBoundingBox(Gfx::Canvas& canvas) const
+void BitmapCacheNode::gnodeBoundingBox(Gfx::Box<double>& cube,
+                                       Gfx::Canvas& canvas) const
 {
 DOTRACE("BitmapCacheNode::gnodeBoundingBox");
 
   if (itsMode != Gmodes::GL_BITMAP_CACHE &&
       itsMode != Gmodes::X11_BITMAP_CACHE)
     {
-      return child()->gnodeBoundingBox(canvas);
+      child()->gnodeBoundingBox(cube, canvas);
+      return;
     }
 
   // else
@@ -180,7 +182,7 @@ DOTRACE("BitmapCacheNode::gnodeBoundingBox");
 
   bbox.setTopRight(canvas.worldFromScreen(top_right));
 
-  return bbox;
+  cube.unionize(bbox);
 }
 
 static const char vcid_bitmapcachenode_cc[] = "$Header$";

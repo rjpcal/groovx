@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:48:47 2001
-// written: Wed Nov 13 10:26:46 2002
+// written: Wed Nov 13 10:46:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,8 @@ void GrObjAligner::draw(Gfx::Canvas& canvas) const
   child()->draw(canvas);
 }
 
-Gfx::Box<double> GrObjAligner::gnodeBoundingBox(Gfx::Canvas& canvas) const
+void GrObjAligner::gnodeBoundingBox(Gfx::Box<double>& cube,
+                                    Gfx::Canvas& canvas) const
 {
   Gfx::Rect<double> bounds = child()->getBoundingBox(canvas);
 
@@ -57,7 +58,7 @@ Gfx::Box<double> GrObjAligner::gnodeBoundingBox(Gfx::Canvas& canvas) const
 
   bounds.setCenter(center);
 
-  return bounds;
+  cube.unionize(bounds);
 }
 
 

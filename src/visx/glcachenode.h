@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:39:48 2001
-// written: Wed Nov 13 10:21:33 2002
+// written: Wed Nov 13 10:46:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,8 @@ public:
 
   virtual void draw(Gfx::Canvas& canvas) const;
 
-  virtual Gfx::Box<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
+  virtual void gnodeBoundingBox(Gfx::Box<double>& cube,
+                                Gfx::Canvas& canvas) const;
 
   void invalidate();
 

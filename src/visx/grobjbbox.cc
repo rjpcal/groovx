@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Wed Nov 13 10:27:36 2002
+// written: Wed Nov 13 10:47:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,8 @@ GrObjBBox::GrObjBBox(Util::SoftRef<Gnode> child) :
 
 GrObjBBox::~GrObjBBox() {}
 
-Gfx::Box<double> GrObjBBox::gnodeBoundingBox(Gfx::Canvas& canvas) const
+void GrObjBBox::gnodeBoundingBox(Gfx::Box<double>& cube,
+                                 Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjBBox::gnodeBoundingBox");
 
@@ -57,8 +58,8 @@ DOTRACE("GrObjBBox::gnodeBoundingBox");
 
   dbgEval(3, itsPixelBorder); dbgEval(3, border_pixels);
 
-  return addPixelBorder(child()->getBoundingBox(canvas),
-                        border_pixels);
+  cube.unionize(addPixelBorder(child()->getBoundingBox(canvas),
+                               border_pixels));
 }
 
 void GrObjBBox::draw(Gfx::Canvas& canvas) const
