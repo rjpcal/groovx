@@ -72,6 +72,23 @@ public:
 
   mutable StopWatch itsTimer;
 
+  EventGroup& eventsAt(TimePoint time_point)
+  {
+    switch (time_point)
+      {
+      case IMMEDIATE:     return itsImmediateEvents;
+      case FROM_START:    return itsStartEvents;
+      case FROM_RESPONSE: return itsResponseEvents;
+      case FROM_ABORT:    return itsAbortEvents;
+      }
+
+    throw ErrorWithMsg("unknown TimingHdlr::TimePoint enumerant");
+    return itsAbortEvents; // but we'll never get here
+  }
+
+  const EventGroup& eventsAt(TimePoint time_point) const
+  { return const_cast<Impl*>(this)->eventsAt(time_point); }
+
 private:
   Util::ErrorHandler* itsErrorHandler;
   TrialBase* itsTrial;
@@ -180,25 +197,7 @@ Ref<TrialEvent> TimingHdlr::getEvent(TimePoint time_point,
                                      unsigned int index) const
 {
 DOTRACE("TimingHdlr::getEvent");
-  switch (time_point) {
-  case IMMEDIATE:
-    return itsImpl->itsImmediateEvents.at(index);
-    break;
-  case FROM_START:
-    return itsImpl->itsStartEvents.at(index);
-    break;
-  case FROM_RESPONSE:
-    return itsImpl->itsResponseEvents.at(index);
-    break;
-  case FROM_ABORT:
-    return itsImpl->itsAbortEvents.at(index);
-    break;
-  default:
-    break;
-  }
-
-  throw ErrorWithMsg("unknown TimingHdlr::TimePoint enumerant");
-  return Ref<TrialEvent>(Util::UID(0)); // will raise an exception
+  return itsImpl->eventsAt(time_point).at(index);
 }
 
 int TimingHdlr::getElapsedMsec() const
@@ -216,31 +215,9 @@ unsigned int TimingHdlr::addEvent(Ref<TrialEvent> event_item,
 {
 DOTRACE("TimingHdlr::addEvent");
 
-  switch (time_point)
-    {
-    case IMMEDIATE:
-      event_item->setDelay(0);
-      itsImpl->itsImmediateEvents.push_back(event_item);
-      return itsImpl->itsImmediateEvents.size() - 1;
-      break;
-    case FROM_START:
-      itsImpl->itsStartEvents.push_back(event_item);
-      return itsImpl->itsStartEvents.size() - 1;
-      break;
-    case FROM_RESPONSE:
-      itsImpl->itsResponseEvents.push_back(event_item);
-      return itsImpl->itsResponseEvents.size() - 1;
-      break;
-    case FROM_ABORT:
-      itsImpl->itsAbortEvents.push_back(event_item);
-      return itsImpl->itsAbortEvents.size() - 1;
-      break;
-    default:
-      break;
-    }
-
-  throw ErrorWithMsg("unknown TimingHdlr::TimePoint enumerant");
-  return 0; // we'll never get here
+  Impl::EventGroup& events = itsImpl->eventsAt(time_point); 
+  events.push_back(event_item);
+  return events.size() - 1;
 }
 
 unsigned int TimingHdlr::addEventByName(const char* event_type,
@@ -306,10 +283,11 @@ DOTRACE("TimingHdlr::Impl::thBeginTrial");
 void TimingHdlr::Impl::thResponseSeen()
 {
 DOTRACE("TimingHdlr::Impl::thResponseSeen");
-  if (itsResponseEvents.size() > 0) {
-    cancelAll(itsStartEvents);
-    scheduleAll(itsResponseEvents);
-  }
+  if (itsResponseEvents.size() > 0)
+	 {
+		cancelAll(itsStartEvents);
+		scheduleAll(itsResponseEvents);
+	 }
 }
 
 void TimingHdlr::Impl::thAbortTrial()
