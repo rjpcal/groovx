@@ -87,10 +87,11 @@ public:
 
   /// Find a package given its name and version.
   /** If the package is not already loaded, this function will attempt to
-      "require" the package. If the package cannot be found or loaded, a
-      null pointer will be returned. */
+      "require" the package. If a null pointer is passed to version (the
+      default), then any version will be acceptable. If no suitable package
+      cannot be found or loaded, a null pointer will be returned. */
   static PkgBase* lookup(Tcl_Interp* interp,
-                         const char* name, const char* version) throw();
+                         const char* name, const char* version = 0) throw();
 
   /** Returns a Tcl status code indicating whether the package
       initialization was successful. */
