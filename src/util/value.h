@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:19:17 1999
-// written: Wed Sep 25 19:00:39 2002
+// written: Mon Nov  4 15:09:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,14 +53,12 @@ public:
   /// Read the value from an \c STD_IO::istream.
   virtual void scanFrom(STD_IO::istream& is) = 0;
 
-  /** Get a C-style string (\c char*) representation of the value by
-      building a string stream, calling printTo(), and returning its
-      value. The result of this function is only valid until the next
-      call.*/
+  /// Get a C-style string (\c char*) representation of the value
+  /** Builds a string stream, calls printTo(), and returns its value. The
+      result of this function is only valid until the next call.*/
   const char* getCstring() const;
 
-  /** Attempt to get an \c fstring representation of the value. Calls
-      the C-string get(). */
+  /// Get an \c fstring representation of the value.
   fstring getFstring() const;
 
   /** Set the value from a C-style string (\c char*) representation,
