@@ -145,6 +145,10 @@ public:
       getenv() returns a pointer to static data which can be overwritten by
       subsequent calls. */
   const char* getenv(const char* environment_variable);
+
+  /** Suspend execution of the calling process for the specified
+      number of seconds. */
+  void sleep(unsigned int seconds);
 };
 
 static const char vcid_system_h[] = "$Header$";

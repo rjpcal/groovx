@@ -3,7 +3,7 @@
 // system.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Nov 17 15:05:41 1999
-// written: Tue Sep 19 16:52:33 2000
+// written: Thu Sep 21 15:19:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,6 +86,10 @@ DOTRACE("System::getenv");
   return ::getenv(environment_variable); 
 }
 
+void System::sleep(unsigned int seconds) {
+DOTRACE("System::sleep");
+  ::sleep(seconds);
+}
 
 static const char vcid_system_cc[] = "$Header$";
 #endif // !SYSTEM_CC_DEFINED
