@@ -53,6 +53,9 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
+using Util::Ref;
+using Util::SoftRef;
+
 Util::Tracer Trial::tracer;
 
 ///////////////////////////////////////////////////////////////////////
@@ -347,7 +350,7 @@ DOTRACE("Trial::avgRespTime");
 }
 
 
-void Trial::addNode(Util::Ref<GxNode> item)
+void Trial::addNode(Ref<GxNode> item)
 {
 DOTRACE("Trial::addNode");
   rep->gxNodes.push_back(item);
@@ -359,10 +362,10 @@ DOTRACE("Trial::trNextNode");
   setCurrentNode(rep->currentNode+1);
 }
 
-Util::FwdIter<Util::Ref<GxNode> > Trial::nodes() const
+Util::FwdIter<Ref<GxNode> > Trial::nodes() const
 {
 DOTRACE("Trial::nodes");
-  return Util::FwdIter<Util::Ref<GxNode> >
+  return Util::FwdIter<Ref<GxNode> >
     (rep->gxNodes.begin(), rep->gxNodes.end());
 }
 
@@ -401,7 +404,7 @@ DOTRACE("Trial::stdInfo");
        ii != end;
        ++ii)
     {
-      for (Util::FwdIter<const Util::Ref<GxNode> > tr((*ii)->deepChildren());
+      for (Util::FwdIter<const Ref<GxNode> > tr((*ii)->deepChildren());
            tr.isValid();
            tr.next())
         {
@@ -548,7 +551,7 @@ DOTRACE("Trial::trProcessResponse");
 void Trial::trDraw()
 {
 DOTRACE("Trial::trDraw");
-  Util::SoftRef<Toglet> widget = getWidget();
+  SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     {
       rep->installCurrentNode();
@@ -560,7 +563,7 @@ DOTRACE("Trial::trDraw");
 void Trial::trRender()
 {
 DOTRACE("Trial::trRender");
-  Util::SoftRef<Toglet> widget = getWidget();
+  SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     {
       rep->installCurrentNode();
@@ -572,7 +575,7 @@ DOTRACE("Trial::trRender");
 void Trial::trUndraw()
 {
 DOTRACE("Trial::trUndraw");
-  Util::SoftRef<Toglet> widget = getWidget();
+  SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     widget->undraw();
 }
@@ -580,7 +583,7 @@ DOTRACE("Trial::trUndraw");
 void Trial::trSwapBuffers()
 {
 DOTRACE("Trial::trSwapBuffers");
-  Util::SoftRef<Toglet> widget = getWidget();
+  SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     widget->swapBuffers();
 }
@@ -588,7 +591,7 @@ DOTRACE("Trial::trSwapBuffers");
 void Trial::trRenderBack()
 {
 DOTRACE("Trial::trRenderBack");
-  Util::SoftRef<Toglet> widget = getWidget();
+  SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     widget->getCanvas().drawOnBackBuffer();
 }
@@ -596,7 +599,7 @@ DOTRACE("Trial::trRenderBack");
 void Trial::trRenderFront()
 {
 DOTRACE("Trial::trRenderFront");
-  Util::SoftRef<Toglet> widget = getWidget();
+  SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     widget->getCanvas().drawOnFrontBuffer();
 }
@@ -604,7 +607,7 @@ DOTRACE("Trial::trRenderFront");
 void Trial::trClearBuffer()
 {
 DOTRACE("Trial::trClearBuffer");
-  Util::SoftRef<Toglet> widget = getWidget();
+  SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     widget->clearscreen();
 }
@@ -612,7 +615,7 @@ DOTRACE("Trial::trClearBuffer");
 void Trial::trFinishDrawing()
 {
 DOTRACE("Trial::trFinishDrawing");
-  Util::SoftRef<Toglet> widget = getWidget();
+  SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     widget->getCanvas().finishDrawing();
 }
