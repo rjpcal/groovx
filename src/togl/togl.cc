@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Nov 20 21:09:12 2002
+// written: Thu Nov 21 09:22:49 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -213,7 +213,8 @@ void Togl::makeCurrent() const
 
 void Togl::swapBuffers()
 {
-  rep->canvas->glxFlush(Tk_WindowId(rep->tkWin));
+  rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
+  rep->canvas->glxFlush();
 }
 
 Togl::Color Togl::queryColor(unsigned int color_index) const

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Nov 20 21:16:58 2002
+// written: Thu Nov 21 09:37:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -90,12 +90,12 @@ DOTRACE("GLCanvas::makeCurrent");
   Gfx::Canvas::setCurrent(*this);
 }
 
-void GLCanvas::glxFlush(Window win)
+void GLCanvas::glxFlush()
 {
 DOTRACE("GLCanvas::glxFlush");
 
   if (rep->opts->doubleFlag)
-    rep->glx->swapBuffers(win);
+    rep->glx->swapBuffers();
   else
     flushOutput();
 }
@@ -654,26 +654,35 @@ DOTRACE("GLCanvas::drawBezierFill4");
 #endif
 }
 
-void GLCanvas::beginPoints()        {
-DOTRACE("GLCanvas::beginPoints"); glBegin(GL_POINTS); }
-void GLCanvas::beginLines()         {
-DOTRACE("GLCanvas::beginLines"); glBegin(GL_LINES); }
-void GLCanvas::beginLineStrip()     {
-DOTRACE("GLCanvas::beginLineStrip"); glBegin(GL_LINE_STRIP); }
-void GLCanvas::beginLineLoop()      {
-DOTRACE("GLCanvas::beginLineLoop"); glBegin(GL_LINE_LOOP); }
-void GLCanvas::beginTriangles()     {
-DOTRACE("GLCanvas::beginTriangles"); glBegin(GL_TRIANGLES); }
-void GLCanvas::beginTriangleStrip() {
-DOTRACE("GLCanvas::beginTriangleStrip"); glBegin(GL_TRIANGLE_STRIP); }
-void GLCanvas::beginTriangleFan()   {
-DOTRACE("GLCanvas::beginTriangleFan"); glBegin(GL_TRIANGLE_FAN); }
-void GLCanvas::beginQuads()         {
-DOTRACE("GLCanvas::beginQuads"); glBegin(GL_QUADS); }
-void GLCanvas::beginQuadStrip()     {
-DOTRACE("GLCanvas::beginQuadStrip"); glBegin(GL_QUAD_STRIP); }
-void GLCanvas::beginPolygon()       {
-DOTRACE("GLCanvas::beginPolygon"); glBegin(GL_POLYGON); }
+void GLCanvas::beginPoints()
+{ DOTRACE("GLCanvas::beginPoints"); glBegin(GL_POINTS); }
+
+void GLCanvas::beginLines()
+{ DOTRACE("GLCanvas::beginLines"); glBegin(GL_LINES); }
+
+void GLCanvas::beginLineStrip()
+{ DOTRACE("GLCanvas::beginLineStrip"); glBegin(GL_LINE_STRIP); }
+
+void GLCanvas::beginLineLoop()
+{ DOTRACE("GLCanvas::beginLineLoop"); glBegin(GL_LINE_LOOP); }
+
+void GLCanvas::beginTriangles()
+{ DOTRACE("GLCanvas::beginTriangles"); glBegin(GL_TRIANGLES); }
+
+void GLCanvas::beginTriangleStrip()
+{ DOTRACE("GLCanvas::beginTriangleStrip"); glBegin(GL_TRIANGLE_STRIP); }
+
+void GLCanvas::beginTriangleFan()
+{ DOTRACE("GLCanvas::beginTriangleFan"); glBegin(GL_TRIANGLE_FAN); }
+
+void GLCanvas::beginQuads()
+{ DOTRACE("GLCanvas::beginQuads"); glBegin(GL_QUADS); }
+
+void GLCanvas::beginQuadStrip()
+{ DOTRACE("GLCanvas::beginQuadStrip"); glBegin(GL_QUAD_STRIP); }
+
+void GLCanvas::beginPolygon()
+{ DOTRACE("GLCanvas::beginPolygon"); glBegin(GL_POLYGON); }
 
 void GLCanvas::vertex2(const Gfx::Vec2<double>& v)
 {

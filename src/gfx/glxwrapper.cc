@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:07 2002
-// written: Wed Nov 20 20:40:03 2002
+// written: Thu Nov 21 09:25:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,13 +28,13 @@ namespace
 {
   // For caching the latest subject of GlxWrapper::makeCurrent()
   const GlxWrapper* currentGlxWrapper = 0;
-  Window currentWindow = 0;
 }
 
 GlxWrapper::GlxWrapper(Display* dpy, GlxOpts& opts, GlxWrapper* share) :
   itsDisplay(dpy),
   itsVisInfo(0),
-  itsContext(0)
+  itsContext(0),
+  itsCurrentWin(0)
 {
 DOTRACE("GlxWrapper::GlxWrapper");
 
@@ -109,15 +109,15 @@ DOTRACE("GlxWrapper::make");
   return glx;
 }
 
-void GlxWrapper::makeCurrent(Window win) const
+void GlxWrapper::makeCurrent(Window win)
 {
 DOTRACE("GlxWrapper::makeCurrent");
 
-  if (currentGlxWrapper != this || currentWindow != win)
+  if (currentGlxWrapper != this || itsCurrentWin != win)
     {
       glXMakeCurrent(itsDisplay, win, itsContext);
       currentGlxWrapper = this;
-      currentWindow = win;
+      itsCurrentWin = win;
     }
 }
 
@@ -135,9 +135,9 @@ DOTRACE("GlxWrapper::isDoubleBuffered");
   return bool(dbl_flag);
 }
 
-void GlxWrapper::swapBuffers(Window window) const
+void GlxWrapper::swapBuffers() const
 {
-  glXSwapBuffers(itsDisplay, window);
+  glXSwapBuffers(itsDisplay, itsCurrentWin);
 }
 
 static const char vcid_glxwrapper_cc[] = "$Header$";
