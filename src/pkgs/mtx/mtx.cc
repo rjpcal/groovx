@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Fri Mar 30 12:43:39 2001
+// written: Sat Mar 31 07:47:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,6 +57,9 @@ MtxIter::MtxIter(Mtx& m, ptrdiff_t storageOffset, int s, int n) :
 
 Mtx::MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
 {
+  if (!mxIsNumeric(a))
+	 throw ErrorWithMsg("cannot construct a Mtx with a non-numeric mxArray");
+
   init(mxGetPr(a), mxGetM(a), mxGetN(a), s);
 }
 
