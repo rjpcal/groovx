@@ -106,6 +106,18 @@ namespace geom
     vec3 operator/(const V& factor) const
     { vec3<V> copy(*this); copy /= factor; return copy; }
 
+
+    //
+    // vec3-vec2 math (fill in z==0 for addition)
+    //
+
+    vec3 operator+(const vec2<V>& rhs) const
+    { return vec3<V>(x() + rhs.x(), y() + rhs.y(), z()); }
+
+    vec3 operator-(const vec2<V>& rhs) const
+    { return vec3<V>(x() - rhs.x(), y() - rhs.y(), z()); }
+
+
     //
     // vec3-vec3 math
     //
