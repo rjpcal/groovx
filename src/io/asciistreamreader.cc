@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu Nov 11 12:10:48 1999
+// written: Thu Nov 11 17:39:08 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,6 +40,7 @@ namespace {
   const char STRING_ENDER = '^';
 
   void unEscape(string& text) {
+  DOTRACE("<asciistreamreader.cc>::unEscape");
 	 // un-escape any special characters
 	 for (int pos = 0; pos < text.length(); ++pos) {
 
@@ -230,18 +231,19 @@ DOTRACE("AsciiStreamReader::Impl::initAttributes");
   DebugEvalNL(attrib_count);
 
   for (int i = 0; i < attrib_count; ++i) {
-	 string type, name, equal, value;
+	 char type[64], name[64], equal[16];
 
 	 itsBuf >> type >> name >> equal;
+
+  	 string value;
 	 getline(itsBuf, value, STRING_ENDER);
 
 	 DebugEval(type); DebugEval(name); DebugEvalNL(value);
 
 	 unEscape(value);
-
 	 DebugEvalNL(value);
 
-	 itsAttribs[name] = Attrib(type, value);
+  	 itsAttribs[name] = Attrib(type, value);
   }
 }
 
