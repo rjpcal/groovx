@@ -139,10 +139,10 @@ proc testfile {file_arg} {
         
         puts "running test file ${file_arg}..."
 
-        set result [ catch {source $file_arg} errmsg ]
+        set result [ catch {source $file_arg} ]
         if { $result != 0 } {
             puts "...an error occurred while evaluating ${file_arg}:"
-            puts $errmsg
+	    puts $errorInfo
 	    exit
         }
     }
