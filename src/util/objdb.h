@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Sep 25 18:59:09 2002
+// written: Fri Nov 22 15:21:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,25 +105,23 @@ public:
   // Collection interface
   //
 
-  /** Returns the number of filled sites in the PtrList. */
+  /// Returns the number of valid objects in the database.
   int count() const;
 
-  /** Returns true if 'id' is a valid index into a non-NULL T* in
-      the PtrList, given its current size. */
+  /// Returns true if 'id' is a valid uid.
   bool isValidId(Util::UID id) const;
 
-  /** If the object at \a id is unshared, removes reference to the
-      object at index \a id, causing the object to be destroyed since
-      it was unshared. If the object is shared, this operation throws
-      an exception. */
+  /// Releases the object specified by \a id, but only if it is unshared.
+  /** This causes the object to be destroyed since it was unshared. If the
+      object is shared, this operation throws an exception. */
   void remove(Util::UID id);
 
-  /** Removes reference to the object at \a id. */
+  /// Removes reference to the object with uid \a id.
   void release(Util::UID id);
 
-  /** Releases references to all unshared objects held by the
-      list. Since the objects are unshared, they will be destroyed in
-      the process. */
+  /// Releases all unshared objects held in the database.
+  /** Since the objects are unshared, they will be destroyed in the
+      process. */
   void purge();
 
   /** Calls \c purge() repeatedly until no more items can be
@@ -131,22 +129,22 @@ public:
       other items in the list. */
   void clear();
 
-  /** WARNING: should only be called during program exit. Does a full
-      clear of all objects held by the ObjDb. This breaks the usual
-      semantics of ObjDb, since it removes both shared and unshared
+  /// WARNING: should only be called during program exit.
+  /** Does a full clear of all objects held by the ObjDb. This breaks the
+      usual semantics of ObjDb, since it removes both shared and unshared
       objects. */
   void clearOnExit();
 
-  /** Return the \c Util::Object* at the index given by \a id. Checks
-      first if \a id is a valid index, and throws an \c InvalidIdError
+  /// Return the \c Util::Object* with the uid given by \a id.
+  /** Checks first if \a id is a valid uid, and throws an \c InvalidIdError
       if it is not. */
-  Util::Object* getCheckedPtrBase(Util::UID id) throw (InvalidIdError);
+  Util::Object* getCheckedObj(Util::UID id) throw (InvalidIdError);
 
-  /** Add ptr at the next available location, and return the index
-      where it was inserted. If necessary, the list will be expanded
-      to make room for the ptr. The PtrList now assumes control of the
-      memory management for the object *ptr. */
-  void insertPtrBase(Util::Object* ptr);
+  /// Insert a strong reference to obj into the database.
+  void insertObj(Util::Object* obj);
+
+  /// Insert a weak reference to obj into the database.
+  void insertObjWeak(Util::Object* obj);
 
 private:
   ObjDb(const ObjDb&);
