@@ -12,11 +12,11 @@
 #ifndef MTXOPS_H_DEFINED
 #define MTXOPS_H_DEFINED
 
-class Mtx;
+class mtx;
 
-Mtx squared(const Mtx& src);
+mtx squared(const mtx& src);
 
-Mtx zeropad(const Mtx& src, int new_mrows, int new_ncols,
+mtx zeropad(const mtx& src, int new_mrows, int new_ncols,
             int* ppadtop=0, int* ppadleft=0);
 
 static const char vcid_mtxops_h[] = "$Header$";

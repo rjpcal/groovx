@@ -134,12 +134,12 @@ inline col_index_range col_range_n(int begin, int count) { return col_index_rang
 
 
 
-class Mtx;
+class mtx;
 
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Mtx iterators
+// mtx iterators
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -202,7 +202,7 @@ public:
 
 private:
   friend class slice;
-  friend class Mtx;
+  friend class mtx;
 
   template <class U> friend class stride_iterator_base;
 
@@ -222,7 +222,7 @@ typedef stride_iterator_base<const double> mtx_const_iter;
 class slice
 {
 protected:
-  Mtx& m_owner;
+  mtx& m_owner;
   ptrdiff_t m_offset;
   int m_stride;
   int m_nelems;
@@ -234,9 +234,9 @@ protected:
 
   ptrdiff_t storage_offset(int i) const { return m_offset + m_stride*i; }
 
-  friend class Mtx;
+  friend class mtx;
 
-  inline slice(const Mtx& owner, ptrdiff_t offset, int s, int n);
+  inline slice(const mtx& owner, ptrdiff_t offset, int s, int n);
 
 public:
 
@@ -285,9 +285,9 @@ public:
   double mean() const { return sum()/m_nelems; }
 
 
-  // Returns an index matrix so that this->reorder(Mtx) will put the
+  // Returns an index matrix so that this->reorder(mtx) will put the
   // slice in sorted order
-  Mtx get_sort_order() const;
+  mtx get_sort_order() const;
 
   bool operator==(const slice& other) const;
 
@@ -314,7 +314,7 @@ public:
   void sort();
 
   // Reorders the slice by applying *this[i] = *this[index[i]]
-  void reorder(const Mtx& index);
+  void reorder(const mtx& index);
 
   void operator+=(double val) { apply(Add(val)); }
   void operator-=(double val) { apply(Sub(val)); }
@@ -327,7 +327,7 @@ public:
 
   // This is assignment of value, not reference
   slice& operator=(const slice& other);
-  slice& operator=(const Mtx& other);
+  slice& operator=(const mtx& other);
 };
 
 
@@ -544,7 +544,7 @@ private:
 
 //  Iterator templates for iterating over two-dimensional data
 
-/// Index-based iterator for Mtx class.
+/// Index-based iterator for mtx class.
 template <class M, class T>
 class index_iterator_base
 {
@@ -604,7 +604,7 @@ public:
   index_iterator_base operator-(int x) const { return index_iterator_base(m_src, m_index-x); }
 };
 
-/// Column-major iterator for Mtx class.
+/// Column-major iterator for mtx class.
 template <class T>
 class colmaj_iterator_base
 {
@@ -648,7 +648,7 @@ public:
   { return m_ptr != other.m_ptr; }
 };
 
-/// Row-major iterator for Mtx class.
+/// Row-major iterator for mtx class.
 template <class T>
 class rowmaj_iterator_base
 {
@@ -871,8 +871,6 @@ public:
     double operator()(double) { return v; }
   };
 
-  void setAll(double x) { apply_f(Setter(x)); }
-
   void clear(double x = 0.0) { apply_f(Setter(x)); }
 };
 
@@ -880,33 +878,33 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * SubMtxRef class definition
+ * sub_mtx_ref class definition
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class SubMtxRef : public mtx_base<data_ref_holder>
+class sub_mtx_ref : public mtx_base<data_ref_holder>
 {
 public:
   typedef mtx_base<data_ref_holder> Base;
 
-  SubMtxRef(const mtx_specs& specs, data_holder& ref) :
+  sub_mtx_ref(const mtx_specs& specs, data_holder& ref) :
     Base(specs, data_ref_holder(&ref))
   {}
 
-  SubMtxRef& operator=(const SubMtxRef& other);
-  SubMtxRef& operator=(const Mtx& other);
+  sub_mtx_ref& operator=(const sub_mtx_ref& other);
+  sub_mtx_ref& operator=(const mtx& other);
 };
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Mtx class definition
+ * mtx class definition
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Mtx : public mtx_base<data_holder>
+class mtx : public mtx_base<data_holder>
 {
 public:
 
@@ -916,40 +914,40 @@ public:
   // Constructors + Conversion
   //
 
-  static const Mtx& emptyMtx();
+  static const mtx& empty_mtx();
 
-  Mtx(const mtx_specs& specs, const data_holder& data) :
+  mtx(const mtx_specs& specs, const data_holder& data) :
     Base(specs, data)
   {}
 
-  Mtx(mxArray* a, storage_policy s = COPY);
+  mtx(mxArray* a, storage_policy s = COPY);
 
   /** With a const mxArray*, only BORROW or COPY are allowed as storage
       policies, in order to preserve const-correctness. */
-  Mtx(const mxArray* a, storage_policy s = COPY);
+  mtx(const mxArray* a, storage_policy s = COPY);
 
-  Mtx(double* data, int mrows, int ncols, storage_policy s = COPY);
+  mtx(double* data, int mrows, int ncols, storage_policy s = COPY);
 
-  Mtx(const mtx_shape& s, init_policy p = ZEROS);
+  mtx(const mtx_shape& s, init_policy p = ZEROS);
 
-  Mtx(int mrows, int ncols, init_policy p = ZEROS);
+  mtx(int mrows, int ncols, init_policy p = ZEROS);
 
-  Mtx(const slice& s);
+  mtx(const slice& s);
 
-  Mtx(const Mtx& other) : Base(other) {}
+  mtx(const mtx& other) : Base(other) {}
 
-  virtual ~Mtx();
+  virtual ~mtx();
 
-  Mtx& operator=(const Mtx& other)
+  mtx& operator=(const mtx& other)
   {
-    Mtx temp(other);
+    mtx temp(other);
     Base::swap(temp);
     return *this;
   }
 
   // This will destroy any data in the process of changing the size of
-  // the Mtx to the specified dimensions; its only advantage over just
-  // declaring a new Mtx is that it will avoid a deallocate/allocate
+  // the mtx to the specified dimensions; its only advantage over just
+  // declaring a new mtx is that it will avoid a deallocate/allocate
   // cycle if the new dimensions are the same as the current dimensions.
   void resize(int mrowsNew, int ncolsNew);
 
@@ -957,7 +955,7 @@ public:
       submatrix, contig() will make a new matrix of the proper size and copy
       the elements there; otherwise, it will just return the current
       matrix. */
-  Mtx contig() const;
+  mtx contig() const;
 
   mxArray* makeMxArray() const;
 
@@ -992,58 +990,58 @@ public:
   const double& at(int elem) const
     { return Base::at(offset_from_start(elem)); }
 
-  bool sameSize(const Mtx& x) const
+  bool sameSize(const mtx& x) const
   { return (mrows() == x.mrows()) && (ncols() == x.ncols()); }
 
   //
   // Slices, submatrices
   //
 
-  SubMtxRef sub(const row_index_range& rng)
+  sub_mtx_ref sub(const row_index_range& rng)
   {
-    return SubMtxRef(this->specs().sub_rows(rng), this->data_);
+    return sub_mtx_ref(this->specs().sub_rows(rng), this->data_);
   }
 
-  SubMtxRef sub(const col_index_range& rng)
+  sub_mtx_ref sub(const col_index_range& rng)
   {
-    return SubMtxRef(this->specs().sub_cols(rng), this->data_);
+    return sub_mtx_ref(this->specs().sub_cols(rng), this->data_);
   }
 
-  SubMtxRef sub(const row_index_range& rr, const col_index_range& cc)
+  sub_mtx_ref sub(const row_index_range& rr, const col_index_range& cc)
   {
-    return SubMtxRef(this->specs().sub_rows(rr).sub_cols(cc), this->data_);
-  }
-
-
-  Mtx sub(const row_index_range& rng) const
-  {
-    return Mtx(this->specs().sub_rows(rng), this->data_);
-  }
-
-  Mtx sub(const col_index_range& rng) const
-  {
-    return Mtx(this->specs().sub_cols(rng), this->data_);
-  }
-
-  Mtx sub(const row_index_range& rr, const col_index_range& cc) const
-  {
-    return Mtx(this->specs().sub_rows(rr).sub_cols(cc), this->data_);
+    return sub_mtx_ref(this->specs().sub_rows(rr).sub_cols(cc), this->data_);
   }
 
 
-  Mtx operator()(const row_index_range& rng) const { return sub(rng); }
+  mtx sub(const row_index_range& rng) const
+  {
+    return mtx(this->specs().sub_rows(rng), this->data_);
+  }
 
-  Mtx operator()(const col_index_range& rng) const { return sub(rng); }
+  mtx sub(const col_index_range& rng) const
+  {
+    return mtx(this->specs().sub_cols(rng), this->data_);
+  }
 
-  Mtx operator()(const row_index_range& rr, const col_index_range& cc) const
+  mtx sub(const row_index_range& rr, const col_index_range& cc) const
+  {
+    return mtx(this->specs().sub_rows(rr).sub_cols(cc), this->data_);
+  }
+
+
+  mtx operator()(const row_index_range& rng) const { return sub(rng); }
+
+  mtx operator()(const col_index_range& rng) const { return sub(rng); }
+
+  mtx operator()(const row_index_range& rr, const col_index_range& cc) const
   { return sub(rr, cc); }
 
 
-  Mtx as_shape(const mtx_shape& s) const
-  { return Mtx(this->specs().as_shape(s), this->data_); }
+  mtx as_shape(const mtx_shape& s) const
+  { return mtx(this->specs().as_shape(s), this->data_); }
 
-  Mtx as_shape(int mr, int nc) const
-  { return Mtx(this->specs().as_shape(mr, nc), this->data_); }
+  mtx as_shape(int mr, int nc) const
+  { return mtx(this->specs().as_shape(mr, nc), this->data_); }
 
   slice row(int r) const
     { return slice(*this, offset_from_storage(r,0), rowstride(), ncols()); }
@@ -1054,9 +1052,9 @@ public:
   mtx_const_iter rowIter(int r) const
     { return mtx_const_iter(address(r,0), rowstride(), ncols()); }
 
-  Mtx asRow() const { return as_shape(1, nelems()); }
+  mtx asRow() const { return as_shape(1, nelems()); }
 
-  void reorderRows(const Mtx& index);
+  void reorderRows(const mtx& index);
 
 
 
@@ -1069,9 +1067,9 @@ public:
   mtx_const_iter columnIter(int c) const
     { return mtx_const_iter(address(0,c), colstride(), mrows()); }
 
-  Mtx asColumn() const { return as_shape(nelems(), 1); }
+  mtx asColumn() const { return as_shape(nelems(), 1); }
 
-  void reorderColumns(const Mtx& index);
+  void reorderColumns(const mtx& index);
 
   void swapColumns(int c1, int c2);
 
@@ -1080,9 +1078,9 @@ public:
   // Functions
   //
 
-  Mtx meanRow() const;
+  mtx meanRow() const;
 
-  Mtx meanColumn() const;
+  mtx meanColumn() const;
 
   const_iterator find_min() const;
   const_iterator find_max() const;
@@ -1094,25 +1092,25 @@ public:
 
   double mean() const { return sum() / nelems(); }
 
-  Mtx& operator+=(double x) { apply_f(Add(x)); return *this; }
-  Mtx& operator-=(double x) { apply_f(Sub(x)); return *this; }
-  Mtx& operator*=(double fac) { apply_f(Mul(fac)); return *this; }
-  Mtx& operator/=(double div) { apply_f(Div(div)); return *this; }
+  mtx& operator+=(double x) { apply_f(Add(x)); return *this; }
+  mtx& operator-=(double x) { apply_f(Sub(x)); return *this; }
+  mtx& operator*=(double fac) { apply_f(Mul(fac)); return *this; }
+  mtx& operator/=(double div) { apply_f(Div(div)); return *this; }
 
-  Mtx& operator+=(const Mtx& other);
-  Mtx& operator-=(const Mtx& other);
+  mtx& operator+=(const mtx& other);
+  mtx& operator-=(const mtx& other);
 
-  bool operator==(const Mtx& other) const;
+  bool operator==(const mtx& other) const;
 
-  bool operator!=(const Mtx& other) const
+  bool operator!=(const mtx& other) const
   { return !(operator==(other)); }
 
   // result = vec * mtx;
-  static void VMmul_assign(const slice& vec, const Mtx& mtx,
+  static void VMmul_assign(const slice& vec, const mtx& mtx,
                            slice& result);
 
   // this = m1 * m2;
-  void assign_MMmul(const Mtx& m1, const Mtx& m2);
+  void assign_MMmul(const mtx& m1, const mtx& m2);
 
   void make_unique() { Base::data_.make_unique(); }
 
@@ -1132,8 +1130,8 @@ inline const double* slice::data_start() const
 inline double* slice::data_start_nc()
 { return m_owner.storage_nc() + m_offset; }
 
-inline slice::slice(const Mtx& owner, ptrdiff_t offset, int s, int n) :
-  m_owner(const_cast<Mtx&>(owner)),
+inline slice::slice(const mtx& owner, ptrdiff_t offset, int s, int n) :
+  m_owner(const_cast<mtx&>(owner)),
   m_offset(offset),
   m_stride(s),
   m_nelems(n) {}
@@ -1156,22 +1154,22 @@ inline double innerProduct(mtx_const_iter s1, mtx_const_iter s2)
   return result;
 }
 
-Mtx operator+(const Mtx& m, double x);
-Mtx operator-(const Mtx& m, double x);
-Mtx operator*(const Mtx& m, double x);
-Mtx operator/(const Mtx& m, double x);
+mtx operator+(const mtx& m, double x);
+mtx operator-(const mtx& m, double x);
+mtx operator*(const mtx& m, double x);
+mtx operator/(const mtx& m, double x);
 
-Mtx operator+(const Mtx& m1, const Mtx& m2);
-Mtx operator-(const Mtx& m1, const Mtx& m2);
+mtx operator+(const mtx& m1, const mtx& m2);
+mtx operator-(const mtx& m1, const mtx& m2);
 
 // Simple element-by-element multiplication (i.e. NOT matrix multiplication)
-Mtx arr_mul(const Mtx& m1, const Mtx& m2);
+mtx arr_mul(const mtx& m1, const mtx& m2);
 
 // Simple element-by-element division (i.e. NOT matrix division)
-Mtx arr_div(const Mtx& m1, const Mtx& m2);
+mtx arr_div(const mtx& m1, const mtx& m2);
 
-Mtx min(const Mtx& m1, const Mtx& m2);
-Mtx max(const Mtx& m1, const Mtx& m2);
+mtx min(const mtx& m1, const mtx& m2);
+mtx max(const mtx& m1, const mtx& m2);
 
 static const char vcid_mtx_h[] = "$Header$";
 #endif // !MTX_H_DEFINED

@@ -21,18 +21,18 @@
 
 #include "util/trace.h"
 
-Mtx squared(const Mtx& src)
+mtx squared(const mtx& src)
 {
 DOTRACE("squared");
 
-  Mtx result(src);
+  mtx result(src);
   // FIXME would be better if mtx_base had a transformF() template
   result.apply_f(Square());
 
   return result;
 }
 
-Mtx zeropad(const Mtx& src, int new_mrows, int new_ncols,
+mtx zeropad(const mtx& src, int new_mrows, int new_ncols,
             int* ppadtop, int* ppadleft)
 {
   DOTRACE("zeropad");
@@ -40,7 +40,7 @@ Mtx zeropad(const Mtx& src, int new_mrows, int new_ncols,
   if (new_mrows < src.mrows() || new_ncols < src.ncols())
     throw Util::Error("zeropad(): new size must be >= old size");
 
-  Mtx result(new_mrows, new_ncols);
+  mtx result(new_mrows, new_ncols);
 
   const int padtop =  (new_mrows - src.mrows() + 1) / 2;
   const int padleft = (new_ncols - src.ncols() + 1) / 2;

@@ -44,14 +44,14 @@ int Mtx_Init(Tcl_Interp* interp)
 {
 DOTRACE("Mtx_Init");
 
-  PKG_CREATE(interp, "Mtx", "$Revision$");
+  PKG_CREATE(interp, "mtx", "$Revision$");
   Tcl::defGenericObjCmds<MtxObj>(pkg);
 
-  pkg->defAction<MtxObj>("print", &Mtx::print);
+  pkg->defAction<MtxObj>("print", &mtx::print);
 
-  pkg->defGetter<MtxObj, int>("mrows", &Mtx::mrows);
-  pkg->defGetter<MtxObj, int>("ncols", &Mtx::ncols);
-  pkg->defGetter<MtxObj, int>("nelems", &Mtx::nelems);
+  pkg->defGetter<MtxObj, int>("mrows", &mtx::mrows);
+  pkg->defGetter<MtxObj, int>("ncols", &mtx::ncols);
+  pkg->defGetter<MtxObj, int>("nelems", &mtx::nelems);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&MtxObj::make);
 
