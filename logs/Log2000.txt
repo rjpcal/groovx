@@ -594,6 +594,10 @@ invalid, it is impossible to show a new trial because the program
 always tries to undraw the current, invalid trial before drawing a new
 one. So there is no way to un-corrupt the program state.
 
+(9-Oct-2000, done 11-Oct-2000) Could refactor EventResponseHdlr and
+Trial by using a state pattern instead of an enum TrialState. Done for
+EventResponseHdlr, but I'm not sure this helped make things clearer.
+
 (done 16-Oct-2000) NullablePtrHandle? Allows resources to be
 purged. Done. 
 
