@@ -37,6 +37,7 @@
 #include "pkgs/testutils.h"
 
 #include <cstring>
+#include <sstream>
 
 #include "util/trace.h"
 
@@ -194,6 +195,58 @@ namespace
     TEST_REQUIRE(s > "pine");
     TEST_REQUIRE(s > "panini");
   }
+
+  void testRead()
+  {
+    const std::string orig("orange panini");
+    std::istringstream in(orig);
+
+    fstring dummy; (void)dummy; // this is here to make sure that the
+                                // "empty_string_rep" is shared,
+                                // forcing us to make sure that the
+                                // real "out" fstring uniquifies
+                                // itself before trying to read from
+                                // the istringstream
+    fstring out;
+    in >> out;
+    TEST_REQUIRE_EQ(out, "orange");
+  }
+
+  void testReadsome()
+  {
+    const std::string orig("azure banana");
+    std::istringstream in(orig);
+
+    fstring dummy; (void)dummy; // see comment in testRead();
+
+    fstring out;
+    out.readsome(in, 10);
+    TEST_REQUIRE_EQ(out, "azure bana");
+  }
+
+  void testReadline1()
+  {
+    const std::string orig("marooned on\nan island!\nforever\n");
+    std::istringstream in(orig);
+
+    fstring dummy; (void)dummy; // see comment in testRead();
+
+    fstring out;
+    out.readline(in);
+    TEST_REQUIRE_EQ(out, "marooned on");
+  }
+
+  void testReadline2()
+  {
+    const std::string orig("marooned on\nan island!\nforever\n");
+    std::istringstream in(orig);
+
+    fstring dummy; (void)dummy; // see comment in testRead();
+
+    fstring out;
+    out.readline(in, '!');
+    TEST_REQUIRE_EQ(out, "marooned on\nan island");
+  }
 }
 
 extern "C"
@@ -216,6 +269,10 @@ DOTRACE("Fstringtest_Init");
   DEF_TEST(pkg, testCopyOnWrite);
   DEF_TEST(pkg, testLessThan);
   DEF_TEST(pkg, testGreaterThan);
+  DEF_TEST(pkg, testRead);
+  DEF_TEST(pkg, testReadsome);
+  DEF_TEST(pkg, testReadline1);
+  DEF_TEST(pkg, testReadline2);
 
   PKG_RETURN;
 }
