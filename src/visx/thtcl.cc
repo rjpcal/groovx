@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Mon Dec 11 14:29:48 2000
+// written: Mon Dec 11 15:41:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,6 @@
 #include "io/iofactory.h"
 
 #include "tcl/ioitempkg.h"
-#include "tcl/listpkg.h"
 #include "tcl/tclcmd.h"
 
 #define NO_TRACE
@@ -145,10 +144,8 @@ DOTRACE("Th_Init");
 
   Tcl::TclPkg* pkg1 = new ThTcl::ThPkg(interp);
   Tcl::TclPkg* pkg2 = new SimpleThTcl::SimpleThPkg(interp);
-  Tcl::TclPkg* pkg3 =
-	 new Tcl::PtrListPkg<TimingHdlr>(interp, "ThList", "$Revision$");
 
-  return pkg1->combineStatus(pkg2->combineStatus(pkg3->initStatus()));
+  return pkg1->combineStatus(pkg2->initStatus());
 }
 
 static const char vcid_thtcl_cc[] = "$Header$";
