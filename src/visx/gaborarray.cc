@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Tue May 13 13:03:33 2003
+// written: Tue May 13 13:15:42 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -80,6 +80,7 @@ GaborArray::GaborArray(double gaborPeriod, double gaborSigma,
   itsPhaseSeed(0),
   itsForegNumber(foregNumber),
   itsForegSpacing(foregSpacing),
+  itsForegHidden(false),
   itsSize(sizeX, sizeY),
   itsGaborPeriod(gaborPeriod),
   itsGaborSigma(gaborSigma),
@@ -107,6 +108,8 @@ const FieldMap& GaborArray::classFields()
     Field("foregNumber", &GaborArray::itsForegNumber, 24, 1, 100, 1),
     Field("foregSpacing", &GaborArray::itsForegSpacing,
           45.0, 1.0, 100.0, 1.0),
+    Field("foregHidden", &GaborArray::itsForegHidden,
+          true, false, true, true, Field::BOOLEAN),
     Field("size", Field::ValueType(), &GaborArray::itsSize,
           "512 512", "16 16", "2048 2048", "16 16", Field::MULTI),
     Field("gaborPeriod", &GaborArray::itsGaborPeriod, 15.0, 1.0, 50.0, 1.0),
@@ -231,10 +234,12 @@ DOTRACE("GaborArray::update");
       const double phi   = 2 * M_PI * phases.fdraw();
 //       const double phi = 0.0;
 
+      const double rand_theta = 2*M_PI * thetas.fdraw();
+
       const double theta =
-        (itsArray[i].type == Element::CONTOUR)
+        (itsArray[i].type == Element::CONTOUR && !itsForegHidden)
         ? rad_0_2pi(itsArray[i].theta + M_PI_2)
-        : 2*M_PI * thetas.fdraw();
+        : rand_theta;
 
       const int xcenter = int(itsArray[i].pos.x() + itsSize.x() / 2.0 + 0.5);
       const int ycenter = int(itsArray[i].pos.y() + itsSize.y() / 2.0 + 0.5);
