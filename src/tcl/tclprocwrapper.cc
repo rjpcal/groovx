@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 30 11:47:10 2002
-// written: Wed Jan 30 11:49:33 2002
+// written: Wed Jan 30 15:07:50 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,12 +68,22 @@ bool Tcl::ProcWrapper::isNoop() const
 
 void Tcl::ProcWrapper::invoke(const fstring& args) const
 {
+  if (isNoop()) return;
+
   fstring cmd = itsName; cmd.append(" ").append(args);
 
   Tcl::Code code(cmd, Tcl::Code::THROW_EXCEPTION);
 
   // might throw if Tcl code raises an error:
   code.invoke(itsInterp);
+}
+
+fstring Tcl::ProcWrapper::fullSpec() const
+{
+  fstring result;
+  result.append('{', itsArgs, "} ");
+  result.append('{', itsBody, '}');
+  return result;
 }
 
 static const char vcid_tclprocwrapper_cc[] = "$Header$";
