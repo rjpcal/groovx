@@ -79,8 +79,9 @@ namespace Util
 
     /// Answers whether the components of this Slot still exist.
     /** This allows a slot adapter, for example, to indicate if its
-        target object has disappeared. */
-    virtual bool exists() const = 0;
+        target object has disappeared. Default implementation returns
+        true always. */
+    virtual bool exists() const;
 
     /// Call the slot with the given arguments
     virtual void doCall(void* params) = 0;
@@ -170,8 +171,6 @@ namespace Util
   public:
     static SlotAdapterFreeFunc0* make(FreeFunc* f);
 
-    virtual bool exists() const;
-
     virtual void call();
   };
 
@@ -204,6 +203,9 @@ namespace Util
 
     template <class C, class MF>
     static Util::SoftRef<Slot1<P1> > make(C* obj, MF mf);
+
+    template <class FF>
+    static Util::SoftRef<Slot1<P1> > make(FF f);
 
     virtual void call(P1 p1) = 0;
 
@@ -250,6 +252,41 @@ namespace Util
   {
     return Util::SoftRef<Slot1<P1> >
       (SlotAdapterMemFunc1<P1, C, MF>::make(obj, mf),
+       Util::STRONG,
+       Util::PRIVATE);
+  }
+
+
+  //  ###################################################################
+  //  ===================================================================
+
+  /// A free-func adapter for slots with one argument.
+
+  template <class P1, class FF>
+  class SlotAdapterFreeFunc1 : public Slot1<P1>
+  {
+    FF itsFreeFunc;
+
+    SlotAdapterFreeFunc1(FF f) : itsFreeFunc(f) {}
+
+    virtual ~SlotAdapterFreeFunc1() throw() {}
+
+  public:
+    static SlotAdapterFreeFunc1<P1, FF>* make(FF f)
+    { return new SlotAdapterFreeFunc1<P1, FF>(f); }
+
+    virtual void call(P1 p1)
+    {
+      (*itsFreeFunc)(p1);
+    }
+  };
+
+  template <class P1>
+  template <class FF>
+  inline Util::SoftRef<Slot1<P1> > Slot1<P1>::make(FF f)
+  {
+    return Util::SoftRef<Slot1<P1> >
+      (SlotAdapterFreeFunc1<P1, FF>::make(f),
        Util::STRONG,
        Util::PRIVATE);
   }
@@ -352,6 +389,9 @@ namespace Util
 
     Util::SoftRef<Slot1<P1> > connect(Util::SoftRef<Slot1<P1> > slot)
     { SignalBase::doConnect(slot); return slot; }
+
+    Util::SoftRef<Slot1<P1> > connect(void (*free_func)(P1))
+    { return connect(Slot1<P1>::make(free_func)); }
 
     template <class C, class MF>
     Util::SoftRef<Slot1<P1> > connect(C* obj, MF mem_func)
