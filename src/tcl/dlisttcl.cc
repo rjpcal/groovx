@@ -44,7 +44,7 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-#include <algorithm>
+#include <algorithm> // for std::random_shuffle
 #include <cmath>
 
 // Helper functions
@@ -386,7 +386,10 @@ namespace Dlist
 
             Tcl::List result;
 
-            std::copy(slots.begin(), slots.end(), result.appender());
+            for (unsigned int i = 0; i < slots.size(); ++i)
+              {
+                result.append(slots[i]);
+              }
 
             return result;
           }
@@ -450,7 +453,10 @@ namespace Dlist
 
     Tcl::List result;
 
-    std::copy(slots.begin(), slots.end(), result.appender());
+    for (unsigned int i = 0; i < slots.size(); ++i)
+      {
+        result.append(slots[i]);
+      }
 
     return result;
   }
@@ -574,7 +580,10 @@ namespace Dlist
 
     Tcl::List result;
 
-    std::copy(objs.begin(), objs.end(), result.appender());
+    for (unsigned int i = 0; i < objs.size(); ++i)
+      {
+        result.append(objs[i]);
+      }
 
     return result;
   }
