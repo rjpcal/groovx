@@ -6,7 +6,7 @@
 # This is the Makefile for the grsh shell. This shell provides the
 # following functionality:
 # 
-# 	1) Tcl/Tk 8.1 core
+# 	1) Tcl/Tk 8.2.1 core
 # 	2) OpenGL graphics, via the Togl widget
 # 	3) A suite of major extensions that allow creation and execution of
 # 		arbitrary visual psychophysics experiments
@@ -30,7 +30,7 @@ SRC := ./src
 OBJ := ./obj/$(ARCH)
 LIB := $(PROJECT)/lib/$(ARCH)
 LOG := ./logs
-DOC := ./docs
+DOC := ./doc
 IDEP := ./idep
 SCRIPTS := ./scripts
 
@@ -82,7 +82,7 @@ endif
 
 ifeq ($(ARCH),hp9000s700)
 	PROD_OPTIONS := +p +Z
-	PROD_OPTIM := +O2
+	PROD_OPTIM := +O3
 	PROD_LINK_OPTIONS := -Wl,+vallcompatwarnings
 endif
 ifeq ($(ARCH),irix6)
@@ -1019,11 +1019,11 @@ clean:
 
 # Make clean, and also remove all debug object files
 clean_do: clean
-	mv $(ARCH)/*.do util/$(ARCH)/*.do trash
+	mv $(OBJ)/*.do $(OBJ)/util/*.do trash
 
 # Make clean, and also remove all production object files
 clean_o: clean
-	mv $(ARCH)/*.o util/$(ARCH)/*.o trash
+	mv $(OBJ)/*.o $(OBJ)/util/*.o trash
 
 ALL_SOURCES := $(SRC)/*.*
 
