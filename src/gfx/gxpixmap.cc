@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999 (as bitmap.cc)
-// written: Tue Dec 24 20:22:44 2002
+// written: Tue Dec 24 20:53:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -363,8 +363,8 @@ DOTRACE("GxPixmap::grGetBoundingBox");
   // Get the corners in screen coordinates
 
   Gfx::Vec2<int> bottom_left = bbox.screenFromWorld(Gfx::Vec2<double>());
-  Gfx::Vec2<int> top_right =
-    bottom_left + (Gfx::Vec2<double>(size()) * getZoom());
+  Gfx::Vec2<int> top_right
+    (Gfx::Vec2<double>(bottom_left) + (Gfx::Vec2<double>(size()) * getZoom()));
 
   bbox.vertex2(Gfx::Vec2<double>());
 
