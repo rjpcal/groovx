@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Mon Dec 11 14:29:47 2000
+// written: Mon Dec 11 14:59:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -174,16 +174,16 @@ public:
   }
 };
 
-class IoListPkg : public PtrListPkg<IO::IoObject> {
+class IoDbPkg : public PtrListPkg<IO::IoObject> {
 public:
-  IoListPkg(Tcl_Interp* interp) :
-	 PtrListPkg<IO::IoObject>(interp, "IO", "$Revision$")
+  IoDbPkg(Tcl_Interp* interp) :
+	 PtrListPkg<IO::IoObject>(interp, "IoDb", "$Revision$")
   {
 	 declareCAction("clear", &IoPtrList::clear);
 	 declareCAction("purge", &IoPtrList::purge);
   }
 
-  virtual ~IoListPkg()
+  virtual ~IoDbPkg()
     {
 		IoPtrList::theList().clearOnExit();
 	 }
@@ -195,7 +195,7 @@ extern "C"
 int Io_Init(Tcl_Interp* interp) {
 DOTRACE("Io_Init");
 
-  Tcl::TclPkg* pkg1 = new Tcl::IoListPkg(interp);
+  Tcl::TclPkg* pkg1 = new Tcl::IoDbPkg(interp);
   Tcl::TclPkg* pkg2 = new Tcl::IoObjectPkg(interp);
 
   return pkg1->combineStatus(pkg2->initStatus());
