@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 29 09:19:26 1999
-// written: Thu Aug 30 10:19:23 2001
+// written: Mon Sep 10 17:17:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef CLONEFACE_CC_DEFINED
 #define CLONEFACE_CC_DEFINED
 
-#include "cloneface.h"
+#include "visx/cloneface.h"
 
 #include "io/ioproxy.h"
 #include "io/readutils.h"

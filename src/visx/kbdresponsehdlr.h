@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:09:11 1999
-// written: Sun Aug 26 08:35:13 2001
+// written: Mon Sep 10 17:17:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #define KBDRESPONSEHDLR_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(EVENTRESPONSEHDLR_H_DEFINED)
-#include "eventresponsehdlr.h"
+#include "visx/eventresponsehdlr.h"
 #endif
 
 

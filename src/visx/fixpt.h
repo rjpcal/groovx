@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Sep  5 17:23:32 2001
+// written: Mon Sep 10 17:17:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #define FIXPT_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GROBJ_H_DEFINED)
-#include "grobj.h"
+#include "visx/grobj.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////

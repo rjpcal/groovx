@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul  9 17:49:07 2001
-// written: Sat Aug 25 21:52:09 2001
+// written: Mon Sep 10 17:17:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef MTXTCL_CC_DEFINED
 #define MTXTCL_CC_DEFINED
 
-#include "mtxobj.h"
+#include "visx/mtxobj.h"
 
 #include "tcl/tclpkg.h"
 

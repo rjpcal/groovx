@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 15:14:19 1999
-// written: Sat Sep  8 14:01:17 2001
+// written: Mon Sep 10 17:17:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef HOUSETCL_CC_DEFINED
 #define HOUSETCL_CC_DEFINED
 
-#include "house.h"
+#include "visx/house.h"
 
 #include "tcl/fieldpkg.h"
 

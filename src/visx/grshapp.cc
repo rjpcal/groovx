@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:26:59 1999
-// written: Fri Aug 10 10:46:50 2001
+// written: Mon Sep 10 17:17:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef GRSHAPP_CC_DEFINED
 #define GRSHAPP_CC_DEFINED
 
-#include "grshapp.h"
+#include "visx/grshapp.h"
 
 #include "util/error.h"
 

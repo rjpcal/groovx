@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Sat Sep  8 13:52:57 2001
+// written: Mon Sep 10 17:17:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef FACETCL_CC_DEFINED
 #define FACETCL_CC_DEFINED
 
-#include "cloneface.h"
-#include "face.h"
+#include "visx/cloneface.h"
+#include "visx/face.h"
 
 #include "tcl/fieldpkg.h"
 

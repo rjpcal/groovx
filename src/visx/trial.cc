@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Aug 29 16:48:45 2001
+// written: Mon Sep 10 17:17:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,14 +13,14 @@
 #ifndef TRIAL_CC_DEFINED
 #define TRIAL_CC_DEFINED
 
-#include "trial.h"
+#include "visx/trial.h"
 
-#include "block.h"
-#include "response.h"
-#include "responsehandler.h"
-#include "timinghdlr.h"
+#include "visx/block.h"
+#include "visx/response.h"
+#include "visx/responsehandler.h"
+#include "visx/timinghdlr.h"
 
-#include "grobj.h"
+#include "visx/grobj.h"
 
 #include "io/readutils.h"
 #include "io/writeutils.h"

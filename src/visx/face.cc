@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Sep  5 17:28:21 2001
+// written: Mon Sep 10 17:17:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef FACE_CC_DEFINED
 #define FACE_CC_DEFINED
 
-#include "face.h"
+#include "visx/face.h"
 
 #include "gfx/canvas.h"
 #include "gfx/rect.h"

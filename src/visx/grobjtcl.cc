@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Sat Sep  8 14:00:03 2001
+// written: Mon Sep 10 17:17:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,9 @@
 #ifndef GROBJTCL_CC_DEFINED
 #define GROBJTCL_CC_DEFINED
 
-#include "application.h"
-#include "grobj.h"
-#include "recttcl.h"
+#include "visx/application.h"
+#include "visx/grobj.h"
+#include "visx/recttcl.h"
 
 #include "gfx/rect.h"
 

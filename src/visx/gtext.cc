@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Wed Sep  5 17:28:34 2001
+// written: Mon Sep 10 17:17:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef GTEXT_CC_DEFINED
 #define GTEXT_CC_DEFINED
 
-#include "gtext.h"
+#include "visx/gtext.h"
 
 #include "gfx/canvas.h"
 #include "gfx/rect.h"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:42:39 2001
-// written: Fri Aug 24 16:54:15 2001
+// written: Mon Sep 10 17:17:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef GLCACHENODE_CC_DEFINED
 #define GLCACHENODE_CC_DEFINED
 
-#include "glcachenode.h"
+#include "visx/glcachenode.h"
 
 #include "gfx/canvas.h"
 #include "gfx/rect.h"

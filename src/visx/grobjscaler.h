@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:00:57 2001
-// written: Tue Sep  4 11:34:02 2001
+// written: Mon Sep 10 17:17:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,10 @@
 #ifndef GROBJSCALER_H_DEFINED
 #define GROBJSCALER_H_DEFINED
 
-#include "gmodes.h"
-#include "gnode.h"
+#include "visx/gmodes.h"
+#include "visx/gnode.h"
 
-#include "application.h"
+#include "visx/application.h"
 
 #include "gfx/rect.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:48:47 2001
-// written: Wed Aug 22 18:13:13 2001
+// written: Mon Sep 10 17:17:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef GROBJALIGNER_CC_DEFINED
 #define GROBJALIGNER_CC_DEFINED
 
-#include "grobjaligner.h"
+#include "visx/grobjaligner.h"
 
 #include "gfx/canvas.h"
 #include "gfx/vec3.h"

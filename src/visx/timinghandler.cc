@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 19 21:39:51 1999
-// written: Thu Aug 30 10:28:48 2001
+// written: Mon Sep 10 17:17:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,9 @@
 #ifndef TIMINGHANDLER_CC_DEFINED
 #define TIMINGHANDLER_CC_DEFINED
 
-#include "timinghandler.h"
+#include "visx/timinghandler.h"
 
-#include "trialevent.h"
+#include "visx/trialevent.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"

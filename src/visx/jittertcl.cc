@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 14:58:40 1999
-// written: Sat Aug 25 21:50:39 2001
+// written: Mon Sep 10 17:17:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef JITTERTCL_CC_DEFINED
 #define JITTERTCL_CC_DEFINED
 
-#include "jitter.h"
+#include "visx/jitter.h"
 
 #include "tcl/tclpkg.h"
 

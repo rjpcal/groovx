@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Aug 27 16:27:54 2001
+// written: Mon Sep 10 17:17:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,9 @@
 #ifndef TOGLET_CC_DEFINED
 #define TOGLET_CC_DEFINED
 
-#include "toglet.h"
+#include "visx/toglet.h"
 
-#include "xbmaprenderer.h"
+#include "visx/xbmaprenderer.h"
 
 #include "gfx/glcanvas.h"
 #include "gfx/rgbacolor.h"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Sun Aug 26 08:35:16 2001
+// written: Mon Sep 10 17:17:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef SOUNDTCL_CC_DEFINED
 #define SOUNDTCL_CC_DEFINED
 
-#include "application.h"
-#include "sound.h"
+#include "visx/application.h"
+#include "visx/sound.h"
 
 #include "tcl/tclpkg.h"
 #include "tcl/tclsafeinterp.h"

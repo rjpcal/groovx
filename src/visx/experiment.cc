@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:50:51 1999
-// written: Thu May 10 12:04:48 2001
+// written: Mon Sep 10 17:17:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef EXPERIMENT_CC_DEFINED
 #define EXPERIMENT_CC_DEFINED
 
-#include "experiment.h"
+#include "visx/experiment.h"
 
 Experiment::~Experiment() {}
 

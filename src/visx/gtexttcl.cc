@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 12:30:38 1999
-// written: Thu Aug 30 16:29:36 2001
+// written: Mon Sep 10 17:17:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef GTEXTTCL_CC_DEFINED
 #define GTEXTTCL_CC_DEFINED
 
-#include "gtext.h"
+#include "visx/gtext.h"
 
 #include "tcl/fieldpkg.h"
 

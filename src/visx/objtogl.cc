@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Sat Sep  8 14:03:09 2001
+// written: Mon Sep 10 17:17:38 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -16,9 +16,9 @@
 #ifndef OBJTOGL_CC_DEFINED
 #define OBJTOGL_CC_DEFINED
 
-#include "grshapp.h"
-#include "toglet.h"
-#include "trialbase.h"
+#include "visx/grshapp.h"
+#include "visx/toglet.h"
+#include "visx/trialbase.h"
 
 #include "gfx/gxnode.h"
 

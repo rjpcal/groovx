@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:52:41 1999
-// written: Mon Aug 13 14:38:14 2001
+// written: Mon Sep 10 17:17:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef GLBMAPRENDERER_CC_DEFINED
 #define GLBMAPRENDERER_CC_DEFINED
 
-#include "glbmaprenderer.h"
+#include "visx/glbmaprenderer.h"
 
 #include "gfx/bmapdata.h"
 #include "gfx/canvas.h"

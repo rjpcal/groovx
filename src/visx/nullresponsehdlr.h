@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:54:35 1999
-// written: Sun Aug 26 08:35:13 2001
+// written: Mon Sep 10 17:17:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #define NULLRESPONSEHDLR_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(RESPONSEHANDLER_H_DEFINED)
-#include "responsehandler.h"
+#include "visx/responsehandler.h"
 #endif
 
 class NullResponseHdlr : public ResponseHandler

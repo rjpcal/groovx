@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:30 1999
-// written: Sun Aug 26 08:36:36 2001
+// written: Mon Sep 10 17:17:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,11 +14,11 @@
 #define GLBITMAP_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(BITMAP_H_DEFINED)
-#include "bitmap.h"
+#include "visx/bitmap.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GLBMAPRENDERER_H_DEFINED)
-#include "glbmaprenderer.h"
+#include "visx/glbmaprenderer.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Sep  5 17:29:21 2001
+// written: Mon Sep 10 17:17:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef MASKHATCH_CC_DEFINED
 #define MASKHATCH_CC_DEFINED
 
-#include "maskhatch.h"
+#include "visx/maskhatch.h"
 
 #include "gfx/canvas.h"
 #include "gfx/rect.h"

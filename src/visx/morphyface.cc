@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Sat Sep  8 08:53:49 2001
+// written: Mon Sep 10 17:17:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,9 @@
 #ifndef MORPHYFACE_CC_DEFINED
 #define MORPHYFACE_CC_DEFINED
 
-#include "morphyface.h"
+#include "visx/morphyface.h"
 
-#include "bezier.h"
+#include "visx/bezier.h"
 
 #include "gfx/canvas.h"
 #include "gfx/rect.h"

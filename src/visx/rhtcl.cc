@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Sun Sep  9 07:02:55 2001
+// written: Mon Sep 10 17:17:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,10 @@
 #ifndef RHTCL_CC_DEFINED
 #define RHTCL_CC_DEFINED
 
-#include "eventresponsehdlr.h"
-#include "responsehandler.h"
-#include "kbdresponsehdlr.h"
-#include "nullresponsehdlr.h"
+#include "visx/eventresponsehdlr.h"
+#include "visx/responsehandler.h"
+#include "visx/kbdresponsehdlr.h"
+#include "visx/nullresponsehdlr.h"
 
 #include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"

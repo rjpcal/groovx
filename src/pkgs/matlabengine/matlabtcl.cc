@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jul 10 12:16:44 2001
-// written: Sat Sep  8 14:01:58 2001
+// written: Mon Sep 10 17:17:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef MATLABTCL_CC_DEFINED
 #define MATLABTCL_CC_DEFINED
 
-#include "mtxobj.h"
+#include "visx/mtxobj.h"
 
 #include "tcl/tclpkg.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Wed Sep  5 17:23:40 2001
+// written: Mon Sep 10 17:17:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,11 @@
 #ifndef BITMAPCACHENODE_CC_DEFINED
 #define BITMAPCACHENODE_CC_DEFINED
 
-#include "bitmapcachenode.h"
+#include "visx/bitmapcachenode.h"
 
-#include "bitmaprep.h"
-#include "glbmaprenderer.h"
-#include "xbmaprenderer.h"
+#include "visx/bitmaprep.h"
+#include "visx/glbmaprenderer.h"
+#include "visx/xbmaprenderer.h"
 
 #include "gfx/canvas.h"
 #include "gfx/rect.h"

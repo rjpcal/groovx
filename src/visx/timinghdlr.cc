@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Sun Aug 26 08:35:16 2001
+// written: Mon Sep 10 17:17:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,9 @@
 #ifndef TIMINGHDLR_CC_DEFINED
 #define TIMINGHDLR_CC_DEFINED
 
-#include "timinghdlr.h"
+#include "visx/timinghdlr.h"
 
-#include "trialevent.h"
+#include "visx/trialevent.h"
 
 #include "io/readutils.h"
 #include "io/writeutils.h"

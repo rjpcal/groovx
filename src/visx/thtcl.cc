@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Sat Sep  8 14:08:48 2001
+// written: Mon Sep 10 17:17:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,9 @@
 #ifndef THTCL_CC_DEFINED
 #define THTCL_CC_DEFINED
 
-#include "timinghandler.h"
-#include "timinghdlr.h"
-#include "trialevent.h"
+#include "visx/timinghandler.h"
+#include "visx/timinghdlr.h"
+#include "visx/trialevent.h"
 
 #include "tcl/tclpkg.h"
 

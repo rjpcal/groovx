@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:39:48 2001
-// written: Sun Aug 26 08:35:13 2001
+// written: Mon Sep 10 17:17:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef GLCACHENODE_H_DEFINED
 #define GLCACHENODE_H_DEFINED
 
-#include "gmodes.h"
-#include "gnode.h"
+#include "visx/gmodes.h"
+#include "visx/gnode.h"
 
 class GLCacheNode : public Gnode
 {

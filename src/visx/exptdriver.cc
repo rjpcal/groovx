@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Sun Sep  9 07:09:15 2001
+// written: Mon Sep 10 17:17:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,10 @@
 #ifndef EXPTDRIVER_CC_DEFINED
 #define EXPTDRIVER_CC_DEFINED
 
-#include "exptdriver.h"
+#include "visx/exptdriver.h"
 
-#include "block.h"
-#include "tlistutils.h"
+#include "visx/block.h"
+#include "visx/tlistutils.h"
 
 #include "gwt/widget.h"
 

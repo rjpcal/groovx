@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 14:16:30 1999
-// written: Sat Sep  8 13:58:01 2001
+// written: Mon Sep 10 17:17:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef GABORTCL_CC_DEFINED
 #define GABORTCL_CC_DEFINED
 
-#include "gabor.h"
+#include "visx/gabor.h"
 
 #include "tcl/fieldpkg.h"
 

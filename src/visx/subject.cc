@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Sun Aug 26 08:53:53 2001
+// written: Mon Sep 10 17:17:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef SUBJECT_CC_DEFINED
 #define SUBJECT_CC_DEFINED
 
-#include "subject.h"
+#include "visx/subject.h"
 
 #include "io/reader.h"
 #include "io/writer.h"

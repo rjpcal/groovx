@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:42:42 2001
-// written: Sun Aug 26 08:35:13 2001
+// written: Mon Sep 10 17:17:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef GROBJALIGNER_H_DEFINED
 #define GROBJALIGNER_H_DEFINED
 
-#include "gmodes.h"
-#include "gnode.h"
+#include "visx/gmodes.h"
+#include "visx/gnode.h"
 
 #include "gfx/rect.h"
 #include "gfx/vec2.h"

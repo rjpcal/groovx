@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Sun Sep  9 14:30:25 2001
+// written: Mon Sep 10 17:17:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,15 +13,15 @@
 #ifndef EVENTRESPONSEHDLR_CC_DEFINED
 #define EVENTRESPONSEHDLR_CC_DEFINED
 
-#include "eventresponsehdlr.h"
+#include "visx/eventresponsehdlr.h"
 
-#include "experiment.h"
-#include "feedbackmap.h"
-#include "grshapp.h"
-#include "sound.h"
-#include "response.h"
-#include "responsemap.h"
-#include "trialbase.h"
+#include "visx/experiment.h"
+#include "visx/feedbackmap.h"
+#include "visx/grshapp.h"
+#include "visx/sound.h"
+#include "visx/response.h"
+#include "visx/responsemap.h"
+#include "visx/trialbase.h"
 
 #include "io/reader.h"
 #include "io/writer.h"

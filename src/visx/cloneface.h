@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 29 09:19:25 1999
-// written: Sun Aug 26 08:35:14 2001
+// written: Mon Sep 10 17:17:37 2001
 // $Id$
 //
 // CloneFace is a modified version of Face that allows additional
@@ -18,7 +18,7 @@
 #ifndef CLONEFACE_H_DEFINED
 #define CLONEFACE_H_DEFINED
 
-#include "face.h"
+#include "visx/face.h"
 
 ///////////////////////////////////////////////////////////////////////
 /**

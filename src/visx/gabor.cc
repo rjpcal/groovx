@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Mon Sep 10 12:17:51 2001
+// written: Mon Sep 10 17:17:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef GABOR_CC_DEFINED
 #define GABOR_CC_DEFINED
 
-#include "gabor.h"
+#include "visx/gabor.h"
 
 #include "gfx/bmapdata.h"
 #include "gfx/canvas.h"

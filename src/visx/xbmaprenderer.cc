@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:22:34 1999
-// written: Mon Aug 13 12:18:49 2001
+// written: Mon Sep 10 17:17:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef XBMAPRENDERER_CC_DEFINED
 #define XBMAPRENDERER_CC_DEFINED
 
-#include "xbmaprenderer.h"
+#include "visx/xbmaprenderer.h"
 
 #include "gfx/bmapdata.h"
 #include "gfx/canvas.h"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Sat Aug 25 21:58:08 2001
+// written: Mon Sep 10 17:17:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef SUBJECTTCL_CC_DEFINED
 #define SUBJECTTCL_CC_DEFINED
 
-#include "subject.h"
+#include "visx/subject.h"
 
 #include "tcl/tclpkg.h"
 

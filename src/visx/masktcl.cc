@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 18:19:05 1999
-// written: Sat Sep  8 14:01:40 2001
+// written: Mon Sep 10 17:17:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef MASKTCL_CC_DEFINED
 #define MASKTCL_CC_DEFINED
 
-#include "maskhatch.h"
+#include "visx/maskhatch.h"
 
 #include "tcl/fieldpkg.h"
 

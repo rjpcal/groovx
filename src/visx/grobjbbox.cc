@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Wed Sep  5 16:08:25 2001
+// written: Mon Sep 10 17:17:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef GROBJBBOX_CC_DEFINED
 #define GROBJBBOX_CC_DEFINED
 
-#include "grobjbbox.h"
+#include "visx/grobjbbox.h"
 
 #include "gfx/canvas.h"
 #include "gfx/rect.h"

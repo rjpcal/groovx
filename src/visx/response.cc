@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 13 18:33:17 2000
-// written: Mon Sep  3 14:49:07 2001
+// written: Mon Sep 10 17:17:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef RESPONSE_CC_DEFINED
 #define RESPONSE_CC_DEFINED
 
-#include "response.h"
+#include "visx/response.h"
 
 #include "util/strings.h"
 

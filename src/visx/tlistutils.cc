@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Sun Aug 26 08:35:16 2001
+// written: Mon Sep 10 17:17:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,11 @@
 #ifndef TLISTUTILS_CC_DEFINED
 #define TLISTUTILS_CC_DEFINED
 
-#include "tlistutils.h"
+#include "visx/tlistutils.h"
 
-#include "gtext.h"
-#include "position.h"
-#include "trial.h"
+#include "visx/gtext.h"
+#include "visx/position.h"
+#include "visx/trial.h"
 
 #include "gfx/canvas.h"
 #include "gfx/gxseparator.h"

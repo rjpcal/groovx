@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:09:12 1999
-// written: Sun Aug 26 08:53:53 2001
+// written: Mon Sep 10 17:17:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef KBDRESPONSEHDLR_CC_DEFINED
 #define KBDRESPONSEHDLR_CC_DEFINED
 
-#include "kbdresponsehdlr.h"
+#include "visx/kbdresponsehdlr.h"
 
 #include "util/strings.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Sat Aug 25 22:02:27 2001
+// written: Mon Sep 10 17:17:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,10 @@
 #ifndef TRIALTCL_CC_DEFINED
 #define TRIALTCL_CC_DEFINED
 
-#include "trial.h"
+#include "visx/trial.h"
 
-#include "responsehandler.h"
-#include "timinghdlr.h"
+#include "visx/responsehandler.h"
+#include "visx/timinghdlr.h"
 
 #include "gfx/gxnode.h"
 

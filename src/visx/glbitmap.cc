@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:17 1999
-// written: Sat Sep  8 08:51:51 2001
+// written: Mon Sep 10 17:17:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef GLBITMAP_CC_DEFINED
 #define GLBITMAP_CC_DEFINED
 
-#include "glbitmap.h"
+#include "visx/glbitmap.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"

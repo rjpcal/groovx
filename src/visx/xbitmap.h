@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:39:09 1999
-// written: Sun Aug 26 08:36:36 2001
+// written: Mon Sep 10 17:17:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,11 +14,11 @@
 #define XBITMAP_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(BITMAP_H_DEFINED)
-#include "bitmap.h"
+#include "visx/bitmap.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(XBMAPRENDERER_H_DEFINED)
-#include "xbmaprenderer.h"
+#include "visx/xbmaprenderer.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)

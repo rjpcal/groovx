@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Sep  5 18:26:49 2001
+// written: Mon Sep 10 17:17:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef FISH_CC_DEFINED
 #define FISH_CC_DEFINED
 
-#include "fish.h"
+#include "visx/fish.h"
 
 #include "gfx/canvas.h"
 #include "gfx/rect.h"

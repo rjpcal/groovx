@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:53:34 1999
-// written: Thu Aug 30 16:55:29 2001
+// written: Mon Sep 10 17:17:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef POSITIONTCL_CC_DEFINED
 #define POSITIONTCL_CC_DEFINED
 
-#include "position.h"
+#include "visx/position.h"
 
 #include "tcl/fieldpkg.h"
 

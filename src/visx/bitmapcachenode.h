@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:19:59 2001
-// written: Sun Aug 26 08:35:15 2001
+// written: Mon Sep 10 17:17:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef BITMAPCACHENODE_H_DEFINED
 #define BITMAPCACHENODE_H_DEFINED
 
-#include "gmodes.h"
-#include "gnode.h"
+#include "visx/gmodes.h"
+#include "visx/gnode.h"
 
 #include "util/strings.h"
 #include "util/pointers.h"

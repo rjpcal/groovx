@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:42:36 1999
-// written: Sat Sep  8 14:02:12 2001
+// written: Mon Sep 10 17:17:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef MORPHYFACETCL_CC_DEFINED
 #define MORPHYFACETCL_CC_DEFINED
 
-#include "morphyface.h"
+#include "visx/morphyface.h"
 
 #include "tcl/fieldpkg.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Sep  5 17:23:42 2001
+// written: Mon Sep 10 17:17:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,10 @@
 #ifndef BITMAP_CC_DEFINED
 #define BITMAP_CC_DEFINED
 
-#include "bitmap.h"
+#include "visx/bitmap.h"
 
-#include "bmaprenderer.h"
-#include "bitmaprep.h"
+#include "visx/bmaprenderer.h"
+#include "visx/bitmaprep.h"
 
 #include "gfx/rect.h"
 

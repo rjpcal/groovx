@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Sep  5 17:31:12 2001
+// written: Mon Sep 10 17:17:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef FIXPT_CC_DEFINED
 #define FIXPT_CC_DEFINED
 
-#include "fixpt.h"
+#include "visx/fixpt.h"
 
 #include "gfx/canvas.h"
 #include "gfx/rect.h"

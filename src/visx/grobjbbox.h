@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 09:06:14 2001
-// written: Wed Sep  5 16:07:11 2001
+// written: Mon Sep 10 17:17:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef GROBJBBOX_H_DEFINED
 #define GROBJBBOX_H_DEFINED
 
-#include "gnode.h"
+#include "visx/gnode.h"
 
 #include "gfx/rect.h"
 

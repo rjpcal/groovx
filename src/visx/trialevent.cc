@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Tue Aug 21 15:22:43 2001
+// written: Mon Sep 10 17:17:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,9 @@
 #ifndef TRIALEVENT_CC_DEFINED
 #define TRIALEVENT_CC_DEFINED
 
-#include "trialevent.h"
+#include "visx/trialevent.h"
 
-#include "trialbase.h"
+#include "visx/trialbase.h"
 
 #include "gfx/canvas.h"
 

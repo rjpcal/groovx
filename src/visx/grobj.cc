@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Sep  5 18:01:22 2001
+// written: Mon Sep 10 17:17:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,9 @@
 #ifndef GROBJ_CC_DEFINED
 #define GROBJ_CC_DEFINED
 
-#include "grobj.h"
+#include "visx/grobj.h"
 
-#include "grobjimpl.h"
+#include "visx/grobjimpl.h"
 
 #include "gfx/canvas.h"
 

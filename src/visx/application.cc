@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:05:52 1999
-// written: Sun Aug 26 08:35:17 2001
+// written: Mon Sep 10 17:17:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef APPLICATION_CC_DEFINED
 #define APPLICATION_CC_DEFINED
 
-#include "application.h"
+#include "visx/application.h"
 
 #include "system/system.h"
 

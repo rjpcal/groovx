@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Sat Sep  8 13:50:35 2001
+// written: Mon Sep 10 17:17:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef BLOCKTCL_CC_DEFINED
 #define BLOCKTCL_CC_DEFINED
 
-#include "block.h"
-#include "trialbase.h"
+#include "visx/block.h"
+#include "visx/trialbase.h"
 
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"

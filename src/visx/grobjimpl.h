@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Wed Sep  5 17:27:34 2001
+// written: Mon Sep 10 17:17:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,15 +13,15 @@
 #ifndef GROBJIMPL_H_DEFINED
 #define GROBJIMPL_H_DEFINED
 
-#include "gnode.h"
+#include "visx/gnode.h"
 
-#include "grobj.h"
-#include "grobjaligner.h"
-#include "grobjbbox.h"
-#include "grobjscaler.h"
+#include "visx/grobj.h"
+#include "visx/grobjaligner.h"
+#include "visx/grobjbbox.h"
+#include "visx/grobjscaler.h"
 
-#include "bitmapcachenode.h"
-#include "glcachenode.h"
+#include "visx/bitmapcachenode.h"
+#include "visx/glcachenode.h"
 
 #include "util/volatileobject.h"
 

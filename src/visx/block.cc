@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Sun Aug 26 08:35:17 2001
+// written: Mon Sep 10 17:17:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,11 @@
 #ifndef BLOCK_CC_DEFINED
 #define BLOCK_CC_DEFINED
 
-#include "block.h"
+#include "visx/block.h"
 
-#include "experiment.h"
-#include "response.h"
-#include "trialbase.h"
+#include "visx/experiment.h"
+#include "visx/response.h"
+#include "visx/trialbase.h"
 
 #include "gwt/widget.h"
 

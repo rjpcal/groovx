@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Sat Sep  8 14:10:39 2001
+// written: Mon Sep 10 17:17:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,9 @@
 #ifndef TLISTTCL_CC_DEFINED
 #define TLISTTCL_CC_DEFINED
 
-#include "application.h"
-#include "tlistutils.h"
-#include "trial.h"
+#include "visx/application.h"
+#include "visx/tlistutils.h"
+#include "visx/trial.h"
 
 #include "gfx/gxnode.h"
 #include "gfx/gxseparator.h"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jan 25 18:41:20 2000
-// written: Thu May 10 12:04:44 2001
+// written: Mon Sep 10 17:17:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef TRIALBASE_CC_DEFINED
 #define TRIALBASE_CC_DEFINED
 
-#include "trialbase.h"
+#include "visx/trialbase.h"
 
 TrialBase::~TrialBase () {}
 
