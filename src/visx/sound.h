@@ -3,7 +3,7 @@
 // sound.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:43:07 1999
-// written: Fri Oct 27 09:02:35 2000
+// written: Fri Oct 27 17:57:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,6 +43,10 @@ public:
   // This function shuts down sound capability in a
   // platform-appropriate way.
   static void closeSound();
+
+  // Returns a pointer to a new platform-appropriate Sound object. The
+  // caller is responsible for destroying the Sound object.
+  static Sound* make();
 
   // Returns a pointer to a new platform-appropriate Sound object. The
   // caller is responsible for destroying the Sound object.
