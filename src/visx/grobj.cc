@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Tue Nov 30 16:54:18 1999
+// written: Wed Dec  1 22:11:21 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,13 +17,14 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
+#include "bitmaprep.h"
 #include "gfxattribs.h"
-#include "glbitmap.h"
-#include "xbitmap.h"
+#include "glbmaprenderer.h"
 #include "error.h"
 #include "rect.h"
 #include "reader.h"
 #include "writer.h"
+#include "xbmaprenderer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -259,7 +260,8 @@ private:
 
 	 mutable bool itsIsCurrent;    // true if displaylist is current
 	 mutable int itsDisplayList;   // OpenGL display list that draws the object
-	 Bitmap* itsBitmapCache;
+	 auto_ptr<BmapRenderer> itsBmapRenderer;
+	 auto_ptr<BitmapRep> itsBitmapCache;
 
 	 // This function updates the cached OpenGL display list.
 	 void recompileIfNeeded(const GrObj::Impl* obj) const;
@@ -434,6 +436,7 @@ GrObj::Impl::Renderer::Renderer() :
   itsMode(GrObj::GROBJ_GL_COMPILE),
   itsIsCurrent(false),
   itsDisplayList(-1),
+  itsBmapRenderer(0),
   itsBitmapCache(0)
 {
 DOTRACE("GrObj::Impl::Renderer::Renderer");
@@ -442,7 +445,6 @@ DOTRACE("GrObj::Impl::Renderer::Renderer");
 GrObj::Impl::Renderer::~Renderer() {
 DOTRACE("GrObj::Impl::Renderer::~Renderer");
   glDeleteLists(itsDisplayList, 1);
-  delete itsBitmapCache;
 }
 
 void GrObj::Impl::Renderer::recompileIfNeeded(const GrObj::Impl* obj) const {
@@ -462,7 +464,7 @@ bool GrObj::Impl::Renderer::recacheBitmapIfNeeded(const GrObj::Impl* obj) const 
 DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
   if (itsIsCurrent) return false;
 
-  Assert(itsBitmapCache != 0);
+  Assert(itsBitmapCache.get() != 0);
   
   obj->undraw();
   
@@ -491,6 +493,10 @@ DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
   
   if (GrObj::GROBJ_X11_BITMAP_CACHE == itsMode) {
 	 itsBitmapCache->flipVertical();
+	 itsBitmapCache->flipContrast();
+  }
+  
+  if (GrObj::GROBJ_GL_BITMAP_CACHE == itsMode) {
 	 itsBitmapCache->flipContrast();
   }
   
@@ -537,16 +543,16 @@ DOTRACE("GrObj::Impl::Renderer::setMode");
 	 // These modes require a bounding box
 	 if ( !obj->hasBB() ) return;
 
-	 itsMode = new_mode;
-	 delete itsBitmapCache;
-	 
 	 if (GrObj::GROBJ_GL_BITMAP_CACHE == new_mode) {
-		itsBitmapCache = new GLBitmap();
+		itsBmapRenderer.reset(new GLBmapRenderer());
+		itsBitmapCache.reset(new BitmapRep(itsBmapRenderer.get()));
 	 }
 	 if (GrObj::GROBJ_X11_BITMAP_CACHE == new_mode) {
-		itsBitmapCache = new XBitmap();
+		itsBmapRenderer.reset(new XBmapRenderer());
+		itsBitmapCache.reset(new BitmapRep(itsBmapRenderer.get()));
 	 }
 	 
+	 itsMode = new_mode;
 	 break;
 
   } // end switch
@@ -566,8 +572,8 @@ DOTRACE("GrObj::Impl::Renderer::render");
 
   case GrObj::GROBJ_GL_BITMAP_CACHE:
   case GrObj::GROBJ_X11_BITMAP_CACHE:
-	 Assert(itsBitmapCache != 0);
-	 itsBitmapCache->draw();
+	 Assert(itsBitmapCache.get() != 0);
+	 itsBitmapCache->grRender();
 	 break;
 
   } // end switch
