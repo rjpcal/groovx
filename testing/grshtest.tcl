@@ -27,6 +27,7 @@ set files {
 	 expt_test.tcl
 	 eventrh_test.tcl
 	 face_test.tcl
+	 fish_test.tcl
 	 fixpt_test.tcl
 	 gabor_test.tcl
 	 gl_test.tcl
