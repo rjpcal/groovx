@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 13:10:24 2002
+// written: Mon Mar  4 13:26:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -376,13 +376,18 @@ protected:
   ptrdiff_t offset_;
 };
 
-class DataHolder
+class DataHolder : public WithPolicies
 {
-public:
-  // FIXME: this should go away, and soon!
-  DataHolder() : datablock_(0) {}
+  DataHolder& operator=(const DataHolder&); // not allowed
 
-  DataHolder(DataBlock* db) : datablock_(db) {}
+public:
+  DataHolder(double* data, int mrows, int ncols, StoragePolicy s);
+
+  DataHolder(DataBlock* db);
+
+  DataHolder(const DataHolder& other);
+
+  ~DataHolder();
 
 protected:
   DataBlock* datablock_;
@@ -396,11 +401,9 @@ protected:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class MtxImpl : public MtxStorage, private DataHolder, public WithPolicies
+class MtxImpl : public MtxStorage, public DataHolder
 {
 private:
-  void init(double* data, int mrows, int ncols, StoragePolicy s);
-
   MtxImpl& operator=(const MtxImpl& other); // not allowed
 
 public:
@@ -411,8 +414,9 @@ public:
   MtxImpl(int mrows, int ncols, InitPolicy p);
 
   MtxImpl(double* data, int mrows, int ncols, StoragePolicy s = COPY) :
-    MtxStorage()
-  { init(data, mrows, ncols, s); }
+    MtxStorage(mrows, ncols),
+    DataHolder(data, mrows, ncols, s)
+  {}
 
   MtxImpl(mxArray* a, StoragePolicy s);
 

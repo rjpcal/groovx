@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar  4 13:10:02 2002
+// written: Mon Mar  4 13:25:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -288,15 +288,20 @@ Slice& Slice::operator=(const Mtx& other)
   return *this;
 }
 
-
-
 ///////////////////////////////////////////////////////////////////////
 //
-// MtxImpl member definitions
+// DataHolder member functions
 //
 ///////////////////////////////////////////////////////////////////////
 
-void MtxImpl::init(double* data, int mrows, int ncols, StoragePolicy s)
+DataHolder::DataHolder(DataBlock* db) :
+  datablock_(db)
+{
+  datablock_->incrRefCount();
+}
+
+DataHolder::DataHolder(double* data, int mrows, int ncols, StoragePolicy s) :
+  datablock_(0)
 {
   switch (s)
     {
@@ -313,12 +318,24 @@ void MtxImpl::init(double* data, int mrows, int ncols, StoragePolicy s)
     }
 
   datablock_->incrRefCount();
-
-  mrows_ = mrows;
-  rowstride_ = mrows;
-  ncols_ = ncols;
-  offset_ = 0;
 }
+
+DataHolder::DataHolder(const DataHolder& other) :
+  datablock_(other.datablock_)
+{
+  datablock_->incrRefCount();
+}
+
+DataHolder::~DataHolder()
+{
+  datablock_->decrRefCount();
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// MtxImpl member definitions
+//
+///////////////////////////////////////////////////////////////////////
 
 void MtxImpl::swap(MtxImpl& other)
 {
@@ -332,9 +349,7 @@ void MtxImpl::swap(MtxImpl& other)
 MtxImpl::MtxImpl(const MtxImpl& other) :
   MtxStorage(other),
   DataHolder(other)
-{
-  datablock_->incrRefCount();
-}
+{}
 
 namespace
 {
@@ -348,20 +363,20 @@ namespace
 MtxImpl::MtxImpl(int mrows, int ncols, InitPolicy p) :
   MtxStorage(mrows, ncols),
   DataHolder(newDataBlock(mrows, ncols, p))
-{
-  datablock_->incrRefCount();
-}
+{}
 
 #ifdef HAVE_MATLAB
-MtxImpl::MtxImpl(mxArray* a, StoragePolicy s) : MtxStorage()
+MtxImpl::MtxImpl(mxArray* a, StoragePolicy s) :
+  MtxStorage(mxGetM(a), mxGetN(a)),
+  DataHolder(mxGetPr(a), mxGetM(a), mxGetN(a), s)
 {
   if (!mxIsDouble(a))
     throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
-
-  init(mxGetPr(a), mxGetM(a), mxGetN(a), s);
 }
 
-MtxImpl::MtxImpl(const mxArray* a, StoragePolicy s) : MtxStorage()
+MtxImpl::MtxImpl(const mxArray* a, StoragePolicy s) :
+  MtxStorage(mxGetM(a), mxGetN(a)),
+  DataHolder(mxGetPr(a), mxGetM(a), mxGetN(a), s)
 {
   if (s != BORROW && s != COPY)
     throw Util::Error("cannot construct a Mtx from a const mxArray* "
@@ -369,12 +384,10 @@ MtxImpl::MtxImpl(const mxArray* a, StoragePolicy s) : MtxStorage()
 
   if (!mxIsDouble(a))
     throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
-
-  init(mxGetPr(a), mxGetM(a), mxGetN(a), s);
 }
 #endif
 
-MtxImpl::~MtxImpl() { datablock_->decrRefCount(); }
+MtxImpl::~MtxImpl() {}
 
 void MtxImpl::reshape(int mr, int nc)
 {
