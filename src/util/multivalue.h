@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 16:45:38 2001
-// written: Sun Aug 26 08:35:09 2001
+// written: Mon Sep  3 14:23:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,9 +28,6 @@ public:
   virtual void scanFrom(STD_IO::istream& is);
 
   virtual const char* get(Util::TypeCue<const char*>) const;
-
-  virtual void assignTo(Value& other) const;
-  virtual void assignFrom(const Value& other);
 
 protected:
   virtual unsigned int numValues() const = 0;

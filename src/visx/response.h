@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 13 18:30:04 2000
-// written: Sun Aug 26 08:35:13 2001
+// written: Mon Sep  3 14:23:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,8 +35,6 @@ public:
   virtual void scanFrom(STD_IO::istream& is);
 
   virtual const char* get(Util::TypeCue<const char*>) const;
-
-  virtual void assignTo(Value& other) const;
 
   bool isValid() const { return (itsVal >= 0); }
 

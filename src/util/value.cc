@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:21:32 1999
-// written: Mon Sep  3 14:11:01 2001
+// written: Mon Sep  3 14:22:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,8 +71,6 @@ void Value::set(fstring val)
 {
   set(val.c_str());
 }
-
-void Value::assignFrom(const Value& other) { other.assignTo(*this); }
 
 static const char vcid_value_cc[] = "$Header$";
 #endif // !VALUE_CC_DEFINED

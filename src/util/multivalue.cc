@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 16:58:56 2001
-// written: Wed Aug 22 17:36:47 2001
+// written: Mon Sep  3 14:23:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,18 +63,6 @@ const char* TMultiValue<T>::get(Util::TypeCue<const char*>) const
   printTo(ost);
   ost << '\0';
   return buf;
-}
-
-template <class T>
-void TMultiValue<T>::assignTo(Value& other) const
-{ other.set(this->get(Util::TypeCue<const char*>())); }
-
-template <class T>
-void TMultiValue<T>::assignFrom(const Value& other)
-{
-  istrstream ist(other.get(Util::TypeCue<const char*>()));
-  DebugEvalNL(other.get(Util::TypeCue<const char*>()));
-  scanFrom(ist);
 }
 
 template class TMultiValue<int>;

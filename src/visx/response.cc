@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 13 18:33:17 2000
-// written: Thu Aug  9 07:27:27 2001
+// written: Mon Sep  3 14:23:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,13 +64,6 @@ DOTRACE("Response::get(const char*)");
   str = "";
   str.append(itsVal).append(" ").append(itsMsec);
   return str.c_str();
-}
-
-void Response::assignTo(Value& other) const
-{
-DOTRACE("Response::assignTo");
-
-  other.set(this->get(Util::TypeCue<const char*>()));
 }
 
 static const char vcid_response_cc[] = "$Header$";

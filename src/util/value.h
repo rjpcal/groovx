@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:19:17 1999
-// written: Mon Sep  3 13:40:40 2001
+// written: Mon Sep  3 14:22:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,13 +120,6 @@ public:
 
   /** Attempt to set the value from an fstring. Calls the C-string set(). */
   void set(fstring val);
-
-  /// Assign \a this's value to \a other, using the native type of \a this.
-  virtual void assignTo(Value& other) const = 0;
-
-  /** Assign \a other's value to \a this. Default is to call
-      other.assignTo(this) */
-  virtual void assignFrom(const Value& other);
 };
 
 ///////////////////////////////////////////////////////////////////////
