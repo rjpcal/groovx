@@ -3,7 +3,7 @@
 // strings.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:42:44 2000
-// written: Thu Nov  2 17:55:49 2000
+// written: Thu Nov  2 18:23:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,17 +74,13 @@ void fixed_string::Rep::operator delete(void* space) {
 
 fixed_string::Rep::Rep(const char* text)
 {
+  if (text == 0) text = "";
 
   itsRefCount = 0; 
+  itsLength = strlen(text);
+  itsText = new char[itsLength+1];
 
-  itsText = (text == 0 ? new char[1] : new char[strlen(text)+1]);
-  itsLength = (text == 0 ? 0 : strlen(text));
-
-  if (text != 0)
-	 strcpy(itsText, text);
-  else
-	 itsText[0] = 0;
-
+  memcpy(itsText, text, itsLength+1);
 }
 
 fixed_string::Rep::~Rep()
@@ -94,7 +90,22 @@ fixed_string::fixed_string(const char* text) :
   itsRep(0)
 {
 DOTRACE("fixed_string::fixed_string(const char*)");
-  itsRep = Rep::make(text);
+
+  static Rep* empty_rep = 0;
+  if (text == 0 || text[0] == '\0')
+	 {
+		if (empty_rep == 0)
+		  {
+			 empty_rep = Rep::make("");
+			 empty_rep->incrRefCount();
+		  }
+
+		itsRep = empty_rep;
+	 }
+  else {
+	 itsRep = Rep::make(text);
+  }
+
   itsRep->incrRefCount();
 }
 
@@ -124,7 +135,7 @@ fixed_string& fixed_string::operator=(const char* text)
 DOTRACE("fixed_string::operator=(const char*)");
 
   Rep* old_rep = itsRep;
-  itsRep = Rep::make(text); 
+  itsRep = Rep::make(text);
   itsRep->incrRefCount();
   old_rep->decrRefCount();
 
