@@ -526,7 +526,7 @@ docs: $(DOC)/DoxygenConfig $(DOC)/*.doc $(ALL_HEADERS)
 
 # Generate tags file based only on header files
 H_TAGS: $(ALL_HEADERS)
-	$(ETAGS) -fH_TAGS $(ALL_HEADERS)
+	find $(SRC) -name \*.h | $(ETAGS) - -o $@
 
 # Count the number of non-commented source lines
 ncsl: $(ALL_SOURCES) $(ALL_HEADERS)
@@ -548,7 +548,7 @@ showpid:
 
 # Generate TAGS file based on all source files
 TAGS: $(ALL_SOURCES) $(ALL_HEADERS)
-	$(ETAGS) -fTAGS $(ALL_SOURCES) $(ALL_HEADERS)
+	find $(SRC) -name \*.h -or -name \*.cc | $(ETAGS) - -o $@
 
 tardist: clean
 	touch diststamp
