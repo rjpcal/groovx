@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Mar  8 11:06:55 2000
+// written: Wed Mar  8 16:45:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,6 @@
 #ifndef TLISTTCL_CC_DEFINED
 #define TLISTTCL_CC_DEFINED
 
-#include <tcl.h>
 #include <vector>
 
 #include "application.h"
@@ -310,14 +309,13 @@ public:
 //
 //--------------------------------------------------------------------
 
-extern "C" Tcl_PackageInitProc Tlist_Init;
-
+extern "C"
 int Tlist_Init(Tcl_Interp* interp) {
 DOTRACE("Tlist_Init");
 
-  new TlistTcl::TlistPkg(interp);
+  Tcl::TclPkg* pkg = new TlistTcl::TlistPkg(interp);
 
-  return TCL_OK;
+  return pkg->initStatus();
 }
 
 static const char vcid_tlisttcl_cc[] = "$Header$";

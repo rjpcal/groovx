@@ -3,15 +3,13 @@
 // trialtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 09:51:54 1999
-// written: Wed Dec 15 13:07:02 1999
+// written: Wed Mar  8 16:46:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TRIALTCL_CC_DEFINED
 #define TRIALTCL_CC_DEFINED
-
-#include <tcl.h>
 
 #include "iofactory.h"
 #include "trial.h"
@@ -87,16 +85,15 @@ public:
 //
 //---------------------------------------------------------------------
 
-extern "C" Tcl_PackageInitProc Trial_Init;
-
+extern "C"
 int Trial_Init(Tcl_Interp* interp) {
 DOTRACE("Trial_Init");
 
-  new TrialTcl::TrialPkg(interp);
+  Tcl::TclPkg* pkg = new TrialTcl::TrialPkg(interp);
 
   FactoryRegistrar<IO, Trial>::registerWith(IoFactory::theOne());
 
-  return TCL_OK;
+  return pkg->initStatus();
 }
 
 static const char vcid_trialtcl_cc[] = "$Header$";

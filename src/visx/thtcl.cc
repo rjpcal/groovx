@@ -3,15 +3,13 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Mon Mar  6 12:26:44 2000
+// written: Wed Mar  8 16:44:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef THTCL_CC_DEFINED
 #define THTCL_CC_DEFINED
-
-#include <tcl.h>
 
 #include "iofactory.h"
 #include "thlist.h"
@@ -140,14 +138,13 @@ public:
 //
 //---------------------------------------------------------------------
 
-extern "C" Tcl_PackageInitProc Th_Init;
-
+extern "C"
 int Th_Init(Tcl_Interp* interp) {
 DOTRACE("Th_Init");
 
-  new ThTcl::ThPkg(interp);
-  new SimpleThTcl::SimpleThPkg(interp);
-  new ThlistTcl::ThListPkg(interp);
+  Tcl::TclPkg* pkg1 = new ThTcl::ThPkg(interp);
+  Tcl::TclPkg* pkg2 = new SimpleThTcl::SimpleThPkg(interp);
+  Tcl::TclPkg* pkg3 = new ThlistTcl::ThListPkg(interp);
 
   FactoryRegistrar<IO, TimingHdlr>       :: registerWith(IoFactory::theOne());
   FactoryRegistrar<IO, TimingHandler>    :: registerWith(IoFactory::theOne());
@@ -161,7 +158,7 @@ DOTRACE("Th_Init");
   FactoryRegistrar<IO, RenderFrontEvent> :: registerWith(IoFactory::theOne());
   FactoryRegistrar<IO, ClearBufferEvent> :: registerWith(IoFactory::theOne());
 
-  return TCL_OK;
+  return pkg1->combineStatus(pkg2->combineStatus(pkg3->initStatus()));
 }
 
 static const char vcid_thtcl_cc[] = "$Header$";
