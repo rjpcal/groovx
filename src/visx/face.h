@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Nov 10 17:23:54 2000
+// written: Sat Nov 11 10:16:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,19 +66,19 @@ public:
 
   /** The category of the face. The semantics of \a category are
       defined by the client. */
-  CTProperty<Face, int> faceCategory;
+  TProperty<int> faceCategory;
 
   /// The height of the eyes above the vertical midline of the face.
-  CTProperty<Face, double> eyeHeight;
+  TProperty<double> eyeHeight;
 
   /// The distance between the centers of the eyes.
-  CTProperty<Face, double> eyeDistance;
+  TProperty<double> eyeDistance;
 
   /// The length of the nose.
-  CTProperty<Face, double> noseLength;
+  TProperty<double> noseLength;
 
   /// The (negative) height of the mouth below the vertical midline of the face.
-  CTProperty<Face, double> mouthHeight;
+  TProperty<double> mouthHeight;
 
   ///////////////
   // accessors //

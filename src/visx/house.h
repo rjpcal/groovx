@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:15 1999
-// written: Fri Nov 10 17:03:52 2000
+// written: Sat Nov 11 10:19:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,61 +63,61 @@ public:
   static const PInfo& getPropertyInfo(unsigned int i);
 
   /// Width/height ratio of each story.
-  CTProperty<House, double> storyAspectRatio;
+  TProperty<double> storyAspectRatio;
 
   /// Number of stories in the building.
-  CTProperty<House, int> numStories;
+  TProperty<int> numStories;
 
   /// Position of the door in range [0, numWindows).
-  CTProperty<House, int> doorPosition;
+  TProperty<int> doorPosition;
 
   /// Width of door as fraction of available parcel.
-  CTProperty<House, double> doorWidth;
+  TProperty<double> doorWidth;
 
   /// Height of door as fraction of one story.
-  CTProperty<House, double> doorHeight;
+  TProperty<double> doorHeight;
 
   /// Whether door handle is on left or right.
-  CTProperty<House, bool> doorOrientation;
+  TProperty<bool> doorOrientation;
 
   /// Number of windows per story.
-  CTProperty<House, int> numWindows;
+  TProperty<int> numWindows;
 
   /// Width of windows as fraction of available parcel.
-  CTProperty<House, double> windowWidth;
+  TProperty<double> windowWidth;
 
   /// Height of windows as fraction of one story.
-  CTProperty<House, double> windowHeight;
+  TProperty<double> windowHeight;
 
   /// Number of vertical bars in each window.
-  CTProperty<House, int> windowVertBars;
+  TProperty<int> windowVertBars;
 
   /// Number of horizontal bars in each window.
-  CTProperty<House, int> windowHorizBars;
+  TProperty<int> windowHorizBars;
 
   /// Enumerated mode for the roof shape.
-  CTProperty<House, int> roofShape;
+  TProperty<int> roofShape;
 
   /// Amount of roof overhang, as a fraction of story width.
-  CTProperty<House, double> roofOverhang;
+  TProperty<double> roofOverhang;
 
   /// Height of roof as fraction of the story height.
-  CTProperty<House, double> roofHeight;
+  TProperty<double> roofHeight;
 
   /// Color of the roof: 0 -> black, 1 -> white.
-  CTProperty<House, int> roofColor;
+  TProperty<int> roofColor;
 
   /// X position of the chimney within the roof.
-  CTProperty<House, double> chimneyXPosition;
+  TProperty<double> chimneyXPosition;
 
   /// Y position of the chimney within the roof.
-  CTProperty<House, double> chimneyYPosition;
+  TProperty<double> chimneyYPosition;
 
   /// Width of the chimney, as fraction of the story width.
-  CTProperty<House, double> chimneyWidth;
+  TProperty<double> chimneyWidth;
 
   /// Height of the chimney, as fraction of the story height.
-  CTProperty<House, double> chimneyHeight;
+  TProperty<double> chimneyHeight;
 
 protected:
   virtual void grGetBoundingBox(Rect<double>& bbox,

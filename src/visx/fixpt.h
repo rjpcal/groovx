@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri Nov 10 17:27:03 2000
+// written: Sat Nov 11 10:18:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,10 +61,10 @@ public:
   static const PInfo& getPropertyInfo(unsigned int i);
 
   /// Length of crosshairs in GL coordinates.
-  CTProperty<FixPt, double> length;
+  TProperty<double> length;
 
   /// Width of crosshairs in pixels.
-  CTProperty<FixPt, int> width;
+  TProperty<int> width;
 
 protected:
   virtual void grGetBoundingBox(Rect<double>& bbox,

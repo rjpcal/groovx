@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Fri Nov 10 17:03:53 2000
+// written: Sat Nov 11 10:19:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,33 +80,33 @@ public:
   static const PInfo& getPropertyInfo(unsigned int i);
 
   /// The current \c ColorMode used for rendering.
-  CTProperty<Gabor, ColorMode> colorMode;
+  TProperty<ColorMode> colorMode;
 
   /// Contrast of the sine grating.
-  CTProperty<Gabor, double> contrast;
+  TProperty<double> contrast;
 
   /// The spatial frequency of the sine grating, in cycles per OpenGL unit.
-  CTProperty<Gabor, double> spatialFreq;
+  TProperty<double> spatialFreq;
 
   /// Phase of the sine grating, in degrees.
-  CTProperty<Gabor, int> phase;
+  TProperty<int> phase;
 
   /// The base standard deviation for the Gaussian.
-  CTProperty<Gabor, double> sigma;
+  TProperty<double> sigma;
 
   /// The ratio of standard deviations width/height.
-  CTProperty<Gabor, double> aspectRatio;
+  TProperty<double> aspectRatio;
 
   /// Orientation of the sine grating, in degrees.
-  CTProperty<Gabor, int> orientation;
+  TProperty<int> orientation;
 
   /** Number of rectangle subdivisions per OpenGL unit (note that this
 		applies only when the colorMode is \a BW_DITHER_RECT). */
-  CTProperty<Gabor, int> resolution;
+  TProperty<int> resolution;
 
   /** The size of the points used when \a colorMode is either \a
       GRAYSCALE or \a BW_DITHER_POINT. */
-  CTProperty<Gabor, int> pointSize;
+  TProperty<int> pointSize;
 
 protected:
   virtual void grGetBoundingBox(Rect<double>& bbox,

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Fri Nov 10 17:03:53 2000
+// written: Sat Nov 11 10:18:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -87,34 +87,34 @@ public:
 
   /** The category of the fish. The semantics of \a category are
       defined by the client. */
-  CTProperty<Fish, int> fishCategory;
+  TProperty<int> fishCategory;
 
   virtual int category() const { return fishCategory.getNative(); }
   virtual void setCategory(int val) { fishCategory.setNative(val); }
 
   /// Controls the shape of the dorsal fin.
-  CTPtrProperty<Fish, double> dorsalFinCoord;
+  TPtrProperty<double> dorsalFinCoord;
 
   /// Controls the shape of the tail fin.
-  CTPtrProperty<Fish, double> tailFinCoord;
+  TPtrProperty<double> tailFinCoord;
 
   /// Controls the shape of the lower fin (one fin vs. two fins).
-  CTPtrProperty<Fish, double> lowerFinCoord;
+  TPtrProperty<double> lowerFinCoord;
 
   /// Controls the shape of the mouth
-  CTPtrProperty<Fish, double> mouthCoord;
+  TPtrProperty<double> mouthCoord;
 
   /// Selects the current part for editing.
-  CTBoundedProperty<Fish, int, 0, 3, 1> currentPart;
+  TBoundedProperty<int, 0, 3, 1> currentPart;
 
   /// Selects the current end point for editing.
-  CTBoundedProperty<Fish, int, 0, 3, 1> currentEndPt;
+  TBoundedProperty<int, 0, 3, 1> currentEndPt;
 
   /// Controls the part referred to by the current end point.
-  CTPtrProperty<Fish, int> endPt_Part;
+  TPtrProperty<int> endPt_Part;
 
   /// Controls the breakpoint referred to by the current end point.
-  CTPtrProperty<Fish, int> endPt_Bkpt;
+  TPtrProperty<int> endPt_Bkpt;
 
   /////////////
   // actions //

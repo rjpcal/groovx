@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:37:45 1999
-// written: Fri Nov 10 17:23:54 2000
+// written: Sat Nov 11 10:21:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,72 +65,72 @@ public:
 
   /** The category of the face. The semantics of \a category are
       defined by the client. */
-  CTProperty<MorphyFace, int> mfaceCategory;
+  TProperty<int> mfaceCategory;
 
   virtual int category() const { return mfaceCategory.getNative(); }
   virtual void setCategory(int val) { mfaceCategory.setNative(val); }
-  
-  CTProperty<MorphyFace, double> faceWidth;
+
+  TProperty<double> faceWidth;
     ///< The width of the face.
-  CTProperty<MorphyFace, double> topWidth;
+  TProperty<double> topWidth;
     ///< The width of the top of the face, as a fraction of \a faceWidth.
-  CTProperty<MorphyFace, double> bottomWidth;
+  TProperty<double> bottomWidth;
     ///< The width of the bottom of the face, as a fraction of \a faceWidth.
-  CTProperty<MorphyFace, double> topHeight;
+  TProperty<double> topHeight;
     ///< The height of the top of the face.
-  CTProperty<MorphyFace, double> bottomHeight;
+  TProperty<double> bottomHeight;
     ///< The height of the bottom of the face.
 
-  CTProperty<MorphyFace, double> hairWidth;
+  TProperty<double> hairWidth;
     ///< The width of the hair.
-  CTProperty<MorphyFace, int> hairStyle;
+  TProperty<int> hairStyle;
     ///< The style of the hair.
 
-  CTProperty<MorphyFace, double> eyeYpos;
+  TProperty<double> eyeYpos;
     ///< The y-position of the eyes, relative to the face midline.
-  CTProperty<MorphyFace, double> eyeDistance;
+  TProperty<double> eyeDistance;
     ///< The distance between the centers of the eyes.
-  CTProperty<MorphyFace, double> eyeHeight;
+  TProperty<double> eyeHeight;
     ///< The height of the eyes themselves.
-  CTProperty<MorphyFace, double> eyeAspectRatio;
+  TProperty<double> eyeAspectRatio;
     ///< The aspect ratio of the eyes (width over height).
 
-  CTProperty<MorphyFace, double> pupilXpos;
+  TProperty<double> pupilXpos;
     ///< The x-position of the pupils, relative to the center of the eye.
-  CTProperty<MorphyFace, double> pupilYpos;
+  TProperty<double> pupilYpos;
     ///< The y-position of the pupils, relative to the center of the eye.
-  CTProperty<MorphyFace, double> pupilSize;
+  TProperty<double> pupilSize;
     ///< The diameter of the pupils, relative to the height of the eye.
-  CTBoundedProperty<MorphyFace, double, 0, 999, 1000> pupilDilation;
+  TBoundedProperty<double, 0, 999, 1000> pupilDilation;
     ///< The dilation of the pupil, on a scale of [0,1).
 
-  CTProperty<MorphyFace, double> eyebrowXpos;
+  TProperty<double> eyebrowXpos;
     ///< The x-position of the eyebrows, relative to the eye.
-  CTProperty<MorphyFace, double> eyebrowYpos;
+  TProperty<double> eyebrowYpos;
     ///< The y-position of the eyebrows, relative to the top of the eye.
-  CTProperty<MorphyFace, double> eyebrowCurvature;
+  TProperty<double> eyebrowCurvature;
     ///< The degree of eyebrow curvature, relative to that of the eye.
-  CTProperty<MorphyFace, double> eyebrowAngle;
+  TProperty<double> eyebrowAngle;
     ///< The angle of image-plane rotation of the eyebrow.
-  CTProperty<MorphyFace, double> eyebrowThickness;
+  TProperty<double> eyebrowThickness;
     ///< The thickness of the eyebrow, relative to the default thickness.
 
-  CTProperty<MorphyFace, double> noseXpos;
+  TProperty<double> noseXpos;
     ///< The x-position of the nose, relative to the face midline.
-  CTProperty<MorphyFace, double> noseYpos;
+  TProperty<double> noseYpos;
     ///< The y-position of the nose, relative to the face midline.
-  CTProperty<MorphyFace, double> noseLength;
+  TProperty<double> noseLength;
     ///< The length of the nose.
-  CTProperty<MorphyFace, double> noseWidth;
+  TProperty<double> noseWidth;
     ///< The width of the nose.
 
-  CTProperty<MorphyFace, double> mouthXpos;
+  TProperty<double> mouthXpos;
     ///< The x-position of the mouth, relative to the face midline.
-  CTProperty<MorphyFace, double> mouthYpos;
+  TProperty<double> mouthYpos;
     ///< The y-position of the mouth, relative to the face midline.
-  CTProperty<MorphyFace, double> mouthWidth;
+  TProperty<double> mouthWidth;
     ///< The width of the mouth.
-  CTProperty<MorphyFace, double> mouthCurvature;
+  TProperty<double> mouthCurvature;
     ///< The degree of curvature of the mouth.
 
 protected:
