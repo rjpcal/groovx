@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Mon Jun 11 18:37:35 2001
+// written: Wed Jun 20 18:23:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,11 +27,11 @@
 
 #include "util/error.h"
 #include "util/errorhandler.h"
+#include "util/log.h"
 
 #include <tcl.h>
 #include <cmath>
 #include <cstring>
-#include <iostream.h>
 #include <typeinfo>
 
 #define NO_TRACE
@@ -158,15 +158,15 @@ DOTRACE("TrialEvent::invokeTemplate");
   int error = itsActualRequest - msec;
 
 #ifdef EVENT_TRACE
-  cerr << demangle_cstr(typeid(*this).name()) << ' '
-       << IO::IoObject::id() << endl;
+  Util::log() << demangle_cstr(typeid(*this).name()) << ' '
+              << IO::IoObject::id() << '\n';
 
-  cerr << "    request delay == " << itsRequestedDelay << '\n';
-  cerr << "    est offset == " << itsEstimatedOffset << '\n';
-  cerr << "    actual request == " << itsActualRequest << '\n';
-  cerr << "    invoke count == " << itsInvokeCount << '\n';
-  cerr << "    total offset == " << itsTotalOffset << '\n';
-  cerr << "    before == " << msec << '\n';
+  Util::log() << "    request delay == " << itsRequestedDelay << '\n';
+  Util::log() << "    est offset == " << itsEstimatedOffset << '\n';
+  Util::log() << "    actual request == " << itsActualRequest << '\n';
+  Util::log() << "    invoke count == " << itsInvokeCount << '\n';
+  Util::log() << "    total offset == " << itsTotalOffset << '\n';
+  Util::log() << "    before == " << msec << '\n';
 #endif
 
   itsTotalOffset += error;
@@ -199,7 +199,7 @@ DOTRACE("TrialEvent::invokeTemplate");
     }
 
 #ifdef EVENT_TRACE
-  cerr << "    after == " << itsTimer.elapsedMsec() << '\n';
+  Util::log() << "    after == " << itsTimer.elapsedMsec() << '\n';
 #endif
 }
 
