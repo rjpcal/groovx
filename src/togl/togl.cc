@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Aug  5 13:35:00 2002
+// written: Mon Aug  5 14:04:09 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -130,7 +130,7 @@ public:
   void setReshapeFunc(Togl_Callback* proc) { itsReshapeProc = proc; }
   void setDestroyFunc(Togl_Callback* proc) { itsDestroyProc = proc; }
 
-  void postRedisplay()
+  void requestRedisplay()
   {
     if (!itsUpdatePending)
       {
@@ -139,7 +139,7 @@ public:
       }
   }
 
-  void postReconfigure();
+  void requestReconfigure();
 
   void swapBuffers() const
   {
@@ -187,7 +187,7 @@ public:
   void useLayer(int layer);
   void showOverlay();
   void hideOverlay();
-  void postOverlayRedisplay();
+  void requestOverlayRedisplay();
   int existsOverlay() const { return itsOpts.overlayFlag; }
   int getOverlayTransparentValue() const { return itsOverlayTransparentPixel; }
   int isMappedOverlay() const { return (itsOpts.overlayFlag && itsOverlayIsMapped); }
@@ -201,7 +201,7 @@ public:
   Screen* screen() const { return Tk_Screen(itsTkWin); }
   int screenNumber() const { return Tk_ScreenNumber(itsTkWin); }
   Colormap colormap() const { return Tk_Colormap(itsTkWin); }
-  Window windowId() const { return ((TkWindow*) itsTkWin)->window; }
+  Window windowId() const { return Tk_WindowId(itsTkWin); }
 
   int dumpToEpsFile(const char* filename, int inColor,
                     void (*user_redraw)( const Togl* )) const;
@@ -414,11 +414,11 @@ int Togl::configure(int objc, Tcl_Obj* const objv[])
 void Togl::makeCurrent() const
   { rep->makeCurrent(); }
 
-void Togl::postRedisplay()
-  { rep->postRedisplay(); }
+void Togl::requestRedisplay()
+  { rep->requestRedisplay(); }
 
-void Togl::postReconfigure()
-  { rep->postReconfigure(); }
+void Togl::requestReconfigure()
+  { rep->requestReconfigure(); }
 
 void Togl::swapBuffers() const
   { rep->swapBuffers(); }
@@ -578,8 +578,8 @@ void Togl::showOverlay()
 void Togl::hideOverlay()
   { rep->hideOverlay(); }
 
-void Togl::postOverlayRedisplay()
-  { rep->postOverlayRedisplay(); }
+void Togl::requestOverlayRedisplay()
+  { rep->requestOverlayRedisplay(); }
 
 int Togl::existsOverlay() const
   { return rep->existsOverlay(); }
@@ -893,9 +893,9 @@ DOTRACE("Togl::Impl::dummyOverlayRenderCallback");
 }
 
 
-void Togl::Impl::postReconfigure()
+void Togl::Impl::requestReconfigure()
 {
-DOTRACE("Togl::Impl::postReconfigure");
+DOTRACE("Togl::Impl::requestReconfigure");
   if (itsOpts.width != Tk_Width(itsTkWin) || itsOpts.height != Tk_Height(itsTkWin))
     {
       itsOpts.width = Tk_Width(itsTkWin);
@@ -1014,9 +1014,9 @@ DOTRACE("Togl::Impl::hideOverlay");
     }
 }
 
-void Togl::Impl::postOverlayRedisplay()
+void Togl::Impl::requestOverlayRedisplay()
 {
-DOTRACE("Togl::Impl::postOverlayRedisplay");
+DOTRACE("Togl::Impl::requestOverlayRedisplay");
   if (!itsOverlayUpdatePending && itsOverlayWindow && itsOverlayDisplayProc)
     {
       Tk_DoWhenIdle( Togl::Impl::dummyOverlayRenderCallback,
@@ -1078,22 +1078,20 @@ DOTRACE("Togl::Impl::eventProc");
       DebugPrintNL("Expose");
       if (eventPtr->xexpose.count == 0)
         {
-          if (!itsUpdatePending &&
-              eventPtr->xexpose.window==windowId())
+          if (eventPtr->xexpose.window==windowId())
             {
-              postRedisplay();
+              requestRedisplay();
             }
-          if (!itsOverlayUpdatePending && itsOpts.overlayFlag
-              && itsOverlayIsMapped
+          if (itsOpts.overlayFlag && itsOverlayIsMapped
               && eventPtr->xexpose.window==itsOverlayWindow)
             {
-              postOverlayRedisplay();
+              requestOverlayRedisplay();
             }
         }
       break;
     case ConfigureNotify:
       DebugPrintNL("ConfigureNotify");
-      postReconfigure();
+      requestReconfigure();
       break;
     case MapNotify:
       DebugPrintNL("MapNotify");
@@ -1153,38 +1151,26 @@ DOTRACE("Togl::Impl::widgetCmdDeletedProc");
    * destroys the widget.
    */
 
-  /* NEW in togl 1.5 beta 3 */
-  if (this && itsTkWin)
+  if (itsTkWin != 0)
     {
       Tk_DeleteEventHandler(itsTkWin,
                             ExposureMask | StructureNotifyMask,
                             Togl::Impl::dummyEventProc,
                             static_cast<ClientData>(this));
-    }
 
-  /* NEW in togl 1.5 beta 3 */
-  if (itsGlx.get() != 0)
-    {
-      itsGlx.reset( 0 );
-    }
-
-  if (itsOverlayGlx.get() != 0)
-    {
-      Tcl_HashEntry *entryPtr;
-      TkWindow *winPtr = (TkWindow *) itsTkWin;
-      if (winPtr)
+      if (itsOverlayWindow != 0)
         {
-          entryPtr = Tcl_FindHashEntry(&winPtr->dispPtr->winTable,
-                                       (char *) itsOverlayWindow );
+          TkWindow* winPtr = reinterpret_cast<TkWindow*>(itsTkWin);
+
+          Tcl_HashEntry* entryPtr =
+            Tcl_FindHashEntry(&winPtr->dispPtr->winTable,
+                              (char*) itsOverlayWindow );
+
           Tcl_DeleteHashEntry(entryPtr);
         }
-      itsOverlayGlx.reset( 0 );
-    }
 
-  if (itsTkWin != NULL)
-    {
       Tk_DestroyWindow(itsTkWin);
-      itsTkWin = NULL;
+      itsTkWin = 0;
     }
 }
 
@@ -1307,7 +1293,7 @@ DOTRACE("Togl::Impl::setupOverlay");
     };
 #endif
 
-  TkWindow *winPtr = (TkWindow *) itsTkWin;
+  TkWindow* winPtr = reinterpret_cast<TkWindow*>(itsTkWin);
 
   XVisualInfo* visinfo = glXChooseVisual( itsDisplay,
                                           DefaultScreen(itsDisplay),
