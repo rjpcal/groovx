@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Mon Aug 13 16:43:05 2001
+// written: Tue Aug 14 09:06:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,6 +120,8 @@ DOTRACE("GxSeparator::addChild");
 
   item->attach(itsImpl);
 
+  sendStateChangeMsg();
+
   return (itsImpl->itsChildren.size() - 1);
 }
 
@@ -136,6 +138,8 @@ DOTRACE("GxSeparator::insertChild");
                               item);
 
   item->attach(itsImpl);
+
+  sendStateChangeMsg();
 }
 
 void GxSeparator::removeChildAt(ChildId index)
@@ -145,6 +149,8 @@ DOTRACE("GxSeparator::removeChildAt");
     {
       itsImpl->itsChildren[index]->detach(itsImpl);
       itsImpl->itsChildren.erase(itsImpl->itsChildren.begin()+index);
+
+      sendStateChangeMsg();
     }
 }
 
@@ -164,6 +170,7 @@ DOTRACE("GxSeparator::removeChild");
         {
           (*itr)->detach(itsImpl);
           itsImpl->itsChildren.erase(itr);
+          sendStateChangeMsg();
           break;
         }
     }
