@@ -1,0 +1,88 @@
+##########################################################################
+#
+# A framework for visual experiments
+#
+# Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+#
+# $Id$
+#
+##########################################################################
+
+1. Overview
+
+   This is a C++ toolkit for writing visual psychophysics
+   experiments. Various abstractions relating to experiments (visual
+   objects, trials, observer responses, etc.) are implemented in C++, and
+   are exposed through a Tcl interface as scriptable objects.
+
+2. Organization of the files
+
+   The src/ directory contains subdirectories for each of the various
+   components of the system. Packages that are configured to be loadable at
+   run-time are found in src/pkgs/.
+
+   When the system is built, the object files go into a hierarchy within
+   obj/$ARCH/ that parallels src/. That is, a source file src/foo/bar.cc
+   will be compiled to obj/i686/foo/bar.o if your system architecture is
+   i686.
+
+3. Dependencies
+
+   This software requires the following packages:
+
+     Tcl/Tk (version 8.4b1 or later)
+     X11 windowing system
+     OpenGL
+     libz (gzip library)
+
+   The following packages are not critical, but are expected by default in
+   the Makefile, so some source hacking might be necessary to disable them.
+
+     libpng (portable network graphics library)
+     matlab (allows running a matlab engine inside the grsh shell)
+
+4. Makefile configuration
+
+   There is no autoconf/configure script available to do Makefile
+   configuration at the present time. Instead, top-level configuration
+   options are listed together at the top of the Makefile. These include
+   options for specifying where the software should be installed, and for
+   specifying where various dependencies are installed.
+
+5. Building
+
+   Once you have all package dependencies installed, and done any necessary
+   customization to the Makefile, just type "make" and everything should
+   build and install. A short test suite (takes ~10 seconds on a 1GHz
+   Pentium III Linux machine) is run at the end of every "make" invocation.
+
+6. Portability
+
+   This software in its current state is known to build successfully under
+   RedHat Linux 7.x, and under Mac OS X 10.1.x. Earlier versions of the
+   software have been built successfully under SGI's IRIX6 and HP's HPUX
+   10.x, but these configurations have not been tested recently.
+
+   The software requires a reasonable C++ std-compliant compiler. Compilers
+   that have worked successfully in the past include:
+
+     g++ 2.95.x (linux, Mac OS X)
+     g++ 3.0.x (linux)
+     g++ 3.1.x (linux)
+     Intel's icc 6.0 (linux)
+     HP's aCC (hpux 10.x)
+     SGI's MIPSpro (irix6)
+
+7. Contact information
+
+   Any questions about the software should be directed to its author:
+
+     Rob Peters
+     California Institute of Technology
+     Mail Code 139-74
+     Pasadena, CA 91125
+     (626) 395-2882
+     rjpeters@klab.caltech.edu
+     www.klab.caltech.edu/rjpeters/
+     www.klab.caltech.edu/rjpeters/grsh/
+
