@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Thu Mar  9 15:42:13 2000
+// written: Thu Mar 23 10:08:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,10 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
+  const unsigned long GROBJ_SERIAL_VERSION_ID = 1;
+
   GLenum BITMAP_CACHE_BUFFER = GL_FRONT;
+
 #ifdef LOCAL_DEBUG
   inline void checkForGlError(const char* where) throw (GrObjError) {
 	 GLenum status = glGetError();
@@ -94,15 +97,16 @@ public:
   Impl(GrObj* obj);
   virtual ~Impl();
 
-  virtual void serialize(ostream &os, IO::IOFlag flag) const;
-  virtual void deserialize(istream &is, IO::IOFlag flag);
+  void serialize(ostream &os, IO::IOFlag flag) const;
+  void deserialize(istream &is, IO::IOFlag flag);
   // These functions write the object's state from/to an output/input
   // stream. Both functions are defined, but are no-ops for GrObj.
 
-  virtual int charCount() const;
+  int charCount() const;
 
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
+  unsigned long serialVersionId() const { return GROBJ_SERIAL_VERSION_ID; }
+  void readFrom(Reader* reader);
+  void writeTo(Writer* writer) const;
 
 
   /////////////
@@ -790,6 +794,9 @@ DOTRACE("GrObj::Impl::charCount");
 
 void GrObj::Impl::readFrom(Reader* reader) {
 DOTRACE("GrObj::Impl::readFrom");
+
+  unsigned long svid = reader->readSerialVersionId(); 
+
   reader->readValue("GrObj::category", itsCategory);
 
   int temp;
@@ -797,7 +804,10 @@ DOTRACE("GrObj::Impl::readFrom");
   reader->readValue("GrObj::renderMode", temp);
   itsRenderer.setMode(temp, this);
 
-  reader->readValue("GrObj::unRenderMod", itsUnRenderer.itsMode);
+  if (svid == 0)
+	 reader->readValue("GrObj::unRenderMod", itsUnRenderer.itsMode);
+  else if (svid == 1)
+	 reader->readValue("GrObj::unRenderMode", itsUnRenderer.itsMode);
 
   reader->readValue("GrObj::bbVisibility", itsBB.itsIsVisible);
 
@@ -817,7 +827,10 @@ DOTRACE("GrObj::Impl::writeTo");
   writer->writeValue("GrObj::category", itsCategory);
 
   writer->writeValue("GrObj::renderMode", itsRenderer.getMode());
-  writer->writeValue("GrObj::unRenderMod", itsUnRenderer.itsMode);
+  if (GROBJ_SERIAL_VERSION_ID == 0)
+	 writer->writeValue("GrObj::unRenderMod", itsUnRenderer.itsMode);
+  else if (GROBJ_SERIAL_VERSION_ID == 1)
+	 writer->writeValue("GrObj::unRenderMode", itsUnRenderer.itsMode);
 
   writer->writeValue("GrObj::bbVisibility", itsBB.itsIsVisible);
 
@@ -1289,6 +1302,11 @@ DOTRACE("GrObj::deserialize");
 
   itsImpl->deserialize(is, flag); 
   sendStateChangeMsg();
+}
+
+unsigned long GrObj::serialVersionId() const {
+DOTRACE("GrObj::Impl::serialVersionId");
+  return itsImpl->serialVersionId(); 
 }
 
 void GrObj::readFrom(Reader* reader) {
