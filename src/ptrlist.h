@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Thu Jun 10 20:39:09 1999
+// written: Wed Jun 30 14:13:24 1999
 // $Id$
 //
 // PtrList is type-parameterized container for pointers. PtrList is
@@ -54,6 +54,76 @@ public:
   // the same indices as before the first serialize operation.
 
   virtual int charCount() const;
+
+  ///////////////
+  // iterators //
+  ///////////////
+
+  typedef T* pointer;
+  typedef T& reference;
+  typedef T* const_pointer;
+  typedef T& const_reference;
+  
+  class iterator {
+  private:
+	 int itsIndex;
+	 PtrList<T>* itsList;
+	 
+	 // The index is not checked.
+	 iterator (PtrList<T>& aList, int index) :
+		itsList(&aList),
+		itsIndex(index) {}
+
+	 // 'bool check' is a dummy argument to indicate that the index
+	 // must be checked
+	 iterator (PtrList<T>& aList, int index, bool check) :
+		itsList(&aList),
+		itsIndex(index)
+	 {
+		while ( itsIndex > itsList->capacity() ) { --itsIndex; }
+		while ( itsIndex < 0 ) { ++itsIndex; }
+		if ( !(itsList->isValidId(itsIndex)) ) { ++*this; }
+	 }
+
+  public:
+	 friend class PtrList<T>;
+
+	 iterator (const iterator& rhs) :
+		itsList(rhs.itsList),
+		itsIndex(rhs.itsIndex) {}
+
+	 iterator& operator=(const iterator& rhs) 
+		{ itsList = rhs.itsList; itsIndex = rhs.itsIndex; }
+
+	 bool operator== (const iterator& x) const 
+		{ return (itsIndex == x.itsIndex) && (itsList == x.itsList); }
+	 bool operator!= (const iterator& x) const
+		{ return (itsIndex != x.itsIndex) || (itsList != x.itsList); }
+
+	 reference operator* () const { return *(itsList->getPtr(itsIndex)); } 
+
+	 pointer operator-> () const { return &(operator*()); }
+
+	 iterator& operator++ () { 
+		while ( (itsIndex<itsList->capacity())
+				  && !(itsList->isValidId(itsIndex)) ) { ++itsIndex; }
+	 }
+
+	 iterator operator++ (int)
+		{ iterator tmp = *this; ++*this; return tmp; }
+
+	 iterator& operator-- () {
+		while ( (itsIndex > -1) && !(itsList->isValidId(itsIndex)) )
+		  { --itsIndex; }
+	 }
+
+	 iterator operator-- (int)
+		{ iterator tmp = *this; --*this; return tmp; }
+  };
+
+  iterator begin() { return iterator(*this, 0); }
+  iterator end() { return iterator(*this, capacity()); }
+  iterator at(int index) { return iterator(*this, index, true); }
 
   ///////////////
   // accessors //
