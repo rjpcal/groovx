@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:16:22 1999
-// written: Thu Jul 12 15:45:17 2001
+// written: Thu Jul 12 16:50:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "tcl/tclerror.h"
 #include "tcl/tclitempkgbase.h"
+#include "tcl/tclvalue.h"
 
 #include "util/strings.h"
 
@@ -32,16 +33,17 @@
 ///////////////////////////////////////////////////////////////////////
 
 template <class ValType>
-Tcl::TVecGetterCmd<ValType>::TVecGetterCmd(TclItemPkgBase* pkg,
+Tcl::TVecGetterCmd<ValType>::TVecGetterCmd(Tcl_Interp* interp,
+                                           ItemFetcher* fetcher,
                                            const char* cmd_name,
                                            shared_ptr<Getter<ValType> > getter,
                                            const char* usage,
                                            unsigned int item_argn) :
-  VecCmd(pkg->interp(), cmd_name,
+  VecCmd(interp, cmd_name,
          usage ? usage : (item_argn ? "item_id(s)" : (char *) 0),
          item_argn,
          item_argn+1, item_argn+1),
-  itsPkg(pkg),
+  itsFetcher(fetcher),
   itsItemArgn(item_argn),
   itsGetter(getter)
 {
@@ -56,7 +58,7 @@ template <class ValType>
 void Tcl::TVecGetterCmd<ValType>::invoke(Tcl::Context& ctx)
 {
 DOTRACE("Tcl::TVecGetterCmd<>::invoke");
-  void* item = itsPkg->getItemFromContext(ctx);
+  void* item = itsFetcher->getItemFromContext(ctx);
   ctx.setResult(itsGetter->get(item));
 }
 
@@ -72,6 +74,7 @@ namespace Tcl
   template class TVecGetterCmd<const char*>;
   template class TVecGetterCmd<fixed_string>;
   template class TVecGetterCmd<const fixed_string&>;
+  template class TVecGetterCmd<TclValue>;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -82,16 +85,17 @@ namespace Tcl
 
 template <class T>
 Tcl::TVecSetterCmd<T>::TVecSetterCmd(
-  TclItemPkgBase* pkg, const char* cmd_name,
+  Tcl_Interp* interp,
+  ItemFetcher* fetcher, const char* cmd_name,
   shared_ptr<Setter<value_type> > setter,
   const char* usage, unsigned int item_argn
 ) :
-  VecCmd(pkg->interp(), cmd_name,
+  VecCmd(interp, cmd_name,
          usage ? usage : (item_argn ?
                           "item_id(s) new_value(s)" : "new_value"),
          item_argn,
          item_argn+2, item_argn+2),
-  itsPkg(pkg),
+  itsFetcher(fetcher),
   itsItemArgn(item_argn),
   itsValArgn(item_argn+1),
   itsSetter(setter)
@@ -106,7 +110,7 @@ template <class T>
 void Tcl::TVecSetterCmd<T>::invoke(Tcl::Context& ctx)
 {
 DOTRACE("Tcl::TVecSetterCmd<>::invoke");
-  void* item = itsPkg->getItemFromContext(ctx);
+  void* item = itsFetcher->getItemFromContext(ctx);
   stack_type val = ctx.getValFromArg(itsValArgn, (stack_type*)0);
   itsSetter->set(item, val);
 }
@@ -121,6 +125,7 @@ namespace Tcl
   template class TVecSetterCmd<double>;
   template class TVecSetterCmd<const char*>;
   template class TVecSetterCmd<const fixed_string&>;
+  template class TVecSetterCmd<TclValue>;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -130,17 +135,18 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-Tcl::TVecAttribCmd<T>::TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name,
+Tcl::TVecAttribCmd<T>::TVecAttribCmd(Tcl_Interp* interp,
+                                     ItemFetcher* fetcher, const char* cmd_name,
                                      shared_ptr<Getter<T> > getter,
                                      shared_ptr<Setter<T> > setter,
                                      const char* usage,
                                      unsigned int item_argn) :
-  TVecGetterCmd<T>(pkg, cmd_name, getter, usage, item_argn)
+  TVecGetterCmd<T>(interp, fetcher, cmd_name, getter, usage, item_argn)
 {
 DOTRACE("Tcl::TVecAttribCmd<>::TVecAttribCmd");
 
-  addOverload( pkg->interp(), make_shared(
-    new TVecSetterCmd<T>(pkg, cmd_name, setter, usage, item_argn)));
+  addOverload( interp, make_shared(
+    new TVecSetterCmd<T>(interp, fetcher, cmd_name, setter, usage, item_argn)));
 }
 
 template <class T>
@@ -156,6 +162,7 @@ namespace Tcl
   template class TVecAttribCmd<double>;
   template class TVecAttribCmd<const char*>;
   template class TVecAttribCmd<const fixed_string&>;
+  template class TVecAttribCmd<TclValue>;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -164,15 +171,16 @@ namespace Tcl
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::VecActionCmd::VecActionCmd(TclItemPkgBase* pkg, const char* cmd_name,
+Tcl::VecActionCmd::VecActionCmd(Tcl_Interp* interp,
+                                ItemFetcher* fetcher, const char* cmd_name,
                                 shared_ptr<Action> action,
                                 const char* usage,
                                 unsigned int item_argn) :
-  VecCmd(pkg->interp(), cmd_name,
+  VecCmd(interp, cmd_name,
          usage ? usage : (item_argn ? "item_id(s)" : (char *) 0),
          item_argn,
          item_argn+1, item_argn+1),
-  itsPkg(pkg),
+  itsFetcher(fetcher),
   itsAction(action),
   itsItemArgn(item_argn)
 {
@@ -184,7 +192,7 @@ Tcl::VecActionCmd::~VecActionCmd() {}
 void Tcl::VecActionCmd::invoke(Tcl::Context& ctx)
 {
 DOTRACE("Tcl::VecActionCmd::invoke");
-  void* item = itsPkg->getItemFromContext(ctx);
+  void* item = itsFetcher->getItemFromContext(ctx);
   itsAction->action(item);
 }
 

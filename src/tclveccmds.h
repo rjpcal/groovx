@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:11:41 1999
-// written: Thu Jul 12 15:44:51 2001
+// written: Thu Jul 12 16:31:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,6 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
 #include "util/pointers.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCMD_H_DEFINED)
-#include "tcl/tclcmd.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLVECCMD_H_DEFINED)
@@ -54,7 +50,7 @@ namespace Tcl
 
 namespace Tcl {
 
-class TclItemPkgBase;
+class ItemFetcher;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -67,7 +63,7 @@ class TclItemPkgBase;
 template <class ValType>
 class TVecGetterCmd : public Tcl::VecCmd {
 public:
-  TVecGetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
+  TVecGetterCmd(Tcl_Interp* interp, ItemFetcher* fetcher, const char* cmd_name,
                 shared_ptr<Getter<ValType> > getter,
                 const char* usage, unsigned int item_argn);
 
@@ -80,7 +76,7 @@ private:
   TVecGetterCmd(const TVecGetterCmd&);
   TVecGetterCmd& operator=(const TVecGetterCmd&);
 
-  TclItemPkgBase* itsPkg;
+  ItemFetcher* itsFetcher;
   int itsItemArgn;
   shared_ptr< Getter<ValType> > itsGetter;
 };
@@ -100,7 +96,7 @@ public:
   typedef typename SetterCmdTraits<T>::stack_type stack_type;
   typedef typename SetterCmdTraits<T>::iterator_type iterator_type;
 
-  TVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
+  TVecSetterCmd(Tcl_Interp* interp, ItemFetcher* fetcher, const char* cmd_name,
                  shared_ptr<Setter<value_type> > setter,
                  const char* usage, unsigned int item_argn);
 
@@ -112,7 +108,7 @@ private:
   TVecSetterCmd(const TVecSetterCmd&);
   TVecSetterCmd& operator=(const TVecSetterCmd&);
 
-  TclItemPkgBase* itsPkg;
+  ItemFetcher* itsFetcher;
   int itsItemArgn;
   int itsValArgn;
   shared_ptr< Setter<value_type> > itsSetter;
@@ -129,7 +125,7 @@ private:
 template <class T>
 class TVecAttribCmd : public TVecGetterCmd<T> {
 public:
-  TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name,
+  TVecAttribCmd(Tcl_Interp* interp, ItemFetcher* fetcher, const char* cmd_name,
                 shared_ptr<Getter<T> > getter,
                 shared_ptr<Setter<T> > setter,
                 const char* usage, unsigned int item_argn);
@@ -149,7 +145,7 @@ public:
 
 class Tcl::VecActionCmd : public Tcl::VecCmd {
 public:
-  VecActionCmd(TclItemPkgBase* pkg, const char* cmd_name,
+  VecActionCmd(Tcl_Interp* interp, ItemFetcher* fetcher, const char* cmd_name,
                shared_ptr<Action> action,
                const char* usage, unsigned int item_argn);
   virtual ~VecActionCmd();
@@ -161,7 +157,7 @@ private:
   VecActionCmd(const VecActionCmd&);
   VecActionCmd& operator=(const VecActionCmd&);
 
-  TclItemPkgBase* itsPkg;
+  ItemFetcher* itsFetcher;
   shared_ptr<Action> itsAction;
   int itsItemArgn;
 };
