@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Wed Dec  8 00:49:26 1999
+// written: Wed Dec 15 16:12:33 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -326,6 +326,70 @@ TclIoItemPkg::TclIoItemPkg(Tcl_Interp* interp, const char* name,
 }
 
 } // end namespace Tcl
+
+///////////////////////////////////////////////////////////////////////
+//
+// VecPropertyCmdBase member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+Tcl::VecPropertyCmdBase::VecPropertyCmdBase(TclItemPkg* pkg,
+														  const char* property_name) :
+  TclCmd(pkg->interp(), pkg->makePkgCmdName(property_name),
+			(pkg->itemArgn() ? "item_id(s) ?new_value(s)?" : "?new_value?"),
+			pkg->itemArgn()+1, pkg->itemArgn()+2, false),
+  itsPkg(pkg),
+  itsItemArgn(pkg->itemArgn()),
+  itsValArgn(pkg->itemArgn()+1),
+  itsObjcGet(pkg->itemArgn()+1),
+  itsObjcSet(pkg->itemArgn()+2)
+{
+DOTRACE("Tcl::VecPropertyCmdBase::VecPropertyCmdBase");
+}
+
+void Tcl::VecPropertyCmdBase::invoke() {
+DOTRACE("Tcl::VecPropertyCmdBase::invoke");
+  // Fetch the item ids
+  vector<int> ids;
+
+  if (itsItemArgn) {
+	 getSequenceFromArg(itsItemArgn, back_inserter(ids), (int*) 0);
+  }
+  else {
+	 // -1 is the cue to use the default item
+	 ids.push_back(-1);
+  }
+
+  // If we are getting...
+  if (TclCmd::objc() == itsObjcGet) {
+	 returnVal( getValFromItemId(ids[0]) );
+
+	 for (size_t i = 1; i < ids.size(); ++i) {
+		lappendVal( getValFromItemId(ids[i]) );
+	 }
+
+  }
+  // ... or if we are setting
+  else if (TclCmd::objc() == itsObjcSet) {
+	 vector<TclValue> vals;
+
+	 if (ids.size() == 1) {
+		vals.push_back(TclValue(itsPkg->interp(), arg(itsValArgn)));
+	 }
+	 else {
+		getValSequenceFromArg(itsValArgn, back_inserter(vals));
+	 }
+
+	 size_t max_valn = vals.size()-1;
+
+	 for (size_t i = 0, valn = 0; i < ids.size(); ++i) {
+		setItemIdToVal(ids[i], vals[valn]);
+		if (valn < max_valn) ++valn;
+	 }
+  }
+  // ... or ... "can't happen"
+  else { /* Assert(0); */ }
+}
 
 #ifdef ACC_COMPILER
 void do_nothing() { 
