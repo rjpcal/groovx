@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:48 1999
-// written: Wed Jul 31 18:44:39 2002
+// written: Sun Nov  3 13:42:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,8 @@ Util::Error::Error() :
 {
 DOTRACE("Util::Error::Error()");
 
+  dbgDump(4, itsInfo);
+
   if (last == 0)
     last = new BackTrace(*itsBackTrace);
   else
@@ -46,6 +48,8 @@ Util::Error::Error(const fstring& msg) :
 {
 DOTRACE("Util::Error::Error(fstring)");
 
+  dbgDump(4, itsInfo);
+
   if (last == 0)
     last = new BackTrace(*itsBackTrace);
   else
@@ -57,7 +61,8 @@ Util::Error::Error(const Util::Error& other) :
   itsBackTrace(new BackTrace(*other.itsBackTrace))
 {
 DOTRACE("Util::Error::Error(copy)");
-  DebugEvalNL(itsInfo);
+
+  dbgDump(4, itsInfo);
 }
 
 Util::Error::~Error()
