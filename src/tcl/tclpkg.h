@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed May 31 00:09:56 2000
+// written: Wed May 31 00:31:25 2000
 // $Id$
 //
 //
@@ -104,10 +104,13 @@ public:
   typedef void (C::* Setter_f) (T);
 
   /// Construct with a getter and setter member function pointers.
-  CAttrib(Getter_f getter, Setter_f setter) :
-	 CGetter<C,T>(getter),
-	 CSetter<C,T>(setter) {}
+  CAttrib(Getter_f getter, Setter_f setter);
 };
+
+template <class C, class T>
+CAttrib<C,T>::CAttrib(Getter_f getter, Setter_f setter) :
+  CGetter<C,T>(getter),
+  CSetter<C,T>(setter) {}
 
 /**
  *
@@ -349,7 +352,9 @@ public:
   void declareCAttrib(const char* cmd_name,
 							 T (C::* getterFunc) () const, void (C::* setterFunc) (T),
 							 const char* usage = 0) {
-	 declareAttrib(cmd_name, new CAttrib<C,T>(getterFunc, setterFunc), usage);
+ 	 declareAttrib(cmd_name,
+  						new CAttrib<C,T>(getterFunc, setterFunc),
+						usage);
   }
 
   void declareProperty(const PropertyInfo<C>& pinfo);
