@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Tue Jul 30 10:44:59 2002
+// written: Mon Nov  4 18:56:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 #include "gfx/gxline.h"
 #include "gfx/gxmaterial.h"
 #include "gfx/gxnode.h"
+#include "gfx/gxpointset.h"
 #include "gfx/gxseparator.h"
 #include "gfx/gxsphere.h"
 #include "gfx/pscanvas.h"
@@ -144,6 +145,12 @@ DOTRACE("Gx_Init");
   Tcl::defCreator<GxMaterial>(pkg9);
 
   status = pkg9->combineStatus(status);
+
+  Tcl::Pkg* pkg10 = new Tcl::Pkg(interp, "GxPointSet", "$Revision$");
+  Tcl::defFieldContainer<GxPointSet>(pkg10);
+  Tcl::defCreator<GxPointSet>(pkg10);
+
+  status = pkg10->combineStatus(status);
 
   return status;
 }
