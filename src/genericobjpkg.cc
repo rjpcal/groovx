@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec 11 14:38:13 2000
-// written: Thu May 10 12:04:43 2001
+// written: Wed Jun  6 15:56:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,8 @@
 
 #include "tcl/ioitempkg.h"
 
-#include "io/io.h"
-#include "io/iodb.h"
+#include "util/iodb.h"
+#include "util/object.h"
 
 //---------------------------------------------------------------------
 //
@@ -29,7 +29,7 @@ Tcl::IoCaster::IoCaster() {}
 Tcl::IoCaster::~IoCaster() {}
 
 bool Tcl::IoCaster::isMyType(int id) {
-  MaybeIdItem<IO::IoObject> item(id);
+  MaybeIdItem<Util::Object> item(id);
   return (item.isValid() && isMyType(item.get()));
 }
 
