@@ -32,8 +32,8 @@ Table of contents:
      http://www.klab.caltech.edu/rjpeters/code/tcl8.5a1-src.tar.gz
      http://www.klab.caltech.edu/rjpeters/code/tk8.5a1-src.tar.gz
 
-   Optionally, if you're interested in playing around with the editor
-   program that I showed you, you can also build itcl (incr tcl) and
+   Optionally, if you're interested in playing around with the visual
+   object editor program, you can also build itcl (incr tcl) and
    iwidgets (incr widgets), for which I also have tarballs:
 
      http://www.klab.caltech.edu/rjpeters/code/itcl3.2.1_src.tgz
@@ -117,8 +117,8 @@ Table of contents:
 
    to get a sample version of my free-viewing psychophysics
    experiment. The original source for that script would be found in
-   $BUILD/groovx/share/scripts/sample_expt.tcl if you want to
-   read the source and experiment with changing it.
+   $BUILD/groovx/share/scripts/sample_expt.tcl if you want to read the
+   source, experiment with changing it, etc.
 
    When you run sample_expt.tcl, it will go through 10 free-viewing
    trials with some sample images I've included with groovx (you have
