@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:00:17 2001
-// written: Fri Jul 13 10:23:25 2001
+// written: Fri Jul 13 17:22:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ public:
     }
 
   template <class T>
-  T get(unsigned int index) const
+  T get(unsigned int index, T* /*dummy*/=0) const
     {
       return Tcl::Convert<T>::fromTcl(at(index));
     }
