@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:43 1999
-// written: Mon Jul 16 07:06:32 2001
+// written: Wed Jul 18 14:17:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,71 +17,31 @@
 #include "tcl/tclcmd.h"
 #endif
 
-namespace IO { class IoObject; }
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLOBJPTR_H_DEFINED)
+#include "tcl/tclobjptr.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
+#include "io/io.h"
+#endif
+
+class fixed_string;
+
+namespace Util
+{
+  template <class T> class Ref;
+}
 
 namespace Tcl
 {
+  Tcl::ObjPtr   stringify(Util::Ref<IO::IoObject> obj);
+  void        destringify(Util::Ref<IO::IoObject> obj, const char* buf);
 
-class StringifyCmd : public TclCmd {
-public:
-  StringifyCmd(Tcl_Interp* interp, const char* cmd_name);
+  Tcl::ObjPtr write(Util::Ref<IO::IoObject> obj);
+  void         read(Util::Ref<IO::IoObject> obj, const char* buf);
 
-  virtual ~StringifyCmd();
-
-protected:
-  virtual void invoke(Tcl::Context& ctx);
-};
-
-// It is assumed that the string is contained in the last argument
-class DestringifyCmd : public TclCmd {
-public:
-  DestringifyCmd(Tcl_Interp* interp, const char* cmd_name);
-
-  virtual ~DestringifyCmd();
-
-protected:
-  virtual void invoke(Tcl::Context& ctx);
-};
-
-class WriteCmd : public TclCmd {
-public:
-  WriteCmd(Tcl_Interp* interp, const char* cmd_name);
-
-  virtual ~WriteCmd();
-
-protected:
-  virtual void invoke(Tcl::Context& ctx);
-};
-
-class ReadCmd : public TclCmd {
-public:
-  ReadCmd(Tcl_Interp* interp, const char* cmd_name);
-
-  virtual ~ReadCmd();
-
-protected:
-  virtual void invoke(Tcl::Context& ctx);
-};
-
-class ASWSaveCmd : public TclCmd {
-public:
-  ASWSaveCmd(Tcl_Interp* interp, const char* cmd_name);
-
-  virtual ~ASWSaveCmd();
-
-protected:
-  virtual void invoke(Tcl::Context& ctx);
-};
-
-class ASRLoadCmd : public TclCmd {
-public:
-  ASRLoadCmd(Tcl_Interp* interp, const char* cmd_name);
-
-  virtual ~ASRLoadCmd();
-
-protected:
-  virtual void invoke(Tcl::Context& ctx);
-};
+  void saveASW(Util::Ref<IO::IoObject> obj, fixed_string filename);
+  void loadASR(Util::Ref<IO::IoObject> obj, fixed_string filename);
 
 } // end namespace Tcl
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Mon Jul 16 07:32:18 2001
+// written: Wed Jul 18 14:13:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,247 +38,128 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-
-///////////////////////////////////////////////////////////////////////
-//
-// StringifyCmd
-//
-///////////////////////////////////////////////////////////////////////
-
-Tcl::StringifyCmd::StringifyCmd(Tcl_Interp* interp, const char* cmd_name)
-  :
-  TclCmd(interp, cmd_name, "item_id", 2) {}
-
-Tcl::StringifyCmd::~StringifyCmd() {}
-
-void Tcl::StringifyCmd::invoke(Tcl::Context& ctx)
+namespace
 {
-DOTRACE("Tcl::StringifyCmd::invoke");
-  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
-
-  DebugEval(typeid(*item).name());
-
-  ostrstream ost;
-
-  try {
-    IO::LegacyWriter writer(ost);
-    writer.writeRoot(item.get());
-    ost << '\0';
+  template <class Writer>
+  void streamWrite(Util::Ref<IO::IoObject> obj, STD_IO::ostream& os)
+  {
+    Writer writer(os);
+    writer.writeRoot(obj.get());
   }
-  catch (IO::IoError& err) {
-    err.appendMsg(" with buffer contents ==\n");
 
-    ost << '\0';
-    err.appendMsg(ost.str());
+  template <class Reader>
+  void streamRead(Util::Ref<IO::IoObject> obj, STD_IO::istream& is)
+  {
+    Reader reader(is);
+    reader.readRoot(obj.get());
+  }
+
+  template <class Writer>
+  Tcl::ObjPtr stringWrite(Util::Ref<IO::IoObject> obj)
+  {
+    ostrstream ost;
+
+    try {
+      streamWrite<Writer>(obj, ost);
+      ost << '\0';
+    }
+    catch (IO::IoError& err) {
+      err.appendMsg(" with buffer contents ==\n");
+
+      ost << '\0';
+      err.appendMsg(ost.str());
+
+      ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
+
+      throw err;
+    }
+    catch (...) {
+      ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
+      throw;
+    }
+
+    Tcl::ObjPtr result(ost.str());
 
     ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
 
-    throw err;
+    return result;
   }
-  catch (...) {
-    ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
-    throw;
-  }
-
-  ctx.setResult(ost.str());
-
-  ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
 }
 
-
-///////////////////////////////////////////////////////////////////////
-//
-// DestringifyCmd
-//
-///////////////////////////////////////////////////////////////////////
-
-Tcl::DestringifyCmd::DestringifyCmd(Tcl_Interp* interp, const char* cmd_name)
-  :
-  TclCmd(interp, cmd_name, "item_id string", 3) {}
-
-Tcl::DestringifyCmd::~DestringifyCmd() {}
-
-void Tcl::DestringifyCmd::invoke(Tcl::Context& ctx)
+Tcl::ObjPtr Tcl::stringify(Util::Ref<IO::IoObject> obj)
 {
-DOTRACE("Tcl::DestringifyCmd::invoke");
+  return stringWrite<IO::LegacyWriter>(obj);
+}
 
-  // We assume that the string is contained in the last argument in the command
-  const char* buf = ctx.getCstringFromArg(ctx.objc() - 1);
-  Assert(buf);
+Tcl::ObjPtr Tcl::write(Util::Ref<IO::IoObject> obj)
+{
+  return stringWrite<AsciiStreamWriter>(obj);
+}
 
+void Tcl::destringify(Util::Ref<IO::IoObject> obj, const char* buf)
+{
   istrstream ist(buf);
 
-  IO::LegacyReader reader(ist);
-
-  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
-
-  reader.readRoot(item.get());
+  streamRead<IO::LegacyReader>(obj, ist);
 }
 
-
-///////////////////////////////////////////////////////////////////////
-//
-// WriteCmd
-//
-///////////////////////////////////////////////////////////////////////
-
-Tcl::WriteCmd::WriteCmd(Tcl_Interp* interp, const char* cmd_name)
-  :
-  TclCmd(interp, cmd_name, "item_id", 2) {}
-
-Tcl::WriteCmd::~WriteCmd() {}
-
-void Tcl::WriteCmd::invoke(Tcl::Context& ctx)
+void Tcl::read(Util::Ref<IO::IoObject> obj, const char* buf)
 {
-DOTRACE("Tcl::WriteCmd::invoke");
-  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
+  istrstream ist(buf);
 
-  ostrstream ost;
-
-  DebugEval(typeid(*item).name());
-
-  try {
-    AsciiStreamWriter writer(ost);
-    writer.writeRoot(item.get());
-    ost << '\0';
-  }
-  catch (IO::IoError& err) {
-    err.appendMsg(" with buffer contents ==\n");
-
-    ost << '\0';
-    err.appendMsg(ost.str());
-
-    ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
-
-    throw err;
-  }
-  catch (...) {
-    ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
-    throw;
-  }
-
-  ctx.setResult(ost.str());
-
-  ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
+  streamRead<AsciiStreamReader>(obj, ist);
 }
 
-
-///////////////////////////////////////////////////////////////////////
-//
-// ReadCmd
-//
-///////////////////////////////////////////////////////////////////////
-
-Tcl::ReadCmd::ReadCmd(Tcl_Interp* interp, const char* cmd_name)
-  :
-  TclCmd(interp, cmd_name, "item_id string", 3) {}
-
-Tcl::ReadCmd::~ReadCmd() {}
-
-void Tcl::ReadCmd::invoke(Tcl::Context& ctx)
+void Tcl::saveASW(Util::Ref<IO::IoObject> obj, fixed_string filename)
 {
-DOTRACE("Tcl::ReadCmd::invoke");
-  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
-
-  const char* str = ctx.getCstringFromArg(ctx.objc() - 1);
-
-  istrstream ist(str);
-
-  AsciiStreamReader reader(ist);
-  reader.readRoot(item.get());
-}
-
-
-///////////////////////////////////////////////////////////////////////
-//
-// ASWSaveCmd
-//
-///////////////////////////////////////////////////////////////////////
-
-Tcl::ASWSaveCmd::ASWSaveCmd(Tcl_Interp* interp, const char* cmd_name)
-  :
-  TclCmd(interp, cmd_name, "item_id filename", 3) {}
-
-Tcl::ASWSaveCmd::~ASWSaveCmd() {}
-
-void Tcl::ASWSaveCmd::invoke(Tcl::Context& ctx)
-{
-DOTRACE("Tcl::ASWSaveCmd::invoke");
-  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
-  fixed_string filename = ctx.getCstringFromArg(2);
-
   STD_IO::ofstream ofs(filename.c_str());
-  if ( ofs.fail() ) {
-    Tcl::TclError err("couldn't open file ");
-    err.appendMsg("'", filename.c_str(), "'");
-    err.appendMsg("for writing");
-    throw err;
-  }
+  if ( ofs.fail() )
+    {
+      Tcl::TclError err("couldn't open file ");
+      err.appendMsg("'", filename.c_str(), "'");
+      err.appendMsg("for writing");
+      throw err;
+    }
 
-  string_literal gz_ext(".gz");
+  if ( filename.ends_with("gz") )
+    {
+      ofs.close();
 
-  const char* filename_ext = filename.c_str() + filename.length() - 3;
+      Util::gzstreambuf buf(filename.c_str(), STD_IO::ios::out);
+      STD_IO::ostream os(&buf);
 
-  if ( gz_ext == filename_ext ) {
-    ofs.close();
-
-    Util::gzstreambuf buf(filename.c_str(), STD_IO::ios::out);
-    STD_IO::ostream os(&buf);
-
-    AsciiStreamWriter writer(os);
-    writer.writeRoot(item.get());
-  }
-  else {
-    AsciiStreamWriter writer(ofs);
-    writer.writeRoot(item.get());
-  }
+      streamWrite<AsciiStreamWriter>(obj, os);
+    }
+  else
+    {
+      streamWrite<AsciiStreamWriter>(obj, ofs);
+    }
 }
 
-
-///////////////////////////////////////////////////////////////////////
-//
-// ASRLoadCmd
-//
-///////////////////////////////////////////////////////////////////////
-
-Tcl::ASRLoadCmd::ASRLoadCmd(Tcl_Interp* interp, const char* cmd_name)
-  :
-  TclCmd(interp, cmd_name, "item_id filename", 3) {}
-
-Tcl::ASRLoadCmd::~ASRLoadCmd() {}
-
-void Tcl::ASRLoadCmd::invoke(Tcl::Context& ctx)
+void Tcl::loadASR(Util::Ref<IO::IoObject> obj, fixed_string filename)
 {
-DOTRACE("Tcl::ASRLoadCmd::invoke");
-
-  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
-  fixed_string filename = ctx.getCstringFromArg(2);
-
   STD_IO::ifstream ifs(filename.c_str());
-  if ( ifs.fail() ) {
-    Tcl::TclError err("couldn't open file ");
-    err.appendMsg("'", filename.c_str(), "'");
-    err.appendMsg("for reading");
-    throw err;
-  }
+  if ( ifs.fail() )
+    {
+      Tcl::TclError err("couldn't open file ");
+      err.appendMsg("'", filename.c_str(), "'");
+      err.appendMsg("for reading");
+      throw err;
+    }
 
-  string_literal gz_ext(".gz");
+  if ( filename.ends_with("gz") )
+    {
+      ifs.close();
 
-  const char* filename_ext = filename.c_str() + filename.length() - 3;
+      Util::gzstreambuf buf(filename.c_str(), STD_IO::ios::in);
+      STD_IO::istream is(&buf);
 
-  if ( gz_ext == filename_ext ) {
-    ifs.close();
-
-    Util::gzstreambuf buf(filename.c_str(), STD_IO::ios::in);
-    STD_IO::istream is(&buf);
-
-    AsciiStreamReader reader(is);
-    reader.readRoot(item.get());
-  }
-  else {
-    AsciiStreamReader reader(ifs);
-    reader.readRoot(item.get());
-  }
+      streamRead<AsciiStreamReader>(obj, is);
+    }
+  else
+    {
+      streamRead<AsciiStreamReader>(obj, ifs);
+    }
 }
 
 static const char vcid_stringifycmd_cc[] = "$Header$";
