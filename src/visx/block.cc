@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Jul  8 10:40:28 1999
+// written: Wed Jul 21 14:44:59 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@
 #include "trial.h"
 #include "timeutils.h"
 
-#define NO_TRACE
+#define LOCAL_TRACE
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
@@ -388,11 +388,6 @@ void Block::endTrial() {
 DOTRACE("Block::endTrial");
   if (isComplete()) return;
 
-  // XXX Right now this will cause a semantic problem (but not a
-  // crash) if both processResponse and endTrial are called by a
-  // high-level caller for the same Trial...
-  processResponse(-1);
-
   // Prepare to start next trial.
   ++itsCurTrialSeqIdx;
 }
@@ -407,6 +402,7 @@ void Block::haltExpt() {
 DOTRACE("Block::haltExpt");
   undrawTrial();
   abortTrial();
+  endTrial();
 }
 
 //--------------------------------------------------------------------
