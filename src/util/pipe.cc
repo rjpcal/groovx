@@ -264,6 +264,9 @@ rutz::bidir_pipe::bidir_pipe(char* const* argv) :
 
 rutz::bidir_pipe::~bidir_pipe() throw()
 {
+  close_in();
+  close_out();
+
   delete m_out_stream;
   delete m_in_stream;
 }
