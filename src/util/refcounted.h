@@ -41,14 +41,18 @@ protected:
 public:
   RefCounts();
 
+  friend class Util::RefCounted;
+
   typedef unsigned short Count;
 
   void acquireWeak();
   Count releaseWeak();
 
+protected:
   void acquireStrong();
   Count releaseStrong();
 
+public:
   Count strongCount() { return itsStrong; }
   Count weakCount() { return itsWeak; }
 
