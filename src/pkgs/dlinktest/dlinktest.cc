@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 10 18:16:43 2001
-// written: Mon Sep 10 18:59:00 2001
+// written: Fri Sep 14 11:16:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "util/dlink_list.h"
 
-#include "tests/testutils.h"
+#include "pkgs/testutils.h"
 
 #include "util/trace.h"
 
