@@ -3,7 +3,7 @@
 // factory.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 22:37:31 1999
-// written: Fri Sep 22 18:18:58 2000
+// written: Tue Oct 31 12:17:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,8 @@
 
 #include "factory.h"
 
-#include <string>
+#include "util/strings.h"
+
 #include <map>
 
 namespace {
@@ -33,7 +34,7 @@ void FactoryError::throwForType(const char* type) {
 struct CreatorMapBase::Impl {
   Impl() : itsMap() {}
 
-  std::map<std::string, void*> itsMap;
+  std::map<fixed_string, void*> itsMap;
 };
 
 CreatorMapBase::CreatorMapBase() :
@@ -43,7 +44,7 @@ CreatorMapBase::CreatorMapBase() :
 CreatorMapBase::~CreatorMapBase() {}
 
 void CreatorMapBase::clear() {
-  for (std::map<std::string, void*>::iterator ii = itsImpl->itsMap.begin();
+  for (std::map<fixed_string, void*>::iterator ii = itsImpl->itsMap.begin();
 		 ii != itsImpl->itsMap.end();
 		 ++ii) {
 	 killPtr(ii->second);
@@ -54,11 +55,11 @@ void CreatorMapBase::clear() {
 }
 
 void* CreatorMapBase::getPtrForName(const char* name) const {
-  return itsImpl->itsMap[std::string(name)];
+  return itsImpl->itsMap[fixed_string(name)];
 }
 
 void CreatorMapBase::setPtrForName(const char* name, void* ptr) {
-  std::string sname(name);
+  fixed_string sname(name);
   killPtr(itsImpl->itsMap[sname]);
   itsImpl->itsMap[sname] = ptr;
 }
