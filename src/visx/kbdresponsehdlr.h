@@ -3,7 +3,7 @@
 // kbdresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:11 1999
-// written: Mon Jul 19 17:02:22 1999
+// written: Tue Jul 20 16:43:59 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,8 +91,8 @@ private:
   string itsKeyRespPairs;
   vector<RegExp_ResponseVal> itsRegexps;
 
-  bool itsUseFeedback;
   string itsFeedbackPairs;
+  bool itsUseFeedback;
 
   struct Condition_Feedback {
 	 Condition_Feedback(Tcl_Obj* cond, Tcl_Obj* res) :
