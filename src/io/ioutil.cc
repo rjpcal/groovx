@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Wed Jul 11 14:35:26 2001
+// written: Wed Jul 11 14:37:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -173,7 +173,7 @@ void Tcl::ReadCmd::invoke() {
 DOTRACE("Tcl::ReadCmd::invoke");
   IO::IoObject& io = getIO();
 
-  const char* str = arg(objc() - 1).getCstring();
+  const char* str = getCstringFromArg(objc() - 1);
 
   istrstream ist(str);
 

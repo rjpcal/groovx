@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Jul 11 14:18:21 2001
+// written: Wed Jul 11 14:37:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -134,9 +134,9 @@ public:
 protected:
   virtual void invoke() {
 
-    const char* filename = arg(2).getCstring();
+    const char* filename = getCstringFromArg(2);
 
-    bool use_bases    = objc() < 4 ? true : arg(3).getBool();
+    bool use_bases    = objc() < 4 ? true : getBoolFromArg(3);
 
     STD_IO::ofstream ofs(filename);
     if (ofs.fail()) {
