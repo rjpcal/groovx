@@ -52,7 +52,7 @@ namespace
 
   int addEventType(Tcl_Interp* interp,
                    CreatorFunc* func,
-                   const char* name)
+                   const char* name) throw()
   {
     PKG_CREATE(interp, name, "4.$Revision$");
     Nub::ObjFactory::theOne().register_creator(func, name);
@@ -86,6 +86,8 @@ DOTRACE("Trialevent_Init");
 
   pkg->defAttrib("delay", &TrialEvent::getDelay, &TrialEvent::setDelay, SRC_POS);
 
+  PKG_FINISH;
+
   addEventType(interp, &makeAbortTrialEvent, "AbortTrialEvent");
   addEventType(interp, &makeDrawEvent, "DrawEvent");
   addEventType(interp, &makeRenderEvent, "RenderEvent");
@@ -100,7 +102,7 @@ DOTRACE("Trialevent_Init");
   addEventType(interp, &makeClearBufferEvent, "ClearBufferEvent");
   addEventType(interp, &makeFinishDrawingEvent, "FinishDrawingEvent");
 
-  PKG_RETURN;
+  return PKG_STATUS;
 }
 
 extern "C"

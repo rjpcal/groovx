@@ -62,6 +62,8 @@ namespace
 {
   bool VERBOSE_INIT = false;
 
+  int INIT_DEPTH = 0;
+
   // Construct a capitalization-correct version of the given name that is
   // just how Tcl likes it: first character uppercase, all others
   // lowercase.
@@ -155,6 +157,9 @@ namespace
   }
 }
 
+const int Tcl::Pkg::STATUS_OK = TCL_OK;
+const int Tcl::Pkg::STATUS_ERR = TCL_ERROR;
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Helper functions that provide typesafe access to Tcl_LinkVar
@@ -223,13 +228,7 @@ DOTRACE("Tcl::Pkg::Pkg");
 
   rep = new Impl(interp, name, version);
 
-  if ( !rep->pkgName.empty() && !rep->version.empty() )
-    {
-      Tcl_PkgProvideEx(interp, rep->pkgName.c_str(), rep->version.c_str(),
-                       static_cast<ClientData>(this));
-    }
-
-  Tcl_CreateExitHandler(&Impl::exitHandler, static_cast<ClientData>(this));
+  ++INIT_DEPTH;
 }
 
 Tcl::Pkg::~Pkg() throw()
@@ -490,17 +489,38 @@ DOTRACE("Tcl::Pkg::verboseInit");
   VERBOSE_INIT = verbose;
 }
 
-int Tcl::Pkg::finishInit() const
+int Tcl::Pkg::finishInit()
 {
 DOTRACE("Tcl::Pkg::finishInit");
+
+  --INIT_DEPTH;
 
   if (rep->initStatus == TCL_OK)
     {
       if (VERBOSE_INIT)
-        std::cerr << pkgName() << " initialized.\n";
+        {
+          for (int i = 0; i < INIT_DEPTH; ++i)
+            std::cerr << "    ";
+          std::cerr << pkgName() << " initialized.\n";
+        }
+
+      if ( !rep->pkgName.empty() && !rep->version.empty() )
+        {
+          Tcl_PkgProvideEx(rep->interp.intp(),
+                           rep->pkgName.c_str(), rep->version.c_str(),
+                           static_cast<ClientData>(this));
+        }
+
+      Tcl_CreateExitHandler(&Impl::exitHandler,
+                            static_cast<ClientData>(this));
+
+      return rep->initStatus;
     }
 
-  return rep->initStatus;
+  // else (rep->initStatus != TCL_OK)
+
+  delete this;
+  return TCL_ERROR;
 }
 
 const char* const Tcl::Pkg::actionUsage = "objref(s)";

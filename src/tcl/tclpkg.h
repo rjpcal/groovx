@@ -85,6 +85,9 @@ private:
   ~Pkg() throw();
 
 public:
+  static const int STATUS_OK;
+  static const int STATUS_ERR;
+
   /// Don't call this directly! Use the PKG_CREATE macro instead.
   static Pkg* createInMacro(Tcl_Interp* interp,
                             const char* name, const char* version)
@@ -279,7 +282,7 @@ public:
   /** If the package's status is OK, then this does the relevant
       Tcl_PkgProvide and returns TCL_OK. Otherwise, it returns
       TCL_ERROR. */
-  int finishInit() const;
+  int finishInit();
 
 private:
   Pkg(const Pkg&); // not implemented
@@ -300,6 +303,9 @@ private:
   Impl* rep;
 };
 
+#include "util/debug.h"
+DBG_REGISTER
+
 /*
   These macros make it slightly more convenient to make sure that
   *_Init() package initialization functions don't leak any exceptions
@@ -312,25 +318,45 @@ private:
     where MM is major version, and mm is minor version. This
     constructor can also correctly parse a version string such as
     given by the RCS revision tag. */
-#define PKG_CREATE(interp, pkgname, pkgversion)                     \
-                                                                    \
-Tcl::Pkg* pkg = 0;                                                  \
-                                                                    \
-try { pkg = Tcl::Pkg::createInMacro(interp, pkgname, pkgversion); } \
-catch (...) { return 1; }                                           \
-                                                                    \
-try                                                                 \
-{
+#define PKG_CREATE(interp, pkgname, pkgversion)                       \
+                                                                      \
+int PKG_STATUS = Tcl::Pkg::STATUS_ERR;                                \
+{                                                                     \
+  Tcl::Pkg* pkg = 0;                                                  \
+                                                                      \
+  try { pkg = Tcl::Pkg::createInMacro(interp, pkgname, pkgversion); } \
+  catch (...) { return 1; }                                           \
+                                                                      \
+  static bool recursive_initialization = false;                       \
+  ASSERT(!recursive_initialization);                                  \
+  recursive_initialization = true;                                    \
+                                                                      \
+  try                                                                 \
+  {                                                                   \
 
 
 /// This macro should go at the end of each *_Init() function.
-#define PKG_RETURN                              \
-}                                               \
-catch(...)                                      \
-{                                               \
-  pkg->handleLiveException(SRC_POS);            \
-}                                               \
-return pkg->finishInit();
+#define PKG_RETURN                                \
+  }                                               \
+  catch(...)                                      \
+  {                                               \
+    pkg->handleLiveException(SRC_POS);            \
+  }                                               \
+  recursive_initialization = false;               \
+  PKG_STATUS = pkg->finishInit();                 \
+}                                                 \
+return PKG_STATUS;
+
+/// Use this instead of PKG_RETURN if more work needs to be done after the package is initialized.
+#define PKG_FINISH                                \
+  }                                               \
+  catch(...)                                      \
+  {                                               \
+    pkg->handleLiveException(SRC_POS);            \
+  }                                               \
+  recursive_initialization = false;               \
+  PKG_STATUS = pkg->finishInit();                 \
+}
 
 
 static const char vcid_tclpkg_h[] = "$Id$ $URL$";
