@@ -3,7 +3,7 @@
 // xitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:39:09 1999
-// written: Wed Nov 24 12:09:53 1999
+// written: Wed Dec  1 10:16:16 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,8 @@
 struct _XImage;
 typedef _XImage XImage;
 
+class ToglConfig;
+
 class XBitmap : public Bitmap {
 public:
   // Creators
@@ -28,6 +30,8 @@ public:
   private: void init();
   
 public:
+  static void initClass(const ToglConfig* config);
+
   virtual ~XBitmap();
 
   virtual void serialize(ostream& os, IOFlag flag) const;
