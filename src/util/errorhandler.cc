@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 11 10:17:31 2000
-// written: Mon Jul  2 15:11:45 2001
+// written: Wed Aug  8 12:14:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,6 @@ Util::ErrorHandler::~ErrorHandler() {}
 Util::NullErrorHandler::~NullErrorHandler() {}
 
 void Util::NullErrorHandler::handleUnknownError() {}
-void Util::NullErrorHandler::handleError(Error&) {}
 void Util::NullErrorHandler::handleErrorWithMsg(ErrorWithMsg&) {}
 void Util::NullErrorHandler::handleMsg(const char*) {}
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:47 1999
-// written: Sun Aug  5 20:11:39 2001
+// written: Wed Aug  8 12:14:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,21 +19,6 @@
 
 class dynamic_string;
 
-/**
- *
- * \c Error is the base class for all error classes.
- *
- **/
-
-class Error {
-public:
-  /// Default constructor.
-  Error();
-  /// Virtual constructor ensures correct destruction of subclasses.
-  virtual ~Error();
-};
-
-
 
 /**
  *
@@ -42,7 +27,7 @@ public:
  *
  **/
 
-class ErrorWithMsg : public virtual Error {
+class ErrorWithMsg {
 public:
   /// Default construct with an empty message string.
   ErrorWithMsg();

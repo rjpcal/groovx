@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Jul 18 13:02:00 2001
+// written: Wed Aug  8 12:13:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -394,11 +394,6 @@ DOTRACE("Tcl::TclCmd::Impl::invokeCallback");
         {
           errMessage(interp, theImpl->cmdName(), typeid(err));
         }
-    }
-  catch (Error& err)
-    {
-      DebugPrintNL("catch (Error&)");
-      errMessage(interp, theImpl->cmdName(), typeid(err));
     }
   catch (std::exception& err)
     {

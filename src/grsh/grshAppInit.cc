@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Mon Jul 16 15:10:13 2001
+// written: Wed Aug  8 12:13:26 2001
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -188,11 +188,6 @@ DOTRACE("Tcl_AppInit");
   }
   catch (ErrorWithMsg& err) {
     Util::log() << "uncaught ErrorWithMsg: " << err.msg_cstr() << '\n';
-  }
-  catch (Error& err) {
-    Util::log() << "uncaught Error of type"
-                << demangle_cstr(typeid(err).name())
-                << '\n';
   }
   catch (std::exception& err) {
     Util::log() << "uncaught std::exception of type "

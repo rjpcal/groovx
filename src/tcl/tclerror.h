@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Jun 20 15:10:26 1999
-// written: Thu May 10 12:04:37 2001
+// written: Wed Aug  8 12:14:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,8 @@
 
 struct Tcl_Interp;
 
-namespace Tcl {
+namespace Tcl
+{
   class TclError;
   class BkdErrorHandler;
 }
@@ -50,7 +51,6 @@ public:
   virtual ~BkdErrorHandler();
 
   virtual void handleUnknownError();
-  virtual void handleError(Error& err);
   virtual void handleErrorWithMsg(ErrorWithMsg& err);
   virtual void handleMsg(const char* msg);
 };

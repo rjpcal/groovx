@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Jun 20 15:10:13 1999
-// written: Thu May 10 12:04:42 2001
+// written: Wed Aug  8 12:13:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ TclError::TclError() :
 DOTRACE("TclError::TclError");
 }
 
-TclError::TclError(const char* msg) : 
+TclError::TclError(const char* msg) :
   ::ErrorWithMsg(msg)
 {
 DOTRACE("TclError::TclError");
@@ -58,10 +58,6 @@ Tcl::BkdErrorHandler::~BkdErrorHandler() {}
 
 void Tcl::BkdErrorHandler::handleUnknownError() {
   raiseBackgroundError("an error of unknown type occurred");
-}
-
-void Tcl::BkdErrorHandler::handleError(Error&) {
-  raiseBackgroundError("an Error of unknown type occurred");
 }
 
 void Tcl::BkdErrorHandler::handleErrorWithMsg(ErrorWithMsg& err) {

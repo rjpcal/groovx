@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 11 10:15:41 2000
-// written: Thu May 10 12:04:36 2001
+// written: Wed Aug  8 12:14:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,10 @@
 #ifndef ERRORHANDLER_H_DEFINED
 #define ERRORHANDLER_H_DEFINED
 
-class Error;
 class ErrorWithMsg;
 
-namespace Util {
+namespace Util
+{
   class ErrorHandler;
   class NullErrorHandler;
 }
@@ -26,7 +26,6 @@ public:
   virtual ~ErrorHandler();
 
   virtual void handleUnknownError() = 0;
-  virtual void handleError(Error& err) = 0;
   virtual void handleErrorWithMsg(ErrorWithMsg& err) = 0;
   virtual void handleMsg(const char* msg) = 0;
 };
@@ -36,7 +35,6 @@ public:
   virtual ~NullErrorHandler();
 
   virtual void handleUnknownError();
-  virtual void handleError(Error& err);
   virtual void handleErrorWithMsg(ErrorWithMsg& err);
   virtual void handleMsg(const char* msg);
 };
