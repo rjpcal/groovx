@@ -5,21 +5,44 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Mar 19 12:45:34 2003
+// written: Wed Mar 19 17:59:09 2003
 // $Id$
 //
-// This file defines two classes and several macros that can be used
-// to achieve function profiling and tracing. The basic idea is that
-// for each function for which profiling is enabled, a static Prof
-// object is created. This object maintains the call count and total
-// elapsed time for that function. The job of measuring and recording
-// such information falls to the Trace class. An automatic object of
-// the Trace class is constructed on entry to a function, and it is
-// destructed just prior to function exit. If LOCAL_TRACE is defined,
-// the Trace object will emit "entering" and "leaving" messages as it
-// is constructed and destructed, respectively. In any case, the Trace
-// object takes care of teling the static Prof object to 1) increment
-// its counter, and 2) record the elapsed time.
+// --------------------------------------------------------------------
+//
+// This file is part of GroovX.
+//
+// GroovX is free software; you can redistribute it and/or modify it under
+// the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your
+// option) any later version.
+//
+// GroovX is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+// FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+// for more details.
+//
+// You should have received a copy of the GNU General Public License along
+// with GroovX; if not, write to the Free Software Foundation, Inc., 59
+// Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+//
+///////////////////////////////////////////////////////////////////////
+
+#ifndef TRACE_H_DEFINED
+#define TRACE_H_DEFINED
+
+// This file defines two classes and several macros that can be used to
+// achieve function profiling and tracing. The basic idea is that for each
+// function for which profiling is enabled, a static Prof object is
+// created. This object maintains the call count and total elapsed time for
+// that function. The job of measuring and recording such information falls
+// to the Trace class. An automatic object of the Trace class is
+// constructed on entry to a function, and it is destructed just prior to
+// function exit. If LOCAL_TRACE is defined, the Trace object will emit
+// "entering" and "leaving" messages as it is constructed and destructed,
+// respectively. In any case, the Trace object takes care of teling the
+// static Prof object to 1) increment its counter, and 2) record the
+// elapsed time.
 //
 // The behavior of the control macros are as follows:
 //
@@ -27,11 +50,6 @@
 // 2) if LOCAL_TRACE is defined, profiling AND tracing will always occur
 // 3) if TRACE is defined, profiling AND tracing will occur, EXCEPT:
 // 4) if NO_TRACE is defined, TRACE is ignored
-//
-///////////////////////////////////////////////////////////////////////
-
-#ifndef TRACE_H_DEFINED
-#define TRACE_H_DEFINED
 
 #include "util/time.h"
 

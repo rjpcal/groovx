@@ -5,18 +5,36 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Mar 19 12:45:30 2003
+// written: Wed Mar 19 18:00:25 2003
 // $Id$
 //
-// This package provides some simple Tcl functions that are wrappers
-// for C OpenGL functions. The function names, argument lists, and
-// symbolic constants for the Tcl functions are identical to those in
-// the analagous C functions.
+// --------------------------------------------------------------------
+//
+// This file is part of GroovX.
+//
+// GroovX is free software; you can redistribute it and/or modify it under
+// the terms of the GNU General Public License as published by the Free
+// Software Foundation; either version 2 of the License, or (at your
+// option) any later version.
+//
+// GroovX is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+// FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+// for more details.
+//
+// You should have received a copy of the GNU General Public License along
+// with GroovX; if not, write to the Free Software Foundation, Inc., 59
+// Temple Place, Suite 330, Boston, MA 02111-1307 USA.
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GLTCL_CC_DEFINED
 #define GLTCL_CC_DEFINED
+
+// This Tcl package provides some simple Tcl wrappers for C OpenGL
+// functions. The function names, argument lists, and symbolic constants
+// for the Tcl functions are identical to those in the analagous C
+// functions.
 
 #include "gfx/canvas.h"
 
