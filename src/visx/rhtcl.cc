@@ -30,11 +30,6 @@
 #ifndef RHTCL_CC_DEFINED
 #define RHTCL_CC_DEFINED
 
-#include "visx/eventresponsehdlr.h"
-#include "visx/responsehandler.h"
-#include "visx/kbdresponsehdlr.h"
-#include "visx/nullresponsehdlr.h"
-
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
@@ -43,6 +38,11 @@
 #include "util/pointers.h"
 #include "util/serialport.h"
 #include "util/strings.h"
+
+#include "visx/eventresponsehdlr.h"
+#include "visx/responsehandler.h"
+#include "visx/kbdresponsehdlr.h"
+#include "visx/nullresponsehdlr.h"
 
 #include <tk.h>
 #include <X11/Xlib.h>
@@ -166,6 +166,7 @@ DOTRACE("Eventresponsehdlr_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "EventResponseHdlr",
                                "$Revision$");
+  Tcl::defCreator<EventResponseHdlr>(pkg);
   pkg->inheritPkg("ResponseHandler");
   Tcl::defTracing(pkg, EventResponseHdlr::tracer);
 
@@ -206,6 +207,7 @@ int Kbdresponsehdlr_Init(Tcl_Interp* interp)
 DOTRACE("Kbdresponsehdlr_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "KbdResponseHdlr", "$Revision$");
+  Tcl::defCreator<KbdResponseHdlr>(pkg);
   pkg->inheritPkg("EventResponseHdlr");
   Tcl::defGenericObjCmds<KbdResponseHdlr>(pkg);
 
@@ -221,6 +223,7 @@ DOTRACE("Nullresponsehdlr_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "NullResponseHdlr",
                                "$Revision$");
+  Tcl::defCreator<NullResponseHdlr>(pkg);
   pkg->inheritPkg("ResponseHandler");
   Tcl::defGenericObjCmds<NullResponseHdlr>(pkg);
   pkg->namespaceAlias("NullRh");
@@ -239,10 +242,6 @@ DOTRACE("Serialrh_Init");
   pkg->def( "SerialRh::SerialRh", "",
             Util::bindLast(Util::bindFirst(&startSerial, interp),
                            "/dev/tty0p0") );
-
-  Util::ObjFactory::theOne().registerCreatorFunc(&EventResponseHdlr::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&KbdResponseHdlr::make);
-  Util::ObjFactory::theOne().registerCreatorFunc(&NullResponseHdlr::make);
 
   return pkg->initStatus();
 }
