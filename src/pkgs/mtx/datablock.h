@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 18:04:10 2001
-// written: Fri Apr  6 15:51:34 2001
+// written: Thu Sep 13 11:49:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,8 @@
 
 #include <cstddef>
 
-class DataBlock {
+class DataBlock
+{
 private:
   DataBlock(const DataBlock& other); // not implemented
   DataBlock& operator=(const DataBlock& other); // not implemented

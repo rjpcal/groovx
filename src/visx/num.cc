@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:28:26 2001
-// written: Thu Sep 13 11:49:08 2001
+// written: Thu Sep 13 11:50:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,8 @@ const double Num::SQRT_2 = 1.41421356237;
 bool Num::filled = false;
 double Num::lookup[TABLE_SIZE] = { 0.0 };
 
-namespace {
+namespace
+{
   double fastexpImpl(double xx)
   {
     static const double one_over[] = {
