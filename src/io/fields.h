@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Tue Nov 14 12:52:49 2000
+// written: Tue Nov 14 21:15:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -249,8 +249,14 @@ private:
   Impl* const itsImpl;
 
 public:
-  FieldMap(const FieldInfo* begin, const FieldInfo* end);
+  FieldMap(const FieldInfo* begin, const FieldInfo* end,
+			  const FieldMap* parent=0);
   ~FieldMap();
+
+  static const FieldMap* emptyFieldMap();
+
+  bool hasParent() const;
+  const FieldMap* parent() const;
 
   const FieldInfo& info(const fixed_string& name) const;
 
@@ -297,14 +303,16 @@ class FieldContainer : public virtual IO::IoObject,
 							  public virtual Observable
 {
 private:
-  const FieldMap& itsFieldMap;
+  const FieldMap* itsFieldMap;
 
   FieldContainer(const FieldContainer&);
   FieldContainer& operator=(const FieldContainer&);
 
 public:
-  FieldContainer(const FieldMap& pmap);
+  FieldContainer();
   virtual ~FieldContainer();
+
+  void setFieldMap(const FieldMap& fields);
 
   Field& field(const fixed_string& name);
   Field& field(const FieldInfo& pinfo);
@@ -315,7 +323,7 @@ public:
   void readFieldsFrom(IO::Reader* reader);
   void writeFieldsTo(IO::Writer* writer) const;
 
-  const FieldMap& fields() const { return itsFieldMap; }
+  const FieldMap& fields() const { return *itsFieldMap; }
 };
 
 
