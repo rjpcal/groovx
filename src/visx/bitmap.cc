@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Sep  8 13:05:31 1999
+// written: Fri Sep 24 19:01:17 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include <GL/glu.h>
 #include <cstring>				  // for memcpy
 
+#include "error.h"
 #include "pbm.h"
 
 #define NO_TRACE
@@ -29,14 +30,14 @@ namespace {
 }
 
 Bitmap::Bitmap() :
-  GrObj()
+  GrObj(GROBJ_GL_COMPILE, GROBJ_DIRECT_RENDER)
 {
 DOTRACE("Bitmap::Bitmap");
   init();
 }
 
 Bitmap::Bitmap(const char* filename) :
-  GrObj(),
+  GrObj(GROBJ_GL_COMPILE, GROBJ_DIRECT_RENDER),
   itsFilename(filename)
 {
 DOTRACE("Bitmap::Bitmap");
@@ -44,7 +45,7 @@ DOTRACE("Bitmap::Bitmap");
 }
 
 Bitmap::Bitmap(istream& is, IOFlag flag) :
-  GrObj()
+  GrObj(GROBJ_GL_COMPILE, GROBJ_DIRECT_RENDER)
 {
 DOTRACE("Bitmap::Bitmap");
   init();
@@ -56,15 +57,18 @@ DOTRACE("Bitmap::init");
   itsRasterX = itsRasterY = 0.0;
   itsZoomX = itsZoomY = 1.0;
   itsUsingZoom = false;
-  itsBytes = 0;
+  itsBytes.resize(1);
   itsContrastFlip = false;
   itsVerticalFlip = false;
+
+  itsHeight = 1;
+  itsWidth = 1;
+  itsBitsPerPixel = 1;
+  itsByteAlignment = 1;
 }
 
 Bitmap::~Bitmap() {
 DOTRACE("Bitmap::~Bitmap");
-  delete [] itsBytes;
-  itsBytes = 0;
 }
 
 void Bitmap::serialize(ostream& os, IOFlag flag) const {
@@ -103,8 +107,8 @@ DOTRACE("Bitmap::deserialize");
 
   if (flag & BASES) { GrObj::deserialize(is, flag); }
 
-  itsBytes = 0;
-  bytesChangeHook(itsBytes, 0, 0);
+  itsBytes.resize(1);
+  bytesChangeHook(0, 0, 0, 1, 1);
 
   if ( !itsFilename.empty() ) {
 	 loadPbmFile(itsFilename.c_str());
@@ -122,24 +126,76 @@ DOTRACE("Bitmap::charCount");
 
 void Bitmap::loadPbmFile(const char* filename) {
 DOTRACE("Bitmap::loadPbmFile");
+  // Create a Pbm object by reading pbm data from 'filename'.
   Pbm pbm(filename);
-  unsigned char* bytes;
-  pbm.grabBytes(bytes, itsWidth, itsHeight, itsBitsPerPixel);
-  
-  delete [] itsBytes;
-  itsBytes = bytes;
-  
-  // Wait to set itsFilename until we are sure that the new read
-  // succeeded; otherwise, the contents of itsBytes will be out of
-  // sync with itsFilename.
+
+  // Grab ownership of the bitmap data from pbm into this object's itsBytes.
+  pbm.grabBytes(itsBytes, itsWidth, itsHeight, itsBitsPerPixel);
   itsFilename = filename;
 
   if (itsContrastFlip) { doFlipContrast(); }
   if (itsVerticalFlip) { doFlipVertical(); }
 
-  bytesChangeHook(itsBytes, itsWidth, itsHeight);
+  bytesChangeHook(&(itsBytes[0]), itsWidth, itsHeight,
+						itsBitsPerPixel, itsByteAlignment);
   
   sendStateChangeMsg();
+}
+
+void Bitmap::writePbmFile(const char* filename) const {
+DOTRACE("Bitmap::writePbmFile");
+  Pbm pbm(itsBytes, itsWidth, itsHeight, itsBitsPerPixel);
+  pbm.write(filename);
+}
+
+void Bitmap::grabScreenRect(int left, int top, int right, int bottom) {
+  grabScreenRect(Rect<int>(left, top, right, bottom));
+}
+
+void Bitmap::grabScreenRect(const Rect<int>& rect) {
+DOTRACE("Bitmap::grabScreenRect");
+  int width = rect.r - rect.l + 1;    DebugEval(width);
+  int height = rect.t - rect.b + 1;   DebugEvalNL(height);
+
+  int bits_per_pixel = 1;
+  vector<unsigned char> newBytes( (width/8 + 1) * height + 1);
+
+  glPixelStorei(GL_PACK_ALIGNMENT, 1);
+  glReadPixels(rect.l, rect.b, width, height,
+					GL_COLOR_INDEX, GL_BITMAP, &(newBytes[0]));
+
+  itsFilename = "";
+  itsRasterY = itsRasterX = 0.0;
+  itsZoomY = itsZoomX = 1.0;
+  itsUsingZoom = false;
+  itsContrastFlip = false;
+  itsVerticalFlip = false;
+
+  itsHeight = height;
+  itsWidth = width;
+  itsBitsPerPixel = bits_per_pixel;
+  itsByteAlignment = 1;
+  
+  itsBytes.swap(newBytes);
+  bytesChangeHook(&(itsBytes[0]), itsWidth, itsHeight,
+						itsBitsPerPixel, itsByteAlignment);
+
+  sendStateChangeMsg();
+}
+
+void Bitmap::grabWorldRect(double left, double top,
+									double right, double bottom) {
+  grabWorldRect(Rect<double>(left, top, right, bottom));
+}
+
+void Bitmap::grabWorldRect(const Rect<double>& rect) {
+DOTRACE("Bitmap::grabWorldRect");
+  Rect<int> screen_rect;
+
+  getScreenFromWorld(rect.l, rect.t, screen_rect.l, screen_rect.t);
+  getScreenFromWorld(rect.r, rect.b, screen_rect.r, screen_rect.b, false);
+
+  grabScreenRect(screen_rect);
 }
 
 void Bitmap::flipContrast() {
@@ -170,7 +226,8 @@ DOTRACE("Bitmap::doFlipContrast");
 	 }
   }
 
-  bytesChangeHook(itsBytes, itsWidth, itsHeight);
+  bytesChangeHook(&(itsBytes[0]), itsWidth, itsHeight,
+						itsBitsPerPixel, itsByteAlignment);
 
   sendStateChangeMsg();
 }
@@ -189,51 +246,41 @@ DOTRACE("Bitmap::doFlipVertical");
   int bytes_per_row = bytesPerRow();
   int num_bytes = byteCount();
   
-  unsigned char* new_bytes = new unsigned char[num_bytes];
+  vector<unsigned char> new_bytes(num_bytes);
   
   for (int row = 0; row < itsHeight; ++row) {
 	 int new_row = (itsHeight-1)-row;
-	 memcpy(static_cast<void*> (new_bytes + (new_row * bytes_per_row)),
-			  static_cast<void*> (itsBytes  + (row     * bytes_per_row)),
+	 memcpy(static_cast<void*> (&(new_bytes[new_row * bytes_per_row])),
+			  static_cast<void*> (&(itsBytes [row     * bytes_per_row])),
 			  bytes_per_row);
   }
   
-  delete [] itsBytes;
-  itsBytes = new_bytes;
+  itsBytes.swap(new_bytes);
 
-  bytesChangeHook(itsBytes, itsWidth, itsHeight);
+  bytesChangeHook(&(itsBytes[0]), itsWidth, itsHeight,
+						itsBitsPerPixel, itsByteAlignment);
 
   sendStateChangeMsg();
 }
 
 void Bitmap::center() {
 DOTRACE("Bitmap::center");
-  GLdouble mv_matrix[16];
-  glGetDoublev(GL_MODELVIEW_MATRIX, mv_matrix);
-
-  GLdouble proj_matrix[16];
-  glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
-
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT, viewport);
 
-  GLdouble left_x, bottom_y, right_x, top_y, dummy_z;
+  GLdouble left_x, bottom_y, right_x, top_y;
 
-  GLint result = gluUnProject(viewport[0], viewport[1], 0,
-										mv_matrix, proj_matrix, viewport,
-										&left_x, &bottom_y, &dummy_z);
+  getWorldFromScreen(viewport[0], viewport[1], left_x, bottom_y);
+  getWorldFromScreen(viewport[0]+itsWidth, viewport[1]+itsHeight,
+							right_x, top_y, false);
 
-  result = gluUnProject(viewport[0]+itsWidth, viewport[1]+itsHeight, 0,
-								mv_matrix, proj_matrix, viewport,
-								&right_x, &top_y, &dummy_z);
+  GLdouble screen_width = abs(right_x - left_x);
+  GLdouble screen_height = abs(top_y - bottom_y);
 
-  GLdouble win_width = abs(right_x - left_x);
-  GLdouble win_height = abs(top_y - bottom_y);
+  DebugEval(screen_width); DebugEvalNL(screen_height);
 
-  DebugEval(win_width); DebugEvalNL(win_height);
-
-  itsRasterX = -win_width/2.0;
-  itsRasterY = -win_height/2.0;
+  itsRasterX = -screen_width/2.0;
+  itsRasterY = -screen_height/2.0;
   
   itsRasterX *= abs(itsZoomX);
   itsRasterY *= abs(itsZoomY);
@@ -243,67 +290,69 @@ DOTRACE("Bitmap::center");
 
 void Bitmap::grRender() const {
 DOTRACE("Bitmap::grRender");
-  doRender(itsBytes,
+  doRender(const_cast<unsigned char*>(&(itsBytes[0])),
 			  itsRasterX, itsRasterY,
 			  itsWidth, itsHeight,
 			  itsBitsPerPixel,
+			  itsByteAlignment,
 			  itsZoomX, itsZoomY);
 }
 
-void Bitmap::undraw() const {
-DOTRACE("Bitmap::undraw");
-  GLdouble mv_matrix[16];
-  glGetDoublev(GL_MODELVIEW_MATRIX, mv_matrix);
-  
-  // Projection matrix looks like this:
-  //  _                                              _       
-  // |      2                                         |      
-  // | ------------      0            0        t_x    |      
-  // | right - left                                   |      
-  // |                   2                            |      
-  // |      0       ------------      0        t_y    |      
-  // |              top - bottom                      |      
-  // |                               -2               |      
-  // |      0            0       ----------    t_z    |      
-  // |                           far - near           |      
-  // |                                                |      
-  // |      0            0            0         1     |       
-  // |_                                              _|      
+void Bitmap::grUnRender() const {
+DOTRACE("Bitmap::grUnRender");
+  double world_left, world_top, world_right, world_bottom; 
+  getBoundingBox(world_left, world_top, world_right, world_bottom);
 
+  int screen_left, screen_top, screen_right, screen_bottom;
+  getScreenFromWorld(world_left, world_top, screen_left, screen_top);
+  getScreenFromWorld(world_right, world_bottom, screen_right, screen_bottom,
+							false);
 
-  GLdouble proj_matrix[16];
-  glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
+  doUndraw( screen_left-1,
+				screen_bottom-1,
+				screen_right-screen_left+2,
+				screen_top-screen_bottom+2 );
+}
 
-  GLint viewport[4];
-  glGetIntegerv(GL_VIEWPORT, viewport);
-
-  // Map itsRasterX/itsRasterY from GL coordinates to window coordinates
-  GLdouble win_raster_x, win_raster_y, win_raster_z;
-  GLint result = gluProject(itsRasterX, itsRasterY, 0.0,
-									 mv_matrix, proj_matrix, viewport,
-									 &win_raster_x, &win_raster_y, &win_raster_z);
-
-  DebugEval(result);
-  DebugEval(win_raster_x);
-  DebugEval(win_raster_y);
-  DebugEvalNL(win_raster_z);
-
-  if (itsZoomX < 0.0) {
-	 win_raster_x += itsWidth*itsZoomX;
-  }
-  if (itsZoomY < 0.0) {
-	 win_raster_y += itsHeight*itsZoomY;
-  }
-
-  doUndraw( int(win_raster_x)-1, 
-				int(win_raster_y)-1, 
-				int(itsWidth*abs(itsZoomX))+2, 
-				int(itsHeight*abs(itsZoomY))+2 );
+void Bitmap::doUndraw(int /*winRasterX*/, int /*winRasterY*/,
+							 int /*winWidthX*/, int /*winHeightY*/) const {
+DOTRACE("Bitmap::doUndraw");
 }
 
 ///////////////
 // accessors //
 ///////////////
+
+bool Bitmap::grGetBoundingBox(double& left, double& top,
+										double& right, double& bottom,
+										int& border_pixels) const {
+DOTRACE("Bitmap::grGetBoundingBox");
+
+  border_pixels = 2; 
+
+  // Object coordinates for the lower left corner
+  left = itsRasterX;
+  bottom = itsRasterY;
+
+  // Get screen coordinates for the lower left corner, so that we can
+  // find the upper right corner in screen coordinates
+  int screen_left, screen_bottom;
+  getScreenFromWorld(itsRasterX, itsRasterY, screen_left, screen_bottom);
+
+  if (itsZoomX < 0.0) {
+	 screen_left += itsWidth*itsZoomX;
+  }
+  if (itsZoomY < 0.0) {
+	 screen_bottom += itsHeight*itsZoomY;
+  }
+
+  // Get object coordinates for the upper right corner
+  getWorldFromScreen(screen_left+itsWidth*abs(itsZoomX),
+							screen_bottom+itsHeight*abs(itsZoomY),
+							right, top);
+
+  return true;
+}
 
 int Bitmap::byteCount() const {
 DOTRACE("Bitmap::byteCount");
