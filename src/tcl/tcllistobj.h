@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:00:17 2001
-// written: Fri Jul 13 17:22:48 2001
+// written: Sun Jul 15 15:18:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,6 +92,22 @@ public:
 
   template <class T>
   Iterator<T> end(T* /*dummy*/=0);
+
+  class Appender {
+    Tcl::List& itsList;
+  public:
+    Appender(Tcl::List& aList) : itsList(aList) {}
+
+    template <class T>
+    Appender& operator=(const T& val)
+    { itsList.append(val); return *this; }
+
+    Appender& operator*() { return *this; }
+    Appender& operator++() { return *this; }
+    Appender& operator++(int) { return *this; }
+  };
+
+  Appender appender() { return Appender(*this); }
 
   /// Utility function to return the list length of a Tcl object
   static unsigned int getLength(Tcl_Obj* obj);
