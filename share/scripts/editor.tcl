@@ -15,7 +15,6 @@ package require Iwidgets
 #     parent.itsPanes.objtype (childsite)
 #       parent.itsPanes.objtype.fields (frame)
 #     parent.itsPanes.itsControls (childsite)
-#     parent.itsPanes.itsControls.viewingdist
 #     parent.itsPanes.itsControls.objtypes
 #     parent.itsPanes.itsControls.new
 #     parent.itsPanes.itsControls.preview
@@ -388,7 +387,6 @@ itcl::class Editor {
     private method makePreviewObj {}
     private method requestDraw {}
     private method updateControls {obj}
-    private method viewingDist {val}
     private method setAttrib {fname val}
     private method showFieldControls {}
     private method runCmd {}
@@ -566,10 +564,6 @@ itcl::body Editor::updateControls {obj} {
     set itsUpdateInProgress 0
 }
 
-itcl::body Editor::viewingDist {val} {
-    Toglet::setViewingDistance $itsToglet $val
-}
-
 itcl::body Editor::setAttrib {fname val} {
     debug "in setAttrib..."
 
@@ -646,13 +640,6 @@ itcl::body Editor::init {parent objtype } {
     # Set up controls
     #
 
-    scale $itsControls.viewingdist -showvalue false \
-	-from 1 -to 200 -orient horizontal \
-	-width $::SCALE_WIDTH \
-	-command [itcl::code $this viewingDist]
-    $itsControls.viewingdist set 60
-    pack $itsControls.viewingdist -side top -fill x
-
     set itsButtons [frame $itsControls.buttons]
 
     iwidgets::optionmenu $itsButtons.objtypes -labeltext "Object type:" \
@@ -666,16 +653,19 @@ itcl::body Editor::init {parent objtype } {
 	GxCylinder \
 	GxDrawStyle \
 	GxColor \
+	GxFixedScaleCamera \
 	GxLighting \
 	GxLine \
 	GxMaterial \
+	GxPerspectiveCamera \
 	GxPointSet \
+	GxPsyphyCamera \
 	GxSeparator \
 	GxSphere \
+	GxTransform \
 	House \
 	MaskHatch \
-	MorphyFace \
-	Position
+	MorphyFace
     $itsButtons.objtypes sort ascending
     setObjType $objtype
     pack $itsButtons.objtypes -side top -anchor nw
