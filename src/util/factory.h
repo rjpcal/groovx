@@ -56,20 +56,6 @@ public:
 
 /**
  *
- * Creator implements the CreatorBase interface by returning a new
- * object of type Derived from the create() method. Derived must have
- * a default constructor, and must be a subclass of Base.
- *
- **/
-template <class Base, class Derived>
-class Creator : public CreatorBase<Base> {
-public:
-  /// Return a new object of type \c Derived.
-  virtual Base* create() { return new Derived; }
-};
-
-/**
- *
  * CreatorFromFunc implements the CreatorBase interface by storing a
  * pointer to function that returns an object of the appropriate type.
  *
@@ -200,14 +186,6 @@ public:
 								 new CreatorFromFunc<Base, Derived>(func));
   }
 
-  /** Registers a new type with the factory. The class Derived must be
-      a subclass of Base. */
-  template <class Derived>
-  void registerType(Derived* /*dummy*/) {
-	 itsMap.setPtrForName(demangle_cstr(typeid(Derived).name()),
-								 new Creator<Base, Derived>);
-  }
-
   /** Returns a new object of a given type. If the given type has not
       been registered with the factory, a null pointer is returned. */
   Base* newObject(const char* type) {
@@ -240,36 +218,6 @@ public:
 	 return d;
   }
 };
-
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * \c FactoryRegistrar is a convenience class for registering types
- * with a factory. \c FactoryRegistrar objects should not be
- * instantiated; instead, clients simply use the static function \c
- * registerWith() to register the \c Derived type with a \c Factory
- * rooted in the \c Base type.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class Base, class Derived>
-class FactoryRegistrar {
-private:
-  /// Constructor private so that clients don't instantiate this class.
-  FactoryRegistrar();
-
-public:
-  /** Registers a creator for type \c Derived with \a theFactory,
-      which is rooted in type \c Base. \c Derived must be a class
-      derived from \c Base. */
-  static void registerWith(Factory<Base>& theFactory)
-	 {
-		theFactory.registerType( (Derived*) 0 );
-	 }
-};
-
 
 static const char vcid_factory_h[] = "$Header$";
 #endif // !FACTORY_H_DEFINED
