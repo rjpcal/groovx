@@ -3,7 +3,7 @@
 // factory.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 22:37:31 1999
-// written: Tue Oct 31 13:49:45 2000
+// written: Wed Nov  1 16:23:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef FACTORY_CC_DEFINED
 #define FACTORY_CC_DEFINED
 
-#include "factory.h"
+#include "util/factory.h"
 
 #include "util/strings.h"
 
