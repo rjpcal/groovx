@@ -48,9 +48,13 @@ proc test {package_name test_name script expected_result_regexp {flags 1}} {
 		  lappend ::INTERMITTENT_BUGS "$package_name $test_name"
 	 }
 	 if {$flags <= 0} { return }
-	 if {$::VERBOSE != 0} {
+	 if {$::VERBOSE > 0} {
 		  puts "================================================================"
 		  puts "==== $package_name $test_name"
+	 }
+	 if {$::VERBOSE > 1} {
+		  puts "==== Contents of test case:"
+		  puts $script
 	 }
 	 catch {eval $script} result
 	 incr ::num_tests
@@ -60,12 +64,14 @@ proc test {package_name test_name script expected_result_regexp {flags 1}} {
 		  }
 		  incr ::num_success
 	 } else {
-		  if {$::VERBOSE == 0} {
+		  if {$::VERBOSE <= 0} {
 				puts "================================================================"
 				puts "==== $package_name $test_name"
 		  }
-		  puts "==== Contents of test case:"
-		  puts $script
+		  if {$::VERBOSE <= 1} {
+				puts "==== Contents of test case:"
+				puts $script
+		  }
 		  puts "==== Result was:"
 		  puts $result
 		  puts "---- Result should have been:"
