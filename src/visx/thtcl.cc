@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Fri Jan 18 16:06:59 2002
+// written: Wed Jan 23 10:55:28 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,6 +42,7 @@ DOTRACE("Th_Init");
 
   Util::ObjFactory::theOne().registerCreatorFunc(&AbortTrialEvent::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&DrawEvent::make);
+  Util::ObjFactory::theOne().registerCreatorFunc(&RenderEvent::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&UndrawEvent::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&EndTrialEvent::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&NextNodeEvent::make);
@@ -79,8 +80,12 @@ DOTRACE("Th_Init");
   pkg2->defAttrib("interTrialInterval",
                   &TimingHandler::getInterTrialInterval,
                   &TimingHandler::setInterTrialInterval);
-  pkg2->defAttrib("stimDur", &TimingHandler::getStimDur, &TimingHandler::setStimDur);
-  pkg2->defAttrib("timeout", &TimingHandler::getTimeout, &TimingHandler::setTimeout);
+  pkg2->defAttrib("stimDur",
+                  &TimingHandler::getStimDur,
+                  &TimingHandler::setStimDur);
+  pkg2->defAttrib("timeout",
+                  &TimingHandler::getTimeout,
+                  &TimingHandler::setTimeout);
 
   return Tcl::Pkg::initStatus(pkg1, pkg2);
 }

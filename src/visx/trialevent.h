@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Fri Jan 18 16:06:51 2002
+// written: Wed Jan 23 10:52:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -140,7 +140,8 @@ protected:
   virtual void invoke(TrialBase& trial);
 };
 
-/// TrialEvent subclass to call TrialBase::installSelf() and Widget::display().
+/** TrialEvent subclass to call TrialBase::installSelf() and
+    Widget::fullRender(). */
 class DrawEvent : public TrialEvent
 {
 protected:
@@ -151,6 +152,21 @@ public:
   static DrawEvent* make() { return new DrawEvent; }
   /// Virtual destructor.
   virtual ~DrawEvent();
+protected:
+  virtual void invoke(TrialBase& trial);
+};
+
+/// TrialEvent subclass to call Widget::render().
+class RenderEvent : public TrialEvent
+{
+protected:
+  /// Construct with a requested delay of \a msec milliseconds.
+  RenderEvent(int msec = 0);
+public:
+  /// Default creator.
+  static RenderEvent* make() { return new RenderEvent; }
+  /// Virtual destructor.
+  virtual ~RenderEvent();
 protected:
   virtual void invoke(TrialBase& trial);
 };
