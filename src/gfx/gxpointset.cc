@@ -96,8 +96,8 @@ void GxPointSet::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxPointSet::getBoundingCube");
 
-  for (unsigned int i = 0; i < itsPoints.arr().size(); ++i)
-    bbox.vertex3(itsPoints.arr()[i]);
+  for (unsigned int i = 0; i < itsPoints.arraySize(); ++i)
+    bbox.vertex3(itsPoints.arrayAt(i));
 }
 
 void GxPointSet::draw(Gfx::Canvas& canvas) const
@@ -106,8 +106,8 @@ DOTRACE("GxPointSet::draw");
 
   canvas.begin(Gfx::Canvas::VertexStyle(itsStyle));
 
-  for (unsigned int i = 0; i < itsPoints.arr().size(); ++i)
-    canvas.vertex3(itsPoints.arr()[i]);
+  for (unsigned int i = 0; i < itsPoints.arraySize(); ++i)
+    canvas.vertex3(itsPoints.arrayAt(i));
 
   canvas.end();
 }

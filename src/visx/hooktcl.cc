@@ -534,7 +534,7 @@ namespace
 
   const TArrayValue<GbVec3<double> >& getArray() { return arraydata; }
 
-  unsigned int getArraySize() { return arraydata.arr().size(); }
+  unsigned int getArraySize() { return arraydata.arraySize(); }
 
   void setArray(const TArrayValue<GbVec3<double> >& a) { arraydata = a; }
 

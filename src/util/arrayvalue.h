@@ -30,11 +30,11 @@
 #ifndef ARRAYVALUE_H_DEFINED
 #define ARRAYVALUE_H_DEFINED
 
-#include "util/minivec.h"
 #include "util/strings.h"
 #include "util/value.h"
 
 #include <iomanip>
+#include <vector>
 
 /// A Value subclass representing a fixed-size set of homogeneous values.
 template <class T>
@@ -58,7 +58,7 @@ public:
 
   virtual void scanFrom(STD_IO::istream& is)
   {
-    minivec<T> newarray;
+    std::vector<T> newarray;
 
     while (!is.eof() && !is.fail())
       {
@@ -69,11 +69,13 @@ public:
     itsArray.swap(newarray);
   }
 
-        minivec<T>& arr()       { return itsArray; }
-  const minivec<T>& arr() const { return itsArray; }
+  unsigned int arraySize() const { return itsArray.size(); }
+
+        T& arrayAt(unsigned int i)       { return itsArray[i]; }
+  const T& arrayAt(unsigned int i) const { return itsArray[i]; }
 
 private:
-  minivec<T> itsArray;
+  std::vector<T> itsArray;
 };
 
 static const char vcid_arrayvalue_h[] = "$Header$";
