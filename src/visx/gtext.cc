@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Wed Oct 20 10:16:15 1999
+// written: Tue Nov  2 10:25:56 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -680,8 +680,8 @@ DOTRACE("Gtext::~Gtext");
 
 void Gtext::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("Gtext::serialize");
-  char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+
+  if (flag & TYPENAME) { os << ioTag << IO::SEP; }
 
   os << itsText << endl;
 
@@ -692,7 +692,8 @@ void Gtext::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Gtext::deserialize");
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); } 
 
-  IO::eatWhitespace(is);
+  if ( IO::SEP == is.peek() ) { is.get(); }
+
   getline(is, itsText, '\n');
 
   if (is.fail()) throw InputError(ioTag);
