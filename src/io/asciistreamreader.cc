@@ -313,12 +313,8 @@ DOTRACE("AsciiStreamReader::readValueObj");
   dbgEvalNL(3, name);
 
   AttribMap::Attrib a = currentAttribs().get(name);
-  Util::icstrstream ist(a.value.c_str());
 
-  ist >> value;
-
-  if (ist.fail())
-    throw AttributeReadError(name, a.value);
+  value.setFstring(a.value);
 }
 
 Ref<IO::IoObject>
