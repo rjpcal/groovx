@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Mar 30 09:50:05 2000
+// written: Mon May 22 11:54:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,25 +104,26 @@ public:
 	 itsFlipVertical(vertical)
 	 {}
 
-  virtual void update(BmapData& update_me)
-	 {
-	 DOTRACE("PbmUpdater::update");
-
-		// Create a Pbm object by reading pbm data from 'filename'.
-		Pbm pbm(itsFilename.c_str());
-
-		// Grab ownership of the bitmap data from pbm into this's itsData
-		pbm.swapInto( update_me );
-
-		if (itsFlipContrast) { update_me.flipContrast(); }
-		if (itsFlipVertical) { update_me.flipVertical(); }
-	 }
+  virtual void update(BmapData& update_me);
 
 private:
   fixed_string itsFilename;
   bool itsFlipContrast;
   bool itsFlipVertical;
 };
+
+void PbmUpdater::update(BmapData& update_me) {
+DOTRACE("PbmUpdater::update");
+
+  // Create a Pbm object by reading pbm data from 'filename'.
+  Pbm pbm(itsFilename.c_str());
+
+  // Grab ownership of the bitmap data from pbm into this's itsData
+  pbm.swapInto( update_me );
+
+  if (itsFlipContrast) { update_me.flipContrast(); }
+  if (itsFlipVertical) { update_me.flipVertical(); }
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
