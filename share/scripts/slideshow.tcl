@@ -15,19 +15,43 @@ proc msg { tag content } {
 proc split_lines { text linelength indent } {
 }
 
+proc image_file_exists { fname } {
+    if { ![file exists $fname] } { return 0 }
+    if { [file size $fname] == 0 } {
+	msg "empty file" $fname
+	file delete $fname
+	return 0
+    }
+    return 1
+}
+
 proc build_scaled_pixmap { fname size } {
     set px [new GxPixmap]
     -> $px purgeable 1
 
-    set cmd "|anytopnm $fname | pnmscale -xysize $size"
-    msg "resize load" $fname
-    set fd [open $cmd r]
+    set code [catch {
+	if { 0 } {
+	    set cmd "|anytopnm $fname | pnmscale -xysize $size"
+	    msg "resize load" $fname
+	    set fd [open $cmd r]
 
-    fconfigure $fd -encoding binary -translation {binary binary}
+	    fconfigure $fd -encoding binary -translation {binary binary}
 
-    -> $px loadImageStream $fd
+	    -> $px loadImageStream $fd
 
-    catch {close $fd}
+	    catch {close $fd}
+	} else {
+	    msg "fast load" $fname
+	    -> $px loadImage $fname
+	    -> $px zoomTo $size
+	}
+    } result]
+
+    if { $code != 0 } {
+	msg "load error" $fname
+	msg "error detail" $result
+	error "couldn't load image $fname"
+    }
 
     return $px
 }
@@ -295,21 +319,20 @@ itcl::class Playlist {
 
 	set i $itsGuessNext
 	set f [lindex $itsList $i]
-	while { ![file exists $f] } {
+	while { ![image_file_exists $f] } {
 	    msg "no such file" $f
 	    set itsList [lreplace $itsList $i $i]
 	    set i [expr $i % [llength $itsList]]
 	    set f [lindex $itsList $i]
 	}
-	set itsPixmapCache($f) \
-	    [build_scaled_pixmap $f [-> $itsWidget size]]
+	set itsPixmapCache($f) [build_scaled_pixmap $f [-> $itsWidget size]]
 	msg "cache insert" $f
     }
 
     public method show {} {
 	set f [$this filename]
 
-	while { ![file exists $f] } {
+	while { ![image_file_exists $f] } {
 	    msg "no such file" $f
 	    set itsList [lreplace $itsList $itsIdx $itsIdx]
 	    set itsIdx [expr $itsIdx % [llength $itsList]]
@@ -435,9 +458,13 @@ bind Canvas <ButtonRelease> {PLAYLIST show}
 
 pack .f.loop .f.noloop .f.shuffler .f.sorter .f.hide .f.rot90 .f.rot270 \
     .f.spinner \
-    -side left -expand yes
+    -side left -expand no
 
-pack .f -side top
+set show_buttons [expr ![string equal [exec /usr/bin/uname] "Darwin"]]
+
+if { $show_buttons } {
+    pack .f -side top -anchor nw -expand no
+}
 
 -> [Toglet::current] destroy
 
@@ -458,8 +485,12 @@ bind all <Key-Return> {PLAYLIST save}
 bind all <Key-x> {PLAYLIST purge}
 bind all <Key-Escape> {PLAYLIST purge; exit }
 
--> $t height [expr [winfo screenheight .] - 100]
--> $t width [expr [winfo screenwidth .] - 25]
+if { $show_buttons } {
+    -> $t height [expr [winfo screenheight .] - 100]
+} else {
+    -> $t height [expr [winfo screenheight .] - 50]
+}
+-> $t width [expr [winfo screenwidth .] - 10]
 
 -> $t repack "-side bottom"
 
