@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Mon Oct  9 08:35:46 2000
+// written: Mon Oct  9 11:42:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,38 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(MASTERPTR_H_DEFINED)
 #include "masterptr.h"
 #endif
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * ItemWithId<T> is a wrapper of a PtrHandle<T> along with an integer
+ * index from a PtrList<T>.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+template <class T>
+class ItemWithId {
+private:
+  PtrHandle<T> itsItem;
+  const int itsId;
+
+public:
+  ItemWithId(MasterPtr<T>* master, int id_) : itsItem(master), itsId(id_) {}
+  ItemWithId(PtrHandle<T> item_, int id_) : itsItem(item_), itsId(id_) {}
+
+  // Default destructor, copy constructor, operator=() are fine
+
+        T* operator->()       { return (itsItem.masterPtr()->getPtr()); }
+  const T* operator->() const { return (itsItem.masterPtr()->getPtr()); }
+        T& operator*()        { return *(itsItem.masterPtr()->getPtr()); }
+  const T& operator*()  const { return *(itsItem.masterPtr()->getPtr()); }
+
+        T* get()              { return (itsItem.masterPtr()->getPtr()); }
+  const T* get()        const { return (itsItem.masterPtr()->getPtr()); }
+
+  int id() const { return itsId; }
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -48,7 +80,7 @@ public:
   typedef T* Ptr;
 
   /// A reference-counted handle to type T.
-  typedef PtrHandle<T> SharedPtr;
+  typedef ItemWithId<T> SharedPtr;
 
   ///////////////
   // accessors //
@@ -65,7 +97,7 @@ public:
 		MasterPtrBase* voidPtr = VoidPtrList::getVoidPtr(id);
 		// cast as reference to force an exception on error
 		MasterPtr<T>& tPtr = dynamic_cast<MasterPtr<T>&>(*voidPtr);
-		return SharedPtr(&tPtr);
+		return SharedPtr(&tPtr, id);
 	 }
 
   /** Returns the object at index \a id, after a check is performed to
@@ -76,7 +108,7 @@ public:
 		MasterPtrBase* voidPtr = VoidPtrList::getCheckedVoidPtr(id);
 		// cast as reference to force an exception on error
 		MasterPtr<T>& tPtr = dynamic_cast<MasterPtr<T>&>(*voidPtr);
-		return SharedPtr(&tPtr);
+		return SharedPtr(&tPtr, id);
 	 }
 
   //////////////////
