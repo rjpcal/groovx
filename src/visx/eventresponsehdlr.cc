@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Tue Dec  7 19:01:28 1999
+// written: Tue Jan 11 12:22:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -366,8 +366,8 @@ DOTRACE("EventResponseHdlr::Impl::deserialize");
 
   oldDeserialize(is, flag);
 
-  getline(is, itsEventSequence, '\n');
-  getline(is, itsBindingSubstitution, '\n');
+  getline(is, itsEventSequence, '\n');       DebugEvalNL(itsEventSequence);
+  getline(is, itsBindingSubstitution, '\n'); DebugEvalNL(itsBindingSubstitution);
 
   if (is.fail()) throw InputError(ioTag);
 
@@ -411,6 +411,14 @@ DOTRACE("EventResponseHdlr::Impl::oldDeserialize");
   int val;
   is >> val;
   itsUseFeedback = bool(val);
+
+  // The next character after itsUseFeedback had better be a newline,
+  // and we need to remove it from the stream.
+  int cc = is.get();
+  if ( cc != '\n' ) {
+	 DebugEvalNL(cc);
+	 throw IoLogicError(ioTag);
+  }
 }
 
 int EventResponseHdlr::Impl::oldCharCount() const {
