@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Sat Nov 23 14:10:21 2002
+// written: Sat Nov 23 14:21:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,6 @@ class Scene : public Util::VolatileObject
 {
 public:
   Scene(GWT::Widget* owner) :
-    itsOwner(owner),
     itsDrawNode(GxEmptyNode::make()),
     itsUndrawNode(GxEmptyNode::make()),
     isItVisible(false),
@@ -42,9 +41,9 @@ public:
     isItRefreshing(true),
     isItRefreshed(false),
     itsTimer(100, true),
-    slotNodeChanged(Util::Slot::make(this, &Scene::onNodeChange))
+    slotNodeChanged(Util::Slot::make(owner, &GWT::Widget::onNodeChange))
   {
-    itsTimer.sigTimeOut.connect(this, &Scene::fullRender);
+    itsTimer.sigTimeOut.connect(owner, &GWT::Widget::fullRender);
     itsCamera->sigNodeChanged.connect(slotNodeChanged);
   }
 
@@ -52,9 +51,9 @@ public:
 
   void undraw(Gfx::Canvas& canvas);
 
-  void render();
+  void render(Gfx::Canvas& canvas, int width, int height);
 
-  void fullRender();
+  void fullRender(Gfx::Canvas& canvas, int width, int height);
 
   void clearscreen(Gfx::Canvas& canvas)
   {
@@ -70,12 +69,12 @@ public:
     doFlush(canvas);
   }
 
-  void setVisibility(bool val)
+  void setVisibility(Gfx::Canvas& canvas, bool val)
   {
     isItVisible = val;
     if ( !isItVisible )
       {
-        fullClearscreen(itsOwner->getCanvas());
+        fullClearscreen(canvas);
       }
   }
 
@@ -97,16 +96,16 @@ public:
     itsDrawNode->sigNodeChanged.connect(slotNodeChanged);
   }
 
-  void flushChanges()
+  void flushChanges(Gfx::Canvas& canvas, int width, int height)
   {
     if (isItRefreshing && !isItRefreshed)
-      fullRender();
+      fullRender(canvas, width, height);
   }
 
-  void onNodeChange()
+  void onNodeChange(Gfx::Canvas& canvas, int width, int height)
   {
     isItRefreshed = false;
-    flushChanges();
+    flushChanges(canvas, width, height);
   }
 
 private:
@@ -118,7 +117,6 @@ private:
   Scene(const Scene&);
   Scene& operator=(const Scene&);
 
-  GWT::Widget* itsOwner;
   Util::Ref<GxNode> itsDrawNode;
   Util::Ref<GxNode> itsUndrawNode;
   bool isItVisible;
@@ -133,6 +131,62 @@ public:
 
   Util::Ref<Util::Slot> slotNodeChanged;
 };
+
+///////////////////////////////////////////////////////////////////////
+//
+// Scene member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+void Scene::render(Gfx::Canvas& canvas, int width, int height)
+{
+DOTRACE("Scene::render");
+
+  try
+    {
+      Gfx::MatrixSaver msaver(canvas);
+      Gfx::AttribSaver asaver(canvas);
+
+      itsCamera->reshape(width, height);
+      itsCamera->draw(canvas);
+      itsDrawNode->draw(canvas);
+      itsUndrawNode = itsDrawNode;
+
+      isItRefreshed = true;
+    }
+  catch (...)
+    {
+      // Here, something failed during rendering, so just go invisible
+      setVisibility(canvas, false);
+    }
+}
+
+void Scene::fullRender(Gfx::Canvas& canvas, int width, int height)
+{
+DOTRACE("Scene::fullRender");
+
+  // (1) Clear the screen (but only if we are not "holding")
+  if( !isItHolding )
+    {
+      canvas.clearColorBuffer();
+    }
+
+  // (2) Render the current object
+  if ( isItVisible )
+    {
+      render(canvas, width, height);
+    }
+
+  // (3) Flush the graphics stream
+  doFlush(canvas);
+}
+
+void Scene::undraw(Gfx::Canvas& canvas)
+{
+DOTRACE("Scene::undraw");
+  itsUndrawNode->undraw(canvas);
+  doFlush(canvas);
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -154,67 +208,6 @@ public:
   Buttons itsButtonListeners;
   Keys itsKeyListeners;
 };
-
-
-///////////////////////////////////////////////////////////////////////
-//
-// Scene member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-void Scene::render()
-{
-DOTRACE("Scene::render");
-
-  Gfx::Canvas& canvas = itsOwner->getCanvas();
-
-  try
-    {
-      Gfx::MatrixSaver msaver(canvas);
-      Gfx::AttribSaver asaver(canvas);
-
-      itsCamera->reshape(itsOwner->width(), itsOwner->height());
-      itsCamera->draw(canvas);
-      itsDrawNode->draw(canvas);
-      itsUndrawNode = itsDrawNode;
-
-      isItRefreshed = true;
-    }
-  catch (...)
-    {
-      // Here, something failed during rendering, so just go invisible
-      setVisibility(false);
-    }
-}
-
-void Scene::fullRender()
-{
-DOTRACE("Scene::fullRender");
-
-  Gfx::Canvas& canvas = itsOwner->getCanvas();
-
-  // (1) Clear the screen (but only if we are not "holding")
-  if( !isItHolding )
-    {
-      canvas.clearColorBuffer();
-    }
-
-  // (2) Render the current object
-  if ( isItVisible )
-    {
-      render();
-    }
-
-  // (3) Flush the graphics stream
-  doFlush(canvas);
-}
-
-void Scene::undraw(Gfx::Canvas& canvas)
-{
-DOTRACE("Scene::undraw");
-  itsUndrawNode->undraw(canvas);
-  doFlush(canvas);
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -270,12 +263,12 @@ void GWT::Widget::removeKeyListeners()
 
 void GWT::Widget::render()
 {
-  itsScene->render();
+  itsScene->render(getCanvas(), width(), height());
 }
 
 void GWT::Widget::fullRender()
 {
-  itsScene->fullRender();
+  itsScene->fullRender(getCanvas(), width(), height());
 }
 
 void GWT::Widget::clearscreen()
@@ -296,7 +289,7 @@ void GWT::Widget::undraw()
 void GWT::Widget::setVisibility(bool vis)
 {
 DOTRACE("GWT::Widget::setVisibility");
-  itsScene->setVisibility(vis);
+  itsScene->setVisibility(getCanvas(), vis);
 }
 
 void GWT::Widget::setHold(bool hold_on)
@@ -309,7 +302,7 @@ void GWT::Widget::allowRefresh(bool allow)
 {
 DOTRACE("GWT::Widget::allowRefresh");
   itsScene->isItRefreshing = allow;
-  itsScene->flushChanges();
+  itsScene->flushChanges(getCanvas(), width(), height());
 }
 
 const Util::Ref<GxCamera>& GWT::Widget::getCamera() const
@@ -345,6 +338,11 @@ DOTRACE("GWT::Widget::animate");
       itsScene->itsTimer.setDelayMsec(1000/framesPerSecond);
       itsScene->itsTimer.schedule();
     }
+}
+
+void GWT::Widget::onNodeChange()
+{
+  itsScene->onNodeChange(getCanvas(), width(), height());
 }
 
 void GWT::Widget::dispatchButtonEvent(unsigned int button, int x, int y)

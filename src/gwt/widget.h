@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Sat Nov 23 14:04:09 2002
+// written: Sat Nov 23 14:16:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -129,6 +129,8 @@ public:
   void setDrawable(const Util::Ref<GxNode>& node);
 
   void animate(unsigned int framesPerSecond);
+
+  void onNodeChange();
 
   void dispatchButtonEvent(unsigned int button, int x, int y);
   void dispatchKeyEvent(const char* keys, int x, int y,
