@@ -317,17 +317,20 @@ class format_set
 public:
   format_set() : m_links() {}
 
-  void append_format(const string& src, const string& link_pattern)
+  void add_format(const string& src_colon_pattern)
   {
-    m_links.push_back(formatter(src, link_pattern));
+    string::size_type colon = src_colon_pattern.find_first_of(':');
+    string src = src_colon_pattern.substr(0, colon);
+    string pattern = src_colon_pattern.substr(colon+1);
+    m_links.push_back(formatter(src, pattern));
   }
 
   string transform(const string& srcfile) const
   {
-    for (unsigned int i = 0; i < m_links.size(); ++i)
+    for (unsigned int i = m_links.size(); i > 0; --i)
       {
-        if (m_links[i].matches(srcfile))
-          return m_links[i].transform(srcfile);
+        if (m_links[i-1].matches(srcfile))
+          return m_links[i-1].transform(srcfile);
       }
     cerr << "no patterns matched source file: " << srcfile << '\n';
     exit(1);
@@ -458,6 +461,7 @@ cppdeps::cppdeps(const int argc, char** const argv) :
          "                          will have more than one target; the default is for\n"
          "                          the list of extensions to include just '.o'\n"
          "    --exeformat\n"
+         "    --linkformat\n"
          "    --checksys            force tracking of dependencies in #include <...>\n"
          "                          directives (default is to not record <...> files\n"
          "                          as dependencies)\n"
@@ -494,8 +498,8 @@ cppdeps::cppdeps(const int argc, char** const argv) :
   m_cfg_header_exts.push_back(".hh");
   m_cfg_header_exts.push_back(".hpp");
 
-  m_cfg_exe_formats.append_format("./", "../bin/*.exe");
-  m_cfg_link_formats.append_format("", "*.link");
+  m_cfg_exe_formats.add_format(":*.exe");
+  m_cfg_link_formats.add_format(":*.link");
 
   char** arg = argv+1; // skip to first command-line arg
 
@@ -544,6 +548,14 @@ cppdeps::cppdeps(const int argc, char** const argv) :
       else if (strcmp(*arg, "--objext") == 0)
         {
           m_cfg_obj_exts.push_back(*++arg);
+        }
+      else if (strcmp(*arg, "--exeformat") == 0)
+        {
+          m_cfg_exe_formats.add_format(*++arg);
+        }
+      else if (strcmp(*arg, "--linkformat") == 0)
+        {
+          m_cfg_link_formats.add_format(*++arg);
         }
       else if (strcmp(*arg, "--debug") == 0)
         {
@@ -1123,14 +1135,24 @@ void cppdeps::print_link_deps(const string& fname)
 
   const string exe = m_cfg_exe_formats.transform(fname);
 
+  std::set<string> links;
+
   for (dep_list_t::const_iterator
          itr = ldeps.begin(),
          stop = ldeps.end();
        itr != stop;
        ++itr)
     {
-      const string link = m_cfg_link_formats.transform((*itr).target);
-      printf("%s: %s\n", exe.c_str(), link.c_str());
+      links.insert(m_cfg_link_formats.transform((*itr).target));
+    }
+
+  for (std::set<string>::iterator
+         itr = links.begin(),
+         stop = links.end();
+       itr != stop;
+       ++itr)
+    {
+      printf("%s: %s\n", exe.c_str(), (*itr).c_str());
     }
 }
 
