@@ -242,6 +242,12 @@ public:
     defSetter( cmd_name, setterFunc );
   }
 
+  /// Control whether packages should be verbose as they start up.
+  static void verboseInit(bool verbose) throw();
+
+  /// Called just prior to returning from the *_Init function.
+  void finishInit() const;
+
 private:
   Pkg(const Pkg&); // not implemented
   Pkg& operator=(const Pkg&); // not implemented
@@ -289,6 +295,7 @@ try                                                                     \
 
 /// This macro should go at the end of each *_Init() function.
 #define PKG_RETURN                              \
+  pkg->finishInit();                            \
   return pkg->initStatus();                     \
 }                                               \
 catch(...)                                      \
