@@ -788,10 +788,6 @@ void GLCanvas::drawText(const fstring& text, const GxFont& font)
 {
 DOTRACE("GLCanvas::drawText");
   glListBase( font.listBase() );
-//   rasterPos( Vec2d(0.0, 0.0) );
-//   glCallLists( text.length(), GL_BYTE, text.c_str() );
-
-//   return;
 
   const bool israster = font.isRaster();
 
@@ -807,7 +803,7 @@ DOTRACE("GLCanvas::drawText");
       while (p[len] != '\0' && p[len] != '\n')
         ++len;
 
-      dbgEvalNL(0, p);
+      dbgEval(3, len); dbgEvalNL(3, p);
 
       glPushMatrix();
       if (israster)
