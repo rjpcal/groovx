@@ -4,8 +4,8 @@
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
-// created: Mar-99
-// written: Tue Aug 21 15:22:42 2001
+// created: Mon Mar  1 08:00:00 1999
+// written: Wed Aug 22 15:30:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

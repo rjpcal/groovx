@@ -4,8 +4,8 @@
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
-// created: Dec-98
-// written: Wed Jul 18 12:27:38 2001
+// created: Tue Dec  1 08:00:00 1998
+// written: Wed Aug 22 15:28:51 2001
 // $Id$
 //
 // This package provides additional Tcl list manipulation functions

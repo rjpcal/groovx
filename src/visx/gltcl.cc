@@ -4,8 +4,8 @@
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
-// created: Nov-98
-// written: Mon Aug 13 12:15:36 2001
+// created: Mon Nov  2 08:00:00 1998
+// written: Wed Aug 22 15:30:56 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
