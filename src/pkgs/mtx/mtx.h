@@ -141,7 +141,7 @@ class mtx;
 
 ///////////////////////////////////////////////////////////////////////
 //
-// mtx iterators
+// iterators
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -150,7 +150,19 @@ class mtx;
 template <class T>
 class stride_iterator_base
 {
+private:
+  T* data;
+  int stride;
+  T* stop;
+
 protected:
+  // these friend declarations are to allow access to the protected
+  // "raw" constructor that starts from a raw pointer plus
+  // stride+length info
+  friend class slice;
+  friend class mtx;
+  template <class U> friend class stride_iterator_base;
+
   stride_iterator_base(T* d, int str, int n) :
     data(d), stride(str), stop(data+str*n) {}
 
@@ -201,16 +213,6 @@ public:
 
   stride_iterator_base operator+(int x) const { stride_iterator_base res(*this); res += x; return res; }
   stride_iterator_base operator-(int x) const { stride_iterator_base res(*this); res -= x; return res; }
-
-private:
-  friend class slice;
-  friend class mtx;
-
-  template <class U> friend class stride_iterator_base;
-
-  T* data;
-  int stride;
-  T* stop;
 };
 
 typedef stride_iterator_base<double> mtx_iter;
@@ -347,7 +349,7 @@ public:
   int mrows() const { return m_mrows; }
   int ncols() const { return m_ncols; }
 
-  int length() const { return (m_mrows > m_ncols) ? m_mrows : m_ncols; }
+  int max_dim() const { return (m_mrows > m_ncols) ? m_mrows : m_ncols; }
 
   int nelems() const { return m_mrows*m_ncols; }
 
@@ -406,7 +408,7 @@ public:
 
   ptrdiff_t offset() const { return m_offset; }
 
-  int length() const { return m_shape.length(); }
+  int max_dim() const { return m_shape.max_dim(); }
   int nelems() const { return mrows()*ncols(); }
 
   int mrows() const { return m_shape.mrows(); }
