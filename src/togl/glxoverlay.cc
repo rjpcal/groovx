@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug  5 17:09:31 2002
-// written: Mon Aug  5 17:15:06 2002
+// written: Sat Aug 10 15:20:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "togl/glxoverlay.h"
 
+#include "togl/glxattribs.h"
 #include "togl/glxwrapper.h"
 
 #include "util/error.h"
@@ -40,35 +41,17 @@ GlxOverlay::GlxOverlay(Display* dpy, Window parent,
 {
 DOTRACE("GlxOverlay::GlxOverlay");
 
-#ifdef GLX_TRANSPARENT_TYPE_EXT
-  static int ovAttributeList[] =
-    {
-      GLX_BUFFER_SIZE, 2,
-      GLX_LEVEL, 1,
-      GLX_TRANSPARENT_TYPE_EXT, GLX_TRANSPARENT_INDEX_EXT,
-      None
-    };
-#else
-  static int ovAttributeList[] =
-    {
-      GLX_BUFFER_SIZE, 2,
-      GLX_LEVEL, 1,
-      None
-    };
-#endif
+  GlxAttribs attribs;
+  attribs.colorIndex( 2 );
+  attribs.level( 1 );
+  attribs.transparent();
 
-  XVisualInfo* visinfo = glXChooseVisual( itsDisplay,
-                                          DefaultScreen(itsDisplay),
-                                          ovAttributeList );
-
-  if (!visinfo)
-    {
-      throw Util::Error("no suitable overlay visual available");
-    }
+  // share display lists with normal layer context
+  itsGlx = new GlxWrapper(itsDisplay, attribs, direct, share);
 
 #ifdef GLX_TRANSPARENT_INDEX_EXT
   {
-    int fail = glXGetConfig(itsDisplay, visinfo,
+    int fail = glXGetConfig(itsDisplay, itsGlx->visInfo(),
                             GLX_TRANSPARENT_INDEX_VALUE_EXT,
                             &itsTransparentPixel);
     if (fail)
@@ -76,13 +59,11 @@ DOTRACE("GlxOverlay::GlxOverlay");
   }
 #endif
 
-  // share display lists with normal layer context
-  itsGlx = new GlxWrapper(itsDisplay, visinfo, direct, share);
-
   XSetWindowAttributes swa;
   swa.colormap = XCreateColormap( itsDisplay,
-                                  RootWindow(itsDisplay, visinfo->screen),
-                                  visinfo->visual, AllocNone );
+                                  RootWindow(itsDisplay,
+                                             itsGlx->visInfo()->screen),
+                                  itsGlx->visInfo()->visual, AllocNone );
   itsCmap = swa.colormap;
 
   swa.border_pixel = 0;
@@ -94,8 +75,8 @@ DOTRACE("GlxOverlay::GlxOverlay");
   itsWindow = XCreateWindow( itsDisplay, parent,
                              0, 0,
                              width, height, 0,
-                             visinfo->depth, InputOutput,
-                             visinfo->visual,
+                             itsGlx->visInfo()->depth, InputOutput,
+                             itsGlx->visInfo()->visual,
                              CWBorderPixel|CWColormap|CWEventMask,
                              &swa );
 
