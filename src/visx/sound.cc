@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Thu May 10 12:04:45 2001
+// written: Fri May 11 20:06:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,10 @@
 
 #ifdef IRIX6
 #include "irixsound.h"
+#endif
+
+#ifdef I686
+#include "intelsound.h"
 #endif
 
 namespace {
