@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:28 2000
-// written: Mon Nov 25 11:22:10 2002
+// written: Fri Dec 13 10:27:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -144,7 +144,7 @@ DOTRACE("Util::RefCounted::operator delete");
 Util::RefCounted::RefCounted() : itsRefCounts(new Util::RefCounts)
 {
 DOTRACE("Util::RefCounted::RefCounted");
-  dbgPrint(3, "RefCounted ctor"); dbgEvalNL(3, (void*)this);
+  dbgPrint(7, "RefCounted ctor"); dbgEvalNL(7, (void*)this);
 
   itsRefCounts->acquireWeak();
 }
@@ -152,8 +152,8 @@ DOTRACE("Util::RefCounted::RefCounted");
 Util::RefCounted::~RefCounted()
 {
 DOTRACE("Util::RefCounted::~RefCounted");
-  dbgPrint(3, "RefCounted dtor");
-  dbgEval(3, (void*)this); dbgEvalNL(3, itsRefCounts->strongCount());
+  dbgPrint(7, "RefCounted dtor");
+  dbgEval(7, (void*)this); dbgEvalNL(7, itsRefCounts->strongCount());
 
   // Must guarantee that (strong-count == 0) when the refcounted object is
   // destroyed. Without that guarantee, weak references will be messed up,
@@ -206,8 +206,8 @@ int Util::RefCounted::refCount() const
 {
 DOTRACE("Util::RefCounted::refCount");
 
-  dbgEval(3, itsRefCounts->weakCount());
-  dbgEvalNL(3, itsRefCounts->strongCount());
+  dbgEval(7, itsRefCounts->weakCount());
+  dbgEvalNL(7, itsRefCounts->strongCount());
 
   return itsRefCounts->strongCount();
 }
