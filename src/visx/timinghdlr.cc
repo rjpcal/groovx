@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Wed May 17 13:59:20 2000
+// written: Mon May 22 12:16:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,19 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
+
+///////////////////////////////////////////////////////////////////////
+//
+// File scope stuff
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace {
+
+  const unsigned long TIMINGHDLR_SERIAL_VERSION_ID = 1;
+
+  const char* ioTag = "TimingHdlr";
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -65,33 +78,11 @@ private:
   Util::ErrorHandler* itsErrorHandler;
   TrialBase* itsTrial;
 
-  void scheduleAll(vector<TrialEvent*>& events) {
-  DOTRACE("scheduleAll");
-    Assert(itsTrial != 0);
-	 Assert(itsWidget != 0);
-	 Assert(itsErrorHandler != 0);
-
-    for (size_t i = 0; i < events.size(); ++i) {
-		events[i]->schedule(*itsWidget, *itsErrorHandler, *itsTrial);
-	 }
-  }
-
-  void cancelAll(vector<TrialEvent*>& events) {
-  DOTRACE("cancelAll");
-    for (size_t i = 0; i < events.size(); ++i) {
-		events[i]->cancel();
-	 }
-  }
+  void scheduleAll(vector<TrialEvent*>& events);
+  void cancelAll(vector<TrialEvent*>& events);
 
 public:
-  void deleteAll(vector<TrialEvent*>& events) {
-  DOTRACE("deleteAll");
-    for (size_t i = 0; i < events.size(); ++i) {
-		delete events[i];
-		events[i] = 0;
-	 }
-	 events.resize(0);
-  }
+  void deleteAll(vector<TrialEvent*>& events);
 
   // Delegand functions
   void thHaltExpt();
@@ -110,13 +101,6 @@ const TimingHdlr::TimePoint TimingHdlr::IMMEDIATE;
 const TimingHdlr::TimePoint TimingHdlr::FROM_START;
 const TimingHdlr::TimePoint TimingHdlr::FROM_RESPONSE;
 const TimingHdlr::TimePoint TimingHdlr::FROM_ABORT;
-
-namespace {
-
-  const unsigned long TIMINGHDLR_SERIAL_VERSION_ID = 1;
-
-  const char* ioTag = "TimingHdlr";
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -309,9 +293,9 @@ DOTRACE("TimingHdlr::getEvent");
 	 return itsImpl->itsAbortEvents[index];
 	 break;
   default:
-	 return 0;
 	 break;
   }
+  return 0;
 }
 
 int TimingHdlr::getElapsedMsec() const {
@@ -344,9 +328,9 @@ DOTRACE("TimingHdlr::addEvent");
 	 return itsImpl->itsAbortEvents.size() - 1;
 	 break;
   default:
-	 return -1;
 	 break;
   }
+  return -1;
 }
 
 int TimingHdlr::addEventByName(const char* event_type, TimePoint timepoint,
@@ -357,6 +341,40 @@ DOTRACE("TimingHdlr::addEventByName");
 
   e->setDelay(msec_delay);
   return addEvent(e, timepoint);
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// TimingHdlr helper function definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+
+void TimingHdlr::Impl::scheduleAll(vector<TrialEvent*>& events) {
+DOTRACE("TimingHdlr::Impl::scheduleAll");
+  Assert(itsTrial != 0);
+  Assert(itsWidget != 0);
+  Assert(itsErrorHandler != 0);
+
+  for (size_t i = 0; i < events.size(); ++i) {
+	 events[i]->schedule(*itsWidget, *itsErrorHandler, *itsTrial);
+  }
+}
+
+void TimingHdlr::Impl::cancelAll(vector<TrialEvent*>& events) {
+DOTRACE("TimingHdlr::Impl::cancelAll");
+  for (size_t i = 0; i < events.size(); ++i) {
+	 events[i]->cancel();
+  }
+}
+
+void TimingHdlr::Impl::deleteAll(vector<TrialEvent*>& events) {
+DOTRACE("TimingHdlr::Impl::deleteAll");
+  for (size_t i = 0; i < events.size(); ++i) {
+	 delete events[i];
+	 events[i] = 0;
+  }
+  events.resize(0);
 }
 
 ///////////////////////////////////////////////////////////////////////
