@@ -2,8 +2,7 @@
 // expt.h
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 12:58:28 1999
-static const char vcid_expt_h[] = "$Id$";
+// written: Sat Mar 13 17:59:29 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef EXPT_H_DEFINED
@@ -29,9 +28,10 @@ public:
   virtual bool isComplete() const = 0;
   virtual const char* trialDescription() const = 0;
 
-  // control functions
+  // actions
   virtual void beginTrial() = 0;
   virtual void recordResponse(int resp) = 0;
 };
 
+static const char vcid_expt_h[] = "$Id$";
 #endif // !EXPT_H_DEFINED
