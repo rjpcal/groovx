@@ -3,7 +3,7 @@
 // rhlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:29 1999
-// written: Mon Oct  9 08:34:38 2000
+// written: Wed Oct 11 13:31:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,13 +62,9 @@ DOTRACE("RhList::theRhList");
   return theInstance; 
 }
 
-void RhList::afterInsertHook(int /* id */, MasterPtrBase* ptr) {
+void RhList::afterInsertHook(int id, MasterPtrBase* /* ptr */) {
 DOTRACE("RhList::afterInsertHook");
-  MasterIoPtr* ioPtr = dynamic_cast<MasterIoPtr*>(ptr);
-  if (ioPtr == 0) throw InvalidIdError("IO cast failed");
-  IO::IoObject* obj = ioPtr->ioPtr();
-  ResponseHandler* rh = dynamic_cast<ResponseHandler*>(obj);
-  if (rh == 0) throw InvalidIdError("RH cast failed");
+  SharedPtr rh = getCheckedPtr(id);
   rh->setInterp(itsInterp);
 }
 
