@@ -5,13 +5,18 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:19 2000
-// written: Thu May 10 12:04:35 2001
+// written: Sat May 19 08:44:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef REFCOUNTED_H_DEFINED
 #define REFCOUNTED_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDLIB_DEFINED)
+#include <cstdlib>
+#define CSTDLIB_DEFINED
+#endif
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +36,20 @@ private:
   // one-to-one correspondence with their pointee's.
   RefCounted(const RefCounted& other);
   RefCounted& operator=(const RefCounted& other);
+
+protected:
+  /** Class-specific operator new; protected to ensure that clients
+      use factory functions. */
+  void* operator new(size_t bytes);
+
+#ifndef GCC_COMPILER
+protected:
+#else
+public:
+#endif
+  /** Class-specific operator delete; private since deletion should
+      only happen in RefCounted::decrRefCount. */
+  void operator delete(void* space, size_t bytes);
 
 protected:
   /** Virtual destructor is protected, so that we can prevent clients
