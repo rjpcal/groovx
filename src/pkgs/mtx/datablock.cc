@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 18:04:40 2001
-// written: Tue Mar 13 18:06:41 2001
+// written: Thu Mar 15 14:57:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -124,16 +124,16 @@ void DataBlock::makeUnique(DataBlock*& rep) {
 DOTRACE("DataBlock::makeUnique");
   if (rep->itsRefCount <= 1) return;
 
-  DataBlock* new_rep = new SharedDataBlock(rep->itsLength);
+  DataBlock* rep_copy = makeDataCopy(rep->itsData, rep->itsLength);
 
-  memcpy(new_rep->itsData, rep->itsData, sizeof(double)*new_rep->itsLength);
+  // do the swap
 
   rep->decrRefCount();
-  new_rep->incrRefCount();
+  rep_copy->incrRefCount();
 
-  rep = new_rep;
+  rep = rep_copy;
 
-  Postcondition(new_rep->itsRefCount == 1);
+  Postcondition(rep->itsRefCount == 1);
 }
 
 static const char vcid_datablock_cc[] = "$Header$";
