@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Thu Nov 21 18:02:58 2002
+// written: Sat Nov 23 13:43:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -90,7 +90,6 @@ public:
   virtual void removeButtonListeners();
   virtual void removeKeyListeners();
 
-  virtual void bind(const char* event_sequence, const char* script) = 0;
   virtual void takeFocus() = 0;
   virtual void swapBuffers() = 0;
 
