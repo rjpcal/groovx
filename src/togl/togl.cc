@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 12:04:57 2002
+// written: Mon Sep 16 12:13:13 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -934,6 +934,20 @@ DOTRACE("Togl::freeColorOverlay");
     rep->itsOverlay->freeColor(pixel);
 }
 
+void Togl::setWidth(int w)
+{
+DOTRACE("Togl::setWidth");
+  rep->itsOpts->width = w;
+  Tk_GeometryRequest(rep->itsTkWin, rep->itsOpts->width, rep->itsOpts->height);
+}
+
+void Togl::setHeight(int h)
+{
+DOTRACE("Togl::setHeight");
+  rep->itsOpts->height = h;
+  Tk_GeometryRequest(rep->itsTkWin, rep->itsOpts->width, rep->itsOpts->height);
+}
+
 ClientData Togl::getClientData() const { return rep->itsClientData; }
 void Togl::setClientData(ClientData p) { rep->itsClientData = p; }
 
@@ -1048,29 +1062,29 @@ namespace
     return result;
   }
 
-  int ToglCmd(ClientData, Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
-  {
-    DOTRACE("ToglCmd");
-    if (objc <= 1)
-      {
-        Tcl_AppendResult(interp, "wrong # args: should be "
-                         "\"pathName command ?options?\"", NULL);
-        return TCL_ERROR;
-      }
+//   int ToglCmd(ClientData, Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
+//   {
+//     DOTRACE("ToglCmd");
+//     if (objc <= 1)
+//       {
+//         Tcl_AppendResult(interp, "wrong # args: should be "
+//                          "\"pathName command ?options?\"", NULL);
+//         return TCL_ERROR;
+//       }
 
-    /* Create Togl data structure */
-    try
-      {
-        Togl* p = new Togl(interp, Tcl_GetString(objv[1]));
-        p->configure(objc-2, objv+2);
-      }
-    catch (...)
-      {
-        return TCL_ERROR;
-      }
+//     /* Create Togl data structure */
+//     try
+//       {
+//         Togl* p = new Togl(interp, Tcl_GetString(objv[1]));
+//         p->configure(objc-2, objv+2);
+//       }
+//     catch (...)
+//       {
+//         return TCL_ERROR;
+//       }
 
-    return TCL_OK;
-  }
+//     return TCL_OK;
+//   }
 }
 
 extern "C" int Togl_Init(Tcl_Interp *interp)
@@ -1079,7 +1093,7 @@ DOTRACE("Togl_Init");
 
   Tcl_PkgProvide(interp, "Togl", TOGL_VERSION);
 
-  Tcl_CreateObjCommand(interp, "togl", ToglCmd, (ClientData) 0, NULL);
+//   Tcl_CreateObjCommand(interp, "togl", ToglCmd, (ClientData) 0, NULL);
 
   return TCL_OK;
 }

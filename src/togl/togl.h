@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Mon Sep 16 11:04:14 2002
+// written: Mon Sep 16 12:11:16 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -118,6 +118,10 @@ public:
   bool isMappedOverlay() const;
   unsigned long allocColorOverlay(float red, float green, float blue) const;
   void freeColorOverlay(unsigned long index) const;
+
+  // Manipulators
+  void setWidth(int w);
+  void setHeight(int h);
 
   // User client data
   ClientData getClientData() const;
