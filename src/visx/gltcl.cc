@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Sat Sep  8 08:53:30 2001
+// written: Sat Sep  8 13:59:06 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -35,10 +35,7 @@
 #include <cmath>                // for sqrt() in drawThickLine
 #include <map>
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
-#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //

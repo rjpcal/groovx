@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 15:14:19 1999
-// written: Wed Aug 15 12:24:57 2001
+// written: Sat Sep  8 14:01:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,6 @@
 
 #include "tcl/fieldpkg.h"
 
-#define NO_TRACE
 #include "util/trace.h"
 
 

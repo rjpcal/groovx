@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Sep  5 16:02:01 2001
+// written: Sat Sep  8 14:03:09 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -36,10 +36,7 @@
 #  include <GL/gl.h>
 #endif
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
-#include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
