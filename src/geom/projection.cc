@@ -61,5 +61,21 @@ DOTRACE("geom::unproject");
   return pmi.apply_to(screen2);
 }
 
+vec3d geom::project(const txform& modelview,
+                    const txform& projection,
+                    const recti& viewport,
+                    const vec3d& world_pos)
+{
+DOTRACE("geom::project");
+
+  const txform pm = projection.mtx_mul(modelview);
+
+  const vec3d s1 = pm.apply_to(world_pos);
+
+  return vec3d(viewport.left()   + 0.5 * (s1.x()+1) * viewport.width(),
+               viewport.bottom() + 0.5 * (s1.y()+1) * viewport.height(),
+               0.5 * (s1.z()+1));
+}
+
 static const char vcid_projection_cc[] = "$Header$";
 #endif // !PROJECTION_CC_DEFINED

@@ -42,6 +42,11 @@ namespace geom
                          const txform& projection,
                          const rect<int>& viewport,
                          const vec3<double>& screen_pos);
+
+  vec3<double> project(const txform& modelview,
+                       const txform& projection,
+                       const rect<int>& viewport,
+                       const vec3<double>& world_pos);
 }
 
 static const char vcid_projection_h[] = "$Header$";

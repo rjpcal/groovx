@@ -114,6 +114,61 @@ namespace
     glGetDoublev(GL_PROJECTION_MATRIX, &m[0]);
     return txform::copy_of(&m[0]);
   }
+
+  vec3d unproject1(const txform& modelview,
+                   const txform& projection,
+                   const recti& viewport,
+                   const vec3d& screen)
+  {
+    DOTRACE("<glcanvas.cc>::unproject1");
+
+    const int v[4] = { viewport.left(), viewport.bottom(),
+                       viewport.width(), viewport.height() };
+
+    vec3d world_pos;
+
+    GLint status =
+      gluUnProject(screen.x(), screen.y(), screen.z(),
+                   modelview.col_major_data(),
+                   projection.col_major_data(),
+                   &v[0],
+                   &world_pos.x(), &world_pos.y(), &world_pos.z());
+
+    dbg_eval_nl(3, status);
+
+    if (status == GL_FALSE)
+      throw rutz::error("gluUnProject error", SRC_POS);
+
+    return world_pos;
+  }
+
+  vec3d project1(const txform& modelview,
+                 const txform& projection,
+                 const recti& viewport,
+                 const vec3d& world_pos)
+  {
+    DOTRACE("<glcanvas.cc>::project1");
+
+    const int v[4] = { viewport.left(), viewport.bottom(),
+                       viewport.width(), viewport.height() };
+
+    vec3d screen_pos;
+
+    GLint status =
+      gluProject(world_pos.x(), world_pos.y(), world_pos.z(),
+                 modelview.col_major_data(),
+                 projection.col_major_data(),
+                 &v[0],
+                 &screen_pos.x(), &screen_pos.y(), &screen_pos.z());
+
+    dbg_eval_nl(3, status);
+
+    if (status == GL_FALSE)
+      throw rutz::error("GLCanvas::screenFromWorld3(): gluProject error",
+                        SRC_POS);
+
+    return screen_pos;
+  }
 }
 
 class GLCanvas::Impl
@@ -223,60 +278,30 @@ DOTRACE("GLCanvas::screenFromWorld3");
 
   const txform m = rep->getModelview();
   const txform p = rep->getProjection();
-  const recti viewport = this->getScreenViewport();
+  const recti v = this->getScreenViewport();
 
-  const int v[4] = { viewport.left(), viewport.bottom(),
-                     viewport.width(), viewport.height() };
-
-  vec3d screen_pos;
-
-  GLint status =
-    gluProject(world_pos.x(), world_pos.y(), world_pos.z(),
-               m.col_major_data(),
-               p.col_major_data(),
-               &v[0],
-               &screen_pos.x(), &screen_pos.y(), &screen_pos.z());
-
-  dbg_eval_nl(3, status);
-
-  if (status == GL_FALSE)
-    throw rutz::error("GLCanvas::screenFromWorld3(): gluProject error",
-                      SRC_POS);
+  const vec3d screen_pos = geom::project(m, p, v, world_pos);
 
   dbg_dump(3, world_pos);
   dbg_dump(3, screen_pos);
 
+  if (GET_DBG_LEVEL() >= 8)
+    {
+      const vec3d screen_pos1 = project1(m, p, v, world_pos);
+      const vec3d diff = screen_pos - screen_pos1;
+
+      if (diff.length() > 1e-10)
+        {
+          dbg_eval_nl(0, diff.length());
+          dbg_dump(0, p);
+          dbg_dump(0, m);
+          dbg_dump(0, screen_pos1);
+          dbg_dump(0, screen_pos);
+          PANIC("numerical error during world->screen projection");
+        }
+    }
+
   return screen_pos;
-}
-
-namespace
-{
-  vec3d unproject1(const txform& modelview,
-                   const txform& projection,
-                   const recti& viewport,
-                   const vec3d& screen)
-  {
-    DOTRACE("<glcanvas.cc>::unproject1");
-
-    const int v[4] = { viewport.left(), viewport.bottom(),
-                       viewport.width(), viewport.height() };
-
-    vec3d world_pos;
-
-    GLint status =
-      gluUnProject(screen.x(), screen.y(), screen.z(),
-                   modelview.col_major_data(),
-                   projection.col_major_data(),
-                   &v[0],
-                   &world_pos.x(), &world_pos.y(), &world_pos.z());
-
-    dbg_eval_nl(3, status);
-
-    if (status == GL_FALSE)
-      throw rutz::error("gluUnProject error", SRC_POS);
-
-    return world_pos;
-  }
 }
 
 vec3d GLCanvas::worldFromScreen3(const vec3d& screen_pos) const
