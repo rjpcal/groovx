@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Thu May 10 12:04:42 2001
+// written: Fri May 11 22:04:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -175,6 +175,13 @@ int Tcl::TclCmd::getIntFromArg(int argn) {
   return getValFromObj(itsInterp, itsObjv[argn], (int*)0);
 }
 
+template <>
+unsigned int Tcl::TclCmd::getValFromObj<unsigned int>(
+  Tcl_Interp*, Tcl_Obj* obj, unsigned int* /*dummy*/
+) {
+  return (unsigned int)getValFromObj(0,obj,(int*)0);
+}
+
 // Extracting long's
 
 template <>
@@ -197,6 +204,13 @@ DOTRACE("Tcl::TclCmd::getValFromObj<long>");
 
 long Tcl::TclCmd::getLongFromArg(int argn) {
   return getValFromObj(itsInterp, itsObjv[argn], (long*)0);
+}
+
+template <>
+unsigned long Tcl::TclCmd::getValFromObj<unsigned long>(
+  Tcl_Interp*, Tcl_Obj* obj, unsigned long* /*dummy*/
+) {
+  return (unsigned long)getValFromObj(0,obj,(long*)0);
 }
 
 // Extracting bool's
@@ -588,7 +602,9 @@ DOTRACE("Tcl::ListIterator::operator*");
 namespace Tcl {
   template class ListIterator<bool>;
   template class ListIterator<int>;
+  template class ListIterator<unsigned int>;
   template class ListIterator<long>;
+  template class ListIterator<unsigned long>;
   template class ListIterator<double>;
   template class ListIterator<const char*>;
   template class ListIterator<TclValue>;
