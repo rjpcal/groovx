@@ -3,7 +3,7 @@
 // tclveccmds.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:16:22 1999
-// written: Thu Mar 16 13:27:13 2000
+// written: Thu Mar 16 14:07:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@
 Tcl::VecGetterBaseCmd::VecGetterBaseCmd(TclItemPkgBase* pkg, const char* cmd_name,
 													 const char* usage, int item_argn) :
   TclCmd(pkg->interp(), cmd_name,
-			usage ? usage : (item_argn ? "item_id(s)" : NULL), 
+			usage ? usage : (item_argn ? "item_id(s)" : (char *) 0), 
 			item_argn+1, item_argn+1),
   itsPkg(pkg),
   itsItemArgn(item_argn)
@@ -70,7 +70,7 @@ Tcl::TVecGetterCmd<ValType>::TVecGetterCmd(TclItemPkgBase* pkg, const char* cmd_
 														 Getter<ValType>* getter,
 														 const char* usage, int item_argn) :
   TclCmd(pkg->interp(), cmd_name,
-			usage ? usage : (item_argn ? "item_id(s)" : NULL), 
+			usage ? usage : (item_argn ? "item_id(s)" : (char *) 0), 
 			item_argn+1, item_argn+1),
   VecGetterBaseCmd(pkg, cmd_name, usage, item_argn),
   itsGetter(getter)
@@ -139,7 +139,18 @@ DOTRACE("Tcl::VecSetterBaseCmd::invoke");
 }
 
 template <class T>
-Tcl::TVecSetterCmd<T>::TVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
+Tcl::TVecSetterCmd<T>::TVecSetterCmd(TclItemPkgBase* pkg,
+												 const char* cmd_name, Setter<T>* setter,
+												 const char* usage, int item_argn) :
+  Base(pkg, cmd_name, setter, usage, item_argn),
+  TclCmd(pkg->interp(), cmd_name, 
+			usage ? usage : (item_argn ? 
+								  "item_id(s) new_value(s)" : "new_value"), 
+			item_argn+2, item_argn+2)
+{}
+
+template <class Traits>
+Tcl::TrVecSetterCmd<Traits>::TrVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
 												 Setter<T>* setter,
 												 const char* usage, int item_argn) :
   TclCmd(pkg->interp(), cmd_name, 
@@ -149,20 +160,19 @@ Tcl::TVecSetterCmd<T>::TVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
   VecSetterBaseCmd(pkg, cmd_name, usage, item_argn),
   itsSetter(setter)
 {
-DOTRACE("Tcl::TVecSetterCmd<>::TVecSetterCmd");
+DOTRACE("Tcl::TrVecSetterCmd<>::TrVecSetterCmd");
 }
 
-template <class T>
-void Tcl::TVecSetterCmd<T>::setSingleItem(void* item, int val_argn) {
-DOTRACE("Tcl::TVecSetterCmd<T>::setSingleItem");
-  T val;
-  getValFromArg(val_argn, val);
+template <class Traits>
+void Tcl::TrVecSetterCmd<Traits>::setSingleItem(void* item, int val_argn) {
+DOTRACE("Tcl::TrVecSetterCmd<Traits>::setSingleItem");
+  stack_type val = getValFromArg(val_argn, (stack_type*)0);
   itsSetter->set(item, val);
 }
 
-template <class T>
-void Tcl::TVecSetterCmd<T>::invokeForItemArgn(int item_argn, int val_argn) {
-DOTRACE("Tcl::TVecSetterCmd<T>::invokeForItemArgn");
+template <class Traits>
+void Tcl::TrVecSetterCmd<Traits>::invokeForItemArgn(int item_argn, int val_argn) {
+DOTRACE("Tcl::TrVecSetterCmd<Traits>::invokeForItemArgn");
 
   Tcl::ListIterator<int>
 #ifdef LOCAL_DEBUG
@@ -174,8 +184,7 @@ DOTRACE("Tcl::TVecSetterCmd<T>::invokeForItemArgn");
   int num_ids = end-id_itr;  DebugEvalNL(num_ids);  Assert(num_ids >= 0);
 
   if (num_ids == 1) {
-	 T val;
-	 getValFromArg(val_argn, val);
+	 stack_type val = getValFromArg(val_argn, (stack_type*)0);
 
 	 while (id_itr != end)
 		{
@@ -187,69 +196,9 @@ DOTRACE("Tcl::TVecSetterCmd<T>::invokeForItemArgn");
 
   }
   else {
-	 Tcl::ListIterator<T>
-		val_itr = beginOfArg(val_argn, (T*)0),
-		val_end =   endOfArg(val_argn, (T*)0);
-
-	 if (val_end-val_itr < 1) {
-		throw TclError("the list of new values is empty");
-	 }
-
-	 while (id_itr != end)
-		{
-		  DOTRACE("inner loop");
-		  DebugEvalNL(id_itr - begin);
-
-		  void* item = pkg()->getItemFromId(*id_itr);  DebugEval(item);
-		  itsSetter->set(item, *val_itr);
-
-		  ++id_itr;
-		  if ( (val_end - val_itr) > 1 )
-			 ++val_itr;
-		}
-  }
-}
-
-template <>
-void Tcl::TVecSetterCmd<const fixed_string&>::setSingleItem(
-  void* item, int val_argn) {
-DOTRACE("Tcl::TVecSetterCmd<T>::setSingleItem");
-  const char* val;
-  getValFromArg(val_argn, val);
-  itsSetter->set(item, val);
-}
-
-template <>
-void Tcl::TVecSetterCmd<const fixed_string&>::invokeForItemArgn(
-  int item_argn, int val_argn) {
-DOTRACE("Tcl::TVecSetterCmd<T>::invokeForItemArgn");
-
-  Tcl::ListIterator<int>
-#ifdef LOCAL_DEBUG
-	 begin  = beginOfArg(item_argn, (int*)0),
-#endif
-	 id_itr = beginOfArg(item_argn, (int*)0),
-	 end    =   endOfArg(item_argn, (int*)0);
-
-  int num_ids = end-id_itr;  DebugEvalNL(num_ids);  Assert(num_ids >= 0);
-
-  if (num_ids == 1) {
-	 const char* val;
-	 getValFromArg(val_argn, val);
-
-	 while (id_itr != end)
-		{
-		  void* item = pkg()->getItemFromId(*id_itr);  DebugEval(item);
-		  itsSetter->set(item, val);
-
-		  ++id_itr;
-		}
-
-  }
-  else {
-	 Tcl::ListIterator<const char*>
-		val_itr = beginOfArg(val_argn, (const char**)0),
-		val_end =   endOfArg(val_argn, (const char**)0);
+	 iterator_type
+		val_itr = beginOfArg(val_argn, (stack_type*)0),
+		val_end =   endOfArg(val_argn, (stack_type*)0);
 
 	 if (val_end-val_itr < 1) {
 		throw TclError("the list of new values is empty");
@@ -329,7 +278,7 @@ Tcl::VecActionCmd::VecActionCmd(TclItemPkgBase* pkg, const char* cmd_name,
 										  Action* action,
 										  const char* usage, int item_argn) :
   TclCmd(pkg->interp(), cmd_name, 
-			usage ? usage : (item_argn ? "item_id(s)" : NULL),
+			usage ? usage : (item_argn ? "item_id(s)" : (char *) 0),
 			item_argn+1, item_argn+1),
   itsPkg(pkg),
   itsAction(action),

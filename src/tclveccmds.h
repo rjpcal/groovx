@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Thu Mar 16 13:27:23 2000
+// written: Thu Mar 16 14:07:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,9 +25,25 @@ template <class T> class Attrib;
 
 class Action;
 
+class fixed_string;
+
 
 namespace Tcl {
   class VecActionCmd;
+
+  template <class T>
+	 class SetterCmdTraits {
+		typedef T value_type;
+		typedef T stack_type;
+		typedef ListIterator<T> iterator_type;
+	 };
+
+  template <>
+	 class SetterCmdTraits<const fixed_string&> {
+		typedef const fixed_string& value_type;
+		typedef const char* stack_type;
+		typedef ListIterator<const char*> iterator_type;
+	 };
 }
 
 namespace Tcl {
@@ -47,9 +63,9 @@ public:
   VecGetterBaseCmd(TclItemPkgBase* pkg, const char* cmd_name,
 						 const char* usage, int item_argn);
 
+protected:
   virtual void invoke();
 
-protected:
   virtual void doReturnValForItem(void* item) = 0;
   virtual void doAppendValForItem(void* item) = 0;
 
@@ -88,9 +104,9 @@ public:
   VecSetterBaseCmd(TclItemPkgBase* pkg, const char* cmd_name,
 						 const char* usage, int item_argn);
 
+protected:
   virtual void invoke();
 
-protected:
   virtual void invokeForItemArgn(int item_argn, int val_argn) = 0;
   virtual void setSingleItem(void* item, int val_argn) = 0;
 
@@ -105,18 +121,29 @@ private:
   int itsValArgn;
 };
 
-template <class T>
-class TVecSetterCmd : public VecSetterBaseCmd {
-public:
-  TVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name, Setter<T>* setter,
+template <class Traits>
+class TrVecSetterCmd : public VecSetterBaseCmd {
+protected:
+  typedef typename Traits::value_type T;
+  typedef typename Traits::stack_type stack_type;
+  typedef typename Traits::iterator_type iterator_type;
+
+  TrVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name, Setter<T>* setter,
                 const char* usage, int item_argn);
 
-protected:
   virtual void invokeForItemArgn(int item_argn, int val_argn);
   virtual void setSingleItem(void* item, int val_argn);
 
 private:
   scoped_ptr< Setter<T> > itsSetter;
+};
+
+template <class T>
+class TVecSetterCmd : public TrVecSetterCmd< SetterCmdTraits<T> > {
+public:
+  typedef TrVecSetterCmd< SetterCmdTraits<T> > Base;
+  TVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name, Setter<T>* setter,
+                const char* usage, int item_argn);
 };
 
 ///////////////////////////////////////////////////////////////////////
