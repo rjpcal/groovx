@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Mon Jun 11 15:08:17 2001
+// written: Tue Jun 12 17:10:34 2001
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -17,6 +17,15 @@
 #include <tk.h>
 
 #include "grshapp.h"
+
+#include "system/demangle.h"
+
+#include "util/error.h"
+
+#include <cstdlib>
+#include <exception>
+#include <iostream.h>
+#include <typeinfo>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -124,34 +133,34 @@ private:
   int itsStatus;
 };
 
-TclApp::TclApp(int argc, char** argv, Tcl_Interp* interp) : 
+TclApp::TclApp(int argc, char** argv, Tcl_Interp* interp) :
   GrshApp(argc, argv, interp),
   itsStatus(TCL_OK)
 {
 DOTRACE("TclApp::TclApp(Tcl_Interp*)");
 
   {for (size_t i = 0; i < sizeof(IMMEDIATE_PKGS)/sizeof(PackageInfo); ++i) {
-#ifdef LOCAL_TRACE		
-	 cerr << "initializing " << IMMEDIATE_PKGS[i].pkgName << endl << flush;
+#ifdef LOCAL_TRACE
+    cerr << "initializing " << IMMEDIATE_PKGS[i].pkgName << endl << flush;
 #endif
-	 int result = IMMEDIATE_PKGS[i].pkgInitProc(interp);
-	 if (result != TCL_OK) { itsStatus = result; }
+    int result = IMMEDIATE_PKGS[i].pkgInitProc(interp);
+    if (result != TCL_OK) { itsStatus = result; }
   }}
 
 #if 0
   {for (size_t i = 0; i < sizeof(DELAYED_PKGS)/sizeof(PackageInfo); ++i) {
-	 Tcl_StaticPackage((Tcl_Interp*) 0,
-							 const_cast<char*>(DELAYED_PKGS[i].pkgName),
-							 DELAYED_PKGS[i].pkgInitProc,
-							 0);
+    Tcl_StaticPackage((Tcl_Interp*) 0,
+                      const_cast<char*>(DELAYED_PKGS[i].pkgName),
+                      DELAYED_PKGS[i].pkgInitProc,
+                      0);
   }}
 #endif
 
   // set prompt to "cmd[n]% " where cmd is the name of the program,
   // and n is the history event number
-  Tcl_SetVar(interp, "tcl_prompt1", 
-				 "puts -nonewline \"([history nextid]) $argv0> \"",
-				 TCL_GLOBAL_ONLY | TCL_LEAVE_ERR_MSG);
+  Tcl_SetVar(interp, "tcl_prompt1",
+             "puts -nonewline \"([history nextid]) $argv0> \"",
+             TCL_GLOBAL_ONLY | TCL_LEAVE_ERR_MSG);
 
   // specifies a file to be 'source'd upon startup
   Tcl_SetVar(interp, "tcl_rcFileName", "./grsh_startup.tcl", TCL_GLOBAL_ONLY);
@@ -172,8 +181,30 @@ namespace {
 // procedure to initialize a TclApp
 int Tcl_AppInit(Tcl_Interp* interp) {
 DOTRACE("Tcl_AppInit");
-  static TclApp theApp(LOCAL_ARGC, LOCAL_ARGV, interp);
-  return theApp.status();
+  try {
+    static TclApp theApp(LOCAL_ARGC, LOCAL_ARGV, interp);
+    return theApp.status();
+  }
+  catch (ErrorWithMsg& err) {
+    cerr << "uncaught ErrorWithMsg: " << err.msg_cstr() << endl;
+  }
+  catch (Error& err) {
+    cerr << "uncaught Error of type"
+         << demangle_cstr(typeid(err).name())
+         << endl;
+  }
+  catch (std::exception& err) {
+    cerr << "uncaught std::exception of type "
+         << demangle_cstr(typeid(err).name())
+         << " occurred: "
+         << err.what()
+         << endl;
+  }
+  catch (...) {
+    cerr << "uncaught exception of unknown type" << endl;
+  }
+
+  exit(-1);
 }
 
 int main(int argc, char** argv) {
