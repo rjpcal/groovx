@@ -3,13 +3,15 @@
 // glcanvas.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Dec  6 20:28:36 1999
-// written: Mon Dec  6 21:23:35 1999
+// written: Mon Dec  6 21:50:13 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GLCANVAS_CC_DEFINED
 #define GLCANVAS_CC_DEFINED
+
+#include "glcanvas.h"
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -139,7 +141,7 @@ DOTRACE("GLCanvas::isDoubleBuffered");
 
 void GLCanvas::swapForeBack() const {
 DOTRACE("GLCanvas::swapForeBack");
-  if ( Canvas::theCanvas().isRgba() ) {
+  if ( this->isRgba() ) {
 	 GLdouble foreground[4];
 	 GLdouble background[4];
 	 glGetDoublev(GL_CURRENT_COLOR, &foreground[0]);
