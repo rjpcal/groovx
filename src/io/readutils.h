@@ -3,7 +3,7 @@
 // readutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:25:40 1999
-// written: Tue Nov 16 14:36:21 1999
+// written: Wed Dec  1 11:43:56 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,14 @@
 
 #ifndef READER_H_DEFINED
 #include "reader.h"
+#endif
+
+#ifdef ACC_COMPILER
+// For some reason aCC wants to see the full definition of class IO
+// before parsing the dynamic_cast<C*>(IO*) in readObjectSeq
+#  ifndef IO_H_DEFINED
+#  include "io.h"
+#  endif
 #endif
 
 class ReadUtils {
