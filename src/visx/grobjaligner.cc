@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:48:47 2001
-// written: Mon Aug 13 12:17:29 2001
+// written: Tue Aug 14 12:48:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ DOTRACE("GrObjAligner::doAlignment");
   if (Gmodes::NATIVE_ALIGNMENT == itsMode) return;
 
   // This indicates where the center of the object will go
-  Gfx::Vec2<double> center = getCenter(native.width(), native.height());
+  Gfx::Vec2<double> center = getCenter(native);
 
   center -= native.center();
 
@@ -61,7 +61,7 @@ Gfx::Rect<double> GrObjAligner::gnodeBoundingBox(Gfx::Canvas& canvas) const
 {
   Gfx::Rect<double> bounds = child()->gnodeBoundingBox(canvas);
 
-  Gfx::Vec2<double> center = getCenter(bounds.width(), bounds.height());
+  Gfx::Vec2<double> center = getCenter(bounds);
 
   bounds.setCenter(center);
 

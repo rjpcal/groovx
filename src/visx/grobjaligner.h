@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:42:42 2001
-// written: Mon Aug 13 12:15:35 2001
+// written: Tue Aug 14 12:50:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "gmodes.h"
 #include "gnode.h"
 
+#include "gfx/rect.h"
 #include "gfx/vec2.h"
 
 class GrObjAligner : public Gnode {
@@ -26,20 +27,25 @@ public:
     itsCenter(0.0, 0.0)
   {}
 
-  Gfx::Vec2<double> getCenter(double width, double height) const
+  Gfx::Vec2<double> getCenter(const Gfx::Rect<double>& bounds) const
   {
-    if (Gmodes::CENTER_ON_CENTER == itsMode)
-      return Gfx::Vec2<double>(0.0, 0.0);
-    else if (Gmodes::NW_ON_CENTER == itsMode)
-      return Gfx::Vec2<double>(width/2.0, -height/2.0);
-    else if (Gmodes::NE_ON_CENTER == itsMode)
-      return Gfx::Vec2<double>(-width/2.0, -height/2.0);
-    else if (Gmodes::SW_ON_CENTER == itsMode)
-      return Gfx::Vec2<double>(width/2.0, height/2.0);
-    else if (Gmodes::SE_ON_CENTER == itsMode)
-      return Gfx::Vec2<double>(-width/2.0, height/2.0);
-    // else Gmodes::ARBITRARY_ON_CENTER:
-    return itsCenter;
+    switch (itsMode)
+      {
+      case Gmodes::CENTER_ON_CENTER:
+        return Gfx::Vec2<double>(0.0, 0.0);
+      case Gmodes::NW_ON_CENTER:
+        return Gfx::Vec2<double>(bounds.width()/2.0, -bounds.height()/2.0);
+      case Gmodes::NE_ON_CENTER:
+        return Gfx::Vec2<double>(-bounds.width()/2.0, -bounds.height()/2.0);
+      case Gmodes::SW_ON_CENTER:
+        return Gfx::Vec2<double>(bounds.width()/2.0, bounds.height()/2.0);
+      case Gmodes::SE_ON_CENTER:
+        return Gfx::Vec2<double>(-bounds.width()/2.0, bounds.height()/2.0);
+      case Gmodes::ARBITRARY_ON_CENTER:
+        return itsCenter;
+      }
+    // NATIVE_ALIGNMENT
+    return bounds.center();
   }
 
   Gmodes::AlignmentMode getMode() const { return itsMode; }
