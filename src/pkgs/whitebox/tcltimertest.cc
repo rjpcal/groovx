@@ -34,7 +34,10 @@
 
 #include "pkgs/testutils.h"
 
-#include "tcl/tcltimer.h"
+#include "tcl/tcltimerscheduler.h"
+
+#include "util/sharedptr.h"
+#include "util/timer.h"
 
 #include <cstdlib> // for abs()
 #include <tcl.h>
@@ -46,10 +49,23 @@ DBG_REGISTER
 
 namespace
 {
+  // A Util::Timer class that uses Tcl::TimerScheduler.
+  class TclTimer : public Util::Timer
+  {
+  public:
+    TclTimer(unsigned int msec, bool repeat)
+      :
+      Util::Timer(rutz::make_shared(new Tcl::TimerScheduler),
+                  msec, repeat)
+    {}
+
+    virtual ~TclTimer() {}
+  };
+
   int v0 = 0;
   int v1 = 0;
   int v2 = 0;
-  Tcl::Timer* tp1 = 0;
+  TclTimer* tp1 = 0;
 
   void v0_callback()
   {
@@ -74,9 +90,9 @@ namespace
     v1 = 0;
     v2 = 0;
 
-    Tcl::Timer t0(20, false);
-    Tcl::Timer t1(5,  true);
-    Tcl::Timer t2(0,  false);
+    TclTimer t0(20, false);
+    TclTimer t1(5,  true);
+    TclTimer t2(0,  false);
 
     tp1 = &t1;
 
@@ -124,7 +140,7 @@ namespace
   {
     v0 = 0;
 
-    Tcl::Timer t0(10, false);
+    TclTimer t0(10, false);
 
     t0.sigTimeOut.connect(&v0_callback);
 
@@ -150,7 +166,7 @@ namespace
   // Make sure that we don't let ourselves get into an infinite loop
   void testTimerNoInfiniteLoop()
   {
-    Tcl::Timer t(0, true);
+    TclTimer t(0, true);
 
     bool caught = false;
 

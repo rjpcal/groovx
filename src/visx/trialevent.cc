@@ -42,12 +42,14 @@
 #include "io/writeutils.h"
 
 #include "tcl/tclmain.h"
+#include "tcl/tcltimerscheduler.h"
 
 #include "util/algo.h"
 #include "util/error.h"
 #include "util/iter.h"
 #include "util/log.h"
 #include "util/ref.h"
+#include "util/sharedptr.h"
 
 #include "visx/trial.h"
 
@@ -66,7 +68,7 @@ using rutz::fstring;
 ///////////////////////////////////////////////////////////////////////
 
 TrialEvent::TrialEvent(unsigned int msec) :
-  itsTimer(msec, false),
+  itsTimer(rutz::make_shared(new Tcl::TimerScheduler), msec, false),
   itsRequestedDelay(msec),
   itsTrial(0),
   itsEstimatedOffset(0.0),
@@ -117,8 +119,8 @@ DOTRACE("TrialEvent::schedule");
 
   // Figure out the delay we want to request. If our requested delay
   // is zero, then just leave it as is, so that we get an immediate
-  // callback from Tcl::Timer. Otherwise, adjust the request according
-  // to how much error we expect based on past observations.
+  // callback from the scheduler. Otherwise, adjust the request
+  // according to how much error we expect based on past observations.
 
   unsigned int actual_request = 0;
 

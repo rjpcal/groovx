@@ -34,9 +34,13 @@
 
 #include "gxscene.h"
 
+#include "tcl/tcltimerscheduler.h"
+
+#include "util/sharedptr.h"
+
+#include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
-#include "util/trace.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -55,7 +59,7 @@ GxScene::GxScene(Util::SoftRef<Gfx::Canvas> canvas) :
   isItHolding(false),
   isItRefreshing(true),
   isItRefreshed(false),
-  itsTimer(100, true),
+  itsTimer(rutz::make_shared(new Tcl::TimerScheduler), 100, true),
   slotNodeChanged(Util::Slot0::make(this, &GxScene::onNodeChange))
 {
 DOTRACE("GxScene::GxScene");

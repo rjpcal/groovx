@@ -35,9 +35,8 @@
 #include "io/io.h"
 #include "io/tclprocwrapper.h"
 
-#include "tcl/tcltimer.h"
-
 #include "util/ref.h"
+#include "util/timer.h"
 
 #include <vector>
 
@@ -123,7 +122,7 @@ private:
   TrialEvent(const TrialEvent&);
   TrialEvent& operator=(const TrialEvent&);
 
-  Tcl::Timer itsTimer;
+  Util::Timer itsTimer;
   unsigned int itsRequestedDelay;
   Trial* itsTrial;
 

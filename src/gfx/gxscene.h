@@ -38,9 +38,8 @@
 #include "gfx/gxnode.h"
 
 #include "util/ref.h"
+#include "util/timer.h"
 #include "util/volatileobject.h"
-
-#include "tcl/tcltimer.h"
 
 /// Manages a graphics "scene" for a window object.
 class GxScene : public Util::VolatileObject
@@ -121,7 +120,7 @@ private:
   bool isItRefreshing;
   bool isItRefreshed;
 
-  Tcl::Timer itsTimer;
+  Util::Timer itsTimer;
 
   Util::Ref<Util::Slot0> slotNodeChanged;
 };
