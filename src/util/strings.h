@@ -79,6 +79,8 @@ public:
 
   static void make_unique(string_rep*& rep);
 
+  bool is_unique() throw() { return itsRefCount == 1; }
+
   void incr_ref_count() throw() { ++itsRefCount; }
 
   std::size_t decr_ref_count() throw()
@@ -255,7 +257,7 @@ public:
   bool empty() const throw() { return is_empty(); }
 
   /// Reset to an empty string.
-  void clear() { string_rep::make_unique(itsRep); itsRep->clear(); }
+  void clear();
 
   //
   // Substring operations

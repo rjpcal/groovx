@@ -307,6 +307,20 @@ DOTRACE("fstring::ends_with");
   return ext.equals(this->c_str() + skip);
 }
 
+void fstring::clear()
+{
+DOTRACE("fstring::clear");
+
+  if (itsRep->is_unique())
+    {
+      itsRep->clear();
+    }
+  else
+    {
+      fstring().swap(*this);
+    }
+}
+
 bool fstring::equals(const char* other) const throw()
 {
 DOTRACE("fstring::equals(const char*)");
