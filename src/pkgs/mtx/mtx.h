@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 14:59:21 2002
+// written: Mon Mar  4 16:51:43 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -529,6 +529,67 @@ protected:
 
 public:
   void makeUnique() { data_.makeUnique(); }
+
+  //
+  // Iterators
+  //
+
+  template <class M, class T>
+  class iter_base
+  {
+    M* mtx;
+    int elem;
+
+  public:
+    iter_base(M* m, int e) : mtx(m), elem(e) {}
+
+    typedef std::random_access_iterator_tag iterator_category;
+
+    typedef T            value_type;
+    typedef ptrdiff_t    difference_type;
+    typedef T*           pointer;
+    typedef T&           reference;
+
+    iter_base end() const { return iter_base(mtx, mtx->nelems()); }
+
+    bool hasMore() const { return elem < mtx->nelems(); }
+
+    reference operator*() const { return mtx->at(elem); }
+
+    // Comparison
+
+    bool operator==(const iter_base& other) const { return elem == other.elem; }
+
+    bool operator!=(const iter_base& other) const { return elem != other.elem; }
+
+    bool operator<(const iter_base& other) const { return elem < other.elem; }
+
+    difference_type operator-(const iter_base& other) const
+      { return elem - other.elem; }
+
+    // Increment/Decrement
+
+    iter_base& operator++() { ++elem; return *this; }
+    iter_base& operator--() { --elem; return *this; }
+
+    iter_base operator++(int) { return iter_base(mtx, elem++); }
+    iter_base operator--(int) { return iter_base(mtx, elem--); }
+
+    iter_base& operator+=(int x) { elem += x; return *this; }
+    iter_base& operator-=(int x) { elem -= x; return *this; }
+
+    iter_base operator+(int x) const { return iter_base(mtx, elem+x); }
+    iter_base operator-(int x) const { return iter_base(mtx, elem-x); }
+  };
+
+  typedef iter_base<MtxBase, double> iterator;
+  typedef iter_base<const MtxBase, const double> const_iterator;
+
+  iterator begin_nc() { return iterator(this, 0); }
+  iterator end_nc() { return iterator(this, nelems()); }
+
+  const_iterator begin() const { return const_iterator(this, 0); }
+  const_iterator end() const { return const_iterator(this, nelems()); }
 };
 
 
@@ -598,63 +659,6 @@ public:
   //
   // Iteration
   //
-
-  template <class M, class T>
-  class iter_base
-  {
-    M* mtx;
-    int elem;
-
-  public:
-    iter_base(M* m, int e) : mtx(m), elem(e) {}
-
-    typedef std::random_access_iterator_tag iterator_category;
-
-    typedef T            value_type;
-    typedef ptrdiff_t    difference_type;
-    typedef T*           pointer;
-    typedef T&           reference;
-
-    iter_base end() const { return iter_base(mtx, mtx->nelems()); }
-
-    bool hasMore() const { return elem < mtx->nelems(); }
-
-    reference operator*() const { return mtx->at(elem); }
-
-    // Comparison
-
-    bool operator==(const iter_base& other) const { return elem == other.elem; }
-
-    bool operator!=(const iter_base& other) const { return elem != other.elem; }
-
-    bool operator<(const iter_base& other) const { return elem < other.elem; }
-
-    difference_type operator-(const iter_base& other) const
-      { return elem - other.elem; }
-
-    // Increment/Decrement
-
-    iter_base& operator++() { ++elem; return *this; }
-    iter_base& operator--() { --elem; return *this; }
-
-    iter_base operator++(int) { return iter_base(mtx, elem++); }
-    iter_base operator--(int) { return iter_base(mtx, elem--); }
-
-    iter_base& operator+=(int x) { elem += x; return *this; }
-    iter_base& operator-=(int x) { elem -= x; return *this; }
-
-    iter_base operator+(int x) const { return iter_base(mtx, elem+x); }
-    iter_base operator-(int x) const { return iter_base(mtx, elem-x); }
-  };
-
-  typedef iter_base<Mtx, double> iterator;
-  typedef iter_base<const Mtx, const double> const_iterator;
-
-  iterator begin_nc() { return iterator(this, 0); }
-  iterator end_nc() { return iterator(this, nelems()); }
-
-  const_iterator begin() const { return const_iterator(this, 0); }
-  const_iterator end() const { return const_iterator(this, nelems()); }
 
 
   template <class T>
