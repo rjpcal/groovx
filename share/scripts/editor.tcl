@@ -93,14 +93,23 @@ itcl::class FieldControls {
 
 		  set align_us [list]
 
+		  set column 0
+
 		  foreach finfo [${objtype}::allFields] {
-				set fname [lindex $finfo 0]
+				set fname [namespace tail [lindex $finfo 0]]
 				set lower [lindex $finfo 1]
 				set upper [lindex $finfo 2]
 				set step [lindex $finfo 3]
 				set flags [lindex $finfo 4]
-
 				set startsnewgroup [expr [lsearch $flags NEW_GROUP] != -1]
+
+				if {$startsnewgroup} {
+					 set currentframe [frame $itsFrame.column[incr column]]
+					 pack $currentframe -side left -fill y -expand yes
+				}
+
+				if { [lsearch $itsNames $fname] != -1 } { continue }
+
 				set isItTransient($fname) [expr [lsearch $flags TRANSIENT] != -1]
 				set isItString($fname) [expr [lsearch $flags STRING] != -1]
 				set isItMulti($fname) [expr [lsearch $flags MULTI] != -1]
@@ -109,11 +118,6 @@ itcl::class FieldControls {
 
 				lappend itsNames $fname
 				set itsCachedValues($fname) 0
-
-				if {$startsnewgroup} {
-					 set currentframe [frame $itsFrame.$fname]
-					 pack $currentframe -side left -fill y -expand yes
-				}
 
 				set pane $currentframe
 
@@ -205,7 +209,6 @@ itcl::class Editor {
 		  GrObj::alignmentMode $grobjs $GrObj::CENTER_ON_CENTER
 		  GrObj::scalingMode $grobjs $GrObj::MAINTAIN_ASPECT_SCALING
 		  GrObj::renderMode $grobjs $GrObj::DIRECT_RENDER
-		  GrObj::unRenderMode $grobjs $GrObj::CLEAR_BOUNDING_BOX
 		  GrObj::height $grobjs 1.0
 	 }
 
