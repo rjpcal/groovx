@@ -3,7 +3,7 @@
 // experiment.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 10:52:17 1999
-// written: Sat Dec  4 01:52:05 1999
+// written: Sat Dec  4 12:51:32 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,8 @@ class Widget;
 
 class Experiment {
 public:
+  virtual ~Experiment();
+
   virtual Widget* getWidget() = 0;
 
   virtual void edDraw() = 0;
