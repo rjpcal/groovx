@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:30 1999
-// written: Fri Jan 18 16:06:53 2002
+// written: Tue May 14 19:28:50 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,6 +30,7 @@
 struct GLRHolder
 {
   GLRHolder(shared_ptr<GLBmapRenderer> p) : itsRenderer(p) {}
+  virtual ~GLRHolder() {}
   shared_ptr<GLBmapRenderer> itsRenderer;
 };
 

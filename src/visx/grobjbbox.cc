@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Fri Jan 18 16:07:01 2002
+// written: Tue May 14 19:43:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,8 +25,7 @@
 
 namespace
 {
-  Gfx::Rect<double> addPixelBorder(Gfx::Canvas& canvas,
-                                   const Gfx::Rect<double>& raw,
+  Gfx::Rect<double> addPixelBorder(const Gfx::Rect<double>& raw,
                                    int border_pixels)
   {
 
@@ -58,8 +57,7 @@ DOTRACE("GrObjBBox::gnodeBoundingBox");
 
   DebugEval(itsPixelBorder); DebugEval(border_pixels);
 
-  return addPixelBorder(canvas,
-                        child()->gnodeBoundingBox(canvas),
+  return addPixelBorder(child()->gnodeBoundingBox(canvas),
                         border_pixels);
 }
 
@@ -72,8 +70,7 @@ DOTRACE("GrObjBBox::gnodeDraw");
   if (isItVisible)
     {
       Gfx::Rect<double> bounds =
-        addPixelBorder(canvas,
-                       child()->gnodeBoundingBox(canvas),
+        addPixelBorder(child()->gnodeBoundingBox(canvas),
                        itsPixelBorder);
 
 #define ANIMATE_BBOX

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Fri Jan 18 16:07:01 2002
+// written: Tue May 14 19:43:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -326,7 +326,7 @@ DOTRACE("GrObj::saveBitmapCache");
   itsImpl->itsBitmapCache->saveBitmapCache(canvas, filename);
 }
 
-void GrObj::update(Gfx::Canvas& canvas) const
+void GrObj::update(Gfx::Canvas& /*canvas*/) const
 {
 DOTRACE("GrObj::update");
 }

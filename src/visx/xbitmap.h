@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:39:09 1999
-// written: Fri Jan 18 16:06:51 2002
+// written: Tue May 14 19:29:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,6 +30,7 @@
 struct XRHolder
 {
   XRHolder(shared_ptr<XBmapRenderer> p) : itsRenderer(p) {}
+  virtual ~XRHolder() {}
   shared_ptr<XBmapRenderer> itsRenderer;
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Sat Feb  2 17:05:46 2002
+// written: Tue May 14 19:50:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -129,7 +129,7 @@ private:
   mutable double itsEstimatedOffset;
   mutable int itsActualRequest;
   mutable double itsTotalOffset;
-  mutable int itsTotalError;
+  mutable double itsTotalError;
   mutable int itsInvokeCount;
 };
 

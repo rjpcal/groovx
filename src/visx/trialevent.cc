@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Sat Feb  2 17:09:18 2002
+// written: Tue May 14 19:50:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ TrialEvent::TrialEvent(int msec) :
   itsEstimatedOffset(0.0),
   itsActualRequest(msec),
   itsTotalOffset(0.0),
-  itsTotalError(0),
+  itsTotalError(0.0),
   itsInvokeCount(0)
 {
 DOTRACE("TrialEvent::TrialEvent");
@@ -71,8 +71,10 @@ DOTRACE("TrialEvent::~TrialEvent");
   DebugEval(itsTotalOffset);
   DebugEval(itsTotalError);
   DebugEval(itsInvokeCount);
+#ifdef LOCAL_DEBUG
   double averageError =
-    itsInvokeCount ? double(itsTotalError)/itsInvokeCount : 0.0;
+    itsInvokeCount ? itsTotalError/itsInvokeCount : 0.0;
+#endif
   DebugEvalNL(averageError);
 }
 
