@@ -2,8 +2,8 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 10:56:05 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:57:31 1999
+static const char vcid_fixpt_h[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FIXPT_H_DEFINED
