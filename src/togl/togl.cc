@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 17:53:11 2002
+// written: Tue Sep 17 21:16:41 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -498,11 +498,6 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
                             &atts);
 
   XSelectInput(dpy, win, ALL_EVENTS_MASK);
-
-  if (!rep->itsOpts->glx.rgbaFlag)
-    {
-      X11Util::hackInstallColormap(dpy, Tk_WindowId(tkwin), cmap);
-    }
 
   // Bind the context to the window and make it the current context
   rep->itsGlx->makeCurrent(win);
