@@ -78,6 +78,8 @@ DOC := ./doc
 SCRIPTS := ./scripts
 VISX_LIB_DIR := $(exec_prefix)/lib/visx
 
+DEFS += -DVISX_LIB_DIR=\"$(VISX_LIB_DIR)\"
+
 #-------------------------------------------------------------------------
 #
 # Rules to rebuild files from the configure script
@@ -111,8 +113,7 @@ $(DOC)/DoxyConfig: $(DOC)/DoxyConfig.in config.status
 
 CPPFLAGS += -I$(SRC)
 
-ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS) \
-	-DVISX_LIB_DIR=\"$(VISX_LIB_DIR)\"
+ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
 
 $(OBJ)/%.$(OBJEXT) : $(SRC)/%.cc
 	@[ -d ${@D} ] || mkdir -p ${@D}
