@@ -38,6 +38,8 @@
 #include <sstream>
 
 #include "util/trace.h"
+#include "util/debug.h"
+DBG_REGISTER;
 
 Value::Value()
 {
@@ -53,11 +55,14 @@ const char* Value::getCstring() const
 {
 DOTRACE("Value::getCstring");
 
-  static std::ostringstream oss;
-  oss.str(std::string());
+  static std::string result;
+
+  std::ostringstream oss;
   printTo(oss);
-  oss << '\0';
-  return oss.str().c_str();
+
+  result = oss.str();
+
+  return result.c_str();
 }
 
 fstring Value::getFstring() const
