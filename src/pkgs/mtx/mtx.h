@@ -949,7 +949,7 @@ public:
   // the mtx to the specified dimensions; its only advantage over just
   // declaring a new mtx is that it will avoid a deallocate/allocate
   // cycle if the new dimensions are the same as the current dimensions.
-  void resize(int mrowsNew, int ncolsNew);
+  void resize(int mrows_new, int ncols_new);
 
   /** Makes sure that the data are in contiguous storage; if called on a
       submatrix, contig() will make a new matrix of the proper size and copy
@@ -957,7 +957,7 @@ public:
       matrix. */
   mtx contig() const;
 
-  mxArray* makeMxArray() const;
+  mxArray* make_mxarray() const;
 
 
   //
@@ -967,7 +967,7 @@ public:
   void print() const;
 
   // This version will print the given name before printing the matrix contents
-  void print(const char* mtxName) const;
+  void print(const char* mtx_name) const;
 
   //
   // Iteration
@@ -990,7 +990,7 @@ public:
   const double& at(int elem) const
     { return Base::at(offset_from_start(elem)); }
 
-  bool sameSize(const mtx& x) const
+  bool same_size(const mtx& x) const
   { return (mrows() == x.mrows()) && (ncols() == x.ncols()); }
 
   //
@@ -1046,41 +1046,41 @@ public:
   slice row(int r) const
     { return slice(*this, offset_from_storage(r,0), rowstride(), ncols()); }
 
-  mtx_iter rowIter(int r)
+  mtx_iter row_iter(int r)
     { return mtx_iter(address_nc(r,0), rowstride(), ncols()); }
 
-  mtx_const_iter rowIter(int r) const
+  mtx_const_iter row_iter(int r) const
     { return mtx_const_iter(address(r,0), rowstride(), ncols()); }
 
-  mtx asRow() const { return as_shape(1, nelems()); }
+  mtx as_row() const { return as_shape(1, nelems()); }
 
-  void reorderRows(const mtx& index);
+  void reorder_rows(const mtx& index);
 
 
 
   slice column(int c) const
     { return slice(*this, offset_from_storage(0,c), colstride(), mrows()); }
 
-  mtx_iter columnIter(int c)
+  mtx_iter column_iter(int c)
     { return mtx_iter(address_nc(0,c), colstride(), mrows()); }
 
-  mtx_const_iter columnIter(int c) const
+  mtx_const_iter column_iter(int c) const
     { return mtx_const_iter(address(0,c), colstride(), mrows()); }
 
-  mtx asColumn() const { return as_shape(nelems(), 1); }
+  mtx as_column() const { return as_shape(nelems(), 1); }
 
-  void reorderColumns(const mtx& index);
+  void reorder_columns(const mtx& index);
 
-  void swapColumns(int c1, int c2);
+  void swap_columns(int c1, int c2);
 
 
   //
   // Functions
   //
 
-  mtx meanRow() const;
+  mtx mean_row() const;
 
-  mtx meanColumn() const;
+  mtx mean_column() const;
 
   const_iterator find_min() const;
   const_iterator find_max() const;
@@ -1144,7 +1144,7 @@ inline slice::slice(const mtx& owner, ptrdiff_t offset, int s, int n) :
 ///////////////////////////////////////////////////////////////////////
 
 
-inline double innerProduct(mtx_const_iter s1, mtx_const_iter s2)
+inline double inner_product(mtx_const_iter s1, mtx_const_iter s2)
 {
   double result = 0.0;
 

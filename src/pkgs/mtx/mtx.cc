@@ -286,7 +286,7 @@ DOTRACE("slice::sort");
 void slice::reorder(const mtx& index_)
 {
 DOTRACE("slice::reorder");
-  mtx index(index_.asColumn());
+  mtx index(index_.as_column());
 
   if (index.mrows() != nelems())
     throw Util::Error("dimension mismatch in slice::reorder");
@@ -653,9 +653,9 @@ DOTRACE("mtx::mtx");
 mtx::~mtx() {}
 
 #ifdef WITH_MATLAB
-mxArray* mtx::makeMxArray() const
+mxArray* mtx::make_mxarray() const
 {
-DOTRACE("mtx::makeMxArray");
+DOTRACE("mtx::make_mxarray");
   mxArray* result_mx = mxCreateDoubleMatrix(mrows(), ncols(), mxREAL);
 
   std::copy(colmaj_begin(), colmaj_end(), mxGetPr(result_mx));
@@ -664,14 +664,14 @@ DOTRACE("mtx::makeMxArray");
 }
 #endif
 
-void mtx::resize(int mrowsNew, int ncolsNew)
+void mtx::resize(int mrows_new, int ncols_new)
 {
 DOTRACE("mtx::resize");
-  if (mrows() == mrowsNew && ncols() == ncolsNew)
+  if (mrows() == mrows_new && ncols() == ncols_new)
     return;
   else
     {
-      mtx newsize(mrowsNew, ncolsNew, ZEROS);
+      mtx newsize(mrows_new, ncols_new, ZEROS);
       this->swap(newsize);
     }
 }
@@ -702,20 +702,20 @@ void mtx::print() const
   std::cout << std::endl;
 }
 
-void mtx::print(const char* mtxName) const
+void mtx::print(const char* mtx_name) const
 {
-  std::cout << mtxName << '\n';
+  std::cout << mtx_name << '\n';
   print();
 }
 
-void mtx::reorderRows(const mtx& index_)
+void mtx::reorder_rows(const mtx& index_)
 {
-DOTRACE("mtx::reorderRows");
+DOTRACE("mtx::reorder_rows");
 
-  mtx index(index_.asColumn());
+  mtx index(index_.as_column());
 
   if (index.mrows() != mrows())
-    throw Util::Error("dimension mismatch in mtx::reorderRows");
+    throw Util::Error("dimension mismatch in mtx::reorder_rows");
 
   mtx neworder(mrows(), ncols());
 
@@ -725,14 +725,14 @@ DOTRACE("mtx::reorderRows");
   *this = neworder;
 }
 
-void mtx::reorderColumns(const mtx& index_)
+void mtx::reorder_columns(const mtx& index_)
 {
-DOTRACE("mtx::reorderColumns");
+DOTRACE("mtx::reorder_columns");
 
-  mtx index(index_.asColumn());
+  mtx index(index_.as_column());
 
   if (index.mrows() != ncols())
-    throw Util::Error("dimension mismatch in mtx::reorderColumns");
+    throw Util::Error("dimension mismatch in mtx::reorder_columns");
 
   mtx neworder(mrows(), ncols());
 
@@ -742,18 +742,18 @@ DOTRACE("mtx::reorderColumns");
   *this = neworder;
 }
 
-void mtx::swapColumns(int c1, int c2)
+void mtx::swap_columns(int c1, int c2)
 {
-DOTRACE("mtx::swapColumns");
+DOTRACE("mtx::swap_columns");
 
   if (c1 == c2) return;
 
   memswap(address_nc(0,c1), address_nc(0,c2), mrows());
 }
 
-mtx mtx::meanRow() const
+mtx mtx::mean_row() const
 {
-DOTRACE("mtx::meanRow");
+DOTRACE("mtx::mean_row");
 
   mtx res(1, ncols());
 
@@ -765,9 +765,9 @@ DOTRACE("mtx::meanRow");
   return res;
 }
 
-mtx mtx::meanColumn() const
+mtx mtx::mean_column() const
 {
-DOTRACE("mtx::meanColumn");
+DOTRACE("mtx::mean_column");
 
   mtx res(mrows(), 1);
 
@@ -882,7 +882,7 @@ DOTRACE("mtx::VMmul_assign");
   mtx_iter resultIter = result.begin_nc();
 
   for (int col = 0; col < mtx.ncols(); ++col, ++resultIter)
-    *resultIter = innerProduct(veciter, mtx.columnIter(col));
+    *resultIter = inner_product(veciter, mtx.column_iter(col));
 }
 
 void mtx::assign_MMmul(const mtx& m1, const mtx& m2)
@@ -894,12 +894,12 @@ DOTRACE("mtx::assign_MMmul");
 
   for (int n = 0; n < mrows(); ++n)
     {
-      mtx_iter rowElement = this->rowIter(n);
+      mtx_iter rowElement = this->row_iter(n);
 
-      mtx_const_iter veciter = m1.rowIter(n);
+      mtx_const_iter veciter = m1.row_iter(n);
 
       for (int col = 0; col < m2.ncols(); ++col, ++rowElement)
-        *rowElement = innerProduct(veciter, m2.columnIter(col));
+        *rowElement = inner_product(veciter, m2.column_iter(col));
     }
 }
 
@@ -944,7 +944,7 @@ namespace
   template <class Op>
   mtx binaryOp(const mtx& m1, const mtx& m2, Op op)
   {
-    if (! m1.sameSize(m2) )
+    if (! m1.same_size(m2) )
       throw Util::Error("dimension mismatch in binaryOp(mtx, mtx)");
 
     mtx result(m1.mrows(), m1.ncols(), mtx::NO_INIT);
