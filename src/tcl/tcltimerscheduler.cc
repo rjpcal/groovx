@@ -72,6 +72,11 @@ Tcl::TimerScheduler::TimerScheduler()
 DOTRACE("Tcl::TimerScheduler::TimerScheduler");
 }
 
+Tcl::TimerScheduler::~TimerScheduler() throw()
+{
+DOTRACE("Tcl::TimerScheduler::~TimerScheduler");
+}
+
 shared_ptr<Util::TimerToken>
 Tcl::TimerScheduler::schedule(int msec,
                               void (*callback)(void*),

@@ -32,9 +32,8 @@
 #ifndef TCLTIMER_H_DEFINED
 #define TCLTIMER_H_DEFINED
 
-#include "tcl/tcltimerscheduler.h"
-
 #include "util/pointers.h"
+#include "util/scheduler.h"
 #include "util/signal.h"
 #include "util/stopwatch.h"
 
@@ -71,7 +70,7 @@ private:
   Timer(const Timer&);
   Timer& operator=(const Timer&);
 
-  Tcl::TimerScheduler itsScheduler;
+  shared_ptr<Util::Scheduler> itsScheduler;
 
   shared_ptr<Util::TimerToken> itsToken;
   unsigned int itsMsecDelay;

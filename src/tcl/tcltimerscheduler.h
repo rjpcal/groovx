@@ -41,14 +41,16 @@ namespace Tcl
   class TimerScheduler;
 }
 
-class Tcl::TimerScheduler
+class Tcl::TimerScheduler : public Util::Scheduler
 {
 public:
   TimerScheduler();
+  virtual ~TimerScheduler() throw();
 
-  shared_ptr<Util::TimerToken> schedule(int msec,
-                                        void (*callback)(void*),
-                                        void* clientdata);
+  virtual shared_ptr<Util::TimerToken>
+  schedule(int msec,
+           void (*callback)(void*),
+           void* clientdata);
 };
 
 static const char vcid_tcltimerscheduler_h[] = "$Header$";

@@ -37,5 +37,7 @@
 Util::TimerToken::TimerToken() {}
 Util::TimerToken::~TimerToken() throw() {}
 
+Util::Scheduler::~Scheduler() throw() {}
+
 static const char vcid_scheduler_cc[] = "$Header$";
 #endif // !SCHEDULER_CC_DEFINED

@@ -34,8 +34,11 @@
 
 namespace Util
 {
+  class Scheduler;
   class TimerToken;
 }
+
+template <class T> class shared_ptr;
 
 class Util::TimerToken
 {
@@ -50,6 +53,16 @@ public:
   virtual ~TimerToken() throw();
 };
 
+class Util::Scheduler
+{
+public:
+  virtual ~Scheduler() throw();
+
+  virtual shared_ptr<Util::TimerToken>
+  schedule(int msec,
+           void (*callback)(void*),
+           void* clientdata) = 0;
+};
 
 static const char vcid_scheduler_h[] = "$Header$";
 #endif // !SCHEDULER_H_DEFINED

@@ -36,6 +36,7 @@
 
 #include "tcl/tclmain.h"
 #include "tcl/tclsafeinterp.h"
+#include "tcl/tcltimerscheduler.h"
 
 #include "util/error.h"
 
@@ -45,7 +46,7 @@ DBG_REGISTER
 
 Tcl::Timer::Timer(unsigned int msec, bool repeat) :
   sigTimeOut(),
-  itsScheduler(),
+  itsScheduler(new Tcl::TimerScheduler),
   itsToken(0),
   itsMsecDelay(msec),
   isItRepeating(repeat),
@@ -84,9 +85,9 @@ DOTRACE("Tcl::Timer::schedule");
     }
   else
     {
-      itsToken = itsScheduler.schedule(itsMsecDelay,
-                                       dummyCallback,
-                                       static_cast<void*>(this));
+      itsToken = itsScheduler->schedule(itsMsecDelay,
+                                        dummyCallback,
+                                        static_cast<void*>(this));
     }
 }
 
