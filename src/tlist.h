@@ -3,7 +3,7 @@
 // tlist.h
 // Rob Peters
 // created: Fri Mar 12 13:23:02 1999
-// written: Thu Oct 21 18:14:37 1999
+// written: Fri Dec  3 15:31:32 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,15 +83,6 @@ public:
   /////////////
   // actions //
   /////////////
-
-  // Redraws the Tlist's current trial to the OpenGL window. If the
-  // Tlist's visibility is false, nothing will be displayed.
-  void redraw() const;
-
-  // Erase the Tlist's current trial from the OpenGL window. The
-  // Tlist's visibility is set to false, so redraw events sent to the
-  // screen window will not cause the Tlist to draw anything.
-  void undraw();
 
   // This command sets the Tlist's visiblity to zero and clears the
   // OpenGL window.
