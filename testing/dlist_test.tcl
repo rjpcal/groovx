@@ -40,7 +40,7 @@ test "Dlist-dlist::index" "err" {
 ### dlist::not ###
 test "Dlist-dlist::not" "args" {
     dlist::not
-} {wrong \# args: should be "dlist::not source_list"}
+} {wrong \# args: should be "dlist::not list"}
 test "Dlist-dlist::not" "norm1" {
     catch {dlist::not {}}
 } {^0$}
@@ -71,7 +71,7 @@ test "Dlist-dlist::ones" "err2" {
 ### dlist::pickone ###
 test "Dlist-dlist::pickone" "args" {
     dlist::pickone
-} {wrong \# args: should be "dlist::pickone source_list"}
+} {wrong \# args: should be "dlist::pickone list"}
 test "Dlist-dlist::pickone" "norm1" {
     dlist::pickone {1 3 5 7 9}
 } {[13579]}
@@ -152,7 +152,7 @@ test "Dlist-dlist::slice" "err2" {
 ### dlist::sum ###
 test "Dlist-dlist::sum" "args" {
     dlist::sum
-} {wrong \# args: should be "dlist::sum source_list"}
+} {wrong \# args: should be "dlist::sum list"}
 test "Dlist-dlist::sum" "norm int" {
     dlist::sum { -3 6 0 9 17}
 } {^29$}
