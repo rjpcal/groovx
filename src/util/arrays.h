@@ -3,7 +3,7 @@
 // arrays.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 15:56:36 2000
-// written: Sun Mar 12 00:24:23 2000
+// written: Sat Mar 18 10:00:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -258,6 +258,21 @@ public:
 		dynamic_block temp(new_size);
 		assign_varsize(*this, temp);
 		this->swap(temp);
+	 }
+
+  template <class RandomAccessIterator>
+  void assign(RandomAccessIterator start, RandomAccessIterator finish)
+	 {
+		int num = finish-start;
+		if (num < 0) 
+		  {
+			 resize(0);
+			 return;
+		  }
+		resize(num);
+		iterator ii = begin();
+		while (start != finish)
+		  *ii++ = *start++;
 	 }
 
 private:
