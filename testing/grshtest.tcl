@@ -61,6 +61,11 @@ if { $seed_arg != -1 } {
 	 set seed [clock clicks]
 }
 
+set verbose_arg [lsearch -exact $argv "-verbose"]
+if { $verbose_arg != -1 } {
+	 set ::VERBOSE [lindex $argv [expr $verbose_arg +1]]
+}
+
 puts "seed $seed"
 expr srand($seed)
 proc rand_cmp {a1 a2} { return [expr round(200*rand() - 100.0)] }
