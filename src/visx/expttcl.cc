@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Fri Jun 15 06:54:24 2001
+// written: Fri Jun 15 10:08:40 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -25,11 +25,12 @@
 
 #include "system/system.h"
 
-#include "tcl/tclcmd.h"
+#include "tcl/genericobjpkg.h"
 #include "tcl/tclevalcmd.h"
 #include "tcl/tclitempkg.h"
 #include "tcl/tracertcl.h"
 
+#include "util/objfactory.h"
 #include "util/ref.h"
 #include "util/strings.h"
 
@@ -46,11 +47,32 @@
 
 namespace ExptTcl {
   class BeginCmd;
-  class InitCmd;
   class PauseCmd;
   class SetStartCommandCmd;
 
   class ExptPkg;
+  class ExpPkg;
+};
+
+class ExptTcl::ExptPkg : public Tcl::CTclItemPkg<ExptDriver>,
+                         public Tcl::IoFetcher
+{
+public:
+  ExptPkg(Tcl_Interp* interp);
+
+  virtual ~ExptPkg()
+    {
+      itsExptDriver->edClearExpt();
+    }
+
+  virtual IO::IoObject& getIoFromId(int) { return *itsExptDriver; }
+
+  virtual ExptDriver* getCItemFromId(int) {
+    return itsExptDriver.get();
+  }
+
+private:
+  Ref<ExptDriver> itsExptDriver;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -74,7 +96,7 @@ namespace ExptTcl {
 class ExptTcl::BeginCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
   BeginCmd(Tcl::CTclItemPkg<ExptDriver>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, NULL, 1, 1)
+    Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, NULL, pkg->itemArgn()+1)
     {}
 protected:
   virtual void invoke();
@@ -126,7 +148,7 @@ DOTRACE("ExptTcl::BeginCmd::beginCmd");
 class ExptTcl::PauseCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
   PauseCmd(Tcl::CTclItemPkg<ExptDriver>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, (char*)0, 1, 1),
+    Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, (char*)0, pkg->itemArgn()+1),
     itsPauseMsgCmd(
             "tk_messageBox -default ok -icon info "
             "-title \"Pause\" -type ok "
@@ -183,7 +205,8 @@ private:
 class ExptTcl::SetStartCommandCmd : public Tcl::TclItemCmd<ExptDriver> {
 public:
   SetStartCommandCmd(Tcl::CTclItemPkg<ExptDriver>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "start_command", 2, 2) {}
+    Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "start_command",
+                                pkg->itemArgn()+2) {}
 protected:
   virtual void invoke() {
     // Build the script to be executed when the start key is pressed
@@ -201,33 +224,12 @@ protected:
 
 //---------------------------------------------------------------------
 //
-// ExptPkg class defintion
+// ExptPkg definitions
 //
 //---------------------------------------------------------------------
 
-class ExptTcl::ExptPkg : public Tcl::CTclItemPkg<ExptDriver>,
-                         public Tcl::IoFetcher
-{
-public:
-  ExptPkg(Tcl_Interp* interp);
-
-  virtual ~ExptPkg()
-    {
-      itsExptDriver->edClearExpt();
-    }
-
-  virtual IO::IoObject& getIoFromId(int) { return *itsExptDriver; }
-
-  virtual ExptDriver* getCItemFromId(int) {
-    return itsExptDriver.get();
-  }
-
-private:
-  Ref<ExptDriver> itsExptDriver;
-};
-
 ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :
-  Tcl::CTclItemPkg<ExptDriver>(interp, "Expt", "2.7", 0),
+  Tcl::CTclItemPkg<ExptDriver>(interp, "Expt", "$Revision$", 0),
   itsExptDriver(ExptDriver::make(Application::theApp().argc(),
                                  Application::theApp().argv(),
                                  interp))
@@ -258,16 +260,66 @@ ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :
 
 //---------------------------------------------------------------------
 //
+// ExpPkg definition
+//
+//---------------------------------------------------------------------
+
+class ExptTcl::ExpPkg : public Tcl::GenericObjPkg<ExptDriver>
+{
+public:
+  ExpPkg(Tcl_Interp* interp) :
+    Tcl::GenericObjPkg<ExptDriver>(interp, "Exp", "$Revision$")
+  {
+    addCommand( new BeginCmd(this, "Exp::begin") );
+    addCommand( new PauseCmd(this, "Exp::pause") );
+    addCommand( new SetStartCommandCmd(this, "Exp::setStartCommand") );
+
+    declareCSetter("addBlock", &ExptDriver::addBlock);
+    declareCAttrib("autosaveFile",
+                   &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
+    declareCAttrib("autosavePeriod",
+                   &ExptDriver::getAutosavePeriod,
+                   &ExptDriver::setAutosavePeriod);
+    declareCAction("clear", &ExptDriver::edClearExpt);
+    declareCGetter("currentBlock", &ExptDriver::currentBlock);
+    declareCAction("reset", &ExptDriver::edResetExpt);
+    declareCAction("stop", &ExptDriver::edHaltExpt);
+    declareCAction("storeData", &ExptDriver::storeData);
+    declareCAttrib("widget", &ExptDriver::widget, &ExptDriver::setWidget);
+  }
+};
+
+//---------------------------------------------------------------------
+//
 // Expt_Init --
 //
 //---------------------------------------------------------------------
 
+namespace {
+  Tcl_Interp* exptCreateInterp = 0;
+
+  ExptDriver* makeExptDriver()
+  {
+    if (exptCreateInterp == 0)
+      FactoryError::throwForType("ExptDriver");
+
+    return ExptDriver::make(Application::theApp().argc(),
+                            Application::theApp().argv(),
+                            exptCreateInterp);
+  }
+}
+
 extern "C" int Expt_Init(Tcl_Interp* interp) {
 DOTRACE("Expt_Init");
 
-  new ExptTcl::ExptPkg(interp);
+  Tcl::TclPkg* pkg1 = new ExptTcl::ExptPkg(interp);
+  Tcl::TclPkg* pkg2 = new ExptTcl::ExpPkg(interp);
 
-  return TCL_OK;
+  exptCreateInterp = interp;
+
+  Util::ObjFactory::theOne().registerCreatorFunc( makeExptDriver );
+
+  return pkg1->combineStatus(pkg2->initStatus());
 }
 
 static const char vcid_expttcl_cc[] = "$Header$";
