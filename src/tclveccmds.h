@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Wed May 17 13:57:38 2000
+// written: Wed May 17 14:09:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -158,7 +158,7 @@ public:
 template <class T>
 class TVecAttribCmd : public TVecGetterCmd<T>, public TVecSetterCmd<T> {
 public:
-  typedef TVecAttribCmd::T Type
+  typedef TVecAttribCmd::T Type;
   TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name,
 					 Attrib<Type>* attrib, const char* usage, int item_argn);
 

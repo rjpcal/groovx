@@ -3,7 +3,7 @@
 // tclveccmds.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:16:22 1999
-// written: Tue Mar 21 19:35:05 2000
+// written: Wed May 17 14:11:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -143,7 +143,7 @@ DOTRACE("Tcl::VecSetterBaseCmd::invoke");
 
 template <class T>
 Tcl::TVecSetterCmd<T>::TVecSetterCmd(TclItemPkgBase* pkg,
-												 const char* cmd_name, Setter<T>* setter,
+												 const char* cmd_name, Setter<Type>* setter,
 												 const char* usage, int item_argn) :
   Base(pkg, cmd_name, setter, usage, item_argn),
   TclCmd(pkg->interp(), cmd_name, 
@@ -240,10 +240,10 @@ template class TVecSetterCmd<const fixed_string&>;
 
 template <class T>
 Tcl::TVecAttribCmd<T>::TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name,
-												 Attrib<T>* attrib,
+												 Attrib<Type>* attrib,
 												 const char* usage, int item_argn) :
-  TVecGetterCmd<T>(pkg, 0, attrib, 0, item_argn),
-  TVecSetterCmd<T>(pkg, 0, attrib, 0, item_argn),
+  TVecGetterCmd<Type>(pkg, 0, attrib, 0, item_argn),
+  TVecSetterCmd<Type>(pkg, 0, attrib, 0, item_argn),
   TclCmd(pkg->interp(), cmd_name,
 			usage ? usage : (item_argn ?
 								  "item_id(s) ?new_value(s)?" : "?new_value?"),
@@ -257,8 +257,8 @@ DOTRACE("Tcl::TVecAttribCmd<>::TVecAttribCmd");
 template <class T>
 void Tcl::TVecAttribCmd<T>::invoke() {
 DOTRACE("Tcl::TVecAttribCmd<>::invoke");
-  if      (TclCmd::objc() == itsObjcGet) { TVecGetterCmd<T>::invoke(); }
-  else if (TclCmd::objc() == itsObjcSet) { TVecSetterCmd<T>::invoke(); }
+  if      (TclCmd::objc() == itsObjcGet) { TVecGetterCmd<Type>::invoke(); }
+  else if (TclCmd::objc() == itsObjcSet) { TVecSetterCmd<Type>::invoke(); }
   else    /* "can't happen" */           { Assert(0); }
 }
 
