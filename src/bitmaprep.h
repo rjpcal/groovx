@@ -3,7 +3,7 @@
 // bitmaprep.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri Sep 29 15:01:49 2000
+// written: Thu Oct 19 11:39:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,9 +60,6 @@ public:
 
 private:
   void init();
-
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
 
 public:
 

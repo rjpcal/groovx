@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Mon Oct  9 19:40:35 2000
+// written: Thu Oct 19 11:41:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,6 @@
 #include "tlist.h"
 #include "trialbase.h"
 
-#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/readutils.h"
 #include "io/writer.h"
@@ -174,51 +173,8 @@ DOTRACE("Block::removeAllTrials");
   itsImpl->itsCurrentTrialId = -1;
 }
 
-void Block::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("Block::legacySrlz");
-
-  IO::WriteUtils::writeValueSeq(
-       lwriter, "trialSeq",
-		 itsImpl->itsTrialSequence.begin(), itsImpl->itsTrialSequence.end());
-
-  lwriter->insertChar('\n');
-
-  lwriter->setFieldSeparator('\n');
-  lwriter->writeValue("randSeed", itsImpl->itsRandSeed);
-  lwriter->writeValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
-  lwriter->writeValue("verbose", itsImpl->itsVerbose);
-}
-
-void Block::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("Block::legacyDesrlz");
-
-  itsImpl->itsTrialSequence.clear();
-  IO::ReadUtils::template readValueSeq<int>(
-		 lreader, "trialSeq", std::back_inserter(itsImpl->itsTrialSequence));
-
-  lreader->readValue("randSeed", itsImpl->itsRandSeed);
-
-  lreader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
-  if (itsImpl->itsCurTrialSeqIdx < 0 ||
-		size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size()) {
-	 throw IO::ValueError(ioTag.c_str());
-  }
-  itsImpl->updateCurrentTrial();
-
-  lreader->readValue("verbose", itsImpl->itsVerbose);
-
-  // XXX I think this is not necessary
-  //  	 lreader->input().ignore(1, '\n');
-}
-
 void Block::readFrom(IO::Reader* reader) {
 DOTRACE("Block::readFrom");
-
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
 
   itsImpl->itsTrialSequence.clear();
   IO::ReadUtils::template readValueSeq<int>(
@@ -235,12 +191,6 @@ DOTRACE("Block::readFrom");
 
 void Block::writeTo(IO::Writer* writer) const {
 DOTRACE("Block::writeTo");
-
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
 
   IO::WriteUtils::writeValueSeq(
        writer, "trialSeq",

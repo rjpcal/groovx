@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Sep 29 16:04:06 2000
+// written: Thu Oct 19 11:38:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,12 +15,17 @@
 
 #include "bitmaprep.h"
 #include "io/ioproxy.h"
-#include "io/iolegacy.h"
+#include "io/reader.h"
+#include "io/writer.h"
 
 #define NO_TRACE
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
+
+namespace {
+  const IO::VersionId BITMAP_SERIAL_VERSION_ID = 2;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -47,48 +52,39 @@ DOTRACE("Bitmap::~Bitmap");
   delete itsImpl;
 }
 
-void Bitmap::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("Bitmap::legacySrlz");
-
-  itsImpl->writeTo(lwriter);
-
-  IO::ConstIoProxy<GrObj> baseclass(this);
-  lwriter->writeBaseClass("GrObj", &baseclass);
-}
-
-void Bitmap::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("Bitmap::legacyDesrlz");
-
-  itsImpl->readFrom(lreader);
-
-  IO::IoProxy<GrObj> baseclass(this);
-  lreader->readBaseClass("GrObj", &baseclass);
+IO::VersionId Bitmap::serialVersionId() const {
+DOTRACE("Bitmap::serialVersionId");
+  return BITMAP_SERIAL_VERSION_ID;
 }
 
 void Bitmap::readFrom(IO::Reader* reader) {
 DOTRACE("Bitmap::readFrom");
 
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
-
   itsImpl->readFrom(reader);
-  GrObj::readFrom(reader);
+
+  IO::VersionId svid = reader->readSerialVersionId(); 
+
+  if (svid < 2)
+	 GrObj::readFrom(reader);
+  else if (svid == 2)
+	 {
+		IO::IoProxy<GrObj> baseclass(this);
+		reader->readBaseClass("GrObj", &baseclass);
+	 }
 }
 
 void Bitmap::writeTo(IO::Writer* writer) const {
 DOTRACE("Bitmap::writeTo");
 
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
-
   itsImpl->writeTo(writer);
-  GrObj::writeTo(writer);
+
+  if (BITMAP_SERIAL_VERSION_ID < 2)
+	 GrObj::writeTo(writer);
+  else if (BITMAP_SERIAL_VERSION_ID == 2)
+	 {
+		IO::ConstIoProxy<GrObj> baseclass(this);
+		writer->writeBaseClass("GrObj", &baseclass);
+	 }
 }
 
 /////////////

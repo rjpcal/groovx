@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon Oct  9 17:09:30 2000
+// written: Thu Oct 19 11:39:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,6 @@
 #include "rect.h"
 
 #include "io/io.h"
-#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -161,52 +160,8 @@ DOTRACE("BitmapRep::init");
   itsImpl->itsData.clear();
 }
 
-void BitmapRep::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("BitmapRep::legacySrlz");
-
-  lwriter->setStringMode(IO::GETLINE_TAB);
-  lwriter->writeValue("itsFilename", itsImpl->itsFilename);
-
-  lwriter->writeValue("rasterX", itsImpl->itsRasterX);
-  lwriter->writeValue("rasterY", itsImpl->itsRasterY);
-  lwriter->writeValue("zoomX", itsImpl->itsZoomX);
-  lwriter->writeValue("zoomY", itsImpl->itsZoomY);
-  lwriter->writeValue("usingZoom", itsImpl->itsUsingZoom);
-  lwriter->writeValue("contrastFlip", itsImpl->itsContrastFlip);
-  lwriter->setFieldSeparator('\n');
-  lwriter->writeValue("verticalFlip", itsImpl->itsVerticalFlip);
-}
-
-void BitmapRep::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("BitmapRep::legacyDesrlz");
-
-  lreader->setStringMode(IO::GETLINE_TAB);
-  lreader->readValue("itsFilename", itsImpl->itsFilename);
-
-  lreader->readValue("rasterX", itsImpl->itsRasterX);
-  lreader->readValue("rasterY", itsImpl->itsRasterY);
-  lreader->readValue("zoomX", itsImpl->itsZoomX);
-  lreader->readValue("zoomY", itsImpl->itsZoomY);
-  lreader->readValue("usingZoom", itsImpl->itsUsingZoom);
-  lreader->readValue("contrastFlip", itsImpl->itsContrastFlip);
-  lreader->readValue("verticalFlip", itsImpl->itsVerticalFlip);
-
-  if ( itsImpl->itsFilename.empty() ) {
-	 clearBytes();
-  }
-  else {
-	 queuePbmFile(itsImpl->itsFilename.c_str());
-  }
-}
-
 void BitmapRep::readFrom(IO::Reader* reader) {
 DOTRACE("BitmapRep::readFrom");
-
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
 
   reader->readValue("filename", itsImpl->itsFilename);
   reader->readValue("rasterX", itsImpl->itsRasterX);
@@ -227,12 +182,6 @@ DOTRACE("BitmapRep::readFrom");
 
 void BitmapRep::writeTo(IO::Writer* writer) const {
 DOTRACE("BitmapRep::writeTo");
-
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
 
   writer->writeValue("filename", itsImpl->itsFilename);
   writer->writeValue("rasterX", itsImpl->itsRasterX);
