@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri May 12 16:47:42 2000
+// written: Wed May 17 13:59:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,6 +62,10 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 class Trial::Impl {
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+
 public:
   Impl(Trial*) :
 	 itsIdPairs(), itsResponses(), itsType(-1),
