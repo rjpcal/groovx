@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Sat May 19 11:54:42 2001
+// written: Sat May 19 14:50:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -118,10 +118,9 @@ public:
 	 }
   }
 
-  void inflateObject(const fixed_string& name, IO::IoObject* obj)
+  void inflateObject(const fixed_string& name, IdItem<IO::IoObject> obj)
   {
 	 DebugEvalNL(name);
-	 Precondition(obj != 0);
 
 	 itsLegacyVersionId = getLegacyVersionId();
 	 if (itsLegacyVersionId != -1) 
@@ -258,7 +257,7 @@ DOTRACE("IO::LegacyReader::readMaybeObject");
   IdItem<IO::IoObject> obj(IO::IoMgr::newIO(type));
   DebugEvalNL(obj->ioTypename());
 
-  itsImpl->inflateObject(name, obj.get());
+  itsImpl->inflateObject(name, obj);
 
   return obj;
 }
@@ -268,7 +267,7 @@ void IO::LegacyReader::readOwnedObject(const fixed_string& name,
 DOTRACE("IO::LegacyReader::readOwnedObject");
 
   itsImpl->readTypename(obj->ioTypename());
-  itsImpl->inflateObject(name, obj.get());
+  itsImpl->inflateObject(name, obj);
 }
 
 void IO::LegacyReader::readBaseClass(const fixed_string& baseClassName,
@@ -276,20 +275,21 @@ void IO::LegacyReader::readBaseClass(const fixed_string& baseClassName,
 DOTRACE("IO::LegacyReader::readBaseClass");
 
   itsImpl->readTypename(basePart->ioTypename());
-  itsImpl->inflateObject(baseClassName, basePart.get());
+  itsImpl->inflateObject(baseClassName, basePart);
 }
 
-IdItem<IO::IoObject> IO::LegacyReader::readRoot(IO::IoObject* root) {
+IdItem<IO::IoObject> IO::LegacyReader::readRoot(IO::IoObject* givenRoot) {
 DOTRACE("IO::LegacyReader::readRoot");
-  if (root == 0) {
+  if (givenRoot == 0) {
 	 return readObject("rootObject");
   }
-  DebugEvalNL(root->ioTypename());
 
-  itsImpl->readTypename(root->ioTypename());
-  itsImpl->inflateObject("rootObject", root);
+  DebugEvalNL(givenRoot->ioTypename());
 
-  return IdItem<IO::IoObject>(root);
+  IdItem<IO::IoObject> root(givenRoot);
+  readOwnedObject("rootObject", root);
+
+  return root;
 }
 
 ///////////////////////////////////////////////////////////////////////
