@@ -11,25 +11,28 @@ def sort(seq):
 # files and lists of files that they directly include
 
 class DirectIncludeMap:
-    includeRegex = re.compile('^\s*#\s*include\s*"(.*)"')
+    includeRegex = re.compile('^#\s*include\s*"(.*)"')
 
     def loadDirectIncludes(self, file):
-        self.itsIncludes[file] = []
+        includes = []
+        theRegex = self.includeRegex
+        projectPath = self.itsPath
         f = open(file, 'r')
         for line in f.readlines():
-            match = self.includeRegex.match(line)
+            match = theRegex.match(line)
             if not match:
                 continue
-            dependency = os.path.join(self.itsPath,match.group(1))
+            dependency = projectPath + match.group(1)
             if os.path.isfile(dependency):
-                self.itsIncludes[file].append(dependency)
+                includes.append(dependency)
             else:
                 print >>sys.stderr, 'in file: ', file,
                 print >>sys.stderr, ', missing dependency: ', dependency
         f.close()
-        
+        self.itsIncludes[file] = includes
+
     def __init__(self, path):
-        self.itsPath = path
+        self.itsPath = path + '/'
         self.itsIncludes = {}
 
     def get(self, file):
