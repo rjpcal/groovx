@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 24 18:13:53 2001
-// written: Sat Aug 10 11:11:38 2002
+// written: Sat Aug 10 11:32:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -148,7 +148,13 @@ DOTRACE("Sound::initSound");
 bool Sound::haveSound()
 {
 DOTRACE("Sound::haveSound");
-  return (ESD >= 0);
+#ifndef PPC
+  return (ESD > 0);
+#else
+  // for some strange reason, sounds seem to play ok under Mac OS X even if
+  // the esd_audio_open() call fails
+  return true;
+#endif
 }
 
 void Sound::closeSound()
