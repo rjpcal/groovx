@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Fri Sep 29 17:44:16 2000
+// written: Fri Sep 29 18:42:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -335,26 +335,14 @@ DOTRACE("MorphyFace::legacyDesrlz");
   lreader->eatWhitespace();
   int version = lreader->getLegacyVersionId();
 
-  if (version == 1) {
-	 char brace = lreader->readChar("leftBrace");
-	 if (brace != '{') {
-		IO::LogicError err(ioTag); err.appendMsg(" missing left-brace");
-		throw err;
-	 }
-  }
+  if (version == 1) lreader->grabLeftBrace();
 
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 lreader->readValueObj(PINFOS[i].name_cstr(),
 								  const_cast<Value&>(get(PINFOS[i].property())));
   }
 
-  if (version == 1) {
-	 char brace = lreader->readChar("rightBrace");
-	 if (brace != '}') {
-		IO::LogicError err(ioTag); err.appendMsg(" missing right-brace");
-		throw err;
-	 }
-  }
+  if (version == 1) lreader->grabRightBrace();
 
   Invariant(check());
 

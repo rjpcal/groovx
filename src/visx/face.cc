@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Fri Sep 29 17:43:55 2000
+// written: Fri Sep 29 18:41:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -121,26 +121,14 @@ DOTRACE("Face::legacyDesrlz");
   lreader->eatWhitespace();
   int version = lreader->getLegacyVersionId();
 
-  if (version == 1) {
-	 char brace = lreader->readChar("leftBrace");
-	 if (brace != '{') {
-		IO::LogicError err(ioTag.c_str()); err.appendMsg(" missing left-brace");
-		throw err;
-	 }
-  }
+  if (version == 1) lreader->grabLeftBrace();
 
   for (size_t i = 0; i < NUM_PINFOS; ++i) {
 	 lreader->readValueObj(PINFOS[i].name_cstr(),
 								  const_cast<Value&>(get(PINFOS[i].property())));
   }
 
-  if (version == 1) {
-	 char brace = lreader->readChar("rightBrace");
-	 if (brace != '}') {
-		IO::LogicError err(ioTag.c_str()); err.appendMsg(" missing right-brace");
-		throw err;
-	 }
-  }
+  if (version == 1) lreader->grabRightBrace();
 
   Invariant(check());
 
