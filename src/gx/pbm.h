@@ -3,7 +3,7 @@
 // pbm.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:06 1999
-// written: Fri Sep 24 18:24:36 1999
+// written: Fri Sep 24 18:41:23 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,8 @@ public:
   void setBytes(const vector<unsigned char>& bytes,
 					 int width, int height, int bits_per_pixel);
 
-  void writeStream(ostream& os) const;
+  void write(ostream& os) const;
+  void write(const char* filename) const;
 
 private:
   void init();
