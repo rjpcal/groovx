@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Mon Dec  6 15:30:25 1999
+// written: Tue Dec 14 19:40:33 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 #include <cmath>
 
 #include "error.h"
+#include "glcanvas.h"
 #include "gtext.h"
 #include "objlist.h"
 #include "position.h"
@@ -41,11 +42,18 @@ int TlistUtils::createPreview(Tlist& tlist,
 										int pixel_width,
 										int pixel_height) {
 DOTRACE("TlistUtils::createPreview");
-  double world_width, world_height, world_origin_x, world_origin_y;
+  Point<double> world_origin =
+	 GLCanvas::theCanvas().getWorldFromScreen( Point<int>(0, 0) );
 
-  GrObj::getWorldFromScreen(0, 0, world_origin_x, world_origin_y);
-  GrObj::getWorldFromScreen(pixel_width, pixel_height,
-									 world_width, world_height, false);
+  double world_origin_x = world_origin.x();
+  double world_origin_y = world_origin.y();
+
+  Point<double> world_extent =
+	 GLCanvas::theCanvas().getWorldFromScreen( Point<int>(pixel_width,
+																			pixel_height) );
+
+  double world_width = world_extent.x();
+  double world_height = world_extent.y();
 
   world_width -= world_origin_x;
   world_height -= world_origin_y;
