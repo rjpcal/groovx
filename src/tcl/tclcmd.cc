@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Mar  8 11:06:34 2000
+// written: Wed Mar  8 15:39:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "demangle.h"
 #include "errmsg.h"
 
+#include <tcl.h>
 #include <exception>
 #include <typeinfo>
 #include <string>
@@ -139,11 +140,6 @@ DOTRACE("Tcl::TclCmd::getCstringFromArg");
   return Tcl_GetString(itsObjv[argn]);
 }
 
-string Tcl::TclCmd::getStringFromArg(int argn) {
-DOTRACE("Tcl::TclCmd::getStringFromArg");
-  return Tcl_GetString(itsObjv[argn]);
-}
-
 template <>
 void Tcl::TclCmd::getValFromObj<int>(Tcl_Obj* obj, int& val) {
   if ( Tcl_GetIntFromObj(itsInterp, obj, &val) != TCL_OK ) throw TclError();
@@ -176,12 +172,14 @@ void Tcl::TclCmd::getValFromObj<string>(Tcl_Obj* obj,
   val = Tcl_GetString(obj);
 }
 
-void Tcl::TclCmd::returnVal(const Value& val) {
-DOTRACE("Tcl::TclCmd::returnVal");
-  TclValue return_val(itsInterp, val);
-  Tcl_SetObjResult(itsInterp, return_val.getObj());
-  itsResult = TCL_OK;
-};
+void Tcl::TclCmd::safeSplitList(Tcl_Obj* obj, int* count_return,
+										  Tcl_Obj*** elements_return) {
+  if ( Tcl_ListObjGetElements(itsInterp, obj, count_return, elements_return)
+		 != TCL_OK)
+	 {
+		throw TclError();
+	 }
+}
 
 void Tcl::TclCmd::returnVoid() {
 DOTRACE("Tcl::TclCmd::returnVoid");
@@ -224,14 +222,15 @@ DOTRACE("Tcl::TclCmd::returnCstring");
   itsResult = TCL_OK;
 }
 
-void Tcl::TclCmd::returnString(const string& val) {
-DOTRACE("Tcl::TclCmd::returnString");
-  Tcl_SetObjResult(itsInterp, Tcl_NewStringObj(val.c_str(), -1));
+void Tcl::TclCmd::returnValue(const Value& val) {
+DOTRACE("Tcl::TclCmd::returnValue");
+  TclValue return_val(itsInterp, val);
+  Tcl_SetObjResult(itsInterp, return_val.getObj());
   itsResult = TCL_OK;
-}
+};
 
-void Tcl::TclCmd::lappendVal(const Value& val) {
-DOTRACE("Tcl::TclCmd::lappendVal");
+void Tcl::TclCmd::lappendValue(const Value& val) {
+DOTRACE("Tcl::TclCmd::lappendValue");
   Tcl_Obj* result = Tcl_GetObjResult(itsInterp);
   TclValue list_element(itsInterp, val);
   int cmd_result = Tcl_ListObjAppendElement(itsInterp, result,
@@ -239,51 +238,43 @@ DOTRACE("Tcl::TclCmd::lappendVal");
   if (cmd_result != TCL_OK) throw TclError();
 }
 
-void Tcl::TclCmd::lappendVal(int val) {
-DOTRACE("Tcl::TclCmd::lappendVal");
+void Tcl::TclCmd::lappendInt(int val) {
+DOTRACE("Tcl::TclCmd::lappendInt");
   Tcl_Obj* result = Tcl_GetObjResult(itsInterp); 
   int cmd_result = Tcl_ListObjAppendElement(itsInterp, result, 
 														  Tcl_NewIntObj(val));
   if (cmd_result != TCL_OK) throw TclError();
 }
 
-void Tcl::TclCmd::lappendVal(long val) {
-DOTRACE("Tcl::TclCmd::lappendVal");
+void Tcl::TclCmd::lappendLong(long val) {
+DOTRACE("Tcl::TclCmd::lappendLong");
   Tcl_Obj* result = Tcl_GetObjResult(itsInterp);
   int cmd_result = Tcl_ListObjAppendElement(itsInterp, result,
 														  Tcl_NewLongObj(val));
   if (cmd_result != TCL_OK) throw TclError();
 }
 
-void Tcl::TclCmd::lappendVal(bool val) {
-DOTRACE("Tcl::TclCmd::lappendVal");
+void Tcl::TclCmd::lappendBool(bool val) {
+DOTRACE("Tcl::TclCmd::lappendBool");
   Tcl_Obj* result = Tcl_GetObjResult(itsInterp); 
   int cmd_result = Tcl_ListObjAppendElement(itsInterp, result, 
 														  Tcl_NewBooleanObj(val));
   if (cmd_result != TCL_OK) throw TclError();
 }
 
-void Tcl::TclCmd::lappendVal(double val) {
-DOTRACE("Tcl::TclCmd::lappendVal");
+void Tcl::TclCmd::lappendDouble(double val) {
+DOTRACE("Tcl::TclCmd::lappendDouble");
   Tcl_Obj* result = Tcl_GetObjResult(itsInterp); 
   int cmd_result = Tcl_ListObjAppendElement(itsInterp, result,
 														  Tcl_NewDoubleObj(val));
   if (cmd_result != TCL_OK) throw TclError();
 }
 
-void Tcl::TclCmd::lappendVal(const char* val) {
-DOTRACE("Tcl::TclCmd::lappendVal");
+void Tcl::TclCmd::lappendCstring(const char* val) {
+DOTRACE("Tcl::TclCmd::lappendCstring");
   Tcl_Obj* result = Tcl_GetObjResult(itsInterp); 
   int cmd_result = Tcl_ListObjAppendElement(itsInterp, result,
 														  Tcl_NewStringObj(val, -1));
-  if (cmd_result != TCL_OK) throw TclError();
-}
-
-void Tcl::TclCmd::lappendVal(const string& val) {
-DOTRACE("Tcl::TclCmd::lappendVal");
-  Tcl_Obj* result = Tcl_GetObjResult(itsInterp); 
-  int cmd_result = Tcl_ListObjAppendElement(itsInterp, result,
-														  Tcl_NewStringObj(val.c_str(), -1));
   if (cmd_result != TCL_OK) throw TclError();
 }
 
