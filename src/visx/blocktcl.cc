@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Thu Oct 26 17:46:03 2000
+// written: Fri Oct 27 13:58:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ namespace BlockTcl {
 		  if (id < first_trial) continue;
 		  if (testing_last_trial && (id > last_trial)) continue;
 
-		  block->addTrial(MaybeIdItem<TrialBase>(id), repeat);
+		  block->addTrial(IdItem<TrialBase>(id), repeat);
 		}
   }
 }
@@ -109,7 +109,7 @@ protected:
 			itr != end;
 			++itr)
 		{
-		  block->addTrial(MaybeIdItem<TrialBase>(*itr), repeat);
+		  block->addTrial(IdItem<TrialBase>(*itr), repeat);
 		}
   }
 };
