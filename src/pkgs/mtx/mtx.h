@@ -235,26 +235,42 @@ typedef stride_iterator_base<const double> mtx_const_iter;
 /// Represents a one dimensional sub-array of a matrix.
 class slice
 {
-protected:
-  data_holder& m_data_source;
-  ptrdiff_t m_offset;
-  int m_stride;
-  int m_nelems;
+private:
+  data_holder&          m_data_source;
+  ptrdiff_t    const    m_offset;
+  int          const    m_stride;
+  int          const    m_nelems;
 
-  inline const double* data_start() const;
-  inline double* data_start_nc();
+  const double* data_start() const
+    { return m_data_source.storage() + m_offset; }
+
+  double* data_start_nc()
+    { return m_data_source.storage_nc() + m_offset; }
+
   ptrdiff_t data_offset(int i) const { return m_stride*i; }
   const double* address(int i) const { return data_start() + data_offset(i); }
 
   ptrdiff_t storage_offset(int i) const { return m_offset + m_stride*i; }
 
-  friend class mtx; // so that mtx can get at slice's constructors
+  slice(const data_holder& src, ptrdiff_t offset, int s, int n)
+    :
+    // by doing this const_cast, slice is promising to uphold the const
+    // correctness of the data_holder
+    m_data_source(const_cast<data_holder&>(src)),
+    m_offset(offset),
+    m_stride(s),
+    m_nelems(n)
+  {}
 
-  inline slice(const data_holder& src, ptrdiff_t offset, int s, int n);
+  friend class mtx; // so that mtx can get at slice's constructor
 
 public:
 
   // Default copy constructor OK
+
+  // No "default" assignment operator, since that would be assignment
+  // of reference; instead we have an operator=() that does assignment
+  // of value; see below
 
   //
   // Data access
@@ -1039,29 +1055,6 @@ public:
 private:
   friend class slice;
 };
-
-//  #######################################################
-//  #######################################################
-//  #######################################################
-//  =======================================================
-//  Inline member function definitions
-
-
-inline const double* slice::data_start() const
-{ return m_data_source.storage() + m_offset; }
-
-inline double* slice::data_start_nc()
-{ return m_data_source.storage_nc() + m_offset; }
-
-inline slice::slice(const data_holder& src, ptrdiff_t offset,
-                    int s, int n)
-  :
-  // by doing this const_cast, slice is promising to uphold the const
-  // correctness of the data_holder
-  m_data_source(const_cast<data_holder&>(src)),
-  m_offset(offset),
-  m_stride(s),
-  m_nelems(n) {}
 
 
 
