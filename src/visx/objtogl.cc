@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Mon Aug 13 15:24:01 2001
+// written: Thu Aug 16 09:35:02 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -184,6 +184,7 @@ public:
     def( "setMinRect", "left top right bottom", &ObjTogl::setMinRect );
     def( "show", "toglet_id trial_id", &ObjTogl::show );
 
+    defSetter("allowRefresh", &Toglet::allowRefresh);
     defAction("clearscreen", &Toglet::clearscreen);
     defAction("destroy", &Toglet::destroyWidget);
     defSetter("dumpEps", "item_id(s) filename", &Toglet::writeEpsFile);
