@@ -3,7 +3,7 @@
 // tlistwidget.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:46:38 1999
-// written: Tue Oct 17 17:50:08 2000
+// written: Mon Oct 23 12:01:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ public:
 	 try {
 		itsDrawItem.refresh();
 	 }
-	 catch(InvalidIdError&) {
+	 catch(...) {
 		setVisibility(false);
 		throw;
 	 }
@@ -95,7 +95,7 @@ DOTRACE("TlistWidget::Impl::safeDrawTrial");
 	 itsUndrawItem = itsDrawItem;
 	 return;
   }
-  catch (InvalidIdError& err) {
+  catch (ErrorWithMsg& err) {
 	 DebugEvalNL(err.msg_cstr());
   }
 
@@ -114,7 +114,7 @@ DOTRACE("TlistWidget::Impl::display");
 	 try {
 		itsUndrawItem->trUndraw(canvas, false);
 	 }
-	 catch (InvalidIdError&) {
+	 catch (...) {
 		canvas.clearColorBuffer();
 	 }
   }
