@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Feb 17 13:34:40 2000
-// written: Fri Sep  7 16:47:51 2001
+// written: Fri Sep  7 17:36:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,20 +19,14 @@
 
 #include "util/tracer.h"
 
-namespace
-{
-  void traceOn(Util::Tracer& tracer) { tracer.on(); }
-  void traceOff(Util::Tracer& tracer) { tracer.off(); }
-  void traceToggle(Util::Tracer& tracer) { tracer.toggle(); }
-  bool traceStatus(Util::Tracer& tracer) { return tracer.status(); }
-}
+using namespace Util;
 
-void Tcl::defTracing(Tcl::Pkg* pkg, Util::Tracer& tracer)
+void Tcl::defTracing(Tcl::Pkg* pkg, Tracer& tracer)
 {
-  pkg->def( "traceOn", "", Util::bindFirst(traceOn, tracer) );
-  pkg->def( "traceOff", "", Util::bindFirst(traceOff, tracer) );
-  pkg->def( "traceToggle", "", Util::bindFirst(traceToggle, tracer) );
-  pkg->def( "traceStatus", "", Util::bindFirst(traceStatus, tracer) );
+  pkg->def( "traceOn",     "", bindFirst(memFunc(&Tracer::on), &tracer) );
+  pkg->def( "traceOff",    "", bindFirst(memFunc(&Tracer::off), &tracer) );
+  pkg->def( "traceToggle", "", bindFirst(memFunc(&Tracer::toggle), &tracer) );
+  pkg->def( "traceStatus", "", bindFirst(memFunc(&Tracer::status), &tracer) );
 }
 
 static const char vcid_tracertcl_cc[] = "$Header$";
