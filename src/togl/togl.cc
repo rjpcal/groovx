@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed May 24 08:20:57 2000
+// written: Wed May 24 08:46:52 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -99,11 +99,16 @@ public:
   int makeWindowExist();
 
 private:
+//   void buildAttribList(int* attrib_list, int ci_depth, int dbl_flag);
+  void setupGLXContext(bool directCtx);
+  Window findParent();
+  Colormap findColormap();
   void setupStackingOrder();
   void setupOverlayIfNeeded();
   void issueConfigureNotify();
   void checkDblBufferSnafu();
-  void setupEPS();
+  void setupEpsMaps();
+  void freeEpsMaps();
 
 public:
 
@@ -142,35 +147,35 @@ public:
   int itsStereoFlag;
   int itsAuxNumber;
   int itsIndirect;
-  char *itsShareList;             /* name (ident) of Togl to share dlists with */
-  char *itsShareContext;          /* name (ident) to share OpenGL context with */
+  char* itsShareList;             /* name (ident) of Togl to share dlists with */
+  char* itsShareContext;          /* name (ident) to share OpenGL context with */
 
-  char *itsIdent;				/* User's identification string */
+  char* itsIdent;				/* User's identification string */
   ClientData itsClientData;		/* Pointer to user data */
 
   GLboolean itsUpdatePending;		/* Should normal planes be redrawn? */
 
-  Togl_Callback *itsCreateProc;		/* Callback when widget is created */
-  Togl_Callback *itsDisplayProc;		/* Callback when widget is rendered */
-  Togl_Callback *itsReshapeProc;		/* Callback when window size changes */
-  Togl_Callback *itsDestroyProc;		/* Callback when widget is destroyed */
-  Togl_Callback *itsTimerProc;		/* Callback when widget is idle */
+  Togl_Callback* itsCreateProc;		/* Callback when widget is created */
+  Togl_Callback* itsDisplayProc;		/* Callback when widget is rendered */
+  Togl_Callback* itsReshapeProc;		/* Callback when window size changes */
+  Togl_Callback* itsDestroyProc;		/* Callback when widget is destroyed */
+  Togl_Callback* itsTimerProc;		/* Callback when widget is idle */
 
   /* Overlay stuff */
   GLXContext itsOverlayCtx;		/* Overlay planes OpenGL context */
   Window itsOverlayWindow;		/* The overlay window, or 0 */
-  Togl_Callback *itsOverlayDisplayProc;	/* Overlay redraw proc */
+  Togl_Callback* itsOverlayDisplayProc;	/* Overlay redraw proc */
   GLboolean itsOverlayUpdatePending;	/* Should overlay be redrawn? */
   Colormap itsOverlayCmap;		/* colormap for overlay is created */
   int itsOverlayTransparentPixel;		/* transparent pixel */
   int itsOverlayIsMapped;
 
   /* for DumpToEpsFile: Added by Miguel A. de Riera Pasenau 10.01.1997 */
-  XVisualInfo *itsVisInfo;		/* Visual info of the current */
+  XVisualInfo* itsVisInfo;		/* Visual info of the current */
   /* context needed for DumpToEpsFile */
-  GLfloat *itsEpsRedMap;		/* Index2RGB Maps for Color index modes */
-  GLfloat *itsEpsGreenMap;
-  GLfloat *itsEpsBlueMap;
+  GLfloat* itsEpsRedMap;		/* Index2RGB Maps for Color index modes */
+  GLfloat* itsEpsGreenMap;
+  GLfloat* itsEpsBlueMap;
   GLint itsEpsMapSize;            	/* = Number of indices in our Togl */
 };
 
@@ -2311,6 +2316,9 @@ DOTRACE("Togl::makeWindowExist");
 	 /* It may take a few tries to get a visual */
 	 for (int attempt=0; attempt<MAX_ATTEMPTS; attempt++) {
 		int attrib_count = 0;
+
+// 		buildAttribList(attrib_list, ci_depths[attempt], dbl_flags[attempt]);
+
 		attrib_list[attrib_count++] = GLX_USE_GL;
 		if (itsRgbaFlag) {
 		  /* RGB[A] mode */
@@ -2327,18 +2335,12 @@ DOTRACE("Togl::makeWindowExist");
 		  }
 
 		  /* for EPS Output */
-		  if ( itsEpsRedMap) free( ( char *)itsEpsRedMap);
-		  if ( itsEpsGreenMap) free( ( char *)itsEpsGreenMap);
-		  if ( itsEpsBlueMap) free( ( char *)itsEpsBlueMap);
-		  itsEpsRedMap = itsEpsGreenMap = itsEpsBlueMap = NULL;
-		  itsEpsMapSize = 0;
+		  freeEpsMaps();
 		}
 		else {
 		  /* Color index mode */
-		  int depth;
 		  attrib_list[attrib_count++] = GLX_BUFFER_SIZE;
-		  depth = ci_depths[attempt];
-		  attrib_list[attrib_count++] = depth;
+		  attrib_list[attrib_count++] = ci_depths[attempt];
 		}
 		if (itsDepthFlag) {
 		  attrib_list[attrib_count++] = GLX_DEPTH_SIZE;
@@ -2394,21 +2396,7 @@ DOTRACE("Togl::makeWindowExist");
 	 /*
 	  * Create a new OpenGL rendering context.
 	  */
-	 if (itsShareList) {
-		/* share display lists with existing this widget */
-		Togl* shareWith = FindTogl(itsShareList);
-		GLXContext shareCtx;
-		if (shareWith)
-		  shareCtx = shareWith->itsGLXContext;
-		else
-		  shareCtx = None;
-		itsGLXContext = glXCreateContext(itsDisplay, itsVisInfo,
-													shareCtx, directCtx);
-	 }
-	 else {
-		/* don't share display lists */
-		itsGLXContext = glXCreateContext(itsDisplay, itsVisInfo, None, directCtx);
-	 }
+	 setupGLXContext(directCtx);
 
 	 if (itsGLXContext == NULL) {
 		return TCL_ERR(itsInterp, "could not create rendering context");
@@ -2417,50 +2405,7 @@ DOTRACE("Togl::makeWindowExist");
   } // end else clause
 
 
-  /* Find parent of window */
-  /* Necessary for creation */
-  Window parent;
-  if ((winPtr->parentPtr == NULL) || (winPtr->flags & TK_TOP_LEVEL)) {
-	 parent = XRootWindow(winPtr->display, winPtr->screenNum);
-  }
-  else {
-	 if (winPtr->parentPtr->window == None) {
-		Tk_MakeWindowExist((Tk_Window) winPtr->parentPtr);
-	 }
-	 parent = winPtr->parentPtr->window;
-  }
-
-
-  /*
-	* find a colormap
-	*/
-  int scrnum = DefaultScreen(itsDisplay);
-  Colormap cmap;
-  if (itsRgbaFlag) {
-	 /* Colormap for RGB mode */
-	 cmap = get_rgb_colormap( itsDisplay, scrnum, itsVisInfo );
-  }
-  else {
-	 /* Colormap for CI mode */
-	 if (itsPrivateCmapFlag) {
-		/* need read/write colormap so user can store own color entries */
-		cmap = XCreateColormap(itsDisplay,
-									  RootWindow(itsDisplay, itsVisInfo->screen),
-									  itsVisInfo->visual, AllocAll);
-	 }
-	 else {
-		if (itsVisInfo->visual==DefaultVisual(itsDisplay, scrnum)) {
-		  /* share default/root colormap */
-		  cmap = DefaultColormap(itsDisplay,scrnum);
-		}
-		else {
-		  /* make a new read-only colormap */
-		  cmap = XCreateColormap(itsDisplay,
-										 RootWindow(itsDisplay, itsVisInfo->screen),
-										 itsVisInfo->visual, AllocNone);
-		}
-	 }
-  }
+  Colormap cmap = findColormap();
 
   /* Make sure Tk knows to switch to the new colormap when the cursor
 	* is over this window when running in color index mode.
@@ -2468,6 +2413,9 @@ DOTRACE("Togl::makeWindowExist");
   /*   Tk_SetWindowVisual(itsTkWin, itsVisInfo->visual, itsVisInfo->depth, cmap);*/
 										  /* Rob's */
   Tk_SetWindowColormap(itsTkWin, cmap);
+
+  // Find parent of window (necessary for creation)
+  Window parent = findParent();
 
   XSetWindowAttributes swa;
   swa.colormap = cmap;
@@ -2510,9 +2458,82 @@ DOTRACE("Togl::makeWindowExist");
   checkDblBufferSnafu();
 
   // for EPS Output
-  setupEPS();
+  setupEpsMaps();
 
   return TCL_OK;
+
+} // end Togl::makeWindowExist()
+
+// void Togl::buildAttribList(int* attrib_list, int ci_depth, int dbl_flag) {
+// DOTRACE("Togl::buildAttribList");
+// }
+
+void Togl::setupGLXContext(bool directCtx) {
+DOTRACE("Togl::setupGLXContext");
+  if (itsShareList) {
+	 /* share display lists with existing this widget */
+	 Togl* shareWith = FindTogl(itsShareList);
+	 GLXContext shareCtx;
+	 if (shareWith)
+		shareCtx = shareWith->itsGLXContext;
+	 else
+		shareCtx = None;
+	 itsGLXContext = glXCreateContext(itsDisplay, itsVisInfo,
+												 shareCtx, directCtx);
+  }
+  else {
+	 /* don't share display lists */
+	 itsGLXContext = glXCreateContext(itsDisplay, itsVisInfo, None, directCtx);
+  }
+}
+
+Window Togl::findParent() {
+DOTRACE("Togl::findParent");
+
+  TkWindow *winPtr = (TkWindow *) itsTkWin;
+
+  if ((winPtr->parentPtr == NULL) || (winPtr->flags & TK_TOP_LEVEL)) {
+	 return XRootWindow(winPtr->display, winPtr->screenNum);
+  }
+  // else...
+  if (winPtr->parentPtr->window == None) {
+	 Tk_MakeWindowExist((Tk_Window) winPtr->parentPtr);
+  }
+  return winPtr->parentPtr->window;
+}
+
+Colormap Togl::findColormap() {
+DOTRACE("Togl::findColormap");
+
+  int scrnum = DefaultScreen(itsDisplay);
+  Colormap cmap;
+  if (itsRgbaFlag) {
+	 /* Colormap for RGB mode */
+	 cmap = get_rgb_colormap( itsDisplay, scrnum, itsVisInfo );
+  }
+  else {
+	 /* Colormap for CI mode */
+	 if (itsPrivateCmapFlag) {
+		/* need read/write colormap so user can store own color entries */
+		cmap = XCreateColormap(itsDisplay,
+									  RootWindow(itsDisplay, itsVisInfo->screen),
+									  itsVisInfo->visual, AllocAll);
+	 }
+	 else {
+		if (itsVisInfo->visual==DefaultVisual(itsDisplay, scrnum)) {
+		  /* share default/root colormap */
+		  cmap = DefaultColormap(itsDisplay,scrnum);
+		}
+		else {
+		  /* make a new read-only colormap */
+		  cmap = XCreateColormap(itsDisplay,
+										 RootWindow(itsDisplay, itsVisInfo->screen),
+										 itsVisInfo->visual, AllocNone);
+		}
+	 }
+  }
+
+  return cmap;
 }
 
 void Togl::setupStackingOrder() {
@@ -2618,8 +2639,8 @@ DOTRACE("Togl::checkDblBufferSnafu");
   }
 }
 
-void Togl::setupEPS() {
-DOTRACE("Togl::setupEPS");
+void Togl::setupEpsMaps() {
+DOTRACE("Togl::setupEpsMaps");
   if ( !itsRgbaFlag ) {
 	 GLint index_bits;
 	 glGetIntegerv( GL_INDEX_BITS, &index_bits );
@@ -2635,6 +2656,15 @@ DOTRACE("Togl::setupEPS");
 		itsEpsBlueMap = ( GLfloat *)calloc( index_size, sizeof( GLfloat));
 	 }
   }
+}
+
+void Togl::freeEpsMaps() {
+DOTRACE("Togl::freeEpsMaps");
+  if (itsEpsRedMap) free( ( char *)itsEpsRedMap);
+  if (itsEpsGreenMap) free( ( char *)itsEpsGreenMap);
+  if (itsEpsBlueMap) free( ( char *)itsEpsBlueMap);
+  itsEpsRedMap = itsEpsGreenMap = itsEpsBlueMap = NULL;
+  itsEpsMapSize = 0;
 }
 
 static const char vcid_togl_cc[] = "$Header$";
