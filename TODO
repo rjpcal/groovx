@@ -37,7 +37,11 @@
    --> used in gltcl.cc::checkGL (passed to throwIfError())
    --> used in gltcl.cc::loadMatrix (passed to throwIfError())
    --> used in gltcl.cc::pixelCheckSum (passed to grabPixels())
-   --> used in TlistUtils::createPreview (passed to doCreatePreview())
+
+   [x] used in TlistUtils::createPreview (passed to doCreatePreview())
+       called from pkg->def (tlisttcl.cc)
+
+** Toglet::getCurrent()
 
 ** ObjFactory::theOne()
 

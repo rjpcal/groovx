@@ -4617,3 +4617,14 @@
   src/gfx/recttcl
 
 * (done 20-Oct-2004) move sound stuff into src/media/
+
+* (23-Oct-2004) fix problem with invalid rect in Tlist::createPreview
+
+  e.g. set f [newarr Face 25]
+  set p [Tlist::createPreview $f {-1.5 1.5 -1.5 1.5}]
+  see $p
+
+  OK... this invalid rect caused bogus arithmetic in
+  doCreatePreview(), causing us to try glScale()'ing with a singular
+  scale factor. Fixed that problem with arg-checking; now trying to
+  robustify geom::rect.
