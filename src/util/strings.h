@@ -249,6 +249,19 @@ public:
 
   void readline(STD_IO::istream& is, char eol);
 
+  //
+  // Operators -- note that these are member functions rather than free
+  // functions in order to avoid problems with buggy compilers that are too
+  // loose about implicitly converting anything to an fstring to match an ==
+  // or != call.
+  //
+
+  bool operator==(const char* rhs) const    { return equals(rhs); }
+  bool operator==(const fstring& rhs) const { return equals(rhs); }
+
+  bool operator!=(const char* rhs) const    { return !equals(rhs); }
+  bool operator!=(const fstring& rhs) const { return !equals(rhs); }
+
 private:
   void do_append(const char& c)
   { append_text(1, &c); }
@@ -301,22 +314,10 @@ namespace Util
 inline bool operator==(const char* lhs, const fstring& rhs)
   { return rhs.equals(lhs); }
 
-inline bool operator==(const fstring& lhs, const char* rhs)
-  { return lhs.equals(rhs); }
-
-inline bool operator==(const fstring& lhs, const fstring& rhs)
-  { return lhs.equals(rhs); }
-
 // operator !=
 
 inline bool operator!=(const char* lhs, const fstring& rhs)
   { return !rhs.equals(lhs); }
-
-inline bool operator!=(const fstring& lhs, const char* rhs)
-  { return !lhs.equals(rhs); }
-
-inline bool operator!=(const fstring& lhs, const fstring& rhs)
-  { return !lhs.equals(rhs); }
 
 ///////////////////////////////////////////////////////////////////////
 //
