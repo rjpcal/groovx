@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:48:47 2001
-// written: Wed Jul 18 18:14:35 2001
+// written: Thu Jul 19 10:33:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,11 +17,13 @@
 
 #include "rect.h"
 
-#include <GL/gl.h>
+#include "gwt/canvas.h"
+#include "gx/vec3.h"
 
 #include "util/trace.h"
 
-void GrObjAligner::doAlignment(const Rect<double>& native) const
+void GrObjAligner::doAlignment(GWT::Canvas& canvas,
+                               const Rect<double>& native) const
 {
 DOTRACE("GrObjAligner::doAlignment");
 
@@ -32,7 +34,9 @@ DOTRACE("GrObjAligner::doAlignment");
 
   center -= native.center();
 
-  glTranslated(center.x(), center.y(), 0.0);
+  Vec3<double> vec(center.x(), center.y(), 0.0);
+
+  canvas.translate(vec);
 }
 
 static const char vcid_grobjaligner_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:01:45 2001
-// written: Wed Jul 18 18:02:37 2001
+// written: Thu Jul 19 10:32:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,21 +15,18 @@
 
 #include "grobjscaler.h"
 
-#include <GL/gl.h>
+#include "gwt/canvas.h"
+#include "gx/vec3.h"
 
 #include "util/trace.h"
 
-void GrObjScaler::doScaling() const
+void GrObjScaler::doScaling(GWT::Canvas& canvas) const
 {
 DOTRACE("GrObjScaler::doScaling");
   if (GrObj::NATIVE_SCALING == itsMode) return;
 
-  switch (itsMode) {
-  case GrObj::MAINTAIN_ASPECT_SCALING:
-  case GrObj::FREE_SCALING:
-    glScaled(itsWidthFactor, itsHeightFactor, 1.0);
-    break;
-  }
+  Vec3<double> vec(itsWidthFactor, itsHeightFactor, 1.0);
+  canvas.scale(vec);
 }
 
 void GrObjScaler::setMode(GrObj::ScalingMode new_mode)

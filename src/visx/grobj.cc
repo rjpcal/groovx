@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Jul 18 18:27:52 2001
+// written: Thu Jul 19 11:59:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,13 +64,13 @@ const int GrObj::ARBITRARY_ON_CENTER;
 // GrObj default constructor
 GrObj::GrObj(GrObj::RenderMode render_mode,
              GrObj::RenderMode unrender_mode) :
-  itsImpl(new Impl(this))
+  itsImpl(new GrObjImpl(this))
 {
 DOTRACE("GrObj::GrObj");
 
   DebugEval((void*)this); DebugEvalNL((void*)itsImpl);
 
-  setRenderMode(render_mode);
+  itsImpl->itsRenderer.setMode(render_mode);
   setUnRenderMode(unrender_mode);
 
   // The GrObj needs to observe itself in order to update its display
@@ -91,7 +91,7 @@ DOTRACE("GrObj::~GrObj");
 }
 
 IO::VersionId GrObj::serialVersionId() const {
-DOTRACE("GrObj::Impl::serialVersionId");
+DOTRACE("GrObj::serialVersionId");
   return itsImpl->serialVersionId();
 }
 
@@ -114,14 +114,14 @@ DOTRACE("GrObj::writeTo");
 
 bool GrObj::getBBVisibility() const {
 DOTRACE("GrObj::getBBVisibility");
-  return itsImpl->getBBVisibility();
+  return itsImpl->itsBB.isVisible();
 }
 
-void GrObj::getBoundingBox(const GWT::Canvas& canvas, Rect<double>& bbox) const
+void GrObj::getBoundingBox(GWT::Canvas& canvas, Rect<double>& bbox) const
 {
 DOTRACE("GrObj::getBoundingBox");
 
-  itsImpl->getBoundingBox(canvas, bbox);
+  bbox = itsImpl->itsBB.withBorder(grGetBoundingBox(), canvas);
 }
 
 GrObj::ScalingMode GrObj::getScalingMode() const
@@ -132,12 +132,12 @@ DOTRACE("GrObj::getScalingMode");
 
 double GrObj::getWidth() const {
 DOTRACE("GrObj::getWidth");
-  return itsImpl->finalWidth();
+  return itsImpl->itsScaler.scaledWidth(grGetBoundingBox());
 }
 
 double GrObj::getHeight() const {
 DOTRACE("GrObj::getHeight");
-  return itsImpl->finalHeight();
+  return itsImpl->itsScaler.scaledHeight(grGetBoundingBox());
 }
 
 double GrObj::getAspectRatio() const {
@@ -147,7 +147,7 @@ DOTRACE("GrObj::getAspectRatio");
 
 double GrObj::getMaxDimension() const {
 DOTRACE("GrObj::getMaxDimension");
-  return itsImpl->getMaxDimension();
+  return itsImpl->itsScaler.scaledMaxDim(grGetBoundingBox());
 }
 
 GrObj::AlignmentMode GrObj::getAlignmentMode() const {
@@ -165,13 +165,18 @@ DOTRACE("GrObj::getCenterY");
   return itsImpl->itsAligner.itsCenter.y();
 }
 
+int GrObj::getPixelBorder() const {
+DOTRACE("GrObj::getPixelBorder");
+  return itsImpl->itsBB.pixelBorder();
+}
+
 int GrObj::category() const {
 DOTRACE("GrObj::category");
   return itsImpl->category();
 }
 
 GrObj::RenderMode GrObj::getRenderMode() const {
-  return itsImpl->getRenderMode();
+  return itsImpl->itsRenderer.getMode();
 }
 
 GrObj::RenderMode GrObj::getUnRenderMode() const {
@@ -185,11 +190,12 @@ DOTRACE("GrObj::getUnRenderMode");
 
 void GrObj::setBitmapCacheDir(const char* dirname) {
 DOTRACE("GrObj::setBitmapCacheDir");
-  Impl::setBitmapCacheDir(dirname);
+  GrObjRenderer::BITMAP_CACHE_DIR = dirname;
 }
 
-void GrObj::setBBVisibility(bool visibility) {
-  itsImpl->setBBVisibility(visibility);
+void GrObj::setBBVisibility(bool visibility)
+{
+  itsImpl->itsBB.setVisible(visibility);
 }
 
 void GrObj::setScalingMode(ScalingMode val)
@@ -203,14 +209,14 @@ DOTRACE("GrObj::setScalingMode");
 void GrObj::setWidth(double val) {
 DOTRACE("GrObj::setWidth");
 
-  itsImpl->setWidth(val);
+  itsImpl->itsScaler.setWidth(val, grGetBoundingBox());
   sendStateChangeMsg();
 }
 
 void GrObj::setHeight(double val) {
 DOTRACE("GrObj::setHeight");
 
-  itsImpl->setHeight(val);
+  itsImpl->itsScaler.setHeight(val, grGetBoundingBox());
   sendStateChangeMsg();
 }
 
@@ -224,7 +230,7 @@ DOTRACE("GrObj::setAspectRatio");
 void GrObj::setMaxDimension(double val) {
 DOTRACE("GrObj::setMaxDimension");
 
-  itsImpl->setMaxDimension(val);
+  itsImpl->itsScaler.setMaxDim(val, grGetBoundingBox());
   sendStateChangeMsg();
 }
 
@@ -249,6 +255,11 @@ DOTRACE("GrObj::setCenterY");
   sendStateChangeMsg();
 }
 
+void GrObj::setPixelBorder(int pixels) {
+DOTRACE("GrObj::setPixelBorder");
+  itsImpl->itsBB.setPixelBorder(pixels);
+}
+
 void GrObj::setCategory(int val) {
 DOTRACE("GrObj::setCategory");
   itsImpl->setCategory(val);
@@ -257,12 +268,7 @@ DOTRACE("GrObj::setCategory");
 void GrObj::setRenderMode(GrObj::RenderMode mode) {
 DOTRACE("GrObj::setRenderMode");
 
-#ifdef I686
-  // display lists don't work at present with i686/linux/mesa
-  if (mode == GLCOMPILE) mode = DIRECT_RENDER;
-#endif
-
-  itsImpl->setRenderMode(mode);
+  itsImpl->itsRenderer.setMode(mode);
   sendStateChangeMsg();
 }
 
@@ -280,10 +286,11 @@ DOTRACE("GrObj::receiveStateChangeMsg");
   DebugEval((void*)dynamic_cast<Util::Observer*>(this));
   DebugEval((void*)dynamic_cast<Util::Observable*>(this));
   DebugEvalNL((void*)obj);
-  if (obj == this) {
-    DebugEval((void*)this); DebugEvalNL((void*)itsImpl);
-    itsImpl->invalidateCaches();
-  }
+  if (obj == this)
+    {
+      DebugEval((void*)this); DebugEvalNL((void*)itsImpl);
+      itsImpl->invalidateCaches();
+    }
 }
 
 void GrObj::receiveDestroyMsg(const Util::Observable*) {
@@ -298,15 +305,15 @@ DOTRACE("GrObj::receiveDestroyMsg");
 /////////////
 
 void GrObj::saveBitmapCache(GWT::Canvas& canvas, const char* filename) const {
-  itsImpl->saveBitmapCache(canvas, filename);
+  itsImpl->itsRenderer.saveBitmapCache(itsImpl, canvas, filename);
 }
 
 void GrObj::restoreBitmapCache() const {
-  itsImpl->restoreBitmapCache();
+  itsImpl->itsRenderer.restoreBitmapCache();
 }
 
 void GrObj::update(GWT::Canvas& canvas) const {
-  itsImpl->update(canvas);
+  itsImpl->itsRenderer.update(itsImpl, canvas);
 }
 
 void GrObj::draw(GWT::Canvas& canvas) const {

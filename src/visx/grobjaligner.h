@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:42:42 2001
-// written: Wed Jul 18 18:13:27 2001
+// written: Thu Jul 19 10:33:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ public:
     return itsCenter;
   }
 
-  void doAlignment(const Rect<double>& native) const;
+  void doAlignment(GWT::Canvas& canvas, const Rect<double>& native) const;
 
   void setMode(GrObj::AlignmentMode new_mode)
   {

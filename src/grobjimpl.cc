@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Wed Jul 18 18:19:16 2001
+// written: Thu Jul 19 11:46:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,6 @@
 #include "gwt/canvas.h"
 
 #include "util/error.h"
-#include "util/janitor.h"
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -31,279 +30,22 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-class GrObjError : public ErrorWithMsg {
-public:
-  GrObjError(const char* msg) : ErrorWithMsg(msg) {}
-};
-
 ///////////////////////////////////////////////////////////////////////
 //
 // File scope stuff
 //
 ///////////////////////////////////////////////////////////////////////
 
-const IO::VersionId GrObj::Impl::GROBJ_SERIAL_VERSION_ID;
-
-dynamic_string GrObj::Impl::Renderer::BITMAP_CACHE_DIR(".");
-
-namespace {
-
-  GLenum BITMAP_CACHE_BUFFER = GL_FRONT;
-
-#ifdef LOCAL_DEBUG
-  inline void checkForGlError(const char* where) throw (GrObjError) {
-    GLenum status = glGetError();
-    if (status != GL_NO_ERROR) {
-      const char* msg =
-        reinterpret_cast<const char*>(gluErrorString(status));
-      GrObjError err("GL error: ");
-      err.appendMsg(msg);
-      err.appendMsg(" ");
-      err.appendMsg(where);
-      throw err;
-    }
-  }
-#else
-#  define checkForGlError(x) {}
-#endif
-}
+const IO::VersionId GrObjImpl::GROBJ_SERIAL_VERSION_ID;
 
 
 ///////////////////////////////////////////////////////////////////////
 //
-// GrObj::Impl::BoundingBox definitions
+// GrObjImpl creator definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-void GrObj::Impl::BoundingBox::updateRaw() const {
-DOTRACE("GrObj::Impl::BoundingBox::updateRaw");
-  DebugEval(itsRawBBIsCurrent);
-  if (!itsRawBBIsCurrent)
-    {
-      itsOwner->grGetBoundingBox(itsCachedRawBB, itsCachedPixelBorder);
-      itsRawBBIsCurrent = true;
-    }
-}
-
-Rect<double> GrObj::Impl::BoundingBox::withBorder(
-  const GWT::Canvas& canvas) const
-{
-DOTRACE("GrObj::Impl::BoundingBox::withBorder");
-
-  // Do the object's internal scaling and alignment, and find the
-  // bounding box in screen coordinates
-
-  Rect<int> screen_pos;
-
-  {
-    glMatrixMode(GL_MODELVIEW);
-
-    GWT::Canvas::StateSaver state(canvas);
-
-    itsOwner->itsScaler.doScaling();
-    itsOwner->itsAligner.doAlignment(native());
-
-    screen_pos = canvas.getScreenFromWorld(native());
-  }
-
-  // Add a pixel border around the edges of the image...
-  int bp = pixelBorder();
-
-  screen_pos.widenByStep(bp);
-  screen_pos.heightenByStep(bp);
-
-  // ... and project back to world coordinates
-  return canvas.getWorldFromScreen(screen_pos);
-}
-
-
-
-///////////////////////////////////////////////////////////////////////
-//
-// GrObj::Impl::Renderer definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-GrObj::Impl::Renderer::Renderer() :
-  itsMode(GrObj::GLCOMPILE),
-  itsCacheFilename(""),
-  itsIsCurrent(false),
-  itsDisplayList(-1),
-  itsBmapRenderer(0),
-  itsBitmapCache(0)
-{
-DOTRACE("GrObj::Impl::Renderer::Renderer");
-}
-
-GrObj::Impl::Renderer::~Renderer() {
-DOTRACE("GrObj::Impl::Renderer::~Renderer");
-  glDeleteLists(itsDisplayList, 1);
-}
-
-void GrObj::Impl::Renderer::recompileIfNeeded(const GrObj::Impl* obj,
-                                              GWT::Canvas& canvas) const {
-DOTRACE("GrObj::Impl::Renderer::recompileIfNeeded");
-  if (itsIsCurrent) return;
-
-  newList();
-
-  glNewList(itsDisplayList, GLCOMPILE);
-  obj->grRender(canvas, GrObj::DRAW);
-  glEndList();
-
-  postUpdated();
-}
-
-bool GrObj::Impl::Renderer::recacheBitmapIfNeeded(const GrObj::Impl* obj,
-                                                  GWT::Canvas& canvas) const {
-DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
-  if (itsIsCurrent) return false;
-
-  Assert(itsBitmapCache.get() != 0);
-
-  obj->undraw(canvas);
-
-  {
-    glMatrixMode(GL_MODELVIEW);
-    GWT::Canvas::StateSaver state(canvas);
-
-    glPushAttrib(GL_COLOR_BUFFER_BIT|GL_PIXEL_MODE_BIT);
-    {
-      glDrawBuffer(GL_FRONT);
-
-      obj->itsScaler.doScaling();
-      obj->itsAligner.doAlignment(obj->itsBB.native());
-
-      obj->grRender(canvas, GrObj::DRAW);
-
-      glReadBuffer(GL_FRONT);
-      Rect<double> bmapbox_init = obj->getRawBB();
-      Rect<int> screen_rect = canvas.getScreenFromWorld(bmapbox_init);
-      screen_rect.widenByStep(2);
-      screen_rect.heightenByStep(2);
-      Rect<double> bmapbox = canvas.getWorldFromScreen(screen_rect);
-
-      DebugEval(bmapbox.left()); DebugEval(bmapbox.top());
-      DebugEval(bmapbox.right()); DebugEvalNL(bmapbox.bottom());
-      itsBitmapCache->grabWorldRect(bmapbox);
-      itsBitmapCache->setRasterX(bmapbox.left());
-      itsBitmapCache->setRasterY(bmapbox.bottom());
-    }
-    glPopAttrib();
-  }
-
-  DebugEvalNL(itsMode);
-
-  if (GrObj::X11_BITMAP_CACHE == itsMode) {
-    itsBitmapCache->flipVertical();
-    itsBitmapCache->flipContrast();
-  }
-
-  if (GrObj::GL_BITMAP_CACHE == itsMode) {
-    itsBitmapCache->flipContrast();
-  }
-
-  postUpdated();
-
-  return true;
-}
-
-void GrObj::Impl::Renderer::callList() const {
-DOTRACE("GrObj::Impl::Renderer::callList");
-  // We must explicitly check that the display list is valid,
-  // since it might be invalid if the object was recently
-  // constructed, for example.
-  if (glIsList(itsDisplayList) == GL_TRUE) {
-    glCallList(itsDisplayList);
-    DebugEvalNL(itsDisplayList);
-  }
-}
-
-void GrObj::Impl::Renderer::newList() const {
-DOTRACE("GrObj::Impl::Renderer::newList");
-  glDeleteLists(itsDisplayList, 1);
-  itsDisplayList = glGenLists(1);
-  if (itsDisplayList == 0) {
-    throw GrObjError("GrObj::newList: couldn't allocate display list");
-  }
-}
-
-void GrObj::Impl::Renderer::setMode(GrObj::RenderMode new_mode) {
-DOTRACE("GrObj::Impl::Renderer::setMode");
-  // If new_mode is the same as the current render mode, then return
-  // immediately (and don't send a state change message)
-  if (new_mode == itsMode) return;
-
-  itsMode = new_mode;
-
-  switch (new_mode)
-	 {
-	 case GrObj::GL_BITMAP_CACHE:
-		itsBmapRenderer.reset(new GLBmapRenderer());
-		itsBitmapCache.reset(new BitmapRep(itsBmapRenderer));
-		queueBitmapLoad();
-		break;
-
-	 case GrObj::X11_BITMAP_CACHE:
-		itsBmapRenderer.reset(new XBmapRenderer());
-		itsBitmapCache.reset(new BitmapRep(itsBmapRenderer));
-		queueBitmapLoad();
-		break;
-	 }
-}
-
-void GrObj::Impl::Renderer::render(const GrObj::Impl* obj,
-                                   GWT::Canvas& canvas) const {
-DOTRACE("GrObj::Impl::Renderer::render");
-  DebugEvalNL(itsMode);
-  switch (itsMode) {
-
-  case GrObj::DIRECT_RENDER:
-    obj->grRender(canvas, GrObj::DRAW);
-    break;
-
-  case GrObj::GLCOMPILE:
-    callList();
-    break;
-
-  case GrObj::GL_BITMAP_CACHE:
-  case GrObj::X11_BITMAP_CACHE:
-    Assert(itsBitmapCache.get() != 0);
-    itsBitmapCache->render(canvas);
-    break;
-
-  } // end switch
-}
-
-bool GrObj::Impl::Renderer::update(const GrObj::Impl* obj,
-                                   GWT::Canvas& canvas) const {
-DOTRACE("GrObj::Impl::Renderer::update");
-  checkForGlError("before GrObj::update");
-
-  bool objectDrawn = false;
-
-  switch (itsMode) {
-  case GrObj::GLCOMPILE:
-    recompileIfNeeded(obj, canvas);
-    break;
-
-  case GrObj::GL_BITMAP_CACHE:
-  case GrObj::X11_BITMAP_CACHE:
-    objectDrawn = recacheBitmapIfNeeded(obj, canvas);
-    break;
-  }
-  checkForGlError("during GrObj::update");
-
-  return objectDrawn;
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// GrObj::Impl creator definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-GrObj::Impl::Impl(GrObj* obj) :
+GrObjImpl::GrObjImpl(GrObj* obj) :
   self(obj),
   itsCategory(-1),
   itsBB(this),
@@ -313,12 +55,12 @@ GrObj::Impl::Impl(GrObj* obj) :
   itsUnRenderer()
 {};
 
-GrObj::Impl::~Impl() {
-DOTRACE("GrObj::Impl::~Impl");
+GrObjImpl::~GrObjImpl() {
+DOTRACE("GrObjImpl::~GrObjImpl");
 }
 
-void GrObj::Impl::readFrom(IO::Reader* reader) {
-DOTRACE("GrObj::Impl::readFrom");
+void GrObjImpl::readFrom(IO::Reader* reader) {
+DOTRACE("GrObjImpl::readFrom");
 
   reader->ensureReadVersionId("GrObj", 1, "Try grsh0.8a4");
 
@@ -334,7 +76,11 @@ DOTRACE("GrObj::Impl::readFrom");
 
   reader->readValue("GrObj::unRenderMode", itsUnRenderer.itsMode);
 
-  reader->readValue("GrObj::bbVisibility", itsBB.itsIsVisible);
+  {
+    bool val;
+    reader->readValue("GrObj::bbVisibility", val);
+    itsBB.setVisible(val);
+  }
 
   reader->readValue("GrObj::scalingMode", temp);
   itsScaler.setMode(temp);
@@ -349,8 +95,8 @@ DOTRACE("GrObj::Impl::readFrom");
   invalidateCaches();
 }
 
-void GrObj::Impl::writeTo(IO::Writer* writer) const {
-DOTRACE("GrObj::Impl::writeTo");
+void GrObjImpl::writeTo(IO::Writer* writer) const {
+DOTRACE("GrObjImpl::writeTo");
 
   writer->ensureWriteVersionId("GrObj", GROBJ_SERIAL_VERSION_ID, 1,
                                "Try grsh0.8a4");
@@ -363,7 +109,7 @@ DOTRACE("GrObj::Impl::writeTo");
 
   writer->writeValue("GrObj::unRenderMode", itsUnRenderer.itsMode);
 
-  writer->writeValue("GrObj::bbVisibility", itsBB.itsIsVisible);
+  writer->writeValue("GrObj::bbVisibility", itsBB.isVisible());
 
   writer->writeValue("GrObj::scalingMode", itsScaler.getMode());
   writer->writeValue("GrObj::widthFactor", itsScaler.itsWidthFactor);
@@ -377,182 +123,98 @@ DOTRACE("GrObj::Impl::writeTo");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// GrObj::Impl action definitions
+// GrObjImpl action definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-void GrObj::Impl::draw(GWT::Canvas& canvas) const {
-DOTRACE("GrObj::Impl::draw");
-  checkForGlError("before GrObj::draw");
-
-  if ( itsBB.itsIsVisible ) {
-    grDrawBoundingBox(canvas);
-  }
+void GrObjImpl::draw(GWT::Canvas& canvas) const {
+DOTRACE("GrObjImpl::draw");
+  canvas.throwIfError("before GrObj::draw");
 
   bool objectDrawn = itsRenderer.update(this, canvas);
 
-  if ( !objectDrawn ) {
+  Rect<double> bbox = grGetBoundingBox();
 
+  if ( !objectDrawn )
     {
-      glMatrixMode(GL_MODELVIEW);
-
       GWT::Canvas::StateSaver state(canvas);
 
-      itsScaler.doScaling();
-      itsAligner.doAlignment(itsBB.native());
+      itsScaler.doScaling(canvas);
+      itsAligner.doAlignment(canvas, bbox);
 
       itsRenderer.render(this, canvas);
+
+      itsBB.draw(bbox, canvas);
     }
-  }
 
-  checkForGlError("during GrObj::draw");
+  canvas.throwIfError("during GrObj::draw");
 }
 
-void GrObj::Impl::saveBitmapCache(
-  GWT::Canvas& canvas, const char* filename
-  ) {
-DOTRACE("GrObj::Impl::Renderer::saveBitmapCache");
+void GrObjImpl::undraw(GWT::Canvas& canvas) const {
+DOTRACE("GrObjImpl::undraw");
+  canvas.throwIfError("before GrObj::undraw");
 
-  Util::Janitor<Impl, int> rmj(*this, &Impl::getRenderMode,
-                               &Impl::setRenderMode);
-  Util::Janitor<Impl, bool> bbj(*this, &Impl::getBBVisibility,
-                                &Impl::setBBVisibility);
+  switch (itsUnRenderer.itsMode)
+    {
+    case GrObj::DIRECT_RENDER:     undrawDirectRender(canvas);     break;
+    case GrObj::SWAP_FORE_BACK:    undrawSwapForeBack(canvas);     break;
+    case GrObj::CLEAR_BOUNDING_BOX:undrawClearBoundingBox(canvas); break;
+    default:                       /* nothing */                   break;
+    }
 
-  setRenderMode(GrObj::X11_BITMAP_CACHE);
-  setBBVisibility(false);
-
-  itsRenderer.setCacheFilename("");
-
-  itsRenderer.saveBitmapCache(this, canvas, filename);
-
-  invalidateCaches();
+  canvas.throwIfError("during GrObj::undraw");
 }
 
-void GrObj::Impl::undraw(GWT::Canvas& canvas) const {
-DOTRACE("GrObj::Impl::undraw");
-  checkForGlError("before GrObj::undraw");
-
-  switch (itsUnRenderer.itsMode) {
-  case GrObj::DIRECT_RENDER:     undrawDirectRender(canvas);     break;
-  case GrObj::SWAP_FORE_BACK:    undrawSwapForeBack(canvas);     break;
-  case GrObj::CLEAR_BOUNDING_BOX:undrawClearBoundingBox(canvas); break;
-  default:                       /* nothing */                   break;
-  }
-
-  if ( itsBB.itsIsVisible ) {
-    undrawBoundingBox(canvas);
-  }
-
-  checkForGlError("during GrObj::undraw");
-}
-
-void GrObj::Impl::grDrawBoundingBox(const GWT::Canvas& canvas) const {
-DOTRACE("GrObj::Impl::grDrawBoundingBox");
-
-  Rect<double> bbox = itsBB.withBorder(canvas);
-
-  glPushAttrib(GL_LINE_BIT);
-  {
-    glLineWidth(1.0);
-    glEnable(GL_LINE_STIPPLE);
-    glLineStipple(1, 0x0F0F);
-
-    glBegin(GL_LINE_LOOP);
-      glVertex2d(bbox.left(), bbox.bottom());
-      glVertex2d(bbox.right(), bbox.bottom());
-      glVertex2d(bbox.right(), bbox.top());
-      glVertex2d(bbox.left(), bbox.top());
-    glEnd();
-  }
-  glPopAttrib();
-}
-
-void GrObj::Impl::invalidateCaches() {
-DOTRACE("GrObj::Impl::invalidateCaches");
+void GrObjImpl::invalidateCaches() {
+DOTRACE("GrObjImpl::invalidateCaches");
   itsRenderer.invalidate();
-  itsBB.invalidate();
 }
 
-void GrObj::Impl::undrawDirectRender(GWT::Canvas& canvas) const {
-DOTRACE("GrObj::Impl::undrawDirectRender");
-  glMatrixMode(GL_MODELVIEW);
+void GrObjImpl::undrawDirectRender(GWT::Canvas& canvas) const {
+DOTRACE("GrObjImpl::undrawDirectRender");
 
   GWT::Canvas::StateSaver state(canvas);
 
-  itsScaler.doScaling();
-  itsAligner.doAlignment(itsBB.native());
+  Rect<double> bbox = grGetBoundingBox();
 
-  self->grRender(canvas, GrObj::UNDRAW);
+  itsScaler.doScaling(canvas);
+  itsAligner.doAlignment(canvas, bbox);
+
+  if ( itsRenderer.getMode() == GrObj::GLCOMPILE )
+    {
+      itsRenderer.callList();
+    }
+  else
+    {
+      self->grRender(canvas, GrObj::UNDRAW);
+    }
+
+  itsBB.draw(bbox, canvas);
 }
 
-void GrObj::Impl::undrawSwapForeBack(GWT::Canvas& canvas) const {
-DOTRACE("GrObj::Impl::undrawSwapForeBack");
+void GrObjImpl::undrawSwapForeBack(GWT::Canvas& canvas) const {
+DOTRACE("GrObjImpl::undrawSwapForeBack");
   glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
   {
     canvas.swapForeBack();
 
-    {
-      glMatrixMode(GL_MODELVIEW);
-
-      GWT::Canvas::StateSaver state(canvas);
-
-      itsScaler.doScaling();
-      itsAligner.doAlignment(itsBB.native());
-
-      if ( itsRenderer.getMode() == GrObj::GLCOMPILE ) {
-        itsRenderer.callList();
-      }
-      else {
-        self->grRender(canvas, GrObj::UNDRAW);
-      }
-    }
+    undrawDirectRender(canvas);
   }
   glPopAttrib();
 }
 
-void GrObj::Impl::undrawClearBoundingBox(GWT::Canvas& canvas) const {
-DOTRACE("GrObj::Impl::undrawClearBoundingBox");
-  glMatrixMode(GL_MODELVIEW);
+void GrObjImpl::undrawClearBoundingBox(GWT::Canvas& canvas) const {
+DOTRACE("GrObjImpl::undrawClearBoundingBox");
 
-  Rect<double> world_pos = itsBB.withBorder(canvas);
+  Rect<double> world_pos = itsBB.withBorder(grGetBoundingBox(), canvas);
 
-  glPushAttrib(GL_SCISSOR_BIT);
-  {
-    glEnable(GL_SCISSOR_TEST);
+  Rect<int> screen_pos = canvas.getScreenFromWorld(world_pos);
 
-    Rect<int> screen_pos = canvas.getScreenFromWorld(world_pos);
+  // Add an extra one-pixel border around the rect
+  screen_pos.widenByStep(itsBB.pixelBorder());
+  screen_pos.heightenByStep(itsBB.pixelBorder());
 
-    // Add an extra one-pixel border around the rect
-    screen_pos.widenByStep(itsBB.pixelBorder());
-    screen_pos.heightenByStep(itsBB.pixelBorder());
-
-    glScissor(screen_pos.left(), screen_pos.bottom(),
-              screen_pos.width(), screen_pos.height());
-
-    glClear(GL_COLOR_BUFFER_BIT);
-    glDisable(GL_SCISSOR_TEST);
-  }
-  glPopAttrib();
-}
-
-void GrObj::Impl::undrawBoundingBox(GWT::Canvas& canvas) const {
-DOTRACE("GrObj::Impl::undrawBoundingBox");
-  glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
-  {
-    canvas.swapForeBack();
-
-    {
-      glMatrixMode(GL_MODELVIEW);
-
-      GWT::Canvas::StateSaver state(canvas);
-
-      itsScaler.doScaling();
-      itsAligner.doAlignment(itsBB.native());
-
-      grDrawBoundingBox(canvas);
-    }
-  }
-  glPopAttrib();
+  canvas.clearColorBuffer(screen_pos);
 }
 
 static const char vcid_grobjimpl_cc[] = "$Header$";
