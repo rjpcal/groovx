@@ -128,7 +128,10 @@ DOTRACE("Gfx::LineStrip::end");
 void Gfx::LineStrip::drawSimpleLineStrip()
 {
 DOTRACE("Gfx::LineStrip::drawSimpleLineStrip");
-  canvas->beginLineStrip();
+  if (loop)
+    canvas->beginLineLoop();
+  else
+    canvas->beginLineStrip();
   for (unsigned int i = 0; i < pts.size(); ++i)
     {
       canvas->vertex2(pts[i]);
@@ -158,7 +161,7 @@ namespace
 
 void Gfx::LineStrip::drawJoinedLineStrip()
 {
-DOTRACE("drawJoinedLineStrip");
+DOTRACE("Gfx::LineStrip::drawJoinedLineStrip");
   canvas->beginQuadStrip();
 
   Vec2d d1;
