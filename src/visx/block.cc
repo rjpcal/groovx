@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Tue Mar  7 10:49:03 2000
+// written: Thu Mar  9 17:10:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@
 
 namespace {
   Tlist& theTlist = Tlist::theTlist();
-  const string_literal ioTag = "Block";
+  const string_literal ioTag("Block");
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,8 @@ public:
 	 itsTrialSequence(),
 	 itsRandSeed(0),
 	 itsCurTrialSeqIdx(0),
-	 itsVerbose(false)
+	 itsVerbose(false),
+	 itsTimer()
 	 {}
 
   vector<int> itsTrialSequence; // Ordered sequence of indexes into the Tlist

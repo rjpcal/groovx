@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Tue Mar  7 10:46:41 2000
+// written: Thu Mar  9 17:08:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -175,6 +175,9 @@ public:
   virtual void resetBlock();
 
 private:
+  Block(const Block&);
+  Block& operator=(const Block&);
+
   class Impl;
   Impl* const itsImpl;
 };

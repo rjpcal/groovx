@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Mar  8 10:55:48 2000
+// written: Thu Mar  9 17:11:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@
 
 namespace {
 
-  const string_literal ioTag = "ExptDriver";
+  const string_literal ioTag("ExptDriver");
 
 #ifdef TIME_TRACE
   inline void TimeTraceNL(const char* loc, int msec) {

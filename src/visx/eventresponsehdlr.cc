@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Thu Mar  9 10:24:09 2000
+// written: Thu Mar  9 17:11:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,9 +40,9 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const string_literal ioTag = "EventResponseHdlr";
+  const string_literal ioTag("EventResponseHdlr");
 
-  const string_literal nullScript = "{}";
+  const string_literal nullScript("{}");
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -193,8 +193,8 @@ private:
 
   fixed_string getUniqueCmdName()
 	 {
-		const string_literal privateHandleCmdName =
-		  "__EventResponseHdlrPrivate::handle";
+		const string_literal privateHandleCmdName(
+		  "__EventResponseHdlrPrivate::handle");
 
 		static unsigned long cmdCounter = 0;
 

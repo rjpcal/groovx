@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Mar  9 11:36:39 2000
+// written: Thu Mar  9 16:55:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ namespace {
   inline T abs(const T& val)
 	 { return (val < 0) ? -val : val; }
 
-  const string_literal ioTag = "Bitmap";
+  const string_literal ioTag("Bitmap");
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -56,14 +56,20 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 class BitmapRep::Impl {
-public:
-  Impl(BmapRenderer* renderer) :
-	 itsRenderer(renderer)
-	 {}
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
 
-  Impl(BmapRenderer* renderer, const char* filename) :
+public:
+  Impl(BmapRenderer* renderer, const char* filename="") :
 	 itsRenderer(renderer),
-	 itsFilename(filename)
+	 itsFilename(filename),
+	 itsRasterX(0.0), itsRasterY(0.0),
+	 itsZoomX(0.0), itsZoomY(0.0),
+	 itsUsingZoom(false),
+	 itsContrastFlip(false),
+	 itsVerticalFlip(false),
+	 itsData()
 	 {}
 
   BmapRenderer* itsRenderer;

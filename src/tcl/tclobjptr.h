@@ -3,7 +3,7 @@
 // tclobjlock.h
 // Rob Peters
 // created: Tue May 11 13:44:19 1999
-// written: Mon Mar  6 12:10:31 2000
+// written: Thu Mar  9 16:59:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,29 +40,34 @@ public:
   ~TclObjLock() { Tcl_DecrRefCount(itsObj); }
   
   /// Copy constructor.
-  TclObjLock(const TclObjLock& x)
+  TclObjLock(const TclObjLock& x) :
+	 itsObj(const_cast<Tcl_Obj*>(x.itsObj))
 	 {
-		itsObj = const_cast<Tcl_Obj*>(x.itsObj);
 		Tcl_IncrRefCount(itsObj);
 	 }
   
   /// Assignment operator from a TclObjLock.
   TclObjLock& operator=(const TclObjLock& x)
 	 {
-		return this->operator=(x.itsObj);
+		assign(x.itsObj); return *this;
 	 }
 
   /// Assignment operator from a Tcl_Obj*.
   TclObjLock& operator=(Tcl_Obj* x)
 	 {
-		if (itsObj != x) {		  Tcl_DecrRefCount(itsObj);
-		  itsObj = x;
-		  Tcl_IncrRefCount(itsObj);
-		}
-		return *this;
+		assign(x); return *this;
 	 }
 
 private:
+  void assign(Tcl_Obj* x)
+	 {
+		if (itsObj != x) {
+		  Tcl_DecrRefCount(itsObj);
+		  itsObj = x;
+		  Tcl_IncrRefCount(itsObj);
+		}
+	 }
+
   Tcl_Obj* itsObj;
 };
 
@@ -86,27 +91,22 @@ public:
   ~TclObjPtr() { Tcl_DecrRefCount(itsObj); }
   
   /// Copy constructor.
-  TclObjPtr(const TclObjPtr& x)
+  TclObjPtr(const TclObjPtr& x) :
+	 itsObj(const_cast<Tcl_Obj*>(x.itsObj))
 	 {
-		itsObj = const_cast<Tcl_Obj*>(x.itsObj);
 		Tcl_IncrRefCount(itsObj);
 	 }
   
   /// Assignment operator from TclObjPtr.
   TclObjPtr& operator=(const TclObjPtr& x)
 	 {
-		return this->operator=(x.itsObj);
+		assign(x.itsObj); return *this;
 	 }
   
   /// Assignment operator from Tcl_Obj*.
   TclObjPtr& operator=(Tcl_Obj* x)
 	 {
-		if (itsObj != x) {
-		  Tcl_DecrRefCount(itsObj);
-		  itsObj = x;
-		  Tcl_IncrRefCount(itsObj);
-		}
-		return *this;
+		assign(x); return *this;
 	 }
   
   typedef Tcl_Obj* Tcl_ObjPtr;
@@ -115,6 +115,15 @@ public:
   operator Tcl_ObjPtr() { return itsObj; }
   
 private:
+  void assign(Tcl_Obj* x)
+	 {
+		if (itsObj != x) {
+		  Tcl_DecrRefCount(itsObj);
+		  itsObj = x;
+		  Tcl_IncrRefCount(itsObj);
+		}
+	 }
+
   Tcl_Obj* itsObj;
 };
 

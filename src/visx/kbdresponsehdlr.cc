@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Wed Mar  8 08:08:48 2000
+// written: Thu Mar  9 17:11:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@
 #include "debug.h"
 
 namespace {
-  const string_literal ioTag = "KbdResponseHdlr";
+  const string_literal ioTag("KbdResponseHdlr");
 }
 
 ///////////////////////////////////////////////////////////////////////

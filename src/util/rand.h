@@ -3,7 +3,7 @@
 // rand.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 14:09:24 1999
-// written: Fri Jun 25 14:21:01 1999
+// written: Thu Mar  9 17:09:24 2000
 // $Id$
 //
 // The random number generator classes here are taken from _The C++
@@ -17,7 +17,7 @@
 class Randint { // uniform distribution in the interval [0,max]
   unsigned long randx;
 public:
-  Randint(long s = 0) { randx = s; }
+  Randint(long s = 0) : randx(s) {}
   void seed(long s) { randx = s; }
 
   // magic numbers chosen to use 31 bits of a 32-bit long:

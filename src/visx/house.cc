@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Sun Mar  5 14:47:06 2000
+// written: Thu Mar  9 16:59:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -189,34 +189,35 @@ namespace {
 //
 ///////////////////////////////////////////////////////////////////////
 
-House::House () {
-DOTRACE("House::House ");
-  storyAspectRatio() = 3.0; 
-  numStories() = 2;
+House::House() :
+  storyAspectRatio(3.0), 
+  numStories(2),
 
-  doorPosition() = 2;
-  doorHeight() = 0.75;
-  doorWidth() = 0.75;
+  doorPosition(2),
+  doorHeight(0.75),
+  doorWidth(0.75),
 
-  numWindows() = 5;
-  windowHeight() = 0.5;
-  windowWidth() = 0.75;
-  windowVertBars() = 1;
-  windowHorizBars() = 1;
+  numWindows(5),
+  windowHeight(0.5),
+  windowWidth(0.75),
+  windowVertBars(1),
+  windowHorizBars(1),
 
-  roofShape() = 0;
-  roofOverhang() = 0.05;
-  roofHeight() = 0.75;
-  roofColor() = 1;
+  roofShape(0),
+  roofOverhang(0.05),
+  roofHeight(0.75),
+  roofColor(1),
 
-  chimneyXPosition() = 0.2;
-  chimneyYPosition() = 0.5;
-  chimneyWidth() = 0.06;
-  chimneyHeight() = 0.5;
+  chimneyXPosition(0.2),
+  chimneyYPosition(0.5),
+  chimneyWidth(0.06),
+  chimneyHeight(0.5)
+{
+DOTRACE("House::House");
 }
 
-House::~House () {
-DOTRACE("House::~House ");
+House::~House() {
+DOTRACE("House::~House");
 }
 
 void House::serialize(ostream& os, IOFlag flag) const {

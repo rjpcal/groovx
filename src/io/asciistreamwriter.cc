@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Wed Mar  8 17:24:10 2000
+// written: Thu Mar  9 17:01:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,9 +64,16 @@ namespace {
 }
 
 class AsciiStreamWriter::Impl {
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+
 public:
   Impl(AsciiStreamWriter* owner, ostream& os) :
-	 itsOwner(owner), itsBuf(os), itsToHandle(), itsWrittenObjects() 
+	 itsOwner(owner), itsBuf(os), itsToHandle(), itsWrittenObjects(), itsAttribs()
+#ifndef NO_IOS_EXCEPTIONS
+	 , itsOriginalExceptionState(itsBuf.exceptions())
+#endif
 	 {
 #ifndef NO_IOS_EXCEPTIONS
 	 itsOriginalExceptionState = itsBuf.exceptions();

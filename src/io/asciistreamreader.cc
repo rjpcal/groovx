@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Wed Mar  8 17:14:08 2000
+// written: Thu Mar  9 17:00:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,13 +67,19 @@ namespace {
 }
 
 class AsciiStreamReader::Impl {
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+
 public:
   Impl(AsciiStreamReader* owner, istream& is) :
 	 itsOwner(owner), itsBuf(is), itsCreatedObjects(), itsAttribs(),
 	 itsValueBuffer(4096)
+#ifndef NO_IOS_EXCEPTIONS
+	 , itsOriginalExceptionState(itsBuf.exceptions())
+#endif
   {
 #ifndef NO_IOS_EXCEPTIONS
-	 itsOriginalExceptionState = itsBuf.exceptions();
 	 itsBuf.exceptions( ios::badbit | ios::failbit );
 #endif
   }

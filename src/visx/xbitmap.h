@@ -3,7 +3,7 @@
 // xitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:39:09 1999
-// written: Fri Feb 18 09:13:42 2000
+// written: Thu Mar  9 17:02:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,6 +51,9 @@ public:
   virtual int charCount() const;
 
 private:
+  XBitmap(const XBitmap&);
+  XBitmap& operator=(const XBitmap&);
+
   XBmapRenderer* itsRenderer;
 };
 

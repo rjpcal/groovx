@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Wed Mar  8 11:42:44 2000
+// written: Thu Mar  9 17:04:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -98,6 +98,9 @@ protected:
   void clear();
 
 private:
+  CreatorMapBase(const CreatorMapBase&);
+  CreatorMapBase& operator=(const CreatorMapBase&);
+
   struct Impl;
   Impl* const itsImpl;
 };
@@ -132,6 +135,18 @@ protected:
 	 { delete static_cast<CreatorType*>(ptr); }
 };
 
+/**
+ *
+ * \cFactoryBase exists purely to introduce a virtual destructor into
+ * the \c Factory hierarchy.
+ *
+ **/
+
+class FactoryBase {
+public:
+  virtual ~FactoryBase();
+};
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -147,7 +162,7 @@ protected:
 ///////////////////////////////////////////////////////////////////////
 
 template <class Base>
-class Factory {
+class Factory : public FactoryBase {
 private:
   CreatorMap<Base> itsMap;
 
@@ -159,7 +174,7 @@ public:
   /** Registers a new type with the factory. The class Derived must be
       a subclass of Base. */
   template <class Derived>
-  void registerType(Derived* dummy) {
+  void registerType(Derived* /*dummy*/) {
 	 itsMap.setPtrForName(demangle_cstr(typeid(Derived).name()),
 								 new Creator<Base, Derived>);
   }
@@ -186,7 +201,7 @@ public:
       specified Derived class. If the downcast fails, a FactorError is
       thrown. */
   template <class Derived>
-  Derived* newTypedObject(const char* type, Derived* dummy) {
+  Derived* newTypedObject(const char* type, Derived* /*dummy*/) {
 	 Base* b = newCheckedObject(type);
 	 Derived* d = dynamic_cast<Derived*>(b);
 	 if (d == 0) { 

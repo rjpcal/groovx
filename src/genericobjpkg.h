@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Wed Mar  8 15:48:24 2000
+// written: Thu Mar  9 17:08:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,6 +104,9 @@ protected:
 	 returnInt(id);
   }
 private:
+  DefaultCreatorCmd(const DefaultCreatorCmd&);
+  DefaultCreatorCmd& operator=(const DefaultCreatorCmd&);
+
   ListItemPkg<C, List>* itsPkg;
 };
 
