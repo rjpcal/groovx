@@ -3,7 +3,7 @@
 // pbm.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:07 1999
-// written: Sat Sep 23 15:42:29 2000
+// written: Thu Oct  5 13:15:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -106,7 +106,11 @@ void Pbm::Impl::setBytes(const dynamic_block<unsigned char>& bytes,
 	 itsMode = 6;
 	 break;
   default:
-	 throw PbmError("invalid bits_per_pixel value");
+	 {
+		PbmError err("invalid bits_per_pixel value: ");
+		err.appendNumber(itsBitsPerPixel);
+		throw err;
+	 }
 	 break;
   }
 }
@@ -234,14 +238,18 @@ DOTRACE("Pbm::readStream");
 
   int c = is.get();
   if (c != 'P') {
-	 throw PbmError("bad magic number while reading pbm file");
+	 PbmError err("bad magic number while reading pbm file: ");
+	 err.appendNumber(c);
+	 throw err;
   }
 
   is >> itsImpl->itsMode;
   DebugEvalNL(itsImpl->itsMode);
 
   if (itsImpl->itsMode < 1 || itsImpl->itsMode > 6) {
-	 throw PbmError("invalid mode seen while reading pbm file");
+	 PbmError err("invalid mode seen while reading pbm file: ");
+	 err.appendNumber(itsImpl->itsMode);
+	 throw err;
   }
 
   while ( isspace(is.peek()) ) {
