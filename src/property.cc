@@ -3,7 +3,7 @@
 // property.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:57:34 1999
-// written: Sat Mar  4 04:32:20 2000
+// written: Tue Mar  7 15:46:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,9 @@
 
 #include "reader.h"
 #include "writer.h"
+#include "util/pointers.h"
 
 #include <iostream.h>
-#include <memory>
 #include <string>
 
 Property::~Property() {}
@@ -116,11 +116,11 @@ public:
   /// User-friendly name of the property
   string name;
   /// Suggested minimum value
-  auto_ptr<Value> min;
+  scoped_ptr<Value> min;
   /// Suggested maximum value
-  auto_ptr<Value> max;
+  scoped_ptr<Value> max;
   /// Suggested resolution
-  auto_ptr<Value> res;
+  scoped_ptr<Value> res;
   /// True if this is the first in a new group of properties
   bool startNewGroup;
 };
