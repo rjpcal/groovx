@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Tue May 13 10:07:17 2003
+// written: Tue May 13 10:17:55 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -36,6 +36,7 @@
 #include "gx/vec2.h"
 
 #include "util/arrays.h"
+#include "util/pointers.h"
 
 class Element;
 class Snake;
@@ -58,8 +59,6 @@ public:
 
   static GaborArray* make() { return new GaborArray; }
 
-  void renderInto(Gfx::BmapData& data) const;
-
   void saveImage(const char* filename) const;
 
 protected:
@@ -68,6 +67,21 @@ protected:
   virtual void grRender(Gfx::Canvas& canvas) const;
 
 private:
+  GaborArray(const GaborArray&);
+  GaborArray& operator=(const GaborArray&);
+
+  void dumpFrame() const;
+
+  void rebuild();
+  void updateBmap() const;
+  bool tryPush(const Element& e);
+  bool tooClose(const Gfx::Vec2<double>& v, int except);
+  /// Mark inside elements and return how many there were.
+  int insideElements(const Snake& snake);
+  void hexGridElements();
+  void fillElements();
+  void jitterElement();
+
   int itsForegNumber;
   double itsForegSpacing;
   Gfx::Vec2<int> itsSize;
@@ -78,17 +92,7 @@ private:
   double backgMinSpacingSqr;
   int totalNumber;
   fixed_block<Element> array;
-
-  void dumpFrame() const;
-
-  void rebuild();
-  bool tryPush(const Element& e);
-  bool tooClose(const Gfx::Vec2<double>& v, int except);
-  /// Mark inside elements and return how many there were.
-  int insideElements(const Snake& snake);
-  void hexGridElements();
-  void fillElements();
-  void jitterElement();
+  mutable shared_ptr<Gfx::BmapData> itsBmap;
 };
 
 static const char vcid_gaborarray_h[] = "$Header$";

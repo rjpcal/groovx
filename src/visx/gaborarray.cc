@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Tue May 13 10:07:19 2003
+// written: Tue May 13 10:17:40 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -86,9 +86,76 @@ DOTRACE("GaborArray::GaborArray");
   rebuild();
 }
 
-void GaborArray::renderInto(BmapData& data) const
+void GaborArray::saveImage(const char* filename) const
 {
-DOTRACE("GaborArray::renderInto");
+DOTRACE("GaborArray::saveImage");
+
+  updateBmap();
+
+  ImgFile::save(filename, *itsBmap);
+}
+
+void GaborArray::grGetBoundingBox(Bbox& bbox) const
+{
+DOTRACE("GaborArray::grGetBoundingBox");
+
+  // FIXME this heavily duplicates Gabor::grGetBoundingBox()
+
+  const Vec2d world_origin(0.0, 0.0);
+
+  const Vec2i screen_origin = bbox.screenFromWorld(world_origin);
+
+  Rect<int> screen_rect;
+  screen_rect.setXYWH(screen_origin, itsSize);
+
+  Rect<double> world_rect = bbox.worldFromScreen(screen_rect);
+
+  bbox.drawRect(world_rect);
+}
+
+void GaborArray::grRender(Canvas& canvas) const
+{
+DOTRACE("GaborArray::grRender");
+
+  updateBmap();
+
+  canvas.drawPixels(*itsBmap, Vec2d(0.0, 0.0), Vec2d(1.0, 1.0));
+}
+
+void GaborArray::rebuild()
+{
+DOTRACE("GaborArray::rebuild");
+
+  Snake snake(itsForegNumber, itsForegSpacing);
+
+  // pull in elements from the snake
+  for (int n = 0; n < snake.getLength(); ++n)
+    {
+      if (!tryPush(snake.getElement(n)))
+        {
+          throw Util::Error("snake elements were too close together!\n");
+        }
+    }
+
+  hexGridElements();
+
+  const int diffusionCycles = 10;
+
+  for (int i = 0; i < diffusionCycles; ++i)
+    {
+      jitterElement();
+      fillElements();
+    }
+
+  const int insideNumber = insideElements(snake);
+
+  printf(" FOREG_NUMBER %d    PATCH_NUMBER %d    TOTAL_NUMBER %d\n",
+          snake.getLength(), insideNumber, totalNumber);
+}
+
+void GaborArray::updateBmap() const
+{
+DOTRACE("GaborArray::updateBmap");
 
   fixed_block<double> win(itsSize.x()*itsSize.y());
 
@@ -126,9 +193,9 @@ DOTRACE("GaborArray::renderInto");
           }
     }
 
-  BmapData dest(itsSize, 8, 1);
+  shared_ptr<BmapData> result(new BmapData(itsSize, 8, 1));
 
-  unsigned char* bytes = dest.bytesPtr();
+  unsigned char* bytes = result->bytesPtr();
 
   for (int k = 0; k < itsSize.x()*itsSize.y(); ++k)
     {
@@ -138,79 +205,7 @@ DOTRACE("GaborArray::renderInto");
       *bytes++ = val;
     }
 
-  data.swap(dest);
-}
-
-void GaborArray::saveImage(const char* filename) const
-{
-DOTRACE("GaborArray::saveImage");
-
-  BmapData data;
-
-  renderInto(data);
-
-  ImgFile::save(filename, data);
-}
-
-void GaborArray::grGetBoundingBox(Bbox& bbox) const
-{
-DOTRACE("GaborArray::grGetBoundingBox");
-
-  // FIXME this heavily duplicates Gabor::grGetBoundingBox()
-
-  const Vec2d world_origin(0.0, 0.0);
-
-  const Vec2i screen_origin = bbox.screenFromWorld(world_origin);
-
-  Rect<int> screen_rect;
-  screen_rect.setXYWH(screen_origin, itsSize);
-
-  Rect<double> world_rect = bbox.worldFromScreen(screen_rect);
-
-  bbox.drawRect(world_rect);
-}
-
-void GaborArray::grRender(Canvas& canvas) const
-{
-DOTRACE("GaborArray::grRender");
-
-  BmapData data;
-
-  renderInto(data);
-
-  canvas.drawPixels(data, Vec2d(0.0, 0.0),
-                    Vec2d(1.0, 1.0));
-}
-
-void GaborArray::rebuild()
-{
-DOTRACE("GaborArray::rebuild");
-
-  Snake snake(itsForegNumber, itsForegSpacing);
-
-  // pull in elements from the snake
-  for (int n = 0; n < snake.getLength(); ++n)
-    {
-      if (!tryPush(snake.getElement(n)))
-        {
-          throw Util::Error("snake elements were too close together!\n");
-        }
-    }
-
-  hexGridElements();
-
-  const int diffusionCycles = 10;
-
-  for (int i = 0; i < diffusionCycles; ++i)
-    {
-      jitterElement();
-      fillElements();
-    }
-
-  const int insideNumber = insideElements(snake);
-
-  printf(" FOREG_NUMBER %d    PATCH_NUMBER %d    TOTAL_NUMBER %d\n",
-          snake.getLength(), insideNumber, totalNumber);
+  itsBmap.swap(result);
 }
 
 bool GaborArray::tryPush(const Element& e)
