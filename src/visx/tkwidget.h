@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Tue Sep 17 12:35:22 2002
+// written: Tue Sep 17 12:52:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,11 @@ public:
 
   void destroyWidget();
 
-  // Accessors
+  int width() const;
+  int height() const;
+  void setWidth(int w);
+  void setHeight(int h);
+
   Tcl_Interp* interp() const;
   Tk_Window tkWin() const;
   const char* pathname() const;
@@ -56,6 +60,8 @@ public:
 
   virtual void displayCallback() = 0;
 
+  virtual void reshapeCallback() = 0;
+
   /// Overridden from GWT::Widget.
   virtual void bind(const char* event_sequence, const char* script);
 
@@ -63,6 +69,7 @@ public:
   virtual void takeFocus();
 
   void requestRedisplay();
+  void requestReconfigure();
 
   void hook();
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Tue Sep 17 12:36:09 2002
+// written: Tue Sep 17 12:52:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,6 +85,8 @@ public:
     tkWin(Tk_CreateWindowFromPath(interp, Tk_MainWindow(interp),
                             const_cast<char*>(pathname),
                             (char *) 0)),
+    width(400),
+    height(400),
     updatePending(false),
     shutdownRequested(false)
   {
@@ -103,6 +105,9 @@ public:
   Tcl::TkWidget* owner;
   Tcl_Interp* interp;
   const Tk_Window tkWin;
+
+  int width;
+  int height;
 
   bool updatePending;
   bool shutdownRequested;
@@ -173,6 +178,12 @@ DOTRACE("TkWidgImpl::cEventCallback");
               }
           }
           break;
+        case ConfigureNotify:
+          {
+            DOTRACE("TkWidgImpl::cEventCallback-ConfigureNotify");
+            widg->requestReconfigure();
+          }
+       break;
         case KeyPress:
           if (widg->hasKeyListeners())
             keyEventProc(widg, (XKeyEvent*) rawEvent);
@@ -233,6 +244,21 @@ Tcl::TkWidget::~TkWidget()
                         TkWidgImpl::cEventCallback,
                         static_cast<void*>(this));
   delete rep;
+}
+
+int Tcl::TkWidget::width() const { return rep->width; }
+int Tcl::TkWidget::height() const { return rep->height; }
+
+void Tcl::TkWidget::setWidth(int w)
+{
+  rep->width = w;
+  Tk_GeometryRequest(rep->tkWin, rep->width, rep->height);
+}
+
+void Tcl::TkWidget::setHeight(int h)
+{
+  rep->height = h;
+  Tk_GeometryRequest(rep->tkWin, rep->width, rep->height);
 }
 
 void Tcl::TkWidget::destroyWidget()
@@ -331,6 +357,22 @@ DOTRACE("Tcl::TkWidget::requestRedisplay");
       Tk_DoWhenIdle(TkWidgImpl::cRenderCallback, static_cast<ClientData>(this));
       rep->updatePending = true;
     }
+}
+
+void Tcl::TkWidget::requestReconfigure()
+{
+DOTRACE("Tcl::TkWidget::requestReconfigure");
+
+  if (rep->width != Tk_Width(rep->tkWin) ||
+      rep->height != Tk_Height(rep->tkWin))
+    {
+      rep->width = Tk_Width(rep->tkWin);
+      rep->height = Tk_Height(rep->tkWin);
+      XResizeWindow(Tk_Display(rep->tkWin), Tk_WindowId(rep->tkWin),
+                    rep->width, rep->height);
+    }
+
+  reshapeCallback();
 }
 
 void Tcl::TkWidget::hook()

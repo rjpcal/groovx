@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 12:37:58 2002
+// written: Tue Sep 17 12:54:50 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -68,15 +68,11 @@ struct ToglOpts
 {
   void toDefaults()
   {
-    width = 400;
-    height = 400;
     time = 0;
     privateCmapFlag = 0;
     glx.toDefaults();
   }
 
-  int width;
-  int height;
   int time;
   int privateCmapFlag;
   GlxOpts glx;
@@ -210,10 +206,8 @@ public:
   void configure(int objc, Tcl_Obj* const objv[]);
 
   // All callbacks cast to/from Togl::Impl*, _NOT_ Togl* !!!
-  static void cEventCallback(ClientData clientData, XEvent* eventPtr) throw();
   static void cTimerCallback(ClientData clientData) throw();
 
-  void requestReconfigure();
   void swapBuffers() const;
 
   void ensureSharedColormap(const char* what) const;
@@ -232,7 +226,6 @@ public:
   Gfx::Canvas& canvas() const { return itsGlx->canvas(); }
 
 private:
-  void eventProc(XEvent* eventPtr);
   void makeWindowExist(); // throws a Util::Error on failure
 };
 
@@ -293,7 +286,7 @@ DOTRACE("Togl::Impl::Impl");
   // Get the window mapped onscreen
   //
 
-  Tk_GeometryRequest(itsTkWin, itsOpts->width, itsOpts->height);
+  Tk_GeometryRequest(itsTkWin, itsOwner->width(), itsOwner->height());
 
   Assert(itsGlx.get() == 0);
 
@@ -302,11 +295,6 @@ DOTRACE("Togl::Impl::Impl");
   //
   // Set up handlers
   //
-
-  Tk_CreateEventHandler(itsTkWin,
-                        StructureNotifyMask,
-                        &cEventCallback,
-                        static_cast<ClientData>(this));
 
   if (itsOpts->time > 0)
     {
@@ -399,21 +387,6 @@ DOTRACE("Togl::Impl::configure");
     makeWindowExist();
 }
 
-void Togl::Impl::cEventCallback(ClientData clientData, XEvent* eventPtr) throw()
-{
-  Impl* rep = static_cast<Impl*>(clientData);
-  Tcl_Preserve(clientData);
-  try
-    {
-      rep->eventProc(eventPtr);
-    }
-  catch (...)
-    {
-      Tcl::Interp(rep->itsInterp).handleLiveException("cEventCallback", true);
-    }
-  Tcl_Release(clientData);
-}
-
 void Togl::Impl::cTimerCallback(ClientData clientData) throw()
 {
 DOTRACE("Togl::Impl::cTimerCallback");
@@ -433,22 +406,6 @@ DOTRACE("Togl::Impl::cTimerCallback");
     }
 
   Tcl_Release(clientData);
-}
-
-void Togl::Impl::requestReconfigure()
-{
-DOTRACE("Togl::Impl::requestReconfigure");
-  if (itsOpts->width != Tk_Width(itsTkWin) ||
-      itsOpts->height != Tk_Height(itsTkWin))
-    {
-      itsOpts->width = Tk_Width(itsTkWin);
-      itsOpts->height = Tk_Height(itsTkWin);
-      XResizeWindow(itsDisplay, windowId(), itsOpts->width, itsOpts->height);
-
-      itsGlx->makeCurrent(windowId());
-    }
-
-  itsOwner->reshapeCallback();
 }
 
 void Togl::Impl::swapBuffers() const
@@ -579,24 +536,6 @@ DOTRACE("Togl::Impl::loadFontList");
   itsFontListBase = newListBase;
 }
 
-void Togl::Impl::eventProc(XEvent* eventPtr)
-{
-DOTRACE("Togl::Impl::eventProc");
-
-  switch (eventPtr->type)
-    {
-    case ConfigureNotify:
-      {
-        DOTRACE("Togl::Impl::eventProc-ConfigureNotify");
-        requestReconfigure();
-      }
-      break;
-    default:
-      /*nothing*/
-      ;
-    }
-}
-
 void Togl::Impl::makeWindowExist()
 {
 DOTRACE("Togl::Impl::makeWindowExist");
@@ -616,7 +555,7 @@ DOTRACE("Togl::Impl::makeWindowExist");
                           itsOpts->glx.rgbaFlag, itsOpts->privateCmapFlag);
 
   TkUtil::createWindow(itsTkWin, itsGlx->visInfo(),
-                       itsOpts->width, itsOpts->height, cmap);
+                       itsOwner->width(), itsOwner->height(), cmap);
 
   if (!itsOpts->glx.rgbaFlag)
     {
@@ -671,7 +610,7 @@ void Togl::reshapeCallback()
 {
 DOTRACE("Togl::reshapeCallback");
 
-  glViewport(0, 0, rep->itsOpts->width, rep->itsOpts->height);
+  glViewport(0, 0, width(), height());
 }
 
 void Togl::timerCallback()
@@ -686,10 +625,7 @@ void Togl::configure(int objc, Tcl_Obj* const objv[])
   { rep->configure(objc, objv); }
 
 void Togl::makeCurrent() const          { rep->itsGlx->makeCurrent(rep->windowId()); }
-void Togl::requestReconfigure()         { rep->requestReconfigure(); }
 void Togl::swapBuffers()                { rep->swapBuffers(); }
-int Togl::width() const                 { return rep->itsOpts->width; }
-int Togl::height() const                { return rep->itsOpts->height; }
 bool Togl::isRgba() const               { return rep->itsOpts->glx.rgbaFlag; }
 bool Togl::isDoubleBuffered() const     { return rep->itsOpts->glx.doubleFlag; }
 unsigned int Togl::bitsPerPixel() const { return rep->itsGlx->visInfo()->depth; }
@@ -730,21 +666,6 @@ void Togl::loadBitmapFonti(int fontnumber) const
 DOTRACE("Togl::loadBitmapFonti");
   rep->loadFontList(GLUtil::loadBitmapFont(Tk_Display(rep->itsTkWin),
                                            GLUtil::NamedFont(fontnumber)));
-}
-
-
-void Togl::setWidth(int w)
-{
-DOTRACE("Togl::setWidth");
-  rep->itsOpts->width = w;
-  Tk_GeometryRequest(rep->itsTkWin, rep->itsOpts->width, rep->itsOpts->height);
-}
-
-void Togl::setHeight(int h)
-{
-DOTRACE("Togl::setHeight");
-  rep->itsOpts->height = h;
-  Tk_GeometryRequest(rep->itsTkWin, rep->itsOpts->width, rep->itsOpts->height);
 }
 
 Gfx::Canvas& Togl::getCanvas() const

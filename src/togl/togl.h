@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Tue Sep 17 12:37:24 2002
+// written: Tue Sep 17 12:51:51 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -62,6 +62,7 @@ public:
   /// Overridden from Tcl::TkWidget.
   virtual void displayCallback();
 
+  /// Overridden from Tcl::TkWidget.
   virtual void reshapeCallback();
 
   virtual void timerCallback();
@@ -74,14 +75,11 @@ public:
   Tcl_Obj* cget(Tcl_Obj* param) const;
   void configure(int objc, Tcl_Obj* const objv[]);
   void makeCurrent() const;
-  void requestReconfigure();
 
   /// Overridden from GWT::Widget.
   virtual void swapBuffers();
 
   // Query functions
-  int width() const;
-  int height() const;
   bool isRgba() const;
   bool isDoubleBuffered() const;
   unsigned int bitsPerPixel() const;
@@ -110,10 +108,6 @@ public:
   void loadDefaultFont() const;
   void loadBitmapFont(const char* fontname) const;
   void loadBitmapFonti(int fontnumber) const;
-
-  // Manipulators
-  void setWidth(int w);
-  void setHeight(int h);
 
   class Impl;
   friend class Impl;
