@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Sat Jul  3 13:50:30 1999
+// written: Sat Jul  3 13:53:04 1999
 // $Id$
 //
 // PtrList is type-parameterized container for pointers. PtrList is
@@ -147,11 +147,9 @@ public:
 
   template <class Iterator>
   void insertValidIds(Iterator itr) const {
-	 for (int i = 0; i < itsTrials.size(); ++i) {
-		if (isValidId(i)) {
-		  *itr = i;
-		  ++itr;
-		}
+	 for (int i = 0; i < itsVec.size(); ++i) {
+		if (isValidId(i)) 
+		  *itr++ = i;
 	 }
   }
 
