@@ -41,11 +41,18 @@ Util::Time Util::Time::wallClockNow() throw()
   return t;
 }
 
-Util::Time Util::Time::rusageNow() throw()
+Util::Time Util::Time::rusageUserNow() throw()
 {
   rusage ru;
   getrusage(RUSAGE_SELF, &ru);
   return Util::Time(ru.ru_utime);
+}
+
+Util::Time Util::Time::rusageSysNow() throw()
+{
+  rusage ru;
+  getrusage(RUSAGE_SELF, &ru);
+  return Util::Time(ru.ru_stime);
 }
 
 static const char vcid_time_cc[] = "$Header$";

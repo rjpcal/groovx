@@ -233,7 +233,7 @@ namespace
 #if defined(TRACE_WALL_CLOCK_TIME)
     return Util::Time::wallClockNow();
 #elif defined(TRACE_CPU_TIME)
-    return Util::Time::rusageNow();
+    return Util::Time::rusageUserNow();
 #endif
   }
 

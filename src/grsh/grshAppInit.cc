@@ -250,7 +250,9 @@ DOTRACE("main");
 
       Tcl::Interp& interp = app.interp();
 
-      const Util::Time start1 = Util::Time::wallClockNow();
+      const Util::Time ru1 = Util::Time::rusageUserNow();
+      const Util::Time rs1 = Util::Time::rusageSysNow();
+      const Util::Time wc1 = Util::Time::wallClockNow();
 
       for (size_t i = 0; i < sizeof(IMMEDIATE_PKGS)/sizeof(PackageInfo); ++i)
         {
@@ -268,12 +270,18 @@ DOTRACE("main");
 
       if (Tcl::Main::isInteractive())
         {
-          const Util::Time t = Util::Time::wallClockNow() - start1;
+          const Util::Time ru = Util::Time::rusageUserNow() - ru1;
+          const Util::Time rs = Util::Time::rusageSysNow() - rs1;
+          const Util::Time wc = Util::Time::wallClockNow() - wc1;
 
-          fprintf(stderr, "\tstartup time (tcl+tk) %6.3fs\n", t.sec());
+          fprintf(stderr, "\tstartup time (tcl+tk) "
+                  "%6.3fs (user) %6.3fs (sys) %6.3fs (wall)\n",
+                  ru.sec(), rs.sec(), wc.sec());
         }
 
-      const Util::Time start2 = Util::Time::wallClockNow();
+      const Util::Time ru2 = Util::Time::rusageUserNow();
+      const Util::Time rs2 = Util::Time::rusageSysNow();
+      const Util::Time wc2 = Util::Time::wallClockNow();
 
       for (size_t i = 0; i < sizeof(DELAYED_PKGS)/sizeof(PackageInfo); ++i)
         {
@@ -316,9 +324,13 @@ DOTRACE("main");
 
       if (Tcl::Main::isInteractive())
         {
-          const Util::Time t = Util::Time::wallClockNow() - start2;
+          const Util::Time ru = Util::Time::rusageUserNow() - ru2;
+          const Util::Time rs = Util::Time::rusageSysNow() - rs2;
+          const Util::Time wc = Util::Time::wallClockNow() - wc2;
 
-          fprintf(stderr, "\tstartup time (GroovX) %6.3fs\n", t.sec());
+          fprintf(stderr, "\tstartup time (GroovX) "
+                  "%6.3fs (user) %6.3fs (sys) %6.3fs (wall)\n",
+                  ru.sec(), rs.sec(), wc.sec());
         }
 
       Tcl::List path = interp.getGlobalVar<Tcl::List>("auto_path");
