@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Tue Dec  7 18:33:44 1999
+// written: Thu Dec 16 16:00:28 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,11 +64,9 @@ public:
   List& theList() { return itsList; }
 
   virtual C* getCItemFromId(int id) {
-	 C* p = dynamic_cast<C*>(itsList.getCheckedPtr(id));
-	 if ( p == NULL ) {
-		throw TclError("object not of correct type");
-	 }
-	 return p;
+	 // will throw bad_cast if cast fails
+	 C& p = dynamic_cast<C&>(*(itsList.getCheckedPtr(id)));
+	 return &p;
   }
 
   virtual IO& getIoFromId(int id) {
