@@ -2,7 +2,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Sun Apr 25 12:50:03 1999
+// written: Wed May 26 12:03:29 1999
 // $Id$
 //
 // This is the abstract base class for graphic objects. GrObj*'s may
@@ -12,7 +12,7 @@
 // classes is the grRecompile() function. This is the function that
 // should generate an up-to-date OpenGL display list that, when
 // called, will properly display the object. The function that should
-// actually be called to display the object is grAction(). This
+// actually be called to display the object is draw(). This
 // function is declared virtual and so may be overridden, but the
 // default version, which simply recompiles the display list (if
 // necessary) and then calls the display list, should be adequate in
@@ -26,20 +26,31 @@
 #include "io.h"
 #endif
 
+#ifndef OBSERVABLE_H_DEFINED
+#include "observable.h"
+#endif
+
+#ifndef OBSERVER_H_DEFINED
+#include "observer.h"
+#endif
+
 ///////////////////////////////////////////////////////////////////////
 // GrObj abstract class definition
 ///////////////////////////////////////////////////////////////////////
 
-class GrObj : public virtual IO {
+class GrObj : public virtual Observable, 
+				  public virtual Observer,
+				  public virtual IO 
+{
 public:
   //////////////
   // creators //
   //////////////
 
-  GrObj (int categ = -1);
+  GrObj ();
   // Default constructor.
 
-  GrObj (istream &is);
+  GrObj (istream &is, IOFlag flag);
   // Construct from an istream by using deserialize.
 
   virtual ~GrObj ();
@@ -49,6 +60,8 @@ public:
   virtual void deserialize(istream &is, IOFlag flag);
   // These functions write the object's state from/to an output/input
   // stream. Both functions are defined, but are no-ops for GrObj.
+
+  virtual int charCount() const = 0;
 
   ///////////////
   // accessors //
@@ -64,12 +77,16 @@ public:
   //////////////////
 
   virtual void setCategory(int val) = 0;
+  
+  virtual void receiveStateChangeMsg(const Observable* obj);
+  virtual void receiveDestroyMsg(const Observable* obj);
+
 
   /////////////
   // actions //
   /////////////
 
-  virtual void grAction() const;
+  virtual void draw() const;
   // This function may be overridden, but a default version is
   // provided in GrObj that simply calls the display list that was
   // compiled in grRecompile. If overridden, this function should
@@ -82,16 +99,15 @@ protected:
   // that can render the object.
 
   bool grIsCurrent() const { return itsIsCurrent; }
-  void grPostRecompile() const { itsIsCurrent = false; }
-  void grPostCompiled() const { itsIsCurrent = true; }
+  void grPostUpdated() const;
   // These functions manipulate whether the GrObj is considered
   // current: the GrObj is current if its OpenGL display list is in
   // correspondence with all of its parameters. Thus, whenever a
   // manipulator changes a parameter in a derived class, it should
-  // also call grPostRecompile to indicate that the display list must
-  // be recompiled. And when grRecompile has finished compiling the
-  // display list, it should call grPostCompiled to indicate that the
-  // GrObj is ready for display.
+  // also call sendStateChangeMsg to indicate that the display list
+  // must be recompiled. And when grRecompile has finished compiling
+  // the display list, it should call grPostUpdated to indicate that
+  // the GrObj is ready for display.
 
   void grNewList() const;
   // This function is to be used from grRecompile in derived classes to 
