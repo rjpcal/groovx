@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Sat Sep 23 15:37:40 2000
+// written: Sat Sep 23 16:02:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,10 @@ class ostream;
 #  endif
 #endif
 
-class type_info;
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TYPEINFO_DEFINED)
+#include <typeinfo>
+#define TYPEINFO_DEFINED
+#endif
 
 class fixed_string;
 
@@ -204,14 +207,14 @@ public:
   /// Construct, and call \c setMsg(message)
   IoError(const char* message);
   /// Construct, and call \c setMsg(typeInfo)
-  IoError(const type_info& typeInfo);
+  IoError(const std::type_info& typeInfo);
   /// Virtual destructor
   virtual ~IoError();
 protected:
   /// Change the message associated with the exception to \a newMessage
   virtual void setMsg(const char* newMessage);
   /// Change the message associated with the exception to \c typeInfo.name()
-  virtual void setMsg(const type_info& typeInfo);
+  virtual void setMsg(const std::type_info& typeInfo);
 };
 
 /**
@@ -226,7 +229,7 @@ public:
   ///
   InputError(const char* str);
   ///
-  InputError(const type_info& ti) { setMsg(ti); }
+  InputError(const std::type_info& ti) { setMsg(ti); }
   /// Virtual destructor
   virtual ~InputError();
 };
@@ -243,7 +246,7 @@ public:
   ///
   OutputError(const char* str);
   ///
-  OutputError(const type_info& ti) { setMsg(ti); }
+  OutputError(const std::type_info& ti) { setMsg(ti); }
   /// Virtual destructor
   virtual ~OutputError();
 };
@@ -262,7 +265,7 @@ public:
   ///
   LogicError(const char* str);
   ///
-  LogicError(const type_info& ti) { setMsg(ti); }
+  LogicError(const std::type_info& ti) { setMsg(ti); }
   /// Virtual destructor
   virtual ~LogicError();
 };
@@ -280,7 +283,7 @@ public:
   ///
   ValueError(const char* str);
   ///
-  ValueError(const type_info& ti) { setMsg(ti); }
+  ValueError(const std::type_info& ti) { setMsg(ti); }
   /// Virtual destructor
   virtual ~ValueError();
 };
