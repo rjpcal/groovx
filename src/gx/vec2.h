@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 28 12:54:13 1999
-// written: Wed Jul 18 15:30:54 2001
+// written: Wed Aug  8 08:11:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,6 +47,15 @@ public:
   template <class U>
   Point& operator-=(const Point<U>& rhs)
     { x_ -= V(rhs.x()); y_ -= V(rhs.y()); return *this; }
+
+
+  template <class U>
+  Point& operator*=(const Point<U>& factor)
+    { x_ *= factor.x(); y_ *= factor.y(); }
+
+  template <class U>
+  Point& operator/=(const Point<U>& factor)
+    { x_ /= factor.x(); y_ /= factor.y(); }
 
 
   template <class U>
