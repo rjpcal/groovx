@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 16:35:06 2001
-// written: Mon Sep 10 17:17:35 2001
+// written: Thu Sep 13 10:50:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #define RESPONSEMAP_H_DEFINED
 
 #include "visx/response.h"
+#include "util/error.h"
 #include "util/minivec.h"
 #include "util/strings.h"
 #include "tcl/tcllistobj.h"
