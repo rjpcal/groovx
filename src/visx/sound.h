@@ -3,7 +3,7 @@
 // sound.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:43:07 1999
-// written: Fri Sep 29 14:31:36 2000
+// written: Tue Oct 24 12:52:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
 #include "io/io.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ITEMWITHID_H_DEFINED)
+#include "itemwithid.h"
 #endif
 
 class SoundError : public ErrorWithMsg {
@@ -45,6 +49,11 @@ public:
   // Returns a pointer to a new platform-appropriate Sound object. The
   // caller is responsible for destroying the Sound object.
   static Sound* newPlatformSound(const char* soundfile);
+
+  static void setOkSound(ItemWithId<Sound> ok_sound);
+  static void setErrSound(ItemWithId<Sound> err_sound);
+  static ItemWithId<Sound> getOkSound();
+  static ItemWithId<Sound> getErrSound();
 
   virtual ~Sound();
 
