@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Sun May 20 21:58:54 2001
+// written: Mon Jun  4 11:27:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -239,6 +239,7 @@ public:
   {
 	 declareCAction("clear", &IoDb::clear);
 	 declareCAction("purge", &IoDb::purge);
+	 declareCSetter("release", &IoDb::release);
 	 addCommand( new IoTcl::LoadObjectsCmd(interp, "IoDb::loadObjects") );
 	 addCommand( new IoTcl::SaveObjectsCmd(interp, "IoDb::saveObjects") );
   }
