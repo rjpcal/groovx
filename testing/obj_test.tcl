@@ -18,18 +18,13 @@ namespace eval Objtest {
         ObjDb::clear
     }
 
-    proc testResetCmd { objname } {
-        upvar $objname this
+    proc testResetCmd { bc sc1 sc2 } {
 
-        set cmdname "${this(baseclass)}::removeAll"
-        set usage "wrong \# args: should be \"$cmdname\""
-        set testname "${this(packagename)}-${cmdname}"
+        ::test "${bc}::removeAll" "too many args" [format {
+            %s::removeAll junk
+        } $bc] {wrong \# args: should be}
 
-        ::test $testname "too many args" [format {
-            %s junk
-        } $cmdname] $usage
-
-        ::test $testname "check number of objects" [format {
+        ::test "${bc}::removeAll" "check number of objects" [format {
 	    set bc %s
             ${bc}::removeAll
             set before_count [${bc}::countAll]
@@ -38,7 +33,7 @@ namespace eval Objtest {
             ${bc}::removeAll
             set after_count [${bc}::countAll]
             return [expr $before_count - $after_count]
-        } $this(baseclass) $this(subclass1) $this(subclass2)] {^0$}
+        } $bc $sc1 $sc2] {^0$}
     }
 
     proc testCountAllCmd { objname } {
@@ -46,12 +41,11 @@ namespace eval Objtest {
 
         set cmdname "${this(baseclass)}::countAll"
         set usage "wrong \# args: should be \"$cmdname\""
-        set testname "${this(packagename)}-${cmdname}"
 
-        eval ::test $testname {"too many args"} {"
+        eval ::test $cmdname {"too many args"} {"
             $cmdname junk
         "} {$usage}
-        eval ::test $testname {"normal use"} {"
+        eval ::test $cmdname {"normal use"} {"
             set before_count \[$cmdname\]
             Obj::new ${this(subclass1)}
             Obj::new ${this(subclass2)}
@@ -65,17 +59,16 @@ namespace eval Objtest {
 
         set cmdname "Obj::delete"
         set usage "wrong \# args: should be \"$cmdname objref\\(s\\)\""
-        set testname "${this(packagename)}-${cmdname}"
 
-        eval ::test $testname {"too few args"} {"
+        eval ::test $cmdname {"too few args"} {"
             $cmdname
         "} {$usage}
 
-        eval ::test $testname {"too many args"} {"
+        eval ::test $cmdname {"too many args"} {"
             $cmdname junk junk
         "} {$usage}
 
-        eval ::test $testname {"normal use"} {"
+        eval ::test $cmdname {"normal use"} {"
             set id \[Obj::new ${this(subclass1)}\]
             $cmdname \$id
             IO::is \$id
@@ -87,13 +80,12 @@ namespace eval Objtest {
 
         set cmdname "${this(baseclass)}::findAll"
         set usage "wrong \# args: should be \"$cmdname\""
-        set testname "${this(packagename)}-${cmdname}"
 
-        eval ::test $testname {"too many args"} {"
+        eval ::test $cmdname {"too many args"} {"
             $cmdname junk
         "} {$usage}
 
-        eval ::test $testname {"normal use on filled list"} {"
+        eval ::test $cmdname {"normal use on filled list"} {"
             Obj::new ${this(subclass1)}
             set remove_me \[Obj::new ${this(subclass1)}\]
             Obj::new ${this(subclass2)}
@@ -110,22 +102,21 @@ namespace eval Objtest {
 
         set cmdname "${this(baseclass)}::is"
         set usage "wrong \# args: should be "
-        set testname "${this(packagename)}-${cmdname}"
 
-        eval ::test $testname {"too few args"} {"
+        eval ::test $cmdname {"too few args"} {"
             $cmdname
         "} {$usage}
 
-        eval ::test $testname {"too many args"} {"
+        eval ::test $cmdname {"too many args"} {"
             $cmdname 0 junk
         "} {$usage}
 
-        eval ::test $testname {"normal use on valid id"} {"
+        eval ::test $cmdname {"normal use on valid id"} {"
             set id \[Obj::new ${this(subclass1)}\]
             $cmdname \$id
         "} {"^1$"}
 
-        eval ::test $testname {"normal use on valid id"} {"
+        eval ::test $cmdname {"normal use on valid id"} {"
             set id \[Obj::new ${this(subclass1)}\]
             Obj::delete \$id
             $cmdname \$id
@@ -140,7 +131,7 @@ namespace eval Objtest {
 
         purgeAll
 
-        testResetCmd testObj
+        testResetCmd $baseclass $subclass1 $subclass2
         testCountAllCmd testObj
         testDeleteCmd testObj
         testFindAllCmd testObj
