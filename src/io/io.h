@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Mon Oct 18 17:59:05 1999
+// written: Tue Oct 19 14:25:04 1999
 // $Id$
 //
 // This file defines the IO abstract interface. This interface
@@ -73,8 +73,6 @@ public:
   // "New" IO functions
   virtual void readFrom(Reader* reader);
   virtual void writeTo(Writer* writer) const;
-
-  virtual int attributeCount();
 
   // Returns a unique id for this object
   unsigned long id() const;
