@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:38 1999
-// written: Fri Jan 18 16:07:07 2002
+// written: Thu May 23 16:59:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,6 @@
 #include "util/arrays.h"
 
 #include "util/trace.h"
-#define LOCAL_DEBUG
-#include "util/debug.h"
 
 namespace
 {
