@@ -2,7 +2,7 @@
 // poslist.h
 // Rob Peters
 // created: Fri Mar 12 17:13:53 1999
-// written: Fri Mar 12 17:30:05 1999
+// written: Sat Mar 13 19:12:53 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef POSLIST_H_DEFINED
@@ -24,7 +24,7 @@
 // PosList class
 ///////////////////////////////////////////////////////////////////////
 
-class PosList {
+class PosList : public virtual IO{
 public:
   //////////////
   // creators //
@@ -34,6 +34,10 @@ public:
   // construct a list of 'size' Position*'s, initialized to NULL
 
   ~PosList ();
+
+  // write/read the object's state from/to an output/input stream
+  virtual IOResult serialize(ostream &os, IOFlag flag = NO_FLAGS) const;
+  virtual IOResult deserialize(istream &is, IOFlag flag = NO_FLAGS);
 
   ///////////////
   // accessors //
