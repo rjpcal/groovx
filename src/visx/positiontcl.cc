@@ -3,7 +3,7 @@
 // positiontcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:53:34 1999
-// written: Wed Oct 13 15:38:50 1999
+// written: Thu Oct 21 13:07:06 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,9 +12,7 @@
 #define POSITIONTCL_CC_DEFINED
 
 #include <tcl.h>
-#include <typeinfo>
 
-#include "demangle.h"
 #include "iomgr.h"
 #include "position.h"
 #include "poslist.h"
@@ -29,7 +27,6 @@ namespace PosTcl {
   class TranslateCmd;
   class ScaleCmd;
   class RotateCmd;
-  class TypeCmd;
   class PosPkg;
 }
 
@@ -116,23 +113,6 @@ protected:
 
 //---------------------------------------------------------------------
 //
-// TypeCmd --
-//
-//---------------------------------------------------------------------
-
-class PosTcl::TypeCmd : public TclItemCmd<Position> {
-public:
-  TypeCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<Position>(pkg, cmd_name, "posid", 2, 2) {}
-protected:
-  virtual void invoke() {
-	 Position* p = getItem();
-	 returnCstring(demangle(typeid(*p).name()).c_str());
-  }
-};
-
-//---------------------------------------------------------------------
-//
 // PosPkg class definition
 //
 //---------------------------------------------------------------------
@@ -145,7 +125,6 @@ public:
 	 addCommand( new RotateCmd(this, "Pos::rotate") );
 	 addCommand( new TranslateCmd(this, "Pos::translate") );
 	 addCommand( new ScaleCmd(this, "Pos::scale") );
-	 addCommand( new TypeCmd(this, "Pos::type") );
 
 	 Tcl_Eval(interp,
 				 "namespace eval Pos { proc position {} { return Pos } }\n"
