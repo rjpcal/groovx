@@ -427,3 +427,108 @@ callbacks, one subclass of which could use a Tcl_Interp* to register
 timer callbacks. [Later] OK, now I've got Tcl::Timer, which exposes a
 Util::Signal that can be connect()'ed to, by clients who want to
 receive timer callbacks.
+
+(24-Jun-2001, 2-Sep-2001) Allow other kinds of Field's besides numeric
+ones: string fields, sequences, and enums. These can then be
+manipulated by appropriate widgets: entries (strings), trees?
+(sequences), and list boxes (enums). OK, we're on our way on this one
+now; I've added various flags that can be specified for Field's,
+including STRING, MULTI, TRANSIENT, NO_GET, NO_SET, NEW_GROUP; and
+this architecture is extensible enough for now.
+
+(31-Aug-2001, done 3-Sep-2001) Need to merge Value and Tcl::ObjPtr
+somehow, since Tcl::ObjPtr is much more expressive. OK, I didn't merge
+the two, but instead I made the whole Field system rely on
+Tcl::ObjPtr's instead of Value's. This allowed for sweeping cutbacks
+in the responsibilities of Value: first, we could eliminated TValue<>,
+TValuePtr<>, and TclValue, and second, the Value interface was cut
+back to just get/set for strings, plus printTo() and scanFrom().
+
+(2-Dec-2000, obsolete 3-Sep-2001) Should Value be implemented using
+Coplien's envelope/letter idiom? Value's could then be passed around
+as stack objects, and they could contain ref-counted smart pointers to
+different value implementations. The implementation would be the same
+interface, but a separate inheritance hierarchy... in effect we'd
+rename the current Value hierarchy to ValueType. Or... maybe we should
+just be passing around shared_ptr<Value>'s, making Value a ref-counted
+type.
+
+(29-Aug-2001, done 3-Sep-2001) Hmmm... got a problem with Signal
+connecting... in the Fish constructor, we try to connect "this,
+updatePtrs" to a signal. But, since nobody has ref'ed "this" yet, it
+appears to be a dead object to the SoftRef constructor, which then
+neglects to actually form a reference. How to fix? (1) keep a flag in
+RefCounts indicating if the object is live or dead, (2) make SoftRef's
+less hasty to release their reference. Actually, this would be an even
+worse problem if we were trying to construct strong Ref's from "this"
+in a constructor, since if the Ref went out of scope before the
+constructor completed, the object would be deleted
+prematurely. [3-Sep-2001] OK, I added
+RefCounts::releaseStrongNoDelete() and
+RefCounted::decrRefCountNoDelete(), which I used to implement
+Util::FloatingRef<>. FloatingRef is now in use in the Fish
+constructor... seems to work OK. Still need some discipline to make
+sure that FloatingRef is used where necessary... basically anywhere
+that can be called from a constructor.
+
+(3-Sep-2001, done 4-Sep-2001) A memory leak seems to have popped
+up... noticeable when running the batch file conversion job,
+especially with the fMRI data files. OK, fixed it -- problem was that
+I wasn't disconnect()'ing in the GrObjBBox dtor from the Signal that
+was connect()'ed to in the ctor. Will try to get a Connection object
+set up to manage these things properly.
+
+(3-Sep-2001, done 4-Sep-2001) Change GrObj I/O to use the FieldMap.
+
+(3-Sep-2001, done 4-Sep-2001) Eliminate GrObj unrender mode.
+
+(4-Sep-2001, done 4-Sep-2001) I've semi-broken GrObjScaler along the
+way of changing GrObj IO to use width/height rather than
+widthFactor/heightFactor.  Need to roll back those changes and start
+again.
+
+  ---> put the old asw files back in place
+
+  ---> roll back GrObj scaler
+
+  ---> reconvert the asw files to strip the "GrObj::" prefixes
+
+  ---> implement Field::PRIVATE, so we can use width/heightFactor for
+       IO, but not for the GUI
+
+(9-Sep-2001, done 9-Sep-2001) Make Tcl::Command ctor take fstring, not
+const char*, args. Well, instead I made Tcl::Command::Impl hold
+fstring's internally; this is good enough.
+
+(9-Sep-2001, done 9-Sep-2001) Move dlist_... commands to
+dlist::... Add dlist::slice.
+
+(10-Sep-2001, done 12-Sep-2001) OK, here's my bright idea for how to
+run unit tests of C++ code: put all the test cases into a Tcl package
+which can be dynamically loaded into the interpreter, and then the
+test cases can be run. This would help get my feet wet with
+dynamically-loadable extensions as well. [12-Sep-2001] I've got the
+first test done. The only problem is that I have to maintain things in
+several places in order to add a new test module: (1) add a
+src/tests/*.cc file, (2) add an entry in
+~/local/$ARCH/lib/grsh/pkgIndex.tcl, (3) add a testing/*.tcl file. For
+now I'm just DSTTTCPW, and hoping that any necessary structure will
+fall out of refactoring as I push this forward a bit. Goals are: (1)
+any time a bug or crash occurs that was unrevealed by a test, add an
+appropriate test file that exposes the bug, then fix the bug, and (2)
+any new functionality that is added should be done in parallel with
+new unit tests.
+
+(13-Sep-2001, done 14-Sep-2001) OK, to get real packages working:
+there should be a "src/pkgs" directory, within which there would be
+one directory for each package (i.e., "src/pkgs/face",
+"src/pkgs/grobjs"), and all the source files in each subdirectory
+would be linked into one shared library containing a Tcl_PkgInit
+function, so that it could be loaded with 'package require' into
+Tcl. This unified structure would allow us to automatically generate
+the pkgIndex.tcl file using make. [14-Sep-2001] Cool! This is mostly
+working now. I'm able to have things be quite automated with this
+directory structure. We can build a .so --> .o dependency file for
+make, based on the directory structure. And, based on #include
+"pkgs/*/*.h", we can figure out which other packages are required by a
+given package.
