@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Sep  5 17:02:30 2001
+// written: Wed Sep  5 17:14:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,6 +40,8 @@ public:
   /// Virtual destructor.
   virtual ~Gabor();
 
+  static const FieldMap& classFields();
+
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
@@ -66,6 +68,13 @@ public:
       rectangle in the patch is rendered black with a probability
       proportional to the value of the Gabor function. */
   static const ColorMode BW_DITHER_RECT = 4;
+
+  /** Sets the contrast to \c pow(10,\a logContrast). \a logContrast
+      must be negative, so that contrast falls in [0,1]. */
+  void setLogContrast(double logContrast);
+
+  /// Returns \c log10(contrast).
+  double getLogContrast() const;
 
 private:
   /// The current \c ColorMode used for rendering.
@@ -104,9 +113,6 @@ private:
   /** The size of the points used when \a colorMode is either \a
       GRAYSCALE or \a BW_DITHER_POINT. */
   int itsPointSize;
-
-public:
-  static const FieldMap& classFields();
 
 protected:
   virtual Gfx::Rect<double> grGetBoundingBox() const;

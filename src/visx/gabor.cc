@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Sep  5 17:02:16 2001
+// written: Wed Sep  5 17:21:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,6 +50,9 @@ const FieldMap& Gabor::classFields()
   {
     Field("colorMode", &Gabor::itsColorMode, 2, 1, 4, 1, Field::NEW_GROUP),
     Field("contrast", &Gabor::itsContrast, 1.0, 0.0, 1.0, 0.05),
+    Field("logContrast",
+          std::make_pair(&Gabor::getLogContrast, &Gabor::setLogContrast),
+          0.0, -3.0, 0.0, 0.1, Field::TRANSIENT),
     Field("spatialFreq", &Gabor::itsSpatialFreq, 3.5, 0.5, 10.0, 0.5),
     Field("phase", &Gabor::itsPhase, 0, 0, 359, 1),
     Field("drift", &Gabor::itsDrift, 0, 0, 359, 1, Field::TRANSIENT),
@@ -123,6 +126,23 @@ DOTRACE("Gabor::writeTo");
   writeFieldsTo(writer, classFields());
 
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
+}
+
+void Gabor::setLogContrast(double logContrast)
+{
+DOTRACE("Gabor::setLogContrast");
+
+  if (logContrast <= 0.0)
+    {
+      itsContrast = std::pow(10.0, logContrast);
+    }
+}
+
+double Gabor::getLogContrast() const
+{
+DOTRACE("getLogContrast");
+
+  return std::log10(itsContrast);
 }
 
 Gfx::Rect<double> Gabor::grGetBoundingBox() const
