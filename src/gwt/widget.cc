@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Thu May 24 17:12:12 2001
+// written: Mon Jun  4 18:59:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,12 +15,14 @@
 
 #include "gwt/widget.h"
 
+#include "gwt/canvas.h"
+
 #include "gx/gxnode.h"
 
 #include "io/io.h"
 #include "io/iditem.h"
 
-#include "gwt/canvas.h"
+#include "util/observer.h"
 
 #include "util/trace.h"
 #define LOCAL_ASSERT
@@ -56,7 +58,7 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class GWT::Widget::Impl {
+class GWT::Widget::Impl : public Observer {
 public:
   Impl(GWT::Widget* owner) :
 	 itsOwner(owner),
@@ -97,7 +99,20 @@ public:
     { itsHoldOn = hold_on; }
 
   void setDrawable(const IdItem<GxNode>& node)
-    { itsDrawNode = node.handle(); }
+    {
+		itsDrawNode->detach(this);
+
+		itsDrawNode = node.handle();
+
+		itsDrawNode->attach(this);
+	 }
+
+  virtual void receiveStateChangeMsg(const Observable*)
+    {
+		refresh(*(itsOwner->getCanvas()));
+	 }
+
+  virtual void receiveDestroyMsg(const Observable*) {}
 
 private:
   void doFlush(GWT::Canvas& canvas)
