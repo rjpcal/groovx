@@ -3,7 +3,7 @@
 // value.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:19:17 1999
-// written: Sat Oct  2 21:22:32 1999
+// written: Tue Oct 19 15:48:33 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,6 +60,22 @@ public:
   virtual void get(double& val) const = 0;
   virtual void get(const char*& val) const = 0;
   virtual void get(string& val) const = 0;
+
+  // The default implementations of the set functions all throw
+  // exceptions, so that the default case is a read-only value.
+  virtual void setInt(int val);
+  virtual void setLong(long val);
+  virtual void setBool(bool val);
+  virtual void setDouble(double val);
+  virtual void setCstring(const char* val);
+  virtual void setString(const string& val);
+
+  void set(int val) { setInt(val); }
+  void set(long val) { setLong(val); }
+  void set(bool val) { setBool(val); }
+  void set(double val) { setDouble(val); }
+  void set(const char* val) { setCstring(val); }
+  void set(const string& val) { setString(val); }
 }; 
 
 
@@ -93,6 +109,13 @@ public:
   virtual void get(double& val) const;
   virtual void get(const char*& val) const;
   virtual void get(string& val) const;
+
+  virtual void setInt(int val);
+  virtual void setLong(long val);
+  virtual void setBool(bool val);
+  virtual void setDouble(double val);
+  virtual void setCstring(const char* val);
+  virtual void setString(const string& val);
 
   T itsVal;
 };
@@ -129,6 +152,13 @@ public:
   virtual void get(double& val) const;
   virtual void get(const char*& val) const;
   virtual void get(string& val) const;
+
+  virtual void setInt(int val);
+  virtual void setLong(long val);
+  virtual void setBool(bool val);
+  virtual void setDouble(double val);
+  virtual void setCstring(const char* val);
+  virtual void setString(const string& val);
 
   T& operator()() { return *itsValPtr; }
   const T& operator()() const { return *itsValPtr; }
