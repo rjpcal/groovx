@@ -3,7 +3,7 @@
 // tclevalcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jun 17 10:38:13 1999
-// written: Thu Mar  9 16:01:28 2000
+// written: Thu Mar  9 17:41:08 2000
 // $Id$
 //
 // TclEvalCmd serves as a wrapper for a Tcl command string that is to
@@ -45,14 +45,12 @@ public:
   TclEvalCmd(const char* tcl_cmd, ErrorHandlingMode mode = NONE,
 				 int flags = TCL_EVAL_GLOBAL) :
 	 itsCmdObj(Tcl_NewStringObj(tcl_cmd, -1)),
-	 itsLock(itsCmdObj),
 	 itsErrorMode(mode),
 	 itsFlags(flags) {}
 
   TclEvalCmd(Tcl_Obj* cmd_object, ErrorHandlingMode mode = NONE,
 				 int flags = TCL_EVAL_GLOBAL) :
 	 itsCmdObj(cmd_object),
-	 itsLock(itsCmdObj),
 	 itsErrorMode(mode),
 	 itsFlags(flags) {}
 
@@ -79,11 +77,7 @@ public:
   }
 
 private:
-  TclEvalCmd(const TclEvalCmd&);
-  TclEvalCmd& operator=(const TclEvalCmd&);
-
-  Tcl_Obj* itsCmdObj;
-  Tcl::TclObjLock itsLock;
+  TclObjPtr itsCmdObj;
   ErrorHandlingMode itsErrorMode;
   int itsFlags;
 };
