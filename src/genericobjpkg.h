@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Wed Oct 18 22:55:43 2000
+// written: Fri Oct 20 17:20:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -113,7 +113,7 @@ public:
 	 itsPkg(pkg) {}
 protected:
   virtual void invoke() {
-	 typename List::Ptr newObject(new C);
+	 typename List::Ptr newObject(C::make());
 	 typename List::SharedPtr item = itsPkg->theList().insert(newObject);
 	 returnInt(item.id());
   }
