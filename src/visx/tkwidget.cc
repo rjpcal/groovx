@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Tue Sep 17 21:38:57 2002
+// written: Wed Sep 18 12:47:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -241,6 +241,7 @@ Tcl::TkWidget::TkWidget(Tcl_Interp* interp,
                         const char* classname, const char* pathname) :
   rep(new TkWidgImpl(this, interp, classname, pathname))
 {
+DOTRACE("Tcl::TkWidget::TkWidget");
   XBmapRenderer::initClass(rep->tkWin);
 
   incrRefCount();
@@ -248,6 +249,7 @@ Tcl::TkWidget::TkWidget(Tcl_Interp* interp,
 
 Tcl::TkWidget::~TkWidget()
 {
+DOTRACE("Tcl::TkWidget::~TkWidget");
   delete rep;
 }
 
@@ -273,12 +275,7 @@ DOTRACE("Tcl::TkWidget::destroyWidget");
   // If we are exiting, don't bother destroying the widget; otherwise...
   if ( !Tcl_InterpDeleted(rep->interp) )
     {
-      fstring destroy_cmd_str = "destroy ";
-      destroy_cmd_str.append( pathname() );
-
-      Tcl::Code destroy_cmd(destroy_cmd_str.c_str(),
-                            Tcl::Code::BACKGROUND_ERROR);
-      destroy_cmd.invoke(rep->interp);
+      Tk_DestroyWindow(rep->tkWin);
     }
 }
 
