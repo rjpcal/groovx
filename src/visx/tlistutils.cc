@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Mon Oct 30 11:53:41 2000
+// written: Mon Oct 30 15:54:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -206,7 +206,7 @@ DOTRACE("TlistUtils::readFromObjidsOnly");
   // FIXME this will not really do what we want anymore -- need to
   // return a list of the trial ids that are created
   // Remove all trials and resize itsTrials to 0
-  tlist.clear();
+  tlist.purge();
 
   // Determine whether we will read to the end of the input stream, or
   // whether we will read only num_lines lines from the stream,
