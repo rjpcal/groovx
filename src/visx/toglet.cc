@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Aug  5 13:09:41 2002
+// written: Mon Aug  5 14:04:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -378,7 +378,7 @@ DOTRACE("TogletImpl::reconfigure");
 
   sizer->reconfigure(togl->width(), togl->height());
 
-  togl->postRedisplay();
+  togl->requestRedisplay();
 }
 
 void TogletImpl::reshapeCallback(Togl* togl)
