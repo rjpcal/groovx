@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Sat Feb  9 12:21:56 2002
+// written: Mon Feb 25 11:56:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +31,17 @@ public:
   }
 };
 
+class FilledFace : public Face
+{
+public:
+  static FilledFace* make()
+  {
+    FilledFace* p = new FilledFace;
+    p->setField("isFilled", 1);
+    return p;
+  }
+};
+
 extern "C"
 int Face_Init(Tcl_Interp* interp)
 {
@@ -48,7 +59,11 @@ DOTRACE("Face_Init");
   Tcl::defFieldContainer<InnerFace>(pkg3);
   Tcl::defCreator<InnerFace>(pkg3);
 
-  return Tcl::Pkg::initStatus(pkg, pkg2, pkg3);
+  Tcl::Pkg* pkg4 = new Tcl::Pkg(interp, "FilledFace", "$Revision$");
+  Tcl::defFieldContainer<FilledFace>(pkg4);
+  Tcl::defCreator<FilledFace>(pkg4);
+
+  return Tcl::Pkg::initStatus(pkg, pkg2, pkg3, pkg4);
 }
 
 static const char vcid_facetcl_cc[] = "$Header$";
