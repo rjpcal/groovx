@@ -3,7 +3,7 @@
 // tclpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 12:55:27 1999
-// written: Wed Mar 15 10:59:37 2000
+// written: Sat Mar 18 12:43:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,12 +17,14 @@
 #include <cctype>
 #include <cstring>
 #include <typeinfo>
-#include <vector>
 #include <string>
 
 #include "tcl/tcllink.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tclerror.h"
+
+#include "util/lists.h"
+#include "util/pointers.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -49,15 +51,15 @@ public:
   ~Impl();
 
   Tcl_Interp* itsInterp;
-  vector<TclCmd *> itsCmds;
+  list_stack<shared_ptr<TclCmd> > itsCmds;
   string itsPkgName;
   string itsVersion;
 
   int itsInitStatus;
 
-  vector<int*> ownedInts;
-  vector<double*> ownedDoubles;
-  vector<char**> ownedCstrings;
+  list_stack<shared_ptr<int> > ownedInts;
+  list_stack<shared_ptr<double> > ownedDoubles;
+  list_stack<shared_ptr<char*> > ownedCstrings;
 };
 
 Tcl::TclPkg::Impl::Impl(Tcl_Interp* interp,
@@ -100,28 +102,9 @@ DOTRACE("Tcl::TclPkg::Impl::Impl");
 
 Tcl::TclPkg::Impl::~Impl() {
 DOTRACE("Tcl::TclPkg::Impl::~Impl");
-  for (size_t i = 0; i < itsCmds.size(); i++) {
-	 DebugEval(i); DebugEval(itsCmds.size()); DebugEvalNL((void*)itsCmds[i]);
-	 DebugEvalNL(typeid(*itsCmds[i]).name());
-
-#ifndef GCC_COMPILER
-	 delete itsCmds[i];
-	 itsCmds[i] = 0;
-#endif
-  }
-
-  while ( !(ownedInts.empty()) ) {
-	 delete ownedInts.back();
-	 ownedInts.pop_back();
-  }
-  while ( !(ownedDoubles.empty()) ) {
-	 delete ownedDoubles.back();
-	 ownedDoubles.pop_back();
-  }
   while ( !(ownedCstrings.empty()) ) {
-	 delete [] *(ownedCstrings.back());
-	 delete ownedCstrings.back();
-	 ownedCstrings.pop_back();
+ 	 delete [] *(ownedCstrings.front());
+ 	 ownedCstrings.pop_front();
   }
 }
 
@@ -206,19 +189,19 @@ DOTRACE("Tcl::TclPkg::linkVar char*");
 void Tcl::TclPkg::linkVarCopy(const char* varName, int var) throw (Tcl::TclError) {
 DOTRACE("Tcl::TclPkg::linkVarCopy int");
   DebugEvalNL(varName);
-  int* copy = new int(var);
-  itsImpl->ownedInts.push_back(copy);
-  if (Tcl_LinkInt(itsImpl->itsInterp, varName, copy, TCL_LINK_READ_ONLY)
-		!= TCL_OK)
+  shared_ptr<int> copy(new int(var));
+  itsImpl->ownedInts.push_front(copy);
+  if (Tcl_LinkInt(itsImpl->itsInterp, varName,
+						copy.get(), TCL_LINK_READ_ONLY) != TCL_OK)
 	 throw TclError();
 }
 
 void Tcl::TclPkg::linkVarCopy(const char* varName, double var) throw (Tcl::TclError) {
 DOTRACE("Tcl::TclPkg::linkVarCopy double");
-  double* copy = new double(var);
-  itsImpl->ownedDoubles.push_back(copy);
-  if (Tcl_LinkDouble(itsImpl->itsInterp, varName, copy, TCL_LINK_READ_ONLY)
-		!= TCL_OK)
+  shared_ptr<double> copy(new double(var));
+  itsImpl->ownedDoubles.push_front(copy);
+  if (Tcl_LinkDouble(itsImpl->itsInterp, varName,
+							copy.get(), TCL_LINK_READ_ONLY) != TCL_OK)
 	 throw TclError();
 }
 
@@ -227,10 +210,9 @@ DOTRACE("Tcl::TclPkg::linkVarCopy char*");
   DebugEvalNL(varName);
   char* copy = new char[strlen(var)+1];
   strcpy(copy, var);
-  char** copyptr = new char* (copy);
-  itsImpl->ownedCstrings.push_back(copyptr);
-  if (Tcl_LinkString(itsImpl->itsInterp, varName, copyptr, TCL_LINK_READ_ONLY)
-		!= TCL_OK)
+  shared_ptr<char*> copyptr(new char* (copy));
+  if (Tcl_LinkString(itsImpl->itsInterp, varName,
+							copyptr.get(), TCL_LINK_READ_ONLY) != TCL_OK)
 	 throw TclError();
 }
 
@@ -260,7 +242,7 @@ DOTRACE("Tcl::TclPkg::linkConstVar char*");
 
 void Tcl::TclPkg::addCommand(TclCmd* cmd) {
 DOTRACE("Tcl::TclPkg::addCommand");
-  itsImpl->itsCmds.push_back(cmd);
+  itsImpl->itsCmds.push_front(shared_ptr<TclCmd>(cmd));
 }
 
 void Tcl::TclPkg::setInitStatusOk() {
