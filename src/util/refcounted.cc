@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:28 2000
-// written: Tue Aug 14 18:03:58 2001
+// written: Sun Aug 19 17:10:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -159,13 +159,17 @@ void Util::RefCounted::decrRefCount() const
 bool Util::RefCounted::isShared() const
 {
 DOTRACE("Util::RefCounted::isShared");
-  return itsRefCounts->isShared();
+
+  return (itsRefCounts->strongCount() > 1) || isVolatile();
+  // We check isVolatile() so that volatile objects always appear
+  // shared, so that they cannot be removed from the ObjDb until they
+  // become invalid.
 }
 
 bool Util::RefCounted::isUnshared() const
 {
 DOTRACE("Util::RefCounted::isUnshared");
-  return itsRefCounts->isUnshared();
+  return !isShared();
 }
 
 bool Util::RefCounted::isVolatile() const
