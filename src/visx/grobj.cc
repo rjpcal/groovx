@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Aug 15 19:40:32 2001
+// written: Thu Aug 16 10:19:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -340,6 +340,7 @@ DOTRACE("GrObj::receiveStateChangeMsg");
 
 void GrObj::saveBitmapCache(Gfx::Canvas& canvas, const char* filename) const
 {
+DOTRACE("GrObj::saveBitmapCache");
   const_cast<GrObj*>(this)->setRenderMode(Gmodes::GL_BITMAP_CACHE);
 
   draw(canvas);
@@ -349,15 +350,18 @@ void GrObj::saveBitmapCache(Gfx::Canvas& canvas, const char* filename) const
 
 void GrObj::update(Gfx::Canvas& canvas) const
 {
+DOTRACE("GrObj::update");
 }
 
 void GrObj::draw(Gfx::Canvas& canvas) const
 {
+DOTRACE("GrObj::draw");
   itsImpl->itsTopNode->gnodeDraw(canvas);
 }
 
 void GrObj::undraw(Gfx::Canvas& canvas) const
 {
+DOTRACE("GrObj::undraw");
   itsImpl->itsTopNode->gnodeUndraw(canvas);
 }
 
