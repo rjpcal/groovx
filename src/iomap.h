@@ -3,7 +3,7 @@
 // iomap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 24 16:19:25 2000
-// written: Tue Oct 24 17:00:32 2000
+// written: Wed Oct 25 07:44:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,15 +20,34 @@ namespace IO {
 }
 
 class IO::IoMap {
-protected:
+public:
   IoMap();
+
+  ~IoMap();
 
   void insertObject(IO::IoObject* object);
 
   void removeObject(IO::IoObject* object);
 
-public:
-  ~IoMap();
+  class Impl;
+  class ItrImpl;
+
+  class Iterator {
+  private:
+	 ItrImpl* itsImpl;
+  public:
+	 Iterator(Impl* impl);
+	 ~Iterator();
+	 Iterator(const Iterator& other);
+	 Iterator& operator=(const Iterator& other);
+
+	 IO::IoObject* getObject() const;
+	 IO::UID getUID() const;
+
+	 bool hasMore() const;
+
+	 void advance();
+  };
 
   friend class IO::IoObject;
 
@@ -45,8 +64,9 @@ public:
   IO::UID smallestUID() const;
   IO::UID largestUID() const;
 
+  Iterator getIterator() const;
+
 private:
-  class Impl;
   Impl* itsImpl;
 };
 
