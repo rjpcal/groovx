@@ -558,18 +558,16 @@ DOTRACE("Trial::trProcessResponse");
 
   Util::log("trProcessResponse");
 
-  response.setCorrectVal(rep->correctResponse);
-
   rep->responses.push_back(response);
 
-  dbgEval(3, response.correctVal());
+  dbgEval(3, rep->correctResponse);
   dbgEvalNL(3, response.val());
 
   rep->activeState->th->thResponseSeen();
 
   // If the response was incorrect, we'll ask our parent container to
   // kindly repeat this trial
-  if (!response.isCorrect())
+  if (!response.matchesCorrectValue(rep->correctResponse))
     {
       rep->activeState->status = CHILD_REPEAT;
     }

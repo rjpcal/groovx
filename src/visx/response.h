@@ -46,8 +46,9 @@ public:
       that occur when the user hits an errant key. */
   static const int IGNORE = -3;
 
-  Response(int v = INVALID_VALUE, int m = -1, int c = ALWAYS_CORRECT) :
-    itsVal(v), itsMsec(m), itsCorrectVal(c) {}
+  Response(int v = INVALID_VALUE, int m = -1) :
+    itsVal(v), itsMsec(m)
+  {}
 
   virtual ~Response() throw();
 
@@ -60,21 +61,20 @@ public:
 
   bool isValid() const { return (itsVal >= 0); }
 
-  bool isCorrect() const
-    { return (itsCorrectVal == ALWAYS_CORRECT) || (itsVal == itsCorrectVal); }
+  bool matchesCorrectValue(int cval) const
+  {
+    return (cval == ALWAYS_CORRECT) || (itsVal == cval);
+  }
 
-  int correctVal() const { return itsCorrectVal; }
   int val() const { return itsVal; }
   int msec() const { return itsMsec; }
 
-  void setCorrectVal(int new_val) { itsCorrectVal = new_val; }
   void setVal(int new_val) { itsVal = new_val; }
   void setMsec(int new_val) { itsMsec = new_val; }
 
 private:
   int itsVal;
   int itsMsec;
-  int itsCorrectVal;
 };
 
 static const char vcid_response_h[] = "$Header$";
