@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Sat Jan 15 10:56:15 2000
+// written: Sat Jan 15 11:03:41 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -87,6 +87,9 @@ DOTRACE("BeginCmd::beginCmd");
 
   ExptDriver* ed = getItem();
   Widget* widget = ed->getWidget();
+
+  // Create the begin key binding
+  widget->bind("<Control-KeyPress-b>", "{ Togl::takeFocus; Expt::begin }");
 
   // Create the quit key binding
   widget->bind("<Control-KeyPress-q>", "{ Expt::storeData; exit }");
