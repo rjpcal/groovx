@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Fri Jul  5 14:11:34 2002
+// written: Thu Nov 14 17:08:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "gwt/widget.h"
 
 #include "gfx/canvas.h"
+#include "gfx/gxemptynode.h"
 #include "gfx/gxnode.h"
 
 #include "tcl/tcltimer.h"
@@ -26,35 +27,6 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
-
-class EmptyNode : public GxNode
-{
-private:
-  EmptyNode() {}
-public:
-  virtual ~EmptyNode() {}
-
-  virtual void readFrom(IO::Reader*) {}
-  virtual void writeTo(IO::Writer*) const {}
-
-  virtual void getBoundingCube(Gfx::Box<double>&, Gfx::Canvas&) const {}
-
-  virtual void draw(Gfx::Canvas&) const {}
-
-  static EmptyNode* make()
-    {
-      return new EmptyNode;
-    }
-};
-
-namespace
-{
-  Util::Ref<EmptyNode> getEmptyNode()
-  {
-    static Util::Ref<EmptyNode> node(EmptyNode::make());
-    return node;
-  }
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -67,8 +39,8 @@ class GWT::Widget::Impl : public Util::VolatileObject
 public:
   Impl(GWT::Widget* owner) :
     itsOwner(owner),
-    itsDrawNode(getEmptyNode()),
-    itsUndrawNode(getEmptyNode()),
+    itsDrawNode(GxEmptyNode::make()),
+    itsUndrawNode(GxEmptyNode::make()),
     isItVisible(false),
     isItHolding(false),
     isItRefreshing(true),
@@ -92,8 +64,8 @@ public:
   void clearscreen(Gfx::Canvas& canvas)
   {
     canvas.clearColorBuffer();
-    setDrawable(getEmptyNode());
-    itsUndrawNode = getEmptyNode();
+    setDrawable(Util::Ref<GxNode>(GxEmptyNode::make()));
+    itsUndrawNode = Util::Ref<GxNode>(GxEmptyNode::make());
     isItVisible = false;
   }
 
