@@ -15,6 +15,7 @@ package require Iwidgets
 #       parent.itsPanes.objtype.fields (frame)
 #     parent.itsPanes.itsControls (childsite)
 #     parent.itsPanes.itsControls.viewingdist
+#     parent.itsPanes.itsControls.objtypes
 #     parent.itsPanes.itsControls.new
 #     parent.itsPanes.itsControls.preview
 #     parent.itsPanes.itsControls.redraw
@@ -29,7 +30,11 @@ itcl::class FieldControls {
 	 private variable itsControls
 	 private variable itsCachedValues
 
-	 constructor {parent objtype setCallback} {
+	 constructor {panes objtype setCallback} {
+		  $panes insert 0 $objtype
+
+		  set parent [$panes childsite $objtype]
+
 		  set itsObjType $objtype
 		  set itsNames [list]
 		  foreach field [${objtype}::allFields] {
@@ -99,9 +104,10 @@ itcl::class Editor {
 	 private variable itsPanes
 	 private variable itsControls
 	 private variable itsToglet
-	 private variable itsObjType Face
 	 private variable itsControlsArray
 	 private variable itsUpdateInProgress 0
+
+	 private method curObjType {} { return [$itsControls.objtypes get] }
 
 	 private method standardSettings {objs} {
 		  set grobjs [dlist_select $objs [GrObj::is $objs]]
@@ -117,7 +123,7 @@ itcl::class Editor {
 
 	 private method addNewObject {} {
 		  # create new object
-		  eval set obj [new $itsObjType]
+		  eval set obj [new [curObjType]]
 
 		  standardSettings $obj
 
@@ -207,8 +213,6 @@ itcl::class Editor {
 	 private method updateControls {obj} {
 		  set itsUpdateInProgress 1
 
-		  set viewobj [getViewSelection]
-
 		  set objtype [IO::type $obj]
 
 		  set controls $itsControlsArray($objtype)
@@ -228,13 +232,13 @@ itcl::class Editor {
 	 private method setAttrib {name val} {
 		  set editobjs [getEditSelection]
 
-		  set controls $itsControlsArray($itsObjType)
+		  set controls $itsControlsArray([curObjType])
 
 		  if { !$itsUpdateInProgress && [llength $editobjs] > 0 } {
 				if { [$controls getCachedVal $name] != $val } {
 					 #puts "setting $editobjs $name to $val"
 					 Toglet::allowRefresh $itsToglet 0
-					 ${itsObjType}::$name $editobjs $val
+					 [curObjType]::$name $editobjs $val
 					 $controls setCachedVal $name $val
 					 Toglet::allowRefresh $itsToglet 1
 				}
@@ -243,31 +247,34 @@ itcl::class Editor {
 		  }
 	 }
 
-	 private method makeFieldControls {objtype} {
+	 private method showFieldControls {} {
+
+		  set objtype [curObjType]
 
 		  if { ![info exists itsControlsArray($objtype)] } {
-				$itsPanes insert 0 $objtype
-
-				set parent [$itsPanes childsite $objtype]
-
 				set itsControlsArray($objtype) \
-						  [FieldControls #auto $parent $objtype \
+						  [FieldControls #auto $itsPanes $objtype \
 						  [itcl::code $this setAttrib]]
 
 				pack [$itsControlsArray($objtype) getFrame] -fill y -side left
 		  }
 
-		  if { ![string equal $itsObjType $objtype] } {
-				$itsPanes hide $itsObjType
+		  set alltypes [$itsControls.objtypes get 0 end]
+
+		  foreach type $alltypes {
+				if { ![string equal $objtype $type] } {
+					 if { [info exists itsControlsArray($type)] } {
+						  $itsPanes hide $type
+					 }
+				}
 		  }
 
 		  $itsPanes show $objtype
-		  set itsObjType $objtype
+
+		  $itsPanes fraction 75 25
 	 }
 
 	 constructor {parent objtype} {
-		  set itsObjType $objtype
-
 		  set itsPanes [iwidgets::panedwindow $parent.panes \
 					 -width 900 -height 900]
 
@@ -284,6 +291,13 @@ itcl::class Editor {
 					 -command [itcl::code $this viewingDist]
 		  $itsControls.viewingdist set 60
 		  pack $itsControls.viewingdist -side top -fill x
+
+		  iwidgets::optionmenu $itsControls.objtypes -labeltext "Object type:" \
+					 -command [itcl::code $this showFieldControls]
+		  $itsControls.objtypes insert 0 \
+					 Face Fish Gabor House MaskHatch MorphyFace
+		  $itsControls.objtypes select $objtype
+		  pack $itsControls.objtypes -side left -anchor nw
 
 		  button $itsControls.new -text "New Object" -relief raised \
 					 -command [itcl::code $this addNewObject]
@@ -318,24 +332,17 @@ itcl::class Editor {
 		  Toglet::width $itsToglet 600
 		  Toglet::currentToglet $itsToglet
 
-		  makeFieldControls $itsObjType
-
-		  $itsPanes fraction 75 25
+		  showFieldControls
 
 		  pack $itsPanes -side left -fill both -expand yes
-
-		  glColor 0.0 0.0 0.0 1.0
-		  glClearColor 1.0 1.0 1.0 1.0
-
-		  glClear $::GL_COLOR_BUFFER_BIT
-		  glLineWidth 1
 	 }
 
 	 public method loadObjects {filename} {
 		  set ids [ObjDb::loadObjects $filename]
 
 		  $itsControls.editobjlist clear
-		  eval $itsControls.editobjlist insert end [${itsObjType}::findAll]
+		  eval $itsControls.editobjlist insert end $ids
+		  $itsControls.editobjlist sort ascending
 		  standardSettings [$itsControls.editobjlist get 0 end]
 
 		  $itsControls.viewobjlist clear
@@ -348,7 +355,7 @@ itcl::class Editor {
 		  Expt::load $filename
 
 		  $itsControls.editobjlist clear
-		  eval $itsControls.editobjlist insert end [${itsObjType}::findAll]
+		  eval $itsControls.editobjlist insert end [[curObjType]::findAll]
 		  standardSettings [$itsControls.editobjlist get 0 end]
 
 		  $itsControls.viewobjlist clear
