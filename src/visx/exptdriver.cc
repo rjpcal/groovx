@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Nov 11 19:30:01 1999
+// written: Wed Nov 17 17:25:18 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,8 @@
 #include <string>
 #include <vector>
 
-#include "tclerror.h"
 #include "block.h"
+#include "tclerror.h"
 #include "responsehandler.h"
 #include "tclevalcmd.h"
 #include "timinghdlr.h"
@@ -38,6 +38,7 @@
 #include "tlist.h"
 #include "timeutils.h"
 #include "writer.h"
+#include "system.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -926,6 +927,17 @@ DOTRACE("ExptDriver::ExptImpl::writeAndExit");
 	 TlistTcl::writeResponsesProc(resp_filename.c_str());
 	 cout << "wrote file " << resp_filename << endl;
 
+	 // Change file access modes to allow read-only by user and group
+	 System::mode_t datafile_mode = System::IRUSR | System::IRGRP;
+
+	 int error1 =
+		System::theSystem().chmod(expt_filename.c_str(), datafile_mode);
+	 int error2 =
+		System::theSystem().chmod(resp_filename.c_str(), datafile_mode);
+	 if (error1 != 0 || error2 != 0) {
+		raiseBackgroundError("error during System::chmod");
+		return;
+	 }
   }
   catch (IoError& err) {
 	 raiseBackgroundError(err.msg().c_str());
