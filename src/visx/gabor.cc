@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Thu Mar 30 12:25:12 2000
+// written: Tue May 30 16:19:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -222,15 +222,21 @@ DOTRACE("Gabor::grRender");
 		  }
 
 		  double gauss_x = exp( -1.0*(x-xmean)*(x-xmean) / (4.0*xsigma*xsigma) );
-		  
+
 		  double sin_x = sin(2*PI*spatialFreq()*x + phase()*PI/180.0);
-		
+
 		  double gauss_y = exp( -1.0*(y-ymean)*(y-ymean) / (4.0*ysigma*ysigma) );
-		  
+
 		  double gabor = 0.5*sin_x*gauss_x*gauss_y*contrast() + 0.5;
-		  
+
 		  if ( colorMode() == GRAYSCALE ) {
 			 glColor4d(gabor, gabor, gabor, 1.0);
+			 glBegin(GL_POINTS);
+			 glVertex2d(unrotated_x, unrotated_y);
+			 glEnd();			 
+		  }
+		  else if ( colorMode() == COLOR_INDEX ) {
+			 glIndexd(gabor*255.0);
 			 glBegin(GL_POINTS);
 			 glVertex2d(unrotated_x, unrotated_y);
 			 glEnd();			 

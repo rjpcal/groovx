@@ -3,7 +3,7 @@
 // gabor.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Thu Mar 30 09:50:01 2000
+// written: Tue May 30 16:17:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,14 +54,18 @@ public:
       function. */
   static const ColorMode GRAYSCALE = 1;
 
+  /** In this mode, each point in the patch is rendered with a color
+      index proportional to the value of the Gabor function. */
+  static const ColorMode COLOR_INDEX = 2;
+
   /** In this mode, each point in the patch is rendered black with a
       probability proportional to the value of the Gabor function. */
-  static const ColorMode BW_DITHER_POINT = 2;
+  static const ColorMode BW_DITHER_POINT = 3;
 
   /** In this mode, the patch is subdivided into rectangles, and each
       rectangle in the patch is rendered black with a probability
       proportional to the value of the Gabor function. */
-  static const ColorMode BW_DITHER_RECT = 3;
+  static const ColorMode BW_DITHER_RECT = 4;
 
   /// Info about a \c Gabor property.
   typedef PropertyInfo<Gabor> PInfo;
