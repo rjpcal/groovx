@@ -30,6 +30,9 @@
 #ifndef FIELDS_H_DEFINED
 #define FIELDS_H_DEFINED
 
+#include "io/reader.h"
+#include "io/writer.h"
+
 #include "tcl/tclobjptr.h"
 
 #include "util/algo.h"

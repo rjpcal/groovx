@@ -138,7 +138,7 @@ namespace Tcl
 
     R operator()(Tcl::Context& /*ctx*/)
     {
-      return (itsHeldFunc());
+      return (Util::FuncHolder<Func>::itsHeldFunc());
     }
   };
 
@@ -279,7 +279,7 @@ namespace Tcl
   protected:
     virtual void invoke(Tcl::Context& ctx)
     {
-      R res(itsHeldFunc(ctx)); ctx.setResult(res);
+      R res(Util::FuncHolder<Functor>::itsHeldFunc(ctx)); ctx.setResult(res);
     }
   };
 
@@ -301,7 +301,7 @@ namespace Tcl
   protected:
     virtual void invoke(Tcl::Context& ctx)
     {
-      itsHeldFunc(ctx);
+      Util::FuncHolder<Functor>::itsHeldFunc(ctx);
     }
   };
 

@@ -30,8 +30,6 @@
 #ifndef TCLOBJPTR_H_DEFINED
 #define TCLOBJPTR_H_DEFINED
 
-#include "tcl/tclconvert.h"
-
 typedef struct Tcl_Obj Tcl_Obj;
 
 namespace Tcl
@@ -84,18 +82,12 @@ public:
   Tcl_Obj* obj() const { return itsObj; }
 
   template <class T>
-  T as() const
-  {
-    return Tcl::toNative<T>(itsObj);
-  }
+  inline T as() const;
 
   void append(const Tcl::ObjPtr& other);
 
   template <class T>
-  void append(const T& other)
-  {
-    append(Tcl::toTcl(other));
-  }
+  inline void append(const T& other);
 
   bool isShared() const;
   bool isUnique() const { return !isShared(); }
@@ -121,7 +113,29 @@ private:
   mutable Tcl_Obj* itsObj;
 };
 
+
 } // end namespace Tcl
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// Inline member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+#include "tcl/tclconvert.h"
+
+template <class T>
+inline T Tcl::ObjPtr::as() const
+{
+  return Tcl::toNative<T>(itsObj);
+}
+
+template <class T>
+inline void Tcl::ObjPtr::append(const T& other)
+{
+  append(Tcl::toTcl(other));
+}
 
 static const char vcid_tclobjptr_h[] = "$Header$";
 #endif // !TCLOBJPTR_H_DEFINED

@@ -309,35 +309,35 @@ namespace Util
     template <class Ptr>
     R operator()(Ptr obj)
     {
-      return (extractPtr(obj)->*itsHeldFunc)();
+      return (extractPtr(obj)->*FuncHolder<MemFunc>::itsHeldFunc)();
     }
 
     /// Function-call operator for object + one arg.
     template <class Ptr, class P1>
     R operator()(Ptr obj, P1 p1)
     {
-      return (extractPtr(obj)->*itsHeldFunc)(p1);
+      return (extractPtr(obj)->*FuncHolder<MemFunc>::itsHeldFunc)(p1);
     }
 
     /// Function-call operator for object + two args.
     template <class Ptr, class P1, class P2>
     R operator()(Ptr obj, P1 p1, P2 p2)
     {
-      return (extractPtr(obj)->*itsHeldFunc)(p1, p2);
+      return (extractPtr(obj)->*FuncHolder<MemFunc>::itsHeldFunc)(p1, p2);
     }
 
     /// Function-call operator for object + three args.
     template <class Ptr, class P1, class P2, class P3>
     R operator()(Ptr obj, P1 p1, P2 p2, P3 p3)
     {
-      return (extractPtr(obj)->*itsHeldFunc)(p1, p2, p3);
+      return (extractPtr(obj)->*FuncHolder<MemFunc>::itsHeldFunc)(p1, p2, p3);
     }
 
     /// Function-call operator for object + four args.
     template <class Ptr, class P1, class P2, class P3, class P4>
     R operator()(Ptr obj, P1 p1, P2 p2, P3 p3, P4 p4)
     {
-      return (extractPtr(obj)->*itsHeldFunc)(p1, p2, p3, p4);
+      return (extractPtr(obj)->*FuncHolder<MemFunc>::itsHeldFunc)(p1, p2, p3, p4);
     }
   };
 

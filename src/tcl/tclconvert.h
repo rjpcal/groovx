@@ -36,6 +36,13 @@ class fstring;
 class Value;
 typedef struct Tcl_Obj Tcl_Obj;
 
+namespace Util
+{
+  template <class T> class FwdIter;
+  template <class T> class Ref;
+  template <class T> class SoftRef;
+}
+
 namespace Tcl
 {
   class List;
@@ -109,6 +116,24 @@ namespace Tcl
   Tcl::ObjPtr toTcl(const Value& val);
   Tcl::ObjPtr toTcl(Tcl::List listObj);
   Tcl::ObjPtr toTcl(Tcl::ObjPtr val);
+
+  template <class T>
+  Util::Ref<T> fromTcl(Tcl_Obj* obj, Util::Ref<T>*);
+
+  template <class T>
+  Tcl::ObjPtr toTcl(Util::Ref<T> obj);
+
+  template <class T>
+  Util::SoftRef<T> fromTcl(Tcl_Obj* obj, Util::SoftRef<T>*);
+
+  template <class T>
+  Tcl::ObjPtr toTcl(Util::SoftRef<T> obj);
+
+  template <class T>
+  Util::FwdIter<T> fromTcl(Tcl_Obj* obj, Util::FwdIter<T>*);
+
+  template <class T>
+  Tcl::ObjPtr toTcl( Util::FwdIter<T> iter );
 }
 
 static const char vcid_tclconvert_h[] = "$Header$";

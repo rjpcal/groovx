@@ -30,7 +30,6 @@
 #ifndef TCLLISTOBJ_H_DEFINED
 #define TCLLISTOBJ_H_DEFINED
 
-#include "tcl/tclconvert.h"
 #include "tcl/tclobjptr.h"
 
 #include "util/pointers.h"
@@ -87,10 +86,7 @@ public:
     }
 
   template <class T>
-  T get(unsigned int index, T* /*dummy*/=0) const
-    {
-      return Tcl::toNative<T>(at(index));
-    }
+  inline T get(unsigned int index, T* /*dummy*/=0) const;
 
   unsigned int size() const { update(); return itsLength; }
   unsigned int length() const { update(); return itsLength; }
@@ -273,6 +269,14 @@ public:
 // Inline member definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+#include "tcl/tclconvert.h"
+
+template <class T>
+inline T Tcl::List::get(unsigned int index, T* /*dummy*/) const
+{
+  return Tcl::toNative<T>(at(index));
+}
 
 template <class T>
 inline Tcl::List::Iterator<T> Tcl::List::begin(T* /*dummy*/)

@@ -45,7 +45,7 @@ public:
   GbVec2(T x_=T(), T y_=T());
 
   /// String conversion constructor.
-  GbVec2(const fstring& s) : TMultiValue<T>(2) { setFstring(s); }
+  GbVec2(const fstring& s) : TMultiValue<T>(2) { TMultiValue<T>::setFstring(s); }
 
   /// Virtual destructor.
   virtual ~GbVec2();
@@ -70,7 +70,7 @@ public:
   GbVec3(T x_=T(), T y_=T(), T z_=T());
 
   /// String conversion constructor.
-  GbVec3(const fstring& s) : TMultiValue<T>(3) { setFstring(s); }
+  GbVec3(const fstring& s) : TMultiValue<T>(3) { TMultiValue<T>::setFstring(s); }
 
   /// Virtual destructor.
   virtual ~GbVec3();
