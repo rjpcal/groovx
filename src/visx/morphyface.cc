@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Sat Aug 18 08:13:22 2001
+// written: Mon Aug 20 18:19:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,6 @@
 
 #include "util/algo.h"
 
-#include <cstring>
 #include <GL/gl.h>
 #include <GL/glu.h>
 
@@ -519,7 +518,6 @@ DOTRACE("MorphyFace::grGetBoundingBox");
 
   return bbox;
 }
-
 
 static const char vcid_morphyface_cc[] = "$Header$";
 #endif // !MORPHYFACE_CC_DEFINED
