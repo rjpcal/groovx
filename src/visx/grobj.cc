@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Thu Nov 18 13:50:32 1999
+// written: Thu Nov 18 15:06:17 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -206,37 +206,45 @@ public:
 private:
   class Renderer {
   public:
-	 Renderer() :
-		itsMode(GrObj::GROBJ_GL_COMPILE),
-		itsIsCurrent(false),
-		itsDisplayList(-1),
-		itsBitmapCache(0)
-		{}
+	 Renderer();
+	 virtual ~Renderer();
 
-	 virtual ~Renderer() {
-		glDeleteLists(itsDisplayList, 1);
-		delete itsBitmapCache;
-	 }
+	 void callList() const;
+
+	 void invalidate() const { itsIsCurrent = false; }
+
+	 void setMode(GrObj::GrObjRenderMode new_mode, GrObj::Impl* obj);
+
+	 // Returns true if the object was rendered to the screen as part
+	 // of the update, false otherwise
+	 bool update(const GrObj::Impl* obj) const;
+
+	 void render(const GrObj::Impl* obj) const;
 
 	 GrObj::GrObjRenderMode itsMode;
+
+  private:
 	 mutable bool itsIsCurrent;    // true if displaylist is current
 	 mutable int itsDisplayList;   // OpenGL display list that draws the object
 	 Bitmap* itsBitmapCache;
+
+	 // This function updates the cached OpenGL display list.
+	 void recompileIfNeeded(const GrObj::Impl* obj) const;
+
+	 // This function updates the cached bitmap, and returns a true if
+	 // the bitmap was actually recached, and false if nothing was done.
+	 bool recacheBitmapIfNeeded(const GrObj::Impl* obj) const;
+
+	 void postUpdated() const { itsIsCurrent = true; }
+
+	 // This function deletes any previous display list, allocates a new
+	 // display list, and checks that the allocation actually succeeded.
+	 void newList() const;
   };
 
-  // This function updates the cached OpenGL display list.
-  void recompile() const;
-
-  // This function updates the cached bitmap.
-  void recacheBitmap() const;
-
-  void drawDirectRender() const;
-  void drawGLCompile() const;
-  void drawBitmapCache() const;
+  friend class Renderer;
 
 public:
-
-  int getDisplayList() const { return itsRenderer.itsDisplayList; }
 
   GrObj::GrObjRenderMode getRenderMode() const { return itsRenderer.itsMode; }
   void setRenderMode(GrObj::GrObjRenderMode new_mode);
@@ -245,10 +253,6 @@ public:
   void draw() const;
 
   void grDrawBoundingBox() const;
-
-  // This function deletes any previous display list, allocates a new
-  // display list, and checks that the allocation actually succeeded.
-  void newList() const;
 
   /////////////////
   // unrendering //
@@ -284,23 +288,26 @@ public:
   double finalWidth() const;
   double finalHeight() const;
 
-  bool isCurrent() const { return itsRenderer.itsIsCurrent; }
-
   double getMaxDimension() const
 	 { return max(finalWidth(), finalHeight()); }
 
   int getCategory() const { return itsCategory; }
   void setCategory(int val) { itsCategory = val; }
 
-  void postUpdated() const { itsRenderer.itsIsCurrent = true; }
-
   void invalidateCaches();
+
+  ///////////////////////////////////////////
+  // Forwards to GrObj's protected members //
+  ///////////////////////////////////////////
+
+  void grRender() const { self->grRender(); }
+  void grUnRender() const { self->grUnRender(); }
 
   //////////////////
   // Data members //
   //////////////////
 private:
-  GrObj* self;
+  GrObj* const self;
 
   int itsCategory;
   Scaler itsScaler;
@@ -309,6 +316,176 @@ private:
   Renderer itsRenderer;
   UnRenderer itsUnRenderer;
 };
+
+///////////////////////////////////////////////////////////////////////
+//
+// GrObj::Impl::Renderer definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+GrObj::Impl::Renderer::Renderer() :
+  itsMode(GrObj::GROBJ_GL_COMPILE),
+  itsIsCurrent(false),
+  itsDisplayList(-1),
+  itsBitmapCache(0)
+{
+DOTRACE("GrObj::Impl::Renderer::Renderer");
+}
+
+GrObj::Impl::Renderer::~Renderer() {
+DOTRACE("GrObj::Impl::Renderer::~Renderer");
+  glDeleteLists(itsDisplayList, 1);
+  delete itsBitmapCache;
+}
+
+void GrObj::Impl::Renderer::recompileIfNeeded(const GrObj::Impl* obj) const {
+DOTRACE("GrObj::Impl::Renderer::recompileIfNeeded");
+  if (itsIsCurrent) return;
+  
+  newList();
+  
+  glNewList(itsDisplayList, GL_COMPILE);
+  obj->grRender();
+  glEndList();
+  
+  postUpdated();
+}
+
+bool GrObj::Impl::Renderer::recacheBitmapIfNeeded(const GrObj::Impl* obj) const {
+DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
+  if (itsIsCurrent) return false;
+
+  Assert(itsBitmapCache != 0);
+  
+  obj->undraw();
+  
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  {
+	 glPushAttrib(GL_PIXEL_MODE_BIT|GL_COLOR_BUFFER_BIT);
+	 {
+		glDrawBuffer(GL_FRONT);
+		glReadBuffer(GL_FRONT);
+		
+		obj->doScaling();
+		obj->doAlignment();
+		
+		obj->grRender();
+		
+		Assert(obj->hasBB());
+		
+		itsBitmapCache->grabWorldRect(obj->getRawBB());
+		itsBitmapCache->setRasterX(obj->getRawBB().left());
+		itsBitmapCache->setRasterY(obj->getRawBB().bottom());
+	 }
+	 glPopAttrib;
+  }
+  glPopMatrix();
+  
+  if (GrObj::GROBJ_X11_BITMAP_CACHE == itsMode) {
+	 itsBitmapCache->flipVertical();
+	 itsBitmapCache->flipContrast();
+  }
+  
+  postUpdated();
+
+  return true;
+}
+
+void GrObj::Impl::Renderer::callList() const {
+DOTRACE("GrObj::Impl::Renderer::callList");
+  // We must explicitly check that the display list is valid,
+  // since it might be invalid if the object was recently
+  // constructed, for example.
+  if (glIsList(itsDisplayList) == GL_TRUE) {
+	 glCallList(itsDisplayList);
+	 DebugEvalNL(itsDisplayList);
+  }
+}
+
+void GrObj::Impl::Renderer::newList() const {
+DOTRACE("GrObj::Impl::Renderer::newList");
+  glDeleteLists(itsDisplayList, 1);
+  itsDisplayList = glGenLists(1); 
+  if (itsDisplayList == 0) {     
+	 throw GrObjError("GrObj::newList: couldn't allocate display list");
+  }
+}
+
+void GrObj::Impl::Renderer::setMode(GrObj::GrObjRenderMode new_mode,
+												GrObj::Impl* obj) {
+DOTRACE("GrObj::Impl::Renderer::setMode");
+  // If new_mode is the same as the current render mode, then return
+  // immediately (and don't send a state change message)
+  if (new_mode == itsMode) return; 
+
+  switch (new_mode) {
+  case GrObj::GROBJ_DIRECT_RENDER:
+  case GrObj::GROBJ_GL_COMPILE:
+	 itsMode = new_mode;
+	 break;
+
+  case GrObj::GROBJ_GL_BITMAP_CACHE:
+  case GrObj::GROBJ_X11_BITMAP_CACHE:
+	 // These modes require a bounding box
+	 if ( !obj->hasBB() ) return;
+
+	 itsMode = new_mode;
+	 delete itsBitmapCache;
+	 
+	 if (GrObj::GROBJ_GL_BITMAP_CACHE == new_mode) {
+		itsBitmapCache = new GLBitmap();
+	 }
+	 if (GrObj::GROBJ_X11_BITMAP_CACHE == new_mode) {
+		itsBitmapCache = new XBitmap();
+	 }
+	 
+	 break;
+
+  } // end switch
+}
+
+void GrObj::Impl::Renderer::render(const GrObj::Impl* obj) const {
+DOTRACE("GrObj::Impl::Renderer::render");
+  switch (itsMode) {
+
+  case GrObj::GROBJ_DIRECT_RENDER:
+	 obj->grRender();
+	 break;
+
+  case GrObj::GROBJ_GL_COMPILE:
+	 callList(); 
+	 break;
+
+  case GrObj::GROBJ_GL_BITMAP_CACHE:
+  case GrObj::GROBJ_X11_BITMAP_CACHE:
+	 Assert(itsBitmapCache != 0);
+	 itsBitmapCache->draw();
+	 break;
+
+  } // end switch
+}
+
+bool GrObj::Impl::Renderer::update(const GrObj::Impl* obj) const {
+DOTRACE("GrObj::Impl::Renderer::update");
+  checkForGlError("before GrObj::update");
+
+  bool objectDrawn = false;
+
+  switch (itsMode) {
+  case GrObj::GROBJ_GL_COMPILE:
+	 recompileIfNeeded(obj);
+	 break;
+		
+  case GrObj::GROBJ_GL_BITMAP_CACHE:
+  case GrObj::GROBJ_X11_BITMAP_CACHE:
+	 objectDrawn = recacheBitmapIfNeeded(obj);
+	 break;
+  }
+  checkForGlError("during GrObj::update");
+
+  return objectDrawn;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -364,12 +541,13 @@ DOTRACE("GrObj::Impl::deserialize");
 
   if (flag & IO::TYPENAME) { IO::readTypename(is, "GrObj"); }
 
+  int temp;
+
   is >> itsCategory; if (is.fail()) throw InputError("after GrObj::itsCategory");
 
   is >> itsRenderer.itsMode; if (is.fail()) throw InputError("after GrObj::itsRenderer.itsMode");
   is >> itsUnRenderer.itsMode; if (is.fail()) throw InputError("after GrObj::itsUnRenderer.itsMode");
 
-  int temp;
   is >> temp; if (is.fail()) throw InputError("after GrObj::temp"); itsBB.itsIsVisible = bool(temp);
 
   is >> itsScaler.itsMode; if (is.fail()) throw InputError("after GrObj::itsScaler.itsMode");
@@ -635,34 +813,7 @@ DOTRACE("GrObj::Impl::setAlignmentMode");
 
 void GrObj::Impl::setRenderMode(GrObj::GrObjRenderMode new_mode) {
 DOTRACE("GrObj::Impl::setRenderMode");
-  // If new_mode is the same as the current render mode, then return
-  // immediately (and don't send a state change message)
-  if (new_mode == itsRenderer.itsMode) return; 
-
-  switch (new_mode) {
-  case GrObj::GROBJ_DIRECT_RENDER:
-  case GrObj::GROBJ_GL_COMPILE:
-	 itsRenderer.itsMode = new_mode;
-	 break;
-
-  case GrObj::GROBJ_GL_BITMAP_CACHE:
-  case GrObj::GROBJ_X11_BITMAP_CACHE:
-	 // These modes require a bounding box
-	 if ( !hasBB() ) return;
-
-	 itsRenderer.itsMode = new_mode;
-	 delete itsRenderer.itsBitmapCache;
-	 
-	 if (GrObj::GROBJ_GL_BITMAP_CACHE == new_mode) {
-		itsRenderer.itsBitmapCache = new GLBitmap();
-	 }
-	 if (GrObj::GROBJ_X11_BITMAP_CACHE == new_mode) {
-		itsRenderer.itsBitmapCache = new XBitmap();
-	 }
-	 
-	 break;
-
-  } // end switch
+  itsRenderer.setMode(new_mode, this); 
 }
 
 void GrObj::Impl::setUnRenderMode(GrObj::GrObjRenderMode new_mode) {
@@ -710,21 +861,7 @@ DOTRACE("GrObj::Impl::updateBB");
 
 void GrObj::Impl::update() const {
 DOTRACE("GrObj::Impl::update");
-  checkForGlError("before GrObj::update");
-  if ( !isCurrent() ) {
-
-	 switch (itsRenderer.itsMode) {
-	 case GrObj::GROBJ_GL_COMPILE:
-		recompile();
-		break;
-		
-	 case GrObj::GROBJ_GL_BITMAP_CACHE:
-	 case GrObj::GROBJ_X11_BITMAP_CACHE:
-		recacheBitmap();
-		break;
-	 }
-  }
-  checkForGlError("during GrObj::update");
+  itsRenderer.update(this);
 }
 
 void GrObj::Impl::draw() const {
@@ -735,16 +872,18 @@ DOTRACE("GrObj::Impl::draw");
 	 grDrawBoundingBox();
   }
 
-  switch (itsRenderer.itsMode) {
+  bool objectDrawn = itsRenderer.update(this);
 
-  case GrObj::GROBJ_DIRECT_RENDER:      drawDirectRender(); break;
+  if ( !objectDrawn ) {
+	 glMatrixMode(GL_MODELVIEW);
 
-  case GrObj::GROBJ_GL_COMPILE:         drawGLCompile();    break;
+	 glPushMatrix();
+	   doScaling();
+		doAlignment();
 
-  case GrObj::GROBJ_GL_BITMAP_CACHE:
-  case GrObj::GROBJ_X11_BITMAP_CACHE:   drawBitmapCache();   break;
-
-  } // end switch
+		itsRenderer.render(this);
+	 glPopMatrix();
+  }
 
   checkForGlError("during GrObj::draw"); 
 }
@@ -791,70 +930,9 @@ DOTRACE("GrObj::Impl::grDrawBoundingBox");
 
 void GrObj::Impl::invalidateCaches() {
 DOTRACE("GrObj::Impl::invalidateCaches");
-  itsRenderer.itsIsCurrent = false;
+  itsRenderer.invalidate();
   itsBB.itsRawBBIsCurrent = false;
   itsBB.itsFinalBBIsCurrent = false;
-}
-
-void GrObj::Impl::newList() const {
-DOTRACE("GrObj::Impl::newList");
-  glDeleteLists(itsRenderer.itsDisplayList, 1);
-  itsRenderer.itsDisplayList = glGenLists(1); 
-  if (itsRenderer.itsDisplayList == 0) {     
-	 cerr << "GrObj::newList: couldn't allocate display list\n";
-	 throw GrObjError();
-  }
-}
-
-void GrObj::Impl::recompile() const {
-DOTRACE("GrObj::Impl::recompile");
-  newList();
-  
-  glNewList(getDisplayList(), GL_COMPILE);
-  self->grRender();
-  glEndList();
-  
-  postUpdated();
-}
-
-void GrObj::Impl::recacheBitmap() const {
-DOTRACE("GrObj::Impl::recacheBitmap");
-  Assert(itsRenderer.itsBitmapCache != 0);
-  
-  undraw();
-  
-  glMatrixMode(GL_MODELVIEW);
-  glPushMatrix();
-  {
-	 glPushAttrib(GL_PIXEL_MODE_BIT|GL_COLOR_BUFFER_BIT);
-	 {
-		glDrawBuffer(GL_FRONT);
-		glReadBuffer(GL_FRONT);
-		
-		doScaling();
-		doAlignment();
-		
-		self->grRender();
-		
-		Assert(hasBB());
-		
-		itsRenderer.itsBitmapCache->grabWorldRect(getRawBB().left(),
-																getRawBB().top(),
-																getRawBB().right(),
-																getRawBB().bottom());
-		itsRenderer.itsBitmapCache->setRasterX(getRawBB().left());
-		itsRenderer.itsBitmapCache->setRasterY(getRawBB().bottom());
-	 }
-	 glPopAttrib;
-  }
-  glPopMatrix();
-  
-  if (GrObj::GROBJ_X11_BITMAP_CACHE == itsRenderer.itsMode) {
-	 itsRenderer.itsBitmapCache->flipVertical();
-	 itsRenderer.itsBitmapCache->flipContrast();
-  }
-  
-  postUpdated();
 }
 
 void GrObj::Impl::doAlignment() const {
@@ -943,52 +1021,6 @@ DOTRACE("GrObj::Impl::updateCachedFinalBB");
   }
 }
 
-void GrObj::Impl::drawDirectRender() const {
-DOTRACE("GrObj::Impl::drawDirectRender");
-  glMatrixMode(GL_MODELVIEW);
-
-  glPushMatrix();
-    doScaling();
-	 doAlignment();
-	 
-	 self->grRender();
-  glPopMatrix();
-}
-
-void GrObj::Impl::drawGLCompile() const {
-DOTRACE("GrObj::Impl::drawGLCompile");
-  glMatrixMode(GL_MODELVIEW);
-
-  if ( !isCurrent() ) {
-	 recompile();
-  }
-  glPushMatrix();
-    doScaling();
-	 doAlignment();
-	 glCallList( itsRenderer.itsDisplayList );
-  glPopMatrix();
-}
-
-void GrObj::Impl::drawBitmapCache() const {
-DOTRACE("GrObj::Impl::drawBitmapCache");
-  glMatrixMode(GL_MODELVIEW);
-
-  if ( !isCurrent() ) {
-	 recacheBitmap();
-  }
-  // If recacheBitmap() was called, then we don't need to draw the
-  // bitmap again since the object was rendered to the screen as
-  // part of recacheBitmap().
-  else {
-	 Assert(itsRenderer.itsBitmapCache != 0);
-	 glPushMatrix();
-	   doScaling();
-		doAlignment();
-		itsRenderer.itsBitmapCache->draw();
-	 glPopMatrix();
-  }
-}
-
 void GrObj::Impl::undrawDirectRender() const {
 DOTRACE("GrObj::Impl::undrawDirectRender");
   glMatrixMode(GL_MODELVIEW);
@@ -1017,14 +1049,7 @@ DOTRACE("GrObj::Impl::undrawSwapForeBack");
 		doAlignment();
 		  
 		if ( itsRenderer.itsMode == GrObj::GROBJ_GL_COMPILE ) {
-		  // Since we don't do a recompile of the display list here,
-		  // we must explicitly check that the display list is valid,
-		  // since it might be invalid if the object was recently
-		  // constructed, for example.
-		  if (glIsList(itsRenderer.itsDisplayList) == GL_TRUE) {
-			 glCallList( itsRenderer.itsDisplayList );
-			 DebugEvalNL(itsRenderer.itsDisplayList);
-		  }
+		  itsRenderer.callList();
 		}
 		else {
 		  self->grRender();
@@ -1143,7 +1168,6 @@ GrObj::GrObj(istream& is, IOFlag flag) :
 {
 DOTRACE("GrObj::GrObj(istream&)");
   deserialize(is, flag);
-  itsImpl->newList();
 
   attach(this);
 
