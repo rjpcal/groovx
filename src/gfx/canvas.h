@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Tue Nov  5 07:24:01 2002
+// written: Thu Nov 14 17:19:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,6 +41,13 @@ namespace Gfx
 class Canvas : public virtual Util::Object
 {
 public:
+  /// Set the current Canvas.
+  static void installCanvas(Gfx::Canvas& canvas);
+
+  /// Get the current Canvas.
+  static Canvas& canvas();
+
+
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~Canvas();
 
