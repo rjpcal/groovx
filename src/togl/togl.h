@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Mon Sep 16 12:50:24 2002
+// written: Mon Sep 16 17:08:24 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -32,10 +32,6 @@ namespace Gfx
 {
   class Canvas;
 }
-
-#define TOGL_VERSION "1.5"
-#define TOGL_MAJOR_VERSION 1
-#define TOGL_MINOR_VERSION 5
 
 ///////////////////////////////////////////////////////////////////////
 //
