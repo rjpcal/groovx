@@ -10,7 +10,8 @@ proc getPkgNameFromPath { path } {
     set code [regexp {pkgs/([a-z]*)/} $path fullmatch pkgname]
 
     if { $code == 0 } {
-	error "couldn't extract package name from path '$path'"
+	puts "couldn't extract package name from path '$path'"
+	exit 1
     }
 
     return $pkgname
@@ -72,7 +73,8 @@ proc setup_package { pkgname ccfiles libdir } {
     if { $code == 0 } {
 
 	if { [llength $initfile] > 1 } {
-	    error "package $pkgname has more than one Tcl_PkgInit: $initfile"
+	    puts "package $pkgname has more than one Tcl_PkgInit: $initfile"
+	    exit 1
 	}
 
 	set pkgtitle [string totitle $pkgname]
@@ -118,7 +120,9 @@ foreach pkgdir $pkgdirs {
     set dir [string trimright $pkgdir "/"]
 
     if { ![file isdirectory $dir] } {
-	error "while computing package dependencies:\nno such directory '$dir'"
+	puts "while computing package dependencies:"
+	puts "no such directory '$dir'"
+	exit 1
     }
 
     if { ![string equal $pkgdir "whitebox"] } {
