@@ -120,6 +120,11 @@ public:
 
   virtual void transform(const Gfx::Txform& tx);
 
+  /// Do a "safe" glRasterPos().
+  /** If the given position does not fall in the screen viewport, then we
+      use the "fake glBitmap()" hack to get a valid raster position outside
+      the viewport. */
+  void rasterPos(const Gfx::Vec2<double>& world_pos);
 
   virtual void drawPixels(const Gfx::BmapData& data,
                           const Gfx::Vec2<double>& world_pos,

@@ -205,5 +205,32 @@ test "GxPixmap::loadImage" "read GIF format" {
     return [-> $::PIXMAP checkSum]
 } {^8639262$}
 
+### partially off-window ###
+test "GxPixmap::render" "partially off-window" {
+    glClearColor 0.0 0.0 0.0 0.0
+    clearscreen
+    set c0 [pixelCheckSum]
+    set p [new GxPixmap]
+    -> $p loadImage testing/jpegfile.jpg
+    -> $p alignmentMode 7
+    see $p
+    set c1 [pixelCheckSum]
+    -> $p centerX -2.0
+    set c2 [pixelCheckSum]
+    -> $p centerY -2.0
+    set c3 [pixelCheckSum]
+    -> $p centerX 2.0
+    set c4 [pixelCheckSum]
+    -> $p centerY 2.0
+    set c5 [pixelCheckSum]
+
+    set didShow \
+	[expr $c0 != $c2 && $c0 != $c3 && $c0 != $c4 && $c0 != $c5]
+    set wasOffWindow \
+	[expr $c1 != $c2 && $c1 != $c3 && $c1 != $c4 && $c1 != $c5]
+
+    return "$didShow $wasOffWindow $c0 $c1 $c2 $c3 $c4 $c5"
+} {^1 1 }
+
 ### cleanup
 unset PIXMAP
