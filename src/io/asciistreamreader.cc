@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu Nov 11 18:45:53 1999
+// written: Tue Nov 16 12:42:06 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -156,6 +156,8 @@ public:
 
   IO* readObject(const string& attrib_name);
 
+  void readValueObj(const string& name, Value& value);
+
   void readOwnedObject(const string& name, IO* obj);
 
   void initAttributes();
@@ -171,6 +173,9 @@ public:
 
 char* AsciiStreamReader::Impl::readStringType(const string& name) {
 DOTRACE("AsciiStreamReader::Impl::readStringType");
+
+  assertAttribExists(name); 
+
   istrstream ist(itsAttribs[name].value.c_str());
 
   int len;
@@ -202,6 +207,19 @@ DOTRACE("AsciiStreamReader::Impl::readObject");
   }
 
   return itsCreatedObjects[id];
+}
+
+void AsciiStreamReader::Impl::readValueObj(
+  const string& attrib_name,
+  Value& value
+  ) {
+DOTRACE("AsciiStreamReader::Impl::readValueObj");
+
+  assertAttribExists(attrib_name);
+
+  istrstream ist(itsAttribs[attrib_name].value.c_str());
+
+  ist >> value;
 }
 
 void AsciiStreamReader::Impl::readOwnedObject(
@@ -350,29 +368,7 @@ char* AsciiStreamReader::readCstring(const string& name) {
 
 void AsciiStreamReader::readValueObj(const string& name, Value& value) {
 DOTRACE("AsciiStreamReader::readValueObj");
-  switch (value.getNativeType()) {
-  case Value::INT:
-	 value.setInt(readInt(name));
-	 break;
-  case Value::LONG:
-	 value.setLong(readInt(name));
-	 break;
-  case Value::BOOL:
-	 value.setBool(readBool(name));
-	 break;
-  case Value::DOUBLE:
-	 value.setDouble(readDouble(name));
-	 break;
-  case Value::CSTRING:
-	 value.setCstring(readCstring(name));
-	 break;
-  case Value::STRING:
-	 value.setString(readString(name));
-	 break;
-  default:
-	 throw ReadError("couldn't handle Value type");
-	 break;
-  }
+  itsImpl.readValueObj(name, value); 
 }
 
 IO* AsciiStreamReader::readObject(const string& attrib_name) {
