@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Sep 11 14:54:44 2002
+// written: Thu Sep 12 14:55:27 2002
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -37,10 +37,6 @@
 #include <map>
 
 #include "util/trace.h"
-
-#if defined(__GNUC__) && __GNUC__ < 3
-#  define BROKEN_TEMPLATE_HACK
-#endif
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -239,18 +235,18 @@ namespace GLTcl
 
 #undef NAMEVAL
 
-  void GLTcl::extractValues(GLenum tag, GLboolean* vals_out)
+  void extractValues(GLenum tag, GLboolean* vals_out)
   { glGetBooleanv(tag, vals_out); }
 
-  void GLTcl::extractValues(GLenum tag, GLdouble* vals_out)
+  void extractValues(GLenum tag, GLdouble* vals_out)
   { glGetDoublev(tag, vals_out); }
 
-  void GLTcl::extractValues(GLenum tag, GLint* vals_out)
+  void extractValues(GLenum tag, GLint* vals_out)
   { glGetIntegerv(tag, vals_out); }
 
   template <class T>
   Tcl::List get(GLenum param_tag
-#ifdef BROKEN_TEMPLATE_HACK
+#ifdef BROKEN_TEMPLATE_FUNCTIONS
                 , T* /*dummy*/=0
 #endif
                 )
@@ -268,7 +264,7 @@ namespace GLTcl
     return result;
   }
 
-#ifdef BROKEN_TEMPLATE_HACK
+#ifdef BROKEN_TEMPLATE_FUNCTIONS
   Tcl::List getBoolean(GLenum param_tag)
   { return get<GLboolean>(param_tag, (GLboolean*) 0); }
 
@@ -505,7 +501,7 @@ DOTRACE("Gltcl_Init");
   pkg->def( "::gluPerspective", "field_of_view_y aspect zNear zFar",
             gluPerspective );
 
-#ifndef BROKEN_TEMPLATE_HACK
+#ifndef BROKEN_TEMPLATE_FUNCTIONS
   pkg->def( "::glGetBoolean", "param_name", GLTcl::get<GLboolean> );
   pkg->def( "::glGetDouble", "param_name", GLTcl::get<GLdouble> );
   pkg->def( "::glGetInteger", "param_name", GLTcl::get<GLint> );
