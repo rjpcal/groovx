@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:47:00 1999
-// written: Tue Nov 14 14:52:14 2000
+// written: Fri Nov 17 11:45:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,9 +45,9 @@ IO::ReadVersionError::~ReadVersionError() {}
 
 IO::Reader::~Reader() {}
 
-void IO::Reader::ensureReadVersionId(const char* name,
-												 IO::VersionId lowest_supported_version,
-												 const char* msg) {
+int IO::Reader::ensureReadVersionId(const char* name,
+												IO::VersionId lowest_supported_version,
+												const char* msg) {
   IO::VersionId actual_version = this->readSerialVersionId();
 
   if (actual_version < lowest_supported_version)
@@ -55,6 +55,8 @@ void IO::Reader::ensureReadVersionId(const char* name,
 										 lowest_supported_version, msg);
 
   Assert(actual_version >= lowest_supported_version);
+
+  return actual_version;
 }
 
 template <>

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:46:08 1999
-// written: Tue Nov 14 14:46:58 2000
+// written: Fri Nov 17 11:44:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,11 +95,12 @@ public:
   virtual ~Reader();
 
   /** A convenience function to ensure that the current serial version
-      is no less than the \a lowest_supported_version. If this test
-      fails, a ReadVersionError will be thrown.*/
-  void ensureReadVersionId(const char* name,
-									IO::VersionId lowest_supported_version,
-									const char* msg);
+      is no less than the \a lowest_supported_version. Returns the
+      actual version. If this test fails, a ReadVersionError will be
+      thrown. */
+  int ensureReadVersionId(const char* name,
+								  IO::VersionId lowest_supported_version,
+								  const char* msg);
 
   /** Returns the serialization version id that was stored with the
       object currently being read. */
