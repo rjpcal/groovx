@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:46:08 1999
-// written: Sat May 19 11:37:09 2001
+// written: Sat Jun  9 14:23:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -134,13 +134,13 @@ public:
 
   /** Get an \c IdItem associated with the tag \a name. A new object
       of the appropriate type will be created and inserted into the \c
-      IoDb, if necessary. */
+      ObjDb, if necessary. */
   virtual IdItem<IO::IoObject> readObject(const fixed_string& name) = 0;
 
   /** Get a \c MaybeIdItem associated with the tag \a name. If no such
       object exists, a null object is returned; otherwise, a new
       object of the appropriate type will be created and inserted into
-      the \c IoDb, if necessary. */
+      the \c ObjDb, if necessary. */
   virtual MaybeIdItem<IO::IoObject> readMaybeObject(const fixed_string& name) = 0;
 
   /** Restore the state of the IO object \a obj, associated with the

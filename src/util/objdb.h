@@ -1,17 +1,17 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// iodb.h
+// objdb.h
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Tue Jun  5 10:41:43 2001
+// written: Sat Jun  9 14:23:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IODB_H_DEFINED
-#define IODB_H_DEFINED
+#ifndef OBJDB_H_DEFINED
+#define OBJDB_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
 #include "util/error.h"
@@ -24,7 +24,7 @@
 /**
  *
  * InvalidIdError is an exception class that will be thrown from
- * IoDb if an attempt to use an invalid id is made in a checked
+ * ObjDb if an attempt to use an invalid id is made in a checked
  * function.
  *
  **/
@@ -42,24 +42,24 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * IoDb.
+ * ObjDb.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IoDb {
+class ObjDb {
 private:
-  static IoDb theInstance;
+  static ObjDb theInstance;
 
   /// Default constructor makes an empty list.
-  IoDb();
+  ObjDb();
 
 public:
   /// Virtual destructor.
-  virtual ~IoDb();
+  virtual ~ObjDb();
 
-  /// Returns the singleton instance of IoDb.
-  static IoDb& theDb();
+  /// Returns the singleton instance of ObjDb.
+  static ObjDb& theDb();
 
   class Impl;
   class ItrImpl;
@@ -127,7 +127,7 @@ public:
 
   public:
 	 CastingIterator(const Iterator& begin) :
-		itsItr(begin), itsEnd(IoDb::theDb().end()) { advanceToValid(); }
+		itsItr(begin), itsEnd(ObjDb::theDb().end()) { advanceToValid(); }
 
 	 CastingIterator& operator++() { ++itsItr; advanceToValid(); return *this; }
 
@@ -175,8 +175,8 @@ public:
   void clear();
 
   /** WARNING: should only be called during program exit. Does a full
-      clear of all objects held by the IoDb. This breaks the usual
-      semantics of IoDb, since it removes both shared and unshared
+      clear of all objects held by the ObjDb. This breaks the usual
+      semantics of ObjDb, since it removes both shared and unshared
       objects. */
   void clearOnExit();
 
@@ -192,11 +192,11 @@ public:
   void insertPtrBase(Util::Object* ptr);
 
 private:
-  IoDb(const IoDb&);
-  IoDb& operator=(const IoDb&);
+  ObjDb(const ObjDb&);
+  ObjDb& operator=(const ObjDb&);
 
   Impl* const itsImpl;
 };
 
-static const char vcid_iodb_h[] = "$Header$";
-#endif // !IODB_H_DEFINED
+static const char vcid_objdb_h[] = "$Header$";
+#endif // !OBJDB_H_DEFINED

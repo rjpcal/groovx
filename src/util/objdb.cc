@@ -1,19 +1,19 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// iodb.cc
+// objdb.cc
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Jun  6 15:55:32 2001
+// written: Sat Jun  9 14:23:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IODB_CC_DEFINED
-#define IODB_CC_DEFINED
+#ifndef OBJDB_CC_DEFINED
+#define OBJDB_CC_DEFINED
 
-#include "util/iodb.h"
+#include "util/objdb.h"
 
 #include "system/demangle.h"
 
@@ -36,16 +36,16 @@ InvalidIdError::~InvalidIdError() {}
 
 ///////////////////////////////////////////////////////////////////////
 //
-// IoDb::Impl definition
+// ObjDb::Impl definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class IoDb::Impl {
+class ObjDb::Impl {
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 
-  IoDb* itsOwner;
+  ObjDb* itsOwner;
 
 public:
 
@@ -54,7 +54,7 @@ public:
   typedef std::map<Util::UID, IoPtrHandle> MapType;
   MapType itsPtrMap;
 
-  Impl(IoDb* owner) :
+  Impl(ObjDb* owner) :
 	 itsOwner(owner),
 	 itsPtrMap()
 	 {}
@@ -153,13 +153,13 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// IoDb::ItrImpl definition
+// ObjDb::ItrImpl definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class IoDb::ItrImpl {
+class ObjDb::ItrImpl {
 public:
-  typedef IoDb::Impl::MapType MapType;
+  typedef ObjDb::Impl::MapType MapType;
 
   ItrImpl(MapType::iterator itr) : itsIter(itr) {}
 
@@ -168,141 +168,141 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// IoDb::Iterator member definitions
+// ObjDb::Iterator member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-IoDb::Iterator::Iterator(IoDb::ItrImpl* impl) :
+ObjDb::Iterator::Iterator(ObjDb::ItrImpl* impl) :
   itsImpl(impl)
 {
-DOTRACE("IoDb::Iterator::Iterator()");
+DOTRACE("ObjDb::Iterator::Iterator()");
 }
 
-IoDb::Iterator::~Iterator()
+ObjDb::Iterator::~Iterator()
 {
-DOTRACE("IoDb::Iterator::~Iterator");
+DOTRACE("ObjDb::Iterator::~Iterator");
   delete itsImpl;
 }
 
-IoDb::Iterator::Iterator(const IoDb::Iterator& other) :
+ObjDb::Iterator::Iterator(const ObjDb::Iterator& other) :
   itsImpl(new ItrImpl(other.itsImpl->itsIter))
 {
-DOTRACE("IoDb::Iterator::Iterator(copy)");
+DOTRACE("ObjDb::Iterator::Iterator(copy)");
 }
 
-IoDb::Iterator&
-IoDb::Iterator::operator=(const IoDb::Iterator& other)
+ObjDb::Iterator&
+ObjDb::Iterator::operator=(const ObjDb::Iterator& other)
 {
-DOTRACE("IoDb::Iterator::operator=");
+DOTRACE("ObjDb::Iterator::operator=");
   ItrImpl* old_impl = itsImpl;
   itsImpl = new ItrImpl(other.itsImpl->itsIter);
   delete old_impl;
   return *this;
 }
 
-bool IoDb::Iterator::operator==(
-      const IoDb::Iterator& other) const
+bool ObjDb::Iterator::operator==(
+      const ObjDb::Iterator& other) const
 {
   return itsImpl->itsIter == other.itsImpl->itsIter;
 }
 
-IoDb::Iterator&
-IoDb::Iterator::operator++()
+ObjDb::Iterator&
+ObjDb::Iterator::operator++()
 {
   ++(itsImpl->itsIter);
   return *this;
 }
 
-int IoDb::Iterator::getId() const
+int ObjDb::Iterator::getId() const
 {
   return (*(itsImpl->itsIter)).first;
 }
 
-Util::Object* IoDb::Iterator::getObject() const
+Util::Object* ObjDb::Iterator::getObject() const
 {
   return (*(itsImpl->itsIter)).second.get();
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// IoDb member definitions
+// ObjDb member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-IoDb IoDb::theInstance;
+ObjDb ObjDb::theInstance;
 
-IoDb& IoDb::theDb() { return theInstance; }
+ObjDb& ObjDb::theDb() { return theInstance; }
 
-IoDb::Iterator IoDb::begin() const {
-DOTRACE("IoDb::begin");
+ObjDb::Iterator ObjDb::begin() const {
+DOTRACE("ObjDb::begin");
   return Iterator(new ItrImpl(itsImpl->itsPtrMap.begin()));
 }
 
-IoDb::Iterator IoDb::end() const {
-DOTRACE("IoDb::end");
+ObjDb::Iterator ObjDb::end() const {
+DOTRACE("ObjDb::end");
   return Iterator(new ItrImpl(itsImpl->itsPtrMap.end()));
 }
 
-IoDb::IoDb() :
+ObjDb::ObjDb() :
   itsImpl(new Impl(this))
 {
-DOTRACE("IoDb::IoDb");
+DOTRACE("ObjDb::ObjDb");
 }
 
-IoDb::~IoDb() {
-DOTRACE("IoDb::~IoDb");
+ObjDb::~ObjDb() {
+DOTRACE("ObjDb::~ObjDb");
   delete itsImpl; 
 }
 
-int IoDb::count() const {
-DOTRACE("IoDb::count");
+int ObjDb::count() const {
+DOTRACE("ObjDb::count");
 
   return itsImpl->count();
 }
 
-bool IoDb::isValidId(Util::UID id) const {
-DOTRACE("IoDb::isValidId");
+bool ObjDb::isValidId(Util::UID id) const {
+DOTRACE("ObjDb::isValidId");
   return itsImpl->isValidId(id);
 }
 
-void IoDb::remove(Util::UID id) {
-DOTRACE("IoDb::remove");
+void ObjDb::remove(Util::UID id) {
+DOTRACE("ObjDb::remove");
   itsImpl->remove(id);
 }
 
-void IoDb::release(Util::UID id) {
-DOTRACE("IoDb::release");
+void ObjDb::release(Util::UID id) {
+DOTRACE("ObjDb::release");
   itsImpl->release(id);
 }
 
-void IoDb::purge() {
-DOTRACE("IoDb::clear");
+void ObjDb::purge() {
+DOTRACE("ObjDb::clear");
   DebugEvalNL(typeid(*this).name());
   itsImpl->purge();
 }
 
-void IoDb::clear() {
-DOTRACE("IoDb::clear");
+void ObjDb::clear() {
+DOTRACE("ObjDb::clear");
   // Call purge until no more items can be removed
   while ( itsImpl->purge() != 0 )
 	 { ; }
 }
 
-void IoDb::clearOnExit() {
-DOTRACE("IoDb::clearOnExit");
+void ObjDb::clearOnExit() {
+DOTRACE("ObjDb::clearOnExit");
   itsImpl->clearAll(); 
 }
 
-Util::Object* IoDb::getCheckedPtrBase(Util::UID id) throw (InvalidIdError) {
-DOTRACE("IoDb::getCheckedPtrBase");
+Util::Object* ObjDb::getCheckedPtrBase(Util::UID id) throw (InvalidIdError) {
+DOTRACE("ObjDb::getCheckedPtrBase");
   return itsImpl->getCheckedPtrBase(id);
 }
 
-void IoDb::insertPtrBase(Util::Object* ptr) {
-DOTRACE("IoDb::insertPtrBase");
+void ObjDb::insertPtrBase(Util::Object* ptr) {
+DOTRACE("ObjDb::insertPtrBase");
 
   itsImpl->insertPtrBase(ptr);
 }
 
-static const char vcid_iodb_cc[] = "$Header$";
-#endif // !IODB_CC_DEFINED
+static const char vcid_objdb_cc[] = "$Header$";
+#endif // !OBJDB_CC_DEFINED

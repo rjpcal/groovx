@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Jun  6 19:56:02 2001
+// written: Sat Jun  9 14:26:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@
 #include "tcl/stringifycmd.h"
 #include "tcl/tclpkg.h"
 
-#include "util/iodb.h"
+#include "util/objdb.h"
 #include "util/objmgr.h"
 
 #include <fstream.h>
@@ -199,7 +199,7 @@ protected:
 		stop = endOfArg(1, (int*)0);
 	 while (itr != stop)
 		{
-		  IoDb::theDb().remove(*itr);
+		  ObjDb::theDb().remove(*itr);
 		  ++itr;
 		}
   }
@@ -233,25 +233,33 @@ public:
   }
 };
 
-class IoDbPkg : public CTclItemPkg<IoDb> {
+class ObjDbPkg : public CTclItemPkg<ObjDb> {
 public:
-  IoDbPkg(Tcl_Interp* interp) :
-	 CTclItemPkg<IoDb>(interp, "IoDb", "$Revision$", 0)
+  ObjDbPkg(Tcl_Interp* interp) :
+	 CTclItemPkg<ObjDb>(interp, "ObjDb", "$Revision$", 0)
   {
-	 declareCAction("clear", &IoDb::clear);
-	 declareCAction("purge", &IoDb::purge);
-	 declareCSetter("release", &IoDb::release);
-	 addCommand( new IoTcl::LoadObjectsCmd(interp, "IoDb::loadObjects") );
-	 addCommand( new IoTcl::SaveObjectsCmd(interp, "IoDb::saveObjects") );
+	 declareCAction("clear", &ObjDb::clear);
+	 declareCAction("purge", &ObjDb::purge);
+	 declareCSetter("release", &ObjDb::release);
+	 addCommand( new IoTcl::LoadObjectsCmd(interp, "ObjDb::loadObjects") );
+	 addCommand( new IoTcl::SaveObjectsCmd(interp, "ObjDb::saveObjects") );
+
+	 TclPkg::eval("namespace eval IoDb {\n"
+					  "  proc clear {args} { eval ObjDb::clear $args }\n"
+					  "  proc purge {args} { eval ObjDb::purge $args }\n"
+					  "  proc release {args} { eval ObjDb::release $args }\n"
+					  "  proc loadObjects {args} { eval ObjDb::loadObjects $args }\n"
+					  "  proc saveObjects {args} { eval ObjDb::saveObjects $args }\n"
+					  "}\n");
   }
 
-  virtual ~IoDbPkg()
+  virtual ~ObjDbPkg()
     {
-		IoDb::theDb().clearOnExit();
+		ObjDb::theDb().clearOnExit();
 	 }
 
-  IoDb* getCItemFromId(int)
-    { return &(IoDb::theDb()); }
+  ObjDb* getCItemFromId(int)
+    { return &(ObjDb::theDb()); }
 };
 
 } // end namespace Tcl
@@ -260,7 +268,7 @@ extern "C"
 int Io_Init(Tcl_Interp* interp) {
 DOTRACE("Io_Init");
 
-  Tcl::TclPkg* pkg1 = new Tcl::IoDbPkg(interp);
+  Tcl::TclPkg* pkg1 = new Tcl::ObjDbPkg(interp);
   Tcl::TclPkg* pkg2 = new Tcl::IoObjectPkg(interp);
 
   return pkg1->combineStatus(pkg2->initStatus());

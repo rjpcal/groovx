@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec 11 14:38:13 2000
-// written: Wed Jun  6 15:56:57 2001
+// written: Sat Jun  9 14:24:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "tcl/ioitempkg.h"
 
-#include "util/iodb.h"
+#include "util/objdb.h"
 #include "util/object.h"
 
 //---------------------------------------------------------------------
@@ -67,8 +67,8 @@ Tcl::CountAllCmd::~CountAllCmd() {}
 
 void Tcl::CountAllCmd::invoke() {
   int count = 0;
-  IoDb& theList = IoDb::theDb();
-  for (IoDb::IdIterator
+  ObjDb& theList = ObjDb::theDb();
+  for (ObjDb::IdIterator
 			itr = theList.beginIds(),
 			end = theList.endIds();
 		 itr != end;
@@ -95,8 +95,8 @@ Tcl::FindAllCmd::FindAllCmd(Tcl_Interp* interp, IoCaster* caster,
 Tcl::FindAllCmd::~FindAllCmd() {}
 
 void Tcl::FindAllCmd::invoke() {
-  IoDb& theList = IoDb::theDb();
-  for (IoDb::IdIterator
+  ObjDb& theList = ObjDb::theDb();
+  for (ObjDb::IdIterator
 			itr = theList.beginIds(),
 			end = theList.endIds();
 		 itr != end;
@@ -122,8 +122,8 @@ Tcl::RemoveAllCmd::RemoveAllCmd(Tcl_Interp* interp, IoCaster* caster,
 Tcl::RemoveAllCmd::~RemoveAllCmd() {}
 
 void Tcl::RemoveAllCmd::invoke() {
-  IoDb& theList = IoDb::theDb();
-  for (IoDb::IdIterator
+  ObjDb& theList = ObjDb::theDb();
+  for (ObjDb::IdIterator
 			itr = theList.beginIds(),
 			end = theList.endIds();
 		 itr != end;

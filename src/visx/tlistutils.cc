@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Wed Jun  6 15:56:57 2001
+// written: Sat Jun  9 14:24:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@
 #include "util/arrays.h"
 #include "util/error.h"
 #include "util/iditem.h"
-#include "util/iodb.h"
+#include "util/objdb.h"
 
 #include <cmath>
 #include <iostream.h>
@@ -129,9 +129,9 @@ DOTRACE("TlistUtils::writeResponses");
   ofs.setf(ios::fixed);
   ofs.precision(2);
 
-  for (IoDb::CastingIterator<Trial>
-			itr = IoDb::theDb().begin(),
-			end = IoDb::theDb().end();
+  for (ObjDb::CastingIterator<Trial>
+			itr = ObjDb::theDb().begin(),
+			end = ObjDb::theDb().end();
 		 itr != end;
 		 ++itr)
 	 {
@@ -149,9 +149,9 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
 
   STD_IO::ofstream ofs(filename);
 
-  for (IoDb::CastingIterator<Trial>
-			itr = IoDb::theDb().begin(),
-			end = IoDb::theDb().end();
+  for (ObjDb::CastingIterator<Trial>
+			itr = ObjDb::theDb().begin(),
+			end = ObjDb::theDb().end();
 		 itr != end;
 		 ++itr)
 	 {
@@ -175,9 +175,9 @@ DOTRACE("TlistUtils::writeMatlab");
   ofs.setf(ios::fixed);
   ofs.precision(2);
 
-  for (IoDb::CastingIterator<Trial>
-			itr = IoDb::theDb().begin(),
-			end = IoDb::theDb().end();
+  for (ObjDb::CastingIterator<Trial>
+			itr = ObjDb::theDb().begin(),
+			end = ObjDb::theDb().end();
 		 itr != end;
 		 ++itr)
 	 {
