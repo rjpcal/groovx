@@ -3,7 +3,7 @@
 // value.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:21:32 1999
-// written: Thu Jun  1 14:21:47 2000
+// written: Thu Jun  1 14:37:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,11 @@
 
 #include <iostream.h>
 
-namespace {
+namespace VALUE_CC_LOCAL {
   void raiseValueError() { throw ValueError(); }
 }
+
+using namespace VALUE_CC_LOCAL;
 
 ValueError::ValueError() :
   ErrorWithMsg()

@@ -3,7 +3,7 @@
 // hpsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 12 13:03:47 1999
-// written: Mon May 15 19:02:01 2000
+// written: Thu Jun  1 14:40:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
+namespace HPSOUND_CC_LOCAL {
   const string_literal ioTag("HpAudioSound");
 
   Audio* theAudio = 0;
@@ -48,6 +48,7 @@ namespace {
   }
 }
 
+using namespace HPSOUND_CC_LOCAL;
 
 ///////////////////////////////////////////////////////////////////////
 //
