@@ -3,17 +3,13 @@
 // sound.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:43:07 1999
-// written: Fri Mar  3 15:09:45 2000
+// written: Mon Mar  6 18:03:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SOUND_H_DEFINED
 #define SOUND_H_DEFINED
-
-#ifndef STRINGFWD_H_DEFINED
-#include "stringfwd.h"
-#endif
 
 #ifndef ERROR_H_DEFINED
 #include "error.h"
@@ -26,7 +22,7 @@
 class SoundError : public ErrorWithMsg {
 public:
   SoundError() : ErrorWithMsg() {}
-  SoundError(const string& msg) : ErrorWithMsg(msg) {}
+  SoundError(const char* msg) : ErrorWithMsg(msg) {}
 };
 
 class Sound : public virtual IO {
@@ -47,7 +43,7 @@ public:
 
   // Returns a pointer to a new platform-appropriate Sound object. The
   // caller is responsible for destroying the Sound object.
-  static Sound* newPlatformSound(const string& soundfile);
+  static Sound* newPlatformSound(const char* soundfile);
 
   virtual ~Sound();
 
@@ -60,8 +56,8 @@ public:
   virtual void writeTo(Writer* writer) const = 0;
 
   virtual void play() = 0;
-  virtual void setFile(const string& filename) = 0;
-  virtual const string& getFile() const = 0;
+  virtual void setFile(const char* filename) = 0;
+  virtual const char* getFile() const = 0;
 };
 
 static const char vcid_sound_h[] = "$Header$";
