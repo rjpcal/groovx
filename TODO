@@ -7,6 +7,14 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
+* (9-Oct-2004) Fix GLCanvas::grabPixels() to work with 16-bit framebuffer
+
+  This is a problem under my YellowDog Linux install. Should be able
+  to use glReadPixels with GL_UNSIGNED_SHORT_5_6_5 or similar.
+
+  This means including a "real" bytesPerPixel functionality, that
+  doesn't just assume rgba==24 or rgba==32.
+
 * (17-Jul-2004) Clean according to the way of UNIX!
 
   more code reuse!!! less reinventing-the-wheel!!!
