@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Tue Aug 21 13:54:30 2001
+// written: Thu Aug 23 09:44:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "maskhatch.h"
 
+#include "gfx/canvas.h"
 #include "gfx/rect.h"
 
 #include "io/ioproxy.h"
@@ -119,55 +120,53 @@ DOTRACE("MaskHatch::grGetBoundingBox");
   return bbox;
 }
 
-void MaskHatch::grRender(Gfx::Canvas&) const
+void MaskHatch::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("MaskHatch::grRender");
 
   if (itsNumLines == 0) return;
 
-  glPushAttrib(GL_LINE_BIT);
+  Gfx::Canvas::AttribSaver attribSaver(canvas);
+
+  glLineWidth(itsLineWidth);
+
+  glBegin(GL_LINES);
   {
-    glLineWidth(itsLineWidth);
+    for (int i = 0; i < itsNumLines; ++i)
+      {
+        GLdouble position = double(i)/itsNumLines;
 
-    glBegin(GL_LINES);
-    {
-      for (int i = 0; i < itsNumLines; ++i)
-        {
-          GLdouble position = double(i)/itsNumLines;
+        // horizontal line
+        glVertex2d(0.0, position);
+        glVertex2d(1.0, position);
 
-          // horizontal line
-          glVertex2d(0.0, position);
-          glVertex2d(1.0, position);
+        // vertical line
+        glVertex2d(position, 0.0);
+        glVertex2d(position, 1.0);
 
-          // vertical line
-          glVertex2d(position, 0.0);
-          glVertex2d(position, 1.0);
+        // lines with slope = 1
+        glVertex2d(0.0, position);
+        glVertex2d(1.0-position, 1.0);
 
-          // lines with slope = 1
-          glVertex2d(0.0, position);
-          glVertex2d(1.0-position, 1.0);
+        glVertex2d(position, 0.0);
+        glVertex2d(1.0, 1.0-position);
 
-          glVertex2d(position, 0.0);
-          glVertex2d(1.0, 1.0-position);
+        // lines with slope = -1
+        glVertex2d(0.0, 1.0-position);
+        glVertex2d(1.0-position, 0.0);
 
-          // lines with slope = -1
-          glVertex2d(0.0, 1.0-position);
-          glVertex2d(1.0-position, 0.0);
+        glVertex2d(position, 1.0);
+        glVertex2d(1.0, position);
+      }
 
-          glVertex2d(position, 1.0);
-          glVertex2d(1.0, position);
-        }
+    // final closing lines
+    glVertex2d(0.0, 1.0);
+    glVertex2d(1.0, 1.0);
 
-      // final closing lines
-      glVertex2d(0.0, 1.0);
-      glVertex2d(1.0, 1.0);
-
-      glVertex2d(1.0, 0.0);
-      glVertex2d(1.0, 1.0);
-    }
-    glEnd();
+    glVertex2d(1.0, 0.0);
+    glVertex2d(1.0, 1.0);
   }
-  glPopAttrib();
+  glEnd();
 }
 
 static const char vcid_maskhatch_cc[] = "$Header$";
