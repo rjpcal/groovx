@@ -274,6 +274,7 @@ TCLWORKS_OBJS := \
 	$(OBJ)/tcl/tcldlist.do \
 	$(OBJ)/tcl/tclerror.do \
 	$(OBJ)/tcl/tclitempkg.do \
+	$(OBJ)/tcl/tclitempkgbase.do \
 	$(OBJ)/tcl/tclpkg.do \
 	$(OBJ)/tcl/tclvalue.do \
 	$(OBJ)/tcl/tclveccmds.do \
@@ -323,6 +324,8 @@ endif
 
 PROD_TARGET := $(HOME)/bin/$(ARCH)/grsh$(VERSION)
 
+PROD_DEFS := -DASSERT -DINVARIANT
+
 # Note: exception handling does not work with shared libraries in the
 # current version of g++ (2.95.1), so on irix6 we must make the
 # libvisx library as an archive library.
@@ -358,7 +361,7 @@ PROD_APPWORKS_OBJS := $(DEBUG_APPWORKS_OBJS:.do=.o)
 
 COMMON_OPTIONS := $(ARCH_FLAGS) $(INCLUDE_DIRS)
 
-ALL_PROD_OPTIONS := $(COMMON_OPTIONS) $(PROD_OPTIONS) 
+ALL_PROD_OPTIONS := $(COMMON_OPTIONS) $(PROD_OPTIONS) $(PROD_DEFS)
 ALL_DEBUG_OPTIONS := $(COMMON_OPTIONS) $(DEBUG_OPTIONS) $(DEBUG_DEFS)
 
 $(OBJ)/%.o : $(SRC)/%.cc
@@ -505,6 +508,13 @@ ifeq ($(ARCH),hp9000s700)
 	echo 'etags not installed'
 else
 	etags -f$(SRC)/TAGS $(ALL_SOURCES) $(ALL_HEADERS)
+endif
+
+$(SRC)/H_TAGS: $(ALL_HEADERS)
+ifeq ($(ARCH),hp9000s700)
+	echo 'etags not installed'
+else
+	etags -f$(SRC)/H_TAGS $(ALL_HEADERS)
 endif
 
 # Count the lines in all source files
