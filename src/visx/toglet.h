@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri Jun 22 09:03:11 2001
+// written: Sat Jul 21 18:43:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,8 +49,6 @@ protected:
              int config_argc=0, char** config_argv=0,
              bool pack=true,
              double dist=30.0, double unit_angle=2.05);
-
-  virtual Tk_Window tkWin() const;
 
 public:
   // types

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Jul 16 13:28:17 2001
+// written: Sat Jul 21 18:45:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -145,31 +145,38 @@ DOTRACE("Toglet::Toglet");
 
   itsTogl->makeCurrent();
 
-  if ( itsTogl->usesRgba() ) {
-    glColor4f(1.0, 1.0, 1.0, 1.0);
-    glClearColor(0.0, 0.0, 0.0, 1.0);
-  }
-  else { // not using rgba
-    if ( itsTogl->hasPrivateCmap() ) {
-      glClearIndex(0);
-      glIndexi(1);
+  if ( itsTogl->usesRgba() )
+    {
+      glColor4f(1.0, 1.0, 1.0, 1.0);
+      glClearColor(0.0, 0.0, 0.0, 1.0);
     }
-    else {
-      glClearIndex(itsTogl->allocColor(0.0, 0.0, 0.0));
-      glIndexi(itsTogl->allocColor(1.0, 1.0, 1.0));
+  else
+    { // not using rgba
+      if ( itsTogl->hasPrivateCmap() )
+        {
+          glClearIndex(0);
+          glIndexi(1);
+        }
+      else
+        {
+          glClearIndex(itsTogl->allocColor(0.0, 0.0, 0.0));
+          glIndexi(itsTogl->allocColor(1.0, 1.0, 1.0));
+        }
     }
-  }
 
   Tk_Window tkwin = itsTogl->tkWin();
   XBmapRenderer::initClass(tkwin);
 
-  if (pack) {
-    dynamic_string pack_cmd_str = "pack ";
-    pack_cmd_str += pathname();
-    pack_cmd_str += " -side left -expand 1 -fill both; update";
-    Tcl::Code pack_cmd(pack_cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
-    pack_cmd.invoke(interp);
-  }
+  if (pack)
+    {
+      dynamic_string pack_cmd_str = "pack ";
+      pack_cmd_str += pathname();
+      pack_cmd_str += " -side left -expand 1 -fill both; update";
+      Tcl::Code pack_cmd(pack_cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
+      pack_cmd.invoke(interp);
+    }
+
+  TkWidget::setTkWin(tkwin);
 
   incrRefCount();
 }
@@ -187,12 +194,6 @@ DOTRACE("Toglet::~Toglet");
 ///////////////
 // accessors //
 ///////////////
-
-Tk_Window Toglet::tkWin() const {
-DOTRACE("Toglet::tkWin");
-
-  return itsTogl->tkWin();
-}
 
 double Toglet::getFixedScale() const {
 DOTRACE("Toglet::getFixedScale");

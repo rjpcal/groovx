@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Thu Jul 19 20:48:36 2001
+// written: Sat Jul 21 18:34:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,8 @@ namespace Tcl
 
 class Tcl::TkWidget : public GWT::Widget {
 protected:
-  virtual Tk_Window tkWin() const = 0;
+  Tk_Window tkWin() const;
+  void setTkWin(Tk_Window win);
 
 public:
   TkWidget();
@@ -57,7 +58,7 @@ private:
   class TkWidgImpl;
   friend class TkWidgImpl;
 
-  TkWidgImpl* const itsImpl;
+  TkWidgImpl* itsImpl;
 };
 
 static const char vcid_tkwidget_h[] = "$Header$";
