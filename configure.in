@@ -530,6 +530,54 @@ else
    AC_SUBST(LIB_SUFFIX, ${PACKAGE_VERSION})
 fi
 
+### --enable-rgba
+
+AC_MSG_CHECKING([whether to enable rgba color])
+
+AC_ARG_ENABLE(rgba,
+	      [AC_HELP_STRING([--enable-rgba],
+			      [whether to use rgba color (instead of color index) [yes]])],
+	      ,
+	      enable_rgba=yes)
+
+AC_MSG_RESULT($enable_rgba)
+
+if test $enable_rgba = no; then
+   AC_DEFINE(NO_RGBA,1,[disable rgba color?])
+fi
+
+### --enable-double-buffer
+
+AC_MSG_CHECKING([whether to enable double-buffered graphics])
+
+AC_ARG_ENABLE(double-buffer,
+	      [AC_HELP_STRING([--enable-double-buffer],
+			      [whether to use double-buffered graphics (instead of single-buffered) [yes]])],
+	      ,
+	      enable_double_buffer=yes)
+
+AC_MSG_RESULT($enable_double_buffer)
+
+if test $enable_double_buffer = no; then
+   AC_DEFINE(NO_DOUBLE_BUFFER,1,[use single- instead of double-buffering?])
+fi
+
+### --enable-direct-render
+
+AC_MSG_CHECKING([whether to enable direct-rendered OpenGL graphics])
+
+AC_ARG_ENABLE(direct-render,
+	      [AC_HELP_STRING([--enable-direct-render],
+			      [whether to use direct-rendered OpenGL graphics [yes]])],
+	      ,
+	      enable_direct_render=yes)
+
+AC_MSG_RESULT($enable_direct_render)
+
+if test $enable_direct_render = no; then
+   AC_DEFINE(NO_DIRECT_RENDER,1,[use indirect instead of direct-rendering?])
+fi
+
 ### --with-htmldoc
 
 AC_MSG_CHECKING([where to install html documentation])

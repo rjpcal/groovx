@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sun Aug  4 16:29:23 2002
-// written: Wed May 14 12:58:04 2003
+// written: Wed May 14 13:12:11 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -40,10 +40,10 @@
 #include "util/trace.h"
 
 GlxOpts::GlxOpts() :
-#ifndef NO_RGBA
-  rgbaFlag( true ),
-#else
+#if defined(NO_RGBA) && NO_RGBA != 0
   rgbaFlag( false ),
+#else
+  rgbaFlag( true ),
 #endif
   rgbaRed( 1 ),
   rgbaGreen( 1 ),
@@ -51,10 +51,10 @@ GlxOpts::GlxOpts() :
   alphaFlag( false ),
   alphaSize( 1 ),
   colorIndexSize( 8 ),
-#ifndef NO_DOUBLE_BUFFER
-  doubleFlag( true ),
-#else
+#if defined(NO_DOUBLE_BUFFER) && NO_DOUBLE_BUFFER != 0
   doubleFlag( false ),
+#else
+  doubleFlag( true ),
 #endif
   depthFlag( true ),
   depthSize( 8 ),
@@ -66,7 +66,11 @@ GlxOpts::GlxOpts() :
   stencilFlag( false ),
   stencilSize( 1 ),
   auxNumber( 0 ),
+#if defined(NO_DIRECT_RENDER) && NO_DIRECT_RENDER != 0
+  indirect( true ),
+#else
   indirect( false ),
+#endif
   level( 0 ),
   transparent( false )
 {
