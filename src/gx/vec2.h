@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Jan 28 12:54:13 1999
-// written: Mon May 12 12:22:12 2003
+// written: Mon May 12 12:42:53 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -90,6 +90,12 @@ public:
   void setLength(V len)
   {
     scaleBy(len / length());
+  }
+
+  void setPolarRad(double r, double theta)
+  {
+    xx = r * cos(theta);
+    yy = r * sin(theta);
   }
 
   double thetaDeg() const { return PointAlgo::thetaDeg(yy, xx); }
