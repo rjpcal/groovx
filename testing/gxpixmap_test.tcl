@@ -24,36 +24,36 @@ IO::testWriteCmd GxPixmap IO 1 $::PIXMAP
 IO::testReadCmd GxPixmap IO 1 $::PIXMAP
 
 ### Obj::new GxPixmap ###
-test "GxPixmap-Obj::new GxPixmap" "too many args" {
+test "Obj::new GxPixmap" "too many args" {
     Obj::new GxPixmap junk junk
 } {^wrong \# args: should be}
-test "GxPixmap-Obj::new GxPixmap" "normal use" {
+test "Obj::new GxPixmap" "normal use" {
     set ::PIXMAP [Obj::new GxPixmap]
 } "^${INT}$"
 
 ### GxPixmap::loadImage ###
-test "GxPixmap-GxPixmap::loadImage" "too few args" {
+test "GxPixmap::loadImage" "too few args" {
     GxPixmap::loadImage
 } {^wrong \# args: should be}
-test "GxPixmap-GxPixmap::loadImage" "too many args" {
+test "GxPixmap::loadImage" "too many args" {
     GxPixmap::loadImage $::PIXMAP $::IMGFILE junk
 } {^wrong \# args: should be}
-test "GxPixmap-GxPixmap::loadImage" "normal use" {
+test "GxPixmap::loadImage" "normal use" {
     GxPixmap::loadImage $::PIXMAP $::IMGFILE
     GxPixmap::flipContrast $::PIXMAP
     GxShapeKit::alignmentMode $::PIXMAP $GxShapeKit::CENTER_ON_CENTER
 } {^$}
-test "GxPixmap-GxPixmap::loadImage" "error on non-existent file" {
+test "GxPixmap::loadImage" "error on non-existent file" {
     exec rm -rf $::TEST_DIR/nonexistent_file.ppm
     GxPixmap::loadImage $::PIXMAP $::TEST_DIR/nonexistent_file.ppm
 } "^GxPixmap::loadImage: couldn't open file "
-test "GxPixmap-GxPixmap::loadImage" "error on junk text file" {
+test "GxPixmap::loadImage" "error on junk text file" {
     file copy -force $::TEST_DIR/junk_text_file $::TEST_DIR/junk_text_file.pbm
     catch {GxPixmap::loadImage $::PIXMAP $::TEST_DIR/junk_text_file.pbm} result
     file delete -force $::TEST_DIR/junk_text_file.pbm
     return $result
 } "^GxPixmap::loadImage: bad magic number while reading pnm file.*$"
-test "GxPixmap-GxPixmap::loadImage" "error on junk binary file" {
+test "GxPixmap::loadImage" "error on junk binary file" {
     file copy -force $::TEST_DIR/junk_bin_file $::TEST_DIR/junk_bin_file.pbm
     catch {GxPixmap::loadImage $::PIXMAP $::TEST_DIR/junk_bin_file.pbm} result
     file delete -force $::TEST_DIR/junk_bin_file.pbm
@@ -61,7 +61,7 @@ test "GxPixmap-GxPixmap::loadImage" "error on junk binary file" {
 } "^GxPixmap::loadImage: bad magic number while reading pnm file.*$"
 
 ### GxPixmap rendering ###
-test "GxPixmap-rendering" "normal render" {
+test "rendering" "normal render" {
     clearscreen
     see $::PIXMAP
     set sum [pixelCheckSum]
@@ -69,13 +69,13 @@ test "GxPixmap-rendering" "normal render" {
 } {^1}
 
 ### GxPixmap::flipContrastCmd ###
-test "GxPixmap-GxPixmap::flipContrast" "too few args" {
+test "GxPixmap::flipContrast" "too few args" {
     GxPixmap::flipContrast
 } {^wrong \# args: should be "GxPixmap::flipContrast item_id\(s\)"$}
-test "GxPixmap-GxPixmap::flipContrast" "too many args" {
+test "GxPixmap::flipContrast" "too many args" {
     GxPixmap::flipContrast $::PIXMAP junk
 } {^wrong \# args: should be "GxPixmap::flipContrast item_id\(s\)"$}
-test "GxPixmap-GxPixmap::flipContrast" "normal use" {
+test "GxPixmap::flipContrast" "normal use" {
     GxPixmap::flipContrast $::PIXMAP
     clearscreen
     see $::PIXMAP
@@ -90,13 +90,13 @@ test "GxPixmap-GxPixmap::flipContrast" "normal use" {
 } {^1}
 
 ### GxPixmap::flipVerticalCmd ###
-test "GxPixmap-GxPixmap::flipVertical" "too few args" {
+test "GxPixmap::flipVertical" "too few args" {
     GxPixmap::flipVertical
 } {^wrong \# args: should be "GxPixmap::flipVertical item_id\(s\)"$}
-test "GxPixmap-GxPixmap::flipVertical" "too many args" {
+test "GxPixmap::flipVertical" "too many args" {
     GxPixmap::flipVertical $::PIXMAP junk
 } {^wrong \# args: should be "GxPixmap::flipVertical item_id\(s\)"$}
-test "GxPixmap-GxPixmap::flipVertical" "normal use" {
+test "GxPixmap::flipVertical" "normal use" {
 
     GxShapeKit::alignmentMode $::PIXMAP $GxShapeKit::CENTER_ON_CENTER
 
@@ -114,13 +114,13 @@ test "GxPixmap-GxPixmap::flipVertical" "normal use" {
 } {^1}
 
 ### GxPixmap::zoomCmd ###
-test "GxPixmap-GxPixmap::zoom" "too few args" {
+test "GxPixmap::zoom" "too few args" {
     GxPixmap::zoom
 } {^wrong \# args: should be}
-test "GxPixmap-GxPixmap::zoom" "too many args" {
+test "GxPixmap::zoom" "too many args" {
     GxPixmap::zoom $::PIXMAP 1.0 junk
 } {^wrong \# args: should be}
-test "GxPixmap-GxPixmap::zoom" "normal use" {
+test "GxPixmap::zoom" "normal use" {
     GxPixmap::asBitmap $::PIXMAP no
     GxPixmap::usingZoom $::PIXMAP yes
 
@@ -138,13 +138,13 @@ test "GxPixmap-GxPixmap::zoom" "normal use" {
 } {^1}
 
 ### GxPixmap::asBitmapCmd ###
-test "GxPixmap-GxPixmap::asBitmap" "too few args" {
+test "GxPixmap::asBitmap" "too few args" {
     GxPixmap::asBitmap
 } {^wrong \# args: should be}
-test "GxPixmap-GxPixmap::asBitmap" "too many args" {
+test "GxPixmap::asBitmap" "too many args" {
     GxPixmap::asBitmap $::PIXMAP yes junk
 } {^wrong \# args: should be}
-test "GxPixmap-GxPixmap::asBitmap" "normal use" {
+test "GxPixmap::asBitmap" "normal use" {
     GxPixmap::asBitmap $::PIXMAP no
     clearscreen
     set time1 [lindex [time {see $::PIXMAP}] 0]
@@ -160,7 +160,7 @@ test "GxPixmap-GxPixmap::asBitmap" "normal use" {
 
 ### GxPixmap::stringifyCmd ###
 ### GxPixmap::destringifyCmd ###
-test "GxPixmap-GxPixmap::stringify" "stringify, destringify, compare" {
+test "GxPixmap::stringify" "stringify, destringify, compare" {
     set b1 [Obj::new GxPixmap]
     GxPixmap::zoom $b1 {3.0 4.5}
 
@@ -174,6 +174,36 @@ test "GxPixmap-GxPixmap::stringify" "stringify, destringify, compare" {
 
     return "[string equal $str1 $str2] $str1 $str2"
 } {^1 }
+
+### PNG format ###
+test "GxPixmap::loadImage" "read PNG format" {
+    glClearColor 0.2 0.8 0.2 0.0
+    clearscreen
+    -> $::PIXMAP loadImage testing/pngfile.png
+    see $::PIXMAP
+
+    return [pixelCheckSum]
+} {^30483306$}
+
+### JPEG format ###
+test "GxPixmap::loadImage" "read JPEG format" {
+    glClearColor 1.0 1.0 1.0 0.0
+    clearscreen
+    -> $::PIXMAP loadImage testing/jpegfile.jpg
+    see $::PIXMAP
+
+    return [pixelCheckSum]
+} {^37328256$}
+
+### GIF format ###
+test "GxPixmap::loadImage" "read GIF format" {
+    glClearColor 0.0 0.0 0.0 0.0
+    clearscreen
+    -> $::PIXMAP loadImage testing/giffile.gif
+    see $::PIXMAP
+
+    return [pixelCheckSum]
+} {^25917786$}
 
 ### cleanup
 unset PIXMAP
