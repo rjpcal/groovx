@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Thu May 10 12:04:38 2001
+// written: Thu May 17 07:15:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,12 +46,13 @@ class fixed_string;
 ///////////////////////////////////////////////////////////////////////
 
 class IO::IoObject : public RefCounted {
-public:
-
-  /// Class-specific operator new.
+protected:
+  /** Class-specific operator new; protected to ensure that clients
+      use factory functions. */
   void* operator new(size_t bytes);
 
-  /// Class-specific operator delete.
+  /** Class-specific operator delete; private since deletion should
+      only happen in RefCounted::decrRefCount. */
   void operator delete(void* space, size_t bytes);
 
   /// Default constructor
@@ -60,6 +61,7 @@ public:
   /// Virtual destructor to ensure correct destruction of subclasses
   virtual ~IoObject() = 0;
 
+public:
   /** Subclasses implement this method to save the object's state via
       the generic interface provided by \c IO::Reader. Parsing the
       format of the input is handled by the \c IO::Reader, so
