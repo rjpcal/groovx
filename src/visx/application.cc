@@ -3,7 +3,7 @@
 // application.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 11:05:52 1999
-// written: Tue Dec  7 11:11:18 1999
+// written: Tue Dec  7 11:54:06 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,11 @@
 
 namespace {
   Application* theSingleton = 0;
+}
+
+Application::Application() 
+{
+DOTRACE("Application::Application");
 }
 
 void Application::installApp(Application* theApp) {

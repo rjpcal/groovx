@@ -3,7 +3,7 @@
 // application.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 10:55:51 1999
-// written: Tue Dec  7 11:09:11 1999
+// written: Tue Dec  7 11:53:41 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,6 +36,9 @@ public:
 
 class Application {
 protected:
+  /// Default no-op constructor.
+  Application();
+
   /** When the concrete Application is created in a program, the
       Application should be installed with this function so that it is
       globally accessible via theApp(). */
