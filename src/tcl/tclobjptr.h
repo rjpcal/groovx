@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:44:19 1999
-// written: Tue Jul  9 13:50:55 2002
+// written: Tue Jul 23 15:00:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,10 +77,17 @@ public:
 
   Tcl_Obj* obj() const { return itsObj; }
 
+  // FIXME: really need this function?
   template <class Cue>
   typename Cue::Type as(Cue) const
   {
     return Tcl::Convert<typename Cue::Type>::fromTcl(itsObj);
+  }
+
+  template <class T>
+  T as() const
+  {
+    return Tcl::Convert<T>::fromTcl(itsObj);
   }
 
   void append(const Tcl::ObjPtr& other);
