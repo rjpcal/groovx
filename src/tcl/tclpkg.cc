@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Thu Mar  9 10:42:57 2000
+// written: Fri Mar 10 01:03:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -117,6 +117,9 @@ protected:
   }
 
 private:
+  ItemStringifyCmd(const ItemStringifyCmd&);
+  ItemStringifyCmd& operator=(const ItemStringifyCmd&);
+
   TclIoItemPkg* itsPkg;
   int itsItemArgn;
 };
@@ -137,6 +140,9 @@ protected:
   }
 
 private:
+  ItemDestringifyCmd(const ItemDestringifyCmd&);
+  ItemDestringifyCmd& operator=(const ItemDestringifyCmd&);
+
   TclIoItemPkg* itsPkg;
   int itsItemArgn;
 };
@@ -157,6 +163,9 @@ protected:
   }
 
 private:
+  ItemWriteCmd(const ItemWriteCmd&);
+  ItemWriteCmd& operator=(const ItemWriteCmd&);
+
   TclIoItemPkg* itsPkg;
   int itsItemArgn;
 };
@@ -177,6 +186,9 @@ protected:
   }
 
 private:
+  ItemReadCmd(const ItemReadCmd&);
+  ItemReadCmd& operator=(const ItemReadCmd&);
+
   TclIoItemPkg* itsPkg;
   int itsItemArgn;
 };
