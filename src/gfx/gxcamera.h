@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Nov 21 15:18:58 2002
-// written: Sat Mar 29 13:02:25 2003
+// written: Thu Apr  3 15:39:05 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -52,9 +52,12 @@ class GxCamera : public GxNode
 public:
   GxCamera() : GxNode(), itsWidth(0), itsHeight(0) {}
 
+  /// Notifies the GxCamera that its window has changed size.
   void reshape(int w, int h) { itsWidth = w; itsHeight = h; }
 
+  /// Get the width of the camera's window.
   int width() const { return itsWidth; }
+  /// Get the height of the camera's window.
   int height() const { return itsHeight; }
 
   /// Overridden from GxNode.
@@ -69,10 +72,13 @@ private:
 class GxPerspectiveCamera : public GxCamera, public FieldContainer
 {
 public:
+  /// Default constructor.
   GxPerspectiveCamera();
 
+  /// Factory function.
   static GxPerspectiveCamera* make() { return new GxPerspectiveCamera; }
 
+  /// Get GxPerspectiveCamera's fields.
   static const FieldMap& classFields();
 
   virtual void readFrom(IO::Reader* reader);
@@ -91,6 +97,7 @@ private:
 class GxFixedRectCamera : public GxCamera
 {
 public:
+  /// Default constructor.
   GxFixedRectCamera() :
     GxCamera(),
     itsRect(Gfx::RectLTRB<double>(-1.0, 1.0, 1.0, -1.0))
@@ -99,8 +106,10 @@ public:
   virtual void readFrom(IO::Reader* /*reader*/) {}
   virtual void writeTo(IO::Writer* /*writer*/) const {}
 
+  /// Change the viewable rect area.
   void setRect(const Gfx::Rect<double>& rect) { itsRect = rect; }
 
+  /// Get the viewable rect area.
   const Gfx::Rect<double>& getRect() const { return itsRect; }
 
   virtual void draw(Gfx::Canvas& canvas) const;
@@ -113,6 +122,7 @@ private:
 class GxMinRectCamera : public GxCamera
 {
 public:
+  /// Default constructor.
   GxMinRectCamera() :
     GxCamera(),
     itsRect(Gfx::RectLTRB<double>(-1.0, 1.0, 1.0, -1.0))
@@ -121,8 +131,10 @@ public:
   virtual void readFrom(IO::Reader* /*reader*/) {}
   virtual void writeTo(IO::Writer* /*writer*/) const {}
 
+  /// Change the minimally-visible rect
   void setRect(const Gfx::Rect<double>& rect) { itsRect = rect; }
 
+  /// Get the minimally-visible rect
   const Gfx::Rect<double>& getRect() const { return itsRect; }
 
   virtual void draw(Gfx::Canvas& canvas) const;
@@ -135,19 +147,26 @@ private:
 class GxFixedScaleCamera : public GxCamera, public FieldContainer
 {
 public:
+  /// Default constructor.
   GxFixedScaleCamera();
 
+  /// Factory function.
   static GxFixedScaleCamera* make() { return new GxFixedScaleCamera; }
 
+  /// Get GxFixedScaleCamera's fields.
   static const FieldMap& classFields();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
+  /// Get the log-base-10 of the pixels-per-unit factor.
   double getLogPixelsPerUnit() const;
+  /// Set the log-base-10 of the pixels-per-unit factor.
   void setLogPixelsPerUnit(double s);
 
+  /// Get the pixels-per-unit factor.
   double getPixelsPerUnit() const { return itsPixelsPerUnit; }
+  /// Set the pixels-per-unit factor.
   void setPixelsPerUnit(double s);
 
   virtual void draw(Gfx::Canvas& canvas) const;
@@ -162,19 +181,26 @@ private:
 class GxPsyphyCamera : public GxCamera, public FieldContainer
 {
 public:
+  /// Default constructor.
   GxPsyphyCamera();
 
+  /// Factory function.
   static GxPsyphyCamera* make() { return new GxPsyphyCamera; }
 
+  /// Get GxPsyphyCamera's fields.
   static const FieldMap& classFields();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
+  /// Get the degrees of visual angle corresponding to one OpenGL unit.
   double getUnitAngle() const { return itsDegreesPerUnit; }
-  double getViewingDistIn() const { return itsViewingDistance; }
-
+  /// Set the degrees of visual angle corresponding to one OpenGL unit.
   void setUnitAngle(double deg_per_unit);
+
+  /// Get the observer's viewing distance in inches.
+  double getViewingDistIn() const { return itsViewingDistance; }
+  /// Set the observer's viewing distance in inches.
   void setViewingDistIn(double inches);
 
   virtual void draw(Gfx::Canvas& canvas) const;

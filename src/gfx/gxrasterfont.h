@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Nov 13 16:44:36 2002
-// written: Sat Mar 29 13:01:06 2003
+// written: Thu Apr  3 15:40:50 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -37,6 +37,7 @@
 class GxRasterFont : public GxFont
 {
 public:
+  /// Construct from the given X11 font specification.
   GxRasterFont(const char* fontname);
 
   virtual ~GxRasterFont();

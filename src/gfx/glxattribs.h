@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Aug  3 16:36:13 2002
-// written: Tue Apr  1 18:55:12 2003
+// written: Thu Apr  3 15:19:58 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -56,13 +56,16 @@ private:
   int next;
 
 public:
+  /// Default constructor.
   GlxAttribs() : next(0)
   {
     push( GLX_USE_GL );
   }
 
+  /// Get the underlying data array to use to construct a GLXContext.
   int* get() { cap(); return data; }
 
+  /// Set RGBA-mode minimum bit-depths.
   void rgba(int rbits, int gbits, int bbits, int abits = -1)
   {
     push( GLX_RGBA );
@@ -79,35 +82,41 @@ public:
       }
   }
 
+  /// Specify the stacking level for this context.
   void level(int lev)
   {
     push( GLX_LEVEL );
     push( lev );
   }
 
+  /// Specify a minimum bit-depth for color-index mode.
   void colorIndex(int bits)
   {
     push( GLX_BUFFER_SIZE );
     push( bits );
   }
 
+  /// Specify a minimum bit-depth for the depth-buffer (i.e. z-buffer).
   void depthBuffer(int bits)
   {
     push( GLX_DEPTH_SIZE );
     push( bits );
   }
 
+  /// Request double-buffering mode.
   void doubleBuffer()
   {
     push( GLX_DOUBLEBUFFER );
   }
 
+  /// Specify a minimum bit-depth for the stencil buffer.
   void stencilBuffer(int bits)
   {
     push( GLX_STENCIL_SIZE );
     push( bits );
   }
 
+  /// Specify minimum bit-depths for the accum buffer.
   void accum(int rbits, int gbits, int bbits, int abits = -1)
   {
     push( GLX_ACCUM_RED_SIZE );
@@ -123,12 +132,14 @@ public:
       }
   }
 
+  /// Request a number of aux buffers.
   void auxBuffers(int n)
   {
     push( GLX_AUX_BUFFERS );
     push( n );
   }
 
+  /// Request transparency if available.
   void transparent()
   {
 #ifdef GLX_TRANSPARENT_TYPE_EXT

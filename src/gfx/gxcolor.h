@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Aug 22 17:42:48 2001
-// written: Wed Mar 19 17:56:04 2003
+// written: Thu Apr  3 15:32:28 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -52,12 +52,14 @@ protected:
 public:
   virtual ~GxColor();
 
+  /// Factory function.
   static GxColor* make() { return new GxColor; }
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
+  /// Get GxColor's fields.
   static const FieldMap& classFields();
 
   /// This is a no-op since GxColor doesn't actually draw anything onscreen.

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Nov 13 12:31:35 2002
-// written: Wed Mar 19 17:56:05 2003
+// written: Thu Apr  3 15:31:18 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -51,14 +51,19 @@ private:
   Util::Ref<GxNode> itsChild;
 
 public:
+  /// Default constructor.
   GxBin();
 
+  /// Construct with a given child node.
   GxBin(Util::Ref<GxNode> child);
 
+  /// Virtual destructor.
   virtual ~GxBin();
 
+  /// Get the bin's child node.
   const Util::Ref<GxNode>& child() const { return itsChild; }
 
+  /// Set the bin's child node.
   void setChild(const Util::Ref<GxNode>& child);
 };
 

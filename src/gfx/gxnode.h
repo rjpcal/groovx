@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Nov  1 18:26:45 2000
-// written: Wed Mar 19 17:56:01 2003
+// written: Thu Apr  3 15:39:30 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -71,6 +71,7 @@ public:
   /// Virtual destructor.
   virtual ~GxNode();
 
+  /// Signal that will be triggered whenever the node changes state.
   Util::Signal0 sigNodeChanged;
 
   /// Get the value of the user-defined category. Default returns -1.

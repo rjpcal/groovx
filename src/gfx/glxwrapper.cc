@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Aug  3 16:38:07 2002
-// written: Wed Mar 19 17:56:05 2003
+// written: Thu Apr  3 15:26:15 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -117,7 +117,7 @@ DOTRACE("GlxWrapper::make");
   GlxWrapper* glx = new GlxWrapper(dpy, opts);
 
   // Make sure we don't try to use a depth buffer with indirect rendering
-  if ( !glx->isDirect() && opts.depthFlag == true )
+  if ( !glx->isDirect() && opts.depthFlag )
     {
       delete glx;
       opts.depthFlag = false;

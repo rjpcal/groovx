@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Nov 13 13:04:27 2002
-// written: Sat Mar 29 13:01:58 2003
+// written: Thu Apr  3 15:43:38 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -70,30 +70,49 @@ public:
   static const Mode FREE_SCALING             = 3;
 
 
+  /// Default constructor.
   GxScaler();
+
+  /// Construct with a given child object.
   GxScaler(Util::Ref<GxNode> child);
 
+  /// Factory function.
   static GxScaler* make();
 
+  /// Get the current scaling mode.
   Mode getMode() const { return itsMode; }
+
+  /// Change the current scaling mode.
   void setMode(Mode new_mode);
 
+  /// Set the desired scaled width of the child object.
   void setWidth(double new_width);
+  /// Set the desired scaled height of the child object.
   void setHeight(double new_height);
+  /// Set the desired maximum scaled dimension of the child object.
   void setMaxDim(double new_max_dimension);
 
+  /// Set the desired scaled aspect ratio of the child object.
   void setAspectRatio(double new_aspect_ratio);
 
+  /// Set the desired width scaling factor.
   void setWidthFactor(double f);
+  /// Set the desired height scaling factor.
   void setHeightFactor(double f);
 
+  /// Get the scaled width of the child object.
   double scaledWidth() const;
+  /// Get the scaled height of the child object.
   double scaledHeight() const;
+  /// Get the maximum scaled dimension of the child object.
   double scaledMaxDim() const;
 
+  /// Get the scaled aspect ratio of the child object.
   double aspectRatio() const;
 
+  /// Get the width scaling factor.
   double widthFactor() const { return itsWidthFactor; }
+  /// Get the height scaling factor.
   double heightFactor() const { return itsHeightFactor; }
 
   virtual void readFrom(IO::Reader* /*reader*/) {};

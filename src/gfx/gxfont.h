@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Nov 12 18:34:57 2002
-// written: Wed Mar 19 17:56:02 2003
+// written: Thu Apr  3 15:35:36 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -42,14 +42,19 @@ namespace Gfx
 class GxFont
 {
 public:
+  /// Factory function.
   static GxFont* make(const char* name);
 
+  /// Virtual destructor.
   virtual ~GxFont();
 
+  /// Get the string name of the font.
   virtual const char* fontName() const = 0;
 
+  /// Get an OpenGL display list for rendering the font.
   virtual unsigned int listBase() const = 0;
 
+  /// Get the bounding box of a piece of text rendered with this font.
   virtual void bboxOf(const char* text, Gfx::Bbox& bbox) const = 0;
 };
 

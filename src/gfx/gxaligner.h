@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Nov 13 12:58:27 2002
-// written: Wed Mar 19 17:56:05 2003
+// written: Thu Apr  3 15:30:33 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -79,13 +79,16 @@ public:
   static const Mode ARBITRARY_ON_CENTER   = 7;
 
 
-
+  /// Construct with a given child object.
   GxAligner(Util::SoftRef<GxNode> child);
 
+  /// Get the center after aligning the given rect.
   Gfx::Vec2<double> getCenter(const Gfx::Rect<double>& bounds) const;
 
+  /// Get the alignment mode.
   Mode getMode() const        { return itsMode; }
 
+  /// Set the alignment mode.
   void setMode(Mode new_mode) { itsMode = new_mode; }
 
   virtual void readFrom(IO::Reader* /*reader*/) {};
@@ -99,8 +102,8 @@ private:
   void doAlignment(Gfx::Canvas& canvas, const Gfx::Rect<double>& native) const;
 
 public:
-  Mode itsMode;
-  Gfx::Vec2<double> itsCenter;
+  Mode itsMode;                 ///< Current alignment mode.
+  Gfx::Vec2<double> itsCenter;  ///< Current center.
 };
 
 

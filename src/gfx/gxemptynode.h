@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Nov 14 16:59:04 2002
-// written: Wed Mar 19 17:56:02 2003
+// written: Thu Apr  3 15:33:01 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -52,6 +52,7 @@ public:
 
   virtual void draw(Gfx::Canvas&) const;
 
+  /// Factory function.
   static GxEmptyNode* make();
 };
 

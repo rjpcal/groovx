@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Nov 23 17:42:38 2002
-// written: Sat Mar 29 13:03:00 2003
+// written: Thu Apr  3 15:46:05 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -45,8 +45,10 @@
 class GxScene : public Util::VolatileObject
 {
 public:
+  /// Construct with a canvas in which to draw.
   GxScene(Util::SoftRef<Gfx::Canvas> canvas);
 
+  /// Undraw the scene from the canvas.
   void undraw();
 
   /// "Bare-bones rendering"
@@ -75,18 +77,25 @@ public:
       command, or by remap events sent to the screen window. */
   void setVisibility(bool val);
 
+  /// Get the camera used to view the scene.
   const Util::Ref<GxCamera>& getCamera() const { return itsCamera; }
 
+  /// Set the camera to be used to view the scene.
   void setCamera(const Ref<GxCamera>& cam);
 
+  /// Get the drawable object currently being viewed.
   void setDrawable(const Ref<GxNode>& node);
 
+  /// To be called when the associated window is resized.
   void reshape(int width, int height);
 
+  /// Whether to retain current contents when something new is drawn.
   void setHold(bool val) { isItHolding = val; }
 
+  /// Whether the scene should be refreshed when something changes.
   void allowRefresh(bool allow) { isItRefreshing = allow; flushChanges(); }
 
+  /// Redraw the scene at a given frame rate.
   void animate(unsigned int framesPerSecond);
 
 private:

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sun Aug  4 16:28:37 2002
-// written: Sat Mar 29 12:46:03 2003
+// written: Thu Apr  3 15:37:15 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -40,58 +40,59 @@ struct GlxOpts
 {
   GlxOpts() :
 #ifndef NO_RGBA
-    rgbaFlag( 1 ),
+    rgbaFlag( true ),
 #else
-    rgbaFlag( 0 ),
+    rgbaFlag( false ),
 #endif
     rgbaRed( 1 ),
     rgbaGreen( 1 ),
     rgbaBlue( 1 ),
+    alphaFlag( false ),
+    alphaSize( 1 ),
     colorIndexSize( 8 ),
 #ifndef NO_DOUBLE_BUFFER
-    doubleFlag( 1 ),
+    doubleFlag( true ),
 #else
-    doubleFlag( 0 ),
+    doubleFlag( false ),
 #endif
-    depthFlag( 1 ),
+    depthFlag( true ),
     depthSize( 8 ),
-    accumFlag( 0 ),
+    accumFlag( false ),
     accumRed( 1 ),
     accumGreen( 1 ),
     accumBlue( 1 ),
     accumAlpha( 1 ),
-    alphaFlag( 0 ),
-    alphaSize( 1 ),
-    stencilFlag( 0 ),
+    stencilFlag( false ),
     stencilSize( 1 ),
     auxNumber( 0 ),
-    indirect( 0 ),
+    indirect( false ),
     level( 0 ),
-    transparent( 0 )
+    transparent( false )
   {}
 
-  int rgbaFlag;
-  int rgbaRed;
-  int rgbaGreen;
-  int rgbaBlue;
-  int colorIndexSize;
-  int doubleFlag;
-  int depthFlag;
-  int depthSize;
-  int accumFlag;
-  int accumRed;
-  int accumGreen;
-  int accumBlue;
-  int accumAlpha;
-  int alphaFlag;
-  int alphaSize;
-  int stencilFlag;
-  int stencilSize;
-  int auxNumber;
-  int indirect;
-  int level;
-  int transparent;
+  bool rgbaFlag;                ///< whether to use RGBA-mode
+  int rgbaRed;                  ///< red bit-depth in RGBA-mode
+  int rgbaGreen;                ///< green bit-depth in RGBA-mode
+  int rgbaBlue;                 ///< blue bit-depth in RGBA-mode
+  bool alphaFlag;               ///< whether to request an alpha layer
+  int alphaSize;                ///< alpha bit-depth in RGBA-mode
+  int colorIndexSize;           ///< bit-depth in color-index mode
+  bool doubleFlag;              ///< whether to request double-buffering
+  bool depthFlag;               ///< whether to request a depth buffer
+  int depthSize;                ///< bit-depth of depth buffer
+  bool accumFlag;               ///< whether to request an accum buffer
+  int accumRed;                 ///< red bit-depth of accum buffer
+  int accumGreen;               ///< green bit-depth of accum buffer
+  int accumBlue;                ///< blue bit-depth of accum buffer
+  int accumAlpha;               ///< alpha bit-depth of accum buffer
+  bool stencilFlag;             ///< whether to request a stencil buffer
+  int stencilSize;              ///< bit-depth of stencil buffer
+  int auxNumber;                ///< number of aux buffers to request
+  bool indirect;                ///< whether to request an indirect rendering context
+  int level;                    ///< stacking level of GL context
+  bool transparent;             ///< whether to request transparency
 
+  /// Create an attribute list from the current option set.
   shared_ptr<GlxAttribs> buildAttribList();
 };
 

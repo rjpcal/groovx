@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Fri Mar 28 17:59:07 2003
+// written: Thu Apr  3 15:25:48 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -101,7 +101,7 @@ DOTRACE("GLCanvas::makeCurrent");
   rep->glx->makeCurrent(win);
 
   // Check for a single/double buffering snafu
-  if (rep->opts->doubleFlag == 0 && isDoubleBuffered())
+  if (!rep->opts->doubleFlag && isDoubleBuffered())
     {
       // We requested single buffering but had to accept a double buffered
       // visual.  Set the GL draw buffer to be the front buffer to

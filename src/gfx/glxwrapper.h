@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Aug  3 16:38:03 2002
-// written: Sat Mar 29 13:01:28 2003
+// written: Thu Apr  3 15:29:06 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -48,30 +48,40 @@ private:
   Window itsCurrentWin;
 
 public:
+  /// Construct.
   GlxWrapper(Display* dpy, GlxOpts& opts, GlxWrapper* share = 0);
 
+  /// Factory function.
   static GlxWrapper* make(Display* dpy, GlxOpts& opts);
 
+  /// Destructor.
   ~GlxWrapper();
 
+  /// Query whether rendering context has direct access to the hardware.
   bool isDirect() const
   {
     return glXIsDirect(itsDisplay, itsContext) == True ? true : false;
   }
 
+  /// Query whether the rendering context is double-buffered.
   bool isDoubleBuffered() const;
 
+  /// Bind the rendering context to the given window.
   void makeCurrent(Window win);
 
   /// Swaps buffers if in double-buffering mode.
   void swapBuffers() const;
 
+  /// Get the associated X11 Display.
   Display* display() const { return itsDisplay; }
 
+  /// Get the currently associated X11 Window.
   Window window() const { return itsCurrentWin; }
 
+  /// Get the associated X11 XVisualInfo.
   XVisualInfo* visInfo() const { return itsVisInfo; }
 
+  /// Get the associated GLXContext.
   GLXContext context() const { return itsContext; }
 };
 

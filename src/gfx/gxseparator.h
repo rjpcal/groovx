@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Nov  2 11:20:15 2000
-// written: Wed Mar 19 17:56:00 2003
+// written: Thu Apr  3 15:48:28 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -53,26 +53,37 @@ namespace Util
 class GxSeparator : public GxNode
 {
 protected:
+  /// Default constructor.
   GxSeparator();
 
 public:
+  /// Factory function.
   static GxSeparator* make();
 
+  /// Virtual destructor.
   virtual ~GxSeparator();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
+  /// Index type to refer to child nodes.
   typedef unsigned int ChildId;
 
+  /// Add the given child node, and return its index.
   ChildId addChild(Util::Ref<GxNode> item);
+  /// Insert the given child at the given index.
   void insertChild(Util::Ref<GxNode> item, ChildId at_index);
+  /// Remove the child at the given index.
   void removeChildAt(ChildId index);
+  /// Remove the child matching the given node.
   void removeChild(Util::Ref<GxNode> item);
 
+  /// Get the number of child nodes.
   unsigned int numChildren() const;
+  /// Get the child node at the given index.
   Util::Ref<GxNode> getChild(ChildId index) const;
 
+  /// Get an iterator of all the child nodes.
   Util::FwdIter<Util::Ref<GxNode> > children() const;
 
   /** Returns an iterator to all the children recursively contained in
