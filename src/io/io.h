@@ -99,8 +99,6 @@ public:
 		resemble the way the object was declared in source code. */
   virtual fixed_string ioTypename() const;
 
-  virtual fixed_string legacyIoTypename() const;
-
   virtual fixed_string legacyValidTypenames() const;
 
 private:

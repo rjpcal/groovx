@@ -74,11 +74,6 @@ IO::IoObject::~IoObject() {
 DOTRACE("IO::IoObject::~IoObject");
 }
 
-fixed_string IO::IoObject::legacyIoTypename() const {
-DOTRACE("IO::IoObject::legacyIoTypename");
-  return demangle_cstr(typeid(*this).name());
-}
-
 fixed_string IO::IoObject::legacyValidTypenames() const {
 DOTRACE("IO::IoObject::legacyValidTypenames");
   return demangle_cstr(typeid(*this).name());

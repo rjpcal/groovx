@@ -3,7 +3,7 @@
 // iolegacy.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 27 08:40:04 2000
-// written: Fri Sep 29 14:46:21 2000
+// written: Fri Sep 29 16:20:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -483,8 +483,8 @@ DOTRACE("IO::LegacyWriter::writeObject");
   DebugEvalNL(itsImpl->itsFlags & IO::TYPENAME); 
 
   if (itsImpl->itsFlags & IO::TYPENAME) {
-	 itsImpl->itsOutStream << obj->legacyIoTypename() << itsImpl->itsFSep;
-	 throwIfError(obj->legacyIoTypename().c_str());
+	 itsImpl->itsOutStream << obj->ioTypename() << itsImpl->itsFSep;
+	 throwIfError(obj->ioTypename().c_str());
   }
 
   obj->writeTo(this); 
@@ -500,8 +500,8 @@ DOTRACE("IO::LegacyWriter::writeOwnedObject");
   DebugEvalNL(itsImpl->itsFlags & IO::TYPENAME); 
 
   if (itsImpl->itsFlags & IO::TYPENAME) {
-	 itsImpl->itsOutStream << obj->legacyIoTypename() << itsImpl->itsFSep;
-	 throwIfError(obj->legacyIoTypename().c_str());
+	 itsImpl->itsOutStream << obj->ioTypename() << itsImpl->itsFSep;
+	 throwIfError(obj->ioTypename().c_str());
   }
 
   obj->writeTo(this); 
@@ -520,8 +520,8 @@ DOTRACE("IO::LegacyWriter::writeBaseClass");
 	 DebugEvalNL(itsImpl->itsFlags & IO::TYPENAME); 
 
 	 if (itsImpl->itsFlags & IO::TYPENAME) {
-		itsImpl->itsOutStream << basePart->legacyIoTypename() << itsImpl->itsFSep;
-		throwIfError(basePart->legacyIoTypename().c_str());
+		itsImpl->itsOutStream << basePart->ioTypename() << itsImpl->itsFSep;
+		throwIfError(basePart->ioTypename().c_str());
 	 }
 
 	 basePart->writeTo(this);
@@ -538,8 +538,8 @@ DOTRACE("IO::LegacyWriter::writeRoot");
   DebugEvalNL(itsImpl->itsFlags & IO::TYPENAME); 
 
   if (itsImpl->itsFlags & IO::TYPENAME) {
-	 itsImpl->itsOutStream << root->legacyIoTypename() << itsImpl->itsFSep;
-	 throwIfError(root->legacyIoTypename().c_str());
+	 itsImpl->itsOutStream << root->ioTypename() << itsImpl->itsFSep;
+	 throwIfError(root->ioTypename().c_str());
   }
 
   root->writeTo(this);
