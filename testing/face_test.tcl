@@ -125,11 +125,11 @@ unset EPS
 test "FaceTcl-Face::loadFaces" "too few args" { 
 	 Face::loadFaces
 } {wrong \# args: should be "Face::loadFaces\
-		  filename \?num_to_read\? \?use_virtual_ctor\?"}
+		  filename \?num_to_read\?"}
 test "FaceTcl-Face::loadFaces" "too many args" { 
 	 Face::loadFaces j u n k y
 } {wrong \# args: should be "Face::loadFaces\
-		  filename \?num_to_read\? \?use_virtual_ctor\?"}
+		  filename \?num_to_read\?"}
 test "FaceTcl-Face::loadFaces" "normal file read with no comments" {
 	 ObjList::reset
 	 set objids [Face::loadFaces $::TEST_DIR/faces_file_no_comments]
