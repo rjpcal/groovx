@@ -56,8 +56,6 @@ public:
   // will be displayed by a "redraw" command, or by remap events sent
   // to the screen window.
   void setVisibility(bool vis);
-  
-  void setCurTrial(const MaybeIdItem<TrialBase>& item);
 
   void setHold(bool hold_on);
 
