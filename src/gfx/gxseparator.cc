@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Mon Aug 13 16:33:11 2001
+// written: Mon Aug 13 16:43:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,8 +66,6 @@ public:
     DOTRACE("GxSeparator::Impl::receiveStateChangeMsg");
     itsOwner->sendStateChangeMsg();
   }
-
-  virtual void receiveDestroyMsg(const Observable*) {}
 
   virtual bool isVolatile() const { return true; }
 

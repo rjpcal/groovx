@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Mon Aug 13 12:15:36 2001
+// written: Mon Aug 13 16:42:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -267,12 +267,6 @@ DOTRACE("GrObj::receiveStateChangeMsg");
       DebugEval((void*)this); DebugEvalNL((void*)itsImpl);
       itsImpl->invalidateCaches();
     }
-}
-
-void GrObj::receiveDestroyMsg(const Util::Observable*) {
-DOTRACE("GrObj::receiveDestroyMsg");
-  // Do nothing since the only Observable that 'this' is watching is
-  // itself
 }
 
 

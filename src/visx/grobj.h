@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Mon Aug 13 12:15:35 2001
+// written: Mon Aug 13 16:43:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -216,7 +216,6 @@ public:
   void setUnRenderMode(Gmodes::RenderMode mode);
 
   virtual void receiveStateChangeMsg(const Util::Observable* obj);
-  virtual void receiveDestroyMsg(const Util::Observable* obj);
 
 
   ///////////////////////////////////////////////////////////////////////
