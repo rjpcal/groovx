@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Dec  4 18:15:12 2002
+// written: Wed Dec  4 18:29:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,13 +17,18 @@
 
 #include "util/tracer.h"
 
-#include "visx/experiment.h"
+#include "visx/element.h"
 
 struct Tcl_Interp;
 
+class fstring;
+
 class Block;
 
-class fstring;
+namespace Gfx
+{
+  class Canvas;
+}
 
 namespace Util
 {
@@ -41,7 +46,7 @@ namespace Util
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class ExptDriver : public Experiment
+class ExptDriver : public Element
 {
 private:
   /// Copy constructor not allowed
@@ -132,15 +137,23 @@ public:
 
   void setWidget(const Util::SoftRef<Toglet>& widg);
 
-  virtual Gfx::Canvas& getCanvas() const;
+  /// Return the Canvas for the Widget in which the experiment is running.
+  Gfx::Canvas& getCanvas() const;
 
   Tcl_Interp* getInterp() const;
 
-  virtual void edBeginExpt();
+  /// Begin the experiment.
+  void edBeginExpt();
 
-  virtual void edResumeExpt();
-  virtual void edClearExpt();
-  virtual void edResetExpt();
+  /// Resume the experiment after it has been halted.
+  void edResumeExpt();
+
+  /// Clear the experiment to an empty state.
+  void edClearExpt();
+
+  /** Reset the Experiment, restoring it to a state in which no
+      trials have been run. */
+  void edResetExpt();
 
   void pause();
 
