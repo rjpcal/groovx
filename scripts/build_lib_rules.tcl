@@ -6,7 +6,7 @@ set LIBEXT ""
 set SRCROOT ""
 set OBJROOT ""
 set OBJEXT ""
-set MODULES [list]
+set MODULE [list]
 
 set PROJECT_LIBS [list]
 
@@ -50,7 +50,7 @@ source [file dirname [info script]]/parse_cmdline.tcl
 # --libdir, --libprefix, --libext, --srcroot, --objroot, --objext, --module
 parse_cmdline $argv
 
-foreach module $::MODULES {
+foreach module $::MODULE {
     process_module $module
 }
 
