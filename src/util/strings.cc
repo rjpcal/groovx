@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Sun Aug  5 20:14:54 2001
+// written: Wed Aug  8 18:58:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,15 +70,48 @@ void string_rep::operator delete(void* space)
   repList.deallocate(space);
 }
 
+void string_rep::append(std::size_t length, const char* text)
+{
+  Precondition(itsRefCount <= 1);
+  Precondition(text != 0);
+
+  if (itsLength + length + 1 <= itsAllocSize)
+    {
+      memcpy(itsText+itsLength, text, length+1);
+      itsLength += length;
+    }
+  else
+    {
+      string_rep new_rep(Util::max(itsAllocSize*2, itsLength + length + 1), 0);
+
+      new_rep.append(this->itsLength, this->itsText);
+      new_rep.append(length, text);
+
+      Util::swap(itsAllocSize, new_rep.itsAllocSize);
+      Util::swap(itsLength, new_rep.itsLength);
+      Util::swap(itsText, new_rep.itsText);
+    }
+}
+
 string_rep::string_rep(std::size_t length, const char* text) :
   itsRefCount(0),
-  itsText(new char[length+1]),
-  itsLength(length)
+  itsAllocSize(length+1),
+  itsLength(0),
+  itsText(new char[itsAllocSize])
 {
   if (text)
-    memcpy(itsText, text, itsLength+1);
+    append(length, text);
   else
     itsText[0] = '\0';
+}
+
+string_rep::string_rep(std::size_t length) :
+  itsRefCount(0),
+  itsAllocSize(length+1),
+  itsLength(length),
+  itsText(new char[itsAllocSize])
+{
+  itsText[0] = '\0';
 }
 
 string_rep::~string_rep()
@@ -103,9 +136,15 @@ string_rep* string_rep::make(std::size_t length, const char* text)
   if (length == 0)
     return getEmptyRep();
 
-  string_rep* p = new string_rep(length, text);
+  return new string_rep(length, text);
+}
 
-  return p;
+string_rep* string_rep::make(std::size_t length)
+{
+  if (length == 0)
+    return getEmptyRep();
+
+  return new string_rep(length);
 }
 
 void string_rep::makeUnique(string_rep*& rep)
@@ -120,6 +159,13 @@ void string_rep::makeUnique(string_rep*& rep)
   rep = new_rep;
 
   Postcondition(new_rep->itsRefCount == 1);
+}
+
+char* string_rep::data()
+{
+  Precondition(itsRefCount <= 1);
+
+  return itsText;
 }
 
 //---------------------------------------------------------------------
@@ -195,23 +241,23 @@ DOTRACE("fixed_string::operator=(const fixed_string&)");
 bool fixed_string::equals(const char* other) const
 {
 DOTRACE("fixed_string::equals(const char*)");
-  return ( itsRep->itsText == other ||
-           strcmp(itsRep->itsText, other) == 0 );
+  return ( c_str() == other ||
+           strcmp(c_str(), other) == 0 );
 }
 
 bool fixed_string::equals(const string_literal& other) const
 {
 DOTRACE("fixed_string::equals(const string_literal&");
-  return ( itsRep->itsLength == other.length() &&
-           strcmp(itsRep->itsText, other.c_str()) == 0 );
+  return ( length() == other.length() &&
+           strcmp(c_str(), other.c_str()) == 0 );
 }
 
 bool fixed_string::equals(const fixed_string& other) const
 {
 DOTRACE("fixed_string::equals(const fixed_string&)");
-  return itsRep->itsText == other.itsRep->itsText ||
-    ( itsRep->itsLength == other.itsRep->itsLength &&
-      strcmp(itsRep->itsText, other.itsRep->itsText) == 0 );
+  return c_str() == other.c_str() ||
+    ( length() == other.length() &&
+      strcmp(c_str(), other.c_str()) == 0 );
 }
 
 bool fixed_string::ends_with(const fixed_string& ext) const
@@ -225,108 +271,12 @@ DOTRACE("fixed_string::ends_with");
   return ext.equals(this->c_str() + skip);
 }
 
-//---------------------------------------------------------------------
-//
-// dynamic_string member definitions
-//
-//---------------------------------------------------------------------
-
-struct dynamic_string::Impl {
-  Impl(const char* s) : text(s == 0 ? "" : s) {}
-  std::string text;
-};
-
-dynamic_string::dynamic_string(const char* text) :
-  itsImpl(new Impl(text))
+void fixed_string::append_text(std::size_t length, const char* text)
 {
-DOTRACE("dynamic_string::dynamic_string");
-}
+DOTRACE("fixed_string::append_text");
 
-dynamic_string::dynamic_string(const fixed_string& other) :
-  itsImpl(new Impl(other.c_str()))
-{
-DOTRACE("dynamic_string::dynamic_string");
-}
-
-dynamic_string::dynamic_string(const dynamic_string& other) :
-  itsImpl(new Impl(*(other.itsImpl)))
-{
-DOTRACE("dynamic_string::dynamic_string");
-}
-
-dynamic_string::~dynamic_string()
-{
-DOTRACE("dynamic_string::~dynamic_string");
-  delete itsImpl;
-}
-
-void dynamic_string::swap(dynamic_string& other)
-{
-DOTRACE("dynamic_string::swap");
-  itsImpl->text.swap(other.itsImpl->text);
-}
-
-dynamic_string& dynamic_string::operator=(const char* text)
-{
-DOTRACE("dynamic_string::operator=(const char*)");
-  itsImpl->text = (text) ? text : "";
-  return *this;
-}
-
-dynamic_string& dynamic_string::operator=(const fixed_string& other)
-{
-DOTRACE("dynamic_string::operator=(const fixed_string&)");
-  itsImpl->text = other.c_str();
-  return *this;
-}
-
-dynamic_string& dynamic_string::operator=(const dynamic_string& other)
-{
-DOTRACE("dynamic_string::operator=(const dynamic_string&)");
-  itsImpl->text = other.itsImpl->text;
-  return *this;
-}
-
-void dynamic_string::appendCstring(const char* text)
-{
-DOTRACE("dynamic_string::appendCstring");
-  if (text) itsImpl->text += text;
-}
-
-bool dynamic_string::equals(const char* other) const
-{
-DOTRACE("dynamic_string::equals(const char*)");
-  return (other != 0) && ( itsImpl->text == other );
-}
-
-bool dynamic_string::equals(const string_literal& other) const
-{
-DOTRACE("dynamic_string::equals(const string_literal&)");
-  return ( itsImpl->text.length() == other.itsLength &&
-           itsImpl->text == other.itsText );
-}
-
-bool dynamic_string::equals(const fixed_string& other) const
-{
-DOTRACE("dynamic_string::equals(const fixed_string&)");
-  return ( itsImpl->text.length() == other.length() &&
-           itsImpl->text == other.c_str() );
-}
-
-bool dynamic_string::equals(const dynamic_string& other) const
-{
-DOTRACE("dynamic_string::equals(const dynamic_string&)");
-  return ( itsImpl->text == other.itsImpl->text );
-}
-
-const char* dynamic_string::c_str() const
-{
-  return itsImpl->text.c_str();
-}
-
-unsigned int dynamic_string::length() const
-{
-  return itsImpl->text.length();
+  string_rep::makeUnique(itsRep);
+  itsRep->append(length, text);
 }
 
 //---------------------------------------------------------------------
@@ -336,13 +286,6 @@ unsigned int dynamic_string::length() const
 //---------------------------------------------------------------------
 
 STD_IO::istream& operator>>(STD_IO::istream& is, fixed_string& str)
-{
-  std::string temp; is >> temp;
-  str = temp.c_str();
-  return is;
-}
-
-STD_IO::istream& operator>>(STD_IO::istream& is, dynamic_string& str)
 {
   std::string temp; is >> temp;
   str = temp.c_str();
@@ -361,12 +304,6 @@ STD_IO::ostream& operator<<(STD_IO::ostream& os, const fixed_string& str)
   return os;
 }
 
-STD_IO::ostream& operator<<(STD_IO::ostream& os, const dynamic_string& str)
-{
-  os << str.c_str();
-  return os;
-}
-
 STD_IO::istream& getline(STD_IO::istream& is, fixed_string& str)
 {
   std::string temp;
@@ -375,23 +312,7 @@ STD_IO::istream& getline(STD_IO::istream& is, fixed_string& str)
   return is;
 }
 
-STD_IO::istream& getline(STD_IO::istream& is, dynamic_string& str)
-{
-  std::string temp;
-  std::getline(is, temp);
-  str = temp.c_str();
-  return is;
-}
-
 STD_IO::istream& getline(STD_IO::istream& is, fixed_string& str, char eol)
-{
-  std::string temp;
-  std::getline(is, temp, eol);
-  str = temp.c_str();
-  return is;
-}
-
-STD_IO::istream& getline(STD_IO::istream& is, dynamic_string& str, char eol)
 {
   std::string temp;
   std::getline(is, temp, eol);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Sun Aug  5 19:07:15 2001
+// written: Wed Aug  8 19:00:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ public:
 
   void becomeActive(Util::WeakRef<GWT::Widget> widget, TrialBase& trial) const
   {
-    dynamic_string script(itsCmdCallback->name());
+    fixed_string script(itsCmdCallback->name());
     script.append(" ").append((int)itsOwner->id());
     script.append(" ").append(itsBindingSubstitution);
 
@@ -162,7 +162,7 @@ public:
 
   static const char* uniqueCmdName()
   {
-    static dynamic_string baseName;
+    static fixed_string baseName;
     static int cmdCounter = 0;
 
     baseName = "__EventResponseHdlrPrivate::handle";

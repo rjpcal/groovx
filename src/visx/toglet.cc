@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Aug  8 15:29:30 2001
+// written: Wed Aug  8 19:00:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ namespace {
 
   const char* widgetName(Util::UID id)
   {
-    static dynamic_string buf;
+    static fixed_string buf;
     buf = PARENT;
     buf.append(".togl_private");
     buf.append(int(id));
@@ -111,7 +111,7 @@ namespace
 {
   void setIntParam(Togl* togl, const char* param, int val)
   {
-    dynamic_string builder = togl->pathname();
+    fixed_string builder = togl->pathname();
     builder.append(" configure -").append(param)
       .append(" ").append(val);
 
@@ -180,7 +180,7 @@ DOTRACE("Toglet::Toglet");
 
   if (pack)
     {
-      dynamic_string pack_cmd_str = "pack ";
+      fixed_string pack_cmd_str = "pack ";
       pack_cmd_str += pathname();
       pack_cmd_str += " -side left -expand 1 -fill both; update";
       Tcl::Code pack_cmd(pack_cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
@@ -316,7 +316,7 @@ DebugPrintNL("Toglet::destroyWidget");
   // If we are exiting, don't bother destroying the widget; otherwise...
   if ( !Tcl_InterpDeleted(itsTogl->interp()) )
     {
-      dynamic_string destroy_cmd_str = "destroy ";
+      fixed_string destroy_cmd_str = "destroy ";
       destroy_cmd_str += pathname();
 
       Tcl::Code destroy_cmd(destroy_cmd_str.c_str(),
@@ -442,7 +442,7 @@ void Toglet::bind(const char* event_sequence, const char* script)
 {
 DOTRACE("Toglet::bind");
 
-  dynamic_string cmd_str = "bind ";
+  fixed_string cmd_str = "bind ";
   cmd_str.append( pathname() ).append(" ");
   cmd_str.append( event_sequence ).append(" ");
   cmd_str.append("{ ").append( script ).append(" }");
@@ -538,7 +538,7 @@ DOTRACE("Toglet::swapBuffers");
 void Toglet::takeFocus()
 {
 DOTRACE("Toglet::takeFocus");
-  dynamic_string cmd_str = "focus -force ";
+  fixed_string cmd_str = "focus -force ";
   cmd_str.append( pathname() );
 
   Tcl::Code cmd(cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Aug  8 15:29:29 2001
+// written: Wed Aug  8 19:00:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ namespace
   inline void errMessage(Tcl_Interp* interp, const fixed_string& cmd_name,
                          const std::type_info& exc_type, const char* what=0)
     {
-      dynamic_string msg = "an error of type ";
+      fixed_string msg = "an error of type ";
       msg += demangle_cstr(exc_type.name());
       msg += " occurred";
       if (what)
@@ -181,16 +181,16 @@ public:
 
   const char* usage() const
   {
-    static dynamic_string result;
+    static fixed_string result;
 
     result = findFirstOverload()->buildUsage();
 
     return result.c_str();
   }
 
-  dynamic_string buildUsage() const
+  fixed_string buildUsage() const
   {
-    dynamic_string result;
+    fixed_string result;
 
     result.append("\t").append(itsCmdName);
 
@@ -401,7 +401,7 @@ DOTRACE("Tcl::TclCmd::Impl::invokeCallback");
     }
   catch (const char* text)
     {
-      dynamic_string msg = "an error occurred: ";
+      fixed_string msg = "an error occurred: ";
       msg += text;
       errMessage(interp, theImpl->cmdName(), msg.c_str());
     }

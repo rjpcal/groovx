@@ -71,7 +71,7 @@ void Util::Error::init()
 {
 DOTRACE("Util::Error::init");
 
-  itsInfo = new dynamic_string("");
+  itsInfo = new fixed_string("");
   itsCount = new ushort(1);
 }
 

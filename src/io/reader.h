@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:46:08 1999
-// written: Wed Aug  8 15:57:05 2001
+// written: Wed Aug  8 19:00:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -124,10 +124,9 @@ public:
   virtual void readValueObj(const fixed_string& name, Value& value) = 0;
 
   /** This generic function reads a value attribute of any basic type,
-      of type \c Value, or of several supported string types (\c
-      std::string, \c fixed_string, and \c dynamic_string). The value
-      associated with tag \a name will be copied into \a
-      returnValue. */
+      of type \c Value, or of supported string types (\c std::string,
+      \c fixed_string). The value associated with tag \a name will be
+      copied into \a returnValue. */
   template <class T>
   void readValue(const fixed_string& name, T& returnValue);
 

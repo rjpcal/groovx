@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:47 1999
-// written: Wed Aug  8 15:56:08 2001
+// written: Wed Aug  8 19:01:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,13 @@
 #ifndef ERROR_H_DEFINED
 #define ERROR_H_DEFINED
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STRINGS_H_DEFINED)
+#include "util/strings.h"
+#endif
+
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TOSTRING_H_DEFINED)
 #include "util/tostring.h"
 #endif
-
-class dynamic_string;
 
 namespace Util
 {
@@ -131,7 +133,7 @@ private:
 
   typedef unsigned short ushort;
 
-  dynamic_string* itsInfo;
+  fixed_string* itsInfo;
   ushort* itsCount;
 };
 

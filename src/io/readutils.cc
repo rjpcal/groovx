@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:25:40 1999
-// written: Wed Jun 20 18:27:49 2001
+// written: Wed Aug  8 19:00:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,9 +18,9 @@
 #include "util/strings.h"
 
 const char* IO::ReadUtils::makeElementNameString(const char* seq_name,
-																 int element_num)
+                                                 int element_num)
 {
-  static dynamic_string result("");
+  static fixed_string result("");
   result = seq_name;
   result.append( element_num );
   return result.c_str();
@@ -28,7 +28,7 @@ const char* IO::ReadUtils::makeElementNameString(const char* seq_name,
 
 const char* IO::ReadUtils::makeSeqCountString(const char* seq_name)
 {
-  static dynamic_string result("");
+  static fixed_string result("");
   result = seq_name;
   result += "Count";
   return result.c_str();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Wed Aug  8 15:29:30 2001
+// written: Wed Aug  8 19:00:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@
 #define DYNAMIC_TRACE_EXPR GrObj::tracer.status()
 #include "util/trace.h"
 
-dynamic_string GrObjRenderer::BITMAP_CACHE_DIR(".");
+fixed_string GrObjRenderer::BITMAP_CACHE_DIR(".");
 
 GrObjRenderer::GrObjRenderer() :
 #ifndef I686

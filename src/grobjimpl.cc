@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Sun Jul 22 15:50:07 2001
+// written: Wed Aug  8 19:00:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ DOTRACE("GrObjImpl::readFrom");
   }
 
   {
-    dynamic_string filename;
+    fixed_string filename;
     reader->readValue("GrObj::cacheFilename", filename);
     itsRenderer.setCacheFilename(filename);
   }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Aug  8 15:29:29 2001
+// written: Wed Aug  8 19:00:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -230,8 +230,8 @@ const char* Trial::Impl::description() const
 {
 DOTRACE("Trial::Impl::description");
 
-  dynamic_string objids;
-  dynamic_string cats;
+  fixed_string objids;
+  fixed_string cats;
 
   for (GxNodes::const_iterator
          ii = itsGxNodes.begin(),
@@ -250,7 +250,7 @@ DOTRACE("Trial::Impl::description");
         }
     }
 
-  static dynamic_string buf;
+  static fixed_string buf;
 
   buf = "";
   buf.append("trial type == " ).append(itsType);

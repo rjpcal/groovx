@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Wed Jul 18 12:27:38 2001
+// written: Wed Aug  8 18:48:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,15 +46,29 @@ void operator delete(void* space)
 }
 #endif
 
-#include <tcl.h>
+#include "tcl/tcllistobj.h"
+#include "util/strings.h"
 
 namespace HookTcl
 {
   void hook(Tcl::Context& ctx)
   {
-    const char* proc = ctx.getValFromArg(1, TypeCue<const char*>());
-    Tcl_CmdInfo info;
-    int result = Tcl_GetCommandInfo(ctx.interp(), (char*)proc, &info);
+    Tcl::List result;
+
+    fixed_string f("foo");
+    result.append(f);
+
+    f.append("bar");
+    result.append(f);
+
+    f.append(42);
+    result.append(f);
+
+    f.append(fixed_string("fstr"));
+    result.append(f);
+
+    result.append(f.length());
+
     ctx.setResult(result);
   }
 
@@ -66,7 +80,7 @@ public:
   HookPkg(Tcl_Interp* interp) :
     Tcl::Pkg(interp, "Hook", "$Revision$")
   {
-    defVecRaw( "::hook", 1, "variable", HookTcl::hook );
+    defVecRaw( "::hook", 0, "variable", HookTcl::hook );
     def( "::memUsage", 0, HookTcl::memUsage );
   }
 };

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Aug  8 15:29:30 2001
+// written: Wed Aug  8 19:00:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -292,7 +292,7 @@ const char* Block::trialDescription() const
 DOTRACE("Block::trialDescription");
   if (isComplete()) return "block is complete";
 
-  static dynamic_string descr;
+  static fixed_string descr;
   descr = "";
   descr.append("trial id == ").append(currentTrial().id()).append(", ")
     .append(itsImpl->currentTrial()->description())

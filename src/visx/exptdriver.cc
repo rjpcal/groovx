@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Aug  8 15:29:30 2001
+// written: Wed Aug  8 19:00:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -168,7 +168,7 @@ public:
   fixed_string itsEndDate;      // Date(+time) when Expt was stopped
   fixed_string itsAutosaveFile; // Filename used for autosaves
 
-  dynamic_string itsInfoLog;
+  fixed_string itsInfoLog;
 
   int itsAutosavePeriod;
 
@@ -208,7 +208,7 @@ ExptDriver::Impl::Impl(int argc, char** argv,
 {
 DOTRACE("ExptDriver::Impl::Impl");
 
-  dynamic_string cmd_line("command line: ");
+  fixed_string cmd_line("command line: ");
 
   for (int i = 0; i < argc; ++i) {
     cmd_line.append(argv[i]);
@@ -443,14 +443,14 @@ DOTRACE("ExptDriver::Impl::storeData");
         System::theSystem().formattedTime("%H%M%S%d%b%Y");
 
       // Write the main experiment file
-      dynamic_string expt_filename = "expt";
+      fixed_string expt_filename = "expt";
       expt_filename += unique_file_extension;
       expt_filename += ".asw";
       IO::saveASW(Util::Ref<IO::IoObject>(itsOwner), expt_filename.c_str());
       Util::log() << "wrote file " << expt_filename.c_str() << '\n';
 
       // Write the responses file
-      dynamic_string resp_filename = "resp";
+      fixed_string resp_filename = "resp";
       resp_filename += unique_file_extension;
       TlistUtils::writeResponses(resp_filename.c_str());
       Util::log() << "wrote file " << resp_filename.c_str() << '\n';
