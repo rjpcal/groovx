@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Sat Dec  4 01:56:55 1999
+// written: Sat Dec  4 02:31:42 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -657,7 +657,7 @@ DOTRACE("ExptDriver::Impl::edDraw");
   if ( !assertIds() ) return;
 
   try {
-	 block().drawTrial();
+	 block().drawTrial(itsOwner);
   }
   catch (InvalidIdError& err) {
 	 raiseBackgroundError(err.msg().c_str());
@@ -669,7 +669,7 @@ DOTRACE("ExptDriver::Impl::edUndraw");
   if ( !assertIds() ) return;
 
   try {
-	 block().undrawTrial();
+	 block().undrawTrial(itsOwner);
   }
   catch (InvalidIdError& err) {
 	 raiseBackgroundError(err.msg().c_str());
@@ -723,7 +723,7 @@ DOTRACE("ExptDriver::Impl::edBeginTrial");
   
   if ( !assertIds() ) return;
 
-  block().beginTrial();
+  block().beginTrial(itsOwner);
   timingHdlr().thBeginTrial(itsOwner);
   responseHandler().rhBeginTrial(itsOwner);
 }
@@ -764,7 +764,7 @@ DOTRACE("ExptDriver::Impl::edProcessResponse");
 
   TimeTraceNL("edProcessResponse", timingHdlr().getElapsedMsec());
 
-  block().processResponse(response);
+  block().processResponse(response, itsOwner);
 }
 
 //--------------------------------------------------------------------
@@ -780,7 +780,7 @@ DOTRACE("ExptDriver::Impl::edAbortTrial");
   TimeTraceNL("edAbortTrial", timingHdlr().getElapsedMsec());
   
   responseHandler().rhAbortTrial(itsOwner);
-  block().abortTrial();
+  block().abortTrial(itsOwner);
   timingHdlr().thAbortTrial(itsOwner);
 }
 
@@ -796,7 +796,7 @@ void ExptDriver::Impl::edEndTrial() {
   TimeTraceNL("edEndTrial", timingHdlr().getElapsedMsec());
   
   responseHandler().rhEndTrial(itsOwner);
-  block().endTrial();
+  block().endTrial(itsOwner);
 
   if ( needAutosave() ) { doAutosave(); }
 
@@ -835,7 +835,7 @@ DOTRACE("ExptDriver::Impl::edHaltExpt");
   }
 
   if ( BlockList::theBlockList().isValidId(itsBlockId) ) {
-	 block().haltExpt();
+	 block().haltExpt(itsOwner);
   }
   if ( RhList::theRhList().isValidId(itsRhId) ) {
 	 responseHandler().rhHaltExpt(itsOwner);
