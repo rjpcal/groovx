@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Thu May 10 12:04:40 2001
+// written: Sat May 19 09:00:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -132,26 +132,7 @@ DOTRACE("HpAudioSound::HpAudioSound");
   itsPlayParams.duration.type = ATTFullLength;
   itsPlayParams.event_mask = 0;
 
-  if (filename != 0 && filename[0] != '\0')
-	 {
-		if ( !theAudio )
-		  { throw SoundError("invalid audio server connection"); }
-
-		STD_IO::ifstream ifs(filename);
-		if (ifs.fail()) {
-		  throw SoundFilenameError(filename);
-		}
-		ifs.close();
-
-		AFileFormat fileFormat = AFFUnknown;
-		AudioAttrMask AttribsMask = 0;
-		AudioAttributes Attribs;
-
-		itsSBucket = ALoadAFile(theAudio, const_cast<char *>(filename),
-										fileFormat, AttribsMask, &Attribs, NULL);
-
-		itsFilename = filename;
-	 }
+  setFile(filename);
 }
 
 HpAudioSound::~HpAudioSound() {
@@ -190,8 +171,26 @@ DOTRACE("HpAudioSound::play");
 void HpAudioSound::setFile(const char* filename) {
 DOTRACE("HpAudioSound::setFile");
 
-  HpAudioSound new_sound(filename); 
-  this->swap(new_sound);
+  if (filename != 0 && filename[0] != '\0')
+	 {
+		if ( !theAudio )
+		  { throw SoundError("invalid audio server connection"); }
+
+		STD_IO::ifstream ifs(filename);
+		if (ifs.fail()) {
+		  throw SoundFilenameError(filename);
+		}
+		ifs.close();
+
+		AFileFormat fileFormat = AFFUnknown;
+		AudioAttrMask AttribsMask = 0;
+		AudioAttributes Attribs;
+
+		itsSBucket = ALoadAFile(theAudio, const_cast<char *>(filename),
+										fileFormat, AttribsMask, &Attribs, NULL);
+
+		itsFilename = filename;
+	 }
 }
 
 

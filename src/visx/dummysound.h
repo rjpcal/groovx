@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Thu May 10 12:04:40 2001
+// written: Sat May 19 08:59:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,16 +78,7 @@ DummySound::DummySound(const char* filename) :
   itsFilename("")
 {
 DOTRACE("DummySound::DummySound");
-  if (filename != 0 && filename[0] != '\0')
-	 {
-		STD_IO::ifstream ifs(filename);
-		if (ifs.fail()) {
-		  throw SoundFilenameError(filename);
-		}
-		ifs.close();
-
-		itsFilename = filename;
-	 }
+  setFile(filename);
 }
 
 DummySound::~DummySound() {
@@ -117,9 +108,16 @@ DOTRACE("DummySound::play");
 	
 void DummySound::setFile(const char* filename) {
 DOTRACE("DummySound::setFile");
+  if (filename != 0 && filename[0] != '\0')
+	 {
+		STD_IO::ifstream ifs(filename);
+		if (ifs.fail()) {
+		  throw SoundFilenameError(filename);
+		}
+		ifs.close();
 
-  DummySound new_sound(filename); 
-  this->swap(new_sound);
+		itsFilename = filename;
+	 }
 }
 
 
