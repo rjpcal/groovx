@@ -73,7 +73,7 @@ test "ExptTcl-Expt::load" "fMRI sample" {
 	 set filename [lindex $files $i]
 	 puts "filename $filename"
     Expt::load $::TEST_DIR/$filename
-	 set dif [expr [ObjList::count] - [lindex $ocounts $i]]
+	 set dif [expr [GrObj::countAll] - [lindex $ocounts $i]]
 	 return $dif
 } {^0$}
 test "ExptTcl-Expt::load" "psyphy samples" {
@@ -88,8 +88,8 @@ test "ExptTcl-Expt::load" "psyphy samples" {
 		  IoDb::clear
 
 		  Expt::load $::TEST_DIR/[lindex $files $i]
-		  set odif [expr [ObjList::count] - [lindex $ocounts $i]]
-		  set tdif [expr [Tlist::count] - [lindex $tcounts $i]]
+		  set odif [expr [GrObj::countAll] - [lindex $ocounts $i]]
+		  set tdif [expr [Trial::countAll] - [lindex $tcounts $i]]
 		  append result "$odif $tdif "
 	 }
 	 return $result
