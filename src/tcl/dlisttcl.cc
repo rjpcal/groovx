@@ -1,12 +1,14 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // tcldlist.cc
 // Rob Peters 
 // created: Dec-98
-// written: Wed Apr 14 20:28:10 1999
+// written: Wed May 12 19:16:00 1999
 // $Id$
 //
 // This package provides additional list manipulation functions using
 // object-style (rather than string-style) Tcl commands
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TCLDLIST_CC_DEFINED
@@ -24,8 +26,11 @@
 #include "debug.h"
 
 ///////////////////////////////////////////////////////////////////////
+//
 // Tcldlist Tcl package declarations
+//
 ///////////////////////////////////////////////////////////////////////
+
 namespace Tcldlist {
   Tcl_ObjCmdProc dlist_chooseCmd;
   Tcl_ObjCmdProc dlist_notCmd;
@@ -39,9 +44,13 @@ namespace Tcldlist {
 }
 
 ///////////////////////////////////////////////////////////////////////
+//
 // Tcldlist Tcl package definitions
+//
 ///////////////////////////////////////////////////////////////////////
 
+//--------------------------------------------------------------------
+//
 // This command takes two lists as arguments, and uses the integers in
 // the second (index) list to return a permutation of the elements in
 // the first (source) list
@@ -53,8 +62,11 @@ namespace Tcldlist {
 //      dlist_choose { 3 5 7 } { 2 0 1 }
 // returns 
 //      7 3 5
-int Tcldlist::dlist_chooseCmd(ClientData, Tcl_Interp *interp,
-                              int objc, Tcl_Obj *const objv[]) {
+//
+//--------------------------------------------------------------------
+
+int Tcldlist::dlist_chooseCmd(ClientData, Tcl_Interp* interp,
+                              int objc, Tcl_Obj* const objv[]) {
 DOTRACE("Tcldlist::dlist_chooseCmd");
   if (objc != 3) {
     Tcl_WrongNumArgs(interp, 1, objv, "source_list index_list"); 
@@ -71,7 +83,7 @@ DOTRACE("Tcldlist::dlist_chooseCmd");
 #endif
 
   // make a new list to hold the result
-  Tcl_Obj *list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
+  Tcl_Obj* list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
 
   int index;
   Tcl_Obj *idx_elem, *src_elem;
@@ -104,14 +116,19 @@ DOTRACE("Tcldlist::dlist_chooseCmd");
   return TCL_OK;
 }
 
+//--------------------------------------------------------------------
+//
 // This command takes as its argument a single list containing only
 // integers, and returns a list in which each element is the logical
 // negation of its corresponding element in the source list.
 // 
 // usage:
 // dlist_not source_list
-int Tcldlist::dlist_notCmd(ClientData, Tcl_Interp *interp,
-                           int objc, Tcl_Obj *const objv[]) {
+//
+//--------------------------------------------------------------------
+
+int Tcldlist::dlist_notCmd(ClientData, Tcl_Interp* interp,
+                           int objc, Tcl_Obj* const objv[]) {
 DOTRACE("Tcldlist::dlist_notCmd");
   if (objc != 2) {
     Tcl_WrongNumArgs(interp, 1, objv, "source_list");
@@ -126,12 +143,12 @@ DOTRACE("Tcldlist::dlist_notCmd");
 #endif
 
   // make a new Tcl list to store the result
-  Tcl_Obj *list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
-  Tcl_Obj *one_elem = Tcl_NewIntObj(1);  // Tcl object holding (int) 1
-  Tcl_Obj *zero_elem = Tcl_NewIntObj(0); // Tcl object holding (int) 0
+  Tcl_Obj* list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
+  Tcl_Obj* one_elem = Tcl_NewIntObj(1);  // Tcl object holding (int) 1
+  Tcl_Obj* zero_elem = Tcl_NewIntObj(0); // Tcl object holding (int) 0
 
   int element;
-  Tcl_Obj *src_elem;
+  Tcl_Obj* src_elem;
 
   // loop over the source list
   for (int i = 0; i < src_len; i++) {
@@ -152,13 +169,18 @@ DOTRACE("Tcldlist::dlist_notCmd");
   return TCL_OK;
 }
 
+//--------------------------------------------------------------------
+//
 // this command produces a list of ones of the length specified by its
 // lone argument
 //
 // usage:
 // dlist_ones num_ones
-int Tcldlist::dlist_onesCmd(ClientData, Tcl_Interp *interp,
-                            int objc, Tcl_Obj *const objv[]) {
+//
+//--------------------------------------------------------------------
+
+int Tcldlist::dlist_onesCmd(ClientData, Tcl_Interp* interp,
+                            int objc, Tcl_Obj* const objv[]) {
 DOTRACE("Tcldlist::dlist_onesCmd");
   if (objc != 2) {
     Tcl_WrongNumArgs(interp, 1, objv, "num_ones"); 
@@ -168,8 +190,8 @@ DOTRACE("Tcldlist::dlist_onesCmd");
   int num_ones;
   if (Tcl_GetIntFromObj(interp, objv[1], &num_ones) != TCL_OK) return TCL_ERROR;
 
-  Tcl_Obj *list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
-  Tcl_Obj *one_obj = Tcl_NewIntObj(1);
+  Tcl_Obj* list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
+  Tcl_Obj* one_obj = Tcl_NewIntObj(1);
   for (int i = 0; i < num_ones; i++) {
     if (Tcl_ListObjAppendElement(interp, list_out, one_obj) != TCL_OK)
       return TCL_ERROR;
@@ -178,13 +200,18 @@ DOTRACE("Tcldlist::dlist_onesCmd");
   return TCL_OK;
 }
 
+//--------------------------------------------------------------------
+//
 // This commmand returns a single element chosen at random
 // from the source list
 //
 // usage:
 // dlist_pickone source_list
-int Tcldlist::dlist_pickoneCmd(ClientData, Tcl_Interp *interp,
-                               int objc, Tcl_Obj *const objv[]) {
+//
+//--------------------------------------------------------------------
+
+int Tcldlist::dlist_pickoneCmd(ClientData, Tcl_Interp* interp,
+                               int objc, Tcl_Obj* const objv[]) {
 DOTRACE("Tcldlist::dlist_pickoneCmd");
   if (objc != 2) {
     Tcl_WrongNumArgs(interp, 1, objv, "source_list"); 
@@ -206,7 +233,7 @@ DOTRACE("Tcldlist::dlist_pickoneCmd");
 #endif
 
   // get the appropriate list element...
-  Tcl_Obj *chosen;
+  Tcl_Obj* chosen;
   if (Tcl_ListObjIndex(interp, objv[1], randnum, &chosen) != TCL_OK)
     return TCL_ERROR;
 
@@ -215,13 +242,18 @@ DOTRACE("Tcldlist::dlist_pickoneCmd");
   return TCL_OK;
 }
 
+//--------------------------------------------------------------------
+//
 // this command produces an ordered list of all integers between begin
 // and end, inclusive.
 //
 // usage:
 // dlist_range begin end
-int Tcldlist::dlist_rangeCmd(ClientData, Tcl_Interp *interp,
-                             int objc, Tcl_Obj *const objv[]) {
+//
+//--------------------------------------------------------------------
+
+int Tcldlist::dlist_rangeCmd(ClientData, Tcl_Interp* interp,
+                             int objc, Tcl_Obj* const objv[]) {
 DOTRACE("Tcldlist::dlist_rangeCmd");
   if (objc != 3) {
     Tcl_WrongNumArgs(interp, 1, objv, "begin end"); 
@@ -232,7 +264,7 @@ DOTRACE("Tcldlist::dlist_rangeCmd");
   if (Tcl_GetIntFromObj(interp, objv[1], &begin) != TCL_OK) return TCL_ERROR;
   if (Tcl_GetIntFromObj(interp, objv[2], &end) != TCL_OK) return TCL_ERROR;
 
-  Tcl_Obj *list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
+  Tcl_Obj* list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
   for (int i = begin; i <= end; i++) {
     if (Tcl_ListObjAppendElement(interp, list_out, Tcl_NewIntObj(i)) != TCL_OK)
       return TCL_ERROR;
@@ -241,6 +273,8 @@ DOTRACE("Tcldlist::dlist_rangeCmd");
   return TCL_OK;
 }
 
+//--------------------------------------------------------------------
+//
 // This command taks two lists as arguments. Each element from the
 // first (source) list is appended to the result multiple times; the
 // number of times is determined by the corresponding integer found in
@@ -255,8 +289,11 @@ DOTRACE("Tcldlist::dlist_rangeCmd");
 //      4 5 5 6 6 6
 //
 // Note that times_list cannot be longer than source_list
-int Tcldlist::dlist_repeatCmd(ClientData, Tcl_Interp *interp,
-                              int objc, Tcl_Obj *const objv[]) {
+//
+//--------------------------------------------------------------------
+
+int Tcldlist::dlist_repeatCmd(ClientData, Tcl_Interp* interp,
+                              int objc, Tcl_Obj* const objv[]) {
 DOTRACE("Tcldlist::dlist_repeatCmd");
   if (objc != 3) {
     Tcl_WrongNumArgs(interp, 1, objv, "source_list times_list"); 
@@ -275,7 +312,7 @@ DOTRACE("Tcldlist::dlist_repeatCmd");
   DUMP_VAL2(min_len);
 #endif
 
-  Tcl_Obj *list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
+  Tcl_Obj* list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
 
   int times;
   Tcl_Obj *src_elem, *tim_elem;
@@ -297,14 +334,19 @@ DOTRACE("Tcldlist::dlist_repeatCmd");
   return TCL_OK;
 }
 
+//--------------------------------------------------------------------
+//
 // This command takes two lists as arguments, using the binary flags
 // in the second (flags) list to choose which elements from the first
 // (source) list should be appended to the output list
 //
 // usage:
 // dlist_select source_list flags_list
-int Tcldlist::dlist_selectCmd(ClientData, Tcl_Interp *interp,
-                              int objc, Tcl_Obj *const objv[]) {
+//
+//--------------------------------------------------------------------
+
+int Tcldlist::dlist_selectCmd(ClientData, Tcl_Interp* interp,
+                              int objc, Tcl_Obj* const objv[]) {
 DOTRACE("Tcldlist::dlist_selectCmd");
   if (objc != 3) {
     Tcl_WrongNumArgs(interp, 1, objv, "source_list flags_list"); 
@@ -326,7 +368,7 @@ DOTRACE("Tcldlist::dlist_selectCmd");
 #endif
 
   // make a new Tcl list to hold the result
-  Tcl_Obj *list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
+  Tcl_Obj* list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
 
   int flag;
   Tcl_Obj *src_elem, *flg_elem;
@@ -352,14 +394,19 @@ DOTRACE("Tcldlist::dlist_selectCmd");
   return TCL_OK;
 }
 
+//--------------------------------------------------------------------
+//
 // this command sums the numbers in a list, trying to return an int
 // result if possible, but returning a double result if any doubles
 // are found in the source list
 //
 // usage:
 // dlist_sum source_list
-int Tcldlist::dlist_sumCmd(ClientData, Tcl_Interp *interp,
-                           int objc, Tcl_Obj *const objv[]) {
+//
+//--------------------------------------------------------------------
+
+int Tcldlist::dlist_sumCmd(ClientData, Tcl_Interp* interp,
+                           int objc, Tcl_Obj* const objv[]) {
 DOTRACE("Tcldlist::dlist_sumCmd");
   if (objc != 2) {
     Tcl_WrongNumArgs(interp, 1, objv, "source_list");
@@ -374,7 +421,7 @@ DOTRACE("Tcldlist::dlist_sumCmd");
   double next_d=0.0;
   int next_i=0;
   int is_double=0;              // true if any list elements are floating-pt
-  Tcl_Obj *src_elem;
+  Tcl_Obj* src_elem;
 
   // loop over objects in list
   for (int i = 0; i < src_len; i++) {
@@ -409,13 +456,18 @@ DOTRACE("Tcldlist::dlist_sumCmd");
   return TCL_OK;
 }
 
+//--------------------------------------------------------------------
+//
 // this command produces a list of zeros of the length specified by its
 // lone argument
 //
 // usage:
 // dlist_zeros num_zeros
-int Tcldlist::dlist_zerosCmd(ClientData, Tcl_Interp *interp,
-                             int objc, Tcl_Obj *const objv[]) {
+//
+//--------------------------------------------------------------------
+
+int Tcldlist::dlist_zerosCmd(ClientData, Tcl_Interp* interp,
+                             int objc, Tcl_Obj* const objv[]) {
 DOTRACE("Tcldlist::dlist_zerosCmd");
   if (objc != 2) {
     Tcl_WrongNumArgs(interp, 1, objv, "num_zeros"); 
@@ -425,8 +477,8 @@ DOTRACE("Tcldlist::dlist_zerosCmd");
   int num_ones;
   if (Tcl_GetIntFromObj(interp, objv[1], &num_ones) != TCL_OK) return TCL_ERROR;
 
-  Tcl_Obj *list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
-  Tcl_Obj *zero_obj = Tcl_NewIntObj(0);
+  Tcl_Obj* list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
+  Tcl_Obj* zero_obj = Tcl_NewIntObj(0);
   for (int i = 0; i < num_ones; i++) {
     if (Tcl_ListObjAppendElement(interp, list_out, zero_obj) != TCL_OK)
       return TCL_ERROR;
@@ -435,8 +487,13 @@ DOTRACE("Tcldlist::dlist_zerosCmd");
   return TCL_OK;
 }
 
+//--------------------------------------------------------------------
+//
 // package initialization procedure
-int Tcldlist::Tcldlist_Init(Tcl_Interp *interp) {
+//
+//--------------------------------------------------------------------
+
+int Tcldlist::Tcldlist_Init(Tcl_Interp* interp) {
 DOTRACE("Tcldlist::Tcldlist_Init");
   Tcl_CreateObjCommand(interp, "dlist_choose", dlist_chooseCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
