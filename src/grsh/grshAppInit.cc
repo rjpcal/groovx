@@ -30,8 +30,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#include "grsh/grsh.h"
-
 #include "system/system.h"
 
 #include "tcl/tcllistobj.h"

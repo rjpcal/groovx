@@ -34,8 +34,6 @@
 
 #include "gfx/toglet.h"
 
-#include "grsh/grsh.h"
-
 #include "io/ioutil.h"
 #include "io/readutils.h"
 #include "io/tclprocwrapper.h"
