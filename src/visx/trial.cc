@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Jun  1 14:00:36 2000
+// written: Fri Jul  7 15:54:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,6 +52,8 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
+  const unsigned long TRIAL_SERIAL_VERSION_ID = 1;
+
   const string_literal ioTag("Trial");
 }
 
@@ -68,6 +70,7 @@ private:
 
 public:
   Impl(Trial*) :
+	 itsCorrectResponse(Response::ALWAYS_CORRECT),
 	 itsIdPairs(), itsResponses(), itsType(-1),
 	 itsRhId(0), itsThId(0),
 	 itsCanvas(0),
@@ -75,6 +78,7 @@ public:
 	 {}
 
 private:
+  int itsCorrectResponse;
   vector<IdPair> itsIdPairs;
   vector<Response> itsResponses;
   int itsType;
@@ -137,6 +141,7 @@ public:
   void writeTo(IO::Writer* writer) const;
   int readFromObjidsOnly(istream &is, int offset);
 
+  int getCorrectResponse() const { return itsCorrectResponse; }
   int getResponseHandler() const;
   int getTimingHdlr() const;
   Trial::IdPairItr beginIdPairs() const;
@@ -148,6 +153,7 @@ public:
   double avgResponse() const;
   double avgRespTime() const;
 
+  void setCorrectResponse(int response) { itsCorrectResponse = response; }
   void add(int objid, int posid);
   void clearObjs();
   void setType(int t);
@@ -163,7 +169,7 @@ public:
   void trNextTrial();
   void trHaltExpt();
   void trResponseSeen();
-  void trRecordResponse(const Response& response);
+  void trRecordResponse(Response& response);
   void trDrawTrial() const;
   void trUndrawTrial() const;
   void trDraw(GWT::Canvas& canvas, bool flush) const;
@@ -305,6 +311,13 @@ DOTRACE("Trial::Impl::charCount");
 void Trial::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("Trial::Impl::readFrom");
   reader->readValue("type", itsType);
+
+  unsigned long svid = reader->readSerialVersionId();
+  if (svid >= 1)
+	 reader->readValue("correctResponse", itsCorrectResponse);
+  else
+	 itsCorrectResponse = Response::ALWAYS_CORRECT;
+
   reader->readValue("rhId", itsRhId);
   reader->readValue("thId", itsThId);
 
@@ -320,6 +333,10 @@ DOTRACE("Trial::Impl::readFrom");
 void Trial::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("Trial::Impl::writeTo");
   writer->writeValue("type", itsType);
+
+  if (TRIAL_SERIAL_VERSION_ID >= 1)
+	 writer->writeValue("correctResponse", itsCorrectResponse);
+
   writer->writeValue("rhId", itsRhId);
   writer->writeValue("thId", itsThId);
 
@@ -579,9 +596,11 @@ DOTRACE("Trial::Impl::trResponseSeen");
   timingHdlr().thResponseSeen();
 }
 
-void Trial::Impl::trRecordResponse(const Response& response) {
+void Trial::Impl::trRecordResponse(Response& response) {
 DOTRACE("Trial::Impl::trRecordResponse");
   timeTrace("trRecordResponse");
+  response.setCorrectVal(itsCorrectResponse);
+
   itsResponses.push_back(response);
 
   getBlock().processResponse(response);
@@ -691,6 +710,9 @@ void Trial::deserialize(istream &is, IO::IOFlag flag)
 int Trial::charCount() const
   { return itsImpl->charCount(); }
 
+unsigned long Trial::serialVersionId() const
+  { return TRIAL_SERIAL_VERSION_ID; }
+
 void Trial::readFrom(IO::Reader* reader)
   { itsImpl->readFrom(reader); }
 
@@ -699,6 +721,9 @@ void Trial::writeTo(IO::Writer* writer) const
 
 int Trial::readFromObjidsOnly(istream &is, int offset)
   { return itsImpl->readFromObjidsOnly(is, offset); }
+
+int Trial::getCorrectResponse() const
+  { return itsImpl->getCorrectResponse(); }
 
 int Trial::getResponseHandler() const
   { return itsImpl->getResponseHandler(); }
@@ -729,6 +754,9 @@ double Trial::avgResponse() const
 
 double Trial::avgRespTime() const
   { return itsImpl->avgRespTime(); }
+
+void Trial::setCorrectResponse(int response)
+  { itsImpl->setCorrectResponse(response); }
 
 void Trial::add(int objid, int posid)
   { itsImpl->add(objid, posid); }
@@ -770,7 +798,7 @@ void Trial::trHaltExpt()
 void Trial::trResponseSeen()
   { itsImpl->trResponseSeen(); }
 
-void Trial::trRecordResponse(const Response& response)
+void Trial::trRecordResponse(Response& response)
   { itsImpl->trRecordResponse(response); }
 
 void Trial::trDrawTrial() const

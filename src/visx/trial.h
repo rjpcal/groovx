@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Thu Jun  1 14:00:20 2000
+// written: Fri Jul  7 15:47:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,6 +73,7 @@ public:
   virtual void deserialize(istream &is, IO::IOFlag flag);
   virtual int charCount() const;
   
+  virtual unsigned long serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
@@ -89,6 +90,8 @@ public:
   ///////////////
   // accessors //
   ///////////////
+
+  int getCorrectResponse() const;
 
   int getResponseHandler() const;
   int getTimingHdlr() const;
@@ -112,6 +115,8 @@ public:
   //////////////////
   // manipulators //
   //////////////////
+
+  void setCorrectResponse(int response);
 
   void add(int objid, int posid);
 
@@ -140,7 +145,7 @@ public:
   virtual void trNextTrial();
   virtual void trHaltExpt();
   virtual void trResponseSeen();
-  virtual void trRecordResponse(const Response& response);
+  virtual void trRecordResponse(Response& response);
   virtual void trDrawTrial() const;
   virtual void trUndrawTrial() const;
 
