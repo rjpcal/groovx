@@ -5,17 +5,13 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Sun Aug 26 08:35:11 2001
+// written: Wed Sep 12 21:42:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef IO_H_DEFINED
 #define IO_H_DEFINED
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
-#include "util/error.h"
-#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
 #include "util/object.h"
@@ -93,20 +89,6 @@ public:
   virtual fstring ioTypename() const;
 };
 
-
-/**
- * A subclass of Util::Error for invalid filenames or filenames
- * referring to inaccessible files.
- **/
-class IO::FilenameError : public Util::Error
-{
-public:
-  /// Default constructor.
-  FilenameError(const char* filename);
-
-  /// Virtual destructor
-  virtual ~FilenameError();
-};
 
 static const char vcid_io_h[] = "$Header$";
 #endif // !IO_H_DEFINED

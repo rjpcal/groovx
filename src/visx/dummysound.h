@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Sun Aug 26 08:35:14 2001
+// written: Wed Sep 12 21:44:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 #ifndef DUMMYSOUND_H_DEFINED
 #define DUMMYSOUND_H_DEFINED
 
+#include "io/ioerror.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
