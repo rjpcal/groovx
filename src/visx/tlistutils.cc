@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Fri Oct 27 18:40:40 2000
+// written: Sun Oct 29 22:14:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,6 @@
 #include "position.h"
 #include "rect.h"
 #include "trial.h"
-#include "ioptrlist.h"
 
 #include "gwt/canvas.h"
 
@@ -198,6 +197,8 @@ DOTRACE("TlistUtils::loadObjidFile");
 int TlistUtils::readFromObjidsOnly(STD_IO::istream& is,
 											  int num_lines, int offset) {
 DOTRACE("TlistUtils::readFromObjidsOnly");
+
+  throw ErrorWithMsg("FIXME: readFromObjidsOnly");
 
   IoPtrList& tlist = IoPtrList::theList(); 
 
