@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Tue Sep  4 19:07:19 2001
+// written: Wed Sep  5 17:52:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,12 +55,6 @@ namespace Tcl
       item->setField(itsField, val);
     }
   };
-
-  ///////////////////////////////////////////////////////////////////////
-  //
-  // FieldsCmd class definition
-  //
-  ///////////////////////////////////////////////////////////////////////
 
   struct FieldsLister
   {
@@ -118,6 +112,7 @@ DOTRACE("Tcl::FieldsLister::operator()");
               if (!field.allowGet()) flags.append("NO_GET");
               if (!field.allowSet()) flags.append("NO_SET");
               if (field.isPrivate()) flags.append("PRIVATE");
+              if (field.isBoolean()) flags.append("BOOLEAN");
 
               sub_list.append(flags);
 

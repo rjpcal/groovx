@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Tue Sep  4 12:53:51 2001
+// written: Wed Sep  5 18:01:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,18 +104,18 @@ const FieldMap& GrObj::classFields()
     Field("cacheFilename", GETSET(GrObj, CacheFilename), 0, 0, 20, 1,
           Field::STRING),
     Field("bbVisibility", GETSET(GrObj, BBVisibility),
-          false, false, true, true),
+          false, false, true, true, Field::BOOLEAN),
     Field("scalingMode", GETSET(GrObj, ScalingMode), 1, 1, 3, 1),
     Field("widthFactor", GETSET(GrObj, WidthFactor), 1.0, 0.1, 10.0, 0.1,
-			 Field::PRIVATE),
+          Field::PRIVATE),
     Field("heightFactor", GETSET(GrObj, HeightFactor), 1.0, 0.1, 10.0, 0.1,
-			 Field::PRIVATE),
+          Field::PRIVATE),
     Field("aspectRatio", GETSET(GrObj, AspectRatio), 1.0, 0.1, 10.0, 0.1,
           Field::TRANSIENT),
     Field("width", GETSET(GrObj, Width), 1.0, 0.1, 10.0, 0.1,
-			 Field::TRANSIENT),
+          Field::TRANSIENT),
     Field("height", GETSET(GrObj, Height), 1.0, 0.1, 10.0, 0.1,
-			 Field::TRANSIENT),
+          Field::TRANSIENT),
     Field("maxDimension", GETSET(GrObj, MaxDimension), 1.0, 0.1, 10.0, 0.1,
           Field::TRANSIENT),
     Field("alignmentMode", GETSET(GrObj, AlignmentMode), 1, 1, 7, 1),

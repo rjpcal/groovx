@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Tue Sep  4 19:05:23 2001
+// written: Wed Sep  5 17:50:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -140,18 +140,6 @@ namespace
   {
     return *(obj.*memptr);
   }
-
-//    template <class T>
-//    struct Deref
-//    {
-//      typedef T Type;
-//    };
-
-//    template <class T>
-//    struct Deref<T*>
-//    {
-//      typedef T Type;
-//    };
 }
 
 
@@ -354,6 +342,7 @@ public:
   static const unsigned int NO_GET    = 1 << 5; // otherwise, allow get
   static const unsigned int NO_SET    = 1 << 6; // otherwise, allow set
   static const unsigned int PRIVATE   = 1 << 7; // otherwise, public
+  static const unsigned int BOOLEAN   = 1 << 8;
 
   unsigned int flags()    const { return itsFlags; }
 
@@ -376,6 +365,8 @@ public:
 
   bool isPrivate()        const { return   itsFlags & PRIVATE ; }
   bool isPublic()         const { return !(itsFlags & PRIVATE); }
+
+  bool isBoolean()        const { return   itsFlags & BOOLEAN; }
 
   struct ValueType {};
 
