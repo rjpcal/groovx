@@ -72,6 +72,8 @@ class Tcl::MainImpl
 private:
   static MainImpl* theMainImpl;
 
+  // Data members
+
   int itsArgc;
   const char** itsArgv;
   Tcl::Interp itsSafeInterp;
@@ -81,6 +83,9 @@ private:
   fstring itsCommand;   // Build lines of terminal input into Tcl commands.
   bool itsGotPartial;
   bool isItInteractive; // True if input is a terminal-like device.
+  fstring itsCommandLine; // Entire command-line as a string
+
+  // Function members
 
   MainImpl(int argc, char** argv);
 
@@ -129,6 +134,8 @@ public:
 
   const char* const* argv() const { return itsArgv; }
 
+  fstring commandLine() const { return itsCommandLine; }
+
 #ifdef WITH_READLINE
   static void readlineLineComplete(char* line);
 #endif
@@ -151,11 +158,18 @@ Tcl::MainImpl::MainImpl(int argc, char** argv) :
   itsInChannel(0),
   itsCommand(),
   itsGotPartial(false),
-  isItInteractive(isatty(0))
+  isItInteractive(isatty(0)),
+  itsCommandLine()
 {
 DOTRACE("Tcl::MainImpl::MainImpl");
 
   Tcl_FindExecutable(argv[0]);
+
+  itsCommandLine.append(argv[0]);
+  for (int i = 1; i < argc; ++i)
+    {
+      itsCommandLine.append(" ", argv[i]);
+    }
 
   // Parse command-line arguments.  If the next argument doesn't start with
   // a "-" then strip it off and use it as the name of a script file to
@@ -616,6 +630,12 @@ const char* const* Tcl::Main::argv()
 {
 DOTRACE("Tcl::Main::argv");
   return Tcl::MainImpl::get()->argv();
+}
+
+fstring Tcl::Main::commandLine()
+{
+DOTRACE("Tcl::Main::commandLine");
+  return Tcl::MainImpl::get()->commandLine();
 }
 
 static const char vcid_tclmain_cc[] = "$Header$";
