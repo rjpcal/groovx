@@ -503,11 +503,13 @@ DOTRACE("GLCanvas::rasterPos");
       // invalid point and then subsequent glDrawPixels() calls would
       // fail. To trick OpenGL in using the position we want, we first
       // do a glRasterPos() to some valid position -- in this case, we
-      // pick the lower left corner of the viewport with coords
-      // (0,0). Then we do a glBitmap() call whose only purpose is to
-      // use the "xmove" and "ymove" arguments to adjust the raster
-      // position.
-      const vec2d lower_left = worldFromScreen2(vec2i(0,0));
+      // pick a point NEAR the lower left corner of the viewport with
+      // coords (1,1). (The reason we don't use (0,0) is that this
+      // might get converted into a world position that is slightly
+      // outside the viewport due to rounding errors.) Then we do a
+      // glBitmap() call whose only purpose is to use the "xmove" and
+      // "ymove" arguments to adjust the raster position.
+      const vec2d lower_left = worldFromScreen2(vec2i(1,1));
       dbg_dump(3, lower_left);
       glRasterPos2d(lower_left.x(), lower_left.y());
 
@@ -515,8 +517,8 @@ DOTRACE("GLCanvas::rasterPos");
         throw rutz::error("couldn't set valid raster position", SRC_POS);
 
       glBitmap(0, 0, 0.0f, 0.0f,
-               screen_pos.x(),
-               screen_pos.y(),
+               screen_pos.x()-1,
+               screen_pos.y()-1,
                static_cast<const GLubyte*>(0));
     }
 
