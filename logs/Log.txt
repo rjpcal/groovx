@@ -3,47 +3,13 @@ $Id$
 
 *** FRONT of priority queue ***
 
-(21-Mar-2000) Need to have a way to explicitly represent GrObj's with
-cached-bitmap-file representations... this way we can have access both
-to a GrObj's semantic properties (i.e. face width, nose length, etc.)
-while still accessing it in a bitmap form. This would involve a
-command to cache a GrObj to file, given a filename, and then the
-object should automatically load that file when it is deserialized at
-a later time.
-
-(22-Mar-2000) We could have a more compact reader/writer format by
-using a system that wrote class definitions to the file, and stored
-some sort of translator for each class in the reader/writer... this
-would allow us to just store the raw data for individual objects,
-without having to store the metadata over and over.
+(28-Mar-2000) The Togl widget can take over its own event dispatching
+by calling Tk_CreateEventHandler; then we can add event bindings to
+the widget using C++ only, without having to use Tcl script code.
 
 (16-Mar-2000) Block should have a parameter (or virtual function) to
 control what happens on abortTrial()... i.e., should we reschedule the
 trial, ignore the trial, record an invalid response?
-
-(8-Feb-2000) Should think about doing dynamic tracing generically,
-perhaps with a mixin base class.
-
-========================================================================
-GOAL #1
-(24-Jan-2000) More flexible behavior by putting trial behavior in
-Trial rather than in ExptDriver.
-
-Goal: ExptDriver should not have to know anything about TimingHdlr's
-or ResponseHdlr's.
-
-Goal: ExptDriver shouldn't have to know about any lists except maybe
-BlockList. As for serializing, the lists should register themselves
-with ExptDriver at application startup. Experiment base class should
-declare an abstract manageObject(const char* name, IO* object)
-function. The lists should call this in in their Tcl_PkgInitProc's.
-
-To do this, as usual we should try an easy migration path.
-1) make Trial an abstract class, and move current Trial implementation
-into a derived class
-2) set up abstract Trial functions to take on behavior of Experiment
-functions. At first, ExptDriver can just forward stuff to Trial so
-that we don't have to redefine the handlers' interfaces right away.
 
 (20-Jan-2000) We should set up a way for Trial's to have a prepare()
 function which would do things like update its GrObj's (and flush
@@ -51,12 +17,28 @@ pending requests like loading bitmap data). Then Block's could have a
 prepareNextTrial() function which could be called during the preceding
 trial.
 
-------------------------------------------------------------------------
+Goal: ExptDriver shouldn't have to know about any lists except maybe
+BlockList. As for serializing, the lists should register themselves
+with ExptDriver at application startup. Experiment base class should
+declare an abstract manageObject(const char* name, IO* object)
+function. The lists should call this in in their
+Tcl_PkgInitProc's. The problem with this approach is that we lose the
+ability to control the order in which the lists are read/written
+through the IO interface. This is not so much a problem for the
+readFrom()/writeTo() interface, as this is designed to be
+order-independent, but it is a problem for the
+serialize()/deserialize() interface. Perhaps we could use some ad hoc
+strategy to make sure that the managed objects are written in the same
+order every time (based on their ioTypename() for instance?).
 
 ========================================================================
 GOAL #2
 (24-Jan-2000) Allow a more flexible description of the scene graph, a
 la Open Inventor.
+
+This is now particularly important as Trial's take on more
+behavior... they shouldn't be used anymore as a way to store
+combinations of objects.
 ------------------------------------------------------------------------
 
 ========================================================================
@@ -89,6 +71,10 @@ just involves dereferencing the const* counter and comparing it to the
 stored counter value.
 
 Problem: how to handle derived classes with a ListItem?
+
+(10-May-2000) In lieu of true reference counting with PtrList's, we
+could allow locks that clients could take that would temporarily
+prevent objects from being deleted.
 ------------------------------------------------------------------------
 
 ========================================================================
@@ -97,119 +83,9 @@ GOAL #4
 Who gets to do it, and when?
 ------------------------------------------------------------------------
 
-(19-Jan-2000) GLBitmap should use auto_ptr for itsRenderer and fix
-initialization order (eliminate tempRenderer). Same for XBitmap.
-
-(19-Jan-2000) Does BitmapRep really need to implement grUnRender(), or
-can we just use GrObj's GROBJ_CLEAR_BOUNDING_BOX mode?
-
-(19-Jan-2000) Auto-detect gzipped files? (Hint: how is Tcl's 'file
-extension' implemented?)
-
-(17-Jan-2000) We should have a TclVecItemCmd<C> template that parallels
-TclItemCmd<C> but can handle vectors of items. Mainly it would need a
-getItems() member that returns a reference to a vector<C*>. ... no,
-better would be to have getItems() take an insert iterator. Actually,
-there ought to be some way to get the base class to take care of most
-of the iteration, so that the subclasses just need to define what to
-do for each element. This would be similar to the way VecSetterBaseCmd
-provides a partial implementation for TVecSetterCmd.
-
-(15-Jan-2000) I think the executable shouldn't have to depend on the
-shared libraries, since these should be able to be change without
-forcing a relink on the main executable. ... Yes, but we need to be
-able to account for whether static or dynamic linking is being used.
-
-(11-Jan-2000) ObjList::saveObjects should not save base classes, perhaps?
-
-(8-Jan-2000) How to read/write CountedPtr's? This is the big barrier
-to establishing CountedPtr's as a better way to manage objects between
-C++ and Tcl. Probably Reader/Writer need a special method for
-CountedPtr's. The question is how to keep track of the pointers to the
-reference counts. Or... we could put the reference count right in
-IO... Aha! Instead of AsciiStreamReader maintaining a map<unsigned
-long, IO*> during deserialization, we could use a map<unsigned long,
-CountedPtr<IO> >. However, this introduces a split from the semantics
-of readOwnedObject()... this suggests that we need a separate map for
-owned objects. As this transition will require a nearly universal
-switch to CountedPtr's, we need to provide a feasible migration route,
-perhaps by providing the ability to short-circuit CountedPtr's
-ref-counting at first.
-
-(16-Dec-1999) Try to fix ToglConfig::loadFonti on irix by switching
-fontnumber to a long before casting to char*.
-
-(14-Dec-1999) Need Canvas& arguments on GrObj::getBoundingBox,
-GrObj::grGetBoundingBox, and Bitmap::grabScreenRect/grabWorldRect.
-
-(14-Dec-1999) Could have a GrObjProxy that internally stores an
-ObjList id, and then forwards all its operations to that object. This
-way dumb clients (who don't need to know whether a GrObj* is actually
-a GrObjProxy) could just depend on the GrObj interface rather than
-dragging in the ObjList. Hmmm... unfortunately these clients also tend
-to depend on the objid.
-
-(14-Dec-1999) The implementation of GrObj should be moved into a
-separate component since it is fairly heavyweight. Subclasses would
-then be required to provide this implementation upon
-construction. This method would allow clients, but not subclasses, of
-GrObj to avoid dependencies on such components as bitmaprep, etc. But,
-how to avoid having to make all GrObj functions virtual? We'd like
-some to stay non-virtual. Aha! The new lightweight GrObj shouldn't
-even have the grRender(), grUnRender(), or grGetBoundingBox()
-functions... these will first be defined in GrObjImpl.
-
-(1-Dec-1999) Unsavory dependencies:
-  EventResponseHdlr on ObjTogl -- axed via Widget abstraction!
-  EventResponseHdlr on SoundList
-  ObjTogl on Tlist -- compilation dep gone, but still link dep
-  Trial on ObjList, PosList?
-  Block on Tlist?
-  BitmapRep on GLCanvas::theCanvas()
-
-... I see that this whole PtrList business introduces some wacky
-  dependencies... I don't think C++ clients should be depending on the
-  PtrList's directly. Instead, maybe the PtrList's should manage
-  CountedPtr's or something similar, so that the integer indices are
-  only visible in Tcl.
-
-(14-Dec-1999) ExptDriver should really own the ToglConfig... maybe it
-should arrange to create this as part of application startup?
-
-(12-Dec-1999) Could have an abstract class for timer callbacks, one
-subclass of which could use a Tcl_Interp* to register timer callbacks.
-
-listitempkg.h:75: cannot dynamic_cast
-`*(this->Tcl::CTclIoItemPkg<XBitmap>::_vptr$TclPkg +
-32)->__vtbl_ptr_type::__pfn((this +
-(this->Tcl::CTclIoItemPkg<XBitmap>::_vptr$TclPkg +
-32)->__vtbl_ptr_type::__delta), id)' (of type `class XBitmap') to type
-`class Tcl::IO &'
-
-(6-Dec-1999) Replace GrObj::getScreenFromWorld etc. with
-Canvas::... in BitmapRep (how to get the Canvas& arguments where they
-need to be?)
-
-(21-Nov-1999) Would like to split project into loosely coupled
-subprojects that can be used separately in other projects. Each
-subproject should generate its own library. OK, I think the way to
-manage this large task is to split the steps into 1) logically
-partitioning things into namespaces, 2) physically partioning things
-into different libraries, 3) physically partitioning the source +
-libraries into different directories, and 4) generating separate
-makefiles for each directory. I've started this process with doing
-1+2) for the Tcl namespace, and the tclworks library.
-
-(3-Dec-1999) I have a potential type-system loophole with TclItemPkg
-and TclItemCmd... TclItemPkg blindly casts TclItemCmd::getItemFromId()
-from void* to T*, without any guarantee that TclItemPkg is dealing
-with the correct type. Suggests we need a template wrapper around
-TclItemPkg?
-
-(1-Dec-1999) There's some suspicious memory management going on in
-BitmapRep with regard to the BmapRenderer... who owns it? The
-BitmapRep or the owner of BitmapRep? BitmapRep could have a
-resetRenderer() operation.
+========================================================================
+GOAL #5
+(15-May-2000) Improve the overall timing accuracy of the software.
 
 (29-Nov-1999) TrialEvent's could internally adjust their requested
 delays so that the actual delays converge to the requested
@@ -226,6 +102,53 @@ a block or experiment knows how long it is supposed to last, then
 timer events report to the block how long they requested, and how long
 they actually lasted. Then the block could adjust the requested times
 for future trial events in order to compensate.
+
+(done 14-May-2000) Implemented error-checking and adjustment in
+TrialEvent's. This gives very good accuracy (+/-1msec average per
+trial) over an experiment. Still need to control this error-checking
+from script-level, and to provide a hint to the TrialEvent at
+construction time.
+
+(15-May-2000) Need to include info about timing throughout the
+experiment object hierarchy, from Experiment, Block, and Trial, to
+TimingHdlr. Each object should know its allotted time, its expected
+error, and should compute its actual error and use this to give
+feedback to someone in order to improve future timing. Experiment and
+Block don't have too much control, but they can keep an overall view
+of how the timing is going, and perhaps issue a request for future
+trials to compensate their timing by a particular scale factor in
+order to adjust for past errors.
+
+(15-May-2000) Perhaps most usefully, Trial's should know their desired
+length and give feedback to their TimingHdlr's so that the
+TimingHdlr's can do a multiplicative scaling to compensate.
+------------------------------------------------------------------------
+
+========================================================================
+GOAL #6
+(16-May-2000) Phase out the old serialize()/deserialize() interface.
+
+(13-Apr-2000) Encapsulate the old serialize/deserialize functions by
+wrapping them in a special Reader/Writer pair, that has specialized
+functions for each of the currently existing types. If an unsupported
+type is encountered, we throw an exception. Come to think of it, we'd
+only have to support a Reader, since we don't want to do any writing
+if this format is to become obsolete. This would have the advantage of
+moving all the ugly old code out of the current components.
+------------------------------------------------------------------------
+
+========================================================================
+GOAL #7
+(16-May-2000) Make bitmap caching a more fluent part of the software.
+
+(21-Mar-2000) Need to have a way to explicitly represent GrObj's with
+cached-bitmap-file representations... this way we can have access both
+to a GrObj's semantic properties (i.e. face width, nose length, etc.)
+while still accessing it in a bitmap form. This would involve a
+command to cache a GrObj to file, given a filename, and then the
+object should automatically load that file when it is deserialized at
+a later time.
+------------------------------------------------------------------------
 
 ========================================================================
 Subsection on refactoring ToglConfig into Widget, Camera, Canvas
@@ -272,24 +195,6 @@ GrObj's in their grRender() function. How does it relate to a
 Window/Widget? Is it owned, referred to, etc.? Has a width+height.
 ------------------------------------------------------------------------
 
-(22-Nov-1999) Hey, I think I might be able to totally do away with
-PtrList's, at least in the public interface. I think that they could
-be wrapped into the base class, so that every GrObj created is
-automatically placed in the ObjList, and anytime a GrObj is destroyed
-it is removed from the PtrList. This would just entail overriding
-operator new + delete for that class. The class would have static
-operations that mimic the PtrList's operations.
-
-(22-Nov-1999) Need to get rjp_subject working. 1) Need to maintain a
-do_expt script in each subject's directory. 2) Need to make sure that
-autosave file is writable by rjp_subject, and if not, use a different
-filename. (Maybe use temp filename generating facility of OS?).
-
-(10-Nov-1999) Should objectify the debugging facilities. Should try to
-allow a way for dynamic tracing + debugging. We can make the debugging
-stuff into members of the Trace class. Define a new class,
-TraceChannel, that stores an ostream*, and allows tracing to be turned
-on or off.
 
 ========================================================================
 (29-Nov-1999) How to automate the data analysis? Need to bridge the
@@ -328,7 +233,6 @@ Use case:
 2) run mds analysis on results of similarity tasks
 3) compile subjects' overall categorization results across all clones
 4) fit various models to the categorization results
-
 ------------------------------------------------------------------------
 
 ========================================================================
@@ -360,9 +264,101 @@ itself over the entire duration).
 5) exit
 ------------------------------------------------------------------------
 
-(17-Nov-1999) Can replace my homegrown eatWhitespace() functions with
-the builtin 'ws' istream manipulator. ... This would be
-IO::eatWhitespace() and AsciiStreamReader::eatWhitespace().
+(22-Mar-2000) We could have a more compact reader/writer format by
+using a system that wrote class definitions to the file, and stored
+some sort of translator for each class in the reader/writer... this
+would allow us to just store the raw data for individual objects,
+without having to store the metadata over and over.
+
+(19-Jan-2000) GLBitmap should use auto_ptr for itsRenderer and fix
+initialization order (eliminate tempRenderer). Same for XBitmap.
+
+(19-Jan-2000) Does BitmapRep really need to implement grUnRender(), or
+can we just use GrObj's GROBJ_CLEAR_BOUNDING_BOX mode?
+
+(19-Jan-2000) Auto-detect gzipped files? (Hint: how is Tcl's 'file
+extension' implemented?)
+
+(17-Jan-2000) We should have a TclVecItemCmd<C> template that parallels
+TclItemCmd<C> but can handle vectors of items. Mainly it would need a
+getItems() member that returns a reference to a vector<C*>. ... no,
+better would be to have getItems() take an insert iterator. Actually,
+there ought to be some way to get the base class to take care of most
+of the iteration, so that the subclasses just need to define what to
+do for each element. This would be similar to the way VecSetterBaseCmd
+provides a partial implementation for TVecSetterCmd.
+
+(11-Jan-2000) ObjList::saveObjects should not save base classes, perhaps?
+
+(8-Jan-2000) How to read/write CountedPtr's? This is the big barrier
+to establishing CountedPtr's as a better way to manage objects between
+C++ and Tcl. Probably Reader/Writer need a special method for
+CountedPtr's. The question is how to keep track of the pointers to the
+reference counts. Or... we could put the reference count right in
+IO... Aha! Instead of AsciiStreamReader maintaining a map<unsigned
+long, IO*> during deserialization, we could use a map<unsigned long,
+CountedPtr<IO> >. However, this introduces a split from the semantics
+of readOwnedObject()... this suggests that we need a separate map for
+owned objects. As this transition will require a nearly universal
+switch to CountedPtr's, we need to provide a feasible migration route,
+perhaps by providing the ability to short-circuit CountedPtr's
+ref-counting at first.
+
+(14-Dec-1999) Need Canvas& arguments on GrObj::getBoundingBox,
+GrObj::grGetBoundingBox, and Bitmap::grabScreenRect/grabWorldRect.
+
+(14-Dec-1999) The implementation of GrObj should be moved into a
+separate component since it is fairly heavyweight. Subclasses would
+then be required to provide this implementation upon
+construction. This method would allow clients, but not subclasses, of
+GrObj to avoid dependencies on such components as bitmaprep, etc. But,
+how to avoid having to make all GrObj functions virtual? We'd like
+some to stay non-virtual. Aha! The new lightweight GrObj shouldn't
+even have the grRender(), grUnRender(), or grGetBoundingBox()
+functions... these will first be defined in GrObjImpl.
+
+(1-Dec-1999) Unsavory dependencies:
+  EventResponseHdlr on ObjTogl -- axed via Widget abstraction!
+  EventResponseHdlr on SoundList
+  ObjTogl on Tlist -- compilation dep gone, but still link dep
+  Trial on ObjList, PosList?
+  Block on Tlist?
+  BitmapRep on GLCanvas::theCanvas()
+
+... I see that this whole PtrList business introduces some wacky
+  dependencies... I don't think C++ clients should be depending on the
+  PtrList's directly. Instead, maybe the PtrList's should manage
+  CountedPtr's or something similar, so that the integer indices are
+  only visible in Tcl.
+
+(14-Dec-1999) ExptDriver should really own the ToglConfig... maybe it
+should arrange to create this as part of application startup?
+
+(12-Dec-1999) Could have an abstract class for timer callbacks, one
+subclass of which could use a Tcl_Interp* to register timer callbacks.
+
+(6-Dec-1999) Replace GrObj::getScreenFromWorld etc. with
+Canvas::... in BitmapRep (how to get the Canvas& arguments where they
+need to be?)
+
+(3-Dec-1999) I have a potential type-system loophole with TclItemPkg
+and TclItemCmd... TclItemPkg blindly casts TclItemCmd::getItemFromId()
+from void* to T*, without any guarantee that TclItemPkg is dealing
+with the correct type. Suggests we need a template wrapper around
+TclItemPkg?
+
+(22-Nov-1999) Hey, I think I might be able to totally do away with
+PtrList's, at least in the public interface. I think that they could
+be wrapped into the base class, so that every GrObj created is
+automatically placed in the ObjList, and anytime a GrObj is destroyed
+it is removed from the PtrList. This would just entail overriding
+operator new + delete for that class. The class would have static
+operations that mimic the PtrList's operations.
+
+(22-Nov-1999) Need to get rjp_subject working. 1) Need to maintain a
+do_expt script in each subject's directory. 2) Need to make sure that
+autosave file is writable by rjp_subject, and if not, use a different
+filename. (Maybe use temp filename generating facility of OS?).
 
 (17-Nov-1999) Can we automate the use of Matlab for data analysis by
 opening a pipe to a Matlab process from within Tcl?
@@ -382,19 +378,6 @@ introduced without having to add a method to TclCmd by subclassing it.
 
 (5-Nov-1999) AsciiStreamReader should gracefully report an invalid
 attribute name, perhaps by throwing a NoSuchAttributeError.
-
-(2-Nov-1999) Major flaw in serialize/deserialize semantics: when doing
-virtual construction with newIO, we first read the typename, and then
-deserialize using ~IO::TYPENAME in the flags. However, this turns off
-typename reading in base classes as well, which is disastrous. For
-now, I guess we can explicitly force typenames to be used when calling
-serialize or deserialize on a base class, but this is pretty ugly.
-
-(22-Oct-1999) Can now write generic IO tests, which take a class name
-and a list of properties, and then try reading/writing an object to
-make sure the values of those properties are correctly retrieved.
-
-(21-Oct-1999) Gabor needs to have serialize/deserialize implemented.
 
 (20-Oct-1999) There is a memory leak (I think) in
 AsciiStreamReader::readCstring()... which returns a new char[] to a
@@ -480,9 +463,6 @@ then no check is done, and not much time is lost worrying about the
 check. This would avoid the problem of trying to maintain parallel
 hierarchies of Property, BoundedProperty, etc.
 
-(2-Oct-1999) One class could theoretically provide more than one
-MetaClass, in order to provide different interfaces.
-
 (2-Oct-1999) Eventually, it should be possible to declare all of the
 necessary Tcl functions for a class with something like template<C>
 initTcl(), which in turn would call C::getProperties,
@@ -527,21 +507,6 @@ orthographic or perspective projection, could be related by
 inheritance from an abstract base class Camera. Parameters include
 viewing volume, autoUpdate (determines if scene is automatically
 redrawn upon Expose or Resize events)...
-
-(21-Jun-1999) Can get seg-fault by closing Tk-Togl window while tcl
-shell is still running, then calling exit. Problem is: who 'owns' the
-ToglConfig, and who 'owns' the Togl widget that it contains? I would
-like ToglConfig to own its widget, and for ObjTogl to own the
-ToglConfig singleton. But the problem is that the ToglConfig doesn't
-have total control over the destruction of its widget, since the
-widget can be destroyed by dismissing the top-level application window
-or by exiting the application. If the ToglConfig handled the widget's
-destruction, it could arrange to delete itself when the widget was
-destroyed, but then it would have no way of informing ObjTogl that it
-had gone away... Right now I've patched the problem by having ObjTogl
-own the widget, in the sense of creating and destroying it. There is a
-static destroyCallback that is registered through the Togl API as a
-destroy callback; this callback will be invoked in one of several ways...
 
 (19-Jul-1999) Eureka! The right way to build various experiments is
 now suddenly clear (!) There must be an abstract base class
@@ -597,50 +562,8 @@ intermediate command classes could provide default
 doc-strings. Subclasses could either append, or override, their
 superclass's doc-string.
 
-(5-Jul-1999) To trash or not to trash GfxAttribs? It's functionality
-is superfluous at the moment, since all the information it provides is
-available in ToglConfig, but switching dependencies from GfxAttribs to
-ToglConfig will tend to introduce coupling as well as recompiling,
-since ToglConfig is probably more volatile than GfxAttribs... 
-Something to think about.
-
-(5-Jul-1999) I could improve the efficiency of id-list manipulations
-in Tcl by adding a new Tcl object type that stored an STL vector or
-list as its internal rep. Then there would be no translations between
-Tcl lists and STL vectors/sequences required... Also I could make a
-Tcl_ObjType for the ids themselves, where the internal rep is a
-PtrList::iterator, and the Obj is able to provide an Item* from the
-list when asked. But... how to avoid having to put functions for this
-stuff all in the TclCmd base class? Maybe TclCmd subclasses could add
-the necessary functionality through getVectorFromArg, getGrObjFromArg,
-etc. Probably I would want to wrap up Tcl_Obj in a C++ class TclObj
-before doing any of this... this would actually be a great chance to
-use reference-counted proxy semantics... the C++ class would be a
-proxy for the Tcl_Obj, so the TclObj objects could be passed around by
-value if their constructors called Tcl_IncrRefCount and the
-destructors called Tcl_DecrRefCount (but how likely is aCC to ensure
-that all the destructors are called in the face of
-exceptions?). ... Hold on, maybe this is all too much-- it's pretty
-complicated, since Tcl_ObjType is like a metaclass (the class of a
-class), and Tcl_Obj is like a polymorphic class.
-
 (3-Jul-1999) Tlist makeSingles, etc. could now take a sequence/list of
 objids as an optional argument utilizing TclCmd::getSequenceFromArg.
-
-(3-Jul-1999) Maybe PtrList<T>::iterator should return a pair<int, T*>?
-This makes PtrList look suspiciously like a map... which I guess is
-really how I am using it. The ids are just used as tags... I'm just
-wary of using an STL map for implementation since they tend to be
-quite sluggish... wish I had a hash_map. At least PtrList's interface
-is reasonably well encapsulated so I could try new implementations. I
-guess I could even try an implementation using Tcl's hash map
-API... Trying the Tcl_HashMap implementation now. Maybe need to
-provide two kinds of iterators: one for fast but non-sequential access
-using Tcl_HashSearch, and one for slower but sequential (sorted)
-access through the keys. ... OK, I see now that the idea of the
-elements being ordered sequentially *was* an important part of the
-interface provided by the old implementation (I think), so for now
-I'll stick with the old implementation.
 
 (3-Jul-1999) Need to correctly handle widget destruction within the
 ObjTogl package. The problem is that if a new Togl widget is created
@@ -648,29 +571,6 @@ and then destroyed, the "offical" Togl widget (the singleton) is no
 longer the current glX rendering context... perhaps there should be a
 line in both the create and destroy callbacks that resets the
 "official" widget as the glX-current context.
-
-(1-Jul-1999) Time to get back to testing...........................
-OK, I have a bit more flexible framework for testing now; each Tcl
-package gets its own XXX_test.tcl file, and all of these files are
-sourced in the main grshtest.tcl file. The idea, though, is that any
-of the individual test files should be able to stand on its own-- it
-should acquire and release any resources that it might need
-locally. Now that I have generic TclCmd's etc. working, it would be
-nice to make the testing process a little generic as well, such that
-tests that are repeatedly testing the same C++ code (such as the arg
-check for a TVecAttribCmd, for example) can be a bit more automated.
-
-[Earlier] I squashed a bug that was basically a result of having
-written less-than-accurate function names. ExptDriver::stopTime was
-used to cancel all timer callbacks, but it also aborted the current
-trial, which is not necessarily implied by its name. Aborting the
-trial in the middle of ExptDriver::handleResponse then had a
-disastrous effect. Better rename these functions quick. Also, there
-should have been a test in place to identify this bug... better write
-those ExptDriver tests quick.
-
--- Add tests to grshtest.tcl for CloneFace. Need mainly to check
-various permutations of loadFaces.
 
 (30-Jun-1999) How to late-bind error strings and other string
 literals? Put them in a separate compilation unit, register them
@@ -691,9 +591,6 @@ right now is the issue with bus ergrors due to OpenGL calls from
 dynamically-linked modules--most of the 'extensions' will use OpenGL,
 so this probably makes them unable to be dynamically loaded.
 
-(30-Jun-1999) Still might want to split IoMgr into separate
-categories?
-
 (30-Jun-1999) Really need to get an iterator working for
 PtrList's... and get rid of these pseudo-working Id's. OK, now have an
 iterator class implemented, but how to construct them? Specifically,
@@ -703,26 +600,8 @@ the iterator in a corrupted state? Also, basically all of the PtrList
 operations should use iterators... addPtr() should return an iterator,
 remove() should take an iterator.
 
-(27-Jun-1999) Maybe Response's want to be first class objects rather
-than lowly int's? This would allow the class to have a static member
-InvalidResponse... would allow subclassing of responses... would allow
-different ResponseHandler's to work with different Response
-subclasses... Interestingly, the creation of a Response requires input
-from both ResponseHandler (for the semantic value) and from the
-TimingHandler (for the response time) --> trying to implement Response
-would probably raise some important design issues. Actually, I think I
-do have a simple Response struct that is just local to Trial's right
-now.
-
-(28-Jun-1999) Idea: callbacks can be set up from Tcl by storing a Tcl
-script as a string in C++ than can be set through the Tcl
-interface. This basically allows run-time modification of code...
-
 (28-Jun-1999) Need way for TclCmd's to "own" TclEvalCmd's, so that the
 Tcl_Interp* management can be hidden from the client.
-
-(28-Jun-1999) Need Stopwatch class to handle all this timing stuff
-that needs to go on.
 
 (27-Jun-1999) could perhaps use TclCmd again in KbdResponseHandler to
 wrap up the event binding... this would allow for exceptions during
@@ -741,63 +620,12 @@ through at() especially when algorithms are untested.
 (21-Jun-1999) Would be nice to arrange things so that GL coordinates
 correspond to degrees of visual angle... really nice.
 
-(26-Jun-1999) OpenGL crash problems raise issue of who should really
-be allowed to call OpenGL? Best to keep all graphics calls as
-localized as possible... this still needs some work.
-
-(19-Jun-1999) Big Bug #2. There seems to be a problem with exceptions:
-in TclCmd::getDoubleFromArg, when an exception is thrown, the Trace
-object is not properly destructed... maybe this is underneath the
-problems that have popped up with exceptions elsewhere?
-
-(17-Jun-1999) Looks like TlistTcl could also use some de-bloating via
-conversion to TclCmd/TclPkg. --> This is under way: TlistPkg now
-implements the TcllListPkg interface, so stringify, destringify,
-reset, and count are now handled automagically. Actually most of the
-bloat in TlistTcl is due to the creational functions makeSingles, etc
-that really belong elsewhere (where?) Should all this creational code
-go toether in one area, or does Tlist need a separate creational
-packaged from Expt, for example?
-
-(15-Jun-1999) Clean up some old Tcl package files by converting them
-to TclCmd/TclPkg format. ... in progress ... I'll skip misctcl,
-tcldlist. But still need to do subjecttcl.
-
 (15-Jun-1999) Bitmaps need to have attribs for glPixelZoom() and other
 operations that can affect pixel rendering... should these be placed
 in a separate Position subclass?
 
-(24-Jun-1999) Now that we have a standard location for catching
-run-time errors in TclCmd, I should be able to remove many catch
-blocks from within current TclCmd's, particularly those doing
-I/O. Also, IoError probably no longer needs the semantics of adding
-its own type to the beginning of the error message; this could be done
-instead in the TclCmd's catch block.
-
-() Need to make major modifications to prepare for fMRI work.
---need to make different types of trials, mainly varying according to
-how they collect responses, if at all, and how they give
-feedback. Most of this stuff could be wrapped in ResponseHandler and
-TimingHandler objects; it's just a matter of moving those from
-ExptDriver into Trial's. How to do a FeedbackPolicy within C++ rather
-than from Tcl?
---Order dependency should be removed from serialize/deserialize
-methods: members should be requested by name. Need capability for
-versioning in serialize/deserialize.
---need to look seriously at some industrial-strength creational
-patterns: I've got a lot of functionality implemented, but it the
-various objects need to be able to be assembled in the right
-ways. E.g., set the TimingHandler for a whole bunch of Trial's, vary
-one parameter along a set of Trial's, etc. Most of this will probably
-be helped by having some good iterators for PtrList's.
-
 () :) :) :) Would be _really_ nice to have a file translator in Matlab
 that could read the Expt files...
-
-() What should the requirements be on reading in to a Trial by ObjId's
-only? Should we require that the proper ObjId's already exist, or do
-we assume they will be created later? Right now we assume they will be
-created later, and do not check for their validity as they are read in.
 
 () There are dependencies in tlisttcl.cc on GrObj and Position that
 are due to the Creational functions that are present in that file, such
@@ -805,27 +633,11 @@ as MakeSummaryTrial, MakeSingles, etc... These are the things that
 should be solved with a Creational design pattern such as Abstract
 Factory or Builder.
 
-() Want a nice way to manage creation of ExptDrivers, but which
-pattern to use? Abstract Factory or Builder?  The final ExptDriver
-needs to be composed of many different parts, each of which can be
-created in several possible ways, and there are some order
-dependencies in the creation of these sub-objects.
-
-() ObjId's and PosId's need a way to iterate over their list's while
-skipping NULL's.
-
 () Would like to change event binding from eval'ing Tk's "bind"
 command to using the API function Tk_CreateEventHandler. But there is
 a problem with multiple possible matches to a single event -- whereas
 "bind" calls the most specific binding, who knows what happens with
 event handlers???
-
-() Buggy behavior: if Expt::begin is called on an empty experiment,
-the message "expt is complete" comes up but the Expt keeps on running
-empty trials, then aborting them.
-
-() Damn. another bug -- if a GrObj is changed while it is onscreen, it
-cannot be properly undrawn since its old state is not remembered...
 
 () An idea for a more generic way to describe Trial's: rather than
 explicitly storing objid/posid pairs, Trial's could store sequences of
@@ -1348,6 +1160,38 @@ internally they are implemented with a vector for more efficient
 access times than with a map. --> Implemented ObjId and PosId classes
 (although they still need better iteration).
 
+(note Jun-1999) What should the requirements be on reading in to a
+Trial by ObjId's only? Should we require that the proper ObjId's
+already exist, or do we assume they will be created later? Right now
+we assume they will be created later, and do not check for their
+validity as they are read in.
+
+(Jun-1999, done) Need to make major modifications to prepare for fMRI
+work.
+--need to make different types of trials, mainly varying according to
+how they collect responses, if at all, and how they give
+feedback. Most of this stuff could be wrapped in ResponseHandler and
+TimingHandler objects; it's just a matter of moving those from
+ExptDriver into Trial's. How to do a FeedbackPolicy within C++ rather
+than from Tcl?
+--Order dependency should be removed from serialize/deserialize
+methods: members should be requested by name. Need capability for
+versioning in serialize/deserialize.
+--need to look seriously at some industrial-strength creational
+patterns: I've got a lot of functionality implemented, but it the
+various objects need to be able to be assembled in the right
+ways. E.g., set the TimingHandler for a whole bunch of Trial's, vary
+one parameter along a set of Trial's, etc. Most of this will probably
+be helped by having some good iterators for PtrList's.
+
+(fixed Jun-1999) Buggy behavior: if Expt::begin is called on an empty
+experiment, the message "expt is complete" comes up but the Expt keeps
+on running empty trials, then aborting them.
+
+(fixed Jun-1999) Damn. another bug -- if a GrObj is changed while it
+is onscreen, it cannot be properly undrawn since its old state is not
+remembered...
+
 (done 9-Jun-1999) Same thing with Tlist [should it be a singleton] ???
 Ah-hah!  Tlist is different -- it's more like a Block in an Expt,
 because an Expt should conceivable be able to have several blocks. So
@@ -1460,6 +1304,10 @@ are generated by throwing exceptions of class TclError; these are
 caught and converted back to a 'return TCL_ERROR' before control
 returns to Tcl.
 
+(15-Jun-1999, done) Clean up some old Tcl package files by converting
+them to TclCmd/TclPkg format. ... in progress ... I'll skip misctcl,
+tcldlist. But still need to do subjecttcl.
+
 (done 16-Jun-1999) figure out how to make !@#$^& shared libraries
 work! [Later -->] Well, they're !@#$^ing working now, but they're
 still a pain in the @$$. For some reason, objtogl doesn't like to be
@@ -1512,6 +1360,16 @@ of object to get from, and on the type of value to get. Also just
 noticed that it's fairly expensive in compile-time to modify
 tclcmd.h--this file is very heavily depended-on.
 
+(17-Jun-1999) Looks like TlistTcl could also use some de-bloating via
+conversion to TclCmd/TclPkg. --> This is under way: TlistPkg now
+implements the TcllListPkg interface, so stringify, destringify,
+reset, and count are now handled automagically. Actually most of the
+bloat in TlistTcl is due to the creational functions makeSingles, etc
+that really belong elsewhere (where?) Should all this creational code
+go toether in one area, or does Tlist need a separate creational
+packaged from Expt, for example? [Later] ... this stuff has moved to
+TlistUtils.
+
 (note 18-Jun-1999) Got another core dump with a "missing symbol during
 dynamic loading". The dynamic linker couldn't find TclError() for a
 call inside a function defined inside an unnamed namespace. The
@@ -1533,6 +1391,15 @@ IoError, perhaps?
 declareSetter, declareAction in TclItemPkg along with
 declareAttrib. --> OK, now I have getter/setter working, but still
 need to implement declareAction. --> OK, declareAction is done too.
+
+(19-Jun-1999, done) Big Bug #2. There seems to be a problem with
+exceptions: in TclCmd::getDoubleFromArg, when an exception is thrown,
+the Trace object is not properly destructed... maybe this is
+underneath the problems that have popped up with exceptions elsewhere?
+[Later] I think this was a problem with having multiple versions of
+the Trace objects floating around (i.e. some compiled with tracing on,
+others with tracing off)... this led to multiple definitions of
+~Trace()... a "bad thing".
 
 (16-Jun-1999, done 20-Jun-1999) Now that shared libraries are
 pseudo-working, it is definitely a worthy goal to try to get Tcl's
@@ -1597,6 +1464,21 @@ timing should be specified either relative to immediate, Trial start,
 or response seen. This can all go in a base class; then we can
 recreate the interface of the current TimingHandler in a derived
 class. --> Done.
+
+(21-Jun-1999) Can get seg-fault by closing Tk-Togl window while tcl
+shell is still running, then calling exit. Problem is: who 'owns' the
+ToglConfig, and who 'owns' the Togl widget that it contains? I would
+like ToglConfig to own its widget, and for ObjTogl to own the
+ToglConfig singleton. But the problem is that the ToglConfig doesn't
+have total control over the destruction of its widget, since the
+widget can be destroyed by dismissing the top-level application window
+or by exiting the application. If the ToglConfig handled the widget's
+destruction, it could arrange to delete itself when the widget was
+destroyed, but then it would have no way of informing ObjTogl that it
+had gone away... Right now I've patched the problem by having ObjTogl
+own the widget, in the sense of creating and destroying it. There is a
+static destroyCallback that is registered through the Togl API as a
+destroy callback; this callback will be invoked in one of several ways...
 
 (22-Jun-1999, done 22-Jun-1999) Should add a
 "mother-of-all-base-classes" base error class from which to derive all
@@ -1741,6 +1623,13 @@ problems. --> Can't seem to get anywhere... even using the debugger,
 things just crash on the calls to OpenGL. For now it's easiest just to
 link in statically everything that calls OpenGL.
 
+(24-Jun-1999, done) Now that we have a standard location for catching
+run-time errors in TclCmd, I should be able to remove many catch
+blocks from within current TclCmd's, particularly those doing
+I/O. Also, IoError probably no longer needs the semantics of adding
+its own type to the beginning of the error message; this could be done
+instead in the TclCmd's catch block.
+
 (23-Jun-1999, done 25-Jun-1999) ExptDriver needs to be able to run
 multiple blocks.  --When a block is done, see if there are more
 blocks; if so, start the next one, otherwise stop. --> Done
@@ -1801,6 +1690,12 @@ old expt.h/expt.cc files.
 arbitrary ordering of blocks? Or should it just run through blocks in
 sequence... Yes, just in sequence is fine. Just need to create enough
 blocks as necessary, then address the individual blocks by id.
+
+(26-Jun-1999, under way) OpenGL crash problems raise issue of who
+should really be allowed to call OpenGL? Best to keep all graphics
+calls as localized as possible... this still needs some work. [Later
+16-May-2000] This is a slow migration, but the necessary architecture
+is now in place with GWT::Canvas.
 
 (27-Jun-1999, done 27-Jun-1999) Moved the decision to abort a trial
 based on response value from ExptDriver back into
@@ -1957,6 +1852,27 @@ see if the currently loaded font is the one it used last time it
 compiled its display list and recompiles itself if necessary before
 drawing.
 
+
+(1-Jul-1999) Time to get back to testing...........................
+OK, I have a bit more flexible framework for testing now; each Tcl
+package gets its own XXX_test.tcl file, and all of these files are
+sourced in the main grshtest.tcl file. The idea, though, is that any
+of the individual test files should be able to stand on its own-- it
+should acquire and release any resources that it might need
+locally. Now that I have generic TclCmd's etc. working, it would be
+nice to make the testing process a little generic as well, such that
+tests that are repeatedly testing the same C++ code (such as the arg
+check for a TVecAttribCmd, for example) can be a bit more automated.
+
+[Earlier] I squashed a bug that was basically a result of having
+written less-than-accurate function names. ExptDriver::stopTime was
+used to cancel all timer callbacks, but it also aborted the current
+trial, which is not necessarily implied by its name. Aborting the
+trial in the middle of ExptDriver::handleResponse then had a
+disastrous effect. Better rename these functions quick. Also, there
+should have been a test in place to identify this bug... better write
+those ExptDriver tests quick.
+
 (29-Jun-1999, done 2-Jul-1999) Analogously to TclCmd::returnSequence,
 it would be great to be able to extract from a Tcl list arg into an
 STL back_inserter iterator. For one thing, this would allow ItemCmd's
@@ -2033,6 +1949,51 @@ toglReshapeFunc in ObjTogl, replace them with virtual functions in
 ToglConfig, (3 done) remove loadFont from Gtext (it's replaced with
 Togl::loadFont). OK, this is all done except I'm going to reconsider
 whether to get rid of GfxAttribs...
+
+(3-Jul-1999, done 3-Jul-1999) Maybe PtrList<T>::iterator should return
+a pair<int, T*>?  This makes PtrList look suspiciously like a
+map... which I guess is really how I am using it. The ids are just
+used as tags... I'm just wary of using an STL map for implementation
+since they tend to be quite sluggish... wish I had a hash_map. At
+least PtrList's interface is reasonably well encapsulated so I could
+try new implementations. I guess I could even try an implementation
+using Tcl's hash map API... Trying the Tcl_HashMap implementation
+now. Maybe need to provide two kinds of iterators: one for fast but
+non-sequential access using Tcl_HashSearch, and one for slower but
+sequential (sorted) access through the keys. ... OK, I see now that
+the idea of the elements being ordered sequentially *was* an important
+part of the interface provided by the old implementation (I think), so
+for now I'll stick with the old implementation.
+
+(5-Jul-1999) I could improve the efficiency of id-list manipulations
+in Tcl by adding a new Tcl object type that stored an STL vector or
+list as its internal rep. Then there would be no translations between
+Tcl lists and STL vectors/sequences required... Also I could make a
+Tcl_ObjType for the ids themselves, where the internal rep is a
+PtrList::iterator, and the Obj is able to provide an Item* from the
+list when asked. But... how to avoid having to put functions for this
+stuff all in the TclCmd base class? Maybe TclCmd subclasses could add
+the necessary functionality through getVectorFromArg, getGrObjFromArg,
+etc. Probably I would want to wrap up Tcl_Obj in a C++ class TclObj
+before doing any of this... this would actually be a great chance to
+use reference-counted proxy semantics... the C++ class would be a
+proxy for the Tcl_Obj, so the TclObj objects could be passed around by
+value if their constructors called Tcl_IncrRefCount and the
+destructors called Tcl_DecrRefCount (but how likely is aCC to ensure
+that all the destructors are called in the face of
+exceptions?). ... Hold on, maybe this is all too much-- it's pretty
+complicated, since Tcl_ObjType is like a metaclass (the class of a
+class), and Tcl_Obj is like a polymorphic class. [Later] The need for
+a vector Tcl_Obj is eliminated by the introduction of STL-style
+iterators than can retrieve elements of a template type from
+Tcl_Obj's.
+
+(5-Jul-1999) To trash or not to trash GfxAttribs? It's functionality
+is superfluous at the moment, since all the information it provides is
+available in ToglConfig, but switching dependencies from GfxAttribs to
+ToglConfig will tend to introduce coupling as well as recompiling,
+since ToglConfig is probably more volatile than GfxAttribs... 
+Something to think about. [Later] GfxAttribs is gone bye-bye...
 
 (7-Jul-1999, done 7-Jul-1999) Cut out ~300 lines of code by
 introducing a new template TclPkg, ListItemPkg<class C, class List>,
@@ -2269,10 +2230,21 @@ in IO.
 null pointers to be serialized. This involves introducing the
 convention of using 0 as the IO::id() for a null object.
 
+(22-Oct-1999) Can now write generic IO tests, which take a class name
+and a list of properties, and then try reading/writing an object to
+make sure the values of those properties are correctly retrieved.
+
 (21-Oct-1999, done 2-Nov-1999) Fixpt needs to change its Tcl class
 name to FixPt. Done, but injected all the FixPt:: commands back into
 the Fixpt:: namespace for the time being to preserve backward
 compatibility.
+
+(2-Nov-1999) Major flaw in serialize/deserialize semantics: when doing
+virtual construction with newIO, we first read the typename, and then
+deserialize using ~IO::TYPENAME in the flags. However, this turns off
+typename reading in base classes as well, which is disastrous. For
+now, I guess we can explicitly force typenames to be used when calling
+serialize or deserialize on a base class, but this is pretty ugly.
 
 (3-Nov-1999, done 3-Nov-1999) Need a way to script experiments, so
 that we can run several experiments in a row, and a new experiment can
@@ -2436,6 +2408,9 @@ screen width + height, and the other represents the "camera", or the
 view into the OpenGL world, with its viewport,
 perspective/orthographic projection, etc.
 
+(28-Jun-1999, done 18-Nov-1999) Need Stopwatch class to handle all
+this timing stuff that needs to go on.
+
 (20-Nov-1999, done 20-Nov-1999) Could make Factory a little faster to
 compile by avoiding the #include <map>. 1) Make a non-template
 CreatorMapBase class that has an Impl class that hides a map<string,
@@ -2480,6 +2455,16 @@ fromVoidToIO() and fromIOToVoid(). PtrList<> then provides a typesafe
 wrapper for all of this functionality. It stores the pointers by
 static_cast'ing between void* and T*; IO*'s are retrieved by
 static_cast void* to T*, then dynamic_cast T* to IO*.
+
+(21-Nov-1999, under way) Would like to split project into loosely
+coupled subprojects that can be used separately in other
+projects. Each subproject should generate its own library. OK, I think
+the way to manage this large task is to split the steps into 1)
+logically partitioning things into namespaces, 2) physically
+partioning things into different libraries, 3) physically partitioning
+the source + libraries into different directories, and 4) generating
+separate makefiles for each directory. I've started this process with
+doing 1+2) for the Tcl namespace, and the tclworks library.
 
 (30-Nov-1999, done 30-Nov-1999) How to avoid 'unused variable'
 warnings with FactoryRegistrar's? ... moved the registration from the
@@ -2636,6 +2621,21 @@ demand. It would have the added benefit that in an fMRI script, we
 would only have to load the bitmaps that are actually used in the
 experiment. Done using BmapData to handle the actuall caching process.
 
+(8-Feb-2000, done 8-Feb-2000) Should think about doing dynamic tracing
+generically, perhaps with a mixin base class. This is basically done
+by using Util::Tracer.
+
+(27-Jun-1999, done 13-Mar-2000) Maybe Response's want to be first
+class objects rather than lowly int's? This would allow the class to
+have a static member InvalidResponse... would allow subclassing of
+responses... would allow different ResponseHandler's to work with
+different Response subclasses... Interestingly, the creation of a
+Response requires input from both ResponseHandler (for the semantic
+value) and from the TimingHandler (for the response time) --> trying
+to implement Response would probably raise some important design
+issues. Actually, I think I do have a simple Response struct that is
+just local to Trial's right now.
+
 (3-Mar-2000, done 20-Mar-2000) Ugh. I just now realized how much time
 it takes to compile STL headers. In the past, I didn't try to
 forward-declare STL templates since their declarations can vary by
@@ -2688,3 +2688,67 @@ the convention that {}'s protect ^'s, so in order to have reached the
 end of an attribute, we must see a '^' and be at brace level 0. This
 in turn required that {}'s be treated specially--they must be escaped
 with '\' when occurring within an attribute string. 
+
+(28-Mar-2000, done 29-Mar-2000) Need to implement SerialRh (response
+handler). This will share a lot of code with EventResponseHdlr, so we
+probably need to create a base class for both such as FeedbackRh that
+will handle the inputResponseMap and the feedbackMap but will delegate
+attend() and ignore() via abstract functions. ... [Later] OK, so in
+fact we don't need a new ResponseHandler class; instead we can add a
+new event source that translates incoming serial port characters into
+window-system events via Tk_QueueWindowEvent.
+
+
+========================================================================
+GOAL #1 -- done 11 May 2000
+
+Goal: ExptDriver should not have to know anything about TimingHdlr's
+or ResponseHdlr's. Done!
+
+To do this, as usual we should try an easy migration path.
+1) make Trial an abstract class, and move current Trial implementation
+into a derived class
+2) set up abstract Trial functions to take on behavior of Experiment
+functions. At first, ExptDriver can just forward stuff to Trial so
+that we don't have to redefine the handlers' interfaces right away.
+
+(24-Jan-2000) More flexible behavior by putting trial behavior in
+Trial rather than in ExptDriver.
+
+(9-May-2000) I think I may finally have my hooks into this
+problem. Branched off behavior from edBeginTrial() into
+edDoTrial(). Added Trial::trDoTrial(), which is called from
+edBeginTrial(). For now, trDoTrial() just calls right back to
+edDoTrial(), mimicking the previous behavior exactly. But... now we
+can slowly migrate the behavior from edDoTrial() back into
+trDoTrial(). Then this process can be iterated for the other
+Experiment:: functions. Eventually this will allow us to create a
+Trial base class with these new functions as virtual functions, so
+that we can create Trial's with very different behaviors (e.g. a
+ball-tracking trial, or a delayed-match trial).
+
+(12-May-2000) The way things look now, there is fairly clean
+separation amongst the different experiment participants. Basically:
+
+                                ___________________________________
+                               |                                   |
+                               V                                   |
+ Experiment ---> Block ---> Trial ---> Response     Timing       Trial
+            <---       <---       <--- Handler   +->Handler ---> Event
+                               |                 |                 
+                               |_________________|
+
+Importantly, this means that we can treat ResponseHandler, TimingHdlr,
+and TrialEvents as implementation details of Trial... so that can now
+substitute in other Trial subclasses with different behaviors.
+------------------------------------------------------------------------
+
+(15-Jan-2000, done) I think the executable shouldn't have to depend on
+the shared libraries, since these should be able to be change without
+forcing a relink on the main executable. ... Yes, but we need to be
+able to account for whether static or dynamic linking is being used.
+
+
+(16-Dec-1999, done) Try to fix ToglConfig::loadFonti on irix by
+switching fontnumber to a long before casting to char*. Tried
+it... didn't work.
