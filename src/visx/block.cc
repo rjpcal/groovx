@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Tue Aug  3 15:17:31 1999
+// written: Mon Sep 27 11:27:20 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -174,8 +174,7 @@ int Block::charCount() const {
 
 Trial& Block::getCurTrial() const {
 DOTRACE("Block::getCurTrial");
-  Assert(theTlist.isValidId(currentTrial()));
-  return *(theTlist.getPtr(currentTrial()));
+  return *(theTlist.getCheckedPtr(currentTrial()));
 }
 
 int Block::numTrials() const {
