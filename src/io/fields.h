@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Tue Nov 14 21:15:43 2000
+// written: Wed Nov 15 07:39:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -320,8 +320,8 @@ public:
   const Field& field(const fixed_string& name) const;
   const Field& field(const FieldInfo& pinfo) const;
 
-  void readFieldsFrom(IO::Reader* reader);
-  void writeFieldsTo(IO::Writer* writer) const;
+  void readFieldsFrom(IO::Reader* reader, const FieldMap& fields);
+  void writeFieldsTo(IO::Writer* writer, const FieldMap& fields) const;
 
   const FieldMap& fields() const { return *itsFieldMap; }
 };
