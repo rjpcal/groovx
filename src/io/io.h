@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Sat Mar  4 14:37:27 2000
+// written: Tue Mar  7 20:07:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,10 +22,12 @@
 class istream;
 class ostream;
 
+class type_info;
+
+class fixed_string;
+
 class Reader;
 class Writer;
-
-class type_info;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -97,7 +99,7 @@ public:
 		object. The implementation provided by \c IO returns a demangled
 		version of \c typeid(*this).name(), which should very closely
 		resemble the way the object was declared in source code. */
-  virtual string ioTypename() const;
+  virtual fixed_string ioTypename() const;
 
   /** This function removes all whitespace characters from \a
 		theStream, until the first non-whitespace character is seen. It

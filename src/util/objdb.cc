@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Mon Mar  6 18:29:44 2000
+// written: Tue Mar  7 20:13:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include "demangle.h"
 #include "iomgr.h"
 #include "readutils.h"
+#include "util/strings.h"
 #include "writeutils.h"
 
 #define NO_TRACE
@@ -35,7 +36,7 @@ DOTRACE("IoPtrList::IoPtrList");
 
 void IoPtrList::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("IoPtrList::serialize");
-  string ioTag = IO::ioTypename();
+  fixed_string ioTag = IO::ioTypename();
 
   if (flag & BASES) { /* there are no bases to deserialize */ }
 
@@ -68,18 +69,18 @@ DOTRACE("IoPtrList::serialize");
   }
 
   if (c != num_non_null) {
-	 throw IoLogicError(ioTag);
+	 throw IoLogicError(ioTag.c_str());
   }
 
   // itsFirstVacant
   os << firstVacant() << endl;
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw OutputError(ioTag.c_str());
 }
 
 
 void IoPtrList::deserialize(istream &is, IOFlag flag) {
 DOTRACE("IoPtrList::deserialize");
-  string ioTag = IO::ioTypename();
+  string ioTag = IO::ioTypename().c_str();
 
   if (flag & BASES) { /* there are no bases to deserialize */ }
   if (flag & TYPENAME) { 
@@ -132,7 +133,7 @@ DOTRACE("IoPtrList::deserialize");
 
 int IoPtrList::charCount() const {
 DOTRACE("IoPtrList::charCount");
-  string ioTag = IO::ioTypename();
+  fixed_string ioTag = IO::ioTypename();
   int ch_count = ioTag.size() + 1
 	 + gCharCount<int>(voidVecSize()) + 1;
   int num_non_null = VoidPtrList::count();

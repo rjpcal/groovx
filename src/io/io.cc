@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Mon Mar  6 20:42:39 2000
+// written: Tue Mar  7 20:09:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 #include <typeinfo>
 
 #include "demangle.h"
+#include "util/strings.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -68,9 +69,9 @@ DOTRACE("IO::id");
  return itsId;
 }
 
-string IO::ioTypename() const {
+fixed_string IO::ioTypename() const {
 DOTRACE("IO::ioTypename");
-  return demangle(typeid(*this).name());
+  return demangle_cstr(typeid(*this).name());
 }
 
 int IO::eatWhitespace(istream& is) {
