@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Sun Oct 22 15:18:02 2000
+// written: Mon Oct 23 12:27:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -183,7 +183,6 @@ public:
   void edHaltExpt() const;
   void edResumeExpt();
   void edResetExpt();
-  int edGetCurrentTrial() const;
   void edSetCurrentTrial(int trial);
 
   void edEndExpt();
@@ -702,20 +701,6 @@ DOTRACE("ExptDriver::Impl::edResetExpt");
 
 //---------------------------------------------------------------------
 //
-// ExptDriver::edGetCurrentTrial() --
-//
-//---------------------------------------------------------------------
-
-int ExptDriver::Impl::edGetCurrentTrial() const {
-DOTRACE("ExptDriver::Impl::edGetCurrentTrial");
-
-  if ( !assertIds() ) return -1;
-
-  return block().currentTrial();
-}
-
-//---------------------------------------------------------------------
-//
 // ExptDriver::edSetCurrentTrial() --
 //
 //---------------------------------------------------------------------
@@ -903,9 +888,6 @@ void ExptDriver::edResetExpt()
 
 void ExptDriver::edSetCurrentTrial(int trial)
   { itsImpl->edSetCurrentTrial(trial); }
-
-int ExptDriver::edGetCurrentTrial() const
-  { return itsImpl->edGetCurrentTrial(); }
 
 void ExptDriver::storeData()
   { itsImpl->storeData(); }

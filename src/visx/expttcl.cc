@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Thu Oct 19 18:00:04 2000
+// written: Mon Oct 23 12:29:22 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -237,7 +237,6 @@ ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :
   declareCAction("reset", &ExptDriver::edResetExpt);
   declareCAction("stop", &ExptDriver::edHaltExpt);
   declareCAction("storeData", &ExptDriver::storeData);
-  declareCGetter("currentTrial", &ExptDriver::edGetCurrentTrial);
 
   // Install the experiment into the application
   Application& app = Application::theApp();

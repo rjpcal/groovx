@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Oct 19 17:59:17 2000
+// written: Mon Oct 23 12:26:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -110,7 +110,6 @@ public:
   virtual void edResetExpt();
 
   /// Returns the id of the current trial
-  virtual int edGetCurrentTrial() const;
   virtual void edSetCurrentTrial(int trial);
 
   /** This saves the experiment file and a summary-of-responses file
