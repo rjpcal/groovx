@@ -26,9 +26,32 @@ package require Iwidgets
 itcl::class FieldControls {
 	 private variable itsObjType
 	 private variable itsNames
+	 private variable isItTransient
+	 private variable isItString
+	 private variable isItMulti
 	 private variable itsFrame
 	 private variable itsControls
 	 private variable itsCachedValues
+
+	 private method setControl {name val} {
+		  set control $itsControls($name)
+		  if { $isItString($name) || $isItMulti($name) } {
+				$control delete 0 end
+				$control insert 0 $val
+		  } else {
+				$control set $val
+		  }
+	 }
+
+	 private method onControl {callback name {val {}}} {
+		  if { $isItString($name) || $isItMulti($name) } {
+				set control $itsControls($name)
+				$callback $name [$control get]
+				return 1
+		  } else {
+				$callback $name $val
+		  }
+	 }
 
 	 constructor {panes objtype setCallback} {
 		  $panes insert 0 $objtype
@@ -37,14 +60,12 @@ itcl::class FieldControls {
 
 		  set itsObjType $objtype
 		  set itsNames [list]
-		  foreach field [${objtype}::allFields] {
-				lappend itsNames [lindex $field 0]
-				set itsCachedValues($field) 0
-		  }
 
 		  set itsFrame [frame $parent.fields]
 
 		  set currentframe ""
+
+		  set align_us [list]
 
 		  foreach field [${objtype}::allFields] {
 				set name [lindex $field 0]
@@ -54,7 +75,12 @@ itcl::class FieldControls {
 				set flags [lindex $field 4]
 
 				set startsnewgroup [expr [lsearch $flags NEW_GROUP] != -1]
-				set transient [expr [lsearch $flags TRANSIENT] != -1]
+				set isItTransient($name) [expr [lsearch $flags TRANSIENT] != -1]
+				set isItString($name) [expr [lsearch $flags STRING] != -1]
+				set isItMulti($name) [expr [lsearch $flags MULTI] != -1]
+
+				lappend itsNames [lindex $field 0]
+				set itsCachedValues($field) 0
 
 				if {$startsnewgroup} {
 					 set currentframe [frame $itsFrame.$name]
@@ -63,30 +89,42 @@ itcl::class FieldControls {
 
 				set pane $currentframe
 
-				scale $pane.$name -label $name -from $lower -to $upper \
-						  -resolution $step -bigincrement $step \
-						  -digits [string length $step] \
-						  -repeatdelay 500 -repeatinterval 250 \
-						  -orient horizontal \
-						  -command "$setCallback $name"
+				if {$isItString($name) || $isItMulti($name)} {
+					 iwidgets::entryfield $pane.$name -labeltext $name -width 15 \
+								-command [itcl::code $this onControl $setCallback $name]
+					 lappend align_us $pane.$name
+				} else {
 
-				if {$transient} {
-					 $pane.$name configure -fg blue
+					 scale $pane.$name -label $name -from $lower -to $upper \
+								-resolution $step -bigincrement $step \
+								-digits [string length $step] \
+								-repeatdelay 500 -repeatinterval 250 \
+								-orient horizontal \
+								-command [itcl::code $this onControl $setCallback $name]
+				}
+
+				if {$isItTransient($name)} {
+					 $pane.$name configure -foreground blue
+				}
+
+				if {$isItMulti($name)} {
+					 $pane.$name configure -foreground darkgreen
 				}
 
 				pack $pane.$name -side top
 
 				set itsControls($name) $pane.$name
 		  }
+
+		  eval iwidgets::Labeledwidget::alignlabels $align_us
+
+		  pack $itsFrame -fill y -side left		  
 	 }
 
-	 public method names {} { return $itsNames }
-
-	 public method getFrame {} { return $itsFrame }
-
-	 public method getControl {name} { return $itsControls($name) }
-
-	 public method getCachedVal {name} { return $itsCachedValues($name) }
+	 public method getCachedVal {name} {
+		  #puts "itsObjType $itsObjType, name $name"
+		  return $itsCachedValues($name)
+	 }
 
 	 public method setCachedVal {name val} { set itsCachedValues($name) $val }
 
@@ -94,7 +132,7 @@ itcl::class FieldControls {
 		  foreach field $itsNames {
 				set val [${itsObjType}::$field $obj]
 				set control $itsControls($field)
-				$control set $val
+				setControl $field $val
 				set itsCachedValues($field) $val
 		  }
 	 }
@@ -104,21 +142,21 @@ itcl::class Editor {
 	 private variable itsPanes
 	 private variable itsControls
 	 private variable itsToglet
-	 private variable itsControlsArray
+	 private variable itsControlSets
 	 private variable itsUpdateInProgress 0
+
+	 private method setObjType {type} { $itsControls.objtypes select $type }
 
 	 private method curObjType {} { return [$itsControls.objtypes get] }
 
 	 private method standardSettings {objs} {
 		  set grobjs [dlist_select $objs [GrObj::is $objs]]
 
-		  if { [llength $grobjs] > 0 } {
-				GrObj::alignmentMode $grobjs $GrObj::CENTER_ON_CENTER
-				GrObj::scalingMode $grobjs $GrObj::MAINTAIN_ASPECT_SCALING
-				GrObj::renderMode $grobjs $GrObj::DIRECT_RENDER
-				GrObj::unRenderMode $grobjs $GrObj::CLEAR_BOUNDING_BOX
-				GrObj::height $grobjs 1.0
-		  }
+		  GrObj::alignmentMode $grobjs $GrObj::CENTER_ON_CENTER
+		  GrObj::scalingMode $grobjs $GrObj::MAINTAIN_ASPECT_SCALING
+		  GrObj::renderMode $grobjs $GrObj::DIRECT_RENDER
+		  GrObj::unRenderMode $grobjs $GrObj::CLEAR_BOUNDING_BOX
+		  GrObj::height $grobjs 1.0
 	 }
 
 	 private method addNewObject {} {
@@ -195,6 +233,7 @@ itcl::class Editor {
 	 private method onEditObjSelect {} {
 		  set objs [getEditSelection]
 		  if { [llength $objs] > 0 } {
+				setObjType [IO::type [lindex $objs 0]]
 				updateControls [lindex $objs 0]
 		  }
 	 }
@@ -215,7 +254,7 @@ itcl::class Editor {
 
 		  set objtype [IO::type $obj]
 
-		  set controls $itsControlsArray($objtype)
+		  set controls $itsControlSets($objtype)
 
 		  $controls update $obj
 
@@ -230,9 +269,13 @@ itcl::class Editor {
 	 }
 
 	 private method setAttrib {name val} {
-		  set editobjs [getEditSelection]
+		  set objtype [curObjType]
 
-		  set controls $itsControlsArray([curObjType])
+		  set selection [getEditSelection]
+
+		  set editobjs [dlist_select $selection [${objtype}::is $selection]]
+
+		  set controls $itsControlSets($objtype)
 
 		  if { !$itsUpdateInProgress && [llength $editobjs] > 0 } {
 				if { [$controls getCachedVal $name] != $val } {
@@ -251,22 +294,22 @@ itcl::class Editor {
 
 		  set objtype [curObjType]
 
-		  if { ![info exists itsControlsArray($objtype)] } {
-				set itsControlsArray($objtype) \
-						  [FieldControls #auto $itsPanes $objtype \
-						  [itcl::code $this setAttrib]]
-
-				pack [$itsControlsArray($objtype) getFrame] -fill y -side left
-		  }
-
 		  set alltypes [$itsControls.objtypes get 0 end]
 
 		  foreach type $alltypes {
 				if { ![string equal $objtype $type] } {
-					 if { [info exists itsControlsArray($type)] } {
+					 if { [info exists itsControlSets($type)] } {
 						  $itsPanes hide $type
 					 }
 				}
+		  }
+
+		  if { ![info exists itsControlSets($objtype)] } {
+
+				set itsControlSets($objtype) \
+						  [FieldControls #auto $itsPanes $objtype \
+						  [itcl::code $this setAttrib]]
+
 		  }
 
 		  $itsPanes show $objtype
@@ -295,8 +338,10 @@ itcl::class Editor {
 		  iwidgets::optionmenu $itsControls.objtypes -labeltext "Object type:" \
 					 -command [itcl::code $this showFieldControls]
 		  $itsControls.objtypes insert 0 \
-					 Face Fish Gabor House MaskHatch MorphyFace
-		  $itsControls.objtypes select $objtype
+					 Face Fish Gabor Gtext GxDrawStyle GxColor \
+					 House MaskHatch MorphyFace Position
+		  $itsControls.objtypes sort ascending
+		  setObjType $objtype
 		  pack $itsControls.objtypes -side left -anchor nw
 
 		  button $itsControls.new -text "New Object" -relief raised \
