@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Thu Jul 12 13:10:09 2001
+// written: Thu Jul 12 16:37:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -265,6 +265,31 @@ public:
   virtual ~IoFetcher();
 
   virtual IO::IoObject& getIoFromId(int id) = 0;
+};
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * TclItemPkgBase class definition
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+class TclItemPkgBase : public TclPkg, public ItemFetcher {
+public:
+  TclItemPkgBase(Tcl_Interp* interp, const char* name, const char* version,
+                 int item_argn);
+
+  virtual ~TclItemPkgBase();
+
+  virtual void* getItemFromId(int id) = 0;
+
+  virtual void* getItemFromContext(Context& ctx);
+
+  int itemArgn() const { return itsItemArgn; }
+
+private:
+  int itsItemArgn;
 };
 
 ///////////////////////////////////////////////////////////////////////

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec 16 15:25:06 1999
-// written: Thu Jul 12 16:27:25 2001
+// written: Thu Jul 12 16:37:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,8 +68,6 @@ public:
 namespace Tcl
 {
   class Context;
-  class TclItemPkgBase;
-
   class ItemFetcher;
 }
 
@@ -78,31 +76,6 @@ public:
   virtual ~ItemFetcher();
 
   virtual void* getItemFromContext(Tcl::Context& ctx) = 0;
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * TclItemPkgBase class definition
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-class Tcl::TclItemPkgBase : public Tcl::TclPkg, public Tcl::ItemFetcher {
-public:
-  TclItemPkgBase(Tcl_Interp* interp, const char* name, const char* version,
-                 int item_argn);
-
-  virtual ~TclItemPkgBase();
-
-  virtual void* getItemFromId(int id) = 0;
-
-  virtual void* getItemFromContext(Tcl::Context& ctx);
-
-  int itemArgn() const { return itsItemArgn; }
-
-private:
-  int itsItemArgn;
 };
 
 static const char vcid_tclitempkgbase_h[] = "$Header$";

@@ -49,20 +49,5 @@ template class Setter<const fixed_string&>;
 
 Tcl::ItemFetcher::~ItemFetcher() {}
 
-Tcl::TclItemPkgBase::TclItemPkgBase(Tcl_Interp* interp,
-                                    const char* name, const char* version,
-                                    int item_argn) :
-  TclPkg(interp, name, version),
-  itsItemArgn(item_argn)
-{}
-
-Tcl::TclItemPkgBase::~TclItemPkgBase() {}
-
-void* Tcl::TclItemPkgBase::getItemFromContext(Tcl::Context& ctx)
-{
-  int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
-  return getItemFromId(id);
-}
-
 static const char vcid_tclitempkgbase_cc[] = "$Header$";
 #endif // !TCLITEMPKGBASE_CC_DEFINED
