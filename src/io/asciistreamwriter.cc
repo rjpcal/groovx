@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Mon Jun 26 12:22:01 2000
+// written: Mon Jul 10 14:52:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,6 @@
 
 #include <iostream.h>
 #include <string>
-#include <typeinfo>
 #include <set>
 
 #define NO_TRACE
@@ -105,28 +104,6 @@ public:
   ios::iostate itsOriginalExceptionState;
 #endif
 
-  class DummyCountingWriter : public IO::Writer {
-  public:
-	 DummyCountingWriter() : itsCount(0) {}
-
-	 virtual void writeChar(const char*, char)             { ++itsCount; }
-	 virtual void writeInt(const char*, int)               { ++itsCount; }
-	 virtual void writeBool(const char*, bool)             { ++itsCount; }
-	 virtual void writeDouble(const char*, double)         { ++itsCount; }
-	 virtual void writeCstring(const char*, const char*)   { ++itsCount; }
-	 virtual void writeValueObj(const char*, const Value&) { ++itsCount; }
-	 virtual void writeObject(const char*, const IO::IoObject*)      { ++itsCount; }
-	 virtual void writeOwnedObject(const char*, const IO::IoObject*) { ++itsCount; }
-	 virtual void writeBaseClass(const char*, const IO::IoObject*)   { ++itsCount; }
-	 virtual void writeRoot(const IO::IoObject*) {}
-
-	 void reset() { itsCount = 0; }
-	 unsigned int attribCount() const { return itsCount; }
-
-  private:
-	 unsigned int itsCount;
-  };
-
   // Helper functions
 private:
   bool haveMoreObjectsToHandle() const {
@@ -195,8 +172,6 @@ public:
 void AsciiStreamWriter::Impl::flattenObject(const IO::IoObject* obj) {
 DOTRACE("AsciiStreamWriter::Impl::flattenObject");
 
-  static DummyCountingWriter counter;
-
   // Objects are written in the following format:
   //
   // { ?<version id>? <attribute count>
@@ -212,12 +187,8 @@ DOTRACE("AsciiStreamWriter::Impl::flattenObject");
   if ( serial_ver_id > 0 )
 	 itsBuf << 'v' << serial_ver_id << ' ';
 
-  //   ...get the attribute count...
-  counter.reset();
-  obj->writeTo(&counter);
-
   //   ...write the <attribute count>...
-  itsBuf << counter.attribCount() << '\n';
+  itsBuf << obj->ioAttribCount() << '\n';
 
   //   ...write the object's <attributes>...
   obj->writeTo(itsOwner);
