@@ -16,12 +16,13 @@ itcl::class Editor {
 	 private variable itsVisible true
 	 private variable itsFieldPanes
 	 private variable itsFieldControls
-	 private variable itsEditObjList {}
 	 private variable itsViewObjList {}
-	 private variable itsEditObj 0
+	 private variable itsEditObjs {}
 	 private variable itsViewObj 0
 	 private variable itsObjType Face
 	 private variable itsFieldNames {}
+	 private variable itsUpdateInProgress 0
+	 private variable itsAttribValues
 
 	 private method standardSettings {objs} {
 		  GrObj::alignmentMode $objs $GrObj::CENTER_ON_CENTER
@@ -37,14 +38,16 @@ itcl::class Editor {
 
 		  standardSettings $obj
 
-		  lappend itsEditObjList $obj
+		  $itsControls.editobjlist insert end $obj
+
 		  lappend itsViewObjList $obj
-		  selectEditObj $obj
+		  selectEditObjs $obj
 		  selectViewObj $obj
 	 }
 
 	 private method makePreviewObj {} {
-		  set obj [Tlist::createPreview $itsEditObjList]
+		  set obj [Tlist::createPreview \
+					 [$itsControls.editobjlist getcurselection]]
 		  lappend itsViewObjList $obj
 		  selectViewObj $obj
 	 }
@@ -58,29 +61,41 @@ itcl::class Editor {
 		  requestDraw
 	 }
 
-	 private method selectEditObj {obj} {
-		  set itsEditObj $obj
+	 private method updateControls {obj} {
+		  set itsUpdateInProgress 1
 
-		  $itsControls.editobjspinner delete 0 end
-		  $itsControls.editobjspinner insert 0 $itsEditObj
-
-		  if { $itsEditObj == $itsViewObj } {
+		  if { $obj == $itsViewObj } {
 				Toglet::setVisible $itsToglet false
 		  }
 
 		  foreach field $itsFieldNames {
 				set val [${itsObjType}::$field $obj]
 				$itsFieldControls($field) set $val
+				set itsAttribValues($field) $val
 		  }
 
-		  if { $itsEditObj == $itsViewObj } {
-				# need to force the controls to update before we draw the object
-				update
+		  # need to force the controls to update before we draw the object
+		  update
 
+		  if { $obj == $itsViewObj } {
 				Toglet::setVisible $itsToglet true
 
 				requestDraw
 		  }
+
+		  set itsUpdateInProgress 0
+	 }
+
+	 private method selectEditObjs {objs} {
+		  set itsEditObjs $objs
+
+		  if { [llength $objs] > 0 } {
+				updateControls [lindex $itsEditObjs 0]
+		  }
+	 }
+
+	 private method onEditObjSelect {} {
+		  selectEditObjs [$itsControls.editobjlist getcurselection]
 	 }
 
 	 private method requestDraw {} {
@@ -104,10 +119,6 @@ itcl::class Editor {
 		  return [lindex $objlist $current]
 	 }
 
-	 private method nextEditObj {step} {
-		  selectEditObj [findNextObj $step $itsEditObjList $itsEditObj]
-	 }
-
 	 private method nextViewObj {step} {
 		  selectViewObj [findNextObj $step $itsViewObjList $itsViewObj]
 	 }
@@ -117,8 +128,12 @@ itcl::class Editor {
 	 }
 
 	 private method setAttrib {name val} {
-		  if { $itsEditObj } {
-				${itsObjType}::$name $itsEditObj $val
+		  if { !$itsUpdateInProgress && [llength $itsEditObjs] > 0 } {
+				if { $itsAttribValues($name) != $val } {
+					 #puts "setting $itsEditObjs $name to $val"
+					 ${itsObjType}::$name $itsEditObjs $val
+					 set itsAttribValues($name) $val
+				}
 		  }
 	 }
 
@@ -153,6 +168,8 @@ itcl::class Editor {
 								-repeatdelay 500 -repeatinterval 250 \
 								-orient horizontal \
 								-command [itcl::code $this setAttrib $name]
+
+					 set itsAttribValues($name) 0
 
 					 pack $pane.$name -side top
 
@@ -202,11 +219,11 @@ itcl::class Editor {
 					 -command [itcl::code $this requestDraw]
 		  pack $itsControls.redraw -side left -anchor nw
 
-		  iwidgets::spinner $itsControls.editobjspinner \
-					 -labeltext "Edit object: " -fixed 5 \
-					 -increment [itcl::code $this nextEditObj 1] \
-					 -decrement [itcl::code $this nextEditObj -1]
-		  pack $itsControls.editobjspinner -side left -anchor nw
+		  iwidgets::scrolledlistbox $itsControls.editobjlist \
+					 -labeltext "Edit objects:" -selectmode extended \
+					 -hscrollmode dynamic \
+					 -selectioncommand [itcl::code $this onEditObjSelect]
+		  pack $itsControls.editobjlist -side left -anchor nw
 
 		  iwidgets::spinner $itsControls.viewobjspinner \
 					 -labeltext "View object: " -fixed 5 \
@@ -235,22 +252,30 @@ itcl::class Editor {
 
 	 public method loadObjects {filename} {
 		  set ids [ObjDb::loadObjects $filename]
-		  set itsEditObjList [${itsObjType}::findAll]
+
+		  $itsControls.editobjlist clear
+		  eval $itsControls.editobjlist insert end [${itsObjType}::findAll]
+		  standardSettings [$itsControls.editobjlist get 0 end]
+
 		  set itsViewObjList [GxNode::findAll]
-		  standardSettings $itsEditObjList
+
 		  return [llength $ids]
 	 }
 
 	 public method loadExpt {filename} {
 		  Expt::load $filename
-		  set itsEditObjList [${itsObjType}::findAll]
+
+		  $itsControls.editobjlist clear
+		  eval $itsControls.editobjlist insert end [${itsObjType}::findAll]
+		  standardSettings [$itsControls.editobjlist get 0 end]
+
 		  set itsViewObjList [GxNode::findAll]
-		  standardSettings $itsEditObjList
 	 }
 
 	 public method saveObjects {filename} {
-		  ObjDb::saveObjects $itsEditObjList $filename no
-		  return [llength $itsEditObjList]
+		  set objs [$itsControls.editobjlist get 0 end] 
+		  ObjDb::saveObjects $filename no
+		  return [llength $objs]
 	 }
 }
 
