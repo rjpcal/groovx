@@ -3,7 +3,7 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Thu Oct 14 11:34:16 1999
+// written: Mon Dec  6 21:51:10 1999
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -97,7 +97,7 @@ public:
 
     int result;
 
-    for (int i = 0; i < sizeof(Names_Procs)/sizeof(PkgName_PkgProc); ++i) {
+    for (size_t i = 0; i < sizeof(Names_Procs)/sizeof(PkgName_PkgProc); ++i) {
 		//		cerr << "initializing " << Names_Procs[i].PkgName << endl << flush;
 		result = Names_Procs[i].PkgProc(itsInterp);
 		if (result != TCL_OK) { itsStatus = result; }
