@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Thu Jul 19 13:24:31 2001
+// written: Sun Jul 22 15:50:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,9 +83,9 @@ DOTRACE("GrObjImpl::readFrom");
   }
 
   {
-	 int temp;
-	 reader->readValue("GrObj::unRenderMode", temp);
-	 itsRenderer.setUnMode(temp);
+    int temp;
+    reader->readValue("GrObj::unRenderMode", temp);
+    itsRenderer.setUnMode(temp);
   }
 
   {
@@ -169,7 +169,7 @@ void GrObjImpl::undraw(GWT::Canvas& canvas) const {
 DOTRACE("GrObjImpl::undraw");
   canvas.throwIfError("before GrObj::undraw");
 
-  switch (itsRenderer.getMode())
+  switch (itsRenderer.getUnMode())
     {
     case GrObj::DIRECT_RENDER:
     case GrObj::SWAP_FORE_BACK:
