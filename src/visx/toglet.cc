@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Thu Oct 14 12:39:34 1999
+// written: Thu Oct 14 16:19:16 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -489,26 +489,28 @@ DOTRACE("ToglConfig::takeFocus");
 void ToglConfig::writeEpsFile(const char* filename) {
 DOTRACE("ToglConfig::writeEpsFile");
 
-  // save the old color indices for foreground and background
-  GLint oldclear, oldindex;
-  glGetIntegerv(GL_INDEX_CLEAR_VALUE, &oldclear);
-  glGetIntegerv(GL_CURRENT_INDEX, &oldindex);
+  glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
+  {
+	 // Set fore/background colors to extremes for the purposes of EPS
+	 // rendering
+	 if ( GfxAttribs::usingRgba() ) {
+		glColor4d(0.0, 0.0, 0.0, 1.0);
+		glClearColor(1.0, 1.0, 1.0, 1.0);
+	 }
+	 else {
+		glIndexi(0);
+		glClearIndex(255);
+	 }
 
-  // set color indices to maximum values for the purposes of the EPS rendering
-  glClearIndex(255);
-  glIndexi(0);
-
-  // get a clear buffer
-  glClear(GL_COLOR_BUFFER_BIT);
-  swapBuffers();
-
-  // do the EPS dump
-  const int rgbFlag = 0;
-  Togl_DumpToEpsFile(itsWidget, filename, rgbFlag, dummyEpsCallback);
-
-  // restore the old color indices
-  glClearIndex(oldclear);
-  glIndexi(oldindex);
+	 // get a clear buffer
+	 glClear(GL_COLOR_BUFFER_BIT);
+	 swapBuffers();
+	 
+	 // do the EPS dump
+	 const int rgbFlag = 0;
+	 Togl_DumpToEpsFile(itsWidget, filename, rgbFlag, dummyEpsCallback);
+  }
+  glPopAttrib();
 
   // redisplay original image
   display();
