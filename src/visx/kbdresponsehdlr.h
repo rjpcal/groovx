@@ -3,7 +3,7 @@
 // kbdresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:11 1999
-// written: Mon Nov  8 16:23:43 1999
+// written: Tue Nov  9 09:27:46 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,10 +56,6 @@ public:
   virtual void rhBeginTrial() const;
   virtual void rhAbortTrial() const;
   virtual void rhHaltExpt() const;
-
-protected:
-  virtual void attend() const;
-  virtual void ignore() const;
 
 private:
   class Impl;
