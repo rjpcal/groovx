@@ -100,6 +100,17 @@ public:
 
   ~Impl() {}
 
+  void addLogInfo(const char* message)
+  {
+    const fstring date_string = Util::Time::wallClockNow().format();
+
+    infoLog.append("@");
+    infoLog.append(date_string);
+    infoLog.append(" ");
+    infoLog.append(message);
+    infoLog.append("\n");
+  }
+
   //
   // data members
   //
@@ -146,7 +157,7 @@ DOTRACE("ExptDriver::ExptDriver");
     cmd_line.append(" ");
   }
 
-  addLogInfo(cmd_line.c_str());
+  rep->addLogInfo(cmd_line.c_str());
 }
 
 ExptDriver::~ExptDriver() throw()
@@ -258,7 +269,7 @@ DOTRACE("ExptDriver::vxAllChildrenFinished");
 
   Util::log( "ExptDriver::vxAllChildrenFinished" );
 
-  addLogInfo("Experiment complete.");
+  rep->addLogInfo("Experiment complete.");
 
   storeData();
 
@@ -317,18 +328,6 @@ DOTRACE("ExptDriver::getInfoLog");
   return rep->infoLog.c_str();
 }
 
-void ExptDriver::addLogInfo(const char* message)
-{
-DOTRACE("ExptDriver::addLogInfo");
-  const fstring date_string = Util::Time::wallClockNow().format();
-
-  rep->infoLog.append("@");
-  rep->infoLog.append(date_string);
-  rep->infoLog.append(" ");
-  rep->infoLog.append(message);
-  rep->infoLog.append("\n");
-}
-
 fstring ExptDriver::getDoWhenComplete() const
 {
 DOTRACE("ExptDriver::getDoWhenComplete");
@@ -362,7 +361,7 @@ DOTRACE("ExptDriver::edBeginExpt");
       throw Util::Error("Can't begin experiment: there are no pending elements");
     }
 
-  addLogInfo("Beginning experiment.");
+  rep->addLogInfo("Beginning experiment.");
 
   rep->beginDate = Util::Time::wallClockNow().format();
   rep->hostname = System::theSystem().getenv("HOSTNAME");
@@ -412,7 +411,7 @@ DOTRACE("ExptDriver::pause");
 
   vxHalt();
 
-  addLogInfo("Experiment paused.");
+  rep->addLogInfo("Experiment paused.");
 
   rep->interp.eval(pauseMsgCmd);
 
@@ -428,7 +427,7 @@ DOTRACE("ExptDriver::pause");
 
   Tcl::Interp::clearEventQueue();
 
-  addLogInfo("Resuming experiment.");
+  rep->addLogInfo("Resuming experiment.");
 
   edResumeExpt();
 }
@@ -470,7 +469,7 @@ DOTRACE("ExptDriver::storeData");
   System::theSystem().chmod(expt_filename.c_str(), datafile_mode);
   System::theSystem().chmod(resp_filename.c_str(), datafile_mode);
 
-  addLogInfo("Experiment saved.");
+  rep->addLogInfo("Experiment saved.");
 }
 
 static const char vcid_exptdriver_cc[] = "$Header$";

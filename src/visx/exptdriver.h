@@ -125,10 +125,6 @@ public:
   /// Return the full contents of the info log.
   const char* getInfoLog() const;
 
-  /** Add a message to the info log. The message will automatically be
-      date/time-stamped. */
-  void addLogInfo(const char* message);
-
   /// Get the script to be executed when the experiment completes.
   fstring getDoWhenComplete() const;
 
