@@ -275,7 +275,8 @@ endif
 
 ALL_CC_OPTIONS := $(CC_SWITCHES) $(INCLUDE_PATH) $(CPP_DEFINES)
 
-$(OBJ)/%$(OBJ_EXT) : $(LOGS)/.timestamp $(SRC)/%.cc
+$(OBJ)/%$(OBJ_EXT) : $(SRC)/%.cc
+	@mkdir -p $(LOGS)
 	@echo $< >> $(LOGS)/CompileStats
 	@echo ""
 	$(CXX) $(ALL_CC_OPTIONS) \
@@ -482,11 +483,11 @@ cleaner: clean
 	find $(OBJ) -follow -name \*.ii -exec rm -f {} \;
 
 # Count the lines in all source files
-count: $(LOGS)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
-	wc $+ | tee $(LOGS)/count
+count: $(LOGS)/.timestamp
+	wc $(ALL_SOURCES) $(ALL_HEADERS) | tee $(LOGS)/count
 
 count_sort: $(LOGS)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
-	wc $+ | sort -n | tee $(LOGS)/count_sort
+	wc $(ALL_SOURCES) $(ALL_HEADERS) | sort -n | tee $(LOGS)/count_sort
 
 do_sizes:
 	ls -lLR obj/$(PLATFORM) | grep "\.do" | sort -n +4 > do_sizes
@@ -500,12 +501,12 @@ H_TAGS: $(ALL_HEADERS)
 	find $(SRC) -name \*.h | $(ETAGS) - -o $@
 
 # Count the number of non-commented source lines
-ncsl: $(LOGS)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
-	NCSL $+ | tee $(LOGS)/ncsl
+ncsl: $(LOGS)/.timestamp
+	NCSL $(ALL_SOURCES) $(ALL_HEADERS) | tee $(LOGS)/ncsl
 
 # Count the number of non-commented source lines and sort
-ncsl_sort: $(LOGS)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
-	NCSL $+ | sort -n | tee $(LOGS)/ncsl_sort
+ncsl_sort: $(LOGS)/.timestamp
+	NCSL $(ALL_SOURCES) $(ALL_HEADERS) | sort -n | tee $(LOGS)/ncsl_sort
 
 o_sizes:
 	ls -lLR obj/$(PLATFORM) | grep "\.o" | sort -n +4 > o_sizes
