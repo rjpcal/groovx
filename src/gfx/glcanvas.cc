@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Nov 20 20:29:44 2002
+// written: Wed Nov 20 20:42:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "gfx/glcanvas.h"
 
+#include "gfx/glxopts.h"
 #include "gfx/glxwrapper.h"
 
 #include "gx/bmapdata.h"
@@ -36,23 +37,23 @@
 class GLCanvas::Impl
 {
 public:
-  Impl(Display* dpy, GlxOpts& opts, GlxWrapper* share) :
-    glx(new GlxWrapper(dpy, opts, share)),
-    opts(opts)
+  Impl(Display* dpy, GlxWrapper* share) :
+    opts(new GlxOpts),
+    glx(new GlxWrapper(dpy, *opts, share))
   {}
 
+  shared_ptr<GlxOpts> opts; // FIXME avoid duplication of GlxOpts in GlxWrapper?
   shared_ptr<GlxWrapper> glx;
-  GlxOpts opts; // FIXME avoid duplication of GlxOpts in GlxWrapper?
 };
 
-GLCanvas::GLCanvas(Display* dpy, GlxOpts& opts, GlxWrapper* share) :
-  rep(new Impl(dpy, opts, share))
+GLCanvas::GLCanvas(Display* dpy, GlxWrapper* share) :
+  rep(new Impl(dpy, share))
 {}
 
-GLCanvas* GLCanvas::make(Display* dpy, GlxOpts& opts, GlxWrapper* share)
+GLCanvas* GLCanvas::make(Display* dpy, GlxWrapper* share)
 {
 DOTRACE("GLCanvas::make");
-  return new GLCanvas(dpy, opts, share);
+  return new GLCanvas(dpy, share);
 }
 
 GLCanvas::~GLCanvas()
@@ -78,7 +79,7 @@ DOTRACE("GLCanvas::makeCurrent");
   rep->glx->makeCurrent(win);
 
   // Check for a single/double buffering snafu
-  if (rep->opts.doubleFlag == 0 && isDoubleBuffered())
+  if (rep->opts->doubleFlag == 0 && isDoubleBuffered())
     {
       // We requested single buffering but had to accept a double buffered
       // visual.  Set the GL draw buffer to be the front buffer to
@@ -93,7 +94,10 @@ void GLCanvas::glxFlush(Window win)
 {
 DOTRACE("GLCanvas::glxFlush");
 
-  rep->glx->flush(win);
+  if (rep->opts->doubleFlag)
+    rep->glx->swapBuffers(win);
+  else
+    flushOutput();
 }
 
 Gfx::Vec2<int> GLCanvas::screenFromWorld(
@@ -200,14 +204,14 @@ bool GLCanvas::isRgba() const
 {
 DOTRACE("GLCanvas::isRgba");
 
-  return rep->opts.rgbaFlag;
+  return rep->opts->rgbaFlag;
 }
 
 bool GLCanvas::isColorIndex() const
 {
 DOTRACE("GLCanvas::isColorIndex");
 
-  return !(rep->opts.rgbaFlag);
+  return !(rep->opts->rgbaFlag);
 }
 
 bool GLCanvas::isDoubleBuffered() const

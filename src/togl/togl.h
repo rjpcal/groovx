@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Wed Nov 13 22:26:11 2002
+// written: Wed Nov 20 20:32:22 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -63,9 +63,6 @@ public:
   virtual void swapBuffers();
 
   // Query functions
-  bool isRgba() const;
-  bool isDoubleBuffered() const;
-  unsigned int bitsPerPixel() const;
   bool hasPrivateCmap() const;
 
   // Color index mode

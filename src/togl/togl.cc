@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Nov 20 20:29:28 2002
+// written: Wed Nov 20 20:37:33 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -27,14 +27,12 @@
 #include "togl/togl.h"
 
 #include "gfx/glcanvas.h"
-#include "gfx/glxopts.h"
 
 #include "gx/rgbacolor.h"
 
 #include "tcl/tclsafeinterp.h"
 
 #include "util/error.h"
-#include "util/pointers.h"
 #include "util/ref.h"
 
 #include <X11/Xlib.h>
@@ -65,7 +63,6 @@ private:
 public:
   Togl* itsOwner;
   const Tk_Window itsTkWin;
-  shared_ptr<GlxOpts> itsOpts;
   Util::SoftRef<GLCanvas> itsCanvas;
 
   bool itsPrivateCmapFlag;
@@ -100,7 +97,6 @@ Tk_ClassProcs toglProcs =
 Togl::Impl::Impl(Togl* owner) :
   itsOwner(owner),
   itsTkWin(owner->tkWin()),
-  itsOpts(new GlxOpts),
   itsCanvas(),
 
   itsPrivateCmapFlag(false)
@@ -193,8 +189,7 @@ Window Togl::Impl::cClassCreateProc(Tk_Window tkwin,
 
   Display* dpy = Tk_Display(tkwin);
 
-  rep->itsCanvas =
-    Util::SoftRef<GLCanvas>(GLCanvas::make(dpy, *(rep->itsOpts)));
+  rep->itsCanvas = Util::SoftRef<GLCanvas>(GLCanvas::make(dpy));
 
   Visual* visual = rep->itsCanvas->visual();
   int screen = rep->itsCanvas->screen();
@@ -237,7 +232,7 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
   // Bind the context to the window and make it the current context
   rep->itsCanvas->makeCurrent(win);
 
-  if (rep->itsOpts->rgbaFlag)
+  if (rep->itsCanvas->isRgba())
     {
       DOTRACE("GlxWrapper::GlxWrapper::rgbaFlag");
       rep->itsCanvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
@@ -282,9 +277,6 @@ DOTRACE("Togl::displayCallback");
 
 void Togl::makeCurrent() const          { rep->itsCanvas->makeCurrent(Tk_WindowId(rep->itsTkWin)); }
 void Togl::swapBuffers()                { rep->swapBuffers(); }
-bool Togl::isRgba() const               { return rep->itsCanvas->isRgba(); }
-bool Togl::isDoubleBuffered() const     { return rep->itsCanvas->isDoubleBuffered(); }
-unsigned int Togl::bitsPerPixel() const { return rep->itsCanvas->bitsPerPixel(); }
 bool Togl::hasPrivateCmap() const       { return rep->itsPrivateCmapFlag; }
 
 Togl::Color Togl::queryColor(unsigned int color_index) const

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Wed Nov 20 20:29:55 2002
+// written: Wed Nov 20 20:33:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,17 +17,16 @@
 
 #include <X11/Xlib.h>
 
-class GlxOpts;
 class GlxWrapper;
 
 /// GLCanvas implements Gfx::Canvas using OpenGL.
 class GLCanvas : public Gfx::Canvas
 {
 protected:
-  GLCanvas(Display* dpy, GlxOpts& opts, GlxWrapper* share = 0);
+  GLCanvas(Display* dpy, GlxWrapper* share = 0);
 
 public:
-  static GLCanvas* make(Display* dpy, GlxOpts& opts, GlxWrapper* share = 0);
+  static GLCanvas* make(Display* dpy, GlxWrapper* share = 0);
 
   virtual ~GLCanvas();
 

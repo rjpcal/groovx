@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:03 2002
-// written: Wed Nov 20 19:57:03 2002
+// written: Wed Nov 20 20:39:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,14 +13,11 @@
 #ifndef GLXWRAPPER_H_DEFINED
 #define GLXWRAPPER_H_DEFINED
 
-#include "gfx/glxopts.h"
-
 #include "util/ref.h"
 
 #include <GL/glx.h>
 #include <X11/Xlib.h>
 
-class GlxAttribs;
 class GlxOpts;
 
 class GlxWrapper
@@ -29,7 +26,6 @@ private:
   Display* itsDisplay;
   XVisualInfo* itsVisInfo;
   GLXContext itsContext;
-  GlxOpts itsOpts;
 
 public:
   GlxWrapper(Display* dpy, GlxOpts& opts, GlxWrapper* share = 0);
@@ -51,8 +47,8 @@ public:
 
   GLXContext context() const { return itsContext; }
 
-  /// Flushes or swaps buffers for single- or double-buffering, respectively.
-  void flush(Window window) const;
+  /// Swaps buffers if in double-buffering mode.
+  void swapBuffers(Window window) const;
 };
 
 static const char vcid_glxwrapper_h[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:07 2002
-// written: Wed Nov 20 19:58:21 2002
+// written: Wed Nov 20 20:40:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,8 +34,7 @@ namespace
 GlxWrapper::GlxWrapper(Display* dpy, GlxOpts& opts, GlxWrapper* share) :
   itsDisplay(dpy),
   itsVisInfo(0),
-  itsContext(0),
-  itsOpts(opts)
+  itsContext(0)
 {
 DOTRACE("GlxWrapper::GlxWrapper");
 
@@ -136,16 +135,9 @@ DOTRACE("GlxWrapper::isDoubleBuffered");
   return bool(dbl_flag);
 }
 
-void GlxWrapper::flush(Window window) const
+void GlxWrapper::swapBuffers(Window window) const
 {
-  if (itsOpts.doubleFlag)
-    {
-      glXSwapBuffers(itsDisplay, window);
-    }
-  else
-    {
-      glFlush();
-    }
+  glXSwapBuffers(itsDisplay, window);
 }
 
 static const char vcid_glxwrapper_cc[] = "$Header$";
