@@ -1,0 +1,465 @@
+1 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_scale_12.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+2 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_scale_12.obj...conversion ok
+2 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/attention/hmax/stimuli/evb_scale_12.obj...rename ok
+3 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_scale_16.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+4 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_scale_16.obj...conversion ok
+4 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/attention/hmax/stimuli/evb_scale_16.obj...rename ok
+5 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_scale_8.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+6 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_scale_8.obj...conversion ok
+6 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/attention/hmax/stimuli/evb_scale_8.obj...rename ok
+7 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+8 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_1.obj...conversion ok
+8 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_1.obj...rename ok
+9 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_16.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+10 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_16.obj...conversion ok
+10 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_16.obj...rename ok
+11 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+12 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_2.obj...conversion ok
+12 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_2.obj...rename ok
+13 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_24.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+14 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_24.obj...conversion ok
+14 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_24.obj...rename ok
+15 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_4.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+16 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_4.obj...conversion ok
+16 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_4.obj...rename ok
+17 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_8.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+18 /cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_8.obj...conversion ok
+18 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/attention/hmax/stimuli/evb_width_8.obj...rename ok
+19 /cit/rjpeters/science/projects/attention/hmax/stimuli/fish_grid3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Fish, serial version 3 is not supported. The lowest supported version is 4. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+20 /cit/rjpeters/science/projects/attention/hmax/stimuli/fish_grid3.obj...conversion ok
+20 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/attention/hmax/stimuli/fish_grid3.obj...rename ok
+21 /cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Fish, serial version 3 is not supported. The lowest supported version is 4. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+22 /cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_1.obj...conversion ok
+22 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_1.obj...rename ok
+23 /cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_16.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Fish, serial version 3 is not supported. The lowest supported version is 4. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+24 /cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_16.obj...conversion ok
+24 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_16.obj...rename ok
+25 /cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Fish, serial version 3 is not supported. The lowest supported version is 4. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+26 /cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_2.obj...conversion ok
+26 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_2.obj...rename ok
+27 /cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Fish, serial version 3 is not supported. The lowest supported version is 4. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+28 /cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_3.obj...conversion ok
+28 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_3.obj...rename ok
+29 /cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_4.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Fish, serial version 3 is not supported. The lowest supported version is 4. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+30 /cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_4.obj...conversion ok
+30 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_4.obj...rename ok
+31 /cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_8.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Fish, serial version 3 is not supported. The lowest supported version is 4. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+32 /cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_8.obj...conversion ok
+32 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/attention/hmax/stimuli/fishes_width_8.obj...rename ok
+33 /cit/rjpeters/science/projects/attention/hmax/stimuli/gridded3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+34 /cit/rjpeters/science/projects/attention/hmax/stimuli/gridded3.obj...conversion ok
+34 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/attention/hmax/stimuli/gridded3.obj...rename ok
+35 /cit/rjpeters/science/projects/face/faces_triads/surf2001/adapt1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+36 /cit/rjpeters/science/projects/face/faces_triads/surf2001/adapt1.obj...conversion ok
+36 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/surf2001/adapt1.obj...rename ok
+37 /cit/rjpeters/science/projects/face/faces_triads/surf2001/adapt2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+38 /cit/rjpeters/science/projects/face/faces_triads/surf2001/adapt2.obj...conversion ok
+38 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/surf2001/adapt2.obj...rename ok
+39 /cit/rjpeters/science/projects/face/faces_triads/surf2001/adapt3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Fish, serial version 2 is not supported. The lowest supported version is 4. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+40 /cit/rjpeters/science/projects/face/faces_triads/surf2001/adapt3.obj...conversion ok
+40 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/surf2001/adapt3.obj...rename ok
+41 /cit/rjpeters/science/projects/face/faces_triads/surf2001/test1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+42 /cit/rjpeters/science/projects/face/faces_triads/surf2001/test1.obj...conversion ok
+42 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/surf2001/test1.obj...rename ok
+43 /cit/rjpeters/science/projects/face/faces_triads/surf2001/test2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+44 /cit/rjpeters/science/projects/face/faces_triads/surf2001/test2.obj...conversion ok
+44 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/surf2001/test2.obj...rename ok
+45 /cit/rjpeters/science/projects/face/faces_triads/surf2001/test3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Fish, serial version 2 is not supported. The lowest supported version is 4. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+46 /cit/rjpeters/science/projects/face/faces_triads/surf2001/test3.obj...conversion ok
+46 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/surf2001/test3.obj...rename ok
+47 /cit/rjpeters/science/projects/face/faces_triads/bfaces.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+48 /cit/rjpeters/science/projects/face/faces_triads/bfaces.obj...conversion ok
+48 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/bfaces.obj...rename ok
+49 /cit/rjpeters/science/projects/face/faces_triads/bfaces_all.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+50 /cit/rjpeters/science/projects/face/faces_triads/bfaces_all.obj...conversion ok
+50 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/bfaces_all.obj...rename ok
+51 /cit/rjpeters/science/projects/face/faces_triads/bfaces_ed_mh.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+52 /cit/rjpeters/science/projects/face/faces_triads/bfaces_ed_mh.obj...conversion ok
+52 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/bfaces_ed_mh.obj...rename ok
+53 /cit/rjpeters/science/projects/face/faces_triads/bfaces_ed_nl.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+54 /cit/rjpeters/science/projects/face/faces_triads/bfaces_ed_nl.obj...conversion ok
+54 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/bfaces_ed_nl.obj...rename ok
+55 /cit/rjpeters/science/projects/face/faces_triads/bfaces_eh_ed.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+56 /cit/rjpeters/science/projects/face/faces_triads/bfaces_eh_ed.obj...conversion ok
+56 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/bfaces_eh_ed.obj...rename ok
+57 /cit/rjpeters/science/projects/face/faces_triads/bfaces_eh_mh.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+58 /cit/rjpeters/science/projects/face/faces_triads/bfaces_eh_mh.obj...conversion ok
+58 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/bfaces_eh_mh.obj...rename ok
+59 /cit/rjpeters/science/projects/face/faces_triads/bfaces_eh_nl.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+60 /cit/rjpeters/science/projects/face/faces_triads/bfaces_eh_nl.obj...conversion ok
+60 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/bfaces_eh_nl.obj...rename ok
+61 /cit/rjpeters/science/projects/face/faces_triads/bfaces_nl_mh.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+62 /cit/rjpeters/science/projects/face/faces_triads/bfaces_nl_mh.obj...conversion ok
+62 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/bfaces_nl_mh.obj...rename ok
+63 /cit/rjpeters/science/projects/face/faces_triads/evb0.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+64 /cit/rjpeters/science/projects/face/faces_triads/evb0.obj...conversion ok
+64 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb0.obj...rename ok
+65 /cit/rjpeters/science/projects/face/faces_triads/evb1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+66 /cit/rjpeters/science/projects/face/faces_triads/evb1.obj...conversion ok
+66 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb1.obj...rename ok
+67 /cit/rjpeters/science/projects/face/faces_triads/evb2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+68 /cit/rjpeters/science/projects/face/faces_triads/evb2.obj...conversion ok
+68 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb2.obj...rename ok
+69 /cit/rjpeters/science/projects/face/faces_triads/evb3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+70 /cit/rjpeters/science/projects/face/faces_triads/evb3.obj...conversion ok
+70 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb3.obj...rename ok
+71 /cit/rjpeters/science/projects/face/faces_triads/evb_2d_1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+72 /cit/rjpeters/science/projects/face/faces_triads/evb_2d_1.obj...conversion ok
+72 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_2d_1.obj...rename ok
+73 /cit/rjpeters/science/projects/face/faces_triads/evb_2d_2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+74 /cit/rjpeters/science/projects/face/faces_triads/evb_2d_2.obj...conversion ok
+74 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_2d_2.obj...rename ok
+75 /cit/rjpeters/science/projects/face/faces_triads/evb_2d_3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+76 /cit/rjpeters/science/projects/face/faces_triads/evb_2d_3.obj...conversion ok
+76 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_2d_3.obj...rename ok
+77 /cit/rjpeters/science/projects/face/faces_triads/evb_3d_1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+78 /cit/rjpeters/science/projects/face/faces_triads/evb_3d_1.obj...conversion ok
+78 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_3d_1.obj...rename ok
+79 /cit/rjpeters/science/projects/face/faces_triads/evb_3d_2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+80 /cit/rjpeters/science/projects/face/faces_triads/evb_3d_2.obj...conversion ok
+80 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_3d_2.obj...rename ok
+81 /cit/rjpeters/science/projects/face/faces_triads/evb_3d_3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+82 /cit/rjpeters/science/projects/face/faces_triads/evb_3d_3.obj...conversion ok
+82 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_3d_3.obj...rename ok
+83 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_0.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+84 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_0.obj...conversion ok
+84 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_rotate_0.obj...rename ok
+85 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_105.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+86 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_105.obj...conversion ok
+86 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_rotate_105.obj...rename ok
+87 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_120.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+88 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_120.obj...conversion ok
+88 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_rotate_120.obj...rename ok
+89 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_135.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+90 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_135.obj...conversion ok
+90 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_rotate_135.obj...rename ok
+91 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_15.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+92 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_15.obj...conversion ok
+92 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_rotate_15.obj...rename ok
+93 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_150.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+94 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_150.obj...conversion ok
+94 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_rotate_150.obj...rename ok
+95 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_165.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+96 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_165.obj...conversion ok
+96 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_rotate_165.obj...rename ok
+97 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_30.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+98 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_30.obj...conversion ok
+98 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_rotate_30.obj...rename ok
+99 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_45.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+100 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_45.obj...conversion ok
+100 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_rotate_45.obj...rename ok
+101 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_60.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+102 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_60.obj...conversion ok
+102 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_rotate_60.obj...rename ok
+103 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_75.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+104 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_75.obj...conversion ok
+104 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_rotate_75.obj...rename ok
+105 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_90.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+106 /cit/rjpeters/science/projects/face/faces_triads/evb_rotate_90.obj...conversion ok
+106 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evb_rotate_90.obj...rename ok
+107 /cit/rjpeters/science/projects/face/faces_triads/evp1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+108 /cit/rjpeters/science/projects/face/faces_triads/evp1.obj...conversion ok
+108 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evp1.obj...rename ok
+109 /cit/rjpeters/science/projects/face/faces_triads/evp2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+110 /cit/rjpeters/science/projects/face/faces_triads/evp2.obj...conversion ok
+110 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evp2.obj...rename ok
+111 /cit/rjpeters/science/projects/face/faces_triads/evp3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+112 /cit/rjpeters/science/projects/face/faces_triads/evp3.obj...conversion ok
+112 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evp3.obj...rename ok
+113 /cit/rjpeters/science/projects/face/faces_triads/evp_2d_1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+114 /cit/rjpeters/science/projects/face/faces_triads/evp_2d_1.obj...conversion ok
+114 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evp_2d_1.obj...rename ok
+115 /cit/rjpeters/science/projects/face/faces_triads/evp_2d_2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+116 /cit/rjpeters/science/projects/face/faces_triads/evp_2d_2.obj...conversion ok
+116 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evp_2d_2.obj...rename ok
+117 /cit/rjpeters/science/projects/face/faces_triads/evp_2d_3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+118 /cit/rjpeters/science/projects/face/faces_triads/evp_2d_3.obj...conversion ok
+118 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evp_2d_3.obj...rename ok
+119 /cit/rjpeters/science/projects/face/faces_triads/evp_3d_1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+120 /cit/rjpeters/science/projects/face/faces_triads/evp_3d_1.obj...conversion ok
+120 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evp_3d_1.obj...rename ok
+121 /cit/rjpeters/science/projects/face/faces_triads/evp_3d_2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+122 /cit/rjpeters/science/projects/face/faces_triads/evp_3d_2.obj...conversion ok
+122 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evp_3d_2.obj...rename ok
+123 /cit/rjpeters/science/projects/face/faces_triads/evp_3d_3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+124 /cit/rjpeters/science/projects/face/faces_triads/evp_3d_3.obj...conversion ok
+124 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/evp_3d_3.obj...rename ok
+125 /cit/rjpeters/science/projects/face/faces_triads/faces6105.5.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+126 /cit/rjpeters/science/projects/face/faces_triads/faces6105.5.obj...conversion ok
+126 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/faces6105.5.obj...rename ok
+127 /cit/rjpeters/science/projects/face/faces_triads/faces6177.2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+128 /cit/rjpeters/science/projects/face/faces_triads/faces6177.2.obj...conversion ok
+128 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/faces6177.2.obj...rename ok
+129 /cit/rjpeters/science/projects/face/faces_triads/faces6177.6.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+130 /cit/rjpeters/science/projects/face/faces_triads/faces6177.6.obj...conversion ok
+130 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/faces6177.6.obj...rename ok
+131 /cit/rjpeters/science/projects/face/faces_triads/faces6204.1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+132 /cit/rjpeters/science/projects/face/faces_triads/faces6204.1.obj...conversion ok
+132 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/faces6204.1.obj...rename ok
+133 /cit/rjpeters/science/projects/face/faces_triads/faces6204.4.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+134 /cit/rjpeters/science/projects/face/faces_triads/faces6204.4.obj...conversion ok
+134 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/faces6204.4.obj...rename ok
+135 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_0.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+136 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_0.obj...conversion ok
+136 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_0.obj...rename ok
+137 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_105.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+138 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_105.obj...conversion ok
+138 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_105.obj...rename ok
+139 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_120.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+140 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_120.obj...conversion ok
+140 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_120.obj...rename ok
+141 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_135.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+142 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_135.obj...conversion ok
+142 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_135.obj...rename ok
+143 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_15.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+144 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_15.obj...conversion ok
+144 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_15.obj...rename ok
+145 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_150.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+146 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_150.obj...conversion ok
+146 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_150.obj...rename ok
+147 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_165.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+148 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_165.obj...conversion ok
+148 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_165.obj...rename ok
+149 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_30.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+150 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_30.obj...conversion ok
+150 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_30.obj...rename ok
+151 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_45.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+152 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_45.obj...conversion ok
+152 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_45.obj...rename ok
+153 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_60.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+154 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_60.obj...conversion ok
+154 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_60.obj...rename ok
+155 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_75.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+156 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_75.obj...conversion ok
+156 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_75.obj...rename ok
+157 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_90.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+158 /cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_90.obj...conversion ok
+158 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/filled_evb_rotate_90.obj...rename ok
+159 /cit/rjpeters/science/projects/face/faces_triads/fishes_c1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Fish, serial version 3 is not supported. The lowest supported version is 4. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+160 /cit/rjpeters/science/projects/face/faces_triads/fishes_c1.obj...conversion ok
+160 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/fishes_c1.obj...rename ok
+161 /cit/rjpeters/science/projects/face/faces_triads/fishes_c2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Fish, serial version 3 is not supported. The lowest supported version is 4. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+162 /cit/rjpeters/science/projects/face/faces_triads/fishes_c2.obj...conversion ok
+162 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/fishes_c2.obj...rename ok
+163 /cit/rjpeters/science/projects/face/faces_triads/fishes_c3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Fish, serial version 3 is not supported. The lowest supported version is 4. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+164 /cit/rjpeters/science/projects/face/faces_triads/fishes_c3.obj...conversion ok
+164 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/fishes_c3.obj...rename ok
+165 /cit/rjpeters/science/projects/face/faces_triads/fishes_c4.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Fish, serial version 3 is not supported. The lowest supported version is 4. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+166 /cit/rjpeters/science/projects/face/faces_triads/fishes_c4.obj...conversion ok
+166 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/fishes_c4.obj...rename ok
+167 /cit/rjpeters/science/projects/face/faces_triads/fishes_or.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Fish, serial version 3 is not supported. The lowest supported version is 4. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+168 /cit/rjpeters/science/projects/face/faces_triads/fishes_or.obj...conversion ok
+168 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/fishes_or.obj...rename ok
+169 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_0.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+170 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_0.obj...conversion ok
+170 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_0.obj...rename ok
+171 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_105.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+172 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_105.obj...conversion ok
+172 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_105.obj...rename ok
+173 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_120.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+174 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_120.obj...conversion ok
+174 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_120.obj...rename ok
+175 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_135.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+176 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_135.obj...conversion ok
+176 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_135.obj...rename ok
+177 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_15.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+178 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_15.obj...conversion ok
+178 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_15.obj...rename ok
+179 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_150.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+180 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_150.obj...conversion ok
+180 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_150.obj...rename ok
+181 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_165.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+182 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_165.obj...conversion ok
+182 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_165.obj...rename ok
+183 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_30.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+184 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_30.obj...conversion ok
+184 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_30.obj...rename ok
+185 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_45.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+186 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_45.obj...conversion ok
+186 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_45.obj...rename ok
+187 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_60.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+188 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_60.obj...conversion ok
+188 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_60.obj...rename ok
+189 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_75.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+190 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_75.obj...conversion ok
+190 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_75.obj...rename ok
+191 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_90.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+192 /cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_90.obj...conversion ok
+192 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/inner_evb_rotate_90.obj...rename ok
+193 /cit/rjpeters/science/projects/face/faces_triads/mfaces.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+194 /cit/rjpeters/science/projects/face/faces_triads/mfaces.obj...conversion ok
+194 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/mfaces.obj...rename ok
+195 /cit/rjpeters/science/projects/face/faces_triads/mfaces_oln.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+196 /cit/rjpeters/science/projects/face/faces_triads/mfaces_oln.obj...conversion ok
+196 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/mfaces_oln.obj...rename ok
+197 /cit/rjpeters/science/projects/face/faces_triads/mfaces_s50.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+198 /cit/rjpeters/science/projects/face/faces_triads/mfaces_s50.obj...conversion ok
+198 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/mfaces_s50.obj...rename ok
+199 /cit/rjpeters/science/projects/face/faces_triads/mfaces_s50_c1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+200 /cit/rjpeters/science/projects/face/faces_triads/mfaces_s50_c1.obj...conversion ok
+200 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/mfaces_s50_c1.obj...rename ok
+201 /cit/rjpeters/science/projects/face/faces_triads/mfaces_s50_c2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+202 /cit/rjpeters/science/projects/face/faces_triads/mfaces_s50_c2.obj...conversion ok
+202 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/mfaces_s50_c2.obj...rename ok
+203 /cit/rjpeters/science/projects/face/faces_triads/mfaces_s50_c3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+204 /cit/rjpeters/science/projects/face/faces_triads/mfaces_s50_c3.obj...conversion ok
+204 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/mfaces_s50_c3.obj...rename ok
+205 /cit/rjpeters/science/projects/face/faces_triads/mfaces_s50_c4.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+206 /cit/rjpeters/science/projects/face/faces_triads/mfaces_s50_c4.obj...conversion ok
+206 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/mfaces_s50_c4.obj...rename ok
+207 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_s50.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+208 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_s50.obj...conversion ok
+208 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nos_faces_s50.obj...rename ok
+209 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_s50_c1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+210 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_s50_c1.obj...conversion ok
+210 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nos_faces_s50_c1.obj...rename ok
+211 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_s50_c2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+212 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_s50_c2.obj...conversion ok
+212 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nos_faces_s50_c2.obj...rename ok
+213 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_s50_c3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+214 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_s50_c3.obj...conversion ok
+214 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nos_faces_s50_c3.obj...rename ok
+215 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_s50_c4.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+216 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_s50_c4.obj...conversion ok
+216 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nos_faces_s50_c4.obj...rename ok
+217 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_s55.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+218 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_s55.obj...conversion ok
+218 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nos_faces_s55.obj...rename ok
+219 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_s70.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+220 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_s70.obj...conversion ok
+220 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nos_faces_s70.obj...rename ok
+221 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_s85.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+222 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_s85.obj...conversion ok
+222 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nos_faces_s85.obj...rename ok
+223 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_sel.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+224 /cit/rjpeters/science/projects/face/faces_triads/nos_faces_sel.obj...conversion ok
+224 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nos_faces_sel.obj...rename ok
+225 /cit/rjpeters/science/projects/face/faces_triads/nosesn_faces_c1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+226 /cit/rjpeters/science/projects/face/faces_triads/nosesn_faces_c1.obj...conversion ok
+226 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nosesn_faces_c1.obj...rename ok
+227 /cit/rjpeters/science/projects/face/faces_triads/nosesn_faces_c2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+228 /cit/rjpeters/science/projects/face/faces_triads/nosesn_faces_c2.obj...conversion ok
+228 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nosesn_faces_c2.obj...rename ok
+229 /cit/rjpeters/science/projects/face/faces_triads/nosesn_faces_c3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+230 /cit/rjpeters/science/projects/face/faces_triads/nosesn_faces_c3.obj...conversion ok
+230 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nosesn_faces_c3.obj...rename ok
+231 /cit/rjpeters/science/projects/face/faces_triads/nosesn_faces_c4.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+232 /cit/rjpeters/science/projects/face/faces_triads/nosesn_faces_c4.obj...conversion ok
+232 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nosesn_faces_c4.obj...rename ok
+233 /cit/rjpeters/science/projects/face/faces_triads/nosesn_faces_or.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+234 /cit/rjpeters/science/projects/face/faces_triads/nosesn_faces_or.obj...conversion ok
+234 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nosesn_faces_or.obj...rename ok
+235 /cit/rjpeters/science/projects/face/faces_triads/nosmeh_faces_c1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+236 /cit/rjpeters/science/projects/face/faces_triads/nosmeh_faces_c1.obj...conversion ok
+236 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nosmeh_faces_c1.obj...rename ok
+237 /cit/rjpeters/science/projects/face/faces_triads/nosmeh_faces_c2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+238 /cit/rjpeters/science/projects/face/faces_triads/nosmeh_faces_c2.obj...conversion ok
+238 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nosmeh_faces_c2.obj...rename ok
+239 /cit/rjpeters/science/projects/face/faces_triads/nosmeh_faces_c3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+240 /cit/rjpeters/science/projects/face/faces_triads/nosmeh_faces_c3.obj...conversion ok
+240 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nosmeh_faces_c3.obj...rename ok
+241 /cit/rjpeters/science/projects/face/faces_triads/nosmeh_faces_c4.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+242 /cit/rjpeters/science/projects/face/faces_triads/nosmeh_faces_c4.obj...conversion ok
+242 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nosmeh_faces_c4.obj...rename ok
+243 /cit/rjpeters/science/projects/face/faces_triads/nosmeh_faces_or.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+244 /cit/rjpeters/science/projects/face/faces_triads/nosmeh_faces_or.obj...conversion ok
+244 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nosmeh_faces_or.obj...rename ok
+245 /cit/rjpeters/science/projects/face/faces_triads/nosnm_faces_c1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+246 /cit/rjpeters/science/projects/face/faces_triads/nosnm_faces_c1.obj...conversion ok
+246 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nosnm_faces_c1.obj...rename ok
+247 /cit/rjpeters/science/projects/face/faces_triads/nosnm_faces_c2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+248 /cit/rjpeters/science/projects/face/faces_triads/nosnm_faces_c2.obj...conversion ok
+248 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nosnm_faces_c2.obj...rename ok
+249 /cit/rjpeters/science/projects/face/faces_triads/nosnm_faces_c3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+250 /cit/rjpeters/science/projects/face/faces_triads/nosnm_faces_c3.obj...conversion ok
+250 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nosnm_faces_c3.obj...rename ok
+251 /cit/rjpeters/science/projects/face/faces_triads/nosnm_faces_c4.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+252 /cit/rjpeters/science/projects/face/faces_triads/nosnm_faces_c4.obj...conversion ok
+252 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nosnm_faces_c4.obj...rename ok
+253 /cit/rjpeters/science/projects/face/faces_triads/nosnm_faces_or.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+254 /cit/rjpeters/science/projects/face/faces_triads/nosnm_faces_or.obj...conversion ok
+254 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/nosnm_faces_or.obj...rename ok
+255 /cit/rjpeters/science/projects/face/faces_triads/pvb1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+256 /cit/rjpeters/science/projects/face/faces_triads/pvb1.obj...conversion ok
+256 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/pvb1.obj...rename ok
+257 /cit/rjpeters/science/projects/face/faces_triads/pvb2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+258 /cit/rjpeters/science/projects/face/faces_triads/pvb2.obj...conversion ok
+258 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/pvb2.obj...rename ok
+259 /cit/rjpeters/science/projects/face/faces_triads/pvb3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+260 /cit/rjpeters/science/projects/face/faces_triads/pvb3.obj...conversion ok
+260 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/pvb3.obj...rename ok
+261 /cit/rjpeters/science/projects/face/faces_triads/pvb_2d_1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+262 /cit/rjpeters/science/projects/face/faces_triads/pvb_2d_1.obj...conversion ok
+262 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/pvb_2d_1.obj...rename ok
+263 /cit/rjpeters/science/projects/face/faces_triads/pvb_2d_2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+264 /cit/rjpeters/science/projects/face/faces_triads/pvb_2d_2.obj...conversion ok
+264 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/pvb_2d_2.obj...rename ok
+265 /cit/rjpeters/science/projects/face/faces_triads/pvb_2d_3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+266 /cit/rjpeters/science/projects/face/faces_triads/pvb_2d_3.obj...conversion ok
+266 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/pvb_2d_3.obj...rename ok
+267 /cit/rjpeters/science/projects/face/faces_triads/pvb_3d_1.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+268 /cit/rjpeters/science/projects/face/faces_triads/pvb_3d_1.obj...conversion ok
+268 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/pvb_3d_1.obj...rename ok
+269 /cit/rjpeters/science/projects/face/faces_triads/pvb_3d_2.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+270 /cit/rjpeters/science/projects/face/faces_triads/pvb_3d_2.obj...conversion ok
+270 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/pvb_3d_2.obj...rename ok
+271 /cit/rjpeters/science/projects/face/faces_triads/pvb_3d_3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+272 /cit/rjpeters/science/projects/face/faces_triads/pvb_3d_3.obj...conversion ok
+272 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/pvb_3d_3.obj...rename ok
+273 /cit/rjpeters/science/projects/face/faces_triads/set4020.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+274 /cit/rjpeters/science/projects/face/faces_triads/set4020.obj...conversion ok
+274 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/set4020.obj...rename ok
+275 /cit/rjpeters/science/projects/face/faces_triads/set5999.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+276 /cit/rjpeters/science/projects/face/faces_triads/set5999.obj...conversion ok
+276 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/set5999.obj...rename ok
+277 /cit/rjpeters/science/projects/face/faces_triads/set8601.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+278 /cit/rjpeters/science/projects/face/faces_triads/set8601.obj...conversion ok
+278 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/set8601.obj...rename ok
+279 /cit/rjpeters/science/projects/face/faces_triads/set8617.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+280 /cit/rjpeters/science/projects/face/faces_triads/set8617.obj...conversion ok
+280 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/set8617.obj...rename ok
+281 /cit/rjpeters/science/projects/face/faces_triads/test_faces_3.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+282 /cit/rjpeters/science/projects/face/faces_triads/test_faces_3.obj...conversion ok
+282 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/test_faces_3.obj...rename ok
+283 /cit/rjpeters/science/projects/face/faces_triads/wilken2001.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+284 /cit/rjpeters/science/projects/face/faces_triads/wilken2001.obj...conversion ok
+284 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/faces_triads/wilken2001.obj...rename ok
+285 /cit/rjpeters/science/projects/face/source/bfaces.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+286 /cit/rjpeters/science/projects/face/source/bfaces.obj...conversion ok
+286 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/source/bfaces.obj...rename ok
+287 /cit/rjpeters/science/projects/face/source/bfaces_all.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+288 /cit/rjpeters/science/projects/face/source/bfaces_all.obj...conversion ok
+288 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/source/bfaces_all.obj...rename ok
+289 /cit/rjpeters/science/projects/face/source/bfaces_ed_mh.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+290 /cit/rjpeters/science/projects/face/source/bfaces_ed_mh.obj...conversion ok
+290 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/source/bfaces_ed_mh.obj...rename ok
+291 /cit/rjpeters/science/projects/face/source/bfaces_ed_nl.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+292 /cit/rjpeters/science/projects/face/source/bfaces_ed_nl.obj...conversion ok
+292 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/source/bfaces_ed_nl.obj...rename ok
+293 /cit/rjpeters/science/projects/face/source/bfaces_eh_ed.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+294 /cit/rjpeters/science/projects/face/source/bfaces_eh_ed.obj...conversion ok
+294 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/source/bfaces_eh_ed.obj...rename ok
+295 /cit/rjpeters/science/projects/face/source/bfaces_eh_mh.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+296 /cit/rjpeters/science/projects/face/source/bfaces_eh_mh.obj...conversion ok
+296 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/source/bfaces_eh_mh.obj...rename ok
+297 /cit/rjpeters/science/projects/face/source/bfaces_eh_nl.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+298 /cit/rjpeters/science/projects/face/source/bfaces_eh_nl.obj...conversion ok
+298 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/source/bfaces_eh_nl.obj...rename ok
+299 /cit/rjpeters/science/projects/face/source/bfaces_nl_mh.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+300 /cit/rjpeters/science/projects/face/source/bfaces_nl_mh.obj...conversion ok
+300 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/source/bfaces_nl_mh.obj...rename ok
+301 /cit/rjpeters/science/projects/face/source/mfaces_all.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+302 /cit/rjpeters/science/projects/face/source/mfaces_all.obj...conversion ok
+302 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/face/source/mfaces_all.obj...rename ok
+303 /cit/rjpeters/science/projects/fmri/new_bitmaps_huge/mfaces_hi.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+304 /cit/rjpeters/science/projects/fmri/new_bitmaps_huge/mfaces_hi.obj...conversion ok
+304 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/fmri/new_bitmaps_huge/mfaces_hi.obj...rename ok
+305 /cit/rjpeters/science/projects/fmri/new_bitmaps_huge/mfaces_lo.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in MorphyFace, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+306 /cit/rjpeters/science/projects/fmri/new_bitmaps_huge/mfaces_lo.obj...conversion ok
+306 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/fmri/new_bitmaps_huge/mfaces_lo.obj...rename ok
+307 /cit/rjpeters/science/projects/fmri/new_bitmaps_huge/lhouses_hi.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in House, serial version 2 is not supported. The lowest supported version is 3. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+308 /cit/rjpeters/science/projects/fmri/new_bitmaps_huge/lhouses_hi.obj...conversion ok
+308 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/fmri/new_bitmaps_huge/lhouses_hi.obj...rename ok
+309 /cit/rjpeters/science/projects/fmri/old_bitmaps/bfaces_all/bfaces_all.obj...read failed: ObjDb::loadObjects: IO::ReadVersionError: in Face, serial version 1 is not supported. The lowest supported version is 2. Try cvs tag xml_conversion_20040526 (IO::ReadVersionError)
+310 /cit/rjpeters/science/projects/fmri/old_bitmaps/bfaces_all/bfaces_all.obj...conversion ok
+310 /cit/rjpeters/oldobj//cit/rjpeters/science/projects/fmri/old_bitmaps/bfaces_all/bfaces_all.obj...rename ok
