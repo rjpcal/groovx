@@ -10,6 +10,8 @@ set MODULES [list]
 
 set PROJECT_LIBS [list]
 
+set PROJECT_OBJS [list]
+
 proc process_module { module } {
     set srcdir [file join $::SRCROOT [string tolower $module]]
     set objdir [file join $::OBJROOT [string tolower $module]]
@@ -24,6 +26,7 @@ proc process_module { module } {
 	set stem [file rootname [file tail $f]]
 	set objfile ${objdir}/${stem}${::OBJEXT}
 	lappend ::LIBRULES($libname) $objfile
+	lappend ::PROJECT_OBJS $objfile
     }
 }
 
@@ -36,6 +39,9 @@ proc print_makefile_output { } {
 
     puts -nonewline "PROJECT_LIBS := \\\n  "
     puts [join $::PROJECT_LIBS " \\\n  "]
+
+    puts -nonewline "PROJECT_OBJS := \\\n  "
+    puts [join $::PROJECT_OBJS " \\\n  "]
 }
 
 proc run { argv } {
