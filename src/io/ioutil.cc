@@ -3,7 +3,7 @@
 // stringifycmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:28 1999
-// written: Tue Dec  7 23:13:37 1999
+// written: Mon Mar  6 16:53:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,12 @@
 
 #include "stringifycmd.h"
 
-#include <strstream.h>
-#include <vector>
-#include <cstring>
-#include <typeinfo>
-
 #include "io.h"
+#include "util/arrays.h"
+
+#include <cstring>
+#include <strstream.h>
+#include <typeinfo>
 
 #include "asciistreamreader.h"
 #include "asciistreamwriter.h"
@@ -37,7 +37,7 @@ DOTRACE("Tcl::StringifyCmd::invoke");
   // Give ourselves a little extra space above what is returned by
   // io.charCount, so we have a chance to detect underestimates by
   // charCount.
-  vector<char> buf(buf_size+32);
+  fixed_block<char> buf(buf_size+32);
 
   ostrstream ost(&(buf[0]), buf_size+20);
 
@@ -54,9 +54,12 @@ DOTRACE("Tcl::StringifyCmd::invoke");
 	 }
   }
   catch (IoError& err) {
+	 err.appendMsg(" with buffer contents ==\n");
+
 	 buf[buf.size()-1] = '\0';
-	 string buf_contents(buf.begin(), buf.end());
-	 throw TclError(err.msg() + " with buffer contents ==\n" + buf_contents);
+	 err.appendMsg(&buf[0]);
+
+	 throw err;
   }
   returnCstring(&(buf[0]));
 }
@@ -74,7 +77,7 @@ DOTRACE("Tcl::DestringifyCmd::invoke");
 	 getIO().deserialize(ist, IO::BASES|IO::TYPENAME);
   }
   catch (IoError& err) {
-	 throw TclError(err.msg());
+	 throw TclError(err.msg_cstr());
   }
   returnVoid();
 }
@@ -83,13 +86,13 @@ void Tcl::WriteCmd::invoke() {
 DOTRACE("Tcl::WriteCmd::invoke");
   IO& io = getIO();   
 
-  int buf_size = 4096;
-  vector<char> buf(buf_size);
+  const int BUF_SIZE = 4096;
+  static_block<char, BUF_SIZE> buf;
 
-  ostrstream ost(&(buf[0]), buf_size-1);
+  ostrstream ost(&(buf[0]), buf.size()-1);
 
   DebugEval(typeid(io).name());
-  DebugEval(buf_size);
+  DebugEval(buf.size());
 
   AsciiStreamWriter writer(ost);
   writer.writeRoot(&io);
