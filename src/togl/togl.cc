@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Nov 13 22:26:56 2002
+// written: Wed Nov 20 14:43:49 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -34,7 +34,6 @@
 
 #include "togl/glxopts.h"
 #include "togl/glxwrapper.h"
-#include "togl/x11util.h"
 
 #include "util/error.h"
 #include "util/pointers.h"
@@ -153,6 +152,40 @@ Togl::Color Togl::Impl::queryColor(unsigned int color_index) const
   return color;
 }
 
+namespace
+{
+  Colormap findColormap(Display* dpy, XVisualInfo* visInfo, bool privateCmap)
+  {
+    // For RGB colormap or shared color-index colormap
+    if (!privateCmap)
+      {
+        int scrnum = DefaultScreen(dpy);
+
+        if (visInfo->visual == DefaultVisual(dpy, scrnum))
+          {
+            // Just share the default colormap
+            return DefaultColormap(dpy, scrnum);
+          }
+        else
+          {
+            // Make a new read-only colormap
+            return XCreateColormap(dpy,
+                                   RootWindow(dpy, visInfo->screen),
+                                   visInfo->visual, AllocNone);
+          }
+      }
+
+    // For private color-index colormap
+    else
+      {
+        // Use AllocAll to get a read/write colormap
+        return XCreateColormap(dpy,
+                               RootWindow(dpy, visInfo->screen),
+                               visInfo->visual, AllocAll);
+      }
+  }
+}
+
 Window Togl::Impl::cClassCreateProc(Tk_Window tkwin,
                                     Window parent,
                                     ClientData clientData)
@@ -165,8 +198,7 @@ Window Togl::Impl::cClassCreateProc(Tk_Window tkwin,
 
   XVisualInfo* visInfo = rep->itsGlx->visInfo();
 
-  Colormap cmap = X11Util::findColormap(dpy, visInfo,
-                                        rep->itsPrivateCmapFlag);
+  Colormap cmap = findColormap(dpy, visInfo, rep->itsPrivateCmapFlag);
 
   // Make sure Tk knows to switch to the new colormap when the cursor is over
   // this window when running in color index mode.
