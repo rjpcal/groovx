@@ -52,8 +52,8 @@ public:
 
   static const double SQRT_2;
 
-  static void linearCombo(int nelems, const double* w, int w_stride,
-								  const ConstSlice* elems, int dim,
+  static void linearCombo(const ConstSlice& vec,
+								  const ConstSlice* m2rows, int m2mrows,
 								  double* result);
 
 private:

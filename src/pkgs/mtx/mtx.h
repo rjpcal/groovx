@@ -13,47 +13,14 @@
 #ifndef KEANU_H_DEFINED
 #define KEANU_H_DEFINED
 
-#include <cstddef>
-
-class DataBlock {
-private:
-  DataBlock(const DataBlock& other); // not implemented
-  DataBlock& operator=(const DataBlock& other); // not implemented
-
-  // Class-specific operator new.
-  void* operator new(size_t bytes);
-
-  // Class-specific operator delete.
-  void operator delete(void* space);
-
-  DataBlock();
-  ~DataBlock();
-
-  static DataBlock* getEmptyDataBlock();
-
-  friend class DummyFriend; // to eliminate compiler warning
-
-public:
-  static DataBlock* makeDataCopy(const double* data, int data_length);
-
-  static DataBlock* makeBlank(int length);
-
-  static void makeUnique(DataBlock*& rep);
-
-  void incrRefCount() { ++itsRefCount; }
-  void decrRefCount() { if (--itsRefCount <= 0) delete this; }
-
-private:
-  int itsRefCount;
-
-public:
-  double* itsData;
-  unsigned int itsLength;
-};
+#include "datablock.h"
 
 class Mtx;
 
 class ConstSlice {
+private:
+  ConstSlice& operator=(const ConstSlice& other); // not implemented
+
 protected:
   double* itsData;
   int itsStride;
@@ -63,10 +30,10 @@ protected:
 
   friend class Mtx;
 
+public:
   ConstSlice(const double* d, int s, int n) :
 	 itsData(const_cast<double*>(d)), itsStride(s), itsNelems(n) {}
 
-public:
   ConstSlice() : itsData(0), itsStride(0), itsNelems(0) {}
 
   ConstSlice(const ConstSlice& other) :
@@ -75,12 +42,11 @@ public:
 	 itsNelems(other.itsNelems)
   {}
 
-  ConstSlice& operator=(const ConstSlice& other)
+  void rebind(const ConstSlice& other)
   {
 	 itsData = other.itsData;
 	 itsStride = other.itsStride;
 	 itsNelems = other.itsNelems;
-	 return *this;
   }
 
   double operator[](int i) const { return *(address(i)); }
@@ -144,12 +110,14 @@ class Slice : public ConstSlice {
   double* address(int i) { return itsData + itsStride*i; }
 
 public:
-  Slice(const double* d, int s, int n) :
+  Slice(double* d, int s, int n) :
 	 ConstSlice(d,s,n) {}
 
   Slice() : ConstSlice() {}
 
   double& operator[](int i) { return *(address(i)); }
+
+  Slice& operator=(const Slice& other);
 
   Slice rightmost(int n)
   {
@@ -182,7 +150,17 @@ private:
   }
 
 public:
-  Mtx(mxArray* a);
+  enum StoragePolicy { COPY, BORROW };
+
+private:
+  // Sets up an appropriate DataBlock and increments its reference count
+  void initialize(double* data, int mrows, int ncols, StoragePolicy s = COPY);
+
+public:
+  Mtx(mxArray* a, StoragePolicy s = COPY);
+
+  Mtx(double* data, int mrows, int ncols, StoragePolicy s = COPY)
+  { initialize(data, mrows, ncols, s); }
 
   Mtx(int mrows, int ncols);
 
@@ -217,10 +195,6 @@ public:
 
   int ncols() const { return ncols_; }
 
-  double* data() { return start_; }
-
-  const double* data() const { return start_; }
-
   Mtx columnSlice(int column) const { return Mtx(*this, column); }
 
   Slice rowSlice(int row)
@@ -242,6 +216,7 @@ private:
   int ncols_;
   double* start_;
 };
+
 
 static const char vcid_keanu_h[] = "$Header$";
 #endif // !KEANU_H_DEFINED

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:28:26 2001
-// written: Mon Mar 12 16:44:11 2001
+// written: Mon Mar 12 17:41:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "num.h"
 
+#include "error.h"
 #include "mtx.h"
 
 #include "trace.h"
@@ -24,13 +25,13 @@ const double Num::SQRT_2 = 1.41421356237;
 bool Num::filled = false;
 double Num::lookup[TABLE_SIZE] = { 0.0 };
 
-void Num::linearCombo(int nelems, const double* w, int w_stride,
-							 const ConstSlice* elems, int dim,
+void Num::linearCombo(const ConstSlice& vec,
+							 const ConstSlice* m2rows, int m2mrows,
 							 double* result)
 {
 DOTRACE("Num::linearCombo");
 
-  // e.g nelems == 3   dim == 4
+  // e.g m2mrows == 3   m2ncols == 4
   //
   //               | e11  e12  e13  e14 |
   // [w1 w2 w3] *  | e21  e22  e23  e24 | = 
@@ -38,12 +39,18 @@ DOTRACE("Num::linearCombo");
   //
   //
   // [ w1*e11+w2*e21+w3*e31  w1*e12+w2*e22+w3*e32  ... ]
-  for (int d = 0; d < dim; ++d)
+
+  if (vec.nelems() != m2mrows)
+	 throw ErrorWithMsg("dimension mismatch in linearCombo");
+
+  int m2ncols = m2rows[0].nelems(); 
+
+  for (int col = 0; col < m2ncols; ++col)
 	 {
-		result[d] = 0.0;
-		for (int elem = 0; elem < nelems; ++elem)
+		result[col] = 0.0;
+		for (int row = 0; row < m2mrows; ++row)
 		  {
-			 result[d] += w[elem*w_stride] * (elems[elem][d]);
+			 result[col] += vec[row] * (m2rows[row][col]);
 		  }
 	 }
 }
