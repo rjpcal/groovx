@@ -224,6 +224,7 @@ $(exec_prefix)/lib/libDeepUtil$(LIB_EXT)
 
 # Common dependencies for all package libraries:
 $(VISX_LIB_DIR)/algotest.$(SHLIB_EXT):        $(PKG_LIB_DEPS)
+$(VISX_LIB_DIR)/basesixfourtest.$(SHLIB_EXT): $(PKG_LIB_DEPS)
 $(VISX_LIB_DIR)/fstringtest.$(SHLIB_EXT):     $(PKG_LIB_DEPS)
 $(VISX_LIB_DIR)/matlabengine.$(SHLIB_EXT):    $(PKG_LIB_DEPS)
 $(VISX_LIB_DIR)/mtx.$(SHLIB_EXT):             $(PKG_LIB_DEPS)
