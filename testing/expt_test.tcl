@@ -124,7 +124,7 @@ test "ExptTcl-Expt::begin" "general sanity test" {
 
     set ::DONE 0
     Expt::doWhenComplete { set ::DONE 1; set ::STOP 1 }
-    after 500 set ::STOP 1
+    after 2000 set ::STOP 1
     Expt::begin
 
     vwait ::STOP
