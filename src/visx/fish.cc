@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Sun Aug 26 08:36:36 2001
+// written: Wed Aug 29 12:07:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "fish.h"
 
 #include "gfx/rect.h"
+#include "gfx/vec3.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -67,7 +68,8 @@ struct Fish::FishPart
 
   dynamic_block<GLfloat> itsKnots;
 
-  dynamic_block<GLfloat> itsCoefs[2];
+  dynamic_block<GLfloat> itsCoefs0;
+  dynamic_block<GLfloat> itsCoefs1;
 };
 
 /////////////////////////////////////////////////////////////////////////
@@ -171,72 +173,64 @@ void Fish::restoreToDefault()
 DOTRACE("Fish::restoreToDefault");
   itsFishParts[3].itsOrder = itsFishParts[2].itsOrder = itsFishParts[1].itsOrder = itsFishParts[0].itsOrder = 4;
 
-  static static_block<GLfloat, 13> default_knots =
-  {{
+  static const GLfloat def_knots[] =
+  {
     0.0, 0.0, 0.0, 0.0,
     0.1667, 0.3333, 0.5000, 0.6667, 0.8333,
     1.0, 1.0, 1.0, 1.0
-  }};
-  itsFishParts[0].itsKnots.assign(default_knots.begin(), default_knots.end());
-  itsFishParts[1].itsKnots.assign(default_knots.begin(), default_knots.end());
-  itsFishParts[2].itsKnots.assign(default_knots.begin(), default_knots.end());
-  itsFishParts[3].itsKnots.assign(default_knots.begin(), default_knots.end());
+  };
+  itsFishParts[0].itsKnots.assign(array_begin(def_knots), array_end(def_knots));
+  itsFishParts[1].itsKnots.assign(array_begin(def_knots), array_end(def_knots));
+  itsFishParts[2].itsKnots.assign(array_begin(def_knots), array_end(def_knots));
+  itsFishParts[3].itsKnots.assign(array_begin(def_knots), array_end(def_knots));
 
   // coefficients 0
-  static static_block<GLfloat, 9> coefs0_0 =
-  {{
-    -0.2856, -0.2140, -0.2176, -0.0735, 0.0168,
-    0.1101, 0.3049, 0.0953, 0.1597
-  }};
-  static static_block<GLfloat, 9> coefs0_1 =
-  {{
-    0.2915, 0.2866, 0.2863, 0.4670,
-    0.3913, 0.3071, 0.1048, 0.1800, 0.1538
-  }};
-  itsFishParts[0].itsCoefs[0].assign(coefs0_0.begin(), coefs0_0.end());
-  itsFishParts[0].itsCoefs[1].assign(coefs0_1.begin(), coefs0_1.end());
+  static GLfloat coefs0_0[] =
+  {
+    -0.2856, -0.2140, -0.2176, -0.0735, 0.0168, 0.1101, 0.3049, 0.0953, 0.1597
+  };
+  static GLfloat coefs0_1[] =
+  {
+    0.2915, 0.2866, 0.2863, 0.4670, 0.3913, 0.3071, 0.1048, 0.1800, 0.1538
+  };
+  itsFishParts[0].itsCoefs0.assign(array_begin(coefs0_0), array_end(coefs0_0));
+  itsFishParts[0].itsCoefs1.assign(array_begin(coefs0_1), array_end(coefs0_1));
 
   // coefficients 1
-  static static_block<GLfloat, 9> coefs1_0 =
-  {{
-    0.1597, 0.2992, 0.2864, 0.7837, 0.4247,
-    0.6362, 0.3379, 0.3137, 0.1573
-  }};
-  static static_block<GLfloat, 9> coefs1_1 =
-  {{
-    0.1538, 0.1016, 0.1044, 0.1590, 0.0155,
-    -0.3203, -0.0706, 0.0049, -0.0401
-  }};
-  itsFishParts[1].itsCoefs[0].assign(coefs1_0.begin(), coefs1_0.end());
-  itsFishParts[1].itsCoefs[1].assign(coefs1_1.begin(), coefs1_1.end());
+  static GLfloat coefs1_0[] =
+  {
+    0.1597, 0.2992, 0.2864, 0.7837, 0.4247, 0.6362, 0.3379, 0.3137, 0.1573
+  };
+  static GLfloat coefs1_1[] =
+  {
+    0.1538, 0.1016, 0.1044, 0.1590, 0.0155, -0.3203, -0.0706, 0.0049, -0.0401
+  };
+  itsFishParts[1].itsCoefs0.assign(array_begin(coefs1_0), array_end(coefs1_0));
+  itsFishParts[1].itsCoefs1.assign(array_begin(coefs1_1), array_end(coefs1_1));
 
   // coefficients 2
-  static static_block<GLfloat, 9> coefs2_0 =
-  {{
-    0.1573, 0.2494, 0.1822, -0.0208, -0.0632,
-    -0.1749, -0.1260, -0.3242, -0.2844
-  }};
-  static static_block<GLfloat, 9> coefs2_1 =
-  {{
-    -0.0401, -0.0294, -0.0877, -0.3236, -0.3412,
-    -0.1120, -0.4172, -0.1818, -0.1840
-  }};
-  itsFishParts[2].itsCoefs[0].assign(coefs2_0.begin(), coefs2_0.end());
-  itsFishParts[2].itsCoefs[1].assign(coefs2_1.begin(), coefs2_1.end());
+  static GLfloat coefs2_0[] =
+  {
+    0.1573, 0.2494, 0.1822, -0.0208, -0.0632, -0.1749, -0.1260, -0.3242, -0.2844
+  };
+  static GLfloat coefs2_1[] =
+  {
+    -0.0401, -0.0294, -0.0877, -0.3236, -0.3412, -0.1120, -0.4172, -0.1818, -0.1840
+  };
+  itsFishParts[2].itsCoefs0.assign(array_begin(coefs2_0), array_end(coefs2_0));
+  itsFishParts[2].itsCoefs1.assign(array_begin(coefs2_1), array_end(coefs2_1));
 
   // coefficients 3
-  static static_block<GLfloat, 9> coefs3_0 =
-  {{
-    -0.2844, -0.3492, -0.4554, -0.6135, -0.7018,
-    -0.5693, -0.4507, -0.3393, -0.2856
-  }};
-  static static_block<GLfloat, 9> coefs3_1 =
-  {{
-    -0.1840, -0.1834, -0.1489, -0.0410, 0.0346,
-    0.1147, 0.2227, 0.2737, 0.2915
-  }};
-  itsFishParts[3].itsCoefs[0].assign(coefs3_0.begin(), coefs3_0.end());
-  itsFishParts[3].itsCoefs[1].assign(coefs3_1.begin(), coefs3_1.end());
+  static GLfloat coefs3_0[] =
+  {
+    -0.2844, -0.3492, -0.4554, -0.6135, -0.7018, -0.5693, -0.4507, -0.3393, -0.2856
+  };
+  static GLfloat coefs3_1[] =
+  {
+    -0.1840, -0.1834, -0.1489, -0.0410, 0.0346, 0.1147, 0.2227, 0.2737, 0.2915
+  };
+  itsFishParts[3].itsCoefs0.assign(array_begin(coefs3_0), array_end(coefs3_0));
+  itsFishParts[3].itsCoefs1.assign(array_begin(coefs3_1), array_end(coefs3_1));
 
   itsEndPts[0].itsPart = 1;
   itsEndPts[0].itsBkpt = 6;
@@ -348,15 +342,22 @@ DOTRACE("Fish::readSplineFile");
       ifs >> dummy >> ncoefs;
 
       // allocates space and reads in the successive coefficients
-      for (j = 0; j < 2; ++j)
-        {
-          itsFishParts[i].itsCoefs[j].resize(ncoefs);
+      {
+        itsFishParts[i].itsCoefs0.resize(ncoefs);
 
-          for (k = 0; k < ncoefs; ++k)
-            {
-              ifs >> itsFishParts[i].itsCoefs[j][k];
-            }
-        }
+        for (k = 0; k < ncoefs; ++k)
+          {
+            ifs >> itsFishParts[i].itsCoefs0[k];
+          }
+      }
+      {
+        itsFishParts[i].itsCoefs1.resize(ncoefs);
+
+        for (k = 0; k < ncoefs; ++k)
+          {
+            ifs >> itsFishParts[i].itsCoefs1[k];
+          }
+      }
 
       if (ifs.fail())
         {
@@ -445,18 +446,16 @@ DOTRACE("Fish::grRender");
   // Loop over fish parts
   for (int i = 0; i < 4; ++i)
     {
-      int totcoefs = 3*(itsFishParts[i].itsCoefs[0].size());
+      int totcoefs = 3*(itsFishParts[i].itsCoefs0.size());
 
-      fixed_block<GLfloat> coefs(totcoefs);
+      fixed_block<Gfx::Vec3<GLfloat> > ctrlpnts(totcoefs);
 
       {
-        for (size_t j = 0; j < itsFishParts[i].itsCoefs[0].size(); ++j)
+        for (size_t j = 0; j < itsFishParts[i].itsCoefs0.size(); ++j)
           {
-            for (int k = 0; k < 2; ++k)
-              {
-                coefs.at(3*j+k) = (GLfloat) itsFishParts[i].itsCoefs[k][j];
-              }
-            coefs.at(3*j+2) = (GLfloat) 0.0;
+            ctrlpnts.at(j).x() = itsFishParts[i].itsCoefs0[j];
+            ctrlpnts.at(j).y() = itsFishParts[i].itsCoefs1[j];
+            ctrlpnts.at(j).z() = 0.0;
           }
       }
 
@@ -472,8 +471,8 @@ DOTRACE("Fish::grRender");
               float beta  = 0.5*(1+itsCoords[j]);
               GLfloat x = alpha*itsEndPts[j].itsX[0] + beta*itsEndPts[j].itsX[1];
               GLfloat y = alpha*itsEndPts[j].itsY[0] + beta*itsEndPts[j].itsY[1];
-              coefs.at(3*bkpt)   = x;
-              coefs.at(3*bkpt+1) = y;
+              ctrlpnts.at(bkpt).x() = x;
+              ctrlpnts.at(bkpt).y() = y;
             }
         }
 
@@ -483,7 +482,7 @@ DOTRACE("Fish::grRender");
         gluNurbsCurve(theNurb,
                       itsFishParts[i].itsKnots.size(),
                       &(itsFishParts[i].itsKnots[0]),
-                      3, &coefs[0],
+                      3, ctrlpnts.at(0).data(),
                       itsFishParts[i].itsOrder, GL_MAP1_VERTEX_3);
       }
       gluEndCurve(theNurb);
