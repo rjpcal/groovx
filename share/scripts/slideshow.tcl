@@ -409,16 +409,16 @@ set PLAYLIST [Playlist PLAYLIST $argv $t]
 -> $t bind <ButtonPress-3> {spinPic 1; PLAYLIST show}
 -> $t bind <ButtonPress-2> {jumpPic; PLAYLIST show}
 
--> $t bind <Key-Left> {spinPic -1; PLAYLIST show}
--> $t bind <Key-Right> {spinPic 1; PLAYLIST show}
--> $t bind <Key-Up> {jumpPic; PLAYLIST show}
--> $t bind <Key-Down> {PLAYLIST remove; updateText; PLAYLIST show}
--> $t bind <Key-Return> {PLAYLIST save}
+bind all <Key-Left> {spinPic -1; PLAYLIST show}
+bind all <Key-Right> {spinPic 1; PLAYLIST show}
+bind all <Key-Up> {jumpPic; PLAYLIST show}
+bind all <Key-Down> {PLAYLIST remove; updateText; PLAYLIST show}
+bind all <Key-Return> {PLAYLIST save}
 -> $t bind <Key-x> {PLAYLIST purge}
 -> $t bind <Key-Escape> {PLAYLIST purge; exit }
 
--> $t height 975
--> $t width 1400
+-> $t height [expr [winfo screenheight .] - 100]
+-> $t width [expr [winfo screenwidth .] - 25]
 
 -> $t repack "-side bottom"
 
