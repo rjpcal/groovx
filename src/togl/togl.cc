@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Jan 23 10:09:14 2002
+// written: Thu Jun  6 18:02:24 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -312,7 +312,7 @@ static Tk_ConfigSpec configSpecs[] =
    DEFAULT_WIDTH, Tk_Offset(Togl::Impl, itsWidth), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, "-rgba", "rgba", "Rgba",
-#if defined(I686) || defined(IRIX6) || defined(PPC)
+#ifndef NO_RGBA
    "true",
 #else
    "false",
@@ -329,7 +329,7 @@ static Tk_ConfigSpec configSpecs[] =
    "1", Tk_Offset(Togl::Impl, itsRgbaBlue), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, "-double", "double", "Double",
-#if defined(I686) || defined(IRIX6) || defined(PPC)
+#ifndef NO_DOUBLE_BUFFER
    "true",
 #else
    "false",
@@ -1210,7 +1210,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsHeight(0),
   itsTime(0),
   itsTimerHandler(0),
-#if defined(I686) || defined(IRIX6)
+#ifndef NO_RGBA
   itsRgbaFlag(1),
 #else
   itsRgbaFlag(0),
@@ -1218,7 +1218,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsRgbaRed(1),
   itsRgbaGreen(1),
   itsRgbaBlue(1),
-#if defined(I686) || defined(IRIX6)
+#ifndef NO_DOUBLE_BUFFER
   itsDoubleFlag(1),
 #else
   itsDoubleFlag(0),
