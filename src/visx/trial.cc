@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Mon Oct  9 19:48:11 2000
+// written: Mon Oct 16 12:46:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -114,24 +114,28 @@ private:
 
   GWT::Canvas& getCanvas() const
 	 {
+		Precondition(itsState == ACTIVE);
 		Precondition(itsCanvas != 0);
 		return *itsCanvas;
 	 }
 
   ResponseHandler& responseHandler() const
 	 {
+		Precondition(itsState == ACTIVE);
 		Precondition( RhList::theRhList().isValidId(itsRhId) );
 		return *(RhList::theRhList().getPtr(itsRhId));
 	 }
 
   TimingHdlr& timingHdlr() const
 	 {
+		Precondition(itsState == ACTIVE);
 		Precondition( ThList::theThList().isValidId(itsThId) );
 		return *(ThList::theThList().getPtr(itsThId));
 	 }
 
   Block& getBlock() const
 	 {
+		Precondition(itsState == ACTIVE);
 		Precondition(itsBlock != 0);
 		return *itsBlock;
 	 }
@@ -490,11 +494,8 @@ DOTRACE("Trial::Impl::trDoTrial");
   itsCanvas = widget.getCanvas();
   itsBlock = &block;
 
-  if (itsBlock == 0)
-	 errhdlr.handleMsg("Trial::itsBlock was null in trDoTrial");
-
-  if (itsCanvas == 0)
-	 errhdlr.handleMsg("Trial::itsCanvas was null in trDoTrial");
+  Assert(itsBlock != 0);
+  Assert(itsCanvas != 0);
 
   if ( !assertIdsOrHalt() ) return;
 
@@ -548,9 +549,13 @@ DOTRACE("Trial::Impl::trNextTrial");
 
   timeTrace("trNextTrial");
 
+  // We have to getBlock() before changing to inactive state, since
+  // the invariant says we cannot getBlock() when in an inactive state.
+  Block& block = getBlock();
+
   itsState = INACTIVE;
 
-  getBlock().nextTrial();
+  block.nextTrial();
 }
 
 void Trial::Impl::trHaltExpt() {
@@ -626,10 +631,12 @@ DOTRACE("Trial::Impl::trDraw");
 		PosList::thePosList().getCheckedPtr(itsIdPairs[i].posid);
 
     DebugEval(itsIdPairs[i].objid);
-    DebugEvalNL((void *) obj);
+    DebugEvalNL(obj.get());
     DebugEval(itsIdPairs[i].posid);
-    DebugEvalNL((void *) pos);
+    DebugEvalNL(pos.get());
 
+	 Assert(obj.get() != 0);
+	 Assert(pos.get() != 0);
 
 	 { 
 		GWT::Canvas::StateSaver state(canvas);
@@ -648,6 +655,9 @@ DOTRACE("Trial::Impl::trUndraw");
 		ObjList::theObjList().getCheckedPtr(itsIdPairs[i].objid);
     PosList::SharedPtr pos =
 		PosList::thePosList().getCheckedPtr(itsIdPairs[i].posid);
+
+	 Assert(obj.get() != 0);
+	 Assert(pos.get() != 0);
 
 	 {
 		GWT::Canvas::StateSaver state(canvas);
