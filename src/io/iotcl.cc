@@ -32,6 +32,7 @@
 
 #include "io/io.h"
 #include "io/ioutil.h"
+#include "io/outputfile.h"
 
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
@@ -58,6 +59,23 @@ DOTRACE("Io_Init");
   pkg->def( "save", "item_id filename", IO::saveASW );
   pkg->def( "load", "item_id filename", IO::loadASR );
   pkg->def( "retrieve", "filename", IO::retrieveASR );
+
+  return pkg->initStatus();
+}
+
+extern "C"
+int Outputfile_Init(Tcl_Interp* interp)
+{
+DOTRACE("Outputfile_Init");
+
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "OutputFile", "$Revision$");
+  pkg->inheritPkg("IO");
+  Tcl::defCreator<OutputFile>(pkg);
+  Tcl::defGenericObjCmds<IO::IoObject>(pkg);
+
+  pkg->defAttrib("filename",
+                 &OutputFile::getFilename,
+                 &OutputFile::setFilename);
 
   return pkg->initStatus();
 }
