@@ -3,7 +3,7 @@
 // observable.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 25 18:39:27 1999
-// written: Thu Mar 30 00:15:08 2000
+// written: Mon May 22 12:19:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,9 +30,9 @@
 struct ObservableImpl {
 public:
   ObservableImpl() : itsObservers()
-	 { DOTRACE("ObservableImpl::ObservableImpl"); }
+	 { }
   ~ObservableImpl()
-	 { DOTRACE("ObservableImpl::~ObservableImpl"); }
+	 { }
   list<Observer *> itsObservers;
 };
 
