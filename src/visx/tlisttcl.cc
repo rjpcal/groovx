@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Thu Feb 21 14:51:49 2002
+// written: Tue May 14 19:46:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,8 +35,8 @@
 #include "visx/grobj.h"
 
 #include <cmath>
-#include <fstream.h>
-#include <strstream.h>
+#include <fstream>
+#include <sstream>
 
 #include "util/trace.h"
 
@@ -367,7 +367,7 @@ Tcl::List TlistTcl::loadObjidFile(const char* objid_file,
       if (ifs.fail())
         throw Util::Error("error reading objid file");
 
-      istrstream ist(line);
+      std::istringstream ist(line);
 
       Ref<Trial> trial(Trial::make());
       Ref<GxSeparator> sep(GxSeparator::make());

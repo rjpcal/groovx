@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 13 18:33:17 2000
-// written: Fri Jan 18 16:07:00 2002
+// written: Tue May 14 19:45:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 #include "util/strings.h"
 
-#include <iostream.h>
+#include <iostream>
 
 #include "util/trace.h"
 

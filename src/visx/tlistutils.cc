@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Fri Jan 18 16:06:59 2002
+// written: Tue May 14 19:48:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,8 +24,8 @@
 #include "util/objdb.h"
 #include "util/ref.h"
 
-#include <fstream.h>
-#include <iomanip.h>
+#include <fstream>
+#include <iomanip>
 
 #include "util/trace.h"
 
@@ -38,20 +38,20 @@ DOTRACE("TlistUtils::writeResponses");
 
   // We prepend a '%' to the header line so that MATLAB can ignore
   // this line as a comment
-  ofs << '%' << setw(wid-1) << "Trial" << setw(wid) << "N"
-      << setw(wid) << "Average" << setw(wid) << "msec\n";
+  ofs << '%' << std::setw(wid-1) << "Trial" << std::setw(wid) << "N"
+      << std::setw(wid) << "Average" << std::setw(wid) << "msec\n";
 
-  ofs.setf(ios::fixed);
+  ofs.setf(std::ios::fixed);
   ofs.precision(2);
 
   for (ObjDb::CastingIterator<Trial> itr(ObjDb::theDb().objects());
        itr.isValid();
        ++itr)
     {
-      ofs << setw(wid) << itr->id();
-      ofs << setw(wid) << itr->numResponses();
-      ofs << setw(wid) << itr->avgResponse();
-      ofs << setw(wid) << itr->avgRespTime() << endl;
+      ofs << std::setw(wid) << itr->id();
+      ofs << std::setw(wid) << itr->numResponses();
+      ofs << std::setw(wid) << itr->avgResponse();
+      ofs << std::setw(wid) << itr->avgRespTime() << std::endl;
     }
 
   if (ofs.fail())
@@ -76,7 +76,7 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
 
       int num_ones = itr->numResponses() - num_zeros;
 
-      ofs << num_zeros << "  " << num_ones << endl;
+      ofs << num_zeros << "  " << num_ones << std::endl;
     }
 }
 
@@ -131,7 +131,7 @@ DOTRACE("TlistUtils::writeMatlab");
 
   STD_IO::ofstream ofs(filename);
 
-  ofs.setf(ios::fixed);
+  ofs.setf(std::ios::fixed);
   ofs.precision(2);
 
   MatlabTrialWriter writer(ofs);

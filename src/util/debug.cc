@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct  9 18:48:38 2000
-// written: Fri Jan 18 16:07:05 2002
+// written: Tue May 14 20:52:28 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "util/debug.h"
 
 #include <cstdlib>
-#include <iostream.h>
+#include <iostream>
 
 #define LOCAL_PROF
 #include "util/trace.h"

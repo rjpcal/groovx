@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Sat Feb  2 17:43:19 2002
+// written: Tue May 14 19:52:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@
 #define TRACE_USE_COUNT
 
 #ifdef TRACE_USE_COUNT
-#  include <fstream.h>
+#  include <fstream>
 #endif
 
 #include "util/trace.h"

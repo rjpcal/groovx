@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Fri May  3 17:45:22 2002
+// written: Tue May 14 19:54:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@
 #include "util/strings.h"
 #include "util/value.h"
 
-#include <iostream.h>
+#include <iostream>
 #include <strstream.h>
 #include <map>
 #include <list>

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Fri Jan 18 16:06:55 2002
+// written: Tue May 14 19:51:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ static const char vcid_debug_h[] = "$Id$";
 #endif
 
 #ifdef LOCAL_DEBUG
-#  include <iostream.h>
+#  include <iostream>
 #  define DebugEval(expr) STD_IO::cerr << #expr << " == " << (expr) << ", ";
 #  define DebugEvalNL(expr) STD_IO::cerr << #expr << " == " << (expr) << STD_IO::endl;
 #  define DebugPrint(expr) STD_IO::cerr << expr << " ";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 16:58:56 2001
-// written: Fri Jan 18 16:07:04 2002
+// written: Tue May 14 20:07:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 #include "util/error.h"
 
-#include <iostream.h>
+#include <iostream>
 
 #include "util/debug.h"
 

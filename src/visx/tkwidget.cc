@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Fri Jan 18 16:06:59 2002
+// written: Tue May 14 19:45:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@
 #include "util/debug.h"
 
 #ifdef LOCAL_DEBUG
-#include <iostream.h>
+#include <iostream>
 
 class DbgButtonListener : public GWT::ButtonListener
 {
