@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu Oct 26 10:52:56 2000
+// written: Fri Oct 27 13:22:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,67 +104,13 @@ private:
   Impl& operator=(const Impl&);
 
   IoPtrList* itsOwner;
-#ifdef USE_OLD_ID_SYSTEM
-  int itsFirstVacant;
-#endif
 
 public:
   typedef std::map<int, IoPtrHandle> MapType;
   MapType itsPtrMap;
 
-private:
-  int findPtr(IO::IoObject* ptr)
-	 {
-		for (MapType::const_iterator
-				 itr = itsPtrMap.begin(),
-				 end = itsPtrMap.end();
-			  itr != end;
-			  ++itr)
-		  {
-			 if ( (*itr).second.ioObject() == ptr )
-				return (*itr).first;
-		  }
-		return -1;
-	 }
-
-#ifdef USE_OLD_ID_SYSTEM
-  void updateFirstVacantOnErase(int id)
-	 {
-		// reset itsFirstVacant in case i would now be the first vacant
-		if (itsFirstVacant > id) itsFirstVacant = id;		
-	 }
-#else
-  void updateFirstVacantOnErase(int /* id */) {}
-#endif
-
-#ifdef USE_OLD_ID_SYSTEM
-  int getIdForInsertion(IO::IoObject* ptr)
-	 {
-		DebugEval(itsFirstVacant);
-
-		Assert(itsFirstVacant >= 0);
-		Assert(itsPtrMap.find(itsFirstVacant) == itsPtrMap.end());
-
-		const int new_id = itsFirstVacant;
-
-		// make sure itsFirstVacant is up-to-date
-		while ( itsPtrMap.find(++itsFirstVacant) != itsPtrMap.end() )
-		  { ; }
-
-		DebugEvalNL(itsFirstVacant);
-
-		return new_id;
-	 }
-#else
-  int getIdForInsertion(IO::IoObject* ptr) { return ptr->id(); }
-#endif
-
-public:
   Impl(IoPtrList* owner) :
 	 itsOwner(owner),
-#ifdef USE_OLD_ID_SYSTEM
-	 itsFirstVacant(0),
-#endif
 	 itsPtrMap()
 	 {}
 
@@ -200,8 +146,6 @@ public:
 		MapType::iterator itr = itsPtrMap.find(id);
 
 		itsPtrMap.erase(itr);
-
-		updateFirstVacantOnErase(id);
 	 }
 
   void remove(int id)
@@ -213,8 +157,6 @@ public:
 		  throw ErrorWithMsg("can't remove a shared object");
 
 		itsPtrMap.erase(itr);
-
-		updateFirstVacantOnErase(id);
 	 }
 
   void clear()
@@ -227,15 +169,9 @@ public:
 			  itr != end;
 			  ++itr)
 		  {
-			 // If the object is unshared, we'll be releasing it, so
-			 // update itsFirstVacant accordingly
-			 if ( (*itr).second.ioObject()->isUnshared() )
-				{
-				  updateFirstVacantOnErase((*itr).first);
-				}
-			 // ...otherwise, we'll be saving the object, so copy it into
-			 // the new_map,
-			 else
+			 // If the object is shared, we'll be saving the object, so
+			 // copy it into the new_map,
+			 if ( (*itr).second.ioObject()->isShared() )
 				{
 				  new_map.insert(*itr);
 				}
@@ -262,12 +198,19 @@ public:
 	 {
 	 DOTRACE("IoPtrList::Impl::insertPtrBase");
 		Precondition(ptr != 0);
-		int existing_site = findPtr(ptr);
 
-		if (existing_site != -1)
-		  return existing_site;
+		// Check if the object is already in the map
+		MapType::iterator existing_site = itsPtrMap.find(ptr->id());
+		if (existing_site != itsPtrMap.end())
+		  {
+			 // Make sure the existing object is the same as the object
+			 // that we're trying to insert
+			 Assert( (*existing_site).second.ioObject() == ptr );
 
-		const int new_id = getIdForInsertion(ptr);
+			 return ptr->id();
+		  }
+
+		const int new_id = ptr->id();
 		itsPtrMap.insert(MapType::value_type(new_id, IoPtrHandle(ptr)));
 
 		return new_id;
