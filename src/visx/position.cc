@@ -3,7 +3,7 @@
 // position.cc
 // Rob Peters
 // created: Wed Mar 10 21:33:15 1999
-// written: Thu Mar 30 00:02:12 2000
+// written: Thu Mar 30 09:50:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,10 +75,10 @@ DOTRACE("Position::Position()");
   Invariant(check());
 }
 
-Position::Position (istream& is, IOFlag flag) : 
+Position::Position (istream& is, IO::IOFlag flag) : 
   itsImpl(new PositionImpl)
 {
-DOTRACE("Position::Position(istream&, IOFlag)");
+DOTRACE("Position::Position(istream&, IO::IOFlag)");
   deserialize(is, flag);
 }
 
@@ -87,13 +87,13 @@ DOTRACE("Position::~Position");
   delete itsImpl;
 }
 
-void Position::serialize(ostream &os, IOFlag flag) const {
+void Position::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("Position::serialize");
   Invariant(check());
-  if (flag & BASES) { /* there are no bases to serialize */ }
+  if (flag & IO::BASES) { /* there are no bases to serialize */ }
 
   char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   os << itsImpl->tr_x << sep
      << itsImpl->tr_y << sep
@@ -105,17 +105,17 @@ DOTRACE("Position::serialize");
      << itsImpl->rt_y << sep
      << itsImpl->rt_z << sep
      << itsImpl->rt_ang << endl;
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw IO::OutputError(ioTag);
 }
 
-void Position::deserialize(istream &is, IOFlag flag) {
+void Position::deserialize(istream &is, IO::IOFlag flag) {
 DOTRACE("Position::deserialize");
   Invariant(check());
 
   DebugEvalNL(flag);
 
-  if (flag & BASES) { /* there are no bases to deserialize */ }
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
   is >> itsImpl->tr_x;
   is >> itsImpl->tr_y;
@@ -131,25 +131,25 @@ DOTRACE("Position::deserialize");
   DebugEval(itsImpl->tr_x);
   DebugEvalNL(itsImpl->rt_ang);
 
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw IO::InputError(ioTag);
 }
 
 int Position::charCount() const {
   return (strlen(ioTag) + 1
-			 + gCharCount<double>(itsImpl->tr_x) + 1
-			 + gCharCount<double>(itsImpl->tr_y) + 1
-			 + gCharCount<double>(itsImpl->tr_z) + 1
-			 + gCharCount<double>(itsImpl->sc_x) + 1
-			 + gCharCount<double>(itsImpl->sc_y) + 1
-			 + gCharCount<double>(itsImpl->sc_z) + 1
-			 + gCharCount<double>(itsImpl->rt_x) + 1
-			 + gCharCount<double>(itsImpl->rt_y) + 1
-			 + gCharCount<double>(itsImpl->rt_z) + 1
-			 + gCharCount<double>(itsImpl->rt_ang) + 1
+			 + IO::gCharCount<double>(itsImpl->tr_x) + 1
+			 + IO::gCharCount<double>(itsImpl->tr_y) + 1
+			 + IO::gCharCount<double>(itsImpl->tr_z) + 1
+			 + IO::gCharCount<double>(itsImpl->sc_x) + 1
+			 + IO::gCharCount<double>(itsImpl->sc_y) + 1
+			 + IO::gCharCount<double>(itsImpl->sc_z) + 1
+			 + IO::gCharCount<double>(itsImpl->rt_x) + 1
+			 + IO::gCharCount<double>(itsImpl->rt_y) + 1
+			 + IO::gCharCount<double>(itsImpl->rt_z) + 1
+			 + IO::gCharCount<double>(itsImpl->rt_ang) + 1
 			 + 1);// fudge factor
 }
 
-void Position::readFrom(Reader* reader) {
+void Position::readFrom(IO::Reader* reader) {
 DOTRACE("Position::readFrom");
 
   reader->readValue("transX", itsImpl->tr_x);
@@ -166,7 +166,7 @@ DOTRACE("Position::readFrom");
   reader->readValue("rotateAngle", itsImpl->rt_ang);
 }
 
-void Position::writeTo(Writer* writer) const {
+void Position::writeTo(IO::Writer* writer) const {
 DOTRACE("Position::writeTo");
 
   writer->writeValue("transX", itsImpl->tr_x);

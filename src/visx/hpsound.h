@@ -3,7 +3,7 @@
 // hpsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 12 13:03:47 1999
-// written: Thu Mar 30 00:03:27 2000
+// written: Thu Mar 30 09:50:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,12 +74,12 @@ public:
   HpAudioSound(Audio* audio, const char* filename);
   virtual ~HpAudioSound();
 
-  virtual void serialize(ostream& os, IOFlag flag) const;
-  virtual void deserialize(istream& is, IOFlag flag);
+  virtual void serialize(ostream& os, IO::IOFlag flag) const;
+  virtual void deserialize(istream& is, IO::IOFlag flag);
   virtual int charCount() const;
   
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
   virtual void play();
   virtual void setFile(const char* filename);
@@ -123,41 +123,41 @@ DOTRACE("HpAudioSound::~HpAudioSound");
   ADestroySBucket( itsAudio, itsSBucket, NULL );
 }
 
-void HpAudioSound::serialize(ostream& os, IOFlag flag) const {
+void HpAudioSound::serialize(ostream& os, IO::IOFlag flag) const {
 DOTRACE("HpAudioSound::serialize");
 
   char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   os << itsFilename << endl;
 
-  if (os.fail()) throw OutputError(ioTag.c_str());
+  if (os.fail()) throw IO::OutputError(ioTag.c_str());
 
-  if (flag & BASES) { /* no bases to deal with */ }
+  if (flag & IO::BASES) { /* no bases to deal with */ }
 }
 
-void HpAudioSound::deserialize(istream& is, IOFlag flag) {
+void HpAudioSound::deserialize(istream& is, IO::IOFlag flag) {
 DOTRACE("HpAudioSound::deserialize");
 
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
   getline(is, itsFilename, '\n');
   
-  if (is.fail()) throw InputError(ioTag.c_str());
+  if (is.fail()) throw IO::InputError(ioTag.c_str());
 
-  if (flag & BASES) { /* no bases to deal with */ }
+  if (flag & IO::BASES) { /* no bases to deal with */ }
 
   setFile(itsFilename.c_str());
 }
 
-void HpAudioSound::readFrom(Reader* reader) {
+void HpAudioSound::readFrom(IO::Reader* reader) {
 DOTRACE("HpAudioSound::readFrom");
 
   reader->readValue("filename", itsFilename);
   setFile(itsFilename.c_str());
 }
 
-void HpAudioSound::writeTo(Writer* writer) const {
+void HpAudioSound::writeTo(IO::Writer* writer) const {
 DOTRACE("HpAudioSound::writeTo");
   writer->writeValue("filename", itsFilename); 
 }

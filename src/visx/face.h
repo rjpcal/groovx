@@ -3,7 +3,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu Mar 30 00:12:50 2000
+// written: Thu Mar 30 09:50:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ public:
   Face (double eh=0.6, double es=0.4, double nl=0.4, double mh=-0.8, int categ=0);
 
   /// Construct from an \c istream using \c deserialize().
-  Face (istream &is, IOFlag flag);
+  Face (istream &is, IO::IOFlag flag);
 
   /// Virtual destructor.
   virtual ~Face ();
@@ -47,18 +47,18 @@ public:
   /** Write the face to a stream using the format:
 	  
 	   <tt>[Face] category eyeHgt eyeDist noseLen mouthHgt</tt> */
-  virtual void serialize(ostream &os, IOFlag flag) const;
+  virtual void serialize(ostream &os, IO::IOFlag flag) const;
 
   /** Read the face from a stream using the format:
 	  
 	   <tt>[Face] category eyeHgt eyeDist noseLen mouthHgt</tt> */
-  virtual void deserialize(istream &is, IOFlag flag);
+  virtual void deserialize(istream &is, IO::IOFlag flag);
   
   virtual int charCount() const;
 
   virtual unsigned long serialVersionId() const;
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
   ////////////////
   // properties //

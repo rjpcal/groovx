@@ -3,7 +3,7 @@
 // cloneface.cc
 // Rob Peters
 // created: Thu Apr 29 09:19:26 1999
-// written: Thu Mar 30 00:07:00 2000
+// written: Thu Mar 30 12:14:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,10 +51,10 @@ DOTRACE("CloneFace::CloneFace()");
   }
 }
 
-CloneFace::CloneFace (istream& is, IOFlag flag) :
+CloneFace::CloneFace (istream& is, IO::IOFlag flag) :
   Face(), itsEyeAspect(0.0), itsVertOffset(0.0) 
 {
-DOTRACE("CloneFace::CloneFace(istream&, IOFlag)");
+DOTRACE("CloneFace::CloneFace(istream&, IO::IOFlag)");
   deserialize(is, flag);
 }
 
@@ -67,10 +67,10 @@ DOTRACE("CloneFace::~CloneFace");
 // before the base class (Face) since the first thing the virtual
 // constructor sees must be the typename of the most fully derived
 // class, in order to invoke the proper constructor.
-void CloneFace::serialize(ostream &os, IOFlag flag) const {
+void CloneFace::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("CloneFace::serialize");
   char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   for (int i = 0; i < 24; ++i) {
 	 os << itsCtrlPnts[i] << sep;
@@ -78,16 +78,16 @@ DOTRACE("CloneFace::serialize");
   os << itsEyeAspect << sep;
   os << itsVertOffset << sep;
 
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw IO::OutputError(ioTag);
 
-  // Always serialize Face, regardless of (flag & BASES)
+  // Always serialize Face, regardless of (flag & IO::BASES)
   // Always use the typename in the base class, regardless of flag
-  Face::serialize(os, (flag | TYPENAME));
+  Face::serialize(os, (flag | IO::TYPENAME));
 }
 
-void CloneFace::deserialize(istream &is, IOFlag flag) {
+void CloneFace::deserialize(istream &is, IO::IOFlag flag) {
 DOTRACE("CloneFace::deserialize");
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
   
   for (int i = 0; i < 24; ++i) {
 	 is >> itsCtrlPnts[i];
@@ -98,39 +98,39 @@ DOTRACE("CloneFace::deserialize");
   // Bug in aCC requires this rather than a simple throw; see face.cc
   // for further explanation.
   try {
-	 if (is.fail()) throw InputError(ioTag);
+	 if (is.fail()) throw IO::InputError(ioTag);
   }
-  catch (IoError&) {
+  catch (IO::IoError&) {
  	 throw;
   }
 
-  // Always deserialize Face, regardless of (flag & BASES)
+  // Always deserialize Face, regardless of (flag & IO::BASES)
   // Always use the typename in the base class, regardless of flag
-  Face::deserialize(is, (flag | TYPENAME));
+  Face::deserialize(is, (flag | IO::TYPENAME));
 }
 
 int CloneFace::charCount() const {
 DOTRACE("CloneFace::charCount");
   return ( strlen(ioTag) + 1  
 			  + 24*6 + 1
-			  + gCharCount(itsEyeAspect) + 1
-			  + gCharCount(itsVertOffset) + 1
+			  + IO::gCharCount(itsEyeAspect) + 1
+			  + IO::gCharCount(itsVertOffset) + 1
 			  + Face::charCount()
 			  + 5 ); 
 }
 
-void CloneFace::readFrom(Reader* reader) {
+void CloneFace::readFrom(IO::Reader* reader) {
 DOTRACE("CloneFace::readFrom");
 
-  ReadUtils::readValueSeq(reader, "ctrlPnts", itsCtrlPnts, (double*)0);
+  IO::ReadUtils::readValueSeq(reader, "ctrlPnts", itsCtrlPnts, (double*)0);
   reader->readValue("eyeAspect", itsEyeAspect);
   reader->readValue("vertOffset", itsVertOffset);
 }
 
-void CloneFace::writeTo(Writer* writer) const {
+void CloneFace::writeTo(IO::Writer* writer) const {
 DOTRACE("CloneFace::writeTo");
 
-  WriteUtils::writeValueSeq(writer, "ctrlPnts", itsCtrlPnts, itsCtrlPnts+24);
+  IO::WriteUtils::writeValueSeq(writer, "ctrlPnts", itsCtrlPnts, itsCtrlPnts+24);
   writer->writeValue("eyeAspect", itsEyeAspect);
   writer->writeValue("vertOffset", itsVertOffset);
 }

@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Wed Mar 29 14:07:32 2000
+// written: Thu Mar 30 12:29:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,17 +11,17 @@
 #ifndef LISTITEMPKG_H_DEFINED
 #define LISTITEMPKG_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TYPEINFO_DEFINED)
-#include <typeinfo>
-#define TYPEINFO_DEFINED
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(DEMANGLE_H_DEFINED)
+#include "system/demangle.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLITEMPKG_H_DEFINED)
 #include "tcl/tclitempkg.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(DEMANGLE_H_DEFINED)
-#include "demangle.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TYPEINFO_DEFINED)
+#include <typeinfo>
+#define TYPEINFO_DEFINED
 #endif
 
 namespace Tcl {
@@ -69,8 +69,8 @@ public:
 	 return &p;
   }
 
-  virtual IO& getIoFromId(int id) {
-	 return dynamic_cast<IO&>( *(getCItemFromId(id)) );
+  virtual IO::IoObject& getIoFromId(int id) {
+	 return dynamic_cast<IO::IoObject&>( *(getCItemFromId(id)) );
   }
 
 private:

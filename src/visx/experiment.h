@@ -3,7 +3,7 @@
 // experiment.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 10:52:17 1999
-// written: Wed Mar 29 22:10:26 2000
+// written: Thu Mar 30 08:29:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,8 @@
 #ifndef EXPERIMENT_H_DEFINED
 #define EXPERIMENT_H_DEFINED
 
-class IO;
+namespace IO { class IoObject; }
+
 class Response;
 
 namespace GWT {
@@ -31,7 +32,7 @@ public:
   virtual GWT::Canvas* getCanvas() = 0;
   ///< Return the Canvas for the Widget in which the experiment is running.
 
-  virtual void manageObject(const char* name, IO* object) = 0;
+  virtual void manageObject(const char* name, IO::IoObject* object) = 0;
   ///< Registers an object for the Experiment to handle for serialization.
 
   virtual void edDraw() = 0;

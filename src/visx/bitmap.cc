@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Mar 29 22:12:41 2000
+// written: Thu Mar 30 09:50:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ Bitmap::Bitmap(BmapRenderer* renderer, const char* filename) :
 DOTRACE("Bitmap::Bitmap");
 }
 
-Bitmap::Bitmap(BmapRenderer* renderer, istream& is, IOFlag flag) :
+Bitmap::Bitmap(BmapRenderer* renderer, istream& is, IO::IOFlag flag) :
   GrObj(GROBJ_GL_COMPILE, GROBJ_DIRECT_RENDER),
   itsImpl(new BitmapRep(renderer))
 {
@@ -54,7 +54,7 @@ DOTRACE("Bitmap::~Bitmap");
   delete itsImpl;
 }
 
-void Bitmap::serialize(ostream& os, IOFlag flag) const {
+void Bitmap::serialize(ostream& os, IO::IOFlag flag) const {
 DOTRACE("Bitmap::serialize");
 
   itsImpl->serialize(os, flag);
@@ -62,7 +62,7 @@ DOTRACE("Bitmap::serialize");
   if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
 }
 
-void Bitmap::deserialize(istream& is, IOFlag flag) {
+void Bitmap::deserialize(istream& is, IO::IOFlag flag) {
 DOTRACE("Bitmap::deserialize");
 
   itsImpl->deserialize(is, flag);
@@ -73,14 +73,14 @@ DOTRACE("Bitmap::deserialize");
 int Bitmap::charCount() const
   { return itsImpl->charCount() + GrObj::charCount(); }
 
-void Bitmap::readFrom(Reader* reader) {
+void Bitmap::readFrom(IO::Reader* reader) {
 DOTRACE("Bitmap::readFrom");
 
   itsImpl->readFrom(reader);
   GrObj::readFrom(reader);
 }
 
-void Bitmap::writeTo(Writer* writer) const {
+void Bitmap::writeTo(IO::Writer* writer) const {
 DOTRACE("Bitmap::writeTo");
 
   itsImpl->writeTo(writer);

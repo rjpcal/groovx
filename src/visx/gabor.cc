@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Thu Mar 30 00:03:10 2000
+// written: Thu Mar 30 12:25:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,12 @@
 
 #include "gabor.h"
 
-#include "randutils.h"
 #include "rect.h"
 
 #include "io/reader.h"
 #include "io/writer.h"
+
+#include "util/randutils.h"
 
 #include <GL/gl.h>
 #include <cmath>
@@ -71,18 +72,18 @@ DOTRACE("Gabor::~Gabor");
 
 }
 
-void Gabor::serialize(ostream &os, IOFlag flag) const {
+void Gabor::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("Gabor::serialize");
-  if (flag & TYPENAME) { os << ioTag << IO::SEP; }
-  if (os.fail()) throw OutputError(ioTag);
-  if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }
+  if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
+  if (os.fail()) throw IO::OutputError(ioTag);
+  if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
 }
 
-void Gabor::deserialize(istream &is, IOFlag flag) {
+void Gabor::deserialize(istream &is, IO::IOFlag flag) {
 DOTRACE("Gabor::deserialize");
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
-  if (is.fail()) throw InputError(ioTag);
-  if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
+  if (is.fail()) throw IO::InputError(ioTag);
+  if (flag & IO::BASES) { GrObj::deserialize(is, flag | IO::TYPENAME); }
 }
 
 int Gabor::charCount() const {
@@ -90,7 +91,7 @@ DOTRACE("Gabor::charCount");
   return strlen(ioTag) + 1 + GrObj::charCount();
 }
 
-void Gabor::readFrom(Reader* reader) {
+void Gabor::readFrom(IO::Reader* reader) {
 DOTRACE("Gabor::readFrom");
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 reader->readValueObj(PINFOS[i].name_cstr(),
@@ -100,7 +101,7 @@ DOTRACE("Gabor::readFrom");
   GrObj::readFrom(reader);
 }
 
-void Gabor::writeTo(Writer* writer) const {
+void Gabor::writeTo(IO::Writer* writer) const {
 DOTRACE("Gabor::writeTo");
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
@@ -235,14 +236,14 @@ DOTRACE("Gabor::grRender");
 			 glEnd();			 
 		  }
 		  else if ( colorMode() == BW_DITHER_POINT ) {
-			 if ( randDoubleRange(0.0, 1.0) < gabor ) {
+			 if ( Util::randDoubleRange(0.0, 1.0) < gabor ) {
 				glBegin(GL_POINTS);
 				glVertex2d(unrotated_x, unrotated_y);
 				glEnd();
 			 }
 		  }
 		  else if ( colorMode() == BW_DITHER_RECT ) {
-			 if ( randDoubleRange(0.0, 1.0) < gabor ) {
+			 if ( Util::randDoubleRange(0.0, 1.0) < gabor ) {
 				glRectd(unrotated_x, unrotated_y,
 						  unrotated_x+res_step, unrotated_y+res_step);
 			 }

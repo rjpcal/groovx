@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Mar 30 00:02:47 2000
+// written: Thu Mar 30 12:31:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,12 +26,13 @@
 #include "rhlist.h"
 #include "thlist.h"
 #include "tlist.h"
-#include "system.h"
 #include "stopwatch.h"
 #include "tlistwidget.h"
 
 #include "io/reader.h"
 #include "io/writer.h"
+
+#include "system/system.h"
 
 #include "tcl/tclerror.h"
 #include "tcl/tclevalcmd.h"
@@ -141,10 +142,10 @@ public:
 
   int charCount() const;
 
-  void readFrom(Reader* reader);
-  void writeTo(Writer* writer) const;
+  void readFrom(IO::Reader* reader);
+  void writeTo(IO::Writer* writer) const;
 
-  void manageObject(const char* name, IO* object);
+  void manageObject(const char* name, IO::IoObject* object);
 
   void init();
 
@@ -205,12 +206,12 @@ private:
   mutable dynamic_string itsDoUponCompletionBody;
 
 //   struct ManagedObject {
-// 	 ManagedObject(const string& n, IO* obj) :
+// 	 ManagedObject(const string& n, IO::IoObject* obj) :
 // 		name(n), object(obj) {}
-// 	 ManagedObject(const char* n, IO* obj) :
+// 	 ManagedObject(const char* n, IO::IoObject* obj) :
 // 		name(n), object(obj) {}
 // 	 string name;
-// 	 IO* object;
+// 	 IO::IoObject* object;
 //   };
 
 //   vector<ManagedObject> itsManagedObjects;
@@ -281,7 +282,7 @@ DOTRACE("ExptDriver::Impl::updateDoUponCompletionBody");
 							"info body Expt::doUponCompletion");
 	 
 	 if (tclresult != TCL_OK) {
-		throw OutputError("couldn't get the proc body for Expt::doUponCompletion");
+		throw IO::OutputError("couldn't get the proc body for Expt::doUponCompletion");
 	 }
 	 
 	 itsDoUponCompletionBody = Tcl_GetStringResult(itsInterp);
@@ -305,7 +306,7 @@ DOTRACE("ExptDriver::Impl::recreateDoUponCompletionProc");
 	 proc_cmd.invoke(itsInterp);
   }
   catch (Tcl::TclError& err) {
-	 throw InputError(err.msg_cstr());
+	 throw IO::InputError(err.msg_cstr());
   }
 }
 
@@ -515,7 +516,7 @@ DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
 void ExptDriver::Impl::serialize(ostream& os, IO::IOFlag flag) const {
 DOTRACE("ExptDriver::Impl::serialize");
 
-  if (flag & TYPENAME) { os << ioTag << IO::SEP; }
+  if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
 
   ObjList::   theObjList()   .serialize(os, flag);
   PosList::   thePosList()   .serialize(os, flag);
@@ -539,13 +540,13 @@ DOTRACE("ExptDriver::Impl::serialize");
   os << itsDoUponCompletionBody.length() << endl
 	  << itsDoUponCompletionBody << endl;
 
-  if (os.fail()) throw OutputError(ioTag.c_str());
+  if (os.fail()) throw IO::OutputError(ioTag.c_str());
 }
 
 void ExptDriver::Impl::deserialize(istream& is, IO::IOFlag flag) {
 DOTRACE("ExptDriver::Impl::deserialize");
 
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
   ObjList::   theObjList()   .deserialize(is, flag);
   PosList::   thePosList()   .deserialize(is, flag);
@@ -579,7 +580,7 @@ DOTRACE("ExptDriver::Impl::deserialize");
 
   recreateDoUponCompletionProc();
 
-  if (is.fail()) throw InputError(ioTag.c_str());
+  if (is.fail()) throw IO::InputError(ioTag.c_str());
 }
 
 int ExptDriver::Impl::charCount() const {
@@ -596,15 +597,15 @@ DOTRACE("ExptDriver::Impl::charCount");
 			 + itsBeginDate.length() + 1
 			 + itsEndDate.length() + 1
 			 + itsAutosaveFile.length() + 1
-			 + gCharCount<int>(itsBlockId) + 1
-			 + gCharCount<int>(itsRhId) + 1
-			 + gCharCount<int>(itsThId) + 1
-			 + gCharCount<int>(itsDoUponCompletionBody.length()) + 1
+			 + IO::gCharCount<int>(itsBlockId) + 1
+			 + IO::gCharCount<int>(itsRhId) + 1
+			 + IO::gCharCount<int>(itsThId) + 1
+			 + IO::gCharCount<int>(itsDoUponCompletionBody.length()) + 1
 			 + itsDoUponCompletionBody.length() + 1
 			 + 5); // fudge factor
 }
 
-void ExptDriver::Impl::readFrom(Reader* reader) {
+void ExptDriver::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("ExptDriver::Impl::readFrom");
 
   reader->readOwnedObject("theObjList", &ObjList::theObjList());
@@ -628,7 +629,7 @@ DOTRACE("ExptDriver::Impl::readFrom");
   recreateDoUponCompletionProc();
 }
 
-void ExptDriver::Impl::writeTo(Writer* writer) const {
+void ExptDriver::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("ExptDriver::Impl::writeTo");
 
   writer->writeOwnedObject("theObjList", &ObjList::theObjList());
@@ -652,7 +653,7 @@ DOTRACE("ExptDriver::Impl::writeTo");
   writer->writeValue("doUponCompletionScript", itsDoUponCompletionBody);
 }
 
-void ExptDriver::Impl::manageObject(const char* /* name */, IO* /* object */) {
+void ExptDriver::Impl::manageObject(const char* /* name */, IO::IoObject* /* object */) {
 DOTRACE("ExptDriver::Impl::manageObject");
 //   itsManagedObjects.push_back(ManagedObject(name, object)); 
 }
@@ -943,7 +944,7 @@ DOTRACE("ExptDriver::Impl::edSetCurrentTrial");
 void ExptDriver::Impl::read(const char* filename) {
 DOTRACE("ExptDriver::Impl::read");
   ifstream ifs(filename);
-  if (ifs.fail()) throw IoFilenameError(filename);
+  if (ifs.fail()) throw IO::FilenameError(filename);
   deserialize(ifs, IO::BASES|IO::TYPENAME);
 }
 
@@ -956,7 +957,7 @@ DOTRACE("ExptDriver::Impl::read");
 void ExptDriver::Impl::write(const char* filename) const {
 DOTRACE("ExptDriver::Impl::write");
   ofstream ofs(filename);
-  if (ofs.fail()) throw IoFilenameError(filename);
+  if (ofs.fail()) throw IO::FilenameError(filename);
   serialize(ofs, IO::BASES|IO::TYPENAME);
 }
 
@@ -1004,7 +1005,7 @@ DOTRACE("ExptDriver::Impl::storeData");
 		return;
 	 }
   }
-  catch (IoError& err) {
+  catch (IO::IoError& err) {
 	 raiseBackgroundError(err.msg_cstr());
 	 return;
   }
@@ -1034,19 +1035,19 @@ DOTRACE("ExptDriver::~ExptDriver");
   delete itsImpl; 
 }
 
-void ExptDriver::serialize(ostream &os, IOFlag flag) const
+void ExptDriver::serialize(ostream &os, IO::IOFlag flag) const
   { itsImpl->serialize(os, flag); }
 
-void ExptDriver::deserialize(istream &is, IOFlag flag) 
+void ExptDriver::deserialize(istream &is, IO::IOFlag flag) 
   { itsImpl->deserialize(is, flag); }
 
 int ExptDriver::charCount() const
   { return itsImpl->charCount(); }
 
-void ExptDriver::readFrom(Reader* reader) 
+void ExptDriver::readFrom(IO::Reader* reader) 
   { itsImpl->readFrom(reader); }
 
-void ExptDriver::writeTo(Writer* writer) const 
+void ExptDriver::writeTo(IO::Writer* writer) const 
   { itsImpl->writeTo(writer); }
 
 
@@ -1072,7 +1073,7 @@ GWT::Widget* ExptDriver::getWidget()
 GWT::Canvas* ExptDriver::getCanvas()
   { return itsImpl->getCanvas(); }
 
-void ExptDriver::manageObject(const char* name, IO* object)
+void ExptDriver::manageObject(const char* name, IO::IoObject* object)
   { itsImpl->manageObject(name, object); }
 
 void ExptDriver::edDraw() 

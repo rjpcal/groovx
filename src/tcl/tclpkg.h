@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Thu Mar 30 00:12:50 2000
+// written: Thu Mar 30 08:29:17 2000
 // $Id$
 //
 //
@@ -24,7 +24,7 @@
 #include "io/property.h"
 #endif
 
-class IO;
+namespace IO { class IoObject; }
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -238,7 +238,7 @@ public:
   TclIoItemPkg(Tcl_Interp* interp, const char* name, const char* version,
 					int item_argn=1);
 
-  virtual IO& getIoFromId(int id) = 0;
+  virtual IO::IoObject& getIoFromId(int id) = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////

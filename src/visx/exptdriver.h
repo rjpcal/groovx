@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Mar 29 23:50:53 2000
+// written: Thu Mar 30 09:50:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class ExptDriver : public Experiment, public virtual IO {
+class ExptDriver : public Experiment, public virtual IO::IoObject {
 private:
   /// Copy constructor not allowed
   ExptDriver(const ExptDriver&);
@@ -60,14 +60,14 @@ public:
   /// Virtual destructor.
   virtual ~ExptDriver();
 
-  virtual void serialize(ostream &os, IOFlag flag) const;
-  virtual void deserialize(istream &is, IOFlag flag);
+  virtual void serialize(ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(istream &is, IO::IOFlag flag);
   virtual int charCount() const;
 
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
-  virtual void manageObject(const char* name, IO* object);
+  virtual void manageObject(const char* name, IO::IoObject* object);
 
   //////////////////////////////
   // Accessors + Manipulators //

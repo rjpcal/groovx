@@ -3,7 +3,7 @@
 // stringifycmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:28 1999
-// written: Thu Mar 30 00:10:32 2000
+// written: Thu Mar 30 09:12:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@
 
 void Tcl::StringifyCmd::invoke() {
 DOTRACE("Tcl::StringifyCmd::invoke");
-  IO& io = getIO();
+  IO::IoObject& io = getIO();
 
   int buf_size = io.charCount();
 
@@ -54,7 +54,7 @@ DOTRACE("Tcl::StringifyCmd::invoke");
 		throw TclError("buffer overflow during stringify");
 	 }
   }
-  catch (IoError& err) {
+  catch (IO::IoError& err) {
 	 err.appendMsg(" with buffer contents ==\n");
 
 	 buf[buf.size()-1] = '\0';
@@ -77,7 +77,7 @@ DOTRACE("Tcl::DestringifyCmd::invoke");
   try {
 	 getIO().deserialize(ist, IO::BASES|IO::TYPENAME);
   }
-  catch (IoError& err) {
+  catch (IO::IoError& err) {
 	 throw TclError(err.msg_cstr());
   }
   returnVoid();
@@ -85,7 +85,7 @@ DOTRACE("Tcl::DestringifyCmd::invoke");
 
 void Tcl::WriteCmd::invoke() {
 DOTRACE("Tcl::WriteCmd::invoke");
-  IO& io = getIO();   
+  IO::IoObject& io = getIO();   
 
   const int BUF_SIZE = 4096;
   static_block<char, BUF_SIZE> buf;
@@ -104,7 +104,7 @@ DOTRACE("Tcl::WriteCmd::invoke");
 
 void Tcl::ReadCmd::invoke() {
 DOTRACE("Tcl::ReadCmd::invoke");
-  IO& io = getIO();
+  IO::IoObject& io = getIO();
 
   const char* str = arg(objc() - 1).getCstring();
 
@@ -116,7 +116,7 @@ DOTRACE("Tcl::ReadCmd::invoke");
 
 void Tcl::ASWSaveCmd::invoke() {
 DOTRACE("Tcl::ASWSaveCmd::invoke");
-  IO& io = getIO();
+  IO::IoObject& io = getIO();
   const char* filename = getFilename();
 
   ofstream ofs(filename);
@@ -139,7 +139,7 @@ DOTRACE("Tcl::ASRLoadCmd::invoke");
 
   beforeLoadHook(); 
 
-  IO& io = getIO();
+  IO::IoObject& io = getIO();
   const char* filename = getFilename();
 
   ifstream ifs(filename);

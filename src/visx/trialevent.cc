@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Thu Mar 30 00:04:07 2000
+// written: Thu Mar 30 12:29:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,14 @@
 
 #include "trialevent.h"
 
-#include "demangle.h"
 #include "experiment.h"
 
 #include "io/reader.h"
 #include "io/writer.h"
 
 #include "gwt/canvas.h"
+
+#include "system/demangle.h"
 
 #include "util/error.h"
 
@@ -77,38 +78,38 @@ DOTRACE("TrialEvent::~TrialEvent");
   DebugEvalNL(itsInvokeCount ? itsTotalError/itsInvokeCount : 0);
 }
 
-void TrialEvent::serialize(ostream& os, IOFlag flag) const {
+void TrialEvent::serialize(ostream& os, IO::IOFlag flag) const {
 DOTRACE("TrialEvent::serialize");
 
-  if (flag&TYPENAME)
+  if (flag&IO::TYPENAME)
 	 {
 		os << demangle_cstr(typeid(*this).name()) << ' ';
 	 }
   os << itsRequestedDelay << endl;
-  if (os.fail()) throw InputError(typeid(*this));
+  if (os.fail()) throw IO::InputError(typeid(*this));
 }
 
-void TrialEvent::deserialize(istream& is, IOFlag flag) {
+void TrialEvent::deserialize(istream& is, IO::IOFlag flag) {
 DOTRACE("TrialEvent::deserialize");
 
   cancel(); // cancel since the event is changing state
 
-  if (flag&TYPENAME)
+  if (flag&IO::TYPENAME)
 	 {
-		IO::readTypename(is, demangle_cstr(typeid(*this).name()));
+		IO::IoObject::readTypename(is, demangle_cstr(typeid(*this).name()));
 	 }
   is >> itsRequestedDelay;
-  if (is.fail()) throw InputError(typeid(*this));
+  if (is.fail()) throw IO::InputError(typeid(*this));
 }
 
 int TrialEvent::charCount() const {
 DOTRACE("TrialEvent::charCount");
   return ( strlen(demangle_cstr(typeid(*this).name())) + 1
-			 + gCharCount<int>(itsRequestedDelay) + 1
+			 + IO::gCharCount<int>(itsRequestedDelay) + 1
 			 + 1); // fudge factor
 }
 
-void TrialEvent::readFrom(Reader* reader) {
+void TrialEvent::readFrom(IO::Reader* reader) {
 DOTRACE("TrialEvent::readFrom");
 
   cancel(); // cancel since the event is changing state
@@ -116,7 +117,7 @@ DOTRACE("TrialEvent::readFrom");
   reader->readValue("requestedDelay", itsRequestedDelay);
 }
 
-void TrialEvent::writeTo(Writer* writer) const {
+void TrialEvent::writeTo(IO::Writer* writer) const {
 DOTRACE("TrialEvent::writeTo");
 
   writer->writeValue("requestedDelay", itsRequestedDelay);

@@ -3,7 +3,7 @@
 // eventresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:30:54 1999
-// written: Wed Mar 29 14:07:38 2000
+// written: Thu Mar 30 09:50:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,12 +84,12 @@ public:
   /// Virtual destructor.
   virtual ~EventResponseHdlr();
 
-  virtual void serialize(ostream &os, IOFlag flag) const;
-  virtual void deserialize(istream &is, IOFlag flag);
+  virtual void serialize(ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(istream &is, IO::IOFlag flag);
   virtual int charCount() const;
 
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
   // manipulators/accessors
 
@@ -146,12 +146,12 @@ protected:
   /** This deprecated function is provided for compatibility with old
       \c KbdResponseHdlr interface, since the eventSequence and
       bindingSubstitution fields are ignored. */
-  void oldSerialize(ostream &os, IOFlag flag) const;
+  void oldSerialize(ostream &os, IO::IOFlag flag) const;
 
   /** This deprecated function is provided for compatibility with old
       \c KbdResponseHdlr interface, since the eventSequence and
       bindingSubstitution fields are ignored. */
-  void oldDeserialize(istream &is, IOFlag flag);
+  void oldDeserialize(istream &is, IO::IOFlag flag);
 
   /** This deprecated function is provided for compatibility with old
       \c KbdResponseHdlr interface, since the eventSequence and

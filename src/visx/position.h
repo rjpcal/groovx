@@ -3,7 +3,7 @@
 // position.h
 // Rob Peters
 // created: Wed Mar 10 21:33:14 1999
-// written: Wed Mar 29 23:50:52 2000
+// written: Thu Mar 30 09:50:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ class PositionImpl;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Position : public virtual IO {
+class Position : public virtual IO::IoObject {
 public:
   //////////////
   // creators //
@@ -38,21 +38,21 @@ public:
   /// Default constructor.
   Position();
   /// Stream constructor.
-  Position(istream &is, IOFlag flag);
+  Position(istream &is, IO::IOFlag flag);
   ///
   virtual ~Position();
 
   ///
-  virtual void serialize(ostream &os, IOFlag flag) const;
+  virtual void serialize(ostream &os, IO::IOFlag flag) const;
   ///
-  virtual void deserialize(istream &is, IOFlag flag);
+  virtual void deserialize(istream &is, IO::IOFlag flag);
   ///
   virtual int charCount() const;
 
   ///
-  virtual void readFrom(Reader* reader);
+  virtual void readFrom(IO::Reader* reader);
   ///
-  virtual void writeTo(Writer* writer) const;
+  virtual void writeTo(IO::Writer* writer) const;
 
   ///////////////
   // accessors //

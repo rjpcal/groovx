@@ -3,7 +3,7 @@
 // subject.cc
 // Rob Peters
 // created: Dec-98
-// written: Thu Mar 30 00:02:12 2000
+// written: Thu Mar 30 09:50:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,35 +52,35 @@ Subject::~Subject() {
 DOTRACE("Subject::~Subject");
 }
 
-Subject::Subject(istream &is, IOFlag flag) :
+Subject::Subject(istream &is, IO::IOFlag flag) :
   itsName(""), itsDirectory("")
 {
 DOTRACE("Subject::Subject");
   deserialize(is, flag);
 }
 
-void Subject::serialize(ostream &os, IOFlag flag) const {
+void Subject::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("Subject::serialize");
-  if (flag & BASES) { /* there are no bases to deserialize */ }
+  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
 
   char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   os << itsName << endl;
   os << itsDirectory << endl;
 
-  if (os.fail()) throw OutputError(ioTag.c_str());
+  if (os.fail()) throw IO::OutputError(ioTag.c_str());
 }
 
-void Subject::deserialize(istream &is, IOFlag flag) {
+void Subject::deserialize(istream &is, IO::IOFlag flag) {
 DOTRACE("Subject::deserialize");
-  if (flag & BASES) { /* there are no bases to deserialize */ }
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
+  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
   getline(is, itsName, '\n');
   getline(is, itsDirectory, '\n');
 
-  if (is.fail()) throw InputError(ioTag.c_str());
+  if (is.fail()) throw IO::InputError(ioTag.c_str());
 }
 
 int Subject::charCount() const {
@@ -90,14 +90,14 @@ int Subject::charCount() const {
 			 + 5);// fudge factor
 }
 
-void Subject::readFrom(Reader* reader) {
+void Subject::readFrom(IO::Reader* reader) {
 DOTRACE("Subject::readFrom");
 
   reader->readValue("name", itsName);
   reader->readValue("directory", itsDirectory);
 }
 
-void Subject::writeTo(Writer* writer) const {
+void Subject::writeTo(IO::Writer* writer) const {
 DOTRACE("Subject::writeTo");
 
   writer->writeValue("name", itsName);

@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Wed Mar 29 23:54:34 2000
+// written: Thu Mar 30 09:54:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 
   int num_read = 0;
 
-  IO::eatWhitespace(ifs);
+  IO::IoObject::eatWhitespace(ifs);
 
   while ( (num_to_read == ALL || num_read < num_to_read)
 			 && (ifs.peek() != EOF) ) {
@@ -87,11 +87,11 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 	 if (reading_typenames) { ifs >> type; }
 	 else                   { type = given_type; }
 
-	 IO* io = IoMgr::newIO(type.c_str());
+	 IO::IoObject* io = IO::IoMgr::newIO(type.c_str());
 	 
 	 GrObj* p = dynamic_cast<GrObj*>(io);
 	 if (!p) {
-		throw InputError("ObjlistTcl::loadObjects");
+		throw IO::InputError("ObjlistTcl::loadObjects");
 	 }
 	 
 	 IO::IOFlag flags = use_bases ? IO::BASES : IO::NO_FLAGS;
@@ -104,7 +104,7 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 
 	 ++num_read;
 
-	 IO::eatWhitespace(ifs);
+	 IO::IoObject::eatWhitespace(ifs);
   }
 }
 
@@ -164,7 +164,7 @@ public:
 	 ASRLoadCmd(interp, cmd_name, "filename", 2), itsSandbox(0) {}
 
 protected:
-  virtual IO& getIO() { return itsSandbox; }
+  virtual IO::IoObject& getIO() { return itsSandbox; }
   virtual const char* getFilename() { return getCstringFromArg(1); }
 
   virtual void beforeLoadHook()

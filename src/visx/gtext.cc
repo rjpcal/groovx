@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Thu Mar 30 00:03:20 2000
+// written: Thu Mar 30 09:50:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -666,13 +666,13 @@ DOTRACE("Gtext::Gtext(const char*)");
   GrObj::setHeight(1.0);
 }
 
-Gtext::Gtext(istream& is, IOFlag flag) :
+Gtext::Gtext(istream& is, IO::IOFlag flag) :
   GrObj(GROBJ_GL_COMPILE, GROBJ_SWAP_FORE_BACK),
   itsText(""),
   itsStrokeWidth(2),
   itsListBase(0)
 {
-DOTRACE("Gtext::Gtext(istream&, IOFlag)");
+DOTRACE("Gtext::Gtext(istream&, IO::IOFlag)");
   deserialize(is, flag);
 }
  
@@ -680,27 +680,27 @@ Gtext::~Gtext() {
 DOTRACE("Gtext::~Gtext");
 }
 
-void Gtext::serialize(ostream &os, IOFlag flag) const {
+void Gtext::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("Gtext::serialize");
 
-  if (flag & TYPENAME) { os << ioTag << IO::SEP; }
+  if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
 
   os << itsText << endl;
 
-  if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }
+  if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
 }
 
-void Gtext::deserialize(istream &is, IOFlag flag) {
+void Gtext::deserialize(istream &is, IO::IOFlag flag) {
 DOTRACE("Gtext::deserialize");
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); } 
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); } 
 
   if ( IO::SEP == is.peek() ) { is.get(); }
 
   getline(is, itsText, '\n');
 
-  if (is.fail()) throw InputError(ioTag.c_str());
+  if (is.fail()) throw IO::InputError(ioTag.c_str());
 
-  if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
+  if (flag & IO::BASES) { GrObj::deserialize(is, flag | IO::TYPENAME); }
 }
 
 int Gtext::charCount() const {
@@ -711,7 +711,7 @@ DOTRACE("Gtext::charCount");
 			 + 1); // fudge factor
 }
 
-void Gtext::readFrom(Reader* reader) {
+void Gtext::readFrom(IO::Reader* reader) {
 DOTRACE("Gtext::readFrom");
   reader->readValue("text", itsText);
   reader->readValue("strokeWidth", itsStrokeWidth);
@@ -719,7 +719,7 @@ DOTRACE("Gtext::readFrom");
   GrObj::readFrom(reader); 
 }
 
-void Gtext::writeTo(Writer* writer) const {
+void Gtext::writeTo(IO::Writer* writer) const {
 DOTRACE("Gtext::writeTo");
   writer->writeValue("text", itsText);
   writer->writeValue("strokeWidth", itsStrokeWidth);

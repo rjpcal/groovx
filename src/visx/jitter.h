@@ -3,7 +3,7 @@
 // jitter.h
 // Rob Peters
 // created: Wed Apr  7 13:46:40 1999
-// written: Wed Mar 29 14:07:36 2000
+// written: Thu Mar 30 09:50:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,22 +21,22 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Jitter : public Position, public virtual IO {
+class Jitter : public Position, public virtual IO::IoObject {
 public:
   //////////////
   // creators //
   //////////////
 
   Jitter();
-  Jitter(istream &is, IOFlag flag);
+  Jitter(istream &is, IO::IOFlag flag);
   virtual ~Jitter();
 
-  virtual void serialize(ostream &os, IOFlag flag) const;
-  virtual void deserialize(istream &is, IOFlag flag);
+  virtual void serialize(ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(istream &is, IO::IOFlag flag);
   virtual int charCount() const;
 
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
   //////////////////
   // manipulators //

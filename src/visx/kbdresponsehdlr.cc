@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Wed Mar 15 10:17:28 2000
+// written: Thu Mar 30 09:08:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,30 +46,30 @@ KbdResponseHdlr::KbdResponseHdlr(const char* key_resp_pairs) :
   setBindingSubstitution("%K");
 }
 
-void KbdResponseHdlr::serialize(ostream &os, IOFlag flag) const {
+void KbdResponseHdlr::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("KbdResponseHdlr::serialize");
-  if (flag & TYPENAME) { os << ioTag << IO::SEP; }
+  if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
 
   oldSerialize(os, flag);
 
-  if (os.fail()) throw OutputError(ioTag.c_str());
+  if (os.fail()) throw IO::OutputError(ioTag.c_str());
 
-  if (flag & BASES) { /* no bases to serialize */ }
+  if (flag & IO::BASES) { /* no bases to serialize */ }
 }
 
-void KbdResponseHdlr::deserialize(istream &is, IOFlag flag) {
+void KbdResponseHdlr::deserialize(istream &is, IO::IOFlag flag) {
 DOTRACE("KbdResponseHdlr::deserialize");
 
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
   oldDeserialize(is, flag);
 
   setEventSequence("<KeyPress");
   setBindingSubstitution("%K");
 
-  if (is.fail()) throw InputError(ioTag.c_str());
+  if (is.fail()) throw IO::InputError(ioTag.c_str());
 
-  if (flag & BASES) { /* no bases to deserialize */ }
+  if (flag & IO::BASES) { /* no bases to deserialize */ }
 }
 
 int KbdResponseHdlr::charCount() const {

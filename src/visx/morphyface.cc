@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Thu Mar 30 00:03:45 2000
+// written: Thu Mar 30 12:15:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -289,7 +289,7 @@ DOTRACE("MorphyFace::MorphyFace");
 
 // read the object's state from an input stream. The input stream must
 // already be open and connected to an appropriate file.
-MorphyFace::MorphyFace(istream& is, IOFlag flag) :
+MorphyFace::MorphyFace(istream& is, IO::IOFlag flag) :
   GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX),
 
   category(0),
@@ -329,7 +329,7 @@ MorphyFace::MorphyFace(istream& is, IOFlag flag) :
   mouthWidth(2.5),
   mouthCurvature(0.6)
 {
-DOTRACE("MorphyFace::MorphyFace(istream&, IOFlag)");
+DOTRACE("MorphyFace::MorphyFace(istream&, IO::IOFlag)");
   deserialize(is, flag);
   Invariant(check());
 }
@@ -341,12 +341,12 @@ DOTRACE("MorphyFace::~MorphyFace");
 
 // Writes the object's state to an output stream. The output stream
 // must already be open and connected to an appropriate file.
-void MorphyFace::serialize(ostream &os, IOFlag flag) const {
+void MorphyFace::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("MorphyFace::serialize");
   Invariant(check());
 
   char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   // version
   os << "@1" << sep;
@@ -358,16 +358,16 @@ DOTRACE("MorphyFace::serialize");
   }
 
   os << '}' << endl;
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw IO::OutputError(ioTag);
 
-  if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }
+  if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
 }
 
-void MorphyFace::deserialize(istream &is, IOFlag flag) {
+void MorphyFace::deserialize(istream &is, IO::IOFlag flag) {
 DOTRACE("MorphyFace::deserialize");
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
-  IO::eatWhitespace(is);
+  IO::IoObject::eatWhitespace(is);
   int version = 0;
 
   if ( is.peek() == '@' ) {
@@ -387,7 +387,7 @@ DOTRACE("MorphyFace::deserialize");
 	 char brace;
 	 is >> brace;
 	 if (brace != '{') {
-		IoLogicError err(ioTag); err.appendMsg(" missing left-brace");
+		IO::LogicError err(ioTag); err.appendMsg(" missing left-brace");
 		throw err;
 	 }
 
@@ -397,12 +397,12 @@ DOTRACE("MorphyFace::deserialize");
 
 	 is >> brace;
 	 if (brace != '}') {
-		IoLogicError err(ioTag); err.appendMsg(" missing right-brace");
+		IO::LogicError err(ioTag); err.appendMsg(" missing right-brace");
 		throw err;
 	 }
   }
   else {
-	 IoLogicError err(ioTag); err.appendMsg(" unknown version");
+	 IO::LogicError err(ioTag); err.appendMsg(" unknown version");
 	 throw err;
   }
 
@@ -413,14 +413,14 @@ DOTRACE("MorphyFace::deserialize");
   // optimization off. Somehow adding the catch and re-throw avoids
   // the problem, without changing the program's behavior.
   try {
-	 if (is.fail()) throw InputError(ioTag);
+	 if (is.fail()) throw IO::InputError(ioTag);
   }
-  catch (IoError&) { 
+  catch (IO::IoError&) { 
 	 throw;
   }
   Invariant(check());
 
-  if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
+  if (flag & IO::BASES) { GrObj::deserialize(is, flag | IO::TYPENAME); }
 
   sendStateChangeMsg();
 }
@@ -441,7 +441,7 @@ DOTRACE("MorphyFace::serialVersionId");
   return MFACE_SERIAL_VERSION_ID;
 }
 
-void MorphyFace::readFrom(Reader* reader) {
+void MorphyFace::readFrom(IO::Reader* reader) {
 DOTRACE("MorphyFace::readFrom");
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 reader->readValueObj(PINFOS[i].name_cstr(),
@@ -453,12 +453,12 @@ DOTRACE("MorphyFace::readFrom");
 	 GrObj::readFrom(reader);
   else if (svid == 1)
 	 {
-		IOProxy<GrObj> baseclass(this);
+		IO::IoProxy<GrObj> baseclass(this);
 		reader->readBaseClass("GrObj", &baseclass);
 	 }
 }
 
-void MorphyFace::writeTo(Writer* writer) const {
+void MorphyFace::writeTo(IO::Writer* writer) const {
 DOTRACE("MorphyFace::writeTo");
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
@@ -468,7 +468,7 @@ DOTRACE("MorphyFace::writeTo");
 	 GrObj::writeTo(writer);
   else if (MFACE_SERIAL_VERSION_ID == 1)
 	 {
-		IOProxy<GrObj> baseclass(const_cast<MorphyFace*>(this));
+		IO::IoProxy<GrObj> baseclass(const_cast<MorphyFace*>(this));
 		writer->writeBaseClass("GrObj", &baseclass);
 	 }
 }

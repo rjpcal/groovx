@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Mar 29 23:56:49 2000
+// written: Thu Mar 30 12:09:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -170,7 +170,7 @@ DOTRACE("Block_Init");
   Tcl::TclPkg* pkg1 = new BlockTcl::BlockPkg(interp);
   Tcl::TclPkg* pkg2 = new BlockListTcl::BlockListPkg(interp);
 
-  FactoryRegistrar<IO, Block>::registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, Block>::registerWith(IO::IoFactory::theOne());
 
   return pkg1->initedOk() ? pkg2->initStatus() : pkg1->initStatus();
 }

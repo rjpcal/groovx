@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Wed Mar 29 23:50:52 2000
+// written: Thu Mar 30 09:50:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ class Response;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Trial : public virtual IO {
+class Trial : public virtual IO::IoObject {
 public:
   //////////////////
   // nested types //
@@ -56,16 +56,16 @@ public:
   //////////////
 
   Trial();
-  Trial(istream &is, IOFlag flag); 
+  Trial(istream &is, IO::IOFlag flag); 
   virtual ~Trial ();
 
   // write/read the object's state from/to an output/input stream
-  virtual void serialize(ostream &os, IOFlag flag) const;
-  virtual void deserialize(istream &is, IOFlag flag);
+  virtual void serialize(ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(istream &is, IO::IOFlag flag);
   virtual int charCount() const;
   
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
   // this function reads from an istream that is assumed to contain
   // objid's only; posid's are implied by the position in the input

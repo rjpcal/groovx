@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Thu Mar 30 00:02:55 2000
+// written: Thu Mar 30 12:15:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,14 +97,14 @@ DOTRACE("Face::Face");
 
 // read the object's state from an input stream. The input stream must
 // already be open and connected to an appropriate file.
-Face::Face(istream& is, IOFlag flag) :
+Face::Face(istream& is, IO::IOFlag flag) :
   category(0),
   eyeHeight(0.6),
   eyeDistance(0.4),
   noseLength(0.4),
   mouthHeight(-0.8)
 {
-DOTRACE("Face::Face(istream&, IOFlag)");
+DOTRACE("Face::Face(istream&, IO::IOFlag)");
   deserialize(is, flag);
   Invariant(check());
 }
@@ -116,12 +116,12 @@ DOTRACE("Face::~Face");
 
 // Writes the object's state to an output stream. The output stream
 // must already be open and connected to an appropriate file.
-void Face::serialize(ostream &os, IOFlag flag) const {
+void Face::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("Face::serialize");
   Invariant(check());
 
   char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   // version
   os << "@1" << sep;
@@ -133,16 +133,16 @@ DOTRACE("Face::serialize");
   }
 
   os << '}' << endl;
-  if (os.fail()) throw OutputError(ioTag.c_str());
+  if (os.fail()) throw IO::OutputError(ioTag.c_str());
 
-  if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }
+  if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
 }
 
-void Face::deserialize(istream &is, IOFlag flag) {
+void Face::deserialize(istream &is, IO::IOFlag flag) {
 DOTRACE("Face::deserialize");
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
-  IO::eatWhitespace(is);
+  IO::IoObject::eatWhitespace(is);
   int version = 0;
 
   if ( is.peek() == '@' ) {
@@ -166,7 +166,7 @@ DOTRACE("Face::deserialize");
 	 char brace;
 	 is >> brace;
 	 if (brace != '{') {
-		IoLogicError err(ioTag.c_str()); err.appendMsg(" missing left-brace");
+		IO::LogicError err(ioTag.c_str()); err.appendMsg(" missing left-brace");
 		throw err;
 	 }
 
@@ -176,12 +176,12 @@ DOTRACE("Face::deserialize");
 
 	 is >> brace;
 	 if (brace != '}') {
-		IoLogicError err(ioTag.c_str()); err.appendMsg(" missing right-brace");
+		IO::LogicError err(ioTag.c_str()); err.appendMsg(" missing right-brace");
 		throw err;
 	 }
   }
   else {
-	 IoLogicError err(ioTag.c_str()); err.appendMsg(" unknown version");
+	 IO::LogicError err(ioTag.c_str()); err.appendMsg(" unknown version");
 	 throw err;
   }
 
@@ -192,14 +192,14 @@ DOTRACE("Face::deserialize");
   // optimization off. Somehow adding the catch and re-throw avoids
   // the problem, without changing the program's behavior.
   try {
-	 if (is.fail()) throw InputError(ioTag.c_str());
+	 if (is.fail()) throw IO::InputError(ioTag.c_str());
   }
-  catch (IoError&) { 
+  catch (IO::IoError&) { 
 	 throw;
   }
   Invariant(check());
 
-  if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
+  if (flag & IO::BASES) { GrObj::deserialize(is, flag | IO::TYPENAME); }
 
   sendStateChangeMsg();
 }
@@ -224,7 +224,7 @@ DOTRACE("Face::serialVersionId");
   return FACE_SERIAL_VERSION_ID;
 }
 
-void Face::readFrom(Reader* reader) {
+void Face::readFrom(IO::Reader* reader) {
 DOTRACE("Face::readFrom");
   for (size_t i = 0; i < NUM_PINFOS; ++i) {
 	 reader->readValueObj(PINFOS[i].name_cstr(),
@@ -236,12 +236,12 @@ DOTRACE("Face::readFrom");
 	 GrObj::readFrom(reader);
   else if (svid == 1)
 	 {
-		IOProxy<GrObj> baseclass(this);
+		IO::IoProxy<GrObj> baseclass(this);
 		reader->readBaseClass("GrObj", &baseclass);
 	 }
 }
 
-void Face::writeTo(Writer* writer) const {
+void Face::writeTo(IO::Writer* writer) const {
 DOTRACE("Face::writeTo");
   for (size_t i = 0; i < NUM_PINFOS; ++i) {
 	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
@@ -251,7 +251,7 @@ DOTRACE("Face::writeTo");
 	 GrObj::writeTo(writer);
   else if (FACE_SERIAL_VERSION_ID == 1)
 	 {
-		IOProxy<GrObj> baseclass(const_cast<Face*>(this));
+		IO::IoProxy<GrObj> baseclass(const_cast<Face*>(this));
 		writer->writeBaseClass("GrObj", &baseclass);
 	 }
 }

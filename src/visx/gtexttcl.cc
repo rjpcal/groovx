@@ -3,7 +3,7 @@
 // gtexttcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 12:30:38 1999
-// written: Wed Mar 29 23:57:00 2000
+// written: Thu Mar 30 12:09:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ DOTRACE("Gtext_Init");
 
   Tcl::TclPkg* pkg = new GtextTcl::GtextPkg(interp); 
 
-  FactoryRegistrar<IO, Gtext>::registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, Gtext>::registerWith(IO::IoFactory::theOne());
 
   return pkg->initStatus();
 }

@@ -3,7 +3,7 @@
 // iofactory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:06 1999
-// written: Wed Mar 29 23:50:52 2000
+// written: Thu Mar 30 12:07:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,8 +19,10 @@
 #include "io/io.h"
 #endif
 
+namespace IO { class IoFactory; }
+
 /// Singleton wrapper for Factor<IO>.
-class IoFactory : public Factory<IO> {
+class IO::IoFactory : public Factory<IO::IoObject> {
 protected:
   /// Default constructor.
   IoFactory();

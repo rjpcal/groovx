@@ -3,7 +3,7 @@
 // fishtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 12:00:53 1999
-// written: Wed Mar 29 23:56:57 2000
+// written: Thu Mar 30 12:09:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ int Fish_Init(Tcl_Interp* interp) {
 
   Tcl::TclPkg* pkg = new FishTcl::FishPkg(interp);
 
-  FactoryRegistrar<IO, Fish>::registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, Fish>::registerWith(IO::IoFactory::theOne());
 
   return pkg->initStatus();
 }

@@ -3,7 +3,7 @@
 // glbitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:30 1999
-// written: Wed Mar 29 14:07:38 2000
+// written: Thu Mar 30 09:50:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ public:
   GLBitmap(const char* filename);
 
   /// Construct from an \c istream by calling \c deserialize().
-  GLBitmap(istream& is, IOFlag flag);
+  GLBitmap(istream& is, IO::IOFlag flag);
 
   private: void init();
 
@@ -46,12 +46,12 @@ public:
   /// Virtual destructor.
   virtual ~GLBitmap();
 
-  virtual void serialize(ostream& os, IOFlag flag) const;
-  virtual void deserialize(istream& is, IOFlag flag);
+  virtual void serialize(ostream& os, IO::IOFlag flag) const;
+  virtual void deserialize(istream& is, IO::IOFlag flag);
   virtual int charCount() const;
 
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
   public:
   /** Query whether the bitmap will be rendered using \c glBitmap()

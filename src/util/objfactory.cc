@@ -3,7 +3,7 @@
 // iofactory.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 30 15:01:02 1999
-// written: Wed Mar 29 23:56:37 2000
+// written: Thu Mar 30 12:09:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,13 +14,13 @@
 #include "io/iofactory.h"
 
 namespace {
-  IoFactory* instance = 0;
+  IO::IoFactory* instance = 0;
 }
 
-IoFactory::IoFactory() :
-  Factory<IO>() {}
+IO::IoFactory::IoFactory() :
+  Factory<IO::IoObject>() {}
 
-IoFactory& IoFactory::theOne() {
+IO::IoFactory& IO::IoFactory::theOne() {
   if (instance == 0) {
 	 instance = new IoFactory;
   }

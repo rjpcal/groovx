@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Wed Mar 29 22:09:34 2000
+// written: Thu Mar 30 09:50:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ DOTRACE("GrObj::GrObj");
 
 // read the object's state from an input stream. The input stream must
 // already be open and connected to an appropriate file.
-GrObj::GrObj(istream& is, IOFlag flag) :
+GrObj::GrObj(istream& is, IO::IOFlag flag) :
   itsImpl(new Impl(this))
 {
 DOTRACE("GrObj::GrObj(istream&)");
@@ -100,12 +100,12 @@ DOTRACE("GrObj::~GrObj");
 
 // write the object's state to an output stream. The output stream must
 // already be open and connected to an appropriate file.
-void GrObj::serialize(ostream& os, IOFlag flag) const {
+void GrObj::serialize(ostream& os, IO::IOFlag flag) const {
 DOTRACE("GrObj::serialize");
   itsImpl->serialize(os, flag);
 }
 
-void GrObj::deserialize(istream& is, IOFlag flag) {
+void GrObj::deserialize(istream& is, IO::IOFlag flag) {
 DOTRACE("GrObj::deserialize");
 
   itsImpl->deserialize(is, flag); 
@@ -117,14 +117,14 @@ DOTRACE("GrObj::Impl::serialVersionId");
   return itsImpl->serialVersionId(); 
 }
 
-void GrObj::readFrom(Reader* reader) {
+void GrObj::readFrom(IO::Reader* reader) {
 DOTRACE("GrObj::readFrom");
 
   itsImpl->readFrom(reader);
   sendStateChangeMsg();
 }
 
-void GrObj::writeTo(Writer* writer) const {
+void GrObj::writeTo(IO::Writer* writer) const {
 DOTRACE("GrObj::writeTo");
   itsImpl->writeTo(writer);
 }

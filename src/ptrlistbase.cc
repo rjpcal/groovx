@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Fri Mar 24 18:51:08 2000
+// written: Thu Mar 30 12:28:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 
 #include "voidptrlist.h"
 
-#include "demangle.h"
+#include "system/demangle.h"
 
 #include <algorithm> // for ::count
 #include <typeinfo>

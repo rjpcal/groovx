@@ -3,7 +3,7 @@
 // misctcl.cc
 // Rob Peters
 // created: Nov-98
-// written: Sun Oct  3 19:28:18 1999
+// written: Thu Mar 30 12:25:21 2000
 // $Id$
 //
 // this file contains the implementations for some simple Tcl functions
@@ -15,11 +15,11 @@
 #ifndef MISCTCL_C_DEFINED
 #define MISCTCL_C_DEFINED
 
+#include "util/randutils.h"
+
 #include <tcl.h>
 #include <cstdlib>
 #include <unistd.h>
-
-#include "randutils.h"
 
 ///////////////////////////////////////////////////////////////////////
 // MiscTcl Tcl package declarations
@@ -48,7 +48,7 @@ int MiscTcl::randCmd(ClientData, Tcl_Interp* interp,
   if (Tcl_GetDoubleFromObj(interp, objv[1], &min) != TCL_OK) return TCL_ERROR;
   if (Tcl_GetDoubleFromObj(interp, objv[2], &max) != TCL_OK) return TCL_ERROR;
 
-  double result = randDoubleRange(min, max);
+  double result = Util::randDoubleRange(min, max);
   Tcl_SetObjResult(interp, Tcl_NewDoubleObj(result));
   return TCL_OK;
 }

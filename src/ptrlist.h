@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Wed Mar 29 14:07:35 2000
+// written: Thu Mar 30 08:29:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -98,10 +98,10 @@ protected:
   void* castFromT(T* ptr) const;
 
   /// Reimplemented from \c IoPtrList.
-  virtual IO* fromVoidToIO(void* ptr) const;
+  virtual IO::IoObject* fromVoidToIO(void* ptr) const;
 
   /// Reimplemented from \c IoPtrList.
-  virtual void* fromIOToVoid(IO* ptr) const;
+  virtual void* fromIOToVoid(IO::IoObject* ptr) const;
 
   /// Casts \a ptr to the correct type, then \c delete's it.
   virtual void destroyPtr(void* ptr);

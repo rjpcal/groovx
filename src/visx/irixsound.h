@@ -3,7 +3,7 @@
 // irixsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 14 11:23:12 1999
-// written: Thu Mar 30 00:03:30 2000
+// written: Thu Mar 30 09:50:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,12 +63,12 @@ public:
   IrixAudioSound(const char* filename);
   virtual ~IrixAudioSound();
 
-  virtual void serialize(ostream& os, IOFlag flag) const;
-  virtual void deserialize(istream& is, IOFlag flag);
+  virtual void serialize(ostream& os, IO::IOFlag flag) const;
+  virtual void deserialize(istream& is, IO::IOFlag flag);
   virtual int charCount() const;
   
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
   virtual void play();
   virtual void setFile(const char* filename);
@@ -116,29 +116,29 @@ DOTRACE("IrixAudioSound::~IrixAudioSound");
   }
 }
 
-void IrixAudioSound::serialize(ostream& os, IOFlag flag) const {
+void IrixAudioSound::serialize(ostream& os, IO::IOFlag flag) const {
 DOTRACE("IrixAudioSound::serialize");
 
   char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   os << itsFilename << endl;
 
-  if (os.fail()) throw OutputError(ioTag.c_str());
+  if (os.fail()) throw IO::OutputError(ioTag.c_str());
 
-  if (flag & BASES) { /* no bases to deal with */ }
+  if (flag & IO::BASES) { /* no bases to deal with */ }
 }
 
-void IrixAudioSound::deserialize(istream& is, IOFlag flag) {
+void IrixAudioSound::deserialize(istream& is, IO::IOFlag flag) {
 DOTRACE("IrixAudioSound::deserialize");
 
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
   getline(is, itsFilename, '\n');
   
-  if (is.fail()) throw InputError(ioTag.c_str());
+  if (is.fail()) throw IO::InputError(ioTag.c_str());
 
-  if (flag & BASES) { /* no bases to deal with */ }
+  if (flag & IO::BASES) { /* no bases to deal with */ }
 
   setFile(itsFilename.c_str());
 }
@@ -150,13 +150,13 @@ DOTRACE("IrixAudioSound::charCount");
 			 +5); // fudge factor
 }
 
-void IrixAudioSound::readFrom(Reader* reader) {
+void IrixAudioSound::readFrom(IO::Reader* reader) {
 DOTRACE("IrixAudioSound::readFrom");
   reader->readValue("filename", itsFilename);
   setFile(itsFilename.c_str());
 }
 
-void IrixAudioSound::writeTo(Writer* writer) const {
+void IrixAudioSound::writeTo(IO::Writer* writer) const {
 DOTRACE("IrixAudioSound::writeTo");
   writer->writeValue("filename", itsFilename);
 }

@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Mar 29 22:12:41 2000
+// written: Thu Mar 30 10:06:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,18 +44,18 @@ public:
   Bitmap(BmapRenderer* renderer, const char* filename);
 
   /// Construct a Bitmap by deserializing from a stream.
-  Bitmap(BmapRenderer* renderer, istream& is, IOFlag flag);
+  Bitmap(BmapRenderer* renderer, istream& is, IO::IOFlag flag);
 
 public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~Bitmap();
 
-  virtual void serialize(ostream& os, IOFlag flag) const;
-  virtual void deserialize(istream& is, IOFlag flag);
+  virtual void serialize(ostream& os, IO::IOFlag flag) const;
+  virtual void deserialize(istream& is, IO::IOFlag flag);
   virtual int charCount() const;
 
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
   /////////////
   // actions //

@@ -3,7 +3,7 @@
 // timinghdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:55 1999
-// written: Wed Mar 29 23:50:52 2000
+// written: Thu Mar 30 09:50:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,17 +28,17 @@ class Experiment;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class TimingHdlr : public virtual IO {
+class TimingHdlr : public virtual IO::IoObject {
 public:
   TimingHdlr();
   virtual ~TimingHdlr();
 
-  virtual void serialize(ostream &os, IOFlag flag) const;
-  virtual void deserialize(istream &is, IOFlag flag);
+  virtual void serialize(ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(istream &is, IO::IOFlag flag);
   virtual int charCount() const;
 
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
   typedef int TimePoint;
   static const TimePoint IMMEDIATE=0;

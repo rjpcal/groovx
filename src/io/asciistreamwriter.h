@@ -3,7 +3,7 @@
 // asciistreamwriter.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:56 1999
-// written: Thu Mar 30 00:02:12 2000
+// written: Thu Mar 30 10:07:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ class ostream;
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c AsciiStreamWriter implements the \c Writer interface, using nice
+ * \c AsciiStreamWriter implements the \c IO::Writer interface, using nice
  * human-readable ascii formatting. \c AsciiStreamWriter writes
  * objects to an output stream in a ascii format that is readable by
  * \AsciiStreamReader. With this data format, objects may read and
@@ -38,7 +38,7 @@ class ostream;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class AsciiStreamWriter : public Writer {
+class AsciiStreamWriter : public IO::Writer {
 public:
   /// Construct with a connection to an open \c ostream.
   AsciiStreamWriter(ostream& os);
@@ -53,11 +53,11 @@ public:
   virtual void writeCstring(const char* name, const char* val);
   virtual void writeValueObj(const char* name, const Value& value);
 
-  virtual void writeObject(const char* name, const IO* obj);
-  virtual void writeOwnedObject(const char* name, const IO* obj);
-  virtual void writeBaseClass(const char* baseClassName, const IO* basePart);
+  virtual void writeObject(const char* name, const IO::IoObject* obj);
+  virtual void writeOwnedObject(const char* name, const IO::IoObject* obj);
+  virtual void writeBaseClass(const char* baseClassName, const IO::IoObject* basePart);
 
-  virtual void writeRoot(const IO* root);
+  virtual void writeRoot(const IO::IoObject* root);
 
 private:
   class Impl;

@@ -3,7 +3,7 @@
 // writer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:50 1999
-// written: Thu Mar 30 00:02:12 2000
+// written: Thu Mar 30 10:02:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,66 +18,66 @@
 #include <string>
 #include <strstream.h>
 
-WriteError::WriteError(const char* msg) :
-  ErrorWithMsg("WriteError: ")
+IO::WriteError::WriteError(const char* msg) :
+  ErrorWithMsg("IO::WriteError: ")
 {
   appendMsg(msg);
 }
 
-Writer::~Writer () {}
+IO::Writer::~Writer () {}
 
 template<>
-void Writer::writeValue<char>(const char* name, const char& val) {
+void IO::Writer::writeValue<char>(const char* name, const char& val) {
   writeChar(name, val);
 }
 
 template<>
-void Writer::writeValue<int>(const char* name, const int& val) {
+void IO::Writer::writeValue<int>(const char* name, const int& val) {
   writeInt(name, val);
 }
 
 template<>
-void Writer::writeValue<size_t>(const char* name, const size_t& val) {
+void IO::Writer::writeValue<size_t>(const char* name, const size_t& val) {
   writeInt(name, val);
 }
 
 template<>
-void Writer::writeValue<bool>(const char* name, const bool& val) {
+void IO::Writer::writeValue<bool>(const char* name, const bool& val) {
   writeBool(name, val);
 }
 
 template<>
-void Writer::writeValue<double>(const char* name, const double& val) {
+void IO::Writer::writeValue<double>(const char* name, const double& val) {
   writeDouble(name, val);
 }
 
 template<>
-void Writer::writeValue<string>(const char* name, const string& val) {
+void IO::Writer::writeValue<string>(const char* name, const string& val) {
   writeCstring(name, val.c_str());
 }
 
 
 template<>
-void Writer::writeValue<fixed_string>(const char* name,
+void IO::Writer::writeValue<fixed_string>(const char* name,
 												  const fixed_string& val) {
   writeCstring(name, val.c_str());
 }
 
 
 template<>
-void Writer::writeValue<dynamic_string>(const char* name,
+void IO::Writer::writeValue<dynamic_string>(const char* name,
 													 const dynamic_string& val) {
   writeCstring(name, val.c_str());
 }
 
 template<>
-void Writer::writeValue<const char*>(const char* name,
+void IO::Writer::writeValue<const char*>(const char* name,
 												 const char* const& val) {
   writeCstring(name, val);
 }
 
 template<>
-void Writer::writeValue<Value>(const char* name,
+void IO::Writer::writeValue<Value>(const char* name,
 										  const Value& value) {
   writeValueObj(name, value);
 }

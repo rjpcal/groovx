@@ -3,7 +3,7 @@
 // trialtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 09:51:54 1999
-// written: Wed Mar 29 23:57:23 2000
+// written: Thu Mar 30 12:09:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ DOTRACE("Trial_Init");
 
   Tcl::TclPkg* pkg = new TrialTcl::TrialPkg(interp);
 
-  FactoryRegistrar<IO, Trial>::registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, Trial>::registerWith(IO::IoFactory::theOne());
 
   return pkg->initStatus();
 }

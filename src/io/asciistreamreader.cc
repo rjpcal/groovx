@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu Mar 30 00:10:20 2000
+// written: Thu Mar 30 09:54:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class AttributeReadError : public ReadError {
+class AttributeReadError : public IO::ReadError {
 public:
   AttributeReadError(const string& attrib_name) :
 	 ReadError("input failed while reading attribute: ")
@@ -86,7 +86,7 @@ namespace {
 				{
 				  int ch2 = is.get();
 				  if (ch2 == EOF || ch2 == STRING_ENDER)
-					 throw ReadError("missing character after trailing backslash");
+					 throw IO::ReadError("missing character after trailing backslash");
 				  switch (ch2) {
 				  case '\\':
 					 *itr++ = '\\';
@@ -101,7 +101,7 @@ namespace {
 					 *itr++ = '}';
 					 break;
 				  default:
-					 throw ReadError("invalid escape character");
+					 throw IO::ReadError("invalid escape character");
 					 break;
 				  }
 				}
@@ -141,32 +141,32 @@ public:
 
   class ObjectMap {
   private:
-	 map<unsigned long, IO*> itsMap;
+	 map<unsigned long, IO::IoObject*> itsMap;
 
   public:
 	 ObjectMap() : itsMap() {}
 
 	 // This returns the object for the given id; the object must
 	 // already have been created, otherwise an exception will be thrown.
-	 IO* getObject(unsigned long id)
+	 IO::IoObject* getObject(unsigned long id)
 		{
-		  IO* obj = itsMap[id];
+		  IO::IoObject* obj = itsMap[id];
 		  if ( obj == 0 )
-			 throw ReadError("no object was found for the given id");
+			 throw IO::ReadError("no object was found for the given id");
 
 		  return obj;
 		}
 
 	 // This will create an object for the id if one has not yet been
 	 // created, then return the object for that id.
-	 IO* fetchObject(const char* type, unsigned long id) {
-		IO*& itsMap_at_id = itsMap[id];
+	 IO::IoObject* fetchObject(const char* type, unsigned long id) {
+		IO::IoObject*& itsMap_at_id = itsMap[id];
 
 		if ( itsMap_at_id == 0 )
 		  {
-			 IO* obj = IoMgr::newIO(type);
+			 IO::IoObject* obj = IO::IoMgr::newIO(type);
 
-			 // If there was a problem within IoMgr::newIO(), it will throw
+			 // If there was a problem within IO::IoMgr::newIO(), it will throw
 			 // an exception, so we should never pass this point with a
 			 // NULL obj.
 			 DebugEvalNL((void*) obj);
@@ -179,13 +179,13 @@ public:
 		return itsMap_at_id;
 	 }
 
-	 void assignObjectForId(unsigned long id, IO* object)
+	 void assignObjectForId(unsigned long id, IO::IoObject* object)
 		{
-		  IO*& itsMap_at_id = itsMap[id];
+		  IO::IoObject*& itsMap_at_id = itsMap[id];
 
 		  // See if an object has already been created for this id
 		  if ( itsMap_at_id != 0 )
-			 throw ReadError("object has already been created");
+			 throw IO::ReadError("object has already been created");
 
 		  itsMap_at_id = object;
 		}
@@ -216,7 +216,7 @@ public:
 		  const Attrib& attrib = itsMap[attrib_name];
 		  if ( attrib.type.empty() )
 			 {
-				ReadError err("invalid attribute name: ");
+				IO::ReadError err("invalid attribute name: ");
 				err.appendMsg(attrib_name.c_str());
 				throw err;
 			 }
@@ -231,7 +231,7 @@ public:
 		  Attrib& attrib = itsMap[attrib_name];
 		  if ( !attrib.type.empty() )
 			 {
-				ReadError err("object input stream contains"
+				IO::ReadError err("object input stream contains"
 								  "multiple attributes with name: ");
 				err.appendMsg(attrib_name.c_str());
 				throw err;
@@ -254,12 +254,12 @@ private:
   AttribMap& currentAttribs()
 	 {
 		if ( itsAttribs.empty() )
-		  throw ReadError("attempted to read attribute "
+		  throw IO::ReadError("attempted to read attribute "
 								"when no attribute map was active");
 		return itsAttribs.front();
 	 }
 
-  void inflateObject(Reader* reader, istream& buf, IO* obj);
+  void inflateObject(IO::Reader* reader, istream& buf, IO::IoObject* obj);
 
   // Delegands -- this is the public interface that AsciiStreamReader
   // forwards to in implementing its own member functions.
@@ -284,15 +284,15 @@ public:
   // Returns a new dynamically allocated char array
   char* readStringType(const string& name);
 
-  IO* readObject(const string& attrib_name);
+  IO::IoObject* readObject(const string& attrib_name);
 
   void readValueObj(const string& name, Value& value);
 
-  void readOwnedObject(const string& name, IO* obj);
+  void readOwnedObject(const string& name, IO::IoObject* obj);
 
-  void readBaseClass(Reader* reader, const char* baseClassName, IO* basePart);
+  void readBaseClass(IO::Reader* reader, const char* baseClassName, IO::IoObject* basePart);
 
-  IO* readRoot(Reader* reader, IO* given_root);
+  IO::IoObject* readRoot(IO::Reader* reader, IO::IoObject* given_root);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -315,7 +315,7 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 		int ch = buf.get();  Assert(ch == 'v');
 		buf >> itsSerialVersionId;
 		if ( buf.fail() )
-		  throw ReadError("input failed while reading serialization version id");
+		  throw IO::ReadError("input failed while reading serialization version id");
 	 }
   else
 	 {
@@ -327,10 +327,10 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
   buf >> attrib_count;    DebugEvalNL(attrib_count);
 
   if (attrib_count < 0)
-	 throw ReadError("found a negative attribute count");
+	 throw IO::ReadError("found a negative attribute count");
 
   if ( buf.fail() )
-	 throw ReadError("input failed while reading attribute count");
+	 throw IO::ReadError("input failed while reading attribute count");
 
   // Loop and load all the attributes
   char type[64], name[64], equal[16];
@@ -340,7 +340,7 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
  	 buf >> type >> name >> equal;   DebugEval(type); DebugEvalNL(name); 
 
 	 if ( buf.fail() )
-		throw ReadError("input failed while reading attribute type and name");
+		throw IO::ReadError("input failed while reading attribute type and name");
 
 	 Attrib& attrib = getNewAttrib(name);
 
@@ -356,8 +356,8 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void AsciiStreamReader::Impl::inflateObject(Reader* reader,
-														  istream& buf, IO* obj) {
+void AsciiStreamReader::Impl::inflateObject(IO::Reader* reader,
+														  istream& buf, IO::IoObject* obj) {
 DOTRACE("AsciiStreamReader::Impl::inflateObject");
 
   itsAttribs.push_front(AttribMap()); 
@@ -381,7 +381,7 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
   ist.get(); // ignore one char of whitespace after the length
 
   if (len < 0)
-	 throw ReadError("found a negative length for a string attribute");
+	 throw IO::ReadError("found a negative length for a string attribute");
 
   char* new_cstring = new char[len+1];
   if (len > 0)
@@ -398,7 +398,7 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
   return new_cstring;
 }
 
-IO* AsciiStreamReader::Impl::readObject(const string& attrib_name) {
+IO::IoObject* AsciiStreamReader::Impl::readObject(const string& attrib_name) {
 DOTRACE("AsciiStreamReader::Impl::readObject");
 
   const Attrib& attrib = currentAttribs()[attrib_name];
@@ -431,7 +431,7 @@ DOTRACE("AsciiStreamReader::Impl::readValueObj");
 }
 
 void AsciiStreamReader::Impl::readOwnedObject(
-  const string& attrib_name, IO* obj
+  const string& attrib_name, IO::IoObject* obj
   ) {
 DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
 
@@ -443,13 +443,13 @@ DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
 	 throw AttributeReadError(attrib_name);
 
   if ( id == 0 )
-	 { throw ReadError("owned object had object id of 0"); }
+	 { throw IO::ReadError("owned object had object id of 0"); }
 
   itsObjects.assignObjectForId(id, obj);
 }
 
 void AsciiStreamReader::Impl::readBaseClass(
-  Reader* reader, const char* baseClassName, IO* basePart
+  IO::Reader* reader, const char* baseClassName, IO::IoObject* basePart
   ) {
 DOTRACE("AsciiStreamReader::Impl::readBaseClass");
 
@@ -463,7 +463,7 @@ DOTRACE("AsciiStreamReader::Impl::readBaseClass");
   ist >> bracket >> ws;
 }
 
-IO* AsciiStreamReader::Impl::readRoot(Reader* reader, IO* given_root) {
+IO::IoObject* AsciiStreamReader::Impl::readRoot(IO::Reader* reader, IO::IoObject* given_root) {
 DOTRACE("AsciiStreamReader::Impl::readRoot");
 
   itsObjects.clear();
@@ -472,7 +472,7 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
   unsigned long rootid;
 
   while ( itsBuf.peek() != EOF ) {
-	 IO* obj = NULL;
+	 IO::IoObject* obj = NULL;
 	 char type[64], equal[16], bracket[16];
 	 unsigned long id;
 
@@ -480,7 +480,7 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 	 DebugEval(type); DebugEvalNL(id);
 
 	 if ( itsBuf.fail() )
-		throw ReadError("input failed while reading typename and object id");
+		throw IO::ReadError("input failed while reading typename and object id");
 
 	 if ( !haveReadRoot ) {
 		rootid = id;
@@ -498,7 +498,7 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 	 itsBuf >> bracket >> ws;
 
 	 if ( itsBuf.fail() )
-		throw ReadError("input failed while parsing ending bracket");
+		throw IO::ReadError("input failed while parsing ending bracket");
   }
 
   return itsObjects.getObject(rootid);
@@ -556,21 +556,21 @@ void AsciiStreamReader::readValueObj(const char* name, Value& value) {
   itsImpl.readValueObj(name, value); 
 }
 
-IO* AsciiStreamReader::readObject(const char* attrib_name) {
+IO::IoObject* AsciiStreamReader::readObject(const char* attrib_name) {
   return itsImpl.readObject(attrib_name);
 }
 
-void AsciiStreamReader::readOwnedObject(const char* name, IO* obj) {
+void AsciiStreamReader::readOwnedObject(const char* name, IO::IoObject* obj) {
   itsImpl.readOwnedObject(name, obj);
 }
 
 void AsciiStreamReader::readBaseClass(
-  const char* baseClassName, IO* basePart
+  const char* baseClassName, IO::IoObject* basePart
   ) {
   itsImpl.readBaseClass(this, baseClassName, basePart);
 }
 
-IO* AsciiStreamReader::readRoot(IO* given_root) {
+IO::IoObject* AsciiStreamReader::readRoot(IO::IoObject* given_root) {
   return itsImpl.readRoot(this, given_root);
 }
 

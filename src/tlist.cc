@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Wed Mar 15 10:17:25 2000
+// written: Thu Mar 30 09:07:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,10 +60,10 @@ DOTRACE("Tlist::theTlist");
 //
 //---------------------------------------------------------------------
 
-void Tlist::serialize(ostream &os, IOFlag flag) const {
+void Tlist::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("Tlist::serialize");
   // Always serialize the PtrList base
-  if (true || flag & BASES) { 
+  if (true || flag & IO::BASES) { 
 	 PtrList<Trial>::serialize(os, flag);
   }
 
@@ -71,7 +71,7 @@ DOTRACE("Tlist::serialize");
   // itsVisibility.
   os << int(0) << IO::SEP << bool(false) << IO::SEP;
 
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw IO::OutputError(ioTag);
 }
 
 //---------------------------------------------------------------------
@@ -80,10 +80,10 @@ DOTRACE("Tlist::serialize");
 //
 //---------------------------------------------------------------------
 
-void Tlist::deserialize(istream &is, IOFlag flag) {
+void Tlist::deserialize(istream &is, IO::IOFlag flag) {
 DOTRACE("Tlist::deserialize");
   // Always deserialize its PtrList<Trial> base
-  if (true || flag & BASES) {
+  if (true || flag & IO::BASES) {
 	 PtrList<Trial>::deserialize(is, flag);
   }
 
@@ -92,13 +92,13 @@ DOTRACE("Tlist::deserialize");
   int dummy1, dummy2;
   is >> dummy1 >> dummy2;
 
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw IO::InputError(ioTag);
 }
 
 int Tlist::charCount() const {
   return (strlen(ioTag) + 1
-			 + gCharCount<int>(0) + 1
-			 + gCharCount<bool>(false) + 1
+			 + IO::gCharCount<int>(0) + 1
+			 + IO::gCharCount<bool>(false) + 1
 			 + PtrList<Trial>::charCount()
 			 + 5 ); // fudge factor 5
 }

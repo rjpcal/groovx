@@ -2,7 +2,7 @@
 // jittertcl.cc
 // Rob Peters
 // created: Wed Apr  7 14:58:40 1999
-// written: Wed Mar 29 23:57:06 2000
+// written: Thu Mar 30 12:09:09 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -74,7 +74,7 @@ DOTRACE("Jitter_Init");
 
   Tcl::TclPkg* pkg = new JitterTcl::JitterPkg(interp);
 
-  FactoryRegistrar<IO, Jitter>::registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, Jitter>::registerWith(IO::IoFactory::theOne());
 
   return pkg->initStatus();
 }

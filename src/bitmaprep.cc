@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Mar 30 00:02:24 2000
+// written: Thu Mar 30 09:50:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -174,14 +174,14 @@ DOTRACE("BitmapRep::serialize");
   os << itsImpl->itsContrastFlip << sep;
   os << itsImpl->itsVerticalFlip << endl;
 
-  if (os.fail()) throw OutputError(ioTag.c_str());
+  if (os.fail()) throw IO::OutputError(ioTag.c_str());
 }
 
 void BitmapRep::deserialize(istream& is, int flag) {
 DOTRACE("BitmapRep::deserialize");
-  if (flag & IO::TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
-  IO::eatWhitespace(is);
+  IO::IoObject::eatWhitespace(is);
   getline(is, itsImpl->itsFilename, '\t');
 
   is >> itsImpl->itsRasterX >> itsImpl->itsRasterY;
@@ -197,7 +197,7 @@ DOTRACE("BitmapRep::deserialize");
   is >> val;
   itsImpl->itsVerticalFlip = bool(val);
 
-  if (is.fail()) throw InputError(ioTag.c_str());
+  if (is.fail()) throw IO::InputError(ioTag.c_str());
 
   if ( itsImpl->itsFilename.empty() ) {
 	 clearBytes();
@@ -212,7 +212,7 @@ DOTRACE("BitmapRep::charCount");
   return 128;
 }
 
-void BitmapRep::readFrom(Reader* reader) {
+void BitmapRep::readFrom(IO::Reader* reader) {
 DOTRACE("BitmapRep::readFrom");
   reader->readValue("filename", itsImpl->itsFilename);
   reader->readValue("rasterX", itsImpl->itsRasterX);
@@ -231,7 +231,7 @@ DOTRACE("BitmapRep::readFrom");
   }
 }
 
-void BitmapRep::writeTo(Writer* writer) const {
+void BitmapRep::writeTo(IO::Writer* writer) const {
 DOTRACE("BitmapRep::writeTo");
   writer->writeValue("filename", itsImpl->itsFilename);
   writer->writeValue("rasterX", itsImpl->itsRasterX);

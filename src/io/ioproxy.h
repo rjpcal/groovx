@@ -3,7 +3,7 @@
 // ioproxy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Mar 22 21:41:38 2000
-// written: Wed Mar 29 23:50:52 2000
+// written: Thu Mar 30 12:15:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,24 +19,26 @@
 #include "util/strings.h"
 #endif
 
-template <class C>
-class IOProxy : public IO {
-public:
-  IOProxy(C* ref) : itsReferand(ref) {}
+namespace IO {
 
-  virtual void serialize(ostream& os, IOFlag flag) const
+template <class C>
+class IoProxy : public IO::IoObject {
+public:
+  IoProxy(C* ref) : itsReferand(ref) {}
+
+  virtual void serialize(ostream& os, IO::IOFlag flag) const
 	 { itsReferand->C::serialize(os, flag); }
 
-  virtual void deserialize(istream& is, IOFlag flag)
+  virtual void deserialize(istream& is, IO::IOFlag flag)
 	 { itsReferand->C::deserialize(is, flag); }
 
   virtual int charCount() const
 	 { return itsReferand->C::charCount(); }
 
-  virtual void readFrom(Reader* reader)
+  virtual void readFrom(IO::Reader* reader)
 	 { itsReferand->C::readFrom(reader); }
 
-  virtual void writeTo(Writer* writer) const
+  virtual void writeTo(IO::Writer* writer) const
 	 { itsReferand->C::writeTo(writer); }
 
   virtual unsigned long id() const
@@ -51,6 +53,8 @@ public:
 private:
   C* itsReferand;
 };
+
+} // end namespace IO
 
 static const char vcid_ioproxy_h[] = "$Header$";
 #endif // !IOPROXY_H_DEFINED

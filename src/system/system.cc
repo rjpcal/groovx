@@ -3,7 +3,7 @@
 // system.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Nov 17 15:05:41 1999
-// written: Wed Mar 15 10:17:27 2000
+// written: Thu Mar 30 12:31:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef SYSTEM_CC_DEFINED
 #define SYSTEM_CC_DEFINED
 
-#include "system.h"
+#include "system/system.h"
 
 #include "util/arrays.h"
 

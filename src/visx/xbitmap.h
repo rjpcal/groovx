@@ -3,7 +3,7 @@
 // xitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:39:09 1999
-// written: Wed Mar 29 14:07:33 2000
+// written: Thu Mar 30 08:50:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ public:
   XBitmap(const char* filename);
 
   /// Construct from an \c istream by calling \c deserialize().
-  XBitmap(istream& is, IOFlag flag);
+  XBitmap(istream& is, IO::IOFlag flag);
 
   private: void init();
   
@@ -46,8 +46,8 @@ public:
   /// Virtual destructor.
   virtual ~XBitmap();
 
-  virtual void serialize(ostream& os, IOFlag flag) const;
-  virtual void deserialize(istream& is, IOFlag flag);
+  virtual void serialize(ostream& os, IO::IOFlag flag) const;
+  virtual void deserialize(istream& is, IO::IOFlag flag);
   virtual int charCount() const;
 
 private:

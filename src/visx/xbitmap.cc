@@ -3,7 +3,7 @@
 // xbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:37:04 1999
-// written: Wed Mar 15 10:17:24 2000
+// written: Thu Mar 30 09:08:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ DOTRACE("XBitmap::XBitmap");
   init();
 }
 
-XBitmap::XBitmap(istream& is, IOFlag flag) :
+XBitmap::XBitmap(istream& is, IO::IOFlag flag) :
   Bitmap(tempRenderer = new XBmapRenderer()),
   itsRenderer(tempRenderer)
 
@@ -73,23 +73,23 @@ DOTRACE("XBitmap::~XBitmap");
   delete itsRenderer; 
 }
 
-void XBitmap::serialize(ostream& os, IOFlag flag) const {
+void XBitmap::serialize(ostream& os, IO::IOFlag flag) const {
 DOTRACE("XBitmap::serialize");
   char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw IO::OutputError(ioTag);
 
-  if (flag & BASES) { Bitmap::serialize(os, flag | TYPENAME); }
+  if (flag & IO::BASES) { Bitmap::serialize(os, flag | IO::TYPENAME); }
 }
 
-void XBitmap::deserialize(istream& is, IOFlag flag) {
+void XBitmap::deserialize(istream& is, IO::IOFlag flag) {
 DOTRACE("XBitmap::deserialize");
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw IO::InputError(ioTag);
 
-  if (flag & BASES) { Bitmap::deserialize(is, flag | TYPENAME); }
+  if (flag & IO::BASES) { Bitmap::deserialize(is, flag | IO::TYPENAME); }
 }
 
 int XBitmap::charCount() const {

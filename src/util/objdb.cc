@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu Mar 30 00:07:27 2000
+// written: Thu Mar 30 12:14:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,14 +33,14 @@ IoPtrList::IoPtrList(int size) :
 DOTRACE("IoPtrList::IoPtrList");
 }
 
-void IoPtrList::serialize(ostream &os, IOFlag flag) const {
+void IoPtrList::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("IoPtrList::serialize");
-  fixed_string ioTag = IO::ioTypename();
+  fixed_string ioTag = IO::IoObject::ioTypename();
 
-  if (flag & BASES) { /* there are no bases to deserialize */ }
+  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
 
   char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   // itsVec: we will serialize only the non-null T*'s in
   // itsVec. In order to correctly deserialize the object later, we
@@ -61,32 +61,32 @@ DOTRACE("IoPtrList::serialize");
       os << i << sep;
       // we must serialize the typename since deserialize requires a
       // typename in order to call the virtual constructor
-		IO* obj = fromVoidToIO(getVoidPtr(i));
-      obj->serialize(os, flag|TYPENAME);
+		IO::IoObject* obj = fromVoidToIO(getVoidPtr(i));
+      obj->serialize(os, flag|IO::TYPENAME);
       ++c;
     }
   }
 
   if (c != num_non_null) {
-	 throw IoLogicError(ioTag.c_str());
+	 throw IO::LogicError(ioTag.c_str());
   }
 
   // itsFirstVacant
   os << firstVacant() << endl;
-  if (os.fail()) throw OutputError(ioTag.c_str());
+  if (os.fail()) throw IO::OutputError(ioTag.c_str());
 }
 
 
-void IoPtrList::deserialize(istream &is, IOFlag flag) {
+void IoPtrList::deserialize(istream &is, IO::IOFlag flag) {
 DOTRACE("IoPtrList::deserialize");
-  fixed_string ioTag = IO::ioTypename();
+  fixed_string ioTag = IO::IoObject::ioTypename();
 
-  if (flag & BASES) { /* there are no bases to deserialize */ }
-  if (flag & TYPENAME) { 
+  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+  if (flag & IO::TYPENAME) { 
 	 dynamic_string typename_list = ioTag;
 	 typename_list += " ";
 	 typename_list += alternateIoTags();
-	 IO::readTypename(is, typename_list.c_str());
+	 IO::IoObject::readTypename(is, typename_list.c_str());
   }
 
   // voidVec
@@ -95,9 +95,9 @@ DOTRACE("IoPtrList::deserialize");
   is >> size >> num_non_null;
   // We must check if the istream has failed in order to avoid
   // attempting to resize the voidVec to some crazy size.
-  if (is.fail()) throw InputError(ioTag.c_str());
+  if (is.fail()) throw IO::InputError(ioTag.c_str());
   if ( size < 0 || num_non_null < 0 || num_non_null > size ) {
-	 throw IoValueError(ioTag.c_str());
+	 throw IO::ValueError(ioTag.c_str());
   }
   VoidPtrList::clear();
   voidVecResize(size);
@@ -106,13 +106,13 @@ DOTRACE("IoPtrList::deserialize");
   for (int i = 0; i < num_non_null; ++i) {
     is >> ptrid;
 	 if (ptrid < 0 || ptrid >= size) {
-		throw IoValueError(ioTag.c_str());
+		throw IO::ValueError(ioTag.c_str());
 	 }
 
 	 is >> type;
 
-	 IO* obj = IoMgr::newIO(type.c_str());
-	 if (!obj) throw InputError(ioTag.c_str());
+	 IO::IoObject* obj = IO::IoMgr::newIO(type.c_str());
+	 if (!obj) throw IO::InputError(ioTag.c_str());
 
 	 insertVoidPtrAt(ptrid, fromIOToVoid(obj));
 	 obj->deserialize(is, flag & ~IO::TYPENAME);
@@ -120,56 +120,56 @@ DOTRACE("IoPtrList::deserialize");
   // itsFirstVacant
   is >> VoidPtrList::firstVacant();
   if (firstVacant() < 0) {
-	 throw IoValueError(ioTag.c_str());
+	 throw IO::ValueError(ioTag.c_str());
   }
 
   // The next character after itsFirstVacant had better be a newline,
   // and we need to remove it from the stream.
   if ( is.get() != '\n' )
-	 { throw IoLogicError(ioTag.c_str()); }
+	 { throw IO::LogicError(ioTag.c_str()); }
 
-  if (is.fail()) throw InputError(ioTag.c_str());
+  if (is.fail()) throw IO::InputError(ioTag.c_str());
 }
 
 
 int IoPtrList::charCount() const {
 DOTRACE("IoPtrList::charCount");
-  fixed_string ioTag = IO::ioTypename();
+  fixed_string ioTag = IO::IoObject::ioTypename();
   int ch_count = ioTag.length() + 1
-	 + gCharCount<int>(voidVecSize()) + 1;
+	 + IO::gCharCount<int>(voidVecSize()) + 1;
   int num_non_null = VoidPtrList::count();
   ch_count += 
-	 gCharCount<int>(num_non_null) + 1;
+	 IO::gCharCount<int>(num_non_null) + 1;
   
   for (size_t i = 0, end = voidVecSize();
 		 i < end;
 		 ++i) {
 	 if (getVoidPtr(i) != NULL) {
-		ch_count += gCharCount<int>(i) + 1;
+		ch_count += IO::gCharCount<int>(i) + 1;
 
-		IO* obj = fromVoidToIO(getVoidPtr(i));
+		IO::IoObject* obj = fromVoidToIO(getVoidPtr(i));
 		ch_count += obj->charCount() + 1;
 	 }
   }
 
-  ch_count += gCharCount<int>(firstVacant()) + 1;
+  ch_count += IO::gCharCount<int>(firstVacant()) + 1;
   return ch_count + 5;
 }
 
 
-void IoPtrList::readFrom(Reader* reader) {
+void IoPtrList::readFrom(IO::Reader* reader) {
 DOTRACE("IoPtrList::readFrom");
   firstVacant() = reader->readInt("itsFirstVacant");
 
-  int count = ReadUtils::readSequenceCount(reader, "itsVec"); DebugEvalNL(count);
+  int count = IO::ReadUtils::readSequenceCount(reader, "itsVec"); DebugEvalNL(count);
 
   Assert(count >= 0);
   unsigned int uint_count = (unsigned int) count;
 
-  fixed_block<IO*> ioBlock(uint_count);
+  fixed_block<IO::IoObject*> ioBlock(uint_count);
 
-  ReadUtils::readObjectSeq(reader, "itsVec", ioBlock.begin(),
-									(IO*) 0, count);
+  IO::ReadUtils::readObjectSeq(reader, "itsVec", ioBlock.begin(),
+									(IO::IoObject*) 0, count);
 
   VoidPtrList::clear();
   voidVecResize(uint_count);
@@ -181,14 +181,14 @@ DOTRACE("IoPtrList::readFrom");
 }
 
 
-void IoPtrList::writeTo(Writer* writer) const {
+void IoPtrList::writeTo(IO::Writer* writer) const {
 DOTRACE("IoPtrList::writeTo");
   writer->writeInt("itsFirstVacant", firstVacant());
 
   unsigned int count = voidVecSize();
   DebugEvalNL(count);
 
-  fixed_block<IO*> ioBlock(count);
+  fixed_block<IO::IoObject*> ioBlock(count);
 
   for (size_t i = 0; i < count; ++i)
 	 {
@@ -201,7 +201,7 @@ DOTRACE("IoPtrList::writeTo");
 		DebugEvalNL(ioBlock[i]);
 	 }
 
-  WriteUtils::writeObjectSeq(writer, "itsVec", ioBlock.begin(), ioBlock.end());
+  IO::WriteUtils::writeObjectSeq(writer, "itsVec", ioBlock.begin(), ioBlock.end());
 }
 
 const char* IoPtrList::alternateIoTags() const {

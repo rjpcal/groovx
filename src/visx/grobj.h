@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu Mar 30 00:15:08 2000
+// written: Thu Mar 30 10:06:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ namespace GWT {
 
 class GrObj : public virtual Observable, 
 				  public virtual Observer,
-				  public virtual IO 
+				  public virtual IO::IoObject 
 {
 public:
 
@@ -214,18 +214,18 @@ public:
 		  GrObjRenderMode unrender_mode = GROBJ_SWAP_FORE_BACK);
 
   /// Construct from an istream by using deserialize.
-  GrObj(istream &is, IOFlag flag);
+  GrObj(istream &is, IO::IOFlag flag);
 
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~GrObj();
 
-  virtual void serialize(ostream &os, IOFlag flag) const;
-  virtual void deserialize(istream &is, IOFlag flag);
+  virtual void serialize(ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(istream &is, IO::IOFlag flag);
   virtual int charCount() const;
 
   virtual unsigned long serialVersionId() const;
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
   ///////////////////////////////////////////////////////////////////////
   //

@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Thu Mar 30 00:10:20 2000
+// written: Thu Mar 30 10:02:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,14 +97,14 @@ public:
 
   AsciiStreamWriter* itsOwner;
   ostream& itsBuf;
-  set<const IO *> itsToHandle;
-  set<const IO *> itsWrittenObjects;
+  set<const IO::IoObject *> itsToHandle;
+  set<const IO::IoObject *> itsWrittenObjects;
 
 #ifndef NO_IOS_EXCEPTIONS
   ios::iostate itsOriginalExceptionState;
 #endif
 
-  class DummyCountingWriter : public Writer {
+  class DummyCountingWriter : public IO::Writer {
   public:
 	 DummyCountingWriter() : itsCount(0) {}
 
@@ -114,10 +114,10 @@ public:
 	 virtual void writeDouble(const char*, double)         { ++itsCount; }
 	 virtual void writeCstring(const char*, const char*)   { ++itsCount; }
 	 virtual void writeValueObj(const char*, const Value&) { ++itsCount; }
-	 virtual void writeObject(const char*, const IO*)      { ++itsCount; }
-	 virtual void writeOwnedObject(const char*, const IO*) { ++itsCount; }
-	 virtual void writeBaseClass(const char*, const IO*)   { ++itsCount; }
-	 virtual void writeRoot(const IO*) {}
+	 virtual void writeObject(const char*, const IO::IoObject*)      { ++itsCount; }
+	 virtual void writeOwnedObject(const char*, const IO::IoObject*) { ++itsCount; }
+	 virtual void writeBaseClass(const char*, const IO::IoObject*)   { ++itsCount; }
+	 virtual void writeRoot(const IO::IoObject*) {}
 
 	 void reset() { itsCount = 0; }
 	 unsigned int attribCount() const { return itsCount; }
@@ -132,36 +132,36 @@ private:
 	 return !itsToHandle.empty();
   }
 
-  bool alreadyWritten(const IO* obj) const {
+  bool alreadyWritten(const IO::IoObject* obj) const {
 	 return ( itsWrittenObjects.find(obj) != 
 				 itsWrittenObjects.end() );
   }
 
-  const IO* getNextObjectToHandle() const {
+  const IO::IoObject* getNextObjectToHandle() const {
 	 return *(itsToHandle.begin());
   }
 
-  void markObjectAsWritten(const IO* obj) {
+  void markObjectAsWritten(const IO::IoObject* obj) {
 	 itsToHandle.erase(obj);
 	 itsWrittenObjects.insert(obj);
   }
 
-  void addObjectToBeHandled(const IO* obj) {
+  void addObjectToBeHandled(const IO::IoObject* obj) {
 	 if ( !alreadyWritten(obj) ) 
 		{ itsToHandle.insert(obj); }
   }
 
-  void flattenObject(const IO* obj);
+  void flattenObject(const IO::IoObject* obj);
 
   // Delegands
 public:
   void writeValueObj(const char* name, const Value& value);
 
-  void writeObject(const char* name, const IO* obj);
+  void writeObject(const char* name, const IO::IoObject* obj);
 
-  void writeOwnedObject(const char* name, const IO* obj);
+  void writeOwnedObject(const char* name, const IO::IoObject* obj);
 
-  void writeBaseClass(const char* baseClassName, const IO* basePart);
+  void writeBaseClass(const char* baseClassName, const IO::IoObject* basePart);
 
   template <class T>
   void writeBasicType(const char* name, T val,
@@ -182,7 +182,7 @@ public:
 			  << val_length << " " << escaped_val << ATTRIB_ENDER;
   }
 
-  void writeRoot(const IO* root);
+  void writeRoot(const IO::IoObject* root);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -191,7 +191,7 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-void AsciiStreamWriter::Impl::flattenObject(const IO* obj) {
+void AsciiStreamWriter::Impl::flattenObject(const IO::IoObject* obj) {
 DOTRACE("AsciiStreamWriter::Impl::flattenObject");
 
   static DummyCountingWriter counter;
@@ -233,7 +233,7 @@ DOTRACE("AsciiStreamWriter::Impl::flattenObject");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void AsciiStreamWriter::Impl::writeRoot(const IO* root) {
+void AsciiStreamWriter::Impl::writeRoot(const IO::IoObject* root) {
 DOTRACE("AsciiStreamWriter::Impl::writeRoot");
   itsToHandle.clear();
   itsWrittenObjects.clear();
@@ -242,7 +242,7 @@ DOTRACE("AsciiStreamWriter::Impl::writeRoot");
 
   while ( haveMoreObjectsToHandle() )
 	 {
-		const IO* obj = getNextObjectToHandle();
+		const IO::IoObject* obj = getNextObjectToHandle();
 
 		if ( !alreadyWritten(obj) )
 		  {
@@ -266,7 +266,7 @@ DOTRACE("AsciiStreamWriter::Impl::writeValueObj");
 }
 
 void AsciiStreamWriter::Impl::writeObject(const char* name,
-														const IO* obj) {
+														const IO::IoObject* obj) {
 DOTRACE("AsciiStreamWriter::Impl::writeObject");
 
   if (obj == 0) {
@@ -282,19 +282,19 @@ DOTRACE("AsciiStreamWriter::Impl::writeObject");
 }
 
 void AsciiStreamWriter::Impl::writeOwnedObject(
-  const char* name, const IO* obj
+  const char* name, const IO::IoObject* obj
   ) {
 DOTRACE("AsciiStreamWriter::Impl::writeOwnedObject");
   writeObject(name, obj);
 }
 
 void AsciiStreamWriter::Impl::writeBaseClass(
-  const char* baseClassName, const IO* basePart
+  const char* baseClassName, const IO::IoObject* basePart
   ) {
 DOTRACE("AsciiStreamWriter::Impl::writeBaseClass");
 
   if (basePart == 0)
-	 throw WriteError("the base class part of an object must be non-null");
+	 throw IO::WriteError("the base class part of an object must be non-null");
 
   fixed_string type = basePart->ioTypename().c_str();
 
@@ -352,20 +352,20 @@ void AsciiStreamWriter::writeValueObj(const char* name, const Value& value) {
   itsImpl.writeValueObj(name, value);
 }
 
-void AsciiStreamWriter::writeObject(const char* name, const IO* obj) {
+void AsciiStreamWriter::writeObject(const char* name, const IO::IoObject* obj) {
   itsImpl.writeObject(name, obj);
 }
 
-void AsciiStreamWriter::writeOwnedObject(const char* name, const IO* obj) {
+void AsciiStreamWriter::writeOwnedObject(const char* name, const IO::IoObject* obj) {
   itsImpl.writeOwnedObject(name, obj);
 }
 
 void AsciiStreamWriter::writeBaseClass(const char* baseClassName,
-													const IO* basePart) {
+													const IO::IoObject* basePart) {
   itsImpl.writeBaseClass(baseClassName, basePart);
 }
 
-void AsciiStreamWriter::writeRoot(const IO* root) {
+void AsciiStreamWriter::writeRoot(const IO::IoObject* root) {
   itsImpl.writeRoot(root);
 }
 

@@ -3,7 +3,7 @@
 // responsehandler.h
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Wed Mar 29 23:50:52 2000
+// written: Thu Mar 30 09:50:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ class Experiment;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class ResponseHandler : public virtual IO {
+class ResponseHandler : public virtual IO::IoObject {
 public:
   /// Default constructor.
   ResponseHandler();
@@ -39,12 +39,12 @@ public:
   /// Virtual destructor.
   virtual ~ResponseHandler();
 
-  virtual void serialize(ostream& os, IOFlag flag) const = 0;
-  virtual void deserialize(istream& is, IOFlag flag) = 0;
+  virtual void serialize(ostream& os, IO::IOFlag flag) const = 0;
+  virtual void deserialize(istream& is, IO::IOFlag flag) = 0;
   virtual int charCount() const = 0;
 
-  virtual void readFrom(Reader* reader) = 0;
-  virtual void writeTo(Writer* writer) const = 0;
+  virtual void readFrom(IO::Reader* reader) = 0;
+  virtual void writeTo(IO::Writer* writer) const = 0;
 
   /** This symbolic is used in place of an actual response value to
       indicate that the response was invalid or could not be

@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Mar 30 00:07:55 2000
+// written: Thu Mar 30 12:14:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -114,10 +114,10 @@ Trial::Trial() :
 DOTRACE("Trial::Trial()");
 }
 
-Trial::Trial(istream &is, IOFlag flag) :
+Trial::Trial(istream &is, IO::IOFlag flag) :
   itsImpl( new Impl )
 {
-DOTRACE("Trial::Trial(istream&, IOFlag)");
+DOTRACE("Trial::Trial(istream&, IO::IOFlag)");
   deserialize(is, flag);
 }
 
@@ -126,12 +126,12 @@ DOTRACE("Trial::~Trial");
   delete itsImpl;
 }
 
-void Trial::serialize(ostream &os, IOFlag flag) const {
+void Trial::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("Trial::serialize");
-  if (flag & BASES) { /* there are no bases to deserialize */ }
+  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
 
   char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   // itsImpl->itsIdPairs
   os << itsImpl->itsIdPairs.size() << sep;
@@ -153,20 +153,20 @@ DOTRACE("Trial::serialize");
   // itsImpl->itsThId
   os << itsImpl->itsThId << endl;
 
-  if (os.fail()) throw OutputError(ioTag.c_str());
+  if (os.fail()) throw IO::OutputError(ioTag.c_str());
 }
 
-void Trial::deserialize(istream &is, IOFlag flag) {
+void Trial::deserialize(istream &is, IO::IOFlag flag) {
 DOTRACE("Trial::deserialize");
-  if (flag & BASES) { /* there are no bases to deserialize */ }
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
+  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
   
   // itsImpl->itsIdPairs
   itsImpl->itsIdPairs.clear();
   int size;
   is >> size;
   if (size < 0) {
-	 throw IoValueError(ioTag.c_str());
+	 throw IO::ValueError(ioTag.c_str());
   }
   int objid;
   int posid;
@@ -174,7 +174,7 @@ DOTRACE("Trial::deserialize");
     is >> objid >> posid;
 	 if ( !ObjList::theObjList().isValidId(objid) ||
 			!PosList::thePosList().isValidId(posid) ) {
-		throw IoValueError(ioTag.c_str());
+		throw IO::ValueError(ioTag.c_str());
 	 }
     add(objid, posid);
   }
@@ -193,54 +193,54 @@ DOTRACE("Trial::deserialize");
   // itsImpl->itsThId
   is >> itsImpl->itsThId; DebugEvalNL(itsImpl->itsThId);
 
-  if (is.fail()) { throw InputError(ioTag.c_str()); }
+  if (is.fail()) { throw IO::InputError(ioTag.c_str()); }
 }
 
 int Trial::charCount() const {
   int count = (ioTag.length() + 1
-					+ gCharCount<int>(itsImpl->itsIdPairs.size()) + 1);
+					+ IO::gCharCount<int>(itsImpl->itsIdPairs.size()) + 1);
   for (vector<IdPair>::const_iterator ii = itsImpl->itsIdPairs.begin(); 
        ii != itsImpl->itsIdPairs.end(); 
        ++ii) {
-	 count += (gCharCount<int>(ii->objid) + 1
-				  + gCharCount<int>(ii->posid) + 2);
+	 count += (IO::gCharCount<int>(ii->objid) + 1
+				  + IO::gCharCount<int>(ii->posid) + 2);
   }
-  count += (gCharCount<int>(itsImpl->itsResponses.size()) + 2);
+  count += (IO::gCharCount<int>(itsImpl->itsResponses.size()) + 2);
   for (size_t i = 0; i < itsImpl->itsResponses.size(); ++i) {
-	 count += (gCharCount<int>(itsImpl->itsResponses[i].val()) + 1
-				  + gCharCount<int>(itsImpl->itsResponses[i].msec()) + 2);
+	 count += (IO::gCharCount<int>(itsImpl->itsResponses[i].val()) + 1
+				  + IO::gCharCount<int>(itsImpl->itsResponses[i].msec()) + 2);
   }
   count += 
-	 gCharCount<int>(itsImpl->itsType) + 1
-	 + gCharCount<int>(itsImpl->itsRhId) + 1
-	 + gCharCount<int>(itsImpl->itsThId) + 1;
+	 IO::gCharCount<int>(itsImpl->itsType) + 1
+	 + IO::gCharCount<int>(itsImpl->itsRhId) + 1
+	 + IO::gCharCount<int>(itsImpl->itsThId) + 1;
   return (count + 1);// fudge factor (1)
 }					
 
-void Trial::readFrom(Reader* reader) {
+void Trial::readFrom(IO::Reader* reader) {
 DOTRACE("Trial::readFrom");
   reader->readValue("type", itsImpl->itsType);
   reader->readValue("rhId", itsImpl->itsRhId);
   reader->readValue("thId", itsImpl->itsThId);
 
   itsImpl->itsResponses.clear();
-  ReadUtils::readValueObjSeq(reader, "responses",
+  IO::ReadUtils::readValueObjSeq(reader, "responses",
 									  back_inserter(itsImpl->itsResponses), (Response*) 0);
 
   itsImpl->itsIdPairs.clear();
-  ReadUtils::readValueObjSeq(reader, "idPairs",
+  IO::ReadUtils::readValueObjSeq(reader, "idPairs",
 									  back_inserter(itsImpl->itsIdPairs), (IdPair*) 0);
 }
 
-void Trial::writeTo(Writer* writer) const {
+void Trial::writeTo(IO::Writer* writer) const {
 DOTRACE("Trial::writeTo");
   writer->writeValue("type", itsImpl->itsType);
   writer->writeValue("rhId", itsImpl->itsRhId);
   writer->writeValue("thId", itsImpl->itsThId);
 
-  WriteUtils::writeValueObjSeq(writer, "responses",
+  IO::WriteUtils::writeValueObjSeq(writer, "responses",
 										 itsImpl->itsResponses.begin(), itsImpl->itsResponses.end());
-  WriteUtils::writeValueObjSeq(writer, "idPairs",
+  IO::WriteUtils::writeValueObjSeq(writer, "idPairs",
 										 itsImpl->itsIdPairs.begin(), itsImpl->itsIdPairs.end());
 }
 
@@ -251,7 +251,7 @@ DOTRACE("Trial::readFromObjidsOnly");
   if (offset == 0) {
     while (is >> objid) {
 		if ( objid < 0) {
-		  throw IoValueError(ioTag.c_str());
+		  throw IO::ValueError(ioTag.c_str());
 		}
       add(objid, posid);
       ++posid;
@@ -260,7 +260,7 @@ DOTRACE("Trial::readFromObjidsOnly");
   else { // offset != 0
     while (is >> objid) {
 		if ( (objid+offset) < 0 ) {
-		  throw IoValueError(ioTag.c_str());
+		  throw IO::ValueError(ioTag.c_str());
 		}
       add(objid+offset, posid);
       ++posid;
@@ -271,7 +271,7 @@ DOTRACE("Trial::readFromObjidsOnly");
   // istrstream's seem to always fail at eof, even if nothing went
   // wrong, we must only throw the exception if we have fail'ed with
   // out reaching eof. This should catch most mistakes.
-  if (is.fail() && !is.eof()) throw InputError(ioTag.c_str());
+  if (is.fail() && !is.eof()) throw IO::InputError(ioTag.c_str());
 
   // return the number of objid's read
   return posid;

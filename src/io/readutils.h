@@ -3,7 +3,7 @@
 // readutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:25:40 1999
-// written: Thu Mar 30 00:01:22 2000
+// written: Thu Mar 30 12:13:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,15 +23,18 @@
 #  endif
 #endif
 
+namespace IO {
+
+/// Utilities for reading sequences from a \c IO::Reader.
 class ReadUtils {
 public:
 
   /// Get the number of elements in the stored sequence \a seq_name.
-  static int readSequenceCount(Reader* reader, const char* seq_name)
+  static int readSequenceCount(IO::Reader* reader, const char* seq_name)
 	 {
 		int count = reader->readInt(makeSeqCountString(seq_name));
  		if (0 > count)
- 		  throw ReadError("read negative value for sequence count");
+ 		  throw IO::ReadError("read negative value for sequence count");
 		return count;
 	 }
 
@@ -41,7 +44,7 @@ public:
 		avoid reading the value twice (this may be important if the
 		reader does not support random access to the attributes). */
   template <class Inserter, class T>
-  static void readValueSeq(Reader* reader, const char* seq_name,
+  static void readValueSeq(IO::Reader* reader, const char* seq_name,
 									Inserter inserter, T* /*dummy*/,
 									int known_count = -1)
 	 {
@@ -62,7 +65,7 @@ public:
 		we avoid reading the value twice (this may be important if the
 		reader does not support random access to the attributes). */
   template <class Inserter, class T>
-  static void readValueObjSeq(Reader* reader, const char* seq_name,
+  static void readValueObjSeq(IO::Reader* reader, const char* seq_name,
 										Inserter inserter, T* /*dummy*/,
 										int known_count = -1)
 	 {
@@ -83,7 +86,7 @@ public:
 		we avoid reading the value twice (this may be important if the
 		reader does not support random access to the attributes). */
   template <class Inserter, class C>
-  static void readObjectSeq(Reader* reader, const char* seq_name,
+  static void readObjectSeq(IO::Reader* reader, const char* seq_name,
 									 Inserter inserter, C* /*dummy*/,
 									 int known_count = -1)
 	 {
@@ -91,7 +94,7 @@ public:
 		  readSequenceCount(reader, seq_name) : known_count;
 
 		for (int i = 0; i < count; ++i) {
-		  IO* io = reader->readObject(makeElementNameString(seq_name, i));
+		  IO::IoObject* io = reader->readObject(makeElementNameString(seq_name, i));
 
 		  if (io == 0) {
 			 *inserter = static_cast<C*>(0);
@@ -99,7 +102,7 @@ public:
 
 		  else {
 			 C* obj = dynamic_cast<C*>(io);
-			 if (obj == 0) throw ReadError("failed cast in readObjectSeq");
+			 if (obj == 0) throw IO::ReadError("failed cast in readObjectSeq");
 			 *inserter = obj;
 		  }
 
@@ -114,6 +117,8 @@ private:
 														 int element_num);
   static const char* makeSeqCountString(const char* seq_name);
 };
+
+} // end namespace IO
 
 static const char vcid_readutils_h[] = "$Header$";
 #endif // !READUTILS_H_DEFINED

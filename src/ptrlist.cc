@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Mon Mar  6 18:32:47 2000
+// written: Thu Mar 30 12:29:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,8 @@
 
 #include "ptrlist.h"
 
-#include "demangle.h"
+#include "system/demangle.h"
+
 #include "util/strings.h"
 
 #include <typeinfo>
@@ -35,15 +36,15 @@ template <class T>
 void* PtrList<T>::castFromT(T* ptr) const { return static_cast<void*>(ptr); }
 
 template <class T>
-IO* PtrList<T>::fromVoidToIO(void* ptr) const
+IO::IoObject* PtrList<T>::fromVoidToIO(void* ptr) const
 {
-  IO* io = dynamic_cast<IO*>(castToT(ptr));
+  IO::IoObject* io = dynamic_cast<IO::IoObject*>(castToT(ptr));
   if ( io == 0 ) { throw ErrorWithMsg("bad cast in fromVoidToIO"); }
   return io;
 }
 
 template <class T>
-void* PtrList<T>::fromIOToVoid(IO* obj) const
+void* PtrList<T>::fromIOToVoid(IO::IoObject* obj) const
 {
   void* v = castFromT(dynamic_cast<T*>(obj));
   if ( v == 0 ) { throw ErrorWithMsg("bad cast in fromIOToVoid"); }

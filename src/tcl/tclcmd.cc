@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Fri Mar 17 17:42:09 2000
+// written: Thu Mar 30 12:29:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,8 @@
 
 #include "tcl/tclcmd.h"
 
-#include "demangle.h"
+#include "system/demangle.h"
+
 #include "tcl/errmsg.h"
 
 #include "util/strings.h"

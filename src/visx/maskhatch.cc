@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Thu Mar 30 00:03:38 2000
+// written: Thu Mar 30 09:50:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,18 +53,18 @@ DOTRACE("MaskHatch::~MaskHatch ");
   
 }
 
-void MaskHatch::serialize(ostream &os, IOFlag flag) const {
+void MaskHatch::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("MaskHatch::serialize");
-  if (flag & TYPENAME) { os << ioTag << IO::SEP; }
-  if (os.fail()) throw OutputError(ioTag);
-  if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }
+  if (flag & IO::TYPENAME) { os << ioTag << IO::SEP; }
+  if (os.fail()) throw IO::OutputError(ioTag);
+  if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
 }
 
-void MaskHatch::deserialize(istream &is, IOFlag flag) {
+void MaskHatch::deserialize(istream &is, IO::IOFlag flag) {
 DOTRACE("MaskHatch::deserialize");
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
-  if (is.fail()) throw InputError(ioTag);
-  if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
+  if (is.fail()) throw IO::InputError(ioTag);
+  if (flag & IO::BASES) { GrObj::deserialize(is, flag | IO::TYPENAME); }
 }
 
 int MaskHatch::charCount() const {
@@ -72,7 +72,7 @@ DOTRACE("MaskHatch::charCount");
   return strlen(ioTag) + 1 + GrObj::charCount();
 }
 
-void MaskHatch::readFrom(Reader* reader) {
+void MaskHatch::readFrom(IO::Reader* reader) {
 DOTRACE("MaskHatch::readFrom");
   for (size_t i = 0; i < numPropertyInfos(); ++i) {
 	 reader->readValueObj(PINFOS[i].name_cstr(),
@@ -82,7 +82,7 @@ DOTRACE("MaskHatch::readFrom");
   GrObj::readFrom(reader);
 }
 
-void MaskHatch::writeTo(Writer* writer) const {
+void MaskHatch::writeTo(IO::Writer* writer) const {
 DOTRACE("MaskHatch::writeTo");
   for (size_t i = 0; i < numPropertyInfos(); ++i) {
 	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));

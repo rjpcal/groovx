@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Mar 30 00:07:13 2000
+// written: Thu Mar 30 12:25:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,6 @@
 #include "block.h"
 
 #include "experiment.h"
-#include "rand.h"
 #include "response.h"
 #include "tlist.h"
 #include "trial.h"
@@ -24,6 +23,7 @@
 #include "io/writer.h"
 #include "io/writeutils.h"
 
+#include "util/rand.h"
 #include "util/strings.h"
 
 #include <algorithm>
@@ -52,26 +52,26 @@ namespace {
 	 for (size_t i = 0; i < vec.size(); ++i) {
 		os << vec[i] << sep;
 	 }
-	 if (os.fail()) throw OutputError("VecInt");
+	 if (os.fail()) throw IO::OutputError("VecInt");
   }
 
   void deserializeVecInt(istream &is, vector<int>& vec) {
 	 int size;
 	 is >> size;
 	 if (size < 0) {
-		throw InputError("VecInt saw negative value for size");
+		throw IO::InputError("VecInt saw negative value for size");
 	 }
 	 vec.resize(size, 0);
 	 for (int i = 0; i < size; ++i) {
 		is >> vec[i];
 	 }
-	 if (is.fail()) throw InputError("VecInt");
+	 if (is.fail()) throw IO::InputError("VecInt");
   }
 
   int charCountVecInt(const vector<int>& vec) {
-	 int count = gCharCount<int>(vec.size()) + 1;
+	 int count = IO::gCharCount<int>(vec.size()) + 1;
 	 for (size_t i = 0; i < vec.size(); ++i) {
-		count += gCharCount<int>(vec[i]);
+		count += IO::gCharCount<int>(vec[i]);
 		++count;
 	 }
 	 count += 5;// fudge factor
@@ -155,7 +155,7 @@ void Block::shuffle(int seed) {
 DOTRACE("Block::shuffle");
   itsImpl->itsRandSeed = seed;
 
-  Urand generator(seed);
+  Util::Urand generator(seed);
   
   random_shuffle(itsImpl->itsTrialSequence.begin(),
 					  itsImpl->itsTrialSequence.end(),
@@ -168,12 +168,12 @@ DOTRACE("Block::removeAllTrials");
   itsImpl->itsCurTrialSeqIdx = 0;
 }
 
-void Block::serialize(ostream &os, IOFlag flag) const {
+void Block::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("Block::serialize");
-  if (flag & BASES) { /* there are no bases to deserialize */ }
+  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
 
   char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   // itsImpl->itsTrialSequence
   serializeVecInt(os, itsImpl->itsTrialSequence);
@@ -185,13 +185,13 @@ DOTRACE("Block::serialize");
   // itsImpl->itsVerbose
   os << itsImpl->itsVerbose << endl;
 
-  if (os.fail()) throw OutputError(ioTag.c_str());
+  if (os.fail()) throw IO::OutputError(ioTag.c_str());
 }
 
-void Block::deserialize(istream &is, IOFlag flag) {
+void Block::deserialize(istream &is, IO::IOFlag flag) {
 DOTRACE("Block::deserialize");
-  if (flag & BASES) { /* there are no bases to deserialize */ }
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
+  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
   
   // itsImpl->itsTrialSequence
   deserializeVecInt(is, itsImpl->itsTrialSequence);
@@ -202,7 +202,7 @@ DOTRACE("Block::deserialize");
   is >> itsImpl->itsCurTrialSeqIdx;
   if (itsImpl->itsCurTrialSeqIdx < 0 ||
 		size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size()) {
-	 throw IoValueError(ioTag.c_str());
+	 throw IO::ValueError(ioTag.c_str());
   }
   // itsImpl->itsVerbose
   int val;
@@ -210,32 +210,32 @@ DOTRACE("Block::deserialize");
   itsImpl->itsVerbose = bool(val);
 
   is.ignore(1, '\n');
-  if (is.fail()) throw InputError(ioTag.c_str());
+  if (is.fail()) throw IO::InputError(ioTag.c_str());
 }
 
 int Block::charCount() const {
   return (ioTag.length() + 1
 			 + charCountVecInt(itsImpl->itsTrialSequence) + 1
-			 + gCharCount<int>(itsImpl->itsRandSeed) + 1
-			 + gCharCount<int>(itsImpl->itsCurTrialSeqIdx) + 1
-			 + gCharCount<bool>(itsImpl->itsVerbose) + 1
+			 + IO::gCharCount<int>(itsImpl->itsRandSeed) + 1
+			 + IO::gCharCount<int>(itsImpl->itsCurTrialSeqIdx) + 1
+			 + IO::gCharCount<bool>(itsImpl->itsVerbose) + 1
 			 + 5); //fudge factor
 }
 
-void Block::readFrom(Reader* reader) {
+void Block::readFrom(IO::Reader* reader) {
 DOTRACE("Block::readFrom");
   itsImpl->itsTrialSequence.clear();
-  ReadUtils::readValueSeq(
+  IO::ReadUtils::readValueSeq(
 		 reader, "trialSeq", back_inserter(itsImpl->itsTrialSequence), (int*)0);
   reader->readValue("randSeed", itsImpl->itsRandSeed);
   reader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
   reader->readValue("verbose", itsImpl->itsVerbose);
 }
 
-void Block::writeTo(Writer* writer) const {
+void Block::writeTo(IO::Writer* writer) const {
 DOTRACE("Block::writeTo");
 
-  WriteUtils::writeValueSeq(
+  IO::WriteUtils::writeValueSeq(
        writer, "trialSeq",
 		 itsImpl->itsTrialSequence.begin(), itsImpl->itsTrialSequence.end());
   writer->writeValue("randSeed", itsImpl->itsRandSeed);

@@ -3,7 +3,7 @@
 // stringifycmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:43 1999
-// written: Wed Mar 29 14:07:32 2000
+// written: Thu Mar 30 08:29:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 #include "tcl/tclcmd.h"
 #endif
 
-class IO;
+namespace IO { class IoObject; }
 
 namespace Tcl {
 
@@ -26,7 +26,7 @@ public:
 	 TclCmd(interp, cmd_name, usage, objc, objc, true) {}
 
 protected:
-  virtual IO& getIO() = 0;
+  virtual IO::IoObject& getIO() = 0;
 
 private:
   virtual void invoke();
@@ -40,7 +40,7 @@ public:
 	 TclCmd(interp, cmd_name, usage, objc, objc, true) {}
 
 protected:
-  virtual IO& getIO() = 0;
+  virtual IO::IoObject& getIO() = 0;
 
 private:
   virtual void invoke();
@@ -53,7 +53,7 @@ public:
 	 TclCmd(interp, cmd_name, usage, objc, objc, true) {}
 
 protected:
-  virtual IO& getIO() = 0;
+  virtual IO::IoObject& getIO() = 0;
 
 private:
   virtual void invoke();
@@ -66,7 +66,7 @@ public:
 	 TclCmd(interp, cmd_name, usage, objc, objc, true) {}
 
 protected:
-  virtual IO& getIO() = 0;
+  virtual IO::IoObject& getIO() = 0;
 
 private:
   virtual void invoke();
@@ -79,7 +79,7 @@ public:
 	 TclCmd(interp, cmd_name, usage, objc, objc, true) {}
 
 protected:
-  virtual IO& getIO() = 0;
+  virtual IO::IoObject& getIO() = 0;
   virtual const char* getFilename() = 0;
 
 private:
@@ -93,7 +93,7 @@ public:
 	 TclCmd(interp, cmd_name, usage, objc, objc, true) {}
 
 protected:
-  virtual IO& getIO() = 0;
+  virtual IO::IoObject& getIO() = 0;
   virtual const char* getFilename() = 0;
 
   virtual void beforeLoadHook();

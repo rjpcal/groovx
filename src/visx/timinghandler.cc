@@ -3,7 +3,7 @@
 // timinghandler.cc
 // Rob Peters
 // created: Wed May 19 21:39:51 1999
-// written: Wed Mar 15 10:17:25 2000
+// written: Thu Mar 30 09:50:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,23 +52,23 @@ TimingHandler::~TimingHandler() {
 DOTRACE("TimingHandler::~TimingHandler");
 }
 
-void TimingHandler::serialize(ostream &os, IOFlag flag) const {
+void TimingHandler::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("TimingHandler::serialize");
   char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
   
-  if (true || (flag & BASES)) { TimingHdlr::serialize(os, flag|TYPENAME); }
+  if (true || (flag & IO::BASES)) { TimingHdlr::serialize(os, flag|IO::TYPENAME); }
 
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw IO::OutputError(ioTag);
 }
 
-void TimingHandler::deserialize(istream &is, IOFlag flag) {
+void TimingHandler::deserialize(istream &is, IO::IOFlag flag) {
 DOTRACE("TimingHandler::deserialize");
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
-  if (true || (flag & BASES)) { TimingHdlr::deserialize(is, flag|TYPENAME); }
+  if (true || (flag & IO::BASES)) { TimingHdlr::deserialize(is, flag|IO::TYPENAME); }
 
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw IO::InputError(ioTag);
 }
 
 int TimingHandler::charCount() const {
@@ -78,12 +78,12 @@ DOTRACE("TimingHandler::charCount");
 			 + 1); // fudge factor
 }
 
-void TimingHandler::readFrom(Reader* reader) {
+void TimingHandler::readFrom(IO::Reader* reader) {
 DOTRACE("TimingHandler::readFrom");
   TimingHdlr::readFrom(reader);
 }
 
-void TimingHandler::writeTo(Writer* writer) const {
+void TimingHandler::writeTo(IO::Writer* writer) const {
 DOTRACE("TimingHandler::writeTo");
   TimingHdlr::writeTo(writer);
 }

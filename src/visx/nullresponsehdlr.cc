@@ -3,7 +3,7 @@
 // nullresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:36 1999
-// written: Wed Mar 15 10:17:28 2000
+// written: Thu Mar 30 09:50:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,16 +31,16 @@ NullResponseHdlr::~NullResponseHdlr() {
 DOTRACE("NullResponseHdlr::~NullResponseHdlr");
 }
 
-void NullResponseHdlr::serialize(ostream &os, IOFlag flag) const {
+void NullResponseHdlr::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("NullResponseHdlr::serialize");
 
-  if (flag & TYPENAME) { os << ioTag << ' '; }
+  if (flag & IO::TYPENAME) { os << ioTag << ' '; }
 }
 
-void NullResponseHdlr::deserialize(istream &is, IOFlag flag) {
+void NullResponseHdlr::deserialize(istream &is, IO::IOFlag flag) {
 DOTRACE("NullResponseHdlr::deserialize");
 
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 }
 
 int NullResponseHdlr::charCount() const {
@@ -48,11 +48,11 @@ DOTRACE("NullResponseHdlr::charCount");
   return strlen(ioTag) + 1;
 }
 
-void NullResponseHdlr::readFrom(Reader*) {
+void NullResponseHdlr::readFrom(IO::Reader*) {
 DOTRACE("NullResponseHdlr::readFrom");
 }
 
-void NullResponseHdlr::writeTo(Writer*) const {
+void NullResponseHdlr::writeTo(IO::Writer*) const {
 DOTRACE("NullResponseHdlr::writeTo");
 }
 

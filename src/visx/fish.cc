@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Thu Mar 30 00:02:59 2000
+// written: Thu Mar 30 09:50:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -248,37 +248,37 @@ DOTRACE("Fish::~Fish");
   delete [] itsEndPts;
 }
 
-void Fish::serialize(ostream& os, IOFlag flag) const {
+void Fish::serialize(ostream& os, IO::IOFlag flag) const {
 DOTRACE("Fish::serialize");
 
   char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
 	 (this->*IO_MEMBERS[i]).serialize(os, flag);
   }
 
-  if (os.fail()) throw OutputError(ioTag.c_str());
+  if (os.fail()) throw IO::OutputError(ioTag.c_str());
 
-  if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }  
+  if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }  
 }
 
-void Fish::deserialize(istream& is, IOFlag flag) {
+void Fish::deserialize(istream& is, IO::IOFlag flag) {
 DOTRACE("Fish::deserialize");
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
 
   for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
 	 (this->*IO_MEMBERS[i]).deserialize(is, flag);
   }
 
   try {
-	 if (is.fail()) throw InputError(ioTag.c_str());
+	 if (is.fail()) throw IO::InputError(ioTag.c_str());
   }
-  catch (IoError&) { 
+  catch (IO::IoError&) { 
 	 throw;
   }
 
-  if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
+  if (flag & IO::BASES) { GrObj::deserialize(is, flag | IO::TYPENAME); }
 
   sendStateChangeMsg();
 }
@@ -298,7 +298,7 @@ DOTRACE("Fish::charCount");
   return result;
 }
 
-void Fish::readFrom(Reader* reader) {
+void Fish::readFrom(IO::Reader* reader) {
 DOTRACE("Fish::readFrom");
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 reader->readValueObj(PINFOS[i].name_cstr(),
@@ -308,7 +308,7 @@ DOTRACE("Fish::readFrom");
   GrObj::readFrom(reader);
 }
 
-void Fish::writeTo(Writer* writer) const {
+void Fish::writeTo(IO::Writer* writer) const {
 DOTRACE("Fish::writeTo");
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));

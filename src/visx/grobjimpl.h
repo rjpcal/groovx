@@ -3,7 +3,7 @@
 // grobjimpl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:54 2000
-// written: Wed Mar 29 22:09:30 2000
+// written: Thu Mar 30 09:50:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,8 +57,8 @@ public:
   int charCount() const;
 
   unsigned long serialVersionId() const { return GROBJ_SERIAL_VERSION_ID; }
-  void readFrom(Reader* reader);
-  void writeTo(Writer* writer) const;
+  void readFrom(IO::Reader* reader);
+  void writeTo(IO::Writer* writer) const;
 
 
   //////////////////

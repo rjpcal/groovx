@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Thu Mar 30 00:03:04 2000
+// written: Thu Mar 30 09:50:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ namespace {
 FixPt::FixPt(double len, int wid) : 
   length(len), width(wid) {}
 
-FixPt::FixPt(istream &is, IOFlag flag) :
+FixPt::FixPt(istream &is, IO::IOFlag flag) :
   length(0.1), width(1)
 {
   deserialize(is, flag);
@@ -59,36 +59,36 @@ FixPt::FixPt(istream &is, IOFlag flag) :
 
 FixPt::~FixPt() {}
 
-void FixPt::serialize(ostream &os, IOFlag flag) const {
+void FixPt::serialize(ostream &os, IO::IOFlag flag) const {
   char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   os << length() << sep;
   os << width() << endl;
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw IO::OutputError(ioTag);
 
-  if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }
+  if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
 }
 
-void FixPt::deserialize(istream &is, IOFlag flag) {
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+void FixPt::deserialize(istream &is, IO::IOFlag flag) {
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
   is >> length();
   is >> width();
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw IO::InputError(ioTag);
 
-  if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
+  if (flag & IO::BASES) { GrObj::deserialize(is, flag | IO::TYPENAME); }
 }
 
 int FixPt::charCount() const {
   return (strlen(ioTag) + 1
-			 + gCharCount<double>(length()) + 1
-			 + gCharCount<int>(width()) + 1
+			 + IO::gCharCount<double>(length()) + 1
+			 + IO::gCharCount<int>(width()) + 1
 			 + GrObj::charCount()
 			 + 1);// fudge factor
 }
 
-void FixPt::readFrom(Reader* reader) {
+void FixPt::readFrom(IO::Reader* reader) {
 DOTRACE("FixPt::readFrom");
   reader->readValue("length", length());
   reader->readValue("width", width());
@@ -98,7 +98,7 @@ DOTRACE("FixPt::readFrom");
   GrObj::readFrom(reader);
 }
 
-void FixPt::writeTo(Writer* writer) const {
+void FixPt::writeTo(IO::Writer* writer) const {
 DOTRACE("FixPt::writeTo");
   writer->writeDouble("length", length());
   writer->writeInt("width", width());

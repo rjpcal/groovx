@@ -3,7 +3,7 @@
 // property.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:57:34 1999
-// written: Thu Mar 30 00:12:50 2000
+// written: Thu Mar 30 09:50:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,28 +24,28 @@
 Property::~Property() {}
 
 template <class T>
-void TProperty<T>::serialize(ostream& os, IOFlag) const 
+void TProperty<T>::serialize(ostream& os, IO::IOFlag) const 
   { os << itsVal.itsVal << ' '; }
 
 template <class T>
-void TProperty<T>::deserialize(istream& is, IOFlag)
+void TProperty<T>::deserialize(istream& is, IO::IOFlag)
   { is >> itsVal.itsVal; }
 
 template <>
-void TProperty<bool>::deserialize(istream& is, IOFlag) {
+void TProperty<bool>::deserialize(istream& is, IO::IOFlag) {
   int temp; is >> temp; itsVal.itsVal = bool(temp);
 }
 
 template <class T>
 int TProperty<T>::charCount() const
-  { return gCharCount<T>(itsVal.itsVal); }
+  { return IO::gCharCount<T>(itsVal.itsVal); }
 
 template <class T>
-void TProperty<T>::readFrom(Reader* reader)
+void TProperty<T>::readFrom(IO::Reader* reader)
   { reader->readValue("value", itsVal.itsVal); }
 
 template <class T>
-void TProperty<T>::writeTo(Writer* writer) const
+void TProperty<T>::writeTo(IO::Writer* writer) const
   { writer->writeValue("value", itsVal.itsVal); }
 
 template class TProperty<int>;
@@ -54,27 +54,27 @@ template class TProperty<double>;
 
 
 template <class T>
-void TPtrProperty<T>::serialize(ostream& os, IOFlag) const 
+void TPtrProperty<T>::serialize(ostream& os, IO::IOFlag) const 
 	 { os << itsVal() << ' '; }
 
 template <class T>
-void TPtrProperty<T>::deserialize(istream& is, IOFlag)
+void TPtrProperty<T>::deserialize(istream& is, IO::IOFlag)
 	 { is >> itsVal(); }
 
 template <>
-void TPtrProperty<bool>::deserialize(istream& is, IOFlag)
+void TPtrProperty<bool>::deserialize(istream& is, IO::IOFlag)
     { int temp; is >> temp; itsVal() = bool(temp); }
 
 template <class T>
 int TPtrProperty<T>::charCount() const
-	 { return gCharCount<T>(itsVal()); }
+	 { return IO::gCharCount<T>(itsVal()); }
 
 template <class T>
-void TPtrProperty<T>::readFrom(Reader* reader)
+void TPtrProperty<T>::readFrom(IO::Reader* reader)
 	 { reader->readValue("value", itsVal()); }
 
 template <class T>
-void TPtrProperty<T>::writeTo(Writer* writer) const
+void TPtrProperty<T>::writeTo(IO::Writer* writer) const
 	 { writer->writeValue("value", itsVal()); }
   
 

@@ -3,7 +3,7 @@
 // glbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:17 1999
-// written: Thu Mar 30 00:03:14 2000
+// written: Thu Mar 30 09:50:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ DOTRACE("GLBitmap::GLBitmap");
   init(); 
 }
 
-GLBitmap::GLBitmap(istream& is, IOFlag flag) :
+GLBitmap::GLBitmap(istream& is, IO::IOFlag flag) :
   Bitmap(tempRenderer = new GLBmapRenderer()),
   itsRenderer(tempRenderer)
 {
@@ -69,29 +69,29 @@ DOTRACE("GLBitmap::~GLBitmap");
   delete itsRenderer; 
 }
 
-void GLBitmap::serialize(ostream& os, IOFlag flag) const {
+void GLBitmap::serialize(ostream& os, IO::IOFlag flag) const {
 DOTRACE("GLBitmap::serialize");
   char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   os << itsRenderer->getUsingGlBitmap() << sep;
 
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw IO::OutputError(ioTag);
 
-  if (flag & BASES) { Bitmap::serialize(os, flag | TYPENAME); }
+  if (flag & IO::BASES) { Bitmap::serialize(os, flag | IO::TYPENAME); }
 }
 
-void GLBitmap::deserialize(istream& is, IOFlag flag) {
+void GLBitmap::deserialize(istream& is, IO::IOFlag flag) {
 DOTRACE("GLBitmap::deserialize");
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
   int val;
   is >> val;
   itsRenderer->setUsingGlBitmap(bool(val));
 
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw IO::InputError(ioTag);
 
-  if (flag & BASES) { Bitmap::deserialize(is, flag | TYPENAME); }
+  if (flag & IO::BASES) { Bitmap::deserialize(is, flag | IO::TYPENAME); }
 }
 
 int GLBitmap::charCount() const {
@@ -99,7 +99,7 @@ DOTRACE("GLBitmap::charCount");
   return 128;
 }
 
-void GLBitmap::readFrom(Reader* reader) {
+void GLBitmap::readFrom(IO::Reader* reader) {
 DOTRACE("GLBitmap::readFrom");
   bool val;
   reader->readValue("usingGlBitmap", val); 
@@ -108,7 +108,7 @@ DOTRACE("GLBitmap::readFrom");
   Bitmap::readFrom(reader);
 }
 
-void GLBitmap::writeTo(Writer* writer) const {
+void GLBitmap::writeTo(IO::Writer* writer) const {
 DOTRACE("GLBitmap::writeTo");
   writer->writeValue("usingGlBitmap", itsRenderer->getUsingGlBitmap());
 

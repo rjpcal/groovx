@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Thu Mar 23 19:37:57 2000
+// written: Thu Mar 30 08:29:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -109,7 +109,7 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO& getIO() {
+  virtual IO::IoObject& getIO() {
     int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
     return itsPkg->getIoFromId(id);
   }
@@ -132,7 +132,7 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO& getIO() {
+  virtual IO::IoObject& getIO() {
     int id = itsItemArgn ? getIntFromArg(itsItemArgn) : -1;
     return itsPkg->getIoFromId(id);
   }
@@ -155,7 +155,7 @@ public:
 	 itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO& getIO() {
+  virtual IO::IoObject& getIO() {
 	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
 	 return itsPkg->getIoFromId(id);
   }
@@ -178,7 +178,7 @@ public:
 	 itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO& getIO() {
+  virtual IO::IoObject& getIO() {
 	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
 	 return itsPkg->getIoFromId(id);
   }
@@ -201,7 +201,7 @@ public:
 	 itsItemArgn(item_argn) {}
   
 protected:
-  virtual IO& getIO() {
+  virtual IO::IoObject& getIO() {
 	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
 	 return itsPkg->getIoFromId(id);
   }
@@ -228,7 +228,7 @@ public:
 	 itsItemArgn(item_argn) {}
   
 protected:
-  virtual IO& getIO() {
+  virtual IO::IoObject& getIO() {
 	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
 	 return itsPkg->getIoFromId(id);
   }

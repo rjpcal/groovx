@@ -3,7 +3,7 @@
 // writeutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:18:36 1999
-// written: Thu Mar 30 00:02:12 2000
+// written: Thu Mar 30 12:13:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,13 +15,15 @@
 #include "io/writer.h"
 #endif
 
-///
+namespace IO {
+
+/// Utilities for writing sequences to a \c IO::Writer.
 class WriteUtils {
 public:
   /** A generic interface for handling containers, sequences, etc. of
       value types. */
   template <class Itr>
-  static void writeValueSeq(Writer* writer,
+  static void writeValueSeq(IO::Writer* writer,
 									 const char* name, Itr begin, Itr end)
 	 {
 		writer->writeValue(makeSeqCountString(name),
@@ -39,7 +41,7 @@ public:
   /** A generic interface for handling containers, sequences, etc. of
 		objects of Value subtypes */
   template <class Itr>
-  static void writeValueObjSeq(Writer* writer,
+  static void writeValueObjSeq(IO::Writer* writer,
 										 const char* name, Itr begin, Itr end)
 	 {
 		writer->writeValue(makeSeqCountString(name),
@@ -57,7 +59,7 @@ public:
 
   /// A generic interface for handling containers, sequences, etc. of objects
   template <class Itr>
-  static void writeObjectSeq(Writer* writer,
+  static void writeObjectSeq(IO::Writer* writer,
 									  const char* name, Itr begin, Itr end)
 	 {
 		writer->writeValue(makeSeqCountString(name),
@@ -87,6 +89,8 @@ private:
 														 int element_num);
   static const char* makeSeqCountString(const char* seq_name);
 };
+
+} // end namespace IO
 
 static const char vcid_writeutils_h[] = "$Header$";
 #endif // !WRITEUTILS_H_DEFINED

@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Mar 29 23:50:52 2000
+// written: Thu Mar 30 10:07:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,23 +30,23 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IoPtrList : public VoidPtrList, public virtual IO {
+class IoPtrList : public VoidPtrList, public virtual IO::IoObject {
 public:
   /// Construct and reserve space for \a size objects.
   IoPtrList(int size);
 
-  virtual void serialize(ostream &os, IOFlag flag) const;
-  virtual void deserialize(istream &is, IOFlag flag);
+  virtual void serialize(ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(istream &is, IO::IOFlag flag);
   virtual int charCount() const;
 
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
 protected:
   /// Subclasses must override this to cast the void* to an IO*.
-  virtual IO* fromVoidToIO(void* ptr) const = 0;
+  virtual IO::IoObject* fromVoidToIO(void* ptr) const = 0;
   /// Subclasses must override this to cast the IO* to a void*.
-  virtual void* fromIOToVoid(IO* ptr) const = 0;
+  virtual void* fromIOToVoid(IO::IoObject* ptr) const = 0;
 
   /** May be overridden by subclasses to provide a list of alternative
       typenames suitable for use in \c IO::readTypename(). The default

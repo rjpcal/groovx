@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Mar 29 22:09:33 2000
+// written: Thu Mar 30 09:12:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -219,7 +219,7 @@ protected:
 		  TlistUtils::loadObjidFile(theTlist, objid_file, num_lines, offset);
 		returnInt(num_loaded);
 	 }
-	 catch (IoError& err) {
+	 catch (IO::IoError& err) {
 		throw Tcl::TclError(err.msg_cstr());
 	 }
   }

@@ -2,7 +2,7 @@
 // iomgr.h
 // Rob Peters
 // created: Fri Apr 23 01:12:37 1999
-// written: Wed Mar 29 23:50:52 2000
+// written: Thu Mar 30 09:54:01 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -15,10 +15,12 @@
 
 class istream;
 
-namespace IoMgr {
-  IO* newIO(const char* type);
-  IO* newIO(istream &is, IO::IOFlag flag);
-  IO* newIO(const char* type, istream &is, IO::IOFlag flag);
+namespace IO {
+  namespace IoMgr {
+	 IO::IoObject* newIO(const char* type);
+	 IO::IoObject* newIO(istream &is, IO::IOFlag flag);
+	 IO::IoObject* newIO(const char* type, istream &is, IO::IOFlag flag);
+  }
 }
 
 static const char vcid_iomgr_h[] = "$Header$";

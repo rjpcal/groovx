@@ -3,7 +3,7 @@
 // grobjimpl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:57 2000
-// written: Thu Mar 30 00:02:13 2000
+// written: Thu Mar 30 09:50:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -412,7 +412,7 @@ DOTRACE("GrObj::Impl::serialize");
   os << itsAligner.itsCenterX << IO::SEP;
   os << itsAligner.itsCenterY << endl;  
 
-  if (os.fail()) throw OutputError("GrObj");
+  if (os.fail()) throw IO::OutputError("GrObj");
 
   if (flag & IO::BASES) { /* no bases to serialize */ }
 }
@@ -422,32 +422,32 @@ DOTRACE("GrObj::Impl::deserialize");
 
   DebugEvalNL(flag & IO::TYPENAME); 
 
-  if (flag & IO::TYPENAME) { IO::readTypename(is, "GrObj"); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, "GrObj"); }
 
   int temp;
 
-  is >> itsCategory; if (is.fail()) throw InputError("after GrObj::itsCategory");
+  is >> itsCategory; if (is.fail()) throw IO::InputError("after GrObj::itsCategory");
 
   is >> temp; itsRenderer.setMode(temp, this);
-  if (is.fail()) throw InputError("after GrObj::itsRenderer.itsMode");
+  if (is.fail()) throw IO::InputError("after GrObj::itsRenderer.itsMode");
 
-  is >> itsUnRenderer.itsMode; if (is.fail()) throw InputError("after GrObj::itsUnRenderer.itsMode");
+  is >> itsUnRenderer.itsMode; if (is.fail()) throw IO::InputError("after GrObj::itsUnRenderer.itsMode");
 
-  is >> temp; if (is.fail()) throw InputError("after GrObj::temp"); itsBB.itsIsVisible = bool(temp);
+  is >> temp; if (is.fail()) throw IO::InputError("after GrObj::temp"); itsBB.itsIsVisible = bool(temp);
 
   is >> temp; itsScaler.setMode(temp, this);
-  if (is.fail()) throw InputError("after GrObj::itsScaler.itsMode");
+  if (is.fail()) throw IO::InputError("after GrObj::itsScaler.itsMode");
 
-  is >> itsScaler.itsWidthFactor; if (is.fail()) throw InputError("after GrObj::itsScaler.itsWidthFactor");
-  is >> itsScaler.itsHeightFactor; if (is.fail()) throw InputError("after GrObj::itsScaler.itsHeightFactor");
+  is >> itsScaler.itsWidthFactor; if (is.fail()) throw IO::InputError("after GrObj::itsScaler.itsWidthFactor");
+  is >> itsScaler.itsHeightFactor; if (is.fail()) throw IO::InputError("after GrObj::itsScaler.itsHeightFactor");
 
-  is >> itsAligner.itsMode; if (is.fail()) throw InputError("after GrObj::itsAligner.itsMode");
-  is >> itsAligner.itsCenterX; if (is.fail()) throw InputError("after GrObj::itsAligner.itsCenterX");
-  is >> itsAligner.itsCenterY; if (is.fail()) throw InputError("after GrObj::itsAligner.itsCenterY");
+  is >> itsAligner.itsMode; if (is.fail()) throw IO::InputError("after GrObj::itsAligner.itsMode");
+  is >> itsAligner.itsCenterX; if (is.fail()) throw IO::InputError("after GrObj::itsAligner.itsCenterX");
+  is >> itsAligner.itsCenterY; if (is.fail()) throw IO::InputError("after GrObj::itsAligner.itsCenterY");
 
   invalidateCaches();
 
-  if (is.fail()) throw InputError("GrObj");
+  if (is.fail()) throw IO::InputError("GrObj");
 
   if (flag & IO::BASES) { /* no bases to deserialize */ }
 }
@@ -455,27 +455,27 @@ DOTRACE("GrObj::Impl::deserialize");
 int GrObj::Impl::charCount() const {
 DOTRACE("GrObj::Impl::charCount");
   int count = 
-	 gCharCount("GrObj") + 1
-	 + gCharCount(itsCategory) + 1
+	 IO::gCharCount("GrObj") + 1
+	 + IO::gCharCount(itsCategory) + 1
 	 
-	 + gCharCount(itsRenderer.getMode()) + 1
-	 + gCharCount(itsUnRenderer.itsMode) + 1
+	 + IO::gCharCount(itsRenderer.getMode()) + 1
+	 + IO::gCharCount(itsUnRenderer.itsMode) + 1
 	 
-	 + gCharCount(itsBB.itsIsVisible) + 1
+	 + IO::gCharCount(itsBB.itsIsVisible) + 1
 	 
-	 + gCharCount(itsScaler.getMode()) + 1
-	 + gCharCount(itsScaler.itsWidthFactor) + 1
-	 + gCharCount(itsScaler.itsHeightFactor) + 1
+	 + IO::gCharCount(itsScaler.getMode()) + 1
+	 + IO::gCharCount(itsScaler.itsWidthFactor) + 1
+	 + IO::gCharCount(itsScaler.itsHeightFactor) + 1
 	 
-	 + gCharCount(itsAligner.itsMode) + 1
-	 + gCharCount(itsAligner.itsCenterX) + 1
-	 + gCharCount(itsAligner.itsCenterY) + 1
+	 + IO::gCharCount(itsAligner.itsMode) + 1
+	 + IO::gCharCount(itsAligner.itsCenterX) + 1
+	 + IO::gCharCount(itsAligner.itsCenterY) + 1
 	 + 5; // fudge factor
   DebugEvalNL(count);
   return count;
 }
 
-void GrObj::Impl::readFrom(Reader* reader) {
+void GrObj::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("GrObj::Impl::readFrom");
 
   unsigned long svid = reader->readSerialVersionId(); 
@@ -511,7 +511,7 @@ DOTRACE("GrObj::Impl::readFrom");
   reader->readValue("GrObj::centerY", itsAligner.itsCenterY);
 }
 
-void GrObj::Impl::writeTo(Writer* writer) const {
+void GrObj::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("GrObj::Impl::writeTo");
   writer->writeValue("GrObj::category", itsCategory);
 

@@ -3,7 +3,7 @@
 // trialevent.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:45:05 1999
-// written: Wed Mar 29 23:50:52 2000
+// written: Thu Mar 30 09:50:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ class Experiment;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class TrialEvent : public virtual IO {
+class TrialEvent : public virtual IO::IoObject {
 public:
   /// Construct with a requested delay of \a msec.
   TrialEvent(int msec);
@@ -48,12 +48,12 @@ public:
   /// Destructor cancels any pending callback to \c invoke().
   virtual ~TrialEvent();
 
-  virtual void serialize(ostream &os, IOFlag flag) const;
-  virtual void deserialize(istream &is, IOFlag flag);
+  virtual void serialize(ostream &os, IO::IOFlag flag) const;
+  virtual void deserialize(istream &is, IO::IOFlag flag);
   virtual int charCount() const;
 
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
   /// Return the current requested delay time, in milliseconds.
   int getDelay() const { return itsRequestedDelay; }

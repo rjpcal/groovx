@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Thu Mar 30 00:14:16 2000
+// written: Thu Mar 30 10:06:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Property : public virtual IO {
+class Property : public virtual IO::IoObject {
 public:
   ///
   template <class C> friend class PropFriend;
@@ -78,12 +78,12 @@ public:
   ///
   template <class C> friend class PropFriend;
 
-  virtual void serialize(ostream& os, IOFlag) const;
-  virtual void deserialize(istream& is, IOFlag);
+  virtual void serialize(ostream& os, IO::IOFlag) const;
+  virtual void deserialize(istream& is, IO::IOFlag);
   virtual int charCount() const;
 
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
   
 #ifndef GCC_COMPILER
 protected:
@@ -228,12 +228,12 @@ public:
   ///
   void reseat(T& valRef) { itsVal.reseat(valRef); }
 
-  virtual void serialize(ostream& os, IOFlag) const ;
-  virtual void deserialize(istream& is, IOFlag);
+  virtual void serialize(ostream& os, IO::IOFlag) const ;
+  virtual void deserialize(istream& is, IO::IOFlag);
   virtual int charCount() const;
 
-  virtual void readFrom(Reader* reader);
-  virtual void writeTo(Writer* writer) const;
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
   
   virtual void set(const Value& new_val) { new_val.get(itsVal()); }
   virtual const Value& get() const { return itsVal; }

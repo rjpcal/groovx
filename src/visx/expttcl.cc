@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Thu Mar 30 00:09:14 2000
+// written: Thu Mar 30 08:29:22 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -252,7 +252,7 @@ public:
 	 }
   }
 
-  virtual IO& getIoFromId(int) { return itsExptDriver; }
+  virtual IO::IoObject& getIoFromId(int) { return itsExptDriver; }
 
   virtual ExptDriver* getCItemFromId(int) {
 	 return &itsExptDriver;

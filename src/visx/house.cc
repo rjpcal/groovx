@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Thu Mar 30 00:03:24 2000
+// written: Thu Mar 30 09:50:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -222,42 +222,42 @@ House::~House() {
 DOTRACE("House::~House");
 }
 
-void House::serialize(ostream& os, IOFlag flag) const {
+void House::serialize(ostream& os, IO::IOFlag flag) const {
 DOTRACE("House::serialize");
 
   char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
 	 (this->*IO_MEMBERS[i]).serialize(os, flag);
   }
 
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw IO::OutputError(ioTag);
 
-  if (flag & BASES) { GrObj::serialize(os, flag | TYPENAME); }
+  if (flag & IO::BASES) { GrObj::serialize(os, flag | IO::TYPENAME); }
 }
 
-void House::deserialize(istream& is, IOFlag flag) {
+void House::deserialize(istream& is, IO::IOFlag flag) {
 DOTRACE("House::deserialize");
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
   for (unsigned int i = 0; i < NUM_IO_MEMBERS; ++i) {
 	 (this->*IO_MEMBERS[i]).deserialize(is, flag);
   }
 
   try {
-	 if (is.fail()) throw InputError(ioTag);
+	 if (is.fail()) throw IO::InputError(ioTag);
   }
-  catch (IoError&) { 
+  catch (IO::IoError&) { 
 	 throw;
   }
 
-  if (flag & BASES) { GrObj::deserialize(is, flag | TYPENAME); }
+  if (flag & IO::BASES) { GrObj::deserialize(is, flag | IO::TYPENAME); }
 
   sendStateChangeMsg();
 }
 
-void House::readFrom(Reader* reader) {
+void House::readFrom(IO::Reader* reader) {
 DOTRACE("House::readFrom");
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 reader->readValueObj(PINFOS[i].name_cstr(),
@@ -267,7 +267,7 @@ DOTRACE("House::readFrom");
   GrObj::readFrom(reader);
 }
 
-void House::writeTo(Writer* writer) const {
+void House::writeTo(IO::Writer* writer) const {
 DOTRACE("House::writeTo");
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 writer->writeValueObj(PINFOS[i].name_cstr(),

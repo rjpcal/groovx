@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Wed Mar 29 23:56:53 2000
+// written: Thu Mar 30 12:09:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,10 +100,10 @@ void FaceTcl::LoadFacesCmd::invoke() {
 		char c = char(ist.peek());
 		bool saw_alpha = bool(isalpha(c));
 		if (use_virtual_ctor | saw_alpha) {
-		  IO* io = IoMgr::newIO(ist, IO::BASES & IO::TYPENAME);
+		  IO::IoObject* io = IO::IoMgr::newIO(ist, IO::BASES & IO::TYPENAME);
 		  p = dynamic_cast<Face *>(io);
 		  if (!p) {
-			 throw InputError("FaceTcl::loadFaces");
+			 throw IO::InputError("FaceTcl::loadFaces");
 		  }
 		}
 		else {
@@ -149,8 +149,8 @@ DOTRACE("Face_Init");
 
   Tcl::TclPkg* pkg = new FaceTcl::FacePkg(interp);
 
-  FactoryRegistrar<IO, Face>      :: registerWith(IoFactory::theOne());
-  FactoryRegistrar<IO, CloneFace> :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, Face>      :: registerWith(IO::IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, CloneFace> :: registerWith(IO::IoFactory::theOne());
 
   return pkg->initStatus();
 }

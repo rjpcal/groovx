@@ -3,7 +3,7 @@
 // writer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:49 1999
-// written: Wed Mar 29 14:07:33 2000
+// written: Thu Mar 30 12:15:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,20 +15,25 @@
 #include "util/error.h"
 #endif
 
-class IO;
+namespace IO {
+  class IoObject;
+  class WriteError;
+  class Writer;
+}
+
 class Value;
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Exception class for errors in \c Writer methods. \c WriteError
- * should be thrown by subclasses of \c Writer when an error occurs
- * during a call to any of the methods in the \c Writer interface.
+ * Exception class for errors in \c IO::Writer methods. \c WriteError
+ * should be thrown by subclasses of \c IO::Writer when an error occurs
+ * during a call to any of the methods in the \c IO::Writer interface.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class WriteError : public ErrorWithMsg {
+class IO::WriteError : public ErrorWithMsg {
 public:
   /// Construct with a descriptive message \a msg.
   WriteError(const char* msg);
@@ -37,11 +42,11 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c Writer provides the interface that \c IO objects use to save
+ * \c IO::Writer provides the interface that \c IO objects use to save
  * their state in a \c writeTo() implementation. It provides the
- * inverse operations to those in \c Reader. To save an object tree, a
+ * inverse operations to those in \c IO::Reader. To save an object tree, a
  * client should call \c writeRoot() on the root object in that
- * tree. Subclasses of \c Writer will implement this interface using
+ * tree. Subclasses of \c IO::Writer will implement this interface using
  * different back ends for the actual storage medium, for example, an
  * ASCII text file, an on-screen dialog box, a relational database,
  * etc.
@@ -49,7 +54,7 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Writer {
+class IO::Writer {
 public:
 
   /// Virtual destructor allows correct destruction of subclasses.
@@ -80,28 +85,28 @@ public:
   void writeValue(const char* name, const T& val);
 
   /// Store the \c IO object \a val in association with the tag \a name.
-  virtual void writeObject(const char* name, const IO* obj) = 0;
+  virtual void writeObject(const char* name, const IO::IoObject* obj) = 0;
 
   /** Store the owned \c IO object \a obj in association with the tag
       \a name. This function should only be used if \a obj is \b owned
       by the storing object; no other objects should reference \a
       obj. This allows the \c Writer subclass to implement the storage
       of an owned object as a contained object. */
-  virtual void writeOwnedObject(const char* name, const IO* obj) = 0;
+  virtual void writeOwnedObject(const char* name, const IO::IoObject* obj) = 0;
 
   /** Write the named base class using the IO object \a obj, which
       should be arranged to point or refer to the appropriate base
       class part of the object. In particular, \a obj's virtual
       functions must NOT call the fully derived versions. This effect
-      can be best accomplished with an \c IOProxy. */
+      can be best accomplished with an \c IO::IoProxy. */
   virtual void writeBaseClass(const char* baseClassName,
-										const IO* basePart) = 0;
+										const IO::IoObject* basePart) = 0;
 
   /** Store an entire object hierarchy, starting with the root object
       \a root. All objects and values referenced by \a root will be
       stored recursively, until there are no more remaining
       references. */
-  virtual void writeRoot(const IO* root) = 0;
+  virtual void writeRoot(const IO::IoObject* root) = 0;
 };
 
 static const char vcid_writer_h[] = "$Header$";

@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Wed Mar 29 14:07:36 2000
+// written: Thu Mar 30 12:15:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,8 +22,43 @@ class type_info;
 
 class fixed_string;
 
-class Reader;
-class Writer;
+namespace IO {
+  class IoObject;
+
+  class Reader;
+  class Writer;
+
+  class IoError;
+  class InputError;
+  class OutputError;
+  class LogicError;
+  class ValueError;
+  class FilenameError;
+
+  /** The symbolic constants of type \c IOFlag flags may be OR'ed
+   * together and passed to the flag argument of \c serialize() or \c
+   * deserialize() to control different aspects of the formatting used
+   * to read and write objects. In general, the same flags must be
+   * used to read an object as were used to write it. */
+  typedef int IOFlag;
+
+  /// Neither the class's name or its bases will be written/read
+  const IOFlag NO_FLAGS   = 0;
+  /// The class's name is written/read
+  const IOFlag TYPENAME   = 1 << 0;
+  /// The class's bases are written/read
+  const IOFlag BASES      = 1 << 1;
+
+  /// A default separator to be used between elements in a serialized object
+  const char SEP = ' ';
+
+
+  /** This template function returns the number of characters needed
+	 * to write a type using the << insertion operator. It is
+	 * instantiated * for the basic types. */
+  template<class T>
+  int gCharCount(T val);
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -35,41 +70,24 @@ class Writer;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IO {
+class IO::IoObject {
 public:
 
-  /** The symbolic constants of type \c IOFlag flags may be OR'ed
-   * together and passed to the flag argument of \c serialize() or \c
-   * deserialize() to control different aspects of the formatting used
-   * to read and write objects. In general, the same flags must be
-   * used to read an object as were used to write it. */
-  typedef int IOFlag;
-
-  /// Neither the class's name or its bases will be written/read
-  static const IOFlag NO_FLAGS   = 0;
-  /// The class's name is written/read
-  static const IOFlag TYPENAME   = 1 << 0;
-  /// The class's bases are written/read
-  static const IOFlag BASES      = 1 << 1;
-
-  /// A default separator to be used between elements in a serialized object.
-  static const char SEP = ' ';
-
   /// Default constructor
-  IO();
+  IoObject();
 
   /// Virtual destructor to ensure correct destruction of subclasses
-  virtual ~IO() = 0;
+  virtual ~IoObject() = 0;
 
   /** The old-style function to send an object to a stream. Each
       subclass must implement its own formatting. \c writeTo() should
       be favored over \c serialize(). */
-  virtual void serialize(ostream& os, IOFlag flag) const;
+  virtual void serialize(ostream& os, IO::IOFlag flag) const;
 
   /** The old-style function to read an object from a stream. Each
       subclass must implement its own formatting. \c readFrom() should
       be favored over \c deserialize(). */
-  virtual void deserialize(istream& is, IOFlag flag);
+  virtual void deserialize(istream& is, IO::IOFlag flag);
 
   /** The old-style function to return an upper limit on the number of
       characters that will be sent to a stream by \c serialize(). Each
@@ -77,20 +95,20 @@ public:
   virtual int charCount() const;
 
   /** The preferred method for saving an object's state via the
-      generic interface provided by \c Reader. Each subclass of \c
-      Reader provides its own formatting scheme, so that subclasses of
+      generic interface provided by \c IO::Reader. Each subclass of \c
+      IO::Reader provides its own formatting scheme, so that subclasses of
       \c IO don't need to implement any formatting. */
-  virtual void readFrom(Reader* reader) = 0;
+  virtual void readFrom(IO::Reader* reader) = 0;
 
   /** The preferred method for restoring an object's state via the
-      generic interface provided by \c Writer. Each subclass of \c
-      Writer provides its own formatting scheme, so that subclasses of
+      generic interface provided by \c IO::Writer. Each subclass of \c
+      IO::Writer provides its own formatting scheme, so that subclasses of
       \c IO don't need to implement any formatting. */
-  virtual void writeTo(Writer* writer) const = 0;
+  virtual void writeTo(IO::Writer* writer) const = 0;
   
   /** Returns a unique id for this object. This function should NEVER
       be overridden by public clients; it will only be overridden by
-      other classes internal to the io system, such as \c IOProxy for
+      other classes internal to the io system, such as \c IO::IoProxy for
       example. */
   virtual unsigned long id() const;
 
@@ -99,7 +117,7 @@ public:
       they make a change that requires a change to their serialization
       protocol. Overriding versions of this function should follow the
       convention that a higher id refers to a later version of the
-      class. Implementations of \c Reader and \c Writer will provide a
+      class. Implementations of \c IO::Reader and \c IO::Writer will provide a
       way for a class to store and retrieve the serialization version
       of an object. */
   virtual unsigned long serialVersionId() const;
@@ -135,20 +153,6 @@ private:
 
 
 
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * This template function returns the number of characters needed to
- * write a type using the << insertion operator. It is instantiated
- * for the basic types.
- *
- * @short Gives the number of characters for a string representation of
- * a basic type.
- **/
-///////////////////////////////////////////////////////////////////////
-template<class T>
-int gCharCount(T val);
-
 
 
 
@@ -176,7 +180,7 @@ int gCharCount(T val);
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IoError : public ErrorWithMsg {
+class IO::IoError : public ErrorWithMsg {
 public:
   /// Default constructor
   IoError();
@@ -196,7 +200,7 @@ protected:
  *
  * A subclass of IoError for general input errors. 
  **/
-class InputError : public IoError {
+class IO::InputError : public IO::IoError {
 public:
   ///
   InputError() : IoError() {}
@@ -211,7 +215,7 @@ public:
  *
  * A subclass of IoError for general output errors. \ingroup IoExcept
  **/
-class OutputError : public IoError {
+class IO::OutputError : public IO::IoError {
 public:
   ///
   OutputError() : IoError() {}
@@ -228,14 +232,14 @@ public:
  * during input or output. This type of error suggests * that either
  * the object or its serialized description has been * corrupted.
  **/
-class IoLogicError : public IoError {
+class IO::LogicError : public IO::IoError {
 public:
   ///
-  IoLogicError() : IoError() {}
+  LogicError() : IoError() {}
   ///
-  IoLogicError(const char* str);
+  LogicError(const char* str);
   ///
-  IoLogicError(const type_info& ti) { setMsg(ti); }
+  LogicError(const type_info& ti) { setMsg(ti); }
 };
 
 /**
@@ -244,14 +248,14 @@ public:
  * A subclass of IoError for out-of-bounds values that are encountered
  * during input or output.
  **/
-class IoValueError : public IoError {
+class IO::ValueError : public IO::IoError {
 public:
   ///
-  IoValueError() : IoError() {}
+  ValueError() : IoError() {}
   ///
-  IoValueError(const char* str);
+  ValueError(const char* str);
   ///
-  IoValueError(const type_info& ti) { setMsg(ti); }
+  ValueError(const type_info& ti) { setMsg(ti); }
 };
 
 /**
@@ -260,12 +264,12 @@ public:
  * A subclass of IoError for invalid filenames or filenames referring
  * to inaccessible files.
  **/
-class IoFilenameError : public IoError {
+class IO::FilenameError : public IO::IoError {
 public:
   ///
-  IoFilenameError() : IoError() {}
+  FilenameError() : IoError() {}
   ///
-  IoFilenameError(const char* filename);
+  FilenameError(const char* filename);
 };
 
 static const char vcid_io_h[] = "$Header$";

@@ -3,7 +3,7 @@
 // jitter.cc
 // Rob Peters
 // created: Wed Apr  7 13:46:41 1999
-// written: Thu Mar 30 00:03:32 2000
+// written: Thu Mar 30 12:25:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,10 @@
 
 #include "jitter.h"
 
-#include "randutils.h"
-
 #include "io/reader.h"
 #include "io/writer.h"
+
+#include "util/randutils.h"
 
 #include <cstring>
 #include <iostream.h>
@@ -52,7 +52,7 @@ DOTRACE("Jitter::Jitter");
   // empty
 }
 
-Jitter::Jitter(istream &is, IOFlag flag) : 
+Jitter::Jitter(istream &is, IO::IOFlag flag) : 
   Position() ,
   itsXJitter(0.0), itsYJitter(0.0), itsRJitter(0.0),
   itsXShift(0.0), itsYShift(0.0), itsRShift(0.0)
@@ -71,25 +71,25 @@ DOTRACE("Jitter::~Jitter");
 // before the base class (Position), since the first thing that the
 // PosMgr virtual constructor sees must be the name of the most fully
 // derived class, in order to invoke the proper constructor.
-void Jitter::serialize(ostream &os, IOFlag flag) const {
+void Jitter::serialize(ostream &os, IO::IOFlag flag) const {
 DOTRACE("Jitter::serialize");
   char sep = ' ';
-  if (flag & TYPENAME) { os << ioTag << sep; }
+  if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   os << itsXJitter << sep
 	  << itsYJitter << sep
 	  << itsRJitter << endl;
 
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw IO::OutputError(ioTag);
 
   // The base class (Position) is always serialized, regardless of flag.
   // The typename in the base class is always used, regardless of flag.
-  Position::serialize(os, (flag | TYPENAME));
+  Position::serialize(os, (flag | IO::TYPENAME));
 }
 
-void Jitter::deserialize(istream &is, IOFlag flag) {
+void Jitter::deserialize(istream &is, IO::IOFlag flag) {
 DOTRACE("Jitter::deserialize");
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
 
   is >> itsXJitter >> itsYJitter >> itsRJitter;
 
@@ -98,23 +98,23 @@ DOTRACE("Jitter::deserialize");
   DebugEval(itsYJitter);
   DebugEvalNL(itsRJitter);
 
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw IO::InputError(ioTag);
 
   // The base class (Position) is always deserialized, regardless of flag.
   // The typename in the base class is always used, regardless of flag.
-  Position::deserialize(is, (flag | TYPENAME));
+  Position::deserialize(is, (flag | IO::TYPENAME));
 }
 
 int Jitter::charCount() const {
   return (strlen(ioTag) + 1
-			 + gCharCount<double>(itsXJitter) + 1
-			 + gCharCount<double>(itsYJitter) + 1
-			 + gCharCount<double>(itsRJitter) + 1
+			 + IO::gCharCount<double>(itsXJitter) + 1
+			 + IO::gCharCount<double>(itsYJitter) + 1
+			 + IO::gCharCount<double>(itsRJitter) + 1
 			 + Position::charCount()
 			 + 1);// fudge factor
 }
 
-void Jitter::readFrom(Reader* reader) {
+void Jitter::readFrom(IO::Reader* reader) {
 DOTRACE("Jitter::readFrom");
 
   Position::readFrom(reader);
@@ -124,7 +124,7 @@ DOTRACE("Jitter::readFrom");
   reader->readValue("jitterR", itsRJitter);
 }
 
-void Jitter::writeTo(Writer* writer) const {
+void Jitter::writeTo(IO::Writer* writer) const {
 DOTRACE("Jitter::writeTo");
 
   Position::writeTo(writer);
@@ -142,8 +142,8 @@ void Jitter::translate() const {
 DOTRACE("Jitter::translate");
   double x,y,z;
   getTranslate(x,y,z);
-  glTranslatef(x+randDoubleRange(-itsXJitter, itsXJitter),
-					y+randDoubleRange(-itsYJitter, itsYJitter),
+  glTranslatef(x+Util::randDoubleRange(-itsXJitter, itsXJitter),
+					y+Util::randDoubleRange(-itsYJitter, itsYJitter),
 					z);
 }
 
@@ -151,15 +151,15 @@ void Jitter::rotate() const {
 DOTRACE("Jitter::rotate");
   double a,x,y,z;
   getRotate(a,x,y,z);
-  glRotatef(a+randDoubleRange(-itsRJitter, itsRJitter),
+  glRotatef(a+Util::randDoubleRange(-itsRJitter, itsRJitter),
 				x, y, z);
 }
 
 void Jitter::rejitter() const {
 DOTRACE("Jitter::rejitter");
-  itsXShift = randDoubleRange(-itsXJitter, itsXJitter);
-  itsYShift = randDoubleRange(-itsYJitter, itsYJitter);
-  itsRShift = randDoubleRange(-itsRJitter, itsRJitter);
+  itsXShift = Util::randDoubleRange(-itsXJitter, itsXJitter);
+  itsYShift = Util::randDoubleRange(-itsYJitter, itsYJitter);
+  itsRShift = Util::randDoubleRange(-itsRJitter, itsRJitter);
 }
 
 void Jitter::go() const {

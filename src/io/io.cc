@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Wed Mar 29 23:50:53 2000
+// written: Thu Mar 30 12:29:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,8 @@
 #include <strstream.h>
 #include <typeinfo>
 
-#include "demangle.h"
+#include "system/demangle.h"
+
 #include "util/strings.h"
 
 #define NO_TRACE
@@ -42,54 +43,54 @@ namespace {
 //
 ///////////////////////////////////////////////////////////////////////
 
-// These members are declared and initialized within the class, but
-// they still must be given a unique *definition* here.
-const IO::IOFlag IO::NO_FLAGS;
-const IO::IOFlag IO::TYPENAME;
-const IO::IOFlag IO::BASES;
+// // These members are declared and initialized within the class, but
+// // they still must be given a unique *definition* here.
+// const IO::IOFlag IO::NO_FLAGS;
+// const IO::IOFlag IO::TYPENAME;
+// const IO::IOFlag IO::BASES;
 
-const char IO::SEP;
+// const char IO::SEP;
 
-IO::IO() : itsId(++idCounter) {
-DOTRACE("IO::IO");
+IO::IoObject::IoObject() : itsId(++idCounter) {
+DOTRACE("IO::IoObject::IoObject");
   DebugEvalNL(itsId);
 }
 
 // Must be defined out of line to avoid duplication of IO's vtable
-IO::~IO() {
-DOTRACE("IO::~IO");
+IO::IoObject::~IoObject() {
+DOTRACE("IO::IoObject::~IoObject");
 }
 
-void IO::serialize(ostream&, IOFlag) const {}
-void IO::deserialize(istream&, IOFlag) {}
-int IO::charCount() const { return 0; }
+void IO::IoObject::serialize(ostream&, IO::IOFlag) const {}
+void IO::IoObject::deserialize(istream&, IO::IOFlag) {}
+int IO::IoObject::charCount() const { return 0; }
 
-unsigned long IO::id() const {
-DOTRACE("IO::id");
+unsigned long IO::IoObject::id() const {
+DOTRACE("IO::IoObject::id");
   return itsId;
 }
 
-unsigned long IO::serialVersionId() const {
-DOTRACE("IO::serialVersionId");
+unsigned long IO::IoObject::serialVersionId() const {
+DOTRACE("IO::IoObject::serialVersionId");
   return 0; 
 }
 
-fixed_string IO::ioTypename() const {
-DOTRACE("IO::ioTypename");
+fixed_string IO::IoObject::ioTypename() const {
+DOTRACE("IO::IoObject::ioTypename");
   return demangle_cstr(typeid(*this).name());
 }
 
-int IO::eatWhitespace(istream& is) {
-DOTRACE("IO::eatWhitespace");
+int IO::IoObject::eatWhitespace(istream& is) {
+DOTRACE("IO::IoObject::eatWhitespace");
   int c=0;
   while ( isspace(is.peek()) )
 	 { is.get(); ++c; }
   return c;
 }
 
-void IO::readTypename(istream& is, const char* correctNames_cstr,
+void IO::IoObject::readTypename(istream& is, const char* correctNames_cstr,
 							 bool doCheck) {
-DOTRACE("IO::readTypename");
+DOTRACE("IO::IoObject::readTypename");
   string correctNames = correctNames_cstr;
 
   string name;
@@ -136,7 +137,7 @@ DOTRACE("IO::readTypename");
 
   // If we got here, then none of the substrings matched so we must
   // raise an exception.
-  InputError err("couldn't read typename for ");
+  IO::InputError err("couldn't read typename for ");
   err.appendMsg(first_candidate.c_str());
   throw err;
 }
@@ -147,6 +148,8 @@ DOTRACE("IO::readTypename");
 //
 ///////////////////////////////////////////////////////////////////////
 
+namespace IO {
+
 template<class T>
 int gCharCount(T val) {
   static const int BUF_SIZE = 64;
@@ -156,30 +159,19 @@ int gCharCount(T val) {
   return strlen(buf);
 }
 
+// Explicit instantiations
 template int gCharCount<int>(int val);
 template int gCharCount<bool>(bool val);
 template int gCharCount<char>(char val);
 template int gCharCount<double>(double val);
 
-template <>
-int gCharCount(const char* val) {
-  return strlen(val);
-}
+// Specializations for string types
+template <> int gCharCount(const char* val)   { return strlen(val); }
+template <> int gCharCount(char* val)         { return strlen(val); }
+template <> int gCharCount(string val)        { return val.length(); }
+template <> int gCharCount(const string& val) { return val.length(); }
 
-template <>
-int gCharCount(char* val) {
-  return strlen(val);
-}
-
-template <>
-int gCharCount(string val) {
-  return val.length();
-}
-
-template <>
-int gCharCount(const string& val) {
-  return val.length();
-}
+} // end namespace IO
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -187,62 +179,62 @@ int gCharCount(const string& val) {
 //
 ///////////////////////////////////////////////////////////////////////
 
-IoError::IoError() :
+IO::IoError::IoError() :
   ErrorWithMsg()
 {
-DOTRACE("IoError::IoError");
+DOTRACE("IO::IoError::IoError");
 }
 
-IoError::IoError(const char* str) :
+IO::IoError::IoError(const char* str) :
   ErrorWithMsg(demangle_cstr(typeid(*this).name()))
 {
-DOTRACE("IoError::IoError(const string&)");
+DOTRACE("IO::IoError::IoError");
   appendMsg(": ");
   appendMsg(str);
 }
 
-IoError::IoError(const type_info& ti) :
+IO::IoError::IoError(const type_info& ti) :
   ErrorWithMsg(demangle_cstr(typeid(*this).name()))
 {
-DOTRACE("IoError::IoError(const type_info&)");
+DOTRACE("IO::IoError::IoError");
   appendMsg(": ");
   appendMsg(demangle_cstr(ti.name()));
 }
 
-void IoError::setMsg(const char* str) {
-DOTRACE("IoError::setMsg(const char*)");
+void IO::IoError::setMsg(const char* str) {
+DOTRACE("IO::IoError::setMsg(const char*)");
   ErrorWithMsg::setMsg(demangle_cstr(typeid(*this).name()));
   ErrorWithMsg::appendMsg(": ");
   ErrorWithMsg::appendMsg(str);
 }
 
-void IoError::setMsg(const type_info& ti) {
-DOTRACE("IoError::setMsg(const type_info&)");
+void IO::IoError::setMsg(const type_info& ti) {
+DOTRACE("IO::IoError::setMsg(const type_info&)");
   IoError::setMsg(demangle_cstr(ti.name()));
 }
 
-InputError::InputError(const char* str) {
-DOTRACE("InputError::InputError");
+IO::InputError::InputError(const char* str) {
+DOTRACE("IO::InputError::InputError");
   setMsg(str);
 }
 
-OutputError::OutputError(const char* str) {
-DOTRACE("OutputError::OutputError");
+IO::OutputError::OutputError(const char* str) {
+DOTRACE("IO::OutputError::OutputError");
   setMsg(str);
 }
 
-IoLogicError::IoLogicError(const char* str) {
-DOTRACE("IoLogicError::IoLogicError");
+IO::LogicError::LogicError(const char* str) {
+DOTRACE("IO::LogicError::LogicError");
   setMsg(str);
 }
 
-IoValueError::IoValueError(const char* str) {
-DOTRACE("IoValueError::IoValueError");
+IO::ValueError::ValueError(const char* str) {
+DOTRACE("IO::ValueError::ValueError");
   setMsg(str);
 }
 
-IoFilenameError::IoFilenameError(const char* str) {
-DOTRACE("IoFilenameError::IoFilenameError");
+IO::FilenameError::FilenameError(const char* str) {
+DOTRACE("IO::FilenameError::FilenameError");
   setMsg(str);
 }
 

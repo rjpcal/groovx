@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Thu Mar 30 09:38:25 2000
+// written: Thu Mar 30 12:09:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -154,17 +154,17 @@ DOTRACE("Th_Init");
   Tcl::TclPkg* pkg2 = new SimpleThTcl::SimpleThPkg(interp);
   Tcl::TclPkg* pkg3 = new ThlistTcl::ThListPkg(interp);
 
-  FactoryRegistrar<IO::IoObject, TimingHdlr>       :: registerWith(IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, TimingHandler>    :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, TimingHdlr>       :: registerWith(IO::IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, TimingHandler>    :: registerWith(IO::IoFactory::theOne());
 
-  FactoryRegistrar<IO::IoObject, AbortTrialEvent>  :: registerWith(IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, DrawEvent>        :: registerWith(IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, UndrawEvent>      :: registerWith(IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, EndTrialEvent>    :: registerWith(IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, SwapBuffersEvent> :: registerWith(IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, RenderBackEvent>  :: registerWith(IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, RenderFrontEvent> :: registerWith(IoFactory::theOne());
-  FactoryRegistrar<IO::IoObject, ClearBufferEvent> :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, AbortTrialEvent>  :: registerWith(IO::IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, DrawEvent>        :: registerWith(IO::IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, UndrawEvent>      :: registerWith(IO::IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, EndTrialEvent>    :: registerWith(IO::IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, SwapBuffersEvent> :: registerWith(IO::IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, RenderBackEvent>  :: registerWith(IO::IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, RenderFrontEvent> :: registerWith(IO::IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, ClearBufferEvent> :: registerWith(IO::IoFactory::theOne());
 
   return pkg1->combineStatus(pkg2->combineStatus(pkg3->initStatus()));
 }

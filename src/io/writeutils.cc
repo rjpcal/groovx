@@ -3,7 +3,7 @@
 // writeutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:21:32 1999
-// written: Thu Mar 30 00:06:53 2000
+// written: Thu Mar 30 12:14:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ const char* makeNumberString(int number) {
 
 }
 
-const char* WriteUtils::makeElementNameString(const char* seq_name,
+const char* IO::WriteUtils::makeElementNameString(const char* seq_name,
 															 int element_num) {
   static dynamic_string result("");
   result = seq_name;
@@ -36,7 +36,7 @@ const char* WriteUtils::makeElementNameString(const char* seq_name,
   return result.c_str();
 }
 
-const char* WriteUtils::makeSeqCountString(const char* seq_name) {
+const char* IO::WriteUtils::makeSeqCountString(const char* seq_name) {
   static dynamic_string result("");
   result = seq_name;
   result += "Count";

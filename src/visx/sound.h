@@ -3,7 +3,7 @@
 // sound.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:43:07 1999
-// written: Wed Mar 29 23:50:52 2000
+// written: Thu Mar 30 09:50:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ public:
   SoundError(const char* msg) : ErrorWithMsg(msg) {}
 };
 
-class Sound : public virtual IO {
+class Sound : public virtual IO::IoObject {
 public:
   // This function will attempt to do any platform-dependent
   // initialization that is necessary to use Sound's, returning true
@@ -47,13 +47,13 @@ public:
 
   virtual ~Sound();
 
-  virtual void serialize(ostream& os, IOFlag flag) const = 0;
-  virtual void deserialize(istream& is, IOFlag flag) = 0;
+  virtual void serialize(ostream& os, IO::IOFlag flag) const = 0;
+  virtual void deserialize(istream& is, IO::IOFlag flag) = 0;
 
   virtual int charCount() const = 0;
 
-  virtual void readFrom(Reader* reader) = 0;
-  virtual void writeTo(Writer* writer) const = 0;
+  virtual void readFrom(IO::Reader* reader) = 0;
+  virtual void writeTo(IO::Writer* writer) const = 0;
 
   virtual void play() = 0;
   virtual void setFile(const char* filename) = 0;

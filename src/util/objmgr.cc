@@ -3,7 +3,7 @@
 // iomgr.cc
 // Rob Peters
 // created: Fri Apr 23 01:13:16 1999
-// written: Wed Mar 29 23:57:36 2000
+// written: Thu Mar 30 12:09:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,23 +25,23 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-IO* IoMgr::newIO(const char* type) {
-DOTRACE("IoMgr::newIO(const char*)");
-  return IoFactory::theOne().newCheckedObject(type);
+IO::IoObject* IO::IoMgr::newIO(const char* type) {
+DOTRACE("IO::IoMgr::newIO(const char*)");
+  return IO::IoFactory::theOne().newCheckedObject(type);
 }
 
-IO* IoMgr::newIO(istream& is, IO::IOFlag flag) {
-DOTRACE("IoMgr::newIo(istream&, IO::IOFlag)");
+IO::IoObject* IO::IoMgr::newIO(istream& is, IO::IOFlag flag) {
+DOTRACE("IO::IoMgr::newIo(istream&, IO::IOFlag)");
   fixed_string type;
   is >> type;
-  // We must turn off the TYPENAME flag since the typename has already
+  // We must turn off the IO::TYPENAME flag since the typename has already
   // been read from the input stream by the present function.
   return newIO(type.c_str(), is, flag & ~IO::TYPENAME);
 }
 
-IO* IoMgr::newIO(const char* type, istream& is, IO::IOFlag flag) {
-DOTRACE("IoMgr::newIo(const char*, istream&, IO::IOFlag)");
-  IO* io = newIO(type);
+IO::IoObject* IO::IoMgr::newIO(const char* type, istream& is, IO::IOFlag flag) {
+DOTRACE("IO::IoMgr::newIo(const char*, istream&, IO::IOFlag)");
+  IO::IoObject* io = newIO(type);
   io->deserialize(is, flag);
   return io;
 }

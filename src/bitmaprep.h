@@ -3,7 +3,7 @@
 // bitmaprep.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Wed Mar 29 22:12:50 2000
+// written: Thu Mar 30 09:50:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,13 +14,12 @@
 class BmapRenderer;
 class istream;
 class ostream;
-class Reader;
-class Writer;
 template <class V> class Rect;
 
-namespace GWT {
-  class Canvas;
-}
+namespace GWT { class Canvas; }
+
+namespace IO { class Reader; }
+namespace IO { class Writer; }
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -60,9 +59,9 @@ public:
   int charCount() const;
 
   /// Conforms to the \c IO interface.
-  void readFrom(Reader* reader);
+  void readFrom(IO::Reader* reader);
   /// Conforms to the \c IO interface.
-  void writeTo(Writer* writer) const;
+  void writeTo(IO::Writer* writer) const;
 
   /////////////
   // actions //
