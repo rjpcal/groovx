@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Feb 25 13:27:36 2003
-// written: Wed Feb 26 16:37:45 2003
+// written: Thu Feb 27 16:35:02 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,9 +58,7 @@ public:
 
   ~stdiobuf() { close(); }
 
-  bool is_open() { return itsFiledes >= 0; }
-
-  void ensure_open();
+  bool is_open() const { return itsFiledes >= 0; }
 
   void close();
 
