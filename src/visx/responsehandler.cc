@@ -3,7 +3,7 @@
 // responsehandler.cc
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Thu May 20 11:45:01 1999
+// written: Thu Jun 17 11:03:28 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,11 +14,28 @@
 #include "responsehandler.h"
 
 #include "exptdriver.h"
-#include "tclobjlock.h"
+#include "tclevalcmd.h"
+#include "soundtcl.h"
 
 #define NO_TRACE
 #include "trace.h"
+#define LOCAL_ASSERT
 #include "debug.h"
+
+///////////////////////////////////////////////////////////////////////
+//
+// File scope stuff
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace {
+  ExptDriver& exptDriver = ExptDriver::theExptDriver();
+
+  // YUK! this should be handled through a function call somehow
+  const char* const widgetName = ".togl";
+
+  const char* const ioTag = "ResponseHandler";
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -35,19 +52,14 @@
 //
 //--------------------------------------------------------------------
 
-ResponseHandler::ResponseHandler(ExptDriver& ed,
-											Tcl_Interp* interp, const string& s) : 
-  itsExptDriver(ed),
-  itsInterp(interp),
+ResponseHandler::ResponseHandler(const string& s) : 
+  itsInterp(0),
   itsKeyRespPairs(s),
   itsRegexps(),
-  itsUseFeedback(true)
+  itsUseFeedback(true),
+  itsRawResponse(NULL)
 {
 DOTRACE("ResponseHandler::ResponseHandler");
-  Tcl_Preserve(itsInterp);  
-  Tcl_CreateObjCommand(itsInterp, "__ResponseHandlerPrivate::handle",
-							  handleCmd, static_cast<ClientData>(this),
-							  (Tcl_CmdDeleteProc *) NULL);
 }
 
 //--------------------------------------------------------------------
@@ -73,7 +85,80 @@ DOTRACE("ResponseHandler::~ResponseHandler");
 	 Tcl_DeleteCommand(itsInterp, "__ResponseHandlerPrivate::handle");
   }
 
-  Tcl_Release(itsInterp);
+  if (itsInterp != 0) {
+	 Tcl_Release(itsInterp);
+  }
+}
+
+void ResponseHandler::serialize(ostream &os, IOFlag flag) const {
+DOTRACE("ResponseHandler::serialize");
+  if (flag & BASES) { /* no bases to serialize */ }
+
+  char sep = ' ';
+  if (flag & TYPENAME) { os << ioTag << sep; }
+
+  os << getKeyRespPairs() << endl;
+  
+  os << getUseFeedback() << endl;
+
+  if (os.fail()) throw OutputError(ioTag);
+}
+
+void ResponseHandler::deserialize(istream &is, IOFlag flag) {
+DOTRACE("ResponseHandler::deserialize");
+  if (flag & BASES) { /* no bases to deserialize */ }
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+
+  if (is.peek() != EOF) {
+	 string aKeyRespPairs;
+	 getline(is, aKeyRespPairs, '\n');
+	 setKeyRespPairs(aKeyRespPairs);
+  }
+
+  if (is.peek() != EOF) { 
+	 int aUseFeedback;
+	 is >> aUseFeedback; 
+	 setUseFeedback(bool(aUseFeedback));
+  }
+
+  if (is.fail()) throw InputError(ioTag);
+}
+
+int ResponseHandler::charCount() const {
+DOTRACE("ResponseHandler::charCount");
+  return 0;
+}
+
+void ResponseHandler::setInterp(Tcl_Interp* interp) {
+DOTRACE("ResponseHandler::setInterp");
+  // can only set itsInterp once
+  if (itsInterp == 0 && interp != 0) { 
+	 itsInterp = interp;
+	 Tcl_CreateObjCommand(itsInterp, "__ResponseHandlerPrivate::handle",
+								 handleCmd, static_cast<ClientData>(this),
+								 (Tcl_CmdDeleteProc *) NULL);
+	 Tcl_Preserve(itsInterp);
+  }
+}
+
+void ResponseHandler::rhBeginTrial() const {
+DOTRACE("ResponseHandler::rhBeginTrial");
+  attend();
+}
+
+void ResponseHandler::rhAbortTrial() const {
+DOTRACE("ResponseHandler::rhAbortTrial");
+  Assert(itsInterp != 0);
+
+  ignore();
+
+  int result = SoundTcl::playProc(itsInterp, NULL, "err");
+  if (result != TCL_OK) Tcl_BackgroundError(itsInterp);
+}
+
+void ResponseHandler::rhHaltExpt() const {
+DOTRACE("ResponseHandler::rhHaltExpt");
+  ignore();
 }
 
 //--------------------------------------------------------------------
@@ -86,18 +171,36 @@ DOTRACE("ResponseHandler::~ResponseHandler");
 // when a response has been made so that events are not received
 // during response processing and during the inter-trial period.
 //
-// Results:
-// A usual Tcl result.
-//
 //--------------------------------------------------------------------
 
-int ResponseHandler::attend() const {
+void ResponseHandler::attend() const {
 DOTRACE("ResponseHandler::attend");
-  static Tcl_Obj* bindCmdObj = 
-    Tcl_NewStringObj("bind .togl <KeyPress> "
-							"{ __ResponseHandlerPrivate::handle %K }", -1);
-  static TclObjLock lock_(bindCmdObj);
-  return Tcl_EvalObjEx(itsInterp, bindCmdObj, TCL_EVAL_GLOBAL);
+  Assert(itsInterp != 0);
+
+  Tk_Window tkwin = Tk_NameToWindow(itsInterp, 
+												const_cast<char *>(widgetName),
+												Tk_MainWindow(itsInterp));
+  Tk_CreateEventHandler(tkwin, KeyPressMask, eventProc,
+								static_cast<ClientData>
+								(const_cast<ResponseHandler *>(this)));
+
+  static TclEvalCmd bindCmd("bind .togl <KeyPress> "
+									 "{ __ResponseHandlerPrivate::handle %K }");
+
+  // Clear the event queue before we rebind to input events
+  while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0) {
+    ; // Empty loop body
+  }
+
+  int result = bindCmd.invoke(itsInterp);
+  if (result != TCL_OK) Tcl_BackgroundError(itsInterp);
+}
+
+void ResponseHandler::eventProc(ClientData clientData, XEvent* /*eventPtr*/) {
+DOTRACE("ResponseHandler::eventProc");
+  const ResponseHandler& rh = *(const_cast<const ResponseHandler*>
+										  (static_cast<ResponseHandler *>(clientData)));
+  
 }
 
 //--------------------------------------------------------------------
@@ -115,8 +218,9 @@ DOTRACE("ResponseHandler::attend");
 //
 //--------------------------------------------------------------------
 
-int ResponseHandler::feedback(int response) {
+int ResponseHandler::feedback(int response) const {
 DOTRACE("ResponseHandler::feedback");
+  Assert(itsInterp != 0);
 
   DebugEvalNL(response);
 
@@ -148,6 +252,8 @@ DOTRACE("ResponseHandler::feedback");
 
 int ResponseHandler::getRespFromKeysym(const char* keysym) const {
 DOTRACE("ResponseHandler::getRespFromKeysym");
+  Assert(itsInterp != 0);
+
   // Get exactly one character -- the last character -- in keysym
   // (just before the terminating '\0'). This is the character that we
   // will take as the response. (The last character must be extracted
@@ -215,23 +321,22 @@ DOTRACE("ResponseHandler::handleCmd");
 //
 //--------------------------------------------------------------------
 
-int ResponseHandler::handleResponse(const char* keysym) {
+int ResponseHandler::handleResponse(const char* keysym) const {
 DOTRACE("ResponseHandler::handleResponse");
-  itsExptDriver.tellResponseSeen();
+  exptDriver.edResponseSeen();
 
-  int result = ignore();
-  if (result != TCL_OK) return result;
+  ignore();
 
   int response = getRespFromKeysym(keysym);
 
   // If we had a valid response and itsUseFeedback is true, then give
   // the appropriate feedback for 'response'.
   if (response >= 0 && itsUseFeedback) {
-    result = feedback(response);
+    int result = feedback(response);
     if (result != TCL_OK) return result;
   }
 
-  itsExptDriver.processResponse(response);
+  exptDriver.edProcessResponse(response);
   return TCL_OK;
 }
 
@@ -247,17 +352,23 @@ DOTRACE("ResponseHandler::handleResponse");
 // key/button-press being interpreted as a response. The effect is
 // cancelled by calling attend().
 //
-// Results:
-// A usual Tcl result.
-//
 //--------------------------------------------------------------------
 
-int ResponseHandler::ignore() const {
+void ResponseHandler::ignore() const {
 DOTRACE("ResponseHandler::ignore");
-  static Tcl_Obj* unbindCmdObj = 
-    Tcl_NewStringObj("bind .togl <KeyPress> {}", -1);
-  static TclObjLock lock_(unbindCmdObj);
-  return Tcl_EvalObjEx(itsInterp, unbindCmdObj, TCL_EVAL_GLOBAL);
+  Assert(itsInterp != 0);
+
+  Tk_Window tkwin = Tk_NameToWindow(itsInterp, 
+												const_cast<char *>(widgetName),
+												Tk_MainWindow(itsInterp));
+  Tk_DeleteEventHandler(tkwin, KeyPressMask, eventProc,
+								static_cast<ClientData>
+								(const_cast<ResponseHandler *>(this)));
+
+  static TclEvalCmd unbindCmd("bind .togl <KeyPress> {}");
+
+  int result = unbindCmd.invoke(itsInterp);
+  if (result != TCL_OK) Tcl_BackgroundError(itsInterp);
 }
 
 //--------------------------------------------------------------------
@@ -268,17 +379,16 @@ DOTRACE("ResponseHandler::ignore");
 // list of regexps and response values stored in the string
 // itsKeyRespPairs.
 //
-// Results:
-// Returns a usual Tcl result.
-// 
 //--------------------------------------------------------------------
 
-int ResponseHandler::updateRegexps() {
+void ResponseHandler::updateRegexps() {
 DOTRACE("ResponseHandler::updateRegexps");
+  Assert(itsInterp != 0);
 
   // Get rid of any old stored regexps/response value pairs.
   itsRegexps.clear();
 
+  DebugEvalNL(itsKeyRespPairs);
 
   // Make a Tcl_Obj out of the string itsKeyRespPairs, then extract
   // individual list elements out of this Tcl_Obj.
@@ -288,9 +398,10 @@ DOTRACE("ResponseHandler::updateRegexps");
   Tcl_Obj** pairsObjs;
   int num_pairs=0;
   if ( Tcl_ListObjGetElements(itsInterp, key_resp_pairsObj, 
-									  &num_pairs, &pairsObjs) != TCL_OK )
-    return TCL_ERROR;
-
+										&num_pairs, &pairsObjs) != TCL_OK ) {
+	 Tcl_BackgroundError(itsInterp);
+    return;
+  }
 
   // Loop over the regexp/response value pairs, and store in
   // itsRegexps a compiled Tcl_RegExp and integer response value for
@@ -302,32 +413,47 @@ DOTRACE("ResponseHandler::updateRegexps");
 
     // Check that the length of the "pair" is really 2
     int length;
-    if (Tcl_ListObjLength(itsInterp, pairObj, &length) != TCL_OK) 
-		return TCL_ERROR;
-    if (length != 2) return TCL_ERROR;
+    if (Tcl_ListObjLength(itsInterp, pairObj, &length) != TCL_OK) {
+		Tcl_BackgroundError(itsInterp);
+		return;
+	 }
+    if (length != 2) {
+		Tcl_BackgroundError(itsInterp);
+		return;
+	 }
 
     // Get a Tcl_Obj from the first element of the pair, then get a
     // compiled regular expression from this Tcl_Obj.
     Tcl_Obj *regexpObj=NULL;
-    if (Tcl_ListObjIndex(itsInterp, pairObj, 0, &regexpObj) != TCL_OK)
-      return TCL_ERROR;
+    if (Tcl_ListObjIndex(itsInterp, pairObj, 0, &regexpObj) != TCL_OK) {
+      Tcl_BackgroundError(itsInterp);
+		return;
+	 }
     Tcl_RegExp regexp = Tcl_GetRegExpFromObj(itsInterp, regexpObj, 0);
-    if (!regexp) return TCL_ERROR;
+    if (!regexp) {
+		Tcl_BackgroundError(itsInterp);
+		return;
+	 }
 
 	 // Get a Tcl_Obj from the second element of the pair; then get an
 	 // integer from that Tcl_Obj.
 	 Tcl_Obj *response_valObj=NULL;
-    if (Tcl_ListObjIndex(itsInterp, pairObj, 1, &response_valObj) != TCL_OK)
-      return TCL_ERROR;
+    if (Tcl_ListObjIndex(itsInterp, pairObj, 1, &response_valObj) != TCL_OK) {
+      Tcl_BackgroundError(itsInterp);
+		return;
+	 }
     int response_val=-1;
-    if (Tcl_GetIntFromObj(itsInterp, response_valObj, &response_val) != TCL_OK)
-      return TCL_ERROR;
+    if (Tcl_GetIntFromObj(itsInterp, response_valObj, &response_val)
+		  != TCL_OK) {
+      Tcl_BackgroundError(itsInterp);
+		return;
+	 }
     
     // Push the pair onto the vector
     itsRegexps.push_back(RegExp_ResponseVal(regexp, response_val));
   }
 
-  return TCL_OK;
+  DebugPrintNL("updateRegexps success!");
 }
 
 static const char vcid_responsehandler_cc[] = "$Header$";

@@ -2,7 +2,7 @@
 // responsehandler.h
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Wed May 26 15:55:08 1999
+// written: Fri Jun 11 20:23:38 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -40,7 +40,7 @@ class ExptDriver;
 class ResponseHandler : public virtual IO {
 public:
   // creators
-  ResponseHandler(ExptDriver& ed, Tcl_Interp* interp, const string& s="");
+  ResponseHandler(const string& s="");
   virtual ~ResponseHandler();
 
   virtual void serialize(ostream &os, IOFlag flag) const;
@@ -48,6 +48,8 @@ public:
   virtual int charCount() const;
 
   // manipulators/accessors
+  void setInterp(Tcl_Interp* interp);
+
   void setKeyRespPairs(const string& s) { 
 	 itsKeyRespPairs = s; 
 	 updateRegexps();
@@ -72,14 +74,13 @@ private:
   int handleResponse(const char* keysym) const;
   virtual int getRespFromKeysym(const char* keysym) const;
   int feedback(int response) const;
-  int updateRegexps();
+  void updateRegexps();
   struct RegExp_ResponseVal {
     RegExp_ResponseVal(Tcl_RegExp rx, int rv) : regexp(rx), resp_val(rv) {}
     Tcl_RegExp regexp;
     int resp_val;
   };
 
-  mutable ExptDriver& itsExptDriver;
   mutable Tcl_Interp* itsInterp;
   string itsKeyRespPairs;
   vector<RegExp_ResponseVal> itsRegexps;
