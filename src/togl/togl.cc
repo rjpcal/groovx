@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 22:30:25 2002
+// written: Tue Sep 17 22:42:02 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -27,8 +27,6 @@
 #include "togl/togl.h"
 
 #include "gfx/canvas.h"
-
-#include "gx/rgbacolor.h"
 
 #include "tcl/tclsafeinterp.h"
 
@@ -150,22 +148,6 @@ DOTRACE("Togl::Impl::Impl");
       itsTimerToken =
         Tcl_CreateTimerHandler(itsTime, &cTimerCallback,
                                static_cast<ClientData>(this));
-    }
-
-  //
-  // Set up canvas
-  //
-
-  if (itsOpts->rgbaFlag)
-    {
-      itsGlx->canvas().setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
-      itsGlx->canvas().setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
-    }
-  else
-    {
-      // FIXME use XBlackPixel(), XWhitePixel() here?
-      itsGlx->canvas().setColorIndex(0);
-      itsGlx->canvas().setClearColorIndex(1);
     }
 }
 
@@ -332,8 +314,6 @@ Togl::Togl(Tcl_Interp* interp, const char* pathname) :
   rep(new Impl(this))
 {
 DOTRACE("Togl::Togl");
-
-  makeCurrent();
 }
 
 Togl::~Togl()

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:07 2002
-// written: Mon Sep 16 18:36:14 2002
+// written: Tue Sep 17 22:42:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,8 @@
 #include "gfx/glcanvas.h"
 
 #include "grsh/grsh.h"
+
+#include "gx/rgbacolor.h"
 
 #include "togl/glxattribs.h"
 #include "togl/glxopts.h"
@@ -81,8 +83,24 @@ DOTRACE("GlxWrapper::GlxWrapper");
       throw Util::Error("could not create GL rendering context");
     }
 
+  //
+  // Set up canvas
+  //
+
   itsCanvas = Util::SoftRef<GLCanvas>
     (GLCanvas::make(itsVisInfo->depth, opts.rgbaFlag, isDoubleBuffered()));
+
+  if (opts.rgbaFlag)
+    {
+      itsCanvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
+      itsCanvas->setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
+    }
+  else
+    {
+      // FIXME use XBlackPixel(), XWhitePixel() here?
+      itsCanvas->setColorIndex(0);
+      itsCanvas->setClearColorIndex(1);
+    }
 }
 
 GlxWrapper::~GlxWrapper()
