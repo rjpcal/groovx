@@ -73,7 +73,8 @@ namespace
     while ( (num_to_read == ALL || num_read < num_to_read)
             && (ifs.peek() != EOF) )
       {
-        // allow for whole-line comments between objects beginning with '#'
+        // allow for whole-line comments between objects beginning
+        // with '#'
         if (ifs.peek() == '#')
           {
             ifs.ignore(10000000, '\n');
@@ -94,12 +95,14 @@ namespace
     return result;
   }
 
-  void saveObjects(Tcl::List objids, const char* filename, bool use_bases)
+  void saveObjects(Tcl::List objids, const char* filename,
+                   bool use_bases)
   {
     STD_IO::ofstream ofs(filename);
     if (ofs.fail())
       {
-        throw Util::Error(fstring("error opening file: ", filename), SRC_POS);
+        throw Util::Error(fstring("error opening file: ", filename),
+                          SRC_POS);
       }
 
     IO::LegacyWriter writer(ofs, use_bases);
@@ -120,14 +123,15 @@ namespace
   void dbRelease(Util::UID id) { ObjDb::theDb().release(id); }
   void dbClearOnExit() { ObjDb::theDb().clearOnExit(); }
 
-  // This is just here to select between the const char* + fstring versions
-  // of newObj().
+  // This is just here to select between the const char* + fstring
+  // versions of newObj().
   SoftRef<Util::Object> objNew(const char* type)
   {
     return Util::ObjMgr::newObj(type);
   }
 
-  SoftRef<Util::Object> objNewArgs(const char* type, Tcl::List init_args,
+  SoftRef<Util::Object> objNewArgs(const char* type,
+                                   Tcl::List init_args,
                                    Tcl::Interp interp)
   {
     SoftRef<Util::Object> obj(Util::ObjMgr::newObj(type));
