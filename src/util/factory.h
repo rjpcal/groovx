@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Wed Mar  8 11:19:32 2000
+// written: Wed Mar  8 11:42:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,12 +11,8 @@
 #ifndef FACTORY_H_DEFINED
 #define FACTORY_H_DEFINED
 
-#ifndef STRINGFWD_H_DEFINED
-#include "stringfwd.h"
-#endif
-
 #ifndef ERROR_H_DEFINED
-#include "error.h"
+#include "util/error.h"
 #endif
 
 #ifndef DEMANGLE_H_DEFINED
