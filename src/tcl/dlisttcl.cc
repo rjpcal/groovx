@@ -46,6 +46,41 @@
 DBG_REGISTER;
 
 #include <algorithm>
+#include <cmath>
+
+// Helper functions
+namespace
+{
+  template <class Itr>
+  double perm_distance_aux(Itr itr, Itr end)
+  {
+    int c = 0;
+    double result = 0.0;
+    while (itr != end)
+      {
+        result += fabs(double(*itr) - double(c));
+        ++itr;
+        ++c;
+      }
+
+    return result / double(c);
+  }
+
+  template <class Itr>
+  double perm_distance2_aux(Itr itr, Itr end, double power)
+  {
+    int c = 0;
+    double result = 0.0;
+    while (itr != end)
+      {
+        result += pow(fabs(double(*itr) - double(c)), power);
+        ++itr;
+        ++c;
+      }
+
+    return pow(result, 1.0/power) / double(c);
+  }
+}
 
 namespace DlistTcl
 {
@@ -263,6 +298,164 @@ namespace DlistTcl
     return result;
   }
 
+  double perm_distance(Tcl::List src)
+  {
+    return perm_distance_aux(src.begin<unsigned int>(),
+                             src.end<unsigned int>());
+  }
+
+  double perm_distance2(Tcl::List src, double power)
+  {
+    return perm_distance2_aux(src.begin<unsigned int>(),
+                              src.end<unsigned int>(),
+                              power);
+  }
+
+  //---------------------------------------------------------------------
+  //
+  // generate a complete/pure permutation of the numbers 0..N-1
+  // the result is such that:
+  //   result[i] != i         for all i
+  //   sum(abs(result[i]-i))  is maximal
+  //
+  // WARNING: At first glance this might sound like it yields a nice random
+  // list, but in fact simply reversing the order of elements gives a
+  // result that satisfies the constraints of this algorithm, without being
+  // random at all!
+  //
+  //---------------------------------------------------------------------
+
+  Tcl::List permute_maximal(unsigned int N)
+  {
+    if (N < 2)
+      throw Util::Error("N must be at least 2 to make a permutation");
+
+    double maxdist = double(N)/2.0;
+
+    if (N%2)
+      {
+        const double half = double(N)/2.0;
+        maxdist = half + 1.0/(2.0 + 1.0/half);
+      }
+
+    maxdist -= 0.0001;
+
+    fixed_block<unsigned int> slots(N);
+
+    for (unsigned int i = 0; i < slots.size()-1; ++i)
+      slots[i] = i+1;
+
+    slots[slots.size()-1] = 0;
+
+    double dist = perm_distance_aux(slots.begin(), slots.end());
+
+    for (int c = 0; c < 100000; ++c)
+      {
+        unsigned int i = Util::randRange(0u, N);
+        unsigned int j = i;
+        while (j == i)
+          {
+            j = Util::randRange(0u, N);
+          }
+
+        if (slots[j] != i && slots[i] != j)
+          {
+            const double origdist =
+              fabs(double(i)-double(slots[i])) +
+              fabs(double(j)-double(slots[j]));
+
+            const double newdist =
+              fabs(double(j)-double(slots[i])) +
+              fabs(double(i)-double(slots[j]));
+
+            if (newdist > origdist)
+              {
+                Util::swap2(slots[i], slots[j]);
+                dist += (newdist-origdist)/double(N);
+              }
+          }
+
+        if (dist >= maxdist)
+          {
+            double distcheck = perm_distance_aux(slots.begin(), slots.end());
+            if (distcheck < maxdist)
+              {
+                throw Util::Error("snafu in permutation distance computation");
+              }
+
+            dbgEvalNL(3, c);
+
+            Tcl::List result;
+
+            std::copy(slots.begin(), slots.end(), result.appender());
+
+            return result;
+          }
+      }
+
+    throw Util::Error("permutation algorithm failed to converge");
+    return Tcl::List(); // can't happen, but placate compiler
+  }
+
+  //---------------------------------------------------------------------
+  //
+  // generate a random permutation of the numbers 0..N-1 such that:
+  //   result[i] != i         for all i
+  //
+  //---------------------------------------------------------------------
+
+  Tcl::List permute_moveall(unsigned int N)
+  {
+    if (N < 2)
+      throw Util::Error("N must be at least 2 to make a permutation");
+
+    fixed_block<bool> used(N);
+    for (unsigned int i = 0; i < N; ++i)
+      used[i] = false;
+
+    fixed_block<unsigned int> slots(N);
+
+    // fill slots[0] ... slots[N-2]
+    for (unsigned int i = 0; i < N-1; ++i)
+      {
+        unsigned int v = i;
+        while (v == i || used[v])
+          v = Util::randRange(0u, N);
+
+        Assert(v < N);
+
+        used[v] = true;
+        slots[i] = v;
+      }
+
+    // figure out which is the last available slot
+    unsigned int lastslot = N;
+    for (unsigned int i = 0; i < N; ++i)
+      if (!used[i])
+        {
+          lastslot = i;
+          break;
+        }
+
+    Assert(lastslot != N);
+
+    if (lastslot == N)
+      {
+        slots[N-1] = slots[N-2];
+        slots[N-2] = lastslot;
+      }
+    else
+      {
+        slots[N-1] = lastslot;
+      }
+
+    Tcl::List result;
+
+    std::copy(slots.begin(), slots.end(), result.appender());
+
+    return result;
+  }
+
   //--------------------------------------------------------------------
   //
   // This command taks two lists as arguments. Each element from the
@@ -290,6 +483,24 @@ namespace DlistTcl
                       times_list.get<unsigned int>(t));
       }
 
+    return result;
+  }
+
+  //--------------------------------------------------------------------
+  //
+  // Return a new list containing the elements of the source list in
+  // reverse order.
+  //
+  //--------------------------------------------------------------------
+
+  Tcl::List reverse(Tcl::List src)
+  {
+    if (src.length() < 2)
+      return src;
+
+    Tcl::List result;
+    for (unsigned int i = 0; i < src.length(); ++i)
+      result.append(src.at(src.length()-i-1));
     return result;
   }
 
@@ -346,6 +557,31 @@ namespace DlistTcl
     std::copy(objs.begin(), objs.end(), result.appender());
 
     return result;
+  }
+
+  //---------------------------------------------------------------------
+  //
+  // Shuffle an input list through a random permutation such that no
+  // element remains in its initial position.
+  //
+  //---------------------------------------------------------------------
+
+  Tcl::List shuffle_moveall(Tcl::List src)
+  {
+    Tcl::List permutation = permute_moveall(src.length());
+    return DlistTcl::choose(src, permutation);
+  }
+
+  //---------------------------------------------------------------------
+  //
+  // Shuffle an input list through a maximal permutation.
+  //
+  //---------------------------------------------------------------------
+
+  Tcl::List shuffle_maximal(Tcl::List src)
+  {
+    Tcl::List permutation = permute_maximal(src.length());
+    return DlistTcl::choose(src, permutation);
   }
 
   //---------------------------------------------------------------------
@@ -438,21 +674,28 @@ DOTRACE("Dlist_Init");
   PKG_CREATE(interp, "dlist", "$Revision$");
 
   pkg->def( "choose", "source_list index_list", &DlistTcl::choose );
-  pkg->def( "cycle_left", "source_list n", &DlistTcl::cycle_left );
-  pkg->def( "cycle_right", "source_list n", &DlistTcl::cycle_right );
+  pkg->def( "cycle_left", "list n", &DlistTcl::cycle_left );
+  pkg->def( "cycle_right", "list n", &DlistTcl::cycle_right );
   pkg->def( "index", "list index", &DlistTcl::index );
-  pkg->def( "not", "source_list", &DlistTcl::not_ );
+  pkg->def( "not", "list", &DlistTcl::not_ );
   pkg->def( "ones", "num_ones", &DlistTcl::ones );
   pkg->def( "linspace", "begin end npts", &DlistTcl::linspace );
-  pkg->def( "pickone", "source_list", &DlistTcl::pickone );
+  pkg->def( "perm_distance", "list", &DlistTcl::perm_distance );
+  pkg->def( "perm_distance2", "list power", &DlistTcl::perm_distance2 );
+  pkg->def( "permute_maximal", "N", &DlistTcl::permute_maximal );
+  pkg->def( "permute_moveall", "N", &DlistTcl::permute_moveall );
+  pkg->def( "pickone", "list", &DlistTcl::pickone );
   pkg->def( "range", "begin end ?step=1?", &DlistTcl::range );
   pkg->def( "range", "begin end", Util::bindLast(&DlistTcl::range, 1) );
   pkg->def( "repeat", "source_list times_list", &DlistTcl::repeat );
+  pkg->def( "reverse", "list", &DlistTcl::reverse );
   pkg->def( "select", "source_list flags_list", &DlistTcl::select );
-  pkg->def( "shuffle", "source_list ?seed=0?", &DlistTcl::shuffle );
-  pkg->def( "shuffle", "source_list", Util::bindLast(&DlistTcl::shuffle, 0) );
+  pkg->def( "shuffle", "list ?seed=0?", &DlistTcl::shuffle );
+  pkg->def( "shuffle", "list", Util::bindLast(&DlistTcl::shuffle, 0) );
+  pkg->def( "shuffle_maximal", "list", &DlistTcl::shuffle_maximal );
+  pkg->def( "shuffle_moveall", "list", &DlistTcl::shuffle_moveall );
   pkg->def( "slice", "list n", &DlistTcl::slice );
-  pkg->def( "sum", "source_list", &DlistTcl::sum );
+  pkg->def( "sum", "list", &DlistTcl::sum );
   pkg->def( "zeros", "num_zeros", &DlistTcl::zeros );
 
   PKG_RETURN;
