@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:47 1999
-// written: Wed Jul 31 18:31:55 2002
+// written: Wed Jul 31 18:34:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ public:
   const BackTrace& backTrace() const { return *itsBackTrace; }
 
   /// Get the most recently back trace used in constructing a Util::Error.
-  static BackTrace& lastBackTrace();
+  static const BackTrace& lastBackTrace();
 
 private:
   Error& operator=(const Error& other);
