@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Thu May 25 12:41:38 2000
+// written: Thu May 25 14:01:34 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -28,6 +28,7 @@
 
 #include "util/strings.h"
 
+#include <tcl.h>
 #include <strstream.h>
 #include <iomanip.h>
 
@@ -250,17 +251,15 @@ DOTRACE("ObjTogl::InitCmd::invoke");
 
   const char* pathname = ".togl_private";
 
-  // Eval a command to create the widget. This will cause in turn
-  // call the createCallback as part of Togl's internal creation
-  // procedures.
-  dynamic_string create_cmd_str = "togl ";
-  create_cmd_str += pathname;
-  create_cmd_str += " ";
-  create_cmd_str += init_args;
+  // Create the Togl widget. This will cause in turn call the
+  // createCallback as part of Togl's internal creation procedures.
+  int config_argc = 0;
+  char** config_argv = 0;
+  Tcl_SplitList(interp(), init_args, &config_argc, &config_argv);
 
-  Tcl::TclEvalCmd create_cmd(create_cmd_str.c_str(),
- 									  Tcl::TclEvalCmd::THROW_EXCEPTION);
-  create_cmd.invoke(interp());
+  new Togl(interp(), pathname, config_argc, config_argv);
+
+  Tcl_Free((char*) config_argv);
 
     // Make sure that widget creation and the create callback
     // successfully set ObjTogl::theTogl to point to a struct Togl
