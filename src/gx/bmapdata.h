@@ -85,7 +85,7 @@ public:
   BmapData();
 
   /// Construct with the given image data specifications.
-  BmapData(const Gfx::Vec2<int>& extent, int bits_per_pixel, int byte_alignment);
+  BmapData(const Gfx::Vec2<int>& dims, int bits_per_pixel, int byte_alignment);
 
   /// Copy constructor.
   BmapData(const BmapData& other);
@@ -188,6 +188,9 @@ public:
 
   /// Specify the row order but leave the actual memory untouched.
   void specifyRowOrder(RowOrder order) const;
+
+  shared_ptr<BmapData> makeScrambled(int numsubcols, int numsubrows,
+                                     int seed) const;
 
 private:
   class Impl;

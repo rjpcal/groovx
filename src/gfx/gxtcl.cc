@@ -407,6 +407,7 @@ DOTRACE("Gxpixmap_Init");
   pkg->defAttrib("purgeable", &GxPixmap::isPurgeable, &GxPixmap::setPurgeable);
   pkg->defAttrib("asBitmap", &GxPixmap::getAsBitmap, &GxPixmap::setAsBitmap);
   pkg->defGetter("checkSum", &GxPixmap::checkSum);
+  pkg->defVec("scramble", "numcols numrows seed", &GxPixmap::scramble);
 
   // For GLBitmap/XBitmap backward-compatibility
   Util::ObjFactory::theOne().registerCreatorFunc(&CompatBitmap::makeGL, "GLBitmap");

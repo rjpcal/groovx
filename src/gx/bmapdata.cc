@@ -36,8 +36,11 @@
 
 #include "util/algo.h"
 #include "util/arrays.h"
+#include "util/error.h"
 #include "util/pointers.h"
+#include "util/rand.h"
 
+#include <algorithm>
 #include <cstring>              // for memcpy
 
 #include "util/trace.h"
@@ -75,6 +78,29 @@ public:
   }
 
   // default copy-ctor and assn-oper OK
+
+  // These are "fast" versions of the public interface that don't call
+  // updateIfNeeded() before returning data. Therefore it is the caller's
+  // responsibility to make sure updateIfNeeded() has been called at least
+  // once per public API call.
+  unsigned char* bytesPtr() { return &(bytes[0]); }
+
+  unsigned int bytesPerRow() const
+  { return ( (extent.x()*bitsPerPixel - 1)/8 + 1 ); }
+
+  unsigned char* rowPtr(unsigned int row)
+  {
+    const unsigned int offset =
+      (rowOrder == TOP_FIRST)
+      ?
+      row
+      :
+      extent.y() - row - 1;
+
+    return bytesPtr() + offset * bytesPerRow();
+  }
+
+  unsigned int byteCount() const { return bytes.size(); }
 
   Gfx::Vec2<int> extent;
   int bitsPerPixel;
@@ -121,30 +147,26 @@ unsigned char* Gfx::BmapData::bytesPtr() const
 {
 DOTRACE("Gfx::BmapData::bytesPtr");
   updateIfNeeded();
-  return &(rep->bytes[0]);
+  return rep->bytesPtr();
 }
 
 unsigned char* Gfx::BmapData::rowPtr(unsigned int row) const
 {
 DOTRACE("Gfx::BmapData::rowPtr");
 
-  const unsigned int offset =
-    (rowOrder() == TOP_FIRST)
-    ?
-    row
-    :
-    height() - row - 1;
+  updateIfNeeded();
 
-  return bytesPtr() + offset * bytesPerRow();
+  return rep->rowPtr(row);
 }
 
 long int Gfx::BmapData::checkSum() const
 {
 DOTRACE("Gfx::BmapData::checkSum");
 
+  updateIfNeeded();
   long int sum = 0;
   unsigned int byte_count = byteCount();
-  unsigned char* bytes = bytesPtr();
+  unsigned char* bytes = rep->bytesPtr();
   while (byte_count > 0)
     {
       sum += bytes[--byte_count];
@@ -201,16 +223,16 @@ unsigned int Gfx::BmapData::byteCount() const
 DOTRACE("Gfx::BmapData::byteCount");
   updateIfNeeded();
 
-  Assert(rep->bytes.size() == bytesPerRow() * rep->extent.y());
+  Assert(rep->bytes.size() == rep->bytesPerRow() * rep->extent.y());
 
-  return rep->bytes.size();
+  return rep->byteCount();
 }
 
 unsigned int Gfx::BmapData::bytesPerRow() const
 {
 DOTRACE("Gfx::BmapData::bytesPerRow");
   updateIfNeeded();
-  return ( (rep->extent.x()*rep->bitsPerPixel - 1)/8 + 1 );
+  return rep->bytesPerRow();
 }
 
 Gfx::BmapData::RowOrder
@@ -250,8 +272,8 @@ void Gfx::BmapData::flipVertical()
 DOTRACE("Gfx::BmapData::flipVertical");
   updateIfNeeded();
 
-  int bytes_per_row = bytesPerRow();
-  int num_bytes = byteCount();
+  int bytes_per_row = rep->bytesPerRow();
+  int num_bytes = rep->byteCount();
 
   dynamic_block<unsigned char> new_bytes(num_bytes);
 
@@ -321,6 +343,116 @@ void Gfx::BmapData::setRowOrder(Gfx::BmapData::RowOrder order) const
 void Gfx::BmapData::specifyRowOrder(Gfx::BmapData::RowOrder order) const
 {
   rep->rowOrder = order;
+}
+
+shared_ptr<Gfx::BmapData>
+Gfx::BmapData::makeScrambled(int nsubimg_x, int nsubimg_y, int seed) const
+{
+DOTRACE("Gfx::BmapData::makeScrambled");
+
+  Gfx::BmapData result(this->size(),
+                       this->bitsPerPixel(),
+                       this->byteAlignment());
+
+  if ( result.width() % nsubimg_x != 0 )
+    {
+      throw Util::Error("not an evenly divisible width");
+    }
+
+  if ( result.height() % nsubimg_y != 0 )
+    {
+      throw Util::Error("not an evenly divisible width");
+    }
+
+  const int npos = nsubimg_x * nsubimg_y;
+
+  fixed_block<int> newpos(npos);
+  for (int i = 0; i < npos; ++i)
+    {
+      newpos[i] = i;
+    }
+
+  Util::Urand generator(seed);
+
+  std::random_shuffle(newpos.begin(), newpos.end(), generator);
+
+  const int bytes_per_row = rep->bytesPerRow();
+
+  const int size_subimg_x = result.width() / nsubimg_x * bitsPerPixel()/8;
+  const int size_subimg_y = result.height() / nsubimg_y;
+
+  for (int i = 0; i < npos; ++i)
+    {
+      const bool fliplr = generator.booldraw();
+      const bool fliptb = generator.booldraw();
+
+      const int src_subimg_y = i / nsubimg_y;
+      const int src_subimg_x = i % nsubimg_y;
+
+      const int src_fullimg_y = src_subimg_y * size_subimg_y;
+      const int src_fullimg_x = src_subimg_x * size_subimg_x;
+
+      const int dst_subimg_y = newpos[i] / nsubimg_y;
+      const int dst_subimg_x = newpos[i] % nsubimg_y;
+
+      const int dst_fullimg_y = dst_subimg_y * size_subimg_y;
+      const int dst_fullimg_x = dst_subimg_x * size_subimg_x;
+
+      for (int y = 0; y < size_subimg_y; ++y)
+        {
+          const unsigned int src_offset =
+            (rep->rowOrder == TOP_FIRST)
+            ?
+            src_fullimg_y + y
+            :
+            rep->extent.y() - 1 - (src_fullimg_y + y);
+
+          const unsigned char* src =
+            rep->bytesPtr() + src_offset * bytes_per_row + src_fullimg_x;
+
+//           const unsigned char* src =
+//             rep->rowPtr(src_fullimg_y+y) + src_fullimg_x;
+
+          unsigned int dst_row =
+            fliptb
+            ? dst_fullimg_y+size_subimg_y-1-y
+            : dst_fullimg_y+y;
+
+          const unsigned int dst_offset =
+            (rep->rowOrder == TOP_FIRST)
+            ?
+            dst_row
+            :
+            result.rep->extent.y() - 1 - dst_row;
+
+//           unsigned char* dst =
+//             result.rep->rowPtr(dst_row) + dst_fullimg_x;
+
+          unsigned char* dst =
+            result.rep->bytesPtr() + dst_offset * bytes_per_row + dst_fullimg_x;
+
+          unsigned char* dst_end = dst + size_subimg_x;
+
+          if (fliplr)
+            {
+              while (dst_end != dst)
+                {
+                  *--dst_end = *src++;
+                }
+            }
+          else
+            {
+              while (dst != dst_end)
+                {
+                  *dst++ = *src++;
+                }
+            }
+        }
+    }
+
+  shared_ptr<Gfx::BmapData> ret(new Gfx::BmapData);
+  ret->swap(result);
+  return ret;
 }
 
 static const char vcid_bmapdata_cc[] = "$Header$";

@@ -468,5 +468,17 @@ DOTRACE("GxPixmap::setAsBitmap");
   this->sigNodeChanged.emit();
 }
 
+void GxPixmap::scramble(int numsubcols, int numsubrows, int seed)
+{
+DOTRACE("GxPixmap::scramble");
+
+  shared_ptr<Gfx::BmapData> newdata =
+    rep->itsData.makeScrambled(numsubcols, numsubrows, seed);
+
+  rep->itsData.swap(*newdata);
+
+  this->sigNodeChanged.emit();
+}
+
 static const char vcid_gxpixmap_cc[] = "$Header$";
 #endif // !GXPIXMAP_CC_DEFINED

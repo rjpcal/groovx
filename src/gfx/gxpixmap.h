@@ -157,6 +157,9 @@ public:
   /// Change whether the image will be rendered as a 1-bit bitmap.
   void setAsBitmap(bool val);
 
+  ///
+  void scramble(int numsubcols, int numsubrows, int seed);
+
 protected:
   /// Implements the \c GxShapeKit rendering operation.
   virtual void grRender(Gfx::Canvas& canvas) const;
