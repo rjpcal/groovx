@@ -57,18 +57,29 @@ public:
   /// natural-log of the gamma function
   static double gammaln(double xx)
   {
-    double tol = 1e-50;
+    static bool filled = false;
+    static const int TABLE_SIZE = 101;
+    static double lookup[TABLE_SIZE] = { 0.0 };
 
-    int ival = int(xx);
+
+    const double tol = 1e-50;
+
+    const int ival = int(xx);
 
     if ( (ival < TABLE_SIZE) && (xx - double(ival) < tol) )
       {
-        if (!filled) fillTable();
+        if (!filled)
+          {
+            for (int i = 0; i < TABLE_SIZE; ++i)
+              lookup[i] = gammaln_engine(double(i));
+
+            filled = true;
+          }
         return lookup[ival];
       }
     else
       {
-        return gammalnEngine(xx);
+        return gammaln_engine(xx);
       }
   }
 
@@ -79,19 +90,7 @@ public:
   static const double SQRT_2;
 
 private:
-  static bool filled;
-  static const int TABLE_SIZE = 101;
-  static double lookup[TABLE_SIZE];
-
-  static void fillTable()
-  {
-    for (int i = 0; i < TABLE_SIZE; ++i)
-      lookup[i] = gammalnEngine(double(i));
-
-    filled = true;
-  }
-
-  static double gammalnEngine(double xx);
+  static double gammaln_engine(double xx);
 };
 
 ///////////////////////////////////////////////////////////////////////

@@ -38,9 +38,6 @@
 
 const double Num::SQRT_2 = 1.41421356237;
 
-bool Num::filled = false;
-double Num::lookup[TABLE_SIZE] = { 0.0 };
-
 namespace
 {
   double fastexpImpl(double xx)
@@ -77,22 +74,26 @@ namespace
   }
 }
 
-double Num::gammalnEngine(double xx)
+double Num::gammaln_engine(const double xx)
 {
-DOTRACE("Num::gammalnEngine");
+DOTRACE("Num::gammaln_engine");
 
-  static double cof[6] = {76.18009172947146,     -86.50532032941677,
-                          24.01409824083091,     -1.231738572450155,
-                          0.1208650973866179e-2, -0.5395239384953e-5};
-  double x,y,tmp,ser;
-  int j;
+  static const double cof[6] =
+    {
+      76.18009172947146,     -86.50532032941677,
+      24.01409824083091,     -1.231738572450155,
+      0.1208650973866179e-2, -0.5395239384953e-5
+    };
 
-  y = x = xx;
-  tmp = x+5.5;
-  tmp -= (x+0.5)*log(tmp);
-  ser=1.000000000190015;
-  for (j=0;j<=5;j++) ser += cof[j]/++y;
-  return -tmp+log(2.5066282746310005*ser/x);
+  double ser=1.000000000190015;
+
+  for (int j = 0; j < 5; ++j)
+    ser += cof[j]/(xx+j+1);
+
+  const double tmp1 = xx+5.5;
+  const double tmp = tmp1 - (xx+0.5)*log(tmp1);
+
+  return -tmp+log(2.5066282746310005*ser/xx);
 }
 
 double Num::fastexp7(double x)
