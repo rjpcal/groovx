@@ -81,6 +81,41 @@ namespace
     TEST_REQUIRE(s == "double val: 1.234, int val: 1234");
   }
 
+  void testConstructCharRange()
+  {
+    // note that this array is NOT null-terminated
+    const char init[19] =
+      {
+        't', 'h', 'e', ' ', 'q', 'u', 'i', 'c', 'k', ' ',
+        'b', 'r', 'o', 'w', 'n', ' ', 'f', 'o', 'x'
+      };
+
+    {
+      fstring s((char_range(&init[0], 0)));
+      TEST_REQUIRE(s == "");
+    }
+
+    {
+      fstring s((char_range(&init[0], 1)));
+      TEST_REQUIRE(s == "t");
+    }
+
+    {
+      fstring s((char_range(&init[0], 4)));
+      TEST_REQUIRE(s == "the ");
+    }
+
+    {
+      fstring s((char_range(&init[4], 5)));
+      TEST_REQUIRE(s == "quick");
+    }
+
+    {
+      fstring s((char_range(&init[0], 19)));
+      TEST_REQUIRE(s == "the quick brown fox");
+    }
+  }
+
   void testSwap()
   {
     fstring s1("foo");
@@ -154,6 +189,7 @@ DOTRACE("Fstringtest_Init");
   DEF_TEST(pkg, testConstruct1);
   DEF_TEST(pkg, testConstruct2);
   DEF_TEST(pkg, testConstructNum);
+  DEF_TEST(pkg, testConstructCharRange);
   DEF_TEST(pkg, testSwap);
   DEF_TEST(pkg, testAssign1);
   DEF_TEST(pkg, testAssign2);
