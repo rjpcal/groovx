@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Tue Jun 19 14:20:09 2001
+// written: Wed Jun 20 18:13:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,13 +24,13 @@
 #include "io/writer.h"
 #include "io/writeutils.h"
 
+#include "util/log.h"
 #include "util/minivec.h"
 #include "util/rand.h"
 #include "util/ref.h"
+#include "util/strings.h"
 
 #include <algorithm>
-#include <iostream>
-#include <strstream.h>
 
 #define DYNAMIC_TRACE_EXPR Block::tracer.status()
 #include "util/trace.h"
@@ -275,17 +275,14 @@ const char* Block::trialDescription() const {
 DOTRACE("Block::trialDescription");
   if (isComplete()) return "block is complete";
 
-  const int BUF_SIZE = 200;
-  static char buf[BUF_SIZE];    // static because the address is returned
+  static dynamic_string descr;
+  descr = "";
+  descr.append("trial id == ").append(currentTrial()).append(", ")
+    .append(itsImpl->currentTrialItem()->description())
+    .append(", completed ").append(numCompleted())
+    .append(" of ").append(numTrials());
 
-  ostrstream ost(buf, BUF_SIZE);
-  ost << "trial id == " << currentTrial() << ", ";
-  ost << itsImpl->currentTrialItem()->description();
-  ost << ", completed " << numCompleted()
-      << " of " << numTrials();
-  ost << '\0';
-
-  return buf;
+  return descr.c_str();
 }
 
 bool Block::getVerbose() const {
@@ -311,9 +308,10 @@ DOTRACE("Block::beginTrial");
 
   itsImpl->itsHasBegun = true;
 
-  if (itsImpl->itsVerbose) {
-    std::cerr << trialDescription() << std::endl;
-  }
+  if (itsImpl->itsVerbose)
+    {
+      Util::log() << trialDescription() << '\n';
+    }
 
   itsImpl->setExpt(expt);
 
@@ -347,9 +345,10 @@ void Block::processResponse(const Response& response) {
 DOTRACE("Block::processResponse");
   if (isComplete()) return;
 
-  if (itsImpl->itsVerbose) {
-    std::cerr << "response: " << response << '\n';
-  }
+  if (itsImpl->itsVerbose)
+    {
+      Util::log() << "response: " << response.val() << '\n';
+    }
 
   DebugEval(response.correctVal());
   DebugEvalNL(response.val());
