@@ -46,8 +46,8 @@ namespace
                        const FilePosition& pos)
   {
     if (!expr)
-      throw Util::Error(fstring(pos.fileName, ":", pos.lineNo,
-                                ": failed test of: ",exprString), pos);
+      throw Util::Error(fstring(pos.fileName, ":", pos.lineNo, ":\n"
+                                "\texpected: ", exprString, "\n"), pos);
   }
 
   template <class T, class U>
@@ -60,8 +60,10 @@ namespace
     if (!(expr1 == expr2))
       {
         fstring msg(pos.fileName, ":", pos.lineNo, ": failed test:\n");
-        msg.append("\texpected ", exprString1, " == ", exprString2, "\n");
-        msg.append("\tgot: ", expr1, " != ", expr2);
+        msg.append("\texpected ", exprString1, " (lhs) "
+                   "== ", exprString2, " (rhs)\n");
+        msg.append("\tgot: (lhs) ", exprString1, " == ", expr1, "\n");
+        msg.append("\t     (rhs) ", exprString2, " == ", expr2, "\n");
         throw Util::Error(msg, pos);
       }
   }
@@ -83,8 +85,10 @@ namespace
     if (!approxEq(expr1, expr2, tol))
       {
         fstring msg(pos.fileName, ":", pos.lineNo, ": failed test:\n");
-        msg.append("\texpected ", exprString1, " ~= ", exprString2, "\n");
-        msg.append("\tgot: ", expr1, " != ", expr2);
+        msg.append("\texpected ", exprString1, " (lhs) "
+                   "~= ", exprString2, " (rhs)\n");
+        msg.append("\tgot: (lhs) ", exprString1, " == ", expr1, "\n");
+        msg.append("\t     (rhs) ", exprString2, " == ", expr2, "\n");
         throw Util::Error(msg, pos);
       }
   }
