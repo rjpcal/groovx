@@ -15,8 +15,6 @@
 
 #include "util/objdb.h"
 
-#include "system/demangle.h"
-
 #include "util/object.h"
 #include "util/ref.h"
 
@@ -45,8 +43,6 @@ private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 
-  ObjDb* itsOwner;
-
 public:
 
   typedef Util::WeakRef<Util::Object> ObjRef;
@@ -54,10 +50,7 @@ public:
   typedef std::map<Util::UID, ObjRef> MapType;
   mutable MapType itsPtrMap;
 
-  Impl(ObjDb* owner) :
-    itsOwner(owner),
-    itsPtrMap()
-    {}
+  Impl() : itsPtrMap() {}
 
   // Check whether the iterator points to a valid spot in the map, AND
   // that it points to a still-living object. If the object has died,
@@ -98,7 +91,7 @@ public:
       if (!isValidItr(itr)) return;
 
       if ( (*itr).second.get()->isShared() )
-        throw ErrorWithMsg("can't remove a shared object");
+        throw ErrorWithMsg("attempted to remove a shared object");
 
       itsPtrMap.erase(itr);
     }
@@ -140,9 +133,8 @@ public:
     {
       MapType::iterator itr = itsPtrMap.find(id);
       if (!isValidItr(itr)) {
-        InvalidIdError err("attempt to access invalid id '");
-        err.appendNumber(id);
-        err.appendMsg("' in ", demangle_cstr(typeid(*itsOwner).name()));
+        InvalidIdError err("attempted to access invalid object '");
+        err.appendNumber(id).appendMsg("'");
         throw err;
       }
 
@@ -262,7 +254,7 @@ DOTRACE("ObjDb::end");
 }
 
 ObjDb::ObjDb() :
-  itsImpl(new Impl(this))
+  itsImpl(new Impl)
 {
 DOTRACE("ObjDb::ObjDb");
 }

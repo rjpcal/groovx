@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Wed Jun 13 13:36:41 2001
+// written: Wed Jun 13 15:25:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -280,7 +280,7 @@ private:
     {
       if (!isValid())
         Util::RefHelper::throwErrorWithMsg(
-                         "attempt to dereference invalid WeakHandle");
+                         "attempted to access invalid object");
     }
 
     void swap(WeakHandle& other)
