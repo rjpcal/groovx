@@ -3,7 +3,7 @@
 // stringifycmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:43 1999
-// written: Thu Jun 24 19:19:06 1999
+// written: Mon Oct 18 18:42:36 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,6 +35,32 @@ class DestringifyCmd : public TclCmd {
 public:
   DestringifyCmd(Tcl_Interp* interp, const char* cmd_name, 
 					  const char* usage, int objc) :
+	 TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+
+protected:
+  virtual IO& getIO() = 0;
+
+private:
+  virtual void invoke();
+};
+
+class WriteCmd : public TclCmd {
+public:
+  WriteCmd(Tcl_Interp* interp, const char* cmd_name,
+			  const char* usage, int objc) :
+	 TclCmd(interp, cmd_name, usage, objc, objc, true) {}
+
+protected:
+  virtual IO& getIO() = 0;
+
+private:
+  virtual void invoke();
+};
+
+class ReadCmd : public TclCmd {
+public:
+  ReadCmd(Tcl_Interp* interp, const char* cmd_name,
+			 const char* usage, int objc) :
 	 TclCmd(interp, cmd_name, usage, objc, objc, true) {}
 
 protected:
