@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Mon Aug  6 11:13:38 2001
+// written: Mon Aug  6 16:47:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,6 @@
 #include "grobj.h"
 
 #include "gx/gxtraversal.h"
-#include "gx/gxseparator.h"
 
 #include "io/readutils.h"
 #include "io/writeutils.h"
@@ -98,12 +97,11 @@ public:
 
   int itsCorrectResponse;
 
-private:
-  typedef minivec<Ref<GxSeparator> > GxNodes;
+  typedef minivec<Ref<GxNode> > GxNodes;
   GxNodes itsGxNodes;
 
   unsigned int itsCurrentNode;
-public:
+
   minivec<Response> itsResponses;
 
   int itsType;
@@ -145,27 +143,8 @@ public:
   double avgResponse() const;
   double avgRespTime() const;
 
-  void add(Util::UID objid, Util::UID posid);
-
-  void addNode(Util::UID id)
-  {
-    Ref<GxNode> obj(id);
-    try
-      {
-        Ref<GxSeparator> sep = dynamicCast<GxSeparator>(obj);
-        itsGxNodes.push_back(sep);
-      }
-    catch (...)
-      {
-        Ref<GxSeparator> sep(GxSeparator::make());
-        sep->addChild(obj);
-        itsGxNodes.push_back(sep);
-      }
-  }
-
   void trNextNode() { setCurrentNode(itsCurrentNode+1); }
 
-  unsigned int getCurrentNode() const { return itsCurrentNode; }
   void setCurrentNode(unsigned int nodeNumber)
   {
     if (nodeNumber >= itsGxNodes.size())
@@ -209,7 +188,7 @@ DOTRACE("Trial::Impl::readFrom");
   reader->ensureReadVersionId("Trial", 4, "Try grsh0.8a4");
 
   itsGxNodes.clear();
-  IO::ReadUtils::readObjectSeq<GxSeparator>(
+  IO::ReadUtils::readObjectSeq<GxNode>(
           reader, "gxObjects", std::back_inserter(itsGxNodes));
 
   itsResponses.clear();
@@ -267,7 +246,7 @@ DOTRACE("Trial::Impl::description");
           const GrObj* g = dynamic_cast<const GrObj*>(tr.current());
           if (g)
             {
-              objids.append(" ").append(int(g->id()));
+              objids.append(" ").append(g->id());
               cats.append(" ").append(g->category());
             }
         }
@@ -325,23 +304,6 @@ DOTRACE("Trial::Impl::avgRespTime");
 //////////////////
 // manipulators //
 //////////////////
-
-void Trial::Impl::add(Util::UID objid, Util::UID posid)
-{
-DOTRACE("Trial::Impl::add");
-
-  Ref<GxSeparator> sepitem(GxSeparator::make());
-
-  sepitem->addChild(Ref<GxNode>(posid));
-  sepitem->addChild(Ref<GxNode>(objid));
-
-  if (itsGxNodes.size() == 0)
-    {
-      itsGxNodes.push_back(Ref<GxSeparator>(GxSeparator::make()));
-    }
-
-  itsGxNodes[0]->addChild(sepitem);
-}
 
 void Trial::Impl::clearObjs()
 {
@@ -623,17 +585,14 @@ double Trial::avgRespTime() const
   { return itsImpl->avgRespTime(); }
 
 
-void Trial::add(Util::UID objid, Util::UID posid)
-  { itsImpl->add(objid, posid); }
-
-void Trial::addNode(Util::UID id)
-  { itsImpl->addNode(id); }
+void Trial::addNode(Util::Ref<GxNode> item)
+  { itsImpl->itsGxNodes.push_back(item); }
 
 void Trial::trNextNode()
   { itsImpl->trNextNode(); }
 
 unsigned int Trial::getCurrentNode() const
-  { return itsImpl->getCurrentNode(); }
+  { return itsImpl->itsCurrentNode; }
 
 void Trial::setCurrentNode(unsigned int nodeNumber)
   { itsImpl->setCurrentNode(nodeNumber); }
