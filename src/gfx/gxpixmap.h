@@ -97,6 +97,9 @@ public:
       is specified in screen coordinates. */
   void grabScreenRect(const Gfx::Rect<int>& rect);
 
+  /// Like grabScreen(), but grab pixels from the entire canvas window.
+  void grabScreen();
+
   /// Grabs pixels from a rectangular area of the screen buffer.
   /** The pixels are loaded into the GxPixmap's pixel array. The rectangle
       is specified in world coordinates. */

@@ -380,6 +380,7 @@ DOTRACE("Gxpixmap_Init");
   pkg->defAction("flipVertical", &GxPixmap::flipVertical);
   pkg->defVec("grabScreenRect", "item_id(s) {left top right bottom}",
               &GxPixmap::grabScreenRect );
+  pkg->defVec("grabScreen", "item_id(s)", &GxPixmap::grabScreen );
   pkg->defVec("grabWorldRect", "item_id(s) {left top right bottom}",
               &GxPixmap::grabWorldRect );
   pkg->defVec("loadImage", "item_id(s) filename(s)", &GxPixmap::loadImage );

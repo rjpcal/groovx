@@ -314,6 +314,17 @@ DOTRACE("GxPixmap::grabScreenRect");
   this->sigNodeChanged.emit();
 }
 
+void GxPixmap::grabScreen()
+{
+DOTRACE("GxPixmap::grabScreen");
+
+  Gfx::Canvas& canvas = Gfx::Canvas::current();
+
+  Gfx::Rect<int> bounds = canvas.getScreenViewport();
+
+  grabScreenRect(bounds);
+}
+
 void GxPixmap::grabWorldRect(const Gfx::Rect<double>& world_rect)
 {
 DOTRACE("GxPixmap::grabWorldRect");
