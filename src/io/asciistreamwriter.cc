@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Mon Mar 20 20:25:37 2000
+// written: Thu Mar 23 09:38:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,10 @@
 
 #include "asciistreamwriter.h"
 
-#include "demangle.h"
 #include "io.h"
 #include "value.h"
 #include "util/arrays.h"
+#include "util/strings.h"
 
 #include <iostream.h>
 #include <string>
@@ -52,6 +52,13 @@ namespace {
 		  text.replace(pos, 1, "\\c");
 		  pos += 2;
 		  break;
+		case '{':
+		  text.replace(pos, 1, "\\{");
+		  pos += 2;
+		  break;
+		case '}':
+		  text.replace(pos, 1, "\\}");
+		  pos += 2;
 		default:
 		  ++pos;
 		  break;
@@ -108,6 +115,7 @@ public:
 	 virtual void writeValueObj(const char*, const Value&) { ++itsCount; }
 	 virtual void writeObject(const char*, const IO*)      { ++itsCount; }
 	 virtual void writeOwnedObject(const char*, const IO*) { ++itsCount; }
+	 virtual void writeBaseClass(const char*, const IO*)   { ++itsCount; }
 	 virtual void writeRoot(const IO*) {}
 
 	 void reset() { itsCount = 0; }
@@ -142,6 +150,8 @@ private:
 		{ itsToHandle.insert(obj); }
   }
 
+  void flattenObject(const IO* obj);
+
   // Delegands
 public:
   void writeValueObj(const char* name, const Value& value);
@@ -149,6 +159,8 @@ public:
   void writeObject(const char* name, const IO* obj);
 
   void writeOwnedObject(const char* name, const IO* obj);
+
+  void writeBaseClass(const char* baseClassName, const IO* basePart);
 
   template <class T>
   void writeBasicType(const char* name, T val,
@@ -174,6 +186,48 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 //
+// AsciiStreamWriter::Impl helper functions
+//
+///////////////////////////////////////////////////////////////////////
+
+void AsciiStreamWriter::Impl::flattenObject(const IO* obj) {
+DOTRACE("AsciiStreamWriter::Impl::flattenObject");
+
+  static DummyCountingWriter counter;
+
+  // Objects are written in the following format:
+  //
+  // { ?<version id>? <attribute count>
+  // ...attributes...
+  // }
+  //
+
+  // Open the object's braces...
+  itsBuf << "{ ";
+
+  //   ...write <version id> if it is nonzero...
+  unsigned long serial_ver_id = obj->serialVersionId();;
+  if ( serial_ver_id > 0 )
+	 itsBuf << 'v' << serial_ver_id << ' ';
+
+  //   ...get the attribute count...
+  counter.reset();
+  obj->writeTo(&counter);
+
+  //   ...write the <attribute count>...
+  itsBuf << counter.attribCount() << '\n';
+
+  //   ...write the object's <attributes>...
+  obj->writeTo(itsOwner);
+
+  markObjectAsWritten(obj);
+
+  //   ...and finally, close the object's braces.
+  itsBuf << '}' << '\n';
+}
+
+///////////////////////////////////////////////////////////////////////
+//
 // AsciiStreamWriter::Impl delegand definitions
 //
 ///////////////////////////////////////////////////////////////////////
@@ -185,27 +239,16 @@ DOTRACE("AsciiStreamWriter::Impl::writeRoot");
 
   itsToHandle.insert(root);
 
-  DummyCountingWriter counter;
+  while ( haveMoreObjectsToHandle() )
+	 {
+		const IO* obj = getNextObjectToHandle();
 
-  while ( haveMoreObjectsToHandle() ) {
-	 const IO* obj = getNextObjectToHandle();
-
-	 if ( alreadyWritten(obj) ) { continue; }
-
-	 itsBuf << demangle_cstr(typeid(*obj).name())
-			  << " " << obj->id() << " := { ";
-
-	 counter.reset();
-	 obj->writeTo(&counter);
-
-	 itsBuf << counter.attribCount() << '\n';
-
-	 obj->writeTo(itsOwner);
-
-	 markObjectAsWritten(obj);
-
-	 itsBuf << '}' << '\n';
-  }
+		if ( !alreadyWritten(obj) )
+		  {
+			 itsBuf << obj->ioTypename().c_str() << ' ' << obj->id() << " := ";
+			 flattenObject(obj);
+		  }
+	 }
 
   itsBuf.flush();
 }
@@ -229,7 +272,7 @@ DOTRACE("AsciiStreamWriter::Impl::writeObject");
 	 itsBuf << "NULL " << name << " := 0" << ATTRIB_ENDER;
   }
   else {
-	 itsBuf << demangle_cstr(typeid(*obj).name()) << " "
+	 itsBuf << obj->ioTypename().c_str() << " "
 			  << name << " := "
 			  << obj->id() << ATTRIB_ENDER;
 	 
@@ -241,7 +284,24 @@ void AsciiStreamWriter::Impl::writeOwnedObject(
   const char* name, const IO* obj
   ) {
 DOTRACE("AsciiStreamWriter::Impl::writeOwnedObject");
-  writeObject(name, obj); 
+  writeObject(name, obj);
+}
+
+void AsciiStreamWriter::Impl::writeBaseClass(
+  const char* baseClassName, const IO* basePart
+  ) {
+DOTRACE("AsciiStreamWriter::Impl::writeBaseClass");
+
+  if (basePart == 0)
+	 throw WriteError("the base class part of an object must be non-null");
+
+  fixed_string type = basePart->ioTypename().c_str();
+
+  itsBuf << type.c_str() << ' ' << baseClassName << " := ";
+
+  flattenObject(basePart);
+
+  itsBuf << ATTRIB_ENDER;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -297,6 +357,11 @@ void AsciiStreamWriter::writeObject(const char* name, const IO* obj) {
 
 void AsciiStreamWriter::writeOwnedObject(const char* name, const IO* obj) {
   itsImpl.writeOwnedObject(name, obj);
+}
+
+void AsciiStreamWriter::writeBaseClass(const char* baseClassName,
+													const IO* basePart) {
+  itsImpl.writeBaseClass(baseClassName, basePart);
 }
 
 void AsciiStreamWriter::writeRoot(const IO* root) {

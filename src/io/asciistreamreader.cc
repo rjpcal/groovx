@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Tue Mar 21 12:48:20 2000
+// written: Thu Mar 23 09:33:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include "iomgr.h"
 #include "value.h"
 #include "util/arrays.h"
+#include "util/lists.h"
 
 #include <iostream.h>
 #include <strstream.h>
@@ -58,17 +59,25 @@ namespace {
 
   void readAndUnEscape(istream& is, string& text_out)
 	 {
-		// DOTRACE("AsciiStreamReader::Impl::readAndUnEscape");
+// 		DOTRACE("AsciiStreamReader::Impl::readAndUnEscape");
+
+		int brace_level = 0;
+
 	   fixed_block<char>::iterator
 		  itr = READ_BUFFER.begin(),
 		  stop = READ_BUFFER.end();
+
 		int ch = 0;
-		while ( (ch = is.get()) != EOF && ch != STRING_ENDER)
+
+		while ( (ch = is.get()) != EOF &&
+				  !(brace_level == 0 && ch == STRING_ENDER) )
 		  {
 			 if (itr >= stop)
 				throw ("AsciiStreamReader exceeded read buffer capacity");
 			 if (ch != '\\')
 				{
+				  if (ch == '{') ++brace_level;
+				  if (ch == '}') --brace_level;
 				  *itr++ = ch;
 				  continue;
 				}
@@ -83,6 +92,12 @@ namespace {
 					 break;
 				  case 'c':
 					 *itr++ = '^';
+					 break;
+				  case '{':
+					 *itr++ = '{';
+					 break;
+				  case '}':
+					 *itr++ = '}';
 					 break;
 				  default:
 					 throw ReadError("invalid escape character");
@@ -185,9 +200,14 @@ public:
   class AttribMap {
   private:
 	 map<string, Attrib> itsMap;
+	 unsigned long itsSerialVersionId;
 
   public:
-	 AttribMap() : itsMap() {}
+	 AttribMap() : itsMap(), itsSerialVersionId(0) {}
+
+	 void readAttributes(istream& buf);
+
+	 unsigned long getSerialVersionId() const { return itsSerialVersionId; }
 
 	 const Attrib& operator[](const string& attrib_name)
 		{
@@ -203,23 +223,19 @@ public:
 		  return attrib;
 		}
 
+  private:
 	 Attrib& getNewAttrib(const string& attrib_name)
 		{
 		  // DOTRACE("AsciiStreamReader::Impl::AttribMap::getNewAttrib");
 		  Attrib& attrib = itsMap[attrib_name];
 		  if ( !attrib.type.empty() )
 			 {
-				ReadError err("already created attribute name: ");
+				ReadError err("object input stream contains"
+								  "multiple attributes with name: ");
 				err.appendMsg(attrib_name.c_str());
 				throw err;
 			 }
 		  return attrib;
-		}
-
-	 void clear()
-		{
-		  // DOTRACE("AsciiStreamReader::Impl::AttribMap::clear");
-		  itsMap.clear();
 		}
   };
 
@@ -227,28 +243,42 @@ public:
 private:
   istream& itsBuf;
   ObjectMap itsObjects;
-  AttribMap itsAttribs;
+  slink_list<AttribMap> itsAttribs;
 
 #ifndef NO_IOS_EXCEPTIONS
   ios::iostate itsOriginalExceptionState;
 #endif
+
+  // Helper functions
+  AttribMap& currentAttribs()
+	 {
+		if ( itsAttribs.empty() )
+		  throw ReadError("attempted to read attribute "
+								"when no attribute map was active");
+		return itsAttribs.front();
+	 }
+
+  void inflateObject(Reader* reader, istream& buf, IO* obj);
 
   // Delegands -- this is the public interface that AsciiStreamReader
   // forwards to in implementing its own member functions.
 public:
   template <class T>
   T readBasicType(const string& name, T* /* dummy */) {
-	 istrstream ist(itsAttribs[name].value.c_str());
+	 istrstream ist(currentAttribs()[name].value.c_str());
 
 	 T return_val;
 	 ist >> return_val;
-	 DebugEval(itsAttribs[name].value); DebugEvalNL(return_val);
+	 DebugEval(currentAttribs()[name].value); DebugEvalNL(return_val);
 
 	 if (ist.fail())
 		throw AttributeReadError(name);
 
 	 return return_val;
   }
+
+  unsigned long readSerialVersionId()
+	 { return currentAttribs().getSerialVersionId(); }
 
   // Returns a new dynamically allocated char array
   char* readStringType(const string& name);
@@ -259,10 +289,65 @@ public:
 
   void readOwnedObject(const string& name, IO* obj);
 
-  void initAttributes();
+  void readBaseClass(Reader* reader, const char* baseClassName, IO* basePart);
 
   IO* readRoot(Reader* reader, IO* given_root);
 };
+
+///////////////////////////////////////////////////////////////////////
+//
+// AsciiStreamReader::Impl::AttribMap member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+void AsciiStreamReader::Impl::AttribMap::readAttributes(istream& buf) {
+DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
+
+  itsMap.clear();
+
+  // Skip all whitespace
+  buf >> ws;
+
+  // Check if there is a version id in the stream
+  if (buf.peek() == 'v')
+	 {
+		int ch = buf.get();  Assert(ch == 'v');
+		buf >> itsSerialVersionId;
+		if ( buf.fail() )
+		  throw ReadError("input failed while reading serialization version id");
+	 }
+  else
+	 {
+		itsSerialVersionId = 0;
+	 }
+
+  // Get the attribute count
+  int attrib_count;
+  buf >> attrib_count;    DebugEvalNL(attrib_count);
+
+  if (attrib_count < 0)
+	 throw ReadError("found a negative attribute count");
+
+  if ( buf.fail() )
+	 throw ReadError("input failed while reading attribute count");
+
+  // Loop and load all the attributes
+  char type[64], name[64], equal[16];
+
+  for (int i = 0; i < attrib_count; ++i) {
+
+ 	 buf >> type >> name >> equal;   DebugEval(type); DebugEvalNL(name); 
+
+	 if ( buf.fail() )
+		throw ReadError("input failed while reading attribute type and name");
+
+	 Attrib& attrib = getNewAttrib(name);
+
+	 attrib.type = type;
+
+	 readAndUnEscape(buf, attrib.value);
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -270,10 +355,25 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
+void AsciiStreamReader::Impl::inflateObject(Reader* reader,
+														  istream& buf, IO* obj) {
+DOTRACE("AsciiStreamReader::Impl::inflateObject");
+
+  itsAttribs.push_front(AttribMap()); 
+
+  //   ...read the object's attributes from the stream...
+  itsAttribs.front().readAttributes(buf);
+
+  //   ...now the object can query us for its attributes...
+  obj->readFrom(reader);
+
+  itsAttribs.pop_front();
+}
+
 char* AsciiStreamReader::Impl::readStringType(const string& name) {
 DOTRACE("AsciiStreamReader::Impl::readStringType");
 
-  istrstream ist(itsAttribs[name].value.c_str());
+  istrstream ist(currentAttribs()[name].value.c_str());
 
   int len;
   ist >> len;                     DebugEvalNL(len);
@@ -293,14 +393,14 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
 		throw AttributeReadError(name);
 	 }  
 
-  DebugEval(itsAttribs[name].value); DebugEvalNL(new_cstring);
+  DebugEval(currentAttribs()[name].value); DebugEvalNL(new_cstring);
   return new_cstring;
 }
 
 IO* AsciiStreamReader::Impl::readObject(const string& attrib_name) {
 DOTRACE("AsciiStreamReader::Impl::readObject");
 
-  const Attrib& attrib = itsAttribs[attrib_name];
+  const Attrib& attrib = currentAttribs()[attrib_name];
 
   istrstream ist(attrib.value.c_str());
   unsigned long id;
@@ -321,7 +421,7 @@ void AsciiStreamReader::Impl::readValueObj(
   ) {
 DOTRACE("AsciiStreamReader::Impl::readValueObj");
 
-  istrstream ist(itsAttribs[attrib_name].value.c_str());
+  istrstream ist(currentAttribs()[attrib_name].value.c_str());
 
   ist >> value;
 
@@ -334,7 +434,7 @@ void AsciiStreamReader::Impl::readOwnedObject(
   ) {
 DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
 
-  istrstream ist(itsAttribs[attrib_name].value.c_str());
+  istrstream ist(currentAttribs()[attrib_name].value.c_str());
   unsigned long id;
   ist >> id;
 
@@ -347,34 +447,19 @@ DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
   itsObjects.assignObjectForId(id, obj);
 }
 
-void AsciiStreamReader::Impl::initAttributes() {
-DOTRACE("AsciiStreamReader::Impl::initAttributes");
-  itsAttribs.clear();
+void AsciiStreamReader::Impl::readBaseClass(
+  Reader* reader, const char* baseClassName, IO* basePart
+  ) {
+DOTRACE("AsciiStreamReader::Impl::readBaseClass");
 
-  int attrib_count;
-  itsBuf >> attrib_count;    DebugEvalNL(attrib_count);
+  istrstream ist(currentAttribs()[baseClassName].value.c_str());
+  char bracket[16];
 
-  if (attrib_count < 0)
-	 throw ReadError("found a negative attribute count");
+  ist >> bracket;
 
-  if ( itsBuf.fail() )
-	 throw ReadError("input failed while reading attribute count");
+  inflateObject(reader, ist, basePart);
 
-  char type[64], name[64], equal[16];
-
-  for (int i = 0; i < attrib_count; ++i) {
-
- 	 itsBuf >> type >> name >> equal;   DebugEval(type); DebugEval(name); 
-
-	 if ( itsBuf.fail() )
-		throw ReadError("input failed while reading attribute type and name");
-
-	 Attrib& attrib = itsAttribs.getNewAttrib(name);
-
-	 attrib.type = type;
-
-	 readAndUnEscape(itsBuf, attrib.value);
-  }
+  ist >> bracket >> ws;
 }
 
 IO* AsciiStreamReader::Impl::readRoot(Reader* reader, IO* given_root) {
@@ -406,9 +491,8 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 	 }
 
 	 obj = itsObjects.fetchObject(type, id);
-	 
-	 initAttributes();
-	 obj->readFrom(reader);
+
+	 inflateObject(reader, itsBuf, obj);
 
 	 itsBuf >> bracket >> ws;
 
@@ -435,6 +519,11 @@ DOTRACE("AsciiStreamReader::AsciiStreamReader");
 AsciiStreamReader::~AsciiStreamReader () {
 DOTRACE("AsciiStreamReader::~AsciiStreamReader");
   delete &itsImpl; 
+}
+
+unsigned long AsciiStreamReader::readSerialVersionId() {
+DOTRACE("AsciiStreamReader::readSerialVersionId");
+  return itsImpl.readSerialVersionId();
 }
 
 char AsciiStreamReader::readChar(const char* name) {
@@ -472,6 +561,12 @@ IO* AsciiStreamReader::readObject(const char* attrib_name) {
 
 void AsciiStreamReader::readOwnedObject(const char* name, IO* obj) {
   itsImpl.readOwnedObject(name, obj);
+}
+
+void AsciiStreamReader::readBaseClass(
+  const char* baseClassName, IO* basePart
+  ) {
+  itsImpl.readBaseClass(this, baseClassName, basePart);
 }
 
 IO* AsciiStreamReader::readRoot(IO* given_root) {
