@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar  4 13:32:29 2002
+// written: Mon Mar  4 13:49:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -282,7 +282,7 @@ Slice& Slice::operator=(const Mtx& other)
     throw Util::Error("dimension mismatch in Slice::operator=");
 
   int i = 0;
-  for (  MtxIter lhs = beginNC(); lhs.hasMore(); ++lhs, ++i)
+  for (MtxIter lhs = beginNC(); lhs.hasMore(); ++lhs, ++i)
     *lhs = other.at(i);
 
   return *this;
@@ -338,11 +338,11 @@ void DataHolder::swap(DataHolder& other)
 
 ///////////////////////////////////////////////////////////////////////
 //
-// MtxImpl member definitions
+// MtxBase member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-void MtxImpl::swap(MtxImpl& other)
+void MtxBase::swap(MtxBase& other)
 {
   std::swap(mrows_, other.mrows_);
   std::swap(rowstride_, other.rowstride_);
@@ -351,27 +351,27 @@ void MtxImpl::swap(MtxImpl& other)
   DataHolder::swap(other);
 }
 
-MtxImpl::MtxImpl(const MtxImpl& other) :
+MtxBase::MtxBase(const MtxBase& other) :
   MtxStorage(other),
   DataHolder(other)
 {}
 
 namespace
 {
-  DataBlock* newDataBlock(int mrows, int ncols, MtxImpl::InitPolicy p)
+  DataBlock* newDataBlock(int mrows, int ncols, MtxBase::InitPolicy p)
   {
-    if (p == MtxImpl::ZEROS) return DataBlock::makeBlank(mrows*ncols);
+    if (p == MtxBase::ZEROS) return DataBlock::makeBlank(mrows*ncols);
     return DataBlock::makeUninitialized(mrows*ncols);
   }
 }
 
-MtxImpl::MtxImpl(int mrows, int ncols, InitPolicy p) :
+MtxBase::MtxBase(int mrows, int ncols, InitPolicy p) :
   MtxStorage(mrows, ncols),
   DataHolder(newDataBlock(mrows, ncols, p))
 {}
 
 #ifdef HAVE_MATLAB
-MtxImpl::MtxImpl(mxArray* a, StoragePolicy s) :
+MtxBase::MtxBase(mxArray* a, StoragePolicy s) :
   MtxStorage(mxGetM(a), mxGetN(a)),
   DataHolder(mxGetPr(a), mxGetM(a), mxGetN(a), s)
 {
@@ -379,7 +379,7 @@ MtxImpl::MtxImpl(mxArray* a, StoragePolicy s) :
     throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
 }
 
-MtxImpl::MtxImpl(const mxArray* a, StoragePolicy s) :
+MtxBase::MtxBase(const mxArray* a, StoragePolicy s) :
   MtxStorage(mxGetM(a), mxGetN(a)),
   DataHolder(mxGetPr(a), mxGetM(a), mxGetN(a), s)
 {
@@ -392,9 +392,9 @@ MtxImpl::MtxImpl(const mxArray* a, StoragePolicy s) :
 }
 #endif
 
-MtxImpl::~MtxImpl() {}
+MtxBase::~MtxBase() {}
 
-void MtxImpl::reshape(int mr, int nc)
+void MtxBase::reshape(int mr, int nc)
 {
   if (mr*nc != nelems())
     {
@@ -413,7 +413,7 @@ void MtxImpl::reshape(int mr, int nc)
   ncols_ = nc;
 }
 
-void MtxImpl::selectRows(const RowRange& rng)
+void MtxBase::selectRows(const RowRange& rng)
 {
   if (rng.begin() < 0)
     throw Util::Error("selectRows(): row index must be >= 0");
@@ -428,7 +428,7 @@ void MtxImpl::selectRows(const RowRange& rng)
   mrows_ = rng.count();
 }
 
-void MtxImpl::selectCols(const ColRange& rng)
+void MtxBase::selectCols(const ColRange& rng)
 {
   if (rng.begin() < 0)
     throw Util::Error("selectCols(): column index must be >= 0");
@@ -469,12 +469,7 @@ mxArray* Mtx::makeMxArray() const
 {
   mxArray* result_mx = mxCreateDoubleMatrix(mrows(), ncols(), mxREAL);
 
-  const int n = nelems();
-
-  double* matdata = mxGetPr(result_mx);
-
-  for (int i = 0; i < n; ++i)
-    matdata[i] = itsImpl.at(itsImpl.offsetFromStart(i));
+  std::copy(colmaj_begin(), colmaj_end(), mxGetPr(result_mx));
 
   return result_mx;
 }
@@ -487,7 +482,7 @@ DOTRACE("Mtx::resize");
     return;
   else
     {
-      MtxImpl newImpl(mrowsNew, ncolsNew, ZEROS);
+      MtxBase newImpl(mrowsNew, ncolsNew, ZEROS);
       this->itsImpl.swap(newImpl);
     }
 }

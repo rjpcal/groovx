@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 13:36:57 2002
+// written: Mon Mar  4 13:50:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -405,35 +405,35 @@ private:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * MtxImpl class.
+ * MtxBase class.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class MtxImpl : public MtxStorage, public DataHolder
+class MtxBase : public MtxStorage, public DataHolder
 {
 private:
-  MtxImpl& operator=(const MtxImpl& other); // not allowed
+  MtxBase& operator=(const MtxBase& other); // not allowed
 
 public:
-  void swap(MtxImpl& other);
+  void swap(MtxBase& other);
 
-  MtxImpl(const MtxImpl& other);
+  MtxBase(const MtxBase& other);
 
-  MtxImpl(int mrows, int ncols, InitPolicy p);
+  MtxBase(int mrows, int ncols, InitPolicy p);
 
-  MtxImpl(double* data, int mrows, int ncols, StoragePolicy s = COPY) :
+  MtxBase(double* data, int mrows, int ncols, StoragePolicy s = COPY) :
     MtxStorage(mrows, ncols),
     DataHolder(data, mrows, ncols, s)
   {}
 
-  MtxImpl(mxArray* a, StoragePolicy s);
+  MtxBase(mxArray* a, StoragePolicy s);
 
   /** With a const mxArray*, only BORROW or COPY are allowed as storage
       policies, in order to preserve const-correctness. */
-  MtxImpl(const mxArray* a, StoragePolicy s);
+  MtxBase(const mxArray* a, StoragePolicy s);
 
-  ~MtxImpl();
+  ~MtxBase();
 
   const double& at(int i) const
   {
@@ -463,11 +463,12 @@ public:
 
 #ifdef APPLY_IMPL
 #  error macro error
-#else
+#endif // APPLY_IMPL
+
   // This workaround is required because compilers don't seem to be
   // able to accept both functors as well as function pointers as
   // template arguments to a single apply() template
-#  define APPLY_IMPL \
+#define APPLY_IMPL \
  \
       double* p = storage_nc() + offset_; \
       unsigned int gap = rowgap(); \
@@ -502,8 +503,7 @@ public:
     APPLY_IMPL;
   }
 
-#  undef APPLY_IMPL
-#endif // APPLY_IMPL
+#undef APPLY_IMPL
 };
 
 
@@ -639,6 +639,14 @@ public:
     T* itsCurrentEnd;
 
   public:
+
+    typedef std::forward_iterator_tag iterator_category;
+
+    typedef T            value_type;
+    typedef ptrdiff_t    difference_type;
+    typedef T*           pointer;
+    typedef T&           reference;
+
     colmaj_iter_base(int rg, int rs, T* ptr) :
       itsRowgap(rg),
       itsRowstride(rs),
@@ -694,6 +702,14 @@ public:
     T* itsCurrentEnd;
 
   public:
+
+    typedef std::forward_iterator_tag iterator_category;
+
+    typedef T            value_type;
+    typedef ptrdiff_t    difference_type;
+    typedef T*           pointer;
+    typedef T&           reference;
+
     rowmaj_iter_base(int s, int ncols, T* ptr) :
       itsStride(s),
       itsCurrentStart(ptr),
@@ -882,7 +898,7 @@ private:
 
   friend class Slice;
 
-  MtxImpl itsImpl;
+  MtxBase itsImpl;
 };
 
 ///////////////////////////////////////////////////////////////////////
