@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed May 17 13:54:24 2000
+// written: Wed May 31 22:59:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,28 +45,6 @@
 namespace {
   Tlist& theTlist = Tlist::theTlist();
   const string_literal ioTag("Block");
-
-  void serializeVecInt(ostream &os, const vector<int>& vec) {
-	 char sep = ' ';
-	 os << vec.size() << sep << sep;
-	 for (size_t i = 0; i < vec.size(); ++i) {
-		os << vec[i] << sep;
-	 }
-	 if (os.fail()) throw IO::OutputError("VecInt");
-  }
-
-  void deserializeVecInt(istream &is, vector<int>& vec) {
-	 int size;
-	 is >> size;
-	 if (size < 0) {
-		throw IO::InputError("VecInt saw negative value for size");
-	 }
-	 vec.resize(size, 0);
-	 for (int i = 0; i < size; ++i) {
-		is >> vec[i];
-	 }
-	 if (is.fail()) throw IO::InputError("VecInt");
-  }
 
   int charCountVecInt(const vector<int>& vec) {
 	 int count = IO::gCharCount<int>(vec.size()) + 1;
@@ -213,7 +191,10 @@ DOTRACE("Block::serialize");
   if (flag & IO::TYPENAME) { os << ioTag << sep; }
 
   // itsImpl->itsTrialSequence
-  serializeVecInt(os, itsImpl->itsTrialSequence);
+  os << itsImpl->itsTrialSequence.size() << sep << sep;
+  for (size_t i = 0; i < itsImpl->itsTrialSequence.size(); ++i) {
+	 os << itsImpl->itsTrialSequence[i] << sep;
+  }
   os << endl;
   // itsImpl->itsRandSeed
   os << itsImpl->itsRandSeed << endl;
@@ -231,7 +212,16 @@ DOTRACE("Block::deserialize");
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag.c_str()); }
   
   // itsImpl->itsTrialSequence
-  deserializeVecInt(is, itsImpl->itsTrialSequence);
+  int size;
+  is >> size;
+  if (size < 0) {
+	 throw IO::InputError("VecInt saw negative value for size");
+  }
+  itsImpl->itsTrialSequence.resize(size, 0);
+  for (int i = 0; i < size; ++i) {
+	 is >> itsImpl->itsTrialSequence[i];
+  }
+  if (is.fail()) throw IO::InputError(ioTag.c_str());
 
   // itsImpl->itsRandSeed
   is >> itsImpl->itsRandSeed;
