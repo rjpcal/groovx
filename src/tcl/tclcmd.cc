@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Thu Mar 30 12:29:25 2000
+// written: Wed May 31 14:58:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -129,65 +129,7 @@ DOTRACE("Tcl::TclCmd::arg");
   return TclValue(itsInterp, itsObjv[argn]);
 }
 
-int Tcl::TclCmd::getIntFromArg(int argn) {
-DOTRACE("Tcl::TclCmd::getIntFromArg");
-  int val;
-
-  Tcl_Obj* obj = checkSharing(itsObjv[argn], &tclIntType);
-
-  if ( Tcl_GetIntFromObj(itsInterp, obj, &val) != TCL_OK ) {
-	 throw TclError();
-  }
-  return val;
-}
-
-long Tcl::TclCmd::getLongFromArg(int argn) {
-DOTRACE("Tcl::TclCmd::getLongFromArg");
-  long val;
-
-  Tcl_Obj* obj = checkSharing(itsObjv[argn], &tclIntType);
-
-  if ( Tcl_GetLongFromObj(itsInterp, obj, &val) != TCL_OK) {
-	 throw TclError();
-  }
-  return val;
-}
-
-bool Tcl::TclCmd::getBoolFromArg(int argn) {
-DOTRACE("Tcl::TclCmd::getBoolFromArg");
-  int val;
-
-  Tcl_Obj* obj = checkSharing(itsObjv[argn], &tclBooleanType);
-
-  if ( Tcl_GetBooleanFromObj(itsInterp, obj, &val) != TCL_OK ) {
-	 throw TclError();
-  }
-  return bool(val);
-}
-
-double Tcl::TclCmd::getDoubleFromArg(int argn) {
-DOTRACE("Tcl::TclCmd::getDoubleFromArg");
-  DebugEvalNL(Tcl_GetString(itsObjv[argn]));
-
-  double val;
-
-  Tcl_Obj* obj = checkSharing(itsObjv[argn], &tclDoubleType);
-
-  try {
-	 if ( Tcl_GetDoubleFromObj(itsInterp, obj, &val) != TCL_OK ) {
-		throw TclError();
-	 }
-  }
-  catch (TclError&) {
-	 throw;
-  }
-  return val;
-}
-
-const char* Tcl::TclCmd::getCstringFromArg(int argn) {
-DOTRACE("Tcl::TclCmd::getCstringFromArg");
-  return Tcl_GetString(itsObjv[argn]);
-}
+// Extracting int's
 
 template <>
 int Tcl::TclCmd::getValFromObj<int>(
@@ -200,12 +142,18 @@ DOTRACE("Tcl::TclCmd::getValFromObj<int>");
 
   if ( Tcl_GetIntFromObj(0, obj, &val) != TCL_OK )
 	 {
-		TclError err("expected int value but got ");
+		TclError err("expected integer but got ");
 		err.appendMsg("\"", Tcl_GetString(obj), "\"");
 		throw err;
 	 }
   return val;
 }
+
+int Tcl::TclCmd::getIntFromArg(int argn) {
+  return getValFromObj(itsInterp, itsObjv[argn], (int*)0);
+}
+
+// Extracting long's
 
 template <>
 long Tcl::TclCmd::getValFromObj<long>(
@@ -225,6 +173,12 @@ DOTRACE("Tcl::TclCmd::getValFromObj<long>");
   return val;
 }
 
+long Tcl::TclCmd::getLongFromArg(int argn) {
+  return getValFromObj(itsInterp, itsObjv[argn], (long*)0);
+}
+
+// Extracting bool's
+
 template <>
 bool Tcl::TclCmd::getValFromObj<bool>(
   Tcl_Interp*, Tcl_Obj* obj, bool* /*dummy*/
@@ -243,6 +197,12 @@ DOTRACE("Tcl::TclCmd::getValFromObj<bool>");
   return bool(int_val);
 }
 
+bool Tcl::TclCmd::getBoolFromArg(int argn) {
+  return getValFromObj(itsInterp, itsObjv[argn], (bool*)0);
+}
+
+// Extracting double's
+
 template <>
 double Tcl::TclCmd::getValFromObj<double>(
   Tcl_Interp*, Tcl_Obj* obj, double* /*dummy*/
@@ -254,12 +214,18 @@ DOTRACE("Tcl::TclCmd::getValFromObj<double>");
 
   if ( Tcl_GetDoubleFromObj(0, obj, &val) != TCL_OK )
 	 {
-		TclError err("expected double value but got ");
+		TclError err("expected floating-point number but got ");
 		err.appendMsg("\"", Tcl_GetString(obj), "\"");
 		throw err;
 	 }
   return val;
 }
+
+double Tcl::TclCmd::getDoubleFromArg(int argn) {
+  return getValFromObj(itsInterp, itsObjv[argn], (double*)0);
+}
+
+// Extracting const char*'s
 
 template <>
 const char* Tcl::TclCmd::getValFromObj<const char*>(
@@ -268,6 +234,13 @@ const char* Tcl::TclCmd::getValFromObj<const char*>(
 DOTRACE("Tcl::TclCmd::getValFromObj<const char*>");
   return Tcl_GetString(obj);
 }
+
+const char* Tcl::TclCmd::getCstringFromArg(int argn) {
+DOTRACE("Tcl::TclCmd::getCstringFromArg");
+  return Tcl_GetString(itsObjv[argn]);
+}
+
+// Extracting TclValue's
 
 template <>
 Tcl::TclValue Tcl::TclCmd::getValFromObj<Tcl::TclValue>(
