@@ -54,26 +54,26 @@ DBG_REGISTER
 
 namespace
 {
-  FreeList<string_rep>* repList;
+  FreeList<string_rep>* rep_list;
 }
 
 void* string_rep::operator new(size_t bytes)
 {
-  if (repList == 0) repList = new FreeList<string_rep>;
-  return repList->allocate(bytes);
+  if (rep_list == 0) rep_list = new FreeList<string_rep>;
+  return rep_list->allocate(bytes);
 }
 
 void string_rep::operator delete(void* space)
 {
-  repList->deallocate(space);
+  rep_list->deallocate(space);
 }
 
 string_rep::string_rep(std::size_t length, const char* text,
                        std::size_t capacity) :
-  itsRefCount(0),
-  itsCapacity(Util::max(length+1, capacity)),
-  itsLength(0),
-  itsText(new char[itsCapacity])
+  m_refcount(0),
+  m_capacity(Util::max(length+1, capacity)),
+  m_length(0),
+  m_text(new char[m_capacity])
 {
   if (text)
     append(length, text);
@@ -85,8 +85,8 @@ string_rep::~string_rep() throw()
 {
 DOTRACE("string_rep::~string_rep");
 
-  delete [] itsText;
-  itsText = (char*)0xdeadbeef;
+  delete [] m_text;
+  m_text = (char*)0xdeadbeef;
 }
 
 string_rep* string_rep::get_empty_rep()
@@ -112,12 +112,12 @@ string_rep* string_rep::make(std::size_t length, const char* text,
 
 string_rep* string_rep::clone() const
 {
-  return new string_rep(itsLength, itsText, itsCapacity);
+  return new string_rep(m_length, m_text, m_capacity);
 }
 
 void string_rep::make_unique(string_rep*& rep)
 {
-  if (rep->itsRefCount <= 1) return;
+  if (rep->m_refcount <= 1) return;
 
   string_rep* new_rep = rep->clone();
 
@@ -126,97 +126,97 @@ void string_rep::make_unique(string_rep*& rep)
 
   rep = new_rep;
 
-  Postcondition(new_rep->itsRefCount == 1);
+  Postcondition(new_rep->m_refcount == 1);
 }
 
 char* string_rep::data() throw()
 {
-  Precondition(itsRefCount <= 1);
+  Precondition(m_refcount <= 1);
 
-  return itsText;
+  return m_text;
 }
 
 void string_rep::clear() throw()
 {
-  Precondition(itsRefCount <= 1);
+  Precondition(m_refcount <= 1);
 
-  itsLength = 0;
+  m_length = 0;
   add_terminator();
 }
 
 void string_rep::append_no_terminate(char c)
 {
-  if (itsLength + 2 <= itsCapacity)
+  if (m_length + 2 <= m_capacity)
     {
-      itsText[itsLength++] = c;
+      m_text[m_length++] = c;
     }
   else
     {
-      realloc(itsLength + 2);
-      itsText[itsLength++] = c;
+      realloc(m_length + 2);
+      m_text[m_length++] = c;
     }
 }
 
 void string_rep::add_terminator() throw()
 {
-  itsText[itsLength] = '\0';
+  m_text[m_length] = '\0';
 }
 
 void string_rep::set_length(std::size_t length) throw()
 {
-  Precondition(length+1 < itsCapacity);
-  itsLength = length;
+  Precondition(length+1 < m_capacity);
+  m_length = length;
   add_terminator();
 }
 
 void string_rep::append(std::size_t length, const char* text)
 {
-  Precondition(itsRefCount <= 1);
+  Precondition(m_refcount <= 1);
   Precondition(text != 0);
 
-  if (itsLength + length + 1 <= itsCapacity)
+  if (m_length + length + 1 <= m_capacity)
     {
-      memcpy(itsText+itsLength, text, length);
-      itsLength += length;
+      memcpy(m_text+m_length, text, length);
+      m_length += length;
       add_terminator();
     }
   else
     {
-      realloc(itsLength + length + 1);
+      realloc(m_length + length + 1);
       append(length, text);
     }
 
-  Postcondition(itsLength+1 <= itsCapacity);
+  Postcondition(m_length+1 <= m_capacity);
 }
 
 void string_rep::realloc(std::size_t capacity)
 {
-  Precondition(itsRefCount <= 1);
+  Precondition(m_refcount <= 1);
 
-  string_rep new_rep(Util::max(itsCapacity*2 + 32, capacity), 0);
+  string_rep new_rep(Util::max(m_capacity*2 + 32, capacity), 0);
 
-  new_rep.append(this->itsLength, this->itsText);
+  new_rep.append(this->m_length, this->m_text);
 
-  Util::swap2(itsCapacity, new_rep.itsCapacity);
-  Util::swap2(itsLength, new_rep.itsLength);
-  Util::swap2(itsText, new_rep.itsText);
+  Util::swap2(m_capacity, new_rep.m_capacity);
+  Util::swap2(m_length, new_rep.m_length);
+  Util::swap2(m_text, new_rep.m_text);
 }
 
 void string_rep::reserve(std::size_t capacity)
 {
-  if (itsCapacity < capacity)
+  if (m_capacity < capacity)
     realloc(capacity);
 }
 
 void string_rep::debugDump() const throw()
 {
   dbgEvalNL(0, (void*)this);
-  dbgEvalNL(0, itsRefCount);
-  dbgEvalNL(0, itsLength);
-  dbgEvalNL(0, (void*)itsText);
-  dbgEvalNL(0, itsText);
-  for (unsigned int i = 0; i < itsLength; ++i)
-    dbgPrint(0, (void*)(int)itsText[i]);
+  dbgEvalNL(0, m_refcount);
+  dbgEvalNL(0, m_length);
+  dbgEvalNL(0, (void*)m_text);
+  dbgEvalNL(0, m_text);
+  for (unsigned int i = 0; i < m_length; ++i)
+    dbgPrint(0, (void*)(int)m_text[i]);
   dbgPrintNL(0, "");
 }
 
@@ -229,36 +229,36 @@ void string_rep::debugDump() const throw()
 void fstring::init_empty()
 {
 DOTRACE("fstring::init_empty");
-  Precondition(itsRep == 0);
+  Precondition(m_rep == 0);
 
-  itsRep = string_rep::make(0, 0);
+  m_rep = string_rep::make(0, 0);
 
-  itsRep->incr_ref_count();
+  m_rep->incr_ref_count();
 }
 
 void fstring::init_range(char_range r)
 {
 DOTRACE("fstring::init");
-  Precondition(itsRep == 0);
+  Precondition(m_rep == 0);
 
-  itsRep = string_rep::make(r.len, r.text);
+  m_rep = string_rep::make(r.len, r.text);
 
-  itsRep->incr_ref_count();
+  m_rep->incr_ref_count();
 }
 
 fstring::fstring() :
-  itsRep(string_rep::make(0,0))
+  m_rep(string_rep::make(0,0))
 {
 DOTRACE("fstring::fstring");
 
-  itsRep->incr_ref_count();
+  m_rep->incr_ref_count();
 }
 
 fstring::fstring(const fstring& other) throw() :
-  itsRep(other.itsRep)
+  m_rep(other.m_rep)
 {
 DOTRACE("fstring::fstring(const fstring&)");
-  itsRep->incr_ref_count();
+  m_rep->incr_ref_count();
 }
 
 fstring::~fstring() throw()
@@ -267,15 +267,15 @@ DOTRACE("fstring::~fstring");
 
   dbgDump(7, *this);
 
-  if (itsRep->decr_ref_count() == 0)
-    itsRep = (string_rep*)0xdeadbeef;
+  if (m_rep->decr_ref_count() == 0)
+    m_rep = (string_rep*)0xdeadbeef;
 }
 
 void fstring::swap(fstring& other) throw()
 {
 DOTRACE("fstring::swap");
 
-  Util::swap2(itsRep, other.itsRep);
+  Util::swap2(m_rep, other.m_rep);
 }
 
 fstring& fstring::operator=(const char* text)
@@ -311,9 +311,9 @@ void fstring::clear()
 {
 DOTRACE("fstring::clear");
 
-  if (itsRep->is_unique())
+  if (m_rep->is_unique())
     {
-      itsRep->clear();
+      m_rep->clear();
     }
   else
     {
@@ -385,18 +385,18 @@ DOTRACE("fstring::append_range");
 
   // special case for when the current string is empty: just make a new
   // rep with the to-be-appended text and swap
-  if (itsRep->length() == 0)
+  if (m_rep->length() == 0)
     {
       string_rep* newrep = string_rep::make(len, text);
-      string_rep* oldrep = itsRep;
-      itsRep = newrep;
+      string_rep* oldrep = m_rep;
+      m_rep = newrep;
       oldrep->decr_ref_count();
-      itsRep->incr_ref_count();
+      m_rep->incr_ref_count();
     }
   else
     {
-      string_rep::make_unique(itsRep);
-      itsRep->append(len, text);
+      string_rep::make_unique(m_rep);
+      m_rep->append(len, text);
     }
 }
 
@@ -419,10 +419,10 @@ DOTRACE("fstring::read");
           is.unget();
           break;
         }
-      itsRep->append_no_terminate(char(c));
+      m_rep->append_no_terminate(char(c));
     }
 
-  itsRep->add_terminator();
+  m_rep->add_terminator();
 }
 
 void fstring::readsome(STD_IO::istream& is, unsigned int count)
@@ -431,16 +431,16 @@ DOTRACE("fstring::readsome");
 
   if (count > 0)
     {
-      string_rep::make_unique(itsRep);
-      itsRep->reserve(count+1);
+      string_rep::make_unique(m_rep);
+      m_rep->reserve(count+1);
 #ifndef PRESTANDARD_IOSTREAMS
-      unsigned int numread = is.readsome(itsRep->data(), count);
-      itsRep->set_length(numread);
+      unsigned int numread = is.readsome(m_rep->data(), count);
+      m_rep->set_length(numread);
 #else
-      is.read(itsRep->data(), count);
+      is.read(m_rep->data(), count);
       if (is.eof()) is.clear();
       unsigned int numread = is.gcount();
-      itsRep->set_length(numread);
+      m_rep->set_length(numread);
 #endif
     }
 }
@@ -465,16 +465,16 @@ DOTRACE("fstring::readline");
       int c = is.get();
       if (c == EOF || c == eol)
         break;
-      itsRep->append_no_terminate(char(c));
+      m_rep->append_no_terminate(char(c));
     }
 
-  itsRep->add_terminator();
+  m_rep->add_terminator();
 }
 
 void fstring::debugDump() const throw()
 {
   dbgEvalNL(0, (void*)this);
-  itsRep->debugDump();
+  m_rep->debugDump();
 }
 
 static const char vcid_strings_cc[] = "$Header$";

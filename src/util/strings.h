@@ -79,21 +79,21 @@ public:
 
   static void make_unique(string_rep*& rep);
 
-  bool is_unique() throw() { return itsRefCount == 1; }
+  bool is_unique() throw() { return m_refcount == 1; }
 
-  void incr_ref_count() throw() { ++itsRefCount; }
+  void incr_ref_count() throw() { ++m_refcount; }
 
   std::size_t decr_ref_count() throw()
   {
-    std::size_t c = --itsRefCount;
+    std::size_t c = --m_refcount;
     if (c <= 0)
       delete this;
     return c;
   }
 
-  std::size_t length() const throw() { return itsLength; }
-  std::size_t capacity() const throw() { return itsCapacity; }
-  const char* text() const throw() { return itsText; }
+  std::size_t length() const throw() { return m_length; }
+  std::size_t capacity() const throw() { return m_capacity; }
+  const char* text() const throw() { return m_text; }
   char* data() throw();
 
   void clear() throw();
@@ -113,11 +113,11 @@ public:
   void debugDump() const throw();
 
 private:
-  unsigned int itsRefCount;
+  unsigned int m_refcount;
 
-  std::size_t itsCapacity;
-  std::size_t itsLength;
-  char* itsText;
+  std::size_t m_capacity;
+  std::size_t m_length;
+  char* m_text;
 };
 
 struct char_range
@@ -156,14 +156,14 @@ public:
 
   /// Construct by copying from a C-style null-terminated char array.
   fstring(const char* s) :
-    itsRep(0)
+    m_rep(0)
   {
     init_empty(); append(s);
   }
 
   /// Construct from a character range (pointer plus length).
   fstring(char_range r) :
-    itsRep(0)
+    m_rep(0)
   {
     init_range(r);
   }
@@ -171,7 +171,7 @@ public:
   /// Construct by converting args to strings and concatenating.
   template <class T1>
   explicit fstring(const T1& part1) :
-    itsRep(0)
+    m_rep(0)
   {
     init_empty(); append(part1);
   }
@@ -179,7 +179,7 @@ public:
   /// Construct by converting args to strings and concatenating.
   template <class T1, class T2>
   fstring(const T1& part1, const T2& part2) :
-    itsRep(0)
+    m_rep(0)
   {
     init_empty(); append(part1); append(part2);
   }
@@ -187,7 +187,7 @@ public:
   /// Construct by converting args to strings and concatenating.
   template <class T1, class T2, class T3>
   fstring(const T1& part1, const T2& part2, const T3& part3) :
-    itsRep(0)
+    m_rep(0)
   {
     init_empty(); append(part1); append(part2, part3);
   }
@@ -196,7 +196,7 @@ public:
   template <class T1, class T2, class T3, class T4>
   fstring(const T1& part1, const T2& part2, const T3& part3,
           const T4& part4) :
-    itsRep(0)
+    m_rep(0)
   {
     init_empty(); append(part1); append(part2, part3, part4);
   }
@@ -205,7 +205,7 @@ public:
   template <class T1, class T2, class T3, class T4, class T5>
   fstring(const T1& part1, const T2& part2, const T3& part3,
           const T4& part4, const T5& part5) :
-    itsRep(0)
+    m_rep(0)
   {
     init_empty(); append(part1); append(part2, part3, part4, part5);
   }
@@ -214,7 +214,7 @@ public:
   template <class T1, class T2, class T3, class T4, class T5, class T6>
   fstring(const T1& part1, const T2& part2, const T3& part3,
           const T4& part4, const T5& part5, const T6& part6) :
-    itsRep(0)
+    m_rep(0)
   {
     init_empty(); append(part1); append(part2, part3, part4, part5, part6);
   }
@@ -224,7 +224,7 @@ public:
   fstring(const T1& part1, const T2& part2, const T3& part3,
           const T4& part4, const T5& part5, const T6& part6,
           const T7& part7) :
-    itsRep(0)
+    m_rep(0)
   {
     init_empty(); append(part1); append(part2, part3, part4, part5, part6, part7);
   }
@@ -241,14 +241,14 @@ public:
   /// Get a pointer to the non-const underlying data array.
   char* data()
   {
-    string_rep::make_unique(itsRep); return itsRep->data();
+    string_rep::make_unique(m_rep); return m_rep->data();
   }
 
   /// Get a pointer to the const underlying data array.
-  const char* c_str() const throw() { return itsRep->text(); }
+  const char* c_str() const throw() { return m_rep->text(); }
 
   /// Get the number of characters in the string (NOT INCLUDING the null terminator).
-  std::size_t length() const throw() { return itsRep->length(); }
+  std::size_t length() const throw() { return m_rep->length(); }
 
   /// Query whether the length of the string is 0.
   bool is_empty() const throw() { return (length() == 0); }
@@ -279,8 +279,8 @@ public:
   bool operator<(const char* other) const throw();
 
   /// Query if string is lexicographically less-than another string.
-  template <class StrType>
-  bool operator<(const StrType& other) const throw()
+  template <class string_type>
+  bool operator<(const string_type& other) const throw()
   {
     return operator<(other.c_str());
   }
@@ -289,8 +289,8 @@ public:
   bool operator>(const char* other) const throw();
 
   /// Query if string is lexicographically greater-than another string.
-  template <class StrType>
-  bool operator>(const StrType& other) const throw()
+  template <class string_type>
+  bool operator>(const string_type& other) const throw()
   {
     return operator>(other.c_str());
   }
@@ -405,7 +405,7 @@ private:
 
   void init_range(char_range r);
 
-  string_rep* itsRep;
+  string_rep* m_rep;
 };
 
 
