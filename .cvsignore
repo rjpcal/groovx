@@ -1,5 +1,6 @@
 Makefile
 autom4te-2.53.cache
+autom4te.cache
 build
 config.h
 config.log
@@ -8,6 +9,6 @@ ilabx
 local
 prof.out
 reconfigure
+snapshots
 tclprof.out
 test.cc
-snapshots
