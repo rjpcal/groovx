@@ -63,8 +63,7 @@ test "ExptTcl-Expt::load" "fMRI sample" {
 	 IoDb::clear
 	 set files {expt215302Aug1999.asw.gz expt215012Jan2000.asw.gz expt232423May2000.asw.gz}
 	 set ocounts {113 166 76}
-	 srand [clock clicks]
-	 set i [expr int([rand 0 3])]
+	 set i [expr int(rand()*3)]
 	 set filename [lindex $files $i]
 	 puts "filename $filename"
     Expt::load $::TEST_DIR/$filename
