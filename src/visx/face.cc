@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Mon Nov 13 21:13:31 2000
+// written: Tue Nov 14 11:33:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -281,7 +281,7 @@ DOTRACE("Face::grHasBoundingBox");
 
 int Face::category() const {
 DOTRACE("Face::category");
-  return faceCategory.getNative();
+  return faceCategory();
 }
 
 void Face::setCategory(int val) {

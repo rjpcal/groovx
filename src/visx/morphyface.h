@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:37:45 1999
-// written: Mon Nov 13 22:18:54 2000
+// written: Tue Nov 14 11:33:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ public:
       defined by the client. */
   TField<int> mfaceCategory;
 
-  virtual int category() const { return mfaceCategory.getNative(); }
+  virtual int category() const { return mfaceCategory(); }
   virtual void setCategory(int val) { mfaceCategory.setNative(val); }
 
   TField<double> faceWidth;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Mon Nov 13 21:49:53 2000
+// written: Tue Nov 14 11:33:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ public:
       defined by the client. */
   TField<int> fishCategory;
 
-  virtual int category() const { return fishCategory.getNative(); }
+  virtual int category() const { return fishCategory(); }
   virtual void setCategory(int val) { fishCategory.setNative(val); }
 
   /// Controls the shape of the dorsal fin.
