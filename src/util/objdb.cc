@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Sun Nov  3 13:41:11 2002
+// written: Fri Nov 22 15:44:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -121,9 +121,26 @@ public:
     }
 
   void clearAll()
-    { itsPtrMap.clear(); }
+    {
+      itsPtrMap.clear();
 
-  Util::Object* getCheckedPtrBase(Util::UID id) throw (InvalidIdError)
+#if 0 // an alternate implementation for verbose debugging:
+      while (!itsPtrMap.empty())
+        {
+          MapType::iterator it = itsPtrMap.begin();
+
+          if ((*it).second.isValid())
+            {
+              dbgEvalNL(3, typeid(*(*it).second).name());
+              dbgEvalNL(3, (*it).second->id());
+            }
+
+          itsPtrMap.erase(it);
+        }
+#endif
+    }
+
+  Util::Object* getCheckedObj(Util::UID id) throw (InvalidIdError)
     {
       MapType::iterator itr = itsPtrMap.find(id);
       if (!isValidItr(itr))
@@ -135,7 +152,7 @@ public:
       return (*itr).second.get();
     }
 
-  void insertPtrBase(Util::Object* ptr)
+  void insertObj(Util::Object* ptr, bool strong)
     {
       Precondition(ptr != 0);
 
@@ -152,7 +169,9 @@ public:
 
       // Must create the ObjRef with "PRIVATE" to avoid endless recursion
       itsPtrMap.insert(MapType::value_type
-                       (new_id, ObjRef(ptr, Util::STRONG, Util::PRIVATE)));
+                       (new_id, ObjRef(ptr,
+                                       strong ? Util::STRONG : Util::WEAK,
+                                       Util::PRIVATE)));
     }
 };
 
@@ -236,11 +255,11 @@ ObjDb::Iterator ObjDb::objects() const
 DOTRACE("ObjDb::children");
 
  return shared_ptr<ObjDb::Iterator::Interface>
-   (new ObjDbIter(itsImpl->itsPtrMap, itsImpl->itsPtrMap.begin()));
+   (new ObjDbIter(rep->itsPtrMap, rep->itsPtrMap.begin()));
 }
 
 ObjDb::ObjDb() :
-  itsImpl(new Impl)
+  rep(new Impl)
 {
 DOTRACE("ObjDb::ObjDb");
 }
@@ -248,65 +267,71 @@ DOTRACE("ObjDb::ObjDb");
 ObjDb::~ObjDb()
 {
 DOTRACE("ObjDb::~ObjDb");
-  delete itsImpl;
+  delete rep;
 }
 
 int ObjDb::count() const
 {
 DOTRACE("ObjDb::count");
 
-  return itsImpl->count();
+  return rep->count();
 }
 
 bool ObjDb::isValidId(Util::UID id) const
 {
 DOTRACE("ObjDb::isValidId");
-  return itsImpl->isValidId(id);
+  return rep->isValidId(id);
 }
 
 void ObjDb::remove(Util::UID id)
 {
 DOTRACE("ObjDb::remove");
-  itsImpl->remove(id);
+  rep->remove(id);
 }
 
 void ObjDb::release(Util::UID id)
 {
 DOTRACE("ObjDb::release");
-  itsImpl->release(id);
+  rep->release(id);
 }
 
 void ObjDb::purge()
 {
 DOTRACE("ObjDb::clear");
   dbgEvalNL(3, typeid(*this).name());
-  itsImpl->purge();
+  rep->purge();
 }
 
 void ObjDb::clear()
 {
 DOTRACE("ObjDb::clear");
   // Call purge until no more items can be removed
-  while ( itsImpl->purge() != 0 )
+  while ( rep->purge() != 0 )
     { ; }
 }
 
 void ObjDb::clearOnExit()
 {
 DOTRACE("ObjDb::clearOnExit");
-  itsImpl->clearAll();
+  rep->clearAll();
 }
 
-Util::Object* ObjDb::getCheckedPtrBase(Util::UID id) throw (InvalidIdError)
+Util::Object* ObjDb::getCheckedObj(Util::UID id) throw (InvalidIdError)
 {
-DOTRACE("ObjDb::getCheckedPtrBase");
-  return itsImpl->getCheckedPtrBase(id);
+DOTRACE("ObjDb::getCheckedObj");
+  return rep->getCheckedObj(id);
 }
 
-void ObjDb::insertPtrBase(Util::Object* ptr)
+void ObjDb::insertObj(Util::Object* obj)
 {
-DOTRACE("ObjDb::insertPtrBase");
-  itsImpl->insertPtrBase(ptr);
+DOTRACE("ObjDb::insertObj");
+  rep->insertObj(obj, true);
+}
+
+void ObjDb::insertObjWeak(Util::Object* obj)
+{
+DOTRACE("ObjDb::insertObjWeak");
+  rep->insertObj(obj, false);
 }
 
 static const char vcid_objdb_cc[] = "$Header$";
