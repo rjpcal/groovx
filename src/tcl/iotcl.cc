@@ -3,7 +3,7 @@
 // iotcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct 30 10:00:39 2000
-// written: Mon Oct 30 16:07:35 2000
+// written: Wed Nov  1 18:03:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -144,11 +144,15 @@ protected:
   }
 };
 
-class IoItemPkg : public ItemPkg<IO::IoObject> {
+class IoItemPkg : public ItemPkg<IO::IoObject>,
+                  public IoFetcher
+{
 public:
   IoItemPkg(Tcl_Interp* interp) :
 	 ItemPkg<IO::IoObject>(interp, "IO", "$Revision$")
   {
+	 TclItemPkg::addIoCommands(this);
+
 	 addCommand( new IoTypeCmd(this, TclPkg::makePkgCmdName("type")) );
 	 addCommand( new IoRefCountCmd(this, TclPkg::makePkgCmdName("refCount")));
 	 addCommand( new IoIncrRefCountCmd(this,
@@ -158,6 +162,10 @@ public:
 
 	 addCommand( new IoNewCmd(interp, TclPkg::makePkgCmdName("new")));
 	 addCommand( new IoDeleteCmd(interp, TclPkg::makePkgCmdName("delete")));
+  }
+
+  virtual IO::IoObject& getIoFromId(int id) {
+	 return dynamic_cast<IO::IoObject&>( *(getCItemFromId(id)) );
   }
 };
 
