@@ -2,20 +2,28 @@
 // point.h
 // Rob Peters
 // created: Thu Jan 28 12:54:13 1999
-// written: Tue Mar 16 19:36:28 1999
+// written: Mon Nov 15 14:33:09 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef POINT_H_DEFINED
 #define POINT_H_DEFINED
 
-template<class F>
+template<class V>
 class Point {
 public:
-  Point(F xi=0, F yi=0) : x(xi), y(yi);
+  Point(V x=0, V y=0) : x_(x), y_(y);
   virtual ~Point();
-  F x;
-  F y;
+
+  V& x() { return x_; }
+  V& y() { return y_; }
+
+  const V& x() const { return x_; }
+  const V& y() const { return y_; }
+
+private:
+  V x_;
+  V y_;
 };
 
 static const char vcid_point_h[] = "$Header$";
