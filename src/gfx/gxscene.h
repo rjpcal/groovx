@@ -62,14 +62,15 @@ public:
   void undraw();
 
   /// "Bare-bones rendering"
-  /** Only render the current object; the caller is expected to take care
-      of clearing the color buffer first and flushing the graphics stream
-      afterwards. */
+  /** Only render the current object; the caller is expected to take
+      care of clearing the color buffer first and flushing the
+      graphics stream afterwards. */
   void render();
 
   /// "Full-featured rendering"
-  /** First clears the color buffer, then renders the current object, then
-      flushes the graphics stream and swaps buffers if necessary. */
+  /** First clears the color buffer, then renders the current object,
+      then flushes the graphics stream and swaps buffers if
+      necessary. */
   void fullRender();
 
   /// "Bare-bones clearscreen"
@@ -78,17 +79,19 @@ public:
   void clearscreen();
 
   /// "Full-featured clearscreen"
-  /** Clears the color buffer, set the current object to empty, and flush
-      the graphics stream. */
+  /** Clears the color buffer, set the current object to empty, and
+      flush the graphics stream. */
   void fullClearscreen();
 
   /// Change the global visibility
-  /** Which determines whether anything will be displayed by a "redraw"
-      command, or by remap events sent to the screen window. */
+  /** Which determines whether anything will be displayed by a
+      "redraw" command, or by remap events sent to the screen
+      window. */
   void setVisibility(bool val);
 
   /// Get the camera used to view the scene.
-  const Nub::Ref<GxCamera>& getCamera() const { return itsCamera; }
+  const Nub::Ref<GxCamera>& getCamera() const
+  { return itsCamera; }
 
   /// Set the camera to be used to view the scene.
   void setCamera(const Nub::Ref<GxCamera>& cam);
@@ -103,7 +106,8 @@ public:
   void setHold(bool val) { isItHolding = val; }
 
   /// Whether the scene should be refreshed when something changes.
-  void allowRefresh(bool allow) { isItRefreshing = allow; flushChanges(); }
+  void allowRefresh(bool allow)
+  { isItRefreshing = allow; flushChanges(); }
 
   /// Redraw the scene at a given frame rate.
   void animate(unsigned int framesPerSecond);
