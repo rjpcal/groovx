@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Mon Sep  9 11:49:26 2002
+// written: Mon Sep  9 11:51:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,11 +17,11 @@
 
 #include "util/ref.h"
 
-#if defined(HP9000S700)
+#if defined(HAVE_ALIB_H)
 #  include "visx/hpsound.h"
 #elif defined(HAVE_DMEDIA_AUDIO_H)
 #  include "visx/irixsound.h"
-#elif defined(I686) || defined(PPC)
+#elif defined(HAVE_ESD_H)
 #  include "visx/esdsound.h"
 #else
 #  include "visx/dummysound.h"
