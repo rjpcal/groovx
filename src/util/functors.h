@@ -32,728 +32,722 @@
 #ifndef FUNCTORS_H_DEFINED
 #define FUNCTORS_H_DEFINED
 
-#include "util/ref.h"
-
-namespace Util
+namespace rutz
 {
+  //  ###################################################################
+  //  ===================================================================
+  //
+  //  func_traits
+  //
+  //  ===================================================================
 
-//  ###################################################################
-//  ===================================================================
-//
-//  FuncTraits
-//
-//  ===================================================================
-
-  struct Null_t;
+  struct null_t;
 
   /// Holds typedefs for the types of a function's arguments and return value.
   template <class R = void,
-            class A1 = Null_t, class A2 = Null_t, class A3 = Null_t,
-            class A4 = Null_t, class A5 = Null_t, class A6 = Null_t,
-            class A7 = Null_t, class A8 = Null_t>
-  struct FuncArgs
+            class A1 = null_t, class A2 = null_t, class A3 = null_t,
+            class A4 = null_t, class A5 = null_t, class A6 = null_t,
+            class A7 = null_t, class A8 = null_t>
+  struct func_args
   {
-    typedef R  Retn_t;
-    typedef A1 Arg1_t;
-    typedef A2 Arg2_t;
-    typedef A3 Arg3_t;
-    typedef A4 Arg4_t;
-    typedef A5 Arg5_t;
-    typedef A6 Arg6_t;
-    typedef A7 Arg7_t;
-    typedef A8 Arg8_t;
+    typedef R  retn_t;
+    typedef A1 arg1_t;
+    typedef A2 arg2_t;
+    typedef A3 arg3_t;
+    typedef A4 arg4_t;
+    typedef A5 arg5_t;
+    typedef A6 arg6_t;
+    typedef A7 arg7_t;
+    typedef A8 arg8_t;
   };
 
   /// A traits class for holding information about functions/functors.
-  template <class Func>
-  struct FuncTraits
+  template <class func>
+  struct func_traits
   {
-    typedef typename Func::Retn_t Retn_t;
+    typedef typename func::retn_t retn_t;
   };
 
-//  ===================================================================
-//
-//  FuncTraits specializations for free functions
-//
-//  ===================================================================
+  //  ===================================================================
+  //
+  //  func_traits specializations for free functions
+  //
+  //  ===================================================================
 
   /// Specialization for free functions with no arguments.
   template <class R>
-  struct FuncTraits<R (*)()>
+  struct func_traits<R (*)()>
     :
-    public FuncArgs<R>
+    public func_args<R>
   {
-    enum { numArgs = 0 };
+    enum { num_args = 0 };
   };
 
   /// Specialization for free functions with 1 argument.
   template <class R, class P1>
-  struct FuncTraits<R (*)(P1)>
+  struct func_traits<R (*)(P1)>
     :
-    public FuncArgs<R, P1>
+    public func_args<R, P1>
   {
-    enum { numArgs = 1 };
+    enum { num_args = 1 };
   };
 
   /// Specialization for free functions with 2 arguments.
   template <class R, class P1, class P2>
-  struct FuncTraits<R (*)(P1, P2)>
+  struct func_traits<R (*)(P1, P2)>
     :
-    public FuncArgs<R, P1, P2>
+    public func_args<R, P1, P2>
   {
-    enum { numArgs = 2 };
+    enum { num_args = 2 };
   };
 
   /// Specialization for free functions with 3 arguments.
   template <class R, class P1, class P2, class P3>
-  struct FuncTraits<R (*)(P1, P2, P3)>
+  struct func_traits<R (*)(P1, P2, P3)>
     :
-    public FuncArgs<R, P1, P2, P3>
+    public func_args<R, P1, P2, P3>
   {
-    enum { numArgs = 3 };
+    enum { num_args = 3 };
   };
 
   /// Specialization for free functions with 4 arguments.
   template <class R, class P1, class P2, class P3, class P4>
-  struct FuncTraits<R (*)(P1, P2, P3, P4)>
+  struct func_traits<R (*)(P1, P2, P3, P4)>
     :
-    public FuncArgs<R, P1, P2, P3, P4>
+    public func_args<R, P1, P2, P3, P4>
   {
-    enum { numArgs = 4 };
+    enum { num_args = 4 };
   };
 
   /// Specialization for free functions with 5 arguments.
   template <class R, class P1, class P2, class P3, class P4, class P5>
-  struct FuncTraits<R (*)(P1, P2, P3, P4, P5)>
+  struct func_traits<R (*)(P1, P2, P3, P4, P5)>
     :
-    public FuncArgs<R, P1, P2, P3, P4, P5>
+    public func_args<R, P1, P2, P3, P4, P5>
   {
-    enum { numArgs = 5 };
+    enum { num_args = 5 };
   };
 
   /// Specialization for free functions with 6 arguments.
-  template <class R, class P1, class P2, class P3, class P4, class P5, class P6>
-  struct FuncTraits<R (*)(P1, P2, P3, P4, P5, P6)>
+  template <class R, class P1, class P2, class P3, class P4, class P5,
+            class P6>
+  struct func_traits<R (*)(P1, P2, P3, P4, P5, P6)>
     :
-    public FuncArgs<R, P1, P2, P3, P3, P4, P5, P6>
+    public func_args<R, P1, P2, P3, P3, P4, P5, P6>
   {
-    enum { numArgs = 6 };
+    enum { num_args = 6 };
   };
 
-//  ===================================================================
-//
-//  FuncTraits specializations for member functions
-//
-//  We treat the "this" pointer as an implicit first-argument to the
-//  function.
-//
-//  ===================================================================
+  //  ===================================================================
+  //
+  //  func_traits specializations for member functions
+  //
+  //  We treat the "this" pointer as an implicit first-argument to the
+  //  function.
+  //
+  //  ===================================================================
 
   /// Specialization for member functions with "this" plus 0 arguments.
   template <class R, class C>
-  struct FuncTraits<R (C::*)()>
+  struct func_traits<R (C::*)()>
     :
-    public FuncArgs<R, Null_t>
+    public func_args<R, null_t>
   {
-    enum { numArgs = 1 };
-    typedef C Class_t;
+    enum { num_args = 1 };
+    typedef C class_t;
   };
 
   /// Specialization for member functions with "this" plus 0 arguments.
   template <class R, class C>
-  struct FuncTraits<R (C::*)() const>
+  struct func_traits<R (C::*)() const>
     :
-    public FuncArgs<R, Null_t>
+    public func_args<R, null_t>
   {
-    enum { numArgs = 1 };
-    typedef C Class_t;
+    enum { num_args = 1 };
+    typedef C class_t;
   };
 
   /// Specialization for member functions with "this" plus 1 argument.
   template <class R, class C, class P1>
-  struct FuncTraits<R (C::*)(P1)>
+  struct func_traits<R (C::*)(P1)>
     :
-    public FuncArgs<R, Null_t, P1>
+    public func_args<R, null_t, P1>
   {
-    enum { numArgs = 2 };
-    typedef C Class_t;
+    enum { num_args = 2 };
+    typedef C class_t;
   };
 
   /// Specialization for member functions with "this" plus 1 argument.
   template <class R, class C, class P1>
-  struct FuncTraits<R (C::*)(P1) const>
+  struct func_traits<R (C::*)(P1) const>
     :
-    public FuncArgs<R, Null_t, P1>
+    public func_args<R, null_t, P1>
   {
-    enum { numArgs = 2 };
-    typedef C Class_t;
+    enum { num_args = 2 };
+    typedef C class_t;
   };
 
   /// Specialization for member functions with "this" plus 2 arguments.
   template <class R, class C, class P1, class P2>
-  struct FuncTraits<R (C::*)(P1, P2)>
+  struct func_traits<R (C::*)(P1, P2)>
     :
-    public FuncArgs<R, Null_t, P1, P2>
+    public func_args<R, null_t, P1, P2>
   {
-    enum { numArgs = 3 };
-    typedef C Class_t;
+    enum { num_args = 3 };
+    typedef C class_t;
   };
 
   /// Specialization for member functions with "this" plus 2 arguments.
   template <class R, class C, class P1, class P2>
-  struct FuncTraits<R (C::*)(P1, P2) const>
+  struct func_traits<R (C::*)(P1, P2) const>
     :
-    public FuncArgs<R, Null_t, P1, P2>
+    public func_args<R, null_t, P1, P2>
   {
-    enum { numArgs = 3 };
-    typedef C Class_t;
+    enum { num_args = 3 };
+    typedef C class_t;
   };
 
   /// Specialization for member functions with "this" plus 3 arguments.
   template <class R, class C, class P1, class P2, class P3>
-  struct FuncTraits<R (C::*)(P1, P2, P3)>
+  struct func_traits<R (C::*)(P1, P2, P3)>
     :
-    public FuncArgs<R, Null_t, P1, P2, P3>
+    public func_args<R, null_t, P1, P2, P3>
   {
-    enum { numArgs = 4 };
-    typedef C Class_t;
+    enum { num_args = 4 };
+    typedef C class_t;
   };
 
   /// Specialization for member functions with "this" plus 3 arguments.
   template <class R, class C, class P1, class P2, class P3>
-  struct FuncTraits<R (C::*)(P1, P2, P3) const>
+  struct func_traits<R (C::*)(P1, P2, P3) const>
     :
-    public FuncArgs<R, Null_t, P1, P2, P3>
+    public func_args<R, null_t, P1, P2, P3>
   {
-    enum { numArgs = 4 };
-    typedef C Class_t;
+    enum { num_args = 4 };
+    typedef C class_t;
   };
 
   /// Specialization for member functions with "this" plus 4 arguments.
   template <class R, class C, class P1, class P2, class P3, class P4>
-  struct FuncTraits<R (C::*)(P1, P2, P3, P4)>
+  struct func_traits<R (C::*)(P1, P2, P3, P4)>
     :
-    public FuncArgs<R, Null_t, P1, P2, P3, P4>
+    public func_args<R, null_t, P1, P2, P3, P4>
   {
-    enum { numArgs = 5 };
-    typedef C Class_t;
+    enum { num_args = 5 };
+    typedef C class_t;
   };
 
   /// Specialization for member functions with "this" plus 4 arguments.
   template <class R, class C, class P1, class P2, class P3, class P4>
-  struct FuncTraits<R (C::*)(P1, P2, P3, P4) const>
+  struct func_traits<R (C::*)(P1, P2, P3, P4) const>
     :
-    public FuncArgs<R, Null_t, P1, P2, P3, P4>
+    public func_args<R, null_t, P1, P2, P3, P4>
   {
-    enum { numArgs = 5 };
-    typedef C Class_t;
+    enum { num_args = 5 };
+    typedef C class_t;
   };
 
   /// Specialization for member functions with "this" plus 5 arguments.
   template <class R, class C, class P1, class P2, class P3, class P4,
             class P5>
-  struct FuncTraits<R (C::*)(P1, P2, P3, P4, P5)>
+  struct func_traits<R (C::*)(P1, P2, P3, P4, P5)>
     :
-    public FuncArgs<R, Null_t, P1, P2, P3, P4, P5>
+    public func_args<R, null_t, P1, P2, P3, P4, P5>
   {
-    enum { numArgs = 6 };
-    typedef C Class_t;
+    enum { num_args = 6 };
+    typedef C class_t;
   };
 
   /// Specialization for member functions with "this" plus 5 arguments.
   template <class R, class C, class P1, class P2, class P3, class P4,
             class P5>
-  struct FuncTraits<R (C::*)(P1, P2, P3, P4, P5) const>
+  struct func_traits<R (C::*)(P1, P2, P3, P4, P5) const>
     :
-    public FuncArgs<R, Null_t, P1, P2, P3, P4, P5>
+    public func_args<R, null_t, P1, P2, P3, P4, P5>
   {
-    enum { numArgs = 6 };
-    typedef C Class_t;
+    enum { num_args = 6 };
+    typedef C class_t;
   };
 
   /// Specialization for member functions with "this" plus 6 arguments.
   template <class R, class C, class P1, class P2, class P3, class P4,
             class P5, class P6>
-  struct FuncTraits<R (C::*)(P1, P2, P3, P4, P5, P6)>
+  struct func_traits<R (C::*)(P1, P2, P3, P4, P5, P6)>
     :
-    public FuncArgs<R, Null_t, P1, P2, P3, P4, P5, P6>
+    public func_args<R, null_t, P1, P2, P3, P4, P5, P6>
   {
-    enum { numArgs = 7 };
-    typedef C Class_t;
+    enum { num_args = 7 };
+    typedef C class_t;
   };
 
   /// Specialization for member functions with "this" plus 6 arguments.
   template <class R, class C, class P1, class P2, class P3, class P4,
             class P5, class P6>
-  struct FuncTraits<R (C::*)(P1, P2, P3, P4, P5, P6) const>
+  struct func_traits<R (C::*)(P1, P2, P3, P4, P5, P6) const>
     :
-    public FuncArgs<R, Null_t, P1, P2, P3, P4, P5, P6>
+    public func_args<R, null_t, P1, P2, P3, P4, P5, P6>
   {
-    enum { numArgs = 7 };
-    typedef C Class_t;
+    enum { num_args = 7 };
+    typedef C class_t;
   };
 
-//  ###################################################################
-//  ===================================================================
+  //  ###################################################################
+  //  ===================================================================
 
   template <class F>
-  class MemFunctorBase;
+  class mem_functor_base;
 
-  /// FuncTraits specialization for MemFunctorBase.
+  /// func_traits specialization for mem_functor_base.
   template <class MF>
-  struct FuncTraits<MemFunctorBase<MF> > : public FuncTraits<MF>
+  struct func_traits<mem_functor_base<MF> > : public func_traits<MF>
   {};
 
   template <class C>
-  C* extractPtr(C* c) { return c; }
+  C* extract_ptr(C* c) { return c; }
 
-  template <class C>
-  C* extractPtr(const SoftRef<C>& c) { return c.get(); }
-
-  /// MemFunctorBase adapts a member function to an ordinary operator().
+  /// mem_functor_base adapts a member function to an ordinary operator().
   /** The "this" pointer is passed through the first argument of the
-      operator() call, via a raw pointer or a SoftRef<>. */
+      operator() call, via a raw pointer or a smart pointer. */
 
-  template <class MemFunc>
-  class MemFunctorBase : public FuncTraits<MemFunctorBase<MemFunc> >
+  template <class mem_func>
+  class mem_functor_base
+    :
+    public func_traits<mem_functor_base<mem_func> >
   {
   private:
-    MemFunc itsHeldFunc;
+    mem_func m_held_func;
 
   public:
-    typedef typename FuncTraits<MemFunc>::Retn_t R;
-    typedef typename FuncTraits<MemFunc>::Class_t C;
+    typedef typename func_traits<mem_func>::retn_t R;
+    typedef typename func_traits<mem_func>::class_t C;
 
-    MemFunctorBase(MemFunc f) : itsHeldFunc(f) {}
+    mem_functor_base(mem_func f) : m_held_func(f) {}
 
     /// Function-call operator for object + 0 args.
-    template <class Ptr>
-    R operator()(Ptr obj)
+    template <class ptr>
+    R operator()(ptr obj)
     {
-      return (extractPtr(obj)->*itsHeldFunc)();
+      return (extract_ptr(obj)->*m_held_func)();
     }
 
     /// Function-call operator for object + 1 arg.
-    template <class Ptr, class P1>
-    R operator()(Ptr obj, P1 p1)
+    template <class ptr, class P1>
+    R operator()(ptr obj, P1 p1)
     {
-      return (extractPtr(obj)->*itsHeldFunc)(p1);
+      return (extract_ptr(obj)->*m_held_func)(p1);
     }
 
     /// Function-call operator for object + 2 args.
-    template <class Ptr, class P1, class P2>
-    R operator()(Ptr obj, P1 p1, P2 p2)
+    template <class ptr, class P1, class P2>
+    R operator()(ptr obj, P1 p1, P2 p2)
     {
-      return (extractPtr(obj)->*itsHeldFunc)(p1, p2);
+      return (extract_ptr(obj)->*m_held_func)(p1, p2);
     }
 
     /// Function-call operator for object + 3 args.
-    template <class Ptr, class P1, class P2, class P3>
-    R operator()(Ptr obj, P1 p1, P2 p2, P3 p3)
+    template <class ptr, class P1, class P2, class P3>
+    R operator()(ptr obj, P1 p1, P2 p2, P3 p3)
     {
-      return (extractPtr(obj)->*itsHeldFunc)(p1, p2, p3);
+      return (extract_ptr(obj)->*m_held_func)(p1, p2, p3);
     }
 
     /// Function-call operator for object + 4 args.
-    template <class Ptr, class P1, class P2, class P3, class P4>
-    R operator()(Ptr obj, P1 p1, P2 p2, P3 p3, P4 p4)
+    template <class ptr, class P1, class P2, class P3, class P4>
+    R operator()(ptr obj, P1 p1, P2 p2, P3 p3, P4 p4)
     {
-      return (extractPtr(obj)->*itsHeldFunc)(p1, p2, p3, p4);
+      return (extract_ptr(obj)->*m_held_func)(p1, p2, p3, p4);
     }
 
     /// Function-call operator for object + 5 args.
-    template <class Ptr, class P1, class P2, class P3, class P4,
+    template <class ptr, class P1, class P2, class P3, class P4,
               class P5>
-    R operator()(Ptr obj, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
+    R operator()(ptr obj, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
     {
-      return (extractPtr(obj)->*itsHeldFunc)(p1, p2, p3, p4, p5);
+      return (extract_ptr(obj)->*m_held_func)(p1, p2, p3, p4, p5);
     }
 
     /// Function-call operator for object + 6 args.
-    template <class Ptr, class P1, class P2, class P3, class P4,
+    template <class ptr, class P1, class P2, class P3, class P4,
               class P5, class P6>
-    R operator()(Ptr obj, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)
+    R operator()(ptr obj, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6)
     {
-      return (extractPtr(obj)->*itsHeldFunc)(p1, p2, p3, p4, p5, p6);
+      return (extract_ptr(obj)->*m_held_func)(p1, p2, p3, p4, p5, p6);
     }
   };
 
-//  ###################################################################
-//  ===================================================================
+  //  ###################################################################
+  //  ===================================================================
 
-/// MemFunctor extends MemFunctorBase using SoftRef<> for "this" pointers.
+  /// mem_functor extends mem_functor_base smart pointers for "this".
 
-//  ===================================================================
+  //  ===================================================================
 
-  template <class MemFunc>
-  struct MemFunctor : public MemFunctorBase<MemFunc>
+  template <class mem_func>
+  struct mem_functor : public mem_functor_base<mem_func>
   {
-    MemFunctor(MemFunc f) : MemFunctorBase<MemFunc>(f) {}
+    mem_functor(mem_func f) : mem_functor_base<mem_func>(f) {}
 
-    // operator()'s inherited from MemFunctorBase
+    // operator()'s inherited from mem_functor_base
   };
 
-  /// Specialization of FuncTraits for MemFunctor.
+  /// Factory function to make a mem_functor from any member function.
   template <class MF>
-  struct FuncTraits<MemFunctor<MF> > : public FuncTraits<MF>
-  {
-    typedef SoftRef<typename MemFunctor<MF>::C> Arg1_t;
-  };
-
-  /// Factory function to make a MemFunctor from any member function.
-  template <class MF>
-  inline MemFunctor<MF> memFunc(MF mf)
+  inline mem_functor<MF> mem_func(MF mf)
   {
     return mf;
   }
 
 
-//  ###################################################################
-//  ===================================================================
+  //  ###################################################################
+  //  ===================================================================
 
   ///  Traits struct for specifying a "functor" type given a function pointer.
-  template <class Fptr>
-  struct FunctorOf
+  template <class fptr>
+  struct functor_of
   {
-    typedef Fptr Type;
+    typedef fptr type;
   };
 
   /// Specialization for zero-arg mem func.
   template <class R, class C>
-  struct FunctorOf< R (C::*)() >
+  struct functor_of< R (C::*)() >
   {
-    typedef Util::MemFunctor<R (C::*)()> Type;
+    typedef rutz::mem_functor<R (C::*)()> type;
   };
 
   /// Specialization for zero-arg const mem func.
   template <class R, class C>
-  struct FunctorOf< R (C::*)() const >
+  struct functor_of< R (C::*)() const >
   {
-    typedef Util::MemFunctor<R (C::*)() const> Type;
+    typedef rutz::mem_functor<R (C::*)() const> type;
   };
 
   /// Specialization for one-arg mem func.
   template <class R, class C, class P1>
-  struct FunctorOf< R (C::*)(P1) >
+  struct functor_of< R (C::*)(P1) >
   {
-    typedef Util::MemFunctor<R (C::*)(P1)> Type;
+    typedef rutz::mem_functor<R (C::*)(P1)> type;
   };
 
   /// Specialization for one-arg const mem func.
   template <class R, class C, class P1>
-  struct FunctorOf< R (C::*)(P1) const >
+  struct functor_of< R (C::*)(P1) const >
   {
-    typedef Util::MemFunctor<R (C::*)(P1) const> Type;
+    typedef rutz::mem_functor<R (C::*)(P1) const> type;
   };
 
   /// Specialization for two-arg mem func.
   template <class R, class C, class P1, class P2>
-  struct FunctorOf< R (C::*)(P1, P2) >
+  struct functor_of< R (C::*)(P1, P2) >
   {
-    typedef Util::MemFunctor<R (C::*)(P1, P2)> Type;
+    typedef rutz::mem_functor<R (C::*)(P1, P2)> type;
   };
 
   /// Specialization for two-arg const mem func.
   template <class R, class C, class P1, class P2>
-  struct FunctorOf< R (C::*)(P1, P2) const >
+  struct functor_of< R (C::*)(P1, P2) const >
   {
-    typedef Util::MemFunctor<R (C::*)(P1, P2) const> Type;
+    typedef rutz::mem_functor<R (C::*)(P1, P2) const> type;
   };
 
   /// Specialization for three-arg mem func.
   template <class R, class C, class P1, class P2, class P3>
-  struct FunctorOf< R (C::*)(P1, P2, P3) >
+  struct functor_of< R (C::*)(P1, P2, P3) >
   {
-    typedef Util::MemFunctor<R (C::*)(P1, P2, P3)> Type;
+    typedef rutz::mem_functor<R (C::*)(P1, P2, P3)> type;
   };
 
   /// Specialization for three-arg const mem func.
   template <class R, class C, class P1, class P2, class P3>
-  struct FunctorOf< R (C::*)(P1, P2, P3) const >
+  struct functor_of< R (C::*)(P1, P2, P3) const >
   {
-    typedef Util::MemFunctor<R (C::*)(P1, P2, P3) const> Type;
+    typedef rutz::mem_functor<R (C::*)(P1, P2, P3) const> type;
   };
 
   /// Specialization for four-arg mem func.
   template <class R, class C, class P1, class P2, class P3, class P4>
-  struct FunctorOf< R (C::*)(P1, P2, P3, P4) >
+  struct functor_of< R (C::*)(P1, P2, P3, P4) >
   {
-    typedef Util::MemFunctor<R (C::*)(P1, P2, P3, P4)> Type;
+    typedef rutz::mem_functor<R (C::*)(P1, P2, P3, P4)> type;
   };
 
   /// Specialization for four-arg const mem func.
   template <class R, class C, class P1, class P2, class P3, class P4>
-  struct FunctorOf< R (C::*)(P1, P2, P3, P4) const >
+  struct functor_of< R (C::*)(P1, P2, P3, P4) const >
   {
-    typedef Util::MemFunctor<R (C::*)(P1, P2, P3, P4) const> Type;
+    typedef rutz::mem_functor<R (C::*)(P1, P2, P3, P4) const> type;
   };
 
   /// Specialization for 5-arg mem func.
   template <class R, class C, class P1, class P2, class P3, class P4,
             class P5>
-  struct FunctorOf< R (C::*)(P1, P2, P3, P4, P5) >
+  struct functor_of< R (C::*)(P1, P2, P3, P4, P5) >
   {
-    typedef Util::MemFunctor<R (C::*)(P1, P2, P3, P4, P5)> Type;
+    typedef rutz::mem_functor<R (C::*)(P1, P2, P3, P4, P5)> type;
   };
 
   /// Specialization for 5-arg const mem func.
   template <class R, class C, class P1, class P2, class P3, class P4,
             class P5>
-  struct FunctorOf< R (C::*)(P1, P2, P3, P4, P5) const >
+  struct functor_of< R (C::*)(P1, P2, P3, P4, P5) const >
   {
-    typedef Util::MemFunctor<R (C::*)(P1, P2, P3, P4, P5) const> Type;
+    typedef rutz::mem_functor<R (C::*)(P1, P2, P3, P4, P5) const> type;
   };
 
   /// Specialization for 6-arg mem func.
   template <class R, class C, class P1, class P2, class P3, class P4,
             class P5, class P6>
-  struct FunctorOf< R (C::*)(P1, P2, P3, P4, P5, P6) >
+  struct functor_of< R (C::*)(P1, P2, P3, P4, P5, P6) >
   {
-    typedef Util::MemFunctor<R (C::*)(P1, P2, P3, P4, P5, P6)> Type;
+    typedef rutz::mem_functor<R (C::*)(P1, P2, P3, P4, P5, P6)> type;
   };
 
   /// Specialization for 6-arg const mem func.
   template <class R, class C, class P1, class P2, class P3, class P4,
             class P5, class P6>
-  struct FunctorOf< R (C::*)(P1, P2, P3, P4, P5, P6) const >
+  struct functor_of< R (C::*)(P1, P2, P3, P4, P5, P6) const >
   {
-    typedef Util::MemFunctor<R (C::*)(P1, P2, P3, P4, P5, P6) const> Type;
+    typedef rutz::mem_functor<R (C::*)(P1, P2, P3, P4, P5, P6) const> type;
   };
 
 
-// ####################################################################
-//  ===================================================================
+  // ####################################################################
+  //  ===================================================================
 
   /// Factory function for building a "functor" from any function pointer.
-  template <class Fptr>
-  inline typename FunctorOf<Fptr>::Type
-  buildFunctor(Fptr f)
+  template <class fptr>
+  inline typename functor_of<fptr>::type
+  build_functor(fptr f)
   {
     return f;
   }
 
-//  ###################################################################
-//  ===================================================================
+  //  ###################################################################
+  //  ===================================================================
 
-  template <class BaseFunctor, class Bound>
-  class BoundFirst;
+  template <class base_functor, class bound_t>
+  class bound_first;
 
-  /// FuncTraits specialization for BoundFirst.
-  template <class BaseFunctor, class Bound>
-  struct FuncTraits<BoundFirst<BaseFunctor, Bound> >
+  /// func_traits specialization for bound_first.
+  template <class base_functor, class bound_t>
+  struct func_traits<bound_first<base_functor, bound_t> >
   {
-    enum { numArgs = (FuncTraits<BaseFunctor>::numArgs-1) };
+    enum { num_args = (func_traits<base_functor>::num_args-1) };
 
-    typedef typename FuncTraits<BaseFunctor>::Retn_t   Retn_t;
-    typedef typename FuncTraits<BaseFunctor>::Arg2_t   Arg1_t;
-    typedef typename FuncTraits<BaseFunctor>::Arg3_t   Arg2_t;
-    typedef typename FuncTraits<BaseFunctor>::Arg4_t   Arg3_t;
-    typedef typename FuncTraits<BaseFunctor>::Arg5_t   Arg4_t;
-    typedef typename FuncTraits<BaseFunctor>::Arg6_t   Arg5_t;
-    typedef typename FuncTraits<BaseFunctor>::Arg7_t   Arg6_t;
-    typedef typename FuncTraits<BaseFunctor>::Arg8_t   Arg7_t;
-    typedef                                   Null_t   Arg8_t;
+    typedef typename func_traits<base_functor>::retn_t   retn_t;
+    typedef typename func_traits<base_functor>::arg2_t   arg1_t;
+    typedef typename func_traits<base_functor>::arg3_t   arg2_t;
+    typedef typename func_traits<base_functor>::arg4_t   arg3_t;
+    typedef typename func_traits<base_functor>::arg5_t   arg4_t;
+    typedef typename func_traits<base_functor>::arg6_t   arg5_t;
+    typedef typename func_traits<base_functor>::arg7_t   arg6_t;
+    typedef typename func_traits<base_functor>::arg8_t   arg7_t;
+    typedef                                     null_t   arg8_t;
   };
 
-/// BoundFirst wraps another functor type with a fixed first argument.
-/** BoundFirst's can be constructed with the factory function
-    bindFirst(). */
+  /// bound_first wraps another functor type with a fixed first argument.
+  /** bound_first's can be constructed with the factory function
+      bind_first(). */
 
-  template <class BaseFunctor, class Bound_t>
-  class BoundFirst : public FuncTraits<BoundFirst<BaseFunctor, Bound_t> >
+  template <class base_functor, class bound_t>
+  class bound_first
+    :
+    public func_traits<bound_first<base_functor, bound_t> >
   {
   private:
-    BaseFunctor itsHeldFunc;
-    Bound_t itsBound;
+    base_functor m_held_func;
+    bound_t m_bound;
 
   public:
-    BoundFirst(BaseFunctor base, Bound_t bound) :
-      itsHeldFunc(base),
-      itsBound(bound)
+    bound_first(base_functor base, bound_t bound) :
+      m_held_func(base),
+      m_bound(bound)
     {}
 
-    BoundFirst(const BoundFirst& other) :
-      itsHeldFunc(other.itsHeldFunc),
-      itsBound(other.itsBound)
+    bound_first(const bound_first& other) :
+      m_held_func(other.m_held_func),
+      m_bound(other.m_bound)
     {}
 
-    // Workaround for g++-3.1's overeager "implicit typename" warnings
-    typedef FuncTraits<BoundFirst<BaseFunctor, Bound_t> > Traits;
-    typedef typename Traits::Retn_t   Retn_t;
-    typedef typename Traits::Arg1_t   Arg1_t;
-    typedef typename Traits::Arg2_t   Arg2_t;
-    typedef typename Traits::Arg3_t   Arg3_t;
-    typedef typename Traits::Arg4_t   Arg4_t;
-    typedef typename Traits::Arg5_t   Arg5_t;
-    typedef typename Traits::Arg6_t   Arg6_t;
-    typedef typename Traits::Arg7_t   Arg7_t;
-    typedef typename Traits::Arg8_t   Arg8_t;
+    typedef func_traits<bound_first<base_functor, bound_t> > traits;
+    typedef typename traits::retn_t   retn_t;
+    typedef typename traits::arg1_t   arg1_t;
+    typedef typename traits::arg2_t   arg2_t;
+    typedef typename traits::arg3_t   arg3_t;
+    typedef typename traits::arg4_t   arg4_t;
+    typedef typename traits::arg5_t   arg5_t;
+    typedef typename traits::arg6_t   arg6_t;
+    typedef typename traits::arg7_t   arg7_t;
+    typedef typename traits::arg8_t   arg8_t;
 
     //
     // All versions of operator() are provided, but only the one that
-    // involves the correct call to itsHeldFunc() will compile
+    // involves the correct call to m_held_func() will compile
     // successfully
     //
 
-    Retn_t operator()()
+    retn_t operator()()
     {
-      return itsHeldFunc(itsBound);
+      return m_held_func(m_bound);
     }
-    Retn_t operator()(Arg1_t p1)
+    retn_t operator()(arg1_t p1)
     {
-      return itsHeldFunc(itsBound, p1);
+      return m_held_func(m_bound, p1);
     }
-    Retn_t operator()(Arg1_t p1, Arg2_t p2)
+    retn_t operator()(arg1_t p1, arg2_t p2)
     {
-      return itsHeldFunc(itsBound, p1, p2);
+      return m_held_func(m_bound, p1, p2);
     }
-    Retn_t operator()(Arg1_t p1, Arg2_t p2, Arg3_t p3)
+    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3)
     {
-      return itsHeldFunc(itsBound, p1, p2, p3);
+      return m_held_func(m_bound, p1, p2, p3);
     }
-    Retn_t operator()(Arg1_t p1, Arg2_t p2, Arg3_t p3, Arg4_t p4)
+    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3, arg4_t p4)
     {
-      return itsHeldFunc(itsBound, p1, p2, p3, p4);
+      return m_held_func(m_bound, p1, p2, p3, p4);
     }
-    Retn_t operator()(Arg1_t p1, Arg2_t p2, Arg3_t p3, Arg4_t p4,
-                      Arg5_t p5)
+    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3, arg4_t p4,
+                      arg5_t p5)
     {
-      return itsHeldFunc(itsBound, p1, p2, p3, p4, p5);
+      return m_held_func(m_bound, p1, p2, p3, p4, p5);
     }
-    Retn_t operator()(Arg1_t p1, Arg2_t p2, Arg3_t p3, Arg4_t p4, Arg5_t p5,
-                      Arg6_t p6)
+    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3, arg4_t p4,
+                      arg5_t p5, arg6_t p6)
     {
-      return itsHeldFunc(itsBound, p1, p2, p3, p4, p5, p6);
+      return m_held_func(m_bound, p1, p2, p3, p4, p5, p6);
     }
-    Retn_t operator()(Arg1_t p1, Arg2_t p2, Arg3_t p3, Arg4_t p4, Arg5_t p5,
-                      Arg6_t p6, Arg7_t p7)
+    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3, arg4_t p4,
+                      arg5_t p5, arg6_t p6, arg7_t p7)
     {
-      return itsHeldFunc(itsBound, p1, p2, p3, p4, p5, p6, p7);
+      return m_held_func(m_bound, p1, p2, p3, p4, p5, p6, p7);
     }
 
   private:
-    BoundFirst& operator=(const BoundFirst&);
+    bound_first& operator=(const bound_first&);
   };
 
-  /// Factory function for creating BoundFirst functors.
-  template <class BaseFunctor, class Bound_t>
-  BoundFirst<BaseFunctor, Bound_t> bindFirst(BaseFunctor base, Bound_t bound)
+  /// Factory function for creating bound_first functors.
+  template <class base_functor, class bound_t>
+  bound_first<base_functor, bound_t> bind_first(base_functor base,
+                                                bound_t bound)
   {
-    return BoundFirst<BaseFunctor, Bound_t>(base, bound);
+    return bound_first<base_functor, bound_t>(base, bound);
   }
 
 
-//  ###################################################################
-//  ===================================================================
+  //  ###################################################################
+  //  ===================================================================
 
-  template <class BaseFunctor, class Bound>
-  class BoundLast;
+  template <class base_functor, class bound_t>
+  class bound_last;
 
-  /// FuncTraits specialization for BoundLast.
-  template <class BaseFunctor, class Bound>
-  struct FuncTraits<BoundLast<BaseFunctor, Bound> >
+  /// func_traits specialization for bound_last.
+  template <class base_functor, class bound_t>
+  struct func_traits<bound_last<base_functor, bound_t> >
   {
-    enum { numArgs = (FuncTraits<BaseFunctor>::numArgs-1) };
+    enum { num_args = (func_traits<base_functor>::num_args-1) };
 
-    typedef typename FuncTraits<BaseFunctor>::Retn_t   Retn_t;
-    typedef typename FuncTraits<BaseFunctor>::Arg1_t   Arg1_t;
-    typedef typename FuncTraits<BaseFunctor>::Arg2_t   Arg2_t;
-    typedef typename FuncTraits<BaseFunctor>::Arg3_t   Arg3_t;
-    typedef typename FuncTraits<BaseFunctor>::Arg4_t   Arg4_t;
-    typedef typename FuncTraits<BaseFunctor>::Arg5_t   Arg5_t;
-    typedef typename FuncTraits<BaseFunctor>::Arg6_t   Arg6_t;
-    typedef typename FuncTraits<BaseFunctor>::Arg7_t   Arg7_t;
-    typedef typename FuncTraits<BaseFunctor>::Arg8_t   Arg8_t;
+    typedef typename func_traits<base_functor>::retn_t   retn_t;
+    typedef typename func_traits<base_functor>::arg1_t   arg1_t;
+    typedef typename func_traits<base_functor>::arg2_t   arg2_t;
+    typedef typename func_traits<base_functor>::arg3_t   arg3_t;
+    typedef typename func_traits<base_functor>::arg4_t   arg4_t;
+    typedef typename func_traits<base_functor>::arg5_t   arg5_t;
+    typedef typename func_traits<base_functor>::arg6_t   arg6_t;
+    typedef typename func_traits<base_functor>::arg7_t   arg7_t;
+    typedef typename func_traits<base_functor>::arg8_t   arg8_t;
   };
 
-  /// BoundLast wraps another functor type with a fixed last argument.
-  /** BoundLast objects can be constructed with the factory function
-      bindLast(). */
+  /// bound_last wraps another functor type with a fixed last argument.
+  /** bound_last objects can be constructed with the factory function
+      bind_last(). */
 
-  template <class BaseFunctor, class Bound_t>
-  class BoundLast : public FuncTraits<BoundLast<BaseFunctor, Bound_t> >
+  template <class base_functor, class bound_t>
+  class bound_last
+    :
+    public func_traits<bound_last<base_functor, bound_t> >
   {
   private:
-    BaseFunctor itsHeldFunc;
-    Bound_t itsBound;
+    base_functor m_held_func;
+    bound_t m_bound;
 
   public:
-    BoundLast(BaseFunctor base, Bound_t bound) :
-      itsHeldFunc(base),
-      itsBound(bound)
+    bound_last(base_functor base, bound_t bound) :
+      m_held_func(base),
+      m_bound(bound)
     {}
 
-    BoundLast(const BoundLast& other) :
-      itsHeldFunc(other.itsHeldFunc),
-      itsBound(other.itsBound)
+    bound_last(const bound_last& other) :
+      m_held_func(other.m_held_func),
+      m_bound(other.m_bound)
     {}
 
-    // Workaround for g++-3.1's overeager "implicit typename" warnings
-    typedef FuncTraits<BoundLast<BaseFunctor, Bound_t> > Traits;
-    typedef typename Traits::Retn_t   Retn_t;
-    typedef typename Traits::Arg1_t   Arg1_t;
-    typedef typename Traits::Arg2_t   Arg2_t;
-    typedef typename Traits::Arg3_t   Arg3_t;
-    typedef typename Traits::Arg4_t   Arg4_t;
-    typedef typename Traits::Arg5_t   Arg5_t;
-    typedef typename Traits::Arg6_t   Arg6_t;
-    typedef typename Traits::Arg7_t   Arg7_t;
-    typedef typename Traits::Arg8_t   Arg8_t;
+    typedef func_traits<bound_last<base_functor, bound_t> > traits;
+    typedef typename traits::retn_t   retn_t;
+    typedef typename traits::arg1_t   arg1_t;
+    typedef typename traits::arg2_t   arg2_t;
+    typedef typename traits::arg3_t   arg3_t;
+    typedef typename traits::arg4_t   arg4_t;
+    typedef typename traits::arg5_t   arg5_t;
+    typedef typename traits::arg6_t   arg6_t;
+    typedef typename traits::arg7_t   arg7_t;
+    typedef typename traits::arg8_t   arg8_t;
 
     //
-    // All versions of operator() are provided, but only the one that
-    // involves the correct call to itsHeldFunc() will compile
+    // Multiple versions of operator() are provided, but only the one
+    // that involves the correct call to m_held_func() will compile
     // successfully
     //
 
-    Retn_t operator()()
+    retn_t operator()()
     {
-      return itsHeldFunc(itsBound);
+      return m_held_func(m_bound);
     }
-    Retn_t operator()(Arg1_t p1)
+    retn_t operator()(arg1_t p1)
     {
-      return itsHeldFunc(p1, itsBound);
+      return m_held_func(p1, m_bound);
     }
-    Retn_t operator()(Arg1_t p1, Arg2_t p2)
+    retn_t operator()(arg1_t p1, arg2_t p2)
     {
-      return itsHeldFunc(p1, p2, itsBound);
+      return m_held_func(p1, p2, m_bound);
     }
-    Retn_t operator()(Arg1_t p1, Arg2_t p2, Arg3_t p3)
+    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3)
     {
-      return itsHeldFunc(p1, p2, p3, itsBound);
+      return m_held_func(p1, p2, p3, m_bound);
     }
-    Retn_t operator()(Arg1_t p1, Arg2_t p2, Arg3_t p3, Arg4_t p4)
+    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3, arg4_t p4)
     {
-      return itsHeldFunc(p1, p2, p3, p4, itsBound);
+      return m_held_func(p1, p2, p3, p4, m_bound);
     }
-    Retn_t operator()(Arg1_t p1, Arg2_t p2, Arg3_t p3, Arg4_t p4,
-                      Arg5_t p5)
+    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3, arg4_t p4,
+                      arg5_t p5)
     {
-      return itsHeldFunc(p1, p2, p3, p4, p5, itsBound);
+      return m_held_func(p1, p2, p3, p4, p5, m_bound);
     }
-    Retn_t operator()(Arg1_t p1, Arg2_t p2, Arg3_t p3, Arg4_t p4, Arg5_t p5,
-                      Arg6_t p6)
+    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3, arg4_t p4,
+                      arg5_t p5, arg6_t p6)
     {
-      return itsHeldFunc(p1, p2, p3, p4, p5, p6, itsBound);
+      return m_held_func(p1, p2, p3, p4, p5, p6, m_bound);
     }
-    Retn_t operator()(Arg1_t p1, Arg2_t p2, Arg3_t p3, Arg4_t p4, Arg5_t p5,
-                      Arg6_t p6, Arg7_t p7)
+    retn_t operator()(arg1_t p1, arg2_t p2, arg3_t p3, arg4_t p4,
+                      arg5_t p5, arg6_t p6, arg7_t p7)
     {
-      return itsHeldFunc(p1, p2, p3, p4, p5, p6, p7, itsBound);
+      return m_held_func(p1, p2, p3, p4, p5, p6, p7, m_bound);
     }
 
   private:
-    BoundLast& operator=(const BoundLast&);
+    bound_last& operator=(const bound_last&);
   };
 
-  /// Factory function for creating BoundLast functors.
-  template <class BaseFunctor, class Bound_t>
-  BoundLast<BaseFunctor, Bound_t> bindLast(BaseFunctor base, Bound_t bound)
+  /// Factory function for creating bound_last functors.
+  template <class base_functor, class bound_t>
+  bound_last<base_functor, bound_t> bind_last(base_functor base,
+                                              bound_t bound)
   {
-    return BoundLast<BaseFunctor, Bound_t>(base, bound);
+    return bound_last<base_functor, bound_t>(base, bound);
   }
 
-} // end namespace Util
+} // end namespace rutz
 
 static const char vcid_functors_h[] = "$Header$";
 #endif // !FUNCTORS_H_DEFINED

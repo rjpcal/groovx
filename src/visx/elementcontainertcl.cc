@@ -69,11 +69,12 @@ DOTRACE("Elementcontainer_Init");
   Tcl::defGenericObjCmds<Element>(pkg, SRC_POS);
 
   pkg->def("addElement", "objref element_id",
-           Util::bindLast(Util::memFunc(&ElementContainer::addElement), 1),
+           rutz::bind_last(rutz::mem_func
+                           (&ElementContainer::addElement), 1),
            SRC_POS);
 
   pkg->def("addElements", "objref element_id(s)",
-           Util::bindLast(&addElementIds, 1), SRC_POS);
+           rutz::bind_last(&addElementIds, 1), SRC_POS);
 
   pkg->def("addElements", "objref element_id(s) repeat=1",
            &addElementIds, SRC_POS);

@@ -63,33 +63,33 @@ DOTRACE("Timinghdlr_Init");
   Tcl::defGenericObjCmds<TimingHdlr>(pkg, SRC_POS);
 
   pkg->def( "addImmediateEvent", "th_id event_type msec_delay",
-            Util::bindLast(&addNewEvent, TimingHdlr::IMMEDIATE),
+            rutz::bind_last(&addNewEvent, TimingHdlr::IMMEDIATE),
             SRC_POS );
   pkg->def( "addStartEvent", "th_id event_type msec_delay",
-            Util::bindLast(&addNewEvent, TimingHdlr::FROM_START),
+            rutz::bind_last(&addNewEvent, TimingHdlr::FROM_START),
             SRC_POS );
   pkg->def( "addResponseEvent", "th_id event_type msec_delay",
-            Util::bindLast(&addNewEvent, TimingHdlr::FROM_RESPONSE),
+            rutz::bind_last(&addNewEvent, TimingHdlr::FROM_RESPONSE),
             SRC_POS );
   pkg->def( "addAbortEvent", "th_id event_type msec_delay",
-            Util::bindLast(&addNewEvent, TimingHdlr::FROM_ABORT),
+            rutz::bind_last(&addNewEvent, TimingHdlr::FROM_ABORT),
             SRC_POS );
 
   pkg->def( "addImmediateEvent", "th_id event_id",
-            Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
-                           TimingHdlr::IMMEDIATE),
+            rutz::bind_last(rutz::mem_func(&TimingHdlr::addEvent),
+                            TimingHdlr::IMMEDIATE),
             SRC_POS );
   pkg->def( "addStartEvent", "th_id event_id",
-            Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
-                           TimingHdlr::FROM_START),
+            rutz::bind_last(rutz::mem_func(&TimingHdlr::addEvent),
+                            TimingHdlr::FROM_START),
             SRC_POS );
   pkg->def( "addResponseEvent", "th_id event_id",
-            Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
-                           TimingHdlr::FROM_RESPONSE),
+            rutz::bind_last(rutz::mem_func(&TimingHdlr::addEvent),
+                            TimingHdlr::FROM_RESPONSE),
             SRC_POS );
   pkg->def( "addAbortEvent", "th_id event_id",
-            Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
-                           TimingHdlr::FROM_ABORT),
+            rutz::bind_last(rutz::mem_func(&TimingHdlr::addEvent),
+                            TimingHdlr::FROM_ABORT),
             SRC_POS );
 
   pkg->namespaceAlias("Th");

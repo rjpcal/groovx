@@ -245,11 +245,11 @@ DOTRACE("Serialrh_Init");
 
   PKG_CREATE(interp, "SerialRh", "$Revision$");
   pkg->def( "SerialRh::SerialRh", "device=/dev/tty0p0",
-            Util::bindFirst(&startSerial, interp),
+            rutz::bind_first(&startSerial, interp),
             SRC_POS );
   pkg->def( "SerialRh::SerialRh", "",
-            Util::bindLast(Util::bindFirst(&startSerial, interp),
-                           "/dev/tty0p0"),
+            rutz::bind_last(rutz::bind_first(&startSerial, interp),
+                            "/dev/tty0p0"),
             SRC_POS );
 
   PKG_RETURN;

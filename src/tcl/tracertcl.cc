@@ -38,14 +38,14 @@
 
 #include "util/tracer.h"
 
-using namespace Util;
-
-void Tcl::defTracing(Tcl::Pkg* pkg, rutz::tracer& tracer)
+void Tcl::defTracing(Tcl::Pkg* pkg, rutz::tracer& t)
 {
-  pkg->def( "traceOn",     "", bindFirst(memFunc(&rutz::tracer::on), &tracer), SRC_POS );
-  pkg->def( "traceOff",    "", bindFirst(memFunc(&rutz::tracer::off), &tracer), SRC_POS );
-  pkg->def( "traceToggle", "", bindFirst(memFunc(&rutz::tracer::toggle), &tracer), SRC_POS );
-  pkg->def( "traceStatus", "", bindFirst(memFunc(&rutz::tracer::status), &tracer), SRC_POS );
+  using namespace rutz;
+
+  pkg->def( "traceOn",     "", bind_first(mem_func(&tracer::on), &t), SRC_POS );
+  pkg->def( "traceOff",    "", bind_first(mem_func(&tracer::off), &t), SRC_POS );
+  pkg->def( "traceToggle", "", bind_first(mem_func(&tracer::toggle), &t), SRC_POS );
+  pkg->def( "traceStatus", "", bind_first(mem_func(&tracer::status), &t), SRC_POS );
 }
 
 static const char vcid_tracertcl_cc[] = "$Header$";

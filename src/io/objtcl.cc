@@ -188,11 +188,10 @@ DOTRACE("Objdb_Init");
   pkg->def( "purge", 0, &dbPurge, SRC_POS );
   pkg->def( "release", 0, &dbRelease, SRC_POS );
   pkg->def( "loadObjects", "filename num_to_read=-1", &loadObjects, SRC_POS );
-  pkg->def( "loadObjects", "filename", Util::bindLast(&loadObjects, ALL), SRC_POS );
+  pkg->def( "loadObjects", "filename", rutz::bind_last(&loadObjects, ALL), SRC_POS );
   pkg->def( "saveObjects", "objids filename use_bases=yes", &saveObjects, SRC_POS );
   pkg->def( "saveObjects", "objids filename",
-            Util::bindLast(&saveObjects, true),
-            SRC_POS );
+            rutz::bind_last(&saveObjects, true), SRC_POS );
 
   PKG_RETURN;
 }
@@ -214,7 +213,7 @@ DOTRACE("Obj_Init");
 
   pkg->def( "new", "typename", &objNew, SRC_POS );
   pkg->def( "new", "typename {cmd1 arg1 cmd2 arg2 ...}",
-            Util::bindLast(&objNewArgs, Tcl::Interp(interp)),
+            rutz::bind_last(&objNewArgs, Tcl::Interp(interp)),
             SRC_POS );
   pkg->def( "newarr", "typename array_size=1", &objNewArr, SRC_POS );
   pkg->def( "delete", "objref(s)", &objDelete, SRC_POS );

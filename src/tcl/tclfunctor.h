@@ -43,6 +43,16 @@
 namespace rutz
 {
   struct file_pos;
+
+  template <class C>
+  C* extract_ptr(const Util::SoftRef<C>& c) { return c.get(); }
+
+  /// Specialization of func_traits for mem_functor.
+  template <class MF>
+  struct func_traits<mem_functor<MF> > : public func_traits<MF>
+  {
+    typedef Util::SoftRef<typename mem_functor<MF>::C> arg1_t;
+  };
 }
 
 namespace Tcl
@@ -103,8 +113,8 @@ namespace Tcl
 #endif
 
 #define EXTRACT_PARAM(N) \
-  typename Util::FuncTraits<Func>::Arg##N##_t p##N = \
-  ctx.template getValFromArg<typename Util::FuncTraits<Func>::Arg##N##_t>(N);
+  typename rutz::func_traits<Func>::arg##N##_t p##N = \
+  ctx.template getValFromArg<typename rutz::func_traits<Func>::arg##N##_t>(N);
 
   /// Generic Tcl::Functor definition.
   template <unsigned int N, class R, class Func>
@@ -112,13 +122,13 @@ namespace Tcl
   {};
 }
 
-namespace Util
+namespace rutz
 {
-  /// Specialization of FuncTraits for Tcl::Functor.
+  /// Specialization of func_traits for Tcl::Functor.
   template <unsigned int N, class F, class Func>
-  struct FuncTraits<Tcl::Functor<N, F, Func> >
+  struct func_traits<Tcl::Functor<N, F, Func> >
   {
-    typedef typename Util::FuncTraits<Func>::Retn_t Retn_t;
+    typedef typename rutz::func_traits<Func>::retn_t retn_t;
   };
 }
 
@@ -333,12 +343,12 @@ namespace Tcl
 /// Factory function to make Tcl::Functor's from any functor or function ptr.
 
   template <class Fptr>
-  inline Functor<Util::FuncTraits<Fptr>::numArgs,
-                 typename Util::FuncTraits<Fptr>::Retn_t,
-                 typename Util::FunctorOf<Fptr>::Type>
+  inline Functor<rutz::func_traits<Fptr>::num_args,
+                 typename rutz::func_traits<Fptr>::retn_t,
+                 typename rutz::functor_of<Fptr>::type>
   buildTclFunctor(Fptr f)
   {
-    return Util::buildFunctor(f);
+    return rutz::build_functor(f);
   }
 
 
@@ -407,8 +417,8 @@ namespace Tcl
                                 const char* usage, int nargs,
                                 const rutz::file_pos& src_pos)
   {
-    typedef typename Util::FuncTraits<Functor>::Retn_t Retn_t;
-    return Command::make(interp, GenericCallback<Retn_t, Functor>::make(f),
+    typedef typename rutz::func_traits<Functor>::retn_t retn_t;
+    return Command::make(interp, GenericCallback<retn_t, Functor>::make(f),
                          cmd_name, usage, nargs+1,
                          -1 /*default for objc_max*/,
                          false /*default for exact_objc*/,
@@ -426,9 +436,9 @@ namespace Tcl
                                 int nargs, unsigned int keyarg,
                                 const rutz::file_pos& src_pos)
   {
-    typedef typename Util::FuncTraits<Functor>::Retn_t Retn_t;
+    typedef typename rutz::func_traits<Functor>::retn_t retn_t;
     shared_ptr<Command> cmd =
-      Command::make(interp, GenericCallback<Retn_t, Functor>::make(f),
+      Command::make(interp, GenericCallback<retn_t, Functor>::make(f),
                     cmd_name, usage, nargs+1,
                     -1 /*default for objc_max*/,
                     false /*default for exact_objc*/,
@@ -454,7 +464,7 @@ namespace Tcl
   {
     return makeGenericCmd
       (interp, buildTclFunctor(f), cmd_name, usage,
-       Util::FuncTraits<Func>::numArgs, src_pos);
+       rutz::func_traits<Func>::num_args, src_pos);
   }
 
 // ####################################################################
@@ -469,7 +479,7 @@ namespace Tcl
   {
     return makeGenericVecCmd
       (interp, buildTclFunctor(f), cmd_name, usage,
-       Util::FuncTraits<Func>::numArgs, keyarg, src_pos);
+       rutz::func_traits<Func>::num_args, keyarg, src_pos);
   }
 
 } // end namespace Tcl

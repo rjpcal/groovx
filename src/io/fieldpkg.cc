@@ -74,7 +74,7 @@ namespace Tcl
 
     ~FieldsLister() throw() {}
 
-    typedef void Retn_t;
+    typedef void retn_t;
 
     void operator()(Tcl::Context& ctx);
   };
@@ -138,9 +138,9 @@ DOTRACE("Tcl::defField");
   const unsigned int keyarg = 1;
 
   pkg->defVec( field.name().c_str(), "objref(s)",
-               Util::bindFirst(getField, field), keyarg, src_pos );
+               rutz::bind_first(getField, field), keyarg, src_pos );
   pkg->defVec( field.name().c_str(), "objref(s) new_val(s)",
-               Util::bindFirst(setField, field), keyarg, src_pos );
+               rutz::bind_first(setField, field), keyarg, src_pos );
 }
 
 void Tcl::defAllFields(Tcl::Pkg* pkg, const FieldMap& fieldmap,

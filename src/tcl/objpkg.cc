@@ -123,13 +123,13 @@ void Tcl::defGenericObjCmds(Tcl::Pkg* pkg,
 {
 DOTRACE("Tcl::defGenericObjCmds");
   pkg->defVec( "is", "objref(s)",
-               Util::bindFirst(isMyType, caster), 1, src_pos );
+               rutz::bind_first(isMyType, caster), 1, src_pos );
   pkg->def( "countAll", "",
-            Util::bindFirst(countAll, caster), src_pos );
+            rutz::bind_first(countAll, caster), src_pos );
   pkg->def( "findAll", "",
-            Util::bindFirst(findAll, caster), src_pos );
+            rutz::bind_first(findAll, caster), src_pos );
   pkg->def( "removeAll", "",
-            Util::bindFirst(removeAll, caster), src_pos );
+            rutz::bind_first(removeAll, caster), src_pos );
 }
 
 static const char vcid_objpkg_cc[] = "$Header$";

@@ -55,8 +55,8 @@ DOTRACE("Tlist_Init");
             &TlistUtils::createPreview,
             SRC_POS );
   pkg->def( "createPreview", "objids",
-            Util::bindLast(Util::bindLast(&TlistUtils::createPreview,
-                                          true), -1),
+            rutz::bind_last(rutz::bind_last(&TlistUtils::createPreview,
+                                            true), -1),
             SRC_POS );
 
   pkg->def( "dealSingles", "objid(s) posid",
@@ -73,7 +73,7 @@ DOTRACE("Tlist_Init");
             &TlistUtils::loadObjidFile,
             SRC_POS );
   pkg->def( "loadObjidFile", "objid_file objids posids",
-            Util::bindLast(&TlistUtils::loadObjidFile, -1),
+            rutz::bind_last(&TlistUtils::loadObjidFile, -1),
             SRC_POS );
 
   pkg->def( "write_responses", "filename", &TlistUtils::writeResponses, SRC_POS );

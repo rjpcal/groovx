@@ -94,15 +94,15 @@ int Misc_Init(Tcl_Interp* interp)
 {
 DOTRACE("Misc_Init");
 
-  using namespace Util;
+  using namespace rutz;
 
   PKG_CREATE(interp, "Misc", "$Revision$");
 
   pkg->def( "::rand", "min max",
-            bindFirst(memFunc(&rutz::urand::fdraw_range), &generator),
+            bind_first(mem_func(&rutz::urand::fdraw_range), &generator),
             SRC_POS );
   pkg->def( "::srand", "seed",
-            bindFirst(memFunc(&rutz::urand::seed), &generator),
+            bind_first(mem_func(&rutz::urand::seed), &generator),
             SRC_POS );
 
   // use the standard library sleep() to sleep a specified # of seconds
