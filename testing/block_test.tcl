@@ -10,6 +10,13 @@
 BlockList::reset
 set ::BLOCK [Block::Block]
 
+source ${::TEST_DIR}/io_test.tcl
+
+IO::testStringifyCmd BlockTcl Block 1 $::BLOCK
+IO::testDestringifyCmd BlockTcl Block 1 $::BLOCK
+IO::testWriteCmd BlockTcl Block 1 $::BLOCK
+IO::testReadCmd BlockTcl Block 1 $::BLOCK
+
 ### Block::currentTrialCmd ###
 test "BlockTcl-Block::currentTrial" "too few args" {
 	 Block::currentTrial

@@ -13,7 +13,14 @@ if { [catch {package require Sound}] != 0 } { return }
 #set AUDIO [Sound::haveAudio]
 set AUDIO 0							  ;# disable sound tests
 
-set TEST_SOUND -1
+set TEST_SOUND [Sound::Sound $::TEST_DIR/sound1.au]
+
+source ${::TEST_DIR}/io_test.tcl
+
+IO::testStringifyCmd SoundTcl Sound 1 $::TEST_SOUND
+IO::testDestringifyCmd SoundTcl Sound 1 $::TEST_SOUND
+IO::testWriteCmd SoundTcl Sound 1 $::TEST_SOUND
+IO::testReadCmd SoundTcl Sound 1 $::TEST_SOUND
 
 ### Sound::Sound ###
 test "SoundTcl-Sound::Sound" "too few args" {
