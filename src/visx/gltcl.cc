@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Fri Jul 16 18:37:36 1999
+// written: Thu Jul 22 17:37:35 1999
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -51,19 +51,27 @@ namespace TclGL {
   class GLCmd;
 
   class glBeginCmd;
+  class glCallListCmd;
   class glClearCmd;
   class glClearIndexCmd;
   class glColorCmd;
+  class glDeleteListsCmd;
   class glDrawBufferCmd;
   class glEndCmd;
+  class glEndListCmd;
   class glFlushCmd;
+  class glGenListsCmd;
   class glGetCmd;
   class glIndexiCmd;
+  class glIsListCmd;
   class glLineWidthCmd;
+  class glListBaseCmd;
   class glLoadIdentityCmd;
   class glLoadMatrixCmd;
   class glMatrixModeCmd;
+  class glNewListCmd;
   class glOrthoCmd;
+  class glPolygonModeCmd;
   class glPopMatrixCmd;
   class glPushMatrixCmd;
   class glRotateCmd;
@@ -145,6 +153,23 @@ protected:
 
 //---------------------------------------------------------------------
 //
+// TclGL::glCallListCmd --
+//
+//---------------------------------------------------------------------
+
+class TclGL::glCallListCmd : public TclGL::GLCmd {
+public:
+  glCallListCmd(TclPkg* pkg, const char* cmd_name) :
+	 GLCmd(pkg, cmd_name, "list", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 GLuint list_id = getIntFromArg(1);
+	 glCallList(1);
+  }
+};
+
+//---------------------------------------------------------------------
+//
 // TclGL::glClearCmd --
 //
 //---------------------------------------------------------------------
@@ -209,6 +234,24 @@ protected:
 
 //---------------------------------------------------------------------
 //
+// TclGL::glDeleteListsCmd --
+//
+//---------------------------------------------------------------------
+
+class TclGL::glDeleteListsCmd : public TclGL::GLCmd {
+public:
+  glDeleteListsCmd(TclPkg* pkg, const char* cmd_name) :
+	 GLCmd(pkg, cmd_name, "list_id range", 3, 3) {}
+protected:
+  virtual void invoke() {
+	 GLuint list_id = getIntFromArg(1);
+	 GLsizei range = getIntFromArg(2);
+	 glDeleteLists(list_id, range);
+  }
+};
+
+//---------------------------------------------------------------------
+//
 // TclGL::glDrawBufferCmd --
 //
 //---------------------------------------------------------------------
@@ -251,6 +294,20 @@ protected:
   virtual void invoke() { glEnd(); }
 };
 
+//---------------------------------------------------------------------
+//
+// TclGL::glEndListCmd --
+//
+//---------------------------------------------------------------------
+
+class TclGL::glEndListCmd : public TclGL::GLCmd {
+public:
+  glEndListCmd(TclPkg* pkg, const char* cmd_name) :
+	 GLCmd(pkg, cmd_name, NULL, 1, 1) {}
+protected:
+  virtual void invoke() { glEndList(); checkGL(); }
+};
+
 //--------------------------------------------------------------------
 //
 // TclGL::glFlushCmd --
@@ -263,6 +320,25 @@ public:
 	 GLCmd(pkg, cmd_name, NULL, 1, 1) {}
 protected:
   virtual void invoke() { glFlush(); }
+};
+
+//---------------------------------------------------------------------
+//
+// TclGL::glGenListsCmd --
+//
+//---------------------------------------------------------------------
+
+class TclGL::glGenListsCmd : public TclGL::GLCmd {
+public:
+  glGenListsCmd(TclPkg* pkg, const char* cmd_name) :
+	 GLCmd(pkg, cmd_name, "range", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 GLsizei range = getIntFromArg(1);
+	 GLuint base = glGenLists(range);	 
+	 checkGL();
+	 returnInt(base);
+  }
 };
 
 //---------------------------------------------------------------------
@@ -613,6 +689,26 @@ protected:
   }
 };
 
+//---------------------------------------------------------------------
+//
+// TclGL::glIsListCmd --
+//
+//---------------------------------------------------------------------
+
+class TclGL::glIsListCmd : public TclGL::GLCmd {
+public:
+  glIsListCmd(TclPkg* pkg, const char* cmd_name) :
+	 GLCmd(pkg, cmd_name, "list_id", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 GLuint list_id = getIntFromArg(1);
+	 GLboolean is_list = glIsList(list_id);
+	 checkGL();
+	 if (is_list == GL_TRUE) returnBool(true);
+	 else returnBool(false);
+  }
+};
+
 //--------------------------------------------------------------------
 //
 // TclGL::glLineWidthCmd --
@@ -627,6 +723,24 @@ protected:
   virtual void invoke() {
 	 GLdouble w = getDoubleFromArg(1);
 	 glLineWidth(w);
+	 checkGL();
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// TclGL::glListBaseCmd --
+//
+//---------------------------------------------------------------------
+
+class TclGL::glListBaseCmd : public TclGL::GLCmd {
+public:
+  glListBaseCmd(TclPkg* pkg, const char* cmd_name) :
+	 GLCmd(pkg, cmd_name, "base", 2, 2) {}
+protected:
+  virtual void invoke() { 
+	 GLuint base = getIntFromArg(1);
+	 glListBase(base);
 	 checkGL();
   }
 };
@@ -698,6 +812,29 @@ protected:
 
 //---------------------------------------------------------------------
 //
+// TclGL::glNewListCmd --
+//
+//---------------------------------------------------------------------
+
+class TclGL::glNewListCmd : public TclGL::GLCmd {
+public:
+  glNewListCmd(TclPkg* pkg, const char* cmd_name) :
+	 GLCmd(pkg, cmd_name, "list_id mode", 3, 3)
+  {
+	 pkg->linkVarCopy("GL_COMPILE", GL_COMPILE);
+	 pkg->linkVarCopy("GL_COMPILE_AND_EXECUTE", GL_COMPILE_AND_EXECUTE);
+  }
+protected:
+  virtual void invoke() {
+	 GLuint list_id = getIntFromArg(1);
+	 GLenum mode = getIntFromArg(2);
+	 glNewList(list_id, mode);
+	 checkGL();
+  }
+};
+
+//---------------------------------------------------------------------
+//
 // TclGL::glOrthoCmd --
 //
 //---------------------------------------------------------------------
@@ -716,6 +853,35 @@ protected:
 	 GLdouble zFar   = getDoubleFromArg(6);
 
 	 glOrtho(left, right, bottom, top, zNear, zFar);
+	 checkGL();
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// TclGL::glPolygonModeCmd --
+//
+//---------------------------------------------------------------------
+
+class TclGL::glPolygonModeCmd : public TclGL::GLCmd {
+public:
+  glPolygonModeCmd(TclPkg* pkg, const char* cmd_name) :
+	 GLCmd(pkg, cmd_name, "face mode", 3, 3)
+  {
+	 // Face enum's
+	 pkg->linkVarCopy("GL_FRONT", GL_FRONT);
+	 pkg->linkVarCopy("GL_BACK", GL_BACK);
+	 pkg->linkVarCopy("GL_FRONT_AND_BACK", GL_FRONT_AND_BACK);
+	 // Mode enum's
+	 pkg->linkVarCopy("GL_POINT", GL_POINT);
+	 pkg->linkVarCopy("GL_LINE", GL_LINE);
+	 pkg->linkVarCopy("GL_FILL", GL_FILL);
+  }
+protected:
+  virtual void invoke() { 
+	 GLenum face = getIntFromArg(1);
+	 GLenum mode = getIntFromArg(2);
+	 glPolygonMode(face, mode);
 	 checkGL();
   }
 };
@@ -1166,21 +1332,29 @@ public:
 	 TclPkg(interp, "Tclgl", "2.0")
   {
 	 addCommand( new glBeginCmd        (this, "glBegin") );
+	 addCommand( new glCallListCmd     (this, "glCallList") );
 	 addCommand( new glClearCmd        (this, "glClear") );
 	 addCommand( new glClearIndexCmd   (this, "glClearIndex") );
 	 addCommand( new glColorCmd        (this, "glColor") );
+	 addCommand( new glDeleteListsCmd  (this, "glDeleteLists") );
 	 addCommand( new glDrawBufferCmd   (this, "glDrawBuffer") );
 	 addCommand( new glEndCmd          (this, "glEnd") );
+	 addCommand( new glEndListCmd      (this, "glEndList") );
 	 addCommand( new glFlushCmd        (this, "glFlush") );
+	 addCommand( new glGenListsCmd     (this, "glGenLists") );
 	 addCommand( new glGetTypeCmd<GLboolean>(this, "glGetBoolean") );
 	 addCommand( new glGetTypeCmd<GLdouble>(this, "glGetDouble") );
 	 addCommand( new glGetTypeCmd<GLint>(this, "glGetInteger") );
 	 addCommand( new glIndexiCmd       (this, "glIndexi") );
+	 addCommand( new glIsListCmd       (this, "glIsList") );
 	 addCommand( new glLineWidthCmd    (this, "glLineWidth") );
+	 addCommand( new glListBaseCmd     (this, "glListBase") );
 	 addCommand( new glLoadIdentityCmd (this, "glLoadIdentity") );
 	 addCommand( new glLoadMatrixCmd   (this, "glLoadMatrix") );	 
 	 addCommand( new glMatrixModeCmd   (this, "glMatrixMode") );
+	 addCommand( new glNewListCmd      (this, "glNewList") );
 	 addCommand( new glOrthoCmd        (this, "glOrtho") );
+	 addCommand( new glPolygonModeCmd  (this, "glPolygonMode") );
 	 addCommand( new glPopMatrixCmd    (this, "glPopMatrix") );
 	 addCommand( new glPushMatrixCmd   (this, "glPushMatrix") );
 	 addCommand( new glRotateCmd       (this, "glRotate") );
