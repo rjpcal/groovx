@@ -108,6 +108,15 @@ namespace
     return fname.substr(0, pos);
   }
 
+  string join_filename(const string& dir, const string& fname)
+  {
+    string result(dir);
+    result.reserve(dir.length() + 1 + fname.length());
+    result += '/';
+    result += fname;
+    return result;
+  }
+
   string trim_trailing_slashes(const string& inp)
   {
     string result = inp;
@@ -319,8 +328,7 @@ public:
 
   int is_cc_or_h_filename(const char* fname);
 
-  static bool resolve_one(const char* include_name,
-                          int include_length,
+  static bool resolve_one(const string& include_name,
                           const string& src_fname,
                           const string& dirname,
                           const vector<string>& ipath,
@@ -496,8 +504,7 @@ int cppdeps::is_cc_or_h_filename(const char* fname)
   return 0;
 }
 
-bool cppdeps::resolve_one(const char* include_name,
-                          int include_length,
+bool cppdeps::resolve_one(const string& include_name,
                           const string& src_fname,
                           const string& dirname_without_slash,
                           const vector<string>& ipath,
@@ -506,9 +513,7 @@ bool cppdeps::resolve_one(const char* include_name,
 {
   for (unsigned int i = 0; i < ipath.size(); ++i)
     {
-      string fullpath = ipath[i];
-      fullpath += '/';
-      fullpath.append(include_name, include_length);
+      const string fullpath = join_filename(ipath[i], include_name);
 
       if (file_exists(fullpath.c_str()))
         {
@@ -522,9 +527,8 @@ bool cppdeps::resolve_one(const char* include_name,
 
   // Try resolving the include by using the directory containing the
   // source file currently being examined.
-  string fullpath = dirname_without_slash;
-  fullpath += '/';
-  fullpath.append(include_name, include_length);
+  const string fullpath =
+    join_filename(dirname_without_slash, include_name);
 
   if (file_exists(fullpath.c_str()))
     {
@@ -532,14 +536,12 @@ bool cppdeps::resolve_one(const char* include_name,
       return true;
     }
 
-  string include_string(include_name, include_length);
-
   // Try resolving the include by using the current working directory
   // from which this program was invoked.
-  if (file_exists(include_string.c_str()))
+  if (file_exists(include_name.c_str()))
     {
-      if (src_fname != include_string)
-        vec.push_back(include_spec(include_string, src_fname));
+      if (src_fname != include_name)
+        vec.push_back(include_spec(include_name, src_fname));
       return true;
     }
 
@@ -548,12 +550,12 @@ bool cppdeps::resolve_one(const char* include_name,
   for (unsigned int i = 0; i < literal.size(); ++i)
     {
       const char* extension =
-        include_name + include_length - literal[i].length();
+        include_name.c_str() + include_name.length() - literal[i].length();
 
       if (strncmp(extension, literal[i].c_str(),
                   literal[i].length()) == 0)
         {
-          vec.push_back(include_spec(include_string, "(literal)", true));
+          vec.push_back(include_spec(include_name, "(literal)", true));
           return true;
         }
     }
@@ -641,7 +643,7 @@ cppdeps::get_direct_includes(const string& src_fname)
       if (!is_valid_delimiter)
         continue;
 
-      const char* const include_name = fptr;
+      const char* const include_start = fptr;
 
       switch (delimiter)
         {
@@ -665,31 +667,31 @@ cppdeps::get_direct_includes(const string& src_fname)
           exit(1);
         }
 
-      const int include_length = fptr - include_name;
+      // include_start and include_length together specify the piece
+      // of text inside the #include "..." or #include <...> -- we
+      // need to keep track of include_length because include_start is
+      // not null-terminated, since it's just pointing into the middle
+      // of some mmap'ed file
 
-      // include_name and include_length together specify the piece of text
-      // inside the #include "..." or #include <...> -- we need to keep
-      // track of include_length because include_name is not
-      // null-terminated, since it's just pointing into the middle of some
-      // mmap'ed file
+      const int include_length = fptr - include_start;
+      const string include_name(include_start, include_length);
 
-      if (resolve_one(include_name, include_length, src_fname,
+      if (resolve_one(include_name, src_fname,
                       dirname_without_slash, m_user_ipath,
                       m_literal_exts, vec))
         continue;
 
       if (m_check_sys_includes &&
-          resolve_one(include_name, include_length, src_fname,
+          resolve_one(include_name, src_fname,
                       dirname_without_slash, m_sys_ipath,
                       m_literal_exts, vec))
         continue;
 
-      const string include_string(include_name, include_length);
       if (!m_quiet)
         {
           cerr << "WARNING: in " << src_fname
                << ": couldn\'t resolve #include \""
-               << include_string << "\"\n";
+               << include_name << "\"\n";
           cerr << "\twith search path: [";
           for (unsigned int i = 0; i < m_user_ipath.size(); ++i)
             {
@@ -820,10 +822,7 @@ void cppdeps::batch_build()
               if (should_ignore_file(e->d_name))
                 continue;
 
-              string pathname = current_file;
-              pathname += '/';
-              pathname += e->d_name;
-              files.push_back(pathname);
+              files.push_back(join_filename(current_file, e->d_name));
             }
 
           closedir(d);
