@@ -2,7 +2,7 @@
 // iostl.h
 // Rob Peters
 // created: Sat Mar 13 15:20:43 1999
-// written: Wed May 26 21:23:02 1999
+// written: Thu Jun 24 18:10:46 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -31,7 +31,7 @@ public:
   virtual void deserialize(istream& is, IOFlag) {
 	 is >> itsVal;
   }
-  virtual int charCount() const { return 0; }
+  virtual int charCount() const { return gCharCount<T>(itsVal); }
 
   T& operator() () { return itsVal; }
   const T& operator() () const { return itsVal; }
