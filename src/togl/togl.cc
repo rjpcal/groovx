@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Nov 20 20:22:44 2002
+// written: Wed Nov 20 20:29:28 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -152,14 +152,15 @@ Togl::Color Togl::Impl::queryColor(unsigned int color_index) const
 
 namespace
 {
-  Colormap findColormap(Display* dpy, XVisualInfo* visInfo, bool privateCmap)
+  Colormap findColormap(Display* dpy, Visual* visual,
+                        int screen, bool privateCmap)
   {
     // For RGB colormap or shared color-index colormap
     if (!privateCmap)
       {
         int scrnum = DefaultScreen(dpy);
 
-        if (visInfo->visual == DefaultVisual(dpy, scrnum))
+        if (visual == DefaultVisual(dpy, scrnum))
           {
             // Just share the default colormap
             return DefaultColormap(dpy, scrnum);
@@ -168,8 +169,8 @@ namespace
           {
             // Make a new read-only colormap
             return XCreateColormap(dpy,
-                                   RootWindow(dpy, visInfo->screen),
-                                   visInfo->visual, AllocNone);
+                                   RootWindow(dpy, screen),
+                                   visual, AllocNone);
           }
       }
 
@@ -178,8 +179,8 @@ namespace
       {
         // Use AllocAll to get a read/write colormap
         return XCreateColormap(dpy,
-                               RootWindow(dpy, visInfo->screen),
-                               visInfo->visual, AllocAll);
+                               RootWindow(dpy, screen),
+                               visual, AllocAll);
       }
   }
 }
@@ -195,13 +196,16 @@ Window Togl::Impl::cClassCreateProc(Tk_Window tkwin,
   rep->itsCanvas =
     Util::SoftRef<GLCanvas>(GLCanvas::make(dpy, *(rep->itsOpts)));
 
-  XVisualInfo* visInfo = rep->itsCanvas->visInfo();
+  Visual* visual = rep->itsCanvas->visual();
+  int screen = rep->itsCanvas->screen();
+  int depth = rep->itsCanvas->bitsPerPixel();
 
-  Colormap cmap = findColormap(dpy, visInfo, rep->itsPrivateCmapFlag);
+  Colormap cmap = findColormap(dpy, visual, screen,
+                               rep->itsPrivateCmapFlag);
 
   // Make sure Tk knows to switch to the new colormap when the cursor is over
   // this window when running in color index mode.
-  Tk_SetWindowVisual(tkwin, visInfo->visual, visInfo->depth, cmap);
+  Tk_SetWindowVisual(tkwin, visual, depth, cmap);
 
 #define ALL_EVENTS_MASK \
 KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask| \
@@ -219,8 +223,8 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
                              0, 0,
                              rep->itsOwner->width(),
                              rep->itsOwner->height(),
-                             0, visInfo->depth,
-                             InputOutput, visInfo->visual,
+                             0, depth,
+                             InputOutput, visual,
                              CWBorderPixel | CWColormap | CWEventMask,
                              &atts);
 

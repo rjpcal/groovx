@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Wed Nov 20 20:19:41 2002
+// written: Wed Nov 20 20:29:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,6 @@
 #include "gfx/canvas.h"
 
 #include <X11/Xlib.h>
-#include <X11/Xutil.h> // for XVisualInfo
 
 class GlxOpts;
 class GlxWrapper;
@@ -32,7 +31,9 @@ public:
 
   virtual ~GLCanvas();
 
-  XVisualInfo* visInfo() const;
+  Visual* visual() const;
+
+  int screen() const;
 
   void makeCurrent(Window win);
 

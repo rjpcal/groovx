@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Nov 20 20:20:34 2002
+// written: Wed Nov 20 20:29:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,9 +61,14 @@ GLCanvas::~GLCanvas()
   rep = 0;
 }
 
-XVisualInfo* GLCanvas::visInfo() const
+Visual* GLCanvas::visual() const
 {
-  return rep->glx->visInfo();
+  return rep->glx->visInfo()->visual;
+}
+
+int GLCanvas::screen() const
+{
+  return rep->glx->visInfo()->screen;
 }
 
 void GLCanvas::makeCurrent(Window win)
