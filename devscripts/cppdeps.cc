@@ -1248,7 +1248,7 @@ private:
 
   vector<string>           m_src_files;
 
-  bool                     m_debug;
+  bool                     m_inspect;
   int                      m_argc;
   char**                   m_argv;
 
@@ -1270,7 +1270,7 @@ public:
 };
 
 cppdeps::cppdeps(const int argc, char** const argv) :
-  m_debug(false),
+  m_inspect(false),
   m_argc(argc),
   m_argv(argv)
 {
@@ -1280,12 +1280,18 @@ cppdeps::cppdeps(const int argc, char** const argv) :
         ("usage: %s [options] --srcdir [dir]...\n"
          "\n"
          "options:\n"
-         "    --srcdir [dir]        specify a directory containing source files\n"
+         "    --srcdir [dir]        specify a directory containing source files; this\n"
+         "                          directory will be searched recursively for files\n"
+         "                          with C/C++ filename extensions (including .c, .C,\n"
+         "                          .cc, .cpp, .h, .H, .hh, .hpp)\n"
          "    --includedir [dir]    specify a directory to be searched when resolving\n"
          "                          #include \"...\" directives\n"
          "    --I[dir]              same as --includedir [dir]\n"
          "    --sysincludedir [dir] specify a directory to be searched when resolving\n"
          "                          #include <...> directives\n"
+         "    --checksys            force tracking of dependencies in #include <...>\n"
+         "                          directives (default is to not record <...> files\n"
+         "                          as dependencies)\n"
          "    --objdir [dir]        specify a path prefix indicating where the object\n"
          "                          (.o) files should be placed (the default\n"
          "                          is no prefix, or just './')\n"
@@ -1294,38 +1300,46 @@ cppdeps::cppdeps(const int argc, char** const argv) :
          "                          such extension, in which case each rule emitted\n"
          "                          will have more than one target; the default is for\n"
          "                          the list of extensions to include just '.o'\n"
-         "    --exeformat\n"
-         "    --options-file\n"
-         "    --linkformat\n"
-         "    --prune-dir <dirname> don't look for source files in the named directory;\n"
+         "    --options-file [file] read additional options from the named file; this\n"
+         "                          file is expected to have one option (plus possible\n"
+         "                          argument) per line\n"
+         "    --output-compile-deps print makefile rules expressing compile-time\n"
+         "                          dependencies (i.e., dependencies of object files on\n"
+         "                          source and header files) -- this is the default\n"
+         "                          output mode\n"
+         "    --output-link-deps    print makefile rules expressing link-time\n"
+         "                          dependencies (i.e., dependencies of executables on\n"
+         "                          object files and static or dynamic libraries)\n"
+         "    --literal [.ext]      treat files ending in \".ext\" as literal #include\'s\n"
+         "    --exeformat [fmt]\n"
+         "    --linkformat [fmt]\n"
+         "    --phantomlinkformat [fmt]\n"
+         "    --prune-dir [dir]     don't look for source files in the named directory;\n"
          "                          the <dirname> should not contain any slashes, since\n"
          "                          it refers to simple directory entry (default pruned\n"
          "                          directories are \".\", \"..\", \"RCS\", \"CVS\"\n"
-         "    --checksys            force tracking of dependencies in #include <...>\n"
-         "                          directives (default is to not record <...> files\n"
-         "                          as dependencies)\n"
-         "    --literal [.ext]      treat files ending in \".ext\" as literal #include\'s\n"
-         "    --verbosity [level]   level = -1: suppress warnings and error messages\n"
-         "                                      (you'll still get the errors themselves :)\n"
-         "                          level =  0: suppress warnings\n"
-         "                          level =  1: [default] normal verbosity\n"
-         "                          level =  2: extra warnings\n"
-         "                          level =  3: lots of extra tracing statements\n"
-         "    --debug               show contents of internal variables\n"
+         "    --prune-ext [.ext]    don't consider any source files whose names end with\n"
+         "                          the given extension\n"
+         "    --verbosity [level]   level -1: suppress warnings and error messages\n"
+         "                                    (you'll still get the errors themselves :)\n"
+         "                          level  0: suppress warnings\n"
+         "                          level  1: [default] normal verbosity\n"
+         "                          level  2: extra warnings\n"
+         "                          level  3: lots of extra tracing statements\n"
+         "    --inspect             show contents of internal variables while processing\n"
+         "                          command-line arguments\n"
          "\n"
-         "any unrecognized command-line arguments are treated as source directories,\n"
-         "which will be searched recursively for files with C/C++ filename extensions\n"
-         "(including .c, .C, .cc, .cpp, .h, .H, .hh, .hpp)\n"
          "\n"
          "example:\n"
          "\n"
-         "    %s --includedir ~/local/include/ --objdir project/obj/ ./\n"
+         "    %s --includedir ~/local/include/ --objdir project/obj/ --srcdir ./\n"
          "\n"
          "    builds dependencies for all source files found recursively within the\n"
          "    current directory (./), using ~/local/include to resolve #include's,\n"
          "    and putting .o files into project/obj/.\n",
          argv[0],
          argv[0]);
+      exit(1);
     }
 
   cfg.sys_ipath.push_back("/usr/include");
@@ -1353,7 +1367,7 @@ cppdeps::cppdeps(const int argc, char** const argv) :
       if (handle_option(*arg, *(arg+1)))
         ++arg;
 
-      if (m_debug)
+      if (m_inspect)
         {
           inspect(argv, arg);
         }
@@ -1373,7 +1387,7 @@ cppdeps::cppdeps(const int argc, char** const argv) :
   if (cfg.obj_exts.size() == 0)
     cfg.obj_exts.push_back(".o");
 
-  if (m_debug)
+  if (m_inspect)
     {
       inspect(argv, arg);
     }
@@ -1381,7 +1395,23 @@ cppdeps::cppdeps(const int argc, char** const argv) :
 
 bool cppdeps::handle_option(const char* option, const char* optarg)
 {
-  if (strcmp(option, "--includedir") == 0)
+  if (strcmp(option, "--srcdir") == 0)
+    {
+      const string fname = trim_trailing_slashes(optarg);
+      if (!file_exists(fname.c_str()))
+        {
+          cerr << "ERROR: no such source file: '" << fname << "'\n";
+          exit(1);
+        }
+      m_src_files.push_back(fname);
+      if (is_directory(fname.c_str()))
+        {
+          cfg.user_ipath.push_back(fname);
+          cfg.strip_prefix = fname;
+        }
+      return true;
+    }
+  else if (strcmp(option, "--includedir") == 0)
     {
       cfg.user_ipath.push_back(optarg);
       return true;
@@ -1396,19 +1426,24 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
       cfg.sys_ipath.push_back(optarg);
       return true;
     }
-  else if (strcmp(option, "--objdir") == 0)
-    {
-      cfg.obj_prefix = trim_trailing_slashes(optarg);
-      return true;
-    }
   else if (strcmp(option, "--checksys") == 0)
     {
       cfg.check_sys_deps = true;
       return false;
     }
-  else if (strcmp(option, "--verbosity") == 0)
+  else if (strcmp(option, "--objdir") == 0)
     {
-      cfg.verbosity = verbosity_level(atoi(optarg));
+      cfg.obj_prefix = trim_trailing_slashes(optarg);
+      return true;
+    }
+  else if (strcmp(option, "--objext") == 0)
+    {
+      cfg.obj_exts.push_back(optarg);
+      return true;
+    }
+  else if (strcmp(option, "--options-file") == 0)
+    {
+      load_options_file(optarg);
       return true;
     }
   else if (strcmp(option, "--output-compile-deps") == 0)
@@ -1426,24 +1461,19 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
       cfg.literal_exts.push_back(optarg);
       return true;
     }
-  else if (strcmp(option, "--objext") == 0)
-    {
-      cfg.obj_exts.push_back(optarg);
-      return true;
-    }
   else if (strcmp(option, "--exeformat") == 0)
     {
       cfg.exe_formats.add_format(optarg);
       return true;
     }
-  else if (strcmp(option, "--options-file") == 0)
-    {
-      load_options_file(optarg);
-      return true;
-    }
   else if (strcmp(option, "--linkformat") == 0)
     {
       cfg.link_formats.add_format(optarg);
+      return true;
+    }
+  else if (strcmp(option, "--phantomlinkformat") == 0)
+    {
+      cfg.phantom_link_formats.add_format(optarg);
       return true;
     }
   else if (strcmp(option, "--prune-dir") == 0)
@@ -1456,32 +1486,15 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
       cfg.prune_exts.push_back(optarg);
       return true;
     }
-  else if (strcmp(option, "--phantomlinkformat") == 0)
+  else if (strcmp(option, "--verbosity") == 0)
     {
-      cfg.phantom_link_formats.add_format(optarg);
+      cfg.verbosity = verbosity_level(atoi(optarg));
       return true;
     }
-  else if (strcmp(option, "--debug") == 0)
+  else if (strcmp(option, "--inspect") == 0)
     {
-      m_debug = true;
+      m_inspect = true;
       return false;
-    }
-  // treat any unrecognized arguments as src files
-  else if (strcmp(option, "--srcdir") == 0)
-    {
-      const string fname = trim_trailing_slashes(optarg);
-      if (!file_exists(fname.c_str()))
-        {
-          cerr << "ERROR: no such source file: '" << fname << "'\n";
-          exit(1);
-        }
-      m_src_files.push_back(fname);
-      if (is_directory(fname.c_str()))
-        {
-          cfg.user_ipath.push_back(fname);
-          cfg.strip_prefix = fname;
-        }
-      return true;
     }
   else
     {
