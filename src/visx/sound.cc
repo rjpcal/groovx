@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Fri Nov 10 17:03:58 2000
+// written: Thu May 10 11:49:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,11 +18,11 @@
 #include "io/iditem.h"
 
 #ifdef HP9000S700
-#include "hpsound.cc"
+#include "hpsound.h"
 #endif
 
 #ifdef IRIX6
-#include "irixsound.cc"
+#include "irixsound.h"
 #endif
 
 namespace {
