@@ -209,3 +209,5 @@ will be needed, and then they can be phased out.
   GLBitmap/XBitmap in order to be able to read old expt files.
 
 * (done 21-Nov-2002) Rename Bitmap --> GxPixmap
+
+* (done 21-Nov-2002) Rename Gtext --> GxText

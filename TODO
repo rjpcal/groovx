@@ -7,7 +7,7 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
-* (20-Nov-2002) Rename Gtext --> GxText
+* (21-Nov-2002) Merge Togl into Toglet
 
 * (13-Sep-2001) Nested containment of FieldContainer's
   in addition to inheritance.
