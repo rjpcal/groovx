@@ -3,7 +3,7 @@
 // blocklist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:22:16 1999
-// written: Mon Jul  5 14:59:28 1999
+// written: Sat Nov 20 20:30:01 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,12 +17,14 @@
 
 class Block;
 
-class BlockList : public PtrList<Block>, public virtual IO {
+/// A singleton wrapper of PtrList<Block>.
+class BlockList : public PtrList<Block> {
 private:
   typedef PtrList<Block> Base;
 protected:
   BlockList(int size);
 public:
+  /// Returns the singleton instance.
   static BlockList& theBlockList();
 };
 

@@ -3,7 +3,7 @@
 // cloneface.h
 // Rob Peters
 // created: Thu Apr 29 09:19:25 1999
-// written: Thu Oct 21 18:09:27 1999
+// written: Sat Nov 20 20:34:45 1999
 // $Id$
 //
 // CloneFace is a modified version of Face that allows additional
@@ -19,32 +19,49 @@
 #include "face.h"
 
 ///////////////////////////////////////////////////////////////////////
-//
-// CloneFace class definition
-//
+/**
+ *
+ * CloneFace is a subclass of Face that adds the ability to control
+ * additional paramters for Brunswik face rendering. This is achieved
+ * by overriding Face's getCtrlPnts(), getEyeAspect(), and
+ * getVertOffset() functions to return CloneFace data members. (In the
+ * base class Face, these functions just return constant data.)
+ *
+ * @memo Subclass of Face that can manipulate additional parameters
+ * for rendering Brunswik faces.
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 class CloneFace : public Face {
 public:
-  CloneFace ();
-  CloneFace (istream &is, IOFlag flag);
+  /// Default constructor.
+  CloneFace();
+  /// Construct by deserializing from a stream.
+  CloneFace(istream &is, IOFlag flag);
+  ///
   virtual ~CloneFace();
   
+  ///
   virtual void serialize(ostream &os, IOFlag flag) const;
+  ///
   virtual void deserialize(istream &is, IOFlag flag);
+  ///
   virtual int charCount() const;
 
+  ///
   virtual void readFrom(Reader* reader);
+  ///
   virtual void writeTo(Writer* writer) const;
 
+  /// Returns an array of Bezier control points for face outline.
   virtual const double* getCtrlPnts() const;
-  // Returns an array of Bezier control points for face outline
 
+  /// Returns the aspect ratio of eye outline.
   virtual double getEyeAspect() const;
-  // Returns the aspect ratio of eye outline.
   
+  /** Returns the amount of vertical offset applied to all internal
+		face features. */
   virtual double getVertOffset() const;
-  // Returns the amount of vertical offset applied to all features.
 
 private:
   double itsCtrlPnts[24];		  // Bezier control points for face outline
