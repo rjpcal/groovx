@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:29:16 2001
-// written: Mon Jul 16 14:44:25 2001
+// written: Mon Jul 16 14:47:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,21 +36,22 @@ public:
 Tcl::Code::Code() :
   itsCodeObj(),
   itsErrorMode(NONE),
-  itsFlags(TCL_EVAL_GLOBAL)
+  itsFlags(TCL_EVAL_GLOBAL),
+  itsErrHandler()
 {}
 
 Tcl::Code::Code(Tcl::ObjPtr cmd, ErrorHandlingMode mode) :
   itsCodeObj(cmd),
   itsErrorMode(mode),
   itsFlags(TCL_EVAL_GLOBAL),
-  itsErrorHandler(0)
+  itsErrHandler(0)
 {}
 
-Tcl::Code::Code(Tcl::ObjPtr cmd, Util::ErrorHander* handler) :
+Tcl::Code::Code(Tcl::ObjPtr cmd, Util::ErrorHandler* handler) :
   itsCodeObj(cmd),
   itsErrorMode(NONE),
   itsFlags(TCL_EVAL_GLOBAL),
-  itsErrorHandler(handler)
+  itsErrHandler(handler)
 {}
 
 bool Tcl::Code::invoke(Tcl_Interp* interp)
@@ -63,9 +64,9 @@ bool Tcl::Code::invoke(Tcl_Interp* interp)
     {
       EvalError err(itsCodeObj);
 
-      if (itsErrorHandler != 0)
+      if (itsErrHandler != 0)
         {
-          itsErrorHandler->handleErrorWithMsg(err);
+          itsErrHandler->handleErrorWithMsg(err);
         }
       else if (NONE == itsErrorMode)
         {
@@ -88,7 +89,7 @@ bool Tcl::Code::invoke(Tcl_Interp* interp)
 
 bool Tcl::Code::invoke(const Tcl::SafeInterp& interp)
 {
-  invoke(interp.intp());
+  return invoke(interp.intp());
 }
 
 static const char vcid_tclcode_cc[] = "$Header$";
