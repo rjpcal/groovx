@@ -96,6 +96,8 @@ DOTRACE("Trialevent_Init");
 
   pkg->defAttrib("delay", &TrialEvent::getDelay, &TrialEvent::setDelay);
 
+  initEventType<NullTrialEvent>(interp);
+
   addEventType(interp, &makeAbortTrialEvent, "AbortTrialEvent");
   addEventType(interp, &makeDrawEvent, "DrawEvent");
   addEventType(interp, &makeRenderEvent, "RenderEvent");

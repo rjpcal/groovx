@@ -170,6 +170,18 @@ DOTRACE("TrialEvent::invokeTemplate");
 
 //---------------------------------------------------------------------
 //
+// NullTrialEvent
+//
+//---------------------------------------------------------------------
+
+NullTrialEvent::NullTrialEvent(unsigned int msec) : TrialEvent(msec) {}
+
+NullTrialEvent::~NullTrialEvent() throw() {}
+
+void NullTrialEvent::invoke(Trial&) {}
+
+//---------------------------------------------------------------------
+//
 // TrialMemFuncEvent
 //
 //---------------------------------------------------------------------

@@ -136,6 +136,28 @@ private:
 //  ###################################################################
 //  ===================================================================
 
+/// TrialEvent subclass that does nothing in its invoke() function.
+/** Why is this useful? It may be helpful in testing the runtime overhead
+    involved in TrialEvent callbacks. */
+class NullTrialEvent : public TrialEvent
+{
+protected:
+  /// Construct with a requested delay of \a msec milliseconds.
+  NullTrialEvent(unsigned int msec = 0);
+
+  /// Virtual destructor.
+  virtual ~NullTrialEvent() throw();
+
+  virtual void invoke(Trial&);
+
+public:
+  /// Default creator.
+  static NullTrialEvent* make() { return new NullTrialEvent; }
+};
+
+//  ###################################################################
+//  ===================================================================
+
 /// TrialEvent subclass that just binds to an arbitrary Trial member function.
 class TrialMemFuncEvent : public TrialEvent
 {
