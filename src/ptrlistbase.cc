@@ -3,7 +3,7 @@
 // ptrlistbase.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Oct 25 10:01:03 2000
+// written: Wed Oct 25 10:47:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,10 @@
 #include "system/demangle.h"
 
 #include <typeinfo>
-#include <vector>
+// #include <vector>
+#include <map>
+
+// #define OLD_VERSION
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -146,19 +149,33 @@ private:
 
   PtrListBase* itsOwner;
   int itsFirstVacant;
-  typedef std::vector<IoPtrHandle> VecType;
+//   typedef std::vector<IoPtrHandle> VecType;
+  typedef std::map<int, IoPtrHandle> VecType;
   VecType itsPtrVec;
 
   void ensureNotDuplicate(IO::IoObject* ptr);
 
   int findPtr(IO::IoObject* ptr)
 	 {
+#ifdef OLD_VERSION
 		for (int i = 0; i < itsPtrVec.size(); ++i)
 		  {
 			 if ( itsPtrVec[i].ioObject() == ptr )
 				return i;
 		  }
 		return -1;
+#else
+		for (VecType::const_iterator
+				 itr = itsPtrVec.begin(),
+				 end = itsPtrVec.end();
+			  itr != end;
+			  ++itr)
+		  {
+			 if ( (*itr).second.ioObject() == ptr )
+				return (*itr).first;
+		  }
+		return -1;
+#endif
 	 }
 
   // Add obj at index 'id', destroying any the object was previously
@@ -173,12 +190,20 @@ public:
 	 itsFirstVacant(0),
 	 itsPtrVec()
 	 {
+#ifdef OLD_VERSION
 		itsPtrVec.reserve(size);
+#endif
 	 }
 
   int capacity() const
 	 {
+#ifdef OLD_VERSION
 		return itsPtrVec.size();
+#else
+		VecType::const_reverse_iterator itr = itsPtrVec.rbegin();
+		if (itr == itsPtrVec.rend()) return 1;
+		return itsPtrVec.rbegin()->first + 1;
+#endif
 	 }
 
   int count() const
@@ -189,13 +214,17 @@ public:
 		// pointers, i.e. the size of the container less the number of null
 		// pointers.
 		int num_non_null=0; 
-		for (Impl::VecType::const_iterator
+		for (VecType::const_iterator
 				 itr = itsPtrVec.begin(),
 				 end = itsPtrVec.end();
 			  itr != end;
 			  ++itr)
 		  {
+#ifdef OLD_VERSION
 			 if (itr->ioObject()->isValid()) ++num_non_null;
+#else
+			 if ((*itr).second.ioObject()->isValid()) ++num_non_null;
+#endif
 		  }
 
 		return num_non_null;
@@ -205,35 +234,65 @@ public:
 	 {
 		DebugEval(id);
 		DebugEval(id>=0);
+#ifdef OLD_VERSION
 		DebugEvalNL(itsPtrVec.size());
 		DebugEvalNL(id<itsPtrVec.size());
 
 		return ( id >= 0 && size_t(id) < itsPtrVec.size() &&
 					itsPtrVec[id].ioObject()->isValid() );
+#else
+		VecType::const_iterator itr = itsPtrVec.find(id);
+		return ( (itr != itsPtrVec.end()) &&
+					((*itr).second.ioObject()->isValid()) );
+#endif
 	 }
 
   void release(int id)
 	 {
+#ifdef OLD_VERSION
 		if (!isValidId(id)) return;
 
 		itsPtrVec[id] = IoPtrHandle();
 
 		// reset itsFirstVacant in case i would now be the first vacant
 		if (itsFirstVacant > id) itsFirstVacant = id;
+#else
+		VecType::iterator itr = itsPtrVec.find(id);
+
+		itsPtrVec.erase(itr);
+
+		// reset itsFirstVacant in case i would now be the first vacant
+		if (itsFirstVacant > id) itsFirstVacant = id;		
+#endif
 	 }
 
   void remove(int id)
 	 {
+#ifdef OLD_VERSION
 		if (!isValidId(id)) return;
 
 		if ( itsPtrVec[id].ioObject()->isShared() )
 		  throw ErrorWithMsg("can't remove a shared object");
 
 		release(id);
+#else
+		VecType::iterator itr = itsPtrVec.find(id);
+		if (itr == itsPtrVec.end()) return;
+
+		if ( (*itr).second.ioObject()->isShared() )
+		  throw ErrorWithMsg("can't remove a shared object");
+
+		itsPtrVec.erase(itr);
+
+		// reset itsFirstVacant in case i would now be the first vacant
+		if (itsFirstVacant > id) itsFirstVacant = id;		
+
+#endif
 	 }
 
   void clear()
 	 {
+#ifdef OLD_VERSION
 		for (size_t i = 0; i < itsPtrVec.size(); ++i) {
 
 		  DebugEval(i); DebugEvalNL(itsPtrVec[i].ioObject()->refCount());
@@ -249,10 +308,38 @@ public:
 				release(i);
 			 }
 		}
+#else
+		VecType new_map;
+
+		for (VecType::const_iterator
+				 itr = itsPtrVec.begin(),
+				 end = itsPtrVec.end();
+			  itr != end;
+			  ++itr)
+		  {
+			 // If the object is unshared or invalid, we'll be releasing it, so
+			 // update itsFirstVacant accordingly
+			 if ( (*itr).second.ioObject()->isUnshared() ||
+					!((*itr).second.ioObject()->isValid()) )
+				{
+				  if (itsFirstVacant > (*itr).first) itsFirstVacant = (*itr).first;
+				}
+			 // ...otherwise, we'll be saving the object, so copy it into
+			 // the new_map,
+			 else
+				{
+				  new_map[(*itr).first] = (*itr).second;
+				}
+		  }
+
+		// Now swap maps so that the old map gets cleared and everything erased
+		itsPtrVec.swap(new_map);
+#endif
 	 }
 
   IO::IoObject* getCheckedPtrBase(int id) const throw (InvalidIdError)
 	 {
+#ifdef OLD_VERSION
 		if ( !isValidId(id) ) {
 		  InvalidIdError err("attempt to access invalid id '");
 		  err.appendNumber(id);
@@ -262,10 +349,22 @@ public:
 
 		DebugEvalNL(itsPtrVec[id].ioObject()->refCount());
 		return itsPtrVec[id].ioObject();
+#else
+		VecType::const_iterator itr = itsPtrVec.find(id);
+		if (itr == itsPtrVec.end()) {
+		  InvalidIdError err("attempt to access invalid id '");
+		  err.appendNumber(id);
+		  err.appendMsg("' in ", demangle_cstr(typeid(*itsOwner).name()));
+		  throw err;
+		}
+
+		return (*itr).second.ioObject();
+#endif
 	 }
 
   int insertPtrBase(IO::IoObject* ptr)
 	 {
+#ifdef OLD_VERSION
 		int existing_site = findPtr(ptr);
 
 		if (existing_site != -1)
@@ -274,6 +373,16 @@ public:
 		int new_site = itsFirstVacant;
 		insertPtrBaseAt(new_site, ptr);
 		return new_site;              // return the id of the inserted void*
+#else
+		int existing_site = findPtr(ptr);
+
+		if (existing_site != -1)
+		  return existing_site;
+
+		int new_site = itsFirstVacant;
+		insertPtrBaseAt(new_site, ptr);
+		return new_site;              // return the id of the inserted void*
+#endif
 	 }
 };
 
@@ -291,6 +400,7 @@ DOTRACE("PtrListBase::Impl::ensureNotDuplicate");
   Assert(findPtr(ptr) == -1); 
 }
 
+#ifdef OLD_VERSION
 void PtrListBase::Impl::insertPtrBaseAt(int id, IO::IoObject* ptr) {
 DOTRACE("PtrListBase::Impl::insertPtrBaseAt");
 
@@ -345,6 +455,40 @@ DOTRACE("PtrListBase::Impl::insertPtrBaseAt");
 
   DebugEvalNL(itsFirstVacant);
 }
+#else
+void PtrListBase::Impl::insertPtrBaseAt(int id, IO::IoObject* ptr) {
+DOTRACE("PtrListBase::Impl::insertPtrBaseAt");
+
+  Precondition(ptr != 0);
+
+  DebugEval(id);
+  if (id < 0) return;
+
+  VecType::iterator itr = itsPtrVec.find(id);
+
+  if (itr != itsPtrVec.end())
+	 {
+		InvalidIdError err("object already exists at id '");
+		err.appendNumber(id);
+		err.appendMsg("' in ", demangle_cstr(typeid(*this).name()));
+		throw err;
+	 }
+
+  ensureNotDuplicate(ptr);
+
+  //
+  // The actual insertion
+  //
+  if ( ptr->isValid() )
+	 itsPtrVec[id] = IoPtrHandle(ptr);
+
+  // make sure itsFirstVacant is up-to-date
+  while ( itsPtrVec.find(itsFirstVacant) != itsPtrVec.end() )
+	 { ++itsFirstVacant; }
+
+  DebugEvalNL(itsFirstVacant);
+}
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 //
