@@ -7,7 +7,42 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
+* (22-Nov-2002) Make Tcl::Command a Util::Object subclass
+  ... for the ultimate in reflexion!
+
 * (21-Nov-2002) Need a better way to pass enums to/from Tcl
+
+  Who uses the various link*() functions now?
+
+    gxtcl.cc GxShapeKit GxCache GxScaler GxAligner
+    gltcl.cc theAttribMap
+
+  Maybe the simplest way is this. Make a big ugly global associative array
+  of enum names. Buyer beware of name clashes. Then we have the string->int
+  translators look for a string in the biguglyarray if the initial int
+  extraction fails. That would be pretty darn simple.
+
+  Downside would be that we wouldn't have any reverse lookup
+  (i.e. int->string); i.e. given a command-name, figure out which enums it
+  can accept. Also, we couldn't return values to Tcl in their string form.
+
+  Let's see. We could have one enum-map per Tcl::Pkg. Then, have a
+  biguglyglobalvariable that points to the current enum-map. This enum map
+  would be used in the string->int translations. Plus the Tcl::Pkg could
+  have an auxiliary command to translate int values into string form. The
+  advantage here would be that we could assume that each integer value is
+  unique in a given enum-map. (Hmmm... will that really be true for the GL
+  enums?)
+
+  Maybe I should just bite the bullet and implement a real Enum type, which
+  would be like an int/string union, that could be passed to/from C++
+  functions. The callee's would be responsible for knowing where to find an
+  EnumList (or EnumTranslator) that could do the translation. Then we could
+  get the string values out to the IO files (but do we want that?).
+
+* (22-Nov-2002) Merge Tcl::PkgBase and Tcl::Pkg again?
+
+  Actually, the stuff in tclpkg.h now should go to a new "objpkg.h".
 
 * (22-Nov-2002) Finish cleaning out the src/visx tree.
 
