@@ -131,17 +131,6 @@ private:
            << " value=\"" << val << "\"/>\n";
   }
 
-  void writeStringType(const char* name, const char* val,
-                       const char* typeName)
-  {
-    indent();
-    itsBuf << "<" << typeName
-           << " name=\"" << name << "\""
-           << " value=\"";
-    writeEscaped(val);
-    itsBuf << "\"/>\n";
-  }
-
   void flattenObject(SoftRef<const IO::IoObject> obj, const char* name,
                      const char* xmltype);
 
@@ -292,7 +281,19 @@ DOTRACE("XMLWriter::writeRoot");
 void XMLWriter::writeCstring(const char* name, const char* val)
 {
 DOTRACE("XMLWriter::writeCstring");
-  writeStringType(name, val, "cstring");
+
+  indent();
+  // special case for empty string:
+  if (*val == '\0')
+    {
+      itsBuf << "<string name=\"" << name << "\"/>\n";
+    }
+  else
+    {
+      itsBuf << "<string name=\"" << name << "\">";
+      writeEscaped(val);
+      itsBuf << "</string>\n";
+    }
 }
 
 void XMLWriter::flattenObject(SoftRef<const IO::IoObject> obj,
@@ -304,8 +305,7 @@ DOTRACE("XMLWriter::flattenObject");
   itsBuf << "<" << xmltype << " type=\"" << obj->objTypename() << "\""
          << " id=\"" << itsIdMap.get(obj->id()) << "\""
          << " name=\"" << name << "\""
-         << " version=\"" << obj->serialVersionId() << "\""
-         << " attribCount=\"" << obj->ioAttribCount() << "\">\n";
+         << " version=\"" << obj->serialVersionId() << "\">\n";
 
   ++itsIndentLevel;
   obj->writeTo(*this);
