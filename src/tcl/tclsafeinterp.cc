@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Mon Jul 16 14:24:07 2001
+// written: Mon Jul 16 14:48:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,7 +111,8 @@ DOTRACE("Tcl::SafeInterp::setGlobalVar");
     }
 }
 
-void Tcl::SafeInterp::unsetGlobalVar(const char* var_name) const {
+void Tcl::SafeInterp::unsetGlobalVar(const char* var_name) const
+{
 DOTRACE("Tcl::SafeInterp::unsetGlobalVar");
 
   if (Tcl_UnsetVar(itsInterp, const_cast<char*>(var_name),
@@ -119,6 +120,23 @@ DOTRACE("Tcl::SafeInterp::unsetGlobalVar");
     {
       handleError("couldn't unset global variable");
     }
+}
+
+Tcl_Obj* Tcl::SafeInterp::getObjGlobalVar(const char* name1,
+                                          const char* name2) const
+{
+DOTRACE("Tcl::SafeInterp::getObjGlobalVar");
+  Tcl_Obj* obj = Tcl_GetVar2Ex(itsInterp,
+                               const_cast<char*>(name1),
+                               const_cast<char*>(name2),
+                               TCL_GLOBAL_ONLY|TCL_LEAVE_ERR_MSG);
+
+  if (obj == 0)
+    {
+      handleError("couldn't get the Tcl variable");
+    }
+
+  return obj;
 }
 
 void Tcl::SafeInterp::clearEventQueue() {

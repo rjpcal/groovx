@@ -71,11 +71,20 @@ public:
   void setGlobalVar(const char* var_name, Tcl::ObjPtr var) const;
   void unsetGlobalVar(const char* var_name) const;
 
+  template <class Cue>
+  typename Cue::Type getGlobalVar(Cue, const char* name1,
+											 const char* name2=0) const
+  {
+	 return Tcl::Convert<typename Cue::Type>::fromTcl
+		(getObjGlobalVar(name1, name2));
+  }
+
   // Events
   static void clearEventQueue();
 
 private:
   Tcl_Obj* getObjResult() const;
+  Tcl_Obj* getObjGlobalVar(const char* name1, const char* name2) const;
 
   void handleError(const char* msg) const;
 
