@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Dec  6 13:58:56 1999
+// written: Mon Dec  6 20:08:56 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,6 +92,9 @@ public:
 
   ///
   virtual Widget* getWidget();
+
+  ///
+  virtual Canvas* getCanvas();
 
   /** @name Graphics Actions */
   //@{

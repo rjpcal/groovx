@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Sat Dec  4 15:53:42 1999
+// written: Mon Dec  6 20:11:00 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,6 +41,7 @@
 #include "system.h"
 #include "stopwatch.h"
 #include "tlistwidget.h"
+#include "canvas.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -147,6 +148,9 @@ public:
 
   Widget* getWidget()
 	 { return ObjTogl::theToglConfig(); }
+
+  Canvas* getCanvas()
+	 { return &(Canvas::theCanvas()); }
 
   void edDraw();
   void edUndraw();
@@ -1019,6 +1023,9 @@ void ExptDriver::setAutosaveFile(const string& str)
 
 Widget* ExptDriver::getWidget()
   { return itsImpl->getWidget(); }
+
+Canvas* ExptDriver::getCanvas()
+  { return itsImpl->getCanvas(); }
 
 void ExptDriver::edDraw() 
   { itsImpl->edDraw(); }

@@ -3,7 +3,7 @@
 // experiment.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 10:52:17 1999
-// written: Mon Dec  6 13:14:41 1999
+// written: Mon Dec  6 20:08:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,8 @@
 
 class Widget;
 
+class Canvas;
+
 /// Protocol class that represents psychophysical experiments.
 class Experiment {
 public:
@@ -20,6 +22,9 @@ public:
 
   virtual Widget* getWidget() = 0;
   ///< Return the Widget in which the experiment is running.
+
+  virtual Canvas* getCanvas() = 0;
+  ///< Return the Canvas for the Widget in which the experiment is running.
 
   virtual void edDraw() = 0;
   ///< Draws the current trial onto the screen.
