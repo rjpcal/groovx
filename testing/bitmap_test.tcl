@@ -56,6 +56,8 @@ test "BitmapTcl-Bitmap::loadPbm" "error on junk binary file" {
 
 ### Bitmap rendering ###
 test "BitmapTcl-rendering" "normal render" {
+	 BlockList::reset
+	 Tlist::reset
 	 Tlist::makeSingles $::POS
 	 clearscreen
 	 show $::BITMAP
