@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Aug  5 19:42:31 2002
+// written: Tue Aug  6 14:18:39 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -50,11 +50,11 @@
 #endif
 #include <tcl.h>
 #include <tk.h>
-#include <tkInt.h> // needed to access "dispPtr->winTable" field of TkWindow
 
+#define LOCAL_TRACE
+#define LOCAL_DEBUG
 #include "util/trace.h"
 #include "util/debug.h"
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -228,7 +228,7 @@ public:
   Display* itsDisplay;
   ToglOpts itsOpts;
   shared_ptr<GlxWrapper> itsGlx;
-  Tcl_Command itsWidgetCmd;
+  Tcl_Command itsCmdToken;
 
   bool itsUpdatePending;
   ClientData itsClientData;
@@ -247,7 +247,7 @@ public:
   int configure(int objc, Tcl_Obj* const objv[]);
 
   // All callbacks cast to/from Togl::Impl*, _NOT_ Togl* !!!
-  static void cDestroyCallback(char* clientData);
+  static void cEventuallyFreeCallback(char* clientData);
   static void cEventCallback(ClientData clientData, XEvent* eventPtr);
   static void cWidgetCmdDeletedCallback(ClientData clientData);
   static void cTimerCallback(ClientData clientData);
@@ -273,7 +273,7 @@ public:
 
 private:
   void eventProc(XEvent* eventPtr);
-  void widgetCmdDeletedProc();
+  void cleanup();
   void makeWindowExist(); // throws a Util::Error on failure
   void setupOverlay(); // throws a Util::Error on failure
 };
@@ -313,7 +313,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp, const char* pathname) :
   itsDisplay(0),
   itsOpts(),
   itsGlx(0),
-  itsWidgetCmd(0),
+  itsCmdToken(0),
 
   itsUpdatePending(false),
   itsClientData(DefaultClientData),
@@ -378,10 +378,10 @@ DOTRACE("Togl::Impl::Impl");
   // Set up handlers
   //
 
-  itsWidgetCmd = Tcl_CreateObjCommand(itsInterp, Tk_PathName(itsTkWin),
-                                      Togl_WidgetCmd,
-                                      static_cast<ClientData>(this),
-                                      &cWidgetCmdDeletedCallback);
+  itsCmdToken = Tcl_CreateObjCommand(itsInterp, Tk_PathName(itsTkWin),
+                                     Togl_WidgetCmd,
+                                     static_cast<ClientData>(this),
+                                     &cWidgetCmdDeletedCallback);
 
   Tk_CreateEventHandler(itsTkWin,
                         ExposureMask | StructureNotifyMask,
@@ -465,33 +465,36 @@ DOTRACE("Togl::Impl::configure");
 }
 
 // Gets called when an Togl widget is destroyed.
-void Togl::Impl::cDestroyCallback(char* clientData)
+void Togl::Impl::cEventuallyFreeCallback(char* clientData)
 {
-DOTRACE("Togl::Impl::cDestroyCallback");
-  Impl* impl = reinterpret_cast<Impl*>(clientData);
-  delete impl->itsOwner;
+DOTRACE("Togl::Impl::cEventuallyFreeCallback");
+  Impl* rep = reinterpret_cast<Impl*>(clientData);
+  delete rep->itsOwner;
 }
 
 void Togl::Impl::cEventCallback(ClientData clientData, XEvent* eventPtr)
 {
-  Impl* impl = static_cast<Impl*>(clientData);
-  impl->eventProc(eventPtr);
+  Impl* rep = static_cast<Impl*>(clientData);
+  rep->eventProc(eventPtr);
 }
 
 void Togl::Impl::cWidgetCmdDeletedCallback(ClientData clientData)
 {
-  Impl* impl = static_cast<Impl*>(clientData);
-  impl->widgetCmdDeletedProc();
+DOTRACE("Togl::Impl::cWidgetCmdDeletedCallback");
+  Impl* rep = static_cast<Impl*>(clientData);
+
+  rep->cleanup();
 }
 
 void Togl::Impl::cTimerCallback(ClientData clientData)
 {
 DOTRACE("Togl::Impl::cTimerCallback");
-  Impl* impl = static_cast<Impl*>(clientData);
-  impl->itsUserTimerProc(impl->itsOwner);
-  impl->itsTimerToken =
-    Tcl_CreateTimerHandler( impl->itsOpts.time, cTimerCallback,
-                            static_cast<ClientData>(impl) );
+  Impl* rep = static_cast<Impl*>(clientData);
+
+  rep->itsUserTimerProc(rep->itsOwner);
+  rep->itsTimerToken =
+    Tcl_CreateTimerHandler(rep->itsOpts.time, cTimerCallback,
+                           static_cast<ClientData>(rep));
 }
 
 // Called when the widget's contents must be redrawn.
@@ -671,25 +674,11 @@ DOTRACE("Togl::Impl::eventProc");
     case DestroyNotify:
       {
         DOTRACE("Togl::Impl::eventProc-DestroyNotify");
-        if (itsWidgetCmd != 0)
-          {
-            Tcl_DeleteCommandFromToken( itsInterp, itsWidgetCmd );
-            itsWidgetCmd = 0;
-          }
-        if (itsUserTimerProc != 0)
-          {
-            Tcl_DeleteTimerHandler(itsTimerToken);
-            itsUserTimerProc = 0;
-          }
-        if (itsUpdatePending)
-          {
-            Tcl_CancelIdleCall(Togl::Impl::cRenderCallback,
-                               static_cast<ClientData>(this));
-            itsUpdatePending = 0;
-          }
 
-        Tcl_EventuallyFree( static_cast<ClientData>(this),
-                            Togl::Impl::cDestroyCallback );
+        cleanup();
+
+        Tcl_EventuallyFree(static_cast<ClientData>(this),
+                           Togl::Impl::cEventuallyFreeCallback);
       }
       break;
     default:
@@ -698,35 +687,43 @@ DOTRACE("Togl::Impl::eventProc");
     }
 }
 
-void Togl::Impl::widgetCmdDeletedProc()
+void Togl::Impl::cleanup()
 {
-DOTRACE("Togl::Impl::widgetCmdDeletedProc");
+DOTRACE("Togl::Impl::cleanup");
 
   // This procedure could be invoked either because the window was
   // destroyed and the command was then deleted (in which case itsTkWin is
   // NULL) or because the command was deleted, and then this procedure
   // destroys the widget.
 
+  if (itsCmdToken != 0)
+    {
+      Tcl_DeleteCommandFromToken(itsInterp, itsCmdToken);
+      itsCmdToken = 0;
+    }
+
   if (itsTkWin != 0)
     {
-      Tk_DeleteEventHandler(itsTkWin,
-                            ExposureMask | StructureNotifyMask,
-                            Togl::Impl::cEventCallback,
-                            static_cast<ClientData>(this));
-
       if (itsOverlay)
         {
-          TkWindow* winPtr = reinterpret_cast<TkWindow*>(itsTkWin);
-
-          Tcl_HashEntry* entryPtr =
-            Tcl_FindHashEntry(&winPtr->dispPtr->winTable,
-                              (char*) itsOverlay->windowId() );
-
-          Tcl_DeleteHashEntry(entryPtr);
+          TkUtil::forgetWindow(itsTkWin, itsOverlay->windowId());
         }
 
       Tk_DestroyWindow(itsTkWin);
       itsTkWin = 0;
+    }
+
+  if (itsUserTimerProc != 0)
+    {
+      Tcl_DeleteTimerHandler(itsTimerToken);
+      itsUserTimerProc = 0;
+    }
+
+  if (itsUpdatePending)
+    {
+      Tcl_CancelIdleCall(Togl::Impl::cRenderCallback,
+                         static_cast<ClientData>(this));
+      itsUpdatePending = 0;
     }
 }
 
@@ -790,14 +787,7 @@ DOTRACE("Togl::Impl::setupOverlay");
 
   Assert(itsOverlay != 0);
 
-  TkWindow* winPtr = reinterpret_cast<TkWindow*>(itsTkWin);
-
-  int new_flag;
-  Tcl_HashEntry* hPtr =
-    Tcl_CreateHashEntry( &winPtr->dispPtr->winTable,
-                         (char *) itsOverlay->windowId(), &new_flag );
-
-  Tcl_SetHashValue( hPtr, winPtr );
+  TkUtil::addWindow(itsTkWin, itsOverlay->windowId());
 }
 
 ///////////////////////////////////////////////////////////////////////
