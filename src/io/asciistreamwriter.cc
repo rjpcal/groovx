@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Tue Oct 19 16:11:23 1999
+// written: Wed Oct 20 12:10:47 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +31,32 @@
 #if defined(IRIX6) || defined(HP9000S700)
 #define AsciiStreamWriter ASW
 #endif
+
+namespace {
+  const char STRING_ENDER = '^';
+
+  void addEscapes(string& text) {
+	 // Escape any special characters
+	 for (int pos = 0; pos < text.length(); /* ++ done in loop body */ ) {
+
+		switch (text[pos]) {
+		case '\\': // i.e., a single backslash
+		  text.replace(pos, 1, "\\\\"); // i.e., two backslashes
+		  pos += 2;
+		  break;
+		case '^':
+		  text.replace(pos, 1, "\\c");
+		  pos += 2;
+		  break;
+		default:
+		  ++pos;
+		  break;
+		}
+
+	 }
+  }
+
+}
 
 class AsciiStreamWriter::Impl {
 public:
@@ -88,20 +114,27 @@ DOTRACE("AsciiStreamWriter::writeDouble");
 
 void AsciiStreamWriter::writeString(const string& name, const string& val) {
 DOTRACE("AsciiStreamWriter::writeString");
+  string escaped_val(val);
+  addEscapes(escaped_val);
+
   vector<char> buf(32 + name.length() + val.length());
   ostrstream ost(&buf[0], 32 + name.length() + val.length());
   ost << "string " << name << " := " 
-		<< val.length() << " " << val << '\0';
+		<< val.length() << " " << escaped_val << '\0';
   itsImpl.itsAttribs.push_back(&buf[0]);
 }
 
 void AsciiStreamWriter::writeCstring(const string& name, const char* val) {
 DOTRACE("AsciiStreamWriter::writeCstring");
-  int val_len = strlen(val);
+  int val_len = strlen(val); 
+
+  string escaped_val(val);
+  addEscapes(escaped_val);
+
   vector<char> buf(32 + name.length() + val_len);
   ostrstream ost(&buf[0], 32 + name.length() + val_len);
   ost << "cstring " << name << " := " 
-		<< val_len << " " << val << '\0';
+		<< val_len << " " << escaped_val << '\0';
   itsImpl.itsAttribs.push_back(&buf[0]);
 }
 
@@ -181,7 +214,7 @@ DOTRACE("AsciiStreamWriter::flushAttributes");
   itsImpl.itsBuf << itsImpl.itsAttribs.size() << endl;
 
   for (int i = 0; i < itsImpl.itsAttribs.size(); ++i) {
-	 itsImpl.itsBuf << itsImpl.itsAttribs[i] << endl;
+	 itsImpl.itsBuf << itsImpl.itsAttribs[i] << STRING_ENDER << endl;
   }
 
   itsImpl.itsAttribs.clear();
