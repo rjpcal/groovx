@@ -205,7 +205,7 @@ proc testDestringifyCmd { objname } {
 
     eval ::test $testname {"error on incomplete input"} {"
         $destringify ${this(listname)}
-    "} {"${destringify}: IO::InputError: ${this(listname)}"}
+    "} {"${destringify}: IO::InputError:"}
 
     eval ::test $testname {"error on bad input"} {"
         $destringify {this is a bunch of bs}
