@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Thu Mar 30 09:50:04 2000
+// written: Thu May 11 18:25:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,10 @@
 
 #include "eventresponsehdlr.h"
 
-#include "experiment.h"
 #include "sound.h"
 #include "soundlist.h"
 #include "response.h"
+#include "trial.h"
 
 #include "io/reader.h"
 #include "io/writer.h"
@@ -117,24 +117,43 @@ public:
   void setBindingSubstitution(const fixed_string& sub)
 	 { itsBindingSubstitution = sub.c_str(); }
 
-  void rhBeginTrial(Experiment* expt) const
-	 { itsExperiment = expt; attend(expt); }
+  void abortInvalidResponses()
+	 { itsAbortInvalidResponses = true; }
 
-  void rhAbortTrial(Experiment* expt) const;
+  void ignoreInvalidResponses()
+	 { itsAbortInvalidResponses = false; }
 
-  void rhEndTrial(Experiment* expt) const
-	 { itsExperiment = expt; ignore(expt); }
+  void rhBeginTrial(GWT::Widget& widget, Trial& trial) const
+	 {
+		itsWidget = &widget;
+		itsTrial = &trial;
+		attend();
+	 }
 
-  void rhHaltExpt(Experiment* expt) const
-	 { itsExperiment = expt; ignore(expt); }
+  void rhAbortTrial() const;
+
+  void rhEndTrial() const
+	 { ignore(); }
+
+  void rhHaltExpt() const
+	 { ignore(); }
 
   // Helper functions
 private:
-  Experiment& getExpt() const
+
+  GWT::Widget& getWidget() const
 	 {
-		if (itsExperiment == 0)
-		  { throw ErrorWithMsg("EventResponseHdlr::itsExperiment is NULL"); }
-		return *itsExperiment;
+		if (itsWidget == 0)
+		  { throw ErrorWithMsg("EventResponseHdlr::itsWidget is NULL"); }
+		return *itsWidget;
+	 }
+
+
+  Trial& getTrial() const
+	 {
+		if (itsTrial == 0)
+		  { throw ErrorWithMsg("EventResponseHdlr::itsTrial is NULL"); }
+		return *itsTrial;
 	 }
 
   // When this procedure is invoked, the program listens to the events
@@ -143,7 +162,7 @@ private:
   // ignore() when a response has been made so that events are not
   // received during response processing and during the inter-trial
   // period.
-  void attend(Experiment* expt) const;
+  void attend() const;
 
   // When this procedure is invoked, the program ignores
   // user-generated events (mouse or keyboard) that would otherwise
@@ -152,7 +171,7 @@ private:
   // processed, and any other time when it is necessary to avoid an
   // unintended key/button-press being interpreted as a response. The
   // effect is cancelled by calling attend().
-  void ignore(Experiment* expt) const;
+  void ignore() const;
 
 
   void raiseBackgroundError(const char* msg) const throw();
@@ -206,7 +225,7 @@ private:
 
 		fixed_block<char> buf(privateHandleCmdName.length() + 32);
 		ostrstream ost(&buf[0], buf.size());
-		ost << privateHandleCmdName << ++cmdCounter << '\0';		
+		ost << privateHandleCmdName << ++cmdCounter << '\0';
 		return &buf[0];
 	 }
 
@@ -214,7 +233,8 @@ private:
 private:
   EventResponseHdlr* itsOwner;
 
-  mutable Experiment* itsExperiment;
+  mutable GWT::Widget* itsWidget;
+  mutable Trial* itsTrial;
 
   Tcl_Interp* itsInterp;
 
@@ -264,7 +284,7 @@ private:
 
 		  case REGEX_FOUND_MATCH:
 			 return true;
-		
+
 		  default: // "can't happen"
 			 Assert(false);
 		  }
@@ -318,7 +338,7 @@ private:
 
 	 bool invokeIfTrue(Tcl_Interp* interp) throw (ErrorWithMsg)
 		{
-		  if (isTrue(interp)) 
+		  if (isTrue(interp))
 			 { invoke(interp); return true; }
 		  return false;
 		}
@@ -351,6 +371,8 @@ private:
 
   fixed_string itsEventSequence;
   fixed_string itsBindingSubstitution;
+
+  bool itsAbortInvalidResponses;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -370,7 +392,8 @@ Util::Tracer EventResponseHdlr::tracer;
 EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
 										const char* input_response_map) :
   itsOwner(owner),
-  itsExperiment(0),
+  itsWidget(0),
+  itsTrial(0),
   itsInterp(0),
   itsTclCmdToken(0),
   itsPrivateCmdName(getUniqueCmdName().c_str()),
@@ -380,7 +403,8 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
   itsFeedbacks(),
   itsUseFeedback(true),
   itsEventSequence("<KeyPress>"),
-  itsBindingSubstitution("%K")
+  itsBindingSubstitution("%K"),
+  itsAbortInvalidResponses(true)
 {
 DOTRACE("EventResponseHdlr::Impl::Impl");
 }
@@ -396,9 +420,9 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
   // destruction will delete all commands associated with it.
 
   if ( !Tcl_InterpDeleted(itsInterp) ) {
-	 if (itsExperiment != 0)
-		ignore(itsExperiment);
- 
+	 if (itsWidget != 0)
+		ignore();
+
 	 DebugPrint("deleting Tcl command "); DebugPrintNL(itsPrivateCmdName);
 
 	 DebugEvalNL((void*) itsTclCmdToken);
@@ -523,9 +547,9 @@ DOTRACE("EventResponseHdlr::Impl::writeTo");
 void EventResponseHdlr::Impl::setInterp(Tcl_Interp* interp) {
 DOTRACE("EventResponseHdlr::Impl::setInterp");
   // can only set itsInterp once
-  if (itsInterp == 0 && interp != 0) { 
+  if (itsInterp == 0 && interp != 0) {
 	 itsInterp = interp;
-	 itsTclCmdToken = 
+	 itsTclCmdToken =
 		Tcl_CreateObjCommand(itsInterp,
 									const_cast<char*>(itsPrivateCmdName.c_str()),
 									privateHandleCmd, static_cast<ClientData>(this),
@@ -534,13 +558,12 @@ DOTRACE("EventResponseHdlr::Impl::setInterp");
   }
 }
 
-void EventResponseHdlr::Impl::rhAbortTrial(Experiment* expt) const {
+void EventResponseHdlr::Impl::rhAbortTrial() const {
 DOTRACE("EventResponseHdlr::Impl::rhAbortTrial");
-  itsExperiment = expt; 
 
   Assert(itsInterp != 0);
 
-  ignore(expt);
+  ignore();
 
   try {
 	 const int ERR_INDEX = 1;
@@ -558,13 +581,13 @@ DOTRACE("EventResponseHdlr::Impl::rhAbortTrial");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void EventResponseHdlr::Impl::attend(Experiment* expt) const {
+void EventResponseHdlr::Impl::attend() const {
 DOTRACE("EventResponseHdlr::Impl::attend");
   clearEventQueue();
-  
+
   try {
-	 expt->getWidget()->bind(itsEventSequence.c_str(),
-									 getBindingScript().c_str());
+	 getWidget().bind(itsEventSequence.c_str(),
+							getBindingScript().c_str());
   }
   catch (ErrorWithMsg& err) {
 	 raiseBackgroundError(err.msg_cstr());
@@ -575,11 +598,11 @@ DOTRACE("EventResponseHdlr::Impl::attend");
   }
 }
 
-void EventResponseHdlr::Impl::ignore(Experiment* expt) const {
+void EventResponseHdlr::Impl::ignore() const {
 DOTRACE("EventResponseHdlr::Impl::ignore");
   try {
-	 expt->getWidget()->bind(itsEventSequence.c_str(),
-									 nullScript.c_str());
+	 getWidget().bind(itsEventSequence.c_str(),
+							nullScript.c_str());
   }
   catch (ErrorWithMsg& err) {
 	 raiseBackgroundError(err.msg_cstr());
@@ -591,8 +614,8 @@ DOTRACE("EventResponseHdlr::Impl::ignore");
 }
 
 void EventResponseHdlr::Impl::raiseBackgroundError(const char* msg) const throw() {
-DOTRACE("EventResponseHdlr::Impl::raiseBackgroundError"); 
-  DebugEvalNL(msg); 
+DOTRACE("EventResponseHdlr::Impl::raiseBackgroundError");
+  DebugEvalNL(msg);
   Assert(itsInterp != 0);
   Tcl_AppendResult(itsInterp, msg, (char*) 0);
   Tcl_BackgroundError(itsInterp);
@@ -638,22 +661,25 @@ DOTRACE("EventResponseHdlr::Impl::privateHandleCmd");
 void EventResponseHdlr::Impl::handleResponse(const char* keysym) const {
 DOTRACE("EventResponseHdlr::Impl::handleResponse");
 
-  Response theResponse; 
+  Response theResponse;
 
-  theResponse.setMsec(getExpt().edElapsedTrialMsec());
+  Trial& trial = getTrial();
 
-  getExpt().edResponseSeen();
+  theResponse.setMsec(trial.trElapsedMsec());
 
-  ignore(&(getExpt()));
+  trial.trResponseSeen();
+
+  ignore();
 
   theResponse.setVal(getRespFromKeysym(keysym)); DebugEvalNL(theResponse.val());
 
   if ( !theResponse.isValid() ) {
-	 getExpt().edAbortTrial();
+	 if ( itsAbortInvalidResponses )
+		trial.trAbortTrial();
   }
 
   else {
-	 getExpt().edProcessResponse(theResponse);
+	 trial.recordResponse(theResponse);
 	 if (itsUseFeedback) { feedback(theResponse.val()); }
   }
 }
@@ -743,7 +769,7 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacks");
 
 		Tcl_Obj *condition = getCheckedListElement(current_pair, 0);
 		Tcl_Obj *result = getCheckedListElement(current_pair, 1);
-    
+
 		itsFeedbacks.at(i) = Impl::Condition_Feedback(condition, result);
 	 }
 
@@ -795,7 +821,7 @@ DOTRACE("EventResponseHdlr::updateRegexps");
 
 		Tcl::TclObjPtr response_valObj = getCheckedListElement(current_pair, 1);
 		int response_val = getCheckedInt(response_valObj);
-    
+
 		itsRegexps.at(i) = Impl::RegExp_ResponseVal(patternObj, response_val);
 	 }
 
@@ -836,7 +862,7 @@ void EventResponseHdlr::Impl::checkedSplitList(
 ) const throw(ErrorWithMsg) {
 DOTRACE("EventResponseHdlr::Impl::checkedSplitList");
 
-  if ( Tcl_ListObjGetElements(itsInterp, tcllist, 
+  if ( Tcl_ListObjGetElements(itsInterp, tcllist,
 										&length_out, &elements_out) != TCL_OK ) {
 	 throw ErrorWithMsg("error splitting list for EventResponseHdlr");
   }
@@ -863,12 +889,12 @@ DOTRACE("EventResponseHdlr::Impl::getCheckedInt");
 ///////////////////////////////////////////////////////////////////////
 
 
-EventResponseHdlr::EventResponseHdlr() : 
+EventResponseHdlr::EventResponseHdlr() :
   ResponseHandler(),
   itsImpl(new Impl(this, ""))
 {}
 
-EventResponseHdlr::EventResponseHdlr(const char* input_response_map) : 
+EventResponseHdlr::EventResponseHdlr(const char* input_response_map) :
   ResponseHandler(),
   itsImpl(new Impl(this, input_response_map))
 {}
@@ -924,45 +950,44 @@ DOTRACE("EventResponseHdlr::setFeedbackMap");
   itsImpl->setFeedbackMap(feedback_string);
 }
 
-const fixed_string& EventResponseHdlr::getEventSequence() const {
-  return itsImpl->getEventSequence();
-}
+const fixed_string& EventResponseHdlr::getEventSequence() const 
+  { return itsImpl->getEventSequence(); }
 
-void EventResponseHdlr::setEventSequence(const fixed_string& seq) {
-  itsImpl->setEventSequence(seq);
-}
+void EventResponseHdlr::setEventSequence(const fixed_string& seq)
+  { itsImpl->setEventSequence(seq); }
 
-const fixed_string& EventResponseHdlr::getBindingSubstitution() const {
-  return itsImpl->getBindingSubstitution();
-}
+const fixed_string& EventResponseHdlr::getBindingSubstitution() const
+  { return itsImpl->getBindingSubstitution(); }
 
-void EventResponseHdlr::setBindingSubstitution(const fixed_string& sub) {
-  itsImpl->setBindingSubstitution(sub);
-}
+void EventResponseHdlr::setBindingSubstitution(const fixed_string& sub)
+  { itsImpl->setBindingSubstitution(sub); }
 
-void EventResponseHdlr::rhBeginTrial(Experiment* expt) const
-  { itsImpl->rhBeginTrial(expt); }
+void EventResponseHdlr::abortInvalidResponses()
+  { itsImpl->abortInvalidResponses(); }
 
-void EventResponseHdlr::rhAbortTrial(Experiment* expt) const
-  { itsImpl->rhAbortTrial(expt); }
+void EventResponseHdlr::ignoreInvalidResponses()
+  { itsImpl->ignoreInvalidResponses(); }
 
-void EventResponseHdlr::rhEndTrial(Experiment* expt) const
-  { itsImpl->rhEndTrial(expt); }
+void EventResponseHdlr::rhBeginTrial(GWT::Widget& widget, Trial& trial) const
+  { itsImpl->rhBeginTrial(widget, trial); }
 
-void EventResponseHdlr::rhHaltExpt(Experiment* expt) const
-  { itsImpl->rhHaltExpt(expt); }
+void EventResponseHdlr::rhAbortTrial() const
+  { itsImpl->rhAbortTrial(); }
 
-void EventResponseHdlr::oldSerialize(ostream &os, IO::IOFlag flag) const {
-  itsImpl->oldSerialize(os, flag);
-}
+void EventResponseHdlr::rhEndTrial() const
+  { itsImpl->rhEndTrial(); }
 
-void EventResponseHdlr::oldDeserialize(istream &is, IO::IOFlag flag) {
-  itsImpl->oldDeserialize(is, flag);
-}
+void EventResponseHdlr::rhHaltExpt() const
+  { itsImpl->rhHaltExpt(); }
 
-int EventResponseHdlr::oldCharCount() const {
-  return itsImpl->oldCharCount();
-}
+void EventResponseHdlr::oldSerialize(ostream &os, IO::IOFlag flag) const
+  { itsImpl->oldSerialize(os, flag); }
+
+void EventResponseHdlr::oldDeserialize(istream &is, IO::IOFlag flag)
+  { itsImpl->oldDeserialize(is, flag); }
+
+int EventResponseHdlr::oldCharCount() const
+  { return itsImpl->oldCharCount(); }
 
 static const char vcid_eventresponsehdlr_cc[] = "$Header$";
 #endif // !EVENTRESPONSEHDLR_CC_DEFINED

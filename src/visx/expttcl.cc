@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed May 10 12:17:29 2000
+// written: Thu May 11 18:45:37 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -64,8 +64,8 @@ namespace ExptTcl {
 // Creates the necessary screen bindings for start, pause, and quit,
 // then begins the current trial (probably the first trial) of the
 // current Expt. Record the time when the experiment
-// began. edBeginTrial is called, which displays a trial, and
-// generates the timer callbacks associated with a trial.
+// began. edBeginExpt is called, which displays a trial, and generates
+// the timer callbacks associated with a trial.
 //
 //--------------------------------------------------------------------
 
@@ -97,7 +97,7 @@ DOTRACE("ExptTcl::BeginCmd::beginCmd");
   widget->bind("<Control-KeyPress-c>", "{ Expt::stop }");
 
   // Create the reset key binding
-  widget->bind("<Control-KeyPress-r>", "{ Expt::stop; Expt::reset }");
+  widget->bind("<Control-KeyPress-r>", "{ Expt::reset }");
 
   // Create the pause key binding
   widget->bind("<KeyPress-p>", "{ Expt::pause }");
@@ -140,7 +140,7 @@ protected:
 
 	 pauseMsgCmd.invoke(interp());
 
-	 ed->edBeginTrial();
+	 ed->edResumeExpt();
   }
 };
 
@@ -241,6 +241,9 @@ public:
 
     declareCAttrib("autosaveFile",
 						 &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
+    declareCAttrib("autosavePeriod",
+						 &ExptDriver::getAutosavePeriod,
+						 &ExptDriver::setAutosavePeriod);
 	 declareCAction("reset", &ExptDriver::edResetExpt);
 	 declareCAction("stop", &ExptDriver::edHaltExpt);
 	 declareCAction("storeData", &ExptDriver::storeData);

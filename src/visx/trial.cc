@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed May 10 12:35:59 2000
+// written: Thu May 11 18:52:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 
 #include "trial.h"
 
+#include "block.h"
 #include "experiment.h"
 #include "objlist.h"
 #include "poslist.h"
@@ -62,9 +63,11 @@ namespace {
 
 class Trial::Impl {
 public:
-  Impl() :
+  Impl(Trial*) :
 	 itsIdPairs(), itsResponses(), itsType(-1),
-	 itsRhId(0), itsThId(0)
+	 itsRhId(0), itsThId(0),
+	 itsCanvas(0),
+	 itsBlock(0)
 	 {}
 
   vector<IdPair> itsIdPairs;
@@ -73,23 +76,26 @@ public:
   int itsRhId;
   int itsThId;
 
-  bool checkIds() const
+private:
+  GWT::Canvas* itsCanvas;
+  Block* itsBlock;
+
+  bool assertIdsOrHalt()
 	 {
 		if ( RhList::theRhList().isValidId(itsRhId) &&
 			  ThList::theThList().isValidId(itsThId) ) {
 		  return true;
 		}
+
+		trHaltExpt();
+
 		return false;
 	 }
 
-  bool assertIdsOrHalt(Experiment& expt) const
+  GWT::Canvas& getCanvas() const
 	 {
-		if ( checkIds() ) return true;
-
-		// ...else halt any of the participants for which we have valid id's
-		expt.edHaltExpt();
-
-		return false;
+		Assert(itsCanvas != 0);
+		return *itsCanvas;
 	 }
 
   ResponseHandler& responseHandler() const
@@ -104,6 +110,13 @@ public:
 		return *(ThList::theThList().getPtr(itsThId));
 	 }
 
+public:
+
+  Block& getBlock() const
+	 {
+		Assert(itsBlock != 0);
+		return *itsBlock;
+	 }
 
 #ifdef TIME_TRACE
   inline void timeTrace(const char* loc) {
@@ -113,6 +126,20 @@ public:
 #else
   inline void timeTrace(const char*) {}
 #endif
+
+  // Delegand functions for Trial
+  void trDoTrial(Trial* self, Experiment& expt, Block& block);
+  int trElapsedMsec();
+  void trAbortTrial();
+  void trEndTrial();
+  void trNextTrial();
+  void trHaltExpt();
+  void trResponseSeen();
+  void trDrawTrial() const;
+  void trUndrawTrial() const;
+  void trDraw(GWT::Canvas& canvas, bool flush) const;
+  void trUndraw(GWT::Canvas& canvas, bool flush) const;
+  void undoLastResponse();
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -157,13 +184,13 @@ DOTRACE("Trial::IdPair::scanFrom");
 //////////////
 
 Trial::Trial() : 
-  itsImpl( new Impl )
+  itsImpl( new Impl(this) )
 {
 DOTRACE("Trial::Trial()");
 }
 
 Trial::Trial(istream &is, IO::IOFlag flag) :
-  itsImpl( new Impl )
+  itsImpl( new Impl(this) )
 {
 DOTRACE("Trial::Trial(istream&, IO::IOFlag)");
   deserialize(is, flag);
@@ -329,13 +356,6 @@ DOTRACE("Trial::readFromObjidsOnly");
 // accessors //
 ///////////////
 
-int Trial::getAutosavePeriod() const {
-DOTRACE("Trial::getAutosavePeriod");
-  if ( itsImpl->checkIds() )
-	 return itsImpl->timingHdlr().getAutosavePeriod();
-  else return 0;
-}
-
 int Trial::getResponseHandler() const {
 DOTRACE("Trial::getResponseHandler");
   DebugEvalNL(itsImpl->itsRhId);
@@ -461,6 +481,8 @@ void Trial::recordResponse(const Response& response) {
 DOTRACE("Trial::recordResponse"); 
   itsImpl->timeTrace("recordResponse");
   itsImpl->itsResponses.push_back(response);
+
+  itsImpl->getBlock().processResponse(response);
 }
 
 void Trial::clearResponses() {
@@ -472,78 +494,113 @@ DOTRACE("Trial::clearResponses");
 // actions //
 /////////////
 
-void Trial::trDoTrial(Experiment& expt) {
-DOTRACE("Trial::trDoTrial");
-  if ( !itsImpl->assertIdsOrHalt(expt) ) return;
+void Trial::Impl::trDoTrial(Trial* self, Experiment& expt, Block& block) {
+DOTRACE("Trial::Impl::trDoTrial");
+  itsCanvas = expt.getCanvas();
+  itsBlock = &block;
+  if ( !assertIdsOrHalt() ) return;
 
-  itsImpl->timeTrace("trDoTrial"); 
+  timingHdlr().thBeginTrial(*(expt.getWidget()), expt.getErrorHandler(), *self);
+  timeTrace("trDoTrial"); 
 
-  itsImpl->timingHdlr().thBeginTrial(&expt);
-  itsImpl->responseHandler().rhBeginTrial(&expt);
+  responseHandler().rhBeginTrial(*(expt.getWidget()), *self);
 }
 
-int Trial::trElapsedMsec(Experiment& expt) {
-DOTRACE("Trial::trElapsedMsec");
-  if ( !itsImpl->assertIdsOrHalt(expt) ) return -1;
+int Trial::Impl::trElapsedMsec() {
+DOTRACE("Trial::Impl::trElapsedMsec");
+  if ( !assertIdsOrHalt() ) return -1;
 
-  return itsImpl->timingHdlr().getElapsedMsec();
+  return timingHdlr().getElapsedMsec();
 }
 
-void Trial::trAbortTrial(Experiment& expt) {
-DOTRACE("Trial::trAbortTrial");
-  if ( !itsImpl->assertIdsOrHalt(expt) ) return;
+void Trial::Impl::trAbortTrial() {
+DOTRACE("Trial::Impl::trAbortTrial");
+  if ( !assertIdsOrHalt() ) return;
 
-  itsImpl->timeTrace("trAbortTrial");
+  timeTrace("trAbortTrial");
 
-  itsImpl->responseHandler().rhAbortTrial(&expt);
-  itsImpl->timingHdlr().thAbortTrial(&expt);
+  responseHandler().rhAbortTrial();
+  timingHdlr().thAbortTrial();
+
+  getBlock().abortTrial();
 }
 
-void Trial::trEndTrial(Experiment& expt) {
-DOTRACE("Trial::trEndTrial");
-  if ( !itsImpl->assertIdsOrHalt(expt) ) return;
+void Trial::Impl::trEndTrial() {
+DOTRACE("Trial::Impl::trEndTrial");
+  if ( !assertIdsOrHalt() ) return;
 
-  itsImpl->timeTrace("trEndTrial");
+  timeTrace("trEndTrial");
 
-  itsImpl->responseHandler().rhEndTrial(&expt);
+  responseHandler().rhEndTrial();
+
+  getBlock().endTrial();
 }
 
-void Trial::trHaltExpt(Experiment& expt) {
-DOTRACE("Trial::trHaltExpt");
-  if ( !itsImpl->assertIdsOrHalt(expt) ) return;
+void Trial::Impl::trNextTrial() {
+DOTRACE("Trial::Impl::trNextTrial");
+  if ( !assertIdsOrHalt() ) return;
 
-  if ( ThList::theThList().isValidId(itsImpl->itsThId) ) { 
-	 itsImpl->timeTrace("edHaltExpt");
+  timeTrace("trNextTrial");
+
+  getBlock().nextTrial();
+}
+
+void Trial::Impl::trHaltExpt() {
+DOTRACE("Trial::Impl::trHaltExpt");
+
+  if ( ThList::theThList().isValidId(itsThId) ) { 
+	 timeTrace("trHaltExpt");
   }
 
-  if ( RhList::theRhList().isValidId(itsImpl->itsRhId) ) {
-	 itsImpl->responseHandler().rhHaltExpt(&expt);
+  trUndrawTrial();
+  trAbortTrial();
+  trEndTrial();
+
+  if ( RhList::theRhList().isValidId(itsRhId) ) {
+	 responseHandler().rhHaltExpt();
   }
-  if ( ThList::theThList().isValidId(itsImpl->itsThId) ) {
-	 itsImpl->timingHdlr().thHaltExpt(&expt);
+
+  // This must come last in order to ensure that we cancel any timer
+  // callbacks that were scheduled in trAbortTrial().
+  if ( ThList::theThList().isValidId(itsThId) ) { 
+	 timingHdlr().thHaltExpt();
   }
 }
 
-void Trial::trResponseSeen(Experiment& expt) {
-DOTRACE("Trial::trResponseSeen");
-  if ( !itsImpl->assertIdsOrHalt(expt) ) return;
+void Trial::Impl::trResponseSeen() {
+DOTRACE("Trial::Impl::trResponseSeen");
+  if ( !assertIdsOrHalt() ) return;
 
-  itsImpl->timeTrace("trResponseSeen");
+  timeTrace("trResponseSeen");
 
-  itsImpl->timingHdlr().thResponseSeen(&expt);
+  timingHdlr().thResponseSeen();
 }
 
-void Trial::trDraw(GWT::Canvas& canvas, bool flush) const {
-DOTRACE("Trial::trDraw");
-  for (size_t i = 0; i < itsImpl->itsIdPairs.size(); ++i) {
+void Trial::Impl::trDrawTrial() const {
+DOTRACE("Trial::Impl::trDrawTrial");
+
+  trDraw(getCanvas(), true);
+
+  getBlock().drawTrialHook();
+}
+
+void Trial::Impl::trUndrawTrial() const {
+DOTRACE("Trial::Impl::trUndrawTrial");
+
+  trUndraw(getCanvas(), true);
+}
+
+void Trial::Impl::trDraw(GWT::Canvas& canvas, bool flush) const {
+DOTRACE("Trial::Impl::trDraw");
+  for (size_t i = 0; i < itsIdPairs.size(); ++i) {
     ObjList::Ptr obj =
-		ObjList::theObjList().getCheckedPtr(itsImpl->itsIdPairs[i].objid);
+		ObjList::theObjList().getCheckedPtr(itsIdPairs[i].objid);
     PosList::Ptr pos =
-		PosList::thePosList().getCheckedPtr(itsImpl->itsIdPairs[i].posid);
+		PosList::thePosList().getCheckedPtr(itsIdPairs[i].posid);
 
-    DebugEval(itsImpl->itsIdPairs[i].objid);
+    DebugEval(itsIdPairs[i].objid);
     DebugEvalNL((void *) obj);
-    DebugEval(itsImpl->itsIdPairs[i].posid);
+    DebugEval(itsIdPairs[i].posid);
     DebugEvalNL((void *) pos);
 
 
@@ -557,13 +614,13 @@ DOTRACE("Trial::trDraw");
   if (flush) canvas.flushOutput();
 }
 
-void Trial::trUndraw(GWT::Canvas& canvas, bool flush) const {
-DOTRACE("Trial::trUndraw");
-  for (size_t i = 0; i < itsImpl->itsIdPairs.size(); ++i) {
+void Trial::Impl::trUndraw(GWT::Canvas& canvas, bool flush) const {
+DOTRACE("Trial::Impl::trUndraw");
+  for (size_t i = 0; i < itsIdPairs.size(); ++i) {
     ObjList::Ptr obj =
-		ObjList::theObjList().getCheckedPtr(itsImpl->itsIdPairs[i].objid);
+		ObjList::theObjList().getCheckedPtr(itsIdPairs[i].objid);
     PosList::Ptr pos =
-		PosList::thePosList().getCheckedPtr(itsImpl->itsIdPairs[i].posid);
+		PosList::thePosList().getCheckedPtr(itsIdPairs[i].posid);
 
 	 {
 		GWT::Canvas::StateSaver state(canvas);
@@ -575,11 +632,53 @@ DOTRACE("Trial::trUndraw");
   if (flush) canvas.flushOutput();
 }
 
-void Trial::undoLastResponse() {
-DOTRACE("Trial::undoLastResponse");
-  if ( !itsImpl->itsResponses.empty() )
-	 itsImpl->itsResponses.pop_back();
+void Trial::Impl::undoLastResponse() {
+DOTRACE("Trial::Impl::undoLastResponse");
+  if ( !itsResponses.empty() )
+	 itsResponses.pop_back();
 }
+
+///////////////////////////////////////////////////////////////////////
+//
+// Trial delegations to Trial::Impl
+//
+///////////////////////////////////////////////////////////////////////
+
+void Trial::trDoTrial(Experiment& expt, Block& block)
+  { itsImpl->trDoTrial(this, expt, block); }
+
+int Trial::trElapsedMsec()
+  { return itsImpl->trElapsedMsec(); }
+
+void Trial::trAbortTrial()
+  { itsImpl->trAbortTrial(); }
+
+void Trial::trEndTrial()
+  { itsImpl->trEndTrial(); }
+
+void Trial::trNextTrial()
+  { itsImpl->trNextTrial(); }
+
+void Trial::trHaltExpt()
+  { itsImpl->trHaltExpt(); }
+
+void Trial::trResponseSeen()
+  { itsImpl->trResponseSeen(); }
+
+void Trial::trDrawTrial() const
+  { itsImpl->trDrawTrial(); }
+
+void Trial::trUndrawTrial() const
+  { itsImpl->trUndrawTrial(); }
+
+void Trial::trDraw(GWT::Canvas& canvas, bool flush) const
+  { itsImpl->trDraw(canvas, flush); }
+
+void Trial::trUndraw(GWT::Canvas& canvas, bool flush) const
+  { itsImpl->trUndraw(canvas, flush); }
+
+void Trial::undoLastResponse()
+  { itsImpl->undoLastResponse(); }
 
 static const char vcid_trial_cc[] = "$Header$";
 #endif // !TRIAL_CC_DEFINED

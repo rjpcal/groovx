@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Mar 30 12:25:06 2000
+// written: Thu May 11 17:45:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,15 +91,45 @@ public:
 	 itsTrialSequence(),
 	 itsRandSeed(0),
 	 itsCurTrialSeqIdx(0),
-	 itsVerbose(false)
+	 itsVerbose(false),
+	 itsCurrentTrialId(-1),
+	 itsExperiment(0),
+	 itsHasBegun(false)
 	 {}
 
   vector<int> itsTrialSequence; // Ordered sequence of indexes into the Tlist
-										  // Also functions as # of completed trials
 
   int itsRandSeed;				  // Random seed used to create itsTrialSequence
   int itsCurTrialSeqIdx;		  // Index of the current trial
+										  // Also functions as # of completed trials
   bool itsVerbose;
+
+  int itsCurrentTrialId;
+
+  mutable bool itsHasBegun;
+
+  void updateCurrentTrial()
+	 {
+		if ( itsCurTrialSeqIdx < 0 || 
+			  itsCurTrialSeqIdx >= itsTrialSequence.size() )
+		  itsCurrentTrialId = -1;
+		else
+		  itsCurrentTrialId = itsTrialSequence.at(itsCurTrialSeqIdx);
+	 }
+
+  void setExpt(Experiment& expt)
+	 {
+		itsExperiment = &expt;
+	 }
+
+  Experiment& getExpt()
+	 {
+		Assert( itsExperiment != 0 );
+		return *itsExperiment;
+	 }
+
+private:
+  mutable Experiment* itsExperiment;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -128,6 +158,7 @@ DOTRACE("Block::addTrial");
   for (int i = 0; i < repeat; ++i) {
 	 itsImpl->itsTrialSequence.push_back(trialid);
   }
+  itsImpl->updateCurrentTrial();
 };
 
 void Block::addTrials(int first_trial, int last_trial, int repeat) {
@@ -160,12 +191,14 @@ DOTRACE("Block::shuffle");
   random_shuffle(itsImpl->itsTrialSequence.begin(),
 					  itsImpl->itsTrialSequence.end(),
 					  generator);
+  itsImpl->updateCurrentTrial();
 }
 
 void Block::removeAllTrials() {
 DOTRACE("Block::removeAllTrials");
   itsImpl->itsTrialSequence.clear();
   itsImpl->itsCurTrialSeqIdx = 0;
+  itsImpl->itsCurrentTrialId = -1;
 }
 
 void Block::serialize(ostream &os, IO::IOFlag flag) const {
@@ -198,12 +231,15 @@ DOTRACE("Block::deserialize");
 
   // itsImpl->itsRandSeed
   is >> itsImpl->itsRandSeed;
+
   // itsImpl->itsCurTrialSeqIdx
   is >> itsImpl->itsCurTrialSeqIdx;
   if (itsImpl->itsCurTrialSeqIdx < 0 ||
 		size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size()) {
 	 throw IO::ValueError(ioTag.c_str());
   }
+  itsImpl->updateCurrentTrial();
+
   // itsImpl->itsVerbose
   int val;
   is >> val;
@@ -229,6 +265,7 @@ DOTRACE("Block::readFrom");
 		 reader, "trialSeq", back_inserter(itsImpl->itsTrialSequence), (int*)0);
   reader->readValue("randSeed", itsImpl->itsRandSeed);
   reader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
+  itsImpl->updateCurrentTrial();
   reader->readValue("verbose", itsImpl->itsVerbose);
 }
 
@@ -266,7 +303,8 @@ int Block::currentTrial() const {
 DOTRACE("Block::currentTrial");
   if (isComplete()) return -1;
 
-  return itsImpl->itsTrialSequence[itsImpl->itsCurTrialSeqIdx];
+  DebugEvalNL(itsImpl->itsCurrentTrialId);
+  return itsImpl->itsCurrentTrialId;
 }
 
 int Block::currentTrialType() const {
@@ -291,7 +329,7 @@ DOTRACE("Block::prevResponse");
 		itsImpl->itsTrialSequence.size() == 0) return -1;
 
   return theTlist.getCheckedPtr(
-     itsImpl->itsTrialSequence[itsImpl->itsCurTrialSeqIdx-1])->lastResponse();
+     itsImpl->itsTrialSequence.at(itsImpl->itsCurTrialSeqIdx-1))->lastResponse();
 }
 
 bool Block::isComplete() const {
@@ -348,30 +386,30 @@ DOTRACE("Block::setVerbose");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Block::beginTrial(Experiment*) {
+void Block::beginTrial(Experiment& expt) {
 DOTRACE("Block::beginTrial");
+
+  if ( isComplete() ) return;
+
+  itsImpl->itsHasBegun = true;
+
   if (itsImpl->itsVerbose) {
 	 cerr << trialDescription() << endl;
   }
+
+  itsImpl->setExpt(expt);
+
+  getCurTrial().trDoTrial(expt, *this);
 }
 
-void Block::drawTrial(Experiment* expt) {
-DOTRACE("Block::drawTrial");
+void Block::drawTrialHook() {
+DOTRACE("Block::drawTrialHook");
   if (isComplete()) return;
 
-  getCurTrial().trDraw(*(expt->getCanvas()), true);
-
-  expt->edSetCurrentTrial(currentTrial());
+  itsImpl->getExpt().edSetCurrentTrial(currentTrial());
 }
 
-void Block::undrawTrial(Experiment* expt) {
-DOTRACE("Block::undrawTrial");
-  if (isComplete()) return;
-
-  getCurTrial().trUndraw(*(expt->getCanvas()), true);
-}
-
-void Block::abortTrial(Experiment*) {
+void Block::abortTrial() {
 DOTRACE("Block::abortTrial");
   if (isComplete()) return;
 
@@ -381,7 +419,8 @@ DOTRACE("Block::abortTrial");
 
   // Erase the aborted trial from the sequence. Subsequent trials will
   // slide up to fill in the gap.
-  itsImpl->itsTrialSequence.erase(itsImpl->itsTrialSequence.begin()+itsImpl->itsCurTrialSeqIdx);
+  itsImpl->itsTrialSequence.erase(
+				  itsImpl->itsTrialSequence.begin()+itsImpl->itsCurTrialSeqIdx);
 
   // Add the aborted trial to the back of the sequence.
   itsImpl->itsTrialSequence.push_back(aborted_trial);
@@ -392,30 +431,46 @@ DOTRACE("Block::abortTrial");
   --itsImpl->itsCurTrialSeqIdx;
 }
 
-void Block::processResponse(const Response& response, Experiment*) {
+void Block::processResponse(const Response& response) {
 DOTRACE("Block::processResponse");
   if (isComplete()) return;
-
-  getCurTrial().recordResponse(response);
 
   if (itsImpl->itsVerbose) {
     cerr << "response: " << response << '\n';
   }
 }
 
-void Block::endTrial(Experiment*) {
+void Block::endTrial() {
 DOTRACE("Block::endTrial");
   if (isComplete()) return;
 
   // Prepare to start next trial.
   ++itsImpl->itsCurTrialSeqIdx;
+  itsImpl->updateCurrentTrial();
+
+  DebugEval(numCompleted());
+  DebugEval(numTrials());
+  DebugEvalNL(isComplete());
+
+  itsImpl->getExpt().edEndTrial();
 }
 
-void Block::haltExpt(Experiment* expt) {
+void Block::nextTrial() {
+DOTRACE("Block::nextTrial");
+  if ( !isComplete() ) {
+	 beginTrial(itsImpl->getExpt());
+  }
+  else {
+	 itsImpl->getExpt().edNextBlock();
+  }
+}
+
+
+void Block::haltExpt() {
 DOTRACE("Block::haltExpt");
-  undrawTrial(expt);
-  abortTrial(expt);
-  endTrial(expt);
+
+  if ( itsImpl->itsHasBegun && !isComplete() )
+	 getCurTrial().trHaltExpt();
 }
 
 void Block::undoPrevTrial() {
@@ -428,6 +483,7 @@ DOTRACE("Block::undoPrevTrial");
   
   // Move the counter back to the previous trial...
   --itsImpl->itsCurTrialSeqIdx;
+  itsImpl->updateCurrentTrial();
 
   // ...and erase the last response given to that trial
   if ( theTlist.isValidId(currentTrial()) ) {

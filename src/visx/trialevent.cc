@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Thu Mar 30 12:29:12 2000
+// written: Thu May 11 17:47:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,16 +13,18 @@
 
 #include "trialevent.h"
 
-#include "experiment.h"
+#include "trial.h"
 
 #include "io/reader.h"
 #include "io/writer.h"
 
 #include "gwt/canvas.h"
+#include "gwt/widget.h"
 
 #include "system/demangle.h"
 
 #include "util/error.h"
+#include "util/errorhandler.h"
 
 #include <tcl.h>
 #include <cmath>
@@ -56,8 +58,10 @@ public:
 
 TrialEvent::TrialEvent(int msec) :
   itsRequestedDelay(msec),
-  itsToken(NULL),
-  itsExperiment(0),
+  itsToken(0),
+  itsWidget(0),
+  itsErrorHandler(0),
+  itsTrial(0),
   itsIsPending(false),
   itsTimer(),
   itsTotalError(0),
@@ -123,9 +127,13 @@ DOTRACE("TrialEvent::writeTo");
   writer->writeValue("requestedDelay", itsRequestedDelay);
 }
 
-void TrialEvent::schedule(Experiment* expt) {
+void TrialEvent::schedule(GWT::Widget& widget,
+								  Util::ErrorHandler& errhdlr,
+								  Trial& trial) {
 DOTRACE("TrialEvent::schedule");
-  itsExperiment = expt;
+  itsWidget = &widget;
+  itsErrorHandler = &errhdlr;
+  itsTrial = &trial;
 
   // Cancel any possible previously pending invocation.
   cancel();
@@ -159,13 +167,31 @@ DOTRACE("TrialEvent::cancel");
   itsToken = 0;
 }
 
-Experiment& TrialEvent::getExperiment() {
-DOTRACE("TrialEvent::getExperiment");
-  DebugEvalNL((void *) itsExperiment);
-  if (itsExperiment == 0) {
-	 throw TrialEventError("TrialEvent::itsExperiment is NULL");
+GWT::Widget& TrialEvent::getWidget() {
+DOTRACE("TrialEvent::getWidget");
+  DebugEvalNL((void *) itsWidget);
+  if (itsWidget == 0) {
+	 throw TrialEventError("TrialEvent::itsWidget is NULL");
   }
-  return *itsExperiment;
+  return *itsWidget;
+}
+
+Util::ErrorHandler& TrialEvent::getErrorHandler() {
+DOTRACE("TrialEvent::getErrorHandler");
+  DebugEvalNL((void *) itsErrorHandler);
+  if (itsErrorHandler == 0) {
+	 throw TrialEventError("TrialEvent::itsErrorHandler is NULL");
+  }
+  return *itsErrorHandler;
+}
+
+Trial& TrialEvent::getTrial() {
+DOTRACE("TrialEvent::getTrial");
+  DebugEvalNL((void *) itsTrial);
+  if (itsTrial == 0) {
+	 throw TrialEventError("TrialEvent::itsTrial is NULL");
+  }
+  return *itsTrial;
 }
 
 void TrialEvent::dummyInvoke(ClientData clientData) {
@@ -190,8 +216,28 @@ DOTRACE("TrialEvent::dummyInvoke");
   ++(event->itsInvokeCount);
 
   // Do the actual event callback.
-  event->invoke();
-  
+  try
+	 {
+		Util::ErrorHandler& errhdlr = event->getErrorHandler();
+
+		try
+		  {
+			 event->invoke();
+		  }
+		catch (ErrorWithMsg& err)
+		  {
+			 errhdlr.handleErrorWithMsg(err);
+		  }
+		catch (...)
+		  {
+			 errhdlr.handleMsg(
+				"an error of unknown type occured during a TrialEvent callback");
+		  }
+	 }
+  catch(...)
+	 {
+	 }
+
 #ifdef EVENT_TRACE
   cerr << "    after == " << event->itsTimer.elapsedMsec() << endl;
 #endif
@@ -205,42 +251,43 @@ DOTRACE("TrialEvent::dummyInvoke");
 
 void AbortTrialEvent::invoke() {
 DOTRACE("AbortTrialEvent::invoke");
-  getExperiment().edAbortTrial();
+  getTrial().trAbortTrial();
 }
 
 void DrawEvent::invoke() {
 DOTRACE("DrawEvent::invoke");
-  getExperiment().edDraw();
+  getTrial().trDrawTrial();
 }
 
 void EndTrialEvent::invoke() {
 DOTRACE("EndTrialEvent::invoke");
-  getExperiment().edEndTrial();
+  getTrial().trEndTrial();
+  getTrial().trNextTrial();
 }
 
 void UndrawEvent::invoke() {
 DOTRACE("UndrawEvent::invoke");
-  getExperiment().edUndraw();
+  getTrial().trUndrawTrial();
 }
 
 void SwapBuffersEvent::invoke() {
 DOTRACE("SwapBuffersEvent::invoke");
-  getExperiment().edSwapBuffers();
+  getWidget().swapBuffers();
 }
 
 void RenderBackEvent::invoke() {
 DOTRACE("RenderBackEvent::invoke");
-  getExperiment().getCanvas()->drawOnBackBuffer();
+  getWidget().getCanvas()->drawOnBackBuffer();
 }
 
 void RenderFrontEvent::invoke() {
 DOTRACE("RenderFrontEvent::invoke");
-  getExperiment().getCanvas()->drawOnFrontBuffer();
+  getWidget().getCanvas()->drawOnFrontBuffer();
 }
 
 void ClearBufferEvent::invoke() {
 DOTRACE("ClearBufferEvent::invoke");
-  GWT::Canvas* canvas = getExperiment().getCanvas();
+  GWT::Canvas* canvas = getWidget().getCanvas();
   canvas->clearColorBuffer();
   canvas->flushOutput();
 }

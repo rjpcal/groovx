@@ -3,7 +3,7 @@
 // responsehandler.h
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Thu Mar 30 09:50:01 2000
+// written: Thu May 11 10:19:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,12 @@
 #include "io/io.h"
 #endif
 
+namespace GWT { class Widget; }
+
 struct Tcl_Interp;
 
-class Experiment;
+class Block;
+class Trial;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -55,25 +58,25 @@ public:
       processing that may be required in handling responses. */
   virtual void setInterp(Tcl_Interp* interp) = 0;
 
-  /** Will by called by an \c Experiment at the beginning of a
+  /** Will be called by a \c Trial at the beginning of a
       trial. \c ResponseHandler subclasses implement this function to
       prepare listening for responses, etc. */
-  virtual void rhBeginTrial(Experiment* expt) const = 0;
+  virtual void rhBeginTrial(GWT::Widget& widget, Trial& trial) const = 0;
 
-  /** Will by called by an \c Experiment if a trial is aborted. \c
+  /** Will by called by a \c Trial if a trial is aborted. \c
       ResponseHandler subclasses implement this function to quit
       listening for responses, etc. */
-  virtual void rhAbortTrial(Experiment* expt) const = 0;
+  virtual void rhAbortTrial() const = 0;
 
-  /** Will by called by an \c Experiment when a trial is complete. \c
+  /** Will by called by a \c Trial when a trial is complete. \c
       ResponseHandler subclasses implement this function to quit
       listening for responses, etc. */
-  virtual void rhEndTrial(Experiment* expt) const = 0;
+  virtual void rhEndTrial() const = 0;
 
-  /** Will by called by an \c Experiment when the sequence of trials
+  /** Will by called by a \c Trial when the sequence of trials
       is halted suddenly. \c ResponseHandler subclasses implement this
       function to quit listening for responses, etc. */
-  virtual void rhHaltExpt(Experiment* expt) const = 0;
+  virtual void rhHaltExpt() const = 0;
 
 private:
   ResponseHandler(const ResponseHandler&);

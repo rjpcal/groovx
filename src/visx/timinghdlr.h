@@ -3,7 +3,7 @@
 // timinghdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:55 1999
-// written: Thu Mar 30 09:50:01 2000
+// written: Thu May 11 13:34:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,8 +19,11 @@
 #include "stopwatch.h"
 #endif
 
+namespace GWT { class Widget; }
+namespace Util { class ErrorHandler; }
+
+class Trial;
 class TrialEvent;
-class Experiment;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -37,6 +40,7 @@ public:
   virtual void deserialize(istream &is, IO::IOFlag flag);
   virtual int charCount() const;
 
+  virtual unsigned long serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
@@ -49,8 +53,6 @@ public:
   ///////////////
   // accessors //
   ///////////////
-
-  int getAutosavePeriod() const;
 
   TrialEvent* getEvent(TimePoint time_point, int index) const;
 
@@ -66,17 +68,16 @@ public:
   int addEventByName(const char* event_type,
 							TimePoint time_point, int msec_delay);
 
-  void setAutosavePeriod(int val);
-
   /////////////
   // actions //
   /////////////
 
-  virtual void thBeginTrial(Experiment* expt);
-  virtual void thAbortTrial(Experiment* expt);
-  virtual void thResponseSeen(Experiment* expt);
+  virtual void thBeginTrial(GWT::Widget& widget,
+									 Util::ErrorHandler& eh, Trial& trial);
+  virtual void thResponseSeen();
+  virtual void thAbortTrial();
 
-  virtual void thHaltExpt(Experiment* expt);
+  virtual void thHaltExpt();
 
 private:
   TimingHdlr(const TimingHdlr&);

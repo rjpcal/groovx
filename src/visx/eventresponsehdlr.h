@@ -3,7 +3,7 @@
 // eventresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:30:54 1999
-// written: Thu Mar 30 09:50:01 2000
+// written: Thu May 11 18:24:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,7 +91,9 @@ public:
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
-  // manipulators/accessors
+  ////////////////////////////
+  // manipulators/accessors //
+  ////////////////////////////
 
   virtual void setInterp(Tcl_Interp* interp);
 
@@ -137,10 +139,22 @@ public:
       response value. */
   void setBindingSubstitution(const fixed_string& sub);
 
-  virtual void rhBeginTrial(Experiment* expt) const;
-  virtual void rhAbortTrial(Experiment* expt) const;
-  virtual void rhEndTrial(Experiment* expt) const;
-  virtual void rhHaltExpt(Experiment* expt) const;
+  /** Causes the response handler to abort the trial if an invalid
+      responses is seen. This is the default behavior. */
+  void abortInvalidResponses();
+
+  /** Causes the response handler to ignore invalid responses as if
+      they did not happen. */
+  void ignoreInvalidResponses();
+
+  /////////////
+  // Actions //
+  /////////////
+
+  virtual void rhBeginTrial(GWT::Widget& widget, Trial& trial) const;
+  virtual void rhAbortTrial() const;
+  virtual void rhEndTrial() const;
+  virtual void rhHaltExpt() const;
 
 protected:
   /** This deprecated function is provided for compatibility with old

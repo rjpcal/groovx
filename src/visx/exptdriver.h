@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed May 10 14:37:28 2000
+// written: Thu May 11 10:54:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,6 +73,7 @@ public:
   virtual void deserialize(istream &is, IO::IOFlag flag);
   virtual int charCount() const;
 
+  virtual unsigned long serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
@@ -90,29 +91,27 @@ public:
   /// Change the name of the file to use for autosaves
   void setAutosaveFile(const fixed_string& str);
 
+  /// Return the current autosave period.
+  int getAutosavePeriod() const;
+  /// Change the autosave period to \a period.
+  void setAutosavePeriod(int period);
+
+  virtual Util::ErrorHandler& getErrorHandler();
+
   virtual GWT::Widget* getWidget();
 
   virtual GWT::Canvas* getCanvas();
 
-  virtual void edDraw();
-  virtual void edUndraw();
-  virtual void edSwapBuffers();
-
   virtual void edBeginExpt();
-
-  virtual void edBeginTrial();
-  virtual void edProcessResponse(const Response& response);
-  virtual void edAbortTrial();
   virtual void edEndTrial();
+  virtual void edNextBlock();
   virtual void edHaltExpt() const;
-
+  virtual void edResumeExpt();
   virtual void edResetExpt();
 
   /// Returns the id of the current trial
   virtual int edGetCurrentTrial() const;
   virtual void edSetCurrentTrial(int trial);
-
-  virtual void edRaiseBackgroundError(const char* msg) const;
 
   /// Uses \c deserialize() to read an experiment from \a filename.
   void read(const char* filename);

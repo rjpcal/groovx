@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Thu May 11 09:18:38 2000
+// written: Thu May 11 18:12:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ class ThTcl::ThPkg: public Tcl::ListItemPkg<TimingHdlr, ThList> {
 public:
   ThPkg(Tcl_Interp* interp) :
 	 Tcl::ListItemPkg<TimingHdlr, ThList>(interp, ThList::theThList(),
-													  "Th", "1.1")
+													  "Th", "$Revision$")
   {
 	 addCommand( new AddEventCmd(this, "Th::addImmediateEvent",
 										  TimingHdlr::IMMEDIATE));
@@ -85,6 +85,9 @@ public:
 
 	 TclPkg::eval("namespace eval Th { "
 					  "    proc timingHdlr {} { return [Th] } }");
+	 TclPkg::eval("namespace eval Th { "
+					  "    proc autosavePeriod {id args} { "
+					  "        return [eval Expt::autosavePeriod $args] } }");
   }
 };
 
@@ -102,7 +105,7 @@ class SimpleThTcl::SimpleThPkg : public Tcl::ListItemPkg<TimingHandler, ThList> 
 public:
   SimpleThPkg(Tcl_Interp* interp) :
 	 Tcl::ListItemPkg<TimingHandler, ThList>(interp, ThList::theThList(),
-														  "SimpleTh", "1.1")
+														  "SimpleTh", "$Revision$")
   {
 	 declareCAttrib("abortWait",  
 						 &TimingHandler::getAbortWait,
@@ -131,7 +134,7 @@ public:
 class ThlistTcl::ThListPkg : public Tcl::IoPtrListPkg {
 public:
   ThListPkg(Tcl_Interp* interp) :
-	 Tcl::IoPtrListPkg(interp, ThList::theThList(), "ThList", "3.0")
+	 Tcl::IoPtrListPkg(interp, ThList::theThList(), "ThList", "$Revision$")
   {
 	 ThList::theThList().insertAt(0, ThList::Ptr(new TimingHandler()));
   }

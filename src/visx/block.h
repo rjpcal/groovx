@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Wed May 10 15:23:51 2000
+// written: Thu May 11 17:44:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -129,12 +129,7 @@ public:
 		not changed until a call either to processResponse, abortTrial,
 		or endTrial; thus, multiple calls in a row to drawTrial will
 		simply show the same trial repeatedly. */
-  virtual void drawTrial(Experiment& expt);
-
-  /** The current trial is erased from the screen, and the Tlist's
-		visibility is set to false, so that the trial does not reappear
-		if any redraw events are sent to the screen window. */
-  virtual void undrawTrial(Experiment& expt);
+  virtual void drawTrialHook();
 
   /** Aborts the current trial of the experiment. The current (to be
       aborted) trial is put at the end of the trial sequence in the
@@ -142,22 +137,24 @@ public:
       call to drawTrial will start the same trial that would have
       started if the current trial had been completed normally,
       instead of being aborted. */
-  virtual void abortTrial(Experiment& expt);
+  virtual void abortTrial();
 
   /** Record a response to the current trial in the Block, and prepare
       the Block for the next trial. The response is recorded for the
       current trial, and the Block's trial sequence index is
-      incremented. In this way, the next call to drawTrial will start
-      the next trial. Also, the next call to prevResponse will return
-      the response that was recorded in the present command. */
-  virtual void processResponse(const Response& response, Experiment& expt);
+      incremented. Also, the next call to prevResponse will return the
+      response that was recorded in the present command. */
+  virtual void processResponse(const Response& response);
 
   /** Prepares the Block to start the next trial by incrementing the
       trial sequence index. */
-  virtual void endTrial(Experiment& expt);
+  virtual void endTrial();
+
+  /// Begins the next trial, moving on to the next Block if necessary.
+  virtual void nextTrial();
 
   /// Undraws, aborts, and ends the current trial.
-  virtual void haltExpt(Experiment& expt);
+  virtual void haltExpt();
 
   /** The state of the experiment is restored to what it was just
 		prior to the beginning of the most recent successfully completed

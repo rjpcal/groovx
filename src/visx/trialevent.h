@@ -3,7 +3,7 @@
 // trialevent.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:45:05 1999
-// written: Wed May 10 14:45:59 2000
+// written: Thu May 11 13:21:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,13 +19,15 @@
 #include "stopwatch.h"
 #endif
 
+namespace GWT { class Widget; }
+namespace Util { class ErrorHandler; }
+
+class Experiment;
+class Trial;
+
 struct Tcl_TimerToken_;
 typedef struct Tcl_TimerToken_* Tcl_TimerToken;
 typedef void* ClientData;
-
-class Block;
-class Experiment;
-class Trial;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -74,7 +76,7 @@ public:
       to \c cancel(). If the requested delay is negative or zero, the
       \c invoke() callback is triggered immediately without involving
       the event loop. */
-  void schedule(Experiment* expt, Block* block, Trial* trial);
+  void schedule(GWT::Widget& widget, Util::ErrorHandler& errhdlr, Trial& trial);
 
   /** Cancels a pending event. That is, if \c cancel() is called after
       \c schedule() has been called but before \c invoke() has been
@@ -91,17 +93,17 @@ protected:
       subclasses should not call this function directly. */
   virtual void invoke() = 0;
 
-  /** This returns the \c Experiment which was passed to the most
+  /** This returns the \c Widget which was passed to the most
       recent call to \c schedule(). \c TrialEventError is thrown if \c
-      schedule() has never been called, or if the \c Experiment*
+      schedule() has never been called, or if the \c Widget*
       passed most recently to \c schedule() was null. */
-  Experiment& getExperiment();
+  GWT::Widget& getWidget();
 
-  /** This returns the \c Block which was passed to the most recent
-      call to \c schedule(). \c BlockEventError is thrown if \c
-      schedule() has never been called, or if the \c Block* passed
-      most recently to \c schedule() was null. */
-  Block& getBlock();
+  /** This returns the \c ErrorHandler which was passed to the most
+      recent call to \c schedule(). \c TrialEventError is thrown if \c
+      schedule() has never been called, or if the \c ErrorHandler*
+      passed most recently to \c schedule() was null. */
+  Util::ErrorHandler& getErrorHandler();
 
   /** This returns the \c Trial which was passed to the most recent
       call to \c schedule(). \c TrialEventError is thrown if \c
@@ -118,8 +120,8 @@ private:
   int itsRequestedDelay;
   Tcl_TimerToken itsToken;
 
-  Experiment* itsExperiment;
-  Block* itsBlock;
+  GWT::Widget* itsWidget;
+  Util::ErrorHandler* itsErrorHandler;
   Trial* itsTrial;
 
   mutable bool itsIsPending;
@@ -137,7 +139,7 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-/// TrialEvent subclass to call Experiment::edAbortTrial().
+/// TrialEvent subclass to call Trial::trAbortTrial().
 class AbortTrialEvent : public TrialEvent {
 public:
   /// Construct with a requested delay of \a msec milliseconds.
@@ -146,7 +148,7 @@ protected:
   virtual void invoke();
 };
 
-/// TrialEvent subclass to call Experiment::edDraw().
+/// TrialEvent subclass to call Trial::trDrawTrial().
 class DrawEvent : public TrialEvent {
 public:
   /// Construct with a requested delay of \a msec milliseconds.
@@ -155,7 +157,7 @@ protected:
   virtual void invoke();
 };
 
-/// TrialEvent subclass to call Experiment::edEndTrial().
+/// TrialEvent subclass to call Trial::trEndTrial().
 class EndTrialEvent : public TrialEvent {
 public:
   /// Construct with a requested delay of \a msec milliseconds.
@@ -164,7 +166,7 @@ protected:
   virtual void invoke();
 };
 
-/// TrialEvent subclass to call Experiment::edUndraw().
+/// TrialEvent subclass to call Trial::trUndrawTrial().
 class UndrawEvent : public TrialEvent {
 public:
   /// Construct with a requested delay of \a msec milliseconds.
@@ -191,7 +193,7 @@ protected:
   virtual void invoke();
 };
 
-/// TrialEvent subclass to call Experiment::edSwapBuffers().
+/// TrialEvent subclass to call Widget::swapBuffers().
 class SwapBuffersEvent : public TrialEvent {
 public:
   /// Construct with a requested delay of \a msec milliseconds.
