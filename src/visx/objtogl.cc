@@ -3,11 +3,11 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Dec 14 17:31:10 1999
+// written: Tue Dec 14 17:34:28 1999
 // $Id$
 //
-// This package provides functionality that allows a Togl widget to
-// work with a Tlist, controlling its display, reshaping, etc.
+// This package provides functionality that controlling the display,
+// reshaping, etc. of a Togl widget.
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -23,7 +23,6 @@
 #include <tk.h>
 #include <string>
 
-#include "tlist.h"
 #include "tclcmd.h"
 #include "tclevalcmd.h"
 #include "tclitempkg.h"
@@ -358,7 +357,7 @@ protected:
 //
 // ObjTogl::SetCurTrialCmd --
 //
-// Change the Tlist's current trial to a specified trial id. The
+// Change the widget's current trial to a specified trial id. The
 // current trial is the one that will be displayed by a subsequent
 // call to "redraw", or by remap events sent to the screen
 // window. Returns an error if the specified trial id is not valid.
@@ -434,8 +433,8 @@ protected:
 //
 // ObjTogl::ShowCmd --
 //
-// Make a specified trial the Tlist's current trial, and draw it in
-// the OpenGL window. The Tlist's visibility is set to true.
+// Make a specified trial the widget's current trial, and draw it in
+// the OpenGL window. The widget's visibility is set to true.
 //
 //--------------------------------------------------------------------
 
