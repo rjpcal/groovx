@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Tue Aug 21 11:45:44 2001
+// written: Tue Aug 21 11:49:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ public:
       display(itsOwner->getCanvas());
   }
 
-  virtual void receiveStateChangeMsg()
+  virtual void receiveSignal()
   {
     isItRefreshed = false;
     flushChanges();

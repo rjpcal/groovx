@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Tue Aug 21 11:45:44 2001
+// written: Tue Aug 21 11:49:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ DOTRACE("GrObj::GrObj");
   // This is necessary because any representations that have been
   // cached during the GrObj constructor will become invalid upon
   // return to the derived class constructor.
-  sendStateChangeMsg();
+  emitSignal();
 }
 
 // GrObj destructor
@@ -102,7 +102,7 @@ void GrObj::readFrom(IO::Reader* reader)
 DOTRACE("GrObj::readFrom");
 
   itsImpl->readFrom(reader);
-  sendStateChangeMsg();
+  emitSignal();
 }
 
 void GrObj::writeTo(IO::Writer* writer) const
@@ -218,7 +218,7 @@ DOTRACE("GrObj::setBitmapCacheDir");
 void GrObj::setBBVisibility(bool visibility)
 {
   itsImpl->itsBB->setVisible(visibility);
-  sendStateChangeMsg();
+  emitSignal();
 }
 
 void GrObj::setScalingMode(Gmodes::ScalingMode val)
@@ -226,7 +226,7 @@ void GrObj::setScalingMode(Gmodes::ScalingMode val)
 DOTRACE("GrObj::setScalingMode");
 
   itsImpl->itsScaler->setMode(val);
-  sendStateChangeMsg();
+  emitSignal();
 }
 
 void GrObj::setWidth(double val)
@@ -234,7 +234,7 @@ void GrObj::setWidth(double val)
 DOTRACE("GrObj::setWidth");
 
   itsImpl->itsScaler->setWidth(val, grGetBoundingBox());
-  sendStateChangeMsg();
+  emitSignal();
 }
 
 void GrObj::setHeight(double val)
@@ -242,7 +242,7 @@ void GrObj::setHeight(double val)
 DOTRACE("GrObj::setHeight");
 
   itsImpl->itsScaler->setHeight(val, grGetBoundingBox());
-  sendStateChangeMsg();
+  emitSignal();
 }
 
 void GrObj::setAspectRatio(double val)
@@ -250,7 +250,7 @@ void GrObj::setAspectRatio(double val)
 DOTRACE("GrObj::setAspectRatio");
 
   itsImpl->itsScaler->setAspectRatio(val);
-  sendStateChangeMsg();
+  emitSignal();
 }
 
 void GrObj::setMaxDimension(double val)
@@ -258,7 +258,7 @@ void GrObj::setMaxDimension(double val)
 DOTRACE("GrObj::setMaxDimension");
 
   itsImpl->itsScaler->setMaxDim(val, grGetBoundingBox());
-  sendStateChangeMsg();
+  emitSignal();
 }
 
 void GrObj::setAlignmentMode(Gmodes::AlignmentMode val)
@@ -266,7 +266,7 @@ void GrObj::setAlignmentMode(Gmodes::AlignmentMode val)
 DOTRACE("GrObj::setAlignmentMode");
 
   itsImpl->itsAligner->setMode(val);
-  sendStateChangeMsg();
+  emitSignal();
 }
 
 void GrObj::setCenterX(double val)
@@ -274,7 +274,7 @@ void GrObj::setCenterX(double val)
 DOTRACE("GrObj::setCenterX");
 
   itsImpl->itsAligner->itsCenter.x() = val;
-  sendStateChangeMsg();
+  emitSignal();
 }
 
 void GrObj::setCenterY(double val)
@@ -282,7 +282,7 @@ void GrObj::setCenterY(double val)
 DOTRACE("GrObj::setCenterY");
 
   itsImpl->itsAligner->itsCenter.y() = val;
-  sendStateChangeMsg();
+  emitSignal();
 }
 
 void GrObj::setPixelBorder(int pixels)
@@ -303,7 +303,7 @@ DOTRACE("GrObj::setRenderMode");
 
   itsImpl->itsBitmapCache->setMode(mode);
   itsImpl->itsGLCache->setMode(mode);
-  sendStateChangeMsg();
+  emitSignal();
 }
 
 void GrObj::setUnRenderMode(Gmodes::RenderMode)
@@ -311,9 +311,9 @@ void GrObj::setUnRenderMode(Gmodes::RenderMode)
 DOTRACE("GrObj::setUnRenderMode");
 }
 
-void GrObj::receiveStateChangeMsg()
+void GrObj::receiveSignal()
 {
-DOTRACE("GrObj::receiveStateChangeMsg");
+DOTRACE("GrObj::receiveSignal");
   itsImpl->invalidateCaches();
 }
 

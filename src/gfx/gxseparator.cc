@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Tue Aug 21 11:45:44 2001
+// written: Tue Aug 21 11:49:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,10 +63,10 @@ public:
         }
     }
 
-  virtual void receiveStateChangeMsg()
+  virtual void receiveSignal()
   {
-    DOTRACE("GxSeparator::Impl::receiveStateChangeMsg");
-    itsOwner->sendStateChangeMsg();
+    DOTRACE("GxSeparator::Impl::receiveSignal");
+    itsOwner->emitSignal();
   }
 
   virtual bool isVolatile() const { return true; }
@@ -122,7 +122,7 @@ DOTRACE("GxSeparator::addChild");
 
   item->connect(itsImpl);
 
-  sendStateChangeMsg();
+  emitSignal();
 
   return (itsImpl->itsChildren.size() - 1);
 }
@@ -141,7 +141,7 @@ DOTRACE("GxSeparator::insertChild");
 
   item->connect(itsImpl);
 
-  sendStateChangeMsg();
+  emitSignal();
 }
 
 void GxSeparator::removeChildAt(ChildId index)
@@ -152,7 +152,7 @@ DOTRACE("GxSeparator::removeChildAt");
       itsImpl->itsChildren[index]->disconnect(itsImpl);
       itsImpl->itsChildren.erase(itsImpl->itsChildren.begin()+index);
 
-      sendStateChangeMsg();
+      emitSignal();
     }
 }
 
@@ -172,7 +172,7 @@ DOTRACE("GxSeparator::removeChild");
         {
           (*itr)->disconnect(itsImpl);
           itsImpl->itsChildren.erase(itr);
-          sendStateChangeMsg();
+          emitSignal();
           break;
         }
     }

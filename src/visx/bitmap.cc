@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Aug 16 11:03:24 2001
+// written: Tue Aug 21 11:47:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -93,23 +93,23 @@ void Bitmap::loadPbmFile(const char* filename)
 {
 DOTRACE("Bitmap::loadPbmFile");
   itsImpl->loadPbmFile(filename);
-  sendStateChangeMsg();
+  emitSignal();
 }
 
 void Bitmap::savePbmFile(const char* filename) const
-  { itsImpl->savePbmFile(filename); sendStateChangeMsg(); }
+  { itsImpl->savePbmFile(filename); emitSignal(); }
 
 void Bitmap::grabScreenRect(const Gfx::Rect<int>& rect)
-  { itsImpl->grabScreenRect(rect); sendStateChangeMsg(); }
+  { itsImpl->grabScreenRect(rect); emitSignal(); }
 
 void Bitmap::grabWorldRect(const Gfx::Rect<double>& world_rect)
-  { itsImpl->grabWorldRect(world_rect); sendStateChangeMsg(); }
+  { itsImpl->grabWorldRect(world_rect); emitSignal(); }
 
 void Bitmap::flipContrast()
-  { itsImpl->flipContrast(); sendStateChangeMsg(); }
+  { itsImpl->flipContrast(); emitSignal(); }
 
 void Bitmap::flipVertical()
-  { itsImpl->flipVertical(); sendStateChangeMsg(); }
+  { itsImpl->flipVertical(); emitSignal(); }
 
 void Bitmap::grRender(Gfx::Canvas& canvas) const
 {
@@ -137,10 +137,10 @@ bool Bitmap::getUsingZoom() const
 //////////////////
 
 void Bitmap::setZoom(Gfx::Vec2<double> zoom)
-  { itsImpl->setZoom(zoom); sendStateChangeMsg(); }
+  { itsImpl->setZoom(zoom); emitSignal(); }
 
 void Bitmap::setUsingZoom(bool val)
-  { itsImpl->setUsingZoom(val); sendStateChangeMsg(); }
+  { itsImpl->setUsingZoom(val); emitSignal(); }
 
 static const char vcid_bitmap_cc[] = "$Header$";
 #endif // !BITMAP_CC_DEFINED

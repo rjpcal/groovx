@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Tue Aug 21 11:45:44 2001
+// written: Tue Aug 21 11:49:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,9 +76,9 @@ DOTRACE("Util::Signal::disconnect");
   DebugEvalNL(itsImpl->itsObservers.size());
 }
 
-void Util::Signal::sendStateChangeMsg() const
+void Util::Signal::emitSignal() const
 {
-DOTRACE("Util::Signal::sendStateChangeMsg");
+DOTRACE("Util::Signal::emitSignal");
 
   for (ListType::iterator
          ii = itsImpl->itsObservers.begin(),
@@ -88,7 +88,7 @@ DOTRACE("Util::Signal::sendStateChangeMsg");
     {
       DebugPrintNL("sending state change...");
       if ((*ii).isValid())
-        (*ii)->receiveStateChangeMsg();
+        (*ii)->receiveSignal();
     }
 }
 

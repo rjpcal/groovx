@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Tue Aug 21 11:33:33 2001
+// written: Tue Aug 21 11:49:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,14 +66,14 @@ public:
   /** Reimplemented from \c GrObj in order to catch changes to \c
       currentPart and \c currentEndPt, so that we can reseat the
       referents of \itsEndPt_Part and itsEndPt_Bkpt, respectively. */
-  virtual void receiveStateChangeMsg();
+  virtual void receiveSignal();
 
   ////////////////
   // properties //
   ////////////////
 
   virtual int category() const { return itsFishCategory; }
-  virtual void setCategory(int val) { itsFishCategory = val; sendStateChangeMsg(); }
+  virtual void setCategory(int val) { itsFishCategory = val; emitSignal(); }
 
 private:
   /** The category of the fish. The semantics of \a category are

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Tue Aug 21 11:32:57 2001
+// written: Tue Aug 21 11:49:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,10 +101,10 @@ DOTRACE("MaskHatch::writeTo");
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
-void MaskHatch::receiveStateChangeMsg()
+void MaskHatch::receiveSignal()
 {
   setPixelBorder(itsLineWidth/2 + 2);
-  GrObj::receiveStateChangeMsg();
+  GrObj::receiveSignal();
 }
 
 Gfx::Rect<double> MaskHatch::grGetBoundingBox() const

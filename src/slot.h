@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:37:02 1999
-// written: Tue Aug 21 11:45:30 2001
+// written: Tue Aug 21 11:49:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ namespace Util
  * Along with Signal, implements the Observer design pattern. An
  * Observer can be informed of changes in an Signal by calling
  * connect() on that Signal. Thereafter, the Observer will receive
- * notifications of changes in the Signal via receiveStateChangeMsg().
+ * notifications of changes in the Signal via receiveSignal().
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ public:
   virtual ~Observer();
 
   /// Informs the Observer that one of its subjects has changed.
-  virtual void receiveStateChangeMsg() = 0;
+  virtual void receiveSignal() = 0;
 };
 
 static const char vcid_observer_h[] = "$Header$";

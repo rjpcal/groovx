@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Tue Aug 21 11:43:02 2001
+// written: Tue Aug 21 11:49:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ class GrObjImpl;
  * that mediate the various drawing modes are kept up to date by using
  * the Signal interface. Thus, whenever a manipulator changes a
  * parameter in a derived class, it should also call
- * Signal::sendStateChangeMsg() to indicate that an update is needed.
+ * Signal::emitSignal() to indicate that an update is needed.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -215,7 +215,7 @@ public:
       are not met, in which case the scaling mode is unchanged. */
   void setUnRenderMode(Gmodes::RenderMode mode);
 
-  virtual void receiveStateChangeMsg();
+  virtual void receiveSignal();
 
 
   ///////////////////////////////////////////////////////////////////////

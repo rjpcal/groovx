@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Tue Aug 21 11:44:03 2001
+// written: Tue Aug 21 11:48:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -155,7 +155,7 @@ void FieldContainer::setField(const Field& field, const Value& new_val)
 {
   field.setValue(this, new_val);
   if (itsSignal)
-    itsSignal->sendStateChangeMsg();
+    itsSignal->emitSignal();
 }
 
 void FieldContainer::readFieldsFrom(IO::Reader* reader,
@@ -169,7 +169,7 @@ DOTRACE("FieldContainer::readFieldsFrom");
     }
 
   if (itsSignal)
-    itsSignal->sendStateChangeMsg();
+    itsSignal->emitSignal();
 }
 
 void FieldContainer::writeFieldsTo(IO::Writer* writer,

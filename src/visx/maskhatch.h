@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Tue Aug 21 11:33:40 2001
+// written: Tue Aug 21 11:49:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ public:
   static const FieldMap& classFields();
 
   /// Overridden from GrObj.
-  virtual void receiveStateChangeMsg();
+  virtual void receiveSignal();
 
 protected:
   virtual Gfx::Rect<double> grGetBoundingBox() const;
