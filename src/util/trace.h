@@ -3,7 +3,7 @@
 // trace.h
 // Rob Peters
 // created: Jan-99
-// written: Thu Sep 21 18:43:51 2000
+// written: Mon Oct  9 18:57:07 2000
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -121,30 +121,8 @@ public:
   static void setMode(Mode new_mode);
   static Mode getMode();
 
-  // Setting 'breakpoint' to true will cause
-  Trace(Prof& p, bool useMsg) : 
-	 prof(p), 
-	 start(), finish(), elapsed(),
-	 giveTraceMsg(useMsg)
-	 {
-		if (giveTraceMsg)
-		  {
-			 printIn();
-		  }
-		gettimeofday(&start, NULL);
-	 }
-  
-  ~Trace()
-	 {
-		gettimeofday(&finish, NULL);
-		elapsed.tv_sec = finish.tv_sec - start.tv_sec;
-		elapsed.tv_usec = finish.tv_usec - start.tv_usec;
-		prof.add(elapsed);
-		if (giveTraceMsg)
-		  {
-			 printOut();
-		  }
-	 }
+  Trace(Prof& p, bool useMsg);
+  ~Trace();
 
 private:
   void printIn();
