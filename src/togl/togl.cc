@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Thu May 25 13:19:06 2000
+// written: Thu May 25 13:43:26 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -95,8 +95,8 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
 class Togl::Impl
 {
 public:
-  Impl(Togl* owner,
-		 Tcl_Interp* interp, Tk_Window mainwin, int argc, char** argv);
+  Impl(Togl* owner, Tcl_Interp* interp,
+		 const char* pathname, int config_argc, char** config_argv);
   virtual ~Impl();
 
   int configure(Tcl_Interp* interp, int argc, char* argv[], int flags);
@@ -1268,8 +1268,9 @@ DOTRACE("Togl::stereoFrustum");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Togl::Togl(Tcl_Interp* interp, Tk_Window mainwin, int argc, char** argv) :
-  itsImpl(new Impl(this, interp, mainwin, argc, argv))
+Togl::Togl(Tcl_Interp* interp, const char* pathname,
+			  int config_argc, char** config_argv) :
+  itsImpl(new Impl(this, interp, pathname, config_argc, config_argv))
 {
 DOTRACE("Togl::Togl");
 }
@@ -1285,8 +1286,8 @@ DOTRACE("Togl::~Togl");
 //     * Creates a command that handles this object
 //     * Configures this Togl for the given arguments
 
-Togl::Impl::Impl(Togl* owner,
-					  Tcl_Interp* interp, Tk_Window mainwin, int argc, char** argv) :
+Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
+					  const char* pathname, int config_argc, char** config_argv) :
   itsOwner(owner),
 
   itsNext(NULL),
@@ -1343,9 +1344,10 @@ Togl::Impl::Impl(Togl* owner,
 DOTRACE("Togl::Impl::Impl");
 
   /* Create the window. */
-  char* name = argv[1];
+  Tk_Window mainwin = Tk_MainWindow(interp);
   itsTkWin = Tk_CreateWindowFromPath(itsInterp, mainwin,
-												 name, (char *) NULL);
+												 const_cast<char*>(pathname),
+												 (char *) 0);
   if (itsTkWin == NULL) {
 	 throw TCL_ERROR;
   }
@@ -1366,9 +1368,11 @@ DOTRACE("Togl::Impl::Impl");
 								static_cast<ClientData>(this));
 
   /* Configure Togl widget */
-  if (configure(itsInterp, argc-2, argv+2, 0) == TCL_ERROR) {
-	 Tk_DestroyWindow(itsTkWin);
-	 throw TCL_ERROR;
+  if (config_argc > 0 ) {
+	 if (configure(itsInterp, config_argc, config_argv, 0) == TCL_ERROR) {
+		Tk_DestroyWindow(itsTkWin);
+		throw TCL_ERROR;
+	 }
   }
 
   // If OpenGL window wasn't already created by configure() we
@@ -2550,7 +2554,7 @@ namespace ToglTcl {
   class ToglPkg;
 }
 
-int ToglTcl::ToglCmd(ClientData clientData, Tcl_Interp *interp,
+int ToglTcl::ToglCmd(ClientData, Tcl_Interp *interp,
 							int argc, char **argv)
 {
 DOTRACE("ToglTcl::ToglCmd");
@@ -2559,11 +2563,9 @@ DOTRACE("ToglTcl::ToglCmd");
 						 "wrong # args: should be \"pathName read filename\"");
   }
 
-  Tk_Window mainwin = (Tk_Window)clientData;
-
   /* Create Togl data structure */
   try {
-	 new Togl(interp, mainwin, argc, argv);
+	 new Togl(interp, argv[1], argc-2, argv+2);
   }
   catch (...) {
 	 return TCL_ERROR;
@@ -2578,7 +2580,7 @@ public:
 	 TclPkg(interp, "Togl", TOGL_VERSION)
 	 {
 		Tcl_CreateCommand(interp, "togl", ToglTcl::ToglCmd,
-								(ClientData) Tk_MainWindow(interp), NULL);
+								(ClientData) 0, NULL);
 		Tcl_InitHashTable(&CommandTable, TCL_STRING_KEYS);
 	 }
 };

@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Thu May 25 13:07:51 2000
+// written: Thu May 25 13:40:52 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -96,7 +96,8 @@ extern void Togl_ResetDefaultCallbacks( void );
 class Togl
 {
 public:
-  Togl(Tcl_Interp* interp, Tk_Window mainwin, int argc, char** argv);
+  Togl(Tcl_Interp* interp, const char* pathname,
+		 int config_argc = 0, char** config_argv = 0);
   virtual ~Togl();
 
   // Change callbacks for existing widget
