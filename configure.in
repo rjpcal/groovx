@@ -5,6 +5,8 @@ dnl
 dnl $Revision$
 
 AC_INIT(grsh, [0.8a8], [rjpeters@klab.caltech.edu])
+AC_PREREQ(2.53)
+AC_REVISION($Revision$)
 
 # If CXXFLAGS was not already set, then set it now to keep autoconf from
 # adding "-g -O2".
