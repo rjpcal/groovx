@@ -23,7 +23,7 @@ test "Toglet-Togl::undraw" "normal use" {
 	 Togl::see $f
 	 Togl::undraw
 	 set sum [pixelCheckSum]
-	 return "[expr $sum == 0] $sum]"
+	 return "[expr $sum == 0] $sum"
 } {^1 }
 test "Toglet-Togl::undraw" "no error" {} $BLANK $no_test
 
