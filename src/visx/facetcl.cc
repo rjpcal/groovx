@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Thu May 10 12:04:48 2001
+// written: Fri Jul 13 14:30:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,10 +26,10 @@ int Face_Init(Tcl_Interp* interp) {
 DOTRACE("Face_Init");
 
   Tcl::TclPkg* pkg =
-	 new Tcl::FieldCntrPkg<Face>(interp, "Face", "$Revision$"); 
+    new Tcl::FieldCntrPkg<Face>(interp, "Face", "$Revision$");
 
   Tcl::TclPkg* pkg2 =
-	 new Tcl::FieldCntrPkg<CloneFace>(interp, "CloneFace", "$Revision$"); 
+    new Tcl::FieldCntrPkg<CloneFace>(interp, "CloneFace", "$Revision$");
 
   return pkg->combineStatus(pkg2->initStatus());
 }
