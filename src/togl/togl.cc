@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Sun Aug  4 20:23:27 2002
+// written: Mon Aug  5 08:07:35 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -213,6 +213,7 @@ public:
   Togl_Callback* itsTimerProc;  /* Callback when widget is idle */
 
   /* Overlay stuff */
+  // FIXME move overlay stuff into a separate struct
   GlxWrapper* itsOverlayGlx;    /* Overlay planes OpenGL context */
   Window itsOverlayWindow;      /* The overlay window, or 0 */
   Togl_Callback* itsOverlayDisplayProc; /* Overlay redraw proc */
@@ -465,9 +466,8 @@ DOTRACE("<togl.cc>::Togl_WidgetCmd");
           if (strcmp(argv[2],"-extensions")==0)
             {
               /* Return a list of OpenGL extensions available */
-              char *extensions;
-              extensions = (char *) glGetString(GL_EXTENSIONS);
-              Tcl_SetResult( interp, extensions, TCL_STATIC );
+              Tcl_SetResult(interp, (char*) glGetString(GL_EXTENSIONS),
+                            TCL_STATIC);
               result = TCL_OK;
             }
           else
@@ -988,6 +988,7 @@ DOTRACE("Togl::Impl::postReconfigure");
 unsigned long Togl::Impl::allocColor(float red, float green, float blue) const
 {
 DOTRACE("Togl::Impl::allocColor");
+  // FIXME move this duplicated error-handling to a separate function
   if (itsGlxOpts.rgbaFlag)
     {
       fprintf(stderr,"Error: Togl::allocColor illegal in RGBA mode.\n");
