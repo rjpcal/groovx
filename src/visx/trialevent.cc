@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Fri Sep 29 16:12:32 2000
+// written: Thu Oct  5 12:42:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,6 @@
 
 #define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_DEBUG
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
