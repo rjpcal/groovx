@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Sun Oct 22 16:01:07 2000
+// written: Sun Oct 22 16:13:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -124,15 +124,11 @@ public:
   IoError();
   /// Construct, and call \c setMsg(message)
   IoError(const char* message);
-  /// Construct, and call \c setMsg(typeInfo)
-  IoError(const std::type_info& typeInfo);
   /// Virtual destructor
   virtual ~IoError();
 protected:
   /// Change the message associated with the exception to \a newMessage
   virtual void setMsg(const char* newMessage);
-  /// Change the message associated with the exception to \c typeInfo.name()
-  virtual void setMsg(const std::type_info& typeInfo);
 };
 
 /**
@@ -146,8 +142,6 @@ public:
   InputError() : IoError() {}
   ///
   InputError(const char* str);
-  ///
-  InputError(const std::type_info& ti) { setMsg(ti); }
   /// Virtual destructor
   virtual ~InputError();
 };
@@ -163,8 +157,6 @@ public:
   OutputError() : IoError() {}
   ///
   OutputError(const char* str);
-  ///
-  OutputError(const std::type_info& ti) { setMsg(ti); }
   /// Virtual destructor
   virtual ~OutputError();
 };
@@ -182,8 +174,6 @@ public:
   LogicError() : IoError() {}
   ///
   LogicError(const char* str);
-  ///
-  LogicError(const std::type_info& ti) { setMsg(ti); }
   /// Virtual destructor
   virtual ~LogicError();
 };
@@ -200,8 +190,6 @@ public:
   ValueError() : IoError() {}
   ///
   ValueError(const char* str);
-  ///
-  ValueError(const std::type_info& ti) { setMsg(ti); }
   /// Virtual destructor
   virtual ~ValueError();
 };
