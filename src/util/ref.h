@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Wed Jun 13 16:21:40 2001
+// written: Thu Jun 14 10:03:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,11 +112,19 @@ private:
     Handle(const Handle& other) : itsMaster(other.itsMaster)
     { itsMaster->incrRefCount(); }
 
+#ifdef MIPSPRO_COMPILER
+    template <class U> friend class Ref<U>::Handle;
+#   define HANDLE_U typename Ref<U>::Handle
+#else
     template <class U> friend class Handle;
+#   define HANDLE_U Handle<U>
+#endif
 
     template <class U>
-    Handle(const Handle<U>& other) : itsMaster(other.itsMaster)
+    Handle(const HANDLE_U& other) : itsMaster(other.itsMaster)
     { itsMaster->incrRefCount(); }
+
+#undef HANDLE_U
 
     Handle& operator=(const Handle& other)
     {
@@ -222,33 +230,43 @@ private:
     static Util::RefCounts* getCounts(T* master, RefType tp)
     {
       return (master && (tp == WEAK || master->isVolatile())) ?
-		  master->refCounts() : 0;
+        master->refCounts() : 0;
     }
 
-	 RefType refType() const
-	 {
-		return (itsMaster && itsCounts) ? WEAK : STRONG;
-	 }
+    RefType refType() const
+    {
+      return (itsMaster && itsCounts) ? WEAK : STRONG;
+    }
 
   public:
-    explicit WeakHandle(T* master, RefType tp) : 
-		 itsMaster(master),
-		 itsCounts(getCounts(master, tp))
+    explicit WeakHandle(T* master, RefType tp) :
+       itsMaster(master),
+       itsCounts(getCounts(master, tp))
     { acquire(); }
 
     ~WeakHandle()
     { release(); }
 
-    WeakHandle(const WeakHandle& other) : itsMaster(other.itsMaster),
-														itsCounts(other.itsCounts)
+    WeakHandle(const WeakHandle& other) :
+      itsMaster(other.itsMaster),
+      itsCounts(other.itsCounts)
     { acquire(); }
 
+#ifdef MIPSPRO_COMPILER
+    template <class U> friend class WeakRef<U>::WeakHandle;
+#   define WEAKHANDLE_U typename WeakRef<U>::WeakHandle
+#else
     template <class U> friend class WeakHandle;
+#   define WEAKHANDLE_U WeakHandle<U>
+#endif
 
     template <class U>
-    WeakHandle(const WeakHandle<U>& other) : itsMaster(other.itsMaster),
-															itsCounts(other.itsCounts)
+    WeakHandle(const WEAKHANDLE_U& other) :
+      itsMaster(other.itsMaster),
+      itsCounts(other.itsCounts)
     { acquire(); }
+
+#undef WEAKHANDLE_U
 
     WeakHandle& operator=(const WeakHandle& other)
     {
@@ -344,14 +362,14 @@ public:
   explicit WeakRef(Util::UID id, RefType tp = STRONG) :
     itsHandle(RefHelper::isValidId(id) ?
               RefHelper::getCastedItem<T>(id) : 0,
-				  tp)
+              tp)
   {}
 
   explicit WeakRef(T* master, RefType tp = STRONG) : itsHandle(master, tp)
   { insertItem(); }
 
   WeakRef(T* master, bool /*noInsert*/, RefType tp = STRONG) :
-	 itsHandle(master,tp)
+    itsHandle(master,tp)
   {}
 
 
