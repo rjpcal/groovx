@@ -71,24 +71,32 @@ dnl Setup linking options
 LDFLAGS="$LDFLAGS -Wl,-rpath,\${exec_prefix}/lib"
 LDFLAGS="$LDFLAGS -L\${exec_prefix}/lib"
 
-dnl Specify the location of tcltk8.4
+###
+
+AC_MSG_CHECKING([for location of tcltk8.4])
 
 AC_ARG_WITH(tcltk,
 	    AC_HELP_STRING([--with-tcltk=DIR],
-			   [specify where tcl/tk >= 8.4 are installed (default=/usr/local)]),
+			   [specify where tcl/tk >= 8.4 are installed [/usr/local]]),
 	    ,
 	    with_tcltk=/usr/local)
+
+AC_MSG_RESULT($with_tcltk)
 
 CPPFLAGS="$CPPFLAGS -I${with_tcltk}/include"
 LDFLAGS="$LDFLAGS -Wl,-rpath,${with_tcltk}/lib -L${with_tcltk}/lib"
 
-dnl Check whether to enable matlab support
+###
+
+AC_MSG_CHECKING([whether to to enable matlab support])
 
 AC_ARG_ENABLE(matlab,
 	      AC_HELP_STRING([--enable-matlab],
-			     [enable MATLAB support (default=yes)]),
+			     [enable MATLAB support \[yes\]]),
 	      ,
 	      enable_matlab=yes)
+
+AC_MSG_RESULT($enable_matlab)
 
 if test $enable_matlab = yes; then
    CPPFLAGS="$CPPFLAGS -I/usr/local/matlab/extern/include"
@@ -98,26 +106,34 @@ dnl FIXME these lines are architecture-specific
    AC_DEFINE(WITH_MATLAB, 1)
 fi
 
-dnl Check whether to enable GNU readline command editing for the shell interface
+###
+
+AC_MSG_CHECKING([whether to use GNU readline command editing in the shell])
 
 AC_ARG_ENABLE(readline,
 	      AC_HELP_STRING([--enable-readline],
-	                     [enable GNU readline command editing (default=yes)]),
+	                     [enable GNU readline command editing [yes]]),
 	      ,
 	      enable_readline=yes)
+
+AC_MSG_RESULT($enable_readline)
 
 if test $enable_readline = yes; then
    LIBS="$LIBS -lreadline -ltermcap"
    AC_DEFINE(WITH_READLINE, 1)
 fi
 
-dnl Check whether to enable debug mode by default
+###
+
+AC_MSG_CHECKING([whether to enable debug mode by default])
 
 AC_ARG_ENABLE(default-debug,
 	      AC_HELP_STRING([--enable-default-debug],
 			     [whether the default build should include debugging (default=yes)]),
 	      ,
 	      enable_default_debug=yes)
+
+AC_MSG_RESULT($enable_default_debug)
 
 if test $enable_default_debug = yes; then
    AC_SUBST(DEFAULT_MODE, debug)
