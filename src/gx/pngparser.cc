@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr 24 20:05:06 2002
-// written: Thu Apr 25 07:43:11 2002
+// written: Thu Apr 25 09:21:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,7 @@
 #include <cstdio>
 #include <png.h>
 
+#include "util/debug.h"
 #include "util/trace.h"
 
 /// This class provides exception-safe cleanup for libpng.
@@ -49,6 +50,9 @@ public:
   void parse(const char* filename, Gfx::BmapData& data);
 
 private:
+  PngParser(const PngParser&);
+  PngParser& operator=(const PngParser&);
+
   FILE* itsFile;
   png_structp itsPngPtr;
   png_infop itsInfoPtr;
