@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Wed Oct 20 10:13:24 1999
+// written: Tue Nov  2 10:21:35 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,9 +40,6 @@ public:
 
   virtual void readFrom(Reader* reader);
   virtual void writeTo(Writer* writer) const;
-
-  virtual void setCategory(int) {}
-  virtual int getCategory() const { return -1; }
 
   void setText(const char* text);
   const char* getText() const;
