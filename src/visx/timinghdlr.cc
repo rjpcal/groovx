@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Wed Dec  1 11:31:29 1999
+// written: Wed Dec  1 11:43:08 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,9 +14,9 @@
 #include "timinghdlr.h"
 
 #include "iomgr.h"
-#include "reader.h"
+#include "readutils.h"
 #include "trialevent.h"
-#include "writer.h"
+#include "writeutils.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -158,19 +158,19 @@ DOTRACE("TimingHdlr::readFrom");
   reader->readValue("autosavePeriod", itsAutosavePeriod);
 
   deleteAll(itsImmediateEvents);
-  reader->readObjectSeq("immediateEvents",
+  ReadUtils::readObjectSeq(reader, "immediateEvents",
 								back_inserter(itsImmediateEvents), (TrialEvent*)0);
 
   deleteAll(itsStartEvents);
-  reader->readObjectSeq("startEvents",
+  ReadUtils::readObjectSeq(reader, "startEvents",
 								back_inserter(itsStartEvents), (TrialEvent*)0);
 
   deleteAll(itsResponseEvents);
-  reader->readObjectSeq("responseEvents",
+  ReadUtils::readObjectSeq(reader, "responseEvents",
 								back_inserter(itsResponseEvents), (TrialEvent*)0);
 
   deleteAll(itsAbortEvents);
-  reader->readObjectSeq("abortEvents",
+  ReadUtils::readObjectSeq(reader, "abortEvents",
 								back_inserter(itsAbortEvents), (TrialEvent*)0);
 }
 
@@ -178,16 +178,16 @@ void TimingHdlr::writeTo(Writer* writer) const {
 DOTRACE("TimingHdlr::writeTo");
   writer->writeValue("autosavePeriod", itsAutosavePeriod);
 
-  writer->writeObjectSeq("immediateEvents",
+  WriteUtils::writeObjectSeq(writer, "immediateEvents",
 								 itsImmediateEvents.begin(), itsImmediateEvents.end());
 
-  writer->writeObjectSeq("startEvents",
+  WriteUtils::writeObjectSeq(writer, "startEvents",
 								 itsStartEvents.begin(), itsStartEvents.end());
 
-  writer->writeObjectSeq("responseEvents",
+  WriteUtils::writeObjectSeq(writer, "responseEvents",
 								 itsResponseEvents.begin(), itsResponseEvents.end());
 
-  writer->writeObjectSeq("abortEvents",
+  WriteUtils::writeObjectSeq(writer, "abortEvents",
 								 itsAbortEvents.begin(), itsAbortEvents.end());
 }
 

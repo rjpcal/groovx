@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Tue Nov 30 17:26:22 1999
+// written: Wed Dec  1 11:41:30 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,8 +19,8 @@
 
 #include "demangle.h"
 #include "iomgr.h"
-#include "reader.h"
-#include "writer.h"
+#include "readutils.h"
+#include "writeutils.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -159,7 +159,7 @@ DOTRACE("IoPtrList::readFrom");
 
   vector<IO*> ioVec;
 
-  reader->readObjectSeq("itsVec", back_inserter(ioVec), (IO*) 0);
+  ReadUtils::readObjectSeq(reader, "itsVec", back_inserter(ioVec), (IO*) 0);
 
   vector<void*>& voidVec = VoidPtrList::vec();
 
@@ -184,7 +184,7 @@ DOTRACE("IoPtrList::writeTo");
 	 if ( vec()[i] != 0 )
 		ioVec[i] = fromVoidToIO(vec()[i]);
 
-  writer->writeObjectSeq("itsVec", ioVec.begin(), ioVec.end());
+  WriteUtils::writeObjectSeq(writer, "itsVec", ioVec.begin(), ioVec.end());
 }
 
 static const char vcid_ioptrlist_cc[] = "$Header$";
