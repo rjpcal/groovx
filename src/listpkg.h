@@ -3,7 +3,7 @@
 // listpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 29 17:23:03 1999
-// written: Wed Jul  7 14:26:55 1999
+// written: Tue Dec  7 18:34:57 1999
 // $Id$
 //
 // This file defines a template TclPkg intended to be used with List's
@@ -22,6 +22,8 @@
 #ifndef TCLITEMPKG_H_DEFINED
 #include "tclitempkg.h"
 #endif
+
+namespace Tcl {
 
 //---------------------------------------------------------------------
 //
@@ -90,6 +92,8 @@ public:
 private:
   List& itsList;
 };
+
+} // end namespace Tcl
 
 static const char vcid_listpkg_h[] = "$Header$";
 #endif // !LISTPKG_H_DEFINED

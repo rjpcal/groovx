@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Thu Oct 21 13:00:59 1999
+// written: Tue Dec  7 18:33:44 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,8 @@
 #ifndef DEMANGLE_H_DEFINED
 #include "demangle.h"
 #endif
+
+namespace Tcl {
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -117,6 +119,8 @@ ListItemPkg<C, List>::ListItemPkg(Tcl_Interp* interp, List& aList,
 						  this, TclPkg::makePkgCmdName(
 									 creator_cmd_name ? creator_cmd_name : name)) );
 }
+
+} // end namespace Tcl
 
 static const char vcid_listitempkg_h[] = "$Header$";
 #endif // !LISTITEMPKG_H_DEFINED

@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Tue Dec  7 12:16:05 1999
+// written: Tue Dec  7 18:32:08 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,8 @@
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
+
+namespace Tcl {
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -162,32 +164,40 @@ private:
   int itsItemArgn;
 };
 
+} // end namespace Tcl
+
 ///////////////////////////////////////////////////////////////////////
 //
 // TclItemPkg member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
+// NOTE: aCC won't compile these static TclItemPkg functions if they
+// are defined inside a namespace Tcl {} block. So, as a workaround,
+// we must define them at global scope, using explicit Tcl:: qualifiers
+
 template <class T>
-void TclItemPkg::declareGetter_(TclItemPkg* pkg, const char* cmd_name,
-                                Getter<T>* getter, const char* usage) {
-  pkg->addCommand( new TVecGetterCmd<T>(pkg, pkg->makePkgCmdName(cmd_name), 
-                                        getter, usage, pkg->itsItemArgn) );
+void Tcl::TclItemPkg::declareGetter_(TclItemPkg* pkg, const char* cmd_name,
+												 Getter<T>* getter, const char* usage) {
+  pkg->addCommand( new Tcl::TVecGetterCmd<T>(pkg, pkg->makePkgCmdName(cmd_name), 
+															getter, usage, pkg->itsItemArgn) );
 }
 
 template <class T>
-void TclItemPkg::declareSetter_(TclItemPkg* pkg, const char* cmd_name,
-                                Setter<T>* setter, const char* usage) {
-  pkg->addCommand( new TVecSetterCmd<T>(pkg, pkg->makePkgCmdName(cmd_name),
-                                        setter, usage, pkg->itsItemArgn) );
+void Tcl::TclItemPkg::declareSetter_(TclItemPkg* pkg, const char* cmd_name,
+												 Setter<T>* setter, const char* usage) {
+  pkg->addCommand( new Tcl::TVecSetterCmd<T>(pkg, pkg->makePkgCmdName(cmd_name),
+															setter, usage, pkg->itsItemArgn) );
 }
 
 template <class T>
-void TclItemPkg::declareAttrib_(TclItemPkg* pkg, const char* attrib_name,
-                                Attrib<T>* attrib, const char* usage) {
-  pkg->addCommand( new TVecAttribCmd<T>(pkg, pkg->makePkgCmdName(attrib_name),
-                                        attrib, usage, pkg->itsItemArgn) );
+void Tcl::TclItemPkg::declareAttrib_(TclItemPkg* pkg, const char* attrib_name,
+												 Attrib<T>* attrib, const char* usage) {
+  pkg->addCommand( new Tcl::TVecAttribCmd<T>(pkg, pkg->makePkgCmdName(attrib_name),
+															attrib, usage, pkg->itsItemArgn) );
 }
+
+namespace Tcl {
 
 void TclItemPkg::instantiate() {
   Getter<int>* gi=0;             declareGetter_(this, 0, gi, 0);
@@ -312,6 +322,8 @@ TclIoItemPkg::TclIoItemPkg(Tcl_Interp* interp, const char* name,
   addCommand( new ItemWriteCmd(this, itemArgn()) );
   addCommand( new ItemReadCmd(this, itemArgn()) );
 }
+
+} // end namespace Tcl
 
 static const char vcid_tclitempkg_cc[] = "$Header$";
 #endif // !TCLITEMPKG_CC_DEFINED
