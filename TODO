@@ -27,27 +27,27 @@
 
 * (19-Jul-2004) port graphics stuff to Aqua for Darwin
 
-  where is <GL/glx.h> used?
+  where are <GL/glx.h> and <X11/Xlib.h> used?
 
     glxwrapper.h
-      OK - used only in glxwrapper.cc and in glwindowinterface.cc (for instantiation)
-    xbmaprenderer.cc
-      OK - not used externally
-    gxrasterfont.cc
-
-  where is <X11/Xlib.h> used?
-
-    glxwrapper.h
-      OK - used only in glxwrapper.cc and in glwindowinterface.cc (for instantiation)
+      OK - used only in glwindowinterface.cc for instantiation
     xbmaprenderer.h
-      OK - used only in xbmaprenderer.cc
-    gxrasterfont.cc
-    rhtcl.cc
-      only used for XStringToKeysym and XKeysymToKeycode
+      OK - not used anywhere
+    glxrasterfont.h
+      OK - used only in gxrasterfont.cc for instantiation
 
-  how to set up for Aqua?
+  where are GL_PLATFORM macros used?
 
-    TkMacOSXGetDrawablePort to get a GWorldPtr/CGrafPtr from Tk_WindowId(tkWin)
+    glcanvas.cc -- guards the <GL/gl.h> #includes
+    gxvectorfont.cc -- guards the <GL/gl.h> #includes
+    gltcl.cc -- guards the <GL/gl.h> #includes
+
+    toglet.cc -- guards Tk_SetClassProcs
+    tkwidget.cc -- selects implementation of WindowSystem portability layer
+    gltcl.cc --	checks for GL_RESCALE_NORMAL_EXT
+
+    gxrasterfont.cc -- selects between {Glx,Agl}Rasterfont
+    glwindowinterface.cc -- selects between {Glx,Agl}Wrapper
 
 * (8-Jun-2004) Change EventResponseHdlr::feedbackMap to be a proc
 
