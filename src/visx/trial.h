@@ -2,8 +2,8 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Fri Mar 12 11:07:18 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:16:55 1999
+static const char vcid_trial_h[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 class Tlist {

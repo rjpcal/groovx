@@ -2,8 +2,8 @@
 // trace.h
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 11:19:32 1999
-static const char vcid[] = "$Id$";
+// written: Fri Mar 12 12:17:48 1999
+static const char vcid_trace_h[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TRACE_H_DEFINED
