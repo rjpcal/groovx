@@ -274,27 +274,18 @@ void Tcl::Interp::createProc(const char* namesp, const char* proc_name,
                              const char* args, const char* body)
 {
 DOTRACE("Tcl::Interp::createProc");
-  Tcl::ObjPtr proc_cmd_str;
 
-  const bool have_namespace = (namesp != 0 && (*namesp != '\0'));
-
-  if (have_namespace)
+  if (namesp == 0 || (*namesp == '\0'))
     {
-      proc_cmd_str.append("namespace eval ");
-      proc_cmd_str.append(namesp);
-      proc_cmd_str.append(" { ");
+      namesp = "::";
     }
-  proc_cmd_str.append("proc ");
-  proc_cmd_str.append(proc_name);
-  proc_cmd_str.append(" {");
+
+  fstring proc_cmd_str;
+  proc_cmd_str.append("namespace eval ", namesp);
+  proc_cmd_str.append(" { proc ", proc_name, " {");
   if (args)
     proc_cmd_str.append(args);
-  proc_cmd_str.append("} {");
-  proc_cmd_str.append(body);
-  proc_cmd_str.append("} ");
-
-  if (have_namespace)
-    proc_cmd_str.append(" }");
+  proc_cmd_str.append("} {", body, "} }");
 
   Tcl::Code proc_cmd(proc_cmd_str, Tcl::Code::THROW_EXCEPTION);
   proc_cmd.invoke(*this);
@@ -304,20 +295,17 @@ void Tcl::Interp::deleteProc(const char* namesp, const char* proc_name)
 {
 DOTRACE("Tcl::Interp::deleteProc");
 
-  Tcl::ObjPtr cmd_str;
+  fstring cmd_str;
 
   cmd_str.append("rename ");
 
   if (namesp && (*namesp != '\0'))
     {
       cmd_str.append(namesp);
-      cmd_str.append("::");
     }
 
-  cmd_str.append(proc_name);
-
   // by renaming to the empty string "", we delete the Tcl proc
-  cmd_str.append(" \"\"");
+  cmd_str.append("::", proc_name, " \"\"");
 
   Tcl::Code cmd(cmd_str, Tcl::Code::THROW_EXCEPTION);
   cmd.invoke(*this);
