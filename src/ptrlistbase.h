@@ -3,7 +3,7 @@
 // ptrlistbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Oct 25 09:18:23 2000
+// written: Wed Oct 25 09:32:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -93,13 +93,9 @@ public:
   virtual void clear();
 
 protected:
-  /** Return the \c IO::IoObject* at the index given by \a id.  There is no
-		range-check performed; this must be done by the client with
-		\c isValidId(). */
-  virtual IO::IoObject* getPtrBase(int id) const throw ();
-
-  /** Like \c getPtrBase(), but checks first if \a id is a valid index,
-		and throws an \c InvalidIdError if it is not. */
+  /** Return the \c IO::IoObject* at the index given by \a id. Checks
+		first if \a id is a valid index, and throws an \c InvalidIdError
+		if it is not. */
   virtual IO::IoObject* getCheckedPtrBase(int id) const throw (InvalidIdError);
 
   /** Add ptr at the next available location, and return the index
