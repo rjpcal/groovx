@@ -437,12 +437,23 @@ www_export: export
 #
 #-------------------------------------------------------------------------
 
+
+$(exec_prefix)/bin/%.tcl: ./share/scripts/%.tcl
+	rm -f $@
+	cp ./share/scripts/$(@F) $@
+	chmod 555 $@
+
+install-scripts: $(exec_prefix)/bin/.timestamp	\
+$(exec_prefix)/bin/editor.tcl			\
+$(exec_prefix)/bin/make_faces.tcl		\
+$(exec_prefix)/bin/slideshow.tcl		\
+$(exec_prefix)/bin/visedit.tcl			\
+
+
 $(prefix)/share/audio/%.au: ./share/audio/%.au
+	rm -f $@
 	cp $^ $@
 	chmod 444 $@
-
-install-scripts: $(exec_prefix)/bin/.timestamp
-	cp share/scripts/*.tcl $(exec_prefix)/bin
 
 install-audio: $(prefix)/share/audio/.timestamp	\
 $(prefix)/share/audio/saw100_200Hz_2x120ms.au	\
@@ -474,4 +485,4 @@ $(prefix)/share/audio/sin_200Hz_300ms.au	\
 $(prefix)/share/audio/sin_350Hz_2x120ms.au	\
 $(prefix)/share/audio/sin_350Hz_300ms.au	\
 $(prefix)/share/audio/sin_500Hz_2x120ms.au	\
-$(prefix)/share/audio/sin_500Hz_300ms.au
+$(prefix)/share/audio/sin_500Hz_300ms.au	\
