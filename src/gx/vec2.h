@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 28 12:54:13 1999
-// written: Thu May 10 12:04:40 2001
+// written: Wed Jul 18 15:30:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,36 +24,38 @@ public:
   const V& x() const { return x_; }
   const V& y() const { return y_; }
 
+  void set(V x, V y) { x_ = x; y_ = y; }
+
   Point operator+(const Point<V>& rhs) const
-	 { return Point<V>(x_ + rhs.x(), y_ + rhs.y()); }
+    { return Point<V>(x_ + rhs.x(), y_ + rhs.y()); }
 
   Point operator-(const Point<V>& rhs) const
-	 { return Point<V>(x_ - rhs.x(), y_ - rhs.y()); }
+    { return Point<V>(x_ - rhs.x(), y_ - rhs.y()); }
 
 
   Point operator*(const V& factor) const
-	 { return Point<V>(x_ * factor, y_ * factor); }
+    { return Point<V>(x_ * factor, y_ * factor); }
 
-  Point operator/(const V& factor) const 
-	 { return Point<V>(x_ / factor, y_ / factor); }
+  Point operator/(const V& factor) const
+    { return Point<V>(x_ / factor, y_ / factor); }
 
 
   template <class U>
   Point& operator+=(const Point<U>& rhs)
-	 { x_ += V(rhs.x()); y_ += V(rhs.y()); return *this; }
+    { x_ += V(rhs.x()); y_ += V(rhs.y()); return *this; }
 
   template <class U>
   Point& operator-=(const Point<U>& rhs)
-	 { x_ -= V(rhs.x()); y_ -= V(rhs.y()); return *this; }
+    { x_ -= V(rhs.x()); y_ -= V(rhs.y()); return *this; }
 
 
   template <class U>
   Point& operator*=(const U& factor)
-	 { x_ *= factor; y_ *= factor; }
+    { x_ *= factor; y_ *= factor; }
 
   template <class U>
   Point& operator/=(const U& factor)
-	 { x_ /= factor; y_ /= factor; }
+    { x_ /= factor; y_ /= factor; }
 
 private:
   V x_;
