@@ -109,6 +109,7 @@ ifeq ($(PLATFORM),i686)
 	AUDIO_LIB := -lesd -laudiofile-0.2.1
 endif
 
+##
 ifeq ($(PLATFORM),ppc)
 endif
 
