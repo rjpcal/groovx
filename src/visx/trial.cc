@@ -331,10 +331,10 @@ DOTRACE("Trial::vxUndo");
     rep->responses.pop_back();
 }
 
-Util::FwdIter<Response> Trial::responses() const
+rutz::fwd_iter<Response> Trial::responses() const
 {
 DOTRACE("Trial::responses");
-  return Util::FwdIter<Response>
+  return rutz::fwd_iter<Response>
     (rep->responses.begin(), rep->responses.end());
 }
 
@@ -386,10 +386,10 @@ DOTRACE("Trial::trNextNode");
   setCurrentNode(rep->currentNode+1);
 }
 
-Util::FwdIter<Ref<GxNode> > Trial::nodes() const
+rutz::fwd_iter<Ref<GxNode> > Trial::nodes() const
 {
 DOTRACE("Trial::nodes");
-  return Util::FwdIter<Ref<GxNode> >
+  return rutz::fwd_iter<Ref<GxNode> >
     (rep->gxNodes.begin(), rep->gxNodes.end());
 }
 
@@ -429,11 +429,13 @@ DOTRACE("Trial::stdInfo");
        ii != end;
        ++ii)
     {
-      for (Util::FwdIter<const Ref<GxNode> > tr((*ii)->deepChildren());
-           tr.isValid();
+      for (rutz::fwd_iter<const Ref<GxNode> > tr((*ii)->deepChildren());
+           tr.is_valid();
            tr.next())
         {
-          const GxShapeKit* g = dynamic_cast<const GxShapeKit*>((*tr).get());
+          const GxShapeKit* g =
+            dynamic_cast<const GxShapeKit*>((*tr).get());
+
           if (g)
             {
               objids.append(" ", g->uniqueName());

@@ -38,9 +38,13 @@
 
 #include "visx/element.h"
 
+namespace rutz
+{
+  template <class T> class fwd_iter;
+}
+
 namespace Util
 {
-  template <class T> class FwdIter;
   template <class T> class Ref;
 }
 
@@ -90,7 +94,7 @@ public:
 
   void setType(int t);
 
-  Util::FwdIter<Response> responses() const;
+  rutz::fwd_iter<Response> responses() const;
 
   unsigned int numResponses() const;
 
@@ -104,7 +108,7 @@ public:
   void trNextNode();
 
   /// Returns an iterator to all the nodes contained in the Trial.
-  Util::FwdIter<Util::Ref<GxNode> > nodes() const;
+  rutz::fwd_iter<Util::Ref<GxNode> > nodes() const;
 
   unsigned int getCurrentNode() const;
   void setCurrentNode(unsigned int nodeNumber);

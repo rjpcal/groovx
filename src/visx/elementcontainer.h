@@ -34,9 +34,13 @@
 
 #include "visx/element.h"
 
+namespace rutz
+{
+  template <class T> class fwd_iter;
+}
+
 namespace Util
 {
-  template <class T> class FwdIter;
   template <class T> class Ref;
   template <class T> class SoftRef;
 }
@@ -120,7 +124,7 @@ public:
   unsigned int numCompleted() const;
 
   /// Returns an iterator to all the contained child elements.
-  Util::FwdIter<const Util::Ref<Element> > getElements() const;
+  rutz::fwd_iter<const Util::Ref<Element> > getElements() const;
 
   /// Returns true if the all child elements are complete, false otherwise.
   bool isComplete() const;

@@ -36,6 +36,11 @@
 
 #include "util/signal.h"
 
+namespace rutz
+{
+  template <class T> class fwd_iter;
+}
+
 namespace Gfx
 {
   class Bbox;
@@ -46,7 +51,6 @@ namespace Gfx
 
 namespace Util
 {
-  template <class T> class FwdIter;
   template <class T> class Ref;
 }
 
@@ -88,7 +92,7 @@ public:
 
   /** Returns an iterator to all the children recursively contained in
       this object. */
-  virtual Util::FwdIter<const Util::Ref<GxNode> > deepChildren();
+  virtual rutz::fwd_iter<const Util::Ref<GxNode> > deepChildren();
 
   /// Get the 2-D z-projection of the result of getBoundingCube().
   Gfx::Rect<double> getBoundingBox(Gfx::Canvas& canvas) const;

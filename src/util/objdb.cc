@@ -149,7 +149,7 @@ public:
         {
           MapType::iterator it = itsPtrMap.begin();
 
-          if ((*it).second.isValid())
+          if ((*it).second.is_valid())
             {
               dbg_eval_nl(3, typeid(*(*it).second).name());
               dbg_eval_nl(3, (*it).second->id());
@@ -205,7 +205,7 @@ public:
 namespace
 {
   class ObjDbIter :
-    public Util::FwdIterIfx<const Util::SoftRef<Util::Object> >
+    public rutz::fwd_iter_ifx<const Util::SoftRef<Util::Object> >
   {
   public:
     typedef ObjDb::Impl::MapType MapType;
@@ -235,23 +235,23 @@ namespace
     MapType::iterator itsIter;
     const MapType::iterator itsEnd;
 
-    virtual Interface* clone() const
+    virtual ifx_t* clone() const
     {
       return new ObjDbIter(itsMap, itsIter);
     }
 
     virtual void next()
     {
-      if (!atEnd())
+      if (!at_end())
         {
           ++itsIter;
           advanceToValid();
         }
     }
 
-    virtual ValueType& get() const { return (*itsIter).second; }
+    virtual value_t& get()  const { return (*itsIter).second; }
 
-    virtual bool     atEnd() const { return (itsIter == itsEnd); }
+    virtual bool  at_end() const { return (itsIter == itsEnd); }
   };
 }
 
@@ -275,7 +275,7 @@ ObjDb::Iterator ObjDb::objects() const
 {
 DOTRACE("ObjDb::children");
 
- return shared_ptr<ObjDb::Iterator::Interface>
+ return shared_ptr<ObjDb::Iterator::ifx_t>
    (new ObjDbIter(rep->itsPtrMap, rep->itsPtrMap.begin()));
 }
 

@@ -46,19 +46,23 @@
 #include "util/traits.h"
 #include "util/value.h"
 
+namespace rutz
+{
+  template <class T> class fwd_iter;
+}
+
 namespace IO
 {
   class Reader;
   class Writer;
 }
 
-class FieldContainer;
-
 namespace Util
 {
-  template <class T> class FwdIter;
   class Signal0;
 }
+
+class FieldContainer;
 
 namespace FieldAux
 {
@@ -636,7 +640,7 @@ public:
   const Field& field(const fstring& name) const;
 
   /// Iterator type
-  typedef Util::FwdIter<const Field> Iterator;
+  typedef rutz::fwd_iter<const Field> Iterator;
 
   /// Get an iterator that runs over the Field's in alphabetical order by name
   Iterator alphaFields() const;

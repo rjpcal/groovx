@@ -234,22 +234,22 @@ DOTRACE("GxSeparator::getChild");
   return rep->children[index];
 }
 
-Util::FwdIter<Util::Ref<GxNode> > GxSeparator::children() const
+rutz::fwd_iter<Util::Ref<GxNode> > GxSeparator::children() const
 {
 DOTRACE("GxSeparator::children");
 
-  return Util::FwdIter<Util::Ref<GxNode> >(rep->children.begin(),
-                                           rep->children.end());
+  return rutz::fwd_iter<Util::Ref<GxNode> >(rep->children.begin(),
+                                            rep->children.end());
 }
 
-class GxSepIter : public Util::FwdIterIfx<const Util::Ref<GxNode> >
+class GxSepIter : public rutz::fwd_iter_ifx<const Util::Ref<GxNode> >
 {
 public:
   GxSepIter(GxSeparator* root) :
     itsNodes()
   {
-    for (Util::FwdIter<Util::Ref<GxNode> > itr(root->children());
-         itr.isValid();
+    for (rutz::fwd_iter<Util::Ref<GxNode> > itr(root->children());
+         itr.is_valid();
          ++itr)
       {
         addDeepChildren(*itr);
@@ -258,8 +258,8 @@ public:
 
   void addDeepChildren(Util::Ref<GxNode> node)
   {
-    for (Util::FwdIter<const Util::Ref<GxNode> > itr(node->deepChildren());
-         itr.isValid();
+    for (rutz::fwd_iter<const Util::Ref<GxNode> > itr(node->deepChildren());
+         itr.is_valid();
          ++itr)
       {
         itsNodes.push_back(*itr);
@@ -268,14 +268,14 @@ public:
 
   typedef const Util::Ref<GxNode> ValType;
 
-  virtual Util::FwdIterIfx<ValType>* clone() const
+  virtual rutz::fwd_iter_ifx<ValType>* clone() const
   {
     return new GxSepIter(*this);
   }
 
-  virtual bool     atEnd()  const { return itsNodes.empty(); }
+  virtual bool     at_end() const { return itsNodes.empty(); }
   virtual ValType&   get()  const { return itsNodes.front(); }
-  virtual void      next()        { if (!atEnd()) itsNodes.pop_front(); }
+  virtual void      next()        { if (!at_end()) itsNodes.pop_front(); }
 
 private:
   // Want to use a list instead of a vector-type container here since we
@@ -284,11 +284,11 @@ private:
   mutable std::list<Util::Ref<GxNode> > itsNodes;
 };
 
-Util::FwdIter<const Util::Ref<GxNode> > GxSeparator::deepChildren()
+rutz::fwd_iter<const Util::Ref<GxNode> > GxSeparator::deepChildren()
 {
 DOTRACE("GxSeparator::deepChildren");
 
-  return Util::FwdIter<const Util::Ref<GxNode> >
+  return rutz::fwd_iter<const Util::Ref<GxNode> >
     (shared_ptr<GxSepIter>(new GxSepIter(this)));
 }
 

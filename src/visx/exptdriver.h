@@ -42,6 +42,11 @@ struct Tcl_Interp;
 
 class fstring;
 
+namespace rutz
+{
+  template <class T> class fwd_iter;
+}
+
 namespace Gfx
 {
   class Canvas;
@@ -49,7 +54,6 @@ namespace Gfx
 
 namespace Util
 {
-  template <class T> class FwdIter;
   template <class T> class Ref;
   template <class T> class SoftRef;
 }

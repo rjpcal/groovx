@@ -392,12 +392,12 @@ void MultiEvent::writeTo(IO::Writer& writer) const
                         IO::makeConstProxy<TrialEvent>(this));
 }
 
-Util::FwdIter<const Util::Ref<TrialEvent> >
+rutz::fwd_iter<const Util::Ref<TrialEvent> >
 MultiEvent::getEvents() const
 {
 DOTRACE("MultiEvent::getEvents");
 
-  return Util::FwdIter<const Util::Ref<TrialEvent> >
+  return rutz::fwd_iter<const Util::Ref<TrialEvent> >
     (itsEvents.begin(), itsEvents.end());
 }
 

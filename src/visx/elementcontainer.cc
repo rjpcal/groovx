@@ -333,11 +333,11 @@ DOTRACE("ElementContainer::numCompleted");
   return rep->sequencePos;
 }
 
-Util::FwdIter<const Util::Ref<Element> > ElementContainer::getElements() const
+rutz::fwd_iter<const Util::Ref<Element> > ElementContainer::getElements() const
 {
 DOTRACE("ElementContainer::getElements");
 
-  return Util::FwdIter<const Util::Ref<Element> >
+  return rutz::fwd_iter<const Util::Ref<Element> >
     (rep->elements.begin(), rep->elements.end());
 }
 

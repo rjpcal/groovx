@@ -65,7 +65,7 @@ namespace
   {
     ObjDb& theDb = ObjDb::theDb();
     int count = 0;
-    for (ObjDb::Iterator itr(theDb.objects()); itr.isValid(); ++itr)
+    for (ObjDb::Iterator itr(theDb.objects()); itr.is_valid(); ++itr)
       {
         if (caster->isMyType((*itr).getWeak()))
           ++count;
@@ -79,7 +79,7 @@ namespace
 
     Tcl::List result;
 
-    for (ObjDb::Iterator itr(theDb.objects()); itr.isValid(); ++itr)
+    for (ObjDb::Iterator itr(theDb.objects()); itr.is_valid(); ++itr)
       {
         if (caster->isMyType((*itr).getWeak()))
           result.append((*itr).id());
@@ -92,7 +92,7 @@ namespace
   {
     ObjDb& theDb = ObjDb::theDb();
     for (ObjDb::Iterator itr(theDb.objects());
-         itr.isValid();
+         itr.is_valid();
          /* increment done in loop body */)
       {
         dbg_eval(3, (*itr)->id());

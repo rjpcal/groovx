@@ -187,7 +187,7 @@ DOTRACE("TlistUtils::writeResponses");
   ofs.precision(2);
 
   for (ObjDb::CastingIterator<Trial> itr(ObjDb::theDb().objects());
-       itr.isValid();
+       itr.is_valid();
        ++itr)
     {
       ofs << std::setw(wid) << itr->id() << " ";
@@ -208,7 +208,7 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
   STD_IO::ofstream ofs(filename);
 
   for (ObjDb::CastingIterator<Trial> itr(ObjDb::theDb().objects());
-       itr.isValid();
+       itr.is_valid();
        ++itr)
     {
       // Use this to make sure we don't round down when we should round up.
@@ -290,7 +290,7 @@ DOTRACE("TlistUtils::writeMatlab");
   MatlabTrialWriter writer(ofs);
 
   for (ObjDb::CastingIterator<Trial> itr(ObjDb::theDb().objects());
-       itr.isValid();
+       itr.is_valid();
        ++itr)
     {
       writer.writeRoot(*itr);

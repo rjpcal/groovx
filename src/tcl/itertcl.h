@@ -39,17 +39,17 @@
 namespace Tcl
 {
   template <class T>
-  inline Util::FwdIter<T> fromTcl(Tcl_Obj* obj, Util::FwdIter<T>*)
+  inline rutz::fwd_iter<T> fromTcl(Tcl_Obj* obj, rutz::fwd_iter<T>*)
   {
     Tcl::List l(obj);
-    return Util::FwdIter<T>(l.template begin<T>(), l.template end<T>());
+    return rutz::fwd_iter<T>(l.template begin<T>(), l.template end<T>());
   }
 
   template <class T>
-  inline Tcl::ObjPtr toTcl( Util::FwdIter<T> iter )
+  inline Tcl::ObjPtr toTcl( rutz::fwd_iter<T> iter )
   {
     Tcl::List result;
-    while ( !iter.atEnd() )
+    while ( !iter.at_end() )
       {
         result.append(*iter);
         iter.next();

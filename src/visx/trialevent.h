@@ -44,9 +44,9 @@
 class OutputFile;
 class Trial;
 
-namespace Util
+namespace rutz
 {
-  template <class T> class FwdIter;
+  template <class T> class fwd_iter;
 }
 
 //  #######################################################
@@ -324,7 +324,7 @@ public:
   virtual void writeTo(IO::Writer& writer) const;
 
   /// Returns an iterator to all the events in the sequence.
-  Util::FwdIter<const Util::Ref<TrialEvent> > getEvents() const;
+  rutz::fwd_iter<const Util::Ref<TrialEvent> > getEvents() const;
 
   /// Add a new event and return its index in the sequence.
   unsigned int addEvent(Util::Ref<TrialEvent> event);

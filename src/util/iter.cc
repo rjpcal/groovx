@@ -34,7 +34,7 @@
 
 #include "util/iter.h"
 
-const Util::IterEnd_t Util::IterEnd = {};
+const rutz::iter_end_t rutz::iter_end = {};
 
 static const char vcid_iter_cc[] = "$Header$";
 #endif // !ITER_CC_DEFINED

@@ -85,11 +85,11 @@ public:
   Util::Ref<GxNode> getChild(ChildId index) const;
 
   /// Get an iterator of all the child nodes.
-  Util::FwdIter<Util::Ref<GxNode> > children() const;
+  rutz::fwd_iter<Util::Ref<GxNode> > children() const;
 
   /** Returns an iterator to all the children recursively contained in
       this object. */
-  virtual Util::FwdIter<const Util::Ref<GxNode> > deepChildren();
+  virtual rutz::fwd_iter<const Util::Ref<GxNode> > deepChildren();
 
   virtual bool contains(GxNode* other) const;
 

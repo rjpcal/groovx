@@ -94,7 +94,7 @@ public:
   // Iterators
   //
 
-  typedef Util::FwdIter<const Util::SoftRef<Util::Object> > Iterator;
+  typedef rutz::fwd_iter<const Util::SoftRef<Util::Object> > Iterator;
 
   Iterator objects() const;
 
@@ -106,7 +106,7 @@ public:
 
     void advanceToValid()
     {
-      while (!itsItr.atEnd() && (dynamic_cast<T*>((*itsItr).getWeak())==0))
+      while (!itsItr.at_end() && (dynamic_cast<T*>((*itsItr).getWeak())==0))
         ++itsItr;
     }
 
@@ -116,8 +116,8 @@ public:
 
     CastingIterator& operator++() { ++itsItr; advanceToValid(); return *this; }
 
-    bool atEnd() const { return itsItr.atEnd(); }
-    bool isValid() const { return itsItr.isValid(); }
+    bool at_end() const { return itsItr.at_end(); }
+    bool is_valid() const { return itsItr.is_valid(); }
 
     T* operator*() const { return &(dynamic_cast<T&>(**itsItr)); }
 

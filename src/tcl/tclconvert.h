@@ -38,9 +38,13 @@ class fstring;
 class Value;
 typedef struct Tcl_Obj Tcl_Obj;
 
+namespace rutz
+{
+  template <class T> class fwd_iter;
+}
+
 namespace Util
 {
-  template <class T> class FwdIter;
   template <class T> class Ref;
   template <class T> class SoftRef;
 }
@@ -141,10 +145,10 @@ namespace Tcl
   Tcl::ObjPtr toTcl(Util::SoftRef<T> obj);
 
   template <class T>
-  Util::FwdIter<T> fromTcl(Tcl_Obj* obj, Util::FwdIter<T>*);
+  rutz::fwd_iter<T> fromTcl(Tcl_Obj* obj, rutz::fwd_iter<T>*);
 
   template <class T>
-  Tcl::ObjPtr toTcl( Util::FwdIter<T> iter );
+  Tcl::ObjPtr toTcl( rutz::fwd_iter<T> iter );
 }
 
 static const char vcid_tclconvert_h[] = "$Header$";

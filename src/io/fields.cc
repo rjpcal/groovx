@@ -191,7 +191,7 @@ void FieldContainer::readFieldsFrom(IO::Reader& reader,
 {
 DOTRACE("FieldContainer::readFieldsFrom");
 
-  for (FieldMap::Iterator itr(fields.ioFields()); itr.isValid(); ++itr)
+  for (FieldMap::Iterator itr(fields.ioFields()); itr.is_valid(); ++itr)
     {
       if (!itr->isTransient())
         itr->readValueFrom(this, reader, itr->name());
@@ -206,7 +206,7 @@ void FieldContainer::writeFieldsTo(IO::Writer& writer,
 {
 DOTRACE("FieldContainer::writeFieldsTo");
 
-  for (FieldMap::Iterator itr(fields.ioFields()); itr.isValid(); ++itr)
+  for (FieldMap::Iterator itr(fields.ioFields()); itr.is_valid(); ++itr)
     {
       if (!itr->isTransient())
         itr->writeValueTo(this, writer, itr->name());

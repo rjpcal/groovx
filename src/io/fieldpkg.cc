@@ -90,7 +90,7 @@ DOTRACE("Tcl::FieldsLister::operator()");
            fmap != 0;
            fmap = isItRecursive ? fmap->parent() : 0)
         {
-          for (FieldMap::Iterator itr(fmap->ioFields()); itr.isValid(); ++itr)
+          for (FieldMap::Iterator itr(fmap->ioFields()); itr.is_valid(); ++itr)
             {
               const Field& field = *itr;
 
@@ -150,7 +150,7 @@ DOTRACE("Tcl::defAllFields");
 
   for (const FieldMap* fmap = &fieldmap; fmap != 0; fmap = fmap->parent())
     {
-      for (FieldMap::Iterator itr(fmap->ioFields()); itr.isValid(); ++itr)
+      for (FieldMap::Iterator itr(fmap->ioFields()); itr.is_valid(); ++itr)
         {
           defField(pkg, *itr, src_pos);
         }

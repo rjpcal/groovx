@@ -44,7 +44,7 @@
 
 #include "util/trace.h"
 
-class GxNodeIter : public Util::FwdIterIfx<const Util::Ref<GxNode> >
+class GxNodeIter : public rutz::fwd_iter_ifx<const Util::Ref<GxNode> >
 {
   Util::Ref<GxNode> itsNode;
   bool isItValid;
@@ -55,12 +55,12 @@ public:
 
   typedef const Util::Ref<GxNode> ValType;
 
-  virtual Util::FwdIterIfx<ValType>* clone() const
+  virtual rutz::fwd_iter_ifx<ValType>* clone() const
   {
     return new GxNodeIter(*this);
   }
 
-  virtual bool     atEnd()  const { return !isItValid; }
+  virtual bool     at_end() const { return !isItValid; }
   virtual ValType&   get()  const { return itsNode; }
   virtual void      next()        { isItValid = false; }
 };
@@ -87,11 +87,11 @@ DOTRACE("GxNode::contains");
   return (this == other);
 }
 
-Util::FwdIter<const Util::Ref<GxNode> > GxNode::deepChildren()
+rutz::fwd_iter<const Util::Ref<GxNode> > GxNode::deepChildren()
 {
 DOTRACE("GxNode::deepChildren");
 
-  return Util::FwdIter<const Util::Ref<GxNode> >
+  return rutz::fwd_iter<const Util::Ref<GxNode> >
     (shared_ptr<GxNodeIter>(new GxNodeIter(this)));
 }
 

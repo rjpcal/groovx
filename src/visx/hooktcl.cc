@@ -307,15 +307,15 @@ namespace
 
   void setArray(const TArrayValue<GbVec3<double> >& a) { arraydata = a; }
 
-  Util::FwdIter<GbVec3<double > > getData()
+  rutz::fwd_iter<GbVec3<double > > getData()
   {
-    return Util::FwdIter<GbVec3<double> >(&data[0], &data[4]);
+    return rutz::fwd_iter<GbVec3<double> >(&data[0], &data[4]);
   }
 
-  void setData(Util::FwdIter<const GbVec3<double> > iter)
+  void setData(rutz::fwd_iter<const GbVec3<double> > iter)
   {
     int i = 0;
-    while (i < 4 && !iter.atEnd())
+    while (i < 4 && !iter.at_end())
       {
         data[i] = *iter;
         ++iter; ++i;
