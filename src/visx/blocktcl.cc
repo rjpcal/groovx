@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Mon Oct 23 23:14:08 2000
+// written: Tue Oct 24 13:05:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -161,26 +161,6 @@ public:
   }
 };
 
-///////////////////////////////////////////////////////////////////////
-//
-// BlockListPkg class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace BlockListTcl {
-  class BlockListPkg;
-}
-
-class BlockListTcl::BlockListPkg : public Tcl::IoPtrListPkg {
-public:
-  BlockListPkg(Tcl_Interp* interp) :
-	 Tcl::IoPtrListPkg(interp, BlockList::theBlockList(), "BlockList", "3.0")
-  {
-	 // FIXME	 
-// 	 BlockList::theBlockList().insertAt(0, BlockList::Ptr(Block::make()));
-  }
-};
-
 //---------------------------------------------------------------------
 //
 // BlockTcl::Block_Init
@@ -192,7 +172,8 @@ int Block_Init(Tcl_Interp* interp) {
 DOTRACE("Block_Init");
 
   Tcl::TclPkg* pkg1 = new BlockTcl::BlockPkg(interp);
-  Tcl::TclPkg* pkg2 = new BlockListTcl::BlockListPkg(interp);
+  Tcl::TclPkg* pkg2 = new Tcl::IoPtrListPkg(interp, BlockList::theBlockList(),
+														  "BlockList", "$Revision$");
 
   IO::IoFactory::theOne().registerCreatorFunc(&Block::make);
 
