@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Mon Jul 16 13:40:51 2001
+// written: Mon Jul 16 13:47:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -107,6 +107,12 @@ DOTRACE("Tcl::SafeInterp::unsetGlobalVar");
     {
       handleError("couldn't unset global variable");
     }
+}
+
+void Tcl::SafeInterp::clearEventQueue() const {
+DOTRACE("Tcl::SafeInterp::clearEventQueue");
+  while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
+    { /* Empty loop body */ }
 }
 
 void Tcl::SafeInterp::handleError(const char* msg) const {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Mon Jul 16 13:40:08 2001
+// written: Mon Jul 16 13:46:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,8 +60,14 @@ public:
   void setGlobalVar(const char* var_name, Tcl::ObjPtr var) const;
   void unsetGlobalVar(const char* var_name) const;
 
+  // Events
+  void clearEventQueue() const;
+
 private:
   void handleError(const char* msg) const;
+
+  SafeInterp(const SafeInterp&);
+  SafeInterp& operator=(const SafeInterp&);
 
   Tcl_Interp* const itsInterp;
 };
