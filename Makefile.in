@@ -191,7 +191,7 @@ $(DEP)/pkgdepends $(VISX_LIB_DIR)/pkgIndex.tcl: \
 		--objext $(OBJEXT) \
 		--pkgsrc $(SRC)/pkgs \
 		--libdir $(VISX_LIB_DIR) \
-		--pkgdirs hashtest,matlabengine,mtx,whitebox
+		--pkgdirs matlabengine,mtx,whitebox
 
 $(VISX_LIB_DIR)/dlinktest.$(SHLIB_EXT): \
 	$(exec_prefix)/lib/libDeepTcl$(LIB_EXT) \
