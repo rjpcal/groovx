@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Jul 18 17:14:26 2001
+// written: Thu Jul 19 09:25:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -222,11 +222,9 @@ public:
                       Rect<double>& bounding_box) const;
 
 protected:
-  /** Subclasses must override this function to fill in the parameters
-      with the bounding box in GL coordinates for the object's
-      onscreen image. */
-  virtual void grGetBoundingBox(Rect<double>& bounding_box,
-                                int& border_pixels) const = 0;
+  /** Subclasses must override this function to return the bounding
+      box in GL coordinates for the object's onscreen image. */
+  virtual Rect<double> grGetBoundingBox() const = 0;
 
 public:
   /// Returns the current scaling mode.
@@ -257,6 +255,10 @@ public:
 
   /// Returns the x value of the location of the object's center.
   double getCenterY() const;
+
+  /** Returns the thickness (in pixels) of the border around the
+      bounding box area. */
+  int getPixelBorder() const;
 
   /// Returns the value of the user-defined category.
   virtual int category() const;
@@ -323,6 +325,10 @@ public:
       val. This value is used only if the alignment mode is \c
       ARBITRARY_ON_CENTER. */
   void setCenterY(double val);
+
+  /** Change the thickness (in pixels) of the border that will be
+      added around the bounding box area. */
+  void setPixelBorder(int pixels);
 
   /// Change the value of the user-defined category to \a val.
   virtual void setCategory(int val);

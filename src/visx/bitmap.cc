@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Jul 18 17:07:17 2001
+// written: Thu Jul 19 09:26:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "bmaprenderer.h"
 #include "bitmaprep.h"
+#include "rect.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -143,9 +144,8 @@ void Bitmap::grRender(GWT::Canvas& canvas, DrawMode mode) const
 // accessors //
 ///////////////
 
-void Bitmap::grGetBoundingBox(Rect<double>& bbox,
-                              int& border_pixels) const
-  { itsImpl->grGetBoundingBox(bbox, border_pixels); }
+Rect<double> Bitmap::grGetBoundingBox() const
+  { return itsImpl->grGetBoundingBox(); }
 
 int Bitmap::byteCount() const
   { return itsImpl->byteCount(); }
