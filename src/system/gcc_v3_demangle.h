@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 19 17:00:38 2001
-// written: Mon Jan 13 11:04:47 2003
+// written: Thu Feb 27 16:11:59 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,9 +18,10 @@
 #include <cstdlib>
 #include <cxxabi.h>
 
+#include "util/debug.h"
 #include "util/trace.h"
 
-const char* gcc_v3_demangle(const char* in)
+const char* gcc_v3_demangle(const char* mangled)
 {
 DOTRACE("gcc_v3_demangle");
 
@@ -29,29 +30,30 @@ DOTRACE("gcc_v3_demangle");
   static unsigned int length = 256;
   static char* demangled = static_cast<char*>(malloc(length));
 
-  demangled = abi::__cxa_demangle(in, demangled, &length, &status);
+  demangled = abi::__cxa_demangle(mangled, demangled, &length, &status);
 
   if (status == 0) return demangled;
+
+  fstring msg("while demangling '", mangled, "': ");
 
   switch (status)
     {
     case -1:
-      throw Util::Error(fstring("memory allocation error in demangling of '",
-                                in, "'"));
+      throw Util::Error(fstring(msg, "memory allocation error"));
       break;
     case -2:
-      throw Util::Error(fstring("invalid mangled name '", in, "'"));
+      throw Util::Error(fstring(msg, "invalid mangled name"));
       break;
     case -3:
-      throw Util::Error(fstring("invalid arguments in demangling of '",
-                                in, "'"));
+      throw Util::Error(fstring(msg, "invalid arguments"
+                                " (e.g. buf non-NULL and length NULL'"));
       break;
     default:
-      throw Util::Error(fstring("unknown error code in demangling of '",
-                                in, "'"));
+      throw Util::Error(fstring(msg, "unknown error code"));
     }
 
-  return "can't happen";
+  Assert(false);
+  return "can't happen"; // can't happen, but placate compiler
 }
 
 //
