@@ -3,7 +3,7 @@
 // housetcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 15:14:19 1999
-// written: Thu Sep 30 11:04:53 1999
+// written: Mon Oct  4 15:59:09 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,42 +14,20 @@
 #include <tcl.h>
 
 #include "house.h"
-#include "iomgr.h"
 #include "objlist.h"
-#include "listitempkg.h"
+#include "propitempkg.h"
 
 #define NO_TRACE
 #include "trace.h"
-#define LOCAL_ASSERT
-#include "debug.h"
 
-///////////////////////////////////////////////////////////////////////
-//
-// HousePkg class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace HouseTcl {
-  class HousePkg;
-}
-
-class HouseTcl::HousePkg : public ListItemPkg<House, ObjList> {
-public:
-  HousePkg(Tcl_Interp* interp) :
-	 ListItemPkg<House, ObjList>(interp, ObjList::theObjList(), "House", "1.1")
-  {
-	 declareAllProperties();
-  }
-};
 
 extern "C" Tcl_PackageInitProc House_Init;
 
 int House_Init(Tcl_Interp* interp) {
 DOTRACE("House_Init");
 
-  new HouseTcl::HousePkg(interp);
-
-  FactoryRegistrar<IO, House> registrar(IoFactory::theOne());
+  new PropertyListItemPkg<House, ObjList>(interp, ObjList::theObjList(),
+														"House", "1.3");
 
   return TCL_OK;
 }
