@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Dec  1 11:38:12 1999
+// written: Wed Dec  1 15:11:57 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -373,7 +373,9 @@ DOTRACE("Block::undoPrevTrial");
   --itsCurTrialSeqIdx;
 
   // ...and erase the last response given to that trial
-  getCurTrial().undoLastResponse();
+  if ( theTlist.isValidId(currentTrial()) ) {
+	 getCurTrial().undoLastResponse();
+  }
 }
 
 void Block::resetBlock() {
