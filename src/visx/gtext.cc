@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Tue Mar 26 13:13:19 2002
+// written: Tue Mar 26 13:34:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -584,8 +584,8 @@ namespace
 
   CP left_curly_data[] =
   {
-    {4, 6, PT}, {3, 6, PT}, {2, 5, PT}, {2, 3.5, PT}, {2.5, 3, PT}, {1.5, 3, STROKE},
-    {2.5, 3, PT}, {2, 2.5, PT}, {2, 1, PT}, {3, 0, PT}, {4, 0, END}
+    {4, 6, PT}, {2.5, 6, PT}, {2, 5.5, PT}, {2, 4, PT}, {2.5, 3.5, PT}, {1.5, 3, PT},
+    {2.5, 2.5, PT}, {2, 2, PT}, {2, 0.5, PT}, {2.5, 0, PT}, {4, 0, END}
   };
 
   CP vertical_bar_data[] =
@@ -595,8 +595,8 @@ namespace
 
   CP right_curly_data[] =
   {
-    {0, 6, PT}, {1, 6, PT}, {2, 5, PT}, {2, 3.5, PT}, {1.5, 3, PT}, {2.5, 3, STROKE},
-    {1.5, 3, PT}, {2, 2.5, PT}, {2, 1, PT}, {1, 0, PT}, {0, 0, END}
+    {0, 6, PT}, {1.5, 6, PT}, {2, 5.5, PT}, {2, 4, PT}, {1.5, 3.5, PT}, {2.5, 3, PT},
+    {1.5, 2.5, PT}, {2, 2, PT}, {2, 0.5, PT}, {1.5, 0, PT}, {0, 0, END}
   };
 
   CP tilde_data[] =
