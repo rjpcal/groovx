@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Mon Jun 18 09:43:50 2001
+// written: Sun Jul 22 18:13:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,6 +73,8 @@ namespace Util { namespace RefHelper {
 
 
 
+namespace Util {
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -86,8 +88,6 @@ namespace Util { namespace RefHelper {
  *
  **/
 ///////////////////////////////////////////////////////////////////////
-
-namespace Util {
 
 template <class T>
 class Ref {
@@ -187,6 +187,8 @@ Ref<To> dynamicCast(Ref<Fr> p)
 
 
 
+namespace Util {
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -201,8 +203,6 @@ Ref<To> dynamicCast(Ref<Fr> p)
  *
  **/
 ///////////////////////////////////////////////////////////////////////
-
-namespace Util {
 
 template <class T>
 class WeakRef {
