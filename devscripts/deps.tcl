@@ -217,11 +217,8 @@ namespace eval cdeps {
 
 	    set ofile [file join $obj_dir [string range $stem $offset end]]
 
-	    puts -nonewline "${ofile}.do ${ofile}.o:"
-	    foreach dep $::NESTED_INCLUDES($f) {
-		puts -nonewline " $dep"
-	    }
-	    puts ""
+	    puts -nonewline "${ofile}.o:  "
+	    puts [join $::NESTED_INCLUDES($f) " "]
 	}
     }
 
