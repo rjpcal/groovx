@@ -5,13 +5,18 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 20 07:54:29 2001
-// written: Fri Jul 20 08:01:45 2001
+// written: Fri Jul 20 08:07:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FREELIST_H_DEFINED
 #define FREELIST_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CSTDDEF_DEFINED)
+#include <cstddef>
+#define CSTDDEF_DEFINED
+#endif
 
 class FreeListBase {
 private:
