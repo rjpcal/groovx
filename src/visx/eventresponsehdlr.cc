@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Mar  8 08:32:40 2000
+// written: Thu Mar  9 10:24:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,6 @@
 
 #include <tcl.h>
 #include <strstream.h>
-#include <vector>
 
 #include "error.h"
 #include "experiment.h"
@@ -218,7 +217,9 @@ private:
 
   class RegExp_ResponseVal {
   public:
-    RegExp_ResponseVal(Tcl_RegExp rx, int rv) : itsRegexp(rx), itsRespVal(rv) {}
+    RegExp_ResponseVal(Tcl_RegExp rx = 0, int rv = -1) :
+		itsRegexp(rx), itsRespVal(rv)
+		{}
 
 	 bool matchesString(Tcl_Interp* interp,
 							  const char* string_to_match) throw(ErrorWithMsg)
@@ -254,27 +255,31 @@ private:
   };
 
   fixed_string itsInputResponseMap;
-  mutable vector<RegExp_ResponseVal> itsRegexps;
+  mutable dynamic_block<RegExp_ResponseVal> itsRegexps;
 
   class Condition_Feedback {
+  private:
+	 static Tcl::TclObjPtr theNullObject;
+
   public:
-  	 Condition_Feedback(Tcl_Obj* cond, Tcl_Obj* res) :
-  		itsCondition(cond),
- 		itsResultCmd(res, Tcl::TclEvalCmd::THROW_EXCEPTION, TCL_EVAL_GLOBAL)
+	 // This no-argument constructor puts the object in an invalid
+	 // state, which we mark with itsIsValid=false. In order for the
+	 // object to be used, it must be assigned to with the default
+	 // assignment constructor.
+  	 Condition_Feedback() :
+		itsIsValid(false),
+  		itsCondition(theNullObject),
+ 		itsResultCmd(theNullObject)
 		{}
 
-	 bool isTrue(Tcl_Interp* interp) throw(ErrorWithMsg)
+  	 Condition_Feedback(Tcl_Obj* cond, Tcl_Obj* res) :
+		itsIsValid(false),
+  		itsCondition(cond),
+ 		itsResultCmd(res, Tcl::TclEvalCmd::THROW_EXCEPTION, TCL_EVAL_GLOBAL)
 		{
-		  int expr_result;
-		  if (Tcl_ExprBooleanObj(interp, itsCondition, &expr_result) != TCL_OK) {
-			 throw ErrorWithMsg("error evaluating boolean expression "
-									  "for EventResponseHdlr");
-		  }
-		  return bool(expr_result);
+		  if (cond != 0 && res != 0)
+			 itsIsValid = true;
 		}
-
-	 void invoke(Tcl_Interp* interp) throw(ErrorWithMsg)
-		{ itsResultCmd.invoke(interp); }
 
 	 bool invokeIfTrue(Tcl_Interp* interp) throw (ErrorWithMsg)
 		{
@@ -284,18 +289,44 @@ private:
 		}
 
   private:
+	 bool isTrue(Tcl_Interp* interp) throw(ErrorWithMsg)
+		{
+		  Assert(itsIsValid);
+		  int expr_result;
+		  if (Tcl_ExprBooleanObj(interp, itsCondition, &expr_result) != TCL_OK)
+			 {
+				throw ErrorWithMsg("error evaluating boolean expression "
+										 "for EventResponseHdlr");
+			 }
+		  return bool(expr_result);
+		}
+
+	 void invoke(Tcl_Interp* interp) throw(ErrorWithMsg)
+		{ itsResultCmd.invoke(interp); }
+
+	 bool itsIsValid;
 	 Tcl::TclObjPtr itsCondition;
  	 Tcl::TclEvalCmd itsResultCmd;
   };
 
   fixed_string itsFeedbackMap;
-  mutable vector<Condition_Feedback> itsFeedbacks;
+  mutable dynamic_block<Condition_Feedback> itsFeedbacks;
 
   bool itsUseFeedback;
 
   fixed_string itsEventSequence;
   fixed_string itsBindingSubstitution;
 };
+
+///////////////////////////////////////////////////////////////////////
+//
+// Static member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+Tcl::TclObjPtr EventResponseHdlr::Impl::Condition_Feedback::theNullObject(
+  Tcl_NewStringObj("", -1)
+);
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -559,7 +590,7 @@ DOTRACE("EventResponseHdlr::Impl::privateHandleCmd");
 	 impl->handleResponse(Tcl_GetString(objv[1]));
   }
   catch (ErrorWithMsg& err) {
-	 Tcl_AppendResult(interp, err.msg().c_str(), (char*) 0);
+	 Tcl_AppendResult(interp, err.msg_cstr(), (char*) 0);
 	 return TCL_ERROR;
   }
   catch (...) {
@@ -644,15 +675,19 @@ void EventResponseHdlr::Impl::updateFeedbacks() {
 DOTRACE("EventResponseHdlr::Impl::updateFeedbacks");
   Assert(itsInterp != 0);
 
-  itsFeedbacks.clear(); 
-
   try {
 	 Tcl_Obj** pairs;
 	 int num_pairs=0;
 	 Tcl::TclObjPtr pairs_list(Tcl_NewStringObj(itsFeedbackMap.c_str(), -1));
 	 checkedSplitList(pairs_list, pairs, num_pairs);
 
-	 for (int i = 0; i < num_pairs; ++i) {
+	 Assert(num_pairs >= 0);
+
+	 unsigned int uint_num_pairs = num_pairs;
+
+	 itsFeedbacks.resize(uint_num_pairs);
+
+	 for (unsigned int i = 0; i < uint_num_pairs; ++i) {
 
 		Tcl::TclObjPtr current_pair = pairs[i];
 
@@ -666,7 +701,7 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacks");
 		Tcl_Obj *condition = getCheckedListElement(current_pair, 0);
 		Tcl_Obj *result = getCheckedListElement(current_pair, 1);
     
-		itsFeedbacks.push_back(Impl::Condition_Feedback(condition, result));
+		itsFeedbacks.at(i) = Impl::Condition_Feedback(condition, result);
 	 }
 
 	 DebugPrintNL("updateFeedbacks success!");
@@ -690,9 +725,6 @@ void EventResponseHdlr::Impl::updateRegexps() {
 DOTRACE("EventResponseHdlr::updateRegexps");
   Assert(itsInterp != 0);
 
-  // Get rid of any old stored regexps/response value pairs.
-  itsRegexps.clear();
-
   try {
 	 Tcl_Obj** pairs;
 	 int num_pairs=0;
@@ -700,7 +732,12 @@ DOTRACE("EventResponseHdlr::updateRegexps");
                        Tcl_NewStringObj(itsInputResponseMap.c_str(), -1));
 	 checkedSplitList(pairs_list, pairs, num_pairs);
 
-	 for (int i = 0; i < num_pairs; ++i) {
+	 Assert(num_pairs >= 0);
+	 unsigned int uint_num_pairs = num_pairs;
+
+	 itsRegexps.resize(uint_num_pairs);
+
+	 for (unsigned int i = 0; i < uint_num_pairs; ++i) {
 
 		Tcl::TclObjPtr current_pair = pairs[i];
 
@@ -717,7 +754,7 @@ DOTRACE("EventResponseHdlr::updateRegexps");
 		Tcl_Obj *response_valObj = getCheckedListElement(current_pair, 1);
 		int response_val = getCheckedInt(response_valObj);
     
-		itsRegexps.push_back(Impl::RegExp_ResponseVal(regexp, response_val));
+		itsRegexps.at(i) = Impl::RegExp_ResponseVal(regexp, response_val);
 	 }
 
 	 DebugPrintNL("updateRegexps success!");
