@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed Dec  8 00:37:46 1999
+// written: Mon Mar  6 12:23:55 2000
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -20,7 +20,6 @@
 #include <GL/glu.h>
 #include <tcl.h>
 #include <cmath>                // for sqrt() in drawThickLine
-#include <string>
 #include <vector>
 #include <map>
 
@@ -40,7 +39,7 @@
 
 class GLError : public ErrorWithMsg {
 public:
-  GLError(const string& msg = "") : ErrorWithMsg(msg) {}
+  GLError(const char* msg = "") : ErrorWithMsg(msg) {}
 };
 
 namespace TclGL {
@@ -123,7 +122,7 @@ protected:
   void checkGL() throw(GLError) {
 	 GLenum status = glGetError();
 	 if (status != GL_NO_ERROR) {
-		string msg = reinterpret_cast<const char*>(gluErrorString(status));
+		const char* msg = reinterpret_cast<const char*>(gluErrorString(status));
 		throw GLError(msg);
 	 }
   }
