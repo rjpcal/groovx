@@ -220,9 +220,9 @@ benchmarks: $(EXECUTABLE)
 
 # Remove all backups, temporaries, and coredumps
 neat:
-	find . -name \*~ -exec ls -l {} \;
-	find . -name \#~ -exec ls -l {} \;
-	find . -name .\#\* -exec ls -l {} \;
+	find . -name \*~ -exec rm -f {} \;
+	find . -name \#~ -exec rm -f {} \;
+	find . -name .\#\* -exec rm -f {} \;
 	rm -f ./expt*2003.asw ./resp*2003 ./core*
 
 # Make neat, and also remove all intermediate build files
