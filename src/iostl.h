@@ -2,7 +2,7 @@
 // iostl.h
 // Rob Peters
 // created: Sat Mar 13 15:20:43 1999
-// written: Thu Sep 16 13:43:52 1999
+// written: Tue Oct 12 10:35:30 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -64,9 +64,9 @@ int gCharCountIoVec( const vector<T*>& vec ) {
 // assumed that class T supports operator >> and operator << for input
 // and output.
 template<class T, char sep>
-class IoWrapper<vector<T> > : public virtual IO {
+class IoWrapper<vector<T>, sep> : public virtual IO {
 public:
-  IoWrapper<vector<T> >() : itsVec() {}
+  IoWrapper<vector<T>, sep>() : itsVec() {}
 
   virtual void serialize(ostream& os, IOFlag) const {
 	 os << itsVec.size() << sep << sep;
@@ -124,9 +124,9 @@ private:
 // Specialization of IoWrapper for vectors of pointers. The objects
 // pointed to must be derived from IO.
 template<class T, char sep>
-class IoWrapper<vector<T *> > : public virtual IO {
+class IoWrapper<vector<T *>, sep> : public virtual IO {
 public:
-  IoWrapper<vector<T *> >() : itsVec() {}
+  IoWrapper<vector<T *>, sep>() : itsVec() {}
 
   virtual void serialize(ostream& os, IOFlag flag) const;
 
