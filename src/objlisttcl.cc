@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Thu Oct 19 19:00:10 2000
+// written: Fri Oct 20 12:16:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,8 +47,7 @@ class ObjlistTcl::LoadObjectsCmd : public Tcl::TclCmd {
 public:
   LoadObjectsCmd(Tcl_Interp* interp, const char* cmd_name) :
 	 Tcl::TclCmd(interp, cmd_name,
-					 "filename ?num_to_read=-1? ?typename=\"\"? ?use_bases=no?",
-					 2, 5, false)
+					 "filename ?num_to_read=-1?", 2, 5, false)
   {}
 
 protected:
@@ -61,8 +60,6 @@ DOTRACE("ObjlistTcl::LoadObjectsCmd::invoke");
 
   const char* file        =                             getCstringFromArg(1);
   int         num_to_read =      (objc() < 3) ? ALL   : getIntFromArg(2);
-  const char* given_type  =      (objc() < 4) ?  ""   : getCstringFromArg(3);
-  bool        use_bases   = bool((objc() < 5) ? false : getBoolFromArg(4));
 
   STD_IO::ifstream ifs(file);
   if (ifs.fail()) { throw Tcl::TclError("unable to open file"); }
@@ -83,9 +80,7 @@ DOTRACE("ObjlistTcl::LoadObjectsCmd::invoke");
 		continue;
 	 }
 
-	 IO::IOFlag flags = use_bases ? IO::BASES : IO::NO_FLAGS;
-
-	 IO::LegacyReader reader(ifs, flags);
+	 IO::LegacyReader reader(ifs, IO::BASES);
 	 IO::IoObject* io = reader.readRoot(0);
 
 	 GrObj* p = dynamic_cast<GrObj*>(io);
