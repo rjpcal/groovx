@@ -10,7 +10,7 @@
 package require Face
 package require Pos
 package require Tlist
-package require Objtogl
+package require Toglet
 
 if { ![Togl::inited] } { Togl::init; update }
 

@@ -10,7 +10,7 @@
 # Multiple inclusion guard
 if { [info exists List::TEST_DEFINED] } return;
 
-package require Objtogl
+package require Toglet
 if { ![Togl::inited] } { Togl::init; ::update }
 
 namespace eval List {

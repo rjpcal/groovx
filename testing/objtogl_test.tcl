@@ -7,7 +7,7 @@
 ###
 ##############################################################################
 
-package require Objtogl
+package require Toglet
 package require Togl
 package require Face
 package require Pos
@@ -148,8 +148,7 @@ test "ObjTogl-dumpCmap" "too many args" {
 test "ObjTogl-dumpCmap" "normal use" {
     set str [Togl::dumpCmap 0 3]
 	 lindex $str 3
-} "3$SP$FLT$SP$FLT$SP$FLT
-"
+} "3$SP$FLT$SP$FLT$SP$FLT"
 test "ObjTogl-dumpCmap" "error from non-integral number arg1" {
     Togl::dumpCmap 0.5 1
 } {expected integer but got "0\.5"}

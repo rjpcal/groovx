@@ -8,8 +8,8 @@
 ##############################################################################
 
 package require Expt
-package require Objtogl
 package require Tlist
+package require Toglet
 package require Block
 package require Nullrh
 package require Th

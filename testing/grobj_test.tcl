@@ -169,7 +169,7 @@ proc testUpdateCmd { objname } {
 	 }
 
 	 if { $this(testsubclass) } {
-		  package require Objtogl
+		  package require Toglet
 		  if { ![Togl::inited] } { Togl::init; ::update }
 
 
@@ -185,7 +185,7 @@ proc testDrawCmd { objname } {
 	 set testname "${this(package)}-draw"
 
 	 if { $this(testsubclass) } {
-		  package require Objtogl
+		  package require Toglet
 		  if { ![Togl::inited] } { Togl::init; ::update }
 
 		  eval ::test $testname {"normal use"} {"

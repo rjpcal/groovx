@@ -9,9 +9,9 @@
 
 package require Bitmap
 package require Glbitmap
-package require Objtogl
 package require Tclgl
 package require Tlist
+package require Toglet
 package require Pos
 
 set PBMFILE $TEST_DIR/pbmfile.PPM

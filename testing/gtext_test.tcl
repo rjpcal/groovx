@@ -8,7 +8,7 @@
 ##############################################################################
 
 package require Gtext
-package require Objtogl
+package require Toglet
 package require Tclgl
 package require Tlist
 package require Pos
