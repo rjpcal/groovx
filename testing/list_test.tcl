@@ -56,11 +56,11 @@ proc testResetCmd { objname } {
     "} {$usage}
     eval ::test $testname {"check number of objects"} {"
         $cmdname
-        set before_count \[${this(listname)}::count\]
+        set before_count \[${this(baseclass)}::countAll\]
         IO::new ${this(subclass1)}
         IO::new ${this(subclass2)}
         $cmdname
-        set after_count \[${this(listname)}::count\]
+        set after_count \[${this(baseclass)}::countAll\]
 		  return \[expr \$before_count - \$after_count\]
     "} {"^0$"}
 }
@@ -68,7 +68,7 @@ proc testResetCmd { objname } {
 proc testCountCmd { objname } {
     upvar $objname this
 
-    set cmdname "${this(listname)}::count"
+    set cmdname "${this(baseclass)}::countAll"
     set usage "wrong \# args: should be \"$cmdname\""
     set testname "${this(packagename)}-${cmdname}"
 
@@ -122,7 +122,7 @@ proc testGetValidIdsCmd { objname } {
         set remove_me \[IO::new ${this(subclass1)}\]
         IO::new ${this(subclass2)}
 		  IO::delete \$remove_me
-		  set count \[${this(listname)}::count\]
+		  set count \[${this(baseclass)}::countAll\]
 		  set num_ids \[llength \[$cmdname\]\]
 		  set removed_id \[lsearch -exact \[$cmdname\] \$remove_me\]
 		  return \"\[expr \$count - \$num_ids\] \$removed_id\"
@@ -175,7 +175,7 @@ proc testStringifyCmd { objname } {
         IO::new ${this(subclass1)}
         IO::new ${this(subclass2)}
         $destringify \$str
-        ${this(listname)}::count
+        ${this(baseclass)}::countAll
     "} {"^0$"}
     eval ::test $testname {"use on filled list"} {"
         ${this(listname)}::reset
@@ -204,7 +204,7 @@ proc testStringifyCmd { objname } {
 
 	     set equal1 \[string equal \$type1_before \$type1_after\]
 	     set equal2 \[string equal \$type2_before \$type2_after\]
-        return \"\[${this(listname)}::count\] \$equal1 \$equal2\"
+        return \"\[${this(baseclass)}::countAll\] \$equal1 \$equal2\"
     "} {"^2 1 1$"}
 
 }
@@ -256,7 +256,7 @@ proc testWriteCmd { objname } {
         IO::new ${this(subclass1)}
         IO::new ${this(subclass2)}
         $readcmd \$str
-        ${this(listname)}::count
+        ${this(baseclass)}::countAll
     "} {"^0$"}
     eval ::test $testname {"use on filled list"} {"
         ${this(listname)}::reset
@@ -285,7 +285,7 @@ proc testWriteCmd { objname } {
 
 	     set equal1 \[string equal \$type1_before \$type1_after\]
 	     set equal2 \[string equal \$type2_before \$type2_after\]
-        return \"\[${this(listname)}::count\] \$equal1 \$equal2\"
+        return \"\[${this(baseclass)}::countAll\] \$equal1 \$equal2\"
     "} {"^2 1 1$"}
 
 }
