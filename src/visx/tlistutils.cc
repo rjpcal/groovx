@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Mon Oct 23 12:52:05 2000
+// written: Mon Oct 23 16:54:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -447,11 +447,11 @@ DOTRACE("TlistUtils::writeMatlab");
 
 	 if ( t )
 		{
-		  for (Trial::IdPairItr ii = t->beginIdPairs(), end = t->endIdPairs();
+		  for (Trial::GrObjItr ii = t->beginGrObjs(), end = t->endGrObjs();
 				 ii != end;
 				 ++ii)
 			 {
-				ofs << ii->objid() << ' ';
+				ofs << ii->id() << ' ';
 			 }
 
 		  ofs << t->avgResponse() << endl;
