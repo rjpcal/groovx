@@ -9,6 +9,7 @@
 
 set pkgs {
     Dlinktest
+    Fstringtest
 }
 
 foreach pkg $pkgs {
