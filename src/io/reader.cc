@@ -32,10 +32,25 @@
 
 #include "io/reader.h"
 
+#include "util/error.h"
+
 #include "util/trace.h"
 #include "util/debug.h"
 
-IO::ReadError::~ReadError() throw() {}
+namespace IO
+{
+  class ReadVersionError : public Util::Error
+  {
+  public:
+    /// Construct with information relevant to the problem
+    ReadVersionError(const char* classname,
+                     IO::VersionId attempted_id,
+                     IO::VersionId lowest_supported_id,
+                     const char* msg);
+
+    virtual ~ReadVersionError() throw();
+  };
+}
 
 IO::ReadVersionError::ReadVersionError(const char* classname,
                                        IO::VersionId attempted_id,

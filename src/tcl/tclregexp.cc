@@ -32,7 +32,7 @@
 
 #include "tcl/tclregexp.h"
 
-#include "tcl/tclerror.h"
+#include "util/error.h"
 
 #include <tcl.h>
 
@@ -48,7 +48,7 @@ namespace
     Tcl_RegExp regexp = Tcl_GetRegExpFromObj(0, patternObj.obj(), flags);
     if (!regexp)
       {
-        throw Tcl::TclError(fstring("error getting a Tcl_RegExp from '",
+        throw Util::Error(fstring("error getting a Tcl_RegExp from '",
                                     Tcl_GetString(patternObj.obj()), "'"));
       }
     return regexp;
@@ -69,7 +69,7 @@ bool Tcl::RegExp::matchesString(const char* str)
   switch (regex_result)
   {
   case REGEX_ERROR:
-    throw TclError("error executing regular expression");
+    throw Util::Error("error executing regular expression");
 
   case REGEX_NO_MATCH:
     return false;

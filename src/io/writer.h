@@ -30,7 +30,6 @@
 #ifndef WRITER_H_DEFINED
 #define WRITER_H_DEFINED
 
-#include "util/error.h"
 #include "util/strings.h"
 
 #include "io/iodecls.h"
@@ -48,46 +47,6 @@ namespace IO
 }
 
 class Value;
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * Exception class for errors in \c IO::Writer methods. \c WriteError
- * should be thrown by subclasses of \c IO::Writer when an error occurs
- * during a call to any of the methods in the \c IO::Writer interface.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-class IO::WriteError : public Util::Error
-{
-public:
-  WriteError(const fstring& msg) : Util::Error(msg) {};
-
-  virtual ~WriteError() throw();
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * WriteVersionError is an exception class that can be thrown by
- * clients of Writer if there is a problem serial version id during
- * the read (e.g. the version is no longer supported).
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-class IO::WriteVersionError : public Util::Error
-{
-public:
-  /// Construct with information relevant to the problem
-  WriteVersionError(const char* classname,
-                   IO::VersionId attempted_id,
-                   IO::VersionId lowest_supported_id,
-                   const char* msg);
-
-  virtual ~WriteVersionError() throw();
-};
 
 ///////////////////////////////////////////////////////////////////////
 /**

@@ -32,6 +32,7 @@
 
 #include "io/iolegacy.h"
 
+#include "util/error.h"
 #include "util/objmgr.h"
 #include "util/ref.h"
 #include "util/strings.h"
@@ -67,7 +68,7 @@ public:
     if (itsInStream.fail())
       {
         dbgPrint(3, "throwIfError for"); dbgEvalNL(3, type);
-        throw IO::ReadError(type);
+        throw Util::Error(type);
       }
   }
 
@@ -89,8 +90,8 @@ public:
       {
         // If we got here, then none of the substrings matched so we must
         // raise an exception.
-        throw IO::ReadError(fstring("couldn't read typename for ",
-                                    correct_name.c_str()));
+        throw Util::Error(fstring("couldn't read typename for ",
+                                  correct_name.c_str()));
       }
   }
 
@@ -104,8 +105,8 @@ public:
       {
         // If we got here, then none of the substrings matched so we must
         // raise an exception.
-        throw IO::ReadError(fstring("couldn't read typename for ",
-                                    correct_name.c_str()));
+        throw Util::Error(fstring("couldn't read typename for ",
+                                  correct_name.c_str()));
       }
   }
 
@@ -127,7 +128,7 @@ public:
       }
     else
       {
-        throw IO::ReadError("missing legacy versionId");
+        throw Util::Error("missing legacy versionId");
       }
 
     return version;
@@ -140,7 +141,7 @@ public:
     if (brace != '{')
       {
         dbgPrintNL(3, "grabLeftBrace failed");
-        throw IO::ReadError("missing left-brace");
+        throw Util::Error("missing left-brace");
       }
   }
 
@@ -151,7 +152,7 @@ public:
     if (brace != '}')
       {
         dbgPrintNL(3, "grabRightBrace failed");
-        throw IO::ReadError("missing right-brace");
+        throw Util::Error("missing right-brace");
       }
   }
 
@@ -248,15 +249,15 @@ DOTRACE("IO::LegacyReader::readStringImpl");
 
   if (numchars < 0)
     {
-      throw IO::ReadError("LegacyReader::readStringImpl "
-                          "saw negative character count");
+      throw Util::Error("LegacyReader::readStringImpl "
+                        "saw negative character count");
     }
 
   int c = rep->itsInStream.get();
   if (c != ' ')
     {
-      throw IO::ReadError("LegacyReader::readStringImpl "
-                          "did not have whitespace after character count");
+      throw Util::Error("LegacyReader::readStringImpl "
+                        "did not have whitespace after character count");
     }
 
 //   if (rep->itsInStream.peek() == '\n') { rep->itsInStream.get(); }
@@ -374,7 +375,7 @@ public:
     if (itsOutStream.fail())
       {
         dbgPrint(3, "throwIfError for"); dbgEvalNL(3, type);
-        throw IO::WriteError(type);
+        throw Util::Error(type);
       }
   }
 

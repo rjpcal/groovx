@@ -34,7 +34,6 @@
 #include "io/iolegacy.h"
 
 #include "tcl/objpkg.h"
-#include "tcl/tclerror.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tcllistobj.h"
 #include "tcl/tclsafeinterp.h"
@@ -55,7 +54,7 @@ namespace
   Tcl::List loadObjects(const char* file, int num_to_read)
   {
     STD_IO::ifstream ifs(file);
-    if (ifs.fail()) { throw Tcl::TclError("unable to open file"); }
+    if (ifs.fail()) { throw Util::Error("unable to open file"); }
 
     int num_read = 0;
 
@@ -92,7 +91,7 @@ namespace
     STD_IO::ofstream ofs(filename);
     if (ofs.fail())
       {
-        throw Tcl::TclError(fstring("error opening file: ", filename));
+        throw Util::Error(fstring("error opening file: ", filename));
       }
 
     IO::LegacyWriter writer(ofs, use_bases);

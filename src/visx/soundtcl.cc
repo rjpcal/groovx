@@ -36,11 +36,12 @@
 #include "tcl/tclpkg.h"
 #include "tcl/tclsafeinterp.h"
 
-#include "util/error.h"
 #include "util/objfactory.h"
 #include "util/strings.h"
 
 #include "visx/sound.h"
+
+#include <exception>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -84,11 +85,11 @@ public:
             ERR = err_sound.id();
             linkConstVar("Sound::err", ERR);
           }
-        catch (Util::Error& err)
+        catch (std::exception& err)
           {
             dbgPrintNL(3, "error creating sounds during startup");
             interp.appendResult("SoundPkg: ");
-            interp.appendResult(err.msg_cstr());
+            interp.appendResult(err.what());
             setInitStatusError();
           }
       }

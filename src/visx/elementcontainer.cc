@@ -93,7 +93,7 @@ DOTRACE("ElementContainer::readFrom");
   reader.readValue("curTrialSeqdx", rep->sequencePos);
   if (rep->sequencePos > rep->elements.size())
     {
-      throw IO::ReadError("ElementContainer");
+      throw Util::Error("ElementContainer");
     }
 }
 

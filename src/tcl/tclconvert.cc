@@ -32,10 +32,10 @@
 
 #include "tcl/tclconvert.h"
 
-#include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
 #include "tcl/tclobjptr.h"
 
+#include "util/error.h"
 #include "util/strings.h"
 #include "util/value.h"
 
@@ -93,7 +93,7 @@ namespace
   inline void ensurePositive(T t)
   {
     if (t < 0)
-      throw Tcl::TclError("signed/unsigned conversion failed");
+      throw Util::Error("signed/unsigned conversion failed");
   }
 }
 
@@ -119,8 +119,8 @@ DOTRACE("Tcl::fromTcl(int*)");
 
   if ( Tcl_GetIntFromObj(0, safeobj.get(), &val) != TCL_OK )
     {
-      throw TclError(fstring("expected integer but got \"",
-                             Tcl_GetString(obj), "\""));
+      throw Util::Error(fstring("expected integer but got \"",
+                                Tcl_GetString(obj), "\""));
     }
   return val;
 }
@@ -146,8 +146,8 @@ DOTRACE("Tcl::fromTcl(long*)");
 
   if ( Tcl_GetLongFromObj(0, safeobj.get(), &val) != TCL_OK )
     {
-      throw TclError(fstring("expected long value but got \"",
-                             Tcl_GetString(obj), "\""));
+      throw Util::Error(fstring("expected long value but got \"",
+                                Tcl_GetString(obj), "\""));
     }
   return val;
 }
@@ -173,8 +173,8 @@ DOTRACE("Tcl::fromTcl(bool*)");
 
   if ( Tcl_GetBooleanFromObj(0, safeobj.get(), &int_val) != TCL_OK )
     {
-      throw TclError(fstring("expected boolean value but got \"",
-                             Tcl_GetString(obj), "\""));
+      throw Util::Error(fstring("expected boolean value but got \"",
+                                Tcl_GetString(obj), "\""));
     }
   return bool(int_val);
 }
@@ -189,8 +189,8 @@ DOTRACE("Tcl::fromTcl(double*)");
 
   if ( Tcl_GetDoubleFromObj(0, safeobj.get(), &val) != TCL_OK )
     {
-      throw TclError(fstring("expected floating-point number but got \"",
-                             Tcl_GetString(obj), "\""));
+      throw Util::Error(fstring("expected floating-point number but got \"",
+                                Tcl_GetString(obj), "\""));
     }
   return val;
 }

@@ -36,6 +36,7 @@
 
 #include "util/arrays.h"
 #include "util/cstrstream.h"
+#include "util/error.h"
 #include "util/objmgr.h"
 #include "util/pointers.h"
 #include "util/ref.h"
@@ -60,13 +61,13 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class AttributeReadError : public IO::ReadError
+class AttributeReadError : public Util::Error
 {
 public:
   AttributeReadError(const fstring& attrib_name,
                      const fstring& attrib_value) :
-    IO::ReadError(fstring("error reading attribute '", attrib_name,
-                          "' with value '", attrib_value, "'"))
+    Util::Error(fstring("error reading attribute '", attrib_name,
+                        "' with value '", attrib_value, "'"))
   {}
 };
 
@@ -103,8 +104,8 @@ public:
         MapType::const_iterator itr = itsMap.find(id);
         if ( itr == itsMap.end() )
           {
-            throw IO::ReadError(fstring("no object was found "
-                                        "for the given id:", id));
+            throw Util::Error(fstring("no object was found "
+                                      "for the given id:", id));
           }
 
         return (*itr).second;
@@ -140,7 +141,7 @@ public:
             msg.append("object has already been created\n");
             msg.append("\ttype: ", object->objTypename().c_str(), "\n");
             msg.append("\tid: ", id);
-            throw IO::ReadError(msg);
+            throw Util::Error(msg);
           }
 
         itsMap.insert(MapType::value_type(id, object));
@@ -197,9 +198,9 @@ public:
             ++itr;
           }
 
-        throw IO::ReadError(fstring("no attribute named '",
-                                    attrib_name.c_str(), "' for ",
-                                    itsObjTag.c_str()));
+        throw Util::Error(fstring("no attribute named '",
+                                  attrib_name.c_str(), "' for ",
+                                  itsObjTag.c_str()));
       }
 
   private:
@@ -222,8 +223,8 @@ private:
   AttribMap& currentAttribs()
     {
       if ( itsAttribs.is_empty() )
-        throw IO::ReadError("attempted to read attribute "
-                            "when no attribute map was active");
+        throw Util::Error("attempted to read attribute "
+                          "when no attribute map was active");
       return *(itsAttribs.front());
     }
 
@@ -297,10 +298,10 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAndUnEscape");
       if (itr >= stop)
         {
           READ_BUFFER[ READ_BUFFER.size() - 1 ] = '\0';
-          throw IO::ReadError(fstring("AsciiStreamReader exceeded "
-                                      "read buffer capacity\n"
-                                      "buffer contents: \n",
-                                      &(READ_BUFFER[0])));
+          throw Util::Error(fstring("AsciiStreamReader exceeded "
+                                    "read buffer capacity\n"
+                                    "buffer contents: \n",
+                                    &(READ_BUFFER[0])));
         }
 
       // We only substitute in the escape sequence if we are reading at the
@@ -318,7 +319,7 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAndUnEscape");
         {
           int ch2 = is.get();
           if (ch2 == EOF || ch2 == STRING_ENDER)
-            throw IO::ReadError("missing character after trailing backslash");
+            throw Util::Error("missing character after trailing backslash");
           switch (ch2)
             {
             case '\\':
@@ -335,7 +336,7 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAndUnEscape");
               break;
             default:
               *itr = '\0';
-              throw IO::ReadError
+              throw Util::Error
                 (fstring("invalid escape character '", char(ch2),
                          "' with buffer contents: ", &READ_BUFFER[0]));
               break;
@@ -362,8 +363,8 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
       int ch = buf.get();  Assert(ch == 'v');
       buf >> itsSerialVersionId;
       if ( buf.fail() )
-        throw IO::ReadError("input failed while reading "
-                            "serialization version id");
+        throw Util::Error("input failed while reading "
+                          "serialization version id");
     }
   else
     {
@@ -376,14 +377,14 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 
   if (attrib_count < 0)
     {
-      throw IO::ReadError(fstring("found a negative attribute count: ",
-                                  attrib_count));
+      throw Util::Error(fstring("found a negative attribute count: ",
+                                attrib_count));
     }
 
   if ( buf.fail() )
     {
-      throw IO::ReadError(fstring("input failed while reading "
-                                  "attribute count: ", attrib_count));
+      throw Util::Error(fstring("input failed while reading "
+                                "attribute count: ", attrib_count));
     }
 
   // Loop and load all the attributes
@@ -402,7 +403,7 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
           msg.append("\ttype: ", type, "\n");
           msg.append("\tname: ", name, "\n");
           msg.append("\tequal: ", equal);
-          throw IO::ReadError(msg);
+          throw Util::Error(msg);
         }
 
       addNewAttrib(name, type, readAndUnEscape(buf));
@@ -446,8 +447,8 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
 
   if (len < 0)
     {
-      throw IO::ReadError(fstring("found a negative length "
-                                  "for a string attribute: ", len));
+      throw Util::Error(fstring("found a negative length "
+                                "for a string attribute: ", len));
     }
 
   fstring new_string;
@@ -544,7 +545,7 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
           msg.append("id: ", id, "\n");
           msg.append("\tequal: ", equal, "\n");
           msg.append("\tbracket: ", bracket);
-          throw IO::ReadError(msg);
+          throw Util::Error(msg);
         }
 
       if ( !haveReadRoot )
@@ -566,9 +567,9 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 
       if ( itsBuf.fail() )
         {
-          throw IO::ReadError(fstring("input failed "
-                                      "while parsing ending bracket\n",
-                                      "\tbracket: ", bracket));
+          throw Util::Error(fstring("input failed "
+                                    "while parsing ending bracket\n",
+                                    "\tbracket: ", bracket));
         }
     }
 

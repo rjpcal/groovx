@@ -30,7 +30,6 @@
 #ifndef READER_H_DEFINED
 #define READER_H_DEFINED
 
-#include "util/error.h"
 #include "util/strings.h"
 
 #include "io/iodecls.h"
@@ -42,46 +41,6 @@ namespace Util
 }
 
 class Value;
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * Exception class for errors in \c IO::Reader methods. \c ReadError
- * should be thrown by subclasses of \c IO::Reader when an error occurs
- * during a call to any of the \c IO::Reader methods.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-class IO::ReadError : public Util::Error
-{
-public:
-  ReadError(const fstring& msg) : Util::Error(msg) {};
-
-  virtual ~ReadError() throw();
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * ReadVersionError is an exception class that can be thrown by
- * clients of Reader if there is a problem serial version id during
- * the read (e.g. the version is no longer supported).
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-class IO::ReadVersionError : public Util::Error
-{
-public:
-  /// Construct with information relevant to the problem
-  ReadVersionError(const char* classname,
-                   IO::VersionId attempted_id,
-                   IO::VersionId lowest_supported_id,
-                   const char* msg);
-
-  virtual ~ReadVersionError() throw();
-};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -107,7 +66,7 @@ public:
 
   /** A convenience function to ensure that the current serial version
       is no less than the \a lowest_supported_version. Returns the
-      actual version. If this test fails, a ReadVersionError will be
+      actual version. If this test fails, an exception will be
       thrown. */
   int ensureReadVersionId(const char* name,
                           IO::VersionId lowest_supported_version,

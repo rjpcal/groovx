@@ -37,6 +37,8 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+#include "util/error.h"
+
 #include "util/trace.h"
 
 const FieldMap& GxLighting::classFields()

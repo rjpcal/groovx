@@ -33,7 +33,6 @@
 #include "tcl/tclpkgbase.h"
 
 #include "tcl/tclcmd.h"
-#include "tcl/tclerror.h"
 #include "tcl/tclsafeinterp.h"
 
 #include "util/pointers.h"

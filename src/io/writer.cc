@@ -32,11 +32,25 @@
 
 #include "io/writer.h"
 
+#include "util/error.h"
 #include "util/strings.h"
 
 #include "util/debug.h"
 
-IO::WriteError::~WriteError() throw() {}
+namespace IO
+{
+  class WriteVersionError : public Util::Error
+  {
+  public:
+    /// Construct with information relevant to the problem
+    WriteVersionError(const char* classname,
+                      IO::VersionId attempted_id,
+                      IO::VersionId lowest_supported_id,
+                      const char* msg);
+
+    virtual ~WriteVersionError() throw();
+  };
+}
 
 IO::WriteVersionError::WriteVersionError(const char* classname,
                                          IO::VersionId attempted_id,

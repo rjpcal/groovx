@@ -30,7 +30,8 @@
 #ifndef READUTILS_H_DEFINED
 #define READUTILS_H_DEFINED
 
-#include "util/ref.h"
+#include "util/error.h"
+#include "util/ref.h"    // for dynamicCast
 
 #include "io/reader.h"
 
@@ -49,7 +50,7 @@ namespace ReadUtils
     {
       int count = reader.readInt(makeSeqCountString(seq_name));
       if (0 > count)
-        throw IO::ReadError("read negative value for sequence count");
+        throw Util::Error("read negative value for sequence count");
       return count;
     }
 

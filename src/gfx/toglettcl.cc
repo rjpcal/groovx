@@ -36,10 +36,10 @@
 #include "gfx/toglet.h"
 
 #include "tcl/objpkg.h"
-#include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
 
+#include "util/error.h"
 #include "util/objfactory.h"
 #include "util/ref.h"
 
@@ -58,7 +58,7 @@ namespace
   {
     if (start > 255 || end > 255)
       {
-        throw Tcl::TclError("colormap index out of range");
+        throw Util::Error("colormap index out of range");
       }
 
     Tcl::List result;

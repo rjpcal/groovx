@@ -339,16 +339,9 @@ DOTRACE("main");
       app.run();
       return 0;
     }
-  catch (Util::Error& err)
-    {
-      std::cerr << "caught in main: Error ("
-                << demangled_name(typeid(err))
-                << "): " << err.msg_cstr() << '\n';
-      err.backTrace().print(std::cerr);
-    }
   catch (std::exception& err)
     {
-      std::cerr << "caught in main: std::exception ("
+      std::cerr << "caught in main: ("
                 << demangled_name(typeid(err))
                 << "): " << err.what() << '\n';
     }

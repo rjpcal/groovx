@@ -32,7 +32,7 @@
 
 #include "tcl/tcllistobj.h"
 
-#include "tcl/tclerror.h"
+#include "util/error.h"
 
 #include <tcl.h>
 
@@ -64,7 +64,7 @@ DOTRACE("Tcl::List::split");
   int count;
   if ( Tcl_ListObjGetElements(0, itsList.obj(), &count, &itsElements) != TCL_OK)
     {
-      throw Tcl::TclError("couldn't split Tcl list");
+      throw Util::Error("couldn't split Tcl list");
     }
 
   Assert(count >= 0);
@@ -80,7 +80,7 @@ DOTRACE("Tcl::List::doAppend");
   while (times--)
     if ( Tcl_ListObjAppendElement(0, itsList.obj(), obj.obj()) != TCL_OK )
       {
-        throw Tcl::TclError("couldn't append to Tcl list");
+        throw Util::Error("couldn't append to Tcl list");
       }
 
   invalidate();
@@ -93,7 +93,7 @@ DOTRACE("Tcl::List::at");
   update();
 
   if (index >= itsLength)
-    throw Tcl::TclError("index was out of range in Tcl list access");
+    throw Util::Error("index was out of range in Tcl list access");
 
   dbgEval(3, index); dbgEvalNL(3, itsElements[index]);
 
@@ -107,7 +107,7 @@ DOTRACE("Tcl::List::getLength");
   int len;
   if ( Tcl_ListObjLength(0, obj, &len) != TCL_OK)
     {
-      throw Tcl::TclError("couldn't get list length of Tcl object");
+      throw Util::Error("couldn't get list length of Tcl object");
     }
 
   Assert(len >= 0);

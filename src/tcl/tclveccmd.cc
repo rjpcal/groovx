@@ -33,9 +33,9 @@
 #include "tcl/tclveccmd.h"
 
 #include "tcl/tclcmd.h"
-#include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
 
+#include "util/error.h"
 #include "util/minivec.h"
 #include "util/pointers.h"
 
@@ -72,7 +72,7 @@ public:
         Tcl::List arg(objv[i]);
         if (arg.length() == 0)
           {
-            throw Tcl::TclError("argument was empty");
+            throw Util::Error("argument was empty");
           }
         itsArgs.push_back( arg.begin<Tcl_Obj*>() );
       }

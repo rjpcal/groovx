@@ -41,7 +41,6 @@
 
 #include "system/system.h"
 
-#include "tcl/tclerror.h"
 #include "tcl/tclmain.h"
 #include "tcl/tclsafeinterp.h"
 

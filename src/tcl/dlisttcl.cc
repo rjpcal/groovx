@@ -32,12 +32,12 @@
 
 // This file implements additional Tcl list manipulation functions
 
-#include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
 
 #include "util/algo.h"
 #include "util/arrays.h"
+#include "util/error.h"
 #include "util/rand.h"
 #include "util/randutils.h"
 
@@ -145,7 +145,7 @@ namespace DlistTcl
   {
     if (source_list.length() == 0)
       {
-        throw Tcl::TclError("source_list is empty");
+        throw Util::Error("source_list is empty");
       }
 
     return source_list.at(Util::randRange(0u, source_list.length()));
@@ -197,7 +197,7 @@ namespace DlistTcl
 
     if (npts < 2)
       {
-        throw Tcl::TclError("npts must be at least 2");
+        throw Util::Error("npts must be at least 2");
       }
 
     const double skip = (end - begin) / (npts - 1);
@@ -263,7 +263,7 @@ namespace DlistTcl
 
     if (flg_len < src_len)
       {
-        throw Tcl::TclError("flags list must be as long as source_list");
+        throw Util::Error("flags list must be as long as source_list");
       }
 
     Tcl::List result;
@@ -346,7 +346,7 @@ namespace DlistTcl
               {
                 isum += source_list.get<int>(i);
               }
-            catch(Tcl::TclError&)
+            catch(Util::Error&)
               {
                 seen_double = true;
                 dsum = isum;

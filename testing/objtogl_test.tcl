@@ -77,7 +77,7 @@ test "Toglet-dumpCmap" "error from too small index" {
 } {^Toglet::dumpCmap:}
 test "Toglet-dumpCmap" "error from too large index" {
     Togl::dumpCmap 100 900
-} {^Toglet::dumpCmap: colormap index out of range$}
+} {^Toglet::dumpCmap: colormap index out of range}
 
 ### pixelsPerUnitCmd ###
 test "GxCamera-pixelsPerUnit" "args" {
@@ -98,13 +98,13 @@ test "GxCamera-pixelsPerUnit" "err1" {
     catch {-> $c pixelsPerUnit 0} result
     delete $c
     set result
-} {pixelsPerUnit: invalid scaling factor$}
+} {pixelsPerUnit: invalid scaling factor}
 test "GxCamera-pixelsPerUnit" "err2" {
     set c [new GxFixedScaleCamera]
     catch {-> $c pixelsPerUnit -1.2} result
     delete $c
     set result
-} {pixelsPerUnit: invalid scaling factor$}
+} {pixelsPerUnit: invalid scaling factor}
 
 ### unitAngle ###
 test "GxCamera-unitAngle" "args" {
@@ -120,13 +120,13 @@ test "GxCamera-unitAngle" "err1" {
     catch {-> $c unitAngle 0} result
     delete $c
     set result
-} {unitAngle: unit angle must be positive$}
+} {unitAngle: unit angle must be positive}
 test "GxCamera-unitAngle" "err2" {
     set c [new GxPsyphyCamera]
     catch {-> $c unitAngle 0} result
     delete $c
     set result
-} {unitAngle: unit angle must be positive$}
+} {unitAngle: unit angle must be positive}
 
 ### viewingDistIn ###
 test "GxCamera-viewingDistIn" "args" {

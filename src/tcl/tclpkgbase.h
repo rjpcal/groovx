@@ -36,7 +36,6 @@ namespace Tcl
 {
   class Command;
   class Interp;
-  class TclError;
   class PkgBase;
 }
 

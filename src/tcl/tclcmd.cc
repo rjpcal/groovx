@@ -32,7 +32,6 @@
 
 #include "tcl/tclcmd.h"
 
-#include "tcl/tclerror.h"
 #include "tcl/tclsafeinterp.h"
 
 #include "util/strings.h"

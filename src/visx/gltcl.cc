@@ -40,11 +40,11 @@
 #include "gx/bmapdata.h"
 #include "gx/rect.h"
 
-#include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
 
 #include "util/arrays.h"
+#include "util/error.h"
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -275,7 +275,7 @@ namespace GLTcl
     const AttribInfo* theInfo = theAttribMap[param_tag];
     if ( theInfo == 0 )
       {
-        throw Tcl::TclError("invalid or unsupported enumerant");
+        throw Util::Error("invalid or unsupported enumerant");
       }
 
     fixed_block<T> theVals(theInfo->num_values);
@@ -310,7 +310,7 @@ void GLTcl::loadMatrix(Tcl::List entries)
 
   if (matrix.size() != 16)
     {
-      throw Tcl::TclError("matrix must have 16 entries in column-major order");
+      throw Util::Error("matrix must have 16 entries in column-major order");
     }
 
   glLoadMatrixd(&matrix[0]);

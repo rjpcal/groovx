@@ -99,7 +99,7 @@ DOTRACE("Block::readFrom");
   reader.readValue("curTrialSeqdx", iolegacySequencePos());
   if (numCompleted() > numElements())
     {
-      throw IO::ReadError("Block");
+      throw Util::Error("Block");
     }
 
   if (svid < 2)
