@@ -75,6 +75,11 @@ public:
       caller is responsible for destroying the Sound object. */
   static Sound* make();
 
+  /** Returns a pointer to a new platform-appropriate Sound object with the
+      named sound file pre-loaded. The caller is responsible for destroying
+      the Sound object. */
+  static Sound* makeFrom(const char* filename) { return new Sound(filename); }
+
   /** Returns a pointer to a new platform-appropriate SoundRep object. The
       caller is responsible for destroying the Sound object. */
   static SoundRep* newPlatformSoundRep(const char* soundfile);

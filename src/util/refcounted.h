@@ -126,7 +126,7 @@ private:
   RefCounted(const RefCounted& other);
   RefCounted& operator=(const RefCounted& other);
 
-public:
+protected:
   /** Class-specific operator new; protected to ensure that clients
       use factory functions. */
   void* operator new(size_t bytes);
@@ -135,7 +135,6 @@ public:
       only happen in RefCounted::decrRefCount. */
   void operator delete(void* space, size_t bytes);
 
-protected:
   /** Virtual destructor is protected, so that we can prevent clients
       from instantiating RefCounted's on the stack and from destroying
       them explicitly. Instead, RefCounted objects will only be
