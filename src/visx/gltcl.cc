@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Thu Jul 22 19:48:54 1999
+// written: Tue Aug  3 15:33:29 1999
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -63,6 +63,7 @@ namespace TclGL {
   class glFrustumCmd;
   class glGenListsCmd;
   class glGetCmd;
+  class glGetErrorCmd;
   class glIndexiCmd;
   class glIsListCmd;
   class glLineWidthCmd;
@@ -702,6 +703,20 @@ void TclGL::glGetTypeCmd<GLdouble>::extractValues(GLenum tag, GLdouble* vals_out
 template <>
 void TclGL::glGetTypeCmd<GLint>::extractValues(GLenum tag, GLint* vals_out)
 { glGetIntegerv(tag, vals_out); }
+
+//---------------------------------------------------------------------
+//
+// TclGL::glGetErrorCmd --
+//
+//---------------------------------------------------------------------
+
+class TclGL::glGetErrorCmd : public TclGL::GLCmd {
+public:
+  glGetErrorCmd(TclPkg* pkg, const char* cmd_name) :
+	 GLCmd(pkg, cmd_name, NULL, 1, 1) {}
+protected:
+  virtual void invoke() { checkGL(); }
+};
 
 //--------------------------------------------------------------------
 //
@@ -1420,6 +1435,7 @@ public:
 	 addCommand( new glFlushCmd        (this, "glFlush") );
 	 addCommand( new glFrustumCmd      (this, "glFrustum") );
 	 addCommand( new glGenListsCmd     (this, "glGenLists") );
+	 addCommand( new glGetErrorCmd     (this, "glGetError") );
 	 addCommand( new glGetTypeCmd<GLboolean>(this, "glGetBoolean") );
 	 addCommand( new glGetTypeCmd<GLdouble>(this, "glGetDouble") );
 	 addCommand( new glGetTypeCmd<GLint>(this, "glGetInteger") );
