@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:20:09 2001
-// written: Mon Aug 27 20:35:55 2001
+// written: Tue Aug 28 12:58:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,37 +29,31 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-namespace
-{
-  enum GfxPrim
-  {
-    NONE=0,
-    POINTS=1,
-    LINES,
-    LINE_STRIP,
-    LINE_LOOP,
-    TRIANGLES,
-    TRIANGLE_STRIP,
-    TRIANGLE_FAN,
-    QUADS,
-    QUAD_STRIP,
-    POLYGON
-  };
-}
-
 class Gfx::PSCanvas::Impl
 {
 public:
+
+  struct Primitive;
+
+  std::ofstream                     itsFstream;
+  unsigned int                      itsIndentLevel;
+  dlink_list<Gfx::Vec2<double> >    itsScales;
+  double                            itsLineWidth;
+  Primitive*                        itsPrimPtr;
+  unsigned int                      itsVcount;
+  bool                              itsPolygonFill;
+
   Impl(const char* filename) :
     itsFstream(filename),
     itsIndentLevel(0),
     itsScales(),
-    itsLineWidth(1.0),
-    itsGfxPrim(NONE),
-    itsVcount(0)
+    itsLineWidth(1.0), // in points
+    itsPrimPtr(0),
+    itsVcount(0),
+    itsPolygonFill(false)
   {
     if (!itsFstream.is_open())
-      throw Util::Error(fstring("couldn't open '", filename, "' for writing"));
+      raiseError(fstring("couldn't open '", filename, "' for writing"));
 
     itsScales.push_back(Gfx::Vec2<double>(1.0, 1.0));
 
@@ -74,6 +68,211 @@ public:
   {
     itsFstream << "showpage\n";
   }
+
+  //
+  // Graphics primitive definitions
+  //
+
+  struct Primitive
+  {
+    typedef Gfx::PSCanvas::Impl PS;
+
+    virtual void onBegin(PS* ps) = 0;
+    virtual void onVertex(PS* ps, const Gfx::Vec2<double>& v) = 0;
+    virtual void onEnd(PS* ps) = 0;
+  };
+
+  struct PointsPrim : public Primitive
+  {
+    virtual void onBegin(PS*) {}
+
+    virtual void onVertex(PS* ps, const Gfx::Vec2<double>& v)
+    {
+      ps->newpath(); ps->moveto(v); ps->stroke();
+    }
+
+    virtual void onEnd(PS*) {}
+  };
+
+  struct LinesPrim : public Primitive
+  {
+    virtual void onBegin(PS* ps)
+    {
+      ps->newpath();
+    }
+    virtual void onVertex(PS* ps, const Gfx::Vec2<double>& v)
+    {
+      if (ps->itsVcount % 2)
+        {
+          ps->lineto(v); ps->stroke();
+        }
+      else
+        {
+          ps->moveto(v);
+        }
+    }
+    virtual void onEnd(PS*) {}
+  };
+
+  struct LineStripPrim : public Primitive
+  {
+    virtual void onBegin(PS* ps)
+    {
+      ps->newpath();
+    }
+    virtual void onVertex(PS* ps, const Gfx::Vec2<double>& v)
+    {
+      if (ps->itsVcount == 0)
+        {
+          ps->moveto(v);
+        }
+      else
+        {
+          ps->lineto(v);
+        }
+    }
+    virtual void onEnd(PS* ps)
+    {
+      ps->stroke();
+    }
+  };
+
+  struct LineLoopPrim : public Primitive
+  {
+    virtual void onBegin(PS*) {}
+    virtual void onVertex(PS* ps, const Gfx::Vec2<double>& v)
+    {
+      if (ps->itsVcount == 0)
+        {
+          ps->newpath(); ps->moveto(v);
+        }
+      else
+        {
+          ps->lineto(v);
+        }
+    }
+    virtual void onEnd(PS* ps)
+    {
+      ps->closepath(); ps->stroke();
+    }
+  };
+
+  struct TrianglesPrim : public Primitive
+  {
+    virtual void onBegin(PS* ps)
+    {
+      ps->newpath();
+    }
+    virtual void onVertex(PS* ps, const Gfx::Vec2<double>& v)
+    {
+      switch(ps->itsVcount % 3)
+        {
+        case 0:
+          ps->moveto(v);
+          break;
+        case 1:
+          ps->lineto(v);
+          break;
+        case 2:
+          ps->lineto(v); ps->closepath(); ps->renderpolygon();
+          break;
+        }
+    }
+    virtual void onEnd(PS*) {}
+  };
+
+  struct TriangleStripPrim : public Primitive
+  {
+    virtual void onBegin(PS*) { /* FIXME */ }
+    virtual void onVertex(PS*, const Gfx::Vec2<double>&) { /* FIXME */ }
+    virtual void onEnd(PS*) { /* FIXME */ }
+  };
+
+  struct TriangleFanPrim : public Primitive
+  {
+    virtual void onBegin(PS*) { /* FIXME */ }
+    virtual void onVertex(PS*, const Gfx::Vec2<double>&) { /* FIXME */ }
+    virtual void onEnd(PS*) { /* FIXME */ }
+  };
+
+  struct QuadsPrim : public Primitive
+  {
+    virtual void onBegin(PS*) {}
+
+    virtual void onVertex(PS* ps, const Gfx::Vec2<double>& v)
+    {
+      switch(ps->itsVcount % 3)
+        {
+        case 0:
+          ps->moveto(v);
+          break;
+        case 1:
+        case 2:
+          ps->lineto(v);
+          break;
+        case 3:
+          ps->lineto(v); ps->closepath(); ps->renderpolygon();
+          break;
+        }
+    }
+    virtual void onEnd(PS* ps) {}
+  };
+
+  struct QuadStripPrim : public Primitive
+  {
+    dlink_list<Gfx::Vec2<double> > itsPts1;
+    dlink_list<Gfx::Vec2<double> > itsPts2;
+
+    virtual void onBegin(PS*)
+    {
+      itsPts1.clear();
+      itsPts2.clear();
+    }
+
+    virtual void onVertex(PS* ps, const Gfx::Vec2<double>& v)
+    {
+      if ((ps->itsVcount %2) == 0)
+        itsPts1.push_back(v);
+      else
+        itsPts2.push_front(v);
+    }
+
+    virtual void onEnd(PS* ps)
+    {
+      ps->newpath();
+
+      dlink_list<Gfx::Vec2<double> >::iterator itr = itsPts1.begin();
+
+      ps->moveto(*itr); ++itr;
+
+      while (!itsPts1.empty())
+        {
+          ps->lineto(itsPts1.front());
+          itsPts1.pop_front();
+        }
+
+      while (!itsPts2.empty())
+        {
+          ps->lineto(itsPts2.front());
+          itsPts2.pop_front();
+        }
+
+      ps->closepath();
+
+      ps->renderpolygon();
+    }
+  };
+
+  struct PolygonPrim : public LineLoopPrim
+  {
+    virtual void onEnd(PS* ps)
+    {
+      ps->closepath(); ps->renderpolygon();
+    }
+  };
+
+
+
 
   void indent()
   {
@@ -138,14 +337,28 @@ public:
     indent(); itsFstream << "closepath\n";
   }
 
-  void arc(double x, double y, double radius,
-           double start_angle, double end_angle)
+  void renderpolygon()
   {
-    indent();
-    push1(x); push1(y); push1(radius);
-    push1(start_angle); push1(end_angle);
-    itsFstream << "arc\n";
-//      indent(); itsFstream << "4 { pop } repeat\n";
+    if (itsPolygonFill)
+      fill();
+    else
+      stroke();
+  }
+
+  void arc(double x, double y, double r, double start, double end,
+           bool reverse=false)
+  {
+    indent(); push1(x); push1(y); push1(r); push1(start); push1(end);
+    if (reverse)
+      itsFstream << "arcn\n";
+    else
+      itsFstream << "arc\n";
+    //      indent(); itsFstream << "4 { pop } repeat\n";
+  }
+
+  void arcn(double x, double y, double r, double start, double end)
+  {
+    arc(x, y, r, start, end, true);
   }
 
   void bezier(const Gfx::Vec3<double>& p1,
@@ -160,6 +373,11 @@ public:
     stroke();
   }
 
+  void fill()
+  {
+    indent(); itsFstream << "fill\n\n";
+  }
+
   void stroke()
   {
     indent(); itsFstream << "stroke\n\n";
@@ -167,7 +385,8 @@ public:
 
   void setlinewidth(double w)
   {
-    double factor = (itsScales.back().x() + itsScales.back().y()) / 2.0;
+    double factor =
+      (itsScales.back().abs().x() + itsScales.back().abs().y()) / 2.0;
 
     DebugEvalNL(factor);
 
@@ -185,73 +404,59 @@ public:
     itsFstream << v.x() << " " << v.y() << " ";
   }
 
-  void raiseError(const char* msg)
+  void raiseError(const fstring& msg)
   {
-    throw Util::Error(fstring("error in PSCanvas: ", msg));
+    DOTRACE("Gfx::PSCanvas::Impl::raiseError");
+    throw Util::Error(fstring("PSCanvas error: ", msg));
   }
 
-  void beginPrimitive(GfxPrim p)
+  void beginPrimitive(Primitive* ptr)
   {
-    if (itsGfxPrim != NONE)
-      raiseError("mismatched calls to begin/end primitive");
+    if (itsPrimPtr != 0)
+      raiseError("in beginPrimitive, already in graphics primitive");
 
-    itsGfxPrim = p;
+    itsPrimPtr = ptr;
+
+    Assert(itsVcount == 0);
   }
 
   void endPrimitive()
   {
-    if (itsGfxPrim == NONE)
-      raiseError("mismatched calls to begin/end primitive");
-
-    switch(itsGfxPrim)
+    if (itsPrimPtr == 0)
       {
-      case POINTS:
-      case LINES:
-        ;// nothing
-        break;
-      case LINE_STRIP:
-        stroke();
-        break;
-      case LINE_LOOP:
-        closepath(); stroke();
-        break;
-      case TRIANGLES:
-        break;
-      case TRIANGLE_STRIP:
-        break;
-      case TRIANGLE_FAN:
-        break;
-      case QUADS:
-        break;
-      case QUAD_STRIP:
-        break;
-      case POLYGON:
-        break;
-      case NONE:
-      default:
-        raiseError("not in graphics primitive");
-        break;
+        raiseError("called endPrimitive outside graphics primitive");
       }
 
-    itsGfxPrim == NONE;
+    itsPrimPtr->onEnd(this);
+
+    itsPrimPtr = 0;
     itsVcount = 0;
   }
-
-  std::ofstream itsFstream;
-  unsigned int itsIndentLevel;
-  dlink_list<Gfx::Vec2<double> > itsScales;
-  double itsLineWidth;
-  GfxPrim itsGfxPrim;
-  unsigned int itsVcount;
 };
+
+namespace
+{
+  Gfx::PSCanvas::Impl::PointsPrim thePointsPrim;
+  Gfx::PSCanvas::Impl::LinesPrim theLinesPrim;
+  Gfx::PSCanvas::Impl::LineStripPrim theLineStripPrim;
+  Gfx::PSCanvas::Impl::LineLoopPrim theLineLoopPrim;
+  Gfx::PSCanvas::Impl::TrianglesPrim theTrianglesPrim;
+  Gfx::PSCanvas::Impl::TriangleStripPrim theTriangleStripPrim;
+  Gfx::PSCanvas::Impl::TriangleFanPrim theTriangleFanPrim;
+  Gfx::PSCanvas::Impl::QuadsPrim theQuadsPrim;
+  Gfx::PSCanvas::Impl::QuadStripPrim theQuadStripPrim;
+  Gfx::PSCanvas::Impl::PolygonPrim thePolygonPrim;
+}
 
 Gfx::PSCanvas::PSCanvas(const char* filename) :
   itsImpl(new Impl(filename))
 {
+DOTRACE("Gfx::PSCanvas::PSCanvas");
 }
 
 Gfx::PSCanvas::~PSCanvas()
 {
+DOTRACE("Gfx::PSCanvas::~PSCanvas");
   delete itsImpl;
 }
 
@@ -261,13 +466,18 @@ Gfx::Vec2<int> Gfx::PSCanvas::screenFromWorld(
 {
 DOTRACE("Gfx::PSCanvas::screenFromWorld(Gfx::Vec2)");
 // FIXME
+  itsImpl->raiseError("not implemented");
+  return Gfx::Vec2<int>();
 }
 
 Gfx::Vec2<double> Gfx::PSCanvas::worldFromScreen(
   const Gfx::Vec2<int>& screen_pos
   ) const
 {
+DOTRACE("Gfx::PSCanvas::worldFromScreen(Gfx::Vec2)");
 // FIXME
+  itsImpl->raiseError("not implemented");
+  return Gfx::Vec2<double>();
 }
 
 
@@ -275,22 +485,32 @@ Gfx::Rect<int> Gfx::PSCanvas::screenFromWorld(const Gfx::Rect<double>& world_pos
 {
 DOTRACE("Gfx::PSCanvas::screenFromWorld(Gfx::Rect)");
 // FIXME
+  itsImpl->raiseError("not implemented");
+  return Gfx::Rect<int>();
 }
 
 Gfx::Rect<double> Gfx::PSCanvas::worldFromScreen(const Gfx::Rect<int>& screen_pos) const
 {
 DOTRACE("Gfx::PSCanvas::worldFromScreen(Gfx::Rect)");
 // FIXME
+  itsImpl->raiseError("not implemented");
+  return Gfx::Rect<double>();
 }
 
 Gfx::Rect<int> Gfx::PSCanvas::getScreenViewport() const
 {
+DOTRACE("Gfx::PSCanvas::getScreenViewport()");
 // FIXME
+  itsImpl->raiseError("not implemented");
+  return Gfx::Rect<int>();
 }
 
 Gfx::Rect<double> Gfx::PSCanvas::getWorldViewport() const
 {
+DOTRACE("Gfx::PSCanvas::getWorldViewport()");
 // FIXME
+  itsImpl->raiseError("not implemented");
+  return Gfx::Rect<double>();
 }
 
 
@@ -322,27 +542,31 @@ void Gfx::PSCanvas::throwIfError(const char* where) const
 {
 DOTRACE("Gfx::PSCanvas::throwIfError");
   if (itsImpl->itsFstream.fail())
-    throw Util::Error("stream failure in PSCanvas");
+    itsImpl->raiseError("stream failure");
 }
 
 
 void Gfx::PSCanvas::pushAttribs()
 {
+DOTRACE("Gfx::PSCanvas::pushAttribs");
   itsImpl->gsave();
 }
 
 void Gfx::PSCanvas::popAttribs()
 {
+DOTRACE("Gfx::PSCanvas::popAttribs");
   itsImpl->grestore();
 }
 
 void Gfx::PSCanvas::drawOnFrontBuffer()
 {
+DOTRACE("Gfx::PSCanvas::drawOnFrontBuffer");
   ;// nothing
 }
 
 void Gfx::PSCanvas::drawOnBackBuffer()
 {
+DOTRACE("Gfx::PSCanvas::drawOnBackBuffer");
   ;// nothing
 }
 
@@ -379,24 +603,35 @@ DOTRACE("Gfx::PSCanvas::swapForeBack");
 void Gfx::PSCanvas::setLineWidth(double width)
 {
 DOTRACE("Gfx::PSCanvas::setLineWidth");
-  itsImpl->setlinewidth(width);
+
+  itsImpl->setlinewidth(width * 0.5);
+  // arbitrary scaling by 0.5 so lines look "not too thick" in Postscript
+}
+
+void Gfx::PSCanvas::setPolygonFill(bool on)
+{
+DOTRACE("Gfx::PSCanvas::setPolygonFill");
+
+  itsImpl->itsPolygonFill = on;
 }
 
 void Gfx::PSCanvas::enableAntialiasing()
 {
 DOTRACE("Gfx::PSCanvas::enableAntialiasing");
-// FIXME
+  // nothing, antialiasing is default in postscript
 }
 
 
 
 void Gfx::PSCanvas::pushMatrix()
 {
+DOTRACE("Gfx::PSCanvas::pushMatrix");
   itsImpl->gsave();
 }
 
 void Gfx::PSCanvas::popMatrix()
 {
+DOTRACE("Gfx::PSCanvas::popMatrix");
   itsImpl->grestore();
 }
 
@@ -437,7 +672,7 @@ DOTRACE("Gfx::PSCanvas::drawBitmap");
 void Gfx::PSCanvas::grabPixels(const Gfx::Rect<int>& bounds, Gfx::BmapData& data_out)
 {
 DOTRACE("Gfx::PSCanvas::grabPixels");
-// FIXME
+  itsImpl->raiseError("grabPixels not allowed");
 }
 
 void Gfx::PSCanvas::clearColorBuffer()
@@ -458,21 +693,29 @@ DOTRACE("Gfx::PSCanvas::drawRect");
 
   itsImpl->newpath();
   itsImpl->moveto(rect.bottomLeft());
-  itsImpl->moveto(rect.bottomRight());
-  itsImpl->moveto(rect.topRight());
-  itsImpl->moveto(rect.topLeft());
+  itsImpl->lineto(rect.bottomRight());
+  itsImpl->lineto(rect.topRight());
+  itsImpl->lineto(rect.topLeft());
   itsImpl->closepath();
   itsImpl->stroke();
 }
 
 void Gfx::PSCanvas::drawCircle(double inner_radius, double outer_radius,
-                               unsigned int, unsigned int)
+                               bool fill, unsigned int, unsigned int)
 {
 DOTRACE("Gfx::PSCanvas::drawCircle");
 
   itsImpl->newpath();
   itsImpl->arc(0.0, 0.0, outer_radius, 0.0, 360.0);
-  itsImpl->stroke();
+  if (fill)
+    {
+      itsImpl->arcn(0.0, 0.0, inner_radius, 360.0, 0.0);
+      itsImpl->fill();
+    }
+  else
+    {
+      itsImpl->stroke();
+    }
 }
 
 void Gfx::PSCanvas::drawBezier4(const Gfx::Vec3<double>& p1,
@@ -487,114 +730,86 @@ DOTRACE("Gfx::PSCanvas::drawBezier4");
 
 void Gfx::PSCanvas::beginPoints()
 {
-  itsImpl->beginPrimitive(POINTS);
+DOTRACE("Gfx::PSCanvas::beginPoints");
+  itsImpl->beginPrimitive(&thePointsPrim);
 }
 
 void Gfx::PSCanvas::beginLines()
 {
-  itsImpl->beginPrimitive(LINES);
+DOTRACE("Gfx::PSCanvas::beginLines");
+  itsImpl->beginPrimitive(&theLinesPrim);
 }
 
 void Gfx::PSCanvas::beginLineStrip()
 {
-  itsImpl->beginPrimitive(LINE_STRIP);
+DOTRACE("Gfx::PSCanvas::beginLineStrip");
+  itsImpl->beginPrimitive(&theLineStripPrim);
 }
 
 void Gfx::PSCanvas::beginLineLoop()
 {
-  itsImpl->beginPrimitive(LINE_LOOP);
+DOTRACE("Gfx::PSCanvas::beginLineLoop");
+  itsImpl->beginPrimitive(&theLineLoopPrim);
 }
 
 void Gfx::PSCanvas::beginTriangles()
 {
-  itsImpl->beginPrimitive(TRIANGLES);
+DOTRACE("Gfx::PSCanvas::beginTriangles");
+  itsImpl->beginPrimitive(&theTrianglesPrim);
 }
 
 void Gfx::PSCanvas::beginTriangleStrip()
 {
-  itsImpl->beginPrimitive(TRIANGLE_STRIP);
+DOTRACE("Gfx::PSCanvas::beginTriangleStrip");
+  itsImpl->beginPrimitive(&theTriangleStripPrim);
 }
 
 void Gfx::PSCanvas::beginTriangleFan()
 {
-  itsImpl->beginPrimitive(TRIANGLE_FAN);
+DOTRACE("Gfx::PSCanvas::beginTriangleFan");
+  itsImpl->beginPrimitive(&theTriangleFanPrim);
 }
 
 void Gfx::PSCanvas::beginQuads()
 {
-  itsImpl->beginPrimitive(QUADS);
+DOTRACE("Gfx::PSCanvas::beginQuads");
+  itsImpl->beginPrimitive(&theQuadsPrim);
 }
 
 void Gfx::PSCanvas::beginQuadStrip()
 {
-  itsImpl->beginPrimitive(QUAD_STRIP);
+DOTRACE("Gfx::PSCanvas::beginQuadStrip");
+  itsImpl->beginPrimitive(&theQuadStripPrim);
 }
 
 void Gfx::PSCanvas::beginPolygon()
 {
-  itsImpl->beginPrimitive(POLYGON);
+DOTRACE("Gfx::PSCanvas::beginPolygon");
+  itsImpl->beginPrimitive(&thePolygonPrim);
 }
 
 void Gfx::PSCanvas::vertex2(const Gfx::Vec2<double>& v)
 {
-  switch(itsImpl->itsGfxPrim)
+DOTRACE("Gfx::PSCanvas::vertex2");
+
+  if (itsImpl->itsPrimPtr == 0)
     {
-    case POINTS:
-      itsImpl->newpath(); itsImpl->moveto(v); itsImpl->stroke();
-      break;
-    case LINES:
-      {
-        if (itsImpl->itsVcount % 2)
-          {
-            itsImpl->lineto(v); itsImpl->stroke();
-          }
-        else
-          {
-            itsImpl->newpath(); itsImpl->moveto(v);
-          }
-      }
-      break;
-    case LINE_STRIP:
-    case LINE_LOOP:
-      {
-        if (itsImpl->itsVcount == 0)
-          {
-            itsImpl->newpath(); itsImpl->moveto(v);
-          }
-        else
-          {
-            itsImpl->lineto(v);
-          }
-      }
-      break;
-    case TRIANGLES:
-      break;
-    case TRIANGLE_STRIP:
-      break;
-    case TRIANGLE_FAN:
-      break;
-    case QUADS:
-      break;
-    case QUAD_STRIP:
-      break;
-    case POLYGON:
-      break;
-    case NONE:
-    default:
-      itsImpl->raiseError("not in graphics primitive");
-      break;
+      itsImpl->raiseError("called vertex() outside graphics primitive");
     }
 
+  itsImpl->itsPrimPtr->onVertex(itsImpl, v);
   ++(itsImpl->itsVcount);
 }
 
 void Gfx::PSCanvas::vertex3(const Gfx::Vec3<double>& v)
 {
+DOTRACE("Gfx::PSCanvas::vertex3");
   vertex2(Gfx::Vec2<double>(v.x(), v.y()));
 }
 
 void Gfx::PSCanvas::end()
 {
+DOTRACE("Gfx::PSCanvas::end");
   itsImpl->endPrimitive();
 }
 
