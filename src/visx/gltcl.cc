@@ -56,8 +56,6 @@ namespace GLTcl {
   class glLoadMatrixCmd;
   class glOrthoCmd;
   class glRotateCmd;
-  class glScaleCmd;
-  class glTranslateCmd;
   class glVertexCmd;
 
   class gluLookAtCmd;
@@ -231,6 +229,64 @@ namespace GLTcl {
   };
 
 
+  //
+  // three arguments
+  //
+
+  template <class R, class P1, class P2, class P3>
+  class GLCmdP3 : public Tcl::TclCmd {
+  public:
+    typedef R (*Func)(P1, P2, P3);
+
+    GLCmdP3(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
+            const char* usage) :
+      Tcl::TclCmd(pkg->interp(), cmd_name, usage, 4),
+      itsFunc(f)
+    {}
+
+  protected:
+    virtual void invoke()
+    {
+      P1 p1 = getValFromArg(1, (P1*)0);
+      P2 p2 = getValFromArg(2, (P2*)0);
+      P3 p3 = getValFromArg(2, (P3*)0);
+      returnVal(itsFunc(p1, p2, p3));
+    }
+
+  private:
+    GLCmdP3(const GLCmdP3&);
+    GLCmdP3& operator=(const GLCmdP3&);
+
+    Func itsFunc;
+  };
+
+  template <class P1, class P2, class P3>
+  class GLCmdP3<void, P1, P2, P3> : public Tcl::TclCmd {
+  public:
+    typedef void (*Func)(P1, P2, P3);
+
+    GLCmdP3(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
+            const char* usage) :
+      Tcl::TclCmd(pkg->interp(), cmd_name, usage, 4),
+      itsFunc(f)
+    {}
+
+  protected:
+    virtual void invoke()
+    {
+      P1 p1 = getValFromArg(1, (P1*)0);
+      P2 p2 = getValFromArg(2, (P2*)0);
+      P3 p3 = getValFromArg(2, (P3*)0);
+      itsFunc(p1, p2, p3);
+    }
+
+  private:
+    GLCmdP3(const GLCmdP3&);
+    GLCmdP3& operator=(const GLCmdP3&);
+
+    Func itsFunc;
+  };
+
   template <class Func>
   inline Tcl::TclCmd* makeCmd(Tcl::TclPkg* pkg, Func f,
                               const char* cmd_name, const char* usage);
@@ -257,6 +313,14 @@ namespace GLTcl {
                               const char* cmd_name, const char* usage)
   {
     return new GLTcl::GLCmdP2<R, P1, P2>(pkg, f, cmd_name, usage);
+  }
+
+  template <class R, class P1, class P2, class P3>
+  inline Tcl::TclCmd* makeCmd(Tcl::TclPkg* pkg,
+                              R (*f)(P1, P2, P3),
+                              const char* cmd_name, const char* usage)
+  {
+    return new GLTcl::GLCmdP3<R, P1, P2, P3>(pkg, f, cmd_name, usage);
   }
 
 } // end namespace GLTcl
@@ -734,48 +798,6 @@ protected:
     GLdouble z = getDoubleFromArg(4);
 
     glRotated(angle, x, y, z);
-    checkGL();
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// GLTcl::glScaleCmd --
-//
-//---------------------------------------------------------------------
-
-class GLTcl::glScaleCmd : public Tcl::TclCmd {
-public:
-  glScaleCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "x y z", 4, 4) {}
-protected:
-  virtual void invoke() {
-    GLdouble x = getDoubleFromArg(1);
-    GLdouble y = getDoubleFromArg(2);
-    GLdouble z = getDoubleFromArg(3);
-
-    glScaled(x, y, z);
-    checkGL();
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// GLTcl::glTranslateCmd --
-//
-//---------------------------------------------------------------------
-
-class GLTcl::glTranslateCmd : public Tcl::TclCmd {
-public:
-  glTranslateCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "x y z", 4, 4) {}
-protected:
-  virtual void invoke() {
-    GLdouble x = getDoubleFromArg(1);
-    GLdouble y = getDoubleFromArg(2);
-    GLdouble z = getDoubleFromArg(3);
-
-    glTranslated(x, y, z);
     checkGL();
   }
 };
@@ -1259,6 +1281,8 @@ public:
     addCommand( makeCmd (this, glPolygonMode, "glPolygonMode", "face mode") );
     addCommand( makeCmd (this, glPopMatrix, "glPopMatrix", 0) );
     addCommand( makeCmd (this, glPushMatrix, "glPushMatrix", 0) );
+    addCommand( makeCmd (this, glScaled, "glScale", "x y z") );
+    addCommand( makeCmd (this, glTranslated, "glTranslate", "x y z") );
 
     addCommand( new glClearColorCmd   (this, "glClearColor") );
     addCommand( new glColorCmd        (this, "glColor") );
@@ -1269,8 +1293,6 @@ public:
     addCommand( new glLoadMatrixCmd   (this, "glLoadMatrix") );
     addCommand( new glOrthoCmd        (this, "glOrtho") );
     addCommand( new glRotateCmd       (this, "glRotate") );
-    addCommand( new glScaleCmd        (this, "glScale") );
-    addCommand( new glTranslateCmd    (this, "glTranslate") );
     addCommand( new glVertexCmd       (this, "glVertex") );
     addCommand( new gluLookAtCmd      (this, "gluLookAt") );
     addCommand( new gluPerspectiveCmd (this, "gluPerspective") );
