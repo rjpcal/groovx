@@ -3,7 +3,7 @@
 // trace.h
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 10 01:30:08 2000
+// written: Thu Sep 21 18:43:51 2000
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -116,6 +116,12 @@ private:
 
 class Util::Trace {
 public:
+  enum Mode { RUN, STEP };
+
+  static void setMode(Mode new_mode);
+  static Mode getMode();
+
+  // Setting 'breakpoint' to true will cause
   Trace(Prof& p, bool useMsg) : 
 	 prof(p), 
 	 start(), finish(), elapsed(),
@@ -139,6 +145,7 @@ public:
 			 printOut();
 		  }
 	 }
+
 private:
   void printIn();
   void printOut();
