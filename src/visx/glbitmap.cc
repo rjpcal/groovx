@@ -3,7 +3,7 @@
 // glbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:17 1999
-// written: Wed Nov 24 12:10:26 1999
+// written: Wed Dec  1 18:03:32 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include <GL/gl.h>
 #include <string>
 
+#include "glbmaprenderer.h"
 #include "reader.h"
 #include "writer.h"
 
@@ -26,24 +27,29 @@
 
 namespace {
   const string ioTag = "GLBitmap";
+
+  GLBmapRenderer* tempRenderer = 0;
 }
 
 GLBitmap::GLBitmap() :
-  Bitmap()
+  Bitmap(tempRenderer = new GLBmapRenderer()),
+  itsRenderer(tempRenderer)
 {
 DOTRACE("GLBitmap::GLBitmap");
   init();
 }
 
 GLBitmap::GLBitmap(const char* filename) :
-  Bitmap(filename)
+  Bitmap(tempRenderer = new GLBmapRenderer(), filename),
+  itsRenderer(tempRenderer)
 {
 DOTRACE("GLBitmap::GLBitmap");
   init(); 
 }
 
 GLBitmap::GLBitmap(istream& is, IOFlag flag) :
-  Bitmap()
+  Bitmap(tempRenderer = new GLBmapRenderer()),
+  itsRenderer(tempRenderer)
 {
 DOTRACE("GLBitmap::GLBitmap");
   deserialize(is, flag);
@@ -53,12 +59,12 @@ void GLBitmap::init() {
 DOTRACE("GLBitmap::init");
   GrObj::setRenderMode(GROBJ_GL_COMPILE);
   GrObj::setUnRenderMode(GROBJ_CLEAR_BOUNDING_BOX);
-  itsUsingGlBitmap = true;
   setUsingZoom(true);
 }
 
 GLBitmap::~GLBitmap() {
 DOTRACE("GLBitmap::~GLBitmap");
+  delete itsRenderer; 
 }
 
 void GLBitmap::serialize(ostream& os, IOFlag flag) const {
@@ -66,7 +72,7 @@ DOTRACE("GLBitmap::serialize");
   char sep = ' ';
   if (flag & TYPENAME) { os << ioTag << sep; }
 
-  os << itsUsingGlBitmap << sep;
+  os << itsRenderer->getUsingGlBitmap() << sep;
 
   if (os.fail()) throw OutputError(ioTag);
 
@@ -79,7 +85,7 @@ DOTRACE("GLBitmap::deserialize");
 
   int val;
   is >> val;
-  itsUsingGlBitmap = bool(val);
+  itsRenderer->setUsingGlBitmap(bool(val));
 
   if (is.fail()) throw InputError(ioTag);
 
@@ -93,68 +99,35 @@ DOTRACE("GLBitmap::charCount");
 
 void GLBitmap::readFrom(Reader* reader) {
 DOTRACE("GLBitmap::readFrom");
-  reader->readValue("usingGlBitmap", itsUsingGlBitmap); 
+  bool val;
+  reader->readValue("usingGlBitmap", val); 
+  itsRenderer->setUsingGlBitmap(val);
 
   Bitmap::readFrom(reader);
 }
 
 void GLBitmap::writeTo(Writer* writer) const {
 DOTRACE("GLBitmap::writeTo");
-  writer->writeValue("usingGlBitmap", itsUsingGlBitmap);
+  writer->writeValue("usingGlBitmap", itsRenderer->getUsingGlBitmap());
 
   Bitmap::writeTo(writer);
 }
 
 bool GLBitmap::getUsingGlBitmap() const {
 DOTRACE("GLBitmap::getUsingGlBitmap");
-  return itsUsingGlBitmap; 
+  return itsRenderer->getUsingGlBitmap();
 }
 
 void GLBitmap::setUsingGlBitmap(bool val) {
 DOTRACE("GLBitmap::setUsingGlBitmap");
-  itsUsingGlBitmap = val;
+  itsRenderer->setUsingGlBitmap(val);
 
   // glPixelZoom() does not work with glBitmap()
-  if (itsUsingGlBitmap) {
+  if (itsRenderer->getUsingGlBitmap()) {
 	 setUsingZoom(false);
   }
 
   sendStateChangeMsg();
-}
-
-void GLBitmap::doRender(unsigned char* bytes,
-								double x_pos,
-								double y_pos,
-								int width,
-								int height,
-								int bits_per_pixel,
-								int byte_alignment,
-								double zoom_x,
-								double zoom_y) const {
-DOTRACE("GLBitmap::doRender");
-  glRasterPos2d(x_pos, y_pos);
-  glPixelZoom(zoom_x, zoom_y);
-  
-  glPixelStorei(GL_UNPACK_ALIGNMENT, byte_alignment);
-
-  if (bits_per_pixel == 24) {
-	 glDrawPixels(width, height, GL_RGB, GL_UNSIGNED_BYTE,
-					  static_cast<GLvoid*>(bytes));
-  }
-  else if (bits_per_pixel == 8) {
-	 glDrawPixels(width, height, GL_COLOR_INDEX, GL_UNSIGNED_BYTE,
-					  static_cast<GLvoid*>(bytes));
-  }
-  else if (bits_per_pixel == 1) {
-	 if (itsUsingGlBitmap) {
-		glBitmap(width, height, 0.0, 0.0, 0.0, 0.0,
-					static_cast<GLubyte*>(bytes));
-	 }
-	 else {
-		glDrawPixels(width, height, GL_COLOR_INDEX, GL_BITMAP,
-						 static_cast<GLvoid*>(bytes));
-	 }
-  }
 }
 
 static const char vcid_glbitmap_cc[] = "$Header$";

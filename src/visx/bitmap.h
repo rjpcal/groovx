@@ -29,6 +29,8 @@ template <class V> class Rect;
 
 class BitmapRep;
 
+class BmapRenderer;
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -46,14 +48,12 @@ class Bitmap : public GrObj {
   // Creators
 public:
   ///
-  Bitmap();
+  Bitmap(BmapRenderer* renderer);
   /** Create a bitmap from a graphics file. Currently the only
 		supported file format is PBM (Portable BitMap). */
-  Bitmap(const char* filename);
+  Bitmap(BmapRenderer* renderer, const char* filename);
   /// Construct a Bitmap by deserializing from a stream.
-  Bitmap(istream& is, IOFlag flag);
-
-  private: void init();
+  Bitmap(BmapRenderer* renderer, istream& is, IOFlag flag);
 
 public:
   ///
@@ -100,17 +100,6 @@ public:
   void grabWorldRect(const Rect<double>& rect);
   //@}
 
-  protected:
-  /** This operation is a hook that is called after every time that
-      the bitmap data change. The default implementation provided by
-      Bitmap is a no-op, but subclasses may override if they need to
-      perform specific actions when that bitmap data change. */
-  virtual void bytesChangeHook(unsigned char* /* theBytes */,
-										 int /* width */,
-										 int /* height */,
-										 int /* bits_per_pixel */,
-										 int /* byte_alignment */);
-
   public:
   /** Flips the luminance contrast of the bitmap data, in a way that
       may depend on the format of the bitmap data. */
@@ -133,40 +122,16 @@ public:
 
   protected:
   /** Implements the GrObj rendering operation. This function
-      delegates the work to doRender(); therefore, subclasses of
+      delegates the work to itsRenderer; therefore, subclasses of
       Bitmap should not override grRender(), but should instead
-      override doRender(). */
+      provide a specialized renderer. */
   virtual void grRender() const;
 
-  protected:
-  /** This is the operation that subclasses must implement to do the
-		actual rendering of the bitmap data. All of the information
-		needed to do the rendering is passed as arguments to the
-		function. */
-  virtual void doRender(unsigned char* /* bytes */,
-								double /* x_pos */,
-								double /* y_pos */,
-								int /* width */,
-								int /* height */,
-								int /* bits_per_pixel */,
-								int /* byte_alignment */,
-								double /* zoom_x */,
-								double /* zoom_y */) const = 0;
-
-  public:
   /** Implements the GrObj undrawing operation. This function
-      delegates the work to doUndraw(); therefore, subclasses of
+      delegates the work to itsRenderer; therefore, subclasses of
       Bitmap should not override grUnRender(), but should instead
-      override doUndraw(). */
+      provide a specialized renderer. */
   virtual void grUnRender() const;
-
-  protected:
-  /** This is the operation that subclasses should override if they
-      need to provide a special unrendering method. A default no-op
-      implementation is provided. */
-  virtual void doUndraw(
-					  int /*winRasterX*/, int /*winRasterY*/,
-					  int /*winWidthX*/, int /*winHeightY*/) const;
 
   ///////////////
   // accessors //

@@ -3,7 +3,7 @@
 // xitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:39:09 1999
-// written: Wed Dec  1 10:16:16 1999
+// written: Wed Dec  1 17:47:30 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,9 +14,6 @@
 #ifndef BITMAP_H_DEFINED
 #include "bitmap.h"
 #endif
-
-struct _XImage;
-typedef _XImage XImage;
 
 class ToglConfig;
 
@@ -41,31 +38,6 @@ public:
 
   virtual void readFrom(Reader* reader);
   virtual void writeTo(Writer* writer) const;
-
-  // Actions
-  protected: virtual void bytesChangeHook(unsigned char* theBytes,
-														int width,
-														int height,
-														int bits_per_pixel,
-														int byte_alignment);
-
-  protected: virtual void doUndraw(int winRasterX,
-											  int winRasterY,
-											  int winWidthX,
-											  int winHeightY) const;
-
-  protected: virtual void doRender(unsigned char* /* bytes */,
-											  double /* x_pos */,
-											  double /* y_pos */,
-											  int /* width */,
-											  int /* height */,
-											  int /* bits_per_pixel */,
-											  int /* byte_alignment */,
-											  double /* zoom_x */,
-											  double /* zoom_y */) const;
-
-private:
-  XImage* itsImage;
 };
 
 static const char vcid_xbitmap_h[] = "$Header$";
