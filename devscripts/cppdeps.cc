@@ -2,7 +2,8 @@
 //
 // cppdeps.cc
 //
-// Copyright (c) 2003-2005 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2003-2005
+// Rob Peters <rjpeters at klab dot caltech dot edu>
 //
 // created: Wed Jul 16 15:47:10 2003
 // commit: $Id$
@@ -1460,7 +1461,16 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
 {
   if (strcmp(option, "--srcdir") == 0)
     {
-      const string fname = trim_trailing_slashes(optarg);
+      // SPECIAL CASE: if the argument to --srcdir is an empty string,
+      // then we treat it as if it were "." instead, i.e. the current
+      // directory. Otherwise, we just trim any trailing slashes from
+      // the non-empty argument.
+
+      const string fname =
+        (strlen(optarg) == 0)
+        ? string(".")
+        : trim_trailing_slashes(optarg);
+
       if (!file_exists(fname.c_str()))
         {
           cerr << "ERROR: no such source file: '" << fname << "'\n";
