@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Mon Jan 13 11:04:47 2003
+// written: Tue Feb  4 17:06:53 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,9 +27,10 @@
 #include "util/dlink_list.h"
 #include "util/error.h"
 #include "util/iter.h"
-#include "util/minivec.h"
 #include "util/ref.h"
 #include "util/volatileobject.h"
+
+#include <vector>
 
 #include "util/trace.h"
 
@@ -75,7 +76,7 @@ public:
 
   GxSeparator* owner;
 
-  typedef minivec<Ref<GxNode> > VecType;
+  typedef std::vector<Ref<GxNode> > VecType;
   VecType children;
 
   bool debugMode;
