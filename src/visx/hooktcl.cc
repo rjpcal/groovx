@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Sun Aug  4 15:52:53 2002
+// written: Tue Nov  5 05:28:08 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -232,22 +232,22 @@ public:
 
   static void info(Tcl_Obj* p)
   {
-    DebugEvalNL(p->typePtr ? p->typePtr->name : "");
-    DebugEvalNL(p->refCount);
+    dbgEvalNL(3, p->typePtr ? p->typePtr->name : "");
+    dbgEvalNL(3, p->refCount);
 
     convert(p);
 
     MyObj* gobj =
       static_cast<MyObj*>(p->internalRep.otherValuePtr);
 
-    DebugEvalNL((void*)p);
-    DebugEvalNL(p->typePtr ? p->typePtr->name : "");
-    DebugEvalNL(p->refCount);
-    DebugEvalNL(p->bytes);
-    DebugEvalNL(p->length);
-    DebugEvalNL((void*)gobj);
-    DebugEvalNL(gobj->value);
-    DebugEvalNL(MyObj::counter);
+    dbgEvalNL(3, (void*)p);
+    dbgEvalNL(3, p->typePtr ? p->typePtr->name : "");
+    dbgEvalNL(3, p->refCount);
+    dbgEvalNL(3, p->bytes);
+    dbgEvalNL(3, p->length);
+    dbgEvalNL(3, (void*)gobj);
+    dbgEvalNL(3, gobj->value);
+    dbgEvalNL(3, MyObj::counter);
   }
 
   virtual MyObj* clone() const
@@ -366,8 +366,7 @@ DOTRACE("HashObj::convert");
 
   for (unsigned int i = 1; i < l.length(); i += 2)
     {
-      p->insert(Tcl::Convert<fstring>::fromTcl(l.at(i-1)),
-                l.at(i));
+      p->insert(Tcl::toNative<fstring>(l.at(i-1)), l.at(i));
     }
 
   objPtr->internalRep.otherValuePtr = static_cast<GenericObj*>(p);
@@ -504,15 +503,48 @@ Tcl::ObjPtr HashObj_Pairs(Tcl_Obj* obj)
   return p->pairs();
 }
 
+#include "gfx/gbvec.h"
+#include "util/arrayvalue.h"
+#include "util/iter.h"
+#include "tcl/itertcl.h"
+
+namespace
+{
+  GbVec3<double> data[4];
+
+  TArrayValue<GbVec3<double> > arraydata;
+
+  const TArrayValue<GbVec3<double> >& getArray() { return arraydata; }
+
+  unsigned int getArraySize() { return arraydata.arr().size(); }
+
+  void setArray(const TArrayValue<GbVec3<double> >& a) { arraydata = a; }
+
+  Util::FwdIter<GbVec3<double > > getData()
+  {
+    return Util::FwdIter<GbVec3<double> >(&data[0], &data[4]);
+  }
+
+  void setData(Util::FwdIter<const GbVec3<double> > iter)
+  {
+    int i = 0;
+    while (i < 4 && !iter.atEnd())
+      {
+        data[i] = *iter;
+        ++iter; ++i;
+      }
+  }
+}
+
 extern "C"
 int Hook_Init(Tcl_Interp* interp)
 {
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Hook", "$Revision$");
 
-  Tcl_RegisterObjType(&genericObjType);
-
   pkg->def( "::hook", "", HookTcl::hook );
   pkg->def( "::memUsage", 0, HookTcl::memUsage );
+
+  Tcl_RegisterObjType(&genericObjType);
 
   pkg->def( "::myobj", "val", MyObj::make );
   pkg->def( "::myinfo", "obj", MyObj::info );
@@ -526,6 +558,13 @@ int Hook_Init(Tcl_Interp* interp)
   pkg->def( "::hash::keys", "hash", HashObj_Keys );
   pkg->def( "::hash::values", "hash", HashObj_Values );
   pkg->def( "::hash::pairs", "hash", HashObj_Pairs );
+
+  pkg->def( "::getData", 0, getData );
+  pkg->def( "::setData", "list", setData );
+
+  pkg->def( "::getArray", 0, getArray );
+  pkg->def( "::getArraySize", 0, getArraySize );
+  pkg->def( "::setArray", "list", setArray );
 
   return pkg->initStatus();
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Wed Sep 18 13:18:26 2002
+// written: Sun Nov  3 13:41:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -376,7 +376,7 @@ DOTRACE("Tcl::TkWidget::pixelsPerInch");
 
   const double screen_ppi = screen_pixel_width / screen_inch_width;
 
-  DebugEvalNL(screen_ppi);
+  dbgEvalNL(3, screen_ppi);
   return screen_ppi;
 }
 
@@ -387,7 +387,7 @@ DOTRACE("Tcl::TkWidget::pack");
   fstring pack_cmd_str = "pack ";
   pack_cmd_str.append( pathname() );
   pack_cmd_str.append( " -side left -expand 1 -fill both; update" );
-  Tcl::Code pack_cmd(pack_cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
+  Tcl::Code pack_cmd(Tcl::toTcl(pack_cmd_str), Tcl::Code::THROW_EXCEPTION);
   pack_cmd.invoke(rep->interp);
 }
 
@@ -406,7 +406,7 @@ DOTRACE("Tcl::TkWidget::bind");
   cmd_str.append( event_sequence, " ");
   cmd_str.append("{ ", script, " }");
 
-  Tcl::Code cmd(cmd_str, Tcl::Code::THROW_EXCEPTION);
+  Tcl::Code cmd(Tcl::toTcl(cmd_str), Tcl::Code::THROW_EXCEPTION);
 
   cmd.invoke(rep->interp);
 }
@@ -418,7 +418,7 @@ DOTRACE("Tcl::TkWidget::takeFocus");
   fstring cmd_str = "focus -force ";
   cmd_str.append( pathname() );
 
-  Tcl::Code cmd(cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
+  Tcl::Code cmd(Tcl::toTcl(cmd_str), Tcl::Code::THROW_EXCEPTION);
 
   cmd.invoke(rep->interp);
 }
