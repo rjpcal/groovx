@@ -70,17 +70,26 @@ class cppdeps
   include_map_t m_nested_includes;
   include_map_t m_direct_includes;
 
-  enum ParseState
+  enum parse_state
     {
       NOT_STARTED = 0,
       IN_PROGRESS = 1,
       COMPLETE = 2
     };
 
-  map<string, ParseState> m_parse_states;
+  map<string, parse_state> m_parse_states;
 
   bool m_check_sys_includes;
   bool m_quiet;
+
+  enum output_mode
+    {
+      MAKEFILE_DEPS,
+      DIRECT_INCLUDE_TREE,
+      NESTED_INCLUDE_TREE
+    };
+
+  output_mode m_output_mode;
 
 public:
   cppdeps(char** argv);
@@ -90,6 +99,8 @@ public:
   string trim_dirname(const string& inp);
 
   int is_cc_filename(const char* fname);
+
+  int is_cc_or_h_filename(const char* fname);
 
   static bool resolve_one(const char* include_name,
                           int include_length,
@@ -196,7 +207,8 @@ namespace
 
 cppdeps::cppdeps(char** argv) :
   m_check_sys_includes(false),
-  m_quiet(false)
+  m_quiet(false),
+  m_output_mode(MAKEFILE_DEPS)
 {
   m_sys_ipath.push_back("/usr/include");
   m_sys_ipath.push_back("/usr/include/linux");
@@ -228,6 +240,14 @@ cppdeps::cppdeps(char** argv) :
       else if (strcmp(*argv, "--quiet") == 0)
         {
           m_quiet = true;
+        }
+      else if (strcmp(*argv, "--output-direct-includes") == 0)
+        {
+          m_output_mode = DIRECT_INCLUDE_TREE;
+        }
+      else if (strcmp(*argv, "--output-nested-includes") == 0)
+        {
+          m_output_mode = NESTED_INCLUDE_TREE;
         }
       ++argv;
     }
@@ -274,6 +294,32 @@ int cppdeps::is_cc_filename(const char* fname)
   if (len > 4)
     {
       if (strcmp(".cc", fname+len-3) == 0) return 3;
+    }
+  if (len > 5)
+    {
+      if (strcmp(".cpp", fname+len-3) == 0) return 4;
+    }
+  return 0;
+}
+
+int cppdeps::is_cc_or_h_filename(const char* fname)
+{
+  int n = is_cc_filename(fname);
+  if (n > 0) return n;
+
+  const unsigned int len = strlen(fname);
+  if (len > 3)
+    {
+      if (strcmp(".h", fname+len-2) == 0) return 2;
+      if (strcmp(".H", fname+len-2) == 0) return 2;
+    }
+  if (len > 4)
+    {
+      if (strcmp(".hh", fname+len-3) == 0) return 3;
+    }
+  if (len > 5)
+    {
+      if (strcmp(".hpp", fname+len-4) == 0) return 4;
     }
   return 0;
 }
@@ -531,27 +577,60 @@ void cppdeps::batch_build()
             }
           else
             {
-              const int ext_len = is_cc_filename(e->d_name);
-              if (ext_len > 0)
+              switch (m_output_mode)
                 {
-                  const include_list_t& includes = get_nested_includes(fullname);
+                case MAKEFILE_DEPS:
+                  {
+                    const int ext_len = is_cc_filename(e->d_name);
+                    if (ext_len > 0)
+                      {
+                        const include_list_t& includes = get_nested_includes(fullname);
 
-                  // Use C-style stdio here since it came out running quite
-                  // a bit faster than iostreams, at least under g++-3.2.
-                  printf("%s/%s.o: ",
-                         m_objdir.c_str(),
-                         fullname.substr(offset, fullname.length()-ext_len-offset).c_str());
+                        // Use C-style stdio here since it came out running quite
+                        // a bit faster than iostreams, at least under g++-3.2.
+                        printf("%s/%s.o: ",
+                               m_objdir.c_str(),
+                               fullname.substr(offset, fullname.length()-ext_len-offset).c_str());
 
-                  for (include_list_t::const_iterator
-                         itr = includes.begin(),
-                         stop = includes.end();
-                       itr != stop;
-                       ++itr)
-                    {
-                      printf(" %s", (*itr).c_str());
-                    }
+                        for (include_list_t::const_iterator
+                               itr = includes.begin(),
+                               stop = includes.end();
+                             itr != stop;
+                             ++itr)
+                          {
+                            printf(" %s", (*itr).c_str());
+                          }
 
-                  printf("\n");
+                        printf("\n");
+                      }
+                  }
+                  break;
+                case DIRECT_INCLUDE_TREE:
+                case NESTED_INCLUDE_TREE:
+                  {
+                    const int ext_len = is_cc_or_h_filename(e->d_name);
+                    if (ext_len > 0)
+                      {
+                        const include_list_t& includes =
+                          m_output_mode == DIRECT_INCLUDE_TREE
+                          ? get_direct_includes(fullname)
+                          : get_nested_includes(fullname);
+
+                        printf("%s: ", fullname.c_str());
+
+                        for (include_list_t::const_iterator
+                               itr = includes.begin(),
+                               stop = includes.end();
+                             itr != stop;
+                             ++itr)
+                          {
+                            printf(" %s", (*itr).c_str());
+                          }
+
+                        printf("\n");
+                      }
+                  }
+                  break;
                 }
             }
         }
