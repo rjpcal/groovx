@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Thu Mar 30 10:02:17 2000
+// written: Mon Jun 26 12:22:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,7 @@
 
 #define NO_TRACE
 #include "util/trace.h"
+#define LOCAL_ASSERT
 #include "util/debug.h"
 
 #if defined(IRIX6) || defined(HP9000S700)
@@ -273,6 +274,8 @@ DOTRACE("AsciiStreamWriter::Impl::writeObject");
 	 itsBuf << "NULL " << name << " := 0" << ATTRIB_ENDER;
   }
   else {
+	 Assert(dynamic_cast<const IO::IoObject*>(obj) != 0);
+
 	 itsBuf << obj->ioTypename().c_str() << " "
 			  << name << " := "
 			  << obj->id() << ATTRIB_ENDER;
