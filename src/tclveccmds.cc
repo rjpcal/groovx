@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:16:22 1999
-// written: Tue May 15 18:04:47 2001
+// written: Fri May 18 17:22:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,6 +100,15 @@ void Tcl::TVecGetterCmd<ValType>::doAppendValForItem(void* item) {
 
 // Specializations for fixed_string
 template <>
+void Tcl::TVecGetterCmd<fixed_string>::doReturnValForItem(void* item) {
+  returnVal(itsGetter->get(item).c_str());
+}
+
+template <>
+void Tcl::TVecGetterCmd<fixed_string>::doAppendValForItem(void* item) {
+  lappendVal(itsGetter->get(item).c_str());
+}
+template <>
 void Tcl::TVecGetterCmd<const fixed_string&>::doReturnValForItem(void* item) {
   returnVal(itsGetter->get(item).c_str());
 }
@@ -109,6 +118,7 @@ void Tcl::TVecGetterCmd<const fixed_string&>::doAppendValForItem(void* item) {
   lappendVal(itsGetter->get(item).c_str());
 }
 
+
 // Explicit instatiation requests
 namespace Tcl {
 template class TVecGetterCmd<int>;
@@ -117,6 +127,7 @@ template class TVecGetterCmd<unsigned long>;
 template class TVecGetterCmd<bool>;
 template class TVecGetterCmd<double>;
 template class TVecGetterCmd<const char*>;
+template class TVecGetterCmd<fixed_string>;
 template class TVecGetterCmd<const fixed_string&>;
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 31 18:32:51 2000
-// written: Mon May 14 16:05:59 2001
+// written: Fri May 18 17:50:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,6 +37,7 @@ template class Getter<unsigned long>;
 template class Getter<bool>;
 template class Getter<double>;
 template class Getter<const char*>;
+template class Getter<fixed_string>;
 template class Getter<const fixed_string&>;
 
 template class Setter<int>;
