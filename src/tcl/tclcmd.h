@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed May 17 13:45:17 2000
+// written: Thu Oct  5 13:54:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -289,6 +289,9 @@ public:
 
   /// Return satisfactorily with the \c Value result \a val.
   void returnValue(const Value& val);
+
+  /// Return a Tcl_Obj*.
+  void returnTclObj(Tcl_Obj* obj);
 
   /** Return satisfactorily with the string type result \a val. The
       templated type must have a c_str() function returning const char*. */

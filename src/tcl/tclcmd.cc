@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Sat Sep 23 16:08:24 2000
+// written: Thu Oct  5 13:55:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -318,6 +318,12 @@ DOTRACE("Tcl::TclCmd::returnValue");
   Tcl_SetObjResult(itsInterp, return_val.getObj());
   itsResult = TCL_OK;
 };
+
+void Tcl::TclCmd::returnTclObj(Tcl_Obj* obj) {
+DOTRACE("Tcl::TclCmd::returnTclObj");
+  Tcl_SetObjResult(itsInterp, obj);
+  itsResult = TCL_OK;
+}
 
 void Tcl::TclCmd::lappendValue(const Value& val) {
 DOTRACE("Tcl::TclCmd::lappendValue");
