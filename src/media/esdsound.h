@@ -40,6 +40,7 @@
 
 #include <cstring> // for strncpy()
 #include <esd.h>
+#include <unistd.h> // for write(), close()
 
 #include "util/trace.h"
 #include "util/debug.h"
