@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Aug  9 18:01:44 2001
+// written: Fri Aug 10 07:12:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -113,12 +113,6 @@ public:
 
   /// Conforms to the \c GrObj interface.
   Rect<double> grGetBoundingBox() const;
-
-  /// Get the number of bytes of image data.
-  int byteCount() const;
-
-  /// Get the number of bytes per row in the image data.
-  int bytesPerRow() const;
 
   /// Get the image's size (x-width, y-height) in pixels.
   Point<int> size() const;

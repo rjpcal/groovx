@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Aug  9 17:59:45 2001
+// written: Fri Aug 10 07:12:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -339,18 +339,6 @@ DOTRACE("BitmapRep::grGetBoundingBox");
   bbox.setTopRight(canvas.getWorldFromScreen(screen_point));
 
   return bbox;
-}
-
-int BitmapRep::byteCount() const
-{
-DOTRACE("BitmapRep::byteCount");
-  return itsImpl->itsData.byteCount();
-}
-
-int BitmapRep::bytesPerRow() const
-{
-DOTRACE("BitmapRep::bytesPerRow");
-  return itsImpl->itsData.bytesPerRow();
 }
 
 Point<int> BitmapRep::size() const
