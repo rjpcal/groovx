@@ -50,11 +50,42 @@
 
 namespace
 {
+  // Construct a capitalization-correct version of the given name that is
+  // just how Tcl likes it: first character uppercase, all others
+  // lowercase.
+  std::string makeCleanPkgName(const std::string& name)
+  {
+    std::string clean = name;
+
+    clean[0] = char(toupper(clean[0]));
+
+    for (size_t i = 1; i < clean.length(); ++i)
+      {
+        clean[i] = char(tolower(clean[i]));
+      }
+
+    return clean;
+  }
+
+  std::string makeCleanVersionString(const char* ver)
+  {
+    std::string result = ver ? ver : "";
+
+    // Fix up version to remove any extraneous char's (such as
+    // version-control info, where we'd get a string like
+    //   '$Revision 2.8 $'
+
+    result.erase(0, result.find_first_of("0123456789"));
+    result.erase(result.find_last_of("0123456789")+1, std::string::npos);
+
+    return result;
+  }
+
   void exitHandler(ClientData clientData)
   {
     DOTRACE("Tcl::PkgBase-exitHandler");
     Tcl::PkgBase* pkg = static_cast<Tcl::PkgBase*>(clientData);
-    dbgEvalNL(3, pkg->pkgName());
+    dbgEvalNL(3, pkg->namespName());
     delete pkg;
   }
 }
@@ -78,8 +109,9 @@ public:
 
   Tcl::Interp interp;
   slink_list<shared_ptr<Command> > cmds;
-  std::string pkgName;
-  std::string version;
+  const std::string namespName;
+  const std::string pkgName;
+  const std::string version;
 
   int initStatus;
 
@@ -91,37 +123,14 @@ Tcl::PkgBase::Impl::Impl(Tcl_Interp* intp,
                          const char* name, const char* vers) :
   interp(intp),
   cmds(),
-  pkgName(name ? name : ""),
-  version(vers ? vers : ""),
+  namespName(name ? name : ""),
+  pkgName(makeCleanPkgName(namespName)),
+  version(makeCleanVersionString(vers)),
   initStatus(TCL_OK),
   ownedInts(),
   ownedDoubles()
 {
 DOTRACE("Tcl::PkgBase::Impl::Impl");
-  if ( !pkgName.empty() && !version.empty() )
-  {
-
-    // First we must construct a capitalization-correct version of
-    // pkgName that is just how Tcl likes it: first character
-    // uppercase, all others lowercase.
-    std::string pkgname = pkgName;
-
-    pkgname[0] = char(toupper(pkgname[0]));
-
-    for (size_t i = 1; i < pkgname.length(); ++i)
-    {
-      pkgname[i] = char(tolower(pkgname[i]));
-    }
-
-    // Fix up version to remove any extraneous char's (such as
-    // version-control info, where we'd get a string like
-    //   '$Revision 2.8 $'
-
-    version.erase(0, version.find_first_of("0123456789"));
-    version.erase(version.find_last_of("0123456789")+1, std::string::npos);
-
-    interp.pkgProvide(pkgname.c_str(), version.c_str());
-  }
 }
 
 Tcl::PkgBase::Impl::~Impl()
@@ -134,6 +143,13 @@ Tcl::PkgBase::PkgBase(Tcl_Interp* interp,
   rep(new Impl(interp, name, version))
 {
 DOTRACE("Tcl::PkgBase::PkgBase");
+
+  if ( !rep->pkgName.empty() && !rep->version.empty() )
+    {
+      Tcl_PkgProvideEx(interp, rep->pkgName.c_str(), rep->version.c_str(),
+                       static_cast<ClientData>(this));
+    }
+
   Tcl_CreateExitHandler(exitHandler, static_cast<ClientData>(this));
 }
 
@@ -141,6 +157,30 @@ Tcl::PkgBase::~PkgBase()
 {
 DOTRACE("Tcl::PkgBase::~PkgBase");
   delete rep;
+}
+
+Tcl::PkgBase* Tcl::PkgBase::lookup(Tcl_Interp* interp, const char* name,
+                                   const char* version) throw()
+{
+DOTRACE("Tcl::PkgBase::lookup");
+
+  ClientData clientData = 0;
+
+  std::string cleanName = makeCleanPkgName(name);
+
+  const char* ver =
+    Tcl_PkgRequireEx(interp, cleanName.c_str(), version, 0, &clientData);
+
+  if (ver != 0)
+    {
+      Tcl::PkgBase* result = static_cast<Tcl::PkgBase*>(clientData);
+
+      result = dynamic_cast<Tcl::PkgBase*>(result);
+
+      return result;
+    }
+
+  return 0;
 }
 
 int Tcl::PkgBase::initStatus() const
@@ -195,8 +235,8 @@ void Tcl::PkgBase::namespaceAlias(const char* namesp)
 {
 DOTRACE("Tcl::PkgBase::namespaceAlias");
 
-  exportAll(rep->interp, rep->pkgName.c_str());
-  exportInto(rep->interp, rep->pkgName.c_str(), namesp);
+  exportAll(rep->interp, rep->namespName.c_str());
+  exportInto(rep->interp, rep->namespName.c_str(), namesp);
 }
 
 void Tcl::PkgBase::inherit(const char* namesp)
@@ -204,7 +244,24 @@ void Tcl::PkgBase::inherit(const char* namesp)
 DOTRACE("Tcl::PkgBase::inherit");
 
   exportAll(rep->interp, namesp);
-  exportInto(rep->interp, namesp, rep->pkgName.c_str());
+  exportInto(rep->interp, namesp, rep->namespName.c_str());
+}
+
+void Tcl::PkgBase::inheritPkg(const char* name, const char* version)
+{
+DOTRACE("Tcl::PkgBase::inheritPkg");
+
+  Tcl::PkgBase* other = lookup(rep->interp.intp(), name, version);
+
+  if (other != 0)
+    {
+      inherit(other->namespName());
+    }
+}
+
+const char* Tcl::PkgBase::namespName()
+{
+  return rep->namespName.c_str();
 }
 
 const char* Tcl::PkgBase::pkgName()
@@ -233,7 +290,7 @@ DOTRACE("Tcl::PkgBase::makePkgCmdName");
   else
     {
       static std::string name;
-      name = pkgName();
+      name = namespName();
       name += "::";
       name += cmd_name;
       return name.c_str();
