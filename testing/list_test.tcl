@@ -268,11 +268,11 @@ proc testReadCmd { objname } {
 
     eval ::test $testname {"error on incomplete input"} {"
         $readcmd ${this(listname)}
-    "} {"${readcmd}: ReadError: input failed"}
+    "} {"${readcmd}: IO::ReadError: input failed"}
 
     eval ::test $testname {"error on bad input"} {"
         $readcmd {this is a bunch of bs}
-    "} {"${readcmd}: ReadError: input failed"}
+    "} {"${readcmd}: IO::ReadError: input failed"}
 }
 
 namespace export testList
