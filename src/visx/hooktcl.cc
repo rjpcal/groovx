@@ -331,10 +331,6 @@ namespace
 }
 
 #include "gfx/toglet.h"
-#include "geom/rect.h"
-#include "geom/vec2.h"
-#include "geom/vec3.h"
-#include "gfx/glcanvas.h"
 #include <GL/gl.h>
 
 namespace
@@ -343,13 +339,7 @@ namespace
   {
     Nub::SoftRef<Toglet> t = Toglet::getCurrent();
 
-    using geom::rectd;
-    using geom::vec3d;
-    using geom::vec2d;
-
-    GLCanvas& canvas = dynamic_cast<GLCanvas&>(*t->getCanvas());
-
-    canvas.translate(geom::vec3d(-2.56, -2.56, 0.0));
+    glTranslated(-2.56, -2.56, 0.0);
 
     const int SIZE = 512;
 
@@ -371,7 +361,7 @@ namespace
                  GL_LUMINANCE, GL_UNSIGNED_BYTE,
                  static_cast<GLvoid*>(&buf[0]));
 
-    canvas.flushOutput();
+    t->swapBuffers();
   }
 }
 
