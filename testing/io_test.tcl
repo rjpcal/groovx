@@ -21,26 +21,30 @@ proc testWriteLGX { packagename objref} {
 
     set usage "wrong \# args: should be "
 
-    eval ::test $testname {"too few args"} {"
-        $cmdname
-    "} {$usage}
-    eval ::test $testname {"too many args"} {"
-        $cmdname 0 junk
-    "} {$usage}
-    eval ::test $testname {"error from negative id"} {"
-        $cmdname -1
-    "} {"expected.*but got"}
-    eval ::test $testname {"error from too large id"} {"
-        $cmdname 10000000
-    "} {"attempted to access invalid object.*$"}
-    eval ::test $testname {"error from non-integral id"} {"
-        $cmdname 1.5
-    "} {"expected.*but got"}
+    ::test $testname "too few args" [format {
+	%s
+    } $cmdname] $usage
 
-    eval ::test $testname {"normal use"} {"
-        set code \[catch {$cmdname $objref} result\]
-        return \"\$code \$result\"
-    "} {^0.*$}
+    ::test $testname "too many args" [format {
+        %s 0 junk
+    } $cmdname] $usage
+
+    ::test $testname "error from negative id" [format {
+        %s -1
+    } $cmdname] {expected.*but got}
+
+    ::test $testname "error from too large id" [format {
+        %s 10000000
+    } $cmdname] {attempted to access invalid object.*$}
+
+    ::test $testname "error from non-integral id" [format {
+        %s 1.5
+    } $cmdname] {expected.*but got}
+
+    ::test $testname "normal use" [format {
+        set code [catch {%s %s} result]
+        return "$code $result"
+    } $cmdname $objref] {^0.*$}
 }
 
 proc testReadLGX { packagename objref} {
