@@ -50,15 +50,19 @@ proc print { chan txt } {
 # Main code
 #
 
+set project_root [pwd]
+
 set indexfile [open $::env(HOME)/local/$::env(ARCH)/lib/visx/pkgIndex.tcl w]
 
-set depfile [open $::env(HOME)/sorcery/grsh/dep/$::env(ARCH)/pkgdepends w]
+set depfile [open ${project_root}/dep/$::env(ARCH)/pkgdepends w]
 
 set libdir $::env(HOME)/local/$::env(ARCH)/lib/visx
 
 set objdir obj/$::env(ARCH)/pkgs
 
-cd $::env(HOME)/sorcery/grsh/src/pkgs
+set pkgdir ${project_root}/src/pkgs
+
+cd $pkgdir
 
 print $::depfile "PKG_LIBS := \n\n"
 
