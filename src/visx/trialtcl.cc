@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Tue May 22 14:57:40 2001
+// written: Wed May 23 18:48:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ public:
 						 &Trial::getCurrentNode, &Trial::setCurrentNode);
 	 declareCGetter("description", &Trial::description);
 	 declareCGetter("lastResponse", &Trial::lastResponse);
-	 declareCAction("nextNode", &Trial::nextNode);
+	 declareCAction("nextNode", &Trial::trNextNode);
 	 declareCGetter("numResponses", &Trial::numResponses);
 	 declareCAttrib("responseHdlr",
 						 &Trial::getResponseHandler, &Trial::setResponseHandler);
