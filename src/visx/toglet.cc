@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Aug  5 14:04:22 2002
+// written: Wed Aug  7 11:40:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,7 @@
 #include "tcl/tclcode.h"
 #include "tcl/tclsafeinterp.h"
 
+#include "togl/glutil.h"
 #include "togl/togl.h"
 
 #include "util/error.h"
@@ -302,7 +303,6 @@ public:
 
   static void reshapeCallback(Togl* togl);
   static void displayCallback(Togl* togl);
-  static void epsCallback(const Togl* togl);
   static void destroyCallback(Togl* togl);
 };
 
@@ -384,12 +384,12 @@ DOTRACE("TogletImpl::reconfigure");
 void TogletImpl::reshapeCallback(Togl* togl)
 {
 DOTRACE("TogletImpl::reshapeCallback");
-  Toglet* config = static_cast<Toglet*>(togl->getClientData());
-  DebugEvalNL((void*) config);
+  Toglet* toglet = static_cast<Toglet*>(togl->getClientData());
+  DebugEvalNL((void*) toglet);
 
   try
     {
-      config->rep->reconfigure();
+      toglet->rep->reconfigure();
     }
   catch (...)
     {
@@ -414,24 +414,19 @@ DOTRACE("TogletImpl::displayCallback");
     }
 }
 
-void TogletImpl::epsCallback(const Togl* togl)
-{
-  displayCallback(const_cast<Togl*>(togl));
-}
-
 void TogletImpl::destroyCallback(Togl* togl)
 {
   DebugEvalNL((void*)togl);
-  Toglet* config = static_cast<Toglet*>(togl->getClientData());
+  Toglet* toglet = static_cast<Toglet*>(togl->getClientData());
 
 
-  // We have to test that config is non-null, because if this
+  // We have to test that toglet is non-null, because if this
   // callback was triggered out of Toglet's destructor, then it
   // will have already set the client data for the Togl* to null.
-  DebugEvalNL((void*)config);
-  if (config)
+  DebugEvalNL((void*)toglet);
+  if (toglet)
     {
-      config->decrRefCount();
+      toglet->decrRefCount();
     }
 }
 
@@ -756,9 +751,11 @@ DOTRACE("Toglet::writeEpsFile");
     rep->canvas->clearColorBuffer();
     swapBuffers();
 
+    fullRender();
+
     // do the EPS dump
-    const int rgbFlag = 0;
-    rep->togl->dumpToEpsFile(filename, rgbFlag, TogletImpl::epsCallback);
+    const bool inColor = false;
+    GLUtil::generateEPS(filename, inColor, getWidth(), getHeight());
   }
 
   // redisplay original image
