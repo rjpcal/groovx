@@ -103,6 +103,7 @@ extern "C"
   Tcl_PackageInitProc Morphyface_Init;
   Tcl_PackageInitProc Multievent_Init;
   Tcl_PackageInitProc Nullresponsehdlr_Init;
+  Tcl_PackageInitProc Nulltrialevent_Init;
   Tcl_PackageInitProc Obj_Init;
   Tcl_PackageInitProc Objdb_Init;
   Tcl_PackageInitProc Outputfile_Init;
@@ -188,6 +189,7 @@ PackageInfo DELAYED_PKGS[] =
     { "Morphyface",          Morphyface_Init,          "1.0" },
     { "Multievent",          Multievent_Init,          "3.0" },
     { "Nullresponsehdlr",    Nullresponsehdlr_Init,    "3.0" },
+    { "Nulltrialevent",      Nulltrialevent_Init,      "3.0" },
     { "Obj",                 Obj_Init,                 "1.0" },
     { "Objdb",               Objdb_Init,               "1.0" },
     { "Outputfile",          Outputfile_Init,          "1.0" },
