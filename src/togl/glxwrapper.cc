@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:07 2002
-// written: Sat Aug 10 15:19:34 2002
+// written: Mon Sep 16 11:51:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #define GLXWRAPPER_CC_DEFINED
 
 #include "togl/glxwrapper.h"
+
+#include "gfx/glcanvas.h"
 
 #include "togl/glxattribs.h"
 #include "togl/glxopts.h"
@@ -31,25 +33,28 @@ namespace
   Window currentWindow = 0;
 }
 
-GlxWrapper::GlxWrapper(Display* dpy, GlxAttribs& attribs, bool direct,
-                       GlxWrapper* share) :
+GlxWrapper::GlxWrapper(Display* dpy, GlxOpts& opts, GlxWrapper* share) :
   itsDisplay(dpy),
   itsVisInfo(0),
-  itsContext(0)
+  itsContext(0),
+  itsCanvas()
 {
 DOTRACE("GlxWrapper::GlxWrapper");
+
+  shared_ptr<GlxAttribs> attribs = opts.buildAttribList();
+
   itsVisInfo = glXChooseVisual(itsDisplay,
                                DefaultScreen(itsDisplay),
-                               attribs.get());
+                               attribs->get());
 
   // If we had requested single-buffering, then now try for
   // double-buffering, since that can emulate single-buffering
   if (itsVisInfo == 0)
     {
-      attribs.doubleBuffer();
+      attribs->doubleBuffer();
       itsVisInfo = glXChooseVisual(itsDisplay,
                                    DefaultScreen(itsDisplay),
-                                   attribs.get());
+                                   attribs->get());
     }
 
   // If we still didn't get a matching visual, then bail out
@@ -65,7 +70,7 @@ DOTRACE("GlxWrapper::GlxWrapper");
   itsContext = glXCreateContext(itsDisplay,
                                 itsVisInfo,
                                 share ? share->itsContext : None,
-                                direct ? GL_TRUE : GL_FALSE);
+                                opts.indirect ? GL_FALSE : GL_TRUE);
 
   DebugEvalNL(itsContext);
 
@@ -73,6 +78,9 @@ DOTRACE("GlxWrapper::GlxWrapper");
     {
       throw Util::Error("could not create GL rendering context");
     }
+
+  itsCanvas = Util::SoftRef<GLCanvas>
+    (GLCanvas::make(itsVisInfo->depth, opts.rgbaFlag, isDoubleBuffered()));
 }
 
 GlxWrapper::~GlxWrapper()
@@ -85,10 +93,8 @@ GlxWrapper* GlxWrapper::make(Display* dpy, GlxOpts& opts)
 {
 DOTRACE("GlxWrapper::make");
 
-  shared_ptr<GlxAttribs> attribs = opts.buildAttribList();
-
   // Create a new OpenGL rendering context.
-  GlxWrapper* glx = new GlxWrapper(dpy, *attribs, !opts.indirect);
+  GlxWrapper* glx = new GlxWrapper(dpy, opts);
 
   // Make sure we don't try to use a depth buffer with indirect rendering
   if ( !glx->isDirect() && opts.depthFlag == true )
@@ -127,6 +133,11 @@ DOTRACE("GlxWrapper::isDoubleBuffered");
     }
 
   return bool(dbl_flag);
+}
+
+GLCanvas& GlxWrapper::canvas() const
+{
+  return *itsCanvas;
 }
 
 static const char vcid_glxwrapper_cc[] = "$Header$";
