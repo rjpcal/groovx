@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Jul 10 10:11:03 2001
+// written: Thu Aug  9 06:54:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,10 +63,10 @@ namespace RC
 void RC::raiseException(const char* msg, const char* f, int ln)
 {
   DebugPrintNL(msg);
-  ErrorWithMsg err("Range check failed in file '");
-  err.appendMsg(f).appendMsg("' at line #").appendNumber(ln).appendMsg(": ");
-  err.appendMsg(msg);
-  throw err;
+  fstring errmsg;
+  errmsg.append("Range check failed in file '", f, "' at line #");
+  errmsg.append(ln, ": ", msg);
+  throw Util::Error(errmsg);
 }
 
 void RC::less(const void* x, const void* lim, const char* f, int ln)
@@ -166,7 +166,7 @@ void Slice::reorder(const Mtx& index_)
   Mtx index(index_.asColumn());
 
   if (index.mrows() != nelems())
-    throw ErrorWithMsg("dimension mismatch in Slice::reorder");
+    throw Util::Error("dimension mismatch in Slice::reorder");
 
   Mtx neworder(nelems(), 1);
 
@@ -179,7 +179,7 @@ void Slice::reorder(const Mtx& index_)
 Slice& Slice::operator+=(const Slice& other)
 {
   if (itsNelems != other.nelems())
-    throw ErrorWithMsg("dimension mismatch in Slice::operator+=");
+    throw Util::Error("dimension mismatch in Slice::operator+=");
 
   MtxConstIter rhs = other.begin();
 
@@ -192,7 +192,7 @@ Slice& Slice::operator+=(const Slice& other)
 Slice& Slice::operator-=(const Slice& other)
 {
   if (itsNelems != other.nelems())
-    throw ErrorWithMsg("dimension mismatch in Slice::operator-=");
+    throw Util::Error("dimension mismatch in Slice::operator-=");
 
   MtxConstIter rhs = other.begin();
 
@@ -205,7 +205,7 @@ Slice& Slice::operator-=(const Slice& other)
 Slice& Slice::operator=(const Slice& other)
 {
   if (itsNelems != other.nelems())
-    throw ErrorWithMsg("dimension mismatch in Slice::operator=");
+    throw Util::Error("dimension mismatch in Slice::operator=");
 
   MtxConstIter rhs = other.begin();
 
@@ -218,7 +218,7 @@ Slice& Slice::operator=(const Slice& other)
 Slice& Slice::operator=(const Mtx& other)
 {
   if (itsNelems != other.nelems())
-    throw ErrorWithMsg("dimension mismatch in Slice::operator=");
+    throw Util::Error("dimension mismatch in Slice::operator=");
 
   int i = 0;
   for (  MtxIter lhs = beginNC(); lhs.hasMore(); ++lhs, ++i)
@@ -252,7 +252,7 @@ MtxIter::MtxIter(Mtx& m, ptrdiff_t storageOffset, int s, int n) :
 Mtx::MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
 {
   if (!mxIsNumeric(a))
-    throw ErrorWithMsg("cannot construct a Mtx with a non-numeric mxArray");
+    throw Util::Error("cannot construct a Mtx with a non-numeric mxArray");
 
   init(mxGetPr(a), mxGetM(a), mxGetN(a), s);
 }
@@ -262,15 +262,15 @@ void Mtx::MtxImpl::reshape(int mr, int nc)
 {
   if (mr*nc != nelems())
     {
-      ErrorWithMsg err("dimension mismatch in Mtx::reshape: ");
-      err.appendMsg("current nelems == ").appendNumber(nelems())
-        .appendMsg("; requested ")
-        .appendNumber(mr).appendMsg("x").appendNumber(nc);
-      throw err;
+      fstring msg;
+      msg.append("dimension mismatch in Mtx::reshape: ");
+      msg.append("current nelems == ", nelems(), "; requested ");
+      msg.append(mr, "x", nc);
+      throw Util::Error(msg);
     }
 
   if (rowstride_ != mrows_)
-    throw ErrorWithMsg("reshape not allowed for submatrix");
+    throw Util::Error("reshape not allowed for submatrix");
 
   mrows_ = mr;
   rowstride_ = mr;
@@ -280,10 +280,10 @@ void Mtx::MtxImpl::reshape(int mr, int nc)
 void Mtx::MtxImpl::selectRowRange(int r, int nr)
 {
   if (r < 0 || nr < 0)
-    throw ErrorWithMsg("attempted to select rows with negative indices");
+    throw Util::Error("attempted to select rows with negative indices");
 
   if ((r+nr) > mrows_)
-    throw ErrorWithMsg("attempted to index more rows than are available");
+    throw Util::Error("attempted to index more rows than are available");
 
   offset_ += r;
   mrows_ = nr;
@@ -292,10 +292,10 @@ void Mtx::MtxImpl::selectRowRange(int r, int nr)
 void Mtx::MtxImpl::selectColumnRange(int c, int nc)
 {
   if (c < 0 || nc < 0)
-    throw ErrorWithMsg("attempted to select rows with negative indices");
+    throw Util::Error("attempted to select rows with negative indices");
 
   if ((c+nc) > ncols_)
-    throw ErrorWithMsg("attempted to index more columns than are available");
+    throw Util::Error("attempted to index more columns than are available");
 
   offset_ += c*rowstride_;
   ncols_ = nc;
@@ -326,7 +326,7 @@ Mtx::Mtx(const Slice& s) :
   itsImpl(const_cast<double*>(s.dataStart()), s.nelems(), 1, BORROW)
 {
   if (s.itsStride != 1)
-    throw ErrorWithMsg("can't initialize Mtx from Slice with stride != 1");
+    throw Util::Error("can't initialize Mtx from Slice with stride != 1");
 }
 
 Mtx::~Mtx() {}
@@ -391,7 +391,7 @@ void Mtx::reorderRows(const Mtx& index_)
   Mtx index(index_.asColumn());
 
   if (index.mrows() != mrows())
-    throw ErrorWithMsg("dimension mismatch in Mtx::reorderRows");
+    throw Util::Error("dimension mismatch in Mtx::reorderRows");
 
   Mtx neworder(mrows(), ncols());
 
@@ -415,7 +415,7 @@ void Mtx::reorderColumns(const Mtx& index_)
   Mtx index(index_.asColumn());
 
   if (index.mrows() != ncols())
-    throw ErrorWithMsg("dimension mismatch in Mtx::reorderColumns");
+    throw Util::Error("dimension mismatch in Mtx::reorderColumns");
 
   Mtx neworder(mrows(), ncols());
 
@@ -437,7 +437,7 @@ void Mtx::swapColumns(int c1, int c2)
 Mtx& Mtx::operator+=(const Mtx& other)
 {
   if (ncols() != other.ncols())
-    throw ErrorWithMsg("dimension mismatch in Mtx::operator+=");
+    throw Util::Error("dimension mismatch in Mtx::operator+=");
 
   for (int i = 0; i < ncols(); ++i)
     column(i) += other.column(i);
@@ -448,7 +448,7 @@ Mtx& Mtx::operator+=(const Mtx& other)
 Mtx& Mtx::operator-=(const Mtx& other)
 {
   if (ncols() != other.ncols())
-    throw ErrorWithMsg("dimension mismatch in Mtx::operator-=");
+    throw Util::Error("dimension mismatch in Mtx::operator-=");
 
   for (int i = 0; i < ncols(); ++i)
     column(i) -= other.column(i);
@@ -470,7 +470,7 @@ void Mtx::VMmul_assign(const Slice& vec, const Mtx& mtx,
 
   if ( (vec.nelems() != mtx.mrows()) ||
        (result.nelems() != mtx.ncols()) )
-    throw ErrorWithMsg("dimension mismatch in Mtx::VMmul_assign");
+    throw Util::Error("dimension mismatch in Mtx::VMmul_assign");
 
   MtxConstIter veciter = vec.begin();
 
@@ -485,7 +485,7 @@ void Mtx::assign_MMmul(const Mtx& m1, const Mtx& m2)
 DOTRACE("Mtx::assign_MMmul");
   if ( (m1.ncols() != m2.mrows()) ||
        (this->ncols() != m2.ncols()) )
-    throw ErrorWithMsg("dimension mismatch in Mtx::VMmul_assign");
+    throw Util::Error("dimension mismatch in Mtx::VMmul_assign");
 
   for (int n = 0; n < mrows(); ++n)
     {
