@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Fri Jan 18 16:06:54 2002
+// written: Mon Jan 21 14:24:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -161,7 +161,7 @@ public:
 
   const char* c_str() const { return itsRep->text(); }
   std::size_t length() const { return itsRep->length(); }
-  bool empty() const { return (length() == 0); }
+  bool is_empty() const { return (length() == 0); }
 
   void clear() { string_rep::makeUnique(itsRep); itsRep->clear(); }
 
