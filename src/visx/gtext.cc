@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Wed Jun  6 20:25:38 2001
+// written: Fri Jun  8 18:46:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -665,7 +665,7 @@ DOTRACE("Gtext::make");
 }
 
 Gtext::Gtext(const char* text) :
-  GrObj(GROBJ_GL_COMPILE, GROBJ_SWAP_FORE_BACK),
+  GrObj(GLCOMPILE, SWAP_FORE_BACK),
   itsText(text ? text : ""),
   itsStrokeWidth(2),
   itsListBase(0)

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Fri Jun  1 16:00:03 2001
+// written: Fri Jun  8 18:46:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -184,7 +184,7 @@ DOTRACE("GrObj::Impl::BoundingBox::updateFinal");
 ///////////////////////////////////////////////////////////////////////
 
 GrObj::Impl::Renderer::Renderer() :
-  itsMode(GrObj::GROBJ_GL_COMPILE),
+  itsMode(GrObj::GLCOMPILE),
   itsCacheFilename(""),
   itsIsCurrent(false),
   itsDisplayList(-1),
@@ -206,7 +206,7 @@ DOTRACE("GrObj::Impl::Renderer::recompileIfNeeded");
   
   newList();
   
-  glNewList(itsDisplayList, GL_COMPILE);
+  glNewList(itsDisplayList, GLCOMPILE);
   obj->grRender(canvas, GrObj::DRAW);
   glEndList();
   
@@ -258,12 +258,12 @@ DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
 
   DebugEvalNL(itsMode);
 
-  if (GrObj::GROBJ_X11_BITMAP_CACHE == itsMode) {
+  if (GrObj::X11_BITMAP_CACHE == itsMode) {
 	 itsBitmapCache->flipVertical();
 	 itsBitmapCache->flipContrast();
   }
 
-  if (GrObj::GROBJ_GL_BITMAP_CACHE == itsMode) {
+  if (GrObj::GL_BITMAP_CACHE == itsMode) {
 	 itsBitmapCache->flipContrast();
   }
   
@@ -292,7 +292,7 @@ DOTRACE("GrObj::Impl::Renderer::newList");
   }
 }
 
-void GrObj::Impl::Renderer::setMode(GrObj::GrObjRenderMode new_mode,
+void GrObj::Impl::Renderer::setMode(GrObj::RenderMode new_mode,
 												GrObj::Impl* obj) {
 DOTRACE("GrObj::Impl::Renderer::setMode");
   // If new_mode is the same as the current render mode, then return
@@ -300,21 +300,21 @@ DOTRACE("GrObj::Impl::Renderer::setMode");
   if (new_mode == itsMode) return; 
 
   switch (new_mode) {
-  case GrObj::GROBJ_DIRECT_RENDER:
-  case GrObj::GROBJ_GL_COMPILE:
+  case GrObj::DIRECT_RENDER:
+  case GrObj::GLCOMPILE:
 	 itsMode = new_mode;
 	 break;
 
-  case GrObj::GROBJ_GL_BITMAP_CACHE:
-  case GrObj::GROBJ_X11_BITMAP_CACHE:
+  case GrObj::GL_BITMAP_CACHE:
+  case GrObj::X11_BITMAP_CACHE:
 	 // These modes require a bounding box
 	 if ( !obj->hasBB() ) return;
 
-	 if (GrObj::GROBJ_GL_BITMAP_CACHE == new_mode) {
+	 if (GrObj::GL_BITMAP_CACHE == new_mode) {
 		itsBmapRenderer.reset(new GLBmapRenderer());
 		itsBitmapCache.reset(new BitmapRep(itsBmapRenderer));
 	 }
-	 if (GrObj::GROBJ_X11_BITMAP_CACHE == new_mode) {
+	 if (GrObj::X11_BITMAP_CACHE == new_mode) {
 		itsBmapRenderer.reset(new XBmapRenderer());
 		itsBitmapCache.reset(new BitmapRep(itsBmapRenderer));
 	 }
@@ -333,16 +333,16 @@ DOTRACE("GrObj::Impl::Renderer::render");
   DebugEvalNL(itsMode);
   switch (itsMode) {
 
-  case GrObj::GROBJ_DIRECT_RENDER:
+  case GrObj::DIRECT_RENDER:
 	 obj->grRender(canvas, GrObj::DRAW);
 	 break;
 
-  case GrObj::GROBJ_GL_COMPILE:
+  case GrObj::GLCOMPILE:
 	 callList(); 
 	 break;
 
-  case GrObj::GROBJ_GL_BITMAP_CACHE:
-  case GrObj::GROBJ_X11_BITMAP_CACHE:
+  case GrObj::GL_BITMAP_CACHE:
+  case GrObj::X11_BITMAP_CACHE:
 	 Assert(itsBitmapCache.get() != 0);
 	 itsBitmapCache->render(canvas);
 	 break;
@@ -358,12 +358,12 @@ DOTRACE("GrObj::Impl::Renderer::update");
   bool objectDrawn = false;
 
   switch (itsMode) {
-  case GrObj::GROBJ_GL_COMPILE:
+  case GrObj::GLCOMPILE:
 	 recompileIfNeeded(obj, canvas);
 	 break;
 		
-  case GrObj::GROBJ_GL_BITMAP_CACHE:
-  case GrObj::GROBJ_X11_BITMAP_CACHE:
+  case GrObj::GL_BITMAP_CACHE:
+  case GrObj::X11_BITMAP_CACHE:
 	 objectDrawn = recacheBitmapIfNeeded(obj, canvas);
 	 break;
   }
@@ -562,19 +562,19 @@ DOTRACE("GrObj::Impl::setAlignmentMode");
   DebugEvalNL(itsAligner.itsMode); 
 }
 
-void GrObj::Impl::setUnRenderMode(GrObj::GrObjRenderMode new_mode) {
+void GrObj::Impl::setUnRenderMode(GrObj::RenderMode new_mode) {
 DOTRACE("GrObj::Impl::setUnRenderMode");
   // If new_mode is the same as the current unrender mode, then return
   // immediately (and don't send a state change message)
   if (new_mode == itsUnRenderer.itsMode) return; 
 
   switch (new_mode) {
-  case GrObj::GROBJ_DIRECT_RENDER:
-  case GrObj::GROBJ_SWAP_FORE_BACK:
+  case GrObj::DIRECT_RENDER:
+  case GrObj::SWAP_FORE_BACK:
 	 itsUnRenderer.itsMode = new_mode;
 	 break;
 
-  case GrObj::GROBJ_CLEAR_BOUNDING_BOX:
+  case GrObj::CLEAR_BOUNDING_BOX:
 	 // These modes require a bounding box
 	 if ( !hasBB() ) return;
 
@@ -627,7 +627,7 @@ DOTRACE("GrObj::Impl::Renderer::saveBitmapCache");
   Util::Janitor<Impl, bool> bbj(*this, &Impl::getBBVisibility,
 										  &Impl::setBBVisibility);
 
-  setRenderMode(GrObj::GROBJ_X11_BITMAP_CACHE);
+  setRenderMode(GrObj::X11_BITMAP_CACHE);
   setBBVisibility(false);
 
   itsRenderer.setCacheFilename("");
@@ -642,9 +642,9 @@ DOTRACE("GrObj::Impl::undraw");
   checkForGlError("before GrObj::undraw");
 
   switch (itsUnRenderer.itsMode) {
-  case GrObj::GROBJ_DIRECT_RENDER:     undrawDirectRender(canvas);     break;
-  case GrObj::GROBJ_SWAP_FORE_BACK:    undrawSwapForeBack(canvas);     break;
-  case GrObj::GROBJ_CLEAR_BOUNDING_BOX:undrawClearBoundingBox(canvas); break;
+  case GrObj::DIRECT_RENDER:     undrawDirectRender(canvas);     break;
+  case GrObj::SWAP_FORE_BACK:    undrawSwapForeBack(canvas);     break;
+  case GrObj::CLEAR_BOUNDING_BOX:undrawClearBoundingBox(canvas); break;
   default:                             /* nothing */                  break;
   }
 
@@ -747,7 +747,7 @@ DOTRACE("GrObj::Impl::undrawSwapForeBack");
 		doScaling();
 		doAlignment();
 		  
-		if ( itsRenderer.getMode() == GrObj::GROBJ_GL_COMPILE ) {
+		if ( itsRenderer.getMode() == GrObj::GLCOMPILE ) {
 		  itsRenderer.callList();
 		}
 		else {

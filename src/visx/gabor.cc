@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Fri Jun  1 14:17:32 2001
+// written: Fri Jun  8 18:46:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ DOTRACE("Gabor::Gabor");
 
   setFieldMap(GABOR_FIELDS);
 
-  GrObj::setUnRenderMode(GrObj::GROBJ_CLEAR_BOUNDING_BOX);
+  GrObj::setUnRenderMode(GrObj::CLEAR_BOUNDING_BOX);
   GrObj::setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
 }
 

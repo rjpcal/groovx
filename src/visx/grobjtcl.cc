@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Tue May 15 17:51:58 2001
+// written: Fri Jun  8 18:46:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -163,12 +163,12 @@ public:
 						 &GrObj::getUnRenderMode, &GrObj::setUnRenderMode);
 	 declareCAttrib("width", &GrObj::getWidth, &GrObj::setWidth);
 
-	 linkVarCopy("GrObj::GROBJ_DIRECT_RENDER", GrObj::GROBJ_DIRECT_RENDER);
-	 linkVarCopy("GrObj::GROBJ_GL_COMPILE", GrObj::GROBJ_GL_COMPILE);
-	 linkVarCopy("GrObj::GROBJ_GL_BITMAP_CACHE", GrObj::GROBJ_GL_BITMAP_CACHE);
-	 linkVarCopy("GrObj::GROBJ_X11_BITMAP_CACHE", GrObj::GROBJ_X11_BITMAP_CACHE);
-	 linkVarCopy("GrObj::GROBJ_SWAP_FORE_BACK", GrObj::GROBJ_SWAP_FORE_BACK);
-	 linkVarCopy("GrObj::GROBJ_CLEAR_BOUNDING_BOX", GrObj::GROBJ_CLEAR_BOUNDING_BOX);
+	 linkVarCopy("GrObj::DIRECT_RENDER", GrObj::DIRECT_RENDER);
+	 linkVarCopy("GrObj::GLCOMPILE", GrObj::GLCOMPILE);
+	 linkVarCopy("GrObj::GL_BITMAP_CACHE", GrObj::GL_BITMAP_CACHE);
+	 linkVarCopy("GrObj::X11_BITMAP_CACHE", GrObj::X11_BITMAP_CACHE);
+	 linkVarCopy("GrObj::SWAP_FORE_BACK", GrObj::SWAP_FORE_BACK);
+	 linkVarCopy("GrObj::CLEAR_BOUNDING_BOX", GrObj::CLEAR_BOUNDING_BOX);
 
 	 linkVarCopy("GrObj::NATIVE_SCALING", GrObj::NATIVE_SCALING);
 	 linkVarCopy("GrObj::MAINTAIN_ASPECT_SCALING", GrObj::MAINTAIN_ASPECT_SCALING);

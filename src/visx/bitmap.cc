@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Jun  1 15:55:36 2001
+// written: Fri Jun  8 18:46:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,14 +40,14 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 Bitmap::Bitmap(shared_ptr<BmapRenderer> renderer) :
-  GrObj(GROBJ_GL_COMPILE, GROBJ_DIRECT_RENDER),
+  GrObj(GLCOMPILE, DIRECT_RENDER),
   itsImpl(new BitmapRep(renderer))
 {
 DOTRACE("Bitmap::Bitmap");
 }
 
 Bitmap::Bitmap(shared_ptr<BmapRenderer> renderer, const char* filename) :
-  GrObj(GROBJ_GL_COMPILE, GROBJ_DIRECT_RENDER),
+  GrObj(GLCOMPILE, DIRECT_RENDER),
   itsImpl(new BitmapRep(renderer, filename))
 {
 DOTRACE("Bitmap::Bitmap");

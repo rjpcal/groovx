@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Fri Jun  1 15:57:01 2001
+// written: Fri Jun  8 18:46:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -235,9 +235,9 @@ private:
 
 	 void invalidate() const { itsIsCurrent = false; }
 
-	 void setMode(GrObj::GrObjRenderMode new_mode, GrObj::Impl* obj);
+	 void setMode(GrObj::RenderMode new_mode, GrObj::Impl* obj);
 
-	 GrObj::GrObjRenderMode getMode() const { return itsMode; }
+	 GrObj::RenderMode getMode() const { return itsMode; }
 
 	 const dynamic_string& getCacheFilename() const { return itsCacheFilename; }
 
@@ -265,13 +265,13 @@ private:
 	 void restoreBitmapCache() const
 		{
 		  queueBitmapLoad();
-		  if ( GrObj::GROBJ_X11_BITMAP_CACHE == itsMode ||
-				 GrObj::GROBJ_GL_BITMAP_CACHE == itsMode )
+		  if ( GrObj::X11_BITMAP_CACHE == itsMode ||
+				 GrObj::GL_BITMAP_CACHE == itsMode )
 			 postUpdated();
 		}
 
   private:
-	 GrObj::GrObjRenderMode itsMode;
+	 GrObj::RenderMode itsMode;
 
 	 mutable dynamic_string itsCacheFilename;
 
@@ -310,9 +310,9 @@ private:
 
 public:
 
-  GrObj::GrObjRenderMode getRenderMode() const
+  GrObj::RenderMode getRenderMode() const
 	 { return itsRenderer.getMode(); }
-  void setRenderMode(GrObj::GrObjRenderMode new_mode)
+  void setRenderMode(GrObj::RenderMode new_mode)
 	 { itsRenderer.setMode(new_mode, this); }
 
   static void setBitmapCacheDir(const char* dirname)
@@ -334,10 +334,10 @@ private:
   class UnRenderer {
   public:
 	 UnRenderer() :
-		itsMode(GrObj::GROBJ_SWAP_FORE_BACK)
+		itsMode(GrObj::SWAP_FORE_BACK)
 		{}
 
-	 GrObj::GrObjRenderMode itsMode;
+	 GrObj::RenderMode itsMode;
   };
 
   void undrawDirectRender(GWT::Canvas& canvas) const;
@@ -348,10 +348,10 @@ private:
 
 public:
 
-  GrObj::GrObjRenderMode getUnRenderMode() const
+  GrObj::RenderMode getUnRenderMode() const
 	 { return itsUnRenderer.itsMode; }
 
-  void setUnRenderMode(GrObj::GrObjRenderMode new_mode);
+  void setUnRenderMode(GrObj::RenderMode new_mode);
 
   void undraw(GWT::Canvas& canvas) const;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Jun  8 14:02:23 2001
+// written: Fri Jun  8 18:46:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,12 +36,12 @@ Util::Tracer GrObj::tracer;
 // flags and constants //
 /////////////////////////
 
-const GrObj::GrObjRenderMode GrObj::GROBJ_DIRECT_RENDER;
-const GrObj::GrObjRenderMode GrObj::GROBJ_GL_COMPILE;
-const GrObj::GrObjRenderMode GrObj::GROBJ_GL_BITMAP_CACHE;
-const GrObj::GrObjRenderMode GrObj::GROBJ_X11_BITMAP_CACHE;
-const GrObj::GrObjRenderMode GrObj::GROBJ_SWAP_FORE_BACK;
-const GrObj::GrObjRenderMode GrObj::GROBJ_CLEAR_BOUNDING_BOX;
+const GrObj::RenderMode GrObj::DIRECT_RENDER;
+const GrObj::RenderMode GrObj::GLCOMPILE;
+const GrObj::RenderMode GrObj::GL_BITMAP_CACHE;
+const GrObj::RenderMode GrObj::X11_BITMAP_CACHE;
+const GrObj::RenderMode GrObj::SWAP_FORE_BACK;
+const GrObj::RenderMode GrObj::CLEAR_BOUNDING_BOX;
 
 
 const int GrObj::NATIVE_SCALING;
@@ -62,8 +62,8 @@ const int GrObj::ARBITRARY_ON_CENTER;
 //////////////
 
 // GrObj default constructor
-GrObj::GrObj(GrObjRenderMode render_mode,
-				 GrObjRenderMode unrender_mode) :
+GrObj::GrObj(GrObj::RenderMode render_mode,
+				 GrObj::RenderMode unrender_mode) :
   itsImpl(new Impl(this))
 {
 DOTRACE("GrObj::GrObj");
@@ -178,11 +178,11 @@ DOTRACE("GrObj::category");
   return itsImpl->category();
 }
 
-GrObj::GrObjRenderMode GrObj::getRenderMode() const {
+GrObj::RenderMode GrObj::getRenderMode() const {
   return itsImpl->getRenderMode();
 }
 
-GrObj::GrObjRenderMode GrObj::getUnRenderMode() const {
+GrObj::RenderMode GrObj::getUnRenderMode() const {
 DOTRACE("GrObj::getUnRenderMode");
   return itsImpl->getUnRenderMode();
 }
@@ -261,19 +261,19 @@ DOTRACE("GrObj::setCategory");
   itsImpl->setCategory(val);
 }
 
-void GrObj::setRenderMode(GrObjRenderMode mode) {
+void GrObj::setRenderMode(GrObj::RenderMode mode) {
 DOTRACE("GrObj::setRenderMode");
 
 #ifdef I686
   // display lists don't work at present with i686/linux/mesa
-  if (mode == GROBJ_GL_COMPILE) mode = GROBJ_DIRECT_RENDER; 
+  if (mode == GLCOMPILE) mode = DIRECT_RENDER; 
 #endif
 
   itsImpl->setRenderMode(mode); 
   sendStateChangeMsg();
 }
 
-void GrObj::setUnRenderMode(GrObjRenderMode mode) {
+void GrObj::setUnRenderMode(GrObj::RenderMode mode) {
 DOTRACE("GrObj::setUnRenderMode");
 
   itsImpl->setUnRenderMode(mode); 

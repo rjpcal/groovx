@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:17 1999
-// written: Sat May 19 11:44:07 2001
+// written: Fri Jun  8 18:46:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,8 +66,8 @@ DOTRACE("GLBitmap::GLBitmap");
 
 void GLBitmap::init() {
 DOTRACE("GLBitmap::init");
-  GrObj::setRenderMode(GROBJ_GL_COMPILE);
-  GrObj::setUnRenderMode(GROBJ_CLEAR_BOUNDING_BOX);
+  GrObj::setRenderMode(GLCOMPILE);
+  GrObj::setUnRenderMode(CLEAR_BOUNDING_BOX);
   setUsingZoom(true);
 }
 

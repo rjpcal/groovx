@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Jun  8 13:59:16 2001
+// written: Fri Jun  8 18:46:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,47 +65,47 @@ public:
   //
   ///////////////////////////////////////////////////////////////////////
 
-  /** The symbolic constants of type \c GrObjRenderMode control the
+  /** The symbolic constants of type \c GrObj::RenderMode control the
 	   way the object is drawn to and undrawn from the screen. The
 	   current modes can be get/set with \c getRenderMode(), \c
 	   setRenderMode(), \c getUnRenderMode(), and \c
 	   setUnRenderMode(). The default rendering mode is \c
-	   GROBJ_GL_COMPILE, and the default unrendering mode is \c
-	   GROBJ_SWAP_FORE_BACK. **/
-  typedef int GrObjRenderMode;
+	   GLCOMPILE, and the default unrendering mode is \c
+	   SWAP_FORE_BACK. **/
+  typedef int RenderMode;
 
   /** In this mode, \c grRender() will be called every time the object
 		is drawn or undrawn.  */
-  static const GrObjRenderMode GROBJ_DIRECT_RENDER = 1;
+  static const RenderMode DIRECT_RENDER = 1;
 
   /** In this mode, \c grRender() is called on a draw request only if
       the object's state has changed since the last draw request. If
       it has not changed, then the object is instead rendered from
       either a cached OpenGL display list. The behavior of \c
-      GROBJ_GL_COMPILE should be exactly the same as that of \c
-      GROBJ_DIRECT_RENDER, except that drawing should be faster if the
+      GLCOMPILE should be exactly the same as that of \c
+      DIRECT_RENDER, except that drawing should be faster if the
       object's state has not changed since the last draw. **/
-  static const GrObjRenderMode GROBJ_GL_COMPILE = 2;
+  static const RenderMode GLCOMPILE = 2;
 
   /** In this mode, \c grRender() is called on an draw request only if
       the object's state has changed since the last draw request. If
       it has not changed, then the object is instead rendered from a
       cached bitmap using the OpenGL bitmap-rendering API (which may
       be \b slow if the host is not an SGI). This mode may yield a
-      speed increase over \c GROBJ_GL_COMPILE, but carries the
+      speed increase over \c GLCOMPILE, but carries the
       following caveat: the object's size will not respond to OpenGL
       scaling or rotation requests, but will be fixed at the screen
       size at which the object was most recently direct-rendered; note
       however that OpenGL translation requests will still work
       properly. This mode requires the object to have a bounding box
       (i.e. \c getBoundingBox() must return \c true). **/
-  static const GrObjRenderMode GROBJ_GL_BITMAP_CACHE = 3;
+  static const RenderMode GL_BITMAP_CACHE = 3;
 
   /** In this mode, \c grRender() is called on an draw request only if
       the object's state has changed since the last draw request. If
       it has not changed, then the object is instead rendered from a
       cached bitmap using the X11 bitmap-rendering API. This mode may
-      yield a speed increase over \c GROBJ_GL_COMPILE, but carry the
+      yield a speed increase over \c GLCOMPILE, but carry the
       following caveats: 1) the object's size will not respond to
       OpenGL scaling or rotation requests, but will be fixed at the
       screen size at which the object was most recently
@@ -115,19 +115,19 @@ public:
       double-buffering is being used. This mode requires the object to
       have a bounding box (i.e. \c getBoundingBox() must return \c
       true). **/
-  static const GrObjRenderMode GROBJ_X11_BITMAP_CACHE = 4;
+  static const RenderMode X11_BITMAP_CACHE = 4;
 
   /** This mode may be used only as an unrendering mode. If selected,
 		unrendering will be done by performing a normal render except
 		with the foreground and background colors swapped. */
-  static const GrObjRenderMode GROBJ_SWAP_FORE_BACK = 5;
+  static const RenderMode SWAP_FORE_BACK = 5;
 
   /** This mode may be used only as an unrendering mode. If selected,
       unrendering will be done by clearing to the background color the
       region enclosed by the object's bounding box. This mode requires
       the object to have a bounding box (i.e. \c getBoundingBox() must
       return \c true). */
-  static const GrObjRenderMode GROBJ_CLEAR_BOUNDING_BOX = 6;
+  static const RenderMode CLEAR_BOUNDING_BOX = 6;
 
 
   ///////////////////////////////////////////////////////////////////////
@@ -205,8 +205,8 @@ public:
   //////////////
 
   /// Default constructor
-  GrObj(GrObjRenderMode render_mode = GROBJ_GL_COMPILE,
-		  GrObjRenderMode unrender_mode = GROBJ_SWAP_FORE_BACK);
+  GrObj(RenderMode render_mode = GLCOMPILE,
+		  RenderMode unrender_mode = SWAP_FORE_BACK);
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~GrObj();
 
@@ -278,10 +278,10 @@ public:
   virtual int category() const;
 
   /// Returns the current rendering mode.
-  GrObjRenderMode getRenderMode() const;
+  RenderMode getRenderMode() const;
 
   /// Returns the current unrendering mode.
-  GrObjRenderMode getUnRenderMode() const;
+  RenderMode getUnRenderMode() const;
 
   ///////////////////////////////////////////////////////////////////////
   //
@@ -346,12 +346,12 @@ public:
   /** Changes the current rendering mode to \a mode, unless the
       requirements of \a mode (for example, requiring a bounding box)
       are not met, in which case the scaling mode is unchanged. */
-  void setRenderMode(GrObjRenderMode mode);
+  void setRenderMode(RenderMode mode);
 
   /** Changes the current unrendering mode to \a mode, unless the
       requirements of \a mode (for example, requiring a bounding box)
       are not met, in which case the scaling mode is unchanged. */
-  void setUnRenderMode(GrObjRenderMode mode);
+  void setUnRenderMode(RenderMode mode);
 
   virtual void receiveStateChangeMsg(const Util::Observable* obj);
   virtual void receiveDestroyMsg(const Util::Observable* obj);
