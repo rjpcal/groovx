@@ -32,7 +32,7 @@ test "ObjTogl-Togl::undraw" "normal use" {
 	 setForeground 1
 	 setBackground 0
 	 clearscreen
-	 Togl::show 0
+	 Togl::show $t
 	 Togl::undraw
 	 pixelCheckSum
 } {^0$}
@@ -113,7 +113,7 @@ test "ObjTogl-Togl::setCurTrial" "normal use" {
 	 set p [Pos::Pos]
 	 set t [Trial::Trial]
 	 Trial::add $t $f $p
-	 catch {Togl::setCurTrial 0}
+	 catch {Togl::setCurTrial $t}
 } {^0$}
 test "ObjTogl-Togl::setCurTrial" "error on too low trial id" {
     Togl::setCurTrial -1
