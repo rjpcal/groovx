@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Nov 18 10:37:03 1999
+// written: Sat Nov 20 20:26:28 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -284,14 +284,6 @@ DOTRACE("Block::trialDescription");
 //
 ///////////////////////////////////////////////////////////////////////
 
-//--------------------------------------------------------------------
-//
-// Block::beginTrial --
-//
-// Do whatever is necessary at the beginning of a trial.
-//
-//--------------------------------------------------------------------
-
 void Block::beginTrial() {
 DOTRACE("Block::beginTrial");
   if (itsVerbose) {
@@ -305,18 +297,6 @@ DOTRACE("Block::beginTrial");
   itsTimer.restart();
 }
 
-//--------------------------------------------------------------------
-//
-// Block::drawTrial --
-//
-// The current trial is drawn, The current trial is not changed until
-// a call either to processResponse, abortTrial, or endTrial; thus,
-// multiple calls in a row to drawTrial will simply show the same
-// trial repeatedly, although the response time timer will be
-// restarted each time.
-//
-//--------------------------------------------------------------------
-
 void Block::drawTrial() {
 DOTRACE("Block::drawTrial");
   if (isComplete()) return;
@@ -326,35 +306,12 @@ DOTRACE("Block::drawTrial");
   theTlist.drawTrial(currentTrial());
 }
 
-//--------------------------------------------------------------------
-//
-// Block::undrawTrial --
-//
-// The current trial is erased from the screen, and the Tlist's
-// visibility is set to false, so that the trial does not reappear if
-// any redraw events are sent to the screen window.
-//
-//--------------------------------------------------------------------
-
 void Block::undrawTrial() {
 DOTRACE("Block::undrawTrial");
   if (isComplete()) return;
 
   theTlist.undrawTrial(currentTrial());
 }
-
-//--------------------------------------------------------------------
-//
-// Block::abortTrial --
-//
-// Aborts the current trial of the experiment. The current (to be
-// aborted) trial is put at the end of the trial sequence in the Block,
-// without recording any response for that trial. The next call to
-// drawTrial will start the same trial that would have started if the
-// current trial had been completed normally, instead of being
-// aborted.
-//
-//--------------------------------------------------------------------
 
 void Block::abortTrial() {
 DOTRACE("Block::abortTrial");
@@ -377,25 +334,6 @@ DOTRACE("Block::abortTrial");
   --itsCurTrialSeqIdx;
 }
 
-//--------------------------------------------------------------------
-//
-// Block::processResponse --
-//
-// Record a response to the current trial in the Block, and prepare the
-// Block for the next trial.
-//
-// Results:
-// none.
-//
-// Side effects:
-// The response is recorded for the current trial, and the Block's
-// trial sequence index is incremented. In this way, the next call to 
-// drawTrial will start the next trial. Also, the next call to 
-// prevResponse will return the response that was recorded in the
-// present command.
-//
-//--------------------------------------------------------------------
-
 void Block::processResponse(int response) {
 DOTRACE("Block::processResponse");
   if (isComplete()) return;
@@ -407,12 +345,6 @@ DOTRACE("Block::processResponse");
   }
 }
 
-//---------------------------------------------------------------------
-//
-// Block::endTrial --
-//
-//---------------------------------------------------------------------
-
 void Block::endTrial() {
 DOTRACE("Block::endTrial");
   if (isComplete()) return;
@@ -421,32 +353,12 @@ DOTRACE("Block::endTrial");
   ++itsCurTrialSeqIdx;
 }
 
-//---------------------------------------------------------------------
-//
-// Block::haltExpt --
-//
-//---------------------------------------------------------------------
-
 void Block::haltExpt() {
 DOTRACE("Block::haltExpt");
   undrawTrial();
   abortTrial();
   endTrial();
 }
-
-//--------------------------------------------------------------------
-//
-// Block::undoPrevTrial --
-//
-// This function undoes the last *successfully* completed trial. It
-// moves the trial counter back one, then erases the most recent
-// response given to that trial. After this, the next invocation of
-// drawTrial() will redo the trial that was undone in the present
-// command.  In sum, the state of the experiment is restored to what
-// it was just prior to the beginning of the most recent successfully
-// completed trial.
-//
-//--------------------------------------------------------------------
 
 void Block::undoPrevTrial() {
 DOTRACE("Block::undoPrevTrial");
@@ -460,12 +372,6 @@ DOTRACE("Block::undoPrevTrial");
   // ...and erase the last response given to that trial
   getCurTrial().undoLastResponse();
 }
-
-//---------------------------------------------------------------------
-//
-// Block::resetBlock --
-//
-//---------------------------------------------------------------------
 
 void Block::resetBlock() {
 DOTRACE("Block::resetBlock");
