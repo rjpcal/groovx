@@ -97,6 +97,7 @@ proc min {a b} {
 }
 
 proc looper {} {
+    after cancel $::LOOP_HANDLE
     set ::LOOP_HANDLE [after $::DELAY ::looper]
     spinPic 1
     $::PLAYLIST show
@@ -149,6 +150,8 @@ Togl::bind <ButtonPress-3> {spinPic 1; $::PLAYLIST show}
 
 Togl::height 975
 Togl::width 1400
+
+update
 
 updateText
 $::PLAYLIST show
