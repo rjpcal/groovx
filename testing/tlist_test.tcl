@@ -12,8 +12,6 @@ package require Gxtransform
 package require Tlist
 package require Toglet
 
-if { ![Togl::inited] } { Togl::init; update }
-
 ### Tlist::loadObjidFileCmd ###
 test "TlistTcl-Tlist::loadObjidFile" "too few args" {
     Tlist::loadObjidFile

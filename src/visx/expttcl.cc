@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Nov 20 15:08:26 2002
+// written: Thu Nov 21 15:09:41 2002
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -93,7 +93,7 @@ namespace ExptTcl
     // Destroy the experiment start key binding
     widget->bind("<KeyPress-s>", "");
 
-    // Force the focus to the Togl widget
+    // Force the focus to the widget
     widget->takeFocus();
 
     expt->edBeginExpt();

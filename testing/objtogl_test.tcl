@@ -11,11 +11,6 @@ package require Toglet
 package require Face
 package require Tlist
 
-### ObjTogl::InitCmd ###
-test "ObjTogl-Togl::Init" "test widget create" {
-	 if { ![Togl::inited] } { Togl::init; update }
-} {^$}
-
 ### Togl::undrawCmd ###
 test "ObjTogl-Togl::undraw" "too many args" {
 	 Togl::undraw junk

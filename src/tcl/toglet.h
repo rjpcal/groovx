@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Nov 21 14:41:39 2002
+// written: Thu Nov 21 15:09:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,41 +17,62 @@
 
 struct Tcl_Interp;
 
+class TogletSizer;
+
 namespace Gfx
 {
   class Canvas;
 }
 
-///////////////////////////////////////////////////////////////////////
-//
-// Togl class definition
-//
-///////////////////////////////////////////////////////////////////////
+// ####################################################################
 
-class Togl : public Tcl::TkWidget
+/// Toglet is an OpenGL Tk widget.
+
+class Toglet : public Tcl::TkWidget
 {
-private:
-  Togl(const Togl&);
-  Togl& operator=(const Togl&);
+protected:
+  Toglet(bool pack=true);
 
 public:
-  Togl(Tcl_Interp* interp, const char* pathname);
-  virtual ~Togl();
+
+  static Toglet* make() { return new Toglet; }
+
+  virtual ~Toglet();
 
   virtual bool isNotShareable() const { return true; }
+
+  //
+  // accessors
+  //
+
+  bool usingFixedScale() const;
 
   /// Overridden from GWT::Widget.
   virtual Gfx::Canvas& getCanvas() const;
 
+  // manipulators
+  static void defaultParent(const char* pathname);
+
+  void scaleRect(double factor);
+  void setPixelsPerUnit(double s);
+  void setFixedRectLTRB(double L, double T, double R, double B);
+  void setMinRectLTRB(double L, double T, double R, double B);
+  void setUnitAngle(double deg);
+  void setViewingDistIn(double in);
+  void setPerspective(double fovy, double zNear, double zFar);
+
+  void makeCurrent() const;
+
   /// Overridden from Tcl::TkWidget.
   virtual void displayCallback();
 
-  void makeCurrent() const;
+  /// Overridden from Tcl::TkWidget.
+  virtual void reshapeCallback();
 
   /// Overridden from GWT::Widget.
   virtual void swapBuffers();
 
-  /// Simple RGB color struct for use with Togl.
+  /// Simple RGB color struct.
   struct Color
   {
     Color(unsigned int p=0, double r=0.0, double g=0.0, double b=0.0):
@@ -65,47 +86,10 @@ public:
   class Impl;
 
 private:
-  Impl* const rep;
-};
-
-class TogletSizer;
-
-// ####################################################################
-
-/// Toglet is an OpenGL Tk widget implemented with the "Togl" library.
-
-class Toglet : public Togl
-{
-protected:
-  Toglet(bool pack=true);
-
-public:
-
-  static Toglet* make() { return new Toglet; }
-
-  virtual ~Toglet();
-
-  // accessors
-  bool usingFixedScale() const;
-
-  // manipulators
-  static void defaultParent(const char* pathname);
-
-  void scaleRect(double factor);
-  void setPixelsPerUnit(double s);
-  void setFixedRectLTRB(double L, double T, double R, double B);
-  void setMinRectLTRB(double L, double T, double R, double B);
-  void setUnitAngle(double deg);
-  void setViewingDistIn(double in);
-  void setPerspective(double fovy, double zNear, double zFar);
-
-  /// Overridden from Tcl::TkWidget.
-  virtual void reshapeCallback();
-
-private:
   Toglet(const Toglet&); // no copy constructor
   Toglet& operator=(const Toglet&); // no assignment operator
 
+  Impl* const rep;
   TogletSizer* itsSizer;
 };
 

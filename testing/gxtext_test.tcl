@@ -13,8 +13,6 @@ package require Tlist
 
 source ${::TEST_DIR}/gxshapekit_test.tcl
 
-if { ![Togl::inited] } { Togl::init; update }
-
 set ::TEXT [Obj::new GxText]
 GxText::text $::TEXT "GxText"
 GxShapeKit::testSubclass GxText GxText $::TEXT

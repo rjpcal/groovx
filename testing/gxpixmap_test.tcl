@@ -23,8 +23,6 @@ IO::testDestringifyCmd GxPixmap IO 1 $::PIXMAP
 IO::testWriteCmd GxPixmap IO 1 $::PIXMAP
 IO::testReadCmd GxPixmap IO 1 $::PIXMAP
 
-if { ![Togl::inited] } { Togl::init; update }
-
 ### Obj::new GxPixmap ###
 test "GxPixmap-Obj::new GxPixmap" "too many args" {
     Obj::new GxPixmap junk junk

@@ -21,8 +21,6 @@ IO::testDestringifyCmd ExptTcl IO 1 [Exp::currentExp]
 IO::testWriteCmd ExptTcl IO 1 [Exp::currentExp]
 IO::testReadCmd ExptTcl IO 1 [Exp::currentExp]
 
-if { ![Togl::inited] } { Togl::init; update }
-
 # need to add checks on appropriate returns from all functions that use
 # isComplete()
 # i.e. try to begin a trial after the expt is done, try to abort a trial on 

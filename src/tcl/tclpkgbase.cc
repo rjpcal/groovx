@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Sun Nov  3 13:41:11 2002
+// written: Thu Nov 21 15:03:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -264,8 +264,9 @@ DOTRACE("Tcl::PkgBase::makePkgCmdName");
 void Tcl::PkgBase::eval(const char* script)
 {
 DOTRACE("Tcl::PkgBase::eval");
-  fstring script_copy(script);
-  Tcl_Eval(itsImpl->itsInterp, script_copy.data());
+
+  Tcl::Code code(Tcl::toTcl(script), Tcl::Code::THROW_EXCEPTION);
+  code.invoke(itsImpl->itsInterp);
 }
 
 void Tcl::PkgBase::addCommand(Command* cmd)

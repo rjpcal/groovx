@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Nov 21 14:42:57 2002
+// written: Thu Nov 21 14:58:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,22 +46,22 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Togl::Impl class definition
+// Toglet::Impl class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Togl::Impl
+class Toglet::Impl
 {
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 
 public:
-  Togl* owner;
+  Toglet* owner;
   const Tk_Window tkWin;
   Util::SoftRef<GLCanvas> canvas;
 
-  Impl(Togl* owner);
+  Impl(Toglet* p);
   ~Impl() throw() {}
 
   static Window cClassCreateProc(Tk_Window tkwin,
@@ -74,41 +74,38 @@ Tk_ClassProcs toglProcs =
   {
     sizeof(Tk_ClassProcs),
     (Tk_ClassWorldChangedProc*) 0,
-    Togl::Impl::cClassCreateProc,
+    Toglet::Impl::cClassCreateProc,
     (Tk_ClassModalProc*) 0,
   };
 
 //---------------------------------------------------------------------
 //
-// Togl::Impl::Impl
+// Toglet::Impl::Impl
 //
 //---------------------------------------------------------------------
 
-Togl::Impl::Impl(Togl* p) :
+Toglet::Impl::Impl(Toglet* p) :
   owner(p),
   tkWin(owner->tkWin()),
   canvas()
 {
-DOTRACE("Togl::Impl::Impl");
+DOTRACE("Toglet::Impl::Impl");
 
   //
   // Get the window mapped onscreen
   //
 
   Tk_GeometryRequest(tkWin, owner->width(), owner->height());
-
   Tk_SetClassProcs(tkWin, &toglProcs, static_cast<ClientData>(this));
-
   Tk_MakeWindowExist(tkWin);
-
   Tk_MapWindow(tkWin);
 }
 
-Window Togl::Impl::cClassCreateProc(Tk_Window tkwin,
+Window Toglet::Impl::cClassCreateProc(Tk_Window tkwin,
                                     Window parent,
                                     ClientData clientData)
 {
-  Togl::Impl* rep = static_cast<Togl::Impl*>(clientData);
+  Toglet::Impl* rep = static_cast<Toglet::Impl*>(clientData);
 
   Display* dpy = Tk_Display(tkwin);
 
@@ -177,71 +174,9 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Togl member function definitions
+// Toglet member function definitions
 //
 ///////////////////////////////////////////////////////////////////////
-
-Togl::Togl(Tcl_Interp* interp, const char* pathname) :
-  Tcl::TkWidget(interp, "Togl", pathname),
-  rep(new Impl(this))
-{
-DOTRACE("Togl::Togl");
-}
-
-Togl::~Togl()
-{
-DOTRACE("Togl::~Togl");
-  delete rep;
-}
-
-void Togl::displayCallback()
-{
-DOTRACE("Togl::displayCallback");
-
-  rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
-  fullRender();
-}
-
-void Togl::makeCurrent() const
-{
-  rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
-}
-
-void Togl::swapBuffers()
-{
-  rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
-  rep->canvas->glxFlush();
-}
-
-Togl::Color Togl::queryColor(unsigned int color_index) const
-{
-  XColor col;
-
-  col.pixel = color_index;
-  XQueryColor(Tk_Display(rep->tkWin), Tk_Colormap(rep->tkWin), &col);
-
-  Togl::Color color;
-
-  color.pixel = (unsigned int)col.pixel;
-#ifdef HAVE_LIMITS
-  const unsigned short usmax = std::numeric_limits<unsigned short>::max();
-#else
-  const unsigned short usmax = USHRT_MAX;
-#endif
-
-  color.red   = double(col.red)   / usmax;
-  color.green = double(col.green) / usmax;
-  color.blue  = double(col.blue)  / usmax;
-
-  return color;
-}
-
-Gfx::Canvas& Togl::getCanvas() const
-{
-DOTRACE("Togl::getCanvas");
-  makeCurrent();
-  return *(rep->canvas);
-}
 
 namespace
 {
@@ -473,10 +408,12 @@ DOTRACE("TogletSizer::reconfigure");
 ///////////////////////////////////////////////////////////////////////
 
 Toglet::Toglet(bool pack) :
-  Togl(Tcl::Main::interp(), widgetName(id())),
+  Tcl::TkWidget(Tcl::Main::interp(), "Toglet", widgetName(id())),
+  rep(new Impl(this)),
   itsSizer(new TogletSizer)
 {
 DOTRACE("Toglet::Toglet");
+
   dbgEvalNL(3, (void*) this);
 
   const double default_unit_angle = 2.05;
@@ -494,6 +431,8 @@ DOTRACE("Toglet::~Toglet");
   dbgEvalNL(3, (void*)itsSizer);
 
   delete itsSizer;
+
+  delete rep;
 }
 
 ///////////////
@@ -504,6 +443,13 @@ bool Toglet::usingFixedScale() const
 {
 DOTRACE("Toglet::usingFixedScale");
   return itsSizer->usingFixedScale();
+}
+
+Gfx::Canvas& Toglet::getCanvas() const
+{
+DOTRACE("Toglet::getCanvas");
+  makeCurrent();
+  return *(rep->canvas);
 }
 
 //////////////////
@@ -567,15 +513,60 @@ DOTRACE("Toglet::setMinRectLTRB");
   reshapeCallback();
 }
 
+void Toglet::makeCurrent() const
+{
+  rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
+}
+
+void Toglet::displayCallback()
+{
+DOTRACE("Toglet::displayCallback");
+
+  rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
+  fullRender();
+}
+
 void Toglet::reshapeCallback()
 {
 DOTRACE("Toglet::reshapeCallback");
 
-  Togl::makeCurrent();
+  makeCurrent();
 
   itsSizer->reconfigure(width(), height());
 
   requestRedisplay();
+}
+
+void Toglet::swapBuffers()
+{
+DOTRACE("Toglet::swapBuffers");
+  rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
+  rep->canvas->glxFlush();
+}
+
+Toglet::Color Toglet::queryColor(unsigned int color_index) const
+{
+DOTRACE("Toglet::queryColor");
+
+  XColor col;
+
+  col.pixel = color_index;
+  XQueryColor(Tk_Display(rep->tkWin), Tk_Colormap(rep->tkWin), &col);
+
+  Toglet::Color color;
+
+  color.pixel = (unsigned int)col.pixel;
+#ifdef HAVE_LIMITS
+  const unsigned short usmax = std::numeric_limits<unsigned short>::max();
+#else
+  const unsigned short usmax = USHRT_MAX;
+#endif
+
+  color.red   = double(col.red)   / usmax;
+  color.green = double(col.green) / usmax;
+  color.blue  = double(col.blue)  / usmax;
+
+  return color;
 }
 
 static const char vcid_toglet_cc[] = "$Header$";

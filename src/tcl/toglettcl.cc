@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998 (as objtogl.cc)
-// written: Thu Nov 21 14:38:24 2002
+// written: Thu Nov 21 15:06:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ namespace TogletTcl
 
     for (unsigned int i = start; i <= end; ++i)
       {
-        Togl::Color color = toglet->queryColor(i);
+        Toglet::Color color = toglet->queryColor(i);
         Tcl::List color_list;
         color_list.append(i);
         color_list.append(color.red);
@@ -137,7 +137,7 @@ public:
     def( "defaultParent", "parent", &Toglet::defaultParent );
     def( "dumpCmap", "toglet_id start_index end_index", &TogletTcl::dumpCmap );
     def( "dumpCmap", "toglet_id", &TogletTcl::dumpCmapAll );
-    def( "Togl::inited", 0, &TogletTcl::inited );
+    def( "inited", 0, &TogletTcl::inited );
     def( "perspective", "toglet_id fovy zNear zFar", &Toglet::setPerspective );
     def( "see", "gxnode_id", &TogletTcl::see );
     def( "setCurTrial", "toglet_id widget_id", &TogletTcl::setCurTrial );
@@ -160,8 +160,8 @@ public:
     defSetter("setViewingDistance", "item_id(s) distance_in_inches",
               &Toglet::setViewingDistIn);
     defSetter("setVisible", "item_id(s) visibility", &Toglet::setVisibility);
-    defAction("swapBuffers", &Togl::swapBuffers);
-    defAction("takeFocus", &Togl::takeFocus);
+    defAction("swapBuffers", &Toglet::swapBuffers);
+    defAction("takeFocus", &Toglet::takeFocus);
     defAttrib("timeOut", &Tcl::TkWidget::timeOut, &Tcl::TkWidget::setTimeOut);
     defAction("undraw", &Toglet::undraw);
     defGetter("usingFixedScale", &Toglet::usingFixedScale);
@@ -171,14 +171,16 @@ public:
 
     setCurrentTogl(SoftRef<Toglet>(Toglet::make()));
 
-    Pkg::eval("namespace eval Togl { proc init {} {} }\n"
-              "proc clearscreen {} { Togl::clearscreen }\n"
+    Pkg::eval("proc clearscreen {} { Togl::clearscreen }\n"
               "proc see {id} { Togl::see $id }\n"
               "proc undraw {} { Togl::undraw }\n");
 
-    Pkg::eval("foreach cmd [info commands ::Toglet::*] {"
-              "  proc ::Togl::[namespace tail $cmd] {args} \" eval $cmd \\[Toglet::currentToglet\\] \\$args \" }\n"
-              "namespace eval Togl { namespace export * }"
+    Pkg::eval("foreach cmd [info commands ::Toglet::*] {\n"
+              "  namespace eval ::Togl {\n"
+              "    proc [namespace tail $cmd] {args} \" eval $cmd \\[Toglet::currentToglet\\] \\$args \""
+              "  }\n"
+              "}\n"
+              "namespace eval ::Togl { namespace export * }"
               );
 
     Pkg::eval("Expt::widget [Toglet::currentToglet]");

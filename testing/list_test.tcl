@@ -11,7 +11,6 @@
 if { [info exists List::TEST_DEFINED] } return;
 
 package require Toglet
-if { ![Togl::inited] } { Togl::init; ::update }
 
 namespace eval List {
 

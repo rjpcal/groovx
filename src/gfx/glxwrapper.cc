@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:07 2002
-// written: Thu Nov 21 09:25:20 2002
+// written: Thu Nov 21 15:09:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ DOTRACE("GlxWrapper::GlxWrapper");
   int dummy;
   if (!glXQueryExtension(dpy, &dummy, &dummy))
     {
-      throw Util::Error("Togl: X server has no OpenGL GLX extension");
+      throw Util::Error("GlxWrapper: X server has no OpenGL GLX extension");
     }
 
   shared_ptr<GlxAttribs> attribs = opts.buildAttribList();
