@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Sun Oct  3 19:17:02 1999
+// written: Wed Nov  3 07:59:33 1999
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -83,7 +83,10 @@ DOTRACE("BeginCmd::beginCmd");
   ToglConfig* config = ObjTogl::theToglConfig();
 
   // Create the quit key binding
-  config->bind("<KeyPress-q>", "{ Expt::writeAndExit }");
+  config->bind("<Control-KeyPress-q>", "{ Expt::writeAndExit yes}");
+
+  // Create the save key binding
+  config->bind("<Control-KeyPress-s>", "{ Expt::writeAndExit no}");
 
   // Create the pause key binding
   config->bind("<KeyPress-p>", "{ Expt::pause }");
@@ -232,7 +235,7 @@ public:
 						 &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
 	 declareCAction("reset", &ExptDriver::edResetExpt);
 	 declareCAction("stop", &ExptDriver::edHaltExpt);
-	 declareCAction("writeAndExit", &ExptDriver::writeAndExit);
+	 declareCSetter("writeAndExit", &ExptDriver::writeAndExit);
   }
 
   virtual IO& getIoFromId(int) { return ExptDriver::theExptDriver(); }
