@@ -85,6 +85,20 @@ if test $enable_readline = yes; then
    AC_DEFINE(WITH_READLINE, 1)
 fi
 
+dnl Check whether to enable debug mode by default
+
+AC_ARG_ENABLE(default-debug,
+	      AC_HELP_STRING([--enable-default-debug],
+			     [whether the default build should include debugging (default=yes)]),
+	      ,
+	      enable_default_debug=yes)
+
+if test $enable_default_debug = yes; then
+   AC_SUBST(DEFAULT_MODE, debug)
+else
+   AC_SUBST(DEFAULT_MODE, prod)
+fi
+
 AC_CONFIG_FILES([Makedefs])
 
 AC_OUTPUT()

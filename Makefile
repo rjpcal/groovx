@@ -87,11 +87,7 @@ ifeq ($(PLATFORM),irix6)
 
 	DEFS += -DSHORTEN_SYMBOL_NAMES
 
-	DEFAULT_MODE := prod
-
 	AUDIO_LIB := -laudio -laudiofile
-
-	LDFLAGS += -Wl,-rpath,$(exec_prefix)/lib
 endif
 
 ifeq ($(PLATFORM),i686)
@@ -103,8 +99,6 @@ ifeq ($(PLATFORM),i686)
 
 	DEFS += -DBROKEN_GL_DISPLAY_LISTS -march=i686
 
-	DEFAULT_MODE := debug
-
 	AUDIO_LIB := -lesd -laudiofile
 endif
 
@@ -113,7 +107,6 @@ ifeq ($(PLATFORM),ppc)
 	SHLIB_EXT := dylib
 	STATLIB_EXT := a
 	DEFS += -DESD_WORKAROUND
-	DEFAULT_MODE := debug
 	AUDIO_LIB := -lesd -laudiofile
 # The /sw/lib and /sw/include directories are managed by Fink
 	LDFLAGS += -L/sw/lib
