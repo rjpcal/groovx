@@ -3,7 +3,7 @@
 // trialevent.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:45:05 1999
-// written: Thu May 11 19:37:34 2000
+// written: Thu Jun  1 14:04:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STOPWATCH_H_DEFINED)
-#include "stopwatch.h"
+#include "util/stopwatch.h"
 #endif
 
 namespace GWT { class Widget; }
@@ -91,28 +91,11 @@ protected:
       take whatever specific action is desired when the callback
       triggers. The function is called internally by \c TrialEvent, so
       subclasses should not call this function directly. */
-  virtual void invoke() = 0;
-
-  /** This returns the \c Widget which was passed to the most
-      recent call to \c schedule(). \c TrialEventError is thrown if \c
-      schedule() has never been called, or if the \c Widget*
-      passed most recently to \c schedule() was null. */
-  GWT::Widget& getWidget();
-
-  /** This returns the \c ErrorHandler which was passed to the most
-      recent call to \c schedule(). \c TrialEventError is thrown if \c
-      schedule() has never been called, or if the \c ErrorHandler*
-      passed most recently to \c schedule() was null. */
-  Util::ErrorHandler& getErrorHandler();
-
-  /** This returns the \c Trial which was passed to the most recent
-      call to \c schedule(). \c TrialEventError is thrown if \c
-      schedule() has never been called, or if the \c Trial* passed
-      most recently to \c schedule() was null. */
-  TrialBase& getTrial();
+  virtual void invoke(GWT::Widget& widget, TrialBase& trial) = 0;
 
 private:
   static void dummyInvoke(ClientData clientData);
+  void invokeTemplate();
 
   TrialEvent(const TrialEvent&);
   TrialEvent& operator=(const TrialEvent&);
@@ -128,8 +111,10 @@ private:
 
   // Diagnostic stuff
   mutable StopWatch itsTimer;
+  mutable int itsEstimatedOffset;
+  mutable int itsActualRequest;
+  mutable int itsTotalOffset;
   mutable int itsTotalError;
-  mutable int itsTotalAbsError;
   mutable int itsInvokeCount;
 };
 
@@ -143,72 +128,88 @@ private:
 class AbortTrialEvent : public TrialEvent {
 public:
   /// Construct with a requested delay of \a msec milliseconds.
-  AbortTrialEvent(int msec = 0) : TrialEvent(msec) {}
+  AbortTrialEvent(int msec = 0);
+  /// Virtual destructor.
+  virtual ~AbortTrialEvent();
 protected:
-  virtual void invoke();
+  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
 };
 
 /// TrialEvent subclass to call TrialBase::trDrawTrial().
 class DrawEvent : public TrialEvent {
 public:
   /// Construct with a requested delay of \a msec milliseconds.
-  DrawEvent(int msec = 0) : TrialEvent(msec) {}
+  DrawEvent(int msec = 0);
+  /// Virtual destructor.
+  virtual ~DrawEvent();
 protected:
-  virtual void invoke();
+  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
 };
 
 /// TrialEvent subclass to call TrialBase::trEndTrial().
 class EndTrialEvent : public TrialEvent {
 public:
   /// Construct with a requested delay of \a msec milliseconds.
-  EndTrialEvent(int msec = 0) : TrialEvent(msec) {}
+  EndTrialEvent(int msec = 0);
+  /// Virtual destructor.
+  virtual ~EndTrialEvent();
 protected:
-  virtual void invoke();
+  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
 };
 
 /// TrialEvent subclass to call TrialBase::trUndrawTrial().
 class UndrawEvent : public TrialEvent {
 public:
   /// Construct with a requested delay of \a msec milliseconds.
-  UndrawEvent(int msec = 0) : TrialEvent(msec) {}
+  UndrawEvent(int msec = 0);
+  /// Virtual destructor.
+  virtual ~UndrawEvent();
 protected:
-  virtual void invoke();
+  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
 };
 
 /// TrialEvent subclass to call Canvas::drawOnBackBuffer().
 class RenderBackEvent : public TrialEvent {
 public:
   /// Construct with a requested delay of \a msec milliseconds.
-  RenderBackEvent(int msec = 0) : TrialEvent(msec) {}
+  RenderBackEvent(int msec = 0);
+  /// Virtual destructor.
+  virtual ~RenderBackEvent();
 protected:
-  virtual void invoke();
+  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
 };
 
 /// TrialEvent subclass to call Canvas::drawOnFrontBuffer().
 class RenderFrontEvent : public TrialEvent {
 public:
   /// Construct with a requested delay of \a msec milliseconds.
-  RenderFrontEvent(int msec = 0) : TrialEvent(msec) {}
+  RenderFrontEvent(int msec = 0);
+  /// Virtual destructor.
+  virtual ~RenderFrontEvent();
 protected:
-  virtual void invoke();
+  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
 };
 
 /// TrialEvent subclass to call Widget::swapBuffers().
 class SwapBuffersEvent : public TrialEvent {
 public:
   /// Construct with a requested delay of \a msec milliseconds.
-  SwapBuffersEvent(int msec = 0) : TrialEvent(msec) {}
+  SwapBuffersEvent(int msec = 0);
+  /// Virtual destructor.
+  virtual ~SwapBuffersEvent();
 protected:
-  virtual void invoke();
+  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
 };
 
 /// TrialEvent subclass to call Canvas::clearColorBuffer().
 class ClearBufferEvent : public TrialEvent {
 public:
   /// Construct with a requested delay of \a msec milliseconds.
-  ClearBufferEvent(int msec = 0) : TrialEvent(msec) {}
+  ClearBufferEvent(int msec = 0);
+  /// Virtual destructor.
+  virtual ~ClearBufferEvent();
 protected:
-  virtual void invoke();
+  virtual void invoke(GWT::Widget& widget, TrialBase& trial);
 };
 
 static const char vcid_trialevent_h[] = "$Header$";
