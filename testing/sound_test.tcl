@@ -18,10 +18,10 @@ set TEST_SOUND [Obj::new Sound]
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd SoundTcl IO 1 $::TEST_SOUND
-IO::testDestringifyCmd SoundTcl IO 1 $::TEST_SOUND
-IO::testWriteCmd SoundTcl IO 1 $::TEST_SOUND
-IO::testReadCmd SoundTcl IO 1 $::TEST_SOUND
+IO::testWriteLGX SoundTcl $::TEST_SOUND
+IO::testReadLGX SoundTcl $::TEST_SOUND
+IO::testWriteASW SoundTcl $::TEST_SOUND
+IO::testReadASW SoundTcl $::TEST_SOUND
 
 ### Obj::new Sound ###
 test "SoundTcl-Obj::new Sound" "normal sound create" {

@@ -13,10 +13,10 @@ set TRIAL [Obj::new Trial]
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd TrialTcl IO 1 $::TRIAL
-IO::testDestringifyCmd TrialTcl IO 1 $::TRIAL
-IO::testWriteCmd TrialTcl IO 1 $::TRIAL
-IO::testReadCmd TrialTcl IO 1 $::TRIAL
+IO::testWriteLGX TrialTcl $::TRIAL
+IO::testReadLGX TrialTcl $::TRIAL
+IO::testWriteASW TrialTcl $::TRIAL
+IO::testReadASW TrialTcl $::TRIAL
 
 ### Trial::stdInfo ###
 test "TrialTcl-Trial::stdInfo" "use when empty" {

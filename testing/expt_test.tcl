@@ -18,10 +18,10 @@ set EXPT [new ExptDriver]
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd ExptTcl IO 1 $::EXPT
-IO::testDestringifyCmd ExptTcl IO 1 $::EXPT
-IO::testWriteCmd ExptTcl IO 1 $::EXPT
-IO::testReadCmd ExptTcl IO 1 $::EXPT
+IO::testWriteLGX ExptTcl $::EXPT
+IO::testReadLGX ExptTcl $::EXPT
+IO::testWriteASW ExptTcl $::EXPT
+IO::testReadASW ExptTcl $::EXPT
 
 delete $EXPT
 
@@ -32,7 +32,7 @@ delete $EXPT
 # make sure to get trialDescription on empty + completed expt's
 # try all different possibilities on init
 
-### Expt::begin ###
+### ExptDriver::begin ###
 test "ExptDriver::begin" "too many args" {
     ExptDriver::begin a b
 } {^wrong \# args: should be}
@@ -49,19 +49,19 @@ test "ExptDriver::begin" "normal use" {
 } {^$}
 test "ExptDriver::begin" "error" {} $BLANK $no_test
 
-### Expt::pause ###
+### ExptDriver::pause ###
 test "ExptDriver::pause" "too many args" {
     ExptDriver::pause a b
 } {^wrong \# args: should be}
 
-### Expt::load ###
-test "ExptDriver::load" "too few args" {
-    ExptDriver::load
+### ExptDriver::loadASW ###
+test "ExptDriver::loadASW" "too few args" {
+    ExptDriver::loadASW
 } {wrong \# args: should be}
-test "ExptDriver::load" "too many args" {
-    ExptDriver::load a b c
+test "ExptDriver::loadASW" "too many args" {
+    ExptDriver::loadASW a b c
 } {wrong \# args: should be}
-test "ExptDriver::load" "fMRI sample" {
+test "ExptDriver::loadASW" "fMRI sample" {
     Togl::setVisible false
     ObjDb::clear
     set expt [new ExptDriver]
@@ -70,12 +70,12 @@ test "ExptDriver::load" "fMRI sample" {
     set i [expr int(rand()*3)]
     set filename [lindex $files $i]
     puts "filename $filename"
-    -> $expt load $::TEST_DIR/$filename
+    -> $expt loadASW $::TEST_DIR/$filename
     set dif [expr [GxShapeKit::countAll] - [lindex $ocounts $i]]
     delete $expt
     return $dif
 } {^0$}
-test "ExptDriver::load" "psyphy samples" {
+test "ExptDriver::loadASW" "psyphy samples" {
     set files {expt080905Oct2000.asw.gz train_2_fishes_or.asw.gz pairs_mfaces_s50.asw.gz}
     set ocounts {20 10 20}
     set tcounts {20 10 400}
@@ -86,7 +86,7 @@ test "ExptDriver::load" "psyphy samples" {
         ObjDb::clear
         set expt [new ExptDriver]
 
-        -> $expt load $::TEST_DIR/[lindex $files $i]
+        -> $expt loadASW $::TEST_DIR/[lindex $files $i]
         set odif [expr [GxShapeKit::countAll] - [lindex $ocounts $i]]
         set tdif [expr [Trial::countAll] - [lindex $tcounts $i]]
         append result "$odif $tdif "
@@ -95,15 +95,15 @@ test "ExptDriver::load" "psyphy samples" {
     return $result
 } {^0 0 0 0 0 0 $}
 
-### Expt::save ###
-test "ExptDriver::save" "too few args" {
-    ExptDriver::save
+### ExptDriver::saveASW ###
+test "ExptDriver::saveASW" "too few args" {
+    ExptDriver::saveASW
 } {wrong \# args: should be}
-test "ExptDriver::save" "too many args" {
-    ExptDriver::save a b c
+test "ExptDriver::saveASW" "too many args" {
+    ExptDriver::saveASW a b c
 } {wrong \# args: should be}
 
-### Expt::halt ###
+### ExptDriver::halt ###
 test "ExptDriver::halt" "too many args" {
     ExptDriver::halt a b
 } {^wrong \# args: should be}

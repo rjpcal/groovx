@@ -12,10 +12,10 @@ KbdRh::inputResponseMap $::KBDRH { {{^[aA]$} 0} {{^[lL]$} 1} }
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd KbdRhTcl IO 1 $::KBDRH
-IO::testDestringifyCmd KbdRhTcl IO 1 $::KBDRH
-IO::testWriteCmd KbdRhTcl IO 1 $::KBDRH
-IO::testReadCmd KbdRhTcl IO 1 $::KBDRH
+IO::testWriteLGX KbdRhTcl $::KBDRH
+IO::testReadLGX KbdRhTcl $::KBDRH
+IO::testWriteASW KbdRhTcl $::KBDRH
+IO::testReadASW KbdRhTcl $::KBDRH
 
 ### Obj::new KbdRh ###
 test "KbdRhTcl-Obj::new KbdRh" "too many args" {

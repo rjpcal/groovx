@@ -188,7 +188,7 @@ set ::POS [Obj::new GxTransform]
 GxSeparator::addChild $::GXSEP $::POS
 GxSeparator::addChild $::GXSEP $::FACE
 
-IO::testStringifyCmd GxSepTcl IO 1 $::GXSEP
-IO::testDestringifyCmd GxSepTcl IO 1 $::GXSEP
-IO::testWriteCmd GxSepTcl IO 1 $::GXSEP
-IO::testReadCmd GxSepTcl IO 1 $::GXSEP
+IO::testWriteLGX GxSepTcl $::GXSEP
+IO::testReadLGX GxSepTcl $::GXSEP
+IO::testWriteASW GxSepTcl $::GXSEP
+IO::testReadASW GxSepTcl $::GXSEP

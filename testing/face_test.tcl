@@ -32,7 +32,7 @@ test "Face::eyeHeight" "too many args" {
     Face::eyeHeight j u n
 } {^wrong \# args: should be}
 test "Face::eyeHeight" "normal use set" {
-    Face::eyeHeight $::faceid 2.0 
+    Face::eyeHeight $::faceid 2.0
 } {^$}
 test "Face::eyeHeight" "normal use query" {
     set val1 1.234
@@ -55,7 +55,7 @@ test "Face::eyeDistance" "too many args" {
     Face::eyeDistance j u n
 } {^wrong \# args: should be}
 test "Face::eyeDistance" "normal use set" {
-    Face::eyeDistance $::faceid 2.0 
+    Face::eyeDistance $::faceid 2.0
 } {^$}
 test "Face::eyeDistance" "normal use query" {
     set val1 1.357
@@ -78,7 +78,7 @@ test "Face::noseLength" "too many args" {
     Face::noseLength j u n
 } {^wrong \# args: should be}
 test "Face::noseLength" "normal use set" {
-    Face::noseLength $::faceid 2.0 
+    Face::noseLength $::faceid 2.0
 } {^$}
 test "Face::noseLength" "normal use query" {
     set val1 0.246
@@ -101,7 +101,7 @@ test "Face::mouthHeight" "too many args" {
     Face::mouthHeight j u n
 } {^wrong \# args: should be}
 test "Face::mouthHeight" "normal use set" {
-    Face::mouthHeight $::faceid 2.0 
+    Face::mouthHeight $::faceid 2.0
 } {^$}
 test "Face::mouthHeight" "normal use query" {
     set val1 9.876
@@ -119,22 +119,22 @@ test "Face::mouthHeight" "error from bad objid" {
 unset faceid
 unset EPS
 
-### destringify ###
-test "Face::destringify" "error from wrong type" {
+### readLGX ###
+test "Face::readLGX" "error from wrong type" {
     set fx [Obj::new Face]
-    -> $fx destringify junk
-} {^IO::destringify: .*$}
-test "Face::destringify" "stringify/destringify check" {
+    -> $fx readLGX junk
+} {^IO::readLGX: .*$}
+test "Face::readLGX" "writeLGX/readLGX check" {
     set f [Obj::new Face]
     -> $f noseLength -1.2
     -> $f mouthHeight -0.6
     -> $f eyeHeight 0.4
     -> $f eyeDistance 0.6
-    set str1 [-> $f stringify]
+    set str1 [-> $f writeLGX]
 
     set f2 [Obj::new Face]
-    -> $f2 destringify $str1
-    set str2 [-> $f2 stringify]
+    -> $f2 readLGX $str1
+    set str2 [-> $f2 writeLGX]
 
     expr [string compare $str1 $str2] == 0
 } {^1$}

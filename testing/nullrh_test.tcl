@@ -13,7 +13,7 @@ set ::NULLRH [Obj::new NullResponseHdlr]
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd NullRhTcl IO 1 $::NULLRH
-IO::testDestringifyCmd NullRhTcl IO 1 $::NULLRH
-IO::testWriteCmd NullRhTcl IO 1 $::NULLRH
-IO::testReadCmd NullRhTcl IO 1 $::NULLRH
+IO::testWriteLGX NullRhTcl $::NULLRH
+IO::testReadLGX NullRhTcl $::NULLRH
+IO::testWriteASW NullRhTcl $::NULLRH
+IO::testReadASW NullRhTcl $::NULLRH

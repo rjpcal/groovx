@@ -18,10 +18,10 @@ GxPixmap::loadImage $::PIXMAP $::IMGFILE
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd GxPixmap IO 1 $::PIXMAP
-IO::testDestringifyCmd GxPixmap IO 1 $::PIXMAP
-IO::testWriteCmd GxPixmap IO 1 $::PIXMAP
-IO::testReadCmd GxPixmap IO 1 $::PIXMAP
+IO::testWriteLGX GxPixmap $::PIXMAP
+IO::testReadLGX GxPixmap $::PIXMAP
+IO::testWriteASW GxPixmap $::PIXMAP
+IO::testReadASW GxPixmap $::PIXMAP
 
 ### Obj::new GxPixmap ###
 test "Obj::new GxPixmap" "too many args" {
@@ -158,19 +158,19 @@ test "GxPixmap::asBitmap" "normal use" {
 
 } {^1$} $no_test
 
-### GxPixmap::stringifyCmd ###
-### GxPixmap::destringifyCmd ###
-test "GxPixmap::stringify" "stringify, destringify, compare" {
+### GxPixmap::writeLGX ###
+### GxPixmap::readLGX ###
+test "GxPixmap::writeLGX" "writeLGX, readLGX, compare" {
     set b1 [Obj::new GxPixmap]
     GxPixmap::zoom $b1 {3.0 4.5}
 
-    set str1 [IO::stringify $b1]
+    set str1 [IO::writeLGX $b1]
 
     Obj::delete $b1
 
     set b2 [Obj::new GxPixmap]
-    IO::destringify $b2 $str1
-    set str2 [IO::stringify $b2]
+    IO::readLGX $b2 $str1
+    set str2 [IO::writeLGX $b2]
 
     return "[string equal $str1 $str2] $str1 $str2"
 } {^1 }

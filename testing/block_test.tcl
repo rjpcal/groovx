@@ -11,10 +11,10 @@ set ::BLOCK [Obj::new Block]
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd BlockTcl IO 1 $::BLOCK
-IO::testDestringifyCmd BlockTcl IO 1 $::BLOCK
-IO::testWriteCmd BlockTcl IO 1 $::BLOCK
-IO::testReadCmd BlockTcl IO 1 $::BLOCK
+IO::testWriteLGX BlockTcl $::BLOCK
+IO::testReadLGX BlockTcl $::BLOCK
+IO::testWriteASW BlockTcl $::BLOCK
+IO::testReadASW BlockTcl $::BLOCK
 
 ### Block::currentElement ###
 test "Block::currentElement" "too few args" {

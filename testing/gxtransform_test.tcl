@@ -13,10 +13,10 @@ set ::POS [Obj::new GxTransform]
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd GxTransform IO 1 $::POS
-IO::testDestringifyCmd GxTransform IO 1 $::POS
-IO::testWriteCmd GxTransform IO 1 $::POS
-IO::testReadCmd GxTransform IO 1 $::POS
+IO::testWriteLGX GxTransform $::POS
+IO::testReadLGX GxTransform $::POS
+IO::testWriteASW GxTransform $::POS
+IO::testReadASW GxTransform $::POS
 
 ### Obj::new GxTransform ###
 test "GxTransform-Obj::new GxTransform" "too many args" {
@@ -82,21 +82,21 @@ test "GxTransform-GxTransform::translation" "error on non-numeric input" {
     GxTransform::translation $::pos {1.0 2.0 junk}
 } {GxTransform::translation: }
 
-### GxTransform::stringifyCmd ###
-test "GxTransform-GxTransform::stringify" "too few args" {
-    IO::stringify
+### GxTransform::writeLGX ###
+test "GxTransform-GxTransform::writeLGX" "too few args" {
+    IO::writeLGX
 } {wrong \# args: should be}
-test "GxTransform-IO::stringify" "too many args" {
-    IO::stringify posid junk
+test "GxTransform-IO::writeLGX" "too many args" {
+    IO::writeLGX posid junk
 } {wrong \# args: should be}
-test "GxTransform-IO::stringify" "normal use" {
+test "GxTransform-IO::writeLGX" "normal use" {
 	 GxTransform::scaling $::pos {1.0 2.5 4.0}
 	 GxTransform::translation $::pos {5.3 10.6 15.9}
-	 IO::stringify $::pos
+	 IO::writeLGX $::pos
 } "GxTransform @$::INT"
-test "GxTransform-IO::stringify" "error on non-integral posid" {
-    IO::stringify 1.5
-} {IO::stringify: }
+test "GxTransform-IO::writeLGX" "error on non-integral posid" {
+    IO::writeLGX 1.5
+} {IO::writeLGX: }
 
 ### GxTransform::typeCmd ###
 test "GxTransform-Obj::type" "args" {
