@@ -3,7 +3,7 @@
 // asciistreamreader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:54 1999
-// written: Wed Mar 22 16:47:06 2000
+// written: Wed Mar 22 23:45:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,6 +57,7 @@ public:
 
   virtual IO* readObject(const char* name);
   virtual void readOwnedObject(const char* name, IO* obj);
+  virtual void readBaseClass(const char* baseClassName, IO* basePart);
 
   virtual IO* readRoot(IO* root=0);
 
