@@ -1052,3 +1052,137 @@ bloat.
 | indirectly by requesting the widget to redraw itself.
 | 
 +-----------------------------------------------------------------------
+
+(2-Oct-1999, done 15-Nov-2000) Should be able to call up a property
+info struct from a class by giving it a string name of a
+property. [Later] This is done now with FieldMap, which can be gotten
+from a class by the static function classFields(), and which has a
+member info() that retrieves a FieldInfo object given the attribute
+name.
+
+(28-Nov-2000, done 28-Nov-2000) Make Position use Vec3's. Move
+translate(), scale(), and rotate() into Canvas, along with appropriate
+Vec3 arguments.
+
+(27-Oct-2000, done 30-Nov-2000) Should IoPtrList attempt to get
+objects out of the IoMap if the PtrList site is empty? No--some
+objects need to remain permanently hidden as implementation details.
+
+========================================================================
+| "Dynamic templates" 4-Oct-2000
+| 
+| (4-Oct-2000) I like the idea I saw in the CUJ that dealt with
+| deferring the template nature of something. Basically a generic
+| interface is provided in a derived class, like
+| 
+| class Impl { public: virtual ~class Impl(); };
+| 
+| template <class T> class TImpl : public Impl { public: T data; };
+| 
+| class Interface {
+| public:
+|   template <class T>
+|   T getT() {
+|     TImpl* tptr = dynamic_cast<TImpl<T>*>(itsImpl);
+|     if (tptr) return tptr->data;
+|     else { throw "..."; }
+|   }
+| 
+|   Impl* itsImpl;
+| };
+| 
+| This allows Interface to gain some of the benefits of templates, but
+| doesn't require the entire class to be templated, only the getT()
+| function. If there a long chain of templates involved, this technique
+| might be able to defer the templated-ness to the last class in the
+| chain, for example. This is a particular benefit if there are virtual
+| functions involved, since it allows us to avoid having vtables laid
+| down everywhere.
+| 
+| As a practice before I move on to a more heavy use of this approach, I
+| bet I can use this approach to eliminate the use of void*'s in the
+| implentation of the TclPkg hierarchy. Ugh. I just realized that this
+| is basically skirting around the idea of just using a
+| mother-of-all-base classes approach, such as deriving everything from
+| Object. The template idea is just a way of grafting on the MOAB to a
+| preexisting object hierarchy. ... except that the template approach
+| does allow non-objects to be included, such as native types,
+| pointer-to-members, etc.
+| 
+| I think I should be able to get some benefit of this in my TclPkg
+| hierarchy. For example, PropertyInfo would not have to be a template
+| class; instead, PropertyInfo::property() would just have to be a
+| template member function, along with a template constructor.
+| 
+| *) Turning PropertyInfo into a non-template class allows us to turn
+|    the get getPropertyInfos() interface from an ad-hoc interface to a
+|    dynamic, polymorphic interface.
+| 
+| *) PropFriend would have an non-template base class that would define
+|    the functions set() and get(). These would be implemented in a
+|    template class that used dynamic casts to get the type information
+|    back out.
+| 
+| *) CPropertiesCmd would not have to be a template.
+| 
+| (30-Nov-2000) Time to move on... I don't think this technique will be
+| too useful for me; the one possible area of use might be as a way to
+| implement generic function pointers.
+| 
++-----------------------------------------------------------------------
+
+(2-Oct-1999, nixed 30-Nov-2000) Property's could store a pointer to
+something like ValChecker, which has a virtual function, that could
+variously do 1) check whether new value is the same as the current
+value, 2) check whether the new value is in bounds/valid. If the
+ValChecker* is 0, then no check is done, and not much time is lost
+worrying about the check. This would avoid the problem of trying to
+maintain parallel hierarchies of Property, BoundedProperty, etc.
+
+(1-Dec-2000, done 2-Dec-2000) Need a better naming convention to
+distinguish between unadorned value types (like Vec3), field/value
+types (like GxVec3), and scene node types.
+
+OK, I'll use no prefix for unadorned basic types, use the prefix 'Gb'
+for Field/Value types, and use 'Gx' for scene nodes.
+
+RgbaColor (unadorned) ---> GbRgbaColor (Field/Value) ---> GxRgbaColor (node)
+
+Vec3 (unadorned) ---> GbVec3 (Field/Value)
+
+(30-Oct-2000, done 2-Dec-2000) Use PtrHandle's in TimingHdlr
+implementation to avoid deleteAll().
+
+(22-Mar-2000) We could have a more compact reader/writer format by
+using a system that wrote class definitions to the file, and stored
+some sort of translator for each class in the reader/writer... this
+would allow us to just store the raw data for individual objects,
+without having to store the metadata over and over. [Later] the
+generic version of this is that each read/write requires a per-class
+translater, with the default being that the normal verbose translater
+is used, but if a different translater is present, then that one can
+be used instead. This idea might come around if I implement
+FormatWriter as suggested in a different note.
+
+(May-1999, obsolete 5-Dec-2000) An idea for a more generic way to
+describe Trial's: rather than explicitly storing objid/posid pairs,
+Trial's could store sequences of events (this overlaps my previous
+idea about using events to describe trial timing). One particular
+*type* of event then could be DisplayObjectAtPosition (or something
+less wordy). This event would store the objid and posid (or maybe
+GrObj* and Position*) and would know how to display itself. The events
+would have in common an action() function or something
+similar. Problem: who stores the references to ObjList and PosList
+that make posid's and objid's work?  Currently it is Trial's, but with
+this new scheme there would have to be one for each
+DisplayObjectAtPosition event, and with several of these per Trial,
+and perhaps thousands of Trials in an Expt, this means many thousands
+of references, all of which are pointing at just one or two
+ObjList's/PosList's. This seems somewhat excessive. What to do ...?
+[Later] This latter problem has been solved by making ObjList and
+PosList singletons.
+
+(22-Jun-1999, done) Ugh. Spent all day tracking down idiotic pointer
+problems. Should really use vector<unsigned char> rather than C-style
+arrays to hold the info in Bitmap's and Pbm's, and use checked access
+through at() especially when algorithms are untested.
