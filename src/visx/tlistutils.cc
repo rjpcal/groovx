@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Mon Aug 20 08:48:39 2001
+// written: Mon Aug 20 12:06:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ DOTRACE("TlistUtils::createPreview");
       obj->setMaxDimension(0.8);
 
       Ref<Gtext> label(Gtext::make());
-      label->setText(Util::Convert<Util::UID>::toString(objids[i]));
+      label->setText(fstring(objids[i]));
       label->setAlignmentMode(Gmodes::CENTER_ON_CENTER);
       label->setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
       label->setHeight(0.1);
