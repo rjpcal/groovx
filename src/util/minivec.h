@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 31 11:01:16 2000
-// written: Sat Sep  8 08:55:28 2001
+// written: Wed Sep 12 22:21:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,6 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
 #include "util/algo.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
-#include "util/error.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(NEW_DEFINED)
@@ -296,15 +292,17 @@ public:
       return *(begin() + n);
     }
 
+  class out_of_range {};
+
   reference       at (size_type n)
     {
-      if (n >= size()) throw Util::Error("index out of range");
+      if (n >= size()) throw out_of_range();
       return *(begin() + n);
     }
 
   const_reference at (size_type n)         const
     {
-      if (n >= size()) throw Util::Error("index out of range");
+      if (n >= size()) throw out_of_range();
       return *(begin() + n);
     }
 
