@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 26 18:47:31 2000
-// written: Thu May 10 12:04:37 2001
+// written: Fri May 11 20:45:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,6 +69,9 @@ protected:
   virtual fixed_string readStringImpl(const fixed_string& name);
 
 private:
+  LegacyReader(const LegacyReader&);
+  LegacyReader& operator=(const LegacyReader&);
+
   class Impl;
   friend class Impl;
 
@@ -105,6 +108,9 @@ protected:
   virtual void writeCstring(const char* name, const char* val);
 
 private:
+  LegacyWriter(const LegacyWriter&);
+  LegacyWriter& operator=(const LegacyWriter&);
+
   class Impl;
   friend class Impl;
 

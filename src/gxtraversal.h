@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 23:42:45 2000
-// written: Thu May 10 12:04:38 2001
+// written: Fri May 11 20:43:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,9 @@ public:
   void advance();
 
 private:
+  GxTraversal(const GxTraversal&);
+  GxTraversal& operator=(const GxTraversal&);
+
   class Impl;
   Impl* const itsImpl;
 };
