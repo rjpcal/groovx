@@ -3,7 +3,7 @@
 // ptrlistbase.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Oct 25 09:44:45 2000
+// written: Wed Oct 25 10:01:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -116,7 +116,7 @@ public:
 	 return *this;
   }
 
-  IO::IoObject* ioObject()
+  IO::IoObject* ioObject() const
   {
 	 Invariant(itsIoObject != 0);
 	 return itsIoObject;
@@ -140,34 +140,26 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 class PtrListBase::Impl {
-public:
-  Impl(int size) :
-	 itsFirstVacant(0),
-	 itsPtrVec()
-	 {
-		itsPtrVec.reserve(size);
-	 }
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
 
+  PtrListBase* itsOwner;
   int itsFirstVacant;
   typedef std::vector<IoPtrHandle> VecType;
   VecType itsPtrVec;
 
-  int capacity() const
-	 {
-		return itsPtrVec.size();
-	 }
-
   void ensureNotDuplicate(IO::IoObject* ptr);
 
   int findPtr(IO::IoObject* ptr)
-  {
-	 for (int i = 0; i < itsPtrVec.size(); ++i)
-		{
-		  if ( itsPtrVec[i].ioObject() == ptr )
-			 return i;
-		}
-	 return -1;
-  }
+	 {
+		for (int i = 0; i < itsPtrVec.size(); ++i)
+		  {
+			 if ( itsPtrVec[i].ioObject() == ptr )
+				return i;
+		  }
+		return -1;
+	 }
 
   // Add obj at index 'id', destroying any the object was previously
   // pointed to from that that location. The list will be expanded if
@@ -175,9 +167,114 @@ public:
   // returns without effect.
   void insertPtrBaseAt(int id, IO::IoObject* ptr);
 
-private:
-  Impl(const Impl&);
-  Impl& operator=(const Impl&);
+public:
+  Impl(PtrListBase* owner, int size) :
+	 itsOwner(owner),
+	 itsFirstVacant(0),
+	 itsPtrVec()
+	 {
+		itsPtrVec.reserve(size);
+	 }
+
+  int capacity() const
+	 {
+		return itsPtrVec.size();
+	 }
+
+  int count() const
+	 {
+		// Count the number of null pointers. In the STL call count, we must
+		// cast the value (NULL) so that template deduction treats it as a
+		// pointer rather than an int. Then return the number of non-null
+		// pointers, i.e. the size of the container less the number of null
+		// pointers.
+		int num_non_null=0; 
+		for (Impl::VecType::const_iterator
+				 itr = itsPtrVec.begin(),
+				 end = itsPtrVec.end();
+			  itr != end;
+			  ++itr)
+		  {
+			 if (itr->ioObject()->isValid()) ++num_non_null;
+		  }
+
+		return num_non_null;
+	 }
+
+  bool isValidId(int id) const
+	 {
+		DebugEval(id);
+		DebugEval(id>=0);
+		DebugEvalNL(itsPtrVec.size());
+		DebugEvalNL(id<itsPtrVec.size());
+
+		return ( id >= 0 && size_t(id) < itsPtrVec.size() &&
+					itsPtrVec[id].ioObject()->isValid() );
+	 }
+
+  void release(int id)
+	 {
+		if (!isValidId(id)) return;
+
+		itsPtrVec[id] = IoPtrHandle();
+
+		// reset itsFirstVacant in case i would now be the first vacant
+		if (itsFirstVacant > id) itsFirstVacant = id;
+	 }
+
+  void remove(int id)
+	 {
+		if (!isValidId(id)) return;
+
+		if ( itsPtrVec[id].ioObject()->isShared() )
+		  throw ErrorWithMsg("can't remove a shared object");
+
+		release(id);
+	 }
+
+  void clear()
+	 {
+		for (size_t i = 0; i < itsPtrVec.size(); ++i) {
+
+		  DebugEval(i); DebugEvalNL(itsPtrVec[i].ioObject()->refCount());
+		  DebugEvalNL(itsPtrVec[i].ioObject()->isUnshared());
+
+		  if ( !(itsPtrVec[i].ioObject()->isValid()) )
+			 {
+				if (itsFirstVacant > i) itsFirstVacant = i;
+			 }
+		  if ( itsPtrVec[i].ioObject()->isValid() &&
+				 itsPtrVec[i].ioObject()->isUnshared() )
+			 {
+				release(i);
+			 }
+		}
+	 }
+
+  IO::IoObject* getCheckedPtrBase(int id) const throw (InvalidIdError)
+	 {
+		if ( !isValidId(id) ) {
+		  InvalidIdError err("attempt to access invalid id '");
+		  err.appendNumber(id);
+		  err.appendMsg("' in ", demangle_cstr(typeid(*itsOwner).name()));
+		  throw err;
+		}
+
+		DebugEvalNL(itsPtrVec[id].ioObject()->refCount());
+		return itsPtrVec[id].ioObject();
+	 }
+
+  int insertPtrBase(IO::IoObject* ptr)
+	 {
+		int existing_site = findPtr(ptr);
+
+		if (existing_site != -1)
+		  return existing_site;
+
+		int new_site = itsFirstVacant;
+		insertPtrBaseAt(new_site, ptr);
+		return new_site;              // return the id of the inserted void*
+	 }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -192,128 +289,6 @@ void PtrListBase::Impl::ensureNotDuplicate(IO::IoObject* ptr) {
 DOTRACE("PtrListBase::Impl::ensureNotDuplicate");
 
   Assert(findPtr(ptr) == -1); 
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// PtrListBase member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-PtrListBase::PtrListBase(int size) :
-  itsImpl(new Impl(size))
-{
-DOTRACE("PtrListBase::PtrListBase");
-}
-
-PtrListBase::~PtrListBase() {
-DOTRACE("PtrListBase::~PtrListBase");
-  delete itsImpl; 
-}
-
-int PtrListBase::capacity() const {
-DOTRACE("PtrListBase::capacity");
-  return itsImpl->capacity();
-}
-
-int PtrListBase::count() const {
-DOTRACE("PtrListBase::count");
-  // Count the number of null pointers. In the STL call count, we must
-  // cast the value (NULL) so that template deduction treats it as a
-  // pointer rather than an int. Then return the number of non-null
-  // pointers, i.e. the size of the container less the number of null
-  // pointers.
-  int num_non_null=0; 
-  for (Impl::VecType::iterator
-			itr = itsImpl->itsPtrVec.begin(),
-			end = itsImpl->itsPtrVec.end();
-		 itr != end;
-		 ++itr)
-	 {
-		if (itr->ioObject()->isValid()) ++num_non_null;
-	 }
-  
-  return num_non_null;
-}
-
-bool PtrListBase::isValidId(int id) const {
-DOTRACE("PtrListBase::isValidId");
-
-  DebugEval(id);
-  DebugEval(id>=0);
-  DebugEvalNL(itsImpl->itsPtrVec.size());
-  DebugEvalNL(id<itsImpl->itsPtrVec.size());
-
-  return ( id >= 0 && size_t(id) < itsImpl->itsPtrVec.size() &&
-			  itsImpl->itsPtrVec[id].ioObject()->isValid() );
-}
-
-void PtrListBase::remove(int id) {
-DOTRACE("PtrListBase::remove");
-  if (!isValidId(id)) return;
-
-  if ( itsImpl->itsPtrVec[id].ioObject()->isShared() )
-	 throw ErrorWithMsg("can't remove a shared object");
-
-  release(id);
-}
-
-void PtrListBase::release(int id) {
-DOTRACE("PtrListBase::release");
-  if (!isValidId(id)) return;
-
-  itsImpl->itsPtrVec[id] = IoPtrHandle();
-
-  // reset itsImpl->itsFirstVacant in case i would now be the first vacant
-  if (itsImpl->itsFirstVacant > id) itsImpl->itsFirstVacant = id;
-}
-
-void PtrListBase::clear() {
-DOTRACE("PtrListBase::clear");
-  DebugEvalNL(typeid(*this).name());
-  for (size_t i = 0; i < itsImpl->itsPtrVec.size(); ++i) {
-
-	 DebugEval(i); DebugEvalNL(itsImpl->itsPtrVec[i].ioObject()->refCount());
-	 DebugEvalNL(itsImpl->itsPtrVec[i].ioObject()->isUnshared());
-
-	 if ( !(itsImpl->itsPtrVec[i].ioObject()->isValid()) )
-		{
-		  if (itsImpl->itsFirstVacant > i) itsImpl->itsFirstVacant = i;
-		}
-	 if ( itsImpl->itsPtrVec[i].ioObject()->isValid() &&
-			itsImpl->itsPtrVec[i].ioObject()->isUnshared() )
-		{
-		  release(i);
-		}
-  }
-}
-
-IO::IoObject* PtrListBase::getCheckedPtrBase(int id) const throw (InvalidIdError) {
-DOTRACE("PtrListBase::getCheckedPtrBase");
-  if ( !isValidId(id) ) {
-	 InvalidIdError err("attempt to access invalid id '");
-	 err.appendNumber(id);
-	 err.appendMsg("' in ", demangle_cstr(typeid(*this).name()));
-	 throw err;
-  }
-
-  DebugEvalNL(itsImpl->itsPtrVec[id].ioObject()->refCount());
-  return itsImpl->itsPtrVec[id].ioObject();
-}
-
-int PtrListBase::insertPtrBase(IO::IoObject* ptr) {
-DOTRACE("PtrListBase::insertPtrBase");
-
-  ensureCorrectType(ptr); 
-
-  int existing_site = itsImpl->findPtr(ptr);
-
-  if (existing_site != -1)
-	 return existing_site;
-
-  int new_site = itsImpl->itsFirstVacant;
-  itsImpl->insertPtrBaseAt(new_site, ptr);
-  return new_site;              // return the id of the inserted void*
 }
 
 void PtrListBase::Impl::insertPtrBaseAt(int id, IO::IoObject* ptr) {
@@ -369,6 +344,68 @@ DOTRACE("PtrListBase::Impl::insertPtrBaseAt");
 	 { ++itsFirstVacant; }
 
   DebugEvalNL(itsFirstVacant);
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// PtrListBase member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+PtrListBase::PtrListBase(int size) :
+  itsImpl(new Impl(this, size))
+{
+DOTRACE("PtrListBase::PtrListBase");
+}
+
+PtrListBase::~PtrListBase() {
+DOTRACE("PtrListBase::~PtrListBase");
+  delete itsImpl; 
+}
+
+int PtrListBase::capacity() const {
+DOTRACE("PtrListBase::capacity");
+  return itsImpl->capacity();
+}
+
+int PtrListBase::count() const {
+DOTRACE("PtrListBase::count");
+
+  return itsImpl->count();
+}
+
+bool PtrListBase::isValidId(int id) const {
+DOTRACE("PtrListBase::isValidId");
+  return itsImpl->isValidId(id);
+}
+
+void PtrListBase::remove(int id) {
+DOTRACE("PtrListBase::remove");
+  itsImpl->remove(id);
+}
+
+void PtrListBase::release(int id) {
+DOTRACE("PtrListBase::release");
+  itsImpl->release(id);
+}
+
+void PtrListBase::clear() {
+DOTRACE("PtrListBase::clear");
+  DebugEvalNL(typeid(*this).name());
+  itsImpl->clear();
+}
+
+IO::IoObject* PtrListBase::getCheckedPtrBase(int id) const throw (InvalidIdError) {
+DOTRACE("PtrListBase::getCheckedPtrBase");
+  return itsImpl->getCheckedPtrBase(id);
+}
+
+int PtrListBase::insertPtrBase(IO::IoObject* ptr) {
+DOTRACE("PtrListBase::insertPtrBase");
+
+  ensureCorrectType(ptr); 
+
+  return itsImpl->insertPtrBase(ptr);
 }
 
 static const char vcid_ptrlistbase_cc[] = "$Header$";
