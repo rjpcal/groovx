@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Aug  5 11:34:10 2002
+// written: Mon Aug  5 13:15:06 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -111,11 +111,10 @@ private:
   Impl& operator=(const Impl&);
 
 public:
-  Impl(Togl* owner, Tcl_Interp* interp,
-       const char* pathname, int config_argc, const char** config_argv);
+  Impl(Togl* owner, Tcl_Interp* interp, const char* pathname);
   ~Impl();
 
-  int configure(Tcl_Interp* interp, int argc, const char* argv[], int flags);
+  int configure(Tcl_Interp* interp, int argc, const char* argv[]);
 
   void makeCurrent() const;
 
@@ -258,98 +257,105 @@ public:
  * Setup Togl widget configuration options:
  */
 
-static Tk_ConfigSpec configSpecsNew[] =
+namespace
 {
-  {TK_CONFIG_PIXELS, (char*)"-height", (char*)"height", (char*)"Height",
-   (char*)DEFAULT_HEIGHT, Tk_Offset(ToglOpts, height), 0, NULL},
+  const int TOGL_GLX_OPTION = 0x1;
 
-  {TK_CONFIG_PIXELS, (char*)"-width", (char*)"width", (char*)"Width",
-   (char*)DEFAULT_WIDTH, Tk_Offset(ToglOpts, width), 0, NULL},
+  Tk_OptionTable toglOptionTable = 0;
 
-  {TK_CONFIG_BOOLEAN, (char*)"-rgba", (char*)"rgba", (char*)"Rgba",
+  Tk_OptionSpec optionSpecs[] =
+  {
+    {TK_OPTION_PIXELS, (char*)"-width", (char*)"width", (char*)"Width",
+     (char*)DEFAULT_WIDTH, -1, Tk_Offset(ToglOpts, width), 0, NULL, 0},
+
+    {TK_OPTION_PIXELS, (char*)"-height", (char*)"height", (char*)"Height",
+     (char*)DEFAULT_HEIGHT, -1, Tk_Offset(ToglOpts, height), 0, NULL, 0},
+
+    {TK_OPTION_BOOLEAN, (char*)"-rgba", (char*)"rgba", (char*)"Rgba",
 #ifndef NO_RGBA
-   (char*)"true",
+     (char*)"true",
 #else
-   (char*)"false",
+     (char*)"false",
 #endif
-   Tk_Offset(ToglOpts, glx.rgbaFlag), 0, NULL},
+     -1, Tk_Offset(ToglOpts, glx.rgbaFlag), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_INT, (char*)"-redsize", (char*)"redsize", (char*)"RedSize",
-   (char*)"1", Tk_Offset(ToglOpts, glx.rgbaRed), 0, NULL},
+    {TK_OPTION_INT, (char*)"-redsize", (char*)"redsize", (char*)"RedSize",
+     (char*)"1", -1, Tk_Offset(ToglOpts, glx.rgbaRed), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_INT, (char*)"-greensize", (char*)"greensize", (char*)"GreenSize",
-   (char*)"1", Tk_Offset(ToglOpts, glx.rgbaGreen), 0, NULL},
+    {TK_OPTION_INT, (char*)"-greensize", (char*)"greensize", (char*)"GreenSize",
+     (char*)"1", -1, Tk_Offset(ToglOpts, glx.rgbaGreen), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_INT, (char*)"-bluesize", (char*)"bluesize", (char*)"BlueSize",
-   (char*)"1", Tk_Offset(ToglOpts, glx.rgbaBlue), 0, NULL},
+    {TK_OPTION_INT, (char*)"-bluesize", (char*)"bluesize", (char*)"BlueSize",
+     (char*)"1", -1, Tk_Offset(ToglOpts, glx.rgbaBlue), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_INT, (char*)"-colorindexsize", (char*)"colorindexsize", (char*)"ColorIndexSize",
-   (char*)"8", Tk_Offset(ToglOpts, glx.colorIndexSize), 0, NULL},
+    {TK_OPTION_INT, (char*)"-colorindexsize", (char*)"colorindexsize", (char*)"ColorIndexSize",
+     (char*)"8", -1, Tk_Offset(ToglOpts, glx.colorIndexSize), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_BOOLEAN, (char*)"-double", (char*)"double", (char*)"Double",
+    {TK_OPTION_BOOLEAN, (char*)"-double", (char*)"double", (char*)"Double",
 #ifndef NO_DOUBLE_BUFFER
-   (char*)"true",
+     (char*)"true",
 #else
-   (char*)"false",
+     (char*)"false",
 #endif
-   Tk_Offset(ToglOpts, glx.doubleFlag), 0, NULL},
+     -1, Tk_Offset(ToglOpts, glx.doubleFlag), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_BOOLEAN, (char*)"-depth", (char*)"depth", (char*)"Depth",
-   (char*)"true", Tk_Offset(ToglOpts, glx.depthFlag), 0, NULL},
+    {TK_OPTION_BOOLEAN, (char*)"-depth", (char*)"depth", (char*)"Depth",
+     (char*)"true", -1, Tk_Offset(ToglOpts, glx.depthFlag), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_INT, (char*)"-depthsize", (char*)"depthsize", (char*)"DepthSize",
-   (char*)"8", Tk_Offset(ToglOpts, glx.depthSize), 0, NULL},
+    {TK_OPTION_INT, (char*)"-depthsize", (char*)"depthsize", (char*)"DepthSize",
+     (char*)"8", -1, Tk_Offset(ToglOpts, glx.depthSize), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_BOOLEAN, (char*)"-accum", (char*)"accum", (char*)"Accum",
-   (char*)"false", Tk_Offset(ToglOpts, glx.accumFlag), 0, NULL},
+    {TK_OPTION_BOOLEAN, (char*)"-accum", (char*)"accum", (char*)"Accum",
+     (char*)"false", -1, Tk_Offset(ToglOpts, glx.accumFlag), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_INT, (char*)"-accumredsize", (char*)"accumredsize", (char*)"AccumRedSize",
-   (char*)"1", Tk_Offset(ToglOpts, glx.accumRed), 0, NULL},
+    {TK_OPTION_INT, (char*)"-accumredsize", (char*)"accumredsize", (char*)"AccumRedSize",
+     (char*)"1", -1, Tk_Offset(ToglOpts, glx.accumRed), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_INT, (char*)"-accumgreensize", (char*)"accumgreensize", (char*)"AccumGreenSize",
-   (char*)"1", Tk_Offset(ToglOpts, glx.accumGreen), 0, NULL},
+    {TK_OPTION_INT, (char*)"-accumgreensize", (char*)"accumgreensize", (char*)"AccumGreenSize",
+     (char*)"1", -1, Tk_Offset(ToglOpts, glx.accumGreen), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_INT, (char*)"-accumbluesize", (char*)"accumbluesize", (char*)"AccumBlueSize",
-   (char*)"1", Tk_Offset(ToglOpts, glx.accumBlue), 0, NULL},
+    {TK_OPTION_INT, (char*)"-accumbluesize", (char*)"accumbluesize", (char*)"AccumBlueSize",
+     (char*)"1", -1, Tk_Offset(ToglOpts, glx.accumBlue), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_INT, (char*)"-accumalphasize", (char*)"accumalphasize", (char*)"AccumAlphaSize",
-   (char*)"1", Tk_Offset(ToglOpts, glx.accumAlpha), 0, NULL},
+    {TK_OPTION_INT, (char*)"-accumalphasize", (char*)"accumalphasize", (char*)"AccumAlphaSize",
+     (char*)"1", -1, Tk_Offset(ToglOpts, glx.accumAlpha), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_BOOLEAN, (char*)"-alpha", (char*)"alpha", (char*)"Alpha",
-   (char*)"false", Tk_Offset(ToglOpts, glx.alphaFlag), 0, NULL},
+    {TK_OPTION_BOOLEAN, (char*)"-alpha", (char*)"alpha", (char*)"Alpha",
+     (char*)"false", -1, Tk_Offset(ToglOpts, glx.alphaFlag), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_INT, (char*)"-alphasize", (char*)"alphasize", (char*)"AlphaSize",
-   (char*)"1", Tk_Offset(ToglOpts, glx.alphaSize), 0, NULL},
+    {TK_OPTION_INT, (char*)"-alphasize", (char*)"alphasize", (char*)"AlphaSize",
+     (char*)"1", -1, Tk_Offset(ToglOpts, glx.alphaSize), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_BOOLEAN, (char*)"-stencil", (char*)"stencil", (char*)"Stencil",
-   (char*)"false", Tk_Offset(ToglOpts, glx.stencilFlag), 0, NULL},
+    {TK_OPTION_BOOLEAN, (char*)"-stencil", (char*)"stencil", (char*)"Stencil",
+     (char*)"false", -1, Tk_Offset(ToglOpts, glx.stencilFlag), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_INT, (char*)"-stencilsize", (char*)"stencilsize", (char*)"StencilSize",
-   (char*)"1", Tk_Offset(ToglOpts, glx.stencilSize), 0, NULL},
+    {TK_OPTION_INT, (char*)"-stencilsize", (char*)"stencilsize", (char*)"StencilSize",
+     (char*)"1", -1, Tk_Offset(ToglOpts, glx.stencilSize), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_INT, (char*)"-auxbuffers", (char*)"auxbuffers", (char*)"AuxBuffers",
-   (char*)"0", Tk_Offset(ToglOpts, glx.auxNumber), 0, NULL},
+    {TK_OPTION_INT, (char*)"-auxbuffers", (char*)"auxbuffers", (char*)"AuxBuffers",
+     (char*)"0", -1, Tk_Offset(ToglOpts, glx.auxNumber), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_BOOLEAN, (char*)"-privatecmap", (char*)"privateCmap", (char*)"PrivateCmap",
-   (char*)"false", Tk_Offset(ToglOpts, privateCmapFlag), 0, NULL},
+    {TK_OPTION_BOOLEAN, (char*)"-indirect", (char*)"indirect", (char*)"Indirect",
+     (char*)"false", -1, Tk_Offset(ToglOpts, glx.indirect), 0, NULL, TOGL_GLX_OPTION},
 
-  {TK_CONFIG_BOOLEAN, (char*)"-overlay", (char*)"overlay", (char*)"Overlay",
-   (char*)"false", Tk_Offset(ToglOpts, overlayFlag), 0, NULL},
+    {TK_OPTION_BOOLEAN, (char*)"-privatecmap", (char*)"privateCmap", (char*)"PrivateCmap",
+     (char*)"false", -1, Tk_Offset(ToglOpts, privateCmapFlag), 0, NULL, 0},
+
+    {TK_OPTION_BOOLEAN, (char*)"-overlay", (char*)"overlay", (char*)"Overlay",
+     (char*)"false", -1, Tk_Offset(ToglOpts, overlayFlag), 0, NULL, 0},
 
 #ifndef NO_TK_CURSOR
-  { TK_CONFIG_ACTIVE_CURSOR, (char*)"-cursor", (char*)"cursor", (char*)"Cursor",
-    (char*)"", Tk_Offset(ToglOpts, cursor), TK_CONFIG_NULL_OK, NULL },
+    { TK_OPTION_CURSOR, (char*)"-cursor", (char*)"cursor", (char*)"Cursor",
+      (char*)"", -1, Tk_Offset(ToglOpts, cursor), TK_OPTION_NULL_OK, NULL , 0},
 #endif
 
-  {TK_CONFIG_INT, (char*)"-time", (char*)"time", (char*)"Time",
-   (char*)DEFAULT_TIME, Tk_Offset(ToglOpts, time), 0, NULL},
+    {TK_OPTION_INT, (char*)"-time", (char*)"time", (char*)"Time",
+     (char*)DEFAULT_TIME, -1, Tk_Offset(ToglOpts, time), 0, NULL, 0},
 
-  {TK_CONFIG_BOOLEAN, (char*)"-indirect", (char*)"indirect", (char*)"Indirect",
-   (char*)"false", Tk_Offset(ToglOpts, glx.indirect), 0, NULL},
-
-  {TK_CONFIG_END, (char *) NULL, (char *) NULL, (char *) NULL,
-   (char *) NULL, 0, 0, NULL}
-};
+    {TK_OPTION_END, (char*) 0, (char*) 0, (char *) 0,
+     (char*) 0, 0, 0, 0, NULL, 0}
+  };
+}
 
 
 static Togl_Callback *DefaultCreateProc = NULL;
@@ -403,8 +409,8 @@ void Togl::setReshapeFunc( Togl_Callback *proc )
 void Togl::setDestroyFunc( Togl_Callback *proc )
   { rep->setDestroyFunc(proc); }
 
-int Togl::configure(Tcl_Interp *interp, int argc, const char *argv[], int flags)
-  { return rep->configure(interp, argc, argv, flags); }
+int Togl::configure(Tcl_Interp *interp, int argc, const char *argv[])
+  { return rep->configure(interp, argc, argv); }
 
 void Togl::makeCurrent() const
   { rep->makeCurrent(); }
@@ -483,8 +489,17 @@ DOTRACE("<togl.cc>::Togl_WidgetCmd");
       if (argc == 2)
         {
           /* Return list of all configuration parameters */
-          result = Tk_ConfigureInfo(interp, impl->tkWin(), configSpecsNew,
-                                    (char*) &impl->itsOpts, (char*)NULL, 0);
+          Tcl_Obj* objResult =
+            Tk_GetOptionInfo(interp, (char*) &impl->itsOpts, toglOptionTable,
+                             (Tcl_Obj*)NULL, impl->tkWin());
+          if (objResult != 0)
+            {
+              Tcl_SetObjResult(interp, objResult);
+            }
+          else
+            {
+              result = TCL_ERROR;
+            }
         }
       else if (argc == 3)
         {
@@ -498,16 +513,27 @@ DOTRACE("<togl.cc>::Togl_WidgetCmd");
           else
             {
               /* Return a specific configuration parameter */
-              result = Tk_ConfigureInfo(interp, impl->tkWin(), configSpecsNew,
-                                        (char*) &impl->itsOpts, argv[2], 0);
+              Tcl_Obj* optName = Tcl_NewStringObj(argv[2], -1);
+              Tcl_IncrRefCount(optName);
+              Tcl_Obj* objResult =
+                Tk_GetOptionInfo(interp, (char*) &impl->itsOpts, toglOptionTable,
+                                 optName, impl->tkWin());
+              Tcl_DecrRefCount(optName);
+              if (objResult != 0)
+                {
+                  Tcl_SetObjResult(interp, objResult);
+                }
+              else
+                {
+                  result = TCL_ERROR;
+                }
             }
         }
       else
         {
           /* Execute a configuration change */
           result = impl->configure(interp, argc-2,
-                                   const_cast<const char**>(argv+2),
-                                   TK_CONFIG_ARGV_ONLY);
+                                   const_cast<const char**>(argv+2));
         }
     }
   else if (!strncmp(argv[1], "render", Util::max((std::size_t)1,
@@ -669,9 +695,8 @@ int Togl::dumpToEpsFile( const char *filename, int inColor,
 //
 ///////////////////////////////////////////////////////////////////////
 
-Togl::Togl(Tcl_Interp* interp, const char* pathname,
-           int config_argc, const char** config_argv) :
-  rep(new Impl(this, interp, pathname, config_argc, config_argv))
+Togl::Togl(Tcl_Interp* interp, const char* pathname) :
+  rep(new Impl(this, interp, pathname))
 {
 DOTRACE("Togl::Togl");
 }
@@ -688,9 +713,7 @@ DOTRACE("Togl::~Togl");
 //     * Creates a command that handles this object
 //     * Configures this Togl for the given arguments
 
-Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
-                 const char* pathname,
-                 int config_argc, const char** config_argv) :
+Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp, const char* pathname) :
   itsOwner(owner),
 
   itsGlx(0),
@@ -716,8 +739,6 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
 {
 DOTRACE("Togl::Impl::Impl");
 
-  itsOpts.toDefaults();
-
   /* Create the window. */
   Tk_Window mainwin = Tk_MainWindow(interp);
   itsTkWin = Tk_CreateWindowFromPath(itsInterp, mainwin,
@@ -732,31 +753,22 @@ DOTRACE("Togl::Impl::Impl");
 
   Tk_SetClass(itsTkWin, (char*)"Togl");
 
-  // Configure the widget
-  if (config_argc > 0 )
+  if (toglOptionTable == 0)
     {
-      if (configure(itsInterp, config_argc, config_argv, 0) == TCL_ERROR)
-        {
-          Tk_DestroyWindow(itsTkWin);
-          throw Util::Error("Togl constructor couldn't configure widget");
-        }
-    }
-  else
-    {
-      // Generate a default argc/argv array
-      const char* init_args = "-time 1";
-
-      Tcl_SplitList(interp, init_args, &config_argc, &config_argv);
-
-      if (configure(itsInterp, config_argc, config_argv, 0) == TCL_ERROR)
-        {
-          Tk_DestroyWindow(itsTkWin);
-          throw Util::Error("Togl constructor couldn't configure widget");
-        }
-
-      Tcl_Free((char*) config_argv);
+      toglOptionTable = Tk_CreateOptionTable(interp, optionSpecs);
     }
 
+  itsOpts.toDefaults();
+
+  if (Tk_InitOptions(interp, reinterpret_cast<char*>(&itsOpts),
+                     toglOptionTable, itsTkWin) == TCL_ERROR)
+    {
+      Tk_DestroyWindow(itsTkWin);
+      throw Util::Error(fstring("Togl couldn't initialize options:\n",
+                                Tcl_GetStringResult(itsInterp)));
+    }
+
+  Tk_GeometryRequest(itsTkWin, itsOpts.width, itsOpts.height);
 
   // If OpenGL window wasn't already created by configure() we
   // create it now.  We can tell by checking if the GLX context has
@@ -798,7 +810,7 @@ Togl::Impl::~Impl()
 {
 DOTRACE("Togl::Impl::~Impl");
 
-  Tk_FreeOptions(configSpecsNew, (char*) &itsOpts, itsDisplay, 0);
+  Tk_FreeConfigOptions((char*) &itsOpts, toglOptionTable, itsTkWin);
 
   if (itsDestroyProc)
     {
@@ -813,58 +825,40 @@ DOTRACE("Togl::Impl::~Impl");
 //
 //---------------------------------------------------------------------
 
-int Togl::Impl::configure(Tcl_Interp* interp,
-                          int argc, const char* argv[], int flags)
+int Togl::Impl::configure(Tcl_Interp* interp, int argc, const char* argv[])
 {
 DOTRACE("Togl::Impl::configure");
 
-  int oldRgbaFlag       = itsOpts.glx.rgbaFlag;
-  int oldRgbaRed        = itsOpts.glx.rgbaRed;
-  int oldRgbaGreen      = itsOpts.glx.rgbaGreen;
-  int oldRgbaBlue       = itsOpts.glx.rgbaBlue;
-  int oldColorIndexSize = itsOpts.glx.colorIndexSize;
-  int oldDoubleFlag     = itsOpts.glx.doubleFlag;
-  int oldDepthFlag      = itsOpts.glx.depthFlag;
-  int oldDepthSize      = itsOpts.glx.depthSize;
-  int oldAccumFlag      = itsOpts.glx.accumFlag;
-  int oldAccumRed       = itsOpts.glx.accumRed;
-  int oldAccumGreen     = itsOpts.glx.accumGreen;
-  int oldAccumBlue      = itsOpts.glx.accumBlue;
-  int oldAccumAlpha     = itsOpts.glx.accumAlpha;
-  int oldAlphaFlag      = itsOpts.glx.alphaFlag;
-  int oldAlphaSize      = itsOpts.glx.alphaSize;
-  int oldStencilFlag    = itsOpts.glx.stencilFlag;
-  int oldStencilSize    = itsOpts.glx.stencilSize;
-  int oldAuxNumber      = itsOpts.glx.auxNumber;
+  Tcl_Obj** objv = new Tcl_Obj*[argc+1];
 
-  if (Tk_ConfigureWidget(interp, itsTkWin, configSpecsNew,
-                         argc, const_cast<char**>(argv),
-                         reinterpret_cast<char *>(&itsOpts), flags)
+  for (int i = 0; i < argc; ++i)
+    {
+      objv[i] = Tcl_NewStringObj(argv[i], -1);
+      Tcl_IncrRefCount(objv[i]);
+    }
+
+  objv[argc] = 0;
+
+  int mask = 0;
+
+  if (Tk_SetOptions(interp, reinterpret_cast<char *>(&itsOpts),
+                    toglOptionTable, argc, objv, itsTkWin,
+                    (Tk_SavedOptions*) 0, &mask)
       == TCL_ERROR)
     {
       return TCL_ERROR;
     }
 
+  for (int i = 0; i < argc; ++i)
+    {
+      Tcl_DecrRefCount(objv[i]);
+    }
+
+  delete [] objv;
+
   Tk_GeometryRequest(itsTkWin, itsOpts.width, itsOpts.height);
 
-  if (itsOpts.glx.rgbaFlag != oldRgbaFlag
-      || itsOpts.glx.rgbaRed != oldRgbaRed
-      || itsOpts.glx.rgbaGreen != oldRgbaGreen
-      || itsOpts.glx.rgbaBlue != oldRgbaBlue
-      || itsOpts.glx.colorIndexSize != oldColorIndexSize
-      || itsOpts.glx.doubleFlag != oldDoubleFlag
-      || itsOpts.glx.depthFlag != oldDepthFlag
-      || itsOpts.glx.depthSize != oldDepthSize
-      || itsOpts.glx.accumFlag != oldAccumFlag
-      || itsOpts.glx.accumRed != oldAccumRed
-      || itsOpts.glx.accumGreen != oldAccumGreen
-      || itsOpts.glx.accumBlue != oldAccumBlue
-      || itsOpts.glx.accumAlpha != oldAccumAlpha
-      || itsOpts.glx.alphaFlag != oldAlphaFlag
-      || itsOpts.glx.alphaSize != oldAlphaSize
-      || itsOpts.glx.stencilFlag != oldStencilFlag
-      || itsOpts.glx.stencilSize != oldStencilSize
-      || itsOpts.glx.auxNumber != oldAuxNumber)
+  if (mask & TOGL_GLX_OPTION)
     {
       /* Have to recreate the window and GLX context */
       if (makeWindowExist()==TCL_ERROR)
@@ -1169,19 +1163,21 @@ DOTRACE("Togl::Impl::eventProc");
       break;
     case DestroyNotify:
       DebugPrintNL("DestroyNotify");
-      if (itsTkWin != NULL)
+      if (itsWidgetCmd != 0)
         {
-          itsTkWin = NULL;
           Tcl_DeleteCommandFromToken( itsInterp, itsWidgetCmd );
+          itsWidgetCmd = 0;
         }
-      if (itsTimerProc != NULL)
+      if (itsTimerProc != 0)
         {
           Tcl_DeleteTimerHandler(itsTimerHandler);
+          itsTimerProc = 0;
         }
       if (itsUpdatePending)
         {
           Tcl_CancelIdleCall(Togl::Impl::dummyRenderCallback,
                              static_cast<ClientData>(this));
+          itsUpdatePending = 0;
         }
 
       Tcl_EventuallyFree( static_cast<ClientData>(this),
@@ -1465,7 +1461,8 @@ namespace
     /* Create Togl data structure */
     try
       {
-        new Togl(interp, argv[1], argc-2, const_cast<const char**>(argv+2));
+        Togl* p = new Togl(interp, argv[1]);
+        p->configure(interp, argc-2, const_cast<const char**>(argv+2));
       }
     catch (...)
       {
