@@ -3,7 +3,7 @@
 // tclitempkgbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Dec 16 15:25:06 1999
-// written: Wed Mar 29 14:07:32 2000
+// written: Fri May 19 19:08:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,8 @@ struct Tcl_Interp;
 template <class T>
 class Getter {
 public:
+  virtual ~Getter() {}
+
   /** Should be overridden by subclasses to cast \a item to the
       appropriate type, then call the appropriate member and return
       its result. */
@@ -41,6 +43,8 @@ public:
 template <class T>
 class Setter {
 public:
+  virtual ~Setter() {}
+
   /** Should be overridden by subclasses to cast \a item to the
       appropriate type, then call the appropriate member with \a val
       as the lone argument. */
@@ -57,6 +61,8 @@ class Attrib : public virtual Getter<T>, public virtual Setter<T> {};
     with no argument and no return value). */
 class Action {
 public:
+  virtual ~Action() {}
+
   /** Should be overridden by subclasses to cast \a item to the
       appropriate type, then perform an appropriate action on the result. */
   virtual void action(void* item) = 0;
