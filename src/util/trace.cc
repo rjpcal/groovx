@@ -302,26 +302,30 @@ Util::Prof::~Prof() throw()
 {
   if (PRINT_AT_EXIT)
     {
-      static STD_IO::ofstream* stream = 0;
+      static FILE* file = 0;
       static bool inited = false;
 
       if (!inited)
         {
-          stream = new (std::nothrow) STD_IO::ofstream(PDATA_FILE);
+          file = fopen(PDATA_FILE, "w");
 
-          // need this extra state flag since it's possible that the new
-          // call above fails, so we can't simply check (stream != 0) to
-          // see if initialization has already been tried
+          // need this extra state flag since it's possible that the
+          // fopen() call above fails, so we can't simply check (file!=0)
+          // to see if initialization has already been tried
           inited = true;
         }
 
-      if (stream && stream->good())
+      if (file != 0)
         {
-          printProfData(*stream);
+          printProfData(file);
+          fprintf(file, "%10ld %6d %10ld %10ld %s\n",
+                  long(avgTime()), count(),
+                  long(selfTime()), long(totalTime()),
+                  itsFuncName);
         }
       else
         {
-          STD_IO::cerr << "profile stream not good\n";
+          fprintf(stderr, "couldn't write to profile file\n");
         }
     }
 }
@@ -373,6 +377,16 @@ double Util::Prof::avgTime() const throw()
   return itsCallCount > 0 ? (totalTime() / itsCallCount) : 0.0;
 }
 
+void Util::Prof::printProfData(FILE* file) const throw()
+{
+  Assert(file != 0);
+
+  fprintf(file, "%10ld %6d %10ld %10ld %s\n",
+          long(avgTime()), count(),
+          long(selfTime()), long(totalTime()),
+          itsFuncName);
+}
+
 void Util::Prof::printProfData(std::ostream& os) const throw()
 {
   os.exceptions(STD_IO::ios::goodbit);
@@ -381,7 +395,7 @@ void Util::Prof::printProfData(std::ostream& os) const throw()
      << std::setw(6) << count() << ' '
      << std::setw(10) << long(selfTime()) << ' '
      << std::setw(10) << long(totalTime()) << ' '
-     << itsFuncName << std::endl;
+     << itsFuncName << '\n';
 }
 
 void Util::Prof::printAtExit(bool yes_or_no) throw()
@@ -403,10 +417,19 @@ namespace
   }
 }
 
+void Util::Prof::printAllProfData(FILE* file) throw()
+{
+  std::stable_sort(allProfs().begin(), allProfs().end(), compareTotalTime);
+
+  for (unsigned int i = 0; i < allProfs().size(); ++i)
+    {
+      if (allProfs()[i]->count() > 0)
+        allProfs()[i]->printProfData(file);
+    }
+}
+
 void Util::Prof::printAllProfData(STD_IO::ostream& os) throw()
 {
-  os.exceptions(STD_IO::ios::goodbit);
-
   std::stable_sort(allProfs().begin(), allProfs().end(), compareTotalTime);
 
   for (unsigned int i = 0; i < allProfs().size(); ++i)
