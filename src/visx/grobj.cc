@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Thu Jul 19 13:10:35 2001
+// written: Fri Aug 10 10:46:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -117,7 +117,7 @@ DOTRACE("GrObj::getBBVisibility");
   return itsImpl->itsBB.isVisible();
 }
 
-void GrObj::getBoundingBox(GWT::Canvas& canvas, Rect<double>& bbox) const
+void GrObj::getBoundingBox(Gfx::Canvas& canvas, Rect<double>& bbox) const
 {
 DOTRACE("GrObj::getBoundingBox");
 
@@ -304,7 +304,7 @@ DOTRACE("GrObj::receiveDestroyMsg");
 // actions //
 /////////////
 
-void GrObj::saveBitmapCache(GWT::Canvas& canvas, const char* filename) const {
+void GrObj::saveBitmapCache(Gfx::Canvas& canvas, const char* filename) const {
   itsImpl->itsRenderer.saveBitmapCache(itsImpl, canvas, filename);
 }
 
@@ -312,15 +312,15 @@ void GrObj::restoreBitmapCache() const {
   itsImpl->itsRenderer.restoreBitmapCache();
 }
 
-void GrObj::update(GWT::Canvas& canvas) const {
+void GrObj::update(Gfx::Canvas& canvas) const {
   itsImpl->itsRenderer.update(itsImpl, canvas);
 }
 
-void GrObj::draw(GWT::Canvas& canvas) const {
+void GrObj::draw(Gfx::Canvas& canvas) const {
   itsImpl->draw(canvas);
 }
 
-void GrObj::undraw(GWT::Canvas& canvas) const {
+void GrObj::undraw(Gfx::Canvas& canvas) const {
   itsImpl->undraw(canvas);
 }
 

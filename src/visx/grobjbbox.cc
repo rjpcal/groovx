@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Thu Jul 19 11:08:42 2001
+// written: Fri Aug 10 10:46:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@
 
 Rect<double> GrObjBBox::withBorder(
   const Rect<double>& native,
-  GWT::Canvas& canvas) const
+  Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjBBox::withBorder");
 
@@ -33,7 +33,7 @@ DOTRACE("GrObjBBox::withBorder");
   Rect<int> screen_pos;
 
   {
-    GWT::Canvas::StateSaver state(canvas);
+    Gfx::Canvas::StateSaver state(canvas);
 
     itsOwner->itsScaler.doScaling(canvas);
     itsOwner->itsAligner.doAlignment(canvas, native);
@@ -51,7 +51,7 @@ DOTRACE("GrObjBBox::withBorder");
   return canvas.getWorldFromScreen(screen_pos);
 }
 
-void GrObjBBox::draw(Rect<double>& bounds, GWT::Canvas& canvas) const
+void GrObjBBox::draw(Rect<double>& bounds, Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjBBox::draw");
 

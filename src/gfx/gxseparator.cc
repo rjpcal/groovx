@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Thu Aug  9 06:56:09 2001
+// written: Fri Aug 10 10:56:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,9 @@
 #ifndef GXSEPARATOR_CC_DEFINED
 #define GXSEPARATOR_CC_DEFINED
 
-#include "gx/gxseparator.h"
+#include "gfx/gxseparator.h"
 
-#include "gwt/canvas.h"
+#include "gfx/canvas.h"
 
 #include "io/readutils.h"
 #include "io/writeutils.h"
@@ -196,11 +196,11 @@ DOTRACE("GxSeparator::contains");
   return itsImpl->contains(other);
 }
 
-void GxSeparator::draw(GWT::Canvas& canvas) const
+void GxSeparator::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxSeparator::draw");
 
-  GWT::Canvas::StateSaver state(canvas);
+  Gfx::Canvas::StateSaver state(canvas);
 
   for(ConstChildItr itr = beginChildren(), end = endChildren();
       itr != end;
@@ -210,11 +210,11 @@ DOTRACE("GxSeparator::draw");
     }
 }
 
-void GxSeparator::undraw(GWT::Canvas& canvas) const
+void GxSeparator::undraw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxSeparator::undraw");
 
-  GWT::Canvas::StateSaver state(canvas);
+  Gfx::Canvas::StateSaver state(canvas);
 
   for(ConstChildItr itr = beginChildren(), end = endChildren();
       itr != end;

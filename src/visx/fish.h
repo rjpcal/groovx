@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Thu Jul 19 09:40:38 2001
+// written: Fri Aug 10 10:46:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -116,7 +116,7 @@ public:
 protected:
   virtual Rect<double> grGetBoundingBox() const;
 
-  virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const;
+  virtual void grRender(Gfx::Canvas& canvas, DrawMode mode) const;
 
 private:
   Fish(const Fish&);

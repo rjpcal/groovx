@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jan 25 18:41:19 2000
-// written: Sat Jul 21 19:59:41 2001
+// written: Fri Aug 10 10:50:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,9 +17,13 @@
 #include "io/io.h"
 #endif
 
-namespace GWT
+namespace Gfx
 {
   class Canvas;
+}
+
+namespace GWT
+{
   class Widget;
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:00:57 2001
-// written: Sun Jul 22 23:35:07 2001
+// written: Fri Aug 10 10:46:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ public:
     itsHeightFactor(1.0)
   {}
 
-  void doScaling(GWT::Canvas& canvas) const;
+  void doScaling(Gfx::Canvas& canvas) const;
   GrObj::ScalingMode getMode() const { return itsMode; }
   void setMode(GrObj::ScalingMode new_mode);
 

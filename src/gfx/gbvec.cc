@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:11:19 2000
-// written: Thu Aug  9 13:16:19 2001
+// written: Fri Aug 10 10:56:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef GBVEC_CC_DEFINED
 #define GBVEC_CC_DEFINED
 
-#include "gx/gbvec.h"
+#include "gfx/gbvec.h"
 
 #include "io/reader.h"
 #include "io/writer.h"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Aug  8 20:16:40 2001
+// written: Fri Aug 10 10:46:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -291,7 +291,7 @@ DOTRACE("getX11Window");
   return itsTogl->windowId();
 }
 
-GWT::Canvas& Toglet::getCanvas()
+Gfx::Canvas& Toglet::getCanvas()
 {
 DOTRACE("Toglet::getCanvas");
   itsTogl->makeCurrent();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Aug 10 07:11:30 2001
+// written: Fri Aug 10 10:46:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@ protected:
       constructor. Therefore, subclasses of \c Bitmap should not
       override \c grRender(), but should instead provide a specialized
       \c BmapRenderer. */
-  virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const;
+  virtual void grRender(Gfx::Canvas& canvas, DrawMode mode) const;
 
   virtual Rect<double> grGetBoundingBox() const;
 

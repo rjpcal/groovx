@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:14 1999
-// written: Thu May 10 12:04:39 2001
+// written: Fri Aug 10 10:56:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,11 +14,11 @@
 #define POSITION_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GBVEC_H_DEFINED)
-#include "gx/gbvec.h"
+#include "gfx/gbvec.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GXNODE_H_DEFINED)
-#include "gx/gxnode.h"
+#include "gfx/gxnode.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
@@ -80,11 +80,11 @@ public:
   /////////////
 
   /// Translate, scale, and rotate.
-  virtual void draw(GWT::Canvas&) const;
+  virtual void draw(Gfx::Canvas&) const;
 
   /** Redo most recent draw(). (This is useful if the behavior of
       draw() changes from one call to the next.) */
-  virtual void undraw(GWT::Canvas&) const;
+  virtual void undraw(Gfx::Canvas&) const;
 
 private:
   Position(const Position&);

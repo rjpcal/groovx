@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:20:15 2000
-// written: Mon Aug  6 11:09:28 2001
+// written: Fri Aug 10 10:56:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #define GXSEPARATOR_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GXNODE_H_DEFINED)
-#include "gx/gxnode.h"
+#include "gfx/gxnode.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IODECLS_H_DEFINED)
@@ -73,10 +73,10 @@ public:
   virtual bool contains(GxNode* other) const;
 
   /// Draw all of the contained objects on \a canvas.
-  virtual void draw(GWT::Canvas& canvas) const;
+  virtual void draw(Gfx::Canvas& canvas) const;
 
   /// Undraw all of the contained objects from \a canvas.
-  virtual void undraw(GWT::Canvas& canvas) const;
+  virtual void undraw(Gfx::Canvas& canvas) const;
 
 private:
   GxSeparator(const GxSeparator&);

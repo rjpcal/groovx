@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Sat Jul 21 18:43:50 2001
+// written: Fri Aug 10 10:46:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ public:
   int getX11ScreenNumber() const;
   Window getX11Window() const;
 
-  virtual GWT::Canvas& getCanvas();
+  virtual Gfx::Canvas& getCanvas();
 
   // manipulators
   static void defaultParent(const char* pathname);
@@ -122,7 +122,7 @@ private:
 
   void reconfigure();
 
-  scoped_ptr<GWT::Canvas> itsCanvas;
+  scoped_ptr<Gfx::Canvas> itsCanvas;
 
   Togl* const itsTogl;
   double itsViewingDistance;     // inches

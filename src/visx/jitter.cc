@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:41 1999
-// written: Sat May 19 11:44:06 2001
+// written: Fri Aug 10 10:55:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,8 @@
 
 #include "jitter.h"
 
-#include "gwt/canvas.h"
-
-#include "gx/vec3.h"
+#include "gfx/canvas.h"
+#include "gfx/vec3.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -46,7 +45,7 @@ DOTRACE("Jitter::make");
 }
 
 Jitter::Jitter () :
-  Position(), 
+  Position(),
   itsXJitter(0.0), itsYJitter(0.0), itsRJitter(0.0),
   itsXShift(0.0), itsYShift(0.0), itsRShift(0.0)
 {
@@ -80,7 +79,7 @@ void Jitter::writeTo(IO::Writer* writer) const {
 DOTRACE("Jitter::writeTo");
 
   writer->ensureWriteVersionId("Jitter", JITTER_SERIAL_VERSION_ID, 2,
-										 "Try grsh0.8a4");
+                               "Try grsh0.8a4");
 
   writer->writeValue("jitterX", itsXJitter);
   writer->writeValue("jitterY", itsYJitter);
@@ -100,13 +99,13 @@ DOTRACE("Jitter::rejitter");
   itsRShift = Util::randDoubleRange(-itsRJitter, itsRJitter);
 }
 
-void Jitter::draw(GWT::Canvas& canvas) const {
+void Jitter::draw(Gfx::Canvas& canvas) const {
 DOTRACE("Jitter::draw");
   rejitter();
   undraw(canvas);
 }
 
-void Jitter::undraw(GWT::Canvas& canvas) const {
+void Jitter::undraw(Gfx::Canvas& canvas) const {
 DOTRACE("Jitter::undraw");
   // Translate
   canvas.translate(translation.vec()+Vec3<double>(itsXShift, itsYShift, 0.0));

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Sat Jul 21 18:57:29 2001
+// written: Fri Aug 10 10:50:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,9 +17,13 @@
 #include "util/object.h"
 #endif
 
-namespace GWT
+namespace Gfx
 {
   class Canvas;
+}
+
+namespace GWT
+{
   class Widget;
 
   class ButtonListener;
@@ -66,7 +70,7 @@ public:
   /// Virtual destructor.
   virtual ~Widget();
 
-  virtual Canvas& getCanvas() = 0;
+  virtual Gfx::Canvas& getCanvas() = 0;
 
   virtual void addButtonListener (Util::Ref<GWT::ButtonListener> b);
   virtual void addKeyListener    (Util::Ref<GWT::KeyListener> k);
@@ -97,7 +101,7 @@ public:
 
   void dispatchButtonEvent(unsigned int button, int x, int y);
   void dispatchKeyEvent(const char* keys, int x, int y,
-								bool controlPressed);
+                        bool controlPressed);
 
 private:
   Widget(const Widget&);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 10:55:51 1999
-// written: Wed Aug  8 12:49:51 2001
+// written: Fri Aug 10 10:50:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef APPLICATION_H_DEFINED
 #define APPLICATION_H_DEFINED
 
-namespace GWT
+namespace Gfx
 {
   class Canvas;
 }
@@ -47,7 +47,7 @@ public:
   static Application& theApp();
 
   /// Retrieves the experiment that is running in the application.
-  virtual GWT::Canvas& getCanvas() = 0;
+  virtual Gfx::Canvas& getCanvas() = 0;
 
   int argc() const;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:26:59 1999
-// written: Wed Aug  8 15:29:30 2001
+// written: Fri Aug 10 10:46:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,14 +46,14 @@ DOTRACE("GrshApp::getInterp");
   return itsInterp;
 }
 
-void GrshApp::installCanvas(GWT::Canvas& canvas)
+void GrshApp::installCanvas(Gfx::Canvas& canvas)
 {
 DOTRACE("GrshApp::installCanvas");
   itsCanvas = &canvas;
   Assert(itsCanvas != 0);
 }
 
-GWT::Canvas& GrshApp::getCanvas()
+Gfx::Canvas& GrshApp::getCanvas()
 {
 DOTRACE("GrshApp::getCanvas");
   if (itsCanvas == 0)

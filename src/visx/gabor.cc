@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Thu Aug  9 14:03:04 2001
+// written: Fri Aug 10 10:46:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -135,7 +135,7 @@ DOTRACE("Gabor::grGetBoundingBox");
   return bbox;
 }
 
-void Gabor::grRender(GWT::Canvas&, DrawMode) const
+void Gabor::grRender(Gfx::Canvas&, DrawMode) const
 {
 DOTRACE("Gabor::grRender");
   const double xsigma2 = sigma()*aspectRatio() * sigma()*aspectRatio() ;
@@ -169,17 +169,17 @@ DOTRACE("Gabor::grRender");
           {
             const double unrotated_y = y_step*res_step - 0.5;
 
-				Point<double> point(unrotated_x, unrotated_y);
-				point.rotateDeg(orientation());
+            Point<double> point(unrotated_x, unrotated_y);
+            point.rotateDeg(orientation());
 
-				point -= center;
+            point -= center;
 
             const double gauss_xy =
-				  exp( (point.x())*(point.x()) / (-4.0*xsigma2) +
-						 (point.y())*(point.y()) / (-4.0*ysigma2) );
+              exp( (point.x())*(point.x()) / (-4.0*xsigma2) +
+                   (point.y())*(point.y()) / (-4.0*ysigma2) );
 
             const double sin_x =
-				  sin(2*PI*spatialFreq()*point.x() + phase()*PI/180.0);
+              sin(2*PI*spatialFreq()*point.x() + phase()*PI/180.0);
 
             const double gabor = 0.5*sin_x*gauss_xy*contrast() + 0.5;
 

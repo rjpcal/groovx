@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri Aug 10 07:27:36 2001
+// written: Fri Aug 10 10:55:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,11 +22,11 @@
 #include "point.h"
 #include "rect.h"
 
+#include "gfx/canvas.h"
+
 #include "io/io.h"
 #include "io/reader.h"
 #include "io/writer.h"
-
-#include "gwt/canvas.h"
 
 #include "util/algo.h"
 #include "util/pointers.h"
@@ -276,7 +276,7 @@ DOTRACE("BitmapRep::grabScreenRect");
 void BitmapRep::grabWorldRect(const Rect<double>& world_rect)
 {
 DOTRACE("BitmapRep::grabWorldRect");
-  GWT::Canvas& canvas = Application::theApp().getCanvas();
+  Gfx::Canvas& canvas = Application::theApp().getCanvas();
 
   Rect<int> screen_rect = canvas.getScreenFromWorld(world_rect);
 
@@ -307,7 +307,7 @@ DOTRACE("BitmapRep::flipVertical");
   itsImpl->itsRenderer->notifyBytesChanged();
 }
 
-void BitmapRep::render(GWT::Canvas& canvas) const
+void BitmapRep::render(Gfx::Canvas& canvas) const
 {
 DOTRACE("BitmapRep::render");
 
@@ -326,7 +326,7 @@ Rect<double> BitmapRep::grGetBoundingBox() const
 DOTRACE("BitmapRep::grGetBoundingBox");
 
   // Get screen coordinates for the lower left corner
-  GWT::Canvas& canvas = Application::theApp().getCanvas();
+  Gfx::Canvas& canvas = Application::theApp().getCanvas();
 
   Point<int> screen_point = canvas.getScreenFromWorld(itsImpl->itsRasterPos);
 

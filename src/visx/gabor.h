@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Thu Jul 19 09:41:03 2001
+// written: Fri Aug 10 10:46:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,7 +104,7 @@ public:
 protected:
   virtual Rect<double> grGetBoundingBox() const;
 
-  virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const;
+  virtual void grRender(Gfx::Canvas& canvas, DrawMode mode) const;
 };
 
 static const char vcid_gabor_h[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:38 1999
-// written: Fri Aug 10 10:42:45 2001
+// written: Fri Aug 10 10:56:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef CANVAS_CC_DEFINED
 #define CANVAS_CC_DEFINED
 
-#include "gx/canvas.h"
+#include "gfx/canvas.h"
 
 Gfx::Canvas::~Canvas() {}
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:27:15 2000
-// written: Thu May 10 12:04:44 2001
+// written: Fri Aug 10 10:56:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef GXNODE_CC_DEFINED
 #define GXNODE_CC_DEFINED
 
-#include "gx/gxnode.h"
+#include "gfx/gxnode.h"
 
 #include "util/trace.h"
 

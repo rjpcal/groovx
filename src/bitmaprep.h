@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri Aug 10 07:12:25 2001
+// written: Fri Aug 10 10:50:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ class BmapRenderer;
 template <class V> class Point;
 template <class V> class Rect;
 
-namespace GWT
+namespace Gfx
 {
   class Canvas;
 }
@@ -105,7 +105,7 @@ public:
 
   /** Implements the rendering operation. This function delegates the
       work to itsRenderer. */
-  void render(GWT::Canvas& canvas) const;
+  void render(Gfx::Canvas& canvas) const;
 
   ///////////////
   // accessors //

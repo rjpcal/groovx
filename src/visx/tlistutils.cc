@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Wed Aug  8 15:29:30 2001
+// written: Fri Aug 10 10:55:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,9 +20,8 @@
 #include "rect.h"
 #include "trial.h"
 
-#include "gwt/canvas.h"
-
-#include "gx/gxseparator.h"
+#include "gfx/canvas.h"
+#include "gfx/gxseparator.h"
 
 #include "io/reader.h"
 
@@ -39,7 +38,7 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-Util::UID TlistUtils::createPreview(GWT::Canvas& canvas,
+Util::UID TlistUtils::createPreview(Gfx::Canvas& canvas,
                                     Util::UID* objids,
                                     unsigned int objids_size)
 {

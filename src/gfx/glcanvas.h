@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Thu Jul 19 11:15:24 2001
+// written: Fri Aug 10 10:56:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,10 +14,10 @@
 #define GLCANVAS_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CANVAS_H_DEFINED)
-#include "gwt/canvas.h"
+#include "gfx/canvas.h"
 #endif
 
-class GLCanvas : public GWT::Canvas {
+class GLCanvas : public Gfx::Canvas {
 public:
   virtual ~GLCanvas();
 

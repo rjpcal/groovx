@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Aug  8 20:16:40 2001
+// written: Fri Aug 10 10:46:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -538,7 +538,7 @@ Util::WeakRef<GWT::Widget> ExptDriver::getWidget() const
 void ExptDriver::setWidget(Util::WeakRef<GWT::Widget> widg)
   { itsImpl->itsWidget = widg; }
 
-GWT::Canvas& ExptDriver::getCanvas() const
+Gfx::Canvas& ExptDriver::getCanvas() const
   { return itsImpl->itsWidget->getCanvas(); }
 
 void ExptDriver::edBeginExpt()

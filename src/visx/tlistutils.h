@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 02:58:20 1999
-// written: Mon Aug  6 10:57:53 2001
+// written: Fri Aug 10 10:50:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 #include "util/utilfwd.h"
 #endif
 
-namespace GWT
+namespace Gfx
 {
   class Canvas;
 }
@@ -26,7 +26,7 @@ template <class T> class dynamic_block;
 
 class TlistUtils {
 public:
-  static Util::UID createPreview(GWT::Canvas& canvas,
+  static Util::UID createPreview(Gfx::Canvas& canvas,
                                  Util::UID* objids, unsigned int objids_size);
 
   /** Write a file containing a summary of the responses to each Trial

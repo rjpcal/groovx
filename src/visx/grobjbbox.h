@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 09:06:14 2001
-// written: Thu Jul 19 11:09:38 2001
+// written: Fri Aug 10 10:56:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "rect.h"
 
-#include "gwt/canvas.h"
+#include "gfx/canvas.h"
 
 class GrObjImpl;
 
@@ -32,7 +32,7 @@ public:
   {}
 
   Rect<double> withBorder(const Rect<double>& native,
-                          GWT::Canvas& canvas) const;
+                          Gfx::Canvas& canvas) const;
 
   bool isVisible() const { return itsIsVisible; }
   void setVisible(bool val) { itsIsVisible = val; }
@@ -40,7 +40,7 @@ public:
   void setPixelBorder(int pixels) { itsPixelBorder = pixels; }
   int pixelBorder() const { return itsPixelBorder; }
 
-  void draw(Rect<double>& bounds, GWT::Canvas& canvas) const;
+  void draw(Rect<double>& bounds, Gfx::Canvas& canvas) const;
 
 private:
   // data

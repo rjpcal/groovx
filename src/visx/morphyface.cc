@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Thu Aug  9 12:00:43 2001
+// written: Fri Aug 10 10:55:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,11 +22,11 @@
 #include "bezier.h"
 #include "rect.h"
 
+#include "gfx/canvas.h"
+
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
-
-#include "gwt/canvas.h"
 
 #include "util/algo.h"
 
@@ -272,7 +272,7 @@ DOTRACE("MorphyFace::writeTo");
 // Actions
 ///////////////////////////////////////////////////////////////////////
 
-void MorphyFace::grRender(GWT::Canvas& canvas, DrawMode mode) const
+void MorphyFace::grRender(Gfx::Canvas& canvas, DrawMode mode) const
 {
 DOTRACE("MorphyFace::grRender");
 

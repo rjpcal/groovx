@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:26:45 2000
-// written: Thu Jul 19 10:20:50 2001
+// written: Fri Aug 10 10:51:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,10 @@
 #include "io/io.h"
 #endif
 
-namespace GWT { class Canvas; }
+namespace Gfx
+{
+  class Canvas;
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -58,10 +61,10 @@ public:
   virtual bool contains(GxNode* other) const;
 
   /// Draw the object on \a canvas.
-  virtual void draw(GWT::Canvas& canvas) const = 0;
+  virtual void draw(Gfx::Canvas& canvas) const = 0;
 
   /// Undraw the object from \a canvas.
-  virtual void undraw(GWT::Canvas& canvas) const = 0;
+  virtual void undraw(Gfx::Canvas& canvas) const = 0;
 };
 
 static const char vcid_gxnode_h[] = "$Header$";

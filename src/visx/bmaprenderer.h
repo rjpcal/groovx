@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 16:51:34 1999
-// written: Wed Aug  8 11:15:08 2001
+// written: Fri Aug 10 10:50:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef BMAPRENDERER_H_DEFINED
 #define BMAPRENDERER_H_DEFINED
 
-namespace GWT
+namespace Gfx
 {
   class Canvas;
 }
@@ -41,7 +41,7 @@ public:
       actual rendering of the bitmap data. All of the information
       needed to do the rendering is passed as arguments to the
       function. */
-  virtual void doRender(GWT::Canvas& canvas,
+  virtual void doRender(Gfx::Canvas& canvas,
                         const BmapData& data,
                         const Point<double>& world_pos,
                         const Point<double>& zoom) const = 0;

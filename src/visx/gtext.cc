@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Wed Aug  8 12:52:36 2001
+// written: Fri Aug 10 10:46:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -753,7 +753,7 @@ DOTRACE("Gtext::grGetBoundingBox");
   return bbox;
 }
 
-void Gtext::grRender(GWT::Canvas&, DrawMode) const
+void Gtext::grRender(Gfx::Canvas&, DrawMode) const
 {
 DOTRACE("Gtext::grRender");
   glPushAttrib(GL_LIST_BIT|GL_LINE_BIT);

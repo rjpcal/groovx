@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Sat Jul 21 20:45:40 2001
+// written: Fri Aug 10 10:55:04 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -20,7 +20,7 @@
 #include "toglet.h"
 #include "trialbase.h"
 
-#include "gx/gxnode.h"
+#include "gfx/gxnode.h"
 
 #include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"

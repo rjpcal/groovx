@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:26:58 1999
-// written: Wed Aug  8 12:50:45 2001
+// written: Fri Aug 10 10:46:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,17 +32,17 @@ public:
   Tcl_Interp* getInterp();
 
   /// Installs \a canavs as the application's \c Canvas.
-  void installCanvas(GWT::Canvas& canvas);
+  void installCanvas(Gfx::Canvas& canvas);
 
   /// Returns the application's \c Canvas.
-  virtual GWT::Canvas& getCanvas();
+  virtual Gfx::Canvas& getCanvas();
 
 private:
   GrshApp(const GrshApp&);
   GrshApp& operator=(const GrshApp&);
 
   Tcl_Interp* itsInterp;
-  GWT::Canvas* itsCanvas;
+  Gfx::Canvas* itsCanvas;
 };
 
 static const char vcid_grshapp_h[] = "$Header$";

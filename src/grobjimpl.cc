@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Wed Aug  8 20:16:40 2001
+// written: Fri Aug 10 10:55:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,10 @@
 
 #include "grobjimpl.h"
 
+#include "gfx/canvas.h"
+
 #include "io/reader.h"
 #include "io/writer.h"
-
-#include "gwt/canvas.h"
 
 #include "util/error.h"
 
@@ -142,7 +142,7 @@ DOTRACE("GrObjImpl::writeTo");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void GrObjImpl::draw(GWT::Canvas& canvas) const {
+void GrObjImpl::draw(Gfx::Canvas& canvas) const {
 DOTRACE("GrObjImpl::draw");
   canvas.throwIfError("before GrObj::draw");
 
@@ -152,7 +152,7 @@ DOTRACE("GrObjImpl::draw");
 
   if ( !objectDrawn )
     {
-      GWT::Canvas::StateSaver state(canvas);
+      Gfx::Canvas::StateSaver state(canvas);
 
       itsScaler.doScaling(canvas);
       itsAligner.doAlignment(canvas, bbox);
@@ -165,7 +165,7 @@ DOTRACE("GrObjImpl::draw");
   canvas.throwIfError("during GrObj::draw");
 }
 
-void GrObjImpl::undraw(GWT::Canvas& canvas) const {
+void GrObjImpl::undraw(Gfx::Canvas& canvas) const {
 DOTRACE("GrObjImpl::undraw");
   canvas.throwIfError("before GrObj::undraw");
 
@@ -190,10 +190,10 @@ DOTRACE("GrObjImpl::invalidateCaches");
   itsRenderer.invalidate();
 }
 
-void GrObjImpl::undrawDirectRender(GWT::Canvas& canvas) const {
+void GrObjImpl::undrawDirectRender(Gfx::Canvas& canvas) const {
 DOTRACE("GrObjImpl::undrawDirectRender");
 
-  GWT::Canvas::StateSaver state(canvas);
+  Gfx::Canvas::StateSaver state(canvas);
 
   Rect<double> bbox = grGetBoundingBox();
 
@@ -205,7 +205,7 @@ DOTRACE("GrObjImpl::undrawDirectRender");
   itsBB.draw(bbox, canvas);
 }
 
-void GrObjImpl::undrawClearBoundingBox(GWT::Canvas& canvas) const {
+void GrObjImpl::undrawClearBoundingBox(Gfx::Canvas& canvas) const {
 DOTRACE("GrObjImpl::undrawClearBoundingBox");
 
   Rect<double> world_pos = itsBB.withBorder(grGetBoundingBox(), canvas);

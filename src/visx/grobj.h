@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Thu Jul 19 09:25:10 2001
+// written: Fri Aug 10 10:56:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #define GROBJ_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GXNODE_H_DEFINED)
-#include "gx/gxnode.h"
+#include "gfx/gxnode.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBSERVER_H_DEFINED)
@@ -28,7 +28,7 @@
 template <class V> class Point;
 template <class V> class Rect;
 
-namespace GWT
+namespace Gfx
 {
   class Canvas;
 }
@@ -221,7 +221,7 @@ public:
   /** Returns the bounding box given by \c grGetBoundingBox(), with
       additional modifications to reflect the scaling mode, alignment
       mode, and pixel border values. */
-  void getBoundingBox(GWT::Canvas& canvas,
+  void getBoundingBox(Gfx::Canvas& canvas,
                       Rect<double>& bounding_box) const;
 
 protected:
@@ -360,7 +360,7 @@ public:
       will be stored in the directory given to \c
       setBitmapCacheDir(). The filename must refer to a format
       supported by \c Pbm. */
-  void saveBitmapCache(GWT::Canvas& canvas, const char* filename) const;
+  void saveBitmapCache(Gfx::Canvas& canvas, const char* filename) const;
 
   /** Restores the bitmap cache from the bitmap cache filename that
       was most recently passed to \c saveBitmapCache(). */
@@ -368,22 +368,22 @@ public:
 
   /** Recompiles the OpenGL display list or bitmap cache, if there are
       changes pending, otherwise does nothing. */
-  void update(GWT::Canvas& canvas) const;
+  void update(Gfx::Canvas& canvas) const;
 
   /** This function draws the object according to the GrRenderMode
       selected with setRenderMode(). */
-  void draw(GWT::Canvas& canvas) const;
+  void draw(Gfx::Canvas& canvas) const;
 
   /** This function undraws the object according to the GrRenderMode
       selected with setUnRenderMode(). */
-  void undraw(GWT::Canvas& canvas) const;
+  void undraw(Gfx::Canvas& canvas) const;
 
   enum DrawMode { DRAW, UNDRAW };
 
 protected:
   /** This function must be overridden in derived classes to execute
       the actual OpenGL commands that render the object. */
-  virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const = 0;
+  virtual void grRender(Gfx::Canvas& canvas, DrawMode mode) const = 0;
 
 private:
   GrObj(const GrObj&);

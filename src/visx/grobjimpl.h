@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Thu Jul 19 13:13:08 2001
+// written: Fri Aug 10 10:46:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,20 +40,20 @@ public:
   void writeTo(IO::Writer* writer) const;
 
 
-  void draw(GWT::Canvas& canvas) const;
+  void draw(Gfx::Canvas& canvas) const;
 
-  void undraw(GWT::Canvas& canvas) const;
+  void undraw(Gfx::Canvas& canvas) const;
 
   void invalidateCaches();
 
-  void undrawDirectRender(GWT::Canvas& canvas) const;
-  void undrawClearBoundingBox(GWT::Canvas& canvas) const;
+  void undrawDirectRender(Gfx::Canvas& canvas) const;
+  void undrawClearBoundingBox(Gfx::Canvas& canvas) const;
 
   //
   // Forwards to GrObj's protected members
   //
 
-  void grRender(GWT::Canvas& canvas, GrObj::DrawMode mode) const
+  void grRender(Gfx::Canvas& canvas, GrObj::DrawMode mode) const
     { self->grRender(canvas, mode); }
 
   Rect<double> grGetBoundingBox() const

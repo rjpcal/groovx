@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Mon Aug  6 16:42:11 2001
+// written: Fri Aug 10 10:55:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "responsehandler.h"
 #include "timinghdlr.h"
 
-#include "gx/gxnode.h"
+#include "gfx/gxnode.h"
 
 #include "tcl/fieldpkg.h"
 #include "tcl/tclmemfunctor.h"

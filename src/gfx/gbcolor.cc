@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:10:25 2000
-// written: Thu Aug  9 11:54:21 2001
+// written: Fri Aug 10 10:56:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef GBCOLOR_CC_DEFINED
 #define GBCOLOR_CC_DEFINED
 
-#include "gx/gbcolor.h"
+#include "gfx/gbcolor.h"
 
 #include "io/reader.h"
 #include "io/writer.h"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Wed Aug  8 12:27:25 2001
+// written: Fri Aug 10 10:55:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,8 @@
 
 #include "gwt/widget.h"
 
-#include "gwt/canvas.h"
-
-#include "gx/gxnode.h"
+#include "gfx/canvas.h"
+#include "gfx/gxnode.h"
 
 #include "util/dlink_list.h"
 #include "util/observer.h"
@@ -37,8 +36,8 @@ public:
   virtual void readFrom(IO::Reader*) {}
   virtual void writeTo(IO::Writer*) const {}
 
-  virtual void draw(GWT::Canvas&) const {}
-  virtual void undraw(GWT::Canvas&) const {}
+  virtual void draw(Gfx::Canvas&) const {}
+  virtual void undraw(Gfx::Canvas&) const {}
 
   static EmptyNode* make()
     {
@@ -74,13 +73,13 @@ public:
 
   static Impl* make(GWT::Widget* owner) { return new Impl(owner); }
 
-  void safeDraw(GWT::Canvas& canvas);
+  void safeDraw(Gfx::Canvas& canvas);
 
-  void display(GWT::Canvas& canvas);
+  void display(Gfx::Canvas& canvas);
 
-  void clearscreen(GWT::Canvas& canvas);
+  void clearscreen(Gfx::Canvas& canvas);
 
-  void refresh(GWT::Canvas& canvas)
+  void refresh(Gfx::Canvas& canvas)
     {
       DOTRACE("GWT::Widget::Impl::refresh");
       canvas.clearColorBuffer();
@@ -88,7 +87,7 @@ public:
       doFlush(canvas);
     }
 
-  void undraw(GWT::Canvas& canvas);
+  void undraw(Gfx::Canvas& canvas);
 
   void setVisibility(bool val)
     {
@@ -121,7 +120,7 @@ public:
   virtual void receiveDestroyMsg(const Util::Observable*) {}
 
 private:
-  void doFlush(GWT::Canvas& canvas)
+  void doFlush(Gfx::Canvas& canvas)
     {
       if (canvas.isDoubleBuffered())
         {
@@ -158,7 +157,7 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-void GWT::Widget::Impl::safeDraw(GWT::Canvas& canvas) {
+void GWT::Widget::Impl::safeDraw(Gfx::Canvas& canvas) {
 DOTRACE("GWT::Widget::Impl::safeDraw");
 
   if ( !itsVisibility ) return;
@@ -179,7 +178,7 @@ DOTRACE("GWT::Widget::Impl::safeDraw");
   setVisibility(false);
 }
 
-void GWT::Widget::Impl::display(GWT::Canvas& canvas) {
+void GWT::Widget::Impl::display(Gfx::Canvas& canvas) {
 DOTRACE("GWT::Widget::Impl::display");
 
   // Only erase the previous trial if hold is off
@@ -199,14 +198,14 @@ DOTRACE("GWT::Widget::Impl::display");
   doFlush(canvas);
 }
 
-void GWT::Widget::Impl::clearscreen(GWT::Canvas& canvas) {
+void GWT::Widget::Impl::clearscreen(Gfx::Canvas& canvas) {
 DOTRACE("GWT::Widget::Impl::clearscreen");
   setVisibility(false);
   canvas.clearColorBuffer();
   doFlush(canvas);
 }
 
-void GWT::Widget::Impl::undraw(GWT::Canvas& canvas) {
+void GWT::Widget::Impl::undraw(Gfx::Canvas& canvas) {
 DOTRACE("GWT::Widget::Impl::undraw");
   itsUndrawNode->undraw(canvas);
   doFlush(canvas);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:10:45 2000
-// written: Thu Aug  9 13:15:52 2001
+// written: Fri Aug 10 10:56:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VEC3_H_DEFINED)
-#include "gx/vec3.h"
+#include "gfx/vec3.h"
 #endif
 
 template <class T>

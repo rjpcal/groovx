@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:09:31 2000
-// written: Thu Aug  9 11:54:01 2001
+// written: Fri Aug 10 10:56:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(RGBACOLOR_H_DEFINED)
-#include "gx/rgbacolor.h"
+#include "gfx/rgbacolor.h"
 #endif
 
 class GbColor : public RgbaColor, public Field, public Value {

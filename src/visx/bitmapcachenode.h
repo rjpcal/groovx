@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:19:59 2001
-// written: Wed Aug  8 20:16:38 2001
+// written: Fri Aug 10 10:46:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,13 +46,13 @@ public:
 
   // Returns true if the object was rendered to the screen as part
   // of the update, false otherwise
-  bool update(const GrObjImpl* obj, GWT::Canvas& canvas) const;
+  bool update(const GrObjImpl* obj, Gfx::Canvas& canvas) const;
 
-  void render(const GrObjImpl* obj, GWT::Canvas& canvas) const;
+  void render(const GrObjImpl* obj, Gfx::Canvas& canvas) const;
 
-  void unrender(const GrObjImpl* obj, GWT::Canvas& canvas) const;
+  void unrender(const GrObjImpl* obj, Gfx::Canvas& canvas) const;
 
-  void saveBitmapCache(const GrObjImpl* obj, GWT::Canvas& canvas,
+  void saveBitmapCache(const GrObjImpl* obj, Gfx::Canvas& canvas,
                        const char* filename);
 
   void restoreBitmapCache() const
@@ -88,11 +88,11 @@ private:
   void queueBitmapLoad() const;
 
   // This function updates the cached OpenGL display list.
-  void recompileIfNeeded(const GrObjImpl* obj, GWT::Canvas& canvas) const;
+  void recompileIfNeeded(const GrObjImpl* obj, Gfx::Canvas& canvas) const;
 
   // This function updates the cached bitmap, and returns a true if
   // the bitmap was actually recached, and false if nothing was done.
-  bool recacheBitmapIfNeeded(const GrObjImpl* obj, GWT::Canvas& canvas) const;
+  bool recacheBitmapIfNeeded(const GrObjImpl* obj, Gfx::Canvas& canvas) const;
 
   void postUpdated() const { itsIsCurrent = true; }
 

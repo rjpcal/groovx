@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Thu Aug  9 07:06:04 2001
+// written: Fri Aug 10 10:55:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "point.h"
 #include "rect.h"
 
-#include "gx/vec3.h"
+#include "gfx/vec3.h"
 
 #include "util/error.h"
 

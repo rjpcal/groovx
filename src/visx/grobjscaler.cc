@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:01:45 2001
-// written: Thu Jul 19 13:34:15 2001
+// written: Fri Aug 10 10:55:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,13 +15,13 @@
 
 #include "grobjscaler.h"
 
-#include "gwt/canvas.h"
-#include "gx/vec3.h"
+#include "gfx/canvas.h"
+#include "gfx/vec3.h"
 
 #define DYNAMIC_TRACE_EXPR GrObj::tracer.status()
 #include "util/trace.h"
 
-void GrObjScaler::doScaling(GWT::Canvas& canvas) const
+void GrObjScaler::doScaling(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjScaler::doScaling");
   if (GrObj::NATIVE_SCALING == itsMode) return;

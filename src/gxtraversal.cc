@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Nov  3 00:24:54 2000
-// written: Tue Jun 12 11:17:12 2001
+// written: Fri Aug 10 10:56:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,9 @@
 #ifndef GXTRAVERSAL_CC_DEFINED
 #define GXTRAVERSAL_CC_DEFINED
 
-#include "gx/gxtraversal.h"
+#include "gfx/gxtraversal.h"
 
-#include "gx/gxseparator.h"
+#include "gfx/gxseparator.h"
 
 #include "util/dlink_list.h"
 #include "util/ref.h"

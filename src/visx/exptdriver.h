@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Aug  8 20:16:38 2001
+// written: Fri Aug 10 10:46:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,7 +101,7 @@ public:
   Util::WeakRef<GWT::Widget> getWidget() const;
   void setWidget(Util::WeakRef<GWT::Widget> widg);
 
-  virtual GWT::Canvas& getCanvas() const;
+  virtual Gfx::Canvas& getCanvas() const;
 
   virtual void edBeginExpt();
   virtual void edEndTrial();

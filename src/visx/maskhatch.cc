@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Thu Aug  9 12:01:03 2001
+// written: Fri Aug 10 10:46:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ DOTRACE("MaskHatch::grGetBoundingBox");
   return bbox;
 }
 
-void MaskHatch::grRender(GWT::Canvas&, DrawMode) const {
+void MaskHatch::grRender(Gfx::Canvas&, DrawMode) const {
 DOTRACE("MaskHatch::grRender");
 
   if (numLines() == 0) return;

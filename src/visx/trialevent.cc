@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Wed Aug  8 12:45:57 2001
+// written: Fri Aug 10 10:55:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,11 +17,12 @@
 
 #include "trialbase.h"
 
+#include "gfx/canvas.h"
+
+#include "gwt/widget.h"
+
 #include "io/reader.h"
 #include "io/writer.h"
-
-#include "gwt/canvas.h"
-#include "gwt/widget.h"
 
 #include "system/demangle.h"
 

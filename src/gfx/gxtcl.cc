@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Mon Aug  6 11:10:31 2001
+// written: Fri Aug 10 10:56:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef GXTCL_CC_DEFINED
 #define GXTCL_CC_DEFINED
 
-#include "gx/gxnode.h"
-#include "gx/gxseparator.h"
+#include "gfx/gxnode.h"
+#include "gfx/gxseparator.h"
 
 #include "tcl/tclpkg.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 10:52:17 1999
-// written: Sat Jul 21 20:01:49 2001
+// written: Fri Aug 10 10:50:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,10 @@
 namespace GWT
 {
   class Widget;
+}
+
+namespace Gfx
+{
   class Canvas;
 }
 
@@ -39,7 +43,7 @@ public:
   virtual Util::WeakRef<GWT::Widget> getWidget() const = 0;
   ///< Return the Widget in which the experiment is running.
 
-  virtual GWT::Canvas& getCanvas() const = 0;
+  virtual Gfx::Canvas& getCanvas() const = 0;
   ///< Return the Canvas for the Widget in which the experiment is running.
 
   virtual void edBeginExpt() = 0;

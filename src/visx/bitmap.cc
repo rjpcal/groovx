@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Aug 10 07:12:11 2001
+// written: Fri Aug 10 10:46:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -116,7 +116,7 @@ void Bitmap::flipContrast()
 void Bitmap::flipVertical()
   { itsImpl->flipVertical(); sendStateChangeMsg(); }
 
-void Bitmap::grRender(GWT::Canvas& canvas, DrawMode mode) const
+void Bitmap::grRender(Gfx::Canvas& canvas, DrawMode mode) const
 {
   if (mode == DRAW)
     itsImpl->render(canvas);

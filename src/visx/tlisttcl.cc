@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Aug  8 16:03:47 2001
+// written: Fri Aug 10 10:55:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,8 @@
 #include "tlistutils.h"
 #include "trial.h"
 
-#include "gx/gxnode.h"
-#include "gx/gxseparator.h"
+#include "gfx/gxnode.h"
+#include "gfx/gxseparator.h"
 
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
@@ -89,7 +89,7 @@ Util::UID TlistTcl::createPreview(Tcl::List objid_list)
   fixed_block<Util::UID> objids(objid_list.begin<Util::UID>(),
                                 objid_list.end<Util::UID>());
 
-  GWT::Canvas& canvas = Application::theApp().getCanvas();
+  Gfx::Canvas& canvas = Application::theApp().getCanvas();
 
   return TlistUtils::createPreview(canvas, &objids[0], objids.size());
 }

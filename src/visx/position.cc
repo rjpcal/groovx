@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Thu Aug  9 12:01:30 2001
+// written: Fri Aug 10 10:55:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,8 @@
 
 #include "position.h"
 
-#include "gx/vec3.h"
-
-#include "gwt/canvas.h"
+#include "gfx/canvas.h"
+#include "gfx/vec3.h"
 
 #include "io/reader.h"
 #include "io/writer.h"
@@ -135,7 +134,7 @@ DOTRACE("Position::writeTo");
 // actions //
 /////////////
 
-void Position::draw(GWT::Canvas& canvas) const {
+void Position::draw(Gfx::Canvas& canvas) const {
 DOTRACE("Position::draw");
   canvas.translate(translation.vec());
   canvas.scale(scaling.vec());
@@ -147,7 +146,7 @@ DOTRACE("Position::draw");
   itsImpl->rt_ang = rotationAngle();
 }
 
-void Position::undraw(GWT::Canvas& canvas) const {
+void Position::undraw(Gfx::Canvas& canvas) const {
 DOTRACE("Position::undraw");
   canvas.translate(itsImpl->tr);
   canvas.scale(itsImpl->sc);

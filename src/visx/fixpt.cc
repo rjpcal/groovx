@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Thu Aug  9 11:59:58 2001
+// written: Fri Aug 10 10:46:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,7 +105,7 @@ DOTRACE("FixPt::grGetBoundingBox");
   return bbox;
 }
 
-void FixPt::grRender(GWT::Canvas&, DrawMode) const {
+void FixPt::grRender(Gfx::Canvas&, DrawMode) const {
 DOTRACE("FixPt::grRender");
   glPushAttrib(GL_LINE_BIT);
   glLineWidth(width());

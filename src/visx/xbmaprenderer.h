@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:19:23 1999
-// written: Wed Aug  8 11:15:08 2001
+// written: Fri Aug 10 10:46:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ public:
   /// Virtual destructor.
   virtual ~XBmapRenderer();
 
-  virtual void doRender(GWT::Canvas& canvas,
+  virtual void doRender(Gfx::Canvas& canvas,
                         const BmapData& data,
                         const Point<double>& world_pos,
                         const Point<double>& zoom) const;

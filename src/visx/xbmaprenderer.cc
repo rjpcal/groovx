@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:22:34 1999
-// written: Thu Aug  9 17:10:44 2001
+// written: Fri Aug 10 10:55:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "bmapdata.h"
 #include "point.h"
 
-#include "gwt/canvas.h"
+#include "gfx/canvas.h"
 
 #include "util/error.h"
 
@@ -103,7 +103,7 @@ DOTRACE("XBmapRenderer::~XBmapRenderer");
   if (itsImage) XFree(itsImage);
 }
 
-void XBmapRenderer::doRender(GWT::Canvas& canvas,
+void XBmapRenderer::doRender(Gfx::Canvas& canvas,
                              const BmapData& data,
                              const Point<double>& world_pos,
                              const Point<double>& /* zoom */) const

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:48:47 2001
-// written: Thu Jul 19 13:33:54 2001
+// written: Fri Aug 10 10:55:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,13 +17,13 @@
 
 #include "rect.h"
 
-#include "gwt/canvas.h"
-#include "gx/vec3.h"
+#include "gfx/canvas.h"
+#include "gfx/vec3.h"
 
 #define DYNAMIC_TRACE_EXPR GrObj::tracer.status()
 #include "util/trace.h"
 
-void GrObjAligner::doAlignment(GWT::Canvas& canvas,
+void GrObjAligner::doAlignment(Gfx::Canvas& canvas,
                                const Rect<double>& native) const
 {
 DOTRACE("GrObjAligner::doAlignment");

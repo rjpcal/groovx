@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Thu Aug  9 11:59:35 2001
+// written: Fri Aug 10 10:55:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,11 +17,11 @@
 
 #include "rect.h"
 
+#include "gfx/canvas.h"
+
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
-
-#include "gwt/canvas.h"
 
 #include "util/strings.h"
 
@@ -128,7 +128,7 @@ DOTRACE("Face::writeTo");
 // Actions
 ///////////////////////////////////////////////////////////////////////
 
-void Face::grRender(GWT::Canvas& canvas, DrawMode mode) const {
+void Face::grRender(Gfx::Canvas& canvas, DrawMode mode) const {
 DOTRACE("Face::grRender");
   Invariant(check());
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:37:45 1999
-// written: Mon Aug  6 17:10:14 2001
+// written: Fri Aug 10 10:46:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -129,7 +129,7 @@ public:
 protected:
   virtual Rect<double> grGetBoundingBox() const;
 
-  virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const;
+  virtual void grRender(Gfx::Canvas& canvas, DrawMode mode) const;
 
 private:
   MorphyFace(const MorphyFace&);            // copy constructor not to be used

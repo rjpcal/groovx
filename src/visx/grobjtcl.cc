@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Thu Aug  9 17:27:15 2001
+// written: Fri Aug 10 10:46:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ namespace GrobjTcl
 {
   Rect<double> boundingBox(Util::Ref<GrObj> obj)
   {
-    GWT::Canvas& canvas = Application::theApp().getCanvas();
+    Gfx::Canvas& canvas = Application::theApp().getCanvas();
 
     Rect<double> bbox;
     obj->getBoundingBox(canvas, bbox);
@@ -41,13 +41,13 @@ namespace GrobjTcl
 
   void saveBitmapCache(Util::Ref<GrObj> obj, const char* filename)
   {
-    GWT::Canvas& canvas = Application::theApp().getCanvas();
+    Gfx::Canvas& canvas = Application::theApp().getCanvas();
     obj->saveBitmapCache(canvas, filename);
   }
 
   void update(Util::Ref<GrObj> obj)
   {
-    GWT::Canvas& canvas = Application::theApp().getCanvas();
+    Gfx::Canvas& canvas = Application::theApp().getCanvas();
     obj->update(canvas);
   }
 

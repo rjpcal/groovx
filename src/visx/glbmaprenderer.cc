@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:52:41 1999
-// written: Wed Aug  8 08:07:22 2001
+// written: Fri Aug 10 10:55:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "bmapdata.h"
 #include "point.h"
 
-#include "gwt/canvas.h"
+#include "gfx/canvas.h"
 
 #include <GL/gl.h>
 
@@ -35,7 +35,7 @@ GLBmapRenderer::~GLBmapRenderer ()
 DOTRACE("GLBmapRenderer::~GLBmapRenderer ");
 }
 
-void GLBmapRenderer::doRender(GWT::Canvas& canvas,
+void GLBmapRenderer::doRender(Gfx::Canvas& canvas,
                               const BmapData& data,
                               const Point<double>& world_pos,
                               const Point<double>& zoom) const

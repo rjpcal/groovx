@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Thu Aug  9 18:00:42 2001
+// written: Fri Aug 10 10:46:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ DOTRACE("GrObjRenderer::~GrObjRenderer");
 }
 
 void GrObjRenderer::recompileIfNeeded(const GrObjImpl* obj,
-                                      GWT::Canvas& canvas) const {
+                                      Gfx::Canvas& canvas) const {
 DOTRACE("GrObjRenderer::recompileIfNeeded");
   if (itsIsCurrent) return;
 
@@ -67,7 +67,7 @@ DOTRACE("GrObjRenderer::recompileIfNeeded");
 }
 
 bool GrObjRenderer::recacheBitmapIfNeeded(const GrObjImpl* obj,
-                                          GWT::Canvas& canvas) const {
+                                          Gfx::Canvas& canvas) const {
 DOTRACE("GrObjRenderer::recacheBitmapIfNeeded");
   if (itsIsCurrent) return false;
 
@@ -76,7 +76,7 @@ DOTRACE("GrObjRenderer::recacheBitmapIfNeeded");
   obj->undraw(canvas);
 
   {
-    GWT::Canvas::StateSaver state(canvas);
+    Gfx::Canvas::StateSaver state(canvas);
 
     glPushAttrib(GL_COLOR_BUFFER_BIT|GL_PIXEL_MODE_BIT);
     {
@@ -171,7 +171,7 @@ DOTRACE("GrObjRenderer::setMode");
     }
 }
 
-void GrObjRenderer::render(const GrObjImpl* obj, GWT::Canvas& canvas) const {
+void GrObjRenderer::render(const GrObjImpl* obj, Gfx::Canvas& canvas) const {
 DOTRACE("GrObjRenderer::render");
   DebugEvalNL(itsMode);
   switch (itsMode) {
@@ -193,7 +193,7 @@ DOTRACE("GrObjRenderer::render");
   } // end switch
 }
 
-void GrObjRenderer::unrender(const GrObjImpl* obj, GWT::Canvas& canvas) const
+void GrObjRenderer::unrender(const GrObjImpl* obj, Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjRenderer::unrender");
   glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
@@ -209,7 +209,7 @@ DOTRACE("GrObjRenderer::unrender");
   glPopAttrib();
 }
 
-bool GrObjRenderer::update(const GrObjImpl* obj, GWT::Canvas& canvas) const {
+bool GrObjRenderer::update(const GrObjImpl* obj, Gfx::Canvas& canvas) const {
 DOTRACE("GrObjRenderer::update");
   canvas.throwIfError("before GrObj::update");
 
@@ -230,7 +230,7 @@ DOTRACE("GrObjRenderer::update");
   return objectDrawn;
 }
 
-void GrObjRenderer::saveBitmapCache(const GrObjImpl* obj, GWT::Canvas& canvas,
+void GrObjRenderer::saveBitmapCache(const GrObjImpl* obj, Gfx::Canvas& canvas,
                                     const char* filename)
 {
   Util::Janitor<GrObjRenderer, int> rmj(*this,
