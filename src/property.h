@@ -3,13 +3,18 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Wed Sep 29 12:06:26 1999
+// written: Wed Sep 29 20:26:45 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef PROPERTY_H_DEFINED
 #define PROPERTY_H_DEFINED
+
+#ifndef STRING_DEFINED
+#include "string"
+#define STRING_DEFINED
+#endif
 
 #ifndef IO_H_DEFINED
 #include "io.h"
@@ -66,10 +71,20 @@ protected:
   virtual void set(const Value& new_val) { new_val.get(itsVal.itsVal); }
   virtual const Value& get() const { return itsVal; }
 
-  void setNative(T new_val) { itsVal.itsVal = new_val; }
-  T getNative() const { return itsVal.itsVal; }
+  virtual void setNative(T new_val) { itsVal.itsVal = new_val; }
+  virtual T getNative() const { return itsVal.itsVal; }
+
+  T& operator()() { return itsVal.itsVal; }
+  const T& operator()() const { return itsVal.itsVal; }
 
   TValue<T> itsVal;
+};
+
+template <class C, class T>
+class CTProperty : public TProperty<T> { 
+public:
+  CTProperty(T init = T()) : TProperty<T>(init) {}
+  friend class C;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -78,21 +93,33 @@ protected:
 //
 ///////////////////////////////////////////////////////////////////////
 
-template <class T, T min, T max>
+template <class T, int min, int max, int div>
 class TBoundedProperty : public TProperty<T> {
+public:
   TBoundedProperty(T init=T()) : TProperty<T>(init) {}
 
 protected:
   virtual void set(const Value& new_val)
 	 {
 		T temp; new_val.get(temp);
-		if (temp >= min && temp <= max) TProperty<T>::itsVal.itsVal = temp;
+		if (temp >= min/T(div) && temp <= max/T(div))
+		  TProperty<T>::itsVal.itsVal = temp;
 	 }
   virtual const Value& get() const { return TProperty<T>::itsVal; }
+  
+  virtual void setNative(T new_val)
+	 {
+		if (new_val >= min/T(div) && new_val <= max/T(div))
+		  TProperty<T>::itsVal.itsVal = new_val;
+	 }
+  T virtual getNative() const { return TProperty<T>::itsVal.itsVal; }
+};
 
-  void setNative(T new_val)
-	 { if (new_val >= min && new_val <= max) TProperty<T>::itsVal.itsVal = new_val; }
-  T getNative() const { return TProperty<T>::itsVal.itsVal; }
+template <class C, class T, int min, int max, int div>
+class CTBoundedProperty : public TBoundedProperty<T, min, max, div> { 
+public:
+  CTBoundedProperty(T init = T()) : TBoundedProperty<T, min, max, div>(init) {}
+  friend class C;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -116,7 +143,43 @@ public:
 
   template <class T>
   void setNative(TProperty<T> C::* prop, T new_val)
-	 { (static_cast<C*>(this)->*prop).setNative(new_val); }
+	 { (static_cast<C*>(this)->*prop).setNative(new_val); sendStateChangeMsg(); }
+};
+
+///////////////////////////////////////////////////////////////////////
+//
+// PropertyInfo template class definition
+//
+///////////////////////////////////////////////////////////////////////
+
+template <class C>
+class PropertyInfo {
+public:
+  typedef Property C::* PropPtr;
+
+  template <class T>
+  PropertyInfo(const string& name_, PropPtr property_,
+					T min_, T max_, T res_) :
+	 name(name_),
+	 property(property_),
+	 min(new TValue<T>(min_)),
+	 max(new TValue<T>(max_)),
+	 res(new TValue<T>(res_)) {}
+  
+  PropertyInfo& operator=(const PropertyInfo& rhs) {
+	 name = rhs.name;
+	 property = rhs.property;
+	 min = auto_ptr<Value>(rhs.min->clone());
+	 max = auto_ptr<Value>(rhs.max->clone());
+	 res = auto_ptr<Value>(rhs.res->clone());
+  }
+
+  string name;
+  PropPtr property;
+  auto_ptr<Value> min;			  // suggested minimum value
+  auto_ptr<Value> max;			  // suggested maximum value
+  auto_ptr<Value> res;			  // suggested resolution
+  bool startNewGroup;			  // whether this is the first of a new group
 };
 
 static const char vcid_property_h[] = "$Header$";
