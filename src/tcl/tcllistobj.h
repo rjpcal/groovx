@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:00:17 2001
-// written: Thu Jul 19 21:05:54 2001
+// written: Thu Aug  9 11:43:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -114,7 +114,7 @@ public:
 
     Appender& operator*() { return *this; }
     Appender& operator++() { return *this; }
-    Appender& operator++(int) { return *this; }
+    Appender operator++(int) { return *this; }
   };
 
   Appender appender() { return Appender(*this); }

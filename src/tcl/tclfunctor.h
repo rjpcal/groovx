@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Thu Aug  9 11:37:41 2001
+// written: Thu Aug  9 11:43:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -141,7 +141,7 @@ namespace Tcl
   public:
     Functor0<void, Func>(Func f) : FuncHolder<Func>(f) {}
 
-    void operator()(Tcl::Context& ctx)
+    void operator()(Tcl::Context&)
     {
       itsFunc();
     }
