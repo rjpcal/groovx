@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:16:22 1999
-// written: Fri May 11 21:56:35 2001
+// written: Mon May 14 16:04:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ DOTRACE("Tcl::VecGetterBaseCmd::invoke");
 
 template <class ValType>
 Tcl::TVecGetterCmd<ValType>::TVecGetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
-														 Getter<ValType>* getter,
+														 shared_ptr<Getter<ValType> > getter,
 														 const char* usage, int item_argn) :
   TclCmd(pkg->interp(), cmd_name,
 			usage ? usage : (item_argn ? "item_id(s)" : (char *) 0), 
@@ -154,11 +154,12 @@ DOTRACE("Tcl::VecSetterBaseCmd::invoke");
 
 template <class T>
 Tcl::TVecSetterCmd<T>::TVecSetterCmd(TclItemPkgBase* pkg,
-												 const char* cmd_name, Setter<T>* setter,
+												 const char* cmd_name,
+												 shared_ptr<Setter<T> > setter,
 												 const char* usage, int item_argn) :
   Base(pkg, cmd_name, setter, usage, item_argn),
-  TclCmd(pkg->interp(), cmd_name, 
-			usage ? usage : (item_argn ? 
+  TclCmd(pkg->interp(), cmd_name,
+			usage ? usage : (item_argn ?
 								  "item_id(s) new_value(s)" : "new_value"), 
 			item_argn+2, item_argn+2)
 {}
@@ -168,7 +169,8 @@ Tcl::TVecSetterCmd<T>::~TVecSetterCmd() {}
 
 template <class Traits>
 Tcl::TrVecSetterCmd<Traits>::TrVecSetterCmd(
-  TclItemPkgBase* pkg, const char* cmd_name, Setter<value_type>* setter,
+  TclItemPkgBase* pkg, const char* cmd_name,
+  shared_ptr<Setter<value_type> > setter,
   const char* usage, int item_argn
 ) :
   TclCmd(pkg->interp(), cmd_name, 
@@ -260,7 +262,7 @@ template class TVecSetterCmd<const fixed_string&>;
 
 template <class T>
 Tcl::TVecAttribCmd<T>::TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name,
-												 Attrib<T>* attrib,
+												 shared_ptr<Attrib<T> > attrib,
 												 const char* usage, int item_argn) :
   TVecGetterCmd<T>(pkg, 0, attrib, 0, item_argn),
   TVecSetterCmd<T>(pkg, 0, attrib, 0, item_argn),
@@ -303,7 +305,7 @@ template class TVecAttribCmd<const fixed_string&>;
 ///////////////////////////////////////////////////////////////////////
 
 Tcl::VecActionCmd::VecActionCmd(TclItemPkgBase* pkg, const char* cmd_name,
-										  Action* action,
+										  shared_ptr<Action> action,
 										  const char* usage, int item_argn) :
   TclCmd(pkg->interp(), cmd_name, 
 			usage ? usage : (item_argn ? "item_id(s)" : (char *) 0),

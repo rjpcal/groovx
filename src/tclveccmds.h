@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:11:41 1999
-// written: Thu May 10 12:04:36 2001
+// written: Mon May 14 16:01:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,7 +84,8 @@ private:
 template <class ValType>
 class TVecGetterCmd : public VecGetterBaseCmd {
 public:
-  TVecGetterCmd(TclItemPkgBase* pkg, const char* cmd_name, Getter<ValType>* getter,
+  TVecGetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
+					 shared_ptr<Getter<ValType> > getter,
                 const char* usage, int item_argn);
 
   virtual ~TVecGetterCmd();
@@ -94,7 +95,7 @@ protected:
   virtual void doAppendValForItem(void* item);
 
 private:
-  scoped_ptr< Getter<ValType> > itsGetter;
+  shared_ptr< Getter<ValType> > itsGetter;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -137,7 +138,8 @@ protected:
   typedef typename Traits::iterator_type iterator_type;
 
   TrVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
-					  Setter<value_type>* setter, const char* usage, int item_argn);
+					  shared_ptr<Setter<value_type> > setter,
+					  const char* usage, int item_argn);
 
   virtual ~TrVecSetterCmd();
 
@@ -145,15 +147,17 @@ protected:
   virtual void setSingleItem(void* item, int val_argn);
 
 private:
-  scoped_ptr< Setter<value_type> > itsSetter;
+  shared_ptr< Setter<value_type> > itsSetter;
 };
 
 template <class T>
 class TVecSetterCmd : public TrVecSetterCmd< SetterCmdTraits<T> > {
 public:
   typedef TrVecSetterCmd< SetterCmdTraits<T> > Base;
+
   TVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
-					 Setter<T>* setter, const char* usage, int item_argn);
+					 shared_ptr<Setter<T> > setter,
+					 const char* usage, int item_argn);
 
   virtual ~TVecSetterCmd();
 };
@@ -170,7 +174,8 @@ template <class T>
 class TVecAttribCmd : public TVecGetterCmd<T>, public TVecSetterCmd<T> {
 public:
   TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name,
-					 Attrib<T>* attrib, const char* usage, int item_argn);
+					 shared_ptr<Attrib<T> > attrib,
+					 const char* usage, int item_argn);
 
   virtual ~TVecAttribCmd();
 
@@ -194,9 +199,9 @@ private:
 
 class Tcl::VecActionCmd : public Tcl::TclCmd {
 public:
-  VecActionCmd(TclItemPkgBase* pkg, const char* cmd_name, Action* action,
+  VecActionCmd(TclItemPkgBase* pkg, const char* cmd_name,
+					shared_ptr<Action> action,
                const char* usage, int item_argn);
-
   virtual ~VecActionCmd();
 
 protected:
@@ -207,7 +212,7 @@ private:
   VecActionCmd& operator=(const VecActionCmd&);
 
   TclItemPkgBase* itsPkg;
-  scoped_ptr<Action> itsAction;
+  shared_ptr<Action> itsAction;
   int itsItemArgn;
 };
 

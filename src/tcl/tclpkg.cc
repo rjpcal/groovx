@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Fri May 11 21:54:32 2001
+// written: Mon May 14 16:03:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ void Tcl::TclItemPkg::declareGetter(const char* cmd_name,
 												Getter<T>* getter, const char* usage) {
   addCommand(
          new Tcl::TVecGetterCmd<T>(this, makePkgCmdName(cmd_name), 
-											  getter, usage, itsItemArgn)
+											  make_shared(getter), usage, itsItemArgn)
 			);
 }
 
@@ -61,7 +61,7 @@ void Tcl::TclItemPkg::declareSetter(const char* cmd_name,
 												Setter<T>* setter, const char* usage) {
   addCommand(
 		   new Tcl::TVecSetterCmd<T>(this, makePkgCmdName(cmd_name),
-											  setter, usage, itsItemArgn)
+											  make_shared(setter), usage, itsItemArgn)
 			);
 }
 
@@ -70,7 +70,7 @@ void Tcl::TclItemPkg::declareAttrib(const char* attrib_name,
 												Attrib<T>* attrib, const char* usage) {
   addCommand(
 			new Tcl::TVecAttribCmd<T>(this, makePkgCmdName(attrib_name),
-											  attrib, usage, itsItemArgn)
+											  make_shared(attrib), usage, itsItemArgn)
 			);
 }
 
@@ -103,7 +103,7 @@ void Tcl::TclItemPkg::instantiate() {
 void Tcl::TclItemPkg::declareAction(const char* action_name, Action* action,
 												const char* usage) {
   addCommand( new VecActionCmd(this, makePkgCmdName(action_name),
-                               action, usage, itsItemArgn) );
+                               make_shared(action), usage, itsItemArgn) );
 }
 
 
