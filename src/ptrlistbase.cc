@@ -3,7 +3,7 @@
 // ptrlistbase.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Mon Oct  9 19:48:58 2000
+// written: Mon Oct 16 15:02:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -244,6 +244,9 @@ DOTRACE("PtrListBase::insertPtrBase");
 
 void PtrListBase::insertPtrBaseAt(int id, MasterPtrBase* ptr) {
 DOTRACE("PtrListBase::insertPtrBaseAt");
+
+  Precondition(ptr != 0);
+
   DebugEval(id); DebugEvalNL(ptr->ptr());
   if (id < 0) return;
 
