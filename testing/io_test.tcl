@@ -53,6 +53,13 @@ proc testStringifyCmd { packagename classname item_argn {item_id -1} } {
             "} {^0.*$}
 		  }
 	 }
+
+	 if { $item_argn == -1 } {
+		  eval ::test $testname {"normal use"} {"
+		      set code \[catch {$cmdname} result\]
+		      return \"\$code \$result\"
+		  "} {^0.*$}
+	 }
 }
 
 proc testDestringifyCmd { packagename classname item_argn {item_id -1} } {
@@ -101,6 +108,18 @@ proc testDestringifyCmd { packagename classname item_argn {item_id -1} } {
 				
 		  }
 	 }
+
+	 if { $item_argn == -1 } {
+		  eval ::test $testname {"normal use"} {"
+		      set str \[$stringify\] 
+		      set code \[catch {$cmdname \$str} result\]
+		      return \"\$code \$result\"
+		  "} {^0.*$}
+		  eval ::test $testname {"error on junk"} {"
+		      set code \[catch {$cmdname junk} result\]
+		      return \"\$code \$result\"
+		  "} {^1.*$}
+	 }
 }
 
 proc testWriteCmd { packagename classname item_argn {item_id -1} } {
@@ -140,6 +159,13 @@ proc testWriteCmd { packagename classname item_argn {item_id -1} } {
 				    return \"\$code \$result\"
             "} {^0.*$}
 		  }
+	 }
+
+	 if { $item_argn == -1 } {
+		  eval ::test $testname {"normal use"} {"
+		      set code \[catch {$cmdname} result\]
+		      return \"\$code \$result\"
+		  "} {^0.*$}
 	 }
 }
 
@@ -188,6 +214,18 @@ proc testReadCmd { packagename classname item_argn {item_id -1} } {
 				"} {^1.*$}
 				
 		  }
+	 }
+
+	 if { $item_argn == -1 } {
+		  eval ::test $testname {"normal use"} {"
+		      set str \[$writecmd\] 
+		      set code \[catch {$readcmd \$str} msg\]
+		      set result \"\$code\$msg\"
+		  "} {^0$}
+		  eval ::test $testname {"error on junk"} {"
+		      set code \[catch {$readcmd junk} result\]
+		      return \"\$code \$result\"
+		  "} {^1.*$}
 	 }
 }
 
