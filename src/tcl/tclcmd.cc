@@ -58,8 +58,9 @@ DBG_REGISTER
 
 namespace
 {
-  struct Overloads
+  class Overloads
   {
+  public:
     typedef std::list<Tcl::Command*> List;
 
     List itsList;
@@ -110,6 +111,11 @@ namespace
         }
 
       return warning;
+    }
+
+    int rawInvoke(int s_objc, Tcl_Obj *const objv[]) throw()
+    {
+      return (*itsList.begin())->rawInvoke(s_objc, objv);
     }
   };
 
@@ -217,11 +223,11 @@ namespace
                       int s_objc,
                       Tcl_Obj *const objv[]) throw()
   {
-    Tcl::Command* cmd = static_cast<Tcl::Command*>(clientData);
+    Overloads* ov = static_cast<Overloads*>(clientData);
 
-    Assert(cmd != 0);
+    Assert(ov != 0);
 
-    return cmd->rawInvoke(s_objc, objv);
+    return ov->rawInvoke(s_objc, objv);
   }
 }
 
@@ -244,13 +250,13 @@ DOTRACE("Tcl::Command::Command");
     }
   else
     {
+      rep->overloads.reset( new Overloads );
+
       Tcl_CreateObjCommand(interp.intp(),
                            rep->cmdName.c_str(),
                            cInvokeCallback,
-                           static_cast<ClientData>(this),
+                           static_cast<ClientData>(rep->overloads.get()),
                            (Tcl_CmdDeleteProc*) NULL);
-
-      rep->overloads.reset( new Overloads );
 
       commandTable()[rep->cmdName] = this;
     }
