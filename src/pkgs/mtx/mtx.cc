@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Wed Mar 14 12:48:34 2001
+// written: Wed Mar 14 15:19:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ Slice& Slice::operator=(const ConstSlice& other)
 
   ConstIterator rhs = other.begin();
 
-  for (Iterator lhs = begin(), stop = end(); lhs != stop; ++lhs, ++rhs)
+  for (Iterator lhs = begin(); lhs.hasMore(); ++lhs, ++rhs)
 	 *lhs = *rhs;
 
   return *this;
@@ -64,6 +64,12 @@ void Mtx::initialize(double* data, int mrows, int ncols, StoragePolicy s)
   start_ = storage_->itsData;
 
   storage_->incrRefCount();
+}
+
+const Mtx& Mtx::emptyMtx()
+{
+  static Mtx m(0,0);
+  return m;
 }
 
 Mtx::Mtx(mxArray* a, StoragePolicy s)

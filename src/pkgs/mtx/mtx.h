@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Mar 14 12:57:19 2001
+// written: Wed Mar 14 15:19:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,6 +49,11 @@ public:
 ///////////////////////////////////////////////////////////////////////
 //
 // ConstSlice class definition
+//
+// We need separate classes for const slice references and non-const
+// slice references. This is because the non-const should not
+// increment the ref count of the underlying storage, allowing writes
+// to pass through to the originating matrix.
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -111,7 +116,7 @@ public:
   double sum() const
   {
 	 double s = 0.0;
-	 for (ConstIterator i = begin(), e = end(); i != e; ++i)
+	 for (ConstIterator i = begin(); i.hasMore(); ++i)
 		s += *i;
 	 return s;
   }
@@ -122,9 +127,14 @@ public:
   static double dot(const ConstSlice& s1, const ConstSlice& s2)
   {
 	 double result = 0.0;
-	 const int n = s1.itsNelems;
-	 for (int i = 0; i < n; ++i)
-		result += s1[i] * s2[i];
+
+	 ConstIterator
+		ps1(s1.begin()),
+		ps2(s2.begin());
+
+	 for (; ps1.hasMore(); ++ps1, ++ps2)
+		result += (*ps1) * (*ps2);
+
 	 return result;
   }
 
@@ -134,9 +144,11 @@ public:
 
   class ConstIterator {
 	 const double* data;
+	 const double* stop;
 	 int stride;
 
-	 ConstIterator(const double* d, int s) : data(d), stride(s) {}
+	 ConstIterator(const double* d, int s, int n) :
+		data(d), stride(s), stop(d + s*n) {}
 
 	 friend class ConstSlice;
 
@@ -146,17 +158,11 @@ public:
 
 	 ConstIterator& operator++() { data += stride; return *this; }
 
-	 bool operator==(const ConstIterator& other) const
-	   { return data == other.data; }
-
-	 bool operator!=(const ConstIterator& other) const
-	   { return data != other.data; }
+	 bool hasMore() const { return data < stop; }
   };
 
   ConstIterator begin() const
-    { return ConstIterator(data(), itsStride); }
-  ConstIterator end() const
-    { return ConstIterator(address(itsNelems), itsStride); }
+    { return ConstIterator(data(), itsStride, itsNelems); }
 };
 
 
@@ -202,7 +208,7 @@ public:
   template <class F>
   void apply(F func)
   {
-	 for (Iterator i = begin(), e = end(); i != e; ++i)
+	 for (Iterator i = begin(); i.hasMore(); ++i)
 		*i = func(*i);
   }
 
@@ -215,8 +221,9 @@ public:
   class Iterator {
 	 double* data;
 	 int stride;
+	 double* stop;
 
-	 Iterator(double* d, int s) : data(d), stride(s) {}
+	 Iterator(double* d, int s, int n) : data(d), stride(s), stop(d + s*n) {}
 
 	 friend class Slice;
 
@@ -226,17 +233,11 @@ public:
 
 	 Iterator& operator++() { data += stride; return *this; }
 
-	 bool operator==(const Iterator& other) const
-	   { return data == other.data; }
-
-	 bool operator!=(const Iterator& other) const
-	   { return data != other.data; }
+	 bool hasMore() const { return data < stop; }
   };
 
   Iterator begin()
-    { return Iterator(data(), itsStride); }
-  Iterator end()
-    { return Iterator(address(itsNelems), itsStride); }
+    { return Iterator(data(), itsStride, itsNelems); }
 };
 
 
@@ -277,6 +278,8 @@ public:
   //
   // Constructors
   //
+
+  static const Mtx& emptyMtx();
 
   Mtx(mxArray* a, StoragePolicy s = COPY);
 
