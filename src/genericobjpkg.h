@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Thu Mar  9 17:08:26 2000
+// written: Wed Mar 15 10:57:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 #endif
 
 #ifndef TCLITEMPKG_H_DEFINED
-#include "tclitempkg.h"
+#include "tcl/tclitempkg.h"
 #endif
 
 #ifndef DEMANGLE_H_DEFINED

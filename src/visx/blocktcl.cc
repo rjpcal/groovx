@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Mar 15 10:17:31 2000
+// written: Wed Mar 15 11:13:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,9 +16,10 @@
 #include "iofactory.h"
 #include "blocklist.h"
 #include "block.h"
-#include "tclcmd.h"
-#include "listitempkg.h"
-#include "listpkg.h"
+
+#include "tcl/listitempkg.h"
+#include "tcl/listpkg.h"
+#include "tcl/tclcmd.h"
 
 #define NO_TRACE
 #include "util/trace.h"

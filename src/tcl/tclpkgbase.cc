@@ -3,7 +3,7 @@
 // tclpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 12:55:27 1999
-// written: Wed Mar 15 10:17:25 2000
+// written: Wed Mar 15 10:59:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef TCLPKG_CC_DEFINED
 #define TCLPKG_CC_DEFINED
 
-#include "tclpkg.h"
+#include "tcl/tclpkg.h"
 
 #include <tcl.h>
 #include <cctype>
@@ -20,9 +20,9 @@
 #include <vector>
 #include <string>
 
-#include "tcllink.h"
-#include "tclcmd.h"
-#include "tclerror.h"
+#include "tcl/tcllink.h"
+#include "tcl/tclcmd.h"
+#include "tcl/tclerror.h"
 
 #define NO_TRACE
 #include "util/trace.h"

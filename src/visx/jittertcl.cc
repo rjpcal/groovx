@@ -2,7 +2,7 @@
 // jittertcl.cc
 // Rob Peters
 // created: Wed Apr  7 14:58:40 1999
-// written: Wed Mar 15 10:17:28 2000
+// written: Wed Mar 15 11:12:56 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -12,7 +12,8 @@
 #include "iofactory.h"
 #include "jitter.h"
 #include "poslist.h"
-#include "listitempkg.h"
+
+#include "tcl/listitempkg.h"
 
 #define NO_TRACE
 #include "util/trace.h"

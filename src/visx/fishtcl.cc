@@ -3,7 +3,7 @@
 // fishtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 12:00:53 1999
-// written: Wed Mar  8 16:31:03 2000
+// written: Wed Mar 15 11:11:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,10 @@
 
 #include "iofactory.h"
 #include "objlist.h"
-#include "listitempkg.h"
 #include "fish.h"
-#include "tracertcl.h"
+
+#include "tcl/listitempkg.h"
+#include "tcl/tracertcl.h"
 
 namespace FishTcl {
   class FishCmd;

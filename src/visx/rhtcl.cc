@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Mar 15 10:17:27 2000
+// written: Wed Mar 15 11:13:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,17 +11,18 @@
 #ifndef RHTCL_CC_DEFINED
 #define RHTCL_CC_DEFINED
 
-#include <tcl.h>
-
 #include "eventresponsehdlr.h"
 #include "iofactory.h"
 #include "rhlist.h"
 #include "responsehandler.h"
 #include "kbdresponsehdlr.h"
 #include "nullresponsehdlr.h"
-#include "listitempkg.h"
-#include "listpkg.h"
-#include "tracertcl.h"
+
+#include "tcl/listitempkg.h"
+#include "tcl/listpkg.h"
+#include "tcl/tracertcl.h"
+
+#include <tcl.h>
 
 #define NO_TRACE
 #include "util/trace.h"

@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Mar  8 16:44:34 2000
+// written: Wed Mar 15 11:13:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,13 @@
 
 #include "iofactory.h"
 #include "thlist.h"
-#include "tclcmd.h"
 #include "timinghandler.h"
 #include "timinghdlr.h"
 #include "trialevent.h"
-#include "listitempkg.h"
-#include "listpkg.h"
+
+#include "tcl/listitempkg.h"
+#include "tcl/listpkg.h"
+#include "tcl/tclcmd.h"
 
 #define NO_TRACE
 #include "util/trace.h"

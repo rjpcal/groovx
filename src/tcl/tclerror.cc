@@ -3,7 +3,7 @@
 // tclerror.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Jun 20 15:10:13 1999
-// written: Wed Mar 15 10:17:26 2000
+// written: Wed Mar 15 10:44:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef TCLERROR_CC_DEFINED
 #define TCLERROR_CC_DEFINED
 
-#include "tclerror.h"
+#include "tcl/tclerror.h"
 
 #define NO_TRACE
 #include "util/trace.h"

@@ -3,7 +3,7 @@
 // gtexttcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 12:30:38 1999
-// written: Wed Mar 15 10:17:29 2000
+// written: Wed Mar 15 11:12:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,8 @@
 #include "iofactory.h"
 #include "objlist.h"
 #include "gtext.h"
-#include "listitempkg.h"
+
+#include "tcl/listitempkg.h"
 
 #define NO_TRACE
 #include "util/trace.h"

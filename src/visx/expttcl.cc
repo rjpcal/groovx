@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Fri Mar 10 00:39:40 2000
+// written: Wed Mar 15 11:04:41 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -18,12 +18,14 @@
 #include "asciistreamreader.h"
 #include "asciistreamwriter.h"
 #include "grshapp.h"
-#include "tclevalcmd.h"
 #include "exptdriver.h"
-#include "util/strings.h"
-#include "tclitempkg.h"
-#include "tclcmd.h"
 #include "widget.h"
+
+#include "tcl/tclcmd.h"
+#include "tcl/tclevalcmd.h"
+#include "tcl/tclitempkg.h"
+
+#include "util/strings.h"
 
 #include <fstream.h>
 

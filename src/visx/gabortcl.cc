@@ -3,7 +3,7 @@
 // gabortcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 14:16:30 1999
-// written: Wed Mar 15 10:17:30 2000
+// written: Wed Mar 15 11:14:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,8 +12,9 @@
 #define GABORTCL_CC_DEFINED
 
 #include "objlist.h"
-#include "propitempkg.h"
 #include "gabor.h"
+
+#include "tcl/propitempkg.h"
 
 #define NO_TRACE
 #include "util/trace.h"

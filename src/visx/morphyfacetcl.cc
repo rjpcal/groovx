@@ -3,7 +3,7 @@
 // morphyfacetcl.cc
 // Rob Peters 
 // created: Wed Sep  8 15:42:36 1999
-// written: Wed Mar 15 10:17:28 2000
+// written: Wed Mar 15 11:14:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,8 +12,9 @@
 #define FACETCL_CC_DEFINED
 
 #include "objlist.h"
-#include "propitempkg.h"
 #include "morphyface.h"
+
+#include "tcl/propitempkg.h"
 
 #define NO_TRACE
 #include "util/trace.h"

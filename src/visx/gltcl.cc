@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed Mar 15 10:17:26 2000
+// written: Wed Mar 15 10:59:37 2000
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -23,9 +23,9 @@
 #include <vector>
 #include <map>
 
-#include "tclpkg.h"
-#include "tclcmd.h"
-#include "tclerror.h"
+#include "tcl/tclpkg.h"
+#include "tcl/tclcmd.h"
+#include "tcl/tclerror.h"
 
 #define NO_TRACE
 #include "util/trace.h"

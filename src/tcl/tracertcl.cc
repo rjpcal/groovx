@@ -3,7 +3,7 @@
 // tracertcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Feb 17 13:34:40 2000
-// written: Wed Mar 15 10:17:32 2000
+// written: Wed Mar 15 11:01:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,10 +11,10 @@
 #ifndef TRACERTCL_CC_DEFINED
 #define TRACERTCL_CC_DEFINED
 
-#include "tracertcl.h"
+#include "tcl/tracertcl.h"
 
-#include "tclcmd.h"
-#include "tclpkg.h"
+#include "tcl/tclcmd.h"
+#include "tcl/tclpkg.h"
 #include "util/tracer.h"
 
 #define LOCAL_ASSERT

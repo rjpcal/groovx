@@ -3,7 +3,7 @@
 // tclitempkgbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Dec 16 15:25:06 1999
-// written: Tue Feb 15 10:29:44 2000
+// written: Wed Mar 15 10:59:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,7 @@
 #define TCLITEMPKGBASE_H_DEFINED
 
 #ifndef TCLPKG_H_DEFINED
-#include "tclpkg.h"
+#include "tcl/tclpkg.h"
 #endif
 
 struct Tcl_Interp;

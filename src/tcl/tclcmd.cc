@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Mar 15 10:17:26 2000
+// written: Wed Mar 15 10:55:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,10 +11,10 @@
 #ifndef TCLCMD_CC_DEFINED
 #define TCLCMD_CC_DEFINED
 
-#include "tclcmd.h"
+#include "tcl/tclcmd.h"
 
 #include "demangle.h"
-#include "errmsg.h"
+#include "tcl/errmsg.h"
 
 #include <tcl.h>
 #include <exception>

@@ -3,7 +3,7 @@
 // housetcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 15:14:19 1999
-// written: Wed Mar 15 10:17:29 2000
+// written: Wed Mar 15 11:14:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,8 @@
 
 #include "house.h"
 #include "objlist.h"
-#include "propitempkg.h"
+
+#include "tcl/propitempkg.h"
 
 #define NO_TRACE
 #include "util/trace.h"

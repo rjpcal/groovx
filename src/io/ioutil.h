@@ -3,7 +3,7 @@
 // stringifycmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:43 1999
-// written: Tue Dec  7 18:19:24 1999
+// written: Wed Mar 15 10:46:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,7 @@
 #define STRINGIFYCMD_H_DEFINED
 
 #ifndef TCLCMD_H_DEFINED
-#include "tclcmd.h"
+#include "tcl/tclcmd.h"
 #endif
 
 class IO;

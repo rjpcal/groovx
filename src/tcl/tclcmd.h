@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Sat Mar 11 23:15:28 2000
+// written: Wed Mar 15 11:00:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,11 +12,11 @@
 #define TCLCMD_H_DEFINED
 
 #ifndef TCLVALUE_H_DEFINED
-#include "tclvalue.h"
+#include "tcl/tclvalue.h"
 #endif
 
 #ifndef TCLERROR_H_DEFINED
-#include "tclerror.h"
+#include "tcl/tclerror.h"
 #endif
 
 struct Tcl_Interp;

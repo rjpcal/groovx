@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Mar 15 10:17:25 2000
+// written: Wed Mar 15 11:13:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,9 +16,10 @@
 #include "application.h"
 #include "experiment.h"
 #include "tlist.h"
-#include "tclcmd.h"
-#include "listpkg.h"
 #include "tlistutils.h"
+
+#include "tcl/listpkg.h"
+#include "tcl/tclcmd.h"
 
 #define NO_TRACE
 #include "util/trace.h"

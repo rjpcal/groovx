@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Sat Mar 11 12:21:02 2000
+// written: Wed Mar 15 10:54:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #endif
 
 #ifndef TCLCMD_H_DEFINED
-#include "tclcmd.h"
+#include "tcl/tclcmd.h"
 #endif
 
 template <class T> class Getter;

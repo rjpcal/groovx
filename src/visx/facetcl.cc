@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Wed Mar 15 10:17:30 2000
+// written: Wed Mar 15 11:11:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,8 +23,9 @@
 #include "iomgr.h"
 #include "objlist.h"
 #include "face.h"
-#include "listitempkg.h"
-#include "tclcmd.h"
+
+#include "tcl/listitempkg.h"
+#include "tcl/tclcmd.h"
 
 #define NO_TRACE
 #include "util/trace.h"

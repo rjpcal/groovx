@@ -3,7 +3,7 @@
 // tclveccmds.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:16:22 1999
-// written: Wed Mar 15 10:17:25 2000
+// written: Wed Mar 15 11:00:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,9 @@
 #ifndef TCLVECCMDS_CC_DEFINED
 #define TCLVECCMDS_CC_DEFINED
 
-#include "tclveccmds.h"
+#include "tcl/tclveccmds.h"
 
-#include "tclitempkgbase.h"
+#include "tcl/tclitempkgbase.h"
 #include "util/strings.h"
 
 #include <vector>

@@ -3,7 +3,7 @@
 // tclvalue.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Wed Mar 15 10:17:25 2000
+// written: Wed Mar 15 11:00:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef TCLVALUE_CC_DEFINED
 #define TCLVALUE_CC_DEFINED
 
-#include "tclvalue.h"
+#include "tcl/tclvalue.h"
 
 #include <tcl.h>
 #include <string>

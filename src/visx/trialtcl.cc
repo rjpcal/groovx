@@ -3,7 +3,7 @@
 // trialtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 09:51:54 1999
-// written: Wed Mar 15 10:17:24 2000
+// written: Wed Mar 15 11:12:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,8 @@
 #include "iofactory.h"
 #include "trial.h"
 #include "tlist.h"
-#include "listitempkg.h"
+
+#include "tcl/listitempkg.h"
 
 #define NO_TRACE
 #include "util/trace.h"

@@ -3,7 +3,7 @@
 // tclevalcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jun 17 10:38:13 1999
-// written: Thu Mar  9 17:41:08 2000
+// written: Wed Mar 15 10:59:05 2000
 // $Id$
 //
 // TclEvalCmd serves as a wrapper for a Tcl command string that is to
@@ -18,11 +18,11 @@
 #define TCLEVALCMD_H_DEFINED
 
 #ifndef TCLOBJLOCK_H_DEFINED
-#include "tclobjlock.h"
+#include "tcl/tclobjlock.h"
 #endif
 
 #ifndef TCLERROR_H_DEFINED
-#include "tclerror.h"
+#include "tcl/tclerror.h"
 #endif
 
 namespace Tcl {

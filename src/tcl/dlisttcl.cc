@@ -3,7 +3,7 @@
 // tcldlist.cc
 // Rob Peters 
 // created: Dec-98
-// written: Wed Mar 15 10:17:26 2000
+// written: Wed Mar 15 10:55:16 2000
 // $Id$
 //
 // This package provides additional list manipulation functions using
@@ -14,12 +14,12 @@
 #ifndef TCLDLIST_CC_DEFINED
 #define TCLDLIST_CC_DEFINED
 
-#include "tcldlist.h"
+#include "tcl/tcldlist.h"
 
 #include <tcl.h>
 #include <cstdlib>
 
-#include "errmsg.h"
+#include "tcl/errmsg.h"
 
 #define NO_TRACE
 #include "util/trace.h"

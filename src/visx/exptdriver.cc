@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Mar 15 10:17:30 2000
+// written: Wed Mar 15 11:04:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,15 +13,8 @@
 
 #include "exptdriver.h"
 
-#include <tcl.h>
-#include <iostream.h>
-#include <fstream.h>
-#include <sys/time.h>
-
 #include "block.h"
-#include "tclerror.h"
 #include "responsehandler.h"
-#include "tclevalcmd.h"
 #include "timinghdlr.h"
 #include "tlistutils.h"
 #include "trial.h"
@@ -34,12 +27,21 @@
 #include "rhlist.h"
 #include "thlist.h"
 #include "tlist.h"
-#include "util/arrays.h"
-#include "util/strings.h"
 #include "writer.h"
 #include "system.h"
 #include "stopwatch.h"
 #include "tlistwidget.h"
+
+#include "tcl/tclerror.h"
+#include "tcl/tclevalcmd.h"
+
+#include "util/arrays.h"
+#include "util/strings.h"
+
+#include <tcl.h>
+#include <iostream.h>
+#include <fstream.h>
+#include <sys/time.h>
 
 #define NO_TRACE
 #include "util/trace.h"

@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Mar 15 10:19:32 2000
+// written: Wed Mar 15 11:03:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,21 +13,23 @@
 
 #include "eventresponsehdlr.h"
 
-#include <tcl.h>
-#include <strstream.h>
-
-#include "util/error.h"
 #include "experiment.h"
 #include "sound.h"
 #include "soundlist.h"
 #include "reader.h"
 #include "response.h"
-#include "tclevalcmd.h"
-#include "tclobjlock.h"
-#include "util/arrays.h"
-#include "util/strings.h"
 #include "widget.h"
 #include "writer.h"
+
+#include "tcl/tclevalcmd.h"
+#include "tcl/tclobjlock.h"
+
+#include "util/arrays.h"
+#include "util/error.h"
+#include "util/strings.h"
+
+#include <tcl.h>
+#include <strstream.h>
 
 #define DYNAMIC_TRACE_EXPR EventResponseHdlr::tracer.status()
 #include "util/trace.h"

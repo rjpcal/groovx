@@ -3,7 +3,7 @@
 // stringifycmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:28 1999
-// written: Wed Mar 15 10:17:27 2000
+// written: Wed Mar 15 11:10:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef STRINGIFYCMD_CC_DEFINED
 #define STRINGIFYCMD_CC_DEFINED
 
-#include "stringifycmd.h"
+#include "tcl/stringifycmd.h"
 
 #include "io.h"
 #include "util/arrays.h"

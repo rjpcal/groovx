@@ -2,18 +2,19 @@
 // subjecttcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Wed Mar 15 10:17:27 2000
+// written: Wed Mar 15 11:07:59 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SUBJECTTCL_CC_DEFINED
 #define SUBJECTTCL_CC_DEFINED
 
+#include "subject.h"
+
+#include "tcl/errmsg.h"
+
 #include <tcl.h>
 #include <cstring>
-
-#include "errmsg.h"
-#include "subject.h"
 
 #define NO_TRACE
 #include "util/trace.h"

@@ -3,7 +3,7 @@
 // listpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec 15 17:27:51 1999
-// written: Wed Mar 15 10:17:28 2000
+// written: Wed Mar 15 11:12:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef LISTPKG_CC_DEFINED
 #define LISTPKG_CC_DEFINED
 
-#include "listpkg.h"
+#include "tcl/listpkg.h"
 
 #include <vector>
 

@@ -3,7 +3,7 @@
 // bitmaptcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:43:45 1999
-// written: Wed Mar 15 10:20:36 2000
+// written: Wed Mar 15 11:11:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,11 +16,13 @@
 #include "xbitmap.h"
 #include "iofactory.h"
 #include "objlist.h"
-#include "listitempkg.h"
-#include "util/strings.h"
 #include "system.h"
-#include "tclcmd.h"
-#include "tclobjlock.h"
+
+#include "util/strings.h"
+
+#include "tcl/listitempkg.h"
+#include "tcl/tclcmd.h"
+#include "tcl/tclobjlock.h"
 
 #include <tcl.h>
 

@@ -3,7 +3,7 @@
 // propitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct  4 15:42:59 1999
-// written: Wed Dec 15 12:59:41 1999
+// written: Wed Mar 15 11:11:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,7 @@
 #define PROPITEMPKG_H_DEFINED
 
 #ifndef LISTITEMPKG_H_DEFINED
-#include "listitempkg.h"
+#include "tcl/listitempkg.h"
 #endif
 
 #ifndef IOFACTORY_H_DEFINED

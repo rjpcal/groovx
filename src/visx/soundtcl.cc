@@ -3,7 +3,7 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Wed Mar 15 10:17:27 2000
+// written: Wed Mar 15 11:13:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,11 @@
 
 #include "soundlist.h"
 #include "sound.h"
-#include "listpkg.h"
-#include "listitempkg.h"
-#include "tcllink.h"
+
+#include "tcl/listitempkg.h"
+#include "tcl/listpkg.h"
+#include "tcl/tcllink.h"
+
 #include "util/strings.h"
 
 #include <tcl.h>

@@ -3,7 +3,7 @@
 // fixpttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Wed Mar 15 10:17:30 2000
+// written: Wed Mar 15 11:14:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,8 @@
 
 #include "fixpt.h"
 #include "objlist.h"
-#include "propitempkg.h"
+
+#include "tcl/propitempkg.h"
 
 #define NO_TRACE
 #include "util/trace.h"

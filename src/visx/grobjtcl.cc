@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Wed Mar  8 16:13:17 2000
+// written: Wed Mar 15 11:11:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,11 @@
 #include "experiment.h"
 #include "grobj.h"
 #include "objlist.h"
-#include "listitempkg.h"
 #include "rect.h"
-#include "tclveccmds.h"
-#include "tracertcl.h"
+
+#include "tcl/listitempkg.h"
+#include "tcl/tclveccmds.h"
+#include "tcl/tracertcl.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
