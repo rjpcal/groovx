@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Mar 30 09:50:01 2000
+// written: Wed May 10 12:35:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(EXPERIMENT_H_DEFINED)
 #include "experiment.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRACER_H_DEFINED)
+#include "util/tracer.h"
 #endif
 
 struct Tcl_Interp;
@@ -54,6 +58,11 @@ private:
   ExptDriver& operator=(const ExptDriver&);
 
 public:
+
+  /** This tracer dynamically controls the tracing of ExptDriver
+		member functions. */
+  static Util::Tracer tracer;
+
   /// Construct with the applications Tcl interpreter.
   ExptDriver(Tcl_Interp* interp);
 
