@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Sun Sep  9 14:30:24 2001
+// written: Sun Sep  9 14:49:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,8 @@
 
 struct Tcl_Interp;
 struct Tcl_Obj;
+
+class fstring;
 
 namespace Tcl
 {
@@ -75,10 +77,10 @@ public:
   virtual ~Command();
 
   /// Returns the command registered name.
-  const char* name() const;
+  const fstring& name() const;
 
   /// Returns a string describing the command's proper usage.
-  virtual const char* usage() const;
+  fstring usage() const;
 
   /** This is overridden by subclasses to implement the specific
       functionality for the command that is represented. The \c
@@ -135,14 +137,6 @@ public:
   /// Return the number of arguments in the current invocation.
   unsigned int objc() { return itsObjc; }
 
-  //
-  // To query the arguments of the current invocation:
-  //
-
-  /** Attempts to retrieve a C-style string (\c char*) from argument
-      number \a argn. */
-  const char* getCstringFromArg(unsigned int argn)
-    { return getValFromArg(argn, TypeCue<const char*>()); }
 
   /** Attempt to convert argument number \a argn to type \c T, and
       copy the result into \a val. */
@@ -153,10 +147,6 @@ public:
       return Tcl::Convert<typename Cue::Type>::fromTcl(getObjv(argn));
     }
 
-
-  //
-  // To return a value to the Tcl interpreter
-  //
 
   /// Return satisfactorily with the result \a t of type \c T.
   template <class T>
