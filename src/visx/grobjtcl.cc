@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Fri Jan 18 16:07:01 2002
+// written: Fri Jul  5 14:02:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,11 +32,7 @@ namespace
   {
     Gfx::Canvas& canvas = Application::theApp().getCanvas();
 
-    Gfx::Rect<double> bbox;
-
-    obj->getBoundingBox(bbox, canvas);
-
-    return bbox;
+    return obj->getBoundingBox(canvas);
   }
 
   void saveBitmapCache(Util::Ref<GrObj> obj, const char* filename)

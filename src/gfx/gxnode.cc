@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:27:15 2000
-// written: Fri Jul  5 13:34:13 2002
+// written: Fri Jul  5 14:04:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,11 @@
 
 #include "gfx/gxnode.h"
 
+#include "gfx/canvas.h"
+
 #include "gx/box.h"
 
 #include "util/iter.h"
-
 #include "util/ref.h"
 
 #include "util/trace.h"
@@ -74,9 +75,25 @@ DOTRACE("GxNode::deepChildren");
     (shared_ptr<GxNodeIter>(new GxNodeIter(this)));
 }
 
-void GxNode::getBoundingBox(Gfx::Rect<double>&, Gfx::Canvas&) const
+Gfx::Rect<double> GxNode::getBoundingBox(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxNode::getBoundingBox");
+
+  Gfx::Box<double> cube;
+  getBoundingCube(cube, canvas);
+
+  return cube.rect();
+}
+
+void GxNode::undraw(Gfx::Canvas& canvas) const
+{
+DOTRACE("GxNode::undraw");
+
+  const Gfx::Rect<double> world_box = getBoundingBox(canvas);
+
+  const Gfx::Rect<int> screen_box = canvas.screenFromWorld(world_box);
+
+  canvas.clearColorBuffer(screen_box);
 }
 
 static const char vcid_gxnode_cc[] = "$Header$";

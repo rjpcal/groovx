@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:14 1999
-// written: Wed Jul  3 16:24:39 2002
+// written: Fri Jul  5 14:02:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,10 +96,6 @@ public:
   /////////////
   // actions //
   /////////////
-
-  /// Apply our transformation to the bbox.
-  virtual void getBoundingBox(Gfx::Rect<double>& bbox,
-                              Gfx::Canvas& canvas) const;
 
   /// Apply our transformation to the bbox.
   virtual void getBoundingCube(Gfx::Box<double>& cube,

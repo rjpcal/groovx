@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:20:15 2000
-// written: Wed Jul  3 15:23:14 2002
+// written: Fri Jul  5 13:59:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,10 +65,7 @@ public:
 
   virtual bool contains(GxNode* other) const;
 
-  /// Apply all of the contained objects' transformations to the bbox.
-  virtual void getBoundingBox(Gfx::Rect<double>& bbox,
-                              Gfx::Canvas& canvas) const;
-
+  /// Apply all of the contained objects' transformations to the cube.
   virtual void getBoundingCube(Gfx::Box<double>& cube,
                                Gfx::Canvas& canvas) const;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Wed Jul  3 16:42:56 2002
+// written: Fri Jul  5 14:02:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -197,28 +197,6 @@ DOTRACE("Position::getTxform");
 /////////////
 // actions //
 /////////////
-
-void Position::getBoundingBox(Gfx::Rect<double>& bbox, Gfx::Canvas&) const
-{
-DOTRACE("Position::getBoundingBox");
-
-  const Gfx::Txform& txform = getTxform();
-
-  Gfx::Vec2<double> p1 = txform.applyTo(bbox.bottomLeft());
-  Gfx::Vec2<double> p2 = txform.applyTo(bbox.bottomRight());
-  Gfx::Vec2<double> p3 = txform.applyTo(bbox.topLeft());
-  Gfx::Vec2<double> p4 = txform.applyTo(bbox.topRight());
-
-  using Util::min;
-  using Util::max;
-
-  const double left = min(min(p1.x(), p2.x()), min(p3.x(), p4.x()));
-  const double right = max(max(p1.x(), p2.x()), max(p3.x(), p4.x()));
-  const double bottom = min(min(p1.y(), p2.y()), min(p3.y(), p4.y()));
-  const double top = max(max(p1.y(), p2.y()), max(p3.y(), p4.y()));
-
-  bbox.setRectLRBT(left, right, bottom, top);
-}
 
 void Position::getBoundingCube(Gfx::Box<double>& cube, Gfx::Canvas&) const
 {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Fri Jul  5 13:33:46 2002
+// written: Fri Jul  5 14:06:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -140,17 +140,10 @@ DOTRACE("GrObj::getBBVisibility");
   return itsImpl->itsBB->isVisible();
 }
 
-void GrObj::getBoundingBox(Gfx::Rect<double>& bbox, Gfx::Canvas& canvas) const
-{
-DOTRACE("GrObj::getBoundingBox");
-
-  bbox.unionize(itsImpl->itsTopNode->gnodeBoundingBox(canvas));
-}
-
 void GrObj::getBoundingCube(Gfx::Box<double>& cube,
                             Gfx::Canvas& canvas) const
 {
-DOTRACE("GrObj::getBoundingBox");
+DOTRACE("GrObj::getBoundingCube");
 
   Gfx::Rect<double> rect = cube.rect();
 
@@ -351,18 +344,6 @@ void GrObj::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObj::draw");
   itsImpl->itsTopNode->gnodeDraw(canvas);
-}
-
-void GrObj::undraw(Gfx::Canvas& canvas) const
-{
-DOTRACE("GrObj::undraw");
-
-  Gfx::Rect<double> world_box;
-  getBoundingBox(world_box, canvas);
-
-  Gfx::Rect<int> screen_box = canvas.screenFromWorld(world_box);
-
-  canvas.clearColorBuffer(screen_box);
 }
 
 const fstring& GrObj::getCacheFilename() const

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul  5 12:46:27 2002
-// written: Fri Jul  5 13:19:41 2002
+// written: Fri Jul  5 13:57:04 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ DOTRACE("GxCylinder::writeTo");
 void GxCylinder::getBoundingCube(Gfx::Box<double>& cube,
                                  Gfx::Canvas& canvas) const
 {
-DOTRACE("GxCylinder::getBoundingBox");
+DOTRACE("GxCylinder::getBoundingCube");
 
   Gfx::Box<double> mybox;
 

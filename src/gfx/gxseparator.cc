@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Wed Jul  3 16:41:11 2002
+// written: Fri Jul  5 13:59:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -257,22 +257,10 @@ DOTRACE("GxSeparator::contains");
   return itsImpl->contains(other);
 }
 
-void GxSeparator::getBoundingBox(Gfx::Rect<double>& bbox,
-                                 Gfx::Canvas& canvas) const
-{
-DOTRACE("GxSeparator::getBoundingBox");
-
-  Gfx::Box<double> cube(bbox);
-
-  getBoundingCube(cube, canvas);
-
-  bbox = cube.rect();
-}
-
 void GxSeparator::getBoundingCube(Gfx::Box<double>& bbox,
                                   Gfx::Canvas& canvas) const
 {
-DOTRACE("GxSeparator::getBoundingBox");
+DOTRACE("GxSeparator::getBoundingCube");
 
   Gfx::Box<double> mybox;
 

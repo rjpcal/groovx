@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:26:45 2000
-// written: Fri Jul  5 13:34:02 2002
+// written: Fri Jul  5 14:06:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,11 +73,8 @@ public:
       this object. */
   virtual Util::FwdIter<const Util::Ref<GxNode> > deepChildren();
 
-  /** Subclasses override this to transform \a bbox according to how
-      that subclass will be rendered. The default implementation does
-      nothing. */
-  virtual void getBoundingBox(Gfx::Rect<double>& bbox,
-                              Gfx::Canvas& canvas) const;
+  /// Get the 2-D z-projection of the result of getBoundingCube().
+  Gfx::Rect<double> getBoundingBox(Gfx::Canvas& canvas) const;
 
   /** Subclasses override this to transform \a bbox according to how that
       subclass will be rendered. */
@@ -87,8 +84,8 @@ public:
   /// Draw the object on \a canvas.
   virtual void draw(Gfx::Canvas& canvas) const = 0;
 
-  /// Undraw the object from \a canvas.
-  virtual void undraw(Gfx::Canvas& canvas) const = 0;
+  /// Undraw the object from \a canvas by clearing the bounding box.
+  virtual void undraw(Gfx::Canvas& canvas) const;
 };
 
 static const char vcid_gxnode_h[] = "$Header$";

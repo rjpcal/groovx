@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Fri Jul  5 13:32:02 2002
+// written: Fri Jul  5 14:06:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,15 +85,10 @@ public:
       is drawn. */
   bool getBBVisibility() const;
 
-  /** Overridden from GxNode. Extends bbox by the rect returned by
-      grGetBoundingBox(), with additional transformations to reflect
-      the scaling mode, alignment mode, and pixel border
-      values. Subclasses of GrObj should override grGetBoundingBox(),
-      not boundingBox(). */
-  virtual void getBoundingBox(Gfx::Rect<double>& bbox,
-                              Gfx::Canvas& canvas) const;
-
-  /// Overridden from GxNode.
+  /** Overridden from GxNode. Extends the cube by the rect returned by
+      grGetBoundingBox(), with additional transformations to reflect the
+      scaling mode, alignment mode, and pixel border values. Subclasses of
+      GrObj should override grGetBoundingBox(), not getBoundingCube(). */
   virtual void getBoundingCube(Gfx::Box<double>& cube,
                                Gfx::Canvas& canvas) const;
 
@@ -230,9 +225,6 @@ public:
   /** This function draws the object according to the GrRenderMode
       selected with setRenderMode(). */
   void draw(Gfx::Canvas& canvas) const;
-
-  /// This function undraws the object by clearing its bounding box.
-  void undraw(Gfx::Canvas& canvas) const;
 
   /** This function must be overridden in derived classes to execute
       the actual drawing commands that render the object. */
