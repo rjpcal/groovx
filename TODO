@@ -125,9 +125,6 @@ void test() { buildTclFunctor(bar); }
 
 ** no <cheader> include files so e.g. size_t not in std:: namespace
 
-* (23-Feb-2002) Remaining OS X issues:
-  explicit template instantiation does not work (e.g. util/multivalue.cc)
-
 * (25-Jan-2002) Logging goodies
   log levels, and multiple log targets with separate log levels for each?
 
