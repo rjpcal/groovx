@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Aug 15 06:40:18 2001
+// written: Wed Aug 15 10:09:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -476,9 +476,13 @@ DOTRACE("Trial::Impl::undoLastResponse");
 
 namespace
 {
+
   const FieldInfo FINFOS[] =
   {
-    FieldInfo("tType", &Trial::tType, -1, -10, 10, 1, true)
+    FieldInfo("tType",
+              shared_ptr<FieldMemberPtr>(
+                 new ReadWriteAttrib<Trial, int>(&Trial::trialType, &Trial::setType)),
+              -1, -10, 10, 1, true)
   };
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
@@ -500,7 +504,6 @@ DOTRACE("Trial::make");
 
 Trial::Trial() :
   FieldContainer(0),
-  tType(this, &Trial::trialType, &Trial::setType),
   itsImpl( new Impl(this) )
 {
 DOTRACE("Trial::Trial()");

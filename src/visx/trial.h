@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mar-99
-// written: Mon Aug  6 16:28:43 2001
+// written: Wed Aug 15 10:06:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,8 +86,6 @@ public:
   // returns some info about relationship between objects in trial
   virtual int trialType() const;
   void setType(int t);
-
-  ReadWriteAttrib<Trial, int> tType;
 
   virtual const char* description() const;
 

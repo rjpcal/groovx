@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 11 13:21:57 2001
-// written: Wed Aug  8 20:16:38 2001
+// written: Wed Aug 15 10:09:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,44 +26,49 @@
 #endif
 
 template <class C, class T>
-class ReadWriteAttrib : public Field {
-  C* itsC;
-
+class ReadWriteAttrib : public FieldMemberPtr {
   typedef T (C::* Getter)() const;
   typedef void (C::* Setter)(T);
 
   Getter itsGetter;
   Setter itsSetter;
 
-  ReadWriteAttrib(const ReadWriteAttrib&);
   ReadWriteAttrib& operator=(const ReadWriteAttrib&);
-
-protected:
-  virtual void doSetValue(const Value& new_val)
-  {
-    (itsC->*itsSetter)(new_val.get(Util::TypeCue<T>()));
-  }
+  ReadWriteAttrib(const ReadWriteAttrib&);
 
 public:
-  ReadWriteAttrib(C* t, Getter g, Setter s) :
-    Field(), itsC(t), itsGetter(g), itsSetter(s) {}
+  ReadWriteAttrib(Getter g, Setter s) : itsGetter(g), itsSetter(s) {}
 
-  virtual void readValueFrom(IO::Reader* reader, const fstring& name)
+  virtual void set(FieldContainer* obj, const Value& new_val) const
   {
+    C& cobj = dynamic_cast<C&>(*obj);
+
+    (cobj.*itsSetter)(new_val.get(Util::TypeCue<T>()));
+  }
+
+  virtual shared_ptr<Value> get(const FieldContainer* obj) const
+  {
+    const C& cobj = dynamic_cast<const C&>(*obj);
+
+    return shared_ptr<Value>(new TValue<T>((cobj.*itsGetter)()));
+  }
+
+  virtual void readValueFrom(FieldContainer* obj,
+                             IO::Reader* reader, const fstring& name)
+  {
+    C& cobj = dynamic_cast<C&>(*obj);
+
     T temp;
     reader->readValue(name, temp);
-    (itsC->*itsSetter)(temp);
+    (cobj.*itsSetter)(temp);
   }
 
-  virtual void writeValueTo(IO::Writer* writer,
-                            const fstring& name) const
+  virtual void writeValueTo(const FieldContainer* obj,
+                            IO::Writer* writer, const fstring& name) const
   {
-    writer->writeValue(name.c_str(), (itsC->*itsGetter)());
-  }
+    const C& cobj = dynamic_cast<const C&>(*obj);
 
-  virtual shared_ptr<Value> value() const
-  {
-    return shared_ptr<Value>(new TValue<T>((itsC->*itsGetter)()));
+    writer->writeValue(name.c_str(), (cobj.*itsGetter)());
   }
 };
 
