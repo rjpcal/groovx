@@ -22,18 +22,18 @@ IO::testReadCmd TrialTcl IO 1 $::TRIAL
 test "TrialTcl-Trial::stdInfo" "use when empty" {
     set tr [new Trial]
     set str [Trial::stdInfo $tr]
-    regexp {objs ==([0-9 ]*),} $str fullmatch objs
-    return "[llength $objs]"
-} {^0$}
+    regexp {objs ==([^,]*),} $str fullmatch objs
+    return "[llength $objs] $objs"
+} {^0 }
 
 test "TrialTcl-Trial::stdInfo" "use with one object" {
     set face [new Face]
     set tr [new Trial]
     Trial::addNode $tr $face
     set str [Trial::stdInfo $tr]
-    regexp {objs == ([0-9 ]*),} $str fullmatch objs
-    return "[expr $objs == $face] [llength $objs]"
-} {^1 1$}
+    regexp {objs == ([^,]*),} $str fullmatch objs
+    return "[expr [string equal $objs Face($face)]] $objs"
+} {^1 }
 
 test "TrialTcl-Trial::stdInfo" "use with several objects" {
     set face [new Face]
@@ -44,12 +44,12 @@ test "TrialTcl-Trial::stdInfo" "use with several objects" {
     Trial::addNode $tr $fixpt
     Trial::addNode $tr $house
     set str [Trial::stdInfo $tr]
-    regexp {objs == ([0-9 ]*),} $str fullmatch objs
-    set idx0 [lsearch -exact $objs $face]
-    set idx1 [lsearch -exact $objs $fixpt]
-    set idx2 [lsearch -exact $objs $house]
-    return "[llength $objs] $idx0 $idx1 $idx2"
-} {^3 0 1 2$}
+    regexp {objs == ([^,]*),} $str fullmatch objs
+    set idx0 [lsearch -exact $objs "Face($face)"]
+    set idx1 [lsearch -exact $objs "FixPt($fixpt)"]
+    set idx2 [lsearch -exact $objs "House($house)"]
+    return "[llength $objs] $idx0 $idx1 $idx2 $objs"
+} {^3 0 1 2 }
 
 test "TrialTcl-Trial::stdInfo" "use with nested objects" {
     set face [new Face]
@@ -66,13 +66,13 @@ test "TrialTcl-Trial::stdInfo" "use with nested objects" {
     Trial::addNode $tr $face
 
     set str [Trial::stdInfo $tr]
-    regexp {objs == ([0-9 ]*),} $str fullmatch objs
+    regexp {objs == ([^,]*),} $str fullmatch objs
 
-    set idx0 [lsearch -exact $objs $fixpt]
-    set idx1 [lsearch -exact $objs $house]
-    set idx2 [lsearch -exact $objs $face]
-    return "[llength $objs] $idx0 $idx1 $idx2"
-} {^3 0 1 2$}
+    set idx0 [lsearch -exact $objs "FixPt($fixpt)"]
+    set idx1 [lsearch -exact $objs "House($house)"]
+    set idx2 [lsearch -exact $objs "Face($face)"]
+    return "[llength $objs] $idx0 $idx1 $idx2 $objs"
+} {^3 0 1 2 }
 
 ### Trial::responseHdlrCmd ###
 test "TrialTcl-Trial::responseHdlr" "too few args" {
