@@ -3,7 +3,7 @@
 // writeutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:18:36 1999
-// written: Thu Sep 28 17:54:34 2000
+// written: Wed Oct 25 18:37:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,6 +75,25 @@ public:
 	 
 		while (begin != end) {
 		  writer->writeObject(makeElementNameString(name, count), *begin);
+		  ++begin;
+		  ++count;
+		}
+	 }
+
+  /// A generic interface for handling containers, sequences, etc. of objects
+  template <class Itr>
+  static void writeSmartPtrSeq(IO::Writer* writer, const char* name,
+										 Itr begin, Itr end, bool skip_count=false)
+	 {
+		if (!skip_count) {
+		  writer->writeValue(makeSeqCountString(name),
+									computeCount(begin, end));
+		}
+
+		int count = 0;
+	 
+		while (begin != end) {
+		  writer->writeObject(makeElementNameString(name, count), begin->get());
 		  ++begin;
 		  ++count;
 		}
