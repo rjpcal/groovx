@@ -41,20 +41,23 @@ namespace IO
 {
   class IoObject;
 
-  fstring  stringify(Util::Ref<IO::IoObject> obj);
-  void     destringify(Util::Ref<IO::IoObject> obj, const char* buf);
+  // LGX -- "Legacy" compact format
+  fstring  writeLGX(Util::Ref<IO::IoObject> obj);
+  void     readLGX(Util::Ref<IO::IoObject> obj, const char* buf);
 
-  fstring  write(Util::Ref<IO::IoObject> obj);
-  void     read(Util::Ref<IO::IoObject> obj, const char* buf);
-
-  fstring  writeXML(Util::Ref<IO::IoObject> obj);
+  // ASW -- AsciiStreamWriter format
+  fstring  writeASW(Util::Ref<IO::IoObject> obj);
+  void     readASW(Util::Ref<IO::IoObject> obj, const char* buf);
 
   void saveASW(Util::Ref<IO::IoObject> obj, fstring filename);
-  void loadASR(Util::Ref<IO::IoObject> obj, fstring filename);
+  void loadASW(Util::Ref<IO::IoObject> obj, fstring filename);
 
-  void saveXML(Util::Ref<IO::IoObject> obj, fstring filename);
+  Util::Ref<IO::IoObject> retrieveASW(fstring filename);
 
-  Util::Ref<IO::IoObject> retrieveASR(fstring filename);
+  // GVX -- GroovX XML format
+  fstring  writeGVX(Util::Ref<IO::IoObject> obj);
+
+  void saveGVX(Util::Ref<IO::IoObject> obj, fstring filename);
 }
 
 static const char vcid_ioutil_h[] = "$Header$";

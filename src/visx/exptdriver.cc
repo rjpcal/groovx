@@ -245,7 +245,7 @@ DOTRACE("ExptDriver::vxEndTrialHook");
     return;
 
   dbgEvalNL(3, rep->autosaveFile.c_str());
-  IO::saveASW(Util::Ref<IO::IoObject>(this), rep->autosaveFile);
+  IO::saveGVX(Util::Ref<IO::IoObject>(this), rep->autosaveFile);
 }
 
 void ExptDriver::vxAllChildrenFinished()
@@ -442,8 +442,8 @@ DOTRACE("ExptDriver::storeData");
   // Write the main experiment file
   fstring expt_filename = rep->filePrefix;
   expt_filename.append("_", rep->fileTimestamp);
-  expt_filename.append(".asw");
-  IO::saveASW(Util::Ref<IO::IoObject>(this), expt_filename.c_str());
+  expt_filename.append(".gvx");
+  IO::saveGVX(Util::Ref<IO::IoObject>(this), expt_filename.c_str());
   Util::log( fstring( "wrote file ", expt_filename.c_str()) );
 
   // Write the responses file

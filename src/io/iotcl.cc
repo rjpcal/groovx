@@ -51,21 +51,18 @@ DOTRACE("Io_Init");
   pkg->inheritPkg("Obj");
   Tcl::defGenericObjCmds<IO::IoObject>(pkg);
 
-  pkg->defVec( "stringify", "item_id(s)", IO::stringify );
-  pkg->defVec( "destringify", "item_id(s) string(s)", IO::destringify );
+  pkg->defVec( "writeLGX", "item_id(s)", IO::writeLGX );
+  pkg->defVec( "readLGX", "item_id(s) string(s)", IO::readLGX );
 
-  pkg->defVec( "write", "item_id(s)", IO::write );
-  pkg->defVec( "read", "item_id(s) string(s)", IO::read );
+  pkg->defVec( "writeASW", "item_id(s)", IO::writeASW );
+  pkg->defVec( "readASW", "item_id(s) string(s)", IO::readASW );
+  pkg->def( "saveASW", "item_id filename", IO::saveASW );
+  pkg->def( "loadASW", "item_id filename", IO::loadASW );
+  pkg->def( "retrieveASW", "filename", IO::retrieveASW );
 
-  pkg->defVec( "writeXML", "item_id(s)", IO::writeXML );
-
-  pkg->def( "save", "item_id filename", IO::saveASW );
-  pkg->def( "load", "item_id filename", IO::loadASR );
-
-  pkg->def( "saveXML", "item_id filename", IO::saveXML );
-  pkg->def( "loadXML", "filename", IO::loadXML );
-
-  pkg->def( "retrieve", "filename", IO::retrieveASR );
+  pkg->defVec( "writeGVX", "item_id(s)", IO::writeGVX );
+  pkg->def( "saveGVX", "item_id filename", IO::saveGVX );
+  pkg->def( "loadGVX", "filename", IO::loadGVX );
 
   pkg->def( "xmlDebug", "filename", IO::xmlDebug );
 

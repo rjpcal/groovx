@@ -51,7 +51,7 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-fstring IO::stringify(Util::Ref<IO::IoObject> obj)
+fstring IO::writeLGX(Util::Ref<IO::IoObject> obj)
 {
   std::ostringstream ost;
 
@@ -61,7 +61,7 @@ fstring IO::stringify(Util::Ref<IO::IoObject> obj)
   return fstring(ost.str().c_str());
 }
 
-void IO::destringify(Util::Ref<IO::IoObject> obj, const char* buf)
+void IO::readLGX(Util::Ref<IO::IoObject> obj, const char* buf)
 {
   Util::icstrstream ist(buf);
 
@@ -69,7 +69,7 @@ void IO::destringify(Util::Ref<IO::IoObject> obj, const char* buf)
   reader.readRoot(obj.get());
 }
 
-fstring IO::write(Util::Ref<IO::IoObject> obj)
+fstring IO::writeASW(Util::Ref<IO::IoObject> obj)
 {
   std::ostringstream ost;
 
@@ -79,7 +79,7 @@ fstring IO::write(Util::Ref<IO::IoObject> obj)
   return fstring(ost.str().c_str());
 }
 
-void IO::read(Util::Ref<IO::IoObject> obj, const char* buf)
+void IO::readASW(Util::Ref<IO::IoObject> obj, const char* buf)
 {
   Util::icstrstream ist(buf);
 
@@ -87,7 +87,7 @@ void IO::read(Util::Ref<IO::IoObject> obj, const char* buf)
   reader->readRoot(obj.get());
 }
 
-fstring IO::writeXML(Util::Ref<IO::IoObject> obj)
+fstring IO::writeGVX(Util::Ref<IO::IoObject> obj)
 {
   std::ostringstream ost;
 
@@ -103,19 +103,19 @@ void IO::saveASW(Util::Ref<IO::IoObject> obj, fstring fname)
   writer->writeRoot(obj.get());
 }
 
-void IO::loadASR(Util::Ref<IO::IoObject> obj, fstring fname)
+void IO::loadASW(Util::Ref<IO::IoObject> obj, fstring fname)
 {
   shared_ptr<IO::Reader> reader = IO::makeAsciiStreamReader(fname.c_str());
   reader->readRoot(obj.get());
 }
 
-void IO::saveXML(Util::Ref<IO::IoObject> obj, fstring filename)
+void IO::saveGVX(Util::Ref<IO::IoObject> obj, fstring filename)
 {
   shared_ptr<IO::Writer> writer = IO::makeXMLWriter(filename.c_str());
   writer->writeRoot(obj.get());
 }
 
-Util::Ref<IO::IoObject> IO::retrieveASR(fstring fname)
+Util::Ref<IO::IoObject> IO::retrieveASW(fstring fname)
 {
   shared_ptr<IO::Reader> reader = IO::makeAsciiStreamReader(fname.c_str());
   return reader->readRoot();

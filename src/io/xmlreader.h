@@ -40,7 +40,7 @@ namespace IO
   class IoObject;
   class Reader;
 
-  Util::Ref<IO::IoObject> loadXML(const char* filename);
+  Util::Ref<IO::IoObject> loadGVX(const char* filename);
 
   void xmlDebug(const char* filename);
 }

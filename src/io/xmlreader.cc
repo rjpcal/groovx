@@ -563,7 +563,7 @@ namespace
 } // end anonymous namespace
 
 
-Util::Ref<IO::IoObject> IO::loadXML(const char* filename)
+Util::Ref<IO::IoObject> IO::loadGVX(const char* filename)
 {
   shared_ptr<std::istream> ifs(Util::igzopen(filename));
   TreeBuilder x(*ifs);
