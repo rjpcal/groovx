@@ -346,6 +346,8 @@ dnl FIXME these lines are architecture-specific
    AC_DEFINE(WITH_MATLAB, 1)
 fi
 
+AC_SUBST(enable_matlab)
+
 ###
 
 enable_readline=yes
