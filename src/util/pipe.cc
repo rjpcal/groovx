@@ -183,6 +183,16 @@ STD_IO::iostream& rutz::exec_pipe::stream() throw()
   return *m_stream;
 }
 
+void rutz::exec_pipe::close()
+{
+  if (m_stream != 0)
+    {
+      m_stream->close();
+      m_fds.close_reader();
+      m_fds.close_writer();
+    }
+}
+
 int rutz::exec_pipe::exit_status() throw()
 {
   const int child_status = m_child.wait();

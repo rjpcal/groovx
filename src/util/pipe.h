@@ -143,6 +143,9 @@ public:
   /// Get the stream that is linked to the child process.
   STD_IO::iostream& stream() throw();
 
+  /// Close the underlying stream.
+  void close();
+
   /// Wait for child process to complete, return 0 if all is OK, -1 if error.
   int exit_status() throw();
 
