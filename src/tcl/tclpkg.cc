@@ -439,15 +439,15 @@ DOTRACE("Tcl::Pkg::linkVarCopy double");
   rep->interp.linkDouble(varName, copy.get(), true);
 }
 
-void Tcl::Pkg::linkConstVar(const char* varName, int& var)
+void Tcl::Pkg::linkVarConst(const char* varName, int& var)
 {
-DOTRACE("Tcl::Pkg::linkConstVar int");
+DOTRACE("Tcl::Pkg::linkVarConst int");
   rep->interp.linkInt(varName, &var, true);
 }
 
-void Tcl::Pkg::linkConstVar(const char* varName, double& var)
+void Tcl::Pkg::linkVarConst(const char* varName, double& var)
 {
-DOTRACE("Tcl::Pkg::linkConstVar double");
+DOTRACE("Tcl::Pkg::linkVarConst double");
   rep->interp.linkDouble(varName, &var, true);
 }
 

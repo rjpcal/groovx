@@ -190,11 +190,11 @@ public:
 
   /// Links \a var with the Tcl variable \a varName.
   /** The Tcl variable will be read_only. */
-  void linkConstVar(const char* varName, int& var);
+  void linkVarConst(const char* varName, int& var);
 
   ///Links \a var with the Tcl variable \a varName.
   /** The Tcl variable will be read_only. */
-  void linkConstVar(const char* varName, double& var);
+  void linkVarConst(const char* varName, double& var);
 
 
   template <class Func>
