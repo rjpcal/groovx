@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue Apr  2 15:55:23 2002
+// written: Tue Apr  2 16:22:50 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,6 +58,15 @@ namespace
     buf.append(int(id));
 
     return buf.c_str();
+  }
+
+  void setIntParam(Togl* togl, const char* param, int val)
+  {
+    fstring cmd_str(togl->pathname(), " configure -", param);
+    cmd_str.append(" ", val);
+
+    Tcl::Code cmd(cmd_str, Tcl::Code::THROW_EXCEPTION);
+    cmd.invoke(togl->interp());
   }
 }
 
@@ -115,22 +124,90 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-struct Toglet::Sizer
+class Toglet::Sizer
 {
+public:
+  enum ResizePolicy
+    {
+      FIXED_SCALE,
+      MIN_RECT
+    };
+
   Sizer(double dist = 30.0) :
+    itsPolicy(FIXED_SCALE),
     itsViewingDistance(dist),
-    itsFixedScaleFlag(true),
     itsFixedScale(1.0),
     itsMinRect()
   {}
 
-  double itsViewingDistance;     // inches
-  bool itsFixedScaleFlag;
-  double itsFixedScale;
-  Gfx::Rect<double> itsMinRect;
+  // For FIXED_SCALE mode:
+  void setFixedScale(double s);
+  void setUnitAngle(double deg, double screen_ppi);
+  void setViewingDistIn(double inches);
+  bool usingFixedScale() const { return itsPolicy == FIXED_SCALE; }
+
+  // For MIN_RECT mode:
+  void scaleRect(double factor);
+  void setMinRectLTRB(double L, double T, double R, double B);
 
   void reconfigure(const int width, const int height);
+
+private:
+  ResizePolicy itsPolicy;
+  double itsViewingDistance;    // inches
+  double itsFixedScale;         // pixels per GLunit
+  Gfx::Rect<double> itsMinRect;
 };
+
+void Toglet::Sizer::setFixedScale(double s)
+{
+  if (s <= 0.0)
+    throw Util::Error("invalid scaling factor");
+
+  itsPolicy = Sizer::FIXED_SCALE;
+  itsFixedScale = s;
+}
+
+void Toglet::Sizer::setUnitAngle(double deg, double screen_ppi)
+{
+  if (deg <= 0.0)
+    throw Util::Error("unit angle must be positive");
+
+  static const double deg_to_rad = 3.141593/180.0;
+  itsPolicy = Sizer::FIXED_SCALE;
+  // tan(deg) == screen_unit_dist/viewing_dist;
+  // screen_unit_dist == 1.0 * itsFixedScale / screepPpi;
+  double screen_unit_dist = tan(deg*deg_to_rad) * itsViewingDistance;
+
+  itsFixedScale = int(screen_unit_dist * screen_ppi);
+}
+
+void Toglet::Sizer::setViewingDistIn(double inches)
+{
+  if (inches <= 0.0)
+    throw Util::Error("viewing distance must be positive (duh)");
+
+  // according to similar triangles,
+  //   new_dist / old_dist == new_scale / old_scale;
+  const double factor = inches / itsViewingDistance;
+  itsFixedScale *= factor;
+  itsViewingDistance = inches;
+}
+
+void Toglet::Sizer::scaleRect(double factor)
+{
+  if (factor <= 0.0)
+    throw Util::Error("invalid scaling factor");
+
+  itsMinRect.widenByFactor(factor);
+  itsMinRect.heightenByFactor(factor);
+}
+
+void Toglet::Sizer::setMinRectLTRB(double L, double T, double R, double B)
+{
+  itsPolicy = Sizer::MIN_RECT;
+  itsMinRect.setRectLTRB(L,T,R,B);
+}
 
 void Toglet::Sizer::reconfigure(const int width, const int height)
 {
@@ -140,52 +217,47 @@ DOTRACE("Toglet::Sizer::reconfigure");
   glLoadIdentity();
   glViewport(0, 0, width, height);
 
-  if (itsFixedScaleFlag)
+  switch (itsPolicy)
     {
-      const double l = -1 * (width  / 2.0) / itsFixedScale;
-      const double r =      (width  / 2.0) / itsFixedScale;
-      const double b = -1 * (height / 2.0) / itsFixedScale;
-      const double t =      (height / 2.0) / itsFixedScale;
-      glOrtho(l, r, b, t, -1.0, 1.0);
+    case FIXED_SCALE:
+      {
+        const double l = -1 * (width  / 2.0) / itsFixedScale;
+        const double r =      (width  / 2.0) / itsFixedScale;
+        const double b = -1 * (height / 2.0) / itsFixedScale;
+        const double t =      (height / 2.0) / itsFixedScale;
+        glOrtho(l, r, b, t, -1.0, 1.0);
+      }
+      break;
+    case MIN_RECT:
+      {
+        // the actual rect that we'll build:
+        Gfx::Rect<double> port(itsMinRect);
+
+        // the desired conditions are as follows:
+        //    (1) port contains itsMinRect
+        //    (2) port.aspect() == getAspect()
+        //    (3) port is the smallest rectangle that meets (1) and (2)
+
+        const double window_aspect = double(width) / double(height);
+
+        const double ratio_of_aspects = itsMinRect.aspect() / window_aspect;
+
+        if ( ratio_of_aspects < 1 ) // the available space is too wide...
+          {
+            port.widenByFactor(1/ratio_of_aspects); // so use some extra width
+          }
+        else                        // the available space is too tall...
+          {
+            port.heightenByFactor(ratio_of_aspects); // so use some extra height
+          }
+
+        glOrtho(port.left(), port.right(),
+                port.bottom(), port.top(), -1.0, 1.0);
+      }
+      break;
+    default:
+      Assert(0); // "can't happen"
     }
-  else // not usingFixedScale (i.e. minRect instead)
-    {
-      // the actual rect that we'll build:
-      Gfx::Rect<double> port(itsMinRect);
-
-      // the desired conditions are as follows:
-      //    (1) port contains itsMinRect
-      //    (2) port.aspect() == getAspect()
-      //    (3) port is the smallest rectangle that meets (1) and (2)
-
-      const double window_aspect = double(width) / double(height);
-
-      const double ratio_of_aspects = itsMinRect.aspect() / window_aspect;
-
-      if ( ratio_of_aspects < 1 ) // the available space is too wide...
-        {
-          port.widenByFactor(1/ratio_of_aspects); // so use some extra width
-        }
-      else                        // the available space is too tall...
-        {
-          port.heightenByFactor(ratio_of_aspects); // so use some extra height
-        }
-
-      glOrtho(port.left(), port.right(),
-              port.bottom(), port.top(), -1.0, 1.0);
-    }
-}
-
-namespace
-{
-  void setIntParam(Togl* togl, const char* param, int val)
-  {
-    fstring cmd_str(togl->pathname(), " configure -", param);
-    cmd_str.append(" ", val);
-
-    Tcl::Code cmd(cmd_str, Tcl::Code::THROW_EXCEPTION);
-    cmd.invoke(togl->interp());
-  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -330,7 +402,21 @@ DOTRACE("Toglet::queryColor");
 bool Toglet::usingFixedScale() const
 {
 DOTRACE("Toglet::usingFixedScale");
-  return itsSizer->itsFixedScaleFlag;
+  return itsSizer->usingFixedScale();
+}
+
+double Toglet::pixelsPerInch() const
+{
+  Screen* scr = Tk_Screen(reinterpret_cast<Tk_FakeWin*>(itsTogl->tkWin()));
+  const int screen_pixel_width = XWidthOfScreen(scr);
+  const int screen_mm_width = XWidthMMOfScreen(scr);
+
+  const double screen_inch_width = screen_mm_width / 25.4;
+
+  const double screen_ppi = screen_pixel_width / screen_inch_width;
+
+  DebugEvalNL(screen_ppi);
+  return screen_ppi;
 }
 
 Gfx::Canvas& Toglet::getCanvas()
@@ -371,11 +457,7 @@ void Toglet::scaleRect(double factor)
 {
 DOTRACE("Toglet::scaleRect");
 
-  if (factor <= 0.0)
-    throw Util::Error("invalid scaling factor");
-
-  itsSizer->itsMinRect.widenByFactor(factor);
-  itsSizer->itsMinRect.heightenByFactor(factor);
+  itsSizer->scaleRect(factor);
 
   reconfigure();
 }
@@ -398,63 +480,28 @@ DOTRACE("Toglet::setColor");
 void Toglet::setFixedScale(double s)
 {
 DOTRACE("Toglet::setFixedScale");
-
-  if (s <= 0.0)
-    throw Util::Error("invalid scaling factor");
-
-  itsSizer->itsFixedScaleFlag = true;
-  itsSizer->itsFixedScale = s;
-
+  itsSizer->setFixedScale(s);
   reconfigure();
 }
 
 void Toglet::setUnitAngle(double deg)
 {
 DOTRACE("Toglet::setUnitAngle");
-
-  if (deg <= 0.0)
-    throw Util::Error("unit angle must be positive");
-
-  static const double deg_to_rad = 3.141593/180.0;
-  itsSizer->itsFixedScaleFlag = true;
-  // tan(deg) == screen_unit_dist/viewing_dist;
-  // screen_unit_dist == 1.0 * itsFixedScale / screepPpi;
-  double screen_unit_dist = tan(deg*deg_to_rad) * itsSizer->itsViewingDistance;
-
-  Screen* scr = Tk_Screen(reinterpret_cast<Tk_FakeWin*>(itsTogl->tkWin()));
-  int screen_pixel_width = XWidthOfScreen(scr);
-  int screen_mm_width = XWidthMMOfScreen(scr);
-  double screen_inch_width = screen_mm_width / 25.4;
-
-  double screen_ppi = screen_pixel_width / screen_inch_width;
-  DebugEvalNL(screen_ppi);
-  itsSizer->itsFixedScale = int(screen_unit_dist * screen_ppi);
-
+  itsSizer->setUnitAngle(deg, pixelsPerInch());
   reconfigure();
 }
 
-void Toglet::setViewingDistIn(double in)
+void Toglet::setViewingDistIn(double inches)
 {
 DOTRACE("Toglet::setViewingDistIn");
-
-  if (in <= 0.0)
-    throw Util::Error("viewing distance must be positive (duh)");
-
-  // according to similar triangles,
-  //   new_dist / old_dist == new_scale / old_scale;
-  double factor = in / itsSizer->itsViewingDistance;
-  itsSizer->itsFixedScale *= factor;
-  itsSizer->itsViewingDistance = in;
-
+  itsSizer->setViewingDistIn(inches);
   reconfigure();
 }
 
 void Toglet::setMinRectLTRB(double L, double T, double R, double B)
 {
 DOTRACE("Toglet::setMinRectLTRB");
-  itsSizer->itsFixedScaleFlag = false;
-  itsSizer->itsMinRect.setRectLTRB(L,T,R,B);
-
+  itsSizer->setMinRectLTRB(L,T,R,B);
   reconfigure();
 }
 
