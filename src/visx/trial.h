@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Mon Oct 30 17:34:01 2000
+// written: Wed Nov  1 18:30:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,7 +37,8 @@ namespace GWT {
 
 namespace Util { class ErrorHandler; }
 
-class GrObj;
+class GxNode;
+
 class Position;
 class Block;
 class Response;
@@ -89,9 +90,9 @@ public:
   int getResponseHandler() const;
   int getTimingHdlr() const;
 
-  typedef const IdItem<GrObj>* GrObjItr;
-  GrObjItr beginGrObjs() const;
-  GrObjItr endGrObjs() const;
+  typedef const IdItem<GxNode>* GxNodeItr;
+  GxNodeItr beginGxNodes() const;
+  GxNodeItr endGxNodes() const;
 
   // returns some info about relationship between objects in trial
   virtual int trialType() const;

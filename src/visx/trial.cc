@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue Oct 31 11:42:31 2000
+// written: Wed Nov  1 18:30:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,11 +14,12 @@
 #include "trial.h"
 
 #include "block.h"
-#include "grobj.h"
 #include "position.h"
 #include "response.h"
 #include "responsehandler.h"
 #include "timinghdlr.h"
+
+#include "gx/gxnode.h"
 
 #include "io/iditem.h"
 #include "io/reader.h"
@@ -71,7 +72,7 @@ public:
 
   Impl(Trial*) :
 	 itsCorrectResponse(Response::ALWAYS_CORRECT),
-	 itsGrObjs(),
+	 itsGxNodes(),
 	 itsPositions(),
 	 itsResponses(),
 	 itsType(-1),
@@ -85,7 +86,7 @@ public:
 private:
   int itsCorrectResponse;
 
-  minivec<IdItem<GrObj> > itsGrObjs;
+  minivec<IdItem<GxNode> > itsGxNodes;
   minivec<IdItem<Position> > itsPositions;
 
   minivec<Response> itsResponses;
@@ -169,8 +170,8 @@ public:
   int getCorrectResponse() const { return itsCorrectResponse; }
   int getResponseHandler() const;
   int getTimingHdlr() const;
-  Trial::GrObjItr beginGrObjs() const;
-  Trial::GrObjItr endGrObjs() const;
+  Trial::GxNodeItr beginGxNodes() const;
+  Trial::GxNodeItr endGxNodes() const;
   int trialType() const;
   const char* description() const;
   int lastResponse() const;
@@ -222,10 +223,10 @@ DOTRACE("Trial::Impl::readFrom");
 
   Assert(svid >= 2);
 
-  itsGrObjs.clear();
-  IO::ReadUtils::readObjectSeq<GrObj>(
+  itsGxNodes.clear();
+  IO::ReadUtils::readObjectSeq<GxNode>(
 	       reader, "grobjs",
-			 IdItem<GrObj>::makeInserter(itsGrObjs));
+			 IdItem<GxNode>::makeInserter(itsGxNodes));
 
   itsPositions.clear();
   IO::ReadUtils::readObjectSeq<Position>(
@@ -261,7 +262,7 @@ DOTRACE("Trial::Impl::writeTo");
   Assert(TRIAL_SERIAL_VERSION_ID >= 2);
 
   IO::WriteUtils::writeSmartPtrSeq(writer, "grobjs",
-											  itsGrObjs.begin(), itsGrObjs.end());
+											  itsGxNodes.begin(), itsGxNodes.end());
 
   IO::WriteUtils::writeSmartPtrSeq(writer, "positions",
 											  itsPositions.begin(), itsPositions.end());
@@ -329,14 +330,14 @@ DOTRACE("Trial::Impl::getTimingHdlr");
   return itsTh.id();
 }
 
-Trial::GrObjItr Trial::Impl::beginGrObjs() const {
-DOTRACE("Trial::Impl::beginGrObjs");
-  return &itsGrObjs[0];
+Trial::GxNodeItr Trial::Impl::beginGxNodes() const {
+DOTRACE("Trial::Impl::beginGxNodes");
+  return &itsGxNodes[0];
 }
 
-Trial::GrObjItr Trial::Impl::endGrObjs() const {
-DOTRACE("Trial::Impl::endGrObjs");
-  return beginGrObjs() + itsGrObjs.size();
+Trial::GxNodeItr Trial::Impl::endGxNodes() const {
+DOTRACE("Trial::Impl::endGxNodes");
+  return beginGxNodes() + itsGxNodes.size();
 }
 
 int Trial::Impl::trialType() const {
@@ -353,17 +354,17 @@ DOTRACE("Trial::Impl::description");
   
   ost << "trial type == " << trialType()
       << ", objs ==";
-  for (size_t i = 0; i < itsGrObjs.size(); ++i) {
-    ost << " " << itsGrObjs[i].id();
+  for (size_t i = 0; i < itsGxNodes.size(); ++i) {
+    ost << " " << itsGxNodes[i].id();
   }
 
   ost << ", categories ==";
-  for (size_t j = 0; j < itsGrObjs.size(); ++j) {
-    DebugEvalNL(itsGrObjs[j].id());
+  for (size_t j = 0; j < itsGxNodes.size(); ++j) {
+    DebugEvalNL(itsGxNodes[j].id());
 
-    Assert(itsGrObjs[j].get() != 0);
+    Assert(itsGxNodes[j].get() != 0);
 
-    ost << " " << itsGrObjs[j]->getCategory();
+    ost << " " << itsGxNodes[j]->getCategory();
   }
 
   ost << '\0';
@@ -412,15 +413,15 @@ DOTRACE("Trial::Impl::avgRespTime");
 
 void Trial::Impl::add(int objid, int posid) {
 DOTRACE("Trial::Impl::add");
-  itsGrObjs.push_back(IdItem<GrObj>(objid));
+  itsGxNodes.push_back(IdItem<GxNode>(objid));
   itsPositions.push_back(IdItem<Position>(posid));
 
-  Invariant(itsGrObjs.size() == itsPositions.size());
+  Invariant(itsGxNodes.size() == itsPositions.size());
 }
 
 void Trial::Impl::clearObjs() {
 DOTRACE("Trial::Impl::clearObjs");
-  itsGrObjs.clear(); 
+  itsGxNodes.clear(); 
   itsPositions.clear();
 }
 
@@ -595,22 +596,22 @@ DOTRACE("Trial::Impl::trUndrawTrial");
 void Trial::Impl::trDraw(GWT::Canvas& canvas, bool flush) const {
 DOTRACE("Trial::Impl::trDraw");
 
-  Invariant(itsGrObjs.size() == itsPositions.size());
+  Invariant(itsGxNodes.size() == itsPositions.size());
 
-  for (size_t i = 0; i < itsGrObjs.size(); ++i) {
+  for (size_t i = 0; i < itsGxNodes.size(); ++i) {
 
-    DebugEval(itsGrObjs[i].id());
-    DebugEvalNL((void*)itsGrObjs[i].get());
+    DebugEval(itsGxNodes[i].id());
+    DebugEvalNL((void*)itsGxNodes[i].get());
     DebugEval(itsPositions[i].id());
     DebugEvalNL((void*)itsPositions[i].get());
 
-	 Assert(itsGrObjs[i].get() != 0);
+	 Assert(itsGxNodes[i].get() != 0);
 	 Assert(itsPositions[i].get() != 0);
 
 	 { 
 		GWT::Canvas::StateSaver state(canvas);
 		itsPositions[i]->go();
-		itsGrObjs[i]->draw(canvas);
+		itsGxNodes[i]->draw(canvas);
 	 }
   }
 
@@ -620,17 +621,17 @@ DOTRACE("Trial::Impl::trDraw");
 void Trial::Impl::trUndraw(GWT::Canvas& canvas, bool flush) const {
 DOTRACE("Trial::Impl::trUndraw");
 
-  Invariant(itsGrObjs.size() == itsPositions.size());
+  Invariant(itsGxNodes.size() == itsPositions.size());
 
-  for (size_t i = 0; i < itsGrObjs.size(); ++i) {
+  for (size_t i = 0; i < itsGxNodes.size(); ++i) {
 
-	 Assert(itsGrObjs[i].get() != 0);
+	 Assert(itsGxNodes[i].get() != 0);
 	 Assert(itsPositions[i].get() != 0);
 
 	 {
 		GWT::Canvas::StateSaver state(canvas);
 		itsPositions[i]->rego();
-		itsGrObjs[i]->undraw(canvas);
+		itsGxNodes[i]->undraw(canvas);
 	 }
   }
 
@@ -695,11 +696,11 @@ int Trial::getResponseHandler() const
 int Trial::getTimingHdlr() const
   { return itsImpl->getTimingHdlr(); }
 
-Trial::GrObjItr Trial::beginGrObjs() const
-  { return itsImpl->beginGrObjs(); }
+Trial::GxNodeItr Trial::beginGxNodes() const
+  { return itsImpl->beginGxNodes(); }
 
-Trial::GrObjItr Trial::endGrObjs() const
-  { return itsImpl->endGrObjs(); }
+Trial::GxNodeItr Trial::endGxNodes() const
+  { return itsImpl->endGxNodes(); }
 
 int Trial::trialType() const
   { return itsImpl->trialType(); }
