@@ -574,7 +574,7 @@ DOTRACE("mtx::print");
     {
       s << '\n';
       for(int j = 0; j < ncols(); ++j)
-        s << std::setw(12) << std::setprecision(7) << at(i,j);
+        s << ' ' << std::setw(18) << std::setprecision(17) << at(i,j);
     }
 }
 

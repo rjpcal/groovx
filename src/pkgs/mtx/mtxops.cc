@@ -8,6 +8,25 @@
 // created: Mon Mar  4 11:13:05 2002
 // commit: $Id$
 //
+// --------------------------------------------------------------------
+//
+// This file is part of GroovX.
+//   [http://www.klab.caltech.edu/rjpeters/groovx/]
+//
+// GroovX is free software; you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// GroovX is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with GroovX; if not, write to the Free Software Foundation,
+// Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef MTXOPS_CC_DEFINED
@@ -19,8 +38,29 @@
 #include "mtx/mtx.h"
 
 #include "util/error.h"
+#include "util/rand.h"
 
 #include "util/trace.h"
+
+mtx rand_mtx(int mrows, int ncols)
+{
+DOTRACE("rand_mtx");
+
+  static rutz::urand generator(rutz::default_rand_seed);
+
+  mtx result = mtx::uninitialized(mrows, ncols);
+
+  for (mtx::colmaj_iter
+         itr = result.colmaj_begin_nc(),
+         stop = result.colmaj_end_nc();
+       itr != stop;
+       ++itr)
+    {
+      *itr = generator.fdraw();
+    }
+
+  return result;
+}
 
 mtx squared(const mtx& src)
 {

@@ -33,6 +33,7 @@
 #define MTXTEST_CC_DEFINED
 
 #include "pkgs/mtx/mtx.h"
+#include "pkgs/mtx/mtxops.h"
 
 #include "tcl/tclpkg.h"
 
@@ -44,22 +45,18 @@ namespace
 {
   void testPrint()
   {
-    double dat[] =
+    for (int i = 1; i <= 10; ++i)
       {
-        1.5, 2.5, 3.5,
-        -2.0, -100.0, 0.0,
-        1e20, 1e-20, 1
-      };
+        const mtx m1 = rand_mtx(i, i);
 
-    mtx m1(&dat[0], 3, 3);
+        rutz::fstring s = m1.as_string();
 
-    rutz::fstring s = m1.as_string();
+        mtx m2 = mtx::empty_mtx();
 
-    mtx m2 = mtx::empty_mtx();
+        m2.scan_string(s.c_str());
 
-    m2.scan_string(s.c_str());
-
-    TEST_REQUIRE_APPROX((m2-m1).mean(), 0.0, 1e-40);
+        TEST_REQUIRE_APPROX(fabs((m2-m1).max()), 0.0, 1e-40);
+      }
   }
 }
 
