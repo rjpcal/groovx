@@ -3,7 +3,7 @@
 // toglconfig.h
 // Rob Peters 
 // created: Jan-99
-// written: Fri Dec  3 15:25:14 1999
+// written: Mon Dec  6 22:57:16 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,6 +70,8 @@ public:
   Display* getX11Display() const;
   int getX11ScreenNumber() const;
   Window getX11Window() const;
+
+  virtual Canvas* getCanvas();
 
   // manipulators
   void destroyWidget();

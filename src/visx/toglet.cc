@@ -30,6 +30,7 @@
 
 #include "error.h"
 #include "gfxattribs.h"
+#include "glcanvas.h"
 #include "tclevalcmd.h"
 
 #define NO_TRACE
@@ -244,6 +245,11 @@ DOTRACE("getX11ScreenNumber");
 Window ToglConfig::getX11Window() const {
 DOTRACE("getX11Window");
   return Togl_Window(itsWidget);
+}
+
+Canvas* ToglConfig::getCanvas() const {
+DOTRACE("ToglConfig::getCanvas");
+  return &(GLCanvas::theCanvas());
 }
 
 //////////////////
