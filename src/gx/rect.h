@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri Aug 10 11:31:07 2001
+// written: Fri Aug 10 18:36:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -107,8 +107,26 @@ public:
   void setTopRight(const Point<V>& point)
     { rr = point.x(); tt = point.y(); }
 
+  void translate(const Point<V>& dist)
+  {
+    ll += dist.x(); rr += dist.x();
+    bb += dist.y(); tt += dist.y();
+  }
+
+  void scale(const Point<V>& factors)
+  {
+    widenByFactor(factors.x());
+    heightenByFactor(factors.y());
+  }
+
+  void setCenter(const Point<V>& point)
+  {
+    Point<V> diff = point - center();
+    translate(diff);
+  }
+
   void widenByFactor(V factor) { ll *= factor; rr *= factor; }
-  void heightenByFactor(V factor) { tt *= factor; bb *= factor; }
+  void heightenByFactor(V factor) { bb *= factor; tt *= factor; }
 
   void widenByStep(V step) { ll -= step; rr += step; }
   void heightenByStep(V step) { bb -= step; tt += step; }
