@@ -3,23 +3,13 @@
 // bmapdata.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jan 19 17:25:51 2000
-// written: Wed Feb 16 08:33:20 2000
+// written: Sun Mar  5 18:51:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef BMAPDATA_H_DEFINED
 #define BMAPDATA_H_DEFINED
-
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
-#endif
-
-#ifndef MEMORY_DEFINED
-#include <memory>
-#define MEMORY_DEFINED
-#endif
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -60,11 +50,13 @@ public:
   //---------------------------------------------------------------------
 
   /// Construct with empty image data.
-  BmapData() { clear(); }
+  BmapData();
 
   /// Construct with the given image data specifications.
   BmapData(int width, int height, int bits_per_pixel, int byte_alignment);
 
+  /// Destructor frees Impl*.
+  ~BmapData();
 
   //---------------------------------------------------------------------
   //
@@ -151,14 +143,8 @@ public:
 
 
 private:
-
-  int itsWidth;
-  int itsHeight;
-  int itsBitsPerPixel;
-  int itsByteAlignment;
-  vector<unsigned char> itsBytes;
-
-  mutable auto_ptr<UpdateFunc> itsUpdater;
+  class Impl;
+  Impl* const itsImpl;
 };
 
 static const char vcid_bmapdata_h[] = "$Header$";
