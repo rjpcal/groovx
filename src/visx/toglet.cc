@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Sep 16 20:17:44 2002
+// written: Tue Sep 17 12:49:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -400,16 +400,11 @@ DOTRACE("Toglet::writeEpsFile");
   fullRender();
 }
 
-void Toglet::displayCallback()
-{
-DOTRACE("Toglet::displayCallback");
-
-  fullRender();
-}
-
 void Toglet::reshapeCallback()
 {
 DOTRACE("Toglet::reshapeCallback");
+
+  Togl::makeCurrent();
 
   itsSizer->reconfigure(width(), height());
 

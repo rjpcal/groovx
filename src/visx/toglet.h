@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Sep 16 20:16:11 2002
+// written: Tue Sep 17 12:25:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,7 +51,6 @@ public:
   // actions
   void writeEpsFile(const char* filename);
 
-  virtual void displayCallback();
   virtual void reshapeCallback();
 
 private:
