@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:47 1999
-// written: Wed Aug  8 12:27:24 2001
+// written: Wed Aug  8 12:51:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,27 +17,9 @@
 #include "grobj.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
-#include "util/error.h"
-#endif
-
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STRINGS_H_DEFINED)
 #include "util/strings.h"
 #endif
-
-/**
- *
- * Exception class for Gtext.
- *
- **/
-
-class GtextError : public Util::Error {
-public:
-  /// Construct with an informative message \a msg.
-  GtextError(const char* msg);
-  /// Virtual destructor.
-  virtual ~GtextError();
-};
 
 ///////////////////////////////////////////////////////////////////////
 /**

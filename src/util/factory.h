@@ -5,17 +5,13 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:55 1999
-// written: Wed Aug  8 12:27:24 2001
+// written: Wed Aug  8 12:55:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FACTORY_H_DEFINED
 #define FACTORY_H_DEFINED
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
-#include "util/error.h"
-#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRAITS_H_DEFINED)
 #include "util/traits.h"
@@ -37,15 +33,10 @@ class fixed_string;
  * Exception class for \c Factory's.
  *
  **/
-class FactoryError : public Util::Error {
-public:
-  /// Construct with an informative message \a msg.
-  FactoryError(const char* str);
-
-  virtual ~FactoryError();
-
-  static void throwForType(const char* type);
-  static void throwForType(const fixed_string& type);
+namespace FactoryError
+{
+  void throwForType(const char* type);
+  void throwForType(const fixed_string& type);
 };
 
 
@@ -224,7 +215,8 @@ public:
 
   /** Returns a new object of a given type. If the given type has not
       been registered with the factory, a null pointer is returned. */
-  BasePtr newObject(const fixed_string& type) {
+  BasePtr newObject(const fixed_string& type)
+  {
     CreatorBase<BasePtr>* creator = itsMap.getPtrForName(type);
     if (creator == 0) return BasePtr();
     return creator->create();
@@ -232,7 +224,8 @@ public:
 
   /** Returns a new object of a given type. If the given type has not
       been registered with the factory, a FactorError is thrown. */
-  BasePtr newCheckedObject(const fixed_string& type) {
+  BasePtr newCheckedObject(const fixed_string& type)
+  {
     CreatorBase<BasePtr>* creator = itsMap.getPtrForName(type);
     if (creator == 0) FactoryError::throwForType(type);
     return creator->create();

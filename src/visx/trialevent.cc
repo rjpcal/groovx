@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Wed Aug  8 12:27:57 2001
+// written: Wed Aug  8 12:45:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,12 +39,6 @@
 #include "util/debug.h"
 
 #define EVENT_TRACE
-
-class TrialEventError : public Util::Error {
-public:
-  TrialEventError(const char* msg = "") : Util::Error(msg) {}
-};
-
 
 ///////////////////////////////////////////////////////////////////////
 //

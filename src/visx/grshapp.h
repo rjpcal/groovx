@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:26:58 1999
-// written: Wed Aug  8 12:27:24 2001
+// written: Wed Aug  8 12:50:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,27 +17,7 @@
 #include "application.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
-#include "util/error.h"
-#endif
-
 struct Tcl_Interp;
-
-/**
- *
- * This exception class will be thrown by \c GrshApp::getCanvas()
- * if no one has installed a \c Canvas.
- *
- **/
-class NoCanvasError : public Util::Error {
-public:
-  /// Default constructor.
-  NoCanvasError();
-  /// Construct with an appropriate message.
-  NoCanvasError(const char* msg);
-  /// Virtual destructor.
-  virtual ~NoCanvasError();
-};
 
 
 class GrshApp : public Application {

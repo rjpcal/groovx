@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:05:52 1999
-// written: Wed Aug  8 12:27:27 2001
+// written: Wed Aug  8 12:50:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #include "application.h"
 
 #include "system/system.h"
+
+#include "util/error.h"
 #include "util/strings.h"
 
 #define NO_TRACE
@@ -26,12 +28,6 @@ namespace
 {
   Application* theSingleton = 0;
 }
-
-NoAppError::NoAppError() : Util::Error() {}
-
-NoAppError::NoAppError(const char* msg) : Util::Error(msg) {}
-
-NoAppError::~NoAppError() {}
 
 class Application::Impl {
 private:
@@ -62,37 +58,45 @@ Application::Application(int argc, char** argv, const char* library_env_var) :
 DOTRACE("Application::Application");
 }
 
-Application::~Application() {
+Application::~Application()
+{
 DOTRACE("Application::~Application");
   delete itsImpl;
 }
 
-void Application::installApp(Application* theApp) {
+void Application::installApp(Application* theApp)
+{
 DOTRACE("Application::installApp");
-  if (theSingleton == 0 && theApp != 0) {
-    theSingleton = theApp;
-  }
+  if (theSingleton == 0 && theApp != 0)
+    {
+      theSingleton = theApp;
+    }
 }
 
-Application& Application::theApp() {
+Application& Application::theApp()
+{
 DOTRACE("Application::theApp");
-  if (theSingleton == 0) {
-    throw NoAppError("the application has not yet been installed");
-  }
+  if (theSingleton == 0)
+    {
+      throw Util::Error("the application has not yet been installed");
+    }
   return *theSingleton;
 }
 
-int Application::argc() const {
+int Application::argc() const
+{
 DOTRACE("Application::argv");
   return itsImpl->itsArgc;
 }
 
-char** Application::argv() const {
+char** Application::argv() const
+{
 DOTRACE("Application::argv");
   return itsImpl->itsArgv;
 }
 
-const char* Application::getLibraryDirectory() const {
+const char* Application::getLibraryDirectory() const
+{
 DOTRACE("Application::getLibraryDirectory");
   return itsImpl->itsLibraryDir.c_str();
 }

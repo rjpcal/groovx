@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Wed Aug  8 12:27:26 2001
+// written: Wed Aug  8 12:52:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,11 +28,8 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-GtextError::GtextError(const char* str) : Util::Error(str) {}
-
-GtextError::~GtextError() {}
-
-namespace {
+namespace
+{
 
 //---------------------------------------------------------------------
 //
@@ -659,7 +656,8 @@ namespace {
 //
 ///////////////////////////////////////////////////////////////////////
 
-Gtext* Gtext::make() {
+Gtext* Gtext::make()
+{
 DOTRACE("Gtext::make");
   return new Gtext;
 }
@@ -682,12 +680,14 @@ Gtext::~Gtext() {
 DOTRACE("Gtext::~Gtext");
 }
 
-IO::VersionId Gtext::serialVersionId() const {
+IO::VersionId Gtext::serialVersionId() const
+{
 DOTRACE("Gtext::serialVersionId");
   return GTEXT_SERIAL_VERSION_ID;
 }
 
-void Gtext::readFrom(IO::Reader* reader) {
+void Gtext::readFrom(IO::Reader* reader)
+{
 DOTRACE("Gtext::readFrom");
 
   reader->ensureReadVersionId("Gtext", 2, "Try grsh0.8a4");
@@ -698,7 +698,8 @@ DOTRACE("Gtext::readFrom");
   reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
 }
 
-void Gtext::writeTo(IO::Writer* writer) const {
+void Gtext::writeTo(IO::Writer* writer) const
+{
 DOTRACE("Gtext::writeTo");
 
   writer->ensureWriteVersionId("Gtext", GTEXT_SERIAL_VERSION_ID, 2,
@@ -710,18 +711,21 @@ DOTRACE("Gtext::writeTo");
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
-void Gtext::setText(const char* text) {
+void Gtext::setText(const char* text)
+{
 DOTRACE("Gtext::setText");
   itsText = text;
   sendStateChangeMsg();
 }
 
-const char* Gtext::getText() const {
+const char* Gtext::getText() const
+{
 DOTRACE("Gtext::getText");
   return itsText.c_str();
 }
 
-void Gtext::setStrokeWidth(int width) {
+void Gtext::setStrokeWidth(int width)
+{
 DOTRACE("Gtext::setStrokeWidth");
   if (width > 0)
     {
@@ -731,12 +735,14 @@ DOTRACE("Gtext::setStrokeWidth");
     }
 }
 
-int Gtext::getStrokeWidth() const {
+int Gtext::getStrokeWidth() const
+{
 DOTRACE("Gtext::getStrokeWidth");
   return itsStrokeWidth;
 }
 
-Rect<double> Gtext::grGetBoundingBox() const {
+Rect<double> Gtext::grGetBoundingBox() const
+{
 DOTRACE("Gtext::grGetBoundingBox");
 
   Rect<double> bbox;
@@ -747,7 +753,8 @@ DOTRACE("Gtext::grGetBoundingBox");
   return bbox;
 }
 
-void Gtext::grRender(GWT::Canvas&, DrawMode) const {
+void Gtext::grRender(GWT::Canvas&, DrawMode) const
+{
 DOTRACE("Gtext::grRender");
   glPushAttrib(GL_LIST_BIT|GL_LINE_BIT);
     glListBase( itsListBase );

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:22:34 1999
-// written: Wed Aug  8 12:27:25 2001
+// written: Wed Aug  8 12:48:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,11 +32,6 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-class XBmapRendererError : public Util::Error {
-public:
-  XBmapRendererError(const char* msg) : Util::Error(msg) {}
-};
-
 namespace
 {
   bool x11_ready = false;
@@ -55,11 +50,11 @@ namespace
     if (x11_ready) return;
 
     if (theTkWin == 0)
-      throw XBmapRendererError(
+      throw Util::Error(
           "must call XBitmap::initClass before using an XBmapRenderer");
 
     if (!Tk_IsMapped(reinterpret_cast<Tk_FakeWin *>(theTkWin)))
-      throw XBmapRendererError(
+      throw Util::Error(
           "the main window must be mapped before using an XBmapRenderer");
 
     display = Tk_Display(reinterpret_cast<Tk_FakeWin *>(theTkWin));
@@ -82,7 +77,7 @@ namespace
     XWindowAttributes xwa;
     Status status = XGetWindowAttributes(display, win, &xwa);
     if (status == 0)
-        throw XBmapRendererError("couldn't get X11 window attributes");
+        throw Util::Error("couldn't get X11 window attributes");
     visual = xwa.visual;
 
     x11_ready = true;

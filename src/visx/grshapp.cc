@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:26:59 1999
-// written: Wed Aug  8 12:27:26 2001
+// written: Wed Aug  8 12:51:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,19 +15,16 @@
 
 #include "grshapp.h"
 
+#include "util/error.h"
+
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace {
+namespace
+{
   const char* GRSH_LIB_DIR = "GRSH_LIB_DIR";
 }
-
-NoCanvasError::NoCanvasError() : Util::Error() {}
-
-NoCanvasError::NoCanvasError(const char* msg) : Util::Error(msg) {}
-
-NoCanvasError::~NoCanvasError() {}
 
 GrshApp::GrshApp(int argc, char** argv, Tcl_Interp* interp) :
   Application(argc, argv, GRSH_LIB_DIR),
@@ -38,26 +35,31 @@ DOTRACE("GrshApp::GrshApp");
   Application::installApp(this);
 }
 
-GrshApp::~GrshApp() {
+GrshApp::~GrshApp()
+{
 DOTRACE("GrshApp::~GrshApp");
 }
 
-Tcl_Interp* GrshApp::getInterp() {
+Tcl_Interp* GrshApp::getInterp()
+{
 DOTRACE("GrshApp::getInterp");
   return itsInterp;
 }
 
-void GrshApp::installCanvas(GWT::Canvas& canvas) {
+void GrshApp::installCanvas(GWT::Canvas& canvas)
+{
 DOTRACE("GrshApp::installCanvas");
   itsCanvas = &canvas;
   Assert(itsCanvas != 0);
 }
 
-GWT::Canvas& GrshApp::getCanvas() {
+GWT::Canvas& GrshApp::getCanvas()
+{
 DOTRACE("GrshApp::getCanvas");
-  if (itsCanvas == 0) {
-    throw NoCanvasError("no canvas has yet been installed");
-  }
+  if (itsCanvas == 0)
+    {
+      throw Util::Error("no canvas has yet been installed");
+    }
   return *itsCanvas;
 }
 

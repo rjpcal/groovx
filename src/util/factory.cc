@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 20 22:37:31 1999
-// written: Wed Aug  8 12:27:24 2001
+// written: Wed Aug  8 12:56:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "util/factory.h"
 
+#include "util/error.h"
 #include "util/strings.h"
 
 #include "util/hash.h"
@@ -22,13 +23,9 @@
 #define NO_TRACE
 #include "util/trace.h"
 
-FactoryError::FactoryError(const char* str) : Util::Error(str) {}
-
-FactoryError::~FactoryError() {}
-
 void FactoryError::throwForType(const char* type)
 {
-  FactoryError err("unknown object type ");
+  Util::Error err("unknown object type ");
   err.appendMsg("'", type, "'");
   throw err;
 }

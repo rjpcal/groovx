@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Aug  8 12:27:26 2001
+// written: Wed Aug  8 12:45:19 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -40,11 +40,6 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class GLError : public Util::Error {
-public:
-  GLError(const char* msg = "") : Util::Error(msg) {}
-};
-
 namespace GLTcl
 {
   class GLPkg;
@@ -73,16 +68,19 @@ namespace GLTcl
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace GLTcl {
+namespace GLTcl
+{
   void checkGL();
 }
 
-void GLTcl::checkGL() {
+void GLTcl::checkGL()
+{
   GLenum status = glGetError();
-  if (status != GL_NO_ERROR) {
-    const char* msg = reinterpret_cast<const char*>(gluErrorString(status));
-    throw GLError(msg);
-  }
+  if (status != GL_NO_ERROR)
+    {
+      const char* msg = reinterpret_cast<const char*>(gluErrorString(status));
+      throw Util::Error(msg);
+    }
 }
 
 //---------------------------------------------------------------------
@@ -156,7 +154,6 @@ namespace GLTcl
 
 namespace GLTcl
 {
-
   template <class T>
   void extractValues(GLenum tag, T* vals_out);
 

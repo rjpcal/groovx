@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 10:55:51 1999
-// written: Wed Aug  8 12:27:24 2001
+// written: Wed Aug  8 12:49:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,23 +13,10 @@
 #ifndef APPLICATION_H_DEFINED
 #define APPLICATION_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
-#include "util/error.h"
-#endif
-
-namespace GWT { class Canvas; }
-
-/** Exception class that is thrown from Application::theApp() if
-    nobody has yet called Application::installApp(). */
-class NoAppError : public Util::Error {
-public:
-  /// Default constructor.
-  NoAppError();
-  /// Construct with an informative message \a msg.
-  NoAppError(const char* msg);
-  /// Virtual destructor.
-  virtual ~NoAppError();
-};
+namespace GWT
+{
+  class Canvas;
+}
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -55,7 +42,7 @@ public:
   virtual ~Application();
 
   /** Provides global access to the singleton Application.
-      @exception NoAppError installApp() has not yet been called.
+      @exception Util::Error installApp() has not yet been called.
       @return the Application passed to installApp. */
   static Application& theApp();
 
