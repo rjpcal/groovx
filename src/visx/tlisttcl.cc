@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Tue Oct 24 12:44:14 2000
+// written: Tue Oct 24 15:33:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -121,7 +121,7 @@ protected:
 			++itr)
 		{
 		  Trial* t = Trial::make();
-		  Tlist::SharedPtr trial = Tlist::theTlist().insert(t);
+		  ItemWithId<TrialBase> trial(t, ItemWithId<TrialBase>::INSERT);
 
 		  t->add(*itr, posid);
 		  NullableItemWithId<GrObj> obj(*itr);
@@ -161,7 +161,7 @@ protected:
 			  ++itr2)
 		  {
 			 Trial* t = Trial::make();
-			 Tlist::SharedPtr trial = Tlist::theTlist().insert(t);
+			 ItemWithId<TrialBase> trial(t, ItemWithId<TrialBase>::INSERT);
 
 			 t->add(*itr1, posid1);
 			 t->add(*itr2, posid2);
@@ -239,7 +239,7 @@ protected:
 			 // loops over p,e run through all permutations
 			 for (int p = 0; p < NUM_PERMS; ++p) {
 				Trial* t = Trial::make();
-				Tlist::SharedPtr trial = Tlist::theTlist().insert(t);
+				ItemWithId<TrialBase> trial(t, ItemWithId<TrialBase>::INSERT);
 				for (int e = 0; e < 3; ++e) {
 				  t->add(base_triad[permutations[p][e]], posids[e]);
 				}
