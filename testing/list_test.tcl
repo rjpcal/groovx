@@ -20,12 +20,7 @@ variable TEST_DEFINED 1
 proc purgeAll {} {
 	 Togl::setVisible 0
 	 Expt::clear
-	 BlockList::reset
-	 Tlist::reset
-	 RhList::reset
-	 ThList::reset
-	 ObjList::reset
-	 PosList::reset
+	 IO::clear
 }
 
 proc testList { packagename listname baseclass subclass1 subclass2 } {
@@ -81,7 +76,6 @@ proc testCountCmd { objname } {
         $cmdname junk
     "} {$usage}
     eval ::test $testname {"normal use"} {"
-        ${this(listname)}::reset
 	     set before_count \[$cmdname\]
         IO::new ${this(subclass1)}
         IO::new ${this(subclass2)}
@@ -124,7 +118,6 @@ proc testGetValidIdsCmd { objname } {
 	 "} {$usage}
 
 	 eval ::test $testname {"normal use on filled list"} {"
-	     ${this(listname)}::reset
         IO::new ${this(subclass1)}
         set remove_me \[IO::new ${this(subclass1)}\]
         IO::new ${this(subclass2)}
