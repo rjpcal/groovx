@@ -26,8 +26,8 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
-#include "util/debug.h"
 #include "util/trace.h"
+#include "util/debug.h"
 
 class GLCanvas::Impl
 {
@@ -331,27 +331,23 @@ DOTRACE("GLCanvas::drawOnBackBuffer");
 
 void GLCanvas::pushMatrix() const
 {
-DOTRACE("GLCanvas::pushMatrix");
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
 }
 
 void GLCanvas::popMatrix() const
 {
-DOTRACE("GLCanvas::popMatrix");
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
 }
 
 void GLCanvas::pushAttribs() const
 {
-DOTRACE("GLCanvas::pushAttribs");
   glPushAttrib(GL_ALL_ATTRIB_BITS);
 }
 
 void GLCanvas::popAttribs() const
 {
-DOTRACE("GLCanvas::popAttribs");
   glPopAttrib();
 }
 
