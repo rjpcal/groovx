@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Jul 11 09:55:35 2001
+// written: Wed Jul 11 10:08:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,14 +21,6 @@
 #include "tcl/convert.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLVALUE_H_DEFINED)
-#include "tcl/tclvalue.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLERROR_H_DEFINED)
-#include "tcl/tclerror.h"
-#endif
-
 #ifdef HP9000S700
 #define BROKEN_TEMPLATE_FRIEND
 #endif
@@ -37,7 +29,11 @@ struct Tcl_Interp;
 struct Tcl_Obj;
 typedef void* ClientData;
 
-namespace Tcl {
+class Value;
+
+namespace Tcl
+{
+  class TclValue;
   class TclCmd;
 }
 
@@ -210,9 +206,6 @@ public:
   /// Attempts to retrieve a C-style string (\c char*) from argument number \a argn.
   const char* getCstringFromArg(int argn);
 
-  /// Return the \c Tcl_Obj* in argument number \a argn.
-  Tcl_Obj* getTclObjFromArg(int argn);
-
   /** Attempts to retrieve an string type from argument number \a
       argn. The templated type must be assignable from const char*. */
   template <class Str>
@@ -225,7 +218,9 @@ public:
       copy the result into \a val. */
   template <class T>
   T getValFromArg(int argn, T* /*dummy*/=0)
-    { return Tcl::fromTcl<T>(itsObjv[argn]); }
+    {
+      return Tcl::fromTcl<T>(itsObjv[argn]);
+    }
 
   //---------------------------------------------------------------------
   //
@@ -256,21 +251,6 @@ public:
 
     for (int i = 0; i < count; ++i) {
       *itr = Tcl::fromTcl<T>(elements[i]);
-      ++itr;
-    }
-  }
-
-  /** Attempts to convert argument number \a argn into a sequence of
-      values, and inserts these through the insert iterator \a
-      itr. The iterator must come from a sequence of TclValue's. */
-  template <class Iterator>
-  void getValSequenceFromArg(int argn, Iterator itr) {
-    Tcl_Obj** elements;
-    int count;
-    safeSplitList(itsObjv[argn], &count, &elements);
-
-    for (int i = 0; i < count; ++i) {
-      *itr = TclValue(itsInterp, elements[i]);
       ++itr;
     }
   }
@@ -483,7 +463,7 @@ private:
   int itsObjc;
   Tcl_Obj* const* itsObjv;
 
-  class Impl; // this contains a vector<TclValue> to hold its args
+  class Impl;
   Impl* const itsImpl;
 
   int itsResult;
