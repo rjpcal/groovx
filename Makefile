@@ -23,7 +23,7 @@
 #-------------------------------------------------------------------------
 
 # The base directory where things will be installed
-INSTALL_PREFIX := $(HOME)/local/$(PLATFORM)
+INSTALL_PREFIX := $(HOME)/local/$(ARCH)
 
 
 
