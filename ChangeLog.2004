@@ -19,3 +19,28 @@
   glorified mult-arg Signal.
 
   OK, eliminated GWT::Widget by rolling it into Tcl::TkWidget.
+
+* (2-Jul-2002, done) new project name?
+
+   OO framework
+
+     hood
+     loot
+     ooze
+     poof
+     igloo
+     roost
+     scoop
+     troop
+     cooler
+     noodle
+
+   Psychophysics experiments -- groovx groovx groovx -- is this "the
+   one"? yep
+
+* (22-Nov-1999, canceled) Need to get rjp_subject working.
+  1) Need to maintain a do_expt script in each subject's directory. 2)
+  Need to make sure that autosave file is writable by rjp_subject, and
+  if not, use a different filename. (Maybe use temp filename
+  generating facility of OS?). Canceled... rjp_subject doesn't even
+  exist anymore...
