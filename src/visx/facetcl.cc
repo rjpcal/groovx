@@ -2,7 +2,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Sat Mar 13 13:40:27 1999
+// written: Sat Mar 13 14:35:10 1999
 static const char vcid_facetcl_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
@@ -12,6 +12,7 @@ static const char vcid_facetcl_cc[] = "$Id$";
 #include "facetcl.h"
 
 #include <tcl.h>
+#include <strstream.h>
 
 #include "errmsg.h"
 #include "objlist.h"
@@ -30,11 +31,14 @@ namespace FaceTcl {
   Face* getFaceFromArg(Tcl_Interp *interp, Tcl_Obj *const objv[],
 							  ObjList *olist, int argn);
 
+  const int BUF_SIZE = 200;
+
   Tcl_ObjCmdProc faceCmd;
   Tcl_ObjCmdProc set_noseCmd;
   Tcl_ObjCmdProc set_mouthCmd;
   Tcl_ObjCmdProc set_eyeheightCmd;
   Tcl_ObjCmdProc set_eyedistCmd;
+  Tcl_ObjCmdProc stringify_faceCmd;
 
   // these constants are passed to err_message() in case of error
   using ObjlistTcl::cant_make_obj;
@@ -58,7 +62,7 @@ DOTRACE("FaceTcl::getFaceFromArg");
 
 int FaceTcl::faceCmd(ClientData, Tcl_Interp *interp,
                      int objc, Tcl_Obj *const objv[]) {
-DOTRACE("faceCmd");
+DOTRACE("FaceTcl::faceCmd");
   if (objc > 1) {
     Tcl_WrongNumArgs(interp, 1, objv, NULL);
     return TCL_ERROR;
@@ -80,8 +84,8 @@ DOTRACE("faceCmd");
 }
 
 int FaceTcl::set_noseCmd(ClientData, Tcl_Interp *interp,
-                           int objc, Tcl_Obj *const objv[]) {  
-DOTRACE("set_noseCmd");
+								 int objc, Tcl_Obj *const objv[]) {
+DOTRACE("FaceTcl::set_noseCmd");  
   if (objc < 3) {
     Tcl_WrongNumArgs(interp, 1, objv, "faceid length");
     return TCL_ERROR;
@@ -101,8 +105,8 @@ DOTRACE("set_noseCmd");
 }
 
 int FaceTcl::set_mouthCmd(ClientData, Tcl_Interp *interp,
-                            int objc, Tcl_Obj *const objv[]) {  
-DOTRACE("set_mouthCmd");
+								  int objc, Tcl_Obj *const objv[]) {
+DOTRACE("FaceTcl::set_mouthCmd");  
   if (objc < 3) {
     Tcl_WrongNumArgs(interp, 1, objv, "faceid height");
     return TCL_ERROR;
@@ -122,8 +126,8 @@ DOTRACE("set_mouthCmd");
 }
 
 int FaceTcl::set_eyeheightCmd(ClientData, Tcl_Interp *interp,
-                          int objc, Tcl_Obj *const objv[]) {  
-DOTRACE("set_eyeheightCmd");
+										int objc, Tcl_Obj *const objv[]) {
+DOTRACE("FaceTcl::set_eyeheightCmd");  
     if (objc < 3) {
     Tcl_WrongNumArgs(interp, 1, objv, "faceid height");
     return TCL_ERROR;
@@ -143,8 +147,8 @@ DOTRACE("set_eyeheightCmd");
 }
 
 int FaceTcl::set_eyedistCmd(ClientData, Tcl_Interp *interp,
-                        int objc, Tcl_Obj *const objv[]) {  
-DOTRACE("set_eyedistCmd");
+									 int objc, Tcl_Obj *const objv[]) {
+DOTRACE("FaceTcl::set_eyedistCmd");  
   if (objc < 3) {
     Tcl_WrongNumArgs(interp, 1, objv, "faceid distance");
     return TCL_ERROR;
@@ -163,6 +167,28 @@ DOTRACE("set_eyedistCmd");
   return TCL_OK;
 }
 
+int FaceTcl::stringify_faceCmd(ClientData, Tcl_Interp *interp,
+										 int objc, Tcl_Obj *const objv[]) {
+DOTRACE("FaceTcl::stringify_faceCmd");  
+  if (objc != 2) {
+    Tcl_WrongNumArgs(interp, 1, objv, "faceid");
+    return TCL_ERROR;
+  }
+  
+  // Get the face
+  ObjList *olist = ObjlistTcl::getObjList();
+  Face *p = getFaceFromArg(interp, objv, olist, 1);
+  if ( p == NULL ) return TCL_ERROR;
+
+  char buf[BUF_SIZE];
+  ostrstream ost(buf, BUF_SIZE);
+  p->serialize(ost, IO::IOFlag(IO::TYPENAME|IO::BASES));
+
+  Tcl_SetObjResult(interp, Tcl_NewStringObj(buf, -1));
+
+  return TCL_OK;
+}
+
 int FaceTcl::Face_Init(Tcl_Interp *interp) {
 DOTRACE("FaceTcl::Face_Init");
   Tcl_CreateObjCommand(interp, "face", faceCmd,
@@ -174,6 +200,8 @@ DOTRACE("FaceTcl::Face_Init");
   Tcl_CreateObjCommand(interp, "set_eyeheight", set_eyeheightCmd,
 							  (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   Tcl_CreateObjCommand(interp, "set_eyedist", set_eyedistCmd,
+							  (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+  Tcl_CreateObjCommand(interp, "stringify_face", stringify_faceCmd,
 							  (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   return TCL_OK;
 }
