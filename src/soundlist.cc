@@ -3,7 +3,7 @@
 // soundlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:44:41 1999
-// written: Thu Jun  1 13:58:50 2000
+// written: Sun Oct  8 15:59:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,6 +44,7 @@ DOTRACE("SoundList::theSoundList");
 
 #include "sound.h"
 #include "ptrlist.cc"
+template class MasterPtr<Sound>;
 template class PtrList<Sound>;
 
 static const char vcid_soundlist_cc[] = "$Header$";

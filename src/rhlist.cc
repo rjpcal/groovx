@@ -26,6 +26,7 @@
 
 #include "responsehandler.h"
 #include "ptrlist.cc"
+template class MasterPtr<ResponseHandler>;
 template class PtrList<ResponseHandler>;
 
 ///////////////////////////////////////////////////////////////////////

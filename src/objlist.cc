@@ -3,7 +3,7 @@
 // objlist.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon May 15 22:29:20 2000
+// written: Sun Oct  8 15:57:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,6 +47,7 @@ DOTRACE("ObjList::theObjList");
 
 #include "grobj.h"
 #include "ptrlist.cc"
+template class MasterPtr<GrObj>;
 template class PtrList<GrObj>;
 
 static const char vcid_objlist_cc[] = "$Header$";
