@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Thu Sep  5 16:32:25 2002
+// written: Thu Sep  5 16:45:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,6 +39,14 @@ private:
   const char* itsStartupFileName;
   Tcl_Channel itsInChannel;
 
+  Tcl_DString itsCommand;     /* Used to assemble lines of terminal input
+                               * into Tcl commands. */
+  Tcl_DString itsLine;        /* Used to read the next line from the
+                               * terminal input. */
+  int isItInteractive;        /* Non-zero means standard input is a
+                               * terminal-like device.  Zero means it's
+                               * a file. */
+
   MainImpl(int argc, char** argv);
 
   void defaultPrompt(bool partial);
@@ -71,14 +79,6 @@ Tcl::MainImpl* Tcl::MainImpl::theMainImpl = 0;
 namespace
 {
   typedef struct ThreadSpecificData {
-    Tcl_Interp *interp;         /* Interpreter for this thread. */
-    Tcl_DString command;        /* Used to assemble lines of terminal input
-                                 * into Tcl commands. */
-    Tcl_DString line;           /* Used to read the next line from the
-                                 * terminal input. */
-    int tty;                    /* Non-zero means standard input is a
-                                 * terminal-like device.  Zero means it's
-                                 * a file. */
   } ThreadSpecificData;
 
   Tcl_ThreadDataKey dataKey;
@@ -99,17 +99,10 @@ DOTRACE("Tcl::MainImpl::MainImpl");
 
   Tcl_FindExecutable(argv[0]);
 
-  // Set up thread-specific data
+  Tcl_DStringInit(&itsCommand);
+  Tcl_DStringInit(&itsLine);
 
-  ThreadSpecificData* tsdPtr = (ThreadSpecificData *)
-    Tcl_GetThreadData(&dataKey, sizeof(ThreadSpecificData));
-
-  tsdPtr->interp = this->interp();
-
-  Tcl_DStringInit(&tsdPtr->command);
-  Tcl_DStringInit(&tsdPtr->line);
-
-  tsdPtr->tty = isatty(0);
+  isItInteractive = isatty(0);
 
   // Parse command-line arguments.  If the next argument doesn't start with
   // a "-" then strip it off and use it as the name of a script file to
@@ -137,7 +130,7 @@ DOTRACE("Tcl::MainImpl::MainImpl");
                              : itsStartupFileName);
 
   itsSafeInterp.setGlobalVar("tcl_interactive",
-                             ((itsStartupFileName == NULL) && tsdPtr->tty)
+                             ((itsStartupFileName == NULL) && isItInteractive)
                              ? 1 : 0);
 }
 
@@ -231,18 +224,15 @@ void Tcl::MainImpl::stdinProc(ClientData /*clientData*/, int /*mask*/)
 
   Tcl::MainImpl* rep = Tcl::MainImpl::get();
 
-  ThreadSpecificData* tsdPtr = (ThreadSpecificData *)
-    Tcl_GetThreadData(&dataKey, sizeof(ThreadSpecificData));
+  Tcl_Interp* interp = rep->interp();
 
-  Tcl_Interp* interp = tsdPtr->interp;
-
-  int count = Tcl_Gets(rep->itsInChannel, &tsdPtr->line);
+  int count = Tcl_Gets(rep->itsInChannel, &rep->itsLine);
 
   if (count < 0)
     {
       if (!gotPartial)
         {
-          if (tsdPtr->tty)
+          if (rep->isItInteractive)
             {
               Tcl_Exit(0);
             }
@@ -255,10 +245,9 @@ void Tcl::MainImpl::stdinProc(ClientData /*clientData*/, int /*mask*/)
         }
     }
 
-  Tcl_DStringAppend(&tsdPtr->command,
-                    Tcl_DStringValue(&tsdPtr->line), -1);
-  char* cmd = Tcl_DStringAppend(&tsdPtr->command, "\n", -1);
-  Tcl_DStringFree(&tsdPtr->line);
+  Tcl_DStringAppend(&rep->itsCommand, Tcl_DStringValue(&rep->itsLine), -1);
+  char* cmd = Tcl_DStringAppend(&rep->itsCommand, "\n", -1);
+  Tcl_DStringFree(&rep->itsLine);
   if (!Tcl_CommandComplete(cmd))
     {
       gotPartial = 1;
@@ -285,10 +274,10 @@ void Tcl::MainImpl::stdinProc(ClientData /*clientData*/, int /*mask*/)
           Tcl_CreateChannelHandler(rep->itsInChannel, TCL_READABLE,
                                    &stdinProc, (ClientData) 0);
         }
-      Tcl_DStringFree(&tsdPtr->command);
+      Tcl_DStringFree(&rep->itsCommand);
       if (Tcl_GetStringResult(interp)[0] != '\0')
         {
-          if ((code != TCL_OK) || (tsdPtr->tty))
+          if ((code != TCL_OK) || (rep->isItInteractive))
             {
               Tcl_Channel outChan = Tcl_GetStdChannel(TCL_STDOUT);
               if (outChan)
@@ -304,7 +293,7 @@ void Tcl::MainImpl::stdinProc(ClientData /*clientData*/, int /*mask*/)
    * Output a prompt.
    */
 
-  if (tsdPtr->tty)
+  if (rep->isItInteractive)
     {
       rep->prompt(gotPartial);
     }
@@ -320,9 +309,6 @@ void Tcl::MainImpl::stdinProc(ClientData /*clientData*/, int /*mask*/)
 void Tcl::MainImpl::run()
 {
 DOTRACE("Tcl::MainImpl::run");
-
-  ThreadSpecificData* tsdPtr = (ThreadSpecificData *)
-    Tcl_GetThreadData(&dataKey, sizeof(ThreadSpecificData));
 
   /*
    * Invoke the script specified on the command line, if any.
@@ -342,7 +328,7 @@ DOTRACE("Tcl::MainImpl::run");
           Tcl_DeleteInterp(this->interp());
           Tcl_Exit(1);
         }
-      tsdPtr->tty = 0;
+      isItInteractive = 0;
     }
   else
     {
@@ -356,7 +342,7 @@ DOTRACE("Tcl::MainImpl::run");
           Tcl_CreateChannelHandler(itsInChannel, TCL_READABLE,
                                    &MainImpl::stdinProc, (ClientData) 0);
         }
-      if (tsdPtr->tty)
+      if (isItInteractive)
         {
           this->prompt(false);
         }
