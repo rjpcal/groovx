@@ -49,9 +49,7 @@
 
 namespace
 {
-  const string_literal ioTag("EventResponseHdlr");
-
-  const string_literal nullScript("{}");
+  const string_literal nullScript("");
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -76,10 +74,9 @@ public:
 
 
   class ERHState {
-  protected:
+  public:
     ERHState() {}
 
-  public:
     virtual ~ERHState() {}
 
     // all virtual functions have default empty bodies, so this class
@@ -92,11 +89,6 @@ public:
     virtual void handleResponse(const char* /*keysym*/) {}
 
     virtual void onDestroy() {}
-
-    static shared_ptr<ERHState> activeState(const EventResponseHdlr::Impl* erh,
-                                            Util::WeakRef<GWT::Widget> widget,
-                                            TrialBase& trial);
-    static shared_ptr<ERHState> inactiveState();
   };
 
 
@@ -105,24 +97,42 @@ public:
     const EventResponseHdlr::Impl& itsErh;
     Util::WeakRef<GWT::Widget> itsWidget;
     TrialBase& itsTrial;
+	 fixed_string itsEventSequence;
+	 fixed_string itsBindingScript;
+
+	 void attend()
+	 {
+		if (itsWidget.isValid())
+		  itsWidget->bind(itsEventSequence.c_str(),
+								itsBindingScript.c_str());
+	 }
+
+	 void ignore()
+	 {
+		if (itsWidget.isValid())
+		  itsWidget->bind(itsEventSequence.c_str(),
+								nullScript.c_str());
+	 }
 
   public:
-    virtual ~ERHActiveState()
-    { itsErh.ignore(itsWidget); }
+    virtual ~ERHActiveState() { ignore(); }
 
     ERHActiveState(const EventResponseHdlr::Impl* erh,
-                   Util::WeakRef<GWT::Widget> widget, TrialBase& trial) :
+                   Util::WeakRef<GWT::Widget> widget, TrialBase& trial,
+						 const fixed_string& seq, const fixed_string& script) :
       itsErh(*erh),
       itsWidget(widget),
-      itsTrial(trial)
+      itsTrial(trial),
+		itsEventSequence(seq),
+		itsBindingScript(script)
     {
-      Assert((&itsErh != 0) && (&itsWidget != 0) && (&itsTrial != 0));
-      itsErh.attend(itsWidget);
+      Assert((&itsErh != 0) && (itsWidget.isValid()) && (&itsTrial != 0));
+      attend();
     }
 
     virtual void rhAbortTrial()
     {
-      itsErh.ignore(itsWidget);
+      ignore();
 
       Ref<Sound> p = Sound::getErrSound();
       p->play();
@@ -130,28 +140,36 @@ public:
 
     virtual void rhEndTrial()
     {
-      itsErh.ignore(itsWidget);
-      itsErh.changeState(ERHState::inactiveState());
+      ignore();
     }
 
     virtual void rhHaltExpt()
     {
-      itsErh.ignore(itsWidget);
-      itsErh.changeState(ERHState::inactiveState());
+      ignore();
     }
 
     virtual void handleResponse(const char* keysym);
 
     virtual void onDestroy()
     {
-      itsErh.ignore(itsWidget);
+      ignore();
     }
   }; // end class ERHActiveState
 
 
-  void changeState(shared_ptr<ERHState> new_state) const
-  { itsState = new_state; }
+  void becomeActive(Util::WeakRef<GWT::Widget> widget, TrialBase& trial) const
+  {
+	 dynamic_string script(itsCmdCallback->name());
+	 script.append(" ").append(itsBindingSubstitution);
 
+	 itsState.reset(new ERHActiveState(this, widget, trial,
+												  itsEventSequence, script.c_str()));
+  }
+
+  void becomeInactive() const
+  {
+	 itsState.reset(new ERHState);
+  }
 
   // Delegand functions
 
@@ -162,47 +180,34 @@ public:
     {
       itsSafeIntp.clearEventQueue();
 
-      itsState = ERHState::activeState(this, widget, trial);
+      becomeActive(widget, trial);
     }
 
   void rhAbortTrial() const { itsState->rhAbortTrial(); }
 
-  void rhEndTrial() const { itsState->rhEndTrial(); }
+  void rhEndTrial() const
+  {
+    itsState->rhEndTrial();
+    becomeInactive();
+  }
 
-  void rhHaltExpt() const { itsState->rhHaltExpt(); }
+  void rhHaltExpt() const
+    {
+      itsState->rhHaltExpt();
+      becomeInactive();
+    }
 
   void rhAllowResponses(Util::WeakRef<GWT::Widget> widget,
-                        TrialBase& trial) const
+								TrialBase& trial) const
     {
-      itsState = ERHState::activeState(this, widget, trial);
+		becomeActive(widget, trial);
     }
 
   void rhDenyResponses() const
-    { itsState = ERHState::inactiveState(); }
+    { becomeInactive(); }
 
   // Helper functions
 private:
-
-  dynamic_string getBindingScript() const
-  {
-    return dynamic_string("{ ")
-      .append(itsCmdCallback->name()).append(" ")
-      .append(itsBindingSubstitution).append(" }");
-  }
-
-  void attend(Util::WeakRef<GWT::Widget> widget) const
-  {
-    DOTRACE("EventResponseHdlr::Impl::attend");
-	 if (widget.isValid())
-		widget->bind(itsEventSequence.c_str(), getBindingScript().c_str());
-  }
-
-  void ignore(Util::WeakRef<GWT::Widget> widget) const
-  {
-    DOTRACE("EventResponseHdlr::Impl::ignore");
-	 if (widget.isValid())
-		widget->bind(itsEventSequence.c_str(), nullScript.c_str());
-  }
 
   class PrivateHandleCmd;
 
@@ -281,24 +286,6 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-shared_ptr<EventResponseHdlr::Impl::ERHState>
-EventResponseHdlr::Impl::ERHState::activeState(
-  const EventResponseHdlr::Impl* erh,
-  Util::WeakRef<GWT::Widget> widget,
-  TrialBase& trial
-)
-{
-DOTRACE("EventResponseHdlr::Impl::ERHState::activeState");
-  return shared_ptr<ERHState>(new ERHActiveState(erh, widget, trial));
-}
-
-shared_ptr<EventResponseHdlr::Impl::ERHState>
-EventResponseHdlr::Impl::ERHState::inactiveState()
-{
-DOTRACE("EventResponseHdlr::Impl::ERHState::inactiveState");
-  return shared_ptr<ERHState>(new ERHState);
-}
-
 void EventResponseHdlr::Impl::ERHActiveState::handleResponse(
   const char* keysym
 ) {
@@ -310,7 +297,7 @@ DOTRACE("EventResponseHdlr::Impl::ERHActiveState::handleResponse");
 
   itsTrial.trResponseSeen();
 
-  itsErh.ignore(itsWidget);
+  ignore();
 
   theResponse.setVal(itsErh.itsResponseMap.valueFor(keysym));
   DebugEvalNL(theResponse.val());
@@ -336,7 +323,7 @@ DOTRACE("EventResponseHdlr::Impl::ERHActiveState::handleResponse");
 EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
                               const char* input_response_map) :
   itsOwner(owner),
-  itsState(ERHState::inactiveState()),
+  itsState(new ERHState),
   itsSafeIntp(dynamic_cast<GrshApp&>(Application::theApp()).getInterp()),
   itsCmdCallback(new PrivateHandleCmd(this)),
   itsResponseMap(input_response_map),
@@ -357,7 +344,7 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
 void EventResponseHdlr::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("EventResponseHdlr::Impl::readFrom");
 
-  itsState = ERHState::inactiveState();
+  becomeInactive(); 
 
   {
     fixed_string rep;
