@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 20:09:37 2002
+// written: Tue Mar  5 13:47:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -330,31 +330,53 @@ struct WithPolicies
  **/
 ///////////////////////////////////////////////////////////////////////
 
+struct MtxShape
+{
+  MtxShape(int mr, int nc) : mrows_(mr), ncols_(nc) {}
+
+  int length() const { return (mrows_ > ncols_) ? mrows_ : ncols_; }
+
+  int mrows() const { return mrows_; }
+  int ncols() const { return ncols_; }
+
+private:
+  int mrows_;
+  int ncols_;
+};
+
 class MtxSpecs
 {
 public:
-  MtxSpecs() : mrows_(0), rowstride_(0), ncols_(0), offset_(0) {}
+  MtxSpecs() : shape_(0, 0), rowstride_(0), offset_(0) {}
+
+  MtxSpecs(const MtxShape& shape) :
+    shape_(shape),
+    rowstride_(shape.mrows()),
+    offset_(0)
+  {}
 
   MtxSpecs(int mrows, int ncols) :
-    mrows_(mrows),
+    shape_(mrows, ncols),
     rowstride_(mrows),
-    ncols_(ncols),
     offset_(0)
   {}
 
   MtxSpecs(const MtxSpecs& other) :
-    mrows_(other.mrows_),
+    shape_(other.shape_),
     rowstride_(other.rowstride_),
-    ncols_(other.ncols_),
     offset_(other.offset_)
   {}
 
   void swap(MtxSpecs& other);
 
+  void reshape(const MtxShape& s) { reshape(s.mrows(), s.ncols()); }
+
   void reshape(int mr, int nc);
 
-  MtxSpecs as_shape(int mr, int nc) const
-  { MtxSpecs result(*this); result.reshape(mr, nc); return result; }
+  MtxSpecs as_shape(const MtxShape& s) const
+  { MtxSpecs result(*this); result.reshape(s); return result; }
+
+  MtxSpecs as_shape(int mr, int nc) const { return as_shape(MtxShape(mr,nc)); }
 
   void selectRows(const RowRange& rng);
   void selectCols(const ColRange& rng);
@@ -369,23 +391,25 @@ public:
     MtxSpecs result(*this); result.selectCols(rng); return result;
   }
 
+  const MtxShape& shape() const { return shape_; }
+
   ptrdiff_t offset() const { return offset_; }
 
-  int length() const { return (mrows_ > ncols_) ? mrows_ : ncols_; }
-  int nelems() const { return mrows_*ncols_; }
+  int length() const { return shape_.length(); }
+  int nelems() const { return mrows()*ncols(); }
 
-  int mrows() const { return mrows_; }
+  int mrows() const { return shape_.mrows(); }
   int rowstride() const { return rowstride_; }
 
-  int ncols() const { return ncols_; }
+  int ncols() const { return shape_.ncols(); }
   int colstride() const { return colstride_; }
 
-  unsigned int rowgap() const { return rowstride_ - mrows_; }
+  unsigned int rowgap() const { return rowstride_ - mrows(); }
 
   int offsetFromStart(int row, int col) const
   {
-    RC_inHalfOpen(row, 0, mrows_);
-    RC_inHalfOpen(col, 0, ncols_);
+    RC_inHalfOpen(row, 0, mrows());
+    RC_inHalfOpen(col, 0, ncols());
     return row + (col*rowstride_);
   }
 
@@ -399,9 +423,8 @@ public:
   { return offset_ + offsetFromStart(elem); }
 
 private:
-  int mrows_;
+  MtxShape shape_;
   int rowstride_;
-  int ncols_;
   static const int colstride_ = 1;
   ptrdiff_t offset_;
 };
@@ -529,6 +552,7 @@ protected:
 
 public:
 
+  const MtxShape& shape() const { return specs().shape(); }
   const MtxSpecs& specs() const { return *this; }
 
 #ifdef APPLY_IMPL
@@ -924,6 +948,9 @@ public:
   {
     return Mtx(this->specs().subRows(rr).subCols(cc), this->data_);
   }
+
+  Mtx as_shape(const MtxShape& s) const
+  { return Mtx(this->specs().as_shape(s), this->data_); }
 
   Mtx as_shape(int mr, int nc) const
   { return Mtx(this->specs().as_shape(mr, nc), this->data_); }

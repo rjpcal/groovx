@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar  4 19:42:26 2002
+// written: Tue Mar  5 13:46:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -290,9 +290,8 @@ Slice& Slice::operator=(const Mtx& other)
 
 void MtxSpecs::swap(MtxSpecs& other)
 {
-  std::swap(mrows_, other.mrows_);
+  std::swap(shape_, other.shape_);
   std::swap(rowstride_, other.rowstride_);
-  std::swap(ncols_, other.ncols_);
   std::swap(offset_, other.offset_);
 }
 
@@ -307,12 +306,11 @@ void MtxSpecs::reshape(int mr, int nc)
       throw Util::Error(msg);
     }
 
-  if (rowstride_ != mrows_)
+  if (rowstride_ != mrows())
     throw Util::Error("reshape not allowed for submatrix");
 
-  mrows_ = mr;
+  shape_ = MtxShape(mr, nc);
   rowstride_ = mr;
-  ncols_ = nc;
 }
 
 void MtxSpecs::selectRows(const RowRange& rng)
@@ -323,11 +321,11 @@ void MtxSpecs::selectRows(const RowRange& rng)
   if (rng.count() <= 0)
     throw Util::Error("selectRows(): number of rows must be > 0");
 
-  if (rng.end() > mrows_)
+  if (rng.end() > mrows())
     throw Util::Error("selectRows(): upper row index out of range");
 
   offset_ += rng.begin();
-  mrows_ = rng.count();
+  shape_ = MtxShape(rng.count(), ncols());
 }
 
 void MtxSpecs::selectCols(const ColRange& rng)
@@ -338,11 +336,11 @@ void MtxSpecs::selectCols(const ColRange& rng)
   if (rng.count() <= 0)
     throw Util::Error("selectCols(): number of columns must be > 0");
 
-  if (rng.end() > ncols_)
+  if (rng.end() > ncols())
     throw Util::Error("selectCols(): upper column index out of range");
 
   offset_ += rng.begin()*rowstride_;
-  ncols_ = rng.count();
+  shape_ = MtxShape(mrows(), rng.count());
 }
 
 ///////////////////////////////////////////////////////////////////////
