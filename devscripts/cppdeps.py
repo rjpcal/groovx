@@ -216,7 +216,7 @@ class DepBuilder:
 
             antecedents.append(file)
 
-            depends = self.itsDirectIncludes.get(file)
+            depends = sort(self.itsFullIncludes[file].keys())
 
             if len(depends) == 0:
                 self.itsLLevels[file] = 0
@@ -245,7 +245,7 @@ class DepBuilder:
         if not marks.has_key(file):
             marks[file] = 1
 
-            for dep in sort(self.itsDirectIncludes.get(file)):
+            for dep in sort(self.itsFullIncludes[file].keys()):
                 (stem, ext) = os.path.splitext(dep)
                 dep = stem + '.cc'
 
@@ -270,7 +270,7 @@ class DepBuilder:
             marks[file] = 1
 
             if (level < maxlevel):
-                for dep in sort(self.itsDirectIncludes.get(file)):
+                for dep in sort(self.itsFullIncludes[file].keys()):
                     (stem, ext) = os.path.splitext(dep)
                     dep = stem + '.cc'
 
