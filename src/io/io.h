@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Wed May 26 21:07:50 1999
+// written: Wed May 26 21:23:04 1999
 // $Id$
 //
 // This file defines the IO abstract interface. This interface
@@ -60,7 +60,7 @@ public:
 // write a type using the << insertion operator. It is instantiated
 // for the basic types.
 template<class T>
-int charCount(T val);
+int gCharCount(T val);
 
 ///////////////////////////////////////////////////////////////////////
 //
