@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999 (as bitmap.cc)
-// written: Thu Nov 21 12:05:51 2002
+// written: Thu Nov 21 12:28:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,14 +101,14 @@ DOTRACE("ImageUpdater::update");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// BitmapImpl class definition
+// GxPixmapImpl class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class BitmapImpl
+class GxPixmapImpl
 {
 public:
-  BitmapImpl() :
+  GxPixmapImpl() :
     itsFilename(),
     itsZoom(1.0, 1.0),
     itsData(),
@@ -144,10 +144,10 @@ public:
     if (!itsFilename.is_empty())
       {
         // NOTE: it's important that this functionality be separate from
-        // Bitmap's own version of queueImage(), since that function
+        // GxPixmap's own version of queueImage(), since that function
         // immediately calls sigNodeChanged, which means that we notify
-        // everyone else that the data have been purged, so the bitmap might
-        // never have a chance to be drawn on the screen
+        // everyone else that the data have been purged, so the bitmap
+        // might never have a chance to be drawn on the screen
 
         itsData.clear();
 
@@ -156,47 +156,47 @@ public:
   }
 
 private:
-  BitmapImpl(const BitmapImpl&);
-  BitmapImpl& operator=(const BitmapImpl&);
+  GxPixmapImpl(const GxPixmapImpl&);
+  GxPixmapImpl& operator=(const GxPixmapImpl&);
 };
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Bitmap member definitions
+// GxPixmap member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-Bitmap::Bitmap() :
+GxPixmap::GxPixmap() :
   GxShapeKit(),
-  rep(new BitmapImpl)
+  rep(new GxPixmapImpl)
 {
-DOTRACE("Bitmap::Bitmap");
+DOTRACE("GxPixmap::GxPixmap");
   setAlignmentMode(GxAligner::CENTER_ON_CENTER);
 }
 
-Bitmap* Bitmap::make()
+GxPixmap* GxPixmap::make()
 {
-DOTRACE("Bitmap::make");
-  return new Bitmap;
+DOTRACE("GxPixmap::make");
+  return new GxPixmap;
 }
 
-Bitmap::~Bitmap()
+GxPixmap::~GxPixmap()
 {
-DOTRACE("Bitmap::~Bitmap");
+DOTRACE("GxPixmap::~GxPixmap");
   delete rep;
 }
 
-IO::VersionId Bitmap::serialVersionId() const
+IO::VersionId GxPixmap::serialVersionId() const
 {
-DOTRACE("Bitmap::serialVersionId");
+DOTRACE("GxPixmap::serialVersionId");
   return BITMAP_SERIAL_VERSION_ID;
 }
 
-void Bitmap::readFrom(IO::Reader* reader)
+void GxPixmap::readFrom(IO::Reader* reader)
 {
-DOTRACE("Bitmap::readFrom");
+DOTRACE("GxPixmap::readFrom");
 
-  int svid = reader->ensureReadVersionId("Bitmap", 2, "Try grsh0.8a7");
+  int svid = reader->ensureReadVersionId("GxPixmap", 2, "Try grsh0.8a7");
 
   reader->readValue("filename", rep->itsFilename);
   reader->readValue("zoomX", rep->itsZoom.x());
@@ -226,11 +226,11 @@ DOTRACE("Bitmap::readFrom");
     reader->readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
 }
 
-void Bitmap::writeTo(IO::Writer* writer) const
+void GxPixmap::writeTo(IO::Writer* writer) const
 {
-DOTRACE("Bitmap::writeTo");
+DOTRACE("GxPixmap::writeTo");
 
-  writer->ensureWriteVersionId("Bitmap", BITMAP_SERIAL_VERSION_ID, 4,
+  writer->ensureWriteVersionId("GxPixmap", BITMAP_SERIAL_VERSION_ID, 4,
                                "Try grsh0.8a7");
 
   writer->writeValue("filename", rep->itsFilename);
@@ -249,9 +249,9 @@ DOTRACE("Bitmap::writeTo");
 // actions //
 /////////////
 
-void Bitmap::loadImage(const char* filename)
+void GxPixmap::loadImage(const char* filename)
 {
-DOTRACE("Bitmap::loadImage");
+DOTRACE("GxPixmap::loadImage");
 
   ImgFile::load(filename, rep->itsData);
 
@@ -260,25 +260,25 @@ DOTRACE("Bitmap::loadImage");
   this->sigNodeChanged.emit();
 }
 
-void Bitmap::queueImage(const char* filename)
+void GxPixmap::queueImage(const char* filename)
 {
-DOTRACE("Bitmap::queueImage");
+DOTRACE("GxPixmap::queueImage");
 
   rep->queueImage(filename);
 
   this->sigNodeChanged.emit();
 }
 
-void Bitmap::saveImage(const char* filename) const
+void GxPixmap::saveImage(const char* filename) const
 {
-DOTRACE("Bitmap::saveImage");
+DOTRACE("GxPixmap::saveImage");
 
   ImgFile::save(filename, rep->itsData);
 }
 
-void Bitmap::grabScreenRect(const Gfx::Rect<int>& rect)
+void GxPixmap::grabScreenRect(const Gfx::Rect<int>& rect)
 {
-DOTRACE("Bitmap::grabScreenRect");
+DOTRACE("GxPixmap::grabScreenRect");
 
   Gfx::Canvas& canvas = Gfx::Canvas::current();
 
@@ -293,9 +293,9 @@ DOTRACE("Bitmap::grabScreenRect");
   this->sigNodeChanged.emit();
 }
 
-void Bitmap::grabWorldRect(const Gfx::Rect<double>& world_rect)
+void GxPixmap::grabWorldRect(const Gfx::Rect<double>& world_rect)
 {
-DOTRACE("Bitmap::grabWorldRect");
+DOTRACE("GxPixmap::grabWorldRect");
 
   Gfx::Canvas& canvas = Gfx::Canvas::current();
 
@@ -306,9 +306,9 @@ DOTRACE("Bitmap::grabWorldRect");
   this->sigNodeChanged.emit();
 }
 
-void Bitmap::flipContrast()
+void GxPixmap::flipContrast()
 {
-DOTRACE("Bitmap::flipContrast");
+DOTRACE("GxPixmap::flipContrast");
 
   // Toggle itsContrastFlip so we keep track of whether the number of
   // flips has been even or odd.
@@ -318,9 +318,9 @@ DOTRACE("Bitmap::flipContrast");
   this->sigNodeChanged.emit();
 }
 
-void Bitmap::flipVertical()
+void GxPixmap::flipVertical()
 {
-DOTRACE("Bitmap::flipVertical");
+DOTRACE("GxPixmap::flipVertical");
 
   rep->itsVerticalFlip = !(rep->itsVerticalFlip);
   rep->itsData.flipVertical();
@@ -328,9 +328,9 @@ DOTRACE("Bitmap::flipVertical");
   this->sigNodeChanged.emit();
 }
 
-void Bitmap::grRender(Gfx::Canvas& canvas) const
+void GxPixmap::grRender(Gfx::Canvas& canvas) const
 {
-DOTRACE("Bitmap::grRender");
+DOTRACE("GxPixmap::grRender");
 
   Gfx::Vec2<double> world_pos;
 
@@ -347,7 +347,7 @@ DOTRACE("Bitmap::grRender");
     {
       // This const_cast is OK because we aren't changing the observable
       // state; we're just re-queuing the current filename
-      const_cast<BitmapImpl*>(rep)->purge();
+      const_cast<GxPixmapImpl*>(rep)->purge();
     }
 }
 
@@ -355,9 +355,9 @@ DOTRACE("Bitmap::grRender");
 // accessors //
 ///////////////
 
-void Bitmap::grGetBoundingBox(Gfx::Bbox& bbox) const
+void GxPixmap::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
-DOTRACE("Bitmap::grGetBoundingBox");
+DOTRACE("GxPixmap::grGetBoundingBox");
 
   // Get the corners in screen coordinates
 
@@ -369,24 +369,24 @@ DOTRACE("Bitmap::grGetBoundingBox");
   bbox.vertex2(bbox.worldFromScreen(top_right));
 }
 
-Gfx::Vec2<int> Bitmap::size() const
+Gfx::Vec2<int> GxPixmap::size() const
   { return rep->itsData.size(); }
 
-Gfx::Vec2<double> Bitmap::getZoom() const
+Gfx::Vec2<double> GxPixmap::getZoom() const
   { return rep->itsUsingZoom ? rep->itsZoom : defaultZoom; }
 
-bool Bitmap::getUsingZoom() const
+bool GxPixmap::getUsingZoom() const
   { return rep->itsUsingZoom; }
 
-bool Bitmap::isPurgeable() const
+bool GxPixmap::isPurgeable() const
   { return rep->itsPurgeable; }
 
-const char* Bitmap::filename() const
+const char* GxPixmap::filename() const
   { return rep->itsFilename.c_str(); }
 
-bool Bitmap::getAsBitmap() const
+bool GxPixmap::getAsBitmap() const
 {
-DOTRACE("Bitmap::getAsBitmap");
+DOTRACE("GxPixmap::getAsBitmap");
   return rep->itsAsBitmap;
 }
 
@@ -394,10 +394,10 @@ DOTRACE("Bitmap::getAsBitmap");
 // manipulators //
 //////////////////
 
-void Bitmap::setZoom(Gfx::Vec2<double> zoom)
+void GxPixmap::setZoom(Gfx::Vec2<double> zoom)
   { rep->itsZoom = zoom; this->sigNodeChanged.emit(); }
 
-void Bitmap::setUsingZoom(bool val)
+void GxPixmap::setUsingZoom(bool val)
 {
   rep->itsUsingZoom = val;
 
@@ -408,12 +408,12 @@ void Bitmap::setUsingZoom(bool val)
   this->sigNodeChanged.emit();
 }
 
-void Bitmap::setPurgeable(bool val)
+void GxPixmap::setPurgeable(bool val)
   { rep->itsPurgeable = val; this->sigNodeChanged.emit(); }
 
-void Bitmap::setAsBitmap(bool val)
+void GxPixmap::setAsBitmap(bool val)
 {
-DOTRACE("Bitmap::setAsBitmap");
+DOTRACE("GxPixmap::setAsBitmap");
   rep->itsAsBitmap = val;
 
   // glPixelZoom() does not work with glBitmap()

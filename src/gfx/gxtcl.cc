@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Thu Nov 21 12:10:11 2002
+// written: Thu Nov 21 12:28:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,16 +108,16 @@ namespace
   const IO::VersionId GLBITMAP_SVID = 3;
 }
 
-class XBitmap : public Bitmap
+class XBitmap : public GxPixmap
 {
 public:
-  XBitmap() : Bitmap() {}
+  XBitmap() : GxPixmap() {}
 
   static XBitmap* make() { return new XBitmap; }
 
   virtual ~XBitmap() {}
 
-  virtual fstring ioTypename() const { return fstring("Bitmap"); }
+  virtual fstring ioTypename() const { return fstring("GxPixmap"); }
 
   virtual IO::VersionId serialVersionId() const { return XBITMAP_SVID; }
 
@@ -125,22 +125,22 @@ public:
   {
     reader->ensureReadVersionId("XBitmap", 2, "Try grsh0.8a4");
 
-    reader->readBaseClass("Bitmap", IO::makeProxy<Bitmap>(this));
+    reader->readBaseClass("Bitmap", IO::makeProxy<GxPixmap>(this));
   }
 
-  // no writeTo() override since we just want Bitmap's writeTo()
+  // no writeTo() override since we just want GxPixmap's writeTo()
 };
 
-class GLBitmap : public Bitmap
+class GLBitmap : public GxPixmap
 {
 public:
-  GLBitmap() : Bitmap() {}
+  GLBitmap() : GxPixmap() {}
 
   static GLBitmap* make() { return new GLBitmap; }
 
   virtual ~GLBitmap() {}
 
-  virtual fstring ioTypename() const { return fstring("Bitmap"); }
+  virtual fstring ioTypename() const { return fstring("GxPixmap"); }
 
   virtual IO::VersionId serialVersionId() const { return GLBITMAP_SVID; }
 
@@ -154,10 +154,10 @@ public:
         reader->readValue("usingGlBitmap", val);
       }
 
-    reader->readBaseClass("Bitmap", IO::makeProxy<Bitmap>(this));
+    reader->readBaseClass("Bitmap", IO::makeProxy<GxPixmap>(this));
   }
 
-  // no writeTo() override since we just want Bitmap's writeTo()
+  // no writeTo() override since we just want GxPixmap's writeTo()
 };
 
 extern "C"
@@ -307,27 +307,27 @@ DOTRACE("Gx_Init");
 
   status = pkg14->combineStatus(status);
 
-  // Bitmap
-  Tcl::Pkg* pkg15 = new Tcl::Pkg(interp, "Bitmap", "$Revision$");
+  // GxPixmap
+  Tcl::Pkg* pkg15 = new Tcl::Pkg(interp, "GxPixmap", "$Revision$");
   pkg15->inherit("GxShapeKit");
-  Tcl::defCreator<Bitmap>(pkg15);
-  Tcl::defGenericObjCmds<Bitmap>(pkg15);
+  Tcl::defCreator<GxPixmap>(pkg15, "Bitmap");
+  Tcl::defGenericObjCmds<GxPixmap>(pkg15);
 
-  pkg15->defGetter( "filename", &Bitmap::filename );
-  pkg15->defVec( "loadImage", "item_id(s) filename(s)", &Bitmap::loadImage );
-  pkg15->defVec( "queueImage", "item_id(s) filename(s)", &Bitmap::queueImage );
-  pkg15->defVec( "saveImage", "item_id(s) filename(s)", &Bitmap::saveImage );
+  pkg15->defGetter( "filename", &GxPixmap::filename );
+  pkg15->defVec( "loadImage", "item_id(s) filename(s)", &GxPixmap::loadImage );
+  pkg15->defVec( "queueImage", "item_id(s) filename(s)", &GxPixmap::queueImage );
+  pkg15->defVec( "saveImage", "item_id(s) filename(s)", &GxPixmap::saveImage );
   pkg15->defVec( "grabScreenRect", "item_id(s) {left top right bottom}",
-                 &Bitmap::grabScreenRect );
+                 &GxPixmap::grabScreenRect );
   pkg15->defVec( "grabWorldRect", "item_id(s) {left top right bottom}",
-                 &Bitmap::grabWorldRect );
-  pkg15->defAction("flipContrast", &Bitmap::flipContrast);
-  pkg15->defAction("flipVertical", &Bitmap::flipVertical);
-  pkg15->defGetter("size", &Bitmap::size);
-  pkg15->defAttrib("zoom", &Bitmap::getZoom, &Bitmap::setZoom);
-  pkg15->defAttrib("usingZoom", &Bitmap::getUsingZoom, &Bitmap::setUsingZoom);
-  pkg15->defAttrib("purgeable", &Bitmap::isPurgeable, &Bitmap::setPurgeable);
-  pkg15->defAttrib("asBitmap", &Bitmap::getAsBitmap, &Bitmap::setAsBitmap);
+                 &GxPixmap::grabWorldRect );
+  pkg15->defAction("flipContrast", &GxPixmap::flipContrast);
+  pkg15->defAction("flipVertical", &GxPixmap::flipVertical);
+  pkg15->defGetter("size", &GxPixmap::size);
+  pkg15->defAttrib("zoom", &GxPixmap::getZoom, &GxPixmap::setZoom);
+  pkg15->defAttrib("usingZoom", &GxPixmap::getUsingZoom, &GxPixmap::setUsingZoom);
+  pkg15->defAttrib("purgeable", &GxPixmap::isPurgeable, &GxPixmap::setPurgeable);
+  pkg15->defAttrib("asBitmap", &GxPixmap::getAsBitmap, &GxPixmap::setAsBitmap);
 
   // GLBitmap for backward-compatibility
   Tcl::defCreator<GLBitmap>(pkg15);

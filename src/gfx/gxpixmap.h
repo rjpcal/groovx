@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999 (as bitmap.h)
-// written: Thu Nov 21 12:05:34 2002
+// written: Thu Nov 21 12:28:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,19 +23,19 @@ namespace Gfx
   template <class V> class Vec2;
 }
 
-class BitmapImpl;
+class GxPixmapImpl;
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c Bitmap is a subclass of \c GxShapeKit that manages bitmap data, but
+ * \c GxPixmap is a subclass of \c GxShapeKit that manages bitmap data, but
  * does not implement a method for rendering the bitmap data to the screen,
  * since there is typically more than one way to do this.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Bitmap : public GxShapeKit
+class GxPixmap : public GxShapeKit
 {
   //////////////
   // creators //
@@ -43,14 +43,14 @@ class Bitmap : public GxShapeKit
 
 protected:
   /// Create an empty bitmap.
-  Bitmap();
+  GxPixmap();
 
 public:
   /// Default creator.
-  static Bitmap* make();
+  static GxPixmap* make();
 
   /// Virtual destructor ensures proper destruction of subclasses.
-  virtual ~Bitmap();
+  virtual ~GxPixmap();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
@@ -74,13 +74,13 @@ public:
   void saveImage(const char* filename) const;
 
   /// Grabs pixels from a rectangular area of the screen buffer.
-  /** The pixels are loaded into the Bitmap's pixel array. The coordinates
-      of the rectangle are specified in screen pixel coordinates. */
+  /** The pixels are loaded into the GxPixmap's pixel array. The rectangle
+      is specified in screen coordinates. */
   void grabScreenRect(const Gfx::Rect<int>& rect);
 
   /// Grabs pixels from a rectangular area of the screen buffer.
-  /** The pixels are loaded into the Bitmap's pixel array. The coordinates
-      of the rectangle are specified in OpenGL coordinates. */
+  /** The pixels are loaded into the GxPixmap's pixel array. The rectangle
+      is specified in world coordinates. */
   void grabWorldRect(const Gfx::Rect<double>& rect);
 
   /// Flips the luminance contrast of the bitmap data.
@@ -142,10 +142,10 @@ protected:
   virtual void grGetBoundingBox(Gfx::Bbox& bbox) const;
 
 private:
-  Bitmap(const Bitmap&);
-  Bitmap& operator=(const Bitmap&);
+  GxPixmap(const GxPixmap&);
+  GxPixmap& operator=(const GxPixmap&);
 
-  BitmapImpl* const rep;
+  GxPixmapImpl* const rep;
 };
 
 static const char vcid_gxpixmap_h[] = "$Header$";
