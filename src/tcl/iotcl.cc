@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Mon Dec 11 14:59:22 2000
+// written: Mon Dec 11 15:58:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,6 @@
 #define IOTCL_CC_DEFINED
 
 #include "tcl/ioitempkg.h"
-#include "tcl/listpkg.h"
 
 #include "io/io.h"
 #include "io/iomgr.h"
@@ -174,11 +173,13 @@ public:
   }
 };
 
-class IoDbPkg : public PtrListPkg<IO::IoObject> {
+class IoDbPkg : public CTclItemPkg<IoPtrList>,
+					 public IoFetcher {
 public:
   IoDbPkg(Tcl_Interp* interp) :
-	 PtrListPkg<IO::IoObject>(interp, "IoDb", "$Revision$")
+	 CTclItemPkg<IoPtrList>(interp, "IoDb", "$Revision$", 0)
   {
+	 TclItemPkg::addIoCommands(this);
 	 declareCAction("clear", &IoPtrList::clear);
 	 declareCAction("purge", &IoPtrList::purge);
   }
@@ -187,6 +188,12 @@ public:
     {
 		IoPtrList::theList().clearOnExit();
 	 }
+
+  IO::IoObject& getIoFromId(int)
+    { return dynamic_cast<IO::IoObject&>(IoPtrList::theList()); }
+
+  IoPtrList* getCItemFromId(int)
+    { return &(IoPtrList::theList()); }
 };
 
 } // end namespace Tcl
