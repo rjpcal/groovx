@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Oct  6 16:28:30 2000
+// written: Sun Oct  8 20:46:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -161,10 +161,6 @@ protected:
 //
 //---------------------------------------------------------------------
 
-// XXX This command is disabled until I figure out how to reimplement
-// release() with a new memory management strategy
-#if 0
-
 class ObjlistTcl::LoadMoreCmd : public Tcl::ASRLoadCmd {
 public:
   LoadMoreCmd(Tcl_Interp* interp, const char* cmd_name) :
@@ -187,8 +183,9 @@ protected:
 		  {
 			 if (itsSandbox.isValidId(id))
 				{
-				  PtrList<GrObj>::Ptr obj = itsSandbox.release(id);
-				  int newid = olist.insert(obj);
+				  PtrList<GrObj>::SharedPtr shptr = itsSandbox.getCheckedPtr(id);
+				  itsSandbox.remove(id);
+				  int newid = olist.insert(shptr);
 				  lappendVal(newid);
 				}
 		  }
@@ -199,8 +196,6 @@ protected:
 private:
   PtrList<GrObj> itsSandbox;
 };
-
-#endif
 
 //---------------------------------------------------------------------
 //
@@ -215,9 +210,7 @@ public:
   {
 	 addCommand( new LoadObjectsCmd(interp, "ObjList::loadObjects") );
 	 addCommand( new SaveObjectsCmd(interp, "ObjList::saveObjects") );
-#if 0
 	 addCommand( new LoadMoreCmd(interp, "ObjList::loadMore") );
-#endif
   }
 };
 
