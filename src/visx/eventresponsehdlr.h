@@ -3,7 +3,7 @@
 // eventresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:30:54 1999
-// written: Fri Mar 10 00:33:49 2000
+// written: Mon Mar 13 13:10:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,10 @@
 
 #ifndef RESPONSEHANDLER_H_DEFINED
 #include "responsehandler.h"
+#endif
+
+#ifndef TRACER_H_DEFINED
+#include "util/tracer.h"
 #endif
 
 class fixed_string;
@@ -67,6 +71,10 @@ class fixed_string;
 
 class EventResponseHdlr : public ResponseHandler {
 public:
+  /** This tracer dynamically controls the tracing of \c
+      EventResponseHdlr member functions. */
+  static Util::Tracer tracer;
+
   /// Default constructor.
   EventResponseHdlr();
 
