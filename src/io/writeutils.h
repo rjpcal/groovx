@@ -108,7 +108,7 @@ public:
           dbgEval(4, count); dbgEvalNL(4, (*begin)->id());
 
           writer.writeObject(makeElementNameString(name, count).c_str(),
-                             SoftRef<const IO::IoObject>(*begin));
+                             Util::SoftRef<const IO::IoObject>(*begin));
           ++begin;
           ++count;
         }
