@@ -412,12 +412,12 @@ itcl::body Editor::setObjType {type} { $itsButtons.objtypes select $type }
 itcl::body Editor::curObjType {} { return [$itsButtons.objtypes get] }
 
 itcl::body Editor::standardSettings {objs} {
-    set grobjs [dlist::select $objs [GrObj::is $objs]]
+    set grobjs [dlist::select $objs [GxShapeKit::is $objs]]
 
-    GrObj::alignmentMode $grobjs $GrObj::CENTER_ON_CENTER
-    GrObj::scalingMode $grobjs $GrObj::MAINTAIN_ASPECT_SCALING
-    GrObj::renderMode $grobjs $GrObj::DIRECT
-    GrObj::height $grobjs 1.0
+    GxShapeKit::alignmentMode $grobjs $GxShapeKit::CENTER_ON_CENTER
+    GxShapeKit::scalingMode $grobjs $GxShapeKit::MAINTAIN_ASPECT_SCALING
+    GxShapeKit::renderMode $grobjs $GxShapeKit::DIRECT
+    GxShapeKit::height $grobjs 1.0
 }
 
 itcl::body Editor::addNewObject {} {
@@ -767,11 +767,11 @@ itcl::body Editor::saveObjects {filename} {
 
 itcl::body Editor::saveBitmaps {basename} {
     set objs [getEditSelection]
-    set grobjs [dlist::select $objs [GrObj::is $objs]]
+    set grobjs [dlist::select $objs [GxShapeKit::is $objs]]
     foreach obj $grobjs {
-	GrObj::renderMode $obj $GrObj::GL_BITMAP_CACHE
-	GrObj::saveBitmapCache $obj "${basename}${obj}.pbm"
-	GrObj::renderMode $obj $GrObj::DIRECT_RENDER
+	GxShapeKit::renderMode $obj $GxShapeKit::GL_BITMAP_CACHE
+	GxShapeKit::saveBitmapCache $obj "${basename}${obj}.pbm"
+	GxShapeKit::renderMode $obj $GxShapeKit::DIRECT_RENDER
     }
     return [llength $objs]
 }
@@ -928,9 +928,11 @@ itcl::class Menuapp {
 wm withdraw .
 
 # get rid of the default widget
-Toglet::destroy [Toglet::currentToglet]
+set defToglet [Toglet::currentToglet]
 
 set app [Menuapp [::AUTO]]
+
+Toglet::destroy $defToglet
 
 update idletasks
 
