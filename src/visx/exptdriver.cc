@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Nov 11 14:39:14 1999
+// written: Thu Nov 11 17:16:15 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -509,7 +509,7 @@ DOTRACE("ExptDriver::ExptImpl::serialize");
 }
 
 void ExptDriver::ExptImpl::deserialize(istream& is, IO::IOFlag flag) {
-DOTRACE("ExptDriver::ExptImpl::serialize");
+DOTRACE("ExptDriver::ExptImpl::deserialize");
 
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
