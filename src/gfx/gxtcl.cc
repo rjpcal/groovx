@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Fri Aug 31 09:23:32 2001
+// written: Fri Aug 31 16:21:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,6 +59,7 @@ namespace GxTcl
   {
     static fstring result =
       "{addChildren 0 10 1 {NEW_GROUP STRING NO_GET}} "
+      "{removeChild 0 10 1 {STRING NO_GET}} "
       "{children 0 20 1 {STRING NO_SET}} ";
     return result;
   }
