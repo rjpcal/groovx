@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Mon Aug  5 16:49:39 2002
+// written: Mon Aug  5 18:07:23 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -53,15 +53,6 @@ extern "C"
   typedef void (Togl_OverlayCallback) (void* togl);
 
   extern int Togl_Init( Tcl_Interp *interp );
-
-  // Default callback setup functions
-
-  extern void Togl_CreateFunc( Togl_Callback *proc );
-  extern void Togl_DisplayFunc( Togl_Callback *proc );
-  extern void Togl_ReshapeFunc( Togl_Callback *proc );
-  extern void Togl_DestroyFunc( Togl_Callback *proc );
-  extern void Togl_TimerFunc( Togl_Callback *proc );
-  extern void Togl_ResetDefaultCallbacks( void );
 }
 
 
@@ -81,10 +72,18 @@ public:
   Togl(Tcl_Interp* interp, const char* pathname);
   virtual ~Togl();
 
+  // Default callback setup functions
+  void setDefaultCreateFunc(Togl_Callback* proc);
+  void setDefaultDisplayFunc(Togl_Callback* proc);
+  void setDefaultReshapeFunc(Togl_Callback* proc);
+  void setDefaultDestroyFunc(Togl_Callback* proc);
+  void setDefaultTimerFunc(Togl_Callback* proc);
+  void resetDefaultCallbacks();
+
   // Change callbacks for existing widget
-  void setDisplayFunc( Togl_Callback *proc );
-  void setReshapeFunc( Togl_Callback *proc );
-  void setDestroyFunc( Togl_Callback *proc );
+  void setDisplayFunc(Togl_Callback* proc);
+  void setReshapeFunc(Togl_Callback* proc);
+  void setDestroyFunc(Togl_Callback* proc);
 
   // Miscellaneous
   int configure(int objc, Tcl_Obj* const objv[]);
