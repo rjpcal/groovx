@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Tue Jun  5 10:55:36 2001
+// written: Wed Jun 13 16:32:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "util/dlink_list.h"
 #include "util/observer.h"
+#include "util/ref.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -31,15 +32,17 @@
 
 namespace
 {
-  typedef dlink_list<Util::Observer*> ListType;
+  typedef Util::WeakRef<Util::Observer> ObsRef;
+
+  typedef dlink_list<ObsRef> ListType;
 }
 
 struct Util::Observable::ObsImpl {
 public:
   ObsImpl() : itsObservers()
-	 { }
+    { }
   ~ObsImpl()
-	 { }
+    { }
   ListType itsObservers;
 };
 
@@ -64,25 +67,27 @@ DOTRACE("Util::Observable::~Observable");
 void Util::Observable::attach(Util::Observer* obs) {
 DOTRACE("Util::Observable::attach");
   if (!obs) return;
-  DebugEvalNL((void*)obs);
-  itsImpl.itsObservers.push_back(obs);
+  itsImpl.itsObservers.push_back(ObsRef(obs, Util::WEAK));
 }
 
 void Util::Observable::detach(Util::Observer* obs) {
 DOTRACE("Util::Observable::detach");
   if (!obs) return;
-  itsImpl.itsObservers.remove(obs);
+  itsImpl.itsObservers.remove(ObsRef(obs, Util::WEAK));
 }
 
 void Util::Observable::sendStateChangeMsg() const {
 DOTRACE("Util::Observable::sendStateChangeMsg");
-  for (ListType::iterator ii = itsImpl.itsObservers.begin();
-		 ii != itsImpl.itsObservers.end();
-		 ii++) {
-	 DebugEvalNL((void*)*ii);
-	 Assert(*ii != 0);
-	 (*ii)->receiveStateChangeMsg(this);
-  }
+
+  for (ListType::iterator
+         ii = itsImpl.itsObservers.begin(),
+         end = itsImpl.itsObservers.end();
+       ii != end;
+       ++ii)
+    {
+      if ((*ii).isValid())
+        (*ii)->receiveStateChangeMsg(this);
+    }
 }
 
 void Util::Observable::sendDestroyMsg() {
@@ -96,19 +101,20 @@ DOTRACE("Util::Observable::sendDestroyMsg");
   // within the loop by detach() (which removes an element from
   // theList), and therefore the loop iterator would be invalidated.
   while (!theList.empty()) {
-	 DebugEval(itsImpl.itsObservers.size());
+    DebugEval(itsImpl.itsObservers.size());
 
-	 Util::Observer* obs = theList.front();
+    WeakRef<Util::Observer> obs = theList.front();
 
-	 DebugEval((void *) this);
-	 DebugEvalNL((void *) obs);
+    DebugEval((void *) this);
 
-	 Assert(obs != 0);
+    // Let the observer know that 'this' is being destroyed ...
+    if (obs.isValid())
+      {
+        obs->receiveDestroyMsg(this);
+      }
 
-	 // Let the observer know that 'this' is being destroyed ...
-	 obs->receiveDestroyMsg(this);
-	 // ... and remove it from the list of observers
-	 detach(obs);
+    // ... and remove it from the list of observers
+    theList.pop_front();
   }
 }
 
