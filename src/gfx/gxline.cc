@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr 17 16:00:32 2002
-// written: Wed Apr 17 16:31:34 2002
+// written: Wed Apr 17 16:35:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -90,7 +90,9 @@ void GxLine::draw(Gfx::Canvas& canvas) const
 DOTRACE("GxLine::draw");
 
   Gfx::AttribSaver as(canvas);
-  canvas.setLineWidth(itsWidth);
+
+  if (itsWidth > 0)
+    canvas.setLineWidth(itsWidth);
 
   Gfx::LinesBlock lb(canvas);
   canvas.vertex3(start.vec());
