@@ -3,7 +3,7 @@
 // timinghandler.h
 // Rob Peters
 // created: Wed May 19 10:56:20 1999
-// written: Thu May 20 13:00:57 1999
+// written: Mon May 24 18:35:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,73 +16,94 @@
 #define TCL_H_DEFINED
 #endif
 
+#ifndef VECTOR_DEFINED
+#include <vector>
+#define VECTOR_DEFINED
+#endif
+
 #ifndef IO_H_DEFINED
 #include "io.h"
+#endif
+
+#ifdef TIME_H_DEFINED
+#include <sys/time.h>
+#define TIME_H_DEFINED
 #endif
 
 class ExptDriver;
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ExptTimer abstract class defintion
+// ExptEvent abstract class defintion
 //
 ///////////////////////////////////////////////////////////////////////
 
-enum TimeBase { IMMEDIATE, FROM_START, FROM_RESPONSE };
-
-class ExptTimer {
+class ExptEvent {
 public:
-  // We initialize itsInterp to NULL-- this is OK because it must be
-  // set with schedule() before will ever be dereferenced.
-  ExptTimer(ExptDriver& ed) :
-	 itsToken(NULL), itsExptDriver(ed) {}
-  virtual ~ExptTimer() {
-	 cancel();
-  }
-  void cancel() {
-	 Tcl_DeleteTimerHandler(itsToken);
-  }
-  void schedule(int msec);
+  ExptEvent(ExptDriver& ed, int msec);
+  virtual ~ExptEvent();
 
-private:
-  static void dummyTimerProc(ClientData clientData) {
-	 ExptTimer* timer = static_cast<ExptTimer *>(clientData);
-	 timer->invoke();
-  }
+  int getDelay() const { return itsRequestedDelay; }
+  void setDelay(int msec) { itsRequestedDelay = msec; }
+
+  void schedule();
+  void cancel();
+
+protected:
   virtual void invoke() = 0;
   
-  TimeBase itsTimeBase;
-  int itsRequestedTime;
-  int itsActualTime;
+private:
+  static void dummyInvoke(ClientData clientData);
+
+  int itsRequestedDelay;
   Tcl_TimerToken itsToken;
+
+  // Diagnostic stuff
+  mutable timeval itsBeginTime;
+  mutable int itsDelayErrors;
+  mutable int itsInvokeCount;
 protected:
   ExptDriver& itsExptDriver;
 };
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ExptTimer derived classes defintions
+// ExptEvent derived classes defintions
 //
 ///////////////////////////////////////////////////////////////////////
 
-class AbortTrialTimer : public ExptTimer {
+class AbortTrialEvent : public ExptEvent {
 public:
-  AbortTrialTimer(ExptDriver& ed) : ExptTimer(ed) {}
-private:
+  AbortTrialEvent(ExptDriver& ed, int msec = 0) : ExptEvent(ed, msec) {}
+protected:
   virtual void invoke();
 };
 
-class StartTrialTimer : public ExptTimer {
+class BeginTrialEvent : public ExptEvent {
 public:
-  StartTrialTimer(ExptDriver& ed) : ExptTimer(ed) {}
-private:
+  BeginTrialEvent(ExptDriver& ed, int msec = 0) : ExptEvent(ed, msec) {}
+protected:
   virtual void invoke();
 };
 
-class UndrawTrialTimer : public ExptTimer {
+class EndTrialEvent : public ExptEvent {
 public:
-  UndrawTrialTimer(ExptDriver& ed) : ExptTimer(ed) {}
-private:
+  EndTrialEvent(ExptDriver& ed, int msec = 0) : ExptEvent(ed, msec) {}
+protected:
+  virtual void invoke();
+};
+
+class DrawEvent : public ExptEvent {
+public:
+  DrawEvent(ExptDriver& ed, int msec = 0) : ExptEvent(ed, msec) {}
+protected:
+  virtual void invoke();
+};
+
+class UndrawEvent : public ExptEvent {
+public:
+  UndrawEvent(ExptDriver& ed, int msec = 0) : ExptEvent(ed, msec) {}
+protected:
   virtual void invoke();
 };
 
@@ -104,101 +125,44 @@ public:
   virtual int charCount() const;
 
   // Accessors + Manipulators
-  int getAbortWait() const { return itsAbortWait; }
+  int getAbortWait() const { return itsAbortWaitEvent.getDelay(); }
   int getAutosavePeriod() const { return itsAutosavePeriod; }
-  int getInterTrialInterval() const { return itsInterTrialInterval; }
-  int getStimDur() const { return itsStimDur; }
-  int getTimeout() const { return itsTimeout; }
+  int getInterTrialInterval() const { return itsBeginEvent.getDelay(); }
+  int getStimDur() const { return itsUndrawEvent.getDelay(); }
+  int getTimeout() const { return itsTimeoutEvent.getDelay(); }
 
-  void setAbortWait(int val) { itsAbortWait = val; }
+  void setAbortWait(int val) { itsAbortWaitEvent.setDelay(val); }
   void setAutosavePeriod(int val) { itsAutosavePeriod = val; }
-  void setInterTrialInterval(int val) { itsInterTrialInterval = val; }
-  void setStimDur(int val) { itsStimDur = val; }
-  void setTimeout(int val) { itsTimeout = val; }
+  void setInterTrialInterval(int val) { itsBeginEvent.setDelay(val); }
+  void setStimDur(int val) { itsUndrawEvent.setDelay(val); }
+  void setTimeout(int val) { itsTimeoutEvent.setDelay(val); }
   
   // Actions
-  void scheduleImmediate();
-  void scheduleFromStart();
-  void scheduleFromResponse();
+  void thBeginTrial();
+  void thAbortTrial();
+  void thEndTrial();
+  void thHaltExpt();
+  void thResponseSeen();
 
-  void scheduleNextTrial();
-  void scheduleAfterAbort();
+protected:
   void cancelAll();
 
 private:
-  AbortTrialTimer itsAbortTimer;
-  StartTrialTimer itsStartTimer;
-  UndrawTrialTimer itsUndrawTrialTimer;
+  AbortTrialEvent itsTimeoutEvent;
+  BeginTrialEvent itsBeginEvent;
+  EndTrialEvent itsAbortWaitEvent;
+  DrawEvent itsDrawEvent;
+  UndrawEvent itsUndrawEvent;
 
-  int itsAbortWait;
+  vector<ExptEvent *> itsBeginEvents;
+  vector<ExptEvent *> itsEndEvents;
+  vector<ExptEvent *> itsResponseEvents;
+  vector<ExptEvent *> itsAbortEvents;
+
   int itsAutosavePeriod;		  // # of trials between autosaves
-  int itsInterTrialInterval;
-  int itsStimDur;
-  int itsTimeout;
 
   ExptDriver& itsExptDriver;
 };
-
-// class TimingHandler {
-// public:
-//   TimingHandler(ExptDriver& ed);
-
-//   void scheduleImmediate();
-//   void scheduleFromStart();
-//   void scheduleFromResponse();
-
-// private:
-//   void scheduleEvents(const list<ExptEvent *>& eventList);
-//   void scheduleOneEvent(ExptEvent* event)l
-
-//   list<ExptEvent *> itsImmediateEvents;
-//   list<ExptEvent *> itsStartEvents;
-//   list<ExptEvent *> itsResponseEvents;
-
-//   int itsResponseOffset;
-  
-//   ExptDriver& itsExptDriver;
-// };
-
-// class ExptEvent {
-// public:
-//   ExptEvent(int req_time) : itsRequestedTime(req_time) {}
-//   virtual void action(ExptDriver& exptDriver) = 0;
-// private:
-//   const int itsRequestedTime;
-//   int itsActualTime;
-// };
-
-// class AbortEvent : public ExptEvent {
-// public:
-//   virtual void action(ExptDriver& exptDriver);
-// };
-
-// class UndrawEvent : public ExptEvent {
-// public:
-//   virtual void action(ExptDriver& exptDriver);
-// };
-
-// class DrawEvent : public ExptEvent {
-// public:
-//   virtual void action(ExptDriver& exptDriver);
-// };
-
-// class ResponseSeenEvent : public ExptEvent {
-// public:
-//   virtual void action(ExptDriver& exptDriver) {
-// 	 exptDriver->tellResponseSeen();
-//   }
-// };
-
-// class RecordResponseEvent : public ExptEvent {
-// public:
-//   virtual void action(ExptDriver& exptDriver) {
-// 	 exptDriver->processResponse(itsResponse);
-//   }
-// private:
-//   int itsResponse;
-// };
 
 static const char vcid_timinghandler_h[] = "$Header$";
 #endif // !TIMINGHANDLER_H_DEFINED
