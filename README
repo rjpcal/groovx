@@ -56,6 +56,12 @@
          them... so, don't remove the tcl+tk sources until after you
          build and install itcl+itk
 
+       # might need to do
+       #   export SHLIB_LDFLAGS=-L/path/to/install/lib
+       # before running ./configure so that the configuration script looks
+       # for e.g. libtclstub8.x.a in the install directory rather than in
+       # the tcl's apparent build directory
+
        cd /path/to/source
        tar xfz itcl3.2.1_src.tgz
        cd itcl3.2.1
