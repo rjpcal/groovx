@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr 24 20:05:06 2002
-// written: Thu Apr 25 09:21:03 2002
+// written: Thu Apr 25 12:26:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -118,11 +118,6 @@ DOTRACE("PngParser::parse");
 
   png_read_info(itsPngPtr, itsInfoPtr);
 
-  const int width = png_get_image_width(itsPngPtr, itsInfoPtr);
-  const int height = png_get_image_height(itsPngPtr, itsInfoPtr);
-
-  const int nchannels = png_get_channels(itsPngPtr, itsInfoPtr);
-
   const int bit_depth = png_get_bit_depth(itsPngPtr, itsInfoPtr);
 
   if (bit_depth == 16)
@@ -135,7 +130,26 @@ DOTRACE("PngParser::parse");
   if (color_type & PNG_COLOR_MASK_ALPHA)
     png_set_strip_alpha(itsPngPtr);
 
+  if (color_type & PNG_COLOR_MASK_PALETTE)
+    png_set_palette_to_rgb(itsPngPtr);
+
+  // This must come after any+all transformations are specified
+  png_read_update_info(itsPngPtr, itsInfoPtr);
+
+  // These calls must come after read_update_info, so that we get values
+  // that reflect any transformations
+  const int width = png_get_image_width(itsPngPtr, itsInfoPtr);
+  const int height = png_get_image_height(itsPngPtr, itsInfoPtr);
+
+  DebugEval(width); DebugEvalNL(height);
+
   const int row_bytes = png_get_rowbytes(itsPngPtr, itsInfoPtr);
+
+  DebugEvalNL(row_bytes);
+
+  const int nchannels = png_get_channels(itsPngPtr, itsInfoPtr);
+
+  DebugEvalNL(nchannels);
 
   Assert(row_bytes == width*nchannels);
 
