@@ -3,7 +3,7 @@
 // soundlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:44:41 1999
-// written: Wed Mar 15 10:17:27 2000
+// written: Mon May 15 18:46:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,6 @@
 #include "util/debug.h"
 
 namespace {
-  SoundList* instance = 0;
   const int DEFAULT_INIT_SIZE = 10;
 }
 
@@ -30,10 +29,8 @@ DOTRACE("SoundList::SoundList");
 
 SoundList& SoundList::theSoundList() {
 DOTRACE("SoundList::theSoundList");
-  if (instance == 0) {
-	 instance = new SoundList(DEFAULT_INIT_SIZE);
-  }
-  return *instance;
+  static SoundList instance(DEFAULT_INIT_SIZE);
+  return instance;
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@
 // objlist.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed Mar 15 10:17:28 2000
+// written: Mon May 15 18:40:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,16 +19,13 @@
 #include "util/debug.h"
 
 namespace {
-  ObjList* instance = 0;
   const int DEFAULT_INIT_SIZE = 10;
 }
 
 ObjList& ObjList::theObjList() {
 DOTRACE("ObjList::theObjList");
-  if (instance == 0) {
-	 instance = new ObjList(DEFAULT_INIT_SIZE);
-  }
-  return *instance;
+  static ObjList instance(DEFAULT_INIT_SIZE);
+  return instance;
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@
 // rhlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:29 1999
-// written: Fri Mar 24 19:28:21 2000
+// written: Mon May 15 18:43:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,6 @@ template class PtrList<ResponseHandler>;
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  RhList* instance = 0;
   const int DEFAULT_INIT_SIZE = 10;
 }
 
@@ -54,10 +53,8 @@ DOTRACE("RhList::RhList");
 
 RhList& RhList::theRhList() {
 DOTRACE("RhList::theRhList");
-  if (instance == 0) {
-	 instance = new RhList(DEFAULT_INIT_SIZE);
-  }
-  return *instance;
+  static RhList instance(DEFAULT_INIT_SIZE);
+  return instance;
 }
 
 void RhList::afterInsertHook(int /* id */, void* ptr) {
