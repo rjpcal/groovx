@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Thu May 10 12:04:48 2001
+// written: Thu May 17 15:24:49 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -21,6 +21,8 @@
 #include "exptdriver.h"
 
 #include "gwt/widget.h"
+
+#include "io/iditem.h"
 
 #include "system/system.h"
 
@@ -211,24 +213,24 @@ public:
 
   virtual ~ExptPkg()
     {
-		itsExptDriver.edClearExpt();
+		itsExptDriver->edClearExpt();
 	 }
 
-  virtual IO::IoObject& getIoFromId(int) { return itsExptDriver; }
+  virtual IO::IoObject& getIoFromId(int) { return *itsExptDriver; }
 
   virtual ExptDriver* getCItemFromId(int) {
-	 return &itsExptDriver;
+	 return itsExptDriver.get();
   }
 
 private:
-  ExptDriver itsExptDriver;
+  IdItem<ExptDriver> itsExptDriver;
 };
 
 ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :
   Tcl::CTclItemPkg<ExptDriver>(interp, "Expt", "2.7", 0),
-  itsExptDriver(Application::theApp().argc(),
-					 Application::theApp().argv(),
-					 interp)
+  itsExptDriver(ExptDriver::make(Application::theApp().argc(),
+											Application::theApp().argv(),
+											interp))
 {
   DOTRACE("ExptPkg::ExptPkg");
 
@@ -257,7 +259,7 @@ ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :
   GrshApp* grshapp = dynamic_cast<GrshApp*>(&app);
 
   if (grshapp != 0) {
-	 grshapp->installExperiment(&itsExptDriver);
+	 grshapp->installExperiment(itsExptDriver.get());
   }
 }
 
