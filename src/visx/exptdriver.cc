@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Dec  1 14:30:25 1999
+// written: Sat Dec  4 01:56:55 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,6 +40,7 @@
 #include "writer.h"
 #include "system.h"
 #include "stopwatch.h"
+#include "tlistwidget.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -156,6 +157,7 @@ public:
   void edEndTrial();
   void edHaltExpt() const;
   void edResetExpt();
+  void edSetCurrentTrial(int trial);
 
   void read(const char* filename);
   void write(const char* filename) const;
@@ -863,6 +865,22 @@ DOTRACE("ExptDriver::Impl::edResetExpt");
   }
 }
 
+//---------------------------------------------------------------------
+//
+// ExptDriver::edSetCurrentTrial() --
+//
+//---------------------------------------------------------------------
+
+void ExptDriver::Impl::edSetCurrentTrial(int trial) {
+DOTRACE("ExptDriver::Impl::edSetCurrentTrial");
+  TlistWidget* widg =
+	 dynamic_cast<TlistWidget*>(ObjTogl::theToglConfig());
+
+  if (widg != 0) {
+	 widg->setCurTrial(trial);
+  }
+}
+
 //--------------------------------------------------------------------
 //
 // ExptDriver::read --
@@ -1043,6 +1061,9 @@ void ExptDriver::edHaltExpt() const
 
 void ExptDriver::edResetExpt() 
   { itsImpl->edResetExpt(); }
+
+void ExptDriver::edSetCurrentTrial(int trial)
+  { itsImpl->edSetCurrentTrial(trial); }
 
 void ExptDriver::read(const char* filename) 
   { itsImpl->read(filename); }

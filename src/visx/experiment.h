@@ -3,7 +3,7 @@
 // experiment.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 10:52:17 1999
-// written: Thu Dec  2 15:09:26 1999
+// written: Sat Dec  4 01:52:05 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,8 @@ public:
   virtual void edEndTrial() = 0;
   virtual void edHaltExpt() const = 0;
   virtual void edResetExpt() = 0;
+
+  virtual void edSetCurrentTrial(int trial) = 0;
 };
 
 static const char vcid_experiment_h[] = "$Header$";
