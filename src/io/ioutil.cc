@@ -83,8 +83,8 @@ fstring IO::write(Util::Ref<IO::IoObject> obj)
 {
   std::ostringstream ost;
 
-  AsciiStreamWriter writer(ost);
-  writer.writeRoot(obj.get());
+  shared_ptr<IO::Writer> writer = IO::makeAsciiStreamWriter(ost);
+  writer->writeRoot(obj.get());
 
   return fstring(ost.str().c_str());
 }
@@ -110,8 +110,8 @@ void IO::saveASW(Util::Ref<IO::IoObject> obj, fstring filename)
 {
   shared_ptr<STD_IO::ostream> os(Util::ogzopen(filename));
 
-  AsciiStreamWriter writer(*os);
-  writer.writeRoot(obj.get());
+  shared_ptr<IO::Writer> writer = IO::makeAsciiStreamWriter(*os);
+  writer->writeRoot(obj.get());
 }
 
 void IO::loadASR(Util::Ref<IO::IoObject> obj, fstring filename)
