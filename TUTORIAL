@@ -218,31 +218,37 @@ Table of contents:
              UndrawEvent
      unknown object type 'foobar' (Util::Error)
 
-   Getting back to our "Hello, World" example, let's see how to
-   explore a little deeper. We are working in a roughly
-   object-oriented system here (after all groovx was originally
-   conceived as a GRaphical Object-Oriented Visual eXperiments). So,
-   what we have stored in the variable "g" is the unique object-id (or
-   UID) for a GxText object. UIDs in groovx are like raw addresses in
-   C or C++; they uniquely refer to a particular object. Groovx uses a
+   Let's return to our "Hello, World" example and explore a little
+   deeper. Groovx is a roughly object-oriented system (after all the
+   acronym was originally conceived as a GRaphical Object-Oriented
+   Visual eXperiments). So, in our example, what we have stored in the
+   variable "g" is the unique object-id (or UID) for a GxText
+   object. UIDs in groovx are like raw addresses in C or C++; they
+   uniquely refer to a particular object. Groovx uses a
    reference-counting system behind the scenes.
 
    The arrow syntax with the pseudo-operator "->" is just a bit of
-   syntactic sugar (note that the order of arguments is different than
-   in C or C++ -- there, you might say "ptr->someFunction()", but in
-   groovx you'd say "-> $ptr someFunction"). In fact, with Tcl's
-   extremely simple and uniform syntax, "->" is just a command like
-   any other, only with a strange-looking name. So, the following two
-   commands are precisely equivalent:
+   syntactic sugar. Note that the order of arguments is different than
+   in C or C++ -- there, you might say
 
-     -> $object command arg1   arg2 arg3 ...
-     Class::command $object   arg1 arg2 arg3 ...
+     ptr->someFunction()
+
+   but in groovx you'd say
+
+     -> $ptr someFunction"
+
+   In fact, with Tcl's extremely simple and uniform syntax, "->" is
+   just a command like any other, only with a strange-looking
+   name. So, the following two commands are precisely equivalent:
+
+     -> $object command arg1 arg2 arg3
+     Class::command $object arg1 arg2 arg3
 
    where "Class" is the class of the given $object. What "->" does is
    to look up the class of $object, and then call the command as shown
    in the second form above.
 
-   OK, we've seen what "->" means, now we can use it to explore the
+   OK, we've seen what "->" means, now let's use it to explore the
    text object above.
 
    First, let's see what its type is:
@@ -284,13 +290,13 @@ Table of contents:
    object. You'll notice that among them is ::GxText::type, the
    command that we previously used to get the type of the object.
 
-   Groovx currently has a partially-working (hence,
-   partially-broken...)  self-documentation system. For some commands
-   (clarification to follow), you can use "?" to get information about
-   how to use the command. For example, for GxText::text, you can do
-   the following:
+   Groovx has a mostly-working self-documentation system. For all
+   groovx commands, you can use "?" to get information about how to
+   use the command. For example, for GxText::text, you can do the
+   following:
 
      groovx>>> ? GxText::text
+     GxText::text resolves to ::GxText::text
              ::GxText::text objref(s)
              ::GxText::text objref(s) new_val(s)
 
@@ -301,28 +307,33 @@ Table of contents:
    objref plus a new 'text' value (that's how we specified the "Hello,
    World" value previously).
 
-   Now for the partially-broken part... with the way that
-   "inheritance" currently works in groovx, inherited commands cannot
-   be looked up with "?" under their inherited name(s), although they
-   CAN be looked up by their original command names (hopefully this
-   situation will improve at a future time). Thus:
+   One thing to note is that with the way that "inheritance" currently
+   works in groovx (by using Tcl's namespace importing mechanism),
+   inherited commands will appear under their base name when looked up
+   with "?". Thus:
 
      groovx>>> ? GxText::type
-     ?: no such Tcl::CommandGroup (Util::Error)
+     GxText::type resolves to ::Obj::type
+     	     ::Obj::type objref(s)
+     	     (defined at src/io/objtcl.cc:205)
 
-   fails, but using the original command name will work:
-
-     groovx>>> ? Obj::type
-           ::Obj::type objref(s)
+   shows that GxType::type is an inherited command, with the original
+   command being Obj::type.
 
    Similarly with GxText::loadGVX, which is inherited from
    IO::loadGVX:
 
      groovx>>> ? GxText::loadGVX
-     ?: no such Tcl::CommandGroup (Util::Error)
-
-     groovx>>> ? IO::loadGVX
+     GxText::loadGVX resolves to ::IO::loadGVX
              ::IO::loadGVX filename
+             (defined at src/io/iotcl.cc:69)
+
+   Finally, you can even use the "?" command to look up itself:
+
+     groovx 1>>> ? ?
+     ? resolves to ::?
+             ::? cmd_name
+             (defined at src/tcl/misctcl.cc:148)
 
    A useful tool for inspecting objects involves using the persistence
    layer built into the C++ framework. This is a generic serialization
