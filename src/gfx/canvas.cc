@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:38 1999
-// written: Thu Nov 14 17:25:59 2002
+// written: Wed Nov 20 11:49:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,8 @@
 
 #include "util/arrays.h"
 #include "util/error.h"
+
+#include "visx/bezier.h"
 
 #include "util/debug.h"
 #include "util/trace.h"
@@ -98,6 +100,50 @@ void Gfx::Canvas::drawBox(const Gfx::Box<double>& box)
     vertex3(box.point101());
     vertex3(box.point100());
   }
+}
+
+void Gfx::Canvas::drawBezier4(const Gfx::Vec3<double>& p1,
+                              const Gfx::Vec3<double>& p2,
+                              const Gfx::Vec3<double>& p3,
+                              const Gfx::Vec3<double>& p4,
+                              unsigned int subdivisions)
+{
+DOTRACE("Gfx::Canvas::drawBezier4");
+
+  Bezier4 xb(p1.x(), p2.x(), p3.x(), p4.x());
+  Bezier4 yb(p1.y(), p2.y(), p3.y(), p4.y());
+  Bezier4 zb(p1.z(), p2.z(), p3.z(), p4.z());
+
+  beginLineStrip();
+  for (unsigned int i = 0; i < subdivisions; ++i)
+    {
+      double u = double(i) / double(subdivisions - 1);
+      vertex3(Gfx::Vec3<double>(xb.eval(u), yb.eval(u), zb.eval(u)));
+    }
+  end();
+}
+
+void Gfx::Canvas::drawBezierFill4(const Gfx::Vec3<double>& center,
+                                  const Gfx::Vec3<double>& p1,
+                                  const Gfx::Vec3<double>& p2,
+                                  const Gfx::Vec3<double>& p3,
+                                  const Gfx::Vec3<double>& p4,
+                                  unsigned int subdivisions)
+{
+DOTRACE("Gfx::Canvas::drawBezierFill4");
+
+  Bezier4 xb(p1.x(), p2.x(), p3.x(), p4.x());
+  Bezier4 yb(p1.y(), p2.y(), p3.y(), p4.y());
+  Bezier4 zb(p1.z(), p2.z(), p3.z(), p4.z());
+
+  beginTriangleFan();
+  vertex3(center);
+  for (unsigned int i = 0; i < subdivisions; ++i)
+    {
+      double u = double(i) / double(subdivisions - 1);
+      vertex3(Gfx::Vec3<double>(xb.eval(u), yb.eval(u), zb.eval(u)));
+    }
+  end();
 }
 
 void Gfx::Canvas::drawNurbsCurve(const dynamic_block<float>& knots,
