@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu May 10 12:04:41 2001
+// written: Thu May 17 15:24:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,14 +59,17 @@ private:
   /// assignment not allowed
   ExptDriver& operator=(const ExptDriver&);
 
+  /// Construct with the applications Tcl interpreter.
+  ExptDriver(int argc, char** argv, Tcl_Interp* interp);
+
 public:
 
   /** This tracer dynamically controls the tracing of ExptDriver
 		member functions. */
   static Util::Tracer tracer;
 
-  /// Construct with the applications Tcl interpreter.
-  ExptDriver(int argc, char** argv, Tcl_Interp* interp);
+  static ExptDriver* make(int argc, char** argv, Tcl_Interp* interp)
+    { return new ExptDriver(argc, argv, interp); }
 
   /// Virtual destructor.
   virtual ~ExptDriver();
