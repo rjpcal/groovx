@@ -2,10 +2,10 @@
 //
 // keanu.h
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Fri Jan 18 16:06:51 2002
+// written: Thu Feb 14 11:56:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
