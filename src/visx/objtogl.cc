@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Thu Jul 12 13:23:43 2001
+// written: Sun Jul 15 13:51:28 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -53,8 +53,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace ObjTogl {
-
+namespace ObjTogl
+{
   WeakRef<Toglet> theWidget;
 
   void setCurrentTogl(WeakRef<Toglet> toglet);
@@ -69,7 +69,6 @@ namespace ObjTogl {
   class SetMinRectCmd;
   class ShowCmd;
 
-  class ObjToglPkg;
   class TogletPkg;
 }
 
@@ -340,69 +339,9 @@ protected:
 
 //---------------------------------------------------------------------
 //
-// ObjToglPkg class definition
+// TogletPkg class definition
 //
 //---------------------------------------------------------------------
-
-class ObjTogl::ObjToglPkg : public Tcl::CTclItemPkg<Toglet> {
-public:
-  ObjToglPkg(Tcl_Interp* interp) :
-    Tcl::CTclItemPkg<Toglet>(interp, "Togl", "$Revision$", 0)
-  {
-    Tcl_PkgProvide(interp, "Objtogl", "$Revision$");
-
-    addCommand( new BindCmd       (this, "Togl::bind") );
-    addCommand( new DumpCmapCmd   (this, "Togl::dumpCmap") );
-    addCommand( new InitedCmd     (interp, "Togl::inited") );
-    addCommand( new SeeCmd        (this, "Togl::see") );
-    addCommand( new SetColorCmd   (this, "Togl::setColor") );
-    addCommand( new SetCurTrialCmd(this, "Togl::setCurTrial") );
-    addCommand( new SetMinRectCmd (this, "Togl::setMinRect") );
-    addCommand( new ShowCmd       (this, "Togl::show") );
-
-    declareCAction("clearscreen", &Toglet::clearscreen);
-    declareCAction("destroy", &Toglet::destroyWidget);
-    declareCSetter("dumpEps", &Toglet::writeEpsFile, "filename");
-    declareCAttrib("height", &Toglet::getHeight, &Toglet::setHeight);
-    declareCSetter("hold", &Toglet::setHold, "hold_on?");
-    declareCAction("loadDefaultFont", &Toglet::loadDefaultFont);
-    declareCSetter("loadFont", &Toglet::loadFont);
-    declareCSetter("loadFonti", &Toglet::loadFonti);
-    declareCAction("refresh", &Toglet::refresh);
-    declareCSetter("scaleRect", &Toglet::scaleRect, "scale");
-    declareCSetter("setFixedScale", &Toglet::setFixedScale, "scale");
-    declareCSetter("setUnitAngle", &Toglet::setUnitAngle, "angle_in_degrees");
-    declareCSetter("setViewingDistance", &Toglet::setViewingDistIn,
-                   "distance_in_inches");
-    declareCSetter("setVisible", &Toglet::setVisibility, "visibility");
-    declareCAction("swapBuffers", &Toglet::swapBuffers);
-    declareCAction("takeFocus", &Toglet::takeFocus);
-    declareCAction("undraw", &Toglet::undraw);
-    declareCGetter("usingFixedScale", &Toglet::usingFixedScale);
-    declareCAttrib("width", &Toglet::getWidth, &Toglet::setWidth);
-
-    Tcl_Eval(interp,
-             "namespace eval Togl { proc init {} {} }\n"
-             "proc clearscreen {} { Togl::clearscreen }\n"
-             "proc see {id} { Togl::see $id }\n"
-             "proc show {id} { Togl::show $id }\n"
-             "proc undraw {} { Togl::undraw }\n"
-             "proc redraw {} { Togl::refresh }\n");
-  }
-
-  virtual ~ObjToglPkg() {
-    if (ObjTogl::theWidget.isValid()) {
-      ObjTogl::theWidget->setVisibility(false);
-    }
-  }
-
-  Toglet* getCItemFromId(int) {
-    if (!theWidget.isValid()) { throw Tcl::TclError("no valid Togl exists"); }
-
-    return ObjTogl::theWidget.get();
-  }
-};
-
 
 class ObjTogl::TogletPkg : public Tcl::GenericObjPkg<Toglet> {
 public:
@@ -447,7 +386,29 @@ public:
 
     setCurrentTogl(WeakRef<Toglet>(Toglet::make(interp)));
 
+    Tcl_PkgProvide(interp, "Objtogl", "$Revision$");
+
+    addCommand( new InitedCmd     (interp, "Togl::inited") );
+
+    TclPkg::eval("namespace eval Togl { proc init {} {} }\n"
+                 "proc clearscreen {} { Togl::clearscreen }\n"
+                 "proc see {id} { Togl::see $id }\n"
+                 "proc show {id} { Togl::show $id }\n"
+                 "proc undraw {} { Togl::undraw }\n"
+                 "proc redraw {} { Togl::refresh }\n");
+
+    TclPkg::eval("foreach cmd [info commands ::Toglet::*] {"
+                 "  proc ::Togl::[namespace tail $cmd] {args} \" eval $cmd \\[Toglet::currentToglet\\] \\$args \" }\n"
+                 "namespace eval Togl { namespace export * }"
+                 );
+
     TclPkg::eval("Expt::widget [Toglet::currentToglet]");
+  }
+
+  virtual ~TogletPkg() {
+    if (ObjTogl::theWidget.isValid()) {
+      ObjTogl::theWidget->setVisibility(false);
+    }
   }
 };
 
@@ -470,18 +431,17 @@ namespace {
 }
 
 extern "C"
-int Objtogl_Init(Tcl_Interp* interp) {
+int Objtogl_Init(Tcl_Interp* interp)
+{
 DOTRACE("Objtogl_Init");
 
-  new ObjTogl::ObjToglPkg(interp);
-
-  new ObjTogl::TogletPkg(interp);
+  Tcl::TclPkg* pkg = new ObjTogl::TogletPkg(interp);
 
   toglCreateInterp = interp;
 
   Util::ObjFactory::theOne().registerCreatorFunc( makeToglet );
 
-  return TCL_OK;
+  return pkg->initStatus();
 }
 
 static const char vcid_objtogl_cc[] = "$Header$";
