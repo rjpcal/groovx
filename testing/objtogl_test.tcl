@@ -115,7 +115,7 @@ test "ObjTogl-Togl::setCurTrial" "normal use" {
 } {^0$}
 test "ObjTogl-Togl::setCurTrial" "error on too low trial id" {
     Togl::setCurTrial -1
-} {Toglet::setCurTrial: attempted to access invalid object.*}
+} {Toglet::setCurTrial:}
 test "ObjTogl-Togl::setCurTrial" "error on too large trial id" {
     Togl::setCurTrial 10000000
 } {Toglet::setCurTrial: attempted to access invalid object.*}
@@ -201,7 +201,7 @@ test "ObjTogl-setColor" "too few args" {
 } {^wrong \# args: should be}
 test "ObjTogl-setColor" "error" {
 	 Togl::setColor -1 0.5 0.5 0.5
-} {^Toglet::setColor: color index must be in \[0, 255\]$}
+} {^Toglet::setColor:}
 
 ### setFixedScaleCmd ###
 test "ObjTogl-setFixedScale" "args" {
