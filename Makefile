@@ -18,10 +18,10 @@
 
 default: all
 
-VERSION := 0.8a7
+VERSION := 0.8a8
 
-TCL_VERSION := 8.3
-TK_VERSION := 8.3
+TCL_VERSION := 8.3.3
+TK_VERSION := 8.3.3
 
 MAKEFLAGS += --warn-undefined-variables
 
@@ -228,7 +228,7 @@ ifeq ($(COMPILER),g++3)
 	CPP_DEFINES += -DGCC_COMPILER=3 -DSTD_IO=std -DFUNCTIONAL_OK
 
 	ifeq ($(MODE),debug)
-		CC_SWITCHES += -O1
+		CC_SWITCHES += -O1 -g
 		LD_OPTIONS +=
 	endif
 
@@ -253,6 +253,7 @@ endif
 INCLUDE_PATH += -I$(LOCAL_ARCH)/include -I$(SRC)
 
 LIB_PATH += -L$(LOCAL_LIB)
+LIB_PATH += -Wl,-rpath,$(LOCAL_LIB)
 
 INCLUDE_PATH += -I/usr/local/matlab/extern/include
 LIB_PATH += -L/usr/local/matlab/extern/lib/glnx86
@@ -270,6 +271,9 @@ EXTERNAL_LIBS := \
 	-lz \
 	$(AUDIO_LIB) \
 	-lm
+
+# add -lefence to EXTERNAL_LIBS for Electric Fence mem debugging
+
 
 EXTERNAL_LIBS += -leng -lmx -lut -lmat -lmi -lmatlb
 
