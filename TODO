@@ -7,6 +7,69 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
+* (8-Jun-2004) Change EventResponseHdlr::feedbackMap to be a proc
+
+* (2-Jun-2004) Toglet::size doesn't work for resizing
+
+* (1-Jun-2004) Serialization goodies
+
+** Need to allow fields to be versioned
+   Need readFieldsFrom() and writeFieldsTo() to respect the versioning.
+
+** Allow default values to be skipped in XML format.
+
+   We don't want to rely on the default values themselves to be stored in
+   the source code, since the source code might use different default
+   values from time to time. Instead we should have one set of default
+   values per XML file. This could be a big savings in file size, since
+   e.g. hundreds or thousands of GxShapeKit objects in an experiment will
+   probably all have the same values.
+
+   This would require first writing the default values to the XML file the
+   first time they are seen. Then on subsequent attempts to write the
+   corresponding values, a check is made to see if the value is the
+   default, and if so, the element is not written to the output.
+
+   At what API level does default-value handling appear? Can it be hidden
+   entirely within a given pair of concrete Reader+Writer classes? Or does
+   there have to be an API entry at the level of the abstract Reader+Writer
+   interfaces? Probably yes to the latter, since somewhere the top-level
+   client code has to specify what the actual default values are.
+
+** Enumerations
+
+** Native array/sequence handling
+
+   Or, at least let concrete Reader+Writer subclasses determine if they can
+   handle arrays specially or if they will just rely on the standard
+   implementation provided by ReadUtils+WriteUtils.
+
+** Binary data handling
+
+   Via base64? This would allow GxPixmaps to embed their bitmaps in the
+   serialization output.
+
+** Specialized URL handling
+
+   So that filenames aren't just treated as plain-old-strings, but get
+   tagged specially. This could then be extended to allow internet
+   resources, etc. Could also be extended to allow filenames to be stored
+   as relative paths relative to either a homedir or some other specified
+   base dir. Then when the archive is later deserialized we can accomodate
+   a change in the base dir.
+
+   Or maybe allow filenames to contain internal references to environment
+   variables using either bash or tcl syntax; then we could have
+
+      ${HOME}/somedir/somefile     or    $::env(HOME)/somedir/somefile
+      ${IMAGELIB}/png/foo.png      or    $::env(IMAGELIB)/png/foo.png
+
+   The type of filename could be stored as an XML attribute, either
+   "absolute" or "relative", then with another optional attribute of
+   "relative-to" or "base".
+
+      <filename type="relative" base="$::env(HOME)">somedir/somefile</filename>
+
 * (25-Nov-2002) What is GWT::Widget's raison d'etre?
 
   OK, now I've got Widget cleaned out. But... now, what's its reason to
