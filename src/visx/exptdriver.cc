@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Tue Nov 28 14:09:49 2000
+// written: Tue Nov 28 15:16:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -701,7 +701,7 @@ DOTRACE("ExptDriver::Impl::edResetExpt");
 
 void ExptDriver::Impl::edSetCurrentTrial(int trial) {
 DOTRACE("ExptDriver::Impl::edSetCurrentTrial");
-  getWidget()->setCurTrial(MaybeIdItem<TrialBase>(trial));
+  IdItem<TrialBase>(trial)->installSelf(*getWidget());
 }
 
 //---------------------------------------------------------------------

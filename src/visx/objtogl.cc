@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Tue Nov 28 14:09:49 2000
+// written: Tue Nov 28 15:16:50 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -381,7 +381,7 @@ protected:
   virtual void invoke() {
 	 int trial = getIntFromArg(1);
 
-	 getItem()->setCurTrial(MaybeIdItem<TrialBase>(trial));
+	 IdItem<TrialBase>(trial)->installSelf(*getItem());
   }
 };
 
@@ -450,7 +450,7 @@ protected:
 
 	 GWT::Widget* widg = getItem();
 
-	 widg->setCurTrial(MaybeIdItem<TrialBase>(id));
+	 IdItem<TrialBase>(id)->installSelf(*widg);
 	 widg->setVisibility(true);
 
 	 widg->display();
