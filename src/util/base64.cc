@@ -37,6 +37,8 @@
 #include "util/error.h"
 #include "util/mappedfile.h"
 
+#include <cctype> // for isspace()
+
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
