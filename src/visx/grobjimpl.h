@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Tue Sep  4 12:54:10 2001
+// written: Wed Sep  5 16:11:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,7 +81,7 @@ public:
   GrObjImpl(GrObj* obj) :
     itsCategory(-1),
     itsNativeNode(new GrObjNode(obj), Util::PRIVATE),
-    itsBB(new GrObjBBox(itsNativeNode, obj->sigNodeChanged), Util::PRIVATE),
+    itsBB(new GrObjBBox(itsNativeNode), Util::PRIVATE),
     itsGLCache(new GLCacheNode(itsBB), Util::PRIVATE),
     itsBitmapCache(new BitmapCacheNode(itsGLCache), Util::PRIVATE),
     itsAligner(new GrObjAligner(itsBitmapCache), Util::PRIVATE),
