@@ -182,7 +182,7 @@ endif
 endif
 
 ifeq ($(COMPILER),g++3)
-	CXX := time g++-3.1
+	CXX := time g++-3
 # Filter the compiler output...
 	WARNINGS := -W -Wdeprecated -Wno-system-headers -Wall -Wsign-promo -Wwrite-strings
 	CC_SWITCHES += $(WARNINGS)
