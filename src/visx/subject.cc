@@ -3,7 +3,7 @@
 // subject.cc
 // Rob Peters
 // created: Dec-98
-// written: Thu Oct 21 23:12:05 1999
+// written: Mon Mar  6 18:39:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const string ioTag = "Subject";
+  const string_literal ioTag = "Subject";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ DOTRACE("Subject::~Subject");
 }
 
 Subject::Subject(istream &is, IOFlag flag) :
-  itsName(NULL), itsDirectory(NULL)
+  itsName(""), itsDirectory("")
 {
 DOTRACE("Subject::Subject");
   deserialize(is, flag);
@@ -70,22 +70,22 @@ DOTRACE("Subject::serialize");
   os << itsName << endl;
   os << itsDirectory << endl;
 
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw OutputError(ioTag.c_str());
 }
 
 void Subject::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Subject::deserialize");
   if (flag & BASES) { /* there are no bases to deserialize */ }
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
 
   getline(is, itsName, '\n');
   getline(is, itsDirectory, '\n');
 
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw InputError(ioTag.c_str());
 }
 
 int Subject::charCount() const {
-  return (ioTag.size() + 1
+  return (ioTag.length() + 1
 			 + itsName.length() + 1
 			 + itsDirectory.length() + 1
 			 + 5);// fudge factor

@@ -2,15 +2,15 @@
 // subject.h
 // Rob Peters
 // created: Dec-98
-// written: Thu Oct 21 23:08:01 1999
+// written: Mon Mar  6 18:39:01 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SUBJECT_H_DEFINED
 #define SUBJECT_H_DEFINED
 
-#ifndef STRING_DEFINED
-#include <string>
+#ifndef STRINGS_H_DEFINED
+#include "util/strings.h"
 #define STRING_DEFINED
 #endif
 
@@ -39,9 +39,10 @@ public:
   void setName(const char* name);
   const char* getDirectory() const { return itsDirectory.c_str(); }
   void setDirectory(const char* dir);
+
 private:
-  string itsName;
-  string itsDirectory;
+  fixed_string itsName;
+  fixed_string itsDirectory;
 };
 
 static const char vcid_subject_h[] = "$Header$";
