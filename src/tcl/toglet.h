@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Nov 21 17:58:05 2002
+// written: Sat Nov 23 14:04:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,8 +53,8 @@ public:
   /// Overridden from Tcl::TkWidget.
   virtual void displayCallback();
 
-  /// Overridden from GWT::Widget.
-  virtual void swapBuffers();
+  /// Swap buffers in a double-buffered GL context.
+  void swapBuffers();
 
   /// Simple RGB color struct.
   struct Color

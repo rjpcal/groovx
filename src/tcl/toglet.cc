@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Fri Nov 22 15:40:53 2002
+// written: Sat Nov 23 14:03:28 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -240,7 +240,7 @@ void Toglet::swapBuffers()
 {
 DOTRACE("Toglet::swapBuffers");
   rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
-  rep->canvas->glxFlush();
+  rep->canvas->flushOutput();
 }
 
 Toglet::Color Toglet::queryColor(unsigned int color_index) const

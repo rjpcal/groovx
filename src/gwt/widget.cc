@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Thu Nov 21 18:02:53 2002
+// written: Sat Nov 23 14:03:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,10 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
+
+class Scene
+{
+};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -120,14 +124,7 @@ public:
 private:
   void doFlush(Gfx::Canvas& canvas)
   {
-    if (canvas.isDoubleBuffered())
-      {
-        itsOwner->swapBuffers();
-      }
-    else
-      {
-        canvas.flushOutput();
-      }
+    canvas.flushOutput();
   }
 
   Impl(const Impl&);

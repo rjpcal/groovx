@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Thu Nov 21 15:39:30 2002
+// written: Sat Nov 23 14:03:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,8 +33,6 @@ public:
   int screen() const;
 
   void makeCurrent(Window win);
-
-  void glxFlush();
 
   virtual Gfx::Vec2<int> screenFromWorld(const Gfx::Vec2<double>& world_pos) const;
   virtual Gfx::Vec2<double> worldFromScreen(const Gfx::Vec2<int>& screen_pos) const;

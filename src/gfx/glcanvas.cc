@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Fri Nov 22 15:53:01 2002
+// written: Sat Nov 23 14:03:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,16 +91,6 @@ DOTRACE("GLCanvas::makeCurrent");
     }
 
   Gfx::Canvas::setCurrent(*this);
-}
-
-void GLCanvas::glxFlush()
-{
-DOTRACE("GLCanvas::glxFlush");
-
-  if (rep->opts->doubleFlag)
-    rep->glx->swapBuffers();
-  else
-    flushOutput();
 }
 
 Gfx::Vec2<int> GLCanvas::screenFromWorld(
@@ -738,7 +728,11 @@ DOTRACE("GLCanvas::end");
 void GLCanvas::flushOutput()
 {
 DOTRACE("GLCanvas::flushOutput");
-  glFlush();
+
+  if (rep->opts->doubleFlag)
+    rep->glx->swapBuffers();
+  else
+    glFlush();
 }
 
 static const char vcid_glcanvas_cc[] = "$Header$";

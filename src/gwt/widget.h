@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Sat Nov 23 13:43:49 2002
+// written: Sat Nov 23 14:04:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #define WIDGET_H_DEFINED
 
 #include "util/object.h"
+
+class Scene;
 
 class GxCamera;
 class GxNode;
@@ -91,7 +93,6 @@ public:
   virtual void removeKeyListeners();
 
   virtual void takeFocus() = 0;
-  virtual void swapBuffers() = 0;
 
   virtual void undraw();
 
@@ -139,6 +140,7 @@ private:
 
   class Impl;
   Impl* const itsImpl;
+  Scene* const itsScene;
 };
 
 static const char vcid_widget_h[] = "$Header$";
