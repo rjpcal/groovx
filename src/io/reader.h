@@ -3,17 +3,13 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Fri Mar  3 23:45:14 2000
+// written: Wed Mar  8 17:21:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef READER_H_DEFINED
 #define READER_H_DEFINED
-
-#ifndef STRINGFWD_H_DEFINED
-#include "stringfwd.h"
-#endif
 
 #ifndef ERROR_H_DEFINED
 #include "error.h"
@@ -72,9 +68,6 @@ public:
   /// Read the \c double attribute associated with the tag \a name.
   virtual double readDouble(const char* name) = 0;
 
-  /// Read the STL \c string attribute associated with the tag \a name.
-  virtual string readString(const char* name) = 0;
-
   /// Read the C-style string (\c char*) attribute associated with the tag \a name.
   virtual char* readCstring(const char* name) = 0;
 
@@ -82,8 +75,10 @@ public:
   virtual void readValueObj(const char* name, Value& value) = 0;
 
   /** This generic function reads a value attribute of any basic type,
-      or of type \c Value. The value associated with tag \a name will
-      be copied into \a returnValue. */
+      of type \c Value, or of several supported string types (\c
+      std::string, \c fixed_string, and \c dyanmic_string). The value
+      associated with tag \a name will be copied into \a
+      returnValue. */
   template <class T>
   void readValue(const char* name, T& returnValue);
 
