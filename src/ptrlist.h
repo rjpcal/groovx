@@ -19,6 +19,8 @@
 #include "masterptr.h"
 #endif
 
+template <class T> class PtrList;
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -31,12 +33,23 @@
 template <class T>
 class ItemWithId {
 private:
+  static PtrList<T>& ptrList();
+
   PtrHandle<T> itsHandle;
   const int itsId;
 
 public:
+
   ItemWithId(MasterPtr<T>* master, int id_) : itsHandle(master), itsId(id_) {}
   ItemWithId(PtrHandle<T> item_, int id_) : itsHandle(item_), itsId(id_) {}
+
+  /** A symbol to pass to constructors indicating that the item should
+		be inserted into an appropriate PtrList. */
+  enum Insert { INSERT };
+
+  ItemWithId(T* ptr, Insert /*dummy param*/);
+  ItemWithId(MasterPtr<T>* master, Insert /*dummy param*/);
+  ItemWithId(PtrHandle<T> item, Insert /*dummy param*/);
 
   // Default destructor, copy constructor, operator=() are fine
 
@@ -117,8 +130,8 @@ public:
   //////////////////
 
   /// Insert \a ptr into the list, and return its id.
-  int insert(T* ptr)
-	 { return PtrListBase::insertPtrBase(new MasterPtr<T>(ptr)); }
+  SharedPtr insert(T* ptr)
+	 { return insert(new MasterPtr<T>(ptr)); }
 
   /** Insert \a ptr into the list at index \a id. An exception will be
       thrown if an object already exists at index \a id. */
@@ -126,8 +139,8 @@ public:
 	 { PtrListBase::insertPtrBaseAt(id, new MasterPtr<T>(ptr)); }
 
   /// Insert \a ptr into the list, and return its id.
-  int insert(MasterPtr<T>* master)
-	 { return PtrListBase::insertPtrBase(master); }
+  SharedPtr insert(MasterPtr<T>* master)
+	 { return SharedPtr(master, PtrListBase::insertPtrBase(master)); }
 
   /** Insert \a ptr into the list at index \a id. An exception will be
       thrown if an object already exists at index \a id. */
@@ -135,17 +148,17 @@ public:
 	 { PtrListBase::insertPtrBaseAt(id, master); }
 
   /// Insert \a handle into the list, and return its id.
-  int insert(PtrHandle<T> handle)
-	 { return PtrListBase::insertPtrBase(handle.masterPtr()); }
+  SharedPtr insert(PtrHandle<T> handle)
+	 { return insert(handle.masterPtr()); }
 
   /** Insert \a handle into the list at index \a id. An exception will be
       thrown if an object already exists at index \a id. */
   void insertAt(int id, PtrHandle<T> handle)
 	 { PtrListBase::insertPtrBaseAt(id, handle.masterPtr()); }
 
-  /// Insert \a ptr into the list, and return its id.
-  int insert(ItemWithId<T> item)
-	 { return PtrListBase::insertPtrBase(item.handle().masterPtr()); }
+  /// Insert \a item into the list, and return its id.
+  SharedPtr insert(ItemWithId<T> item)
+	 { return insert(item.handle().masterPtr()); }
 
   /** Insert \a ptr into the list at index \a id. An exception will be
       thrown if an object already exists at index \a id. */
@@ -174,7 +187,7 @@ protected:
 template <class T>
 class NullableItemWithId {
 private:
-  static PtrList<T>& theirPtrList;
+  static PtrList<T>& ptrList();
 
   mutable NullablePtrHandle<T> itsHandle;
   int itsId;
@@ -183,7 +196,7 @@ private:
     {
 		if ( !itsHandle.isValid() )
 		  {
-			 typename PtrList<T>::SharedPtr p = theirPtrList.getCheckedPtr(itsId);
+			 typename PtrList<T>::SharedPtr p = ptrList().getCheckedPtr(itsId);
 			 itsHandle = p.handle();
 		  }
 	 }
@@ -216,6 +229,30 @@ public:
   NullablePtrHandle<T> handle() const { refreshPtr(); return itsHandle; }
   int id() const { return itsId; }
 };
+
+///////////////////////////////////////////////////////////////////////
+//
+// ItemWithId member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+template <class T>
+ItemWithId<T>::ItemWithId(T* ptr, Insert /*dummy param*/) :
+  itsHandle(new MasterPtr<T>(ptr)),
+  itsId(ptrList().insert(itsHandle).id())
+{}
+
+template <class T>
+ItemWithId<T>::ItemWithId(MasterPtr<T>* master, Insert /*dummy param*/) :
+  itsHandle(master),
+  itsId(itsId = ptrList().insert(itsHandle).id())
+{}
+
+template <class T>
+ItemWithId<T>::ItemWithId(PtrHandle<T> item, Insert /*dummy param*/) :
+  itsHandle(item),
+  itsId(itsId = ptrList().insert(itsHandle).id())
+{}
 
 static const char vcid_ptrlist_h[] = "$Header$";
 #endif // !PTRLIST_H_DEFINED
