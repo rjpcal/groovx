@@ -1,11 +1,11 @@
-///////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
 //
 // fish.cc
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Aug 29 12:48:37 2001
+// written: Wed Aug 29 13:43:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,18 +45,23 @@
 
 namespace
 {
-  int dummy=0; // We need a dummy int to attach various CPtrField's
+  int dummy_int=0; // We need a dummy int to attach various CPtrField's
 
   const IO::VersionId FISH_SERIAL_VERSION_ID = 2;
 
   typedef Gfx::Vec3<GLfloat> Pt3;
+
+  const int DF_0 = 0;
+  const int TF_1 = 1;
+  const int LF_2 = 2;
+  const int MA_3 = 3;
 }
 
 Util::Tracer Fish::tracer;
 
 ///////////////////////////////////////////////////////////////////////
 //
-// FishPart struct --
+// Fish::Part struct --
 //
 // Describes one of the part of the fish (upper fin, tail, bottom fin
 // or mouth). The descripition is in terms of a spline curve, with
@@ -64,34 +69,38 @@ Util::Tracer Fish::tracer;
 //
 ///////////////////////////////////////////////////////////////////////
 
-struct Fish::FishPart
+struct Fish::Part
 {
-  FishPart() : itsOrder(0), itsKnots() {}
+  Part() :
+    itsOrder(0), itsKnots(), itsCtrlPnts(),
+    itsBkpt(1), itsPt0(), itsPt1(),
+    itsCoord(0.0)
+  {}
 
   GLint itsOrder;
 
   dynamic_block<GLfloat> itsKnots;
 
-  dynamic_block<Pt3> itsCoefs;
-};
+  dynamic_block<Pt3> itsCtrlPnts;
 
-/////////////////////////////////////////////////////////////////////////
-//
-// EndPt struct --
-//
-// Each of the endpoint (four in total) is associated with a
-// breakpoint of one of the parts. This is described in this structure
-// as well as the x and y coordinates of the two points which define
-// the boundaries of the endpoint line
-//
-///////////////////////////////////////////////////////////////////////
+  // -- end points --
 
-struct Fish::EndPt
-{
-  int itsPart;
+  // Each endpoint is associated with a breakpoint. This is described
+  // in this structure as well as the x and y coordinates of the two
+  // points which define the boundaries of the endpoint line
   int itsBkpt;
   Pt3 itsPt0;
   Pt3 itsPt1;
+
+  double itsCoord;
+
+  template <std::size_t N1, std::size_t N2>
+  void reset(int order, GLfloat const (&knots)[N1], Pt3 const (&points)[N2])
+  {
+    itsOrder = order;
+    itsKnots.assign(array_begin(knots), array_end(knots));
+    itsCtrlPnts.assign(array_begin(points), array_end(points));
+  }
 };
 
 
@@ -140,17 +149,16 @@ DOTRACE("Fish::makeFromFiles");
 }
 
 Fish::Fish(const char* splinefile, const char* coordfile, int index) :
+  itsParts(new Fish::Part[4]),
   itsFishCategory(-1),
-  itsDorsalFinCoord(&itsCoords[0]),
-  itsTailFinCoord(&itsCoords[1]),
-  itsLowerFinCoord(&itsCoords[2]),
-  itsMouthCoord(&itsCoords[3]),
+  itsDorsalFinCoord(&itsParts[DF_0].itsCoord),
+  itsTailFinCoord(&itsParts[TF_1].itsCoord),
+  itsLowerFinCoord(&itsParts[LF_2].itsCoord),
+  itsMouthCoord(&itsParts[MA_3].itsCoord),
   itsCurrentPart(0),
   itsCurrentEndPt(0),
-  itsEndPt_Part(&dummy),
-  itsEndPt_Bkpt(&dummy),
-  itsFishParts(new FishPart[4]),
-  itsEndPts(new EndPt[4])
+  itsEndPt_Part(&dummy_int),
+  itsEndPt_Bkpt(&dummy_int)
 {
 DOTRACE("Fish::Fish");
 
@@ -171,23 +179,24 @@ DOTRACE("Fish::Fish");
   this->sigNodeChanged.emit();
 }
 
+Fish::~Fish ()
+{
+DOTRACE("Fish::~Fish");
+  delete [] itsParts;
+}
+
 void Fish::restoreToDefault()
 {
 DOTRACE("Fish::restoreToDefault");
-  itsFishParts[3].itsOrder = itsFishParts[2].itsOrder = itsFishParts[1].itsOrder = itsFishParts[0].itsOrder = 4;
 
-  static const GLfloat def_knots[] =
+  static const GLfloat knots[] =
   {
     0.0, 0.0, 0.0, 0.0,
     0.1667, 0.3333, 0.5000, 0.6667, 0.8333,
     1.0, 1.0, 1.0, 1.0
   };
-  itsFishParts[0].itsKnots.assign(array_begin(def_knots), array_end(def_knots));
-  itsFishParts[1].itsKnots.assign(array_begin(def_knots), array_end(def_knots));
-  itsFishParts[2].itsKnots.assign(array_begin(def_knots), array_end(def_knots));
-  itsFishParts[3].itsKnots.assign(array_begin(def_knots), array_end(def_knots));
 
-  static Pt3 coefs0[] =
+  static const Pt3 coefs0[] =
   {
     Pt3(-0.2856,  0.2915, 0.0),
     Pt3(-0.2140,  0.2866, 0.0),
@@ -200,7 +209,7 @@ DOTRACE("Fish::restoreToDefault");
     Pt3( 0.1597,  0.1538, 0.0),
   };
 
-  static Pt3 coefs1[] =
+  static const Pt3 coefs1[] =
   {
     Pt3( 0.1597,  0.1538, 0.0),
     Pt3( 0.2992,  0.1016, 0.0),
@@ -213,7 +222,7 @@ DOTRACE("Fish::restoreToDefault");
     Pt3( 0.1573, -0.0401, 0.0),
   };
 
-  static Pt3 coefs2[] =
+  static const Pt3 coefs2[] =
   {
     Pt3( 0.1573, -0.0401, 0.0),
     Pt3( 0.2494, -0.0294, 0.0),
@@ -226,7 +235,7 @@ DOTRACE("Fish::restoreToDefault");
     Pt3(-0.2844, -0.1840, 0.0),
   };
 
-  static Pt3 coefs3[] =
+  static const Pt3 coefs3[] =
   {
     Pt3(-0.2844, -0.1840, 0.0),
     Pt3(-0.3492, -0.1834, 0.0),
@@ -239,39 +248,31 @@ DOTRACE("Fish::restoreToDefault");
     Pt3(-0.2856,  0.2915, 0.0),
   };
 
-  itsFishParts[0].itsCoefs.assign(array_begin(coefs0), array_end(coefs0));
-  itsFishParts[1].itsCoefs.assign(array_begin(coefs1), array_end(coefs1));
-  itsFishParts[2].itsCoefs.assign(array_begin(coefs2), array_end(coefs2));
-  itsFishParts[3].itsCoefs.assign(array_begin(coefs3), array_end(coefs3));
+  itsParts[DF_0].reset(4, knots, coefs0);
+  itsParts[TF_1].reset(4, knots, coefs1);
+  itsParts[LF_2].reset(4, knots, coefs2);
+  itsParts[MA_3].reset(4, knots, coefs3);
 
-  itsEndPts[0].itsPart = 1;
-  itsEndPts[0].itsBkpt = 6;
-  itsEndPts[0].itsPt0.set(0.2380, 0.3416, 0.0);
-  itsEndPts[0].itsPt1.set(-0.0236, 0.2711, 0.0);
+  itsParts[0].itsBkpt = 6;
+  itsParts[0].itsPt0.set(0.2380, 0.3416, 0.0);
+  itsParts[0].itsPt1.set(-0.0236, 0.2711, 0.0);
 
-  itsEndPts[1].itsPart = 2;
-  itsEndPts[1].itsBkpt = 5;
-  itsEndPts[1].itsPt0.set(0.6514, -0.0305, 0.0);
-  itsEndPts[1].itsPt1.set(0.2433, 0.0523, 0.0);
+  itsParts[1].itsBkpt = 5;
+  itsParts[1].itsPt0.set(0.6514, -0.0305, 0.0);
+  itsParts[1].itsPt1.set(0.2433, 0.0523, 0.0);
 
-  itsEndPts[2].itsPart = 3;
-  itsEndPts[2].itsBkpt = 6;
-  itsEndPts[2].itsPt0.set(-0.2121, 0.0083, 0.0);
-  itsEndPts[2].itsPt1.set(-0.1192, -0.2925, 0.0);
+  itsParts[2].itsBkpt = 6;
+  itsParts[2].itsPt0.set(-0.2121, 0.0083, 0.0);
+  itsParts[2].itsPt1.set(-0.1192, -0.2925, 0.0);
 
-  itsEndPts[3].itsPart = 4;
-  itsEndPts[3].itsBkpt = 5;
-  itsEndPts[3].itsPt0.set(-0.7015, 0.1584, 0.0);
-  itsEndPts[3].itsPt1.set(-0.7022, -0.1054, 0.0);
+  itsParts[3].itsBkpt = 5;
+  itsParts[3].itsPt0.set(-0.7015, 0.1584, 0.0);
+  itsParts[3].itsPt1.set(-0.7022, -0.1054, 0.0);
 
-  itsCoords[0] = itsCoords[1] = itsCoords[2] = itsCoords[3] = 0.0;
-}
-
-Fish::~Fish ()
-{
-DOTRACE("Fish::~Fish");
-  delete [] itsFishParts;
-  delete [] itsEndPts;
+  itsParts[DF_0].itsCoord =
+    itsParts[TF_1].itsCoord =
+    itsParts[LF_2].itsCoord =
+    itsParts[MA_3].itsCoord = 0.0;
 }
 
 IO::VersionId Fish::serialVersionId() const
@@ -307,15 +308,16 @@ void Fish::updatePtrs()
 {
 DOTRACE("Fish::updatePtrs");
 
-  itsEndPt_Part = &(itsEndPts[itsCurrentEndPt].itsPart);
-  itsEndPt_Bkpt = &(itsEndPts[itsCurrentEndPt].itsBkpt);
+ DebugPrintNL("updatePtrs!");
+
+  itsEndPt_Bkpt = &(itsParts[itsCurrentPart].itsBkpt);
 }
 
 void Fish::readSplineFile(const char* splinefile)
 {
 DOTRACE("Fish::readSplineFile");
   size_t i, j;
-  int k, splnb, endptnb;
+  int k, splnb;
   fstring dummy;
 
   // read in the spline knots and coefficient
@@ -328,17 +330,17 @@ DOTRACE("Fish::readSplineFile");
   for(i = 0; i < 4; ++i)
     {
       // spline number and order
-      ifs >> dummy >> splnb >> dummy >> itsFishParts[i].itsOrder;
+      ifs >> dummy >> splnb >> dummy >> itsParts[i].itsOrder;
 
       // number of knots
       int nknots;
       ifs >> dummy >> nknots;
 
       // allocate space and read in the successive knots
-      itsFishParts[i].itsKnots.resize(nknots);
-      for (j = 0; j < itsFishParts[i].itsKnots.size(); ++j)
+      itsParts[i].itsKnots.resize(nknots);
+      for (j = 0; j < itsParts[i].itsKnots.size(); ++j)
         {
-          ifs >> itsFishParts[i].itsKnots[j];
+          ifs >> itsParts[i].itsKnots[j];
         }
 
       // number of coefficients
@@ -346,23 +348,23 @@ DOTRACE("Fish::readSplineFile");
       ifs >> dummy >> ncoefs;
 
       // allocate space and read in the successive coefficients
-      itsFishParts[i].itsCoefs.resize(ncoefs);
+      itsParts[i].itsCtrlPnts.resize(ncoefs);
       {
         for (k = 0; k < ncoefs; ++k)
           {
-            ifs >> itsFishParts[i].itsCoefs[k].x();
+            ifs >> itsParts[i].itsCtrlPnts[k].x();
           }
       }
       {
         for (k = 0; k < ncoefs; ++k)
           {
-            ifs >> itsFishParts[i].itsCoefs[k].y();
+            ifs >> itsParts[i].itsCtrlPnts[k].y();
           }
       }
       {
         for (k = 0; k < ncoefs; ++k)
           {
-            itsFishParts[i].itsCoefs[k].z() = 0.0;
+            itsParts[i].itsCtrlPnts[k].z() = 0.0;
           }
       }
 
@@ -375,17 +377,21 @@ DOTRACE("Fish::readSplineFile");
 
   for(i = 0; i < 4; ++i)
     {
+      int which;
+
+      int endptnb;
+
       // endpt number, associated part and breakpoint
       ifs >> dummy >> endptnb
-          >> dummy >> itsEndPts[i].itsPart
-          >> dummy >> itsEndPts[i].itsBkpt;
+          >> dummy >> which
+          >> dummy >> itsParts[(which-1)].itsBkpt;
 
       // skip the next line
       ifs >> dummy >> dummy;
 
       // x&y coordinates
-      ifs >> itsEndPts[i].itsPt0.x() >> itsEndPts[i].itsPt1.x()
-          >> itsEndPts[i].itsPt0.y() >> itsEndPts[i].itsPt1.y();
+      ifs >> itsParts[(which-1)].itsPt0.x() >> itsParts[(which-1)].itsPt1.x()
+          >> itsParts[(which-1)].itsPt0.y() >> itsParts[(which-1)].itsPt1.y();
 
       if (ifs.fail())
         {
@@ -415,7 +421,7 @@ DOTRACE("Fish::readCoordFile");
 
   for (int i = 0; i < 4; ++i)
     {
-      ifs >> itsCoords[i];
+      ifs >> itsParts[i].itsCoord;
     }
 
   if (ifs.fail())
@@ -437,19 +443,44 @@ DOTRACE("Fish::grGetBoundingBox");
   return bbox;
 }
 
+namespace
+{
+  class NurbsObj
+  {
+  private:
+    NurbsObj(const NurbsObj&);
+    NurbsObj& operator=(const NurbsObj&);
+
+  public:
+    GLUnurbsObj* ptr;
+
+    NurbsObj() : ptr(gluNewNurbsRenderer())
+    {
+      if (ptr == 0)
+        {
+          throw Util::Error("couldn't allocate GLUnurbsObj");
+        }
+    }
+
+    ~NurbsObj()
+    {
+      gluDeleteNurbsRenderer(ptr);
+    }
+  };
+}
+
 void Fish::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("Fish::grRender");
-  // Create and configure the NURBS object
-  GLUnurbsObj* theNurb = gluNewNurbsRenderer();
-  if (theNurb == 0)
-    {
-      throw Util::Error("Fish::grRender: couldn't allocate GLUnurbsObj");
-    }
-  gluNurbsProperty(theNurb, GLU_SAMPLING_METHOD, GLU_DOMAIN_DISTANCE);
-  gluNurbsProperty(theNurb, GLU_U_STEP, 200);
-  gluNurbsProperty(theNurb, GLU_V_STEP, 200);
 
+  // Create and configure the NURBS object
+  NurbsObj theNurb;
+
+  gluNurbsProperty(theNurb.ptr, GLU_SAMPLING_METHOD, GLU_DOMAIN_DISTANCE);
+  gluNurbsProperty(theNurb.ptr, GLU_U_STEP, 200);
+  gluNurbsProperty(theNurb.ptr, GLU_V_STEP, 200);
+
+#ifdef COLORED_PARTS
   Gfx::RgbaColor colors[4] =
   {
     Gfx::RgbaColor(1.0, 0.0, 0.0, 1.0),
@@ -457,45 +488,43 @@ DOTRACE("Fish::grRender");
     Gfx::RgbaColor(0.0, 0.0, 1.0, 1.0),
     Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0)
   };
+#endif
 
   // Loop over fish parts
   for (int i = 0; i < 4; ++i)
     {
+#ifdef COLORED_PARTS
       canvas.setColor(colors[i]);
+#endif
 
-      dynamic_block<Pt3> ctrlpnts(itsFishParts[i].itsCoefs);
+      dynamic_block<Pt3> ctrlpnts(itsParts[i].itsCtrlPnts);
 
-      // Fix up the coefficients at the end points
-      for (int j = 0; j < 4; ++j)
-        {
-          if ( itsEndPts[j].itsPart == (i+1) )
-            {
-              // indexing in the coefs array starts at 0
-              int bkpt = itsEndPts[j].itsBkpt - 1;
+      // Set the coefficients at the break point to a linear sum of
+      // the two corresponding endpoints
 
-              float alpha = 0.5*(1-itsCoords[j]);
-              float beta  = 0.5*(1+itsCoords[j]);
+      float alpha = 0.5*(1-itsParts[i].itsCoord);
+      float beta  = 0.5*(1+itsParts[i].itsCoord);
 
-              Pt3 pt = itsEndPts[j].itsPt0 * alpha + itsEndPts[j].itsPt1 * beta;
+      Pt3 pt = itsParts[i].itsPt0 * alpha + itsParts[i].itsPt1 * beta;
 
-              ctrlpnts.at(bkpt) = pt;
-            }
-        }
+      // indexing in the coefs array starts at 0
+      unsigned int bkpt = itsParts[i].itsBkpt - 1;
+
+      if (bkpt < ctrlpnts.size())
+        ctrlpnts[bkpt] = pt;
 
       // Render the curve
-      gluBeginCurve(theNurb);
+      gluBeginCurve(theNurb.ptr);
       {
-        gluNurbsCurve(theNurb,
-                      itsFishParts[i].itsKnots.size(),
-                      &(itsFishParts[i].itsKnots[0]),
-                      3, ctrlpnts.at(0).data(),
-                      itsFishParts[i].itsOrder, GL_MAP1_VERTEX_3);
+        gluNurbsCurve(theNurb.ptr,
+                      itsParts[i].itsKnots.size(),
+                      &(itsParts[i].itsKnots[0]),
+                      3, ctrlpnts[0].data(),
+                      itsParts[i].itsOrder, GL_MAP1_VERTEX_3);
       }
-      gluEndCurve(theNurb);
+      gluEndCurve(theNurb.ptr);
 
-    } // end loop over fish parts
-
-  gluDeleteNurbsRenderer(theNurb);
+    }
 }
 
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Sun Aug 26 08:35:14 2001
+// written: Wed Aug 29 13:30:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,24 +33,13 @@
 
 class Fish : public GrObj
 {
-public:
-  /// This tracer dynamically controls the tracing of \c Fish member functions.
-  static Util::Tracer tracer;
-
-protected:
-  /** Constructor can make a Fish by reading a spline file and a
-      coordinate file. If either of these filenames are null, the
-      constructor will use default values for the spline
-      coefficients. */
-  Fish(const char* splinefile=0, const char* coordfile=0, int index=0);
-
-public:
-  static Fish* make();
-
-  static Fish* makeFromFiles(const char* splinefile,
-                             const char* coordfile, int index);
-
 private:
+  Fish(const Fish&);
+  Fish& operator=(const Fish&);
+
+  struct Part;
+  Part* itsParts;
+
   void restoreToDefault();
 
   void readSplineFile(const char* splinefile);
@@ -61,13 +50,31 @@ private:
   // respectively.
   void updatePtrs();
 
+protected:
+  /** Constructor can make a Fish by reading a spline file and a
+      coordinate file. If either of these filenames are null, the
+      constructor will use default values for the spline
+      coefficients. */
+  Fish(const char* splinefile=0, const char* coordfile=0, int index=0);
+
 public:
+
+  static Fish* make();
+
+  static Fish* makeFromFiles(const char* splinefile,
+                             const char* coordfile, int index);
+
   /// Virtual destructor.
   virtual ~Fish();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
+
+  static const FieldMap& classFields();
+
+  /// This tracer dynamically controls the tracing of \c Fish member functions.
+  static Util::Tracer tracer;
 
   ////////////////
   // properties //
@@ -107,9 +114,6 @@ private:
   /// Controls the breakpoint referred to by the current end point.
   int* itsEndPt_Bkpt;
 
-public:
-  static const FieldMap& classFields();
-
   /////////////
   // actions //
   /////////////
@@ -118,17 +122,6 @@ protected:
   virtual Gfx::Rect<double> grGetBoundingBox() const;
 
   virtual void grRender(Gfx::Canvas& canvas) const;
-
-private:
-  Fish(const Fish&);
-  Fish& operator=(const Fish&);
-
-  struct EndPt;
-  struct FishPart;
-
-  FishPart* itsFishParts;
-  EndPt* itsEndPts;
-  double itsCoords[4];
 };
 
 static const char vcid_fish_h[] = "$Header$";
