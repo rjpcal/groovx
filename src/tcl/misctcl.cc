@@ -91,7 +91,8 @@ namespace
   fstring cmdUsage(Tcl::Context& ctx)
   {
     const char* name = ctx.getValFromArg<const char*>(1);
-    Tcl::CommandGroup* cmd = Tcl::CommandGroup::lookup(ctx.interp(), name);
+    Tcl::CommandGroup* cmd =
+      Tcl::CommandGroup::lookupOriginal(ctx.interp(), name);
 
     if (cmd == 0)
       throw Util::Error("no such Tcl::CommandGroup");

@@ -52,11 +52,15 @@ namespace Tcl
 class Tcl::CommandGroup
 {
 public:
-  /// Find the command associated with a given name.
-  /** Returns null if no such command. FIXME Fix this so that it works
-      with inherited commands. */
+  /// Find the named command, if it exists.
+  /** Returns null if no such command. */
   static CommandGroup* lookup(Tcl::Interp& interp,
                               const char* name) throw();
+
+  /// Find the named command, after following any namespace aliases.
+  /** Returns null if no such command. */
+  static CommandGroup* lookupOriginal(Tcl::Interp& interp,
+                                      const char* name) throw();
 
   /// Find the command for the given name, making a new one if necessary.
   static CommandGroup* make(Tcl::Interp& interp,

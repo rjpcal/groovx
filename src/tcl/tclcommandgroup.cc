@@ -222,6 +222,36 @@ DOTRACE("Tcl::CommandGroup::lookup");
   */
   Tcl_CmdInfo info;
   const int result = Tcl_GetCommandInfo(interp.intp(), name, &info);
+
+  if (result == 1 &&
+      info.isNativeObjectProc == 1 &&
+      info.objProc == cInvokeCallback &&
+      info.deleteProc == cDeleteCallback)
+    {
+      return static_cast<CommandGroup*>(info.objClientData);
+    }
+  return 0;
+}
+
+Tcl::CommandGroup* Tcl::CommandGroup::lookupOriginal(
+                                            Tcl::Interp& interp,
+                                            const char* name) throw()
+{
+DOTRACE("Tcl::CommandGroup::lookupOriginal");
+
+  const fstring script("namespace origin ", name);
+  if (interp.eval(script, Tcl::IGNORE_ERROR) == false)
+    {
+      return 0;
+    }
+
+  // else...
+  const fstring original = interp.getResult<fstring>();
+
+  Tcl_CmdInfo info;
+  const int result = Tcl_GetCommandInfo(interp.intp(),
+                                        original.c_str(), &info);
+
   if (result == 1 &&
       info.isNativeObjectProc == 1 &&
       info.objProc == cInvokeCallback &&
