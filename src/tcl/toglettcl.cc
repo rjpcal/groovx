@@ -5,15 +5,13 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998 (as objtogl.cc)
-// written: Mon Jan 13 11:01:38 2003
+// written: Mon Mar  3 12:57:42 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TOGLETTCL_CC_DEFINED
 #define TOGLETTCL_CC_DEFINED
-
-#include "tcl/toglet.h"
 
 #include "gfx/gxcamera.h"
 #include "gfx/gxnode.h"
@@ -23,6 +21,7 @@
 #include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
+#include "tcl/toglet.h"
 
 #include "util/objfactory.h"
 #include "util/ref.h"
