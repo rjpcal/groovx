@@ -1,0 +1,45 @@
+<!DOCTYPE object [
+<!ELEMENT object (object | ownedobj | objref | baseclass | double | string | int | bool | valobj)*>
+<!ELEMENT ownedobj (object | ownedobj | objref | baseclass | double | string | int | bool | valobj)*>
+<!ELEMENT objref EMPTY>
+<!ELEMENT baseclass (object | ownedobj | objref | baseclass | double | string | int | bool | valobj)*>
+<!ELEMENT double EMPTY>
+<!ELEMENT int EMPTY>
+<!ELEMENT bool EMPTY>
+<!ELEMENT valobj EMPTY>
+<!ELEMENT string (#PCDATA)>
+
+<!ATTLIST object type CDATA #REQUIRED
+                 id   CDATA #REQUIRED
+                 name CDATA #REQUIRED
+                 version CDATA #REQUIRED
+>
+<!ATTLIST ownedobj type CDATA #REQUIRED
+                   id   CDATA #REQUIRED
+                   name CDATA #REQUIRED
+                   version CDATA #REQUIRED
+>
+<!ATTLIST objref type CDATA #REQUIRED
+                 id   CDATA #REQUIRED
+                 name CDATA #REQUIRED
+>
+<!ATTLIST baseclass type CDATA #REQUIRED
+                    id   CDATA #REQUIRED
+                    name CDATA #REQUIRED
+                    version CDATA #REQUIRED
+>
+<!ATTLIST double name  CDATA #REQUIRED
+                 value CDATA #REQUIRED
+>
+<!ATTLIST int    name  CDATA #REQUIRED
+                 value CDATA #REQUIRED
+>
+<!ATTLIST bool   name  CDATA #REQUIRED
+                 value CDATA #REQUIRED
+>
+<!ATTLIST valobj type  CDATA #REQUIRED
+                 name  CDATA #REQUIRED
+                 value CDATA #REQUIRED
+>
+<!ATTLIST string name  CDATA #REQUIRED>
+]>
