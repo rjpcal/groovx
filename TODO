@@ -293,61 +293,10 @@
 
   Need to have a useful way of debugging TimingHdlr/Trial sequences.
 
-
-* (12-Jun-2001) Refactor TogletTcl into separate Toglet/TkWidget/Widget groups
-
-* (2-Jun-2001) writeRoot() should take a MaybeIdItem
-
-* (27-May-2001) Change Jitter to be a FieldContainer
-
-* (27-May-2001) Refactor away the list_test.tcl module
-  and the dependent blocklist_test.tcl, objlist_test.tcl, etc.
-
 * (30-Nov-2000) a event type to install a GxNode?
   Now that screen-update is better controlled, we could introduce a
   new TrialEvent type that puts a GxNode into the Widget... this would
   give a way to implement visual feedback in an experiment.
-
-* (note 30-Oct-2000) scripts as callbacks?
-  The fact that we now have good unique correspondence between objects
-  and ids means that there are flexible possibilities for allowing
-  scripts as callbacks. For example, a callback class could have an
-  abstract function that takes an object, and an implementation could
-  pass that object to a script as an id.
-
-* (25-Jun-1999) how dynamic loading should work for grsh
-  all of the lists, plus all of the base classes that are held by the
-  lists, need to be statically (or at least permanently dynamically-)
-  linked into the grsh executable. These would be the so-called 'core'
-  modules. Any of the separate Tcl packages should contain the
-  subclass (such as Face) and the TclPkg to work with that subclass
-  (such as FaceTcl)... these units can then be loaded with the Tcl
-  "load" command, and would be called 'extensions'. Dependencies
-  between any of the extensions should be avoided. This hierarchy
-  urges strongly for all the base classes handled on the lists to be
-  abstract. The problem right now is the issue with bus errors due to
-  OpenGL calls from dynamically-linked modules--most of the
-  'extensions' will use OpenGL, so this probably makes them unable to
-  be dynamically loaded.
-
-  OK, later I've figured out that a problem with dynamic loading
-  occurred on program shutdown. Apparently, shlib's loaded with Tcl's
-  'load' are unloaded before C++ static shutdown occurs... this means
-  that virtual destructors for IoObject's maybe missing when the
-  IoPtrList tries to destroy them in its own destructor. Now, I've
-  just figured out that a solution is to Tcl exit handlers; in fact I
-  already had the framework in place via the TclPkg destructor, which
-  is called from an exit handler that is registered for each
-  TclPkg. So for now I just put calls to clear the ExptDriver and the
-  IoPtrList inside the ExptPkg destructor; this ensures that we don't
-  try to call any IoObject destructors after the libraries are
-  unloaded.
-
-  The final step is to come up with an organized build approach using
-  these package files... we need to:
-  1) manage the dependencies for the shlib's,
-  2) make sure the pkgIndex.tcl files are updated,
-  3) maintain separate debug/production trees for the shlib's
 
 * (21-Sep-2000) Writer subclass for matlab export
 
@@ -394,19 +343,6 @@
 * (1-Nov-2000) Event handling by a chain of command
   passing either up or down the experiment hierarchy (i.e. Expt -->
   Block --> Trial --> EventResponseHdlr or the reverse direction).
-
-* (25-Oct-2000) ReadUtils and WriteUtils use iterators?
-  could/should really be implemented in terms of iterators that
-  iterate over the elements in the stream. Then transferring elements
-  to/from a local container is just a simple std::copy type of
-  operation.
-
-* (7-Jul-2000) Adding an 'itsCorrectVal' member to Response
-  Should this value be serialized? We don't have a good way to do
-  versioning of Value types that are written/read with printTo() and
-  scanFrom(). [...Later] Probably if any versioning becomes necessary,
-  it's a good sign that the thing should become an IoObject, rather
-  than a plain Value.
 
 * (22-May-2000) destroy the pause keybinding when an experiment is done
   The problem is, ExptDriver shouldn't know about the names of the Tcl
@@ -456,7 +392,7 @@
 
 * (29-Nov-1999) How to automate the data analysis?
 
-  Need to bridge the gap between output of Grsh program running
+  Need to bridge the gap between output of groovx program running
   experiment, and necessary input to Matlab to process data. I think
   this is a possible route:
 

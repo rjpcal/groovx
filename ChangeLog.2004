@@ -44,3 +44,77 @@
   if not, use a different filename. (Maybe use temp filename
   generating facility of OS?). Canceled... rjp_subject doesn't even
   exist anymore...
+
+* (note 30-Oct-2000, done) scripts as callbacks?
+  The fact that we now have good unique correspondence between objects
+  and ids means that there are flexible possibilities for allowing
+  scripts as callbacks. For example, a callback class could have an
+  abstract function that takes an object, and an implementation could
+  pass that object to a script as an id. Done... this is pretty well
+  captured by Tcl::ProcWrapper.
+
+* (12-Jun-2001, done) Refactor TogletTcl into separate Toglet/TkWidget/Widget groups
+
+* (25-Jun-1999, obsolete) how dynamic loading should work for groovx
+  all of the lists, plus all of the base classes that are held by the
+  lists, need to be statically (or at least permanently dynamically-)
+  linked into the groovx executable. These would be the so-called
+  'core' modules. Any of the separate Tcl packages should contain the
+  subclass (such as Face) and the TclPkg to work with that subclass
+  (such as FaceTcl)... these units can then be loaded with the Tcl
+  "load" command, and would be called 'extensions'. Dependencies
+  between any of the extensions should be avoided. This hierarchy
+  urges strongly for all the base classes handled on the lists to be
+  abstract. The problem right now is the issue with bus errors due to
+  OpenGL calls from dynamically-linked modules--most of the
+  'extensions' will use OpenGL, so this probably makes them unable to
+  be dynamically loaded.
+
+  OK, later I've figured out that a problem with dynamic loading
+  occurred on program shutdown. Apparently, shlib's loaded with Tcl's
+  'load' are unloaded before C++ static shutdown occurs... this means
+  that virtual destructors for IoObject's maybe missing when the
+  IoPtrList tries to destroy them in its own destructor. Now, I've
+  just figured out that a solution is to Tcl exit handlers; in fact I
+  already had the framework in place via the TclPkg destructor, which
+  is called from an exit handler that is registered for each
+  TclPkg. So for now I just put calls to clear the ExptDriver and the
+  IoPtrList inside the ExptPkg destructor; this ensures that we don't
+  try to call any IoObject destructors after the libraries are
+  unloaded.
+
+  The final step is to come up with an organized build approach using
+  these package files... we need to:
+  1) manage the dependencies for the shlib's,
+  2) make sure the pkgIndex.tcl files are updated,
+  3) maintain separate debug/production trees for the shlib's
+
+* (25-Oct-2000, obsolete) ReadUtils and WriteUtils use iterators?
+  could/should really be implemented in terms of iterators that
+  iterate over the elements in the stream. Then transferring elements
+  to/from a local container is just a simple std::copy type of
+  operation. Obsolete... this wouldn't really work now that extracting
+  elements from the stream isn't so simple (since it requires looking
+  up elements by name).
+
+* (7-Jul-2000, 6-Oct-2004) Adding an 'itsCorrectVal' member to Response
+  Should this value be serialized? We don't have a good way to do
+  versioning of Value types that are written/read with printTo() and
+  scanFrom(). [...Later] Probably if any versioning becomes necessary,
+  it's a good sign that the thing should become an IoObject, rather
+  than a plain Value.
+
+  Hmmm... really the problem here is that 'correctVal' is maintained
+  by Trial, rather than Response.
+
+  Let's see who calls the Response functions that depend on
+  itsCorrectVal:
+
+    Response::isCorrect() is called by trProcessResponse()
+    Response::correctVal() is called by trProcessResponse()
+    Response::setCorrectVal() is called by trProcessResponse()
+
+  Well, there you have it... Response::itsCorrectVal is really out of
+  place and just belongs in Trial instead.
+
+  OK, fixed now.
