@@ -3,7 +3,7 @@
 // tclpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 12:55:27 1999
-// written: Tue Sep 14 14:36:04 1999
+// written: Tue Oct 12 16:47:33 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "tclpkg.h"
 
 #include <cstring>
+#include <typeinfo>
 #include <vector>
 
 #include "tcllink.h"
@@ -78,8 +79,13 @@ DOTRACE("TclPkg::TclPkg");
 TclPkg::~TclPkg() {
 DOTRACE("TclPkg::~TclPkg");
   for (int i = 0; i < itsCmds.size(); i++) {
+	 DebugEval(i); DebugEval(itsCmds.size()); DebugEvalNL((void*)itsCmds[i]);
+	 DebugEvalNL(typeid(*itsCmds[i]).name());
+	 
+#ifndef GCC_COMPILER
 	 delete itsCmds[i];
 	 itsCmds[i] = 0;
+#endif
   }
   delete itsPrivateRep;
 }
