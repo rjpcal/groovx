@@ -1,9 +1,9 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// io.cc
+// Io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Sat Sep 23 16:02:37 2000
+// written: Sat Sep 23 16:19:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -115,9 +115,9 @@ DOTRACE("IO::IoObject::eatWhitespace");
 void IO::IoObject::readTypename(STD_IO::istream& is, const char* correctNames_cstr,
 							 bool doCheck) {
 DOTRACE("IO::IoObject::readTypename");
-  string correctNames = correctNames_cstr;
+  std::string correctNames = correctNames_cstr;
 
-  string name;
+  std::string name;
   is >> name;
 
   DebugEval(name); DebugPrintNL("");
@@ -129,15 +129,15 @@ DOTRACE("IO::IoObject::readTypename");
   DebugEval(correctNames);
   DebugEvalNL(doCheck);
 
-  string candidate;
+  std::string candidate;
 
-  string first_candidate = correctNames.substr(0, correctNames.find(' ', 0));
+  std::string first_candidate = correctNames.substr(0, correctNames.find(' ', 0));
 
-  string::size_type end_pos = 0;
-  string::size_type beg_pos = 0;
+  std::string::size_type end_pos = 0;
+  std::string::size_type beg_pos = 0;
 
   // Loop over the space-separated substrings of correctNames.
-  while ( end_pos < string::npos ) {
+  while ( end_pos < std::string::npos ) {
 	 end_pos = correctNames.find(' ', beg_pos);
 
 	 candidate = correctNames.substr(beg_pos, end_pos);
@@ -192,8 +192,8 @@ template int gCharCount<double>(double val);
 // Specializations for string types
 template <> int gCharCount(const char* val)   { return strlen(val); }
 template <> int gCharCount(char* val)         { return strlen(val); }
-template <> int gCharCount(string val)        { return val.length(); }
-template <> int gCharCount(const string& val) { return val.length(); }
+template <> int gCharCount(std::string val)        { return val.length(); }
+template <> int gCharCount(const std::string& val) { return val.length(); }
 
 } // end namespace IO
 
