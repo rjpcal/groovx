@@ -42,6 +42,7 @@
 #include <cstdio> // for ::rename(), ::remove()
 #include <cstring> // for ::strerror()
 #include <sys/stat.h> // for ::chmod()
+#include <unistd.h> // for ::getcwd() (POSIX)
 
 #include "util/trace.h"
 #include "util/debug.h"
