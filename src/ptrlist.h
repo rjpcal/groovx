@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Wed Mar 22 16:47:03 2000
+// written: Thu Mar 23 20:37:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,6 +73,12 @@ public:
   //////////////////
   // manipulators //
   //////////////////
+
+  /** Releases the object at index \a id. Ownership of the pointed-to
+      object is transferred to the caller, and the list site at \a id
+      becomes vacant. */
+  Ptr release(int id) throw (InvalidIdError)
+	 { return DumbPtr<T>(castToT(VoidPtrList::releaseVoidPtr(id))); }
 
   /// Insert \a ptr into the list, and return its id.
   int insert(Ptr ptr)
