@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:00:17 2001
-// written: Wed Jul 11 17:46:39 2001
+// written: Thu Jul 12 12:22:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,6 +89,9 @@ public:
 
   template <class T>
   Iterator<T> end(T* /*dummy*/=0);
+
+  /// Utility function to return the list length of a Tcl object
+  static unsigned int getLength(Tcl_Obj* obj);
 
 private:
   void doAppend(Tcl_Obj* obj, unsigned int times);

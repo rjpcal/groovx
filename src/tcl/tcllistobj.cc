@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:32:35 2001
-// written: Wed Jul 11 18:38:33 2001
+// written: Thu Jul 12 12:21:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,6 +84,21 @@ DOTRACE("Tcl::List::at");
   DebugEval(index); DebugEvalNL(itsElements[index]);
 
   return itsElements[index];
+}
+
+unsigned int Tcl::List::getLength(Tcl_Obj* obj)
+{
+DOTRACE("Tcl::List::getLength");
+
+  int len;
+  if ( Tcl_ListObjLength(0, obj, &len) != TCL_OK)
+    {
+      throw Tcl::TclError("couldn't get list length of Tcl object");
+    }
+
+  Assert(len >= 0);
+
+  return (unsigned int) len;
 }
 
 static const char vcid_tcllistobj_cc[] = "$Header$";
