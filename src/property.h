@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Tue Nov 30 16:44:26 1999
+// written: Mon Dec  6 14:02:16 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,8 +47,9 @@
  * Property defines an interface for getting and setting Value's whose
  * type is not statically known.
  *
- * @memo Abstract base class for get/set dynamically-typed Value's.
+ * @short Abstract base class for get/set dynamically-typed Value's.
  **/
+///////////////////////////////////////////////////////////////////////
 
 class Property {
 public:
@@ -84,8 +85,9 @@ public:
  * functions are protected, but CTProperty allows friendship to be
  * granted to one class (probably the owner of the property).
  *
- * @memo Simple implementation of Property using TValue template.
+ * @short Simple implementation of Property using TValue template.
  **/
+///////////////////////////////////////////////////////////////////////
 
 template <class T>
 class TProperty : public Property, public virtual IO {
@@ -153,8 +155,10 @@ void TProperty<bool>::deserialize(istream& is, IOFlag) {
  * interface, so that the class that owns a TProperty can access its
  * native-type interface.
  *
- * @memo Allows an owner class to have friendship of a TProperty.
+ * @short Allows an owner class to have friendship of a TProperty.
  **/
+///////////////////////////////////////////////////////////////////////
+
 template <class C, class T>
 class CTProperty : public TProperty<T> { 
 public:
@@ -176,7 +180,7 @@ public:
  * specified through the template arguments min, max and div, such
  * that the acceptable range will be [min/div, max/div].
  *
- * @memo Like TProperty, but limits the range of the stored value.
+ * @short Like TProperty, but limits the range of the stored value.
  **/
 
 template <class T, int min, int max, int div>
@@ -218,8 +222,9 @@ public:
  * TBoundedProperty interface, so that the class that owns a TProperty
  * can access its native-type interface.
  *
- * @memo Allows an owner class to have friendship of a TBoundedProperty.
+ * @short Allows an owner class to have friendship of a TBoundedProperty.
  **/
+///////////////////////////////////////////////////////////////////////
 
 template <class C, class T, int min, int max, int div>
 class CTBoundedProperty : public TBoundedProperty<T, min, max, div> { 
@@ -242,8 +247,9 @@ public:
  * its stored value. The TValuePtr can be reseated to point at
  * different objects of the same native type.
  *
- * @memo A property whose stored value is a reseatable reference.
+ * @short A property whose stored value is a reseatable reference.
  **/
+///////////////////////////////////////////////////////////////////////
 
 template <class T>
 class TPtrProperty : public Property, public virtual IO {
@@ -309,8 +315,9 @@ private:
  * TPtrProperty interface, so that the class that owns a TProperty can
  * access its native-type interface.
  *
- * @memo Allows an owner class to have friendship of a TPtrProperty.
+ * @short Allows an owner class to have friendship of a TPtrProperty.
  **/
+///////////////////////////////////////////////////////////////////////
 
 template <class C, class T>
 class CTPtrProperty : public TPtrProperty<T> {
@@ -331,9 +338,10 @@ public:
  * classes that own Property's. Additionally, there are get/setNative
  * functions that can be used on TProperty's.
  *
- * @memo Mixin class to provide get/set functions for classes that own
+ * @short Mixin class to provide get/set functions for classes that own
  * Property's.
  **/
+///////////////////////////////////////////////////////////////////////
 
 template <class C>
 class PropFriend : public virtual Observable {
@@ -369,8 +377,9 @@ public:
  * value. Finally, a startNewGroup member provides a simple way to
  * segregate a list of Property's into groups.
  *
- * @memo Stores ancillary information about a property.
+ * @short Stores ancillary information about a property.
  **/
+///////////////////////////////////////////////////////////////////////
 
 template <class C>
 class PropertyInfo {

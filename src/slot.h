@@ -3,7 +3,7 @@
 // observer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 25 18:37:02 1999
-// written: Wed Nov 10 12:36:21 1999
+// written: Mon Dec  6 14:01:08 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,8 +22,10 @@ class Observable;
  * notifications of changes in the Observable via receiveStateChange()
  * and receiveDestroyMsg().
  *
- * @memo Along with Observable, implements the Observer design pattern.
+ * @short Along with Observable, implements the Observer design pattern.
  **/
+///////////////////////////////////////////////////////////////////////
+
 class Observer {
 public:
   ///

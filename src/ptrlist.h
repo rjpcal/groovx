@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Tue Nov 30 17:18:20 1999
+// written: Mon Dec  6 14:02:29 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@
  * PtrList; any necessary resizing is done when necessary in an insert
  * call.
  *
- * @memo A template container that stores and owns pointers.
+ * @short A template container that stores and owns pointers.
  **/
 ///////////////////////////////////////////////////////////////////////
 

@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Sun Nov 21 02:23:30 1999
+// written: Mon Dec  6 14:00:45 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@
  * from void* to IO* is delegated to subclasses by way of the pure
  * virtual function fromVoidToIO().
  *
- * @memo A subclass of VoidPtrList that adds IO capabilities.
+ * @short A subclass of VoidPtrList that adds IO capabilities.
  **/
 ///////////////////////////////////////////////////////////////////////
 

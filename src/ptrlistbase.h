@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Tue Nov 30 17:07:48 1999
+// written: Mon Dec  6 14:03:00 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ public:
  * destruction of its contained objects to its subclasses by way of
  * destroyPtr().
  *
- * @memo Serves as non-typesafe, void* implementation for PtrList<>.
+ * @short Serves as non-typesafe, void* implementation for PtrList<>.
  **/
 ///////////////////////////////////////////////////////////////////////
 

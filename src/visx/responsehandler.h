@@ -3,7 +3,7 @@
 // responsehandler.h
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Wed Dec  1 14:36:21 1999
+// written: Mon Dec  6 14:02:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,9 +28,10 @@ class Experiment;
  * virtual functions are the actions rhXxx(); these are called by
  * ExptDriver at appropriate points in the trial sequence.
  *
- * @memo Defines the interface for collecting responses from a user
+ * @short Defines the interface for collecting responses from a user
  * during an experiment.
  **/
+///////////////////////////////////////////////////////////////////////
 
 class ResponseHandler : public virtual IO {
 public:

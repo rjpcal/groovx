@@ -3,7 +3,7 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Wed Dec  1 11:44:27 1999
+// written: Mon Dec  6 14:02:41 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ class Value;
  * ReadError should be thrown by subclasses of Reader when an error
  * occurs during a call to any of the Reader methods.
  *
- * @memo Exception class for errors in Reader methods.
+ * @short Exception class for errors in Reader methods.
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -49,7 +49,7 @@ public:
  * reconstruct an object tree, a client should call readRoot() on the
  * root object in that tree.
  *
- * @memo Provides the interface for IO objects to deserialize
+ * @short Provides the interface for IO objects to deserialize
  * themselves when they implement the IO interface readFrom()/writeTo().
  **/
 ///////////////////////////////////////////////////////////////////////

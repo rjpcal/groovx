@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Mon Dec  6 14:00:24 1999
+// written: Mon Dec  6 14:00:37 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -132,7 +132,7 @@ private:
  * write a type using the << insertion operator. It is instantiated
  * for the basic types.
  *
- * @memo Gives the number of characters for a string representation of
+ * @short Gives the number of characters for a string representation of
  * a basic type.
  **/
 template<class T>

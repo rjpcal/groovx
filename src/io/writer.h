@@ -3,7 +3,7 @@
 // writer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:49 1999
-// written: Wed Dec  1 11:45:05 1999
+// written: Mon Dec  6 14:03:13 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,7 @@ class Value;
  * WriteError should be thrown by subclasses of Writer when an error
  * occurs during a call to any of the methods in the Writer interface.
  *
- * @memo Exception class for errors in Writer methods.
+ * @short Exception class for errors in Writer methods.
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -48,7 +48,7 @@ public:
  * write an object tree, a client should call writeRoot() on the root
  * object in that tree.
  *
- * @memo Provides the interface for IO objects to serialize themselves
+ * @short Provides the interface for IO objects to serialize themselves
  * when they implement the IO interface readFrom()/writeTo().
  **/
 ///////////////////////////////////////////////////////////////////////

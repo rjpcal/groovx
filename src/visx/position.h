@@ -3,7 +3,7 @@
 // position.h
 // Rob Peters
 // created: Wed Mar 10 21:33:14 1999
-// written: Wed Nov 10 13:25:52 1999
+// written: Mon Dec  6 14:01:21 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,9 +24,10 @@ class PositionImpl;
  * manipulation of the OpenGL modelview matrix. This manipulation is
  * decomposed into translation, scaling, and rotation.
  *
- * @memo Base class that manipulates the OpenGL modelview matrix.
+ * @short Base class that manipulates the OpenGL modelview matrix.
  *
- */
+ **/
+///////////////////////////////////////////////////////////////////////
 
 class Position : public virtual IO {
 public:

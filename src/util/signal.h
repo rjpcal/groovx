@@ -3,7 +3,7 @@
 // observable.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 25 18:29:04 1999
-// written: Wed Nov 10 12:35:38 1999
+// written: Mon Dec  6 14:00:55 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,8 +26,10 @@ class ObservableImpl;
  * call receiveStateChangeMsg() on all of the Observer's that are
  * observing this Observable.
  *
- * @memo Along with Observer, implements the Observer design pattern.
+ * @short Along with Observer, implements the Observer design pattern.
  **/
+///////////////////////////////////////////////////////////////////////
+
 class Observable {
 public:
   ///
