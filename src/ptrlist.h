@@ -177,7 +177,7 @@ private:
   static PtrList<T>& theirPtrList;
 
   mutable NullablePtrHandle<T> itsHandle;
-  const int itsId;
+  int itsId;
 
   void refreshPtr()
     {
