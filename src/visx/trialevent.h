@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Thu Jan 31 10:11:01 2002
+// written: Sat Feb  2 17:05:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,15 +78,21 @@ public:
   /// Queries whether there is a pending callback to \c invoke().
   bool isPending() const { return itsIsPending; }
 
-  /** Schedules the event to occur after the requested delay, and
-      cancels any previously pending events that had not yet
-      triggered. After this call, \c invoke() will be called after the
-      requested delay (to within the accuracy provided by the
-      applications's event loop), unless there is an intervening call
-      to \c cancel(). If the requested delay is negative or zero, the
-      \c invoke() callback is triggered immediately without involving
-      the event loop. */
-  void schedule(TrialBase& trial, Util::ErrorHandler& errhdlr);
+  /** Schedules the event to occur after the requested delay, and cancels any
+      previously pending events that had not yet triggered. After this call,
+      \c invoke() will be called after the requested delay (to within the
+      accuracy provided by the applications's event loop), unless there is an
+      intervening call to \c cancel(). If the requested delay is negative or
+      zero, the \c invoke() callback is triggered immediately without
+      involving the event loop. The function returns the actual delay that was
+      requested from the event loop (this may differ from the ideal delay
+      request since the TrialEvent will try to learn what the typical error is
+      between ideal/actual delays, and then compensate accordingly). Finally,
+      The minimum_msec parameter specifies a minimum delay time; this may
+      be used to ensure that proper relative ordering of TrialEvent's is
+      maintained, even if the event loop is getting slowed down overall.  */
+  int schedule(TrialBase& trial, Util::ErrorHandler& errhdlr,
+               int minimum_msec = 0);
 
   /** Cancels a pending event. That is, if \c cancel() is called after
       \c schedule() has been called but before \c invoke() has been
