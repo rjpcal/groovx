@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Tue Oct 24 22:47:01 2000
+// written: Thu Oct 26 10:16:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -176,14 +176,10 @@ DOTRACE("Block::readFrom");
 
   Assert(svid >= 1);
 
-  vector<TrialBase*> trials;
-  IO::ReadUtils::readObjectSeq<TrialBase>(
-								reader, "trialSeq", std::back_inserter(trials));
-
   itsImpl->itsTrialSequence.clear();
-  for(int i = 0; i < trials.size(); ++i)
-	 itsImpl->itsTrialSequence.push_back(
-                            NullableItemWithId<TrialBase>(trials[i]));
+  IO::ReadUtils::readObjectSeq<TrialBase>(
+        reader, "trialSeq",
+		  NullableItemWithId<TrialBase>::makeInserter(itsImpl->itsTrialSequence));
 
   reader->readValue("randSeed", itsImpl->itsRandSeed);
   reader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
@@ -206,12 +202,9 @@ DOTRACE("Block::writeTo");
 
   Assert(BLOCK_SERIAL_VERSION_ID >= 1);
 
-  vector<TrialBase*> trials;
-  for (int i = 0; i < itsImpl->itsTrialSequence.size(); ++i)
-	 trials.push_back(itsImpl->itsTrialSequence[i].isValid() ?
-							itsImpl->itsTrialSequence[i].get() : 0);
-  IO::WriteUtils::writeObjectSeq(writer, "trialSeq",
-											trials.begin(), trials.end());
+  IO::WriteUtils::writeSmartPtrSeq(writer, "trialSeq",
+											  itsImpl->itsTrialSequence.begin(),
+											  itsImpl->itsTrialSequence.end());
 
   writer->writeValue("randSeed", itsImpl->itsRandSeed);
   writer->writeValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
