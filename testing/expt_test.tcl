@@ -12,7 +12,7 @@ package require Tlist
 package require Toglet
 package require Block
 package require Nullresponsehdlr
-package require Th
+package require Timinghdlr
 
 source ${::TEST_DIR}/io_test.tcl
 
