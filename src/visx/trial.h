@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Thu Dec  5 15:36:27 2002
+// written: Thu Dec  5 15:43:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,7 +112,7 @@ public:
 
   virtual void vxAbort();
 
-  virtual void vxChildFinished();
+  virtual void vxChildFinished(ChildStatus s);
 
   virtual void vxProcessResponse(Response& response);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Thu Dec  5 15:34:35 2002
+// written: Thu Dec  5 15:42:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -117,7 +117,7 @@ public:
   virtual void vxEndTrialHook();
 
   /// Begins the next element, moving on to the next Block if necessary.
-  virtual void vxChildFinished();
+  virtual void vxChildFinished(ChildStatus s);
 
   /// Records a response to the current element in the Block.
   /** Also, prepares the Block for the next element. The response is

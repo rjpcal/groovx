@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Dec  5 15:37:54 2002
+// written: Thu Dec  5 15:49:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,7 +56,8 @@ namespace
       itsParent(parent),
       itsWidget(widget),
       itsRh(rh),
-      itsTh(th)
+      itsTh(th),
+      itsStatus(Element::CHILD_OK)
     {
       Precondition(parent != 0);
     }
@@ -65,6 +66,7 @@ namespace
     SoftRef<Toglet> itsWidget;
     Ref<ResponseHandler> itsRh;
     Ref<TimingHdlr> itsTh;
+    Element::ChildStatus itsStatus;
   };
 }
 
@@ -350,6 +352,7 @@ DOTRACE("Trial::Impl::vxAbort");
 
   Util::log("vxAbort");
 
+  itsActiveState->itsStatus = CHILD_ABORTED;
   itsActiveState->itsRh->rhAbortTrial();
   itsActiveState->itsTh->thAbortTrial();
   itsActiveState->itsParent->vxAbort();
@@ -367,10 +370,11 @@ DOTRACE("Trial::Impl::trEndTrial");
   itsActiveState->itsParent->vxEndTrialHook();
 
   Element* parent = itsActiveState->itsParent;
+  Element::ChildStatus status = itsActiveState->itsStatus;
 
   becomeInactive();
 
-  parent->vxChildFinished();
+  parent->vxChildFinished(status);
 }
 
 void Trial::Impl::vxHalt()
@@ -413,6 +417,16 @@ DOTRACE("Trial::Impl::vxProcessResponse");
   itsResponses.push_back(response);
 
   itsActiveState->itsParent->vxProcessResponse(response);
+
+  dbgEval(3, response.correctVal());
+  dbgEvalNL(3, response.val());
+
+  // If the response was incorrect, we'll ask our parent container to
+  // kindly repeat this trial
+  if (!response.isCorrect())
+    {
+      itsActiveState->itsStatus = CHILD_REPEAT;
+    }
 }
 
 void Trial::Impl::trAllowResponses(Trial* self)
@@ -610,7 +624,7 @@ double Trial::trElapsedMsec()
 void Trial::vxAbort()
   { rep->vxAbort(); }
 
-void Trial::vxChildFinished()
+void Trial::vxChildFinished(ChildStatus /*s*/)
   { Assert(false); }
 
 void Trial::trEndTrial()

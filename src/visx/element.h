@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  4 15:35:37 2002
-// written: Thu Dec  5 15:34:35 2002
+// written: Thu Dec  5 15:40:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,6 +38,13 @@ class Element : public IO::IoObject
 public:
   virtual ~Element();
 
+  enum ChildStatus
+    {
+      CHILD_OK,
+      CHILD_ABORTED,
+      CHILD_REPEAT
+    };
+
   /// Return an \c ErrorHandler that can deal with error messages.
   virtual Util::ErrorHandler& getErrorHandler() const = 0;
 
@@ -63,7 +70,7 @@ public:
   virtual void vxEndTrialHook();
 
   /// Called when an element's child finishes running.
-  virtual void vxChildFinished() = 0;
+  virtual void vxChildFinished(ChildStatus s) = 0;
 
   virtual void vxProcessResponse(Response& response) = 0;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Dec  5 15:34:35 2002
+// written: Thu Dec  5 15:42:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -311,7 +311,7 @@ DOTRACE("ExptDriver::vxEndTrialHook");
   IO::saveASW(Util::Ref<IO::IoObject>(this), rep->autosaveFile);
 }
 
-void ExptDriver::vxChildFinished()
+void ExptDriver::vxChildFinished(ChildStatus /*s*/)
 {
 DOTRACE("ExptDriver::vxChildFinished");
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Dec  5 15:34:35 2002
+// written: Thu Dec  5 15:48:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,13 +46,6 @@ Util::Tracer Block::tracer;
 namespace
 {
   IO::VersionId BLOCK_SERIAL_VERSION_ID = 2;
-
-  enum ChildStatus
-    {
-      OK,
-      INCORRECT_RESPONSE,
-      ABORTED
-    };
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -72,7 +65,6 @@ public:
     elements(),
     randSeed(0),
     sequencePos(0),
-    childStatus(OK),
     parent(0)
   {}
 
@@ -94,8 +86,6 @@ public:
   int randSeed;                 // Random seed used to create element sequence
   unsigned int sequencePos;     // Index of the current element
                                 // Also functions as # of completed elements
-
-  ChildStatus childStatus;
 
   Element* parent;
 };
@@ -260,8 +250,6 @@ DOTRACE("Block::vxRun");
 
   Precondition( &e != 0 );
 
-  rep->childStatus = OK;
-
   Util::log( status() );
 
   rep->parent = &e;
@@ -280,8 +268,7 @@ DOTRACE("Block::vxHalt");
 void Block::vxAbort()
 {
 DOTRACE("Block::vxAbort");
-
-  rep->childStatus = ABORTED;
+// FIXME
 }
 
 void Block::vxEndTrialHook()
@@ -292,22 +279,21 @@ DOTRACE("Block::vxEndTrialHook");
     rep->parent->vxEndTrialHook();
 }
 
-void Block::vxChildFinished()
+void Block::vxChildFinished(ChildStatus s)
 {
 DOTRACE("Block::vxChildFinished");
   Assert( !isComplete() );
 
-  switch (rep->childStatus)
+  switch (s)
     {
-    case OK:
+    case CHILD_OK:
       // Move on to the next element.
       ++rep->sequencePos;
       break;
 
-    case INCORRECT_RESPONSE:
+    case CHILD_REPEAT:
       {
-        // If the response was incorrect, add a repeat of the current
-        // element to the block and reshuffle
+        // Add a repeat of the current element to the sequence and reshuffle
         addElement(rep->currentElement(), 1);
         std::random_shuffle
           (rep->elements.begin()+rep->sequencePos+1, rep->elements.end());
@@ -317,7 +303,7 @@ DOTRACE("Block::vxChildFinished");
       }
       break;
 
-    case ABORTED:
+    case CHILD_ABORTED:
       {
         // Remember the element that we are about to abort so we can
         // store it at the end of the sequence.
@@ -354,21 +340,14 @@ DOTRACE("Block::vxChildFinished");
       // Release our current parent, then pass control onto it.
       Element& p = rep->getParent();
       rep->parent = 0;
-      p.vxChildFinished();
+      p.vxChildFinished(CHILD_OK);
     }
 }
 
-void Block::vxProcessResponse(Response& response)
+void Block::vxProcessResponse(Response&)
 {
 DOTRACE("Block::vxProcessResponse");
-
-  dbgEval(3, response.correctVal());
-  dbgEvalNL(3, response.val());
-
-  if (!response.isCorrect())
-    {
-      rep->childStatus = INCORRECT_RESPONSE;
-    }
+// FIXME
 }
 
 void Block::vxUndo()

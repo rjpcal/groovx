@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Dec  5 15:34:35 2002
+// written: Thu Dec  5 15:42:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ public:
 
   /** Attempt to start the next element, or stop the experiment if there
       are no more element. */
-  virtual void vxChildFinished();
+  virtual void vxChildFinished(ChildStatus s);
 
   virtual void vxProcessResponse(Response& response);
 
