@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Tue Oct 24 13:41:19 2000
+// written: Tue Oct 24 16:22:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,10 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
+namespace {
+  const IO::VersionId IOPTRLIST_SERIAL_VERSION_ID = 1;
+}
+
 IoPtrList::IoPtrList(int size) :
   PtrListBase(size)
 {
@@ -35,10 +39,22 @@ IoPtrList::~IoPtrList() {
 DOTRACE("IoPtrList::~IoPtrList");
 }
 
+IO::VersionId IoPtrList::serialVersionId() const {
+  return IOPTRLIST_SERIAL_VERSION_ID;
+}
+
 void IoPtrList::readFrom(IO::Reader* reader) {
 DOTRACE("IoPtrList::readFrom");
 
-  firstVacant() = reader->readInt("itsFirstVacant");
+  IO::VersionId svid = reader->readSerialVersionId(); 
+
+  if (svid < 1)
+	 {
+		throw IO::ReadVersionError("IoPtrList", svid, 1,
+											"Try grsh0.8a3");
+	 }
+
+  Assert(svid >= 1);
 
   int count = IO::ReadUtils::readSequenceCount(reader, "itsVec"); DebugEvalNL(count);
 
@@ -51,7 +67,6 @@ DOTRACE("IoPtrList::readFrom");
                    reader, "itsVec", ioBlock.begin(), count);
 
   PtrListBase::clear();
-  baseVecResize(uint_count);
 
   for (size_t i = 0; i < uint_count; ++i)
 	 if (ioBlock[i] != 0) {
@@ -62,14 +77,18 @@ DOTRACE("IoPtrList::readFrom");
 void IoPtrList::writeTo(IO::Writer* writer) const {
 DOTRACE("IoPtrList::writeTo");
 
-  writer->writeInt("itsFirstVacant", firstVacant());
+  if (IOPTRLIST_SERIAL_VERSION_ID < 1)
+	 {
+		throw IO::WriteVersionError("IoPtrList",
+											 IOPTRLIST_SERIAL_VERSION_ID, 1,
+											 "Try grsh0.8a3");
+	 }
 
-  unsigned int count = baseVecSize();
-  DebugEvalNL(count);
+  Assert(IOPTRLIST_SERIAL_VERSION_ID >= 1); 
 
-  fixed_block<IO::IoObject*> ioBlock(count);
+  fixed_block<IO::IoObject*> ioBlock(capacity());
 
-  for (size_t i = 0; i < count; ++i)
+  for (size_t i = 0; i < capacity(); ++i)
 	 {
 		DebugEval(i);
 
