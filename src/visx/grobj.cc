@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Jul 18 17:13:06 2001
+// written: Wed Jul 18 18:27:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -124,9 +124,10 @@ DOTRACE("GrObj::getBoundingBox");
   itsImpl->getBoundingBox(canvas, bbox);
 }
 
-GrObj::ScalingMode GrObj::getScalingMode() const {
+GrObj::ScalingMode GrObj::getScalingMode() const
+{
 DOTRACE("GrObj::getScalingMode");
-  return itsImpl->getScalingMode();
+  return itsImpl->itsScaler.getMode();
 }
 
 double GrObj::getWidth() const {
@@ -141,7 +142,7 @@ DOTRACE("GrObj::getHeight");
 
 double GrObj::getAspectRatio() const {
 DOTRACE("GrObj::getAspectRatio");
-  return itsImpl->aspectRatio();
+  return itsImpl->itsScaler.aspectRatio();
 }
 
 double GrObj::getMaxDimension() const {
@@ -151,17 +152,17 @@ DOTRACE("GrObj::getMaxDimension");
 
 GrObj::AlignmentMode GrObj::getAlignmentMode() const {
 DOTRACE("GrObj::getAlignmentMode");
-  return itsImpl->getAlignmentMode();
+  return itsImpl->itsAligner.getMode();
 }
 
 double GrObj::getCenterX() const {
 DOTRACE("GrObj::getCenterX");
-  return itsImpl->getCenterX();
+  return itsImpl->itsAligner.itsCenter.x();
 }
 
 double GrObj::getCenterY() const {
 DOTRACE("GrObj::getCenterY");
-  return itsImpl->getCenterY();
+  return itsImpl->itsAligner.itsCenter.y();
 }
 
 int GrObj::category() const {
@@ -191,10 +192,11 @@ void GrObj::setBBVisibility(bool visibility) {
   itsImpl->setBBVisibility(visibility);
 }
 
-void GrObj::setScalingMode(ScalingMode val) {
+void GrObj::setScalingMode(ScalingMode val)
+{
 DOTRACE("GrObj::setScalingMode");
 
-  itsImpl->setScalingMode(val);
+  itsImpl->itsScaler.setMode(val);
   sendStateChangeMsg();
 }
 
@@ -215,7 +217,7 @@ DOTRACE("GrObj::setHeight");
 void GrObj::setAspectRatio(double val) {
 DOTRACE("GrObj::setAspectRatio");
 
-  itsImpl->setAspectRatio(val);
+  itsImpl->itsScaler.setAspectRatio(val);
   sendStateChangeMsg();
 }
 
@@ -229,21 +231,21 @@ DOTRACE("GrObj::setMaxDimension");
 void GrObj::setAlignmentMode(AlignmentMode val) {
 DOTRACE("GrObj::setAlignmentMode");
 
-  itsImpl->setAlignmentMode(val);
+  itsImpl->itsAligner.setMode(val);
   sendStateChangeMsg();
 }
 
 void GrObj::setCenterX(double val) {
 DOTRACE("GrObj::setCenterX");
 
-  itsImpl->setCenterX(val);
+  itsImpl->itsAligner.itsCenter.x() = val;
   sendStateChangeMsg();
 }
 
 void GrObj::setCenterY(double val) {
 DOTRACE("GrObj::setCenterY");
 
-  itsImpl->setCenterY(val);
+  itsImpl->itsAligner.itsCenter.y() = val;
   sendStateChangeMsg();
 }
 

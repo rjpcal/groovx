@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:42:42 2001
-// written: Wed Jul 18 15:59:49 2001
+// written: Wed Jul 18 18:13:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,8 +39,14 @@ public:
     return itsCenter;
   }
 
-  void doAlignment(double raw_width, double raw_height,
-                   const Point<double>& raw_center) const;
+  void doAlignment(const Rect<double>& native) const;
+
+  void setMode(GrObj::AlignmentMode new_mode)
+  {
+    itsMode = new_mode;
+  }
+
+  GrObj::AlignmentMode getMode() const { return itsMode; }
 
   GrObj::AlignmentMode itsMode;
   Point<double> itsCenter;
