@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue Nov 16 14:42:23 1999
+// written: Tue Nov 23 15:28:04 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -419,7 +419,8 @@ DOTRACE("Trial::trUndraw");
 
 void Trial::undoLastResponse() {
 DOTRACE("Trial::undoLastResponse");
-  itsResponses.pop_back();
+  if ( !itsResponses.empty() )
+	 itsResponses.pop_back();
 }
 
 static const char vcid_trial_cc[] = "$Header$";
