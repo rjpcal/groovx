@@ -3,7 +3,7 @@
 // subject.cc
 // Rob Peters
 // created: Dec-98
-// written: Thu Jun  3 11:42:00 1999
+// written: Thu Oct 21 18:47:52 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,8 @@
 #include <cstring>
 
 #include "ioutils.h"
+#include "reader.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -99,6 +101,20 @@ int Subject::charCount() const {
 			 + 2 + strlen(itsName) + 1	// 2 chars for its length
 			 + 2 + strlen(itsDirectory) + 1 // 2 chars for its length
 			 + 5);// fudge factor
+}
+
+void Subject::readFrom(Reader* reader) {
+DOTRACE("Subject::readFrom");
+
+  reader->readValue("name", itsName);
+  reader->readValue("directory", itsDirectory);
+}
+
+void Subject::writeTo(Writer* writer) const {
+DOTRACE("Subject::writeTo");
+
+  writer->writeValue("name", itsName);
+  writer->writeValue("directory", itsDirectory);
 }
 
 void Subject::setName(const char* name) {

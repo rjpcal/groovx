@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Wed Oct 13 17:44:09 1999
+// written: Thu Oct 21 18:46:08 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,8 @@
 #include "toglconfig.h"
 #include "sound.h"
 #include "soundlist.h"
+#include "reader.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -139,6 +141,25 @@ DOTRACE("KbdResponseHdlr::charCount");
 			 + itsKeyRespPairs.length() + 1
 			 + gCharCount<bool>(itsUseFeedback) + 1
 			 + 1); // fudge factor
+}
+
+void KbdResponseHdlr::readFrom(Reader* reader) {
+DOTRACE("KbdResponseHdlr::readFrom");
+
+  reader->readValue("keyRespPairs", itsKeyRespPairs);
+  reader->readValue("feedbackPairs", itsFeedbackPairs);
+  reader->readValue("useFeedback", itsUseFeedback);
+
+  updateRegexps();
+  updateFeedbacks();
+}
+
+void KbdResponseHdlr::writeTo(Writer* writer) const {
+DOTRACE("KbdResponseHdlr::writeTo");
+
+  writer->writeValue("keyRespPairs", itsKeyRespPairs);
+  writer->writeValue("feedbackPairs", itsFeedbackPairs);
+  writer->writeValue("useFeedback", itsUseFeedback);
 }
 
 void KbdResponseHdlr::setInterp(Tcl_Interp* interp) {

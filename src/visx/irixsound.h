@@ -3,7 +3,7 @@
 // irixsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 14 11:23:12 1999
-// written: Thu Oct 21 18:11:14 1999
+// written: Thu Oct 21 18:44:26 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,9 @@
 #include <fstream.h>				  // to check if files exist
 #include <unistd.h>
 #include <vector>
+
+#include "reader.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -133,6 +136,17 @@ DOTRACE("IrixAudioSound::charCount");
   return (ioTag.length() + 1
 			 + itsFilename.length() + 1
 			 +5); // fudge factor
+}
+
+void IrixAudioSound::readFrom(Reader* reader) {
+DOTRACE("IrixAudioSound::readFrom");
+  reader->readValue("filename", itsFilename);
+  setFile(itsFilename);
+}
+
+void IrixAudioSound::writeTo(Writer* writer) const {
+DOTRACE("IrixAudioSound::writeTo");
+  writer->writeValue("filename", itsFilename);
 }
 
 void IrixAudioSound::play() {

@@ -3,7 +3,7 @@
 // nullresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:36 1999
-// written: Sat Jul  3 16:34:45 1999
+// written: Thu Oct 21 18:24:54 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,6 +45,14 @@ DOTRACE("NullResponseHdlr::deserialize");
 int NullResponseHdlr::charCount() const {
 DOTRACE("NullResponseHdlr::charCount");
   return ioTag.length() + 1;
+}
+
+void NullResponseHdlr::readFrom(Reader* reader) {
+DOTRACE("NullResponseHdlr::readFrom");
+}
+
+void NullResponseHdlr::writeTo(Writer* writer) const {
+DOTRACE("NullResponseHdlr::writeTo");
 }
 
 // manipulators/accessors
