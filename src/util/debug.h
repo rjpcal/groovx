@@ -2,7 +2,8 @@
 // debug.h
 // Rob Peters
 // created: Jan-99
-// written: Mon Mar  8 04:34:47 1999
+// written: Fri Mar 12 08:24:54 1999
+static const char vcid[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef DEBUG_H_DEFINED

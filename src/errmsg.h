@@ -1,6 +1,9 @@
 ///////////////////////////////////////////////////////////////////////
 // errmsg.h
-// Rob Peters Dec-98
+// Rob Peters
+// created: Dec-98
+// written: Fri Mar 12 08:24:08 1999
+static const char vcid[] = "$Id$";
 //
 // this provides a simple inlined function that appends a Tcl function name
 // and an error message to the interpreters result
