@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Thu Oct  7 16:33:37 1999
+// written: Wed Oct 13 11:20:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -532,7 +532,7 @@ protected:
 	 int offset = (objc() >= 4) ? getIntFromArg(3) : 0;
 
 	 ifstream ifs(objid_file);
-	 int num_loaded = 0;
+	 int num_loaded = -1;
 	 try {
 		num_loaded = theTlist.readFromObjidsOnly(ifs, num_lines, offset);
 	 }
