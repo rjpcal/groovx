@@ -179,13 +179,15 @@ bool Tcl::Interp::eval(const char* code, Tcl::ErrorStrategy strategy)
   return eval(obj, strategy);
 }
 
-bool Tcl::Interp::eval(const fstring& code, Tcl::ErrorStrategy strategy)
+bool Tcl::Interp::eval(const fstring& code,
+                       Tcl::ErrorStrategy strategy)
 {
   Tcl::ObjPtr obj(Tcl::toTcl(code));
   return eval(obj, strategy);
 }
 
-bool Tcl::Interp::eval(const Tcl::ObjPtr& code, Tcl::ErrorStrategy strategy)
+bool Tcl::Interp::eval(const Tcl::ObjPtr& code,
+                       Tcl::ErrorStrategy strategy)
 {
 DOTRACE("Tcl::Interp::eval");
 
@@ -272,7 +274,8 @@ DOTRACE("Tcl::Interp::setObjResult");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Tcl::Interp::setGlobalVar(const char* var_name, const Tcl::ObjPtr& var) const
+void Tcl::Interp::setGlobalVar(const char* var_name,
+                               const Tcl::ObjPtr& var) const
 {
 DOTRACE("Tcl::Interp::setGlobalVar");
 
@@ -451,10 +454,10 @@ DOTRACE("Tcl::Interp::deleteCommand");
 
   // We must check if the interp has been tagged for deletion already,
   // since if it is then we must not attempt to use it to delete a Tcl
-  // command (this results in "called Tcl_HashEntry on deleted table"). Not
-  // deleting the command in that case does not cause a resource leak,
-  // however, since the Tcl_Interp as part if its own destruction will
-  // delete all commands associated with it.
+  // command (this results in "called Tcl_HashEntry on deleted
+  // table"). Not deleting the command in that case does not cause a
+  // resource leak, however, since the Tcl_Interp as part if its own
+  // destruction will delete all commands associated with it.
   if ( !interpDeleted() )
     {
       Tcl_DeleteCommand(intp(), cmd_name);
