@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Sat Jul  3 11:46:58 1999
+// written: Wed Sep 29 16:52:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -268,7 +268,7 @@ public:
     TVecSetterCmd<T>(pkg, 0, attrib, 0, item_argn),
     TclCmd(pkg->interp(), cmd_name,
            usage ? usage : (item_argn ?
-                            "item_id(s) ?new_value(s)?" : "new_value"),
+                            "item_id(s) ?new_value(s)?" : "?new_value?"),
            item_argn+1, item_argn+2, false),
     itsObjcGet(item_argn+1),
     itsObjcSet(item_argn+2) {}
