@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:07 2002
-// written: Mon Aug  5 19:02:26 2002
+// written: Sat Aug 10 15:12:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,6 +89,12 @@ DOTRACE("GlxWrapper::GlxWrapper");
   DebugEvalNL(itsVisInfo->bits_per_rgb);
 
   createContext(direct, share);
+}
+
+GlxWrapper::~GlxWrapper()
+{
+  glXDestroyContext(itsDisplay, itsContext);
+  XFree(itsVisInfo);
 }
 
 GlxWrapper* GlxWrapper::make(Display* dpy, GlxOpts& opts)

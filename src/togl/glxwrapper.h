@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:03 2002
-// written: Mon Aug  5 12:16:23 2002
+// written: Sat Aug 10 15:12:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,10 +37,7 @@ public:
 
   static GlxWrapper* make(Display* dpy, GlxOpts& opts);
 
-  ~GlxWrapper()
-  {
-    glXDestroyContext(itsDisplay, itsContext);
-  }
+  ~GlxWrapper();
 
   bool isDirect() const
   {
