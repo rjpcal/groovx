@@ -37,13 +37,13 @@ set files {
     { gtext_test.tcl 1 }
     { gxsep_test.tcl 1 }
     { house_test.tcl 1 }
-    { iodb_test.tcl 1 }
     { jitter_test.tcl 1 }
     { kbdrh_test.tcl 1 }
     { maskhatch_test.tcl 1 }
     { misc_test.tcl 1 }
     { morphyface_test.tcl 1 }
     { nullrh_test.tcl 1 }
+    { objdb_test.tcl 1 }
     { objlist_test.tcl 1 }
     { objtogl_test.tcl 1 }
     { position_test.tcl 1 }
