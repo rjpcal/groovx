@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Dec  1 15:31:56 1999
+// written: Sat Dec  4 02:09:58 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include <sys/time.h>
 #include <list>
 
+#include "experiment.h"
 #include "rand.h"
 #include "iostl.h"
 #include "reader.h"
@@ -288,7 +289,7 @@ DOTRACE("Block::trialDescription");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Block::beginTrial() {
+void Block::beginTrial(Experiment*) {
 DOTRACE("Block::beginTrial");
   if (itsVerbose) {
 	 cerr << trialDescription() << endl;
@@ -301,23 +302,22 @@ DOTRACE("Block::beginTrial");
   itsTimer.restart();
 }
 
-void Block::drawTrial() {
+void Block::drawTrial(Experiment* expt) {
 DOTRACE("Block::drawTrial");
   if (isComplete()) return;
 
-  // This single call sets the Tlist's current trial and visibility
-  // appropriately, then renders the objects and flushes the graphics.
-  theTlist.drawTrial(currentTrial());
+  theTlist.getCheckedPtr(currentTrial())->trDraw(true);
+  expt->edSetCurrentTrial(currentTrial());
 }
 
-void Block::undrawTrial() {
+void Block::undrawTrial(Experiment*) {
 DOTRACE("Block::undrawTrial");
   if (isComplete()) return;
 
-  theTlist.undrawTrial(currentTrial());
+  theTlist.getCheckedPtr(currentTrial())->trUndraw(true);
 }
 
-void Block::abortTrial() {
+void Block::abortTrial(Experiment*) {
 DOTRACE("Block::abortTrial");
   if (isComplete()) return;
 
@@ -338,7 +338,7 @@ DOTRACE("Block::abortTrial");
   --itsCurTrialSeqIdx;
 }
 
-void Block::processResponse(int response) {
+void Block::processResponse(int response, Experiment*) {
 DOTRACE("Block::processResponse");
   if (isComplete()) return;
 
@@ -349,7 +349,7 @@ DOTRACE("Block::processResponse");
   }
 }
 
-void Block::endTrial() {
+void Block::endTrial(Experiment*) {
 DOTRACE("Block::endTrial");
   if (isComplete()) return;
 
@@ -357,11 +357,11 @@ DOTRACE("Block::endTrial");
   ++itsCurTrialSeqIdx;
 }
 
-void Block::haltExpt() {
+void Block::haltExpt(Experiment* expt) {
 DOTRACE("Block::haltExpt");
-  undrawTrial();
-  abortTrial();
-  endTrial();
+  undrawTrial(expt);
+  abortTrial(expt);
+  endTrial(expt);
 }
 
 void Block::undoPrevTrial() {
