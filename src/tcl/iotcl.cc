@@ -30,8 +30,6 @@
 #ifndef IOTCL_CC_DEFINED
 #define IOTCL_CC_DEFINED
 
-#include "tcl/iotcl.h"
-
 #include "io/io.h"
 #include "io/ioutil.h"
 
@@ -42,9 +40,15 @@
 
 #include "util/trace.h"
 
-void Tcl::defIoCommands(Tcl::Pkg* pkg)
+extern "C"
+int Io_Init(Tcl_Interp* interp)
 {
-DOTRACE("Tcl::defIoCommands");
+DOTRACE("Io_Init");
+
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "IO", "$Revision$");
+  pkg->inheritPkg("Obj");
+  Tcl::defGenericObjCmds<IO::IoObject>(pkg);
+
   pkg->defVec( "stringify", "item_id(s)", IO::stringify );
   pkg->defVec( "destringify", "item_id(s) string(s)", IO::destringify );
 
@@ -54,24 +58,6 @@ DOTRACE("Tcl::defIoCommands");
   pkg->def( "save", "item_id filename", IO::saveASW );
   pkg->def( "load", "item_id filename", IO::loadASR );
   pkg->def( "retrieve", "filename", IO::retrieveASR );
-}
-
-extern "C"
-int Io_Init(Tcl_Interp* interp)
-{
-DOTRACE("Io_Init");
-
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "IO", "$Revision$");
-  pkg->inheritPkg("Obj");
-  Tcl::defGenericObjCmds<IO::IoObject>(pkg);
-  Tcl::defIoCommands(pkg);
-
-  pkg->eval("proc ::-> {args} {\n"
-            "set ids [lindex $args 0]\n"
-            "set namesp [Obj::type [lindex $ids 0]]\n"
-            "set cmd [lreplace $args 0 1 [lindex $args 1] $ids]\n"
-            "namespace eval $namesp $cmd\n"
-            "}");
 
   return pkg->initStatus();
 }

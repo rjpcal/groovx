@@ -215,9 +215,18 @@ DOTRACE("Obj_Init");
   pkg->def( "newarr", "typename array_size=1", &objNewArr );
   pkg->def( "delete", "item_id(s)", &objDelete );
 
-  pkg->eval("proc new {args} { eval Obj::new $args }");
-  pkg->eval("proc newarr {args} { eval Obj::newarr $args }");
-  pkg->eval("proc delete {args} { eval Obj::delete $args }");
+  pkg->eval("proc new {args} { eval Obj::new $args }\n"
+            "\n"
+            "proc newarr {args} { eval Obj::newarr $args }\n"
+            "\n"
+            "proc delete {args} { eval Obj::delete $args }\n"
+            "\n"
+            "proc ::-> {args} {\n"
+            "  set ids [lindex $args 0]\n"
+            "  set namesp [Obj::type [lindex $ids 0]]\n"
+            "  set cmd [lreplace $args 0 1 [lindex $args 1] $ids]\n"
+            "  namespace eval $namesp $cmd\n"
+            "}");
 
   return pkg->initStatus();
 }
