@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Nov 13 13:21:37 2002
+// written: Wed Nov 13 13:47:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,8 +105,6 @@ const FieldMap& GrObj::classFields()
     Field("category", make_mypair(&GrObj::category, &GrObj::setCategory),
           0, 0, 20, 1, Field::NEW_GROUP),
     Field("renderMode", GETSET(GrObj, RenderMode), 1, 1, 4, 1),
-    Field("cacheFilename", GETSET(GrObj, CacheFilename), 0, 0, 20, 1,
-          Field::STRING),
     Field("bbVisibility", GETSET(GrObj, BBVisibility),
           false, false, true, true, Field::BOOLEAN),
     Field("scalingMode", GETSET(GrObj, ScalingMode), 1, 1, 3, 1),
@@ -220,12 +218,6 @@ int GrObj::getRenderMode() const
 // manipulators //
 //////////////////
 
-void GrObj::setBitmapCacheDir(const char* dirname)
-{
-DOTRACE("GrObj::setBitmapCacheDir");
-  BitmapCacheNode::BITMAP_CACHE_DIR = dirname;
-}
-
 void GrObj::setBBVisibility(bool visibility)
 {
   itsImpl->itsBB->setVisible(visibility);
@@ -312,7 +304,6 @@ void GrObj::setRenderMode(int mode)
 {
 DOTRACE("GrObj::setRenderMode");
 
-  itsImpl->itsBitmapCache->setMode(mode);
   itsImpl->itsGLCache->setMode(mode);
   this->sigNodeChanged.emit();
 }
@@ -322,37 +313,10 @@ DOTRACE("GrObj::setRenderMode");
 // actions //
 /////////////
 
-void GrObj::saveBitmapCache(Gfx::Canvas& canvas, const char* filename) const
-{
-DOTRACE("GrObj::saveBitmapCache");
-  const_cast<GrObj*>(this)->setRenderMode(Gmodes::GL_BITMAP_CACHE);
-
-  draw(canvas);
-
-  itsImpl->itsBitmapCache->saveBitmapCache(canvas, filename);
-}
-
-void GrObj::update(Gfx::Canvas& /*canvas*/) const
-{
-DOTRACE("GrObj::update");
-}
-
 void GrObj::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObj::draw");
   itsImpl->itsTopNode->draw(canvas);
-}
-
-const fstring& GrObj::getCacheFilename() const
-{
-DOTRACE("GrObj::getCacheFilename");
-  return itsImpl->itsBitmapCache->getCacheFilename();
-}
-
-void GrObj::setCacheFilename(const fstring& name)
-{
-DOTRACE("GrObj::setCacheFilename");
-  itsImpl->itsBitmapCache->setCacheFilename(name);
 }
 
 double GrObj::getWidthFactor() const
