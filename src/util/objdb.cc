@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri Sep 29 16:09:38 2000
+// written: Fri Sep 29 18:42:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,10 +120,9 @@ DOTRACE("IoPtrList::legacyDesrlz");
 
   firstVacant() = lreader->readInt("itsFirstVacant");
 
-	 // The next character after itsFirstVacant had better be a newline,
-	 // and we need to remove it from the stream.
-  if ( lreader->getChar() != '\n' )
-	 { throw IO::LogicError(ioTag.c_str()); }
+  // The next character after itsFirstVacant had better be a newline,
+  // and we need to remove it from the stream.
+  lreader->grabNewline();
 }
 
 void IoPtrList::readFrom(IO::Reader* reader) {
