@@ -54,8 +54,8 @@ test "$PACKAGE-Gtext::stringify" "stringify, destringify, and compare" {
 	 set ::GTEXT [Obj::new Gtext]
 	 IO::destringify $::GTEXT $str1
 	 set str2 [IO::stringify $::GTEXT]
-	 string equal $str1 $str2
-} {^1$}
+	 return "[string equal $str1 $str2] $str1 $str2"
+} {^1 }
 
 ### Gtext rendering ###
 test "$PACKAGE-rendering" "normal render" {
