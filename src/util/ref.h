@@ -261,7 +261,7 @@ template <class To, class Fr>
 Util::Ref<To> dynamicCast(Util::Ref<Fr> p)
 {
   Fr* f = p.get();
-  To* t = dynamic_cast<To*>(f); // will throw bad_cast on failure
+  To* t = dynamic_cast<To*>(f);
   if (t == 0)
     Util::throwBadCast(typeid(To), typeid(Fr));
   return Util::Ref<To>(t);
@@ -474,7 +474,7 @@ Util::SoftRef<To> dynamicCast(Util::SoftRef<Fr> p)
   if (p.isValid())
     {
       Fr* f = p.get();
-      To* t = dynamic_cast<To*>(f); // will throw bad_cast on failure
+      To* t = dynamic_cast<To*>(f);
       if (t == 0)
         Util::throwBadCast(typeid(To), typeid(Fr));
       return Util::SoftRef<To>(t);
