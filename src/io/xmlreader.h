@@ -30,20 +30,17 @@
 #ifndef XMLREADER_H_DEFINED
 #define XMLREADER_H_DEFINED
 
-#include "util/pointers.h"
-
-#ifdef HAVE_IOSFWD
-#  include <iosfwd>
-#else
-class istream;
-#endif
+namespace Util
+{
+  template <class T> class Ref;
+}
 
 namespace IO
 {
+  class IoObject;
   class Reader;
 
-  /// Make an XML reader that reads from \c STD_IO::istream.
-  shared_ptr<IO::Reader> makeXMLReader(STD_IO::istream& is);
+  Util::Ref<IO::IoObject> loadXML(const char* filename);
 
   void xmlDebug(const char* filename);
 }
