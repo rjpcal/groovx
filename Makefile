@@ -51,7 +51,6 @@ DEP := ./dep/$(PLATFORM)
 OBJ := obj/$(PLATFORM)
 LOGS := ./logs
 DOC := ./doc
-IDEP := ./idep
 SCRIPTS := ./scripts
 
 LOCAL_LIB := $(LOCAL_ARCH)/lib
@@ -512,9 +511,6 @@ dir_structure:
 # Miscellaneous targets
 #
 #-------------------------------------------------------------------------
-
-$(IDEP)/AdepAliases: $(IDEP)/FileList $(ALL_SOURCES) $(ALL_HEADERS)
-	adep -s -f$(IDEP)/FileList > $(IDEP)/AdepAliases
 
 backup:
 	tclsh $(SCRIPTS)/Backup.tcl
