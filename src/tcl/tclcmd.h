@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Mar 15 19:18:30 2000
+// written: Wed Mar 15 19:45:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ public:
 
   enum Pos { BEGIN, END };
 
-  ListIterator(Tcl_Obj* aList, Pos pos = BEGIN);
+  ListIterator(Tcl_Interp* interp, Tcl_Obj* aList, Pos pos = BEGIN);
   ListIterator(const ListIterator& other);
   ~ListIterator();
 
@@ -74,6 +74,7 @@ public:
 private:
   void swap(ListIterator& other);
 
+  Tcl_Interp* itsInterp;
   Tcl_Obj* itsList;
   Tcl_Obj** itsListElements;
   unsigned int itsElementCount;
@@ -181,7 +182,7 @@ public:
       copy the result into \a val. */
   template <class T>
   void getValFromArg(int argn, T& val)
-	 { getValFromObj(itsObjv[argn], val); }
+	 { val = getValFromObj(itsInterp, itsObjv[argn], (T*)0); }
 
   //---------------------------------------------------------------------
   //
@@ -211,9 +212,7 @@ public:
 	 safeSplitList(itsObjv[argn], &count, &elements);
 
 	 for (int i = 0; i < count; ++i) {
-		T val;
-		getValFromObj(elements[i], val);
-		*itr = val;
+		*itr = getValFromObj(itsInterp, elements[i], (T*)0);
 		++itr;
 	 }
   }
@@ -239,7 +238,7 @@ public:
   template <class T>
   ListIterator<T> beginOfArg(int argn, T* /*dummy*/=0)
 	 {
-		return ListIterator<T>(itsObjv[argn], ListIterator<T>::BEGIN);
+		return ListIterator<T>(itsInterp, itsObjv[argn], ListIterator<T>::BEGIN);
 	 }
 
 
@@ -249,7 +248,7 @@ public:
   template <class T>
   ListIterator<T> endOfArg(int argn, T* /*dummy*/=0)
 	 {
-		return ListIterator<T>(itsObjv[argn], ListIterator<T>::END);
+		return ListIterator<T>(itsInterp, itsObjv[argn], ListIterator<T>::END);
 	 }
 
   //---------------------------------------------------------------------
@@ -402,7 +401,7 @@ private:
   void lappendCstring(const char* val);
 
   template <class T>
-  static void getValFromObj(Tcl_Obj* obj, T& val);
+  static T getValFromObj(Tcl_Interp* interp, Tcl_Obj* obj, T* /*dummy*/=0);
 
   TclCmd(const TclCmd&);
   TclCmd& operator=(const TclCmd&);
