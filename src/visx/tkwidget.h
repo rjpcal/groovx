@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Mon Jun 18 09:49:39 2001
+// written: Thu Jul 19 20:48:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,8 +45,10 @@ public:
   virtual void addButtonListener (Util::Ref<GWT::ButtonListener> b);
   virtual void addKeyListener    (Util::Ref<GWT::KeyListener> k);
 
-  void removeButtonListeners();
-  void removeKeyListeners();
+  virtual void removeButtonListeners();
+  virtual void removeKeyListeners();
+
+  void hook();
 
 private:
   TkWidget(const TkWidget&);
