@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 14:45:52 2003
-// written: Tue May 13 11:30:21 2003
+// written: Wed May 14 14:55:24 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -83,37 +83,21 @@ bool GaborSpec::operator<(const GaborSpec& x) const
 
 GaborPatch::GaborPatch(const GaborSpec& spec)
   :
-  itsSize(int(8*spec.sigma + 0.5)),
-  itsData(new double[itsSize*itsSize])
+  itsSpec      ( spec ),
+  itsSize      ( int(8*spec.sigma + 0.5) ),
+  itsCenter    ( itsSize/2.0 + 0.5 ),
+  itsCosTheta  ( cos(spec.theta) ),
+  itsSinTheta  ( sin(spec.theta) ),
+  itsSigmaSqr  ( 2.0* spec.sigma * spec.sigma ),
+  itsData      ( 0 )
 {
 DOTRACE("GaborPatch::GaborPatch");
+}
 
-  const double ssqr  = 2.*spec.sigma*spec.sigma;
-
-  const double cos_theta = cos(spec.theta);
-  const double sin_theta = sin(spec.theta);
-
-  double* ptr = itsData;
-
-  for (int iy = 0; iy < itsSize; ++iy)
-    {
-      const double fy = iy - itsSize / 2.0 + 0.5;
-
-      for (int ix = 0; ix < itsSize; ++ix)
-        {
-          const double fx = ix - itsSize / 2.0 + 0.5;
-
-          const double dx = cos_theta * fx - sin_theta * fy;
-          const double dy = sin_theta * fx + cos_theta * fy;
-
-          const double dsqr  = (dx*dx + dy*dy) / ssqr;
-
-          const double sinus = cos(spec.omega * dx + spec.phi);
-
-          const double gauss = exp(-dsqr);
-          *ptr++ = spec.contrast * sinus * gauss;
-        }
-    }
+GaborPatch::~GaborPatch()
+{
+DOTRACE("GaborPatch::~GaborPatch");
+  delete [] itsData;
 }
 
 const GaborPatch& GaborPatch::lookup(const GaborSpec& spec)
@@ -125,6 +109,7 @@ DOTRACE("GaborPatch::lookup");
   if (patch == 0)
     {
       patch = new GaborPatch(spec);
+      patch->fillCache();
     }
 
   return *patch;
@@ -137,6 +122,37 @@ const GaborPatch& GaborPatch::lookup(double sigma, double omega,
   GaborSpec spec(sigma, omega, theta, phi, contrast);
 
   return lookup(spec);
+}
+
+void GaborPatch::fillCache()
+{
+  if (itsData == 0)
+    {
+      itsData = new double[itsSize*itsSize];
+
+      double* ptr = itsData;
+
+      for (int y = 0; y < itsSize; ++y)
+        for (int x = 0; x < itsSize; ++x)
+          *ptr++ = compute(x, y);
+    }
+}
+
+
+double GaborPatch::compute(int x, int y) const
+{
+  const double fy = y - itsCenter;
+  const double fx = x - itsCenter;
+
+  const double dx = itsCosTheta * fx - itsSinTheta * fy;
+  const double dy = itsSinTheta * fx + itsCosTheta * fy;
+
+  const double dsqr  = (dx*dx + dy*dy) / itsSigmaSqr;
+
+  const double sinus = cos(itsSpec.omega * dx + itsSpec.phi);
+
+  const double gauss = exp(-dsqr);
+  return itsSpec.contrast * sinus * gauss;
 }
 
 static const char vcid_gaborpatch_cc[] = "$Header$";

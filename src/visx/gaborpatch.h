@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 14:45:43 2003
-// written: Wed May 14 14:12:54 2003
+// written: Wed May 14 14:50:26 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -53,12 +53,14 @@ struct GaborSpec
   const double contrast;  ///< [0..1]
 };
 
+/// Manages a pixmap representation of a gabor patch.
+/** Can either compute values directly, or can cache the entire patch. */
 class GaborPatch
 {
 public:
   GaborPatch(const GaborSpec& spec);
 
-  ~GaborPatch() { delete [] itsData; }
+  ~GaborPatch();
 
   static const GaborPatch& lookup(const GaborSpec& s);
 
@@ -67,14 +69,35 @@ public:
 
   int size() const { return itsSize; }
 
-  double at(int x, int y) const { return itsData[x + y*itsSize]; }
+  /// Returns the gabor patch value at the given coordinates.
+  /** If the patch has been cached, then we just lookup the value out of
+      memory, otherwise we compute it. */
+  double at(int x, int y) const
+  {
+    return (itsData != 0)
+      ? itsData[x + y*itsSize]
+      : compute(x, y);
+  }
+
+  /// Force the entire patch to be cached.
+  /** As usual, this is a space-time tradeoff... using the cache will make
+      at() lookups faster, but will obviously expend more memory to do
+      so. */
+  void fillCache();
 
 private:
-  const int itsSize;
-  double* const itsData;
-
   GaborPatch(const GaborPatch&);
   GaborPatch& operator=(const GaborPatch&);
+
+  double compute(int x, int y) const;
+
+  const GaborSpec itsSpec;
+  const int itsSize;
+  const double itsCenter;
+  const double itsCosTheta;
+  const double itsSinTheta;
+  const double itsSigmaSqr;
+  double* itsData;
 };
 
 static const char vcid_gaborpatch_h[] = "$Header$";
