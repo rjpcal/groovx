@@ -385,6 +385,12 @@ public:
   void arc(double x, double y, double r, double start, double end,
            bool reverse=false)
   {
+    // A good cubic Bezier approximation for a unit circle 90 degree arc is:
+    //
+    //   (1,0) (1,a) (a,1) (0,1)
+    //
+    // where a = 4/3*(sqrt(2)-1).
+
     indent(); push1(x); push1(y); push1(r); push1(start); push1(end);
     if (reverse)
       itsFstream << "arcn\n";
