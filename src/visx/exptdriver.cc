@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Sat Dec  4 02:31:42 1999
+// written: Sat Dec  4 03:52:11 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@
 #include "responsehandler.h"
 #include "tclevalcmd.h"
 #include "timinghdlr.h"
-#include "tlisttcl.h"
+#include "tlistutils.h"
 #include "trial.h"
 #include "objlist.h"
 #include "objtogl.h"
@@ -946,7 +946,7 @@ DOTRACE("ExptDriver::Impl::storeData");
 	 
 	 // Write the responses file
 	 string resp_filename = string("resp") + unique_file_extension;
-	 TlistTcl::writeResponsesProc(resp_filename.c_str());
+	 TlistUtils::writeResponses(Tlist::theTlist(), resp_filename.c_str());
 	 cout << "wrote file " << resp_filename << endl;
 
 	 // Change file access modes to allow read-only by user and group
