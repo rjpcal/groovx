@@ -197,6 +197,8 @@ proc testDrawCmd { objname } {
 		  if { ![Togl::inited] } { Togl::init "-rgba false"; ::update }
 
 		  eval ::test $testname {"normal use"} {"
+		      Tlist::reset
+		      PosList::reset
 		      set trial \[Trial::Trial\]
 		      set pos \[Pos::Pos\]
 		      Trial::add \$trial $this(objid) \$pos
