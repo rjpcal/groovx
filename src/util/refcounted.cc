@@ -84,15 +84,15 @@ Util::RefCounts::~RefCounts()
 {
 DOTRACE("Util::RefCounts::~RefCounts");
 
-  AbortIf(itsStrong > 0);
-  AbortIf(itsWeak > 0);
+  if (itsStrong > 0) Panic("RefCounts object destroyed before strong refcount fell to 0");
+  if (itsWeak > 0) Panic("RefCounts object destroyed before weak refcount fell to 0");
 }
 
 void Util::RefCounts::acquireWeak()
 {
 DOTRACE("Util::RefCounts::acquireWeak");
 
-  AbortIf(itsWeak == REFCOUNT_MAX);
+  if (itsWeak == REFCOUNT_MAX) Panic("weak refcount overflow");
 
   ++itsWeak;
 }
@@ -101,12 +101,13 @@ Util::RefCounts::Count Util::RefCounts::releaseWeak()
 {
 DOTRACE("Util::RefCounts::releaseWeak");
 
-  AbortIf(itsWeak == 0);
+  if (itsWeak == 0) Panic("weak refcount already 0 in releaseWeak()");
 
   const Count result = --itsWeak;
 
-  if (itsStrong == 0 && itsWeak == 0)
+  if (itsWeak == 0)
     {
+      if (itsStrong > 0) Panic("weak refcount fell to 0 before strong refcount");
       delete this;
     }
 
@@ -118,7 +119,7 @@ void Util::RefCounts::acquireStrong()
 DOTRACE("Util::RefCounts::acquireStrong");
 
   if (itsVolatile) Panic("attempt to use strong refcount with volatile object");
-  AbortIf(itsStrong == REFCOUNT_MAX);
+  if (itsStrong == REFCOUNT_MAX) Panic("strong refcount overflow");
 
   ++itsStrong;
 }
@@ -128,23 +129,17 @@ Util::RefCounts::Count Util::RefCounts::releaseStrong()
 DOTRACE("Util::RefCounts::releaseStrong");
 
   if (itsVolatile) Panic("attempt to use strong refcount with volatile object");
-  AbortIf(itsStrong == 0);
+  if (itsStrong == 0) Panic("strong refcount already 0 in releaseStrong()");
+  if (itsWeak == 0) Panic("weak refcount prematurely fell to 0");
 
-  const Count result = --itsStrong;
-
-  if (itsStrong == 0 && itsWeak == 0)
-    {
-      delete this;
-    }
-
-  return result;
+  return --itsStrong;
 }
 
 void Util::RefCounts::releaseStrongNoDelete()
 {
 DOTRACE("Util::RefCounts::releaseStrongNoDelete");
 
-  AbortIf(itsStrong == 0);
+  if (itsStrong == 0) Panic("strong refcount already 0 in releaseStrongNoDelete()");
 
   --itsStrong;
 }
@@ -192,9 +187,10 @@ DOTRACE("Util::RefCounted::~RefCounted");
 
   // Must guarantee that (strong-count == 0) when the refcounted object is
   // destroyed. Without that guarantee, weak references will be messed up,
-  // since they'll think that the object is still alive (i.e. strong count
-  // > 0) when it actually is already destroyed.
-  AbortIf(itsRefCounts->itsStrong > 0);
+  // since they'll think that the object is still alive (i.e. strong
+  // refcount > 0) when it actually is already destroyed.
+  if (itsRefCounts->itsStrong > 0)
+    Panic("RefCounted object destroyed before strong refcount dropped to 0");
 
   itsRefCounts->itsOwnerAlive = false;
   itsRefCounts->releaseWeak();
