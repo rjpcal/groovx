@@ -73,7 +73,7 @@ foreach dir [glob \[a-z\]*/] {
 
     set pkg [string trimright $dir /]
 
-    set shlib $libdir/${pkg}.so
+    set shlib $libdir/${pkg}[info sharedlibextension]
 
     regsub -all {\.cc} $ccfiles .do files
 
