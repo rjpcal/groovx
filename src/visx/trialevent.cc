@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Wed Jun 20 18:26:11 2001
+// written: Sat Jul 21 20:35:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,7 @@
 #include "util/error.h"
 #include "util/errorhandler.h"
 #include "util/log.h"
+#include "util/ref.h"
 
 #include <tcl.h>
 #include <typeinfo>
@@ -54,7 +55,7 @@ public:
 TrialEvent::TrialEvent(int msec) :
   itsRequestedDelay(msec),
   itsToken(0),
-  itsWidget(0),
+  itsWidget(),
   itsErrorHandler(0),
   itsTrial(0),
   itsIsPending(false),
@@ -68,7 +69,8 @@ TrialEvent::TrialEvent(int msec) :
 DOTRACE("TrialEvent::TrialEvent");
 }
 
-TrialEvent::~TrialEvent() {
+TrialEvent::~TrialEvent()
+{
 DOTRACE("TrialEvent::~TrialEvent");
 
   cancel();
@@ -81,7 +83,8 @@ DOTRACE("TrialEvent::~TrialEvent");
   DebugEvalNL(averageError);
 }
 
-void TrialEvent::readFrom(IO::Reader* reader) {
+void TrialEvent::readFrom(IO::Reader* reader)
+{
 DOTRACE("TrialEvent::readFrom");
 
   cancel(); // cancel since the event is changing state
@@ -89,15 +92,17 @@ DOTRACE("TrialEvent::readFrom");
   reader->readValue("requestedDelay", itsRequestedDelay);
 }
 
-void TrialEvent::writeTo(IO::Writer* writer) const {
+void TrialEvent::writeTo(IO::Writer* writer) const
+{
 DOTRACE("TrialEvent::writeTo");
 
   writer->writeValue("requestedDelay", itsRequestedDelay);
 }
 
-void TrialEvent::schedule(GWT::Widget& widget,
+void TrialEvent::schedule(Util::WeakRef<GWT::Widget> widget,
                           Util::ErrorHandler& errhdlr,
-                          TrialBase& trial) {
+                          TrialBase& trial)
+{
 DOTRACE("TrialEvent::schedule");
   // Cancel any possible previously pending invocation.
   cancel();
@@ -106,29 +111,32 @@ DOTRACE("TrialEvent::schedule");
   itsTimer.restart();
 
   // Remember the participants
-  itsWidget = &widget;
+  itsWidget = widget;
   itsErrorHandler = &errhdlr;
   itsTrial = &trial;
 
   // If the requested time is zero or negative - i.e., immediate,
   // don't bother creating a timer handler. Instead, generate a direct
   // invocation.
-  if (itsRequestedDelay <= 0) {
-    itsIsPending = true;
-    invokeTemplate();
-  }
+  if (itsRequestedDelay <= 0)
+    {
+      itsIsPending = true;
+      invokeTemplate();
+    }
   // Otherwise, set up a timer that will call the invocation after the
   // specified amount of time.
-  else {
-    itsActualRequest = itsRequestedDelay + itsEstimatedOffset;
-    itsToken = Tcl_CreateTimerHandler(itsActualRequest,
-                                      dummyInvoke,
-                                      static_cast<ClientData>(this));
-    itsIsPending = true;
-  }
+  else
+    {
+      itsActualRequest = itsRequestedDelay + itsEstimatedOffset;
+      itsToken = Tcl_CreateTimerHandler(itsActualRequest,
+                                        dummyInvoke,
+                                        static_cast<ClientData>(this));
+      itsIsPending = true;
+    }
 }
 
-void TrialEvent::cancel() {
+void TrialEvent::cancel()
+{
 DOTRACE("TrialEvent::cancel");
   // Cancel the timer handler associated with itsToken. This is a safe
   // no-op if itsToken is NULL.
@@ -138,7 +146,8 @@ DOTRACE("TrialEvent::cancel");
   itsToken = 0;
 }
 
-void TrialEvent::dummyInvoke(ClientData clientData) {
+void TrialEvent::dummyInvoke(ClientData clientData)
+{
   TrialEvent* event = static_cast<TrialEvent *>(clientData);
 
   Assert(event != 0);
@@ -146,7 +155,8 @@ void TrialEvent::dummyInvoke(ClientData clientData) {
   event->invokeTemplate();
 }
 
-void TrialEvent::invokeTemplate() {
+void TrialEvent::invokeTemplate()
+{
 DOTRACE("TrialEvent::invokeTemplate");
 
   itsIsPending = false;
@@ -179,11 +189,11 @@ DOTRACE("TrialEvent::invokeTemplate");
     int(double(itsTotalOffset)/itsInvokeCount - 0.5);
 
   // Do the actual event callback.
-  if ( itsWidget != 0 && itsErrorHandler != 0 && itsTrial != 0 )
+  if ( itsWidget.isValid() && itsErrorHandler != 0 && itsTrial != 0 )
     {
       try
         {
-          invoke(*itsWidget, *itsTrial);
+          invoke(itsWidget, *itsTrial);
         }
       catch (ErrorWithMsg& err)
         {
@@ -211,7 +221,8 @@ AbortTrialEvent::AbortTrialEvent(int msec) : TrialEvent(msec) {}
 
 AbortTrialEvent::~AbortTrialEvent() {}
 
-void AbortTrialEvent::invoke(GWT::Widget&, TrialBase& trial) {
+void AbortTrialEvent::invoke(Util::WeakRef<GWT::Widget>, TrialBase& trial)
+{
 DOTRACE("AbortTrialEvent::invoke");
   trial.trAbortTrial();
 }
@@ -220,18 +231,20 @@ DrawEvent::DrawEvent(int msec) : TrialEvent(msec) {}
 
 DrawEvent::~DrawEvent() {}
 
-void DrawEvent::invoke(GWT::Widget& widget, TrialBase& trial) {
+void DrawEvent::invoke(Util::WeakRef<GWT::Widget> widget, TrialBase& trial)
+{
 DOTRACE("DrawEvent::invoke");
   trial.installSelf(widget);
-  widget.setVisibility(true);
-  widget.display();
+  widget->setVisibility(true);
+  widget->display();
 }
 
 EndTrialEvent::EndTrialEvent(int msec) : TrialEvent(msec) {}
 
 EndTrialEvent::~EndTrialEvent() {}
 
-void EndTrialEvent::invoke(GWT::Widget&, TrialBase& trial) {
+void EndTrialEvent::invoke(Util::WeakRef<GWT::Widget>, TrialBase& trial)
+{
 DOTRACE("EndTrialEvent::invoke");
   trial.trEndTrial();
   trial.trNextTrial();
@@ -241,7 +254,8 @@ NextNodeEvent::NextNodeEvent(int msec) : TrialEvent(msec) {}
 
 NextNodeEvent::~NextNodeEvent() {}
 
-void NextNodeEvent::invoke(GWT::Widget&, TrialBase& trial) {
+void NextNodeEvent::invoke(Util::WeakRef<GWT::Widget>, TrialBase& trial)
+{
 DOTRACE("NextNodeEvent::invoke");
   trial.trNextNode();
 }
@@ -250,7 +264,8 @@ AllowResponsesEvent::AllowResponsesEvent(int msec) : TrialEvent(msec) {}
 
 AllowResponsesEvent::~AllowResponsesEvent() {}
 
-void AllowResponsesEvent::invoke(GWT::Widget&, TrialBase& trial) {
+void AllowResponsesEvent::invoke(Util::WeakRef<GWT::Widget>, TrialBase& trial)
+{
 DOTRACE("AllowResponsesEvent::invoke");
   trial.trAllowResponses();
 }
@@ -259,7 +274,8 @@ DenyResponsesEvent::DenyResponsesEvent(int msec) : TrialEvent(msec) {}
 
 DenyResponsesEvent::~DenyResponsesEvent() {}
 
-void DenyResponsesEvent::invoke(GWT::Widget&, TrialBase& trial) {
+void DenyResponsesEvent::invoke(Util::WeakRef<GWT::Widget>, TrialBase& trial)
+{
 DOTRACE("DenyResponsesEvent::invoke");
   trial.trDenyResponses();
 }
@@ -268,45 +284,50 @@ UndrawEvent::UndrawEvent(int msec) : TrialEvent(msec) {}
 
 UndrawEvent::~UndrawEvent() {}
 
-void UndrawEvent::invoke(GWT::Widget& widget, TrialBase&) {
+void UndrawEvent::invoke(Util::WeakRef<GWT::Widget> widget, TrialBase&)
+{
 DOTRACE("UndrawEvent::invoke");
-  widget.undraw();
+  widget->undraw();
 }
 
 SwapBuffersEvent::SwapBuffersEvent(int msec) : TrialEvent(msec) {}
 
 SwapBuffersEvent::~SwapBuffersEvent() {}
 
-void SwapBuffersEvent::invoke(GWT::Widget& widget, TrialBase&) {
+void SwapBuffersEvent::invoke(Util::WeakRef<GWT::Widget> widget, TrialBase&)
+{
 DOTRACE("SwapBuffersEvent::invoke");
-  widget.swapBuffers();
+  widget->swapBuffers();
 }
 
 RenderBackEvent::RenderBackEvent(int msec) : TrialEvent(msec) {}
 
 RenderBackEvent::~RenderBackEvent() {}
 
-void RenderBackEvent::invoke(GWT::Widget& widget, TrialBase&) {
+void RenderBackEvent::invoke(Util::WeakRef<GWT::Widget> widget, TrialBase&)
+{
 DOTRACE("RenderBackEvent::invoke");
-  widget.getCanvas().drawOnBackBuffer();
+  widget->getCanvas().drawOnBackBuffer();
 }
 
 RenderFrontEvent::RenderFrontEvent(int msec) : TrialEvent(msec) {}
 
 RenderFrontEvent::~RenderFrontEvent() {}
 
-void RenderFrontEvent::invoke(GWT::Widget& widget, TrialBase&) {
+void RenderFrontEvent::invoke(Util::WeakRef<GWT::Widget> widget, TrialBase&)
+{
 DOTRACE("RenderFrontEvent::invoke");
-  widget.getCanvas().drawOnFrontBuffer();
+  widget->getCanvas().drawOnFrontBuffer();
 }
 
 ClearBufferEvent::ClearBufferEvent(int msec) : TrialEvent(msec) {}
 
 ClearBufferEvent::~ClearBufferEvent() {}
 
-void ClearBufferEvent::invoke(GWT::Widget& widget, TrialBase&) {
+void ClearBufferEvent::invoke(Util::WeakRef<GWT::Widget> widget, TrialBase&)
+{
 DOTRACE("ClearBufferEvent::invoke");
-  widget.clearscreen();
+  widget->clearscreen();
 }
 
 static const char vcid_trialevent_cc[] = "$Header$";
