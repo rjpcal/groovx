@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Aug  5 20:00:26 2001
-// written: Wed Jun 26 11:13:49 2002
+// written: Thu Sep 12 16:22:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,6 +75,19 @@ namespace Util
   struct Convert<char[N]>
   {
     typedef char CharBlock[N];
+    static CharData toString(const CharBlock& x)
+    {
+      return CharData(x, N-1);
+    }
+  };
+
+  /// Specialization for converting string literals (i.e., const char[]'s)
+  /** WARNING: this will misbehave if passed a char[] that is not a
+      literal... e.g. one that is only partially filled with characters */
+  template <unsigned int N>
+  struct Convert<const char[N]>
+  {
+    typedef const char CharBlock[N];
     static CharData toString(const CharBlock& x)
     {
       return CharData(x, N-1);
