@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar  4 15:00:31 2002
+// written: Mon Mar  4 17:28:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -351,31 +351,81 @@ void MtxSpecs::selectCols(const ColRange& rng)
 //
 ///////////////////////////////////////////////////////////////////////
 
-DataHolder::DataHolder(DataBlock* db) :
-  datablock_(db)
+namespace
 {
-  datablock_->incrRefCount();
+  DataBlock* newDataBlock(int mrows, int ncols, WithPolicies::InitPolicy p)
+  {
+    if (p == WithPolicies::ZEROS) return DataBlock::makeBlank(mrows*ncols);
+    return DataBlock::makeUninitialized(mrows*ncols);
+  }
+
+  DataBlock* newDataBlock(double* data,
+                          int mrows, int ncols, WithPolicies::StoragePolicy s)
+  {
+    switch (s)
+      {
+      case WithPolicies::BORROW:
+        return DataBlock::makeBorrowed(data, mrows*ncols);
+        break;
+      case WithPolicies::REFER:
+        return DataBlock::makeReferred(data, mrows*ncols);
+        break;
+      case WithPolicies::COPY:
+      default:
+        break;
+      }
+
+    return DataBlock::makeDataCopy(data, mrows*ncols);
+  }
+
+#ifdef HAVE_MATLAB
+  DataBlock* newDataBlock(mxArray* a, WithPolicies::StoragePolicy s)
+  {
+    if (!mxIsDouble(a))
+      throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
+
+    return newDataBlock(mxGetPr(a), mxGetM(a), mxGetN(a), s);
+  }
+
+  DataBlock* newDataBlock(const mxArray* a, WithPolicies::StoragePolicy s)
+  {
+    if (!mxIsDouble(a))
+      throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
+
+    if (s != WithPolicies::BORROW && s != WithPolicies::COPY)
+      throw Util::Error("cannot construct a Mtx from a const mxArray* "
+                        "unless the StoragePolicy is COPY or BORROW");
+
+    return newDataBlock(mxGetPr(a), mxGetM(a), mxGetN(a), s);
+  }
+#endif
 }
 
 DataHolder::DataHolder(double* data, int mrows, int ncols, StoragePolicy s) :
-  datablock_(0)
+  datablock_(newDataBlock(data, mrows, ncols, s))
 {
-  switch (s)
-    {
-    case BORROW:
-      datablock_ = DataBlock::makeBorrowed(data, mrows*ncols);
-      break;
-    case REFER:
-      datablock_ = DataBlock::makeReferred(data, mrows*ncols);
-      break;
-    case COPY:
-    default:
-      datablock_ = DataBlock::makeDataCopy(data, mrows*ncols);
-      break;
-    }
-
   datablock_->incrRefCount();
 }
+
+DataHolder::DataHolder(int mrows, int ncols, InitPolicy p) :
+  datablock_(newDataBlock(mrows, ncols, p))
+{
+  datablock_->incrRefCount();
+}
+
+#ifdef HAVE_MATLAB
+DataHolder::DataHolder(mxArray* a, StoragePolicy s) :
+  datablock_(newDataBlock(a, s))
+{
+  datablock_->incrRefCount();
+}
+
+DataHolder::DataHolder(const mxArray* a, StoragePolicy s) :
+  datablock_(newDataBlock(a, s))
+{
+  datablock_->incrRefCount();
+}
+#endif
 
 DataHolder::DataHolder(const DataHolder& other) :
   datablock_(other.datablock_)
@@ -391,6 +441,17 @@ DataHolder::~DataHolder()
 void DataHolder::swap(DataHolder& other)
 {
   std::swap(datablock_, other.datablock_);
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// DataHolderRef definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+void DataHolderRef::swap(DataHolderRef& other)
+{
+  std::swap(ref_, other.ref_);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -412,55 +473,48 @@ MtxBase<Data>::MtxBase(const MtxBase& other) :
   data_(other.data_)
 {}
 
-namespace
-{
-  DataBlock* newDataBlock(int mrows, int ncols, WithPolicies::InitPolicy p)
-  {
-    if (p == WithPolicies::ZEROS) return DataBlock::makeBlank(mrows*ncols);
-    return DataBlock::makeUninitialized(mrows*ncols);
-  }
-}
-
 template <class Data>
-MtxBase<Data>::MtxBase(int mrows, int ncols, InitPolicy p) :
+MtxBase<Data>::MtxBase(int mrows, int ncols, const Data& data) :
   MtxSpecs(mrows, ncols),
-  data_(newDataBlock(mrows, ncols, p))
+  data_(data)
 {}
 
-#ifdef HAVE_MATLAB
 template <class Data>
-MtxBase<Data>::MtxBase(mxArray* a, StoragePolicy s) :
-  MtxSpecs(mxGetM(a), mxGetN(a)),
-  data_(mxGetPr(a), mxGetM(a), mxGetN(a), s)
-{
-  if (!mxIsDouble(a))
-    throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
-}
-
-template <class Data>
-MtxBase<Data>::MtxBase(const mxArray* a, StoragePolicy s) :
-  MtxSpecs(mxGetM(a), mxGetN(a)),
-  data_(mxGetPr(a), mxGetM(a), mxGetN(a), s)
-{
-  if (s != BORROW && s != COPY)
-    throw Util::Error("cannot construct a Mtx from a const mxArray* "
-                      "unless the StoragePolicy is COPY or BORROW");
-
-  if (!mxIsDouble(a))
-    throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
-}
-#endif
+MtxBase<Data>::MtxBase(const MtxSpecs& specs, const Data& data) :
+  MtxSpecs(specs),
+  data_(data)
+{}
 
 template <class Data>
 MtxBase<Data>::~MtxBase() {}
 
 template class MtxBase<DataHolder>;
 
+// template class MtxBase<DataHolderRef>;
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Mtx member definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+#ifdef HAVE_MATLAB
+Mtx::Mtx(mxArray* a, StoragePolicy s = COPY) :
+  Base(MtxSpecs(mxGetM(a), mxGetN(a)), DataHolder(a, s))
+{}
+
+Mtx::Mtx(const mxArray* a, StoragePolicy s = COPY) :
+  Base(MtxSpecs(mxGetM(a), mxGetN(a)), DataHolder(a, s))
+{}
+#endif
+
+Mtx::Mtx(double* data, int mrows, int ncols, StoragePolicy s = COPY) :
+  Base(mrows, ncols, DataHolder(data, mrows, ncols, s))
+{}
+
+Mtx::Mtx(int mrows, int ncols, InitPolicy p = ZEROS) :
+  Base(mrows, ncols, DataHolder(mrows, ncols, p))
+{}
 
 const Mtx& Mtx::emptyMtx()
 {
@@ -470,8 +524,10 @@ const Mtx& Mtx::emptyMtx()
   return m;
 }
 
+// FIXME let's just copy the data using iterators...
 Mtx::Mtx(const Slice& s) :
-  Base(const_cast<double*>(s.dataStart()), s.nelems(), 1, COPY)
+  Base(s.nelems(), 1,
+       DataHolder(const_cast<double*>(s.dataStart()), s.nelems(), 1, COPY))
 {
   if (s.itsStride != 1)
     throw Util::Error("can't initialize Mtx from Slice with stride != 1");

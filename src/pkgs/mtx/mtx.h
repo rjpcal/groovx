@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 16:53:40 2002
+// written: Mon Mar  4 17:27:50 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -402,7 +402,13 @@ class DataHolder : public WithPolicies
 public:
   DataHolder(double* data, int mrows, int ncols, StoragePolicy s);
 
-  DataHolder(DataBlock* db);
+  DataHolder(int mrows, int ncols, InitPolicy p);
+
+  DataHolder(mxArray* a, StoragePolicy s);
+
+  /** With a const mxArray*, only BORROW or COPY are allowed as storage
+      policies, in order to preserve const-correctness. */
+  DataHolder(const mxArray* a, StoragePolicy s);
 
   DataHolder(const DataHolder& other);
 
@@ -426,6 +432,36 @@ private:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
+ * DataHolderRef class.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+class DataHolderRef : public WithPolicies
+{
+public:
+  DataHolderRef(DataHolder& ref) : ref_(&ref) {}
+
+  DataHolderRef(const DataHolderRef& other) : ref_(other.ref_) {}
+
+  ~DataHolderRef() {}
+
+  void swap(DataHolderRef& other);
+
+  const double* storage() const { return ref_->storage(); }
+  double* storage_nc() { return ref_->storage_nc(); }
+
+  int storageLength() const { return ref_->storageLength(); }
+
+private:
+  DataHolderRef& operator=(const DataHolderRef&); // not allowed
+
+  DataHolder* ref_;
+};
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
  * MtxBase class.
  *
  **/
@@ -437,25 +473,16 @@ class MtxBase : public MtxSpecs, public WithPolicies
 private:
   MtxBase& operator=(const MtxBase& other); // not allowed
 
+protected:
   Data data_;
 
-protected:
   void swap(MtxBase& other);
 
   MtxBase(const MtxBase& other);
 
-  MtxBase(int mrows, int ncols, InitPolicy p);
+  MtxBase(int mrows, int ncols, const Data& data);
 
-  MtxBase(double* data, int mrows, int ncols, StoragePolicy s = COPY) :
-    MtxSpecs(mrows, ncols),
-    data_(data, mrows, ncols, s)
-  {}
-
-  MtxBase(mxArray* a, StoragePolicy s);
-
-  /** With a const mxArray*, only BORROW or COPY are allowed as storage
-      policies, in order to preserve const-correctness. */
-  MtxBase(const mxArray* a, StoragePolicy s);
+  MtxBase(const MtxSpecs& specs, const Data& data);
 
   ~MtxBase();
 
@@ -528,7 +555,6 @@ protected:
   double* storage_nc() { return data_.storage_nc(); }
 
 public:
-  void makeUnique() { data_.makeUnique(); }
 
   //
   // Iterators
@@ -716,6 +742,20 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
+ * SubMtxRef class definition
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+// class SubMtxRef : public MtxBase<DataHolderRef>
+// {
+// public:
+
+// };
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
  * Mtx class definition
  *
  **/
@@ -733,17 +773,15 @@ public:
 
   static const Mtx& emptyMtx();
 
-  Mtx(mxArray* a, StoragePolicy s = COPY) : Base(a, s) {}
+  Mtx(mxArray* a, StoragePolicy s = COPY);
 
   /** With a const mxArray*, only BORROW or COPY are allowed as storage
       policies, in order to preserve const-correctness. */
-  Mtx(const mxArray* a, StoragePolicy s = COPY) : Base(a, s) {}
+  Mtx(const mxArray* a, StoragePolicy s = COPY);
 
-  Mtx(double* data, int mrows, int ncols, StoragePolicy s = COPY) :
-    Base(data, mrows, ncols, s) {}
+  Mtx(double* data, int mrows, int ncols, StoragePolicy s = COPY);
 
-  Mtx(int mrows, int ncols, InitPolicy p = ZEROS) :
-    Base(mrows, ncols, p) {}
+  Mtx(int mrows, int ncols, InitPolicy p = ZEROS);
 
   Mtx(const Slice& s);
 
@@ -892,6 +930,8 @@ public:
 
   // this = m1 * m2;
   void assign_MMmul(const Mtx& m1, const Mtx& m2);
+
+  void makeUnique() { Base::data_.makeUnique(); }
 
 private:
   friend class Slice;
