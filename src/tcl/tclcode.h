@@ -56,9 +56,11 @@ public:
 
   Code(Tcl_Obj* cmd_object, Util::ErrorHandler* errHandler);
 
-  int invoke(Tcl_Interp* interp);
+  /// Returns true on success, false on failure.
+  bool invoke(Tcl_Interp* interp);
 
-  int invoke(Tcl::SafeInterp& interp);
+  /// Returns true on success, false on failure.
+  bool invoke(Tcl::SafeInterp& interp);
 
 private:
   Tcl::ObjPtr itsCodeObj;

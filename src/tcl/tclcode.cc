@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:29:16 2001
-// written: Mon Jul 16 14:18:31 2001
+// written: Mon Jul 16 14:20:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ Tcl::Code::Code(Tcl_Obj* cmd_object, Util::ErrorHander* handler) :
   itsErrorHandler(handler)
 {}
 
-int Tcl::Code::invoke(Tcl_Interp* interp)
+bool Tcl::Code::invoke(Tcl_Interp* interp)
 {
   if (interp == 0)
     throw EvalError("Tcl_Interp* was null in Tcl::Code::invoke");
@@ -76,7 +76,7 @@ int Tcl::Code::invoke(Tcl_Interp* interp)
         }
       else if (NONE == itsErrorMode)
         {
-          return TCL_ERROR;
+          return false;
         }
       else if (THROW_EXCEPTION == itsErrorMode)
         {
@@ -86,14 +86,14 @@ int Tcl::Code::invoke(Tcl_Interp* interp)
         {
           Tcl_AppendResult(interp, err.msg_cstr(), (char*) 0);
           Tcl_BackgroundError(interp);
-          return tclresult;
+          return false;
         }
     }
 
-  return TCL_OK;
+  return true;
 }
 
-int Tcl::Code::invoke(Tcl::SafeInterp& interp)
+bool Tcl::Code::invoke(Tcl::SafeInterp& interp)
 {
   invoke(interp.intp());
 }
