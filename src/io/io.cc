@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Tue Nov  2 21:23:44 1999
+// written: Wed Feb 16 15:57:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,8 +59,8 @@ IO::~IO() {
 DOTRACE("IO::~IO");
 }
 
-void IO::serialize(ostream& os, IOFlag flag) const {}
-void IO::deserialize(istream& is, IOFlag flag) {}
+void IO::serialize(ostream&, IOFlag) const {}
+void IO::deserialize(istream&, IOFlag) {}
 int IO::charCount() const { return 0; }
 
 unsigned long IO::id() const {
@@ -97,6 +97,8 @@ DOTRACE("IO::readTypename");
 
   string candidate;
 
+  string first_candidate = correctNames.substr(0, correctNames.find(' ', 0));
+
   string::size_type end_pos = 0;
   string::size_type beg_pos = 0;
 
@@ -117,15 +119,15 @@ DOTRACE("IO::readTypename");
 		return;
 	 }
 
-	 // Move the starting position for the next substring search to one
-	 // past the end of the current search. This ensures that we skip
-	 // over the space character that separates the substrings.
-	 beg_pos = end_pos+1;
+	 // Skip ahead until we find the first non-space character. This
+	 // character will mark the beginning of the next candidate
+	 // typename.
+	 beg_pos = correctNames.find_first_not_of(' ', end_pos+1);
   }
 
   // If we got here, then none of the substrings matched so we must
   // raise an exception.
-  throw InputError(candidate + " typename");
+  throw InputError(first_candidate + " typename");
 }
 
 ///////////////////////////////////////////////////////////////////////
