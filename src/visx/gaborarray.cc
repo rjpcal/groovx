@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Tue May 13 08:31:27 2003
+// written: Tue May 13 09:47:34 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -75,8 +75,6 @@ GaborArray::GaborArray(double gaborPeriod_, double gaborSigma_,
   gaborSigma(gaborSigma_),
   sizeX(sizeX_),
   sizeY(sizeY_),
-  halfX(0.5*sizeX),
-  halfY(0.5*sizeY),
   backgIniSpacing(backgIniSpacing_),
   backgMinSpacing(backgMinSpacing_),
   backgMinSpacingSqr(backgMinSpacing*backgMinSpacing),
@@ -330,6 +328,9 @@ DOTRACE("GaborArray::fillElements");
 
   const double dx = sqrt(tryFillArea);
 
+  const double halfX = 0.5 * sizeX;
+  const double halfY = 0.5 * sizeY;
+
   for (double x = -halfX; x <= halfX; x += dx)
     for (double y = -halfY; y <= halfY; y += dx)
       {
@@ -348,6 +349,9 @@ DOTRACE("GaborArray::jitterElement");
 
   const int backgroundIters = 1000;
 
+  const double halfX = 0.5 * sizeX;
+  const double halfY = 0.5 * sizeY;
+
   for (int niter = 0; niter < backgroundIters; ++niter)
     {
       for (int n = 0; n < totalNumber; ++n)
@@ -359,10 +363,10 @@ DOTRACE("GaborArray::jitterElement");
           v.x() = array[n].pos.x() + jitter*(2*drand48() - 1);
           v.y() = array[n].pos.y() + jitter*(2*drand48() - 1);
 
-          if (v.x() < -halfX) v.x() += 2.*halfX;
-          if (v.x() >  halfX) v.x() -= 2.*halfX;
-          if (v.y() < -halfY) v.y() += 2.*halfY;
-          if (v.y() >  halfY) v.y() -= 2.*halfY;
+          if (v.x() < -halfX) v.x() += sizeX;
+          if (v.x() >  halfX) v.x() -= sizeX;
+          if (v.y() < -halfY) v.y() += sizeY;
+          if (v.y() >  halfY) v.y() -= sizeY;
 
           if (!tooClose(v, n))
             {

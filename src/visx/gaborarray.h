@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Tue May 13 08:32:13 2003
+// written: Tue May 13 09:47:04 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -73,8 +73,6 @@ private:
   double gaborSigma;
   int sizeX;
   int sizeY;
-  double halfX;
-  double halfY;
   double backgIniSpacing;
   double backgMinSpacing;
   double backgMinSpacingSqr;
