@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Wed Apr  2 14:15:36 2003
+// written: Mon May 12 11:49:07 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -245,7 +245,7 @@ public:
                           const Gfx::Vec2<double>& world_pos,
                           const Gfx::Vec2<double>& zoom) = 0;
 
-  /// Draw bitmap data at the specified position.
+  /// Draw 1-bit bitmap data at the specified position.
   virtual void drawBitmap(const Gfx::BmapData& data,
                           const Gfx::Vec2<double>& world_pos) = 0;
 
