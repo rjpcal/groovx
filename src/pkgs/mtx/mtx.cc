@@ -78,9 +78,9 @@ void Mtx::MtxImpl::makeUnique()
   if ( !storage_->isUnique() )
 	 {
 		DOTRACE("Mtx::MtxImpl::makeUnique");
-		ptrdiff_t offset = start_ - storage_->itsData;
+		ptrdiff_t offset = getOffset();
   		DataBlock::makeUnique(storage_);
-		start_ = storage_->itsData + offset;
+		setOffset(offset);
 	 }
 }
 

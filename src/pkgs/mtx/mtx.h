@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Thu Mar 15 16:18:12 2001
+// written: Thu Mar 15 16:28:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -349,7 +349,7 @@ private:
 		mrows_ = mrows;
 		rowstride_ = mrows;
 		ncols_ = ncols;
-		start_ = storage_->itsData;
+		setOffset(0);
 	 }
 
 	 MtxImpl& operator=(const MtxImpl& other); // not allowed
@@ -401,8 +401,10 @@ private:
 	 int ncols() const { return ncols_; }
 	 int colstride() const { return colstride_; }
 
-	 double at(int i) const { return start_[i]; }
-	 double& at(int i) { return start_[i]; }
+//  	 double at(int i) const { return start_[i]; }
+//  	 double& at(int i) { return start_[i]; }
+	 double at(int i) const { return storage_->itsData[i+getOffset()]; }
+	 double& at(int i) { return storage_->itsData[i+getOffset()]; }
 
 	 void reshape(int mrows, int ncols);
 
@@ -419,17 +421,17 @@ private:
 	 }
 
 	 ptrdiff_t offsetFromStorage(int row, int col) const
-      { return (start_ - storage_->itsData) + offsetFromStart(row, col); }
+      { return getOffset() + offsetFromStart(row, col); }
 
 	 double* address(int row, int col)
-      { return start_ + offsetFromStart(row, col); }
+      { return storage_->itsData + getOffset() + offsetFromStart(row, col); }
 
 	 const double* address(int row, int col) const
-      { return start_ + offsetFromStart(row, col); }
+      { return storage_->itsData + getOffset() + offsetFromStart(row, col); }
 
 	 void apply(double func(double))
     {
-		double* p = start_;
+		double* p = storage_->itsData + getOffset();
 		int gap = rowgap();
 
 		if (gap == 0)
@@ -458,6 +460,9 @@ private:
 	 double* dataStorage() { return storage_->itsData; }
 
   private:
+	 void setOffset(ptrdiff_t o) { start_ = storage_->itsData + o; }
+	 ptrdiff_t getOffset() const { return start_ - storage_->itsData; }
+
 	 DataBlock* storage_;
 	 int mrows_;
 	 int rowstride_;
