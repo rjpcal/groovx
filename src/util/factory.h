@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Thu Jul  1 15:47:45 1999
+// written: Wed Oct 13 11:34:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,10 @@
 
 #ifndef ERROR_H_DEFINED
 #include "error.h"
+#endif
+
+#ifndef DEMANGLE_H_DEFINED
+#include "demangle.h"
 #endif
 
 class FactoryError : public ErrorWithMsg {
@@ -75,7 +79,7 @@ protected:
 public:
   template <class Derived>
   void registerType(Derived* dummy) {
-	 itsMap[typeid(Derived).name()] = new Creator<Base, Derived>;
+	 itsMap[demangle(typeid(Derived).name())] = new Creator<Base, Derived>;
   }
 
   Base* newObject(const string& type) {
