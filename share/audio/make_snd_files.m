@@ -24,16 +24,50 @@ function make_snd_files()
 
   samp_freq = 44100;
 
-  saw_widths = [0.25 0.50 0.75 1.0];
-
   freqs = [200
            350
            500];
 
   names = cellstr(num2str(freqs));
 
+  saw_widths = [0.25 0.50 0.75 1.0];
+
   make_single_beeps(freqs, saw_widths, samp_freq, names);
   make_double_beeps(freqs, saw_widths, samp_freq, names);
+
+  freqs = [329.6 % E
+           349.2 % F
+           370.0 % F#
+           392.0 % G
+           415.3 % G#
+           440.0 % A
+           466.2 % A#
+           493.9 % B
+           523.3 % C
+           554.4 % C#
+           587.3 % D
+           622.3 % D#
+           659.3 % E
+          ];
+
+  names = {'E_329'
+           'F_349'
+           'F#_370'
+           'G_392'
+           'G#_415'
+           'A_440'
+           'A#_466'
+           'B_493'
+           'C_523'
+           'C#_554'
+           'D_587'
+           'D#_622'
+           'E_659'
+          };
+
+  saw_widths = [0.50];
+
+  make_single_beeps(freqs, saw_widths, samp_freq, names);
 
 % 12 C  16.4  60  C  261    108  C  4186.0
 % 13 C# 17.3   61 C# 277.2   109 C# 4434.9
