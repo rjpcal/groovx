@@ -395,6 +395,16 @@ void GLCanvas::viewport(int x, int y, int w, int h)
 DOTRACE("GLCanvas::viewport");
 
   glViewport(x, y, w, h);
+  dbgEval(2, x); dbgEval(2, y); dbgEval(2, w); dbgEvalNL(2, h);
+  if (GET_DBG_LEVEL() >= 8)
+    {
+      GLint viewport[4];
+      glGetIntegerv(GL_VIEWPORT, viewport);
+      dbgEval(2, viewport[0]);
+      dbgEval(2, viewport[1]);
+      dbgEval(2, viewport[2]);
+      dbgEvalNL(2, viewport[3]);
+    }
 }
 
 void GLCanvas::orthographic(const Rect<double>& bounds,
