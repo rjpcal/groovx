@@ -130,7 +130,7 @@ public:
   Tcl::Interp& interp();
 
   /// Returns the package name.
-  const char* pkgName();
+  const char* namespName();
 
   /// Returns the package version string.
   const char* version();
@@ -145,8 +145,9 @@ public:
 
   /// Import all of the commands and procedures defined in the named pkg.
   /** If the named pkg has not yet been loaded, this function will attempt
-      to load it via loookup(). */
-  void inheritPkg(const char* pkgName, const char* pkgVersion = "");
+      to load it via loookup(). If a null pointer is passed to version (the
+      default), then any version will be acceptable. */
+  void inheritPkg(const char* name, const char* version = 0);
 
   /// Does a simple \c Tcl_Eval of \a script using the package's \c Tcl_Interp.
   void eval(const char* script);
