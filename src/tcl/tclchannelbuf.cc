@@ -48,7 +48,7 @@ Tcl::ChannelBuf::ChannelBuf(Tcl_Interp* interp,
   chan = Tcl_GetChannel(interp, channame, &origmode);
   if (chan == 0)
     {
-      throw Util::Error(fstring("no channel named '", channame, "'"));
+      throw Util::Error(fstring("no channel named '", channame, "'"), SRC_POS);
     }
   opened = true;
 }

@@ -53,7 +53,8 @@ namespace IO
     WriteVersionError(const char* classname,
                       IO::VersionId attempted_id,
                       IO::VersionId lowest_supported_id,
-                      const char* msg);
+                      const char* msg,
+                      const FilePosition& pos);
 
     virtual ~WriteVersionError() throw();
   };
@@ -62,8 +63,9 @@ namespace IO
 IO::WriteVersionError::WriteVersionError(const char* classname,
                                          IO::VersionId attempted_id,
                                          IO::VersionId lowest_supported_id,
-                                         const char* info) :
-  Util::Error()
+                                         const char* info,
+                                         const FilePosition& pos) :
+  Util::Error(pos)
 {
   msg().append("IO::WriteVersionError: ");
   msg().append("in ", classname, ", serial version ");
@@ -78,11 +80,12 @@ IO::Writer::~Writer () throw() {}
 int IO::Writer::ensureWriteVersionId(const char* name,
                                      IO::VersionId actual_version,
                                      IO::VersionId lowest_supported_version,
-                                     const char* msg)
+                                     const char* msg,
+                                     const FilePosition& pos)
 {
   if (actual_version < lowest_supported_version)
     throw IO::WriteVersionError(name, actual_version,
-                                lowest_supported_version, msg);
+                                lowest_supported_version, msg, pos);
 
   Assert(actual_version >= lowest_supported_version);
 

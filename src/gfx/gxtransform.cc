@@ -154,7 +154,8 @@ void GxTransform::readFrom(IO::Reader& reader)
 DOTRACE("GxTransform::readFrom");
 
   reader.ensureReadVersionId("GxTransform", 1,
-                             "Try cvs tag xml_conversion_20040526");
+                             "Try cvs tag xml_conversion_20040526",
+                             SRC_POS);
 
   readFieldsFrom(reader, classFields());
 }
@@ -164,7 +165,7 @@ void GxTransform::writeTo(IO::Writer& writer) const
 DOTRACE("GxTransform::writeTo");
 
   writer.ensureWriteVersionId("GxTransform", POS_SERIAL_VERSION_ID, 1,
-                               "Try groovx0.8a4");
+                               "Try groovx0.8a4", SRC_POS);
 
   writeFieldsTo(writer, classFields());
 }

@@ -47,10 +47,11 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-void FieldAux::throwNotAllowed(const char* what)
+void FieldAux::throwNotAllowed(const char* what,
+                               const FilePosition& pos)
 {
   throw Util::Error(fstring("'", what, "' operation "
-                            "not allowed for that field"));
+                            "not allowed for that field"), pos);
 }
 
 FieldImpl::~FieldImpl() {}
@@ -133,7 +134,7 @@ const Field& FieldMap::field(const fstring& name) const
     }
   else
     {
-      throw Util::Error(fstring("no such field: '", name.c_str(), "'"));
+      throw Util::Error(fstring("no such field: '", name.c_str(), "'"), SRC_POS);
     }
 }
 

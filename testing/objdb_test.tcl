@@ -56,7 +56,7 @@ test "ObjDb-ObjDb::loadObjects" "empty file read with limit on # to read" {
 test "ObjDb-ObjDb::loadObjects" "error on non-existent file" {
 	 exec rm -rf $::TEST_DIR/nonexistent_file
 	 ObjDb::loadObjects $::TEST_DIR/nonexistent_file
-} {^ObjDb::loadObjects: unable to open file}
+} {unable to open file}
 test "ObjDb-ObjDb::loadObjects" "error from junk text file" {
 	 ObjDb::loadObjects $::TEST_DIR/junk_text_file
 } {^ObjDb::loadObjects: }

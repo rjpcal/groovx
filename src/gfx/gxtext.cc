@@ -100,7 +100,8 @@ void GxText::readFrom(IO::Reader& reader)
 DOTRACE("GxText::readFrom");
 
   reader.ensureReadVersionId("GxText", 3,
-                             "Try cvs tag xml_conversion_20040526");
+                             "Try cvs tag xml_conversion_20040526",
+                             SRC_POS);
 
   reader.readValue("text", itsText);
   reader.readValue("strokeWidth", itsStrokeWidth);
@@ -113,7 +114,7 @@ void GxText::writeTo(IO::Writer& writer) const
 DOTRACE("GxText::writeTo");
 
   writer.ensureWriteVersionId("GxText", GTEXT_SERIAL_VERSION_ID, 3,
-                              "Try groovx0.8a4");
+                              "Try groovx0.8a4", SRC_POS);
 
   writer.writeValue("text", itsText);
   writer.writeValue("strokeWidth", itsStrokeWidth);

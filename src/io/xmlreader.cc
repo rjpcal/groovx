@@ -63,24 +63,18 @@ using Util::SoftRef;
 
 namespace
 {
-  void missingAttr(const char* attname, const char* eltype,
-                   const char* elname)
-  {
-    throw Util::Error(fstring("missing '", attname,
-                              "' attribute for <",
-                              eltype, "> element with name: ", elname));
-  }
-
   void invalidAttr(const char* attname, const char* eltype,
-                   const char* elname)
+                   const char* elname, const FilePosition& pos)
   {
     throw Util::Error(fstring("invalid '", attname,
                               "' attribute for <",
-                              eltype, "> element with name: ", elname));
+                              eltype, "> element with name: ", elname),
+                      pos);
   }
 
   const char* findAttr(const char** attr, const char* attname,
-                       const char* eltype, const char* elname)
+                       const char* eltype, const char* elname,
+                       const FilePosition& pos)
   {
     for (int i = 0; attr[i] != 0; i += 2)
       {
@@ -88,7 +82,11 @@ namespace
           return attr[i+1];
       }
 
-    missingAttr(attname, eltype, elname);
+    throw Util::Error(fstring("missing '", attname,
+                              "' attribute for <",
+                              eltype, "> element with name: ", elname),
+                      pos);
+
     Assert(0);
     return 0; // can't happen
   }
@@ -106,7 +104,8 @@ namespace
     {
       throw Util::Error(fstring("child elements not allowed "
                                 "within elements of type: ",
-                                demangled_name(typeid(*this))));
+                                demangled_name(typeid(*this))),
+                        SRC_POS);
     }
 
     virtual void characterData(const char* /*text*/, int /*len*/) { }
@@ -120,16 +119,18 @@ namespace
   XmlElement::~XmlElement() {}
 
   template <class T>
-  T& elementCast(XmlElement* elp, const fstring& name)
+  T& elementCast(XmlElement* elp, const fstring& name,
+                 const FilePosition& pos)
   {
     if (elp == 0)
-      throw Util::Error(fstring("no element with name: ", name));
+      throw Util::Error(fstring("no element with name: ", name), SRC_POS);
     T* t = dynamic_cast<T*>(elp);
     if (t == 0)
       throw Util::Error(fstring("wrong element type; expected ",
                                 demangled_name(typeid(T)),
                                 ", got ",
-                                demangled_name(typeid(*elp))));
+                                demangled_name(typeid(*elp))),
+                        pos);
     return *t;
   }
 
@@ -157,7 +158,7 @@ namespace
     int n = sscanf(str, "%lf", &itsVal);
     if (n != 1)
       {
-        invalidAttr("value", "double", name);
+        invalidAttr("value", "double", name, SRC_POS);
       }
   }
 
@@ -168,7 +169,7 @@ namespace
     int n = sscanf(str, "%d", &itsVal);
     if (n != 1)
       {
-        invalidAttr("value", "int", name);
+        invalidAttr("value", "int", name, SRC_POS);
       }
   }
 
@@ -180,7 +181,7 @@ namespace
     int n = sscanf(str, "%d", &i);
     if (n != 1)
       {
-        invalidAttr("value", "bool", name);
+        invalidAttr("value", "bool", name, SRC_POS);
       }
     itsVal = bool(i);
   }
@@ -235,19 +236,19 @@ namespace
       itsId(-1),
       itsObjects(objmap)
     {
-      itsId = atoi(findAttr(attr, "id", eltype, name));
-      itsType = findAttr(attr, "type", eltype, name);
+      itsId = atoi(findAttr(attr, "id", eltype, name, SRC_POS));
+      itsType = findAttr(attr, "type", eltype, name, SRC_POS);
 
       if (itsId < 0)
         {
-          invalidAttr("id", eltype, name);
+          invalidAttr("id", eltype, name, SRC_POS);
         }
 
       Assert(itsId >= 0);
 
       if (itsType.empty())
         {
-          invalidAttr("type", eltype, name);
+          invalidAttr("type", eltype, name, SRC_POS);
         }
 
       Assert(!itsType.empty());
@@ -284,11 +285,11 @@ namespace
       itsVersion(-1),
       itsElems()
     {
-      itsVersion = atoi(findAttr(attr, "version", eltype, name));
+      itsVersion = atoi(findAttr(attr, "version", eltype, name, SRC_POS));
 
       if (itsVersion < 0)
         {
-          invalidAttr("version", eltype, name);
+          invalidAttr("version", eltype, name, SRC_POS);
         }
       Assert(itsVersion >= 0);
     }
@@ -325,28 +326,28 @@ namespace
     virtual int readInt(const fstring& name)
     {
       ElPtr el = itsElems[name];
-      IntElement& ilp = elementCast<IntElement>(el.get(), name);
+      IntElement& ilp = elementCast<IntElement>(el.get(), name, SRC_POS);
       return ilp.itsVal;
     }
 
     virtual bool readBool(const fstring& name)
     {
       ElPtr el = itsElems[name];
-      BoolElement& blp = elementCast<BoolElement>(el.get(), name);
+      BoolElement& blp = elementCast<BoolElement>(el.get(), name, SRC_POS);
       return blp.itsVal;
     }
 
     virtual double readDouble(const fstring& name)
     {
       ElPtr el = itsElems[name];
-      DoubleElement& dlp = elementCast<DoubleElement>(el.get(), name);
+      DoubleElement& dlp = elementCast<DoubleElement>(el.get(), name, SRC_POS);
       return dlp.itsVal;
     }
 
     virtual void readValueObj(const fstring& name, Value& value)
     {
       ElPtr el = itsElems[name];
-      ValueElement& vlp = elementCast<ValueElement>(el.get(), name);
+      ValueElement& vlp = elementCast<ValueElement>(el.get(), name, SRC_POS);
       value.setFstring(vlp.itsVal);
     }
 
@@ -366,7 +367,7 @@ namespace
                                  Ref<IO::IoObject> obj)
     {
       ElPtr el = itsElems[name];
-      GroupElement& glp = elementCast<GroupElement>(el.get(), name);
+      GroupElement& glp = elementCast<GroupElement>(el.get(), name, SRC_POS);
       glp.inflate(*obj);
     }
 
@@ -374,7 +375,7 @@ namespace
                                Ref<IO::IoObject> basePart)
     {
       ElPtr el = itsElems[name];
-      GroupElement& glp = elementCast<GroupElement>(el.get(), name);
+      GroupElement& glp = elementCast<GroupElement>(el.get(), name, SRC_POS);
       glp.inflate(*basePart);
     }
 
@@ -392,7 +393,7 @@ namespace
     virtual fstring readStringImpl(const fstring& name)
     {
       ElPtr el = itsElems[name];
-      StringElement& slp = elementCast<StringElement>(el.get(), name);
+      StringElement& slp = elementCast<StringElement>(el.get(), name, SRC_POS);
       return slp.itsVal;
     }
 
@@ -425,7 +426,7 @@ namespace
   SoftRef<IO::IoObject> GroupElement::readMaybeObject(const fstring& name)
   {
     ElPtr el = itsElems[name];
-    ObjrefElement& olp = elementCast<ObjrefElement>(el.get(), name);
+    ObjrefElement& olp = elementCast<ObjrefElement>(el.get(), name, SRC_POS);
     return olp.getObject();
   }
 
@@ -454,7 +455,7 @@ namespace
       }
     else
       {
-        const char* val = findAttr(attr, "value", el, name);
+        const char* val = findAttr(attr, "value", el, name, SRC_POS);
 
         if (strcmp(el, "double") == 0)
           {
@@ -474,7 +475,7 @@ namespace
           }
         else
           {
-            throw Util::Error(fstring("unknown element type: ", el));
+            throw Util::Error(fstring("unknown element type: ", el), SRC_POS);
           }
       }
   }
@@ -499,10 +500,10 @@ namespace
     {
       if (itsRoot.get() == 0)
         {
-          throw Util::Error("no root element found");
+          throw Util::Error("no root element found", SRC_POS);
         }
 
-      return elementCast<ObjectElement>(itsRoot.get(), "root");
+      return elementCast<ObjectElement>(itsRoot.get(), "root", SRC_POS);
     }
 
   protected:
@@ -526,7 +527,7 @@ namespace
     ++itsStartCount;
     ++itsDepth;
 
-    const char* name = findAttr(attr, "name", el, "(noname)");
+    const char* name = findAttr(attr, "name", el, "(noname)", SRC_POS);
 
     Assert(name != 0);
 

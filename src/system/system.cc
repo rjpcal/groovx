@@ -50,9 +50,10 @@ DBG_REGISTER
 
 namespace
 {
-  void throwErrno(const char* where)
+  void throwErrno(const char* where, const FilePosition& pos)
   {
-    throw Util::Error(fstring("in \"", where, "\": ", ::strerror(errno)));
+    throw Util::Error(fstring("in \"", where, "\": ",
+                              ::strerror(errno)), pos);
   }
 
   class ErrnoSaver
@@ -79,7 +80,7 @@ DOTRACE("unixcall::chmod");
   ErrnoSaver saver;
 
   if ( ::chmod(path, mode) != 0 )
-    throwErrno("unixcall::chmod");
+    throwErrno("unixcall::chmod", SRC_POS);
 }
 
 void unixcall::rename(const char* oldpath, const char* newpath)
@@ -89,7 +90,7 @@ DOTRACE("unixcall::rename");
   ErrnoSaver saver;
 
   if ( ::rename(oldpath, newpath) != 0 )
-    throwErrno("unixcall::rename");
+    throwErrno("unixcall::rename", SRC_POS);
 }
 
 void unixcall::remove(const char* pathname)
@@ -99,7 +100,7 @@ DOTRACE("unixcall::remove");
   errno = 0;
 
   if ( ::remove(pathname) != 0 )
-    throwErrno("unixcall::remove");
+    throwErrno("unixcall::remove", SRC_POS);
 }
 
 fstring unixcall::getcwd()
@@ -120,7 +121,7 @@ DOTRACE("unixcall::getcwd");
         }
       else
         {
-          throwErrno("unixcall::getcwd");
+          throwErrno("unixcall::getcwd", SRC_POS);
         }
     }
 

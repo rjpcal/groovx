@@ -93,7 +93,7 @@ void TimingHandler::readFrom(IO::Reader& reader)
 {
 DOTRACE("TimingHandler::readFrom");
 
-  reader.ensureReadVersionId("TimingHandler", 2, "Try groovx0.8a4");
+  reader.ensureReadVersionId("TimingHandler", 2, "Try groovx0.8a4", SRC_POS);
 
   reader.readBaseClass("TimingHdlr", IO::makeProxy<TimingHdlr>(this));
 }
@@ -103,7 +103,7 @@ void TimingHandler::writeTo(IO::Writer& writer) const
 DOTRACE("TimingHandler::writeTo");
 
   writer.ensureWriteVersionId("TimingHandler",
-            TIMINGHANDLER_SERIAL_VERSION_ID, 2, "Try groovx0.8a4");
+            TIMINGHANDLER_SERIAL_VERSION_ID, 2, "Try groovx0.8a4", SRC_POS);
 
   writer.writeBaseClass("TimingHdlr", IO::makeConstProxy<TimingHdlr>(this));
 }

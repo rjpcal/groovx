@@ -55,7 +55,7 @@ namespace
   void setOneLevel(int key, int level)
   {
     if (key < 0 || key >= Debug::MAX_KEYS)
-      throw Util::Error(fstring("no such debug key '", key, "'"));
+      throw Util::Error(fstring("no such debug key '", key, "'"), SRC_POS);
 
     // else...
     Debug::keyLevels[key] = level;
@@ -65,7 +65,7 @@ namespace
   {
     const int key = Debug::lookupKey(fname);
     if (key == -1)
-      throw Util::Error(fstring("no debug key for file '", fname, "'"));
+      throw Util::Error(fstring("no debug key for file '", fname, "'"), SRC_POS);
 
     Assert(key >= 0 && key < Debug::MAX_KEYS);
 

@@ -96,7 +96,7 @@ private:
         if (current_pair.length() != 2)
           {
             throw Util::Error("\"pair\" did not have length 2 "
-                              "in FeedbackMap::update");
+                              "in FeedbackMap::update", SRC_POS);
           }
 
         itsItems.push_back(Item(current_pair[0], current_pair[1]));

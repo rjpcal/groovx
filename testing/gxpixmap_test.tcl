@@ -46,19 +46,19 @@ test "GxPixmap::loadImage" "normal use" {
 test "GxPixmap::loadImage" "error on non-existent file" {
     exec rm -rf $::TEST_DIR/nonexistent_file.ppm
     GxPixmap::loadImage $::PIXMAP $::TEST_DIR/nonexistent_file.ppm
-} "^GxPixmap::loadImage: couldn't open file "
+} "couldn't open file "
 test "GxPixmap::loadImage" "error on junk text file" {
     file copy -force $::TEST_DIR/junk_text_file $::TEST_DIR/junk_text_file.pbm
     catch {GxPixmap::loadImage $::PIXMAP $::TEST_DIR/junk_text_file.pbm} result
     file delete -force $::TEST_DIR/junk_text_file.pbm
     return $result
-} "^GxPixmap::loadImage: bad magic number while reading pnm file.*$"
+} "bad magic number while reading pnm file.*$"
 test "GxPixmap::loadImage" "error on junk binary file" {
     file copy -force $::TEST_DIR/junk_bin_file $::TEST_DIR/junk_bin_file.pbm
     catch {GxPixmap::loadImage $::PIXMAP $::TEST_DIR/junk_bin_file.pbm} result
     file delete -force $::TEST_DIR/junk_bin_file.pbm
     return $result
-} "^GxPixmap::loadImage: bad magic number while reading pnm file.*$"
+} "bad magic number while reading pnm file.*$"
 
 ### GxPixmap rendering ###
 test "rendering" "normal render" {

@@ -51,7 +51,8 @@ namespace IO
     ReadVersionError(const char* classname,
                      IO::VersionId attempted_id,
                      IO::VersionId lowest_supported_id,
-                     const char* msg);
+                     const char* msg,
+                     const FilePosition& pos);
 
     virtual ~ReadVersionError() throw();
   };
@@ -60,8 +61,9 @@ namespace IO
 IO::ReadVersionError::ReadVersionError(const char* classname,
                                        IO::VersionId attempted_id,
                                        IO::VersionId lowest_supported_id,
-                                       const char* info) :
-  Util::Error()
+                                       const char* info,
+                                       const FilePosition& pos) :
+  Util::Error(pos)
 {
   msg().append("IO::ReadVersionError: ");
   msg().append("in ", classname, ", serial version ");
@@ -75,7 +77,8 @@ IO::Reader::~Reader() throw() {}
 
 int IO::Reader::ensureReadVersionId(const char* name,
                                     IO::VersionId lowest_supported_version,
-                                    const char* msg)
+                                    const char* msg,
+                                    const FilePosition& pos)
 {
 DOTRACE("IO::Reader::ensureReadVersionId");
 
@@ -83,7 +86,8 @@ DOTRACE("IO::Reader::ensureReadVersionId");
 
   if (actual_version < lowest_supported_version)
     throw IO::ReadVersionError(name, actual_version,
-                               lowest_supported_version, msg);
+                               lowest_supported_version, msg,
+                               pos);
 
   Assert(actual_version >= lowest_supported_version);
 

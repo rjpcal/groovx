@@ -134,7 +134,7 @@ IO::AttribMap::Attrib IO::AttribMap::get(const fstring& attrib_name)
       ++itr;
     }
 
-  throw Util::Error(msg);
+  throw Util::Error(msg, SRC_POS);
 }
 
 inline

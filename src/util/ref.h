@@ -33,6 +33,7 @@
 #define REF_H_DEFINED
 
 #include "util/algo.h"
+#include "util/fileposition.h"
 #include "util/object.h"
 #include "util/stderror.h"
 #include "util/traits.h"
@@ -72,9 +73,9 @@ namespace Util
     void insertItem(Util::Object* obj);
     void insertItemWeak(Util::Object* obj);
 
-    void throwRefNull(const std::type_info& info);
-    void throwRefUnshareable(const std::type_info& msg);
-    void throwSoftRefInvalid(const std::type_info& info);
+    void throwRefNull(const std::type_info& info, const FilePosition& pos);
+    void throwRefUnshareable(const std::type_info& msg, const FilePosition& pos);
+    void throwSoftRefInvalid(const std::type_info& info, const FilePosition& pos);
 
     template <class T>
     inline T* getCastedItem(Util::UID id)
@@ -82,7 +83,7 @@ namespace Util
       Util::Object* obj = getCheckedItem(id);
       T* t = dynamic_cast<T*>(obj);
       if (t == 0)
-        throwBadCast(typeid(T), typeid(Util::Object));
+        throwBadCast(typeid(T), typeid(Util::Object), SRC_POS);
       return t;
     }
 
@@ -115,10 +116,10 @@ namespace Util
       explicit Handle(T* master) : itsMaster(master)
       {
         if (master == 0)
-          throwRefNull(typeid(T));
+          throwRefNull(typeid(T), SRC_POS);
 
         if (master->isNotShareable())
-          throwRefUnshareable(typeid(T));
+          throwRefUnshareable(typeid(T), SRC_POS);
 
         itsMaster->incrRefCount();
       }
@@ -278,7 +279,7 @@ Util::Ref<To> dynamicCast(Util::Ref<Fr> p)
   Fr* f = p.get();
   To* t = dynamic_cast<To*>(f);
   if (t == 0)
-    Util::throwBadCast(typeid(To), typeid(Fr));
+    Util::throwBadCast(typeid(To), typeid(Fr), SRC_POS);
   return Util::Ref<To>(t);
 }
 
@@ -387,7 +388,7 @@ private:
     void ensureValid() const
     {
       if (!isValid())
-        Util::RefHelper::throwSoftRefInvalid(typeid(T));
+        Util::RefHelper::throwSoftRefInvalid(typeid(T), SRC_POS);
     }
 
     void swap(WeakHandle& other) throw()
@@ -488,7 +489,7 @@ Util::SoftRef<To> dynamicCast(Util::SoftRef<Fr> p)
       Fr* f = p.get();
       To* t = dynamic_cast<To*>(f);
       if (t == 0)
-        Util::throwBadCast(typeid(To), typeid(Fr));
+        Util::throwBadCast(typeid(To), typeid(Fr), SRC_POS);
       return Util::SoftRef<To>(t);
     }
   return Util::SoftRef<To>(p.id());

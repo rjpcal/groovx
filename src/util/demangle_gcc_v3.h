@@ -63,17 +63,17 @@ DOTRACE("demangle_impl");
   switch (status)
     {
     case -1:
-      throw Util::Error(fstring(msg, "memory allocation error"));
+      throw Util::Error(fstring(msg, "memory allocation error"), SRC_POS);
       break;
     case -2:
-      throw Util::Error(fstring(msg, "invalid mangled name"));
+      throw Util::Error(fstring(msg, "invalid mangled name"), SRC_POS);
       break;
     case -3:
       throw Util::Error(fstring(msg, "invalid arguments"
-                                " (e.g. buf non-NULL and length NULL'"));
+                                " (e.g. buf non-NULL and length NULL'"), SRC_POS);
       break;
     default:
-      throw Util::Error(fstring(msg, "unknown error code"));
+      throw Util::Error(fstring(msg, "unknown error code"), SRC_POS);
     }
 
   Assert(false);

@@ -95,7 +95,7 @@ DOTRACE("GlxRasterFont::GlxRasterFont");
     {
       dpy = XOpenDisplay(getenv("DISPLAY"));
       if (dpy == 0)
-        throw Util::Error("couldn't open connection to X server");
+        throw Util::Error("couldn't open connection to X server", SRC_POS);
     }
 
   fstring xname = pickXFont(fontname);
@@ -109,7 +109,7 @@ DOTRACE("GlxRasterFont::GlxRasterFont");
 
   if (itsFontInfo == 0)
     {
-      throw Util::Error(fstring("couldn't load X font '", xname, "'"));
+      throw Util::Error(fstring("couldn't load X font '", xname, "'"), SRC_POS);
     }
 
   dbgEvalNL(2, itsFontInfo->fid);
@@ -123,7 +123,7 @@ DOTRACE("GlxRasterFont::GlxRasterFont");
   if (itsListBase==0)
     {
       XFreeFontInfo(NULL, itsFontInfo, 1);
-      throw Util::Error(fstring("couldn't allocate GL display lists"));
+      throw Util::Error(fstring("couldn't allocate GL display lists"), SRC_POS);
     }
 
   glXUseXFont(itsFontInfo->fid,

@@ -104,13 +104,13 @@ namespace
   DOTRACE("<imgfile.cc>::genericLoad");
 
 #ifndef ANYTOPNM_PROG
-    throw Util::Error(fstring("unknown image file format: ", filename));
+    throw Util::Error(fstring("unknown image file format: ", filename), SRC_POS);
 #else
 
     if (access(ANYTOPNM_PROG, R_OK|X_OK) != 0)
-      throw Util::Error(fstring("couldn't access program '", ANYTOPNM_PROG, "'"));
+      throw Util::Error(fstring("couldn't access program '", ANYTOPNM_PROG, "'"), SRC_POS);
     if (access(filename, R_OK)      != 0)
-      throw Util::Error(fstring("couldn't read file '", filename, "'"));
+      throw Util::Error(fstring("couldn't read file '", filename, "'"), SRC_POS);
 
     fstring nm_copy(filename);
     char* const argv[] = { (char*) ANYTOPNM_PROG, nm_copy.data(), (char*) 0 };
@@ -120,7 +120,7 @@ namespace
     Pbm::load(p.stream(), data);
 
     if (p.exitStatus() != 0)
-      throw Util::Error("child process exited abnormally");
+      throw Util::Error("child process exited abnormally", SRC_POS);
 #endif
   }
 }
@@ -147,7 +147,7 @@ void ImgFile::save(const char* filename, const Gfx::BmapData& data)
     case PNM:  Pbm::save(filename, data); break;
     case PNG:  Png::save(filename, data); break;
     default:
-      throw Util::Error(fstring("unknown file format: ", filename));
+      throw Util::Error(fstring("unknown file format: ", filename), SRC_POS);
     }
 
   Util::log(fstring("saved image file ", filename));

@@ -95,7 +95,7 @@ namespace
       Tcl::CommandGroup::lookupOriginal(ctx.interp(), name);
 
     if (cmd == 0)
-      throw Util::Error("no such Tcl::CommandGroup");
+      throw Util::Error("no such Tcl::CommandGroup", SRC_POS);
 
     fstring result(name, " resolves to ", cmd->cmdName(), "\n");
     result.append(cmd->usage());

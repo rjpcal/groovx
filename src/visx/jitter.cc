@@ -91,7 +91,8 @@ void Jitter::readFrom(IO::Reader& reader)
 DOTRACE("Jitter::readFrom");
 
   reader.ensureReadVersionId("Jitter", 3,
-                             "Try cvs tag xml_conversion_20040526");
+                             "Try cvs tag xml_conversion_20040526",
+                             SRC_POS);
 
   reader.readValue("jitterX", itsXJitter);
   reader.readValue("jitterY", itsYJitter);
@@ -105,7 +106,7 @@ void Jitter::writeTo(IO::Writer& writer) const
 DOTRACE("Jitter::writeTo");
 
   writer.ensureWriteVersionId("Jitter", JITTER_SERIAL_VERSION_ID, 3,
-                              "Try groovx0.8a4");
+                              "Try groovx0.8a4", SRC_POS);
 
   writer.writeValue("jitterX", itsXJitter);
   writer.writeValue("jitterY", itsYJitter);

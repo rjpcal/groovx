@@ -59,7 +59,10 @@ namespace
   Tcl::List loadObjects(const char* file, int num_to_read)
   {
     STD_IO::ifstream ifs(file);
-    if (ifs.fail()) { throw Util::Error("unable to open file"); }
+    if (ifs.fail())
+      {
+        throw Util::Error("unable to open file", SRC_POS);
+      }
 
     int num_read = 0;
 
@@ -96,7 +99,7 @@ namespace
     STD_IO::ofstream ofs(filename);
     if (ofs.fail())
       {
-        throw Util::Error(fstring("error opening file: ", filename));
+        throw Util::Error(fstring("error opening file: ", filename), SRC_POS);
       }
 
     IO::LegacyWriter writer(ofs, use_bases);

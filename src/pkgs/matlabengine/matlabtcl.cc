@@ -62,7 +62,7 @@ protected:
   {
     if (itsEngine == 0)
       {
-        throw Util::Error("couldn't open MATLAB engine");
+        throw Util::Error("couldn't open MATLAB engine", SRC_POS);
       }
 
     itsBuf = new char[itsBufSize];
@@ -89,7 +89,7 @@ public:
     mxArray* arr = engGetVariable(itsEngine, name);
     if (arr == 0)
       {
-        throw Util::Error(fstring("no such MATLAB variable: '", name, "'"));
+        throw Util::Error(fstring("no such MATLAB variable: '", name, "'"), SRC_POS);
       }
 
     Util::Ref<MtxObj> mtx(new MtxObj(arr, mtx::COPY));
@@ -104,7 +104,7 @@ public:
     int result = engPutVariable(itsEngine, name, arr);
     if (result != 0)
       {
-        throw Util::Error("error while putting mxArray into MATLAB engine");
+        throw Util::Error("error while putting mxArray into MATLAB engine", SRC_POS);
       }
   }
 
@@ -125,7 +125,7 @@ public:
 
   void noSupport()
   {
-    throw Util::Error("matlab is not supported in this build");
+    throw Util::Error("matlab is not supported in this build", SRC_POS);
   }
 
   const char* evalString(const char*)

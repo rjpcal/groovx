@@ -267,7 +267,7 @@ DOTRACE("GlxWrapper::GlxWrapper");
   int dummy;
   if (!glXQueryExtension(dpy, &dummy, &dummy))
     {
-      throw Util::Error("GlxWrapper: X server has no OpenGL GLX extension");
+      throw Util::Error("GlxWrapper: X server has no OpenGL GLX extension", SRC_POS);
     }
 
   AttribList attribs(opts);
@@ -289,7 +289,7 @@ DOTRACE("GlxWrapper::GlxWrapper");
   // If we still didn't get a matching visual, then bail out
   if (itsVisInfo == 0)
     {
-      throw Util::Error("couldn't find a matching visual");
+      throw Util::Error("couldn't find a matching visual", SRC_POS);
     }
 
   dbgEvalNL(3, (void*)itsVisInfo->visualid);
@@ -305,7 +305,7 @@ DOTRACE("GlxWrapper::GlxWrapper");
 
   if (itsContext == 0)
     {
-      throw Util::Error("could not create GL rendering context");
+      throw Util::Error("could not create GL rendering context", SRC_POS);
     }
 }
 
@@ -362,7 +362,7 @@ DOTRACE("GlxWrapper::isDoubleBuffered");
 
   if (glXGetConfig(itsDisplay, itsVisInfo, GLX_DOUBLEBUFFER, &dbl_flag) != 0)
     {
-      throw Util::Error("glXGetConfig failed");
+      throw Util::Error("glXGetConfig failed", SRC_POS);
     }
 
   return bool(dbl_flag);

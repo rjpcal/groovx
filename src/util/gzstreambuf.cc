@@ -84,12 +84,12 @@ Util::gzstreambuf::gzstreambuf(const char* name, int om, bool throw_exception) :
       if (om & std::ios::in)
         {
           throw Util::Error(fstring("couldn't open file '",
-                                    name, "' for reading"));
+                                    name, "' for reading"), SRC_POS);
         }
       else if (om & std::ios::out)
         {
           throw Util::Error(fstring("couldn't open file '", name,
-                                    "' for writing"));
+                                    "' for writing"), SRC_POS);
         }
     }
 }
@@ -222,7 +222,7 @@ shared_ptr<std::ostream> Util::ogzopen(const fstring& filename,
         make_shared(new std::ofstream(filename.c_str(), flags));
       if (result->fail())
         throw Util::Error(fstring("couldn't open file '", filename,
-                                  "' for writing"));
+                                  "' for writing"), SRC_POS);
 
       return result;
     }

@@ -105,7 +105,7 @@ public:
       if (!isValidItr(itr)) return;
 
       if ( (*itr).second.get()->isShared() )
-        throw Util::Error("attempted to remove a shared object");
+        throw Util::Error("attempted to remove a shared object", SRC_POS);
 
       itsPtrMap.erase(itr);
     }
@@ -166,7 +166,8 @@ public:
       if (!isValidItr(itr))
         {
           throw InvalidIdError(fstring("attempted to access "
-                                       "invalid object '", id, "'"));
+                                       "invalid object '", id, "'"),
+                               SRC_POS);
         }
 
       return (*itr).second.get();

@@ -112,7 +112,7 @@ test "GxTransform-Obj::type" "normal use on Jitter" {
 } {Jitter}
 test "GxTransform-Obj::type" "error on too small posid" {
 	 Obj::type -1
-} {Obj::type: signed/unsigned.*}
+} {signed/unsigned.*}
 
 unset pos
 

@@ -237,7 +237,7 @@ void GxFixedScaleCamera::setLogPixelsPerUnit(double s)
 void GxFixedScaleCamera::setPixelsPerUnit(double s)
 {
   if (s <= 0.0)
-    throw Util::Error("invalid scaling factor");
+    throw Util::Error("invalid scaling factor", SRC_POS);
 
   itsPixelsPerUnit = s;
 }
@@ -297,7 +297,7 @@ DOTRACE("GxPsyphyCamera::writeTo");
 void GxPsyphyCamera::setUnitAngle(double deg_per_unit)
 {
   if (deg_per_unit <= 0.0)
-    throw Util::Error("unit angle must be positive");
+    throw Util::Error("unit angle must be positive", SRC_POS);
 
   itsDegreesPerUnit = deg_per_unit;
 }
@@ -305,7 +305,7 @@ void GxPsyphyCamera::setUnitAngle(double deg_per_unit)
 void GxPsyphyCamera::setViewingDistIn(double inches)
 {
   if (inches <= 0.0)
-    throw Util::Error("viewing distance must be positive (duh)");
+    throw Util::Error("viewing distance must be positive (duh)", SRC_POS);
 
   itsViewingDistance = inches;
 }

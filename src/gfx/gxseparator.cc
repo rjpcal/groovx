@@ -89,7 +89,7 @@ public:
     {
       if (other->contains(owner))
         {
-          throw Util::Error("couldn't add node without generating a cycle");
+          throw Util::Error("couldn't add node without generating a cycle", SRC_POS);
         }
     }
 
@@ -228,7 +228,7 @@ DOTRACE("GxSeparator::getChild");
   if (index >= rep->children.size())
     {
       throw Util::Error(fstring("GxSeparator has no child with index '",
-                                index, "'"));
+                                index, "'"), SRC_POS);
     }
 
   return rep->children[index];

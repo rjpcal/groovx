@@ -105,7 +105,8 @@ void MaskHatch::readFrom(IO::Reader& reader)
 DOTRACE("MaskHatch::readFrom");
 
   reader.ensureReadVersionId("MaskHatch", 3,
-                             "Try cvs tag xml_conversion_20040526");
+                             "Try cvs tag xml_conversion_20040526",
+                             SRC_POS);
 
   readFieldsFrom(reader, classFields());
 
@@ -117,7 +118,7 @@ void MaskHatch::writeTo(IO::Writer& writer) const
 DOTRACE("MaskHatch::writeTo");
 
   writer.ensureWriteVersionId("MaskHatch", MASKHATCH_SERIAL_VERSION_ID, 3,
-                              "Try groovx0.8a4");
+                              "Try groovx0.8a4", SRC_POS);
 
   writeFieldsTo(writer, classFields());
 

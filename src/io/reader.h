@@ -32,6 +32,7 @@
 #ifndef READER_H_DEFINED
 #define READER_H_DEFINED
 
+#include "util/fileposition.h"
 #include "util/strings.h"
 
 #include "io/iodecls.h"
@@ -77,7 +78,8 @@ public:
       thrown. */
   int ensureReadVersionId(const char* name,
                           IO::VersionId lowest_supported_version,
-                          const char* msg);
+                          const char* msg,
+                          const FilePosition& pos);
 
   /** Returns the serialization version id that was stored with the
       object currently being read. */

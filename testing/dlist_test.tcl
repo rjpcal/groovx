@@ -19,7 +19,7 @@ test "Dlist-dlist::choose" "norm2" {
 } {7 3\.1 5}
 test "Dlist-dlist::choose" "err1" {
      dlist::choose {1 2} {-1 0}
-} {dlist::choose: signed/unsigned conversion failed}
+} {signed/unsigned conversion failed}
 test "Dlist-dlist::choose" "err2" {
      dlist::choose {1 2} {1.5 0}
 } {expected integer but got "1\.5"}
@@ -66,7 +66,7 @@ test "Dlist-dlist::ones" "err1" {
 } {expected integer but got "4\.5"}
 test "Dlist-dlist::ones" "err2" {
     dlist::ones -1
-} {dlist::ones: signed/unsigned conversion failed}
+} {signed/unsigned conversion failed}
 
 ### dlist::pickone ###
 test "Dlist-dlist::pickone" "args" {
@@ -80,7 +80,7 @@ test "Dlist-dlist::pickone" "norm2" {
 } {0|3\.4|-2\.6|str|list list}
 test "Dlist-dlist::pickone" "error" {
      dlist::pickone {}
-} {dlist::pickone: source_list is empty}
+} {source_list is empty}
 
 ### dlist::range ###
 test "Dlist-dlist::range" "args" {
@@ -113,7 +113,7 @@ test "Dlist-dlist::repeat" "norm3" {
 } {4 5 5 6 6 6}
 test "Dlist-dlist::repeat" "err4" {
     dlist::repeat { 4 5 6 } { -1 2 3 }
-} {dlist::repeat: signed/unsigned conversion failed}
+} {signed/unsigned conversion failed}
 test "Dlist-dlist::repeat" "err2" {
      dlist::repeat { 4 5 6 } { 1.5 2 3 }
 } {expected integer but got "1\.5"}

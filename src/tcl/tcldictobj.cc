@@ -57,7 +57,7 @@ namespace
 {
   void noDictError()
   {
-    throw Util::Error("Tcl::Dict requires Tcl version >= 8.5");
+    throw Util::Error("Tcl::Dict requires Tcl version >= 8.5", SRC_POS);
   }
 }
 
@@ -84,7 +84,7 @@ DOTRACE("Tcl::Dict::doPut");
   if (Tcl_DictObjPut(0, itsDictObj.obj(), keyObj.obj(), val.obj()) != TCL_OK)
     {
       throw Util::Error(fstring("couldn't put object in dict with key: ",
-                                key));
+                                key), SRC_POS);
     }
 }
 
@@ -103,7 +103,7 @@ DOTRACE("Tcl::Dict::doGet");
     }
 
   throw Util::Error(fstring("couldn't get value from dict with key: ",
-                            key));
+                            key), SRC_POS);
 }
 
 #endif // defined(HAVE_TCL_DICT)

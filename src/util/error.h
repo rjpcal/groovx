@@ -32,6 +32,7 @@
 #ifndef ERROR_H_DEFINED
 #define ERROR_H_DEFINED
 
+#include "util/fileposition.h"
 #include "util/strings.h"
 
 #include <exception>
@@ -42,21 +43,20 @@ namespace Util
   class Error;
 }
 
-/**
- *
- * \c Util::Error is a basic error class that carries a string
- * message describing the error.
- *
- **/
+//  ####################################################################
+/// \c Util::Error is a basic exception class.
+/** It carries a string message describing the error as well as
+    information about the location in the source code in which the
+    exception was generated. */
 
 class Util::Error : public std::exception
 {
 public:
   /// Default construct with an empty message string.
-  Error();
+  Error(const FilePosition& pos);
 
   /// Construct with an error message.
-  Error(const fstring& msg);
+  Error(const fstring& msg, const FilePosition& pos);
 
   /// Copy constructor.
   Error(const Error& other) throw();
@@ -73,6 +73,9 @@ public:
   /// Get the error message as a C-style string.
   virtual const char* what() const throw();
 
+  /// Get the source file position where the error was generated.
+  const FilePosition& srcPos() const throw() { return itsPos; }
+
   /// Get the stack back trace associated with this exception.
   const BackTrace& backTrace() const throw() { return *itsBackTrace; }
 
@@ -83,6 +86,7 @@ private:
   Error& operator=(const Error& other);
 
   fstring itsInfo;
+  FilePosition itsPos;
   const BackTrace* itsBackTrace;
 };
 

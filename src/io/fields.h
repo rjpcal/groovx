@@ -38,6 +38,7 @@
 #include "tcl/tclobjptr.h"
 
 #include "util/algo.h"
+#include "util/fileposition.h"
 #include "util/object.h"
 #include "util/pointers.h"
 #include "util/stderror.h"
@@ -68,7 +69,7 @@ namespace FieldAux
   template <class C, class F>
   inline C& cast(F& p);
 
-  void throwNotAllowed(const char* what);
+  void throwNotAllowed(const char* what, const FilePosition& pos);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -371,7 +372,7 @@ public:
 
   virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
   {
-    if (itsSetter == 0) FieldAux::throwNotAllowed("set");
+    if (itsSetter == 0) FieldAux::throwNotAllowed("set", SRC_POS);
 
     C& cobj = FieldAux::cast<C>(*obj);
 
@@ -382,7 +383,7 @@ public:
 
   virtual Tcl::ObjPtr get(const FieldContainer* obj) const
   {
-    if (itsGetter == 0) FieldAux::throwNotAllowed("get");
+    if (itsGetter == 0) FieldAux::throwNotAllowed("get", SRC_POS);
 
     const C& cobj = FieldAux::cast<const C>(*obj);
 
@@ -392,7 +393,7 @@ public:
   virtual void readValueFrom(FieldContainer* obj,
                              IO::Reader& reader, const fstring& name) const
   {
-    if (itsSetter == 0) FieldAux::throwNotAllowed("read");
+    if (itsSetter == 0) FieldAux::throwNotAllowed("read", SRC_POS);
 
     C& cobj = FieldAux::cast<C>(*obj);
 
@@ -406,7 +407,7 @@ public:
   virtual void writeValueTo(const FieldContainer* obj,
                             IO::Writer& writer, const fstring& name) const
   {
-    if (itsGetter == 0) FieldAux::throwNotAllowed("write");
+    if (itsGetter == 0) FieldAux::throwNotAllowed("write", SRC_POS);
 
     const C& cobj = FieldAux::cast<const C>(*obj);
 
@@ -709,7 +710,7 @@ inline C& FieldAux::cast(F& p)
       if (child != 0)
         result = &(FieldAux::cast<C>(*child));
       else
-        Util::throwBadCast(typeid(C), typeid(F));
+        Util::throwBadCast(typeid(C), typeid(F), SRC_POS);
     }
 
   return *result;

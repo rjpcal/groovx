@@ -54,7 +54,10 @@ namespace Util
 class InvalidIdError : public Util::Error
 {
 public:
-  InvalidIdError(const fstring& msg) : Util::Error(msg) {};
+  InvalidIdError(const fstring& msg, const FilePosition& pos)
+    :
+    Util::Error(msg, pos)
+  {};
 
   /// Virtual destructor.
   virtual ~InvalidIdError() throw();
@@ -132,8 +135,8 @@ public:
   bool isValidId(Util::UID id) const throw();
 
   /// Releases the object specified by \a id, but only if it is unshared.
-  /** This causes the object to be destroyed since it was unshared. If the
-      object is shared, this operation throws an exception. */
+  /** This causes the object to be destroyed since it was unshared. If
+      the object is shared, this operation throws an exception. */
   void remove(Util::UID id);
 
   /// Removes reference to the object with uid \a id.
@@ -144,20 +147,20 @@ public:
       process. */
   void purge();
 
-  /** Calls \c purge() repeatedly until no more items can be
-      removed. This will get rid of items that were only referenced by
-      other items in the list. */
+  /// Calls \c purge() repeatedly until no more items can be removed.
+  /** This will get rid of items that were only referenced by other
+      items in the list. */
   void clear();
 
   /// WARNING: should only be called during program exit.
-  /** Does a full clear of all objects held by the ObjDb. This breaks the
-      usual semantics of ObjDb, since it removes both shared and unshared
-      objects. */
+  /** Does a full clear of all objects held by the ObjDb. This breaks
+      the usual semantics of ObjDb, since it removes both shared and
+      unshared objects. */
   void clearOnExit();
 
   /// Return the \c Util::Object* with the uid given by \a id.
-  /** Checks first if \a id is a valid uid, and throws an \c InvalidIdError
-      if it is not. */
+  /** Checks first if \a id is a valid uid, and throws an \c
+      InvalidIdError if it is not. */
   Util::Object* getCheckedObj(Util::UID id) throw (InvalidIdError);
 
   /// Insert a strong reference to obj into the database.

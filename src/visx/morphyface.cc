@@ -275,7 +275,8 @@ void MorphyFace::readFrom(IO::Reader& reader)
 DOTRACE("MorphyFace::readFrom");
 
   reader.ensureReadVersionId("MorphyFace", 2,
-                             "Try cvs tag xml_conversion_20040526");
+                             "Try cvs tag xml_conversion_20040526",
+                             SRC_POS);
 
   readFieldsFrom(reader, classFields());
 
@@ -287,7 +288,7 @@ void MorphyFace::writeTo(IO::Writer& writer) const
 DOTRACE("MorphyFace::writeTo");
 
   writer.ensureWriteVersionId("MorphyFace", MFACE_SERIAL_VERSION_ID, 2,
-                              "Try groovx0.8a4");
+                              "Try groovx0.8a4", SRC_POS);
 
   writeFieldsTo(writer, classFields());
 

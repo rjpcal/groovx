@@ -93,7 +93,7 @@ IO::ObjectMap::getObject(Util::UID id)
   if ( itr == itsMap.end() )
     {
       throw Util::Error(fstring("no object was found "
-                                "for the given id:", id));
+                                "for the given id:", id), SRC_POS);
     }
 
   return (*itr).second;
@@ -131,7 +131,7 @@ void IO::ObjectMap::assignObjectForId(Util::UID id,
       msg.append("object has already been created\n");
       msg.append("\ttype: ", object->objTypename().c_str(), "\n");
       msg.append("\tid: ", id);
-      throw Util::Error(msg);
+      throw Util::Error(msg, SRC_POS);
     }
 
   itsMap.insert(MapType::value_type(id, object));

@@ -93,7 +93,7 @@ test "Sound::play" "normal play err sound" {
 
 test "Sound::play" "error on bad sound id" {
     Sound::play 0
-} {^Sound::play: attempted to access invalid object}
+} {attempted to access invalid object}
 
 
 ### cleanup

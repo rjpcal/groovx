@@ -271,7 +271,8 @@ void House::readFrom(IO::Reader& reader)
 DOTRACE("House::readFrom");
 
   reader.ensureReadVersionId("House", 3,
-                             "Try cvs tag xml_conversion_20040526");
+                             "Try cvs tag xml_conversion_20040526",
+                             SRC_POS);
 
   readFieldsFrom(reader, classFields());
 
@@ -283,7 +284,7 @@ void House::writeTo(IO::Writer& writer) const
 DOTRACE("House::writeTo");
 
   writer.ensureWriteVersionId("House", HOUSE_SERIAL_VERSION_ID, 3,
-                              "Try groovx0.8a4");
+                              "Try groovx0.8a4", SRC_POS);
 
   writeFieldsTo(writer, classFields());
 

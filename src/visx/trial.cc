@@ -225,7 +225,8 @@ DOTRACE("Trial::readFrom");
   rep->becomeInactive();
 
   reader.ensureReadVersionId("Trial", 5,
-                             "Try cvs tag xml_conversion_20040526");
+                             "Try cvs tag xml_conversion_20040526",
+                             SRC_POS);
 
   rep->gxNodes.clear();
   IO::ReadUtils::readObjectSeq<GxNode>
@@ -250,13 +251,15 @@ void Trial::writeTo(IO::Writer& writer) const
 DOTRACE("Trial::writeTo");
 
   writer.ensureWriteVersionId("Trial", TRIAL_SERIAL_VERSION_ID, 5,
-                              "Try groovx0.8a3");
+                              "Try groovx0.8a3", SRC_POS);
 
   IO::WriteUtils::writeObjectSeq(writer, "gxObjects",
-                                 rep->gxNodes.begin(), rep->gxNodes.end());
+                                 rep->gxNodes.begin(),
+                                 rep->gxNodes.end());
 
   IO::WriteUtils::writeValueObjSeq(writer, "responses",
-                                   rep->responses.begin(), rep->responses.end());
+                                   rep->responses.begin(),
+                                   rep->responses.end());
 
   writer.writeValue("correctResponse", rep->correctResponse);
 
@@ -316,7 +319,7 @@ int Trial::lastResponse() const
 DOTRACE("Trial::lastResponse");
 
   if (rep->responses.empty())
-    throw Util::Error("the trial has no responses yet");
+    throw Util::Error("the trial has no responses yet", SRC_POS);
 
   return rep->responses.back().val();
 }
@@ -401,7 +404,7 @@ void Trial::setCurrentNode(unsigned int nodeNumber)
 DOTRACE("Trial::setCurrentNode");
   if (nodeNumber >= rep->gxNodes.size())
     {
-      throw Util::Error(fstring("invalid node number ", nodeNumber));
+      throw Util::Error(fstring("invalid node number ", nodeNumber), SRC_POS);
     }
   rep->currentNode = nodeNumber;
 }
@@ -466,7 +469,7 @@ DOTRACE("Trial::vxRun");
   if ( rep->rh.isInvalid() || rep->th.isInvalid() )
     {
       throw Util::Error("the trial did not have a valid timing handler "
-                        "and response handler");
+                        "and response handler", SRC_POS);
     }
 
   rep->becomeActive(&parent, widget);

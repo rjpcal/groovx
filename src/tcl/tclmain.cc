@@ -120,7 +120,7 @@ public:
   {
     if (theMainImpl == 0)
       {
-        throw Util::Error("no Tcl::Main object has yet been created");
+        throw Util::Error("no Tcl::Main object has yet been created", SRC_POS);
       }
 
     return theMainImpl;

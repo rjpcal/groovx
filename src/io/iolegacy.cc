@@ -69,18 +69,18 @@ public:
     itsLegacyVersionId(0)
   {}
 
-  void throwIfError(const char* type)
+  void throwIfError(const char* type, const FilePosition& pos)
   {
     if (itsInStream.fail())
       {
         dbgPrint(3, "throwIfError for"); dbgEvalNL(3, type);
-        throw Util::Error(type);
+        throw Util::Error(type, pos);
       }
   }
 
-  void throwIfError(const fstring& type)
+  void throwIfError(const fstring& type, const FilePosition& pos)
   {
-    throwIfError(type.c_str());
+    throwIfError(type.c_str(), pos);
   }
 
   IO::LegacyReader* itsOwner;
@@ -97,7 +97,7 @@ public:
         // If we got here, then none of the substrings matched so we must
         // raise an exception.
         throw Util::Error(fstring("couldn't read typename for ",
-                                  correct_name.c_str()));
+                                  correct_name.c_str()), SRC_POS);
       }
   }
 
@@ -112,7 +112,7 @@ public:
         // If we got here, then none of the substrings matched so we must
         // raise an exception.
         throw Util::Error(fstring("couldn't read typename for ",
-                                  correct_name.c_str()));
+                                  correct_name.c_str()), SRC_POS);
       }
   }
 
@@ -130,11 +130,11 @@ public:
 
         itsInStream >> version;
         dbgEvalNL(3, version);
-        throwIfError("versionId");
+        throwIfError("versionId", SRC_POS);
       }
     else
       {
-        throw Util::Error("missing legacy versionId");
+        throw Util::Error("missing legacy versionId", SRC_POS);
       }
 
     return version;
@@ -147,7 +147,7 @@ public:
     if (brace != '{')
       {
         dbgPrintNL(3, "grabLeftBrace failed");
-        throw Util::Error("missing left-brace");
+        throw Util::Error("missing left-brace", SRC_POS);
       }
   }
 
@@ -158,7 +158,7 @@ public:
     if (brace != '}')
       {
         dbgPrintNL(3, "grabRightBrace failed");
-        throw Util::Error("missing right-brace");
+        throw Util::Error("missing right-brace", SRC_POS);
       }
   }
 
@@ -174,7 +174,7 @@ public:
         grabRightBrace();
       }
 
-    throwIfError(name);
+    throwIfError(name, SRC_POS);
   }
 };
 
@@ -209,7 +209,7 @@ DOTRACE("IO::LegacyReader::readChar");
   dbgEval(3, name);
   char val;
   rep->itsInStream >> val;   dbgEvalNL(3, val);
-  rep->throwIfError(name);
+  rep->throwIfError(name, SRC_POS);
   return val;
 }
 
@@ -219,7 +219,7 @@ DOTRACE("IO::LegacyReader::readInt");
   dbgEval(3, name);
   int val;
   rep->itsInStream >> val;   dbgEvalNL(3, val);
-  rep->throwIfError(name);
+  rep->throwIfError(name, SRC_POS);
   return val;
 }
 
@@ -229,7 +229,7 @@ DOTRACE("IO::LegacyReader::readBool");
   dbgEval(3, name);
   int val;
   rep->itsInStream >> val;   dbgEvalNL(3, val);
-  rep->throwIfError(name);
+  rep->throwIfError(name, SRC_POS);
   return bool(val);
 }
 
@@ -239,7 +239,7 @@ DOTRACE("IO::LegacyReader::readDouble");
   dbgEval(3, name);
   double val;
   rep->itsInStream >> val;   dbgEvalNL(3, val);
-  rep->throwIfError(name);
+  rep->throwIfError(name, SRC_POS);
   return val;
 }
 
@@ -251,19 +251,19 @@ DOTRACE("IO::LegacyReader::readStringImpl");
   int numchars = 0;
   rep->itsInStream >> numchars;
 
-  rep->throwIfError(name);
+  rep->throwIfError(name, SRC_POS);
 
   if (numchars < 0)
     {
       throw Util::Error("LegacyReader::readStringImpl "
-                        "saw negative character count");
+                        "saw negative character count", SRC_POS);
     }
 
   int c = rep->itsInStream.get();
   if (c != ' ')
     {
       throw Util::Error("LegacyReader::readStringImpl "
-                        "did not have whitespace after character count");
+                        "did not have whitespace after character count", SRC_POS);
     }
 
 //   if (rep->itsInStream.peek() == '\n') { rep->itsInStream.get(); }
@@ -271,7 +271,7 @@ DOTRACE("IO::LegacyReader::readStringImpl");
   fstring new_string;
   new_string.readsome(rep->itsInStream, (unsigned int) numchars);
 
-  rep->throwIfError(name);
+  rep->throwIfError(name, SRC_POS);
 
   dbgEvalNL(3, new_string);
 
@@ -283,7 +283,7 @@ void IO::LegacyReader::readValueObj(const fstring& name, Value& value)
 DOTRACE("IO::LegacyReader::readValueObj");
   dbgEvalNL(3, name);
   value.scanFrom(rep->itsInStream);
-  rep->throwIfError(name);
+  rep->throwIfError(name, SRC_POS);
 }
 
 Ref<IO::IoObject>
@@ -376,12 +376,12 @@ public:
     itsUsePrettyPrint(true)
   {}
 
-  void throwIfError(const char* type)
+  void throwIfError(const char* type, const FilePosition& pos)
   {
     if (itsOutStream.fail())
       {
         dbgPrint(3, "throwIfError for"); dbgEvalNL(3, type);
-        throw Util::Error(type);
+        throw Util::Error(type, pos);
       }
   }
 
@@ -478,14 +478,14 @@ public:
     if ( !(obj.isValid()) )
       {
         stream() << "NULL" << itsFSep;
-        throwIfError(obj_name);
+        throwIfError(obj_name, SRC_POS);
         return;
       }
 
     Assert(obj.isValid());
 
     stream() << obj->objTypename() << itsFSep;
-    throwIfError(obj->objTypename().c_str());
+    throwIfError(obj->objTypename().c_str(), SRC_POS);
 
     stream() << '@';
 
@@ -510,7 +510,7 @@ public:
     else
       requestNewline();
 
-    throwIfError(obj_name);
+    throwIfError(obj_name, SRC_POS);
   }
 };
 
@@ -544,28 +544,28 @@ void IO::LegacyWriter::writeChar(const char* name, char val)
 {
 DOTRACE("IO::LegacyWriter::writeChar");
   rep->stream() << val << rep->itsFSep;
-  rep->throwIfError(name);
+  rep->throwIfError(name, SRC_POS);
 }
 
 void IO::LegacyWriter::writeInt(const char* name, int val)
 {
 DOTRACE("IO::LegacyWriter::writeInt");
   rep->stream() << val << rep->itsFSep;
-  rep->throwIfError(name);
+  rep->throwIfError(name, SRC_POS);
 }
 
 void IO::LegacyWriter::writeBool(const char* name, bool val)
 {
 DOTRACE("IO::LegacyWriter::writeBool");
   rep->stream() << val << rep->itsFSep;
-  rep->throwIfError(name);
+  rep->throwIfError(name, SRC_POS);
 }
 
 void IO::LegacyWriter::writeDouble(const char* name, double val)
 {
 DOTRACE("IO::LegacyWriter::writeDouble");
   rep->stream() << val << rep->itsFSep;
-  rep->throwIfError(name);
+  rep->throwIfError(name, SRC_POS);
 }
 
 void IO::LegacyWriter::writeCstring(const char* name, const char* val)
@@ -574,7 +574,7 @@ DOTRACE("IO::LegacyWriter::writeCstring");
 
   rep->stream() << strlen(val) << " " << val << rep->itsFSep;
 
-  rep->throwIfError(name);
+  rep->throwIfError(name, SRC_POS);
 }
 
 void IO::LegacyWriter::writeValueObj(const char* name,
@@ -583,7 +583,7 @@ void IO::LegacyWriter::writeValueObj(const char* name,
 DOTRACE("IO::LegacyWriter::writeValueObj");
   value.printTo(rep->stream());
   rep->stream() << rep->itsFSep;
-  rep->throwIfError(name);
+  rep->throwIfError(name, SRC_POS);
 }
 
 void IO::LegacyWriter::writeRawData(const char* name,

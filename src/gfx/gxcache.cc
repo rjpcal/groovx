@@ -75,7 +75,7 @@ void GxCache::readFrom(IO::Reader& reader)
 DOTRACE("GxCache::readFrom");
 
   reader.ensureReadVersionId("GxCache", 1,
-                             "Try Revision 1.11");
+                             "Try Revision 1.11", SRC_POS);
 
   reader.readValue("mode", itsMode);
 }

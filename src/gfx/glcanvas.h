@@ -73,7 +73,8 @@ public:
 
   virtual unsigned int bitsPerPixel() const;
 
-  virtual void throwIfError(const char* where) const;
+  virtual void throwIfError(const char* where,
+                            const FilePosition& pos) const;
 
 
   virtual void pushAttribs(const char* comment="");

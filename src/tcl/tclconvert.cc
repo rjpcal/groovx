@@ -97,7 +97,7 @@ namespace
   inline void ensurePositive(T t)
   {
     if (t < 0)
-      throw Util::Error("signed/unsigned conversion failed");
+      throw Util::Error("signed/unsigned conversion failed", SRC_POS);
   }
 }
 
@@ -124,7 +124,7 @@ DOTRACE("Tcl::fromTcl(int*)");
   if ( Tcl_GetIntFromObj(0, safeobj.get(), &val) != TCL_OK )
     {
       throw Util::Error(fstring("expected integer but got \"",
-                                Tcl_GetString(obj), "\""));
+                                Tcl_GetString(obj), "\""), SRC_POS);
     }
   return val;
 }
@@ -151,7 +151,7 @@ DOTRACE("Tcl::fromTcl(long*)");
   if ( Tcl_GetLongFromObj(0, safeobj.get(), &val) != TCL_OK )
     {
       throw Util::Error(fstring("expected long value but got \"",
-                                Tcl_GetString(obj), "\""));
+                                Tcl_GetString(obj), "\""), SRC_POS);
     }
   return val;
 }
@@ -178,7 +178,7 @@ DOTRACE("Tcl::fromTcl(bool*)");
   if ( Tcl_GetBooleanFromObj(0, safeobj.get(), &int_val) != TCL_OK )
     {
       throw Util::Error(fstring("expected boolean value but got \"",
-                                Tcl_GetString(obj), "\""));
+                                Tcl_GetString(obj), "\""), SRC_POS);
     }
   return bool(int_val);
 }
@@ -194,7 +194,7 @@ DOTRACE("Tcl::fromTcl(double*)");
   if ( Tcl_GetDoubleFromObj(0, safeobj.get(), &val) != TCL_OK )
     {
       throw Util::Error(fstring("expected floating-point number but got \"",
-                                Tcl_GetString(obj), "\""));
+                                Tcl_GetString(obj), "\""), SRC_POS);
     }
   return val;
 }

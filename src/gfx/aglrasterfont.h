@@ -111,7 +111,8 @@ DOTRACE("AglRasterFont::AglRasterFont");
 
   if (itsListBase==0)
     {
-      throw Util::Error(fstring("couldn't allocate GL display lists"));
+      throw Util::Error(fstring("couldn't allocate GL display lists"),
+                        SRC_POS);
     }
 
   GLboolean status = aglUseFont(aglGetCurrentContext(),
@@ -124,7 +125,7 @@ DOTRACE("AglRasterFont::AglRasterFont");
 
   if (status == GL_FALSE)
     {
-      throw Util::Error("aglUseFont failed");
+      throw Util::Error("aglUseFont failed", SRC_POS);
     }
 
   /*
@@ -141,7 +142,7 @@ DOTRACE("AglRasterFont::AglRasterFont");
 
   if (err != noErr)
     {
-      throw Util::Error("aglUseFont failed");
+      throw Util::Error("aglUseFont failed", SRC_POS);
     }
 
 #if 0
@@ -178,7 +179,9 @@ DOTRACE("AglRasterFont::getFontId");
   GetFNum(pstring, &fnum);
 
   if (fnum == 0)
-    throw Util::Error(fstring("couldn't get Apple Font ID for font '", name, "'"));
+    throw Util::Error(fstring("couldn't get Apple Font ID "
+                              "for font '", name, "'"),
+                      SRC_POS);
 
   return GLint(fnum);
 }
@@ -201,7 +204,8 @@ DOTRACE("AglRasterFont::pickAppleFont");
 
       if (n != 2)
         throw Util::Error(fstring("couldn't parse fontspec '",
-                                  spec, "' as '[width]x[height]"));
+                                  spec, "' as '[width]x[height]"),
+                          SRC_POS);
 
       result.fontID = getFontId("Courier");
       result.face = bold;
@@ -219,7 +223,8 @@ DOTRACE("AglRasterFont::pickAppleFont");
 
       if (n != 4)
         throw Util::Error(fstring("couldn't parse fontspec '", spec,
-                                  "' (expected 4 conversions, got ", n, ")"));
+                                  "' (expected 4 conversions, got ", n, ")"),
+                          SRC_POS);
 
       result.fontID = getFontId(family);
 
@@ -238,7 +243,9 @@ DOTRACE("AglRasterFont::pickAppleFont");
           int n2 = sscanf(pxlsize, "%d", &ipxlsize);
 
           if (n2 != 1)
-            throw Util::Error(fstring("couldn't parse pixel size from '", pxlsize, "'"));
+            throw Util::Error(fstring("couldn't parse pixel size "
+                                      "from '", pxlsize, "'"),
+                              SRC_POS);
         }
 
       result.size = ipxlsize;

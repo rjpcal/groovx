@@ -64,7 +64,7 @@ namespace
       case 24: return 6; // RGB
       }
 
-    throw Util::Error(fstring("invalid Pbm bit depth value: ", depth));
+    throw Util::Error(fstring("invalid Pbm bit depth value: ", depth), SRC_POS);
 
     Assert(0); return 0; // can't get here
   }
@@ -78,7 +78,7 @@ namespace
       case 3: case 6: return 24; // RGB
       }
 
-    throw Util::Error(fstring("invalid Pbm mode value: ", mode));
+    throw Util::Error(fstring("invalid Pbm mode value: ", mode), SRC_POS);
 
     Assert(0); return 0; // can't happen
   }
@@ -132,9 +132,9 @@ namespace
     is.read(reinterpret_cast<char*>(data.bytesPtr()), data.byteCount());
     unsigned int numread = is.gcount();
     if (numread < data.byteCount())
-      throw Util::Error("stream underflow in parsePbmMode456");
+      throw Util::Error("stream underflow in parsePbmMode456", SRC_POS);
     if (is.fail() && !is.eof())
-      throw Util::Error("input stream failed in parsePbmMode456");
+      throw Util::Error("input stream failed in parsePbmMode456", SRC_POS);
   }
 }
 
@@ -186,18 +186,18 @@ void Pbm::load(STD_IO::istream& is, Gfx::BmapData& data)
 DOTRACE("Pbm::load");
   if (is.fail())
     {
-      throw Util::Error("input stream failed before reading pnm file");
+      throw Util::Error("input stream failed before reading pnm file", SRC_POS);
     }
 
   if (is.peek() == EOF)
     {
-      throw Util::Error("input stream empty while reading pnm file");
+      throw Util::Error("input stream empty while reading pnm file", SRC_POS);
     }
 
   int c = is.get();
   if (c != 'P')
     {
-      throw Util::Error(fstring("bad magic number while reading pnm file: ", c));
+      throw Util::Error(fstring("bad magic number while reading pnm file: ", c), SRC_POS);
     }
 
   int mode;
@@ -234,7 +234,7 @@ DOTRACE("Pbm::load");
   c = is.get();
   if ( !isspace(c) )
     {
-      throw Util::Error("missing whitespace while reading pnm file");
+      throw Util::Error("missing whitespace while reading pnm file", SRC_POS);
     }
 
   Gfx::BmapData new_data(extent, bit_depth, 1);

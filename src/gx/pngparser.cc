@@ -40,12 +40,12 @@
 
 void Png::load(const char* /*filename*/, Gfx::BmapData& /*data*/)
 {
-  throw Util::Error("png image files are not supported in this build");
+  throw Util::Error("png image files are not supported in this build", SRC_POS);
 }
 
 void Png::save(const char* /*filename*/, const Gfx::BmapData& /*data*/)
 {
-  throw Util::Error("png image files are not supported in this build");
+  throw Util::Error("png image files are not supported in this build", SRC_POS);
 }
 
 #else
@@ -121,7 +121,7 @@ DOTRACE("PngParser::parse");
   itsFile = fopen(filename, "rb");
   if (itsFile == 0)
     {
-      throw Util::Error("couldn't open file for png reading");
+      throw Util::Error("couldn't open file for png reading", SRC_POS);
     }
 
   const int nheader = 8;
@@ -132,23 +132,23 @@ DOTRACE("PngParser::parse");
   int is_png = !png_sig_cmp(header, 0, nheader);
   if (!is_png)
     {
-      throw Util::Error(fstring(filename, " is not a PNG image file"));
+      throw Util::Error(fstring(filename, " is not a PNG image file"), SRC_POS);
     }
 
   itsPngPtr = png_create_read_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
   if (itsPngPtr == 0)
-    throw Util::Error("PNG library couldn't create read_struct");
+    throw Util::Error("PNG library couldn't create read_struct", SRC_POS);
 
   itsInfoPtr = png_create_info_struct(itsPngPtr);
   if (itsInfoPtr == 0)
     {
-      throw Util::Error("PNG library couldn't create info_struct");
+      throw Util::Error("PNG library couldn't create info_struct", SRC_POS);
     }
 
   itsEndPtr = png_create_info_struct(itsPngPtr);
   if (itsEndPtr == 0)
     {
-      throw Util::Error("PNG library couldn't create end info_struct");
+      throw Util::Error("PNG library couldn't create end info_struct", SRC_POS);
     }
 
   png_init_io(itsPngPtr, itsFile);
@@ -180,7 +180,8 @@ DOTRACE("PngParser::parse");
     default:
       throw Util::Error(fstring("bit-depth '", bit_depth,
                                 "' is not supported for PNG images "
-                                "(must be 8- or 16-bit)"));
+                                "(must be 8- or 16-bit)"),
+                        SRC_POS);
     }
 
   const png_byte color_type = png_get_color_type(itsPngPtr, itsInfoPtr);
@@ -281,7 +282,7 @@ int getColorType(const Gfx::BmapData& data)
     case 32: return PNG_COLOR_TYPE_RGB_ALPHA;
     default:
       throw Util::Error(fstring("unknown bitsPerPixel value: ",
-                                data.bitsPerPixel()));
+                                data.bitsPerPixel()), SRC_POS);
     }
   return 0; // can't happen, but placate compiler
 }
@@ -294,17 +295,17 @@ DOTRACE("PngWriter::write");
   if (itsFile == 0)
     {
       throw Util::Error(fstring("couldn't open file '",
-                                filename, "' for png writing"));
+                                filename, "' for png writing"), SRC_POS);
     }
 
   itsPngPtr = png_create_write_struct(PNG_LIBPNG_VER_STRING, 0, 0, 0);
   if (itsPngPtr == 0)
-    throw Util::Error("PNG library couldn't create write_struct");
+    throw Util::Error("PNG library couldn't create write_struct", SRC_POS);
 
   itsInfoPtr = png_create_info_struct(itsPngPtr);
   if (itsInfoPtr == 0)
     {
-      throw Util::Error("PNG library couldn't create info_struct");
+      throw Util::Error("PNG library couldn't create info_struct", SRC_POS);
     }
 
   png_init_io(itsPngPtr, itsFile);

@@ -128,13 +128,13 @@ DOTRACE("WindowSystem::grabKeyboard[glx]");
   switch (result)
     {
     case AlreadyGrabbed:
-      throw Util::Error("couldn't grab keyboard: keyboard already grabbed");
+      throw Util::Error("couldn't grab keyboard: keyboard already grabbed", SRC_POS);
     case GrabNotViewable:
-      throw Util::Error("couldn't grab keyboard: grab window not viewable");
+      throw Util::Error("couldn't grab keyboard: grab window not viewable", SRC_POS);
     case GrabInvalidTime:
-      throw Util::Error("couldn't grab keyboard: grab time invalid");
+      throw Util::Error("couldn't grab keyboard: grab time invalid", SRC_POS);
     case GrabFrozen:
-      throw Util::Error("couldn't grab keyboard: pointer already frozen");
+      throw Util::Error("couldn't grab keyboard: pointer already frozen", SRC_POS);
     }
 }
 
@@ -150,14 +150,14 @@ void WindowSystem::winInfo(Tk_Window /*tkWin*/)
 {
 DOTRACE("WindowSystem::winInfo[agl]");
   // FIXME
-  throw Util::Error("WindowSystem::winInfo not supported");
+  throw Util::Error("WindowSystem::winInfo not supported", SRC_POS);
 }
 
 void WindowSystem::iconify(Tk_Window /*tkWin*/)
 {
 DOTRACE("WindowSystem::iconify[agl]");
   // FIXME
-  throw Util::Error("WindowSystem::iconify not supported");
+  throw Util::Error("WindowSystem::iconify not supported", SRC_POS);
 }
 
 void WindowSystem::grabKeyboard(Tk_Window /*tkWin*/)
@@ -257,7 +257,7 @@ DOTRACE("TkWidgImpl::TkWidgImpl");
 
   if (tkWin == 0)
     {
-      throw Util::Error("TkWidget constructor couldn't create Tk_Window");
+      throw Util::Error("TkWidget constructor couldn't create Tk_Window", SRC_POS);
     }
 
   Tk_SetClass(tkWin, classname);
@@ -581,7 +581,7 @@ DOTRACE("Tcl::TkWidget::setCursor");
       if (new_cursor == 0)
         {
           throw Util::Error(fstring("couldn't set cursor to '",
-                                    cursor_spec, "'"));
+                                    cursor_spec, "'"), SRC_POS);
         }
 
       // OK, creating the new cursor succeeded, now free the old one

@@ -77,13 +77,13 @@ test "GxCamera-pixelsPerUnit" "err1" {
     catch {-> $c pixelsPerUnit 0} result
     delete $c
     set result
-} {pixelsPerUnit: invalid scaling factor}
+} {invalid scaling factor}
 test "GxCamera-pixelsPerUnit" "err2" {
     set c [new GxFixedScaleCamera]
     catch {-> $c pixelsPerUnit -1.2} result
     delete $c
     set result
-} {pixelsPerUnit: invalid scaling factor}
+} {invalid scaling factor}
 
 ### unitAngle ###
 test "GxCamera-unitAngle" "args" {
@@ -99,13 +99,13 @@ test "GxCamera-unitAngle" "err1" {
     catch {-> $c unitAngle 0} result
     delete $c
     set result
-} {unitAngle: unit angle must be positive}
+} {unit angle must be positive}
 test "GxCamera-unitAngle" "err2" {
     set c [new GxPsyphyCamera]
     catch {-> $c unitAngle 0} result
     delete $c
     set result
-} {unitAngle: unit angle must be positive}
+} {unit angle must be positive}
 
 ### viewingDistIn ###
 test "GxCamera-viewingDistIn" "args" {
@@ -121,13 +121,13 @@ test "GxCamera-viewingDistIn" "err1" {
     catch {-> $c viewingDistIn 0} result
     delete $c
     set result
-} {viewingDistIn: .*$}
+} {viewingDistIn: }
 test "GxCamera-viewingDistIn" "err2" {
     set c [new GxPsyphyCamera]
     catch {-> $c viewingDistIn 0} result
     delete $c
     set result
-} {viewingDistIn: .*$}
+} {viewingDistIn: }
 
 ### reshape bugfix ###
 test "GxCamera-reshape" "bugfix" {

@@ -79,7 +79,7 @@ proc testTypeCmd { objname } {
         "} {$usage}
         eval ::test $testname {"error from bad objid"} {"
             $cmdname -1
-        "} {"${cmdname}: signed/unsigned.*"}
+        "} {"signed/unsigned.*"}
     }
 
     if { $this(testsubclass) } {

@@ -257,14 +257,16 @@ DOTRACE("AglWrapper::AglWrapper");
   itsPixFormat = aglChoosePixelFormat(&gdev, ndev, attribs.get());
 
   if (itsPixFormat == 0)
-    throw Util::Error("couldn't choose Apple-OpenGL pixel format");
+    throw Util::Error("couldn't choose Apple-OpenGL pixel format",
+                      SRC_POS);
 
   AGLContext share = 0;
 
   itsContext = aglCreateContext(itsPixFormat, share);
 
   if (itsContext == 0)
-    throw Util::Error("couldn't create Apple-OpenGL graphics context");
+    throw Util::Error("couldn't create Apple-OpenGL graphics context",
+                      SRC_POS);
 }
 
 AglWrapper* AglWrapper::make(Display* dpy, GlxOpts& opts)
@@ -292,7 +294,8 @@ DOTRACE("AglWrapper::isDirect");
   int status = aglDescribePixelFormat(itsPixFormat, AGL_ACCELERATED, &value);
 
   if (status == GL_FALSE)
-    throw Util::Error("couldn't get Apple-OpenGL accelerated attribute");
+    throw Util::Error("couldn't get Apple-OpenGL accelerated attribute",
+                      SRC_POS);
 
   return (value == GL_TRUE);
 }
@@ -305,7 +308,8 @@ DOTRACE("AglWrapper::isDoubleBuffered");
   int status = aglDescribePixelFormat(itsPixFormat, AGL_DOUBLEBUFFER, &value);
 
   if (status == GL_FALSE)
-    throw Util::Error("couldn't get Apple-OpenGL doublebuffer attribute");
+    throw Util::Error("couldn't get Apple-OpenGL doublebuffer attribute",
+                      SRC_POS);
 
   return (value == GL_TRUE);
 }
@@ -318,7 +322,8 @@ DOTRACE("AglWrapper::bitsPerPixel");
   int status = aglDescribePixelFormat(itsPixFormat, AGL_PIXEL_SIZE, &value);
 
   if (status == GL_FALSE)
-    throw Util::Error("couldn't get Apple-OpenGL pixel size attribute");
+    throw Util::Error("couldn't get Apple-OpenGL pixel size attribute",
+                      SRC_POS);
 
   Assert(value > 0);
 
@@ -346,17 +351,17 @@ DOTRACE("AglWrapper::makeCurrent");
   int status1 = aglSetDrawable(itsContext, drawable);
 
   if (status1 == GL_FALSE)
-    throw Util::Error("couldn't set Apple-OpenGL drawable");
+    throw Util::Error("couldn't set Apple-OpenGL drawable", SRC_POS);
 
   int status2 = aglSetCurrentContext(itsContext);
 
   if (status2 == GL_FALSE)
-    throw Util::Error("couldn't set current Apple-OpenGL context");
+    throw Util::Error("couldn't set current Apple-OpenGL context", SRC_POS);
 
   int status3 = aglUpdateContext(itsContext);
 
   if (status3 == GL_FALSE)
-    throw Util::Error("couldn't update Apple-OpenGL context");
+    throw Util::Error("couldn't update Apple-OpenGL context", SRC_POS);
 }
 
 void AglWrapper::onReshape(int /*width*/, int /*height*/)
@@ -366,7 +371,7 @@ DOTRACE("AglWrapper::onReshape");
   int status = aglUpdateContext(itsContext);
 
   if (status == GL_FALSE)
-    throw Util::Error("couldn't update Apple-OpenGL context");
+    throw Util::Error("couldn't update Apple-OpenGL context", SRC_POS);
 }
 
 void AglWrapper::swapBuffers() const

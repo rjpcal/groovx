@@ -85,7 +85,8 @@ public:
     itsPrimPtr(0)
   {
     if (!itsFstream.is_open())
-      raiseError(fstring("couldn't open '", filename, "' for writing"));
+      raiseError(fstring("couldn't open '", filename, "' for writing"),
+                 SRC_POS);
 
     itsStates.push_back(State());
 
@@ -593,15 +594,16 @@ public:
     itsFstream << t.x() << " " << t.y() << " ";
   }
 
-  void raiseError(const fstring& msg)
+  void raiseError(const fstring& msg, const FilePosition& pos)
   {
-    throw Util::Error(fstring("PSCanvas error: ", msg));
+    throw Util::Error(fstring("PSCanvas error: ", msg), pos);
   }
 
   void beginPrimitive(Primitive* ptr, const char* comment)
   {
     if (itsPrimPtr != 0)
-      raiseError("in beginPrimitive, already in graphics primitive");
+      raiseError("in beginPrimitive, already in graphics primitive",
+                 SRC_POS);
 
     if (comment != 0 && comment[0] != '\0')
       {
@@ -616,7 +618,8 @@ public:
   {
     if (itsPrimPtr == 0)
       {
-        raiseError("called endPrimitive outside graphics primitive");
+        raiseError("called endPrimitive outside graphics primitive",
+                   SRC_POS);
       }
 
     itsPrimPtr->end(this);
@@ -656,7 +659,7 @@ Vec2i Gfx::PSCanvas::screenFromWorld(
 {
 DOTRACE("Gfx::PSCanvas::screenFromWorld(Vec2d)");
 // FIXME
-  rep->raiseError("not implemented");
+  rep->raiseError("not implemented", SRC_POS);
   return Vec2i();
 }
 
@@ -666,7 +669,7 @@ Vec2d Gfx::PSCanvas::worldFromScreen(
 {
 DOTRACE("Gfx::PSCanvas::worldFromScreen(Vec2i)");
 // FIXME
-  rep->raiseError("not implemented");
+  rep->raiseError("not implemented", SRC_POS);
   return Vec2d();
 }
 
@@ -676,7 +679,7 @@ Rect<int> Gfx::PSCanvas::screenFromWorld(
 {
 DOTRACE("Gfx::PSCanvas::screenFromWorld(Rect)");
 // FIXME
-  rep->raiseError("not implemented");
+  rep->raiseError("not implemented", SRC_POS);
   return Rect<int>();
 }
 
@@ -685,7 +688,7 @@ Rect<double> Gfx::PSCanvas::worldFromScreen(
 {
 DOTRACE("Gfx::PSCanvas::worldFromScreen(Rect)");
 // FIXME
-  rep->raiseError("not implemented");
+  rep->raiseError("not implemented", SRC_POS);
   return Rect<double>();
 }
 
@@ -693,7 +696,7 @@ Rect<int> Gfx::PSCanvas::getScreenViewport() const
 {
 DOTRACE("Gfx::PSCanvas::getScreenViewport()");
 // FIXME
-  rep->raiseError("not implemented");
+  rep->raiseError("not implemented", SRC_POS);
   return Rect<int>();
 }
 
@@ -701,7 +704,7 @@ Rect<double> Gfx::PSCanvas::getWorldViewport() const
 {
 DOTRACE("Gfx::PSCanvas::getWorldViewport()");
 // FIXME
-  rep->raiseError("not implemented");
+  rep->raiseError("not implemented", SRC_POS);
   return Rect<double>();
 }
 
@@ -730,11 +733,12 @@ DOTRACE("Gfx::PSCanvas::bitsPerPixel");
   return 24;
 }
 
-void Gfx::PSCanvas::throwIfError(const char* where) const
+void Gfx::PSCanvas::throwIfError(const char* where,
+                                 const FilePosition& pos) const
 {
 DOTRACE("Gfx::PSCanvas::throwIfError");
   if (rep->itsFstream.fail())
-    rep->raiseError(where);
+    rep->raiseError(where, pos);
 }
 
 
@@ -903,7 +907,8 @@ DOTRACE("Gfx::PSCanvas::drawBitmap");
 void Gfx::PSCanvas::grabPixels(const Rect<int>&, BmapData&)
 {
 DOTRACE("Gfx::PSCanvas::grabPixels");
-  rep->raiseError("grabPixels not possible");
+  rep->raiseError("grabPixels not possible in PostScript canvas",
+                  SRC_POS);
 }
 
 void Gfx::PSCanvas::clearColorBuffer()
@@ -1053,7 +1058,8 @@ DOTRACE("Gfx::PSCanvas::vertex2");
 
   if (rep->itsPrimPtr == 0)
     {
-      rep->raiseError("called vertex() outside graphics primitive");
+      rep->raiseError("called vertex() outside graphics primitive",
+                      SRC_POS);
     }
 
   rep->itsPrimPtr->vertex(rep, v);
@@ -1075,14 +1081,14 @@ void Gfx::PSCanvas::drawRasterText(const fstring& /*text*/,
                                    const GxRasterFont& /*font*/)
 {
 DOTRACE("Gfx::PSCanvas::drawRasterText");
-  throw Util::Error("PSCanvas::drawRasterText not implemented");
+  throw Util::Error("PSCanvas::drawRasterText not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::drawVectorText(const fstring& /*text*/,
                                    const GxVectorFont& /*font*/)
 {
 DOTRACE("Gfx::PSCanvas::drawVectorText");
-  throw Util::Error("PSCanvas::drawVectorText not implemented");
+  throw Util::Error("PSCanvas::drawVectorText not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::flushOutput()

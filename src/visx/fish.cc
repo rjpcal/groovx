@@ -311,7 +311,8 @@ void Fish::readFrom(IO::Reader& reader)
 DOTRACE("Fish::readFrom");
 
   reader.ensureReadVersionId("Fish", 4,
-                             "Try cvs tag xml_conversion_20040526");
+                             "Try cvs tag xml_conversion_20040526",
+                             SRC_POS);
 
   readFieldsFrom(reader, classFields());
 
@@ -323,7 +324,7 @@ void Fish::writeTo(IO::Writer& writer) const
 DOTRACE("Fish::writeTo");
 
   writer.ensureWriteVersionId("Fish", FISH_SERIAL_VERSION_ID, 4,
-                              "Try groovx0.8a7");
+                              "Try groovx0.8a7", SRC_POS);
 
   writeFieldsTo(writer, classFields());
 
@@ -348,7 +349,7 @@ DOTRACE("Fish::readSplineFile");
   STD_IO::ifstream ifs(splinefile);
   if (ifs.fail())
     {
-      throw Util::Error(fstring("error opening file '", splinefile, "'"));
+      throw Util::Error(fstring("error opening file '", splinefile, "'"), SRC_POS);
     }
 
   for(i = 0; i < 4; ++i)
@@ -396,7 +397,7 @@ DOTRACE("Fish::readSplineFile");
 
       if (ifs.fail())
         {
-          throw Util::Error(fstring("error reading file '", splinefile, "'"));
+          throw Util::Error(fstring("error reading file '", splinefile, "'"), SRC_POS);
         }
     }
 
@@ -415,7 +416,7 @@ DOTRACE("Fish::readSplineFile");
       if (which <= 0)
         {
           throw Util::Error(fstring("bad 'which' value '", which,
-                                    "' while reading fish coords"));
+                                    "' while reading fish coords"), SRC_POS);
         }
 
       // skip the next line
@@ -427,7 +428,7 @@ DOTRACE("Fish::readSplineFile");
 
       if (ifs.fail())
         {
-          throw Util::Error(fstring("error reading file '", splinefile, "'"));
+          throw Util::Error(fstring("error reading file '", splinefile, "'"), SRC_POS);
         }
     }
 }
@@ -440,7 +441,7 @@ DOTRACE("Fish::readCoordFile");
   STD_IO::ifstream ifs(coordfile);
   if (ifs.fail())
     {
-      throw Util::Error(fstring("error opening file '", coordfile, "'"));
+      throw Util::Error(fstring("error opening file '", coordfile, "'"), SRC_POS);
     }
 
   // Skip (index-1) lines
@@ -458,7 +459,7 @@ DOTRACE("Fish::readCoordFile");
 
   if (ifs.fail())
     {
-      throw Util::Error(fstring("error reading file '", coordfile, "'"));
+      throw Util::Error(fstring("error reading file '", coordfile, "'"), SRC_POS);
     }
 }
 

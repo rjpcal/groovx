@@ -160,7 +160,7 @@ void TimingHdlr::readFrom(IO::Reader& reader)
 {
 DOTRACE("TimingHdlr::readFrom");
 
-  reader.ensureReadVersionId("TimingHdlr", 1, "Try groovx0.8a4");
+  reader.ensureReadVersionId("TimingHdlr", 1, "Try groovx0.8a4", SRC_POS);
 
   rep->immediateEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "immediateEvents",
@@ -184,7 +184,7 @@ void TimingHdlr::writeTo(IO::Writer& writer) const
 DOTRACE("TimingHdlr::writeTo");
 
   writer.ensureWriteVersionId("TimingHdlr", TIMINGHDLR_SERIAL_VERSION_ID, 1,
-                              "Try groovx0.8a4");
+                              "Try groovx0.8a4", SRC_POS);
 
   IO::WriteUtils::writeObjectSeq(writer, "immediateEvents",
     rep->immediateEvents.begin(), rep->immediateEvents.end());

@@ -142,7 +142,8 @@ void Gabor::readFrom(IO::Reader& reader)
 DOTRACE("Gabor::readFrom");
 
   reader.ensureReadVersionId("Gabor", 2,
-                             "Try cvs tag xml_conversion_20040526");
+                             "Try cvs tag xml_conversion_20040526",
+                             SRC_POS);
 
   readFieldsFrom(reader, classFields());
 
@@ -154,7 +155,7 @@ void Gabor::writeTo(IO::Writer& writer) const
 DOTRACE("Gabor::writeTo");
 
   writer.ensureWriteVersionId("Gabor", GABOR_SERIAL_VERSION_ID, 2,
-                              "Try groovx0.8a4");
+                              "Try groovx0.8a4", SRC_POS);
 
   writeFieldsTo(writer, classFields());
 

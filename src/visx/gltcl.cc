@@ -85,7 +85,10 @@ namespace GLTcl
     return pixelCheckSum(viewport[0], viewport[1], viewport[2], viewport[3]);
   }
 
-  void checkGL() { Gfx::Canvas::current().throwIfError("checkGL"); }
+  void checkGL()
+  {
+    Gfx::Canvas::current().throwIfError("checkGL", SRC_POS);
+  }
 
   // Just converts to char from unsigned char
   const char* getString(GLenum name)
@@ -287,7 +290,7 @@ namespace GLTcl
     const AttribInfo* theInfo = theAttribMap[param_tag];
     if ( theInfo == 0 )
       {
-        throw Util::Error("invalid or unsupported enumerant");
+        throw Util::Error("invalid or unsupported enumerant", SRC_POS);
       }
 
     fixed_block<T> theVals(theInfo->num_values);
@@ -323,12 +326,12 @@ void GLTcl::loadMatrix(Tcl::List entries)
   if (matrix.size() != 16)
     {
       throw Util::Error("matrix must have 16 entries "
-                        "in column-major order");
+                        "in column-major order", SRC_POS);
     }
 
   glLoadMatrixd(&matrix[0]);
 
-  Gfx::Canvas::current().throwIfError("loadMatrix");
+  Gfx::Canvas::current().throwIfError("loadMatrix", SRC_POS);
 }
 
 //---------------------------------------------------------------------

@@ -38,10 +38,11 @@
 #include "util/error.h"
 
 void Util::throwBadCast(const std::type_info& to,
-                        const std::type_info& from)
+                        const std::type_info& from,
+                        const FilePosition& pos)
 {
   throw Util::Error(fstring("failed cast to ", demangled_name(to),
-                            " from ", demangled_name(from)));
+                            " from ", demangled_name(from)), pos);
 }
 
 static const char vcid_stderror_cc[] = "$Header$";

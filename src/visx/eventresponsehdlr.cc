@@ -306,7 +306,8 @@ void EventResponseHdlr::readFrom(IO::Reader& reader)
 DOTRACE("EventResponseHdlr::readFrom");
 
   reader.ensureReadVersionId("EventResponseHdlr", 2,
-                             "Try cvs tag xml_conversion_20040526");
+                             "Try cvs tag xml_conversion_20040526",
+                             SRC_POS);
 
   rep->becomeInactive();
 
@@ -326,7 +327,7 @@ void EventResponseHdlr::writeTo(IO::Writer& writer) const
 DOTRACE("EventResponseHdlr::writeTo");
 
   writer.ensureWriteVersionId("EventResponseHdlr", ERH_SERIAL_VERSION_ID, 2,
-                              "Try groovx0.8a7");
+                              "Try groovx0.8a7", SRC_POS);
 
   writer.writeValue("feedbackMap", rep->itsFeedbackMap.rep());
   writer.writeValue("useFeedback", rep->itsFeedbackMap.itsUseFeedback);

@@ -45,7 +45,7 @@ namespace
   {
     if (!expr)
       throw Util::Error(fstring(file, "@", line,
-                                ": failed test of: ",exprString));
+                                ": failed test of: ",exprString), SRC_POS);
   }
 
   template <class T, class U>
@@ -60,7 +60,7 @@ namespace
         fstring msg(file, "@", line, ": failed test:\n");
         msg.append("\texpected ", exprString1, " == ", exprString2, "\n");
         msg.append("\tgot: ", expr1, " != ", expr2);
-        throw Util::Error(msg);
+        throw Util::Error(msg, SRC_POS);
       }
   }
 
@@ -83,7 +83,7 @@ namespace
         fstring msg(file, "@", line, ": failed test:\n");
         msg.append("\texpected ", exprString1, " ~= ", exprString2, "\n");
         msg.append("\tgot: ", expr1, " != ", expr2);
-        throw Util::Error(msg);
+        throw Util::Error(msg, SRC_POS);
       }
   }
 }

@@ -303,7 +303,7 @@ DOTRACE("GaborArray::updateForeg");
 
       if (!tryPush(e))
         {
-          throw Util::Error("foreground elements were too close together!\n");
+          throw Util::Error("foreground elements were too close together!\n", SRC_POS);
         }
     }
 
@@ -535,7 +535,7 @@ bool GaborArray::tryPush(const GaborArrayElement& e) const
   if (itsTotalNumber >= MAX_GABOR_NUMBER)
     {
       throw Util::Error(fstring(" More than ", MAX_GABOR_NUMBER,
-                                " elements!\n"));
+                                " elements!\n"), SRC_POS);
     }
 
   itsArray[itsTotalNumber++] = e;

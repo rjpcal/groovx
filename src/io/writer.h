@@ -32,6 +32,7 @@
 #ifndef WRITER_H_DEFINED
 #define WRITER_H_DEFINED
 
+#include "util/fileposition.h"
 #include "util/strings.h"
 
 #include "io/iodecls.h"
@@ -79,7 +80,8 @@ public:
   int ensureWriteVersionId(const char* name,
                            IO::VersionId actual_version,
                            IO::VersionId lowest_supported_version,
-                           const char* msg);
+                           const char* msg,
+                           const FilePosition& pos);
 
   /// Store the \c char attribute \a val in association with the tag \a name.
   virtual void writeChar(const char* name, char val) = 0;

@@ -222,7 +222,8 @@ void GxPixmap::readFrom(IO::Reader& reader)
 DOTRACE("GxPixmap::readFrom");
 
   int svid = reader.ensureReadVersionId("GxPixmap", 4,
-                                        "Try cvs tag xml_conversion_20040526");
+                                        "Try cvs tag xml_conversion_20040526",
+                                        SRC_POS);
 
   reader.readValue("filename", rep->itsFilename);
   reader.readValue("zoomX", rep->itsZoom.x());
@@ -242,9 +243,9 @@ DOTRACE("GxPixmap::readFrom");
       queueImage(rep->itsFilename.c_str());
     }
 
-#if 0
   if (svid >= 5)
     {
+#if 0
       rutz::byte_array imgdata;
       reader.readRawData("image", imgdata);
       if (imgdata.vec.size() > 0)
@@ -253,8 +254,8 @@ DOTRACE("GxPixmap::readFrom");
                              imgdata.vec.size());
           Pbm::load(s, rep->itsData);
         }
-    }
 #endif
+    }
 
   reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
 }
@@ -264,7 +265,7 @@ void GxPixmap::writeTo(IO::Writer& writer) const
 DOTRACE("GxPixmap::writeTo");
 
   writer.ensureWriteVersionId("GxPixmap", BITMAP_SERIAL_VERSION_ID, 5,
-                              "Try groovx0.8a7");
+                              "Try groovx0.8a7", SRC_POS);
 
   writer.writeValue("filename", rep->itsFilename);
   writer.writeValue("zoomX", rep->itsZoom.x());

@@ -66,7 +66,7 @@ Tcl::Interp::Interp(Tcl_Interp* interp) :
 {
 DOTRACE("Tcl::Interp::Interp");
   if (interp == 0)
-    throw Util::Error("tried to make Tcl::Interp with a null Tcl_Interp*");
+    throw Util::Error("tried to make Tcl::Interp with a null Tcl_Interp*", SRC_POS);
 
   Tcl_CallWhenDeleted(itsInterp, interpDeleteProc,
                       static_cast<ClientData>(this));
@@ -102,7 +102,7 @@ DOTRACE("Tcl::Interp::~Interp");
 Tcl_Interp* Tcl::Interp::intp() const
 {
   if (itsInterp == 0)
-    throw Util::Error("Tcl::Interp doesn't have a valid interpreter");
+    throw Util::Error("Tcl::Interp doesn't have a valid interpreter", SRC_POS);
 
   return itsInterp;
 }
@@ -157,7 +157,7 @@ DOTRACE("Tcl::Interp::evalBooleanExpr");
 
   if (Tcl_ExprBooleanObj(intp(), obj.obj(), &expr_result) != TCL_OK)
     {
-      throw Util::Error("error evaluating boolean expression");
+      throw Util::Error("error evaluating boolean expression", SRC_POS);
     }
 
   return bool(expr_result);
@@ -186,7 +186,7 @@ bool Tcl::Interp::eval(const Tcl::ObjPtr& code, Tcl::ErrorStrategy strategy)
 DOTRACE("Tcl::Interp::eval");
 
   if (!hasInterp())
-    throw Util::Error("Tcl_Interp* was null in Tcl::Interp::eval");
+    throw Util::Error("Tcl_Interp* was null in Tcl::Interp::eval", SRC_POS);
 
   if ( Tcl_EvalObjEx(intp(), code.obj(), TCL_EVAL_GLOBAL) == TCL_OK )
     return true;
@@ -198,7 +198,8 @@ DOTRACE("Tcl::Interp::eval");
     case THROW_ERROR:
       throw Util::Error(fstring("error while evaluating ",
                                 Tcl_GetString(code.obj()),
-                                ":\n", getResult<const char*>()));
+                                ":\n", getResult<const char*>()),
+                        SRC_POS);
       break;
     case IGNORE_ERROR:
       return false;
@@ -274,7 +275,7 @@ DOTRACE("Tcl::Interp::setGlobalVar");
                     var.obj(), TCL_GLOBAL_ONLY) == 0)
     {
       throw Util::Error(fstring("couldn't set global variable'",
-                                var_name, "'"));
+                                var_name, "'"), SRC_POS);
     }
 }
 
@@ -286,7 +287,7 @@ DOTRACE("Tcl::Interp::unsetGlobalVar");
                    TCL_GLOBAL_ONLY) != TCL_OK)
     {
       throw Util::Error(fstring("couldn't unset global variable'",
-                                var_name, "'"));
+                                var_name, "'"), SRC_POS);
     }
 }
 
@@ -302,7 +303,7 @@ DOTRACE("Tcl::Interp::getObjGlobalVar");
   if (obj == 0)
     {
       throw Util::Error(fstring("couldn't get global variable '",
-                                name1, "'"));
+                                name1, "'"), SRC_POS);
     }
 
   return obj;
@@ -320,7 +321,7 @@ DOTRACE("Tcl::Interp::linkInt");
 
   if ( Tcl_LinkVar(intp(), temp.data(), reinterpret_cast<char *>(addr), flag)
        != TCL_OK )
-    throw Util::Error("error while linking int variable");
+    throw Util::Error("error while linking int variable", SRC_POS);
 }
 
 void Tcl::Interp::linkDouble(const char* varName, double* addr, bool readOnly)
@@ -335,7 +336,7 @@ DOTRACE("Tcl::Interp::linkDouble");
 
   if ( Tcl_LinkVar(intp(), temp.data(), reinterpret_cast<char *>(addr), flag)
        != TCL_OK )
-    throw Util::Error("error while linking double variable");
+    throw Util::Error("error while linking double variable", SRC_POS);
 }
 
 void Tcl::Interp::linkBoolean(const char* varName, int* addr, bool readOnly)
@@ -350,7 +351,7 @@ DOTRACE("Tcl::Interp::linkBoolean");
 
   if ( Tcl_LinkVar(intp(), temp.data(), reinterpret_cast<char *>(addr), flag)
        != TCL_OK )
-    throw Util::Error("error while linking boolean variable");
+    throw Util::Error("error while linking boolean variable", SRC_POS);
 }
 
 void Tcl::Interp::handleLiveException(const char* where,

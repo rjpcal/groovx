@@ -56,7 +56,7 @@ XmlParser::XmlParser(std::istream& is, int bufsize) :
 DOTRACE("XmlParser::XmlParser");
   if (itsParser == 0)
     {
-      throw Util::Error("couldn't allocate memory for XML_Parser");
+      throw Util::Error("couldn't allocate memory for XML_Parser", SRC_POS);
     }
 
   XML_SetUserData(itsParser, this);
@@ -109,7 +109,7 @@ DOTRACE("XmlParser::parse");
       void* const buf = XML_GetBuffer(itsParser, itsBufSize);
       if (buf == 0)
         {
-          throw Util::Error("couldn't get buffer in XmlParser::parse()");
+          throw Util::Error("couldn't get buffer in XmlParser::parse()", SRC_POS);
         }
 
       // very strangely I wasn't able to get things to work using a
@@ -118,7 +118,7 @@ DOTRACE("XmlParser::parse");
       const int len = itsStream.gcount();
       if (!itsStream.eof() && itsStream.fail())
         {
-          throw Util::Error("read error in XmlParser::parse()");
+          throw Util::Error("read error in XmlParser::parse()", SRC_POS);
         }
 
       const int peek = itsStream.peek();
@@ -143,7 +143,8 @@ DOTRACE("XmlParser::parse");
             (fstring("xml parse error at input line ",
                      XML_GetCurrentLineNumber(itsParser),
                      ":\n",
-                     XML_ErrorString(XML_GetErrorCode(itsParser))));
+                     XML_ErrorString(XML_GetErrorCode(itsParser))),
+             SRC_POS);
         }
 
       if (done)

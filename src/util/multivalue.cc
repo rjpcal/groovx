@@ -69,9 +69,9 @@ void TMultiValue<T>::scanFrom(STD_IO::istream& is)
 DOTRACE("TMultiValue<T>::scanFrom");
 
   if (is.fail())
-    throw Util::Error("istream started out in fail state");
+    throw Util::Error("istream started out in fail state", SRC_POS);
   if (is.eof())
-    throw Util::Error("istream started out in eof state");
+    throw Util::Error("istream started out in eof state", SRC_POS);
 
   T* dat = mutableBegin();
   T* end = mutableEnd();
@@ -85,13 +85,13 @@ DOTRACE("TMultiValue<T>::scanFrom");
         {
           if (is.fail() || is.eof())
             throw Util::Error("stream underflow "
-                              "while scanning a multi-value");
+                              "while scanning a multi-value", SRC_POS);
         }
       else
         {
           if (is.fail() && !is.eof())
             throw Util::Error("stream error "
-                              "while scanning a multi-value");
+                              "while scanning a multi-value", SRC_POS);
         }
     }
 }

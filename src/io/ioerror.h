@@ -47,7 +47,7 @@ class IO::FilenameError : public Util::Error
 {
 public:
   /// Default constructor.
-  FilenameError(const char* filename);
+  FilenameError(const char* filename, const FilePosition& pos);
 
   /// Virtual destructor
   virtual ~FilenameError() throw();

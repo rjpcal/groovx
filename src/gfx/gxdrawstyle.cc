@@ -64,7 +64,7 @@ IO::VersionId GxDrawStyle::serialVersionId() const
 void GxDrawStyle::readFrom(IO::Reader& reader)
 {
   reader.ensureReadVersionId("GxDrawStyle", 1,
-                             "Try groovx0.8a7");
+                             "Try groovx0.8a7", SRC_POS);
 
   readFieldsFrom(reader, classFields());
 }
@@ -72,7 +72,7 @@ void GxDrawStyle::readFrom(IO::Reader& reader)
 void GxDrawStyle::writeTo(IO::Writer& writer) const
 {
   writer.ensureWriteVersionId("GxDrawStyle", GXDRAWSTYLE_SERIAL_VERSION_ID, 1,
-                              "Try groovx0.8a7");
+                              "Try groovx0.8a7", SRC_POS);
 
   writeFieldsTo(writer, classFields());
 }

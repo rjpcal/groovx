@@ -75,7 +75,7 @@ IrixAudioSoundRep::IrixAudioSoundRep(const char* filename) :
 DOTRACE("IrixAudioSoundRep::IrixAudioSoundRep");
 
   if (itsAudioConfig == 0)
-    throw Util::Error("error creating an ALconfig while creating Sound");
+    throw Util::Error("error creating an ALconfig while creating Sound", SRC_POS);
 
   SoundRep::checkFilename(filename);
 
@@ -85,7 +85,7 @@ DOTRACE("IrixAudioSoundRep::IrixAudioSoundRep");
   AFfilehandle audiofile = afOpenFile(filename, "r", (AFfilesetup) 0);
   if (audiofile == AF_NULL_FILEHANDLE)
     {
-      throw Util::Error(fstring("couldn't open sound file ", filename));
+      throw Util::Error(fstring("couldn't open sound file ", filename), SRC_POS);
     }
 
   // Read important parameters from the audio file, and use them to
@@ -96,7 +96,7 @@ DOTRACE("IrixAudioSoundRep::IrixAudioSoundRep");
   if (numChannels == -1)
     {
       throw Util::Error(fstring("error reading the number of channels "
-                                "in sound file ", filename));
+                                "in sound file ", filename), SRC_POS);
     }
   alSetChannels(itsAudioConfig, numChannels);
 
@@ -105,7 +105,7 @@ DOTRACE("IrixAudioSoundRep::IrixAudioSoundRep");
   if (itsFrameCount < 0)
     {
       throw Util::Error(fstring("error reading the frame count "
-                                "in sound file ", filename));
+                                "in sound file ", filename), SRC_POS);
     }
 
   // Sample format and width
@@ -145,12 +145,12 @@ DOTRACE("IrixAudioSoundRep::IrixAudioSoundRep");
   if (readResult == -1)
     {
       throw Util::Error(fstring("error reading sound data "
-                                "from file ", filename));
+                                "from file ", filename), SRC_POS);
     }
 
   if (closeResult == -1)
     {
-      throw Util::Error(fstring("error closing sound file ", filename));
+      throw Util::Error(fstring("error closing sound file ", filename), SRC_POS);
     }
 }
 
@@ -172,14 +172,14 @@ DOTRACE("IrixAudioSoundRep::play");
   dbgEvalNL(3, (void*) audioPort);
   if (audioPort == 0)
     {
-      throw Util::Error("error opening an audio port during Sound::play");
+      throw Util::Error("error opening an audio port during Sound::play", SRC_POS);
     }
 
   int writeResult =
     alWriteFrames(audioPort, static_cast<void*>(&itsSamples[0]), itsFrameCount);
   if (writeResult == -1)
     {
-      throw Util::Error("error writing to the audio port during Sound::play");
+      throw Util::Error("error writing to the audio port during Sound::play", SRC_POS);
     }
 
   while (alGetFilled(audioPort) > 0)
@@ -190,7 +190,7 @@ DOTRACE("IrixAudioSoundRep::play");
   int closeResult = alClosePort(audioPort);
   if (closeResult == -1)
     {
-      throw Util::Error("error closing the audio port during Sound::play");
+      throw Util::Error("error closing the audio port during Sound::play", SRC_POS);
     }
 }
 

@@ -94,7 +94,8 @@ void Block::readFrom(IO::Reader& reader)
 DOTRACE("Block::readFrom");
 
   reader.ensureReadVersionId("Block", 3,
-                             "Try cvs tag xml_conversion_20040526");
+                             "Try cvs tag xml_conversion_20040526",
+                             SRC_POS);
 
   reader.readBaseClass("ElementContainer",
                        IO::makeProxy<ElementContainer>(this));
@@ -105,7 +106,7 @@ void Block::writeTo(IO::Writer& writer) const
 DOTRACE("Block::writeTo");
 
   writer.ensureWriteVersionId("Block", BLOCK_SERIAL_VERSION_ID, 3,
-                              "Try groovx0.8a7");
+                              "Try groovx0.8a7", SRC_POS);
 
   writer.writeBaseClass("ElementContainer",
                         IO::makeConstProxy<ElementContainer>(this));

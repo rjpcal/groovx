@@ -40,7 +40,7 @@
 
 void Jpeg::load(const char* /*filename*/, Gfx::BmapData& /*data*/)
 {
-  throw Util::Error("jpeg image files are not supported in this build");
+  throw Util::Error("jpeg image files are not supported in this build", SRC_POS);
 }
 
 #else
@@ -88,16 +88,16 @@ namespace
   }
 }
 
-#define SETJMP_TRY(statement)                   \
-do {                                            \
-  if (setjmp(state) == 0)                       \
-    {                                           \
-      statement;                                \
-    }                                           \
-  else                                          \
-    {                                           \
-      throw Util::Error(#statement " failed");  \
-    }                                           \
+#define SETJMP_TRY(statement)                            \
+do {                                                     \
+  if (setjmp(state) == 0)                                \
+    {                                                    \
+      statement;                                         \
+    }                                                    \
+  else                                                   \
+    {                                                    \
+      throw Util::Error(#statement " failed", SRC_POS);  \
+    }                                                    \
 } while (0)
 
 void Jpeg::load(const char* filename, Gfx::BmapData& data)
@@ -106,7 +106,7 @@ DOTRACE("Jpeg::load");
 
   if (BITS_IN_JSAMPLE != 8)
     {
-      throw Util::Error("jpeg library must be built for 8 bits-per-sample");
+      throw Util::Error("jpeg library must be built for 8 bits-per-sample", SRC_POS);
     }
 
   jmp_buf state;
@@ -130,7 +130,7 @@ DOTRACE("Jpeg::load");
 
   if (aux.infile == 0)
     {
-      throw Util::Error(fstring("couldn't open '", filename, "' for reading"));
+      throw Util::Error(fstring("couldn't open '", filename, "' for reading"), SRC_POS);
     }
 
 

@@ -67,7 +67,7 @@ DOTRACE("Tcl::List::split");
   int count;
   if ( Tcl_ListObjGetElements(0, itsList.obj(), &count, &itsElements) != TCL_OK)
     {
-      throw Util::Error("couldn't split Tcl list");
+      throw Util::Error("couldn't split Tcl list", SRC_POS);
     }
 
   Assert(count >= 0);
@@ -83,7 +83,7 @@ DOTRACE("Tcl::List::doAppend");
   while (times--)
     if ( Tcl_ListObjAppendElement(0, itsList.obj(), obj.obj()) != TCL_OK )
       {
-        throw Util::Error("couldn't append to Tcl list");
+        throw Util::Error("couldn't append to Tcl list", SRC_POS);
       }
 
   invalidate();
@@ -96,7 +96,7 @@ DOTRACE("Tcl::List::at");
   update();
 
   if (index >= itsLength)
-    throw Util::Error("index was out of range in Tcl list access");
+    throw Util::Error("index was out of range in Tcl list access", SRC_POS);
 
   dbgEval(3, index); dbgEvalNL(3, itsElements[index]);
 
@@ -110,7 +110,7 @@ DOTRACE("Tcl::List::getLength");
   int len;
   if ( Tcl_ListObjLength(0, obj, &len) != TCL_OK)
     {
-      throw Util::Error("couldn't get list length of Tcl object");
+      throw Util::Error("couldn't get list length of Tcl object", SRC_POS);
     }
 
   Assert(len >= 0);

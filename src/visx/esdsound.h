@@ -82,7 +82,7 @@ DOTRACE("EsdSoundRep::EsdSoundRep");
   if (audiofile == AF_NULL_FILEHANDLE)
     {
       throw Util::Error(fstring("couldn't open sound file '",
-                                filename, "'"));
+                                filename, "'"), SRC_POS);
     }
 
   int closeResult = afCloseFile(audiofile);
@@ -90,7 +90,7 @@ DOTRACE("EsdSoundRep::EsdSoundRep");
   if (closeResult == -1)
     {
       throw Util::Error(fstring("error closing sound file '",
-                                filename, "'"));
+                                filename, "'"), SRC_POS);
     }
 
   itsFilename = filename;
@@ -107,7 +107,7 @@ DOTRACE("EsdSoundRep::play");
       int res = esd_play_file("", itsFilename.c_str(), 1);
       if (res == 0)
         throw Util::Error(fstring("error while attempting to play sound file:\n  '",
-                                  itsFilename.c_str(), "'"));
+                                  itsFilename.c_str(), "'"), SRC_POS);
     }
 }
 

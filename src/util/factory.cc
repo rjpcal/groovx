@@ -63,7 +63,8 @@ DOTRACE("AssocArray::~AssocArray");
   clear();
 }
 
-void AssocArray::throwForType(const char* type)
+void AssocArray::throwForType(const char* type,
+                              const FilePosition& pos)
 {
   fstring typelist("known types are:");
 
@@ -75,12 +76,14 @@ void AssocArray::throwForType(const char* type)
         typelist.append("\n\t", ii->first);
     }
 
-  throw Util::Error(fstring(typelist, "\nunknown object type '", type, "'"));
+  throw Util::Error(fstring(typelist, "\nunknown object type '",
+                            type, "'"), pos);
 }
 
-void AssocArray::throwForType(const fstring& type)
+void AssocArray::throwForType(const fstring& type,
+                              const FilePosition& pos)
 {
-  throwForType(type.c_str());
+  throwForType(type.c_str(), pos);
 }
 
 void AssocArray::clear()

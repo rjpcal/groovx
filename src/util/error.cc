@@ -48,9 +48,10 @@ namespace
   static Util::BackTrace* last = 0;
 }
 
-Util::Error::Error() :
+Util::Error::Error(const FilePosition& pos) :
   std::exception(),
   itsInfo(),
+  itsPos(pos),
   itsBackTrace(new BackTrace(Util::BackTrace::current()))
 {
 DOTRACE("Util::Error::Error()");
@@ -68,9 +69,10 @@ DOTRACE("Util::Error::Error()");
     }
 }
 
-Util::Error::Error(const fstring& msg) :
+Util::Error::Error(const fstring& msg, const FilePosition& pos) :
   std::exception(),
   itsInfo(msg),
+  itsPos(pos),
   itsBackTrace(new BackTrace(Util::BackTrace::current()))
 {
 DOTRACE("Util::Error::Error(fstring)");
@@ -91,6 +93,7 @@ DOTRACE("Util::Error::Error(fstring)");
 Util::Error::Error(const Util::Error& other) throw() :
   std::exception(other),
   itsInfo(other.itsInfo),
+  itsPos(other.itsPos),
   itsBackTrace(0)
 {
 DOTRACE("Util::Error::Error(copy)");
@@ -109,6 +112,9 @@ DOTRACE("Util::Error::~Error");
 
 const char* Util::Error::what() const throw()
 {
+  fstring fullmsg("at ", itsPos.fileName, ":", itsPos.lineNo, ":\n",
+                  itsInfo);
+  const_cast<fstring&>(itsInfo) = fullmsg;
   return itsInfo.c_str();
 }
 

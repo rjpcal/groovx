@@ -61,16 +61,14 @@ using IO::AttribMap;
 
 namespace
 {
-  class AttributeReadError : public Util::Error
+  void throwAttrError(const fstring& attrib_name,
+                      const fstring& attrib_value,
+                      const FilePosition& pos)
   {
-  public:
-    AttributeReadError(const fstring& attrib_name,
-                       const fstring& attrib_value) :
-      Util::Error(fstring("error reading attribute '", attrib_name,
-                          "' with value '", attrib_value, "'"))
-    {}
-  };
-
+    throw Util::Error(fstring("error reading attribute '", attrib_name,
+                              "' with value '", attrib_value, "'"),
+                      pos);
+  }
 
   fstring readAndUnEscape(STD_IO::istream& is)
   {
@@ -106,7 +104,7 @@ namespace
 
             if (ch2 == EOF || ch2 == STRING_ENDER)
               throw Util::Error("missing character "
-                                "after trailing backslash");
+                                "after trailing backslash", SRC_POS);
 
             switch (ch2)
               {
@@ -119,7 +117,8 @@ namespace
                 buffer.push_back('\0');
                 throw Util::Error
                   (fstring("invalid escape character '", char(ch2),
-                           "' with buffer contents: ", &buffer[0]));
+                           "' with buffer contents: ", &buffer[0]),
+                   SRC_POS);
                 break;
               }
           }
@@ -178,7 +177,7 @@ private:
   {
     if ( itsAttribs.empty() )
       throw Util::Error("attempted to read attribute "
-                        "when no attribute map was active");
+                        "when no attribute map was active", SRC_POS);
     return *(itsAttribs.back());
   }
 
@@ -198,7 +197,7 @@ private:
     dbgEval(3, a.value); dbgEvalNL(3, return_val);
 
     if (ist.fail())
-      throw AttributeReadError(name, a.value);
+      throwAttrError(name, a.value, SRC_POS);
 
     return return_val;
   }
@@ -278,7 +277,7 @@ DOTRACE("AsciiStreamReader::readStringImpl");
   if (len < 0)
     {
       throw Util::Error(fstring("found a negative length "
-                                "for a string attribute: ", len));
+                                "for a string attribute: ", len), SRC_POS);
     }
 
   fstring new_string;
@@ -286,7 +285,7 @@ DOTRACE("AsciiStreamReader::readStringImpl");
 
   if (ist.fail())
     {
-      throw AttributeReadError(name, a.value);
+      throwAttrError(name, a.value, SRC_POS);
     }
 
   dbgEval(3, a.value); dbgEvalNL(3, new_string);
@@ -324,7 +323,7 @@ DOTRACE("AsciiStreamReader::readMaybeObject");
   ist >> id;
 
   if (ist.fail())
-    throw AttributeReadError(name, attrib.value);
+    throwAttrError(name, attrib.value, SRC_POS);
 
   if (id == 0) { return SoftRef<IO::IoObject>(); }
 
@@ -384,7 +383,7 @@ DOTRACE("AsciiStreamReader::readRoot");
           msg.append("id: ", id, "\n");
           msg.append("\tequal: ", equal, "\n");
           msg.append("\tbracket: ", bracket);
-          throw Util::Error(msg);
+          throw Util::Error(msg, SRC_POS);
         }
 
       if ( !haveReadRoot )
@@ -408,7 +407,8 @@ DOTRACE("AsciiStreamReader::readRoot");
         {
           throw Util::Error(fstring("input failed "
                                     "while parsing ending bracket\n",
-                                    "\tbracket: ", bracket));
+                                    "\tbracket: ", bracket),
+                            SRC_POS);
         }
     }
 
@@ -438,7 +438,7 @@ DOTRACE("AsciiStreamReader::inflateObject");
       buf >> svid;
       if ( buf.fail() )
         throw Util::Error("input failed while reading "
-                          "serialization version id");
+                          "serialization version id", SRC_POS);
     }
 
   attribMap->setSerialVersionId(svid);
@@ -450,13 +450,13 @@ DOTRACE("AsciiStreamReader::inflateObject");
   if (attrib_count < 0)
     {
       throw Util::Error(fstring("found a negative attribute count: ",
-                                attrib_count));
+                                attrib_count), SRC_POS);
     }
 
   if ( buf.fail() )
     {
       throw Util::Error(fstring("input failed while reading "
-                                "attribute count: ", attrib_count));
+                                "attribute count: ", attrib_count), SRC_POS);
     }
 
   // Loop and load all the attributes
@@ -475,7 +475,7 @@ DOTRACE("AsciiStreamReader::inflateObject");
           msg.append("\ttype: ", type, "\n");
           msg.append("\tname: ", name, "\n");
           msg.append("\tequal: ", equal);
-          throw Util::Error(msg);
+          throw Util::Error(msg, SRC_POS);
         }
 
       attribMap->addNewAttrib(name, type, readAndUnEscape(buf));

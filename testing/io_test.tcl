@@ -29,10 +29,10 @@ proc testWriteLGX { packagename objref} {
     "} {$usage}
     eval ::test $testname {"error from negative id"} {"
         $cmdname -1
-    "} {"${cmdname}: signed/unsigned conversion failed.*$"}
+    "} {"signed/unsigned conversion failed.*$"}
     eval ::test $testname {"error from too large id"} {"
         $cmdname 10000000
-    "} {"${cmdname}: attempted to access invalid object.*$"}
+    "} {"attempted to access invalid object.*$"}
     eval ::test $testname {"error from non-integral id"} {"
         $cmdname 1.5
     "} {"expected long value but got \"1\.5\""}
@@ -58,10 +58,10 @@ proc testReadLGX { packagename objref} {
     "} {$usage}
     eval ::test $testname {"error from negative id"} {"
         $cmdname -1 junk
-    "} {"${cmdname}: signed/unsigned conversion failed.*$"}
+    "} {"signed/unsigned conversion failed.*$"}
     eval ::test $testname {"error from too large id"} {"
         $cmdname 10000000 junk
-    "} {"${cmdname}: attempted to access invalid object.*$"}
+    "} {"attempted to access invalid object.*$"}
     eval ::test $testname {"error from non-integral id"} {"
         $cmdname 1.5 junk
     "} {"expected long value but got \"1\.5\""}
@@ -91,10 +91,10 @@ proc testWriteASW { packagename objref} {
     "} {$usage}
     eval ::test $testname {"error from negative id"} {"
         $cmdname -1
-    "} {"${cmdname}: signed/unsigned conversion failed.*$"}
+    "} {"signed/unsigned conversion failed.*$"}
     eval ::test $testname {"error from too large id"} {"
         $cmdname 10000000
-    "} {"${cmdname}: attempted to access invalid object.*$"}
+    "} {"attempted to access invalid object.*$"}
     eval ::test $testname {"error from non-integral id"} {"
         $cmdname 1.5
     "} {"expected long value but got \"1\.5\""}
@@ -120,10 +120,10 @@ proc testReadASW { packagename objref} {
     "} {$usage}
     eval ::test $testname {"error from negative id"} {"
         $readcmd -1 junk
-    "} {"${readcmd}: signed/unsigned conversion failed.*$"}
+    "} {"signed/unsigned conversion failed.*$"}
     eval ::test $testname {"error from too large id"} {"
         $readcmd 10000000 junk
-    "} {"${readcmd}: attempted to access invalid object.*$"}
+    "} {"attempted to access invalid object.*$"}
     eval ::test $testname {"error from non-integral id"} {"
         $readcmd 1.5 junk
     "} {"expected long value but got \"1\.5\""}

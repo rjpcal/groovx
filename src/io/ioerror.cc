@@ -36,8 +36,9 @@
 
 #include "util/trace.h"
 
-IO::FilenameError::FilenameError(const char* str) :
-  Util::Error(fstring("couldn't use file '", str, "'"))
+IO::FilenameError::FilenameError(const char* str,
+                                 const FilePosition& pos) :
+  Util::Error(fstring("couldn't use file '", str, "'"), pos)
 {
 DOTRACE("IO::FilenameError::FilenameError");
 }

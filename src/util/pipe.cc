@@ -63,7 +63,7 @@ int Util::ShellPipe::close()
 Util::PipeFds::PipeFds()
 {
   if (pipe(fds) != 0)
-    throw Util::Error("couldn't create pipe");
+    throw Util::Error("couldn't create pipe", SRC_POS);
 }
 
 Util::PipeFds::~PipeFds() throw()
@@ -77,7 +77,7 @@ Util::ChildProcess::ChildProcess() :
   itsPid(fork())
 {
   if (itsPid == -1)
-    throw Util::Error("couldn't fork child process");
+    throw Util::Error("couldn't fork child process", SRC_POS);
 }
 
 Util::ChildProcess::~ChildProcess() throw()
@@ -100,14 +100,14 @@ namespace
 {
   bool isReadMode(const char* m)
   {
-    if (m == 0) throw Util::Error("invalid read/write mode");
+    if (m == 0) throw Util::Error("invalid read/write mode", SRC_POS);
     switch (m[0])
       {
       case 'r': return true;
       case 'w': return false;
       }
 
-    throw Util::Error(fstring("invalid read/write mode '", m, "'"));
+    throw Util::Error(fstring("invalid read/write mode '", m, "'"), SRC_POS);
     return false; // "can't happen"
   }
 }
@@ -136,7 +136,7 @@ Util::ExecPipe::ExecPipe(const char* m, char* const* argv) :
         }
 
       if (strm == 0)
-        throw Util::Error("couldn't open stream in parent process");
+        throw Util::Error("couldn't open stream in parent process", SRC_POS);
     }
   else // in child
     {

@@ -53,7 +53,7 @@ DOTRACE("demangle_impl");
   if (pipe.isClosed())
     {
       throw Util::Error(fstring("while demangling '", mangled.c_str(),
-                                "': couldn't open pipe to c++filt"));
+                                "': couldn't open pipe to c++filt"), SRC_POS);
     }
 
   std::string demangled;

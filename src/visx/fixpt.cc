@@ -102,7 +102,8 @@ void FixPt::readFrom(IO::Reader& reader)
 DOTRACE("FixPt::readFrom");
 
   reader.ensureReadVersionId("FixPt", 3,
-                             "Try cvs tag xml_conversion_20040526");
+                             "Try cvs tag xml_conversion_20040526",
+                             SRC_POS);
 
   readFieldsFrom(reader, classFields());
 
@@ -114,7 +115,7 @@ void FixPt::writeTo(IO::Writer& writer) const
 DOTRACE("FixPt::writeTo");
 
   writer.ensureWriteVersionId("FixPt", FIXPT_SERIAL_VERSION_ID, 3,
-                              "Try groovx0.8a4");
+                              "Try groovx0.8a4", SRC_POS);
 
   writeFieldsTo(writer, classFields());
 

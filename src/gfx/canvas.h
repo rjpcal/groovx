@@ -37,6 +37,8 @@
 template <class T> class dynamic_block;
 
 class fstring;
+
+class FilePosition;
 class GxRasterFont;
 class GxVectorFont;
 
@@ -113,7 +115,8 @@ public:
   virtual unsigned int bitsPerPixel() const = 0;
 
   /// Throw an exception if there has been an error.
-  virtual void throwIfError(const char* where) const = 0;
+  virtual void throwIfError(const char* where,
+                            const FilePosition& pos) const = 0;
 
 
 

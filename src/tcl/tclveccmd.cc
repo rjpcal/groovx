@@ -76,7 +76,7 @@ public:
         Tcl::List arg(objv[i]);
         if (arg.length() == 0)
           {
-            throw Util::Error("argument was empty");
+            throw Util::Error("argument was empty", SRC_POS);
           }
         itsArgs.push_back( arg.begin<Tcl_Obj*>() );
       }

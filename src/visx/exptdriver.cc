@@ -179,7 +179,8 @@ void ExptDriver::readFrom(IO::Reader& reader)
 DOTRACE("ExptDriver::readFrom");
 
   reader.ensureReadVersionId("ExptDriver", 6,
-                             "Try cvs tag xml_conversion_20040526");
+                             "Try cvs tag xml_conversion_20040526",
+                             SRC_POS);
 
   reader.readValue("hostname", rep->hostname);
   reader.readValue("subject", rep->subject);
@@ -200,7 +201,7 @@ void ExptDriver::writeTo(IO::Writer& writer) const
 DOTRACE("ExptDriver::writeTo");
 
   writer.ensureWriteVersionId("ExptDriver", EXPTDRIVER_SERIAL_VERSION_ID, 6,
-                              "Try groovx0.8a7");
+                              "Try groovx0.8a7", SRC_POS);
 
   writer.writeValue("hostname", rep->hostname);
   writer.writeValue("subject", rep->subject);
@@ -357,7 +358,7 @@ DOTRACE("ExptDriver::edBeginExpt");
 
   if (isComplete())
     {
-      throw Util::Error("Can't begin experiment: there are no pending elements");
+      throw Util::Error("Can't begin experiment: there are no pending elements", SRC_POS);
     }
 
   rep->addLogInfo("Beginning experiment.");
@@ -388,7 +389,7 @@ DOTRACE("ExptDriver::edResumeExpt");
 
   if (isComplete())
     {
-      throw Util::Error("Can't resume experiment: there are no pending elements");
+      throw Util::Error("Can't resume experiment: there are no pending elements", SRC_POS);
     }
 
   currentElement()->vxRun(*this);

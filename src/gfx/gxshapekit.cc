@@ -186,7 +186,7 @@ void GxShapeKit::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxShapeKit::readFrom");
 
-  reader.ensureReadVersionId("GxShapeKit", 3, "Try groovx0.8a7");
+  reader.ensureReadVersionId("GxShapeKit", 3, "Try groovx0.8a7", SRC_POS);
 
   readFieldsFrom(reader, classFields());
 }
@@ -196,7 +196,7 @@ void GxShapeKit::writeTo(IO::Writer& writer) const
 DOTRACE("GxShapeKit::writeTo");
 
   writer.ensureWriteVersionId("GxShapeKit", GROBJ_SERIAL_VERSION_ID, 3,
-                              "Try groovx0.8a7");
+                              "Try groovx0.8a7", SRC_POS);
 
   writeFieldsTo(writer, classFields());
 }
