@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Thu May 10 12:04:41 2001
+// written: Mon Jun  4 11:59:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -283,7 +283,7 @@ DOTRACE("dynamic_string::swap");
 dynamic_string& dynamic_string::operator=(const char* text)
 {
 DOTRACE("dynamic_string::operator=(const char*)");
-  itsImpl->text = text;
+  itsImpl->text = (text) ? text : "";
   return *this;
 }
 
@@ -304,7 +304,7 @@ DOTRACE("dynamic_string::operator=(const dynamic_string&)");
 dynamic_string& dynamic_string::append(const char* text)
 {
 DOTRACE("dynamic_string::append(const char*)");
-  itsImpl->text += text;
+  if (text) itsImpl->text += text;
   return *this;
 }
 
@@ -325,7 +325,7 @@ DOTRACE("dynamic_string::append(const dynamic_string&)");
 bool dynamic_string::equals(const char* other) const
 {
 DOTRACE("dynamic_string::equals(const char*)");
-  return ( itsImpl->text == other );
+  return (other != 0) && ( itsImpl->text == other );
 }
 
 bool dynamic_string::equals(const string_literal& other) const
