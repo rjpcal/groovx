@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Thu Nov 21 14:22:45 2002
+// written: Thu Nov 21 16:36:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "gfx/gxaligner.h"
 #include "gfx/gxcache.h"
+#include "gfx/gxcamera.h"
 #include "gfx/gxcolor.h"
 #include "gfx/gxcylinder.h"
 #include "gfx/gxdrawstyle.h"
@@ -314,6 +315,16 @@ DOTRACE("Gx_Init");
   Tcl::defAllFields(pkg16, GxText::classFields());
 
   status = pkg16->combineStatus(status);
+
+  Tcl::Pkg* pkg17 = new Tcl::Pkg(interp, "GxFixedScaleCamera", "$Revision$");
+  pkg17->inherit("GxNode");
+  Tcl::defCreator<GxFixedScaleCamera>(pkg17);
+  Tcl::defGenericObjCmds<GxText>(pkg16);
+  pkg17->defSetter( "pixelsPerUnit", &GxFixedScaleCamera::setPixelsPerUnit );
+  pkg17->defSetter( "unitAngle", &GxFixedScaleCamera::setUnitAngle );
+  pkg17->defSetter( "viewingDistIn", &GxFixedScaleCamera::setViewingDistIn );
+
+  status = pkg17->combineStatus(status);
 
   return status;
 }

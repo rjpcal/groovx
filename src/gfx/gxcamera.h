@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 21 15:18:58 2002
-// written: Thu Nov 21 15:42:47 2002
+// written: Thu Nov 21 16:40:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #define GXCAMERA_H_DEFINED
 
 #include "gx/rect.h"
+
+#include "gfx/gxnode.h"
 
 namespace Gfx
 {
@@ -24,59 +26,111 @@ namespace Gfx
 
 /// GxCamera sets up an orthographic or perspective projection.
 
-class GxCamera
+class GxCamera : public GxNode
 {
 public:
-  enum ResizePolicy
-    {
-      FIXED_SCALE,
-      FIXED_RECT,
-      MIN_RECT,
-      PERSPECTIVE,
-    };
+  void reshape(int w, int h) { itsWidth = w; itsHeight = h; }
 
-  GxCamera(double dist = 30.0) :
-    itsPolicy(FIXED_SCALE),
-    itsViewingDistance(dist),
-    itsPixelsPerUnit(1.0),
-    itsRect()
-  {}
+  int width() const { return itsWidth; }
+  int height() const { return itsHeight; }
 
-  // For FIXED_SCALE mode:
-  void setPixelsPerUnit(double s);
-  void setUnitAngle(double deg, double screen_ppi);
-  void setViewingDistIn(double inches);
-  bool usingFixedScale() const { return itsPolicy == FIXED_SCALE; }
-
-  // For FIXED_RECT mode:
-  void setFixedRectLTRB(double L, double T, double R, double B);
-
-  // For MIN_RECT mode:
-  void setMinRectLTRB(double L, double T, double R, double B);
-
-  // For FIXED_RECT or MIN_RECT modes:
-  void scaleRect(double factor);
-
-  // For PERSPECTIVE modes:
-  void setPerspective(double fovy, double zNear, double zFar);
-
-  void reconfigure(const int width, const int height,
-                   Gfx::Canvas& canvas);
+  /// Overridden from GxNode.
+  virtual void getBoundingCube(Gfx::Bbox& bbox) const {}
 
 private:
-  ResizePolicy itsPolicy;
-  double itsViewingDistance;    // inches
-  double itsPixelsPerUnit;      // pixels per GLunit
+  int itsWidth;
+  int itsHeight;
+};
+
+class GxPerspectiveCamera : public GxCamera
+{
+public:
+  GxPerspectiveCamera() : GxCamera() {}
+
+  virtual void readFrom(IO::Reader* reader) {}
+  virtual void writeTo(IO::Writer* writer) const {}
+
+  void setPerspective(double fovy, double zNear, double zFar);
+
+  virtual void draw(Gfx::Canvas& canvas) const;
+
+private:
+  double itsFovY;
+  double itsNearZ;
+  double itsFarZ;
+};
+
+class GxFixedRectCamera : public GxCamera
+{
+public:
+  GxFixedRectCamera() :
+    GxCamera(),
+    itsRect(Gfx::RectLTRB<double>(-1.0, 1.0, 1.0, -1.0))
+  {}
+
+  virtual void readFrom(IO::Reader* reader) {}
+  virtual void writeTo(IO::Writer* writer) const {}
+
+  void setRect(const Gfx::Rect<double>& rect) { itsRect = rect; }
+
+  const Gfx::Rect<double>& getRect() const { return itsRect; }
+
+  virtual void draw(Gfx::Canvas& canvas) const;
+
+private:
   Gfx::Rect<double> itsRect;
+};
 
-  struct Perspective
+class GxMinRectCamera : public GxCamera
+{
+public:
+  GxMinRectCamera() :
+    GxCamera(),
+    itsRect(Gfx::RectLTRB<double>(-1.0, 1.0, 1.0, -1.0))
+  {}
+
+  virtual void readFrom(IO::Reader* reader) {}
+  virtual void writeTo(IO::Writer* writer) const {}
+
+  void setRect(const Gfx::Rect<double>& rect) { itsRect = rect; }
+
+  const Gfx::Rect<double>& getRect() const { return itsRect; }
+
+  virtual void draw(Gfx::Canvas& canvas) const;
+
+private:
+  Gfx::Rect<double> itsRect;
+};
+
+class GxFixedScaleCamera : public GxCamera
+{
+public:
+  // FIXME pixels per inch should come from the Canvas
+
+  GxFixedScaleCamera(double screen_ppi = 72.0, double unit_angle = 2.05) :
+    GxCamera(),
+    itsScreenPixelsPerInch(screen_ppi),
+    itsPixelsPerUnit(1.0),
+    itsViewingDistance(30.0)
   {
-    double fovy;
-    double zNear;
-    double zFar;
-  };
+    setUnitAngle(unit_angle);
+  }
 
-  Perspective itsPerspective;
+  static GxFixedScaleCamera* make() { return new GxFixedScaleCamera; }
+
+  virtual void readFrom(IO::Reader* reader) {}
+  virtual void writeTo(IO::Writer* writer) const {}
+
+  void setPixelsPerUnit(double s);
+  void setUnitAngle(double deg);
+  void setViewingDistIn(double inches);
+
+  virtual void draw(Gfx::Canvas& canvas) const;
+
+private:
+  const double itsScreenPixelsPerInch;
+  double itsPixelsPerUnit;
+  double itsViewingDistance;    // inches
 };
 
 static const char vcid_gxcamera_h[] = "$Header$";

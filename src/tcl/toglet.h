@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Nov 21 15:19:10 2002
+// written: Thu Nov 21 16:42:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,16 @@
 
 #include "tcl/tkwidget.h"
 
+class GxCamera;
+
 namespace Gfx
 {
   class Canvas;
+}
+
+namespace Util
+{
+  template <class T> class Ref;
 }
 
 // ####################################################################
@@ -37,25 +44,14 @@ public:
 
   virtual bool isNotShareable() const { return true; }
 
-  //
-  // accessors
-  //
-
-  bool usingFixedScale() const;
+  /// Specify which Tk window should be the parent of new Toglet's.
+  static void defaultParent(const char* pathname);
 
   /// Overridden from GWT::Widget.
   virtual Gfx::Canvas& getCanvas() const;
 
-  // manipulators
-  static void defaultParent(const char* pathname);
-
-  void scaleRect(double factor);
-  void setPixelsPerUnit(double s);
-  void setFixedRectLTRB(double L, double T, double R, double B);
-  void setMinRectLTRB(double L, double T, double R, double B);
-  void setUnitAngle(double deg);
-  void setViewingDistIn(double in);
-  void setPerspective(double fovy, double zNear, double zFar);
+  Util::Ref<GxCamera> getCamera() const;
+  void setCamera(Util::Ref<GxCamera> cam);
 
   void makeCurrent() const;
 

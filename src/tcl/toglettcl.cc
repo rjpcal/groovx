@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998 (as objtogl.cc)
-// written: Thu Nov 21 15:06:01 2002
+// written: Thu Nov 21 16:56:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "tcl/toglet.h"
 
+#include "gfx/gxcamera.h"
 #include "gfx/gxnode.h"
 
 #include "tcl/tclerror.h"
@@ -138,33 +139,24 @@ public:
     def( "dumpCmap", "toglet_id start_index end_index", &TogletTcl::dumpCmap );
     def( "dumpCmap", "toglet_id", &TogletTcl::dumpCmapAll );
     def( "inited", 0, &TogletTcl::inited );
-    def( "perspective", "toglet_id fovy zNear zFar", &Toglet::setPerspective );
     def( "see", "gxnode_id", &TogletTcl::see );
     def( "setCurTrial", "toglet_id widget_id", &TogletTcl::setCurTrial );
     def( "show", "toglet_id trial_id", &TogletTcl::show );
 
     defSetter("allowRefresh", &Toglet::allowRefresh);
     defSetter("animate", "item_id(s) frames_per_second", &Toglet::animate);
+    defAttrib("camera", &Toglet::getCamera, &Toglet::setCamera);
     defAction("clearscreen", &Toglet::fullClearscreen);
     defAction("destroy", &Tcl::TkWidget::destroyWidget);
-    def("fixedRect", "uid left top right bottom", &Toglet::setFixedRectLTRB);
     defAttrib("height", &Tcl::TkWidget::height, &Tcl::TkWidget::setHeight);
     defSetter("hold", "item_id(s) hold_on?", &Toglet::setHold);
     defGetter("pathname", &Tcl::TkWidget::pathname);
     defGetter("pixelsPerInch", &Tcl::TkWidget::pixelsPerInch);
-    defSetter("scaleRect", "item_id(s) scale", &Toglet::scaleRect);
-    defSetter("pixelsPerUnit", "item_id(s) scale", &Toglet::setPixelsPerUnit);
-    def("setMinRect", "uid left top right bottom", &Toglet::setMinRectLTRB);
-    defSetter("setUnitAngle", "item_id(s) angle_in_degrees",
-              &Toglet::setUnitAngle);
-    defSetter("setViewingDistance", "item_id(s) distance_in_inches",
-              &Toglet::setViewingDistIn);
     defSetter("setVisible", "item_id(s) visibility", &Toglet::setVisibility);
     defAction("swapBuffers", &Toglet::swapBuffers);
     defAction("takeFocus", &Toglet::takeFocus);
     defAttrib("timeOut", &Tcl::TkWidget::timeOut, &Tcl::TkWidget::setTimeOut);
     defAction("undraw", &Toglet::undraw);
-    defGetter("usingFixedScale", &Toglet::usingFixedScale);
     defAttrib("width", &Tcl::TkWidget::width, &Tcl::TkWidget::setWidth);
 
     defAction("hook", &Tcl::TkWidget::hook);

@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Nov 21 15:46:02 2002
+// written: Thu Nov 21 16:42:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,10 +53,10 @@ public:
   Toglet* owner;
   const Tk_Window tkWin;
   Util::SoftRef<GLCanvas> canvas;
-  GxCamera* camera;
+  Util::Ref<GxCamera> camera;
 
   Impl(Toglet* p);
-  ~Impl() throw() { delete camera; camera = 0; }
+  ~Impl() throw() {}
 
   static Window cClassCreateProc(Tk_Window tkwin,
                                  Window parent,
@@ -82,7 +82,7 @@ Toglet::Impl::Impl(Toglet* p) :
   owner(p),
   tkWin(owner->tkWin()),
   canvas(),
-  camera(new GxCamera)
+  camera(new GxFixedScaleCamera(p->pixelsPerInch()))
 {
 DOTRACE("Toglet::Impl::Impl");
 
@@ -203,10 +203,6 @@ DOTRACE("Toglet::Toglet");
 
   dbgEvalNL(3, (void*) this);
 
-  const double default_unit_angle = 2.05;
-
-  setUnitAngle(default_unit_angle);
-
   if (pack) Tcl::TkWidget::pack();
 }
 
@@ -219,14 +215,10 @@ DOTRACE("Toglet::~Toglet");
   delete rep;
 }
 
-///////////////
-// accessors //
-///////////////
-
-bool Toglet::usingFixedScale() const
+void Toglet::defaultParent(const char* pathname)
 {
-DOTRACE("Toglet::usingFixedScale");
-  return rep->camera->usingFixedScale();
+DOTRACE("Toglet::defaultParent");
+  PARENT = pathname;
 }
 
 Gfx::Canvas& Toglet::getCanvas() const
@@ -236,66 +228,73 @@ DOTRACE("Toglet::getCanvas");
   return *(rep->canvas);
 }
 
-//////////////////
-// manipulators //
-//////////////////
-
-void Toglet::defaultParent(const char* pathname)
+Util::Ref<GxCamera> Toglet::getCamera() const
 {
-DOTRACE("Toglet::defaultParent");
-  PARENT = pathname;
+DOTRACE("Toglet::getCamera");
+  return rep->camera;
 }
 
-void Toglet::scaleRect(double factor)
+void Toglet::setCamera(Util::Ref<GxCamera> cam)
 {
-DOTRACE("Toglet::scaleRect");
-
-  rep->camera->scaleRect(factor);
-
+DOTRACE("Toglet::setCamera");
+  rep->camera = cam;
   reshapeCallback();
 }
 
-void Toglet::setPixelsPerUnit(double s)
-{
-DOTRACE("Toglet::setPixelsPerUnit");
-  rep->camera->setPixelsPerUnit(s);
-  reshapeCallback();
-}
+// void Toglet::setPixelsPerUnit(double s)
+// {
+// DOTRACE("Toglet::setPixelsPerUnit");
 
-void Toglet::setUnitAngle(double deg)
-{
-DOTRACE("Toglet::setUnitAngle");
-  rep->camera->setUnitAngle(deg, pixelsPerInch());
-  reshapeCallback();
-}
+//   rep->camera = Util::Ref<GxFixedScaleCamera>(new GxFixedScaleCamera(s));
 
-void Toglet::setViewingDistIn(double inches)
-{
-DOTRACE("Toglet::setViewingDistIn");
-  rep->camera->setViewingDistIn(inches);
-  reshapeCallback();
-}
+//   reshapeCallback();
+// }
 
-void Toglet::setPerspective(double fovy, double zNear, double zFar)
-{
-DOTRACE("Toglet::setPerspective");
-  rep->camera->setPerspective(fovy, zNear, zFar);
-  reshapeCallback();
-}
+// void Toglet::setUnitAngle(double deg)
+// {
+// DOTRACE("Toglet::setUnitAngle");
 
-void Toglet::setFixedRectLTRB(double L, double T, double R, double B)
-{
-DOTRACE("Toglet::setFixedRectLTRB");
-  rep->camera->setFixedRectLTRB(L,T,R,B);
-  reshapeCallback();
-}
+//   Util::Ref<GxFixedScaleCamera> cam(new GxFixedScaleCamera);
+//   cam->setUnitAngle(deg, pixelsPerInch());
 
-void Toglet::setMinRectLTRB(double L, double T, double R, double B)
-{
-DOTRACE("Toglet::setMinRectLTRB");
-  rep->camera->setMinRectLTRB(L,T,R,B);
-  reshapeCallback();
-}
+//   rep->camera = cam;
+
+//   reshapeCallback();
+// }
+
+// void Toglet::setViewingDistIn(double inches)
+// {
+// DOTRACE("Toglet::setViewingDistIn");
+
+
+//   Util::Ref<GxFixedScaleCamera> cam(new GxFixedScaleCamera);
+//   cam->setViewingDistIn(inches);
+
+//   rep->camera = cam;
+
+//   reshapeCallback();
+// }
+
+// void Toglet::setPerspective(double fovy, double zNear, double zFar)
+// {
+// DOTRACE("Toglet::setPerspective");
+//   rep->camera->setPerspective(fovy, zNear, zFar);
+//   reshapeCallback();
+// }
+
+// void Toglet::setFixedRectLTRB(double L, double T, double R, double B)
+// {
+// DOTRACE("Toglet::setFixedRectLTRB");
+//   rep->camera->setFixedRectLTRB(L,T,R,B);
+//   reshapeCallback();
+// }
+
+// void Toglet::setMinRectLTRB(double L, double T, double R, double B)
+// {
+// DOTRACE("Toglet::setMinRectLTRB");
+//   rep->camera->setMinRectLTRB(L,T,R,B);
+//   reshapeCallback();
+// }
 
 void Toglet::makeCurrent() const
 {
@@ -307,6 +306,7 @@ void Toglet::displayCallback()
 DOTRACE("Toglet::displayCallback");
 
   makeCurrent();
+  rep->camera->draw(*(rep->canvas));
   fullRender();
 }
 
@@ -316,7 +316,7 @@ DOTRACE("Toglet::reshapeCallback");
 
   makeCurrent();
 
-  rep->camera->reconfigure(width(), height(), *(rep->canvas));
+  rep->camera->reshape(width(), height());
 
   requestRedisplay();
 }
