@@ -125,7 +125,7 @@ else
 	STL_INCLUDE_DIR :=
 endif
 
-INCLUDE_DIRS := -I$(HOME)/include -I$(SRC) -I$(SRC)/util $(STL_INCLUDE_DIR)
+INCLUDE_DIRS := -I$(HOME)/include -I$(SRC) $(STL_INCLUDE_DIR)
 
 ifeq ($(ARCH),hp9000s700)
 	OPENGL_LIB_DIR := -L/opt/graphics/OpenGL/lib
@@ -267,17 +267,17 @@ GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/writeutils.do \
 
 TCLWORKS_OBJS := \
-	$(OBJ)/listpkg.do \
-	$(OBJ)/misctcl.do \
-	$(OBJ)/stringifycmd.do \
-	$(OBJ)/tclcmd.do \
-	$(OBJ)/tcldlist.do \
-	$(OBJ)/tclerror.do \
-	$(OBJ)/tclitempkg.do \
-	$(OBJ)/tclpkg.do \
-	$(OBJ)/tclvalue.do \
-	$(OBJ)/tclveccmds.do \
-	$(OBJ)/tracertcl.do \
+	$(OBJ)/tcl/listpkg.do \
+	$(OBJ)/tcl/misctcl.do \
+	$(OBJ)/tcl/stringifycmd.do \
+	$(OBJ)/tcl/tclcmd.do \
+	$(OBJ)/tcl/tcldlist.do \
+	$(OBJ)/tcl/tclerror.do \
+	$(OBJ)/tcl/tclitempkg.do \
+	$(OBJ)/tcl/tclpkg.do \
+	$(OBJ)/tcl/tclvalue.do \
+	$(OBJ)/tcl/tclveccmds.do \
+	$(OBJ)/tcl/tracertcl.do \
 
 
 #-------------------------------------------------------------------------
@@ -421,7 +421,7 @@ CANVAS_H := $(SRC)/canvas.h
 DEBUG_H := $(SRC)/util/debug.h
 DEMANGLE_H := $(SRC)/demangle.h
 DUMBPTR_H := $(SRC)/dumbptr.h
-ERRMSG_H := $(SRC)/errmsg.h
+ERRMSG_H := $(SRC)/tcl/errmsg.h
 ERROR_H := $(SRC)/util/error.h
 EXPERIMENT_H := $(SRC)/experiment.h
 IOSTL_H := $(SRC)/iostl.h
@@ -439,13 +439,13 @@ RANDUTILS_H := $(SRC)/randutils.h
 STOPWATCH_H := $(SRC)/stopwatch.h
 STRINGS_H := $(SRC)/util/strings.h
 SYSTEM_H := $(SRC)/system.h
-TCLDLIST_H := $(SRC)/tcldlist.h
-TCLOBJLOCK_H := $(SRC)/tclobjlock.h
-TCLPKG_H := $(SRC)/tclpkg.h
+TCLDLIST_H := $(SRC)/tcl/tcldlist.h
+TCLOBJLOCK_H := $(SRC)/tcl/tclobjlock.h
+TCLPKG_H := $(SRC)/tcl/tclpkg.h
 TLISTUTILS_H := $(SRC)/tlistutils.h
 TRACE_H := $(SRC)/util/trace.h
 TRACER_H := $(SRC)/util/tracer.h
-TRACERTCL_H := $(SRC)/tracertcl.h
+TRACERTCL_H := $(SRC)/tcl/tracertcl.h
 WIDGET_H := $(SRC)/widget.h
 
 #
@@ -460,9 +460,9 @@ IO_H := $(ERROR_H) $(SRC)/io.h
 PBM_H := $(ERROR_H) $(SRC)/pbm.h
 READER_H := $(ERROR_H) $(SRC)/reader.h
 RECT_H := $(POINT_H) $(SRC)/rect.h
-TCLERROR_H := $(ERROR_H) $(SRC)/tclerror.h
-TCLITEMPKGBASE_H := $(TCLPKG_H) $(SRC)/tclitempkgbase.h
-TCLLINK_H := $(STRINGS_H) $(SRC)/tcllink.h
+TCLERROR_H := $(ERROR_H) $(SRC)/tcl/tclerror.h
+TCLITEMPKGBASE_H := $(TCLPKG_H) $(SRC)/tcl/tclitempkgbase.h
+TCLLINK_H := $(STRINGS_H) $(SRC)/tcl/tcllink.h
 VALUE_H := $(ERROR_H) $(SRC)/value.h
 VOIDPTRLIST_H := $(ERROR_H) $(SRC)/voidptrlist.h
 WRITER_H := $(ERROR_H) $(SRC)/writer.h
@@ -485,8 +485,8 @@ RESPONSE_H := $(VALUE_H) $(SRC)/response.h
 RESPONSEHANDLER_H := $(IO_H) $(SRC)/responsehandler.h 
 SOUND_H := $(ERROR_H) $(IO_H) $(SRC)/sound.h
 SUBJECT_H := $(STRINGS_H) $(IO_H) $(SRC)/subject.h
-TCLEVALCMD_H := $(TCLOBJLOCK_H) $(TCLERROR_H) $(SRC)/tclevalcmd.h
-TCLVALUE_H := $(VALUE_H) $(SRC)/tclvalue.h
+TCLEVALCMD_H := $(TCLOBJLOCK_H) $(TCLERROR_H) $(SRC)/tcl/tclevalcmd.h
+TCLVALUE_H := $(VALUE_H) $(SRC)/tcl/tclvalue.h
 TIMINGHDLR_H := $(IO_H) $(STOPWATCH_H) $(SRC)/timinghdlr.h
 TOGLCONFIG_H := $(POINTERS_H) $(RECT_H) $(WIDGET_H) $(SRC)/toglconfig.h
 TRIAL_H := $(IO_H) $(VALUE_H) $(SRC)/trial.h
@@ -515,7 +515,7 @@ MORPHYFACE_H := $(GROBJ_H) $(PROPERTY_H) $(SRC)/morphyface.h
 NULLRESPONSEHDLR_H := $(RESPONSEHANDLER_H) $(SRC)/nullresponsehdlr.h
 PTRLIST_H := $(DUMBPTR_H) $(IOPTRLIST_H) $(SRC)/ptrlist.h
 READUTILS_H := $(READER_H) $(IO_H) $(SRC)/readutils.h
-TCLCMD_H := $(TCLVALUE_H) $(TCLERROR_H) $(SRC)/tclcmd.h
+TCLCMD_H := $(TCLVALUE_H) $(TCLERROR_H) $(SRC)/tcl/tclcmd.h
 TIMINGHANDLER_H := $(TIMINGHDLR_H) $(SRC)/timinghandler.h
 TLISTWIDGET_H := $(TOGLCONFIG_H) $(SRC)/tlistwidget.h
 
@@ -531,23 +531,24 @@ POSLIST_H := $(PTRLIST_H) $(SRC)/poslist.h
 PTRLIST_CC := $(PTRLIST_H) $(DEMANGLE_H) $(STRINGS_H) $(SRC)/ptrlist.cc
 RHLIST_H := $(PTRLIST_H) $(SRC)/rhlist.h
 SOUNDLIST_H := $(PTRLIST_H) $(SRC)/soundlist.h
-STRINGIFYCMD_H := $(TCLCMD_H) $(SRC)/stringifycmd.h
+STRINGIFYCMD_H := $(TCLCMD_H) $(SRC)/tcl/stringifycmd.h
 THLIST_H := $(PTRLIST_H) $(SRC)/thlist.h
 TLIST_H := $(PTRLIST_H) $(IO_H) $(SRC)/tlist.h
-TCLITEMPKG_H := $(TCLITEMPKGBASE_H) $(TCLCMD_H) $(PROPERTY_H) $(SRC)/tclitempkg.h
-TCLVECCMDS_H := $(POINTERS_H) $(TCLCMD_H) $(SRC)/tclveccmds.h
+TCLITEMPKG_H := $(TCLITEMPKGBASE_H) $(TCLCMD_H) $(PROPERTY_H) \
+	$(SRC)/tcl/tclitempkg.h
+TCLVECCMDS_H := $(POINTERS_H) $(TCLCMD_H) $(SRC)/tcl/tclveccmds.h
 XBITMAP_H := $(BITMAP_H) $(SRC)/xbitmap.h
 
 #
 # level 5 headers
 #
-LISTITEMPKG_H := $(TCLITEMPKG_H) $(DEMANGLE_H) $(SRC)/listitempkg.h
-LISTPKG_H := $(TCLITEMPKG_H) $(IOPTRLIST_H) $(SRC)/listpkg.h
+LISTITEMPKG_H := $(TCLITEMPKG_H) $(DEMANGLE_H) $(SRC)/tcl/listitempkg.h
+LISTPKG_H := $(TCLITEMPKG_H) $(IOPTRLIST_H) $(SRC)/tcl/listpkg.h
 
 #
 # level 6 headers
 #
-PROPITEMPKG_H := $(LISTITEMPKG_H) $(IOFACTORY_H) $(SRC)/propitempkg.h
+PROPITEMPKG_H := $(LISTITEMPKG_H) $(IOFACTORY_H) $(SRC)/tcl/propitempkg.h
 
 #-------------------------------------------------------------------------
 #
@@ -705,7 +706,7 @@ JITTERTCL_CC := $(IOFACTORY_H) $(JITTER_H) $(POSLIST_H) \
 KBDRESPONSEHDLR_CC := $(KBDRESPONSEHDLR_H) $(STRINGS_H) \
 	$(TRACE_H) $(DEBUG_H) $(SRC)/kbdresponsehdlr.cc
 
-LISTPKG_CC := $(LISTPKG_H) $(TRACE_H) $(SRC)/listpkg.cc
+LISTPKG_CC := $(LISTPKG_H) $(TRACE_H) $(SRC)/tcl/listpkg.cc
 
 MASKHATCH_CC := $(MASKHATCH_H) $(READER_H) \
 	$(RECT_H) $(WRITER_H) $(TRACE_H) $(DEBUG_H) $(SRC)/maskhatch.cc
@@ -713,7 +714,7 @@ MASKHATCH_CC := $(MASKHATCH_H) $(READER_H) \
 MASKTCL_CC := $(OBJLIST_H) $(PROPITEMPKG_H) $(MASKHATCH_H) \
 	$(TRACE_H) $(SRC)/masktcl.cc
 
-MISCTCL_CC := $(RANDUTILS_H) $(SRC)/misctcl.cc
+MISCTCL_CC := $(RANDUTILS_H) $(SRC)/tcl/misctcl.cc
 
 MORPHYFACE_CC := $(MORPHYFACE_H) $(BEZIER_H) $(CANVAS_H) \
 	$(READER_H) $(RECT_H) \
@@ -789,7 +790,7 @@ SOUNDTCL_CC := $(SOUNDLIST_H) $(SOUND_H) $(LISTPKG_H) $(LISTITEMPKG_H) \
 
 STRINGIFYCMD_CC := $(STRINGIFYCMD_H) $(IO_H) $(ARRAYS_H) \
 	$(ASCIISTREAMREADER_H) $(ASCIISTREAMWRITER_H) \
-	$(TRACE_H) $(DEBUG_H) $(SRC)/stringifycmd.cc
+	$(TRACE_H) $(DEBUG_H) $(SRC)/tcl/stringifycmd.cc
 
 STRINGS_CC := $(STRINGS_H) $(SRC)/util/strings.cc
 
@@ -801,25 +802,26 @@ SUBJECTTCL_CC := $(ERRMSG_H) $(SUBJECT_H) $(TRACE_H) $(DEBUG_H) $(SRC)/subjecttc
 SYSTEM_CC := $(SYSTEM_H) $(ARRAYS_H) $(TRACE_H) $(DEBUG_H) $(SRC)/system.cc
 
 TCLCMD_CC := $(TCLCMD_H) $(DEMANGLE_H) $(ERRMSG_H) $(TCLVALUE_H) \
-	$(TRACE_H) $(DEBUG_H) $(SRC)/tclcmd.cc
+	$(TRACE_H) $(DEBUG_H) $(SRC)/tcl/tclcmd.cc
 
-TCLDLIST_CC := $(TCLDLIST_H) $(ERRMSG_H) $(TRACE_H) $(DEBUG_H) $(SRC)/tcldlist.cc
+TCLDLIST_CC := $(TCLDLIST_H) $(ERRMSG_H) \
+	$(TRACE_H) $(DEBUG_H) $(SRC)/tcl/tcldlist.cc
 
-TCLERROR_CC := $(TCLERROR_H) $(TRACE_H) $(SRC)/tclerror.cc
+TCLERROR_CC := $(TCLERROR_H) $(TRACE_H) $(SRC)/tcl/tclerror.cc
 
 TCLGL_CC := $(TCLPKG_H) $(TCLCMD_H) $(TCLERROR_H) \
 	$(TRACE_H) $(DEBUG_H) $(SRC)/tclgl.cc
 
 TCLITEMPKG_CC := $(TCLITEMPKG_H) $(TCLCMD_H) $(STRINGIFYCMD_H) \
-	$(TCLVECCMDS_H) $(STRINGS_H) $(TRACE_H) $(DEBUG_H) $(SRC)/tclitempkg.cc
+	$(TCLVECCMDS_H) $(STRINGS_H) $(TRACE_H) $(DEBUG_H) $(SRC)/tcl/tclitempkg.cc
 
 TCLPKG_CC := $(TCLPKG_H) $(TCLLINK_H) $(TCLCMD_H) $(TCLERROR_H) \
-	$(TRACE_H) $(DEBUG_H) $(SRC)/tclpkg.cc
+	$(TRACE_H) $(DEBUG_H) $(SRC)/tcl/tclpkg.cc
 
-TCLVALUE_CC := $(TCLVALUE_H) $(TRACE_H) $(DEBUG_H) $(SRC)/tclvalue.cc
+TCLVALUE_CC := $(TCLVALUE_H) $(TRACE_H) $(DEBUG_H) $(SRC)/tcl/tclvalue.cc
 
 TCLVECCMDS_CC := $(TCLVECCMDS_H) $(TCLITEMPKGBASE_H) $(STRINGS_H) \
-	$(DEBUG_H) $(TRACE_H) $(SRC)/tclveccmds.cc
+	$(DEBUG_H) $(TRACE_H) $(SRC)/tcl/tclveccmds.cc
 
 THLIST_CC := $(THLIST_H) $(TRACE_H) $(DEBUG_H) \
 	$(TIMINGHDLR_H) $(PTRLIST_CC) $(SRC)/thlist.cc
@@ -855,7 +857,7 @@ TOGLCONFIG_CC := $(TOGLCONFIG_H) $(ERROR_H) $(GLCANVAS_H) $(STRINGS_H) \
 TRACE_CC := $(TRACE_H) $(SRC)/util/trace.cc
 
 TRACERTCL_CC := $(TRACERTCL_H) $(TCLCMD_H) $(TCLPKG_H) $(TRACER_H) \
-	$(DEBUG_H) $(SRC)/tracertcl.cc
+	$(DEBUG_H) $(SRC)/tcl/tracertcl.cc
 
 TRIAL_CC := $(TRIAL_H) $(CANVAS_H) $(OBJLIST_H) $(POSLIST_H)	\
 	$(GROBJ_H) $(POSITION_H) $(READER_H) $(READUTILS_H)			\
@@ -906,7 +908,6 @@ $(OBJ)/bmaprenderer.*[ol]:      $(BMAPRENDERER_CC)
 $(OBJ)/canvas.*[ol]:            $(CANVAS_CC)
 $(OBJ)/cloneface.*[ol]:         $(CLONEFACE_CC)
 $(OBJ)/demangle.*[ol]:          $(DEMANGLE_CC)
-$(OBJ)/util/error.*[ol]:        $(ERROR_CC)
 $(OBJ)/eventresponsehdlr.*[ol]: $(EVENTRESPONSEHDLR_CC)
 $(OBJ)/experiment.*[ol]:        $(EXPERIMENT_CC)
 $(OBJ)/exptdriver.*[ol]:        $(EXPTDRIVER_CC)
@@ -941,10 +942,8 @@ $(OBJ)/ioutils.*[ol]:           $(IOUTILS_CC)
 $(OBJ)/jitter.*[ol]:            $(JITTER_CC)
 $(OBJ)/jittertcl.*[ol]:         $(JITTERTCL_CC)
 $(OBJ)/kbdresponsehdlr.*[ol]:   $(KBDRESPONSEHDLR_CC)
-$(OBJ)/listpkg.*[ol]:           $(LISTPKG_CC)
 $(OBJ)/maskhatch.*[ol]:         $(MASKHATCH_CC)
 $(OBJ)/masktcl.*[ol]:           $(MASKTCL_CC)
-$(OBJ)/misctcl.*[ol]:           $(MISCTCL_CC)
 $(OBJ)/morphyface.*[ol]:        $(MORPHYFACE_CC)
 $(OBJ)/morphyfacetcl.*[ol]:     $(MORPHYFACETCL_CC)
 $(OBJ)/nullresponsehdlr.*[ol]:  $(NULLRESPONSEHDLR_CC)
@@ -968,19 +967,10 @@ $(OBJ)/rhtcl.*[ol]:             $(RHTCL_CC)
 $(OBJ)/sound.*[ol]:             $(SOUND_CC)
 $(OBJ)/soundlist.*[ol]:         $(SOUNDLIST_CC)
 $(OBJ)/soundtcl.*[ol]:          $(SOUNDTCL_CC)
-$(OBJ)/stringifycmd.*[ol]:      $(STRINGIFYCMD_CC)
-$(OBJ)/util/strings.[ol]:       $(STRINGS_CC)
 $(OBJ)/subject.*[ol]:           $(SUBJECT_CC)
 $(OBJ)/subjecttcl.*[ol]:        $(SUBJECTTCL_CC)
 $(OBJ)/system.*[ol]:            $(SYSTEM_CC)
-$(OBJ)/tcldlist.*[ol]:          $(TCLDLIST_CC)
-$(OBJ)/tclcmd.*[ol]:            $(TCLCMD_CC)
-$(OBJ)/tclerror.*[ol]:          $(TCLERROR_CC)
 $(OBJ)/tclgl.*[ol]:             $(TCLGL_CC)
-$(OBJ)/tclitempkg.*[ol]:        $(TCLITEMPKG_CC)
-$(OBJ)/tclpkg.*[ol]:            $(TCLPKG_CC)
-$(OBJ)/tclvalue.*[ol]:          $(TCLVALUE_CC)
-$(OBJ)/tclveccmds.*[ol]:        $(TCLVECCMDS_CC)
 $(OBJ)/thlist.*[ol]:            $(THLIST_CC)
 $(OBJ)/thtcl.*[ol]:             $(THTCL_CC)
 $(OBJ)/timinghdlr.*[ol]:        $(TIMINGHDLR_CC)
@@ -990,8 +980,6 @@ $(OBJ)/tlisttcl.*[ol]:          $(TLISTTCL_CC)
 $(OBJ)/tlistutils.*[ol]:        $(TLISTUTILS_CC)
 $(OBJ)/tlistwidget.*[ol]:       $(TLISTWIDGET_CC)
 $(OBJ)/toglconfig.*[ol]:        $(TOGLCONFIG_CC)
-$(OBJ)/util/trace.*[ol]:        $(TRACE_CC)
-$(OBJ)/tracertcl.*[ol]:         $(TRACERTCL_CC)
 $(OBJ)/trial.*[ol]:             $(TRIAL_CC)
 $(OBJ)/trialevent.*[ol]:        $(TRIALEVENT_CC)
 $(OBJ)/trialtcl.*[ol]:          $(TRIALTCL_CC)
@@ -1002,6 +990,22 @@ $(OBJ)/writer.*[ol]:            $(WRITER_CC)
 $(OBJ)/writeutils.*[ol]:        $(WRITEUTILS_CC)
 $(OBJ)/xbitmap.*[ol]:           $(XBITMAP_CC)
 $(OBJ)/xbmaprenderer.*[ol]:     $(XBMAPRENDERER_CC)
+
+$(OBJ)/util/error.*[ol]:        $(ERROR_CC)
+$(OBJ)/util/strings.[ol]:       $(STRINGS_CC)
+$(OBJ)/util/trace.*[ol]:        $(TRACE_CC)
+
+$(OBJ)/tcl/listpkg.*[ol]:       $(LISTPKG_CC)
+$(OBJ)/tcl/misctcl.*[ol]:       $(MISCTCL_CC)
+$(OBJ)/tcl/stringifycmd.*[ol]:  $(STRINGIFYCMD_CC)
+$(OBJ)/tcl/tclcmd.*[ol]:        $(TCLCMD_CC)
+$(OBJ)/tcl/tcldlist.*[ol]:      $(TCLDLIST_CC)
+$(OBJ)/tcl/tclerror.*[ol]:      $(TCLERROR_CC)
+$(OBJ)/tcl/tclitempkg.*[ol]:    $(TCLITEMPKG_CC)
+$(OBJ)/tcl/tclpkg.*[ol]:        $(TCLPKG_CC)
+$(OBJ)/tcl/tclvalue.*[ol]:      $(TCLVALUE_CC)
+$(OBJ)/tcl/tclveccmds.*[ol]:    $(TCLVECCMDS_CC)
+$(OBJ)/tcl/tracertcl.*[ol]:     $(TRACERTCL_CC)
 
 #-------------------------------------------------------------------------
 #
@@ -1025,7 +1029,7 @@ clean_do: clean
 clean_o: clean
 	mv $(OBJ)/*.o $(OBJ)/util/*.o trash
 
-ALL_SOURCES := $(SRC)/*.*
+ALL_SOURCES := $(SRC)/*.[ch]* $(SRC)/util/*.[ch]* $(SRC)/tcl/*.[ch]*
 
 # Generate TAGS file based on all source files
 $(SRC)/TAGS: $(ALL_SOURCES)
