@@ -3,7 +3,7 @@
 // value.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:19:17 1999
-// written: Fri Mar  3 16:35:04 2000
+// written: Wed Mar  8 11:27:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ public:
   /// Default constructor.
   ValueError();
   /// Construct with an informative message \c msg.
-  ValueError(const string& msg);
+  ValueError(const char* msg);
 };
 
 ///////////////////////////////////////////////////////////////////////

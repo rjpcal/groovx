@@ -3,7 +3,7 @@
 // tclvalue.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Fri Mar  3 23:24:53 2000
+// written: Wed Mar  8 11:31:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -226,7 +226,7 @@ DOTRACE("Tcl::TclValue::getBool");
   if ( Tcl_GetBooleanFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
 	 string msg = Tcl_GetStringResult(itsInterp);
 	 Tcl_ResetResult(itsInterp);
-	 throw ValueError(msg);
+	 throw ValueError(msg.c_str());
   }
   return bool(val);
 }
@@ -259,7 +259,7 @@ DOTRACE("Tcl::TclValue::get");
   if ( Tcl_GetIntFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
 	 string msg = Tcl_GetStringResult(itsInterp);
 	 Tcl_ResetResult(itsInterp);
-	 throw ValueError(msg);
+	 throw ValueError(msg.c_str());
   }
 }
 
@@ -268,7 +268,7 @@ DOTRACE("Tcl::TclValue::get");
   if ( Tcl_GetLongFromObj(itsInterp, itsObj, &val) != TCL_OK) {
 	 string msg = Tcl_GetStringResult(itsInterp);
 	 Tcl_ResetResult(itsInterp);
-	 throw ValueError(msg);
+	 throw ValueError(msg.c_str());
   }
 }
 
@@ -283,7 +283,7 @@ DOTRACE("Tcl::TclValue::get");
 	 if ( Tcl_GetDoubleFromObj(itsInterp, itsObj, &val) != TCL_OK ) {
 		string msg = Tcl_GetStringResult(itsInterp);
 		Tcl_ResetResult(itsInterp);
-		throw ValueError(msg);
+		throw ValueError(msg.c_str());
 	 }
   }
   catch (ValueError&) {
