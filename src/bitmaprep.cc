@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Jan 13 15:13:27 2000
+// written: Thu Jan 13 15:20:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -156,7 +156,16 @@ DOTRACE("BitmapRep::loadPbmFile(const char*)");
 
   // Grab ownership of the bitmap data from pbm into this object's itsBytes.
   pbm.grabBytes(itsBytes, itsWidth, itsHeight, itsBitsPerPixel);
-  itsFilename = filename;
+
+  // If the first character of the new filename is '.', then we assume
+  // it is a temp file, and therefore we don't save this filename in
+  // itsFilename.
+  if ( filename[0] != '.' ) {
+	 itsFilename = filename;
+  }
+  else {
+	 itsFilename = "";
+  }
 
   if (itsContrastFlip) { doFlipContrast(); }
   if (itsVerticalFlip) { doFlipVertical(); }
