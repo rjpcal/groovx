@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Wed Oct  6 10:02:08 1999
+// written: Tue Oct 12 09:29:10 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,8 +12,13 @@
 #define PROPERTY_H_DEFINED
 
 #ifndef STRING_DEFINED
-#include "string"
+#include <string>
 #define STRING_DEFINED
+#endif
+
+#ifndef MEMORY_DEFINED
+#include <memory>
+#define MEMORY_DEFINED
 #endif
 
 #ifndef IO_H_DEFINED
@@ -40,7 +45,12 @@ public:
 
   virtual ~Property();
 
+#ifndef GCC_COMPILER
 protected:
+#else
+public:
+#endif
+
   virtual void set(const Value& val) = 0;
   virtual const Value& get() const = 0;
 };
@@ -58,7 +68,6 @@ public:
 
   template <class C> friend class PropFriend;
 
-protected:
   virtual void serialize(ostream& os, IOFlag) const 
 	 { os << itsVal.itsVal << ' '; }
   virtual void deserialize(istream& is, IOFlag)
@@ -67,6 +76,12 @@ protected:
   virtual int charCount() const
 	 { return gCharCount<T>(itsVal.itsVal); }
 
+
+#ifndef GCC_COMPILER
+protected:
+#else
+public:
+#endif
 
   virtual void set(const Value& new_val) { new_val.get(itsVal.itsVal); }
   virtual const Value& get() const { return itsVal; }
@@ -89,7 +104,11 @@ template <class C, class T>
 class CTProperty : public TProperty<T> { 
 public:
   CTProperty(T init = T()) : TProperty<T>(init) {}
+
+#ifndef GCC_COMPILER
   friend class C;
+#endif
+
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -103,7 +122,12 @@ class TBoundedProperty : public TProperty<T> {
 public:
   TBoundedProperty(T init=T()) : TProperty<T>(init) {}
 
+#ifndef GCC_COMPILER
 protected:
+#else
+public:
+#endif
+
   virtual void set(const Value& new_val)
 	 {
 		T temp; new_val.get(temp);
@@ -124,7 +148,11 @@ template <class C, class T, int min, int max, int div>
 class CTBoundedProperty : public TBoundedProperty<T, min, max, div> { 
 public:
   CTBoundedProperty(T init = T()) : TBoundedProperty<T, min, max, div>(init) {}
+
+#ifndef GCC_COMPILER
   friend class C;
+#endif
+
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -140,7 +168,12 @@ public:
 
   template <class C> friend class PropFriend;
 
+#ifndef GCC_COMPILER
 protected:
+#else
+public:
+#endif
+
   void reseat(T& valRef) { itsVal.reseat(valRef); }
 
   virtual void serialize(ostream& os, IOFlag) const 
@@ -169,7 +202,11 @@ template <class C, class T>
 class CTPtrProperty : public TPtrProperty<T> {
 public:
   CTPtrProperty(T& valRef) : TPtrProperty<T>(valRef) {}
+
+#ifndef GCC_COMPILER
   friend class C;
+#endif
+
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -218,12 +255,21 @@ public:
 	 startNewGroup(new_group) 
   {}
   
+  PropertyInfo(const PropertyInfo& rhs) :
+	 name(rhs.name),
+	 property(rhs.property),
+	 min(rhs.min->clone()),
+	 max(rhs.max->clone()),
+	 res(rhs.res->clone()),
+	 startNewGroup(rhs.startNewGroup)
+  {}
+
   PropertyInfo& operator=(const PropertyInfo& rhs) {
 	 name = rhs.name;
 	 property = rhs.property;
-	 min = auto_ptr<Value>(rhs.min->clone());
-	 max = auto_ptr<Value>(rhs.max->clone());
-	 res = auto_ptr<Value>(rhs.res->clone());
+	 min.reset(rhs.min->clone());
+	 max.reset(rhs.max->clone());
+	 res.reset(rhs.res->clone());
 	 startNewGroup = rhs.startNewGroup;
   }
 
