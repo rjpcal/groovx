@@ -3,7 +3,7 @@
 // tlist.h
 // Rob Peters
 // created: Fri Mar 12 13:23:02 1999
-// written: Fri Dec  3 15:31:32 1999
+// written: Fri Dec  3 15:33:47 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,10 +83,6 @@ public:
   /////////////
   // actions //
   /////////////
-
-  // This command sets the Tlist's visiblity to zero and clears the
-  // OpenGL window.
-  void clearscreen();
 
   void drawTrial(int trial);
   void undrawTrial(int trial);

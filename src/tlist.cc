@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Fri Dec  3 15:31:52 1999
+// written: Fri Dec  3 15:34:05 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -225,13 +225,6 @@ DOTRACE("Tlist::clear");
 /////////////
 // actions //
 /////////////
-
-void Tlist::clearscreen() {
-DOTRACE("clearscreen");
-  setVisible(0);
-  glClear(GL_COLOR_BUFFER_BIT);
-  glFlush();
-}
 
 void Tlist::drawTrial(int trial) {
 DOTRACE("Tlist::drawTrial");
