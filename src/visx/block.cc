@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Mon Oct 23 12:36:31 2000
+// written: Mon Oct 23 13:19:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,6 +43,8 @@
 
 namespace {
   const string_literal ioTag("Block");
+
+  IO::VersionId BLOCK_SERIAL_VERSION_ID = 1;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -154,20 +156,40 @@ void Block::removeAllTrials() {
 DOTRACE("Block::removeAllTrials");
   itsImpl->itsTrialSequence.clear();
   itsImpl->itsCurTrialSeqIdx = 0;
-//    itsImpl->itsCurrentTrialId = -1;
   itsImpl->itsCurrentTrial = NullableItemWithId<TrialBase>(-1);
+}
+
+IO::VersionId Block::serialVersionId() const {
+DOTRACE("Block::serialVersionId");
+  return BLOCK_SERIAL_VERSION_ID;
 }
 
 void Block::readFrom(IO::Reader* reader) {
 DOTRACE("Block::readFrom");
 
-  vector<int> ids;
-  IO::ReadUtils::template readValueSeq<int>(
-		 reader, "trialSeq", std::back_inserter(ids));
+  IO::VersionId svid = reader->readSerialVersionId(); 
+  if (svid == 0)
+	 {
+		vector<int> ids;
+		IO::ReadUtils::template readValueSeq<int>(
+		                            reader, "trialSeq", std::back_inserter(ids));
 
-  itsImpl->itsTrialSequence.clear();
-  for(int i = 0; i < ids.size(); ++i)
-	 itsImpl->itsTrialSequence.push_back(NullableItemWithId<TrialBase>(i));
+		itsImpl->itsTrialSequence.clear();
+		for(int i = 0; i < ids.size(); ++i)
+		  itsImpl->itsTrialSequence.push_back(
+                           NullableItemWithId<TrialBase>(ids[i]));
+	 }
+  else if (svid == 1)
+	 {
+		vector<TrialBase*> trials;
+		IO::ReadUtils::template readObjectSeq<TrialBase>(
+								reader, "trialSeq", std::back_inserter(trials));
+
+		itsImpl->itsTrialSequence.clear();
+		for(int i = 0; i < trials.size(); ++i)
+		  itsImpl->itsTrialSequence.push_back(
+                            NullableItemWithId<TrialBase>(trials[i]));
+	 }
 
   reader->readValue("randSeed", itsImpl->itsRandSeed);
   reader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
@@ -182,10 +204,21 @@ DOTRACE("Block::readFrom");
 void Block::writeTo(IO::Writer* writer) const {
 DOTRACE("Block::writeTo");
 
-  vector<int> ids; 
-  for (int i = 0; i < itsImpl->itsTrialSequence.size(); ++i)
-	 ids.push_back(itsImpl->itsTrialSequence[i].id());
-  IO::WriteUtils::writeValueSeq(writer, "trialSeq", ids.begin(), ids.end());
+  if (BLOCK_SERIAL_VERSION_ID == 0)
+	 {
+		vector<int> ids; 
+		for (int i = 0; i < itsImpl->itsTrialSequence.size(); ++i)
+		  ids.push_back(itsImpl->itsTrialSequence[i].id());
+		IO::WriteUtils::writeValueSeq(writer, "trialSeq", ids.begin(), ids.end());
+	 }
+  else if (BLOCK_SERIAL_VERSION_ID == 1)
+	 {
+		vector<TrialBase*> trials;
+		for (int i = 0; i < itsImpl->itsTrialSequence.size(); ++i)
+		  trials.push_back(itsImpl->itsTrialSequence[i].get());
+		IO::WriteUtils::writeObjectSeq(writer, "trialSeq",
+												 trials.begin(), trials.end());
+	 }
 
   writer->writeValue("randSeed", itsImpl->itsRandSeed);
   writer->writeValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
