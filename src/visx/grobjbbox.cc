@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Wed Nov 13 10:59:40 2002
+// written: Wed Nov 13 11:27:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,16 +25,11 @@
 
 namespace
 {
-  Gfx::Rect<double> addPixelBorder(const Gfx::Rect<double>& raw,
-                                   int border_pixels)
+  void addPixelBorder(Gfx::Box<double>& cube, int border_percent)
   {
-
-    Gfx::Rect<double> result = raw;
-
-    result.scaleX(1.0 + border_pixels/100.0);
-    result.scaleY(1.0 + border_pixels/100.0);
-
-    return result;
+    cube.scaleX(1.0 + border_percent/100.0);
+    cube.scaleY(1.0 + border_percent/100.0);
+    cube.scaleZ(1.0 + border_percent/100.0);
   }
 }
 
@@ -53,13 +48,14 @@ void GrObjBBox::getBoundingCube(Gfx::Box<double>& cube,
 {
 DOTRACE("GrObjBBox::getBoundingCube");
 
+  child()->getBoundingCube(cube, canvas);
+
   // Add extra pixels if the box itself will be visible.
   int border_pixels = isItVisible ? itsPixelBorder+4 : itsPixelBorder;
 
-  dbgEval(3, itsPixelBorder); dbgEval(3, border_pixels);
+  dbgEval(3, itsPixelBorder); dbgEvalNL(3, border_pixels);
 
-  cube.unionize(addPixelBorder(child()->getBoundingBox(canvas),
-                               border_pixels));
+  addPixelBorder(cube, border_pixels);
 }
 
 void GrObjBBox::draw(Gfx::Canvas& canvas) const
@@ -70,9 +66,11 @@ DOTRACE("GrObjBBox::draw");
 
   if (isItVisible)
     {
-      Gfx::Rect<double> bounds =
-        addPixelBorder(child()->getBoundingBox(canvas),
-                       itsPixelBorder);
+      Gfx::Box<double> cube;
+      child()->getBoundingCube(cube, canvas);
+      addPixelBorder(cube, itsPixelBorder);
+
+      Gfx::Rect<double> bounds = cube.rect();
 
 #define ANIMATE_BBOX
 
