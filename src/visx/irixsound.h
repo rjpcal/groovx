@@ -3,7 +3,7 @@
 // irixsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 14 11:23:12 1999
-// written: Thu Mar  9 17:11:43 2000
+// written: Fri Mar 10 00:47:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,6 +74,9 @@ public:
   virtual const char* getFile() const { return itsFilename.c_str(); }
 
 private:
+  IrixAudioSound(const IrixAudioSound&);
+  IrixAudioSound& operator=(const IrixAudioSound&);
+
   fixed_string itsFilename;
 
   ALconfig itsAudioConfig;
@@ -87,6 +90,7 @@ private:
 };
 
 IrixAudioSound::IrixAudioSound(const char* filename) :
+  itsFilename(""),
   itsAudioConfig(alNewConfig()),
   itsNumChannels(0),
   itsFrameCount(0),
