@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Aug  5 20:12:30 2001
-// written: Sun Aug  5 20:18:22 2001
+// written: Mon Aug 20 12:09:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "util/tostring.h"
 
+#include <cstring>
 #include <strstream.h>
 
 #include "util/trace.h"
@@ -23,6 +24,10 @@ namespace
 {
   static char num2str_buf[64];
 }
+
+Util::CharData::CharData(const char* t) :
+  text(t), len(t ? strlen(t) : 0)
+{}
 
 template <class T>
 const char* Util::num2str(const T& x)
