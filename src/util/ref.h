@@ -232,6 +232,7 @@ public:
   {
     if      (vis == PUBLIC)    RefHelper::insertItem(ptr);
     else if (vis == PROTECTED) RefHelper::insertItemWeak(ptr);
+    // else vis == PRIVATE, so don't insert into the ObjDb
   }
 
   template <class U>
@@ -437,6 +438,7 @@ public:
       {
         if      (vis == PUBLIC)    RefHelper::insertItem(itsHandle.get());
         else if (vis == PROTECTED) RefHelper::insertItemWeak(itsHandle.get());
+        // else vis == PRIVATE, so don't insert into the ObjDb
       }
   }
 
