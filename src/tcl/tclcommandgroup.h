@@ -38,7 +38,7 @@ typedef void* ClientData;
 
 class fstring;
 
-struct FilePosition;
+struct rutz::file_pos;
 
 template <class T> class shared_ptr;
 
@@ -65,7 +65,7 @@ public:
   /// Find the named command, making a new one if necessary.
   static CommandGroup* make(Tcl::Interp& interp,
                             const fstring& cmd_name,
-                            const FilePosition& src_pos);
+                            const rutz::file_pos& src_pos);
 
   /// Add the given Tcl::Command to this group's overload list.
   void add(shared_ptr<Tcl::Command> p);
@@ -85,7 +85,7 @@ private:
 
   /// Private constructor since clients should use CommandGroup::make().
   CommandGroup(Tcl::Interp& interp, const fstring& cmd_name,
-               const FilePosition& src_pos);
+               const rutz::file_pos& src_pos);
 
   /// Private destructor since destruction is automated by Tcl.
   ~CommandGroup() throw();

@@ -66,17 +66,20 @@ namespace
     switch (status)
       {
       case -1:
-        throw Util::Error(fstring(msg, "memory allocation error"), SRC_POS);
+        throw rutz::error(fstring(msg, "memory allocation error"),
+                          SRC_POS);
         break;
       case -2:
-        throw Util::Error(fstring(msg, "invalid mangled name"), SRC_POS);
+        throw rutz::error(fstring(msg, "invalid mangled name"),
+                          SRC_POS);
         break;
       case -3:
-        throw Util::Error(fstring(msg, "invalid arguments"
-                                  " (e.g. buf non-NULL and length NULL'"), SRC_POS);
+        throw rutz::error(fstring(msg, "invalid arguments (e.g. "
+                                  "buf non-NULL and length NULL'"),
+                          SRC_POS);
         break;
       default:
-        throw Util::Error(fstring(msg, "unknown error code"), SRC_POS);
+        throw rutz::error(fstring(msg, "unknown error code"), SRC_POS);
       }
 
     ASSERT(false);

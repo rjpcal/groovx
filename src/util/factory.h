@@ -112,10 +112,10 @@ public:
   ~AssocArray();
 
   /// Raise an exception reporting an unknown type.
-  void throwForType(const char* type, const FilePosition& pos);
+  void throwForType(const char* type, const rutz::file_pos& pos);
 
   /// Raise an exception reporting an unknown type.
-  void throwForType(const fstring& type, const FilePosition& pos);
+  void throwForType(const fstring& type, const rutz::file_pos& pos);
 
   /// Retrieve the object associated with the tag \a name.
   void* getPtrForName(const fstring& name) const;
@@ -155,11 +155,11 @@ public:
   typedef CreatorBase<BasePtr> CreatorType;
 
   /// Raise an exception reporting an unknown type.
-  void throwForType(const char* type, const FilePosition& pos)
+  void throwForType(const char* type, const rutz::file_pos& pos)
     { base.throwForType(type, pos); }
 
   /// Raise an exception reporting an unknown type.
-  void throwForType(const fstring& type, const FilePosition& pos)
+  void throwForType(const fstring& type, const rutz::file_pos& pos)
     { base.throwForType(type, pos); }
 
   /// Get the object associated with the tag \a name.

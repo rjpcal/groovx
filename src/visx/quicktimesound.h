@@ -65,7 +65,8 @@ DOTRACE("QuickTimeSoundRep::QuickTimeSoundRep");
                             &ref, 0);
 
   if (noErr != err)
-    throw Util::Error(fstring("error in FSPathMakeRef: ", err), SRC_POS);
+    throw rutz::error(fstring("error in FSPathMakeRef: ", err),
+                      SRC_POS);
 
   // (2) Get an FSSpec from the FSRef
   FSSpec spec;
@@ -74,13 +75,15 @@ DOTRACE("QuickTimeSoundRep::QuickTimeSoundRep");
                          NULL, NULL, &spec, NULL);
 
   if (noErr != err)
-    throw Util::Error(fstring("error in FSGetCatalogInfo: ", err), SRC_POS);
+    throw rutz::error(fstring("error in FSGetCatalogInfo: ", err),
+                      SRC_POS);
 
   // (3) Get a movie file descriptor from the FSSpec
   err = OpenMovieFile(&spec, &itsFileRefNum, fsRdPerm);
 
   if (noErr != err)
-    throw Util::Error(fstring("error in OpenMovieFile: ", err), SRC_POS);
+    throw rutz::error(fstring("error in OpenMovieFile: ", err),
+                      SRC_POS);
 
   // (4) Get a movie object from the movie file
   err = NewMovieFromFile(&itsMovie, itsFileRefNum, 0, nil,
@@ -89,7 +92,8 @@ DOTRACE("QuickTimeSoundRep::QuickTimeSoundRep");
   if (noErr != err)
     {
       CloseMovieFile(itsFileRefNum);
-      throw Util::Error(fstring("error in NewMovieFromFile: ", err), SRC_POS);
+      throw rutz::error(fstring("error in NewMovieFromFile: ", err),
+                        SRC_POS);
     }
 }
 

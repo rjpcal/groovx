@@ -40,58 +40,56 @@
 namespace rutz
 {
   class backtrace;
-}
-
-namespace Util
-{
-  class Error;
+  class error;
 }
 
 //  ####################################################################
-/// \c Util::Error is a basic exception class.
+/// \c rutz::error is a basic exception class.
 /** It carries a string message describing the error as well as
     information about the location in the source code in which the
     exception was generated. */
 
-class Util::Error : public std::exception
+class rutz::error : public std::exception
 {
 public:
   /// Default construct with an empty message string.
-  Error(const FilePosition& pos);
+  error(const rutz::file_pos& pos);
 
   /// Construct with an error message.
-  Error(const fstring& msg, const FilePosition& pos);
+  error(const fstring& msg, const rutz::file_pos& pos);
 
   /// Copy constructor.
-  Error(const Error& other) throw();
+  error(const error& other) throw();
 
   /// Virtual destructor.
-  virtual ~Error() throw();
+  virtual ~error() throw();
 
-  /// Get the error message.
-  fstring& msg() throw() { return itsInfo; }
-
-  /// Get the error message.
-  const fstring& msg() const throw() { return itsInfo; }
-
-  /// Get the error message as a C-style string.
+  /// Get the decorated error message as a C-style string.
   virtual const char* what() const throw();
 
   /// Get the source file position where the error was generated.
-  const FilePosition& srcPos() const throw() { return itsPos; }
+  const rutz::file_pos& src_pos() const throw() { return m_file_pos; }
 
   /// Get the stack back trace associated with this exception.
-  const rutz::backtrace& backTrace() const throw() { return *itsBackTrace; }
+  const rutz::backtrace& get_backtrace() const throw() { return *m_backtrace; }
 
-  /// Get the most recently back trace used in constructing a Util::Error.
-  static const rutz::backtrace& lastBackTrace();
+  /// Get the back trace most recently used in constructing a rutz::error.
+  static const rutz::backtrace& last_backtrace();
+
+protected:
+  /// Reset the error message.
+  void set_msg(const fstring& new_msg) throw() { m_msg = new_msg; }
+
+  /// Get the (un-decorated) error message.
+  const fstring& get_msg() const throw() { return m_msg; }
 
 private:
-  Error& operator=(const Error& other);
+  error& operator=(const error& other);
 
-  fstring itsInfo;
-  FilePosition itsPos;
-  const rutz::backtrace* itsBackTrace;
+  fstring                m_msg; // holds the user-provided info
+  mutable fstring        m_what; // holds m_msg plus decoration
+  rutz::file_pos         m_file_pos;
+  const rutz::backtrace* m_backtrace;
 };
 
 static const char vcid_error_h[] = "$Header$";

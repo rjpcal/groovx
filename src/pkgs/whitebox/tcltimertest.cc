@@ -158,7 +158,7 @@ namespace
       {
         t.schedule();
       }
-    catch (Util::Error&)
+    catch (rutz::error&)
       {
         caught = true;
       }

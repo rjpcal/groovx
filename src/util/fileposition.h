@@ -32,19 +32,22 @@
 #ifndef FILEPOSITION_H_DEFINED
 #define FILEPOSITION_H_DEFINED
 
-/// Represent a position (line number) within a source file.
-struct FilePosition
+namespace rutz
 {
-  FilePosition(const char* file_name, int line_no) :
-    fileName(file_name), lineNo(line_no)
-  {}
+  /// Represent a position (line number) within a source file.
+  struct file_pos
+  {
+    file_pos(const char* file_name, int line_no) :
+      m_file_name(file_name), m_line_no(line_no)
+    {}
 
-  const char* const fileName;
-  int         const lineNo;
-};
+    const char* const m_file_name;
+    int         const m_line_no;
+  };
+}
 
 /// This macro can be used to capture the current source filename and line-number.
-#define SRC_POS FilePosition(__FILE__, __LINE__)
+#define SRC_POS rutz::file_pos(__FILE__, __LINE__)
 
 static const char vcid_fileposition_h[] = "$Header$";
 #endif // !FILEPOSITION_H_DEFINED

@@ -62,7 +62,7 @@ DOTRACE("Util::Timer::schedule");
 
   if (itsMsecDelay == 0 && isItRepeating == true)
     {
-      throw Util::Error("can't schedule a timer callback with "
+      throw rutz::error("can't schedule a timer callback with "
                         "delay=0 and repeating=true", SRC_POS);
     }
 

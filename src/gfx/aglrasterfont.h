@@ -111,7 +111,7 @@ DOTRACE("AglRasterFont::AglRasterFont");
 
   if (itsListBase==0)
     {
-      throw Util::Error(fstring("couldn't allocate GL display lists"),
+      throw rutz::error(fstring("couldn't allocate GL display lists"),
                         SRC_POS);
     }
 
@@ -125,7 +125,7 @@ DOTRACE("AglRasterFont::AglRasterFont");
 
   if (status == GL_FALSE)
     {
-      throw Util::Error("aglUseFont failed", SRC_POS);
+      throw rutz::error("aglUseFont failed", SRC_POS);
     }
 
   /*
@@ -142,7 +142,7 @@ DOTRACE("AglRasterFont::AglRasterFont");
 
   if (err != noErr)
     {
-      throw Util::Error("aglUseFont failed", SRC_POS);
+      throw rutz::error("aglUseFont failed", SRC_POS);
     }
 
 #if 0
@@ -179,7 +179,7 @@ DOTRACE("AglRasterFont::getFontId");
   GetFNum(pstring, &fnum);
 
   if (fnum == 0)
-    throw Util::Error(fstring("couldn't get Apple Font ID "
+    throw rutz::error(fstring("couldn't get Apple Font ID "
                               "for font '", name, "'"),
                       SRC_POS);
 
@@ -203,7 +203,7 @@ DOTRACE("AglRasterFont::pickAppleFont");
       int n = sscanf(spec, "%dx%d", &w, &h);
 
       if (n != 2)
-        throw Util::Error(fstring("couldn't parse fontspec '",
+        throw rutz::error(fstring("couldn't parse fontspec '",
                                   spec, "' as '[width]x[height]"),
                           SRC_POS);
 
@@ -222,7 +222,7 @@ DOTRACE("AglRasterFont::pickAppleFont");
                      family, weight, slant, pxlsize);
 
       if (n != 4)
-        throw Util::Error(fstring("couldn't parse fontspec '", spec,
+        throw rutz::error(fstring("couldn't parse fontspec '", spec,
                                   "' (expected 4 conversions, got ", n, ")"),
                           SRC_POS);
 
@@ -243,7 +243,7 @@ DOTRACE("AglRasterFont::pickAppleFont");
           int n2 = sscanf(pxlsize, "%d", &ipxlsize);
 
           if (n2 != 1)
-            throw Util::Error(fstring("couldn't parse pixel size "
+            throw rutz::error(fstring("couldn't parse pixel size "
                                       "from '", pxlsize, "'"),
                               SRC_POS);
         }

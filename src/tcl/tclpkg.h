@@ -38,9 +38,12 @@
 
 struct Tcl_Interp;
 
-struct FilePosition;
-
 template <class T> class shared_ptr;
+
+namespace rutz
+{
+  struct file_pos;
+}
 
 namespace Tcl
 {
@@ -127,7 +130,7 @@ public:
   Tcl::Interp& interp() throw();
 
   /// Trap a live exception, and leave a message in the Tcl_Interp's result.
-  void handleLiveException(const FilePosition& pos) throw();
+  void handleLiveException(const rutz::file_pos& pos) throw();
 
   /// Returns the package's "namespace name".
   /** Note that the "namespace name" will be the same as the "package
@@ -199,7 +202,7 @@ public:
 
   template <class Func>
   inline void def(const char* cmd_name, const char* usage, Func f,
-                  const FilePosition& src_pos)
+                  const rutz::file_pos& src_pos)
   {
     makeCmd(interp(), f, makePkgCmdName(cmd_name),
             usage, src_pos);
@@ -208,7 +211,7 @@ public:
   template <class Func>
   inline void defVec(const char* cmd_name, const char* usage, Func f,
                      unsigned int keyarg /*default is 1*/,
-                     const FilePosition& src_pos)
+                     const rutz::file_pos& src_pos)
   {
     makeVecCmd(interp(), f, makePkgCmdName(cmd_name),
                usage, keyarg, src_pos);
@@ -217,7 +220,7 @@ public:
   template <class Func>
   inline void defRaw(const char* cmd_name, unsigned int nargs,
                      const char* usage, Func f,
-                     const FilePosition& src_pos)
+                     const rutz::file_pos& src_pos)
   {
     makeGenericCmd(interp(), f, makePkgCmdName(cmd_name),
                    usage, nargs, src_pos);
@@ -227,7 +230,7 @@ public:
   inline void defVecRaw(const char* cmd_name, unsigned int nargs,
                         const char* usage, Func f,
                         unsigned int keyarg /*default is 1*/,
-                        const FilePosition& src_pos)
+                        const rutz::file_pos& src_pos)
   {
     makeGenericVecCmd(interp(), f, makePkgCmdName(cmd_name),
                       usage, nargs, keyarg, src_pos);
@@ -235,14 +238,14 @@ public:
 
   template <class C>
   void defAction(const char* cmd_name, void (C::* actionFunc) (),
-                 const FilePosition& src_pos)
+                 const rutz::file_pos& src_pos)
   {
     defVec( cmd_name, actionUsage(""), actionFunc, 1, src_pos );
   }
 
   template <class C>
   void defAction(const char* cmd_name, void (C::* actionFunc) () const,
-                 const FilePosition& src_pos)
+                 const rutz::file_pos& src_pos)
   {
     defVec( cmd_name, actionUsage(""), actionFunc, 1, src_pos );
   }
@@ -250,14 +253,14 @@ public:
   template <class C, class T>
   void defGetter(const char* cmd_name, const char* usage,
                  T (C::* getterFunc) () const,
-                 const FilePosition& src_pos)
+                 const rutz::file_pos& src_pos)
   {
     defVec( cmd_name, getterUsage(usage), getterFunc, 1, src_pos );
   }
 
   template <class C, class T>
   void defGetter(const char* cmd_name, T (C::* getterFunc) () const,
-                 const FilePosition& src_pos)
+                 const rutz::file_pos& src_pos)
   {
     defVec( cmd_name, getterUsage(""), getterFunc, 1, src_pos );
   }
@@ -265,14 +268,14 @@ public:
   template <class C, class T>
   void defSetter(const char* cmd_name, const char* usage,
                  void (C::* setterFunc) (T),
-                 const FilePosition& src_pos)
+                 const rutz::file_pos& src_pos)
   {
     defVec( cmd_name, setterUsage(usage), setterFunc, 1, src_pos );
   }
 
   template <class C, class T>
   void defSetter(const char* cmd_name, void (C::* setterFunc) (T),
-                 const FilePosition& src_pos)
+                 const rutz::file_pos& src_pos)
   {
     defVec( cmd_name, setterUsage(""), setterFunc, 1, src_pos );
   }
@@ -281,7 +284,7 @@ public:
   void defAttrib(const char* cmd_name,
                  T (C::* getterFunc) () const,
                  void (C::* setterFunc) (T),
-                 const FilePosition& src_pos)
+                 const rutz::file_pos& src_pos)
   {
     defGetter( cmd_name, getterFunc, src_pos );
     defSetter( cmd_name, setterFunc, src_pos );

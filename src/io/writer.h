@@ -81,7 +81,7 @@ public:
                            IO::VersionId actual_version,
                            IO::VersionId lowest_supported_version,
                            const char* msg,
-                           const FilePosition& pos);
+                           const rutz::file_pos& pos);
 
   /// Store the \c char attribute \a val in association with the tag \a name.
   virtual void writeChar(const char* name, char val) = 0;

@@ -44,7 +44,7 @@ DBG_REGISTER
 
 namespace IO
 {
-  class ReadVersionError : public Util::Error
+  class ReadVersionError : public rutz::error
   {
   public:
     /// Construct with information relevant to the problem
@@ -52,7 +52,7 @@ namespace IO
                      IO::VersionId attempted_id,
                      IO::VersionId lowest_supported_id,
                      const char* msg,
-                     const FilePosition& pos);
+                     const rutz::file_pos& pos);
 
     virtual ~ReadVersionError() throw();
   };
@@ -62,13 +62,15 @@ IO::ReadVersionError::ReadVersionError(const char* classname,
                                        IO::VersionId attempted_id,
                                        IO::VersionId lowest_supported_id,
                                        const char* info,
-                                       const FilePosition& pos) :
-  Util::Error(pos)
+                                       const rutz::file_pos& pos) :
+  rutz::error(pos)
 {
-  msg().append("IO::ReadVersionError: ");
-  msg().append("in ", classname, ", serial version ");
-  msg().append(attempted_id, " is not supported. The lowest supported version is ");
-  msg().append(lowest_supported_id, ". ", info);
+  fstring m;
+  m.append("IO::ReadVersionError: in ", classname,
+           ", serial version ", attempted_id, " is not supported. ");
+  m.append("The lowest supported version is ", lowest_supported_id,
+           ". ", info);
+  this->set_msg(m);
 }
 
 IO::ReadVersionError::~ReadVersionError() throw() {}
@@ -78,7 +80,7 @@ IO::Reader::~Reader() throw() {}
 int IO::Reader::ensureReadVersionId(const char* name,
                                     IO::VersionId lowest_supported_version,
                                     const char* msg,
-                                    const FilePosition& pos)
+                                    const rutz::file_pos& pos)
 {
 DOTRACE("IO::Reader::ensureReadVersionId");
 

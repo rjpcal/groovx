@@ -63,9 +63,9 @@ namespace
 {
   void throwAttrError(const fstring& attrib_name,
                       const fstring& attrib_value,
-                      const FilePosition& pos)
+                      const rutz::file_pos& pos)
   {
-    throw Util::Error(fstring("error reading attribute '", attrib_name,
+    throw rutz::error(fstring("error reading attribute '", attrib_name,
                               "' with value '", attrib_value, "'"),
                       pos);
   }
@@ -103,7 +103,7 @@ namespace
             const int ch2 = is.get();
 
             if (ch2 == EOF || ch2 == STRING_ENDER)
-              throw Util::Error("missing character "
+              throw rutz::error("missing character "
                                 "after trailing backslash", SRC_POS);
 
             switch (ch2)
@@ -115,7 +115,7 @@ namespace
 
               default:
                 buffer.push_back('\0');
-                throw Util::Error
+                throw rutz::error
                   (fstring("invalid escape character '", char(ch2),
                            "' with buffer contents: ", &buffer[0]),
                    SRC_POS);
@@ -176,7 +176,7 @@ private:
   AttribMap& currentAttribs()
   {
     if ( itsAttribs.empty() )
-      throw Util::Error("attempted to read attribute "
+      throw rutz::error("attempted to read attribute "
                         "when no attribute map was active", SRC_POS);
     return *(itsAttribs.back());
   }
@@ -276,8 +276,9 @@ DOTRACE("AsciiStreamReader::readStringImpl");
 
   if (len < 0)
     {
-      throw Util::Error(fstring("found a negative length "
-                                "for a string attribute: ", len), SRC_POS);
+      throw rutz::error(fstring("found a negative length "
+                                "for a string attribute: ", len),
+                        SRC_POS);
     }
 
   fstring new_string;
@@ -383,7 +384,7 @@ DOTRACE("AsciiStreamReader::readRoot");
           msg.append("id: ", id, "\n");
           msg.append("\tequal: ", equal, "\n");
           msg.append("\tbracket: ", bracket);
-          throw Util::Error(msg, SRC_POS);
+          throw rutz::error(msg, SRC_POS);
         }
 
       if ( !haveReadRoot )
@@ -405,10 +406,9 @@ DOTRACE("AsciiStreamReader::readRoot");
 
       if ( itsBuf.fail() )
         {
-          throw Util::Error(fstring("input failed "
+          throw rutz::error(fstring("input failed "
                                     "while parsing ending bracket\n",
-                                    "\tbracket: ", bracket),
-                            SRC_POS);
+                                    "\tbracket: ", bracket), SRC_POS);
         }
     }
 
@@ -437,7 +437,7 @@ DOTRACE("AsciiStreamReader::inflateObject");
       int ch = buf.get();  ASSERT(ch == 'v');
       buf >> svid;
       if ( buf.fail() )
-        throw Util::Error("input failed while reading "
+        throw rutz::error("input failed while reading "
                           "serialization version id", SRC_POS);
     }
 
@@ -449,14 +449,15 @@ DOTRACE("AsciiStreamReader::inflateObject");
 
   if (attrib_count < 0)
     {
-      throw Util::Error(fstring("found a negative attribute count: ",
+      throw rutz::error(fstring("found a negative attribute count: ",
                                 attrib_count), SRC_POS);
     }
 
   if ( buf.fail() )
     {
-      throw Util::Error(fstring("input failed while reading "
-                                "attribute count: ", attrib_count), SRC_POS);
+      throw rutz::error(fstring("input failed while reading "
+                                "attribute count: ", attrib_count),
+                        SRC_POS);
     }
 
   // Loop and load all the attributes
@@ -475,7 +476,7 @@ DOTRACE("AsciiStreamReader::inflateObject");
           msg.append("\ttype: ", type, "\n");
           msg.append("\tname: ", name, "\n");
           msg.append("\tequal: ", equal);
-          throw Util::Error(msg, SRC_POS);
+          throw rutz::error(msg, SRC_POS);
         }
 
       attribMap->addNewAttrib(name, type, readAndUnEscape(buf));

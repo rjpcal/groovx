@@ -38,7 +38,8 @@ mtx zeropad(const mtx& src, int new_mrows, int new_ncols,
   DOTRACE("zeropad");
 
   if (new_mrows < src.mrows() || new_ncols < src.ncols())
-    throw Util::Error("zeropad(): new size must be >= old size", SRC_POS);
+    throw rutz::error("zeropad(): new size must be >= old size",
+                      SRC_POS);
 
   mtx result(new_mrows, new_ncols);
 

@@ -105,7 +105,7 @@ public:
       if (!isValidItr(itr)) return;
 
       if ( (*itr).second.get()->isShared() )
-        throw Util::Error("attempted to remove a shared object", SRC_POS);
+        throw rutz::error("attempted to remove a shared object", SRC_POS);
 
       itsPtrMap.erase(itr);
     }

@@ -61,7 +61,7 @@ namespace
     STD_IO::ifstream ifs(file);
     if (ifs.fail())
       {
-        throw Util::Error("unable to open file", SRC_POS);
+        throw rutz::error("unable to open file", SRC_POS);
       }
 
     int num_read = 0;
@@ -101,7 +101,7 @@ namespace
     STD_IO::ofstream ofs(filename);
     if (ofs.fail())
       {
-        throw Util::Error(fstring("error opening file: ", filename),
+        throw rutz::error(fstring("error opening file: ", filename),
                           SRC_POS);
       }
 

@@ -57,7 +57,7 @@ namespace
 
     dbg_eval_nl(3, buf);
 
-    throw Util::Error(fstring("HP Audio Error: ", buf), SRC_POS);
+    throw rutz::error(fstring("HP Audio Error: ", buf), SRC_POS);
 
     // we'll never get here, but we need to placate the compiler
     return 0;
@@ -90,7 +90,7 @@ HpAudioSoundRep::HpAudioSoundRep(const char* filename) :
 {
 DOTRACE("HpAudioSoundRep::HpAudioSoundRep");
   if ( !theAudio )
-    throw Util::Error("invalid HP audio server connection", SRC_POS);
+    throw rutz::error("invalid HP audio server connection", SRC_POS);
 
   SoundRep::checkFilename(filename);
 
@@ -127,7 +127,7 @@ void HpAudioSoundRep::play()
 {
 DOTRACE("HpAudioSoundRep::play");
   if ( !theAudio )
-    throw Util::Error("invalid audio server connection", SRC_POS);
+    throw rutz::error("invalid audio server connection", SRC_POS);
 
   if (itsSBucket)
     ATransID xid = APlaySBucket( theAudio, itsSBucket, &itsPlayParams, NULL );

@@ -89,7 +89,7 @@ void range_checking::raise_exception(const fstring& msg,
   fstring errmsg;
   errmsg.append("range check failed in file '", f, "' at line #");
   errmsg.append(ln, ": ", msg);
-  throw Util::Error(errmsg, SRC_POS);
+  throw rutz::error(errmsg, SRC_POS);
 }
 
 void range_checking::geq(const void* x, const void* lim,
@@ -292,7 +292,7 @@ DOTRACE("slice::reorder");
   mtx index(index_.as_column());
 
   if (index.mrows() != nelems())
-    throw Util::Error("dimension mismatch in slice::reorder", SRC_POS);
+    throw rutz::error("dimension mismatch in slice::reorder", SRC_POS);
 
   mtx neworder(nelems(), 1);
 
@@ -306,7 +306,7 @@ slice& slice::operator+=(const slice& other)
 {
 DOTRACE("slice::operator+=(const slice&)");
   if (m_nelems != other.nelems())
-    throw Util::Error("dimension mismatch in slice::operator+=", SRC_POS);
+    throw rutz::error("dimension mismatch in slice::operator+=", SRC_POS);
 
   mtx_const_iter rhs = other.begin();
 
@@ -320,7 +320,7 @@ slice& slice::operator-=(const slice& other)
 {
 DOTRACE("slice::operator-=(const slice&)");
   if (m_nelems != other.nelems())
-    throw Util::Error("dimension mismatch in slice::operator-=", SRC_POS);
+    throw rutz::error("dimension mismatch in slice::operator-=", SRC_POS);
 
   mtx_const_iter rhs = other.begin();
 
@@ -334,7 +334,7 @@ slice& slice::operator=(const slice& other)
 {
 DOTRACE("slice::operator=(const slice&)");
   if (m_nelems != other.nelems())
-    throw Util::Error("dimension mismatch in slice::operator=", SRC_POS);
+    throw rutz::error("dimension mismatch in slice::operator=", SRC_POS);
 
   mtx_const_iter rhs = other.begin();
 
@@ -348,7 +348,7 @@ slice& slice::operator=(const mtx& other)
 {
 DOTRACE("slice::operator=(const mtx&)");
   if (m_nelems != other.nelems())
-    throw Util::Error("dimension mismatch in slice::operator=", SRC_POS);
+    throw rutz::error("dimension mismatch in slice::operator=", SRC_POS);
 
   int i = 0;
   for (mtx_iter lhs = begin_nc(); lhs.has_more(); ++lhs, ++i)
@@ -373,11 +373,11 @@ DOTRACE("mtx_specs::as_shape");
       msg.append("as_shape(): dimension mismatch: ");
       msg.append("current nelems == ", nelems(), "; requested ");
       msg.append(s.mrows(), "x", s.ncols());
-      throw Util::Error(msg, SRC_POS);
+      throw rutz::error(msg, SRC_POS);
     }
 
   if (m_rowstride != mrows())
-    throw Util::Error("as_shape(): cannot reshape a submatrix", SRC_POS);
+    throw rutz::error("as_shape(): cannot reshape a submatrix", SRC_POS);
 
   mtx_specs result = *this;
   result.m_shape = s;
@@ -390,13 +390,13 @@ void mtx_specs::select_rows(const row_index_range& rng)
 {
 DOTRACE("mtx_specs::select_rows");
   if (rng.begin() < 0)
-    throw Util::Error("select_rows(): row index must be >= 0", SRC_POS);
+    throw rutz::error("select_rows(): row index must be >= 0", SRC_POS);
 
   if (rng.count() <= 0)
-    throw Util::Error("select_rows(): number of rows must be > 0", SRC_POS);
+    throw rutz::error("select_rows(): number of rows must be > 0", SRC_POS);
 
   if (rng.end() > mrows())
-    throw Util::Error("select_rows(): upper row index out of range", SRC_POS);
+    throw rutz::error("select_rows(): upper row index out of range", SRC_POS);
 
   m_offset += rng.begin();
   m_shape = mtx_shape(rng.count(), ncols());
@@ -406,13 +406,13 @@ void mtx_specs::select_cols(const col_index_range& rng)
 {
 DOTRACE("mtx_specs::select_cols");
   if (rng.begin() < 0)
-    throw Util::Error("select_cols(): column index must be >= 0", SRC_POS);
+    throw rutz::error("select_cols(): column index must be >= 0", SRC_POS);
 
   if (rng.count() <= 0)
-    throw Util::Error("select_cols(): number of columns must be > 0", SRC_POS);
+    throw rutz::error("select_cols(): number of columns must be > 0", SRC_POS);
 
   if (rng.end() > ncols())
-    throw Util::Error("select_cols(): upper column index out of range", SRC_POS);
+    throw rutz::error("select_cols(): upper column index out of range", SRC_POS);
 
   m_offset += rng.begin()*m_rowstride;
   m_shape = mtx_shape(mrows(), rng.count());
@@ -460,7 +460,8 @@ namespace
                              mtx_policies::storage_policy s)
   {
     if (!mxIsDouble(a))
-      throw Util::Error("cannot construct a mtx with a non-'double' mxArray", SRC_POS);
+      throw rutz::error("cannot construct a mtx "
+                        "with a non-'double' mxArray", SRC_POS);
 
     return new_data_block(mxGetPr(a), mxGetM(a), mxGetN(a), s);
   }
@@ -469,11 +470,13 @@ namespace
                              mtx_policies::storage_policy s)
   {
     if (!mxIsDouble(a))
-      throw Util::Error("cannot construct a mtx with a non-'double' mxArray", SRC_POS);
+      throw rutz::error("cannot construct a mtx "
+                        "with a non-'double' mxArray", SRC_POS);
 
     if (s != mtx_policies::BORROW && s != mtx_policies::COPY)
-      throw Util::Error("cannot construct a mtx from a const mxArray* "
-                        "unless the storage_policy is COPY or BORROW", SRC_POS);
+      throw rutz::error("cannot construct a mtx from a const mxArray* "
+                        "unless the storage_policy is COPY or BORROW",
+                        SRC_POS);
 
     return new_data_block(mxGetPr(a), mxGetM(a), mxGetN(a), s);
   }
@@ -581,7 +584,8 @@ sub_mtx_ref& sub_mtx_ref::operator=(const sub_mtx_ref& other)
 {
 DOTRACE("sub_mtx_ref::operator=(const sub_mtx_ref&)");
   if (this->nelems() != other.nelems())
-    throw Util::Error("sub_mtx_ref::operator=(): dimension mismatch", SRC_POS);
+    throw rutz::error("sub_mtx_ref::operator=(): dimension mismatch",
+                      SRC_POS);
 
   std::copy(other.colmaj_begin(), other.colmaj_end(),
             this->colmaj_begin_nc());
@@ -593,7 +597,8 @@ sub_mtx_ref& sub_mtx_ref::operator=(const mtx& other)
 {
 DOTRACE("sub_mtx_ref::operator=(const mtx&)");
   if (this->nelems() != other.nelems())
-    throw Util::Error("sub_mtx_ref::operator=(): dimension mismatch", SRC_POS);
+    throw rutz::error("sub_mtx_ref::operator=(): dimension mismatch",
+                      SRC_POS);
 
   std::copy(other.colmaj_begin(), other.colmaj_end(),
             this->colmaj_begin_nc());
@@ -722,7 +727,8 @@ DOTRACE("mtx::reorder_rows");
   mtx index(index_.as_column());
 
   if (index.mrows() != mrows())
-    throw Util::Error("dimension mismatch in mtx::reorder_rows", SRC_POS);
+    throw rutz::error("dimension mismatch in mtx::reorder_rows",
+                      SRC_POS);
 
   mtx neworder(mrows(), ncols());
 
@@ -739,7 +745,8 @@ DOTRACE("mtx::reorder_columns");
   mtx index(index_.as_column());
 
   if (index.mrows() != ncols())
-    throw Util::Error("dimension mismatch in mtx::reorder_columns", SRC_POS);
+    throw rutz::error("dimension mismatch in mtx::reorder_columns",
+                      SRC_POS);
 
   mtx neworder(mrows(), ncols());
 
@@ -791,7 +798,8 @@ mtx::const_iterator mtx::find_min() const
 DOTRACE("mtx::find_min");
 
   if (nelems() == 0)
-    throw Util::Error("find_min(): the matrix must be non-empty", SRC_POS);
+    throw rutz::error("find_min(): the matrix must be non-empty",
+                      SRC_POS);
 
   return std::min_element(begin(), end());
 }
@@ -801,7 +809,8 @@ mtx::const_iterator mtx::find_max() const
 DOTRACE("mtx::find_max");
 
   if (nelems() == 0)
-    throw Util::Error("find_max(): the matrix must be non-empty", SRC_POS);
+    throw rutz::error("find_max(): the matrix must be non-empty",
+                      SRC_POS);
 
   return std::max_element(begin(), end());
 }
@@ -811,7 +820,8 @@ double mtx::min() const
 DOTRACE("mtx::min");
 
   if (nelems() == 0)
-    throw Util::Error("min(): the matrix must be non-empty", SRC_POS);
+    throw rutz::error("min(): the matrix must be non-empty",
+                      SRC_POS);
 
   return *(std::min_element(colmaj_begin(), colmaj_end()));
 }
@@ -821,7 +831,8 @@ double mtx::max() const
 DOTRACE("mtx::max");
 
   if (nelems() == 0)
-    throw Util::Error("max(): the matrix must be non-empty", SRC_POS);
+    throw rutz::error("max(): the matrix must be non-empty",
+                      SRC_POS);
 
   return *(std::max_element(colmaj_begin(), colmaj_end()));
 }
@@ -836,7 +847,8 @@ mtx& mtx::operator+=(const mtx& other)
 {
 DOTRACE("mtx::operator+=(const mtx&)");
   if (ncols() != other.ncols())
-    throw Util::Error("dimension mismatch in mtx::operator+=", SRC_POS);
+    throw rutz::error("dimension mismatch in mtx::operator+=",
+                      SRC_POS);
 
   for (int i = 0; i < ncols(); ++i)
     column(i) += other.column(i);
@@ -848,7 +860,8 @@ mtx& mtx::operator-=(const mtx& other)
 {
 DOTRACE("mtx::operator-=(const mtx&)");
   if (ncols() != other.ncols())
-    throw Util::Error("dimension mismatch in mtx::operator-=", SRC_POS);
+    throw rutz::error("dimension mismatch in mtx::operator-=",
+                      SRC_POS);
 
   for (int i = 0; i < ncols(); ++i)
     column(i) -= other.column(i);
@@ -882,7 +895,8 @@ DOTRACE("mtx::VMmul_assign");
 
   if ( (vec.nelems() != mtx.mrows()) ||
        (result.nelems() != mtx.ncols()) )
-    throw Util::Error("dimension mismatch in mtx::VMmul_assign", SRC_POS);
+    throw rutz::error("dimension mismatch in mtx::VMmul_assign",
+                      SRC_POS);
 
   mtx_const_iter veciter = vec.begin();
 
@@ -897,7 +911,8 @@ void mtx::assign_MMmul(const mtx& m1, const mtx& m2)
 DOTRACE("mtx::assign_MMmul");
   if ( (m1.ncols() != m2.mrows()) ||
        (this->ncols() != m2.ncols()) )
-    throw Util::Error("dimension mismatch in mtx::VMmul_assign", SRC_POS);
+    throw rutz::error("dimension mismatch in mtx::VMmul_assign",
+                      SRC_POS);
 
   for (int n = 0; n < mrows(); ++n)
     {
@@ -952,7 +967,8 @@ namespace
   mtx binary_op(const mtx& m1, const mtx& m2, Op op)
   {
     if (! m1.same_size(m2) )
-      throw Util::Error("dimension mismatch in binary_op(mtx, mtx)", SRC_POS);
+      throw rutz::error("dimension mismatch in binary_op(mtx, mtx)",
+                        SRC_POS);
 
     mtx result(m1.mrows(), m1.ncols(), mtx::NO_INIT);
 

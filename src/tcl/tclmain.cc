@@ -121,7 +121,7 @@ public:
   {
     if (theMainImpl == 0)
       {
-        throw Util::Error("no Tcl::Main object has yet been created",
+        throw rutz::error("no Tcl::Main object has yet been created",
                           SRC_POS);
       }
 
@@ -551,7 +551,7 @@ DOTRACE("Tcl::MainImpl::run");
           // ensure errorInfo is set properly:
           itsSafeInterp.addErrorInfo("");
 
-          const fstring bt = Util::Error::lastBackTrace().format();
+          const fstring bt = rutz::error::last_backtrace().format();
 
           std::cerr << itsSafeInterp.getGlobalVar<const char*>("errorInfo")
                     << "\n" << bt << "\nError in startup script\n";

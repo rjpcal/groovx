@@ -50,9 +50,9 @@ DBG_REGISTER
 
 namespace
 {
-  void throwErrno(const char* where, const FilePosition& pos)
+  void throwErrno(const char* where, const rutz::file_pos& pos)
   {
-    throw Util::Error(fstring("in \"", where, "\": ",
+    throw rutz::error(fstring("in \"", where, "\": ",
                               ::strerror(errno)), pos);
   }
 

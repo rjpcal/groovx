@@ -79,7 +79,7 @@ public:
   int ensureReadVersionId(const char* name,
                           IO::VersionId lowest_supported_version,
                           const char* msg,
-                          const FilePosition& pos);
+                          const rutz::file_pos& pos);
 
   /** Returns the serialization version id that was stored with the
       object currently being read. */

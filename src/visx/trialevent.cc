@@ -413,7 +413,7 @@ void MultiEvent::eraseEventAt(unsigned int index)
 {
 DOTRACE("MultiEvent::eraseEventAt");
   if (index >= itsEvents.size())
-    throw Util::Error("index out of bounds", SRC_POS);
+    throw rutz::error("index out of bounds", SRC_POS);
 
   itsEvents.erase(itsEvents.begin() + index);
 }

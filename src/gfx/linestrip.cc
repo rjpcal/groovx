@@ -76,7 +76,7 @@ DOTRACE("Gfx::LineStrip::begin");
 
   if (pts.size() != 0)
     {
-      throw Util::Error("LineStrip::end() not called before LineStrip::begin()", SRC_POS);
+      throw rutz::error("LineStrip::end() not called before LineStrip::begin()", SRC_POS);
     }
 
   ASSERT(canvas == 0);

@@ -80,7 +80,8 @@ void OutputFile::setFilename(fstring fname)
   shared_ptr<STD_IO::ostream> s(new STD_IO::ofstream(fname.c_str()));
 
   if (s->fail())
-    throw Util::Error(fstring("couldn't open '", fname, "' for writing"), SRC_POS);
+    throw rutz::error(fstring("couldn't open '", fname,
+                              "' for writing"), SRC_POS);
 
   itsStream.swap(s);
   itsFilename = fname;
@@ -94,7 +95,7 @@ bool OutputFile::hasStream() const
 STD_IO::ostream& OutputFile::stream()
 {
   if (!hasStream())
-    throw Util::Error("OutputFile object's stream is invalid", SRC_POS);
+    throw rutz::error("OutputFile object's stream is invalid", SRC_POS);
 
   return *itsStream;
 }

@@ -290,7 +290,7 @@ namespace GLTcl
     const AttribInfo* theInfo = theAttribMap[param_tag];
     if ( theInfo == 0 )
       {
-        throw Util::Error("invalid or unsupported enumerant", SRC_POS);
+        throw rutz::error("invalid or unsupported enumerant", SRC_POS);
       }
 
     rutz::fixed_block<T> theVals(theInfo->num_values);
@@ -325,7 +325,7 @@ void GLTcl::loadMatrix(Tcl::List entries)
 
   if (matrix.size() != 16)
     {
-      throw Util::Error("matrix must have 16 entries "
+      throw rutz::error("matrix must have 16 entries "
                         "in column-major order", SRC_POS);
     }
 

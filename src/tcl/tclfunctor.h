@@ -40,7 +40,10 @@
 #include "util/pointers.h"
 #include "util/ref.h"
 
-struct FilePosition;
+namespace rutz
+{
+  struct file_pos;
+}
 
 namespace Tcl
 {
@@ -402,7 +405,7 @@ namespace Tcl
                                (Tcl::Interp& interp, Functor f,
                                 const char* cmd_name,
                                 const char* usage, int nargs,
-                                const FilePosition& src_pos)
+                                const rutz::file_pos& src_pos)
   {
     typedef typename Util::FuncTraits<Functor>::Retn_t Retn_t;
     return Command::make(interp, GenericCallback<Retn_t, Functor>::make(f),
@@ -421,7 +424,7 @@ namespace Tcl
                                (Tcl::Interp& interp, Functor f,
                                 const char* cmd_name, const char* usage,
                                 int nargs, unsigned int keyarg,
-                                const FilePosition& src_pos)
+                                const rutz::file_pos& src_pos)
   {
     typedef typename Util::FuncTraits<Functor>::Retn_t Retn_t;
     shared_ptr<Command> cmd =
@@ -447,7 +450,7 @@ namespace Tcl
   inline shared_ptr<Command> makeCmd
                               (Tcl::Interp& interp, Func f,
                                const char* cmd_name, const char* usage,
-                               const FilePosition& src_pos)
+                               const rutz::file_pos& src_pos)
   {
     return makeGenericCmd
       (interp, buildTclFunctor(f), cmd_name, usage,
@@ -462,7 +465,7 @@ namespace Tcl
                               (Tcl::Interp& interp, Func f,
                                const char* cmd_name, const char* usage,
                                unsigned int keyarg /*default is 1*/,
-                               const FilePosition& src_pos)
+                               const rutz::file_pos& src_pos)
   {
     return makeGenericVecCmd
       (interp, buildTclFunctor(f), cmd_name, usage,

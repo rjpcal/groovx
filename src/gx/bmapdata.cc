@@ -360,12 +360,12 @@ DOTRACE("Gfx::BmapData::makeScrambled");
 
   if ( width() % nsubimg_x != 0 )
     {
-      throw Util::Error("not an evenly divisible width", SRC_POS);
+      throw rutz::error("not an evenly divisible width", SRC_POS);
     }
 
   if ( height() % nsubimg_y != 0 )
     {
-      throw Util::Error("not an evenly divisible width", SRC_POS);
+      throw rutz::error("not an evenly divisible width", SRC_POS);
     }
 
   shared_ptr<Gfx::BmapData> result
@@ -390,7 +390,7 @@ DOTRACE("Gfx::BmapData::makeScrambled");
 
   if (rep->bitsPerPixel != 8 && rep->bitsPerPixel != 24)
     {
-      throw Util::Error(fstring("unknown bits-per-pixel value: ",
+      throw rutz::error(fstring("unknown bits-per-pixel value: ",
                                 rep->bitsPerPixel), SRC_POS);
     }
 

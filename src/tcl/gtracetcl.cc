@@ -55,7 +55,8 @@ namespace
   void setOneLevel(int key, int level)
   {
     if (key < 0 || key >= rutz::debug::MAX_KEYS)
-      throw Util::Error(fstring("no such debug key '", key, "'"), SRC_POS);
+      throw rutz::error(fstring("no such debug key '", key, "'"),
+                        SRC_POS);
 
     // else...
     rutz::debug::key_levels[key] = level;
@@ -65,7 +66,8 @@ namespace
   {
     const int key = rutz::debug::lookup_key(fname);
     if (key == -1)
-      throw Util::Error(fstring("no debug key for file '", fname, "'"), SRC_POS);
+      throw rutz::error(fstring("no debug key for file '", fname, "'"),
+                        SRC_POS);
 
     ASSERT(key >= 0 && key < rutz::debug::MAX_KEYS);
 

@@ -141,7 +141,7 @@ shared_ptr<Tcl::Command> Tcl::Command::make(
           shared_ptr<Tcl::Callback> callback,
           const char* cmd_name, const char* usage,
           int objc_min, int objc_max, bool exact_objc,
-          const FilePosition& src_pos)
+          const rutz::file_pos& src_pos)
 {
 DOTRACE("Tcl::Command::make");
 

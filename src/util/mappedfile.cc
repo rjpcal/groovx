@@ -55,7 +55,7 @@ rutz::mapped_file::mapped_file(const char* filename)
     {
       fstring msg("stat() failed for file ", filename, ":\n",
                   strerror(errno), "\n");
-      throw Util::Error(msg, SRC_POS);
+      throw rutz::error(msg, SRC_POS);
     }
 
   m_fileno = open(filename, O_RDONLY);
@@ -63,7 +63,7 @@ rutz::mapped_file::mapped_file(const char* filename)
     {
       fstring msg("open() failed for file ", filename, ":\n",
                   strerror(errno), "\n");
-      throw Util::Error(msg, SRC_POS);
+      throw rutz::error(msg, SRC_POS);
     }
 
   m_mem = mmap(0, m_statbuf.st_size,
@@ -73,7 +73,7 @@ rutz::mapped_file::mapped_file(const char* filename)
     {
       fstring msg("mmap() failed for file ", filename, ":\n",
                   strerror(errno), "\n");
-      throw Util::Error(msg, SRC_POS);
+      throw rutz::error(msg, SRC_POS);
     }
 }
 

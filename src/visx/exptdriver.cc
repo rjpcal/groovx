@@ -358,7 +358,8 @@ DOTRACE("ExptDriver::edBeginExpt");
 
   if (isComplete())
     {
-      throw Util::Error("Can't begin experiment: there are no pending elements", SRC_POS);
+      throw rutz::error("Can't begin experiment: "
+                        "there are no pending elements", SRC_POS);
     }
 
   rep->addLogInfo("Beginning experiment.");
@@ -389,7 +390,8 @@ DOTRACE("ExptDriver::edResumeExpt");
 
   if (isComplete())
     {
-      throw Util::Error("Can't resume experiment: there are no pending elements", SRC_POS);
+      throw rutz::error("Can't resume experiment: "
+                        "there are no pending elements", SRC_POS);
     }
 
   currentElement()->vxRun(*this);

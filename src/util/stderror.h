@@ -34,7 +34,10 @@
 
 #include <typeinfo>
 
-class FilePosition;
+namespace rutz
+{
+  class file_pos;
+}
 
 // Provides a common interface for throwing some exceptions with
 // standardized error messages.
@@ -43,7 +46,7 @@ namespace Util
 {
   void throwBadCast(const std::type_info& to,
                     const std::type_info& from,
-                    const FilePosition& pos);
+                    const rutz::file_pos& pos);
 }
 
 static const char vcid_stderror_h[] = "$Header$";

@@ -96,7 +96,7 @@ DOTRACE("ElementContainer::readFrom");
   reader.readValue("curTrialSeqdx", rep->sequencePos);
   if (rep->sequencePos > rep->elements.size())
     {
-      throw Util::Error("ElementContainer", SRC_POS);
+      throw rutz::error("ElementContainer", SRC_POS);
     }
 }
 

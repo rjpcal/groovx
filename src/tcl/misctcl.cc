@@ -61,7 +61,7 @@ namespace
 
   fstring backTrace()
   {
-    const rutz::backtrace& bt = Util::Error::lastBackTrace();
+    const rutz::backtrace& bt = rutz::error::last_backtrace();
 
     return bt.format();
   }
@@ -73,7 +73,7 @@ namespace
       Tcl::CommandGroup::lookupOriginal(ctx.interp(), name);
 
     if (cmd == 0)
-      throw Util::Error("no such Tcl::CommandGroup", SRC_POS);
+      throw rutz::error("no such Tcl::CommandGroup", SRC_POS);
 
     fstring result(name, " resolves to ", cmd->cmdName(), "\n");
     result.append(cmd->usage());

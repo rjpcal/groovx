@@ -130,7 +130,7 @@ DOTRACE("GLCanvas::screenFromWorld(Gfx::Vec2)");
   dbg_eval(3, status);
 
   if (status == GL_FALSE)
-    throw Util::Error("GLCanvas::screenFromWorld(): gluProject error",
+    throw rutz::error("GLCanvas::screenFromWorld(): gluProject error",
                       SRC_POS);
 
   return Vec2i(int(temp_screen_x), int(temp_screen_y));
@@ -160,7 +160,7 @@ DOTRACE("GLCanvas::worldFromScreen(Gfx::Vec2)");
   dbg_eval(3, status);
 
   if (status == GL_FALSE)
-    throw Util::Error("GLCanvas::worldFromScreen(): gluUnProject error",
+    throw rutz::error("GLCanvas::worldFromScreen(): gluUnProject error",
                       SRC_POS);
 
   return world_pos;
@@ -232,7 +232,7 @@ DOTRACE("GLCanvas::bitsPerPixel");
 }
 
 void GLCanvas::throwIfError(const char* where,
-                            const FilePosition& pos) const
+                            const rutz::file_pos& pos) const
 {
 DOTRACE("GLCanvas::throwIfError");
   GLenum status = glGetError();
@@ -240,7 +240,7 @@ DOTRACE("GLCanvas::throwIfError");
     {
       const char* msg =
         reinterpret_cast<const char*>(gluErrorString(status));
-      throw Util::Error(fstring("GL error: ", msg, " ", where), pos);
+      throw rutz::error(fstring("GL error: ", msg, " ", where), pos);
     }
 }
 
@@ -641,7 +641,7 @@ DOTRACE("GLCanvas::drawCircle");
   GLUquadricObj* qobj = gluNewQuadric();
 
   if (qobj == 0)
-    throw Util::Error("couldn't allocate GLUquadric object", SRC_POS);
+    throw rutz::error("couldn't allocate GLUquadric object", SRC_POS);
 
   gluQuadricDrawStyle(qobj, fill ? GLU_FILL : GLU_SILHOUETTE);
   gluDisk(qobj, inner_radius, outer_radius, slices, loops);
@@ -657,7 +657,7 @@ DOTRACE("GLCanvas::drawCylinder");
   GLUquadric* qobj = gluNewQuadric();
 
   if (qobj == 0)
-    throw Util::Error("couldn't allocate GLUquadric object", SRC_POS);
+    throw rutz::error("couldn't allocate GLUquadric object", SRC_POS);
 
   gluQuadricDrawStyle(qobj, fill ? GLU_FILL : GLU_LINE);
   gluCylinder(qobj, base_radius, top_radius, height, slices, stacks);
@@ -672,7 +672,7 @@ DOTRACE("GLCanvas::drawSphere");
   GLUquadric* qobj = gluNewQuadric();
 
   if (qobj == 0)
-    throw Util::Error("couldn't allocate GLUquadric object", SRC_POS);
+    throw rutz::error("couldn't allocate GLUquadric object", SRC_POS);
 
   gluQuadricDrawStyle(qobj, fill ? GLU_FILL : GLU_LINE);
   gluSphere(qobj, radius, slices, stacks);
@@ -902,7 +902,7 @@ DOTRACE("GLCanvas::genLists");
   const int i = glGenLists(num);
 
   if (i == 0)
-    throw Util::Error("Couldn't allocate GL display list", SRC_POS);
+    throw rutz::error("Couldn't allocate GL display list", SRC_POS);
 
   return i;
 }

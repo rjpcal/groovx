@@ -71,7 +71,7 @@ class Tcl::CommandGroup::Impl
 {
 public:
   Impl(Tcl::Interp& intp, const fstring& cmd_name,
-       const FilePosition& src_pos)
+       const rutz::file_pos& src_pos)
     :
     interp(intp),
     cmdToken(Tcl_CreateObjCommand(interp.intp(),
@@ -85,7 +85,7 @@ public:
     initialCmdName(getFullCommandName(intp, cmdToken)),
     cmdList(),
     profName("tcl/", cmd_name),
-    prof(profName.c_str(), src_pos.fileName, src_pos.lineNo)
+    prof(profName.c_str(), src_pos.m_file_name, src_pos.m_line_no)
   {}
 
   ~Impl() throw() {}
@@ -221,7 +221,7 @@ DOTRACE("Tcl::CommandGroup::Impl::lookupHelper");
 
 Tcl::CommandGroup::CommandGroup(Tcl::Interp& interp,
                                 const fstring& cmd_name,
-                                const FilePosition& src_pos)
+                                const rutz::file_pos& src_pos)
   :
   rep(new Impl(interp, cmd_name, src_pos))
 {
@@ -303,7 +303,7 @@ DOTRACE("Tcl::CommandGroup::lookupOriginal");
 
 Tcl::CommandGroup* Tcl::CommandGroup::make(Tcl::Interp& interp,
                                            const fstring& cmd_name,
-                                           const FilePosition& src_pos)
+                                           const rutz::file_pos& src_pos)
 {
 DOTRACE("Tcl::CommandGroup::make");
   CommandGroup* const c =

@@ -198,7 +198,7 @@ DOTRACE("TlistUtils::writeResponses");
     }
 
   if (ofs.fail())
-    throw Util::Error("error while writing to file", SRC_POS);
+    throw rutz::error("error while writing to file", SRC_POS);
 }
 
 void TlistUtils::writeIncidenceMatrix(const char* filename)
@@ -492,7 +492,7 @@ Tcl::List TlistUtils::loadObjidFile(const char* objid_file,
   STD_IO::ifstream ifs(objid_file);
 
   if (ifs.fail())
-    throw Util::Error(fstring("couldn't open '", objid_file,
+    throw rutz::error(fstring("couldn't open '", objid_file,
                               "' for reading"), SRC_POS);
 
   const int BUF_SIZE = 200;
@@ -511,7 +511,7 @@ Tcl::List TlistUtils::loadObjidFile(const char* objid_file,
         continue;
 
       if (ifs.fail())
-        throw Util::Error("error reading objid file", SRC_POS);
+        throw rutz::error("error reading objid file", SRC_POS);
 
       rutz::icstrstream ist(line);
 
@@ -528,7 +528,7 @@ Tcl::List TlistUtils::loadObjidFile(const char* objid_file,
         }
 
       if (ist.fail() && !ist.eof())
-        throw Util::Error("error reading objid file", SRC_POS);
+        throw rutz::error("error reading objid file", SRC_POS);
 
       trial->addNode(sep);
 

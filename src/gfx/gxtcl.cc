@@ -133,7 +133,7 @@ namespace GxTcl
 
     if (N < 4)
       {
-        throw Util::Error("N must be at least 4", SRC_POS);
+        throw rutz::error("N must be at least 4", SRC_POS);
       }
 
     Tcl::List result;

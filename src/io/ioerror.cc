@@ -37,8 +37,9 @@
 #include "util/trace.h"
 
 IO::FilenameError::FilenameError(const char* str,
-                                 const FilePosition& pos) :
-  Util::Error(fstring("couldn't use file '", str, "'"), pos)
+                                 const rutz::file_pos& pos)
+  :
+  rutz::error(fstring("couldn't use file '", str, "'"), pos)
 {
 DOTRACE("IO::FilenameError::FilenameError");
 }

@@ -86,7 +86,7 @@ DOTRACE("XBmapRenderer::doRender");
   Status status = XGetWindowAttributes(display, win, &xwa);
   if (status == 0)
     {
-      throw Util::Error("couldn't get X11 window attributes", SRC_POS);
+      throw rutz::error("couldn't get X11 window attributes", SRC_POS);
     }
   Visual* visual = xwa.visual;
 
@@ -120,7 +120,7 @@ DOTRACE("XBmapRenderer::doRender");
 
   if (image == NULL)
     {
-      throw Util::Error("couldn't create an XImage", SRC_POS);
+      throw rutz::error("couldn't create an XImage", SRC_POS);
     }
 
   // Create a graphics context

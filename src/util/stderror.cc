@@ -39,9 +39,9 @@
 
 void Util::throwBadCast(const std::type_info& to,
                         const std::type_info& from,
-                        const FilePosition& pos)
+                        const rutz::file_pos& pos)
 {
-  throw Util::Error(fstring("failed cast to ", rutz::demangled_name(to),
+  throw rutz::error(fstring("failed cast to ", rutz::demangled_name(to),
                             " from ", rutz::demangled_name(from)), pos);
 }
 

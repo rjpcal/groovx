@@ -65,9 +65,10 @@ void Tcl::List::split() const
 DOTRACE("Tcl::List::split");
 
   int count;
-  if ( Tcl_ListObjGetElements(0, itsList.obj(), &count, &itsElements) != TCL_OK)
+  if ( Tcl_ListObjGetElements(0, itsList.obj(), &count, &itsElements)
+       != TCL_OK)
     {
-      throw Util::Error("couldn't split Tcl list", SRC_POS);
+      throw rutz::error("couldn't split Tcl list", SRC_POS);
     }
 
   ASSERT(count >= 0);
@@ -81,9 +82,10 @@ DOTRACE("Tcl::List::doAppend");
   itsList.ensureUnique();
 
   while (times--)
-    if ( Tcl_ListObjAppendElement(0, itsList.obj(), obj.obj()) != TCL_OK )
+    if ( Tcl_ListObjAppendElement(0, itsList.obj(), obj.obj())
+         != TCL_OK )
       {
-        throw Util::Error("couldn't append to Tcl list", SRC_POS);
+        throw rutz::error("couldn't append to Tcl list", SRC_POS);
       }
 
   invalidate();
@@ -96,7 +98,8 @@ DOTRACE("Tcl::List::at");
   update();
 
   if (index >= itsLength)
-    throw Util::Error("index was out of range in Tcl list access", SRC_POS);
+    throw rutz::error("index was out of range in Tcl list access",
+                      SRC_POS);
 
   dbg_eval(3, index); dbg_eval_nl(3, itsElements[index]);
 
@@ -110,7 +113,8 @@ DOTRACE("Tcl::List::getLength");
   int len;
   if ( Tcl_ListObjLength(0, obj, &len) != TCL_OK)
     {
-      throw Util::Error("couldn't get list length of Tcl object", SRC_POS);
+      throw rutz::error("couldn't get list length of Tcl object",
+                        SRC_POS);
     }
 
   ASSERT(len >= 0);

@@ -64,9 +64,9 @@ using Util::SoftRef;
 namespace
 {
   void invalidAttr(const char* attname, const char* eltype,
-                   const char* elname, const FilePosition& pos)
+                   const char* elname, const rutz::file_pos& pos)
   {
-    throw Util::Error(fstring("invalid '", attname,
+    throw rutz::error(fstring("invalid '", attname,
                               "' attribute for <",
                               eltype, "> element with name: ", elname),
                       pos);
@@ -74,7 +74,7 @@ namespace
 
   const char* findAttr(const char** attr, const char* attname,
                        const char* eltype, const char* elname,
-                       const FilePosition& pos)
+                       const rutz::file_pos& pos)
   {
     for (int i = 0; attr[i] != 0; i += 2)
       {
@@ -82,7 +82,7 @@ namespace
           return attr[i+1];
       }
 
-    throw Util::Error(fstring("missing '", attname,
+    throw rutz::error(fstring("missing '", attname,
                               "' attribute for <",
                               eltype, "> element with name: ", elname),
                       pos);
@@ -102,7 +102,7 @@ namespace
 
     virtual void addChild(const char* /*name*/, ElPtr /*elp*/)
     {
-      throw Util::Error(fstring("child elements not allowed "
+      throw rutz::error(fstring("child elements not allowed "
                                 "within elements of type: ",
                                 rutz::demangled_name(typeid(*this))),
                         SRC_POS);
@@ -120,13 +120,14 @@ namespace
 
   template <class T>
   T& elementCast(XmlElement* elp, const fstring& name,
-                 const FilePosition& pos)
+                 const rutz::file_pos& pos)
   {
     if (elp == 0)
-      throw Util::Error(fstring("no element with name: ", name), SRC_POS);
+      throw rutz::error(fstring("no element with name: ", name),
+                        SRC_POS);
     T* t = dynamic_cast<T*>(elp);
     if (t == 0)
-      throw Util::Error(fstring("wrong element type; expected ",
+      throw rutz::error(fstring("wrong element type; expected ",
                                 rutz::demangled_name(typeid(T)),
                                 ", got ",
                                 rutz::demangled_name(typeid(*elp))),
@@ -475,7 +476,8 @@ namespace
           }
         else
           {
-            throw Util::Error(fstring("unknown element type: ", el), SRC_POS);
+            throw rutz::error(fstring("unknown element type: ", el),
+                              SRC_POS);
           }
       }
   }
@@ -500,7 +502,7 @@ namespace
     {
       if (itsRoot.get() == 0)
         {
-          throw Util::Error("no root element found", SRC_POS);
+          throw rutz::error("no root element found", SRC_POS);
         }
 
       return elementCast<ObjectElement>(itsRoot.get(), "root", SRC_POS);

@@ -125,7 +125,7 @@ DOTRACE("GxLighting::draw");
   GLCanvas* glcanvas = dynamic_cast<GLCanvas*>(&canvas);
 
   if (glcanvas == 0)
-    throw Util::Error("can't use GxLighting with non-OpenGL canvas", SRC_POS);
+    throw rutz::error("can't use GxLighting with non-OpenGL canvas", SRC_POS);
 
   glcanvas->light(0,
                   &specularColor,

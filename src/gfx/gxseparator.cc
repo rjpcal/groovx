@@ -89,7 +89,7 @@ public:
     {
       if (other->contains(owner))
         {
-          throw Util::Error("couldn't add node without generating a cycle", SRC_POS);
+          throw rutz::error("couldn't add node without generating a cycle", SRC_POS);
         }
     }
 
@@ -227,7 +227,7 @@ Util::Ref<GxNode> GxSeparator::getChild(ChildId index) const
 DOTRACE("GxSeparator::getChild");
   if (index >= rep->children.size())
     {
-      throw Util::Error(fstring("GxSeparator has no child with index '",
+      throw rutz::error(fstring("GxSeparator has no child with index '",
                                 index, "'"), SRC_POS);
     }
 

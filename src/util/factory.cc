@@ -64,7 +64,7 @@ DOTRACE("AssocArray::~AssocArray");
 }
 
 void AssocArray::throwForType(const char* type,
-                              const FilePosition& pos)
+                              const rutz::file_pos& pos)
 {
   fstring typelist("known types are:");
 
@@ -76,12 +76,12 @@ void AssocArray::throwForType(const char* type,
         typelist.append("\n\t", ii->first);
     }
 
-  throw Util::Error(fstring(typelist, "\nunknown object type '",
+  throw rutz::error(fstring(typelist, "\nunknown object type '",
                             type, "'"), pos);
 }
 
 void AssocArray::throwForType(const fstring& type,
-                              const FilePosition& pos)
+                              const rutz::file_pos& pos)
 {
   throwForType(type.c_str(), pos);
 }

@@ -92,7 +92,7 @@ IO::ObjectMap::getObject(Util::UID id)
   MapType::const_iterator itr = itsMap.find(id);
   if ( itr == itsMap.end() )
     {
-      throw Util::Error(fstring("no object was found "
+      throw rutz::error(fstring("no object was found "
                                 "for the given id:", id), SRC_POS);
     }
 
@@ -131,7 +131,7 @@ void IO::ObjectMap::assignObjectForId(Util::UID id,
       msg.append("object has already been created\n");
       msg.append("\ttype: ", object->objTypename().c_str(), "\n");
       msg.append("\tid: ", id);
-      throw Util::Error(msg, SRC_POS);
+      throw rutz::error(msg, SRC_POS);
     }
 
   itsMap.insert(MapType::value_type(id, object));

@@ -49,78 +49,78 @@ namespace
   static rutz::backtrace* last = 0;
 }
 
-Util::Error::Error(const FilePosition& pos) :
+rutz::error::error(const rutz::file_pos& pos) :
   std::exception(),
-  itsInfo(),
-  itsPos(pos),
-  itsBackTrace(new rutz::backtrace(rutz::backtrace::current()))
+  m_msg(),
+  m_file_pos(pos),
+  m_backtrace(new rutz::backtrace(rutz::backtrace::current()))
 {
-DOTRACE("Util::Error::Error()");
+DOTRACE("rutz::error::error()");
 
-  dbg_dump(4, itsInfo);
+  dbg_dump(4, m_msg);
 
   if (last == 0)
-    last = new rutz::backtrace(*itsBackTrace);
+    last = new rutz::backtrace(*m_backtrace);
   else
-    *last = *itsBackTrace;
+    *last = *m_backtrace;
 
   if (GET_DBG_LEVEL() >= 4)
     {
-      itsBackTrace->print();
+      m_backtrace->print();
     }
 }
 
-Util::Error::Error(const fstring& msg, const FilePosition& pos) :
+rutz::error::error(const fstring& msg, const rutz::file_pos& pos) :
   std::exception(),
-  itsInfo(msg),
-  itsPos(pos),
-  itsBackTrace(new rutz::backtrace(rutz::backtrace::current()))
+  m_msg(msg),
+  m_file_pos(pos),
+  m_backtrace(new rutz::backtrace(rutz::backtrace::current()))
 {
-DOTRACE("Util::Error::Error(fstring)");
+DOTRACE("rutz::error::error(fstring)");
 
-  dbg_dump(4, itsInfo);
+  dbg_dump(4, m_msg);
 
   if (last == 0)
-    last = new rutz::backtrace(*itsBackTrace);
+    last = new rutz::backtrace(*m_backtrace);
   else
-    *last = *itsBackTrace;
+    *last = *m_backtrace;
 
   if (GET_DBG_LEVEL() >= 4)
     {
-      itsBackTrace->print();
+      m_backtrace->print();
     }
 }
 
-Util::Error::Error(const Util::Error& other) throw() :
+rutz::error::error(const rutz::error& other) throw() :
   std::exception(other),
-  itsInfo(other.itsInfo),
-  itsPos(other.itsPos),
-  itsBackTrace(0)
+  m_msg(other.m_msg),
+  m_file_pos(other.m_file_pos),
+  m_backtrace(0)
 {
-DOTRACE("Util::Error::Error(copy)");
+DOTRACE("rutz::error::error(copy)");
 
-  dbg_dump(4, itsInfo);
+  dbg_dump(4, m_msg);
 
-  if (other.itsBackTrace != 0)
-    itsBackTrace =
-      new (std::nothrow) rutz::backtrace(*other.itsBackTrace);
+  if (other.m_backtrace != 0)
+    m_backtrace =
+      new (std::nothrow) rutz::backtrace(*other.m_backtrace);
 }
 
-Util::Error::~Error() throw()
+rutz::error::~error() throw()
 {
-DOTRACE("Util::Error::~Error");
-  delete itsBackTrace;
+DOTRACE("rutz::error::~error");
+  delete m_backtrace;
 }
 
-const char* Util::Error::what() const throw()
+const char* rutz::error::what() const throw()
 {
-  fstring fullmsg("at ", itsPos.fileName, ":", itsPos.lineNo, ":\n",
-                  itsInfo);
-  const_cast<fstring&>(itsInfo) = fullmsg;
-  return itsInfo.c_str();
+  m_what = fstring("at ", m_file_pos.m_file_name,
+                   ":", m_file_pos.m_line_no, ":\n",
+                   m_msg);
+  return m_what.c_str();
 }
 
-const rutz::backtrace& Util::Error::lastBackTrace()
+const rutz::backtrace& rutz::error::last_backtrace()
 {
   if (last == 0)
     last = new rutz::backtrace();

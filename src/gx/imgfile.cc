@@ -108,9 +108,9 @@ namespace
   DOTRACE("<imgfile.cc>::pipeLoad");
 
     if (access(progname, R_OK|X_OK) != 0)
-      throw Util::Error(fstring("couldn't access program '", progname, "'"), SRC_POS);
+      throw rutz::error(fstring("couldn't access program '", progname, "'"), SRC_POS);
     if (access(filename, R_OK)      != 0)
-      throw Util::Error(fstring("couldn't read file '", filename, "'"), SRC_POS);
+      throw rutz::error(fstring("couldn't read file '", filename, "'"), SRC_POS);
 
     fstring nm_copy(filename);
     char* const argv[] = { (char*) progname, nm_copy.data(), (char*) 0 };
@@ -120,7 +120,7 @@ namespace
     Pbm::load(p.stream(), data);
 
     if (p.exitStatus() != 0)
-      throw Util::Error("child process exited abnormally", SRC_POS);
+      throw rutz::error("child process exited abnormally", SRC_POS);
   }
 }
 
@@ -143,7 +143,7 @@ DOTRACE("ImgFile::load");
       // anytopnm, and pipe the output via a stream into a pnm parser.
     default:   pipeLoad(ANYTOPNM_PROG, filename, data); break;
 #else
-    default:   throw Util::Error(fstring("unknown image file format: ",
+    default:   throw rutz::error(fstring("unknown image file format: ",
                                          filename), SRC_POS);
       break;
 #endif
@@ -159,7 +159,7 @@ void ImgFile::save(const char* filename, const Gfx::BmapData& data)
     case PNM:  Pbm::save(filename, data); break;
     case PNG:  Png::save(filename, data); break;
     default:
-      throw Util::Error(fstring("unknown file format: ", filename), SRC_POS);
+      throw rutz::error(fstring("unknown file format: ", filename), SRC_POS);
     }
 
   Util::log(fstring("saved image file ", filename));

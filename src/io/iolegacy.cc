@@ -69,16 +69,16 @@ public:
     itsLegacyVersionId(0)
   {}
 
-  void throwIfError(const char* type, const FilePosition& pos)
+  void throwIfError(const char* type, const rutz::file_pos& pos)
   {
     if (itsInStream.fail())
       {
         dbg_print(3, "throwIfError for"); dbg_eval_nl(3, type);
-        throw Util::Error(type, pos);
+        throw rutz::error(type, pos);
       }
   }
 
-  void throwIfError(const fstring& type, const FilePosition& pos)
+  void throwIfError(const fstring& type, const rutz::file_pos& pos)
   {
     throwIfError(type.c_str(), pos);
   }
@@ -98,7 +98,7 @@ public:
       {
         // If we got here, then none of the substrings matched so we must
         // raise an exception.
-        throw Util::Error(fstring("couldn't read typename for ",
+        throw rutz::error(fstring("couldn't read typename for ",
                                   correct_name.c_str()), SRC_POS);
       }
   }
@@ -115,7 +115,7 @@ public:
       {
         // If we got here, then none of the substrings matched so we must
         // raise an exception.
-        throw Util::Error(fstring("couldn't read typename for ",
+        throw rutz::error(fstring("couldn't read typename for ",
                                   correct_name.c_str()), SRC_POS);
       }
   }
@@ -139,7 +139,7 @@ public:
       }
     else
       {
-        throw Util::Error("missing legacy versionId", SRC_POS);
+        throw rutz::error("missing legacy versionId", SRC_POS);
       }
 
     return version;
@@ -152,7 +152,7 @@ public:
     if (brace != '{')
       {
         dbg_print_nl(3, "grabLeftBrace failed");
-        throw Util::Error("missing left-brace", SRC_POS);
+        throw rutz::error("missing left-brace", SRC_POS);
       }
   }
 
@@ -163,7 +163,7 @@ public:
     if (brace != '}')
       {
         dbg_print_nl(3, "grabRightBrace failed");
-        throw Util::Error("missing right-brace", SRC_POS);
+        throw rutz::error("missing right-brace", SRC_POS);
       }
   }
 
@@ -262,18 +262,16 @@ DOTRACE("IO::LegacyReader::readStringImpl");
 
   if (numchars < 0)
     {
-      throw Util::Error("LegacyReader::readStringImpl "
+      throw rutz::error("LegacyReader::readStringImpl "
                         "saw negative character count", SRC_POS);
     }
 
   int c = rep->itsInStream.get();
   if (c != ' ')
     {
-      throw Util::Error("LegacyReader::readStringImpl "
+      throw rutz::error("LegacyReader::readStringImpl "
                         "did not have whitespace after character count", SRC_POS);
     }
-
-//   if (rep->itsInStream.peek() == '\n') { rep->itsInStream.get(); }
 
   fstring new_string;
   new_string.readsome(rep->itsInStream, (unsigned int) numchars);
@@ -383,12 +381,12 @@ public:
     itsUsePrettyPrint(true)
   {}
 
-  void throwIfError(const char* type, const FilePosition& pos)
+  void throwIfError(const char* type, const rutz::file_pos& pos)
   {
     if (itsOutStream.fail())
       {
         dbg_print(3, "throwIfError for"); dbg_eval_nl(3, type);
-        throw Util::Error(type, pos);
+        throw rutz::error(type, pos);
       }
   }
 

@@ -95,7 +95,7 @@ private:
 
         if (current_pair.length() != 2)
           {
-            throw Util::Error("\"pair\" did not have length 2 "
+            throw rutz::error("\"pair\" did not have length 2 "
                               "in FeedbackMap::update", SRC_POS);
           }
 

@@ -131,7 +131,7 @@ DOTRACE("Tcl::FieldsLister::operator()");
 ///////////////////////////////////////////////////////////////////////
 
 void Tcl::defField(Tcl::Pkg* pkg, const Field& field,
-                   const FilePosition& src_pos)
+                   const rutz::file_pos& src_pos)
 {
 DOTRACE("Tcl::defField");
 
@@ -144,7 +144,7 @@ DOTRACE("Tcl::defField");
 }
 
 void Tcl::defAllFields(Tcl::Pkg* pkg, const FieldMap& fieldmap,
-                       const FilePosition& src_pos)
+                       const rutz::file_pos& src_pos)
 {
 DOTRACE("Tcl::defAllFields");
 

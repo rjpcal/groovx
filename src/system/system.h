@@ -45,7 +45,7 @@ namespace unixcall
        Modes are specified by or'ing the following:
 
        ERRORS
-       Throws a Util::Error on error if an error occurs. The more
+       Throws a rutz::error on error if an error occurs. The more
        general errors for chmod are listed below:
 
        EPERM   The effective UID does not match the owner of  the
@@ -90,7 +90,7 @@ namespace unixcall
        overwritten.
 
        ERRORS
-       Throws a Util::Error on error if an error occurs.
+       Throws a rutz::error on error if an error occurs.
   */
   void rename(const char* oldpath, const char* newpath);
 
@@ -113,7 +113,7 @@ namespace unixcall
        may continue to use it.
 
        ERRORS
-       Throws a Util::Error on error if an error occurs.
+       Throws a rutz::error on error if an error occurs.
   */
   void remove(const char* pathname);
 

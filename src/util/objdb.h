@@ -51,12 +51,12 @@ namespace Util
  *
  **/
 
-class InvalidIdError : public Util::Error
+class InvalidIdError : public rutz::error
 {
 public:
-  InvalidIdError(const fstring& msg, const FilePosition& pos)
+  InvalidIdError(const fstring& msg, const rutz::file_pos& pos)
     :
-    Util::Error(msg, pos)
+    rutz::error(msg, pos)
   {};
 
   /// Virtual destructor.

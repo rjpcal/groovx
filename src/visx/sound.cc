@@ -76,7 +76,7 @@ void SoundRep::checkFilename(const char* filename)
 DOTRACE("SoundRep::checkFilename");
 
   if (filename == 0 || filename[0] == '\0')
-    throw Util::Error("invalid filename", SRC_POS);
+    throw rutz::error("invalid filename", SRC_POS);
 
   STD_IO::ifstream ifs(filename);
 

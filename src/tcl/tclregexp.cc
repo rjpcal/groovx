@@ -51,8 +51,9 @@ namespace
     Tcl_RegExp regexp = Tcl_GetRegExpFromObj(0, patternObj.obj(), flags);
     if (!regexp)
       {
-        throw Util::Error(fstring("error getting a Tcl_RegExp from '",
-                                    Tcl_GetString(patternObj.obj()), "'"), SRC_POS);
+        throw rutz::error(fstring("error getting a Tcl_RegExp from '",
+                                  Tcl_GetString(patternObj.obj()), "'"),
+                          SRC_POS);
       }
     return regexp;
   }
@@ -72,7 +73,7 @@ bool Tcl::RegExp::matchesString(const char* str)
   switch (regex_result)
   {
   case REGEX_ERROR:
-    throw Util::Error("error executing regular expression", SRC_POS);
+    throw rutz::error("error executing regular expression", SRC_POS);
 
   case REGEX_NO_MATCH:
     return false;

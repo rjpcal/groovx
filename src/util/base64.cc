@@ -222,7 +222,8 @@ DOTRACE("rutz::base64_decode");
         continue;
 
       else
-        throw Util::Error("invalid character within base64 string", SRC_POS);
+        throw rutz::error("invalid character within base64 string",
+                          SRC_POS);
     }
 
   ASSERT(i != 1); // can't happen; this would be an extra 6 bits

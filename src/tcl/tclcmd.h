@@ -41,7 +41,10 @@ typedef struct Tcl_Obj Tcl_Obj;
 
 class fstring;
 
-struct FilePosition;
+namespace rutz
+{
+  struct file_pos;
+}
 
 template <class T> class shared_ptr;
 
@@ -108,7 +111,7 @@ public:
           shared_ptr<Tcl::Callback> callback,
           const char* cmd_name, const char* usage,
           int objc_min, int objc_max, bool exact_objc,
-          const FilePosition& src_pos);
+          const rutz::file_pos& src_pos);
 
   /// Virtual destructor ensures proper destruction of subclasses.
   ~Command() throw();

@@ -73,7 +73,7 @@ Gfx::Canvas& Gfx::Canvas::current()
 DOTRACE("Gfx::Canvas::current");
 
   if (appCanvas == 0)
-    throw Util::Error("appCanvas not inited", SRC_POS);
+    throw rutz::error("appCanvas not inited", SRC_POS);
 
   return *appCanvas;
 }

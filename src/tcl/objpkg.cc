@@ -119,7 +119,7 @@ namespace
 
 void Tcl::defGenericObjCmds(Tcl::Pkg* pkg,
                             shared_ptr<Tcl::ObjCaster> caster,
-                            const FilePosition& src_pos)
+                            const rutz::file_pos& src_pos)
 {
 DOTRACE("Tcl::defGenericObjCmds");
   pkg->defVec( "is", "objref(s)",

@@ -48,9 +48,9 @@
 DBG_REGISTER
 
 void FieldAux::throwNotAllowed(const char* what,
-                               const FilePosition& pos)
+                               const rutz::file_pos& pos)
 {
-  throw Util::Error(fstring("'", what, "' operation "
+  throw rutz::error(fstring("'", what, "' operation "
                             "not allowed for that field"), pos);
 }
 
@@ -134,7 +134,8 @@ const Field& FieldMap::field(const fstring& name) const
     }
   else
     {
-      throw Util::Error(fstring("no such field: '", name.c_str(), "'"), SRC_POS);
+      throw rutz::error(fstring("no such field: '", name.c_str(), "'"),
+                        SRC_POS);
     }
 }
 

@@ -73,9 +73,9 @@ namespace Util
     void insertItem(Util::Object* obj);
     void insertItemWeak(Util::Object* obj);
 
-    void throwRefNull(const std::type_info& info, const FilePosition& pos);
-    void throwRefUnshareable(const std::type_info& msg, const FilePosition& pos);
-    void throwSoftRefInvalid(const std::type_info& info, const FilePosition& pos);
+    void throwRefNull(const std::type_info& info, const rutz::file_pos& pos);
+    void throwRefUnshareable(const std::type_info& msg, const rutz::file_pos& pos);
+    void throwSoftRefInvalid(const std::type_info& info, const rutz::file_pos& pos);
 
     template <class T>
     inline T* getCastedItem(Util::UID id)

@@ -35,21 +35,25 @@
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 
+namespace rutz
+{
+  class file_pos;
+}
+
 class Field;
 class FieldMap;
-class FilePosition;
 
 namespace Tcl
 {
   class Pkg;
 
   void defField(Pkg* pkg, const Field& field,
-                const FilePosition& src_pos);
+                const rutz::file_pos& src_pos);
   void defAllFields(Pkg* pkg, const FieldMap& fmap,
-                    const FilePosition& src_pos);
+                    const rutz::file_pos& src_pos);
 
   template <class C>
-  void defFieldContainer(Pkg* pkg, const FilePosition& src_pos)
+  void defFieldContainer(Pkg* pkg, const rutz::file_pos& src_pos)
   {
     Tcl::defGenericObjCmds<C>(pkg, src_pos);
 

@@ -57,7 +57,7 @@ namespace
 {
   void noDictError()
   {
-    throw Util::Error("Tcl::Dict requires Tcl version >= 8.5", SRC_POS);
+    throw rutz::error("Tcl::Dict requires Tcl version >= 8.5", SRC_POS);
   }
 }
 
@@ -83,8 +83,8 @@ DOTRACE("Tcl::Dict::doPut");
   Tcl::ObjPtr keyObj = Tcl::toTcl(key);
   if (Tcl_DictObjPut(0, itsDictObj.obj(), keyObj.obj(), val.obj()) != TCL_OK)
     {
-      throw Util::Error(fstring("couldn't put object in dict with key: ",
-                                key), SRC_POS);
+      throw rutz::error(fstring("couldn't put object in dict "
+                                "with key: ", key), SRC_POS);
     }
 }
 
@@ -102,8 +102,8 @@ DOTRACE("Tcl::Dict::doGet");
         return Tcl::ObjPtr(dest);
     }
 
-  throw Util::Error(fstring("couldn't get value from dict with key: ",
-                            key), SRC_POS);
+  throw rutz::error(fstring("couldn't get value from dict "
+                            "with key: ", key), SRC_POS);
 }
 
 #endif // defined(HAVE_TCL_DICT)

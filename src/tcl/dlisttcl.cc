@@ -226,7 +226,7 @@ namespace Dlist
   {
     if (source_list.length() == 0)
       {
-        throw Util::Error("source_list is empty", SRC_POS);
+        throw rutz::error("source_list is empty", SRC_POS);
       }
 
     return source_list.at(rutz::rand_range(0u, source_list.length()));
@@ -278,7 +278,7 @@ namespace Dlist
 
     if (npts < 2)
       {
-        throw Util::Error("npts must be at least 2", SRC_POS);
+        throw rutz::error("npts must be at least 2", SRC_POS);
       }
 
     const double skip = (end - begin) / (npts - 1);
@@ -329,7 +329,8 @@ namespace Dlist
   Tcl::List permute_maximal(unsigned int N)
   {
     if (N < 2)
-      throw Util::Error("N must be at least 2 to make a permutation", SRC_POS);
+      throw rutz::error("N must be at least 2 to make a permutation",
+                        SRC_POS);
 
     double maxdist = double(N)/2.0;
 
@@ -381,7 +382,8 @@ namespace Dlist
             double distcheck = perm_distance_aux(slots.begin(), slots.end());
             if (distcheck < maxdist)
               {
-                throw Util::Error("snafu in permutation distance computation", SRC_POS);
+                throw rutz::error("snafu in permutation "
+                                  "distance computation", SRC_POS);
               }
 
             dbg_eval_nl(3, c);
@@ -397,7 +399,8 @@ namespace Dlist
           }
       }
 
-    throw Util::Error("permutation algorithm failed to converge", SRC_POS);
+    throw rutz::error("permutation algorithm failed to converge",
+                      SRC_POS);
     return Tcl::List(); // can't happen, but placate compiler
   }
 
@@ -411,7 +414,7 @@ namespace Dlist
   Tcl::List permute_moveall(unsigned int N)
   {
     if (N < 2)
-      throw Util::Error("N must be at least 2 to make a permutation", SRC_POS);
+      throw rutz::error("N must be at least 2 to make a permutation", SRC_POS);
 
     rutz::fixed_block<bool> used(N);
     for (unsigned int i = 0; i < N; ++i)
@@ -547,7 +550,8 @@ namespace Dlist
 
     if (flg_len < src_len)
       {
-        throw Util::Error("flags list must be as long as source_list", SRC_POS);
+        throw rutz::error("flags list must be as long as source_list",
+                          SRC_POS);
       }
 
     Tcl::List result;
@@ -658,7 +662,7 @@ namespace Dlist
               {
                 isum += source_list.get<int>(i);
               }
-            catch(Util::Error&)
+            catch(rutz::error&)
               {
                 seen_double = true;
                 dsum = isum;

@@ -39,15 +39,12 @@ namespace IO
   class FilenameError;
 }
 
-/**
- * A subclass of Util::Error for invalid filenames or filenames
- * referring to inaccessible files.
- **/
-class IO::FilenameError : public Util::Error
+/// An exception class for invalid filenames or inaccessible files.
+class IO::FilenameError : public rutz::error
 {
 public:
   /// Default constructor.
-  FilenameError(const char* filename, const FilePosition& pos);
+  FilenameError(const char* filename, const rutz::file_pos& pos);
 
   /// Virtual destructor
   virtual ~FilenameError() throw();

@@ -594,9 +594,9 @@ public:
     itsFstream << t.x() << " " << t.y() << " ";
   }
 
-  void raiseError(const fstring& msg, const FilePosition& pos)
+  void raiseError(const fstring& msg, const rutz::file_pos& pos)
   {
-    throw Util::Error(fstring("PSCanvas error: ", msg), pos);
+    throw rutz::error(fstring("PSCanvas error: ", msg), pos);
   }
 
   void beginPrimitive(Primitive* ptr, const char* comment)
@@ -734,7 +734,7 @@ DOTRACE("Gfx::PSCanvas::bitsPerPixel");
 }
 
 void Gfx::PSCanvas::throwIfError(const char* where,
-                                 const FilePosition& pos) const
+                                 const rutz::file_pos& pos) const
 {
 DOTRACE("Gfx::PSCanvas::throwIfError");
   if (rep->itsFstream.fail())
@@ -1081,14 +1081,14 @@ void Gfx::PSCanvas::drawRasterText(const fstring& /*text*/,
                                    const GxRasterFont& /*font*/)
 {
 DOTRACE("Gfx::PSCanvas::drawRasterText");
-  throw Util::Error("PSCanvas::drawRasterText not implemented", SRC_POS);
+  throw rutz::error("PSCanvas::drawRasterText not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::drawVectorText(const fstring& /*text*/,
                                    const GxVectorFont& /*font*/)
 {
 DOTRACE("Gfx::PSCanvas::drawVectorText");
-  throw Util::Error("PSCanvas::drawVectorText not implemented", SRC_POS);
+  throw rutz::error("PSCanvas::drawVectorText not implemented", SRC_POS);
 }
 
 void Gfx::PSCanvas::flushOutput()

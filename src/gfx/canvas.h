@@ -37,11 +37,11 @@
 namespace rutz
 {
   template <class T> class dynamic_block;
+  class file_pos;
 }
 
 class fstring;
 
-class FilePosition;
 class GxRasterFont;
 class GxVectorFont;
 
@@ -119,7 +119,7 @@ public:
 
   /// Throw an exception if there has been an error.
   virtual void throwIfError(const char* where,
-                            const FilePosition& pos) const = 0;
+                            const rutz::file_pos& pos) const = 0;
 
 
 

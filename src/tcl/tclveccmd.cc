@@ -63,7 +63,8 @@ namespace Tcl
 class Tcl::VecContext : public Tcl::Context
 {
 public:
-  VecContext(Tcl::Interp& interp, unsigned int objc, Tcl_Obj* const objv[],
+  VecContext(Tcl::Interp& interp, unsigned int objc,
+             Tcl_Obj* const objv[],
              unsigned int num_calls) :
     Context(interp, objc, objv),
     itsArg0(objv[0]),
@@ -76,7 +77,7 @@ public:
         Tcl::List arg(objv[i]);
         if (arg.length() == 0)
           {
-            throw Util::Error("argument was empty", SRC_POS);
+            throw rutz::error("argument was empty", SRC_POS);
           }
         itsArgs.push_back( arg.begin<Tcl_Obj*>() );
       }

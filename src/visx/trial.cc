@@ -319,7 +319,7 @@ int Trial::lastResponse() const
 DOTRACE("Trial::lastResponse");
 
   if (rep->responses.empty())
-    throw Util::Error("the trial has no responses yet", SRC_POS);
+    throw rutz::error("the trial has no responses yet", SRC_POS);
 
   return rep->responses.back().val();
 }
@@ -404,7 +404,8 @@ void Trial::setCurrentNode(unsigned int nodeNumber)
 DOTRACE("Trial::setCurrentNode");
   if (nodeNumber >= rep->gxNodes.size())
     {
-      throw Util::Error(fstring("invalid node number ", nodeNumber), SRC_POS);
+      throw rutz::error(fstring("invalid node number ", nodeNumber),
+                        SRC_POS);
     }
   rep->currentNode = nodeNumber;
 }
@@ -468,7 +469,7 @@ DOTRACE("Trial::vxRun");
 
   if ( rep->rh.isInvalid() || rep->th.isInvalid() )
     {
-      throw Util::Error("the trial did not have a valid timing handler "
+      throw rutz::error("the trial did not have a valid timing handler "
                         "and response handler", SRC_POS);
     }
 

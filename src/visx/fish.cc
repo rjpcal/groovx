@@ -351,7 +351,8 @@ DOTRACE("Fish::readSplineFile");
   STD_IO::ifstream ifs(splinefile);
   if (ifs.fail())
     {
-      throw Util::Error(fstring("error opening file '", splinefile, "'"), SRC_POS);
+      throw rutz::error(fstring("error opening file '",
+                                splinefile, "'"), SRC_POS);
     }
 
   for(i = 0; i < 4; ++i)
@@ -399,7 +400,8 @@ DOTRACE("Fish::readSplineFile");
 
       if (ifs.fail())
         {
-          throw Util::Error(fstring("error reading file '", splinefile, "'"), SRC_POS);
+          throw rutz::error(fstring("error reading file '",
+                                    splinefile, "'"), SRC_POS);
         }
     }
 
@@ -417,8 +419,9 @@ DOTRACE("Fish::readSplineFile");
 
       if (which <= 0)
         {
-          throw Util::Error(fstring("bad 'which' value '", which,
-                                    "' while reading fish coords"), SRC_POS);
+          throw rutz::error(fstring("bad 'which' value '", which,
+                                    "' while reading fish coords"),
+                            SRC_POS);
         }
 
       // skip the next line
@@ -430,7 +433,8 @@ DOTRACE("Fish::readSplineFile");
 
       if (ifs.fail())
         {
-          throw Util::Error(fstring("error reading file '", splinefile, "'"), SRC_POS);
+          throw rutz::error(fstring("error reading file '",
+                                    splinefile, "'"), SRC_POS);
         }
     }
 }
@@ -443,7 +447,8 @@ DOTRACE("Fish::readCoordFile");
   STD_IO::ifstream ifs(coordfile);
   if (ifs.fail())
     {
-      throw Util::Error(fstring("error opening file '", coordfile, "'"), SRC_POS);
+      throw rutz::error(fstring("error opening file '",
+                                coordfile, "'"), SRC_POS);
     }
 
   // Skip (index-1) lines
@@ -461,7 +466,8 @@ DOTRACE("Fish::readCoordFile");
 
   if (ifs.fail())
     {
-      throw Util::Error(fstring("error reading file '", coordfile, "'"), SRC_POS);
+      throw rutz::error(fstring("error reading file '",
+                                coordfile, "'"), SRC_POS);
     }
 }
 

@@ -144,7 +144,7 @@ public:
 
   // Errors
   void handleLiveException(const char* where,
-                           const FilePosition& pos,
+                           const rutz::file_pos& pos,
                            bool withBkgdError = false) throw();
   void backgroundError() throw();
 

@@ -58,7 +58,7 @@ DOTRACE("Util::stdiobuf::init");
 
   if (throw_exception && !is_open())
     {
-      throw Util::Error("couldn't open file stdiobuf", SRC_POS);
+      throw rutz::error("couldn't open file stdiobuf", SRC_POS);
     }
 }
 

@@ -66,7 +66,8 @@ Tcl::Interp::Interp(Tcl_Interp* interp) :
 {
 DOTRACE("Tcl::Interp::Interp");
   if (interp == 0)
-    throw Util::Error("tried to make Tcl::Interp with a null Tcl_Interp*", SRC_POS);
+    throw rutz::error("tried to make Tcl::Interp "
+                      "with a null Tcl_Interp*", SRC_POS);
 
   Tcl_CallWhenDeleted(itsInterp, interpDeleteProc,
                       static_cast<ClientData>(this));
@@ -102,7 +103,8 @@ DOTRACE("Tcl::Interp::~Interp");
 Tcl_Interp* Tcl::Interp::intp() const
 {
   if (itsInterp == 0)
-    throw Util::Error("Tcl::Interp doesn't have a valid interpreter", SRC_POS);
+    throw rutz::error("Tcl::Interp doesn't have a valid interpreter",
+                      SRC_POS);
 
   return itsInterp;
 }
@@ -157,7 +159,7 @@ DOTRACE("Tcl::Interp::evalBooleanExpr");
 
   if (Tcl_ExprBooleanObj(intp(), obj.obj(), &expr_result) != TCL_OK)
     {
-      throw Util::Error("error evaluating boolean expression", SRC_POS);
+      throw rutz::error("error evaluating boolean expression", SRC_POS);
     }
 
   return bool(expr_result);
@@ -186,7 +188,8 @@ bool Tcl::Interp::eval(const Tcl::ObjPtr& code, Tcl::ErrorStrategy strategy)
 DOTRACE("Tcl::Interp::eval");
 
   if (!hasInterp())
-    throw Util::Error("Tcl_Interp* was null in Tcl::Interp::eval", SRC_POS);
+    throw rutz::error("Tcl_Interp* was null "
+                      "in Tcl::Interp::eval", SRC_POS);
 
   if ( Tcl_EvalObjEx(intp(), code.obj(), TCL_EVAL_GLOBAL) == TCL_OK )
     return true;
@@ -196,7 +199,7 @@ DOTRACE("Tcl::Interp::eval");
   switch (strategy)
     {
     case THROW_ERROR:
-      throw Util::Error(fstring("error while evaluating ",
+      throw rutz::error(fstring("error while evaluating ",
                                 Tcl_GetString(code.obj()),
                                 ":\n", getResult<const char*>()),
                         SRC_POS);
@@ -274,7 +277,7 @@ DOTRACE("Tcl::Interp::setGlobalVar");
   if (Tcl_SetVar2Ex(intp(), const_cast<char*>(var_name), /*name2*/0,
                     var.obj(), TCL_GLOBAL_ONLY) == 0)
     {
-      throw Util::Error(fstring("couldn't set global variable'",
+      throw rutz::error(fstring("couldn't set global variable'",
                                 var_name, "'"), SRC_POS);
     }
 }
@@ -286,7 +289,7 @@ DOTRACE("Tcl::Interp::unsetGlobalVar");
   if (Tcl_UnsetVar(intp(), const_cast<char*>(var_name),
                    TCL_GLOBAL_ONLY) != TCL_OK)
     {
-      throw Util::Error(fstring("couldn't unset global variable'",
+      throw rutz::error(fstring("couldn't unset global variable'",
                                 var_name, "'"), SRC_POS);
     }
 }
@@ -302,14 +305,15 @@ DOTRACE("Tcl::Interp::getObjGlobalVar");
 
   if (obj == 0)
     {
-      throw Util::Error(fstring("couldn't get global variable '",
+      throw rutz::error(fstring("couldn't get global variable '",
                                 name1, "'"), SRC_POS);
     }
 
   return obj;
 }
 
-void Tcl::Interp::linkInt(const char* varName, int* addr, bool readOnly)
+void Tcl::Interp::linkInt(const char* varName, int* addr,
+                          bool readOnly)
 {
 DOTRACE("Tcl::Interp::linkInt");
   dbg_eval_nl(3, varName);
@@ -319,12 +323,14 @@ DOTRACE("Tcl::Interp::linkInt");
   int flag = TCL_LINK_INT;
   if (readOnly) flag |= TCL_LINK_READ_ONLY;
 
-  if ( Tcl_LinkVar(intp(), temp.data(), reinterpret_cast<char *>(addr), flag)
+  if ( Tcl_LinkVar(intp(), temp.data(),
+                   reinterpret_cast<char *>(addr), flag)
        != TCL_OK )
-    throw Util::Error("error while linking int variable", SRC_POS);
+    throw rutz::error("error while linking int variable", SRC_POS);
 }
 
-void Tcl::Interp::linkDouble(const char* varName, double* addr, bool readOnly)
+void Tcl::Interp::linkDouble(const char* varName, double* addr,
+                             bool readOnly)
 {
 DOTRACE("Tcl::Interp::linkDouble");
   dbg_eval_nl(3, varName);
@@ -334,12 +340,14 @@ DOTRACE("Tcl::Interp::linkDouble");
   int flag = TCL_LINK_DOUBLE;
   if (readOnly) flag |= TCL_LINK_READ_ONLY;
 
-  if ( Tcl_LinkVar(intp(), temp.data(), reinterpret_cast<char *>(addr), flag)
+  if ( Tcl_LinkVar(intp(), temp.data(),
+                   reinterpret_cast<char *>(addr), flag)
        != TCL_OK )
-    throw Util::Error("error while linking double variable", SRC_POS);
+    throw rutz::error("error while linking double variable", SRC_POS);
 }
 
-void Tcl::Interp::linkBoolean(const char* varName, int* addr, bool readOnly)
+void Tcl::Interp::linkBoolean(const char* varName, int* addr,
+                              bool readOnly)
 {
 DOTRACE("Tcl::Interp::linkBoolean");
   dbg_eval_nl(3, varName);
@@ -349,13 +357,14 @@ DOTRACE("Tcl::Interp::linkBoolean");
   int flag = TCL_LINK_BOOLEAN;
   if (readOnly) flag |= TCL_LINK_READ_ONLY;
 
-  if ( Tcl_LinkVar(intp(), temp.data(), reinterpret_cast<char *>(addr), flag)
+  if ( Tcl_LinkVar(intp(), temp.data(),
+                   reinterpret_cast<char *>(addr), flag)
        != TCL_OK )
-    throw Util::Error("error while linking boolean variable", SRC_POS);
+    throw rutz::error("error while linking boolean variable", SRC_POS);
 }
 
 void Tcl::Interp::handleLiveException(const char* where,
-                                      const FilePosition& pos,
+                                      const rutz::file_pos& pos,
                                       bool withBkgdError) throw()
 {
 DOTRACE("Tcl::Interp::handleLiveException");
@@ -373,7 +382,7 @@ DOTRACE("Tcl::Interp::handleLiveException");
           fstring msg;
 
           msg.append(rutz::demangled_name(typeid(err)), " caught at ",
-                     pos.fileName, ":", pos.lineNo, ":\n");
+                     pos.m_file_name, ":", pos.m_line_no, ":\n");
 
           if (where != 0 && where[0] != '\0')
             msg.append(where, ": ");
@@ -395,7 +404,7 @@ DOTRACE("Tcl::Interp::handleLiveException");
           fstring msg;
 
           msg.append("exception of unknown type caught at ",
-                     pos.fileName, ":", pos.lineNo, ":\n");
+                     pos.m_file_name, ":", pos.m_line_no, ":\n");
 
           if (where != 0 && where[0] != '\0')
             msg.append(where, ": ");

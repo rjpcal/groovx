@@ -89,12 +89,12 @@ rutz::gzstreambuf::gzstreambuf(const char* name, int om,
     {
       if (om & std::ios::in)
         {
-          throw Util::Error(fstring("couldn't open file '",
+          throw rutz::error(fstring("couldn't open file '",
                                     name, "' for reading"), SRC_POS);
         }
       else if (om & std::ios::out)
         {
-          throw Util::Error(fstring("couldn't open file '", name,
+          throw rutz::error(fstring("couldn't open file '", name,
                                     "' for writing"), SRC_POS);
         }
     }
@@ -230,7 +230,7 @@ shared_ptr<std::ostream> rutz::ogzopen(const fstring& filename,
       shared_ptr<std::ostream> result =
         make_shared(new std::ofstream(filename.c_str(), flags));
       if (result->fail())
-        throw Util::Error(fstring("couldn't open file '", filename,
+        throw rutz::error(fstring("couldn't open file '", filename,
                                   "' for writing"), SRC_POS);
 
       return result;

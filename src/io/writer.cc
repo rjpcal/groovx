@@ -45,7 +45,7 @@ DBG_REGISTER
 
 namespace IO
 {
-  class WriteVersionError : public Util::Error
+  class WriteVersionError : public rutz::error
   {
   public:
     /// Construct with information relevant to the problem
@@ -53,7 +53,7 @@ namespace IO
                       IO::VersionId attempted_id,
                       IO::VersionId lowest_supported_id,
                       const char* msg,
-                      const FilePosition& pos);
+                      const rutz::file_pos& pos);
 
     virtual ~WriteVersionError() throw();
   };
@@ -63,13 +63,15 @@ IO::WriteVersionError::WriteVersionError(const char* classname,
                                          IO::VersionId attempted_id,
                                          IO::VersionId lowest_supported_id,
                                          const char* info,
-                                         const FilePosition& pos) :
-  Util::Error(pos)
+                                         const rutz::file_pos& pos) :
+  rutz::error(pos)
 {
-  msg().append("IO::WriteVersionError: ");
-  msg().append("in ", classname, ", serial version ");
-  msg().append(attempted_id, " is not supported. The lowest supported version is ");
-  msg().append(lowest_supported_id, ". ", info);
+  fstring m;
+  m.append("IO::WriteVersionError: in ", classname,
+           ", serial version ", attempted_id, " is not supported. ");
+  m.append("The lowest supported version is ", lowest_supported_id,
+           ". ", info);
+  this->set_msg(m);
 }
 
 IO::WriteVersionError::~WriteVersionError() throw() {}
@@ -80,7 +82,7 @@ int IO::Writer::ensureWriteVersionId(const char* name,
                                      IO::VersionId actual_version,
                                      IO::VersionId lowest_supported_version,
                                      const char* msg,
-                                     const FilePosition& pos)
+                                     const rutz::file_pos& pos)
 {
   if (actual_version < lowest_supported_version)
     throw IO::WriteVersionError(name, actual_version,

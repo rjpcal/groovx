@@ -54,7 +54,7 @@ namespace
 
     if (pipe.isClosed())
       {
-        throw Util::Error(fstring("while demangling '", mangled.c_str(),
+        throw rutz::error(fstring("while demangling '", mangled.c_str(),
                                   "': couldn't open pipe to c++filt"),
                           SRC_POS);
       }

@@ -52,7 +52,8 @@ namespace ReadUtils
     {
       int count = reader.readInt(makeSeqCountString(seq_name));
       if (0 > count)
-        throw Util::Error("read negative value for sequence count", SRC_POS);
+        throw rutz::error("read negative value for sequence count",
+                          SRC_POS);
       return count;
     }
 
