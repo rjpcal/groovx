@@ -278,13 +278,19 @@ public:
 
   int ncols() const { return ncols_; }
 
-  Mtx column(int column) const { return Mtx(*this, column); }
+  Mtx columnSubMtx(int column) const { return Mtx(*this, column); }
 
-  Slice row(int row)
-    { return Slice(address(row,0), mrows_, ncols_); }
+  Slice row(int r)
+    { return Slice(address(r,0), mrows_, ncols_); }
 
-  ConstSlice row(int row) const
-    { return ConstSlice(address(row,0), mrows_, ncols_); }
+  ConstSlice row(int r) const
+    { return ConstSlice(address(r,0), mrows_, ncols_); }
+
+  Slice column(int c)
+    { return Slice(address(0,c), 1, mrows_); }
+
+  ConstSlice column(int c) const
+    { return ConstSlice(address(0,c), 1, mrows_); }
 
   Slice asSlice()
     { return Slice(start_, 1, nelems()); }
