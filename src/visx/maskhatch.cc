@@ -45,6 +45,8 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
+using namespace Gfx;
+
 namespace
 {
   const IO::VersionId MASKHATCH_SERIAL_VERSION_ID = 2;
@@ -149,34 +151,34 @@ DOTRACE("MaskHatch::grRender");
       double position = double(i)/itsNumLines;
 
       // horizontal line
-      canvas.vertex2(Gfx::Vec2<double>(0.0, position));
-      canvas.vertex2(Gfx::Vec2<double>(1.0, position));
+      canvas.vertex2(Vec2d(0.0, position));
+      canvas.vertex2(Vec2d(1.0, position));
 
       // vertical line
-      canvas.vertex2(Gfx::Vec2<double>(position, 0.0));
-      canvas.vertex2(Gfx::Vec2<double>(position, 1.0));
+      canvas.vertex2(Vec2d(position, 0.0));
+      canvas.vertex2(Vec2d(position, 1.0));
 
       // lines with slope = 1
-      canvas.vertex2(Gfx::Vec2<double>(0.0, position));
-      canvas.vertex2(Gfx::Vec2<double>(1.0-position, 1.0));
+      canvas.vertex2(Vec2d(0.0, position));
+      canvas.vertex2(Vec2d(1.0-position, 1.0));
 
-      canvas.vertex2(Gfx::Vec2<double>(position, 0.0));
-      canvas.vertex2(Gfx::Vec2<double>(1.0, 1.0-position));
+      canvas.vertex2(Vec2d(position, 0.0));
+      canvas.vertex2(Vec2d(1.0, 1.0-position));
 
       // lines with slope = -1
-      canvas.vertex2(Gfx::Vec2<double>(0.0, 1.0-position));
-      canvas.vertex2(Gfx::Vec2<double>(1.0-position, 0.0));
+      canvas.vertex2(Vec2d(0.0, 1.0-position));
+      canvas.vertex2(Vec2d(1.0-position, 0.0));
 
-      canvas.vertex2(Gfx::Vec2<double>(position, 1.0));
-      canvas.vertex2(Gfx::Vec2<double>(1.0, position));
+      canvas.vertex2(Vec2d(position, 1.0));
+      canvas.vertex2(Vec2d(1.0, position));
     }
 
   // final closing lines
-  canvas.vertex2(Gfx::Vec2<double>(0.0, 1.0));
-  canvas.vertex2(Gfx::Vec2<double>(1.0, 1.0));
+  canvas.vertex2(Vec2d(0.0, 1.0));
+  canvas.vertex2(Vec2d(1.0, 1.0));
 
-  canvas.vertex2(Gfx::Vec2<double>(1.0, 0.0));
-  canvas.vertex2(Gfx::Vec2<double>(1.0, 1.0));
+  canvas.vertex2(Vec2d(1.0, 0.0));
+  canvas.vertex2(Vec2d(1.0, 1.0));
 }
 
 static const char vcid_maskhatch_cc[] = "$Header$";

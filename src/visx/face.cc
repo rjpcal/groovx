@@ -45,6 +45,8 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
+using namespace Gfx;
+
 ///////////////////////////////////////////////////////////////////////
 //
 // File scope data
@@ -182,19 +184,19 @@ DOTRACE("Face::grRender");
         {
           if (isItFilled)
             {
-              canvas.drawBezierFill4(Gfx::Vec3<double>(0.0, 0.0, 0.0),
-                                     Gfx::Vec3<double>(ctrlpnts+i*12+0),
-                                     Gfx::Vec3<double>(ctrlpnts+i*12+3),
-                                     Gfx::Vec3<double>(ctrlpnts+i*12+6),
-                                     Gfx::Vec3<double>(ctrlpnts+i*12+9),
+              canvas.drawBezierFill4(Vec3d(0.0, 0.0, 0.0),
+                                     Vec3d(ctrlpnts+i*12+0),
+                                     Vec3d(ctrlpnts+i*12+3),
+                                     Vec3d(ctrlpnts+i*12+6),
+                                     Vec3d(ctrlpnts+i*12+9),
                                      num_subdivisions);
             }
           else
             {
-              canvas.drawBezier4(Gfx::Vec3<double>(ctrlpnts+i*12+0),
-                                 Gfx::Vec3<double>(ctrlpnts+i*12+3),
-                                 Gfx::Vec3<double>(ctrlpnts+i*12+6),
-                                 Gfx::Vec3<double>(ctrlpnts+i*12+9),
+              canvas.drawBezier4(Vec3d(ctrlpnts+i*12+0),
+                                 Vec3d(ctrlpnts+i*12+3),
+                                 Vec3d(ctrlpnts+i*12+6),
+                                 Vec3d(ctrlpnts+i*12+9),
                                  num_subdivisions);
             }
         }
@@ -207,7 +209,7 @@ DOTRACE("Face::grRender");
     if (isItFilled)
       canvas.swapForeBack();
 
-    canvas.translate(Gfx::Vec3<double>(0.0, getVertOffset(), 0.0));
+    canvas.translate(Vec3d(0.0, getVertOffset(), 0.0));
 
     //
     // Set up for drawing eyes.
@@ -219,12 +221,12 @@ DOTRACE("Face::grRender");
     // at opposite points within this range.
     const double aspect = getEyeAspect();
 
-    const Gfx::Vec3<double> eyeball_scale(0.1*aspect     + 0.185*(1-aspect),
-                                          0.1*(1-aspect) + 0.185*aspect,
-                                          1.0);
+    const Vec3d eyeball_scale(0.1*aspect     + 0.185*(1-aspect),
+                              0.1*(1-aspect) + 0.185*aspect,
+                              1.0);
 
     // The absolute scale of the pupil.
-    const Gfx::Vec3<double> pupil_scale_abs(0.07, 0.07, 1.0);
+    const Vec3d pupil_scale_abs(0.07, 0.07, 1.0);
 
     // The scale of the pupil relative to the eyeball scale. These
     // values are computed since it is more efficient in the drawing
@@ -233,7 +235,7 @@ DOTRACE("Face::grRender");
     // after the eyeballs and push a new matrix for the pupils. But,
     // maybe this is the sort of optimization that OpenGL would make
     // on its own in a display list.
-    const Gfx::Vec3<double> pupil_scale(pupil_scale_abs/eyeball_scale);
+    const Vec3d pupil_scale(pupil_scale_abs/eyeball_scale);
 
     // Calculate the x position for the eyes
     const double eye_x = Util::abs(itsEyeDistance)/2.0;
@@ -250,9 +252,7 @@ DOTRACE("Face::grRender");
           {
             Gfx::MatrixSaver eyesaver(canvas);
 
-            canvas.translate(Gfx::Vec3<double>(eye_pos * eye_x,
-                                               itsEyeHeight,
-                                               0.0));
+            canvas.translate(Vec3d(eye_pos * eye_x, itsEyeHeight, 0.0));
             canvas.scale(eyeball_scale);
 
             canvas.drawCircle(0.0, outer_radius, isItFilled,
@@ -278,18 +278,16 @@ DOTRACE("Face::grRender");
     // Calculate the positions for the top and bottom of the nose
     // bottom y always <= 0.0
     // top y always >= 0.0
-    const Gfx::Vec2<double> nose_bottom(theirNose_x,
-                                        -Util::abs(itsNoseLength)/2.0);
-    const Gfx::Vec2<double> nose_top(theirNose_x,
-                                     -nose_bottom.y());
+    const Vec2d nose_bottom(theirNose_x, -Util::abs(itsNoseLength)/2.0);
+    const Vec2d nose_top(theirNose_x, -nose_bottom.y());
 
     {
       Gfx::LinesBlock block(canvas);
 
       if ( !(itsPartsMask & MOUTH_PART_MASK) )
         {
-          canvas.vertex2(Gfx::Vec2<double>(theirMouth_x[0], itsMouthHeight));
-          canvas.vertex2(Gfx::Vec2<double>(theirMouth_x[1], itsMouthHeight));
+          canvas.vertex2(Vec2d(theirMouth_x[0], itsMouthHeight));
+          canvas.vertex2(Vec2d(theirMouth_x[1], itsMouthHeight));
         }
 
       if ( !(itsPartsMask & NOSE_PART_MASK) )
@@ -309,8 +307,8 @@ void Face::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("Face::grGetBoundingBox");
 
-  bbox.vertex2(Gfx::Vec2<double>(-0.7, 0.2 + 0.75*(-1.7-0.2)));
-  bbox.vertex2(Gfx::Vec2<double>(+0.7, 0.2 + 0.75*(+1.4-0.2)));
+  bbox.vertex2(Vec2d(-0.7, 0.2 + 0.75*(-1.7-0.2)));
+  bbox.vertex2(Vec2d(+0.7, 0.2 + 0.75*(+1.4-0.2)));
 }
 
 int Face::category() const

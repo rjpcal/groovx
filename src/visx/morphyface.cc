@@ -49,6 +49,8 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
+using namespace Gfx;
+
 ///////////////////////////////////////////////////////////////////////
 //
 // File scope definitions
@@ -115,14 +117,14 @@ namespace
   {
     Gfx::MatrixSaver saver(canvas);
 
-    canvas.scale(Gfx::Vec3<double>(x_scale, y_scale, 1.0));
+    canvas.scale(Vec3d(x_scale, y_scale, 1.0));
 
     Gfx::QuadStripBlock block(canvas);
 
     for (unsigned int i = 0; i < NUM_HAIR_POINTS; ++i)
       {
-        canvas.vertex2(Gfx::Vec2<double>(vertices[4*i  ], vertices[4*i+1]));
-        canvas.vertex2(Gfx::Vec2<double>(vertices[4*i+2], vertices[4*i+3]));
+        canvas.vertex2(Vec2d(vertices[4*i  ], vertices[4*i+1]));
+        canvas.vertex2(Vec2d(vertices[4*i+2], vertices[4*i+3]));
       }
   }
 }
@@ -296,12 +298,12 @@ DOTRACE("MorphyFace::grRender");
   // Draw eyes
   //
 
-  const Gfx::Vec3<double> eye_ctrlpnts[4] =
+  const Vec3d eye_ctrlpnts[4] =
   {
-    Gfx::Vec3<double>(-3.0/7.0, 0.0,     0.0),
-    Gfx::Vec3<double>(-2.0/7.0, 2.0/3.0, 0.0),
-    Gfx::Vec3<double>( 2.0/7.0, 2.0/3.0, 0.0),
-    Gfx::Vec3<double>( 4.0/7.0, 0.0,     0.0)
+    Vec3d(-3.0/7.0, 0.0,     0.0),
+    Vec3d(-2.0/7.0, 2.0/3.0, 0.0),
+    Vec3d( 2.0/7.0, 2.0/3.0, 0.0),
+    Vec3d( 4.0/7.0, 0.0,     0.0)
   };
 
   const int eye_subdivisions = 10;
@@ -311,11 +313,11 @@ DOTRACE("MorphyFace::grRender");
       Gfx::MatrixSaver msaver(canvas);
 
       // Do appropriate reflection
-      canvas.scale(Gfx::Vec3<double>(left_right*1.0, 1.0, 1.0));
+      canvas.scale(Vec3d(left_right*1.0, 1.0, 1.0));
 
       // Move to the eye position
-      canvas.translate(Gfx::Vec3<double>(Util::abs(itsEyeDistance)/2.0,
-                                         itsEyeYpos, 0.0));
+      canvas.translate(Vec3d(Util::abs(itsEyeDistance)/2.0,
+                             itsEyeYpos, 0.0));
 
       // Draw eye outline
       for (int top_bottom = -1; top_bottom < 2; top_bottom += 2)
@@ -324,9 +326,9 @@ DOTRACE("MorphyFace::grRender");
 
           Gfx::MatrixSaver msaver2(canvas);
 
-          canvas.scale(Gfx::Vec3<double>(itsEyeHeight*itsEyeAspectRatio,
-                                         itsEyeHeight*top_bottom,
-                                         1.0));
+          canvas.scale(Vec3d(itsEyeHeight*itsEyeAspectRatio,
+                             itsEyeHeight*top_bottom,
+                             1.0));
 
           canvas.drawBezier4(eye_ctrlpnts[0], eye_ctrlpnts[1],
                              eye_ctrlpnts[2], eye_ctrlpnts[3],
@@ -339,11 +341,11 @@ DOTRACE("MorphyFace::grRender");
 
         Gfx::MatrixSaver msaver3(canvas);
 
-        canvas.translate(Gfx::Vec3<double>(itsEyebrowXpos, itsEyebrowYpos, 0.0));
-        canvas.rotate(Gfx::Vec3<double>::unitZ(), itsEyebrowAngle);
-        canvas.scale(Gfx::Vec3<double>(itsEyeHeight*itsEyeAspectRatio,
-                                       itsEyeHeight*itsEyebrowCurvature,
-                                       1.0));
+        canvas.translate(Vec3d(itsEyebrowXpos, itsEyebrowYpos, 0.0));
+        canvas.rotate(Vec3d::unitZ(), itsEyebrowAngle);
+        canvas.scale(Vec3d(itsEyeHeight*itsEyeAspectRatio,
+                           itsEyeHeight*itsEyebrowCurvature,
+                           1.0));
 
         Gfx::AttribSaver asaver(canvas);
 
@@ -360,8 +362,8 @@ DOTRACE("MorphyFace::grRender");
 
         Gfx::MatrixSaver msaver4(canvas);
 
-        canvas.translate(Gfx::Vec3<double>(left_right*itsPupilXpos,
-                                           itsPupilYpos, 0.0));
+        canvas.translate(Vec3d(left_right*itsPupilXpos,
+                               itsPupilYpos, 0.0));
 
         double radius = 0.5 * itsPupilSize * itsEyeHeight;
 
@@ -377,12 +379,12 @@ DOTRACE("MorphyFace::grRender");
   // Draw face outline.
   //
 
-  canvas.drawBezier4(Gfx::Vec3<double>(itsFaceWidth, 0.0, 0.0),
-                     Gfx::Vec3<double>(itsBottomWidth*itsFaceWidth,
-                                       itsBottomHeight*4.0/3.0, 0.0),
-                     Gfx::Vec3<double>(-itsBottomWidth*itsFaceWidth,
-                                       itsBottomHeight*4.0/3.0, 0.0),
-                     Gfx::Vec3<double>(-itsFaceWidth, 0.0, 0.0),
+  canvas.drawBezier4(Vec3d(itsFaceWidth, 0.0, 0.0),
+                     Vec3d(itsBottomWidth*itsFaceWidth,
+                           itsBottomHeight*4.0/3.0, 0.0),
+                     Vec3d(-itsBottomWidth*itsFaceWidth,
+                           itsBottomHeight*4.0/3.0, 0.0),
+                     Vec3d(-itsFaceWidth, 0.0, 0.0),
                      30);
 
   //
@@ -394,21 +396,21 @@ DOTRACE("MorphyFace::grRender");
 
     Gfx::MatrixSaver msaver5(canvas);
 
-    canvas.translate(Gfx::Vec3<double>(itsNoseXpos, itsNoseYpos, 0.0));
-    canvas.scale(Gfx::Vec3<double>(Util::abs(itsNoseWidth)/2.0,
-                                   Util::abs(itsNoseLength), 1.0));
+    canvas.translate(Vec3d(itsNoseXpos, itsNoseYpos, 0.0));
+    canvas.scale(Vec3d(Util::abs(itsNoseWidth)/2.0,
+                       Util::abs(itsNoseLength), 1.0));
 
     Gfx::LineStripBlock block(canvas);
 
-    canvas.vertex2(Gfx::Vec2<double>(-0.75, 0.5));
-    canvas.vertex2(Gfx::Vec2<double>(-1.0,  0.0));
-    canvas.vertex2(Gfx::Vec2<double>(-0.75, -0.333333));
-    canvas.vertex2(Gfx::Vec2<double>(-0.25, -0.333333));
-    canvas.vertex2(Gfx::Vec2<double>( 0.0, -0.5));   // CENTER
-    canvas.vertex2(Gfx::Vec2<double>( 0.25, -0.333333));
-    canvas.vertex2(Gfx::Vec2<double>( 0.75, -0.333333));
-    canvas.vertex2(Gfx::Vec2<double>( 1.0,  0.0));
-    canvas.vertex2(Gfx::Vec2<double>( 0.75, 0.5));
+    canvas.vertex2(Vec2d(-0.75, 0.5));
+    canvas.vertex2(Vec2d(-1.0,  0.0));
+    canvas.vertex2(Vec2d(-0.75, -0.333333));
+    canvas.vertex2(Vec2d(-0.25, -0.333333));
+    canvas.vertex2(Vec2d( 0.0, -0.5));   // CENTER
+    canvas.vertex2(Vec2d( 0.25, -0.333333));
+    canvas.vertex2(Vec2d( 0.75, -0.333333));
+    canvas.vertex2(Vec2d( 1.0,  0.0));
+    canvas.vertex2(Vec2d( 0.75, 0.5));
   }
 
   //
@@ -420,13 +422,13 @@ DOTRACE("MorphyFace::grRender");
 
     Gfx::MatrixSaver msaver6(canvas);
 
-    canvas.translate(Gfx::Vec3<double>(itsMouthXpos, itsMouthYpos, 0.0));
-    canvas.scale(Gfx::Vec3<double>(itsMouthWidth, itsMouthCurvature, 1.0));
+    canvas.translate(Vec3d(itsMouthXpos, itsMouthYpos, 0.0));
+    canvas.scale(Vec3d(itsMouthWidth, itsMouthCurvature, 1.0));
 
-    canvas.drawBezier4(Gfx::Vec3<double>(-0.5,  0.5,      0.0),
-                       Gfx::Vec3<double>(-0.2, -0.833333, 0.0),
-                       Gfx::Vec3<double>( 0.2, -0.833333, 0.0),
-                       Gfx::Vec3<double>( 0.5,  0.5,      0.0),
+    canvas.drawBezier4(Vec3d(-0.5,  0.5,      0.0),
+                       Vec3d(-0.2, -0.833333, 0.0),
+                       Vec3d( 0.2, -0.833333, 0.0),
+                       Vec3d( 0.5,  0.5,      0.0),
                        30);
   }
 
