@@ -71,15 +71,18 @@ class Tcl::Interp
 
 public:
   Interp(Tcl_Interp* interp);
-  Interp(const Interp& other);
-  ~Interp();
+  Interp(const Interp& other) throw();
+  ~Interp() throw();
 
   // Interpreter
   bool hasInterp() const throw() { return itsInterp != 0; }
+
+  /// Get the interpreter (if valid), otherwise throw an exception.
   Tcl_Interp* intp() const;
-  bool interpDeleted() const;
-  void forgetInterp();
-  void destroy();
+
+  bool interpDeleted() const throw();
+  void forgetInterp() throw();
+  void destroy() throw();
 
   /// Wrapper around Tcl_PkgProvide().
   void pkgProvide(const char* name, const char* version);
@@ -147,8 +150,7 @@ public:
 
   // Errors
   void handleLiveException(const char* where,
-                           const rutz::file_pos& pos,
-                           bool withBkgdError = false) throw();
+                           const rutz::file_pos& pos) throw();
   void backgroundError() throw();
 
   void addErrorInfo(const char* info);

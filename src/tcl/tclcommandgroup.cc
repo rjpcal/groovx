@@ -412,8 +412,7 @@ DOTRACE("Tcl::CommandGroup::rawInvoke");
     }
   catch (...)
     {
-      rep->interp.handleLiveException(Tcl_GetString(objv[0]),
-                                      SRC_POS, false);
+      rep->interp.handleLiveException(Tcl_GetString(objv[0]), SRC_POS);
     }
 
   return TCL_ERROR;

@@ -104,7 +104,8 @@ void Tcl::TimerSchedulerToken::dummyCallback(void* token) throw()
   catch(...)
     {
       Tcl::Main::interp().handleLiveException("timer callback",
-                                              SRC_POS, true);
+                                              SRC_POS);
+      Tcl::Main::interp().backgroundError();
     }
 }
 

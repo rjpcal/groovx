@@ -324,12 +324,13 @@ DOTRACE("Tcl::Pkg::namespaceAlias");
   try
     {
       exportAll(rep->interp, rep->namespName.c_str());
-      exportInto(rep->interp, rep->namespName.c_str(), namesp, pattern);
+      exportInto(rep->interp, rep->namespName.c_str(),
+                 namesp, pattern);
     }
   catch (...)
     {
       rep->interp.handleLiveException("Tcl::Pkg::namespaceAlias",
-                                      SRC_POS, false);
+                                      SRC_POS);
     }
 }
 
@@ -341,12 +342,12 @@ DOTRACE("Tcl::Pkg::inherit");
   try
     {
       exportAll(rep->interp, namesp);
-      exportInto(rep->interp, namesp, rep->namespName.c_str(), pattern);
+      exportInto(rep->interp, namesp,
+                 rep->namespName.c_str(), pattern);
     }
   catch (...)
     {
-      rep->interp.handleLiveException("Tcl::Pkg::inherit",
-                                      SRC_POS, false);
+      rep->interp.handleLiveException("Tcl::Pkg::inherit", SRC_POS);
     }
 }
 
@@ -410,8 +411,7 @@ DOTRACE("Tcl::Pkg::eval");
     }
   catch(...)
     {
-      rep->interp.handleLiveException("Tcl::Pkg::eval",
-                                      SRC_POS, false);
+      rep->interp.handleLiveException("Tcl::Pkg::eval", SRC_POS);
     }
 }
 

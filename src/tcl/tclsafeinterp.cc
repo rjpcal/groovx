@@ -50,7 +50,7 @@ using rutz::fstring;
 
 namespace
 {
-  void interpDeleteProc(ClientData clientData, Tcl_Interp*)
+  void interpDeleteProc(ClientData clientData, Tcl_Interp*) throw()
   {
     Tcl::Interp* intp = static_cast<Tcl::Interp*>(clientData);
     intp->forgetInterp();
@@ -75,7 +75,7 @@ DOTRACE("Tcl::Interp::Interp");
                       static_cast<ClientData>(this));
 }
 
-Tcl::Interp::Interp(const Tcl::Interp& other) :
+Tcl::Interp::Interp(const Tcl::Interp& other) throw() :
   itsInterp(other.itsInterp)
 {
 DOTRACE("Tcl::Interp::Interp(const Interp&)");
@@ -87,7 +87,7 @@ DOTRACE("Tcl::Interp::Interp(const Interp&)");
     }
 }
 
-Tcl::Interp::~Interp()
+Tcl::Interp::~Interp() throw()
 {
 DOTRACE("Tcl::Interp::~Interp");
 
@@ -111,26 +111,26 @@ Tcl_Interp* Tcl::Interp::intp() const
   return itsInterp;
 }
 
-bool Tcl::Interp::interpDeleted() const
+bool Tcl::Interp::interpDeleted() const throw()
 {
 DOTRACE("Tcl::Interp::interpDeleted");
 
-  return !hasInterp() || bool(Tcl_InterpDeleted(intp()));
+  return (itsInterp == 0) || Tcl_InterpDeleted(itsInterp);
 }
 
-void Tcl::Interp::forgetInterp()
+void Tcl::Interp::forgetInterp() throw()
 {
 DOTRACE("Tcl::Interp::forgetInterp");
   itsInterp = 0;
 }
 
-void Tcl::Interp::destroy()
+void Tcl::Interp::destroy() throw()
 {
 DOTRACE("Tcl::Interp::destroy");
 
-  if (hasInterp())
+  if (itsInterp != 0)
     {
-      Tcl_DeleteInterp(intp());
+      Tcl_DeleteInterp(itsInterp);
       itsInterp = 0;
     }
 }
@@ -366,8 +366,7 @@ DOTRACE("Tcl::Interp::linkBoolean");
 }
 
 void Tcl::Interp::handleLiveException(const char* where,
-                                      const rutz::file_pos& pos,
-                                      bool withBkgdError) throw()
+                                      const rutz::file_pos& pos) throw()
 {
 DOTRACE("Tcl::Interp::handleLiveException");
 
@@ -414,9 +413,6 @@ DOTRACE("Tcl::Interp::handleLiveException");
           appendResult(msg);
         }
     }
-
-  if (withBkgdError)
-    backgroundError();
 }
 
 void Tcl::Interp::backgroundError() throw()
