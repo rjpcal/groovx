@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Tue Sep  4 07:50:39 2001
+// written: Tue Sep  4 08:36:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ DOTRACE("Util::Slot::~Slot");
 
 namespace
 {
-  typedef Util::SoftRef<Util::Slot> ObsRef;
+  typedef Util::Ref<Util::Slot> SlotRef;
 }
 
 struct Util::Signal::SigImpl : public Util::VolatileObject
@@ -71,7 +71,7 @@ struct Util::Signal::SigImpl : public Util::VolatileObject
 
   static SigImpl* make() { return new SigImpl; }
 
-  typedef dlink_list<ObsRef> ListType;
+  typedef dlink_list<SlotRef> ListType;
 
   ListType itsSlots;
 
@@ -96,7 +96,7 @@ struct Util::Signal::SigImpl : public Util::VolatileObject
              /* incr in loop */)
           {
             DebugEvalNL((*ii).getWeak());
-            if ((*ii).isValid() && (*ii)->exists())
+            if ((*ii)->exists())
               {
                 DebugEval(typeid(*(*ii).getWeak()).name());
                 DebugEval((*ii)->refCount());
@@ -106,6 +106,7 @@ struct Util::Signal::SigImpl : public Util::VolatileObject
               }
             else
               {
+                DOTRACE("Util::Signal::SigImpl::emit-erase");
                 ListType::iterator erase_me = ii;
                 ++ii;
                 itsSlots.erase(erase_me);
@@ -160,7 +161,7 @@ void Util::Signal::disconnect(Util::SoftRef<Util::Slot> slot)
 DOTRACE("Util::Signal::disconnect");
   if (!slot.isValid()) return;
 
-  itsImpl->itsSlots.remove(slot);
+  itsImpl->itsSlots.remove(SlotRef(slot.get(), Util::PRIVATE));
 
   DebugEvalNL(itsImpl->itsSlots.size());
 }
@@ -170,7 +171,7 @@ void Util::Signal::connect(Util::SoftRef<Util::Slot> slot)
 DOTRACE("Util::Signal::connect");
   if (!slot.isValid()) return;
 
-  itsImpl->itsSlots.push_back(ObsRef(slot.get(), Util::STRONG, Util::PRIVATE));
+  itsImpl->itsSlots.push_back(SlotRef(slot.get(), Util::PRIVATE));
 
   DebugEvalNL(itsImpl->itsSlots.size());
 }
