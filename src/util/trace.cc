@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Jan 21 13:31:03 2002
+// written: Mon Jan 21 14:21:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -253,12 +253,18 @@ Util::Trace::~Trace()
 
 void Util::Trace::printIn()
 {
-
   if (callStack.size() < MAX_TRACE_LEVEL)
     {
-      for (unsigned int i=0; i < callStack.size(); ++i)
-        STD_IO::cerr << TRACE_TAB;
-      STD_IO::cerr << "--> " << prof.name();
+      if (callStack.size() > 0)
+        {
+          for (unsigned int i=0; i < callStack.size()-1; ++i)
+            {
+              STD_IO::cerr << "|   ";
+            }
+          STD_IO::cerr << "|- ";
+        }
+
+      STD_IO::cerr << prof.name();
 
       if (Util::Trace::getMode() == STEP)
         {
@@ -273,22 +279,6 @@ void Util::Trace::printIn()
 
 void Util::Trace::printOut()
 {
-  if (callStack.size() < MAX_TRACE_LEVEL)
-    {
-      for (unsigned int i=0; i < callStack.size(); ++i)
-        STD_IO::cerr << TRACE_TAB;
-      STD_IO::cerr << "<-- " << prof.name();
-
-      if (Util::Trace::getMode() == STEP)
-        {
-          waitOnStep();
-        }
-      else
-        {
-          STD_IO::cerr << '\n';
-        }
-  }
-
   if (callStack.size() == 0) STD_IO::cerr << '\n';
 }
 
