@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Feb 17 13:34:40 2000
-// written: Fri Sep  7 16:20:13 2001
+// written: Fri Sep  7 16:47:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,59 +21,18 @@
 
 namespace
 {
-  typedef void (Util::Tracer::* TraceActionFunc) ();
-  typedef bool (Util::Tracer::* TraceGetterFunc) () const;
-
-  //
-  // Template functor that runs member functions of bound Tracer's.
-  //
-
-  template <class FuncType>
-  struct TraceFunc
-  {
-    Util::Tracer& itsTracer;
-    FuncType itsFunc;
-
-    TraceFunc(Util::Tracer& tracer, FuncType func) :
-      itsTracer(tracer),
-      itsFunc(func)
-    {}
-
-    typedef void Retn_t;
-
-    void operator()(Tcl::Context& ctx);
-  };
-
-  // Specialization of TraceCmd::invoke for action functions
-  template <>
-  void TraceFunc<TraceActionFunc>::operator()(Tcl::Context&)
-  {
-    (itsTracer.*itsFunc)();
-  }
-
-
-  // Specialization of TraceCmd::invoke for getter functions
-  template <>
-  void TraceFunc<TraceGetterFunc>::operator()(Tcl::Context& ctx)
-  {
-    ctx.setResult( (itsTracer.*itsFunc)() );
-  }
-
-
-} // end namespace Tcl
+  void traceOn(Util::Tracer& tracer) { tracer.on(); }
+  void traceOff(Util::Tracer& tracer) { tracer.off(); }
+  void traceToggle(Util::Tracer& tracer) { tracer.toggle(); }
+  bool traceStatus(Util::Tracer& tracer) { return tracer.status(); }
+}
 
 void Tcl::defTracing(Tcl::Pkg* pkg, Util::Tracer& tracer)
 {
-  using Util::Tracer;
-
-  pkg->defRaw( "traceOn", 0, "",
-               TraceFunc<TraceActionFunc>(tracer, &Tracer::on) );
-  pkg->defRaw( "traceOff", 0, "",
-               TraceFunc<TraceActionFunc>(tracer, &Tracer::off) );
-  pkg->defRaw( "traceToggle", 0, "",
-               TraceFunc<TraceActionFunc>(tracer, &Tracer::toggle) );
-  pkg->defRaw( "traceStatus", 0, "",
-               TraceFunc<TraceGetterFunc>(tracer, &Tracer::status) );
+  pkg->def( "traceOn", "", Util::bindFirst(traceOn, tracer) );
+  pkg->def( "traceOff", "", Util::bindFirst(traceOff, tracer) );
+  pkg->def( "traceToggle", "", Util::bindFirst(traceToggle, tracer) );
+  pkg->def( "traceStatus", "", Util::bindFirst(traceStatus, tracer) );
 }
 
 static const char vcid_tracertcl_cc[] = "$Header$";
