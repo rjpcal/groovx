@@ -3,7 +3,7 @@
 // experiment.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 10:52:17 1999
-// written: Wed Feb 16 15:59:39 2000
+// written: Mon Mar 13 19:19:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,6 +46,9 @@ public:
 
   virtual void edBeginTrial() = 0;
   ///< Begin the next trial.
+
+  virtual int edElapsedTrialMsec() const = 0;
+  ///< Returns the number of milliseconds elapsed in the current trial.
 
   virtual void edResponseSeen() = 0;
   ///< Tell the Experiment that a response has occurred.
