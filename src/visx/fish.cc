@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Aug 29 16:46:23 2001
+// written: Wed Aug 29 17:32:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,6 @@
 
 #define DYNAMIC_TRACE_EXPR Fish::tracer.status()
 #include "util/trace.h"
-#define LOCAL_DEBUG
 #include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
@@ -127,7 +126,12 @@ const FieldMap& Fish::classFields()
           &Fish::itsCurrentEndPt, 0, 0, 3, 1),
 
     Field("endPt_Part", &Fish::itsEndPt_Part, 1, 1, 4, 1),
-    Field("endPt_Bkpt", &Fish::itsEndPt_Bkpt, 1, 1, 10, 1)
+    Field("endPt_Bkpt", &Fish::itsEndPt_Bkpt, 1, 1, 10, 1),
+
+    Field("inColor", &Fish::inColor,
+          false, false, true, true, Field::TRANSIENT),
+    Field("showControlPoints", &Fish::showControlPoints,
+          false, false, true, true, Field::TRANSIENT)
   };
 
   static FieldMap FISH_FIELDS(FIELD_ARRAY, &GrObj::classFields());
@@ -158,7 +162,9 @@ Fish::Fish(const char* splinefile, const char* coordfile, int index) :
   itsCurrentPart(0),
   itsCurrentEndPt(0),
   itsEndPt_Part(&dummy_int),
-  itsEndPt_Bkpt(&dummy_int)
+  itsEndPt_Bkpt(&dummy_int),
+  inColor(false),
+  showControlPoints(false)
 {
 DOTRACE("Fish::Fish");
 
@@ -454,16 +460,24 @@ namespace
   public:
     GLUnurbsObj* ptr;
 
-    NurbsObj() : ptr(gluNewNurbsRenderer())
+    NurbsObj() : ptr(0)
     {
+      DOTRACE("Fish::grRender::NurbsObj");
+      ptr = gluNewNurbsRenderer();
+
       if (ptr == 0)
         {
           throw Util::Error("couldn't allocate GLUnurbsObj");
         }
+
+      gluNurbsProperty(ptr, GLU_SAMPLING_METHOD, GLU_DOMAIN_DISTANCE);
+      gluNurbsProperty(ptr, GLU_U_STEP, 200);
+      gluNurbsProperty(ptr, GLU_V_STEP, 200);
     }
 
     ~NurbsObj()
     {
+      DOTRACE("Fish::grRender::~NurbsObj");
       gluDeleteNurbsRenderer(ptr);
     }
   };
@@ -476,26 +490,19 @@ DOTRACE("Fish::grRender");
   // Create and configure the NURBS object
   NurbsObj theNurb;
 
-  gluNurbsProperty(theNurb.ptr, GLU_SAMPLING_METHOD, GLU_DOMAIN_DISTANCE);
-  gluNurbsProperty(theNurb.ptr, GLU_U_STEP, 200);
-  gluNurbsProperty(theNurb.ptr, GLU_V_STEP, 200);
-
-#ifdef COLORED_PARTS
-  Gfx::RgbaColor colors[4] =
+  static Gfx::RgbaColor colors[4] =
   {
     Gfx::RgbaColor(1.0, 0.0, 0.0, 1.0),
     Gfx::RgbaColor(0.0, 1.0, 0.0, 1.0),
     Gfx::RgbaColor(0.0, 0.0, 1.0, 1.0),
     Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0)
   };
-#endif
 
   // Loop over fish parts
   for (int i = 0; i < 4; ++i)
     {
-#ifdef COLORED_PARTS
-      canvas.setColor(colors[i]);
-#endif
+      if (inColor)
+        canvas.setColor(colors[i]);
 
       dynamic_block<Pt3> ctrlpnts(itsParts[i].itsCtrlPnts);
 
@@ -513,17 +520,31 @@ DOTRACE("Fish::grRender");
       if (bkpt < ctrlpnts.size())
         ctrlpnts[bkpt] = pt;
 
-      // Render the curve
-      gluBeginCurve(theNurb.ptr);
       {
-        gluNurbsCurve(theNurb.ptr,
-                      itsParts[i].itsKnots.size(),
-                      &(itsParts[i].itsKnots[0]),
-                      3, ctrlpnts[0].data(),
-                      itsParts[i].itsOrder, GL_MAP1_VERTEX_3);
+        DOTRACE("Fish::grRender-gluNurbsCurve");
+        // Render the curve
+        gluBeginCurve(theNurb.ptr);
+        {
+          gluNurbsCurve(theNurb.ptr,
+                        itsParts[i].itsKnots.size(),
+                        &(itsParts[i].itsKnots[0]),
+                        3, ctrlpnts[0].data(),
+                        itsParts[i].itsOrder, GL_MAP1_VERTEX_3);
+        }
+        gluEndCurve(theNurb.ptr);
       }
-      gluEndCurve(theNurb.ptr);
 
+      if (showControlPoints)
+        {
+          Gfx::Canvas::AttribSaver saver(canvas);
+          canvas.setPointSize(4.0);
+
+          Gfx::Canvas::PointsBlock block(canvas);
+          for (unsigned int i = 0; i < ctrlpnts.size(); ++i)
+            {
+              canvas.vertex3(ctrlpnts[i]);
+            }
+        }
     }
 }
 
