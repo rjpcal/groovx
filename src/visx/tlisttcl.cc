@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Mon Nov 15 16:40:25 1999
+// written: Fri Dec  3 15:18:55 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -727,7 +727,6 @@ public:
 
 	 declareCAction("redraw", &Tlist::redraw);
 	 declareCAction("undraw", &Tlist::undraw);
-	 declareCAction("clearscreen", &Tlist::clearscreen);
 
 	 addCommand( new ShowCmd(interp, "Tlist::show") );
 	 addCommand( new AddObjectCmd(interp, "Tlist::addObject") );
@@ -749,7 +748,6 @@ public:
 	 Tcl_Eval(interp,
 				 "proc undraw {} { Tlist::undraw }\n"
 				 "proc redraw {} { Tlist::redraw }\n"
-				 "proc clearscreen {} { Tlist::clearscreen }\n"
 				 "proc show {id} { Tlist::show $id }\n");
   }
 };
