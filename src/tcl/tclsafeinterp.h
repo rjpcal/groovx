@@ -35,6 +35,7 @@
 #include "tcl/tclconvert.h"
 #include "tcl/tclobjptr.h"
 
+#include "util/fileposition.h"
 #include "util/pointers.h"
 
 struct Tcl_Interp;
@@ -143,6 +144,7 @@ public:
 
   // Errors
   void handleLiveException(const char* where,
+                           const FilePosition& pos,
                            bool withBkgdError = false) throw();
   void backgroundError() throw();
 
