@@ -1,6 +1,6 @@
 ##########################################################################
 #
-# This is the Makefile for the grsh shell -- if it has the name
+# This is the Makefile for the GroovX project -- if this file has the name
 # "Makefile.in", then it is a template for the real Makefile, so to
 # generate the real Makefile, run the "configure" script.
 #
@@ -38,6 +38,8 @@ MAKEFLAGS += --warn-undefined-variables
 #
 #-------------------------------------------------------------------------
 
+PACKAGE_NAME    := @PACKAGE_NAME@
+PACKAGE_TARNAME := @PACKAGE_TARNAME@
 PACKAGE_VERSION := @PACKAGE_VERSION@
 prefix          := @prefix@
 exec_prefix     := @exec_prefix@
@@ -258,7 +260,7 @@ count_sort: $(ALL_SRCS)
 
 docs: $(DOC)/DoxygenConfig $(DOC)/*.doc $(ALL_SRCS)
 	(doxygen $(DOC)/DoxygenConfig > $(DOC)/DocLog) >& $(DOC)/DocErrors
-	cd ~/www/grsh; chmod -R og+r *
+	chmod -R og+r ~/www/grsh
 
 # Generate tags file based only on header files
 H_TAGS: $(ALL_SRCS)
@@ -283,12 +285,12 @@ showpid:
 TAGS: $(ALL_SRCS)
 	find $(SRC) -name \*.h -or -name \*.cc | etags - -o $@
 
-SNAPSHOT := grsh-`date +%Y_%m_%d`
+DISTNAME := $(PACKAGE_TARNAME)_$(shell date +%Y%m%d)
 
-export: snapshots/.timestamp
-	cvs -d `cat ./CVS/Root` export -r HEAD -d snapshots/$(SNAPSHOT) grsh
-	rm -r snapshots/$(SNAPSHOT)/logs
-	rm -r snapshots/$(SNAPSHOT)/old_src
-	rm -r snapshots/$(SNAPSHOT)/future_src
-	cd snapshots/$(SNAPSHOT); autoconf
-	cd snapshots; tar cfz $(SNAPSHOT).tar.gz $(SNAPSHOT)
+export:
+	echo $(DISTNAME)
+	mkdir -p snapshots
+	cvs -d `cat ./CVS/Root` export -r HEAD -d snapshots/$(DISTNAME) grsh
+	rm -r snapshots/$(DISTNAME)/logs
+	cd snapshots/$(DISTNAME); autoconf
+	cd snapshots; tar cfz $(DISTNAME).tar.gz $(DISTNAME)
