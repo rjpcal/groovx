@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Feb 16 14:36:48 2000
+// written: Wed Feb 16 14:56:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -190,7 +190,8 @@ DOTRACE("IoPtrList::writeTo");
 
 const string& IoPtrList::alternateIoTags() const {
 DOTRACE("IoPtrList::alternateIoTags");
-  return ""; 
+  static string result = ""; 
+  return result; 
 }
 
 static const char vcid_ioptrlist_cc[] = "$Header$";
