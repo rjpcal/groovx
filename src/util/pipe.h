@@ -143,7 +143,7 @@ public:
   /// Get the stream that is linked to the child process.
   STD_IO::iostream& stream() throw();
 
-  /// Close the underlying stream.
+  /// Close the underlying stream AND the underlying file descriptor.
   void close();
 
   /// Wait for child process to complete, return 0 if all is OK, -1 if error.
