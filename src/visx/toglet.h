@@ -3,7 +3,7 @@
 // toglconfig.h
 // Rob Peters 
 // created: Jan-99
-// written: Wed Mar 29 22:13:29 2000
+// written: Thu May 25 14:45:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,9 @@ public:
 	 double red, green, blue;
   };
 
-  ToglConfig(Togl* togl, double dist, double unit_angle);
+  ToglConfig(Tcl_Interp* interp, const char* pathname,
+				 int config_argc, char** config_argv,
+				 double dist, double unit_angle);
   virtual ~ToglConfig();
 
   // accessors
@@ -61,7 +63,6 @@ public:
   Tcl_Interp* getInterp() const;
   int getIntParam(const char* param) const;
   Tcl_Obj* getParamValue(const char* param) const;
-  Togl* getTogl() const;
   int getWidth() const;
   Color queryColor(unsigned int color_index) const {
 	 Color col;
@@ -87,6 +88,14 @@ public:
   void setWidth(int val);
   void setUnitAngle(double deg);
   void setViewingDistIn(double in);
+
+  class DestroyCallback {
+  public:
+	 virtual ~DestroyCallback();
+	 virtual void onDestroy(ToglConfig* config) = 0;
+  };
+
+  void setDestroyCallback(DestroyCallback* callback);
 
   // widget functions
   virtual void bind(const char* event_sequence, const char* script);
@@ -120,6 +129,8 @@ private:
   bool itsUsingRgba;
   bool itsHasPrivateCmap;
   bool itsIsDoubleBuffered;
+
+  scoped_ptr<DestroyCallback> itsDestroyCallback;
 };
 
 static const char vcid_toglconfig_h[] = "$Header$";
