@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Tue Feb  1 18:09:13 2000
+// written: Mon Mar 13 13:14:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,7 @@
 #include "nullresponsehdlr.h"
 #include "listitempkg.h"
 #include "listpkg.h"
+#include "tracertcl.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -44,6 +45,8 @@ public:
 	 Tcl::ListItemPkg<EventResponseHdlr, RhList>(interp, RhList::theRhList(),
 																"EventRh", "$Revision$")
   {
+	 addTracing(this, EventResponseHdlr::tracer);
+
 	 declareCAttrib("useFeedback",
 						 &EventResponseHdlr::getUseFeedback,
 						 &EventResponseHdlr::setUseFeedback);
