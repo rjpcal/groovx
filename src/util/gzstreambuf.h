@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 20 09:12:51 2001
-// written: Wed Jun 20 10:08:59 2001
+// written: Wed Jun 20 10:53:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,8 +29,23 @@ namespace Util
     int mode;
     gzFile file;
 
-    static const int bufSize = 512;
+    static const int bufSize = 4092;
+    static const int pbackSize = 4;
     char buffer[bufSize];
+
+    int flushoutput()
+    {
+      if (!(mode & std::ios::out) || !opened) return EOF;
+
+      int num = pptr()-pbase();
+      if ( gzwrite(file, pbase(), num) != num )
+        {
+          return EOF;
+        }
+
+      pbump(-num);
+      return num;
+    }
 
   public:
     gzstreambuf(const char* name, int om) :
@@ -50,11 +65,12 @@ namespace Util
           if (om & std::ios::in)
             {
               *fmodeptr++ = 'r';
+              setg(buffer+pbackSize, buffer+pbackSize, buffer+pbackSize);
             }
           else if (om & std::ios::out)
             {
               *fmodeptr++ = 'w';
-              setg(buffer+4, buffer+4, buffer+4);
+              setp(buffer, buffer+(bufSize-1));
             }
 
           *fmodeptr++ = 'b';
@@ -90,28 +106,32 @@ namespace Util
       if (gptr() < egptr())
         return *gptr();
 
-      // process size of putback area
-      // -use number of characters read
-      // -but at most four
-      int numPutback = gptr() - eback();
-      if (numPutback > 4)
-        numPutback = 4;
+      int numPutback = 0;
+      if (pbackSize > 0)
+        {
+          // process size of putback area
+          // -use number of characters read
+          // -but at most four
+          numPutback = gptr() - eback();
+          if (numPutback > 4)
+            numPutback = 4;
 
-      // copy up to four characters previously read into the putback
-      // buffer (area of first four characters)
-      std::memcpy (buffer+(4-numPutback), gptr()-numPutback,
-                   numPutback);
+          // copy up to four characters previously read into the putback
+          // buffer (area of first four characters)
+          std::memcpy (buffer+(4-numPutback), gptr()-numPutback,
+                       numPutback);
+        }
 
       // read new characters
-      int num = gzread(file, buffer+4, bufSize-4);
+      int num = gzread(file, buffer+pbackSize, bufSize-pbackSize);
 
       if (num <= 0) // error (0) or end-of-file (-1)
         return EOF;
 
       // reset buffer pointers
-      setg (buffer+(4-numPutback),
-            buffer+4,
-            buffer+4+num);
+      setg (buffer+(pbackSize-numPutback),
+            buffer+pbackSize,
+            buffer+pbackSize+num);
 
       // return next character
       return *gptr();
@@ -121,20 +141,29 @@ namespace Util
     {
       if (!(mode & std::ios::out) || !opened) return EOF;
 
-      int written = c;
       if (c != EOF)
-        written = gzputc(file, c);
+        {
+          // insert the character into the buffer
+          *pptr() = c;
+          pbump(1);
+        }
 
-      return written;
+      if (flushoutput() == EOF)
+        {
+          return -1; // ERROR
+        }
+
+      return c;
     }
 
-    virtual std::streamsize xsputn(const char* s, const std::streamsize n)
+    virtual int sync()
     {
-      if (!(mode & std::ios::out) || !opened) return 0;
-
-      return gzwrite(file, const_cast<char*>(s), n);
+      if (flushoutput() == EOF)
+        {
+          return -1; // ERROR
+        }
+      return 0;
     }
-
   };
 
 }
