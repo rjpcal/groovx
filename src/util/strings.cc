@@ -3,7 +3,7 @@
 // strings.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:42:44 2000
-// written: Sat Sep 23 15:32:24 2000
+// written: Sat Sep 23 16:37:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -123,7 +123,7 @@ bool fixed_string::equals(const fixed_string& other) const
 
 struct dynamic_string::Impl {
   Impl(const char* s) : text(s == 0 ? "" : s) {}
-  string text;
+  std::string text;
 };
 
 dynamic_string::dynamic_string(const char* text) :
@@ -217,7 +217,7 @@ unsigned int dynamic_string::length() const
 }
 
 template <>
-string& dynamic_string::rep(string*)
+std::string& dynamic_string::rep(std::string*)
 {
   return itsImpl->text;
 }
@@ -230,14 +230,14 @@ string& dynamic_string::rep(string*)
 
 STD_IO::istream& operator>>(STD_IO::istream& is, fixed_string& str)
 {
-  string temp; is >> temp;
+  std::string temp; is >> temp;
   str = temp.c_str();
   return is;
 }
 
 STD_IO::istream& operator>>(STD_IO::istream& is, dynamic_string& str)
 {
-  string temp; is >> temp;
+  std::string temp; is >> temp;
   str = temp.c_str();
   return is;
 }
@@ -262,32 +262,32 @@ STD_IO::ostream& operator<<(STD_IO::ostream& os, const dynamic_string& str)
 
 STD_IO::istream& getline(STD_IO::istream& is, fixed_string& str)
 {
-  string temp;
-  getline(is, temp);
+  std::string temp;
+  std::getline(is, temp);
   str = temp.c_str();
   return is;
 }
 
 STD_IO::istream& getline(STD_IO::istream& is, dynamic_string& str)
 {
-  string temp;
-  getline(is, temp);
+  std::string temp;
+  std::getline(is, temp);
   str = temp.c_str();
   return is;
 }
 
 STD_IO::istream& getline(STD_IO::istream& is, fixed_string& str, char eol)
 {
-  string temp;
-  getline(is, temp, eol);
+  std::string temp;
+  std::getline(is, temp, eol);
   str = temp.c_str();
   return is;
 }
 
 STD_IO::istream& getline(STD_IO::istream& is, dynamic_string& str, char eol)
 {
-  string temp;
-  getline(is, temp, eol);
+  std::string temp;
+  std::getline(is, temp, eol);
   str = temp.c_str();
   return is;
 }
