@@ -278,8 +278,9 @@ bool operator<(const include_spec& i1, const include_spec& i2)
 /// A class for doing fast include-file dependency analysis.
 /** Several shortcuts (er, hacks...) are taken to make the parsing
     extremely fast and cheap, but at worst this makes the computed
-    dependencies be unnecessarily pessimistic. For example, a #include that
-    occurs inside a comment will still be treated as a regular #include.*/
+    dependencies be unnecessarily pessimistic. For example, a #include
+    that occurs inside a comment will still be treated as a regular
+    #include. */
 class cppdeps
 {
   vector<string> m_user_ipath;
@@ -327,8 +328,15 @@ public:
 
   void inspect(char** arg0, char** argn);
 
+  // Return value serves two purposes... (1) if it is zero, then the
+  // fname is not recognized as a c++ file, and (2) otherwise, the
+  // return value gives the length of the c++ filename extension,
+  // including the '.' (i.e. '.C' gives 2, '.cc' gives 3, '.cpp' gives
+  // 4).
   int is_cc_filename(const char* fname);
 
+  // Like is_cc_filename(), but also checks for c++ header-file
+  // extensions (like '.h', '.hh', '.hpp').
   int is_cc_or_h_filename(const char* fname);
 
   static bool resolve_one(const string& include_name,
@@ -860,95 +868,97 @@ cppdeps::get_nested_includes(const string& src_fname)
   return result;
 }
 
-void cppdeps::print_makefile_dep(const string& current_file)
+void cppdeps::print_makefile_dep(const string& fname)
 {
-  const int ext_len = is_cc_filename(current_file.c_str());
-  if (ext_len > 0)
+  const int ext_len = is_cc_filename(fname.c_str());
+
+  if (ext_len == 0)
+    // it's not a c++ file, so just do nothing
+    return;
+
+  // otherwise, we do have a c++ file...
+
+  // Remove the trailing filename suffix (i.e. '.C', '.cc', ...)
+  string fname_stem = fname.substr(0, fname.length()-ext_len);
+
+  // Remove a leading directory prefix if necessary
+  if (fname_stem.compare(0, m_strip_prefix.length(),
+                         m_strip_prefix) == 0)
     {
-      string stripped_filename = current_file;
-
-      if (strncmp(current_file.c_str(),
-                  m_strip_prefix.c_str(),
-                  m_strip_prefix.length()) == 0)
-        {
-          const unsigned int offset = m_strip_prefix.length() + 1;
-
-          stripped_filename =
-            current_file.substr(offset,
-                                current_file.length()-offset-ext_len);
-        }
-
-      // Make sure that m_objdir ends with a slash if it is
-      // non-empty, so that we can join it to
-      // stripped_filename and make a proper pathname.
-      if (m_objdir.length() > 0
-          && m_objdir[m_objdir.length()-1] != '/')
-        {
-          m_objdir += '/';
-        }
-
-      assert(m_obj_exts.size() > 0);
-
-      // Use C-style stdio here since it came out
-      // running quite a bit faster than iostreams, at
-      // least under g++-3.2.
-      printf("%s%s%s",
-             m_objdir.c_str(),
-             stripped_filename.c_str(),
-             m_obj_exts[0].c_str());
-
-      for (unsigned int i = 1;
-           i < m_obj_exts.size(); ++i)
-        {
-          printf(" %s%s%s",
-                 m_objdir.c_str(),
-                 stripped_filename.c_str(),
-                 m_obj_exts[i].c_str());
-        }
-
-      printf(": ");
-
-      const include_list_t& includes =
-        get_nested_includes(current_file);
-
-      for (include_list_t::const_iterator
-             itr = includes.begin(),
-             stop = includes.end();
-           itr != stop;
-           ++itr)
-        {
-          printf(" %s", (*itr).target.c_str());
-        }
-
-      printf("\n");
+      fname_stem.erase(0, m_strip_prefix.length() + 1);
     }
+
+  // Make sure that m_objdir ends with a slash if it is non-empty, so
+  // that we can join it to fname_stem and make a proper
+  // pathname.
+  if (m_objdir.length() > 0
+      && m_objdir[m_objdir.length()-1] != '/')
+    {
+      m_objdir += '/';
+    }
+
+  assert(m_obj_exts.size() > 0);
+
+  // Use C-style stdio here since it came out running quite a bit
+  // faster than iostreams, at least under g++-3.2.
+  printf("%s%s%s",
+         m_objdir.c_str(),
+         fname_stem.c_str(),
+         m_obj_exts[0].c_str());
+
+  for (unsigned int i = 1; i < m_obj_exts.size(); ++i)
+    {
+      printf(" %s%s%s",
+             m_objdir.c_str(),
+             fname_stem.c_str(),
+             m_obj_exts[i].c_str());
+    }
+
+  printf(": ");
+
+  const include_list_t& includes = get_nested_includes(fname);
+
+  for (include_list_t::const_iterator
+         itr = includes.begin(),
+         stop = includes.end();
+       itr != stop;
+       ++itr)
+    {
+      printf(" %s", (*itr).target.c_str());
+    }
+
+  printf("\n");
 }
 
-void cppdeps::print_include_tree(const string& current_file)
+void cppdeps::print_include_tree(const string& fname)
 {
-  const int ext_len = is_cc_or_h_filename(current_file.c_str());
-  if (ext_len > 0)
+  const int ext_len = is_cc_or_h_filename(fname.c_str());
+
+  if (ext_len == 0)
+    // it's not a c++ file, so just do nothing
+    return;
+
+  // otherwise, we do have a c++ file
+
+  const include_list_t& includes =
+    m_output_mode == DIRECT_INCLUDE_TREE
+    ? get_direct_includes(fname)
+    : get_nested_includes(fname);
+
+  printf("%s:: ", fname.c_str());
+
+  for (include_list_t::const_iterator
+         itr = includes.begin(),
+         stop = includes.end();
+       itr != stop;
+       ++itr)
     {
-      const include_list_t& includes =
-        m_output_mode == DIRECT_INCLUDE_TREE
-        ? get_direct_includes(current_file)
-        : get_nested_includes(current_file);
-
-      printf("%s:: ", current_file.c_str());
-
-      for (include_list_t::const_iterator
-             itr = includes.begin(),
-             stop = includes.end();
-           itr != stop;
-           ++itr)
-        {
-          printf(" %s:%s",
-                 (*itr).target.c_str(),
-                 (*itr).source.c_str());
-        }
-
-      printf("\n");
+      printf(" %s:%s",
+             (*itr).target.c_str(),
+             (*itr).source.c_str());
     }
+
+  printf("\n");
 }
 
 void cppdeps::traverse_sources(output_func handler)
