@@ -35,6 +35,8 @@
 #include "gx/vec2.h"
 
 #include "util/algo.h"
+#include "util/arrays.h"
+#include "util/pointers.h"
 
 #include <cstring>              // for memcpy
 

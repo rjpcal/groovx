@@ -30,8 +30,7 @@
 #ifndef BMAPDATA_H_DEFINED
 #define BMAPDATA_H_DEFINED
 
-#include "util/arrays.h"
-#include "util/pointers.h"
+template <class T> class shared_ptr;
 
 namespace Gfx
 {
