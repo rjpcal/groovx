@@ -3,7 +3,7 @@
 // serialport.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Mar 29 13:46:11 2000
-// written: Wed Mar 29 16:43:11 2000
+// written: Wed May 17 14:34:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ DOTRACE("Util::SerialPort::SerialPort");
 int Util::SerialPort::close(){
 DOTRACE("Util::SerialPort::close");
   if ( !itsClosed ) {
-	 itsStream.detach();
+	 itsStream.close();
 	 itsExitStatus = ::close(itsFiledes);
 	 itsClosed = true;
   }
