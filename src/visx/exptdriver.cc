@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Mar  7 19:36:07 2000
+// written: Wed Mar  8 10:55:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -291,7 +291,7 @@ DOTRACE("ExptDriver::Impl::recreateDoUponCompletionProc");
 	 proc_cmd.invoke(itsInterp);
   }
   catch (Tcl::TclError& err) {
-	 throw InputError(err.msg());
+	 throw InputError(err.msg_cstr());
   }
 }
 
