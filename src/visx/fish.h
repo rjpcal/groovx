@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Mon Sep  3 10:50:55 2001
+// written: Tue Sep  4 19:18:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,9 +45,8 @@ private:
   void readSplineFile(const char* splinefile);
   void readCoordFile(const char* coordfile, int index);
 
-  // Catches changes to currentPart and currentEndPt, so that we can
-  // reseat the referents of itsEndPt_Part and itsEndPt_Bkpt,
-  // respectively.
+  // Catches changes to currentPart, so that we can reseat the
+  // referent of itsCurrentPartBkpt.
   void updatePtrs();
 
 protected:
@@ -105,14 +104,8 @@ private:
   /// Selects the current part for editing.
   int itsCurrentPart;
 
-  /// Selects the current end point for editing.
-  int itsCurrentEndPt;
-
-  /// Controls the part referred to by the current end point.
-  int* itsEndPt_Part;
-
   /// Controls the breakpoint referred to by the current end point.
-  int* itsEndPt_Bkpt;
+  int* itsCurrentPartBkpt;
 
   /** Controls whether the different parts of the fish will be
       rendered in different colors. */

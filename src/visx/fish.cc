@@ -120,11 +120,8 @@ const FieldMap& Fish::classFields()
     Field("currentPart", &Fish::itsCurrentPart, 0, 0, 3, 1,
           Field::NEW_GROUP | Field::CHECKED | Field::TRANSIENT),
 
-    Field("currentEndPt", &Fish::itsCurrentEndPt, 0, 0, 3, 1,
-          Field::CHECKED | Field::TRANSIENT),
-
-    Field("endPt_Part", &Fish::itsEndPt_Part, 1, 1, 4, 1, Field::TRANSIENT),
-    Field("endPt_Bkpt", &Fish::itsEndPt_Bkpt, 1, 1, 10, 1, Field::TRANSIENT),
+    Field("currentPartBkpt", &Fish::itsCurrentPartBkpt, 1, 1, 10, 1,
+			 Field::TRANSIENT),
 
     Field("inColor", &Fish::inColor,
           false, false, true, true, Field::TRANSIENT),
@@ -160,9 +157,7 @@ Fish::Fish(const char* splinefile, const char* coordfile, int index) :
   itsLowerFinCoord(&itsParts[LF_2].itsCoord),
   itsMouthCoord(&itsParts[MA_3].itsCoord),
   itsCurrentPart(0),
-  itsCurrentEndPt(0),
-  itsEndPt_Part(&dummy_int),
-  itsEndPt_Bkpt(&dummy_int),
+  itsCurrentPartBkpt(&dummy_int),
   inColor(false),
   showControlPoints(false),
   partsMask(0)
@@ -312,7 +307,7 @@ void Fish::updatePtrs()
 {
 DOTRACE("Fish::updatePtrs");
 
-  itsEndPt_Bkpt = &(itsParts[itsCurrentPart].itsBkpt);
+  itsCurrentPartBkpt = &(itsParts[itsCurrentPart].itsBkpt);
 }
 
 void Fish::readSplineFile(const char* splinefile)
