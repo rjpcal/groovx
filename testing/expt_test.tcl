@@ -13,8 +13,17 @@ package require Objlist
 package require Poslist
 package require Tlist
 package require Block
+package require Blocklist
+package require Rhlist
+package require Nullrh
+package require Thlist
+package require Th
 
 if { ![Togl::inited] } { Togl::init "-rgba false"; update }
+
+if { [BlockList::count] == 0 } { Block::Block }
+if { [RhList::count] == 0 } { NullRh::NullRh }
+if { [ThList::count] == 0 } { Th::Th }
 
 # need to add checks on appropriate returns from all functions that use
 # isComplete()
@@ -22,41 +31,6 @@ if { ![Togl::inited] } { Togl::init "-rgba false"; update }
 # an expt that hasn't started, etc.
 # make sure to get trialDescription on empty + completed expt's
 # try all different possibilities on init
-
-### Expt::abortTrialCmd ###
-test "ExptTcl-Expt::abortTrial" "too many args" {
-    Expt::abortTrial junk
-} {wrong \# args: should be "Expt::abortTrial"} $Expt::haveTest
-
-if {$test_serialize} {
-test "ExptTcl-Expt::abortTrial" "normal use on incomplete expt" {
-	 # Check that the value of the previous response is the same 
-	 # before and after we abort a trial.
-	 Expt::read $::TEST_DIR/expt_in_progress_file
-	 Expt::beginTrial
-	 Expt::recordResponse 5
-	 set val [Expt::prevResponse]
-	 puts "val == $val"
-	 Expt::abortTrial
-	 Expt::beginTrial
-	 expr $val == 5 && [Expt::prevResponse] == $val
-} {^1$} $Expt::haveTest
-test "ExptTcl-Expt::abortTrial" "normal use on completed expt" {
-	 # abortTrial on completed Expt is a no-op
-	 Expt::read $::TEST_DIR/completed_expt_file
-	 catch {Expt::abortTrial}
-} {^0$} $Expt::haveTest
-test "ExptTcl-Expt::abortTrial" "normal use on empty expt" {
-	 # abortTrial on empty Expt is a no-op
-	 ObjList::reset
-	 PosList::reset
-	 set p [Pos::Pos]
-	 Tlist::makeSingles $p
-	 Block::init 0 1 0
-	 catch {Expt::abortTrial}
-} {^0$} $Expt::haveTest
-test "ExptTcl-Expt::abortTrial" "error" {} $BLANK $no_test
-}
 
 ### Expt::beginCmd ###
 test "ExptTcl-Expt::begin" "too many args" {
@@ -69,34 +43,6 @@ test "ExptTcl-Expt::begin" "normal use" {
 	 }
 } {^0$}
 test "ExptTcl-Expt::begin" "error" {} $BLANK $no_test
-
-### Expt::beginTrialCmd ###
-test "ExptTcl-Expt::beginTrial" "too many args" {
-    Expt::beginTrial junk
-} {wrong \# args: should be "Expt::beginTrial"} $Expt::haveTest
-
-if {$test_serialize} {
-test "ExptTcl-Expt::beginTrial" "normal use on incomplete expt" {
-	 Expt::read $::TEST_DIR/expt_in_progress_file
-	 catch {Expt::beginTrial}
-} {^0$} $Expt::haveTest
-test "ExptTcl-Expt::beginTrial" "normal use on completed expt" {
-	 Expt::read $::TEST_DIR/completed_expt_file
-	 # This should be a no-op
-	 catch {Expt::beginTrial}
-} {^0$} $Expt::haveTest
-test "ExptTcl-Expt::beginTrial" "normal use on empty expt" {
-	 ObjList::reset
-	 PosList::reset
-	 set p [Pos::Pos]
-	 Tlist::makeSingles $p
-	 Block::init 0 1 0
-	 # This should be a no-op
-	 catch {Expt::beginTrial}
-} {^0$} $Expt::haveTest
-}
-
-test "ExptTcl-Expt::beginTrial" "error" {} $BLANK $no_test
 
 ### Expt::pauseCmd ###
 test "ExptTcl-Expt::pause" "too many args" {
@@ -135,49 +81,12 @@ test "ExptTcl-Expt::read" "error on non-existent file" {
 } "Expt::read: IoFilenameError: $::TEST_DIR/nonexistent_file"
 }
 
-### Expt::recordResponseCmd ###
-test "ExptTcl-Expt::recordResponse" "too few args" {
-    Expt::recordResponse
-} {wrong \# args: should be "Expt::recordResponse response"} $Expt::haveTest
-test "ExptTcl-Expt::recordResponse" "too many args" {
-    Expt::recordResponse j u
-} {wrong \# args: should be "Expt::recordResponse response"} $Expt::haveTest
-
-if {$test_serialize} {
-test "ExptTcl-Expt::recordResponse" "normal record response" {
-	 Expt::read $::TEST_DIR/expt_in_progress_file
-	 Expt::recordResponse 5
-	 Expt::prevResponse
-} {^5$} $Expt::haveTest
-test "ExptTcl-Expt::recordResponse" "record response on complete expt" {
-	 Expt::read $::TEST_DIR/completed_expt_file
-	 catch {Expt::recordResponse 5}
-} {^0$} $Expt::haveTest
-}
-
-test "ExptTcl-Expt::recordResponse" "record response on empty expt" {
-	 ObjList::reset
-	 PosList::reset
-	 set p [Pos::Pos]
-	 Tlist::makeSingles $p
-	 Block::init 0 1 0
-	 catch {Expt::recordResponse 5}
-} {^0$} $Expt::haveTest
-test "ExptTcl-Expt::recordResponse" "error" {} $BLANK $no_test
-
 ### Expt::stopCmd ###
 test "ExptTcl-Expt::stop" "too many args" {
 	 Expt::stop junk
 } {^wrong \# args: should be "Expt::stop"$}
 test "ExptTcl-Expt::stop" "normal use" {} {^$}
 test "ExptTcl-Expt::stop" "error" {} $BLANK $no_test
-
-### Expt::undrawTrialCmd ###
-test "ExptTcl-Expt::undrawTrial" "too many args" {
-	 Expt::undrawTrial junk
-} {^wrong \# args: should be "Expt::undrawTrial"$} $Expt::haveTest
-test "ExptTcl-Expt::undrawTrial" "normal use" {} {^$} $Expt::haveTest
-test "ExptTcl-Expt::undrawTrial" "error" {} $BLANK $no_test
 
 ### Expt::writeCmd ###
 test "ExptTcl-Expt::write" "too few args" {
