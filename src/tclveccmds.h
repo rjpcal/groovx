@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Wed Mar  8 15:59:49 2000
+// written: Fri Mar 10 01:25:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,6 +50,9 @@ protected:
   virtual void doAppendValForItem(void* item) = 0;
 
 private:
+  VecGetterBaseCmd(const VecGetterBaseCmd&);
+  VecGetterBaseCmd& operator=(const VecGetterBaseCmd&);
+
   TclItemPkgBase* itsPkg;
   int itsItemArgn;
 };
@@ -89,6 +92,9 @@ protected:
   virtual void destroyValVec(void* val_vec) = 0;
 
 private:
+  VecSetterBaseCmd(const VecSetterBaseCmd&);
+  VecSetterBaseCmd& operator=(const VecSetterBaseCmd&);
+
   TclItemPkgBase* itsPkg;
   int itsItemArgn;
   int itsValArgn;
@@ -154,6 +160,9 @@ protected:
   virtual void invoke();
 
 private:
+  VecActionCmd(const VecActionCmd&);
+  VecActionCmd& operator=(const VecActionCmd&);
+
   TclItemPkgBase* itsPkg;
   scoped_ptr<Action> itsAction;
   int itsItemArgn;
