@@ -257,7 +257,7 @@ AC_PATH_XTRA
 CPPFLAGS="$CPPFLAGS $X_CFLAGS"
 LDFLAGS="$LDFLAGS $X_LIBS"
 
-AC_CHECK_HEADERS([limits iosfwd iostream fstream sstream \
+AC_CHECK_HEADERS([limits iosfwd iostream istream ostream fstream sstream \
 		  png.h jpeglib.h fcntl.h termios.h sys/time.h unistd.h \
 		  ext/stdio_filebuf.h],,,-)
 
