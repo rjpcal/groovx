@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Sun Nov 21 01:13:30 1999
+// written: Sun Nov 21 03:04:42 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@
 #include "reader.h"
 #include "writer.h"
 
+#define NO_TRACE
 #include "trace.h"
 #include "debug.h"
 
@@ -110,7 +111,7 @@ DOTRACE("IoPtrList::deserialize");
 	 IO* obj = IoMgr::newIO(type.c_str());
 	 if (!obj) throw InputError(ioTag);
 
-	 insertVoidPtrAt(ptrid, static_cast<void*>(obj));
+	 insertVoidPtrAt(ptrid, fromIOToVoid(obj));
 
 	 obj->deserialize(is, flag & ~IO::TYPENAME);
   }
