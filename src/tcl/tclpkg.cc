@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Wed Mar  8 13:39:25 2000
+// written: Wed Mar  8 16:54:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,13 @@
 
 #include "tclitempkg.h"
 
-#include <vector>
-
 #include "tclcmd.h"
 #include "stringifycmd.h"
 #include "tclveccmds.h"
 #include "util/strings.h"
+
+#include <tcl.h>
+#include <vector>
 
 #define NO_TRACE
 #include "trace.h"
