@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Sep  7 15:07:16 2001
-// written: Wed Jun 26 13:14:13 2002
+// written: Thu Sep 12 14:26:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -142,9 +142,29 @@ namespace Util
     typedef C Class_t;
   };
 
+  /// Specialization for member functions with "this" plus 0 arguments.
+  template <class R, class C>
+  struct FuncTraits<R (C::*)() const>
+    :
+    public FuncArgs<R, Null_t>
+  {
+    enum { numArgs = 1 };
+    typedef C Class_t;
+  };
+
   /// Specialization for member functions with "this" plus 1 argument.
   template <class R, class C, class P1>
   struct FuncTraits<R (C::*)(P1)>
+    :
+    public FuncArgs<R, Null_t, P1>
+  {
+    enum { numArgs = 2 };
+    typedef C Class_t;
+  };
+
+  /// Specialization for member functions with "this" plus 1 argument.
+  template <class R, class C, class P1>
+  struct FuncTraits<R (C::*)(P1) const>
     :
     public FuncArgs<R, Null_t, P1>
   {
@@ -162,6 +182,16 @@ namespace Util
     typedef C Class_t;
   };
 
+  /// Specialization for member functions with "this" plus 2 arguments.
+  template <class R, class C, class P1, class P2>
+  struct FuncTraits<R (C::*)(P1, P2) const>
+    :
+    public FuncArgs<R, Null_t, P1, P2>
+  {
+    enum { numArgs = 3 };
+    typedef C Class_t;
+  };
+
   /// Specialization for member functions with "this" plus 3 arguments.
   template <class R, class C, class P1, class P2, class P3>
   struct FuncTraits<R (C::*)(P1, P2, P3)>
@@ -172,9 +202,29 @@ namespace Util
     typedef C Class_t;
   };
 
+  /// Specialization for member functions with "this" plus 3 arguments.
+  template <class R, class C, class P1, class P2, class P3>
+  struct FuncTraits<R (C::*)(P1, P2, P3) const>
+    :
+    public FuncArgs<R, Null_t, P1, P2, P3>
+  {
+    enum { numArgs = 4 };
+    typedef C Class_t;
+  };
+
   /// Specialization for member functions with "this" plus 4 arguments.
   template <class R, class C, class P1, class P2, class P3, class P4>
   struct FuncTraits<R (C::*)(P1, P2, P3, P4)>
+    :
+    public FuncArgs<R, Null_t, P1, P2, P3, P4>
+  {
+    enum { numArgs = 5 };
+    typedef C Class_t;
+  };
+
+  /// Specialization for member functions with "this" plus 4 arguments.
+  template <class R, class C, class P1, class P2, class P3, class P4>
+  struct FuncTraits<R (C::*)(P1, P2, P3, P4) const>
     :
     public FuncArgs<R, Null_t, P1, P2, P3, P4>
   {
