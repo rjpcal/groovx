@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Dec  7 13:14:53 1999
+// written: Fri Jan  7 16:53:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,6 +95,8 @@ private:
 
   void doAutosave();
 
+  // These accessors will NOT recover if the corresponding id is
+  // invalid; clients must check validity before calling the accessor.
   Block& block() const;
   ResponseHandler& responseHandler() const;
   TimingHdlr& timingHdlr() const;
@@ -300,50 +302,44 @@ DOTRACE("ExptDriver::Impl::doAutosave");
 
 Block& ExptDriver::Impl::block() const {
 DOTRACE("ExptDriver::Impl::block");
-  try {
+
+  Assert( BlockList::theBlockList().isValidId(itsBlockId) );
+
 #ifdef LOCAL_DEBUG
-	 Block* block = BlockList::theBlockList().getCheckedPtr(itsBlockId);
-	 DebugEvalNL((void *) block);
-	 return *block;
+  Block* block = BlockList::theBlockList().getPtr(itsBlockId);
+  DebugEvalNL((void *) block);
+  return *block;
 #else
-	 return *(BlockList::theBlockList().getCheckedPtr(itsBlockId));
+  return *(BlockList::theBlockList().getPtr(itsBlockId));
 #endif
-  }
-  catch (InvalidIdError& err) {
-	 raiseBackgroundError(err.msg().c_str());
-  }
 }
 
 ResponseHandler& ExptDriver::Impl::responseHandler() const {
 DOTRACE("ExptDriver::Impl::responseHandler");
-  try {
+
+  Assert( RhList::theRhList().isValidId(itsRhId) );
+
 #ifdef LOCAL_DEBUG
-	 ResponseHandler* rh = RhList::theRhList().getCheckedPtr(itsRhId);
-	 DebugEval(itsRhId);   DebugEvalNL((void *) rh);
-	 return *rh;
+  ResponseHandler* rh = RhList::theRhList().getPtr(itsRhId);
+  DebugEval(itsRhId);   DebugEvalNL((void *) rh);
+  return *rh;
 #else
-	 return *(RhList::theRhList().getCheckedPtr(itsRhId));
+  return *(RhList::theRhList().getPtr(itsRhId));
 #endif
-  }
-  catch (InvalidIdError& err) {
-	 raiseBackgroundError(err.msg().c_str());
-  }  
 }
 
 TimingHdlr& ExptDriver::Impl::timingHdlr() const {
 DOTRACE("ExptDriver::Impl::timingHdlr");
-  try {
+
+  Assert( ThList::theThList().isValidId(itsThId) );
+
 #ifdef LOCAL_DEBUG
-	 TimingHdlr* th = ThList::theThList().getCheckedPtr(itsThId);
-	 DebugEvalNL((void *) th);
-	 return *th;
+  TimingHdlr* th = ThList::theThList().getPtr(itsThId);
+  DebugEvalNL((void *) th);
+  return *th;
 #else
-	 return *(ThList::theThList().getCheckedPtr(itsThId));
+  return *(ThList::theThList().getPtr(itsThId));
 #endif
-  }
-  catch (InvalidIdError& err) {
-	 raiseBackgroundError(err.msg().c_str());
-  }  
 }
 
 //---------------------------------------------------------------------
