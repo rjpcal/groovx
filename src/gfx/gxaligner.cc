@@ -1,19 +1,19 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// grobjaligner.cc
+// gxaligner.cc
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
-// created: Wed Jul 18 15:48:47 2001
-// written: Wed Nov 13 12:46:45 2002
+// created: Wed Nov 13 12:59:04 2002
+// written: Wed Nov 13 12:59:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROBJALIGNER_CC_DEFINED
-#define GROBJALIGNER_CC_DEFINED
+#ifndef GXALIGNER_CC_DEFINED
+#define GXALIGNER_CC_DEFINED
 
-#include "visx/grobjaligner.h"
+#include "gxaligner.h"
 
 #include "gfx/canvas.h"
 
@@ -23,15 +23,15 @@
 
 #include "util/trace.h"
 
-GrObjAligner::GrObjAligner(Util::SoftRef<GxNode> child) :
+GxAligner::GxAligner(Util::SoftRef<GxNode> child) :
   GxBin(child),
   itsMode(NATIVE_ALIGNMENT),
   itsCenter(0.0, 0.0)
 {}
 
-Gfx::Vec2<double> GrObjAligner::getCenter(const Gfx::Rect<double>& bounds) const
+Gfx::Vec2<double> GxAligner::getCenter(const Gfx::Rect<double>& bounds) const
 {
-DOTRACE("GrObjAligner::getCenter");
+DOTRACE("GxAligner::getCenter");
   switch (itsMode)
     {
     case CENTER_ON_CENTER:
@@ -51,10 +51,10 @@ DOTRACE("GrObjAligner::getCenter");
   return bounds.center();
 }
 
-void GrObjAligner::doAlignment(Gfx::Canvas& canvas,
-                               const Gfx::Rect<double>& native) const
+void GxAligner::doAlignment(Gfx::Canvas& canvas,
+                            const Gfx::Rect<double>& native) const
 {
-DOTRACE("GrObjAligner::doAlignment");
+DOTRACE("GxAligner::doAlignment");
 
   if (NATIVE_ALIGNMENT == itsMode) return;
 
@@ -69,8 +69,9 @@ DOTRACE("GrObjAligner::doAlignment");
 }
 
 
-void GrObjAligner::draw(Gfx::Canvas& canvas) const
+void GxAligner::draw(Gfx::Canvas& canvas) const
 {
+DOTRACE("GxAligner::draw");
   Gfx::MatrixSaver state(canvas);
 
   doAlignment(canvas, child()->getBoundingBox(canvas));
@@ -78,9 +79,11 @@ void GrObjAligner::draw(Gfx::Canvas& canvas) const
   child()->draw(canvas);
 }
 
-void GrObjAligner::getBoundingCube(Gfx::Box<double>& cube,
-                                   Gfx::Canvas& canvas) const
+void GxAligner::getBoundingCube(Gfx::Box<double>& cube,
+                                Gfx::Canvas& canvas) const
 {
+DOTRACE("GxAligner::getBoundingCube");
+
   Gfx::Rect<double> bounds = child()->getBoundingBox(canvas);
 
   Gfx::Vec2<double> center = getCenter(bounds);
@@ -91,5 +94,5 @@ void GrObjAligner::getBoundingCube(Gfx::Box<double>& cube,
 }
 
 
-static const char vcid_grobjaligner_cc[] = "$Header$";
-#endif // !GROBJALIGNER_CC_DEFINED
+static const char vcid_gxaligner_cc[] = "$Header$";
+#endif // !GXALIGNER_CC_DEFINED

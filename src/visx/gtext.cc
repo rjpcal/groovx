@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Wed Nov 13 12:54:06 2002
+// written: Wed Nov 13 13:01:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "visx/gtext.h"
 
 #include "gfx/canvas.h"
+#include "gfx/gxaligner.h"
 
 #include "gx/rect.h"
 
@@ -24,7 +25,6 @@
 #include "io/writer.h"
 
 #include "visx/gmodes.h"
-#include "visx/grobjaligner.h"
 
 #include <GL/gl.h>
 
@@ -775,7 +775,7 @@ Gtext::Gtext(const char* text) :
 DOTRACE("Gtext::Gtext(const char*)");
   itsListBase = getStrokeFontListBase();
 
-  setAlignmentMode(GrObjAligner::CENTER_ON_CENTER);
+  setAlignmentMode(GxAligner::CENTER_ON_CENTER);
   setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
   setRenderMode(Gmodes::GLCOMPILE);
   setHeight(1.0);

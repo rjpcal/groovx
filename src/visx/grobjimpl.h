@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Wed Nov 13 12:37:30 2002
+// written: Wed Nov 13 13:01:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,12 @@
 #ifndef GROBJIMPL_H_DEFINED
 #define GROBJIMPL_H_DEFINED
 
+#include "gfx/gxaligner.h"
 #include "gfx/gxbin.h"
 
 #include "gx/box.h"
 
 #include "visx/grobj.h"
-#include "visx/grobjaligner.h"
 #include "visx/grobjbbox.h"
 #include "visx/grobjscaler.h"
 
@@ -70,7 +70,7 @@ public:
   Util::Ref<GrObjBBox> itsBB;
   Util::Ref<GLCacheNode> itsGLCache;
   Util::Ref<BitmapCacheNode> itsBitmapCache;
-  Util::Ref<GrObjAligner> itsAligner;
+  Util::Ref<GxAligner> itsAligner;
   Util::Ref<GrObjScaler> itsScaler;
 
   Util::Ref<GxNode> itsTopNode;
@@ -87,7 +87,7 @@ public:
     itsBB(new GrObjBBox(itsNativeNode), Util::PRIVATE),
     itsGLCache(new GLCacheNode(itsBB), Util::PRIVATE),
     itsBitmapCache(new BitmapCacheNode(itsGLCache), Util::PRIVATE),
-    itsAligner(new GrObjAligner(itsBitmapCache), Util::PRIVATE),
+    itsAligner(new GxAligner(itsBitmapCache), Util::PRIVATE),
     itsScaler(new GrObjScaler(itsAligner), Util::PRIVATE),
     itsTopNode(itsScaler)
   {

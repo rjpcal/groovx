@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Nov 13 12:50:09 2002
+// written: Wed Nov 13 13:01:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "visx/bitmap.h"
 
 #include "gfx/canvas.h"
+#include "gfx/gxaligner.h"
 
 #include "grsh/grsh.h"
 
@@ -33,7 +34,6 @@
 #include "util/pointers.h"
 
 #include "visx/bmaprenderer.h"
-#include "visx/grobjaligner.h"
 
 #include "util/trace.h"
 
@@ -174,7 +174,7 @@ Bitmap::Bitmap(shared_ptr<BmapRenderer> renderer) :
   itsImpl(new BitmapImpl(renderer))
 {
 DOTRACE("Bitmap::Bitmap");
-  setAlignmentMode(GrObjAligner::CENTER_ON_CENTER);
+  setAlignmentMode(GxAligner::CENTER_ON_CENTER);
 }
 
 Bitmap::~Bitmap()

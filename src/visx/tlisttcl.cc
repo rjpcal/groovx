@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Nov 13 12:56:04 2002
+// written: Wed Nov 13 13:01:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #define TLISTTCL_CC_DEFINED
 
 #include "gfx/canvas.h"
+#include "gfx/gxaligner.h"
 #include "gfx/gxnode.h"
 #include "gfx/gxseparator.h"
 
@@ -29,7 +30,6 @@
 #include "util/ref.h"
 
 #include "visx/gmodes.h"
-#include "visx/grobjaligner.h"
 #include "visx/gtext.h"
 #include "visx/position.h"
 #include "visx/grobj.h"
@@ -82,7 +82,7 @@ namespace
 
         Ref<GrObj> obj(objids[i]);
 
-        obj->setAlignmentMode(GrObjAligner::CENTER_ON_CENTER);
+        obj->setAlignmentMode(GxAligner::CENTER_ON_CENTER);
         obj->setBBVisibility(true);
         obj->setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
         obj->setMaxDimension(0.8);
@@ -103,7 +103,7 @@ namespace
           {
             Ref<Gtext> label(Gtext::make());
             label->setText(fstring(objids[i]));
-            label->setAlignmentMode(GrObjAligner::CENTER_ON_CENTER);
+            label->setAlignmentMode(GxAligner::CENTER_ON_CENTER);
             label->setScalingMode(Gmodes::MAINTAIN_ASPECT_SCALING);
             label->setHeight(0.1);
 

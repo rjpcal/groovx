@@ -1,24 +1,27 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// grobjaligner.h
+// gxaligner.h
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
-// created: Wed Jul 18 15:42:42 2001
-// written: Wed Nov 13 12:48:51 2002
+// created: Wed Nov 13 12:58:27 2002
+// written: Wed Nov 13 12:59:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROBJALIGNER_H_DEFINED
-#define GROBJALIGNER_H_DEFINED
+#ifndef GXALIGNER_H_DEFINED
+#define GXALIGNER_H_DEFINED
 
 #include "gfx/gxbin.h"
 
 #include "gx/vec2.h"
 
-/// Controls how a GrObj is aligned relative to the origin when it is drawn.
-class GrObjAligner : public GxBin
+//  ###################################################################
+//  ===================================================================
+
+/// Controls how its child is aligned relative to the origin when it is drawn.
+class GxAligner : public GxBin
 {
 public:
 
@@ -59,7 +62,7 @@ public:
 
 
 
-  GrObjAligner(Util::SoftRef<GxNode> child);
+  GxAligner(Util::SoftRef<GxNode> child);
 
   Gfx::Vec2<double> getCenter(const Gfx::Rect<double>& bounds) const;
 
@@ -84,5 +87,5 @@ public:
 };
 
 
-static const char vcid_grobjaligner_h[] = "$Header$";
-#endif // !GROBJALIGNER_H_DEFINED
+static const char vcid_gxaligner_h[] = "$Header$";
+#endif // !GXALIGNER_H_DEFINED
