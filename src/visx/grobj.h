@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu Nov 18 13:47:40 1999
+// written: Thu Nov 18 13:48:45 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -330,10 +330,6 @@ protected:
 		GROBJ_DIRECT_RENDER or to any of the compile or cache modes. The
 		default implementation provided by GrObj does nothing. */
   virtual void grUnRender() const;
-
-  /** This function queries whether the GrObj's cached representation
-		is in correspondence with all of its parameters. */
-  bool grIsCurrent() const;
 
 private:
   class Impl;
