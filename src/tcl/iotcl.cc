@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Thu May 10 12:04:43 2001
+// written: Thu May 17 09:30:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -231,9 +231,8 @@ protected:
   virtual void invoke() {
 	 const char* type = getCstringFromArg(1);
 
-	 IO::IoObject* obj = IO::IoMgr::newIO(type);
-
-	 IdItem<IO::IoObject> item(obj, IdItem<IO::IoObject>::Insert());
+	 IdItem<IO::IoObject> item(IO::IoMgr::newIO(type),
+										IdItem<IO::IoObject>::Insert());
 
 	 returnInt(item.id());
   }
