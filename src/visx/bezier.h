@@ -3,7 +3,7 @@
 // bezier.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 21 09:51:40 1999
-// written: Sat Mar 18 13:17:44 2000
+// written: Mon Mar 20 08:19:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -153,7 +153,7 @@ void Bezier::setCtrlPnts(const dynamic_block<double>& RR, int extrema_res) {
 
   if (extrema_res <= 0) { extrema_res = 4*(RR.size()); }
 
-  list_stack<double> extrema;
+  slink_list<double> extrema;
 
   extrema.push_front(0.0);
 
@@ -173,7 +173,7 @@ void Bezier::setCtrlPnts(const dynamic_block<double>& RR, int extrema_res) {
   uMin_ = uMax_ = 0.0;
   valMin_ = valMax_ = eval(0.0);
 
-  for (list_stack<double>::iterator
+  for (slink_list<double>::iterator
 			ii = extrema.begin(),
 			end = extrema.end();
 		 ii != end;

@@ -3,7 +3,7 @@
 // tclpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 12:55:27 1999
-// written: Sat Mar 18 12:43:48 2000
+// written: Mon Mar 20 08:19:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,15 +51,15 @@ public:
   ~Impl();
 
   Tcl_Interp* itsInterp;
-  list_stack<shared_ptr<TclCmd> > itsCmds;
+  slink_list<shared_ptr<TclCmd> > itsCmds;
   string itsPkgName;
   string itsVersion;
 
   int itsInitStatus;
 
-  list_stack<shared_ptr<int> > ownedInts;
-  list_stack<shared_ptr<double> > ownedDoubles;
-  list_stack<shared_ptr<char*> > ownedCstrings;
+  slink_list<shared_ptr<int> > ownedInts;
+  slink_list<shared_ptr<double> > ownedDoubles;
+  slink_list<shared_ptr<char*> > ownedCstrings;
 };
 
 Tcl::TclPkg::Impl::Impl(Tcl_Interp* interp,

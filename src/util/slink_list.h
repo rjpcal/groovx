@@ -3,7 +3,7 @@
 // lists.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Mar 18 11:22:40 2000
-// written: Sat Mar 18 13:31:40 2000
+// written: Mon Mar 20 08:19:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,7 @@
 #define LISTS_H_DEFINED
 
 template <class T>
-class list_stack {
+class slink_list {
 public:
   typedef T value_type;
 
@@ -50,9 +50,9 @@ public:
 	 bool operator!=(const iterator& other) { return nn != other.nn; }
   };
 
-  list_stack() : head(0) {}
+  slink_list() : head(0) {}
 
-  list_stack(const list_stack& other) :
+  slink_list(const slink_list& other) :
 	 head(new node(other.head->val, 0))
 	 {
 		node* other_next_node = other.head->next;
@@ -64,11 +64,11 @@ public:
 		  }
 	 }
 
-  ~list_stack() { clear(); }
+  ~slink_list() { clear(); }
 
-  list_stack& operator=(const list_stack& other)
+  slink_list& operator=(const slink_list& other)
 	 {
-		list_stack other_copy(other);
+		slink_list other_copy(other);
 		this->swap(other_copy);
 		return *this;
 	 }
@@ -111,7 +111,7 @@ public:
 		while ( !empty() ) pop_front();
 	 }
 
-  void swap(list_stack& other)
+  void swap(slink_list& other)
 	 {
 		node* other_head = other.head;
 		other.head = this->head;
