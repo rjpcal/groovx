@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Sat Jan 15 11:10:39 2000
+// written: Thu Feb 17 19:42:31 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -450,9 +450,9 @@ protected:
 	 if (widg != 0) {
 		widg->setCurTrial(id);
 		widg->setVisibility(true);
-	 }
 
-	 widg->display();
+		widg->display();
+	 }
   }
 };
 
