@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Dec  4 19:09:09 2002
+// written: Thu Dec  5 13:45:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,6 @@
 
 #include "system/system.h"
 
-#include "tcl/tclcode.h"
 #include "tcl/tclerror.h"
 #include "tcl/tclmain.h"
 #include "tcl/tclprocwrapper.h"
@@ -59,7 +58,7 @@ namespace
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ExptDriver::Impl utility class
+// ExptDriver::Impl class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -70,18 +69,31 @@ private:
   Impl& operator=(const Impl&);
 
 public:
-  Impl(ExptDriver* owner);
-  ~Impl();
+  Impl() :
+    interp(Tcl::Main::safeInterp()),
+    widget(),
+    hostname(""),
+    subject(""),
+    beginDate(""),
+    endDate(""),
+    autosaveFile("__autosave_file"),
+    infoLog(),
+    autosavePeriod(10),
+    elements(),
+    sequenceIdx(0),
+    errorHandler(interp.intp()),
+    doWhenComplete(new Tcl::ProcWrapper(interp))
+  {}
 
-  //////////////////////
-  // helper functions //
-  //////////////////////
+  ~Impl() {}
 
-private:
+  //
+  // helper functions
+  //
 
   bool haveCurrentElement() const
     {
-      return ( itsSequenceIdx < itsElements.size() );
+      return ( sequenceIdx < elements.size() );
     }
 
   // Ensure that there is a valid current element. If there is not, throw
@@ -95,129 +107,43 @@ private:
         }
     }
 
-  bool needAutosave() const;
-  void doAutosave();
+  //
+  // data members
+  //
 
-  //////////////////////////
-  // ExptDriver delegands //
-  //////////////////////////
+  Tcl::Interp interp;
 
-public:
+  SoftRef<Toglet> widget;
 
-  void readFrom(IO::Reader* reader);
-  void writeTo(IO::Writer* writer) const;
+  fstring hostname;     // Host computer on which Expt was begun
+  fstring subject;      // Id of subject on whom Expt was performed
+  fstring beginDate;    // Date(+time) when Expt was begun
+  fstring endDate;      // Date(+time) when Expt was stopped
+  fstring autosaveFile; // Filename used for autosaves
 
-  fstring status() const
-  {
-    if (!haveCurrentElement())
-      return "not running";
+  fstring infoLog;
 
-    return currentElement()->status();
-  }
+  int autosavePeriod;
 
-  void addLogInfo(const char* message)
-  {
-    fstring date_string = System::theSystem().formattedTime();
+  minivec<Ref<Element> > elements;
 
-    itsInfoLog.append("@");
-    itsInfoLog.append(date_string);
-    itsInfoLog.append(" ");
-    itsInfoLog.append(message);
-    itsInfoLog.append("\n");
-  }
+  unsigned int sequenceIdx;
 
-  void addElement(Ref<Element> elem)
-    { itsElements.push_back(elem); }
+  mutable Tcl::BkdErrorHandler errorHandler;
 
-  Ref<Element> currentElement() const
-    {
-      if ( !haveCurrentElement() )
-        throw Util::Error("no current element exists");
-      return itsElements.at(itsSequenceIdx);
-    }
-
-  Util::FwdIter<Util::Ref<Element> > getElements()
-    {
-      return Util::FwdIter<Util::Ref<Element> >(itsElements.begin(),
-                                                itsElements.end());
-    }
-
-  int numCompleted() const
-    {
-      int num = 0;
-      for (unsigned int i = 0; i < itsElements.size(); ++i)
-        num += itsElements[i]->numCompleted();
-      return num;
-    }
-
-  void edBeginExpt();
-  void vxEndTrial();
-  void vxNext();
-  void vxHalt() const;
-  void edResumeExpt();
-  void edClearExpt();
-  void vxReset();
-
-  void edEndExpt();
-
-  void storeData();
-
-  //////////////////
-  // data members //
-  //////////////////
-
-private:
-  ExptDriver* itsOwner;
-
-public:
-  Tcl::Interp itsInterp;
-
-  SoftRef<Toglet> itsWidget;
-
-  fstring itsHostname;     // Host computer on which Expt was begun
-  fstring itsSubject;      // Id of subject on whom Expt was performed
-  fstring itsBeginDate;    // Date(+time) when Expt was begun
-  fstring itsEndDate;      // Date(+time) when Expt was stopped
-  fstring itsAutosaveFile; // Filename used for autosaves
-
-  fstring itsInfoLog;
-
-  int itsAutosavePeriod;
-
-private:
-  minivec<Ref<Element> > itsElements;
-
-  unsigned int itsSequenceIdx;
-
-public:
-  mutable Tcl::BkdErrorHandler itsErrorHandler;
-
-  Ref<Tcl::ProcWrapper> itsDoWhenComplete;
+  Ref<Tcl::ProcWrapper> doWhenComplete;
 };
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ExptDriver::Impl member definitions
+// ExptDriver creator method definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-ExptDriver::Impl::Impl(ExptDriver* owner) :
-  itsOwner(owner),
-  itsInterp(Tcl::Main::safeInterp()),
-  itsWidget(),
-  itsHostname(""),
-  itsSubject(""),
-  itsBeginDate(""),
-  itsEndDate(""),
-  itsAutosaveFile("__autosave_file"),
-  itsInfoLog(),
-  itsAutosavePeriod(10),
-  itsElements(),
-  itsSequenceIdx(0),
-  itsErrorHandler(itsInterp.intp()),
-  itsDoWhenComplete(new Tcl::ProcWrapper(itsInterp))
+ExptDriver::ExptDriver() :
+  rep(new Impl)
 {
-DOTRACE("ExptDriver::Impl::Impl");
+DOTRACE("ExptDriver::ExptDriver");
 
   int argc = Grsh::argc();
   char** argv = Grsh::argv();
@@ -233,245 +159,381 @@ DOTRACE("ExptDriver::Impl::Impl");
   addLogInfo(cmd_line.c_str());
 }
 
-ExptDriver::Impl::~Impl()
+ExptDriver::~ExptDriver()
 {
-DOTRACE("ExptDriver::Impl::~Impl");
+DOTRACE("ExptDriver::~ExptDriver");
+  delete rep;
 }
 
-void ExptDriver::Impl::doAutosave()
+IO::VersionId ExptDriver::serialVersionId() const
 {
-DOTRACE("ExptDriver::Impl::doAutosave");
-  try
-    {
-      dbgEvalNL(3, itsAutosaveFile.c_str());
-      IO::saveASW(Util::Ref<IO::IoObject>(itsOwner), itsAutosaveFile);
-    }
-  catch (Util::Error& err)
-    {
-      itsErrorHandler.handleMsg(err.msg_cstr());
-    }
+DOTRACE("ExptDriver::serialVersionId");
+  return EXPTDRIVER_SERIAL_VERSION_ID;
 }
 
-//--------------------------------------------------------------------
-//
-// ExptDriver::needAutosave --
-//
-// Determine whether an autosave is necessary now. An autosave is
-// requested only if the autosave period is positive, and the number
-// of completed trials is evenly divisible by the autosave period.
-//
-//--------------------------------------------------------------------
-
-bool ExptDriver::Impl::needAutosave() const
+void ExptDriver::readFrom(IO::Reader* reader)
 {
-DOTRACE("ExptDriver::Impl::needAutosave");
-  if ( !haveCurrentElement() ) return false;
-
-  return ( (itsAutosavePeriod > 0) &&
-           ((numCompleted() % itsAutosavePeriod) == 0) &&
-           !(itsAutosaveFile.is_empty()) );
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// ExptDriver::Impl delegand functions
-//
-///////////////////////////////////////////////////////////////////////
-
-void ExptDriver::Impl::readFrom(IO::Reader* reader)
-{
-DOTRACE("ExptDriver::Impl::readFrom");
+DOTRACE("ExptDriver::readFrom");
 
   int svid = reader->ensureReadVersionId("ExptDriver", 3, "Try grsh0.8a3");
 
-  reader->readValue("hostname", itsHostname);
-  reader->readValue("subject", itsSubject);
-  reader->readValue("beginDate", itsBeginDate);
-  reader->readValue("endDate", itsEndDate);
-  reader->readValue("autosaveFile", itsAutosaveFile);
-  reader->readValue("autosavePeriod", itsAutosavePeriod);
-  reader->readValue("infoLog", itsInfoLog);
+  reader->readValue("hostname", rep->hostname);
+  reader->readValue("subject", rep->subject);
+  reader->readValue("beginDate", rep->beginDate);
+  reader->readValue("endDate", rep->endDate);
+  reader->readValue("autosaveFile", rep->autosaveFile);
+  reader->readValue("autosavePeriod", rep->autosavePeriod);
+  reader->readValue("infoLog", rep->infoLog);
 
-  reader->readValue("currentBlockIdx", itsSequenceIdx);
+  reader->readValue("currentBlockIdx", rep->sequenceIdx);
 
-  itsElements.clear();
+  rep->elements.clear();
   IO::ReadUtils::readObjectSeq<Element>(
-           reader, "blocks", std::back_inserter(itsElements));
+           reader, "blocks", std::back_inserter(rep->elements));
 
   if (svid < 4)
     {
       fstring proc_body;
       reader->readValue("doUponCompletionScript", proc_body);
-      itsDoWhenComplete->define("", proc_body);
+      rep->doWhenComplete->define("", proc_body);
     }
   else
     {
-      reader->readOwnedObject("doWhenComplete", itsDoWhenComplete);
+      reader->readOwnedObject("doWhenComplete", rep->doWhenComplete);
     }
 }
 
-void ExptDriver::Impl::writeTo(IO::Writer* writer) const
+void ExptDriver::writeTo(IO::Writer* writer) const
 {
-DOTRACE("ExptDriver::Impl::writeTo");
+DOTRACE("ExptDriver::writeTo");
 
   writer->ensureWriteVersionId("ExptDriver", EXPTDRIVER_SERIAL_VERSION_ID, 4,
                                "Try grsh0.8a7");
 
-  writer->writeValue("hostname", itsHostname);
-  writer->writeValue("subject", itsSubject);
-  writer->writeValue("beginDate", itsBeginDate);
-  writer->writeValue("endDate", itsEndDate);
-  writer->writeValue("autosaveFile", itsAutosaveFile);
-  writer->writeValue("autosavePeriod", itsAutosavePeriod);
-  writer->writeValue("infoLog", itsInfoLog);
+  writer->writeValue("hostname", rep->hostname);
+  writer->writeValue("subject", rep->subject);
+  writer->writeValue("beginDate", rep->beginDate);
+  writer->writeValue("endDate", rep->endDate);
+  writer->writeValue("autosaveFile", rep->autosaveFile);
+  writer->writeValue("autosavePeriod", rep->autosavePeriod);
+  writer->writeValue("infoLog", rep->infoLog);
 
-  writer->writeValue("currentBlockIdx", itsSequenceIdx);
+  writer->writeValue("currentBlockIdx", rep->sequenceIdx);
 
   IO::WriteUtils::writeObjectSeq(writer, "blocks",
-                                 itsElements.begin(), itsElements.end());
+                                 rep->elements.begin(), rep->elements.end());
 
-  writer->writeOwnedObject("doWhenComplete", itsDoWhenComplete);
+  writer->writeOwnedObject("doWhenComplete", rep->doWhenComplete);
 }
+
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ExptDriver action method definitions
+// ExptDriver's Element interface
 //
 ///////////////////////////////////////////////////////////////////////
 
-
-void ExptDriver::Impl::edBeginExpt()
+Util::ErrorHandler& ExptDriver::getErrorHandler() const
 {
-DOTRACE("ExptDriver::Impl::edBeginExpt");
-
-  ensureHasElement();
-
-  addLogInfo("Beginning experiment.");
-
-  itsBeginDate = System::theSystem().formattedTime();
-  itsHostname = System::theSystem().getenv("HOST");
-  itsSubject = System::theSystem().getcwd();
-
-  Util::Log::reset(); // to clear any existing timer scopes
-  Util::Log::addScope("Expt");
-
-  currentElement()->vxRun(*itsOwner);
+DOTRACE("ExptDriver::getErrorHandler");
+  return rep->errorHandler;
 }
 
-
-void ExptDriver::Impl::vxEndTrial()
+const Util::SoftRef<Toglet>& ExptDriver::getWidget() const
 {
-DOTRACE("ExptDriver::Impl::vxEndTrial");
-
-  if ( needAutosave() ) { doAutosave(); }
+DOTRACE("ExptDriver::getWidget");
+  return rep->widget;
 }
 
-
-void ExptDriver::Impl::vxNext()
+int ExptDriver::trialType() const
 {
-DOTRACE("ExptDriver::Impl::vxNext");
-
-  ++itsSequenceIdx;
-
-  if ( !haveCurrentElement() )
-    {
-      edEndExpt();
-    }
-  else
-    {
-      currentElement()->vxRun(*itsOwner);
-    }
+DOTRACE("ExptDriver::trialType");
+  return currentElement()->trialType();
 }
 
-
-void ExptDriver::Impl::vxHalt() const
+int ExptDriver::numCompleted() const
 {
-DOTRACE("ExptDriver::Impl::vxHalt");
+DOTRACE("ExptDriver::numCompleted");
 
-  if ( haveCurrentElement() )
+  int num = 0;
+  for (unsigned int i = 0; i < rep->elements.size(); ++i)
+    num += rep->elements[i]->numCompleted();
+  return num;
+}
+
+int ExptDriver::lastResponse() const
+{
+DOTRACE("ExptDriver::lastResponse");
+  return currentElement()->lastResponse();
+}
+
+fstring ExptDriver::status() const
+{
+DOTRACE("ExptDriver::status");
+
+  if (!rep->haveCurrentElement())
+    return "not running";
+
+  return currentElement()->status();
+}
+
+void ExptDriver::vxRun(Element& /*parent*/)
+{
+DOTRACE("currentElement");
+  /* FIXME */ Assert(false);
+}
+
+void ExptDriver::vxHalt() const
+{
+DOTRACE("ExptDriver::vxHalt");
+
+  if ( rep->haveCurrentElement() )
     {
       currentElement()->vxHalt();
     }
 }
 
-
-void ExptDriver::Impl::edResumeExpt()
+void ExptDriver::vxAbort()
 {
-DOTRACE("ExptDriver::Impl::edResumeExpt");
-  ensureHasElement();
-
-  currentElement()->vxRun(*itsOwner);
+DOTRACE("ExptDriver::vxAbort");
+  /* FIXME */ Assert(false);
 }
 
-
-void ExptDriver::Impl::edClearExpt()
+void ExptDriver::vxEndTrial()
 {
-DOTRACE("ExptDriver::Impl::edClearExpt");
-  vxHalt();
+DOTRACE("ExptDriver::vxEndTrial");
 
-  itsElements.clear();
-  itsSequenceIdx = 0;
+  if ( !rep->haveCurrentElement() )
+    return;
+
+  // Determine whether an autosave is necessary now. An autosave is
+  // requested only if the autosave period is positive, and the number of
+  // completed trials is evenly divisible by the autosave period.
+  if ( rep->autosavePeriod <= 0 ||
+       (numCompleted() % rep->autosavePeriod) != 0 ||
+       rep->autosaveFile.is_empty() )
+    return;
+
+  try
+    {
+      dbgEvalNL(3, rep->autosaveFile.c_str());
+      IO::saveASW(Util::Ref<IO::IoObject>(this), rep->autosaveFile);
+    }
+  catch (Util::Error& err)
+    {
+      rep->errorHandler.handleMsg(err.msg_cstr());
+    }
 }
 
-
-void ExptDriver::Impl::vxReset()
+void ExptDriver::vxNext()
 {
-DOTRACE("ExptDriver::Impl::vxReset");
+DOTRACE("ExptDriver::vxNext");
+
+  ++rep->sequenceIdx;
+
+  if ( !rep->haveCurrentElement() )
+    {
+      Util::log( "experiment complete" );
+
+      addLogInfo("Experiment complete.");
+
+      storeData();
+
+      Util::log( fstring("Expt::doWhenComplete") );
+      rep->doWhenComplete->invoke(""); // Call the user-defined callback
+
+      Util::Log::removeScope("Expt");
+    }
+  else
+    {
+      currentElement()->vxRun(*this);
+    }
+}
+
+void ExptDriver::vxProcessResponse(Response& /*response*/)
+{
+DOTRACE("ExptDriver::vxProcessResponse");
+  /* FIXME */ Assert(false);
+}
+
+void ExptDriver::vxUndo()
+{
+DOTRACE("ExptDriver::vxUndo");
+  currentElement()->vxUndo();
+}
+
+void ExptDriver::vxReset()
+{
+DOTRACE("ExptDriver::vxReset");
   vxHalt();
 
   Util::log("resetting experiment");
 
   while (1)
     {
-      if ( haveCurrentElement() )
+      if ( rep->haveCurrentElement() )
         {
-          Util::log(fstring("resetting element", itsSequenceIdx));
+          Util::log(fstring("resetting element", rep->sequenceIdx));
           currentElement()->vxReset();
         }
 
-      if (itsSequenceIdx > 0)
-        --itsSequenceIdx;
+      if (rep->sequenceIdx > 0)
+        --(rep->sequenceIdx);
       else
         break;
     }
 }
 
+///////////////////////////////////////////////////////////////////////
+//
+// ExptDriver accessor + manipulator method definitions
+//
+///////////////////////////////////////////////////////////////////////
 
-void ExptDriver::Impl::edEndExpt()
+const fstring& ExptDriver::getAutosaveFile() const
 {
-DOTRACE("ExptDriver::Impl::edEndExpt");
-
-  Util::log( "experiment complete" );
-
-  addLogInfo("Experiment complete.");
-
-  storeData();
-
-  Util::log( fstring("Expt::doWhenComplete") );
-  itsDoWhenComplete->invoke("");        // Call the user-defined callback
-
-  Util::Log::removeScope("Expt");
+DOTRACE("ExptDriver::getAutosaveFile");
+  return rep->autosaveFile;
 }
 
-
-//--------------------------------------------------------------------
-//
-// ExptDriver::storeData --
-//
-// The experiment and a summary of the responses to it are written to
-// files with unique filenames.
-//
-//--------------------------------------------------------------------
-
-void ExptDriver::Impl::storeData()
+void ExptDriver::setAutosaveFile(const fstring& str)
 {
-DOTRACE("ExptDriver::Impl::storeData");
+DOTRACE("ExptDriver::setAutosaveFile");
+  rep->autosaveFile = str;
+}
+
+int ExptDriver::getAutosavePeriod() const
+{
+DOTRACE("ExptDriver::getAutosavePeriod");
+  return rep->autosavePeriod;
+}
+
+void ExptDriver::setAutosavePeriod(int period)
+{
+DOTRACE("ExptDriver::setAutosavePeriod");
+  rep->autosavePeriod = period;
+}
+
+const char* ExptDriver::getInfoLog() const
+{
+DOTRACE("ExptDriver::getInfoLog");
+  return rep->infoLog.c_str();
+}
+
+void ExptDriver::addLogInfo(const char* message)
+{
+DOTRACE("ExptDriver::addLogInfo");
+  fstring date_string = System::theSystem().formattedTime();
+
+  rep->infoLog.append("@");
+  rep->infoLog.append(date_string);
+  rep->infoLog.append(" ");
+  rep->infoLog.append(message);
+  rep->infoLog.append("\n");
+}
+
+void ExptDriver::addElement(Ref<Element> elem)
+{
+DOTRACE("ExptDriver::addElement");
+
+  rep->elements.push_back(elem);
+}
+
+Ref<Element> ExptDriver::currentElement() const
+{
+DOTRACE("ExptDriver::currentElement");
+  if ( !rep->haveCurrentElement() )
+    throw Util::Error("no current element exists");
+  return rep->elements.at(rep->sequenceIdx);
+}
+
+Util::FwdIter<Util::Ref<Element> > ExptDriver::getElements() const
+{
+DOTRACE("ExptDriver::getElements");
+
+  return Util::FwdIter<Util::Ref<Element> >(rep->elements.begin(),
+                                            rep->elements.end());
+}
+
+fstring ExptDriver::getDoWhenComplete() const
+{
+DOTRACE("ExptDriver::getDoWhenComplete");
+  return rep->doWhenComplete->fullSpec();
+}
+
+void ExptDriver::setDoWhenComplete(const fstring& script)
+{
+DOTRACE("ExptDriver::setDoWhenComplete");
+  rep->doWhenComplete->define("", script);
+}
+
+void ExptDriver::setWidget(const Util::SoftRef<Toglet>& widg)
+{
+DOTRACE("ExptDriver::setWidget");
+  rep->widget = widg;
+}
+
+Gfx::Canvas& ExptDriver::getCanvas() const
+{
+DOTRACE("ExptDriver::getCanvas");
+  return rep->widget->getCanvas();
+}
+
+Tcl_Interp* ExptDriver::getInterp() const
+{
+DOTRACE("ExptDriver::getInterp");
+  return rep->interp.intp();
+}
+
+void ExptDriver::edBeginExpt()
+{
+DOTRACE("ExptDriver::edBeginExpt");
+
+  rep->ensureHasElement();
+
+  addLogInfo("Beginning experiment.");
+
+  rep->beginDate = System::theSystem().formattedTime();
+  rep->hostname = System::theSystem().getenv("HOST");
+  rep->subject = System::theSystem().getcwd();
+
+  Util::Log::reset(); // to clear any existing timer scopes
+  Util::Log::addScope("Expt");
+
+  currentElement()->vxRun(*this);
+}
+
+void ExptDriver::edResumeExpt()
+{
+DOTRACE("ExptDriver::edResumeExpt");
+
+  rep->ensureHasElement();
+
+  currentElement()->vxRun(*this);
+}
+
+void ExptDriver::edClearExpt()
+{
+DOTRACE("ExptDriver::edClearExpt");
+  vxHalt();
+
+  rep->elements.clear();
+  rep->sequenceIdx = 0;
+}
+
+void ExptDriver::storeData()
+{
+DOTRACE("ExptDriver::storeData");
 
   vxHalt();
 
+  // The experiment and a summary of the responses to it are written to
+  // files with unique filenames.
+
   try
     {
-      itsEndDate = System::theSystem().formattedTime();
+
+      rep->endDate = System::theSystem().formattedTime();
 
       fstring unique_file_extension =
         System::theSystem().formattedTime("%H%M%S%d%b%Y");
@@ -480,7 +542,7 @@ DOTRACE("ExptDriver::Impl::storeData");
       fstring expt_filename = "expt";
       expt_filename.append(unique_file_extension);
       expt_filename.append(".asw");
-      IO::saveASW(Util::Ref<IO::IoObject>(itsOwner), expt_filename.c_str());
+      IO::saveASW(Util::Ref<IO::IoObject>(this), expt_filename.c_str());
       Util::log( fstring( "wrote file ", expt_filename.c_str()) );
 
       // Write the responses file
@@ -500,147 +562,9 @@ DOTRACE("ExptDriver::Impl::storeData");
     }
   catch (Util::Error& err)
     {
-      itsErrorHandler.handleMsg(err.msg_cstr());
+      rep->errorHandler.handleMsg(err.msg_cstr());
     }
 }
-
-
-
-///////////////////////////////////////////////////////////////////////
-//
-// ExptDriver creator method definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-ExptDriver::ExptDriver() :
-  itsImpl(new Impl(this))
-{
-DOTRACE("ExptDriver::ExptDriver");
-}
-
-ExptDriver::~ExptDriver()
-{
-DOTRACE("ExptDriver::~ExptDriver");
-  delete itsImpl;
-}
-
-IO::VersionId ExptDriver::serialVersionId() const
-  { return EXPTDRIVER_SERIAL_VERSION_ID; }
-
-void ExptDriver::readFrom(IO::Reader* reader)
-  { itsImpl->readFrom(reader); }
-
-void ExptDriver::writeTo(IO::Writer* writer) const
-  { itsImpl->writeTo(writer); }
-
-
-///////////////////////////////////////////////////////////////////////
-//
-// ExptDriver's Element interface
-//
-///////////////////////////////////////////////////////////////////////
-
-Util::ErrorHandler& ExptDriver::getErrorHandler() const
-  { return itsImpl->itsErrorHandler; }
-
-const Util::SoftRef<Toglet>& ExptDriver::getWidget() const
-  { return itsImpl->itsWidget; }
-
-int ExptDriver::trialType() const
-  { return itsImpl->currentElement()->trialType(); }
-
-int ExptDriver::numCompleted() const
-  { return itsImpl->numCompleted(); }
-
-int ExptDriver::lastResponse() const
-  { return itsImpl->currentElement()->lastResponse(); }
-
-fstring ExptDriver::status() const
-  { return itsImpl->status(); }
-
-void ExptDriver::vxRun(Element& /*parent*/)
-  { /* FIXME */ Assert(false); }
-
-void ExptDriver::vxHalt() const
-  { itsImpl->vxHalt(); }
-
-void ExptDriver::vxAbort()
-  { /* FIXME */ Assert(false); }
-
-void ExptDriver::vxEndTrial()
-  { itsImpl->vxEndTrial(); }
-
-void ExptDriver::vxNext()
-  { itsImpl->vxNext(); }
-
-void ExptDriver::vxProcessResponse(Response& /*response*/)
-  { /* FIXME */ Assert(false); }
-
-void ExptDriver::vxUndo()
-  { itsImpl->currentElement()->vxUndo(); }
-
-///////////////////////////////////////////////////////////////////////
-//
-// ExptDriver accessor + manipulator method definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-const fstring& ExptDriver::getAutosaveFile() const
-  { return itsImpl->itsAutosaveFile; }
-
-void ExptDriver::setAutosaveFile(const fstring& str)
-  { itsImpl->itsAutosaveFile = str; }
-
-int ExptDriver::getAutosavePeriod() const
-  { return itsImpl->itsAutosavePeriod; }
-
-void ExptDriver::setAutosavePeriod(int period)
-  { itsImpl->itsAutosavePeriod = period; }
-
-const char* ExptDriver::getInfoLog() const
-  { return itsImpl->itsInfoLog.c_str(); }
-
-void ExptDriver::addLogInfo(const char* message)
-  { itsImpl->addLogInfo(message); }
-
-void ExptDriver::addElement(Ref<Element> elem)
-  { itsImpl->addElement(elem); }
-
-Ref<Element> ExptDriver::currentElement() const
-  { return itsImpl->currentElement(); }
-
-Util::FwdIter<Util::Ref<Element> > ExptDriver::getElements() const
-  { return itsImpl->getElements(); }
-
-fstring ExptDriver::getDoWhenComplete() const
-  { return itsImpl->itsDoWhenComplete->fullSpec(); }
-
-void ExptDriver::setDoWhenComplete(const fstring& script)
-  { itsImpl->itsDoWhenComplete->define("", script); }
-
-void ExptDriver::setWidget(const Util::SoftRef<Toglet>& widg)
-  { itsImpl->itsWidget = widg; }
-
-Gfx::Canvas& ExptDriver::getCanvas() const
-  { return itsImpl->itsWidget->getCanvas(); }
-
-Tcl_Interp* ExptDriver::getInterp() const
-  { return itsImpl->itsInterp.intp(); }
-
-void ExptDriver::edBeginExpt()
-  { itsImpl->edBeginExpt(); }
-
-void ExptDriver::edResumeExpt()
-  { itsImpl->edResumeExpt(); }
-
-void ExptDriver::edClearExpt()
-  { itsImpl->edClearExpt(); }
-
-void ExptDriver::vxReset()
-  { itsImpl->vxReset(); }
-
-void ExptDriver::storeData()
-  { itsImpl->storeData(); }
 
 static const char vcid_exptdriver_cc[] = "$Header$";
 #endif // !EXPTDRIVER_CC_DEFINED

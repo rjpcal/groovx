@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Dec  4 19:08:46 2002
+// written: Thu Dec  5 13:16:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -166,7 +166,7 @@ private:
   class Impl;
   friend class Impl;
 
-  Impl* const itsImpl;
+  Impl* const rep;
 };
 
 static const char vcid_exptdriver_h[] = "$Header$";
