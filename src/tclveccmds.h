@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Thu Dec 16 17:40:36 1999
+// written: Tue Mar  7 15:34:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,8 @@
 #ifndef TCLVECCMDS_H_DEFINED
 #define TCLVECCMDS_H_DEFINED
 
-#ifndef MEMORY_DEFINED
-#include <memory>
-#define MEMORY_DEFINED
+#ifndef POINTERS_H_DEFINED
+#include "util/pointers.h"
 #endif
 
 #ifndef TCLCMD_H_DEFINED
@@ -66,7 +65,7 @@ protected:
   virtual void doAppendValForItem(void* item);
 
 private:
-  auto_ptr< Getter<ValType> > itsGetter;
+  scoped_ptr< Getter<ValType> > itsGetter;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -107,7 +106,7 @@ protected:
   virtual void destroyValVec(void* val_vec);
 
 private:
-  auto_ptr< Setter<T> > itsSetter;
+  scoped_ptr< Setter<T> > itsSetter;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -156,9 +155,8 @@ protected:
 
 private:
   TclItemPkgBase* itsPkg;
-  auto_ptr<Action> itsAction;
+  scoped_ptr<Action> itsAction;
   int itsItemArgn;
-
 };
 
 static const char vcid_tclveccmds_h[] = "$Header$";

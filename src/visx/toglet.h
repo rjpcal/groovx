@@ -3,7 +3,7 @@
 // toglconfig.h
 // Rob Peters 
 // created: Jan-99
-// written: Sun Jan 16 23:08:45 2000
+// written: Tue Mar  7 15:36:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,8 +11,8 @@
 #ifndef TOGLCONFIG_H_DEFINED
 #define TOGLCONFIG_H_DEFINED
 
-#ifndef MEMORY_DEFINED
-#include <memory>
+#ifndef POINTERS_H_DEFINED
+#include "util/pointers.h"
 #endif
 
 #ifndef RECT_H_DEFINED
@@ -108,7 +108,7 @@ private:
   ToglConfig(const ToglConfig&); // no copy constructor
   ToglConfig& operator=(const ToglConfig&); // no assignment operator
 
-  auto_ptr<Canvas> itsCanvas;
+  scoped_ptr<Canvas> itsCanvas;
 
   Togl* itsWidget;
   double itsViewingDistance;     // inches
