@@ -105,7 +105,12 @@ AC_ARG_WITH(tcltk,
 
 AC_MSG_RESULT($with_tcltk)
 
-CPPFLAGS="$CPPFLAGS -I${with_tcltk}/include"
+# Need to *prepend* with_tcltk/include to CPPFLAGS, so that we find
+# tcl.h, tk.h, etc. in with_tcltk rather than in the standard system
+# location
+
+CPPFLAGS="-I${with_tcltk}/include $CPPFLAGS"
+
 LDFLAGS="$LDFLAGS -Wl,-rpath,${with_tcltk}/lib -L${with_tcltk}/lib"
 
 ###
