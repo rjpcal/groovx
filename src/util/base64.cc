@@ -160,9 +160,9 @@ DOTRACE("rutz::base64_encode");
     }
 }
 
-void rutz::base64_encode(const char* filename,
-                         rutz::byte_array& dst,
-                         unsigned int line_width)
+void rutz::base64_encode_file(const char* filename,
+                              rutz::byte_array& dst,
+                              unsigned int line_width)
 {
   rutz::mapped_file m(filename);
   rutz::base64_encode(static_cast<const unsigned char*>(m.memory()),
