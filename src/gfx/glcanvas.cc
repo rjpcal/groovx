@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Nov 13 11:03:34 2002
+// written: Wed Nov 20 11:40:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,8 @@
 #include "gx/vec3.h"
 
 #include "util/error.h"
+
+#include "visx/bezier.h"
 
 #include <GL/gl.h>
 #include <GL/glu.h>
@@ -555,6 +557,21 @@ void GLCanvas::drawBezier4(const Gfx::Vec3<double>& p1,
 {
 DOTRACE("GLCanvas::drawBezier4");
 
+#if 1
+  Bezier4 xb(p1.x(), p2.x(), p3.x(), p4.x());
+  Bezier4 yb(p1.y(), p2.y(), p3.y(), p4.y());
+  Bezier4 zb(p1.z(), p2.z(), p3.z(), p4.z());
+
+  glBegin(GL_LINE_STRIP);
+  for (unsigned int i = 0; i < subdivisions; ++i)
+    {
+      double u = double(i) / double(subdivisions - 1);
+      glVertex3d(xb.eval(u), yb.eval(u), zb.eval(u));
+    }
+  glEnd();
+
+#else
+
   Gfx::Vec3<double> points[] =
   {
     p1, p2, p3, p4
@@ -565,6 +582,7 @@ DOTRACE("GLCanvas::drawBezier4");
 
   glMapGrid1d(subdivisions, 0.0, 1.0);
   glEvalMesh1(GL_LINE, 0, subdivisions);
+#endif
 }
 
 void GLCanvas::drawBezierFill4(const Gfx::Vec3<double>& center,
