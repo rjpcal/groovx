@@ -185,20 +185,9 @@ void Gabor::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("Gabor::grGetBoundingBox");
 
-  const vec2d world_origin(0.0, 0.0);
-
-  const vec2i screen_origin = vec2i(bbox.screenFromWorld2(world_origin));
-
-  const vec2i size(itsResolution * itsPointSize,
-                   itsResolution * itsPointSize);
-
-  const geom::rect<int> screen_rect =
-    geom::rect<int>::lbwh(screen_origin, size);
-
-  bbox.vertex2(bbox.worldFromScreen2(screen_rect.bottom_left()));
-  bbox.vertex2(bbox.worldFromScreen2(screen_rect.bottom_right()));
-  bbox.vertex2(bbox.worldFromScreen2(screen_rect.top_left()));
-  bbox.vertex2(bbox.worldFromScreen2(screen_rect.top_right()));
+  bbox.drawScreenRect(vec2d::zeros(),
+                      vec2i::ones() * itsResolution,
+                      vec2d::ones() * itsPointSize);
 }
 
 void Gabor::getBmapData(media::bmap_data& dest) const

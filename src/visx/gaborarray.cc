@@ -262,19 +262,9 @@ void GaborArray::grGetBoundingBox(Bbox& bbox) const
 {
 DOTRACE("GaborArray::grGetBoundingBox");
 
-  // FIXME this heavily duplicates Gabor::grGetBoundingBox()
-
-  const vec2d world_origin(0.0, 0.0);
-
-  const vec2i screen_origin = vec2i(bbox.screenFromWorld2(world_origin));
-
-  const geom::rect<int> screen_rect =
-    geom::rect<int>::lbwh(screen_origin, vec2i(itsSizeX, itsSizeY));
-
-  bbox.vertex2(bbox.worldFromScreen2(screen_rect.bottom_left()));
-  bbox.vertex2(bbox.worldFromScreen2(screen_rect.bottom_right()));
-  bbox.vertex2(bbox.worldFromScreen2(screen_rect.top_left()));
-  bbox.vertex2(bbox.worldFromScreen2(screen_rect.top_right()));
+  bbox.drawScreenRect(vec2d::zeros(),
+                      vec2i(itsSizeX, itsSizeY),
+                      vec2d::ones());
 }
 
 void GaborArray::grRender(Canvas& canvas) const

@@ -435,15 +435,11 @@ void GxPixmap::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxPixmap::grGetBoundingBox");
 
-  using geom::vec2i;
   using geom::vec2d;
 
-  // Get the corners in screen coordinates
-  vec2i bottom_left(bbox.screenFromWorld2(vec2d()));
-  vec2i top_right  (vec2d(bottom_left) + (vec2d(size()) * getZoom()));
-
-  bbox.vertex2(vec2d());
-  bbox.vertex2(bbox.worldFromScreen2(top_right));
+  bbox.drawScreenRect(vec2d::zeros(),
+                      this->size(),
+                      getZoom());
 }
 
 geom::vec2<int> GxPixmap::size() const
