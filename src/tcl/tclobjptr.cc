@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 18:30:47 2001
-// written: Fri Jan 18 16:07:05 2002
+// written: Wed Jan 30 14:57:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,14 +17,7 @@
 
 #include <tcl.h>
 
-#include "util/debug.h"
-
-namespace
-{
-  Tcl::ObjPtr theNullObject("");
-}
-
-Tcl::ObjPtr::ObjPtr() : itsObj(theNullObject.itsObj) { incrRef(itsObj); }
+Tcl::ObjPtr::ObjPtr() : itsObj(Tcl_NewObj()) { incrRef(itsObj); }
 
 void Tcl::ObjPtr::append(const Tcl::ObjPtr& other)
 {
