@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:00:17 2001
-// written: Wed Jun 26 12:09:27 2002
+// written: Mon Sep 16 13:16:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,6 +65,11 @@ public:
   Tcl_Obj* operator[](unsigned int index) const
     {
       update(); return itsElements[index];
+    }
+
+  Tcl_Obj* const* elements() const
+    {
+      update(); return itsElements;
     }
 
   template <class T>
