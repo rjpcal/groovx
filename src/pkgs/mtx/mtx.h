@@ -18,23 +18,35 @@
 
 namespace RC // Range checking
 {
-  void assertLess(const void* x, const void* lim);
-  void assertLEQ(const void* x, const void* lim);
-  void assertInHalfOpen(const void* x, const void* llim, const void* ulim);
+  void less(const void* x, const void* lim);
+  void leq(const void* x, const void* lim);
+  void inHalfOpen(const void* x, const void* llim, const void* ulim);
 
-  void assertLess(int x, int lim);
-  void assertLEQ(int x, int lim);
-  void assertInHalfOpen(int x, int llim, int ulim);
+  void less(int x, int lim);
+  void leq(int x, int lim);
+  void inHalfOpen(int x, int llim, int ulim);
 }
 
 #ifdef RANGE_CHECK
-#  define RC_assertLess(x,lim) RC::assertLess((x),(lim))
-#  define RC_assertLEQ(x,lim) RC::assertLEQ((x),(lim))
-#  define RC_assertInHalfOpen(x,llim,ulim) RC::assertInHalfOpen((x),(llim),(ulim))
-#else
-#  define RC_assertLess(x,lim)
-#  define RC_assertLEQ(x,lim)
-#  define RC_assertInHalfOpen(x,llim,ulim)
+// Range check
+#  define RC_less(x,lim) RC::less((x),(lim))
+#  define RC_leq(x,lim) RC::leq((x),(lim))
+#  define RC_inHalfOpen(x,llim,ulim) RC::inHalfOpen((x),(llim),(ulim))
+
+// Range check, and return the checked value
+#  define RCR_less(x,lim) (RC::less((x),(lim)), x)
+#  define RCR_leq(x,lim) (RC::leq((x),(lim)), x)
+#  define RCR_inHalfOpen(x,llim,ulim) (RC::inHalfOpen((x),(llim),(ulim)), x)
+
+#else // !RANGE_CHECK
+
+#  define RC_less(x,lim)
+#  define RC_leq(x,lim)
+#  define RC_inHalfOpen(x,llim,ulim)
+
+#  define RCR_less(x,lim) (x)
+#  define RCR_leq(x,lim) (x)
+#  define RCR_inHalfOpen(x,llim,ulim) (x)
 #endif
 
 class Mtx;
@@ -88,7 +100,7 @@ class MtxIter {
 
 public:
 
-  double& operator*() { RC_assertLess(data, stop); return *data; }
+  double& operator*() { RC_less(data, stop); return *data; }
 
   MtxIter& operator++()
   {
@@ -114,7 +126,7 @@ public:
   MtxConstIter(const MtxIter& other) :
 	 data(other.data), stride(other.stride), stop(other.stop) {}
 
-  double operator*() const { RC_assertLess(data, stop); return *data; }
+  double operator*() const { RC_less(data, stop); return *data; }
 
   MtxConstIter& operator++() { data += stride; return *this; }
 
@@ -154,12 +166,18 @@ public:
   // Data access
   //
 
-  double operator[](int i) const { return *(address(i)); }
+  double operator[](int i) const
+  {
+	 RC_inHalfOpen(i, 0, itsNelems);
+	 return *(address(i));
+  }
 
   int nelems() const { return itsNelems; }
 
   Slice rightmost(int n) const
   {
+	 RC_inHalfOpen(n, 0, itsNelems);
+
 	 int first = itsNelems - n;
 	 if (first < 0) first = 0;
 
@@ -168,6 +186,8 @@ public:
 
   Slice leftmost(int n) const
   {
+	 RC_inHalfOpen(n, 0, itsNelems);
+
 	 return Slice(itsOwner, storageOffset(0), itsStride, n);
   }
 
@@ -417,18 +437,18 @@ private:
 	 {
 		switch (s) {
 		case BORROW:
-		  storage_ = DataBlock::makeBorrowed(data, mrows*ncols);
+		  datablock_ = DataBlock::makeBorrowed(data, mrows*ncols);
 		  break;
 		case REFER:
-		  storage_ = DataBlock::makeReferred(data, mrows*ncols);
+		  datablock_ = DataBlock::makeReferred(data, mrows*ncols);
 		  break;
 		case COPY:
 		default:
-		  storage_ = DataBlock::makeDataCopy(data, mrows*ncols);
+		  datablock_ = DataBlock::makeDataCopy(data, mrows*ncols);
 		  break;
 		}
 
-		storage_->incrRefCount();
+		datablock_->incrRefCount();
 
 		mrows_ = mrows;
 		rowstride_ = mrows;
@@ -441,7 +461,7 @@ private:
   public:
 	 void swap(MtxImpl& other)
 	 {
-		doswap(storage_, other.storage_);
+		doswap(datablock_, other.datablock_);
 		doswap(mrows_, other.mrows_);
 		doswap(rowstride_, other.rowstride_);
 		doswap(ncols_, other.ncols_);
@@ -449,23 +469,23 @@ private:
 	 }
 
 	 MtxImpl(const MtxImpl& other) :
-		storage_(other.storage_),
+		datablock_(other.datablock_),
 		mrows_(other.mrows_),
 		rowstride_(other.rowstride_),
 		ncols_(other.ncols_),
 		offset_(other.offset_)
 	 {
-		storage_->incrRefCount();
+		datablock_->incrRefCount();
 	 }
 
 	 MtxImpl(int mrows, int ncols) :
-		storage_(DataBlock::makeBlank(mrows*ncols)),
+		datablock_(DataBlock::makeBlank(mrows*ncols)),
 		mrows_(mrows),
 		rowstride_(mrows),
 		ncols_(ncols),
 		offset_(0)
 	 {
-		storage_->incrRefCount();
+		datablock_->incrRefCount();
 	 }
 
 	 MtxImpl(double* data, int mrows, int ncols, StoragePolicy s = COPY)
@@ -473,20 +493,28 @@ private:
 
 	 MtxImpl(mxArray* a, StoragePolicy s);
 
-	 ~MtxImpl() { storage_->decrRefCount(); }
+	 ~MtxImpl() { datablock_->decrRefCount(); }
 
 	 int length() const { return (mrows_ > ncols_) ? mrows_ : ncols_; }
 	 int nelems() const { return mrows_*ncols_; }
 
 	 int mrows() const { return mrows_; }
 	 int rowstride() const { return rowstride_; }
-	 unsigned int rowgap() const { return rowstride_ - mrows_; }
 
 	 int ncols() const { return ncols_; }
 	 int colstride() const { return colstride_; }
 
-	 double at(int i) const { return storage_->itsData[i+offset_]; }
-	 double& at(int i) { return storage_->itsData[i+offset_]; }
+	 double at(int i) const
+	 {
+		RC_less(i+offset_, storageLength());
+		return datablock_->itsData[i+offset_];
+	 }
+
+	 double& at(int i)
+	 {
+		RC_less(i+offset_, storageLength());
+		return datablock_->itsData[i+offset_];
+	 }
 
 	 void reshape(int mrows, int ncols);
 
@@ -494,23 +522,23 @@ private:
 	 void selectColumnRange(int c, int nc);
 
 	 int offsetFromStart(int row, int col) const
-      { return row + (col*rowstride_); }
-
-	 int offsetFromStart(int elem) const
 	 {
-		return ( (elem/mrows()) /* == # of columns */
-					* rowstride_ )
-		  + elem%mrows(); /* == # of rows */
+		RC_inHalfOpen(row, 0, mrows_);
+		RC_inHalfOpen(col, 0, ncols_);
+		return row + (col*rowstride_);
 	 }
 
+	 int offsetFromStart(int elem) const
+	   { return offsetFromStart(elem%mrows(), elem/mrows()); }
+
 	 ptrdiff_t offsetFromStorage(int row, int col) const
-      { return offset_ + offsetFromStart(row, col); }
+	   { return RCR_less(offset_ + offsetFromStart(row, col), storageLength()); }
 
 	 double* address(int row, int col)
-      { return storage_->itsData + offset_ + offsetFromStart(row, col); }
+      { return datablock_->itsData + offsetFromStorage(row, col); }
 
 	 const double* address(int row, int col) const
-      { return storage_->itsData + offset_ + offsetFromStart(row, col); }
+      { return datablock_->itsData + offsetFromStorage(row, col); }
 
 #ifdef APPLY_IMPL
 #  error macro error
@@ -520,7 +548,7 @@ private:
 	 // template arguments to a single apply() template
 #  define APPLY_IMPL \
  \
-		double* p = storage_->itsData + offset_; \
+		double* p = datablock_->itsData + offset_; \
 		unsigned int gap = rowgap(); \
  \
 		if (gap == 0) \
@@ -566,11 +594,14 @@ private:
 
 	 void makeUnique();
 
-	 const double* storageStart() const { return storage_->itsData; }
-	 double* storageStart() { return storage_->itsData; }
+	 const double* storageStart() const { return datablock_->itsData; }
+	 double* storageStart() { return datablock_->itsData; }
 
   private:
-	 DataBlock* storage_;
+	 int storageLength() const { return datablock_->itsLength; }
+	 unsigned int rowgap() const { return rowstride_ - mrows_; }
+
+	 DataBlock* datablock_;
 	 int mrows_;
 	 int rowstride_;
 	 int ncols_;
