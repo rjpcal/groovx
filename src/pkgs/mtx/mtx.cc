@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar  4 12:52:04 2002
+// written: Mon Mar  4 13:10:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -331,7 +331,7 @@ void MtxImpl::swap(MtxImpl& other)
 
 MtxImpl::MtxImpl(const MtxImpl& other) :
   MtxStorage(other),
-  datablock_(other.datablock_)
+  DataHolder(other)
 {
   datablock_->incrRefCount();
 }
@@ -347,7 +347,7 @@ namespace
 
 MtxImpl::MtxImpl(int mrows, int ncols, InitPolicy p) :
   MtxStorage(mrows, ncols),
-  datablock_(newDataBlock(mrows, ncols, p))
+  DataHolder(newDataBlock(mrows, ncols, p))
 {
   datablock_->incrRefCount();
 }

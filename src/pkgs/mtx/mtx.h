@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 12:57:35 2002
+// written: Mon Mar  4 13:10:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -376,6 +376,18 @@ protected:
   ptrdiff_t offset_;
 };
 
+class DataHolder
+{
+public:
+  // FIXME: this should go away, and soon!
+  DataHolder() : datablock_(0) {}
+
+  DataHolder(DataBlock* db) : datablock_(db) {}
+
+protected:
+  DataBlock* datablock_;
+};
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -384,7 +396,7 @@ protected:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class MtxImpl : public MtxStorage, public WithPolicies
+class MtxImpl : public MtxStorage, private DataHolder, public WithPolicies
 {
 private:
   void init(double* data, int mrows, int ncols, StoragePolicy s);
@@ -486,9 +498,6 @@ public:
   double* storage_nc() { makeUnique(); return datablock_->data_nc(); }
 
   int storageLength() const { return datablock_->length(); }
-
-private:
-  DataBlock* datablock_;
 };
 
 
