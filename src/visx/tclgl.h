@@ -3,7 +3,7 @@
 // tclgl.h
 // Rob Peters
 // created: Nov-98
-// written: Thu May 27 20:27:41 1999
+// written: Sun Jun 20 18:12:48 1999
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -19,10 +19,7 @@
 struct Tcl_Interp;
 typedef int (Tcl_PackageInitProc) (Tcl_Interp* interp);
 
-namespace TclGL {
-  // initializes the Tclgl package when called from Tcl_AppInit
-  Tcl_PackageInitProc Tclgl_Init;
-}
+extern "C" Tcl_PackageInitProc Tclgl_Init;
 
 static const char vcid_tclgl_h[] = "$Header$";
 #endif // !TCLGL_H_DEFINED
