@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Thu Jun  3 12:41:14 1999
+// written: Mon Jun  7 13:35:46 1999
 // $Id$
 //
 // This file defines the IO abstract interface. This interface
@@ -49,11 +49,15 @@ public:
   static const IOFlag TYPENAME   = 1 << 0; // The class's name is written/read
   static const IOFlag BASES      = 1 << 1; // The class's bases is written/read
 
+  IO();
   virtual ~IO() = 0;
   virtual void serialize(ostream& os, IOFlag flag) const = 0;
   virtual void deserialize(istream& is, IOFlag flag) = 0;
 
   virtual int charCount() const = 0;
+
+  // Returns a unique id for this object
+  long id();
 
   // This function reads the next word from the istream is, and
   // compares it to the correct names in correctNames. correctNames
@@ -65,6 +69,9 @@ public:
   static void readTypename(istream& is,
 									const string& correctNames,
 									bool doCheck = true);
+
+private:
+  long itsId;
 };
 
 // This template function returns the number of characters needed to
