@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul  5 15:17:06 2002
-// written: Fri Jul  5 18:31:55 2002
+// written: Tue Jul  9 16:21:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -119,9 +119,9 @@ DOTRACE("GxLighting::draw");
   const GLfloat fdirection[] =
     { spotDirection.x(), spotDirection.y(), spotDirection.z(), 0.0 };
 
-  glLightfv(GL_FRONT, GL_SPECULAR, specular);
-  glLightfv(GL_FRONT, GL_DIFFUSE, diffuse);
-  glLightfv(GL_FRONT, GL_AMBIENT, ambient);
+  glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+  glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
   glLightfv(GL_LIGHT0, GL_POSITION, fposition);
   glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, spotExponent);
   glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, spotCutoff);
