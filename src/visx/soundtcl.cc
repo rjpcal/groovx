@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Mon Dec 11 14:29:48 2000
+// written: Mon Dec 11 15:41:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,6 @@
 #include "io/iofactory.h"
 
 #include "tcl/ioitempkg.h"
-#include "tcl/listpkg.h"
 #include "tcl/tcllink.h"
 
 #include "util/strings.h"
@@ -148,22 +147,6 @@ public:
 
 //---------------------------------------------------------------------
 //
-// SoundListPkg --
-//
-//---------------------------------------------------------------------
-
-namespace SoundListTcl {
-  class SoundListPkg;
-}
-
-class SoundListTcl::SoundListPkg : public Tcl::PtrListPkg<Sound> {
-public:
-  SoundListPkg(Tcl_Interp* interp) :
-	 Tcl::PtrListPkg<Sound>(interp, "SoundList", "$Revision$") {}
-};
-
-//---------------------------------------------------------------------
-//
 // Sound_Init --
 //
 //---------------------------------------------------------------------
@@ -171,12 +154,11 @@ public:
 extern "C" int Sound_Init(Tcl_Interp* interp) {
 DOTRACE("Sound_Init");
 
-  Tcl::TclPkg* pkg1 = new SoundTcl::SoundPkg(interp);
-  Tcl::TclPkg* pkg2 = new SoundListTcl::SoundListPkg(interp);
+  Tcl::TclPkg* pkg = new SoundTcl::SoundPkg(interp);
 
   IO::IoFactory::theOne().registerCreatorFunc(&Sound::make);
 
-  return pkg1->initedOk() ? pkg2->initStatus() : pkg1->initStatus();
+  return pkg->initStatus();
 }
 
 static const char vcid_soundtcl_cc[] = "$Header$";
