@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Sep 27 11:12:28 2000
+// written: Thu Sep 28 15:28:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,6 +54,8 @@ protected:
       typenames suitable for use in \c IO::readTypename(). The default
       implementation here returns an empty string. */
   virtual const char* alternateIoTags() const;
+
+  virtual fixed_string legacyValidTypenames() const;
 
 private:
   IoPtrList(const IoPtrList&);
