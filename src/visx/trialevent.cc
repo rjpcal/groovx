@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Thu Dec  2 14:23:27 1999
+// written: Mon Dec  6 22:44:22 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,11 @@
 
 #include "trialevent.h"
 
-#include <GL/gl.h>
 #include <cmath>
 #include <typeinfo>
 #include <cstring>
 
+#include "canvas.h"
 #include "demangle.h"
 #include "error.h"
 #include "experiment.h"
@@ -206,18 +206,19 @@ DOTRACE("SwapBuffersEvent::invoke");
 
 void RenderBackEvent::invoke() {
 DOTRACE("RenderBackEvent::invoke");
-  glDrawBuffer(GL_BACK);
+  getExperiment().getCanvas()->drawOnBackBuffer();
 }
 
 void RenderFrontEvent::invoke() {
 DOTRACE("RenderFrontEvent::invoke");
-  glDrawBuffer(GL_FRONT);
+  getExperiment().getCanvas()->drawOnFrontBuffer();
 }
 
 void ClearBufferEvent::invoke() {
 DOTRACE("ClearBufferEvent::invoke");
-  glClear(GL_COLOR_BUFFER_BIT);
-  glFlush();
+  Canvas* canvas = getExperiment().getCanvas();
+  canvas->clearColorBuffer();
+  canvas->flushOutput();
 }
 
 static const char vcid_trialevent_cc[] = "$Header$";
