@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Jul 11 19:36:33 2001
+// written: Thu Jul 12 13:23:44 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -99,10 +99,11 @@ public:
     Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, NULL, pkg->itemArgn()+1)
     {}
 protected:
-  virtual void invoke(Context& ctx);
+  virtual void invoke(Tcl::Context& ctx);
 };
 
-void ExptTcl::BeginCmd::invoke(Context& ctx) {
+void ExptTcl::BeginCmd::invoke(Tcl::Context& ctx)
+{
 DOTRACE("ExptTcl::BeginCmd::beginCmd");
 
   ExptDriver* ed = getItem(ctx);
@@ -157,7 +158,8 @@ public:
   {}
 
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     ExptDriver* ed = getItem(ctx);
     ed->edHaltExpt();
 
@@ -208,7 +210,8 @@ public:
     Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "start_command",
                                 pkg->itemArgn()+2) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     // Build the script to be executed when the start key is pressed
     dynamic_string start_command = "{ ";
     start_command += ctx.getCstringFromArg(1);

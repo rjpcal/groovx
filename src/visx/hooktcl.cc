@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Thu Jul 12 12:27:02 2001
+// written: Thu Jul 12 13:23:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,8 @@ public:
     Tcl::TclCmd(interp, "memUsage", "", 1, 1, false) {}
 
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     ctx.setResult(TOTAL);
   }
 };
@@ -67,7 +68,7 @@ public:
     Tcl::VecCmd(interp, "hook", "", 1, 0, 10000, false) {}
 
 protected:
-  virtual void invoke(Context& ctx)
+  virtual void invoke(Tcl::Context& ctx)
   {
     int isum = 0;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Wed Jul 11 19:36:34 2001
+// written: Thu Jul 12 13:23:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,8 @@ public:
   LoadPbmCmd(Tcl::CTclItemPkg<Bitmap>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id filename", 3, 3) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     Bitmap* bm = getItem(ctx);
     const char* filename = ctx.getCstringFromArg(2);
     bm->loadPbmFile(filename);
@@ -70,7 +71,8 @@ public:
                        3, 3)
     {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     Bitmap* bm = getItem(ctx);
     const char* filename = ctx.getCstringFromArg(2);
 
@@ -91,7 +93,8 @@ public:
   WritePbmCmd(Tcl::CTclItemPkg<Bitmap>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<Bitmap>(pkg, cmd_name, "bitmap_id filename", 3, 3) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     Bitmap* bm = getItem(ctx);
     const char* filename = ctx.getCstringFromArg(2);
     bm->writePbmFile(filename);
@@ -111,7 +114,8 @@ public:
                        "bitmap_id filename(without .gz extension)", 3, 3)
     {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     Bitmap* bm = getItem(ctx);
     const char* filename = ctx.getCstringFromArg(2);
 
@@ -133,7 +137,8 @@ public:
     Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
                             "bitmap_id left top right bottom", 6, 6) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     int l = ctx.getIntFromArg(2);
     int t = ctx.getIntFromArg(3);
     int r = ctx.getIntFromArg(4);
@@ -156,7 +161,8 @@ public:
     Tcl::TclItemCmd<Bitmap>(pkg, cmd_name,
                             "bitmap_id left top right bottom", 6, 6) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     double l = ctx.getDoubleFromArg(2);
     double t = ctx.getDoubleFromArg(3);
     double r = ctx.getDoubleFromArg(4);

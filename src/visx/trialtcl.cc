@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Wed Jul 11 19:36:33 2001
+// written: Thu Jul 12 13:23:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,8 @@ public:
   AddCmd(Tcl::CTclItemPkg<Trial>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<Trial>(pkg, cmd_name, "trialid objid posid", 4, 4) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     int objid = ctx.getIntFromArg(2);
     int posid = ctx.getIntFromArg(3);
 

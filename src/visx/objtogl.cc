@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jul 11 19:53:12 2001
+// written: Thu Jul 12 13:23:43 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -106,7 +106,8 @@ public:
                             "event_sequence binding_script",
                             pkg->itemArgn()+3) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     const char* event_sequence = ctx.getCstringFromArg(afterItemArg(1));
     const char* binding_script = ctx.getCstringFromArg(afterItemArg(2));
 
@@ -126,7 +127,8 @@ public:
     Tcl::TclCmd(interp, cmd_name, "?item_id?", 1, 2) {}
 
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     if (ctx.objc() < 2)
       {
         ctx.setResult(theWidget.id());
@@ -152,7 +154,8 @@ public:
                             "?start_index=0? ?end_index=255?",
                             pkg->itemArgn()+1, pkg->itemArgn()+3, false) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     int start = (ctx.objc() < 2) ? 0   : ctx.getIntFromArg(afterItemArg(1));
     int end   = (ctx.objc() < 3) ? 255 : ctx.getIntFromArg(afterItemArg(2));
 
@@ -196,7 +199,8 @@ public:
   InitedCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name, NULL, 1, 1) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     ctx.setResult(ObjTogl::theWidget.isValid());
   }
 };
@@ -215,7 +219,8 @@ public:
   SeeCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "item_id", pkg->itemArgn()+2) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
   DOTRACE("SeeCmd::invoke");
     int id = ctx.getIntFromArg(afterItemArg(1));
 
@@ -240,7 +245,8 @@ public:
     Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "index r g b", pkg->itemArgn()+5) {}
 
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     int i = ctx.getIntFromArg(afterItemArg(1));
     double r = ctx.getDoubleFromArg(afterItemArg(2));
     double g = ctx.getDoubleFromArg(afterItemArg(3));
@@ -266,7 +272,8 @@ public:
   SetCurTrialCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "trial_id", pkg->itemArgn()+2) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     int trial = ctx.getIntFromArg(afterItemArg(1));
 
     Ref<TrialBase>(trial)->installSelf(*getItem(ctx));
@@ -285,7 +292,8 @@ public:
     Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "left top right bottom",
                             pkg->itemArgn()+5) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     double l = ctx.getDoubleFromArg(afterItemArg(1));
     double t = ctx.getDoubleFromArg(afterItemArg(2));
     double r = ctx.getDoubleFromArg(afterItemArg(3));
@@ -316,7 +324,8 @@ public:
     Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "trial_id", pkg->itemArgn()+2) {}
 
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
   DOTRACE("ShowCmd::invoke");
     int id = ctx.getIntFromArg(afterItemArg(1));
 

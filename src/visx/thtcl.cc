@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jul 11 19:53:12 2001
+// written: Thu Jul 12 13:23:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,8 @@ public:
                            "th_id event_type msec_delay", 4, 4),
     itsTimePoint(time_point) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     TimingHdlr* th = getItem(ctx);
     const char* event_type = ctx.getCstringFromArg(2);
     int msec = ctx.getIntFromArg(3);

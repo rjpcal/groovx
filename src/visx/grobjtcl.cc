@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Wed Jul 11 19:53:13 2001
+// written: Thu Jul 12 13:23:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,8 @@ public:
   BoundingBoxCmd(Tcl::CTclItemPkg<GrObj>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<GrObj>(pkg, cmd_name, "objid", 2, 2) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     GWT::Canvas& canvas = Application::theApp().getCanvas();
 
     Rect<double> bbox;
@@ -91,7 +92,8 @@ public:
   SetBitmapCacheDirCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name, "dirname", 2, 2) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     const char* dirname = ctx.getCstringFromArg(1);
     GrObj::setBitmapCacheDir(dirname);
   }

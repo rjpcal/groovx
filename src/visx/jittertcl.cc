@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 14:58:40 1999
-// written: Wed Jul 11 19:36:33 2001
+// written: Thu Jul 12 13:23:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,8 @@ public:
     Tcl::TclItemCmd<Jitter>(pkg, cmd_name,
                        "posid x_jitter y_jitter r_jitter", 5, 5) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     Jitter* p = getItem(ctx);
     double xj = ctx.getDoubleFromArg(2); p->setXJitter(xj);
     double yj = ctx.getDoubleFromArg(3); p->setYJitter(yj);

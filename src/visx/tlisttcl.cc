@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Thu Jul 12 07:38:36 2001
+// written: Thu Jul 12 13:23:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,7 +75,8 @@ public:
     Tcl::TclCmd(interp, cmd_name, "objids pixel_width pixel_height",
            4, 4, false) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     fixed_block<int> objids(ctx.beginOfArg(1, (int*)0), ctx.endOfArg(1, (int*)0));
 
     int pixel_width = ctx.getIntFromArg(2);
@@ -105,7 +106,8 @@ public:
   DealSinglesCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name, "objid(s) posid", 3, 3) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     int posid = ctx.getIntFromArg(2);
 
     Tcl::List result;
@@ -141,7 +143,8 @@ public:
   DealPairsCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name, "objids1 objids2 posid1 posid2", 5, 5) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     int posid1 = ctx.getIntFromArg(3);
     int posid2 = ctx.getIntFromArg(4);
 
@@ -183,7 +186,8 @@ public:
     Tcl::TclCmd(interp, cmd_name,
                 "objids posid1 posid2 posid3", 5, 5) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     int posids[3] = { ctx.getIntFromArg(2), ctx.getIntFromArg(3), ctx.getIntFromArg(4) };
 
     const int NUM_PERMS = 18;
@@ -251,7 +255,8 @@ public:
     Tcl::TclCmd(interp, cmd_name, "objid_file objids posids ?num_lines=-1?",
                 4, 5, false) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
   DOTRACE("TlistTcl::LoadObjidFileCmd::invoke");
 
     const char* objid_file =                 ctx.getCstringFromArg(1);
@@ -325,7 +330,8 @@ public:
   WriteResponsesCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name, "filename", 2, 2) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     const char* filename = ctx.getCstringFromArg(1);
 
     TlistUtils::writeResponses(filename);
@@ -343,7 +349,8 @@ public:
   WriteIncidenceMatrixCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name, "filename", 2, 2) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     const char* filename = ctx.getCstringFromArg(1);
     TlistUtils::writeIncidenceMatrix(filename);
   }
@@ -360,7 +367,8 @@ public:
   WriteMatlabCmd(Tcl_Interp* interp, const char* cmd_name) :
     Tcl::TclCmd(interp, cmd_name, "filename", 2, 2) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     const char* filename = ctx.getCstringFromArg(1);
     TlistUtils::writeMatlab(filename);
   }

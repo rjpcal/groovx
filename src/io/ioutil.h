@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:43 1999
-// written: Wed Jul 11 19:44:05 2001
+// written: Thu Jul 12 13:23:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,10 +29,10 @@ public:
   virtual ~StringifyCmd();
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx) = 0;
+  virtual IO::IoObject& getIO(Tcl::Context& ctx) = 0;
 
 private:
-  virtual void invoke(Context& ctx);
+  virtual void invoke(Tcl::Context& ctx);
 };
 
 // It is assumed that the string is contained in the last argument
@@ -44,10 +44,10 @@ public:
   virtual ~DestringifyCmd();
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx) = 0;
+  virtual IO::IoObject& getIO(Tcl::Context& ctx) = 0;
 
 private:
-  virtual void invoke(Context& ctx);
+  virtual void invoke(Tcl::Context& ctx);
 };
 
 class WriteCmd : public TclCmd {
@@ -58,10 +58,10 @@ public:
   virtual ~WriteCmd();
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx) = 0;
+  virtual IO::IoObject& getIO(Tcl::Context& ctx) = 0;
 
 private:
-  virtual void invoke(Context& ctx);
+  virtual void invoke(Tcl::Context& ctx);
 };
 
 class ReadCmd : public TclCmd {
@@ -72,10 +72,10 @@ public:
   virtual ~ReadCmd();
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx) = 0;
+  virtual IO::IoObject& getIO(Tcl::Context& ctx) = 0;
 
 private:
-  virtual void invoke(Context& ctx);
+  virtual void invoke(Tcl::Context& ctx);
 };
 
 class ASWSaveCmd : public TclCmd {
@@ -86,11 +86,11 @@ public:
   virtual ~ASWSaveCmd();
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx) = 0;
-  virtual const char* getFilename(Context& ctx) = 0;
+  virtual IO::IoObject& getIO(Tcl::Context& ctx) = 0;
+  virtual const char* getFilename(Tcl::Context& ctx) = 0;
 
 private:
-  virtual void invoke(Context& ctx);
+  virtual void invoke(Tcl::Context& ctx);
 };
 
 class ASRLoadCmd : public TclCmd {
@@ -101,14 +101,14 @@ public:
   virtual ~ASRLoadCmd();
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx) = 0;
-  virtual const char* getFilename(Context& ctx) = 0;
+  virtual IO::IoObject& getIO(Tcl::Context& ctx) = 0;
+  virtual const char* getFilename(Tcl::Context& ctx) = 0;
 
   virtual void beforeLoadHook();
   virtual void afterLoadHook();
 
 private:
-  virtual void invoke(Context& ctx);
+  virtual void invoke(Tcl::Context& ctx);
 };
 
 } // end namespace Tcl

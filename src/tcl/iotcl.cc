@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Jul 11 19:53:30 2001
+// written: Thu Jul 12 13:23:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -103,10 +103,11 @@ public:
   {}
 
 protected:
-  virtual void invoke(Context& ctx);
+  virtual void invoke(Tcl::Context& ctx);
 };
 
-void IoTcl::LoadObjectsCmd::invoke(Context& ctx) {
+void IoTcl::LoadObjectsCmd::invoke(Tcl::Context& ctx)
+{
 DOTRACE("IoTcl::LoadObjectsCmd::invoke");
   static const int ALL = -1; // indicates to read all objects until eof
 
@@ -132,7 +133,8 @@ public:
                 "objids filename ?use_bases=yes?", 3, 4)
   {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
 
     const char* filename = ctx.getCstringFromArg(2);
 
@@ -166,7 +168,8 @@ public:
     {}
 
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     const char* type = ctx.getCstringFromArg(1);
 
     if (ctx.objc() < 3)
@@ -203,7 +206,8 @@ public:
     {}
 
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
 #ifndef FUNCTIONAL_OK
     Tcl::List::Iterator<int>
       itr = ctx.beginOfArg(1, (int*)0),

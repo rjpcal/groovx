@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec 11 14:38:13 2000
-// written: Wed Jul 11 19:53:30 2001
+// written: Thu Jul 12 13:23:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,7 +51,8 @@ Tcl::IsCmd::IsCmd(Tcl_Interp* interp, ObjCaster* caster, const char* cmd_name) :
 
 Tcl::IsCmd::~IsCmd() {}
 
-void Tcl::IsCmd::invoke(Context& ctx) {
+void Tcl::IsCmd::invoke(Tcl::Context& ctx)
+{
   int id = ctx.getIntFromArg(1);
   ctx.setResult(itsCaster->isIdMyType(id));
 }
@@ -70,7 +71,8 @@ Tcl::CountAllCmd::CountAllCmd(Tcl_Interp* interp, ObjCaster* caster,
 
 Tcl::CountAllCmd::~CountAllCmd() {}
 
-void Tcl::CountAllCmd::invoke(Context& ctx) {
+void Tcl::CountAllCmd::invoke(Tcl::Context& ctx)
+{
   ObjDb& theDb = ObjDb::theDb();
 #ifndef FUNCTIONAL_OK
   int count = 0;
@@ -105,7 +107,8 @@ Tcl::FindAllCmd::FindAllCmd(Tcl_Interp* interp, ObjCaster* caster,
 
 Tcl::FindAllCmd::~FindAllCmd() {}
 
-void Tcl::FindAllCmd::invoke(Context& ctx) {
+void Tcl::FindAllCmd::invoke(Tcl::Context& ctx)
+{
   ObjDb& theDb = ObjDb::theDb();
 
 #if 1
@@ -149,7 +152,8 @@ Tcl::RemoveAllCmd::RemoveAllCmd(Tcl_Interp* interp, ObjCaster* caster,
 
 Tcl::RemoveAllCmd::~RemoveAllCmd() {}
 
-void Tcl::RemoveAllCmd::invoke(Context& ctx) {
+void Tcl::RemoveAllCmd::invoke(Tcl::Context& ctx)
+{
   ObjDb& theDb = ObjDb::theDb();
   for (ObjDb::IdIterator
          itr = theDb.beginIds(),

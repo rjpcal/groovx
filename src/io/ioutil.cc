@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Wed Jul 11 19:53:12 2001
+// written: Thu Jul 12 13:23:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,7 +51,8 @@ Tcl::StringifyCmd::StringifyCmd(Tcl_Interp* interp, const char* cmd_name,
 
 Tcl::StringifyCmd::~StringifyCmd() {}
 
-void Tcl::StringifyCmd::invoke(Context& ctx) {
+void Tcl::StringifyCmd::invoke(Tcl::Context& ctx)
+{
 DOTRACE("Tcl::StringifyCmd::invoke");
   IO::IoObject& io = getIO(ctx);
 
@@ -97,7 +98,8 @@ Tcl::DestringifyCmd::DestringifyCmd(Tcl_Interp* interp, const char* cmd_name,
 
 Tcl::DestringifyCmd::~DestringifyCmd() {}
 
-void Tcl::DestringifyCmd::invoke(Context& ctx) {
+void Tcl::DestringifyCmd::invoke(Tcl::Context& ctx)
+{
 DOTRACE("Tcl::DestringifyCmd::invoke");
 
   // We assume that the string is contained in the last argument in the command
@@ -123,7 +125,8 @@ Tcl::WriteCmd::WriteCmd(Tcl_Interp* interp, const char* cmd_name,
 
 Tcl::WriteCmd::~WriteCmd() {}
 
-void Tcl::WriteCmd::invoke(Context& ctx) {
+void Tcl::WriteCmd::invoke(Tcl::Context& ctx)
+{
 DOTRACE("Tcl::WriteCmd::invoke");
   IO::IoObject& io = getIO(ctx);
 
@@ -169,7 +172,8 @@ Tcl::ReadCmd::ReadCmd(Tcl_Interp* interp, const char* cmd_name,
 
 Tcl::ReadCmd::~ReadCmd() {}
 
-void Tcl::ReadCmd::invoke(Context& ctx) {
+void Tcl::ReadCmd::invoke(Tcl::Context& ctx)
+{
 DOTRACE("Tcl::ReadCmd::invoke");
   IO::IoObject& io = getIO(ctx);
 
@@ -194,7 +198,8 @@ Tcl::ASWSaveCmd::ASWSaveCmd(Tcl_Interp* interp, const char* cmd_name,
 
 Tcl::ASWSaveCmd::~ASWSaveCmd() {}
 
-void Tcl::ASWSaveCmd::invoke(Context& ctx) {
+void Tcl::ASWSaveCmd::invoke(Tcl::Context& ctx)
+{
 DOTRACE("Tcl::ASWSaveCmd::invoke");
   IO::IoObject& io = getIO(ctx);
   fixed_string filename = getFilename(ctx);
@@ -242,7 +247,8 @@ Tcl::ASRLoadCmd::~ASRLoadCmd() {}
 void Tcl::ASRLoadCmd::beforeLoadHook() {}
 void Tcl::ASRLoadCmd::afterLoadHook() {}
 
-void Tcl::ASRLoadCmd::invoke(Context& ctx) {
+void Tcl::ASRLoadCmd::invoke(Tcl::Context& ctx)
+{
 DOTRACE("Tcl::ASRLoadCmd::invoke");
 
   beforeLoadHook();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jul 11 19:37:48 2001
+// written: Thu Jul 12 13:23:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@ public:
     {}
 
 protected:
-  virtual void invoke(Context& ctx)
+  virtual void invoke(Tcl::Context& ctx)
     {
       const char* device = ctx.objc() >= 2 ? ctx.getCstringFromArg(1) : "/dev/tty0p0";
 

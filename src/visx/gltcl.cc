@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jul 11 20:59:05 2001
+// written: Thu Jul 12 13:23:44 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -92,7 +92,8 @@ public:
   glFrustumCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
     Tcl::TclCmd(pkg->interp(), cmd_name, "left right bottom top zNear zFar", 7, 7) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     GLdouble left   = ctx.getDoubleFromArg(1);
     GLdouble right  = ctx.getDoubleFromArg(2);
     GLdouble bottom = ctx.getDoubleFromArg(3);
@@ -379,9 +380,10 @@ public:
 
 protected:
   virtual void getValues(const AttribInfo* theInfo,
-                         Context& ctx) = 0;
+                         Tcl::Context& ctx) = 0;
 
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     GLenum param_tag = ctx.getIntFromArg(1);
 
     const AttribInfo* theInfo = theirAttribs[param_tag];
@@ -414,7 +416,8 @@ public:
 protected:
   void extractValues(GLenum tag, T* vals_out);
 
-  virtual void getValues(const AttribInfo* theInfo, Context& ctx) {
+  virtual void getValues(const AttribInfo* theInfo, Tcl::Context& ctx)
+  {
     fixed_block<T> theVals(theInfo->num_values);
     extractValues(theInfo->param_tag, &(theVals[0]));
     ctx.returnSequence(theVals.begin(), theVals.end());
@@ -448,7 +451,8 @@ public:
   glLoadMatrixCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
     Tcl::TclCmd(pkg->interp(), cmd_name, "4x4_column_major_matrix", 2, 2) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     fixed_block<GLdouble> matrix(16);
 
     unsigned int i = 0;
@@ -481,7 +485,8 @@ public:
   glOrthoCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
     Tcl::TclCmd(pkg->interp(), cmd_name, "left right bottom top zNear zFar", 7, 7) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     GLdouble left   = ctx.getDoubleFromArg(1);
     GLdouble right  = ctx.getDoubleFromArg(2);
     GLdouble bottom = ctx.getDoubleFromArg(3);
@@ -506,7 +511,8 @@ public:
     Tcl::TclCmd(pkg->interp(), cmd_name, "eyeX eyeY eyeZ targX targY targZ upX upY upZ", 10, 10)
     {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     GLdouble eyeX = ctx.getDoubleFromArg(1);
     GLdouble eyeY = ctx.getDoubleFromArg(2);
     GLdouble eyeZ = ctx.getDoubleFromArg(3);
@@ -537,7 +543,7 @@ public:
   {}
 
 protected:
-  virtual void invoke(Context& ctx)
+  virtual void invoke(Tcl::Context& ctx)
     {
       bool on_off = ctx.getBoolFromArg(1);
 
@@ -571,7 +577,7 @@ public:
   {}
 
 protected:
-  virtual void invoke(Context& ctx)
+  virtual void invoke(Tcl::Context& ctx)
     {
       fixed_block<double> coord(4);
 
@@ -602,7 +608,7 @@ public:
   {}
 
 protected:
-  virtual void invoke(Context& ctx)
+  virtual void invoke(Tcl::Context& ctx)
     {
       fixed_block<double> coord(5); // fill with x1 y1 x2 y2 thickness
 
@@ -646,7 +652,7 @@ public:
   {}
 
 protected:
-  virtual void invoke(Context& ctx)
+  virtual void invoke(Tcl::Context& ctx)
     {
       GLdouble range[2] = {-1.0,-1.0};
       GLdouble gran=-1.0;
@@ -685,7 +691,7 @@ public:
   {}
 
 protected:
-  virtual void invoke(Context& ctx)
+  virtual void invoke(Tcl::Context& ctx)
     {
       int x,y,w,h;
       if (ctx.objc() == 5) {

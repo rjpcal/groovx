@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Feb 17 13:34:40 2000
-// written: Wed Jul 11 19:53:12 2001
+// written: Thu Jul 12 13:23:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ public:
     {}
 
 protected:
-  virtual void invoke(Context& ctx);
+  virtual void invoke(Tcl::Context& ctx);
 
 private:
   Util::Tracer& itsTracer;
@@ -62,14 +62,16 @@ private:
 
 // Specialization of TraceCmd::invoke for action functions
 template <>
-void TraceCmd<TraceActionFunc>::invoke(Context& ctx) {
+void TraceCmd<TraceActionFunc>::invoke(Tcl::Context& ctx)
+{
   (itsTracer.*itsFunc)();
 }
 
 
 // Specialization of TraceCmd::invoke for getter functions
 template <>
-void TraceCmd<TraceGetterFunc>::invoke(Context& ctx) {
+void TraceCmd<TraceGetterFunc>::invoke(Tcl::Context& ctx)
+{
   ctx.setResult( (itsTracer.*itsFunc)() );
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Wed Jul 11 19:53:12 2001
+// written: Thu Jul 12 13:23:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ public:
   virtual ~FieldVecCmd();
 
 protected:
-  virtual void invoke(Context& ctx);
+  virtual void invoke(Tcl::Context& ctx);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ public:
   virtual ~FieldsCmd();
 
 protected:
-  virtual void invoke(Context& ctx);
+  virtual void invoke(Tcl::Context& ctx);
 };
 
 } // end namespace Tcl
@@ -104,7 +104,8 @@ Tcl::FieldVecCmd::FieldVecCmd(TclItemPkg* pkg, const FieldInfo& finfo) :
 
 Tcl::FieldVecCmd::~FieldVecCmd() {}
 
-void Tcl::FieldVecCmd::invoke(Context& ctx) {
+void Tcl::FieldVecCmd::invoke(Tcl::Context& ctx)
+{
 DOTRACE("Tcl::FieldVecCmd::invoke");
 
   DebugEvalNL(ctx.getCstringFromArg(0));
@@ -193,7 +194,8 @@ Tcl::FieldsCmd::FieldsCmd(TclPkg* pkg, const FieldMap& fields) :
 
 Tcl::FieldsCmd::~FieldsCmd() {}
 
-void Tcl::FieldsCmd::invoke(Context& ctx) {
+void Tcl::FieldsCmd::invoke(Tcl::Context& ctx)
+{
 DOTRACE("Tcl::FieldsCmd::invoke");
   if (itsFieldList == 0) {
 

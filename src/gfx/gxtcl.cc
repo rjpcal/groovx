@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Wed Jul 11 19:53:12 2001
+// written: Thu Jul 12 13:23:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,8 @@ public:
     Tcl::TclItemCmd<GxNode>(pkg, cmd_name, "item_id other_id", 3, 3) {}
 
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     Ref<GxNode> other(ctx.getIntFromArg(2));
     GxNode* sep = getItem(ctx);
     ctx.setResult(sep->contains(other.get()));
@@ -73,7 +74,8 @@ public:
                                  "item_id child_item_id", 3, 3) {}
 
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     int child = ctx.getIntFromArg(2);
     GxSeparator* sep = getItem(ctx);
     int child_id = sep->addChild(child);

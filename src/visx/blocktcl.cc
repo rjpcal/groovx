@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Jul 11 19:49:09 2001
+// written: Thu Jul 12 13:23:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,8 @@ public:
                      "block_id trial_id(s) ?repeat=1?",
                      3, 4, false) {}
 protected:
-  virtual void invoke(Context& ctx) {
+  virtual void invoke(Tcl::Context& ctx)
+  {
     Block* block = getItem(ctx);
 
     int repeat = (ctx.objc() < 4)  ?  1 : ctx.getIntFromArg(3);

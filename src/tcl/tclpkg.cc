@@ -167,7 +167,7 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx)
+  virtual IO::IoObject& getIO(Tcl::Context& ctx)
   {
     int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
@@ -191,7 +191,7 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx)
+  virtual IO::IoObject& getIO(Tcl::Context& ctx)
   {
     int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
@@ -215,7 +215,7 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx)
+  virtual IO::IoObject& getIO(Tcl::Context& ctx)
   {
     int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
@@ -239,7 +239,7 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx)
+  virtual IO::IoObject& getIO(Tcl::Context& ctx)
   {
     int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
@@ -263,13 +263,13 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx)
+  virtual IO::IoObject& getIO(Tcl::Context& ctx)
   {
     int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
 
-  virtual const char* getFilename(Context& ctx)
+  virtual const char* getFilename(Tcl::Context& ctx)
   {
     return ctx.getCstringFromArg(itsItemArgn+1);
   }
@@ -292,13 +292,13 @@ public:
     itsItemArgn(item_argn) {}
 
 protected:
-  virtual IO::IoObject& getIO(Context& ctx)
+  virtual IO::IoObject& getIO(Tcl::Context& ctx)
   {
     int id = itsItemArgn ? ctx.getIntFromArg(itsItemArgn) : -1;
     return itsFetcher->getIoFromId(id);
   }
 
-  virtual const char* getFilename(Context& ctx) {
+  virtual const char* getFilename(Tcl::Context& ctx) {
     return ctx.getCstringFromArg(itsItemArgn+1);
   }
 

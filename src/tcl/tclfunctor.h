@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Wed Jul 11 19:53:12 2001
+// written: Thu Jul 12 13:23:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke(Context& ctx)
+    virtual void invoke(Tcl::Context& ctx)
     {
       ctx.setResult(itsFunc());
     }
@@ -48,7 +48,7 @@ namespace Tcl {
   };
 
   template <>
-  void CmdP0<void>::invoke(Context& ctx) { itsFunc(); }
+  void CmdP0<void>::invoke(Tcl::Context& ctx) { itsFunc(); }
 
 
 
@@ -68,7 +68,7 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke(Context& ctx)
+    virtual void invoke(Tcl::Context& ctx)
     {
       P1 p1 = ctx.getValFromArg(1, (P1*)0);
       ctx.setResult(itsFunc(p1));
@@ -93,7 +93,7 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke(Context& ctx)
+    virtual void invoke(Tcl::Context& ctx)
     {
       P1 p1 = ctx.getValFromArg(1, (P1*)0);
       itsFunc(p1);
@@ -123,7 +123,7 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke(Context& ctx)
+    virtual void invoke(Tcl::Context& ctx)
     {
       P1 p1 = ctx.getValFromArg(1, (P1*)0);
       P2 p2 = ctx.getValFromArg(2, (P2*)0);
@@ -149,7 +149,7 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke(Context& ctx)
+    virtual void invoke(Tcl::Context& ctx)
     {
       P1 p1 = ctx.getValFromArg(1, (P1*)0);
       P2 p2 = ctx.getValFromArg(2, (P2*)0);
@@ -180,7 +180,7 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke(Context& ctx)
+    virtual void invoke(Tcl::Context& ctx)
     {
       P1 p1 = ctx.getValFromArg(1, (P1*)0);
       P2 p2 = ctx.getValFromArg(2, (P2*)0);
@@ -207,7 +207,7 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke(Context& ctx)
+    virtual void invoke(Tcl::Context& ctx)
     {
       P1 p1 = ctx.getValFromArg(1, (P1*)0);
       P2 p2 = ctx.getValFromArg(2, (P2*)0);
@@ -239,7 +239,7 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke(Context& ctx)
+    virtual void invoke(Tcl::Context& ctx)
     {
       P1 p1 = ctx.getValFromArg(1, (P1*)0);
       P2 p2 = ctx.getValFromArg(2, (P2*)0);
@@ -267,7 +267,7 @@ namespace Tcl {
     {}
 
   protected:
-    virtual void invoke(Context& ctx)
+    virtual void invoke(Tcl::Context& ctx)
     {
       P1 p1 = ctx.getValFromArg(1, (P1*)0);
       P2 p2 = ctx.getValFromArg(2, (P2*)0);
