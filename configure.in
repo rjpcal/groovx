@@ -241,6 +241,14 @@ LDFLAGS="$LDFLAGS -L${with_tcltk}/lib"
 
 AC_MSG_CHECKING([for tcl+tk versions])
 
+if ! test -r ${with_tcltk}/lib/tclConfig.sh; then
+   AC_MSG_ERROR([could not find tclConfig.sh in ${with_tcltk}/lib])
+fi
+
+if ! test -r ${with_tcltk}/lib/tkConfig.sh; then
+   AC_MSG_ERROR([could not find tkConfig.sh in ${with_tcltk}/lib])
+fi
+
 TCL_VERSION=`sh -c ". ${with_tcltk}/lib/tclConfig.sh ; echo \\$TCL_VERSION"`
 TK_VERSION=`sh -c ". ${with_tcltk}/lib/tkConfig.sh ; echo \\$TK_VERSION"`
 
