@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri Aug 17 16:06:31 2001
+// written: Fri Aug 17 16:21:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,14 +22,13 @@
 
 #include "grobj.h"
 
-#include "gfx/gxtraversal.h"
-
 #include "io/readutils.h"
 #include "io/writeutils.h"
 
 #include "gwt/widget.h"
 
 #include "util/errorhandler.h"
+#include "util/iter.h"
 #include "util/log.h"
 #include "util/minivec.h"
 #include "util/ref.h"
@@ -239,7 +238,9 @@ DOTRACE("Trial::Impl::description");
        ii != end;
        ++ii)
     {
-      for (GxTraversal tr(*ii); tr.isValid(); tr.next())
+      for (Util::FwdIter<const Util::Ref<GxNode> > tr((*ii)->deepChildren());
+           tr.isValid();
+           tr.next())
         {
           const GrObj* g = dynamic_cast<const GrObj*>((*tr).get());
           if (g)
