@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:44:19 1999
-// written: Mon Jul 16 17:14:22 2001
+// written: Thu Jul 19 14:05:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,6 +68,12 @@ public:
 
   /// Conversion operator to Tcl_Obj*.
   operator Tcl_ObjPtr() { return itsObj; }
+
+  template <class Cue>
+  typename Cue::Type as(Cue)
+  {
+    return Tcl::Convert<typename Cue::Type>::fromTcl(itsObj);
+  }
 
   void append(Tcl::ObjPtr other);
 
