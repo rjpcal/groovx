@@ -567,7 +567,7 @@ DOTRACE("Tcl::TkWidget::repack");
 
 void Tcl::TkWidget::unpack()
 {
-DOTRACE("Tcl::TkWidget::repack");
+DOTRACE("Tcl::TkWidget::unpack");
 
   if (!Tk_IsTopLevel(rep->tkWin))
     {
