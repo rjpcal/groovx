@@ -257,14 +257,14 @@ BITMAP_H = $(GROBJ_H) $(RECT_H) bitmap.h
 BLOCKLIST_H = $(PTRLIST_H) blocklist.h
 FACE_H = $(IOSTL_H) $(GROBJ_H) face.h
 FISH_H = $(GROBJ_H) $(PROPERTY_H) fish.h
-FIXPT_H = $(GROBJ_H) fixpt.h
+FIXPT_H = $(GROBJ_H) $(PROPERTY_H) fixpt.h
 GTEXT_H = $(GROBJ_H) $(ERROR_H) gtext.h
-HOUSE_H = $(GROBJ_H) $(IOSTL_H) house.h
+HOUSE_H = $(GROBJ_H) $(PROPERTY_H) house.h
 IOMGR_H = $(IO_H) $(IOFACTORY_H) iomgr.h
 JITTER_H = $(POSITION_H) jitter.h
 KBDRESPONSEHDLR_H = $(RESPONSEHANDLER_H) kbdresponsehdlr.h
 MASKHATCH_H = $(GROBJ_H) maskhatch.h
-MORPHYFACE_H = $(IOSTL_H) $(GROBJ_H) $(PROPERTY_H) morphyface.h
+MORPHYFACE_H = $(GROBJ_H) $(PROPERTY_H) morphyface.h
 NULLRESPONSEHDLR_H = $(RESPONSEHANDLER_H) nullresponsehdlr.h
 OBJLIST_H = $(PTRLIST_H) $(ID_H) objlist.h
 POSLIST_H = $(PTRLIST_H) $(ID_H) poslist.h
@@ -333,7 +333,7 @@ FACETCL_CC = $(FACETCL_H) $(CLONEFACE_H) $(IOMGR_H) $(OBJLIST_H) \
 	$(FACE_H) \
 	$(LISTITEMPKG_H) $(TCLCMD_H) $(TRACE_H) $(DEBUG_H) facetcl.cc
 
-FISH_CC = $(FISH_H) fish.cc
+FISH_CC = $(FISH_H) $(ERROR_H) fish.cc
 
 FISHTCL_CC = $(OBJLIST_H) $(LISTITEMPKG_H) $(FISH_H) fishtcl.cc
 
