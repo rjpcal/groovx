@@ -5,13 +5,17 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Mon Jun 24 12:28:04 2002
+// written: Tue Jun 25 13:50:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef CANVAS_H_DEFINED
 #define CANVAS_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
+#include "util/object.h"
+#endif
 
 template <class T> class dynamic_block;
 
@@ -35,7 +39,7 @@ namespace Gfx
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Canvas
+class Canvas : public virtual Util::Object
 {
 public:
   /// Virtual destructor ensures proper destruction of subclasses.
