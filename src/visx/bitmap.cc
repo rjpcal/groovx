@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Mon Nov 15 16:36:16 1999
+// written: Tue Nov 23 17:49:45 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -162,7 +162,7 @@ DOTRACE("Bitmap::writeTo");
 /////////////
 
 void Bitmap::loadPbmFile(const char* filename) {
-DOTRACE("Bitmap::loadPbmFile");
+DOTRACE("Bitmap::loadPbmFile(const char*)");
   // Create a Pbm object by reading pbm data from 'filename'.
   Pbm pbm(filename);
 
@@ -177,6 +177,24 @@ DOTRACE("Bitmap::loadPbmFile");
 						itsBitsPerPixel, itsByteAlignment);
   
   sendStateChangeMsg();
+}
+
+void Bitmap::loadPbmFile(istream& is) {
+DOTRACE("Bitmap::loadPbmFile(istream&)");
+  // Create a Pbm object by reading pbm data from 'filename'.
+  Pbm pbm(is);
+
+  // Grab ownership of the bitmap data from pbm into this object's itsBytes.
+  pbm.grabBytes(itsBytes, itsWidth, itsHeight, itsBitsPerPixel);
+  itsFilename = "(direct_from_stream)";
+
+  if (itsContrastFlip) { doFlipContrast(); }
+  if (itsVerticalFlip) { doFlipVertical(); }
+
+  bytesChangeHook(&(itsBytes[0]), itsWidth, itsHeight,
+						itsBitsPerPixel, itsByteAlignment);
+  
+  sendStateChangeMsg(); 
 }
 
 void Bitmap::writePbmFile(const char* filename) const {
