@@ -42,7 +42,8 @@
 #include "util/rand.h"
 #include "util/strings.h"
 
-#include <cstdio>
+#include <cmath> // for log10()
+#include <cstdio> // for snprintf()
 #include <unistd.h>
 
 #include "util/trace.h"
@@ -61,14 +62,19 @@ namespace
   {
     const Util::BackTrace& bt = Util::Error::lastBackTrace();
 
+    if (bt.size() == 0) return fstring();
+
     fstring result;
 
     const int BUFSIZE = 256;
     char buf[BUFSIZE];
 
+    const int width = int(log10(bt.size()-1) + 1.0);
+
     for (unsigned int i = bt.size(); i > 0; --i)
       {
-        snprintf(&buf[0], BUFSIZE, "[%2d] %-35s (%s:%d)\n",
+        snprintf(&buf[0], BUFSIZE, "[%*d] %-35s (%s:%d)\n",
+                 width,
                  bt.size() - i,
                  bt[i-1]->name(),
                  bt[i-1]->srcFileName(),
