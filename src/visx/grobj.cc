@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Tue Oct 12 15:01:23 1999
+// written: Wed Oct 13 20:45:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 
+#include "gfxattribs.h"
 #include "glbitmap.h"
 #include "xbitmap.h"
 #include "error.h"
@@ -30,6 +31,27 @@
 #ifndef NULL
 #define NULL 0L
 #endif
+
+namespace {
+  void swapForeBack() {
+	 if ( GfxAttribs::usingRgba() ) {
+		GLdouble foreground[4];
+		GLdouble background[4];
+		glGetDoublev(GL_CURRENT_COLOR, &foreground[0]);
+		glGetDoublev(GL_COLOR_CLEAR_VALUE, &background[0]);
+		glColor4dv(background);
+		glClearColor(foreground[0], foreground[1],
+						 foreground[2], foreground[3]);
+	 }
+	 else {
+		GLint foreground, background;
+		glGetIntegerv(GL_CURRENT_INDEX, &foreground);
+		glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
+		glIndexi(background);
+		glClearIndex(foreground);
+	 }
+  }
+}
 
 class GrObjError : public virtual ErrorWithMsg {
 public:
@@ -798,33 +820,32 @@ DOTRACE("GrObj::undraw");
   }
 
   else if ( itsImpl->itsUnRenderMode == GROBJ_SWAP_FORE_BACK ) {
-	 GLint foreground, background;
-	 glGetIntegerv(GL_CURRENT_INDEX, &foreground);
-	 glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
-	 glIndexi(background);
-	 glClearIndex(foreground);
-	 
-	 glPushMatrix();
+	 glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
 	 {
-		grDoScaling();
-		grDoAlignment();
+		swapForeBack();
 		
-		if ( itsImpl->itsRenderMode == GROBJ_GL_COMPILE ) {
-		  // Since we don't do a recompile of the display list here, we must
-		  // explicitly check that the display list is valid, since it might
-		  // be invalid if the object was recently constructed, for example.
-		  if (glIsList(itsImpl->itsDisplayList) == GL_TRUE) {
-			 glCallList( itsImpl->itsDisplayList ); DebugEvalNL(itsImpl->itsDisplayList);
+		glPushMatrix();
+		{
+		  grDoScaling();
+		  grDoAlignment();
+		  
+		  if ( itsImpl->itsRenderMode == GROBJ_GL_COMPILE ) {
+			 // Since we don't do a recompile of the display list here,
+			 // we must explicitly check that the display list is valid,
+			 // since it might be invalid if the object was recently
+			 // constructed, for example.
+			 if (glIsList(itsImpl->itsDisplayList) == GL_TRUE) {
+				glCallList( itsImpl->itsDisplayList );
+				DebugEvalNL(itsImpl->itsDisplayList);
+			 }
+		  }
+		  else {
+			 grRender();
 		  }
 		}
-		else {
-		  grRender();
-		}
+		glPopMatrix();
 	 }
-	 glPopMatrix();
-	 
-	 glIndexi(foreground);
-	 glClearIndex(background);
+	 glPopAttrib();
   }
 
   else if ( itsImpl->itsUnRenderMode == GROBJ_CLEAR_BOUNDING_BOX ) {
@@ -848,23 +869,20 @@ DOTRACE("GrObj::undraw");
   }
 
   if ( itsImpl->itsBBIsVisible ) {
-	 GLint foreground, background;
-	 glGetIntegerv(GL_CURRENT_INDEX, &foreground);
-	 glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
-	 glIndexi(background);
-	 glClearIndex(foreground);
-  
-	 glPushMatrix();
+	 glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
 	 {
-		grDoScaling();
-		grDoAlignment();
-		
-		grDrawBoundingBox();
-	 }
-	 glPopMatrix();
+		swapForeBack();
 
-	 glIndexi(foreground);
-	 glClearIndex(background);
+		glPushMatrix();
+		{
+		  grDoScaling();
+		  grDoAlignment();
+		  
+		  grDrawBoundingBox();
+		}
+		glPopMatrix();
+	 }
+	 glPopAttrib();
   }
 
   checkForGlError("during GrObj::undraw");
