@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Aug  5 11:31:54 2002
+// written: Mon Aug  5 11:34:10 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -224,17 +224,10 @@ public:
   Tk_Window itsTkWin;           /* Tk window structure */
   Tcl_Interp* itsInterp;        /* Tcl interpreter */
   Tcl_Command itsWidgetCmd;     /* Token for togl's widget command */
-//   int itsWidth;
-//   int itsHeight;                /* Dimensions of window */
-//   int itsTime;                  /* Time value for timer */
+
   Tcl_TimerToken itsTimerHandler; /* Token for togl's timer handler */
 
   ToglOpts itsOpts;
-
-//   GlxOpts itsOpts.glx;
-
-//   int itsPrivateCmapFlag;
-//   int itsOpts.overlayFlag;
 
   int itsBitsPerPixel;
 
@@ -705,13 +698,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsTkWin(0),
   itsInterp(interp),
   itsWidgetCmd(0),
-//   itsOpts.width(0),
-//   itsOpts.height(0),
-//   itsOpts.time(0),
   itsTimerHandler(0),
-//   itsOpts.glx(),
-//   itsPrivateCmapFlag(0),
-//   itsOpts.overlayFlag(0),
   itsBitsPerPixel(-1),
   itsClientData(DefaultClientData),
   itsUpdatePending(false),
