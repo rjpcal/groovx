@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Mon Oct 23 11:58:12 2000
+// written: Mon Oct 23 16:36:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,35 +47,6 @@ class Response;
 
 class Trial : public TrialBase {
 public:
-  //////////////////
-  // nested types //
-  //////////////////
-
-  class IdPair : public Value {
-  public:
-	 IdPair(int o = 0, int p = 0);
-	 virtual ~IdPair();
-
-	 virtual Value* clone() const;
-	 virtual Type getNativeType() const;
-	 virtual const char* getNativeTypeName() const;
-
-	 virtual void printTo(STD_IO::ostream& os) const;
-	 virtual void scanFrom(STD_IO::istream& is);
-
-	 int objid() const { return itsGrObj.id(); }
-	 int posid() const { return itsPosition.id(); }
-
-	 NullableItemWithId<GrObj>& obj() { return itsGrObj; }
-	 NullableItemWithId<Position>& pos() { return itsPosition; }
-
-	 const NullableItemWithId<GrObj>& obj() const { return itsGrObj; }
-	 const NullableItemWithId<Position>& pos() const { return itsPosition; }
-
-  private:
-	 NullableItemWithId<GrObj> itsGrObj;
-	 NullableItemWithId<Position> itsPosition;
-  };
 
   //////////////
   // creators //
@@ -111,9 +82,9 @@ public:
   int getResponseHandler() const;
   int getTimingHdlr() const;
 
-  typedef const IdPair* IdPairItr;
-  IdPairItr beginIdPairs() const;
-  IdPairItr endIdPairs() const;
+  typedef const NullableItemWithId<GrObj>* GrObjItr;
+  GrObjItr beginGrObjs() const;
+  GrObjItr endGrObjs() const;
 
   // returns some info about relationship between objects in trial
   virtual int trialType() const;
