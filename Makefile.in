@@ -276,8 +276,8 @@ count_sort: $(ALL_SRCS)
 docs: $(DOC)/DoxyConfig
 	mkdir -p $(BUILD)/html
 	(time doxygen $(DOC)/DoxyConfig > $(DOC)/DocLog) >& $(DOC)/DocErrors
-	chmod -R og+r $(BUILD)/html
 	time cp -r $(BUILD)/html/* $(with_htmldoc)
+	chmod -R og+r $(with_htmldoc)
 
 # Generate tags file based only on header files
 H_TAGS: $(ALL_SRCS)
