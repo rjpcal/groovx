@@ -3,7 +3,7 @@
 // glbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:17 1999
-// written: Mon Sep 20 11:52:26 1999
+// written: Wed Sep 29 22:02:12 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,6 +47,8 @@ DOTRACE("GLBitmap::GLBitmap");
 
 void GLBitmap::init() {
 DOTRACE("GLBitmap::init");
+  GrObj::setRenderMode(GROBJ_GL_COMPILE);
+  GrObj::setUnRenderMode(GROBJ_CLEAR_BOUNDING_BOX);
   itsUsingGlBitmap = true;
   setUsingZoom(true);
 }
@@ -100,17 +102,6 @@ DOTRACE("GLBitmap::setUsingGlBitmap");
   }
 
   sendStateChangeMsg();
-}
-
-void GLBitmap::doUndraw(int winRasterX, int winRasterY,
-								int winWidthX, int winHeightY) const {
-DOTRACE("GLBitmap::doUndraw");
-  glPushAttrib(GL_SCISSOR_BIT);
-    glEnable(GL_SCISSOR_TEST);
-      glScissor(winRasterX, winRasterY, winWidthX, winHeightY);
-		glClear(GL_COLOR_BUFFER_BIT);
-	 glDisable(GL_SCISSOR_TEST);
-  glPopAttrib();	 
 }
 
 void GLBitmap::doRender(unsigned char* bytes,
