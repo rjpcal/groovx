@@ -46,6 +46,7 @@ DBG_REGISTER
 
 using geom::vec2i;
 using geom::vec2d;
+using geom::vec3i;
 using geom::vec3d;
 
 struct Gfx::Bbox::Impl
@@ -57,16 +58,16 @@ struct Gfx::Bbox::Impl
   std::vector<geom::txform> txforms;
   bool first;
 
-  vec2d screenFromWorld2(const vec2d& world_pos) const
+  vec3d screenFromWorld3(const vec3d& world_pos) const
   {
     // FIXME need to install our own modelview matrix here first...
-    return canvas.screenFromWorld2(world_pos);
+    return canvas.screenFromWorld3(world_pos);
   }
 
-  vec2d worldFromScreen2(const vec2i& screen_pos) const
+  vec3d worldFromScreen3(const vec3i& screen_pos) const
   {
     // FIXME need to install our own modelview matrix here first...
-    return canvas.worldFromScreen2(screen_pos);
+    return canvas.worldFromScreen3(screen_pos);
   }
 
   void merge(const vec3d& v)
@@ -164,7 +165,7 @@ void Gfx::Bbox::drawBox(const geom::box<double>& box)
   rep->merge(box.point111());
 }
 
-void Gfx::Bbox::drawScreenRect(const geom::vec2<double>& lower_left,
+void Gfx::Bbox::drawScreenRect(const geom::vec3<double>& lower_left,
                                const geom::vec2<int>& size,
                                const geom::vec2<double>& zoom)
 {
@@ -174,15 +175,15 @@ void Gfx::Bbox::drawScreenRect(const geom::vec2<double>& lower_left,
   drawScreenRect(lower_left, screen_rect);
 }
 
-void Gfx::Bbox::drawScreenRect(const geom::vec2<double>& lower_left,
+void Gfx::Bbox::drawScreenRect(const geom::vec3<double>& lower_left,
                                const geom::rect<int>& screen_rect)
 {
-  const vec2i o = vec2i(rep->screenFromWorld2(lower_left));
+  const vec3i o = vec3i(rep->screenFromWorld3(vec3d(lower_left)));
 
-  rep->merge(rep->worldFromScreen2(o+screen_rect.bottom_left()));
-  rep->merge(rep->worldFromScreen2(o+screen_rect.bottom_right()));
-  rep->merge(rep->worldFromScreen2(o+screen_rect.top_left()));
-  rep->merge(rep->worldFromScreen2(o+screen_rect.top_right()));
+  rep->merge(rep->worldFromScreen3(o+screen_rect.bottom_left()));
+  rep->merge(rep->worldFromScreen3(o+screen_rect.bottom_right()));
+  rep->merge(rep->worldFromScreen3(o+screen_rect.top_left()));
+  rep->merge(rep->worldFromScreen3(o+screen_rect.top_right()));
 }
 
 geom::box<double> Gfx::Bbox::cube() const

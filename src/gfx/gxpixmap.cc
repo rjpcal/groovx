@@ -35,7 +35,7 @@
 #include "gxpixmap.h"
 
 #include "geom/rect.h"
-#include "geom/vec2.h"
+#include "geom/vec3.h"
 
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
@@ -435,9 +435,7 @@ void GxPixmap::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxPixmap::grGetBoundingBox");
 
-  using geom::vec2d;
-
-  bbox.drawScreenRect(vec2d::zeros(),
+  bbox.drawScreenRect(geom::vec3d::zeros(),
                       this->size(),
                       getZoom());
 }

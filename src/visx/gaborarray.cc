@@ -62,6 +62,7 @@ DBG_REGISTER
 
 using geom::vec2i;
 using geom::vec2d;
+using geom::vec3d;
 
 using media::bmap_data;
 
@@ -262,7 +263,7 @@ void GaborArray::grGetBoundingBox(Bbox& bbox) const
 {
 DOTRACE("GaborArray::grGetBoundingBox");
 
-  bbox.drawScreenRect(vec2d::zeros(),
+  bbox.drawScreenRect(vec3d::zeros(),
                       vec2i(itsSizeX, itsSizeY),
                       vec2d::ones());
 }

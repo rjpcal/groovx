@@ -35,7 +35,7 @@
 #include "visx/gabor.h"
 
 #include "geom/rect.h"
-#include "geom/vec2.h"
+#include "geom/vec3.h"
 
 #include "gfx/bbox.h"
 #include "gfx/canvas.h"
@@ -59,6 +59,7 @@ DBG_REGISTER
 
 using geom::vec2i;
 using geom::vec2d;
+using geom::vec3d;
 
 namespace
 {
@@ -185,7 +186,7 @@ void Gabor::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("Gabor::grGetBoundingBox");
 
-  bbox.drawScreenRect(vec2d::zeros(),
+  bbox.drawScreenRect(vec3d::zeros(),
                       vec2i::ones() * itsResolution,
                       vec2d::ones() * itsPointSize);
 }

@@ -32,11 +32,12 @@
 #ifndef AGLRASTERFONT_H_DEFINED
 #define AGLRASTERFONT_H_DEFINED
 
+#include "geom/rect.h"
+#include "geom/vec3.h"
+
 #include "gfx/bbox.h"
 #include "gfx/glcanvas.h"
 #include "gfx/gxrasterfont.h"
-
-#include "geom/rect.h"
 
 #include "tcl/tcllistobj.h"
 
@@ -372,14 +373,12 @@ DOTRACE("AglRasterFont::bboxOf");
   dbg_eval(2, desc);
   dbg_eval_nl(2, maxwid);
 
-  using geom::vec2d;
-
   const int l = orig.x();
   const int r = orig.x() + maxwid;
   const int b = orig.y() - itsFontInfo.descent + (lines - 1) * (rasterHeight());
   const int t = orig.y() + itsFontInfo.ascent;
 
-  bbox.drawScreenRect(vec2d::zeros(), geom::rect<int>::ltrb(l,t,r,b));
+  bbox.drawScreenRect(geom::vec3d::zeros(), geom::rect<int>::ltrb(l,t,r,b));
 }
 
 void AglRasterFont::drawText(const char* text, Gfx::Canvas& canvas) const

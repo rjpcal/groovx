@@ -73,11 +73,11 @@ public:
 
   void drawBox(const geom::box<double>& box);
 
-  void drawScreenRect(const geom::vec2<double>& lower_left,
+  void drawScreenRect(const geom::vec3<double>& lower_left,
                       const geom::vec2<int>& size,
                       const geom::vec2<double>& zoom);
 
-  void drawScreenRect(const geom::vec2<double>& lower_left,
+  void drawScreenRect(const geom::vec3<double>& lower_left,
                       const geom::rect<int>& screen_rect);
 
   geom::box<double> cube() const;

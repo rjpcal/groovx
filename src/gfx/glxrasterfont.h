@@ -33,6 +33,7 @@
 #define GLXRASTERFONT_H_DEFINED
 
 #include "geom/rect.h"
+#include "geom/vec3.h"
 
 #include "gfx/bbox.h"
 #include "gfx/glcanvas.h"
@@ -291,14 +292,12 @@ DOTRACE("GlxRasterFont::bboxOf");
   dbg_eval(2, desc);
   dbg_eval_nl(2, maxwid);
 
-  using geom::vec2d;
-
   const int l = 0;
   const int r = maxwid;
   const int b = -desc + (lines - 1) * (asc+desc);
   const int t = asc;
 
-  bbox.drawScreenRect(vec2d::zeros(), geom::rect<int>::ltrb(l,t,r,b));
+  bbox.drawScreenRect(geom::vec3d::zeros(), geom::rect<int>::ltrb(l,t,r,b));
 }
 
 void GlxRasterFont::drawText(const char* text, Gfx::Canvas& canvas) const
