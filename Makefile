@@ -87,8 +87,6 @@ TMP_FILE := $(TMP_DIR)/tmpfile
 #
 #-------------------------------------------------------------------------
 
-ETAGS := etags
-
 ifeq ($(PLATFORM),irix6)
 	COMPILER := MIPSpro
 	SHLIB_EXT := so
@@ -125,7 +123,6 @@ ifeq ($(PLATFORM),ppc)
 	STATLIB_EXT := a
 	CPP_DEFINES += -DESD_WORKAROUND
 	DEFAULT_MODE := debug
-	ETAGS := etags
 	AUDIO_LIB := -lesd -laudiofile
 # The /sw/lib and /sw/include directories are managed by Fink
 	LIB_PATH += -L/usr/X11R6/lib -L/sw/lib
@@ -517,7 +514,7 @@ docs: $(DOC)/DoxygenConfig $(DOC)/*.doc $(ALL_HEADERS)
 
 # Generate tags file based only on header files
 H_TAGS: $(ALL_HEADERS)
-	find $(SRC) -name \*.h | $(ETAGS) - -o $@
+	find $(SRC) -name \*.h | etags - -o $@
 
 # Count the number of non-commented source lines
 ncsl: $(LOGS)/.timestamp
@@ -536,7 +533,7 @@ showpid:
 
 # Generate TAGS file based on all source files
 TAGS: $(ALL_SOURCES) $(ALL_HEADERS)
-	find $(SRC) -name \*.h -or -name \*.cc | $(ETAGS) - -o $@
+	find $(SRC) -name \*.h -or -name \*.cc | etags - -o $@
 
 SNAPSHOT := grsh-`date +%Y_%m_%d`
 
