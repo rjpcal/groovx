@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Mon Aug 13 12:15:35 2001
+// written: Tue Aug 14 13:05:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,14 +64,34 @@ private:
 
 public:
 
+  //
+  // Data members
+  //
+
+  int itsCategory;
+
+  shared_ptr<GrObjNode> itsNativeNode;
+  shared_ptr<GrObjBBox> itsBB;
+  shared_ptr<GLCacheNode> itsGLCache;
+  shared_ptr<BitmapCacheNode> itsBitmapCache;
+  shared_ptr<GrObjAligner> itsAligner;
+  shared_ptr<GrObjScaler> itsScaler;
+
+  shared_ptr<Gnode> itsTopNode;
+
+  //
+  // Methods
+  //
+
   GrObjImpl(GrObj* obj) :
     itsCategory(-1),
     itsNativeNode(new GrObjNode(obj)),
     itsBB(new GrObjBBox(itsNativeNode)),
     itsGLCache(new GLCacheNode(itsBB)),
-    itsAligner(new GrObjAligner(itsGLCache)),
+    itsBitmapCache(new BitmapCacheNode(itsGLCache)),
+    itsAligner(new GrObjAligner(itsBitmapCache)),
     itsScaler(new GrObjScaler(itsAligner)),
-    itsBitmapCache(new BitmapCacheNode(itsScaler))
+    itsTopNode(itsScaler)
   {}
 
   IO::VersionId serialVersionId() const
@@ -151,34 +171,11 @@ public:
   }
 
 
-  void draw(Gfx::Canvas& canvas) const
-  {
-    itsBitmapCache->gnodeDraw(canvas);
-  }
-
-  void undraw(Gfx::Canvas& canvas) const
-  {
-    itsBitmapCache->gnodeUndraw(canvas);
-  }
-
   void invalidateCaches()
   {
     itsGLCache->invalidate();
     itsBitmapCache->invalidate();
   }
-
-  //
-  // Data members
-  //
-
-  int itsCategory;
-
-  shared_ptr<GrObjNode> itsNativeNode;
-  shared_ptr<GrObjBBox> itsBB;
-  shared_ptr<GLCacheNode> itsGLCache;
-  shared_ptr<GrObjAligner> itsAligner;
-  shared_ptr<GrObjScaler> itsScaler;
-  shared_ptr<BitmapCacheNode> itsBitmapCache;
 };
 
 static const char vcid_grobjimpl_h[] = "$Header$";
