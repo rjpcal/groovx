@@ -139,18 +139,13 @@ proc showPic {} {
     set f [$::PLAYLIST filename]
 
     puts $f
+
     set b [new GxPixmap]
     -> $b loadImage $f
-    set s [-> $b size]
-    puts $s
-    set ratio [min \
-		   [expr ([Togl::width]-10) / double([lindex $s 0])]  \
-		   [expr ([Togl::height]-10) / double([lindex $s 1]) ]]
+    -> $b zoomTo [Togl::size]
 
-    puts $ratio
-    -> $b usingZoom 1
-    -> $b zoom "$ratio $ratio"
     see $b
+
     delete $::PREV
     set ::PREV $b
 }
