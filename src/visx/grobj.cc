@@ -93,11 +93,11 @@ DOTRACE("GrObj::writeTo");
 
 const FieldMap& GrObj::classFields()
 {
-#define GETSET(type, attr) std::make_pair(&type::get##attr, &type::set##attr)
+#define GETSET(type, attr) make_mypair(&type::get##attr, &type::set##attr)
 
   static const Field FIELD_ARRAY[] =
   {
-    Field("category", std::make_pair(&GrObj::category, &GrObj::setCategory),
+    Field("category", make_mypair(&GrObj::category, &GrObj::setCategory),
           0, 0, 20, 1, Field::NEW_GROUP),
     Field("renderMode", GETSET(GrObj, RenderMode), 1, 1, 4, 1),
     Field("cacheFilename", GETSET(GrObj, CacheFilename), 0, 0, 20, 1,

@@ -472,7 +472,7 @@ namespace
 {
   const Field FIELD_ARRAY[] =
   {
-    Field("tType", std::make_pair(&Trial::trialType, &Trial::setType),
+    Field("tType", make_mypair(&Trial::trialType, &Trial::setType),
           -1, -10, 10, 1, Field::NEW_GROUP)
   };
 

@@ -820,7 +820,7 @@ const FieldMap& Gtext::classFields()
           fstring("0"), fstring("0"), fstring("100"), fstring("1"),
           Field::NEW_GROUP | Field::STRING),
     Field("strokeWidth",
-          std::make_pair(&Gtext::getStrokeWidth, &Gtext::setStrokeWidth),
+          make_mypair(&Gtext::getStrokeWidth, &Gtext::setStrokeWidth),
           1, 1, 20, 1)
   };
 
