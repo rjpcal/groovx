@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Mon Sep 16 20:19:11 2002
+// written: Tue Sep 17 11:02:02 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -183,8 +183,8 @@ public:
     defAction("loadDefaultFont", &Togl::loadDefaultFont);
     defSetter("loadFont", &Togl::loadBitmapFont);
     defSetter("loadFonti", &Togl::loadBitmapFonti);
-    defGetter("pathname", &Togl::pathname);
-    defGetter("pixelsPerInch", &Togl::pixelsPerInch);
+    defGetter("pathname", &Tcl::TkWidget::pathname);
+    defGetter("pixelsPerInch", &Tcl::TkWidget::pixelsPerInch);
     defSetter("scaleRect", "item_id(s) scale", &Toglet::scaleRect);
     defSetter("pixelsPerUnit", "item_id(s) scale", &Toglet::setPixelsPerUnit);
     def("setMinRect", "uid left top right bottom", &Toglet::setMinRectLTRB);

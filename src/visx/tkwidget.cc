@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Mon Sep 16 20:09:38 2002
+// written: Tue Sep 17 11:04:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,16 +20,14 @@
 #include "util/ref.h"
 #include "util/strings.h"
 
+#include <iostream>
 #include <tcl.h>
 #include <tk.h>
 #include <X11/Xutil.h>
 
 #include "util/trace.h"
-#define LOCAL_DEBUG
 #include "util/debug.h"
 
-#ifdef LOCAL_DEBUG
-#include <iostream>
 
 class DbgButtonListener : public GWT::ButtonListener
 {
@@ -64,7 +62,6 @@ public:
     return GWT::HANDLED;
   }
 };
-#endif
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -78,10 +75,10 @@ class Tcl::TkWidget::TkWidgImpl
   TkWidgImpl& operator=(const TkWidgImpl&);
 
 public:
-  TkWidgImpl(Tcl::TkWidget* o, Tcl_Interp* p, Tk_Window widg) :
+  TkWidgImpl(Tcl::TkWidget* o, Tcl_Interp* p) :
     owner(o),
     interp(p),
-    tkWin(widg)
+    tkWin(0)
   {}
 
   ~TkWidgImpl()
@@ -165,22 +162,17 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::TkWidget::TkWidget() : rep(0) {}
+Tcl::TkWidget::TkWidget(Tcl_Interp* interp) : rep(new TkWidgImpl(interp)) {}
 
 Tcl::TkWidget::~TkWidget()
 {
   delete rep;
 }
 
-Tk_Window Tcl::TkWidget::tkWin() const
+void Tcl::TkWidget::init(Tk_Window win)
 {
-  return rep ? rep->tkWin : 0;
-}
-
-void Tcl::TkWidget::init(Tcl_Interp* interp, Tk_Window win)
-{
-  delete rep;
-  rep = new TkWidgImpl(this, interp, win);
+  Assert(rep->tkWin == 0);
+  rep->tkWin = win;
 }
 
 void Tcl::TkWidget::destroyWidget()
@@ -191,7 +183,7 @@ DOTRACE("Tcl::TkWidget::destroyWidget");
   if ( !Tcl_InterpDeleted(rep->interp) )
     {
       fstring destroy_cmd_str = "destroy ";
-      destroy_cmd_str.append( Tk_PathName(rep->tkWin) );
+      destroy_cmd_str.append( pathname() );
 
       Tcl::Code destroy_cmd(destroy_cmd_str.c_str(),
                             Tcl::Code::BACKGROUND_ERROR);
@@ -199,12 +191,47 @@ DOTRACE("Tcl::TkWidget::destroyWidget");
     }
 }
 
+Tcl_Interp* Tcl::TkWidget::interp() const
+{
+  return rep->interp;
+}
+
+Tk_Window Tcl::TkWidget::tkWin() const
+{
+  Assert(rep->tkWin != 0);
+  return rep->tkWin;
+}
+
+const char* Tcl::TkWidget::pathname() const
+{
+  Assert(rep->tkWin != 0);
+  return Tk_PathName(rep->tkWin);
+}
+
+double Tcl::TkWidget::pixelsPerInch() const
+{
+DOTRACE("Tcl::TkWidget::pixelsPerInch");
+
+  Assert(rep->tkWin != 0);
+
+  Screen* scr = Tk_Screen(rep->tkWin);
+  const int screen_pixel_width = XWidthOfScreen(scr);
+  const int screen_mm_width = XWidthMMOfScreen(scr);
+
+  const double screen_inch_width = screen_mm_width / 25.4;
+
+  const double screen_ppi = screen_pixel_width / screen_inch_width;
+
+  DebugEvalNL(screen_ppi);
+  return screen_ppi;
+}
+
 void Tcl::TkWidget::pack()
 {
 DOTRACE("Tcl::TkWidget::pack");
 
   fstring pack_cmd_str = "pack ";
-  pack_cmd_str.append( Tk_PathName(rep->tkWin) );
+  pack_cmd_str.append( pathname() );
   pack_cmd_str.append( " -side left -expand 1 -fill both; update" );
   Tcl::Code pack_cmd(pack_cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
   pack_cmd.invoke(rep->interp);
@@ -214,7 +241,7 @@ void Tcl::TkWidget::bind(const char* event_sequence, const char* script)
 {
 DOTRACE("Tcl::TkWidget::bind");
 
-  fstring cmd_str("bind ", Tk_PathName(rep->tkWin), " ");
+  fstring cmd_str("bind ", pathname(), " ");
   cmd_str.append( event_sequence, " ");
   cmd_str.append("{ ", script, " }");
 
@@ -228,7 +255,7 @@ void Tcl::TkWidget::takeFocus()
 DOTRACE("Tcl::TkWidget::takeFocus");
 
   fstring cmd_str = "focus -force ";
-  cmd_str.append( Tk_PathName(rep->tkWin) );
+  cmd_str.append( pathname() );
 
   Tcl::Code cmd(cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
 
@@ -277,11 +304,9 @@ void Tcl::TkWidget::removeKeyListeners()
 
 void Tcl::TkWidget::hook()
 {
-#ifdef LOCAL_DEBUG
   addButtonListener(Util::Ref<GWT::ButtonListener>(DbgButtonListener::make()));
   addButtonListener(Util::Ref<GWT::ButtonListener>(DbgButtonListener::make()));
   addKeyListener(Util::Ref<GWT::KeyListener>(DbgKeyListener::make()));
-#endif
 }
 
 static const char vcid_tkwidget_cc[] = "$Header$";

@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 20:10:54 2002
+// written: Tue Sep 17 11:05:41 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -831,7 +831,7 @@ Togl::Togl(Tcl_Interp* interp, const char* pathname) :
 {
 DOTRACE("Togl::Togl");
 
-  TkWidget::init(interp, rep->itsTkWin);
+  TkWidget::init(rep->itsTkWin);
 
   incrRefCount();
 
@@ -885,25 +885,6 @@ bool Togl::isRgba() const               { return rep->itsOpts->glx.rgbaFlag; }
 bool Togl::isDoubleBuffered() const     { return rep->itsOpts->glx.doubleFlag; }
 unsigned int Togl::bitsPerPixel() const { return rep->itsGlx->visInfo()->depth; }
 bool Togl::hasPrivateCmap() const       { return rep->itsOpts->privateCmapFlag; }
-Tcl_Interp* Togl::interp() const        { return rep->itsInterp; }
-Tk_Window Togl::tkWin() const           { return rep->itsTkWin; }
-const char* Togl::pathname() const      { return Tk_PathName(rep->itsTkWin); }
-
-double Togl::pixelsPerInch() const
-{
-DOTRACE("Togl::pixelsPerInch");
-
-  Screen* scr = Tk_Screen(rep->itsTkWin);
-  const int screen_pixel_width = XWidthOfScreen(scr);
-  const int screen_mm_width = XWidthMMOfScreen(scr);
-
-  const double screen_inch_width = screen_mm_width / 25.4;
-
-  const double screen_ppi = screen_pixel_width / screen_inch_width;
-
-  DebugEvalNL(screen_ppi);
-  return screen_ppi;
-}
 
 unsigned long Togl::allocColor( float red, float green, float blue ) const
   { return rep->allocColor(red, green, blue); }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Mon Sep 16 20:08:41 2002
+// written: Tue Sep 17 11:03:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,6 @@ namespace Tcl
 class Tcl::TkWidget : public GWT::CanvasWidget
 {
 protected:
-  Tk_Window tkWin() const;
   void init(Tcl_Interp* interp, Tk_Window win);
 
 public:
@@ -47,6 +46,12 @@ public:
   virtual ~TkWidget();
 
   void destroyWidget();
+
+  // Accessors
+  Tcl_Interp* interp() const;
+  Tk_Window tkWin() const;
+  const char* pathname() const;
+  double pixelsPerInch() const;
 
   void pack();
 
@@ -71,7 +76,7 @@ private:
   class TkWidgImpl;
   friend class TkWidgImpl;
 
-  TkWidgImpl* rep;
+  TkWidgImpl* const rep;
 };
 
 static const char vcid_tkwidget_h[] = "$Header$";

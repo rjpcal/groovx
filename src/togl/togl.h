@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Mon Sep 16 20:05:15 2002
+// written: Tue Sep 17 11:05:34 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -85,10 +85,6 @@ public:
   bool isDoubleBuffered() const;
   unsigned int bitsPerPixel() const;
   bool hasPrivateCmap() const;
-  Tcl_Interp* interp() const;
-  Tk_Window tkWin() const;
-  const char* pathname() const;
-  double pixelsPerInch() const;
 
   // Color index mode
 
