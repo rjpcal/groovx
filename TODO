@@ -7,17 +7,6 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
-* (2005-03-17) Bugs with GLCanvas.
-
-  this shows the gabor patch correctly positioned, but the bounding
-  box is drawn in the wrong location:
-
-  set g [new Gabor]
-  -> $g resolution 256
-  -> $g alignmentMode $GxShapeKit::CENTER_ON_CENTER
-  -> $g bbVisibility 1
-  see $g
-
 * (19-Nov-2004) Fix redundancy of GxShapeKit::category() redundancy
 
   This is duplicated (and serialized twice) in several base classes,

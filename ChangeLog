@@ -4658,3 +4658,19 @@
   coordinates.
 
 * (26-Oct-2004, done 27-Oct-2004) fix rasterPos() for 3-D
+
+* 2005 STARTS HERE
+
+* (2005-03-17, not-a-bug) Bugs with GLCanvas.
+
+  this shows the gabor patch correctly positioned, but the bounding
+  box is drawn in the wrong location:
+
+  set g [new Gabor]
+  -> $g resolution 256
+  -> $g alignmentMode $GxShapeKit::CENTER_ON_CENTER
+  -> $g bbVisibility 1
+  see $g
+
+  Turns out this was a bug in the nvidia driver that was fixed by
+  upgrading from version 6629 to 7167.
