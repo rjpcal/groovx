@@ -122,10 +122,10 @@ public:
       that is passed to Tcl_PkgProvide() and Tcl_PkgProvide(), and has a
       well-defined capitalization scheme: first character uppercase, all
       remaining letters lowercase. */
-  const char* pkgName() throw();
+  const char* pkgName() const throw();
 
   /// Returns the package version string.
-  const char* version() throw();
+  const char* version() const throw();
 
   /** Causes all of our package's currently defined commands and procedures to
       be imported into the specified other namespace. */
