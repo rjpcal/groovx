@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Apr 16 11:47:48 2001
+// written: Mon Apr 16 14:59:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -256,6 +256,9 @@ public:
 
   void operator/=(double div) { apply(Div(div)); }
 
+  Slice& operator+=(const Slice& other);
+  Slice& operator-=(const Slice& other);
+
   // This is assignment of value, not reference
   Slice& operator=(const Slice& other);
   Slice& operator=(const Mtx& other);
@@ -410,6 +413,9 @@ public:
   Mtx& operator-=(double x) { applyF(Sub(x)); return *this; }
   Mtx& operator*=(double fac) { applyF(Mul(fac)); return *this; }
   Mtx& operator/=(double div) { applyF(Div(div)); return *this; }
+
+  Mtx& operator+=(const Mtx& other);
+  Mtx& operator-=(const Mtx& other);
 
   bool operator==(const Mtx& other) const
   {
@@ -688,6 +694,49 @@ static double innerProduct(MtxConstIter s1, MtxConstIter s2)
   for (; s1.hasMore(); ++s1, ++s2)
 	 result += (*s1) * (*s2);
 
+  return result;
+}
+
+inline Mtx operator+(const Mtx& m, double x)
+{
+  Mtx result(m);
+  result += x;
+  return result;
+}
+
+inline Mtx operator-(const Mtx& m, double x)
+{
+  Mtx result(m);
+  result -= x;
+  return result;
+}
+
+inline Mtx operator*(const Mtx& m, double x)
+{
+  Mtx result(m);
+  result *= x;
+  return result;
+}
+
+inline Mtx operator/(const Mtx& m, double x)
+{
+  Mtx result(m);
+  result /= x;
+  return result;
+}
+
+
+inline Mtx operator+(const Mtx& m1, const Mtx& m2)
+{
+  Mtx result(m1);
+  result += m2;
+  return result;
+}
+
+inline Mtx operator-(const Mtx& m1, const Mtx& m2)
+{
+  Mtx result(m1);
+  result -= m2;
   return result;
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Apr 16 11:48:33 2001
+// written: Mon Apr 16 15:03:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -117,6 +117,32 @@ void Slice::print() const
 		mexPrintf("%7.4f   ", double(*iter));
     }
   mexPrintf("\n");
+}
+
+Slice& Slice::operator+=(const Slice& other)
+{
+  if (itsNelems != other.nelems())
+	 throw ErrorWithMsg("dimension mismatch in Slice::operator+=");
+
+  MtxConstIter rhs = other.begin();
+
+  for (MtxIter lhs = beginNC(); lhs.hasMore(); ++lhs, ++rhs)
+    *lhs += *rhs;
+
+  return *this;
+}
+
+Slice& Slice::operator-=(const Slice& other)
+{
+  if (itsNelems != other.nelems())
+	 throw ErrorWithMsg("dimension mismatch in Slice::operator-=");
+
+  MtxConstIter rhs = other.begin();
+
+  for (MtxIter lhs = beginNC(); lhs.hasMore(); ++lhs, ++rhs)
+    *lhs -= *rhs;
+
+  return *this;
 }
 
 Slice& Slice::operator=(const Slice& other)
@@ -339,6 +365,28 @@ void Mtx::swapColumns(int c1, int c2)
   makeUnique();
 
   memswap(itsImpl.address(0,c1), itsImpl.address(0,c2), mrows());
+}
+
+Mtx& Mtx::operator+=(const Mtx& other)
+{
+  if (ncols() != other.ncols())
+	 throw ErrorWithMsg("dimension mismatch in Mtx::operator+=");
+
+  for (int i = 0; i < ncols(); ++i)
+	 column(i) += other.column(i);
+
+  return *this;
+}
+
+Mtx& Mtx::operator-=(const Mtx& other)
+{
+  if (ncols() != other.ncols())
+	 throw ErrorWithMsg("dimension mismatch in Mtx::operator-=");
+
+  for (int i = 0; i < ncols(); ++i)
+	 column(i) -= other.column(i);
+
+  return *this;
 }
 
 void Mtx::VMmul_assign(const Slice& vec, const Mtx& mtx,
