@@ -3,7 +3,7 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Mon Nov 15 15:49:23 1999
+// written: Mon Dec  6 21:36:09 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -103,7 +103,7 @@ public:
 protected:
   virtual bool grGetBoundingBox(Rect<double>& bbox,
 										  int& border_pixels) const;
-  virtual void grRender() const; 
+  virtual void grRender(Canvas& canvas) const; 
   // This overrides GrObj pure virtual function. It renders a face
   // with the appropriate parameters.
 

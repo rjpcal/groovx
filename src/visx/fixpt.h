@@ -3,7 +3,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Mon Dec  6 13:59:30 1999
+// written: Mon Dec  6 21:34:14 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ protected:
 										  int& border_pixels) const;
 
   ///
-  virtual void grRender() const;
+  virtual void grRender(Canvas& canvas) const;
 };
 
 static const char vcid_fixpt_h[] = "$Header$";

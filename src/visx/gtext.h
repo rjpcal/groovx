@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Mon Dec  6 14:00:05 1999
+// written: Mon Dec  6 21:34:54 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,7 +81,7 @@ protected:
 										  int& border_pixels) const;
 
   ///
-  virtual void grRender() const;
+  virtual void grRender(Canvas& canvas) const;
 
 private:
   string itsText;

@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Mon Dec  6 19:34:39 1999
+// written: Mon Dec  6 21:37:56 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@
 namespace {
   const string ioTag = "MorphyFace";
 
-  void draw_hairstyle1() {
+  void draw_hairstyle1(Canvas& canvas) {
 	 const GLdouble hair_vertices[] = {
 		-0.955, 0.293,
 		-1.000, 0.000,
@@ -122,7 +122,7 @@ namespace {
 		  // First hair line
 		  glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
 		  {
-			 GrObj::swapForeBack();
+			 canvas.swapForeBack();
 		  
 			 glBegin(GL_LINE_STRIP);
 			 {
@@ -385,12 +385,12 @@ DOTRACE("MorphyFace::getPropertyInfos");
 // Actions
 ///////////////////////////////////////////////////////////////////////
 
-void MorphyFace::grRender() const {
+void MorphyFace::grRender(Canvas& canvas) const {
 DOTRACE("MorphyFace::grRender");
   Invariant(check());
 
   // Enable antialiasing, if it is available
-  const bool have_antialiasing = Canvas::theCanvas().isRgba();
+  const bool have_antialiasing = canvas.isRgba();
 
   if (have_antialiasing) {
 	 glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_LINE_BIT);

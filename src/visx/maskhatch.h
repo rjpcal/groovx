@@ -3,7 +3,7 @@
 // maskhatch.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Mon Nov 15 15:48:01 1999
+// written: Mon Dec  6 21:35:42 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ protected:
   virtual bool grGetBoundingBox(Rect<double>& bbox,
 										  int& border_pixels) const;
 
-  virtual void grRender() const; 
+  virtual void grRender(Canvas& canvas) const; 
 };
 
 static const char vcid_maskhatch_h[] = "$Header$";

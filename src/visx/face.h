@@ -3,7 +3,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Mon Dec  6 13:59:04 1999
+// written: Mon Dec  6 21:32:34 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,7 +120,7 @@ public:
 
   /** This overrides GrObj pure virtual function. It renders a face
 		with the appropriate parameters. */
-  protected: virtual void grRender() const; 
+  protected: virtual void grRender(Canvas& canvas) const; 
 
 private:
   /// Check all invariants and return true if everything is OK.

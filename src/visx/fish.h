@@ -3,7 +3,7 @@
 // fish.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:56 1999
-// written: Mon Dec  6 13:59:25 1999
+// written: Mon Dec  6 21:33:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,7 +112,7 @@ protected:
 										  int& border_pixels) const;
 
   ///
-  virtual void grRender() const;
+  virtual void grRender(Canvas& canvas) const;
 
 private:
   void makeIoList(vector<IO *>& vec);

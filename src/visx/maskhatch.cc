@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Tue Nov 30 16:56:05 1999
+// written: Mon Dec  6 21:35:56 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -116,7 +116,7 @@ DOTRACE("MaskHatch::grGetBoundingBox");
   return true;
 }
 
-void MaskHatch::grRender() const {
+void MaskHatch::grRender(Canvas&) const {
 DOTRACE("MaskHatch::grRender");
 
   if (numLines() == 0) return; 

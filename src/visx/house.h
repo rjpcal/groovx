@@ -3,7 +3,7 @@
 // house.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:15 1999
-// written: Mon Dec  6 14:00:12 1999
+// written: Mon Dec  6 21:35:19 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -127,7 +127,7 @@ protected:
   virtual bool grGetBoundingBox(Rect<double>& bbox,
 										  int& border_pixels) const;
   ///
-  virtual void grRender() const; 
+  virtual void grRender(Canvas& canvas) const; 
 
 private:
   House(const House&);

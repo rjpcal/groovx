@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Mon Dec  6 19:32:25 1999
+// written: Mon Dec  6 21:32:54 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -227,11 +227,11 @@ DOTRACE("Face::getPropertyInfos");
 // Actions
 ///////////////////////////////////////////////////////////////////////
 
-void Face::grRender() const {
+void Face::grRender(Canvas& canvas) const {
 DOTRACE("Face::grRender");
   Invariant(check());
 
-  const bool have_antialiasing = Canvas::theCanvas().isRgba();
+  const bool have_antialiasing = canvas.isRgba();
 
   //
   // Drawing commands begin here...

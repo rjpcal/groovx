@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Mon Nov 15 16:03:18 1999
+// written: Mon Dec  6 21:34:24 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -119,7 +119,7 @@ bool FixPt::grGetBoundingBox(Rect<double>& bbox,
   return true;
 }
 
-void FixPt::grRender() const {
+void FixPt::grRender(Canvas&) const {
   glPushAttrib(GL_LINE_BIT);
   glLineWidth(width());
   

@@ -3,7 +3,7 @@
 // gabor.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Mon Dec  6 13:59:43 1999
+// written: Mon Dec  6 21:34:32 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -110,7 +110,7 @@ protected:
 										  int& border_pixels) const;
 
   ///
-  virtual void grRender() const;
+  virtual void grRender(Canvas& canvas) const;
 };
 
 static const char vcid_gabor_h[] = "$Header$";

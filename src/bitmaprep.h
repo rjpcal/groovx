@@ -3,7 +3,7 @@
 // bitmaprep.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon Dec  6 13:57:57 1999
+// written: Mon Dec  6 21:29:37 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@
 #endif
 
 class BmapRenderer;
+class Canvas;
 class istream;
 class ostream;
 class Reader;
@@ -118,11 +119,11 @@ public:
 
   /** Implements the rendering operation. This function delegates the
       work to itsRenderer. */
-  void grRender() const;
+  void grRender(Canvas& canvas) const;
 
   /** Implements the undrawing operation. This function delegates the
       work to itsRenderer. */
-  void grUnRender() const;
+  void grUnRender(Canvas& canvas) const;
 
   ///////////////
   // accessors //

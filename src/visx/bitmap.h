@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Mon Dec  6 13:57:22 1999
+// written: Mon Dec  6 21:31:17 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -125,13 +125,13 @@ public:
       delegates the work to itsRenderer; therefore, subclasses of
       Bitmap should not override grRender(), but should instead
       provide a specialized renderer. */
-  virtual void grRender() const;
+  virtual void grRender(Canvas& canvas) const;
 
   /** Implements the GrObj undrawing operation. This function
       delegates the work to itsRenderer; therefore, subclasses of
       Bitmap should not override grUnRender(), but should instead
       provide a specialized renderer. */
-  virtual void grUnRender() const;
+  virtual void grUnRender(Canvas& canvas) const;
 
   ///////////////
   // accessors //
