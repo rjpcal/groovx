@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Sep 29 16:07:59 2000
+// written: Thu Oct 19 13:45:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,6 @@
 
 #include "rect.h"
 
-#include "io/iolegacy.h"
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
@@ -48,6 +47,8 @@ namespace {
   };
 
   const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(FixPt::PInfo);
+
+  const IO::VersionId FIXPT_SERIAL_VERSION_ID = 2;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -61,55 +62,42 @@ FixPt::FixPt(double len, int wid) :
 
 FixPt::~FixPt() {}
 
-void FixPt::legacySrlz(IO::LegacyWriter* lwriter) const {
-
-  lwriter->writeDouble("length", length());
-  lwriter->setFieldSeparator('\n');
-  lwriter->writeInt("width", width());
-
-  IO::ConstIoProxy<GrObj> baseclass(this);
-  lwriter->writeBaseClass("GrObj", &baseclass);
-}
-
-void FixPt::legacyDesrlz(IO::LegacyReader* lreader) {
-
-  lreader->readValue("length", length());
-  lreader->readValue("width", width());
-
-  IO::IoProxy<GrObj> baseclass(this);
-  lreader->readBaseClass("GrObj", &baseclass);
+IO::VersionId FixPt::serialVersionId() const {
+DOTRACE("FixPt::serialVersionId");
+  return FIXPT_SERIAL_VERSION_ID;
 }
 
 void FixPt::readFrom(IO::Reader* reader) {
 DOTRACE("FixPt::readFrom");
-
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
 
   reader->readValue("length", length());
   reader->readValue("width", width());
 
   DebugEval(length());  DebugEvalNL(width());
 
-  GrObj::readFrom(reader);
+  IO::VersionId svid = reader->readSerialVersionId();
+  if (svid < 2)
+	 GrObj::readFrom(reader);
+  else if (svid == 2)
+	 {
+		IO::IoProxy<GrObj> baseclass(this);
+		reader->readBaseClass("GrObj", &baseclass);
+	 }
 }
 
 void FixPt::writeTo(IO::Writer* writer) const {
 DOTRACE("FixPt::writeTo");
 
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
-
   writer->writeDouble("length", length());
   writer->writeInt("width", width());
 
-  GrObj::writeTo(writer);
+  if (FIXPT_SERIAL_VERSION_ID < 2)
+	 GrObj::writeTo(writer);
+  else if (FIXPT_SERIAL_VERSION_ID == 2)
+	 {
+		IO::ConstIoProxy<GrObj> baseclass(this);
+		writer->writeBaseClass("GrObj", &baseclass);
+	 }
 }
 
 unsigned int FixPt::numPropertyInfos() {

@@ -3,7 +3,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Fri Sep 29 14:36:06 2000
+// written: Thu Oct 19 13:39:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,6 +36,7 @@ public:
   /// Virtual destructor.
   virtual ~FixPt ();
 
+  virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
@@ -65,10 +66,6 @@ protected:
   virtual bool grHasBoundingBox() const;
 
   virtual void grRender(GWT::Canvas& canvas) const;
-
-private:
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
 };
 
 static const char vcid_fixpt_h[] = "$Header$";
