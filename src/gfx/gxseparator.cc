@@ -3,7 +3,7 @@
 // gxseparator.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Nov  2 11:24:04 2000
-// written: Thu Nov  2 11:47:36 2000
+// written: Thu Nov  2 13:20:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,6 +32,11 @@ public:
   typedef minivec<IdItem<GxNode> > VecType;
   VecType itsChildren;
 };
+
+GxSeparator* GxSeparator::make() {
+DOTRACE("GxSeparator::make");
+  return new GxSeparator;
+}
 
 GxSeparator::GxSeparator() :
   itsImpl(new Impl)
