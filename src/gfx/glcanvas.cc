@@ -114,24 +114,6 @@ DOTRACE("GLCanvas::drawBufferBack");
   glDrawBuffer(GL_BACK);
 }
 
-vec2i GLCanvas::screenFromWorld2(const vec2d& world_pos) const
-{
-DOTRACE("GLCanvas::screenFromWorld2");
-
-  return screenFromWorld3(vec3d(world_pos.x(),
-                                world_pos.y(),
-                                0.0)).as_vec2();
-}
-
-vec2d GLCanvas::worldFromScreen2(const vec2i& screen_pos) const
-{
-DOTRACE("GLCanvas::worldFromScreen2");
-
-  return worldFromScreen3(vec3i(screen_pos.x(),
-                                screen_pos.y(),
-                                0)).as_vec2();
-}
-
 vec3i GLCanvas::screenFromWorld3(const vec3d& world_pos) const
 {
 DOTRACE("GLCanvas::screenFromWorld3");

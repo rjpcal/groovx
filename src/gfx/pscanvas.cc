@@ -659,26 +659,6 @@ DOTRACE("Gfx::PSCanvas::~PSCanvas");
   delete rep;
 }
 
-vec2i Gfx::PSCanvas::screenFromWorld2(
-  const vec2d& /*world_pos*/
-  ) const
-{
-DOTRACE("Gfx::PSCanvas::screenFromWorld2");
-// FIXME
-  rep->raiseError("not implemented", SRC_POS);
-  return vec2i();
-}
-
-vec2d Gfx::PSCanvas::worldFromScreen2(
-  const vec2i& /*screen_pos*/
-  ) const
-{
-DOTRACE("Gfx::PSCanvas::worldFromScreen2");
-// FIXME
-  rep->raiseError("not implemented", SRC_POS);
-  return vec2d();
-}
-
 vec3i Gfx::PSCanvas::screenFromWorld3(
   const vec3d& /*world_pos*/
   ) const

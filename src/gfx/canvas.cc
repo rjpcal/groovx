@@ -65,6 +65,24 @@ namespace
 
 Gfx::Canvas::~Canvas() throw() {}
 
+vec2i Gfx::Canvas::screenFromWorld2(const vec2d& world_pos) const
+{
+DOTRACE("Gfx::Canvas::screenFromWorld2");
+
+  return screenFromWorld3(vec3d(world_pos.x(),
+                                world_pos.y(),
+                                0.0)).as_vec2();
+}
+
+vec2d Gfx::Canvas::worldFromScreen2(const vec2i& screen_pos) const
+{
+DOTRACE("Gfx::Canvas::worldFromScreen2");
+
+  return worldFromScreen3(vec3i(screen_pos.x(),
+                                screen_pos.y(),
+                                0)).as_vec2();
+}
+
 geom::rect<int> Gfx::Canvas::screenFromWorldRect(const geom::rect<double>& world_pos) const
 {
 DOTRACE("Gfx::Canvas::screenFromWorldRect");
