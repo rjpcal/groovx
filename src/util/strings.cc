@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Wed Mar 19 17:58:51 2003
+// written: Thu Mar 20 16:35:27 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -214,7 +214,7 @@ void string_rep::debugDump() const
   dbgEvalNL(0, (void*)itsText);
   dbgEvalNL(0, itsText);
   for (unsigned int i = 0; i < itsLength; ++i)
-    dbgPrint(0, (void*)itsText[i]);
+    dbgPrint(0, (void*)(int)itsText[i]);
   dbgPrintNL(0, "");
 }
 

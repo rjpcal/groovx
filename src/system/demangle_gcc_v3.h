@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Jun 19 17:00:38 2001 (as gcc_v3_demangle.h)
-// written: Wed Mar 19 17:55:51 2003
+// written: Thu Mar 20 16:33:55 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -46,7 +46,7 @@ DOTRACE("demangle_impl");
 
   int status = 0;
 
-  static unsigned int length = 256;
+  static std::size_t length = 256;
   static char* demangled = static_cast<char*>(malloc(length));
 
   demangled = abi::__cxa_demangle(mangled.c_str(), demangled, &length, &status);
