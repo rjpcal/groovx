@@ -3,18 +3,13 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Mar  8 15:29:56 2000
+// written: Wed Mar  8 15:42:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TCLCMD_H_DEFINED
 #define TCLCMD_H_DEFINED
-
-#ifndef TCL_H_DEFINED
-#include <tcl.h>
-#define TCL_H_DEFINED
-#endif
 
 #ifndef TCLVALUE_H_DEFINED
 #include "tclvalue.h"
@@ -23,6 +18,10 @@
 #ifndef TCLERROR_H_DEFINED
 #include "tclerror.h"
 #endif
+
+struct Tcl_Interp;
+struct Tcl_Obj;
+typedef void* ClientData;
 
 namespace Tcl {
   class TclCmd;
@@ -68,10 +67,6 @@ public:
 
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~TclCmd();
-
-  /// The procedure that is actually registered with the Tcl C API.
-  static int dummyInvoke(ClientData clientData, Tcl_Interp* interp,
-								 int objc, Tcl_Obj *const objv[]);
 
 protected:
   /** This is overridden by subclasses to implement the specific
@@ -135,10 +130,8 @@ protected:
   void getSequenceFromArg(int argn, Iterator itr, T* dummy) {
 	 Tcl_Obj** elements;
 	 int count;
-	 if ( Tcl_ListObjGetElements(itsInterp, itsObjv[argn], &count, &elements)
-			!= TCL_OK) {
-		throw TclError();
-	 }
+	 safeSplitList(itsObjv[argn], &count, &elements);
+
 	 for (int i = 0; i < count; ++i) {
 		T val;
 		getValFromObj(elements[i], val);
@@ -153,10 +146,8 @@ protected:
   void getValSequenceFromArg(int argn, Iterator itr) {
 	 Tcl_Obj** elements;
 	 int count;
-	 if ( Tcl_ListObjGetElements(itsInterp, itsObjv[argn], &count, &elements)
-			!= TCL_OK) {
-		throw TclError();
-	 }
+	 safeSplitList(itsObjv[argn], &count, &elements);
+
 	 for (int i = 0; i < count; ++i) {
 		*itr = TclValue(itsInterp, elements[i]);
 	 }
@@ -250,6 +241,13 @@ protected:
   }
 
 private:
+  /// The procedure that is actually registered with the Tcl C API.
+  static int dummyInvoke(ClientData clientData, Tcl_Interp* interp,
+								 int objc, Tcl_Obj *const objv[]);
+
+  void safeSplitList(Tcl_Obj* obj, int* count_return,
+							Tcl_Obj*** elements_return);
+
   void lappendValue(const Value& val);
   void lappendInt(int val);
   void lappendLong(long val);
