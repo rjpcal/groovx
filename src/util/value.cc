@@ -34,6 +34,7 @@ DOTRACE("Value::~Value");
 
 const char* Value::getCstring() const
 {
+DOTRACE("Value::getCstring");
   static char buf[512];
   ostrstream ost(buf, 256);
   printTo(ost);
@@ -48,6 +49,7 @@ fstring Value::getFstring() const
 
 void Value::setCstring(const char* str)
 {
+DOTRACE("Value::setCstring");
   istrstream ist(str);
   scanFrom(ist);
 }
