@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Thu Aug  1 10:38:58 2002
+// written: Fri Sep  6 14:00:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
-#ifdef HAVE_MATLAB
+#ifdef WITH_MATLAB
 #include <libmatlb.h>
 #endif
 #include <numeric>
@@ -417,7 +417,7 @@ namespace
     return DataBlock::makeDataCopy(data, mrows*ncols);
   }
 
-#ifdef HAVE_MATLAB
+#ifdef WITH_MATLAB
   DataBlock* newDataBlock(mxArray* a, WithPolicies::StoragePolicy s)
   {
     if (!mxIsDouble(a))
@@ -452,7 +452,7 @@ DataHolder::DataHolder(int mrows, int ncols, InitPolicy p) :
   datablock_->incrRefCount();
 }
 
-#ifdef HAVE_MATLAB
+#ifdef WITH_MATLAB
 DataHolder::DataHolder(mxArray* a, StoragePolicy s) :
   datablock_(newDataBlock(a, s))
 {
@@ -567,7 +567,7 @@ DOTRACE("SubMtxRef::operator=(const Mtx&)");
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifdef HAVE_MATLAB
+#ifdef WITH_MATLAB
 Mtx::Mtx(mxArray* a, StoragePolicy s) :
   Base(MtxSpecs(mxGetM(a), mxGetN(a)), DataHolder(a, s))
 {
@@ -617,7 +617,7 @@ DOTRACE("Mtx::Mtx");
 
 Mtx::~Mtx() {}
 
-#ifdef HAVE_MATLAB
+#ifdef WITH_MATLAB
 mxArray* Mtx::makeMxArray() const
 {
 DOTRACE("Mtx::makeMxArray");

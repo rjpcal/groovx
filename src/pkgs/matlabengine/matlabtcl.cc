@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jul 10 12:16:44 2001
-// written: Fri Jan 18 16:06:58 2002
+// written: Fri Sep  6 14:00:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@
 
 #include "util/trace.h"
 
-#ifdef HAVE_MATLAB
+#ifdef WITH_MATLAB
 
 #include <engine.h>
 
@@ -94,7 +94,7 @@ private:
   char* itsBuf;
 };
 
-#else // !HAVE+MATLAB
+#else // !WITH_MATLAB
 
 class MatlabEngine : public Util::Object
 {
