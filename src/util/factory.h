@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Sat Mar  4 03:06:59 2000
+// written: Wed Mar  8 11:19:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@
 class FactoryError : public ErrorWithMsg {
 public:
   /// Construct with an informative message \a msg.
-  FactoryError(const string& str) : ErrorWithMsg(str) {}
+  FactoryError(const char* str) : ErrorWithMsg(str) {}
 
   static void throwForType(const char* type);
 };

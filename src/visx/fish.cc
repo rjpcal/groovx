@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Sun Mar  5 14:46:55 2000
+// written: Wed Mar  8 11:23:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -327,7 +327,10 @@ DOTRACE("Fish::readSplineFile");
   // reads in the spline knots and coefficient
   ifstream ifs(splinefile);
   if (ifs.fail()) {
-	 throw ErrorWithMsg(string("error opening file '") + splinefile + "'");
+	 ErrorWithMsg err("error opening file '");
+	 err.appendMsg(splinefile);
+	 err.appendMsg("'");
+	 throw err;
   }
 
   for(i = 0; i < 4; ++i) {
@@ -358,7 +361,10 @@ DOTRACE("Fish::readSplineFile");
     }
 
 	 if (ifs.fail()) {
-		throw ErrorWithMsg(string("error reading file '") + splinefile + "'");
+		ErrorWithMsg err("error reading file '");
+		err.appendMsg(splinefile);
+		err.appendMsg("'");
+		throw err;
 	 }
   }
 
@@ -377,7 +383,10 @@ DOTRACE("Fish::readSplineFile");
 		  >> itsEndPts[i].itsY[0] >> itsEndPts[i].itsY[1];
 
 	 if (ifs.fail()) {
-		throw ErrorWithMsg(string("error reading file '") + splinefile + "'");
+		ErrorWithMsg err("error reading file '");
+		err.appendMsg(splinefile);
+		err.appendMsg("'");
+		throw err;
 	 }
   }
 }
@@ -388,7 +397,10 @@ DOTRACE("Fish::readCoordFile");
 
   ifstream ifs(coordfile);
   if (ifs.fail()) {
-	 throw ErrorWithMsg(string("error opening file '") + coordfile + "'");
+	 ErrorWithMsg err("error opening file '");
+	 err.appendMsg(coordfile);
+	 err.appendMsg("'");
+	 throw err;
   }
 
   // Skip (index-1) lines
@@ -403,7 +415,10 @@ DOTRACE("Fish::readCoordFile");
   }
 
   if (ifs.fail()) {
-	 throw ErrorWithMsg(string("error reading file '") + coordfile + "'");
+	 ErrorWithMsg err("error reading file '");
+	 err.appendMsg(coordfile);
+	 err.appendMsg("'");
+	 throw err;
   }
 }
 

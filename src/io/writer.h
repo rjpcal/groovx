@@ -3,7 +3,7 @@
 // writer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:49 1999
-// written: Fri Mar  3 23:41:09 2000
+// written: Wed Mar  8 11:18:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ class Value;
 class WriteError : public ErrorWithMsg {
 public:
   /// Construct with a descriptive message \a msg.
-  WriteError(const string& msg) : ErrorWithMsg(msg) {}
+  WriteError(const char* msg) : ErrorWithMsg(msg) {}
 };
 
 ///////////////////////////////////////////////////////////////////////
