@@ -29,6 +29,36 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
+namespace {
+  size_t TOTAL = 0;
+}
+
+#if 0
+#include <cstdlib>
+
+void* operator new(size_t bytes)
+{
+  TOTAL += bytes;
+  return malloc(bytes);
+}
+
+void operator delete(void* space)
+{
+  free(space);
+}
+#endif
+
+class MemUsageCmd : public Tcl::TclCmd {
+public:
+  MemUsageCmd(Tcl_Interp* interp) :
+	 Tcl::TclCmd(interp, "memUsage", "", 1, 1, false) {}
+
+protected:
+  virtual void invoke() {
+	 returnVal(TOTAL);
+  }
+};
+
 class HookCmd : public Tcl::TclCmd {
 public:
   HookCmd(Tcl_Interp* interp) :
@@ -47,11 +77,12 @@ public:
 	 Tcl::TclPkg(interp, "Hook", "$Revision$")
   {
 	 addCommand(new HookCmd(interp));
+	 addCommand(new MemUsageCmd(interp));
   }
 };
 
 extern "C"
-int Objtest_Init(Tcl_Interp* interp) {
+int Hook_Init(Tcl_Interp* interp) {
 
   Tcl::TclPkg* pkg = new HookPkg(interp);
 
