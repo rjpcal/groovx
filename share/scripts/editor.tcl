@@ -16,8 +16,10 @@ itcl::class Editor {
 	 private variable itsVisible true
 	 private variable itsFieldPanes
 	 private variable itsFieldControls
-	 private variable itsObjects {}
-	 private variable itsCurrentObj 0
+	 private variable itsEditObjList {}
+	 private variable itsViewObjList {}
+	 private variable itsEditObj 0
+	 private variable itsViewObj 0
 	 private variable itsObjType Face
 	 private variable itsFieldNames {}
 
@@ -35,50 +37,79 @@ itcl::class Editor {
 
 		  standardSettings $obj
 
-		  lappend itsObjects $obj
-		  selectObject $obj
+		  lappend itsEditObjList $obj
+		  lappend itsViewObjList $obj
+		  selectEditObj $obj
+		  selectViewObj $obj
 	 }
 
-	 private method selectObject {obj} {
-		  set itsCurrentObj $obj
+	 private method makePreviewObj {} {
+		  set obj [Tlist::createPreview $itsEditObjList]
+		  lappend itsViewObjList $obj
+		  selectViewObj $obj
+	 }
 
-		  $itsControls.idspinner delete 0 end
-		  $itsControls.idspinner insert 0 $itsCurrentObj
+	 private method selectViewObj {obj} {
+		  set itsViewObj $obj
 
-		  Toglet::setVisible $itsToglet false
+		  $itsControls.viewobjspinner delete 0 end
+		  $itsControls.viewobjspinner insert 0 $itsViewObj
+
+		  requestDraw
+	 }
+
+	 private method selectEditObj {obj} {
+		  set itsEditObj $obj
+
+		  $itsControls.editobjspinner delete 0 end
+		  $itsControls.editobjspinner insert 0 $itsEditObj
+
+		  if { $itsEditObj == $itsViewObj } {
+				Toglet::setVisible $itsToglet false
+		  }
 
 		  foreach field $itsFieldNames {
 				set val [${itsObjType}::$field $obj]
 				$itsFieldControls($field) set $val
 		  }
 
-		  # need to force the controls to update before we draw the object
-		  update
+		  if { $itsEditObj == $itsViewObj } {
+				# need to force the controls to update before we draw the object
+				update
 
-		  Toglet::setVisible $itsToglet true
+				Toglet::setVisible $itsToglet true
 
-		  requestDraw
+				requestDraw
+		  }
 	 }
 
 	 private method requestDraw {} {
-		  if { $itsVisible } {
+		  if { $itsVisible && $itsViewObj != 0 } {
 				Toglet::clearscreen $itsToglet
-				Toglet::see $itsToglet $itsCurrentObj
+				Toglet::see $itsToglet $itsViewObj
 				Toglet::swapBuffers $itsToglet
 		  }
 	 }
 
-	 private method nextObject {step} {
-		  set current [lsearch $itsObjects $itsCurrentObj]
+	 private method findNextObj {step objlist current} {
+		  set current [lsearch $objlist $current]
 		  incr current $step
-		  set overflow [expr $current - [llength $itsObjects]]
+		  set overflow [expr $current - [llength $objlist]]
 		  if { $overflow >= 0 } {
 				set current $overflow
 		  } elseif { $current < 0 } {
-				set current [expr [llength $itsObjects] + $current]
+				set current [expr [llength $objlist] + $current]
 		  }
 
-		  selectObject [lindex $itsObjects $current]
+		  return [lindex $objlist $current]
+	 }
+
+	 private method nextEditObj {step} {
+		  selectEditObj [findNextObj $step $itsEditObjList $itsEditObj]
+	 }
+
+	 private method nextViewObj {step} {
+		  selectViewObj [findNextObj $step $itsViewObjList $itsViewObj]
 	 }
 
 	 private method viewingDist {val} {
@@ -86,8 +117,8 @@ itcl::class Editor {
 	 }
 
 	 private method setAttrib {name val} {
-		  if { $itsCurrentObj } {
-				${itsObjType}::$name $itsCurrentObj $val
+		  if { $itsEditObj } {
+				${itsObjType}::$name $itsEditObj $val
 		  }
 	 }
 
@@ -163,15 +194,25 @@ itcl::class Editor {
 					 -command [itcl::code $this addNewObject]
 		  pack $itsControls.new -side left -anchor nw
 
+		  button $itsControls.preview -text "Make Preview" -relief raised \
+					 -command [itcl::code $this makePreviewObj]
+		  pack $itsControls.preview -side left -anchor nw
+
 		  button $itsControls.redraw -text "Redraw" -relief raised \
 					 -command [itcl::code $this requestDraw]
 		  pack $itsControls.redraw -side left -anchor nw
 
-		  iwidgets::spinner $itsControls.idspinner \
-					 -labeltext "Object id: " -fixed 5 \
-					 -increment [itcl::code $this nextObject 1] \
-					 -decrement [itcl::code $this nextObject -1]
-		  pack $itsControls.idspinner -side left -anchor nw
+		  iwidgets::spinner $itsControls.editobjspinner \
+					 -labeltext "Edit object: " -fixed 5 \
+					 -increment [itcl::code $this nextEditObj 1] \
+					 -decrement [itcl::code $this nextEditObj -1]
+		  pack $itsControls.editobjspinner -side left -anchor nw
+
+		  iwidgets::spinner $itsControls.viewobjspinner \
+					 -labeltext "View object: " -fixed 5 \
+					 -increment [itcl::code $this nextViewObj 1] \
+					 -decrement [itcl::code $this nextViewObj -1]
+		  pack $itsControls.viewobjspinner -side left -anchor nw
 
 		  #
 		  # Set up attribs
@@ -194,20 +235,22 @@ itcl::class Editor {
 
 	 public method loadObjects {filename} {
 		  set ids [ObjDb::loadObjects $filename]
-		  set itsObjects [${itsObjType}::findAll]
-		  standardSettings $itsObjects
+		  set itsEditObjList [${itsObjType}::findAll]
+		  set itsViewObjList [GxNode::findAll]
+		  standardSettings $itsEditObjList
 		  return [llength $ids]
 	 }
 
 	 public method loadExpt {filename} {
 		  Expt::load $filename
-		  set itsObjects [${itsObjType}::findAll]
-		  standardSettings $itsObjects
+		  set itsEditObjList [${itsObjType}::findAll]
+		  set itsViewObjList [GxNode::findAll]
+		  standardSettings $itsEditObjList
 	 }
 
 	 public method saveObjects {filename} {
-		  ObjDb::saveObjects $itsObjects $filename no
-		  return [llength $itsObjects]
+		  ObjDb::saveObjects $itsEditObjList $filename no
+		  return [llength $itsEditObjList]
 	 }
 }
 
