@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Thu Aug 16 10:50:25 2001
+// written: Thu Aug 23 09:40:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,8 +23,6 @@
 #include "gfx/rect.h"
 
 #include "util/error.h"
-
-#include <GL/gl.h>
 
 #include "util/trace.h"
 #define LOCAL_ASSERT
@@ -92,15 +90,15 @@ DOTRACE("BitmapCacheNode::recacheBitmap");
 
   Gfx::Rect<int> screen_rect = canvas.screenFromWorld(bmapbox);
 
-  glPushAttrib(GL_COLOR_BUFFER_BIT);
   {
-    glDrawBuffer(GL_FRONT);
+    Gfx::Canvas::AttribSaver saver(canvas);
+
+    canvas.drawOnFrontBuffer();
 
     canvas.clearColorBuffer(screen_rect);
 
     child()->gnodeDraw(canvas);
   }
-  glPopAttrib();
 
   itsBitmapRep->grabWorldRect(bmapbox);
 
