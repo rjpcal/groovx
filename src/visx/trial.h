@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Tue Nov 16 14:12:25 1999
+// written: Sat Dec  4 02:02:05 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -159,8 +159,8 @@ public:
   // actions //
   /////////////
 
-  void trDraw() const;
-  void trUndraw() const;
+  void trDraw(bool flush) const;
+  void trUndraw(bool flush) const;
 
 private:
   ObjGrp itsIdPairs;

@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue Nov 30 17:12:36 1999
+// written: Sat Dec  4 02:02:58 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -379,7 +379,7 @@ DOTRACE("Trial::clearResponses");
 // actions //
 /////////////
 
-void Trial::trDraw() const {
+void Trial::trDraw(bool flush) const {
 DOTRACE("Trial::trDraw");
   for (size_t i = 0; i < itsIdPairs.size(); ++i) {
     GrObj* obj =
@@ -399,9 +399,11 @@ DOTRACE("Trial::trDraw");
       obj->draw();
     glPopMatrix();
   }
+
+  if (flush) glFlush();
 }
 
-void Trial::trUndraw() const {
+void Trial::trUndraw(bool flush) const {
 DOTRACE("Trial::trUndraw");
   for (size_t i = 0; i < itsIdPairs.size(); ++i) {
     GrObj* obj =
@@ -415,6 +417,8 @@ DOTRACE("Trial::trUndraw");
       obj->undraw();
     glPopMatrix();
   }
+
+  if (flush) glFlush();
 }
 
 void Trial::undoLastResponse() {
