@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Apr 24 20:05:06 2002
-// written: Wed Mar 19 17:55:56 2003
+// written: Thu May  1 17:44:26 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -32,6 +32,17 @@
 #define PNGPARSER_CC_DEFINED
 
 #include "pngparser.h"
+
+#ifndef HAVE_LIBPNG
+
+#include "util/error.h"
+
+void Png::load(const char* /*filename*/, Gfx::BmapData& /*data*/)
+{
+  throw Util::Error("png image files are not supported in this build");
+}
+
+#else
 
 #include "gx/bmapdata.h"
 #include "gx/vec2.h"
@@ -217,6 +228,8 @@ DOTRACE("Png::load");
 
   parser.parse(filename, data);
 }
+
+#endif // HAVE_LIBPNG
 
 static const char vcid_pngparser_cc[] = "$Header$";
 #endif // !PNGPARSER_CC_DEFINED
