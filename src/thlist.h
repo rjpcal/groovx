@@ -3,7 +3,7 @@
 // thlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:36 1999
-// written: Mon Jun 21 15:38:51 1999
+// written: Wed Feb 16 07:51:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,15 +17,25 @@
 
 class TimingHdlr;
 
-class ThList : public PtrList<TimingHdlr>, public virtual IO {
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * ThList is a singleton wrapper for \c PtrList<TimingHdlr>.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+class ThList : public PtrList<TimingHdlr> {
 private:
   typedef PtrList<TimingHdlr> Base;
-protected:
-  ThList(int size);
-public:
-  static ThList& theThList();
 
-  virtual ~ThList();
+protected:
+  /// Construct and reserve space for \a size objects.
+  ThList(int size);
+
+public:
+  /// Returns a reference to the singleton instance.
+  static ThList& theThList();
 };
 
 static const char vcid_thlist_h[] = "$Header$";
