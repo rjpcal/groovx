@@ -13,44 +13,43 @@ package require Tlist
 
 source ${::TEST_DIR}/gxshapekit_test.tcl
 
-set ::TEXT [Obj::new GxText]
-GxText::text $::TEXT "GxText"
-::testGxshapekitSubclass GxText $::TEXT
+set p [Obj::new GxText]
+-> $p text "Hello"
+::testGxshapekitSubclass GxText $p
 
 
-set TEXT -1
 set PACKAGE GxTextTcl
 
 ### Obj::new GxText ###
 test "$PACKAGE-Obj::new GxText" "too many args" {
-	 Obj::new GxText junk junk
+    Obj::new GxText junk junk
 } {^wrong \# args: should be}
 test "$PACKAGE-Obj::new GxText" "normal use" {
-	 set ::TEXT [Obj::new GxText]
-	 GxText::text $::TEXT "Hello, World!"
-	 return $::TEXT
-} "^${INT}$"
+    set p [Obj::new GxText]
+    GxText::text $p "Hello, World!"
+} {^$}
 
 ### GxText::textCmd ###
 test "$PACKAGE-GxText::text" "too few args" {
-	 GxText::text
+    GxText::text
 } {^wrong \# args: should be}
 test "$PACKAGE-GxText::text" "too many args" {
-	 GxText::text $::TEXT oops junk
+    GxText::text blah oops junk
 } {^wrong \# args: should be}
 test "$PACKAGE-GxText::text" "normal use set, get, compare" {
-	 GxText::text $::TEXT "Hello, again"
-	 GxText::text $::TEXT
+    set p [new GxText]
+    -> $p text "Hello, again"
+    -> $p text
 } {^Hello, again$}
-test "$PACKAGE-GxText::text" "error" {} {^$} $no_test
 
 ### GxText rendering ###
 test "$PACKAGE-rendering" "normal render" {
-	 clearscreen
-	 see $::TEXT
-	 expr {[-> [::cv] pixelCheckSum] != 0}
+    clearscreen
+    set p [new GxText]
+    -> $p text "Hi there."
+    see $p
+    expr {[-> [::cv] pixelCheckSum] != 0}
 } {^1$}
 
 ### cleanup
 unset PACKAGE
-unset TEXT
