@@ -115,17 +115,21 @@ test "ExptTcl-Expt::begin" "general sanity test" {
 	 set thid [Th::Th]
 	 Th::addStartEvent $thid EndTrialEvent 100
 
+	 set rhid [NullRh::NullRh]
+
 	 set face [Face::Face]
 	 set pos [Pos::Pos]
-	 Tlist::addObject 0 0 0
+	 set trial [Trial::Trial]
+	 Trial::add $trial $face $pos
 
-	 Trial::timingHdlr 0 $thid
+	 Trial::timingHdlr $trial $thid
+	 Trial::responseHdlr $trial $rhid
+
+	 Expt::clear
 
 	 BlockList::reset
 	 set block [Block::Block]
-	 Block::addTrialIds $block 0
-
-	 Expt::reset
+	 Block::addTrialIds $block $trial
 
 	 namespace eval ::Expt {
 		  proc doUponCompletion {} { set ::DONE "complete" }
