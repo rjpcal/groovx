@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Mon Jul 12 13:05:03 1999
+// written: Mon Sep 20 17:20:34 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,14 @@ public:
 													 "GrObj", "2.5")
   {
 	 addCommand( new TypeCmd(this, "GrObj::type") );
+
+	 declareCAttrib("bbVisibility",
+						 &GrObj::getBBVisibility, &GrObj::setBBVisibility);
 	 declareCAttrib("category", &GrObj::getCategory, &GrObj::setCategory);
+	 declareCAttrib("renderMode",
+						 &GrObj::getRenderMode, &GrObj::setRenderMode);
+	 declareCAttrib("unRenderMode",
+						 &GrObj::getUnRenderMode, &GrObj::setUnRenderMode);
 	 declareCAttrib("usingCompile",
 						 &GrObj::getUsingCompile, &GrObj::setUsingCompile);
 	 declareCAction("update", &GrObj::update);
