@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Sat Sep 23 15:32:25 2000
+// written: Sat Sep 23 15:54:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,10 @@
 #include "io/iomgr.h"
 #include "io/readutils.h"
 #include "io/writeutils.h"
+
+#ifdef PRESTANDARD_IOSTREAMS
+#include <iostream.h>
+#endif
 
 #include <cstring>
 #include <vector>
@@ -184,19 +188,19 @@ DOTRACE("TimingHdlr::readFrom");
 
   itsImpl->deleteAll(itsImpl->itsImmediateEvents);
   IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "immediateEvents",
-								back_inserter(itsImpl->itsImmediateEvents));
+								std::back_inserter(itsImpl->itsImmediateEvents));
 
   itsImpl->deleteAll(itsImpl->itsStartEvents);
   IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "startEvents",
-								back_inserter(itsImpl->itsStartEvents));
+								std::back_inserter(itsImpl->itsStartEvents));
 
   itsImpl->deleteAll(itsImpl->itsResponseEvents);
   IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "responseEvents",
-								back_inserter(itsImpl->itsResponseEvents));
+								std::back_inserter(itsImpl->itsResponseEvents));
 
   itsImpl->deleteAll(itsImpl->itsAbortEvents);
   IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "abortEvents",
-								back_inserter(itsImpl->itsAbortEvents));
+								std::back_inserter(itsImpl->itsAbortEvents));
 }
 
 void TimingHdlr::writeTo(IO::Writer* writer) const {
