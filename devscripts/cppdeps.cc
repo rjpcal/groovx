@@ -594,6 +594,12 @@ cppdeps::get_direct_includes(const string& src_fname)
         {
           while (fptr < stop && *fptr != '\n')
             ++fptr;
+
+          assert(!(fptr > stop));
+
+          if (fptr == stop)
+            break;
+
           assert(*fptr == '\n');
           ++fptr;
         }
@@ -602,6 +608,10 @@ cppdeps::get_direct_includes(const string& src_fname)
 
       if (fptr >= stop)
         break;
+
+      // OK, at this point we are guaranteed to be at the beginning of
+      // a line (either we're at the beginning of the file, or else
+      // we've just skipped over a line terminator).
 
       if (*fptr != '#')
         continue;
