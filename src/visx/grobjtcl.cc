@@ -18,8 +18,34 @@
 #include "rect.h"
 
 #include "tcl/genericobjpkg.h"
-#include "tcl/tclveccmds.h"
+#include "tcl/objfunctor.h"
+#include "tcl/tclerror.h"
+#include "tcl/tcllistobj.h"
 #include "tcl/tracertcl.h"
+
+namespace Tcl
+{
+  template <class T>
+  struct Convert<Rect<T> >
+  {
+	 typedef T Type;
+	 static Rect<T> fromTcl( Tcl_Obj* obj )
+	 {
+		Tcl::List listObj(obj);
+		return Rect<T>(listObj.get(0, (T*)0), listObj.get(1, (T*)0),
+							listObj.get(2, (T*)0), listObj.get(3, (T*)0));
+	 }
+
+	 static Tcl_Obj* toTcl( Rect<T> rect )
+	 {
+		Tcl::List listObj;
+		listObj.append(rect.left());
+		listObj.append(rect.top());
+		listObj.append(rect.right());
+		listObj.append(rect.bottom());
+	 }
+  };
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -27,91 +53,34 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace GrobjTcl {
-  class BoundingBoxCmd;
-  class SaveBitmapCacheAction;
-  class SetBitmapCacheDirCmd;
-  class Updater;
-  class GrObjPkg;
-};
-
-//---------------------------------------------------------------------
-//
-// BoundingBoxCmd --
-//
-//---------------------------------------------------------------------
-
-class GrobjTcl::BoundingBoxCmd : public Tcl::TclItemCmd<GrObj> {
-public:
-  BoundingBoxCmd(Tcl::CTclItemPkg<GrObj>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<GrObj>(pkg, cmd_name, "objid", 2, 2) {}
-protected:
-  virtual void invoke(Tcl::Context& ctx)
+namespace GrobjTcl
+{
+  Rect<double> boundingBox(Util::Ref<GrObj> obj)
   {
     GWT::Canvas& canvas = Application::theApp().getCanvas();
 
-    Rect<double> bbox;
-    bool have_box = getItem(ctx)->getBoundingBox(canvas, bbox);
+	 Rect<double> bbox;
+	 bool have_box = obj->getBoundingBox(canvas, bbox);
 
-    Tcl::List result;
+	 if (!have_box)
+		throw Tcl::TclError("object did not define a bounding box");
 
-    if (have_box) {
-      result.append(bbox.left());
-      result.append(bbox.top());
-      result.append(bbox.right());
-      result.append(bbox.bottom());
-    }
-
-    ctx.setResult(result);
+	 return bbox;
   }
-};
 
-//---------------------------------------------------------------------
-//
-// SaveBitmapCacheAction --
-//
-//---------------------------------------------------------------------
-
-class GrobjTcl::SaveBitmapCacheAction : public Setter<const char*> {
-public:
-  virtual void set(void* item, const char* filename) {
-    GrObj* obj = static_cast<GrObj*>(item);
+  void saveBitmapCache(Util::Ref<GrObj> obj, const char* filename)
+  {
     GWT::Canvas& canvas = Application::theApp().getCanvas();
     obj->saveBitmapCache(canvas, filename);
   }
-};
 
-//---------------------------------------------------------------------
-//
-// SetBitmapCacheDirCmd --
-//
-//---------------------------------------------------------------------
-
-class GrobjTcl::SetBitmapCacheDirCmd : public Tcl::TclCmd {
-public:
-  SetBitmapCacheDirCmd(Tcl_Interp* interp, const char* cmd_name) :
-    Tcl::TclCmd(interp, cmd_name, "dirname", 2, 2) {}
-protected:
-  virtual void invoke(Tcl::Context& ctx)
+  void update(Util::Ref<GrObj> obj)
   {
-    const char* dirname = ctx.getCstringFromArg(1);
-    GrObj::setBitmapCacheDir(dirname);
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// Updater --
-//
-//---------------------------------------------------------------------
-
-class GrobjTcl::Updater : public Action {
-public:
-  virtual void action(void* item) {
-    GrObj* obj = static_cast<GrObj*>(item);
     GWT::Canvas& canvas = Application::theApp().getCanvas();
     obj->update(canvas);
   }
+
+  class GrObjPkg;
 };
 
 //---------------------------------------------------------------------
@@ -127,26 +96,16 @@ public:
   {
     Tcl::addTracing(this, GrObj::tracer);
 
-    addCommand( new BoundingBoxCmd(this, "GrObj::boundingBox") );
-    addCommand( new Tcl::TVecSetterCmd<const char*>(
-                                interp, this, "GrObj::saveBitmapCache",
-#ifndef ACC_COMPILER
-                                make_shared(new SaveBitmapCacheAction),
-#else
-                                shared_ptr<Setter<const char*> >(
-                                            new SaveBitmapCacheAction),
-#endif
-                                "item_id(s) filename(s)", 1) );
+	 Tcl::defVec( this, &GrobjTcl::boundingBox,
+					  "GrObj::boundingBox", "item_id(s)" );
+	 Tcl::defVec( this, &GrobjTcl::saveBitmapCache,
+					  "GrObj::saveBitmapCache", "item_id(s) filename(s)" );
     declareCAction("restoreBitmapCache", &GrObj::restoreBitmapCache);
-    addCommand( new Tcl::VecActionCmd(interp, this, "GrObj::update",
-#ifndef ACC_COMPILER
-                                      make_shared(new Updater),
-#else
-                                      shared_ptr<Action>(new Updater),
-#endif
-                                      "item_id(s)", 1) );
+	 Tcl::defVec( this, &GrobjTcl::update,
+					  "GrObj::update", "item_id(s)" );
 
-    addCommand( new SetBitmapCacheDirCmd(interp, "GrObj::setBitmapCacheDir") );
+	 Tcl::def( this, &GrObj::setBitmapCacheDir,
+				  "GrObj::setBitmapCacheDir", "filename" );
 
     declareCAttrib("alignmentMode",
                    &GrObj::getAlignmentMode, &GrObj::setAlignmentMode);
@@ -196,8 +155,8 @@ public:
 //---------------------------------------------------------------------
 
 extern "C"
-int Grobj_Init(Tcl_Interp* interp) {
-
+int Grobj_Init(Tcl_Interp* interp)
+{
   Tcl::TclPkg* pkg = new GrobjTcl::GrObjPkg(interp);
 
   return pkg->initStatus();
