@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 13:26:14 2002
+// written: Mon Mar  4 13:36:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -378,8 +378,6 @@ protected:
 
 class DataHolder : public WithPolicies
 {
-  DataHolder& operator=(const DataHolder&); // not allowed
-
 public:
   DataHolder(double* data, int mrows, int ncols, StoragePolicy s);
 
@@ -389,7 +387,18 @@ public:
 
   ~DataHolder();
 
-protected:
+  void swap(DataHolder& other);
+
+  void makeUnique() { DataBlock::makeUnique(datablock_); }
+
+  const double* storage() const { return datablock_->data(); }
+  double* storage_nc() { makeUnique(); return datablock_->data_nc(); }
+
+  int storageLength() const { return datablock_->length(); }
+
+private:
+  DataHolder& operator=(const DataHolder&); // not allowed
+
   DataBlock* datablock_;
 };
 
@@ -495,13 +504,6 @@ public:
 
 #  undef APPLY_IMPL
 #endif // APPLY_IMPL
-
-  void makeUnique() { DataBlock::makeUnique(datablock_); }
-
-  const double* storage() const { return datablock_->data(); }
-  double* storage_nc() { makeUnique(); return datablock_->data_nc(); }
-
-  int storageLength() const { return datablock_->length(); }
 };
 
 

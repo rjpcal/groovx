@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar  4 13:25:38 2002
+// written: Mon Mar  4 13:32:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -331,6 +331,11 @@ DataHolder::~DataHolder()
   datablock_->decrRefCount();
 }
 
+void DataHolder::swap(DataHolder& other)
+{
+  std::swap(datablock_, other.datablock_);
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // MtxImpl member definitions
@@ -339,11 +344,11 @@ DataHolder::~DataHolder()
 
 void MtxImpl::swap(MtxImpl& other)
 {
-  std::swap(datablock_, other.datablock_);
   std::swap(mrows_, other.mrows_);
   std::swap(rowstride_, other.rowstride_);
   std::swap(ncols_, other.ncols_);
   std::swap(offset_, other.offset_);
+  DataHolder::swap(other);
 }
 
 MtxImpl::MtxImpl(const MtxImpl& other) :
