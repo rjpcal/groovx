@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Jul 11 09:41:05 2001
+// written: Wed Jul 11 10:04:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "system/demangle.h"
 
+#include "tcl/convert.h"
 #include "tcl/errmsg.h"
 
 #include "util/strings.h"
@@ -88,13 +89,6 @@ namespace {
     Tcl::TclCmd* cmd = static_cast<Tcl::TclCmd*>(clientData);
     delete cmd;
   }
-
-  inline Tcl_Obj* checkSharing(Tcl_Obj* obj, Tcl_ObjType* target_type)
-    {
-      if ( (obj->typePtr != target_type) && Tcl_IsShared(obj) )
-        return Tcl_DuplicateObj(obj);
-      return obj;
-    }
 
 #ifdef TRACE_USE_COUNT
   STD_IO::ofstream* USE_COUNT_STREAM = new STD_IO::ofstream("tclprof.out");
@@ -185,151 +179,26 @@ DOTRACE("Tcl::TclCmd::arg");
   return TclValue(itsObjv[argn]);
 }
 
-// Extracting int's
-
-template <>
-int Tcl::TclCmd::getValFromObj<int>(
-  Tcl_Interp*, Tcl_Obj* obj, int* /*dummy*/
-) {
-DOTRACE("Tcl::TclCmd::getValFromObj<int>");
-  int val;
-
-  obj = checkSharing(obj, &tclIntType);
-
-  if ( Tcl_GetIntFromObj(0, obj, &val) != TCL_OK )
-    {
-      TclError err("expected integer but got ");
-      err.appendMsg("\"", Tcl_GetString(obj), "\"");
-      throw err;
-    }
-  return val;
-}
+// Extracting arguments
 
 int Tcl::TclCmd::getIntFromArg(int argn) {
-  return getValFromObj(itsInterp, itsObjv[argn], (int*)0);
-}
-
-template <>
-unsigned int Tcl::TclCmd::getValFromObj<unsigned int>(
-  Tcl_Interp*, Tcl_Obj* obj, unsigned int* /*dummy*/
-) {
-  return (unsigned int)getValFromObj(0,obj,(int*)0);
-}
-
-// Extracting long's
-
-template <>
-long Tcl::TclCmd::getValFromObj<long>(
-  Tcl_Interp*, Tcl_Obj* obj, long* /*dummy*/
-) {
-DOTRACE("Tcl::TclCmd::getValFromObj<long>");
-  long val;
-
-  obj = checkSharing(obj, &tclIntType);
-
-  if ( Tcl_GetLongFromObj(0, obj, &val) != TCL_OK )
-    {
-      TclError err("expected long value but got ");
-      err.appendMsg("\"", Tcl_GetString(obj), "\"");
-      throw err;
-    }
-  return val;
+  return Tcl::fromTcl<int>(itsObjv[argn]);
 }
 
 long Tcl::TclCmd::getLongFromArg(int argn) {
-  return getValFromObj(itsInterp, itsObjv[argn], (long*)0);
-}
-
-template <>
-unsigned long Tcl::TclCmd::getValFromObj<unsigned long>(
-  Tcl_Interp*, Tcl_Obj* obj, unsigned long* /*dummy*/
-) {
-  return (unsigned long)getValFromObj(0,obj,(long*)0);
-}
-
-// Extracting bool's
-
-template <>
-bool Tcl::TclCmd::getValFromObj<bool>(
-  Tcl_Interp*, Tcl_Obj* obj, bool* /*dummy*/
-) {
-DOTRACE("Tcl::TclCmd::getValFromObj<bool>");
-  int int_val;
-
-  obj = checkSharing(obj, &tclBooleanType);
-
-  if ( Tcl_GetBooleanFromObj(0, obj, &int_val) != TCL_OK )
-    {
-      TclError err("expected boolean value but got ");
-      err.appendMsg("\"", Tcl_GetString(obj), "\"");
-      throw err;
-    }
-  return bool(int_val);
+  return Tcl::fromTcl<long>(itsObjv[argn]);
 }
 
 bool Tcl::TclCmd::getBoolFromArg(int argn) {
-  return getValFromObj(itsInterp, itsObjv[argn], (bool*)0);
-}
-
-// Extracting double's
-
-template <>
-double Tcl::TclCmd::getValFromObj<double>(
-  Tcl_Interp*, Tcl_Obj* obj, double* /*dummy*/
-) {
-DOTRACE("Tcl::TclCmd::getValFromObj<double>");
-  double val;
-
-  obj = checkSharing(obj, &tclDoubleType);
-
-  if ( Tcl_GetDoubleFromObj(0, obj, &val) != TCL_OK )
-    {
-      TclError err("expected floating-point number but got ");
-      err.appendMsg("\"", Tcl_GetString(obj), "\"");
-      throw err;
-    }
-  return val;
-}
-
-template <>
-float Tcl::TclCmd::getValFromObj<float>(
-  Tcl_Interp*, Tcl_Obj* obj, float* /*dummy*/
-) {
-  return float(getValFromObj(0, obj, (double*)0));
+  return Tcl::fromTcl<bool>(itsObjv[argn]);
 }
 
 double Tcl::TclCmd::getDoubleFromArg(int argn) {
-  return getValFromObj(itsInterp, itsObjv[argn], (double*)0);
-}
-
-// Extracting const char*'s
-
-template <>
-const char* Tcl::TclCmd::getValFromObj<const char*>(
-  Tcl_Interp*, Tcl_Obj* obj, const char** /*dummy*/
-) {
-DOTRACE("Tcl::TclCmd::getValFromObj<const char*>");
-  return Tcl_GetString(obj);
+  return Tcl::fromTcl<double>(itsObjv[argn]);
 }
 
 const char* Tcl::TclCmd::getCstringFromArg(int argn) {
-DOTRACE("Tcl::TclCmd::getCstringFromArg");
-  return Tcl_GetString(itsObjv[argn]);
-}
-
-// Extracting TclValue's
-
-template <>
-Tcl::TclValue Tcl::TclCmd::getValFromObj<Tcl::TclValue>(
-  Tcl_Interp* interp, Tcl_Obj* obj, TclValue* /*dummy*/
-) {
-DOTRACE("Tcl::TclCmd::getValFromObj<TclValue>");
-  return TclValue(obj);
-}
-
-Tcl_Obj* Tcl::TclCmd::getTclObjFromArg(int argn) {
-DOTRACE("Tcl::TclCmd::getTclObjFromArg");
-  return itsObjv[argn];
+  return Tcl::fromTcl<const char*>(itsObjv[argn]);
 }
 
 void Tcl::TclCmd::safeSplitList(Tcl_Obj* obj, int* count_return,
