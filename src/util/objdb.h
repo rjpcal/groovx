@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Sun Oct 22 15:08:03 2000
+// written: Tue Oct 24 16:09:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,6 +38,7 @@ public:
   /// Virtual destructor.
   virtual ~IoPtrList();
 
+  virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
