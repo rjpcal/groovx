@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Mon Nov 15 16:04:46 1999
+// written: Tue Nov 30 16:55:37 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -202,7 +202,7 @@ DOTRACE("House::deserialize");
 void House::readFrom(Reader* reader) {
 DOTRACE("House::readFrom");
   const vector<PInfo>& infos = getPropertyInfos();
-  for (int i = 0; i < infos.size(); ++i) {
+  for (size_t i = 0; i < infos.size(); ++i) {
 	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
   }
 
@@ -212,7 +212,7 @@ DOTRACE("House::readFrom");
 void House::writeTo(Writer* writer) const {
 DOTRACE("House::writeTo");
   const vector<PInfo>& infos = getPropertyInfos();
-  for (int i = 0; i < infos.size(); ++i) {
+  for (size_t i = 0; i < infos.size(); ++i) {
 	 writer->writeValueObj(infos[i].name, get(infos[i].property));
   }
 

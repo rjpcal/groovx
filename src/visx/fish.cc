@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Mon Nov 15 16:01:39 1999
+// written: Tue Nov 30 16:50:28 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -230,7 +230,7 @@ DOTRACE("Fish::charCount");
   vector<const IO*> ioList;
   makeIoList(ioList);
 
-  for (int i = 0; i < ioList.size(); ++i) {
+  for (size_t i = 0; i < ioList.size(); ++i) {
 	 result += ioList[i]->charCount() + 1; 
   }
 
@@ -244,7 +244,7 @@ DOTRACE("Fish::charCount");
 void Fish::readFrom(Reader* reader) {
 DOTRACE("Fish::readFrom");
   const vector<PInfo>& infos = getPropertyInfos();
-  for (int i = 0; i < infos.size(); ++i) {
+  for (size_t i = 0; i < infos.size(); ++i) {
 	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
   }
 
@@ -254,7 +254,7 @@ DOTRACE("Fish::readFrom");
 void Fish::writeTo(Writer* writer) const {
 DOTRACE("Fish::writeTo");
   const vector<PInfo>& infos = getPropertyInfos();
-  for (int i = 0; i < infos.size(); ++i) {
+  for (size_t i = 0; i < infos.size(); ++i) {
 	 writer->writeValueObj(infos[i].name, get(infos[i].property));
   }
 
@@ -310,7 +310,8 @@ DOTRACE("Fish::getPropertyInfos");
 
 void Fish::readSplineFile(const char* splinefile) {
 DOTRACE("Fish::readSplineFile");
-  int i, j, k, splnb, endptnb;
+  size_t i, j; 
+  int k, splnb, endptnb;
   string dummy;
 
   // reads in the spline knots and coefficient

@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Mon Nov 15 16:05:18 1999
+// written: Tue Nov 30 16:56:05 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ DOTRACE("MaskHatch::charCount");
 void MaskHatch::readFrom(Reader* reader) {
 DOTRACE("MaskHatch::readFrom");
   const vector<PInfo>& infos = getPropertyInfos();
-  for (int i = 0; i < infos.size(); ++i) {
+  for (size_t i = 0; i < infos.size(); ++i) {
 	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
   }
 
@@ -77,7 +77,7 @@ DOTRACE("MaskHatch::readFrom");
 void MaskHatch::writeTo(Writer* writer) const {
 DOTRACE("MaskHatch::writeTo");
   const vector<PInfo>& infos = getPropertyInfos();
-  for (int i = 0; i < infos.size(); ++i) {
+  for (size_t i = 0; i < infos.size(); ++i) {
 	 writer->writeValueObj(infos[i].name, get(infos[i].property));
   }
 

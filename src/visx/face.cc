@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Mon Nov 15 15:42:29 1999
+// written: Tue Nov 30 16:48:45 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -182,7 +182,7 @@ DOTRACE("Face::charCount");
 void Face::readFrom(Reader* reader) {
 DOTRACE("Face::readFrom");
   const vector<PInfo>& infos = getPropertyInfos();
-  for (int i = 0; i < infos.size(); ++i) {
+  for (size_t i = 0; i < infos.size(); ++i) {
 	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
   }
 
@@ -192,7 +192,7 @@ DOTRACE("Face::readFrom");
 void Face::writeTo(Writer* writer) const {
 DOTRACE("Face::writeTo");
   const vector<PInfo>& infos = getPropertyInfos();
-  for (int i = 0; i < infos.size(); ++i) {
+  for (size_t i = 0; i < infos.size(); ++i) {
 	 writer->writeValueObj(infos[i].name, get(infos[i].property));
   }
 

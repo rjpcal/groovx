@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Mon Nov 15 16:03:47 1999
+// written: Tue Nov 30 16:50:56 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ DOTRACE("Gabor::charCount");
 void Gabor::readFrom(Reader* reader) {
 DOTRACE("Gabor::readFrom");
   const vector<PInfo>& infos = getPropertyInfos();
-  for (int i = 0; i < infos.size(); ++i) {
+  for (size_t i = 0; i < infos.size(); ++i) {
 	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
   }
 
@@ -87,7 +87,7 @@ DOTRACE("Gabor::readFrom");
 void Gabor::writeTo(Writer* writer) const {
 DOTRACE("Gabor::writeTo");
   const vector<PInfo>& infos = getPropertyInfos();
-  for (int i = 0; i < infos.size(); ++i) {
+  for (size_t i = 0; i < infos.size(); ++i) {
 	 writer->writeValueObj(infos[i].name, get(infos[i].property));
   }
 
