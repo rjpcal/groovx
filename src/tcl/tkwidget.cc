@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Fri May 16 11:16:05 2003
+// written: Fri May 16 11:41:59 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -428,7 +428,7 @@ void Tcl::TkWidget::maximize()
 DOTRACE("Tcl::TkWidget::maximize");
 
   const int w = XWidthOfScreen(Tk_Screen(rep->tkWin));
-  const int h = XWidthOfScreen(Tk_Screen(rep->tkWin));
+  const int h = XHeightOfScreen(Tk_Screen(rep->tkWin));
   setSize(Gfx::Vec2<int>(w, h));
 
   grabKeyboard();
