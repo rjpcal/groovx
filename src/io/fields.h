@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Wed Aug 15 10:50:40 2001
+// written: Wed Aug 15 12:04:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -358,14 +358,22 @@ private:
 class FieldMap {
 private:
   class Impl;
-  Impl* const itsImpl;
+  Impl* itsImpl;
 
   FieldMap(const FieldMap&);
   FieldMap& operator=(const FieldMap&);
 
+  void init(const FieldInfo* begin, const FieldInfo* end,
+            const FieldMap* parent);
+
 public:
   FieldMap(const FieldInfo* begin, const FieldInfo* end,
-           const FieldMap* parent=0);
+           const FieldMap* parent=0) :
+    itsImpl(0)
+  {
+    init(begin, end, parent);
+  }
+
   ~FieldMap();
 
   static const FieldMap* emptyFieldMap();

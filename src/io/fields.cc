@@ -184,10 +184,12 @@ public:
     }
 };
 
-FieldMap::FieldMap(const FieldInfo* begin, const FieldInfo* end,
-                   const FieldMap* parent) :
-  itsImpl(new Impl(begin,end,parent))
-{}
+void FieldMap::init(const FieldInfo* begin, const FieldInfo* end,
+						  const FieldMap* parent)
+{
+  Assert(itsImpl == 0);
+  itsImpl = new Impl(begin, end, parent);
+}
 
 FieldMap::~FieldMap() { delete itsImpl; }
 
