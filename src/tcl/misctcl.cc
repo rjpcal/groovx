@@ -96,7 +96,7 @@ DOTRACE("Misc_Init");
 
   using namespace rutz;
 
-  PKG_CREATE(interp, "Misc", "$Revision$");
+  PKG_CREATE(interp, "Misc", "4.$Revision$");
 
   pkg->def( "::rand", "min max",
             bind_first(mem_func(&rutz::urand::fdraw_range), &generator),

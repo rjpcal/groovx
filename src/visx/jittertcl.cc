@@ -46,7 +46,7 @@ int Jitter_Init(Tcl_Interp* interp)
 {
 DOTRACE("Jitter_Init");
 
-  PKG_CREATE(interp, "Jitter", "$Revision$");
+  PKG_CREATE(interp, "Jitter", "4.$Revision$");
   pkg->inheritPkg("GxTransform");
   Tcl::defGenericObjCmds<Jitter>(pkg, SRC_POS);
 

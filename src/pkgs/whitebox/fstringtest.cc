@@ -268,7 +268,7 @@ int Fstringtest_Init(Tcl_Interp* interp)
 {
 DOTRACE("Fstringtest_Init");
 
-  PKG_CREATE(interp, "Fstringtest", "$Revision$");
+  PKG_CREATE(interp, "Fstringtest", "4.$Revision$");
 
   DEF_TEST(pkg, testDefaultConstruct);
   DEF_TEST(pkg, testConstruct1);

@@ -54,7 +54,7 @@ int Sound_Init(Tcl_Interp* interp)
 DOTRACE("Sound_Init");
 
   Tcl::Interp intp(interp);
-  PKG_CREATE(interp, "Sound", "$Revision$");
+  PKG_CREATE(interp, "Sound", "4.$Revision$");
 
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<Sound>(pkg, SRC_POS);

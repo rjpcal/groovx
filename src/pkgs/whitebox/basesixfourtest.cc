@@ -206,7 +206,7 @@ int Basesixfourtest_Init(Tcl_Interp* interp)
 {
 DOTRACE("Basesixfourtest_Init");
 
-  PKG_CREATE(interp, "Basesixfourtest", "$Revision$");
+  PKG_CREATE(interp, "Basesixfourtest", "4.$Revision$");
 
   DEF_TEST(pkg, testBase64EncodeDecode1);
   DEF_TEST(pkg, testBase64EncodeDecode2);

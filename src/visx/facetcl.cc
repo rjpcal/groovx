@@ -61,7 +61,7 @@ int Face_Init(Tcl_Interp* interp)
 {
 DOTRACE("Face_Init");
 
-  PKG_CREATE(interp, "Face", "$Revision$");
+  PKG_CREATE(interp, "Face", "4.$Revision$");
 
   pkg->inheritPkg("GxShapeKit");
   Tcl::defFieldContainer<Face>(pkg, SRC_POS);
@@ -81,7 +81,7 @@ int Cloneface_Init(Tcl_Interp* interp)
 {
 DOTRACE("Cloneface_Init");
 
-  PKG_CREATE(interp, "CloneFace", "$Revision$");
+  PKG_CREATE(interp, "CloneFace", "4.$Revision$");
   pkg->inheritPkg("Face");
   Tcl::defFieldContainer<CloneFace>(pkg, SRC_POS);
   Tcl::defCreator<CloneFace>(pkg);

@@ -44,7 +44,7 @@ int House_Init(Tcl_Interp* interp)
 {
 DOTRACE("House_Init");
 
-  PKG_CREATE(interp, "House", "$Revision$");
+  PKG_CREATE(interp, "House", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");
   Tcl::defFieldContainer<House>(pkg, SRC_POS);
   Tcl::defCreator<House>(pkg);

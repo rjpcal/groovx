@@ -58,7 +58,7 @@ int Fish_Init(Tcl_Interp* interp)
 {
 DOTRACE("Fish_Init");
 
-  PKG_CREATE(interp, "Fish", "$Revision$");
+  PKG_CREATE(interp, "Fish", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");
 
   Tcl::defTracing(pkg, Fish::tracer);

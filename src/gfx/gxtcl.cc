@@ -163,7 +163,7 @@ int Gx_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gx_Init");
 
-  PKG_CREATE(interp, "Gx", "$Revision$");
+  PKG_CREATE(interp, "Gx", "4.$Revision$");
 
   pkg->def( "bezier4", "p1 p2 p3 p4 N", &GxTcl::bezier4, SRC_POS );
 
@@ -175,7 +175,7 @@ int Gxnode_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxnode_Init");
 
-  PKG_CREATE(interp, "GxNode", "$Revision$");
+  PKG_CREATE(interp, "GxNode", "4.$Revision$");
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<GxNode>(pkg, SRC_POS);
 
@@ -192,7 +192,7 @@ int Gxseparator_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxseparator_Init");
 
-  PKG_CREATE(interp, "GxSeparator", "$Revision$");
+  PKG_CREATE(interp, "GxSeparator", "4.$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defGenericObjCmds<GxSeparator>(pkg, SRC_POS);
 
@@ -220,7 +220,7 @@ int Gxcolor_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxcolor_Init");
 
-  PKG_CREATE(interp, "GxColor", "$Revision$");
+  PKG_CREATE(interp, "GxColor", "4.$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defFieldContainer<GxColor>(pkg, SRC_POS);
   Tcl::defCreator<GxColor>(pkg);
@@ -233,7 +233,7 @@ int Gxdrawstyle_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxdrawstyle_Init");
 
-  PKG_CREATE(interp, "GxDrawStyle", "$Revision$");
+  PKG_CREATE(interp, "GxDrawStyle", "4.$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defFieldContainer<GxDrawStyle>(pkg, SRC_POS);
   Tcl::defCreator<GxDrawStyle>(pkg);
@@ -246,7 +246,7 @@ int Gxline_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxline_Init");
 
-  PKG_CREATE(interp, "GxLine", "$Revision$");
+  PKG_CREATE(interp, "GxLine", "4.$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defFieldContainer<GxLine>(pkg, SRC_POS);
   Tcl::defCreator<GxLine>(pkg);
@@ -259,7 +259,7 @@ int Gxcylinder_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxcylinder_Init");
 
-  PKG_CREATE(interp, "GxCylinder", "$Revision$");
+  PKG_CREATE(interp, "GxCylinder", "4.$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defFieldContainer<GxCylinder>(pkg, SRC_POS);
   Tcl::defCreator<GxCylinder>(pkg);
@@ -272,7 +272,7 @@ int Gxsphere_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxsphere_Init");
 
-  PKG_CREATE(interp, "GxSphere", "$Revision$");
+  PKG_CREATE(interp, "GxSphere", "4.$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defFieldContainer<GxSphere>(pkg, SRC_POS);
   Tcl::defCreator<GxSphere>(pkg);
@@ -285,7 +285,7 @@ int Gxlighting_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxlighting_Init");
 
-  PKG_CREATE(interp, "GxLighting", "$Revision$");
+  PKG_CREATE(interp, "GxLighting", "4.$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defFieldContainer<GxLighting>(pkg, SRC_POS);
   Tcl::defCreator<GxLighting>(pkg);
@@ -298,7 +298,7 @@ int Gxmaterial_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxmaterial_Init");
 
-  PKG_CREATE(interp, "GxMaterial", "$Revision$");
+  PKG_CREATE(interp, "GxMaterial", "4.$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defFieldContainer<GxMaterial>(pkg, SRC_POS);
   Tcl::defCreator<GxMaterial>(pkg);
@@ -311,7 +311,7 @@ int Gxpointset_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxpointset_Init");
 
-  PKG_CREATE(interp, "GxPointSet", "$Revision$");
+  PKG_CREATE(interp, "GxPointSet", "4.$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defFieldContainer<GxPointSet>(pkg, SRC_POS);
   Tcl::defCreator<GxPointSet>(pkg);
@@ -324,7 +324,7 @@ int Gxscaler_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxscaler_Init");
 
-  PKG_CREATE(interp, "GxScaler", "$Revision$");
+  PKG_CREATE(interp, "GxScaler", "4.$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defCreator<GxScaler>(pkg);
   pkg->defAttrib("child", &GxScaler::child, &GxScaler::setChild, SRC_POS);
@@ -344,7 +344,7 @@ int Gxemptynode_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxemptynode_Init");
 
-  PKG_CREATE(interp, "GxEmptyNode", "$Revision$");
+  PKG_CREATE(interp, "GxEmptyNode", "4.$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defCreator<GxEmptyNode>(pkg);
 
@@ -356,7 +356,7 @@ int Gxtransform_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxtransform_Init");
 
-  PKG_CREATE(interp, "GxTransform", "$Revision$");
+  PKG_CREATE(interp, "GxTransform", "4.$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defCreator<GxTransform>(pkg);
   Tcl::defFieldContainer<GxTransform>(pkg, SRC_POS);
@@ -369,7 +369,7 @@ int Gxshapekit_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxshapekit_Init");
 
-  PKG_CREATE(interp, "GxShapeKit", "$Revision$");
+  PKG_CREATE(interp, "GxShapeKit", "4.$Revision$");
   pkg->inheritPkg("GxNode");
 
   Tcl::defTracing(pkg, GxShapeKit::tracer);
@@ -430,7 +430,7 @@ int Gxpixmap_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxpixmap_Init");
 
-  PKG_CREATE(interp, "GxPixmap", "$Revision$");
+  PKG_CREATE(interp, "GxPixmap", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");
   Tcl::defCreator<GxPixmap>(pkg, "Bitmap");
   Tcl::defGenericObjCmds<GxPixmap>(pkg, SRC_POS);
@@ -472,7 +472,7 @@ int Gxtext_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxtext_Init");
 
-  PKG_CREATE(interp, "GxText", "$Revision$");
+  PKG_CREATE(interp, "GxText", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");
   Tcl::defCreator<GxText>(pkg, "Gtext");
   Tcl::defFieldContainer<GxText>(pkg, SRC_POS);
@@ -490,7 +490,7 @@ int Gxfixedscalecamera_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxfixedscalecamera_Init");
 
-  PKG_CREATE(interp, "GxFixedScaleCamera", "$Revision$");
+  PKG_CREATE(interp, "GxFixedScaleCamera", "4.$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defCreator<GxFixedScaleCamera>(pkg);
   Tcl::defFieldContainer<GxFixedScaleCamera>(pkg, SRC_POS);
@@ -503,7 +503,7 @@ int Gxpsyphycamera_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxpsyphycamera_Init");
 
-  PKG_CREATE(interp, "GxPsyphyCamera", "$Revision$");
+  PKG_CREATE(interp, "GxPsyphyCamera", "4.$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defCreator<GxPsyphyCamera>(pkg);
   Tcl::defFieldContainer<GxPsyphyCamera>(pkg, SRC_POS);
@@ -516,7 +516,7 @@ int Gxperspectivecamera_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxperspectivecamera_Init");
 
-  PKG_CREATE(interp, "GxPerspectiveCamera", "$Revision$");
+  PKG_CREATE(interp, "GxPerspectiveCamera", "4.$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defCreator<GxPerspectiveCamera>(pkg);
   Tcl::defFieldContainer<GxPerspectiveCamera>(pkg, SRC_POS);
@@ -529,7 +529,7 @@ int Gxdisk_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxdisk_Init");
 
-  PKG_CREATE(interp, "GxDisk", "$Revision$");
+  PKG_CREATE(interp, "GxDisk", "4.$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defCreator<GxDisk>(pkg);
   Tcl::defFieldContainer<GxDisk>(pkg, SRC_POS);

@@ -47,7 +47,7 @@ int Log_Init(Tcl_Interp* interp)
 {
 DOTRACE("Log_Init");
 
-  PKG_CREATE(interp, "Log", "$Revision 1.0$");
+  PKG_CREATE(interp, "Log", "4.$Revision$");
   pkg->def("reset", "", &Nub::Log::reset, SRC_POS);
   pkg->def("addScope", "scopename", &::Nub::Log::addScope, SRC_POS);
   pkg->def("removeScope", "scopename", &::Nub::Log::removeScope, SRC_POS);

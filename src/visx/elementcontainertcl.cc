@@ -64,7 +64,7 @@ int Elementcontainer_Init(Tcl_Interp* interp)
 {
 DOTRACE("Elementcontainer_Init");
 
-  PKG_CREATE(interp, "ElementContainer", "$Revision$");
+  PKG_CREATE(interp, "ElementContainer", "4.$Revision$");
   pkg->inheritPkg("Element");
   Tcl::defGenericObjCmds<Element>(pkg, SRC_POS);
 

@@ -153,7 +153,7 @@ int Responsehandler_Init(Tcl_Interp* interp)
 {
 DOTRACE("Responsehandler_Init");
 
-  PKG_CREATE(interp, "ResponseHandler", "$Revision$");
+  PKG_CREATE(interp, "ResponseHandler", "4.$Revision$");
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<ResponseHandler>(pkg, SRC_POS);
   pkg->namespaceAlias("Rh");
@@ -166,7 +166,7 @@ int Eventresponsehdlr_Init(Tcl_Interp* interp)
 {
 DOTRACE("Eventresponsehdlr_Init");
 
-  PKG_CREATE(interp, "EventResponseHdlr", "$Revision$");
+  PKG_CREATE(interp, "EventResponseHdlr", "4.$Revision$");
   Tcl::defCreator<EventResponseHdlr>(pkg);
   pkg->inheritPkg("ResponseHandler");
   Tcl::defTracing(pkg, EventResponseHdlr::tracer);
@@ -215,7 +215,7 @@ int Kbdresponsehdlr_Init(Tcl_Interp* interp)
 {
 DOTRACE("Kbdresponsehdlr_Init");
 
-  PKG_CREATE(interp, "KbdResponseHdlr", "$Revision$");
+  PKG_CREATE(interp, "KbdResponseHdlr", "4.$Revision$");
   Tcl::defCreator<KbdResponseHdlr>(pkg);
   pkg->inheritPkg("EventResponseHdlr");
   Tcl::defGenericObjCmds<KbdResponseHdlr>(pkg, SRC_POS);
@@ -230,7 +230,7 @@ int Nullresponsehdlr_Init(Tcl_Interp* interp)
 {
 DOTRACE("Nullresponsehdlr_Init");
 
-  PKG_CREATE(interp, "NullResponseHdlr", "$Revision$");
+  PKG_CREATE(interp, "NullResponseHdlr", "4.$Revision$");
   Tcl::defCreator<NullResponseHdlr>(pkg);
   pkg->inheritPkg("ResponseHandler");
   Tcl::defGenericObjCmds<NullResponseHdlr>(pkg, SRC_POS);
@@ -244,7 +244,7 @@ int Serialrh_Init(Tcl_Interp* interp)
 {
 DOTRACE("Serialrh_Init");
 
-  PKG_CREATE(interp, "SerialRh", "$Revision$");
+  PKG_CREATE(interp, "SerialRh", "4.$Revision$");
   pkg->def( "SerialRh::SerialRh", "device=/dev/tty0p0",
             rutz::bind_first(&startSerial, interp),
             SRC_POS );

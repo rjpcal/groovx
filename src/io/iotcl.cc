@@ -49,7 +49,7 @@ int Io_Init(Tcl_Interp* interp)
 {
 DOTRACE("Io_Init");
 
-  PKG_CREATE(interp, "IO", "$Revision$");
+  PKG_CREATE(interp, "IO", "4.$Revision$");
   pkg->inheritPkg("Obj");
   Tcl::defGenericObjCmds<IO::IoObject>(pkg, SRC_POS);
 
@@ -78,7 +78,7 @@ int Outputfile_Init(Tcl_Interp* interp)
 {
 DOTRACE("Outputfile_Init");
 
-  PKG_CREATE(interp, "OutputFile", "$Revision$");
+  PKG_CREATE(interp, "OutputFile", "4.$Revision$");
   pkg->inheritPkg("IO");
   Tcl::defCreator<OutputFile>(pkg);
   Tcl::defGenericObjCmds<IO::IoObject>(pkg, SRC_POS);

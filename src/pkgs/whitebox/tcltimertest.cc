@@ -192,7 +192,7 @@ int Tcltimertest_Init(Tcl_Interp* interp)
 {
 DOTRACE("Tcltimertest_Init");
 
-  PKG_CREATE(interp, "Tcltimertest", "$Revision$");
+  PKG_CREATE(interp, "Tcltimertest", "4.$Revision$");
 
   DEF_TEST(pkg, testTimer1);
   DEF_TEST(pkg, testTimerCancel);

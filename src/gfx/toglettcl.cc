@@ -84,7 +84,7 @@ int Toglet_Init(Tcl_Interp* interp)
 {
 DOTRACE("Toglet_Init");
 
-  PKG_CREATE(interp, "Toglet", "$Revision$");
+  PKG_CREATE(interp, "Toglet", "4.$Revision$");
 
   pkg->onExit( &clearOnExit );
 

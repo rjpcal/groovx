@@ -95,7 +95,7 @@ int Canvas_Init(Tcl_Interp* interp)
 {
 DOTRACE("Canvas_Init");
 
-  PKG_CREATE(interp, "Canvas", "$Revision$");
+  PKG_CREATE(interp, "Canvas", "4.$Revision$");
   pkg->inheritPkg("Obj");
   Tcl::defGenericObjCmds<Gfx::Canvas>(pkg, SRC_POS);
 
@@ -117,7 +117,7 @@ int Glcanvas_Init(Tcl_Interp* interp)
 {
 DOTRACE("Glcanvas_Init");
 
-  PKG_CREATE(interp, "GLCanvas", "$Revision$");
+  PKG_CREATE(interp, "GLCanvas", "4.$Revision$");
   pkg->inheritPkg("Canvas");
   Tcl::defGenericObjCmds<GLCanvas>(pkg, SRC_POS);
 

@@ -333,7 +333,7 @@ namespace
 extern "C"
 int Hook_Init(Tcl_Interp* interp)
 {
-  PKG_CREATE(interp, "Hook", "$Revision$");
+  PKG_CREATE(interp, "Hook", "4.$Revision$");
 
   pkg->def( "::hook", "", HookTcl::hook, SRC_POS );
   pkg->def( "::memUsage", 0, HookTcl::memUsage, SRC_POS );

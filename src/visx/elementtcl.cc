@@ -48,7 +48,7 @@ int Element_Init(Tcl_Interp* interp)
 {
 DOTRACE("Element_Init");
 
-  PKG_CREATE(interp, "Element", "$Revision$");
+  PKG_CREATE(interp, "Element", "4.$Revision$");
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<Element>(pkg, SRC_POS);
 

@@ -706,7 +706,7 @@ int Dlist_Init(Tcl_Interp* interp)
 {
 DOTRACE("Dlist_Init");
 
-  PKG_CREATE(interp, "dlist", "$Revision$");
+  PKG_CREATE(interp, "dlist", "4.$Revision$");
 
   pkg->def( "choose", "source_list index_list", &Dlist::choose, SRC_POS );
   pkg->def( "cycle_left", "list n", &Dlist::cycle_left, SRC_POS );

@@ -181,7 +181,7 @@ int Objdb_Init(Tcl_Interp* interp)
 {
 DOTRACE("Objdb_Init");
 
-  PKG_CREATE(interp, "ObjDb", "$Revision$");
+  PKG_CREATE(interp, "ObjDb", "4.$Revision$");
 
   pkg->onExit( &dbClearOnExit );
 
@@ -202,7 +202,7 @@ int Obj_Init(Tcl_Interp* interp)
 {
 DOTRACE("Obj_Init");
 
-  PKG_CREATE(interp, "Obj", "$Revision$");
+  PKG_CREATE(interp, "Obj", "4.$Revision$");
   Tcl::defGenericObjCmds<Nub::Object>(pkg, SRC_POS);
 
   pkg->defGetter("refCount", &Nub::Object::dbg_RefCount, SRC_POS);

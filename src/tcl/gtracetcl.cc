@@ -80,7 +80,7 @@ int Gtrace_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gtrace_Init");
 
-  PKG_CREATE(interp, "Gtrace", "$Revision$");
+  PKG_CREATE(interp, "Gtrace", "4.$Revision$");
   pkg->def("::gtrace", "on_off", &rutz::trace::set_global_trace, SRC_POS);
   pkg->def("::gtrace", "", &rutz::trace::get_global_trace, SRC_POS);
   pkg->def("maxDepth", "level", &rutz::trace::set_max_level, SRC_POS);
@@ -98,7 +98,7 @@ int Prof_Init(Tcl_Interp* interp)
 {
 DOTRACE("Prof_Init");
 
-  PKG_CREATE(interp, "Prof", "$Revision$");
+  PKG_CREATE(interp, "Prof", "4.$Revision$");
   pkg->def("summary", "", &profSummary, SRC_POS);
   pkg->def("reset", "", &rutz::prof::reset_all_prof_data, SRC_POS);
 

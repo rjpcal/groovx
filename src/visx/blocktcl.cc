@@ -45,7 +45,7 @@ int Block_Init(Tcl_Interp* interp)
 {
 DOTRACE("Block_Init");
 
-  PKG_CREATE(interp, "Block", "$Revision$");
+  PKG_CREATE(interp, "Block", "4.$Revision$");
   pkg->inheritPkg("ElementContainer");
   Tcl::defGenericObjCmds<Block>(pkg, SRC_POS);
   Tcl::defCreator<Block>(pkg);

@@ -57,7 +57,7 @@ int Timinghdlr_Init(Tcl_Interp* interp)
 {
 DOTRACE("Timinghdlr_Init");
 
-  PKG_CREATE(interp, "TimingHdlr", "$Revision$");
+  PKG_CREATE(interp, "TimingHdlr", "4.$Revision$");
   Tcl::defCreator<TimingHdlr>(pkg);
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<TimingHdlr>(pkg, SRC_POS);
@@ -102,7 +102,7 @@ int Timinghandler_Init(Tcl_Interp* interp)
 {
 DOTRACE("Timinghandler_Init");
 
-  PKG_CREATE(interp, "TimingHandler", "$Revision$");
+  PKG_CREATE(interp, "TimingHandler", "4.$Revision$");
   Tcl::defCreator<TimingHandler>(pkg);
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<TimingHandler>(pkg, SRC_POS);

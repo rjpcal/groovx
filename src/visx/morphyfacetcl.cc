@@ -43,7 +43,7 @@ int Morphyface_Init(Tcl_Interp* interp)
 {
 DOTRACE("Morphyface_Init");
 
-  PKG_CREATE(interp, "MorphyFace", "$Revision$");
+  PKG_CREATE(interp, "MorphyFace", "4.$Revision$");
   pkg->inheritPkg("GxShapeKit");
   Tcl::defFieldContainer<MorphyFace>(pkg, SRC_POS);
   Tcl::defCreator<MorphyFace>(pkg);

@@ -45,7 +45,7 @@ int Tkwidget_Init(Tcl_Interp* interp)
 {
 DOTRACE("Tkwidget_Init");
 
-  PKG_CREATE(interp, "TkWidget", "$Revision$");
+  PKG_CREATE(interp, "TkWidget", "4.$Revision$");
 
   pkg->inheritPkg("Obj");
   Tcl::defGenericObjCmds<Tcl::TkWidget>(pkg, SRC_POS);

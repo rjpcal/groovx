@@ -107,7 +107,7 @@ int Algotest_Init(Tcl_Interp* interp)
 {
 DOTRACE("Algotest_Init");
 
-  PKG_CREATE(interp, "Algotest", "$Revision$");
+  PKG_CREATE(interp, "Algotest", "4.$Revision$");
 
   DEF_TEST(pkg, testAlgoMinMax);
   DEF_TEST(pkg, testAlgoAbs);

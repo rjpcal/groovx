@@ -152,7 +152,7 @@ int Matlabengine_Init(Tcl_Interp* interp)
 {
 DOTRACE("Matlabengine_Init");
 
-  PKG_CREATE(interp, "MatlabEngine", "$Revision$");
+  PKG_CREATE(interp, "MatlabEngine", "4.$Revision$");
   Tcl::defGenericObjCmds<MatlabEngine>(pkg, SRC_POS);
 
   pkg->def( "eval", "engine_id command", &MatlabEngine::evalString, SRC_POS );

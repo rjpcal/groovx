@@ -120,7 +120,7 @@ DOTRACE("Vectwotest_Init");
 
   // Package can't be named "vec2test" because Tcl doesn't like numerals in
   // package names
-  PKG_CREATE(interp, "Vectwotest", "$Revision$");
+  PKG_CREATE(interp, "Vectwotest", "4.$Revision$");
 
   DEF_TEST(pkg, testAbs);
   DEF_TEST(pkg, testLength);

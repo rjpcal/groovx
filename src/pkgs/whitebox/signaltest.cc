@@ -187,7 +187,7 @@ int Signaltest_Init(Tcl_Interp* interp)
 {
 DOTRACE("Signaltest_Init");
 
-  PKG_CREATE(interp, "Signaltest", "$Revision$");
+  PKG_CREATE(interp, "Signaltest", "4.$Revision$");
 
   DEF_TEST(pkg, testSlotAdapterFreeFunc0);
   DEF_TEST(pkg, testSignalSlotChain);

@@ -86,7 +86,7 @@ int Geomtest_Init(Tcl_Interp* interp)
 {
 DOTRACE("Geomtest_Init");
 
-  PKG_CREATE(interp, "Geomtest", "$Revision$");
+  PKG_CREATE(interp, "Geomtest", "4.$Revision$");
 
   DEF_TEST(pkg, testInvert);
 

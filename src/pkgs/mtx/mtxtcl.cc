@@ -46,7 +46,7 @@ int Mtx_Init(Tcl_Interp* interp)
 {
 DOTRACE("Mtx_Init");
 
-  PKG_CREATE(interp, "mtx", "$Revision$");
+  PKG_CREATE(interp, "mtx", "4.$Revision$");
   Tcl::defGenericObjCmds<MtxObj>(pkg, SRC_POS);
 
   pkg->defAction<MtxObj>("print", &mtx::print, SRC_POS);

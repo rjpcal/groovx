@@ -54,7 +54,7 @@ namespace
                    CreatorFunc* func,
                    const char* name)
   {
-    PKG_CREATE(interp, name, "$Revision$");
+    PKG_CREATE(interp, name, "4.$Revision$");
     Nub::ObjFactory::theOne().register_creator(func, name);
     pkg->inheritPkg("TrialEvent");
 
@@ -80,7 +80,7 @@ int Trialevent_Init(Tcl_Interp* interp)
 {
 DOTRACE("Trialevent_Init");
 
-  PKG_CREATE(interp, "TrialEvent", "$Revision$");
+  PKG_CREATE(interp, "TrialEvent", "4.$Revision$");
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<TrialEvent>(pkg, SRC_POS);
 
@@ -108,7 +108,7 @@ int Nulltrialevent_Init(Tcl_Interp* interp)
 {
 DOTRACE("Nulltrialevent_Init");
 
-  PKG_CREATE(interp, "NullTrialEvent", "$Revision$");
+  PKG_CREATE(interp, "NullTrialEvent", "4.$Revision$");
   pkg->inheritPkg("TrialEvent");
   Tcl::defCreator<NullTrialEvent>(pkg);
 
@@ -120,7 +120,7 @@ int Filewriteevent_Init(Tcl_Interp* interp)
 {
 DOTRACE("Filewriteevent_Init");
 
-  PKG_CREATE(interp, "FileWriteEvent", "$Revision$");
+  PKG_CREATE(interp, "FileWriteEvent", "4.$Revision$");
   pkg->inheritPkg("TrialEvent");
   Tcl::defCreator<FileWriteEvent>(pkg);
 
@@ -141,7 +141,7 @@ int Genericevent_Init(Tcl_Interp* interp)
 {
 DOTRACE("Genericevent_Init");
 
-  PKG_CREATE(interp, "GenericEvent", "$Revision$");
+  PKG_CREATE(interp, "GenericEvent", "4.$Revision$");
   pkg->inheritPkg("TrialEvent");
   Tcl::defCreator<GenericEvent>(pkg);
 
@@ -156,7 +156,7 @@ int Multievent_Init(Tcl_Interp* interp)
 {
 DOTRACE("Multievent_Init");
 
-  PKG_CREATE(interp, "MultiEvent", "$Revision$");
+  PKG_CREATE(interp, "MultiEvent", "4.$Revision$");
   pkg->inheritPkg("TrialEvent");
   Tcl::defCreator<MultiEvent>(pkg);
 

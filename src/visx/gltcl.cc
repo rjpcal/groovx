@@ -457,7 +457,7 @@ int Gl_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gl_Init");
 
-  PKG_CREATE(interp, "GL", "$Revision$");
+  PKG_CREATE(interp, "GL", "4.$Revision$");
   GLTcl::loadGet(pkg);
   GLTcl::loadEnums(pkg);
 

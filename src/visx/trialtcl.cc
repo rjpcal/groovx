@@ -53,7 +53,7 @@ int Trial_Init(Tcl_Interp* interp)
 {
 DOTRACE("Trial_Init");
 
-  PKG_CREATE(interp, "Trial", "$Revision$");
+  PKG_CREATE(interp, "Trial", "4.$Revision$");
   pkg->inheritPkg("Element");
   Tcl::defTracing(pkg, Trial::tracer);
 

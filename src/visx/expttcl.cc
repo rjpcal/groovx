@@ -116,7 +116,7 @@ int Exptdriver_Init(Tcl_Interp* interp)
 {
 DOTRACE("Exptdriver_Init");
 
-  PKG_CREATE(interp, "ExptDriver", "$Revision$");
+  PKG_CREATE(interp, "ExptDriver", "4.$Revision$");
   pkg->inheritPkg("ElementContainer");
   Tcl::defCreator<ExptDriver>(pkg);
   Tcl::defGenericObjCmds<ExptDriver>(pkg, SRC_POS);
