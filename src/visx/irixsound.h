@@ -32,10 +32,6 @@
 #ifndef IRIXSOUND_H_DEFINED
 #define IRIXSOUND_H_DEFINED
 
-#include "io/ioerror.h"
-#include "io/reader.h"
-#include "io/writer.h"
-
 #include "util/arrays.h"
 #include "util/fstring.h"
 

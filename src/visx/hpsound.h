@@ -32,10 +32,6 @@
 #ifndef HPSOUND_H_DEFINED
 #define HPSOUND_H_DEFINED
 
-#include "io/ioerror.h"
-#include "io/reader.h"
-#include "io/writer.h"
-
 #include "util/algo.h"
 #include "util/fstring.h"
 

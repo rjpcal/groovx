@@ -32,10 +32,6 @@
 #ifndef ESDSOUND_H_DEFINED
 #define ESDSOUND_H_DEFINED
 
-#include "io/ioerror.h"
-#include "io/reader.h"
-#include "io/writer.h"
-
 #include "util/error.h"
 #include "util/fstring.h"
 
