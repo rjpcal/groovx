@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:19 2000
-// written: Sun Jul 22 23:22:30 2001
+// written: Sun Jul 22 23:29:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -123,11 +123,11 @@ public:
 protected:
   /** Virtual destructor is protected, so that we can prevent clients
       from instantiating RefCounted's on the stack and from destroying
-      them explicitly. Instead, MasterPtr's will only be destroyed by
-      a 'delete this' call inside decrRefCount() if the reference
-      count falls to zero or below. Clients are forced to create
-      MasterPtr's dynamically using \c new, which is what we need in
-      order for 'delete this' to be valid later on. */
+      them explicitly. Instead, RefCounted objects will only be
+      destroyed by a 'delete this' call inside decrRefCount() if the
+      reference count falls to zero or below. Clients are forced to
+      create RefCounted objects dynamically using \c new, which is
+      what we need in order for 'delete this' to be valid later on. */
   virtual ~RefCounted();
 
   /// Default constructor.
