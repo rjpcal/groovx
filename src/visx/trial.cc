@@ -183,7 +183,7 @@ const FieldMap& Trial::classFields()
 {
   static const Field FIELD_ARRAY[] =
   {
-    Field("tType", make_mypair(&Trial::trialType, &Trial::setType),
+    Field("tType", &Trial::trialType, &Trial::setType,
           -1, -10, 10, 1, Field::NEW_GROUP)
   };
 

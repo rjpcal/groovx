@@ -201,11 +201,11 @@ DOTRACE("GxShapeKit::writeTo");
 
 const FieldMap& GxShapeKit::classFields()
 {
-#define GETSET(attr) make_mypair(&GxShapeKit::get##attr, &GxShapeKit::set##attr)
+#define GETSET(attr) &GxShapeKit::get##attr, &GxShapeKit::set##attr
 
   static const Field FIELD_ARRAY[] =
   {
-    Field("category", make_mypair(&GxShapeKit::category, &GxShapeKit::setCategory),
+    Field("category", &GxShapeKit::category, &GxShapeKit::setCategory,
           0, 0, 20, 1, Field::NEW_GROUP),
     Field("renderMode", GETSET(RenderMode), 1, 1, 4, 1),
     Field("bbVisibility", GETSET(BBVisibility),

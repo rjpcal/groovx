@@ -127,9 +127,9 @@ const FieldMap& GxText::classFields()
           fstring("0"), fstring("0"), fstring("100"), fstring("1"),
           Field::NEW_GROUP | Field::STRING),
     Field("strokeWidth",
-          make_mypair(&GxText::getStrokeWidth, &GxText::setStrokeWidth),
+          &GxText::getStrokeWidth, &GxText::setStrokeWidth,
           1, 1, 20, 1),
-    Field("font", make_mypair(&GxText::getFont, &GxText::setFont),
+    Field("font", &GxText::getFont, &GxText::setFont,
           fstring(), fstring(), fstring(), fstring(),
           Field::STRING | Field::TRANSIENT)
   };

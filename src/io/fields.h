@@ -57,34 +57,6 @@ namespace Util
   class Signal0;
 }
 
-// Have to use this local replacement for std::pair because #include'ing
-// <utility> brings in std::rel_ops, which, with g++-2.96 on Mac OS X, match
-// too greedily and mess up template instantiations with classes that already
-// have their own relational operators.
-
-namespace
-{
-  template <class T1, class T2>
-  struct mypair
-  {
-    // Can't pass these by const reference or else Mac OS X g++-3.1 bugs.
-    mypair(T1 t1, T2 t2) : first(t1), second(t2) {}
-
-    template <class U1, class U2>
-    mypair(const mypair<U1, U2>& p) : first(p.first), second(p.second) {}
-
-    T1 first;
-    T2 second;
-  };
-
-  // Can't pass these by const reference or else Mac OS X g++-3.1 bugs.
-  template <class T1, class T2>
-  inline mypair<T1, T2> make_mypair(T1 t1, T2 t2)
-  {
-    return mypair<T1,T2>(t1, t2);
-  }
-}
-
 namespace FieldAux
 {
   /// A drop-in replacement for dynamic_cast for FieldContainers.
@@ -169,21 +141,40 @@ namespace
   {
     return Deref<const C,T>::get(obj, mptr);
   }
+
+  template <class PM>
+  struct PmTraits;
+
+  template <class C, class T>
+  struct PmTraits<T C::*>
+  {
+    typedef C ClassType;
+    typedef T MemType;
+  };
 }
 
 
 
 /// DataMemberFieldImpl.
-template <class C, class T>
+template <class PM>
 class DataMemberFieldImpl : public FieldImpl
 {
 public:
+  // PM is a pointer-to-member-type of the form "T C::*"
+  typedef typename PmTraits<PM>::ClassType C;
+  typedef typename PmTraits<PM>::MemType T;
 
   /// Type returned when the field is dereferenced.
   typedef typename Util::TypeTraits<T>::DerefT DerefT;
 
   /// Construct with a pointer-to-data-member.
   DataMemberFieldImpl(T C::* memptr) : itsDataMember(memptr) {}
+
+  static shared_ptr<FieldImpl>
+  make(T C::* memptr)
+  {
+    return shared_ptr<FieldImpl> (new DataMemberFieldImpl(memptr));
+  }
 
   /// Change the value of the given object's pointed-to data member.
   virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
@@ -229,10 +220,13 @@ private:
 };
 
 /// CheckedDataMemberFieldImpl.
-template <class C, class T>
+template <class PM>
 class CheckedDataMemberFieldImpl : public FieldImpl
 {
 public:
+  // PM is a pointer-to-member-type of the form "T C::*"
+  typedef typename PmTraits<PM>::ClassType C;
+  typedef typename PmTraits<PM>::MemType T;
 
   /// Type returned when the field is dereferenced.
   typedef typename Util::TypeTraits<T>::DerefT DerefT;
@@ -245,6 +239,13 @@ public:
     itsMin(min),
     itsMax(max)
   {}
+
+  static shared_ptr<FieldImpl>
+  make(T C::* memptr, const DerefT& min, const DerefT& max)
+  {
+    return shared_ptr<FieldImpl>
+      (new CheckedDataMemberFieldImpl(memptr, min, max));
+  }
 
   /// Change the value of the given object's pointed-to data member.
   virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
@@ -490,68 +491,6 @@ public:
   /// Symbol class for use with Field's constructors.
   struct ValueType {};
 
-  /**
-   * Make a FieldImpl from a member-pointer-to-data
-   **/
-
-  template <class C, class T, class T2>
-  static shared_ptr<FieldImpl>
-  makeImpl(T C::* member_ptr, const T2& min, const T2& max, bool check)
-  {
-    if (check)
-      return shared_ptr<FieldImpl>
-        (new CheckedDataMemberFieldImpl<C,T>(member_ptr, min, max));
-    // else...
-    return shared_ptr<FieldImpl>
-      (new DataMemberFieldImpl<C,T>(member_ptr));
-  }
-
-  /**
-   * Make a FieldImpl from a getter/setter pair of
-   * member-pointer-to-functions
-   **/
-
-  template <class C, class T, class T2>
-  static shared_ptr<FieldImpl>
-  makeImpl(mypair<T (C::*)() const, void (C::*)(T)> funcs,
-           const T2& /* min */, const T2& /* max */, bool /* check */)
-  {
-    return shared_ptr<FieldImpl>
-      (new FuncMemberFieldImpl<C,T>(funcs.first, funcs.second));
-  }
-
-  /**
-   * Make a read-only FieldImpl from a getter member-pointer-to-function
-   **/
-
-  template <class C, class T, class T2>
-  static shared_ptr<FieldImpl>
-  makeImpl(T (C::* getter)() const,
-           const T2& /* min */, const T2& /* max */, bool /* check */)
-  {
-    return shared_ptr<FieldImpl>
-      (new FuncMemberFieldImpl<C,T>(getter, 0));
-  }
-
-  /**
-   * Make a write-only FieldImpl from a setter member-pointer-to-function
-   **/
-
-  template <class C, class T, class T2>
-  static shared_ptr<FieldImpl>
-  makeImpl(void (C::* setter)(T),
-           const T2& /* min */, const T2& /* max */, bool /* check */)
-  {
-    return shared_ptr<FieldImpl>
-      (new FuncMemberFieldImpl<C,T>(0, setter));
-  }
-
-  /// The trivial factory function for when we already have a FieldImpl.
-  static shared_ptr<FieldImpl> makeImpl(shared_ptr<FieldImpl> ptr)
-  {
-    return ptr;
-  }
-
   /// Construct using a ValueFieldImpl.
   template <class C, class V>
   Field(const fstring& name, ValueType, V C::* value_ptr,
@@ -567,13 +506,30 @@ public:
     itsFlags(flags)
   {}
 
-  /// Construct using a DataMemberFieldImpl.
-  template <class T, class M>
-  Field(const fstring& name, M member_ptr_init,
+  /// Construct using a pointer-to-member-data.
+  template <class T, class PM>
+  Field(const fstring& name, PM memptr,
         const T& def, const T& min, const T& max, const T& res,
         unsigned int flags=0) :
     itsName(name),
-    itsFieldImpl(makeImpl(member_ptr_init, min, max, (flags & CHECKED))),
+    itsFieldImpl((flags & CHECKED)
+                 ? CheckedDataMemberFieldImpl<PM>::make(memptr, min, max)
+                 : DataMemberFieldImpl<PM>::make(memptr)
+                 ),
+    itsDefaultValue(def),
+    itsMin(min),
+    itsMax(max),
+    itsRes(res),
+    itsFlags(flags)
+  {}
+
+  /// Construct using a getter/setter pair of pointers-to-member-functions.
+  template <class C, class T>
+  Field(const fstring& name, T (C::* getter)() const, void (C::* setter)(T),
+        const T& def, const T& min, const T& max, const T& res,
+        unsigned int flags=0) :
+    itsName(name),
+    itsFieldImpl(new FuncMemberFieldImpl<C,T>(getter, setter)),
     itsDefaultValue(def),
     itsMin(min),
     itsMax(max),

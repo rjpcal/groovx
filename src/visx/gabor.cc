@@ -73,7 +73,7 @@ const FieldMap& Gabor::classFields()
     Field("colorMode", &Gabor::itsColorMode, 2, 1, 4, 1, Field::NEW_GROUP),
     Field("contrast", &Gabor::itsContrast, 1.0, 0.0, 1.0, 0.05),
     Field("logContrast",
-          make_mypair(&Gabor::getLogContrast, &Gabor::setLogContrast),
+          &Gabor::getLogContrast, &Gabor::setLogContrast,
           0.0, -3.0, 0.0, 0.1, Field::TRANSIENT),
     Field("spatialFreq", &Gabor::itsSpatialFreq, 3.5, 0.5, 10.0, 0.5),
     Field("phase", &Gabor::itsPhase, 0, 0, 359, 1),

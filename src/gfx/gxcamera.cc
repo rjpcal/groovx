@@ -194,13 +194,13 @@ DOTRACE("GxFixedScaleCamera::classFields");
   static const Field FIELD_ARRAY[] =
   {
     Field("pixelsPerUnit",
-          make_mypair(&GxFixedScaleCamera::getPixelsPerUnit,
-                      &GxFixedScaleCamera::setPixelsPerUnit),
+          &GxFixedScaleCamera::getPixelsPerUnit,
+          &GxFixedScaleCamera::setPixelsPerUnit,
           2.05, 1.0, 10000.0, 1.0,
           Field::NEW_GROUP),
     Field("logPixelsPerUnit",
-          make_mypair(&GxFixedScaleCamera::getLogPixelsPerUnit,
-                      &GxFixedScaleCamera::setLogPixelsPerUnit),
+          &GxFixedScaleCamera::getLogPixelsPerUnit,
+          &GxFixedScaleCamera::setLogPixelsPerUnit,
           0.5, 0.0, 5.0, 0.025,
           Field::TRANSIENT)
   };
@@ -265,13 +265,13 @@ DOTRACE("GxPsyphyCamera::classFields");
   static const Field FIELD_ARRAY[] =
   {
     Field("unitAngle",
-          make_mypair(&GxPsyphyCamera::getUnitAngle,
-                      &GxPsyphyCamera::setUnitAngle),
+          &GxPsyphyCamera::getUnitAngle,
+          &GxPsyphyCamera::setUnitAngle,
           2.05, 0.1, 100.0, 0.1,
           Field::NEW_GROUP),
     Field("viewingDistIn",
-          make_mypair(&GxPsyphyCamera::getViewingDistIn,
-                      &GxPsyphyCamera::setViewingDistIn),
+          &GxPsyphyCamera::getViewingDistIn,
+          &GxPsyphyCamera::setViewingDistIn,
           30.0, 1.0, 500.0, 1.0),
   };
 
