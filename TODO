@@ -315,19 +315,6 @@ The problem is, ExptDriver shouldn't know about the names of the Tcl
 commands that run it... therefore we don't want ExptDriver to
 create/destroy bindings to "Expt::pause".
 
-* (16-Mar-2000) what happens on Block::abortTrial()?
-Block should have a parameter (or virtual function) to control what happens
-on abortTrial()... i.e., should we reschedule the trial, ignore the trial,
-record an invalid response?
-
-* (20-Jan-2000) a Trial::prepare() function?
-We should set up a way for Trial's to have a prepare() function which would
-do things like update its GrObj's (and flush pending requests like loading
-bitmap data). Then Block's could have a prepareNextTrial() function which
-could be called during the preceding trial. [Later] Hmmm, if I ever were
-going to implement this, it would be better done generically with in
-implementation of idle callbacks.
-
 * (15-May-2000) GOAL #5 Improve the overall timing accuracy of the software.
 
 ** (29-Nov-1999) adjust TrialEvent internal delays

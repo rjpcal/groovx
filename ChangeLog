@@ -324,3 +324,18 @@ will be needed, and then they can be phased out.
   where it seems to belong, rather than in Widget, where it sits now
   (basically to allow Toglet to implement swapBuffers by calling Togl
   something).
+
+* (16-Mar-2000, obsolete 5-Dec-2002) what happens on Block::abortTrial()?
+  Block should have a parameter (or virtual function) to control what
+  happens on abortTrial()... i.e., should we reschedule the trial, ignore
+  the trial, record an invalid response? [Later] OK, this responsibility is
+  now in Trial itself, where it belongs, using the ChildStatus (CHILD_OK,
+  CHILD_ABORTED, CHILD_REPEAT) parameter to vxNext().
+
+* (20-Jan-2000, obsolete 5-Dec-2002) a Trial::prepare() function?
+  We should set up a way for Trial's to have a prepare() function which
+  would do things like update its GrObj's (and flush pending requests like
+  loading bitmap data). Then Block's could have a prepareNextTrial()
+  function which could be called during the preceding trial. [Later] Hmmm,
+  if I ever were going to implement this, it would be better done
+  generically with in implementation of idle callbacks.
