@@ -35,7 +35,7 @@ test "$PACKAGE-Togl::loadFonti" "too many args" {
 } {^wrong \# args: should be "Togl::loadFonti \?fontnumber\?"$}
 test "$PACKAGE-Togl::loadFonti" "normal use" {
 	 catch {Togl::loadFonti 3}
-} {^0$}
+} {^0$} [ expr [string equal $env(ARCH) "irix6"] ? $skip_known_bug : $normal_test]
 test "$PACKAGE-Togl::loadFonti" "error" {
 	 Togl::loadFonti 20
 } {^Togl::loadFonti: unable to load font$}
