@@ -49,18 +49,18 @@ public:
   void acquireStrong();
   Count releaseStrong();
 
-  Count strongCount() { return strong; }
-  Count weakCount() { return weak; }
+  Count strongCount() { return itsStrong; }
+  Count weakCount() { return itsWeak; }
 
-  bool isShared() { return strong > 1; }
+  bool isShared() { return itsStrong > 1; }
   bool isUnshared() { return !isShared(); }
 
 private:
   RefCounts(const RefCounts&);
   RefCounts& operator=(const RefCounts&);
 
-  Count strong;
-  Count weak;
+  Count itsStrong;
+  Count itsWeak;
 };
 
 
