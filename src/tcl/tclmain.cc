@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Thu Sep  5 16:26:38 2002
+// written: Thu Sep  5 16:32:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,16 @@ class Tcl::MainImpl
 private:
   static MainImpl* theMainImpl;
 
+  Tcl::Interp itsSafeInterp;
+  const char* itsStartupFileName;
+  Tcl_Channel itsInChannel;
+
   MainImpl(int argc, char** argv);
+
+  void defaultPrompt(bool partial);
+  void prompt(bool partial);
+
+  static void stdinProc(ClientData /*clientData*/, int /*mask*/);
 
 public:
   static void create(int argc, char** argv)
@@ -50,16 +59,11 @@ public:
     return theMainImpl;
   }
 
-  void defaultPrompt(bool partial);
-  void prompt(bool partial);
+  Tcl_Interp* interp() const { return itsSafeInterp.intp(); }
 
-  static void stdinProc(ClientData /*clientData*/, int /*mask*/);
+  Tcl::Interp& safeInterp() { return itsSafeInterp; }
 
-  Tcl_Interp* interp() const { return safeInterp.intp(); }
-
-  Tcl::Interp safeInterp;
-  const char* startupFileName;
-  Tcl_Channel inChannel;
+  void run();
 };
 
 Tcl::MainImpl* Tcl::MainImpl::theMainImpl = 0;
@@ -87,9 +91,9 @@ namespace
 //---------------------------------------------------------------------
 
 Tcl::MainImpl::MainImpl(int argc, char** argv) :
-  safeInterp(Tcl_CreateInterp()),
-  startupFileName(0),
-  inChannel(0)
+  itsSafeInterp(Tcl_CreateInterp()),
+  itsStartupFileName(0),
+  itsInChannel(0)
 {
 DOTRACE("Tcl::MainImpl::MainImpl");
 
@@ -113,7 +117,7 @@ DOTRACE("Tcl::MainImpl::MainImpl");
 
   if ((argc > 1) && (argv[1][0] != '-'))
     {
-      this->startupFileName = argv[1];
+      itsStartupFileName = argv[1];
       --argc;
       ++argv;
     }
@@ -121,20 +125,20 @@ DOTRACE("Tcl::MainImpl::MainImpl");
   // Make command-line arguments available in the Tcl variables "argc" and
   // "argv".
 
-  this->safeInterp.setGlobalVar("argc", argc-1);
+  itsSafeInterp.setGlobalVar("argc", argc-1);
 
   char* args = Tcl_Merge(argc-1, (const char **)argv+1);
-  this->safeInterp.setGlobalVar("argv", args);
+  itsSafeInterp.setGlobalVar("argv", args);
   Tcl_Free(args);
 
-  this->safeInterp.setGlobalVar("argv0",
-                                (this->startupFileName == NULL)
-                                ? argv[0]
-                                : this->startupFileName);
+  itsSafeInterp.setGlobalVar("argv0",
+                             (itsStartupFileName == NULL)
+                             ? argv[0]
+                             : itsStartupFileName);
 
-  this->safeInterp.setGlobalVar("tcl_interactive",
-                                ((this->startupFileName == NULL) && tsdPtr->tty)
-                                ? 1 : 0);
+  itsSafeInterp.setGlobalVar("tcl_interactive",
+                             ((itsStartupFileName == NULL) && tsdPtr->tty)
+                             ? 1 : 0);
 }
 
 //---------------------------------------------------------------------
@@ -232,7 +236,7 @@ void Tcl::MainImpl::stdinProc(ClientData /*clientData*/, int /*mask*/)
 
   Tcl_Interp* interp = tsdPtr->interp;
 
-  int count = Tcl_Gets(rep->inChannel, &tsdPtr->line);
+  int count = Tcl_Gets(rep->itsInChannel, &tsdPtr->line);
 
   if (count < 0)
     {
@@ -244,7 +248,7 @@ void Tcl::MainImpl::stdinProc(ClientData /*clientData*/, int /*mask*/)
             }
           else
             {
-              Tcl_DeleteChannelHandler(rep->inChannel,
+              Tcl_DeleteChannelHandler(rep->itsInChannel,
                                        &stdinProc, (ClientData) 0);
             }
           return;
@@ -271,14 +275,14 @@ void Tcl::MainImpl::stdinProc(ClientData /*clientData*/, int /*mask*/)
        * command being evaluated.
        */
 
-      Tcl_CreateChannelHandler(rep->inChannel, 0,
+      Tcl_CreateChannelHandler(rep->itsInChannel, 0,
                                &stdinProc, (ClientData) 0);
       int code = Tcl_RecordAndEval(interp, cmd, TCL_EVAL_GLOBAL);
 
-      rep->inChannel = Tcl_GetStdChannel(TCL_STDIN);
-      if (rep->inChannel)
+      rep->itsInChannel = Tcl_GetStdChannel(TCL_STDIN);
+      if (rep->itsInChannel)
         {
-          Tcl_CreateChannelHandler(rep->inChannel, TCL_READABLE,
+          Tcl_CreateChannelHandler(rep->itsInChannel, TCL_READABLE,
                                    &stdinProc, (ClientData) 0);
         }
       Tcl_DStringFree(&tsdPtr->command);
@@ -309,75 +313,33 @@ void Tcl::MainImpl::stdinProc(ClientData /*clientData*/, int /*mask*/)
 
 //---------------------------------------------------------------------
 //
-// Tcl::Main::Main()
+// Tcl::MainImpl::run()
 //
 //---------------------------------------------------------------------
 
-Tcl::Main::Main(int argc, char** argv)
+void Tcl::MainImpl::run()
 {
-  Tcl::MainImpl::create(argc, argv);
-}
+DOTRACE("Tcl::MainImpl::run");
 
-//---------------------------------------------------------------------
-//
-// Tcl::Main::~Main()
-//
-//---------------------------------------------------------------------
-
-Tcl::Main::~Main()
-{}
-
-//---------------------------------------------------------------------
-//
-// Tcl::Main::interp()
-//
-//---------------------------------------------------------------------
-
-Tcl_Interp* Tcl::Main::interp() const
-{
-  return Tcl::MainImpl::get()->interp();
-}
-
-//---------------------------------------------------------------------
-//
-// Tcl::Main::safeInterp()
-//
-//---------------------------------------------------------------------
-
-Tcl::Interp& Tcl::Main::safeInterp() const
-{
-  return Tcl::MainImpl::get()->safeInterp;
-}
-
-//---------------------------------------------------------------------
-//
-// Tcl::Main::run()
-//
-//---------------------------------------------------------------------
-
-void Tcl::Main::run()
-{
   ThreadSpecificData* tsdPtr = (ThreadSpecificData *)
     Tcl_GetThreadData(&dataKey, sizeof(ThreadSpecificData));
-
-  Tcl::MainImpl* rep = Tcl::MainImpl::get();
 
   /*
    * Invoke the script specified on the command line, if any.
    */
 
-  if (rep->startupFileName != NULL)
+  if (itsStartupFileName != NULL)
     {
-      rep->safeInterp.resetResult();
-      int code = Tcl_EvalFile(rep->interp(), rep->startupFileName);
+      itsSafeInterp.resetResult();
+      int code = Tcl_EvalFile(this->interp(), itsStartupFileName);
       if (code != TCL_OK)
         {
           // ensure errorInfo is set properly:
-          Tcl_AddErrorInfo(rep->interp(), "");
+          Tcl_AddErrorInfo(this->interp(), "");
 
-          std::cerr << rep->safeInterp.getGlobalVar<const char*>("errorInfo")
+          std::cerr << itsSafeInterp.getGlobalVar<const char*>("errorInfo")
                     << "\nError in startup script\n";
-          Tcl_DeleteInterp(rep->interp());
+          Tcl_DeleteInterp(this->interp());
           Tcl_Exit(1);
         }
       tsdPtr->tty = 0;
@@ -385,18 +347,18 @@ void Tcl::Main::run()
   else
     {
       // Evaluate the .rc file, if one has been specified.
-      Tcl_SourceRCFile(rep->interp());
+      Tcl_SourceRCFile(this->interp());
 
       // Set up a stdin channel handler.
-      rep->inChannel = Tcl_GetStdChannel(TCL_STDIN);
-      if (rep->inChannel)
+      itsInChannel = Tcl_GetStdChannel(TCL_STDIN);
+      if (itsInChannel)
         {
-          Tcl_CreateChannelHandler(rep->inChannel, TCL_READABLE,
+          Tcl_CreateChannelHandler(itsInChannel, TCL_READABLE,
                                    &MainImpl::stdinProc, (ClientData) 0);
         }
       if (tsdPtr->tty)
         {
-          rep->prompt(false);
+          this->prompt(false);
         }
     }
 
@@ -405,7 +367,7 @@ void Tcl::Main::run()
     {
       Tcl_Flush(outChannel);
     }
-  rep->safeInterp.resetResult();
+  itsSafeInterp.resetResult();
 
   // Loop indefinitely, waiting for commands to execute, until there are no
   // main windows left, then exit.
@@ -414,8 +376,37 @@ void Tcl::Main::run()
     {
       Tcl_DoOneEvent(0);
     }
-  Tcl_DeleteInterp(rep->interp());
+  Tcl_DeleteInterp(this->interp());
   Tcl_Exit(0);
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// Tcl::Main functions delegate to Tcl::MainImpl
+//
+///////////////////////////////////////////////////////////////////////
+
+Tcl::Main::Main(int argc, char** argv)
+{
+  Tcl::MainImpl::create(argc, argv);
+}
+
+Tcl::Main::~Main()
+{}
+
+Tcl_Interp* Tcl::Main::interp() const
+{
+  return Tcl::MainImpl::get()->interp();
+}
+
+Tcl::Interp& Tcl::Main::safeInterp() const
+{
+  return Tcl::MainImpl::get()->safeInterp();
+}
+
+void Tcl::Main::run()
+{
+  Tcl::MainImpl::get()->run();
 }
 
 static const char vcid_tclmain_cc[] = "$Header$";
