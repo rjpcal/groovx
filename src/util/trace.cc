@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Jan 13 11:08:25 2003
+// written: Wed Feb 26 15:40:47 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -473,7 +473,7 @@ void Util::Trace::printIn() throw()
             {
               STD_IO::cerr << "|   ";
             }
-          STD_IO::cerr << "|- ";
+          STD_IO::cerr << "|-->> ";
         }
 
       STD_IO::cerr << itsProf.name();
@@ -491,6 +491,31 @@ void Util::Trace::printIn() throw()
 
 void Util::Trace::printOut() throw()
 {
+  const unsigned int n = Util::BackTrace::current().size();
+
+  if (n < MAX_TRACE_LEVEL)
+    {
+      if (n > 0)
+        {
+          for (unsigned int i=0; i+1 < n; ++i)
+            {
+              STD_IO::cerr << "|   ";
+            }
+          STD_IO::cerr << "| <<--";
+        }
+
+      STD_IO::cerr << itsProf.name();
+
+      if (Util::Trace::getMode() == STEP)
+        {
+          waitOnStep();
+        }
+      else
+        {
+          STD_IO::cerr << '\n';
+        }
+    }
+
   if (Util::BackTrace::current().size() == 0)
     STD_IO::cerr << '\n';
 }
