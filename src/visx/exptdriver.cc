@@ -968,13 +968,6 @@ ExptDriver::ExptDriver() :
 DOTRACE("ExptDriver::ExptDriver");
 }
 
-ExptDriver ExptDriver::theInstance;
-
-ExptDriver& ExptDriver::theExptDriver() {
-DOTRACE("ExptDriver::theExptDriver");
-  return theInstance;
-}
-
 ExptDriver::~ExptDriver() {
 DOTRACE("ExptDriver::~ExptDriver");
   delete itsImpl; 

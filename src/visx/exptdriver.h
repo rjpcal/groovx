@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Dec  1 10:59:49 1999
+// written: Wed Dec  1 15:40:21 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,22 +51,15 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 class ExptDriver : public Experiment, public virtual IO {
-protected:
-  /// Default constructor
-  ExptDriver();
-
 private:
   /// Copy constructor not allowed
   ExptDriver(const ExptDriver&);
   /// assignment not allowed
   ExptDriver& operator=(const ExptDriver&);
 
-  ///
-  static ExptDriver theInstance;
-
 public:
-  /// Retrieve the singleton instance.
-  static ExptDriver& theExptDriver();
+  /// Default constructor
+  ExptDriver();
 
   ///
   virtual ~ExptDriver();
