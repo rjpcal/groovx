@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Mon Dec  6 21:18:53 1999
+// written: Mon Dec  6 21:25:07 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -301,13 +301,6 @@ public:
   /////////////
   // actions //
   /////////////
-
-  /** Swaps the foreground and background colors, in a way that is
-      appropriate to color-index/RGBA modes. In order to be able to
-      unswap the colors, this function should normally be preceded by
-      glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT), so that a
-      call to glPopAttrib() will then unswap the colors. */
-  static void swapForeBack();
 
   /** Recompiles the OpenGL display list or bitmap cache, if there are
 		changes pending, otherwise does nothing. */
