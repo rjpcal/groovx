@@ -3,7 +3,7 @@
 // trace.h
 // Rob Peters
 // created: Jan-99
-// written: Tue Feb  8 17:54:29 2000
+// written: Sun Mar  5 15:50:23 2000
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -52,7 +52,6 @@
 #endif
 
 #ifdef LOCAL_PROF
-#  include <iostream.h>
 #  include <sys/time.h>
 
 extern int MAX_TRACE_LEVEL;
@@ -71,31 +70,41 @@ namespace Util {
 
 class Util::Prof {
 public:
-  Prof(const char* s) : funcName(s), callCount(0) {
-	 totalTime.tv_sec = 0;
-	 totalTime.tv_usec = 0;
-  }
+  Prof(const char* s) : funcName(s), callCount(0)
+	 {
+		totalTime.tv_sec = 0;
+		totalTime.tv_usec = 0;
+	 }
+
   ~Prof();
+
   int count() const { return callCount; }
-  void add(timeval t) { 
-	 totalTime.tv_sec += t.tv_sec; 
-	 totalTime.tv_usec += t.tv_usec;
-	 // avoid overflow
-	 while (totalTime.tv_usec >= 1000000) {
-		++(totalTime.tv_sec);
-		totalTime.tv_usec -= 1000000;
+
+  void add(timeval t)
+	 {
+		totalTime.tv_sec += t.tv_sec; 
+		totalTime.tv_usec += t.tv_usec;
+		// avoid overflow
+		while (totalTime.tv_usec >= 1000000) {
+		  ++(totalTime.tv_sec);
+		  totalTime.tv_usec -= 1000000;
+		}
+		// avoid underflow
+		while (totalTime.tv_usec <= -1000000) {
+		  --(totalTime.tv_sec);
+		  totalTime.tv_usec += 1000000;
+		}
+		++callCount; 
 	 }
-	 // avoid underflow
-	 while (totalTime.tv_usec <= -1000000) {
-		--(totalTime.tv_sec);
-		totalTime.tv_usec += 1000000;
-	 }
-	 ++callCount; 
-  }
+
   const char* name() const { return funcName; }
-  double avgTime() const { 
-	 return (double(totalTime.tv_sec)*1000000 + totalTime.tv_usec)/callCount; 
-  }
+
+  double avgTime() const
+	 { 
+		return (double(totalTime.tv_sec)*1000000 + totalTime.tv_usec)
+		  / callCount; 
+	 }
+
 private:
   const char* funcName;
   int callCount;
@@ -104,34 +113,30 @@ private:
 
 class Util::Trace {
 public:
-  Trace(Prof& p, bool useMsg) : prof(p), giveTraceMsg(useMsg) {
-	 if (giveTraceMsg) {
-		if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
-		  for (int i=0; i < TRACE_LEVEL; ++i)
-			 cerr << TRACE_TAB;
-		  cerr << "entering " << prof.name() << "...\n" << flush;
-		}
-		++TRACE_LEVEL;
+  Trace(Prof& p, bool useMsg) : prof(p), giveTraceMsg(useMsg)
+	 {
+		if (giveTraceMsg)
+		  {
+			 printIn();
+		  }
+		gettimeofday(&start, NULL);
 	 }
-	 gettimeofday(&start, NULL);
-  }
   
-  ~Trace() {
-	 gettimeofday(&finish, NULL);
-	 elapsed.tv_sec = finish.tv_sec - start.tv_sec;
-	 elapsed.tv_usec = finish.tv_usec - start.tv_usec;
-	 prof.add(elapsed);
-	 if (giveTraceMsg) {
-		--TRACE_LEVEL;
-		if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
-		  for (int i=0; i < TRACE_LEVEL; ++i)
-			 cerr << TRACE_TAB;
-		  cerr << "leaving " << prof.name() << ".\n" << flush;
-		}
-		if (TRACE_LEVEL == 0) cerr << endl;
+  ~Trace()
+	 {
+		gettimeofday(&finish, NULL);
+		elapsed.tv_sec = finish.tv_sec - start.tv_sec;
+		elapsed.tv_usec = finish.tv_usec - start.tv_usec;
+		prof.add(elapsed);
+		if (giveTraceMsg)
+		  {
+			 printOut();
+		  }
 	 }
-  }
 private:
+  void printIn();
+  void printOut();
+
   Prof& prof;
   timeval start, finish, elapsed;
   const bool giveTraceMsg;
