@@ -3,7 +3,7 @@
 // tclpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 11:50:23 1999
-// written: Wed Mar  8 16:24:05 2000
+// written: Wed Mar  8 16:41:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,6 +67,12 @@ public:
   /** Returns a Tcl status code indicating whether the package
       initialization was successful. */
   int initStatus() const;
+
+  /** Returns a Tcl status code representing the combination of the
+		current \c TclPkg's status along with \a other_status. If either
+		status represents failure, the result will also represent
+		failure, otherwise success. */
+  int combineStatus(int other_status) const;
 
   /// Returns true if the package was initialized successfully.
   bool initedOk() const;
