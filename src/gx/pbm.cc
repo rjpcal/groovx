@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 16:41:07 1999
-// written: Tue Apr  2 13:36:26 2002
+// written: Tue Apr 30 19:40:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,7 +108,12 @@ namespace
   void parsePbmMode456(STD_IO::istream& is, Gfx::BmapData& data)
   {
   DOTRACE("parsePbmMode456");
+    DebugEvalNL(data.byteCount());
     is.read(reinterpret_cast<char*>(data.bytesPtr()), data.byteCount());
+    if (is.eof())
+      throw Util::Error("eof encountered in parsePbmMode456");
+    if (is.fail())
+      throw Util::Error("input stream failed in parsePbmMode456");
   }
 }
 
@@ -120,7 +125,7 @@ namespace
 
 void Pbm::save(const char* filename, const Gfx::BmapData& data)
 {
-  shared_ptr<STD_IO::ostream> os(Util::ogzopen(filename));
+  shared_ptr<STD_IO::ostream> os(Util::ogzopen(filename, std::ios::binary));
 
   save(*os, data);
 }
@@ -150,7 +155,7 @@ DOTRACE("Pbm::save");
 
 void Pbm::load(const char* filename, Gfx::BmapData& data)
 {
-  shared_ptr<STD_IO::istream> is(Util::igzopen(filename));
+  shared_ptr<STD_IO::istream> is(Util::igzopen(filename, std::ios::binary));
 
   load(*is, data);
 }

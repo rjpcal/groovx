@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 20 13:13:22 2001
-// written: Fri Jan 18 16:07:05 2002
+// written: Tue Apr 30 19:40:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,8 @@
 #include "util/strings.h"
 
 #include <fstream>
+
+#include "util/trace.h"
 
 Util::gzstreambuf::gzstreambuf(const char* name, int om, bool throw_exception) :
   opened(false), mode(0), file(0)
@@ -60,12 +62,12 @@ Util::gzstreambuf::gzstreambuf(const char* name, int om, bool throw_exception) :
 
   if (throw_exception && !opened)
     {
-      if (om & STD_IO::ios::in)
+      if (om & std::ios::in)
         {
           throw Util::Error(fstring("couldn't open file '",
                                     name, "' for reading"));
         }
-      else if (om & STD_IO::ios::out)
+      else if (om & std::ios::out)
         {
           throw Util::Error(fstring("couldn't open file '", name,
                                     "' for writing"));
@@ -85,6 +87,7 @@ void Util::gzstreambuf::close()
 
 int Util::gzstreambuf::underflow() // with help from Josuttis, p. 678
 {
+DOTRACE("Util::gzstreambuf::underflow");
   // is read position before end of buffer?
   if (gptr() < egptr())
     return *gptr();
@@ -116,12 +119,17 @@ int Util::gzstreambuf::underflow() // with help from Josuttis, p. 678
         buffer+pbackSize,
         buffer+pbackSize+num);
 
-  // return next character
-  return *gptr();
+  // return next character Hrmph. We have to cast to unsigned char to avoid
+  // problems with eof. Problem is, -1 is a valid char value to
+  // return. However, without a cast, char(-1) (0xff) gets converted to
+  // int(-1), which is 0xffffffff, which is EOF! What we want is
+  // int(0x000000ff), which we have to get by int(unsigned char(-1)).
+  return static_cast<unsigned char>(*gptr());
 }
 
 int Util::gzstreambuf::overflow(int c)
 {
+DOTRACE("Util::gzstreambuf::overflow");
   if (!(mode & std::ios::out) || !opened) return EOF;
 
   if (c != EOF)
@@ -164,13 +172,14 @@ int Util::gzstreambuf::flushoutput()
 
 namespace
 {
-  class gzstream : public STD_IO::iostream
+  class gzstream : public std::iostream
   {
   private:
     Util::gzstreambuf itsBuf;
   public:
-    gzstream(const char* filename_cstr, int mode, bool throw_exception) :
-      STD_IO::iostream(0),
+    gzstream(const char* filename_cstr, std::ios_base::openmode mode,
+             bool throw_exception) :
+      std::iostream(0),
       itsBuf(filename_cstr, mode, throw_exception)
     {
       rdbuf(&itsBuf);
@@ -178,36 +187,40 @@ namespace
   };
 }
 
-shared_ptr<STD_IO::ostream> Util::ogzopen(const fstring& filename)
+shared_ptr<std::ostream> Util::ogzopen(const fstring& filename,
+                                       std::ios::openmode flags)
 {
   static fstring gz_ext(".gz");
 
   if (filename.ends_with(gz_ext))
     {
-      return shared_ptr<STD_IO::ostream>
-        (new gzstream(filename.c_str(), STD_IO::ios::out, true));
+      return shared_ptr<std::ostream>
+        (new gzstream(filename.c_str(), std::ios::out|flags, true));
     }
   else
     {
-      return shared_ptr<STD_IO::ostream>
-        (new STD_IO::ofstream(filename.c_str()));
+      return shared_ptr<std::ostream>
+        (new std::ofstream(filename.c_str(), flags));
     }
 }
 
-shared_ptr<STD_IO::ostream> Util::ogzopen(const char*filename)
+shared_ptr<std::ostream> Util::ogzopen(const char*filename,
+                                       std::ios::openmode flags)
 {
-  return ogzopen(fstring(filename));
+  return ogzopen(fstring(filename), flags);
 }
 
-shared_ptr<STD_IO::istream> Util::igzopen(const char* filename)
+shared_ptr<std::istream> Util::igzopen(const char* filename,
+                                       std::ios::openmode flags)
 {
-  return shared_ptr<STD_IO::iostream>
-    (new gzstream(filename, STD_IO::ios::in, true));
+  return shared_ptr<std::iostream>
+    (new gzstream(filename, std::ios::in|flags, true));
 }
 
-shared_ptr<STD_IO::istream> Util::igzopen(const fstring& filename)
+shared_ptr<std::istream> Util::igzopen(const fstring& filename,
+                                       std::ios::openmode flags)
 {
-  return igzopen(filename.c_str());
+  return igzopen(filename.c_str(), flags);
 }
 
 // sample test code
