@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Sun Dec 15 14:14:25 2002
+// written: Sun Dec 15 21:01:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,8 +77,17 @@ public:
   /// Returns the command registered name.
   const fstring& name() const;
 
-  /// Returns a string describing the command's proper usage.
+  /// Returns a string describing the command's proper usage, including overloads.
   fstring usage() const;
+
+  /// Returns a string describing this single command's usage.
+  fstring rawUsage() const;
+
+  /// Check if the given argument count is acceptable.
+  bool allowsObjc(unsigned int objc) const;
+
+  /// Check if the given argument count is unacceptable.
+  bool rejectsObjc(unsigned int objc) const;
 
   /** This is overridden by subclasses to implement the specific
       functionality for the command that is represented. The \c
@@ -92,11 +101,12 @@ public:
   /// Change the Tcl::Dispatcher for this command.
   void setDispatcher(shared_ptr<Dispatcher> dpx);
 
+  class Impl;
+
 private:
   Command(const Command&);
   Command& operator=(const Command&);
 
-  class Impl;
   friend class Impl;
   Impl* const rep;
 };

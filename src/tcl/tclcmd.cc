@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Sun Dec 15 14:51:11 2002
+// written: Sun Dec 15 21:20:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 
 #include "util/strings.h"
 
+#include <list>
 #include <map>
 #include <tcl.h>
 
@@ -42,6 +43,61 @@ class HelpCmd;
 
 namespace
 {
+  struct Overloads
+  {
+    typedef std::list<Tcl::Command*> List;
+
+    List itsList;
+
+    void add(Tcl::Command* p) { itsList.push_back(p); }
+
+    void remove(Tcl::Command* p) { itsList.remove(p); }
+
+    fstring usage() const
+    {
+      fstring result;
+
+      List::const_iterator
+        itr = itsList.begin(),
+        end = itsList.end();
+
+      while (true)
+        {
+          result.append("\t", (*itr)->rawUsage());
+          if (++itr != end)
+            result.append("\n");
+          else
+            break;
+        }
+
+      return result;
+    }
+
+    fstring usageWarning() const
+    {
+      fstring warning("wrong # args: should be ");
+
+      if (itsList.size() == 1)
+        {
+          warning.append("\"", itsList.front()->rawUsage(), "\"");
+        }
+      else
+        {
+          warning.append("one of:");
+          for (List::const_iterator
+                 itr = itsList.begin(),
+                 end = itsList.end();
+               itr != end;
+               ++itr)
+            {
+              warning.append("\n\t\"", (*itr)->rawUsage(), "\"");
+            }
+        }
+
+      return warning;
+    }
+  };
+
   // Holds the the addresses of all valid Tcl::Command objects (this is
   // managed in Tcl::Command's constructor+destructor)
   typedef std::map<fstring, Tcl::Command*> CmdTable;
@@ -132,222 +188,41 @@ protected:
 
 class Tcl::Command::Impl
 {
-public:
-  Impl(Tcl::Command* owner, Tcl::Interp& interp,
-       const char* cmd_name, const char* usage,
-       int objc_min, int objc_max, bool exact_objc) :
-    itsOwner(owner),
-    itsInterp(interp),
-    itsDispatcher(theDefaultDispatcher),
-    itsUsage(usage ? usage : ""),
-    itsObjcMin(objc_min < 0 ? 0 : (unsigned int) objc_min),
-    itsObjcMax( (objc_max > 0) ? (unsigned int) objc_max : itsObjcMin),
-    itsExactObjc(exact_objc),
-    itsCmdName(cmd_name),
-    itsUseCount(0),
-    itsOverload(0),
-    itsPrevOverload(0)
-  {
-    registerCmdProc(interp);
-
-    if (firstTime)
-      {
-        firstTime = false;
-        theHelpCmd = new HelpCmd(interp);
-      }
-  }
-
-  ~Impl()
-    {
-#ifdef TRACE_USE_COUNT
-      if (USE_COUNT_STREAM->good())
-        {
-          *USE_COUNT_STREAM << itsCmdName << " "
-                            << itsUseCount << STD_IO::endl;
-        }
-#endif
-
-      removeSelfFromOverloads();
-
-      try
-        {
-          itsInterp.deleteCommand(itsCmdName.c_str());
-
-          CmdTable::iterator pos = commandTable().find(itsCmdName);
-
-          if ((*pos).second == itsOwner)
-            commandTable().erase(pos);
-        }
-      catch (Util::Error& err)
-        {
-          dbgEvalNL(3, err.msg_cstr());
-        }
-      catch (...)
-        {
-          dbgPrintNL(3, "an unknown error occurred");
-        }
-    }
-
-  fstring usage() const
-  {
-    return findFirstOverload()->buildUsage();
-  }
-
-  fstring buildUsage() const
-  {
-    fstring result("\t", itsCmdName);
-
-    if (!itsUsage.is_empty())
-      {
-        result.append(" ", itsUsage);
-      }
-
-    if ( itsOverload != 0 )
-      result.append("\n", itsOverload->buildUsage());
-
-    return result;
-  }
-
-  const fstring& cmdName() const { return itsCmdName; }
-
 private:
-  void registerCmdProc(Tcl::Interp& interp)
-  {
-    Tcl::Command* previousCmd = commandTable()[itsCmdName];
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
 
-    // Only add as an overload if there is an existing previousCmd registered
-    // with the same name as us, AND if that cmd was ORIGINALLY registered
-    // under the same name as us (which may not be the case of that cmd was
-    // the target of renaming or namespace importing, etc.)
-    if ( previousCmd != 0 &&
-         previousCmd->rep->cmdName() == this->cmdName() )
-      {
-        addAsOverloadOf(previousCmd);
-      }
-    else
-      {
-        Tcl_CreateObjCommand(interp.intp(),
-                             itsCmdName.c_str(),
-                             invokeCallback,
-                             static_cast<ClientData>(itsOwner),
-                             (Tcl_CmdDeleteProc*) NULL);
+public:
+  Impl(Tcl::Interp& intp,
+       const char* cmd_name, const char* usg,
+       int objc_min, int objc_max, bool exact_objc) :
+    interp(intp),
+    dispatcher(theDefaultDispatcher),
+    usage(usg ? usg : ""),
+    objcMin(objc_min < 0 ? 0 : (unsigned int) objc_min),
+    objcMax( (objc_max > 0) ? (unsigned int) objc_max : objcMin),
+    exactObjc(exact_objc),
+    cmdName(cmd_name),
+    useCount(0),
+    overloads()
+  {}
 
-        commandTable()[itsCmdName] = itsOwner;
-      }
-  }
-
-  bool isOverloaded() const
-    {
-      return (itsOverload != 0) || (itsPrevOverload != 0);
-    }
-
-  const Impl* findFirstOverload() const
-    {
-      const Impl* first = this;
-      while (first->itsPrevOverload != 0)
-        first = first->itsPrevOverload;
-
-      return first;
-    }
-
-  void addAsOverloadOf(Command* other)
-  {
-    Impl* last = other->rep;
-
-    while (last->itsOverload != 0)
-      last = last->itsOverload;
-
-    last->itsOverload = this;
-    this->itsPrevOverload = last;
-  }
-
-  void removeSelfFromOverloads()
-  {
-    if (itsOverload)
-      {
-        itsOverload->itsPrevOverload = this->itsPrevOverload;
-      }
-
-    if (itsPrevOverload)
-      {
-        itsPrevOverload->itsOverload = this->itsOverload;
-      }
-  }
-
-  bool allowsObjc(unsigned int objc) const
-    {
-      if (itsExactObjc)
-        {
-          return (objc == itsObjcMin || objc == itsObjcMax);
-        }
-
-      return (objc >= itsObjcMin && objc <= itsObjcMax);
-    }
-
-  bool rejectsObjc(unsigned int objc) const { return !allowsObjc(objc); }
-
-  void onInvoke() { ++itsUseCount; }
-
-  Impl* getOverload() const { return itsOverload; }
-
-  fstring warnUsage()
-  {
-    fstring warning("wrong # args: should be ");
-
-    if ( getOverload()==0 )
-      {
-        appendFullUsage(warning);
-      }
-    else
-      {
-        warning.append("one of:");
-        Impl* cmd = this;
-        while ( cmd != 0 )
-          {
-            warning.append("\n\t");
-            cmd->appendFullUsage(warning);
-            cmd = cmd->getOverload();
-          }
-      }
-
-    return warning;
-  }
-
-  void appendFullUsage(fstring& str)
-    {
-      if (!itsUsage.is_empty())
-        {
-          str.append("\"", itsCmdName, " ");
-          str.append(itsUsage, "\"");
-        }
-      else
-        {
-          str.append("\"", itsCmdName, "\"");
-        }
-    }
+  void onInvoke() { ++useCount; }
 
   /// The procedure that is actually registered with the Tcl C API.
   static int invokeCallback(ClientData clientData, Tcl_Interp* interp,
                             int objc, Tcl_Obj *const objv[]);
 
-private:
-  Impl(const Impl&);
-  Impl& operator=(const Impl&);
-
   // These are set once per command object
-  Tcl::Command* const itsOwner;
-  Tcl::Interp itsInterp;
-public:
-  shared_ptr<Tcl::Dispatcher> itsDispatcher;
-private:
-  const fstring itsUsage;
-  const unsigned int itsObjcMin;
-  const unsigned int itsObjcMax;
-  const bool itsExactObjc;
-  const fstring itsCmdName;
-  int itsUseCount;
-  Impl* itsOverload;
-  Impl* itsPrevOverload;
+  Tcl::Interp interp;
+  shared_ptr<Tcl::Dispatcher> dispatcher;
+  const fstring usage;
+  const unsigned int objcMin;
+  const unsigned int objcMax;
+  const bool exactObjc;
+  const fstring cmdName;
+  int useCount;
+  shared_ptr<Overloads> overloads;
 };
 
 
@@ -370,35 +245,35 @@ DOTRACE("Tcl::Command::Impl::invokeCallback");
 
   unsigned int objc = (unsigned int) s_objc;
 
-  Tcl::Interp& interp = rep->itsInterp;
+  Tcl::Interp& interp = rep->interp;
 
   // catch all possible exceptions since this is a callback from C
   try
     {
       rep->onInvoke();
 
-      // Look for an overload that matches...
-      while ( rep->rejectsObjc(objc) )
+      for (Overloads::List::const_iterator
+             itr = rep->overloads->itsList.begin(),
+             end = rep->overloads->itsList.end();
+           itr != end;
+           ++itr)
         {
-          rep = rep->getOverload();
+          if ((*itr)->rejectsObjc(objc))
+            continue;
 
-          // If we run out of potential overloads, abort the command.
-          if ( rep == 0 )
-            {
-              Impl* originalImpl = static_cast<Tcl::Command*>(clientData)->rep;
-              interp.resetResult();
-              interp.appendResult(originalImpl->warnUsage().c_str());
-              return TCL_ERROR;
-            }
+          // Found a matching overload, so try it:
+          (*itr)->getDispatcher()->dispatch(interp, objc, objv, **itr);
+          return TCL_OK;
         }
 
-      // ...and try the matching overload
-      rep->itsDispatcher->dispatch(interp, objc, objv, *(rep->itsOwner));
-      return TCL_OK;
+      // Here, we run out of potential overloads, so abort the command.
+      interp.resetResult();
+      interp.appendResult(rep->overloads->usageWarning().c_str());
+      return TCL_ERROR;
     }
   catch (...)
     {
-      interp.handleLiveException(rep->cmdName().c_str(), false);
+      interp.handleLiveException(rep->cmdName.c_str(), false);
     }
 
   return TCL_ERROR;
@@ -413,15 +288,73 @@ DOTRACE("Tcl::Command::Impl::invokeCallback");
 Tcl::Command::Command(Tcl::Interp& interp,
                       const char* cmd_name, const char* usage,
                       int objc_min, int objc_max, bool exact_objc) :
-  rep(new Impl(this, interp, cmd_name, usage,
+  rep(new Impl(interp, cmd_name, usage,
                objc_min, objc_max, exact_objc))
 {
 DOTRACE("Tcl::Command::Command");
+
+  // Register the command procedure
+  Tcl::Command* previousCmd = commandTable()[rep->cmdName];
+
+  // Only add as an overload if there is an existing previousCmd registered
+  // with the same name as us.
+  if ( previousCmd != 0 )
+    {
+      rep->overloads = previousCmd->rep->overloads;
+    }
+  else
+    {
+      Tcl_CreateObjCommand(interp.intp(),
+                           rep->cmdName.c_str(),
+                           Impl::invokeCallback,
+                           static_cast<ClientData>(this),
+                           (Tcl_CmdDeleteProc*) NULL);
+
+      rep->overloads.reset( new Overloads );
+
+      commandTable()[rep->cmdName] = this;
+    }
+
+  rep->overloads->add(this);
+
+  if (firstTime)
+    {
+      firstTime = false;
+      theHelpCmd = new HelpCmd(interp);
+    }
 }
 
 Tcl::Command::~Command()
 {
 DOTRACE("Tcl::Command::~Command");
+
+#ifdef TRACE_USE_COUNT
+  if (USE_COUNT_STREAM->good())
+    {
+      *USE_COUNT_STREAM << rep->cmdName << " "
+                        << rep->useCount << STD_IO::endl;
+    }
+#endif
+
+  rep->overloads->remove(this);
+
+  try
+    {
+      rep->interp.deleteCommand(rep->cmdName.c_str());
+
+      CmdTable::iterator pos = commandTable().find(rep->cmdName);
+
+      if ((*pos).second == this)
+        commandTable().erase(pos);
+    }
+  catch (Util::Error& err)
+    {
+      dbgEvalNL(3, err.msg_cstr());
+    }
+  catch (...)
+    {
+      dbgPrintNL(3, "an unknown error occurred");
+    }
 
   delete rep;
 }
@@ -429,25 +362,50 @@ DOTRACE("Tcl::Command::~Command");
 const fstring& Tcl::Command::name() const
 {
 DOTRACE("Tcl::Command::name");
-  return rep->cmdName();
+  return rep->cmdName;
 }
 
 fstring Tcl::Command::usage() const
 {
 DOTRACE("Tcl::Command::usage");
-  return rep->usage();
+  return rep->overloads->usage();
+}
+
+bool Tcl::Command::allowsObjc(unsigned int objc) const
+{
+DOTRACE("Tcl::Command::allowsObjc");
+  if (rep->exactObjc)
+    {
+      return (objc == rep->objcMin || objc == rep->objcMax);
+    }
+
+  return (objc >= rep->objcMin && objc <= rep->objcMax);
+}
+
+bool Tcl::Command::rejectsObjc(unsigned int objc) const
+{
+  return !allowsObjc(objc);
+}
+
+fstring Tcl::Command::rawUsage() const
+{
+DOTRACE("Tcl::Command::rawUsage");
+  fstring result(rep->cmdName);
+  if (!rep->usage.is_empty())
+    result.append(" ", rep->usage);
+  return result;
 }
 
 shared_ptr<Tcl::Dispatcher> Tcl::Command::getDispatcher() const
 {
 DOTRACE("Tcl::Command::getDispatcher");
-  return rep->itsDispatcher;
+  return rep->dispatcher;
 }
 
 void Tcl::Command::setDispatcher(shared_ptr<Tcl::Dispatcher> dpx)
 {
 DOTRACE("Tcl::Command::setDispatcher");
-  rep->itsDispatcher = dpx;
+  rep->dispatcher = dpx;
 }
 
 
