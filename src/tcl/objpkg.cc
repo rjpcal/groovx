@@ -56,7 +56,7 @@ Tcl::ObjCaster::ObjCaster() {}
 
 Tcl::ObjCaster::~ObjCaster() {}
 
-bool Tcl::ObjCaster::isIdMyType(Nub::UID uid)
+bool Tcl::ObjCaster::isIdMyType(Nub::UID uid) const
 {
   Nub::SoftRef<Nub::Object> item(uid);
   return (item.isValid() && isMyType(item.get()));
@@ -118,6 +118,11 @@ namespace
   {
     return caster->isIdMyType(id);
   }
+
+  unsigned int getSizeof(shared_ptr<Tcl::ObjCaster> caster)
+  {
+    return caster->getSizeof();
+  }
 }
 
 void Tcl::defGenericObjCmds(Tcl::Pkg* pkg,
@@ -133,6 +138,8 @@ DOTRACE("Tcl::defGenericObjCmds");
             rutz::bind_first(findAll, caster), src_pos );
   pkg->def( "removeAll", "",
             rutz::bind_first(removeAll, caster), src_pos );
+  pkg->def( "sizeof", "",
+            rutz::bind_first(getSizeof, caster), src_pos );
 }
 
 static const char vcid_objpkg_cc[] = "$Header$";

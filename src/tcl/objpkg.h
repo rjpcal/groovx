@@ -63,13 +63,15 @@ protected:
 public:
   virtual ~ObjCaster();
 
-  virtual bool isMyType(const Nub::Object* obj) = 0;
+  virtual bool isMyType(const Nub::Object* obj) const = 0;
 
-  bool isNotMyType(const Nub::Object* obj) { return !isMyType(obj); }
+  virtual unsigned int getSizeof() const = 0;
 
-  bool isIdMyType(Nub::UID uid);
+  bool isNotMyType(const Nub::Object* obj) const { return !isMyType(obj); }
 
-  bool isIdNotMyType(Nub::UID uid) { return !isIdMyType(uid); }
+  bool isIdMyType(Nub::UID uid) const;
+
+  bool isIdNotMyType(Nub::UID uid) const { return !isIdMyType(uid); }
 };
 
 namespace Tcl
@@ -79,7 +81,12 @@ namespace Tcl
   class CObjCaster : public ObjCaster
   {
   public:
-    virtual bool isMyType(const Nub::Object* obj)
+    virtual unsigned int getSizeof() const
+    {
+      return sizeof(C);
+    }
+
+    virtual bool isMyType(const Nub::Object* obj) const
     {
       return (obj != 0 && dynamic_cast<const C*>(obj) != 0);
     }
