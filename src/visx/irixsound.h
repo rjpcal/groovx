@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// irixsound.cc
+// irixsound.h
 //
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,8 +10,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IRIXSOUND_CC_DEFINED
-#define IRIXSOUND_CC_DEFINED
+#ifndef IRIXSOUND_H_DEFINED
+#define IRIXSOUND_H_DEFINED
 
 #include "io/reader.h"
 #include "io/writer.h"
@@ -272,5 +272,5 @@ DOTRACE("Sound::newPlatformSound");
   return new IrixAudioSound(soundfile);
 }
 
-static const char vcid_irixsound_cc[] = "$Header$";
-#endif // !IRIXSOUND_CC_DEFINED
+static const char vcid_irixsound_h[] = "$Header$";
+#endif // !IRIXSOUND_H_DEFINED

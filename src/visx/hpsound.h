@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// hpsound.cc
+// hpsound.h
 //
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,8 +10,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef HPSOUND_CC_DEFINED
-#define HPSOUND_CC_DEFINED
+#ifndef HPSOUND_H_DEFINED
+#define HPSOUND_H_DEFINED
 
 #include "io/reader.h"
 #include "io/writer.h"
@@ -250,5 +250,5 @@ DOTRACE("Sound::newPlatformSound");
   return new HpAudioSound(soundfile);
 }
 
-static const char vcid_hpsound_cc[] = "$Header$";
-#endif // !HPSOUND_CC_DEFINED
+static const char vcid_hpsound_h[] = "$Header$";
+#endif // !HPSOUND_H_DEFINED
