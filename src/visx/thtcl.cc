@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Sat Aug 25 22:00:04 2001
+// written: Sat Sep  8 14:08:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,38 +23,14 @@
 
 #include "util/trace.h"
 
-namespace ThTcl
+namespace
 {
-  unsigned int addImmediateEvent(Util::Ref<TimingHdlr> th,
-                                 const char* event_type, int msec)
+  unsigned int addEvent(Util::Ref<TimingHdlr> th, const char* event_type,
+                        int msec, TimingHdlr::TimePoint time_point)
   {
-    return th->addEventByName(event_type, TimingHdlr::IMMEDIATE, msec);
-  }
-
-  unsigned int addStartEvent(Util::Ref<TimingHdlr> th,
-                             const char* event_type, int msec)
-  {
-    return th->addEventByName(event_type, TimingHdlr::FROM_START, msec);
-  }
-
-  unsigned int addResponseEvent(Util::Ref<TimingHdlr> th,
-                                const char* event_type, int msec)
-  {
-    return th->addEventByName(event_type, TimingHdlr::FROM_RESPONSE, msec);
-  }
-
-  unsigned int addAbortEvent(Util::Ref<TimingHdlr> th,
-                             const char* event_type, int msec)
-  {
-    return th->addEventByName(event_type, TimingHdlr::FROM_ABORT, msec);
+    return th->addEventByName(event_type, time_point, msec);
   }
 }
-
-//---------------------------------------------------------------------
-//
-// ThTcl::Th_Init
-//
-//---------------------------------------------------------------------
 
 extern "C"
 int Th_Init(Tcl_Interp* interp)
@@ -80,13 +56,13 @@ DOTRACE("Th_Init");
   Tcl::defGenericObjCmds<TimingHdlr>(pkg1);
 
   pkg1->def( "addImmediateEvent", "th_id event_type msec_delay",
-             &ThTcl::addImmediateEvent );
+             Util::bindLast(&addEvent, TimingHdlr::IMMEDIATE) );
   pkg1->def( "addStartEvent", "th_id event_type msec_delay",
-             &ThTcl::addStartEvent );
+             Util::bindLast(&addEvent, TimingHdlr::FROM_START) );
   pkg1->def( "addResponseEvent", "th_id event_type msec_delay",
-             &ThTcl::addResponseEvent );
+             Util::bindLast(&addEvent, TimingHdlr::FROM_RESPONSE) );
   pkg1->def( "addAbortEvent", "th_id event_type msec_delay",
-             &ThTcl::addAbortEvent );
+             Util::bindLast(&addEvent, TimingHdlr::FROM_ABORT) );
 
   pkg1->eval("namespace eval Th { "
              "    proc autosavePeriod {id args} { "
