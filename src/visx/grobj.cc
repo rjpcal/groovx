@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Tue Feb  8 17:55:14 2000
+// written: Mon Mar  6 13:01:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@
 
 class GrObjError : public virtual ErrorWithMsg {
 public:
-  GrObjError(const string& msg = "") : ErrorWithMsg(msg) {}
+  GrObjError(const char* msg) : ErrorWithMsg(msg) {}
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -53,8 +53,13 @@ namespace {
   inline void checkForGlError(const char* where) throw (GrObjError) {
 	 GLenum status = glGetError();
 	 if (status != GL_NO_ERROR) {
-		string msg = reinterpret_cast<const char*>(gluErrorString(status));
-		throw GrObjError(string ("GL error: ") + msg + " " + where);
+		const char* msg =
+		  reinterpret_cast<const char*>(gluErrorString(status));
+		GrObjError err("GL error: ");
+		err.appendMsg(msg);
+		err.appendMsg(" ");
+		err.appendMsg(where);
+		throw err;
 	 }
   }
 #else
