@@ -55,12 +55,6 @@ public:
   /// Virtual destructor to ensure correct destruction of subclasses
   virtual ~IoObject() = 0;
 
-  void ioSerialize(STD_IO::ostream& os, IO::IOFlag flag) const;
-
-  void ioDeserialize(STD_IO::istream& is, IO::IOFlag flag);
-
-  int ioCharCount() const;
-
   /** The preferred method for saving an object's state via the
       generic interface provided by \c IO::Reader. Each subclass of \c
       IO::Reader provides its own formatting scheme, so that subclasses of
@@ -104,12 +98,6 @@ public:
 		version of \c typeid(*this).name(), which should very closely
 		resemble the way the object was declared in source code. */
   virtual fixed_string ioTypename() const;
-
-  /** This function removes all whitespace characters from \a
-		theStream, until the first non-whitespace character is seen. It
-		returns the number of whitespace characters that were removed
-		from \a theStream. */
-  static int eatWhitespace(STD_IO::istream& theStream);
 
   /** The old-style function to send an object to a stream. Each
       subclass must implement its own formatting. \c writeTo() should
