@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Fri Mar  3 15:06:05 2000
+// written: Wed Mar  8 08:08:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,9 @@
 
 #include "kbdresponsehdlr.h"
 
-#include <string>
+#include "util/strings.h"
+
+#include <iostream.h>
 
 #define NO_TRACE
 #include "trace.h"
@@ -21,7 +23,7 @@
 #include "debug.h"
 
 namespace {
-  const string ioTag = "KbdResponseHdlr";
+  const string_literal ioTag = "KbdResponseHdlr";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -37,7 +39,7 @@ KbdResponseHdlr::KbdResponseHdlr() :
   setBindingSubstitution("%K");
 }
 
-KbdResponseHdlr::KbdResponseHdlr(const string& key_resp_pairs) : 
+KbdResponseHdlr::KbdResponseHdlr(const char* key_resp_pairs) : 
   EventResponseHdlr(key_resp_pairs)
 {
   setEventSequence("<KeyPress>");
@@ -50,7 +52,7 @@ DOTRACE("KbdResponseHdlr::serialize");
 
   oldSerialize(os, flag);
 
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw OutputError(ioTag.c_str());
 
   if (flag & BASES) { /* no bases to serialize */ }
 }
@@ -58,14 +60,14 @@ DOTRACE("KbdResponseHdlr::serialize");
 void KbdResponseHdlr::deserialize(istream &is, IOFlag flag) {
 DOTRACE("KbdResponseHdlr::deserialize");
 
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
 
   oldDeserialize(is, flag);
 
   setEventSequence("<KeyPress");
   setBindingSubstitution("%K");
 
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw InputError(ioTag.c_str());
 
   if (flag & BASES) { /* no bases to deserialize */ }
 }
