@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Oct 26 09:27:24 2000
+// written: Thu Oct 26 17:13:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,12 +34,14 @@
 #include <strstream.h>
 #include <vector>
 
-#define NO_TRACE
+#define DYNAMIC_TRACE_EXPR Trial::tracer.status()
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
 #define TIME_TRACE
+
+Util::Tracer Trial::tracer;
 
 ///////////////////////////////////////////////////////////////////////
 //

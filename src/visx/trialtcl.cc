@@ -3,7 +3,7 @@
 // trialtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 09:51:54 1999
-// written: Fri Oct 20 18:00:52 2000
+// written: Thu Oct 26 17:12:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include "io/iofactory.h"
 
 #include "tcl/listitempkg.h"
+#include "tcl/tracertcl.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -63,6 +64,8 @@ public:
   TrialPkg(Tcl_Interp* interp) :
 	 Tcl::ListItemPkg<Trial, Tlist>(interp, Tlist::theTlist(), "Trial", "1.1")
   {
+	 Tcl::addTracing(this, Trial::tracer);
+
 	 addCommand( new AddCmd(this, "Trial::add") );
 
 	 declareCGetter("avgResponse", &Trial::avgResponse);

@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Mon Oct 23 16:36:57 2000
+// written: Thu Oct 26 17:11:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,8 +11,8 @@
 #ifndef TRIAL_H_DEFINED
 #define TRIAL_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
-#include "io/io.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRACER_H_DEFINED)
+#include "util/tracer.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VALUE_H_DEFINED)
@@ -47,6 +47,10 @@ class Response;
 
 class Trial : public TrialBase {
 public:
+
+  /** This tracer dynamically controls the tracing of Trial member
+		functions. */
+  static Util::Tracer tracer;
 
   //////////////
   // creators //

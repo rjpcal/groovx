@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Oct 25 20:15:59 2000
+// written: Thu Oct 26 17:14:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@
 #include "tcl/listitempkg.h"
 #include "tcl/listpkg.h"
 #include "tcl/tclcmd.h"
+#include "tcl/tracertcl.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -147,6 +148,8 @@ public:
 	 Tcl::ListItemPkg<Block, BlockList>(interp, BlockList::theBlockList(),
 													"Block", "1.1")
   {
+	 Tcl::addTracing(this, Block::tracer);
+
 	 addCommand( new InitCmd(this, "Block::init") );
 	 addCommand( new AddTrialsCmd(this, "Block::addTrials") );
 	 addCommand( new AddTrialIdsCmd(this, "Block::addTrialIds") );

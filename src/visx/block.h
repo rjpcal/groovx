@@ -3,13 +3,17 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Mon Oct 23 12:05:37 2000
+// written: Thu Oct 26 17:13:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef BLOCK_H_DEFINED
 #define BLOCK_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRACER_H_DEFINED)
+#include "util/tracer.h"
+#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
 #include "io/io.h"
@@ -40,6 +44,11 @@ class Response;
 ///////////////////////////////////////////////////////////////////////
 
 class Block : public virtual IO::IoObject {
+public:
+  /** This tracer dynamically controls the tracing of Block member
+		functions. */
+  static Util::Tracer tracer;
+
   //////////////
   // creators //
   //////////////

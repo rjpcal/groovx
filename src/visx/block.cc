@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Oct 26 10:16:52 2000
+// written: Thu Oct 26 17:14:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,10 +30,12 @@
 #include <strstream.h>
 #include <vector>
 
-#define NO_TRACE
+#define DYNAMIC_TRACE_EXPR Block::tracer.status()
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
+
+Util::Tracer Block::tracer;
 
 ///////////////////////////////////////////////////////////////////////
 //
