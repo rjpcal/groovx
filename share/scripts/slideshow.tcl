@@ -338,9 +338,9 @@ namespace eval pl {
 	set n 0
 	foreach f $pl::m_purge_list {
 	    aux::msg "purging" "[incr n] of $N"
-	    if { [llength [info proc ::auxDeleteHook]] > 0 } {
+	    if { [llength [info proc ::slideshowDeleteHook]] > 0 } {
 		aux::msg "deleteHook" $f
-		::auxDeleteHook $f
+		::slideshowDeleteHook $f
 	    } else {
 		aux::msg "delete file" $f
 		set dir [file dirname $f]
