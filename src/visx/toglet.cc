@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Mar 15 11:09:23 2000
+// written: Wed Mar 29 23:22:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,6 +60,11 @@ namespace {
   void dummyReshapeCallback(Togl* togl);
   void dummyDisplayCallback(Togl* togl);
   void dummyEpsCallback(const Togl* togl);
+
+  void dummyEventProc(ClientData clientData, XEvent* eventPtr) {
+  DOTRACE("dummyEventProc");
+    DebugEvalNL(clientData);
+  }
 
   const char* pathname(Togl* togl) {
 	 return Tk_PathName(reinterpret_cast<Tk_FakeWin*>(Togl_TkWin(togl)));
@@ -122,15 +127,22 @@ DOTRACE("ToglConfig::ToglConfig");
       glIndexi(Togl_AllocColor(togl, 1.0, 1.0, 1.0));
     }
   }
+
+  Tk_Window tkwin = Togl_TkWin(itsWidget);
+  Tk_CreateEventHandler(tkwin, ButtonPressMask, dummyEventProc,
+								static_cast<void*>(this));
 }
 
 ToglConfig::~ToglConfig() {
 DOTRACE("ToglConfig::~ToglConfig");
-DebugPrintNL("ToglConfig::~ToglConfig");
   Togl_SetClientData(itsWidget, static_cast<ClientData>(0));
   Togl_SetReshapeFunc(itsWidget, 0);
   Togl_SetDisplayFunc(itsWidget, 0);
   itsWidget = 0;
+
+  Tk_Window tkwin = Togl_TkWin(itsWidget);
+  Tk_DeleteEventHandler(tkwin, ButtonPressMask, dummyEventProc,
+								static_cast<void*>(this));
 }
 
 ///////////////
@@ -253,7 +265,7 @@ DOTRACE("getX11Window");
   return Togl_Window(itsWidget);
 }
 
-Canvas* ToglConfig::getCanvas() {
+GWT::Canvas* ToglConfig::getCanvas() {
 DOTRACE("ToglConfig::getCanvas");
   return itsCanvas.get();
 }
