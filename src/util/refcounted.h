@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:19 2000
-// written: Wed Jun 13 10:37:00 2001
+// written: Wed Jun 13 10:42:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ protected:
   ~RefCounts();
 
 public:
-  RefCounts() : strong(0), weak(0) {}
+  RefCounts();
 
   typedef unsigned short Count;
 
