@@ -5,13 +5,17 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Thu Jul 12 16:37:38 2001
+// written: Fri Jul 13 11:32:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TCLITEMPKG_H_DEFINED
 #define TCLITEMPKG_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
+#include "util/pointers.h"
+#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLITEMPKGBASE_H_DEFINED)
 #include "tcl/tclitempkgbase.h"
@@ -50,6 +54,10 @@ public:
   /// Construct with a member function pointer.
   CGetter(Getter_f getter) : itsGetter_f(getter) {}
 
+  /// Factory function.
+  static shared_ptr<Getter<T> > make(Getter_f s)
+    { return shared_ptr<Getter<T> >(new CGetter(s)); }
+
   /// Casts \a item to type \c C* and calls the stored member function.
   virtual T get(void *item) const {
     const C* p = static_cast<C*>(item);
@@ -73,6 +81,11 @@ public:
   /// Construct with a member function pointer.
   CGetter<C, Util::Ref<T> >(Getter_f getter) : itsGetter_f(getter) {}
 
+  /// Factory function.
+  static shared_ptr<Getter<int> > make(Getter_f s)
+    { return shared_ptr<Getter<int> >(new CGetter(s)); }
+//      { return shared_ptr<Getter<int> >(static_cast<Getter<int> >(new CGetter(s))); }
+
   /// Casts \a item to type \c C* and calls the stored member function.
   virtual int get(void *item) const {
     const C* p = static_cast<C*>(item);
@@ -95,6 +108,10 @@ public:
 
   /// Construct with a member function pointer.
   CGetter<C, Util::WeakRef<T> >(Getter_f getter) : itsGetter_f(getter) {}
+
+  /// Factory function.
+  static shared_ptr<Getter<int> > make(Getter_f s)
+    { return shared_ptr<Getter<int> >(new CGetter(s)); }
 
   /// Casts \a item to type \c C* and calls the stored member function.
   virtual int get(void *item) const {
@@ -124,6 +141,10 @@ public:
   /// Construct with a member function pointer.
   CSetter(Setter_f setter) : itsSetter_f(setter) {}
 
+  /// Factory function.
+  static shared_ptr<Setter<T> > make(Setter_f s)
+    { return shared_ptr<Setter<T> >(new CSetter(s)); }
+
   /// Casts \a item to type \c C* and calls the stored member function.
   virtual void set(void* item, T val) {
     C* p = static_cast<C*>(item);
@@ -148,6 +169,10 @@ public:
   /// Construct with a member function pointer.
   CSetter<C, Util::Ref<T> >(Setter_f setter) : itsSetter_f(setter) {}
 
+  /// Factory function.
+  static shared_ptr<Setter<int> > make(Setter_f s)
+    { return shared_ptr<Setter<int> >(new CSetter(s)); }
+
   /// Casts \a item to type \c C* and calls the stored member function.
   virtual void set(void* item, int val) {
     C* p = static_cast<C*>(item);
@@ -170,6 +195,10 @@ public:
 
   /// Construct with a member function pointer.
   CSetter<C, Util::WeakRef<T> >(Setter_f setter) : itsSetter_f(setter) {}
+
+  /// Factory function.
+  static shared_ptr<Setter<int> > make(Setter_f s)
+    { return shared_ptr<Setter<int> >(new CSetter(s)); }
 
   /// Casts \a item to type \c C* and calls the stored member function.
   virtual void set(void* item, int val) {
@@ -311,19 +340,20 @@ public:
 
 protected:
   template <class T>
-  void declareGetter(const char* cmd_name, Getter<T>* getter,
+  void declareGetter(const char* cmd_name, shared_ptr<Getter<T> > getter,
                      const char* usage = 0);
 
   template <class T>
-  void declareSetter(const char* cmd_name, Setter<T>* setter,
+  void declareSetter(const char* cmd_name, shared_ptr<Setter<T> > setter,
                      const char* usage = 0);
 
   template <class T>
   void declareAttrib(const char* attrib_name,
-                     Getter<T>* getter, Setter<T>* setter,
+                     shared_ptr<Getter<T> > getter,
+                     shared_ptr<Setter<T> > setter,
                      const char* usage = 0);
 
-  void declareAction(const char* action_name, Action* action,
+  void declareAction(const char* action_name, shared_ptr<Action> action,
                      const char* usage = 0);
 
   void addIoCommands(IoFetcher* fetcher);
@@ -350,27 +380,35 @@ public:
   void declareCAction(const char* cmd_name, void (C::* actionFunc) (),
                       const char* usage = 0)
     {
-      declareAction(cmd_name, new CAction<C>(actionFunc), usage);
+      declareAction(cmd_name,
+                    shared_ptr<Action>(new CAction<C>(actionFunc)),
+                    usage);
     }
 
   void declareCAction(const char* cmd_name, void (C::* actionFunc) () const,
                       const char* usage = 0)
     {
-      declareAction(cmd_name, new CConstAction<C>(actionFunc), usage);
+      declareAction(cmd_name,
+                    shared_ptr<Action>(new CConstAction<C>(actionFunc)),
+                    usage);
     }
 
   template <class CC, class T>
   void declareCGetter(const char* cmd_name, T (CC::* getterFunc) () const,
                       const char* usage = 0)
     {
-      declareGetter(cmd_name, new CGetter<C,T>(getterFunc), usage);
+      declareGetter(cmd_name,
+                    CGetter<C,T>::make(getterFunc),
+                    usage);
     }
 
   template <class CC, class T>
   void declareCSetter(const char* cmd_name, void (CC::* setterFunc) (T),
                       const char* usage = 0)
     {
-      declareSetter(cmd_name, new CSetter<C,T>(setterFunc), usage);
+      declareSetter(cmd_name,
+                    CSetter<C,T>::make(setterFunc),
+                    usage);
     }
 
   template <class CC, class T>
@@ -380,7 +418,8 @@ public:
                       const char* usage = 0)
     {
       declareAttrib(cmd_name,
-                    new CGetter<C,T>(getterFunc), new CSetter<C,T>(setterFunc),
+                    CGetter<C,T>::make(getterFunc),
+                    CSetter<C,T>::make(setterFunc),
                     usage);
     }
 
