@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Jan 11 15:34:31 2000
+// written: Thu Jan 27 13:42:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,6 +75,9 @@ public:
   virtual void readFrom(Reader* reader);
   ///
   virtual void writeTo(Writer* writer) const;
+
+  ///
+  virtual void manageObject(const char* name, IO* object);
 
   //////////////////////////////
   // Accessors + Manipulators //
