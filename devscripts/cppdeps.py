@@ -69,6 +69,8 @@ class DirectIncludeMap:
             for dep in unresolved:
                 sys.stderr.write("\t'%s'\n" % dep)
 
+        resolved = map(os.path.normpath, resolved)
+
         self.itsIncludes[file] = resolved
 
     def __init__(self, paths):
@@ -105,7 +107,9 @@ class DepBuilder:
             return
 
         for file in contents:
-            if not file.endswith('.cc'):
+            if not (file.endswith('.cc')
+                    or file.endswith('.C')
+                    or file.endswith('.c')):
                 continue
 
             fullname = os.path.join(dirname,file)
@@ -125,7 +129,7 @@ class DepBuilder:
         stem = '/'.join(parts[1:])
 
         (stem, ext) = os.path.splitext(stem)
-        assert ext == '.cc'
+        assert (ext == '.cc' or ext == '.C' or ext == '.c')
 
         ostem = self.objDir + stem
 
