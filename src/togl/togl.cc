@@ -312,7 +312,7 @@ static Tk_ConfigSpec configSpecs[] =
    DEFAULT_WIDTH, Tk_Offset(Togl::Impl, itsWidth), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, "-rgba", "rgba", "Rgba",
-#if defined(I686) || defined(IRIX6)
+#if defined(I686) || defined(IRIX6) || defined(PPC)
    "true",
 #else
    "false",
@@ -329,7 +329,7 @@ static Tk_ConfigSpec configSpecs[] =
    "1", Tk_Offset(Togl::Impl, itsRgbaBlue), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, "-double", "double", "Double",
-#if defined(I686) || defined(IRIX6)
+#if defined(I686) || defined(IRIX6) || defined(PPC)
    "true",
 #else
    "false",
