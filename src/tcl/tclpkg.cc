@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Wed Dec  8 00:16:15 1999
+// written: Wed Dec  8 00:49:26 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -326,6 +326,15 @@ TclIoItemPkg::TclIoItemPkg(Tcl_Interp* interp, const char* name,
 }
 
 } // end namespace Tcl
+
+#ifdef ACC_COMPILER
+void do_nothing() { 
+  typeid(bad_alloc);
+  typeid(logic_error);
+  typeid(length_error);
+  typeid(out_of_range);
+}
+#endif
 
 static const char vcid_tclitempkg_cc[] = "$Header$";
 #endif // !TCLITEMPKG_CC_DEFINED
