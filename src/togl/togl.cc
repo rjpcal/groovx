@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 16:37:48 2002
+// written: Tue Sep 17 17:14:19 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -510,15 +510,6 @@ DOTRACE("Togl::displayCallback");
 
   rep->itsGlx->makeCurrent(Tk_WindowId(rep->itsTkWin));
   fullRender();
-}
-
-void Togl::reshapeCallback()
-{
-DOTRACE("Togl::reshapeCallback");
-
-  makeCurrent();
-
-  glViewport(0, 0, width(), height());
 }
 
 void Togl::timerCallback()

@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Tue Sep 17 16:33:57 2002
+// written: Tue Sep 17 17:14:02 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -61,9 +61,6 @@ public:
 
   /// Overridden from Tcl::TkWidget.
   virtual void displayCallback();
-
-  /// Overridden from Tcl::TkWidget.
-  virtual void reshapeCallback();
 
   virtual void timerCallback();
 
