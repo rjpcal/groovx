@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Mar 15 10:17:24 2000
+// written: Sat Mar 18 10:56:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -387,11 +387,15 @@ DOTRACE("Trial::setType");
 
 void Trial::setResponseHandler(int rhid) {
 DOTRACE("Trial::setResponseHandler");
+  if (rhid < 0)
+	 throw InvalidIdError("response handler id was negative");
   itsImpl->itsRhId = rhid;
 }
 
 void Trial::setTimingHdlr(int thid) {
 DOTRACE("setTimingHdlr");
+  if (thid < 0)
+	 throw InvalidIdError("timing handler id was negative");
   itsImpl->itsThId = thid;
 }
 
