@@ -34,6 +34,7 @@
 
 #include "glcanvas.h"
 
+#include "geom/projection.h"
 #include "geom/rect.h"
 #include "geom/txform.h"
 #include "geom/vec2.h"
@@ -255,11 +256,12 @@ namespace
                    const recti& viewport,
                    const vec3d& screen)
   {
-    DOTRACE("unproject1");
-    vec3d world_pos;
+    DOTRACE("<glcanvas.cc>::unproject1");
 
     const int v[4] = { viewport.left(), viewport.bottom(),
                        viewport.width(), viewport.height() };
+
+    vec3d world_pos;
 
     GLint status =
       gluUnProject(screen.x(), screen.y(), screen.z(),
@@ -271,27 +273,9 @@ namespace
     dbg_eval_nl(3, status);
 
     if (status == GL_FALSE)
-      throw rutz::error("GLCanvas::worldFromScreen3(): gluUnProject error",
-                        SRC_POS);
+      throw rutz::error("gluUnProject error", SRC_POS);
 
     return world_pos;
-  }
-
-  vec3d unproject2(const txform& modelview,
-                   const txform& projection,
-                   const recti& viewport,
-                   const vec3d& screen)
-  {
-    DOTRACE("unproject2");
-
-    const txform pm = projection.mtx_mul(modelview);
-    const txform pmi = pm.inverted();
-
-    const vec3d screen2(2*(screen.x() - viewport.left())/viewport.width() - 1,
-                        2*(screen.y() - viewport.bottom())/viewport.height() - 1,
-                        2*(screen.z()) - 1);
-
-    return pmi.apply_to(screen2);
   }
 }
 
@@ -305,7 +289,7 @@ DOTRACE("GLCanvas::worldFromScreen3");
   const txform p = rep->getProjection();
   const recti v = getScreenViewport();
 
-  const vec3d world2 = unproject2(m, p, v, screen_pos);
+  const vec3d world2 = geom::unproject(m, p, v, screen_pos);
 
   if (GET_DBG_LEVEL() >= 8)
     {
