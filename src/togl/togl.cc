@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 11:53:02 2002
+// written: Mon Sep 16 12:04:57 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -267,7 +267,7 @@ public:
 
   Window windowId() const { return Tk_WindowId(itsTkWin); }
 
-  GLCanvas& canvas() const { return itsGlx->canvas(); }
+  Gfx::Canvas& canvas() const { return itsGlx->canvas(); }
 
 private:
   void eventProc(XEvent* eventPtr);
