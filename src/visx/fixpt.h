@@ -3,7 +3,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Thu Oct 21 18:10:10 1999
+// written: Wed Nov 10 15:27:48 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,39 +25,57 @@
 #endif
 
 ///////////////////////////////////////////////////////////////////////
-//
-// FixPt class declaration
-//
-///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * FixPt implements a simple psychophysics fixation cross, with
+ * attributes to control the length of the bars, and the pixel-width
+ * of the bars.
+ *
+ * @memo Subclass of GrObj for drawing psychophysics fixation crosses.
+ **/
 
 class FixPt : public GrObj, public PropFriend<FixPt> {
 public:
+  /// Default constructor.
   FixPt (double len=0.1, int wid=1);
+  /// Stream constructor.
   FixPt (istream &is, IOFlag flag);
+  ///
   virtual ~FixPt ();
 
+  ///
   virtual void serialize(ostream &os, IOFlag flag) const;
+  ///
   virtual void deserialize(istream &is, IOFlag flag);
+  ///
   virtual int charCount() const;
 
+  ///
   virtual void readFrom(Reader* reader);
+  ///
   virtual void writeTo(Writer* writer) const;
 
   ////////////////
   // properties //
   ////////////////
 
+  ///
   typedef PropertyInfo<FixPt> PInfo;
+  ///
   static const vector<PInfo>& getPropertyInfos();
 
-  CTProperty<FixPt, double> length;	// length of crosshairs in GL coordinates
-  CTProperty<FixPt, int> width; // width of crosshairs in pixels
+  /// Length of crosshairs in GL coordinates
+  CTProperty<FixPt, double> length;
+  /// width of crosshairs in pixels
+  CTProperty<FixPt, int> width;
 
 protected:
+  ///
   virtual bool grGetBoundingBox(double& left, double& top,
 										  double& right, double& bottom,
 										  int& border_pixels) const;
 
+  ///
   virtual void grRender() const;
 };
 
