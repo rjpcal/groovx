@@ -316,9 +316,11 @@ ALL_PROD_OPTIONS := $(COMMON_OPTIONS) $(PROD_OPTIM) $(PROD_OPTIONS)
 ALL_DEBUG_OPTIONS := $(COMMON_OPTIONS) $(DEBUG_OPTIM) $(DEBUG_OPTIONS) $(DEBUG_FLAGS)
 
 $(GRSH)/%.o : %.cc
+	echo $< >> CompileStats
 	csh -fc "($(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)) $(FILTER)"
 
 $(UTIL)/%.o : util/%.cc
+	echo $< >> CompileStats
 	csh -fc "($(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)) $(FILTER)"
 
 $(GRSH)/%.do : %.cc
@@ -327,6 +329,7 @@ ifeq ($(EXTRA_STATISTICS),1)
 	wc -l $<
 	wc -l .temp.cc
 endif
+	echo $< >> CompileStats
 	$(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)
 
 $(UTIL)/%.do : util/%.cc
@@ -335,6 +338,7 @@ ifeq ($(EXTRA_STATISTICS),1)
 	wc -l $<
 	wc -l .temp.cc
 endif
+	echo $< >> CompileStats
 	$(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)
 
 %.precc : %.cc
