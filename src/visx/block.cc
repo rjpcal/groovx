@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Fri Oct 27 14:32:36 2000
+// written: Mon Oct 30 11:22:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,10 +14,10 @@
 #include "block.h"
 
 #include "experiment.h"
-#include "iditem.h"
 #include "response.h"
 #include "trialbase.h"
 
+#include "io/iditem.h"
 #include "io/reader.h"
 #include "io/readutils.h"
 #include "io/writer.h"
