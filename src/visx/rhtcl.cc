@@ -63,8 +63,6 @@ DBG_REGISTER
 
 namespace
 {
-
-#if defined(GL_PLATFORM_GLX)
   class SerialEventSource
   {
   public:
@@ -142,12 +140,6 @@ namespace
   {
     theEventSource.reset(new SerialEventSource(interp, device));
   }
-#else // defined(GL_PLATFORM_GLX)
-  void startSerial(Tcl_Interp*, const char*)
-  {
-    throw Util::Error("X11 events not available in this build");
-  }
-#endif
 }
 
 
