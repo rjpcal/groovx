@@ -1,8 +1,0 @@
-#!/bin/csh -f
-
-# $Id$
-
-# Makes the dependencies pertain to not just the *.o file, but also
-#     the *.do file (debug object file) and the *.d file (the dependency file)
-
-sed -e "s@^src/\(.*\)\.o:@dep/\1.d obj/$ARCH/\1.do obj/$ARCH/\1.o:@"
