@@ -5,13 +5,17 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Mon Jun 11 15:08:16 2001
+// written: Mon Jun 18 09:59:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TCLITEMPKG_CC_DEFINED
 #define TCLITEMPKG_CC_DEFINED
+
+#ifdef ACC_COMPILER // aCC needs this to be happy with the header
+#include "util/ref.h"
+#endif
 
 #include "tcl/tclitempkg.h"
 
@@ -33,9 +37,9 @@
 ///////////////////////////////////////////////////////////////////////
 
 Tcl::TclItemPkg::TclItemPkg(Tcl_Interp* interp,
-									 const char* name, const char* version,
-									 int item_argn) :
-  TclItemPkgBase(interp, name, version), 
+                            const char* name, const char* version,
+                            int item_argn) :
+  TclItemPkgBase(interp, name, version),
   itsItemArgn(item_argn)
 {}
 
@@ -47,49 +51,49 @@ Tcl::TclItemPkg::~TclItemPkg() {}
 
 template <class T>
 void Tcl::TclItemPkg::declareGetter(const char* cmd_name,
-												Getter<T>* getter, const char* usage) {
+                                    Getter<T>* getter, const char* usage) {
   addCommand(
          new Tcl::TVecGetterCmd<T>(this, makePkgCmdName(cmd_name),
 #ifndef ACC_COMPILER
-											  make_shared(getter),
+                                   make_shared(getter),
 #else
-											  shared_ptr<Getter<T> >(getter),
+                                   shared_ptr<Getter<T> >(getter),
 #endif
-											  usage, itsItemArgn)
-			);
+                                   usage, itsItemArgn)
+         );
 }
 
 template <class T>
 void Tcl::TclItemPkg::declareSetter(const char* cmd_name,
-												Setter<T>* setter, const char* usage) {
+                                    Setter<T>* setter, const char* usage) {
   addCommand(
-		   new Tcl::TVecSetterCmd<T>(this, makePkgCmdName(cmd_name),
+         new Tcl::TVecSetterCmd<T>(this, makePkgCmdName(cmd_name),
 #ifndef ACC_COMPILER
-											  make_shared(setter),
+                                   make_shared(setter),
 #else
-											  shared_ptr<Setter<T> >(setter),
+                                   shared_ptr<Setter<T> >(setter),
 #endif
-											  usage, itsItemArgn)
-			);
+                                   usage, itsItemArgn)
+         );
 }
 
 template <class T>
 void Tcl::TclItemPkg::declareAttrib(const char* attrib_name,
-												Getter<T>* getter,
-												Setter<T>* setter,
-												const char* usage) {
+                                    Getter<T>* getter,
+                                    Setter<T>* setter,
+                                    const char* usage) {
 
   addCommand(
-			new Tcl::TVecAttribCmd<T>(this, makePkgCmdName(attrib_name),
+         new Tcl::TVecAttribCmd<T>(this, makePkgCmdName(attrib_name),
 #ifndef ACC_COMPILER
-											  make_shared(getter),
-											  make_shared(setter),
+                                   make_shared(getter),
+                                   make_shared(setter),
 #else
-											  shared_ptr<Getter<T> >(getter),
-											  shared_ptr<Setter<T> >(setter),
+                                   shared_ptr<Getter<T> >(getter),
+                                   shared_ptr<Setter<T> >(setter),
 #endif
-											  usage, itsItemArgn)
-			);
+                                   usage, itsItemArgn)
+         );
 }
 
 void Tcl::TclItemPkg::instantiate() {
@@ -125,7 +129,7 @@ void Tcl::TclItemPkg::instantiate() {
 }
 
 void Tcl::TclItemPkg::declareAction(const char* action_name, Action* action,
-												const char* usage) {
+                                    const char* usage) {
   addCommand( new VecActionCmd(this, makePkgCmdName(action_name),
                                make_shared(action), usage, itsItemArgn) );
 }
@@ -150,10 +154,10 @@ namespace Tcl {
 class ItemStringifyCmd : public StringifyCmd {
 public:
   ItemStringifyCmd(TclItemPkg* pkg, IoFetcher* fetcher, int item_argn) :
-    StringifyCmd(pkg->interp(), pkg->makePkgCmdName("stringify"), 
+    StringifyCmd(pkg->interp(), pkg->makePkgCmdName("stringify"),
                  item_argn ? "item_id" : NULL,
                  item_argn+1),
-    itsFetcher(fetcher), 
+    itsFetcher(fetcher),
     itsItemArgn(item_argn) {}
 
 protected:
@@ -174,7 +178,7 @@ class ItemDestringifyCmd : public DestringifyCmd {
 public:
   ItemDestringifyCmd(TclItemPkg* pkg, IoFetcher* fetcher, int item_argn) :
     DestringifyCmd(pkg->interp(), pkg->makePkgCmdName("destringify"),
-                   item_argn ? "item_id string" : "string", 
+                   item_argn ? "item_id string" : "string",
                    item_argn+2),
     itsFetcher(fetcher),
     itsItemArgn(item_argn) {}
@@ -196,16 +200,16 @@ private:
 class ItemWriteCmd : public WriteCmd {
 public:
   ItemWriteCmd(TclItemPkg* pkg, IoFetcher* fetcher, int item_argn) :
-	 WriteCmd(pkg->interp(), pkg->makePkgCmdName("write"),
-				 item_argn ? "item_id" : NULL,
-				 item_argn+1),
-	 itsFetcher(fetcher),
-	 itsItemArgn(item_argn) {}
+    WriteCmd(pkg->interp(), pkg->makePkgCmdName("write"),
+             item_argn ? "item_id" : NULL,
+             item_argn+1),
+    itsFetcher(fetcher),
+    itsItemArgn(item_argn) {}
 
 protected:
   virtual IO::IoObject& getIO() {
-	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
-	 return itsFetcher->getIoFromId(id);
+    int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
+    return itsFetcher->getIoFromId(id);
   }
 
 private:
@@ -219,16 +223,16 @@ private:
 class ItemReadCmd : public ReadCmd {
 public:
   ItemReadCmd(TclItemPkg* pkg, IoFetcher* fetcher, int item_argn) :
-	 ReadCmd(pkg->interp(), pkg->makePkgCmdName("read"),
-				 item_argn ? "item_id string" : "string",
-				 item_argn+2),
-	 itsFetcher(fetcher),
-	 itsItemArgn(item_argn) {}
+    ReadCmd(pkg->interp(), pkg->makePkgCmdName("read"),
+             item_argn ? "item_id string" : "string",
+             item_argn+2),
+    itsFetcher(fetcher),
+    itsItemArgn(item_argn) {}
 
 protected:
   virtual IO::IoObject& getIO() {
-	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
-	 return itsFetcher->getIoFromId(id);
+    int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
+    return itsFetcher->getIoFromId(id);
   }
 
 private:
@@ -242,20 +246,20 @@ private:
 class ItemASRLoadCmd : public ASRLoadCmd {
 public:
   ItemASRLoadCmd(TclItemPkg* pkg, IoFetcher* fetcher, int item_argn) :
-	 ASRLoadCmd(pkg->interp(), pkg->makePkgCmdName("load"),
-					item_argn ? "item_id filename" : "filename",
-					item_argn+2),
-	 itsFetcher(fetcher),
-	 itsItemArgn(item_argn) {}
+    ASRLoadCmd(pkg->interp(), pkg->makePkgCmdName("load"),
+               item_argn ? "item_id filename" : "filename",
+               item_argn+2),
+    itsFetcher(fetcher),
+    itsItemArgn(item_argn) {}
 
 protected:
   virtual IO::IoObject& getIO() {
-	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
-	 return itsFetcher->getIoFromId(id);
+    int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
+    return itsFetcher->getIoFromId(id);
   }
 
   virtual const char* getFilename() {
-	 return getCstringFromArg(itsItemArgn+1);
+    return getCstringFromArg(itsItemArgn+1);
   }
 
 private:
@@ -269,20 +273,20 @@ private:
 class ItemASWSaveCmd : public ASWSaveCmd {
 public:
   ItemASWSaveCmd(TclItemPkg* pkg, IoFetcher* fetcher, int item_argn) :
-	 ASWSaveCmd(pkg->interp(), pkg->makePkgCmdName("save"),
-					item_argn ? "item_id filename" : "filename",
-					item_argn+2),
-	 itsFetcher(fetcher),
-	 itsItemArgn(item_argn) {}
+    ASWSaveCmd(pkg->interp(), pkg->makePkgCmdName("save"),
+               item_argn ? "item_id filename" : "filename",
+               item_argn+2),
+    itsFetcher(fetcher),
+    itsItemArgn(item_argn) {}
 
 protected:
   virtual IO::IoObject& getIO() {
-	 int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
-	 return itsFetcher->getIoFromId(id);
+    int id = itsItemArgn ? arg(itsItemArgn).getInt() : -1;
+    return itsFetcher->getIoFromId(id);
   }
 
   virtual const char* getFilename() {
-	 return getCstringFromArg(itsItemArgn+1);
+    return getCstringFromArg(itsItemArgn+1);
   }
 
 private:
