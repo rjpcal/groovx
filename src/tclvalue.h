@@ -3,7 +3,7 @@
 // tclvalue.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Tue Sep 28 12:05:00 1999
+// written: Wed Sep 29 17:25:55 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,27 +35,38 @@ public:
   TclValue(Tcl_Interp* interp, const char* val);
   TclValue(Tcl_Interp* interp, const string& val);
 
+  TclValue(Tcl_Interp* interp, const Value& rhs);
+
+  TclValue(const TclValue& rhs);
+
   virtual ~TclValue();
 
-  virtual Type getNativeType();
+  Tcl_Obj* getObj() const;
+  void setObj(Tcl_Obj* obj);
 
-  virtual int getInt();
-  virtual long getLong();
-  virtual bool getBool();
-  virtual double getDouble();
-  virtual const char* getCstring();
-  virtual string getString();
+  TclValue& operator=(Tcl_Obj* obj) { setObj(obj); return *this; }
 
-  virtual void get(int& val);
-  virtual void get(long& val);
-  virtual void get(bool& val);
-  virtual void get(double& val);
-  virtual void get(const char*& val);
-  virtual void get(string& val);
+  virtual Value* clone() const;
+  
+  virtual Type getNativeType() const;
+
+  virtual int getInt() const;
+  virtual long getLong() const;
+  virtual bool getBool() const;
+  virtual double getDouble() const;
+  virtual const char* getCstring() const;
+  virtual string getString() const;
+
+  virtual void get(int& val) const;
+  virtual void get(long& val) const;
+  virtual void get(bool& val) const;
+  virtual void get(double& val) const;
+  virtual void get(const char*& val) const;
+  virtual void get(string& val) const;
 
 private:
-  Tcl_Interp* itsInterp;
-  Tcl_Obj* itsObj;
+  mutable Tcl_Interp* itsInterp;
+  mutable Tcl_Obj* itsObj;
 };
 
 static const char vcid_tclvalue_h[] = "$Header$";
