@@ -642,7 +642,18 @@ DOTRACE("Tcl::TkWidget::bind");
 
   fstring cmd_str("bind ", pathname(), " ");
   cmd_str.append( event_sequence, " ");
-  cmd_str.append("{ ", script, " }");
+
+  if (script.length() == 0)
+    {
+      // If the script is the empty string, then we want to destroy the
+      // binding, so we need to actually give an empty string to the "bind"
+      // command; any empty pair of braces "{  }" will not suffice.
+      cmd_str.append( "\"\"" );
+    }
+  else
+    {
+      cmd_str.append("{ ", script, " }");
+    }
 
   rep->interp.eval(cmd_str);
 }
