@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Feb 19 14:51:00 2002
+// written: Tue Feb 19 15:03:08 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,8 @@
 #include "util/strings.h"
 
 #include <algorithm>
-#include <iostream.h>
-#include <iomanip.h>
+#include <iostream>
+#include <iomanip>
 #ifdef HAVE_MATLAB
 #include <libmatlb.h>
 #endif
@@ -117,9 +117,9 @@ void Slice::print() const
 {
   for(MtxConstIter iter = begin(); iter.hasMore(); ++iter)
     {
-      cout << setw(12) << setprecision(7) << double(*iter);
+      std::cout << setw(12) << setprecision(7) << double(*iter);
     }
-  cout << endl;
+  std::cout << std::endl;
 }
 
 namespace
@@ -339,19 +339,19 @@ DOTRACE("Mtx::resize");
 
 void Mtx::print() const
 {
-  cout << "mrows = " << mrows() << ", ncols = " << ncols() << '\n';
+  std::cout << "mrows = " << mrows() << ", ncols = " << ncols() << '\n';
   for(int i = 0; i < mrows(); ++i)
     {
       for(int j = 0; j < ncols(); ++j)
-        cout << setw(12) << setprecision(7) << at(i,j);
-      cout << '\n';
+        std::cout << setw(12) << setprecision(7) << at(i,j);
+      std::cout << '\n';
     }
-  cout << '\n';
+  std::cout << std::endl;
 }
 
 void Mtx::print(const char* mtxName) const
 {
-  cout << mtxName << '\n';
+  std::cout << mtxName << '\n';
   print();
 }
 
