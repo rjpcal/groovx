@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Thu Oct 19 15:27:13 2000
+// written: Fri Oct 20 17:39:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -799,6 +799,10 @@ DOTRACE("EventResponseHdlr::updateRegexpsIfNeeded");
 //
 ///////////////////////////////////////////////////////////////////////
 
+EventResponseHdlr* EventResponseHdlr::make() {
+DOTRACE("EventResponseHdlr::make");
+  return new EventResponseHdlr;
+}
 
 EventResponseHdlr::EventResponseHdlr() :
   ResponseHandler(),

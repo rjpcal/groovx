@@ -3,7 +3,7 @@
 // maskhatch.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Thu Oct 19 14:34:34 2000
+// written: Fri Oct 20 17:35:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,9 +31,13 @@
 ///////////////////////////////////////////////////////////////////////
 
 class MaskHatch : public GrObj, public PropFriend<MaskHatch> {
-public:
+protected:
   /// Default constructor.
   MaskHatch();
+
+public:
+  /// Default creator.
+  static MaskHatch* make();
 
   /// Virtual destructor.
   virtual ~MaskHatch();

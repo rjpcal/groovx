@@ -3,7 +3,7 @@
 // eventresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:30:54 1999
-// written: Thu Oct 19 15:22:40 2000
+// written: Fri Oct 20 17:38:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,8 +75,13 @@ public:
       EventResponseHdlr member functions. */
   static Util::Tracer tracer;
 
+protected:
   /// Default constructor.
   EventResponseHdlr();
+
+public:
+  /// Default creator.
+  static EventResponseHdlr* make();
 
   /// Construct with an initial input_response_map.
   EventResponseHdlr(const char* input_response_map);

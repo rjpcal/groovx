@@ -3,7 +3,7 @@
 // timinghdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:55 1999
-// written: Thu Oct 19 14:53:29 2000
+// written: Fri Oct 20 17:43:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,10 @@ class TrialEvent;
 ///////////////////////////////////////////////////////////////////////
 
 class TimingHdlr : public virtual IO::IoObject {
-public:
+protected:
   TimingHdlr();
+public:
+  static TimingHdlr* make();
   virtual ~TimingHdlr();
 
   virtual IO::VersionId serialVersionId() const;

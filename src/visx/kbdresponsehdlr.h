@@ -3,7 +3,7 @@
 // kbdresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:11 1999
-// written: Thu Oct 19 15:23:07 2000
+// written: Fri Oct 20 17:39:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,10 +23,13 @@
 ///////////////////////////////////////////////////////////////////////
 
 class KbdResponseHdlr : public EventResponseHdlr {
-public:
   // creators
+protected:
   KbdResponseHdlr();
   KbdResponseHdlr(const char* key_resp_pairs);
+public:
+  static KbdResponseHdlr* make();
+
   virtual ~KbdResponseHdlr();
 
   const fixed_string& getKeyRespPairs() const

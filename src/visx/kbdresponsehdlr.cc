@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Thu Oct 19 15:27:55 2000
+// written: Fri Oct 20 17:40:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,11 @@
 // KbdResponseHdlr method definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+KbdResponseHdlr* KbdResponseHdlr::make() {
+DOTRACE("KbdResponseHdlr::make");
+  return new KbdResponseHdlr;
+}
 
 KbdResponseHdlr::KbdResponseHdlr() : 
   EventResponseHdlr("")

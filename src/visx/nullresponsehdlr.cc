@@ -3,7 +3,7 @@
 // nullresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:36 1999
-// written: Wed Oct 11 14:39:08 2000
+// written: Fri Oct 20 17:41:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,11 @@
 
 #define NO_TRACE
 #include "util/trace.h"
+
+NullResponseHdlr* NullResponseHdlr::make() {
+DOTRACE("NullResponseHdlr::make");
+  return new NullResponseHdlr;
+}
 
 NullResponseHdlr::NullResponseHdlr() {
 DOTRACE("NullResponseHdlr::NullResponseHdlr");

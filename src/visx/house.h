@@ -3,7 +3,7 @@
 // house.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:15 1999
-// written: Thu Oct 19 14:18:28 2000
+// written: Fri Oct 20 17:25:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,9 +32,13 @@
 ///////////////////////////////////////////////////////////////////////
 
 class House : public GrObj, public PropFriend<House> {
-public:
+protected:
   /// Default constructor.
   House();
+
+public:
+  /// Default creator.
+  static House* make();
 
   /// Virtual destructor.
   virtual ~House();

@@ -3,7 +3,7 @@
 // xbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:37:04 1999
-// written: Thu Oct 19 15:17:44 2000
+// written: Fri Oct 20 17:24:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,6 +35,11 @@ namespace {
 //////////////
 // creators //
 //////////////
+
+XBitmap* XBitmap::make() {
+DOTRACE("XBitmap::make");
+  return new XBitmap;
+}
 
 XBitmap::XBitmap() :
   Bitmap(tempRenderer = new XBmapRenderer()),

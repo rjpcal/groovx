@@ -3,7 +3,7 @@
 // jitter.h
 // Rob Peters
 // created: Wed Apr  7 13:46:40 1999
-// written: Thu Oct 19 14:26:48 2000
+// written: Fri Oct 20 17:33:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,12 +22,18 @@
 ///////////////////////////////////////////////////////////////////////
 
 class Jitter : public Position, public virtual IO::IoObject {
-public:
   //////////////
   // creators //
   //////////////
 
+  /// Default constructor.
   Jitter();
+
+public:
+  /// Default creator.
+  static Jitter* make();
+
+  /// Virtual destructor.
   virtual ~Jitter();
 
   virtual IO::VersionId serialVersionId() const;

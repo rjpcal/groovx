@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Thu Oct 19 11:56:49 2000
+// written: Fri Oct 20 16:51:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,6 +80,11 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 // Creators
 ///////////////////////////////////////////////////////////////////////
+
+Face* Face::make() {
+DOTRACE("Face::make");
+  return new Face;
+}
 
 Face::Face(double eh, double es, double nl, double mh, int categ) :
   category(categ),

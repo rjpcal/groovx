@@ -3,7 +3,7 @@
 // timinghandler.cc
 // Rob Peters
 // created: Wed May 19 21:39:51 1999
-// written: Thu Oct 19 14:52:25 2000
+// written: Fri Oct 20 17:46:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,6 +35,11 @@ namespace {
 // TimingHandler creator method definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+TimingHandler* TimingHandler::make() {
+DOTRACE("TimingHandler::make");
+  return new TimingHandler;
+}
 
 TimingHandler::TimingHandler() :
   stimdur_start_id(0),

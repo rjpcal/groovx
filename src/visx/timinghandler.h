@@ -3,7 +3,7 @@
 // timinghandler.h
 // Rob Peters
 // created: Wed May 19 10:56:20 1999
-// written: Thu Oct 19 14:47:40 2000
+// written: Fri Oct 20 17:45:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,9 +22,12 @@
 ///////////////////////////////////////////////////////////////////////
 
 class TimingHandler : public TimingHdlr {
-public:
+protected:
   // Creators
   TimingHandler();
+
+public:
+  static TimingHandler* make();
 
   virtual ~TimingHandler();
 

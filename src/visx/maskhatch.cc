@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Thu Oct 19 14:37:34 2000
+// written: Fri Oct 20 17:36:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,6 +45,11 @@ namespace {
   const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(MaskHatch::PInfo);
 
   const IO::VersionId MASKHATCH_SERIAL_VERSION_ID = 2;
+}
+
+MaskHatch* MaskHatch::make() {
+DOTRACE("MaskHatch::make");
+  return new MaskHatch;
 }
 
 MaskHatch::MaskHatch () :

@@ -3,7 +3,7 @@
 // gabor.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Thu Oct 19 13:49:46 2000
+// written: Fri Oct 20 17:21:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,9 +30,13 @@
 ///////////////////////////////////////////////////////////////////////
 
 class Gabor : public GrObj, public PropFriend<Gabor> {
-public:
+protected:
   /// Default constructor.
   Gabor();
+
+public:
+  /// Default creator.
+  static Gabor* make();
 
   /// Virtual destructor.
   virtual ~Gabor();

@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Thu Oct 19 14:57:51 2000
+// written: Fri Oct 20 17:44:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,6 +101,11 @@ const TimingHdlr::TimePoint TimingHdlr::FROM_ABORT;
 // TimingHdlr creator method definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+TimingHdlr* TimingHdlr::make() {
+DOTRACE("TimingHdlr::make");
+  return new TimingHdlr;
+}
 
 TimingHdlr::TimingHdlr() :
   itsImpl(new Impl)

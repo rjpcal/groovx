@@ -3,7 +3,7 @@
 // xitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:39:09 1999
-// written: Thu Oct 19 15:11:38 2000
+// written: Fri Oct 20 17:24:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,15 +27,17 @@ class XBmapRenderer;
 ///////////////////////////////////////////////////////////////////////
 
 class XBitmap : public Bitmap {
-public:
-  // Creators
-
+protected:
   /// Construct an empty bitmap.
   XBitmap();
 
   /** Create a bitmap from a graphics file. See documentation for \c
       Bitmap for a list of supported file types. */
   XBitmap(const char* filename);
+
+public:
+  /// Default creator.
+  static XBitmap* make();
 
   private: void init();
   

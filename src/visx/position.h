@@ -3,7 +3,7 @@
 // position.h
 // Rob Peters
 // created: Wed Mar 10 21:33:14 1999
-// written: Thu Oct 19 14:42:44 2000
+// written: Fri Oct 20 17:35:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,14 +30,18 @@ class PositionImpl;
 ///////////////////////////////////////////////////////////////////////
 
 class Position : public virtual IO::IoObject {
-public:
   //////////////
   // creators //
   //////////////
-
+protected:
   /// Default constructor.
   Position();
-  ///
+
+public:
+  /// Default creator.
+  static Position* make();
+
+  /// Virtual destructor.
   virtual ~Position();
 
   ///

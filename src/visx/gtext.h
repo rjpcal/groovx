@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Thu Oct 19 14:12:25 2000
+// written: Fri Oct 20 17:31:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,9 +48,14 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 class Gtext : public GrObj {
-public:
+protected:
   /// Construct with an initial text string \a text.
   Gtext(const char* text=0);
+
+public:
+  /// Default creator.
+  static Gtext* make();
+
   /// Virtual destructor.
   virtual ~Gtext();
 

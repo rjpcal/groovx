@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Oct 19 15:07:23 2000
+// written: Fri Oct 20 17:43:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -636,6 +636,11 @@ DOTRACE("Trial::Impl::undoLastResponse");
 //////////////
 // creators //
 //////////////
+
+Trial* Trial::make() {
+DOTRACE("Trial::make");
+  return new Trial;
+}
 
 Trial::Trial() : 
   itsImpl( new Impl(this) )

@@ -3,7 +3,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu Oct 19 11:57:00 2000
+// written: Fri Oct 20 17:18:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,13 +30,18 @@
 ///////////////////////////////////////////////////////////////////////
 
 class Face : public GrObj, public PropFriend<Face> {
+protected:
+  /// Construct with initial values for the Brunswik face parameters.
+  Face (double eh=0.6, double es=0.4, double nl=0.4, double mh=-0.8, int categ=0);
+
 public:
   //////////////
   // creators //
   //////////////
 
-  /// Construct with initial values for the Brunswik face parameters.
-  Face (double eh=0.6, double es=0.4, double nl=0.4, double mh=-0.8, int categ=0);
+  /// Default creator.
+  static Face* make();
+
   /// Virtual destructor.
   virtual ~Face ();
 

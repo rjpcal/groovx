@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Thu Oct 19 11:40:50 2000
+// written: Fri Oct 20 17:27:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,13 +36,17 @@ class Response;
 ///////////////////////////////////////////////////////////////////////
 
 class Block : public virtual IO::IoObject {
-public:
   //////////////
   // creators //
   //////////////
 
+protected:
   /// Default constructor.
   Block();
+
+public:
+  /// Default creator.
+  static Block* make();
 
   /// Virtual destructor ensures correct destruction of subclasses.
   virtual ~Block();

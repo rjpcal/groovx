@@ -3,7 +3,7 @@
 // glbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:17 1999
-// written: Thu Oct 19 14:01:59 2000
+// written: Fri Oct 20 17:24:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +31,11 @@ namespace {
   GLBmapRenderer* tempRenderer = 0;
 
   const IO::VersionId GLBITMAP_SERIAL_VERSION_ID = 2;
+}
+
+GLBitmap* GLBitmap::make() {
+DOTRACE("GLBitmap::make");
+  return new GLBitmap;
 }
 
 GLBitmap::GLBitmap() :

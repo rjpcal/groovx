@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Thu Oct 19 14:22:12 2000
+// written: Fri Oct 20 17:27:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -203,6 +203,11 @@ namespace {
 // House member definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+House* House::make() {
+DOTRACE("House::make");
+  return new House;
+}
 
 House::House() :
   storyAspectRatio(3.0), 

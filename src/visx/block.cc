@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Oct 19 11:41:22 2000
+// written: Fri Oct 20 17:28:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -113,6 +113,11 @@ private:
 //////////////
 // creators //
 //////////////
+
+Block* Block::make() {
+DOTRACE("Block::make");
+  return new Block;
+}
 
 Block::Block() :
   itsImpl( new Impl )

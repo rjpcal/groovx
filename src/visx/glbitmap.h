@@ -3,7 +3,7 @@
 // glbitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:30 1999
-// written: Thu Oct 19 13:56:33 2000
+// written: Fri Oct 20 17:23:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,15 +27,17 @@ class GLBmapRenderer;
 ///////////////////////////////////////////////////////////////////////
 
 class GLBitmap : public Bitmap {
-public:
-  // Creators
-
+protected:
   /// Construct an empty bitmap.
   GLBitmap();
 
   /** Create a bitmap from a graphics file. See documentation for \c
       Bitmap for a list of supported file types. */
   GLBitmap(const char* filename);
+
+public:
+  /// Default creator.
+  static GLBitmap* make();
 
   private: void init();
 

@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Thu Oct 19 14:40:29 2000
+// written: Fri Oct 20 17:30:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -261,6 +261,11 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 // Creators
 ///////////////////////////////////////////////////////////////////////
+
+MorphyFace* MorphyFace::make() {
+DOTRACE("MorphyFace::make");
+  return new MorphyFace;
+}
 
 MorphyFace::MorphyFace() :
   GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX),

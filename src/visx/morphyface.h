@@ -3,7 +3,7 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Thu Oct 19 15:18:33 2000
+// written: Fri Oct 20 17:30:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,13 +29,18 @@
 ///////////////////////////////////////////////////////////////////////
 
 class MorphyFace : public GrObj, public PropFriend<MorphyFace> {
-public:
   //////////////
   // creators //
   //////////////
 
+protected:
   /// Default constructor.
   MorphyFace();
+
+public:
+  /// Default creator.
+  static MorphyFace* make();
+
   /// Virtual destructor.
   virtual ~MorphyFace ();
 

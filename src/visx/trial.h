@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Mon Oct 16 18:28:14 2000
+// written: Fri Oct 20 17:42:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,7 +81,11 @@ public:
   // creators //
   //////////////
 
+protected:
   Trial();
+public:
+  static Trial* make();
+
   virtual ~Trial ();
 
   virtual IO::VersionId serialVersionId() const;

@@ -3,7 +3,7 @@
 // jitter.cc
 // Rob Peters
 // created: Wed Apr  7 13:46:41 1999
-// written: Thu Oct 19 14:32:29 2000
+// written: Fri Oct 20 17:34:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,6 +36,11 @@ namespace {
 // Jitter member functions
 //
 ///////////////////////////////////////////////////////////////////////
+
+Jitter* Jitter::make() {
+DOTRACE("Jitter::make");
+  return new Jitter;
+}
 
 Jitter::Jitter () :
   Position(), 

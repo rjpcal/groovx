@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Thu Oct 19 13:45:55 2000
+// written: Fri Oct 20 17:20:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,6 +56,11 @@ namespace {
 // FixPt member functions
 //
 ///////////////////////////////////////////////////////////////////////
+
+FixPt* FixPt::make() {
+DOTRACE("FixPt::make");
+  return new FixPt;
+}
 
 FixPt::FixPt(double len, int wid) : 
   length(len), width(wid) {}

@@ -3,7 +3,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Thu Oct 19 13:39:19 2000
+// written: Fri Oct 20 17:19:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,9 +30,14 @@
 ///////////////////////////////////////////////////////////////////////
 
 class FixPt : public GrObj, public PropFriend<FixPt> {
-public:
+protected:
   /// Construct with initial values for the cross length and pixel-width.
   FixPt (double len=0.1, int wid=1);
+
+public:
+  /// Default creator.
+  static FixPt* make();
+
   /// Virtual destructor.
   virtual ~FixPt ();
 
