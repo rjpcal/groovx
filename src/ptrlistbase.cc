@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Fri Oct  6 13:42:02 2000
+// written: Fri Oct  6 16:57:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,6 +43,76 @@ namespace {
 
 ///////////////////////////////////////////////////////////////////////
 //
+// MasterVoidPtr member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+
+void MasterVoidPtr::swap(MasterVoidPtr& other)
+{
+  VoidPtrList* otherList = other.itsList;
+  other.itsList = this->itsList;
+  this->itsList = otherList;
+
+  void* otherPtr = other.itsPtr;
+  other.itsPtr = this->itsPtr;
+  this->itsPtr = otherPtr;
+}
+
+void MasterVoidPtr::destroy()
+{
+  itsList->destroyPtr(itsPtr);
+}
+
+MasterVoidPtr::MasterVoidPtr(VoidPtrList* vpl) : itsList(vpl), itsPtr(0) {}
+
+MasterVoidPtr::MasterVoidPtr (const MasterVoidPtr& other) :
+  itsList(other.itsList),
+  itsPtr(other.itsPtr)
+{}
+
+MasterVoidPtr& MasterVoidPtr::operator=(const MasterVoidPtr& other)
+{
+  MasterVoidPtr otherCopy(other);
+
+  this->swap(otherCopy);
+
+  return *this;
+}
+
+// XXX Could be abstract eventually?
+MasterVoidPtr* MasterVoidPtr::clone() const {
+  return new MasterVoidPtr(*this);
+}
+
+
+// The pointee is NOT destroyed here; it must be destroyed by the
+// subclass.
+MasterVoidPtr::~MasterVoidPtr() {}
+
+void* MasterVoidPtr::ptr() const
+{
+  DebugEvalNL(itsPtr);
+  return itsPtr;
+}
+
+void MasterVoidPtr::reset(void* new_address)
+{
+  DebugEval(itsPtr);
+  destroy();
+  DebugPrintNL("...destroyed");
+  itsPtr = new_address;
+}
+
+bool MasterVoidPtr::isValid() const
+{
+  DebugEvalNL(itsPtr);
+  DebugEvalNL(itsPtr != 0);
+  return itsPtr != 0;
+}
+
+///////////////////////////////////////////////////////////////////////
+//
 // VoidPtrList::Impl definition
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,80 +127,60 @@ public:
 	 }
 
 
-  class MasterVoidPtr {
-  private:
-	 VoidPtrList* itsList;
-	 void* itsPtr;
-
-	 void destroy()
-	 {
-		itsList->destroyPtr(itsPtr);
-	 }
-
-	 void swap(MasterVoidPtr& other)
-	 {
-		VoidPtrList* otherList = other.itsList;
-		other.itsList = this->itsList;
-		this->itsList = otherList;
-
-		void* otherPtr = other.itsPtr;
-		other.itsPtr = this->itsPtr;
-		this->itsPtr = otherPtr;
-	 }
-
+  class VoidPtrHandle {
   public:
-	 MasterVoidPtr(VoidPtrList* vpl) : itsList(vpl), itsPtr(0) {}
-
-    MasterVoidPtr (const MasterVoidPtr& other) :
-		itsList(other.itsList),
-		itsPtr(other.itsPtr)
-	 {}
-
-    MasterVoidPtr& operator=(const MasterVoidPtr& other)
+	 VoidPtrHandle(VoidPtrList* vlist) :
+		itsMaster(new MasterVoidPtr(vlist)) 
 	 {
-		MasterVoidPtr otherCopy(other);
+		Assert(itsMaster != 0);
+	 }
 
+	 VoidPtrHandle(MasterVoidPtr* master) :
+		itsMaster(master)
+	 {
+		Assert(itsMaster != 0);
+	 }
+
+	 ~VoidPtrHandle()
+	 {
+		Assert(itsMaster != 0);
+		delete itsMaster;
+	 }
+
+	 VoidPtrHandle(const VoidPtrHandle& other) :
+		itsMaster(other.itsMaster->clone())
+	 {
+		Assert(itsMaster != 0);
+	 }
+
+	 VoidPtrHandle& operator=(const VoidPtrHandle& other)
+	 {
+		VoidPtrHandle otherCopy(other);
 		this->swap(otherCopy);
-
+		Assert(itsMaster != 0);
 		return *this;
 	 }
 
-
-	 // XXX Should we destroy here ?
-	 virtual ~MasterVoidPtr() { /* destroy(); */ }
-
-	 void* ptr() const
+	 MasterVoidPtr* masterPtr()
 	 {
-		DebugEvalNL(itsPtr);
-		return itsPtr;
+		Assert(itsMaster != 0);
+		return itsMaster;
 	 }
 
-	 // Set pointer to 0, but do not destroy
-	 void release() { itsPtr = 0; }
-
-	 void reset(void* new_address)
+  private:
+	 void swap(VoidPtrHandle& other)
 	 {
-		DebugEval(itsPtr);
-		destroy();
-		DebugPrintNL("...destroyed");
-		itsPtr = new_address;
+		MasterVoidPtr* otherMaster = other.itsMaster;
+		other.itsMaster = this->itsMaster;
+		this->itsMaster = otherMaster;
 	 }
 
-	 bool isValid() const
-	 {
-		DebugEvalNL(itsPtr);
-		DebugEvalNL(itsPtr != 0);
-		return itsPtr != 0;
-	 }
-
-	 bool operator==(const void* other)
-	 { return itsPtr == other; }
-
-//  	 int refCount;
+	 MasterVoidPtr* itsMaster;
   };
 
   int itsFirstVacant;
-  std::vector<MasterVoidPtr> itsPtrVec;
+  typedef std::vector<VoidPtrHandle> VecType;
+  VecType itsPtrVec;
 
 private:
   Impl(const Impl&);
@@ -179,13 +229,13 @@ DOTRACE("VoidPtrList::count");
   // pointers, i.e. the size of the container less the number of null
   // pointers.
   int num_non_null=0; 
-  for (std::vector<Impl::MasterVoidPtr>::iterator
+  for (Impl::VecType::iterator
 			itr = itsImpl->itsPtrVec.begin(),
 			end = itsImpl->itsPtrVec.end();
 		 itr != end;
 		 ++itr)
 	 {
-		if (itr->isValid()) ++num_non_null;
+		if (itr->masterPtr()->isValid()) ++num_non_null;
 	 }
   
   return num_non_null;
@@ -200,14 +250,14 @@ DOTRACE("VoidPtrList::isValidId");
   DebugEvalNL(id<itsImpl->itsPtrVec.size());
 
   return ( id >= 0 && size_t(id) < itsImpl->itsPtrVec.size() &&
-			  itsImpl->itsPtrVec[id].isValid() );
+			  itsImpl->itsPtrVec[id].masterPtr()->isValid() );
 }
 
 void VoidPtrList::remove(int id) {
 DOTRACE("VoidPtrList::remove");
   if (!isValidId(id)) return;
 
-  itsImpl->itsPtrVec[id].reset(0);
+  itsImpl->itsPtrVec[id].masterPtr()->reset(0);
 
   // reset itsImpl->itsFirstVacant in case i would now be the first vacant
   if (itsImpl->itsFirstVacant > id) itsImpl->itsFirstVacant = id;
@@ -218,17 +268,17 @@ DOTRACE("VoidPtrList::clear");
   DebugEvalNL(typeid(*this).name());
   for (size_t i = 0; i < itsImpl->itsPtrVec.size(); ++i) {
 	 DebugEval(i);
-	 itsImpl->itsPtrVec[i].reset(0);
+	 itsImpl->itsPtrVec[i].masterPtr()->reset(0);
   }
 
-  itsImpl->itsPtrVec.resize(0, Impl::MasterVoidPtr(this));
+  itsImpl->itsPtrVec.resize(0, Impl::VoidPtrHandle(this));
 
   itsImpl->itsFirstVacant = 0;
 }
 
 void* VoidPtrList::getVoidPtr(int id) const throw () {
 DOTRACE("VoidPtrList::getVoidPtr");
-  return itsImpl->itsPtrVec[id].ptr(); 
+  return itsImpl->itsPtrVec[id].masterPtr()->ptr();
 }
 
 void* VoidPtrList::getCheckedVoidPtr(int id) const throw (InvalidIdError) {
@@ -242,10 +292,11 @@ DOTRACE("VoidPtrList::getCheckedVoidPtr");
   return getVoidPtr(id);
 }
 
+#if 0
 void* VoidPtrList::releaseVoidPtr(int id) throw (InvalidIdError) {
 DOTRACE("VoidPtrList::releaseVoidPtr");
   void* ptr = getCheckedVoidPtr(id);
-  itsImpl->itsPtrVec[id].release();
+  itsImpl->itsPtrVec[id].masterPtr()->release();
 
   // reset itsImpl->itsFirstVacant in case i would now be the first vacant
   if (itsImpl->itsFirstVacant > id) itsImpl->itsFirstVacant = id;
@@ -254,6 +305,7 @@ DOTRACE("VoidPtrList::releaseVoidPtr");
 
   return ptr;
 }
+#endif
 
 int VoidPtrList::insertVoidPtr(void* ptr) {
 DOTRACE("VoidPtrList::insertVoidPtr");
@@ -272,12 +324,12 @@ DOTRACE("VoidPtrList::insertVoidPtrAt");
 	 itsImpl->itsPtrVec.reserve(uid+RESERVE_CHUNK);
   }
   if (uid >= itsImpl->itsPtrVec.size()) {
-    itsImpl->itsPtrVec.resize(uid+1, Impl::MasterVoidPtr(this));
+    itsImpl->itsPtrVec.resize(uid+1, Impl::VoidPtrHandle(this));
   }
 
   Assert(itsImpl->itsPtrVec.size() > uid);
 
-  if (itsImpl->itsPtrVec[uid].isValid())
+  if (itsImpl->itsPtrVec[uid].masterPtr()->isValid())
 	 {
 		InvalidIdError err("object already exists at id '");
 		err.appendNumber(id);
@@ -290,9 +342,9 @@ DOTRACE("VoidPtrList::insertVoidPtrAt");
   // nothing needs to be done (in particular, we had better not delete
   // the "previous" object and then hold on the "new" pointer, since
   // the "new" pointer would then be dangling).
-  if (itsImpl->itsPtrVec[uid] == ptr) return;
+  if (itsImpl->itsPtrVec[uid].masterPtr()->ptr() == ptr) return;
 
-  itsImpl->itsPtrVec[uid].reset(ptr);
+  itsImpl->itsPtrVec[uid].masterPtr()->reset(ptr);
 
   // It is possible that ptr is NULL, in this case, we might need to
   // adjust itsImpl->itsFirstVacant if it is currently beyond than the site
@@ -302,7 +354,7 @@ DOTRACE("VoidPtrList::insertVoidPtrAt");
 
   // make sure itsImpl->itsFirstVacant is up-to-date
   while ( (size_t(itsImpl->itsFirstVacant) < itsImpl->itsPtrVec.size()) &&
-			 (itsImpl->itsPtrVec.at(itsImpl->itsFirstVacant).isValid()) )
+			 (itsImpl->itsPtrVec.at(itsImpl->itsFirstVacant).masterPtr()->isValid()) )
 	 { ++(itsImpl->itsFirstVacant); }
 
   afterInsertHook(id, ptr);
@@ -330,7 +382,7 @@ DOTRACE("VoidPtrList::voidVecEnd");
 void VoidPtrList::voidVecResize(unsigned int new_size) {
 DOTRACE("VoidPtrList::voidVecResize");
   if ( new_size > itsImpl->itsPtrVec.size() )
-	 itsImpl->itsPtrVec.resize(new_size, Impl::MasterVoidPtr(this));
+	 itsImpl->itsPtrVec.resize(new_size, Impl::VoidPtrHandle(this));
 }
 
 static const char vcid_voidptrlist_cc[] = "$Header$";
