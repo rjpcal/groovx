@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Sep  5 17:26:19 2001
+// written: Wed Sep  5 18:57:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -140,7 +140,7 @@ double Gabor::getLogContrast() const
 {
 DOTRACE("getLogContrast");
 
-  return std::log10(itsContrast);
+  return (itsContrast > 0.0) ? std::log10(itsContrast) : -10.0;
 }
 
 Gfx::Rect<double> Gabor::grGetBoundingBox(Gfx::Canvas& canvas) const
