@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri Oct 27 16:30:38 2000
+// written: Mon Oct 30 11:24:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
-#include "iditem.h"
+#include "io/iditem.h"
 #endif
 
 namespace IO { class IoObject; }

@@ -3,7 +3,7 @@
 // sound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:43:07 1999
-// written: Fri Oct 27 14:16:53 2000
+// written: Mon Oct 30 11:23:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 
 #include "sound.h"
 
-#include "iditem.h"
+#include "io/iditem.h"
 
 #ifdef HP9000S700
 #include "hpsound.cc"

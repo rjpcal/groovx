@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri Oct 27 08:49:44 2000
+// written: Mon Oct 30 11:23:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,12 +15,12 @@
 
 #include "block.h"
 #include "grobj.h"
-#include "iditem.h"
 #include "position.h"
 #include "response.h"
 #include "responsehandler.h"
 #include "timinghdlr.h"
 
+#include "io/iditem.h"
 #include "io/reader.h"
 #include "io/readutils.h"
 #include "io/writer.h"
