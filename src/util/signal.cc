@@ -60,6 +60,12 @@ Util::SlotBase::~SlotBase() throw()
 DOTRACE("Util::SlotBase::~SlotBase");
 }
 
+bool Util::SlotBase::exists() const
+{
+DOTRACE("Util::SlotBase::exists");
+  return true;
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // Slot0 members
@@ -93,11 +99,6 @@ Util::SlotAdapterFreeFunc0*
 Util::SlotAdapterFreeFunc0::make(FreeFunc* f)
 {
   return new SlotAdapterFreeFunc0(f);
-}
-
-bool Util::SlotAdapterFreeFunc0::exists() const
-{
-  return true;
 }
 
 void Util::SlotAdapterFreeFunc0::call()
