@@ -3,7 +3,7 @@
 // observer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 25 18:37:02 1999
-// written: Wed May 26 09:49:56 1999
+// written: Wed Nov 10 12:36:21 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,16 +14,25 @@
 class Observable;
 
 ///////////////////////////////////////////////////////////////////////
-//
-// Observer interface
-//
-///////////////////////////////////////////////////////////////////////
-
+/**
+ *
+ * Along with Observable, implements the Observer design pattern. An
+ * Observer can be informed of changes in an Observable by calling
+ * attach() on that Observable. Thereafter, the Observer will receive
+ * notifications of changes in the Observable via receiveStateChange()
+ * and receiveDestroyMsg().
+ *
+ * @memo Along with Observable, implements the Observer design pattern.
+ **/
 class Observer {
 public:
+  ///
   virtual ~Observer();
 
+  /// Informs the Observer that one of its subjects has changed.
   virtual void receiveStateChangeMsg(const Observable* obj) = 0;
+
+  /// Informs the Observer that one of its subjects is being destroyed.
   virtual void receiveDestroyMsg(const Observable* obj) = 0;
 };
 
