@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Fri Jun 14 16:34:14 2002
+// written: Tue Jul  9 16:27:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,6 +35,7 @@ DOTRACE("Tcl::defIoCommands");
 
   pkg->def( "save", "item_id filename", IO::saveASW );
   pkg->def( "load", "item_id filename", IO::loadASR );
+  pkg->def( "retrieve", "filename", IO::retrieveASR );
 }
 
 extern "C"
