@@ -3,7 +3,7 @@
 // house.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:15 1999
-// written: Sun Nov 21 15:54:53 1999
+// written: Mon Dec  6 14:00:12 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@
  * stories in the building, the number of windows per story, the
  * height of the roof, the shape of the roof, etc.
  *
- * @memo A subclass of GrObj for drawing simple line-drawn houses.
+ * @short A subclass of GrObj for drawing simple line-drawn houses.
  **/
 ///////////////////////////////////////////////////////////////////////
 

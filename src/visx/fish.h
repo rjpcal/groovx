@@ -3,7 +3,7 @@
 // fish.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:56 1999
-// written: Sat Nov 20 21:51:00 1999
+// written: Mon Dec  6 13:59:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@
  * Fish is a subclass of GrObj that can render outline drawings of
  * tropical fish (rendering algorithm designed by Fabrizio Gabbiani).
  *
- * @memo GrObj subclass for rendering outline drawings of fish.
+ * @short GrObj subclass for rendering outline drawings of fish.
  **/
 ///////////////////////////////////////////////////////////////////////
 

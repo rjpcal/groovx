@@ -3,7 +3,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Sat Nov 20 21:54:38 1999
+// written: Mon Dec  6 13:59:30 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@
  * attributes to control the length of the bars, and the pixel-width
  * of the bars.
  *
- * @memo Subclass of GrObj for drawing psychophysics fixation crosses.
+ * @short Subclass of GrObj for drawing psychophysics fixation crosses.
  **/
 ///////////////////////////////////////////////////////////////////////
 

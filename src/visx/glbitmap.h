@@ -3,7 +3,7 @@
 // glbitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:30 1999
-// written: Wed Dec  1 17:57:32 1999
+// written: Mon Dec  6 13:59:49 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@ class GLBmapRenderer;
  * GLBitmap is a subclass of Bitmap that renders the bitmap data using
  * OpenGL's glDrawPixels() or glBitmap().
  *
- * @memo Bitmap subclass for rendering using OpenGL's glDrawPixels().
+ * @short Bitmap subclass for rendering using OpenGL's glDrawPixels().
  **/
 ///////////////////////////////////////////////////////////////////////
 

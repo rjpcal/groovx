@@ -3,7 +3,7 @@
 // gabor.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Mon Nov 15 15:45:07 1999
+// written: Mon Dec  6 13:59:43 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,8 +30,9 @@
  * Gabor implements a psychophysical Gabor patch. There are several
  * rendering modes, for rendering in grayscale or in black-and-white.
  *
- * @memo Subclass of GrObj for drawing psychophysical Gabor patches.
+ * @short Subclass of GrObj for drawing psychophysical Gabor patches.
  **/
+///////////////////////////////////////////////////////////////////////
 
 class Gabor : public GrObj, public PropFriend<Gabor> {
 public:

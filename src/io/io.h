@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Wed Nov 10 12:43:17 1999
+// written: Mon Dec  6 14:00:24 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,9 +40,11 @@ class type_info;
  * input/output. Classes which need to be read/written
  * should inherit virtually from IO.
  *
- * @memo The IO class defines the abstract interface for object
+ * @short The IO class defines the abstract interface for object
  * input/output.
  **/
+///////////////////////////////////////////////////////////////////////
+
 class IO {
 public:
 

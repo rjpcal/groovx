@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Mon Dec  6 13:59:10 1999
+// written: Mon Dec  6 13:59:19 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -213,7 +213,7 @@ public:
  * member to ensure that the class is registered with an appropriate
  * factory.
  *
- * @memo Convenience class for registering types with a factory.
+ * @short Convenience class for registering types with a factory.
  **/
 ///////////////////////////////////////////////////////////////////////
 

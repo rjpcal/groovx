@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu Nov 18 13:49:47 1999
+// written: Mon Dec  6 13:59:58 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,8 +42,9 @@ template <class V> class Rect;
  * Observable::sendStateChangeMsg() to indicate that an update is
  * needed.
  *
- * @memo Abstract base class for graphic objects.
+ * @short Abstract base class for graphic objects.
  **/
+///////////////////////////////////////////////////////////////////////
 
 class GrObj : public virtual Observable, 
 				  public virtual Observer,

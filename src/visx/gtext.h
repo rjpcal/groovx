@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Sun Nov 21 15:45:34 1999
+// written: Mon Dec  6 14:00:05 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ public:
  * Gtext is a subclass that renders text as a series of vector
  * graphics in OpenGL. There is only one font currently available.
  *
- * @memo Subclass of GrObj for rendering text in a simple vector font.
+ * @short Subclass of GrObj for rendering text in a simple vector font.
  **/
 ///////////////////////////////////////////////////////////////////////
 
