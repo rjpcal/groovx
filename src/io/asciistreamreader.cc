@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu Oct 19 11:27:29 2000
+// written: Mon Oct 23 11:35:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,7 +79,15 @@ DOTRACE("Escape::readAndUnEscape");
 			 !(brace_level == 0 && ch == STRING_ENDER) )
 	 {
 		if (itr >= stop)
-		  throw IO::ReadError("AsciiStreamReader exceeded read buffer capacity");
+		  {
+			 IO::ReadError err("AsciiStreamReader exceeded "
+									 "read buffer capacity\n"
+									 "buffer contents: \n");
+			 READ_BUFFER[ READ_BUFFER.size() - 1 ] = '\0';
+			 err.appendMsg(&(READ_BUFFER[0]));
+			 throw err;
+		  }
+
 		if (ch != '\\')
 		  {
 			 if (ch == '{') ++brace_level;
