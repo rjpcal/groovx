@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu Mar 30 12:14:50 2000
+// written: Fri May 12 14:28:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -168,8 +168,8 @@ DOTRACE("IoPtrList::readFrom");
 
   fixed_block<IO::IoObject*> ioBlock(uint_count);
 
-  IO::ReadUtils::readObjectSeq(reader, "itsVec", ioBlock.begin(),
-									(IO::IoObject*) 0, count);
+  IO::ReadUtils::template readObjectSeq<IO::IoObject>(
+                   reader, "itsVec", ioBlock.begin(), count);
 
   VoidPtrList::clear();
   voidVecResize(uint_count);

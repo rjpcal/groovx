@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu May 11 19:31:20 2000
+// written: Fri May 12 14:27:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -300,12 +300,12 @@ DOTRACE("Trial::readFrom");
   reader->readValue("thId", itsImpl->itsThId);
 
   itsImpl->itsResponses.clear();
-  IO::ReadUtils::readValueObjSeq(reader, "responses",
-									  back_inserter(itsImpl->itsResponses), (Response*) 0);
+  IO::ReadUtils::template readValueObjSeq<Response>(reader, "responses",
+									  back_inserter(itsImpl->itsResponses));
 
   itsImpl->itsIdPairs.clear();
-  IO::ReadUtils::readValueObjSeq(reader, "idPairs",
-									  back_inserter(itsImpl->itsIdPairs), (IdPair*) 0);
+  IO::ReadUtils::template readValueObjSeq<IdPair>(reader, "idPairs",
+									  back_inserter(itsImpl->itsIdPairs));
 }
 
 void Trial::writeTo(IO::Writer* writer) const {

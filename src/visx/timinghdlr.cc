@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Thu May 11 19:41:52 2000
+// written: Fri May 12 14:25:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -250,20 +250,20 @@ DOTRACE("TimingHdlr::readFrom");
 	 reader->readValue("autosavePeriod", itsImpl->itsDummyAutosavePeriod);
 
   itsImpl->deleteAll(itsImpl->itsImmediateEvents);
-  IO::ReadUtils::readObjectSeq(reader, "immediateEvents",
-								back_inserter(itsImpl->itsImmediateEvents), (TrialEvent*)0);
+  IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "immediateEvents",
+								back_inserter(itsImpl->itsImmediateEvents));
 
   itsImpl->deleteAll(itsImpl->itsStartEvents);
-  IO::ReadUtils::readObjectSeq(reader, "startEvents",
-								back_inserter(itsImpl->itsStartEvents), (TrialEvent*)0);
+  IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "startEvents",
+								back_inserter(itsImpl->itsStartEvents));
 
   itsImpl->deleteAll(itsImpl->itsResponseEvents);
-  IO::ReadUtils::readObjectSeq(reader, "responseEvents",
-								back_inserter(itsImpl->itsResponseEvents), (TrialEvent*)0);
+  IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "responseEvents",
+								back_inserter(itsImpl->itsResponseEvents));
 
   itsImpl->deleteAll(itsImpl->itsAbortEvents);
-  IO::ReadUtils::readObjectSeq(reader, "abortEvents",
-								back_inserter(itsImpl->itsAbortEvents), (TrialEvent*)0);
+  IO::ReadUtils::template readObjectSeq<TrialEvent>(reader, "abortEvents",
+								back_inserter(itsImpl->itsAbortEvents));
 }
 
 void TimingHdlr::writeTo(IO::Writer* writer) const {

@@ -3,7 +3,7 @@
 // cloneface.cc
 // Rob Peters
 // created: Thu Apr 29 09:19:26 1999
-// written: Thu Mar 30 12:14:50 2000
+// written: Fri May 12 14:26:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -122,7 +122,7 @@ DOTRACE("CloneFace::charCount");
 void CloneFace::readFrom(IO::Reader* reader) {
 DOTRACE("CloneFace::readFrom");
 
-  IO::ReadUtils::readValueSeq(reader, "ctrlPnts", itsCtrlPnts, (double*)0);
+  IO::ReadUtils::template readValueSeq<double>(reader, "ctrlPnts", itsCtrlPnts);
   reader->readValue("eyeAspect", itsEyeAspect);
   reader->readValue("vertOffset", itsVertOffset);
 }

@@ -3,7 +3,7 @@
 // readutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:25:40 1999
-// written: Thu Mar 30 12:13:27 2000
+// written: Fri May 12 14:28:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,10 +43,9 @@ public:
 		reader, this value can be passed as \c known_count, so that we
 		avoid reading the value twice (this may be important if the
 		reader does not support random access to the attributes). */
-  template <class Inserter, class T>
+  template <class T, class Inserter>
   static void readValueSeq(IO::Reader* reader, const char* seq_name,
-									Inserter inserter, T* /*dummy*/,
-									int known_count = -1)
+									Inserter inserter, int known_count = -1)
 	 {
 		int count = (known_count == -1) ?
 		  readSequenceCount(reader, seq_name) : known_count;
@@ -64,10 +63,9 @@ public:
 		the reader, this value can be passed as \c known_count, so that
 		we avoid reading the value twice (this may be important if the
 		reader does not support random access to the attributes). */
-  template <class Inserter, class T>
+  template <class T, class Inserter>
   static void readValueObjSeq(IO::Reader* reader, const char* seq_name,
-										Inserter inserter, T* /*dummy*/,
-										int known_count = -1)
+										Inserter inserter, int known_count = -1)
 	 {
 		int count = (known_count == -1) ?
 		  readSequenceCount(reader, seq_name) : known_count;
@@ -85,10 +83,9 @@ public:
 		the reader, this value can be passed as \c known_count, so that
 		we avoid reading the value twice (this may be important if the
 		reader does not support random access to the attributes). */
-  template <class Inserter, class C>
+  template <class C, class Inserter>
   static void readObjectSeq(IO::Reader* reader, const char* seq_name,
-									 Inserter inserter, C* /*dummy*/,
-									 int known_count = -1)
+									 Inserter inserter, int known_count = -1)
 	 {
 		int count = (known_count == -1) ?
 		  readSequenceCount(reader, seq_name) : known_count;
