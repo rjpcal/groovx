@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 14:44:42 2000
-// written: Thu May 10 12:04:37 2001
+// written: Tue Jun  5 10:38:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,9 +25,6 @@ namespace IO {
   class LogicError;
   class ValueError;
   class FilenameError;
-
-  /// This type is used for IoObject unique identifiers
-  typedef unsigned long UID;
 
   /// This type is used for verion ids during the read+write process.
   typedef signed long VersionId;
