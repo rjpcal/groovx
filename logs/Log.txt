@@ -3,28 +3,23 @@ $Id$
 
 *** FRONT of priority queue ***
 
-(3-Mar-2000) Ugh. I just now realized how much time it takes to
-compile STL headers. In the past, I didn't try to forward-declare STL
-templates since their declarations can vary by compiler... but I now
-realized (duh!) that (by using an extra level of indirection) I can
-use a "stringfwd.h" file that correctly declares string, depending on
-the compiler. On a tiny test file, this reduces the compilation time
-from about 15 sec to only 1-2 sec !!! So I've created "stringfwd.h"
-and "vectorfwd.h", and I'm going to try to use these exclusively when
-a declaration is needed in one of my header files. One issue is that
-of default arguments... these cannot be used unless the full class
-definition is known. This particularly affects uses like 'const
-string& s = ""', but I think the problem can be easily circumvented
-by removing the default argument, and adding instead an overloaded
-function version with no string argument. [8-Mar-2000] Well, now, a
-week later, the compile time for a full debug build of the project has
-been cut nearly in half, and "stringfwd.h" is no longer needed at all!
-I've found that most interfaces can use 'const char*' just fine, and
-let clients and implementors deal with more complex string classes if
-they so choose. Only 12 translation units now depend on <string>, and
-21 on <vector>.
+(21-Mar-2000) Need to have a way to explicitly represent GrObj's with
+cached-bitmap-file representations... this way we can have access both
+to a GrObj's semantic properties (i.e. face width, nose length, etc.)
+while still accessing it in a bitmap form. This would involve a
+command to cache a GrObj to file, given a filename, and then the
+object should automatically load that file when it is deserialized at
+a later time.
 
-<vector>?: bezier.h iostl.h
+(22-Mar-2000) We could have a more compact reader/writer format by
+using a system that wrote class definitions to the file, and stored
+some sort of translator for each class in the reader/writer... this
+would allow us to just store the raw data for individual objects,
+without having to store the metadata over and over.
+
+(16-Mar-2000) Block should have a parameter (or virtual function) to
+control what happens on abortTrial()... i.e., should we reschedule the
+trial, ignore the trial, record an invalid response?
 
 (8-Feb-2000) Should think about doing dynamic tracing generically,
 perhaps with a mixin base class.
@@ -2641,3 +2636,55 @@ demand. It would have the added benefit that in an fMRI script, we
 would only have to load the bitmaps that are actually used in the
 experiment. Done using BmapData to handle the actuall caching process.
 
+(3-Mar-2000, done 20-Mar-2000) Ugh. I just now realized how much time
+it takes to compile STL headers. In the past, I didn't try to
+forward-declare STL templates since their declarations can vary by
+compiler... but I now realized (duh!) that (by using an extra level of
+indirection) I can use a "stringfwd.h" file that correctly declares
+string, depending on the compiler. On a tiny test file, this reduces
+the compilation time from about 15 sec to only 1-2 sec !!! So I've
+created "stringfwd.h" and "vectorfwd.h", and I'm going to try to use
+these exclusively when a declaration is needed in one of my header
+files. One issue is that of default arguments... these cannot be used
+unless the full class definition is known. This particularly affects
+uses like 'const string& s = ""', but I think the problem can be
+easily circumvented by removing the default argument, and adding
+instead an overloaded function version with no string
+argument. [8-Mar-2000] Well, now, a week later, the compile time for a
+full debug build of the project has been cut nearly in half, and
+"stringfwd.h" is no longer needed at all!  I've found that most
+interfaces can use 'const char*' just fine, and let clients and
+implementors deal with more complex string classes if they so
+choose. Only 12 translation units now depend on <string>, and 21 on
+<vector>. [20-Mar-2000] Decreased those numbers even more now... only
+5 translation units depend on <vector>, 9 on <string>, 3 on <map>, 1
+on <list>, and 1 on <set>.
+
+(21-Mar-2000, done 22-Mar-2000) We need some sort of versioning
+facility for Reader/Writer. OK, but how do we handle versioning
+separately for base classes? Right now, base classes are handled ad
+hoc, with subclasses calling their superclass's writeTo() method from
+within their own writeTo() method. OK, I've added readBaseClass() and
+writeBaseClass() methods to Reader and Writer. This allows base
+classes to be written inline, with a bracketed block of the base
+class's attributes treated as a single attribute for its containing
+class. (In principle, we could now handle owned/contained objects in
+this same way). In order to correctly write base classes, we first
+needed some way to pass the base part of an object as an IO* while
+ensuring that the correct overrides of readFrom()/writeTo() would be
+called (i.e. avoid calling the most fully derived version of these
+functions). This can be done with the IOProxy template, which holds a
+pointer to an object of class C, and forwards all IO functions to the
+C:: versions of those functions. So we can pass an IOProxy<Base>* to
+the readBaseClass() and writeBaseClass() functions in order to achieve
+the desired effect. Another structural change was to allow
+AsciiStreamReader to maintain a stack of attribute maps, so that we
+can represent arbitrarily deep nesting hierarchies of objects. This
+involved just changing itsAttribs from an AttribMap to a
+slink_list<AttribMap>. Finally, we needed to allow the string enders
+('^') that occur inside a base class's attribute to be ignored when
+the end class's attributes are being read... to do this we introduce
+the convention that {}'s protect ^'s, so in order to have reached the
+end of an attribute, we must see a '^' and be at brace level 0. This
+in turn required that {}'s be treated specially--they must be escaped
+with '\' when occurring within an attribute string. 
