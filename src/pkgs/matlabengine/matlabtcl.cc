@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jul 10 12:16:44 2001
-// written: Thu Jul 12 13:23:44 2001
+// written: Fri Jul 13 17:34:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "mtxobj.h"
 
 #include "tcl/genericobjpkg.h"
+#include "tcl/objfunctor.h"
 
 #include "util/error.h"
 #include "util/object.h"
@@ -96,53 +97,24 @@ private:
 
 namespace MatlabTcl
 {
-  class EvalCmd;
-  class GetMtxCmd;
   class MatlabPkg;
 }
-
-class MatlabTcl::EvalCmd : public Tcl::TclItemCmd<MatlabEngine> {
-public:
-  EvalCmd(Tcl::CTclItemPkg<MatlabEngine>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<MatlabEngine>(pkg, cmd_name, "engine command",
-                                  pkg->itemArgn()+2) {}
-
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-  {
-    MatlabEngine* eng = getItem(ctx);
-    const char* cmd = ctx.getCstringFromArg(2);
-    ctx.setResult(eng->evalString(cmd));
-  }
-};
-
-class MatlabTcl::GetMtxCmd : public Tcl::TclItemCmd<MatlabEngine> {
-public:
-  GetMtxCmd(Tcl::CTclItemPkg<MatlabEngine>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<MatlabEngine>(pkg, cmd_name, "engine name",
-                                  pkg->itemArgn()+2) {}
-
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-  {
-    MatlabEngine* eng = getItem(ctx);
-    const char* name = ctx.getCstringFromArg(2);
-    ctx.setResult(eng->getMtx(name)->id());
-  }
-};
 
 class MatlabTcl::MatlabPkg : public Tcl::GenericObjPkg<MatlabEngine> {
 public:
   MatlabPkg(Tcl_Interp* interp) :
     Tcl::GenericObjPkg<MatlabEngine>(interp, "MatlabEngine", "$Revision$")
   {
-    addCommand( new EvalCmd (this, "meval") );
-    addCommand( new GetMtxCmd (this, "getMtx") );
+    Tcl::def( this, &MatlabEngine::evalString,
+              "meval", "engine_id command" );
+    Tcl::def( this, &MatlabEngine::getMtx,
+              "getMtx", "engine_id mtx_name" );
   }
 };
 
 extern "C"
-int Matlab_Init(Tcl_Interp* interp) {
+int Matlab_Init(Tcl_Interp* interp)
+{
 DOTRACE("Matlab_Init");
 
   Tcl::TclPkg* pkg = new MatlabTcl::MatlabPkg(interp);
