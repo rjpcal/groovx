@@ -3,6 +3,31 @@ $Id$
 
 *** FRONT of priority queue ***
 
+(2-Jul-2002) "oo" words:
+
+hood
+loot
+ooze
+poof
+groom
+igloo
+roost
+scoop
+spoof
+troop
+cooler
+noodel
+
+(11-Oct-1999) Could write a Widget class that encapsulates the details
+of Tk widgets. Then we could extend with subclasses... for example one
+subclass could be designed to edit Property's of another class.
+
+Need to rework the Widget inheritance hierarchy. Right now we have a
+bloated base class in GWT::Widget. That class should become much more
+lightweight and not have any Tk- or GL-specific stuff in it.
+
+Should be GWT::Widget <-- Tcl::TkWidget <-- Toglet (or GLWidget)
+
 (23-Feb-2002) Remaining OS X issues:
   set TMPDIR environment variable to a fast drive for gcc temp files
   explicit template instantiation does not work (e.g. util/multivalue.cc)
@@ -13,14 +38,21 @@ separate log levels for each?
 (17-Jan-2002) get automated dependencies working, so I can eliminate some of
 the cruft from the main executable and make things more modular+loadable
 
-  (1) figure out on which .o files a given .cc file depends
-  (2) figure out where those .o files are to be found:
-      -- as individual .o files
-      -- in a static archive
-      -- in a dynamic library
-  (3) figure out what to do with a new .o file:
-	 -- keep it separate
-	 -- put it in a dynamic library
+OK, in order to allow easy building of test driver executables, we need to
+be able to figure out which libraries + object files are required by the
+test script, and specify this information in a makefile-compatible format.
+
+  (1-done) Figure out on which .o files a given .cc file depends. OK,
+	   ldeps::get_batch can do this now.
+
+  (2-done) Figure out where those .o files are to be found (as individual
+           .o files, in a static archive, in a dynamic library). OK, we
+           handle this with a regexp mapping in linkdeps.tcl.
+
+  (3-done) Figure out what to do with a new .o file (keep it separate, or
+	   put it in a dynamic library). OK, this is handled by
+	   build_lib_rules.tcl.
+
   (4) specify these results to a makefile
 
   -- Aha! General principle: need a generic mapping from #include directives
@@ -402,10 +434,6 @@ Bitmap::grabScreenRect/grabWorldRect.
 
 (17-Nov-1999) Can we automate the use of Matlab for data analysis by
 opening a pipe to a Matlab process from within Tcl?
-
-(11-Oct-1999) Could write a Widget class that encapsulates the details
-of Tk widgets. Then we could extend with subclasses... for example one
-subclass could be designed to edit Property's of another class.
 
 (5-Oct-1999) Maybe TimingHdlr should have a toggle switch to indicate
 what the behavior should be when a response is seen. (Whether to
