@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 20 09:12:51 2001
-// written: Wed Jun 20 17:57:12 2001
+// written: Mon Jul  2 15:12:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@
 #include <iostream.h>
 typedef int streamsize;
 #endif
-#include "zlib.h"
+#include <zlib.h>
 
 namespace Util
 {
