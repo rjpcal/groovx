@@ -3,7 +3,7 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Thu Feb 17 15:04:16 2000
+// written: Mon Mar  6 19:10:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,14 +11,14 @@
 #ifndef SOUNDTCL_CC_DEFINED
 #define SOUNDTCL_CC_DEFINED
 
-#include <tcl.h>
-#include <string>
-
 #include "soundlist.h"
 #include "sound.h"
 #include "listpkg.h"
 #include "listitempkg.h"
 #include "tcllink.h"
+#include "util/strings.h"
+
+#include <tcl.h>
 
 #define NO_TRACE
 #include "trace.h"
@@ -32,8 +32,10 @@
 //---------------------------------------------------------------------
 
 namespace SoundTcl {
-  string ok_sound_file = "/cit/rjpeters/face/audio/saw50_500Hz_300ms.au";
-  string err_sound_file = "/cit/rjpeters/face/audio/saw50_350Hz_300ms.au";
+  string_literal ok_sound_file =
+	 "/cit/rjpeters/face/audio/saw50_500Hz_300ms.au";
+  string_literal err_sound_file =
+	 "/cit/rjpeters/face/audio/saw50_350Hz_300ms.au";
 
   class SoundCmd;
   class HaveAudioCmd;
@@ -97,19 +99,19 @@ public:
 	 else {
 		try {
 		  static int OK = 0;
-		  theList().insertAt(OK, SoundList::Ptr(
-										    Sound::newPlatformSound(ok_sound_file)));
+		  theList().insertAt(
+			 OK, SoundList::Ptr(Sound::newPlatformSound(ok_sound_file.c_str())));
 		  linkConstVar("Sound::ok", OK);
 
 		  static int ERR = 1;
-		  theList().insertAt(ERR, SoundList::Ptr(
-			    							 Sound::newPlatformSound(err_sound_file)));
+		  theList().insertAt(
+          ERR, SoundList::Ptr(Sound::newPlatformSound(err_sound_file.c_str())));
 		  linkConstVar("Sound::err", ERR);
 		}
 		catch (SoundError& err) {
 		  DebugPrintNL("error creating sounds during startup");
 		  Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
-										 "SoundPkg: ", err.msg().c_str(), NULL);
+										 "SoundPkg: ", err.msg_cstr(), NULL);
 		}
 	 }
 
