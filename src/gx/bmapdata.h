@@ -131,6 +131,12 @@ public:
   /// Returns the number of bits used per pixel in the bitmap.
   int bitsPerPixel() const;
 
+  /// Returns the number of bits used per each pixel component.
+  /** This differs from bitsPerPixel() if each pixel contains multiple
+      components (e.g. as in an RGB image): the bitsPerComponent() might be
+      8 while the bitsPerPixel() would be 24. */
+  int bitsPerComponent() const;
+
   /// Returns the byte alignment of the bitmap data.
   /** Each image row in the data will begin on a multiple of this number of
       bytes. */

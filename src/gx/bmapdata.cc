@@ -178,6 +178,15 @@ DOTRACE("Gfx::BmapData::bitsPerPixel");
   return rep->bitsPerPixel;
 }
 
+int Gfx::BmapData::bitsPerComponent() const
+{
+DOTRACE("Gfx::BmapData::bitsPerComponent");
+  updateIfNeeded();
+  return rep->bitsPerPixel > 1
+    ? 8
+    : 1;
+}
+
 int Gfx::BmapData::byteAlignment() const
 {
 DOTRACE("Gfx::BmapData::byteAlignment");
