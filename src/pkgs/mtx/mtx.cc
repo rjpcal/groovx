@@ -623,25 +623,42 @@ DOTRACE("mtx::contig");
   return result;
 }
 
+namespace
+{
+  void format_mtx(const mtx& m,
+                  std::ostream& s,
+                  const char* mtx_name,
+                  bool trailing_newline)
+  {
+    if (mtx_name != 0 && mtx_name[0] != '\0')
+      s << mtx_name << '\n';
+
+    s << "mrows " << m.mrows() << " ncols " << m.ncols();
+    for(int i = 0; i < m.mrows(); ++i)
+      {
+        s << '\n';
+        for(int j = 0; j < m.ncols(); ++j)
+          s << ' '
+            << std::setw(18)
+            << std::setprecision(17)
+            << m.at(i,j);
+      }
+
+    if (trailing_newline)
+      s << '\n';
+  }
+}
+
 void mtx::print(std::ostream& s, const char* mtx_name) const
 {
 DOTRACE("mtx::print");
-  if (mtx_name != 0 && mtx_name[0] != '\0')
-    s << mtx_name << '\n';
-
-  s << "mrows " << mrows() << " ncols " << ncols();
-  for(int i = 0; i < mrows(); ++i)
-    {
-      s << '\n';
-      for(int j = 0; j < ncols(); ++j)
-        s << ' ' << std::setw(18) << std::setprecision(17) << at(i,j);
-    }
+  format_mtx(*this, s, mtx_name, true);
 }
 
 void mtx::print_stdout() const
 {
 DOTRACE("mtx::print_stdout");
-  print(std::cout);
+  format_mtx(*this, std::cout, 0, true);
 }
 
 rutz::fstring mtx::as_string() const
@@ -649,7 +666,7 @@ rutz::fstring mtx::as_string() const
 DOTRACE("mtx::as_string");
   std::ostringstream oss;
 
-  this->print(oss);
+  format_mtx(*this, oss, 0, false);
 
   return rutz::fstring(oss.str().c_str());
 }
