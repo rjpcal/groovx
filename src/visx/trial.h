@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Thu Oct 21 18:02:29 1999
+// written: Tue Nov 16 14:00:54 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,10 @@
 
 #ifndef ERROR_H_DEFINED
 #include "error.h"
+#endif
+
+#ifndef VALUE_H_DEFINED
+#include "value.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -46,9 +50,17 @@ public:
   //////////////////
   // nested types //
   //////////////////
-  class Response {
+  class Response : public Value {
   public:
 	 Response(int v = -1, int m = -1) : itsVal(v), itsMsec(m) {}
+
+	 virtual Value* clone() const;
+	 virtual Type getNativeType() const;
+	 virtual const char* getNativeTypeName() const;
+
+	 virtual void printTo(ostream& os) const;
+	 virtual void scanFrom(istream& is);
+
 	 int& val() { return itsVal; }
 	 int& msec() { return itsMsec; }
 	 int val() const { return itsVal; }
@@ -58,8 +70,16 @@ public:
 	 int itsMsec;
   };
 
-  struct IdPair {
+  struct IdPair : public Value {
 	 IdPair(int o, int p) : objid(o), posid(p) {}
+
+	 virtual Value* clone() const;
+	 virtual Type getNativeType() const;
+	 virtual const char* getNativeTypeName() const;
+
+	 virtual void printTo(ostream& os) const;
+	 virtual void scanFrom(istream& is);
+
 	 int objid;
 	 int posid;
   };
