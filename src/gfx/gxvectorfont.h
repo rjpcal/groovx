@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 20:05:23 2002
-// written: Wed Nov 13 20:08:46 2002
+// written: Wed Nov 13 21:39:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,8 @@ public:
   GxVectorFont();
 
   virtual ~GxVectorFont();
+
+  virtual const char* fontName() const;
 
   virtual unsigned int listBase() const;
 

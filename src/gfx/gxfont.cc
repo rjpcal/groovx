@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 12 18:35:02 2002
-// written: Wed Nov 13 16:46:29 2002
+// written: Wed Nov 13 21:38:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,22 @@
 #define GXFONT_CC_DEFINED
 
 #include "gxfont.h"
+
+#include "gfx/gxrasterfont.h"
+#include "gfx/gxvectorfont.h"
+
+#include "util/strings.h"
+
+GxFont* GxFont::make(const char* name_cstr)
+{
+  fstring name(name_cstr);
+
+  if (name == "vector")
+    return new GxVectorFont;
+
+  // else...
+  return new GxRasterFont(name_cstr);
+}
 
 GxFont::~GxFont() {}
 

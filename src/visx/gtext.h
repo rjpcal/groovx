@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:47 1999
-// written: Wed Nov 13 19:56:33 2002
+// written: Wed Nov 13 21:44:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 #ifndef GTEXT_H_DEFINED
 #define GTEXT_H_DEFINED
 
+#include "util/pointers.h"
 #include "util/strings.h"
 
 #include "visx/grobj.h"
@@ -60,13 +61,17 @@ public:
   /// Get the current stroke width of the font.
   int getStrokeWidth() const;
 
+  void setFont(fstring name);
+
+  fstring getFont() const;
+
 protected:
   virtual Gfx::Rect<double> grGetBoundingBox(Gfx::Canvas& canvas) const;
 
   virtual void grRender(Gfx::Canvas& canvas) const;
 
 private:
-  GxFont* itsFont;
+  shared_ptr<GxFont> itsFont;
   fstring itsText;
   int itsStrokeWidth;
 };

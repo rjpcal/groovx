@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 20:05:41 2002
-// written: Wed Nov 13 21:33:02 2002
+// written: Wed Nov 13 21:40:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -754,6 +754,11 @@ namespace
 GxVectorFont::GxVectorFont() {}
 
 GxVectorFont::~GxVectorFont() {}
+
+const char* GxVectorFont::fontName() const
+{
+  return "vector";
+}
 
 unsigned int GxVectorFont::listBase() const
 {

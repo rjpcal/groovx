@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 16:45:32 2002
-// written: Wed Nov 13 20:00:28 2002
+// written: Wed Nov 13 22:08:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,11 @@
 #include "system/system.h"
 
 #include "util/error.h"
+#include "util/strings.h"
 
+#include <cctype>
+#include <cstdio>
+#include <strstream.h>
 #include <GL/gl.h>
 #include <GL/glx.h>
 #include <X11/Xlib.h>
@@ -32,15 +36,16 @@
 
 struct GxRasterFont::Impl
 {
-  Impl() : fontInfo(0), listBase(0), listCount(0) {}
+  Impl(const char* n) : fontInfo(0), fontName(n), listBase(0), listCount(0) {}
 
   XFontStruct* fontInfo;
+  fstring fontName;
   unsigned int listBase;
   unsigned int listCount;
 };
 
 GxRasterFont::GxRasterFont(const char* fontname) :
-  rep(new Impl)
+  rep(new Impl(fontname))
 {
 DOTRACE("GxRasterFont::GxRasterFont");
 
@@ -51,7 +56,34 @@ DOTRACE("GxRasterFont::GxRasterFont");
 
   Display* dpy = XOpenDisplay(System::theSystem().getenv("DISPLAY"));
 
-  rep->fontInfo = XLoadQueryFont( dpy, fontname );
+  if (isdigit(fontname[0]))
+    {
+      // e.g. 8x13, 9x15
+      rep->fontInfo = XLoadQueryFont( dpy, fontname );
+    }
+  else if (fontname[0] == '-')
+    {
+      // e.g. a full X font name "-adobe-..."
+      rep->fontInfo = XLoadQueryFont( dpy, fontname );
+    }
+  else
+    {
+      istrstream ist(fontname);
+      fstring family;
+      ist >> family;
+      int fontsize = 12;
+      ist >> fontsize;
+
+      const char* weight = "medium";
+      const char* slant = "r";
+
+      char xname[256];
+      snprintf(xname, 256, "-*-%s-%s-%s-*-*-%d-*-*-*-*-*-*",
+               family.c_str(), weight, slant, fontsize);
+
+      rep->fontInfo = XLoadQueryFont( dpy, xname );
+    }
+
   dbgEval(2, rep->fontInfo); dbgEvalNL(2, rep->fontInfo->fid);
 
   if (rep->fontInfo == 0)
@@ -104,6 +136,12 @@ DOTRACE("GxRasterFont::~GxRasterFont");
   rep = 0;
 }
 
+const char* GxRasterFont::fontName() const
+{
+DOTRACE("GxRasterFont::fontName");
+  return rep->fontName.c_str();
+}
+
 unsigned int GxRasterFont::listBase() const
 {
 DOTRACE("GxRasterFont::listBase");
@@ -113,22 +151,30 @@ DOTRACE("GxRasterFont::listBase");
 Gfx::Rect<double> GxRasterFont::sizeOf(const char* text,
                                        Gfx::Canvas& canvas) const
 {
-  Gfx::Rect<int> screen;
+  int asc = 0;
+  int desc = 0;
+  int wid = 0;
 
   while (*text != '\0')
     {
       XCharStruct& ch = rep->fontInfo->per_char[*text];
 
-      if (ch.ascent > screen.top())
-        screen.top() = ch.ascent;
+      if (ch.ascent > asc)
+        asc = ch.ascent;
 
-      if (ch.descent > screen.bottom())
-        screen.bottom() = ch.descent;
+      if (ch.descent > desc)
+        desc = ch.descent;
 
-      screen.right() += ch.width;
+      wid += ch.width;
 
       ++text;
     }
+
+  Gfx::Rect<int> screen = canvas.screenFromWorld(Gfx::Rect<double>());
+
+  screen.right() += wid;
+  screen.bottom() -= desc;
+  screen.top() += asc;
 
   return canvas.worldFromScreen(screen);
 }

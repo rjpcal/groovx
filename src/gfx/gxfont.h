@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 12 18:34:57 2002
-// written: Wed Nov 13 19:52:08 2002
+// written: Wed Nov 13 21:34:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,11 @@ namespace Gfx
 class GxFont
 {
 public:
+  static GxFont* make(const char* name);
+
   virtual ~GxFont();
+
+  virtual const char* fontName() const = 0;
 
   virtual unsigned int listBase() const = 0;
 

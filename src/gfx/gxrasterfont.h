@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 16:44:36 2002
-// written: Wed Nov 13 19:59:47 2002
+// written: Wed Nov 13 21:35:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,8 @@ public:
   GxRasterFont(const char* fontname);
 
   virtual ~GxRasterFont();
+
+  virtual const char* fontName() const;
 
   virtual unsigned int listBase() const;
 

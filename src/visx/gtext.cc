@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Wed Nov 13 20:11:29 2002
+// written: Wed Nov 13 22:08:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,9 +18,8 @@
 #include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
 #include "gfx/gxcache.h"
-#include "gfx/gxrasterfont.h"
+#include "gfx/gxfont.h"
 #include "gfx/gxscaler.h"
-#include "gfx/gxvectorfont.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -48,10 +47,14 @@ DOTRACE("Gtext::make");
   return new Gtext;
 }
 
+#include "gfx/gxrasterfont.h"
+
 Gtext::Gtext(const char* text) :
   GrObj(),
+  itsFont(GxFont::make("helvetica 34")),
+//   itsFont(GxFont::make("vector")),
+//   itsFont(GxFont::make("-adobe-helvetica-medium-r-normal--34-240-100-100-p-176-iso8859-1")),
 //   itsFont(new GxRasterFont("-adobe-helvetica-medium-r-normal--34-240-100-100-p-176-iso8859-1")),
-  itsFont(new GxVectorFont),
   itsText(text ? text : ""),
   itsStrokeWidth(2)
 {
@@ -66,7 +69,6 @@ DOTRACE("Gtext::Gtext(const char*)");
 Gtext::~Gtext()
 {
 DOTRACE("Gtext::~Gtext");
-  delete itsFont;
 }
 
 IO::VersionId Gtext::serialVersionId() const
@@ -109,7 +111,10 @@ const FieldMap& Gtext::classFields()
           Field::NEW_GROUP | Field::STRING),
     Field("strokeWidth",
           make_mypair(&Gtext::getStrokeWidth, &Gtext::setStrokeWidth),
-          1, 1, 20, 1)
+          1, 1, 20, 1),
+    Field("font", make_mypair(&Gtext::getFont, &Gtext::setFont),
+          fstring(), fstring(), fstring(), fstring(),
+          Field::STRING | Field::TRANSIENT)
   };
 
   static FieldMap GTEXT_FIELDS(FIELD_ARRAY, &GrObj::classFields());
@@ -152,6 +157,19 @@ Gfx::Rect<double> Gtext::grGetBoundingBox(Gfx::Canvas& canvas) const
 DOTRACE("Gtext::grGetBoundingBox");
 
   return itsFont->sizeOf(itsText.c_str(), canvas);
+}
+
+void Gtext::setFont(fstring name)
+{
+DOTRACE("Gtext::setFont");
+  itsFont.reset(GxFont::make(name.c_str()));
+  this->sigNodeChanged.emit();
+}
+
+fstring Gtext::getFont() const
+{
+DOTRACE("Gtext::getFont");
+  return itsFont->fontName();
 }
 
 void Gtext::grRender(Gfx::Canvas& canvas) const
