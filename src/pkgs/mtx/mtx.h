@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Feb 27 17:58:35 2002
+// written: Wed Feb 27 22:03:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -595,24 +595,25 @@ public:
   const_iterator end() const { return const_iterator(this, nelems()); }
 
 
-  class colmaj_iter
+  template <class T>
+  class colmaj_iter_base
   {
     int itsRowgap;
     int itsRowstride;
-    const double* itsPtr;
-    const double* itsCurrentEnd;
+    T* itsPtr;
+    T* itsCurrentEnd;
 
   public:
-    colmaj_iter(int rg, int rs, const double* ptr) :
+    colmaj_iter_base(int rg, int rs, T* ptr) :
       itsRowgap(rg),
       itsRowstride(rs),
       itsPtr(ptr),
       itsCurrentEnd(itsPtr+(itsRowstride-itsRowgap))
     {}
 
-    const double& operator*() const { return *itsPtr; }
+    T& operator*() const { return *itsPtr; }
 
-    colmaj_iter& operator++()
+    colmaj_iter_base& operator++()
     {
       if (++itsPtr == itsCurrentEnd)
         {
@@ -622,20 +623,31 @@ public:
       return *this;
     }
 
-    bool operator==(const colmaj_iter& other) const
+    bool operator==(const colmaj_iter_base& other) const
     { return itsPtr == other.itsPtr; }
 
-    bool operator!=(const colmaj_iter& other) const
+    bool operator!=(const colmaj_iter_base& other) const
     { return itsPtr != other.itsPtr; }
   };
 
-  colmaj_iter colmaj_begin() const
-  { return colmaj_iter(itsImpl.rowgap(), itsImpl.rowstride(),
-                       itsImpl.address(0,0)); }
+  typedef colmaj_iter_base<double> colmaj_iter;
+  typedef colmaj_iter_base<const double> const_colmaj_iter;
 
-  colmaj_iter colmaj_end() const
+  colmaj_iter colmaj_begin_nc()
   { return colmaj_iter(itsImpl.rowgap(), itsImpl.rowstride(),
-                       itsImpl.address(0,ncols())); }
+                       itsImpl.address_nc(0,0)); }
+
+  colmaj_iter colmaj_end_nc()
+  { return colmaj_iter(itsImpl.rowgap(), itsImpl.rowstride(),
+                       itsImpl.address_nc(0,ncols())); }
+
+  const_colmaj_iter colmaj_begin() const
+  { return const_colmaj_iter(itsImpl.rowgap(), itsImpl.rowstride(),
+                             itsImpl.address(0,0)); }
+
+  const_colmaj_iter colmaj_end() const
+  { return const_colmaj_iter(itsImpl.rowgap(), itsImpl.rowstride(),
+                             itsImpl.address(0,ncols())); }
 
   //
   // Data access
