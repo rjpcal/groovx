@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Mon Sep  3 13:25:26 2001
+// written: Tue Sep  4 19:07:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -115,6 +115,9 @@ DOTRACE("Tcl::FieldsLister::operator()");
               if (field.isString()) flags.append("STRING");
               if (field.isMultiValued()) flags.append("MULTI");
               if (field.isChecked()) flags.append("CHECKED");
+              if (!field.allowGet()) flags.append("NO_GET");
+              if (!field.allowSet()) flags.append("NO_SET");
+              if (field.isPrivate()) flags.append("PRIVATE");
 
               sub_list.append(flags);
 
