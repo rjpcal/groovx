@@ -7,6 +7,8 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
+* (4-Nov-2002) Dynamically-sized array-Value objects?
+
 * (2-Jul-2002) new project name?
 
 OO framework
@@ -75,7 +77,7 @@ Should be GWT::Widget <-- Tcl::TkWidget <-- Toglet (or GLWidget)
   explicit template instantiation does not work (e.g. util/multivalue.cc)
 
 * (25-Jan-2002) Logging goodies
-   log levels, and multiple log targets with separate log levels for each?
+  log levels, and multiple log targets with separate log levels for each?
 
 * (17-Jan-2002) get automated dependencies working
 
