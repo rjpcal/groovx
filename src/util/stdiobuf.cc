@@ -61,9 +61,9 @@ DOTRACE("rutz::stdiobuf::init");
       throw rutz::error("couldn't open file stdiobuf", SRC_POS);
     }
 
-  setg (buffer,
+  setg (buffer+s_pback_size,
         buffer+s_pback_size,
-        buffer+s_buf_size-1);
+        buffer+s_pback_size);
 
   setp (buffer,
         buffer+s_buf_size-1);
