@@ -341,6 +341,7 @@ set PLAYLIST [Playlist PLAYLIST $argv $t]
 -> $t bind <Key-Down> {PLAYLIST remove; updateText; PLAYLIST show}
 -> $t bind <Key-Return> {PLAYLIST save}
 -> $t bind <Key-x> {PLAYLIST purge}
+-> $t bind <Key-Escape> {PLAYLIST purge; exit }
 
 -> $t height 975
 -> $t width 1400
