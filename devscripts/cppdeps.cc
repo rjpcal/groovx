@@ -258,10 +258,10 @@ namespace
 
 } // end unnamed namespace
 
-struct include_spec
+struct dependency
 {
-  include_spec(const string& t, const string& s = string(),
-               bool l = false)
+  dependency(const string& t, const string& s = string(),
+             bool l = false)
     : target(make_normpath(t)), source(s), literal(l)
   {}
 
@@ -270,7 +270,7 @@ struct include_spec
   bool literal; // if true, then we don't try to look up nested includes
 };
 
-bool operator<(const include_spec& i1, const include_spec& i2)
+bool operator<(const dependency& i1, const dependency& i2)
 {
   return i1.target < i2.target;
 }
@@ -289,11 +289,11 @@ class cppdeps
   vector<string> m_src_files;
   string m_objdir;
 
-  typedef vector<include_spec> include_list_t;
+  typedef vector<dependency> dep_list_t;
 
-  typedef map<string, include_list_t> include_map_t;
-  include_map_t m_nested_includes;
-  include_map_t m_direct_includes;
+  typedef map<string, dep_list_t> dep_map_t;
+  dep_map_t m_nested_includes;
+  dep_map_t m_direct_includes;
 
   enum parse_state
     {
@@ -344,14 +344,12 @@ public:
                           const string& dirname,
                           const vector<string>& ipath,
                           const vector<string>& literal,
-                          include_list_t& vec);
+                          dep_list_t& vec);
 
-  const include_list_t& get_direct_includes(const string& src_fname);
-
-  const include_list_t& get_nested_includes(const string& src_fname);
+  const dep_list_t& get_direct_includes(const string& src_fname);
+  const dep_list_t& get_nested_includes(const string& src_fname);
 
   void print_makefile_dep(const string& current_file);
-
   void print_include_tree(const string& current_file);
 
   typedef void (cppdeps::* output_func)(const string&);
@@ -590,7 +588,7 @@ bool cppdeps::resolve_one(const string& include_name,
                           const string& dirname_without_slash,
                           const vector<string>& ipath,
                           const vector<string>& literal,
-                          cppdeps::include_list_t& vec)
+                          cppdeps::dep_list_t& vec)
 {
   for (unsigned int i = 0; i < ipath.size(); ++i)
     {
@@ -598,7 +596,7 @@ bool cppdeps::resolve_one(const string& include_name,
 
       if (file_exists(fullpath.c_str()))
         {
-          vec.push_back(include_spec(fullpath, src_fname));
+          vec.push_back(dependency(fullpath, src_fname));
           return true;
         }
     }
@@ -613,7 +611,7 @@ bool cppdeps::resolve_one(const string& include_name,
 
   if (file_exists(fullpath.c_str()))
     {
-      vec.push_back(include_spec(fullpath, src_fname));
+      vec.push_back(dependency(fullpath, src_fname));
       return true;
     }
 
@@ -622,7 +620,7 @@ bool cppdeps::resolve_one(const string& include_name,
   if (file_exists(include_name.c_str()))
     {
       if (src_fname != include_name)
-        vec.push_back(include_spec(include_name, src_fname));
+        vec.push_back(dependency(include_name, src_fname));
       return true;
     }
 
@@ -636,7 +634,7 @@ bool cppdeps::resolve_one(const string& include_name,
       if (strncmp(extension, literal[i].c_str(),
                   literal[i].length()) == 0)
         {
-          vec.push_back(include_spec(include_name, "(literal)", true));
+          vec.push_back(dependency(include_name, "(literal)", true));
           return true;
         }
     }
@@ -644,18 +642,18 @@ bool cppdeps::resolve_one(const string& include_name,
   return false;
 }
 
-const cppdeps::include_list_t&
+const cppdeps::dep_list_t&
 cppdeps::get_direct_includes(const string& src_fname)
 {
   {
-    include_map_t::iterator itr = m_direct_includes.find(src_fname);
+    dep_map_t::iterator itr = m_direct_includes.find(src_fname);
     if (itr != m_direct_includes.end())
       return (*itr).second;
   }
 
   const string dirname_without_slash = get_dirname_of(src_fname);
 
-  include_list_t& vec = m_direct_includes[src_fname];
+  dep_list_t& vec = m_direct_includes[src_fname];
 
   mapped_file f(src_fname.c_str());
 
@@ -795,11 +793,11 @@ cppdeps::get_direct_includes(const string& src_fname)
   return vec;
 }
 
-const cppdeps::include_list_t&
+const cppdeps::dep_list_t&
 cppdeps::get_nested_includes(const string& src_fname)
 {
   {
-    include_map_t::iterator itr = m_nested_includes.find(src_fname);
+    dep_map_t::iterator itr = m_nested_includes.find(src_fname);
     if (itr != m_nested_includes.end())
       return (*itr).second;
   }
@@ -820,13 +818,13 @@ cppdeps::get_nested_includes(const string& src_fname)
   // this turns out to be cheaper than building up the list in a
   // std::vector and then doing a big std::sort, std::unique(), and
   // vec.erase() at the end
-  std::set<include_spec> includes_set;
+  std::set<dependency> includes_set;
 
   includes_set.insert(src_fname);
 
-  const include_list_t& direct = get_direct_includes(src_fname);
+  const dep_list_t& direct = get_direct_includes(src_fname);
 
-  for (include_list_t::const_iterator
+  for (dep_list_t::const_iterator
          i = direct.begin(),
          istop = direct.end();
        i != istop;
@@ -855,11 +853,11 @@ cppdeps::get_nested_includes(const string& src_fname)
           continue;
         }
 
-      const include_list_t& indirect = get_nested_includes((*i).target);
+      const dep_list_t& indirect = get_nested_includes((*i).target);
       includes_set.insert(indirect.begin(), indirect.end());
     }
 
-  include_list_t& result = m_nested_includes[src_fname];
+  dep_list_t& result = m_nested_includes[src_fname];
   assert(result.empty());
   result.assign(includes_set.begin(), includes_set.end());
 
@@ -916,9 +914,9 @@ void cppdeps::print_makefile_dep(const string& fname)
 
   printf(": ");
 
-  const include_list_t& includes = get_nested_includes(fname);
+  const dep_list_t& includes = get_nested_includes(fname);
 
-  for (include_list_t::const_iterator
+  for (dep_list_t::const_iterator
          itr = includes.begin(),
          stop = includes.end();
        itr != stop;
@@ -940,14 +938,14 @@ void cppdeps::print_include_tree(const string& fname)
 
   // otherwise, we do have a c++ file
 
-  const include_list_t& includes =
+  const dep_list_t& includes =
     m_output_mode == DIRECT_INCLUDE_TREE
     ? get_direct_includes(fname)
     : get_nested_includes(fname);
 
   printf("%s:: ", fname.c_str());
 
-  for (include_list_t::const_iterator
+  for (dep_list_t::const_iterator
          itr = includes.begin(),
          stop = includes.end();
        itr != stop;
