@@ -11,6 +11,15 @@ package require Pos
 package require Jitter
 package require Poslist
 
+set ::POS [Pos::Pos]
+
+source ${::TEST_DIR}/io_test.tcl
+
+IO::testStringifyCmd PositionTcl Pos 1 $::POS
+IO::testDestringifyCmd PositionTcl Pos 1 $::POS
+IO::testWriteCmd PositionTcl Pos 1 $::POS
+IO::testReadCmd PositionTcl Pos 1 $::POS
+
 ### Pos::PosCmd ###
 test "PositionTcl-Pos::Pos" "too many args" {
     Pos::Pos junk

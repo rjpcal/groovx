@@ -15,9 +15,19 @@ package require Tclgl
 package require Tlist
 package require Pos
 
-if { ![Togl::inited] } { Togl::init "-rgba false"; update }
-
 set PBMFILE $TEST_DIR/pbmfile.PPM
+
+set ::GLBITMAP [GLBitmap::GLBitmap]
+Bitmap::loadPbm $::GLBITMAP $::PBMFILE
+
+source ${::TEST_DIR}/io_test.tcl
+
+IO::testStringifyCmd GLBitmapTcl GLBitmap 1 $::GLBITMAP
+IO::testDestringifyCmd GLBitmapTcl GLBitmap 1 $::GLBITMAP
+IO::testWriteCmd GLBitmapTcl GLBitmap 1 $::GLBITMAP
+IO::testReadCmd GLBitmapTcl GLBitmap 1 $::GLBITMAP
+
+if { ![Togl::inited] } { Togl::init "-rgba false"; update }
 
 set POS [Pos::Pos]
 

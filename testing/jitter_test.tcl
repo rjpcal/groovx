@@ -7,6 +7,17 @@
 ###
 ##############################################################################
 
+source ${::TEST_DIR}/io_test.tcl
+
+set ::JITTER [Jitter::Jitter]
+
+IO::testStringifyCmd JitterTcl Jitter 1 $::JITTER
+IO::testDestringifyCmd JitterTcl Jitter 1 $::JITTER
+IO::testWriteCmd JitterTcl Jitter 1 $::JITTER
+IO::testReadCmd JitterTcl Jitter 1 $::JITTER
+
+unset ::JITTER
+
 ### Jitter::JitterCmd ###
 test "JitterTcl-Jitter::Jitter" "too many args" {
 	 Jitter::Jitter junk
