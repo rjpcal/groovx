@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Jun 16 19:29:17 1999
+// written: Fri Jul 16 17:31:58 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "tclcmd.h"
 
 #include <typeinfo>
+#include <string>
 
 #include "errmsg.h"
 
@@ -21,10 +22,6 @@
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
-
-TclError::~TclError() {
-DOTRACE("TclError::~TclError");
-}
 
 TclCmd::~TclCmd() {
 DOTRACE("TclCmd::~TclCmd");
@@ -71,6 +68,15 @@ DOTRACE("TclCmd::getIntFromArg");
   return val;
 }
 
+long TclCmd::getLongFromArg(int argn) {
+DOTRACE("TclCmd::getLongFromArg");
+  long val;
+  if ( Tcl_GetLongFromObj(itsInterp, itsObjv[argn], &val) != TCL_OK) {
+	 throw TclError();
+  }
+  return val;
+}
+
 bool TclCmd::getBoolFromArg(int argn) {
 DOTRACE("TclCmd::getBoolFromArg");
   int val;
@@ -80,18 +86,25 @@ DOTRACE("TclCmd::getBoolFromArg");
   return bool(val);
 }
 
-char* TclCmd::getCstringFromArg(int argn) {
-DOTRACE("TclCmd::getCstringFromArg");
-  return Tcl_GetString(itsObjv[argn]);
-}
-
 double TclCmd::getDoubleFromArg(int argn) {
 DOTRACE("TclCmd::getDoubleFromArg");
+  DebugEvalNL(Tcl_GetString(itsObjv[argn]));
+
   double val;
-  if ( Tcl_GetDoubleFromObj(itsInterp, itsObjv[argn], &val) != TCL_OK ) {
-	 throw TclError();
+  try {
+	 if ( Tcl_GetDoubleFromObj(itsInterp, itsObjv[argn], &val) != TCL_OK ) {
+		throw TclError();
+	 }
+  }
+  catch (TclError&) {
+	 throw;
   }
   return val;
+}
+
+const char* TclCmd::getCstringFromArg(int argn) {
+DOTRACE("TclCmd::getCstringFromArg");
+  return Tcl_GetString(itsObjv[argn]);
 }
 
 void TclCmd::returnVoid() {
@@ -107,6 +120,12 @@ DOTRACE("TclCmd::returnError");
 void TclCmd::returnInt(int val) {
 DOTRACE("TclCmd::returnInt");
   Tcl_SetObjResult(itsInterp, Tcl_NewIntObj(val));
+  itsResult = TCL_OK;
+}
+
+void TclCmd::returnLong(long val) {
+DOTRACE("TclCmd::returnLong");
+  Tcl_SetObjResult(itsInterp, Tcl_NewLongObj(val));
   itsResult = TCL_OK;
 }
 
@@ -134,12 +153,61 @@ DOTRACE("TclCmd::returnString");
   itsResult = TCL_OK;
 }
 
+void TclCmd::lappendVal(int val) {
+DOTRACE("TclCmd::lappendVal");
+  Tcl_Obj* result = Tcl_GetObjResult(itsInterp); 
+  int cmd_result = Tcl_ListObjAppendElement(itsInterp, result, 
+														  Tcl_NewIntObj(val));
+  if (cmd_result != TCL_OK) throw TclError();
+}
+
+void TclCmd::lappendVal(long val) {
+DOTRACE("TclCmd::lappendVal");
+  Tcl_Obj* result = Tcl_GetObjResult(itsInterp);
+  int cmd_result = Tcl_ListObjAppendElement(itsInterp, result,
+														  Tcl_NewLongObj(val));
+  if (cmd_result != TCL_OK) throw TclError();
+}
+
+void TclCmd::lappendVal(bool val) {
+DOTRACE("TclCmd::lappendVal");
+  Tcl_Obj* result = Tcl_GetObjResult(itsInterp); 
+  int cmd_result = Tcl_ListObjAppendElement(itsInterp, result, 
+														  Tcl_NewBooleanObj(val));
+  if (cmd_result != TCL_OK) throw TclError();
+}
+
+void TclCmd::lappendVal(double val) {
+DOTRACE("TclCmd::lappendVal");
+  Tcl_Obj* result = Tcl_GetObjResult(itsInterp); 
+  int cmd_result = Tcl_ListObjAppendElement(itsInterp, result,
+														  Tcl_NewDoubleObj(val));
+  if (cmd_result != TCL_OK) throw TclError();
+}
+
+void TclCmd::lappendVal(const char* val) {
+DOTRACE("TclCmd::lappendVal");
+  Tcl_Obj* result = Tcl_GetObjResult(itsInterp); 
+  int cmd_result = Tcl_ListObjAppendElement(itsInterp, result,
+														  Tcl_NewStringObj(val, -1));
+  if (cmd_result != TCL_OK) throw TclError();
+}
+
+void TclCmd::lappendVal(const string& val) {
+DOTRACE("TclCmd::lappendVal");
+  Tcl_Obj* result = Tcl_GetObjResult(itsInterp); 
+  int cmd_result = Tcl_ListObjAppendElement(itsInterp, result,
+														  Tcl_NewStringObj(val.c_str(), -1));
+  if (cmd_result != TCL_OK) throw TclError();
+}
+
 int TclCmd::dummyInvoke(ClientData clientData, Tcl_Interp* interp,
-										 int objc, Tcl_Obj *const objv[]) {
+								int objc, Tcl_Obj *const objv[]) {
 DOTRACE("TclCmd::dummyInvoke");
 
   TclCmd* theCmd = static_cast<TclCmd*>(clientData);
 
+  DebugEval((void *) theCmd);
   DebugEvalNL(typeid(*theCmd).name());
 
   theCmd->itsInterp = interp;
@@ -147,7 +215,12 @@ DOTRACE("TclCmd::dummyInvoke");
   theCmd->itsObjv = objv;
   theCmd->itsResult = TCL_OK;
 
-  // Check for bad argument count...
+  DebugEval(objc);
+  DebugEval(theCmd->itsObjcMin);
+  DebugEvalNL(theCmd->itsObjcMax);
+
+  // Check for bad argument count, if so abort the command and return
+  // TCL_ERROR...
   if ( ((theCmd->itsExactObjc == true) && 
 		  (objc != theCmd->itsObjcMin && objc != theCmd->itsObjcMax))
 		 ||
@@ -155,19 +228,46 @@ DOTRACE("TclCmd::dummyInvoke");
 		  (objc < theCmd->itsObjcMin || objc > theCmd->itsObjcMax)) ) {
 
 	 theCmd->usage();
+	 theCmd->itsResult = TCL_ERROR;
+	 return TCL_ERROR;
   }
-  // ...otherwise if the argument count is OK
-  else {
-  
-	 try {
-		theCmd->invoke();
+  // ...otherwise if the argument count is OK, try the command and
+  // catch all possible exceptions
+  try {
+	 theCmd->invoke();
+  }
+  catch (TclError& err) {
+	 DebugPrintNL("catch (TclError&)");
+	 if (err.msg() != "") {
+		err_message(interp, theCmd->itsObjv, err.msg().c_str());
 	 }
-	 catch (TclError& err) {
-		if (err.msg() != "") {
-		  err_message(interp, theCmd->itsObjv, err.msg().c_str());
-		}
-		theCmd->itsResult = TCL_ERROR;
+	 theCmd->itsResult = TCL_ERROR;
+  }
+  catch (ErrorWithMsg& err) {
+	 DebugPrintNL("catch (ErrorWithMsg&)");
+	 if (err.msg() != "") {
+		err_message(interp, theCmd->itsObjv, err.msg().c_str());
 	 }
+	 else {
+		string msg = "an error of type ";
+		msg += typeid(err).name();
+		msg += " occurred";
+		err_message(interp, theCmd->itsObjv, msg.c_str());
+	 }
+	 theCmd->itsResult = TCL_ERROR;
+  }
+  catch (Error& err) {
+ 	 DebugPrintNL("catch (Error&)");
+	 string msg = "an error of type ";
+	 msg += typeid(err).name();
+	 msg += " occurred";
+ 	 err_message(interp, theCmd->itsObjv, msg.c_str());
+ 	 theCmd->itsResult = TCL_ERROR;
+  }
+  catch (...) {
+ 	 DebugPrintNL("catch (...)");
+ 	 err_message(interp, theCmd->itsObjv, "an error of unknown type occurred");
+ 	 theCmd->itsResult = TCL_ERROR;
   }
   DebugEvalNL(theCmd->itsResult == TCL_OK);
   return theCmd->itsResult;

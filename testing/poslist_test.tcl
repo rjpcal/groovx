@@ -15,16 +15,16 @@ test "PoslistTcl-PosList::reset" "too many args" {
     PosList::reset junk
 } {wrong \# args: should be "PosList::reset"}
 test "PoslistTcl-PosList::reset" "check number of positions -> 0" {
-	 Pos::position
-	 Jitter::jitter
+	 Pos::Pos
+	 Jitter::Jitter
 	 PosList::reset
 	 PosList::count
 } {^0$}
 test "PoslistTcl-PosList::reset" "check first vacant -> 0" {
-	 Pos::position
-	 Jitter::jitter
+	 Pos::Pos
+	 Jitter::Jitter
 	 PosList::reset
-	 Pos::position
+	 Pos::Pos
 } {^0$}
 test "PoslistTcl-PosList::reset" "no error" {} $BLANK $no_test
 
@@ -34,30 +34,11 @@ test "PoslistTcl-PosList::count" "args" {
 } {wrong \# args: should be "PosList::count"}
 test "PoslistTcl-PosList::count" "normal use" { 
 	 PosList::reset
-	 Pos::position
-	 Jitter::jitter
+	 Pos::Pos
+	 Jitter::Jitter
 	 PosList::count
 } {^2$}
 test "PoslistTcl-PosList::count" "no error" {} $BLANK $no_test
-
-### Pos::typeCmd ###
-test "PositionTcl-Pos::type" "args" {
-    Pos::type
-} {wrong \# args: should be "Pos::type posid"}
-test "PositionTcl-Pos::type" "normal use on Position" { 
-	 set f [Pos::position]
-	 Pos::type $f
-} {Position}
-test "PositionTcl-Pos::type" "normal use on Jitter" {
-	 set f [Jitter::jitter]
-	 Pos::type $f
-} {Jitter}
-test "PositionTcl-Pos::type" "error on too small posid" {
-	 Pos::type -1
-} {Pos::type: posid out of range}
-test "PositionTcl-Pos::type" "error on too large" {
-	 Pos::type 10000
-} {Pos::type: posid out of range}
 
 ### PosList::stringifyCmd ###
 test "PoslistTcl-PosList::stringify" "args" {
@@ -65,11 +46,11 @@ test "PoslistTcl-PosList::stringify" "args" {
 } {wrong \# args: should be "PosList::stringify"}
 test "PoslistTcl-PosList::stringify" "stringify a non-empty PosList" {
 	 PosList::reset
-	 set p [Pos::position]
+	 set p [Pos::Pos]
 	 Pos::rotate $p 3.0 1.5 0.0 -2.2
 	 Pos::scale $p 1.0 2.5 4.0
 	 Pos::translate $p 5.3 10.6 15.9
-	 set j [Jitter::jitter]
+	 set j [Jitter::Jitter]
 	 Pos::rotate $j 3.0 1.5 0.0 -2.2
 	 Pos::scale $j 1.0 2.5 4.0
 	 Pos::translate $j 5.3 10.6 15.9
@@ -94,11 +75,11 @@ test "PoslistTcl-PosList::destringify" "args" {
 } {wrong \# args: should be "PosList::destringify string"}
 test "PoslistTcl-PosList::destringify" "normal use" {
 	 PosList::reset
-	 set p [Pos::position]
+	 set p [Pos::Pos]
 	 Pos::rotate $p 3.0 1.5 0.0 -2.2
 	 Pos::scale $p 1.0 2.5 4.0
 	 Pos::translate $p 5.3 10.6 15.9
-	 set j [Jitter::jitter]
+	 set j [Jitter::Jitter]
 	 Pos::rotate $j 3.0 1.5 0.0 -2.2
 	 Pos::scale $j 1.0 2.5 4.0
 	 Pos::translate $j 5.3 10.6 15.9

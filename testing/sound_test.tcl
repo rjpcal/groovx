@@ -11,50 +11,68 @@
 #set AUDIO [Sound::haveAudio]
 set AUDIO 0							  ;# disable sound tests
 
-### Sound::setCmd ###
-test "SoundTcl-Sound::set" "too few args" {
-	 Sound::set
-} {wrong \# args: should be "Sound::set sound_name \?new_filename\?"} $AUDIO
-test "SoundTcl-Sound::set" "too many args" {
-	 Sound::set j u n
-} {wrong \# args: should be "Sound::set sound_name \?new_filename\?"} $AUDIO
-test "SoundTcl-Sound::set" "normal filename set" {
-	 catch {Sound::set test $::TEST_DIR/sound1.au}
+set TEST_SOUND -1
+
+### Sound::Sound ###
+test "SoundTcl-Sound::Sound" "too few args" {
+	 Sound::Sound
+} {^wrong \# args: should be "Sound::Sound filename"$}
+test "SoundTcl-Sound::Sound" "too many args" {
+	 Sound::Sound filename junk
+} {^wrong \# args: should be "Sound::Sound filename"$}
+test "SoundTcl-Sound::Sound" "normal sound create" {
+	 puts $::TEST_DIR/sound1.au
+	 set ::TEST_SOUND [Sound::Sound $::TEST_DIR/sound1.au]
+	 expr {$::TEST_SOUND > 0}
+} {^1$}
+
+
+### Sound::fileCmd ###
+test "SoundTcl-Sound::file" "too few args" {
+	 Sound::file
+} {wrong \# args: should be "Sound::file item_id\(s\) \?new_value\(s\)\?"}
+test "SoundTcl-Sound::file" "too many args" {
+	 Sound::file j u n
+} {wrong \# args: should be "Sound::file item_id\(s\) \?new_value\(s\)\?"}
+test "SoundTcl-Sound::file" "normal filename set" {
+	 catch {Sound::file $::TEST_SOUND $::TEST_DIR/sound1.au}
 } {^0$} $AUDIO
-test "SoundTcl-Sound::set" "normal filename query" {
-	 Sound::set test $::TEST_DIR/sound1.au
-	 set f [Sound::set test]
+test "SoundTcl-Sound::file" "normal filename query" {
+	 Sound::file $::TEST_SOUND $::TEST_DIR/sound1.au
+	 set f [Sound::file $::TEST_SOUND]
 	 expr [string compare $f "$::TEST_DIR/sound1.au"] == 0
 } {^1$} $AUDIO
-test "SoundTcl-Sound::set" "error on bad filename" {
+test "SoundTcl-Sound::file" "error on bad filename" {
 	 exec rm -rf $::TEST_DIR/nonexistent_file
-	 Sound::set test $::TEST_DIR/nonexistent_file
-} "Sound::set: SoundError: bad or nonexistent file\
-		  '$::TEST_DIR/nonexistent_file'" $AUDIO
+	 Sound::file $::TEST_SOUND $::TEST_DIR/nonexistent_file
+} "^Sound::file: bad or nonexistent file '$::TEST_DIR/nonexistent_file'$"
+test "SoundTcl-Sound::file" "error on junk file" {
+	 Sound::file $::TEST_SOUND $::TEST_DIR/junk_text_file
+} "^Sound::file: HP Audio Error: Cannot Determine File Format$"
 
 ### Sound::playCmd ###
 test "SoundTcl-Sound::play" "too few args" {
 	 Sound::play
-} {wrong \# args: should be "Sound::play sound_name"} $AUDIO
+} {wrong \# args: should be "Sound::play item_id\(s\)"}
 test "SoundTcl-Sound::play" "too many args" {
-	 Sound::play j u
-} {wrong \# args: should be "Sound::play sound_name"} $AUDIO
+	 Sound::play item junk
+} {wrong \# args: should be "Sound::play item_id\(s\)"}
 test "SoundTcl-Sound::play" "normal play test sound" {
-	 Sound::set test $::TEST_DIR/sound1.au
-	 catch {Sound::play test}
+	 Sound::file $::TEST_SOUND $::TEST_DIR/sound1.au
+	 catch {Sound::play $::TEST_SOUND}
 } {^0$} $AUDIO
 test "SoundTcl-Sound::play" "normal play ok sound" {
-	 Sound::set ok $::TEST_DIR/sound1.au
-	 catch {Sound::play ok}
+	 catch {Sound::play $Sound::ok}
 } {^0$} $AUDIO
 test "SoundTcl-Sound::play" "normal play err sound" {
-	 Sound::set err $::TEST_DIR/sound2.au
-	 catch {Sound::play err}
+	 catch {Sound::play $Sound::err}
 } {^0$} $AUDIO
-test "SoundTcl-Sound::play" "error on bad sound name" {
-	 Sound::play junk
-} {Sound::play: sound does not exist} $AUDIO
+test "SoundTcl-Sound::play" "error on bad sound id" {
+	 Sound::play -1
+} {Sound::play: an error of type InvalidIdError occurred}
 
+
+### cleanup
 unset AUDIO
-
+unset TEST_SOUND
 

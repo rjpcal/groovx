@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Tue Jun 29 18:34:46 1999
+// written: Mon Jul 12 13:13:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,11 +14,13 @@
 #include <tcl.h>
 #include <string>
 
+#include "iomgr.h"
 #include "thlist.h"
 #include "tclcmd.h"
 #include "timinghandler.h"
 #include "timinghdlr.h"
-#include "tclitempkg.h"
+#include "trialevent.h"
+#include "listitempkg.h"
 #include "listpkg.h"
 
 #define NO_TRACE
@@ -27,37 +29,13 @@
 #include "debug.h"
 
 namespace ThTcl {
-  class TimingHdlrCmd;
   class AddEventCmd;
   class ThPkg;
-}
-
-namespace SimpleThTcl {
-  class TimingHandlerCmd;
-  class SimpleThPkg;
 }
 
 namespace ThlistTcl {
   class ThListPkg;
 }
-
-//---------------------------------------------------------------------
-//
-// TimingHdlrCmd --
-//
-//---------------------------------------------------------------------
-
-class ThTcl::TimingHdlrCmd : public TclCmd {
-public:
-  TimingHdlrCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, NULL, 1, 1) {}
-protected:
-  virtual void invoke() {
-	 TimingHdlr* th = new TimingHdlr();
-	 int thid = ThList::theThList().insert(th);
-	 returnInt(thid);
-  }
-};
 
 //---------------------------------------------------------------------
 //
@@ -91,12 +69,12 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ThTcl::ThPkg: public CTclIoItemPkg<TimingHdlr> {
+class ThTcl::ThPkg: public ListItemPkg<TimingHdlr, ThList> {
 public:
   ThPkg(Tcl_Interp* interp) :
-	 CTclIoItemPkg<TimingHdlr>(interp, "Th", "1.1")
+	 ListItemPkg<TimingHdlr, ThList>(interp, ThList::theThList(),
+												"Th", "1.1", "timingHdlr")
   {
-	 addCommand( new TimingHdlrCmd(interp, "Th::timingHdlr") );
 	 addCommand( new AddEventCmd(this, "Th::addImmediateEvent",
 										  TimingHdlr::IMMEDIATE));
 	 addCommand( new AddEventCmd(this, "Th::addStartEvent",
@@ -105,39 +83,9 @@ public:
 										  TimingHdlr::FROM_RESPONSE));
 	 addCommand( new AddEventCmd(this, "Th::addAbortEvent",
 										  TimingHdlr::FROM_ABORT));
-	 declareAttrib("autosavePeriod",
-						new CAttrib<TimingHandler, int> (
-									 &TimingHdlr::getAutosavePeriod,
-									 &TimingHdlr::setAutosavePeriod));
-  }
-
-  virtual TimingHdlr* getCItemFromId(int id) {
-	 if ( !ThList::theThList().isValidId(id) ) {
-		throw TclError("invalid timing handler id");
-	 }
-	 return ThList::theThList().getPtr(id);
-  }
-
-  virtual IO& getIoFromId(int id) {
-	 return dynamic_cast<IO&>( *(getCItemFromId(id)) );
-  }
-};
-
-//--------------------------------------------------------------------
-//
-// TimingHandlerCmd --
-//
-//--------------------------------------------------------------------
-
-class SimpleThTcl::TimingHandlerCmd : public TclCmd {
-public:
-  TimingHandlerCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, NULL, 1, 1) {}
-protected:
-  virtual void invoke() {
-	 TimingHandler* th = new TimingHandler();
-	 int thid = ThList::theThList().insert(th);
-	 returnInt(thid);
+	 declareCAttrib("autosavePeriod",
+						 &TimingHdlr::getAutosavePeriod,
+						 &TimingHdlr::setAutosavePeriod);
   }
 };
 
@@ -147,44 +95,28 @@ protected:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class SimpleThTcl::SimpleThPkg : public CTclIoItemPkg<TimingHandler> {
+namespace SimpleThTcl {
+  class SimpleThPkg;
+}
+
+class SimpleThTcl::SimpleThPkg : public ListItemPkg<TimingHandler, ThList> {
 public:
   SimpleThPkg(Tcl_Interp* interp) :
-	 CTclIoItemPkg<TimingHandler>(interp, "Simpleth", "1.1")
+	 ListItemPkg<TimingHandler, ThList>(interp, ThList::theThList(),
+													"SimpleTh", "1.1", "timingHandler")
   {
-	 addCommand( new TimingHandlerCmd(interp, "SimpleTh::timingHandler") );
-	 declareAttrib("abortWait", 
-						new CAttrib<TimingHandler, int> (
-									 &TimingHandler::getAbortWait,
-									 &TimingHandler::setAbortWait));
-	 declareAttrib("interTrialInterval",
-						new CAttrib<TimingHandler, int> (
-									 &TimingHandler::getInterTrialInterval,
-									 &TimingHandler::setInterTrialInterval));
-	 declareAttrib("stimDur",
-						new CAttrib<TimingHandler, int> (
-									 &TimingHandler::getStimDur,
-									 &TimingHandler::setStimDur));
-	 declareAttrib("timeout",
-						new CAttrib<TimingHandler, int> (
-									 &TimingHandler::getTimeout,
-									 &TimingHandler::setTimeout));
-  }
-
-  virtual TimingHandler* getCItemFromId(int id) {
-	 if ( !ThList::theThList().isValidId(id) ) {
-		throw TclError("invalid timing handler id");
-	 }
-	 TimingHandler* th = 
-		dynamic_cast<TimingHandler*>(ThList::theThList().getPtr(id));
-	 if (th == 0) {
-		throw TclError("timing handler not of correct type");
-	 }
-	 return th;
-  }
-
-  virtual IO& getIoFromId(int id) {
-	 return dynamic_cast<IO&>( *(getCItemFromId(id)) );
+	 declareCAttrib("abortWait",  
+						 &TimingHandler::getAbortWait,
+						 &TimingHandler::setAbortWait);
+	 declareCAttrib("interTrialInterval",
+						 &TimingHandler::getInterTrialInterval,
+						 &TimingHandler::setInterTrialInterval);
+	 declareCAttrib("stimDur",
+						 &TimingHandler::getStimDur,
+						 &TimingHandler::setStimDur);
+	 declareCAttrib("timeout",
+						 &TimingHandler::getTimeout,
+						 &TimingHandler::setTimeout);
   }
 };
 
@@ -197,15 +129,9 @@ public:
 class ThlistTcl::ThListPkg : public ListPkg<ThList> {
 public:
   ThListPkg(Tcl_Interp* interp) :
-	 ListPkg<ThList>(interp, "ThList", "3.0")
+	 ListPkg<ThList>(interp, ThList::theThList(), "ThList", "3.0")
   {
 	 ThList::theThList().insertAt(0, new TimingHandler());
-  }
-
-  virtual IO& getIoFromId(int) { return ThList::theThList(); }
-
-  virtual ThList* getCItemFromId(int) {
-	 return &ThList::theThList();
   }
 };
 
@@ -223,6 +149,18 @@ DOTRACE("Th_Init");
   new ThTcl::ThPkg(interp);
   new SimpleThTcl::SimpleThPkg(interp);
   new ThlistTcl::ThListPkg(interp);
+
+  FactoryRegistrar<IO, TimingHdlr> registrar1(IoFactory::theOne());
+  FactoryRegistrar<IO, TimingHandler> registrar2(IoFactory::theOne());
+
+  FactoryRegistrar<IO, AbortTrialEvent>  registrar3(IoFactory::theOne());
+  FactoryRegistrar<IO, DrawEvent>        registrar4(IoFactory::theOne());
+  FactoryRegistrar<IO, UndrawEvent>      registrar5(IoFactory::theOne());
+  FactoryRegistrar<IO, EndTrialEvent>    registrar6(IoFactory::theOne());
+  FactoryRegistrar<IO, SwapBuffersEvent> registrar7(IoFactory::theOne());
+  FactoryRegistrar<IO, RenderBackEvent>  registrar8(IoFactory::theOne());
+  FactoryRegistrar<IO, RenderFrontEvent> registrar9(IoFactory::theOne());
+  FactoryRegistrar<IO, ClearBufferEvent> registrarA(IoFactory::theOne());
 
   return TCL_OK;
 }

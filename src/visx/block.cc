@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Sat Jun 26 12:30:40 1999
+// written: Thu Jul  8 10:40:28 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,11 +17,13 @@
 #include <strstream.h>
 #include <string>
 #include <sys/time.h>
+#include <list>
 
 #include "rand.h"
 #include "iostl.h"
 #include "tlist.h"
 #include "trial.h"
+#include "timeutils.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -36,12 +38,12 @@
 
 namespace {
   Tlist& theTlist = Tlist::theTlist();
-  const string ioTag = "Expt";
+  const string ioTag = "Block";
 }
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Expt member functions
+// Block member functions
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -49,35 +51,56 @@ namespace {
 // creators //
 //////////////
 
-Expt::Expt() :
+Block::Block() :
   itsTrialSequence(),
   itsRandSeed(0),
   itsCurTrialSeqIdx(0),
-  itsVerbose(true)
+  itsVerbose(false)
 {
-DOTRACE("Expt::Expt");
+DOTRACE("Block::Block");
 }
 
-void Expt::addTrials(int first_trial, int last_trial, int repeat) {
-DOTRACE("Expt::addTrials");
-  vector<int> id_vec;
-  theTlist.getValidTrials(id_vec);
-
-  // push all the trial id's that will be used in Expt onto a
-  // vector, in order
-  for (int i = 0; i < id_vec.size(); ++i) {
-	 int id = id_vec[i];
-	 if ( (id >= first_trial || first_trial == -1) &&
-			(id <=  last_trial || last_trial  == -1) ) {
-		for (int j = 0; j < repeat; ++j) {
-		  itsTrialSequence.push_back(id);
-		}
-	 }
+void Block::addTrial(int trialid, int repeat) {
+DOTRACE("Block::addTrial");
+  for (int i = 0; i < repeat; ++i) {
+	 itsTrialSequence.push_back(trialid);
   }
+};
+
+void Block::addTrials(int first_trial, int last_trial, int repeat) {
+DOTRACE("Block::addTrials");
+
+  if (first_trial > last_trial) return;
+
+  list<int> ids;
+  theTlist.insertValidIds(back_inserter(ids));
+
+  if (first_trial != -1) {
+	 remove_if(ids.begin(), ids.end(), bind2nd(less<int>(), first_trial));
+  }
+  if (last_trial != -1) {
+	 remove_if(ids.begin(), ids.end(), bind2nd(greater<int>(), last_trial));
+  }
+
+  for (int i = 0; i < repeat; ++i) {
+	 copy(ids.begin(), ids.end(), back_inserter(itsTrialSequence));
+  }
+
+#if 0
+  Tlist::iterator start =
+	 (first_trial == -1) ? theTlist.begin() : theTlist.at(first_trial);
+  Tlist::iterator finish =
+	 (last_trial == -1)  ? theTlist.end()   : theTlist.at(last_trial+1);
+
+  while (start != finish) {
+	 addTrial(start.toInt(), repeat);
+	 ++start;
+  }
+#endif
 }
 
-void Expt::shuffle(int seed) {
-DOTRACE("Expt::shuffle");
+void Block::shuffle(int seed) {
+DOTRACE("Block::shuffle");
   itsRandSeed = seed;
 
   Urand generator(seed);
@@ -86,14 +109,14 @@ DOTRACE("Expt::shuffle");
 					  generator);
 }
 
-void Expt::reset() {
-DOTRACE("Expt::reset");
+void Block::reset() {
+DOTRACE("Block::reset");
   itsTrialSequence.clear();
   itsCurTrialSeqIdx = 0;
 }
 
-void Expt::serialize(ostream &os, IOFlag flag) const {
-DOTRACE("Expt::serialize");
+void Block::serialize(ostream &os, IOFlag flag) const {
+DOTRACE("Block::serialize");
   if (flag & BASES) { /* there are no bases to deserialize */ }
 
   char sep = ' ';
@@ -112,10 +135,10 @@ DOTRACE("Expt::serialize");
   if (os.fail()) throw OutputError(ioTag);
 }
 
-void Expt::deserialize(istream &is, IOFlag flag) {
-DOTRACE("Expt::deserialize");
+void Block::deserialize(istream &is, IOFlag flag) {
+DOTRACE("Block::deserialize");
   if (flag & BASES) { /* there are no bases to deserialize */ }
-  if (flag & TYPENAME) { IO::readTypename(is, "TrialExpt " + ioTag); }
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
   
   // itsTrialSequence
   deserializeVecInt(is, itsTrialSequence);
@@ -136,7 +159,7 @@ DOTRACE("Expt::deserialize");
   if (is.fail()) throw InputError(ioTag);
 }
 
-int Expt::charCount() const {
+int Block::charCount() const {
   return (ioTag.size() + 1
 			 + charCountVecInt(itsTrialSequence) + 1
 			 + gCharCount<int>(itsRandSeed) + 1
@@ -149,41 +172,41 @@ int Expt::charCount() const {
 // accessors //
 ///////////////
 
-Trial& Expt::getCurTrial() const {
-DOTRACE("Expt::getCurTrial");
-  Assert(theTlist.isValidTrial(currentTrial()));
-  return theTlist.getTrial(currentTrial());
+Trial& Block::getCurTrial() const {
+DOTRACE("Block::getCurTrial");
+  Assert(theTlist.isValidId(currentTrial()));
+  return *(theTlist.getPtr(currentTrial()));
 }
 
-int Expt::numTrials() const {
-DOTRACE("Expt::numTrials");
+int Block::numTrials() const {
+DOTRACE("Block::numTrials");
   return itsTrialSequence.size();
 }
 
-int Expt::numCompleted() const {
-DOTRACE("Expt::numCompleted");
+int Block::numCompleted() const {
+DOTRACE("Block::numCompleted");
   return itsCurTrialSeqIdx;
 }
 
-int Expt::currentTrial() const {
-DOTRACE("Expt::currentTrial");
+int Block::currentTrial() const {
+DOTRACE("Block::currentTrial");
   if (isComplete()) return -1;
 
   return itsTrialSequence[itsCurTrialSeqIdx];
 }
 
-int Expt::currentTrialType() const {
-DOTRACE("Expt::currentTrialType");
+int Block::currentTrialType() const {
+DOTRACE("Block::currentTrialType");
   if (isComplete()) return -1;
 
   DebugEval(currentTrial());
-  DebugEvalNL(theTlist.getTrial(currentTrial()).trialType());
+  DebugEvalNL(getCurTrial().trialType());
 
-  return theTlist.getTrial(currentTrial()).trialType();
+  return getCurTrial().trialType();
 }
 
-int Expt::prevResponse() const {
-DOTRACE("Expt::prevResponse");
+int Block::prevResponse() const {
+DOTRACE("Block::prevResponse");
 
 #if 0
   DebugEval(itsCurTrialSeqIdx);
@@ -192,11 +215,12 @@ DOTRACE("Expt::prevResponse");
 
   if (itsCurTrialSeqIdx == 0 || itsTrialSequence.size() == 0) return -1;
 
-  return theTlist.getTrial(itsTrialSequence[itsCurTrialSeqIdx-1]).lastResponse();
+  return theTlist.getCheckedPtr(
+                       itsTrialSequence[itsCurTrialSeqIdx-1])->lastResponse();
 }
 
-bool Expt::isComplete() const {
-DOTRACE("Expt::isComplete");
+bool Block::isComplete() const {
+DOTRACE("Block::isComplete");
 
 #if 0
   DebugEval(itsCurTrialSeqIdx);
@@ -206,18 +230,16 @@ DOTRACE("Expt::isComplete");
   return (itsCurTrialSeqIdx >= itsTrialSequence.size());
 }
 
-const char* Expt::trialDescription() const {
-DOTRACE("Expt::trialDescription");
+const char* Block::trialDescription() const {
+DOTRACE("Block::trialDescription");
   if (isComplete()) return "block is complete";
-
-  const Trial& t = theTlist.getTrial(currentTrial());
 
   const int BUF_SIZE = 200;
   static char buf[BUF_SIZE];	  // static because the address is returned
 
   ostrstream ost(buf, BUF_SIZE);
   ost << "trial id == " << currentTrial() << ", ";
-  ost << theTlist.getTrial(currentTrial()).description();
+  ost << getCurTrial().description();
   ost << ", completed " << numCompleted()
 		<< " of " << numTrials();
   ost << '\0';
@@ -233,14 +255,14 @@ DOTRACE("Expt::trialDescription");
 
 //--------------------------------------------------------------------
 //
-// Expt::beginTrial --
+// Block::beginTrial --
 //
 // Do whatever is necessary at the beginning of a trial.
 //
 //--------------------------------------------------------------------
 
-void Expt::beginTrial() {
-DOTRACE("Expt::beginTrial");
+void Block::beginTrial() {
+DOTRACE("Block::beginTrial");
   if (itsVerbose) {
 	 cerr << trialDescription() << endl;
   }
@@ -254,7 +276,7 @@ DOTRACE("Expt::beginTrial");
 
 //--------------------------------------------------------------------
 //
-// Expt::drawTrial --
+// Block::drawTrial --
 //
 // The current trial is drawn, The current trial is not changed until
 // a call either to processResponse, abortTrial, or endTrial; thus,
@@ -264,8 +286,8 @@ DOTRACE("Expt::beginTrial");
 //
 //--------------------------------------------------------------------
 
-void Expt::drawTrial() {
-DOTRACE("Expt::drawTrial");
+void Block::drawTrial() {
+DOTRACE("Block::drawTrial");
   if (isComplete()) return;
 
   // This single call sets the Tlist's current trial and visibility
@@ -275,7 +297,7 @@ DOTRACE("Expt::drawTrial");
 
 //--------------------------------------------------------------------
 //
-// Expt::undrawTrial --
+// Block::undrawTrial --
 //
 // The current trial is erased from the screen, and the Tlist's
 // visibility is set to false, so that the trial does not reappear if
@@ -283,8 +305,8 @@ DOTRACE("Expt::drawTrial");
 //
 //--------------------------------------------------------------------
 
-void Expt::undrawTrial() {
-DOTRACE("Expt::undrawTrial");
+void Block::undrawTrial() {
+DOTRACE("Block::undrawTrial");
   if (isComplete()) return;
 
   theTlist.undrawTrial(currentTrial());
@@ -292,10 +314,10 @@ DOTRACE("Expt::undrawTrial");
 
 //--------------------------------------------------------------------
 //
-// Expt::abortTrial --
+// Block::abortTrial --
 //
 // Aborts the current trial of the experiment. The current (to be
-// aborted) trial is put at the end of the trial sequence in the Expt,
+// aborted) trial is put at the end of the trial sequence in the Block,
 // without recording any response for that trial. The next call to
 // drawTrial will start the same trial that would have started if the
 // current trial had been completed normally, instead of being
@@ -303,8 +325,8 @@ DOTRACE("Expt::undrawTrial");
 //
 //--------------------------------------------------------------------
 
-void Expt::abortTrial() {
-DOTRACE("Expt::abortTrial");
+void Block::abortTrial() {
+DOTRACE("Block::abortTrial");
   if (isComplete()) return;
 
   // Remember the trial that we are about to abort so we can store it
@@ -326,16 +348,16 @@ DOTRACE("Expt::abortTrial");
 
 //--------------------------------------------------------------------
 //
-// Expt::processResponse --
+// Block::processResponse --
 //
-// Record a response to the current trial in the Expt, and prepare the
-// Expt for the next trial.
+// Record a response to the current trial in the Block, and prepare the
+// Block for the next trial.
 //
 // Results:
 // none.
 //
 // Side effects:
-// The response is recorded for the current trial, and the Expt's
+// The response is recorded for the current trial, and the Block's
 // trial sequence index is incremented. In this way, the next call to 
 // drawTrial will start the next trial. Also, the next call to 
 // prevResponse will return the response that was recorded in the
@@ -343,20 +365,13 @@ DOTRACE("Expt::abortTrial");
 //
 //--------------------------------------------------------------------
 
-void Expt::processResponse(int response) {
-DOTRACE("Expt::processResponse");
+void Block::processResponse(int response) {
+DOTRACE("Block::processResponse");
   if (isComplete()) return;
 
-  static timeval endTime, elapsedTime;
-  gettimeofday(&endTime, NULL);
+  int msec = elapsedMsecSince(itsBeginTime);
 
-  elapsedTime.tv_sec = endTime.tv_sec - itsBeginTime.tv_sec;
-  elapsedTime.tv_usec = endTime.tv_usec - itsBeginTime.tv_usec;
-
-  int msec = int(double(elapsedTime.tv_sec)*1000.0 +
-					  double(elapsedTime.tv_usec)/1000.0);
-
-  theTlist.getTrial(currentTrial()).recordResponse(response, msec);
+  getCurTrial().recordResponse(response, msec);
 
   if (itsVerbose) {
     cerr << "response " << response << endl;
@@ -365,12 +380,12 @@ DOTRACE("Expt::processResponse");
 
 //---------------------------------------------------------------------
 //
-// Expt::endTrial --
+// Block::endTrial --
 //
 //---------------------------------------------------------------------
 
-void Expt::endTrial() {
-DOTRACE("Expt::endTrial");
+void Block::endTrial() {
+DOTRACE("Block::endTrial");
   if (isComplete()) return;
 
   // XXX Right now this will cause a semantic problem (but not a
@@ -382,9 +397,21 @@ DOTRACE("Expt::endTrial");
   ++itsCurTrialSeqIdx;
 }
 
+//---------------------------------------------------------------------
+//
+// Block::haltExpt --
+//
+//---------------------------------------------------------------------
+
+void Block::haltExpt() {
+DOTRACE("Block::haltExpt");
+  undrawTrial();
+  abortTrial();
+}
+
 //--------------------------------------------------------------------
 //
-// Expt::undoPrevTrial --
+// Block::undoPrevTrial --
 //
 // This function undoes the last *successfully* completed trial. It
 // moves the trial counter back one, then erases the most recent
@@ -396,8 +423,8 @@ DOTRACE("Expt::endTrial");
 //
 //--------------------------------------------------------------------
 
-void Expt::undoPrevTrial() {
-DOTRACE("Expt::undoPrevTrial");
+void Block::undoPrevTrial() {
+DOTRACE("Block::undoPrevTrial");
 
   // Check to make sure we've completed at least one trial
   if (itsCurTrialSeqIdx < 1) return;
@@ -406,7 +433,7 @@ DOTRACE("Expt::undoPrevTrial");
   --itsCurTrialSeqIdx;
 
   // ...and erase the last response given to that trial
-  theTlist.getTrial(currentTrial()).undoLastResponse();
+  getCurTrial().undoLastResponse();
 }
 
 static const char vcid_block_cc[] = "$Header$";

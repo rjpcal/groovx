@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Sun Jun 27 17:39:04 1999
+// written: Tue Jul 20 14:09:15 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,10 @@
 
 #include "exptdriver.h"
 #include "tclevalcmd.h"
-#include "soundtcl.h"
+#include "objtogl.h"
+#include "toglconfig.h"
+#include "sound.h"
+#include "soundlist.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -30,9 +33,6 @@
 
 namespace {
   ExptDriver& exptDriver = ExptDriver::theExptDriver();
-
-  // YUK! this should be handled through a function call somehow
-  const char* const widgetName = ".togl";
 
   const string ioTag = "KbdResponseHdlr";
 }
@@ -119,8 +119,8 @@ DOTRACE("KbdResponseHdlr::deserialize");
 
 int KbdResponseHdlr::charCount() const {
 DOTRACE("KbdResponseHdlr::charCount");
-  return (ioTag.size() + 1
-			 + itsKeyRespPairs.size() + 1
+  return (ioTag.length() + 1
+			 + itsKeyRespPairs.length() + 1
 			 + gCharCount<bool>(itsUseFeedback) + 1
 			 + 1); // fudge factor
 }
@@ -137,6 +137,17 @@ DOTRACE("KbdResponseHdlr::setInterp");
   }
 }
 
+const char* KbdResponseHdlr::getFeedbackPairs() const {
+DOTRACE("KbdResponseHdlr::getFeedbackPairs");
+  return itsFeedbackPairs.c_str(); 
+}
+
+void KbdResponseHdlr::setFeedbackPairs(const char* feedback_string) {
+DOTRACE("KbdResponseHdlr::setFeedbackPairs");
+  itsFeedbackPairs = feedback_string;
+  updateFeedbacks();
+}
+
 void KbdResponseHdlr::rhBeginTrial() const {
 DOTRACE("KbdResponseHdlr::rhBeginTrial");
   attend();
@@ -148,8 +159,15 @@ DOTRACE("KbdResponseHdlr::rhAbortTrial");
 
   ignore();
 
-  int result = SoundTcl::playProc(itsInterp, NULL, "err");
-  if (result != TCL_OK) Tcl_BackgroundError(itsInterp);
+  try {
+	 const int ERR_INDEX = 1;
+	 Sound* p = SoundList::theSoundList().getCheckedPtr(ERR_INDEX);
+	 p->play();
+  }
+  catch (ErrorWithMsg& err) {
+	 Tcl_BackgroundError(itsInterp);
+	 Tcl_AddObjErrorInfo(itsInterp, err.msg().c_str(), -1);
+  }
 }
 
 void KbdResponseHdlr::rhHaltExpt() const {
@@ -182,31 +200,19 @@ void KbdResponseHdlr::attend() const {
 DOTRACE("KbdResponseHdlr::attend");
   Assert(itsInterp != 0);
 
-//   Tk_Window tkwin = Tk_NameToWindow(itsInterp, 
-// 												const_cast<char *>(widgetName),
-// 												Tk_MainWindow(itsInterp));
-//   Tk_CreateEventHandler(tkwin, KeyPressMask, eventProc,
-// 								static_cast<ClientData>
-// 								(const_cast<KbdResponseHdlr *>(this)));
-
-  static TclEvalCmd bindCmd("bind .togl <KeyPress> "
-									 "{ __KbdResponseHdlrPrivate::handle %K }");
-
   // Clear the event queue before we rebind to input events
   while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0) {
-    ; // Empty loop body
+	 ; // Empty loop body
   }
-
-  int result = bindCmd.invoke(itsInterp);
-  if (result != TCL_OK) Tcl_BackgroundError(itsInterp);
-}
-
-// void KbdResponseHdlr::eventProc(ClientData clientData, XEvent* /*eventPtr*/) {
-// DOTRACE("KbdResponseHdlr::eventProc");
-//   const KbdResponseHdlr& rh = *(const_cast<const KbdResponseHdlr*>
-// 										  (static_cast<KbdResponseHdlr *>(clientData)));
   
-// }
+  try {
+	 ObjTogl::theToglConfig()->bind("<KeyPress>",
+											  "{ __KbdResponseHdlrPrivate::handle %K }");
+  }
+  catch (...) {
+	 Tcl_BackgroundError(itsInterp);
+  }
+}
 
 //--------------------------------------------------------------------
 //
@@ -261,14 +267,18 @@ DOTRACE("KbdResponseHdlr::getRespFromKeysym");
   const char* last_char = keysym;
   while ( *(last_char+1) != '\0' ) { ++last_char; }
     
-  int resp = -1;
+  int resp = ResponseHandler::INVALID_RESPONSE;
+
   for (int i = 0; i < itsRegexps.size(); ++i) {
     int found = Tcl_RegExpExec(itsInterp, itsRegexps[i].regexp, 
                                last_char, last_char);
 
 	 // Return value of -1 indicates error while executing in the
-	 // regular expression
-    if (found == -1) Tcl_BackgroundError(itsInterp);
+	 // regular expression, so generate a background error
+    if (found == -1) {
+		Tcl_BackgroundError(itsInterp);
+		return ResponseHandler::INVALID_RESPONSE;
+	 }
 
 	 // Return value of 0 indicates no match was found, so do nothing
 	 // and go to the next loop cycle
@@ -328,9 +338,15 @@ DOTRACE("KbdResponseHdlr::handleResponse");
 
   int response = getRespFromKeysym(keysym);
 
-  // If we had a valid response and itsUseFeedback is true, then give
-  // the appropriate feedback for 'response'.
-  if (response >= 0 && itsUseFeedback) {
+  // If we had an invalid response, instruct the exptDriver to abort
+  // the trial
+  if (response == ResponseHandler::INVALID_RESPONSE) {
+	 exptDriver.edAbortTrial();
+	 return TCL_OK;
+  }
+  // ... otherwise if itsUseFeedback is true, then give the
+  // appropriate feedback for 'response'.
+  else if (itsUseFeedback) {
     int result = feedback(response);
     if (result != TCL_OK) return result;
   }
@@ -357,17 +373,73 @@ void KbdResponseHdlr::ignore() const {
 DOTRACE("KbdResponseHdlr::ignore");
   Assert(itsInterp != 0);
 
-//   Tk_Window tkwin = Tk_NameToWindow(itsInterp, 
-// 												const_cast<char *>(widgetName),
-// 												Tk_MainWindow(itsInterp));
-//   Tk_DeleteEventHandler(tkwin, KeyPressMask, eventProc,
-// 								static_cast<ClientData>
-// 								(const_cast<KbdResponseHdlr *>(this)));
+  try {
+	 ObjTogl::theToglConfig()->bind("<KeyPress>", "{}");
+  }
+  catch (...) {
+	 Tcl_BackgroundError(itsInterp);
+  }
+}
 
-  static TclEvalCmd unbindCmd("bind .togl <KeyPress> {}");
+//---------------------------------------------------------------------
+//
+// KbdResponseHdlr::updateFeedacks --
+//
+//---------------------------------------------------------------------
 
-  int result = unbindCmd.invoke(itsInterp);
-  if (result != TCL_OK) Tcl_BackgroundError(itsInterp);
+void KbdResponseHdlr::updateFeedbacks() {
+DOTRACE("KbdResponseHdlr::updateFeedbacks");
+  Assert(itsInterp != 0);
+
+  itsFeedbacks.clear(); 
+
+  TclObjPtr feedback_pairs_obj(Tcl_NewStringObj(itsFeedbackPairs.c_str(), -1));
+
+  Tcl_Obj** pairs_objs;
+  int num_pairs=0;
+  if ( Tcl_ListObjGetElements(itsInterp, feedback_pairs_obj, 
+										&num_pairs, &pairs_objs) != TCL_OK ) {
+	 Tcl_BackgroundError(itsInterp);
+    return;
+  }
+
+  // Loop over the regexp/response value pairs
+  for (int i = 0; i < num_pairs; ++i) {
+
+	 // Get the i'th pair from the list of pairs
+    Tcl_Obj* pair_obj = pairs_objs[i];
+
+    // Check that the length of the "pair" is really 2
+    int length;
+    if (Tcl_ListObjLength(itsInterp, pair_obj, &length) != TCL_OK) {
+		Tcl_BackgroundError(itsInterp);
+		return;
+	 }
+    if (length != 2) {
+		Tcl_BackgroundError(itsInterp);
+		return;
+	 }
+
+    // Get a Tcl_Obj from the first element of the pair.
+    Tcl_Obj *first_obj=NULL;
+    if (Tcl_ListObjIndex(itsInterp, pair_obj, 0, &first_obj) != TCL_OK) {
+      Tcl_BackgroundError(itsInterp);
+		return;
+	 }
+
+	 // Get a Tcl_Obj from the second element of the pair; then get an
+	 // integer from that Tcl_Obj.
+	 Tcl_Obj *second_obj=NULL;
+    if (Tcl_ListObjIndex(itsInterp, pair_obj, 1, &second_obj) != TCL_OK) {
+      Tcl_BackgroundError(itsInterp);
+		return;
+	 }
+    
+    // Push the pair onto the vector
+    itsFeedbacks.push_back(Condition_Feedback(first_obj, second_obj));
+  }
+
+  DebugPrintNL("updateFeedbacks success!");
 }
 
 //--------------------------------------------------------------------

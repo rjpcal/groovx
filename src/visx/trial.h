@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Thu May 27 20:25:34 1999
+// written: Wed Jul  7 12:36:44 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,21 @@
 #ifndef ID_H_DEFINED
 #include "id.h"
 #endif
+
+#ifndef ERROR_H_DEFINED
+#include "error.h"
+#endif
+
+///////////////////////////////////////////////////////////////////////
+//
+// TrialError class definition
+//
+///////////////////////////////////////////////////////////////////////
+
+class TrialError : public ErrorWithMsg {
+public:
+  TrialError(const string& msg="") : ErrorWithMsg(msg) {}
+};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -58,8 +73,7 @@ public:
   // creators //
   //////////////
 
-  Trial() : 
-    itsIdPairs(), itsResponses(), itsType(-1) {}
+  Trial();
   Trial(istream &is, IOFlag flag); 
   virtual ~Trial () {}
 
@@ -82,6 +96,9 @@ public:
   // accessors //
   ///////////////
 
+  int getResponseHandler() const;
+  int getTimingHdlr() const;
+
   const ObjGrp& objs() const { return itsIdPairs; }
 
   // returns some info about relationship between objects in trial
@@ -100,9 +117,14 @@ public:
   // manipulators //
   //////////////////
 
-  void add(ObjId objid, PosId posid) { itsIdPairs.push_back(IdPair(objid, posid)); }
+  void add(ObjId objid, PosId posid) {
+	 itsIdPairs.push_back(IdPair(objid, posid));
+  }
 
   void setType(int t) { itsType = t; }
+
+  void setResponseHandler(int rhid);
+  void setTimingHdlr(int thid);
 
   void recordResponse(int val, int msec) { 
 	 itsResponses.push_back(Response(val, msec));
@@ -114,13 +136,17 @@ public:
   // actions //
   /////////////
 
-  void action() const;
-  void undraw() const;
+  void trDraw() const;
+  void trUndraw() const;
 
 private:
   ObjGrp itsIdPairs;
   vector<Response> itsResponses;
   int itsType;
+  int itsRhId;
+  int itsThId;
+
+  mutable bool isItRendered;
 };
 
 static const char vcid_trial_h[] = "$Id$";

@@ -20,9 +20,16 @@ set VERBOSE 0
 
 ### Run test procedures
 set files {
+	 gl_test.tcl
+	 sound_test.tcl
+	 kbdrh_test.tcl
+	 th_test.tcl
+	 expt_test.tcl
+	 objtogl_test.tcl
+	 tlist_test.tcl
+	 block_test.tcl
 	 bitmap_test.tcl
 	 gtext_test.tcl
-	 objtogl_test.tcl
 	 grobj_test.tcl
 	 face_test.tcl
 	 fixpt_test.tcl
@@ -33,19 +40,13 @@ set files {
 	 poslist_test.tcl
 	 subject_test.tcl
 	 dlist_test.tcl
-	 gl_test.tcl
-	 sound_test.tcl
 	 trial_test.tcl
-	 tlist_test.tcl
 	 rhlist_test.tcl
-	 kbdrh_test.tcl
-	 th_test.tcl
-	 block_test.tcl
-	 expt_test.tcl
 }
 
 
 foreach file $files {
+	 puts "running ${file}..."
 	 source ${TEST_DIR}/$file
 }
 

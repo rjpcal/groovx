@@ -3,7 +3,7 @@
 // tlist.h
 // Rob Peters
 // created: Fri Mar 12 13:23:02 1999
-// written: Sat Jul  3 14:44:31 1999
+// written: Thu Jul  8 10:51:40 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,21 +65,6 @@ public:
   // number of trials that were loaded.
   int readFromObjidsOnly(istream &is, int num_trials, int offset = 0);
 
-  ///////////////
-  // accessors //
-  ///////////////
-
-  // Precondition: trial > 0
-  // This function will grow the Tlist if trial is beyond the current capacity,
-  // and it will create a new Trial if the Trial* at trial is currently NULL.
-  Trial& getTrial(int trial);
-
-  // Precondition: trial is a valid trialid 
-  //
-  // This accessor for const Tlist's will not create a new Trial or
-  // expand the Tlist
-  Trial& getTrialConst(int trial) const;
-
   //////////////////
   // manipulators //
   //////////////////
@@ -90,7 +75,6 @@ public:
   void setVisible(bool vis);
 
   void setCurTrial(int trial);
-  void addToTrial(int trial, ObjId objid, PosId posid);
   void clear();
 
   /////////////

@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Fri Jun 25 13:01:39 1999
+// written: Sat Jun 26 14:03:34 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 #include <cstring>
 
 #include "exptdriver.h"
+#include "timeutils.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -128,17 +129,14 @@ void TrialEvent::dummyInvoke(ClientData clientData) {
 DOTRACE("TrialEvent::dummyInvoke");
   TrialEvent* event = static_cast<TrialEvent *>(clientData);
 
+  EventTraceNL(typeid(*event).name());
+
+#ifdef EVENT_TRACE
+  cerr << "    before == " << elapsedMsecSince(event->itsBeginTime) << endl;
+#endif
+
 #ifdef LOCAL_DEBUG
-  // Check the elapsed time and compare it to the requested elapsed
-  // time.
-  static timeval endTime, elapsedTime;
-  gettimeofday(&endTime, NULL);
-
-  elapsedTime.tv_sec = endTime.tv_sec - event->itsBeginTime.tv_sec;
-  elapsedTime.tv_usec = endTime.tv_usec - event->itsBeginTime.tv_usec;
-
-  int msec = int(double(elapsedTime.tv_sec)*1000.0 +
-					  double(elapsedTime.tv_usec)/1000.0);
+  int msec = elapsedMsecSince(itsBeginTime);
   int error = event->itsRequestedDelay - msec;
   event->itsTotalAbsError += abs(error);
   event->itsTotalError += error;
@@ -147,6 +145,10 @@ DOTRACE("TrialEvent::dummyInvoke");
 
   // Do the actual event callback.
   event->invoke();
+  
+#ifdef EVENT_TRACE
+  cerr << "    after == " << elapsedMsecSince(event->itsBeginTime) << endl;
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -157,50 +159,43 @@ DOTRACE("TrialEvent::dummyInvoke");
 
 void AbortTrialEvent::invoke() {
 DOTRACE("AbortTrialEvent::invoke");
-  EventTraceNL("AbortTrialEvent");
   getExptDriver().edAbortTrial();
 }
 
 void DrawEvent::invoke() {
 DOTRACE("DrawEvent::invoke");
-  EventTraceNL("DrawEvent");
   getExptDriver().draw();
 }
 
 void EndTrialEvent::invoke() {
 DOTRACE("EndTrialEvent::invoke");
-  EventTraceNL("EndTrialEvent");
   getExptDriver().edEndTrial();
 }
 
 void UndrawEvent::invoke() {
 DOTRACE("UndrawEvent::invoke");
-  EventTraceNL("UndrawEvent");
   getExptDriver().undraw();
 }
 
 void SwapBuffersEvent::invoke() {
 DOTRACE("SwapBuffersEvent::invoke");
-  EventTraceNL("SwapBuffersEvent");
   getExptDriver().edSwapBuffers();
 }
 
 void RenderBackEvent::invoke() {
 DOTRACE("RenderBackEvent::invoke");
-  EventTraceNL("RenderBackEvent");
   glDrawBuffer(GL_BACK);
 }
 
 void RenderFrontEvent::invoke() {
 DOTRACE("RenderFrontEvent::invoke");
-  EventTraceNL("RenderFrontEvent");
   glDrawBuffer(GL_FRONT);
 }
 
 void ClearBufferEvent::invoke() {
 DOTRACE("ClearBufferEvent::invoke");
-  EventTraceNL("ClearBufferEvent");
   glClear(GL_COLOR_BUFFER_BIT);
+  glFlush();
 }
 
 static const char vcid_trialevent_cc[] = "$Header$";

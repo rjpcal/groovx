@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Sat Jun 26 12:30:20 1999
+// written: Fri Jul  2 13:30:04 1999
 // $Id$
 //
 // This file defines the class Block. Block holds a sequence of trial
@@ -36,17 +36,20 @@ struct timeval;
 class Trial;
 
 ///////////////////////////////////////////////////////////////////////
-// Expt class
+// Block class
 ///////////////////////////////////////////////////////////////////////
 
-class Expt : public virtual IO {
+class Block : public virtual IO {
 public:
   //////////////
   // creators //
   //////////////
 
-  Expt();
-  virtual ~Expt() {}
+  Block();
+  virtual ~Block() {}
+
+  // Add the specified trialid to the block, 'repeat' number of times.
+  void addTrial(int trialid, int repeat=1);
 
   // Add to the Block all valid trialids between first_trial and
   // last_trial, inclusive. If a boundary is set to -1, then the
@@ -61,7 +64,7 @@ public:
   // Clear the Block's list of trialids.
   void reset();
 
-  // These I/O functions write/read the _entire_ state of the Expt,
+  // These I/O functions write/read the _entire_ state of the Block,
   // including the global Tlist, ObjList, and PosList.
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
@@ -73,7 +76,7 @@ public:
   
   Trial& getCurTrial() const;
 
-  // Returns the total number of trials that will comprise the Expt.
+  // Returns the total number of trials that will comprise the Block.
   virtual int numTrials() const;
 
   // Returns the number of trials that have been successfully
@@ -86,7 +89,7 @@ public:
   virtual int currentTrialType() const;
 
   // Returns the last valid (but not necessarily "correct") response
-  // that was recorded in the current Expt.
+  // that was recorded in the current Block.
   virtual int prevResponse() const;
 
   // Returns true if the current experiment is complete (i.e. all
@@ -118,6 +121,8 @@ public:
   virtual void abortTrial();
   virtual void processResponse(int response);
   virtual void endTrial();
+
+  virtual void haltExpt();
 
   // The state of the experiment is restored to what it was just prior
   // to the beginning of the most recent successfully completed

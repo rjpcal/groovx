@@ -3,7 +3,7 @@
 // observable.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 25 18:39:27 1999
-// written: Wed May 26 11:51:27 1999
+// written: Sat Jul  3 16:43:34 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

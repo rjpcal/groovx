@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // position.cc
 // Rob Peters
 // created: Wed Mar 10 21:33:15 1999
-// written: Mon Apr 26 15:09:42 1999
+// written: Sat Jul  3 16:34:45 1999
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef POSITION_CC_DEFINED
@@ -13,54 +15,67 @@
 
 #include <iostream.h>
 #include <string>
-#include <typeinfo>
 #include <GL/gl.h>
 
 #define NO_TRACE
 #include "trace.h"
-#define INVARIANT
+#define LOCAL_INVARIANT
 #include "debug.h"
 
 ///////////////////////////////////////////////////////////////////////
+//
+// File scope data
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace {
+  const string ioTag = "Position";
+}
+
+///////////////////////////////////////////////////////////////////////
+//
 // PositionImpl structure 
+//
 ///////////////////////////////////////////////////////////////////////
 
 struct PositionImpl {
-  PositionImpl(float tx = 0.0, float ty = 0.0, float tz = 0.0,
-               float sx = 1.0, float sy = 1.0, float sz = 1.0,
-               float rx = 0.0, float ry = 0.0, float rz = 1.0, float ra = 0.0,
-					float r = 1.0, float g = 1.0, float b = 1.0) :
+  PositionImpl(double tx = 0.0, double ty = 0.0, double tz = 0.0,
+               double sx = 1.0, double sy = 1.0, double sz = 1.0,
+               double rx = 0.0, double ry = 0.0, double rz = 1.0, double ra = 0.0,
+					double r = 1.0, double g = 1.0, double b = 1.0) :
   tr_x(tx), tr_y(ty), tr_z(tz),
   sc_x(sx), sc_y(sy), sc_z(sz),
   rt_x(rx), rt_y(ry), rt_z(rz), rt_ang(ra),
   red(r), green(g), blue(b) {}
 
-  float tr_x, tr_y, tr_z;       // x,y,z coord shift
-  float sc_x, sc_y, sc_z;       // x,y,z scaling
-  float rt_x, rt_y, rt_z;       // vector of rotation axis
-  float rt_ang;                 // angle in degrees of rotation around axis
-  float red, blue, green;		  // RGB color values ( 0.0 <= val <= 1.0 )
+  double tr_x, tr_y, tr_z;       // x,y,z coord shift
+  double sc_x, sc_y, sc_z;       // x,y,z scaling
+  double rt_x, rt_y, rt_z;       // vector of rotation axis
+  double rt_ang;                 // angle in degrees of rotation around axis
+  double red, blue, green;		  // RGB color values ( 0.0 <= val <= 1.0 )
 };
 
 ///////////////////////////////////////////////////////////////////////
+//
 // Position member functions
+//
 ///////////////////////////////////////////////////////////////////////
 
 Position::Position() : 
   itsImpl(new PositionImpl)
 {
 DOTRACE("Position::Position()");
-#ifdef LOCAL_DEBUG
-  DUMP_VAL2((void *) itsImpl);
-#endif
+
+  DebugEvalNL((void *) itsImpl);
+
   // empty
   Invariant(check());
 }
 
-Position::Position (istream &is, IOFlag flag) : 
+Position::Position (istream& is, IOFlag flag) : 
   itsImpl(new PositionImpl)
 {
-DOTRACE("Position::Position(istream &is)");
+DOTRACE("Position::Position(istream&, IOFlag)");
   deserialize(is, flag);
 }
 
@@ -75,7 +90,7 @@ DOTRACE("Position::serialize");
   if (flag & BASES) { /* there are no bases to serialize */ }
 
   char sep = ' ';
-  if (flag & TYPENAME) { os << typeid(Position).name() << sep; }
+  if (flag & TYPENAME) { os << ioTag << sep; }
 
   os << itsImpl->tr_x << sep
      << itsImpl->tr_y << sep
@@ -87,26 +102,17 @@ DOTRACE("Position::serialize");
      << itsImpl->rt_y << sep
      << itsImpl->rt_z << sep
      << itsImpl->rt_ang << endl;
-  if (os.fail()) throw OutputError(typeid(Position));
+  if (os.fail()) throw OutputError(ioTag);
 }
 
 void Position::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Position::deserialize");
   Invariant(check());
-#ifdef LOCAL_DEBUG
-  DUMP_VAL2(flag);
-#endif
+
+  DebugEvalNL(flag);
+
   if (flag & BASES) { /* there are no bases to deserialize */ }
-  if (flag & TYPENAME) {
-    string name;
-    is >> name;
-#ifdef LOCAL_DEBUG
-    DUMP_VAL2(name);
-#endif
-    if (name != typeid(Position).name()) { 
-		throw InputError(typeid(Position));
-	 }
-  }
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
   is >> itsImpl->tr_x;
   is >> itsImpl->tr_y;
@@ -118,18 +124,33 @@ DOTRACE("Position::deserialize");
   is >> itsImpl->rt_y;
   is >> itsImpl->rt_z;
   is >> itsImpl->rt_ang;
-#ifdef LOCAL_DEBUG
-  DUMP_VAL1(itsImpl->tr_x);
-  DUMP_VAL2(itsImpl->rt_ang);
-#endif
-  if (is.fail()) throw InputError(typeid(Position));
+
+  DebugEval(itsImpl->tr_x);
+  DebugEvalNL(itsImpl->rt_ang);
+
+  if (is.fail()) throw InputError(ioTag);
+}
+
+int Position::charCount() const {
+  return (ioTag.length() + 1
+			 + gCharCount<double>(itsImpl->tr_x) + 1
+			 + gCharCount<double>(itsImpl->tr_y) + 1
+			 + gCharCount<double>(itsImpl->tr_z) + 1
+			 + gCharCount<double>(itsImpl->sc_x) + 1
+			 + gCharCount<double>(itsImpl->sc_y) + 1
+			 + gCharCount<double>(itsImpl->sc_z) + 1
+			 + gCharCount<double>(itsImpl->rt_x) + 1
+			 + gCharCount<double>(itsImpl->rt_y) + 1
+			 + gCharCount<double>(itsImpl->rt_z) + 1
+			 + gCharCount<double>(itsImpl->rt_ang) + 1
+			 + 1);// fudge factor
 }
 
 ///////////////
 // accessors //
 ///////////////
 
-void Position::getRotate(float &a, float &x, float &y, float &z) const {
+void Position::getRotate(double &a, double &x, double &y, double &z) const {
 DOTRACE("Position::getRotate");
   Invariant(check());
   a = itsImpl->rt_ang;
@@ -138,7 +159,7 @@ DOTRACE("Position::getRotate");
   z = itsImpl->rt_z;
 }
 
-void Position::getTranslate(float &x, float &y, float &z) const {
+void Position::getTranslate(double &x, double &y, double &z) const {
 DOTRACE("Position::getTranslate");
   Invariant(check());
   x = itsImpl->tr_x;
@@ -146,7 +167,7 @@ DOTRACE("Position::getTranslate");
   z = itsImpl->tr_z;
 }
 
-void Position::getScale(float &x, float &y, float &z) const {
+void Position::getScale(double &x, double &y, double &z) const {
 DOTRACE("Position::getScale");
   Invariant(check());
   x = itsImpl->sc_x;
@@ -158,13 +179,13 @@ DOTRACE("Position::getScale");
 // manipulators //
 //////////////////
 
-void Position::setAngle(float a) {
+void Position::setAngle(double a) {
 DOTRACE("Position::setAngle");
   Invariant(check());
   itsImpl->rt_ang = a;
 }
 
-void Position::setRotate(float a, float x, float y, float z) {
+void Position::setRotate(double a, double x, double y, double z) {
 DOTRACE("Position::setRotate");
   Invariant(check());
   itsImpl->rt_ang = a;
@@ -173,7 +194,7 @@ DOTRACE("Position::setRotate");
   itsImpl->rt_z = z;
 }
 
-void Position::setScale(float x, float y, float z) {
+void Position::setScale(double x, double y, double z) {
 DOTRACE("Position::setScale");
   Invariant(check());
   itsImpl->sc_x = x;
@@ -181,7 +202,7 @@ DOTRACE("Position::setScale");
   itsImpl->sc_z = z;
 }
 
-void Position::setTranslate(float x, float y, float z) {
+void Position::setTranslate(double x, double y, double z) {
 DOTRACE("Position::setTranslate");
   Invariant(check());
   itsImpl->tr_x = x;
@@ -195,9 +216,8 @@ DOTRACE("Position::setTranslate");
 
 void Position::translate() const {
 DOTRACE("Position::translate");
-#ifdef LOCAL_DEBUG
-  DUMP_VAL2((void *) itsImpl);
-#endif
+  DebugEvalNL((void *) itsImpl);
+
   Invariant(check());
   glTranslatef(itsImpl->tr_x, itsImpl->tr_y, itsImpl->tr_z);
 }
@@ -220,6 +240,11 @@ DOTRACE("Position::go");
   translate();
   scale();
   rotate();
+}
+
+void Position::rego() const {
+DOTRACE("Position::rego");
+  go();
 }
 
 bool Position::check() const {

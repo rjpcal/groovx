@@ -3,7 +3,7 @@
 // poslisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:46:09 1999
-// written: Tue Jun 29 18:33:46 1999
+// written: Wed Jul  7 14:28:07 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,11 +42,7 @@ namespace PoslistTcl {
 class PoslistTcl::PosListPkg : public ListPkg<PosList> {
 public:
   PosListPkg(Tcl_Interp* interp) :
-	 ListPkg<PosList>(interp, "PosList", "3.0") {}
-
-  virtual IO& getIoFromId(int) { return PosList::thePosList(); }
-
-  virtual PosList* getCItemFromId(int) { return &PosList::thePosList(); }
+	 ListPkg<PosList>(interp, PosList::thePosList(), "PosList", "3.0") {}
 };
 
 //---------------------------------------------------------------------

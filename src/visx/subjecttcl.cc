@@ -2,7 +2,7 @@
 // subjecttcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Wed Apr 14 20:27:49 1999
+// written: Sun Jun 20 18:11:58 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -29,17 +29,17 @@
 namespace SubjectTcl {
   // utility function to extract a subject from a hash table given a
   // key string stored in an object in a Tcl_Obj array
-  int getSubjectFromObj(Tcl_HashTable *tblPtr, Tcl_Interp *interp,
-                        int objnum, Tcl_Obj *const objv[],
-                        Subject *&theSubject);
+  int getSubjectFromObj(Tcl_HashTable* tblPtr, Tcl_Interp* interp,
+                        int objnum, Tcl_Obj* const objv[],
+                        Subject*& theSubject);
 
   // the main Tcl_CmdProc which calls the subcommands below
   Tcl_ObjCmdProc subjectCmd;
 
   // the subcommands called by subjectCmd
   typedef int (SubjectTcl_SubcmdProc) 
-    (Tcl_HashTable *tblPtr, Tcl_Interp *interp, 
-     int objc, Tcl_Obj *const objv[]);
+    (Tcl_HashTable* tblPtr, Tcl_Interp* interp, 
+     int objc, Tcl_Obj* const objv[]);
 
   SubjectTcl_SubcmdProc newSubjectCmd;
   SubjectTcl_SubcmdProc subjectNameCmd;
@@ -55,14 +55,14 @@ namespace SubjectTcl {
   const char* const default_dir = "./";
 }
 
-int SubjectTcl::getSubjectFromObj(Tcl_HashTable *tblPtr, Tcl_Interp *interp,
-                                  int objnum, Tcl_Obj *const objv[],
-                                  Subject *&theSubject) {
+int SubjectTcl::getSubjectFromObj(Tcl_HashTable* tblPtr, Tcl_Interp* interp,
+                                  int objnum, Tcl_Obj* const objv[],
+                                  Subject*& theSubject) {
 DOTRACE("SubjectTcl::getSubjectFromObj");
-  char *subjectKey = Tcl_GetString(objv[objnum]);
+  char* subjectKey = Tcl_GetString(objv[objnum]);
   Assert(subjectKey);
 
-  Tcl_HashEntry *theEntry = Tcl_FindHashEntry(tblPtr, subjectKey);
+  Tcl_HashEntry* theEntry = Tcl_FindHashEntry(tblPtr, subjectKey);
   if (theEntry == NULL) {
     err_message(interp, objv, no_subject_msg);
     return TCL_ERROR;
@@ -77,10 +77,10 @@ DOTRACE("SubjectTcl::getSubjectFromObj");
   return TCL_OK;
 }
 
-int SubjectTcl::subjectCmd(ClientData clientData, Tcl_Interp *interp,
-                           int objc, Tcl_Obj *const objv[]) {
+int SubjectTcl::subjectCmd(ClientData clientData, Tcl_Interp* interp,
+                           int objc, Tcl_Obj* const objv[]) {
 DOTRACE("SubjectTcl::subjectCmd");
-  Tcl_HashTable *tblPtr = static_cast<Tcl_HashTable *>(clientData);
+  Tcl_HashTable* tblPtr = static_cast<Tcl_HashTable *>(clientData);
   
   if (tblPtr == NULL) {
     err_message(interp, objv, no_hash_msg);
@@ -88,7 +88,7 @@ DOTRACE("SubjectTcl::subjectCmd");
   }
 
   if (objc == 1) {
-    Tcl_WrongNumArgs(interp, 1, objv, "subcommand [args...]");
+    Tcl_WrongNumArgs(interp, 1, objv, "subcommand ?args...?");
     return TCL_ERROR;
   }
   else if (objc >= 2) {         // subcommand
@@ -117,11 +117,11 @@ DOTRACE("SubjectTcl::subjectCmd");
   return TCL_OK;
 }
 
-int SubjectTcl::newSubjectCmd(Tcl_HashTable *tblPtr, Tcl_Interp *interp,
-                              int objc, Tcl_Obj *const objv[]) {
+int SubjectTcl::newSubjectCmd(Tcl_HashTable* tblPtr, Tcl_Interp* interp,
+                              int objc, Tcl_Obj* const objv[]) {
 DOTRACE("SubjectTcl::newSubjectCmd");
   if (objc < 3 || objc > 5) {
-    Tcl_WrongNumArgs(interp, 2, objv, "subjectKey [subjectName] [subjectDir]");
+    Tcl_WrongNumArgs(interp, 2, objv, "subjectKey ?subjectName? ?subjectDir?");
     return TCL_ERROR;
   }
 
@@ -130,33 +130,31 @@ DOTRACE("SubjectTcl::newSubjectCmd");
   const char* subjectName = (objc > 2) ? Tcl_GetString(objv[3]) : subjectKey;
   const char* subjectDir =  (objc > 3) ? Tcl_GetString(objv[4]) : default_dir;
 
-#ifdef LOCAL_DEBUG
-  DUMP_VAL1(tblPtr);
-  DUMP_VAL2(subjectKey);
-#endif 
+  DebugEval(tblPtr);
+  DebugEvalNL(subjectKey);
 
   int isNew;
-  Tcl_HashEntry *newEntry = Tcl_CreateHashEntry(tblPtr, subjectKey, &isNew);
+  Tcl_HashEntry* newEntry = Tcl_CreateHashEntry(tblPtr, subjectKey, &isNew);
   if (isNew == 0) {
     err_message(interp, objv, subject_exists_msg);
     return TCL_ERROR;
   }
   
-  Subject *newSubject = new Subject(subjectName,subjectDir);
+  Subject* newSubject = new Subject(subjectName,subjectDir);
   Tcl_SetHashValue(newEntry, static_cast<ClientData>(newSubject));
 
   return TCL_OK;
 }
 
-int SubjectTcl::subjectNameCmd(Tcl_HashTable *tblPtr, Tcl_Interp *interp,
-                               int objc, Tcl_Obj *const objv[]) {
+int SubjectTcl::subjectNameCmd(Tcl_HashTable* tblPtr, Tcl_Interp* interp,
+                               int objc, Tcl_Obj* const objv[]) {
 DOTRACE("SubjectTcl::subjectNameCmd");
   if (objc < 3 || objc > 4) {
-    Tcl_WrongNumArgs(interp, 2, objv, "subjectKey [subjectName]");
+    Tcl_WrongNumArgs(interp, 2, objv, "subjectKey ?subjectName?");
     return TCL_ERROR;
   }
 
-  Subject *theSubject=NULL;
+  Subject* theSubject=NULL;
   if (getSubjectFromObj(tblPtr, interp, 2, objv, theSubject) != TCL_OK)
     return TCL_ERROR;
 
@@ -175,15 +173,15 @@ DOTRACE("SubjectTcl::subjectNameCmd");
   return TCL_OK;
 }
 
-int SubjectTcl::subjectDirCmd(Tcl_HashTable *tblPtr, Tcl_Interp *interp,
-                              int objc, Tcl_Obj *const objv[]) {
+int SubjectTcl::subjectDirCmd(Tcl_HashTable* tblPtr, Tcl_Interp* interp,
+                              int objc, Tcl_Obj* const objv[]) {
 DOTRACE("SubjectTcl::subjectDirCmd");
   if (objc < 3 || objc > 4) {
-    Tcl_WrongNumArgs(interp, 2, objv, "subjectKey [subjectDir]");
+    Tcl_WrongNumArgs(interp, 2, objv, "subjectKey ?subjectDir?");
     return TCL_ERROR;
   }
 
-  Subject *theSubject=NULL;
+  Subject* theSubject=NULL;
   if (getSubjectFromObj(tblPtr, interp, 2, objv, theSubject) != TCL_OK)
     return TCL_ERROR;
 
@@ -202,8 +200,8 @@ DOTRACE("SubjectTcl::subjectDirCmd");
   return TCL_OK;
 }
 
-int SubjectTcl::listSubjectsCmd(Tcl_HashTable *tblPtr, Tcl_Interp *interp,
-                                int objc, Tcl_Obj *const objv[]) {
+int SubjectTcl::listSubjectsCmd(Tcl_HashTable* tblPtr, Tcl_Interp* interp,
+                                int objc, Tcl_Obj* const objv[]) {
 DOTRACE("SubjectTcl::listSubjectsCmd");
   if (objc != 2) {
     Tcl_WrongNumArgs(interp, 2, objv, NULL);
@@ -215,8 +213,8 @@ DOTRACE("SubjectTcl::listSubjectsCmd");
   for (Tcl_HashEntry* theEntry = Tcl_FirstHashEntry(tblPtr, &search); 
        theEntry != NULL;
        theEntry = Tcl_NextHashEntry(&search)) {
-	 Subject *theSubject = (Subject *) Tcl_GetHashValue(theEntry);
-	 const char *theKey = Tcl_GetHashKey(tblPtr, theEntry);
+	 Subject* theSubject = (Subject *) Tcl_GetHashValue(theEntry);
+	 const char* theKey = Tcl_GetHashKey(tblPtr, theEntry);
     Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
                            theKey, "\t",
                            theSubject->getName(), "\t",
@@ -226,8 +224,8 @@ DOTRACE("SubjectTcl::listSubjectsCmd");
   return TCL_OK;
 }
 
-int SubjectTcl::clearCmd(Tcl_HashTable *tblPtr, Tcl_Interp *interp,
-								 int objc, Tcl_Obj *const objv[]) {
+int SubjectTcl::clearCmd(Tcl_HashTable* tblPtr, Tcl_Interp* interp,
+								 int objc, Tcl_Obj* const objv[]) {
 DOTRACE("SubjectTcl::clearCmd");
   if (objc != 2) {
     Tcl_WrongNumArgs(interp, 2, objv, NULL);
@@ -239,7 +237,7 @@ DOTRACE("SubjectTcl::clearCmd");
   for (Tcl_HashEntry* theEntry = Tcl_FirstHashEntry(tblPtr, &search); 
        theEntry != NULL;
        theEntry = Tcl_NextHashEntry(&search)) {
-	 Subject *theSubject = (Subject *) Tcl_GetHashValue(theEntry);
+	 Subject* theSubject = (Subject *) Tcl_GetHashValue(theEntry);
 	 delete theSubject;
 	 Tcl_DeleteHashEntry(theEntry);
   }
@@ -247,18 +245,19 @@ DOTRACE("SubjectTcl::clearCmd");
   return TCL_OK;
 }
 
-int SubjectTcl::Subject_Init(Tcl_Interp *interp) {
-DOTRACE("SubjectTcl::Subject_Init");
-  Tcl_HashTable *subjectTablePtr = new Tcl_HashTable;
+int Subject_Init(Tcl_Interp* interp) {
+DOTRACE("Subject_Init");
+
+  using namespace SubjectTcl;
+
+  Tcl_HashTable* subjectTablePtr = new Tcl_HashTable;
   Tcl_InitHashTable(subjectTablePtr, TCL_STRING_KEYS);
 
-#ifdef LOCAL_DEBUG
-  DUMP_VAL2(subjectTablePtr);
-#endif
+  DebugEvalNL(subjectTablePtr);
 
   Tcl_CreateObjCommand(interp, "subject", subjectCmd,
                        (ClientData) subjectTablePtr, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_PkgProvide(interp, "Subject", "1.4");
+  Tcl_PkgProvide(interp, "Subject", "1.6");
   return TCL_OK;
 }
 

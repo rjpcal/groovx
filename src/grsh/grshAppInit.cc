@@ -1,79 +1,124 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Apr 13 14:31:03 1999
+// written: Sat Jul  3 10:13:19 1999
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
-// manages collections of GrObj's (graphic objects) within an
-// ObjList (a list of GrObj's). Each GrObj must be defined to be
-// able to display itself using OpenGL (OpenGL commands are rendered
-// through a Togl widget). A Glist is a list of lists of objID's. Each
-// of the sublists can be easily rendered in the Togl window using the
-// "show" Tcl command. This makes it easy to set up experiments in
-// which different combinations of images are shown in series.
+// runs visual experiments.
+//
 ///////////////////////////////////////////////////////////////////////
 
-#include "tk.h"
-#include "togl.h"
-
-// forward declarations of package init procedures (entire ".h" files
-// are not needed here
-namespace ExptTcl       { Tcl_PackageInitProc Expt_Init;        }
-namespace FaceTcl       { Tcl_PackageInitProc Face_Init;        }
-namespace FixptTcl      { Tcl_PackageInitProc Fixpt_Init;       }
-namespace JitterTcl     { Tcl_PackageInitProc Jitter_Init;      }
-namespace MiscTcl       { Tcl_PackageInitProc Misc_Init;        }
-namespace ObjlistTcl    { Tcl_PackageInitProc Objlist_Init;     }
-namespace ObjTogl       { Tcl_PackageInitProc Objtogl_Init;     }
-namespace PositionTcl   { Tcl_PackageInitProc Position_Init;    }
-namespace PoslistTcl    { Tcl_PackageInitProc Poslist_Init;     }
-namespace SoundTcl      { Tcl_PackageInitProc Sound_Init;       }
-namespace SubjectTcl    { Tcl_PackageInitProc Subject_Init;     }
-namespace Tcldlist      { Tcl_PackageInitProc Tcldlist_Init;    }
-namespace TclGL         { Tcl_PackageInitProc Tclgl_Init;       }
-namespace TlistTcl      { Tcl_PackageInitProc Tlist_Init;       }
+#include <iostream.h>
+#include <tk.h>
+#include <togl.h>
 
 #define NO_TRACE
 #include "trace.h"
 
-int main(int argc, char **argv) {
-  Tk_Main(argc, argv, Tcl_AppInit);
-  return 0;
+// Forward declarations of package init procedures
+extern "C" {
+  Tcl_PackageInitProc Bitmap_Init;
+  Tcl_PackageInitProc Block_Init;
+  Tcl_PackageInitProc Expt_Init;
+  Tcl_PackageInitProc Expttest_Init;
+  Tcl_PackageInitProc Face_Init;
+  Tcl_PackageInitProc Fixpt_Init;
+  Tcl_PackageInitProc Grobj_Init;
+  Tcl_PackageInitProc Gtext_Init;
+  Tcl_PackageInitProc Jitter_Init;
+  Tcl_PackageInitProc Misc_Init;
+  Tcl_PackageInitProc Objlist_Init;
+  Tcl_PackageInitProc Objtogl_Init;
+  Tcl_PackageInitProc Pos_Init;
+  Tcl_PackageInitProc Poslist_Init;
+  Tcl_PackageInitProc Rh_Init;
+  Tcl_PackageInitProc Sound_Init;
+  Tcl_PackageInitProc Subject_Init;
+  Tcl_PackageInitProc Tcldlist_Init;
+  Tcl_PackageInitProc Tclgl_Init;
+  Tcl_PackageInitProc Th_Init;
+  Tcl_PackageInitProc Tlist_Init;
+  Tcl_PackageInitProc Trial_Init;
 }
 
+struct PkgName_PkgProc {
+  const char* PkgName;
+  Tcl_PackageInitProc *PkgProc;
+};
+
+PkgName_PkgProc Names_Procs[] = {
+  { "Tcl",      Tcl_Init       }
+  , { "Tk",       Tk_Init        }
+  , { "Togl",     Togl_Init      }
+  , { "Bitmap",   Bitmap_Init    }
+  , { "Block",    Block_Init     }
+  , { "Expt",     Expt_Init      }
+  , { "ExptTest", Expttest_Init  }
+  , { "Face",     Face_Init      }
+  , { "FixPt",    Fixpt_Init     }
+  , { "Grobj",    Grobj_Init     }
+  , { "Gtext",    Gtext_Init     }
+  , { "Jitter",   Jitter_Init    }
+  , { "Misc",     Misc_Init      }
+  , { "ObjList",  Objlist_Init   }
+  , { "Objtogl",  Objtogl_Init   }
+  , { "Pos",      Pos_Init       }
+  , { "PosList",  Poslist_Init   }
+  , { "Rh",       Rh_Init        }
+  , { "Sound",    Sound_Init     }
+  , { "Subject",  Subject_Init   }
+  , { "Tcldlist", Tcldlist_Init  }
+  , { "TclGL",    Tclgl_Init     }
+  , { "Th",       Th_Init        }
+  , { "Tlist",    Tlist_Init     }
+  , { "Trial",    Trial_Init     }
+};
+
+class TclApp {
+public:
+  TclApp(Tcl_Interp* interp) : 
+	 itsInterp(interp), 
+	 itsStatus(TCL_OK)
+  {
+  DOTRACE("TclApp::TclApp(Tcl_Interp*)");
+
+    int result;
+
+    for (int i = 0; i < sizeof(Names_Procs)/sizeof(PkgName_PkgProc); ++i) {
+		//		cerr << "initializing " << Names_Procs[i].PkgName << endl << flush;
+		result = Names_Procs[i].PkgProc(itsInterp);
+		if (result != TCL_OK) { itsStatus = result; }
+	 }
+
+	 // set prompt to "cmd[n]% " where cmd is the name of the program,
+	 // and n is the history event number
+	 Tcl_SetVar(interp, "tcl_prompt1", 
+					"puts -nonewline \"$argv0\\[[history nextid]\\]% \"",
+					TCL_GLOBAL_ONLY | TCL_LEAVE_ERR_MSG);
+	 
+	 // specifies a file to be 'source'd upon startup
+	 Tcl_SetVar(interp, "tcl_rcFileName", "./grsh_startup.tcl", TCL_GLOBAL_ONLY);
+  }
+
+  int status() const { return itsStatus; }
+private:
+  Tcl_Interp* itsInterp;
+  int itsStatus;
+};
+
 // initialize all the necessary packages
-int Tcl_AppInit(Tcl_Interp *interp) {
+int Tcl_AppInit(Tcl_Interp* interp) {
 DOTRACE("Tcl_AppInit");
+  static TclApp theApp(interp);
+  return theApp.status();
+}
 
-  if (Tcl_Init(interp)                  != TCL_OK)   { return TCL_ERROR; }
-  if (Tk_Init(interp)                   != TCL_OK)   { return TCL_ERROR; }
-  if (Togl_Init(interp)                 != TCL_OK)   { return TCL_ERROR; }
-
-  if (ExptTcl::Expt_Init(interp)        != TCL_OK)   { return TCL_ERROR; }
-  if (FaceTcl::Face_Init(interp)        != TCL_OK)   { return TCL_ERROR; }
-  if (FixptTcl::Fixpt_Init(interp)      != TCL_OK)   { return TCL_ERROR; }
-  if (JitterTcl::Jitter_Init(interp)    != TCL_OK)   { return TCL_ERROR; }
-  if (MiscTcl::Misc_Init(interp)        != TCL_OK)   { return TCL_ERROR; }
-  if (ObjlistTcl::Objlist_Init(interp)  != TCL_OK)   { return TCL_ERROR; }
-  if (ObjTogl::Objtogl_Init(interp)     != TCL_OK)   { return TCL_ERROR; }
-  if (PositionTcl::Position_Init(interp) != TCL_OK)  { return TCL_ERROR; }
-  if (PoslistTcl::Poslist_Init(interp)  != TCL_OK)   { return TCL_ERROR; }
-  if (SoundTcl::Sound_Init(interp)      != TCL_OK)   { return TCL_ERROR; }
-  if (SubjectTcl::Subject_Init(interp)  != TCL_OK)   { return TCL_ERROR; }
-  if (Tcldlist::Tcldlist_Init(interp)   != TCL_OK)   { return TCL_ERROR; }
-  if (TclGL::Tclgl_Init(interp)         != TCL_OK)   { return TCL_ERROR; }
-  if (TlistTcl::Tlist_Init(interp)      != TCL_OK)   { return TCL_ERROR; }
-
-  // set prompt to "grsh[n]% " where n is the history event number
-  Tcl_SetVar(interp, "tcl_prompt1", 
-             "puts -nonewline \"$argv0\\[[history nextid]\\]% \"",
-             TCL_GLOBAL_ONLY | TCL_LEAVE_ERR_MSG);
-
-  // specifies a file to be 'source'd upon startup
-  Tcl_SetVar(interp, "tcl_rcFileName", "./grsh_startup.tcl", TCL_GLOBAL_ONLY);
-  return TCL_OK;
+int main(int argc, char** argv) {
+  Tk_Main(argc, argv, Tcl_AppInit);
+  return 0;
 }
 
 static const char vcid_grshAppInit_cc[] = "$Header$";

@@ -3,7 +3,7 @@
 // iofactory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:06 1999
-// written: Wed Jun 30 15:12:41 1999
+// written: Wed Jun 30 16:25:21 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,10 @@
 
 #ifndef FACTORY_H_DEFINED
 #include "factory.h"
-#define FACTORY_H_DEFINED
+#endif
+
+#ifndef IO_H_DEFINED
+#include "io.h"
 #endif
 
 class IoFactory : public Factory<IO> {

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // jitter.cc
 // Rob Peters
 // created: Wed Apr  7 13:46:41 1999
-// written: Sun Apr 25 13:19:31 1999
+// written: Sat Jul  3 16:34:46 1999
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef JITTER_CC_DEFINED
@@ -13,24 +15,35 @@
 
 #include <iostream.h>
 #include <string>
-#include <typeinfo>
 #include <GL/gl.h>
 
 #include "randutils.h"
 
 #define NO_TRACE
 #include "trace.h"
-
 #define LOCAL_ASSERT
 #include "debug.h"
 
 ///////////////////////////////////////////////////////////////////////
+//
+// File scope data
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace {
+  const string ioTag = "Jitter";
+}
+
+///////////////////////////////////////////////////////////////////////
+//
 // Jitter member functions
+//
 ///////////////////////////////////////////////////////////////////////
 
 Jitter::Jitter () :
   Position(), 
-  itsXJitter(0.0), itsYJitter(0.0), itsRJitter(0.0)
+  itsXJitter(0.0), itsYJitter(0.0), itsRJitter(0.0),
+  itsXShift(0.0), itsYShift(0.0), itsRShift(0.0)
 {
 DOTRACE("Jitter::Jitter");
   // empty
@@ -56,39 +69,44 @@ DOTRACE("Jitter::~Jitter");
 void Jitter::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("Jitter::serialize");
   char sep = ' ';
-  if (flag & TYPENAME) { os << typeid(Jitter).name() << sep; }
+  if (flag & TYPENAME) { os << ioTag << sep; }
 
   os << itsXJitter << sep
 	  << itsYJitter << sep
 	  << itsRJitter << endl;
 
+  if (os.fail()) throw OutputError(ioTag);
+
   // The base class (Position) is always serialized, regardless of flag.
   // The typename in the base class is always used, regardless of flag.
-  Position::serialize(os, IOFlag(flag | TYPENAME));
-  if (os.fail()) throw OutputError(typeid(Jitter));
+  Position::serialize(os, (flag | TYPENAME));
 }
 
 void Jitter::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Jitter::deserialize");
-  if (flag & TYPENAME) {
-    string name;
-    is >> name;
-    if (name != typeid(Jitter).name()) {
-		throw InputError(typeid(Jitter));
-	 }
-  }
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
   is >> itsXJitter >> itsYJitter >> itsRJitter;
-#ifdef LOCAL_DEBUG
-  DUMP_VAL1(flag);
-  DUMP_VAL1(itsXJitter);
-  DUMP_VAL1(itsYJitter);
-  DUMP_VAL2(itsRJitter);
-#endif
+
+  DebugEval(flag);
+  DebugEval(itsXJitter);
+  DebugEval(itsYJitter);
+  DebugEvalNL(itsRJitter);
+
+  if (is.fail()) throw InputError(ioTag);
+
   // The base class (Position) is always deserialized, regardless of flag.
   // The typename in the base class is always used, regardless of flag.
-  Position::deserialize(is, IOFlag(flag | TYPENAME));
-  if (is.fail()) throw InputError(typeid(Jitter));
+  Position::deserialize(is, (flag | TYPENAME));
+}
+
+int Jitter::charCount() const {
+  return (ioTag.length() + 1
+			 + gCharCount<double>(itsXJitter) + 1
+			 + gCharCount<double>(itsYJitter) + 1
+			 + gCharCount<double>(itsRJitter) + 1
+			 + Position::charCount()
+			 + 1);// fudge factor
 }
 
 /////////////
@@ -97,7 +115,7 @@ DOTRACE("Jitter::deserialize");
 
 void Jitter::translate() const {
 DOTRACE("Jitter::translate");
-  float x,y,z;
+  double x,y,z;
   getTranslate(x,y,z);
   glTranslatef(x+randDoubleRange(-itsXJitter, itsXJitter),
 					y+randDoubleRange(-itsYJitter, itsYJitter),
@@ -106,10 +124,39 @@ DOTRACE("Jitter::translate");
 
 void Jitter::rotate() const {
 DOTRACE("Jitter::rotate");
-  float a,x,y,z;
+  double a,x,y,z;
   getRotate(a,x,y,z);
   glRotatef(a+randDoubleRange(-itsRJitter, itsRJitter),
 				x, y, z);
+}
+
+void Jitter::rejitter() const {
+DOTRACE("Jitter::rejitter");
+  itsXShift = randDoubleRange(-itsXJitter, itsXJitter);
+  itsYShift = randDoubleRange(-itsYJitter, itsYJitter);
+  itsRShift = randDoubleRange(-itsRJitter, itsRJitter);
+}
+
+void Jitter::go() const {
+DOTRACE("Jitter::go");
+  rejitter();
+  rego();
+}
+
+void Jitter::rego() const {
+DOTRACE("Jitter::rego");
+  // Translate
+  double tx, ty, tz;
+  getTranslate(tx, ty, tz);
+  glTranslatef(tx+itsXShift, ty+itsYShift, tz);
+
+  // Scale
+  Position::scale();
+
+  // Rotate
+  double ra, rx, ry, rz;
+  getRotate(ra, rx, ry, rz);
+  glRotatef(ra+itsRShift, rx, ry, rz);
 }
 
 static const char vcid_jitter_cc[] = "$Header$";

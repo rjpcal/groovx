@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Jun 24 14:48:09 1999
+// written: Sat Jul  3 12:28:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,6 @@
 
 #define NO_TRACE
 #include "trace.h"
-#define LOCAL_DEBUG
 #define LOCAL_ASSERT
 #include "debug.h"
 
@@ -60,6 +59,7 @@ DOTRACE("Bitmap::init");
   itsBytes = 0;
   itsContrastFlip = false;
   itsVerticalFlip = false;
+  itsUsingGlBitmap = true;
 }
 
 Bitmap::~Bitmap() {
@@ -77,7 +77,8 @@ DOTRACE("Bitmap::serialize");
   os << itsRasterX << sep << itsRasterY << sep;
   os << itsZoomX << sep << itsZoomY << sep;
   os << itsContrastFlip << sep;
-  os << itsVerticalFlip << endl;
+  os << itsVerticalFlip << sep;
+  os << itsUsingGlBitmap << endl;
 
   if (os.fail()) throw OutputError(ioTag);
 
@@ -96,6 +97,8 @@ DOTRACE("Bitmap::deserialize");
   itsContrastFlip = bool(val);
   is >> val;
   itsVerticalFlip = bool(val);
+  is >> val;
+  itsUsingGlBitmap = bool(val);
 
   if (is.fail()) throw InputError(ioTag);
 
@@ -111,17 +114,30 @@ DOTRACE("Bitmap::charCount");
   return 128;
 }
 
+int Bitmap::bytesPerRow() const {
+DOTRACE("Bitmap::bytesPerRow");
+  return ( (itsWidth*itsBitsPerPixel - 1)/8 + 1 );
+}
+
+int Bitmap::byteCount() const {
+DOTRACE("Bitmap::byteCount");
+  return bytesPerRow() * itsHeight;
+}
+
 void Bitmap::loadPbmFile(const char* filename) {
 DOTRACE("Bitmap::loadPbmFile");
-  itsFilename = filename;
-
-  Pbm pbm(itsFilename.c_str());
+  Pbm pbm(filename);
   unsigned char* bytes;
   pbm.grabBytes(bytes, itsWidth, itsHeight, itsBitsPerPixel);
   
   delete [] itsBytes;
   itsBytes = bytes;
   
+  // Wait to set itsFilename until we are sure that the new read
+  // succeeded; otherwise, the contents of itsBytes will be out of
+  // sync with itsFilename.
+  itsFilename = filename;
+
   if (itsContrastFlip) { doFlipContrast(); }
   if (itsVerticalFlip) { doFlipVertical(); }
   
@@ -140,7 +156,7 @@ DOTRACE("Bitmap::flipContrast");
 
 void Bitmap::doFlipContrast() {
 DOTRACE("Bitmap::doFlipContrast");
-  int num_bytes = (itsWidth*itsHeight*itsBitsPerPixel)/8 + 1;
+  int num_bytes = byteCount();
 
   // In this case we want to flip each bit
   if (itsBitsPerPixel == 1) {
@@ -169,8 +185,8 @@ DOTRACE("Bitmap::flipVertical");
 void Bitmap::doFlipVertical() {
 DOTRACE("Bitmap::doFlipVertical");
 
-  int bytes_per_row = (itsWidth*itsBitsPerPixel)/8 + 1;
-  int num_bytes = bytes_per_row * itsHeight;
+  int bytes_per_row = bytesPerRow();
+  int num_bytes = byteCount();
   
   unsigned char* new_bytes = new unsigned char[num_bytes];
   
@@ -187,6 +203,31 @@ DOTRACE("Bitmap::doFlipVertical");
   sendStateChangeMsg();
 }
 
+double Bitmap::getRasterX() const {
+DOTRACE("Bitmap::getRasterX");
+  return itsRasterX;
+}
+
+double Bitmap::getRasterY() const {
+DOTRACE("Bitmap::getRasterY");
+  return itsRasterY;
+}
+
+double Bitmap::getZoomX() const {
+DOTRACE("Bitmap::getZoomX");
+  return itsZoomX;
+}
+
+double Bitmap::getZoomY() const {
+DOTRACE("Bitmap::getZoomY");
+  return itsZoomY;
+}
+
+bool Bitmap::getUsingGlBitmap() const {
+DOTRACE("Bitmap::getUsingGlBitmap");
+  return itsUsingGlBitmap; 
+}
+
 void Bitmap::setRasterX(double val) {
 DOTRACE("Bitmap::setRasterX");
   itsRasterX = val;
@@ -197,16 +238,6 @@ void Bitmap::setRasterY(double val) {
 DOTRACE("Bitmap::setRasterY");
   itsRasterY = val;
   sendStateChangeMsg();
-}
-
-double Bitmap::getRasterX() const {
-DOTRACE("Bitmap::getRasterX");
-  return itsRasterX;
-}
-
-double Bitmap::getRasterY() const {
-DOTRACE("Bitmap::getRasterY");
-  return itsRasterY;
 }
 
 void Bitmap::setZoomX(double val) {
@@ -221,14 +252,47 @@ DOTRACE("Bitmap::setZoomY");
   sendStateChangeMsg();
 }
 
-double Bitmap::getZoomX() const {
-DOTRACE("Bitmap::getZoomX");
-  return itsZoomX;
+void Bitmap::setUsingGlBitmap(bool val) {
+DOTRACE("Bitmap::setUsingGlBitmap");
+  itsUsingGlBitmap = val;
+  sendStateChangeMsg();
 }
 
-double Bitmap::getZoomY() const {
-DOTRACE("Bitmap::getZoomY");
-  return itsZoomY;
+void Bitmap::center() {
+DOTRACE("Bitmap::center");
+  GLdouble mv_matrix[16];
+  glGetDoublev(GL_MODELVIEW_MATRIX, mv_matrix);
+
+  GLdouble proj_matrix[16];
+  glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
+
+  GLint viewport[4];
+  glGetIntegerv(GL_VIEWPORT, viewport);
+
+  GLdouble left_x, bottom_y, right_x, top_y, dummy_z;
+
+  GLint result = gluUnProject(viewport[0], viewport[1], 0,
+										mv_matrix, proj_matrix, viewport,
+										&left_x, &bottom_y, &dummy_z);
+
+  result = gluUnProject(viewport[0]+itsWidth, viewport[1]+itsHeight, 0,
+								mv_matrix, proj_matrix, viewport,
+								&right_x, &top_y, &dummy_z);
+
+  GLdouble win_width = abs(right_x - left_x);
+  GLdouble win_height = abs(top_y - bottom_y);
+
+  DebugEval(win_width); DebugEvalNL(win_height);
+
+  itsRasterX = -win_width/2.0;
+  itsRasterY = -win_height/2.0;
+  
+  if (!itsUsingGlBitmap) {
+	 itsRasterX *= abs(itsZoomX);
+	 itsRasterY *= abs(itsZoomY);
+  }
+
+  sendStateChangeMsg();
 }
 
 void Bitmap::undraw() const {
@@ -276,43 +340,43 @@ DOTRACE("Bitmap::undraw");
 	 win_raster_y += itsHeight*itsZoomY;
   }
 
-  glEnable(GL_SCISSOR_TEST);
-    glScissor( int(win_raster_x)-1, 
-					int(win_raster_y)-1, 
-					int(itsWidth*abs(itsZoomX))+2, 
-					int(itsHeight*abs(itsZoomY))+2 );
-    glClear(GL_COLOR_BUFFER_BIT);
-  glDisable(GL_SCISSOR_TEST);
+  glPushAttrib(GL_SCISSOR_BIT);
+    glEnable(GL_SCISSOR_TEST);
+      glScissor( int(win_raster_x)-1, 
+					  int(win_raster_y)-1, 
+					  int(itsWidth*abs(itsZoomX))+2, 
+					  int(itsHeight*abs(itsZoomY))+2 );
+		glClear(GL_COLOR_BUFFER_BIT);
+	 glDisable(GL_SCISSOR_TEST);
+  glPopAttrib();	 
 }
 
-void Bitmap::grRecompile() const {
-DOTRACE("Bitmap::grRecompile");
-  grNewList();
-
-  glNewList(grDisplayList(), GL_COMPILE);
-    glRasterPos2d(itsRasterX, itsRasterY);
-	 glPixelZoom(itsZoomX, itsZoomY);
-
-	 if (itsBitsPerPixel == 24) {
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-  		glDrawPixels(itsWidth, itsHeight, GL_RGB, GL_UNSIGNED_BYTE,
+void Bitmap::grRender() const {
+DOTRACE("Bitmap::grRender");
+  glRasterPos2d(itsRasterX, itsRasterY);
+  glPixelZoom(itsZoomX, itsZoomY);
+  
+  if (itsBitsPerPixel == 24) {
+	 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	 glDrawPixels(itsWidth, itsHeight, GL_RGB, GL_UNSIGNED_BYTE,
+					  static_cast<GLvoid*>(itsBytes));
+  }
+  else if (itsBitsPerPixel == 8) {
+	 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	 glDrawPixels(itsWidth, itsHeight, GL_COLOR_INDEX, GL_UNSIGNED_BYTE,
+					  static_cast<GLvoid*>(itsBytes));
+  }
+  else if (itsBitsPerPixel == 1) {
+	 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	 if (itsUsingGlBitmap) {
+		glBitmap(itsWidth, itsHeight, 0.0, 0.0, 0.0, 0.0,
+					static_cast<GLubyte*>(itsBytes));
+	 }
+	 else {
+		glDrawPixels(itsWidth, itsHeight, GL_COLOR_INDEX, GL_BITMAP,
 						 static_cast<GLvoid*>(itsBytes));
 	 }
-	 else if (itsBitsPerPixel == 8) {
-		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		glDrawPixels(itsWidth, itsHeight, GL_COLOR_INDEX, GL_UNSIGNED_BYTE,
-						 static_cast<GLvoid*>(itsBytes));
-	 }
-	 else if (itsBitsPerPixel == 1) {
- 		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-//   		glDrawPixels(itsWidth, itsHeight, GL_COLOR_INDEX, GL_BITMAP,
-//   						 static_cast<GLvoid*>(itsBytes));
- 		glBitmap(itsWidth, itsHeight, 0.0, 0.0, 0.0, 0.0,
- 					static_cast<GLubyte*>(itsBytes));
-	 }
-  glEndList();
-
-  grPostUpdated();
+  }
 }
 
 static const char vcid_bitmap_cc[] = "$Header$";

@@ -3,7 +3,7 @@
 // trialtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 09:51:54 1999
-// written: Thu Jun 24 19:21:09 1999
+// written: Thu Jul  8 10:56:44 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,10 @@
 
 #include <tcl.h>
 
+#include "iomgr.h"
 #include "trial.h"
 #include "tlist.h"
-#include "tclitempkg.h"
+#include "listitempkg.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -27,37 +28,49 @@ namespace TrialTcl {
   class TrialPkg;
 }
 
+//---------------------------------------------------------------------
+//
+// TrialTcl::AddCmd --
+//
+//---------------------------------------------------------------------
+
+class TrialTcl::AddCmd : public TclItemCmd<Trial> {
+public:
+  AddCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<Trial>(pkg, cmd_name, "trialid objid posid", 4, 4) {}
+protected:
+  virtual void invoke() {
+	 Trial* t = getItem();
+
+	 int objid = getIntFromArg(2);
+	 if (objid < 0) { throw TclError("invalid id"); }
+
+	 int posid = getIntFromArg(3);
+	 if (posid < 0) { throw TclError("invalid id"); }
+
+	 t->add(objid, posid);
+  }
+};
+
 ///////////////////////////////////////////////////////////////////////
 //
 // TrialPkg class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class TrialTcl::TrialPkg : public CTclIoItemPkg<Trial> {
+class TrialTcl::TrialPkg : public ListItemPkg<Trial, Tlist> {
 public:
   TrialPkg(Tcl_Interp* interp) :
-	 CTclIoItemPkg<Trial>(interp, "Trial", "1.1")
+	 ListItemPkg<Trial, Tlist>(interp, Tlist::theTlist(), "Trial", "1.1")
   {
 	 declareAttrib("responseHdlr",
 						new CAttrib<Trial, int>(&Trial::getResponseHandler,
 														&Trial::setResponseHandler));
 	 declareAttrib("timingHdlr",
 						new CAttrib<Trial, int>(&Trial::getTimingHdlr,
-														&Trial::setTimingHdlr));														
+														&Trial::setTimingHdlr));
 	 declareAttrib("type", new CAttrib<Trial, int>(&Trial::trialType,
 																  &Trial::setType));
-  }
-
-  virtual Trial* getCItemFromId(int id) {
-	 // Generate an error if the id is out of range
-	 if ( !Tlist::theTlist().isValidTrial(id) ) {
-		throw TclError("invalid trial id");
-	 }
-	 return &(Tlist::theTlist().getTrial(id));
-  }
-
-  virtual IO& getIoFromId(int id) {
-	 return dynamic_cast<IO&>( *(getCItemFromId(id)) );
   }
 };
 
@@ -73,6 +86,8 @@ int Trial_Init(Tcl_Interp* interp) {
 DOTRACE("Trial_Init");
 
   new TrialTcl::TrialPkg(interp);
+
+  FactoryRegistrar<IO, Trial> registrar(IoFactory::theOne());
 
   return TCL_OK;
 }

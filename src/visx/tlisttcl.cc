@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Tue Jun 29 18:12:41 1999
+// written: Mon Jul 12 12:54:40 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,6 @@
 #include "poslist.h"
 #include "objlisttcl.h"
 #include "poslisttcl.h"
-#include "tclitempkg.h"
 #include "tclcmd.h"
 #include "listpkg.h"
 
@@ -131,7 +130,11 @@ protected:
 	 PosId posid = getIntFromArg(3);
 	 if ( !posid ) { throw TclError(bad_posid_msg); }
 
-	 theTlist.addToTrial(trialid, objid, posid);
+	 if ( !theTlist.isValidId(trialid) ) {
+		theTlist.insertAt(trialid, new Trial);
+	 }
+
+	 theTlist.getPtr(trialid)->add(objid, posid);
 	 returnVoid();
   }
 };
@@ -160,27 +163,22 @@ protected:
 
 	 vector<int> vec;
 	 const ObjList& olist = ObjList::theObjList();
-	 olist.getValidObjids(vec);
+	 olist.getValidIds(vec);
 
 	 theTlist.clear();
 	 
-// 	 int trialid = 0;
-// 	 for ( /* nothing */  ; trialid < vec.size(); ++trialid) {
-// 		theTlist.addToTrial(trialid, vec[trialid], posid);
-// 		const GrObj* obj = olist.getObj(vec[trialid]); // XXX
-// 		Assert(obj);
-// 		theTlist.getTrial(trialid).setType(obj->getCategory());
-// 	 }
-
 	 // This loop runs through all valid objid's and does two things: 
 	 // 1) it adds the objid and the given posid to the trial
 	 // 2) it sets the Trial's type to the category of its single GrObj
 	 for (int i=0; i < vec.size(); ++i) {
 		int id = vec[i];
-		theTlist.addToTrial(id, id, posid);
-		const GrObj* obj = olist.getObj(id); // XXX
-		Assert(obj);
-		theTlist.getTrial(id).setType(obj->getCategory());
+		if ( !theTlist.isValidId(id) ) {
+		  theTlist.insertAt(id, new Trial);
+		}
+		Trial* t = theTlist.getPtr(id);
+		t->add(id, posid);
+		const GrObj* obj = olist.getCheckedPtr(id);
+		t->setType(obj->getCategory());
 	 }
 
 	 returnInt(vec.size());
@@ -210,7 +208,7 @@ protected:
 	 if ( !posid1 || !posid2 ) { throw TclError(bad_posid_msg); }
 
 	 vector<int> vec;
-	 ObjList::theObjList().getValidObjids(vec);
+	 ObjList::theObjList().getValidIds(vec);
 	 
 	 theTlist.clear();
 	 
@@ -221,9 +219,13 @@ protected:
 	 int trialid = 0;
 	 for (int i = 0; i < vec.size(); ++i) {
 		for (int j = 0; j < vec.size(); ++j) {
-		  theTlist.addToTrial(trialid, vec[i], posid1);
-		  theTlist.addToTrial(trialid, vec[j], posid2);
-		  theTlist.getTrial(trialid).setType( i == j );
+		  if ( !theTlist.isValidId(trialid) ) {
+			 theTlist.insertAt(trialid, new Trial);
+		  }
+		  Trial* t = theTlist.getPtr(trialid);
+		  t->add(vec[i], posid1);
+		  t->add(vec[j], posid2);
+		  t->setType( i == j );
 		  
 		  ++trialid;
 		}
@@ -260,7 +262,7 @@ protected:
 	 DebugEval(posid[0]); DebugEval(posid[1]); DebugEvalNL(posid[3]);
 
 	 vector<int> vec;
-	 ObjList::theObjList().getValidObjids(vec);
+	 ObjList::theObjList().getValidIds(vec);
 	 
 	 theTlist.clear();
 
@@ -302,8 +304,12 @@ protected:
 
 			 // loops over p,e run through all permutations
 			 for (int p = 0; p < NUM_PERMS; ++p) {
+				if ( !theTlist.isValidId(trial) ) {
+				  theTlist.insertAt(trial, new Trial);
+				}
+				Trial* t = theTlist.getPtr(trial);
 				for (int e = 0; e < 3; ++e) {
-				  theTlist.addToTrial(trial, base_triad[e], posid[e]);
+				  t->add(base_triad[e], posid[e]);
 				}
 				++trial;
 			 } // end p
@@ -345,14 +351,14 @@ protected:
 	 double ystep = (objc() >= 6) ? getDoubleFromArg(5) : 3.0;
 
 	 ObjList& olist = ObjList::theObjList();
-	 int num_objs = olist.objCount();
+	 int num_objs = olist.count();
 	 
 	 // Figure number of columns-- (num_objs-1)/num_cols gives one fewer
 	 // than the number of rows that we need, so add 1 to it
 	 int num_rows = 1 + (num_objs-1)/num_cols;
 
 	 vector<int> objids;
-	 olist.getValidObjids(objids);
+	 olist.getValidIds(objids);
 	 
 	 // Coords of upper left corner of viewing area
 	 const double x0 = scale * (0.0 - xstep*(num_cols-1)/2.0);
@@ -364,6 +370,12 @@ protected:
 
 	 PosList& plist = PosList::thePosList();
 	 
+	 if ( !theTlist.isValidId(trialid) ) {
+		theTlist.insertAt(trialid, new Trial);
+	 }
+
+	 Trial* t = theTlist.getPtr(trialid);
+
 	 for (int i=0; i < objids.size(); ++i) {
 		int row = i / num_cols;
 		int col = i % num_cols;
@@ -376,8 +388,9 @@ protected:
 		
 		p->setTranslate(xpos, ypos, 0.0);
 		p->setScale(scale, scale, 1.0);
-		PosId posid = plist.addPos(p);
-		theTlist.addToTrial(trialid, objids[i], posid);
+		int posid = plist.insert(p);
+
+		t->add(objids[i], posid);
 	 }
 
 	 // Return the id of the trial generated.
@@ -501,7 +514,7 @@ DOTRACE("TlistTcl::write_responsesProc");
   ofs.setf(ios::fixed);
   ofs.precision(2);
   for (int i = 0; i < trialids.size(); ++i) {
-	 const Trial& t = theTlist.getTrial(trialids[i]);
+	 const Trial& t = *(theTlist.getPtr(trialids[i]));
 	 ofs << setw(wid) << trialids[i];
 	 ofs << setw(wid) << t.numResponses();
 	 ofs << setw(wid) << t.avgResponse();	 
@@ -533,7 +546,7 @@ protected:
 	 ofstream ofs(filename);
 	 
 	 for (int i = 0; i < trialids.size(); ++i) {
-		const Trial& t = theTlist.getTrial(trialids[i]);
+		const Trial& t = *(theTlist.getPtr(trialids[i]));
 		
 		// Use this to make sure we don't round down when we should round up.
 		double fudge = 0.0001;
@@ -576,7 +589,7 @@ protected:
 	 ofs.setf(ios::fixed);
 	 ofs.precision(2);
 	 for (int i = 0; i < trialids.size(); ++i) {
-		const Trial& t = theTlist.getTrial(trialids[i]);
+		const Trial& t = *(theTlist.getPtr(trialids[i]));
 		Trial::ObjGrp objs = t.objs();
 	 
 		for (int j = 0; j < objs.size(); ++j) {
@@ -599,14 +612,14 @@ protected:
 class TlistTcl::TlistPkg : public ListPkg<Tlist> {
 public:
   TlistPkg(Tcl_Interp* interp) :
-	 ListPkg<Tlist>(interp, "Tlist", "3.0")
+	 ListPkg<Tlist>(interp, Tlist::theTlist(), "Tlist", "3.0")
   {
   DOTRACE("TlistPkg::TlistPkg");
-	 declareSetter("setVisible", new CSetter<Tlist, bool>(&Tlist::setVisible));
+	 declareCSetter("setVisible", &Tlist::setVisible);
 
-	 declareAction("redraw", new CConstAction<Tlist>(&Tlist::redraw));
-	 declareAction("undraw", new CAction<Tlist>(&Tlist::undraw));
-	 declareAction("clearscreen", new CAction<Tlist>(&Tlist::clearscreen));
+	 declareCAction("redraw", &Tlist::redraw);
+	 declareCAction("undraw", &Tlist::undraw);
+	 declareCAction("clearscreen", &Tlist::clearscreen);
 
 	 addCommand( new ShowCmd(interp, "Tlist::show") );
 	 addCommand( new AddObjectCmd(interp, "Tlist::addObject") );
@@ -628,12 +641,6 @@ public:
 				 "proc redraw {} { Tlist::redraw }\n"
 				 "proc clearscreen {} { Tlist::clearscreen }\n"
 				 "proc show {id} { Tlist::show $id }\n");
-  }
-
-  virtual IO& getIoFromId(int) { return Tlist::theTlist(); }
-
-  virtual Tlist* getCItemFromId(int) {
-	 return &Tlist::theTlist();
   }
 };
 

@@ -15,8 +15,8 @@ package require Objtogl
 
 if { ![Togl::inited] } { Togl::init "-rgba false"; update }
 
-set FACE [Face::face]
-set FIXPT [Fixpt::fixpt]
+set FACE [Face::Face]
+set FIXPT [Fixpt::Fixpt]
 
 ### GrObj::typeCmd ###
 test "GrobjTcl-GrObj::type" "too few args" {
@@ -33,10 +33,10 @@ test "GrobjTcl-GrObj::type" "normal use on FixPt" {
 } {FixPt}
 test "GrobjTcl-GrObj::type" "error from bad objid" {
 	 GrObj::type -1
-} {GrObj::type: objid out of range}
+} {GrObj::type: an error of type InvalidIdError occurred}
 test "GrobjTcl-GrObj::type" "error from too large objid" {
 	 GrObj::type 10000
-} {GrObj::type: objid out of range}
+} {GrObj::type: an error of type InvalidIdError occurred}
 
 ### GrObj::stringifyCmd ###
 test "GrobjTcl-GrObj::stringify" "too few args" {

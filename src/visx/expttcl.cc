@@ -3,12 +3,12 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Jun 23 19:05:07 1999
+// written: Tue Jul 20 14:41:10 1999
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
-// the Expt class, and defines several Tcl variables that are provided
-// within the Tcl Expt:: namespace.
+// the ExptDriver class, and defines several Tcl variables that are
+// provided within the Tcl Expt:: namespace.
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -17,8 +17,6 @@
 
 #include "expttcl.h"
 
-#include <iostream.h>
-#include <fstream.h>
 #include <tcl.h>
 #include <string>
 
@@ -26,6 +24,8 @@
 #include "exptdriver.h"
 #include "tclitempkg.h"
 #include "tclcmd.h"
+#include "objtogl.h"
+#include "toglconfig.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -43,6 +43,7 @@ namespace ExptTcl {
   class InitCmd;
   class PauseCmd;
   class ReadCmd;
+  class SetStartCommandCmd;
   class WriteCmd;
 
   class ExptPkg;
@@ -81,35 +82,23 @@ void ExptTcl::BeginCmd::invoke() {
 DOTRACE("BeginCmd::beginCmd");
   int result = TCL_OK;
 
-  // Create the quit key binding
-  static TclEvalCmd bindQuitCmd(
-			"bind .togl <KeyPress-q> { Expt::writeAndExit }");
+  ToglConfig* config = ObjTogl::theToglConfig();
 
-  result = bindQuitCmd.invoke(itsInterp);
-  if (result != TCL_OK) throw TclError();
+  // Create the quit key binding
+  config->bind("<KeyPress-q>", "{ Expt::writeAndExit }");
 
   // Create the pause key binding
-  static TclEvalCmd bindPauseCmd("bind .togl <KeyPress-p> { Expt::pause }");
-
-  result = bindPauseCmd.invoke(itsInterp);
-  if (result != TCL_OK) throw TclError();
+  config->bind("<KeyPress-p>", "{ Expt::pause }");
 
   // Destroy the experiment start key binding
-  static TclEvalCmd unbindStartCmd("bind .togl <KeyPress-s> {}");
-
-  result = unbindStartCmd.invoke(itsInterp);
-  if (result != TCL_OK) throw TclError();
+  config->bind("<KeyPress-s>", "{}");
 
   // Force the focus to the Togl widget
-  static TclEvalCmd focusForceCmd("focus -force .togl");
-
-  result = focusForceCmd.invoke(itsInterp);
-  if (result != TCL_OK) throw TclError();
+  config->takeFocus();
 
   ExptDriver* ed = getItem();
 
-  ed->init();
-  ed->edBeginTrial();
+  ed->edBeginExpt();
 
   returnVoid();
 }
@@ -170,15 +159,32 @@ protected:
 	 ExptDriver* ed = getItem();
 	 const char* filename = getCstringFromArg(1);
 
-	 try {
-		ifstream ifs(filename);
-		if (ifs.fail()) throw IoFilenameError(filename);
-		ed->deserialize(ifs, IO::BASES|IO::TYPENAME);
-	 }
-	 catch (IoError& err) {
-		throw TclError(err.info());
-	 }
+	 ed->read(filename);
 	 returnVoid();
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// SetStartCommandCmd --
+//
+//---------------------------------------------------------------------
+
+class ExptTcl::SetStartCommandCmd : public TclItemCmd<ExptDriver> {
+public:
+  SetStartCommandCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<ExptDriver>(pkg, cmd_name, "start_command", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 // Build the script to be executed when the start key is pressed
+	 string start_command = "{ ";
+	 start_command += getCstringFromArg(1);
+	 start_command += " }";
+
+	 ToglConfig* config = ObjTogl::theToglConfig();
+
+	 config->bind("<KeyPress-s>", start_command.c_str());
+	 config->takeFocus();
   }
 };
 
@@ -195,9 +201,11 @@ public:
 protected:
   virtual void invoke() {
   DOTRACE("WriteCmd::invoke");
-    const char* filename = getCstringFromArg(1);
 	 ExptDriver* ed = getItem();
+    const char* filename = getCstringFromArg(1);
+
 	 ed->write(filename);
+	 returnVoid();
   }
 };
 
@@ -210,26 +218,25 @@ protected:
 class ExptTcl::ExptPkg : public CTclIoItemPkg<ExptDriver> {
 public:
   ExptPkg(Tcl_Interp* interp) :
-	 CTclIoItemPkg<ExptDriver>(interp, "Expt", "2.6", 0)
+	 CTclIoItemPkg<ExptDriver>(interp, "Expt", "2.7", 0)
   {
   DOTRACE("ExptPkg::ExptPkg");
 
 	 ExptDriver::theExptDriver().setInterp(interp);
 	 
-    declareAttrib("autosaveFile", new CAttrib<ExptDriver, const string&>(
-                                          &ExptDriver::getAutosaveFile,
-														&ExptDriver::setAutosaveFile));
 	 addCommand( new BeginCmd(this, "Expt::begin") );
 	 addCommand( new PauseCmd(this, "Expt::pause") );
 	 addCommand( new ReadCmd(this, "Expt::read") );
-	 declareAction("stop", new CAction<ExptDriver>(&ExptDriver::edHaltExpt));
+	 addCommand( new SetStartCommandCmd(this, "Expt::setStartCommand") );
 	 addCommand( new WriteCmd(this, "Expt::write") );
-	 declareAction("writeAndExit",
-						new CAction<ExptDriver>(&ExptDriver::writeAndExit));
+
+    declareCAttrib("autosaveFile",
+						 &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
+	 declareCAction("stop", &ExptDriver::edHaltExpt);
+	 declareCAction("writeAndExit", &ExptDriver::writeAndExit);
   }
 
   virtual IO& getIoFromId(int) { return ExptDriver::theExptDriver(); }
-  virtual int getBufSize() { return 4096; }
 
   virtual ExptDriver* getCItemFromId(int) {
 	 return &ExptDriver::theExptDriver();

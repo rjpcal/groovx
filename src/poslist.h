@@ -3,7 +3,7 @@
 // poslist.h
 // Rob Peters
 // created: Fri Mar 12 17:13:53 1999
-// written: Fri Jun 11 21:53:55 1999
+// written: Wed Jun 30 13:55:09 1999
 // $Id$
 //
 // This file defines PosList, a singleton class whose instance is a
@@ -32,7 +32,7 @@ class Position;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class PosList : private PtrList<Position>, public virtual IO {
+class PosList : public PtrList<Position>, public virtual IO {
 private:
   typedef PtrList<Position> Base;
 
@@ -48,26 +48,9 @@ public:
   // Returns a reference to the singleton instance of PosList
   static PosList& thePosList();
 
-  // This function should remain out of line so that the vtable is
-  // created uniquely
-  virtual ~PosList ();
-
-  // write/read the object's state from/to an output/input stream
-  virtual void serialize(ostream &os, IOFlag flag) const
-  { Base::serialize(os, flag); }
-  virtual void deserialize(istream &is, IOFlag flag)
-  { Base::deserialize(is, flag); }
-  virtual int charCount() const
-  { return Base::charCount(); }
-
   ///////////////
   // accessors //
   ///////////////
-
-  int capacity() const { return Base::capacity(); }
-
-  // returns the number of (both filled and unfilled) sites in the PosList
-  int posCount() const { return Base::count(); }
 
   // returns true if 'posid' is a valid index into a non-NULL Position* in
   // the PosList, given its current size
@@ -95,10 +78,6 @@ public:
 
   // delete the Position at index 'i', and reset the Position* to NULL
   void removePos(PosId posid) { Base::remove(posid.toInt()); }
-
-  // delete all Position's held by the list, and reset all Position*'s
-  // to NULL
-  void clearPos() { Base::clear(); }
 };
 
 static const char vcid_poslist_h[] = "$Header$";

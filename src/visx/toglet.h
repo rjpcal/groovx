@@ -3,7 +3,7 @@
 // toglconfig.h
 // Rob Peters 
 // created: Jan-99
-// written: Thu Jun 17 20:22:04 1999
+// written: Tue Jul  6 14:32:23 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,9 @@
 #include "rect.h"
 #endif
 
+struct Togl;
+struct Tcl_Obj;
+
 ///////////////////////////////////////////////////////////////////////
 //
 // ToglConfig class definition
@@ -23,29 +26,65 @@
 
 class ToglConfig {
 public:
-  ToglConfig(double dist, double unit_angle);
-  virtual ~ToglConfig() {}
+  // types
+  struct Color {
+	 Color(unsigned int p=0, double r=0.0, double g=0.0, double b=0.0):
+		pixel(p), red(r), green(g), blue(b) {}
+	 unsigned int pixel;
+	 double red, green, blue;
+  };
 
+  ToglConfig(Togl* togl, double dist, double unit_angle);
+  virtual ~ToglConfig();
+
+  // accessors
+  double getAspect() const { return double(getWidth())/getHeight(); }
+  double getFixedScale() const;
+  Rect<double> getMinRect() const;
+  int getHeight() const;
+  unsigned int getFontListBase() const { return itsFontListBase; }
+  int getIntParam(const char* param) const;
+  Tcl_Obj* getParamValue(const char* param) const;
+  int getWidth() const;
+  Color queryColor(unsigned int color_index) const {
+	 Color col;
+	 queryColor(color_index, col);
+	 return col;
+  }
+  void queryColor(unsigned int color_index, Color& color) const;
+  bool usingFixedScale() const;
+
+  // manipulators
+  void scaleRect(double factor);
+  void setColor(const Color& color);
+  void setFixedScale(double s);
+  void setMinRectLTRB(double L, double T, double R, double B);
+  void setHeight(int val);
+  void setWidth(int val);
+  void setUnitAngle(double deg);
   void setViewingDistIn(double in);
 
-  void setUnitAngle(double deg);
+  // actions
+  void bind(const char* event_sequence, const char* script);
+  void loadFont(const char* fontname);
+  void loadFonti(int fontnumber);
+  void swapBuffers();
+  void takeFocus();
+  void writeEpsFile(const char* filename);
 
-  double getFixedScale() const;
-  void setFixedScale(double s);
-
-  Rect<double> getMinRect() const;
-  void setMinRectLTRB(double L, double T, double R, double B);
-
-  bool usingFixedScale() const;
+  virtual void reconfigure();
+  virtual void display() = 0;
 
 private:
   ToglConfig(const ToglConfig&); // no copy constructor
   ToglConfig& operator=(const ToglConfig&); // no assignment operator
 
+  Togl* itsWidget;
   double itsViewingDistance;     // inches
   bool itsFixedScaleFlag;
   double itsFixedScale;
   Rect<double> itsMinRect;
+  unsigned int itsFontListBase;
 };
 
 static const char vcid_toglconfig_h[] = "$Header$";

@@ -3,8 +3,11 @@
 // rand.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 14:09:24 1999
-// written: Fri Jun 25 14:09:26 1999
+// written: Fri Jun 25 14:21:01 1999
 // $Id$
+//
+// The random number generator classes here are taken from _The C++
+// Programming Language_, 3rd ed., by Bjarne Stroustrup.
 //
 ///////////////////////////////////////////////////////////////////////
 
@@ -28,12 +31,11 @@ public:
   int operator()() { return abs(draw()); }
 };
 
-class Urand : public Randint { // uniform distribution in the interval [0:n
-  int n;
+class Urand : public Randint { // uniform distribution in the interval [0:n[
 public:
-  Urand(int nn) { n = nn; }
+  Urand(long s = 0) : Randint(s) {}
 
-  int operator()() { int r = n*fdraw(); return (r==n) ? n-1 : r; }
+  int operator()(int n) { int r = int(n*fdraw()); return (r==n) ? n-1 : r; }
 };
 
 static const char vcid_rand_h[] = "$Header$";

@@ -7,6 +7,15 @@
 ###
 ##############################################################################
 
+package require Expt
+package require Objtogl
+package require Objlist
+package require Poslist
+package require Tlist
+package require Block
+
+if { ![Togl::inited] } { Togl::init "-rgba false"; update }
+
 # need to add checks on appropriate returns from all functions that use
 # isComplete()
 # i.e. try to begin a trial after the expt is done, try to abort a trial on 
@@ -41,7 +50,7 @@ test "ExptTcl-Expt::abortTrial" "normal use on empty expt" {
 	 # abortTrial on empty Expt is a no-op
 	 ObjList::reset
 	 PosList::reset
-	 set p [Pos::position]
+	 set p [Pos::Pos]
 	 Tlist::makeSingles $p
 	 Block::init 0 1 0
 	 catch {Expt::abortTrial}
@@ -79,7 +88,7 @@ test "ExptTcl-Expt::beginTrial" "normal use on completed expt" {
 test "ExptTcl-Expt::beginTrial" "normal use on empty expt" {
 	 ObjList::reset
 	 PosList::reset
-	 set p [Pos::position]
+	 set p [Pos::Pos]
 	 Tlist::makeSingles $p
 	 Block::init 0 1 0
 	 # This should be a no-op
@@ -149,7 +158,7 @@ test "ExptTcl-Expt::recordResponse" "record response on complete expt" {
 test "ExptTcl-Expt::recordResponse" "record response on empty expt" {
 	 ObjList::reset
 	 PosList::reset
-	 set p [Pos::position]
+	 set p [Pos::Pos]
 	 Tlist::makeSingles $p
 	 Block::init 0 1 0
 	 catch {Expt::recordResponse 5}

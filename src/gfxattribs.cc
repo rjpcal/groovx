@@ -2,7 +2,7 @@
 // gfxattribs.cc
 // Rob Peters
 // created: Tue Mar  9 18:33:05 1999
-// written: Tue Mar 16 19:43:12 1999
+// written: Thu Jun 17 20:22:08 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -11,7 +11,7 @@
 
 #include "gfxattribs.h"
 
-float GfxAttribs::theScreenPpi = 95.0;
+double GfxAttribs::theScreenPpi = 95.0;
 GfxAttribs::GfxFlag GfxAttribs::theFlags = GfxAttribs::NO_FLAGS;
 
 static const char vcid_gfxattribs_cc[] = "$Id$";

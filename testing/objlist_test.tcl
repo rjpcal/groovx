@@ -15,16 +15,16 @@ test "ObjlistTcl-ObjList::reset" "too many args" {
     ObjList::reset junk
 } {wrong \# args: should be "ObjList::reset"}
 test "ObjlistTcl-ObjList::reset" "check number of objects -> 0" {
-	 Face::face
-	 Fixpt::fixpt
+	 Face::Face
+	 Fixpt::Fixpt
 	 ObjList::reset
 	 ObjList::count
 } {^0$}
 test "ObjlistTcl-ObjList::reset" "check first vacant -> 0" {
-	 Face::face
-	 Fixpt::fixpt
+	 Face::Face
+	 Fixpt::Fixpt
 	 ObjList::reset
-	 Face::face
+	 Face::Face
 } {^0$}
 test "ObjlistTcl-ObjList::reset" "no error" {} $BLANK $no_test
 
@@ -34,8 +34,8 @@ test "ObjlistTcl-ObjList::count" "too many args" {
 } {wrong \# args: should be "ObjList::count"}
 test "ObjlistTcl-ObjList::count" "normal use" {
 	 ObjList::reset
-	 Face::face
-	 Fixpt::fixpt
+	 Face::Face
+	 Fixpt::Fixpt
 	 ObjList::count
 } {^2$}
 test "ObjlistTcl-ObjList::count" "no error" {} $BLANK $no_test
@@ -51,8 +51,8 @@ test "ObjlistTcl-ObjList::stringify" "use on empty list" {
 0}
 test "ObjlistTcl-ObjList::stringify" "use on filled list" {
 	 ObjList::reset
-	 set f [Face::face]
-	 set f [Fixpt::fixpt]
+	 set f [Face::Face]
+	 set f [Fixpt::Fixpt]
 	 ObjList::stringify
 } "$OBJLIST $INT 2
 0 Face .*
@@ -66,8 +66,8 @@ test "ObjlistTcl-ObjList::destringify" "args" {
 } {wrong \# args: should be "ObjList::destringify string"}
 test "ObjlistTcl-ObjList::destringify" "use with filled list" {
 	 ObjList::reset
-	 Face::face
-	 Fixpt::fixpt
+	 Face::Face
+	 Fixpt::Fixpt
 	 set a [ObjList::stringify]
 	 ObjList::destringify $a
 	 expr [ObjList::count]==2 \
@@ -76,8 +76,8 @@ test "ObjlistTcl-ObjList::destringify" "use with filled list" {
 } {^1$}
 test "ObjlistTcl-ObjList::destringify" "stringify, destringify, restringify" {
 	 ObjList::reset
-	 Face::face
-	 Fixpt::fixpt
+	 Face::Face
+	 Fixpt::Fixpt
 	 set a [ObjList::stringify]
 	 ObjList::destringify $a
 	 set b [ObjList::stringify]

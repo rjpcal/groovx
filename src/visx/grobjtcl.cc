@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Thu Jul  1 14:12:36 1999
+// written: Mon Jul 12 13:05:03 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,8 @@
 #include <typeinfo>
 
 #include "grobj.h"
-#include "id.h"
+#include "objlist.h"
+#include "listitempkg.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -52,31 +53,25 @@ protected:
 //
 //---------------------------------------------------------------------
 
-GrobjTcl::GrObjPkg::GrObjPkg(Tcl_Interp* interp) :
-  CTclIoItemPkg<GrObj>(interp, "GrObj", "2.5")
-{
-  addCommand( new TypeCmd(this, "GrObj::type") );
-  declareAttrib("category", new CAttrib<GrObj, int>(&GrObj::getCategory,
-																	 &GrObj::setCategory));
-  declareAttrib("usingCompile", 
-					 new CAttrib<GrObj, bool>(&GrObj::getUsingCompile,
-													  &GrObj::setUsingCompile));
-  declareAction("update", new CConstAction<GrObj>(&GrObj::update));
-}
-
-GrObj* GrobjTcl::GrObjPkg::getCItemFromId(int id) {
-  ObjId objid(id);
-  if ( !objid ) {
-	 throw TclError("objid out of range");
+class GrobjTcl::GrObjPkg : public AbstractListItemPkg<GrObj, ObjList> {
+public:
+  GrObjPkg(Tcl_Interp* interp) :
+	 AbstractListItemPkg<GrObj, ObjList>(interp, ObjList::theObjList(),
+													 "GrObj", "2.5")
+  {
+	 addCommand( new TypeCmd(this, "GrObj::type") );
+	 declareCAttrib("category", &GrObj::getCategory, &GrObj::setCategory);
+	 declareCAttrib("usingCompile",
+						 &GrObj::getUsingCompile, &GrObj::setUsingCompile);
+	 declareCAction("update", &GrObj::update);
   }
-  return objid.get();
-}
+};
 
-IO& GrobjTcl::GrObjPkg::getIoFromId(int id) {
-  return dynamic_cast<IO&>( *(getCItemFromId(id)) );
-}
-
-extern "C" Tcl_PackageInitProc Grobj_Init;
+//---------------------------------------------------------------------
+//
+// Grobj_Init --
+//
+//---------------------------------------------------------------------
 
 int Grobj_Init(Tcl_Interp* interp) {
 

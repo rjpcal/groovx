@@ -3,7 +3,7 @@
 // gtexttcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 12:30:38 1999
-// written: Thu Jul  1 13:07:54 1999
+// written: Mon Jul 12 13:05:17 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,16 +16,15 @@
 #include "iomgr.h"
 #include "objlist.h"
 #include "gtext.h"
-#include "tclitempkg.h"
+#include "listitempkg.h"
 
-#define LOCAL_TRACE
+#define NO_TRACE
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
 
 namespace GtextTcl {
   class GtextCmd;
-  class LoadFontCmd;
   class GtextPkg;
 }
 
@@ -45,27 +44,8 @@ protected:
 
 	 Gtext* p = new Gtext(text);
 
-	 ObjId objid = ObjList::theObjList().addObj(p);
-	 returnInt(objid.toInt());
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// GtextTcl::LoadFontCmd --
-//
-//---------------------------------------------------------------------
-
-class GtextTcl::LoadFontCmd : public TclCmd {
-public:
-  LoadFontCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "?fontname?", 1, 2) {}
-protected:
-  virtual void invoke() {
-	 const char* fontname = (objc() < 2) ? 0 : getCstringFromArg(1);
-
-	 Gtext::loadFont(fontname);
-	 returnVoid();
+	 int objid = ObjList::theObjList().insert(p);
+	 returnInt(objid);
   }
 };
 
@@ -75,31 +55,13 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class GtextTcl::GtextPkg : public CTclIoItemPkg<Gtext> {
+class GtextTcl::GtextPkg : public ListItemPkg<Gtext, ObjList> {
 public:
   GtextPkg(Tcl_Interp* interp) :
-	 CTclIoItemPkg<Gtext>(interp, "Gtext", "1.1")
+	 ListItemPkg<Gtext, ObjList>(interp, ObjList::theObjList(), "Gtext", "1.1")
   {
 	 addCommand( new GtextCmd(interp, "Gtext::Gtext") );
-	 addCommand( new LoadFontCmd(interp, "Gtext::loadFont") );
-	 declareAttrib("text", new CAttrib<Gtext, const char*>(&Gtext::getText,
-																			 &Gtext::setText));
-  }
-
-  virtual Gtext* getCItemFromId(int id) {
-	 ObjId objid(id);
-	 if ( !objid ) {
-		throw TclError("objid out of range");
-	 }
-	 Gtext* p = dynamic_cast<Gtext*>(objid.get());
-	 if ( p == NULL ) {
-		throw TclError("object not of correct type");
-	 }
-	 return p;
-  }
-
-  virtual IO& getIoFromId(int id) {
-	 return dynamic_cast<IO&>( *(getCItemFromId(id)) );
+	 declareCAttrib("text", &Gtext::getText, &Gtext::setText);
   }
 };
 

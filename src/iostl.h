@@ -2,7 +2,7 @@
 // iostl.h
 // Rob Peters
 // created: Sat Mar 13 15:20:43 1999
-// written: Thu Jun 24 18:10:46 1999
+// written: Thu Jun 24 19:11:32 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -11,6 +11,11 @@
 
 #ifndef IO_H_DEFINED
 #include "io.h"
+#endif
+
+#ifndef IOSTREAM_H_DEFINED
+#include <iostream.h>
+#define IOSTREAM_H_DEFINED
 #endif
 
 #ifndef VECTOR_DEFINED
@@ -39,6 +44,16 @@ public:
 private:
   T itsVal;
 };
+
+template<class T>
+int gCharCountIoVec( const vector<T*>& vec ) {
+  int count = gCharCount<int>(vec.size()) + 1;
+  for (int i = 0; i < vec.size(); ++i) {
+	 if (vec[i] != 0) {
+		count += vec[i]->charCount() + 1;
+	 }
+  }
+}
 
 // Specialization of IoWrapper for vectors of basic types. Here it is
 // assumed that class T supports operator >> and operator << for input

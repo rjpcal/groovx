@@ -7,21 +7,28 @@
 ###
 ##############################################################################
 
+package require Face
+package require Pos
+package require Tlist
+package require Objtogl
+
+if { ![Togl::inited] } { Togl::init "-rgba false"; update }
+
 ### Tlist::undrawCmd ###
 test "TlistTcl-Tlist::undraw" "too many args" {
 	 Tlist::undraw junk
 } {wrong \# args: should be "Tlist::undraw"}
 test "TlistTcl-Tlist::undraw" "normal use" {
 	 Tlist::reset
-	 set f [Face::face]
-	 set p [Pos::position]
+	 set f [Face::Face]
+	 set p [Pos::Pos]
 	 Tlist::addObject 0 $f $p
 	 setForeground 1
 	 setBackground 0
 	 clearscreen
 	 Tlist::show 0
 	 Tlist::undraw
-	 pixelCheckSum 0 0 $::TOGL_WIDTH $::TOGL_HEIGHT
+	 pixelCheckSum
 } {^0$}
 test "TlistTcl-Tlist::undraw" "no error" {} $BLANK $no_test
 
@@ -31,15 +38,15 @@ test "TlistTcl-Tlist::redraw" "too many args" {
 } {wrong \# args: should be "Tlist::redraw"}
 test "TlistTcl-Tlist::redraw" "normal use" {
 	 Tlist::reset
-	 set f [Face::face]
-	 set p [Pos::position]
+	 set f [Face::Face]
+	 set p [Pos::Pos]
 	 Tlist::addObject 0 $f $p
 	 Tlist::setCurTrial 0
 	 setForeground 1
 	 setBackground 0
 	 Tlist::redraw
 	 # check to see if some pixels actually got drawn
-	 expr [pixelCheckSum 0 0 $::TOGL_WIDTH $::TOGL_HEIGHT] > 500
+	 expr [pixelCheckSum] > 500
 } {^1$}
 test "TlistTcl-Tlist::redraw" "no error" {} $BLANK $no_test
 
@@ -50,7 +57,7 @@ test "TlistTcl-Tlist::clearscreen" "too many args" {
 test "TlistTcl-Tlist::clearscreen" "normal use" {
 	 setBackground 0
 	 Tlist::clearscreen
-	 pixelCheckSum 0 0 $::TOGL_WIDTH $::TOGL_HEIGHT
+	 pixelCheckSum
 } {^0$}
 test "TlistTcl-Tlist::clearscreen" "no error" {} $BLANK $no_test
 
@@ -79,8 +86,8 @@ test "TlistTcl-Tlist::count" "normal use on empty Tlist" {
 } {^0$}
 test "TlistTcl-Tlist::count" "normal use on non-empty Tlist" {
 	 Tlist::reset
-	 set f [Face::face]
-	 set p [Pos::position]
+	 set f [Face::Face]
+	 set p [Pos::Pos]
 	 Tlist::addObject 0 $f $p
 	 Tlist::addObject 3 $f $p
 	 Tlist::count
@@ -115,21 +122,21 @@ test "TlistTcl-Tlist::addObject" "too many args" {
     Tlist::addObject j u n k
 } {wrong \# args: should be "Tlist::addObject trial objid posid"}
 test "TlistTcl-Tlist::addObject" "normal use" {
-	 set f [Face::face]
-	 set p [Pos::position]
+	 set f [Face::Face]
+	 set p [Pos::Pos]
 	 catch {Tlist::addObject 5 $f $p}
 } {^0$}
 test "TlistTcl-Tlist::addObject" "error on bad objid" {
-	 set p [Pos::position]
+	 set p [Pos::Pos]
     Tlist::addObject 5 -1 $p
 } {Tlist::addObject: objid out of range}
 test "TlistTcl-Tlist::addObject" "error on bad posid" {
-	 set f [Face::face]
+	 set f [Face::Face]
     Tlist::addObject 5 $f -1
 } {Tlist::addObject: posid out of range}
 test "TlistTcl-Tlist::addObject" "error on bad trial id" {
-	 set f [Face::face]
-	 set p [Pos::position]
+	 set f [Face::Face]
+	 set p [Pos::Pos]
     Tlist::addObject -1 $f $p
 } {Tlist::addObject: invalid trial id}
 
@@ -141,8 +148,8 @@ test "TlistTcl-Tlist::setCurTrial" "too many args" {
     Tlist::setCurTrial j u
 } {wrong \# args: should be "Tlist::setCurTrial trial_id"}
 test "TlistTcl-Tlist::setCurTrial" "normal use" {
-	 set f [Face::face]
-	 set p [Pos::position]
+	 set f [Face::Face]
+	 set p [Pos::Pos]
 	 Tlist::addObject 0 0 0
 	 catch {Tlist::setCurTrial 0}
 } {^0$}
@@ -161,8 +168,8 @@ test "TlistTcl-Tlist::reset" "too many args" {
 test "TlistTcl-Tlist::reset" "normal use" {
 	 ObjList::reset
 	 PosList::reset
-	 set f [Face::face]
-	 set p [Pos::position]
+	 set f [Face::Face]
+	 set p [Pos::Pos]
 	 Tlist::addObject 0 $f $p
 	 Tlist::addObject 1 $f $p
 	 Tlist::reset
@@ -183,28 +190,23 @@ test "TlistTcl-Tlist::loadObjidFile" "normal read with no offset" {
 	 ObjList::reset
 	 PosList::reset
 	 Tlist::loadObjidFile $::TEST_DIR/objid_file -1 0
-	 Tlist::stringify
-} "Tlist 3 3
-0 Trial 3 1 0  1 1  2 2  0  -1.*
-1 Trial 2 3 0  4 1  0  -1.*
-2 Trial 4 6 0  3 1  9 2  11 3  0  -1.*
-0 $BIT"
+	 expr [regexp "^Trial 4 6 0  3 1  9 2  11 3  0  -1.*$"  [Trial::stringify 2]]\
+				&& [Tlist::count] == 3
+} {^1$}
 test "TlistTcl-Tlist::loadObjidFile" "read with fixed # lines, and offset" {
 	 ObjList::reset
 	 PosList::reset
 	 Tlist::loadObjidFile $::TEST_DIR/objid_file 2 1
-	 Tlist::stringify
-} "Tlist 2 2
-0 Trial 3 2 0  2 1  3 2  0  -1.*
-1 Trial 2 4 0  5 1  0  -1.*
-0 \[01\]"
+	 expr [regexp "^Trial 2 4 0  5 1  0  -1.*" [Trial::stringify 1]] \
+				&& [Tlist::count] == 2
+} {^1$}
 test "TlistTcl-Tlist::loadObjidFile" "read empty file" {
 	 ObjList::reset
 	 PosList::reset
 	 Tlist::loadObjidFile $::TEST_DIR/empty_file -1 0
 	 Tlist::stringify
-} "Tlist 0 0
-0 $BIT"
+	 Tlist::count
+} {^0$}
 test "TlistTcl-Tlist::loadObjidFile" "error on junk text file" {
 	 Tlist::loadObjidFile $::TEST_DIR/junk_text_file -1 0
 } {Tlist::loadObjidFile: InputError: Trial}
@@ -248,25 +250,21 @@ test "TlistTcl-Tlist::makeSingles" "too many args" {
 test "TlistTcl-Tlist::makeSingles" "normal use with several GrObj's" {
 	 ObjList::reset
 	 PosList::reset
-	 Face::face
-	 Face::face
-	 Face::face
-	 set p [Pos::position]
+	 Face::Face
+	 Face::Face
+	 Face::Face
+	 set p [Pos::Pos]
 	 Tlist::makeSingles $p
-	 Tlist::stringify
-} "Tlist $INT 3
-0 Trial 1 0 0  0  0.*
-1 Trial 1 1 0  0  0.*
-2 Trial 1 2 0  0  0.*
-0 $BIT"
+	 expr [regexp "^Trial 1 2 0  0  0.*$" [Trial::stringify 2]] \
+				&& [Tlist::count] == 3
+} {^1$}
 test "TlistTcl-Tlist::makeSingles" "normal use with empty ObjList" {
 	 ObjList::reset
 	 PosList::reset
-	 set p [Pos::position]
+	 set p [Pos::Pos]
 	 Tlist::makeSingles $p
-	 Tlist::stringify
-} "Tlist $INT 0
-0 $BIT"
+	 Tlist::count
+} {^0$}
 test "TlistTcl-Tlist::makeSingles" "error on bad posid" {
 	 ObjList::reset
 	 PosList::reset
@@ -283,27 +281,22 @@ test "TlistTcl-Tlist::makePairs" "too many args" {
 test "TlistTcl-Tlist::makePairs" "normal use on two GrObj's" {
 	 ObjList::reset
 	 PosList::reset
-	 Face::face
-	 Face::face
-	 set p1 [Pos::position]
-	 set p2 [Pos::position]
+	 Face::Face
+	 Face::Face
+	 set p1 [Pos::Pos]
+	 set p2 [Pos::Pos]
 	 Tlist::makePairs $p1 $p2
-	 Tlist::stringify
-} "Tlist $INT 4
-0 Trial 2 0 0  0 1  0  1.*
-1 Trial 2 0 0  1 1  0  0.*
-2 Trial 2 1 0  0 1  0  0.*
-3 Trial 2 1 0  1 1  0  1.*
-0 $BIT"
+	 expr [regexp "^Trial 2 1 0  1 1  0  1.*$" [Trial::stringify 3]] \
+				&& [Tlist::count] == 4
+} {^1$}
 test "TlistTcl-Tlist::makePairs" "normal use with empty ObjList" {
 	 ObjList::reset
 	 PosList::reset
-	 set p1 [Pos::position]
-	 set p2 [Pos::position]
+	 set p1 [Pos::Pos]
+	 set p2 [Pos::Pos]
 	 Tlist::makePairs $p1 $p2
-	 Tlist::stringify
-} "Tlist $INT 0
-0 $BIT"
+	 Tlist::count
+} {^0$}
 test "TlistTcl-Tlist::makePairs" "error on bad posid" {
 	 ObjList::reset
 	 PosList::reset
@@ -320,30 +313,30 @@ test "TlistTcl-Tlist::makeTriads" "too many args" {
 test "TlistTcl-Tlist::makeTriads" "normal use on three GrObj's" {
 	 ObjList::reset
 	 PosList::reset
-	 Face::face
-	 Face::face
-	 Face::face
-	 set p1 [Pos::position]
-	 set p2 [Pos::position]
-	 set p3 [Pos::position]
+	 Face::Face
+	 Face::Face
+	 Face::Face
+	 set p1 [Pos::Pos]
+	 set p2 [Pos::Pos]
+	 set p3 [Pos::Pos]
 	 Tlist::makeTriads $p1 $p2 $p3
 	 Tlist::count
 } {^18$}
 test "TlistTcl-Tlist::makeTriads" "normal use on two GrObj's" {
 	 ObjList::reset
 	 PosList::reset
-	 Face::face
-	 Face::face
-	 set p1 [Pos::position]
-	 set p2 [Pos::position]
-	 set p3 [Pos::position]
+	 Face::Face
+	 Face::Face
+	 set p1 [Pos::Pos]
+	 set p2 [Pos::Pos]
+	 set p3 [Pos::Pos]
 	 Tlist::makeTriads $p1 $p2 $p3
 	 Tlist::count
 } {^0$}
 test "TlistTcl-Tlist::makeTriads" "normal use on empty ObjList" {
 	 ObjList::reset
 	 PosList::reset
-	 set p1 [Pos::position]
+	 set p1 [Pos::Pos]
 	 Tlist::makeTriads $p1 $p1 $p1
 	 Tlist::count
 } {^0$}
@@ -351,8 +344,8 @@ test "TlistTcl-Tlist::makeTriads" "check that Tlist is cleared first" {
 	 # Put some random stuff in the Tlist first
 	 ObjList::reset
 	 PosList::reset
-	 set f [Face::face]
-	 set p [Pos::position]
+	 set f [Face::Face]
+	 set p [Pos::Pos]
 	 Tlist::addObject 0 $f $p
 	 Tlist::addObject 3 $f $p
 	 # Now, this should clear the Tlist before it does anything else, and since
@@ -383,19 +376,10 @@ test "TlistTcl-Tlist::write_responses" "normal use" {
 } {^1$} $test_serialize
 
 ### Tlist::stringifyCmd ###
+### Tlist::destringifyCmd ###
 test "TlistTcl-Tlist::stringify" "too many args" {
     Tlist::stringify junk
 } {wrong \# args: should be "Tlist::stringify"}
-test "TlistTcl-Tlist::stringify" "normal use with everything empty" {
-	 ObjList::reset
-	 PosList::reset
-	 Tlist::reset
-	 Tlist::stringify
-} "Tlist $INT 0
-0 $BIT"
-test "TlistTcl-Tlist::stringify" "no error" {} $BLANK $no_test
-
-### Tlist::destringifyCmd ###
 test "TlistTcl-Tlist::destringify" "too few args" {
     Tlist::destringify
 } {wrong \# args: should be "Tlist::destringify string"}
@@ -405,10 +389,10 @@ test "TlistTcl-Tlist::destringify" "too many args" {
 test "TlistTcl-Tlist::destringify" "write, read, write and compare" {
 	 ObjList::reset
 	 PosList::reset
-	 Face::face
-	 Face::face
-	 set p1 [Pos::position]
-	 set p2 [Pos::position]
+	 Face::Face
+	 Face::Face
+	 set p1 [Pos::Pos]
+	 set p2 [Pos::Pos]
 	 Tlist::makePairs $p1 $p2
 	 set str [Tlist::stringify]
 	 Tlist::reset

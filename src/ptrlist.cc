@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Sat Jul  3 13:50:54 1999
+// written: Wed Jul  7 12:46:58 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,6 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const int BUF_SIZE = 200;
   const int RESIZE_CHUNK = 20;
 }
 
@@ -202,6 +201,13 @@ DOTRACE("PtrList::isValidId");
   DebugEvalNL(itsVec[id] != NULL);
 
   return ( id >= 0 && id < itsVec.size() && itsVec[id] != NULL ); 
+}
+
+template <class T>
+T* PtrList::getCheckedPtr(int id) const throw (InvalidIdError) {
+DOTRACE("PtrList::getCheckedPtr");
+  if ( !isValidId(id) ) { throw InvalidIdError(); }
+  return getPtr(id);
 }
 
 //////////////////

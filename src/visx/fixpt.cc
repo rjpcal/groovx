@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Sun Apr 25 13:19:31 1999
+// written: Sat Jul  3 16:34:47 1999
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FIXPT_CC_DEFINED
@@ -13,14 +15,25 @@
 
 #include <iostream.h>
 #include <string>
-#include <typeinfo>
 #include <GL/gl.h>
 
 ///////////////////////////////////////////////////////////////////////
-// FixPt member functions
+//
+// File scope data
+//
 ///////////////////////////////////////////////////////////////////////
 
-FixPt::FixPt(float len, int wid) : 
+namespace {
+  const string ioTag = "FixPt";
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// FixPt member functions
+//
+///////////////////////////////////////////////////////////////////////
+
+FixPt::FixPt(double len, int wid) : 
   itsLength(len), itsWidth(wid) {}
 
 FixPt::FixPt(istream &is, IOFlag flag) {
@@ -30,49 +43,45 @@ FixPt::FixPt(istream &is, IOFlag flag) {
 FixPt::~FixPt() {}
 
 void FixPt::serialize(ostream &os, IOFlag flag) const {
-  if (flag & BASES) { GrObj::serialize(os, flag); }
-
   char sep = ' ';
-  if (flag & TYPENAME) { os << typeid(FixPt).name() << sep; }
+  if (flag & TYPENAME) { os << ioTag << sep; }
 
   os << itsLength << sep;
   os << itsWidth << endl;
-  if (os.fail()) throw OutputError(typeid(FixPt));
+  if (os.fail()) throw OutputError(ioTag);
+
+  if (flag & BASES) { GrObj::serialize(os, flag); }
 }
 
 void FixPt::deserialize(istream &is, IOFlag flag) {
-  if (flag & BASES) { GrObj::deserialize(is, flag); }
-  if (flag & TYPENAME) {
-    string name;
-    is >> name;
-    if (name != typeid(FixPt).name()) { 
-		throw InputError(typeid(FixPt));
-	 }
-  }
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+
   is >> itsLength;
   is >> itsWidth;
-  if (is.fail()) throw InputError(typeid(FixPt));
+  if (is.fail()) throw InputError(ioTag);
+
+  if (flag & BASES) { GrObj::deserialize(is, flag); }
 }
 
-void FixPt::grRecompile() const {
-  // dump old display list and get new one
-  grNewList();
+int FixPt::charCount() const {
+  return (ioTag.length() + 1
+			 + gCharCount<double>(itsLength) + 1
+			 + gCharCount<int>(itsWidth) + 1
+			 + 1);// fudge factor
+}
 
-  glNewList(grDisplayList(), GL_COMPILE);
-    glPushAttrib(GL_LINE_BIT);
-    glLineWidth(itsWidth);
-
-    glBegin(GL_LINES);
-    glVertex3f(0.0, -itsLength/2.0, 0.0);
-    glVertex3f(0.0, itsLength/2.0, 0.0);
-    glVertex3f(-itsLength/2.0, 0.0, 0.0);
-    glVertex3f(itsLength/2.0, 0.0, 0.0);
-    glEnd();
-    
-    glPopAttrib();
-  glEndList();
-
-  grPostCompiled();
+void FixPt::grRender() const {
+  glPushAttrib(GL_LINE_BIT);
+  glLineWidth(itsWidth);
+  
+  glBegin(GL_LINES);
+  glVertex3f(0.0, -itsLength/2.0, 0.0);
+  glVertex3f(0.0, itsLength/2.0, 0.0);
+  glVertex3f(-itsLength/2.0, 0.0, 0.0);
+  glVertex3f(itsLength/2.0, 0.0, 0.0);
+  glEnd();
+  
+  glPopAttrib();
 }
 
 static const char vcid_fixpt_cc[] = "$Header$";

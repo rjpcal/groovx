@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // positiontcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:53:34 1999
-// written: Sun Apr 25 13:13:28 1999
+// written: Mon Jul 19 15:25:20 1999
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef POSITIONTCL_CC_DEFINED
@@ -12,199 +14,154 @@
 #include "positiontcl.h"
 
 #include <tcl.h>
-#include <strstream.h>
+#include <typeinfo>
 
+#include "iomgr.h"
 #include "position.h"
 #include "poslist.h"
-#include "poslisttcl.h"
-#include "errmsg.h"
+#include "listitempkg.h"
+#include "tclcmd.h"
 
 #define NO_TRACE
 #include "trace.h"
 #include "debug.h"
 
-namespace PositionTcl {
-  const int BUF_SIZE = 200;
-  
-  Tcl_ObjCmdProc positionCmd;
-  Tcl_ObjCmdProc rotateCmd;
-  Tcl_ObjCmdProc scaleCmd;
-  Tcl_ObjCmdProc stringifyCmd;
-  Tcl_ObjCmdProc translateCmd;
+namespace PosTcl {
+  class TranslateCmd;
+  class ScaleCmd;
+  class RotateCmd;
+  class TypeCmd;
+  class PosPkg;
 }
 
-// create a new Position object, insert it into the PosList, and
-// return its id#
-int PositionTcl::positionCmd(ClientData, Tcl_Interp *interp,
-                             int objc, Tcl_Obj *const objv[]) {
-DOTRACE("PositionTcl::positionCmd");
-  if (objc > 1) {
-    Tcl_WrongNumArgs(interp, 1, objv, NULL);
-    return TCL_ERROR;
+//---------------------------------------------------------------------
+//
+// TranslateCmd --
+//
+//---------------------------------------------------------------------
+
+class PosTcl::TranslateCmd : public TclItemCmd<Position> {
+public:
+  TranslateCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<Position>(pkg, cmd_name, 
+								 "posid new_x new_y ?new_z?", 4, 5, false) {}
+protected:
+  virtual void invoke() {
+	 Position* p = getItem();
+
+	 double new_x=0.0, new_y=0.0, new_z=0.0;
+	 if (objc() >= 5) { new_z = getDoubleFromArg(4); }
+	 if (objc() >= 4) { new_y = getDoubleFromArg(3); }
+	 if (objc() >= 3) { new_x = getDoubleFromArg(2); }
+
+	 p->setTranslate(new_x, new_y, new_z);
+	 returnVoid();
   }
-  
-  Position *p = new Position();
-  
-  PosList& plist = PoslistTcl::getPosList();
-  int id = plist.addPos(p);
+};
 
-  Tcl_SetObjResult(interp, Tcl_NewIntObj(id));
-  return TCL_OK;
-}
+//---------------------------------------------------------------------
+//
+// ScaleCmd --
+//
+//---------------------------------------------------------------------
 
-// set the coordinates for translating an object before it is drawn
-int PositionTcl::translateCmd(ClientData, Tcl_Interp *interp,
-                                int objc, Tcl_Obj *const objv[]) {
-DOTRACE("PositionTcl::translateCmd");
-  if (objc < 4 || objc > 5)  {
-    Tcl_WrongNumArgs(interp, 1, objv, "posid new_x new_y [new_z]");
-    return TCL_ERROR;
+class PosTcl::ScaleCmd : public TclItemCmd<Position> {
+public:
+  ScaleCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<Position>(pkg, cmd_name, 
+								 "posid scale_x ?scale_y? ?scale_z?", 3, 5, false) {}
+protected:
+  virtual void invoke() {
+	 Position* p = getItem();
+
+	 double new_x=0.0, new_y=0.0, new_z=0.0;
+	 if (objc() >= 5) { new_z = getDoubleFromArg(4); }
+	 if (objc() >= 4) { new_y = getDoubleFromArg(3); }
+	 if (objc() >= 3) { new_x = getDoubleFromArg(2); }
+
+	 p->setScale(new_x, new_y, new_z);
+	 returnVoid();
   }
+};
 
-  const PosList& plist = PoslistTcl::getPosList();
-  Position *p = PoslistTcl::getPosFromArg(interp, objv, plist, 1);
-  if ( p == NULL ) return TCL_ERROR;
+//---------------------------------------------------------------------
+//
+// RotateCmd --
+//
+//---------------------------------------------------------------------
 
-  double new_x=0.0, new_y=0.0, new_z=0.0;
-  if (objc >= 5) {
-    if (Tcl_GetDoubleFromObj(interp, objv[4], &new_z) != TCL_OK) 
-      return TCL_ERROR;
+class PosTcl::RotateCmd : public TclItemCmd<Position> {
+public:
+  RotateCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<Position>(pkg, cmd_name, 
+								 "posid angle ?rot_axis_x rot_axis_y rot_axis_z?",
+								 3, 6, true) {}
+protected:
+  virtual void invoke() {
+	 Position* p = getItem();
+
+	 double new_a = getDoubleFromArg(2);
+	 if (objc() == 3) {
+		p->setAngle(new_a);
+	 }
+	 else if (objc() == 6) {
+		double new_x = getDoubleFromArg(3);
+		double new_y = getDoubleFromArg(4);
+		double new_z = getDoubleFromArg(5);
+
+		p->setRotate(new_a, new_x, new_y, new_z);
+	 }
+	 returnVoid();
   }
+};
 
-  if (objc >= 4) {
-    if (Tcl_GetDoubleFromObj(interp, objv[3], &new_y) != TCL_OK)
-      return TCL_ERROR;
+//---------------------------------------------------------------------
+//
+// TypeCmd --
+//
+//---------------------------------------------------------------------
+
+class PosTcl::TypeCmd : public TclItemCmd<Position> {
+public:
+  TypeCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<Position>(pkg, cmd_name, "posid", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 Position* p = getItem();
+	 returnCstring(typeid(*p).name());
   }
+};
 
-  if (objc >= 3) {
-    if (Tcl_GetDoubleFromObj(interp, objv[2], &new_x) != TCL_OK)
-      return TCL_ERROR;
+//---------------------------------------------------------------------
+//
+// PosPkg class definition
+//
+//---------------------------------------------------------------------
+
+class PosTcl::PosPkg : public ListItemPkg<Position, PosList> {
+public:
+  PosPkg(Tcl_Interp* interp) :
+	 ListItemPkg<Position, PosList>(interp, PosList::thePosList(), "Pos", "2.3")
+  {
+	 addCommand( new RotateCmd(this, "Pos::rotate") );
+	 addCommand( new TranslateCmd(this, "Pos::translate") );
+	 addCommand( new ScaleCmd(this, "Pos::scale") );
+	 addCommand( new TypeCmd(this, "Pos::type") );
+
+	 Tcl_Eval(interp,
+				 "namespace eval Pos { proc position {} { return Pos } }\n"
+				 "proc posType {id} { return [Position::type $id] }\n");
   }
+};
 
-  p->setTranslate(new_x, new_y, new_z);
-  return TCL_OK;
-}
 
-// set the parameters for scaling an object before it is drawn
-int PositionTcl::scaleCmd(ClientData, Tcl_Interp *interp,
-                            int objc, Tcl_Obj *const objv[]) {
-DOTRACE("PositionTcl::scaleCmd");
-  if (objc < 3 || objc > 5)  {
-    Tcl_WrongNumArgs(interp, 1, objv, "posid scale_x [scale_y] [scale_z]");
-    return TCL_ERROR;
-  }
+int Pos_Init(Tcl_Interp* interp) {
+DOTRACE("Pos_Init");
 
-  const PosList& plist = PoslistTcl::getPosList();
-  Position *p = PoslistTcl::getPosFromArg(interp, objv, plist, 1); 
-  if ( p == NULL ) return TCL_ERROR;
+  new PosTcl::PosPkg(interp);
 
-  double new_x=1.0, new_y=1.0, new_z=1.0;
-  if (objc >= 3) {
-    if (Tcl_GetDoubleFromObj(interp, objv[2], &new_x) != TCL_OK)
-      return TCL_ERROR;
-  }
+  FactoryRegistrar<IO, Position> registrar(IoFactory::theOne());
 
-  if (objc >= 4) {
-    if (Tcl_GetDoubleFromObj(interp, objv[3], &new_y) != TCL_OK)
-      return TCL_ERROR;
-  }
-  else new_y = new_x;
-
-  if (objc >= 5) {
-    if (Tcl_GetDoubleFromObj(interp, objv[4], &new_z) != TCL_OK)
-      return TCL_ERROR;
-  }
-
-  p->setScale(new_x, new_y, new_z);
-  return TCL_OK;
-}
-
-// set the parameters for rotating an object before it is drawn
-int PositionTcl::rotateCmd(ClientData, Tcl_Interp *interp,
-                               int objc, Tcl_Obj *const objv[]) {
-DOTRACE("PositionTcl::rotateCmd");
-  if (objc != 3 && objc != 6)  {
-    Tcl_WrongNumArgs(interp, 1, objv, 
-                     "posid angle [rot_axis_x rot_axis_y rot_axis_z]");
-    return TCL_ERROR;
-  }
-
-  const PosList& plist = PoslistTcl::getPosList();
-  Position *p = PoslistTcl::getPosFromArg(interp, objv, plist, 1); 
-  if ( p == NULL ) return TCL_ERROR;
-
-  double new_a=0.0;
-  if (Tcl_GetDoubleFromObj(interp, objv[2], &new_a) != TCL_OK)
-    return TCL_ERROR;
-  if (objc == 3) {
-    p->setAngle(new_a);
-    return TCL_OK;
-  }
-
-  double new_x=0.0, new_y=0.0, new_z=1.0;
-  if (Tcl_GetDoubleFromObj(interp, objv[3], &new_x) != TCL_OK)
-    return TCL_ERROR;
-  if (Tcl_GetDoubleFromObj(interp, objv[4], &new_y) != TCL_OK)
-    return TCL_ERROR;
-  if (Tcl_GetDoubleFromObj(interp, objv[5], &new_z) != TCL_OK)
-    return TCL_ERROR;
-  
-  p->setRotate(new_a, new_x, new_y, new_z);
-  return TCL_OK;
-}
-
-int PositionTcl::stringifyCmd(ClientData, Tcl_Interp *interp,
-                               int objc, Tcl_Obj *const objv[]) {
-DOTRACE("PositionTcl::stringifyCmd");
-  if (objc != 2) {
-    Tcl_WrongNumArgs(interp, 1, objv, "posid");
-    return TCL_ERROR;
-  }
-  
-  const PosList& plist = PoslistTcl::getPosList();
-  Position *p = PoslistTcl::getPosFromArg(interp, objv, plist, 1);
-  if ( p == NULL ) return TCL_ERROR;
-
-  char buf[BUF_SIZE];
-  ostrstream ost(buf, BUF_SIZE);
-  try {
-	 p->serialize(ost, IO::TYPENAME|IO::BASES);
-	 ost << '\0';
-  }
-  catch (IoError& err) {
-	 err_message(interp, objv, err.info().c_str());
-	 return TCL_ERROR;
-  }
-
-  Tcl_SetObjResult(interp, Tcl_NewStringObj(buf, -1));
-
-  return TCL_OK;
-}
-
-int PositionTcl::Position_Init(Tcl_Interp *interp) {
-DOTRACE("PositionTcl::Position_Init");
-  // Add all commands to ::Pos namespace
-  Tcl_CreateObjCommand(interp, "Pos::position", positionCmd,
-                       (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "Pos::translate", translateCmd,
-                       (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "Pos::scale", scaleCmd,
-                       (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "Pos::rotate", rotateCmd,
-                       (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "Pos::stringify", stringifyCmd,
-                       (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-
-  Tcl_Eval(interp,
-			  "namespace eval Pos {\n"
-			  "  namespace export translate\n"
-			  "  namespace export rotate\n"
-			  "}");
-  Tcl_Eval(interp,
-			  "namespace import Pos::translate\n"
-			  "namespace import Pos::rotate\n");
-
-  Tcl_PkgProvide(interp, "Position", "2.1");
   return TCL_OK;
 }
 

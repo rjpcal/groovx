@@ -3,7 +3,7 @@
 // iofactory.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 30 15:01:02 1999
-// written: Wed Jun 30 15:01:10 1999
+// written: Wed Jun 30 16:32:26 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ namespace {
 }
 
 IoFactory::IoFactory() :
-  Factory<IO> {}
+  Factory<IO>() {}
 
 IoFactory& IoFactory::theOne() {
   if (instance == 0) {

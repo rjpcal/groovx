@@ -7,16 +7,20 @@
 ###
 ##############################################################################
 
-### Pos::positionCmd ###
-test "PositionTcl-Pos::position" "too many args" {
-    Pos::position junk
-} {wrong \# args: should be "Pos::position"}
-test "PositionTcl-Pos::position" "normal create" {
-	 Pos::position
-} {^[0-9]+$}
-test "PositionTcl-Pos::position" "no error" {} $BLANK $no_test
+package require Pos
+package require Jitter
+package require Poslist
 
-set pos [Pos::position]
+### Pos::PosCmd ###
+test "PositionTcl-Pos::Pos" "too many args" {
+    Pos::Pos junk
+} {wrong \# args: should be "Pos::Pos"}
+test "PositionTcl-Pos::Pos" "normal create" {
+	 Pos::Pos
+} {^[0-9]+$}
+test "PositionTcl-Pos::Pos" "no error" {} $BLANK $no_test
+
+set pos [Pos::Pos]
 
 ### Pos::rotateCmd ###
 test "PositionTcl-Pos::rotate" "too few args" {
@@ -39,7 +43,7 @@ test "PositionTcl-Pos::rotate" "error on non-numeric input" {
 } {expected floating-point number but got "junk"}
 test "PositionTcl-Pos::rotate" "error on bad posid" {
     Pos::rotate -1 1 1 1 1
-} {Pos::rotate: posid out of range}
+} {Pos::rotate: an error of type InvalidIdError occurred}
 
 ### scaleCmd ###
 test "PositionTcl-Pos::scale" "too few args" {
@@ -56,7 +60,7 @@ test "PositionTcl-Pos::scale" "error on non-numeric input" {
 } {expected floating-point number but got "junk"}
 test "PositionTcl-Pos::scale" "error on bad posid" {
     Pos::scale -1 -1.2 1.0 1.0
-} {Pos::scale: posid out of range}
+} {Pos::scale: an error of type InvalidIdError occurred}
 
 ### Pos::translateCmd ###
 test "PositionTcl-Pos::translate" "too few args" {
@@ -73,7 +77,7 @@ test "PositionTcl-Pos::translate" "error on non-numeric input" {
 } {expected floating-point number but got "junk"}
 test "PositionTcl-Pos::translate" "error on bad posid" {
     Pos::translate -1 1 1 1
-} {Pos::translate: posid out of range}
+} {Pos::translate: an error of type InvalidIdError occurred}
 
 ### Pos::stringifyCmd ###
 test "PositionTcl-Pos::stringify" "too few args" {
@@ -90,11 +94,30 @@ test "PositionTcl-Pos::stringify" "normal use" {
 } {Position 5\.3 10\.6 15\.9 1 2\.5 4 1\.5 0 -2\.2 3}
 test "PositionTcl-Pos::stringify" "error on bad posid" {
     Pos::stringify -1
-} {Pos::stringify: posid out of range}
+} {Pos::stringify: an error of type InvalidIdError occurred}
 test "PositionTcl-Pos::stringify" "error on non-integral posid" {
     Pos::stringify 1.5
 } {expected integer but got "1\.5"}
 	 
+### Pos::typeCmd ###
+test "PositionTcl-Pos::type" "args" {
+    Pos::type
+} {wrong \# args: should be "Pos::type posid"}
+test "PositionTcl-Pos::type" "normal use on Position" { 
+	 set f [Pos::Pos]
+	 Pos::type $f
+} {Position}
+test "PositionTcl-Pos::type" "normal use on Jitter" {
+	 set f [Jitter::Jitter]
+	 Pos::type $f
+} {Jitter}
+test "PositionTcl-Pos::type" "error on too small posid" {
+	 Pos::type -1
+} {Pos::type: an error of type InvalidIdError occurred}
+test "PositionTcl-Pos::type" "error on too large" {
+	 Pos::type 10000
+} {Pos::type: an error of type InvalidIdError occurred}
+
 PosList::reset
 unset pos
 

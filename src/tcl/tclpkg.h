@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Thu Jun 24 19:18:35 1999
+// written: Mon Jul 12 12:58:56 1999
 // $Id$
 //
 //
@@ -230,6 +230,54 @@ private:
 
 ///////////////////////////////////////////////////////////////////////
 //
+// CTclItemPkg class definition
+//
+///////////////////////////////////////////////////////////////////////
+
+template <class C>
+class CTclItemPkg : public TclItemPkg {
+public:
+  CTclItemPkg(Tcl_Interp* interp, const char* name, const char* version,
+				  int item_argn=1) :
+	 TclItemPkg(interp, name, version, item_argn) {}
+
+  void declareCAction(const char* cmd_name, void (C::* actionFunc) (),
+							 const char* usage = 0) {
+	 declareAction(cmd_name, new CAction<C>(actionFunc), usage);
+  }
+
+  void declareCAction(const char* cmd_name, void (C::* actionFunc) () const,
+							 const char* usage = 0) {
+	 declareAction(cmd_name, new CConstAction<C>(actionFunc), usage);
+  }
+
+  template <class T>
+  void declareCGetter(const char* cmd_name, T (C::* getterFunc) () const,
+							 const char* usage = 0) {
+	 declareGetter(cmd_name, new CGetter<C,T>(getterFunc), usage);
+  }
+
+  template <class T>
+  void declareCSetter(const char* cmd_name, void (C::* setterFunc) (T),
+							 const char* usage = 0) {
+	 declareSetter(cmd_name, new CSetter<C,T>(setterFunc), usage);
+  }
+
+  template <class T>
+  void declareCAttrib(const char* cmd_name,
+							 T (C::* getterFunc) () const, void (C::* setterFunc) (T),
+							 const char* usage = 0) {
+	 declareAttrib(cmd_name, new CAttrib<C,T>(getterFunc, setterFunc), usage);
+  }
+
+  virtual C* getCItemFromId(int id) = 0;
+  virtual void* getItemFromId(int id) {
+	 return static_cast<void*>(getCItemFromId(id));
+  }
+};
+
+///////////////////////////////////////////////////////////////////////
+//
 // CTclIoItemPkg class definition
 //
 ///////////////////////////////////////////////////////////////////////
@@ -242,6 +290,35 @@ public:
 	 TclIoItemPkg(interp, name, version, item_argn) 
   {
 	 declareGetter("charCount", new CGetter<C, int>(&C::charCount));
+  }
+
+  void declareCAction(const char* cmd_name, void (C::* actionFunc) (),
+							 const char* usage = 0) {
+	 declareAction(cmd_name, new CAction<C>(actionFunc), usage);
+  }
+
+  void declareCAction(const char* cmd_name, void (C::* actionFunc) () const,
+							 const char* usage = 0) {
+	 declareAction(cmd_name, new CConstAction<C>(actionFunc), usage);
+  }
+
+  template <class T>
+  void declareCGetter(const char* cmd_name, T (C::* getterFunc) () const,
+							 const char* usage = 0) {
+	 declareGetter(cmd_name, new CGetter<C,T>(getterFunc), usage);
+  }
+
+  template <class T>
+  void declareCSetter(const char* cmd_name, void (C::* setterFunc) (T),
+							 const char* usage = 0) {
+	 declareSetter(cmd_name, new CSetter<C,T>(setterFunc), usage);
+  }
+
+  template <class T>
+  void declareCAttrib(const char* cmd_name,
+							 T (C::* getterFunc) () const, void (C::* setterFunc) (T),
+							 const char* usage = 0) {
+	 declareAttrib(cmd_name, new CAttrib<C,T>(getterFunc, setterFunc), usage);
   }
 
   virtual C* getCItemFromId(int id) = 0;

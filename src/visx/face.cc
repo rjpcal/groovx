@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Sat May 15 15:15:15 1999
+// written: Sat Jul  3 16:34:47 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,9 +16,10 @@
 #include <iostream.h>           // for serialize
 #include <iomanip.h>				  // for setw in serialize
 #include <string>
-#include <typeinfo>
 #include <GL/gl.h>
 #include <GL/glu.h>
+
+#include <cctype>
 
 #include "gfxattribs.h"
 
@@ -35,10 +36,16 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const float theirNose_x = 0.0;
-  const float theirMouth_x[2] = {-0.2, 0.2};
+  const double theirNose_x = 0.0;
+  const double theirMouth_x[2] = {-0.2, 0.2};
 
   const string ioTag = "Face";
+
+  void eatWhitespace(istream& is) {
+	 while ( isspace(is.peek()) ) {
+		is.get();
+	 }
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +54,11 @@ namespace {
 //
 ///////////////////////////////////////////////////////////////////////
 
-Face::Face(float eh, float es, float nl, float mh, int categ) {
+///////////////////////////////////////////////////////////////////////
+// Creators
+///////////////////////////////////////////////////////////////////////
+
+Face::Face(double eh, double es, double nl, double mh, int categ) {
 DOTRACE("Face::Face");
   itsCategory() = categ;
   setEyeHgt(eh);
@@ -67,17 +78,22 @@ DOTRACE("Face::Face(istream&, IOFlag)");
 
 Face::~Face() {
 DOTRACE("Face::~Face");
+  // nothing to do
 }
 
-// write the object's state to an output stream. The output stream must
-// already be open and connected to an appropriate file.
+// Writes the object's state to an output stream. The output stream
+// must already be open and connected to an appropriate file.
 void Face::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("Face::serialize");
   Invariant(check());
-  if (flag & BASES) { GrObj::serialize(os, flag); }
 
   char sep = ' ';
-  if (flag & TYPENAME) { os << typeid(Face).name() << sep; }
+  if (flag & TYPENAME) { os << ioTag << sep; }
+
+  // version
+  os << "@1" << sep;
+
+  os << '{' << sep;
 
   vector<const IO *> ioList;
   makeIoList(ioList);
@@ -85,25 +101,52 @@ DOTRACE("Face::serialize");
 		 ii != ioList.end(); ii++) {
 	 (*ii)->serialize(os, flag);
   }
-  os << endl;
-  if (os.fail()) throw OutputError(typeid(Face));
+  os << '}' << endl;
+  if (os.fail()) throw OutputError(ioTag);
+
+  if (flag & BASES) { GrObj::serialize(os, flag); }
 }
 
 void Face::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Face::deserialize");
-  if (flag & BASES) { GrObj::deserialize(is, flag); }
-  if (flag & TYPENAME) {
-    string name;
-    is >> name;
-    if (name != typeid(Face).name()) { 
-		throw InputError(typeid(Face));
-	 }
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+
+  eatWhitespace(is);
+  int version = 0;
+
+  if ( is.peek() == '@' ) {
+	 int c = is.get();
+	 Assert(c == '@');
+
+	 is >> version;
+	 DebugEvalNL(version);
   }
 
-  vector<IO *> ioList;
-  makeIoList(ioList);
-  for (vector<IO *>::iterator ii = ioList.begin(); ii != ioList.end(); ii++) {
-	 (*ii)->deserialize(is, flag);
+  if (version == 0) {
+	 // Format is:
+	 // Face $category $eyeheight $eyedistance $noselength $mouthheight
+	 vector<IO *> ioList;
+	 makeIoList(ioList);
+	 for (vector<IO *>::iterator ii = ioList.begin(); ii != ioList.end(); ii++) {
+		(*ii)->deserialize(is, flag);
+	 }
+  }
+  else if (version == 1) {
+	 // Format is:
+	 // Face { $category $eyeheight $eyedistance $noselength $mouthheight }
+	 char brace;
+	 is >> brace;
+	 if (brace != '{') { throw IoLogicError(ioTag + " missing left-brace"); }
+	 vector<IO *> ioList;
+	 makeIoList(ioList);
+	 for (vector<IO *>::iterator ii = ioList.begin(); ii != ioList.end(); ii++) {
+		(*ii)->deserialize(is, flag);
+	 }
+	 is >> brace;
+	 if (brace != '}') { throw IoLogicError(ioTag + " missing right-brace"); }
+  }
+  else {
+	 throw IoLogicError(ioTag + " unknown version");
   }
 
   // Mysterious bug in HP compiler (aCC) requires the following
@@ -113,28 +156,37 @@ DOTRACE("Face::deserialize");
   // optimization off. Somehow adding the catch and re-throw avoids
   // the problem, without changing the program's behavior.
   try {
-	 if (is.fail()) throw InputError(typeid(Face));
+	 if (is.fail()) throw InputError(ioTag);
   }
-  catch (IoError& err) {
- 	 throw;
+  catch (IoError&) { 
+	 throw;
   }
   Invariant(check());
+
+  if (flag & BASES) { GrObj::deserialize(is, flag); }
 }
 
 int Face::charCount() const {
 DOTRACE("Face::charCount");
-  return (ioTag.size() + 1
-			 + charCountInt(itsCategory()) + 1
-			 + 4*(4 + 1)
-			 + 5);//fudge factor
+  return (ioTag.length() + 1
+			 + 3 // version
+			 + 2 // brace
+			 + itsCategory.charCount() + 1
+			 + itsEyeDistance.charCount() + 1
+			 + itsNoseLength.charCount() + 1
+			 + itsMouthHeight.charCount() + 1
+			 + itsEyeHeight.charCount() + 1
+			 + 2 // brace
+			 + 1);//fudge factor
 }
 
-void Face::grRecompile() const {
-DOTRACE("Face::grRecompile");
-  Invariant(check());
+///////////////////////////////////////////////////////////////////////
+// Actions
+///////////////////////////////////////////////////////////////////////
 
-  // Delete old display list and get new display list.
-  grNewList();
+void Face::grRender() const {
+DOTRACE("Face::grRender");
+  Invariant(check());
 
   // Create a quadric obj to use for calling gluDisk(). This disk will
   // be used to render the eyeballs and the pupils.
@@ -147,20 +199,20 @@ DOTRACE("Face::grRecompile");
   // Calculate the x positions for the left and right eyes
   // left position always <= 0.0
   // right position always >= 0.0
-  const float left_eye_x = -abs(itsEyeDistance())/2.0;
-  const float right_eye_x = -left_eye_x;
+  const double left_eye_x = -abs(itsEyeDistance())/2.0;
+  const double right_eye_x = -left_eye_x;
 
   // Calculate the y positions for the top and bottom of the nose
   // bottom always <= 0.0
   // top always >= 0.0
-  const float nose_bottom_y = -abs(itsNoseLength())/2.0;
-  const float nose_top_y = -nose_bottom_y;
+  const double nose_bottom_y = -abs(itsNoseLength())/2.0;
+  const double nose_top_y = -nose_bottom_y;
 
   // Generate the eyeball scales on the basis of the eye aspect. The
   // eye aspect should range from 0.0 to 1.0 to control the eyeball x
   // and y scales from 0.1 to 0.185. The x and y scales are always at
   // opposite points within this range.
-  const float eye_aspect = getEyeAspect();
+  const double eye_aspect = getEyeAspect();
   const GLdouble eyeball_x_scale = 0.1*eye_aspect     + 0.185*(1-eye_aspect);
   const GLdouble eyeball_y_scale = 0.1*(1-eye_aspect) + 0.185*eye_aspect;
 
@@ -182,76 +234,75 @@ DOTRACE("Face::grRecompile");
   // the face outline.
   static const int num_subdivisions = 30;
   static const int nctrlsets = 2;
-  const float* const ctrlpnts = getCtrlPnts();
+  const double* const ctrlpnts = getCtrlPnts();
   
   const bool have_antialiasing = GfxAttribs::usingRgba();
 
-  // Generate the display list that will draw the face
-  glNewList(grDisplayList(), GL_COMPILE);
-    // Enable antialiasing, if it is available
-    if (have_antialiasing) {
-      glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_LINE_BIT);
-      glEnable(GL_BLEND); // blend incoming RGBA values with old RGBA values
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency 
-      glEnable(GL_LINE_SMOOTH);   // use anti-aliasing 
-    }
+  //
+  // Drawing commands begin here...
+  //
 
-    // Prepare to push and pop modelview matrices.
-    glMatrixMode(GL_MODELVIEW);
-
-    // Draw left eye.
-    glPushMatrix();
-    glTranslatef(left_eye_x, itsEyeHeight(), 0.0); 
-    glScalef(eyeball_x_scale, eyeball_y_scale, 1.0);
-    gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
-    glScalef(pupil_x_scale, pupil_y_scale, 1.0);
-    gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
-    glPopMatrix();
-
-    // Draw right eye.
-    glPushMatrix();
-    glTranslatef(right_eye_x, itsEyeHeight(), 0.0);
-    glScalef(eyeball_x_scale, eyeball_y_scale, 1.0);
-    gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
-    glScalef(pupil_x_scale, pupil_y_scale, 1.0);
-    gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
-    glPopMatrix();
-
-    // Draw face outline.
-    glEnable(GL_MAP1_VERTEX_3);
-    for (int i = 0; i < nctrlsets; ++i) {
-      glMap1f(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &ctrlpnts[i*12]);
-      // Define a 1-d evaluator for the Bezier curves .
-      glBegin(GL_LINE_STRIP);
-      for (int j = 0; j <= num_subdivisions; ++j) {
-        glEvalCoord1f((GLfloat) j/ (GLfloat) num_subdivisions);
-      }
-      glEnd();
-    }
-    
-    // Draw nose and mouth.
-    glBegin(GL_LINES);
-    glVertex2f(theirMouth_x[0], itsMouthHeight());
-    glVertex2f(theirMouth_x[1], itsMouthHeight());
-    glVertex2f(theirNose_x, nose_bottom_y);
-    glVertex2f(theirNose_x, nose_top_y);
-    glEnd();
-
-    if (have_antialiasing) {
-      glPopAttrib();
-    }
-  glEndList();
-
-  grPostCompiled();
+  // Enable antialiasing, if it is available
+  if (have_antialiasing) {
+	 glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_LINE_BIT);
+	 glEnable(GL_BLEND); // blend incoming RGBA values with old RGBA values
+	 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency 
+	 glEnable(GL_LINE_SMOOTH);   // use anti-aliasing 
+  }
+  
+  // Prepare to push and pop modelview matrices.
+  glMatrixMode(GL_MODELVIEW);
+  
+  // Draw left eye.
+  glPushMatrix();
+  glTranslatef(left_eye_x, itsEyeHeight(), 0.0); 
+  glScalef(eyeball_x_scale, eyeball_y_scale, 1.0);
+  gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
+  glScalef(pupil_x_scale, pupil_y_scale, 1.0);
+  gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
+  glPopMatrix();
+  
+  // Draw right eye.
+  glPushMatrix();
+  glTranslatef(right_eye_x, itsEyeHeight(), 0.0);
+  glScalef(eyeball_x_scale, eyeball_y_scale, 1.0);
+  gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
+  glScalef(pupil_x_scale, pupil_y_scale, 1.0);
+  gluDisk(qobj, 0.0, outer_radius, num_slices, num_loops);
+  glPopMatrix();
+  
+  // Draw face outline.
+  glEnable(GL_MAP1_VERTEX_3);
+  for (int i = 0; i < nctrlsets; ++i) {
+	 glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &ctrlpnts[i*12]);
+	 // Define a 1-d evaluator for the Bezier curves .
+	 glBegin(GL_LINE_STRIP);
+	 for (int j = 0; j <= num_subdivisions; ++j) {
+		glEvalCoord1f((GLdouble) j/ (GLdouble) num_subdivisions);
+	 }
+	 glEnd();
+  }
+  
+  // Draw nose and mouth.
+  glBegin(GL_LINES);
+  glVertex2f(theirMouth_x[0], itsMouthHeight());
+  glVertex2f(theirMouth_x[1], itsMouthHeight());
+  glVertex2f(theirNose_x, nose_bottom_y);
+  glVertex2f(theirNose_x, nose_top_y);
+  glEnd();
+  
+  if (have_antialiasing) {
+	 glPopAttrib();
+  }
 }
 
-///////////////
-// accessors //
-///////////////
+///////////////////////////////////////////////////////////////////////
+// Accessors
+///////////////////////////////////////////////////////////////////////
 
-const float* Face::getCtrlPnts() const {
+const double* Face::getCtrlPnts() const {
 DOTRACE("Face::getCtrlPnts");
-  static const float ctrlpnts[] = {    -.7, 0.2, 0, // first 4 control points 
+  static const double ctrlpnts[] = {    -.7, 0.2, 0, // first 4 control points 
                                        -.7, 1.4, 0,
                                        .7, 1.4, 0,
                                        .7, 0.2, 0,
@@ -262,22 +313,19 @@ DOTRACE("Face::getCtrlPnts");
   return ctrlpnts;
 }
 
-float Face::getEyeAspect() const {
+double Face::getEyeAspect() const {
 DOTRACE("Face::getEyeAspect");
   return 0.0;
 }
 
-float Face::getVertOffset() const {
+double Face::getVertOffset() const {
 DOTRACE("Face::getVertOffset");
   return 0.0;
 }
 
-
-
 bool Face::check() const {
 DOTRACE("Face::check");
-  // nothing to be checked in current implementation, so just...
-  return true;
+  return (itsEyeDistance() >= 0.0 && itsNoseLength() >= 0.0);
 }
 
 void Face::makeIoList(vector<IO *>& vec) {

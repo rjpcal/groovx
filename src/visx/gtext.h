@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Sat Jul  3 11:36:19 1999
+// written: Tue Jul  6 13:13:04 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,9 +43,6 @@ public:
 
   void setText(const char* text);
   const char* getText() const;
-
-  static void loadFont(const char* fontname);
-  static void loadFonti(int fontnumber);
 
   virtual void draw() const;
 

@@ -3,7 +3,7 @@
 // cloneface.cc
 // Rob Peters
 // created: Thu Apr 29 09:19:26 1999
-// written: Thu Jun  3 10:57:16 1999
+// written: Thu Jun 17 20:22:11 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ CloneFace::CloneFace () :
 DOTRACE("CloneFace::CloneFace()");
   // Copy Face's control points into CloneFace's itsCtrlPnts member,
   // so that the default behavior of CloneFace is to mimic Face.
-  const float* const face_pnts = Face::getCtrlPnts();
+  const double* const face_pnts = Face::getCtrlPnts();
   for (int i = 0; i < 24; ++i) {
 	 itsCtrlPnts[i] = face_pnts[i];
   }
@@ -75,32 +75,22 @@ DOTRACE("CloneFace::serialize");
   os << itsEyeAspect << sep;
   os << itsVertOffset << sep;
 
+  if (os.fail()) throw OutputError(ioTag);
+
   // Always serialize Face, regardless of (flag & BASES)
   // Always use the typename in the base class, regardless of flag
   Face::serialize(os, (flag | TYPENAME));
-
-  if (os.fail()) throw OutputError(ioTag);
 }
 
 void CloneFace::deserialize(istream &is, IOFlag flag) {
 DOTRACE("CloneFace::deserialize");
-  if (flag & TYPENAME) {
-    string name;
-    is >> name;
-    if (name != ioTag) { 
-		throw InputError(ioTag);
-	 }
-  }
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
   
   for (int i = 0; i < 24; ++i) {
 	 is >> itsCtrlPnts[i];
   }
   is >> itsEyeAspect;
   is >> itsVertOffset;
-
-  // Always deserialize Face, regardless of (flag & BASES)
-  // Always use the typename in the base class, regardless of flag
-  Face::deserialize(is, (flag | TYPENAME));
 
   // Bug in aCC requires this rather than a simple throw; see face.cc
   // for further explanation.
@@ -110,19 +100,23 @@ DOTRACE("CloneFace::deserialize");
   catch (IoError&) {
  	 throw;
   }
+
+  // Always deserialize Face, regardless of (flag & BASES)
+  // Always use the typename in the base class, regardless of flag
+  Face::deserialize(is, (flag | TYPENAME));
 }
 
-const float* CloneFace::getCtrlPnts() const {
+const double* CloneFace::getCtrlPnts() const {
 DOTRACE("CloneFace::getCtrlPnts");
   return itsCtrlPnts;
 }
 
-float CloneFace::getEyeAspect() const {
+double CloneFace::getEyeAspect() const {
 DOTRACE("CloneFace::getEyeAspect");
   return itsEyeAspect;
 }
 
-float CloneFace::getVertOffset() const {
+double CloneFace::getVertOffset() const {
 DOTRACE("CloneFace::getVertOffset");
   return itsVertOffset;
 }

@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Jun 16 19:12:28 1999
+// written: Tue Jul 20 14:43:05 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,11 +20,25 @@
 #define STRING_DEFINED
 #endif
 
+#ifndef TIME_H_DEFINED
+#include <sys/time.h>
+#define TIME_H_DEFINED
+#endif
+
+#ifndef ERROR_H_DEFINED
+#include "error.h"
+#endif
+
 struct Tcl_Interp;
 
-class Expt;
+class Block;
 class ResponseHandler;
-class TimingHandler;
+class TimingHdlr;
+
+class ExptError : public ErrorWithMsg {
+public:
+  ExptError(const string& msg="") : ErrorWithMsg(msg) {}
+};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -36,15 +50,18 @@ class ExptDriver : public virtual IO {
 protected:
   // Creators
   ExptDriver();
+
 private:
+  ExptDriver(const ExptDriver&);	// copy constructor not allowed
+  ExptDriver& operator=(const ExptDriver&); // assignment not allowed
+
   static ExptDriver theInstance;
+
 public:
   static ExptDriver& theExptDriver();
 
   virtual ~ExptDriver();
 
-  void init(int repeat, int seed, const string& date,
-				const string& host, const string& subject);
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
   virtual int charCount() const;
@@ -53,52 +70,59 @@ public:
   Tcl_Interp* getInterp();
   void setInterp(Tcl_Interp* interp);
 
-  Expt& expt();
-  ResponseHandler& responseHandler();
-  TimingHandler& timingHandler();
+  const string& getAutosaveFile() const;
+  void setAutosaveFile(const string& str);
 
-  const Expt& expt() const;
-  const ResponseHandler& responseHandler() const;
-  const TimingHandler& timingHandler() const;
+  // Graphics actions
+  void draw();
+  void undraw();
+  void edSwapBuffers();
+
+  // Trial event sequence actions
+  void edBeginExpt();
+
+  void edBeginTrial();
+  void edResponseSeen();
+  void edProcessResponse(int response);
+  void edAbortTrial();
+  void edEndTrial();
+  void edHaltExpt() const;
+
+  void read(const char* filename);
+  void write(const char* filename) const;
+
+  // Note: this function calls Tcl_Exit(), so it will never return.
+  void writeAndExit();
+
+protected:
+  void init();
+
+  Block& block() const;
+  ResponseHandler& responseHandler() const;
+  TimingHdlr& timingHdlr() const;
 
   bool needAutosave() const;
 
-  void setBlock(int blockid) { itsBlockId = blockid; }
-  void setResponseHandler(int rhid);
-  void setTimingHandler(int thid);
-
-  const string& getEndDate() const;
-  const string& getAutosaveFile() const;
-  bool getVerbose() const;
-
-  void setEndDate(const string& str);
-  void setAutosaveFile(const string& str);
-  void setVerbose(bool val);
-
-  // Actions
-  void edBeginTrial();
-  void draw();
-  void undraw();
-  void edAbortTrial();
-  void edEndTrial();
-  void edResponseSeen();
-  void edProcessResponse(int response);
-  void edHaltExpt();
-
-  int write(const char* filename);
-  int writeAndExit();
+  // Check the validity of all its id's, return true if all are ok,
+  // otherwise returns false, halts the experiment, and issues an
+  // error message to itsInterp.
+  bool assertIds() const; 
 
 private:
   Tcl_Interp* itsInterp;
 
+  string itsHostname;			  // Host computer on which Expt was begun
+  string itsSubject;				  // Id of subject on whom Expt was performed
+  string itsBeginDate;			  // Date(+time) when Expt was begun
   string itsEndDate;				  // Date(+time) when Expt was stopped
   string itsAutosaveFile;		  // Filename used for autosaves
 
   int itsBlockId;
   int itsRhId;
   int itsThId;
-};
 
+  mutable timeval itsBeginTime;
+};
 
 static const char vcid_exptdriver_h[] = "$Header$";
 #endif // !EXPTDRIVER_H_DEFINED

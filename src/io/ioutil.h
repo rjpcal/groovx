@@ -3,7 +3,7 @@
 // stringifycmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:43 1999
-// written: Mon Jun 14 12:18:33 1999
+// written: Thu Jun 24 19:19:06 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,6 @@ public:
 
 protected:
   virtual IO& getIO() = 0;
-  virtual int getBufSize() = 0;
 
 private:
   virtual void invoke();

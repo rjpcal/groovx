@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Tue Jun 29 18:34:19 1999
+// written: Mon Jul 19 17:01:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,13 @@
 
 #include <tcl.h>
 
+#include "iomgr.h"
 #include "rhlist.h"
 #include "responsehandler.h"
 #include "kbdresponsehdlr.h"
 #include "nullresponsehdlr.h"
 #include "tclcmd.h"
-#include "tclitempkg.h"
+#include "listitempkg.h"
 #include "listpkg.h"
 
 #define NO_TRACE
@@ -26,92 +27,34 @@
 #define LOCAL_ASSERT
 #include "debug.h"
 
-namespace RhListTcl {
-  class RhListPkg;
-}
-
-namespace KbdRhTcl {
-  class KbdResponseHdlrCmd;
-  class KbdRhPkg;
-}
-
-namespace NullRhTcl {
-  class NullResponseHdlrCmd;
-  class NullRhPkg;
-}
-
-//--------------------------------------------------------------------
-//
-// KbdResponseHdlrCmd --
-//
-//--------------------------------------------------------------------
-
-class KbdRhTcl::KbdResponseHdlrCmd : public TclCmd {
-public:
-  KbdResponseHdlrCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, NULL, 1, 1) {}
-protected:
-  virtual void invoke() {
-	 KbdResponseHdlr* rh = new KbdResponseHdlr();
-	 int rhid = RhList::theRhList().insert(rh);
-	 returnInt(rhid);
-  }
-};
-
 ///////////////////////////////////////////////////////////////////////
 //
 // KbdRhPkg class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class KbdRhTcl::KbdRhPkg : public CTclIoItemPkg<KbdResponseHdlr> {
+namespace KbdRhTcl {
+  class KbdRhPkg;
+}
+
+class KbdRhTcl::KbdRhPkg : public ListItemPkg<KbdResponseHdlr, RhList> {
 public:
   KbdRhPkg(Tcl_Interp* interp) :
-	 CTclIoItemPkg<KbdResponseHdlr>(interp, "KbdRh", "1.4")
+	 ListItemPkg<KbdResponseHdlr, RhList>(interp, RhList::theRhList(),
+													  "KbdRh", "1.4")
   {
-	 addCommand( new KbdResponseHdlrCmd(interp, "KbdRh::kbdResponseHdlr") );
-	 declareAttrib("useFeedback",
-						new CAttrib<KbdResponseHdlr, bool> (
-										&KbdResponseHdlr::getUseFeedback,
-										&KbdResponseHdlr::setUseFeedback));
-	 declareAttrib("keyRespPairs",
-						new CAttrib<KbdResponseHdlr, const string&> (
-									   &KbdResponseHdlr::getKeyRespPairs,
-										&KbdResponseHdlr::setKeyRespPairs));
-  }
+	 declareCAttrib("useFeedback",
+						 &KbdResponseHdlr::getUseFeedback,
+						 &KbdResponseHdlr::setUseFeedback);
+	 declareCAttrib("keyRespPairs",
+						 &KbdResponseHdlr::getKeyRespPairs,
+						 &KbdResponseHdlr::setKeyRespPairs);
+	 declareCAttrib("feedbackPairs",
+						 &KbdResponseHdlr::getFeedbackPairs,
+						 &KbdResponseHdlr::setFeedbackPairs);
 
-  virtual KbdResponseHdlr* getCItemFromId(int id) {
-	 if ( !RhList::theRhList().isValidId(id) ) {
-		throw TclError("invalid response handler id");
-	 }
-	 KbdResponseHdlr* p = 
-		dynamic_cast<KbdResponseHdlr*>(RhList::theRhList().getPtr(id));
-	 if (p == 0) {
-		throw TclError("response handler not of correct type");
-	 }
-	 return p;
-  }
-
-  virtual IO& getIoFromId(int id) {
-	 return dynamic_cast<IO&>( *(getCItemFromId(id)) );
-  }
-};
-
-//--------------------------------------------------------------------
-//
-// NullResponseHdlrCmd --
-//
-//--------------------------------------------------------------------
-
-class NullRhTcl::NullResponseHdlrCmd : public TclCmd {
-public:
-  NullResponseHdlrCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, NULL, 1, 1) {}
-protected:
-  virtual void invoke() {
-	 NullResponseHdlr* rh = new NullResponseHdlr();
-	 int rhid = RhList::theRhList().insert(rh);
-	 returnInt(rhid);
+	 Tcl_Eval(interp,
+			 "namespace eval KbdRh {proc kbdResponseHdlr {} {return KbdRh}}\n");
   }
 };
 
@@ -121,28 +64,18 @@ protected:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class NullRhTcl::NullRhPkg : public CTclIoItemPkg<NullResponseHdlr> {
+namespace NullRhTcl {
+  class NullRhPkg;
+}
+
+class NullRhTcl::NullRhPkg : public ListItemPkg<NullResponseHdlr, RhList> {
 public:
   NullRhPkg(Tcl_Interp* interp) :
-	 CTclIoItemPkg<NullResponseHdlr>(interp, "NullRh", "1.4")
+	 ListItemPkg<NullResponseHdlr, RhList>(
+          interp, RhList::theRhList(), "NullRh", "1.4")
   {
-	 addCommand( new NullResponseHdlrCmd(interp, "NullRh::nullResponseHdlr") );
-  }
-
-  virtual NullResponseHdlr* getCItemFromId(int id) {
-	 if ( !RhList::theRhList().isValidId(id) ) {
-		throw TclError("invalid response handler id");
-	 }
-	 NullResponseHdlr* p = 
-		dynamic_cast<NullResponseHdlr*>(RhList::theRhList().getPtr(id));
-	 if (p == 0) {
-		throw TclError("response handler not of correct type");
-	 }
-	 return p;
-  }
-
-  virtual IO& getIoFromId(int id) {
-	 return dynamic_cast<IO&>( *(getCItemFromId(id)) );
+	 Tcl_Eval(interp,
+			"namespace eval NullRh {proc nullResponseHdlr {} {return NullRh}}");
   }
 };
 
@@ -152,19 +85,17 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
+namespace RhListTcl {
+  class RhListPkg;
+}
+
 class RhListTcl::RhListPkg : public ListPkg<RhList> {
 public:
   RhListPkg(Tcl_Interp* interp) :
-	 ListPkg<RhList>(interp, "RhList", "3.0")
+	 ListPkg<RhList>(interp, RhList::theRhList(), "RhList", "3.0")
   {
 	 RhList::theRhList().setInterp(interp);
 	 RhList::theRhList().insertAt(0, new KbdResponseHdlr());
-  }
-
-  virtual IO& getIoFromId(int) { return RhList::theRhList(); }
-
-  virtual RhList* getCItemFromId(int) {
-	 return &RhList::theRhList();
   }
 };
 
@@ -182,6 +113,9 @@ DOTRACE("Rh_Init");
   new RhListTcl::RhListPkg(interp);
   new KbdRhTcl::KbdRhPkg(interp);
   new NullRhTcl::NullRhPkg(interp);
+
+  FactoryRegistrar<IO, KbdResponseHdlr> registrar1(IoFactory::theOne());
+  FactoryRegistrar<IO, NullResponseHdlr> registrar2(IoFactory::theOne());
 
   return TCL_OK;
 }

@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // subject.cc
 // Rob Peters
 // created: Dec-98
-// written: Sun Apr 25 14:13:53 1999
+// written: Thu Jun  3 11:42:00 1999
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SUBJECT_CC_DEFINED
@@ -13,7 +15,6 @@
 
 #include <iostream.h>
 #include <string>
-#include <typeinfo>
 #include <cstring>
 
 #include "ioutils.h"
@@ -27,10 +28,22 @@
 #endif
 
 ///////////////////////////////////////////////////////////////////////
-// Subject member funcitons
+//
+// File scope data
+//
 ///////////////////////////////////////////////////////////////////////
 
-Subject::Subject(const char *name, const char* dir) : 
+namespace {
+  const string ioTag = "Subject";
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// Subject member funcitons
+//
+///////////////////////////////////////////////////////////////////////
+
+Subject::Subject(const char* name, const char* dir) : 
   itsName(NULL), itsDirectory(NULL)
 {
 DOTRACE("Subject::Subject");
@@ -64,27 +77,28 @@ DOTRACE("Subject::serialize");
   if (flag & BASES) { /* there are no bases to deserialize */ }
 
   char sep = ' ';
-  if (flag & TYPENAME) { os << typeid(Subject).name() << sep; }
+  if (flag & TYPENAME) { os << ioTag << sep; }
 
   serializeCstring(os, itsName, sep);
   serializeCstring(os, itsDirectory, sep);
-  if (os.fail()) throw OutputError(typeid(Subject));
+  if (os.fail()) throw OutputError(ioTag);
 }
 
 void Subject::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Subject::deserialize");
   if (flag & BASES) { /* there are no bases to deserialize */ }
-  if (flag & TYPENAME) {
-    string name;
-    is >> name;
-    if (name != typeid(Subject).name()) { 
-		throw InputError(typeid(Subject));
-	 }
-  }
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
   deserializeCstring(is, itsName);
   deserializeCstring(is, itsDirectory);
-  if (is.fail()) throw InputError(typeid(Subject));
+  if (is.fail()) throw InputError(ioTag);
+}
+
+int Subject::charCount() const {
+  return (ioTag.size() + 1
+			 + 2 + strlen(itsName) + 1	// 2 chars for its length
+			 + 2 + strlen(itsDirectory) + 1 // 2 chars for its length
+			 + 5);// fudge factor
 }
 
 void Subject::setName(const char* name) {

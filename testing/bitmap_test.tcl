@@ -18,16 +18,16 @@ if { ![Togl::inited] } { Togl::init "-rgba false"; update }
 
 set PBMFILE $TEST_DIR/pbmfile.PPM
 
-set POS [Pos::position]
+set POS [Pos::Pos]
 
-### Bitmap::bitmapCmd ###
-test "BitmapTcl-Bitmap::bitmap" "too many args" {
-	 Bitmap::bitmap junk
-} {^wrong \# args: should be "Bitmap::bitmap"$}
-test "BitmapTcl-Bitmap::bitmap" "normal use" {
-	 set ::BITMAP [Bitmap::bitmap]
+### Bitmap::BitmapCmd ###
+test "BitmapTcl-Bitmap::Bitmap" "too many args" {
+	 Bitmap::Bitmap junk
+} {^wrong \# args: should be "Bitmap::Bitmap"$}
+test "BitmapTcl-Bitmap::Bitmap" "normal use" {
+	 set ::BITMAP [Bitmap::Bitmap]
 } "^${INT}$"
-test "BitmapTcl-Bitmap::bitmap" "error" {} {^$} $no_test
+test "BitmapTcl-Bitmap::Bitmap" "error" {} {^$} $no_test
 
 ### Bitmap::loadPbmCmd ###
 test "BitmapTcl-Bitmap::loadPbm" "too few args" {
@@ -169,7 +169,7 @@ test "BitmapTcl-Bitmap::usingGlBitmap" "error" {} {^$} $no_test
 test "BitmapTcl-Bitmap::stringify" "stringify, destringify, compare" {
 	 set str1 [Bitmap::stringify $::BITMAP]
 	 ObjList::reset
-	 set ::BITMAP [Bitmap::bitmap]
+	 set ::BITMAP [Bitmap::Bitmap]
 	 Bitmap::destringify $::BITMAP $str1
 	 set str2 [Bitmap::stringify $::BITMAP]
 	 string equal $str1 $str2

@@ -28,28 +28,6 @@ test "$PACKAGE-Gtext::Gtext" "normal use" {
 } "^${INT}$"
 test "$PACKAGE-Gtext::Gtext" "error" {} {^$} $no_test
 
-### Gtext::loadFontCmd ###
-test "$PACKAGE-Gtext::loadFont" "too many args" {
-	 Gtext::loadFont fixed junk
-} {^wrong \# args: should be "Gtext::loadFont \?fontname\?"$}
-test "$PACKAGE-Gtext::loadFont" "normal use" {
-	 catch {Gtext::loadFont}
-} {^0$}
-test "$PACKAGE-Gtext::loadFont" "error" {
-	 Gtext::loadFont junk
-} {^Gtext::loadFont: unable to load font junk$}
-
-### Gtext::loadFontiCmd ###
-test "$PACKAGE-Gtext::loadFonti" "too many args" {
-	 Gtext::loadFonti 3 junk
-} {^wrong \# args: should be "Gtext::loadFonti \?fontnumber\?"$}
-test "$PACKAGE-Gtext::loadFonti" "normal use" {
-	 catch {Gtext::loadFonti 3}
-} {^0$}
-test "$PACKAGE-Gtext::loadFonti" "error" {
-	 Gtext::loadFonti 20
-} {^Gtext::loadFonti: unable to load font$}
-
 ### Gtext::textCmd ###
 test "$PACKAGE-Gtext::text" "too few args" {
 	 Gtext::text
@@ -74,23 +52,24 @@ test "$PACKAGE-Gtext::stringify" "stringify, destringify, and compare" {
 	 string equal $str1 $str2
 } {^1$}
 
-set POS [Pos::position]
+set POS [Pos::Pos]
 
 ### Gtext rendering ###
 test "$PACKAGE-rendering" "normal render" {
 	 clearscreen
 	 Tlist::makeSingles $::POS
+	 Togl::loadFont
 	 show $::GTEXT
 	 expr {[pixelCheckSum] != 0}
 } {^1$}
 
 test "$PACKAGE-rendering" "compare two fonts" {
 	 clearscreen
-	 Gtext::loadFonti 1
+	 Togl::loadFonti 1
 	 show $::GTEXT
 	 set sum1 [pixelCheckSum]
 	 clearscreen
-	 Gtext::loadFonti 2
+	 Togl::loadFonti 2
 	 show $::GTEXT
 	 set sum2 [pixelCheckSum]
 	 clearscreen

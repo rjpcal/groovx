@@ -3,7 +3,7 @@
 // pbm.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:07 1999
-// written: Thu Jun 24 14:48:51 1999
+// written: Fri Jul  2 14:07:34 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 #include <strstream.h>
 #include <cctype>
 
-#define LOCAL_TRACE
+#define NO_TRACE
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
@@ -28,18 +28,32 @@ PbmError::PbmError(const string& str) :
 DOTRACE("PbmError::PbmError");
 }
 
+void Pbm::init() {
+DOTRACE("Pbm::init");
+  itsMode = 0;
+  itsImageWidth = 0;
+  itsImageHeight = 0;
+  itsMaxGrey = 0;
+  itsBitsPerPixel = 0;
+  itsNumBytes = 0;
+  itsBytes = 0;
+}
+
 Pbm::Pbm(istream& is) {
 DOTRACE("Pbm::Pbm(istream&)");
-  init(is);
+  init();
+  readStream(is);
 }
 
 Pbm::Pbm(const char* filename) {
 DOTRACE("Pbm::Pbm(const char*)");
+  init();
+
   ifstream ifs(filename, ios::in|ios::binary);
   if (ifs.fail()) {
 	 throw PbmError(string("couldn't open file: ") + filename);
   }
-  init(ifs);
+  readStream(ifs);
 }
 
 Pbm::~Pbm () {
@@ -62,13 +76,11 @@ DOTRACE("Pbm::grabBytes");
   itsBytes = 0;
 }
 
-void Pbm::init(istream& is) {
-DOTRACE("Pbm::init");
+void Pbm::readStream(istream& is) {
+DOTRACE("Pbm::readStream");
   if (is.fail()) {
 	 throw PbmError("input stream failed before reading pbm file");
   }
-
-  itsBytes = 0;
 
   int c = is.get();
   if (c != 'P') {
@@ -119,13 +131,11 @@ DOTRACE("Pbm::init");
   case 6: itsBitsPerPixel = 24; break;
   default: Assert(false); break;
   }
-
-  itsNumBytes = ((itsImageWidth*itsBitsPerPixel)/8 + 1) * itsImageHeight;
+  
+  int bytes_per_row = ( (itsImageWidth*itsBitsPerPixel - 1)/8 + 1 );
+  itsNumBytes = bytes_per_row * itsImageHeight;
   DebugEvalNL(itsNumBytes);
 
-  DebugEvalNL((void*) &itsBytes);
-
-  DebugEvalNL((void*) itsBytes);
   delete [] itsBytes;
   itsBytes = new unsigned char[itsNumBytes];
   DebugEvalNL((void*) itsBytes);

@@ -3,7 +3,7 @@
 // blocklist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:22:18 1999
-// written: Sat Jun 26 12:32:00 1999
+// written: Mon Jul  5 14:42:17 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,20 +36,15 @@ DOTRACE("BlockList::theBlockList");
   return *instance;
 }
 
-BlockList::~BlockList() {
-DOTRACE("BlockList::~BlockList");
-  // nothing
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
-// Template instantiation for PtrList<Expt>
+// Template instantiation for PtrList<Block>
 //
 ///////////////////////////////////////////////////////////////////////
 
 #include "block.h"
 #include "ptrlist.cc"
-template class PtrList<Expt>;
+template class PtrList<Block>;
 
 static const char vcid_blocklist_cc[] = "$Header$";
 #endif // !BLOCKLIST_CC_DEFINED

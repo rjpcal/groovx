@@ -7,17 +7,17 @@
 ###
 ##############################################################################
 
-### KbdRh::kbdResponseHdlrCmd ###
-test "KbdRhTcl-KbdRh::kbdResponseHdlr" "too many args" {
-    KbdRh::kbdResponseHdlr junk
-} {^wrong \# args: should be "KbdRh::kbdResponseHdlr"$}
-test "KbdRhTcl-KbdRh::kbdResponseHdlr" "normal use" {
-	 catch {KbdRh::kbdResponseHdlr}
+### KbdRh::KbdRhCmd ###
+test "KbdRhTcl-KbdRh::KbdRh" "too many args" {
+    KbdRh::KbdRh junk
+} {^wrong \# args: should be "KbdRh::KbdRh"$}
+test "KbdRhTcl-KbdRh::KbdRh" "normal use" {
+	 catch {KbdRh::KbdRh}
 } {^0$}
 
 ### KbdRh::useFeedbackCmd ###
 RhList::reset
-set rhid [KbdRh::kbdResponseHdlr]
+set rhid [KbdRh::KbdRh]
 test "KbdRhTcl-KbdRh::useFeedback" "too few args" {
 	 KbdRh::useFeedback
 } {^wrong \# args: should be "KbdRh::useFeedback item_id\(s\) \?new_value\(s\)\?"$}
@@ -57,7 +57,7 @@ test "KbdRhTcl-KbdRh::useFeedback" "error on non-boolean input" {
 } {^expected boolean value but got "FLASE"$}
 test "KbdRhTcl-KbdRh::useFeedback" "error on bad rhid" {
 	 KbdRh::useFeedback -1
-} {^KbdRh::useFeedback: invalid response handler id$}
+} {^KbdRh::useFeedback: .*$}
 
 ### KbdRh::keyRespPairs ###
 test "KbdRhTcl-KbdRh::keyRespPairs" "too few args" {
@@ -68,7 +68,7 @@ test "KbdRhTcl-KbdRh::keyRespPairs" "too many args" {
 } {^wrong \# args: should be "KbdRh::keyRespPairs item_id\(s\) \?new_value\(s\)\?"$}
 test "KbdRhTcl-KbdRh::keyRespPairs" "error on bad rhid" {
 	 KbdRh::keyRespPairs -1
-} {^KbdRh::keyRespPairs: invalid response handler id$}
+} {^KbdRh::keyRespPairs: .*$}
 test "KbdRhTcl-KbdRh::keyRespPairs" "normal use" {
 	 KbdRh::keyRespPairs $::rhid { {{^[aA]$} 0} {{^[lL]$} 1} }
 	 KbdRh::keyRespPairs $::rhid

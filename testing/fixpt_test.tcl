@@ -7,13 +7,13 @@
 ###
 ##############################################################################
 
-### Fixpt::fixptCmd ###
-test "FixptTcl-Fixpt::fixpt" "no args limit" {} $BLANK $no_test
-test "FixptTcl-Fixpt::fixpt" "normal create" {
-	 Fixpt::fixpt
+### Fixpt::FixptCmd ###
+test "FixptTcl-Fixpt::Fixpt" "no args limit" {} $BLANK $no_test
+test "FixptTcl-Fixpt::Fixpt" "normal create" {
+	 Fixpt::Fixpt
 } {^[0-9]+$}
 
-set fix [Fixpt::fixpt]
+set fix [Fixpt::Fixpt]
 
 ### lengthCmd ###
 test "FixptTcl-length" "too few args" {
@@ -30,9 +30,9 @@ test "FixptTcl-length" "error from non-numeric input" {
 } {^expected floating-point number but got "junk"$}
 test "FixptTcl-length" "error from bad objid" {
     Fixpt::length -1 1.0
-} {^Fixpt::length: objid out of range$}
+} {^Fixpt::length: an error of type InvalidIdError occurred$}
 test "FixptTcl-length" "error from wrong type" {
-    set f [Face::face]
+    set f [Face::Face]
 	 Fixpt::length $f 1.0
 } {^Fixpt::length: object not of correct type$}
 
@@ -51,9 +51,9 @@ test "FixptTcl-width" "error from non-numeric input" {
 } {expected integer but got "junk"}
 test "FixptTcl-width" "error from bad objid" {
     Fixpt::width -1 5
-} {Fixpt::width: objid out of range}
+} {Fixpt::width: an error of type InvalidIdError occurred}
 test "FixptTcl-width" "error from wrong type" {
-    set f [Face::face]
+    set f [Face::Face]
 	 Fixpt::width $f 5
 } {Fixpt::width: object not of correct type}
 test "FixptTcl-width" "error from non-integral number" {

@@ -2,7 +2,7 @@
 // misctcl.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Apr 12 12:07:46 1999
+// written: Sun Jun 20 18:02:38 1999
 // $Id$
 //
 // this file contains the implementations for some simple Tcl functions
@@ -37,8 +37,8 @@ namespace MiscTcl {
 // MiscTcl Tcl package definitions
 ///////////////////////////////////////////////////////////////////////
 
-int MiscTcl::randCmd(ClientData, Tcl_Interp *interp,
-                     int objc, Tcl_Obj *const objv[]) {
+int MiscTcl::randCmd(ClientData, Tcl_Interp* interp,
+                     int objc, Tcl_Obj* const objv[]) {
   if (objc != 3) {
     Tcl_WrongNumArgs(interp, 1, objv, "min max");
     return TCL_ERROR;
@@ -53,8 +53,8 @@ int MiscTcl::randCmd(ClientData, Tcl_Interp *interp,
   return TCL_OK;
 }
 
-int MiscTcl::srandCmd(ClientData, Tcl_Interp *interp,
-                      int objc, Tcl_Obj *const objv[]) {
+int MiscTcl::srandCmd(ClientData, Tcl_Interp* interp,
+                      int objc, Tcl_Obj* const objv[]) {
   if (objc != 2) {
     Tcl_WrongNumArgs(interp, 1, objv, "seed");
     return TCL_ERROR;
@@ -72,8 +72,8 @@ int MiscTcl::srandCmd(ClientData, Tcl_Interp *interp,
 // performance: performance is pretty good, considering that we're on
 // a seconds timescale with this command. It seems to use an extra
 // 9msec more than the specified delay
-int MiscTcl::sleepCmd(ClientData, Tcl_Interp *interp,
-                      int objc, Tcl_Obj *const objv[]) {
+int MiscTcl::sleepCmd(ClientData, Tcl_Interp* interp,
+                      int objc, Tcl_Obj* const objv[]) {
   if (objc != 2) return TCL_ERROR;
   int secs=0;
   Tcl_GetIntFromObj(interp, objv[1], &secs);
@@ -88,8 +88,8 @@ int MiscTcl::sleepCmd(ClientData, Tcl_Interp *interp,
 // additional 9000usec more than the specified delay, unless the
 // specified number is < 10000, in which case this command invariably
 // takes ~19000 us (ugh)
-int MiscTcl::usleepCmd(ClientData, Tcl_Interp *interp,
-                       int objc, Tcl_Obj *const objv[]) {
+int MiscTcl::usleepCmd(ClientData, Tcl_Interp* interp,
+                       int objc, Tcl_Obj* const objv[]) {
   if (objc != 2) return TCL_ERROR;
   int usecs=0;
   Tcl_GetIntFromObj(interp, objv[1], &usecs);
@@ -105,18 +105,20 @@ int MiscTcl::usleepCmd(ClientData, Tcl_Interp *interp,
 // here. It is typically an extra 10000usec per loop iteration, but
 // again, as in usleepCmd, there seemse to be a minimum of ~20000usec
 // per iteration, even if the specified delay is 1.
-int MiscTcl::usleeprCmd(ClientData, Tcl_Interp *interp,
-                        int objc, Tcl_Obj *const objv[]) {
+int MiscTcl::usleeprCmd(ClientData, Tcl_Interp* interp,
+                        int objc, Tcl_Obj* const objv[]) {
   if (objc != 3) return TCL_ERROR;
   int usecs=0, reps=0;
   Tcl_GetIntFromObj(interp, objv[1], &usecs);
   Tcl_GetIntFromObj(interp, objv[2], &reps);
   if (usecs < 0 || reps < 0) return TCL_ERROR;
-  for ( ; reps > 0; reps--) usleep(usecs);
+  for ( ; reps > 0; --reps) usleep(usecs);
   return TCL_OK;  
 }
 
-int MiscTcl::Misc_Init(Tcl_Interp *interp) {
+int Misc_Init(Tcl_Interp* interp) {
+  using namespace MiscTcl;
+
   Tcl_CreateObjCommand(interp, "rand", randCmd,
                     (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   Tcl_CreateObjCommand(interp, "srand", srandCmd,
@@ -127,7 +129,7 @@ int MiscTcl::Misc_Init(Tcl_Interp *interp) {
                     (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   Tcl_CreateObjCommand(interp, "usleepr", usleeprCmd,
                     (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_PkgProvide(interp, "Misc", "1.4");
+  Tcl_PkgProvide(interp, "Misc", "1.6");
   return TCL_OK;
 }
 

@@ -8,16 +8,16 @@
 ##############################################################################
 
 ### faceCmd ###
-test "FaceTcl-Face::face" "too many args" {
-	 Face::face junk
-} {wrong \# args: should be "Face::face"}
-test "FaceTcl-Face::face" "normal face creation" {
-	 Face::face
+test "FaceTcl-Face::Face" "too many args" {
+	 Face::Face junk
+} {wrong \# args: should be "Face::Face"}
+test "FaceTcl-Face::Face" "normal face creation" {
+	 Face::Face
 } {[0-9]+}
-test "FaceTcl-Face::face" "no possible error" {} $BLANK $no_test
+test "FaceTcl-Face::Face" "no possible error" {} $BLANK $no_test
 
 set EPS 0.00001 ;# floating-point precision required of next four commands
-set faceid [Face::face] ;# guaranteed face id for next operations
+set faceid [Face::Face] ;# guaranteed face id for next operations
 
 ### eyeHgtCmd ###
 test "FaceTcl-eyeHgt" "too few args" {
@@ -40,7 +40,7 @@ test "FaceTcl-eyeHgt" "error from nun-numeric input" {
 } {expected floating-point number but got "junk"}
 test "FaceTcl-eyeHgt" "error from bad objid" {
     Face::eyeHgt -1
-} {Face::eyeHgt: objid out of range}
+} {Face::eyeHgt: an error of type InvalidIdError occurred}
 
 ### eyeDistCmd ###
 test "FaceTcl-eyeDist" "too few args" {
@@ -63,7 +63,7 @@ test "FaceTcl-eyeDist" "error from nun-numeric input" {
 } {expected floating-point number but got "junk"}
 test "FaceTcl-eyeDist" "error from bad objid" {
     Face::eyeDist -1
-} {Face::eyeDist: objid out of range}
+} {Face::eyeDist: an error of type InvalidIdError occurred}
 
 ### noseLenCmd ###
 test "FaceTcl-noseLen" "too few args" {
@@ -86,7 +86,7 @@ test "FaceTcl-noseLen" "error from nun-numeric input" {
 } {expected floating-point number but got "junk"}
 test "FaceTcl-noseLen" "error from bad objid" {
     Face::noseLen -1
-} {Face::noseLen: objid out of range}
+} {Face::noseLen: an error of type InvalidIdError occurred}
 
 ### mouthHgtCmd ###
 test "FaceTcl-mouthHgt" "too few args" {
@@ -109,7 +109,7 @@ test "FaceTcl-mouthHgt" "error from nun-numeric input" {
 } {expected floating-point number but got "junk"}
 test "FaceTcl-mouthHgt" "error from bad objid" {
     Face::mouthHgt -1
-} {Face::mouthHgt: objid out of range}
+} {Face::mouthHgt: an error of type InvalidIdError occurred}
 
 unset faceid
 ObjList::reset
@@ -181,9 +181,9 @@ test "FaceTcl-Face::stringify" "too many args" {
 } {wrong \# args: should be "Face::stringify item_id"}
 test "FaceTcl-Face::stringify" "error from bad objid" {
     Face::stringify -1
-} {Face::stringify: objid out of range}
+} {Face::stringify: an error of type InvalidIdError occurred}
 test "FaceTcl-Face::stringify" "error from wrong type" {
-    set fx [Fixpt::fixpt]
+    set fx [Fixpt::Fixpt]
 	 Face::stringify $fx
 } {Face::stringify: object not of correct type}
 
@@ -196,20 +196,20 @@ test "FaceTcl-Face::destringify" "too many args" {
 } {wrong \# args: should be "Face::destringify item_id string"}
 test "FaceTcl-Face::destringify" "error from bad objid" {
     Face::destringify -1 junk
-} {Face::destringify: objid out of range}
+} {Face::destringify: an error of type InvalidIdError occurred}
 test "FaceTcl-Face::destringify" "error from wrong type" {
-    set fx [Fixpt::fixpt]
+    set fx [Fixpt::Fixpt]
 	 Face::destringify $fx junk
 } {Face::destringify: object not of correct type}
 test "FaceTcl-Face::destringify" "stringify/destringify check" {
-	 set faceid [Face::face]
+	 set faceid [Face::Face]
 	 Face::noseLen $faceid -1.2
 	 Face::mouthHgt $faceid -0.6
 	 Face::eyeHgt $faceid 0.4
 	 Face::eyeDist $faceid 0.6
 	 set str1 [Face::stringify $faceid]
 
-	 set faceid2 [Face::face]
+	 set faceid2 [Face::Face]
 	 Face::destringify $faceid2 $str1
 	 set str2 [Face::stringify $faceid2]
 

@@ -8,21 +8,25 @@
 ##############################################################################
 
 ### glBeginCmd ###
-test "TclGL-glBegin" "args" {glBegin} {wrong \# args: should be "glBegin mode"}
+test "TclGL-glBegin" "args" {
+	 glBegin
+} {wrong \# args: should be "glBegin mode"}
 test "TclGL-glBegin" "normal use" {} {^$}
 test "TclGL-glBegin" "error" {} {^$}
 
 ### glEndCmd ###
-test "TclGL-glEnd" "args" {glEnd junk} {wrong \# args: should be "glEnd"}
+test "TclGL-glEnd" "args" {
+	 glEnd junk
+} {wrong \# args: should be "glEnd"}
 test "TclGL-glEnd" "normal use" {} {^$}
 test "TclGL-glEnd" "error" {} {^$}
 
-### glVertex3fCmd ###
-test "TclGL-glVertex3f" "args" {
-	 glVertex3f
-} {wrong \# args: should be "glVertex3f x y z"}
-test "TclGL-glVertex3f" "normal use" {} {^$}
-test "TclGL-glVertex3f" "error" {} {^$}
+### glVertexCmd ###
+test "TclGL-glVertex" "args" {
+	 glVertex
+} {wrong \# args: should be "glVertex x y \?z=0\? \?w=1\?"}
+test "TclGL-glVertex" "normal use" {} {^$}
+test "TclGL-glVertex" "error" {} {^$}
 
 ### glIndexiCmd ###
 test "TclGL-glIndexi" "args" {
@@ -39,7 +43,9 @@ test "TclGL-glLineWidth" "normal use" {} {^$}
 test "TclGL-glLineWidth" "error" {} {^$}
 
 ### glFlushCmd ###
-test "TclGL-glFlush" "args" {glFlush junk} {wrong \# args: should be "glFlush"}
+test "TclGL-glFlush" "args" {
+	 glFlush junk
+} {wrong \# args: should be "glFlush"}
 test "TclGL-glFlush" "normal use" {} {^$}
 test "TclGL-glFlush" "error" {} {^$}
 

@@ -2,7 +2,7 @@
 // jittertcl.cc
 // Rob Peters
 // created: Wed Apr  7 14:58:40 1999
-// written: Fri Apr 16 18:25:53 1999
+// written: Wed Jul  7 14:07:42 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -14,82 +14,69 @@
 #include <tcl.h>
 #include <strstream.h>
 
-#include "errmsg.h"
+#include "iomgr.h"
 #include "jitter.h"
 #include "poslist.h"
-#include "poslisttcl.h"
+#include "listitempkg.h"
 
 #define NO_TRACE
 #include "trace.h"
 #include "debug.h"
 
 namespace JitterTcl {
-  Tcl_ObjCmdProc jitterCmd;
-  Tcl_ObjCmdProc setJitterCmd;
+  class SetJitterCmd;
+  class JitterPkg;
 }
 
-int JitterTcl::jitterCmd(ClientData, Tcl_Interp *interp,
-								 int objc, Tcl_Obj *const objv[]) {
-DOTRACE("JitterTcl::jitterCmd");
-  if (objc > 1) {
-	 Tcl_WrongNumArgs(interp, 1, objv, NULL);
-	 return TCL_ERROR;
+//---------------------------------------------------------------------
+//
+// SetJitterCmd --
+//
+//---------------------------------------------------------------------
+
+class JitterTcl::SetJitterCmd : public TclItemCmd<Jitter> {
+public:
+  SetJitterCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<Jitter>(pkg, cmd_name,
+							  "posid x_jitter y_jitter r_jitter", 5, 5) {}
+protected:
+  virtual void invoke() {
+	 Jitter* p = getItem();
+	 double xj = getDoubleFromArg(2); p->setXJitter(xj);
+	 double yj = getDoubleFromArg(3); p->setYJitter(yj);
+	 double rj = getDoubleFromArg(4); p->setRJitter(rj);
+	 returnVoid();
   }
+};
 
-  Jitter *j = new Jitter();
+///////////////////////////////////////////////////////////////////////
+//
+// JitterPkg class definition
+//
+///////////////////////////////////////////////////////////////////////
 
-  PosList& plist = PoslistTcl::getPosList();
-  int id = plist.addPos(j);
-
-  Tcl_SetObjResult(interp, Tcl_NewIntObj(id));
-  return TCL_OK;
-}
-
-int JitterTcl::setJitterCmd(ClientData, Tcl_Interp *interp,
-									 int objc, Tcl_Obj *const objv[]) {
-DOTRACE("JitterTcl::setJitterCmd");
-  if (objc != 5) {
-	 Tcl_WrongNumArgs(interp, 1, objv, "posid x_jitter y_jitter r_jitter");
-	 return TCL_ERROR;
+class JitterTcl::JitterPkg : public ListItemPkg<Jitter, PosList> {
+public:
+  JitterPkg(Tcl_Interp* interp) : 
+	 ListItemPkg<Jitter, PosList>(interp, PosList::thePosList(), "Jitter", "2.3")
+  {
+	 addCommand( new SetJitterCmd(this, "Jitter::setJitter") );
   }
+};
 
-  const PosList& plist = PoslistTcl::getPosList();
-  Position *p = PoslistTcl::getPosFromArg(interp, objv, plist, 1);
-  if ( p == NULL ) return TCL_ERROR;
-  Jitter *j = dynamic_cast<Jitter *>(p);
-  if ( j == NULL ) {
-	 err_message(interp, objv, "position not of type jitter");
-	 return TCL_ERROR;
-  }
+//---------------------------------------------------------------------
+//
+// Jitter_Init
+//
+//---------------------------------------------------------------------
 
-  double xj, yj, rj;
-  if (Tcl_GetDoubleFromObj(interp, objv[2], &xj) != TCL_OK) return TCL_ERROR;
-  if (Tcl_GetDoubleFromObj(interp, objv[3], &yj) != TCL_OK) return TCL_ERROR;
-  if (Tcl_GetDoubleFromObj(interp, objv[4], &rj) != TCL_OK) return TCL_ERROR;
+int Jitter_Init(Tcl_Interp* interp) {
+DOTRACE("Jitter_Init");
 
-  j->setXJitter(xj);
-  j->setYJitter(yj);
-  j->setRJitter(rj);
-  return TCL_OK;
-}
+  new JitterTcl::JitterPkg(interp);
 
-int JitterTcl::Jitter_Init(Tcl_Interp *interp) {
-DOTRACE("JitterTcl::Jitter_Init");
-  // Add all commands to ::Jitter namespace
-  Tcl_CreateObjCommand(interp, "Jitter::jitter", jitterCmd,
-                       (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "Jitter::setJitter", setJitterCmd,
-                       (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_Eval(interp,
-			  "namespace eval Jitter {\n"
-			  "  namespace export jitter\n"
-			  "  namespace export setJitter\n"
-			  "}");
-  Tcl_Eval(interp,
-			  "namespace import Jitter::jitter\n"
-			  "namespace import Jitter::setJitter\n");
+  FactoryRegistrar<IO, Jitter> registrar(IoFactory::theOne());
 
-  Tcl_PkgProvide(interp, "Jitter", "2.1");
   return TCL_OK;
 }
 

@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Mon Jun 28 18:44:31 1999
+// written: Mon Jul 12 13:04:05 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,13 +20,11 @@
 #include <cctype>
 #include <vector>
 
+#include "cloneface.h"
 #include "iomgr.h"
-#include "errmsg.h"
 #include "objlist.h"
-#include "objlisttcl.h"
 #include "face.h"
-#include "id.h"
-#include "tclitempkg.h"
+#include "listitempkg.h"
 #include "tclcmd.h"
 
 #define NO_TRACE
@@ -35,30 +33,9 @@
 #include "debug.h"
 
 namespace FaceTcl {
-  class FaceCmd;
   class LoadFacesCmd;
   class FacePkg;
 }
-
-//---------------------------------------------------------------------
-//
-// FaceCmd --
-//
-//---------------------------------------------------------------------
-
-class FaceTcl::FaceCmd : public TclCmd {
-public:
-  FaceCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, NULL, 1, 1) {}
-protected:
-  virtual void invoke() {
-	 double eh=0.6, es=0.4, nl=0.4, mh=-0.8;
-	 Face* p = new Face(eh, es, nl, mh);
-
-	 ObjId objid = ObjList::theObjList().addObj(p);
-	 returnInt(objid.toInt());
-  }
-};
 
 //---------------------------------------------------------------------
 //
@@ -132,12 +109,14 @@ void FaceTcl::LoadFacesCmd::invoke() {
 		else {
 		  p = new Face(ist, IO::NO_FLAGS);
 		}
-		ObjId objid = olist.addObj(p);
-		ids.push_back(objid.toInt());
+		int objid = olist.insert(p);
+		ids.push_back(objid);
 		++num_read;
 	 }
   }
-  catch (IoError& err) {
+  catch (ErrorWithMsg& err) {
+	 DebugEval(typeid(err).name());
+	 DebugEvalNL(err.msg());
 	 throw TclError(err.msg());
   }
 
@@ -151,47 +130,19 @@ void FaceTcl::LoadFacesCmd::invoke() {
 //
 ///////////////////////////////////////////////////////////////////////
 
-class FaceTcl::FacePkg : public CTclIoItemPkg<Face> {
+class FaceTcl::FacePkg : public ListItemPkg<Face, ObjList> {
 public:
   FacePkg(Tcl_Interp* interp) :
-	 CTclIoItemPkg<Face>(interp, "Face", "2.5")
+	 ListItemPkg<Face, ObjList>(interp, ObjList::theObjList(), "Face", "2.5")
   {
-	 addCommand ( new FaceCmd(interp, "Face::face") );
-
-	 declareAttrib("mouthHgt", new CAttrib<Face, double>(&Face::getMouthHgt,
-																		  &Face::setMouthHgt));
-	 declareAttrib("noseLen", new CAttrib<Face, double>(&Face::getNoseLen,
-																		 &Face::setNoseLen));
-	 declareAttrib("eyeDist", new CAttrib<Face, double>(&Face::getEyeDist,
-																		&Face::setEyeDist));
-	 declareAttrib("eyeHgt", new CAttrib<Face, double>(&Face::getEyeHgt,
-																		&Face::setEyeHgt));
+	 declareCAttrib("mouthHgt", &Face::getMouthHgt, &Face::setMouthHgt);
+	 declareCAttrib("noseLen", &Face::getNoseLen, &Face::setNoseLen);
+	 declareCAttrib("eyeDist", &Face::getEyeDist, &Face::setEyeDist);
+	 declareCAttrib("eyeHgt", &Face::getEyeHgt, &Face::setEyeHgt);
 
 	 addCommand( new LoadFacesCmd(interp, "Face::loadFaces") );
 	 
-	 Tcl_Eval(interp, 
-				 "namespace eval Face {\n"
-				 "  namespace export face\n"
-				 "}");
-	 Tcl_Eval(interp,
-				 "namespace import Face::face\n");
-	 
-  }
-
-  virtual Face* getCItemFromId(int id) {
-	 ObjId objid(id);
-	 if ( !objid ) {
-		throw TclError("objid out of range");
-	 }
-	 Face* p = dynamic_cast<Face *>(objid.get());
-	 if ( p == NULL ) {
-		throw TclError("object not of correct type");
-	 }
-	 return p;
-  }
-
-  virtual IO& getIoFromId(int id) {
-	 return dynamic_cast<IO&>( *(getCItemFromId(id)) );
+	 Tcl_Eval(interp, "proc face {} { return [Face::Face] }");
   }
 };
   
@@ -199,6 +150,9 @@ int Face_Init(Tcl_Interp* interp) {
 DOTRACE("Face_Init");
 
   new FaceTcl::FacePkg(interp);
+
+  FactoryRegistrar<IO, Face>             registrar1(IoFactory::theOne());
+  FactoryRegistrar<IO, CloneFace>        registrar2(IoFactory::theOne());
 
   return TCL_OK;
 }

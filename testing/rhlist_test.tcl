@@ -17,8 +17,8 @@ test "RhList-KbdRh::countCmd" "normal use on empty list" {
 } {^0$}
 test "RhList-KbdRh::countCmd" "normal use on filled list" {
 	 RhList::reset
-	 KbdRh::kbdResponseHdlr
-	 KbdRh::kbdResponseHdlr
+	 KbdRh::KbdRh
+	 KbdRh::KbdRh
 	 RhList::count
 } {^2$}
 
@@ -40,8 +40,8 @@ test "RhListTcl-RhList::destringify" "too many args" {
 } {^wrong \# args: should be "RhList::destringify string"$}
 test "RhListTcl-RhList::stringify" "write, read, write and compare" {
 	 RhList::reset
-	 KbdRh::kbdResponseHdlr
-	 KbdRh::kbdResponseHdlr
+	 KbdRh::KbdRh
+	 KbdRh::KbdRh
 	 set str1 [RhList::stringify]
 	 RhList::reset
 	 RhList::destringify $str1

@@ -3,7 +3,7 @@
 // timinghdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:55 1999
-// written: Fri Jun 25 12:49:43 1999
+// written: Sun Jun 27 16:34:24 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,11 @@
 #ifndef VECTOR_DEFINED
 #include <vector>
 #define VECTOR_DEFINED
+#endif
+
+#ifndef TIME_H_DEFINED
+#include <sys/time.h>
+#define TIME_H_DEFINED
 #endif
 
 class TrialEvent;
@@ -43,19 +48,37 @@ public:
   static const TimePoint FROM_RESPONSE=2;
   static const TimePoint FROM_ABORT=3;
 
-  // Accessors + Manipulators
+  ///////////////
+  // accessors //
+  ///////////////
+
   int getAutosavePeriod() const { return itsAutosavePeriod; }
-  void setAutosavePeriod(int val) { itsAutosavePeriod = val; }
+
+  TrialEvent* getEvent(TimePoint time_point, int index) const;
+
+  // Returns the elapsed time in milliseconds since the start of the
+  // current trial
+  int getElapsedMsec() const;
+
+  //////////////////
+  // manipulators //
+  //////////////////
 
   int addEvent(TrialEvent* event, TimePoint time_point);
   int addEventByName(const char* event_type,
 							TimePoint time_point, int msec_delay);
-  TrialEvent* getEvent(TimePoint time_point, int index) const;
+
+  void setAutosavePeriod(int val) { itsAutosavePeriod = val; }
+
+  /////////////
+  // actions //
+  /////////////
 
   virtual void thBeginTrial();
   virtual void thAbortTrial();
-  virtual void thHaltExpt();
   virtual void thResponseSeen();
+
+  virtual void thHaltExpt();
 
 private:
   void scheduleAll(vector<TrialEvent*>& events);
@@ -70,6 +93,8 @@ private:
   vector<TrialEvent*> itsAbortEvents;
 
   int itsAutosavePeriod;
+  
+  mutable timeval itsBeginTime;
 };
 
 static const char vcid_timinghdlr_h[] = "$Header$";
