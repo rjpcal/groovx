@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Fri May 11 20:40:11 2001
+// written: Thu May 17 10:28:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,12 +120,12 @@ protected:
 			itr != end;
 			++itr)
 		{
-		  Trial* t = Trial::make();
-		  IdItem<TrialBase> trial(t, IdItem<TrialBase>::Insert());
+		  IdItem<Trial> trial(Trial::make());
 
-		  t->add(*itr, posid);
+		  trial->add(*itr, posid);
+
 		  IdItem<GxNode> obj(*itr);
-		  t->setType(obj->category());
+		  trial->setType(obj->category());
 
 		  lappendVal(trial.id());
 		}
@@ -158,12 +158,11 @@ protected:
 			  itr2 != end2;
 			  ++itr2)
 		  {
-			 Trial* t = Trial::make();
-			 IdItem<TrialBase> trial(t, IdItem<TrialBase>::Insert());
+			 IdItem<Trial> trial(Trial::make());
 
-			 t->add(*itr1, posid1);
-			 t->add(*itr2, posid2);
-			 t->setType(*itr1 == *itr2);
+			 trial->add(*itr1, posid1);
+			 trial->add(*itr2, posid2);
+			 trial->setType(*itr1 == *itr2);
 
 			 lappendVal(trial.id());
 		  }
@@ -234,10 +233,9 @@ protected:
 
 			 // loops over p,e run through all permutations
 			 for (int p = 0; p < NUM_PERMS; ++p) {
-				Trial* t = Trial::make();
-				IdItem<TrialBase> trial(t, IdItem<TrialBase>::Insert());
+				IdItem<Trial> trial(Trial::make());
 				for (int e = 0; e < 3; ++e) {
-				  t->add(base_triad[permutations[p][e]], posids[e]);
+				  trial->add(base_triad[permutations[p][e]], posids[e]);
 				}
 				lappendVal(trial.id());
 			 } // end p

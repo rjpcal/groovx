@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Thu May 10 12:04:45 2001
+// written: Thu May 17 10:26:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,8 +59,7 @@ protected:
   virtual void invoke() {
 	 const char* filename = getCstringFromArg(1);
 
-	 Sound* p = Sound::newPlatformSound(filename);
-	 IdItem<Sound> sound(p, IdItem<Sound>::Insert());
+	 IdItem<Sound> sound(Sound::newPlatformSound(filename));
 	 returnInt(sound.id());
   }
 };
@@ -112,16 +111,12 @@ public:
 		static int ERR = -1;
 
 		try {
-		  IdItem<Sound> ok_sound(
-               Sound::newPlatformSound(full_ok_file.c_str()),
-					IdItem<Sound>::Insert());
+		  IdItem<Sound> ok_sound(Sound::newPlatformSound(full_ok_file.c_str()));
 		  Sound::setOkSound(ok_sound);
 		  OK = ok_sound.id();
 		  linkConstVar("Sound::ok", OK);
 
-		  IdItem<Sound> err_sound(
-               Sound::newPlatformSound(full_err_file.c_str()),
-					IdItem<Sound>::Insert());
+		  IdItem<Sound> err_sound(Sound::newPlatformSound(full_err_file.c_str()));
 		  Sound::setErrSound(err_sound);
 		  ERR = err_sound.id();		  
 		  linkConstVar("Sound::err", ERR);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Fri May 11 21:15:15 2001
+// written: Thu May 17 10:37:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,42 +57,20 @@ private:
   PtrHandle<T> itsHandle;
 
 public:
-  IdItem(IO::UID id) :
+  // Default destructor, copy constructor, operator=() are fine
+
+  explicit IdItem(IO::UID id) :
 	 itsHandle(IdItemUtils::getCastedItem<T>(id))
   {}
 
-  IdItem(T* master) : itsHandle(master) {}
-  IdItem(PtrHandle<T> item_) : itsHandle(item_) {}
+  explicit IdItem(T* ptr) : itsHandle(ptr)
+    { IdItemUtils::insertItem(ptr); }
 
-  // Default destructor, copy constructor, operator=() are fine
+  explicit IdItem(PtrHandle<T> item) : itsHandle(item)
+    { IdItemUtils::insertItem(itsHandle.get()); }
 
   template <class U>
   IdItem(const IdItem<U>& other) : itsHandle(other.handle()) {}
-
-  /** A symbol class to pass to constructors indicating that the item
-		should be inserted into an appropriate PtrList. */
-  class Insert {};
-
-  IdItem(T* ptr, Insert /*dummy param*/) :
-	 itsHandle(ptr)
-  {
-	 IdItemUtils::insertItem(ptr);
-  }
-
-  IdItem(PtrHandle<T> item, Insert /*dummy param*/) :
-	 itsHandle(item)
-  {
-	 IdItemUtils::insertItem(itsHandle.get());
-  }
-
-  /** This operation will cause \a new_master to be inserted into an
-      appropriate PtrList. */
-  IdItem& operator=(T* new_master)
-  {
-	 itsHandle = PtrHandle<T>(new_master);
-	 IdItemUtils::insertItem(new_master);
-	 return *this;
-  }
 
         T* operator->()       { return itsHandle.get(); }
   const T* operator->() const { return itsHandle.get(); }
@@ -115,7 +93,7 @@ template <class Container, class T>
 inline IdItemInserter<Container, T>&
 IdItemInserter<Container, T>::operator=(T* obj)
 {
-  itsContainer.push_back(IdItem<T>(obj, IdItem<T>::Insert()));
+  itsContainer.push_back(IdItem<T>(obj));
   return *this;
 }
 
@@ -199,7 +177,7 @@ public:
   void refresh() const {
 	 if ( !itsHandle.isValid() )
 		{
-		  IdItem<T> p = IdItemUtils::getCastedItem<T>(itsId);
+		  IdItem<T> p(IdItemUtils::getCastedItem<T>(itsId));
 		  itsHandle = p.handle();
 		  if (itsId != itsHandle->id())
 			 throw ErrorWithMsg("assertion failed in refresh");
@@ -214,7 +192,7 @@ public:
 	 if ( !itsHandle.isValid() )
 		{
 		  if (IdItemUtils::isValidId(itsId)) {
-			 IdItem<T> p = IdItemUtils::getCastedItem<T>(itsId);
+			 IdItem<T> p(IdItemUtils::getCastedItem<T>(itsId));
 			 itsHandle = p.handle();
 			 if (itsId != itsHandle->id())
 				throw ErrorWithMsg("assertion failed in attemptRefresh");

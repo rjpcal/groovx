@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Thu May 10 12:04:45 2001
+// written: Thu May 17 10:30:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,8 +64,7 @@ DOTRACE("TlistUtils::createPreview");
 
   fixed_block<Rect<double> > bbxs(objids_size);
 
-  Trial* preview = Trial::make();
-  IdItem<TrialBase> preview_trial(preview, IdItem<TrialBase>::Insert());
+  IdItem<Trial> preview_trial(Trial::make());
 
   double window_area = world_width*world_height;
   double parcel_area = window_area/objids_size;
@@ -98,29 +97,26 @@ DOTRACE("TlistUtils::createPreview");
 	 ostrstream ost(id_string, 31);
 	 ost << objids[i] << '\0';
 
-	 Gtext* label = Gtext::make();
+	 IdItem<Gtext> label(Gtext::make());
 	 label->setText(id_string);
-	 IdItem<GrObj> label_obj(label, IdItem<GrObj>::Insert());
 	 label->setAlignmentMode(GrObj::CENTER_ON_CENTER);
 	 label->setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
 	 label->setHeight(0.1);
 
-	 IdItem<Position> obj_pos(Position::make(),
-									  IdItem<Position>::Insert());
+	 IdItem<Position> obj_pos(Position::make());
 	 double obj_x = -world_width/2.0 + (x_step+0.5)*parcel_side;
 	 double obj_y = world_height/2.0 - (y_step+0.45)*parcel_side;
 	 obj_pos->translation.vec().set(obj_x, obj_y, 0.0);
 	 obj_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
 
-	 IdItem<Position> label_pos(Position::make(),
-										 IdItem<Position>::Insert());
+	 IdItem<Position> label_pos(Position::make());
 	 double label_x = obj_x;
 	 double label_y = obj_y - 0.50*parcel_side;
 	 label_pos->translation.vec().set(label_x, label_y, 0.0);
 	 label_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
 
-	 preview->add(objids[i], obj_pos.id());
-	 preview->add(label_obj.id(), label_pos.id());
+	 preview_trial->add(objids[i], obj_pos.id());
+	 preview_trial->add(label.id(), label_pos.id());
   }
 
   return preview_trial.id();
@@ -227,9 +223,8 @@ DOTRACE("TlistUtils::readFromObjidsOnly");
 	 if (line[0] == '#')
 		continue;
 	 istrstream ist(line);
-	 Trial* t = Trial::make();
+	 IdItem<Trial> t(Trial::make());
 	 t->readFromObjidsOnly(ist, offset);
-	 IdItem<TrialBase> trialinsert(t, IdItem<TrialBase>::Insert());
     ++trial;
   }
   if (is.bad()) throw IO::InputError("TlistUtils::readFromObjids");

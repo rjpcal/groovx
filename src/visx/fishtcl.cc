@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 12:00:53 1999
-// written: Thu May 10 12:04:48 2001
+// written: Thu May 17 10:23:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,18 +33,15 @@ public:
 protected:
   virtual void invoke() {
 	 if (objc() == 1) {
-		Fish* p = Fish::make();
-		IdItem<GrObj> obj(p, IdItem<GrObj>::Insert());
+		IdItem<Fish> obj(Fish::make());
 		returnInt(obj.id());
 	 }
 	 else if (objc() == 4) {
 		const char* spline_file = arg(1).getCstring();
 		const char* coord_file = arg(2).getCstring();
 		int index = arg(3).getInt();
-		
-		Fish* p = Fish::makeFromFiles(spline_file, coord_file, index);
-		
-		IdItem<GrObj> obj(p, IdItem<GrObj>::Insert());
+
+		IdItem<Fish> obj(Fish::makeFromFiles(spline_file, coord_file, index));
 		returnInt(obj.id());
 	 }
   }

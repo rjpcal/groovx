@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Thu May 17 09:30:56 2001
+// written: Thu May 17 10:31:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,9 +57,8 @@ namespace IoTcl {
 		  }
 
 		  ReaderType reader(is);
-		  IO::IoObject* io = reader.readRoot(0);
 
-		  IdItem<IO::IoObject> obj(io, IdItem<IO::IoObject>::Insert());
+		  IdItem<IO::IoObject> obj(reader.readRoot(0));
 
 		  *result_inserter = obj.id();
 		  ++result_inserter;
@@ -231,8 +230,7 @@ protected:
   virtual void invoke() {
 	 const char* type = getCstringFromArg(1);
 
-	 IdItem<IO::IoObject> item(IO::IoMgr::newIO(type),
-										IdItem<IO::IoObject>::Insert());
+	 IdItem<IO::IoObject> item(IO::IoMgr::newIO(type));
 
 	 returnInt(item.id());
   }

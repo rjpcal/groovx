@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Thu May 17 10:07:26 2001
+// written: Thu May 17 10:26:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -235,9 +235,7 @@ int TimingHdlr::addEventByName(const char* event_type, TimePoint timepoint,
 DOTRACE("TimingHdlr::addEventByName");
 
   try { 
-	 IdItem<TrialEvent> event_item(
-                         IO::IoMgr::newTypedIO<TrialEvent>(event_type),
-								 IdItem<TrialEvent>::Insert());
+	 IdItem<TrialEvent> event_item(IO::IoMgr::newTypedIO<TrialEvent>(event_type));
 
 	 event_item->setDelay(msec_delay);
 	 return addEvent(event_item, timepoint);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri May 11 21:24:02 2001
+// written: Thu May 17 10:30:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -427,8 +427,7 @@ DOTRACE("Trial::Impl::avgRespTime");
 void Trial::Impl::add(int objid, int posid) {
 DOTRACE("Trial::Impl::add");
 
-  IdItem<GxSeparator> sepitem(GxSeparator::make(),
-										IdItem<GxSeparator>::Insert());
+  IdItem<GxSeparator> sepitem(GxSeparator::make());
 
   sepitem->addChild(posid);
   sepitem->addChild(objid);
