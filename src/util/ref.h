@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Fri Nov 22 15:25:54 2002
+// written: Fri Dec 13 10:52:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -309,12 +309,17 @@ private:
         {
           return (itsMaster != 0);
         }
-      else // (itsCounts != 0) implies we are using weak ref's
-        {
-          if (itsCounts->strongCount() > 0) return true;
-        }
 
-      release(); return false;
+      // else... (itsCounts != 0) implies we are using weak ref's
+
+      return (itsCounts->strongCount() > 0);
+
+      // NOTE: We used to release() before returning if the strongCount()
+      // was == 0. But that could cause us to prematurely drop our pointee,
+      // since in fact we can't interpret strongCount()==0 to necessarily
+      // mean that the pointee is dead -- it could be instead that nobody
+      // has yet acquired a strong reference count (e.g., this could happen
+      // in the constructor sequence).
     }
 
     T* get()     const         { ensureValid(); return itsMaster; }
