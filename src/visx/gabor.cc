@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Fri Jan 18 16:07:02 2002
+// written: Wed Mar 27 11:19:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,7 +59,13 @@ const FieldMap& Gabor::classFields()
     Field("aspectRatio", &Gabor::itsAspectRatio, 1.0, 0.1, 10.0, 0.1),
     Field("orientation", &Gabor::itsOrientation, 0, -180, 179, 1),
     Field("resolution", &Gabor::itsResolution, 60, 5, 500, 1),
-    Field("pointSize", &Gabor::itsPointSize, 1, 1, 25, 1)
+    Field("pointSize", &Gabor::itsPointSize, 1, 1, 25, 1),
+    Field("fgTint", Field::ValueType(), &Gabor::itsFgTint,
+           "1.0 1.0 1.0 1.0", "0.0 0.0 0.0 0.0", "1.0 1.0 1.0 1.0",
+          "0.01 0.01 0.01 0.01", Field::NEW_GROUP | Field::MULTI),
+    Field("bgTint", Field::ValueType(), &Gabor::itsBgTint,
+           "0.0 0.0 0.0 0.0", "0.0 0.0 0.0 0.0", "1.0 1.0 1.0 1.0",
+          "0.01 0.01 0.01 0.01", Field::MULTI)
   };
 
   static FieldMap GABOR_FIELDS(FIELD_ARRAY, &GrObj::classFields());
@@ -84,7 +90,9 @@ Gabor::Gabor() :
   itsAspectRatio(1.0),
   itsOrientation(0),
   itsResolution(116),
-  itsPointSize(2)
+  itsPointSize(2),
+  itsFgTint(1.0, 1.0, 1.0, 1.0),
+  itsBgTint(0.0, 0.0, 0.0, 0.0)
 {
 DOTRACE("Gabor::Gabor");
 
@@ -195,7 +203,9 @@ DOTRACE("Gabor::grRender");
 
   Gfx::Vec2<int> size(itsResolution, itsResolution);
 
-  Gfx::BmapData data(size, 8, 1);
+  int bits_per_pixel = (itsColorMode == GRAYSCALE) ? 32 : 8;
+
+  Gfx::BmapData data(size, bits_per_pixel, 1);
 
   unsigned char* bytes = data.bytesPtr();
 
@@ -225,8 +235,22 @@ DOTRACE("Gabor::grRender");
 
           Assert( bytes < bytes_end );
 
-          if ( itsColorMode == GRAYSCALE ||
-               itsColorMode == COLOR_INDEX )
+          if ( itsColorMode == GRAYSCALE )
+            {
+              *bytes++ = (unsigned char)
+                ((itsFgTint.color().r() * gabor +
+                  itsBgTint.color().r() * (1-gabor)) * 255);
+              *bytes++ = (unsigned char)
+                ((itsFgTint.color().g() * gabor +
+                  itsBgTint.color().g() * (1-gabor)) * 255);
+              *bytes++ = (unsigned char)
+                ((itsFgTint.color().b() * gabor +
+                  itsBgTint.color().b() * (1-gabor)) * 255);
+              *bytes++ = (unsigned char)
+                ((itsFgTint.color().a() * gabor +
+                  itsBgTint.color().a() * (1-gabor)) * 255);
+            }
+          else if ( itsColorMode == COLOR_INDEX )
             {
               *bytes++ = (unsigned char) (gabor * 255);
             }
