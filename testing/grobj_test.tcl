@@ -204,6 +204,7 @@ proc testDrawCmd { objname } {
 		      set pix1 \[pixelCheckSum\]
 		      show \$trial
 		      set pix2 \[pixelCheckSum\]
+		      Togl::setVisible false
 		      Tlist::remove \$trial
 		      PosList::remove \$pos
 		      expr \$pix1 == \$pix2
