@@ -3,7 +3,7 @@
 // itemwithid.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct 23 11:42:18 2000
-// written: Mon Oct 23 17:47:11 2000
+// written: Mon Oct 23 18:05:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,6 +57,18 @@ void NullableItemWithId<T>::refresh() const {
 	 {
 		typename PtrList<T>::SharedPtr p = ptrList().getCheckedPtr(itsId);
 		itsHandle = p.handle();
+	 }
+}
+
+template <class T>
+void NullableItemWithId<T>::attemptRefresh() const {
+  if ( !itsHandle.isValid() )
+	 {
+		try {
+		  typename PtrList<T>::SharedPtr p = ptrList().getCheckedPtr(itsId);
+		  itsHandle = p.handle();
+		}
+		catch (InvalidIdError&) { /* eat the exception */ }
 	 }
 }
 

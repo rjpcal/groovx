@@ -3,7 +3,7 @@
 // itemwithid.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct 23 11:41:23 2000
-// written: Mon Oct 23 13:10:01 2000
+// written: Mon Oct 23 18:04:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -109,9 +109,16 @@ public:
         T* get()              { refresh(); return itsHandle.get(); }
   const T* get()        const { refresh(); return itsHandle.get(); }
 
+  /** This will try to refresh the handle from the id, but will not
+      throw an exception if the operation fails; it will just leave
+      the object with an invalid handle. */
+  void attemptRefresh() const;
+
+  /** This will try to refresh the handle from the id, and will throw
+      an exception if the operation fails (if the id is invalid). */
   void refresh() const;
 
-  bool isValid() const { return itsHandle.isValid(); }
+  bool isValid() const { attemptRefresh(); return itsHandle.isValid(); }
 
   NullablePtrHandle<T> handle() const { refresh(); return itsHandle; }
   int id() const { return itsId; }
