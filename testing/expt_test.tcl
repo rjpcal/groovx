@@ -32,20 +32,20 @@ if { ![Togl::inited] } { Togl::init; update }
 
 ### Expt::beginCmd ###
 test "ExptTcl-Expt::begin" "too many args" {
-	 Expt::begin junk
+    Expt::begin junk
 } {^wrong \# args: should be}
 test "ExptTcl-Expt::begin" "normal use" {
-	 Expt::clear
-	 set block [Obj::new Block]
-	 Expt::addBlock $block
-	 Expt::begin
-	 Expt::stop
+    Expt::clear
+    set block [Obj::new Block]
+    Expt::addBlock $block
+    Expt::begin
+    Expt::stop
 } {^$}
 test "ExptTcl-Expt::begin" "error" {} $BLANK $no_test
 
 ### Expt::pauseCmd ###
 test "ExptTcl-Expt::pause" "too many args" {
-	 Expt::pause junk
+    Expt::pause junk
 } {^wrong \# args: should be}
 test "ExptTcl-Expt::pause" "normal use" {} {^$}
 test "ExptTcl-Expt::pause" "error" {} $BLANK $no_test
@@ -58,35 +58,35 @@ test "ExptTcl-Expt::load" "too many args" {
     Expt::load j u
 } {wrong \# args: should be}
 test "ExptTcl-Expt::load" "fMRI sample" {
-	 Togl::setVisible false
-	 Expt::clear
-	 ObjDb::clear
-	 set files {expt215302Aug1999.asw.gz expt215012Jan2000.asw.gz expt232423May2000.asw.gz}
-	 set ocounts {113 166 76}
-	 set i [expr int(rand()*3)]
-	 set filename [lindex $files $i]
-	 puts "filename $filename"
+    Togl::setVisible false
+    Expt::clear
+    ObjDb::clear
+    set files {expt215302Aug1999.asw.gz expt215012Jan2000.asw.gz expt232423May2000.asw.gz}
+    set ocounts {113 166 76}
+    set i [expr int(rand()*3)]
+    set filename [lindex $files $i]
+    puts "filename $filename"
     Expt::load $::TEST_DIR/$filename
-	 set dif [expr [GrObj::countAll] - [lindex $ocounts $i]]
-	 return $dif
+    set dif [expr [GrObj::countAll] - [lindex $ocounts $i]]
+    return $dif
 } {^0$}
 test "ExptTcl-Expt::load" "psyphy samples" {
-	 set files {expt080905Oct2000.asw.gz train_2_fishes_or.asw.gz pairs_mfaces_s50.asw.gz}
-	 set ocounts {20 10 20}
-	 set tcounts {20 10 400}
+    set files {expt080905Oct2000.asw.gz train_2_fishes_or.asw.gz pairs_mfaces_s50.asw.gz}
+    set ocounts {20 10 20}
+    set tcounts {20 10 400}
 
-	 set result ""
+    set result ""
 
-	 for {set i 0} {$i < 3} {incr i} {
-		  Expt::clear
-		  ObjDb::clear
+    for {set i 0} {$i < 3} {incr i} {
+        Expt::clear
+        ObjDb::clear
 
-		  Expt::load $::TEST_DIR/[lindex $files $i]
-		  set odif [expr [GrObj::countAll] - [lindex $ocounts $i]]
-		  set tdif [expr [Trial::countAll] - [lindex $tcounts $i]]
-		  append result "$odif $tdif "
-	 }
-	 return $result
+        Expt::load $::TEST_DIR/[lindex $files $i]
+        set odif [expr [GrObj::countAll] - [lindex $ocounts $i]]
+        set tdif [expr [Trial::countAll] - [lindex $tcounts $i]]
+        append result "$odif $tdif "
+    }
+    return $result
 } {^0 0 0 0 0 0 $}
 
 ### Expt::saveCmd ###
@@ -99,41 +99,39 @@ test "ExptTcl-Expt::save" "too many args" {
 
 ### Expt::stopCmd ###
 test "ExptTcl-Expt::stop" "too many args" {
-	 Expt::stop junk
+    Expt::stop junk
 } {^wrong \# args: should be}
 test "ExptTcl-Expt::stop" "normal use" {} {^$}
 test "ExptTcl-Expt::stop" "error" {} $BLANK $no_test
 
 ### General experiment tests ###
 test "ExptTcl-Expt::begin" "general sanity test" {
-	 set thid [Obj::new TimingHdlr]
-	 Th::addStartEvent $thid EndTrialEvent 100
+    set thid [Obj::new TimingHdlr]
+    Th::addStartEvent $thid EndTrialEvent 100
 
-	 set rhid [Obj::new NullResponseHdlr]
+    set rhid [Obj::new NullResponseHdlr]
 
-	 set face [Obj::new Face]
-	 set trial [Obj::new Trial]
-	 Trial::addNode $trial $face
+    set face [Obj::new Face]
+    set trial [Obj::new Trial]
+    Trial::addNode $trial $face
 
-	 Trial::timingHdlr $trial $thid
-	 Trial::responseHdlr $trial $rhid
+    Trial::timingHdlr $trial $thid
+    Trial::responseHdlr $trial $rhid
 
-	 set block [Obj::new Block]
-	 Block::addTrialIds $block $trial
+    set block [Obj::new Block]
+    Block::addTrialIds $block $trial
 
-	 Expt::clear
-	 Expt::addBlock $block
+    Expt::clear
+    Expt::addBlock $block
 
-	 set ::DONE 0
-	 namespace eval ::Expt {
-		  proc doUponCompletion {} { set ::DONE 1 }
-	 }
-	 after 200 set ::STOP 1
-	 Expt::begin
+    set ::DONE 0
+    Expt::doWhenComplete { set ::DONE 1 }
+    after 200 set ::STOP 1
+    Expt::begin
 
-	 vwait ::STOP
+    vwait ::STOP
 
-	 Expt::reset
+    Expt::reset
 
-	 return $::DONE
+    return $::DONE
 } {^1$}
