@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Tue Dec  7 19:18:42 1999
+// written: Sun Jan 16 22:54:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,8 +43,11 @@ public:
 	 Tcl::TclItemCmd<GrObj>(pkg, cmd_name, "objid", 2, 2) {}
 protected:
   virtual void invoke() {
+	 Canvas* canvas = Application::theApp().getExperiment()->getCanvas();
+
 	 Rect<double> bbox;
-	 bool have_box = getItem()->getBoundingBox(bbox);
+	 bool have_box = getItem()->getBoundingBox(*canvas, bbox);
+
 	 if (have_box) {
 		lappendVal(bbox.left());
 		lappendVal(bbox.top());
