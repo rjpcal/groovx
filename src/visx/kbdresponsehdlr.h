@@ -3,7 +3,7 @@
 // kbdresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:11 1999
-// written: Tue Jul 20 16:43:59 1999
+// written: Tue Jul 20 16:47:01 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,7 +89,7 @@ private:
   };
 
   string itsKeyRespPairs;
-  vector<RegExp_ResponseVal> itsRegexps;
+  mutable vector<RegExp_ResponseVal> itsRegexps;
 
   string itsFeedbackPairs;
   bool itsUseFeedback;
@@ -100,7 +100,7 @@ private:
 	 TclObjPtr condition;
 	 TclObjPtr result; 
   };
-  vector<Condition_Feedback> itsFeedbacks;
+  mutable vector<Condition_Feedback> itsFeedbacks;
 
   mutable const char* itsRawResponse;
 };
