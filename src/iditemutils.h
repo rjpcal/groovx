@@ -20,13 +20,28 @@ namespace IdItemUtils {
   void insertItem(IO::IoObject* obj);
   IO::IoObject* getCheckedItem(int id);
 
+#ifndef ACC_COMPILER
+#  define DYNCAST dynamic_cast
+#else
+  template <class T, class U>
+  T DYNCAST(U& u) { return dynamic_cast<T>(u); }
+#endif
+
   template <class T>
   inline T* getCastedItem(int id)
   {
 	 IO::IoObject* obj = getCheckedItem(id);
-	 T& t = dynamic_cast<T&>(*obj);
+	 T& t = DYNCAST<T&>(*obj);
 	 return &t;
   }
+
+#ifdef DYNCAST
+#undef DYNCAST
+#endif
+
+  template <>
+  inline IO::IoObject* getCastedItem<IO::IoObject>(int id)
+  { return getCheckedItem(id); }
 }
 
 static const char vcid_iditemutils_h[] = "$Header$";
