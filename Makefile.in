@@ -175,7 +175,8 @@ $(DEP)/cppdepends: $(SCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
 
 # dependencies of package shlib's on object files
 
-$(DEP)/pkgdepends: $(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
+$(DEP)/pkgdepends $(VISX_LIB_DIR)/pkgIndex.tcl: \
+		$(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
 		$(ALL_SRCS) $(SCRIPTS)/buildPkgDeps.tcl
 	$(SCRIPTS)/buildPkgDeps.tcl \
 		--depfile $@ \
@@ -350,7 +351,7 @@ build: TAGS $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
 install_scripts: $(exec_prefix)/bin/.timestamp
 	cp share/scripts/*.tcl $(exec_prefix)/bin
 
-install: install_scripts build
+install: install_scripts build $(VISX_LIB_DIR)/pkgIndex.tcl
 	ln -s -f groovx$(PACKAGE_VERSION) $(exec_prefix)/bin/groovx
 
 check: install
