@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Thu Jul 12 13:23:43 2001
+// written: Fri Jul 13 18:05:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include "sound.h"
 
 #include "tcl/genericobjpkg.h"
+#include "tcl/objfunctor.h"
 #include "tcl/tcllink.h"
 
 #include "util/objfactory.h"
@@ -35,27 +36,13 @@
 //
 //---------------------------------------------------------------------
 
-namespace SoundTcl {
+namespace SoundTcl
+{
   const char* ok_sound_file = "/audio/saw50_500Hz_300ms.au";
   const char* err_sound_file = "/audio/saw50_350Hz_300ms.au";
 
-  class HaveAudioCmd;
   class SoundPkg;
 }
-
-//---------------------------------------------------------------------
-//
-// SoundTcl::HaveAudioCmd --
-//
-//---------------------------------------------------------------------
-
-class SoundTcl::HaveAudioCmd : public Tcl::TclCmd {
-public:
-  HaveAudioCmd(Tcl_Interp* interp, const char* cmd_name) :
-    Tcl::TclCmd(interp, cmd_name, NULL, 1, 1) {}
-protected:
-  virtual void invoke(Tcl::Context& ctx) { ctx.setResult( Sound::haveSound() ); }
-};
 
 //---------------------------------------------------------------------
 //
@@ -107,12 +94,14 @@ public:
       }
     }
 
-    addCommand( new HaveAudioCmd(interp, "Sound::haveAudio") );
+    Tcl::def( this, &Sound::haveSound, "Sound::haveAudio", 0 );
+
     declareCAction("play", &Sound::play);
     declareCAttrib("file", &Sound::getFile, &Sound::setFile);
   }
 
-  ~SoundPkg() {
+  ~SoundPkg()
+  {
     Sound::closeSound();
   }
 };
@@ -123,7 +112,8 @@ public:
 //
 //---------------------------------------------------------------------
 
-extern "C" int Sound_Init(Tcl_Interp* interp) {
+extern "C" int Sound_Init(Tcl_Interp* interp)
+{
 DOTRACE("Sound_Init");
 
   Tcl::TclPkg* pkg = new SoundTcl::SoundPkg(interp);
