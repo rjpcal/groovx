@@ -174,23 +174,23 @@ void range_checking::in_full_open(int x,
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Slice member definitions
+// slice member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-Slice Slice::operator()(const index_range& rng) const
+slice slice::operator()(const index_range& rng) const
 {
-DOTRACE("Slice::operator");
-  RC_in_half_open(rng.begin(), 0, itsNelems);
+DOTRACE("slice::operator");
+  RC_in_half_open(rng.begin(), 0, m_nelems);
   RC_geq(rng.count(), 0);
-  RC_leq(rng.end(), itsNelems);
+  RC_leq(rng.end(), m_nelems);
 
-  return Slice(itsOwner, storageOffset(rng.begin()), itsStride, rng.count());
+  return slice(m_owner, storage_offset(rng.begin()), m_stride, rng.count());
 }
 
-void Slice::print() const
+void slice::print() const
 {
-DOTRACE("Slice::print");
+DOTRACE("slice::print");
   for(mtx_const_iter iter = begin(); iter.has_more(); ++iter)
     {
       std::cout << std::setw(12) << std::setprecision(7) << double(*iter);
@@ -198,18 +198,18 @@ DOTRACE("Slice::print");
   std::cout << std::endl;
 }
 
-double Slice::sum() const
+double slice::sum() const
 {
-DOTRACE("Slice::sum");
+DOTRACE("slice::sum");
   double s = 0.0;
   for (mtx_const_iter i = begin(); i.has_more(); ++i)
     s += *i;
   return s;
 }
 
-double Slice::min() const
+double slice::min() const
 {
-DOTRACE("Slice::min");
+DOTRACE("slice::min");
   mtx_const_iter i = begin();
   double mn = *i;
   for (; i.has_more(); ++i)
@@ -217,9 +217,9 @@ DOTRACE("Slice::min");
   return mn;
 }
 
-double Slice::max() const
+double slice::max() const
 {
-DOTRACE("Slice::max");
+DOTRACE("slice::max");
   mtx_const_iter i = begin();
   double mx = *i;
   for (; i.has_more(); ++i)
@@ -240,9 +240,9 @@ namespace
   };
 }
 
-Mtx Slice::getSortOrder() const
+Mtx slice::get_sort_order() const
 {
-DOTRACE("Slice::getSortOrder");
+DOTRACE("slice::get_sort_order");
 
   std::vector<ValIndex> buf(this->begin(), this->end());
 
@@ -264,10 +264,10 @@ DOTRACE("Slice::getSortOrder");
   return index;
 }
 
-bool Slice::operator==(const Slice& other) const
+bool slice::operator==(const slice& other) const
 {
-DOTRACE("Slice::operator==(const Slice&)");
-  if (itsNelems != other.itsNelems) return false;
+DOTRACE("slice::operator==(const slice&)");
+  if (m_nelems != other.m_nelems) return false;
 
   for (mtx_const_iter a = this->begin(), b = other.begin();
        a.has_more();
@@ -277,19 +277,19 @@ DOTRACE("Slice::operator==(const Slice&)");
   return true;
 }
 
-void Slice::sort()
+void slice::sort()
 {
-DOTRACE("Slice::sort");
-  std::sort(beginNC(), endNC());
+DOTRACE("slice::sort");
+  std::sort(begin_nc(), end_nc());
 }
 
-void Slice::reorder(const Mtx& index_)
+void slice::reorder(const Mtx& index_)
 {
-DOTRACE("Slice::reorder");
+DOTRACE("slice::reorder");
   Mtx index(index_.asColumn());
 
   if (index.mrows() != nelems())
-    throw Util::Error("dimension mismatch in Slice::reorder");
+    throw Util::Error("dimension mismatch in slice::reorder");
 
   Mtx neworder(nelems(), 1);
 
@@ -299,71 +299,71 @@ DOTRACE("Slice::reorder");
   *this = neworder.column(0);
 }
 
-Slice& Slice::operator+=(const Slice& other)
+slice& slice::operator+=(const slice& other)
 {
-DOTRACE("Slice::operator+=(const Slice&)");
-  if (itsNelems != other.nelems())
-    throw Util::Error("dimension mismatch in Slice::operator+=");
+DOTRACE("slice::operator+=(const slice&)");
+  if (m_nelems != other.nelems())
+    throw Util::Error("dimension mismatch in slice::operator+=");
 
   mtx_const_iter rhs = other.begin();
 
-  for (mtx_iter lhs = beginNC(); lhs.has_more(); ++lhs, ++rhs)
+  for (mtx_iter lhs = begin_nc(); lhs.has_more(); ++lhs, ++rhs)
     *lhs += *rhs;
 
   return *this;
 }
 
-Slice& Slice::operator-=(const Slice& other)
+slice& slice::operator-=(const slice& other)
 {
-DOTRACE("Slice::operator-=(const Slice&)");
-  if (itsNelems != other.nelems())
-    throw Util::Error("dimension mismatch in Slice::operator-=");
+DOTRACE("slice::operator-=(const slice&)");
+  if (m_nelems != other.nelems())
+    throw Util::Error("dimension mismatch in slice::operator-=");
 
   mtx_const_iter rhs = other.begin();
 
-  for (mtx_iter lhs = beginNC(); lhs.has_more(); ++lhs, ++rhs)
+  for (mtx_iter lhs = begin_nc(); lhs.has_more(); ++lhs, ++rhs)
     *lhs -= *rhs;
 
   return *this;
 }
 
-Slice& Slice::operator=(const Slice& other)
+slice& slice::operator=(const slice& other)
 {
-DOTRACE("Slice::operator=(const Slice&)");
-  if (itsNelems != other.nelems())
-    throw Util::Error("dimension mismatch in Slice::operator=");
+DOTRACE("slice::operator=(const slice&)");
+  if (m_nelems != other.nelems())
+    throw Util::Error("dimension mismatch in slice::operator=");
 
   mtx_const_iter rhs = other.begin();
 
-  for (mtx_iter lhs = beginNC(); lhs.has_more(); ++lhs, ++rhs)
+  for (mtx_iter lhs = begin_nc(); lhs.has_more(); ++lhs, ++rhs)
     *lhs = *rhs;
 
   return *this;
 }
 
-Slice& Slice::operator=(const Mtx& other)
+slice& slice::operator=(const Mtx& other)
 {
-DOTRACE("Slice::operator=(const Mtx&)");
-  if (itsNelems != other.nelems())
-    throw Util::Error("dimension mismatch in Slice::operator=");
+DOTRACE("slice::operator=(const Mtx&)");
+  if (m_nelems != other.nelems())
+    throw Util::Error("dimension mismatch in slice::operator=");
 
   int i = 0;
-  for (mtx_iter lhs = beginNC(); lhs.has_more(); ++lhs, ++i)
+  for (mtx_iter lhs = begin_nc(); lhs.has_more(); ++lhs, ++i)
     *lhs = other.at(i);
 
   return *this;
 }
 
-void MtxSpecs::swap(MtxSpecs& other)
+void mtx_specs::swap(mtx_specs& other)
 {
-  std::swap(shape_, other.shape_);
-  std::swap(rowstride_, other.rowstride_);
-  std::swap(offset_, other.offset_);
+  std::swap(m_shape, other.m_shape);
+  std::swap(m_rowstride, other.m_rowstride);
+  std::swap(m_offset, other.m_offset);
 }
 
-MtxSpecs MtxSpecs::as_shape(const MtxShape& s) const
+mtx_specs mtx_specs::as_shape(const mtx_shape& s) const
 {
-DOTRACE("MtxSpecs::as_shape");
+DOTRACE("mtx_specs::as_shape");
   if (s.nelems() != this->nelems())
     {
       fstring msg;
@@ -373,46 +373,46 @@ DOTRACE("MtxSpecs::as_shape");
       throw Util::Error(msg);
     }
 
-  if (rowstride_ != mrows())
+  if (m_rowstride != mrows())
     throw Util::Error("as_shape(): cannot reshape a submatrix");
 
-  MtxSpecs result = *this;
-  result.shape_ = s;
-  result.rowstride_ = s.mrows();
+  mtx_specs result = *this;
+  result.m_shape = s;
+  result.m_rowstride = s.mrows();
 
   return result;
 }
 
-void MtxSpecs::selectRows(const row_index_range& rng)
+void mtx_specs::select_rows(const row_index_range& rng)
 {
-DOTRACE("MtxSpecs::selectRows");
+DOTRACE("mtx_specs::select_rows");
   if (rng.begin() < 0)
-    throw Util::Error("selectRows(): row index must be >= 0");
+    throw Util::Error("select_rows(): row index must be >= 0");
 
   if (rng.count() <= 0)
-    throw Util::Error("selectRows(): number of rows must be > 0");
+    throw Util::Error("select_rows(): number of rows must be > 0");
 
   if (rng.end() > mrows())
-    throw Util::Error("selectRows(): upper row index out of range");
+    throw Util::Error("select_rows(): upper row index out of range");
 
-  offset_ += rng.begin();
-  shape_ = MtxShape(rng.count(), ncols());
+  m_offset += rng.begin();
+  m_shape = mtx_shape(rng.count(), ncols());
 }
 
-void MtxSpecs::selectCols(const col_index_range& rng)
+void mtx_specs::select_cols(const col_index_range& rng)
 {
-DOTRACE("MtxSpecs::selectCols");
+DOTRACE("mtx_specs::select_cols");
   if (rng.begin() < 0)
-    throw Util::Error("selectCols(): column index must be >= 0");
+    throw Util::Error("select_cols(): column index must be >= 0");
 
   if (rng.count() <= 0)
-    throw Util::Error("selectCols(): number of columns must be > 0");
+    throw Util::Error("select_cols(): number of columns must be > 0");
 
   if (rng.end() > ncols())
-    throw Util::Error("selectCols(): upper column index out of range");
+    throw Util::Error("select_cols(): upper column index out of range");
 
-  offset_ += rng.begin()*rowstride_;
-  shape_ = MtxShape(mrows(), rng.count());
+  m_offset += rng.begin()*m_rowstride;
+  m_shape = mtx_shape(mrows(), rng.count());
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -423,26 +423,26 @@ DOTRACE("MtxSpecs::selectCols");
 
 namespace
 {
-  data_block* newDataBlock(int mrows, int ncols, WithPolicies::InitPolicy p)
+  data_block* newDataBlock(int mrows, int ncols, mtx_policies::init_policy p)
   {
-    if (p == WithPolicies::ZEROS)
+    if (p == mtx_policies::ZEROS)
       return data_block::make_zeros(mrows*ncols);
     // else...
     return data_block::make_uninitialized(mrows*ncols);
   }
 
   data_block* newDataBlock(double* data,
-                           int mrows, int ncols, WithPolicies::StoragePolicy s)
+                           int mrows, int ncols, mtx_policies::storage_policy s)
   {
     switch (s)
       {
-      case WithPolicies::BORROW:
+      case mtx_policies::BORROW:
         return data_block::make_borrowed(data, mrows*ncols);
 
-      case WithPolicies::REFER:
+      case mtx_policies::REFER:
         return data_block::make_referred(data, mrows*ncols);
 
-      case WithPolicies::COPY:
+      case mtx_policies::COPY:
       default:
         break;
       }
@@ -451,7 +451,7 @@ namespace
   }
 
 #ifdef WITH_MATLAB
-  data_block* newDataBlock(mxArray* a, WithPolicies::StoragePolicy s)
+  data_block* newDataBlock(mxArray* a, mtx_policies::storage_policy s)
   {
     if (!mxIsDouble(a))
       throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
@@ -459,40 +459,40 @@ namespace
     return newDataBlock(mxGetPr(a), mxGetM(a), mxGetN(a), s);
   }
 
-  data_block* newDataBlock(const mxArray* a, WithPolicies::StoragePolicy s)
+  data_block* newDataBlock(const mxArray* a, mtx_policies::storage_policy s)
   {
     if (!mxIsDouble(a))
       throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
 
-    if (s != WithPolicies::BORROW && s != WithPolicies::COPY)
+    if (s != mtx_policies::BORROW && s != mtx_policies::COPY)
       throw Util::Error("cannot construct a Mtx from a const mxArray* "
-                        "unless the StoragePolicy is COPY or BORROW");
+                        "unless the storage_policy is COPY or BORROW");
 
     return newDataBlock(mxGetPr(a), mxGetM(a), mxGetN(a), s);
   }
 #endif
 }
 
-DataHolder::DataHolder(double* data, int mrows, int ncols, StoragePolicy s) :
+DataHolder::DataHolder(double* data, int mrows, int ncols, storage_policy s) :
   m_data(newDataBlock(data, mrows, ncols, s))
 {
   m_data->incr_refcount();
 }
 
-DataHolder::DataHolder(int mrows, int ncols, InitPolicy p) :
+DataHolder::DataHolder(int mrows, int ncols, init_policy p) :
   m_data(newDataBlock(mrows, ncols, p))
 {
   m_data->incr_refcount();
 }
 
 #ifdef WITH_MATLAB
-DataHolder::DataHolder(mxArray* a, StoragePolicy s) :
+DataHolder::DataHolder(mxArray* a, storage_policy s) :
   m_data(newDataBlock(a, s))
 {
   m_data->incr_refcount();
 }
 
-DataHolder::DataHolder(const mxArray* a, StoragePolicy s) :
+DataHolder::DataHolder(const mxArray* a, storage_policy s) :
   m_data(newDataBlock(a, s))
 {
   m_data->incr_refcount();
@@ -535,25 +535,25 @@ void DataHolderRef::swap(DataHolderRef& other)
 template <class Data>
 void MtxBase<Data>::swap(MtxBase& other)
 {
-  MtxSpecs::swap(other);
+  mtx_specs::swap(other);
   data_.swap(other.data_);
 }
 
 template <class Data>
 MtxBase<Data>::MtxBase(const MtxBase& other) :
-  MtxSpecs(other),
+  mtx_specs(other),
   data_(other.data_)
 {}
 
 template <class Data>
 MtxBase<Data>::MtxBase(int mrows, int ncols, const Data& data) :
-  MtxSpecs(mrows, ncols),
+  mtx_specs(mrows, ncols),
   data_(data)
 {}
 
 template <class Data>
-MtxBase<Data>::MtxBase(const MtxSpecs& specs, const Data& data) :
-  MtxSpecs(specs),
+MtxBase<Data>::MtxBase(const mtx_specs& specs, const Data& data) :
+  mtx_specs(specs),
   data_(data)
 {}
 
@@ -601,35 +601,35 @@ DOTRACE("SubMtxRef::operator=(const Mtx&)");
 ///////////////////////////////////////////////////////////////////////
 
 #ifdef WITH_MATLAB
-Mtx::Mtx(mxArray* a, StoragePolicy s) :
-  Base(MtxSpecs(mxGetM(a), mxGetN(a)), DataHolder(a, s))
+Mtx::Mtx(mxArray* a, storage_policy s) :
+  Base(mtx_specs(mxGetM(a), mxGetN(a)), DataHolder(a, s))
 {
-DOTRACE("Mtx::Mtx(mxArray*, StoragePolicy)");
+DOTRACE("Mtx::Mtx(mxArray*, storage_policy)");
 }
 
-Mtx::Mtx(const mxArray* a, StoragePolicy s) :
-  Base(MtxSpecs(mxGetM(a), mxGetN(a)), DataHolder(a, s))
+Mtx::Mtx(const mxArray* a, storage_policy s) :
+  Base(mtx_specs(mxGetM(a), mxGetN(a)), DataHolder(a, s))
 {
-DOTRACE("Mtx::Mtx(const mxArray*, StoragePolicy)");
+DOTRACE("Mtx::Mtx(const mxArray*, storage_policy)");
 }
 #endif
 
-Mtx::Mtx(double* data, int mrows, int ncols, StoragePolicy s) :
+Mtx::Mtx(double* data, int mrows, int ncols, storage_policy s) :
   Base(mrows, ncols, DataHolder(data, mrows, ncols, s))
 {
-DOTRACE("Mtx::Mtx(double*, int, int, StoragePolicy)");
+DOTRACE("Mtx::Mtx(double*, int, int, storage_policy)");
 }
 
-Mtx::Mtx(int mrows, int ncols, InitPolicy p) :
+Mtx::Mtx(int mrows, int ncols, init_policy p) :
   Base(mrows, ncols, DataHolder(mrows, ncols, p))
 {
-DOTRACE("Mtx::Mtx(int, int, InitPolicy)");
+DOTRACE("Mtx::Mtx(int, int, init_policy)");
 }
 
-Mtx::Mtx(const MtxShape& s, InitPolicy p) :
+Mtx::Mtx(const mtx_shape& s, init_policy p) :
   Base(s.mrows(), s.ncols(), DataHolder(s.mrows(), s.ncols(), p))
 {
-DOTRACE("Mtx::Mtx(const MtxShape&, InitPolicy)");
+DOTRACE("Mtx::Mtx(const mtx_shape&, init_policy)");
 }
 
 const Mtx& Mtx::emptyMtx()
@@ -643,7 +643,7 @@ DOTRACE("Mtx::emptyMtx");
   return *m;
 }
 
-Mtx::Mtx(const Slice& s) :
+Mtx::Mtx(const slice& s) :
   Base(s.nelems(), 1, DataHolder(s.nelems(), 1, NO_INIT))
 {
 DOTRACE("Mtx::Mtx");
@@ -757,7 +757,7 @@ DOTRACE("Mtx::meanRow");
 
   Mtx res(1, ncols());
 
-  mtx_iter resiter = res.row(0).beginNC();
+  mtx_iter resiter = res.row(0).begin_nc();
 
   for (int c = 0; c < ncols(); ++c, ++resiter)
     *resiter = column(c).mean();
@@ -771,7 +771,7 @@ DOTRACE("Mtx::meanColumn");
 
   Mtx res(mrows(), 1);
 
-  mtx_iter resiter = res.column(0).beginNC();
+  mtx_iter resiter = res.column(0).begin_nc();
 
   for (int r = 0; r < mrows(); ++r, ++resiter)
     *resiter = row(r).mean();
@@ -859,8 +859,8 @@ DOTRACE("Mtx::operator==(const Mtx&)");
   return true;
 }
 
-void Mtx::VMmul_assign(const Slice& vec, const Mtx& mtx,
-                       Slice& result)
+void Mtx::VMmul_assign(const slice& vec, const Mtx& mtx,
+                       slice& result)
 {
 DOTRACE("Mtx::VMmul_assign");
 
@@ -879,7 +879,7 @@ DOTRACE("Mtx::VMmul_assign");
 
   mtx_const_iter veciter = vec.begin();
 
-  mtx_iter resultIter = result.beginNC();
+  mtx_iter resultIter = result.begin_nc();
 
   for (int col = 0; col < mtx.ncols(); ++col, ++resultIter)
     *resultIter = innerProduct(veciter, mtx.columnIter(col));

@@ -36,6 +36,9 @@
 
 #include <iterator>
 
+typedef struct mxArray_tag mxArray;
+
+
 namespace range_checking
 {
   void geq(const void* x, const void* lim, const char* f, int ln);
@@ -198,7 +201,7 @@ public:
   stride_iterator_base operator-(int x) const { stride_iterator_base res(*this); res -= x; return res; }
 
 private:
-  friend class Slice;
+  friend class slice;
   friend class Mtx;
 
   template <class U> friend class stride_iterator_base;
@@ -216,24 +219,24 @@ typedef stride_iterator_base<const double> mtx_const_iter;
 //  ===================================================================
 
 /// Represents a one dimensional sub-array of a matrix.
-class Slice
+class slice
 {
 protected:
-  Mtx& itsOwner;
-  ptrdiff_t itsOffset;
-  int itsStride;
-  int itsNelems;
+  Mtx& m_owner;
+  ptrdiff_t m_offset;
+  int m_stride;
+  int m_nelems;
 
-  inline const double* dataStart() const;
-  inline double* dataStart_nc();
-  ptrdiff_t dataOffset(int i) const { return itsStride*i; }
-  const double* address(int i) const { return dataStart() + dataOffset(i); }
+  inline const double* data_start() const;
+  inline double* data_start_nc();
+  ptrdiff_t data_offset(int i) const { return m_stride*i; }
+  const double* address(int i) const { return data_start() + data_offset(i); }
 
-  ptrdiff_t storageOffset(int i) const { return itsOffset + itsStride*i; }
+  ptrdiff_t storage_offset(int i) const { return m_offset + m_stride*i; }
 
   friend class Mtx;
 
-  inline Slice(const Mtx& owner, ptrdiff_t offset, int s, int n);
+  inline slice(const Mtx& owner, ptrdiff_t offset, int s, int n);
 
 public:
 
@@ -245,13 +248,13 @@ public:
 
   double operator[](int i) const
   {
-    RC_in_half_open(i, 0, itsNelems);
+    RC_in_half_open(i, 0, m_nelems);
     return *(address(i));
   }
 
-  int nelems() const { return itsNelems; }
+  int nelems() const { return m_nelems; }
 
-  Slice operator()(const index_range& rng) const;
+  slice operator()(const index_range& rng) const;
 
   void print() const;
 
@@ -259,14 +262,14 @@ public:
   // Iteration
   //
 
-  mtx_iter beginNC()
-    { return mtx_iter(dataStart_nc(), itsStride, itsNelems); }
+  mtx_iter begin_nc()
+    { return mtx_iter(data_start_nc(), m_stride, m_nelems); }
 
-  mtx_iter endNC()
-    { return beginNC().end(); }
+  mtx_iter end_nc()
+    { return begin_nc().end(); }
 
   mtx_const_iter begin() const
-    { return mtx_const_iter(dataStart(), itsStride, itsNelems); }
+    { return mtx_const_iter(data_start(), m_stride, m_nelems); }
 
   mtx_const_iter end() const
     { return begin().end(); }
@@ -279,16 +282,16 @@ public:
   double min() const;
   double max() const;
 
-  double mean() const { return sum()/itsNelems; }
+  double mean() const { return sum()/m_nelems; }
 
 
   // Returns an index matrix so that this->reorder(Mtx) will put the
-  // Slice in sorted order
-  Mtx getSortOrder() const;
+  // slice in sorted order
+  Mtx get_sort_order() const;
 
-  bool operator==(const Slice& other) const;
+  bool operator==(const slice& other) const;
 
-  bool operator!=(const Slice& other) const
+  bool operator!=(const slice& other) const
   { return !(operator==(other)); }
 
   //
@@ -297,20 +300,20 @@ public:
 
   void apply(double func(double))
   {
-    for (mtx_iter i = beginNC(); i.has_more(); ++i)
+    for (mtx_iter i = begin_nc(); i.has_more(); ++i)
       *i = func(*i);
   }
 
   template <class F>
   void apply(F func)
   {
-    for (mtx_iter i = beginNC(); i.has_more(); ++i)
+    for (mtx_iter i = begin_nc(); i.has_more(); ++i)
       *i = func(*i);
   }
 
   void sort();
 
-  // Reorders the Slice by applying *this[i] = *this[index[i]]
+  // Reorders the slice by applying *this[i] = *this[index[i]]
   void reorder(const Mtx& index);
 
   void operator+=(double val) { apply(Add(val)); }
@@ -319,108 +322,106 @@ public:
   void operator*=(double factor) { apply(Mul(factor)); }
   void operator/=(double div) { apply(Div(div)); }
 
-  Slice& operator+=(const Slice& other);
-  Slice& operator-=(const Slice& other);
+  slice& operator+=(const slice& other);
+  slice& operator-=(const slice& other);
 
   // This is assignment of value, not reference
-  Slice& operator=(const Slice& other);
-  Slice& operator=(const Mtx& other);
+  slice& operator=(const slice& other);
+  slice& operator=(const Mtx& other);
 };
 
 
-
-typedef struct mxArray_tag mxArray;
 
 /// Aggregation of initialization and storage policy enums.
-struct WithPolicies
+struct mtx_policies
 {
-  enum InitPolicy { ZEROS, NO_INIT };
-  enum StoragePolicy { COPY, BORROW, REFER };
+  enum init_policy { ZEROS, NO_INIT };
+  enum storage_policy { COPY, BORROW, REFER };
 };
 
 // ####################################################################
 
-/// MtxShape class holds number-of-rows/number-of-columns info.
+/// mtx_shape class holds number-of-rows/number-of-columns info.
 
-class MtxShape
+class mtx_shape
 {
 public:
-  MtxShape(int mr, int nc) : mrows_(mr), ncols_(nc) {}
+  mtx_shape(int mr, int nc) : m_mrows(mr), m_ncols(nc) {}
 
-  int mrows() const { return mrows_; }
-  int ncols() const { return ncols_; }
+  int mrows() const { return m_mrows; }
+  int ncols() const { return m_ncols; }
 
-  int length() const { return (mrows_ > ncols_) ? mrows_ : ncols_; }
+  int length() const { return (m_mrows > m_ncols) ? m_mrows : m_ncols; }
 
-  int nelems() const { return mrows_*ncols_; }
+  int nelems() const { return m_mrows*m_ncols; }
 
 private:
-  int mrows_;
-  int ncols_;
+  int m_mrows;
+  int m_ncols;
 };
 
 // ####################################################################
 
-/// MtxSpecs class holds shape plus storage offset and rowstride info.
+/// mtx_specs class holds shape plus storage offset and rowstride info.
 
-class MtxSpecs
+class mtx_specs
 {
 public:
-  MtxSpecs() : shape_(0, 0), rowstride_(0), offset_(0) {}
+  mtx_specs() : m_shape(0, 0), m_rowstride(0), m_offset(0) {}
 
-  MtxSpecs(const MtxShape& shape) :
-    shape_(shape),
-    rowstride_(shape.mrows()),
-    offset_(0)
+  mtx_specs(const mtx_shape& shape) :
+    m_shape(shape),
+    m_rowstride(shape.mrows()),
+    m_offset(0)
   {}
 
-  MtxSpecs(int mrows, int ncols) :
-    shape_(mrows, ncols),
-    rowstride_(mrows),
-    offset_(0)
+  mtx_specs(int mrows, int ncols) :
+    m_shape(mrows, ncols),
+    m_rowstride(mrows),
+    m_offset(0)
   {}
 
-  MtxSpecs(const MtxSpecs& other) :
-    shape_(other.shape_),
-    rowstride_(other.rowstride_),
-    offset_(other.offset_)
+  mtx_specs(const mtx_specs& other) :
+    m_shape(other.m_shape),
+    m_rowstride(other.m_rowstride),
+    m_offset(other.m_offset)
   {}
 
-  void swap(MtxSpecs& other);
+  void swap(mtx_specs& other);
 
-  MtxSpecs as_shape(const MtxShape& s) const;
+  mtx_specs as_shape(const mtx_shape& s) const;
 
-  MtxSpecs as_shape(int mr, int nc) const { return as_shape(MtxShape(mr,nc)); }
+  mtx_specs as_shape(int mr, int nc) const { return as_shape(mtx_shape(mr,nc)); }
 
-  void selectRows(const row_index_range& rng);
-  void selectCols(const col_index_range& rng);
+  void select_rows(const row_index_range& rng);
+  void select_cols(const col_index_range& rng);
 
-  MtxSpecs subRows(const row_index_range& rng) const
+  mtx_specs sub_rows(const row_index_range& rng) const
   {
-    MtxSpecs result(*this); result.selectRows(rng); return result;
+    mtx_specs result(*this); result.select_rows(rng); return result;
   }
 
-  MtxSpecs subCols(const col_index_range& rng) const
+  mtx_specs sub_cols(const col_index_range& rng) const
   {
-    MtxSpecs result(*this); result.selectCols(rng); return result;
+    mtx_specs result(*this); result.select_cols(rng); return result;
   }
 
-  const MtxShape& shape() const { return shape_; }
+  const mtx_shape& shape() const { return m_shape; }
 
-  ptrdiff_t offset() const { return offset_; }
+  ptrdiff_t offset() const { return m_offset; }
 
-  int length() const { return shape_.length(); }
+  int length() const { return m_shape.length(); }
   int nelems() const { return mrows()*ncols(); }
 
-  int mrows() const { return shape_.mrows(); }
-  int rowstride() const { return rowstride_; }
+  int mrows() const { return m_shape.mrows(); }
+  int rowstride() const { return m_rowstride; }
 
-  int ncols() const { return shape_.ncols(); }
-  int colstride() const { return colstride_; }
+  int ncols() const { return m_shape.ncols(); }
+  int colstride() const { return m_colstride; }
 
-  unsigned int rowgap() const { return rowstride_ - mrows(); }
+  unsigned int rowgap() const { return m_rowstride - mrows(); }
 
-  int offsetFromStart(int row, int col) const
+  int offset_from_start(int row, int col) const
   {
     // Strictly speaking, the only valid offsets are those that pass
     // RC_in_half_open(), but in order to allow "one-past-the-end"
@@ -429,23 +430,23 @@ public:
     RC_in_full_open(row, 0, mrows());
     RC_in_full_open(col, 0, ncols());
 
-    return row + (col*rowstride_);
+    return row + (col*m_rowstride);
   }
 
-  int offsetFromStart(int elem) const
-  { return offsetFromStart(elem%mrows(), elem/mrows()); }
+  int offset_from_start(int elem) const
+  { return offset_from_start(elem%mrows(), elem/mrows()); }
 
-  int offsetFromStorage(int row, int col) const
-  { return offset_ + offsetFromStart(row, col); }
+  int offset_from_storage(int row, int col) const
+  { return m_offset + offset_from_start(row, col); }
 
-  int offsetFromStorage(int elem) const
-  { return offset_ + offsetFromStart(elem); }
+  int offset_from_storage(int elem) const
+  { return m_offset + offset_from_start(elem); }
 
 private:
-  MtxShape shape_;
-  int rowstride_;
-  static const int colstride_ = 1;
-  ptrdiff_t offset_;
+  mtx_shape m_shape;
+  int m_rowstride;
+  static const int m_colstride = 1;
+  ptrdiff_t m_offset;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -456,21 +457,21 @@ private:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class DataHolder : public WithPolicies
+class DataHolder : public mtx_policies
 {
 public:
   /// Construct with a data array, dimensions, and storage policy.
-  DataHolder(double* data, int mrows, int ncols, StoragePolicy s);
+  DataHolder(double* data, int mrows, int ncols, storage_policy s);
 
   /// Construct empty with dimensions and an init policy.
-  DataHolder(int mrows, int ncols, InitPolicy p);
+  DataHolder(int mrows, int ncols, init_policy p);
 
   /// Construct from a matlab array and a storage policy.
-  DataHolder(mxArray* a, StoragePolicy s);
+  DataHolder(mxArray* a, storage_policy s);
 
   /** With a const mxArray*, only BORROW or COPY are allowed as storage
       policies, in order to preserve const-correctness. */
-  DataHolder(const mxArray* a, StoragePolicy s);
+  DataHolder(const mxArray* a, storage_policy s);
 
   /// Copy constructor.
   DataHolder(const DataHolder& other);
@@ -507,7 +508,7 @@ private:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class DataHolderRef : public WithPolicies
+class DataHolderRef : public mtx_policies
 {
 public:
   /// Construct with a pointee.
@@ -546,7 +547,7 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 template <class Data>
-class MtxBase : public MtxSpecs, public WithPolicies
+class MtxBase : public mtx_specs, public mtx_policies
 {
 private:
   MtxBase& operator=(const MtxBase& other); // not allowed
@@ -560,7 +561,7 @@ protected:
 
   MtxBase(int mrows, int ncols, const Data& data);
 
-  MtxBase(const MtxSpecs& specs, const Data& data);
+  MtxBase(const mtx_specs& specs, const Data& data);
 
   ~MtxBase();
 
@@ -576,37 +577,37 @@ protected:
     return data_.storage_nc()[i+offset()];
   }
 
-  ptrdiff_t offsetFromStorage(int r, int c) const
-  { return RCR_leq(MtxSpecs::offsetFromStorage(r, c), data_.storageLength()); }
+  ptrdiff_t offset_from_storage(int r, int c) const
+  { return RCR_leq(mtx_specs::offset_from_storage(r, c), data_.storageLength()); }
 
   double* address_nc(int row, int col)
-  { return data_.storage_nc() + offsetFromStorage(row, col); }
+  { return data_.storage_nc() + offset_from_storage(row, col); }
 
   const double* address(int row, int col) const
-  { return data_.storage() + offsetFromStorage(row, col); }
+  { return data_.storage() + offset_from_storage(row, col); }
 
   // Does the same thing as address_nc(), but doesn't range-check, since
   // this result is assumed to be some kind of "one-past-the-end" offset.
-  ptrdiff_t end_offsetFromStorage(int r, int c) const
-  { return MtxSpecs::offsetFromStorage(r, c); }
+  ptrdiff_t end_offset_from_storage(int r, int c) const
+  { return mtx_specs::offset_from_storage(r, c); }
 
   // Does the same thing as address_nc(), but doesn't range-check, since
   // this result is assumed to be some kind of "one-past-the-end" address.
   double* end_address_nc(int row, int col)
-  { return data_.storage_nc() + end_offsetFromStorage(row, col); }
+  { return data_.storage_nc() + end_offset_from_storage(row, col); }
 
   // Does the same thing as address(), but doesn't range-check, since
   // this result is assumed to be some kind of "one-past-the-end" address.
   const double* end_address(int row, int col) const
-  { return data_.storage() + end_offsetFromStorage(row, col); }
+  { return data_.storage() + end_offset_from_storage(row, col); }
 
   const double* storage() const { return data_.storage(); }
   double* storage_nc() { return data_.storage_nc(); }
 
 public:
 
-  const MtxShape& shape() const { return specs().shape(); }
-  const MtxSpecs& specs() const { return *this; }
+  const mtx_shape& shape() const { return specs().shape(); }
+  const mtx_specs& specs() const { return *this; }
 
 #ifdef APPLY_IMPL
 #  error macro error
@@ -793,7 +794,7 @@ public:
   template <class T>
   class rowmaj_iter_base
   {
-    int itsStride;
+    int m_stride;
     T* itsCurrentStart;
     T* itsPtr;
     T* itsCurrentEnd;
@@ -808,7 +809,7 @@ public:
     typedef T&           reference;
 
     rowmaj_iter_base(int s, int ncols, T* ptr) :
-      itsStride(s),
+      m_stride(s),
       itsCurrentStart(ptr),
       itsPtr(ptr),
       itsCurrentEnd(itsPtr+(ncols*s))
@@ -818,7 +819,7 @@ public:
 
     rowmaj_iter_base& operator++()
     {
-      itsPtr += itsStride;
+      itsPtr += m_stride;
       if (itsPtr == itsCurrentEnd)
         {
           ++itsCurrentStart;
@@ -882,7 +883,7 @@ class SubMtxRef : public MtxBase<DataHolderRef>
 public:
   typedef MtxBase<DataHolderRef> Base;
 
-  SubMtxRef(const MtxSpecs& specs, DataHolder& ref) :
+  SubMtxRef(const mtx_specs& specs, DataHolder& ref) :
     Base(specs, DataHolderRef(&ref))
   {}
 
@@ -910,23 +911,23 @@ public:
 
   static const Mtx& emptyMtx();
 
-  Mtx(const MtxSpecs& specs, const DataHolder& data) :
+  Mtx(const mtx_specs& specs, const DataHolder& data) :
     Base(specs, data)
   {}
 
-  Mtx(mxArray* a, StoragePolicy s = COPY);
+  Mtx(mxArray* a, storage_policy s = COPY);
 
   /** With a const mxArray*, only BORROW or COPY are allowed as storage
       policies, in order to preserve const-correctness. */
-  Mtx(const mxArray* a, StoragePolicy s = COPY);
+  Mtx(const mxArray* a, storage_policy s = COPY);
 
-  Mtx(double* data, int mrows, int ncols, StoragePolicy s = COPY);
+  Mtx(double* data, int mrows, int ncols, storage_policy s = COPY);
 
-  Mtx(const MtxShape& s, InitPolicy p = ZEROS);
+  Mtx(const mtx_shape& s, init_policy p = ZEROS);
 
-  Mtx(int mrows, int ncols, InitPolicy p = ZEROS);
+  Mtx(int mrows, int ncols, init_policy p = ZEROS);
 
-  Mtx(const Slice& s);
+  Mtx(const slice& s);
 
   Mtx(const Mtx& other) : Base(other) {}
 
@@ -973,16 +974,16 @@ public:
   //
 
   double& at(int row, int col)
-    { return Base::at_nc(offsetFromStart(row, col)); }
+    { return Base::at_nc(offset_from_start(row, col)); }
 
   const double& at(int row, int col) const
-    { return Base::at(offsetFromStart(row, col)); }
+    { return Base::at(offset_from_start(row, col)); }
 
   double& at(int elem)
-    { return Base::at_nc(offsetFromStart(elem)); }
+    { return Base::at_nc(offset_from_start(elem)); }
 
   const double& at(int elem) const
-    { return Base::at(offsetFromStart(elem)); }
+    { return Base::at(offset_from_start(elem)); }
 
   bool sameSize(const Mtx& x) const
   { return (mrows() == x.mrows()) && (ncols() == x.ncols()); }
@@ -993,33 +994,33 @@ public:
 
   SubMtxRef sub(const row_index_range& rng)
   {
-    return SubMtxRef(this->specs().subRows(rng), this->data_);
+    return SubMtxRef(this->specs().sub_rows(rng), this->data_);
   }
 
   SubMtxRef sub(const col_index_range& rng)
   {
-    return SubMtxRef(this->specs().subCols(rng), this->data_);
+    return SubMtxRef(this->specs().sub_cols(rng), this->data_);
   }
 
   SubMtxRef sub(const row_index_range& rr, const col_index_range& cc)
   {
-    return SubMtxRef(this->specs().subRows(rr).subCols(cc), this->data_);
+    return SubMtxRef(this->specs().sub_rows(rr).sub_cols(cc), this->data_);
   }
 
 
   Mtx sub(const row_index_range& rng) const
   {
-    return Mtx(this->specs().subRows(rng), this->data_);
+    return Mtx(this->specs().sub_rows(rng), this->data_);
   }
 
   Mtx sub(const col_index_range& rng) const
   {
-    return Mtx(this->specs().subCols(rng), this->data_);
+    return Mtx(this->specs().sub_cols(rng), this->data_);
   }
 
   Mtx sub(const row_index_range& rr, const col_index_range& cc) const
   {
-    return Mtx(this->specs().subRows(rr).subCols(cc), this->data_);
+    return Mtx(this->specs().sub_rows(rr).sub_cols(cc), this->data_);
   }
 
 
@@ -1031,14 +1032,14 @@ public:
   { return sub(rr, cc); }
 
 
-  Mtx as_shape(const MtxShape& s) const
+  Mtx as_shape(const mtx_shape& s) const
   { return Mtx(this->specs().as_shape(s), this->data_); }
 
   Mtx as_shape(int mr, int nc) const
   { return Mtx(this->specs().as_shape(mr, nc), this->data_); }
 
-  Slice row(int r) const
-    { return Slice(*this, offsetFromStorage(r,0), rowstride(), ncols()); }
+  slice row(int r) const
+    { return slice(*this, offset_from_storage(r,0), rowstride(), ncols()); }
 
   mtx_iter rowIter(int r)
     { return mtx_iter(address_nc(r,0), rowstride(), ncols()); }
@@ -1052,8 +1053,8 @@ public:
 
 
 
-  Slice column(int c) const
-    { return Slice(*this, offsetFromStorage(0,c), colstride(), mrows()); }
+  slice column(int c) const
+    { return slice(*this, offset_from_storage(0,c), colstride(), mrows()); }
 
   mtx_iter columnIter(int c)
     { return mtx_iter(address_nc(0,c), colstride(), mrows()); }
@@ -1100,8 +1101,8 @@ public:
   { return !(operator==(other)); }
 
   // result = vec * mtx;
-  static void VMmul_assign(const Slice& vec, const Mtx& mtx,
-                           Slice& result);
+  static void VMmul_assign(const slice& vec, const Mtx& mtx,
+                           slice& result);
 
   // this = m1 * m2;
   void assign_MMmul(const Mtx& m1, const Mtx& m2);
@@ -1109,7 +1110,7 @@ public:
   void makeUnique() { Base::data_.makeUnique(); }
 
 private:
-  friend class Slice;
+  friend class slice;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -1118,17 +1119,17 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-inline const double* Slice::dataStart() const
-{ return itsOwner.storage() + itsOffset; }
+inline const double* slice::data_start() const
+{ return m_owner.storage() + m_offset; }
 
-inline double* Slice::dataStart_nc()
-{ return itsOwner.storage_nc() + itsOffset; }
+inline double* slice::data_start_nc()
+{ return m_owner.storage_nc() + m_offset; }
 
-inline Slice::Slice(const Mtx& owner, ptrdiff_t offset, int s, int n) :
-  itsOwner(const_cast<Mtx&>(owner)),
-  itsOffset(offset),
-  itsStride(s),
-  itsNelems(n) {}
+inline slice::slice(const Mtx& owner, ptrdiff_t offset, int s, int n) :
+  m_owner(const_cast<Mtx&>(owner)),
+  m_offset(offset),
+  m_stride(s),
+  m_nelems(n) {}
 
 
 ///////////////////////////////////////////////////////////////////////
