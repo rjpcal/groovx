@@ -215,3 +215,6 @@ will be needed, and then they can be phased out.
 * (done 21-Nov-2002) Merge Togl into Toglet
   visx/tkwidget --> gwt/tkwidget
   visx/toglet + togl/togl --> gwt/toglet
+
+* (28-Nov-2000, OK 21-Nov-2002) GxShape base for GxLine, GxRect, GxDisk, etc.
+  Looks like we've pretty much met the goal behind this one.
