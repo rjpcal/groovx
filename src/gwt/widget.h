@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Tue Jul  2 13:06:07 2002
+// written: Mon Sep 16 20:14:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ public:
   /// Virtual destructor.
   virtual ~Widget();
 
-  virtual Gfx::Canvas& getCanvas() = 0;
+  virtual Gfx::Canvas& getCanvas() const = 0;
 
   virtual void addButtonListener (Util::Ref<GWT::ButtonListener> b);
   virtual void addKeyListener    (Util::Ref<GWT::KeyListener> k);
