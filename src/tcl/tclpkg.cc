@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Mon Jul 16 07:12:17 2001
+// written: Mon Jul 16 09:03:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,39 +33,36 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// TclItemPkgBase member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-Tcl::TclItemPkgBase::TclItemPkgBase(Tcl_Interp* interp,
-                                    const char* name, const char* version) :
-  TclPkg(interp, name, version)
-{}
-
-Tcl::TclItemPkgBase::~TclItemPkgBase() {}
-
-void* Tcl::TclItemPkgBase::getItemFromContext(Tcl::Context& ctx)
-{
-  int id = ctx.getIntFromArg(1);
-  return getItemFromId(id);
-}
-
-///////////////////////////////////////////////////////////////////////
-//
 // TclItemPkg member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
 Tcl::TclItemPkg::TclItemPkg(Tcl_Interp* interp,
                             const char* name, const char* version) :
-  TclItemPkgBase(interp, name, version)
+  TclPkg(interp, name, version)
 {}
 
 Tcl::TclItemPkg::~TclItemPkg() {}
 
+void* Tcl::TclItemPkg::getItemFromContext(Tcl::Context& ctx)
+{
+  int id = ctx.getIntFromArg(1);
+  return getItemFromId(id);
+}
+
 const char* Tcl::TclItemPkg::actionUsage(const char* usage)
 {
   return usage ? usage : "item_id(s)";
+}
+
+const char* Tcl::TclItemPkg::getterUsage(const char* usage)
+{
+  return usage ? usage : "item_id(s)";
+}
+
+const char* Tcl::TclItemPkg::setterUsage(const char* usage)
+{
+  return usage ? usage : "item_id(s) new_value(s)";
 }
 
 // NOTE: aCC won't compile these TclItemPkg functions if they are

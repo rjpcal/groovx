@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Mon Jul 16 06:50:19 2001
+// written: Mon Jul 16 09:03:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -282,37 +282,20 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * TclItemPkgBase class definition
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-class TclItemPkgBase : public TclPkg, public ItemFetcher {
-public:
-  TclItemPkgBase(Tcl_Interp* interp, const char* name, const char* version);
-
-  virtual ~TclItemPkgBase();
-
-  virtual void* getItemFromId(int id) = 0;
-
-  virtual void* getItemFromContext(Context& ctx);
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
  * TclItemPkg class definition
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class TclItemPkg : public TclItemPkgBase {
+class TclItemPkg : public ItemFetcher {
 public:
   TclItemPkg(Tcl_Interp* interp, const char* name, const char* version);
 
   virtual ~TclItemPkg();
 
   virtual void* getItemFromId(int id) = 0;
+
+  virtual void* getItemFromContext(Context& ctx);
 
 protected:
   template <class T>
@@ -335,6 +318,8 @@ protected:
   void addIoCommands();
 
   static const char* actionUsage(const char* usage);
+  static const char* getterUsage(const char* usage);
+  static const char* setterUsage(const char* usage);
 
 private:
   void instantiate();
@@ -357,36 +342,31 @@ public:
   void declareCAction(const char* cmd_name, void (C::* actionFunc) (),
                       const char* usage = 0)
     {
-      declareAction(cmd_name,
-                    shared_ptr<Action>(new CAction<C>(actionFunc)),
-                    usage);
-//        Tcl::defVec( this, actionFunc, cmd_name, actionUsage(usage) );
+      Tcl::defVec( this, actionFunc,
+                   makePkgCmdName(cmd_name), actionUsage(usage) );
     }
 
   void declareCAction(const char* cmd_name, void (C::* actionFunc) () const,
                       const char* usage = 0)
     {
-      declareAction(cmd_name,
-                    shared_ptr<Action>(new CConstAction<C>(actionFunc)),
-                    usage);
+      Tcl::defVec( this, actionFunc,
+                   makePkgCmdName(cmd_name), actionUsage(usage) );
     }
 
   template <class CC, class T>
   void declareCGetter(const char* cmd_name, T (CC::* getterFunc) () const,
                       const char* usage = 0)
     {
-      declareGetter(cmd_name,
-                    CGetter<C,T>::make(getterFunc),
-                    usage);
+      Tcl::defVec( this, getterFunc,
+                   makePkgCmdName(cmd_name), getterUsage(usage) );
     }
 
   template <class CC, class T>
   void declareCSetter(const char* cmd_name, void (CC::* setterFunc) (T),
                       const char* usage = 0)
     {
-      declareSetter(cmd_name,
-                    CSetter<C,T>::make(setterFunc),
-                    usage);
+      Tcl::defVec( this, setterFunc,
+                   makePkgCmdName(cmd_name), setterUsage(usage) );
     }
 
   template <class CC, class T>
@@ -395,14 +375,15 @@ public:
                       void (CC::* setterFunc) (T),
                       const char* usage = 0)
     {
-      declareAttrib(cmd_name,
-                    CGetter<C,T>::make(getterFunc),
-                    CSetter<C,T>::make(setterFunc),
-                    usage);
+      Tcl::defVec( this, getterFunc,
+                   makePkgCmdName(cmd_name), getterUsage(usage) );
+      Tcl::defVec( this, setterFunc,
+                   makePkgCmdName(cmd_name), setterUsage(usage) );
     }
 
   virtual C* getCItemFromId(int id) = 0;
-  virtual void* getItemFromId(int id) {
+  virtual void* getItemFromId(int id)
+  {
     return static_cast<void*>(getCItemFromId(id));
   }
 };
@@ -425,12 +406,11 @@ public:
 protected:
   virtual void invoke(Context& ctx) = 0;
 
-  C* getItem(Context& ctx) {
+  C* getItem(Context& ctx)
+  {
     int id = ctx.getIntFromArg(1);
     return itsPkg->getCItemFromId(id);
   }
-
-  int afterItemArg(int n) { return n+1; }
 
 private:
   TclItemCmd(const TclItemCmd&);
