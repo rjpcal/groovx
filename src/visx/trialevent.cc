@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Sat Jul 21 20:35:05 2001
+// written: Sat Jul 21 21:07:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,7 +55,6 @@ public:
 TrialEvent::TrialEvent(int msec) :
   itsRequestedDelay(msec),
   itsToken(0),
-  itsWidget(),
   itsErrorHandler(0),
   itsTrial(0),
   itsIsPending(false),
@@ -99,9 +98,8 @@ DOTRACE("TrialEvent::writeTo");
   writer->writeValue("requestedDelay", itsRequestedDelay);
 }
 
-void TrialEvent::schedule(Util::WeakRef<GWT::Widget> widget,
-                          Util::ErrorHandler& errhdlr,
-                          TrialBase& trial)
+void TrialEvent::schedule(TrialBase& trial,
+                          Util::ErrorHandler& errhdlr)
 {
 DOTRACE("TrialEvent::schedule");
   // Cancel any possible previously pending invocation.
@@ -111,7 +109,6 @@ DOTRACE("TrialEvent::schedule");
   itsTimer.restart();
 
   // Remember the participants
-  itsWidget = widget;
   itsErrorHandler = &errhdlr;
   itsTrial = &trial;
 
@@ -189,11 +186,11 @@ DOTRACE("TrialEvent::invokeTemplate");
     int(double(itsTotalOffset)/itsInvokeCount - 0.5);
 
   // Do the actual event callback.
-  if ( itsWidget.isValid() && itsErrorHandler != 0 && itsTrial != 0 )
+  if ( itsErrorHandler != 0 && itsTrial != 0 )
     {
       try
         {
-          invoke(itsWidget, *itsTrial);
+          invoke(*itsTrial);
         }
       catch (ErrorWithMsg& err)
         {
@@ -221,7 +218,7 @@ AbortTrialEvent::AbortTrialEvent(int msec) : TrialEvent(msec) {}
 
 AbortTrialEvent::~AbortTrialEvent() {}
 
-void AbortTrialEvent::invoke(Util::WeakRef<GWT::Widget>, TrialBase& trial)
+void AbortTrialEvent::invoke(TrialBase& trial)
 {
 DOTRACE("AbortTrialEvent::invoke");
   trial.trAbortTrial();
@@ -231,19 +228,23 @@ DrawEvent::DrawEvent(int msec) : TrialEvent(msec) {}
 
 DrawEvent::~DrawEvent() {}
 
-void DrawEvent::invoke(Util::WeakRef<GWT::Widget> widget, TrialBase& trial)
+void DrawEvent::invoke(TrialBase& trial)
 {
 DOTRACE("DrawEvent::invoke");
-  trial.installSelf(widget);
-  widget->setVisibility(true);
-  widget->display();
+  Util::WeakRef<GWT::Widget> widget = trial.getWidget();
+  if (widget.isValid())
+    {
+      trial.installSelf(widget);
+      widget->setVisibility(true);
+      widget->display();
+    }
 }
 
 EndTrialEvent::EndTrialEvent(int msec) : TrialEvent(msec) {}
 
 EndTrialEvent::~EndTrialEvent() {}
 
-void EndTrialEvent::invoke(Util::WeakRef<GWT::Widget>, TrialBase& trial)
+void EndTrialEvent::invoke(TrialBase& trial)
 {
 DOTRACE("EndTrialEvent::invoke");
   trial.trEndTrial();
@@ -254,7 +255,7 @@ NextNodeEvent::NextNodeEvent(int msec) : TrialEvent(msec) {}
 
 NextNodeEvent::~NextNodeEvent() {}
 
-void NextNodeEvent::invoke(Util::WeakRef<GWT::Widget>, TrialBase& trial)
+void NextNodeEvent::invoke(TrialBase& trial)
 {
 DOTRACE("NextNodeEvent::invoke");
   trial.trNextNode();
@@ -264,7 +265,7 @@ AllowResponsesEvent::AllowResponsesEvent(int msec) : TrialEvent(msec) {}
 
 AllowResponsesEvent::~AllowResponsesEvent() {}
 
-void AllowResponsesEvent::invoke(Util::WeakRef<GWT::Widget>, TrialBase& trial)
+void AllowResponsesEvent::invoke(TrialBase& trial)
 {
 DOTRACE("AllowResponsesEvent::invoke");
   trial.trAllowResponses();
@@ -274,7 +275,7 @@ DenyResponsesEvent::DenyResponsesEvent(int msec) : TrialEvent(msec) {}
 
 DenyResponsesEvent::~DenyResponsesEvent() {}
 
-void DenyResponsesEvent::invoke(Util::WeakRef<GWT::Widget>, TrialBase& trial)
+void DenyResponsesEvent::invoke(TrialBase& trial)
 {
 DOTRACE("DenyResponsesEvent::invoke");
   trial.trDenyResponses();
@@ -284,50 +285,60 @@ UndrawEvent::UndrawEvent(int msec) : TrialEvent(msec) {}
 
 UndrawEvent::~UndrawEvent() {}
 
-void UndrawEvent::invoke(Util::WeakRef<GWT::Widget> widget, TrialBase&)
+void UndrawEvent::invoke(TrialBase& trial)
 {
 DOTRACE("UndrawEvent::invoke");
-  widget->undraw();
+  Util::WeakRef<GWT::Widget> widget = trial.getWidget();
+  if (widget.isValid())
+    widget->undraw();
 }
 
 SwapBuffersEvent::SwapBuffersEvent(int msec) : TrialEvent(msec) {}
 
 SwapBuffersEvent::~SwapBuffersEvent() {}
 
-void SwapBuffersEvent::invoke(Util::WeakRef<GWT::Widget> widget, TrialBase&)
+void SwapBuffersEvent::invoke(TrialBase& trial)
 {
 DOTRACE("SwapBuffersEvent::invoke");
-  widget->swapBuffers();
+  Util::WeakRef<GWT::Widget> widget = trial.getWidget();
+  if (widget.isValid())
+    widget->swapBuffers();
 }
 
 RenderBackEvent::RenderBackEvent(int msec) : TrialEvent(msec) {}
 
 RenderBackEvent::~RenderBackEvent() {}
 
-void RenderBackEvent::invoke(Util::WeakRef<GWT::Widget> widget, TrialBase&)
+void RenderBackEvent::invoke(TrialBase& trial)
 {
 DOTRACE("RenderBackEvent::invoke");
-  widget->getCanvas().drawOnBackBuffer();
+  Util::WeakRef<GWT::Widget> widget = trial.getWidget();
+  if (widget.isValid())
+    widget->getCanvas().drawOnBackBuffer();
 }
 
 RenderFrontEvent::RenderFrontEvent(int msec) : TrialEvent(msec) {}
 
 RenderFrontEvent::~RenderFrontEvent() {}
 
-void RenderFrontEvent::invoke(Util::WeakRef<GWT::Widget> widget, TrialBase&)
+void RenderFrontEvent::invoke(TrialBase& trial)
 {
 DOTRACE("RenderFrontEvent::invoke");
-  widget->getCanvas().drawOnFrontBuffer();
+  Util::WeakRef<GWT::Widget> widget = trial.getWidget();
+  if (widget.isValid())
+    widget->getCanvas().drawOnFrontBuffer();
 }
 
 ClearBufferEvent::ClearBufferEvent(int msec) : TrialEvent(msec) {}
 
 ClearBufferEvent::~ClearBufferEvent() {}
 
-void ClearBufferEvent::invoke(Util::WeakRef<GWT::Widget> widget, TrialBase&)
+void ClearBufferEvent::invoke(TrialBase& trial)
 {
 DOTRACE("ClearBufferEvent::invoke");
-  widget->clearscreen();
+  Util::WeakRef<GWT::Widget> widget = trial.getWidget();
+  if (widget.isValid())
+    widget->clearscreen();
 }
 
 static const char vcid_trialevent_cc[] = "$Header$";
