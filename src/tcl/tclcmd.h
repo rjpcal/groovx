@@ -111,9 +111,6 @@ public:
       retrieved, and allows the interpreter's result to be set.*/
   virtual void invoke(Context& ctx) = 0;
 
-  /// Raw invocation.
-  int rawInvoke(int objc, Tcl_Obj* const objv[]) throw();
-
   /// Get the current Tcl::Dispatcher for this command.
   shared_ptr<Dispatcher> getDispatcher() const;
 
