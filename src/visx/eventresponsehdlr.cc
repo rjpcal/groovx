@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Sat Sep 23 15:32:26 2000
+// written: Sat Sep 23 20:07:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -133,16 +133,20 @@ public:
   void rhAbortTrial() const;
 
   void rhEndTrial() const
-	 { ignore(); }
+	 { ignore(); forgetWidget(); forgetTrial(); }
 
   void rhHaltExpt() const
-	 { ignore(); }
+	 { if (itsWidget != 0) ignore(); }
 
   // Helper functions
 private:
 
+  void forgetWidget() const { itsWidget = 0; }
+  void forgetTrial() const { itsTrial = 0; }
+
   GWT::Widget& getWidget() const
 	 {
+		DebugEval((void*) itsWidget);
 		if (itsWidget == 0)
 		  { throw ErrorWithMsg("EventResponseHdlr::itsWidget is NULL"); }
 		return *itsWidget;
@@ -173,6 +177,7 @@ private:
   // effect is cancelled by calling attend().
   void ignore() const;
 
+  void safeIgnore() const;
 
   void raiseBackgroundError(const char* msg) const throw();
 
@@ -587,8 +592,9 @@ DOTRACE("EventResponseHdlr::Impl::attend");
 
 void EventResponseHdlr::Impl::ignore() const {
 DOTRACE("EventResponseHdlr::Impl::ignore");
+
   getWidget().bind(itsEventSequence.c_str(),
-						 nullScript.c_str());
+  						 nullScript.c_str());
 }
 
 void EventResponseHdlr::Impl::raiseBackgroundError(const char* msg) const throw() {
