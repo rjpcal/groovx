@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:00:17 2001
-// written: Wed Jul 11 16:59:00 2001
+// written: Wed Jul 11 17:46:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,7 +76,10 @@ public:
   unsigned int length() const { update(); return itsLength; }
 
   template <class T>
-  void append(T t) { doAppend(Tcl::toTcl<T>(t)); }
+  void append(T t) { doAppend(Tcl::toTcl<T>(t), 1); }
+
+  template <class T>
+  void append(T t, unsigned int times) { doAppend(Tcl::toTcl<T>(t), times); }
 
   class IteratorBase;
   template <class T> class Iterator;
@@ -88,7 +91,7 @@ public:
   Iterator<T> end(T* /*dummy*/=0);
 
 private:
-  void doAppend(Tcl_Obj* obj);
+  void doAppend(Tcl_Obj* obj, unsigned int times);
 
   void update() const
     {
