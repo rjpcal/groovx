@@ -34,6 +34,7 @@
 
 #include "tcl/tcllistobj.h"
 #include "tcl/tclmain.h"
+#include "tcl/tclpkg.h"
 #include "tcl/tclsafeinterp.h"
 
 #include "util/demangle.h"
@@ -237,6 +238,10 @@ DOTRACE("main");
           else if (strcmp(argv[i], "-gtrace") == 0)
             {
               Util::Trace::setGlobalTrace(true);
+            }
+          else if (strcmp(argv[i], "-showinit") == 0)
+            {
+              Tcl::Pkg::verboseInit(true);
             }
         }
 
