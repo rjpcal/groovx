@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 17 15:05:41 1999
-// written: Fri Jan 18 16:06:56 2002
+// written: Tue Jul  2 13:28:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 class fstring;
 
-///
+/// Singleton class with wrappers of OS/system calls.
 class System
 {
 protected:

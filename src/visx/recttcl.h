@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug  9 17:24:29 2001
-// written: Fri Jan 18 16:06:52 2002
+// written: Tue Jul  2 13:02:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,7 @@
 
 namespace Tcl
 {
+  /// Conversion routines for Gfx::Rect to and from Tcl::ObjPtr.
   template <class T>
   struct Convert<const Gfx::Rect<T>& >
   {
@@ -49,6 +50,7 @@ namespace Tcl
     }
   };
 
+  /// Conversion routines for Gfx::Rect to and from Tcl::ObjPtr.
   template <class T>
   struct Convert<Gfx::Rect<T> >
   {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug  9 17:47:29 2001
-// written: Fri Jan 18 16:06:52 2002
+// written: Tue Jul  2 13:23:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,7 @@
 
 namespace Tcl
 {
+  /// Conversion routines for Gfx::Vec2 to and from Tcl::ObjPtr.
   template <class T>
   struct Convert<const Gfx::Vec2<T>& >
   {
@@ -46,6 +47,7 @@ namespace Tcl
     }
   };
 
+  /// Conversion routines for Gfx::Vec2 to and from Tcl::ObjPtr.
   template <class T>
   struct Convert<Gfx::Vec2<T> >
   {

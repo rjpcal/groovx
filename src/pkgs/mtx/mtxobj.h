@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jul 10 13:07:53 2001
-// written: Fri Jan 18 16:06:51 2002
+// written: Tue Jul  2 13:12:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "util/object.h"
 
+/// Adapter class for fitting Mtx to the Util::Object interface.
 class MtxObj : public Mtx, public Util::Object
 {
 public:

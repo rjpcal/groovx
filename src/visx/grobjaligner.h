@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:42:42 2001
-// written: Fri Jan 18 16:06:52 2002
+// written: Tue Jul  2 13:07:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 #include "gx/rect.h"
 #include "gx/vec2.h"
 
+/// Controls how a GrObj is aligned relative to the origin when it is drawn.
 class GrObjAligner : public Gnode
 {
 public:

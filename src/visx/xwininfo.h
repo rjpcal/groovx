@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 13:32:16 1999
-// written: Fri Jan 18 16:06:51 2002
+// written: Tue Jul  2 13:04:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@ typedef struct _XDisplay Display;
 typedef unsigned long Window;
 #endif
 
+/// Holds X11 display/screen/window info.
 class XWinInfo
 {
 public:

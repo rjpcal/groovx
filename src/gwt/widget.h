@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Wed Jan 23 11:14:17 2002
+// written: Tue Jul  2 13:06:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,12 +44,14 @@ namespace Util
 // Listener class definitions
 //
 
+/// Listener for button-press events.
 class GWT::ButtonListener : public Util::Object
 {
 public:
   virtual EventStatus onButtonPress(unsigned int button, int x, int y) = 0;
 };
 
+/// Listener for key-press events.
 class GWT::KeyListener : public Util::Object
 {
 public:

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:26:58 1999
-// written: Fri Jan 18 16:06:52 2002
+// written: Tue Jul  2 13:11:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 struct Tcl_Interp;
 
 
+/// Application class for grsh; holds a reference to the current Gfx::Canvas.
 class GrshApp : public Application
 {
 public:

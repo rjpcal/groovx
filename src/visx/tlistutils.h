@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 02:58:20 1999
-// written: Fri Jan 18 16:06:51 2002
+// written: Tue Jul  2 13:27:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,11 +13,12 @@
 #ifndef TLISTUTILS_H_DEFINED
 #define TLISTUTILS_H_DEFINED
 
+/// Utility functions for working with batches of Trial objects.
 class TlistUtils
 {
 public:
   /** Write a file containing a summary of the responses to each Trial
-      in the Tlist. */
+      in the ObjDb. */
   static void writeResponses(const char* filename);
 
   static void writeIncidenceMatrix(const char* filename);

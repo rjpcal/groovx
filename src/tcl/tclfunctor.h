@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Wed Jun 26 12:04:42 2002
+// written: Tue Jul  2 13:26:43 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,6 +111,9 @@ namespace Util
 
 namespace Tcl
 {
+
+// ####################################################################
+/// Tcl::FunctorBase
 
   template <class Func>
   struct FunctorBase : protected Util::FuncHolder<Func>

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Feb  8 17:48:17 2000
-// written: Fri Jan 18 16:06:54 2002
+// written: Tue Jul  2 13:05:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@ namespace Util
   class Tracer;
 }
 
+/// A class for dynamic toggling sets of trace statements.
 class Util::Tracer
 {
 public:

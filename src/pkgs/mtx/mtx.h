@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Jun 26 12:26:16 2002
+// written: Tue Jul  2 13:13:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -316,6 +316,7 @@ public:
 
 typedef struct mxArray_tag mxArray;
 
+/// Aggregation of initialization and storage policy enums.
 struct WithPolicies
 {
   enum InitPolicy { ZEROS, NO_INIT };

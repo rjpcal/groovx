@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 13 18:30:04 2000
-// written: Fri Jan 18 16:06:52 2002
+// written: Tue Jul  2 13:04:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include "util/value.h"
 #endif
 
+/// A Value subclass for observers' responses in a experiment trials.
 class Response : public Value
 {
 public:

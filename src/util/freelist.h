@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 20 07:54:29 2001
-// written: Wed Jun 26 11:30:45 2002
+// written: Tue Jul  2 13:22:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@
 class FreeListBase
 {
 private:
+  /// Free-node class for free-list memory pools.
   struct Node
   {
     Node* next;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 16:45:38 2001
-// written: Fri Jan 18 16:06:55 2002
+// written: Tue Jul  2 13:03:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include "util/value.h"
 #endif
 
+/// A Value subclass representing a (small) set of homogeneous values.
 template <class T>
 class TMultiValue : public Value
 {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Aug 21 17:16:15 2001
-// written: Fri Jan 18 16:06:54 2002
+// written: Tue Jul  2 13:22:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,10 @@ namespace Util
   class VolatileObject;
 }
 
+/// Subclass of Util::Object for inherently un-shareable objects.
+/** This typically applies to objects who must control their own lifetime,
+    or whose lifetime is controlled by some external mechanism (such as a
+    windowing system, for example). */
 class Util::VolatileObject : public virtual Util::Object
 {
 public:

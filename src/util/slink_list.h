@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 18 11:22:40 2000
-// written: Sat Feb  2 16:44:15 2002
+// written: Tue Jul  2 13:08:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,6 +49,7 @@ public:
   // Nested types: node and iterators
   //
 
+  /// Singly-linked list node.
   struct node
   {
     node(const T& v, node* n) : val(v), next(n) {}
@@ -62,6 +63,7 @@ public:
     node* next;
   };
 
+  /// Singly-linked list iterator.
   class iterator
   {
   private:
@@ -92,6 +94,7 @@ public:
     bool operator!=(const iterator& other) const { return nn != other.nn; }
   };
 
+  /// Singly-linked list const iterator.
   class const_iterator
   {
   private:

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Mon Feb 25 16:56:24 2002
+// written: Tue Jul  2 13:08:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -303,6 +303,7 @@ private:
 
 namespace Util
 {
+  /// Specialization for fstring.
   template <>
   struct Convert<fstring>
   {

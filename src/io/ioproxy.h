@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 22 21:41:38 2000
-// written: Fri Jan 18 16:06:57 2002
+// written: Tue Jul  2 13:01:43 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,6 +36,16 @@
 
 namespace IO
 {
+
+//  ###################################################################
+//  ===================================================================
+
+/// IoProxy makes a proxy IoObject that behaves as if it were another type.
+/** This is typically used to get an object to behave as if it were
+    actually an object of its base class: i.e., all virtual function calls
+    get dispatched to the base class rather than to the most derived
+    class. This is what is needed when trying to do readFrom() or writeTo()
+    for the base class portion of an object. */
 
 template <class C>
 class IoProxy : public IoObject
@@ -71,6 +81,11 @@ template <class C>
 inline Util::Ref<IoObject> makeProxy(C* ref)
   { return IoProxy<C>::make(ref); }
 
+
+//  ###################################################################
+//  ===================================================================
+
+/// ConstIoProxy is just like IoProxy except for const objects.
 
 template <class C>
 class ConstIoProxy : public IoObject

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Wed Jun 26 11:19:47 2002
+// written: Tue Jul  2 13:13:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -228,8 +228,7 @@ public:
   Util::UID id() const { return get()->id(); }
 };
 
-// TypeTraits specialization for Util::Ref smart pointer
-
+/// TypeTraits specialization for Util::Ref smart pointer
 template <class T>
 struct TypeTraits<Ref<T> >
 {
@@ -271,9 +270,10 @@ class SoftRef
 {
 private:
 
-  // This internal helper class manages memory etc., and provides one
-  // important guarantee: it will never return an invalid pointer from
-  // get() (an exception will be raised if this would fail)
+  /// Internal helper class for SoftRef.
+  /** WeakHandle manages memory etc., and provides one important guarantee:
+      it will never return an invalid pointer from get() (an exception will
+      be raised if this would fail). */
   class WeakHandle
   {
   private:
@@ -436,13 +436,12 @@ public:
     { return itsHandle.isValid() ? itsHandle.get()->id() : 0; }
 };
 
-// TypeTraits specialization for SoftRef smart pointer
-
-  template <class T>
-  struct TypeTraits<SoftRef<T> >
-  {
-    typedef T Pointee;
-  };
+/// TypeTraits specialization for SoftRef smart pointer.
+template <class T>
+struct TypeTraits<SoftRef<T> >
+{
+  typedef T Pointee;
+};
 
 } // end namespace Util
 
