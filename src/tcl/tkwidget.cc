@@ -263,7 +263,7 @@ void TkWidgImpl::cRenderCallback(ClientData clientData) throw()
 {
 DOTRACE("TkWidgImpl::cRenderCallback");
 
-  Tcl::TkWidget* widg = reinterpret_cast<Tcl::TkWidget*>(clientData);
+  Tcl::TkWidget* widg = static_cast<Tcl::TkWidget*>(clientData);
 
   try
     {
@@ -280,13 +280,13 @@ void TkWidgImpl::cEventuallyFreeCallback(char* clientData) throw()
 {
 DOTRACE("TkWidgImpl::cEventuallyFreeCallback");
   Tcl::TkWidget* widg = reinterpret_cast<Tcl::TkWidget*>(clientData);
-  widg->decrRefCount();
+  delete widg;
 }
 
 void TkWidgImpl::cTakeFocusCallback(ClientData clientData) throw()
 {
 DOTRACE("TkWidgImpl::cTakeFocusCallback");
-  Tcl::TkWidget* widg = reinterpret_cast<Tcl::TkWidget*>(clientData);
+  Tcl::TkWidget* widg = static_cast<Tcl::TkWidget*>(clientData);
   try
     {
       widg->takeFocus();
@@ -310,6 +310,8 @@ Tcl::TkWidget::TkWidget(Tcl::Interp& interp,
   rep(new TkWidgImpl(this, interp, classname, pathname, topLevel))
 {
 DOTRACE("Tcl::TkWidget::TkWidget");
+
+  this->markAsVolatile();
 }
 
 Tcl::TkWidget::~TkWidget()
