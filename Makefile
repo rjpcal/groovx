@@ -768,7 +768,7 @@ STRINGIFYCMD_CC := $(STRINGIFYCMD_H) $(IO_H) $(ARRAYS_H) \
 	$(ASCIISTREAMREADER_H) $(ASCIISTREAMWRITER_H) \
 	$(TRACE_H) $(DEBUG_H) stringifycmd.cc
 
-STRINGS_CC := $(STRINGS_H) strings.cc
+STRINGS_CC := $(STRINGS_H) util/strings.cc
 
 SUBJECT_CC := $(SUBJECT_H) $(IOUTILS_H) $(READER_H) $(WRITER_H) \
 	$(TRACE_H) $(DEBUG_H) subject.cc
