@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Tue Aug 21 16:14:30 2001
+// written: Tue Aug 21 16:31:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -87,6 +87,9 @@ public:
   /** Informs all this object's Slots that this Signal's state
       has changed */
   void emit() const;
+
+  /// Returns a slot which when call()'ed will cause this Signal to emit().
+  Util::SoftRef<Util::Slot> slot() const;
 
 private:
 
