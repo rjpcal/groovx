@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Tue May 14 19:57:46 2002
+// written: Tue Jul  9 16:27:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -119,6 +119,14 @@ void IO::loadASR(Util::Ref<IO::IoObject> obj, fstring filename)
   shared_ptr<STD_IO::istream> is(Util::igzopen(filename));
 
   streamRead<AsciiStreamReader>(obj, *is);
+}
+
+Util::Ref<IO::IoObject> IO::retrieveASR(fstring filename)
+{
+  shared_ptr<STD_IO::istream> is(Util::igzopen(filename));
+
+  AsciiStreamReader reader(*is);
+  return reader.readRoot();
 }
 
 static const char vcid_ioutil_cc[] = "$Header$";
