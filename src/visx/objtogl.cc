@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Tue Sep 17 21:23:53 2002
+// written: Tue Sep 17 22:02:06 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -116,21 +116,6 @@ namespace ObjTogl
     toglet->fullRender();
   }
 
-  Tcl_Obj* cget(SoftRef<Toglet> toglet)
-  {
-    return toglet->cget(0);
-  }
-
-  Tcl_Obj* cget2(SoftRef<Toglet> toglet, Tcl_Obj* param)
-  {
-    return toglet->cget(param);
-  }
-
-  void configure(SoftRef<Toglet> toglet, Tcl::List args)
-  {
-    toglet->configure(args.length(), args.elements());
-  }
-
   class TogletPkg;
 }
 
@@ -149,9 +134,6 @@ public:
     Tcl::defGenericObjCmds<Toglet>(this);
 
     def( "bind", "event_sequence binding_script", &Toglet::bind );
-    def( "cget", "toglet_id", &ObjTogl::cget );
-    def( "cget", "toglet_id param_name", &ObjTogl::cget2 );
-    def( "configure", "toglet_id {param1 value1 ?...?}", &ObjTogl::configure );
     def( "currentToglet", "toglet_id", &ObjTogl::setCurrentTogl );
     def( "currentToglet", 0, &ObjTogl::getCurrentTogl );
     def( "defaultParent", "parent", &Toglet::defaultParent );

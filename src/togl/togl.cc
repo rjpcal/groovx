@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 21:37:41 2002
+// written: Tue Sep 17 22:30:25 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -47,10 +47,6 @@
 #include <GL/glx.h>
 #include <tcl.h>
 #include <tk.h>
-#ifndef _TKPORT
-#  define _TKPORT  // This eliminates need to include a bunch of Tk baggage
-#endif
-#include <tkInt.h>
 
 #ifdef HAVE_LIMITS
 #  include <limits>
@@ -60,123 +56,6 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
-
-///////////////////////////////////////////////////////////////////////
-//
-// ToglOpts definition (plain-old-data struct)
-//
-///////////////////////////////////////////////////////////////////////
-
-struct ToglOpts
-{
-  void toDefaults()
-  {
-    time = 0;
-    privateCmapFlag = 0;
-    glx.toDefaults();
-  }
-
-  int time;
-  int privateCmapFlag;
-  GlxOpts glx;
-};
-
-///////////////////////////////////////////////////////////////////////
-//
-// File scope declarations
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace
-{
-  // Defaults
-  const char*  DEFAULT_TIME      = "0";
-
-  // Tk option database machinery for Togl:
-
-  const int TOGL_GLX_OPTION     = 1 << 0;
-
-  Tk_OptionTable toglOptionTable = 0;
-
-  Tk_OptionSpec optionSpecs[] =
-  {
-    {TK_OPTION_BOOLEAN, (char*)"-rgba", (char*)"rgba", (char*)"Rgba",
-#ifndef NO_RGBA
-     (char*)"true",
-#else
-     (char*)"false",
-#endif
-     -1, Tk_Offset(ToglOpts, glx.rgbaFlag), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_INT, (char*)"-redsize", (char*)"redsize", (char*)"RedSize",
-     (char*)"1", -1, Tk_Offset(ToglOpts, glx.rgbaRed), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_INT, (char*)"-greensize", (char*)"greensize", (char*)"GreenSize",
-     (char*)"1", -1, Tk_Offset(ToglOpts, glx.rgbaGreen), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_INT, (char*)"-bluesize", (char*)"bluesize", (char*)"BlueSize",
-     (char*)"1", -1, Tk_Offset(ToglOpts, glx.rgbaBlue), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_INT, (char*)"-colorindexsize", (char*)"colorindexsize", (char*)"ColorIndexSize",
-     (char*)"8", -1, Tk_Offset(ToglOpts, glx.colorIndexSize), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_BOOLEAN, (char*)"-double", (char*)"double", (char*)"Double",
-#ifndef NO_DOUBLE_BUFFER
-     (char*)"true",
-#else
-     (char*)"false",
-#endif
-     -1, Tk_Offset(ToglOpts, glx.doubleFlag), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_BOOLEAN, (char*)"-depth", (char*)"depth", (char*)"Depth",
-     (char*)"true", -1, Tk_Offset(ToglOpts, glx.depthFlag), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_INT, (char*)"-depthsize", (char*)"depthsize", (char*)"DepthSize",
-     (char*)"8", -1, Tk_Offset(ToglOpts, glx.depthSize), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_BOOLEAN, (char*)"-accum", (char*)"accum", (char*)"Accum",
-     (char*)"false", -1, Tk_Offset(ToglOpts, glx.accumFlag), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_INT, (char*)"-accumredsize", (char*)"accumredsize", (char*)"AccumRedSize",
-     (char*)"1", -1, Tk_Offset(ToglOpts, glx.accumRed), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_INT, (char*)"-accumgreensize", (char*)"accumgreensize", (char*)"AccumGreenSize",
-     (char*)"1", -1, Tk_Offset(ToglOpts, glx.accumGreen), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_INT, (char*)"-accumbluesize", (char*)"accumbluesize", (char*)"AccumBlueSize",
-     (char*)"1", -1, Tk_Offset(ToglOpts, glx.accumBlue), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_INT, (char*)"-accumalphasize", (char*)"accumalphasize", (char*)"AccumAlphaSize",
-     (char*)"1", -1, Tk_Offset(ToglOpts, glx.accumAlpha), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_BOOLEAN, (char*)"-alpha", (char*)"alpha", (char*)"Alpha",
-     (char*)"false", -1, Tk_Offset(ToglOpts, glx.alphaFlag), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_INT, (char*)"-alphasize", (char*)"alphasize", (char*)"AlphaSize",
-     (char*)"1", -1, Tk_Offset(ToglOpts, glx.alphaSize), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_BOOLEAN, (char*)"-stencil", (char*)"stencil", (char*)"Stencil",
-     (char*)"false", -1, Tk_Offset(ToglOpts, glx.stencilFlag), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_INT, (char*)"-stencilsize", (char*)"stencilsize", (char*)"StencilSize",
-     (char*)"1", -1, Tk_Offset(ToglOpts, glx.stencilSize), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_INT, (char*)"-auxbuffers", (char*)"auxbuffers", (char*)"AuxBuffers",
-     (char*)"0", -1, Tk_Offset(ToglOpts, glx.auxNumber), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_BOOLEAN, (char*)"-indirect", (char*)"indirect", (char*)"Indirect",
-     (char*)"false", -1, Tk_Offset(ToglOpts, glx.indirect), 0, NULL, TOGL_GLX_OPTION},
-
-    {TK_OPTION_BOOLEAN, (char*)"-privatecmap", (char*)"privateCmap", (char*)"PrivateCmap",
-     (char*)"false", -1, Tk_Offset(ToglOpts, privateCmapFlag), 0, NULL, 0},
-
-    {TK_OPTION_INT, (char*)"-time", (char*)"time", (char*)"Time",
-     (char*)DEFAULT_TIME, -1, Tk_Offset(ToglOpts, time), 0, NULL, 0},
-
-    {TK_OPTION_END, (char*) 0, (char*) 0, (char *) 0,
-     (char*) 0, 0, 0, 0, NULL, 0}
-  };
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -193,18 +72,17 @@ private:
 public:
   Togl* itsOwner;
   const Tk_Window itsTkWin;
-  shared_ptr<ToglOpts> itsOpts;
+  shared_ptr<GlxOpts> itsOpts;
   shared_ptr<GlxWrapper> itsGlx;
 
+  int itsTime;
+  bool itsPrivateCmapFlag;
   int itsFontListBase;
 
   Tcl_TimerToken itsTimerToken;
 
-  Impl(Togl* owner, Tcl_Interp* interp);
+  Impl(Togl* owner);
   ~Impl() throw();
-
-  Tcl_Obj* cget(Tcl_Obj* param) const;
-  void configure(int objc, Tcl_Obj* const objv[]);
 
   // All callbacks cast to/from Togl::Impl*, _NOT_ Togl* !!!
   static void cTimerCallback(ClientData clientData) throw();
@@ -220,11 +98,16 @@ public:
   void loadFontList(GLuint newListBase);
 
   Gfx::Canvas& canvas() const { return itsGlx->canvas(); }
-
-private:
-  void makeWindowExist(); // throws a Util::Error on failure
 };
 
+
+Tk_ClassProcs toglProcs =
+  {
+    sizeof(Tk_ClassProcs),
+    (Tk_ClassWorldChangedProc*) 0,
+    Togl::Impl::cClassCreateProc,
+    (Tk_ClassModalProc*) 0,
+  };
 
 //---------------------------------------------------------------------
 //
@@ -232,12 +115,14 @@ private:
 //
 //---------------------------------------------------------------------
 
-Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp) :
+Togl::Impl::Impl(Togl* owner) :
   itsOwner(owner),
   itsTkWin(owner->tkWin()),
-  itsOpts(new ToglOpts),
+  itsOpts(new GlxOpts),
   itsGlx(0),
 
+  itsTime(-1),
+  itsPrivateCmapFlag(false),
   itsFontListBase(0),
 
   itsTimerToken(0)
@@ -245,39 +130,25 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp) :
 DOTRACE("Togl::Impl::Impl");
 
   //
-  // Set up options
-  //
-
-  if (toglOptionTable == 0)
-    {
-      toglOptionTable = Tk_CreateOptionTable(interp, optionSpecs);
-    }
-
-  itsOpts->toDefaults();
-
-  if (Tk_InitOptions(interp, reinterpret_cast<char*>(itsOpts.get()),
-                     toglOptionTable, itsTkWin) == TCL_ERROR)
-    {
-      throw Util::Error(fstring("Togl couldn't initialize options:\n",
-                                Tcl_GetStringResult(interp)));
-    }
-
-  //
   // Get the window mapped onscreen
   //
 
   Tk_GeometryRequest(itsTkWin, itsOwner->width(), itsOwner->height());
 
-  makeWindowExist();
+  Tk_SetClassProcs(itsTkWin, &toglProcs, static_cast<ClientData>(this));
+
+  Tk_MakeWindowExist(itsTkWin);
+
+  Tk_MapWindow(itsTkWin);
 
   //
   // Set up handlers
   //
 
-  if (itsOpts->time > 0)
+  if (itsTime > 0)
     {
       itsTimerToken =
-        Tcl_CreateTimerHandler(itsOpts->time, &cTimerCallback,
+        Tcl_CreateTimerHandler(itsTime, &cTimerCallback,
                                static_cast<ClientData>(this));
     }
 
@@ -285,7 +156,7 @@ DOTRACE("Togl::Impl::Impl");
   // Set up canvas
   //
 
-  if (itsOpts->glx.rgbaFlag)
+  if (itsOpts->rgbaFlag)
     {
       itsGlx->canvas().setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
       itsGlx->canvas().setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
@@ -305,58 +176,6 @@ DOTRACE("Togl::Impl::~Impl");
   Assert(itsTkWin != 0);
 
   Tcl_DeleteTimerHandler(itsTimerToken);
-
-  Tk_FreeConfigOptions(reinterpret_cast<char*>(itsOpts.get()),
-                       toglOptionTable, itsTkWin);
-}
-
-//---------------------------------------------------------------------
-//
-// Process a configure read-request
-//
-//---------------------------------------------------------------------
-
-Tcl_Obj* Togl::Impl::cget(Tcl_Obj* param) const
-{
-DOTRACE("Togl::Impl::cget");
-
-  Tcl_Obj* objResult =
-    Tk_GetOptionInfo(itsOwner->interp(),
-                     reinterpret_cast<char*>(itsOpts.get()),
-                     toglOptionTable,
-                     param, itsTkWin);
-
-  if (objResult == 0)
-    throw Util::Error("couldn't get configuration parameters");
-
-  return objResult;
-}
-
-//---------------------------------------------------------------------
-//
-// Process a configure write-request
-//
-//---------------------------------------------------------------------
-
-void Togl::Impl::configure(int objc, Tcl_Obj* const objv[])
-{
-DOTRACE("Togl::Impl::configure");
-
-  int mask = 0;
-
-  if (Tk_SetOptions(itsOwner->interp(),
-                    reinterpret_cast<char*>(itsOpts.get()),
-                    toglOptionTable, objc, objv, itsTkWin,
-                    (Tk_SavedOptions*) 0, &mask)
-      == TCL_ERROR)
-    {
-      throw Util::Error("error while setting togl widget options");
-    }
-
-  // If any GLX options changed, then we have to recreate the window
-  // and GLX context
-  if (mask & TOGL_GLX_OPTION)
-    makeWindowExist();
 }
 
 void Togl::Impl::cTimerCallback(ClientData clientData) throw()
@@ -369,7 +188,7 @@ DOTRACE("Togl::Impl::cTimerCallback");
     {
       rep->itsOwner->timerCallback();
       rep->itsTimerToken =
-        Tcl_CreateTimerHandler(rep->itsOpts->time, cTimerCallback,
+        Tcl_CreateTimerHandler(rep->itsTime, cTimerCallback,
                                static_cast<ClientData>(rep));
     }
   catch (...)
@@ -383,7 +202,7 @@ DOTRACE("Togl::Impl::cTimerCallback");
 void Togl::Impl::swapBuffers() const
 {
 DOTRACE("Togl::Impl::swapBuffers");
-  if (itsOpts->glx.doubleFlag)
+  if (itsOpts->doubleFlag)
     {
       glXSwapBuffers(Tk_Display(itsTkWin), Tk_WindowId(itsTkWin));
     }
@@ -449,12 +268,12 @@ Window Togl::Impl::cClassCreateProc(Tk_Window tkwin,
       throw Util::Error("Togl: X server has no OpenGL GLX extension");
     }
 
-  rep->itsGlx.reset(GlxWrapper::make(dpy, rep->itsOpts->glx));
+  rep->itsGlx.reset(GlxWrapper::make(dpy, *(rep->itsOpts)));
 
   XVisualInfo* visInfo = rep->itsGlx->visInfo();
 
   Colormap cmap = X11Util::findColormap(dpy, visInfo,
-                                        rep->itsOpts->privateCmapFlag);
+                                        rep->itsPrivateCmapFlag);
 
   // Make sure Tk knows to switch to the new colormap when the cursor is over
   // this window when running in color index mode.
@@ -491,7 +310,7 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
   rep->itsGlx->makeCurrent(win);
 
   // Check for a single/double buffering snafu
-  if (rep->itsOpts->glx.doubleFlag == 0 && rep->itsGlx->isDoubleBuffered())
+  if (rep->itsOpts->doubleFlag == 0 && rep->itsGlx->isDoubleBuffered())
     {
       // We requested single buffering but had to accept a double buffered
       // visual.  Set the GL draw buffer to be the front buffer to
@@ -502,33 +321,6 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
   return win;
 }
 
-Tk_ClassProcs toglProcs =
-  {
-    sizeof(Tk_ClassProcs),
-    (Tk_ClassWorldChangedProc*) 0,
-    Togl::Impl::cClassCreateProc,
-    (Tk_ClassModalProc*) 0,
-  };
-
-void Togl::Impl::makeWindowExist()
-{
-DOTRACE("Togl::Impl::makeWindowExist");
-
-  TkWindow* winPtr = reinterpret_cast<TkWindow*>(itsTkWin);
-
-  if (winPtr->window != None)
-    {
-      XDestroyWindow(winPtr->display, winPtr->window);
-      winPtr->window = 0;
-    }
-
-  Tk_SetClassProcs(itsTkWin, &toglProcs, static_cast<ClientData>(this));
-
-  Tk_MakeWindowExist(itsTkWin);
-
-  Tk_MapWindow(itsTkWin);
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // Togl member function definitions
@@ -537,7 +329,7 @@ DOTRACE("Togl::Impl::makeWindowExist");
 
 Togl::Togl(Tcl_Interp* interp, const char* pathname) :
   Tcl::TkWidget(interp, "Togl", pathname),
-  rep(new Impl(this, interp))
+  rep(new Impl(this))
 {
 DOTRACE("Togl::Togl");
 
@@ -563,18 +355,12 @@ void Togl::timerCallback()
 DOTRACE("Togl::timerCallback");
 }
 
-Tcl_Obj* Togl::cget(Tcl_Obj* param) const
-  { return rep->cget(param); }
-
-void Togl::configure(int objc, Tcl_Obj* const objv[])
-  { rep->configure(objc, objv); }
-
 void Togl::makeCurrent() const          { rep->itsGlx->makeCurrent(Tk_WindowId(rep->itsTkWin)); }
 void Togl::swapBuffers()                { rep->swapBuffers(); }
-bool Togl::isRgba() const               { return rep->itsOpts->glx.rgbaFlag; }
-bool Togl::isDoubleBuffered() const     { return rep->itsOpts->glx.doubleFlag; }
+bool Togl::isRgba() const               { return rep->itsOpts->rgbaFlag; }
+bool Togl::isDoubleBuffered() const     { return rep->itsOpts->doubleFlag; }
 unsigned int Togl::bitsPerPixel() const { return rep->itsGlx->visInfo()->depth; }
-bool Togl::hasPrivateCmap() const       { return rep->itsOpts->privateCmapFlag; }
+bool Togl::hasPrivateCmap() const       { return rep->itsPrivateCmapFlag; }
 
 Togl::Color Togl::queryColor(unsigned int color_index) const
   { return rep->queryColor(color_index); }
