@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Mon Oct 30 15:54:32 2000
+// written: Wed Nov  1 18:31:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -256,7 +256,7 @@ DOTRACE("TlistUtils::writeMatlab");
 
 		if ( t )
 		  {
-			 for (Trial::GrObjItr ii = t->beginGrObjs(), end = t->endGrObjs();
+			 for (Trial::GxNodeItr ii = t->beginGxNodes(), end = t->endGxNodes();
 					ii != end;
 					++ii)
 				{
