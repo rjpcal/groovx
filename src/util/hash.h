@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 20 08:50:34 2000
-// written: Thu May 10 12:04:36 2001
+// written: Fri May 11 20:56:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -93,6 +93,13 @@ public:
   struct entry_type {
 	 entry_type(const key_type& k, const value_type& v) :
 		key(k), value(v) {}
+
+	 entry_type(const entry_type& other) :
+		key(other.key), value(other.value) {}
+
+	 entry_type& operator=(const entry_type& other)
+	   { key = other.key; value = other.value; return *this; }
+
 	 key_type key;
 	 value_type value;
   };
@@ -156,6 +163,15 @@ public:
 		list_itr(other.list_itr),
 		at_end(other.at_end)
 		{}
+
+	 iterator& operator=(const iterator& other)
+	 {
+		buckets_ptr = other.buckets_ptr;
+		table_itr = other.table_itr;
+		list_itr = other.list_itr;
+		at_end = other.at_end;
+		return *this;
+	 }
 
 	 reference operator*() { return list_itr.operator*(); }
 	 pointer operator->() {
