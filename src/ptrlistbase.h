@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Thu Jun  1 13:07:30 2000
+// written: Thu Oct  5 17:10:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -124,8 +124,6 @@ protected:
   int& firstVacant();
   const int& firstVacant() const;
 
-  void** voidVecBegin() const;
-  void** voidVecEnd() const;
   unsigned int voidVecSize() const;
 
   void voidVecResize(unsigned int new_size);
