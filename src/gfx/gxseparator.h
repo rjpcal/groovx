@@ -3,7 +3,7 @@
 // gxseparator.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Nov  2 11:20:15 2000
-// written: Thu Nov  2 13:51:24 2000
+// written: Thu Nov  2 14:34:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,10 +31,10 @@ public:
 
   typedef int ChildId;
 
-  ChildId addChild(int ioId);
-  void insertChild(int ioId, ChildId at_index);
+  ChildId addChild(int ioUid);
+  void insertChild(int ioUid, ChildId at_index);
   void removeChildId(ChildId index);
-  void removeChildItem(int ioId);
+  void removeChildUid(int ioUid);
 
   int numChildren() const;
   IdItem<GxNode> getChild(ChildId index) const;
