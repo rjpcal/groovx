@@ -3,7 +3,7 @@
 // irixsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 14 11:23:12 1999
-// written: Fri Mar  3 23:20:56 2000
+// written: Thu Mar  9 10:31:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,13 @@
 
 #include "reader.h"
 #include "writer.h"
+#include "util/arrays.h"
+#include "util/strings.h"
 
 #include <dmedia/audio.h>
 #include <dmedia/audiofile.h>
 #include <fstream.h>				  // to check if files exist
 #include <unistd.h>
-#include <string>
-#include <vector>
 
 #define NO_TRACE
 #include "trace.h"
@@ -33,7 +33,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const string ioTag = "IrixAudioSound";
+  const string_literal ioTag = "IrixAudioSound";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -49,13 +49,17 @@ namespace {
 class SoundFilenameError : public SoundError {
 public:
   SoundFilenameError() : SoundError() {}
-  SoundFilenameError(const string& filename) :
-	 SoundError(string("bad or nonexistent file '") + filename + "'") {}
+  SoundFilenameError(const char* filename) :
+	 SoundError("bad or nonexistent file '")
+	 {
+		appendMsg(filename);
+		appendMsg("'");
+	 }
 };
 
 class IrixAudioSound : public Sound {
 public:
-  IrixAudioSound(const string& filename);
+  IrixAudioSound(const char* filename);
   virtual ~IrixAudioSound();
 
   virtual void serialize(ostream& os, IOFlag flag) const;
@@ -66,11 +70,11 @@ public:
   virtual void writeTo(Writer* writer) const;
 
   virtual void play();
-  virtual void setFile(const string& filename);
-  virtual const string& getFile() const { return itsFilename; }
+  virtual void setFile(const char* filename);
+  virtual const char* getFile() const { return itsFilename.c_str(); }
 
 private:
-  string itsFilename;
+  fixed_string itsFilename;
 
   ALconfig itsAudioConfig;
   int itsNumChannels;
@@ -79,10 +83,10 @@ private:
   int itsSampleWidth;
   int itsBytesPerSample;
   double itsSamplingRate;
-  vector<unsigned char> itsSamples;
+  dynamic_block<unsigned char> itsSamples;
 };
 
-IrixAudioSound::IrixAudioSound(const string& filename) :
+IrixAudioSound::IrixAudioSound(const char* filename) :
   itsAudioConfig(alNewConfig()),
   itsNumChannels(0),
   itsFrameCount(0),
@@ -115,7 +119,7 @@ DOTRACE("IrixAudioSound::serialize");
 
   os << itsFilename << endl;
 
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw OutputError(ioTag.c_str());
 
   if (flag & BASES) { /* no bases to deal with */ }
 }
@@ -123,15 +127,15 @@ DOTRACE("IrixAudioSound::serialize");
 void IrixAudioSound::deserialize(istream& is, IOFlag flag) {
 DOTRACE("IrixAudioSound::deserialize");
 
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
 
   getline(is, itsFilename, '\n');
   
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw InputError(ioTag.c_str());
 
   if (flag & BASES) { /* no bases to deal with */ }
 
-  setFile(itsFilename);
+  setFile(itsFilename.c_str());
 }
 
 int IrixAudioSound::charCount() const {
@@ -144,7 +148,7 @@ DOTRACE("IrixAudioSound::charCount");
 void IrixAudioSound::readFrom(Reader* reader) {
 DOTRACE("IrixAudioSound::readFrom");
   reader->readValue("filename", itsFilename);
-  setFile(itsFilename);
+  setFile(itsFilename.c_str());
 }
 
 void IrixAudioSound::writeTo(Writer* writer) const {
@@ -178,9 +182,9 @@ DOTRACE("IrixAudioSound::play");
   }
 }
 
-void IrixAudioSound::setFile(const string& filename) {
+void IrixAudioSound::setFile(const char* filename) {
 DOTRACE("IrixAudioSound::setFile");
-  ifstream ifs(filename.c_str());
+  ifstream ifs(filename);
   if (ifs.fail()) {
 	 throw SoundFilenameError(filename);
   }
@@ -189,10 +193,11 @@ DOTRACE("IrixAudioSound::setFile");
   // Open itsFilename as an audio file for reading. We pass a NULL
   // AFfilesetup to indicate that file setup parameters should be
   // taken from the file itself.
-  AFfilehandle audiofile = afOpenFile(filename.c_str(),
-												  "r", (AFfilesetup) 0);
+  AFfilehandle audiofile = afOpenFile(filename, "r", (AFfilesetup) 0);
   if (audiofile == AF_NULL_FILEHANDLE) {
-	 throw SoundError("couldn't open sound file " + itsFilename);
+	 SoundError err("couldn't open sound file ");
+	 err.appendMsg(itsFilename.c_str());
+	 throw err;
   }
 
   // We don't actually set itsFilename to the new value until we are
@@ -209,16 +214,18 @@ DOTRACE("IrixAudioSound::setFile");
   // Number of audio channels (i.e. mono == 1, stereo == 2)
   itsNumChannels = afGetChannels(audiofile, AF_DEFAULT_TRACK);
   if (itsNumChannels == -1) {
-	 throw SoundError("error reading the number of channels in sound file " +
-							itsFilename);
+	 SoundError err("error reading the number of channels in sound file ");
+	 err.appendMsg(itsFilename.c_str());
+	 throw err;
   }
   alSetChannels(itsAudioConfig, itsNumChannels);
 
   // Frame count
   itsFrameCount = afGetFrameCount(audiofile, AF_DEFAULT_TRACK);
   if (itsFrameCount < 0) {
-	 throw SoundError("error reading the frame count in sound file " +
-							itsFilename);
+	 SoundError err("error reading the frame count in sound file ");
+	 err.appendMsg(itsFilename.c_str());
+	 throw err;
   }
 
   // Sample format and sample width
@@ -257,13 +264,17 @@ DOTRACE("IrixAudioSound::setFile");
   // If the read failed, we dump any data stored in itsSamples
   if (readResult == -1) {
 	 itsSamples.resize(0);
-	 throw SoundError("error reading sound data from file " + itsFilename);
+	 SoundError err("error reading sound data from file ");
+	 err.appendMsg(itsFilename.c_str());
+	 throw err;
   }
 
   // If the close failed, we keep the data that were read, but report
   // the error
   if (closeResult == -1) {
-	 throw SoundError("error closing sound file " + itsFilename);
+	 SoundError err("error closing sound file ");
+	 err.appendMsg(itsFilename.c_str());
+	 throw err;
   }
 }
 
@@ -287,7 +298,7 @@ void Sound::closeSound() {
 DOTRACE("Sound::closeSound");
 }
 
-Sound* Sound::newPlatformSound(const string& soundfile) {
+Sound* Sound::newPlatformSound(const char* soundfile) {
 DOTRACE("Sound::newPlatformSound");
   return new IrixAudioSound(soundfile);
 }
