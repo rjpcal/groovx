@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:26:45 2000
-// written: Wed Aug 15 06:48:09 2001
+// written: Fri Aug 17 10:26:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,7 @@
 namespace Gfx
 {
   class Canvas;
+  template <class V> class Rect;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -58,6 +59,12 @@ public:
       composite structure. This function is used to avoid generated
       cycles in the scene graph. */
   virtual bool contains(GxNode* other) const;
+
+  /** Subclasses override this to transform \a bbox according to how
+      that subclass will be rendered. The default implementation does
+      nothing. */
+  virtual void getBoundingBox(Gfx::Rect<double>& bbox,
+										Gfx::Canvas& canvas) const;
 
   /// Draw the object on \a canvas.
   virtual void draw(Gfx::Canvas& canvas) const = 0;
