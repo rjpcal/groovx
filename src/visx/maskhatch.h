@@ -3,7 +3,7 @@
 // maskhatch.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Fri Feb 18 09:11:16 2000
+// written: Fri Mar  3 16:20:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

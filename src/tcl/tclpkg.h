@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Feb 16 08:45:29 2000
+// written: Fri Mar  3 18:21:42 2000
 // $Id$
 //
 //
@@ -389,7 +389,7 @@ template <class C>
 class CVecPropertyCmd : public VecPropertyCmdBase {
 public:
   CVecPropertyCmd(CTclIoItemPkg<C>* pkg, const PropertyInfo<C>& pinfo) :
-	 VecPropertyCmdBase(pkg, pinfo.name.c_str()),
+	 VecPropertyCmdBase(pkg, pinfo.name_cstr()),
 	 itsPkg(pkg),
 	 itsPropInfo(pinfo)
   {}
@@ -398,13 +398,13 @@ protected:
   virtual const Value& getValFromItemId(int id)
 	 {
 		C* item = itsPkg->getCItemFromId(id);
-		return item->get(itsPropInfo.property);
+		return item->get(itsPropInfo.property());
 	 }
 
   virtual void setItemIdToVal(int id, const Value& value) 
 	 {
 		C* item = itsPkg->getCItemFromId(id);
-		item->set(itsPropInfo.property, value);
+		item->set(itsPropInfo.property(), value);
 	 }
 
 private:
@@ -449,11 +449,11 @@ public:
 
 protected:
   virtual int numInfos() { return itsInfos.size(); }
-  virtual const char* getName(int i) { return itsInfos[i].name.c_str(); }
-  virtual const Value& getMin(int i) { return *(itsInfos[i].min); }
-  virtual const Value& getMax(int i) { return *(itsInfos[i].max); }
-  virtual const Value& getRes(int i) { return *(itsInfos[i].res); }
-  virtual bool getStartNewGroup(int i) { return itsInfos[i].startNewGroup; }
+  virtual const char* getName(int i) { return itsInfos[i].name_cstr(); }
+  virtual const Value& getMin(int i) { return itsInfos[i].min(); }
+  virtual const Value& getMax(int i) { return itsInfos[i].max(); }
+  virtual const Value& getRes(int i) { return itsInfos[i].res(); }
+  virtual bool getStartNewGroup(int i) { return itsInfos[i].startNewGroup(); }
 };
 
 ///////////////////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Thu Nov 11 15:07:41 1999
+// written: Fri Mar  3 15:06:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,6 +12,8 @@
 #define KBDRESPONSEHDLR_CC_DEFINED
 
 #include "kbdresponsehdlr.h"
+
+#include <string>
 
 #define NO_TRACE
 #include "trace.h"
@@ -27,6 +29,13 @@ namespace {
 // KbdResponseHdlr method definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+KbdResponseHdlr::KbdResponseHdlr() : 
+  EventResponseHdlr("")
+{
+  setEventSequence("<KeyPress>");
+  setBindingSubstitution("%K");
+}
 
 KbdResponseHdlr::KbdResponseHdlr(const string& key_resp_pairs) : 
   EventResponseHdlr(key_resp_pairs)

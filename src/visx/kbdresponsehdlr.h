@@ -3,7 +3,7 @@
 // kbdresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:11 1999
-// written: Tue Nov  9 16:44:19 1999
+// written: Fri Mar  3 15:05:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,8 @@
 #ifndef KBDRESPONSEHDLR_H_DEFINED
 #define KBDRESPONSEHDLR_H_DEFINED
 
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
+#ifndef STRINGFWD_H_DEFINED
+#include "stringfwd.h"
 #endif
 
 #ifndef EVENTRESPONSEHDLR_H_DEFINED
@@ -30,7 +29,8 @@
 class KbdResponseHdlr : public EventResponseHdlr {
 public:
   // creators
-  KbdResponseHdlr(const string& s="");
+  KbdResponseHdlr();
+  KbdResponseHdlr(const string& s);
 
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);

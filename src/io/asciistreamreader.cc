@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Tue Nov 30 19:10:34 1999
+// written: Fri Mar  3 23:48:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,15 +13,16 @@
 
 #include "asciistreamreader.h"
 
+#include "io.h"
+#include "iomgr.h"
+#include "value.h"
+
 #include <cctype>
 #include <iostream.h>
 #include <strstream.h>
 #include <map>
+#include <string>
 #include <vector>
-
-#include "io.h"
-#include "iomgr.h"
-#include "value.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -114,7 +115,9 @@ public:
 
   void assertAttribExists(const string& attrib_name) {
 	 if ( itsAttribs[attrib_name].type == "" ) {
-		throw ReadError("invalid attribute name: " + attrib_name);
+		string msg = "invalid attribute name: ";
+		msg += attrib_name;
+		throw ReadError(msg.c_str());
 	 }
   }
 
@@ -334,27 +337,27 @@ DOTRACE("AsciiStreamReader::~AsciiStreamReader");
   delete &itsImpl; 
 }
 
-char AsciiStreamReader::readChar(const string& name) {
+char AsciiStreamReader::readChar(const char* name) {
 DOTRACE("AsciiStreamReader::readChar");
   return itsImpl.readBasicType(name, (char*) 0);
 }
 
-int AsciiStreamReader::readInt(const string& name) {
+int AsciiStreamReader::readInt(const char* name) {
 DOTRACE("AsciiStreamReader::readInt");
   return itsImpl.readBasicType(name, (int*) 0);
 }
 
-bool AsciiStreamReader::readBool(const string& name) {
+bool AsciiStreamReader::readBool(const char* name) {
 DOTRACE("AsciiStreamReader::readBool");
   return bool(itsImpl.readBasicType(name, (int*) 0));
 }
 
-double AsciiStreamReader::readDouble(const string& name) {
+double AsciiStreamReader::readDouble(const char* name) {
 DOTRACE("AsciiStreamReader::readDouble");
   return itsImpl.readBasicType(name, (double*) 0);
 }
 
-string AsciiStreamReader::readString(const string& name) {
+string AsciiStreamReader::readString(const char* name) {
 DOTRACE("AsciiStreamReader::readString");
   char* cstring = itsImpl.readStringType(name);
   string return_val(cstring);
@@ -362,20 +365,20 @@ DOTRACE("AsciiStreamReader::readString");
   return return_val;
 }
 
-char* AsciiStreamReader::readCstring(const string& name) {
+char* AsciiStreamReader::readCstring(const char* name) {
   return itsImpl.readStringType(name);
 }
 
-void AsciiStreamReader::readValueObj(const string& name, Value& value) {
+void AsciiStreamReader::readValueObj(const char* name, Value& value) {
 DOTRACE("AsciiStreamReader::readValueObj");
   itsImpl.readValueObj(name, value); 
 }
 
-IO* AsciiStreamReader::readObject(const string& attrib_name) {
+IO* AsciiStreamReader::readObject(const char* attrib_name) {
   return itsImpl.readObject(attrib_name);
 }
 
-void AsciiStreamReader::readOwnedObject(const string& name, IO* obj) {
+void AsciiStreamReader::readOwnedObject(const char* name, IO* obj) {
   itsImpl.readOwnedObject(name, obj);
 }
 

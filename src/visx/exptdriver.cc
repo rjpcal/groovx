@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Tue Feb  1 17:50:22 2000
+// written: Fri Mar  3 17:32:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -284,7 +284,8 @@ DOTRACE("ExptDriver::Impl::recreateDoUponCompletionProc");
   try {
 	 string proc_cmd_str = "namespace eval Expt { proc doUponCompletion {} {"
 		+ itsDoUponCompletionBody + "} }";
-	 Tcl::TclEvalCmd proc_cmd(proc_cmd_str, Tcl::TclEvalCmd::THROW_EXCEPTION);
+	 Tcl::TclEvalCmd proc_cmd(proc_cmd_str.c_str(),
+									  Tcl::TclEvalCmd::THROW_EXCEPTION);
 	 proc_cmd.invoke(itsInterp);
   }
   catch (Tcl::TclError& err) {
@@ -449,7 +450,7 @@ DOTRACE("ExptDriver::Impl::noteElapsedTime");
 void ExptDriver::Impl::getCurrentTimeDateString(string& date_out) const {
 DOTRACE("ExptDriver::Impl::getCurrentTimeDateString");
   static Tcl::TclEvalCmd dateStringCmd("clock format [clock seconds]",
-											 Tcl::TclEvalCmd::THROW_EXCEPTION);
+													Tcl::TclEvalCmd::THROW_EXCEPTION);
 
   dateStringCmd.invoke(itsInterp);
   date_out = Tcl_GetStringResult(itsInterp);
@@ -469,7 +470,7 @@ DOTRACE("ExptDriver::Impl::getSubjectKey");
 
   // Get the subject's initials as the tail of the current directory
   static Tcl::TclEvalCmd subjectKeyCmd("file tail [pwd]",
-											 Tcl::TclEvalCmd::THROW_EXCEPTION);
+													Tcl::TclEvalCmd::THROW_EXCEPTION);
 
   subjectKeyCmd.invoke(itsInterp);
 

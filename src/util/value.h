@@ -3,7 +3,7 @@
 // value.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:19:17 1999
-// written: Wed Feb 16 09:17:31 2000
+// written: Fri Mar  3 16:35:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,8 @@
 #ifndef VALUE_H_DEFINED
 #define VALUE_H_DEFINED
 
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
+#ifndef STRINGFWD_H_DEFINED
+#include "stringfwd.h"
 #endif
 
 #ifndef ERROR_H_DEFINED
@@ -31,8 +30,10 @@ class ostream;
  **/
 class ValueError : public ErrorWithMsg {
 public:
+  /// Default constructor.
+  ValueError();
   /// Construct with an informative message \c msg.
-  ValueError(const string& msg="");
+  ValueError(const string& msg);
 };
 
 ///////////////////////////////////////////////////////////////////////

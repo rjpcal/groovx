@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Tue Feb  8 15:28:58 2000
+// written: Sat Mar  4 00:26:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,17 +13,17 @@
 
 #include "face.h"
 
+#include "canvas.h"
+#include "reader.h"
+#include "rect.h"
+#include "writer.h"
+
 #include <cmath>					  // for abs()
 #include <iostream.h>           // for serialize
 #include <iomanip.h>				  // for setw in serialize
 #include <string>
 #include <GL/gl.h>
 #include <GL/glu.h>
-
-#include "canvas.h"
-#include "reader.h"
-#include "rect.h"
-#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -183,7 +183,8 @@ void Face::readFrom(Reader* reader) {
 DOTRACE("Face::readFrom");
   const vector<PInfo>& infos = getPropertyInfos();
   for (size_t i = 0; i < infos.size(); ++i) {
-	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
+	 reader->readValueObj(infos[i].name_cstr(),
+								 const_cast<Value&>(get(infos[i].property())));
   }
 
   GrObj::readFrom(reader);
@@ -193,7 +194,7 @@ void Face::writeTo(Writer* writer) const {
 DOTRACE("Face::writeTo");
   const vector<PInfo>& infos = getPropertyInfos();
   for (size_t i = 0; i < infos.size(); ++i) {
-	 writer->writeValueObj(infos[i].name, get(infos[i].property));
+	 writer->writeValueObj(infos[i].name_cstr(), get(infos[i].property()));
   }
 
   GrObj::writeTo(writer);

@@ -3,7 +3,7 @@
 // tclvalue.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:23:55 1999
-// written: Wed Feb 16 09:19:00 2000
+// written: Fri Mar  3 23:24:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "tclvalue.h"
 
 #include <tcl.h>
+#include <string>
 
 #define NO_TRACE
 #include "trace.h"

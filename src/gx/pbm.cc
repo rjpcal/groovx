@@ -3,7 +3,7 @@
 // pbm.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:07 1999
-// written: Sun Feb 20 22:02:52 2000
+// written: Fri Mar  3 15:07:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,13 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
+
+
+PbmError::PbmError() :
+  ErrorWithMsg()
+{
+DOTRACE("PbmError::PbmError");
+}
 
 PbmError::PbmError(const string& str) :
   ErrorWithMsg(str)

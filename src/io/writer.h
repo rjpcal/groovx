@@ -3,7 +3,7 @@
 // writer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:49 1999
-// written: Tue Feb 15 10:59:16 2000
+// written: Fri Mar  3 23:41:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,8 +11,8 @@
 #ifndef WRITER_H_DEFINED
 #define WRITER_H_DEFINED
 
-#ifndef STRING_DEFINED
-#include <string>
+#ifndef STRINGFWD_H_DEFINED
+#include "stringfwd.h"
 #define STRING_DEFINED
 #endif
 
@@ -61,41 +61,41 @@ public:
   virtual ~Writer();
 
   /// Store the \c char attribute \a val in association with the tag \a name.
-  virtual void writeChar(const string& name, char val) = 0;
+  virtual void writeChar(const char* name, char val) = 0;
 
   /// Store the \c int attribute \a val in association with the tag \a name.
-  virtual void writeInt(const string& name, int val) = 0;
+  virtual void writeInt(const char* name, int val) = 0;
 
   /// Store the \c bool attribute \a val in association with the tag \a name.
-  virtual void writeBool(const string& name, bool val) = 0;
+  virtual void writeBool(const char* name, bool val) = 0;
 
   /// Store the \c double attribute \a val in association with the tag \a name.
-  virtual void writeDouble(const string& name, double val) = 0;
+  virtual void writeDouble(const char* name, double val) = 0;
 
   /// Store the STL \c string attribute \a val in association with the tag \a name.
-  virtual void writeString(const string& name, const string& val) = 0;
+  virtual void writeString(const char* name, const string& val) = 0;
 
   /// Store the C-style string (\c char*) attribute \a val in association with the tag \a name.
-  virtual void writeCstring(const string& name, const char* val) = 0;
+  virtual void writeCstring(const char* name, const char* val) = 0;
 
   /// Store the \c Value attribute \a val in association with the tag \a name.
-  virtual void writeValueObj(const string& name, const Value& value) = 0;
+  virtual void writeValueObj(const char* name, const Value& value) = 0;
 
   /** This generic function stores a value attribute of any basic
       type, or of type \c Value. The value \a val will be stored in
       association with the tag \a name. */
   template <class T>
-  void writeValue(const string& name, const T& val);
+  void writeValue(const char* name, const T& val);
 
   /// Store the \c IO object \a val in association with the tag \a name.
-  virtual void writeObject(const string& name, const IO* obj) = 0;
+  virtual void writeObject(const char* name, const IO* obj) = 0;
 
   /** Store the owned \c IO object \a obj in association with the tag
       \a name. This function should only be used if \a obj is \b owned
       by the storing object; no other objects should reference \a
       obj. This allows the \c Writer subclass to implement the storage
       of an owned object as a contained object. */
-  virtual void writeOwnedObject(const string& name, const IO* obj) = 0;
+  virtual void writeOwnedObject(const char* name, const IO* obj) = 0;
 
   /** Store an entire object hierarchy, starting with the root object
       \a root. All objects and values referenced by \a root will be

@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Sun Jan 16 23:13:57 2000
+// written: Fri Mar  3 17:13:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -149,7 +149,7 @@ DOTRACE("ToglConfig::getParamValue");
   cmd_str += " configure -";
   cmd_str += param;
 
-  Tcl::TclEvalCmd cmd(cmd_str, Tcl::TclEvalCmd::BACKGROUND_ERROR);
+  Tcl::TclEvalCmd cmd(cmd_str.c_str(), Tcl::TclEvalCmd::BACKGROUND_ERROR);
 
   // Execute the command
   Tcl_Interp* interp = Togl_Interp(itsWidget);
@@ -259,7 +259,8 @@ DebugPrintNL("ToglConfig::destroyWidget");
   // If we are exiting, don't bother destroying the widget; otherwise...
   if ( !Tcl_InterpDeleted(Togl_Interp(itsWidget)) ) {
 	 string destroy_cmd_str = string("destroy ") + pathname(itsWidget);
-	 Tcl::TclEvalCmd destroy_cmd(destroy_cmd_str, Tcl::TclEvalCmd::BACKGROUND_ERROR);
+	 Tcl::TclEvalCmd destroy_cmd(destroy_cmd_str.c_str(),
+										  Tcl::TclEvalCmd::BACKGROUND_ERROR);
 	 destroy_cmd.invoke(Togl_Interp(itsWidget));
   }
 }
@@ -371,7 +372,8 @@ void ToglConfig::bind(const char* event_sequence, const char* script) {
 DOTRACE("ToglConfig::bind");
   string cmd_str = string("bind ") + pathname(itsWidget) + " "
 	 + event_sequence + " " + script;
-  Tcl::TclEvalCmd cmd(cmd_str, Tcl::TclEvalCmd::THROW_EXCEPTION);
+  Tcl::TclEvalCmd cmd(cmd_str.c_str(),
+							 Tcl::TclEvalCmd::THROW_EXCEPTION);
   try { cmd.invoke(Togl_Interp(itsWidget)); }
   catch (Tcl::TclError&) { throw; }
 }
@@ -488,8 +490,9 @@ DOTRACE("ToglConfig::swapBuffers");
 
 void ToglConfig::takeFocus() {
 DOTRACE("ToglConfig::takeFocus");
-  Tcl::TclEvalCmd cmd(string("focus -force ") + pathname(itsWidget),
-					  Tcl::TclEvalCmd::THROW_EXCEPTION);
+  string cmd_str = "focus -force "; cmd_str += pathname(itsWidget);
+  Tcl::TclEvalCmd cmd(cmd_str.c_str(),
+							 Tcl::TclEvalCmd::THROW_EXCEPTION);
   try { cmd.invoke(Togl_Interp(itsWidget)); }
   catch (Tcl::TclError&) { throw; }
 }

@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Tue Feb  8 15:33:16 2000
+// written: Sat Mar  4 00:03:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,13 +17,13 @@
 
 #include "house.h"
 
-#include <iostream.h>
-#include <string>
-#include <GL/gl.h>
-
 #include "reader.h"
 #include "rect.h"
 #include "writer.h"
+
+#include <iostream.h>
+#include <string>
+#include <GL/gl.h>
 
 #define NO_TRACE
 #include "trace.h"
@@ -203,7 +203,8 @@ void House::readFrom(Reader* reader) {
 DOTRACE("House::readFrom");
   const vector<PInfo>& infos = getPropertyInfos();
   for (size_t i = 0; i < infos.size(); ++i) {
-	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
+	 reader->readValueObj(infos[i].name_cstr(),
+								 const_cast<Value&>(get(infos[i].property())));
   }
 
   GrObj::readFrom(reader);
@@ -213,7 +214,8 @@ void House::writeTo(Writer* writer) const {
 DOTRACE("House::writeTo");
   const vector<PInfo>& infos = getPropertyInfos();
   for (size_t i = 0; i < infos.size(); ++i) {
-	 writer->writeValueObj(infos[i].name, get(infos[i].property));
+	 writer->writeValueObj(infos[i].name_cstr(),
+								  get(infos[i].property()));
   }
 
   GrObj::writeTo(writer);

@@ -3,7 +3,7 @@
 // application.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 10:55:51 1999
-// written: Tue Feb 15 16:45:27 2000
+// written: Fri Mar  3 16:51:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,8 +22,10 @@ class Experiment;
     nobody has yet called Application::installApp(). */
 class NoAppError : public ErrorWithMsg {
 public:
+  /// Default constructor.
+  NoAppError() : ErrorWithMsg() {}
   /// Construct with an informative message \a msg.
-  NoAppError(const string& msg = "") : ErrorWithMsg(msg) {}
+  NoAppError(const char* msg) : ErrorWithMsg(msg) {}
 };
 
 

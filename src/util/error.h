@@ -3,7 +3,7 @@
 // error.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 22 14:59:47 1999
-// written: Wed Feb 16 15:05:31 2000
+// written: Fri Mar  3 16:59:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,8 @@
 #ifndef ERROR_H_DEFINED
 #define ERROR_H_DEFINED
 
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
+#ifndef STRINGFWD_H_DEFINED
+#include "stringfwd.h"
 #endif
 
 /**
@@ -42,20 +41,38 @@ public:
 class ErrorWithMsg : public virtual Error {
 public:
   /// Default construct with an empty message string.
-  ErrorWithMsg() : Error() {}
+  ErrorWithMsg();
+
+  /// Construct with an informative message \a errorMessage.
+  ErrorWithMsg(const char* errorMessage);
 
   /// Construct with an informative message \a errorMessage.
   ErrorWithMsg(const string& errorMessage);
+
+  /// Copy constructor.
+  ErrorWithMsg(const ErrorWithMsg& other);
+
+  /// Virtual destructor.
+  virtual ~ErrorWithMsg();
+
+  /// Assignment operator.
+  ErrorWithMsg& operator=(const ErrorWithMsg& other);
+
+  /// Get a C-style string describing the error.
+  virtual const char* msg_cstr() const;
 
   /// Get a string describing the error.
   virtual const string& msg() const;
 
 protected:
+  void appendMsg(const char* addMsg);
+  void appendMsg(const string& addMsg);
+
   /// Change the informative message to \a newMessage.
   virtual void setMsg(const string& newMessage);
 
 private:
-  string itsInfo;
+  string* itsInfo;
 };
 
 static const char vcid_error_h[] = "$Header$";

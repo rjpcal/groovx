@@ -3,7 +3,7 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Fri Feb 18 09:30:50 2000
+// written: Fri Mar  3 16:43:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,6 @@
 
 #ifndef VECTOR_DEFINED
 #include <vector>
-#define VECTOR_DEFINED
 #endif
 
 #ifndef GROBJ_H_DEFINED

@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Tue Feb  8 15:31:31 2000
+// written: Sat Mar  4 00:27:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,14 +13,14 @@
 
 #include "gabor.h"
 
-#include <GL/gl.h>
-#include <cmath>
-#include <string>
-
 #include "randutils.h"
 #include "reader.h"
 #include "rect.h"
 #include "writer.h"
+
+#include <GL/gl.h>
+#include <cmath>
+#include <string>
 
 #include "trace.h"
 #include "debug.h"
@@ -78,7 +78,8 @@ void Gabor::readFrom(Reader* reader) {
 DOTRACE("Gabor::readFrom");
   const vector<PInfo>& infos = getPropertyInfos();
   for (size_t i = 0; i < infos.size(); ++i) {
-	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
+	 reader->readValueObj(infos[i].name_cstr(),
+								 const_cast<Value&>(get(infos[i].property())));
   }
 
   GrObj::readFrom(reader);
@@ -88,7 +89,7 @@ void Gabor::writeTo(Writer* writer) const {
 DOTRACE("Gabor::writeTo");
   const vector<PInfo>& infos = getPropertyInfos();
   for (size_t i = 0; i < infos.size(); ++i) {
-	 writer->writeValueObj(infos[i].name, get(infos[i].property));
+	 writer->writeValueObj(infos[i].name_cstr(), get(infos[i].property()));
   }
 
   GrObj::writeTo(writer);

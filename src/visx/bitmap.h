@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Feb 18 08:52:07 2000
+// written: Fri Mar  3 14:25:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,16 +13,6 @@
 
 #ifndef GROBJ_H_DEFINED
 #include "grobj.h"
-#endif
-
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
-#endif
-
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
 #endif
 
 template <class V> class Rect;

@@ -3,7 +3,7 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Tue Feb 15 10:54:34 2000
+// written: Fri Mar  3 23:45:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,8 @@
 #ifndef READER_H_DEFINED
 #define READER_H_DEFINED
 
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
+#ifndef STRINGFWD_H_DEFINED
+#include "stringfwd.h"
 #endif
 
 #ifndef ERROR_H_DEFINED
@@ -36,7 +35,7 @@ class Value;
 class ReadError : public ErrorWithMsg {
 public:
   /// Construct with a descriptive message \a msg.
-  ReadError(const string& msg) : ErrorWithMsg(msg) {}
+  ReadError(const char* msg) : ErrorWithMsg(msg) {}
 };
 
 
@@ -62,41 +61,41 @@ public:
   virtual ~Reader();
 
   /// Read the \c char attribute associated with the tag \a name.
-  virtual char readChar(const string& name) = 0;
+  virtual char readChar(const char* name) = 0;
 
   /// Read the \c int attribute associated with the tag \a name.
-  virtual int readInt(const string& name) = 0;
+  virtual int readInt(const char* name) = 0;
 
   /// Read the \c bool attribute associated with the tag \a name.
-  virtual bool readBool(const string& name) = 0;
+  virtual bool readBool(const char* name) = 0;
 
   /// Read the \c double attribute associated with the tag \a name.
-  virtual double readDouble(const string& name) = 0;
+  virtual double readDouble(const char* name) = 0;
 
   /// Read the STL \c string attribute associated with the tag \a name.
-  virtual string readString(const string& name) = 0;
+  virtual string readString(const char* name) = 0;
 
   /// Read the C-style string (\c char*) attribute associated with the tag \a name.
-  virtual char* readCstring(const string& name) = 0;
+  virtual char* readCstring(const char* name) = 0;
 
   /// Read the \c Value attribute associated with the tag \a name.
-  virtual void readValueObj(const string& name, Value& value) = 0;
+  virtual void readValueObj(const char* name, Value& value) = 0;
 
   /** This generic function reads a value attribute of any basic type,
       or of type \c Value. The value associated with tag \a name will
       be copied into \a returnValue. */
   template <class T>
-  void readValue(const string& name, T& returnValue);
+  void readValue(const char* name, T& returnValue);
 
   /** Get a pointer to the \c IO object associated with the tag \a
       name. A new object of the appropriate type will be created, if
       necessary. */
-  virtual IO* readObject(const string& name) = 0;
+  virtual IO* readObject(const char* name) = 0;
 
   /** Restore the state of the IO object \a obj, associated with the
       tag \a name. The \c Reader will not create a new object, but
       will use the IO* provided here. */
-  virtual void readOwnedObject(const string& name, IO* obj) = 0;
+  virtual void readOwnedObject(const char* name, IO* obj) = 0;
 
   /** Restore an entire object hierarchy, starting with the root
 		object. If \a root is non-null, the function will use \a root as

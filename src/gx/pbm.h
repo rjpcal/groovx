@@ -3,7 +3,7 @@
 // pbm.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:06 1999
-// written: Sun Feb 20 22:02:25 2000
+// written: Fri Mar  3 15:07:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,8 @@
 #ifndef PBM_H_DEFINED
 #define PBM_H_DEFINED
 
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
+#ifndef STRINGFWD_H_DEFINED
+#include "stringfwd.h"
 #endif
 
 #ifndef ERROR_H_DEFINED
@@ -35,8 +34,10 @@ class istream;
     during parsing of the bitmap data. */
 class PbmError : public ErrorWithMsg {
 public:
+  /// Default constructor.
+  PbmError();
   /// Construct with an appropriate error message \a msg.
-  PbmError(const string& msg="");
+  PbmError(const string& msg);
 };
 
 class Pbm {

@@ -3,7 +3,7 @@
 // asciistreamreader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:54 1999
-// written: Tue Feb 15 11:06:31 2000
+// written: Fri Mar  3 23:45:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,16 +46,16 @@ public:
   /// Virtual destructor.
   virtual ~AsciiStreamReader();
 
-  virtual char readChar(const string& name);
-  virtual int readInt(const string& name);
-  virtual bool readBool(const string& name);
-  virtual double readDouble(const string& name);
-  virtual string readString(const string& name);
-  virtual char* readCstring(const string& name);
-  virtual void readValueObj(const string& name, Value& value);
+  virtual char readChar(const char* name);
+  virtual int readInt(const char* name);
+  virtual bool readBool(const char* name);
+  virtual double readDouble(const char* name);
+  virtual string readString(const char* name);
+  virtual char* readCstring(const char* name);
+  virtual void readValueObj(const char* name, Value& value);
 
-  virtual IO* readObject(const string& name);
-  virtual void readOwnedObject(const string& name, IO* obj);
+  virtual IO* readObject(const char* name);
+  virtual void readOwnedObject(const char* name, IO* obj);
 
   virtual IO* readRoot(IO* root=0);
 

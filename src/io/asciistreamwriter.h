@@ -3,7 +3,7 @@
 // asciistreamwriter.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:56 1999
-// written: Tue Feb 15 11:06:14 2000
+// written: Fri Mar  3 23:41:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,16 +46,16 @@ public:
   /// Virtual destructor.
   virtual ~AsciiStreamWriter();
 
-  virtual void writeChar(const string& name, char val);
-  virtual void writeInt(const string& name, int val);
-  virtual void writeBool(const string& name, bool val);
-  virtual void writeDouble(const string& name, double val);
-  virtual void writeString(const string& name, const string& val);
-  virtual void writeCstring(const string& name, const char* val);
-  virtual void writeValueObj(const string& name, const Value& value);
+  virtual void writeChar(const char* name, char val);
+  virtual void writeInt(const char* name, int val);
+  virtual void writeBool(const char* name, bool val);
+  virtual void writeDouble(const char* name, double val);
+  virtual void writeString(const char* name, const string& val);
+  virtual void writeCstring(const char* name, const char* val);
+  virtual void writeValueObj(const char* name, const Value& value);
 
-  virtual void writeObject(const string& name, const IO* obj);
-  virtual void writeOwnedObject(const string& name, const IO* obj);
+  virtual void writeObject(const char* name, const IO* obj);
+  virtual void writeOwnedObject(const char* name, const IO* obj);
 
   virtual void writeRoot(const IO* root);
 

@@ -3,7 +3,7 @@
 // value.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:21:32 1999
-// written: Mon Jan 24 13:28:10 2000
+// written: Fri Mar  3 16:35:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,10 +14,15 @@
 #include "value.h"
 
 #include <iostream.h>
+#include <string>
 
 namespace {
   void raiseValueError() { throw ValueError(); }
 }
+
+ValueError::ValueError() :
+  ErrorWithMsg()
+{}
 
 ValueError::ValueError(const string& msg) :
   ErrorWithMsg(msg)

@@ -3,7 +3,7 @@
 // irixsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 14 11:23:12 1999
-// written: Wed Nov  3 08:23:49 1999
+// written: Fri Mar  3 23:20:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,14 +11,15 @@
 #ifndef IRIXSOUND_CC_DEFINED
 #define IRIXSOUND_CC_DEFINED
 
+#include "reader.h"
+#include "writer.h"
+
 #include <dmedia/audio.h>
 #include <dmedia/audiofile.h>
 #include <fstream.h>				  // to check if files exist
 #include <unistd.h>
+#include <string>
 #include <vector>
-
-#include "reader.h"
-#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"

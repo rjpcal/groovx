@@ -3,7 +3,7 @@
 // tclerror.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Jun 20 15:10:13 1999
-// written: Tue Dec  7 18:11:45 1999
+// written: Fri Mar  3 16:38:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,12 @@
 #include "trace.h"
 
 namespace Tcl {
+
+TclError::TclError() :
+  ::ErrorWithMsg()
+{
+DOTRACE("TclError::TclError");
+}
 
 TclError::TclError(const string& msg) : 
   ::ErrorWithMsg(msg)

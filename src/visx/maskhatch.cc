@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Tue Feb  8 15:54:29 2000
+// written: Sat Mar  4 00:03:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,13 @@
 
 #include "maskhatch.h"
 
-#include <GL/gl.h>
-#include <iostream.h>
-#include <string>
-
 #include "reader.h"
 #include "rect.h"
 #include "writer.h"
+
+#include <GL/gl.h>
+#include <iostream.h>
+#include <string>
 
 #define NO_TRACE
 #include "trace.h"
@@ -68,7 +68,8 @@ void MaskHatch::readFrom(Reader* reader) {
 DOTRACE("MaskHatch::readFrom");
   const vector<PInfo>& infos = getPropertyInfos();
   for (size_t i = 0; i < infos.size(); ++i) {
-	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
+	 reader->readValueObj(infos[i].name_cstr(),
+								 const_cast<Value&>(get(infos[i].property())));
   }
 
   GrObj::readFrom(reader);
@@ -78,7 +79,7 @@ void MaskHatch::writeTo(Writer* writer) const {
 DOTRACE("MaskHatch::writeTo");
   const vector<PInfo>& infos = getPropertyInfos();
   for (size_t i = 0; i < infos.size(); ++i) {
-	 writer->writeValueObj(infos[i].name, get(infos[i].property));
+	 writer->writeValueObj(infos[i].name_cstr(), get(infos[i].property()));
   }
 
   GrObj::writeTo(writer);

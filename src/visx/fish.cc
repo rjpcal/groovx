@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Fri Feb 18 08:31:57 2000
+// written: Sat Mar  4 00:26:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,15 +13,15 @@
 
 #include "fish.h"
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <fstream.h>
-#include <strstream.h>
-
 #include "error.h"
 #include "reader.h"
 #include "rect.h"
 #include "writer.h"
+
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <fstream.h>
+#include <strstream.h>
 
 #define DYNAMIC_TRACE_EXPR Fish::tracer.status()
 #include "util/trace.h"
@@ -248,7 +248,8 @@ void Fish::readFrom(Reader* reader) {
 DOTRACE("Fish::readFrom");
   const vector<PInfo>& infos = getPropertyInfos();
   for (size_t i = 0; i < infos.size(); ++i) {
-	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
+	 reader->readValueObj(infos[i].name_cstr(),
+								 const_cast<Value&>(get(infos[i].property())));
   }
 
   GrObj::readFrom(reader);
@@ -258,7 +259,7 @@ void Fish::writeTo(Writer* writer) const {
 DOTRACE("Fish::writeTo");
   const vector<PInfo>& infos = getPropertyInfos();
   for (size_t i = 0; i < infos.size(); ++i) {
-	 writer->writeValueObj(infos[i].name, get(infos[i].property));
+	 writer->writeValueObj(infos[i].name_cstr(), get(infos[i].property()));
   }
 
   GrObj::writeTo(writer);

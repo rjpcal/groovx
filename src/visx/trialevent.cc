@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Tue Feb 15 15:42:07 2000
+// written: Fri Mar  3 23:24:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,9 @@
 #include "trialevent.h"
 
 #include <cmath>
-#include <typeinfo>
 #include <cstring>
+#include <typeinfo>
+#include <string>
 
 #include "canvas.h"
 #include "demangle.h"
@@ -39,7 +40,7 @@
 
 class TrialEventError : public ErrorWithMsg {
 public:
-  TrialEventError(const string& msg = "") : ErrorWithMsg(msg) {}
+  TrialEventError(const char* msg = "") : ErrorWithMsg(msg) {}
 };
 
 ///////////////////////////////////////////////////////////////////////

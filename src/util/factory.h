@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Thu Feb 17 12:40:54 2000
+// written: Sat Mar  4 00:29:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,14 +11,8 @@
 #ifndef FACTORY_H_DEFINED
 #define FACTORY_H_DEFINED
 
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
-#endif
-
-#ifndef TYPEINFO_DEFINED
-#include <typeinfo>
-#define TYPEINFO_DEFINED
+#ifndef STRINGFWD_H_DEFINED
+#include "stringfwd.h"
 #endif
 
 #ifndef ERROR_H_DEFINED
@@ -29,6 +23,11 @@
 #include "demangle.h"
 #endif
 
+#ifndef TYPEINFO_DEFINED
+#include <typeinfo>
+#define TYPEINFO_DEFINED
+#endif
+
 /**
  *
  * Exception class for \c Factory's.
@@ -37,13 +36,10 @@
 class FactoryError : public ErrorWithMsg {
 public:
   /// Construct with an informative message \a msg.
-  FactoryError(const string& str="") : ErrorWithMsg(str) {}
+  FactoryError(const string& str) : ErrorWithMsg(str) {}
+
+  static void throwForType(const string& type);
 };
-
-
-namespace {
-  const string bad_create_msg = "unable to create object of type ";
-}
 
 
 /**
@@ -184,7 +180,7 @@ public:
       been registered with the factory, a FactorError is thrown. */
   Base* newCheckedObject(const string& type) {
 	 Base* p = newObject(type);
-	 if (p == 0) throw FactoryError(bad_create_msg + type);
+	 if (p == 0) FactoryError::throwForType(type);
 	 return p;
   }
 
@@ -199,7 +195,7 @@ public:
 	 Derived* d = dynamic_cast<Derived*>(b);
 	 if (d == 0) { 
 		delete b;
-		throw FactoryError(bad_create_msg + type);
+		FactoryError::throwForType(type);
 	 }
 	 return d;
   }

@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Feb 16 16:01:35 2000
+// written: Fri Mar  3 14:30:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,8 @@
 #include "io.h"
 #endif
 
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
+#ifndef STRINGFWD_H_DEFINED
+#include "stringfwd.h"
 #endif
 
 #ifndef ERROR_H_DEFINED
@@ -36,7 +35,8 @@ class TimingHdlr;
 
 class ExptError : public ErrorWithMsg {
 public:
-  ExptError(const string& msg="") : ErrorWithMsg(msg) {}
+  ExptError() : ErrorWithMsg() {}
+  ExptError(const string& msg) : ErrorWithMsg(msg) {}
 };
 
 ///////////////////////////////////////////////////////////////////////

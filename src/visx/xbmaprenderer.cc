@@ -3,7 +3,7 @@
 // xbmaprenderer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 17:22:34 1999
-// written: Wed Jan 12 15:48:52 2000
+// written: Fri Mar  3 17:30:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@
 
 class XBmapRendererError : public ErrorWithMsg {
 public:
-  XBmapRendererError(const string& msg = "") : ErrorWithMsg(msg) {}
+  XBmapRendererError(const char* msg) : ErrorWithMsg(msg) {}
 };
 
 namespace {
@@ -140,7 +140,7 @@ DOTRACE("XBmapRenderer::doRender");
   glXWaitX();
 }
 
-void XBmapRenderer::doUndraw(Canvas& canvas,
+void XBmapRenderer::doUndraw(Canvas& /* canvas */,
 									  int winRasterX, int winRasterY,
 									  int winWidthX, int winHeightY) const {
 DOTRACE("XBmapRenderer::doUndraw");

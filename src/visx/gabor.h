@@ -3,7 +3,7 @@
 // gabor.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Fri Feb 18 09:04:22 2000
+// written: Fri Mar  3 16:20:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

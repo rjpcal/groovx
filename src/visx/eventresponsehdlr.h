@@ -3,7 +3,7 @@
 // eventresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:30:54 1999
-// written: Mon Feb 21 09:03:28 2000
+// written: Fri Mar  3 14:29:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,8 @@
 #ifndef EVENTRESPONSEHDLR_H_DEFINED
 #define EVENTRESPONSEHDLR_H_DEFINED
 
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
+#ifndef STRINGFWD_H_DEFINED
+#include "stringfwd.h"
 #endif
 
 #ifndef RESPONSEHANDLER_H_DEFINED
@@ -72,7 +71,10 @@
 class EventResponseHdlr : public ResponseHandler {
 public:
   /// Default constructor.
-  EventResponseHdlr(const string& input_response_map="");
+  EventResponseHdlr();
+
+  /// Construct with an initial input_response_map.
+  EventResponseHdlr(const string& input_response_map);
 
   /// Virtual destructor.
   virtual ~EventResponseHdlr();

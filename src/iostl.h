@@ -3,7 +3,7 @@
 // iostl.h
 // Rob Peters
 // created: Sat Mar 13 15:20:43 1999
-// written: Tue Feb 22 09:57:03 2000
+// written: Fri Mar  3 18:28:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,6 @@
 
 #ifndef VECTOR_DEFINED
 #include <vector>
-#define VECTOR_DEFINED
 #endif
 
 void serializeVecInt(ostream &os, const vector<int>& vec);

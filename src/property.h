@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Mon Dec  6 14:02:16 1999
+// written: Fri Mar  3 18:13:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,14 +11,9 @@
 #ifndef PROPERTY_H_DEFINED
 #define PROPERTY_H_DEFINED
 
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
-#endif
-
-#ifndef MEMORY_DEFINED
-#include <memory>
-#define MEMORY_DEFINED
+#ifndef IOSTREAM_H_DEFINED
+#include <iostream.h>
+#define IOSTREAM_H_DEFINED
 #endif
 
 #ifndef IO_H_DEFINED
@@ -331,6 +326,7 @@ public:
 
 };
 
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -338,8 +334,6 @@ public:
  * classes that own Property's. Additionally, there are get/setNative
  * functions that can be used on TProperty's.
  *
- * @short Mixin class to provide get/set functions for classes that own
- * Property's.
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -369,6 +363,48 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
+ * PropertyInfoBase provides the bulk of the implementation for the
+ * template class PropertyInfo.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+class PropertyInfoBase {
+protected:
+  PropertyInfoBase(
+    const char* name, Value* min, Value* max, Value* res, bool new_group);
+
+  PropertyInfoBase(const PropertyInfoBase& other);
+
+  virtual ~PropertyInfoBase();
+
+  PropertyInfoBase& operator=(const PropertyInfoBase& other);
+
+public:
+  /// Returns a user-friendly name of the property
+  const string& name() const;
+  /// Returns a user-friendly name of the property
+  const char* name_cstr() const;
+
+  /// Returns the suggested minimum value
+  const Value& min() const;
+  /// Returns the suggested maximum value
+  const Value& max() const;
+  /// Returns the suggested resolution
+  const Value& res() const;
+
+  /// Returns true if this is the first in a new group of properties
+  bool startNewGroup() const;
+
+private:
+  class Impl;
+  Impl* const itsImpl;
+};
+
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
  * PropertyInfo stores ancillary information about a property, that
  * might be useful, for example, in constructing a user interface to
  * manipulate various Property's. It stores a human-readable name for
@@ -377,62 +413,32 @@ public:
  * value. Finally, a startNewGroup member provides a simple way to
  * segregate a list of Property's into groups.
  *
- * @short Stores ancillary information about a property.
  **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class C>
-class PropertyInfo {
+class PropertyInfo : public PropertyInfoBase {
 public:
   ///
   typedef Property C::* PropPtr;
 
   ///
   template <class T>
-  PropertyInfo(const string& name_, PropPtr property_,
+  PropertyInfo(const char* name_, PropPtr property_,
 					T min_, T max_, T res_, bool new_group = false) :
-	 name(name_),
-	 property(property_),
-	 min(new TValue<T>(min_)),
-	 max(new TValue<T>(max_)),
-	 res(new TValue<T>(res_)),
-	 startNewGroup(new_group) 
-  {}
-  
-  ///
-  PropertyInfo(const PropertyInfo& rhs) :
-	 name(rhs.name),
-	 property(rhs.property),
-	 min(rhs.min->clone()),
-	 max(rhs.max->clone()),
-	 res(rhs.res->clone()),
-	 startNewGroup(rhs.startNewGroup)
-  {}
+	 PropertyInfoBase( name_, new TValue<T>(min_), new TValue<T>(max_),
+							 new TValue<T>(res_), new_group),
+	 itsProperty(property_)
+	 {}
 
-  ///
-  PropertyInfo& operator=(const PropertyInfo& rhs) {
-	 name = rhs.name;
-	 property = rhs.property;
-	 min.reset(rhs.min->clone());
-	 max.reset(rhs.max->clone());
-	 res.reset(rhs.res->clone());
-	 startNewGroup = rhs.startNewGroup;
-	 return *this;
-  }
+public:
+  /// Returns a pointer-to-member that refers to the property
+  PropPtr property() const { return itsProperty; }
 
-  /// User-friendly name of the property
-  string name;
-  /// Pointer-to-member that refers to the property
-  PropPtr property;
-  /// Suggested minimum value
-  auto_ptr<Value> min;
-  /// Suggested maximum value
-  auto_ptr<Value> max;
-  /// Suggested resolution
-  auto_ptr<Value> res;
-  /// True if this is the first in a new group of properties
-  bool startNewGroup;
+private:
+  PropPtr itsProperty;
 };
+
 
 static const char vcid_property_h[] = "$Header$";
 #endif // !PROPERTY_H_DEFINED

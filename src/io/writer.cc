@@ -3,7 +3,7 @@
 // writer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:50 1999
-// written: Tue Feb 15 12:38:18 2000
+// written: Fri Mar  3 23:34:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,43 +18,43 @@
 Writer::~Writer () {}
 
 template<>
-void Writer::writeValue<char>(const string& name, const char& val) {
+void Writer::writeValue<char>(const char* name, const char& val) {
   writeChar(name, val);
 }
 
 template<>
-void Writer::writeValue<int>(const string& name, const int& val) {
+void Writer::writeValue<int>(const char* name, const int& val) {
   writeInt(name, val);
 }
 
 template<>
-void Writer::writeValue<size_t>(const string& name, const size_t& val) {
+void Writer::writeValue<size_t>(const char* name, const size_t& val) {
   writeInt(name, val);
 }
 
 template<>
-void Writer::writeValue<bool>(const string& name, const bool& val) {
+void Writer::writeValue<bool>(const char* name, const bool& val) {
   writeBool(name, val);
 }
 
 template<>
-void Writer::writeValue<double>(const string& name, const double& val) {
+void Writer::writeValue<double>(const char* name, const double& val) {
   writeDouble(name, val);
 }
 
 template<>
-void Writer::writeValue<string>(const string& name, const string& val) {
+void Writer::writeValue<string>(const char* name, const string& val) {
   writeString(name, val);
 }
 
 template<>
-void Writer::writeValue<const char*>(const string& name,
+void Writer::writeValue<const char*>(const char* name,
 												 const char* const& val) {
   writeCstring(name, val);
 }
 
 template<>
-void Writer::writeValue<Value>(const string& name,
+void Writer::writeValue<Value>(const char* name,
 										  const Value& value) {
   writeValueObj(name, value);
 }

@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Wed Dec  1 12:02:03 1999
+// written: Fri Mar  3 23:48:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,11 @@
 
 #include "asciistreamwriter.h"
 
+#include <cstring>
 #include <iostream.h>
+#include <string>
 #include <strstream.h>
 #include <typeinfo>
-#include <cstring>
 #include <vector>
 #include <set>
 
@@ -252,46 +253,46 @@ DOTRACE("AsciiStreamWriter::~AsciiStreamWriter");
   delete &itsImpl; 
 }
 
-void AsciiStreamWriter::writeChar(const string& name, char val) {
+void AsciiStreamWriter::writeChar(const char* name, char val) {
 DOTRACE("AsciiStreamWriter::writeChar");
   itsImpl.writeBasicType(name, val); 
 }
 
-void AsciiStreamWriter::writeInt(const string& name, int val) {
+void AsciiStreamWriter::writeInt(const char* name, int val) {
 DOTRACE("AsciiStreamWriter::writeInt");
   itsImpl.writeBasicType(name, val); 
 }
 
-void AsciiStreamWriter::writeBool(const string& name, bool val) {
+void AsciiStreamWriter::writeBool(const char* name, bool val) {
 DOTRACE("AsciiStreamWriter::writeBool");
   itsImpl.writeBasicType(name, val); 
 }
 
-void AsciiStreamWriter::writeDouble(const string& name, double val) {
+void AsciiStreamWriter::writeDouble(const char* name, double val) {
 DOTRACE("AsciiStreamWriter::writeDouble");
   itsImpl.writeBasicType(name, val); 
 }
 
-void AsciiStreamWriter::writeString(const string& name, const string& val) {
+void AsciiStreamWriter::writeString(const char* name, const string& val) {
 DOTRACE("AsciiStreamWriter::writeString");
   itsImpl.writeStringType(name, val, "string");
 }
 
-void AsciiStreamWriter::writeCstring(const string& name, const char* val) {
+void AsciiStreamWriter::writeCstring(const char* name, const char* val) {
 DOTRACE("AsciiStreamWriter::writeCstring");
   itsImpl.writeStringType(name, val, "cstring");
 }
 
-void AsciiStreamWriter::writeValueObj(const string& name, const Value& value) {
+void AsciiStreamWriter::writeValueObj(const char* name, const Value& value) {
 DOTRACE("AsciiStreamWriter::writeValueObj");
   itsImpl.writeValueObj(name, value);
 }
 
-void AsciiStreamWriter::writeObject(const string& name, const IO* obj) {
+void AsciiStreamWriter::writeObject(const char* name, const IO* obj) {
   itsImpl.writeObject(name, obj);
 }
 
-void AsciiStreamWriter::writeOwnedObject(const string& name, const IO* obj) {
+void AsciiStreamWriter::writeOwnedObject(const char* name, const IO* obj) {
   itsImpl.writeOwnedObject(name, obj);
 }
 

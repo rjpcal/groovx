@@ -3,7 +3,7 @@
 // bitmaprep.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Wed Feb 16 07:33:10 2000
+// written: Fri Mar  3 14:26:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,11 +14,6 @@
 #ifndef STRING_DEFINED
 #include <string>
 #define STRING_DEFINED
-#endif
-
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
 #endif
 
 #ifndef BMAPDATA_H_DEFINED

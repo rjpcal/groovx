@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Tue Dec 14 18:22:51 1999
+// written: Fri Mar  3 16:31:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -136,6 +136,11 @@ DOTRACE("Tcl::TclCmd::getDoubleFromArg");
 
 const char* Tcl::TclCmd::getCstringFromArg(int argn) {
 DOTRACE("Tcl::TclCmd::getCstringFromArg");
+  return Tcl_GetString(itsObjv[argn]);
+}
+
+string Tcl::TclCmd::getStringFromArg(int argn) {
+DOTRACE("Tcl::TclCmd::getStringFromArg");
   return Tcl_GetString(itsObjv[argn]);
 }
 

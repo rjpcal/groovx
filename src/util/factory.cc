@@ -3,7 +3,7 @@
 // factory.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 22:37:31 1999
-// written: Sat Nov 20 23:55:25 1999
+// written: Sat Mar  4 00:32:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,16 @@
 
 #include "factory.h"
 
+#include <string>
 #include <map>
+
+namespace {
+  const string bad_create_msg = "unable to create object of type ";
+}
+
+void FactoryError::throwForType(const string& type) {
+  throw FactoryError(bad_create_msg+type);
+}
 
 struct CreatorMapBase::Impl {
   map<string, void*> itsMap;

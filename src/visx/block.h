@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Wed Feb 16 07:38:25 2000
+// written: Fri Mar  3 14:26:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,11 +18,6 @@
 #ifndef VECTOR_DEFINED
 #include <vector>
 #define VECTOR_DEFINED
-#endif
-
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
 #endif
 
 #ifndef STOPWATCH_H_DEFINED

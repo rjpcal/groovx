@@ -3,7 +3,7 @@
 // house.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:15 1999
-// written: Fri Feb 18 09:08:12 2000
+// written: Fri Mar  3 16:35:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,6 @@
 
 #ifndef VECTOR_DEFINED
 #include <vector>
-#define VECTOR_DEFINED
 #endif
 
 #ifndef GROBJ_H_DEFINED

@@ -3,7 +3,7 @@
 // demangle.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct 13 10:41:19 1999
-// written: Tue Dec 14 19:02:29 1999
+// written: Fri Mar  3 14:27:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,6 +12,8 @@
 #define DEMANGLE_CC_DEFINED
 
 #include "demangle.h"
+
+#include <string>
 
 #ifdef ACC_COMPILER
 string demangle(const string& in) { return in; }

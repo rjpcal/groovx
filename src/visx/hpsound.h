@@ -3,7 +3,7 @@
 // hpsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 12 13:03:47 1999
-// written: Thu Oct 21 18:43:15 1999
+// written: Fri Mar  3 23:20:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,11 +11,12 @@
 #ifndef HPSOUND_CC_DEFINED
 #define HPSOUND_CC_DEFINED
 
-#include <fstream.h>				  // to check if files exist
-#include <Alib.h>
-
 #include "reader.h"
 #include "writer.h"
+
+#include <Alib.h>
+#include <fstream.h>				  // to check if files exist
+#include <string>
 
 #define NO_TRACE
 #include "trace.h"

@@ -3,7 +3,7 @@
 // reader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:47:00 1999
-// written: Tue Feb 15 10:42:55 2000
+// written: Fri Mar  3 23:11:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,47 +13,48 @@
 
 #include "reader.h"
 
+#include <string>
 #include <strstream.h>
 
 Reader::~Reader() {}
 
 template <>
-void Reader::readValue<char>(const string& name, char& return_value) {
+void Reader::readValue<char>(const char* name, char& return_value) {
   return_value = readChar(name);
 }
 
 template <>
-void Reader::readValue<int>(const string& name, int& return_value) {
+void Reader::readValue<int>(const char* name, int& return_value) {
   return_value = readInt(name);
 }
 
 template <>
-void Reader::readValue<size_t>(const string& name, size_t& return_value) {
+void Reader::readValue<size_t>(const char* name, size_t& return_value) {
   return_value = readInt(name);
 }
 
 template <>
-void Reader::readValue<bool>(const string& name, bool& return_value) {
+void Reader::readValue<bool>(const char* name, bool& return_value) {
   return_value = readBool(name);
 }
 
 template <>
-void Reader::readValue<double>(const string& name, double& return_value) {
+void Reader::readValue<double>(const char* name, double& return_value) {
   return_value = readDouble(name);
 }
 
 template <>
-void Reader::readValue<string>(const string& name, string& return_value) {
+void Reader::readValue<string>(const char* name, string& return_value) {
   return_value = readString(name);
 }
 
 template <>
-void Reader::readValue<const char*>(const string& name, const char*& return_value) {
+void Reader::readValue<const char*>(const char* name, const char*& return_value) {
   return_value = readCstring(name);
 }
 
 template <>
-void Reader::readValue<Value>(const string& name, Value& return_value) {
+void Reader::readValue<Value>(const char* name, Value& return_value) {
   readValueObj(name, return_value);
 }
 

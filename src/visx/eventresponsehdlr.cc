@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Tue Feb  1 17:55:29 2000
+// written: Fri Mar  3 14:29:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include <tcl.h>
 #include <strstream.h>
+#include <string>
 #include <vector>
 
 #include "error.h"
@@ -789,6 +790,12 @@ DOTRACE("EventResponseHdlr::Impl::getCheckedInt");
 // All of these methods just delegate to EventResponseHdlr::Impl methods
 //
 ///////////////////////////////////////////////////////////////////////
+
+
+EventResponseHdlr::EventResponseHdlr() : 
+  ResponseHandler(),
+  itsImpl(new Impl(this, ""))
+{}
 
 EventResponseHdlr::EventResponseHdlr(const string& input_response_map) : 
   ResponseHandler(),

@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Sat Feb 19 16:10:28 2000
+// written: Fri Mar  3 16:33:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,9 +16,8 @@
 #define TCL_H_DEFINED
 #endif
 
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
+#ifndef STRINGFWD_H_DEFINED
+#include "stringfwd.h"
 #endif
 
 #ifndef VECTOR_DEFINED
@@ -129,7 +128,7 @@ protected:
   const char* getCstringFromArg(int argn);
 
   /// Attempts to retrieve an STL-style \c string from argument number \a argn.
-  string getStringFromArg(int argn) { return string(getCstringFromArg(argn)); }
+  string getStringFromArg(int argn);
 
   /** Attempt to convert argument number \a argn to type \c T, and
       copy the result into \a val. */

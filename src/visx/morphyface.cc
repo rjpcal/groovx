@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Tue Feb  8 15:34:37 2000
+// written: Sat Mar  4 00:03:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,12 @@
 
 #include "morphyface.h"
 
+#include "bezier.h"
+#include "canvas.h"
+#include "reader.h"
+#include "rect.h"
+#include "writer.h"
+
 #include <iostream.h>           // for serialize
 #include <iomanip.h>				  // for setw in serialize
 #include <string>
@@ -25,12 +31,6 @@
 
 #include <cctype>
 #include <cmath>
-
-#include "bezier.h"
-#include "canvas.h"
-#include "reader.h"
-#include "rect.h"
-#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -309,7 +309,8 @@ void MorphyFace::readFrom(Reader* reader) {
 DOTRACE("MorphyFace::readFrom");
   const vector<PInfo>& infos = getPropertyInfos();
   for (size_t i = 0; i < infos.size(); ++i) {
-	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
+	 reader->readValueObj(infos[i].name_cstr(),
+								 const_cast<Value&>(get(infos[i].property())));
   }
 
   GrObj::readFrom(reader);
@@ -319,7 +320,7 @@ void MorphyFace::writeTo(Writer* writer) const {
 DOTRACE("MorphyFace::writeTo");
   const vector<PInfo>& infos = getPropertyInfos();
   for (size_t i = 0; i < infos.size(); ++i) {
-	 writer->writeValueObj(infos[i].name, get(infos[i].property));
+	 writer->writeValueObj(infos[i].name_cstr(), get(infos[i].property()));
   }
 
   GrObj::writeTo(writer);

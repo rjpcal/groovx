@@ -3,7 +3,7 @@
 // tclevalcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jun 17 10:38:13 1999
-// written: Tue Dec  7 23:45:54 1999
+// written: Fri Mar  3 17:04:11 2000
 // $Id$
 //
 // TclEvalCmd serves as a wrapper for a Tcl command string that is to
@@ -17,9 +17,8 @@
 #ifndef TCLEVALCMD_H_DEFINED
 #define TCLEVALCMD_H_DEFINED
 
-#ifndef STRING_DEFINED
-#include <string>
-#define STRING_DEFINED
+#ifndef STRINGFWD_H_DEFINED
+#include "stringfwd.h"
 #endif
 
 #ifndef TCLOBJLOCK_H_DEFINED
@@ -36,11 +35,20 @@ namespace Tcl {
 
 class Tcl::TclEvalCmd {
 public:
+  class EvalError : public Tcl::TclError {
+  public:
+	 EvalError(Tcl_Obj* cmd_obj) :
+		Tcl::TclError("error while evaluating ")
+		{
+		  appendMsg(Tcl_GetString(cmd_obj));
+		}
+  };
+
   enum ErrorHandlingMode { NONE, THROW_EXCEPTION, BACKGROUND_ERROR };
 
-  TclEvalCmd(const string& tcl_cmd, ErrorHandlingMode mode = NONE,
+  TclEvalCmd(const char* tcl_cmd, ErrorHandlingMode mode = NONE,
 				 int flags = TCL_EVAL_GLOBAL) :
-	 itsCmdObj(Tcl_NewStringObj(tcl_cmd.c_str(), -1)),
+	 itsCmdObj(Tcl_NewStringObj(tcl_cmd, -1)),
 	 itsLock(itsCmdObj),
 	 itsErrorMode(mode),
 	 itsFlags(flags) {}
@@ -59,14 +67,13 @@ public:
 
 	 else {
 		if (tclresult != TCL_OK) {
-		  string msg("error while evaluating ");
-		  msg += Tcl_GetString(itsCmdObj);
-		  
+		  EvalError err(itsCmdObj);
+
 		  if (THROW_EXCEPTION == itsErrorMode) {
-			 throw Tcl::TclError(msg);
+			 throw err;
 		  }
 		  else if (BACKGROUND_ERROR == itsErrorMode) {
-			 Tcl_AppendResult(interp, msg.c_str(), (char*) 0);
+			 Tcl_AppendResult(interp, err.msg_cstr(), (char*) 0);
 			 Tcl_BackgroundError(interp);
 		  }
 		}
