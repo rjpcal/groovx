@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Aug 10 10:56:09 2001
+// written: Fri Aug 10 13:48:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -224,12 +224,10 @@ public:
   void getBoundingBox(Gfx::Canvas& canvas,
                       Rect<double>& bounding_box) const;
 
-protected:
   /** Subclasses must override this function to return the bounding
       box in GL coordinates for the object's onscreen image. */
   virtual Rect<double> grGetBoundingBox() const = 0;
 
-public:
   /// Returns the current scaling mode.
   ScalingMode getScalingMode() const;
 
@@ -380,7 +378,6 @@ public:
 
   enum DrawMode { DRAW, UNDRAW };
 
-protected:
   /** This function must be overridden in derived classes to execute
       the actual OpenGL commands that render the object. */
   virtual void grRender(Gfx::Canvas& canvas, DrawMode mode) const = 0;
