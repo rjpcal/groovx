@@ -2,10 +2,10 @@
 //
 // tclveccmd.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 12 12:14:43 2001
-// written: Mon Sep 10 13:28:25 2001
+// written: Fri Jan 18 16:06:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

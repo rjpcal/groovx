@@ -2,10 +2,10 @@
 //
 // stopwatch.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 18 10:24:59 1999
-// written: Sun Aug 26 08:35:09 2001
+// written: Fri Jan 18 16:06:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // system.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 17 15:05:41 1999
-// written: Mon Aug 20 17:38:07 2001
+// written: Fri Jan 18 16:07:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -102,9 +102,9 @@ DOTRACE("System::getcwd");
   static dynamic_block<char> buf(INIT_SIZE);
 
   while ( !::getcwd(&buf[0], buf.size()) )
-	 {
-		buf.resize(buf.size() * 2);
-	 }
+         {
+                buf.resize(buf.size() * 2);
+         }
 
   return &buf[0];
 }

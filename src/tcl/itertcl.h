@@ -2,10 +2,10 @@
 //
 // itertcl.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 17 14:02:32 2001
-// written: Fri Aug 17 14:04:25 2001
+// written: Fri Jan 18 16:06:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

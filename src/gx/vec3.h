@@ -2,10 +2,10 @@
 //
 // vec3.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 28 18:27:19 2000
-// written: Fri Sep 21 10:50:08 2001
+// written: Fri Jan 18 16:06:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

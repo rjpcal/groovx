@@ -2,10 +2,10 @@
 //
 // bitmapcachenode.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Fri Sep 21 10:46:13 2001
+// written: Fri Jan 18 16:07:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

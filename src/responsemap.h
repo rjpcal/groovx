@@ -2,10 +2,10 @@
 //
 // responsemap.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 16:35:06 2001
-// written: Thu Sep 13 10:50:06 2001
+// written: Fri Jan 18 16:06:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

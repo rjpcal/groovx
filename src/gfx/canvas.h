@@ -2,10 +2,10 @@
 //
 // canvas.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Mon Sep  3 10:32:10 2001
+// written: Fri Jan 18 16:06:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

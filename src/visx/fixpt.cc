@@ -2,10 +2,10 @@
 //
 // fixpt.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Fri Sep 21 10:46:44 2001
+// written: Fri Jan 18 16:07:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

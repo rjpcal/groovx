@@ -2,10 +2,10 @@
 //
 // tclregexp.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:09:12 2001
-// written: Mon Sep 17 11:30:56 2001
+// written: Fri Jan 18 16:07:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

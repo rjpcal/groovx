@@ -2,10 +2,10 @@
 //
 // gmodes.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 14:48:32 2001
-// written: Tue Sep  4 10:38:39 2001
+// written: Fri Jan 18 16:06:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

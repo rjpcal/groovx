@@ -2,10 +2,10 @@
 //
 // ioutil.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:43 1999
-// written: Wed Aug  8 20:16:37 2001
+// written: Fri Jan 18 16:06:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // glcanvas.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Fri Sep 21 10:43:11 2001
+// written: Fri Jan 18 16:07:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

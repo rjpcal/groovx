@@ -2,10 +2,10 @@
 //
 // tlisttcl.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Tue Nov  6 16:20:06 2001
+// written: Fri Jan 18 16:06:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

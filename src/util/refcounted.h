@@ -2,10 +2,10 @@
 //
 // refcounted.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:19 2000
-// written: Mon Sep  3 15:23:47 2001
+// written: Fri Jan 18 16:06:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

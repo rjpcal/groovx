@@ -2,10 +2,10 @@
 //
 // gxdrawstyle.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 29 10:19:31 2001
-// written: Fri Aug 31 15:51:34 2001
+// written: Fri Jan 18 16:07:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

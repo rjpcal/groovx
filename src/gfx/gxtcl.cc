@@ -2,10 +2,10 @@
 //
 // gxtcl.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Tue Nov  6 16:07:42 2001
+// written: Fri Jan 18 16:07:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

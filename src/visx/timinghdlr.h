@@ -2,10 +2,10 @@
 //
 // timinghdlr.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:55 1999
-// written: Sun Aug 26 08:35:12 2001
+// written: Fri Jan 18 16:06:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

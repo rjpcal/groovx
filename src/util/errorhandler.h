@@ -2,10 +2,10 @@
 //
 // errorhandler.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 11 10:15:41 2000
-// written: Sun Aug 26 08:35:10 2001
+// written: Fri Jan 18 16:06:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

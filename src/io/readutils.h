@@ -2,10 +2,10 @@
 //
 // readutils.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:25:40 1999
-// written: Sun Aug 26 08:38:29 2001
+// written: Fri Jan 18 16:06:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // strings.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Thu Sep 13 11:31:13 2001
+// written: Fri Jan 18 16:07:04 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

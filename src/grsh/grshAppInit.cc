@@ -2,10 +2,10 @@
 //
 // grshAppInit.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Fri Jan 18 15:34:44 2002
+// written: Fri Jan 18 16:07:07 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that

@@ -2,10 +2,10 @@
 //
 // ioerror.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 12 21:42:09 2001
-// written: Thu Sep 13 10:57:24 2001
+// written: Fri Jan 18 16:06:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

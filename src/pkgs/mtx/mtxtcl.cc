@@ -2,10 +2,10 @@
 //
 // mtxtcl.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul  9 17:49:07 2001
-// written: Fri Sep 14 11:41:49 2001
+// written: Fri Jan 18 16:06:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

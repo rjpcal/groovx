@@ -2,10 +2,10 @@
 //
 // pbm.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 16:41:06 1999
-// written: Fri Aug 10 11:05:57 2001
+// written: Fri Jan 18 16:06:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // objtogl.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Mon Sep 10 17:17:38 2001
+// written: Fri Jan 18 16:07:00 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,

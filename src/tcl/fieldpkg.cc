@@ -2,10 +2,10 @@
 //
 // fieldpkg.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Mon Sep 17 11:27:07 2001
+// written: Fri Jan 18 16:07:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

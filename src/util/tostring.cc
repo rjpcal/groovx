@@ -2,10 +2,10 @@
 //
 // tostring.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Aug  5 20:12:30 2001
-// written: Sat Sep  8 08:55:08 2001
+// written: Fri Jan 18 16:07:04 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // sound.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Sun Aug 26 08:35:12 2001
+// written: Fri Jan 18 16:06:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // arrays.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 15:56:36 2000
-// written: Wed Aug 29 11:49:08 2001
+// written: Fri Jan 18 16:06:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

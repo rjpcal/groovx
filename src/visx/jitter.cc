@@ -2,10 +2,10 @@
 //
 // jitter.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:41 1999
-// written: Fri Sep 21 10:49:46 2001
+// written: Fri Jan 18 16:07:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

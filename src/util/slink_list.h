@@ -2,10 +2,10 @@
 //
 // slink_list.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 18 11:22:40 2000
-// written: Sun Aug 26 08:36:36 2001
+// written: Fri Jan 18 16:06:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

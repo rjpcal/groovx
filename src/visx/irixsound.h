@@ -2,10 +2,10 @@
 //
 // irixsound.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 14 11:23:12 1999
-// written: Thu Sep 13 11:32:12 2001
+// written: Fri Jan 18 16:06:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

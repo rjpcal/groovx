@@ -2,10 +2,10 @@
 //
 // gnode.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 13:36:59 2001
-// written: Sun Aug 26 08:35:13 2001
+// written: Fri Jan 18 16:06:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

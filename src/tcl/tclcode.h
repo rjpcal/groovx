@@ -2,10 +2,10 @@
 //
 // tclevalcmd.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jun 17 10:38:13 1999
-// written: Mon Sep 17 11:29:17 2001
+// written: Fri Jan 18 16:06:56 2002
 // $Id$
 //
 // Tcl::Code serves as a wrapper for a Tcl command string that is to

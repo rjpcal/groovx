@@ -2,10 +2,10 @@
 //
 // gxcolor.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 17:42:48 2001
-// written: Wed Aug 22 17:53:41 2001
+// written: Fri Jan 18 16:06:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

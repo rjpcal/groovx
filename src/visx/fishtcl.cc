@@ -2,10 +2,10 @@
 //
 // fishtcl.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 12:00:53 1999
-// written: Mon Sep 10 17:17:40 2001
+// written: Fri Jan 18 16:07:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

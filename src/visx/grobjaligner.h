@@ -2,10 +2,10 @@
 //
 // grobjaligner.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:42:42 2001
-// written: Fri Sep 21 10:47:51 2001
+// written: Fri Jan 18 16:06:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

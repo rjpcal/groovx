@@ -2,10 +2,10 @@
 //
 // glcachenode.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:39:48 2001
-// written: Mon Sep 10 17:17:36 2001
+// written: Fri Jan 18 16:06:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

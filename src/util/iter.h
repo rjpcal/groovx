@@ -2,10 +2,10 @@
 //
 // iter.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 17 11:05:24 2001
-// written: Tue Aug 21 15:32:18 2001
+// written: Fri Jan 18 16:06:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

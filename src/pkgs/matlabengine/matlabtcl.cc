@@ -2,10 +2,10 @@
 //
 // matlabtcl.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jul 10 12:16:44 2001
-// written: Fri Sep 14 14:06:30 2001
+// written: Fri Jan 18 16:06:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

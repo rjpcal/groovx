@@ -2,10 +2,10 @@
 //
 // gzstreambuf.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 20 13:13:22 2001
-// written: Thu Aug  9 07:06:03 2001
+// written: Fri Jan 18 16:07:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

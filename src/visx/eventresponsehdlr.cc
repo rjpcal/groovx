@@ -2,10 +2,10 @@
 //
 // eventresponsehdlr.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Thu Sep 13 11:31:13 2001
+// written: Fri Jan 18 16:07:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // xbitmap.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:37:04 1999
-// written: Thu Sep 13 11:31:12 2001
+// written: Fri Jan 18 16:06:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

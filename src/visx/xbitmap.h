@@ -2,10 +2,10 @@
 //
 // xitmap.h
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:39:09 1999
-// written: Mon Sep 10 17:17:35 2001
+// written: Fri Jan 18 16:06:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
