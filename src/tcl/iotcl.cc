@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Thu Jul 12 13:23:43 2001
+// written: Sun Jul 15 08:00:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 
 #include "system/demangle.h"
 
+#include "tcl/objfunctor.h"
 #include "tcl/stringifycmd.h"
 #include "tcl/tclerror.h"
 #include "tcl/tclpkg.h"
@@ -40,7 +41,8 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace IoTcl {
+namespace IoTcl
+{
   class LoadObjectsCmd;
   class SaveObjectsCmd;
 
@@ -135,7 +137,6 @@ public:
 protected:
   virtual void invoke(Tcl::Context& ctx)
   {
-
     const char* filename = ctx.getCstringFromArg(2);
 
     bool use_bases    = ctx.objc() < 4 ? true : ctx.getBoolFromArg(3);
@@ -153,77 +154,46 @@ protected:
   }
 };
 
-namespace Tcl {
+namespace Tcl
+{
 
-//---------------------------------------------------------------------
-//
-// ObjNewCmd
-//
-//---------------------------------------------------------------------
+  //
+  // objNew
+  //
 
-class ObjNewCmd : public TclCmd {
-public:
-  ObjNewCmd(Tcl_Interp* interp, const char* cmd_name) :
-    TclCmd(interp, cmd_name, "typename ?array_size=1?", 2, 3)
-    {}
-
-protected:
-  virtual void invoke(Tcl::Context& ctx)
+  Tcl::List objNew(const char* type, unsigned int array_size)
   {
-    const char* type = ctx.getCstringFromArg(1);
+    Tcl::List result;
 
-    if (ctx.objc() < 3)
+    while (array_size-- > 0)
       {
         WeakRef<Util::Object> item(Util::ObjMgr::newObj(type));
-        ctx.setResult(item.id());
+        result.append(item.id());
       }
-    else
-      {
-        Tcl::List result;
 
-        int array_size = ctx.getIntFromArg(2);
-        while (array_size-- > 0)
-          {
-            WeakRef<Util::Object> item(Util::ObjMgr::newObj(type));
-            result.append(item.id());
-          }
-
-        ctx.setResult(result);
-      }
+    return result;
   }
-};
 
-//---------------------------------------------------------------------
-//
-// ObjDeleteCmd
-//
-//---------------------------------------------------------------------
-
-class ObjDeleteCmd : public TclCmd {
-public:
-  ObjDeleteCmd(Tcl_Interp* interp, const char* cmd_name) :
-    TclCmd(interp, cmd_name, "item_id(s)", 2, 2)
-    {}
-
-protected:
-  virtual void invoke(Tcl::Context& ctx)
+  Tcl::List objNewOne(const char* type)
   {
-#ifndef FUNCTIONAL_OK
-    Tcl::List::Iterator<int>
-      itr = ctx.beginOfArg(1, (int*)0),
-      stop = ctx.endOfArg(1, (int*)0);
+    return objNew(type, 1);
+  }
+
+  //
+  // objDelete
+  //
+
+  void objDelete(Tcl::List item_ids)
+  {
+    Tcl::List::Iterator<Util::UID>
+      itr = item_ids.begin<Util::UID>(),
+      stop = item_ids.end<Util::UID>();
     while (itr != stop)
       {
         ObjDb::theDb().remove(*itr);
         ++itr;
       }
-
-#else
-    std::for_each(ctx.beginOfArg<int>(1), ctx.endOfArg<int>(1),
-                  std::bind1st(std::mem_fun(&ObjDb::remove), &ObjDb::theDb()));
-#endif
   }
-};
 
 class IoObjectPkg : public GenericObjPkg<IO::IoObject>,
                     public IoFetcher
@@ -252,8 +222,9 @@ public:
     declareCAction("incrRefCount", &Util::Object::incrRefCount);
     declareCAction("decrRefCount", &Util::Object::decrRefCount);
 
-    addCommand( new ObjNewCmd(interp, TclPkg::makePkgCmdName("new")));
-    addCommand( new ObjDeleteCmd(interp, TclPkg::makePkgCmdName("delete")));
+    Tcl::def( this, &Tcl::objNew, "Obj::new", "typename array_size=1" );
+    Tcl::def( this, &Tcl::objNewOne, "Obj::new", "typename" );
+    Tcl::def( this, &Tcl::objDelete, "Obj::delete", "item_id(s)" );
 
     TclPkg::eval("proc new {args} { eval Obj::new $args }");
     TclPkg::eval("proc delete {args} { eval Obj::delete $args }");
