@@ -35,7 +35,7 @@ STATLIB_EXT     := @STATLIB_EXT@
 CPPFLAGS        := @CPPFLAGS@
 CXXFLAGS        := @CXXFLAGS@
 DEFS            := @DEFS@
-LDFLAGS         := @LDFLAGS@ @X_LIBS@
+LDFLAGS         := @LDFLAGS@
 LIBS            := @LIBS@ @X_EXTRA_LIBS@
 
 #-------------------------------------------------------------------------
