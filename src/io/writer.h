@@ -3,7 +3,7 @@
 // writer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:49 1999
-// written: Thu Nov 11 11:50:32 1999
+// written: Wed Dec  1 11:45:05 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,35 +85,6 @@ public:
 
   ///
   virtual void writeOwnedObject(const string& name, const IO* obj) = 0;
-
-  /** A generic interface for handling containers, sequences, etc. of
-      value types. */
-  template <class Itr>
-  void writeValueSeq(const string& name, Itr begin, Itr end) {
-	 int count = 0;
-
-	 while (begin != end) {
-		writeValue(name+makeNumberString(count), *begin);
-		++count;
-		++begin;
-	 }
-
-	 writeValue(name+"Count", count);
-  }
-
-  /// A generic interface for handling containers, sequences, etc. of objects
-  template <class Itr>
-  void writeObjectSeq(const string& name, Itr begin, Itr end) {
-	 int count = 0;
-	 
-	 while (begin != end) {
-		writeObject(name+makeNumberString(count), *begin);
-		++count;
-		++begin;
-	 }
-
-	 writeValue(name+"Count", count);
-  }
 
   ///
   virtual void writeRoot(const IO* root) = 0;
