@@ -47,168 +47,168 @@ namespace
     FreeNode* next;
   };
 
-  FreeNode* fsFreeList = 0;
+  FreeNode* fs_free_list = 0;
 
-  class SharedDataBlock : public DataBlock
+  class shared_data_block : public data_block
   {
   public:
-    SharedDataBlock(int length);
-    virtual ~SharedDataBlock();
+    shared_data_block(int length);
+    virtual ~shared_data_block();
 
-    virtual bool isUnique() const { return refCount() <= 1; }
+    virtual bool is_unique() const { return refcount() <= 1; }
   };
 
-  SharedDataBlock::SharedDataBlock(int length) :
-    DataBlock(new double[length], length)
+  shared_data_block::shared_data_block(int length) :
+    data_block(new double[length], length)
   {
-    DOTRACE("SharedDataBlock::SharedDataBlock");
-    dbgEval(3, this); dbgEvalNL(3, itsData);
+    DOTRACE("shared_data_block::shared_data_block");
+    dbgEval(3, this); dbgEvalNL(3, m_storage);
   }
 
-  SharedDataBlock::~SharedDataBlock()
+  shared_data_block::~shared_data_block()
   {
-    DOTRACE("SharedDataBlock::~SharedDataBlock");
-    dbgEval(3, this); dbgEvalNL(3, itsData);
-    delete [] itsData;
+    DOTRACE("shared_data_block::~shared_data_block");
+    dbgEval(3, this); dbgEvalNL(3, m_storage);
+    delete [] m_storage;
   }
 
-  class BorrowedDataBlock : public DataBlock
+  class borrowed_data_block : public data_block
   {
   public:
-    BorrowedDataBlock(double* borrowedData, unsigned int dataLength) :
-      DataBlock(borrowedData, dataLength)
+    borrowed_data_block(double* borrowed_data, unsigned int length) :
+      data_block(borrowed_data, length)
     {}
 
-    virtual ~BorrowedDataBlock()
+    virtual ~borrowed_data_block()
     { /* don't delete the data, since they are 'borrowed' */ }
 
     // Since the data are borrowed, we always return false here.
-    virtual bool isUnique() const { return false; }
+    virtual bool is_unique() const { return false; }
   };
 
-  class ReferredDataBlock : public DataBlock
+  class referred_data_block : public data_block
   {
   public:
-    ReferredDataBlock(double* borrowedData, unsigned int dataLength) :
-      DataBlock(borrowedData, dataLength)
+    referred_data_block(double* referred_data, unsigned int length) :
+      data_block(referred_data, length)
     {}
 
-    virtual ~ReferredDataBlock()
+    virtual ~referred_data_block()
     { /* don't delete the data, since they are 'borrowed' */ }
 
-    virtual bool isUnique() const { return refCount() <= 1; }
+    virtual bool is_unique() const { return refcount() <= 1; }
   };
 }
 
-void* DataBlock::operator new(size_t bytes)
+void* data_block::operator new(size_t bytes)
 {
-DOTRACE("DataBlock::operator new");
+DOTRACE("data_block::operator new");
 
-  Assert(bytes == sizeof(DataBlock));
-  if (fsFreeList == 0)
+  Assert(bytes == sizeof(data_block));
+  if (fs_free_list == 0)
     return ::operator new(bytes);
-  FreeNode* node = fsFreeList;
-  fsFreeList = fsFreeList->next;
+  FreeNode* node = fs_free_list;
+  fs_free_list = fs_free_list->next;
   return (void*)node;
 }
 
-void DataBlock::operator delete(void* space)
+void data_block::operator delete(void* space)
 {
-DOTRACE("DataBlock::operator delete");
+DOTRACE("data_block::operator delete");
 
-  ((FreeNode*)space)->next = fsFreeList;
-  fsFreeList = (FreeNode*)space;
+  ((FreeNode*)space)->next = fs_free_list;
+  fs_free_list = (FreeNode*)space;
 }
 
-DataBlock::DataBlock(double* data, unsigned int len) :
-  itsRefCount(0),
-  itsData(data),
-  itsLength(len)
+data_block::data_block(double* data, unsigned int len) :
+  m_refcount(0),
+  m_storage(data),
+  m_length(len)
 {
-DOTRACE("DataBlock::DataBlock");
+DOTRACE("data_block::data_block");
 }
 
-DataBlock::~DataBlock()
+data_block::~data_block()
 {
-DOTRACE("DataBlock::~DataBlock");
+DOTRACE("data_block::~data_block");
 }
 
-DataBlock* DataBlock::getEmptyDataBlock()
+data_block* data_block::get_empty_data_block()
 {
-DOTRACE("DataBlock::getEmptyDataBlock");
-  static DataBlock* empty_rep = 0;
+DOTRACE("data_block::get_empty_data_block");
+  static data_block* empty_rep = 0;
   if (empty_rep == 0)
     {
-      empty_rep = new SharedDataBlock(0);
-      empty_rep->incrRefCount();
+      empty_rep = new shared_data_block(0);
+      empty_rep->incr_refcount();
     }
 
   return empty_rep;
 }
 
-DataBlock* DataBlock::makeDataCopy(const double* data, int data_length)
+data_block* data_block::make_data_copy(const double* data, int data_length)
 {
-DOTRACE("DataBlock::makeDataCopy");
+DOTRACE("data_block::make_data_copy");
   if (data == 0)
-    return getEmptyDataBlock();
+    return get_empty_data_block();
 
-  DataBlock* p = new SharedDataBlock(data_length);
+  data_block* p = new shared_data_block(data_length);
 
-  memcpy(p->itsData, data, data_length*sizeof(double));
-
-  return p;
-}
-
-DataBlock* DataBlock::makeBlank(int length)
-{
-DOTRACE("DataBlock::makeBlank");
-  if (length <= 0)
-    return getEmptyDataBlock();
-
-  DataBlock* p = new SharedDataBlock(length);
-  memset(p->itsData, 0, length*sizeof(double));
+  memcpy(p->m_storage, data, data_length*sizeof(double));
 
   return p;
 }
 
-DataBlock* DataBlock::makeUninitialized(int length)
+data_block* data_block::make_zeros(int length)
 {
-DOTRACE("DataBlock::makeUninitialized");
+DOTRACE("data_block::make_zeros");
   if (length <= 0)
-    return getEmptyDataBlock();
+    return get_empty_data_block();
 
-  return new SharedDataBlock(length);
+  data_block* p = new shared_data_block(length);
+  memset(p->m_storage, 0, length*sizeof(double));
+
+  return p;
 }
 
-DataBlock* DataBlock::makeBorrowed(double* data, int data_length)
+data_block* data_block::make_uninitialized(int length)
 {
-DOTRACE("DataBlock::makeBorrowed");
-  return new BorrowedDataBlock(data, data_length);
+DOTRACE("data_block::make_uninitialized");
+  if (length <= 0)
+    return get_empty_data_block();
+
+  return new shared_data_block(length);
 }
 
-DataBlock* DataBlock::makeReferred(double* data, int data_length)
+data_block* data_block::make_borrowed(double* data, int data_length)
 {
-DOTRACE("DataBlock::makeReferred");
-  return new ReferredDataBlock(data, data_length);
+DOTRACE("data_block::make_borrowed");
+  return new borrowed_data_block(data, data_length);
 }
 
-void DataBlock::makeUnique(DataBlock*& rep)
+data_block* data_block::make_referred(double* data, int data_length)
 {
-  if (rep->isUnique()) return;
+DOTRACE("data_block::make_referred");
+  return new referred_data_block(data, data_length);
+}
+
+void data_block::make_unique(data_block*& rep)
+{
+  if (rep->is_unique()) return;
 
   {
-    DOTRACE("DataBlock::makeUnique");
+    DOTRACE("data_block::make_unique");
 
-    DataBlock* rep_copy = makeDataCopy(rep->itsData, rep->itsLength);
+    data_block* rep_copy = make_data_copy(rep->m_storage, rep->m_length);
 
     // do the swap
 
-    rep->decrRefCount();
-    rep_copy->incrRefCount();
+    rep->decr_refcount();
+    rep_copy->incr_refcount();
 
     rep = rep_copy;
 
-    Postcondition(rep->itsRefCount == 1);
+    Postcondition(rep->m_refcount == 1);
   }
 }
 

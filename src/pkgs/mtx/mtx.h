@@ -484,21 +484,21 @@ public:
   void swap(DataHolder& other);
 
   /// Make a unique copy of our data block if needed.
-  void makeUnique() { DataBlock::makeUnique(datablock_); }
+  void makeUnique() { data_block::make_unique(m_data); }
 
   /// Get a pointer to const underlying data.
-  const double* storage() const { return datablock_->data(); }
+  const double* storage() const { return m_data->data(); }
 
   /// Get a pointer to non-const underlying data.
-  double* storage_nc() { makeUnique(); return datablock_->data_nc(); }
+  double* storage_nc() { makeUnique(); return m_data->data_nc(); }
 
   /// Get the allocated length of underlying data array.
-  int storageLength() const { return datablock_->length(); }
+  int storageLength() const { return m_data->length(); }
 
 private:
   DataHolder& operator=(const DataHolder&); // not allowed
 
-  DataBlock* datablock_;
+  data_block* m_data;
 };
 
 ///////////////////////////////////////////////////////////////////////

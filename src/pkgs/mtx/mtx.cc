@@ -413,33 +413,35 @@ DOTRACE("MtxSpecs::selectCols");
 
 namespace
 {
-  DataBlock* newDataBlock(int mrows, int ncols, WithPolicies::InitPolicy p)
+  data_block* newDataBlock(int mrows, int ncols, WithPolicies::InitPolicy p)
   {
-    if (p == WithPolicies::ZEROS) return DataBlock::makeBlank(mrows*ncols);
-    return DataBlock::makeUninitialized(mrows*ncols);
+    if (p == WithPolicies::ZEROS)
+      return data_block::make_zeros(mrows*ncols);
+    // else...
+    return data_block::make_uninitialized(mrows*ncols);
   }
 
-  DataBlock* newDataBlock(double* data,
-                          int mrows, int ncols, WithPolicies::StoragePolicy s)
+  data_block* newDataBlock(double* data,
+                           int mrows, int ncols, WithPolicies::StoragePolicy s)
   {
     switch (s)
       {
       case WithPolicies::BORROW:
-        return DataBlock::makeBorrowed(data, mrows*ncols);
+        return data_block::make_borrowed(data, mrows*ncols);
 
       case WithPolicies::REFER:
-        return DataBlock::makeReferred(data, mrows*ncols);
+        return data_block::make_referred(data, mrows*ncols);
 
       case WithPolicies::COPY:
       default:
         break;
       }
 
-    return DataBlock::makeDataCopy(data, mrows*ncols);
+    return data_block::make_data_copy(data, mrows*ncols);
   }
 
 #ifdef WITH_MATLAB
-  DataBlock* newDataBlock(mxArray* a, WithPolicies::StoragePolicy s)
+  data_block* newDataBlock(mxArray* a, WithPolicies::StoragePolicy s)
   {
     if (!mxIsDouble(a))
       throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
@@ -447,7 +449,7 @@ namespace
     return newDataBlock(mxGetPr(a), mxGetM(a), mxGetN(a), s);
   }
 
-  DataBlock* newDataBlock(const mxArray* a, WithPolicies::StoragePolicy s)
+  data_block* newDataBlock(const mxArray* a, WithPolicies::StoragePolicy s)
   {
     if (!mxIsDouble(a))
       throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
@@ -462,45 +464,45 @@ namespace
 }
 
 DataHolder::DataHolder(double* data, int mrows, int ncols, StoragePolicy s) :
-  datablock_(newDataBlock(data, mrows, ncols, s))
+  m_data(newDataBlock(data, mrows, ncols, s))
 {
-  datablock_->incrRefCount();
+  m_data->incr_refcount();
 }
 
 DataHolder::DataHolder(int mrows, int ncols, InitPolicy p) :
-  datablock_(newDataBlock(mrows, ncols, p))
+  m_data(newDataBlock(mrows, ncols, p))
 {
-  datablock_->incrRefCount();
+  m_data->incr_refcount();
 }
 
 #ifdef WITH_MATLAB
 DataHolder::DataHolder(mxArray* a, StoragePolicy s) :
-  datablock_(newDataBlock(a, s))
+  m_data(newDataBlock(a, s))
 {
-  datablock_->incrRefCount();
+  m_data->incr_refcount();
 }
 
 DataHolder::DataHolder(const mxArray* a, StoragePolicy s) :
-  datablock_(newDataBlock(a, s))
+  m_data(newDataBlock(a, s))
 {
-  datablock_->incrRefCount();
+  m_data->incr_refcount();
 }
 #endif
 
 DataHolder::DataHolder(const DataHolder& other) :
-  datablock_(other.datablock_)
+  m_data(other.m_data)
 {
-  datablock_->incrRefCount();
+  m_data->incr_refcount();
 }
 
 DataHolder::~DataHolder()
 {
-  datablock_->decrRefCount();
+  m_data->decr_refcount();
 }
 
 void DataHolder::swap(DataHolder& other)
 {
-  std::swap(datablock_, other.datablock_);
+  std::swap(m_data, other.m_data);
 }
 
 ///////////////////////////////////////////////////////////////////////

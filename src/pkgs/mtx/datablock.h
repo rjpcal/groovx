@@ -34,27 +34,27 @@
 
 /// Base class for holding ref-counted arrays of floating-point data.
 /** Serves as the implementation for higher-level matrix classes, etc. */
-class DataBlock
+class data_block
 {
 private:
-  int itsRefCount;
+  int m_refcount;
 
-  DataBlock(const DataBlock& other); // not implemented
-  DataBlock& operator=(const DataBlock& other); // not implemented
+  data_block(const data_block& other); // not implemented
+  data_block& operator=(const data_block& other); // not implemented
 
-  static DataBlock* getEmptyDataBlock();
+  static data_block* get_empty_data_block();
 
 protected:
-  double* const itsData;          ///< Pointer to the actual storage.
-  unsigned int const itsLength;   ///< Allocated length of the storage.
+  double* const m_storage;        ///< Pointer to the actual storage.
+  unsigned int const m_length;    ///< Allocated length of the storage.
 
   /// Construct with a given data array and length.
-  /** No copy is made of the data array here; the DataBlock object will
+  /** No copy is made of the data array here; the data_block object will
       point directly to the given array. */
-  DataBlock(double* data, unsigned int len);
+  data_block(double* data, unsigned int len);
 
   /// Virtual destructor.
-  virtual ~DataBlock();
+  virtual ~data_block();
 
   /// Class-specific operator new.
   void* operator new(size_t bytes);
@@ -63,49 +63,50 @@ protected:
   void operator delete(void* space);
 
   /// Get the current reference count.
-  int refCount() const { return itsRefCount; }
+  int refcount() const { return m_refcount; }
 
 public:
-  /// Return a new shared DataBlock whose contents are all set to zero.
-  static DataBlock* makeBlank(int length);
+  /// Return a new shared data_block whose contents are all set to zero.
+  static data_block* make_zeros(int length);
 
-  /// Return a new shared DataBlock whose contents are uninitialized
-  /** I.e. contents not zero-set as in makeBlank(). */
-  static DataBlock* makeUninitialized(int length);
+  /// Return a new shared data_block whose contents are uninitialized
+  /** I.e. contents not zero-set as in make_zeros(). */
+  static data_block* make_uninitialized(int length);
 
   /// Make a copy of the given data array.
-  static DataBlock* makeDataCopy(const double* data, int data_length);
+  static data_block* make_data_copy(const double* data, int data_length);
 
   /// The 'data' are borrowed, but are never considered unique.
-  /** Therefore, attempts to makeUnique() will always duplicate the data. */
-  static DataBlock* makeBorrowed(double* data, int data_length);
+  /** Therefore, attempts to make_unique() will always duplicate the
+      data. */
+  static data_block* make_borrowed(double* data, int data_length);
 
-  /// The 'data' are borrowed, as in makeBorrowed(), but...
-  /** Uniqueness is determined by the reference count, so it is possible to
-      write to the data through the DataBlock. */
-  static DataBlock* makeReferred(double* data, int data_length);
+  /// The 'data' are borrowed, as in make_borrowed(), but...
+  /** Uniqueness is determined by the reference count, so it is
+      possible to write to the data through the data_block. */
+  static data_block* make_referred(double* data, int data_length);
 
-  /// Make the given DataBlock have a unique copy of its data, copying if needed.
-  static void makeUnique(DataBlock*& rep);
+  /// Make the given data_block have a unique copy of its data, copying if needed.
+  static void make_unique(data_block*& rep);
 
   /// Increment the reference count.
-  void incrRefCount() { ++itsRefCount; }
+  void incr_refcount() { ++m_refcount; }
 
   /// Decrement the reference count.
-  void decrRefCount() { if (--itsRefCount <= 0) delete this; }
+  void decr_refcount() { if (--m_refcount <= 0) delete this; }
 
   /// Query if the data block is unique.
-  virtual bool isUnique() const = 0;
+  virtual bool is_unique() const = 0;
 
 
   /// Get a pointer to const data.
-  const double* data()    const { return itsData; }
+  const double* data()    const { return m_storage; }
 
   /// Get a pointer to non-const data.
-        double* data_nc()       { return itsData; }
+        double* data_nc()       { return m_storage; }
 
   /// Get the length of the data array.
-  unsigned int  length()  const { return itsLength; }
+  unsigned int  length()  const { return m_length; }
 };
 
 static const char vcid_datablock_h[] = "$Header$";
