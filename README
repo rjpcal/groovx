@@ -33,7 +33,7 @@
 
    This software requires these development packages:
 
-     * Tcl/Tk (version 8.4 or later)
+     * Tcl/Tk (version 8.5 or later)
      * X11 windowing system
      * OpenGL
      * libz (gzip library)
@@ -84,8 +84,61 @@
        # no need to do "make", just do "make install"
        make install
 
+     * Mac OS X Tcl/Tk build notes
 
+       Used the following Makefile fragment for Tcl (in pathtosrc/tcl/macosx/Makefile)
 
+	DESTDIR			?= 
+	INSTALL_ROOT		?= ${DESTDIR}
+
+	BUILD_DIR		?= ${CURDIR}/../../build
+	SYMROOT			?= ${BUILD_DIR}/${PROJECT}
+	OBJROOT			?= ${SYMROOT}
+
+	EXTRA_CONFIGURE_ARGS 	?= 
+	EXTRA_MAKE_ARGS		?= 
+
+	INSTALL_PATH		?= ${HOME}/Library/Frameworks
+	PREFIX			?= ${HOME}/local/tcl8.5a1-aqua
+	BINDIR			?= ${PREFIX}/bin
+	MANDIR			?= ${PREFIX}/man
+
+       Used the following Makefile fragment for Tk (in pathtosrc/tk/macosx/Makefile)
+
+	DESTDIR			?=
+	INSTALL_ROOT		?= ${DESTDIR}
+
+	BUILD_DIR		?= ${CURDIR}/../../build
+	SYMROOT			?= ${BUILD_DIR}/${PROJECT}
+	OBJROOT			?= ${SYMROOT}
+
+	EXTRA_MAKE_ARGS		?= 
+
+	INSTALL_PATH		?= ${HOME}/Library/Frameworks
+	APPLICATION_INSTALL_PATH ?= ${HOME}/Applications/Utilities
+
+	PREFIX			?= ${HOME}/local/tcl8.5a1-aqua
+	BINDIR			?= ${PREFIX}/bin
+
+	TCL_FRAMEWORK_DIR	?= ${BUILD_DIR}/tcl
+	TCLSH_DIR		?= ${TCL_FRAMEWORK_DIR}
+
+       Problems:
+
+        Tk install requires 'chmod' with '-RH' options. But, the Fink
+        version of chmod in /sw/bin/chmod doesn't recognize the '-H'
+        option. So, need to point the installation to /bin/chmod
+        instead. For now, just put a link from /bin/chmod to
+        ~/local/bin/chmod, since ~/local/bin is higher in $PATH than is
+        /sw/bin.
+
+	Tk install expects to find 'Wish Shell.app' in
+	~/Library/Frameworks/Tk.Frame/Versions/8.5/Resources/. But, my
+	Makefile fragment puts 'Wish Shell.app' in
+	~/Applications/Utilities instead. So, for now just do:
+
+	  ln -s ~/Applications/Utilities/Wish\ Shell.app \
+	     ~/Library/Frameworks/Tk.framework/Versions/8.5/Resources/
 
 4. Configuration
 
