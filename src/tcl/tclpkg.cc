@@ -33,6 +33,7 @@
 #include "tcl/tclpkg.h"
 
 #include "tcl/tclcmd.h"
+#include "tcl/tcllistobj.h"
 #include "tcl/tclsafeinterp.h"
 
 #include "util/pointers.h"
@@ -49,8 +50,16 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+#if (TCL_MAJOR_VERSION > 8) || (TCL_MAJOR_VERSION == 8 && TCL_MINOR_VERSION >= 5)
+#  define HAVE_TCL_NAMESPACE_API
+#else
+#  undef  HAVE_TCL_NAMESPACE_API
+#endif
+
 namespace
 {
+  bool VERBOSE_INIT = false;
+
   // Construct a capitalization-correct version of the given name that is
   // just how Tcl likes it: first character uppercase, all others
   // lowercase.
@@ -82,7 +91,50 @@ namespace
     return result;
   }
 
-  bool VERBOSE_INIT = false;
+  void exportAll(Tcl::Interp& interp, const char* from)
+  {
+  DOTRACE("exportAll");
+#ifdef HAVE_TCL_NAMESPACE_API
+    Tcl_Namespace* namesp =
+      Tcl_FindNamespace(interp.intp(), from, 0, TCL_GLOBAL_ONLY);
+    Tcl_Export(interp.intp(), namesp, "*", /*resultListFirst*/ false);
+#else
+    fstring cmd("namespace eval ", from, " { namespace export * }");
+    interp.eval(cmd);
+#endif
+  }
+
+  void exportInto(Tcl::Interp& interp, const char* from, const char* to)
+  {
+  DOTRACE("exportInto");
+    fstring cmd("namespace eval ", to, " { namespace import ::");
+    cmd.append(from, "::* }");
+
+    interp.eval(cmd);
+  }
+
+  Tcl::List getCommandList(Tcl::Interp& interp, const char* namesp)
+  {
+    Tcl::ObjPtr saveresult = interp.getResult<Tcl::ObjPtr>();
+    fstring cmd("info commands ::", namesp, "::*");
+    interp.eval(cmd);
+    Tcl::List cmdlist = interp.getResult<Tcl::List>();
+    interp.setResult(saveresult);
+    return cmdlist;
+  }
+
+  const char* getNameTail(const char* cmdname)
+  {
+    const char* p = cmdname;
+    while (*p != 0) ++p; // skip to end of string
+    while (p > cmdname)
+      {
+        if (*p == ':' && p > cmdname && *(p-1) == ':')
+          return p-1;
+        --p;
+      }
+    return p;
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -167,6 +219,30 @@ DOTRACE("Tcl::Pkg::~Pkg");
   // To avoid double-deletion:
   Tcl_DeleteExitHandler(&Impl::exitHandler, static_cast<ClientData>(this));
 
+  try
+    {
+#ifndef HAVE_TCL_NAMESPACE_API
+      Tcl::List cmdnames = getCommandList(rep->interp,
+                                          rep->namespName.c_str());
+
+      for (unsigned int i = 0; i < cmdnames.length(); ++i)
+        {
+          Tcl_DeleteCommand(rep->interp.intp(),
+                            cmdnames.get<const char*>(i));
+        }
+#else
+      Tcl_Namespace* namesp =
+        Tcl_FindNamespace(rep->interp.intp(), rep->namespName.c_str(),
+                          0, TCL_GLOBAL_ONLY);
+      if (namesp != 0)
+        Tcl_DeleteNamespace(namesp);
+#endif
+    }
+  catch (...)
+    {
+      rep->interp.handleLiveException("Tcl::Pkg::~Pkg");
+    }
+
   delete rep;
 }
 
@@ -233,26 +309,6 @@ void Tcl::Pkg::handleLiveException() throw()
 {
 DOTRACE("Tcl::Pkg::handleLiveException");
   rep->interp.handleLiveException("");
-}
-
-namespace
-{
-  void exportAll(Tcl::Interp& interp, const char* from)
-  {
-  DOTRACE("exportAll");
-    fstring cmd("namespace eval ", from, " { namespace export * }");
-
-    interp.eval(cmd);
-  }
-
-  void exportInto(Tcl::Interp& interp, const char* from, const char* to)
-  {
-  DOTRACE("exportInto");
-    fstring cmd("namespace eval ", to, " { namespace import ::");
-    cmd.append(from, "::* }");
-
-    interp.eval(cmd);
-  }
 }
 
 void Tcl::Pkg::namespaceAlias(const char* namesp) throw()
