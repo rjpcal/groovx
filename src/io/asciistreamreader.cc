@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Fri Nov  3 19:05:36 2000
+// written: Fri Nov  3 19:09:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -175,7 +175,7 @@ public:
 
 	 IO::VersionId getSerialVersionId() const { return itsSerialVersionId; }
 
-	 const Attrib& operator[](const fixed_string& attrib_name)
+	 Attrib get(const fixed_string& attrib_name)
 		{
 		  // DOTRACE("AsciiStreamReader::Impl::AttribMap::operator[]");
 		  ListType::iterator itr = itsMap.begin(), end = itsMap.end();
@@ -183,9 +183,9 @@ public:
 			 {
 				if ((*itr).first == attrib_name)
 				  {
-					 itsMap.push_back(*itr);
+					 Attrib result = (*itr).second;
 					 itsMap.erase(itr);
-					 return itsMap.back().second;
+					 return result;
 				  }
 				++itr;
 			 }
@@ -233,11 +233,12 @@ private:
 public:
   template <class T>
   T readBasicType(const fixed_string& name, T* /* dummy */) {
-	 istrstream ist(currentAttribs()[name].value.c_str());
+	 Attrib a = currentAttribs().get(name);
+	 istrstream ist(a.value.c_str());
 
 	 T return_val;
 	 ist >> return_val;
-	 DebugEval(currentAttribs()[name].value); DebugEvalNL(return_val);
+	 DebugEval(a.value); DebugEvalNL(return_val);
 
 	 if (ist.fail())
 		throw AttributeReadError(name);
@@ -420,7 +421,8 @@ DOTRACE("AsciiStreamReader::Impl::inflateObject");
 fixed_string AsciiStreamReader::Impl::readStringType(const fixed_string& name) {
 DOTRACE("AsciiStreamReader::Impl::readStringType");
 
-  istrstream ist(currentAttribs()[name].value.c_str());
+  Attrib a = currentAttribs().get(name);
+  istrstream ist(a.value.c_str());
 
   int len;
   ist >> len;                     DebugEvalNL(len);
@@ -442,14 +444,14 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
 		throw AttributeReadError(name);
 	 }  
 
-  DebugEval(currentAttribs()[name].value); DebugEvalNL(new_string);
+  DebugEval(a.value); DebugEvalNL(new_string);
   return new_string;
 }
 
 IO::IoObject* AsciiStreamReader::Impl::readObject(const fixed_string& attrib_name) {
 DOTRACE("AsciiStreamReader::Impl::readObject");
 
-  const Attrib& attrib = currentAttribs()[attrib_name];
+  Attrib attrib = currentAttribs().get(attrib_name);
 
   istrstream ist(attrib.value.c_str());
   unsigned long id;
@@ -470,7 +472,8 @@ void AsciiStreamReader::Impl::readValueObj(
   ) {
 DOTRACE("AsciiStreamReader::Impl::readValueObj");
 
-  istrstream ist(currentAttribs()[attrib_name].value.c_str());
+  Attrib a = currentAttribs().get(attrib_name);
+  istrstream ist(a.value.c_str());
 
   ist >> value;
 
@@ -483,7 +486,8 @@ void AsciiStreamReader::Impl::readOwnedObject(
   ) {
 DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
 
-  istrstream ist(currentAttribs()[attrib_name].value.c_str());
+  Attrib a = currentAttribs().get(attrib_name);
+  istrstream ist(a.value.c_str());
   unsigned long id;
   ist >> id;
 
@@ -501,7 +505,8 @@ void AsciiStreamReader::Impl::readBaseClass(
   ) {
 DOTRACE("AsciiStreamReader::Impl::readBaseClass");
 
-  istrstream ist(currentAttribs()[baseClassName].value.c_str());
+  Attrib a = currentAttribs().get(baseClassName);
+  istrstream ist(a.value.c_str());
   char bracket[16];
 
   ist >> bracket;
