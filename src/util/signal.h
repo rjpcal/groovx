@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Mon Nov 25 12:45:00 2002
+// written: Mon Nov 25 15:09:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,10 +111,10 @@ protected:
   void doEmit(void* params) const;
 
   /// Add a Slot to the list of those watching this Signal.
-  void connect(Util::SoftRef<SlotBase> slot);
+  void doConnect(Util::SoftRef<SlotBase> slot);
 
   /// Remove a Slot from the list of those watching this Signal.
-  void disconnect(Util::SoftRef<SlotBase> slot);
+  void doDisconnect(Util::SoftRef<SlotBase> slot);
 
 private:
   SignalBase(const SignalBase&);
@@ -145,7 +145,8 @@ public:
   virtual ~Signal0();
 
   /// Add a Slot to the list of those watching this Signal.
-  void connect(Util::SoftRef<Slot0> slot);
+  void connect(Util::SoftRef<Slot0> slot)
+  { SignalBase::doConnect(slot); }
 
   /** Connect an object to this Signal, so that when the signal is
       triggered, \a mem_func will be called on \a obj. \c connect()
@@ -153,12 +154,11 @@ public:
       created. */
   template <class C, class MF>
   void connect(C* obj, MF mem_func)
-  {
-    connect(Slot0::make(obj, mem_func));
-  }
+  { connect(Slot0::make(obj, mem_func)); }
 
   /// Remove a Slot from the list of those watching this Signal.
-  void disconnect(Util::SoftRef<Slot0> slot);
+  void disconnect(Util::SoftRef<Slot0> slot)
+  { SignalBase::doDisconnect(slot); }
 
   /** Informs all this object's Slots that this Signal's state
       has changed */

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Mon Nov 25 12:32:54 2002
+// written: Mon Nov 25 15:12:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ struct Util::SignalBase::Impl
 {
 public:
   Impl() :
-    itsSlots(),
+    slots(),
     isItEmitting(false)
   {}
 
@@ -76,35 +76,8 @@ public:
 
   typedef dlink_list<SlotRef> ListType;
 
-  ListType itsSlots;
-
+  ListType slots;
   bool isItEmitting;
-
-  void emit(void* params)
-  {
-    if (!isItEmitting)
-      {
-        Lock lock(this);
-
-        for (ListType::iterator ii = itsSlots.begin(), end = itsSlots.end();
-             ii != end;
-             /* incr in loop */)
-          {
-            if ((*ii)->exists())
-              {
-                dbgEval(3, (*ii)->refCount());
-                (*ii)->doCall(params);
-                ++ii;
-              }
-            else
-              {
-                ListType::iterator erase_me = ii;
-                ++ii;
-                itsSlots.erase(erase_me);
-              }
-          }
-      }
-  }
 
   class Lock
   {
@@ -141,28 +114,50 @@ Util::SignalBase::~SignalBase()
 
 void Util::SignalBase::doEmit(void* params) const
 {
-DOTRACE("Util::SignalBase::emit");
-  rep->emit(params);
+DOTRACE("Util::SignalBase::doEmit");
+  if (!rep->isItEmitting)
+    {
+      Impl::Lock lock(rep);
+
+      for (Impl::ListType::iterator
+             ii = rep->slots.begin(), end = rep->slots.end();
+           ii != end;
+           /* incr in loop */)
+        {
+          if ((*ii)->exists())
+            {
+              dbgEval(3, (*ii)->refCount());
+              (*ii)->doCall(params);
+              ++ii;
+            }
+          else
+            {
+              Impl::ListType::iterator erase_me = ii;
+              ++ii;
+              rep->slots.erase(erase_me);
+            }
+        }
+    }
 }
 
-void Util::SignalBase::disconnect(Util::SoftRef<Util::SlotBase> slot)
+void Util::SignalBase::doDisconnect(Util::SoftRef<Util::SlotBase> slot)
 {
-DOTRACE("Util::SignalBase::disconnect");
+DOTRACE("Util::SignalBase::doDisconnect");
   if (!slot.isValid()) return;
 
-  rep->itsSlots.remove(SlotRef(slot.get(), Util::PRIVATE));
+  rep->slots.remove(SlotRef(slot.get(), Util::PRIVATE));
 
-  dbgEvalNL(3, rep->itsSlots.size());
+  dbgEvalNL(3, rep->slots.size());
 }
 
-void Util::SignalBase::connect(Util::SoftRef<Util::SlotBase> slot)
+void Util::SignalBase::doConnect(Util::SoftRef<Util::SlotBase> slot)
 {
-DOTRACE("Util::SignalBase::connect");
+DOTRACE("Util::SignalBase::doConnect");
   if (!slot.isValid()) return;
 
-  rep->itsSlots.push_back(SlotRef(slot.get(), Util::PRIVATE));
+  rep->slots.push_back(SlotRef(slot.get(), Util::PRIVATE));
 
-  dbgEvalNL(3, rep->itsSlots.size());
+  dbgEvalNL(3, rep->slots.size());
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -181,16 +176,6 @@ DOTRACE("Util::Signal0::Signal0");
 Util::Signal0::~Signal0()
 {
 DOTRACE("Util::Signal0::~Signal0");
-}
-
-void Util::Signal0::disconnect(Util::SoftRef<Util::Slot0> slot)
-{
-  SignalBase::disconnect(slot);
-}
-
-void Util::Signal0::connect(Util::SoftRef<Util::Slot0> slot)
-{
-  SignalBase::connect(slot);
 }
 
 static const char vcid_signal_cc[] = "$Header$";
