@@ -3,7 +3,7 @@
 // tclveccmds.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:16:22 1999
-// written: Tue Dec  7 18:21:30 1999
+// written: Wed Dec  8 01:36:23 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,6 @@
 #define LOCAL_ASSERT
 #include "debug.h"
 
-namespace Tcl {
-
 ///////////////////////////////////////////////////////////////////////
 //
 // TVecGetterCmd definitions
@@ -29,9 +27,9 @@ namespace Tcl {
 ///////////////////////////////////////////////////////////////////////
 
 template <class ValType>
-TVecGetterCmd<ValType>::TVecGetterCmd(TclItemPkg* pkg, const char* cmd_name,
-												  Getter<ValType>* getter,
-												  const char* usage, int item_argn) :
+Tcl::TVecGetterCmd<ValType>::TVecGetterCmd(TclItemPkg* pkg, const char* cmd_name,
+														 Getter<ValType>* getter,
+														 const char* usage, int item_argn) :
   TclCmd(pkg->interp(), cmd_name, 
 			usage ? usage : (item_argn ? "item_id(s)" : NULL), 
 			item_argn+1, item_argn+1),
@@ -39,12 +37,12 @@ TVecGetterCmd<ValType>::TVecGetterCmd(TclItemPkg* pkg, const char* cmd_name,
   itsGetter(getter), 
   itsItemArgn(item_argn)
 {
-DOTRACE("TVecGetterCmd<>::TVecGetterCmd");
+DOTRACE("Tcl::TVecGetterCmd<>::TVecGetterCmd");
 }
 
 template <class ValType>
-void TVecGetterCmd<ValType>::invoke() {
-DOTRACE("TVecGetterCmd<>::invoke");
+void Tcl::TVecGetterCmd<ValType>::invoke() {
+DOTRACE("Tcl::TVecGetterCmd<>::invoke");
   vector<int> ids;
   if (itsItemArgn) {
 	 getSequenceFromArg(itsItemArgn, back_inserter(ids), (int*) 0);
@@ -66,7 +64,7 @@ DOTRACE("TVecGetterCmd<>::invoke");
 // 'const string&', even though the code is *exactly the same* as in
 // the generic templated version of invoke() above.
 template<>
-void TVecGetterCmd<const string&>::invoke() {
+void Tcl::TVecGetterCmd<const string&>::invoke() {
   vector<int> ids;
   if (itsItemArgn) {
 	 getSequenceFromArg(itsItemArgn, back_inserter(ids), (int*) 0);
@@ -85,11 +83,13 @@ void TVecGetterCmd<const string&>::invoke() {
 }
 
 // Explicit instatiation requests
+namespace Tcl {
 template class TVecGetterCmd<int>;
 template class TVecGetterCmd<bool>;
 template class TVecGetterCmd<double>;
 template class TVecGetterCmd<const char*>;
 template class TVecGetterCmd<const string&>;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -98,9 +98,9 @@ template class TVecGetterCmd<const string&>;
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-TVecSetterCmd<T>::TVecSetterCmd(TclItemPkg* pkg, const char* cmd_name,
-										  Setter<T>* setter,
-										  const char* usage, int item_argn) :
+Tcl::TVecSetterCmd<T>::TVecSetterCmd(TclItemPkg* pkg, const char* cmd_name,
+												 Setter<T>* setter,
+												 const char* usage, int item_argn) :
   TclCmd(pkg->interp(), cmd_name, 
 			usage ? usage : (item_argn ? 
 								  "item_id(s) new_value(s)" : "new_value"), 
@@ -110,12 +110,12 @@ TVecSetterCmd<T>::TVecSetterCmd(TclItemPkg* pkg, const char* cmd_name,
   itsItemArgn(item_argn),
   itsValArgn(item_argn+1)
 {
-DOTRACE("TVecSetterCmd<>::TVecSetterCmd");
+DOTRACE("Tcl::TVecSetterCmd<>::TVecSetterCmd");
 }
 
 template <class T>
-void TVecSetterCmd<T>::invoke() {
-DOTRACE("TVecSetterCmd<>::invoke");
+void Tcl::TVecSetterCmd<T>::invoke() {
+DOTRACE("Tcl::TVecSetterCmd<>::invoke");
   vector<int> ids;
   if (itsItemArgn) {
 	 getSequenceFromArg(itsItemArgn, back_inserter(ids), (int*) 0);
@@ -155,7 +155,7 @@ DOTRACE("TVecSetterCmd<>::invoke");
 // Specialization for T=const string&, since we must declare 'vals' as
 // type 'vector<string>' rather than 'vector<const string&>'.
 template<>
-void TVecSetterCmd<const string&>::invoke() {
+void Tcl::TVecSetterCmd<const string&>::invoke() {
   vector<int> ids;
   if (itsItemArgn) {
 	 getSequenceFromArg(itsItemArgn, back_inserter(ids), (int*) 0);
@@ -190,11 +190,13 @@ void TVecSetterCmd<const string&>::invoke() {
 }
 
 // Explicit instatiation requests
+namespace Tcl {
 template class TVecSetterCmd<int>;
 template class TVecSetterCmd<bool>;
 template class TVecSetterCmd<double>;
 template class TVecSetterCmd<const char*>;
 template class TVecSetterCmd<const string&>;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -203,9 +205,9 @@ template class TVecSetterCmd<const string&>;
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-TVecAttribCmd<T>::TVecAttribCmd(TclItemPkg* pkg, const char* cmd_name,
-										  Attrib<T>* attrib,
-										  const char* usage, int item_argn) :
+Tcl::TVecAttribCmd<T>::TVecAttribCmd(TclItemPkg* pkg, const char* cmd_name,
+												 Attrib<T>* attrib,
+												 const char* usage, int item_argn) :
   TVecGetterCmd<T>(pkg, 0, attrib, 0, item_argn),
   TVecSetterCmd<T>(pkg, 0, attrib, 0, item_argn),
   TclCmd(pkg->interp(), cmd_name,
@@ -215,29 +217,31 @@ TVecAttribCmd<T>::TVecAttribCmd(TclItemPkg* pkg, const char* cmd_name,
   itsObjcGet(item_argn+1),
   itsObjcSet(item_argn+2)
 {
-DOTRACE("TVecAttribCmd<>::TVecAttribCmd");
+DOTRACE("Tcl::TVecAttribCmd<>::TVecAttribCmd");
 }
 
 template <class T>
-TVecAttribCmd<T>::~TVecAttribCmd()
+Tcl::TVecAttribCmd<T>::~TVecAttribCmd()
 {
-DOTRACE("TVecAttribCmd<>::~TVecAttribCmd");
+DOTRACE("Tcl::TVecAttribCmd<>::~TVecAttribCmd");
 }
 
 template <class T>
-void TVecAttribCmd<T>::invoke() {
-DOTRACE("TVecAttribCmd<>::invoke");
+void Tcl::TVecAttribCmd<T>::invoke() {
+DOTRACE("Tcl::TVecAttribCmd<>::invoke");
   if      (TclCmd::objc() == itsObjcGet) { TVecGetterCmd<T>::invoke(); }
   else if (TclCmd::objc() == itsObjcSet) { TVecSetterCmd<T>::invoke(); }
   else    /* "can't happen" */           { Assert(0); }
 }
 
 // Explicit instatiation requests
+namespace Tcl {
 template class TVecAttribCmd<int>;
 template class TVecAttribCmd<bool>;
 template class TVecAttribCmd<double>;
 template class TVecAttribCmd<const char*>;
 template class TVecAttribCmd<const string&>;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -245,8 +249,9 @@ template class TVecAttribCmd<const string&>;
 //
 ///////////////////////////////////////////////////////////////////////
 
-VecActionCmd::VecActionCmd(TclItemPkg* pkg, const char* cmd_name, Action* action,
-									const char* usage, int item_argn) :
+Tcl::VecActionCmd::VecActionCmd(TclItemPkg* pkg, const char* cmd_name,
+										  Action* action,
+										  const char* usage, int item_argn) :
   TclCmd(pkg->interp(), cmd_name, 
 			usage ? usage : (item_argn ? "item_id(s)" : NULL),
 			item_argn+1, item_argn+1),
@@ -254,11 +259,11 @@ VecActionCmd::VecActionCmd(TclItemPkg* pkg, const char* cmd_name, Action* action
   itsAction(action),
   itsItemArgn(item_argn)
 {
-DOTRACE("VecActionCmd::VecActionCmd");
+DOTRACE("Tcl::VecActionCmd::VecActionCmd");
 }
 
-void VecActionCmd::invoke() {
-DOTRACE("VecActionCmd::invoke");
+void Tcl::VecActionCmd::invoke() {
+DOTRACE("Tcl::VecActionCmd::invoke");
   vector<int> ids;
   if (itsItemArgn) {
 	 getSequenceFromArg(itsItemArgn, back_inserter(ids), (int*) 0);
@@ -271,8 +276,6 @@ DOTRACE("VecActionCmd::invoke");
 	 void* item = itsPkg->getItemFromId(ids[i]);
 	 itsAction->action(item);
   }
-}
-
 }
 
 static const char vcid_tclveccmds_cc[] = "$Header$";
