@@ -34,6 +34,7 @@
 
 #include "io/io.h"
 #include "io/ioerror.h"
+#include "io/writeidmap.h"
 #include "io/writer.h"
 
 #include "util/arrays.h"
@@ -42,7 +43,6 @@
 #include "util/strings.h"
 #include "util/value.h"
 
-#include <map>
 #include <ostream>
 #include <set>
 
@@ -52,44 +52,6 @@ DBG_REGISTER
 
 using Util::Ref;
 using Util::SoftRef;
-
-namespace
-{
-  /// Translate UIDs into a repeatable id sequence for the XML file.
-  /** This way, we can guarantee that, a given object hierarchy will always
-      produce the same XML file, regardless of what the UIDs happen to
-      be. */
-  class IdMap
-  {
-  public:
-    IdMap() :
-      itsMap(),
-      itsNextId(1)
-    {}
-
-    int get(Util::UID uid) const
-    {
-      if (uid == 0) return 0;
-
-      MapType::iterator itr = itsMap.find(uid);
-      if (itr == itsMap.end())
-        {
-          int val = itsNextId++;
-          itsMap.insert(MapType::value_type(uid, val));
-          return val;
-        }
-
-      // else...
-      Assert((*itr).second != 0);
-      return (*itr).second;
-    }
-
-  private:
-    typedef std::map<Util::UID, int> MapType;
-    mutable MapType itsMap;
-    mutable int itsNextId;
-  };
-}
 
 class XMLWriter : public IO::Writer
 {
@@ -156,7 +118,7 @@ private:
   STD_IO::ostream& itsBuf;
   std::set<Util::UID> itsWrittenObjects;
   int itsIndentLevel;
-  IdMap itsIdMap;
+  IO::WriteIdMap itsIdMap;
 };
 
 ///////////////////////////////////////////////////////////////////////
