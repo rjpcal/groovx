@@ -57,12 +57,12 @@ test "TlistTcl-Tlist::loadObjidFile" "error on junk text file" {
 test "TlistTcl-Tlist::loadObjidFile" "error on junk binary file" {
 	 set o [new Face 11]
 	 set p [new Position 4]
-	 set trials [Tlist::loadObjidFile $::TEST_DIR/junk_bin_file $o $p -1]
+	 set before [Trial::countAll]
+	 catch {Tlist::loadObjidFile $::TEST_DIR/junk_bin_file $o $p -1} trials
+	 set result "[llength $trials] [expr [Trial::countAll]-$before]"
 	 IoDb::clear
-	 llength $trials
-} {Tlist::loadObjidFile: IO::InputError:}
-
-#  [ expr [string equal $env(ARCH) "irix6"] ? $skip_known_bug : $normal_test]
+	 return $result
+} {^0 0$}
 
 
 ### Tlist::dealSinglesCmd ###
