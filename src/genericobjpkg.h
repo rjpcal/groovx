@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Wed Jul  7 14:06:01 1999
+// written: Tue Oct 12 10:29:19 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ private:
 };
 
 template <class C, class List>
-ListItemPkg::ListItemPkg(Tcl_Interp* interp, List& aList,
+ListItemPkg<C, List>::ListItemPkg(Tcl_Interp* interp, List& aList,
 								 const char* name, const char* version,
 								 const char* creator_cmd_name) :
   AbstractListItemPkg<C, List>(interp, aList, name, version)
