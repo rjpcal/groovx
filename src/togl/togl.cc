@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 18:55:54 2002
+// written: Mon Sep 16 19:08:46 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -48,6 +48,12 @@
 #include <GL/glx.h>
 #include <tcl.h>
 #include <tk.h>
+
+#ifdef HAVE_LIMITS
+#  include <limits>
+#else
+#  include <climits>
+#endif
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -227,6 +233,8 @@ public:
   unsigned long allocColor(float red, float green, float blue) const;
   void freeColor(unsigned long pixel) const;
   void setColor(unsigned long index, float red, float green, float blue) const;
+  Color queryColor(unsigned int color_index) const;
+  void queryColor(unsigned int color_index, Color& color) const;
 
   void useLayer(Togl::Layer layer);
 
@@ -608,6 +616,35 @@ DOTRACE("Togl::Impl::setColor");
   XStoreColor( itsDisplay, Tk_Colormap(itsTkWin), &xcol );
 }
 
+Togl::Color Togl::Impl::queryColor(unsigned int color_index) const
+{
+  Togl::Color col;
+  queryColor(color_index, col);
+  return col;
+}
+
+void Togl::Impl::queryColor(unsigned int color_index, Color& color) const
+{
+DOTRACE("Togl::Impl::queryColor");
+
+  Colormap cmap = Tk_Colormap(itsTkWin);
+  XColor col;
+
+  col.pixel = color_index;
+  XQueryColor(itsDisplay, cmap, &col);
+
+  color.pixel = (unsigned int)col.pixel;
+#ifdef HAVE_LIMITS
+  const unsigned short usmax = std::numeric_limits<unsigned short>::max();
+#else
+  const unsigned short usmax = USHRT_MAX;
+#endif
+
+  color.red   = double(col.red)   / usmax;
+  color.green = double(col.green) / usmax;
+  color.blue  = double(col.blue)  / usmax;
+}
+
 void Togl::Impl::useLayer(Togl::Layer layer)
 {
 DOTRACE("Togl::Impl::useLayer");
@@ -787,7 +824,7 @@ Tcl_Obj* Togl::cget(Tcl_Obj* param) const
 void Togl::configure(int objc, Tcl_Obj* const objv[])
   { rep->configure(objc, objv); }
 
-void Togl::makeCurrent() const          { rep->itsGlx->makeCurrent(windowId()); }
+void Togl::makeCurrent() const          { rep->itsGlx->makeCurrent(rep->windowId()); }
 void Togl::requestRedisplay()           { rep->requestRedisplay(); }
 void Togl::requestReconfigure()         { rep->requestReconfigure(); }
 void Togl::swapBuffers() const          { rep->swapBuffers(); }
@@ -801,6 +838,22 @@ Tcl_Interp* Togl::interp() const        { return rep->itsInterp; }
 Tk_Window Togl::tkWin() const           { return rep->itsTkWin; }
 const char* Togl::pathname() const      { return Tk_PathName(rep->itsTkWin); }
 
+double Togl::pixelsPerInch() const
+{
+DOTRACE("Togl::pixelsPerInch");
+
+  Screen* scr = Tk_Screen(rep->itsTkWin);
+  const int screen_pixel_width = XWidthOfScreen(scr);
+  const int screen_mm_width = XWidthMMOfScreen(scr);
+
+  const double screen_inch_width = screen_mm_width / 25.4;
+
+  const double screen_ppi = screen_pixel_width / screen_inch_width;
+
+  DebugEvalNL(screen_ppi);
+  return screen_ppi;
+}
+
 unsigned long Togl::allocColor( float red, float green, float blue ) const
   { return rep->allocColor(red, green, blue); }
 
@@ -810,6 +863,12 @@ void Togl::freeColor( unsigned long pixel ) const
 void Togl::setColor( unsigned long index,
                      float red, float green, float blue ) const
   { rep->setColor(index, red, green, blue); }
+
+Togl::Color Togl::queryColor(unsigned int color_index) const
+  { return rep->queryColor(color_index); }
+
+void Togl::queryColor(unsigned int color_index, Color& color) const
+  { rep->queryColor(color_index, color); }
 
 GLuint Togl::loadBitmapFont( const char *fontname ) const
   { return GLUtil::loadBitmapFont(Tk_Display(rep->itsTkWin), fontname); }
@@ -884,12 +943,6 @@ DOTRACE("Togl::setHeight");
   rep->itsOpts->height = h;
   Tk_GeometryRequest(rep->itsTkWin, rep->itsOpts->width, rep->itsOpts->height);
 }
-
-Display* Togl::display() const  { return Tk_Display(rep->itsTkWin); }
-Screen* Togl::screen() const    { return Tk_Screen(rep->itsTkWin); }
-int Togl::screenNumber() const  { return Tk_ScreenNumber(rep->itsTkWin); }
-Colormap Togl::colormap() const { return Tk_Colormap(rep->itsTkWin); }
-Window Togl::windowId() const   { return Tk_WindowId(rep->itsTkWin); }
 
 Gfx::Canvas& Togl::getCanvas() const
 {

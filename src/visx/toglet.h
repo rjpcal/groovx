@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Sep 16 18:40:55 2002
+// written: Mon Sep 16 19:04:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,14 +36,6 @@ protected:
   Toglet(bool pack=true);
 
 public:
-  /// Simple RGB color struct for use with Toglet.
-  struct Color
-  {
-    Color(unsigned int p=0, double r=0.0, double g=0.0, double b=0.0):
-      pixel(p), red(r), green(g), blue(b) {}
-    unsigned int pixel;
-    double red, green, blue;
-  };
 
   static Toglet* make() { return new Toglet; }
 
@@ -52,10 +44,7 @@ public:
   virtual bool isNotShareable() const { return true; }
 
   // accessors
-  Color queryColor(unsigned int color_index) const;
-  void queryColor(unsigned int color_index, Color& color) const;
   bool usingFixedScale() const;
-  double pixelsPerInch() const;
 
   virtual Gfx::Canvas& getCanvas();
 

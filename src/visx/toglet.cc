@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Sep 16 18:55:49 2002
+// written: Mon Sep 16 19:09:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,17 +33,10 @@
 
 #include "visx/xbmaprenderer.h"
 
-#include <X11/Xlib.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <tk.h>
 #include <cmath>
-
-#ifdef HAVE_LIMITS
-#  include <limits>
-#else
-#  include <climits>
-#endif
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -383,55 +376,10 @@ DOTRACE("Toglet::~Toglet");
 // accessors //
 ///////////////
 
-Toglet::Color Toglet::queryColor(unsigned int color_index) const
-{
-  Color col;
-  queryColor(color_index, col);
-  return col;
-}
-
-void Toglet::queryColor(unsigned int color_index, Color& color) const
-{
-DOTRACE("Toglet::queryColor");
-
-  Tk_Window tkwin = Togl::tkWin();
-  Display* display = Tk_Display(reinterpret_cast<Tk_FakeWin *>(tkwin));
-  Colormap cmap = Togl::colormap();
-  XColor col;
-
-  col.pixel = color_index;
-  XQueryColor(display, cmap, &col);
-
-  color.pixel = (unsigned int)col.pixel;
-#ifdef HAVE_LIMITS
-  const unsigned short usmax = std::numeric_limits<unsigned short>::max();
-#else
-  const unsigned short usmax = USHRT_MAX;
-#endif
-
-  color.red   = double(col.red)   / usmax;
-  color.green = double(col.green) / usmax;
-  color.blue  = double(col.blue)  / usmax;
-}
-
 bool Toglet::usingFixedScale() const
 {
 DOTRACE("Toglet::usingFixedScale");
   return rep->sizer->usingFixedScale();
-}
-
-double Toglet::pixelsPerInch() const
-{
-  Screen* scr = Tk_Screen(reinterpret_cast<Tk_FakeWin*>(Togl::tkWin()));
-  const int screen_pixel_width = XWidthOfScreen(scr);
-  const int screen_mm_width = XWidthMMOfScreen(scr);
-
-  const double screen_inch_width = screen_mm_width / 25.4;
-
-  const double screen_ppi = screen_pixel_width / screen_inch_width;
-
-  DebugEvalNL(screen_ppi);
-  return screen_ppi;
 }
 
 Gfx::Canvas& Toglet::getCanvas()

@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Mon Sep 16 18:49:11 2002
+// written: Mon Sep 16 19:11:39 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -28,9 +28,10 @@
 #include "util/object.h"
 #endif
 
-#include <tcl.h>
-#include <tk.h>
-#include <X11/Xlib.h>
+struct Tcl_Interp;
+struct Tcl_Obj;
+
+typedef struct Tk_Window_ *Tk_Window;
 
 namespace Gfx
 {
@@ -80,12 +81,25 @@ public:
   Tcl_Interp* interp() const;
   Tk_Window tkWin() const;
   const char* pathname() const;
+  double pixelsPerInch() const;
 
   // Color index mode
+
+  /// Simple RGB color struct for use with Togl.
+  struct Color
+  {
+    Color(unsigned int p=0, double r=0.0, double g=0.0, double b=0.0):
+      pixel(p), red(r), green(g), blue(b) {}
+    unsigned int pixel;
+    double red, green, blue;
+  };
+
   unsigned long allocColor(float red, float green, float blue) const;
   void freeColor(unsigned long index) const;
   void setColor(unsigned long index,
                 float red, float green, float blue) const;
+  Color queryColor(unsigned int color_index) const;
+  void queryColor(unsigned int color_index, Color& color) const;
 
   // Bitmap fonts
   unsigned int loadBitmapFont(const char* fontname) const;
@@ -116,13 +130,6 @@ public:
   // Manipulators
   void setWidth(int w);
   void setHeight(int h);
-
-  // X11-only commands
-  Display* display() const;
-  Screen* screen() const;
-  int screenNumber() const;
-  Colormap colormap() const;
-  Window windowId() const;
 
   // Canvas
   Gfx::Canvas& getCanvas() const;

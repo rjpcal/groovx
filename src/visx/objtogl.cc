@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Mon Sep 16 18:46:11 2002
+// written: Mon Sep 16 19:02:14 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -55,20 +55,20 @@ namespace ObjTogl
     return theWidget;
   }
 
-  Tcl::List dumpCmap(SoftRef<Toglet> config, unsigned int start, unsigned end)
+  Tcl::List dumpCmap(SoftRef<Toglet> toglet, unsigned int start, unsigned end)
   {
     if (start > 255 || end > 255)
       {
         throw Tcl::TclError("colormap index out of range");
       }
 
-    Toglet::Color color;
+    Togl::Color color;
 
     Tcl::List result;
 
     for (unsigned int i = start; i <= end; ++i)
       {
-        config->queryColor(i, color);
+        toglet->queryColor(i, color);
         Tcl::List color_list;
         color_list.append(i);
         color_list.append(color.red);
