@@ -66,68 +66,80 @@ namespace
 }
 
 extern "C"
-int Th_Init(Tcl_Interp* interp)
+int Timinghdlr_Init(Tcl_Interp* interp)
 {
-DOTRACE("Th_Init");
-
-  // This is just a dummy package to make sure that Tcl sees a package
-  // named "Th", in order for "package require Th" to succeed.
-  Tcl::Pkg* pkg0 = new Tcl::Pkg(interp, "Th", "$Revision$");
+DOTRACE("Timinghdlr_Init");
 
   Util::ObjFactory::theOne().registerCreatorFunc(&TimingHdlr::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&TimingHandler::make);
 
-  Tcl::Pkg* pkg1 = new Tcl::Pkg(interp, "TimingHdlr", "$Revision$");
-  pkg1->inherit("IO");
-  Tcl::defGenericObjCmds<TimingHdlr>(pkg1);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "TimingHdlr", "$Revision$");
+  pkg->inherit("IO");
+  Tcl::defGenericObjCmds<TimingHdlr>(pkg);
 
-  pkg1->def( "addImmediateEvent", "th_id event_type msec_delay",
-             Util::bindLast(&addNewEvent, TimingHdlr::IMMEDIATE) );
-  pkg1->def( "addStartEvent", "th_id event_type msec_delay",
-             Util::bindLast(&addNewEvent, TimingHdlr::FROM_START) );
-  pkg1->def( "addResponseEvent", "th_id event_type msec_delay",
-             Util::bindLast(&addNewEvent, TimingHdlr::FROM_RESPONSE) );
-  pkg1->def( "addAbortEvent", "th_id event_type msec_delay",
-             Util::bindLast(&addNewEvent, TimingHdlr::FROM_ABORT) );
+  pkg->def( "addImmediateEvent", "th_id event_type msec_delay",
+            Util::bindLast(&addNewEvent, TimingHdlr::IMMEDIATE) );
+  pkg->def( "addStartEvent", "th_id event_type msec_delay",
+            Util::bindLast(&addNewEvent, TimingHdlr::FROM_START) );
+  pkg->def( "addResponseEvent", "th_id event_type msec_delay",
+            Util::bindLast(&addNewEvent, TimingHdlr::FROM_RESPONSE) );
+  pkg->def( "addAbortEvent", "th_id event_type msec_delay",
+            Util::bindLast(&addNewEvent, TimingHdlr::FROM_ABORT) );
 
-  pkg1->def( "addImmediateEvent", "th_id event_id",
-             Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
-                            TimingHdlr::IMMEDIATE) );
-  pkg1->def( "addStartEvent", "th_id event_id",
-             Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
-                            TimingHdlr::FROM_START) );
-  pkg1->def( "addResponseEvent", "th_id event_id",
-             Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
-                            TimingHdlr::FROM_RESPONSE) );
-  pkg1->def( "addAbortEvent", "th_id event_id",
-             Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
-                            TimingHdlr::FROM_ABORT) );
+  pkg->def( "addImmediateEvent", "th_id event_id",
+            Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
+                           TimingHdlr::IMMEDIATE) );
+  pkg->def( "addStartEvent", "th_id event_id",
+            Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
+                           TimingHdlr::FROM_START) );
+  pkg->def( "addResponseEvent", "th_id event_id",
+            Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
+                           TimingHdlr::FROM_RESPONSE) );
+  pkg->def( "addAbortEvent", "th_id event_id",
+            Util::bindLast(Util::memFunc(&TimingHdlr::addEvent),
+                           TimingHdlr::FROM_ABORT) );
 
-  pkg1->namespaceAlias("Th");
+  pkg->namespaceAlias("Th");
 
-  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "TimingHandler", "$Revision$");
-  pkg2->inherit("IO");
-  Tcl::defGenericObjCmds<TimingHandler>(pkg2);
+  return pkg->initStatus();
+}
 
-  pkg2->defAttrib("abortWait",
-                  &TimingHandler::getAbortWait,
-                  &TimingHandler::setAbortWait);
-  pkg2->defAttrib("interTrialInterval",
-                  &TimingHandler::getInterTrialInterval,
-                  &TimingHandler::setInterTrialInterval);
-  pkg2->defAttrib("stimDur",
-                  &TimingHandler::getStimDur,
-                  &TimingHandler::setStimDur);
-  pkg2->defAttrib("timeout",
-                  &TimingHandler::getTimeout,
-                  &TimingHandler::setTimeout);
+extern "C"
+int Timinghandler_Init(Tcl_Interp* interp)
+{
+DOTRACE("Timinghandler_Init");
 
-  pkg2->namespaceAlias("SimpleTh");
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "TimingHandler", "$Revision$");
+  pkg->inherit("IO");
+  Tcl::defGenericObjCmds<TimingHandler>(pkg);
 
-  Tcl::Pkg* pkg3 = new Tcl::Pkg(interp, "TrialEvent", "$Revision$");
-  Tcl::defGenericObjCmds<TrialEvent>(pkg3);
+  pkg->defAttrib("abortWait",
+                 &TimingHandler::getAbortWait,
+                 &TimingHandler::setAbortWait);
+  pkg->defAttrib("interTrialInterval",
+                 &TimingHandler::getInterTrialInterval,
+                 &TimingHandler::setInterTrialInterval);
+  pkg->defAttrib("stimDur",
+                 &TimingHandler::getStimDur,
+                 &TimingHandler::setStimDur);
+  pkg->defAttrib("timeout",
+                 &TimingHandler::getTimeout,
+                 &TimingHandler::setTimeout);
 
-  pkg3->defAttrib("delay", &TrialEvent::getDelay, &TrialEvent::setDelay);
+  pkg->namespaceAlias("SimpleTh");
+
+  return pkg->initStatus();
+}
+
+extern "C"
+int Trialevent_Init(Tcl_Interp* interp)
+{
+DOTRACE("Trialevent_Init");
+
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "TrialEvent", "$Revision$");
+  Tcl::defGenericObjCmds<TrialEvent>(pkg);
+
+  pkg->defAttrib("delay", &TrialEvent::getDelay, &TrialEvent::setDelay);
 
   initEventType<AbortTrialEvent>(interp);
   initEventType<DrawEvent>(interp);
@@ -142,12 +154,20 @@ DOTRACE("Th_Init");
   initEventType<RenderFrontEvent>(interp);
   initEventType<ClearBufferEvent>(interp);
 
-  Tcl::Pkg* pkg4 = initEventType<GenericEvent>(interp);
+  return pkg->initStatus();
+}
 
-  pkg4->defGetter("callback", &GenericEvent::getCallback);
-  pkg4->defSetter("callback", &GenericEvent::setCallback);
+extern "C"
+int Genericevent_Init(Tcl_Interp* interp)
+{
+DOTRACE("Genericevent_Init");
 
-  return Tcl::Pkg::initStatus(pkg0, pkg1, pkg2, pkg3, pkg4);
+  Tcl::Pkg* pkg = initEventType<GenericEvent>(interp);
+
+  pkg->defGetter("callback", &GenericEvent::getCallback);
+  pkg->defSetter("callback", &GenericEvent::setCallback);
+
+  return pkg->initStatus();
 }
 
 static const char vcid_thtcl_cc[] = "$Header$";

@@ -142,101 +142,109 @@ namespace
 
 //--------------------------------------------------------------------
 //
-// Rh_Init --
+// Package init procedures
 //
 //--------------------------------------------------------------------
 
 extern "C"
-int Rh_Init(Tcl_Interp* interp)
+int Responsehandler_Init(Tcl_Interp* interp)
 {
-DOTRACE("Rh_Init");
+DOTRACE("Responsehandler_Init");
 
-  // This is just a dummy package to make sure that Tcl sees a package
-  // named "Rh", in order for "package require Rh" to succeed.
-  Tcl::Pkg* pkg0 = new Tcl::Pkg(interp, "Rh", "$Revision$");
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "ResponseHandler", "$Revision$");
+  pkg->inherit("IO");
+  Tcl::defGenericObjCmds<ResponseHandler>(pkg);
+  pkg->namespaceAlias("Rh");
 
-  //
-  // Rh
-  //
+  return pkg->initStatus();
+}
 
-  Tcl::Pkg* pkg1 = new Tcl::Pkg(interp, "ResponseHandler", "$Revision$");
-  pkg1->inherit("IO");
-  Tcl::defGenericObjCmds<ResponseHandler>(pkg1);
-  pkg1->namespaceAlias("Rh");
+extern "C"
+int Eventresponsehdlr_Init(Tcl_Interp* interp)
+{
+DOTRACE("Eventresponsehdlr_Init");
 
-  //
-  // EventRh
-  //
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "EventResponseHdlr",
+                               "$Revision$");
+  pkg->inherit("ResponseHandler");
+  Tcl::defTracing(pkg, EventResponseHdlr::tracer);
 
-  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "EventResponseHdlr",
-                                "$Revision$");
-  pkg2->inherit("ResponseHandler");
-  Tcl::defTracing(pkg2, EventResponseHdlr::tracer);
+  Tcl::defGenericObjCmds<EventResponseHdlr>(pkg);
 
-  Tcl::defGenericObjCmds<EventResponseHdlr>(pkg2);
+  pkg->defAction("abortInvalidResponses",
+                 &EventResponseHdlr::abortInvalidResponses);
+  pkg->defAction("ignoreInvalidResponses",
+                 &EventResponseHdlr::ignoreInvalidResponses);
+  pkg->defAttrib("useFeedback",
+                 &EventResponseHdlr::getUseFeedback,
+                 &EventResponseHdlr::setUseFeedback);
+  pkg->defSetter("inputResponseMap",
+                 &EventResponseHdlr::setInputResponseMap);
+  pkg->defAttrib("feedbackMap",
+                 &EventResponseHdlr::getFeedbackMap,
+                 &EventResponseHdlr::setFeedbackMap);
+  pkg->defAttrib("eventSequence",
+                 &EventResponseHdlr::getEventSequence,
+                 &EventResponseHdlr::setEventSequence);
+  pkg->defAttrib("bindingSubstitution",
+                 &EventResponseHdlr::getBindingSubstitution,
+                 &EventResponseHdlr::setBindingSubstitution);
+  pkg->def("responseProc", "", &EventResponseHdlr::getResponseProc);
+  pkg->def("responseProc", "args body", &EventResponseHdlr::setResponseProc);
+  pkg->defAttrib("maxResponses",
+                 &EventResponseHdlr::getMaxResponses,
+                 &EventResponseHdlr::setMaxResponses);
 
-  pkg2->defAction("abortInvalidResponses",
-                  &EventResponseHdlr::abortInvalidResponses);
-  pkg2->defAction("ignoreInvalidResponses",
-                  &EventResponseHdlr::ignoreInvalidResponses);
-  pkg2->defAttrib("useFeedback",
-                  &EventResponseHdlr::getUseFeedback,
-                  &EventResponseHdlr::setUseFeedback);
-  pkg2->defSetter("inputResponseMap",
-                  &EventResponseHdlr::setInputResponseMap);
-  pkg2->defAttrib("feedbackMap",
-                  &EventResponseHdlr::getFeedbackMap,
-                  &EventResponseHdlr::setFeedbackMap);
-  pkg2->defAttrib("eventSequence",
-                  &EventResponseHdlr::getEventSequence,
-                  &EventResponseHdlr::setEventSequence);
-  pkg2->defAttrib("bindingSubstitution",
-                  &EventResponseHdlr::getBindingSubstitution,
-                  &EventResponseHdlr::setBindingSubstitution);
-  pkg2->def("responseProc", "", &EventResponseHdlr::getResponseProc);
-  pkg2->def("responseProc", "args body", &EventResponseHdlr::setResponseProc);
-  pkg2->defAttrib("maxResponses",
-                  &EventResponseHdlr::getMaxResponses,
-                  &EventResponseHdlr::setMaxResponses);
+  pkg->namespaceAlias("EventRh");
 
-  pkg2->namespaceAlias("EventRh");
+  return pkg->initStatus();
+}
 
-  //
-  // KbdRh
-  //
+extern "C"
+int Kbdresponsehdlr_Init(Tcl_Interp* interp)
+{
+DOTRACE("Kbdresponsehdlr_Init");
 
-  Tcl::Pkg* pkg3 = new Tcl::Pkg(interp, "KbdResponseHdlr", "$Revision$");
-  pkg3->inherit("EventResponseHdlr");
-  Tcl::defGenericObjCmds<KbdResponseHdlr>(pkg3);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "KbdResponseHdlr", "$Revision$");
+  pkg->inherit("EventResponseHdlr");
+  Tcl::defGenericObjCmds<KbdResponseHdlr>(pkg);
 
-  pkg3->namespaceAlias("KbdRh");
+  pkg->namespaceAlias("KbdRh");
 
-  //
-  // NullRh
-  //
+  return pkg->initStatus();
+}
 
-  Tcl::Pkg* pkg4 = new Tcl::Pkg(interp, "NullResponseHdlr",
-                                "$Revision$");
-  pkg4->inherit("ResponseHandler");
-  Tcl::defGenericObjCmds<NullResponseHdlr>(pkg4);
-  pkg4->namespaceAlias("NullRh");
+extern "C"
+int Nullresponsehdlr_Init(Tcl_Interp* interp)
+{
+DOTRACE("Nullresponsehdlr_Init");
 
-  //
-  // SerialRh
-  //
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "NullResponseHdlr",
+                               "$Revision$");
+  pkg->inherit("ResponseHandler");
+  Tcl::defGenericObjCmds<NullResponseHdlr>(pkg);
+  pkg->namespaceAlias("NullRh");
 
-  Tcl::Pkg* pkg5 = new Tcl::Pkg(interp, "SerialRh", "$Revision$");
-  pkg5->def( "SerialRh::SerialRh", "device=/dev/tty0p0",
-             Util::bindFirst(&startSerial, interp) );
-  pkg5->def( "SerialRh::SerialRh", "",
-             Util::bindLast(Util::bindFirst(&startSerial, interp),
-                            "/dev/tty0p0") );
+  return pkg->initStatus();
+}
+
+extern "C"
+int Serialrh_Init(Tcl_Interp* interp)
+{
+DOTRACE("Serialrh_Init");
+
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "SerialRh", "$Revision$");
+  pkg->def( "SerialRh::SerialRh", "device=/dev/tty0p0",
+            Util::bindFirst(&startSerial, interp) );
+  pkg->def( "SerialRh::SerialRh", "",
+            Util::bindLast(Util::bindFirst(&startSerial, interp),
+                           "/dev/tty0p0") );
 
   Util::ObjFactory::theOne().registerCreatorFunc(&EventResponseHdlr::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&KbdResponseHdlr::make);
   Util::ObjFactory::theOne().registerCreatorFunc(&NullResponseHdlr::make);
 
-  return Tcl::Pkg::initStatus(pkg0, pkg1, pkg2, pkg3, pkg4, pkg5);
+  return pkg->initStatus();
 }
 
 static const char vcid_rhtcl_cc[] = "$Header$";

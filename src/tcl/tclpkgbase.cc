@@ -193,24 +193,6 @@ DOTRACE("Tcl::PkgBase::initStatus");
   return rep->initStatus;
 }
 
-int Tcl::PkgBase::initStatus(PkgBase* pkg) throw()
-{
-  return pkg ? pkg->initStatus() : TCL_OK;
-}
-
-int Tcl::PkgBase::combineStatus(int status1, int status2) throw()
-{
-DOTRACE("Tcl::PkgBase::combineStatus");
-  if (TCL_ERROR == status1 || TCL_ERROR == status2)
-    return TCL_ERROR;
-  else if (TCL_OK != status1)
-    return status1;
-  else if (TCL_OK != status2)
-    return status2;
-
-  return TCL_OK;
-}
-
 Tcl::Interp& Tcl::PkgBase::interp() throw()
 {
 DOTRACE("Tcl::PkgBase::interp");

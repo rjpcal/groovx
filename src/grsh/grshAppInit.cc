@@ -43,6 +43,7 @@ extern "C"
   Tcl_PackageInitProc Block_Init;
   Tcl_PackageInitProc Cloneface_Init;
   Tcl_PackageInitProc Dlist_Init;
+  Tcl_PackageInitProc Eventresponsehdlr_Init;
   Tcl_PackageInitProc Exptdriver_Init;
   Tcl_PackageInitProc Face_Init;
   Tcl_PackageInitProc Fish_Init;
@@ -50,6 +51,7 @@ extern "C"
   Tcl_PackageInitProc Gabor_Init;
   Tcl_PackageInitProc Gaborarray_Init;
   Tcl_PackageInitProc Gl_Init;
+  Tcl_PackageInitProc Gtrace_Init;
   Tcl_PackageInitProc Gxcolor_Init;
   Tcl_PackageInitProc Gxcylinder_Init;
   Tcl_PackageInitProc Gxdisk_Init;
@@ -70,22 +72,28 @@ extern "C"
   Tcl_PackageInitProc Gxsphere_Init;
   Tcl_PackageInitProc Gxtext_Init;
   Tcl_PackageInitProc Gxtransform_Init;
-  Tcl_PackageInitProc Gtrace_Init;
   Tcl_PackageInitProc Hook_Init;
   Tcl_PackageInitProc House_Init;
   Tcl_PackageInitProc Io_Init;
   Tcl_PackageInitProc Jitter_Init;
+  Tcl_PackageInitProc Kbdresponsehdlr_Init;
   Tcl_PackageInitProc Maskhatch_Init;
   Tcl_PackageInitProc Misc_Init;
   Tcl_PackageInitProc Morphyface_Init;
+  Tcl_PackageInitProc Nullresponsehdlr_Init;
   Tcl_PackageInitProc Obj_Init;
+  Tcl_PackageInitProc Objdb_Init;
   Tcl_PackageInitProc Prof_Init;
-  Tcl_PackageInitProc Rh_Init;
+  Tcl_PackageInitProc Responsehandler_Init;
+  Tcl_PackageInitProc Serialrh_Init;
   Tcl_PackageInitProc Sound_Init;
-  Tcl_PackageInitProc Th_Init;
   Tcl_PackageInitProc Tlist_Init;
   Tcl_PackageInitProc Toglet_Init;
   Tcl_PackageInitProc Trial_Init;
+  Tcl_PackageInitProc Timinghdlr_Init;
+  Tcl_PackageInitProc Timinghandler_Init;
+  Tcl_PackageInitProc Trialevent_Init;
+  Tcl_PackageInitProc Genericevent_Init;
 }
 
 //
@@ -113,12 +121,14 @@ PackageInfo DELAYED_PKGS[] =
     { "Block",               Block_Init,               "3.0" },
     { "Cloneface",           Cloneface_Init,           "2.0" },
     { "Dlist",               Dlist_Init,               "1.0" },
+    { "Eventresponsehdlr",   Eventresponsehdlr_Init,   "3.0" },
     { "Exptdriver",          Exptdriver_Init,          "2.0" },
     { "Face",                Face_Init,                "2.0" },
     { "Fish",                Fish_Init,                "1.0" },
     { "Fixpt",               Fixpt_Init,               "2.0" },
     { "Gabor",               Gabor_Init,               "1.0" },
     { "Gaborarray",          Gaborarray_Init,          "1.0" },
+    { "Genericevent",        Genericevent_Init,        "3.0" },
     { "Gl",                  Gl_Init,                  "1.0" },
     { "Gtrace",              Gtrace_Init,              "1.0" },
     { "Gxcolor",             Gxcolor_Init,             "1.0" },
@@ -145,17 +155,23 @@ PackageInfo DELAYED_PKGS[] =
     { "House",               House_Init,               "1.0" },
     { "Io",                  Io_Init,                  "1.0" },
     { "Jitter",              Jitter_Init,              "2.0" },
+    { "Kbdresponsehdlr",     Kbdresponsehdlr_Init,     "3.0" },
     { "Maskhatch",           Maskhatch_Init,           "1.0" },
     { "Misc",                Misc_Init,                "1.0" },
     { "Morphyface",          Morphyface_Init,          "1.0" },
+    { "Nullresponsehdlr",    Nullresponsehdlr_Init,    "3.0" },
     { "Obj",                 Obj_Init,                 "1.0" },
+    { "Objdb",               Objdb_Init,               "1.0" },
     { "Prof",                Prof_Init,                "1.0" },
-    { "Rh",                  Rh_Init,                  "3.0" },
+    { "Responsehandler",     Responsehandler_Init,     "3.0" },
+    { "Serialrh",            Serialrh_Init,            "3.0" },
     { "Sound",               Sound_Init,               "1.0" },
-    { "Th",                  Th_Init,                  "3.0" },
+    { "Timinghandler",       Timinghandler_Init,       "3.0" },
+    { "Timinghdlr",          Timinghdlr_Init,          "3.0" },
     { "Tlist",               Tlist_Init,               "3.0" },
     { "Toglet",              Toglet_Init,              "1.0" },
     { "Trial",               Trial_Init,               "1.0" },
+    { "Trialevent",          Trialevent_Init,          "3.0" },
   };
 
 int          appArgc      = 0;

@@ -115,7 +115,6 @@ namespace
 
   class ObjDbPkg : public Tcl::Pkg
   {
-
   public:
     ObjDbPkg(Tcl_Interp* interp) :
       Tcl::Pkg(interp, "ObjDb", "$Revision$")
@@ -186,41 +185,41 @@ namespace
 }
 
 extern "C"
+int Objdb_Init(Tcl_Interp* interp)
+{
+DOTRACE("Objdb_Init");
+
+  Tcl::Pkg* pkg = new ObjDbPkg(interp);
+
+  return pkg->initStatus();
+}
+
+extern "C"
 int Obj_Init(Tcl_Interp* interp)
 {
 DOTRACE("Obj_Init");
 
-  //
-  // ObjDb Package
-  //
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Obj", "$Revision$");
+  Tcl::defGenericObjCmds<Util::Object>(pkg);
 
-  Tcl::Pkg* pkg1 = new ObjDbPkg(interp);
+  pkg->defGetter("refCount", &Util::Object::refCount);
+  pkg->defAction("incrRefCount", &Util::Object::incrRefCount);
+  pkg->defAction("decrRefCount", &Util::Object::decrRefCount);
 
-  //
-  // Obj Package
-  //
+  pkg->defVec( "type", "item_id(s)", &Util::Object::objTypename );
+  pkg->defVec( "realType", "item_id(s)", &Util::Object::realTypename );
 
-  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "Obj", "$Revision$");
-  Tcl::defGenericObjCmds<Util::Object>(pkg2);
-
-  pkg2->defGetter("refCount", &Util::Object::refCount);
-  pkg2->defAction("incrRefCount", &Util::Object::incrRefCount);
-  pkg2->defAction("decrRefCount", &Util::Object::decrRefCount);
-
-  pkg2->defVec( "type", "item_id(s)", &Util::Object::objTypename );
-  pkg2->defVec( "realType", "item_id(s)", &Util::Object::realTypename );
-
-  pkg2->def( "new", "typename", &objNew );
-  pkg2->def( "new", "typename {cmd1 arg1 cmd2 arg2 ...}",
+  pkg->def( "new", "typename", &objNew );
+  pkg->def( "new", "typename {cmd1 arg1 cmd2 arg2 ...}",
              Util::bindLast(&objNewArgs, Tcl::Interp(interp)) );
-  pkg2->def( "newarr", "typename array_size=1", &objNewArr );
-  pkg2->def( "delete", "item_id(s)", &objDelete );
+  pkg->def( "newarr", "typename array_size=1", &objNewArr );
+  pkg->def( "delete", "item_id(s)", &objDelete );
 
-  pkg2->eval("proc new {args} { eval Obj::new $args }");
-  pkg2->eval("proc newarr {args} { eval Obj::newarr $args }");
-  pkg2->eval("proc delete {args} { eval Obj::delete $args }");
+  pkg->eval("proc new {args} { eval Obj::new $args }");
+  pkg->eval("proc newarr {args} { eval Obj::newarr $args }");
+  pkg->eval("proc delete {args} { eval Obj::delete $args }");
 
-  return Tcl::Pkg::initStatus(pkg1, pkg2);
+  return pkg->initStatus();
 }
 
 static const char vcid_objtcl_cc[] = "$Header$";

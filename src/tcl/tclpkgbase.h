@@ -97,36 +97,6 @@ public:
       initialization was successful. */
   int initStatus() const throw();
 
-  /** Returns a Tcl status code reflecting the combination of this
-      package's initStatus() with \a otherStatus. */
-  int combineStatus(int otherStatus) const throw()
-  {
-    return combineStatus(initStatus(), otherStatus);
-  }
-
-  /** Returns a Tcl status code representing the combination of the
-      current \a status1 with \a status2. If either status represents
-      failure, the result will also represent failure, otherwise
-      success. */
-  static int combineStatus(int status1, int status2) throw();
-
-  /** Return the init status of \a pkg, or return okStatus() if \a pkg
-      is null */
-  static int initStatus(PkgBase* pkg) throw();
-
-  /// Combine the init statuses of several packages.
-  static int initStatus(PkgBase* pkg1, PkgBase* pkg2,
-                        PkgBase* pkg3=0, PkgBase* pkg4=0,
-                        PkgBase* pkg5=0, PkgBase* pkg6=0) throw()
-  {
-    return combineStatus(initStatus(pkg1),
-           combineStatus(initStatus(pkg2),
-           combineStatus(initStatus(pkg3),
-           combineStatus(initStatus(pkg4),
-           combineStatus(initStatus(pkg5),
-                         initStatus(pkg6))))));
-  }
-
   /// Returns the Tcl interpreter that was passed to the constructor.
   Tcl::Interp& interp() throw();
 
