@@ -38,6 +38,11 @@
 DBG_REGISTER
 #include "util/trace.h"
 
+GxRasterFont::~GxRasterFont() throw()
+{
+DOTRACE("GxRasterFont::~GxRasterFont");
+}
+
 #if defined(GL_PLATFORM_GLX)
 
 #include "gfx/glxrasterfont.h"

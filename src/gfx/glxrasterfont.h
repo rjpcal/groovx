@@ -58,9 +58,7 @@ class GlxRasterFont : public GxRasterFont
 {
 public:
   GlxRasterFont(const char* n);
-  ~GlxRasterFont();
-
-  virtual ~GxRasterFont() throw();
+  virtual ~GlxRasterFont() throw();
 
   static fstring pickXFont(const char* spec);
 
@@ -76,21 +74,19 @@ public:
   virtual int rasterHeight() const;
 
 private:
-  XFontStruct* fontInfo;
-  fstring fontName;
-  unsigned int listBase;
-  unsigned int listCount;
+  XFontStruct* itsFontInfo;
+  fstring itsFontName;
+  unsigned int itsListBase;
+  unsigned int itsListCount;
 };
 
-GlxRasterFont::GlxRasterFont(const char* n) :
-  fontInfo(0), fontName(n), listBase(0), listCount(0)
+GlxRasterFont::GlxRasterFont(const char* fontname) :
+  itsFontInfo(0),
+  itsFontName(fontname ? fontname : "fixed"),
+  itsListBase(0),
+  itsListCount(0)
 {
 DOTRACE("GlxRasterFont::GlxRasterFont");
-
-  if (fontname == 0)
-    fontname = "fixed";
-
-  Assert( fontname != 0 );
 
   static Display* dpy = 0;
 
@@ -101,42 +97,42 @@ DOTRACE("GlxRasterFont::GlxRasterFont");
         throw Util::Error("couldn't open connection to X server");
     }
 
-  fstring xname = Impl::pickXFont(fontname);
+  fstring xname = pickXFont(fontname);
 
   dbgEvalNL(2, xname.c_str());
   dbgEvalNL(2, xname);
 
-  fontInfo = XLoadQueryFont( dpy, xname.c_str() );
+  itsFontInfo = XLoadQueryFont( dpy, xname.c_str() );
 
-  dbgEvalNL(2, fontInfo);
+  dbgEvalNL(2, itsFontInfo);
 
-  if (fontInfo == 0)
+  if (itsFontInfo == 0)
     {
       throw Util::Error(fstring("couldn't load X font '", xname, "'"));
     }
 
-  dbgEvalNL(2, fontInfo->fid);
+  dbgEvalNL(2, itsFontInfo->fid);
 
-  const int first = fontInfo->min_char_or_byte2;    dbgEval(2, first);
-  const int last = fontInfo->max_char_or_byte2;     dbgEval(2, last);
+  const int first = itsFontInfo->min_char_or_byte2;    dbgEval(2, first);
+  const int last = itsFontInfo->max_char_or_byte2;     dbgEval(2, last);
 
-  listCount = last-first+1;                dbgEvalNL(2, listCount);
-  listBase = GLCanvas::genLists( last+1 ); dbgEvalNL(2, listBase);
+  itsListCount = last-first+1;                dbgEvalNL(2, itsListCount);
+  itsListBase = GLCanvas::genLists( last+1 ); dbgEvalNL(2, itsListBase);
 
-  if (listBase==0)
+  if (itsListBase==0)
     {
-      XFreeFontInfo(NULL, fontInfo, 1);
+      XFreeFontInfo(NULL, itsFontInfo, 1);
       throw Util::Error(fstring("couldn't allocate GL display lists"));
     }
 
-  glXUseXFont(fontInfo->fid,
+  glXUseXFont(itsFontInfo->fid,
               first,
-              listCount,
-              (int) listBase+first);
+              itsListCount,
+              (int) itsListBase+first);
 
 #if 0
   // for debugging
-  for (int l = first; l < first+listCount; ++l)
+  for (int l = first; l < first+itsListCount; ++l)
     {
       double p = 4*double((l-first-1)-48)/42.0 - 2.0;
       glRasterPos2d(-1.0, p);
@@ -146,12 +142,12 @@ DOTRACE("GlxRasterFont::GlxRasterFont");
 #endif
 }
 
-GxRasterFont::~GlxRasterFont()
+GlxRasterFont::~GlxRasterFont() throw()
 {
-DOTRACE("GxRasterFont::~GlxRasterFont");
+DOTRACE("GlxRasterFont::~GlxRasterFont");
 
-  GLCanvas::deleteLists(listBase, listCount);
-  XFreeFontInfo(NULL, fontInfo, 1);
+  GLCanvas::deleteLists(itsListBase, itsListCount);
+  XFreeFontInfo(NULL, itsFontInfo, 1);
 }
 
 fstring GlxRasterFont::pickXFont(const char* spec)
@@ -239,13 +235,13 @@ DOTRACE("GlxRasterFont::pickXFont");
 const char* GlxRasterFont::fontName() const
 {
 DOTRACE("GlxRasterFont::fontName");
-  return fontName.c_str();
+  return itsFontName.c_str();
 }
 
 unsigned int GlxRasterFont::listBase() const
 {
 DOTRACE("GlxRasterFont::listBase");
-  return listBase;
+  return itsListBase;
 }
 
 namespace
@@ -265,8 +261,8 @@ void GlxRasterFont::bboxOf(const char* text, Gfx::Bbox& bbox) const
 {
 DOTRACE("GlxRasterFont::bboxOf");
 
-  const int asc = fontInfo->max_bounds.ascent;
-  const int desc = fontInfo->max_bounds.descent;
+  const int asc = itsFontInfo->max_bounds.ascent;
+  const int desc = itsFontInfo->max_bounds.descent;
 
   int maxwid = 0;
 
@@ -275,7 +271,7 @@ DOTRACE("GlxRasterFont::bboxOf");
   while (1)
     {
       int len = linelength(text);
-      int wid = XTextWidth(rep->fontInfo, text, len);
+      int wid = XTextWidth(itsFontInfo, text, len);
       text += len;
       if (wid > maxwid)
         maxwid = wid;
@@ -310,8 +306,8 @@ DOTRACE("GlxRasterFont::drawText");
 int GlxRasterFont::rasterHeight() const
 {
 DOTRACE("GlxRasterFont::rasterHeight");
-  const int asc = fontInfo->max_bounds.ascent;
-  const int desc = fontInfo->max_bounds.descent;
+  const int asc = itsFontInfo->max_bounds.ascent;
+  const int desc = itsFontInfo->max_bounds.descent;
 
   return asc + desc;
 }
