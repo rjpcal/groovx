@@ -3,7 +3,7 @@
 // eventresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:30:54 1999
-// written: Tue Nov  9 15:57:25 1999
+// written: Tue Nov  9 16:18:22 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,6 +62,14 @@ public:
   virtual void rhBeginTrial() const;
   virtual void rhAbortTrial() const;
   virtual void rhHaltExpt() const;
+
+protected:
+  // Deprecated functions for compatibility with old KbdResponseHdlr
+  // interface--these functions ignore the eventSequence and
+  // bindingSubstitution fields
+  void oldSerialize(ostream &os, IOFlag flag) const;
+  void oldDeserialize(istream &is, IOFlag flag);
+  int oldCharCount() const;
 
 private:
   class Impl;
