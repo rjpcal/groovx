@@ -77,11 +77,11 @@ namespace
 
 namespace range_checking
 {
-  void raiseException(const fstring& msg, const char* f, int ln);
+  void raise_exception(const fstring& msg, const char* f, int ln);
 }
 
-void range_checking::raiseException(const fstring& msg,
-                                    const char* f, int ln)
+void range_checking::raise_exception(const fstring& msg,
+                                     const char* f, int ln)
 {
   dbgPrintNL(3, msg);
   fstring errmsg;
@@ -94,21 +94,21 @@ void range_checking::geq(const void* x, const void* lim,
                          const char* f, int ln)
 {
   if (x>=lim) ; // OK
-  else raiseException("geq: pointer range error", f, ln);
+  else raise_exception("geq: pointer range error", f, ln);
 }
 
 void range_checking::lt(const void* x, const void* lim,
                         const char* f, int ln)
 {
   if (x<lim) ; // OK
-  else raiseException("less: pointer range error", f, ln);
+  else raise_exception("less: pointer range error", f, ln);
 }
 
 void range_checking::leq(const void* x, const void* lim,
                          const char* f, int ln)
 {
   if (x<=lim) ; // OK
-  else raiseException("leq: pointer range error", f, ln);
+  else raise_exception("leq: pointer range error", f, ln);
 }
 
 void range_checking::in_half_open(const void* x,
@@ -116,7 +116,7 @@ void range_checking::in_half_open(const void* x,
                                   const char* f, int ln)
 {
   if (x>=llim && x<ulim) ; // OK
-  else raiseException("in_half_open: pointer range error", f, ln);
+  else raise_exception("in_half_open: pointer range error", f, ln);
 }
 
 void range_checking::in_full_open(const void* x,
@@ -124,31 +124,31 @@ void range_checking::in_full_open(const void* x,
                                   const char* f, int ln)
 {
   if (x>=llim && x<=ulim) ; // OK
-  else raiseException("in_full_open: pointer range error", f, ln);
+  else raise_exception("in_full_open: pointer range error", f, ln);
 }
 
 void range_checking::geq(int x, int lim, const char* f, int ln)
 {
   if (x>=lim) ; // OK
-  else raiseException(fstring("geq: integer range error ",
-                              x, " !>= ", lim),
-                      f, ln);
+  else raise_exception(fstring("geq: integer range error ",
+                               x, " !>= ", lim),
+                       f, ln);
 }
 
 void range_checking::lt(int x, int lim, const char* f, int ln)
 {
   if (x<lim) ; // OK
-  else raiseException(fstring("less: integer range error ",
-                              x, " !< ", lim),
-                      f, ln);
+  else raise_exception(fstring("less: integer range error ",
+                               x, " !< ", lim),
+                       f, ln);
 }
 
 void range_checking::leq(int x, int lim, const char* f, int ln)
 {
   if (x<=lim) ; // OK
-  else raiseException(fstring("leq: integer range error ",
-                              x, " !<= ", lim),
-                      f, ln);
+  else raise_exception(fstring("leq: integer range error ",
+                               x, " !<= ", lim),
+                       f, ln);
 }
 
 void range_checking::in_half_open(int x,
@@ -156,9 +156,9 @@ void range_checking::in_half_open(int x,
                                   const char* f, int ln)
 {
   if (x>=llim && x<ulim) ; // OK
-  else raiseException(fstring("in_half_open: integer range error ",
-                              x, " !in [", llim, ", ", ulim, ")"),
-                      f, ln);
+  else raise_exception(fstring("in_half_open: integer range error ",
+                               x, " !in [", llim, ", ", ulim, ")"),
+                       f, ln);
 }
 
 void range_checking::in_full_open(int x,
@@ -166,9 +166,9 @@ void range_checking::in_full_open(int x,
                                   const char* f, int ln)
 {
   if (x>=llim && x<=ulim) ; // OK
-  else raiseException(fstring("in_full_open: integer range error ",
-                              x, " !in [", llim, ", ", ulim, "]"),
-                      f, ln);
+  else raise_exception(fstring("in_full_open: integer range error ",
+                               x, " !in [", llim, ", ", ulim, "]"),
+                       f, ln);
 }
 
 
@@ -229,14 +229,14 @@ DOTRACE("slice::max");
 
 namespace
 {
-  struct ValIndex
+  struct val_index
   {
     double val;
     unsigned int index;
 
-    ValIndex(double v=0.0) : val(v) {}
+    val_index(double v=0.0) : val(v) {}
 
-    bool operator<(const ValIndex& v2) const { return val < v2.val; }
+    bool operator<(const val_index& v2) const { return val < v2.val; }
   };
 }
 
@@ -244,7 +244,7 @@ mtx slice::get_sort_order() const
 {
 DOTRACE("slice::get_sort_order");
 
-  std::vector<ValIndex> buf(this->begin(), this->end());
+  std::vector<val_index> buf(this->begin(), this->end());
 
   for (unsigned int i = 0; i < buf.size(); ++i)
     {
@@ -423,7 +423,8 @@ DOTRACE("mtx_specs::select_cols");
 
 namespace
 {
-  data_block* newDataBlock(int mrows, int ncols, mtx_policies::init_policy p)
+  data_block* new_data_block(int mrows, int ncols,
+                             mtx_policies::init_policy p)
   {
     if (p == mtx_policies::ZEROS)
       return data_block::make_zeros(mrows*ncols);
@@ -431,8 +432,9 @@ namespace
     return data_block::make_uninitialized(mrows*ncols);
   }
 
-  data_block* newDataBlock(double* data,
-                           int mrows, int ncols, mtx_policies::storage_policy s)
+  data_block* new_data_block(double* data,
+                             int mrows, int ncols,
+                             mtx_policies::storage_policy s)
   {
     switch (s)
       {
@@ -451,15 +453,17 @@ namespace
   }
 
 #ifdef WITH_MATLAB
-  data_block* newDataBlock(mxArray* a, mtx_policies::storage_policy s)
+  data_block* new_data_block(mxArray* a,
+                             mtx_policies::storage_policy s)
   {
     if (!mxIsDouble(a))
       throw Util::Error("cannot construct a mtx with a non-'double' mxArray");
 
-    return newDataBlock(mxGetPr(a), mxGetM(a), mxGetN(a), s);
+    return new_data_block(mxGetPr(a), mxGetM(a), mxGetN(a), s);
   }
 
-  data_block* newDataBlock(const mxArray* a, mtx_policies::storage_policy s)
+  data_block* new_data_block(const mxArray* a,
+                             mtx_policies::storage_policy s)
   {
     if (!mxIsDouble(a))
       throw Util::Error("cannot construct a mtx with a non-'double' mxArray");
@@ -468,32 +472,32 @@ namespace
       throw Util::Error("cannot construct a mtx from a const mxArray* "
                         "unless the storage_policy is COPY or BORROW");
 
-    return newDataBlock(mxGetPr(a), mxGetM(a), mxGetN(a), s);
+    return new_data_block(mxGetPr(a), mxGetM(a), mxGetN(a), s);
   }
 #endif
 }
 
 data_holder::data_holder(double* data, int mrows, int ncols, storage_policy s) :
-  m_data(newDataBlock(data, mrows, ncols, s))
+  m_data(new_data_block(data, mrows, ncols, s))
 {
   m_data->incr_refcount();
 }
 
 data_holder::data_holder(int mrows, int ncols, init_policy p) :
-  m_data(newDataBlock(mrows, ncols, p))
+  m_data(new_data_block(mrows, ncols, p))
 {
   m_data->incr_refcount();
 }
 
 #ifdef WITH_MATLAB
 data_holder::data_holder(mxArray* a, storage_policy s) :
-  m_data(newDataBlock(a, s))
+  m_data(new_data_block(a, s))
 {
   m_data->incr_refcount();
 }
 
 data_holder::data_holder(const mxArray* a, storage_policy s) :
-  m_data(newDataBlock(a, s))
+  m_data(new_data_block(a, s))
 {
   m_data->incr_refcount();
 }
@@ -879,10 +883,10 @@ DOTRACE("mtx::VMmul_assign");
 
   mtx_const_iter veciter = vec.begin();
 
-  mtx_iter resultIter = result.begin_nc();
+  mtx_iter result_itr = result.begin_nc();
 
-  for (int col = 0; col < mtx.ncols(); ++col, ++resultIter)
-    *resultIter = inner_product(veciter, mtx.column_iter(col));
+  for (int col = 0; col < mtx.ncols(); ++col, ++result_itr)
+    *result_itr = inner_product(veciter, mtx.column_iter(col));
 }
 
 void mtx::assign_MMmul(const mtx& m1, const mtx& m2)
@@ -894,19 +898,19 @@ DOTRACE("mtx::assign_MMmul");
 
   for (int n = 0; n < mrows(); ++n)
     {
-      mtx_iter rowElement = this->row_iter(n);
+      mtx_iter row_element = this->row_iter(n);
 
       mtx_const_iter veciter = m1.row_iter(n);
 
-      for (int col = 0; col < m2.ncols(); ++col, ++rowElement)
-        *rowElement = inner_product(veciter, m2.column_iter(col));
+      for (int col = 0; col < m2.ncols(); ++col, ++row_element)
+        *row_element = inner_product(veciter, m2.column_iter(col));
     }
 }
 
 namespace
 {
   template <class Op>
-  mtx unaryOp(const mtx& src, Op op)
+  mtx unary_op(const mtx& src, Op op)
   {
     mtx result(src.mrows(), src.ncols(), mtx::NO_INIT);
 
@@ -920,32 +924,32 @@ namespace
 
 mtx operator+(const mtx& m, double x)
 {
-  return unaryOp(m, std::bind2nd(std::plus<double>(), x));
+  return unary_op(m, std::bind2nd(std::plus<double>(), x));
 }
 
 mtx operator-(const mtx& m, double x)
 {
-  return unaryOp(m, std::bind2nd(std::minus<double>(), x));
+  return unary_op(m, std::bind2nd(std::minus<double>(), x));
 }
 
 mtx operator*(const mtx& m, double x)
 {
-  return unaryOp(m, std::bind2nd(std::multiplies<double>(), x));
+  return unary_op(m, std::bind2nd(std::multiplies<double>(), x));
 }
 
 mtx operator/(const mtx& m, double x)
 {
-  return unaryOp(m, std::bind2nd(std::divides<double>(), x));
+  return unary_op(m, std::bind2nd(std::divides<double>(), x));
 }
 
 
 namespace
 {
   template <class Op>
-  mtx binaryOp(const mtx& m1, const mtx& m2, Op op)
+  mtx binary_op(const mtx& m1, const mtx& m2, Op op)
   {
     if (! m1.same_size(m2) )
-      throw Util::Error("dimension mismatch in binaryOp(mtx, mtx)");
+      throw Util::Error("dimension mismatch in binary_op(mtx, mtx)");
 
     mtx result(m1.mrows(), m1.ncols(), mtx::NO_INIT);
 
@@ -961,37 +965,37 @@ namespace
 mtx operator+(const mtx& m1, const mtx& m2)
 {
 DOTRACE("operator+(mtx, mtx)");
-  return binaryOp(m1, m2, std::plus<double>());
+  return binary_op(m1, m2, std::plus<double>());
 }
 
 mtx operator-(const mtx& m1, const mtx& m2)
 {
 DOTRACE("operator-(mtx, mtx)");
-  return binaryOp(m1, m2, std::minus<double>());
+  return binary_op(m1, m2, std::minus<double>());
 }
 
 mtx arr_mul(const mtx& m1, const mtx& m2)
 {
 DOTRACE("arr_mul(mtx, mtx)");
-  return binaryOp(m1, m2, std::multiplies<double>());
+  return binary_op(m1, m2, std::multiplies<double>());
 }
 
 mtx arr_div(const mtx& m1, const mtx& m2)
 {
 DOTRACE("arr_div(mtx, mtx)");
-  return binaryOp(m1, m2, std::divides<double>());
+  return binary_op(m1, m2, std::divides<double>());
 }
 
 mtx min(const mtx& m1, const mtx& m2)
 {
 DOTRACE("min(mtx, mtx)");
-  return binaryOp(m1, m2, Min());
+  return binary_op(m1, m2, Min());
 }
 
 mtx max(const mtx& m1, const mtx& m2)
 {
 DOTRACE("max(mtx, mtx)");
-  return binaryOp(m1, m2, Max());
+  return binary_op(m1, m2, Max());
 }
 
 static const char vcid_mtx_cc[] = "$Header$";
