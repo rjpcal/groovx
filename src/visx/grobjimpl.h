@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Sun Aug 26 08:35:13 2001
+// written: Mon Sep  3 18:00:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ public:
 
 namespace
 {
-  const IO::VersionId GROBJ_SERIAL_VERSION_ID = 1;
+  const IO::VersionId GROBJ_SERIAL_VERSION_ID = 2;
 }
 
 class GrObjImpl : public Util::VolatileObject
@@ -68,6 +68,8 @@ public:
   //
   // Data members
   //
+
+  GrObj* itsOwner;
 
   int itsCategory;
 
@@ -87,6 +89,7 @@ public:
   static GrObjImpl* make(GrObj* obj) { return new GrObjImpl(obj); }
 
   GrObjImpl(GrObj* obj) :
+    itsOwner(obj),
     itsCategory(-1),
     itsNativeNode(new GrObjNode(obj), Util::PRIVATE),
     itsBB(new GrObjBBox(itsNativeNode, obj->sigNodeChanged), Util::PRIVATE),
@@ -108,7 +111,7 @@ public:
 
   void readFrom(IO::Reader* reader)
   {
-    reader->ensureReadVersionId("GrObj", 1, "Try grsh0.8a4");
+    reader->ensureReadVersionId("GrObj", 2, "Try grsh0.8a7");
 
     reader->readValue("GrObj::category", itsCategory);
 
@@ -126,11 +129,6 @@ public:
     }
 
     {
-      int dummy;
-      reader->readValue("GrObj::unRenderMode", dummy);
-    }
-
-    {
       bool val;
       reader->readValue("GrObj::bbVisibility", val);
       itsBB->setVisible(val);
@@ -142,8 +140,13 @@ public:
       itsScaler->setMode(temp);
     }
 
-    reader->readValue("GrObj::widthFactor", itsScaler->itsWidthFactor);
-    reader->readValue("GrObj::heightFactor", itsScaler->itsHeightFactor);
+    {
+      double temp;
+      reader->readValue("GrObj::width", temp);
+      itsOwner->setWidth(temp);
+      reader->readValue("GrObj::height", temp);
+      itsOwner->setHeight(temp);
+    }
 
     reader->readValue("GrObj::alignmentMode", itsAligner->itsMode);
     reader->readValue("GrObj::centerX", itsAligner->itsCenter.x());
@@ -154,8 +157,8 @@ public:
 
   void writeTo(IO::Writer* writer) const
   {
-    writer->ensureWriteVersionId("GrObj", GROBJ_SERIAL_VERSION_ID, 1,
-                                 "Try grsh0.8a4");
+    writer->ensureWriteVersionId("GrObj", GROBJ_SERIAL_VERSION_ID, 2,
+                                 "Try grsh0.8a7");
 
     writer->writeValue("GrObj::category", itsCategory);
 
@@ -163,13 +166,15 @@ public:
 
     writer->writeValue("GrObj::cacheFilename", itsBitmapCache->getCacheFilename());
 
-    writer->writeValue("GrObj::unRenderMode", Gmodes::CLEAR_BOUNDING_BOX);
-
     writer->writeValue("GrObj::bbVisibility", itsBB->isVisible());
 
     writer->writeValue("GrObj::scalingMode", itsScaler->getMode());
-    writer->writeValue("GrObj::widthFactor", itsScaler->itsWidthFactor);
-    writer->writeValue("GrObj::heightFactor", itsScaler->itsHeightFactor);
+
+    writer->writeValue("GrObj::width",
+                       itsOwner->getWidth());
+
+    writer->writeValue("GrObj::height",
+                       itsOwner->getHeight());
 
     writer->writeValue("GrObj::alignmentMode", itsAligner->itsMode);
     writer->writeValue("GrObj::centerX", itsAligner->itsCenter.x());
