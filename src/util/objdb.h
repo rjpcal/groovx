@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Thu Oct 26 10:43:28 2000
+// written: Fri Oct 27 15:28:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
 #include "util/error.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
+#include "iditem.h"
 #endif
 
 namespace IO { class IoObject; }
@@ -172,9 +176,24 @@ protected:
 		memory management for the object *ptr. */
   int insertPtrBase(IO::IoObject* ptr);
 
-  /** Subclasses override to throw an exception if \a ptr is of the
-      wrong type to be in the list. */
-  virtual void ensureCorrectType(const IO::IoObject* ptr) const = 0;
+public:
+
+  template <class T>
+  IdItem<T> getCheckedIoPtr(int id) const
+    {
+		IO::IoObject* voidPtr = getCheckedPtrBase(id);
+
+		// cast as reference to force an exception on error
+		T& t = dynamic_cast<T&>(*voidPtr);
+
+		return IdItem<T>(&t);
+	 }
+
+  template <class T>
+  void insertIo(T* master)
+    {
+		insertPtrBase(master);
+	 }
 
 private:
   IoPtrList(const IoPtrList&);
