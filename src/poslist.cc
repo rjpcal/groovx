@@ -2,7 +2,7 @@
 // poslist.cc
 // Rob Peters
 // created: Fri Mar 12 17:21:29 1999
-// written: Tue Mar 16 19:34:42 1999
+// written: Fri Apr 23 00:51:21 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -16,10 +16,11 @@
 #include <typeinfo>
 #include <string>
 
-#include "randutils.h"
+#include "posmgr.h"
 
 #define NO_TRACE
 #include "trace.h"
+
 #define LOCAL_ASSERT
 #include "debug.h"
 
@@ -55,7 +56,7 @@ DOTRACE("PosList::~PosList");
   clearPos();
 }
 
-IOResult PosList::serialize(ostream &os, IOFlag flag) const {
+void PosList::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("PosList::serialize");
   if (flag & IO::BASES) { /* there are no bases to deserialize */ }
 
@@ -84,13 +85,15 @@ DOTRACE("PosList::serialize");
       c++;
     }
   }
-  Assert(c==num_non_null);
+  if (c != num_non_null) {
+	 throw IoLogicError(typeid(PosList));
+  }
   // itsFirstVacant
   os << itsFirstVacant << endl;
-  return checkStream(os);
+  if (os.fail()) throw OutputError(typeid(PosList));
 }
 
-IOResult PosList::deserialize(istream &is, IOFlag flag) {
+void PosList::deserialize(istream &is, IOFlag flag) {
 DOTRACE("PosList::deserialize");
 #ifdef LOCAL_DEBUG
   DUMP_VAL2(flag);
@@ -102,7 +105,9 @@ DOTRACE("PosList::deserialize");
 #ifdef LOCAL_DEBUG
     DUMP_VAL2(name);
 #endif
-    if (name != string(typeid(PosList).name())) { return IO_ERROR; }
+    if (name != typeid(PosList).name()) { 
+		throw InputError(typeid(PosList));
+	 }
   }
   // itsPosVec
   clearPos();
@@ -112,23 +117,28 @@ DOTRACE("PosList::deserialize");
   DUMP_VAL1(size);
   DUMP_VAL2(num_non_null);
 #endif
-  Assert( num_non_null <= size );
+  if ( size < 0 || num_non_null < 0 || num_non_null > size ) {
+	 throw IoValueError(typeid(PosList));
+  }
   itsPosVec.resize(size, NULL);
   int posid;
   for (int i = 0; i < num_non_null; i++) {
     is >> posid;
-#ifdef LOCAL_DEBUG
-    DUMP_VAL2(posid);
-#endif
-    itsPosVec[posid] = new Position(is, flag);
+	 if ( posid < 0 || posid >= size ) {
+		throw IoValueError(typeid(PosList));
+	 }		
+    itsPosVec[posid] = PosMgr::newPosition(is, flag);
   }
   // itsFirstVacant
   is >> itsFirstVacant;
-  return checkStream(is);
+  if ( itsFirstVacant < 0 ) {
+	 throw IoValueError(typeid(PosList));
+  }
+  if (is.fail()) throw InputError(typeid(PosList));
 }
 
-int PosList::npos() const {
-DOTRACE("PosList::npos"); 
+int PosList::posCount() const {
+DOTRACE("PosList::posCount"); 
   int count=0;
   for (PosVec::const_iterator ii = itsPosVec.begin(); 
        ii != itsPosVec.end(); ii++) {
@@ -161,6 +171,7 @@ DOTRACE("PosList::getPos");
 
 int PosList::addPos(Position *pos) {
 DOTRACE("PosList::addPos");
+  Assert(itsFirstVacant>=0);
   int new_site = itsFirstVacant;
   addPosAt(new_site, pos);
   return new_site;              // return the id of the inserted Position
@@ -202,6 +213,7 @@ DOTRACE("PosList::clearPos()");
     delete *ii;
     *ii = NULL;
   }
+  itsFirstVacant = 0;
 }
 
 static const char vcid_poslist_cc[] = "$Header$";

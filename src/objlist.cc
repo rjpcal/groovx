@@ -2,7 +2,7 @@
 // objlist.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Mar 16 19:38:01 1999
+// written: Fri Apr 23 00:51:46 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -16,7 +16,6 @@
 #include <typeinfo>
 #include <strstream.h>
 
-#include "randutils.h"
 #include "grobjmgr.h"
 
 #define NO_TRACE
@@ -60,7 +59,7 @@ DOTRACE("ObjList::~ObjList");
   clearObjs();
 }
 
-IOResult ObjList::serialize(ostream &os, IOFlag flag) const {
+void ObjList::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("ObjList::serialize");
   if (flag & IO::BASES) { /* there are no bases to deserialize */ }
 
@@ -91,42 +90,54 @@ DOTRACE("ObjList::serialize");
       c++;
     }
   }
-  Assert(c==num_non_null);
+  if (c != num_non_null) {
+	 throw IoLogicError(typeid(ObjList));
+  }
   // itsFirstVacant
   os << itsFirstVacant << endl;
-  return checkStream(os);
+  if (os.fail()) throw OutputError(typeid(ObjList));
 }
 
-IOResult ObjList::deserialize(istream &is, IOFlag flag) {
+void ObjList::deserialize(istream &is, IOFlag flag) {
 DOTRACE("ObjList::deserialize");
   if (flag & IO::BASES) { /* there are no bases to deserialize */ }
   if (flag & IO::TYPENAME) {
     string name;
     is >> name;
-    if (name != string(typeid(ObjList).name())) { return IO_ERROR; }
+    if (name != typeid(ObjList).name()) { 
+		throw InputError(typeid(ObjList));
+	 }
   }
   // itsObjVec
   clearObjs();
   int size, num_non_null;
   is >> size >> num_non_null;
-  Assert( num_non_null <= size );
+  if ( size < 0 || num_non_null < 0 || num_non_null > size ) {
+	 throw IoValueError(typeid(ObjList));
+  }
   itsObjVec.resize(size, NULL);
   int objid;
   for (int i = 0; i < num_non_null; i++) {
     is >> objid;
+	 if (objid < 0 || objid >= size) {
+		throw IoValueError(typeid(ObjList));
+	 }
     itsObjVec[objid] = GrobjMgr::newGrobj(is, flag);
   }
   // itsFirstVacant
   is >> itsFirstVacant;
-  return checkStream(is);
+  if (itsFirstVacant < 0) {
+	 throw IoValueError(typeid(ObjList));
+  }
+  if (is.fail()) throw InputError(typeid(ObjList));
 }
 
 ///////////////
 // accessors //
 ///////////////
 
-int ObjList::nobjs() const {
-DOTRACE("ObjList::nobjs"); 
+int ObjList::objCount() const {
+DOTRACE("ObjList::objCount"); 
   int count=0;
   for (ObjVec::const_iterator ii = itsObjVec.begin(); 
        ii != itsObjVec.end(); ii++) {
@@ -203,6 +214,7 @@ DOTRACE("ObjList::clearObjs()");
     delete *ii;
     *ii = NULL;
   }
+  itsFirstVacant = 0;
 }
 
 static const char vcid_objlist_cc[] = "$Header$";
