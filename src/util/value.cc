@@ -3,7 +3,7 @@
 // value.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:21:32 1999
-// written: Tue Oct 19 17:07:04 1999
+// written: Tue Nov 16 12:07:44 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,6 +12,8 @@
 #define VALUE_CC_DEFINED
 
 #include "value.h"
+
+#include <iostream.h>
 
 ValueError::ValueError(const string& msg) :
   ErrorWithMsg(msg)
@@ -39,6 +41,12 @@ TValue<T>::~TValue() {}
 
 template <class T>
 Value* TValue<T>::clone() const { return new TValue<T>(itsVal); }
+
+template <class T>
+void TValue<T>::printTo(ostream& os) const { os << itsVal; }
+
+template <class T>
+void TValue<T>::scanFrom(istream& is) { is >> itsVal; }
 
 template <>
 Value::Type TValue<int>::getNativeType() const { return Value::INT; }
@@ -126,6 +134,12 @@ TValuePtr<T>::~TValuePtr() {}
 
 template <class T>
 Value* TValuePtr<T>::clone() const { return new TValuePtr<T>(*itsValPtr); }
+
+template <class T>
+void TValuePtr<T>::printTo(ostream& os) const { os << *itsValPtr; }
+
+template <class T>
+void TValuePtr<T>::scanFrom(istream& is) { is >> *itsValPtr; }
 
 template <>
 Value::Type TValuePtr<int>::getNativeType() const { return Value::INT; }
