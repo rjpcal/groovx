@@ -107,7 +107,7 @@ public:
   Tcl::Interp& interp() throw();
 
   /// Trap a live exception, and write a message to the Tcl_Interp's result.
-  void handleLiveException(const char* where) throw();
+  void handleLiveException() throw();
 
   /// Returns the package's "namespace name".
   /** Note that the "namespace name" will be the same as the "package name"
