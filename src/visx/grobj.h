@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Thu Aug 16 11:05:49 2001
+// written: Thu Aug 16 11:22:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,9 +35,7 @@
 
 namespace Gfx
 {
-  class Canvas;
   template <class V> class Rect;
-  template <class V> class Vec2;
 }
 
 class GrObjImpl;
