@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:58:53 2001
-// written: Thu Sep 13 11:31:14 2001
+// written: Mon Sep 17 11:38:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,6 +86,10 @@ Tcl_Obj* Tcl::Convert<Tcl_Obj*>::fromTcl( Tcl_Obj* obj ) { return obj; }
 
 template <>
 Tcl::ObjPtr Tcl::Convert<Tcl::ObjPtr>::fromTcl( Tcl_Obj* obj ) { return obj; }
+
+template <>
+Tcl::ObjPtr Tcl::Convert<const Tcl::ObjPtr&>::fromTcl( Tcl_Obj* obj )
+{ return obj; }
 
 template <>
 Tcl::ObjPtr Tcl::Convert<Tcl_Obj*>::toTcl( Tcl_Obj* val )
