@@ -505,3 +505,9 @@ showpid:
 # Generate TAGS file based on all source files
 TAGS: $(ALL_SOURCES) $(ALL_HEADERS)
 	$(ETAGS) -fTAGS $(ALL_SOURCES) $(ALL_HEADERS)
+
+tardist: clean
+	cd ..; tar cvfz grsh.tar.gz grsh \
+		--exclude *.o --exclude *.do \
+		--exclude *.a --exclude *.sl \
+		--exclude *,v --exclude *~ --exclude a.out
