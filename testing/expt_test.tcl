@@ -11,9 +11,7 @@ package require Expt
 package require Objtogl
 package require Tlist
 package require Block
-package require Rhlist
 package require Nullrh
-package require Thlist
 package require Th
 
 source ${::TEST_DIR}/io_test.tcl
