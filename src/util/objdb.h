@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri Nov 22 15:21:29 2002
+// written: Fri Nov 22 15:28:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -150,7 +150,7 @@ private:
   ObjDb(const ObjDb&);
   ObjDb& operator=(const ObjDb&);
 
-  Impl* const itsImpl;
+  Impl* const rep;
 };
 
 static const char vcid_objdb_h[] = "$Header$";
