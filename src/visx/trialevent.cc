@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Thu Nov 18 10:44:13 1999
+// written: Wed Dec  1 11:25:19 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@
 #include <cstring>
 
 #include "demangle.h"
-#include "exptdriver.h"
+#include "experiment.h"
 #include "reader.h"
 #include "writer.h"
 
@@ -36,10 +36,6 @@
 #define EventTraceNL(type) {}
 #endif
 
-namespace {
-  ExptDriver& exptDriver = ExptDriver::theExptDriver();
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // TrialEvent method definitions
@@ -47,8 +43,9 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 TrialEvent::TrialEvent(int msec) :
-  itsToken(NULL),
   itsRequestedDelay(msec),
+  itsToken(NULL),
+  itsExperiment(Experiment::getExperiment()),
   itsTotalError(0),
   itsTotalAbsError(0),
   itsInvokeCount(0)
@@ -133,10 +130,10 @@ DOTRACE("TrialEvent::cancel");
   Tcl_DeleteTimerHandler(itsToken);
 }
 
-ExptDriver& TrialEvent::getExptDriver() {
-DOTRACE("TrialEvent::getExptDriver");
-  DebugEvalNL((void *) &exptDriver);
-  return exptDriver;
+Experiment& TrialEvent::getExperiment() {
+DOTRACE("TrialEvent::getExperiment");
+  DebugEvalNL((void *) &itsExperiment);
+  return itsExperiment;
 }
 
 void TrialEvent::dummyInvoke(ClientData clientData) {
@@ -173,27 +170,27 @@ DOTRACE("TrialEvent::dummyInvoke");
 
 void AbortTrialEvent::invoke() {
 DOTRACE("AbortTrialEvent::invoke");
-  getExptDriver().edAbortTrial();
+  getExperiment().edAbortTrial();
 }
 
 void DrawEvent::invoke() {
 DOTRACE("DrawEvent::invoke");
-  getExptDriver().draw();
+  getExperiment().draw();
 }
 
 void EndTrialEvent::invoke() {
 DOTRACE("EndTrialEvent::invoke");
-  getExptDriver().edEndTrial();
+  getExperiment().edEndTrial();
 }
 
 void UndrawEvent::invoke() {
 DOTRACE("UndrawEvent::invoke");
-  getExptDriver().undraw();
+  getExperiment().undraw();
 }
 
 void SwapBuffersEvent::invoke() {
 DOTRACE("SwapBuffersEvent::invoke");
-  getExptDriver().edSwapBuffers();
+  getExperiment().edSwapBuffers();
 }
 
 void RenderBackEvent::invoke() {

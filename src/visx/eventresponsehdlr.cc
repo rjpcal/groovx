@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Tue Nov 30 16:58:45 1999
+// written: Wed Dec  1 11:24:17 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include <vector>
 
 #include "error.h"
-#include "exptdriver.h"
+#include "experiment.h"
 #include "objtogl.h"
 #include "sound.h"
 #include "soundlist.h"
@@ -40,7 +40,7 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  ExptDriver& exptDriver = ExptDriver::theExptDriver();
+  Experiment& getExpt() { return Experiment::getExperiment(); }
 
   const string ioTag = "EventResponseHdlr";
 
@@ -556,18 +556,18 @@ DOTRACE("EventResponseHdlr::Impl::privateHandleCmd");
 void EventResponseHdlr::Impl::handleResponse(const char* keysym) const {
 DOTRACE("EventResponseHdlr::Impl::handleResponse");
 
-  exptDriver.edResponseSeen();
+  getExpt().edResponseSeen();
 
   ignore();
 
   int response = getRespFromKeysym(keysym);
 
   if ( !isValidResponse(response) ) {
-	 exptDriver.edAbortTrial();
+	 getExpt().edAbortTrial();
   }
 
   else {
-	 exptDriver.edProcessResponse(response);
+	 getExpt().edProcessResponse(response);
 	 if (itsUseFeedback) { feedback(response); }
   }
 }
