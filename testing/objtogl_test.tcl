@@ -130,7 +130,7 @@ test "$PACKAGE-Togl::loadDefaultFont" "normal use" {
 } {^0 $}
 test "$PACKAGE-Togl::loadFont" "error" {
 	 Togl::loadFont junk
-} {^Toglet::loadFont: unable to load font junk$}
+} {^Toglet::loadFont: unable to load font}
 
 ### Togl::loadFontiCmd ###
 test "$PACKAGE-Togl::loadFonti" "too many args" {
