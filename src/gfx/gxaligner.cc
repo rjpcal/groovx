@@ -55,26 +55,22 @@ GxAligner::GxAligner(Nub::SoftRef<GxNode> child) :
   itsCenter(0.0, 0.0)
 {}
 
-vec2d GxAligner::getCenter(const geom::rect<double>& bounds) const
+vec2d GxAligner::getCenter(const geom::rect<double>& b) const
 {
 DOTRACE("GxAligner::getCenter");
   switch (itsMode)
     {
-    case CENTER_ON_CENTER:
-      return vec2d(0.0, 0.0);
-    case NW_ON_CENTER:
-      return vec2d(bounds.width()/2.0, -bounds.height()/2.0);
-    case NE_ON_CENTER:
-      return vec2d(-bounds.width()/2.0, -bounds.height()/2.0);
-    case SW_ON_CENTER:
-      return vec2d(bounds.width()/2.0, bounds.height()/2.0);
-    case SE_ON_CENTER:
-      return vec2d(-bounds.width()/2.0, bounds.height()/2.0);
-    case ARBITRARY_ON_CENTER:
-      return itsCenter;
+    case CENTER_ON_CENTER:    return vec2d::zeros();
+    case NW_ON_CENTER:        return vec2d( b.width()/2.0, -b.height()/2.0);
+    case NE_ON_CENTER:        return vec2d(-b.width()/2.0, -b.height()/2.0);
+    case SW_ON_CENTER:        return vec2d( b.width()/2.0,  b.height()/2.0);
+    case SE_ON_CENTER:        return vec2d(-b.width()/2.0,  b.height()/2.0);
+    case ARBITRARY_ON_CENTER: return itsCenter;
+    case NATIVE_ALIGNMENT:    return b.center();
     }
-  // NATIVE_ALIGNMENT
-  return bounds.center();
+
+  ASSERT(0);
+  return vec2d();
 }
 
 void GxAligner::doAlignment(Gfx::Canvas& canvas,
