@@ -1,20 +1,24 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Sun Apr 25 12:50:04 1999
+// written: Thu May 27 19:48:37 1999
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FIXPT_H_DEFINED
 #define FIXPT_H_DEFINED
 
-#ifndef IO_H_INCLUDED
+#ifndef GROBJ_H_DEFINED
 #include "grobj.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
+//
 // FixPt class declaration
+//
 ///////////////////////////////////////////////////////////////////////
 
 class FixPt : public GrObj {
@@ -25,9 +29,10 @@ public:
 
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
+  virtual int charCount() const;
 
-  void setLength(float len) { grPostRecompile(); itsLength = len; }
-  void setWidth(int wid) { grPostRecompile(); itsWidth = wid; }
+  void setLength(float len) { sendStateChangeMsg(); itsLength = len; }
+  void setWidth(int wid) { sendStateChangeMsg(); itsWidth = wid; }
   virtual void setCategory(int) {}
   virtual int getCategory() const { return -1; }
 
