@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Wed May 31 13:10:22 2000
+// written: Fri Jul  7 15:14:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -388,6 +388,7 @@ DOTRACE("TimingHdlr::Impl::thResponseSeen");
 void TimingHdlr::Impl::thAbortTrial() {
 DOTRACE("TimingHdlr::Impl::thAbortTrial");
   cancelAll(itsStartEvents);
+  cancelAll(itsResponseEvents);
   scheduleAll(itsAbortEvents);
 }
 
