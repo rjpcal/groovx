@@ -3,7 +3,7 @@
 // poslist.cc
 // Rob Peters
 // created: Fri Mar 12 17:21:29 1999
-// written: Wed Oct 25 17:52:11 2000
+// written: Thu Oct 26 17:52:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,16 +46,16 @@ DOTRACE("PosList::thePosList");
 template class PtrList<Position>;
 
 template <>
-PtrList<Position>& ItemWithId<Position>::ptrList()
+PtrList<Position>& IdItem<Position>::ptrList()
 { return PosList::thePosList(); }
 
 template <>
-PtrList<Position>& NullableItemWithId<Position>::ptrList()
+PtrList<Position>& MaybeIdItem<Position>::ptrList()
 { return PosList::thePosList(); }
 
-#include "itemwithid.cc"
-template class ItemWithId<Position>;
-template class NullableItemWithId<Position>;
+#include "iditem.cc"
+template class IdItem<Position>;
+template class MaybeIdItem<Position>;
 
 static const char vcid_poslist_cc[] = "$Header$";
 #endif // !POSLIST_CC_DEFINED

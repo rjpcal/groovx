@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Oct 26 17:13:17 2000
+// written: Thu Oct 26 17:46:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,13 +85,13 @@ public:
 private:
   int itsCorrectResponse;
 
-  std::vector<NullableItemWithId<GrObj> > itsGrObjs;
-  std::vector<NullableItemWithId<Position> > itsPositions;
+  std::vector<MaybeIdItem<GrObj> > itsGrObjs;
+  std::vector<MaybeIdItem<Position> > itsPositions;
 
   std::vector<Response> itsResponses;
   int itsType;
-  NullableItemWithId<ResponseHandler> itsRh;
-  NullableItemWithId<TimingHdlr> itsTh;
+  MaybeIdItem<ResponseHandler> itsRh;
+  MaybeIdItem<TimingHdlr> itsTh;
 
   TrialState itsState;
 
@@ -225,12 +225,12 @@ DOTRACE("Trial::Impl::readFrom");
   itsGrObjs.clear();
   IO::ReadUtils::readObjectSeq<GrObj>(
 	       reader, "grobjs",
-			 NullableItemWithId<GrObj>::makeInserter(itsGrObjs));
+			 MaybeIdItem<GrObj>::makeInserter(itsGrObjs));
 
   itsPositions.clear();
   IO::ReadUtils::readObjectSeq<Position>(
           reader, "positions",
-			 NullableItemWithId<Position>::makeInserter(itsPositions));
+			 MaybeIdItem<Position>::makeInserter(itsPositions));
 
   itsResponses.clear();
   IO::ReadUtils::readValueObjSeq<Response>(reader, "responses",
@@ -242,11 +242,11 @@ DOTRACE("Trial::Impl::readFrom");
 
   IO::IoObject* rhio = reader->readObject("rh");
   ResponseHandler* rh = dynamic_cast<ResponseHandler*>(rhio);
-  itsRh = NullableItemWithId<ResponseHandler>(rh);
+  itsRh = MaybeIdItem<ResponseHandler>(rh);
 
   IO::IoObject* thio = reader->readObject("th");
   TimingHdlr* th = dynamic_cast<TimingHdlr*>(thio);
-  itsTh = NullableItemWithId<TimingHdlr>(th);
+  itsTh = MaybeIdItem<TimingHdlr>(th);
 }
 
 void Trial::Impl::writeTo(IO::Writer* writer) const {
@@ -412,8 +412,8 @@ DOTRACE("Trial::Impl::avgRespTime");
 
 void Trial::Impl::add(int objid, int posid) {
 DOTRACE("Trial::Impl::add");
-  itsGrObjs.push_back(NullableItemWithId<GrObj>(objid));
-  itsPositions.push_back(NullableItemWithId<Position>(posid));
+  itsGrObjs.push_back(MaybeIdItem<GrObj>(objid));
+  itsPositions.push_back(MaybeIdItem<Position>(posid));
 
   Invariant(itsGrObjs.size() == itsPositions.size());
 }
@@ -433,14 +433,14 @@ void Trial::Impl::setResponseHandler(int rhid) {
 DOTRACE("Trial::Impl::setResponseHandler");
   if (rhid < 0)
 	 throw ErrorWithMsg("response handler id was negative");
-  itsRh = NullableItemWithId<ResponseHandler>(rhid);
+  itsRh = MaybeIdItem<ResponseHandler>(rhid);
 }
 
 void Trial::Impl::setTimingHdlr(int thid) {
 DOTRACE("Trial::Impl::setTimingHdlr");
   if (thid < 0)
 	 throw ErrorWithMsg("timing handler id was negative");
-  itsTh = NullableItemWithId<TimingHdlr>(thid);
+  itsTh = MaybeIdItem<TimingHdlr>(thid);
 }
 
 void Trial::Impl::clearResponses() {

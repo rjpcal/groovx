@@ -3,7 +3,7 @@
 // blocklist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:22:18 1999
-// written: Wed Oct 25 17:51:49 2000
+// written: Thu Oct 26 17:52:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,16 +43,16 @@ DOTRACE("BlockList::theBlockList");
 template class PtrList<Block>;
 
 template <>
-PtrList<Block>& ItemWithId<Block>::ptrList()
+PtrList<Block>& IdItem<Block>::ptrList()
 { return BlockList::theBlockList(); }
 
 template <>
-PtrList<Block>& NullableItemWithId<Block>::ptrList()
+PtrList<Block>& MaybeIdItem<Block>::ptrList()
 { return BlockList::theBlockList(); }
 
-#include "itemwithid.cc"
-template class ItemWithId<Block>;
-template class NullableItemWithId<Block>;
+#include "iditem.cc"
+template class IdItem<Block>;
+template class MaybeIdItem<Block>;
 
 static const char vcid_blocklist_cc[] = "$Header$";
 #endif // !BLOCKLIST_CC_DEFINED

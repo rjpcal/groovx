@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Thu Oct 26 09:16:20 2000
+// written: Thu Oct 26 17:48:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -121,10 +121,10 @@ protected:
 			++itr)
 		{
 		  Trial* t = Trial::make();
-		  ItemWithId<TrialBase> trial(t, ItemWithId<TrialBase>::Insert());
+		  IdItem<TrialBase> trial(t, IdItem<TrialBase>::Insert());
 
 		  t->add(*itr, posid);
-		  NullableItemWithId<GrObj> obj(*itr);
+		  MaybeIdItem<GrObj> obj(*itr);
 		  t->setType(obj->getCategory());
 
 		  lappendVal(trial.id());
@@ -161,7 +161,7 @@ protected:
 			  ++itr2)
 		  {
 			 Trial* t = Trial::make();
-			 ItemWithId<TrialBase> trial(t, ItemWithId<TrialBase>::Insert());
+			 IdItem<TrialBase> trial(t, IdItem<TrialBase>::Insert());
 
 			 t->add(*itr1, posid1);
 			 t->add(*itr2, posid2);
@@ -239,7 +239,7 @@ protected:
 			 // loops over p,e run through all permutations
 			 for (int p = 0; p < NUM_PERMS; ++p) {
 				Trial* t = Trial::make();
-				ItemWithId<TrialBase> trial(t, ItemWithId<TrialBase>::Insert());
+				IdItem<TrialBase> trial(t, IdItem<TrialBase>::Insert());
 				for (int e = 0; e < 3; ++e) {
 				  t->add(base_triad[permutations[p][e]], posids[e]);
 				}

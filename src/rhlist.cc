@@ -3,7 +3,7 @@
 // rhlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:29 1999
-// written: Wed Oct 25 17:52:22 2000
+// written: Thu Oct 26 17:52:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,16 +29,16 @@
 template class PtrList<ResponseHandler>;
 
 template <>
-PtrList<ResponseHandler>& ItemWithId<ResponseHandler>::ptrList()
+PtrList<ResponseHandler>& IdItem<ResponseHandler>::ptrList()
 { return RhList::theRhList(); }
 
 template <>
-PtrList<ResponseHandler>& NullableItemWithId<ResponseHandler>::ptrList()
+PtrList<ResponseHandler>& MaybeIdItem<ResponseHandler>::ptrList()
 { return RhList::theRhList(); }
 
-#include "itemwithid.cc"
-template class ItemWithId<ResponseHandler>;
-template class NullableItemWithId<ResponseHandler>;
+#include "iditem.cc"
+template class IdItem<ResponseHandler>;
+template class MaybeIdItem<ResponseHandler>;
 
 ///////////////////////////////////////////////////////////////////////
 //

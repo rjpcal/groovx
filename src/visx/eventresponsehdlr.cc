@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Tue Oct 24 13:11:10 2000
+// written: Thu Oct 26 17:48:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -137,7 +137,7 @@ public:
 		Invariant(check());
 		erh->ignore(itsWidget);
 
-		ItemWithId<Sound> p = Sound::getErrSound();
+		IdItem<Sound> p = Sound::getErrSound();
 		p->play();
 	 }
 

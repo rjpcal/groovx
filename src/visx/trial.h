@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Thu Oct 26 17:11:54 2000
+// written: Thu Oct 26 17:52:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,8 +23,8 @@
 #include "trialbase.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ITEMWITHID_H_DEFINED)
-#include "itemwithid.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
+#include "iditem.h"
 #endif
 
 namespace GWT {
@@ -86,7 +86,7 @@ public:
   int getResponseHandler() const;
   int getTimingHdlr() const;
 
-  typedef const NullableItemWithId<GrObj>* GrObjItr;
+  typedef const MaybeIdItem<GrObj>* GrObjItr;
   GrObjItr beginGrObjs() const;
   GrObjItr endGrObjs() const;
 

@@ -3,7 +3,7 @@
 // sound.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:43:07 1999
-// written: Tue Oct 24 12:52:27 2000
+// written: Thu Oct 26 17:52:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,8 +19,8 @@
 #include "io/io.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ITEMWITHID_H_DEFINED)
-#include "itemwithid.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
+#include "iditem.h"
 #endif
 
 class SoundError : public ErrorWithMsg {
@@ -50,10 +50,10 @@ public:
   // caller is responsible for destroying the Sound object.
   static Sound* newPlatformSound(const char* soundfile);
 
-  static void setOkSound(ItemWithId<Sound> ok_sound);
-  static void setErrSound(ItemWithId<Sound> err_sound);
-  static ItemWithId<Sound> getOkSound();
-  static ItemWithId<Sound> getErrSound();
+  static void setOkSound(IdItem<Sound> ok_sound);
+  static void setErrSound(IdItem<Sound> err_sound);
+  static IdItem<Sound> getOkSound();
+  static IdItem<Sound> getErrSound();
 
   virtual ~Sound();
 

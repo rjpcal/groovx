@@ -3,7 +3,7 @@
 // objlist.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed Oct 25 17:52:02 2000
+// written: Thu Oct 26 17:52:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,16 +46,16 @@ DOTRACE("ObjList::theObjList");
 template class PtrList<GrObj>;
 
 template <>
-PtrList<GrObj>& ItemWithId<GrObj>::ptrList()
+PtrList<GrObj>& IdItem<GrObj>::ptrList()
 { return ObjList::theObjList(); }
 
 template <>
-PtrList<GrObj>& NullableItemWithId<GrObj>::ptrList()
+PtrList<GrObj>& MaybeIdItem<GrObj>::ptrList()
 { return ObjList::theObjList(); }
 
-#include "itemwithid.cc"
-template class ItemWithId<GrObj>;
-template class NullableItemWithId<GrObj>;
+#include "iditem.cc"
+template class IdItem<GrObj>;
+template class MaybeIdItem<GrObj>;
 
 static const char vcid_objlist_cc[] = "$Header$";
 #endif // !OBJLIST_CC_DEFINED

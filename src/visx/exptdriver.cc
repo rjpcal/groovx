@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Oct 26 16:57:33 2000
+// written: Thu Oct 26 17:48:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -183,7 +183,7 @@ public:
 
   void addBlock(int block_id)
 	 {
-		itsBlocks.push_back(ItemWithId<Block>(block_id));
+		itsBlocks.push_back(IdItem<Block>(block_id));
 	 }
 
   int currentBlock() const
@@ -235,7 +235,7 @@ private:
 
   int itsAutosavePeriod;
 
-  std::vector<ItemWithId<Block> > itsBlocks;
+  std::vector<IdItem<Block> > itsBlocks;
 
   int itsCurrentBlockIdx;
 
@@ -543,7 +543,7 @@ DOTRACE("ExptDriver::Impl::readFrom");
 
   itsBlocks.clear();
   IO::ReadUtils::readObjectSeq<Block>(
-           reader, "blocks", ItemWithId<Block>::makeInserter(itsBlocks));
+           reader, "blocks", IdItem<Block>::makeInserter(itsBlocks));
 
   reader->readValue("doUponCompletionScript", itsDoUponCompletionBody);
   recreateDoUponCompletionProc();
@@ -712,7 +712,7 @@ DOTRACE("ExptDriver::Impl::edSetCurrentTrial");
 	 dynamic_cast<TlistWidget*>(getWidget());
 
   if (widg != 0) {
-	 widg->setCurTrial(NullableItemWithId<TrialBase>(trial));
+	 widg->setCurTrial(MaybeIdItem<TrialBase>(trial));
   }
 }
 

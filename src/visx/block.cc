@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Oct 26 17:14:18 2000
+// written: Thu Oct 26 17:52:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #include "block.h"
 
 #include "experiment.h"
-#include "itemwithid.h"
+#include "iditem.h"
 #include "response.h"
 #include "trialbase.h"
 
@@ -72,14 +72,14 @@ public:
 	 {}
 
   // Ordered sequence of indexes into the Tlist
-  std::vector<NullableItemWithId<TrialBase> > itsTrialSequence;
+  std::vector<MaybeIdItem<TrialBase> > itsTrialSequence;
 
   int itsRandSeed;				  // Random seed used to create itsTrialSequence
   int itsCurTrialSeqIdx;		  // Index of the current trial
 										  // Also functions as # of completed trials
   bool itsVerbose;
 
-  NullableItemWithId<TrialBase> itsCurrentTrial;
+  MaybeIdItem<TrialBase> itsCurrentTrial;
 
   mutable bool itsHasBegun;
 
@@ -87,7 +87,7 @@ public:
 	 {
 		if ( itsCurTrialSeqIdx < 0 || 
 			  (unsigned int) itsCurTrialSeqIdx >= itsTrialSequence.size() )
-		  itsCurrentTrial = NullableItemWithId<TrialBase>(-1);
+		  itsCurrentTrial = MaybeIdItem<TrialBase>(-1);
 		else
 		  itsCurrentTrial = itsTrialSequence.at(itsCurTrialSeqIdx);
 	 }
@@ -134,7 +134,7 @@ Block::~Block()
   delete itsImpl;
 }
 
-void Block::addTrial(NullableItemWithId<TrialBase> trial, int repeat) {
+void Block::addTrial(MaybeIdItem<TrialBase> trial, int repeat) {
 DOTRACE("Block::addTrial");
   for (int i = 0; i < repeat; ++i) {
 	 itsImpl->itsTrialSequence.push_back(trial);
@@ -158,7 +158,7 @@ void Block::removeAllTrials() {
 DOTRACE("Block::removeAllTrials");
   itsImpl->itsTrialSequence.clear();
   itsImpl->itsCurTrialSeqIdx = 0;
-  itsImpl->itsCurrentTrial = NullableItemWithId<TrialBase>(-1);
+  itsImpl->itsCurrentTrial = MaybeIdItem<TrialBase>(-1);
 }
 
 IO::VersionId Block::serialVersionId() const {
@@ -181,7 +181,7 @@ DOTRACE("Block::readFrom");
   itsImpl->itsTrialSequence.clear();
   IO::ReadUtils::readObjectSeq<TrialBase>(
         reader, "trialSeq",
-		  NullableItemWithId<TrialBase>::makeInserter(itsImpl->itsTrialSequence));
+		  MaybeIdItem<TrialBase>::makeInserter(itsImpl->itsTrialSequence));
 
   reader->readValue("randSeed", itsImpl->itsRandSeed);
   reader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
@@ -256,7 +256,7 @@ DOTRACE("Block::prevResponse");
   if (itsImpl->itsCurTrialSeqIdx == 0 ||
 		itsImpl->itsTrialSequence.size() == 0) return -1;
 
-  NullableItemWithId<TrialBase> prev_trial = 
+  MaybeIdItem<TrialBase> prev_trial = 
 	 itsImpl->itsTrialSequence.at(itsImpl->itsCurTrialSeqIdx-1);
   return prev_trial->lastResponse();
 }
@@ -354,7 +354,7 @@ DOTRACE("Block::abortTrial");
 
   // Add the aborted trial to the back of the sequence.
   itsImpl->itsTrialSequence.push_back(
-                     NullableItemWithId<TrialBase>(aborted_trial));
+                     MaybeIdItem<TrialBase>(aborted_trial));
 
   // We must decrement itsImpl->itsCurTrialSeqIdx, so that when it is
   // incremented by endTrial, the next trial has slid into the
@@ -376,7 +376,7 @@ DOTRACE("Block::processResponse");
   if (!response.isCorrect()) {
 	 // If the response was incorrect, add a repeat of the current
 	 // trial to the block and reshuffle
-	 addTrial(NullableItemWithId<TrialBase>(currentTrial()), 1);
+	 addTrial(MaybeIdItem<TrialBase>(currentTrial()), 1);
 	 std::random_shuffle(
 		itsImpl->itsTrialSequence.begin()+itsImpl->itsCurTrialSeqIdx+1,
 		itsImpl->itsTrialSequence.end());

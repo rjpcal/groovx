@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Thu Oct 26 17:13:49 2000
+// written: Thu Oct 26 17:52:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,8 +19,8 @@
 #include "io/io.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ITEMWITHID_H_DEFINED)
-#include "itemwithid.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
+#include "iditem.h"
 #endif
 
 class TrialBase;
@@ -65,7 +65,7 @@ public:
   virtual ~Block();
 
   /// Add the specified trialid to the block, 'repeat' number of times.
-  void addTrial(NullableItemWithId<TrialBase> trial, int repeat=1);
+  void addTrial(MaybeIdItem<TrialBase> trial, int repeat=1);
 
   /** Randomly permute the sequence of trialids, using seed as the
 		random seed for the shuffle. */

@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Wed Oct 25 16:46:44 2000
+// written: Thu Oct 26 17:52:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,8 @@
 #include "ioptrlist.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ITEMWITHID_H_DEFINED)
-#include "itemwithid.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
+#include "iditem.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -42,10 +42,10 @@ public:
   virtual ~PtrList();
 
   /// A reference-counted handle to type T.
-  typedef ItemWithId<T> SharedPtr;
+  typedef IdItem<T> SharedPtr;
 
-  friend class ItemWithId<T>;
-  friend class NullableItemWithId<T>;
+  friend class IdItem<T>;
+  friend class MaybeIdItem<T>;
 
 protected:
   virtual void ensureCorrectType(const IO::IoObject* ptr) const;
@@ -64,7 +64,7 @@ private:
 	 { return insert(handle.get()); }
 
   /// Insert \a item into the list, and return its id.
-  SharedPtr insert(ItemWithId<T> item)
+  SharedPtr insert(IdItem<T> item)
 	 { return insert(item.handle().get()); }
 };
 

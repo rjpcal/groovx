@@ -3,7 +3,7 @@
 // fishtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 12:00:53 1999
-// written: Thu Oct 26 09:15:14 2000
+// written: Thu Oct 26 17:48:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ protected:
   virtual void invoke() {
 	 if (objc() == 1) {
 		Fish* p = Fish::make();
-		ItemWithId<GrObj> obj(p, ItemWithId<GrObj>::Insert());
+		IdItem<GrObj> obj(p, IdItem<GrObj>::Insert());
 		returnInt(obj.id());
 	 }
 	 else if (objc() == 4) {
@@ -42,7 +42,7 @@ protected:
 		
 		Fish* p = Fish::makeFromFiles(spline_file, coord_file, index);
 		
-		ItemWithId<GrObj> obj(p, ItemWithId<GrObj>::Insert());
+		IdItem<GrObj> obj(p, IdItem<GrObj>::Insert());
 		returnInt(obj.id());
 	 }
   }

@@ -3,7 +3,7 @@
 // itemwithid.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct 23 11:41:23 2000
-// written: Thu Oct 26 09:17:20 2000
+// written: Thu Oct 26 17:48:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,29 +19,29 @@
 template <class T> class PtrList;
 
 template <class Container, class T>
-class ItemWithIdInserter {
+class IdItemInserter {
 public:
   Container& itsContainer;
 
-  ItemWithIdInserter(Container& c) : itsContainer(c) {}
+  IdItemInserter(Container& c) : itsContainer(c) {}
 
-  ItemWithIdInserter& operator=(T* obj);
+  IdItemInserter& operator=(T* obj);
 
-  ItemWithIdInserter& operator*() { return *this; }
-  ItemWithIdInserter& operator++() { return *this; }
+  IdItemInserter& operator*() { return *this; }
+  IdItemInserter& operator++() { return *this; }
 };
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * ItemWithId<T> is a wrapper of a PtrHandle<T> along with an integer
+ * IdItem<T> is a wrapper of a PtrHandle<T> along with an integer
  * index from a PtrList<T>.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class ItemWithId {
+class IdItem {
 private:
   static PtrList<T>& ptrList();
 
@@ -49,9 +49,9 @@ private:
   int itsId;
 
 public:
-  ItemWithId(int id);
-  ItemWithId(T* master, int id_) : itsHandle(master), itsId(id_) {}
-  ItemWithId(PtrHandle<T> item_, int id_) : itsHandle(item_), itsId(id_) {}
+  IdItem(int id);
+  IdItem(T* master, int id_) : itsHandle(master), itsId(id_) {}
+  IdItem(PtrHandle<T> item_, int id_) : itsHandle(item_), itsId(id_) {}
 
   // Default destructor, copy constructor, operator=() are fine
 
@@ -59,12 +59,12 @@ public:
 		should be inserted into an appropriate PtrList. */
   class Insert {};
 
-  ItemWithId(T* ptr, Insert /*dummy param*/);
-  ItemWithId(PtrHandle<T> item, Insert /*dummy param*/);
+  IdItem(T* ptr, Insert /*dummy param*/);
+  IdItem(PtrHandle<T> item, Insert /*dummy param*/);
 
   /** This operation will cause \a new_master to be inserted into an
       appropriate PtrList. */
-  ItemWithId& operator=(T* new_master);
+  IdItem& operator=(T* new_master);
 
         T* operator->()       { return itsHandle.get(); }
   const T* operator->() const { return itsHandle.get(); }
@@ -79,42 +79,42 @@ public:
 
 
   template <class Container>
-  static ItemWithIdInserter<Container, T> makeInserter(Container& c)
-	 { return ItemWithIdInserter<Container, T>(c); }
+  static IdItemInserter<Container, T> makeInserter(Container& c)
+	 { return IdItemInserter<Container, T>(c); }
 };
 
 template <class Container, class T>
-inline ItemWithIdInserter<Container, T>&
-ItemWithIdInserter<Container, T>::operator=(T* obj)
+inline IdItemInserter<Container, T>&
+IdItemInserter<Container, T>::operator=(T* obj)
 {
-  itsContainer.push_back(ItemWithId<T>(obj, ItemWithId<T>::Insert()));
+  itsContainer.push_back(IdItem<T>(obj, IdItem<T>::Insert()));
   return *this;
 }
 
 template <class Container, class T>
-class NiwidInserter {
+class MIdItemInserter {
 public:
   Container& itsContainer;
 
-  NiwidInserter(Container& c) : itsContainer(c) {}
+  MIdItemInserter(Container& c) : itsContainer(c) {}
 
-  NiwidInserter& operator=(T* obj);
+  MIdItemInserter& operator=(T* obj);
 
-  NiwidInserter& operator*() { return *this; }
-  NiwidInserter& operator++() { return *this; }
+  MIdItemInserter& operator*() { return *this; }
+  MIdItemInserter& operator++() { return *this; }
 };
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * NullableItemWithId<T> is a wrapper of a NullablePtrHandle<T> along
+ * MaybeIdItem<T> is a wrapper of a NullablePtrHandle<T> along
  * with an integer index from a PtrList<T>.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class NullableItemWithId {
+class MaybeIdItem {
 private:
   static PtrList<T>& ptrList();
 
@@ -122,24 +122,24 @@ private:
   int itsId;
 
 public:
-  explicit NullableItemWithId(int id_) :
+  explicit MaybeIdItem(int id_) :
 	 itsHandle(0), itsId(id_) {}
 
-  NullableItemWithId(T* master, int id_) :
+  MaybeIdItem(T* master, int id_) :
 	 itsHandle(master), itsId(id_) {}
 
-  NullableItemWithId(PtrHandle<T> item_, int id_) :
+  MaybeIdItem(PtrHandle<T> item_, int id_) :
 	 itsHandle(item_), itsId(id_) {}
 
-  NullableItemWithId(NullablePtrHandle<T> item_, int id_) :
+  MaybeIdItem(NullablePtrHandle<T> item_, int id_) :
 	 itsHandle(item_), itsId(id_) {}
 
-  NullableItemWithId(const ItemWithId<T> other) :
+  MaybeIdItem(const IdItem<T> other) :
 	 itsHandle(other.handle()), itsId(other.id()) {}
 
   // These will cause the item to be inserted into the relevant list.
-  NullableItemWithId(T* master);
-  NullableItemWithId(PtrHandle<T> item);
+  MaybeIdItem(T* master);
+  MaybeIdItem(PtrHandle<T> item);
 
   // Default destructor, copy constructor, operator=() are fine
 
@@ -173,15 +173,15 @@ public:
   typedef T ValueType;
 
   template <class Container>
-  static NiwidInserter<Container, T> makeInserter(Container& c)
-	 { return NiwidInserter<Container, T>(c); }
+  static MIdItemInserter<Container, T> makeInserter(Container& c)
+	 { return MIdItemInserter<Container, T>(c); }
 };
 
 template <class Container, class T>
-inline NiwidInserter<Container, T>&
-NiwidInserter<Container, T>::operator=(T* obj)
+inline MIdItemInserter<Container, T>&
+MIdItemInserter<Container, T>::operator=(T* obj)
 {
-  itsContainer.push_back(NullableItemWithId<T>(obj));
+  itsContainer.push_back(MaybeIdItem<T>(obj));
   return *this;
 }
 

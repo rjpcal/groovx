@@ -3,7 +3,7 @@
 // tlistwidget.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:45:34 1999
-// written: Mon Oct 23 11:57:35 2000
+// written: Thu Oct 26 17:52:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,8 @@
 #include "toglconfig.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ITEMWITHID_H_DEFINED)
-#include "itemwithid.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
+#include "iditem.h"
 #endif
 
 class TrialBase;
@@ -39,7 +39,7 @@ public:
   // to the screen window.
   void setVisibility(bool vis);
   
-  void setCurTrial(const NullableItemWithId<TrialBase>& item);
+  void setCurTrial(const MaybeIdItem<TrialBase>& item);
 
   void setHold(bool hold_on);
 

@@ -3,7 +3,7 @@
 // tlistwidget.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:46:38 1999
-// written: Mon Oct 23 12:01:10 2000
+// written: Thu Oct 26 17:46:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,12 +49,12 @@ public:
 	 itsVisibility = val;
 	 if (itsVisibility == false)
 		{
-		  itsDrawItem = NullableItemWithId<TrialBase>(itsDrawItem.id());
-		  itsUndrawItem =  NullableItemWithId<TrialBase>(itsUndrawItem.id());
+		  itsDrawItem = MaybeIdItem<TrialBase>(itsDrawItem.id());
+		  itsUndrawItem =  MaybeIdItem<TrialBase>(itsUndrawItem.id());
 		}
   }
 
-  void setCurTrial(const NullableItemWithId<TrialBase>& item)
+  void setCurTrial(const MaybeIdItem<TrialBase>& item)
   {
   	 itsDrawItem = item;
 
@@ -71,8 +71,8 @@ public:
   { itsHoldOn = hold_on; }
 
 private:
-  NullableItemWithId<TrialBase> itsDrawItem;
-  NullableItemWithId<TrialBase> itsUndrawItem;
+  MaybeIdItem<TrialBase> itsDrawItem;
+  MaybeIdItem<TrialBase> itsUndrawItem;
   bool itsVisibility;
   bool itsHoldOn;
 };
@@ -182,7 +182,7 @@ DOTRACE("TlistWidget::setVisibility");
   itsImpl->setVisibility(vis);
 }
 
-void TlistWidget::setCurTrial(const NullableItemWithId<TrialBase>& item) {
+void TlistWidget::setCurTrial(const MaybeIdItem<TrialBase>& item) {
 DOTRACE("TlistWidget::setCurTrial");
   itsImpl->setCurTrial(item);
 }

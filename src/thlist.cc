@@ -3,7 +3,7 @@
 // thlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:37 1999
-// written: Wed Oct 25 17:52:42 2000
+// written: Thu Oct 26 17:52:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,16 +43,16 @@ DOTRACE("ThList::theThList");
 template class PtrList<TimingHdlr>;
 
 template <>
-PtrList<TimingHdlr>& ItemWithId<TimingHdlr>::ptrList()
+PtrList<TimingHdlr>& IdItem<TimingHdlr>::ptrList()
 { return ThList::theThList(); }
 
 template <>
-PtrList<TimingHdlr>& NullableItemWithId<TimingHdlr>::ptrList()
+PtrList<TimingHdlr>& MaybeIdItem<TimingHdlr>::ptrList()
 { return ThList::theThList(); }
 
-#include "itemwithid.cc"
-template class ItemWithId<TimingHdlr>;
-template class NullableItemWithId<TimingHdlr>;
+#include "iditem.cc"
+template class IdItem<TimingHdlr>;
+template class MaybeIdItem<TimingHdlr>;
 
 static const char vcid_thlist_cc[] = "$Header$";
 #endif // !THLIST_CC_DEFINED
