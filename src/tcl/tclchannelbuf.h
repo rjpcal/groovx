@@ -36,7 +36,10 @@
 
 #include <tcl.h>
 
-template <class T> class shared_ptr;
+namespace rutz
+{
+  template <class T> class shared_ptr;
+}
 
 namespace Tcl
 {
@@ -79,15 +82,15 @@ namespace Tcl
 
 namespace Tcl
 {
-  shared_ptr<std::ostream> ochanopen(Tcl_Interp* interp,
-                                     const char* channame,
-                                     std::ios::openmode flags =
-                                     std::ios::openmode(0));
+  rutz::shared_ptr<std::ostream>
+  ochanopen(Tcl_Interp* interp,
+            const char* channame,
+            std::ios::openmode flags = std::ios::openmode(0));
 
-  shared_ptr<std::istream> ichanopen(Tcl_Interp* interp,
-                                     const char* channame,
-                                     std::ios::openmode flags =
-                                     std::ios::openmode(0));
+  rutz::shared_ptr<std::istream>
+  ichanopen(Tcl_Interp* interp,
+            const char* channame,
+            std::ios::openmode flags = std::ios::openmode(0));
 }
 
 static const char vcid_tclchannelbuf_h[] = "$Header$";

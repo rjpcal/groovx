@@ -38,6 +38,8 @@
 
 #include "util/trace.h"
 
+using rutz::shared_ptr;
+
 Tcl::Timer::Timer(unsigned int msec, bool repeat)
   :
   Util::Timer(shared_ptr<Util::Scheduler>(new Tcl::TimerScheduler),

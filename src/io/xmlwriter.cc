@@ -52,6 +52,8 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+using rutz::shared_ptr;
+
 using Util::Ref;
 using Util::SoftRef;
 
@@ -318,12 +320,12 @@ DOTRACE("XMLWriter::writeEscaped");
 
 shared_ptr<IO::Writer> IO::makeXMLWriter(STD_IO::ostream& os)
 {
-  return make_shared(new XMLWriter(os));
+  return rutz::make_shared(new XMLWriter(os));
 }
 
 shared_ptr<IO::Writer> IO::makeXMLWriter(const char* filename)
 {
-  return make_shared(new XMLWriter(filename));
+  return rutz::make_shared(new XMLWriter(filename));
 }
 
 static const char vcid_xmlwriter_cc[] = "$Header$";

@@ -110,7 +110,7 @@ public:
 #include "gfx/glxopts.h"
 
 #include "util/error.h"
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 
 #include "util/debug.h"
 DBG_REGISTER

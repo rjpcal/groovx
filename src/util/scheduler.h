@@ -38,7 +38,10 @@ namespace Util
   class TimerToken;
 }
 
-template <class T> class shared_ptr;
+namespace rutz
+{
+  template <class T> class shared_ptr;
+}
 
 class Util::TimerToken
 {
@@ -58,7 +61,7 @@ class Util::Scheduler
 public:
   virtual ~Scheduler() throw();
 
-  virtual shared_ptr<Util::TimerToken>
+  virtual rutz::shared_ptr<Util::TimerToken>
   schedule(int msec,
            void (*callback)(void*),
            void* clientdata) = 0;

@@ -38,11 +38,10 @@ typedef void* ClientData;
 
 class fstring;
 
-template <class T> class shared_ptr;
-
 namespace rutz
 {
   struct file_pos;
+  template <class T> class shared_ptr;
 }
 
 namespace Tcl
@@ -71,7 +70,7 @@ public:
                             const rutz::file_pos& src_pos);
 
   /// Add the given Tcl::Command to this group's overload list.
-  void add(shared_ptr<Tcl::Command> p);
+  void add(rutz::shared_ptr<Tcl::Command> p);
 
   /// Get this group's fully namespace-qualified command name.
   fstring cmdName() const;

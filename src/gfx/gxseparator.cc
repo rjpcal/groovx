@@ -53,6 +53,8 @@
 
 #include "util/trace.h"
 
+using rutz::shared_ptr;
+
 class GxSeparator::Impl : public Util::VolatileObject
 {
   Impl(const Impl&);

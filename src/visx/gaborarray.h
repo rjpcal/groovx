@@ -37,7 +37,7 @@
 #include "gfx/gbvec.h"
 
 #include "util/arrays.h"
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 
 class GaborArrayElement;
 class Snake;
@@ -111,7 +111,7 @@ private:
   GaborArray(const GaborArray&);
   GaborArray& operator=(const GaborArray&);
 
-  shared_ptr<Gfx::BmapData> generateBmap(bool doTagLast = false) const;
+  rutz::shared_ptr<Gfx::BmapData> generateBmap(bool doTagLast = false) const;
 
   void updateForeg() const;
   void updateBackg() const;
@@ -146,7 +146,7 @@ private:
 
   mutable int itsTotalNumber;
   mutable rutz::fixed_block<GaborArrayElement> itsArray;
-  mutable shared_ptr<Gfx::BmapData> itsBmap;
+  mutable rutz::shared_ptr<Gfx::BmapData> itsBmap;
 
   bool itsDumpingFrames;
   unsigned int itsFrameDumpPeriod;

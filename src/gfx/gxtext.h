@@ -34,7 +34,7 @@
 
 #include "gfx/gxshapekit.h"
 
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 #include "util/strings.h"
 
 class GxFont;
@@ -92,7 +92,7 @@ protected:
   virtual void grRender(Gfx::Canvas& canvas) const;
 
 private:
-  shared_ptr<GxFont> itsFont;
+  rutz::shared_ptr<GxFont> itsFont;
   fstring itsText;
   int itsStrokeWidth;
 };

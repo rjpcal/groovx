@@ -32,7 +32,10 @@
 #ifndef GXFONT_H_DEFINED
 #define GXFONT_H_DEFINED
 
-template <class T> class shared_ptr;
+namespace rutz
+{
+  template <class T> class shared_ptr;
+}
 
 namespace Gfx
 {
@@ -46,7 +49,7 @@ class GxFont
 {
 public:
   /// Factory function.
-  static shared_ptr<GxFont> make(const char* name);
+  static rutz::shared_ptr<GxFont> make(const char* name);
 
   /// Virtual destructor.
   virtual ~GxFont() throw();

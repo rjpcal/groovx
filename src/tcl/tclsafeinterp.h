@@ -36,7 +36,7 @@
 #include "tcl/tclobjptr.h"
 
 #include "util/fileposition.h"
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 
 struct Tcl_Interp;
 typedef struct Tcl_Obj Tcl_Obj;

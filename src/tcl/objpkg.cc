@@ -43,6 +43,8 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+using rutz::shared_ptr;
+
 //---------------------------------------------------------------------
 //
 // ObjCaster

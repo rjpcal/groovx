@@ -36,7 +36,10 @@
 
 class GlxOpts;
 
-template <class T> class shared_ptr;
+namespace rutz
+{
+  template <class T> class shared_ptr;
+}
 
 class GlWindowInterface
 {
@@ -67,7 +70,8 @@ public:
                                   int width, int height) throw() = 0;
 
   /// Make a concrete GlWindowInterface of a platform-dependent type.
-  static shared_ptr<GlWindowInterface> make(Display* dpy, GlxOpts& opts);
+  static rutz::shared_ptr<GlWindowInterface> make(Display* dpy,
+                                                  GlxOpts& opts);
 };
 
 static const char vcid_glwindowinterface_h[] = "$Header$";

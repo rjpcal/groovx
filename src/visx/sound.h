@@ -34,7 +34,7 @@
 
 #include "io/io.h"
 
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 #include "util/strings.h"
 
 namespace Util
@@ -118,7 +118,7 @@ public:
 
 private:
   fstring itsFilename;
-  shared_ptr<SoundRep> itsRep;
+  rutz::shared_ptr<SoundRep> itsRep;
 };
 
 static const char vcid_sound_h[] = "$Header$";

@@ -32,7 +32,7 @@
 #ifndef XMLWRITER_H_DEFINED
 #define XMLWRITER_H_DEFINED
 
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 
 #ifdef HAVE_IOSFWD
 #  include <iosfwd>
@@ -45,10 +45,10 @@ namespace IO
   class Writer;
 
   /// Make an XML writer that writes to \c STD_IO::ostream.
-  shared_ptr<IO::Writer> makeXMLWriter(STD_IO::ostream& os);
+  rutz::shared_ptr<IO::Writer> makeXMLWriter(STD_IO::ostream& os);
 
   /// Make an XML writer that writes to the file named \a filename.
-  shared_ptr<IO::Writer> makeXMLWriter(const char* filename);
+  rutz::shared_ptr<IO::Writer> makeXMLWriter(const char* filename);
 }
 
 static const char vcid_xmlwriter_h[] = "$Header$";

@@ -33,7 +33,7 @@
 #define OBJPKG_H_DEFINED
 
 #include "util/objfactory.h"
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 
 namespace rutz
 {
@@ -84,13 +84,13 @@ namespace Tcl
     }
   };
 
-  void defGenericObjCmds(Pkg* pkg, shared_ptr<ObjCaster> caster,
+  void defGenericObjCmds(Pkg* pkg, rutz::shared_ptr<ObjCaster> caster,
                          const rutz::file_pos& src_pos);
 
   template <class C>
   void defGenericObjCmds(Pkg* pkg, const rutz::file_pos& src_pos)
   {
-    shared_ptr<ObjCaster> caster(new CObjCaster<C>);
+    rutz::shared_ptr<ObjCaster> caster(new CObjCaster<C>);
     defGenericObjCmds(pkg, caster, src_pos);
   }
 

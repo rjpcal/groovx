@@ -62,6 +62,8 @@ DBG_REGISTER
 using namespace Geom;
 using namespace Gfx;
 
+using rutz::shared_ptr;
+
 namespace
 {
   const int MAX_GABOR_NUMBER = 1800;

@@ -34,7 +34,7 @@
 
 #include "tcl/tclobjptr.h"
 
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 
 namespace Tcl
 {
@@ -245,9 +245,9 @@ private:
 template <class T>
 class Tcl::List::Iterator : public Tcl::List::IteratorBase
 {
-  // Keep a copy of the current value here so that operator*() can return a
-  // reference rather than by value.
-  mutable shared_ptr<const T> itsCurrent;
+  // Keep a copy of the current value here so that operator*() can
+  // return a reference rather than by value.
+  mutable rutz::shared_ptr<const T> itsCurrent;
 
 public:
   Iterator(const List& owner, Pos pos = BEGIN) :

@@ -32,7 +32,10 @@
 #ifndef BMAPDATA_H_DEFINED
 #define BMAPDATA_H_DEFINED
 
-template <class T> class shared_ptr;
+namespace rutz
+{
+  template <class T> class shared_ptr;
+}
 
 namespace Gfx
 {
@@ -175,7 +178,7 @@ public:
   /// Queues the update given by \a updater.
   /** The \c update() function will be called only when the bitmap
       data must be accessed. */
-  void queueUpdate(shared_ptr<UpdateFunc> updater) const;
+  void queueUpdate(rutz::shared_ptr<UpdateFunc> updater) const;
 
   /// Forces any pending update to be called.
   void updateIfNeeded() const;
@@ -192,11 +195,12 @@ public:
   void specifyRowOrder(RowOrder order) const;
 
   /// Generate a new image from scrambled subparts of the current image.
-  shared_ptr<BmapData> makeScrambled(int numsubcols, int numsubrows,
-                                     int seed,
-                                     bool allowMoveSubparts = true,
-                                     bool allowFlipLeftRight = true,
-                                     bool allowFlipTopBottom = true) const;
+  rutz::shared_ptr<BmapData>
+  makeScrambled(int numsubcols, int numsubrows,
+                int seed,
+                bool allowMoveSubparts = true,
+                bool allowFlipLeftRight = true,
+                bool allowFlipTopBottom = true) const;
 
 private:
   class Impl;

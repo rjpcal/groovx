@@ -35,11 +35,12 @@
 #include <iostream>
 #include <zlib.h>
 
-template <class T> class shared_ptr;
 class fstring;
 
 namespace rutz
 {
+  template <class T> class shared_ptr;
+
   /// A std::streambuf implementation that handles gzip-encoded data.
   class gzstreambuf : public std::streambuf
   {

@@ -58,6 +58,8 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+using rutz::shared_ptr;
+
 namespace
 {
   Util::SoftRef<Toglet> theCurrentToglet;
@@ -79,6 +81,7 @@ private:
   Impl& operator=(const Impl&);
 
 public:
+
   Toglet* owner;
   const Tk_Window tkWin;
   shared_ptr<GlxOpts> opts;

@@ -52,10 +52,10 @@ namespace rutz
 
   /// A reference-counted smart pointer for shared objects.
 
-  /** \c shared_ptr is an enhanced relative of scoped_ptr with
-      reference counted copy semantics.  The object pointed to is
-      deleted when the last shared_ptr pointing to it is destroyed or
-      reset. */
+  /** rutz::shared_ptr is an enhanced relative of rutz::scoped_ptr
+      with reference counted copy semantics.  The object pointed to is
+      deleted when the last rutz::shared_ptr pointing to it is
+      destroyed or reset. */
 
   template<class T>
   class shared_ptr

@@ -44,6 +44,8 @@
 
 #include "util/trace.h"
 
+using rutz::shared_ptr;
+
 class GxNodeIter : public rutz::fwd_iter_ifx<const Util::Ref<GxNode> >
 {
   Util::Ref<GxNode> itsNode;
@@ -61,8 +63,8 @@ public:
   }
 
   virtual bool     at_end() const { return !isItValid; }
-  virtual ValType&   get()  const { return itsNode; }
-  virtual void      next()        { isItValid = false; }
+  virtual ValType&    get() const { return itsNode; }
+  virtual void       next()       { isItValid = false; }
 };
 
 GxNode::GxNode() : sigNodeChanged()

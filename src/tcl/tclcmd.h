@@ -35,7 +35,7 @@
 #include "tcl/tclconvert.h"
 #include "tcl/tclobjptr.h"
 
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 
 typedef struct Tcl_Obj Tcl_Obj;
 
@@ -44,9 +44,8 @@ class fstring;
 namespace rutz
 {
   struct file_pos;
+  template <class T> class shared_ptr;
 }
-
-template <class T> class shared_ptr;
 
 namespace Tcl
 {
@@ -106,12 +105,15 @@ public:
       objc_min and \a objc_max, inclusive. If the value given for \a
       objc_max is negative, then the maximum objc will be set to the
       same value as \a objc_min. */
-  static shared_ptr<Command> make(
-          Tcl::Interp& interp,
-          shared_ptr<Tcl::Callback> callback,
-          const char* cmd_name, const char* usage,
-          int objc_min, int objc_max, bool exact_objc,
-          const rutz::file_pos& src_pos);
+  static rutz::shared_ptr<Command>
+  make(Tcl::Interp& interp,
+       rutz::shared_ptr<Tcl::Callback> callback,
+       const char* cmd_name,
+       const char* usage,
+       int objc_min,
+       int objc_max,
+       bool exact_objc,
+       const rutz::file_pos& src_pos);
 
   /// Virtual destructor ensures proper destruction of subclasses.
   ~Command() throw();
@@ -130,13 +132,13 @@ public:
             unsigned int objc, Tcl_Obj* const objv[]);
 
   /// Get the current Tcl::Dispatcher for this command.
-  shared_ptr<Dispatcher> getDispatcher() const;
+  rutz::shared_ptr<Dispatcher> getDispatcher() const;
 
   /// Change the Tcl::Dispatcher for this command.
-  void setDispatcher(shared_ptr<Dispatcher> dpx);
+  void setDispatcher(rutz::shared_ptr<Dispatcher> dpx);
 
 private:
-  Command(shared_ptr<Tcl::Callback> callback,
+  Command(rutz::shared_ptr<Tcl::Callback> callback,
           const char* cmd_name, const char* usage,
           int objc_min=0, int objc_max=-1, bool exact_objc=false);
 

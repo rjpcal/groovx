@@ -54,6 +54,8 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+using rutz::shared_ptr;
+
 using Util::Ref;
 using Util::SoftRef;
 
@@ -494,12 +496,12 @@ DOTRACE("AsciiStreamReader::inflateObject");
 
 shared_ptr<IO::Reader> IO::makeAsciiStreamReader(STD_IO::istream& os)
 {
-  return make_shared( new AsciiStreamReader(os) );
+  return rutz::make_shared( new AsciiStreamReader(os) );
 }
 
 shared_ptr<IO::Reader> IO::makeAsciiStreamReader(const char* filename)
 {
-  return make_shared( new AsciiStreamReader(filename) );
+  return rutz::make_shared( new AsciiStreamReader(filename) );
 }
 
 static const char vcid_asciistreamreader_cc[] = "$Header$";

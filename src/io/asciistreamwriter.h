@@ -32,7 +32,7 @@
 #ifndef ASCIISTREAMWRITER_H_DEFINED
 #define ASCIISTREAMWRITER_H_DEFINED
 
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 
 #ifdef HAVE_IOSFWD
 #  include <iosfwd>
@@ -50,10 +50,10 @@ namespace IO
       objects to an output stream in a ascii format that is readable by \c
       AsciiStreamReader. With this data format, objects may read and write
       their attributes in any order. */
-  shared_ptr<IO::Writer> makeAsciiStreamWriter(STD_IO::ostream& os);
+  rutz::shared_ptr<IO::Writer> makeAsciiStreamWriter(STD_IO::ostream& os);
 
   /// Make an AsciiStream writer that writes to the file named \a filename.
-  shared_ptr<IO::Writer> makeAsciiStreamWriter(const char* filename);
+  rutz::shared_ptr<IO::Writer> makeAsciiStreamWriter(const char* filename);
 }
 
 static const char vcid_asciistreamwriter_h[] = "$Header$";

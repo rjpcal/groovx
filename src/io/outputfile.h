@@ -34,7 +34,7 @@
 
 #include "io/io.h"
 
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 #include "util/strings.h"
 
 #ifdef HAVE_IOSFWD
@@ -74,7 +74,7 @@ public:
 
 private:
   fstring itsFilename;
-  shared_ptr<STD_IO::ostream> itsStream;
+  rutz::shared_ptr<STD_IO::ostream> itsStream;
 };
 
 static const char vcid_outputfile_h[] = "$Header$";

@@ -37,8 +37,8 @@
 #include "tcl/tclveccmd.h"
 
 #include "util/functors.h"
-#include "util/pointers.h"
 #include "util/ref.h"
+#include "util/sharedptr.h"
 
 namespace rutz
 {
@@ -362,9 +362,9 @@ namespace Tcl
     GenericCallback<R, Functor>(Functor f) : itsHeldFunc(f) {}
 
   public:
-    static shared_ptr<Callback> make(Functor f)
+    static rutz::shared_ptr<Callback> make(Functor f)
     {
-      return shared_ptr<Callback>(new GenericCallback(f));
+      return rutz::shared_ptr<Callback>(new GenericCallback(f));
     }
 
     virtual ~GenericCallback() throw() {}
@@ -389,9 +389,9 @@ namespace Tcl
     GenericCallback<void, Functor>(Functor f) : itsHeldFunc(f) {}
 
   public:
-    static shared_ptr<Callback> make(Functor f)
+    static rutz::shared_ptr<Callback> make(Functor f)
     {
-      return shared_ptr<Callback>(new GenericCallback(f));
+      return rutz::shared_ptr<Callback>(new GenericCallback(f));
     }
 
     virtual ~GenericCallback() throw() {}
@@ -411,11 +411,13 @@ namespace Tcl
 /// Factory function for Tcl::Command's from functors.
 
   template <class Functor>
-  inline shared_ptr<Command> makeGenericCmd
-                               (Tcl::Interp& interp, Functor f,
-                                const char* cmd_name,
-                                const char* usage, int nargs,
-                                const rutz::file_pos& src_pos)
+  inline rutz::shared_ptr<Command>
+  makeGenericCmd(Tcl::Interp& interp,
+                 Functor f,
+                 const char* cmd_name,
+                 const char* usage,
+                 int nargs,
+                 const rutz::file_pos& src_pos)
   {
     typedef typename rutz::func_traits<Functor>::retn_t retn_t;
     return Command::make(interp, GenericCallback<retn_t, Functor>::make(f),
@@ -430,14 +432,17 @@ namespace Tcl
 /// Factory function for vectorized Tcl::Command's from functors.
 
   template <class Functor>
-  inline shared_ptr<Command> makeGenericVecCmd
-                               (Tcl::Interp& interp, Functor f,
-                                const char* cmd_name, const char* usage,
-                                int nargs, unsigned int keyarg,
-                                const rutz::file_pos& src_pos)
+  inline rutz::shared_ptr<Command>
+  makeGenericVecCmd(Tcl::Interp& interp,
+                    Functor f,
+                    const char* cmd_name,
+                    const char* usage,
+                    int nargs,
+                    unsigned int keyarg,
+                    const rutz::file_pos& src_pos)
   {
     typedef typename rutz::func_traits<Functor>::retn_t retn_t;
-    shared_ptr<Command> cmd =
+    rutz::shared_ptr<Command> cmd =
       Command::make(interp, GenericCallback<retn_t, Functor>::make(f),
                     cmd_name, usage, nargs+1,
                     -1 /*default for objc_max*/,
@@ -457,10 +462,12 @@ namespace Tcl
 /// Factory function for Tcl::Command's from function pointers.
 
   template <class Func>
-  inline shared_ptr<Command> makeCmd
-                              (Tcl::Interp& interp, Func f,
-                               const char* cmd_name, const char* usage,
-                               const rutz::file_pos& src_pos)
+  inline rutz::shared_ptr<Command>
+  makeCmd(Tcl::Interp& interp,
+          Func f,
+          const char* cmd_name,
+          const char* usage,
+          const rutz::file_pos& src_pos)
   {
     return makeGenericCmd
       (interp, buildTclFunctor(f), cmd_name, usage,
@@ -471,11 +478,13 @@ namespace Tcl
 /// Factory function for vectorized Tcl::Command's from function pointers.
 
   template <class Func>
-  inline shared_ptr<Command> makeVecCmd
-                              (Tcl::Interp& interp, Func f,
-                               const char* cmd_name, const char* usage,
-                               unsigned int keyarg /*default is 1*/,
-                               const rutz::file_pos& src_pos)
+  inline rutz::shared_ptr<Command>
+  makeVecCmd(Tcl::Interp& interp,
+             Func f,
+             const char* cmd_name,
+             const char* usage,
+             unsigned int keyarg /*default is 1*/,
+             const rutz::file_pos& src_pos)
   {
     return makeGenericVecCmd
       (interp, buildTclFunctor(f), cmd_name, usage,

@@ -32,8 +32,8 @@
 #ifndef TIMER_H_DEFINED
 #define TIMER_H_DEFINED
 
-#include "util/pointers.h"
 #include "util/scheduler.h"
+#include "util/sharedptr.h"
 #include "util/signal.h"
 #include "util/stopwatch.h"
 
@@ -46,7 +46,7 @@ namespace Util
 class Util::Timer
 {
 public:
-  Timer(shared_ptr<Util::Scheduler> sched,
+  Timer(rutz::shared_ptr<Util::Scheduler> sched,
         unsigned int msec, bool repeat = false);
 
   virtual ~Timer();
@@ -72,9 +72,9 @@ private:
   Timer(const Timer&);
   Timer& operator=(const Timer&);
 
-  shared_ptr<Util::Scheduler> itsScheduler;
+  rutz::shared_ptr<Util::Scheduler> itsScheduler;
 
-  shared_ptr<Util::TimerToken> itsToken;
+  rutz::shared_ptr<Util::TimerToken> itsToken;
   unsigned int itsMsecDelay;
   bool isItRepeating;
 

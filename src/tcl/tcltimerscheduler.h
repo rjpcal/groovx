@@ -34,7 +34,10 @@
 
 #include "util/scheduler.h"
 
-template <class T> class shared_ptr;
+namespace rutz
+{
+  template <class T> class shared_ptr;
+}
 
 namespace Tcl
 {
@@ -47,7 +50,7 @@ public:
   TimerScheduler();
   virtual ~TimerScheduler() throw();
 
-  virtual shared_ptr<Util::TimerToken>
+  virtual rutz::shared_ptr<Util::TimerToken>
   schedule(int msec,
            void (*callback)(void*),
            void* clientdata);

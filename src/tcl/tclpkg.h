@@ -38,8 +38,6 @@
 
 struct Tcl_Interp;
 
-template <class T> class shared_ptr;
-
 namespace rutz
 {
   struct file_pos;

@@ -54,6 +54,8 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+using rutz::shared_ptr;
+
 using Util::Ref;
 using Util::SoftRef;
 
@@ -358,12 +360,12 @@ DOTRACE("AsciiStreamWriter::flattenObject");
 
 shared_ptr<IO::Writer> IO::makeAsciiStreamWriter(STD_IO::ostream& os)
 {
-  return make_shared(new AsciiStreamWriter(os));
+  return rutz::make_shared(new AsciiStreamWriter(os));
 }
 
 shared_ptr<IO::Writer> IO::makeAsciiStreamWriter(const char* filename)
 {
-  return make_shared(new AsciiStreamWriter(filename));
+  return rutz::make_shared(new AsciiStreamWriter(filename));
 }
 
 static const char vcid_asciistreamwriter_cc[] = "$Header$";

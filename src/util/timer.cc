@@ -40,6 +40,8 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+using rutz::shared_ptr;
+
 Util::Timer::Timer(shared_ptr<Util::Scheduler> sched,
                    unsigned int msec, bool repeat)
   :

@@ -39,18 +39,23 @@
 class GlxOpts;
 class GlWindowInterface;
 
-template <class T> class shared_ptr;
+namespace rutz
+{
+  template <class T> class shared_ptr;
+}
 
 /// GLCanvas implements Gfx::Canvas using OpenGL.
 class GLCanvas : public Gfx::Canvas, public virtual Util::VolatileObject
 {
 protected:
   /// Construct from windowsystem options and a windowsystem wrapper.
-  GLCanvas(shared_ptr<GlxOpts> opts, shared_ptr<GlWindowInterface> glx);
+  GLCanvas(rutz::shared_ptr<GlxOpts> opts,
+           rutz::shared_ptr<GlWindowInterface> glx);
 
 public:
   /// Factory function.
-  static GLCanvas* make(shared_ptr<GlxOpts> opts, shared_ptr<GlWindowInterface> glx);
+  static GLCanvas* make(rutz::shared_ptr<GlxOpts> opts,
+                        rutz::shared_ptr<GlWindowInterface> glx);
 
   virtual ~GLCanvas() throw();
 

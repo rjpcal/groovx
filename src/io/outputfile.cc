@@ -43,6 +43,8 @@
 
 #include "util/trace.h"
 
+using rutz::shared_ptr;
+
 OutputFile::OutputFile() :
   itsFilename(""),
   itsStream()

@@ -40,7 +40,7 @@
 #include "util/algo.h"
 #include "util/fileposition.h"
 #include "util/object.h"
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 #include "util/stderror.h"
 #include "util/strings.h"
 #include "util/traits.h"
@@ -177,10 +177,10 @@ public:
   /// Construct with a pointer-to-data-member.
   DataMemberFieldImpl(T C::* memptr) : itsDataMember(memptr) {}
 
-  static shared_ptr<FieldImpl>
+  static rutz::shared_ptr<FieldImpl>
   make(T C::* memptr)
   {
-    return shared_ptr<FieldImpl> (new DataMemberFieldImpl(memptr));
+    return rutz::shared_ptr<FieldImpl> (new DataMemberFieldImpl(memptr));
   }
 
   /// Change the value of the given object's pointed-to data member.
@@ -247,10 +247,10 @@ public:
     itsMax(max)
   {}
 
-  static shared_ptr<FieldImpl>
+  static rutz::shared_ptr<FieldImpl>
   make(T C::* memptr, const deref_t& min, const deref_t& max)
   {
-    return shared_ptr<FieldImpl>
+    return rutz::shared_ptr<FieldImpl>
       (new CheckedDataMemberFieldImpl(memptr, min, max));
   }
 
@@ -433,7 +433,7 @@ class Field
 {
 private:
   const fstring itsName;
-  shared_ptr<FieldImpl> itsFieldImpl;
+  rutz::shared_ptr<FieldImpl> itsFieldImpl;
   const fstring itsDefaultValue;
   const fstring itsMin;
   const fstring itsMax;

@@ -32,7 +32,7 @@
 #ifndef ITER_H_DEFINED
 #define ITER_H_DEFINED
 
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 
 #include <utility> // for std::pair
 
