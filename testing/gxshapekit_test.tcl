@@ -10,6 +10,7 @@
 if { [info exists GxShapeKit::TEST_DEFINED] } return;
 
 package require Gxshapekit
+package require Toglet
 
 source ${::TEST_DIR}/io_test.tcl
 
@@ -29,84 +30,87 @@ proc testSubclass { package {subclass "GxShapeKit"} {objid -1} } {
 
     if { $testsubclass } {
         if { $objid == -1 } {
-            set this(objid) [eval Obj::new $subclass ]
+            set objid [Obj::new $subclass]
         } else {
-            set this(objid) $objid
+            set objid $objid
         }
     } else {
-        set this(objid) -1
+        set objid -1
     }
 
-    if { $this(objid) > 0 } {
-        ::testReadWrite $package $this(objid)
+    if { $objid > 0 } {
+        ::testReadWrite $package $objid
     }
 
     # class::type
     if { $testbase } {
-        eval ::test ${subclass}::type {"too few args"} {"
+        ::test ${subclass}::type "too few args" {
             Obj::type
-        "} {"wrong \# args: should be"}
-        eval ::test ${subclass}::type {"too many args"} {"
+	} {wrong \# args: should be}
+
+        ::test ${subclass}::type "too many args" {
             Obj::type 0 junk
-        "} {"wrong \# args: should be"}
-        eval ::test ${subclass}::type {"error from bad objid"} {"
+	} {wrong \# args: should be}
+
+        ::test ${subclass}::type "error from bad objid" {
             Obj::type -1
-        "} {"expected.*but got"}
+        } {expected.*but got}
     }
 
     if { $testsubclass } {
-        eval ::test ${subclass}::type {"normal use on $subclass"} {"
-            Obj::type $this(objid)
-        "} {$subclass}
+        ::test ${subclass}::type "normal use on $subclass" [format {
+            Obj::type %s
+        } $objid] $subclass
     }
 
 
-    # classname::category
     if { $testbase } {
-        eval ::test ${subclass}::category {"too few args"} {"
+	# classname::category
+        ::test ${subclass}::category "too few args" {
             GxShapeKit::category
-        "} {"wrong \# args: should be"}
-        eval ::test ${subclass}::category {"too many args"} {"
+	} {wrong \# args: should be}
+        ::test ${subclass}::category "too many args" {
             GxShapeKit::category 0 0 junk
-        "} {"wrong \# args: should be"}
+	} {wrong \# args: should be}
     }
 
     if { $testsubclass } {
-        eval ::test ${subclass}::category {"normal use get"} {"
-            GxShapeKit::category $this(objid)
-        "} {"^$::INT$"}
-        eval ::test ${subclass}::category {"normal use set"} {"
-            GxShapeKit::category $this(objid) 34
-            GxShapeKit::category $this(objid)
-        "} {^34$}
-        eval ::test ${subclass}::category {"normal use vector get"} {"
-            GxShapeKit::category \"$this(objid) $this(objid)\"
-        "} {"^${::INT}${::SP}${::INT}$"}
-        eval ::test ${subclass}::category {"normal use vector set with one value"} {"
-            GxShapeKit::category \"$this(objid) $this(objid)\" 49
-            GxShapeKit::category \"$this(objid) $this(objid)\"
-        "} {"^${::INT}${::SP}${::INT}$"}
-        eval ::test ${subclass}::category {"normal use vector set with many values"} {"
-            GxShapeKit::category \"$this(objid) $this(objid)\" \"3 7 11\"
-            GxShapeKit::category \"$this(objid) $this(objid)\"
-        "} {"^${::INT}${::SP}${::INT}$"}
-    }
 
+	# classname::category
+        ::test ${subclass}::category "normal use get" [format {
+            GxShapeKit::category %s
+        } $objid] "^$::INT$"
 
-    # class::draw
-    if { $testsubclass } {
-        package require Toglet
+        ::test ${subclass}::category "normal use set" [format {
+            GxShapeKit::category %s 34
+            GxShapeKit::category %s
+        } $objid $objid] {^34$}
 
-        eval ::test ${subclass}::draw {"normal use"} {"
+        ::test ${subclass}::category "normal use vector get" [format {
+            GxShapeKit::category "%s %s"
+        } $objid $objid] "^${::INT}${::SP}${::INT}$"
+
+        ::test ${subclass}::category "normal use vector set with one value" [format {
+            GxShapeKit::category "%s %s" 49
+            GxShapeKit::category "%s %s"
+        } $objid $objid $objid $objid] "^${::INT}${::SP}${::INT}$"
+
+        ::test ${subclass}::category "normal use vector set with many values" [format {
+            GxShapeKit::category "%s %s" "3 7 11"
+            GxShapeKit::category "%s %s"
+        } $objid $objid $objid $objid] "^${::INT}${::SP}${::INT}$"
+
+	# class::draw
+        ::test ${subclass}::draw "normal use" [format {
             glClearColor 0 0 0 0
             glColor 1 1 1 1
             clearscreen
-            set pix1 \[pixelCheckSum\]
-            see $this(objid)
-            set pix2 \[pixelCheckSum\]
-            -> \[Toglet::current\] setVisible false
-            return \"\[expr \$pix1 == \$pix2\] \$pix1 \$pix2\"
-         "} {"^0 "}
+            set pix1 [pixelCheckSum]
+            see %s
+            set pix2 [pixelCheckSum]
+            -> [Toglet::current] setVisible false
+            return "[expr $pix1 == $pix2] $pix1 $pix2"
+	} $objid] {^0 }
     }
 
     set BASE_CLASS_TESTED 1
