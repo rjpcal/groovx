@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Wed Jul 31 16:21:48 2002
+// written: Thu Aug  1 10:03:43 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@
 namespace
 {
   inline void domemswap(double* buf1, double* buf2,
-                        double* tempbuf1, size_t nelems)
+                        double* tempbuf1, size_t nelems) throw()
   {
     memcpy(tempbuf1, buf1, nelems*sizeof(double));
     memcpy(buf1, buf2, nelems*sizeof(double));
@@ -152,6 +152,7 @@ void RC::inFullOpen(int x, int llim, int ulim, const char* f, int ln)
 
 Slice Slice::operator()(const Range& rng) const
 {
+DOTRACE("Slice::operator");
   RC_inHalfOpen(rng.begin(), 0, itsNelems);
   RC_geq(rng.count(), 0);
   RC_leq(rng.end(), itsNelems);
@@ -161,6 +162,7 @@ Slice Slice::operator()(const Range& rng) const
 
 void Slice::print() const
 {
+DOTRACE("Slice::print");
   for(MtxConstIter iter = begin(); iter.hasMore(); ++iter)
     {
       std::cout << std::setw(12) << std::setprecision(7) << double(*iter);
@@ -170,6 +172,7 @@ void Slice::print() const
 
 double Slice::sum() const
 {
+DOTRACE("Slice::sum");
   double s = 0.0;
   for (MtxConstIter i = begin(); i.hasMore(); ++i)
     s += *i;
@@ -178,6 +181,7 @@ double Slice::sum() const
 
 double Slice::min() const
 {
+DOTRACE("Slice::min");
   MtxConstIter i = begin();
   double mn = *i;
   for (; i.hasMore(); ++i)
@@ -187,6 +191,7 @@ double Slice::min() const
 
 double Slice::max() const
 {
+DOTRACE("Slice::max");
   MtxConstIter i = begin();
   double mx = *i;
   for (; i.hasMore(); ++i)
@@ -230,6 +235,7 @@ DOTRACE("Slice::getSortOrder");
 
 bool Slice::operator==(const Slice& other) const
 {
+DOTRACE("Slice::operator==(const Slice&)");
   if (itsNelems != other.itsNelems) return false;
 
   for (MtxConstIter a = this->begin(), b = other.begin();
@@ -242,11 +248,13 @@ bool Slice::operator==(const Slice& other) const
 
 void Slice::sort()
 {
+DOTRACE("Slice::sort");
   std::sort(beginNC(), endNC());
 }
 
 void Slice::reorder(const Mtx& index_)
 {
+DOTRACE("Slice::reorder");
   Mtx index(index_.asColumn());
 
   if (index.mrows() != nelems())
@@ -262,6 +270,7 @@ void Slice::reorder(const Mtx& index_)
 
 Slice& Slice::operator+=(const Slice& other)
 {
+DOTRACE("Slice::operator+=(const Slice&)");
   if (itsNelems != other.nelems())
     throw Util::Error("dimension mismatch in Slice::operator+=");
 
@@ -275,6 +284,7 @@ Slice& Slice::operator+=(const Slice& other)
 
 Slice& Slice::operator-=(const Slice& other)
 {
+DOTRACE("Slice::operator-=(const Slice&)");
   if (itsNelems != other.nelems())
     throw Util::Error("dimension mismatch in Slice::operator-=");
 
@@ -288,6 +298,7 @@ Slice& Slice::operator-=(const Slice& other)
 
 Slice& Slice::operator=(const Slice& other)
 {
+DOTRACE("Slice::operator=(const Slice&)");
   if (itsNelems != other.nelems())
     throw Util::Error("dimension mismatch in Slice::operator=");
 
@@ -301,6 +312,7 @@ Slice& Slice::operator=(const Slice& other)
 
 Slice& Slice::operator=(const Mtx& other)
 {
+DOTRACE("Slice::operator=(const Mtx&)");
   if (itsNelems != other.nelems())
     throw Util::Error("dimension mismatch in Slice::operator=");
 
@@ -320,6 +332,7 @@ void MtxSpecs::swap(MtxSpecs& other)
 
 MtxSpecs MtxSpecs::as_shape(const MtxShape& s) const
 {
+DOTRACE("MtxSpecs::as_shape");
   if (s.nelems() != this->nelems())
     {
       fstring msg;
@@ -341,6 +354,7 @@ MtxSpecs MtxSpecs::as_shape(const MtxShape& s) const
 
 void MtxSpecs::selectRows(const RowRange& rng)
 {
+DOTRACE("MtxSpecs::selectRows");
   if (rng.begin() < 0)
     throw Util::Error("selectRows(): row index must be >= 0");
 
@@ -356,6 +370,7 @@ void MtxSpecs::selectRows(const RowRange& rng)
 
 void MtxSpecs::selectCols(const ColRange& rng)
 {
+DOTRACE("MtxSpecs::selectCols");
   if (rng.begin() < 0)
     throw Util::Error("selectCols(): column index must be >= 0");
 
