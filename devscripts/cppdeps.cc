@@ -360,13 +360,10 @@ private:
       COMPLETE = 2
     };
 
-  enum output_mode
-    {
-      MAKEFILE_DEPS,
-      DIRECT_INCLUDE_TREE,
-      NESTED_INCLUDE_TREE,
-      LINK_DEPS
-    };
+  static const int MAKEFILE_DEPS       = (1 << 0);
+  static const int DIRECT_INCLUDE_TREE = (1 << 1);
+  static const int NESTED_INCLUDE_TREE = (1 << 2);
+  static const int LINK_DEPS           = (1 << 3);
 
   // Member variables
   vector<string>           m_cfg_user_ipath;
@@ -380,7 +377,7 @@ private:
   format_set               m_cfg_link_formats;
   bool                     m_cfg_check_sys_deps;
   bool                     m_cfg_quiet;
-  output_mode              m_cfg_output_mode;
+  int                      m_cfg_output_mode;
 
   vector<string>           m_src_files;
 
