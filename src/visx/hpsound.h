@@ -3,7 +3,7 @@
 // hpsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 12 13:03:47 1999
-// written: Thu Oct 19 14:24:25 2000
+// written: Fri Oct 27 18:05:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ public:
 
 class HpAudioSound : public Sound {
 public:
-  HpAudioSound(const char* filename);
+  HpAudioSound(const char* filename = 0);
   virtual ~HpAudioSound();
 
   virtual void readFrom(IO::Reader* reader);
@@ -79,6 +79,8 @@ public:
   virtual void play();
   virtual void setFile(const char* filename);
   virtual const char* getFile() const { return itsFilename.c_str(); }
+
+  virtual fixed_string ioTypename() const { return "Sound"; }
 
 private:
   fixed_string itsFilename;
@@ -109,7 +111,8 @@ DOTRACE("HpAudioSound::HpAudioSound");
   itsPlayParams.duration.type = ATTFullLength;
   itsPlayParams.event_mask = 0;
 
-  setFile(filename);
+  if (filename != 0)
+	 setFile(filename);
 }
 
 HpAudioSound::~HpAudioSound() {
@@ -123,7 +126,8 @@ void HpAudioSound::readFrom(IO::Reader* reader) {
 DOTRACE("HpAudioSound::readFrom");
 
   reader->readValue("filename", itsFilename);
-  setFile(itsFilename.c_str());
+  if (!itsFilename.empty())
+	 setFile(itsFilename.c_str());
 }
 
 void HpAudioSound::writeTo(IO::Writer* writer) const {
@@ -208,6 +212,11 @@ DOTRACE("Sound::closeSound");
 	 ACloseAudio( theAudio, NULL );
 	 theAudio = 0;
   }
+}
+
+Sound* Sound::make() {
+DOTRACE("Sound::make");
+  return new HpAudioSound();
 }
 
 Sound* Sound::newPlatformSound(const char* soundfile) {

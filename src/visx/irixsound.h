@@ -3,7 +3,7 @@
 // irixsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 14 11:23:12 1999
-// written: Thu Oct 19 14:25:39 2000
+// written: Fri Oct 27 18:04:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ public:
 
 class IrixAudioSound : public Sound {
 public:
-  IrixAudioSound(const char* filename);
+  IrixAudioSound(const char* filename = 0);
   virtual ~IrixAudioSound();
 
   virtual void readFrom(IO::Reader* reader);
@@ -59,6 +59,8 @@ public:
   virtual void play();
   virtual void setFile(const char* filename);
   virtual const char* getFile() const { return itsFilename.c_str(); }
+
+  virtual fixed_string ioTypename() const { return "Sound"; }
 
 private:
   IrixAudioSound(const IrixAudioSound&);
@@ -92,7 +94,8 @@ DOTRACE("IrixAudioSound::IrixAudioSound");
 	 throw SoundError("error creating an ALconfig while creating Sound");
   }
 
-  setFile(filename);
+  if (filename)
+	 setFile(filename);
 }
 
 IrixAudioSound::~IrixAudioSound() {
@@ -255,6 +258,11 @@ DOTRACE("Sound::haveSound");
 
 void Sound::closeSound() {
 DOTRACE("Sound::closeSound");
+}
+
+Sound* Sound::make() {
+DOTRACE("Sound::make");
+  return new IrixAudioSound();
 }
 
 Sound* Sound::newPlatformSound(const char* soundfile) {
