@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998 (as objtogl.cc)
-// written: Wed Dec  4 18:41:16 2002
+// written: Thu Dec  5 13:58:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,8 +25,6 @@
 
 #include "util/objfactory.h"
 #include "util/ref.h"
-
-#include "visx/trial.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -98,24 +96,6 @@ namespace TogletTcl
     return item->id();
   }
 
-  // Change the widget's current trial to a specified trial id. The
-  // current trial is the one that will be displayed by a subsequent
-  // call to "redraw", or by remap events sent to the screen
-  // window. Returns an error if the specified trial id is not valid.
-  void setCurTrial(SoftRef<Toglet> toglet, Ref<Trial> trial)
-  {
-    trial->installSelf(toglet);
-  }
-
-  // Make a specified trial the widget's current trial, and draw it in
-  // the OpenGL window. The widget's visibility is set to true.
-  void show(SoftRef<Toglet> toglet, Ref<Trial> trial)
-  {
-    trial->installSelf(toglet);
-    toglet->setVisibility(true);
-    toglet->fullRender();
-  }
-
   class TogletPkg;
 }
 
@@ -141,8 +121,6 @@ public:
     def( "dumpCmap", "toglet_id", &TogletTcl::dumpCmapAll );
     def( "inited", 0, &TogletTcl::inited );
     def( "see", "gxnode_id", &TogletTcl::see );
-    def( "setCurTrial", "toglet_id widget_id", &TogletTcl::setCurTrial );
-    def( "show", "toglet_id trial_id", &TogletTcl::show );
 
     defSetter("allowRefresh", &Toglet::allowRefresh);
     defSetter("animate", "item_id(s) frames_per_second", &Toglet::animate);
