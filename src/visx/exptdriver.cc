@@ -259,6 +259,8 @@ DOTRACE("ExptDriver::vxAllChildrenFinished");
 
   rep->addLogInfo("Experiment complete.");
 
+  vxHalt();
+
   storeData();
 
   Util::Log::addObjScope(*rep->doWhenComplete);
@@ -431,11 +433,38 @@ DOTRACE("ExptDriver::pause");
 }
 #endif
 
+namespace
+{
+  // Check if fname exists as a file; if so, then rename it to a
+  // unique name so that at the end of this call, no file exists with
+  // the given fname.
+  void renameFileIfExists(const fstring& fname)
+  {
+    struct stat buf;
+
+    if (stat(fname.c_str(), &buf) != 0)
+      {
+        // no file exists at fname, so we don't need to do anything
+        return;
+      }
+
+    fstring newname = fname;
+
+    int i = 0;
+
+    while (stat(newname.c_str(), &buf) == 0)
+      {
+        newname = fname;
+        newname.append(".bkp", i++);
+      }
+
+    unixcall::rename(fname.c_str(), newname.c_str());
+  }
+}
+
 void ExptDriver::storeData()
 {
 DOTRACE("ExptDriver::storeData");
-
-  vxHalt();
 
   // The experiment and a summary of the responses to it are written to
   // files with unique filenames.
@@ -448,6 +477,7 @@ DOTRACE("ExptDriver::storeData");
   fstring expt_filename = rep->filePrefix;
   expt_filename.append("_", rep->fileTimestamp);
   expt_filename.append(".gvx");
+  renameFileIfExists(expt_filename);
   IO::saveGVX(Util::Ref<IO::IoObject>(this), expt_filename.c_str());
   Util::log( fstring( "wrote file ", expt_filename.c_str()) );
 
@@ -455,6 +485,7 @@ DOTRACE("ExptDriver::storeData");
   fstring resp_filename = rep->filePrefix;
   resp_filename.append("_", rep->fileTimestamp);
   resp_filename.append(".resp");
+  renameFileIfExists(resp_filename);
   TlistUtils::writeResponses(resp_filename.c_str());
   Util::log( fstring( "wrote file ", resp_filename.c_str()) );
 
