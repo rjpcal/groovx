@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Sep 28 21:20:56 2000
+// written: Fri Sep 29 09:43:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,8 +62,6 @@ Util::Tracer ExptDriver::tracer;
 namespace {
 
   const IO::VersionId EXPTDRIVER_SERIAL_VERSION_ID = 2;
-
-  const string_literal ioTag("ExptDriver");
 
 #ifdef TIME_TRACE
   inline void TimeTraceNL(const char* loc, int msec) {

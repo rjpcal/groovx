@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Fri Sep 29 09:17:25 2000
+// written: Fri Sep 29 09:43:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,6 @@ GtextError::GtextError(const char* str) : ErrorWithMsg(str) {}
 GtextError::~GtextError() {}
 
 namespace {
-  const string_literal ioTag("Gtext");
 
 //---------------------------------------------------------------------
 //
