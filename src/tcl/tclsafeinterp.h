@@ -3,7 +3,7 @@
 // tclutil.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct 11 10:25:36 2000
-// written: Wed Oct 11 16:33:41 2000
+// written: Wed Oct 11 17:00:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,32 +50,20 @@ namespace Tcl {
 
 class Tcl::SafeInterface {
 private:
-  Util::ErrorHandler* itsErrHandler;
-  mutable bool itsLastOpSucceeded;
-
   SafeInterface(const SafeInterface&);
   SafeInterface& operator=(const SafeInterface&);
 
 protected:
-  Tcl_Interp* itsInterp;
-
-  void swap(SafeInterface& other);
+  Tcl_Interp* const itsInterp;
 
   void handleError(const char* msg) const;
 
-  void resetSuccessFlag() const { itsLastOpSucceeded = true; }
-
 public:
-  enum ErrMode { IGNORE, BKD_ERROR, THROW };
-
-  SafeInterface(Tcl_Interp* interp, ErrMode mode);
-  virtual ~SafeInterface();
+  SafeInterface(Tcl_Interp* interp);
+  ~SafeInterface();
 
   bool hasInterp() const { return itsInterp != 0; }
   Tcl_Interp* intp() const { return itsInterp; }
-
-  bool success() const { return itsLastOpSucceeded; }
-
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -90,10 +78,8 @@ public:
 class Tcl::SafeInterp : public Tcl::SafeInterface {
 public:
 
-  SafeInterp(Tcl_Interp* interp, ErrMode mode);
-  virtual ~SafeInterp();
-
-  void reset(Tcl_Interp* interp, ErrMode mode);
+  SafeInterp(Tcl_Interp* interp);
+  ~SafeInterp();
 
   ///////////////////////////////////////////////////////////////////////
   //

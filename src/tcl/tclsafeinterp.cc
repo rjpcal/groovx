@@ -3,7 +3,7 @@
 // tclutil.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct 11 10:27:35 2000
-// written: Wed Oct 11 15:49:09 2000
+// written: Wed Oct 11 17:02:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,52 +71,16 @@ DOTRACE("Tcl::Safe::getInt");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::SafeInterface::SafeInterface(Tcl_Interp* interp, Tcl::SafeInterface::ErrMode mode) :
-  itsErrHandler(0),
-  itsLastOpSucceeded(true),
+Tcl::SafeInterface::SafeInterface(Tcl_Interp* interp) :
   itsInterp(interp)
-{
-  if (itsInterp == 0 && mode == BKD_ERROR) { mode = IGNORE; }
+{}
 
-  if (mode == IGNORE)
-	 itsErrHandler = new Util::NullErrorHandler;
-  else if (mode == BKD_ERROR)
-	 itsErrHandler = new Tcl::BkdErrorHandler(itsInterp);
-  else if (mode == THROW)
-	 itsErrHandler = 0;
-}
-
-Tcl::SafeInterface::~SafeInterface() {
-  delete itsErrHandler;
-}
-
-void Tcl::SafeInterface::swap(Tcl::SafeInterface& other) {
-DOTRACE("Tcl::SafeInterface::swap");
-
-  Tcl_Interp* otherInterp = other.itsInterp; 
-  other.itsInterp = this->itsInterp;
-  this->itsInterp = otherInterp;
-
-  Util::ErrorHandler* otherErrHandler = other.itsErrHandler; 
-  other.itsErrHandler = this->itsErrHandler;
-  this->itsErrHandler = otherErrHandler;
-
-  bool otherLastResult = other.itsLastOpSucceeded; 
-  other.itsLastOpSucceeded = this->itsLastOpSucceeded;
-  this->itsLastOpSucceeded = otherLastResult;
-}
+Tcl::SafeInterface::~SafeInterface() {}
 
 void Tcl::SafeInterface::handleError(const char* msg) const {
 DOTRACE("Tcl::SafeInterface::handleError");
 
-  itsLastOpSucceeded = false;
-
-  if (itsErrHandler != 0) {
-	 itsErrHandler->handleMsg(msg);
-  }
-  else {
-	 throw TclError(msg);
-  }
+  throw TclError(msg);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -125,26 +89,14 @@ DOTRACE("Tcl::SafeInterface::handleError");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::SafeInterp::SafeInterp(Tcl_Interp* interp, ErrMode mode) :
-  Tcl::SafeInterface(interp, mode)
+Tcl::SafeInterp::SafeInterp(Tcl_Interp* interp) :
+  Tcl::SafeInterface(interp)
 {
 DOTRACE("Tcl::SafeInterp::SafeInterp");
   Invariant(itsInterp != 0);
 }
 
 Tcl::SafeInterp::~SafeInterp() {}
-
-void Tcl::SafeInterp::reset(Tcl_Interp* interp,
-									 Tcl::SafeInterface::ErrMode mode) {
-DOTRACE("Tcl::SafeInterp::reset");
-
-  Precondition(interp != 0);
-
-  SafeInterface new_interp(interp, mode);
-  this->swap(new_interp);
-
-  Invariant(itsInterp != 0);
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -155,14 +107,11 @@ DOTRACE("Tcl::SafeInterp::reset");
 bool Tcl::SafeInterp::evalBooleanExpr(Tcl_Obj* obj) const {
 DOTRACE("Tcl::SafeInterp::evalBooleanExpr");
 
-  resetSuccessFlag();
-
   int expr_result;
 
   if (Tcl_ExprBooleanObj(itsInterp, obj, &expr_result) != TCL_OK)
 	 {
 		handleError("error evaluating boolean expression");
-		return false;
 	 }
 
   return bool(expr_result);
@@ -177,8 +126,8 @@ DOTRACE("Tcl::SafeInterp::evalBooleanExpr");
 bool Tcl::SafeInterp::interpDeleted() const {
 DOTRACE("Tcl::SafeInterp::interpDeleted");
 
-  resetSuccessFlag();
-  return (itsInterp != 0) && Tcl_InterpDeleted(itsInterp);
+  Invariant(itsInterp != 0); 
+  return bool(Tcl_InterpDeleted(itsInterp));
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -190,7 +139,6 @@ DOTRACE("Tcl::SafeInterp::interpDeleted");
 void Tcl::SafeInterp::appendResult(const char* msg) const {
 DOTRACE("Tcl::SafeInterp::appendResult");
 
-  resetSuccessFlag();
   Tcl_AppendResult(itsInterp, msg);
 }
 
