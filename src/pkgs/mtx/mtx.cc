@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Fri Apr  6 10:27:19 2001
+// written: Fri Apr  6 12:25:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -166,6 +166,28 @@ mxArray* Mtx::makeMxArray() const
     matdata[i] = itsImpl.at(itsImpl.offsetFromStart(i));
 
   return result_mx;
+}
+
+Mtx Mtx::extractStructField(mxArray* structArray, const char* fieldName,
+									 int indexIntoArray)
+{
+DOTRACE("Mtx::extractStructField");
+
+  if (!structArray)
+	 throw ErrorWithMsg("mxArray* was null");
+
+  if (mxIsStruct(structArray))
+	 throw ErrorWithMsg("mxArray* is not a struct array");
+
+  mxArray* field = mxGetField(structArray, indexIntoArray, "numStoredExemplars");
+  if (!field)
+	 {
+		ErrorWithMsg err("struct array does not contain field named '");
+		err.appendMsg(fieldName).appendMsg("'");
+		throw err;
+	 }
+
+  return Mtx(field, COPY);
 }
 
 void Mtx::print() const

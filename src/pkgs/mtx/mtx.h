@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Fri Apr  6 11:49:35 2001
+// written: Fri Apr  6 12:21:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -254,6 +254,9 @@ public:
 	 this->itsImpl.swap(temp.itsImpl);
 	 return *this;
   }
+
+  static Mtx extractStructField(mxArray* structArray, const char* fieldName,
+										  int indexIntoArray = 0);
 
   mxArray* makeMxArray() const;
 
