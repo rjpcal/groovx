@@ -3,7 +3,7 @@
 // strings.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:42:44 2000
-// written: Tue Oct 31 22:24:27 2000
+// written: Tue Oct 31 23:00:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
