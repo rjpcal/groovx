@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 22 21:41:38 2000
-// written: Sat May 19 08:18:06 2001
+// written: Sat May 19 10:44:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ namespace IO {
 template <class C>
 class IoProxy : public IO::IoObject {
 protected:
-  IoProxy(C* ref) : itsReferand(ref) {}
+  IoProxy(C* ref) : IO::IoObject(false), itsReferand(ref) {}
   virtual ~IoProxy() {}
 
 public:
@@ -73,7 +73,7 @@ inline IdItem<IO::IoObject> makeProxy(C* ref)
 template <class C>
 class ConstIoProxy : public IO::IoObject {
 protected:
-  ConstIoProxy(const C* ref) : itsReferand(ref) {}
+  ConstIoProxy(const C* ref) : IO::IoObject(false), itsReferand(ref) {}
   virtual ~ConstIoProxy() {}
 
 public:
