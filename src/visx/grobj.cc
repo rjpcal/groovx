@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Nov 13 09:58:52 2002
+// written: Wed Nov 13 10:13:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -345,7 +345,7 @@ DOTRACE("GrObj::update");
 void GrObj::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObj::draw");
-  itsImpl->itsTopNode->gnodeDraw(canvas);
+  itsImpl->itsTopNode->draw(canvas);
 }
 
 const fstring& GrObj::getCacheFilename() const

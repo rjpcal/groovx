@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Sun Nov  3 13:38:57 2002
+// written: Wed Nov 13 10:13:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,11 +61,11 @@ DOTRACE("GrObjBBox::gnodeBoundingBox");
                         border_pixels);
 }
 
-void GrObjBBox::gnodeDraw(Gfx::Canvas& canvas) const
+void GrObjBBox::draw(Gfx::Canvas& canvas) const
 {
-DOTRACE("GrObjBBox::gnodeDraw");
+DOTRACE("GrObjBBox::draw");
 
-  child()->gnodeDraw(canvas);
+  child()->draw(canvas);
 
   if (isItVisible)
     {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:48:47 2001
-// written: Fri Jan 18 16:07:01 2002
+// written: Wed Nov 13 10:13:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,13 +40,13 @@ DOTRACE("GrObjAligner::doAlignment");
 }
 
 
-void GrObjAligner::gnodeDraw(Gfx::Canvas& canvas) const
+void GrObjAligner::draw(Gfx::Canvas& canvas) const
 {
   Gfx::MatrixSaver state(canvas);
 
   doAlignment(canvas, child()->gnodeBoundingBox(canvas));
 
-  child()->gnodeDraw(canvas);
+  child()->draw(canvas);
 }
 
 Gfx::Rect<double> GrObjAligner::gnodeBoundingBox(Gfx::Canvas& canvas) const

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:01:45 2001
-// written: Fri Jan 18 16:07:01 2002
+// written: Wed Nov 13 10:13:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,13 +37,13 @@ DOTRACE("GrObjScaler::setMode");
   itsMode = new_mode;
 }
 
-void GrObjScaler::gnodeDraw(Gfx::Canvas& canvas) const
+void GrObjScaler::draw(Gfx::Canvas& canvas) const
 {
   Gfx::MatrixSaver state(canvas);
 
   doScaling(canvas);
 
-  child()->gnodeDraw(canvas);
+  child()->draw(canvas);
 }
 
 Gfx::Rect<double> GrObjScaler::gnodeBoundingBox(Gfx::Canvas& canvas) const

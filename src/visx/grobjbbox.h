@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 09:06:14 2001
-// written: Fri Jan 18 16:06:52 2002
+// written: Wed Nov 13 10:13:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ public:
   void setPixelBorder(int pixels) { itsPixelBorder = pixels; }
   int pixelBorder() const { return itsPixelBorder; }
 
-  virtual void gnodeDraw(Gfx::Canvas& canvas) const;
+  virtual void draw(Gfx::Canvas& canvas) const;
 
   virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
 

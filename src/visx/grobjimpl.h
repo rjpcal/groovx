@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Tue Jul  2 13:10:47 2002
+// written: Wed Nov 13 10:13:43 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ public:
 
   virtual ~GrObjNode() {}
 
-  virtual void gnodeDraw(Gfx::Canvas& canvas) const
+  virtual void draw(Gfx::Canvas& canvas) const
   { itsObj->grRender(canvas); }
 
   virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const

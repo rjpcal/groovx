@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:42:39 2001
-// written: Sun Nov  3 13:41:11 2002
+// written: Wed Nov 13 10:13:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,11 +30,11 @@ GLCacheNode::~GLCacheNode()
   glDeleteLists(itsDisplayList, 1);
 }
 
-void GLCacheNode::gnodeDraw(Gfx::Canvas& canvas) const
+void GLCacheNode::draw(Gfx::Canvas& canvas) const
 {
   if (itsMode != Gmodes::GLCOMPILE)
     {
-      child()->gnodeDraw(canvas);
+      child()->draw(canvas);
     }
   else
     {
@@ -56,7 +56,7 @@ void GLCacheNode::gnodeDraw(Gfx::Canvas& canvas) const
             }
 
           glNewList(itsDisplayList, GL_COMPILE_AND_EXECUTE);
-          child()->gnodeDraw(canvas);
+          child()->draw(canvas);
           glEndList();
         }
     }
