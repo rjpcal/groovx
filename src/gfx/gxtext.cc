@@ -179,7 +179,7 @@ DOTRACE("GxText::grGetBoundingBox");
 void GxText::setFont(fstring name)
 {
 DOTRACE("GxText::setFont");
-  itsFont.reset(GxFont::make(name.c_str()));
+  itsFont = GxFont::make(name.c_str());
   this->sigNodeChanged.emit();
 }
 

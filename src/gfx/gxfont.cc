@@ -35,17 +35,36 @@
 #include "gfx/gxrasterfont.h"
 #include "gfx/gxvectorfont.h"
 
+#include "util/pointers.h"
 #include "util/strings.h"
 
-GxFont* GxFont::make(const char* name_cstr)
+#include <map>
+
+namespace
+{
+  typedef std::map<fstring, shared_ptr<GxFont> > MapType;
+  MapType theFontMap;
+}
+
+shared_ptr<GxFont> GxFont::make(const char* name_cstr)
 {
   fstring name(name_cstr);
 
-  if (name == "vector")
-    return new GxVectorFont;
+  MapType::iterator itr = theFontMap.find(name);
 
-  // else...
-  return new GxRasterFont(name_cstr);
+  if (itr != theFontMap.end())
+    return (*itr).second;
+
+  if (name == "vector")
+    {
+      shared_ptr<GxFont> font(new GxVectorFont);
+      theFontMap.insert(MapType::value_type(name, font));
+      return font;
+    }
+
+  shared_ptr<GxFont> font(new GxRasterFont(name_cstr));
+  theFontMap.insert(MapType::value_type(name, font));
+  return font;
 }
 
 GxFont::~GxFont() throw() {}

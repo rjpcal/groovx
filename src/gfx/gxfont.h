@@ -30,6 +30,8 @@
 #ifndef GXFONT_H_DEFINED
 #define GXFONT_H_DEFINED
 
+template <class T> class shared_ptr;
+
 namespace Gfx
 {
   class Bbox;
@@ -42,7 +44,7 @@ class GxFont
 {
 public:
   /// Factory function.
-  static GxFont* make(const char* name);
+  static shared_ptr<GxFont> make(const char* name);
 
   /// Virtual destructor.
   virtual ~GxFont() throw();

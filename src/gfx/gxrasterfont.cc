@@ -146,7 +146,14 @@ DOTRACE("GxRasterFont::GxRasterFont");
 
   Assert( fontname != 0 );
 
-  Display* dpy = XOpenDisplay(System::theSystem().getenv("DISPLAY"));
+  static Display* dpy = 0;
+
+  if (dpy == 0)
+    {
+      dpy = XOpenDisplay(System::theSystem().getenv("DISPLAY"));
+      if (dpy == 0)
+        throw Util::Error("couldn't open connection to X server");
+    }
 
   fstring xname = Impl::pickXFont(fontname);
 
