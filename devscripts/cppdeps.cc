@@ -302,8 +302,10 @@ public:
       return m_link_pattern;
 
     // else...
-    const string::size_type suff = srcfile.find_last_of('.');
-    const string stem = string(srcfile).erase(suff).substr(m_prefix.length());
+    string stem = srcfile.substr(m_prefix.length(), string::npos);
+    const string::size_type suff = stem.find_last_of('.');
+    if (suff != string::npos)
+      stem.erase(suff, string::npos);
     string result = m_link_pattern;
     result.replace(m_wildcard_pos, 1, stem);
     return result;
