@@ -3,13 +3,17 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Thu Sep 30 12:17:36 1999
+// written: Tue Oct 12 13:29:14 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef MORPHYFACE_CC_DEFINED
 #define MORPHYFACE_CC_DEFINED
+
+#ifdef ACC_COMPILER
+#pragma OPT_LEVEL 1
+#endif
 
 #include "morphyface.h"
 
