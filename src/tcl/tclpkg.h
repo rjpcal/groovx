@@ -114,7 +114,7 @@ public:
       (the default), then any version will be acceptable. If no
       suitable package cannot be found or loaded, a null pointer will
       be returned. */
-  static Pkg* lookup(Tcl_Interp* interp,
+  static Pkg* lookup(Tcl::Interp& interp,
                      const char* name, const char* version = 0) throw();
 
   /** Returns a Tcl status code indicating whether the package

@@ -272,9 +272,10 @@ DOTRACE("Tcl::Pkg::onExit");
   rep->exitCallback = callback;
 }
 
-int Tcl::Pkg::unloadDestroy(Tcl_Interp* interp, const char* pkgname)
+int Tcl::Pkg::unloadDestroy(Tcl_Interp* intp, const char* pkgname)
 {
 DOTRACE("Tcl::Pkg::unloadDestroy");
+  Tcl::Interp interp(intp);
   Tcl::Pkg* pkg = Tcl::Pkg::lookup(interp, pkgname);
   if (pkg != 0)
     {
@@ -285,7 +286,7 @@ DOTRACE("Tcl::Pkg::unloadDestroy");
   return 0; // TCL_ERROR
 }
 
-Tcl::Pkg* Tcl::Pkg::lookup(Tcl_Interp* intp, const char* name,
+Tcl::Pkg* Tcl::Pkg::lookup(Tcl::Interp& interp, const char* name,
                            const char* version) throw()
 {
 DOTRACE("Tcl::Pkg::lookup");
@@ -294,12 +295,11 @@ DOTRACE("Tcl::Pkg::lookup");
 
   const std::string cleanName = makeCleanPkgName(name);
 
-  Tcl::Interp interp(intp);
-
   Tcl::ObjPtr saveresult = interp.getResult<Tcl::ObjPtr>();
 
   const char* ver =
-    Tcl_PkgRequireEx(intp, cleanName.c_str(), version, 0, &clientData);
+    Tcl_PkgRequireEx(interp.intp(), cleanName.c_str(),
+                     version, 0, &clientData);
 
   interp.setResult(saveresult);
 
@@ -377,7 +377,7 @@ void Tcl::Pkg::inheritPkg(const char* name, const char* version) throw()
 {
 DOTRACE("Tcl::Pkg::inheritPkg");
 
-  Tcl::Pkg* other = lookup(rep->interp.intp(), name, version);
+  Tcl::Pkg* other = lookup(rep->interp, name, version);
 
   if (other != 0)
     {

@@ -238,8 +238,7 @@ PackageInfo DELAYED_PKGS[] =
   {
     dbg_eval_nl(3, type);
 
-    Tcl::Pkg::lookup(Tcl::Main::interp().intp(),
-                     type.c_str());
+    Tcl::Pkg::lookup(Tcl::Main::interp(), type.c_str());
   }
 
 } // end anonymous namespace
