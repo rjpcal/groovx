@@ -301,6 +301,10 @@ public:
   dep_list_t   direct_cdeps;
   bool         nested_cdeps_done;
   dep_list_t   nested_cdeps;
+  bool         direct_ldeps_done;
+  dep_list_t   direct_ldeps;
+  bool         nested_ldeps_done;
+  dep_list_t   nested_ldeps;
 
 private:
   file_info(const string& t)
@@ -314,7 +318,11 @@ private:
     direct_cdeps_done(false),
     direct_cdeps(),
     nested_cdeps_done(false),
-    nested_cdeps()
+    nested_cdeps(),
+    direct_ldeps_done(false),
+    direct_ldeps(),
+    nested_ldeps_done(false),
+    nested_ldeps()
   {}
 
   file_info(const file_info&); // not implemented
@@ -463,9 +471,6 @@ private:
 
   vector<string>           m_src_files;
 
-  dep_map_t                m_direct_ldeps;
-  dep_map_t                m_nested_ldeps;
-
   string                   m_strip_prefix;
 
   int                      m_nest_level;
@@ -503,8 +508,8 @@ public:
 
   const dep_list_t& get_direct_cdeps(file_info* src_finfo);
   const dep_list_t& get_nested_cdeps(file_info* src_finfo);
-  const dep_list_t& get_direct_ldeps(const string& src_fname);
-  const dep_list_t& get_nested_ldeps(const string& src_fname);
+  const dep_list_t& get_direct_ldeps(file_info* src_finfo);
+  const dep_list_t& get_nested_ldeps(file_info* src_finfo);
 
   void print_makefile_dep(const string& current_file);
   void print_include_tree(const string& current_file);
@@ -1106,17 +1111,10 @@ const dep_list_t& cppdeps::get_nested_cdeps(file_info* src_finfo)
   return src_finfo->nested_cdeps;
 }
 
-const dep_list_t& cppdeps::get_direct_ldeps(const string& src_fname_orig)
+const dep_list_t& cppdeps::get_direct_ldeps(file_info* src_finfo)
 {
-  const string src_fname = make_normpath(src_fname_orig);
-
-  file_info* src_finfo = file_info::get(src_fname_orig);
-
-  {
-    dep_map_t::iterator itr = m_direct_ldeps.find(src_fname);
-    if (itr != m_direct_ldeps.end())
-      return (*itr).second;
-  }
+  if (src_finfo->direct_ldeps_done)
+    return src_finfo->direct_ldeps;
 
   std::set<file_info*, file_info_cmp> deps_set;
 
@@ -1134,34 +1132,29 @@ const dep_list_t& cppdeps::get_direct_ldeps(const string& src_fname_orig)
       if (ccfile.length() == 0)
         continue;
 
-      if (ccfile == src_fname)
+      // FIXME: just do pointer comparison here:
+      if (ccfile == src_finfo->target)
         continue;
 
       deps_set.insert(file_info::get(ccfile));
     }
 
-  dep_list_t& result = m_direct_ldeps[src_fname];
-  assert(result.empty());
-  result.assign(deps_set.begin(), deps_set.end());
+  assert(src_finfo->direct_ldeps.empty());
+  src_finfo->direct_ldeps.assign(deps_set.begin(), deps_set.end());
 
-  return result;
+  src_finfo->direct_ldeps_done = true;
+
+  return src_finfo->direct_ldeps;
 }
 
-const dep_list_t& cppdeps::get_nested_ldeps(const string& src_fname_orig)
+const dep_list_t& cppdeps::get_nested_ldeps(file_info* src_finfo)
 {
-  const string src_fname = make_normpath(src_fname_orig);
-
-  {
-    dep_map_t::iterator itr = m_nested_ldeps.find(src_fname);
-    if (itr != m_nested_ldeps.end())
-      return (*itr).second;
-  }
-
-  file_info* src_finfo = file_info::get(src_fname);
+  if (src_finfo->nested_ldeps_done)
+    return src_finfo->nested_ldeps;
 
   if (src_finfo->ldep_parse_state == IN_PROGRESS)
     {
-      cerr << "ERROR: in " << src_fname
+      cerr << "ERROR: in " << src_finfo->target
            << ": untrapped nested link-dep recursion\n";
       exit(1);
     }
@@ -1170,7 +1163,7 @@ const dep_list_t& cppdeps::get_nested_ldeps(const string& src_fname_orig)
 
   if (m_cfg_verbose)
     {
-      info() << "start ldeps for " << src_fname << '\n';
+      info() << "start ldeps for " << src_finfo->target << '\n';
     }
 
   std::set<file_info*, file_info_cmp> deps_set;
@@ -1189,7 +1182,7 @@ const dep_list_t& cppdeps::get_nested_ldeps(const string& src_fname_orig)
 
       deps_set.insert(f);
 
-      const dep_list_t& direct = get_direct_ldeps(f->target);
+      const dep_list_t& direct = get_direct_ldeps(f);
 
       for (dep_list_t::const_iterator
              itr = direct.begin(),
@@ -1197,10 +1190,11 @@ const dep_list_t& cppdeps::get_nested_ldeps(const string& src_fname_orig)
            itr != stop;
            ++itr)
         {
-          if ((*itr)->target == src_fname)
+          // FIXME do pointer comparison here:
+          if ((*itr)->target == src_finfo->target)
             {
               if (!m_cfg_quiet)
-                warning() << " in " << src_fname
+                warning() << " in " << src_finfo->target
                           << ": recursive link-dep cycle with "
                           << (*itr)->target << "\n";
               continue;
@@ -1212,16 +1206,16 @@ const dep_list_t& cppdeps::get_nested_ldeps(const string& src_fname_orig)
 
   if (m_cfg_verbose)
     {
-      info() << "...end ldeps for " << src_fname << '\n';
+      info() << "...end ldeps for " << src_finfo->target << '\n';
     }
 
-  dep_list_t& result = m_nested_ldeps[src_fname];
-  assert(result.empty());
-  result.assign(deps_set.begin(), deps_set.end());
+  assert(src_finfo->nested_ldeps.empty());
+  src_finfo->nested_ldeps.assign(deps_set.begin(), deps_set.end());
 
   src_finfo->ldep_parse_state = COMPLETE;
+  src_finfo->nested_ldeps_done = true;
 
-  return result;
+  return src_finfo->nested_ldeps;
 }
 
 void cppdeps::print_makefile_dep(const string& fname)
@@ -1315,7 +1309,9 @@ void cppdeps::print_link_deps(const string& fname)
   if (exe.empty())
     return;
 
-  const dep_list_t& ldeps = get_nested_ldeps(fname);
+  file_info* finfo = file_info::get(fname);
+
+  const dep_list_t& ldeps = get_nested_ldeps(finfo);
 
   std::set<string> links;
 
