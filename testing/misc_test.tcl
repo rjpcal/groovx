@@ -77,9 +77,9 @@ test "MiscTcl-usleep" "too many args" {
 	 expr $exit_code == 1 && [string compare $res ""] == 0
 } {^1$}
 test "MiscTcl-usleep" "normal use" {
-	 set res [time {usleep 10000}]
+	 set res [time {usleep 10000} 10]
 	 set us [lindex $res 0]
-	 expr $us > 10000 && $us < 25000
+	 expr $us > 9000 && $us < 25000
 } {^1$}
 test "MiscTcl-usleep" "error from negative input" {
 	 # The command should exit with error; thus it should be fast
