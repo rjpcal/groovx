@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Tue Jul  9 13:49:47 2002
+// written: Sun Nov  3 13:49:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -153,7 +153,7 @@ public:
 protected:
   virtual void invoke(Tcl::Context& ctx)
   {
-    const char* cmd_name = ctx.getValFromArg(1, TypeCue<const char*>());
+    const char* cmd_name = ctx.getValFromArg<const char*>(1);
 
     Tcl::Command* cmd = lookupCmd(ctx.interp(), cmd_name);
 
@@ -224,9 +224,9 @@ public:
               Tcl_DeleteCommand(itsInterp, itsCmdName.c_str());
             }
           catch (Util::Error& err)
-            { DebugEvalNL(err.msg_cstr()); }
+            { dbgEvalNL(3, err.msg_cstr()); }
           catch (...)
-            { DebugPrintNL("an unknown error occurred"); }
+            { dbgPrintNL(3, "an unknown error occurred"); }
         }
     }
 
@@ -434,9 +434,10 @@ DOTRACE("Tcl::Command::Impl::invokeCallback");
     }
   catch (Util::Error& err)
     {
-      DebugPrintNL("caught (Util::Error&)");
+      dbgPrintNL(3, "caught (Util::Error&)");
       if ( !err.msg().is_empty() )
         {
+          dbgDump(4, err.msg());
           errMessage(interp, theImpl->cmdName(), err.msg_cstr());
         }
       else
@@ -446,12 +447,12 @@ DOTRACE("Tcl::Command::Impl::invokeCallback");
     }
   catch (std::exception& err)
     {
-      DebugPrintNL("caught (std::exception&)");
+      dbgPrintNL(3, "caught (std::exception&)");
       errMessage(interp, theImpl->cmdName(), typeid(err), err.what());
     }
   catch (...)
     {
-      DebugPrintNL("caught (...)");
+      dbgPrintNL(3, "caught (...)");
       errMessage(interp, theImpl->cmdName(),
                  "an error of unknown type occurred");
     }
