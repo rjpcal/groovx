@@ -84,9 +84,10 @@ test "TrialTcl-Trial::responseHdlr" "too many args" {
     Trial::responseHdlr $::TRIAL 0 junk
 } {^wrong \# args: should be "Trial::responseHdlr item_id\(s\) \?new_value\(s\)\?"$}
 test "TrialTcl-Trial::responseHdlr" "normal use" {
-    Trial::responseHdlr $::TRIAL 0
-    Trial::responseHdlr $::TRIAL
-} {^0$}
+	 set rh [new NullResponseHdlr]
+    Trial::responseHdlr $::TRIAL $rh
+    expr $rh == [Trial::responseHdlr $::TRIAL]
+} {^1$}
 test "TrialTcl-Trial::responseHdlr" "error" {
     set result [catch {Trial::responseHdlr $::TRIAL -1} msg]
     return "$result $msg"
@@ -100,9 +101,10 @@ test "TrialTcl-Trial::timingHdlr" "too many args" {
     Trial::timingHdlr $::TRIAL 0 junk
 } {^wrong \# args: should be "Trial::timingHdlr item_id\(s\) \?new_value\(s\)\?"$}
 test "TrialTcl-Trial::timingHdlr" "normal use" {
-    Trial::timingHdlr $::TRIAL 0
-    Trial::timingHdlr $::TRIAL
-} {^0$}
+	 set th [new TimingHdlr]
+    Trial::timingHdlr $::TRIAL $th
+    expr $th == [Trial::timingHdlr $::TRIAL]
+} {^1$}
 test "TrialTcl-Trial::timingHdlr" "error" {
     set result [catch {Trial::timingHdlr $::TRIAL -1} msg]
     return "$result $msg"
