@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:57:31 2001
-// written: Mon Jul 16 07:55:30 2001
+// written: Mon Jul 16 14:21:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,12 @@
 #define CONVERT_H_DEFINED
 
 struct Tcl_Obj;
+
+template <class T>
+struct TypeCue
+{
+  typedef T Type;
+};
 
 namespace Tcl
 {
