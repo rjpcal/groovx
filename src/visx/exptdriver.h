@@ -142,9 +142,6 @@ public:
   /// Specify the widget in which the experiment should run.
   void setWidget(const Nub::SoftRef<Toglet>& widg);
 
-  /// Return the Canvas for the Widget in which the experiment is running.
-  Gfx::Canvas& getCanvas() const;
-
   /// Begin the experiment.
   void edBeginExpt();
 

@@ -348,12 +348,6 @@ DOTRACE("ExptDriver::setWidget");
   rep->widget = widg;
 }
 
-Gfx::Canvas& ExptDriver::getCanvas() const
-{
-DOTRACE("ExptDriver::getCanvas");
-  return rep->widget->getCanvas();
-}
-
 void ExptDriver::edBeginExpt()
 {
 DOTRACE("ExptDriver::edBeginExpt");
