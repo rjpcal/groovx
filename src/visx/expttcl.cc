@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Mar 15 11:04:41 2000
+// written: Mon Mar 20 19:30:41 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -82,7 +82,7 @@ protected:
 };
 
 void ExptTcl::BeginCmd::invoke() {
-DOTRACE("BeginCmd::beginCmd");
+DOTRACE("ExptTcl::BeginCmd::beginCmd");
 
   ExptDriver* ed = getItem();
   Widget* widget = ed->getWidget();
@@ -165,6 +165,7 @@ public:
 	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "filename", 2, 2) {}
 protected:
   virtual void invoke() {
+  DOTRACE("ExptTcl::ReadCmd::invoke");
 	 ExptDriver* ed = getItem();
 	 const char* filename = getCstringFromArg(1);
 
@@ -210,7 +211,7 @@ public:
 	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "filename", 2, 2) {}
 protected:
   virtual void invoke() {
-  DOTRACE("WriteCmd::invoke");
+  DOTRACE("ExptTcl::WriteCmd::invoke");
 	 ExptDriver* ed = getItem();
     const char* filename = getCstringFromArg(1);
 
@@ -231,6 +232,7 @@ public:
 	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "input_filename", 2, 2) {}
 protected:
   virtual void invoke() {
+  DOTRACE("ExptTcl::LoadCmd::invoke");
 	 ExptDriver* ed = getItem();
 	 const char* filename = getCstringFromArg(1);
 
@@ -254,6 +256,7 @@ public:
 	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "output_filename", 2, 2) {}
 protected:
   virtual void invoke() {
+  DOTRACE("ExptTcl::SaveCmd::invoke");
 	 ExptDriver* ed = getItem();
 	 const char* filename = getCstringFromArg(1);
 
