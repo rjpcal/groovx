@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Mon Jul 16 07:33:34 2001
+// written: Mon Jul 16 07:56:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -180,7 +180,8 @@ public:
   /** Attempt to convert argument number \a argn to type \c T, and
       copy the result into \a val. */
   template <class Cue>
-  typename Cue::Type getValFromArg(unsigned int argn, Cue)
+  typename Return<typename Cue::Type>::Type
+  getValFromArg(unsigned int argn, Cue)
     {
       return Tcl::Convert<typename Cue::Type>::fromTcl(getObjv(argn));
     }
