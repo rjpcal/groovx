@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Mar 19 18:00:56 2003
+// written: Wed Apr  2 13:38:01 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -75,10 +75,10 @@ private:
 
 public:
 
-  /** This tracer dynamically controls the tracing of ExptDriver
-      member functions. */
+  /// Dynamically controls the tracing of ExptDriver member functions.
   static Util::Tracer tracer;
 
+  /// Factory function.
   static ExptDriver* make() { return new ExptDriver; }
 
   /// Virtual destructor.
@@ -123,9 +123,13 @@ public:
       date/time-stamped. */
   void addLogInfo(const char* message);
 
+  /// Get the script to be executed when the experiment completes.
   fstring getDoWhenComplete() const;
+
+  /// Specify a script to be executed when the experiment completes.
   void setDoWhenComplete(const fstring& script);
 
+  /// Specify the widget in which the experiment should run.
   void setWidget(const Util::SoftRef<Toglet>& widg);
 
   /// Return the Canvas for the Widget in which the experiment is running.
@@ -137,6 +141,7 @@ public:
   /// Resume the experiment after it has been halted.
   void edResumeExpt();
 
+  /// Pause the experiment until a top-level dialog box is dismissed.
   void pause();
 
   /** This saves the experiment file and a summary-of-responses file
@@ -145,7 +150,6 @@ public:
 
 private:
   class Impl;
-  friend class Impl;
 
   Impl* const rep;
 };

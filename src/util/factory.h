@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Jun 26 23:40:55 1999
-// written: Tue Apr  1 17:55:04 2003
+// written: Wed Apr  2 13:59:57 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -172,7 +172,7 @@ private:
 
 /**
  *
- * \cFactoryBase exists purely to introduce a virtual destructor into
+ * \c FactoryBase exists purely to introduce a virtual destructor into
  * the \c Factory hierarchy.
  *
  **/
@@ -180,19 +180,20 @@ private:
 class FactoryBase
 {
 public:
+  /// Virtual destructor for proper inheritance.
   virtual ~FactoryBase();
 };
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * \c Factory can create objects from an inheritance hierarchy given
- * only a typename. \Factory maintains a mapping from typenames to \c
- * CreatorBase's, and so given a typename can call the \c create()
- * function of the associated \c Creator. All of the product types of
- * a factory must be derived from \c Base. The constructor is
- * protected because factories for specific types should be
- * implemented as singleton classes derived from Factory.
+ * \c Factory can create objects from an inheritance hierarchy given only a
+ * typename. \c Factory maintains a mapping from typenames to \c
+ * CreatorBase's, and so given a typename can call the \c create() function
+ * of the associated \c Creator. All of the product types of a factory must
+ * be derived from \c Base. The constructor is protected because factories
+ * for specific types should be implemented as singleton classes derived
+ * from Factory.
  *
  **/
 ///////////////////////////////////////////////////////////////////////

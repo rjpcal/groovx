@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Jul 19 16:58:49 2001
-// written: Sat Mar 29 12:55:03 2003
+// written: Wed Apr  2 13:42:16 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -43,11 +43,14 @@
 class FeedbackMap
 {
 public:
+  /// Default constructor.
   FeedbackMap() :
     itsUseFeedback(true), itsRep(), itsItems(), isItDirty(true) {}
 
+  /// Get the string representation for serialization.
   const fstring& rep() const { return itsRep; }
 
+  /// Set from a string representation for serialization.
   void set(const fstring& new_rep)
   {
     itsRep = new_rep;
@@ -55,6 +58,7 @@ public:
     update();
   }
 
+  /// Generate any feedback associated with the given response.
   void giveFeedback(Tcl::Interp& intp, int response) const
   {
     if (!itsUseFeedback) return;
@@ -74,6 +78,7 @@ public:
 
 private:
 
+  /// Regenerate from the string representation if needed.
   void update() const
   {
     if (!isItDirty) return;
@@ -102,11 +107,13 @@ private:
   class Item
   {
   public:
+    /// Construct with a boolean condition and an associated result script.
     Item(Tcl_Obj* cond, Tcl_Obj* res) :
       itsCondition(cond),
       itsResultCmd(res)
     {}
 
+    /// Invoke the associated feedback script if the Item's condition is true.
     bool invokeIfTrue(Tcl::Interp& interp)
     {
       if (interp.evalBooleanExpr(itsCondition))
@@ -123,7 +130,7 @@ private:
   };
 
 public:
-  bool itsUseFeedback;
+  bool itsUseFeedback; ///< Whether any feedback should be used at all
 
 private:
   fstring itsRep;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Mar 19 18:00:56 2003
+// written: Wed Apr  2 13:38:41 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -68,6 +68,7 @@ public:
   // properties //
   ////////////////
 
+  /// Get Face's fields.
   static const FieldMap& classFields();
 
   ///////////////

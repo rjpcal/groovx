@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Dec  2 13:09:31 2000
-// written: Wed Mar 19 17:56:06 2003
+// written: Wed Apr  2 14:03:15 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -39,12 +39,16 @@
 class GbColor : public Gfx::RgbaColor, public TMultiValue<double>
 {
 public:
+  /// Construct with a given luminance (default = white).
   GbColor(double v = 1.0);
+
+  /// Construct with given red/green/blue/alpha values.
   GbColor(double r, double g, double b, double a);
   virtual ~GbColor();
 
-  // These help to disambiguate function calls to set()
+  /// Get the underlying color value.
         Gfx::RgbaColor& color()       { return *this; }
+  /// Get the underlying color value.
   const Gfx::RgbaColor& color() const { return *this; }
 
   virtual fstring getNativeTypeName() const;

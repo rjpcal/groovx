@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Mar 19 18:00:55 2003
+// written: Wed Apr  2 13:43:41 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -60,6 +60,7 @@ public:
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
+  /// Get FixPt's fields.
   static const FieldMap& classFields();
 
 protected:
@@ -68,10 +69,6 @@ protected:
   virtual void grRender(Gfx::Canvas& canvas) const;
 
 private:
-  ////////////////
-  // properties //
-  ////////////////
-
   /// Length of crosshairs in GL coordinates.
   double itsLength;
 

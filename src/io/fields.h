@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Tue Apr  1 18:46:15 2003
+// written: Wed Apr  2 14:02:03 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -264,11 +264,12 @@ private:
   shared_ptr<BoundsChecker<T> > itsChecker;
 };
 
-/** ValueFieldImpl */
+/// ValueFieldImpl
 template <class C, class V>
 class ValueFieldImpl : public FieldImpl
 {
 public:
+  /// Construct with a member pointer for the Value field.
   ValueFieldImpl(V C::* memptr) : itsValueMember(memptr) {}
 
   virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
@@ -312,7 +313,7 @@ private:
   V C::* itsValueMember;
 };
 
-/** FuncMemberFieldImpl */
+/// FuncMemberFieldImpl
 template <class C, class T>
 class FuncMemberFieldImpl : public FieldImpl
 {
@@ -326,6 +327,7 @@ class FuncMemberFieldImpl : public FieldImpl
   FuncMemberFieldImpl(const FuncMemberFieldImpl&);
 
 public:
+  /// Construct with pointers to getter and setter member functions.
   FuncMemberFieldImpl(Getter g, Setter s) : itsGetter(g), itsSetter(s) {}
 
   virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const

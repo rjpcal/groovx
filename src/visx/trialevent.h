@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Wed Mar 19 18:00:51 2003
+// written: Wed Apr  2 14:05:56 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -329,7 +329,10 @@ public:
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
+  /// Get a string containing the Tcl callback script.
   fstring getCallback() const;
+
+  /// Set the Tcl callback script to be triggered.
   void setCallback(const fstring& script);
 
 protected:

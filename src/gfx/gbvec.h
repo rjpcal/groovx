@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Nov 16 00:10:45 2000
-// written: Wed Mar 19 17:56:06 2003
+// written: Wed Apr  2 14:05:04 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -50,8 +50,9 @@ public:
   /// Virtual destructor.
   virtual ~GbVec3();
 
-  // These help to disambiguate function calls to set()
+  /// Get the underlying Gfx::Vec3 value.
         Gfx::Vec3<T>& vec()       { return *this; }
+  /// Get the underlying Gfx::Vec3 value.
   const Gfx::Vec3<T>& vec() const { return *this; }
 
   virtual fstring getNativeTypeName() const;

@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Wed Mar 19 18:00:56 2003
+// written: Wed Apr  2 13:43:21 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -72,8 +72,10 @@ protected:
 
 public:
 
+  /// Factory function.
   static Fish* make();
 
+  /// Create from files specifying the spline values.
   static Fish* makeFromFiles(const char* splinefile,
                              const char* coordfile, int index);
 
@@ -84,6 +86,7 @@ public:
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
+  /// Get Fish's fields.
   static const FieldMap& classFields();
 
   /// This tracer dynamically controls the tracing of \c Fish member functions.

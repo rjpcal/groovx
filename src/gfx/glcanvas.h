@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Fri Mar 28 17:56:31 2003
+// written: Wed Apr  2 14:19:25 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -41,17 +41,22 @@
 class GLCanvas : public Gfx::Canvas, public virtual Util::VolatileObject
 {
 protected:
+  /// Construct with an associated X11 Display.
   GLCanvas(Display* dpy);
 
 public:
+  /// Factory function.
   static GLCanvas* make(Display* dpy);
 
   virtual ~GLCanvas();
 
+  /// Get the associated X11 Visual.
   Visual* visual() const;
 
+  /// Get the number of the associated X11 screen.
   int screen() const;
 
+  /// Bind the GLCanvas to the given X11 window.
   void makeCurrent(Window win);
 
   virtual Gfx::Vec2<int> screenFromWorld(const Gfx::Vec2<double>& world_pos) const;
@@ -176,13 +181,23 @@ public:
   virtual void flushOutput();
 
   // OpenGL-specific stuff:
+
+  /// Create space for a consecutive sequence of \a num display lists.
+  /** The index of the first display list is returned. */
   static int genLists(int num);
+  /// Deallocate \a num display lists starting with the one given by \a start.
   static void deleteLists(int start, int num);
+  /// Start recording the display list given by \a i.
+  /** Optionally execute the commands at the same time if \a do_execute is true. */
   void newList(int i, bool do_execute);
+  /// Stop recording display list commands.
   void endList();
+  /// Check if the given index refers to a valid display list.
   bool isList(int i);
+  /// Trigger the commands recorded in the given display list.
   void callList(int i);
 
+  /// Specify colors and positions associated with a light source.
   void light(int lightnum,
              const Gfx::RgbaColor* specular,
              const Gfx::RgbaColor* diffuse,
@@ -193,6 +208,7 @@ public:
              double spotExponent,
              double spotCutoff);
 
+  /// Specify colors and attributes for a material.
   void material(const Gfx::RgbaColor* specular,
                 const Gfx::RgbaColor* diffuse,
                 const Gfx::RgbaColor* ambient,

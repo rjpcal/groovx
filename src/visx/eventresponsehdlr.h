@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Nov  9 15:30:54 1999
-// written: Wed Mar 19 18:00:56 2003
+// written: Wed Apr  2 13:59:40 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -40,13 +40,13 @@ class fstring;
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * EventResponseHandler provides a generic way to collect responses
- * and give feedback. It provides several hooks for Tcl code to define
- * how responses are interpreted, and how feedback is given. Clients
- * should select an event sequence of interest (for example,
- * "<KeyPress>"), then select an appropriate Tk binding substitution
- * that will extract the relevant event field (for example, "%K" gets
- * the keycode from a KeyPress event).
+ * EventResponseHandler provides a generic way to collect responses and
+ * give feedback. It provides several hooks for Tcl code to define how
+ * responses are interpreted, and how feedback is given. Clients should
+ * select an event sequence of interest (for example, "\<KeyPress\>"), then
+ * select an appropriate Tk binding substitution that will extract the
+ * relevant event field (for example, "%K" gets the keycode from a KeyPress
+ * event).
  *
  * Then, an input response map can be used to define an association
  * between values of the event field, and arbitrary response

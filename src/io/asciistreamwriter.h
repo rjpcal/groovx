@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jun  7 13:05:56 1999
-// written: Wed Mar 19 17:55:55 2003
+// written: Wed Apr  2 13:55:59 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -52,10 +52,10 @@ class ostream;
 /**
  *
  * \c AsciiStreamWriter implements the \c IO::Writer interface, using nice
- * human-readable ascii formatting. \c AsciiStreamWriter writes
- * objects to an output stream in a ascii format that is readable by
- * \AsciiStreamReader. With this data format, objects may read and
- * write their attributes in any order.
+ * human-readable ascii formatting. \c AsciiStreamWriter writes objects to
+ * an output stream in a ascii format that is readable by \c
+ * AsciiStreamReader. With this data format, objects may read and write
+ * their attributes in any order.
  *
  **/
 ///////////////////////////////////////////////////////////////////////

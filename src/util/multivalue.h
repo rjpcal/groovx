@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Aug 22 16:45:38 2001
-// written: Wed Mar 19 17:58:54 2003
+// written: Wed Apr  2 14:04:35 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -41,15 +41,20 @@ public:
   TMultiValue(int num) : itsNumValues(num) {}
   virtual ~TMultiValue() {}
 
+  /// Get a string describing the underlying native type.
   virtual fstring getNativeTypeName() const = 0;
 
   virtual void printTo(STD_IO::ostream& os) const;
   virtual void scanFrom(STD_IO::istream& is);
 
 protected:
+  /// Returns a const pointer to the start of the underlying storage.
   virtual const T*   constBegin() const = 0;
+  /// Returns a const pointer to one-past-the-end of the underlying storage.
           const T*   constEnd()   const { return constBegin() + itsNumValues; }
+  /// Returns a non-const pointer to the start of the underlying storage.
                 T* mutableBegin()       { return const_cast<T*>(constBegin()); }
+  /// Returns a non-const pointer to one-past-the-end of the underlying storage.
                 T* mutableEnd()         { return const_cast<T*>(constEnd()); }
 
 private:

@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Mar 19 18:00:55 2003
+// written: Wed Apr  2 14:02:16 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -57,6 +57,7 @@ public:
   /// Virtual destructor.
   virtual ~Gabor();
 
+  /// Get Gabor's fields.
   static const FieldMap& classFields();
 
   virtual IO::VersionId serialVersionId() const;

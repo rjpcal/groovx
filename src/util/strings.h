@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Wed Mar 19 17:58:51 2003
+// written: Wed Apr  2 13:52:45 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -134,16 +134,23 @@ private:
 class fstring
 {
 public:
+  /// Construct an empty string.
   fstring();
+
+  /// Copy constructor.
   fstring(const fstring& other);
+
+  /// Destructory.
   ~fstring();
 
+  /// Construct by copying from a C-style null-terminated char array.
   fstring(const char* s) :
     itsRep(0)
   {
     init(Util::CharData(s));
   }
 
+  /// Construct by converting args to strings and concatenating.
   template <class T1>
   explicit fstring(const T1& part1) :
     itsRep(0)
@@ -151,6 +158,7 @@ public:
     do_init(part1);
   }
 
+  /// Construct by converting args to strings and concatenating.
   template <class T1, class T2>
   fstring(const T1& part1, const T2& part2) :
     itsRep(0)
@@ -158,6 +166,7 @@ public:
     do_init(part1); append(part2);
   }
 
+  /// Construct by converting args to strings and concatenating.
   template <class T1, class T2, class T3>
   fstring(const T1& part1, const T2& part2, const T3& part3) :
     itsRep(0)
@@ -165,6 +174,7 @@ public:
     do_init(part1); append(part2, part3);
   }
 
+  /// Construct by converting args to strings and concatenating.
   template <class T1, class T2, class T3, class T4>
   fstring(const T1& part1, const T2& part2, const T3& part3,
           const T4& part4) :
@@ -173,6 +183,7 @@ public:
     do_init(part1); append(part2, part3, part4);
   }
 
+  /// Construct by converting args to strings and concatenating.
   template <class T1, class T2, class T3, class T4, class T5>
   fstring(const T1& part1, const T2& part2, const T3& part3,
           const T4& part4, const T5& part5) :
@@ -181,6 +192,7 @@ public:
     do_init(part1); append(part2, part3, part4, part5);
   }
 
+  /// Construct by converting args to strings and concatenating.
   template <class T1, class T2, class T3, class T4, class T5, class T6>
   fstring(const T1& part1, const T2& part2, const T3& part3,
           const T4& part4, const T5& part5, const T6& part6) :
@@ -189,6 +201,7 @@ public:
     do_init(part1); append(part2, part3, part4, part5, part6);
   }
 
+  /// Construct by converting args to strings and concatenating.
   template <class T1, class T2, class T3, class T4, class T5, class T6, class T7>
   fstring(const T1& part1, const T2& part2, const T3& part3,
           const T4& part4, const T5& part5, const T6& part6,
@@ -198,45 +211,63 @@ public:
     do_init(part1); append(part2, part3, part4, part5, part6, part7);
   }
 
+  /// Swap contents with another fstring object.
   void swap(fstring& other);
 
+  /// Assign from a C-style null-terminated char array.
   fstring& operator=(const char* text);
+
+  /// Assignment operator.
   fstring& operator=(const fstring& other);
 
+  /// Get a pointer to the non-const underlying data array.
   char* data()
   {
     string_rep::makeUnique(itsRep); return itsRep->data();
   }
 
+  /// Get a pointer to the const underlying data array.
   const char* c_str() const { return itsRep->text(); }
+
+  /// Get the number of characters in the string (NOT INCLUDING the null terminator).
   std::size_t length() const { return itsRep->length(); }
+
+  /// Query whether the length of the string is 0.
   bool is_empty() const { return (length() == 0); }
 
+  /// Reset to an empty string.
   void clear() { string_rep::makeUnique(itsRep); itsRep->clear(); }
 
   //
   // Substring operations
   //
 
+  /// Query whether the terminal substring matches the given string.
   bool ends_with(const fstring& ext) const;
 
   //
   // Comparison operators
   //
 
+  /// Query for equality with a C-style string.
   bool equals(const char* other) const;
+  /// Query for equality with another fstring object.
   bool equals(const fstring& other) const;
 
+  /// Query if string is lexicographically less-than another string.
   bool operator<(const char* other) const;
 
+  /// Query if string is lexicographically less-than another string.
   template <class StrType>
   bool operator<(const StrType& other) const
   {
     return operator<(other.c_str());
   }
 
+  /// Query if string is lexicographically greater-than another string.
   bool operator>(const char* other) const;
 
+  /// Query if string is lexicographically greater-than another string.
   template <class StrType>
   bool operator>(const StrType& other) const
   {
@@ -247,28 +278,28 @@ public:
   // Appending
   //
 
-  /// Append additional text to the fstring.
+  /// Convert args to string and append to the fstring.
   template <class T1>
   fstring& append(const T1& part1)
   {
     do_append(part1); return *this;
   }
 
-  /// Append additional text to the fstring.
+  /// Convert args to string and append to the fstring.
   template <class T1, class T2>
   fstring& append(const T1& part1, const T2& part2)
   {
     do_append(part1); do_append(part2); return *this;
   }
 
-  /// Append additional text to the fstring.
+  /// Convert args to string and append to the fstring.
   template <class T1, class T2, class T3>
   fstring& append(const T1& part1, const T2& part2, const T3& part3)
   {
     do_append(part1); do_append(part2); do_append(part3); return *this;
   }
 
-  /// Append additional text to the fstring.
+  /// Convert args to string and append to the fstring.
   template <class T1, class T2, class T3, class T4>
   fstring& append(const T1& part1, const T2& part2, const T3& part3,
                   const T4& part4)
@@ -277,7 +308,7 @@ public:
     do_append(part4); return *this;
   }
 
-  /// Append additional text to the fstring.
+  /// Convert args to string and append to the fstring.
   template <class T1, class T2, class T3, class T4, class T5>
   fstring& append(const T1& part1, const T2& part2, const T3& part3,
                   const T4& part4, const T5& part5)
@@ -286,7 +317,7 @@ public:
     do_append(part4); do_append(part5); return *this;
   }
 
-  /// Append additional text to the fstring.
+  /// Convert args to string and append to the fstring.
   template <class T1, class T2, class T3, class T4, class T5, class T6>
   fstring& append(const T1& part1, const T2& part2, const T3& part3,
                   const T4& part4, const T5& part5, const T6& part6)
@@ -299,15 +330,19 @@ public:
   // Input/Output
   //
 
+  /// Set the string by reading consecutive non-whitespace characters.
   void read(STD_IO::istream& is);
 
-  /// Read exactly count characters from the stream
+  /// Set the string by reading exactly count characters.
   void readsome(STD_IO::istream& is, unsigned int count);
 
+  /// Write the string's contents to the ostream.
   void write(STD_IO::ostream& os) const;
 
+  /// Set the string by reading characters up until newline or EOF.
   void readline(STD_IO::istream& is);
 
+  /// Set the string by reading characters up until \a eol or EOF.
   void readline(STD_IO::istream& is, char eol);
 
   //
@@ -317,12 +352,17 @@ public:
   // or != call.
   //
 
+  /// Equality operator.
   bool operator==(const char* rhs) const    { return equals(rhs); }
+  /// Equality operator.
   bool operator==(const fstring& rhs) const { return equals(rhs); }
 
+  /// Inequality operator.
   bool operator!=(const char* rhs) const    { return !equals(rhs); }
+  /// Inequality operator.
   bool operator!=(const fstring& rhs) const { return !equals(rhs); }
 
+  /// Dump contents for debugging.
   void debugDump() const;
 
 private:

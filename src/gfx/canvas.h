@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Fri Mar 28 17:55:19 2003
+// written: Wed Apr  2 14:15:36 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -110,10 +110,12 @@ public:
   /// Query the number of bytes per pixel.
   virtual unsigned int bitsPerPixel() const = 0;
 
+  /// Throw an exception if there has been an error.
   virtual void throwIfError(const char* where) const = 0;
 
 
 
+  /// Function-pointer type for Canvas state-change operations.
   typedef void (Canvas::* Manip)();
 
   /** \c MatrixSaver handles saving and restoring of some part of the
@@ -164,10 +166,14 @@ public:
   /// Select the back buffer for future drawing operations.
   virtual void drawOnBackBuffer() = 0;
 
+  /// Set the current foreground/drawing color.
   virtual void setColor(const Gfx::RgbaColor& rgba) = 0;
+  /// Set the current background/clear color.
   virtual void setClearColor(const Gfx::RgbaColor& rgba) = 0;
 
+  /// Set the current foreground/drawing color index.
   virtual void setColorIndex(unsigned int index) = 0;
+  /// Set the current background/clear color index.
   virtual void setClearColorIndex(unsigned int index) = 0;
 
   /// Swap the foreground and background colors.
@@ -186,6 +192,7 @@ public:
   /// Set the current line stipple pattern
   virtual void setLineStipple(unsigned short bit_pattern = 0xFFFF) = 0;
 
+  /// Turn on antialiasing if available.
   virtual void enableAntialiasing() = 0;
 
   ///////////////////////////////////////////////////////////////////////
@@ -194,11 +201,14 @@ public:
   //
   ///////////////////////////////////////////////////////////////////////
 
+  /// Specify a viewport for the canvas.
   virtual void viewport(int x, int y, int w, int h) = 0;
 
+  /// Specify an orthographic projection for the canvas.
   virtual void orthographic(const Gfx::Rect<double>& bounds,
                             double zNear, double zFar) = 0;
 
+  /// Specify an perspective projection for the canvas.
   virtual void perspective(double fovy, double aspect,
                            double zNear, double zFar) = 0;
 
@@ -214,10 +224,14 @@ public:
   /// Restore the previously saved transformation matrix.
   virtual void popMatrix() = 0;
 
+  /// Translate the coordinate system by the given vector.
   virtual void translate(const Gfx::Vec3<double>& v) = 0;
+  /// Scale/reflect the coordinate system by the given vector.
   virtual void scale(const Gfx::Vec3<double>& v) = 0;
+  /// Rotate the coordinate system around the given vector.
   virtual void rotate(const Gfx::Vec3<double>& v, double degrees) = 0;
 
+  /// Apply a generic transformation to the coordinate system.
   virtual void transform(const Gfx::Txform& tx) = 0;
 
   ///////////////////////////////////////////////////////////////////////
@@ -245,26 +259,33 @@ public:
   /// Clear a region of the color buffer to the clear color.
   virtual void clearColorBuffer(const Gfx::Rect<int>& screen_rect) = 0;
 
+  /// Draw a rectangle.
   virtual void drawRect(const Gfx::Rect<double>& rect) = 0;
 
+  /// Draw a cube.
   virtual void drawBox(const Gfx::Box<double>& box);
 
+  /// Draw a circle.
   virtual void drawCircle(double inner_radius, double outer_radius, bool fill,
                           unsigned int slices, unsigned int loops) = 0;
 
+  /// Draw a cylinder.
   virtual void drawCylinder(double base_radius, double top_radius,
                             double height, int slices, int stacks,
                             bool fill) = 0;
 
+  /// Draw a sphere.
   virtual void drawSphere(double radius, int slices, int stacks,
                           bool fill) = 0;
 
+  /// Draw a Bezier curve with 4 control points.
   virtual void drawBezier4(const Gfx::Vec3<double>& p1,
                            const Gfx::Vec3<double>& p2,
                            const Gfx::Vec3<double>& p3,
                            const Gfx::Vec3<double>& p4,
                            unsigned int subdivisions);
 
+  /// Draw a filled Bezier curve with 4 control points.
   virtual void drawBezierFill4(const Gfx::Vec3<double>& center,
                                const Gfx::Vec3<double>& p1,
                                const Gfx::Vec3<double>& p2,
@@ -272,23 +293,24 @@ public:
                                const Gfx::Vec3<double>& p4,
                                unsigned int subdivisions);
 
-  /** Draw a NURBS curve. The default implementation splits the NURBS
-      curve into 4-pt Bezier curve components, and then draws those
-      with drawBezier4(). */
+  /// Draw a NURBS curve.
+  /** The default implementation splits the NURBS curve into 4-pt Bezier
+      curve components, and then draws those with drawBezier4(). */
   virtual void drawNurbsCurve(const dynamic_block<float>& knots,
                               const dynamic_block<Gfx::Vec3<float> >& pts);
 
-  virtual void beginPoints() = 0;
-  virtual void beginLines() = 0;
-  virtual void beginLineStrip() = 0;
-  virtual void beginLineLoop() = 0;
-  virtual void beginTriangles() = 0;
-  virtual void beginTriangleStrip() = 0;
-  virtual void beginTriangleFan() = 0;
-  virtual void beginQuads() = 0;
-  virtual void beginQuadStrip() = 0;
-  virtual void beginPolygon() = 0;
+  virtual void beginPoints() = 0;         ///< Start a series of points vertices.
+  virtual void beginLines() = 0;          ///< Start a set of lines.
+  virtual void beginLineStrip() = 0;      ///< Start a continuous strip of lines.
+  virtual void beginLineLoop() = 0;       ///< Start a closed loop of lines.
+  virtual void beginTriangles() = 0;      ///< Start a set of triangles.
+  virtual void beginTriangleStrip() = 0;  ///< Start a continuous strip of triangles.
+  virtual void beginTriangleFan() = 0;    ///< Start a fan of triangles with a common anchor point.
+  virtual void beginQuads() = 0;          ///< Start a set of quadrilaterals.
+  virtual void beginQuadStrip() = 0;      ///< Start a continous strip of quadrilaterals.
+  virtual void beginPolygon() = 0;        ///< Start a convex polygon.
 
+  /// Symbolic tags for the vertex-series specified by the begin*() functions.
   enum VertexStyle
     {
       POINTS,
@@ -303,13 +325,18 @@ public:
       POLYGON
     };
 
+  /// Start a series of vertices according to the given Vertex Style.
   void begin(VertexStyle s);
 
+  /// Put a 2-D vertex (with z = 0) into the current vertex-series.
   virtual void vertex2(const Gfx::Vec2<double>& v) = 0;
+  /// Put a 3-D vertex into the current vertex-series.
   virtual void vertex3(const Gfx::Vec3<double>& v) = 0;
 
+  /// End the current vertex-series.
   virtual void end() = 0;
 
+  /// Render text with the given font.
   virtual void drawText(const fstring& text, const GxFont& font) = 0;
 
   /// Flush all pending drawing requests.
