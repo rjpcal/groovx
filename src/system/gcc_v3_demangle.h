@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 19 17:00:38 2001
-// written: Mon Jul  2 15:14:31 2001
+// written: Tue Aug  7 16:52:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,13 +50,15 @@ public:
   }
 };
 
-int GccV3Demangler::munchInt() {
+int GccV3Demangler::munchInt()
+{
   int val = 0;
-  while ( isdigit(itsBuf[itsPos]) ) {
-    val *= 10;
-    val += (itsBuf[itsPos] - '0');
-    itsBuf.erase(itsPos, 1);
-  }
+  while ( isdigit(itsBuf[itsPos]) )
+    {
+      val *= 10;
+      val += (itsBuf[itsPos] - '0');
+      itsBuf.erase(itsPos, 1);
+    }
 
   return val;
 }
@@ -112,7 +114,8 @@ void GccV3Demangler::readBuiltinType() {
   }
 }
 
-void GccV3Demangler::readTemplateArgs() {
+void GccV3Demangler::readTemplateArgs()
+{
   Assert(itsBuf[itsPos] == 'I');
   itsBuf.erase(itsPos, 1);
   itsBuf.insert(itsPos, "<");
@@ -146,7 +149,8 @@ void GccV3Demangler::readUserDefinedType() {
     }
 }
 
-void GccV3Demangler::readType() {
+void GccV3Demangler::readType()
+{
   std::string qual = readQualifiers();
 
   // Check if it's a user-defined type...
@@ -192,7 +196,8 @@ std::string GccV3Demangler::readQualifiers() {
   return qual;
 }
 
-void GccV3Demangler::readUnscopedName() {
+void GccV3Demangler::readUnscopedName()
+{
   if ( itsBuf[itsPos] == 'S')
     {
       Assert(itsBuf[itsPos+1] == 't');
@@ -206,26 +211,30 @@ void GccV3Demangler::readUnscopedName() {
   readType();
 }
 
-void GccV3Demangler::readNestedName() {
+void GccV3Demangler::readNestedName()
+{
   Assert(itsBuf[itsPos] == 'N');
   itsBuf.erase(itsPos, 1);
-  while (true) {
-    readUnscopedName();
+  while (true)
+    {
+      readUnscopedName();
 
-    // See if we're done nesting...
-    if (itsBuf[itsPos] == 'E') {
-      itsBuf.erase(itsPos, 1);
-      return;
+      // See if we're done nesting...
+      if (itsBuf[itsPos] == 'E')
+        {
+          itsBuf.erase(itsPos, 1);
+          return;
+        }
+
+      // ...otherwise insert a scope resolution operator ("::")
+      itsBuf.insert(itsPos, "::");
+      // Skip over the just-inserted "::"
+      itsPos += 2;
     }
-
-    // ...otherwise insert a scope resolution operator ("::")
-    itsBuf.insert(itsPos, "::");
-    // Skip over the just-inserted "::"
-    itsPos += 2;
-  }
 }
 
-void GccV3Demangler::readName() {
+void GccV3Demangler::readName()
+{
   // Check if we have namespace qualifiers...
   if (itsBuf[itsPos] == 'N')
     {
@@ -237,12 +246,17 @@ void GccV3Demangler::readName() {
     }
 }
 
-std::string gcc_v3_demangle(const std::string& in) {
+std::string gcc_v3_demangle(const std::string& in)
+{
 DOTRACE("gcc_v3_demangle");
+
+  DebugEvalNL(in);
 
   GccV3Demangler dm(in);
 
-  return dm.demangle();
+  std::string res = dm.demangle();
+  DebugEvalNL(res);
+  return res;
 }
 
 //
