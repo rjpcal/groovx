@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Fri May 19 19:16:05 2000
+// written: Thu Sep 21 19:44:17 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -19,6 +19,8 @@
 #include "exptdriver.h"
 
 #include "gwt/widget.h"
+
+#include "system/system.h"
 
 #include "tcl/tclcmd.h"
 #include "tcl/tclevalcmd.h"
@@ -128,18 +130,37 @@ public:
 	 itsPauseMsgCmd(
 				"tk_messageBox -default ok -icon info "
 				"-title \"Pause\" -type ok "
-				"-message \"Experiment paused. Click OK to continue.\";\n"
-				"after 1000",
+				"-message \"Experiment paused. Click OK to continue.\";\n",
 				Tcl::TclEvalCmd::THROW_EXCEPTION)
   {}
 
 protected:
   virtual void invoke() {
-
 	 ExptDriver* ed = getItem();
 	 ed->edHaltExpt();
 
 	 itsPauseMsgCmd.invoke(interp());
+
+	 // Clear the event queue
+	 while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
+		{ }
+
+	 GWT::Widget* widget = ed->getWidget();
+	 widget->clearscreen();
+	 widget->swapBuffers();
+	 widget->clearscreen();
+	 widget->swapBuffers();
+
+	 System::theSystem().sleep(2);
+
+	 widget->clearscreen();
+	 widget->swapBuffers();
+	 widget->clearscreen();
+	 widget->swapBuffers();
+
+	 // Clear the event queue
+	 while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
+		{ }
 
 	 ed->edResumeExpt();
   }
