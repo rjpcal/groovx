@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 16:45:32 2002
-// written: Thu Nov 14 16:33:36 2002
+// written: Tue Nov 19 14:00:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,7 @@
 
 #include "gxrasterfont.h"
 
-#include "gfx/canvas.h"
-
+#include "gx/bbox.h"
 #include "gx/rect.h"
 
 #include "system/system.h"
@@ -198,10 +197,9 @@ DOTRACE("GxRasterFont::listBase");
   return rep->listBase;
 }
 
-Gfx::Rect<double> GxRasterFont::sizeOf(const char* text,
-                                       Gfx::Canvas& canvas) const
+void GxRasterFont::bboxOf(const char* text, Gfx::Bbox& bbox) const
 {
-DOTRACE("GxRasterFont::sizeOf");
+DOTRACE("GxRasterFont::bboxOf");
 
   int asc = 0;
   int desc = 0;
@@ -238,13 +236,13 @@ DOTRACE("GxRasterFont::sizeOf");
 
   dbgEval(2, asc); dbgEval(2, desc); dbgEvalNL(2, wid);
 
-  Gfx::Rect<int> screen = canvas.screenFromWorld(Gfx::Rect<double>());
+  Gfx::Rect<int> screen = bbox.screenFromWorld(Gfx::Rect<double>());
 
   screen.right() += wid;
   screen.bottom() -= desc;
   screen.top() += asc;
 
-  return canvas.worldFromScreen(screen);
+  bbox.cube.merge(bbox.worldFromScreen(screen));
 }
 
 static const char vcid_gxrasterfont_cc[] = "$Header$";

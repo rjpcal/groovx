@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Tue Nov 19 12:55:57 2002
+// written: Tue Nov 19 14:02:50 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -280,13 +280,10 @@ void GxSeparator::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxSeparator::getBoundingCube");
 
-  Gfx::Bbox mybox(bbox.canvas);
+  Gfx::Bbox mybox = bbox.push();
 
   if (!rep->children.empty())
     {
-      Gfx::MatrixSaver state(bbox.canvas);
-      Gfx::AttribSaver attribs(bbox.canvas);
-
       for(Impl::VecType::reverse_iterator
             itr = rep->children.rbegin(),
             end = rep->children.rend();

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 20:05:41 2002
-// written: Wed Nov 13 21:40:09 2002
+// written: Tue Nov 19 14:00:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "gxvectorfont.h"
 
+#include "gx/bbox.h"
 #include "gx/rect.h"
 
 #include <cstring>
@@ -765,16 +766,16 @@ unsigned int GxVectorFont::listBase() const
   return getStrokeFontListBase();
 }
 
-Gfx::Rect<double> GxVectorFont::sizeOf(const char* text,
-                                       Gfx::Canvas& /*canvas*/) const
+void GxVectorFont::bboxOf(const char* text, Gfx::Bbox& bbox) const
 {
-  Gfx::Rect<double> size;
-  size.left() = 0.0;
+  Gfx::Rect<double> rect;
+  rect.left() = 0.0;
   unsigned int len = strlen(text);
-  size.right() = len > 0 ? (5*len) - 1 : 1.0;
-  size.bottom() = -1.0;
-  size.top() = 6.0;
-  return size;
+  rect.right() = len > 0 ? (5*len) - 1 : 1.0;
+  rect.bottom() = -1.0;
+  rect.top() = 6.0;
+
+  bbox.cube.merge(rect);
 }
 
 static const char vcid_gxvectorfont_cc[] = "$Header$";

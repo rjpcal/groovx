@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Tue Nov 19 13:44:46 2002
+// written: Tue Nov 19 13:53:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -160,7 +160,7 @@ DOTRACE("Gabor::grGetBoundingBox");
 
   Gfx::Vec2<double> world_origin;
 
-  Gfx::Vec2<int> screen_origin = bbox.canvas.screenFromWorld(world_origin);
+  Gfx::Vec2<int> screen_origin = bbox.screenFromWorld(world_origin);
 
   Gfx::Vec2<int> size(itsResolution * itsPointSize,
                       itsResolution * itsPointSize);
@@ -169,7 +169,7 @@ DOTRACE("Gabor::grGetBoundingBox");
   screen_rect.setRectXYWH(screen_origin.x(), screen_origin.y(),
                           size.x(), size.y());
 
-  Gfx::Rect<double> world_rect = bbox.canvas.worldFromScreen(screen_rect);
+  Gfx::Rect<double> world_rect = bbox.worldFromScreen(screen_rect);
 
   bbox.cube.merge(world_rect);
 }

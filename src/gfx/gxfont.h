@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 12 18:34:57 2002
-// written: Wed Nov 13 21:34:48 2002
+// written: Tue Nov 19 13:59:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 namespace Gfx
 {
+  class Bbox;
   class Canvas;
   template <class V> class Rect;
 }
@@ -30,8 +31,7 @@ public:
 
   virtual unsigned int listBase() const = 0;
 
-  virtual Gfx::Rect<double> sizeOf(const char* text,
-                                   Gfx::Canvas& canvas) const = 0;
+  virtual void bboxOf(const char* text, Gfx::Bbox& bbox) const = 0;
 };
 
 static const char vcid_gxfont_h[] = "$Header$";

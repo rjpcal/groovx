@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 12:59:04 2002
-// written: Tue Nov 19 12:56:36 2002
+// written: Tue Nov 19 14:04:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,7 +85,11 @@ void GxAligner::getBoundingCube(Gfx::Bbox& bbox) const
 {
 DOTRACE("GxAligner::getBoundingCube");
 
-  Gfx::Rect<double> bounds = child()->getBoundingBox(bbox.canvas);
+  Gfx::Bbox mybox = bbox.push();
+
+  child()->getBoundingCube(mybox);
+
+  Gfx::Rect<double> bounds = mybox.cube.rect();
 
   Gfx::Vec2<double> center = getCenter(bounds);
 

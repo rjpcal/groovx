@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Tue Nov 19 13:45:05 2002
+// written: Tue Nov 19 13:59:50 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,6 @@
 #include "gfx/gxcache.h"
 #include "gfx/gxfont.h"
 #include "gfx/gxscaler.h"
-
-#include "gx/bbox.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -158,9 +156,7 @@ void Gtext::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("Gtext::grGetBoundingBox");
 
-  Gfx::Rect<double> rect = itsFont->sizeOf(itsText.c_str(), bbox.canvas);
-
-  bbox.cube.merge(rect);
+  itsFont->bboxOf(itsText.c_str(), bbox);
 }
 
 void Gtext::setFont(fstring name)

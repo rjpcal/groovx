@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Tue Nov 19 13:38:57 2002
+// written: Tue Nov 19 13:52:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -344,12 +344,12 @@ DOTRACE("Bitmap::grGetBoundingBox");
 
   // Get the corners in screen coordinates
 
-  Gfx::Vec2<int> bottom_left = bbox.canvas.screenFromWorld(Gfx::Vec2<double>());
+  Gfx::Vec2<int> bottom_left = bbox.screenFromWorld(Gfx::Vec2<double>());
   Gfx::Vec2<int> top_right = bottom_left + (size() * getZoom());
 
   bbox.cube.merge(Gfx::Vec2<double>());
 
-  bbox.cube.merge(bbox.canvas.worldFromScreen(top_right));
+  bbox.cube.merge(bbox.worldFromScreen(top_right));
 }
 
 Gfx::Vec2<int> Bitmap::size() const
