@@ -4656,3 +4656,5 @@
   robust... ultimately we need to watch out for rounding problems and
   floating-point inaccuracies when converting between screen and world
   coordinates.
+
+* (26-Oct-2004, done 27-Oct-2004) fix rasterPos() for 3-D

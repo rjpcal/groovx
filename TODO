@@ -13,8 +13,6 @@
 
   Need to prohibit 'is' from being inherited, e.g.
 
-* (25-Oct-2004) fix testing with seed 1384024797
-
 * (20-Oct-2004) make media/imgfile not depend on Nub::log
 
 * (15-Oct-2004) make a DebugScheduler that can be used in TimingHdlr
