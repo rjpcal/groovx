@@ -66,7 +66,7 @@ protected:
 
     dynamic_string cmd_usage(cmd_name.c_str());
     cmd_usage.append(" ").append(cmd->usage());
-    returnCstring(cmd_usage.c_str());
+    returnVal(cmd_usage.c_str());
   }
 };
 
@@ -227,43 +227,6 @@ void Tcl::TclCmd::returnError() {
 DOTRACE("Tcl::TclCmd::returnError");
   itsResult = TCL_ERROR;
 }
-
-void Tcl::TclCmd::returnInt(int val) {
-DOTRACE("Tcl::TclCmd::returnInt");
-  Tcl_SetObjResult(itsInterp, Tcl_NewIntObj(val));
-  itsResult = TCL_OK;
-}
-
-void Tcl::TclCmd::returnLong(long val) {
-DOTRACE("Tcl::TclCmd::returnLong");
-  Tcl_SetObjResult(itsInterp, Tcl_NewLongObj(val));
-  itsResult = TCL_OK;
-}
-
-void Tcl::TclCmd::returnBool(bool val) {
-DOTRACE("Tcl::TclCmd::returnBool");
-  Tcl_SetObjResult(itsInterp, Tcl_NewBooleanObj(val));
-  itsResult = TCL_OK;
-}
-
-void Tcl::TclCmd::returnDouble(double val) {
-DOTRACE("Tcl::TclCmd::returnDouble");
-  Tcl_SetObjResult(itsInterp, Tcl_NewDoubleObj(val));
-  itsResult = TCL_OK;
-}
-
-void Tcl::TclCmd::returnCstring(const char* val) {
-DOTRACE("Tcl::TclCmd::returnCstring");
-  Tcl_SetObjResult(itsInterp, Tcl_NewStringObj(val, -1));
-  itsResult = TCL_OK;
-}
-
-void Tcl::TclCmd::returnValue(const Value& val) {
-DOTRACE("Tcl::TclCmd::returnValue");
-  TclValue return_val(val);
-  Tcl_SetObjResult(itsInterp, return_val.getObj());
-  itsResult = TCL_OK;
-};
 
 void Tcl::TclCmd::returnTclObj(Tcl_Obj* obj) {
 DOTRACE("Tcl::TclCmd::returnTclObj");

@@ -135,8 +135,8 @@ public:
  * intended to be used in the implementation of invoke. This interface
  * provides functions such as \c getIntFromArg() and
  * getCstringFromArg() for getting basic types from a command
- * argument, as well as functions such as \c returnInt() and \c
- * returnCstring() for returning basic types to Tcl.
+ * argument, as well as functions such as \c returnVal() and \c
+ * returnString() for returning basic types to Tcl.
  *
  * The only C++ clients of \c TclCmd should be those who make
  * subclasses to perform specific actions, and those who instantiate
@@ -286,58 +286,19 @@ public:
   /// Return an error condition with a void result.
   void returnError();
 
-  /// Return satisfactorily with the \c int result \a val.
-  void returnInt(int val);
-
-  /// Return satisfactorily with the \c long result \a val.
-  void returnLong(long val);
-
-  /// Return satisfactorily with the \c bool result \a val.
-  void returnBool(bool val);
-
-  /// Return satisfactorily with the \c double result \a val.
-  void returnDouble(double val);
-
-  /// Return satisfactorily with the C-style string (\c char*) result \a val.
-  void returnCstring(const char* val);
-
-  /// Return satisfactorily with the \c Value result \a val.
-  void returnValue(const Value& val);
-
-  /// Return a Tcl_Obj*.
-  void returnTclObj(Tcl_Obj* obj);
-
-
-  /// Return satisfactorily with the generic \c Value result \a val.
-  void returnVal(const Value& val) { returnValue(val); }
-
-  /// Return satisfactorily with the \c int result \a val.
-  void returnVal(int val) { returnInt(val); }
-
-  /// Return satisfactorily with the \c unsigned int result \a val.
-  void returnVal(unsigned int val) { returnLong(long(val)); }
-
-  /// Return satisfactorily with the \c long result \a val.
-  void returnVal(long val) { returnLong(val); }
-
-  /// Return satisfactorily with the \c unsigned long result \a val.
-  void returnVal(unsigned long val) { returnLong(long(val)); }
-
-  /// Return satisfactorily with the \c bool result \a val.
-  void returnVal(bool val) { returnBool(val); }
-
-  /// Return satisfactorily with the \c double result \a val.
-  void returnVal(double val) { returnDouble(val); }
-
-  /// Return satisfactorily with the C-style string (\c char*) result \a val.
-  void returnVal(const char* val) { returnCstring(val); }
+  /// Return satisfactorily with the result \a t of type \c T.
+  template <class T>
+  void returnVal(T t)
+    {
+		returnTclObj(Tcl::toTcl<T>(t));
+	 }
 
   /** Return satisfactorily with the string type result \a val. The
       templated type must have a c_str() function returning const char*. */
   template <class Str>
-  void returnStringType(const Str& val)
+  void returnString(const Str& val)
     {
-      returnCstring(Util::StringTraits<Str>::c_str(val));
+      returnVal(Util::StringTraits<Str>::c_str(val));
     }
 
 
@@ -426,6 +387,9 @@ public:
 
 protected:
   Tcl_Interp* interp() { return itsInterp; }
+
+  /// Return a Tcl_Obj*.
+  void returnTclObj(Tcl_Obj* obj);
 
 private:
   friend class ListIteratorBase;
