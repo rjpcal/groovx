@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri May 11 16:23:49 2001
+// written: Sun May 27 07:07:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,27 +19,9 @@
 #  endif
 #endif
 
-#if defined(TEST)
-#  ifndef LOCAL_TEST
-#    define LOCAL_TEST
-#  endif
-#endif
-
 #if defined(ASSERT) || defined(LOCAL_DEBUG)
 #  ifndef LOCAL_ASSERT
 #    define LOCAL_ASSERT
-#  endif
-#endif
-
-#if defined(INVARIANT) || defined(LOCAL_DEBUG)
-#  ifndef LOCAL_INVARIANT
-#    define LOCAL_INVARIANT
-#  endif
-#endif
-
-#if defined(CONTRACT) || defined(LOCAL_DEBUG)
-#  ifndef LOCAL_CONTRACT
-#    define LOCAL_CONTRACT
 #  endif
 #endif
 
