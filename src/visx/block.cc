@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Dec  1 15:11:57 1999
+// written: Wed Dec  1 15:31:56 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -152,7 +152,8 @@ DOTRACE("Block::deserialize");
   is >> itsRandSeed;
   // itsCurTrialSeqIdx
   is >> itsCurTrialSeqIdx;
-  if (itsCurTrialSeqIdx > itsTrialSequence.size()) {
+  if (itsCurTrialSeqIdx < 0 ||
+		size_t(itsCurTrialSeqIdx) > itsTrialSequence.size()) {
 	 throw IoValueError(ioTag);
   }
   // itsVerbose
@@ -209,7 +210,7 @@ DOTRACE("Block::numTrials");
 
 int Block::numCompleted() const {
 DOTRACE("Block::numCompleted");
-  return int(itsCurTrialSeqIdx);
+  return itsCurTrialSeqIdx;
 }
 
 int Block::currentTrial() const {
@@ -260,8 +261,8 @@ DOTRACE("Block::isComplete");
   // positive number if it was actually negative. Thus, we must also
   // check that itsCurTrialSeqIdx is actually non-negative before
   // returning 'true' from this function.
-  return ((itsCurTrialSeqIdx >= itsTrialSequence.size()) &&
-			 (itsCurTrialSeqIdx >= 0));
+  return ((itsCurTrialSeqIdx >= 0) &&
+			 (size_t(itsCurTrialSeqIdx) >= itsTrialSequence.size()));
 }
 
 const char* Block::trialDescription() const {
@@ -365,6 +366,8 @@ DOTRACE("Block::haltExpt");
 
 void Block::undoPrevTrial() {
 DOTRACE("Block::undoPrevTrial");
+
+  DebugEval(itsCurTrialSeqIdx); 
 
   // Check to make sure we've completed at least one trial
   if (itsCurTrialSeqIdx < 1) return;
