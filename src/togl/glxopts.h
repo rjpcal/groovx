@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Aug  4 16:28:37 2002
-// written: Mon Aug  5 11:21:58 2002
+// written: Mon Sep 16 11:48:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,6 +48,8 @@ struct GlxOpts
     stencilSize = 1;
     auxNumber = 0;
     indirect = 0;
+    level = 0;
+    transparent = 0;
   }
 
   int rgbaFlag;
@@ -69,6 +71,8 @@ struct GlxOpts
   int stencilSize;
   int auxNumber;
   int indirect;
+  int level;
+  int transparent;
 
   shared_ptr<GlxAttribs> buildAttribList();
 };

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Aug  4 16:29:23 2002
-// written: Sun Aug  4 16:32:35 2002
+// written: Mon Sep 16 11:49:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,6 +42,10 @@ DOTRACE("GlxOpts::buildAttribList");
                                       alphaFlag ? accumAlpha : -1);
 
   if (auxNumber > 0)   attribs->auxBuffers( auxNumber );
+
+  if (level != 0)      attribs->level( level );
+
+  if (transparent)     attribs->transparent();
 
   return attribs;
 }
