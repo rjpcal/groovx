@@ -3,25 +3,37 @@ $Id$
 
 *** FRONT of priority queue ***
 
-(18-Oct-2000) Ouch! I got bitten by a bug (? or my own problem) using
-MipsPro. The call was
-   C& p = dynamic_cast<C&>(*(itsList.getCheckedPtr(id)));
-in AbstractListItemPkg<C,List>::getCItemFromId(). The problem was that
-if the dynamic_cast threw an exception, the temporary SharedPtr
-created by getCheckedPtr() was not destroyed properly, meaning that
-the reference-counts got hosed. This is a Bad Thing. Who's right?
-Is the temporary supposed to be destroyed, or not?
-
-(18-Oct-2000) I need to think a lot more carefully in the future
-if/when changing file formats. As a one-user system, I think it is
-reasonable to consider migrating all old data over to a new format
-rather than trying to support multiple formats. Hopefully this is less
-of a problem with ASW format than with the Legacy format. I need to
-add a bunch of test cases that ensure that various old files
-(e.g. from psychophysics, fMRI) are still readable with each version.
-
 ========================================================================
 Resource management revisited 17-Oct-2000
+
+(1-done) Generalize Factory so it can take a creation function. Make
+	 class constructors protected and add make() creation functions
+	 instead.
+
+(*) Aha! We can get rid of MasterPtr.... IoObject itself should handle
+	 the reference counting. Then PtrHandle<T> of different types can
+	 be assigned to each other, DynamicCast'ed, etc., since the
+	 pointee's (IoObject*'s) will be related through inheritance.
+
+	 In detail
+	 (*) MasterPtrBase becomes RefCounted
+	 (*) IoObject inherits from RefCounted
+	 (*) VoidPtrHandle manages RefCounted
+	 (*) PtrListBase manages RefCounted
+	 (*) PtrHandle<T> holds T* (derived from RefCounted) directly
+	 (*) NullablePtrHandle<T> holds T* directly
+
+(*) Who makes the MasterPtr's? The IoFactory, or the make()
+	 implementations? How would IoFactory know what kind of
+	 MasterPtr<T> to make?
+
+(*) Make IoMgr use the creation functions and create MasterPtr's
+	 directly there. IoMgr should return a MasterPtr or a
+	 PtrHandle. (which?) This should not be too hard to change since
+	 the only clients are AsciiStreamReader, LegacyReader, and
+	 TimingHdlr.
+
+(*) Change the Reader/Writer interface to accomodate MasterIoPtr's.
 
 (18-Oct-2000) Aha! I have a vision... the PtrList's do not need to be
 serialized at all... they can become merely a runtime resource that
@@ -115,51 +127,6 @@ tlisttcl.cc
 tlistutils.cc
 tlistwidget.cc
 trialtcl.cc
-
-========================================================================
-Migrate legacy data 18-Oct-2000
-
-Should get rid of legacySrlz and legacyDesrlz once and for all.
-
-1-done) fMRI data -- These are not likely to ever be needed. But... I was
-   able to successfully convert all of this data to ASW format.
-
-2-done) Psychophysics fall 1999 -- These are readable by the current
-   legacyDesrlz. Therefore, we can migrate these files to
-   AsciiStreamWriter format in a batch process.
-
-	human_ac human_em human_jl human_ne human_rl
-	also human_ok human_rp human_fg
-
-3-done) Psychophysics spring 1999 -- These are not readable by the current
-	legacyDesrlz, and have fundamental incompatibility due to the lack
-	of RhList, ThList, BlockList. Therefore, I think it's best to
-	orphan them right now. The file format is fairly straightforward if
-	I needed to pull the data out at somepoint in the future. These
-	files are also readable+writable by grsh.a1.2.2, grsh0.5a2, and
-	grsh0.5a3. I'll freeze grsh0.8a2 as is, so that I could in
-	principle restructure these files at some point to be readable by
-	grsh0.8a2, and then re-write them in ASW format.
-
-	human_ap human_aw human_cc human_ss
-
-4-done) The object definition files in faces_triads/. Do we continue to
-   support this format, or convert these to ASW somehow? Or define a
-   "new" format for GrObj's only that allows them to be read in a
-   similar way? Probably best to have a new format that is similar to
-   the sparse format now used by LegacyReader. The question is, should
-   the new format be implemented with readTo/writeFrom, or does it
-   require a separate interface? Probably we can use readTo/writeFrom,
-   especially since, this should be used mostly for GrObj's... this
-   would allow us to collapse legacySrlz and legacyDesrlz back into
-   readFrom/writeTo, since we wouldn't be trying to support an old
-   format anymore.
-
-*) Copy all legacyDesrlz/legacySrlz functions into a text document as
-	a quick way to be able to manually read older files.
-
-------------------------------------------------------------------------
-
 
 (11-Oct-2000) Put more behavior in Tcl::SafeInterp. This functionality
 would be able to be used in many places.
@@ -859,5 +826,10 @@ like?
 
 *** BACK ***
 
-(done 16-Oct-2000) NullablePtrHandle? Allows resources to be
-purged. Done. 
+(note 18-Oct-2000) I need to think a lot more carefully in the future
+if/when changing file formats. As a one-user system, I think it is
+reasonable to consider migrating all old data over to a new format
+rather than trying to support multiple formats. Hopefully this is less
+of a problem with ASW format than with the Legacy format. I need to
+add a bunch of test cases that ensure that various old files
+(e.g. from psychophysics, fMRI) are still readable with each version.
