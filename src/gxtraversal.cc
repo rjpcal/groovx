@@ -3,7 +3,7 @@
 // gxtraversal.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Nov  3 00:24:54 2000
-// written: Fri Nov  3 00:33:54 2000
+// written: Fri Nov  3 11:01:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,9 @@
 
 #include "io/iditem.h"
 
-#include <list>
+#include "util/dlink_list.h"
+
+#include "util/trace.h"
 
 class GxTraversal::Impl {
 public:
@@ -29,6 +31,7 @@ public:
 
   void addNode(const GxNode* node)
 	 {
+	 DOTRACE("GxTraversal::Impl::addNode");
 		if (node == 0) return;
 
 		const GxSeparator* sep = dynamic_cast<const GxSeparator*>(node);
@@ -65,27 +68,40 @@ public:
 	 }
 
 private:
-  list<const GxNode*> itsNodes;
+  dlink_list<const GxNode*> itsNodes;
 };
 
 GxTraversal::GxTraversal(const GxNode* root) :
   itsImpl(new Impl(root))
-{}
+{
+DOTRACE("GxTraversal::GxTraversal");
+}
 
 GxTraversal::~GxTraversal()
-{ delete itsImpl; }
+{
+DOTRACE("GxTraversal::~GxTraversal");
+  delete itsImpl;
+}
 
-void GxTraversal::addNode(const GxNode* node)
-{ itsImpl->addNode(node); }
+void GxTraversal::addNode(const GxNode* node) {
+DOTRACE("GxTraversal::addNode");
+  itsImpl->addNode(node);
+}
 
-bool GxTraversal::hasMore() const
-{ return itsImpl->hasMore(); }
+bool GxTraversal::hasMore() const {
+DOTRACE("GxTraversal::hasMore");
+  return itsImpl->hasMore();
+}
 
-const GxNode* GxTraversal::current() const
-{ return itsImpl->current(); }
+const GxNode* GxTraversal::current() const {
+DOTRACE("GxTraversal::current");
+  return itsImpl->current();
+}
 
-void GxTraversal::advance()
-{ itsImpl->advance(); }
+void GxTraversal::advance() {
+DOTRACE("GxTraversal::advance");
+  itsImpl->advance();
+}
 
 static const char vcid_gxtraversal_cc[] = "$Header$";
 #endif // !GXTRAVERSAL_CC_DEFINED
