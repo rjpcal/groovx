@@ -37,7 +37,6 @@
 #include "tcl/tclsafeinterp.h"
 
 #include "util/pointers.h"
-#include "util/slink_list.h"
 #include "util/strings.h"
 
 #include <tcl.h>
@@ -45,6 +44,7 @@
 #include <iostream>
 #include <typeinfo>
 #include <string>
+#include <vector>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -162,8 +162,8 @@ public:
 
   int initStatus;
 
-  slink_list<shared_ptr<int> > ownedInts;
-  slink_list<shared_ptr<double> > ownedDoubles;
+  std::vector<shared_ptr<int> > ownedInts;
+  std::vector<shared_ptr<double> > ownedDoubles;
 
   ExitCallback* exitCallback;
 
@@ -421,7 +421,7 @@ void Tcl::Pkg::linkVarCopy(const char* varName, int var)
 {
 DOTRACE("Tcl::Pkg::linkVarCopy int");
   shared_ptr<int> copy(new int(var));
-  rep->ownedInts.push_front(copy);
+  rep->ownedInts.push_back(copy);
   rep->interp.linkInt(varName, copy.get(), true);
 }
 
@@ -429,7 +429,7 @@ void Tcl::Pkg::linkVarCopy(const char* varName, double var)
 {
 DOTRACE("Tcl::Pkg::linkVarCopy double");
   shared_ptr<double> copy(new double(var));
-  rep->ownedDoubles.push_front(copy);
+  rep->ownedDoubles.push_back(copy);
   rep->interp.linkDouble(varName, copy.get(), true);
 }
 

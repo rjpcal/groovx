@@ -42,7 +42,6 @@
 #include "util/gzstreambuf.h"
 #include "util/pointers.h"
 #include "util/ref.h"
-#include "util/slink_list.h"
 #include "util/strings.h"
 #include "util/value.h"
 
@@ -169,14 +168,14 @@ private:
   shared_ptr<STD_IO::istream> itsOwnedStream;
   STD_IO::istream& itsBuf;
   IO::ObjectMap itsObjects;
-  slink_list<shared_ptr<AttribMap> > itsAttribs;
+  std::vector<shared_ptr<AttribMap> > itsAttribs;
 
   AttribMap& currentAttribs()
   {
-    if ( itsAttribs.is_empty() )
+    if ( itsAttribs.empty() )
       throw Util::Error("attempted to read attribute "
                         "when no attribute map was active");
-    return *(itsAttribs.front());
+    return *(itsAttribs.back());
   }
 
   void inflateObject(STD_IO::istream& buf,
@@ -478,14 +477,14 @@ DOTRACE("AsciiStreamReader::inflateObject");
       attribMap->addNewAttrib(name, type, readAndUnEscape(buf));
     }
 
-  itsAttribs.push_front(attribMap);
+  itsAttribs.push_back(attribMap);
 
   //
   // (2) now the object can query us for its attributes...
   //
   obj->readFrom(*this);
 
-  itsAttribs.pop_front();
+  itsAttribs.pop_back();
 }
 
 shared_ptr<IO::Reader> IO::makeAsciiStreamReader(STD_IO::istream& os)
