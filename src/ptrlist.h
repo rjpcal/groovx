@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Tue Nov 30 17:11:58 1999
+// written: Tue Nov 30 17:18:20 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ public:
 
 	 ///
 	 iterator& operator=(const iterator& rhs) 
-		{ itsList = rhs.itsList; itsIndex = rhs.itsIndex; }
+		{ itsList = rhs.itsList; itsIndex = rhs.itsIndex; return *this; }
 
 	 ///
 	 bool operator== (const iterator& x) const 
