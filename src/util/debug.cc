@@ -55,22 +55,25 @@ void Debug::Eval(const char* what, int level,                   \
                  const char* where, int line_no,                \
                  bool nl, T expr) throw()                       \
 {                                                               \
+  STD_IO::cerr.exceptions(STD_IO::ios::goodbit);                \
   if (lineComplete)                                             \
     {                                                           \
-      fprintf(stderr, "[%d] %s:%d: ", level, where, line_no);   \
+      STD_IO::cerr << "[" << level << "] "                      \
+                   << where << ":" << line_no << ": ";          \
     }                                                           \
   if (what)                                                     \
-    fprintf(stderr, "(%s) %s = ", #T, what);                    \
-  STD_IO::cerr.exceptions(STD_IO::ios::goodbit);                \
+    {                                                           \
+      STD_IO::cerr << "(" << #T << ") " << what << " = ";       \
+    }                                                           \
   STD_IO::cerr << expr;                                         \
   if (nl)                                                       \
     {                                                           \
-      fprintf(stderr, "\n");                                    \
+      STD_IO::cerr << "\n";                                     \
       lineComplete = true;                                      \
     }                                                           \
   else                                                          \
     {                                                           \
-      fprintf(stderr, ", ");                                    \
+      STD_IO::cerr << ", ";                                     \
       lineComplete = false;                                     \
     }                                                           \
 }
