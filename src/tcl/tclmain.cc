@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Wed Sep 11 14:09:45 2002
+// written: Wed Sep 11 14:24:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,7 +76,7 @@ public:
 
   static MainImpl* get()
   {
-    if (theMainImpl != 0)
+    if (theMainImpl == 0)
       {
         throw Util::Error("no Tcl::Main object has yet been created");
       }
