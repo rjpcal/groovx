@@ -342,6 +342,14 @@ DOTRACE("Tcl::toTcl<const Value&>");
 }
 
 template <>
+Tcl_Obj* Tcl::toTcl<Tcl::ObjPtr>(Tcl::ObjPtr val)
+{
+DOTRACE("Tcl::toTcl<Tcl::ObjPtr>");
+
+  return val;
+}
+
+template <>
 Tcl_Obj* Tcl::toTcl<Tcl_Obj*>(Tcl_Obj* val)
 {
 DOTRACE("Tcl::toTcl<Tcl_Obj*>");
