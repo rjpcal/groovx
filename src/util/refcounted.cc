@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:28 2000
-// written: Tue Jun 12 16:42:50 2001
+// written: Tue Jun 12 17:02:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,11 +120,15 @@ Util::RefCounted::RefCounted() : itsRefCounts(new Util::RefCounts)
 {
 DOTRACE("Util::RefCounted::RefCounted");
   DebugEval((void*)this);
+
+  itsRefCounts->acquireWeak();
 }
 
 Util::RefCounted::~RefCounted()
 {
 DOTRACE("Util::RefCounted::~RefCounted");
+
+  itsRefCounts->releaseWeak();
 }
 
 void Util::RefCounted::incrRefCount() const {
