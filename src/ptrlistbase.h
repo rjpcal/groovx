@@ -3,7 +3,7 @@
 // ptrlistbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Oct 25 13:26:45 2000
+// written: Wed Oct 25 13:48:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,6 +63,9 @@ public:
 
 	 bool operator==(const IdIterator& other) const;
 
+	 bool operator!=(const IdIterator& other) const
+		{ return !(this->operator==(other)); }
+
 	 IdIterator& operator++();
 
 	 int operator*() const;
@@ -97,7 +100,7 @@ public:
   template <class Iterator>
   void insertValidIds(Iterator itr) const {
 	 for(IdIterator id_itr = beginIds(), end = endIds();
-		  !(id_itr == end);
+		  id_itr != end;
 		  ++id_itr)
 		{
 		  *itr++ = *id_itr;
