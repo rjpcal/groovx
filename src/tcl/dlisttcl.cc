@@ -82,7 +82,7 @@ namespace
   }
 }
 
-namespace DlistTcl
+namespace Dlist
 {
 
   //--------------------------------------------------------------------
@@ -458,6 +458,27 @@ namespace DlistTcl
 
   //--------------------------------------------------------------------
   //
+  // this command produces a list of random numbers each between min and
+  // max, and of the given
+  //
+  //--------------------------------------------------------------------
+
+  Tcl::List rand(double min, double max, unsigned int N)
+  {
+    Tcl::List result;
+
+    static Util::Urand generator;
+
+    for (unsigned int i = 0; i < N; ++i)
+      {
+        result.append(generator.fdrawRange(min, max));
+      }
+
+    return result;
+  }
+
+  //--------------------------------------------------------------------
+  //
   // This command taks two lists as arguments. Each element from the
   // first (source) list is appended to the result multiple times; the
   // number of times is determined by the corresponding integer found in
@@ -569,7 +590,7 @@ namespace DlistTcl
   Tcl::List shuffle_moveall(Tcl::List src)
   {
     Tcl::List permutation = permute_moveall(src.length());
-    return DlistTcl::choose(src, permutation);
+    return Dlist::choose(src, permutation);
   }
 
   //---------------------------------------------------------------------
@@ -581,7 +602,7 @@ namespace DlistTcl
   Tcl::List shuffle_maximal(Tcl::List src)
   {
     Tcl::List permutation = permute_maximal(src.length());
-    return DlistTcl::choose(src, permutation);
+    return Dlist::choose(src, permutation);
   }
 
   //---------------------------------------------------------------------
@@ -663,7 +684,7 @@ namespace DlistTcl
     return result;
   }
 
-} // end namespace
+} // end namespace Dlist
 
 
 extern "C"
@@ -673,30 +694,31 @@ DOTRACE("Dlist_Init");
 
   PKG_CREATE(interp, "dlist", "$Revision$");
 
-  pkg->def( "choose", "source_list index_list", &DlistTcl::choose );
-  pkg->def( "cycle_left", "list n", &DlistTcl::cycle_left );
-  pkg->def( "cycle_right", "list n", &DlistTcl::cycle_right );
-  pkg->def( "index", "list index", &DlistTcl::index );
-  pkg->def( "not", "list", &DlistTcl::not_ );
-  pkg->def( "ones", "num_ones", &DlistTcl::ones );
-  pkg->def( "linspace", "begin end npts", &DlistTcl::linspace );
-  pkg->def( "perm_distance", "list", &DlistTcl::perm_distance );
-  pkg->def( "perm_distance2", "list power", &DlistTcl::perm_distance2 );
-  pkg->def( "permute_maximal", "N", &DlistTcl::permute_maximal );
-  pkg->def( "permute_moveall", "N", &DlistTcl::permute_moveall );
-  pkg->def( "pickone", "list", &DlistTcl::pickone );
-  pkg->def( "range", "begin end ?step=1?", &DlistTcl::range );
-  pkg->def( "range", "begin end", Util::bindLast(&DlistTcl::range, 1) );
-  pkg->def( "repeat", "source_list times_list", &DlistTcl::repeat );
-  pkg->def( "reverse", "list", &DlistTcl::reverse );
-  pkg->def( "select", "source_list flags_list", &DlistTcl::select );
-  pkg->def( "shuffle", "list ?seed=0?", &DlistTcl::shuffle );
-  pkg->def( "shuffle", "list", Util::bindLast(&DlistTcl::shuffle, 0) );
-  pkg->def( "shuffle_maximal", "list", &DlistTcl::shuffle_maximal );
-  pkg->def( "shuffle_moveall", "list", &DlistTcl::shuffle_moveall );
-  pkg->def( "slice", "list n", &DlistTcl::slice );
-  pkg->def( "sum", "list", &DlistTcl::sum );
-  pkg->def( "zeros", "num_zeros", &DlistTcl::zeros );
+  pkg->def( "choose", "source_list index_list", &Dlist::choose );
+  pkg->def( "cycle_left", "list n", &Dlist::cycle_left );
+  pkg->def( "cycle_right", "list n", &Dlist::cycle_right );
+  pkg->def( "index", "list index", &Dlist::index );
+  pkg->def( "not", "list", &Dlist::not_ );
+  pkg->def( "ones", "num_ones", &Dlist::ones );
+  pkg->def( "linspace", "begin end npts", &Dlist::linspace );
+  pkg->def( "perm_distance", "list", &Dlist::perm_distance );
+  pkg->def( "perm_distance2", "list power", &Dlist::perm_distance2 );
+  pkg->def( "permute_maximal", "N", &Dlist::permute_maximal );
+  pkg->def( "permute_moveall", "N", &Dlist::permute_moveall );
+  pkg->def( "pickone", "list", &Dlist::pickone );
+  pkg->def( "rand", "min max N", &Dlist::rand );
+  pkg->def( "range", "begin end ?step=1?", &Dlist::range );
+  pkg->def( "range", "begin end", Util::bindLast(&Dlist::range, 1) );
+  pkg->def( "repeat", "source_list times_list", &Dlist::repeat );
+  pkg->def( "reverse", "list", &Dlist::reverse );
+  pkg->def( "select", "source_list flags_list", &Dlist::select );
+  pkg->def( "shuffle", "list ?seed=0?", &Dlist::shuffle );
+  pkg->def( "shuffle", "list", Util::bindLast(&Dlist::shuffle, 0) );
+  pkg->def( "shuffle_maximal", "list", &Dlist::shuffle_maximal );
+  pkg->def( "shuffle_moveall", "list", &Dlist::shuffle_moveall );
+  pkg->def( "slice", "list n", &Dlist::slice );
+  pkg->def( "sum", "list", &Dlist::sum );
+  pkg->def( "zeros", "num_zeros", &Dlist::zeros );
 
   PKG_RETURN;
 }
