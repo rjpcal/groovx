@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Jul 19 09:26:40 2001
+// written: Wed Aug  8 11:22:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,8 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace {
+namespace
+{
   const IO::VersionId BITMAP_SERIAL_VERSION_ID = 2;
 }
 
@@ -41,30 +42,33 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 Bitmap::Bitmap(shared_ptr<BmapRenderer> renderer) :
-  GrObj(GLCOMPILE, DIRECT_RENDER),
+  GrObj(GLCOMPILE, CLEAR_BOUNDING_BOX),
   itsImpl(new BitmapRep(renderer))
 {
 DOTRACE("Bitmap::Bitmap");
 }
 
 Bitmap::Bitmap(shared_ptr<BmapRenderer> renderer, const char* filename) :
-  GrObj(GLCOMPILE, DIRECT_RENDER),
+  GrObj(GLCOMPILE, CLEAR_BOUNDING_BOX),
   itsImpl(new BitmapRep(renderer, filename))
 {
 DOTRACE("Bitmap::Bitmap");
 }
 
-Bitmap::~Bitmap() {
+Bitmap::~Bitmap()
+{
 DOTRACE("Bitmap::~Bitmap");
   delete itsImpl;
 }
 
-IO::VersionId Bitmap::serialVersionId() const {
+IO::VersionId Bitmap::serialVersionId() const
+{
 DOTRACE("Bitmap::serialVersionId");
   return BITMAP_SERIAL_VERSION_ID;
 }
 
-void Bitmap::readFrom(IO::Reader* reader) {
+void Bitmap::readFrom(IO::Reader* reader)
+{
 DOTRACE("Bitmap::readFrom");
 
   itsImpl->readFrom(reader);
@@ -74,7 +78,8 @@ DOTRACE("Bitmap::readFrom");
   reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
 }
 
-void Bitmap::writeTo(IO::Writer* writer) const {
+void Bitmap::writeTo(IO::Writer* writer) const
+{
 DOTRACE("Bitmap::writeTo");
 
   itsImpl->writeTo(writer);
@@ -89,13 +94,15 @@ DOTRACE("Bitmap::writeTo");
 // actions //
 /////////////
 
-void Bitmap::loadPbmFile(const char* filename) {
+void Bitmap::loadPbmFile(const char* filename)
+{
 DOTRACE("Bitmap::loadPbmFile");
   itsImpl->loadPbmFile(filename);
   sendStateChangeMsg();
 }
 
-void Bitmap::loadPbmData(STD_IO::istream& is) {
+void Bitmap::loadPbmData(STD_IO::istream& is)
+{
 DOTRACE("Bitmap::loadPbmData");
   itsImpl->loadPbmData(is);
   sendStateChangeMsg();
@@ -136,8 +143,6 @@ void Bitmap::grRender(GWT::Canvas& canvas, DrawMode mode) const
 {
   if (mode == DRAW)
     itsImpl->render(canvas);
-  else
-    itsImpl->unRender(canvas);
 }
 
 ///////////////
