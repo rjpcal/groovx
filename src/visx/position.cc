@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Wed Aug 29 16:48:35 2001
+// written: Thu Aug 30 10:42:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,9 +21,7 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
-#define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_ASSERT
 #include "util/debug.h"
 
 namespace
@@ -44,7 +42,7 @@ struct PositionImpl
     sc(1.0, 1.0, 1.0),
     rt(0.0, 0.0, 1.0),
     rt_ang(0.0)
-    {}
+  {}
 
   Gfx::Vec3<double> tr;         // x,y,z coord shift
   Gfx::Vec3<double> sc;         // x,y,z scaling
@@ -62,12 +60,13 @@ const FieldMap& Position::classFields()
 {
   static const Field FIELD_ARRAY[] =
   {
-    Field("translation", Field::ValueType(),
-          &Position::translation, 0., 0., 0., 0., Field::NEW_GROUP),
-    Field("scaling", Field::ValueType(),
-          &Position::scaling, 0., 0., 0., 0.),
-    Field("rotationAxis", Field::ValueType(),
-          &Position::rotationAxis, 0., 0., 0., 0.),
+    Field("translation", Field::ValueType(), &Position::translation,
+          "0. 0. 0.", "-10. -10. -10.", "10. 10. 10.", "0.1 0.1 0.1",
+          Field::NEW_GROUP),
+    Field("scaling", Field::ValueType(), &Position::scaling,
+          "1. 1. 1.", "0.1 0.1 0.1", "10. 10. 10.", "0.1 0.1 0.1"),
+    Field("rotationAxis", Field::ValueType(), &Position::rotationAxis,
+          "0. 0. 1.", "-1. -1. -1.", "1. 1. 1.", "0.1 0.1 0.1"),
     Field("rotationAngle",
           &Position::itsRotationAngle, 0., 0., 360., 1.)
   };
