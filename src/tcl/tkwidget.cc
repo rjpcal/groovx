@@ -74,9 +74,6 @@ public:
   Tcl::Interp interp;
   const Tk_Window tkWin;
 
-  int width;
-  int height;
-
   bool updatePending;
   bool shutdownRequested;
 
@@ -152,8 +149,6 @@ TkWidgImpl::TkWidgImpl(Tcl::TkWidget* o, Tcl::Interp& p,
                                 Tk_MainWindow(interp.intp()),
                                 const_cast<char*>(pathname),
                                 topLevel ? (char*) "" : (char*) 0)),
-  width(400),
-  height(400),
   updatePending(false),
   shutdownRequested(false)
 {
@@ -207,16 +202,8 @@ DOTRACE("TkWidgImpl::cEventCallback");
           {
             DOTRACE("TkWidgImpl::cEventCallback-ConfigureNotify");
 
-            if (rep->width != Tk_Width(rep->tkWin) ||
-                rep->height != Tk_Height(rep->tkWin))
-              {
-                rep->width = Tk_Width(rep->tkWin);
-                rep->height = Tk_Height(rep->tkWin);
-                XResizeWindow(Tk_Display(rep->tkWin), Tk_WindowId(rep->tkWin),
-                              rep->width, rep->height);
-              }
-
-            widg->reshapeCallback(rep->width, rep->height);
+            widg->reshapeCallback(Tk_Width(rep->tkWin),
+                                  Tk_Height(rep->tkWin));
             widg->requestRedisplay();
           }
           break;
@@ -290,8 +277,17 @@ DOTRACE("Tcl::TkWidget::~TkWidget");
   delete rep;
 }
 
-int Tcl::TkWidget::width() const { return rep->width; }
-int Tcl::TkWidget::height() const { return rep->height; }
+int Tcl::TkWidget::width() const
+{
+DOTRACE("Tcl::TkWidget::width");
+  return Tk_Width(rep->tkWin);
+}
+
+int Tcl::TkWidget::height() const
+{
+DOTRACE("Tcl::TkWidget::height");
+  return Tk_Height(rep->tkWin);
+}
 
 Gfx::Vec2<int> Tcl::TkWidget::size() const
 {
@@ -301,23 +297,19 @@ Gfx::Vec2<int> Tcl::TkWidget::size() const
 void Tcl::TkWidget::setWidth(int w)
 {
 DOTRACE("Tcl::TkWidget::setWidth");
-  rep->width = w;
-  Tk_GeometryRequest(rep->tkWin, rep->width, rep->height);
+  Tk_GeometryRequest(rep->tkWin, w, height());
 }
 
 void Tcl::TkWidget::setHeight(int h)
 {
 DOTRACE("Tcl::TkWidget::setHeight");
-  rep->height = h;
-  Tk_GeometryRequest(rep->tkWin, rep->width, rep->height);
+  Tk_GeometryRequest(rep->tkWin, width(), h);
 }
 
 void Tcl::TkWidget::setSize(Gfx::Vec2<int> sz)
 {
 DOTRACE("Tcl::TkWidget::setSize");
-  rep->width = sz.x();
-  rep->height = sz.y();
-  Tk_GeometryRequest(rep->tkWin, rep->width, rep->height);
+  Tk_GeometryRequest(rep->tkWin, sz.x(), sz.y());
 }
 
 void Tcl::TkWidget::destroyWidget()

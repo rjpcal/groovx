@@ -57,6 +57,9 @@
 namespace
 {
   Util::SoftRef<Toglet> theCurrentToglet;
+
+  const int DEFAULT_SIZE_X = 400;
+  const int DEFAULT_SIZE_Y = 400;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -117,6 +120,7 @@ Window Toglet::Impl::cClassCreateProc(Tk_Window tkwin,
                                       Window parent,
                                       ClientData clientData) throw()
 {
+DOTRACE("Toglet::Impl::cClassCreateProc");
   Toglet* toglet = static_cast<Toglet*>(clientData);
   Toglet::Impl* rep = toglet->rep;
 
@@ -159,8 +163,8 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
   Window win = XCreateWindow(dpy,
                              parent,
                              0, 0,
-                             rep->owner->width(),
-                             rep->owner->height(),
+                             DEFAULT_SIZE_X,
+                             DEFAULT_SIZE_Y,
                              0, depth,
                              InputOutput, visual,
                              valuemask,
@@ -218,7 +222,7 @@ DOTRACE("Toglet::Toglet");
   // it won't have returned yet, and so our "rep" variable won't be
   // pointing anywhere meaningful (will be either NULL or garbage).
 
-  Tk_GeometryRequest(rep->tkWin, this->width(), this->height());
+  Tk_GeometryRequest(rep->tkWin, DEFAULT_SIZE_X, DEFAULT_SIZE_Y);
   Tk_SetClassProcs(rep->tkWin, &toglProcs, static_cast<ClientData>(this));
   Tk_MakeWindowExist(rep->tkWin);
   Tk_MapWindow(rep->tkWin);
