@@ -102,7 +102,7 @@ DOTRACE("EsdSoundRep::play");
 
   if (!itsFilename.is_empty())
     {
-      int res = esd_play_file("", itsFilename.c_str(), 0);
+      int res = esd_play_file("", itsFilename.c_str(), 1);
       if (res == 0)
         throw Util::Error(fstring("error while attempting to play sound file:\n  '",
                                   itsFilename.c_str(), "'"));
@@ -116,35 +116,21 @@ DOTRACE("EsdSoundRep::play");
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace
-{
-  int ESD = -1;
-}
-
 bool Sound::initSound()
 {
 DOTRACE("Sound::initSound");
-  ESD = esd_audio_open();
-  return haveSound();
+  return true;
 }
 
 bool Sound::haveSound()
 {
 DOTRACE("Sound::haveSound");
-#ifndef ESD_WORKAROUND
-  return (ESD > 0);
-#else
-  // for some strange reason, sounds seem to play ok under Mac OS X even if
-  // the esd_audio_open() call fails
   return true;
-#endif
 }
 
 void Sound::closeSound()
 {
 DOTRACE("Sound::closeSound");
-  if (haveSound())
-    esd_audio_close();
 }
 
 SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
