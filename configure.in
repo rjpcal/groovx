@@ -222,6 +222,11 @@ int main()
 [AC_DEFINE(NO_TYPENAME_MANGLING,1,[is typeid().name() unmangled?]) AC_MSG_RESULT(no)],
 AC_MSG_RESULT(yes))
 
+AC_CHECK_PROG(have_prog_cxxfilt, [c++filt], yes, no)
+if test "$have_prog_cxxfilt" = yes; then
+   AC_DEFINE(HAVE_PROG_CXXFILT)
+fi
+
 ### Check support for c++ iostreams
 
 AC_MSG_CHECKING([whether c++ compiler supports standard iostreams])
