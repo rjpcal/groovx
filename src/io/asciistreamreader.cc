@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu Nov 11 17:39:08 1999
+// written: Thu Nov 11 17:45:42 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -235,15 +235,15 @@ DOTRACE("AsciiStreamReader::Impl::initAttributes");
 
 	 itsBuf >> type >> name >> equal;
 
-  	 string value;
-	 getline(itsBuf, value, STRING_ENDER);
+	 Attrib& attrib = itsAttribs[name];
+	 attrib.type = type;
 
-	 DebugEval(type); DebugEval(name); DebugEvalNL(value);
+	 getline(itsBuf, attrib.value, STRING_ENDER);
 
-	 unEscape(value);
-	 DebugEvalNL(value);
+	 DebugEval(type); DebugEval(name); DebugEvalNL(attrib.value);
 
-  	 itsAttribs[name] = Attrib(type, value);
+	 unEscape(attrib.value);
+	 DebugEvalNL(attrib.value);
   }
 }
 
