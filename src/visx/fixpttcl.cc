@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Thu May 10 12:04:47 2001
+// written: Wed Jul 18 09:51:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,8 +24,8 @@ extern "C"
 int Fixpt_Init(Tcl_Interp* interp) {
 DOTRACE("Fixpt_Init");
 
-  Tcl::TclPkg* pkg =
-	 new Tcl::FieldCntrPkg<FixPt>(interp, "FixPt", "$Revision$");
+  Tcl::TclItemPkg* pkg = new Tcl::TclItemPkg(interp, "FixPt", "$Revision$");
+  Tcl::defFieldContainer<FixPt>(pkg);
 
   return pkg->initStatus();
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:53:34 1999
-// written: Thu May 10 12:04:46 2001
+// written: Wed Jul 18 09:53:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,8 +24,8 @@ extern "C"
 int Pos_Init(Tcl_Interp* interp) {
 DOTRACE("Pos_Init");
 
-  Tcl::TclPkg* pkg = new Tcl::FieldCntrPkg<Position>(interp, "Pos",
-																	  "$Revision$");
+  Tcl::TclItemPkg* pkg = new Tcl::TclItemPkg(interp, "Pos", "$Revision$");
+  Tcl::defFieldContainer<Position>(pkg);
 
   return pkg->initStatus();
 }

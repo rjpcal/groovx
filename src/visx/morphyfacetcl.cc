@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:42:36 1999
-// written: Thu May 10 12:04:46 2001
+// written: Wed Jul 18 09:52:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,8 +24,8 @@ extern "C"
 int Morphyface_Init(Tcl_Interp* interp) {
 DOTRACE("Morphyface_Init");
 
-  Tcl::TclPkg* pkg = 
-	 new Tcl::FieldCntrPkg<MorphyFace>(interp, "MorphyFace", "$Revision$");
+  Tcl::TclItemPkg* pkg = new Tcl::TclItemPkg(interp, "MorphyFace", "$Revision$");
+  Tcl::defFieldContainer<MorphyFace>(pkg);
 
   return pkg->initStatus();
 }

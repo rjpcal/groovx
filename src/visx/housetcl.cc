@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 15:14:19 1999
-// written: Thu May 10 12:04:47 2001
+// written: Wed Jul 18 09:52:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,8 +25,8 @@ extern "C"
 int House_Init(Tcl_Interp* interp) {
 DOTRACE("House_Init");
 
-  Tcl::TclPkg* pkg = 
-	 new Tcl::FieldCntrPkg<House>(interp, "House", "$Revision$");
+  Tcl::TclItemPkg* pkg = new Tcl::TclItemPkg(interp, "House", "$Revision$");
+  Tcl::defFieldContainer<House>(pkg);
 
   return pkg->initStatus();
 }

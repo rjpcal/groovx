@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 18:19:05 1999
-// written: Thu May 10 12:04:46 2001
+// written: Wed Jul 18 09:52:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,8 +24,8 @@ extern "C"
 int Mask_Init(Tcl_Interp* interp) {
 DOTRACE("Mask_Init");
 
-  Tcl::TclPkg* pkg =
-	 new Tcl::FieldCntrPkg<MaskHatch>(interp, "MaskHatch", "$Revision$");
+  Tcl::TclItemPkg* pkg = new Tcl::TclItemPkg(interp, "MaskHatch", "$Revision$");
+  Tcl::defFieldContainer<MaskHatch>(pkg);
 
   return pkg->initStatus();
 }

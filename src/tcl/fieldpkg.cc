@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Mon Jul 16 12:59:38 2001
+// written: Wed Jul 18 09:22:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -144,21 +144,21 @@ DOTRACE("Tcl::FieldsCmd::invoke");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Tcl::declareField(Tcl::TclItemPkg* pkg, const FieldInfo& finfo)
+void Tcl::defField(Tcl::TclItemPkg* pkg, const FieldInfo& finfo)
 {
-DOTRACE("Tcl::declareField");
+DOTRACE("Tcl::defField");
 
   pkg->addCommand( new FieldGetterCmd(pkg, finfo) );
   pkg->addCommand( new FieldSetterCmd(pkg, finfo) );
 }
 
-void Tcl::declareAllFields(Tcl::TclItemPkg* pkg, const FieldMap& fmap){
-DOTRACE("Tcl::declareAllFields");
+void Tcl::defAllFields(Tcl::TclItemPkg* pkg, const FieldMap& fmap){
+DOTRACE("Tcl::defAllFields");
   for (FieldMap::Iterator itr = fmap.begin(), end = fmap.end();
        itr != end;
        ++itr)
     {
-      declareField(pkg, *itr);
+      defField(pkg, *itr);
     }
 
   pkg->addCommand( new FieldsCmd(pkg, fmap) );

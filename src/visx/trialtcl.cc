@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Mon Jul 16 10:31:19 2001
+// written: Wed Jul 18 09:56:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,12 +40,14 @@ namespace TrialTcl
 //
 ///////////////////////////////////////////////////////////////////////
 
-class TrialTcl::TrialPkg : public Tcl::FieldCntrPkg<Trial> {
+class TrialTcl::TrialPkg : public Tcl::TclItemPkg {
 public:
   TrialPkg(Tcl_Interp* interp) :
-    Tcl::FieldCntrPkg<Trial>(interp, "Trial", "$Revision$")
+    Tcl::TclItemPkg(interp, "Trial", "$Revision$")
   {
     Tcl::addTracing(this, Trial::tracer);
+
+    Tcl::defFieldContainer<Trial>(this);
 
     def( &Trial::add, "add", "trialid objid posid" );
 
