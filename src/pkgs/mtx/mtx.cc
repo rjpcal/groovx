@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar  4 12:28:28 2002
+// written: Mon Mar  4 12:52:04 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -322,19 +322,16 @@ void MtxImpl::init(double* data, int mrows, int ncols, StoragePolicy s)
 
 void MtxImpl::swap(MtxImpl& other)
 {
-  doswap(datablock_, other.datablock_);
-  doswap(mrows_, other.mrows_);
-  doswap(rowstride_, other.rowstride_);
-  doswap(ncols_, other.ncols_);
-  doswap(offset_, other.offset_);
+  std::swap(datablock_, other.datablock_);
+  std::swap(mrows_, other.mrows_);
+  std::swap(rowstride_, other.rowstride_);
+  std::swap(ncols_, other.ncols_);
+  std::swap(offset_, other.offset_);
 }
 
 MtxImpl::MtxImpl(const MtxImpl& other) :
-  datablock_(other.datablock_),
-  mrows_(other.mrows_),
-  rowstride_(other.rowstride_),
-  ncols_(other.ncols_),
-  offset_(other.offset_)
+  MtxStorage(other),
+  datablock_(other.datablock_)
 {
   datablock_->incrRefCount();
 }
@@ -349,17 +346,14 @@ namespace
 }
 
 MtxImpl::MtxImpl(int mrows, int ncols, InitPolicy p) :
-  datablock_(newDataBlock(mrows, ncols, p)),
-  mrows_(mrows),
-  rowstride_(mrows),
-  ncols_(ncols),
-  offset_(0)
+  MtxStorage(mrows, ncols),
+  datablock_(newDataBlock(mrows, ncols, p))
 {
   datablock_->incrRefCount();
 }
 
 #ifdef HAVE_MATLAB
-MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
+MtxImpl::MtxImpl(mxArray* a, StoragePolicy s) : MtxStorage()
 {
   if (!mxIsDouble(a))
     throw Util::Error("cannot construct a Mtx with a non-'double' mxArray");
@@ -367,7 +361,7 @@ MtxImpl::MtxImpl(mxArray* a, StoragePolicy s)
   init(mxGetPr(a), mxGetM(a), mxGetN(a), s);
 }
 
-MtxImpl::MtxImpl(const mxArray* a, StoragePolicy s)
+MtxImpl::MtxImpl(const mxArray* a, StoragePolicy s) : MtxStorage()
 {
   if (s != BORROW && s != COPY)
     throw Util::Error("cannot construct a Mtx from a const mxArray* "

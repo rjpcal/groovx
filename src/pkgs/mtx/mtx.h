@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 12:28:32 2002
+// written: Mon Mar  4 12:52:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -320,13 +320,51 @@ struct WithPolicies
   enum StoragePolicy { COPY, BORROW, REFER };
 };
 
-class MtxImpl : public WithPolicies
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * MtxStorage class.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+class MtxStorage
+{
+public:
+  MtxStorage() : mrows_(0), rowstride_(0), ncols_(0), offset_(0) {}
+
+  MtxStorage(int mrows, int ncols) :
+    mrows_(mrows),
+    rowstride_(mrows),
+    ncols_(ncols),
+    offset_(0)
+  {}
+
+  MtxStorage(const MtxStorage& other) :
+    mrows_(other.mrows_),
+    rowstride_(other.rowstride_),
+    ncols_(other.ncols_),
+    offset_(other.offset_)
+  {}
+
+  int mrows_;
+  int rowstride_;
+  int ncols_;
+  static const int colstride_ = 1;
+  ptrdiff_t offset_;
+};
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * MtxImpl class.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+class MtxImpl : public MtxStorage, public WithPolicies
 {
 private:
-  template <class T>
-  static void doswap(T& t1, T& t2)
-  { T t2_ = t2; t2 = t1; t1 = t2_; }
-
   void init(double* data, int mrows, int ncols, StoragePolicy s);
 
   MtxImpl& operator=(const MtxImpl& other); // not allowed
@@ -338,7 +376,8 @@ public:
 
   MtxImpl(int mrows, int ncols, InitPolicy p);
 
-  MtxImpl(double* data, int mrows, int ncols, StoragePolicy s = COPY)
+  MtxImpl(double* data, int mrows, int ncols, StoragePolicy s = COPY) :
+    MtxStorage()
   { init(data, mrows, ncols, s); }
 
   MtxImpl(mxArray* a, StoragePolicy s);
@@ -448,19 +487,16 @@ public:
 
 private:
   DataBlock* datablock_;
-  int mrows_;
-  int rowstride_;
-  int ncols_;
-  static const int colstride_ = 1;
-  ptrdiff_t offset_;
 };
 
-///////////////////////////////////////////////////////////////////////
-//
-// Mtx class definition
-//
-///////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * Mtx class definition
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
 
 class Mtx : public WithPolicies
 {
