@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Wed Aug  8 11:23:40 2001
+// written: Wed Aug  8 11:25:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -132,10 +132,6 @@ public:
 
   /// Does the actual bit-twiddling to vertically flip the image.
   void doFlipVertical();
-
-  /** Centers the image so that its center coincides with the origin
-      in the graphics environment when it is rendered. */
-  void center();
 
   /** Implements the rendering operation. This function delegates the
       work to itsRenderer. */
