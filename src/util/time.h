@@ -192,7 +192,7 @@ public:
       %F     Equivalent to %Y-%m-%d (the ISO 8601 date format). (C99)
 
       %G     The ISO 8601 year with century as a decimal number. The 4-digit
-             year corresponding to the ISO week num­ ber (see %V). This
+             year corresponding to the ISO week number (see %V). This
              has the same format and value as %y, except that if the ISO
              week number belongs to the previous or next year, that year
              is used instead. (TZ)
