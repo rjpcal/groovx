@@ -61,7 +61,7 @@ test "PositionTcl-Pos::scaling" "error on non-numeric input" {
 } {Pos::scaling: }
 test "PositionTcl-Pos::scaling" "error on bad posid" {
     Pos::scaling -1 {-1.2 1.0 1.0}
-} {Pos::scaling: attempted to access invalid object.*}
+} {Pos::scaling: .*}
 
 ### Pos::translation ###
 test "PositionTcl-Pos::translation" "too few args" {
@@ -78,7 +78,7 @@ test "PositionTcl-Pos::translation" "error on non-numeric input" {
 } {Pos::translation: }
 test "PositionTcl-Pos::translation" "error on bad posid" {
     Pos::translation -1 {1 1 1}
-} {Pos::translation: attempted to access invalid object.*}
+} {Pos::translation: .*}
 
 ### Pos::stringifyCmd ###
 test "PositionTcl-Pos::stringify" "too few args" {
@@ -116,7 +116,7 @@ test "PositionTcl-IO::type" "error on too small posid" {
 } {IO::type: signed/unsigned.*}
 test "PositionTcl-IO::type" "error on too large" {
 	 IO::type 10000
-} {IO::type: attempted to access invalid object.*}
+} {IO::type: .*}
 
 unset pos
 

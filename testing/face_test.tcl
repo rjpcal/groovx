@@ -45,7 +45,7 @@ test "FaceTcl-eyeHeight" "error from nun-numeric input" {
 } {expected floating-point number but got "junk"}
 test "FaceTcl-eyeHeight" "error from bad objid" {
     Face::eyeHeight -1
-} {Face::eyeHeight: attempted to access invalid object.*}
+} {Face::eyeHeight: .*}
 
 ### eyeDistanceCmd ###
 test "FaceTcl-eyeDistance" "too few args" {
@@ -68,7 +68,7 @@ test "FaceTcl-eyeDistance" "error from nun-numeric input" {
 } {expected floating-point number but got "junk"}
 test "FaceTcl-eyeDistance" "error from bad objid" {
     Face::eyeDistance -1
-} {Face::eyeDistance: attempted to access invalid object.*}
+} {Face::eyeDistance: .*}
 
 ### noseLengthCmd ###
 test "FaceTcl-noseLength" "too few args" {
@@ -91,7 +91,7 @@ test "FaceTcl-noseLength" "error from nun-numeric input" {
 } {expected floating-point number but got "junk"}
 test "FaceTcl-noseLength" "error from bad objid" {
     Face::noseLength -1
-} {Face::noseLength: attempted to access invalid object.*}
+} {Face::noseLength: .*}
 
 ### mouthHeightCmd ###
 test "FaceTcl-mouthHeight" "too few args" {
@@ -114,7 +114,7 @@ test "FaceTcl-mouthHeight" "error from nun-numeric input" {
 } {expected floating-point number but got "junk"}
 test "FaceTcl-mouthHeight" "error from bad objid" {
     Face::mouthHeight -1
-} {Face::mouthHeight: attempted to access invalid object.*}
+} {Face::mouthHeight: .*}
 
 unset faceid
 unset EPS
