@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Fri May 12 14:26:01 2000
+// written: Wed May 17 13:52:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,6 +86,10 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 class Block::Impl {
+private:
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+
 public:
   Impl() :
 	 itsTrialSequence(),
