@@ -20,6 +20,8 @@
 
 #include "glcanvas.h"
 
+#include "application.h"
+
 #include "gfx/bmapdata.h"
 #include "gfx/rect.h"
 
@@ -66,9 +68,7 @@ namespace GLTcl
 
   class glGetCmd;
 
-  GLCanvas theCanvas;
-
-  void checkGL() { theCanvas.throwIfError("checkGL"); }
+  void checkGL() { Application::theApp().getCanvas().throwIfError("checkGL"); }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -201,7 +201,7 @@ void GLTcl::loadMatrix(Tcl::List entries)
 
   glLoadMatrixd(&matrix[0]);
 
-  theCanvas.throwIfError("loadMatrix");
+  Application::theApp().getCanvas().throwIfError("loadMatrix");
 }
 
 //---------------------------------------------------------------------
@@ -347,7 +347,7 @@ long int GLTcl::pixelCheckSum(int x, int y, int w, int h)
   Gfx::Rect<int> bounds;
   bounds.setRectXYWH(x,y,w,h);
 
-  theCanvas.grabPixels(bounds, data);
+  Application::theApp().getCanvas().grabPixels(bounds, data);
 
   return data.checkSum();
 }
