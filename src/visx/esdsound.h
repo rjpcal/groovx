@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 24 18:13:53 2001
-// written: Mon Jan 21 14:35:02 2002
+// written: Wed Jun 26 13:00:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,15 +25,7 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-///////////////////////////////////////////////////////////////////////
-//
-// EsdSound class definition --
-//
-// This is an implementation of the Sound interface using HP's Audio
-// API.
-//
-///////////////////////////////////////////////////////////////////////
-
+/// EsdSound implementats the Sound interface using the ESD API.
 class EsdSound : public Sound
 {
 public:
@@ -162,7 +154,7 @@ DOTRACE("Sound::haveSound");
 void Sound::closeSound()
 {
 DOTRACE("Sound::closeSound");
-  if (haveSound()) 
+  if (haveSound())
     esd_audio_close();
 }
 

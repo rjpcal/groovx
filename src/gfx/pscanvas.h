@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:18:49 2001
-// written: Mon Jun 24 12:28:28 2002
+// written: Wed Jun 26 12:55:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@ namespace Gfx
   class PSCanvas;
 }
 
+/// Gfx::PSCanvas implements Gfx::Canvas using PostScript commands.
 class Gfx::PSCanvas : public Gfx::Canvas
 {
 public:

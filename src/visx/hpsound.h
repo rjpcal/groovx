@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Sat Feb  2 16:44:15 2002
+// written: Wed Jun 26 13:13:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,11 +26,11 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-///////////////////////////////////////////////////////////////////////
+//  ===================================================================
 //
-// File scope definitions
+//  File scope definitions
 //
-///////////////////////////////////////////////////////////////////////
+//  ===================================================================
 
 namespace HPSOUND_CC_LOCAL
 {
@@ -54,14 +54,12 @@ namespace HPSOUND_CC_LOCAL
 
 using namespace HPSOUND_CC_LOCAL;
 
-///////////////////////////////////////////////////////////////////////
+//  ###################################################################
+//  ===================================================================
 //
-// HpAudioSound class definition --
+/// HpAudioSound implements the Sound interface using HP's audio API.
 //
-// This is an implementation of the Sound interface using HP's Audio
-// API.
-//
-///////////////////////////////////////////////////////////////////////
+//  ===================================================================
 
 class HpAudioSound : public Sound
 {

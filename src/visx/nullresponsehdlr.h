@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:54:35 1999
-// written: Fri Jan 18 16:06:52 2002
+// written: Wed Jun 26 12:56:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include "visx/responsehandler.h"
 #endif
 
+/// NullResponseHdlr implements ResponseHandler by ignoring all responses.
 class NullResponseHdlr : public ResponseHandler
 {
 protected:

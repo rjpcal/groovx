@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:09:11 1999
-// written: Wed Jan 30 11:25:46 2002
+// written: Wed Jun 26 12:56:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,12 +18,7 @@
 #endif
 
 
-///////////////////////////////////////////////////////////////////////
-//
-// KbdResponseHdlr class defintion
-//
-///////////////////////////////////////////////////////////////////////
-
+/// KbdResponseHdlr is just EventResponseHdlr with a default "keypress" event type.
 class KbdResponseHdlr : public EventResponseHdlr
 {
 protected:

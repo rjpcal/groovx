@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 14 11:23:12 1999
-// written: Fri Jan 18 16:06:52 2002
+// written: Wed Jun 26 13:15:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,15 +28,12 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-///////////////////////////////////////////////////////////////////////
+//  ###################################################################
+//  ===================================================================
 //
-// IrixAudioSound class definition --
+/// IrixAudioSound implements Sound using SGI's "dmedia" audio API.
 //
-// This is pretty much a stub implementation of the Sound interface,
-// which eventually will be filled in using some to-be-determined SGI
-// sound API.
-//
-///////////////////////////////////////////////////////////////////////
+//  ===================================================================
 
 class IrixAudioSound : public Sound
 {

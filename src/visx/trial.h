@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Wed Apr  3 17:28:51 2002
+// written: Wed Jun 26 12:54:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,12 +35,7 @@ class GxNode;
 class ResponseHandler;
 class TimingHdlr;
 
-///////////////////////////////////////////////////////////////////////
-//
-// Trial class definition
-//
-///////////////////////////////////////////////////////////////////////
-
+/// Trial collaborates with ResponseHandler+TimingHdlr to implement TrialBase.
 class Trial : public TrialBase, public FieldContainer
 {
 public:

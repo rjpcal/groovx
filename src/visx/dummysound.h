@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Fri Jan 18 16:06:53 2002
+// written: Wed Jun 26 12:59:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,15 +24,7 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-///////////////////////////////////////////////////////////////////////
-//
-// DummySound class definition --
-//
-// This is an implementation of the Sound interface using HP's Audio
-// API.
-//
-///////////////////////////////////////////////////////////////////////
-
+/// DummySound is a stub implementation of the Sound interface.
 class DummySound : public Sound
 {
 public:

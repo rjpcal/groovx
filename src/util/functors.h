@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Sep  7 15:07:16 2001
-// written: Wed Jun 26 12:51:35 2002
+// written: Wed Jun 26 13:14:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,11 +20,12 @@
 namespace Util
 {
 
-///////////////////////////////////////////////////////////////////////
+//  ###################################################################
+//  ===================================================================
 //
-// FuncTraits
+//  FuncTraits
 //
-///////////////////////////////////////////////////////////////////////
+//  ===================================================================
 
   struct Null_t;
 
@@ -53,11 +54,11 @@ namespace Util
     typedef typename Func::Retn_t Retn_t;
   };
 
-///////////////////////////////////////////////////////////////////////
+//  ===================================================================
 //
-// FuncTraits specializations for free functions
+//  FuncTraits specializations for free functions
 //
-///////////////////////////////////////////////////////////////////////
+//  ===================================================================
 
   /// Specialization for free functions with no arguments.
   template <class R>
@@ -122,14 +123,14 @@ namespace Util
     enum { numArgs = 6 };
   };
 
-///////////////////////////////////////////////////////////////////////
+//  ===================================================================
 //
-// FuncTraits specializations for member functions
+//  FuncTraits specializations for member functions
 //
-// We treat the "this" pointer as an implicit first-argument to the
-// function.
+//  We treat the "this" pointer as an implicit first-argument to the
+//  function.
 //
-///////////////////////////////////////////////////////////////////////
+//  ===================================================================
 
   /// Specialization for member functions with "this" plus 0 arguments.
   template <class R, class C>
@@ -181,13 +182,16 @@ namespace Util
     typedef C Class_t;
   };
 
-// ####################################################################
+//  ###################################################################
+//  ===================================================================
 
 /// FuncHolder is a helper class to make pointer semantics explicit.
 /** FuncHolder helps to avoid overeager compiler warnings about holding a
- *  pointer without defining dtor, copy-ctor, and operator=(). If a class
- *  instead inherits privately from FuncHolder, such warnings will be
- *  avoided. */
+    pointer without defining dtor, copy-ctor, and operator=(). If a class
+    instead inherits privately from FuncHolder, such warnings will be
+    avoided. */
+
+//  ===================================================================
 
   template <class Func>
   struct FuncHolder
@@ -205,11 +209,14 @@ namespace Util
     Func itsHeldFunc;
   };
 
-// ####################################################################
+//  ###################################################################
+//  ===================================================================
 
 /// MemFunctorBase adapts a member function to an ordinary operator().
 /** The "this" pointer is passed through the first argument of the
     operator() call, via a raw pointer or a SoftRef<>. */
+
+//  ===================================================================
 
   template <class F>
   class MemFunctorBase;
@@ -266,9 +273,12 @@ namespace Util
     }
   };
 
-// ####################################################################
+//  ###################################################################
+//  ===================================================================
 
-/// MemFunctor extends MemFunctorBase using SoftRef<> for the "this" pointers.
+/// MemFunctor extends MemFunctorBase using SoftRef<> for "this" pointers.
+
+//  ===================================================================
 
   template <class MemFunc>
   struct MemFunctor : public MemFunctorBase<MemFunc>
@@ -293,7 +303,8 @@ namespace Util
   }
 
 
-// ####################################################################
+//  ###################################################################
+//  ===================================================================
 
   template <class BaseFunctor, class Bound>
   class BoundFirst;
@@ -402,7 +413,8 @@ namespace Util
   }
 
 
-// ####################################################################
+//  ###################################################################
+//  ===================================================================
 
   template <class BaseFunctor, class Bound>
   class BoundLast;
@@ -424,9 +436,9 @@ namespace Util
     typedef typename FuncTraits<BaseFunctor>::Arg8_t   Arg8_t;
   };
 
-/// BoundLast wraps another functor type with a fixed last argument.
-/** BoundLast objects can be constructed with the factory function
-    bindLast(). */
+  /// BoundLast wraps another functor type with a fixed last argument.
+  /** BoundLast objects can be constructed with the factory function
+      bindLast(). */
 
   template <class BaseFunctor, class Bound_t>
   class BoundLast : private FuncHolder<BaseFunctor>,
