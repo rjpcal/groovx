@@ -102,7 +102,7 @@ test "PositionTcl-IO::stringify" "error on non-integral posid" {
 ### Pos::typeCmd ###
 test "PositionTcl-IO::type" "args" {
     IO::type
-} {wrong \# args: should be "IO::type item_id"}
+} {wrong \# args: should be "IO::type item_id\(s\)"}
 test "PositionTcl-IO::type" "normal use on Position" { 
 	 set f [IO::new Position]
 	 IO::type $f
