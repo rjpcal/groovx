@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 12 12:15:46 2001
-// written: Mon Sep 10 13:24:07 2001
+// written: Mon Sep 10 13:39:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ public:
       }
   }
 
-  virtual ~VecContext()
+  void flushResult()
   {
     Tcl::Context::setObjResult(itsResult);
   }
@@ -141,6 +141,8 @@ DOTRACE("Tcl::VecDispatcher::dispatch");
           cmd.invoke(cx);
           cx.next();
         }
+
+      cx.flushResult();
     }
   else if (ncalls == 1)
     {
