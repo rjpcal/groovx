@@ -3,7 +3,7 @@
 // strings.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:42:44 2000
-// written: Sat Sep 23 16:37:49 2000
+// written: Tue Oct 31 22:24:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,9 @@
 #include <cstring>
 #include <iostream.h>
 #include <string>
+
+#define NO_PROF
+#include "util/trace.h"
 
 //---------------------------------------------------------------------
 //
@@ -46,9 +49,14 @@ bool string_literal::equals(const string_literal& other) const
 //---------------------------------------------------------------------
 
 fixed_string::fixed_string(const char* text) :
-  itsText(text == 0 ? new char[1] : new char[strlen(text)+1]),
-  itsLength(text == 0 ? 0 : strlen(text))
+  itsText(0),
+  itsLength(0)
 {
+DOTRACE("fixed_string::fixed_string(const char*)");
+
+  itsText = (text == 0 ? new char[1] : new char[strlen(text)+1]);
+  itsLength = (text == 0 ? 0 : strlen(text));
+
   if (text != 0)
 	 strcpy(itsText, text);
   else
@@ -56,19 +64,26 @@ fixed_string::fixed_string(const char* text) :
 }
 
 fixed_string::fixed_string(const fixed_string& other) :
-  itsText(new char[other.length() + 1]),
-  itsLength(other.length())
+  itsText(0),
+  itsLength(0)
 {
+DOTRACE("fixed_string::fixed_string(const fixed_string&)");
+
+  itsText = (new char[other.length() + 1]);
+  itsLength = (other.length());
+
   strcpy(itsText, other.itsText);
 }
 
 fixed_string::~fixed_string()
 {
+DOTRACE("fixed_string::~fixed_string");
   delete [] itsText;
 }
 
 void fixed_string::swap(fixed_string& other)
 {
+DOTRACE("fixed_string::swap");
   char* other_data = other.itsText;
   other.itsText = this->itsText;
   this->itsText = other_data;
@@ -80,6 +95,7 @@ void fixed_string::swap(fixed_string& other)
 
 fixed_string& fixed_string::operator=(const char* text)
 {
+DOTRACE("fixed_string::operator=(const char*)");
   if (itsText != text)
 	 {
 		fixed_string rhs_copy(text);
@@ -90,6 +106,7 @@ fixed_string& fixed_string::operator=(const char* text)
 
 fixed_string& fixed_string::operator=(const fixed_string& other)
 {
+DOTRACE("fixed_string::operator=(const fixed_string&)");
   if (itsText != other.itsText)
 	 {
 		fixed_string rhs_copy(other);
@@ -100,17 +117,20 @@ fixed_string& fixed_string::operator=(const fixed_string& other)
 
 bool fixed_string::equals(const char* other) const
 {
+DOTRACE("fixed_string::equals(const char*)");
   return ( strcmp(itsText, other) == 0 );
 }
 
 bool fixed_string::equals(const string_literal& other) const
 {
+DOTRACE("fixed_string::equals(const string_literal&");
   return ( itsLength == other.itsLength &&
 			  strcmp(itsText, other.itsText) == 0 );
 }
 
 bool fixed_string::equals(const fixed_string& other) const
 {
+DOTRACE("fixed_string::equals(const fixed_string&)");
   return ( itsLength == other.itsLength &&
 			  strcmp(itsText, other.itsText) == 0 );
 }
@@ -128,81 +148,99 @@ struct dynamic_string::Impl {
 
 dynamic_string::dynamic_string(const char* text) :
   itsImpl(new Impl(text))
-{}
+{
+DOTRACE("dynamic_string::dynamic_string");
+}
 
 dynamic_string::dynamic_string(const fixed_string& other) :
   itsImpl(new Impl(other.c_str()))
-{}
+{
+DOTRACE("dynamic_string::dynamic_string");
+}
 
 dynamic_string::dynamic_string(const dynamic_string& other) :
   itsImpl(new Impl(*(other.itsImpl)))
-{}
+{
+DOTRACE("dynamic_string::dynamic_string");
+}
 
 dynamic_string::~dynamic_string()
 {
+DOTRACE("dynamic_string::~dynamic_string");
   delete itsImpl;
 }
 
 void dynamic_string::swap(dynamic_string& other)
 {
+DOTRACE("dynamic_string::swap");
   itsImpl->text.swap(other.itsImpl->text);
 }
 
 dynamic_string& dynamic_string::operator=(const char* text)
 {
+DOTRACE("dynamic_string::operator=(const char*)");
   itsImpl->text = text;
   return *this;
 }
 
 dynamic_string& dynamic_string::operator=(const fixed_string& other)
 {
+DOTRACE("dynamic_string::operator=(const fixed_string&)");
   itsImpl->text = other.c_str();
   return *this;
 }
 
 dynamic_string& dynamic_string::operator=(const dynamic_string& other)
 {
+DOTRACE("dynamic_string::operator=(const dynamic_string&)");
   itsImpl->text = other.itsImpl->text;
   return *this;
 }
 
 dynamic_string& dynamic_string::append(const char* text)
 {
+DOTRACE("dynamic_string::append(const char*)");
   itsImpl->text += text;
   return *this;
 }
 
 dynamic_string& dynamic_string::append(const fixed_string& other)
 {
+DOTRACE("dynamic_string::append(const fixed_string&)");
   itsImpl->text += other.c_str();
   return *this;
 }
 
 dynamic_string& dynamic_string::append(const dynamic_string& other)
 {
+DOTRACE("dynamic_string::append(const dynamic_string&)");
   itsImpl->text += other.itsImpl->text;
   return *this;
 }
 
 bool dynamic_string::equals(const char* other) const
 {
+DOTRACE("dynamic_string::equals(const char*)");
   return ( itsImpl->text == other );
 }
 
 bool dynamic_string::equals(const string_literal& other) const
 {
+DOTRACE("dynamic_string::equals(const string_literal&)");
   return ( itsImpl->text.length() == other.itsLength &&
 			  itsImpl->text == other.itsText );
 }
 
 bool dynamic_string::equals(const fixed_string& other) const
 {
+DOTRACE("dynamic_string::equals(const fixed_string&)");
   return ( itsImpl->text.length() == other.itsLength &&
 			  itsImpl->text == other.itsText );
 }
 
 bool dynamic_string::equals(const dynamic_string& other) const
 {
+DOTRACE("dynamic_string::equals(const dynamic_string&)");
   return ( itsImpl->text == other.itsImpl->text );
 }
 
