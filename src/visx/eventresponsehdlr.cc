@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Tue Jan 11 12:22:33 2000
+// written: Fri Jan 14 15:32:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -389,7 +389,7 @@ DOTRACE("EventResponseHdlr::Impl::oldSerialize");
   os << itsUseFeedback << endl;
 }
 
-void EventResponseHdlr::Impl::oldDeserialize(istream &is, IOFlag flag) {
+void EventResponseHdlr::Impl::oldDeserialize(istream &is, IOFlag) {
 DOTRACE("EventResponseHdlr::Impl::oldDeserialize");
   // XXX This is some sort of strange platform dependency..if the next
   // character in the stream is a space (the separator following the
@@ -601,8 +601,9 @@ DOTRACE("EventResponseHdlr::Impl::getRespFromKeysym");
   Assert(itsInterp != 0);
 
   const char* response_string = extractStringFromKeysym(keysym);
-    
+
   for (size_t i = 0; i < itsRegexps.size(); ++i) {
+
 	 if (itsRegexps[i].matchesString(itsInterp, response_string)) {
 		return itsRegexps[i].responseValue();
 	 }
