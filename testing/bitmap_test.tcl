@@ -28,8 +28,6 @@ IO::testReadCmd GLBitmapTcl IO 1 $::GLBITMAP
 
 if { ![Togl::inited] } { Togl::init; update }
 
-set POS [Obj::new Position]
-
 ### Obj::new GLBitmap ###
 test "GLBitmapTcl-Obj::new GLBitmap" "too many args" {
 	 Obj::new GLBitmap junk junk
@@ -64,9 +62,8 @@ test "BitmapTcl-Bitmap::loadPbm" "error on junk binary file" {
 
 ### Bitmap rendering ###
 test "BitmapTcl-rendering" "normal render" {
-	 set ::BITMAP_TRIAL [Tlist::dealSingles $::BITMAP $::POS]
 	 clearscreen
-	 show $::BITMAP_TRIAL
+	 see $::BITMAP
 	 set sum [pixelCheckSum]
 	 return "[expr $sum != 0] $sum"
 } {^1}
@@ -81,12 +78,12 @@ test "BitmapTcl-Bitmap::flipContrast" "too many args" {
 test "BitmapTcl-Bitmap::flipContrast" "normal use" {
 	 Bitmap::flipContrast $::BITMAP
 	 clearscreen
-	 show $::BITMAP_TRIAL
+	 see $::BITMAP
 	 set count1 [pixelCheckSum]
 	 
 	 Bitmap::flipContrast $::BITMAP
 	 clearscreen
-	 show $::BITMAP_TRIAL
+	 see $::BITMAP
 	 set count2 [pixelCheckSum]
 	 
 	 return "[expr $count1 != $count2] $count1 $count2"
@@ -100,30 +97,21 @@ test "BitmapTcl-Bitmap::flipVertical" "too many args" {
 	 Bitmap::flipVertical $::BITMAP junk
 } {^wrong \# args: should be "Bitmap::flipVertical item_id\(s\)"$}
 test "BitmapTcl-Bitmap::flipVertical" "normal use" {
+
+	 GrObj::alignmentMode $::BITMAP $GrObj::CENTER_ON_CENTER
+
 	 Bitmap::flipVertical $::BITMAP
 	 clearscreen
-	 show $::BITMAP_TRIAL
+	 see $::BITMAP
 	 set count1 [pixelCheckSum]
 	 
 	 Bitmap::flipVertical $::BITMAP
 	 clearscreen
-	 show $::BITMAP_TRIAL
+	 see $::BITMAP
 	 set count2 [pixelCheckSum]
 	 
 	 return "[expr { $count1 == $count2 }] $count1 $count2"
 } {^1}
-
-### Bitmap::rasterPos ###
-test "BitmapTcl-Bitmap::rasterPos" "too few args" {
-	 Bitmap::rasterPos
-} {^wrong \# args: should be}
-test "BitmapTcl-Bitmap::rasterPos" "too many args" {
-	 Bitmap::rasterPos $::BITMAP 3.5 junk
-} {^wrong \# args: should be}
-test "BitmapTcl-Bitmap::rasterPos" "normal use" {
-	 Bitmap::rasterPos $::BITMAP {1.2 3.67}
-	 return "[Bitmap::rasterPos $::BITMAP]"
-} {^1\.2 3\.67$}
 
 ### Bitmap::zoomCmd ###
 test "BitmapTcl-Bitmap::zoom" "too few args" {
@@ -135,16 +123,14 @@ test "BitmapTcl-Bitmap::zoom" "too many args" {
 test "BitmapTcl-Bitmap::zoom" "normal use" {
 	 GLBitmap::usingGlBitmap $::BITMAP no
 
-	 Bitmap::rasterPos $::BITMAP {0.0 0.0}
-
 	 Bitmap::zoom $::BITMAP {0.5 0.5}
 	 clearscreen
-	 show $::BITMAP_TRIAL
+	 see $::BITMAP
 	 set count1 [pixelCheckSum]
 	 
 	 Bitmap::zoom $::BITMAP {1.0 1.0}
 	 clearscreen
-	 show $::BITMAP_TRIAL
+	 see $::BITMAP
 	 set count2 [pixelCheckSum]
 
 	 return "[expr { $count1 != $count2 }] $count1 $count2"
@@ -160,11 +146,11 @@ test "GLBitmapTcl-GLBitmap::usingGlBitmap" "too many args" {
 test "GLBitmapTcl-GLBitmap::usingGlBitmap" "normal use" {
 	 GLBitmap::usingGlBitmap $::BITMAP no
 	 clearscreen
-	 set time1 [lindex [time {show $::BITMAP_TRIAL}] 0]
+	 set time1 [lindex [time {see $::BITMAP}] 0]
 
 	 GLBitmap::usingGlBitmap $::BITMAP yes
 	 clearscreen
-	 set time2 [lindex [time {show $::BITMAP_TRIAL}] 0]
+	 set time2 [lindex [time {see $::BITMAP}] 0]
 
 	 # Rendering should always be faster with glBitmap than with glDrawPixels
 	 expr { $time1 > $time2 }
@@ -183,4 +169,3 @@ test "BitmapTcl-Bitmap::stringify" "stringify, destringify, compare" {
 
 ### cleanup
 unset BITMAP
-unset POS
