@@ -32,10 +32,10 @@
 #ifndef WRITER_H_DEFINED
 #define WRITER_H_DEFINED
 
+#include "io/io.h"
+
 #include "util/fileposition.h"
 #include "util/fstring.h"
-
-#include "io/iodecls.h"
 
 namespace rutz
 {
@@ -46,12 +46,6 @@ namespace Nub
 {
   template <class T> class Ref;
   template <class T> class SoftRef;
-}
-
-namespace IO
-{
-  class IoObject;
-  class Writer;
 }
 
 ///////////////////////////////////////////////////////////////////////

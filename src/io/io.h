@@ -32,13 +32,21 @@
 #ifndef IO_H_DEFINED
 #define IO_H_DEFINED
 
-#include "io/iodecls.h"
-
 #include "nub/object.h"
 
 namespace rutz
 {
   class fstring;
+}
+
+namespace IO
+{
+  class IoObject;
+  class Reader;
+  class Writer;
+
+  /// This type is used for verion ids during the read+write process.
+  typedef signed long VersionId;
 }
 
 ///////////////////////////////////////////////////////////////////////
