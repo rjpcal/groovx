@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Sun Nov  3 13:41:11 2002
+// written: Tue Nov 19 18:09:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,9 +46,10 @@
 class AttributeReadError : public IO::ReadError
 {
 public:
-  AttributeReadError(const fstring& attrib_name) :
-    IO::ReadError(fstring("input failed while reading attribute: ",
-                          attrib_name.c_str()))
+  AttributeReadError(const fstring& attrib_name,
+                     const fstring& attrib_value) :
+    IO::ReadError(fstring("error reading attribute '", attrib_name,
+                          "' with value '", attrib_value, "'"))
   {}
 };
 
@@ -226,7 +227,7 @@ public:
     dbgEval(3, a.value); dbgEvalNL(3, return_val);
 
     if (ist.fail())
-      throw AttributeReadError(name);
+      throw AttributeReadError(name, a.value);
 
     return return_val;
   }
@@ -437,7 +438,7 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
 
   if (ist.fail())
     {
-      throw AttributeReadError(name);
+      throw AttributeReadError(name, a.value);
     }
 
   dbgEval(3, a.value); dbgEvalNL(3, new_string);
@@ -456,7 +457,7 @@ DOTRACE("AsciiStreamReader::Impl::readMaybeObject");
   ist >> id;
 
   if (ist.fail())
-    throw AttributeReadError(attrib_name);
+    throw AttributeReadError(attrib_name, attrib.value);
 
   if (id == 0) { return SoftRef<IO::IoObject>(); }
 
@@ -477,7 +478,7 @@ DOTRACE("AsciiStreamReader::Impl::readValueObj");
   ist >> value;
 
   if (ist.fail())
-    throw AttributeReadError(attrib_name);
+    throw AttributeReadError(attrib_name, a.value);
 }
 
 void AsciiStreamReader::Impl::readOwnedObject(
