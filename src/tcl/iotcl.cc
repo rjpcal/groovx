@@ -13,11 +13,10 @@
 #ifndef IOTCL_CC_DEFINED
 #define IOTCL_CC_DEFINED
 
-#include "tcl/genericobjpkg.h"
-
 #include "io/io.h"
 #include "io/iolegacy.h"
 
+#include "tcl/genericobjpkg.h"
 #include "tcl/objfunctor.h"
 #include "tcl/tclerror.h"
 #include "tcl/tclpkg.h"
@@ -202,14 +201,18 @@ public:
   }
 };
 
-class ObjDbPkg : public CTclItemPkg<ObjDb> {
+class ObjDbPkg : public TclPkg {
+  static void clear() { ObjDb::theDb().clear(); }
+  static void purge() { ObjDb::theDb().purge(); }
+  static void release(Util::UID id) { ObjDb::theDb().release(id); }
+
 public:
   ObjDbPkg(Tcl_Interp* interp) :
-    CTclItemPkg<ObjDb>(interp, "ObjDb", "$Revision$", 0)
+    TclPkg(interp, "ObjDb", "$Revision$")
   {
-    declareCAction("clear", &ObjDb::clear);
-    declareCAction("purge", &ObjDb::purge);
-    declareCSetter("release", &ObjDb::release);
+    Tcl::def( this, &ObjDbPkg::clear, "ObjDb::clear", 0 );
+    Tcl::def( this, &ObjDbPkg::purge, "ObjDb::purge", 0 );
+    Tcl::def( this, &ObjDbPkg::release, "ObjDb::release", 0 );
     Tcl::def( this, &IoTcl::loadObjects,
               "ObjDb::loadObjects", "filename num_to_read=-1" );
     Tcl::def( this, &IoTcl::loadAllObjects,
@@ -233,8 +236,8 @@ public:
       ObjDb::theDb().clearOnExit();
     }
 
-  ObjDb* getCItemFromId(int)
-    { return &(ObjDb::theDb()); }
+//    ObjDb* getCItemFromId(int)
+//      { return &(ObjDb::theDb()); }
 };
 
 } // end namespace Tcl
