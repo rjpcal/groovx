@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Fri Nov 22 12:07:55 2002
+// written: Sat Dec  7 18:08:40 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -18,6 +18,7 @@
 #include "system/demangle.h"
 #include "system/system.h"
 
+#include "tcl/tcllistobj.h"
 #include "tcl/tclmain.h"
 #include "tcl/tclsafeinterp.h"
 
@@ -191,6 +192,12 @@ DOTRACE("main");
               safeIntp.resetResult();
             }
         }
+
+      Tcl::List path = safeIntp.getGlobalVar<Tcl::List>("auto_path");
+
+      path.append(VISX_LIB_DIR);
+
+      safeIntp.setGlobalVar("auto_path", path.asObj());
 
       // specifies a file to be 'source'd upon startup
       safeIntp.setGlobalVar("tcl_rcFileName",

@@ -66,8 +66,7 @@ OBJ := $(BUILD)/obj
 LOGS := ./logs
 DOC := ./doc
 SCRIPTS := ./scripts
-
-CPPFLAGS += -I$(SRC)
+VISX_LIB_DIR := $(exec_prefix)/lib/visx
 
 #-------------------------------------------------------------------------
 #
@@ -82,7 +81,10 @@ CPPFLAGS += -I$(SRC)
 	@[ -d ${@D} ] || mkdir -p ${@D}
 	@[ -f $@ ] || touch $@
 
-ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
+CPPFLAGS += -I$(SRC)
+
+ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS) \
+	-DVISX_LIB_DIR=\"$(VISX_LIB_DIR)\"
 
 $(OBJ)/%.$(OBJEXT) : $(SRC)/%.cc
 	@echo $< >> $(LOGS)/CompileStats
@@ -145,8 +147,6 @@ include $(DEP)/cppdepends
 
 # dependencies of package shlib's on object files
 
-VISX_LIB_DIR := $(exec_prefix)/lib/visx
-
 $(DEP)/pkgdepends: $(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
 		$(ALL_SOURCES) $(ALL_HEADERS) src/pkgs/buildPkgDeps.tcl
 	src/pkgs/buildPkgDeps.tcl \
@@ -159,11 +159,11 @@ $(DEP)/pkgdepends: $(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
 include $(DEP)/pkgdepends
 
 ifneq ($(matlab_lib),)
-$(exec_prefix)/lib/visx/mtx.so: \
+$(VISX_LIB_DIR)/mtx.so: \
 	$(matlab_lib)/libmx.so \
 	$(matlab_lib)/libmatlb.so
 
-$(exec_prefix)/lib/visx/matlabengine.so: \
+$(VISX_LIB_DIR)/matlabengine.so: \
 	$(matlab_lib)/libeng.so \
 	$(matlab_lib)/libmx.so \
 	$(matlab_lib)/libut.so \
