@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Sun May 27 07:24:54 2001
+// written: Sat Jun  2 15:47:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,6 +45,8 @@ template <class T> class MaybeIdItem;
 namespace IdItemUtils {
   bool isValidId(IO::UID id);
   IO::IoObject* getCheckedItem(IO::UID id);
+
+  void insertItem(IO::IoObject* obj);
 
 #ifndef ACC_COMPILER
 #  define DYNCAST dynamic_cast
@@ -91,9 +93,15 @@ public:
 
   explicit IdItem(IO::UID id) : itsHandle(IdItemUtils::getCastedItem<T>(id)) {}
 
-  explicit IdItem(T* ptr) : itsHandle(ptr) {}
+  explicit IdItem(T* ptr) : itsHandle(ptr)
+    { IdItemUtils::insertItem(ptr); }
 
-  explicit IdItem(PtrHandle<T> item) : itsHandle(item) {}
+  IdItem(T* ptr, bool /*noInsert*/) : itsHandle(ptr) {}
+
+  IdItem(PtrHandle<T> item) : itsHandle(item)
+    { IdItemUtils::insertItem(item.get()); }
+
+  IdItem(PtrHandle<T> item, bool /*noInsert*/) : itsHandle(item) {}
 
   template <class U>
   IdItem(const IdItem<U>& other) : itsHandle(other.handle()) {}
@@ -143,22 +151,48 @@ private:
   mutable NullablePtrHandle<T> itsHandle;
   IO::UID itsId;
 
+  void insertItem()
+  {
+	 if (itsHandle.isValid())
+		IdItemUtils::insertItem(itsHandle.get());
+  }
+
 public:
   MaybeIdItem() : itsHandle(0), itsId(0) {}
 
   explicit MaybeIdItem(IO::UID id_) : itsHandle(0), itsId(id_) {}
 
-  MaybeIdItem(T* master) : itsHandle(master), itsId(0)
+  explicit MaybeIdItem(T* master) : itsHandle(master), itsId(0)
   {
 	 if (master != 0) itsId = master->id();
+	 insertItem();
   }
 
-  MaybeIdItem(PtrHandle<T> item) : itsHandle(item), itsId(item->id()) {}
+  MaybeIdItem(T* master, bool /*noInsert*/) : itsHandle(master), itsId(0)
+    { if (master != 0) itsId = master->id(); }
 
-  MaybeIdItem(NullablePtrHandle<T> item) : itsHandle(item), itsId(0)
+
+  MaybeIdItem(PtrHandle<T> item) : itsHandle(item), itsId(item->id())
+    { insertItem(); }
+
+  MaybeIdItem(PtrHandle<T> item, bool /*noInsert*/) :
+	 itsHandle(item), itsId(item->id())
+    {}
+
+
+  MaybeIdItem(NullablePtrHandle<T> item) :
+	 itsHandle(item), itsId(0)
+  {
+	 if (itsHandle.isValid()) itsId = itsHandle->id();
+    insertItem();
+  }
+
+  MaybeIdItem(NullablePtrHandle<T> item, bool /*noInsert*/) :
+	 itsHandle(item), itsId(0)
   {
 	 if (itsHandle.isValid()) itsId = itsHandle->id();
   }
+
 
   template <class U>
   MaybeIdItem(const MaybeIdItem<U>& other) :
@@ -180,7 +214,7 @@ public:
   void refresh() const {
 	 if ( !itsHandle.isValid() )
 		{
-		  IdItem<T> p(IdItemUtils::getCastedItem<T>(itsId));
+		  IdItem<T> p(itsId);
 		  itsHandle = p.handle();
 		  if (itsId != itsHandle->id())
 			 throw ErrorWithMsg("assertion failed in refresh");
@@ -195,7 +229,7 @@ public:
 	 if ( !itsHandle.isValid() )
 		{
 		  if (IdItemUtils::isValidId(itsId)) {
-			 IdItem<T> p(IdItemUtils::getCastedItem<T>(itsId));
+			 IdItem<T> p(itsId);
 			 itsHandle = p.handle();
 			 if (itsId != itsHandle->id())
 				throw ErrorWithMsg("assertion failed in attemptRefresh");

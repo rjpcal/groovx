@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Mon May 21 14:51:52 2001
+// written: Sat Jun  2 15:49:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -548,7 +548,7 @@ DOTRACE("IO::LegacyWriter::writeBaseClass");
 void IO::LegacyWriter::writeRoot(const IO::IoObject* root) {
 DOTRACE("IO::LegacyWriter::writeRoot");
 
-  itsImpl->flattenObject("rootObject", MaybeIdItem<const IO::IoObject>(root));
+  itsImpl->flattenObject("rootObject", MaybeIdItem<const IO::IoObject>(root, true));
 }
 
 static const char vcid_iolegacy_cc[] = "$Header$";

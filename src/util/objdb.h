@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Sun May 27 07:21:07 2001
+// written: Sat Jun  2 15:43:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -145,29 +145,6 @@ public:
 	 T* operator->() const
 	   { return operator*(); }
   };
-
-  class Inserter;
-  friend class Inserter;
-
-  class Inserter {
-	 IoDb* itsList;
-  public:
-	 Inserter(IoDb* list_) : itsList(list_) {}
-
-	 Inserter(const Inserter& other) : itsList(other.itsList) {}
-
-	 Inserter& operator=(const Inserter& other)
-	   { itsList = other.itsList; return *this; }
-
-	 Inserter& operator=(IO::IoObject* obj)
-		{ itsList->insertPtrBase(obj); return *this; }
-
-	 Inserter& operator*() { return *this; }
-	 Inserter& operator++() { return *this; }
-	 Inserter operator++(int) { return *this; }
-  };
-
-  Inserter inserter() { return Inserter(this); }
 
   //
   // Collection interface
