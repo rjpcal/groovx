@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Fri Nov 22 14:47:06 2002
+// written: Fri Nov 22 15:53:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,8 +42,8 @@ public:
     glx(new GlxWrapper(dpy, *opts, share))
   {}
 
-  shared_ptr<GlxOpts> opts;
-  shared_ptr<GlxWrapper> glx;
+  scoped_ptr<GlxOpts> opts;
+  scoped_ptr<GlxWrapper> glx;
 };
 
 GLCanvas::GLCanvas(Display* dpy) :
