@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Wed Dec  4 18:41:16 2002
+// written: Thu Dec  5 14:17:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -261,7 +261,7 @@ void EndTrialEvent::invoke(Trial& trial)
 {
 DOTRACE("EndTrialEvent::invoke");
   trial.vxEndTrial();
-  trial.trNextTrial();
+  trial.vxNext();
 }
 
 NextNodeEvent::NextNodeEvent(int msec) : TrialEvent(msec) {}

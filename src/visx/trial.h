@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Wed Dec  4 18:58:39 2002
+// written: Thu Dec  5 14:16:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -130,7 +130,6 @@ public:
 
   virtual double trElapsedMsec();
 
-  virtual void trNextTrial();
   virtual void trResponseSeen();
   virtual void trAllowResponses();
   virtual void trDenyResponses();
@@ -142,7 +141,7 @@ private:
   Trial& operator=(const Trial&);
 
   class Impl;
-  Impl* const itsImpl;
+  Impl* const rep;
 };
 
 static const char vcid_trial_h[] = "$Id$";

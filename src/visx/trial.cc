@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Dec  4 19:10:54 2002
+// written: Thu Dec  5 14:17:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ public:
   double trElapsedMsec();
   void vxAbort();
   void vxEndTrial();
-  void trNextTrial();
+  void vxNext();
   void vxHalt();
   void trResponseSeen();
   void vxProcessResponse(Response& response);
@@ -368,13 +368,13 @@ DOTRACE("Trial::Impl::vxEndTrial");
   itsActiveState->itsParent->vxEndTrial();
 }
 
-void Trial::Impl::trNextTrial()
+void Trial::Impl::vxNext()
 {
-DOTRACE("Trial::Impl::trNextTrial");
+DOTRACE("Trial::Impl::vxNext");
 
   Precondition( isActive() );
 
-  Util::log("trNextTrial");
+  Util::log("Trial::vxNext");
 
   Element* parent = itsActiveState->itsParent;
 
@@ -465,7 +465,7 @@ DOTRACE("Trial::Impl::vxUndo");
 void Trial::vxReset()
 {
 DOTRACE("Trial::vxReset");
-  itsImpl->itsResponses.clear();
+  rep->itsResponses.clear();
 }
 
 
@@ -500,7 +500,7 @@ DOTRACE("Trial::make");
 
 Trial::Trial() :
   FieldContainer(0),
-  itsImpl( new Impl(this) )
+  rep( new Impl(this) )
 {
 DOTRACE("Trial::Trial()");
 
@@ -510,7 +510,7 @@ DOTRACE("Trial::Trial()");
 Trial::~Trial()
 {
 DOTRACE("Trial::~Trial");
-  delete itsImpl;
+  delete rep;
 }
 
 ////////////////////////////////
@@ -521,134 +521,131 @@ IO::VersionId Trial::serialVersionId() const
   { return TRIAL_SERIAL_VERSION_ID; }
 
 void Trial::readFrom(IO::Reader* reader)
-  { itsImpl->readFrom(reader); }
+  { rep->readFrom(reader); }
 
 void Trial::writeTo(IO::Writer* writer) const
-  { itsImpl->writeTo(writer); }
+  { rep->writeTo(writer); }
 
 Util::ErrorHandler& Trial::getErrorHandler() const
 {
-  Precondition( itsImpl->isActive() );
-  return itsImpl->itsActiveState->itsParent->getErrorHandler();
+  Precondition( rep->isActive() );
+  return rep->itsActiveState->itsParent->getErrorHandler();
 }
 
 const SoftRef<Toglet>& Trial::getWidget() const
 {
-  Precondition( itsImpl->isActive() );
-  return itsImpl->itsActiveState->itsWidget;
+  Precondition( rep->isActive() );
+  return rep->itsActiveState->itsWidget;
 }
 
 int Trial::getCorrectResponse() const
-  { return itsImpl->itsCorrectResponse; }
+  { return rep->itsCorrectResponse; }
 
 void Trial::setCorrectResponse(int response)
-  { itsImpl->itsCorrectResponse = response; }
+  { rep->itsCorrectResponse = response; }
 
 
 Ref<ResponseHandler> Trial::getResponseHandler() const
-  { return Ref<ResponseHandler>(itsImpl->itsRh); }
+  { return Ref<ResponseHandler>(rep->itsRh); }
 
 void Trial::setResponseHandler(Ref<ResponseHandler> rh)
-  { itsImpl->itsRh = SoftRef<ResponseHandler>(rh); }
+  { rep->itsRh = SoftRef<ResponseHandler>(rh); }
 
 
 Ref<TimingHdlr> Trial::getTimingHdlr() const
-  { return Ref<TimingHdlr>(itsImpl->itsTh); }
+  { return Ref<TimingHdlr>(rep->itsTh); }
 
 void Trial::setTimingHdlr(Ref<TimingHdlr> th)
-  { itsImpl->itsTh = SoftRef<TimingHdlr>(th); }
+  { rep->itsTh = SoftRef<TimingHdlr>(th); }
 
 
 int Trial::trialType() const
-  { return itsImpl->itsType; }
+  { return rep->itsType; }
 
 void Trial::setType(int t)
-  { itsImpl->itsType = t; }
+  { rep->itsType = t; }
 
 
 fstring Trial::status() const
-  { return itsImpl->status(); }
+  { return rep->status(); }
 
 int Trial::lastResponse() const
-  { return itsImpl->lastResponse(); }
+  { return rep->lastResponse(); }
 
 void Trial::vxUndo()
-  { itsImpl->vxUndo(); }
+  { rep->vxUndo(); }
 
 unsigned int Trial::numResponses() const
-  { return itsImpl->itsResponses.size(); }
+  { return rep->itsResponses.size(); }
 
 void Trial::clearResponses()
-  { itsImpl->itsResponses.clear(); }
+  { rep->itsResponses.clear(); }
 
 double Trial::avgResponse() const
-  { return itsImpl->avgResponse(); }
+  { return rep->avgResponse(); }
 
 double Trial::avgRespTime() const
-  { return itsImpl->avgRespTime(); }
+  { return rep->avgRespTime(); }
 
 
 void Trial::addNode(Util::Ref<GxNode> item)
-  { itsImpl->itsGxNodes.push_back(item); }
+  { rep->itsGxNodes.push_back(item); }
 
 void Trial::trNextNode()
-  { itsImpl->trNextNode(); }
+  { rep->trNextNode(); }
 
 Util::FwdIter<Util::Ref<GxNode> > Trial::nodes() const
 {
   return Util::FwdIter<Util::Ref<GxNode> >
-    (itsImpl->itsGxNodes.begin(),
-     itsImpl->itsGxNodes.end());
+    (rep->itsGxNodes.begin(),
+     rep->itsGxNodes.end());
 }
 
 unsigned int Trial::getCurrentNode() const
-  { return itsImpl->itsCurrentNode; }
+  { return rep->itsCurrentNode; }
 
 void Trial::setCurrentNode(unsigned int nodeNumber)
-  { itsImpl->setCurrentNode(nodeNumber); }
+  { rep->setCurrentNode(nodeNumber); }
 
 void Trial::clearObjs()
-  { itsImpl->clearObjs(); }
+  { rep->clearObjs(); }
 
 
 void Trial::vxRun(Element& parent)
-  { itsImpl->vxRun(this, parent); }
+  { rep->vxRun(this, parent); }
 
 double Trial::trElapsedMsec()
-  { return itsImpl->trElapsedMsec(); }
+  { return rep->trElapsedMsec(); }
 
 void Trial::vxAbort()
-  { itsImpl->vxAbort(); }
+  { rep->vxAbort(); }
 
 void Trial::vxEndTrial()
-  { itsImpl->vxEndTrial(); }
-
-void Trial::trNextTrial()
-  { itsImpl->trNextTrial(); }
-
-void Trial::vxHalt() const
-  { itsImpl->vxHalt(); }
-
-void Trial::trResponseSeen()
-  { itsImpl->trResponseSeen(); }
-
-void Trial::vxProcessResponse(Response& response)
-  { itsImpl->vxProcessResponse(response); }
-
-void Trial::trAllowResponses()
-  { itsImpl->trAllowResponses(this); }
-
-void Trial::trDenyResponses()
-  { itsImpl->trDenyResponses(); }
-
-void Trial::installSelf(SoftRef<Toglet> widget) const
-  { itsImpl->installSelf(widget); }
-
-int Trial::numCompleted() const
-  { return itsImpl->itsResponses.size(); }
+  { rep->vxEndTrial(); }
 
 void Trial::vxNext()
-  { Assert(false); }
+  { rep->vxNext(); }
+
+void Trial::vxHalt() const
+  { rep->vxHalt(); }
+
+void Trial::trResponseSeen()
+  { rep->trResponseSeen(); }
+
+void Trial::vxProcessResponse(Response& response)
+  { rep->vxProcessResponse(response); }
+
+void Trial::trAllowResponses()
+  { rep->trAllowResponses(this); }
+
+void Trial::trDenyResponses()
+  { rep->trDenyResponses(); }
+
+void Trial::installSelf(SoftRef<Toglet> widget) const
+  { rep->installSelf(widget); }
+
+int Trial::numCompleted() const
+  { return rep->itsResponses.size(); }
 
 static const char vcid_trial_cc[] = "$Header$";
 #endif // !TRIAL_CC_DEFINED
