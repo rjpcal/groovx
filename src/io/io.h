@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Mon Feb 14 18:05:48 2000
+// written: Wed Feb 16 09:36:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -127,6 +127,9 @@ private:
   unsigned long itsId;
 };
 
+
+
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -137,17 +140,37 @@ private:
  * @short Gives the number of characters for a string representation of
  * a basic type.
  **/
+///////////////////////////////////////////////////////////////////////
 template<class T>
 int gCharCount(T val);
+
+
+
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
+ * \defgroup IoExcept Input/OutputException Classes
+ *
+ * These exception classes represent the various types of errors that
+ * may occur during IO operations. The base class for this group of
+ * classes is IoError. All IO-related exception classes defined by
+ * clients should also derive from IoError.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////////////////
+/**
+ * \ingroup IoExcept
  * IoError is base class for the various exception types that may be
  * thrown in IO's input and output methods. All IO-related exception
  * classes defined by clients should also derive from IoError.
  *
  **/
+///////////////////////////////////////////////////////////////////////
+
 class IoError : public ErrorWithMsg {
 public:
   /// Default constructor
@@ -163,7 +186,11 @@ protected:
   virtual void setMsg(const type_info& typeInfo);
 };
 
-/// A subclass of IoError for general input errors.
+/**
+ * \ingroup IoExcept
+ *
+ * A subclass of IoError for general input errors. 
+ **/
 class InputError : public IoError {
 public:
   ///
@@ -174,7 +201,11 @@ public:
   InputError(const type_info& ti) { setMsg(ti); }
 };
 
-/// A subclass of IoError for general output errors.
+/**
+ * \ingroup IoExcept
+ *
+ * A subclass of IoError for general output errors. \ingroup IoExcept
+ **/
 class OutputError : public IoError {
 public:
   ///
@@ -185,10 +216,13 @@ public:
   OutputError(const type_info& ti) { setMsg(ti); }
 };
 
-/** A subclass of IoError for "can't-happen" errors that are
-    discovered during input or output. This type of error suggests
-    that either the object or its serialized description has been
-    corrupted. */
+/**
+ * \ingroup IoExcept
+ *
+ * A subclass of IoError for "can't-happen" errors that are discovered
+ * during input or output. This type of error suggests * that either
+ * the object or its serialized description has been * corrupted.
+ **/
 class IoLogicError : public IoError {
 public:
   ///
@@ -199,8 +233,12 @@ public:
   IoLogicError(const type_info& ti) { setMsg(ti); }
 };
 
-/** A subclass of IoError for out-of-bounds values that are
-    encountered during input or output. */
+/**
+ * \ingroup IoExcept
+ *
+ * A subclass of IoError for out-of-bounds values that are encountered
+ * during input or output.
+ **/
 class IoValueError : public IoError {
 public:
   ///
@@ -211,8 +249,12 @@ public:
   IoValueError(const type_info& ti) { setMsg(ti); }
 };
 
-/** A subclass of IoError for invalid filenames or filenames referring
-    to inaccessible files. */
+/**
+ * \ingroup IoExcept
+ *
+ * A subclass of IoError for invalid filenames or filenames referring
+ * to inaccessible files.
+ **/
 class IoFilenameError : public IoError {
 public:
   ///
