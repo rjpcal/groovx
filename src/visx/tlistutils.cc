@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Thu Oct  5 18:32:49 2000
+// written: Mon Oct 16 15:51:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -431,7 +431,7 @@ DOTRACE("TlistUtils::writeMatlab");
 				 ii != end;
 				 ++ii)
 			 {
-				ofs << ii->objid << ' ';
+				ofs << ii->objid() << ' ';
 			 }
 
 		  ofs << t->avgResponse() << endl;
