@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Wed Nov  1 18:31:11 2000
+// written: Thu Nov  2 15:41:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -255,16 +255,7 @@ DOTRACE("TlistUtils::writeMatlab");
 		Trial* t = dynamic_cast<Trial*>(itr.getObject());
 
 		if ( t )
-		  {
-			 for (Trial::GxNodeItr ii = t->beginGxNodes(), end = t->endGxNodes();
-					ii != end;
-					++ii)
-				{
-				  ofs << ii->id() << ' ';
-				}
-
-			 ofs << t->avgResponse() << endl;
-		  }
+		  t->writeMatlab(ofs);
 	 }
 }
 
