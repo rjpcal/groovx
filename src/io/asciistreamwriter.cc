@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:57 1999
-// written: Wed Aug  8 20:16:40 2001
+// written: Mon Aug 20 12:01:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,39 +36,40 @@
 #define AsciiStreamWriter ASW
 #endif
 
-namespace {
+namespace
+{
   const char* ATTRIB_ENDER = "^\n";
 
-  void addEscapes(std::string& text) {
+  void addEscapes(std::string& text)
+  {
   DOTRACE("AsciiStreamWriter::Impl::addEscapes");
     // Escape any special characters
-    for (size_t pos = 0; pos < text.length(); /* ++ done in loop body */ ) {
-
-      switch (text[pos]) {
-      case '\\': // i.e., a single backslash
-        text.replace(pos, 1, "\\\\"); // i.e., two backslashes
-        pos += 2;
-        break;
-      case '^':
-        text.replace(pos, 1, "\\c");
-        pos += 2;
-        break;
-      case '{':
-        text.replace(pos, 1, "\\{");
-        pos += 2;
-        break;
-      case '}':
-        text.replace(pos, 1, "\\}");
-        pos += 2;
-        break;
-      default:
-        ++pos;
-        break;
+    for (size_t pos = 0; pos < text.length(); /* ++ done in loop body */ )
+      {
+        switch (text[pos])
+          {
+          case '\\': // i.e., a single backslash
+            text.replace(pos, 1, "\\\\"); // i.e., two backslashes
+            pos += 2;
+            break;
+          case '^':
+            text.replace(pos, 1, "\\c");
+            pos += 2;
+            break;
+          case '{':
+            text.replace(pos, 1, "\\{");
+            pos += 2;
+            break;
+          case '}':
+            text.replace(pos, 1, "\\}");
+            pos += 2;
+            break;
+          default:
+            ++pos;
+            break;
+          }
       }
-
-    }
   }
-
 }
 
 class AsciiStreamWriter::Impl {
@@ -91,9 +92,9 @@ public:
   }
 
   ~Impl()
-    {
-      delete itsFstream;
-    }
+  {
+    delete itsFstream;
+  }
 
   AsciiStreamWriter* itsOwner;
   STD_IO::ofstream* itsFstream;
@@ -103,27 +104,34 @@ public:
 
   // Helper functions
 private:
-  bool haveMoreObjectsToHandle() const {
+  bool haveMoreObjectsToHandle() const
+  {
     return !itsToHandle.empty();
   }
 
-  bool alreadyWritten(const IO::IoObject* obj) const {
+  bool alreadyWritten(const IO::IoObject* obj) const
+  {
     return ( itsWrittenObjects.find(obj) !=
              itsWrittenObjects.end() );
   }
 
-  const IO::IoObject* getNextObjectToHandle() const {
+  const IO::IoObject* getNextObjectToHandle() const
+  {
     return *(itsToHandle.begin());
   }
 
-  void markObjectAsWritten(const IO::IoObject* obj) {
+  void markObjectAsWritten(const IO::IoObject* obj)
+  {
     itsToHandle.erase(obj);
     itsWrittenObjects.insert(obj);
   }
 
-  void addObjectToBeHandled(const IO::IoObject* obj) {
+  void addObjectToBeHandled(const IO::IoObject* obj)
+  {
     if ( !alreadyWritten(obj) )
-      { itsToHandle.insert(obj); }
+      {
+        itsToHandle.insert(obj);
+      }
   }
 
   void flattenObject(const IO::IoObject* obj);
@@ -141,14 +149,16 @@ public:
 
   template <class T>
   void writeBasicType(const char* name, T val,
-                      const char* string_typename) {
+                      const char* string_typename)
+  {
     itsBuf << string_typename << " "
            << name << " := "
            << val << ATTRIB_ENDER;
   }
 
   void writeStringType(const char* name, const char* val,
-                       const char* string_typename) {
+                       const char* string_typename)
+  {
     std::string escaped_val(val);
     int val_length = escaped_val.length();
     addEscapes(escaped_val);
@@ -167,7 +177,8 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-void AsciiStreamWriter::Impl::flattenObject(const IO::IoObject* obj) {
+void AsciiStreamWriter::Impl::flattenObject(const IO::IoObject* obj)
+{
 DOTRACE("AsciiStreamWriter::Impl::flattenObject");
 
   // Objects are written in the following format:
@@ -203,7 +214,8 @@ DOTRACE("AsciiStreamWriter::Impl::flattenObject");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void AsciiStreamWriter::Impl::writeRoot(const IO::IoObject* root) {
+void AsciiStreamWriter::Impl::writeRoot(const IO::IoObject* root)
+{
 DOTRACE("AsciiStreamWriter::Impl::writeRoot");
   itsToHandle.clear();
   itsWrittenObjects.clear();
@@ -224,10 +236,9 @@ DOTRACE("AsciiStreamWriter::Impl::writeRoot");
   itsBuf.flush();
 }
 
-void AsciiStreamWriter::Impl::writeValueObj(
-  const char* attrib_name,
-  const Value& value
-  ) {
+void AsciiStreamWriter::Impl::writeValueObj(const char* attrib_name,
+                                            const Value& value)
+{
 DOTRACE("AsciiStreamWriter::Impl::writeValueObj");
 
   itsBuf << value.getNativeTypeName() << " "
@@ -235,36 +246,37 @@ DOTRACE("AsciiStreamWriter::Impl::writeValueObj");
          << value << ATTRIB_ENDER;
 }
 
-void AsciiStreamWriter::Impl::writeObject(
-  const char* name,
-  WeakRef<const IO::IoObject> obj
-) {
+void AsciiStreamWriter::Impl::writeObject(const char* name,
+                                          WeakRef<const IO::IoObject> obj)
+{
 DOTRACE("AsciiStreamWriter::Impl::writeObject");
 
-  if (obj.isValid()) {
-    Assert(dynamic_cast<const IO::IoObject*>(obj.get()) != 0);
+  if (obj.isValid())
+    {
+      Assert(dynamic_cast<const IO::IoObject*>(obj.get()) != 0);
 
-    itsBuf << obj->ioTypename().c_str() << " "
-           << name << " := "
-           << obj->id() << ATTRIB_ENDER;
+      itsBuf << obj->ioTypename().c_str() << " "
+             << name << " := "
+             << obj->id() << ATTRIB_ENDER;
 
-    addObjectToBeHandled(obj.get());
-  }
-  else {
-    itsBuf << "NULL " << name << " := 0" << ATTRIB_ENDER;
-  }
+      addObjectToBeHandled(obj.get());
+    }
+  else
+    {
+      itsBuf << "NULL " << name << " := 0" << ATTRIB_ENDER;
+    }
 }
 
-void AsciiStreamWriter::Impl::writeOwnedObject(
-  const char* name, Ref<const IO::IoObject> obj
-  ) {
+void AsciiStreamWriter::Impl::writeOwnedObject(const char* name,
+                                               Ref<const IO::IoObject> obj)
+{
 DOTRACE("AsciiStreamWriter::Impl::writeOwnedObject");
   writeObject(name, obj);
 }
 
-void AsciiStreamWriter::Impl::writeBaseClass(
-  const char* baseClassName, Ref<const IO::IoObject> basePart
-  ) {
+void AsciiStreamWriter::Impl::writeBaseClass(const char* baseClassName,
+                                             Ref<const IO::IoObject> basePart)
+{
 DOTRACE("AsciiStreamWriter::Impl::writeBaseClass");
 
   fstring type = basePart->ioTypename().c_str();
@@ -294,56 +306,67 @@ AsciiStreamWriter::AsciiStreamWriter(const char* filename) :
 DOTRACE("AsciiStreamWriter::AsciiStreamWriter(const char*)");
 }
 
-AsciiStreamWriter::~AsciiStreamWriter () {
+AsciiStreamWriter::~AsciiStreamWriter ()
+{
 DOTRACE("AsciiStreamWriter::~AsciiStreamWriter");
   delete &itsImpl;
 }
 
-void AsciiStreamWriter::writeChar(const char* name, char val) {
+void AsciiStreamWriter::writeChar(const char* name, char val)
+{
 DOTRACE("AsciiStreamWriter::writeChar");
   itsImpl.writeBasicType(name, val, "char");
 }
 
-void AsciiStreamWriter::writeInt(const char* name, int val) {
+void AsciiStreamWriter::writeInt(const char* name, int val)
+{
 DOTRACE("AsciiStreamWriter::writeInt");
   itsImpl.writeBasicType(name, val, "int");
 }
 
-void AsciiStreamWriter::writeBool(const char* name, bool val) {
+void AsciiStreamWriter::writeBool(const char* name, bool val)
+{
 DOTRACE("AsciiStreamWriter::writeBool");
   itsImpl.writeBasicType(name, val, "bool");
 }
 
-void AsciiStreamWriter::writeDouble(const char* name, double val) {
+void AsciiStreamWriter::writeDouble(const char* name, double val)
+{
 DOTRACE("AsciiStreamWriter::writeDouble");
   itsImpl.writeBasicType(name, val, "double");
 }
 
-void AsciiStreamWriter::writeCstring(const char* name, const char* val) {
+void AsciiStreamWriter::writeCstring(const char* name, const char* val)
+{
 DOTRACE("AsciiStreamWriter::writeCstring");
   itsImpl.writeStringType(name, val, "cstring");
 }
 
-void AsciiStreamWriter::writeValueObj(const char* name, const Value& value) {
+void AsciiStreamWriter::writeValueObj(const char* name, const Value& value)
+{
   itsImpl.writeValueObj(name, value);
 }
 
 void AsciiStreamWriter::writeObject(const char* name,
-                                    WeakRef<const IO::IoObject> obj) {
+                                    WeakRef<const IO::IoObject> obj)
+{
   itsImpl.writeObject(name, obj);
 }
 
 void AsciiStreamWriter::writeOwnedObject(const char* name,
-                                         Ref<const IO::IoObject> obj) {
+                                         Ref<const IO::IoObject> obj)
+{
   itsImpl.writeOwnedObject(name, obj);
 }
 
 void AsciiStreamWriter::writeBaseClass(const char* baseClassName,
-                                       Ref<const IO::IoObject> basePart) {
+                                       Ref<const IO::IoObject> basePart)
+{
   itsImpl.writeBaseClass(baseClassName, basePart);
 }
 
-void AsciiStreamWriter::writeRoot(const IO::IoObject* root) {
+void AsciiStreamWriter::writeRoot(const IO::IoObject* root)
+{
   itsImpl.writeRoot(root);
 }
 
