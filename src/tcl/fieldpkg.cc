@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Wed Jul 18 09:22:30 2001
+// written: Wed Jul 18 10:14:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,36 +29,26 @@
 
 namespace Tcl
 {
-  class FieldGetterCmd : public Tcl::VecCmd {
-  private:
-    const FieldInfo& itsFinfo;
-  public:
-    FieldGetterCmd(Tcl::TclItemPkg* pkg, const FieldInfo& finfo) :
-      VecCmd(pkg->interp(), pkg->makePkgCmdName(finfo.name().c_str()),
-             "item_id(s)", 1, 2),
-      itsFinfo(finfo)
-    {}
+  struct FieldGetter
+  {
+    FieldGetter(const FieldInfo& finfo) : itsFinfo(finfo) {}
 
-  protected:
-    virtual void invoke(Tcl::Context& ctx)
+    const FieldInfo& itsFinfo;
+
+    void operator()(Tcl::Context& ctx)
     {
       Ref<FieldContainer> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
       ctx.setResult<const Value&>(*(item->field(itsFinfo).value()));
     }
   };
 
-  class FieldSetterCmd : public Tcl::VecCmd {
-  private:
-    const FieldInfo& itsFinfo;
-  public:
-    FieldSetterCmd(Tcl::TclItemPkg* pkg, const FieldInfo& finfo) :
-      VecCmd(pkg->interp(), pkg->makePkgCmdName(finfo.name().c_str()),
-             "item_id(s) new_val(s)", 1, 3),
-      itsFinfo(finfo)
-    {}
+  struct FieldSetter
+  {
+    FieldSetter(const FieldInfo& finfo) : itsFinfo(finfo) {}
 
-  protected:
-    virtual void invoke(Tcl::Context& ctx)
+    const FieldInfo& itsFinfo;
+
+    void operator()(Tcl::Context& ctx)
     {
       Ref<FieldContainer> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
       TclValue val = ctx.getValFromArg(2, TypeCue<TclValue>());
@@ -66,27 +56,25 @@ namespace Tcl
     }
   };
 
-///////////////////////////////////////////////////////////////////////
-//
-// FieldsCmd class definition
-//
-///////////////////////////////////////////////////////////////////////
+  ///////////////////////////////////////////////////////////////////////
+  //
+  // FieldsCmd class definition
+  //
+  ///////////////////////////////////////////////////////////////////////
 
-  class FieldsCmd : public TclCmd {
-  private:
+  struct FieldsLister
+  {
     const FieldMap& itsFields;
     Tcl::List itsFieldList;
     bool isItInited;
 
-    FieldsCmd(const FieldsCmd&);
-    FieldsCmd& operator=(const FieldsCmd&);
+    FieldsLister(const FieldMap& fields) :
+      itsFields(fields),
+      itsFieldList(),
+      isItInited(false)
+    {}
 
-  public:
-    FieldsCmd(TclPkg* pkg, const FieldMap& fields);
-    virtual ~FieldsCmd();
-
-  protected:
-    virtual void invoke(Tcl::Context& ctx);
+	 void operator()(Tcl::Context& ctx);
   };
 
 } // end namespace Tcl
@@ -95,22 +83,13 @@ namespace Tcl
 
 ///////////////////////////////////////////////////////////////////////
 //
-// FieldsCmd member definitions
+// FieldsLister member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::FieldsCmd::FieldsCmd(TclPkg* pkg, const FieldMap& fields) :
-  TclCmd(pkg->interp(), pkg->makePkgCmdName("fields"), NULL, 1, 1),
-  itsFields(fields),
-  itsFieldList(),
-  isItInited(false)
-{}
-
-Tcl::FieldsCmd::~FieldsCmd() {}
-
-void Tcl::FieldsCmd::invoke(Tcl::Context& ctx)
+void Tcl::FieldsLister::operator()(Tcl::Context& ctx)
 {
-DOTRACE("Tcl::FieldsCmd::invoke");
+DOTRACE("Tcl::FieldsLister::operator()");
   if (!isItInited)
     {
       for (FieldMap::IoIterator
@@ -148,11 +127,13 @@ void Tcl::defField(Tcl::TclItemPkg* pkg, const FieldInfo& finfo)
 {
 DOTRACE("Tcl::defField");
 
-  pkg->addCommand( new FieldGetterCmd(pkg, finfo) );
-  pkg->addCommand( new FieldSetterCmd(pkg, finfo) );
+  pkg->defVecRaw( FieldGetter(finfo), finfo.name().c_str(), "item_id(s)", 1 );
+  pkg->defVecRaw( FieldSetter(finfo), finfo.name().c_str(),
+                  "item_id(s) new_val(s)", 2 );
 }
 
-void Tcl::defAllFields(Tcl::TclItemPkg* pkg, const FieldMap& fmap){
+void Tcl::defAllFields(Tcl::TclItemPkg* pkg, const FieldMap& fmap)
+{
 DOTRACE("Tcl::defAllFields");
   for (FieldMap::Iterator itr = fmap.begin(), end = fmap.end();
        itr != end;
@@ -161,9 +142,8 @@ DOTRACE("Tcl::defAllFields");
       defField(pkg, *itr);
     }
 
-  pkg->addCommand( new FieldsCmd(pkg, fmap) );
+  pkg->defRaw( FieldsLister(fmap), "fields", 0, 0 );
 }
-
 
 static const char vcid_fieldpkg_cc[] = "$Header$";
 #endif // !FIELDPKG_CC_DEFINED
