@@ -87,33 +87,32 @@
 
 
 
-4. Makefile configuration
+4. Configuration
 
-   There is currently no autoconf/configure script to do Makefile
-   configuration at the present time. Instead, top-level configuration
-   options are listed together at the top of the Makefile. These include
-   options for specifying where the software should be installed, and for
-   specifying where various dependencies are installed.
+   Configuration is done with a standard autoconf-generated configure
+   script. To run the script with the default options, just do:
+
+       ./configure
+
+   To see a description of available configuration options, do:
+
+       ./configure --help
+
+   Some important options:
+
+       --enable-debug={no|yes}
+
+           determines whether to include runtime debuggability into the
+           executable. If 'yes' (the default), then certain commands will
+           be available in the shell to control debug verbosity and stack
+           tracing.
 
 5. Building
 
-   Once you have all package dependencies installed, and done any necessary
-   customization to the Makefile, just type "make" and everything should
-   build and install. A short test suite (takes ~10 seconds on a 1GHz
-   Pentium III Linux machine) is run at the end of every "make" invocation.
-
-   * debug vs. production
-
-     Depending on the architecture, either the debug or production version
-     will be the default version that is built with "make". To override the
-     default, type either "make MODE=prod" for the production version, or
-     "make MODE=debug" for the debug version. The two versions build
-     separate object files and shared libraries, so it is possible for
-     builds of both types to peacefully coexist.
-
-     By convention, the debug executable is called "testsh", while the
-     production executable is called "grshX.X", where "X.X" specifies the
-     version number of the program.
+   Once you have all package dependencies installed, and run the configure
+   script, just type "make" and everything should build and install. A
+   short test suite (takes ~10 seconds on a 1GHz Pentium III Linux machine)
+   is run at the end of every "make" invocation.
 
    * environment variables
 
@@ -152,9 +151,10 @@
 
      g++ 2.95.x (linux, Mac OS X)
      g++ 3.0.x (linux)
-     g++ 3.1.x (linux)
+     g++ 3.1.x (linux, Mac OS X)
+     g++ 3.2.x (linux)
+     g++ 3.3.x (linux, Mac OS X)
      Intel's icc 6.0 (linux)
-     HP's aCC (hpux 10.x)
      SGI's MIPSpro (irix6)
 
 7. Contact information
