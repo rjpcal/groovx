@@ -114,6 +114,9 @@ public:
   /// Retrieve the object associated with the tag \a name.
   void* getPtrForName(const fstring& name) const;
 
+  /// Retrieve the object associated with the tag \a name.
+  void* getPtrForName(const char* name) const;
+
   /// Associate the object at \a ptr with the tag \a name.
   void setPtrForName(const char* name, void* ptr);
 
@@ -155,6 +158,10 @@ public:
 
   /// Get the object associated with the tag \a name.
   CreatorType* getPtrForName(const fstring& name) const
+    { return static_cast<CreatorType*>(base.getPtrForName(name)); }
+
+  /// Get the object associated with the tag \a name.
+  CreatorType* getPtrForName(const char* name) const
     { return static_cast<CreatorType*>(base.getPtrForName(name)); }
 
   /// Associate the object at \a ptr with the tag \a name.
