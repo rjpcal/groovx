@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:46:08 1999
-// written: Thu May 17 15:11:04 2001
+// written: Thu May 17 15:29:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -162,7 +162,7 @@ public:
 		the root object. Otherwise the function will create a new root
 		object. In either case, the function returns the object that was
 		actually used as the root object. */
-  virtual IO::IoObject* readRoot(IO::IoObject* root=0) = 0;
+  virtual IdItem<IO::IoObject> readRoot(IO::IoObject* root=0) = 0;
 
 protected:
   /// Read the string attribute associated with the tag \a name.

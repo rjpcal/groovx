@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:54 1999
-// written: Thu May 17 15:10:23 2001
+// written: Thu May 17 15:31:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,7 +69,7 @@ public:
   virtual void readBaseClass(const fixed_string& baseClassName,
 									  IO::IoObject* basePart);
 
-  virtual IO::IoObject* readRoot(IO::IoObject* root=0);
+  virtual IdItem<IO::IoObject> readRoot(IO::IoObject* root=0);
 
 protected:
   virtual fixed_string readStringImpl(const fixed_string& name);
