@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# $Id$
+
+# standard configuration for my imac
+
+./configure \
+    --prefix=/Users/rjpeters/local/groovx-aqua \
+    --with-tcltk=/Users/rjpeters/Library/Frameworks \
+    --enable-aqua
