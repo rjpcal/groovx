@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Wed Aug  8 20:16:40 2001
+// written: Wed Aug  8 20:54:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -423,7 +423,7 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
                           "for a string attribute: ", len);
     }
 
-  fstring new_string(len+1);
+  fstring new_string; new_string.make_space(len);
   if (len > 0)
     ist.read(new_string.data(), len);
   new_string.data()[len] = '\0';

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Wed Aug  8 20:16:39 2001
+// written: Wed Aug  8 20:54:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -230,7 +230,7 @@ DOTRACE("IO::LegacyReader::readStringImpl");
 
 //   if (itsImpl->itsInStream.peek() == '\n') { itsImpl->itsInStream.get(); }
 
-  fstring new_string(numchars);
+  fstring new_string; new_string.make_space(numchars);
 
   if ( numchars > 0 )
     {

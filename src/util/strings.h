@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Wed Aug  8 20:16:37 2001
+// written: Wed Aug  8 21:03:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -109,6 +109,10 @@ public:
 
   void append(std::size_t length, const char* text);
 
+  void realloc(std::size_t bufsize);
+
+  void make_space(std::size_t len);
+
 private:
   unsigned int itsRefCount;
 
@@ -133,10 +137,39 @@ class fstring {
 public:
   friend class string_literal;
 
-  fstring(std::size_t length = 0);
+  fstring();
   fstring(const char* text);
   fstring(const fstring& other);
   ~fstring();
+
+  template <class T1>
+  fstring(const T1& part1) :
+    itsRep(0)
+  {
+    init(); append(part1);
+  }
+
+  template <class T1, class T2>
+  fstring(const T1& part1, const T2& part2) :
+    itsRep(0)
+  {
+    init(); append(part1, part2);
+  }
+
+  template <class T1, class T2, class T3>
+  fstring(const T1& part1, const T2& part2, const T3& part3) :
+    itsRep(0)
+  {
+    init(); append(part1, part2, part3);
+  }
+
+  template <class T1, class T2, class T3, class T4>
+  fstring(const T1& part1, const T2& part2, const T3& part3,
+          const T4& part4) :
+    itsRep(0)
+  {
+    init(); append(part1, part2, part3, part4);
+  }
 
   void swap(fstring& other);
 
@@ -146,6 +179,11 @@ public:
   bool equals(const char* other) const;
   bool equals(const string_literal& other) const;
   bool equals(const fstring& other) const;
+
+  void make_space(std::size_t len)
+  {
+    string_rep::makeUnique(itsRep); itsRep->make_space(len);
+  }
 
   char* data() { string_rep::makeUnique(itsRep); return itsRep->data(); }
 
@@ -183,20 +221,62 @@ public:
       return strcmp(c_str(), other.c_str()) > 0;
     }
 
-  fstring& append(const char* text)
-  { if (text) append_text(strlen(text), text); return *this; }
+  //
+  // Appending
+  //
 
-  fstring& append(const fstring& other)
-  { append_text(other.length(), other.c_str()); return *this; }
+  /** Append additional text to the error message. */
+  template <class T1>
+  fstring& append(const T1& part1)
+  {
+    do_append(part1); return *this;
+  }
 
-  template <class T>
-  fstring& append(const T& x);
+  /** Append additional text to the error message. */
+  template <class T1, class T2>
+  fstring& append(const T1& part1, const T2& part2)
+  {
+    do_append(part1); do_append(part2); return *this;
+  }
+
+  /** Append additional text to the error message. */
+  template <class T1, class T2, class T3>
+  fstring& append(const T1& part1, const T2& part2, const T3& part3)
+  {
+    do_append(part1); do_append(part2); do_append(part3); return *this;
+  }
+
+  /** Append additional text to the error message. */
+  template <class T1, class T2, class T3, class T4>
+  fstring& append(const T1& part1, const T2& part2, const T3& part3,
+                  const T4& part4)
+  {
+    do_append(part1); do_append(part2); do_append(part3);
+    do_append(part4); return *this;
+  }
 
   template <class T>
   fstring& operator+=(const T& x) { return append(x); }
 
 private:
+  void do_append(const char* text)
+  { if (text) append_text(strlen(text), text); }
+
+  void do_append(const fstring& other)
+  { append_text(other.length(), other.c_str()); }
+
+  void do_append(const string_literal& other)
+  { append_text(other.length(), other.c_str()); }
+
+  template <class T>
+  void do_append(const T& x)
+  {
+    do_append(Util::Convert<T>::toString(x));
+  }
+
   void append_text(std::size_t length, const char* text);
+
+  void init();
 
   string_rep* itsRep;
 };
@@ -216,12 +296,6 @@ namespace Util
   {
     static const char* toString(const fstring& x) { return x.c_str(); }
   };
-}
-
-template <class T>
-inline fstring& fstring::append(const T& x)
-{
-  append(Util::Convert<T>::toString(x)); return *this;
 }
 
 ///////////////////////////////////////////////////////////////////////

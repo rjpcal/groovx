@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:47 1999
-// written: Wed Aug  8 20:16:37 2001
+// written: Wed Aug  8 20:29:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,36 +37,27 @@ public:
   /** Construct with an error message. */
   template <class T1>
   Error(const T1& part1) :
-    itsInfo()
-  {
-    itsInfo.append(part1);
-  }
+    itsInfo(part1)
+  {}
 
   /** Construct with an error message. */
   template <class T1, class T2>
   Error(const T1& part1, const T2& part2) :
-    itsInfo()
-  {
-    itsInfo.append(part1); itsInfo.append(part2);
-  }
+    itsInfo(part1, part2)
+  {}
 
   /** Construct with an error message. */
   template <class T1, class T2, class T3>
   Error(const T1& part1, const T2& part2, const T3& part3) :
-    itsInfo()
-  {
-    itsInfo.append(part1); itsInfo.append(part2); itsInfo.append(part3);
-  }
+    itsInfo(part1, part2, part3)
+  {}
 
   /** Construct with an error message. */
   template <class T1, class T2, class T3, class T4>
   Error(const T1& part1, const T2& part2, const T3& part3,
         const T4& part4) :
-    itsInfo()
-  {
-    itsInfo.append(part1); itsInfo.append(part2); itsInfo.append(part3);
-    itsInfo.append(part4);
-  }
+    itsInfo(part1, part2, part3, part4)
+  {}
 
   /// Copy constructor.
   Error(const Error& other);
@@ -91,14 +82,14 @@ public:
   template <class T1, class T2>
   void append(const T1& part1, const T2& part2)
   {
-    itsInfo.append(part1); itsInfo.append(part2);
+    itsInfo.append(part1, part2);
   }
 
   /** Append additional text to the error message. */
   template <class T1, class T2, class T3>
   void append(const T1& part1, const T2& part2, const T3& part3)
   {
-    itsInfo.append(part1); itsInfo.append(part2); itsInfo.append(part3);
+    itsInfo.append(part1, part2, part3);
   }
 
   /** Append additional text to the error message. */
@@ -106,8 +97,7 @@ public:
   void append(const T1& part1, const T2& part2, const T3& part3,
               const T4& part4)
   {
-    itsInfo.append(part1); itsInfo.append(part2); itsInfo.append(part3);
-    itsInfo.append(part4);
+    itsInfo.append(part1, part2, part3, part4);
   }
 
 private:

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Wed Aug  8 20:16:39 2001
+// written: Wed Aug  8 20:53:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,6 +70,24 @@ void string_rep::operator delete(void* space)
   repList.deallocate(space);
 }
 
+void string_rep::realloc(std::size_t bufsize)
+{
+  Precondition(itsRefCount <= 1);
+
+  string_rep new_rep(Util::max(itsAllocSize*2, bufsize), 0);
+
+  new_rep.append(this->itsLength, this->itsText);
+
+  Util::swap(itsAllocSize, new_rep.itsAllocSize);
+  Util::swap(itsLength, new_rep.itsLength);
+  Util::swap(itsText, new_rep.itsText);
+}
+
+void string_rep::make_space(std::size_t maxlen)
+{
+  realloc(maxlen+1); itsLength = maxlen;
+}
+
 void string_rep::append(std::size_t length, const char* text)
 {
   Precondition(itsRefCount <= 1);
@@ -82,14 +100,8 @@ void string_rep::append(std::size_t length, const char* text)
     }
   else
     {
-      string_rep new_rep(Util::max(itsAllocSize*2, itsLength + length + 1), 0);
-
-      new_rep.append(this->itsLength, this->itsText);
-      new_rep.append(length, text);
-
-      Util::swap(itsAllocSize, new_rep.itsAllocSize);
-      Util::swap(itsLength, new_rep.itsLength);
-      Util::swap(itsText, new_rep.itsText);
+      realloc(itsLength + length + 1);
+      append(length, text);
     }
 }
 
@@ -174,12 +186,22 @@ char* string_rep::data()
 //
 //---------------------------------------------------------------------
 
-fstring::fstring(std::size_t length) :
+void fstring::init()
+{
+DOTRACE("fstring::init");
+  Precondition(itsRep == 0);
+
+  itsRep = string_rep::make(0);
+
+  itsRep->incrRefCount();
+}
+
+fstring::fstring() :
   itsRep(0)
 {
 DOTRACE("fstring::fstring(int)");
 
-  itsRep = string_rep::make(length);
+  itsRep = string_rep::make(0);
 
   itsRep->incrRefCount();
 }
