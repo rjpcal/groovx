@@ -13,12 +13,16 @@
 #ifndef IDITEM_H_DEFINED
 #define IDITEM_H_DEFINED
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
+#include "util/error.h"
+#endif
+
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRHANDLE_H_DEFINED)
 #include "util/ptrhandle.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
-#include "util/error.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRAITS_H_DEFINED)
+#include "util/traits.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IODECLS_H_DEFINED)
@@ -83,6 +87,14 @@ IdItem<To> dynamicCast(IdItem<Fr> p)
   return IdItem<To>(&t);
 }
 
+// TypeTraits specialization for IdItem smart pointer
+
+namespace Util {
+  template <class T>
+  struct TypeTraits<IdItem<T> > {
+	 typedef T Pointee;
+  };
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -189,6 +201,15 @@ MaybeIdItem<To> dynamicCast(MaybeIdItem<Fr> p)
 	 }
   return MaybeIdItem<To>((To*)0, p.id());
 }
+
+// TypeTraits specialization for MaybeIdItem smart pointer
+
+namespace Util {
+  template <class T>
+  struct TypeTraits<MaybeIdItem<T> > {
+	 typedef T Pointee;
+  };
+};
 
 ///////////////////////////////////////////////////////////////////////
 //
