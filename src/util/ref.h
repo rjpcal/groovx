@@ -66,13 +66,10 @@ public:
   template <class U>
   IdItem(const MaybeIdItem<U>& other);
 
-        T* operator->()       { return itsHandle.get(); }
-  const T* operator->() const { return itsHandle.get(); }
-        T& operator*()        { return *(itsHandle.get()); }
-  const T& operator*()  const { return *(itsHandle.get()); }
+  T* operator->() const { return itsHandle.get(); }
+  T& operator*()  const { return *(itsHandle.get()); }
 
-        T* get()              { return itsHandle.get(); }
-  const T* get()        const { return itsHandle.get(); }
+  T* get()        const { return itsHandle.get(); }
 
   PtrHandle<T> handle() const { return itsHandle; }
   IO::UID id() const { return itsHandle->id(); }
@@ -141,13 +138,10 @@ public:
 
   // Default destructor, copy constructor, operator=() are fine
 
-        T* operator->()       { refresh(); return itsHandle.get(); }
-  const T* operator->() const { refresh(); return itsHandle.get(); }
-        T& operator*()        { refresh(); return *(itsHandle.get()); }
-  const T& operator*()  const { refresh(); return *(itsHandle.get()); }
-
-        T* get()              { refresh(); return itsHandle.get(); }
-  const T* get()        const { refresh(); return itsHandle.get(); }
+  T* operator->() const { refresh(); return itsHandle.get(); }
+  T& operator*()  const { refresh(); return *(itsHandle.get()); }
+  
+  T* get()        const { refresh(); return itsHandle.get(); }
 
   /** This will try to refresh the handle from the id, and will throw
       an exception if the operation fails (if the id is invalid). */
