@@ -36,10 +36,8 @@ namespace eval Objtest {
         } $bc $sc1 $sc2] {^0$}
     }
 
-    proc testCountAllCmd { objname } {
-        upvar $objname this
-
-        set cmdname "${this(baseclass)}::countAll"
+    proc testCountAllCmd { bc sc1 sc2 } {
+        set cmdname "${bc}::countAll"
         set usage "wrong \# args: should be \"$cmdname\""
 
         eval ::test $cmdname {"too many args"} {"
@@ -47,16 +45,14 @@ namespace eval Objtest {
         "} {$usage}
         eval ::test $cmdname {"normal use"} {"
             set before_count \[$cmdname\]
-            Obj::new ${this(subclass1)}
-            Obj::new ${this(subclass2)}
+            Obj::new ${sc1}
+            Obj::new ${sc2}
             set after_count \[$cmdname\]
             return \[expr \$after_count - \$before_count\]
         "} {"^2$"}
     }
 
-    proc testDeleteCmd { objname } {
-        upvar $objname this
-
+    proc testDeleteCmd { bc sc1 sc2 } {
         set cmdname "Obj::delete"
         set usage "wrong \# args: should be \"$cmdname objref\\(s\\)\""
 
@@ -69,16 +65,14 @@ namespace eval Objtest {
         "} {$usage}
 
         eval ::test $cmdname {"normal use"} {"
-            set id \[Obj::new ${this(subclass1)}\]
+            set id \[Obj::new ${sc1}\]
             $cmdname \$id
             IO::is \$id
          "} {"^0$"}
     }
 
-    proc testFindAllCmd { objname } {
-        upvar $objname this
-
-        set cmdname "${this(baseclass)}::findAll"
+    proc testFindAllCmd { bc sc1 sc2 } {
+        set cmdname "${bc}::findAll"
         set usage "wrong \# args: should be \"$cmdname\""
 
         eval ::test $cmdname {"too many args"} {"
@@ -86,21 +80,19 @@ namespace eval Objtest {
         "} {$usage}
 
         eval ::test $cmdname {"normal use on filled list"} {"
-            Obj::new ${this(subclass1)}
-            set remove_me \[Obj::new ${this(subclass1)}\]
-            Obj::new ${this(subclass2)}
+            Obj::new ${sc1}
+            set remove_me \[Obj::new ${sc1}\]
+            Obj::new ${sc2}
             Obj::delete \$remove_me
-            set count \[${this(baseclass)}::countAll\]
+            set count \[${bc}::countAll\]
             set num_ids \[llength \[$cmdname\]\]
             set removed_id \[lsearch -exact \[$cmdname\] \$remove_me\]
             return \"\[expr \$count - \$num_ids\] \$removed_id\"
         "} {"^0 -1$"}
     }
 
-    proc testIsCmd { objname } {
-        upvar $objname this
-
-        set cmdname "${this(baseclass)}::is"
+    proc testIsCmd { bc sc1 sc2 } {
+        set cmdname "${bc}::is"
         set usage "wrong \# args: should be "
 
         eval ::test $cmdname {"too few args"} {"
@@ -112,30 +104,25 @@ namespace eval Objtest {
         "} {$usage}
 
         eval ::test $cmdname {"normal use on valid id"} {"
-            set id \[Obj::new ${this(subclass1)}\]
+            set id \[Obj::new ${sc1}\]
             $cmdname \$id
         "} {"^1$"}
 
         eval ::test $cmdname {"normal use on valid id"} {"
-            set id \[Obj::new ${this(subclass1)}\]
+            set id \[Obj::new ${sc1}\]
             Obj::delete \$id
             $cmdname \$id
         "} {"^0$"}
     }
 
     proc testClass { baseclass subclass1 subclass2 } {
-        set testObj(packagename) Obj
-        set testObj(baseclass) $baseclass
-        set testObj(subclass1) $subclass1
-        set testObj(subclass2) $subclass2
-
         purgeAll
 
         testResetCmd $baseclass $subclass1 $subclass2
-        testCountAllCmd testObj
-        testDeleteCmd testObj
-        testFindAllCmd testObj
-        testIsCmd testObj
+        testCountAllCmd $baseclass $subclass1 $subclass2
+        testDeleteCmd $baseclass $subclass1 $subclass2
+        testFindAllCmd $baseclass $subclass1 $subclass2
+        testIsCmd $baseclass $subclass1 $subclass2
     }
 
     namespace export testClass
