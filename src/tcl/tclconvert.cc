@@ -42,18 +42,12 @@
 #include "util/strings.h"
 #include "util/value.h"
 
+#include <limits>
 #include <tcl.h>
 
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
-
-extern Tcl_ObjType   tclBooleanType;
-extern Tcl_ObjType   tclDoubleType;
-extern Tcl_ObjType   tclIntType;
-extern Tcl_ObjType   tclListType;
-extern Tcl_ObjType   tclStringType;
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -92,13 +86,6 @@ namespace
         Tcl_DecrRefCount(itsObj);
     }
   };
-
-  template <class T>
-  inline void ensurePositive(T t)
-  {
-    if (t < 0)
-      throw Util::Error("signed/unsigned conversion failed", SRC_POS);
-  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -119,13 +106,18 @@ DOTRACE("Tcl::fromTcl(int*)");
 
   int val;
 
-  SafeUnshared safeobj(obj, &tclIntType);
+  static Tcl_ObjType* const intType = Tcl_GetObjType("int");
+
+  Assert(intType != 0);
+
+  SafeUnshared safeobj(obj, intType);
 
   if ( Tcl_GetIntFromObj(0, safeobj.get(), &val) != TCL_OK )
     {
       throw Util::Error(fstring("expected integer but got \"",
                                 Tcl_GetString(obj), "\""), SRC_POS);
     }
+
   return val;
 }
 
@@ -135,7 +127,12 @@ DOTRACE("Tcl::fromTcl(unsigned int*)");
 
   int sval = fromTcl(obj, (int*)0);
 
-  ensurePositive(sval);
+  if (sval < 0)
+    {
+      throw Util::Error(fstring("expected integer "
+                                "but got \"", Tcl_GetString(obj),
+                                "\" (value was negative)"), SRC_POS);
+    }
 
   return (unsigned int) sval;
 }
@@ -144,27 +141,73 @@ long Tcl::fromTcl(Tcl_Obj* obj, long*)
 {
 DOTRACE("Tcl::fromTcl(long*)");
 
-  long val;
+  Tcl_WideInt wideval;
 
-  SafeUnshared safeobj(obj, &tclIntType);
+  static Tcl_ObjType* const wideIntType = Tcl_GetObjType("wideInt");
 
-  if ( Tcl_GetLongFromObj(0, safeobj.get(), &val) != TCL_OK )
+  Assert(wideIntType != 0);
+
+  SafeUnshared safeobj(obj, wideIntType);
+
+  const long longmax = std::numeric_limits<long>::max();
+  const long longmin = std::numeric_limits<long>::min();
+
+  if ( Tcl_GetWideIntFromObj(0, safeobj.get(), &wideval) != TCL_OK )
     {
-      throw Util::Error(fstring("expected long value but got \"",
-                                Tcl_GetString(obj), "\""), SRC_POS);
+      throw Util::Error(fstring("expected long value "
+                                "but got \"", Tcl_GetString(obj),
+                                "\""), SRC_POS);
     }
-  return val;
+  else if (wideval > static_cast<Tcl_WideInt>(longmax))
+    {
+      throw Util::Error(fstring("expected long value "
+                                "but got \"", Tcl_GetString(obj),
+                                "\" (value too large)"), SRC_POS);
+    }
+  else if (wideval < static_cast<Tcl_WideInt>(longmin))
+    {
+      throw Util::Error(fstring("expected long value "
+                                "but got \"", Tcl_GetString(obj),
+                                "\" (value too small)"), SRC_POS);
+    }
+
+  return static_cast<long>(wideval);
 }
 
 unsigned long Tcl::fromTcl(Tcl_Obj* obj, unsigned long*)
 {
 DOTRACE("Tcl::fromTcl(unsigned long*)");
 
-  long sval = fromTcl(obj, (long*)0);
+  Tcl_WideInt wideval;
 
-  ensurePositive(sval);
+  static Tcl_ObjType* const wideIntType = Tcl_GetObjType("wideInt");
 
-  return (unsigned long) sval;
+  Assert(wideIntType != 0);
+
+  SafeUnshared safeobj(obj, wideIntType);
+
+  const unsigned long ulongmax = std::numeric_limits<unsigned long>::max();
+
+  if ( Tcl_GetWideIntFromObj(0, safeobj.get(), &wideval) != TCL_OK )
+    {
+      throw Util::Error(fstring("expected unsigned long value "
+                                "but got \"", Tcl_GetString(obj),
+                                "\""), SRC_POS);
+    }
+  else if (wideval < 0)
+    {
+      throw Util::Error(fstring("expected unsigned long value "
+                                "but got \"", Tcl_GetString(obj),
+                                "\" (value was negative)"), SRC_POS);
+    }
+  else if (wideval > static_cast<Tcl_WideInt>(ulongmax))
+    {
+      throw Util::Error(fstring("expected unsigned long value "
+                                "but got \"", Tcl_GetString(obj),
+                                "\" (value too large)"), SRC_POS);
+    }
+
+  return static_cast<unsigned long>(wideval);
 }
 
 bool Tcl::fromTcl(Tcl_Obj* obj, bool*)
@@ -173,7 +216,11 @@ DOTRACE("Tcl::fromTcl(bool*)");
 
   int int_val;
 
-  SafeUnshared safeobj(obj, &tclBooleanType);
+  static Tcl_ObjType* const booleanType = Tcl_GetObjType("boolean");
+
+  Assert(booleanType != 0);
+
+  SafeUnshared safeobj(obj, booleanType);
 
   if ( Tcl_GetBooleanFromObj(0, safeobj.get(), &int_val) != TCL_OK )
     {
@@ -189,7 +236,11 @@ DOTRACE("Tcl::fromTcl(double*)");
 
   double val;
 
-  SafeUnshared safeobj(obj, &tclDoubleType);
+  static Tcl_ObjType* const doubleType = Tcl_GetObjType("double");
+
+  Assert(doubleType != 0);
+
+  SafeUnshared safeobj(obj, doubleType);
 
   if ( Tcl_GetDoubleFromObj(0, safeobj.get(), &val) != TCL_OK )
     {
@@ -268,7 +319,8 @@ DOTRACE("Tcl::toTcl(unsigned long)");
 
   long sval(val);
 
-  ensurePositive(sval);
+  if (sval < 0)
+    throw Util::Error("signed/unsigned conversion failed", SRC_POS);
 
   return Tcl_NewLongObj(sval);
 }
@@ -286,7 +338,8 @@ DOTRACE("Tcl::toTcl(unsigned int)");
 
   int sval(val);
 
-  ensurePositive(sval);
+  if (sval < 0)
+    throw Util::Error("signed/unsigned conversion failed", SRC_POS);
 
   return Tcl_NewIntObj(sval);
 }
