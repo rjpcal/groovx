@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jun 17 10:38:13 1999
-// written: Fri Jan 18 16:06:56 2002
+// written: Mon Jan 28 11:34:42 2002
 // $Id$
 //
 // Tcl::Code serves as a wrapper for a Tcl command string that is to
@@ -46,16 +46,17 @@ class Tcl::Code
 public:
   class EvalError;
 
+  /// Specify what happens in case of an error during invoke()
   enum ErrorHandlingMode
   {
-    NONE,
-    THROW_EXCEPTION,
-    BACKGROUND_ERROR
+    IGNORE_ERRORS,     // nothing is done except to return false from invoke()
+    THROW_EXCEPTION,   // an EvalError is thrown
+    BACKGROUND_ERROR   // Tcl_BackgroundError() is called
   };
 
   Code();
 
-  Code(const Tcl::ObjPtr& cmd, ErrorHandlingMode mode = NONE);
+  Code(const Tcl::ObjPtr& cmd, ErrorHandlingMode mode = IGNORE_ERRORS);
 
   Code(const Tcl::ObjPtr& cmd, Util::ErrorHandler* errHandler);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:29:16 2001
-// written: Fri Jan 18 16:07:05 2002
+// written: Mon Jan 28 11:33:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ public:
 
 Tcl::Code::Code() :
   itsCodeObj(),
-  itsErrorMode(NONE),
+  itsErrorMode(IGNORE_ERRORS),
   itsFlags(TCL_EVAL_GLOBAL),
   itsErrHandler()
 {}
@@ -49,7 +49,7 @@ Tcl::Code::Code(const Tcl::ObjPtr& cmd, ErrorHandlingMode mode) :
 
 Tcl::Code::Code(const Tcl::ObjPtr& cmd, Util::ErrorHandler* handler) :
   itsCodeObj(cmd),
-  itsErrorMode(NONE),
+  itsErrorMode(IGNORE_ERRORS),
   itsFlags(TCL_EVAL_GLOBAL),
   itsErrHandler(handler)
 {}
@@ -61,25 +61,28 @@ bool Tcl::Code::invoke(Tcl_Interp* interp)
 
   if ( Tcl_EvalObjEx(interp, itsCodeObj.obj(), itsFlags) != TCL_OK )
     {
-      EvalError err(itsCodeObj.obj());
+      if (IGNORE_ERRORS == itsErrorMode)
+        {
+          return false;
+        }
+      else
+        {
+          EvalError err(itsCodeObj.obj());
 
-      if (itsErrHandler != 0)
-        {
-          itsErrHandler->handleError(err);
-        }
-      else if (NONE == itsErrorMode)
-        {
-          return false;
-        }
-      else if (THROW_EXCEPTION == itsErrorMode)
-        {
-          throw err;
-        }
-      else if (BACKGROUND_ERROR == itsErrorMode)
-        {
-          Tcl_AppendResult(interp, err.msg_cstr(), (char*) 0);
-          Tcl_BackgroundError(interp);
-          return false;
+          if (itsErrHandler != 0)
+            {
+              itsErrHandler->handleError(err);
+            }
+          else if (THROW_EXCEPTION == itsErrorMode)
+            {
+              throw err;
+            }
+          else if (BACKGROUND_ERROR == itsErrorMode)
+            {
+              Tcl_AppendResult(interp, err.msg_cstr(), (char*) 0);
+              Tcl_BackgroundError(interp);
+              return false;
+            }
         }
     }
 
