@@ -16,6 +16,7 @@
 #include <cmath>
 
 class ConstSlice;
+class Slice;
 class Mtx;
 
 class Num {
@@ -55,7 +56,7 @@ public:
 
   static void linearCombo(const ConstSlice& vec,
 								  const Mtx& mtx,
-								  double* result);
+								  Slice& result);
 
 private:
   static bool filled;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:28:26 2001
-// written: Tue Mar 13 12:02:06 2001
+// written: Tue Mar 13 12:17:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ double Num::lookup[TABLE_SIZE] = { 0.0 };
 
 void Num::linearCombo(const ConstSlice& vec,
 							 const Mtx& mtx,
-							 double* result)
+							 Slice& result)
 {
 DOTRACE("Num::linearCombo");
 
@@ -40,18 +40,12 @@ DOTRACE("Num::linearCombo");
   //
   // [ w1*e11+w2*e21+w3*e31  w1*e12+w2*e22+w3*e32  ... ]
 
-  if (vec.nelems() != mtx.mrows())
+  if ( (vec.nelems() != mtx.mrows()) ||
+		 (result.nelems() != mtx.ncols()) )
 	 throw ErrorWithMsg("dimension mismatch in linearCombo");
 
-
   for (int col = 0; col < mtx.ncols(); ++col)
-	 {
-		result[col] = 0.0;
-  		for (int row = 0; row < mtx.mrows(); ++row)
-  		  {
-  			 result[col] += vec[row] * mtx.at(row,col);
-		  }
-	 }
+	 result[col] = Slice::dot(vec, mtx.column(col));
 }
 
 double Num::gammalnEngine(double xx)
