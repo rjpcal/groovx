@@ -3,7 +3,7 @@
 // ptrlistbase.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Oct 25 15:59:01 2000
+// written: Wed Oct 25 16:44:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -155,20 +155,13 @@ private:
 #endif
 
 public:
-  Impl(PtrListBase* owner, int size) :
+  Impl(PtrListBase* owner) :
 	 itsOwner(owner),
 #ifdef USE_OLD_ID_SYSTEM
 	 itsFirstVacant(0),
 #endif
 	 itsPtrMap()
 	 {}
-
-  int capacity() const
-	 {
-		MapType::const_reverse_iterator itr = itsPtrMap.rbegin();
-		if (itr == itsPtrMap.rend()) return 1;
-		return itsPtrMap.rbegin()->first + 1;
-	 }
 
   int count() const
 	 {
@@ -364,8 +357,8 @@ DOTRACE("PtrListBase::end");
   return Iterator(new ItrImpl(itsImpl->itsPtrMap.end()));
 }
 
-PtrListBase::PtrListBase(int size) :
-  itsImpl(new Impl(this, size))
+PtrListBase::PtrListBase() :
+  itsImpl(new Impl(this))
 {
 DOTRACE("PtrListBase::PtrListBase");
 }
@@ -373,11 +366,6 @@ DOTRACE("PtrListBase::PtrListBase");
 PtrListBase::~PtrListBase() {
 DOTRACE("PtrListBase::~PtrListBase");
   delete itsImpl; 
-}
-
-int PtrListBase::capacity() const {
-DOTRACE("PtrListBase::capacity");
-  return itsImpl->capacity();
 }
 
 int PtrListBase::count() const {
