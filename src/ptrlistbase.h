@@ -3,7 +3,7 @@
 // ptrlistbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Oct 25 13:59:59 2000
+// written: Wed Oct 25 14:15:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,29 +52,51 @@ public:
   class Impl;
   class ItrImpl;
 
-  class IdIterator {
+  class Iterator {
   private:
 	 ItrImpl* itsImpl;
   public:
-	 IdIterator(ItrImpl* impl);
-	 ~IdIterator();
-	 IdIterator(const IdIterator& other);
-	 IdIterator& operator=(const IdIterator& other);
+	 Iterator(ItrImpl* impl);
+	 ~Iterator();
+	 Iterator(const Iterator& other);
+	 Iterator& operator=(const Iterator& other);
 
-	 bool operator==(const IdIterator& other) const;
+	 bool operator==(const Iterator& other) const;
 
-	 bool operator!=(const IdIterator& other) const
+	 bool operator!=(const Iterator& other) const
 		{ return !(this->operator==(other)); }
 
-	 IdIterator& operator++();
+	 Iterator& operator++();
 
-	 int operator*() const;
+	 int getId() const;
 
 	 IO::IoObject* getObject() const;
   };
 
-  IdIterator beginIds() const;
-  IdIterator endIds() const;
+  class IdIterator : public Iterator {
+	 IdIterator();
+  public:
+	 IdIterator(const Iterator& other) : Iterator(other) {}
+
+	 int operator*() const { return getId(); }
+  };
+
+  class PtrIterator : public Iterator {
+	 PtrIterator();
+  public:
+	 PtrIterator(const Iterator& other) : Iterator(other) {}
+
+	 IO::IoObject* operator*() const { return getObject(); }
+  };
+
+  Iterator begin() const;
+  Iterator end() const;
+
+  IdIterator beginIds() const { return begin(); }
+  IdIterator endIds() const { return end(); }
+
+  PtrIterator beginPtrs() const { return begin(); }
+  PtrIterator endPtrs() const { return end(); }
 
 protected:
   /// Construct a PtrList with an initial reserve capacity of 'size'
