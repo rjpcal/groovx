@@ -3,7 +3,7 @@
 // ptrlistbase.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Mon Oct 23 13:14:38 2000
+// written: Tue Oct 24 13:40:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,55 +77,55 @@ public:
 class VoidPtrHandle {
 public:
   VoidPtrHandle() :
-	 itsMaster(DummyObject::getDummy())
+	 itsRCObject(DummyObject::getDummy())
   {
-	 Invariant(itsMaster != 0);
-	 itsMaster->incrRefCount();
+	 Invariant(itsRCObject != 0);
+	 itsRCObject->incrRefCount();
   }
 
   explicit VoidPtrHandle(RefCounted* master) :
-	 itsMaster(master)
+	 itsRCObject(master)
   {
-	 Invariant(itsMaster != 0);
-	 itsMaster->incrRefCount();
+	 Invariant(itsRCObject != 0);
+	 itsRCObject->incrRefCount();
   }
 
   ~VoidPtrHandle()
   {
-	 Invariant(itsMaster != 0);
-	 itsMaster->decrRefCount();
+	 Invariant(itsRCObject != 0);
+	 itsRCObject->decrRefCount();
   }
 
   VoidPtrHandle(const VoidPtrHandle& other) :
-	 itsMaster(other.itsMaster)
+	 itsRCObject(other.itsRCObject)
   {
-	 Invariant(itsMaster != 0);
-	 itsMaster->incrRefCount();
+	 Invariant(itsRCObject != 0);
+	 itsRCObject->incrRefCount();
   }
 
   VoidPtrHandle& operator=(const VoidPtrHandle& other)
   {
 	 VoidPtrHandle otherCopy(other);
 	 this->swap(otherCopy);
-	 Invariant(itsMaster != 0);
+	 Invariant(itsRCObject != 0);
 	 return *this;
   }
 
-  RefCounted* masterPtr()
+  RefCounted* rcObject()
   {
-	 Invariant(itsMaster != 0);
-	 return itsMaster;
+	 Invariant(itsRCObject != 0);
+	 return itsRCObject;
   }
 
 private:
   void swap(VoidPtrHandle& other)
   {
-	 RefCounted* otherMaster = other.itsMaster;
-	 other.itsMaster = this->itsMaster;
-	 this->itsMaster = otherMaster;
+	 RefCounted* otherMaster = other.itsRCObject;
+	 other.itsRCObject = this->itsRCObject;
+	 this->itsRCObject = otherMaster;
   }
 
-  RefCounted* itsMaster;
+  RefCounted* itsRCObject;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -153,7 +153,7 @@ public:
   {
 	 for (int i = 0; i < itsPtrVec.size(); ++i)
 		{
-		  if ( itsPtrVec[i].masterPtr() == ptr )
+		  if ( itsPtrVec[i].rcObject() == ptr )
 			 return i;
 		}
 	 return -1;
@@ -180,7 +180,7 @@ DOTRACE("PtrListBase::Impl::ensureNotDuplicate");
   for (int i = 0; i < itsPtrVec.size(); ++i) 
 	 {
 		DebugEvalNL(i);
-		Assert(ptr != itsPtrVec[i].masterPtr());
+		Assert(ptr != itsPtrVec[i].rcObject());
 	 }
 #endif
 }
@@ -221,7 +221,7 @@ DOTRACE("PtrListBase::count");
 		 itr != end;
 		 ++itr)
 	 {
-		if (itr->masterPtr()->isValid()) ++num_non_null;
+		if (itr->rcObject()->isValid()) ++num_non_null;
 	 }
   
   return num_non_null;
@@ -236,14 +236,14 @@ DOTRACE("PtrListBase::isValidId");
   DebugEvalNL(id<itsImpl->itsPtrVec.size());
 
   return ( id >= 0 && size_t(id) < itsImpl->itsPtrVec.size() &&
-			  itsImpl->itsPtrVec[id].masterPtr()->isValid() );
+			  itsImpl->itsPtrVec[id].rcObject()->isValid() );
 }
 
 void PtrListBase::remove(int id) {
 DOTRACE("PtrListBase::remove");
   if (!isValidId(id)) return;
 
-  if ( itsImpl->itsPtrVec[id].masterPtr()->isShared() )
+  if ( itsImpl->itsPtrVec[id].rcObject()->isShared() )
 	 throw ErrorWithMsg("can't remove a shared object");
 
   release(id);
@@ -264,10 +264,15 @@ DOTRACE("PtrListBase::clear");
   DebugEvalNL(typeid(*this).name());
   for (size_t i = 0; i < itsImpl->itsPtrVec.size(); ++i) {
 
-	 DebugEval(i); DebugEvalNL(itsImpl->itsPtrVec[i].masterPtr()->refCount());
-	 DebugEvalNL(itsImpl->itsPtrVec[i].masterPtr()->isUnshared());
+	 DebugEval(i); DebugEvalNL(itsImpl->itsPtrVec[i].rcObject()->refCount());
+	 DebugEvalNL(itsImpl->itsPtrVec[i].rcObject()->isUnshared());
 
-	 if ( itsImpl->itsPtrVec[i].masterPtr()->isUnshared() )
+	 if ( !(itsImpl->itsPtrVec[i].rcObject()->isValid()) )
+		{
+		  if (itsImpl->itsFirstVacant > i) itsImpl->itsFirstVacant = i;
+		}
+	 if ( itsImpl->itsPtrVec[i].rcObject()->isValid() &&
+			itsImpl->itsPtrVec[i].rcObject()->isUnshared() )
 		{
 		  release(i);
 		}
@@ -276,8 +281,8 @@ DOTRACE("PtrListBase::clear");
 
 RefCounted* PtrListBase::getPtrBase(int id) const throw () {
 DOTRACE("PtrListBase::getPtrBase");
-  DebugEvalNL(itsImpl->itsPtrVec[id].masterPtr()->refCount());
-  return itsImpl->itsPtrVec[id].masterPtr();
+  DebugEvalNL(itsImpl->itsPtrVec[id].rcObject()->refCount());
+  return itsImpl->itsPtrVec[id].rcObject();
 }
 
 RefCounted* PtrListBase::getCheckedPtrBase(int id) const throw (InvalidIdError) {
@@ -323,7 +328,7 @@ DOTRACE("PtrListBase::insertPtrBaseAt");
 
   Assert(itsImpl->itsPtrVec.size() > uid);
 
-  if (itsImpl->itsPtrVec[uid].masterPtr()->isValid())
+  if (itsImpl->itsPtrVec[uid].rcObject()->isValid())
 	 {
 		InvalidIdError err("object already exists at id '");
 		err.appendNumber(id);
@@ -336,7 +341,7 @@ DOTRACE("PtrListBase::insertPtrBaseAt");
   // nothing needs to be done (in particular, we had better not delete
   // the "previous" object and then hold on the "new" pointer, since
   // the "new" pointer would then be dangling).
-  if ( itsImpl->itsPtrVec[uid].masterPtr() == ptr ) return;
+  if ( itsImpl->itsPtrVec[uid].rcObject() == ptr ) return;
 
   itsImpl->ensureNotDuplicate(ptr);
 
@@ -353,7 +358,7 @@ DOTRACE("PtrListBase::insertPtrBaseAt");
 
   // make sure itsImpl->itsFirstVacant is up-to-date
   while ( (size_t(itsImpl->itsFirstVacant) < itsImpl->itsPtrVec.size()) &&
-			 (itsImpl->itsPtrVec.at(itsImpl->itsFirstVacant).masterPtr()->isValid()) )
+			 (itsImpl->itsPtrVec.at(itsImpl->itsFirstVacant).rcObject()->isValid()) )
 	 { ++(itsImpl->itsFirstVacant); }
 
   afterInsertHook(id, ptr);
