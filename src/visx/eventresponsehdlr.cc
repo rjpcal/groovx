@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Tue May 16 13:06:16 2000
+// written: Mon May 22 12:11:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -298,7 +298,6 @@ private:
 		)
 		throw(ErrorWithMsg)
 		{
-		DOTRACE("EventResponseHdlr::Impl::RegExp_ResponseVal::getCheckedRegexp");
 		  const int flags = 0;
 		  Tcl_RegExp regexp = Tcl_GetRegExpFromObj(interp, patternObj, flags);
 		  if (!regexp) {
