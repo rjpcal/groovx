@@ -3,7 +3,7 @@
 // pipe.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jan 14 17:33:24 2000
-// written: Tue Mar  7 13:47:53 2000
+// written: Thu Mar  9 11:40:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,18 +11,15 @@
 #ifndef PIPE_H_DEFINED
 #define PIPE_H_DEFINED
 
+#ifndef CSTDIO_DEFINED
 #include <cstdio>
-
-// This hackery is required since in the sgi "stdio.h" header,
-// popen(), pclose(), and fileno() are not declared if -ansi is used
-// on the command line. So we force the declarations here in that case.
-#if defined(IRIX6) && !(_NO_ANSIMODE)
-extern FILE	*popen(const char *, const char *);
-extern int	pclose(FILE *);
-extern int	fileno(FILE *);
+#define CSTDIO_DEFINED
 #endif
 
+#ifndef FSTREAM_H_DEFINED
 #include <fstream.h>
+#define FSTREAM_H_DEFINED
+#endif
 
 namespace Util {
   class Pipe;
