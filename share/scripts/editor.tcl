@@ -7,106 +7,121 @@
 #
 ##############################################################################
 
-puts "in editor.tcl"
+package require Iwidgets
 
-set RGBA 0
-set DOUBLE 0
+itcl::class Editor {
+	 private variable itsPanes
+	 private variable itsToglet
+	 private variable itsControls
+	 private variable itsAttribs
+	 private variable itsObjects {}
+	 private variable itsCurrentObj {}
+	 private variable itsVisible true
+	 private variable itsObjectType Face
 
-if { [string equal $::env(HOST) "curie.klab.caltech.edu"] || \
-	  [string equal $::env(HOST) "hume.klab.caltech.edu"] } {
-	 set ::DOUBLE 1
-}
+	 private method addNewObject {} {
+		  # create new object
+		  eval set id [new $itsObjectType]
+		  GrObj::alignmentMode $id $GrObj::CENTER_ON_CENTER
+		  GrObj::scalingMode $id $GrObj::MAINTAIN_ASPECT_SCALING
+		  GrObj::unRenderMode $id $GrObj::CLEAR_BOUNDING_BOX
+		  GrObj::height $id 1.0
 
-set ::CLASSNAME [lindex $argv end]
+		  lappend itsObjects $id
+		  selectObject $id
+	 }
 
-set ::XZOOM 8.0
-set ::YZOOM 8.0
+	 private method selectObject {id} {
+		  set itsCurrentObj $id
 
-if { [string equal $::CLASSNAME "Fish"] } {
-#	 set ::XZOOM 3.0
-#	 set ::YZOOM 3.0
-} elseif { [string equal $::CLASSNAME "Face"] } {
-#	 set ::XZOOM 1.5
-#	 set ::YZOOM 1.5
-} elseif { [string equal $::CLASSNAME "MorphyFace"] } {
-	 set ::XZOOM 6.0
-	 set ::YZOOM 6.0
-	 source facemaker.tcl
-} elseif { [string equal $::CLASSNAME "House"] } {
-#	 set ::XZOOM 5.0
-#	 set ::YZOOM 5.0
-	 source homemaker.tcl
-} elseif { [string equal $::CLASSNAME "Gabor"] } {
-#	 set ::XZOOM 2.0
-#	 set ::YZOOM 2.0
-	 if { [string equal $::env(HOST) "curie.klab.caltech.edu"] } {
-		  set ::RGBA 1
+		  $itsControls.idspinner delete 0 end
+		  $itsControls.idspinner insert 0 $itsCurrentObj
+
+		  requestDraw
+	 }
+
+	 private method requestDraw {} {
+		  if { $itsVisible } {
+				Toglet::clearscreen $itsToglet
+				Toglet::see $itsToglet $itsCurrentObj
+				Toglet::swapBuffers $itsToglet
+		  }
+	 }
+
+	 private method nextObject {step} {
+		  set current [lsearch $itsObjects $itsCurrentObj]
+		  incr current $step
+		  set overflow [expr $current - [llength $itsObjects]]
+		  if { $overflow >= 0 } {
+				set current $overflow
+		  } elseif { $current < 0 } {
+				set current [expr [llength $itsObjects] + $current]
+		  }
+
+		  selectObject [lindex $itsObjects $current]
+	 }
+
+	 private method viewingDist {val} {
+		  Toglet::setViewingDistance $itsToglet $val
+	 }
+
+	 constructor {} {
+		  set itsObjectType [lindex $::argv end]
+
+		  set itsPanes [iwidgets::panedwindow .panes -width 600 -height 600]
+
+		  $itsPanes add toglet
+		  Toglet::defaultParent [$itsPanes childsite toglet]
+		  set itsToglet [new Toglet]
+		  Toglet::currentToglet $itsToglet
+
+		  $itsPanes add controls
+		  set itsControls [$itsPanes childsite controls]
+
+		  $itsPanes add attribs
+		  set itsAttribs [$itsPanes childsite attribs]
+
+		  $itsPanes fraction 50 20 30
+
+		  button $itsControls.new -text "New Object" -relief raised \
+					 -command [itcl::code $this addNewObject]
+		  pack $itsControls.new -side left -anchor nw
+
+		  button $itsControls.redraw -text "Redraw" -relief raised \
+					 -command [itcl::code $this requestDraw]
+		  pack $itsControls.redraw -side left -anchor nw
+
+		  iwidgets::spinner $itsControls.idspinner \
+					 -labeltext "Object id: " -fixed 5 \
+					 -increment [itcl::code $this nextObject 1] \
+					 -decrement [itcl::code $this nextObject -1]
+		  pack $itsControls.idspinner -side left -anchor nw
+
+		  scale $itsControls.viewingdist -label "Scale" \
+					 -from 1 -to 200 -showvalue true -orient horizontal \
+					 -command [itcl::code $this viewingDist]
+		  $itsControls.viewingdist set 60
+		  pack $itsControls.viewingdist -side left -anchor nw
+
+		  pack $itsPanes
+
+		  glColor 0.0 0.0 0.0 1.0
+		  glClearColor 1.0 1.0 1.0 1.0
+
+		  glClear $::GL_COLOR_BUFFER_BIT
+		  glLineWidth 4
 	 }
 }
 
-if { ![Togl::inited] } {
-	 Togl::init
-	 Togl::width 1200
-	 Togl::height 1000
-	 Togl::setViewingDistance 30
-	 Togl::setUnitAngle 2.05
-}
-pack forget .togl_private
+# get rid of the default widget
+Toglet::destroy [Toglet::currentToglet]
 
-#########################################################################
+Editor #auto
 
-. configure -bg LightGray
-
-toplevel .controls
-
-frame .top_frame   -borderwidth 4 -relief raised
-frame .controls.frame  -borderwidth 4 -relief raised
-frame .fig_frame -borderwidth 4 -relief sunken
-
-pack .top_frame   -padx 4 -pady 4 -anchor n  -fill x -expand 1 -side top 
-pack .controls.frame  -padx 4 -pady 4 -anchor nw -fill y -expand 1 -side top
-pack .fig_frame -padx 4 -pady 4 -anchor ne -fill both -expand 1 -side bottom 
-
-button .new -text "New object" -relief raised -font {Helvetica 14} \
-		  -command add_new_object
-pack .new -side left -fill y -anchor nw -in .top_frame
-
-button .redraw -text "Redraw" -relief raised -font Helvetica \
-		  -command {clearscreen; request_draw}
-pack .redraw -side left -fill y -anchor nw -in .top_frame
-
-scale .id -label "Object id" -from 0 -to [expr [ObjList::count]-1] \
-		  -resolution 1 -bigincrement 1 -repeatdelay 500 -repeatinterval 250 \
-		  -font {Helvetica 9} -orient horizontal -command _id
-
-pack .id -side left -fill y -anchor nw -in .top_frame
-bind .id <ButtonPress> { update_max_id }
-
-scale .zoomx -label "X Zoom" -from 0.1 -to 10.0 -resolution 0.1 \
-		  -font {Helvetica 9} -orient horizontal -command reposition
-.zoomx set $::XZOOM
-
-scale .zoomy -label "Y Zoom" -from 0.1 -to 10.0 -resolution 0.1 \
-		  -font {Helvetica 9} -orient horizontal -command reposition
-.zoomy set $::YZOOM
-
-scale .posx -label "X Position" -from \-10.0 -to 10.0 -resolution 0.1 \
-		  -font {Helvetica 9} -orient horizontal -command reposition
-
-scale .posy -label "Y Position" -from \-10.0 -to 10.0 -resolution 0.1 \
-		  -font {Helvetica 9} -orient horizontal -command reposition
-
-pack .zoomx .zoomy .posx .posy -side left -fill y -in .top_frame
+return
 
 set ID 0;
 set POS [Pos::Pos]
-
-proc reposition {dummy} {
-	 if { [ObjList::isValidId $::ID] } undraw
-	 Pos::scale $::POS [.zoomx get] [.zoomy get] 1.0
-	 Pos::translate $::POS [.posx get] [.posy get] 1.0
-	 request_draw
-}
 
 # NOSHOW, if non-zero, will temporarily disable redraws upon slider changes
 set NOSHOW 1
@@ -188,56 +203,6 @@ proc load_faces { datafile } {
 	 .id configure -to [expr [ObjList::count]-1]
 }
 
-proc request_draw {} {
-	 if { $::NOSHOW == 0 && [ObjList::isValidId $::ID] } {
-		  if { $::DOUBLE } { clearscreen }
-		  show $::ID
-		  if { $::DOUBLE } { Togl::swapBuffers }
-	 }
-}
-
-proc add_new_object {} {
-	 # create new object
-	 eval set id [${::CLASSNAME}::${::CLASSNAME}]
-	 GrObj::alignmentMode $id $GrObj::CENTER_ON_CENTER
-	 GrObj::scalingMode $id $GrObj::MAINTAIN_ASPECT_SCALING
-	 GrObj::unRenderMode $id $GrObj::GROBJ_CLEAR_BOUNDING_BOX
-	 GrObj::height $id 1.0
-	 # add it to the trial list
-	 Tlist::makeSingles $::POS
-	 # rescale the id slider
-	 .id configure -to [expr [ObjList::count]-1]
-	 .id set $id
-}
-
-#pack .togl_private -side right -in .fig_frame
-pack .togl_private -fill both -expand 1
-
 source $env(HOME)/face/shared/app.tcl
-
-if { $RGBA } {
-	 glColor 0.0 0.0 0.0 1.0
-	 glClearColor 1.0 1.0 1.0 1.0
-} else {
-	 glIndexi 0
-	 glClearIndex 1
-
-	 if { [string equal $::env(HOST) "curie.klab.caltech.edu"] } {
-		  glClearIndex 7
-	 }
-
-}
-glClear $::GL_COLOR_BUFFER_BIT
-glLineWidth 4
-
-Togl::setVisible false
-update
-add_new_object
-update
-
-Togl::setVisible true
-
-set NOSHOW 0
-request_draw
 
 bind all <ButtonPress-2> { clearscreen; request_draw }
