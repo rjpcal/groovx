@@ -35,7 +35,8 @@
 template <class T> class dynamic_block;
 
 class fstring;
-class GxFont;
+class GxRasterFont;
+class GxVectorFont;
 
 namespace Gfx
 {
@@ -335,8 +336,11 @@ public:
   /// End the current vertex-series.
   virtual void end() = 0;
 
-  /// Render text with the given font.
-  virtual void drawText(const fstring& text, const GxFont& font) = 0;
+  /// Render text with the given raster font.
+  virtual void drawRasterText(const fstring& text, const GxRasterFont& font) = 0;
+
+  /// Render text with the given vector font.
+  virtual void drawVectorText(const fstring& text, const GxVectorFont& font) = 0;
 
   /// Flush all pending drawing requests; swap buffers if double-buffering.
   virtual void flushOutput() = 0;

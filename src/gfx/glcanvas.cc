@@ -34,7 +34,8 @@
 
 #include "gfx/glxopts.h"
 #include "gfx/glxwrapper.h"
-#include "gfx/gxfont.h"
+#include "gfx/gxrasterfont.h"
+#include "gfx/gxvectorfont.h"
 
 #include "gx/bmapdata.h"
 #include "gx/rect.h"
@@ -784,11 +785,9 @@ DOTRACE("GLCanvas::end");
   glEnd();
 }
 
-void GLCanvas::drawRasterText(const fstring& text, const GxFont& font)
+void GLCanvas::drawRasterText(const fstring& text, const GxRasterFont& font)
 {
 DOTRACE("GLCanvas::drawRasterText");
-
-  Assert( font.isRaster() );
 
   glListBase( font.listBase() );
 
@@ -829,11 +828,9 @@ DOTRACE("GLCanvas::drawRasterText");
     }
 }
 
-void GLCanvas::drawVectorText(const fstring& text, const GxFont& font)
+void GLCanvas::drawVectorText(const fstring& text, const GxVectorFont& font)
 {
 DOTRACE("GLCanvas::drawVectorText");
-
-  Assert( !font.isRaster() );
 
   glListBase( font.listBase() );
 
@@ -871,16 +868,6 @@ DOTRACE("GLCanvas::drawVectorText");
       ++p;
       ++line;
     }
-}
-
-void GLCanvas::drawText(const fstring& text, const GxFont& font)
-{
-DOTRACE("GLCanvas::drawText");
-
-  if (font.isRaster())
-    drawRasterText(text, font);
-  else
-    drawVectorText(text, font);
 }
 
 void GLCanvas::flushOutput()

@@ -46,9 +46,10 @@ public:
 
   virtual void bboxOf(const char* text, Gfx::Bbox& bbox) const;
 
-  virtual bool isRaster() const throw();
+  virtual void drawText(const char* text, Gfx::Canvas& canvas) const;
 
-  virtual double vectorHeight() const;
+  /// Return the vector height of the font, in world coords.
+  double vectorHeight() const;
 
 private:
   GxVectorFont(const GxVectorFont&);

@@ -32,8 +32,12 @@
 
 #include "gxvectorfont.h"
 
+#include "gfx/canvas.h"
+
 #include "gx/bbox.h"
 #include "gx/rect.h"
+
+#include "util/strings.h"
 
 #include <cstring>
 #include <GL/gl.h>
@@ -821,10 +825,11 @@ void GxVectorFont::bboxOf(const char* text, Gfx::Bbox& bbox) const
   bbox.drawRect(rect);
 }
 
-bool GxVectorFont::isRaster() const throw()
+void GxVectorFont::drawText(const char* text, Gfx::Canvas& canvas) const
 {
-DOTRACE("GxVectorFont::isRaster");
-  return false;
+DOTRACE("GxVectorFont::drawText");
+
+  canvas.drawVectorText(text, *this);
 }
 
 double GxVectorFont::vectorHeight() const

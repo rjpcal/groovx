@@ -47,9 +47,10 @@ public:
 
   virtual void bboxOf(const char* text, Gfx::Bbox& bbox) const;
 
-  virtual bool isRaster() const throw();
+  virtual void drawText(const char* text, Gfx::Canvas& canvas) const;
 
-  virtual int rasterHeight() const;
+  /// Return the line height of the font, in screen coords (i.e., pixels).
+  int rasterHeight() const;
 
 private:
   GxRasterFont(const GxRasterFont&);

@@ -163,7 +163,8 @@ public:
 
   virtual void end();
 
-  virtual void drawText(const fstring& text, const GxFont& font);
+  virtual void drawRasterText(const fstring& text, const GxRasterFont& font);
+  virtual void drawVectorText(const fstring& text, const GxVectorFont& font);
 
   virtual void flushOutput();
 

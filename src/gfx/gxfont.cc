@@ -70,17 +70,5 @@ shared_ptr<GxFont> GxFont::make(const char* name_cstr)
 
 GxFont::~GxFont() throw() {}
 
-double GxFont::vectorHeight() const
-{
-  throw Util::Error("vectorHeight not implemented for this font");
-  return 0.0;
-}
-
-int GxFont::rasterHeight() const
-{
-  throw Util::Error("rasterHeight not implemented for this font");
-  return 0;
-}
-
 static const char vcid_gxfont_cc[] = "$Header$";
 #endif // !GXFONT_CC_DEFINED

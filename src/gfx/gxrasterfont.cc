@@ -289,10 +289,11 @@ DOTRACE("GxRasterFont::bboxOf");
   bbox.drawRect(bbox.worldFromScreen(screen));
 }
 
-bool GxRasterFont::isRaster() const throw()
+void GxRasterFont::drawText(const char* text, Gfx::Canvas& canvas) const
 {
-DOTRACE("GxRasterFont::isRaster");
-  return true;
+DOTRACE("GxRasterFont::drawText");
+
+  canvas.drawRasterText(text, *this);
 }
 
 int GxRasterFont::rasterHeight() const

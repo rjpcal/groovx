@@ -199,7 +199,7 @@ DOTRACE("GxText::grRender");
   Gfx::AttribSaver asaver(canvas);
 
   canvas.setLineWidth(itsStrokeWidth);
-  canvas.drawText(itsText, *itsFont);
+  itsFont->drawText(itsText.c_str(), canvas);
 }
 
 static const char vcid_gxtext_cc[] = "$Header$";

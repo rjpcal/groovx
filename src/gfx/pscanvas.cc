@@ -991,10 +991,18 @@ DOTRACE("Gfx::PSCanvas::end");
   rep->endPrimitive();
 }
 
-void Gfx::PSCanvas::drawText(const fstring& /*text*/, const GxFont& /*font*/)
+void Gfx::PSCanvas::drawRasterText(const fstring& /*text*/,
+                                   const GxRasterFont& /*font*/)
 {
-DOTRACE("Gfx::PSCanvas::drawText");
-  throw Util::Error("PSCanvas::drawText not implemented");
+DOTRACE("Gfx::PSCanvas::drawRasterText");
+  throw Util::Error("PSCanvas::drawRasterText not implemented");
+}
+
+void Gfx::PSCanvas::drawVectorText(const fstring& /*text*/,
+                                   const GxVectorFont& /*font*/)
+{
+DOTRACE("Gfx::PSCanvas::drawVectorText");
+  throw Util::Error("PSCanvas::drawVectorText not implemented");
 }
 
 void Gfx::PSCanvas::flushOutput()
