@@ -297,7 +297,7 @@ void cppdeps::resolve_one(const char* include_name,
     }
 
   cerr << "warning: couldn\'t resolve #include \""
-            << include_string << "\" for " << filename << "\n";
+       << include_string << "\" for " << filename << "\n";
 }
 
 const cppdeps::include_list_t&
@@ -310,7 +310,7 @@ cppdeps::get_direct_includes(const string& filename)
   }
 
   string dirname_with_slash = filename.substr(0, filename.find_last_of('/'));
-  dirname_with_slash += "/";
+  dirname_with_slash += '/';
 
   include_list_t& vec = direct_includes[filename];
 
@@ -361,9 +361,6 @@ cppdeps::get_direct_includes(const string& filename)
       resolve_one(include_name, include_length, filename,
                   dirname_with_slash, vec);
     }
-
-//   munmap(mem, nbytes);
-//   close(fd);
 
   return vec;
 }
@@ -435,13 +432,14 @@ void cppdeps::batch_build()
           cerr << "not a directory: " << dirname.c_str() << "\n";
           exit(1);
         }
+
       for (dirent* e = readdir(d); e != 0; e = readdir(d))
         {
           if (ignore_directory(e->d_name))
             continue;
 
           string fullname = dirname;
-          fullname += "/";
+          fullname += '/';
           fullname += e->d_name;
 
           if (is_directory(fullname.c_str()))
