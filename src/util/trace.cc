@@ -35,194 +35,19 @@
 #define LOCAL_PROF
 #include "util/trace.h"
 
+#include "util/backtrace.h"
+#include "util/staticstack.h"
+
 #include <algorithm>
 #include <cstdio>
 #include <fstream>
 #include <functional>
 #include <iostream>
 #include <iomanip>
-#include <new>
+#include <new> // for std::nothrow
 
 #include "util/debug.h"
 DBG_REGISTER
-
-template <typename T, unsigned int N>
-class static_stack
-{
-public:
-  static_stack() throw() : vec(), sz(0) {}
-
-  static_stack(const static_stack& other) throw() :
-    vec(), sz(0)
-  {
-    *this = other;
-  }
-
-  static_stack& operator=(const static_stack& other) throw()
-  {
-    sz = other.sz;
-
-    for (unsigned int i = 0; i < sz; ++i)
-      {
-        vec[i] = other.vec[i];
-      }
-
-    return *this;
-  }
-
-  unsigned int size() const throw() { return sz; }
-
-  static unsigned int capacity() throw() { return N; }
-
-  bool push(T p) throw()
-  {
-    if (sz >= N)
-      return false;
-
-    vec[sz++] = p;
-    return true;
-  }
-
-  void pop() throw()
-  {
-    if (sz == 0)
-      Panic("underflow in static_stack::pop");
-    --sz;
-  }
-
-  T top() const throw()
-  {
-    return (sz > 0) ? vec[sz-1] : 0;
-  }
-
-  T at(unsigned int i) const throw()
-  {
-    return (i < sz) ? vec[i] : 0;
-  }
-
-  T operator[](unsigned int i) const throw() { return at(i); }
-
-  typedef       T*       iterator;
-  typedef const T* const_iterator;
-
-  iterator begin() throw() { return &vec[0]; }
-  iterator end()   throw() { return &vec[0] + sz; }
-
-  const_iterator begin() const throw() { return &vec[0]; }
-  const_iterator end()   const throw() { return &vec[0] + sz; }
-
-private:
-  T vec[N];
-  unsigned int sz;
-};
-
-///////////////////////////////////////////////////////////////////////
-//
-// Util::BackTrace member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-struct Util::BackTrace::Impl
-{
-  static_stack<Util::Prof*, 256> vec;
-};
-
-Util::BackTrace::BackTrace() throw() :
-  rep(new (std::nothrow) Impl)
-{
-  if (rep == 0)
-    Panic("memory allocation failed");
-}
-
-Util::BackTrace::BackTrace(const BackTrace& other) throw() :
-  rep(new (std::nothrow) Impl(*other.rep))
-{
-  if (rep == 0)
-    Panic("memory allocation failed");
-}
-
-Util::BackTrace& Util::BackTrace::operator=(const BackTrace& other) throw()
-{
-  *rep = *other.rep;
-  return *this;
-}
-
-Util::BackTrace::~BackTrace() throw()
-{
-  delete rep;
-}
-
-Util::BackTrace& Util::BackTrace::current() throw()
-{
-  static Util::BackTrace* ptr = 0;
-  if (ptr == 0)
-    {
-      ptr = new (std::nothrow) Util::BackTrace;
-
-      if (ptr == 0)
-        Panic("memory allocation failed");
-    }
-  return *ptr;
-}
-
-bool Util::BackTrace::push(Util::Prof* p) throw()
-{
-  return rep->vec.push(p);
-}
-
-void Util::BackTrace::pop() throw()
-{
-  rep->vec.pop();
-}
-
-unsigned int Util::BackTrace::size() const throw()
-{
-  return rep->vec.size();
-}
-
-Util::Prof* Util::BackTrace::top() const throw()
-{
-  return rep->vec.top();
-}
-
-Util::Prof* Util::BackTrace::at(unsigned int i) const throw()
-{
-  return rep->vec.at(i);
-}
-
-void Util::BackTrace::print() const throw()
-{
-  printf("stack trace:\n");
-
-  const unsigned int end = size();
-
-  unsigned int i = 0;
-  unsigned int ri = end-1;
-
-  for (; i < end; ++i, --ri)
-    {
-      fprintf(stderr, "\t[%d] %s\n", int(i), rep->vec.at(ri)->name());
-    }
-}
-
-void Util::BackTrace::print(STD_IO::ostream& os) const throw()
-{
-  os.exceptions(STD_IO::ios::goodbit);
-
-  os << "stack trace:\n";
-
-  const unsigned int end = size();
-
-  unsigned int i = 0;
-  unsigned int ri = end-1;
-
-  for (; i < end; ++i, --ri)
-    {
-      os << "\t[" << i << "] " << rep->vec.at(ri)->name() << '\n';
-    }
-
-  os << std::flush;
-}
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -64,7 +64,6 @@ namespace Util
 {
   class Prof;
   class Trace;
-  class BackTrace;
 }
 
 /// Accumulates profiling information for a given execution context.
@@ -155,54 +154,6 @@ private:
   Util::Time itsStart;
   const bool itsGiveTraceMsg;
   bool itsShouldPop;
-};
-
-/// Represents an instantaneous state of the call stack.
-class Util::BackTrace
-{
-public:
-  /// Default construct an empty call stack.
-  BackTrace() throw();
-
-  /// Copy constructor.
-  BackTrace(const BackTrace& other) throw();
-
-  /// Assignment operator.
-  BackTrace& operator=(const BackTrace& other) throw();
-
-  /// Destructor.
-  ~BackTrace() throw();
-
-  /// Access the current call stack.
-  static BackTrace& current() throw();
-
-  /// Push a new element onto the call stack. Returns true if successful.
-  bool push(Util::Prof* p) throw();
-
-  /// Pop the most recent element off of the call stack.
-  void pop() throw();
-
-  /// Get the number of elements in the call stack.
-  unsigned int size() const throw();
-
-  /// Get the top stack frame, or null if the backtrace is empty.
-  Util::Prof* top() const throw();
-
-  /// Will return a null pointer if i is out of range.
-  Util::Prof* at(unsigned int i) const throw();
-
-  /// Shorthand for at(i).
-  Util::Prof* operator[](unsigned int i) const throw() { return at(i); }
-
-  /// Print the call stack on stderr.
-  void print() const throw();
-
-  /// Print the call stack to the given stream.
-  void print(STD_IO::ostream& os) const throw();
-
-private:
-  struct Impl;
-  Impl* const rep;
 };
 
 #if (defined(TRACE) && !defined(NO_TRACE))
