@@ -37,40 +37,6 @@ void Field::setValue(const Value& new_val)
 }
 
 
-///////////////////////////////////////////////////////////////////////
-//
-// TField member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-TField<T>::TField(const T& val) :
-  Field(), itsVal(val) {}
-
-template <class T>
-TField<T>::~TField() {}
-
-template <class T>
-void TField<T>::readValueFrom(IO::Reader* reader, const fstring& name)
-{ reader->readValue(name, itsVal); }
-
-template <class T>
-void TField<T>::writeValueTo(IO::Writer* writer, const fstring& name) const
-{ writer->writeValue(name.c_str(), itsVal); }
-
-template <class T>
-shared_ptr<Value> TField<T>::value() const
-{ return shared_ptr<Value>(new TValue<T>(itsVal)); }
-
-template <class T>
-void TField<T>::doSetValue(const Value& new_val)
-{ itsVal = new_val.get(Util::TypeCue<T>()); }
-
-template class TField<int>;
-template class TField<bool>;
-template class TField<double>;
-
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -113,40 +79,6 @@ void TBoundedField<T>::doSetValue(const Value& new_val) {
 template class TBoundedField<int>;
 template class TBoundedField<bool>;
 template class TBoundedField<double>;
-
-
-
-///////////////////////////////////////////////////////////////////////
-//
-// TPtrField member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-TPtrField<T>::TPtrField(T& valRef) : Field(), itsVal(valRef) {}
-
-template <class T>
-TPtrField<T>::~TPtrField() {}
-
-template <class T>
-void TPtrField<T>::readValueFrom(IO::Reader* reader, const fstring& name)
-{ reader->readValueObj(name, itsVal); }
-
-template <class T>
-void TPtrField<T>::writeValueTo(IO::Writer* writer, const fstring& name) const
-{ writer->writeValueObj(name.c_str(), itsVal); }
-
-template <class T>
-void TPtrField<T>::doSetValue(const Value& new_val)
-{ itsVal() = new_val.get(Util::TypeCue<T>()); }
-
-template <class T>
-shared_ptr<Value> TPtrField<T>::value() const
-{ return shared_ptr<Value>(itsVal.clone()); }
-
-template class TPtrField<int>;
-template class TPtrField<bool>;
-template class TPtrField<double>;
 
 
 

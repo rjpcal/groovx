@@ -89,6 +89,91 @@ public:
                             IO::Writer* writer, const fstring& name) const;
 };
 
+namespace
+{
+  template <class C, class T>
+  T& dereference(C& obj, T C::* memptr)
+  {
+	 return (obj.*memptr);
+  }
+
+  template <class C, class T>
+  const T& dereference(const C& obj, T C::* memptr)
+  {
+	 return (obj.*memptr);
+  }  
+
+  template <class C, class T>
+  T& dereference(C& obj, T* C::* memptr)
+  {
+	 return *(obj.*memptr);
+  }
+
+  template <class C, class T>
+  const T& dereference(const C& obj, T* C::* memptr)
+  {
+	 return *(obj.*memptr);
+  }  
+
+  template <class T>
+  struct Deref
+  {
+	 typedef T Type;
+  };
+
+  template <class T>
+  struct Deref<T*>
+  {
+	 typedef T Type;
+  };
+}
+
+
+
+/** DataAttrib */
+template <class C, class T>
+class DataAttrib : public FieldMemberPtr {
+  T C::* itsDataMember;
+
+  DataAttrib& operator=(const DataAttrib&);
+  DataAttrib(const DataAttrib&);
+
+public:
+  DataAttrib(T C::* memptr) : itsDataMember(memptr) {}
+
+  virtual void set(FieldContainer* obj, const Value& new_val) const
+  {
+    C& cobj = dynamic_cast<C&>(*obj);
+
+    dereference(cobj, itsDataMember) =
+		new_val.get(Util::TypeCue<Deref<T>::Type >());
+  }
+
+  virtual shared_ptr<Value> get(const FieldContainer* obj) const
+  {
+    const C& cobj = dynamic_cast<const C&>(*obj);
+
+    return shared_ptr<Value>(new TValue<Deref<T>::Type >
+									  (dereference(cobj, itsDataMember)));
+  }
+
+  virtual void readValueFrom(FieldContainer* obj,
+                             IO::Reader* reader, const fstring& name)
+  {
+    C& cobj = dynamic_cast<C&>(*obj);
+
+    reader->readValue(name, dereference(cobj, itsDataMember));
+  }
+
+  virtual void writeValueTo(const FieldContainer* obj,
+                            IO::Writer* writer, const fstring& name) const
+  {
+    const C& cobj = dynamic_cast<const C&>(*obj);
+
+    writer->writeValue(name.c_str(), dereference(cobj, itsDataMember));
+  }
+};
+
 /** ReadWriteAttrib */
 template <class C, class T>
 class ReadWriteAttrib : public FieldMemberPtr {
@@ -157,10 +242,10 @@ private:
   bool itsStartsNewGroup;
 
 public:
-  template <class C, class F>
-  static shared_ptr<FieldMemberPtr> makeMemPtr(F C::* member_ptr)
+  template <class C, class T>
+  static shared_ptr<FieldMemberPtr> makeMemPtr(T C::* member_ptr)
   {
-    return shared_ptr<FieldMemberPtr>(new CFieldMemberPtr<C,F>(member_ptr));
+    return shared_ptr<FieldMemberPtr>(new DataAttrib<C,T>(member_ptr));
   }
 
   template <class C, class T>
@@ -175,6 +260,21 @@ public:
   {
     return ptr;
   }
+
+  struct OldTag {};
+
+  template <class T, class C, class F>
+  FieldInfo(const fstring& name, OldTag, F C::* field_ptr,
+            const T& def, const T& min, const T& max, const T& res,
+            bool new_group=false) :
+    itsName(name),
+    itsMemberPtr(new CFieldMemberPtr<C,F>(field_ptr)),
+    itsDefaultValue(new TValue<T>(def)),
+    itsMin(new TValue<T>(min)),
+    itsMax(new TValue<T>(max)),
+    itsRes(new TValue<T>(res)),
+    itsStartsNewGroup(new_group)
+  {}
 
   template <class T, class M>
   FieldInfo(const fstring& name, M member_ptr_init,
@@ -248,39 +348,6 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * TField template implementation of Field.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-class TField : public Field {
-protected:
-  virtual void doSetValue(const Value& new_val);
-
-  TField(const TField&);        // not implemented
-  TField& operator=(const TField&); // not implemented
-
-public:
-  TField(const T& val = T());
-  virtual ~TField();
-
-  virtual void readValueFrom(IO::Reader* reader, const fstring& name);
-  virtual void writeValueTo(IO::Writer* writer, const fstring& name) const;
-
-  virtual shared_ptr<Value> value() const;
-
-  void setNative(T new_val) { itsVal = new_val; }
-
-  const T& operator()() const { return itsVal; }
-
-private:
-  T itsVal;
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
  * TBoundedField template implementation of Field.
  *
  **/
@@ -310,39 +377,6 @@ private:
   T itsVal;
   const T itsMin;
   const T itsMax;
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * TPtrField template implementation of Field.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-class TPtrField : public Field {
-protected:
-  virtual void doSetValue(const Value& new_val);
-
-  TPtrField(const TPtrField&);  // not implemented
-  TPtrField& operator=(const TPtrField&); // not implemented
-
-public:
-  TPtrField(T& valRef);
-  virtual ~TPtrField();
-
-  virtual void readValueFrom(IO::Reader* reader, const fstring& name);
-  virtual void writeValueTo(IO::Writer* writer, const fstring& name) const;
-
-  void reseat(T& valRef) { itsVal.reseat(valRef); }
-
-  virtual shared_ptr<Value> value() const;
-
-  const T& operator()() const { return itsVal(); }
-
-private:
-  TValuePtr<T> itsVal;
 };
 
 ///////////////////////////////////////////////////////////////////////
