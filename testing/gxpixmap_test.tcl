@@ -265,5 +265,48 @@ test "GxPixmap::scramble" "basic checks" {
     return "$ok $c0 $c1 $c2 $c3 $c4 $c5"
 } {^1 }
 
+wm geometry . 402x402
+update idletasks
+
+test "GLCanvas::bitmap" "single-pixel accuracy" {
+    set p [new GxPixmap]
+
+    glClearColor 0 0 0 0
+
+    see $p
+
+    set c0 [-> [::cv] pixelCheckSum]
+
+    -> $p loadImage testing/images/square_bottom_left.pgm.gz
+    set c1 [-> [::cv] pixelCheckSum]
+    set p1 [-> [::cv] pixelCheckSum 0 0 4 4]
+
+    -> $p loadImage testing/images/square_top_left.pgm.gz
+    set c2 [-> [::cv] pixelCheckSum]
+    set p2 [-> [::cv] pixelCheckSum 0 398 4 4]
+
+    -> $p loadImage testing/images/square_bottom_right.pgm.gz
+    set c3 [-> [::cv] pixelCheckSum]
+    set p3 [-> [::cv] pixelCheckSum 398 0 4 4]
+
+    -> $p loadImage testing/images/square_top_right.pgm.gz
+    set c4 [-> [::cv] pixelCheckSum]
+    set p4 [-> [::cv] pixelCheckSum 398 398 4 4]
+
+    set expected [expr 16*255*3]
+    set ok \
+	[expr \
+	     $c1 == $expected && \
+	     $c2 == $expected && \
+	     $c3 == $expected && \
+	     $c4 == $expected && \
+	     $p1 == $expected && \
+	     $p2 == $expected && \
+	     $p3 == $expected && \
+	     $p4 == $expected ]
+
+    return "$ok $c0 $c1 $c2 $c3 $c4 $p1 $p2 $p3 $p4"
+} {^1 0 }
+
 ### cleanup
 unset PIXMAP
