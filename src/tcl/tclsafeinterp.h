@@ -48,6 +48,8 @@ public:
   SafeInterp(Tcl_Interp* interp);
   ~SafeInterp();
 
+  SafeInterp(const SafeInterp& other) : itsInterp(other.itsInterp) {}
+
   bool hasInterp() const { return itsInterp != 0; }
   Tcl_Interp* intp() const { return itsInterp; }
 
@@ -64,7 +66,7 @@ public:
   template <class Cue>
   typename Cue::Type getResult(Cue) const
   {
-	 return Tcl::Convert<typename Cue::Type>::fromTcl(getObjResult());
+    return Tcl::Convert<typename Cue::Type>::fromTcl(getObjResult());
   }
 
   // Variables
@@ -73,10 +75,10 @@ public:
 
   template <class Cue>
   typename Cue::Type getGlobalVar(Cue, const char* name1,
-											 const char* name2=0) const
+                                  const char* name2=0) const
   {
-	 return Tcl::Convert<typename Cue::Type>::fromTcl
-		(getObjGlobalVar(name1, name2));
+    return Tcl::Convert<typename Cue::Type>::fromTcl
+      (getObjGlobalVar(name1, name2));
   }
 
   // Events
@@ -90,9 +92,6 @@ private:
   Tcl_Obj* getObjGlobalVar(const char* name1, const char* name2) const;
 
   void handleError(const char* msg) const;
-
-  SafeInterp(const SafeInterp&);
-  SafeInterp& operator=(const SafeInterp&);
 
   Tcl_Interp* const itsInterp;
 };
