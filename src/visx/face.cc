@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Sat Feb  9 12:16:03 2002
+// written: Mon Feb 25 11:11:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,7 +68,9 @@ const FieldMap& Face::classFields()
     Field("eyeDistance", &Face::itsEyeDistance, 0.4, 0.0, 1.8, 0.01),
     Field("noseLength", &Face::itsNoseLength, 0.4, -0.0, 3.0, 0.01),
     Field("mouthHeight", &Face::itsMouthHeight, 0.8, -1.2, 1.2, 0.01),
-    Field("partsMask", &Face::itsPartsMask, 0, 0, 15, 1, Field::TRANSIENT)
+    Field("partsMask", &Face::itsPartsMask, 0, 0, 15, 1, Field::TRANSIENT),
+    Field("isFilled", &Face::isItFilled, false, false, true, true,
+          Field::TRANSIENT | Field::BOOLEAN)
   };
 
   static FieldMap FACE_FIELDS(FIELD_ARRAY, &GrObj::classFields());
@@ -88,7 +90,8 @@ Face::Face(double eh, double es, double nl, double mh, int categ) :
   itsEyeDistance(es),
   itsNoseLength(nl),
   itsMouthHeight(mh),
-  itsPartsMask(0)
+  itsPartsMask(0),
+  isItFilled(false)
 {
 DOTRACE("Face::Face");
 
@@ -160,16 +163,32 @@ DOTRACE("Face::grRender");
 
       for (int i = 0; i < nctrlsets; ++i)
         {
-          canvas.drawBezier4(Gfx::Vec3<double>(ctrlpnts+i*12+0),
-                             Gfx::Vec3<double>(ctrlpnts+i*12+3),
-                             Gfx::Vec3<double>(ctrlpnts+i*12+6),
-                             Gfx::Vec3<double>(ctrlpnts+i*12+9),
-                             num_subdivisions);
+          if (isItFilled)
+            {
+              canvas.drawBezierFill4(Gfx::Vec3<double>(0.0, 0.0, 0.0),
+                                     Gfx::Vec3<double>(ctrlpnts+i*12+0),
+                                     Gfx::Vec3<double>(ctrlpnts+i*12+3),
+                                     Gfx::Vec3<double>(ctrlpnts+i*12+6),
+                                     Gfx::Vec3<double>(ctrlpnts+i*12+9),
+                                     num_subdivisions);
+            }
+          else
+            {
+              canvas.drawBezier4(Gfx::Vec3<double>(ctrlpnts+i*12+0),
+                                 Gfx::Vec3<double>(ctrlpnts+i*12+3),
+                                 Gfx::Vec3<double>(ctrlpnts+i*12+6),
+                                 Gfx::Vec3<double>(ctrlpnts+i*12+9),
+                                 num_subdivisions);
+            }
         }
     }
 
   {
-    Gfx::MatrixSaver saver(canvas);
+    Gfx::MatrixSaver msaver(canvas);
+    Gfx::AttribSaver asaver(canvas);
+
+    if (isItFilled)
+      canvas.swapForeBack();
 
     canvas.translate(Gfx::Vec3<double>(0.0, getVertOffset(), 0.0));
 
@@ -219,11 +238,19 @@ DOTRACE("Face::grRender");
                                                0.0));
             canvas.scale(eyeball_scale);
 
-            canvas.drawCircle(0.0, outer_radius, false, num_slices, num_loops);
+            canvas.drawCircle(0.0, outer_radius, isItFilled,
+                              num_slices, num_loops);
 
             canvas.scale(pupil_scale);
 
-            canvas.drawCircle(0.0, outer_radius, false, num_slices, num_loops);
+            {
+              Gfx::AttribSaver asaver(canvas);
+              if (isItFilled)
+                canvas.swapForeBack();
+
+              canvas.drawCircle(0.0, outer_radius, isItFilled,
+                                num_slices, num_loops);
+            }
           }
       }
 
