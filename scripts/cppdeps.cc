@@ -32,6 +32,7 @@
 #define CPPDEPS_CC_DEFINED
 
 #include <cassert>
+#include <cctype>
 #include <iostream>
 #include <map>
 #include <set>
@@ -44,6 +45,7 @@
 #include <sys/mman.h>  // for mmap()
 #include <sys/stat.h>  // for stat()
 #include <sys/types.h>
+#include <time.h>      // for time()
 #include <unistd.h>
 
 using std::vector;
@@ -55,6 +57,16 @@ using std::cerr;
 namespace
 {
   // helper functions
+
+  string string_time(const time_t t)
+  {
+    string s(ctime(&t));
+    while (s.length() > 0 && isspace(s[s.length()-1]))
+      {
+        s.erase(s.length()-1, 1);
+      }
+    return s;
+  }
 
   bool file_exists(const char* fname)
   {
@@ -295,6 +307,9 @@ class cppdeps
 
   string m_strip_prefix;
 
+  const time_t m_start_time;  // so we can check to see if any source files
+                              // have timestamps in the future
+
 public:
   cppdeps(int argc, char** argv);
 
@@ -322,7 +337,8 @@ public:
 cppdeps::cppdeps(int argc, char** argv) :
   m_check_sys_includes(false),
   m_quiet(false),
-  m_output_mode(MAKEFILE_DEPS)
+  m_output_mode(MAKEFILE_DEPS),
+  m_start_time(time((time_t*) 0))
 {
   if (argc == 1)
     {
@@ -559,6 +575,13 @@ cppdeps::get_direct_includes(const string& src_fname)
   include_list_t& vec = m_direct_includes[src_fname];
 
   mapped_file f(src_fname.c_str());
+
+  if (f.mtime() > m_start_time && !m_quiet)
+    {
+      cerr << "WARNING: for file " << src_fname << ":\n"
+           << "\tmodification time (" << string_time(f.mtime()) << ") is in the future\n"
+           << "\tvs. current time  (" << string_time(m_start_time) << ")\n";
+    }
 
   const char* fptr = static_cast<const char*>(f.memory());
   const char* const stop = fptr + f.length();
