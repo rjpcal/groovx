@@ -184,6 +184,8 @@ public:
 
   virtual void flushOutput();
 
+  virtual void finishDrawing();
+
   // OpenGL-specific stuff:
 
   /// Create space for a consecutive sequence of \a num display lists.

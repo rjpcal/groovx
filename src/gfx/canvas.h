@@ -338,8 +338,12 @@ public:
   /// Render text with the given font.
   virtual void drawText(const fstring& text, const GxFont& font) = 0;
 
-  /// Flush all pending drawing requests.
+  /// Flush all pending drawing requests; swap buffers if double-buffering.
   virtual void flushOutput() = 0;
+
+  /// Wait (i.e., don't return) until all pending drawing requests are completed.
+  /** Default implementation is a no-op. */
+  virtual void finishDrawing();
 };
 
 #define BLOCK_TYPEDEF(name) \
