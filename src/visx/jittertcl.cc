@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 14:58:40 1999
-// written: Fri Jan 18 16:07:01 2002
+// written: Fri Nov 22 17:18:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "visx/jitter.h"
 
+#include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 
 #include "util/objfactory.h"

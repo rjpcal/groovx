@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 14 16:24:33 2002
-// written: Fri Jun 14 16:37:35 2002
+// written: Fri Nov 22 17:17:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 
 #include "system/demangle.h"
 
+#include "tcl/objpkg.h"
 #include "tcl/tclcode.h"
 #include "tcl/tclerror.h"
 #include "tcl/tclpkg.h"

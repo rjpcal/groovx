@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Tue Jul  9 16:27:36 2002
+// written: Fri Nov 22 17:17:07 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "io/io.h"
 #include "io/ioutil.h"
 
+#include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 
 #include "util/strings.h"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Apr  3 17:25:29 2002
+// written: Fri Nov 22 17:17:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include "visx/trialbase.h"
 
 #include "tcl/itertcl.h"
+#include "tcl/objpkg.h"
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Sun Nov  3 13:41:11 2002
+// written: Fri Nov 22 17:18:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "visx/kbdresponsehdlr.h"
 #include "visx/nullresponsehdlr.h"
 
+#include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
 

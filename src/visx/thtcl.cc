@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Thu Jan 31 14:36:30 2002
+// written: Fri Nov 22 17:18:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include "visx/timinghdlr.h"
 #include "visx/trialevent.h"
 
+#include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 
 #include "util/objfactory.h"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998 (as objtogl.cc)
-// written: Thu Nov 21 17:10:50 2002
+// written: Fri Nov 22 17:17:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "gfx/gxcamera.h"
 #include "gfx/gxnode.h"
 
+#include "tcl/objpkg.h"
 #include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"

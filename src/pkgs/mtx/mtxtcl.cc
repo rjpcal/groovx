@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul  9 17:49:07 2001
-// written: Fri Jan 18 16:06:58 2002
+// written: Fri Nov 22 17:18:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "mtxobj.h"
 
+#include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 
 #include "util/objfactory.h"

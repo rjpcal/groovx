@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 12:00:53 1999
-// written: Fri Jan 18 16:07:02 2002
+// written: Fri Nov 22 17:18:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "visx/fish.h"
 
 #include "tcl/fieldpkg.h"
+#include "tcl/objpkg.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"

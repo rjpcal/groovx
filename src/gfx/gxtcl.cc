@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Thu Nov 21 18:16:03 2002
+// written: Fri Nov 22 17:13:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,6 +41,7 @@
 
 #include "tcl/fieldpkg.h"
 #include "tcl/itertcl.h"
+#include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
 
