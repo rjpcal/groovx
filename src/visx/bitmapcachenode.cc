@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// grobjrenderer.cc
+// bitmapcachenode.cc
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,10 +10,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROBJRENDERER_CC_DEFINED
-#define GROBJRENDERER_CC_DEFINED
+#ifndef BITMAPCACHENODE_CC_DEFINED
+#define BITMAPCACHENODE_CC_DEFINED
 
-#include "grobjrenderer.h"
+#include "bitmapcachenode.h"
 
 #include "bitmaprep.h"
 #include "glbmaprenderer.h"
@@ -29,58 +29,58 @@
 #include "util/debug.h"
 #include "util/trace.h"
 
-fstring GrObjRenderer::BITMAP_CACHE_DIR(".");
+fstring BitmapCacheNode::BITMAP_CACHE_DIR(".");
 
-GrObjRenderer::GrObjRenderer() :
+BitmapCacheNode::BitmapCacheNode() :
   itsMode(Gmodes::DIRECT_RENDER),
   itsCacheFilename(""),
-  itsBitmapCache(0)
+  itsBitmapRep(0)
 {
-DOTRACE("GrObjRenderer::GrObjRenderer");
+DOTRACE("BitmapCacheNode::BitmapCacheNode");
 }
 
-GrObjRenderer::~GrObjRenderer()
+BitmapCacheNode::~BitmapCacheNode()
 {
-DOTRACE("GrObjRenderer::~GrObjRenderer");
+DOTRACE("BitmapCacheNode::~BitmapCacheNode");
 }
 
-void GrObjRenderer::setCacheFilename(const fstring& name)
+void BitmapCacheNode::setCacheFilename(const fstring& name)
 {
-DOTRACE("GrObjRenderer::setCacheFilename");
+DOTRACE("BitmapCacheNode::setCacheFilename");
   itsCacheFilename = name;
-  itsBitmapCache.reset( 0 );
+  itsBitmapRep.reset( 0 );
 }
 
-void GrObjRenderer::invalidate()
+void BitmapCacheNode::invalidate()
 {
-DOTRACE("GrObjRenderer::invalidate");
-  itsBitmapCache.reset( 0 );
+DOTRACE("BitmapCacheNode::invalidate");
+  itsBitmapRep.reset( 0 );
 }
 
-bool GrObjRenderer::recacheBitmap(const Gnode* node, Gfx::Canvas& canvas) const
+bool BitmapCacheNode::recacheBitmap(const Gnode* node, Gfx::Canvas& canvas) const
 {
-DOTRACE("GrObjRenderer::recacheBitmap");
+DOTRACE("BitmapCacheNode::recacheBitmap");
 
-  if (itsBitmapCache.get() != 0) return false;
+  if (itsBitmapRep.get() != 0) return false;
 
   switch (itsMode)
     {
     case Gmodes::GL_BITMAP_CACHE:
-      itsBitmapCache.reset(
+      itsBitmapRep.reset(
             new BitmapRep(shared_ptr<BmapRenderer>(new GLBmapRenderer())));
       break;
 
     case Gmodes::X11_BITMAP_CACHE:
-      itsBitmapCache.reset(
+      itsBitmapRep.reset(
             new BitmapRep(shared_ptr<BmapRenderer>(new XBmapRenderer())));
       break;
     }
 
-  Assert(itsBitmapCache.get() != 0);
+  Assert(itsBitmapRep.get() != 0);
 
   if ( !itsCacheFilename.empty() )
     {
-      itsBitmapCache->queuePbmFile(fullCacheFilename().c_str());
+      itsBitmapRep->queuePbmFile(fullCacheFilename().c_str());
       return false;
     }
 
@@ -94,22 +94,22 @@ DOTRACE("GrObjRenderer::recacheBitmap");
 
     node->gnodeDraw(canvas);
 
-    itsBitmapCache->grabWorldRect(bmapbox);
+    itsBitmapRep->grabWorldRect(bmapbox);
   }
   glPopAttrib();
 
   if (Gmodes::X11_BITMAP_CACHE == itsMode)
     {
-      itsBitmapCache->flipVertical();
-      itsBitmapCache->flipContrast();
+      itsBitmapRep->flipVertical();
+      itsBitmapRep->flipContrast();
     }
 
   return true;
 }
 
-void GrObjRenderer::setMode(Gmodes::RenderMode new_mode)
+void BitmapCacheNode::setMode(Gmodes::RenderMode new_mode)
 {
-DOTRACE("GrObjRenderer::setMode");
+DOTRACE("BitmapCacheNode::setMode");
 
 #ifdef I686
   // display lists don't work at present with i686/linux/mesa
@@ -122,9 +122,9 @@ DOTRACE("GrObjRenderer::setMode");
   itsMode = new_mode;
 }
 
-void GrObjRenderer::render(const Gnode* node, Gfx::Canvas& canvas) const
+void BitmapCacheNode::render(const Gnode* node, Gfx::Canvas& canvas) const
 {
-DOTRACE("GrObjRenderer::render");
+DOTRACE("BitmapCacheNode::render");
   DebugEvalNL(itsMode);
 
   if (itsMode != Gmodes::GL_BITMAP_CACHE &&
@@ -137,28 +137,28 @@ DOTRACE("GrObjRenderer::render");
       bool objectDrawn = recacheBitmap(node, canvas);
       if (!objectDrawn)
         {
-          Assert(itsBitmapCache.get() != 0);
-          itsBitmapCache->render(canvas);
+          Assert(itsBitmapRep.get() != 0);
+          itsBitmapRep->render(canvas);
         }
     }
 }
 
-void GrObjRenderer::unrender(const Gnode* node, Gfx::Canvas& canvas) const
+void BitmapCacheNode::unrender(const Gnode* node, Gfx::Canvas& canvas) const
 {
-DOTRACE("GrObjRenderer::unrender");
+DOTRACE("BitmapCacheNode::unrender");
 
   node->gnodeUndraw(canvas);
 }
 
-void GrObjRenderer::saveBitmapCache(const Gnode* node, Gfx::Canvas& canvas,
+void BitmapCacheNode::saveBitmapCache(const Gnode* node, Gfx::Canvas& canvas,
                                     const char* filename) const
 {
-  if (itsBitmapCache.get() != 0)
+  if (itsBitmapRep.get() != 0)
     {
       itsCacheFilename = filename;
-      itsBitmapCache->savePbmFile(fullCacheFilename().c_str());
+      itsBitmapRep->savePbmFile(fullCacheFilename().c_str());
     }
 }
 
-static const char vcid_grobjrenderer_cc[] = "$Header$";
-#endif // !GROBJRENDERER_CC_DEFINED
+static const char vcid_bitmapcachenode_cc[] = "$Header$";
+#endif // !BITMAPCACHENODE_CC_DEFINED

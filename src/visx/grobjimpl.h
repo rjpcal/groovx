@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Fri Aug 10 17:36:24 2001
+// written: Fri Aug 10 18:14:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,9 +20,9 @@
 #include "grobj.h"
 #include "grobjaligner.h"
 #include "grobjbbox.h"
-#include "grobjrenderer.h"
 #include "grobjscaler.h"
 
+#include "bitmapcachenode.h"
 #include "glcachenode.h"
 
 class GrObjNode : public Gnode {
@@ -82,7 +82,7 @@ public:
 
   GrObjScaler itsScaler;
   GrObjAligner itsAligner;
-  GrObjRenderer itsRenderer;
+  BitmapCacheNode itsBitmapCache;
 };
 
 static const char vcid_grobjimpl_h[] = "$Header$";

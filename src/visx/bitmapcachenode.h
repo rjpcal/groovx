@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// grobjrenderer.h
+// bitmapcachenode.h
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,8 +10,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef GROBJRENDERER_H_DEFINED
-#define GROBJRENDERER_H_DEFINED
+#ifndef BITMAPCACHENODE_H_DEFINED
+#define BITMAPCACHENODE_H_DEFINED
 
 #include "gmodes.h"
 #include "gnode.h"
@@ -23,10 +23,10 @@ class BitmapRep;
 
 class Gnode;
 
-class GrObjRenderer {
+class BitmapCacheNode {
 public:
-  GrObjRenderer();
-  virtual ~GrObjRenderer();
+  BitmapCacheNode();
+  virtual ~BitmapCacheNode();
 
   static fstring BITMAP_CACHE_DIR;
 
@@ -52,7 +52,7 @@ private:
 
   mutable fstring itsCacheFilename;
 
-  mutable shared_ptr<BitmapRep> itsBitmapCache;
+  mutable shared_ptr<BitmapRep> itsBitmapRep;
 
   fstring fullCacheFilename() const
     {
@@ -67,5 +67,5 @@ private:
   bool recacheBitmap(const Gnode* node, Gfx::Canvas& canvas) const;
 };
 
-static const char vcid_grobjrenderer_h[] = "$Header$";
-#endif // !GROBJRENDERER_H_DEFINED
+static const char vcid_bitmapcachenode_h[] = "$Header$";
+#endif // !BITMAPCACHENODE_H_DEFINED

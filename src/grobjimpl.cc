@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Fri Aug 10 18:09:40 2001
+// written: Fri Aug 10 18:14:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ GrObjImpl::GrObjImpl(GrObj* obj) :
   itsGLCache(new GLCacheNode(itsBB)),
   itsScaler(),
   itsAligner(),
-  itsRenderer()
+  itsBitmapCache()
 {};
 
 GrObjImpl::~GrObjImpl()
@@ -77,13 +77,13 @@ DOTRACE("GrObjImpl::readFrom");
     int temp;
     reader->readValue("GrObj::renderMode", temp);
     itsGLCache->setMode(temp);
-    itsRenderer.setMode(temp);
+    itsBitmapCache.setMode(temp);
   }
 
   {
     fstring filename;
     reader->readValue("GrObj::cacheFilename", filename);
-    itsRenderer.setCacheFilename(filename);
+    itsBitmapCache.setCacheFilename(filename);
   }
 
   {
@@ -125,7 +125,7 @@ DOTRACE("GrObjImpl::writeTo");
 
   writer->writeValue("GrObj::renderMode", itsGLCache->getMode());
 
-  writer->writeValue("GrObj::cacheFilename", itsRenderer.getCacheFilename());
+  writer->writeValue("GrObj::cacheFilename", itsBitmapCache.getCacheFilename());
 
   writer->writeValue("GrObj::unRenderMode", itsGLCache->getUnMode());
 
@@ -159,7 +159,7 @@ DOTRACE("GrObjImpl::draw");
   itsScaler.doScaling(canvas);
   itsAligner.doAlignment(canvas, bbox);
 
-  itsRenderer.render(itsGLCache.get(), canvas);
+  itsBitmapCache.render(itsGLCache.get(), canvas);
 
   canvas.throwIfError("during GrObj::draw");
 }
@@ -174,14 +174,14 @@ DOTRACE("GrObjImpl::undraw");
   itsScaler.doScaling(canvas);
   itsAligner.doAlignment(canvas, bbox);
 
-  itsRenderer.unrender(itsGLCache.get(), canvas);
+  itsBitmapCache.unrender(itsGLCache.get(), canvas);
 }
 
 void GrObjImpl::invalidateCaches()
 {
 DOTRACE("GrObjImpl::invalidateCaches");
   itsGLCache->invalidate();
-  itsRenderer.invalidate();
+  itsBitmapCache.invalidate();
 }
 
 static const char vcid_grobjimpl_cc[] = "$Header$";
