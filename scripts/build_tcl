@@ -1,0 +1,37 @@
+#!/usr/bin/env tclsh
+
+proc find_src { root pattern } {
+    set dirs [lsort [glob ${root}/$pattern]]
+    set dir [lindex $dirs end]
+    puts "found source directory $dir"
+    return $dir
+}
+
+set root [file normalize [lindex $argv 0]]
+set dst [file normalize [lindex $argv 1]]
+
+set tcl_src [find_src $root tcl*/]
+set tk_src [find_src $root tk*/]
+set itcl_src [find_src $root itcl*/]
+set iwidgets_src [find_src $root iwidgets*/]
+
+cd $tcl_src
+exec ./configure --prefix=$dst >&@ stdout
+exec make >&@ stdout
+exec make install >&@ stdout
+
+cd $tk_src
+exec ./configure --prefix=$dst >&@ stdout
+exec make >&@ stdout
+exec make install >&@ stdout
+
+cd $itcl_src
+exec ./configure --prefix=$dst >&@ stdout
+exec make >&@ stdout
+exec make install >&@ stdout
+
+cd $iwidgets_src
+exec ./configure --prefix=$dst \
+    --with-itcl=$itcl_src \
+    --with-itk=$itcl_src >&@ stdout
+exec make install >&@ stdout

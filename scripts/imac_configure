@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# $Id$
+
+# standard configuration for my imac
+
+./configure \
+    --prefix=/Users/rjpeters/local/groovx \
+    --with-tcltk=/Users/rjpeters/local/tcl8.4.5
