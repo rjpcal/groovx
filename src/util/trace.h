@@ -3,7 +3,7 @@
 // trace.h
 // Rob Peters
 // created: Jan-99
-// written: Tue Aug  3 18:36:09 1999
+// written: Wed Aug  4 12:26:21 1999
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -79,23 +79,17 @@ private:
   timeval totalTime;
 };
 
-// We must wrap the Trace class in an unnamed namespace so that when
-// an out-of-line version of ~Trace() is generated, each translation
-// unit gets a unique copy with LOCAL_TRACE compiled in or out, as
-// appropriate.
-namespace {
-
 class Trace {
 public:
-  Trace(Prof& p) : prof(p) {
-#ifdef LOCAL_TRACE
-	 if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
-      for (int i=0; i < TRACE_LEVEL; ++i)
-        cerr << TRACE_TAB;
-      cerr << "entering " << prof.name() << "...\n" << flush;
-    }
-    ++TRACE_LEVEL;
-#endif
+  Trace(Prof& p, bool useMsg) : prof(p), giveTraceMsg(useMsg) {
+	 if (giveTraceMsg) {
+		if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
+		  for (int i=0; i < TRACE_LEVEL; ++i)
+			 cerr << TRACE_TAB;
+		  cerr << "entering " << prof.name() << "...\n" << flush;
+		}
+		++TRACE_LEVEL;
+	 }
 	 gettimeofday(&start, NULL);
   }
   
@@ -104,26 +98,29 @@ public:
 	 elapsed.tv_sec = finish.tv_sec - start.tv_sec;
 	 elapsed.tv_usec = finish.tv_usec - start.tv_usec;
 	 prof.add(elapsed);
-#ifdef LOCAL_TRACE
-    --TRACE_LEVEL;
-    if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
-      for (int i=0; i < TRACE_LEVEL; ++i)
-        cerr << TRACE_TAB;
-      cerr << "leaving " << prof.name() << ".\n" << flush;
-    }
-    if (TRACE_LEVEL == 0) cerr << endl;
-#endif
+	 if (giveTraceMsg) {
+		--TRACE_LEVEL;
+		if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
+		  for (int i=0; i < TRACE_LEVEL; ++i)
+			 cerr << TRACE_TAB;
+		  cerr << "leaving " << prof.name() << ".\n" << flush;
+		}
+		if (TRACE_LEVEL == 0) cerr << endl;
+	 }
   }
 private:
   Prof& prof;
   timeval start, finish, elapsed;
+  const bool giveTraceMsg;
 };
 
-} // end unnamed namepsace
-
-#define DOTRACE(x) static Prof P__(x); Trace T__(P__);
+#  ifdef LOCAL_TRACE
+#    define DOTRACE(x) static Prof P__(x); Trace T__(P__, true);
+#  else
+#    define DOTRACE(x) static Prof P__(x); Trace T__(P__, false);
+#  endif
 #else // !defined(LOCAL_PROF)
-#define DOTRACE(x) {}
+#  define DOTRACE(x) {}
 #endif // !defined(LOCAL_PROF)
 
 static const char vcid_trace_h[] = "$Header$";
