@@ -187,7 +187,7 @@ void XMLWriter::writeValueObj(const char* name, const rutz::value& v)
 DOTRACE("XMLWriter::writeValueObj");
   indent();
   itsBuf << "<valobj"
-         << " type=\"" << value.value_typename() << "\""
+         << " type=\"" << v.value_typename() << "\""
          << " name=\"" << name << "\""
          << " value=\"";
   v.print_to(itsBuf);
