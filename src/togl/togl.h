@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Sun Aug 26 08:53:51 2001
+// written: Tue Jan 22 16:13:18 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -29,11 +29,6 @@
 #include <GL/gl.h>
 #ifdef TOGL_X11
 #include <X11/Xlib.h>
-#endif
-
-#ifdef __sgi
-#include <GL/glx.h>
-#include <X11/extensions/SGIStereo.h>
 #endif
 
 
@@ -64,28 +59,22 @@
 class Togl;
 
 
-#ifdef __cplusplus
 extern "C"
 {
-#endif
+  typedef void (Togl_Callback) (Togl* togl);
+  typedef int  (Togl_CmdProc) (Togl* togl, int argc, char *argv[]);
 
-typedef void (Togl_Callback) (Togl* togl);
-typedef int  (Togl_CmdProc) (Togl* togl, int argc, char *argv[]);
+  extern int Togl_Init( Tcl_Interp *interp );
 
-extern int Togl_Init( Tcl_Interp *interp );
+  // Default callback setup functions
 
-// Default callback setup functions
-
-extern void Togl_CreateFunc( Togl_Callback *proc );
-extern void Togl_DisplayFunc( Togl_Callback *proc );
-extern void Togl_ReshapeFunc( Togl_Callback *proc );
-extern void Togl_DestroyFunc( Togl_Callback *proc );
-extern void Togl_TimerFunc( Togl_Callback *proc );
-extern void Togl_ResetDefaultCallbacks( void );
-
-#ifdef __cplusplus
+  extern void Togl_CreateFunc( Togl_Callback *proc );
+  extern void Togl_DisplayFunc( Togl_Callback *proc );
+  extern void Togl_ReshapeFunc( Togl_Callback *proc );
+  extern void Togl_DestroyFunc( Togl_Callback *proc );
+  extern void Togl_TimerFunc( Togl_Callback *proc );
+  extern void Togl_ResetDefaultCallbacks( void );
 }
-#endif
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -163,17 +152,6 @@ public:
   int screenNumber() const;
   Colormap colormap() const;
   Window windowId() const;
-
-  // SGI stereo-only commands.
-  // Contributed by Ben Evans (Ben.Evans@anusf.anu.edu.au)
-#ifdef __sgi
-  static void stereoDrawBuffer( GLenum mode );
-  static void stereoFrustum( GLfloat left, GLfloat right,
-                             GLfloat bottom, GLfloat top,
-                             GLfloat near, GLfloat far,
-                             GLfloat eyeDist, GLfloat eyeOffset );
-  static void stereoClear( GLbitfield mask );
-#endif
 
   // Generate EPS file.
   // Contributed by Miguel A. De Riera Pasenau (miguel@DALILA.UPC.ES)
