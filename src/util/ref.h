@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Wed Jun 13 15:25:14 2001
+// written: Wed Jun 13 16:21:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -125,6 +125,9 @@ private:
 
     T* get() const { return itsMaster; }
 
+    bool operator==(const Handle& other) const
+    { return itsMaster == other.itsMaster; }
+
   private:
     void swap(Handle& other)
     {
@@ -159,6 +162,12 @@ public:
   T& operator*()  const { return *(get()); }
 
   T* get()        const { return itsHandle.get(); }
+
+  bool operator==(const Ref& other) const
+  { return itsHandle == other.itsHandle; }
+
+  bool operator!=(const Ref& other) const
+  { return !(operator==(other)); }
 
   Util::UID id() const { return get()->id(); }
 };
@@ -255,6 +264,12 @@ private:
 
     T* get()        const { ensureValid(); return itsMaster; }
 
+    bool operator==(const WeakHandle& other) const
+    {
+      this->isValid(); other.isValid(); // force update
+      return itsMaster == other.itsMaster;
+    }
+
   private:
     void acquire() const
     {
@@ -345,6 +360,12 @@ public:
 
   bool isValid() const { return itsHandle.isValid(); }
   bool isInvalid() const { return !(isValid()); }
+
+  bool operator==(const WeakRef& other) const
+  { return itsHandle == other.itsHandle; }
+
+  bool operator!=(const WeakRef& other) const
+  { return !(operator==(other)); }
 
   Util::UID id() const
     { return itsHandle.isValid() ? itsHandle.get()->id() : 0; }
