@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Jul 18 17:07:15 2001
+// written: Thu Jul 19 09:37:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,13 +92,20 @@ DOTRACE("MaskHatch::writeTo");
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
-void MaskHatch::grGetBoundingBox(Rect<double>& bbox,
-                                 int& border_pixels) const {
+void MaskHatch::receiveStateChangeMsg(const Util::Observable* obj)
+{
+  setPixelBorder(lineWidth()/2 + 2);
+  GrObj::receiveStateChangeMsg(obj);
+}
+
+Rect<double> MaskHatch::grGetBoundingBox() const {
 DOTRACE("MaskHatch::grGetBoundingBox");
+
+  Rect<double> bbox;
 
   bbox.left() = bbox.bottom() = 0.0;
   bbox.right() = bbox.top() = 1.0;
-  border_pixels = lineWidth()/2 + 2;
+  return bbox;
 }
 
 void MaskHatch::grRender(GWT::Canvas&, DrawMode) const {

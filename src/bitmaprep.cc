@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Wed Jul 18 17:07:17 2001
+// written: Thu Jul 19 09:29:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -372,14 +372,12 @@ DOTRACE("BitmapRep::render");
 void BitmapRep::unRender(GWT::Canvas& canvas) const {
 DOTRACE("BitmapRep::unRender");
 
-  Rect<double> world_rect;
-  int border_pixels;
-  grGetBoundingBox(world_rect, border_pixels);
+  Rect<double> world_rect = grGetBoundingBox();
 
   Rect<int> screen_pos = canvas.getScreenFromWorld(world_rect);
 
-  screen_pos.widenByStep(border_pixels + 1);
-  screen_pos.heightenByStep(border_pixels + 1);
+  screen_pos.widenByStep(1);
+  screen_pos.heightenByStep(1);
 
   itsImpl->itsRenderer->doUndraw( canvas,
                                   screen_pos.left(),
@@ -392,11 +390,10 @@ DOTRACE("BitmapRep::unRender");
 // accessors //
 ///////////////
 
-void BitmapRep::grGetBoundingBox(Rect<double>& bbox,
-                                 int& border_pixels) const {
+Rect<double> BitmapRep::grGetBoundingBox() const {
 DOTRACE("BitmapRep::grGetBoundingBox");
 
-  border_pixels = 2;
+  Rect<double> bbox;
 
   // Object coordinates for the lower left corner
   bbox.left() = itsImpl->itsRasterX;
@@ -408,18 +405,22 @@ DOTRACE("BitmapRep::grGetBoundingBox");
   Point<int> screen_point =
     canvas.getScreenFromWorld(Point<double>(itsImpl->itsRasterX, itsImpl->itsRasterY));
 
-  if (itsImpl->itsZoomX < 0.0) {
-    screen_point.x() += int(width()*itsImpl->itsZoomX);
-  }
-  if (itsImpl->itsZoomY < 0.0) {
-    screen_point.y() += int(height()*itsImpl->itsZoomY);
-  }
+  if (itsImpl->itsZoomX < 0.0)
+    {
+      screen_point.x() += int(width()*itsImpl->itsZoomX);
+    }
+  if (itsImpl->itsZoomY < 0.0)
+    {
+      screen_point.y() += int(height()*itsImpl->itsZoomY);
+    }
 
   // Move the point to the upper right corner
   screen_point += Point<double>(width()*abs(itsImpl->itsZoomX),
                                 height()*abs(itsImpl->itsZoomY));
 
   bbox.setTopRight(canvas.getWorldFromScreen(screen_point));
+
+  return bbox;
 }
 
 int BitmapRep::byteCount() const {

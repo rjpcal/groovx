@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Wed Jul 18 17:07:15 2001
+// written: Thu Jul 19 09:38:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -565,9 +565,11 @@ DOTRACE("MorphyFace::grRender");
 // Accessors
 ///////////////////////////////////////////////////////////////////////
 
-void MorphyFace::grGetBoundingBox(Rect<double>& bbox,
-                                  int& border_pixels) const {
+Rect<double> MorphyFace::grGetBoundingBox() const {
 DOTRACE("MorphyFace::grGetBoundingBox");
+
+  Rect<double> bbox;
+
   Bezier4 xbezier_top(-1.0, -topWidth(), topWidth(), 1.0);
   Bezier4 xbezier_bottom(1.0, bottomWidth(), -bottomWidth(), -1.0);
 
@@ -585,7 +587,7 @@ DOTRACE("MorphyFace::grGetBoundingBox");
   bbox.top()    =  topHeight() * (1 + hairWidth());
   bbox.bottom() =  bottomHeight();
 
-  border_pixels = 4;
+  return bbox;
 }
 
 bool MorphyFace::check() const {

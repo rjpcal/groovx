@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Wed Jul 18 17:07:17 2001
+// written: Thu Jul 19 09:30:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -261,14 +261,16 @@ DOTRACE("Face::grRender");
 // Accessors
 ///////////////////////////////////////////////////////////////////////
 
-void Face::grGetBoundingBox(Rect<double>& bounding_box,
-                            int& border_pixels) const {
+Rect<double> Face::grGetBoundingBox() const {
 DOTRACE("Face::grGetBoundingBox");
+
+  Rect<double> bounding_box;
   bounding_box.left() = -0.7;
   bounding_box.right() = 0.7;
   bounding_box.bottom() = 0.2 + 0.75*(-1.7-0.2);
   bounding_box.top() = 0.2 + 0.75*(1.4-0.2);
-  border_pixels = 4;
+
+  return bounding_box;
 }
 
 int Face::category() const {

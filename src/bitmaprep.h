@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Wed Jul 18 17:07:14 2001
+// written: Thu Jul 19 09:39:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -144,8 +144,7 @@ public:
   ///////////////
 
   /// Conforms to the \c GrObj interface.
-  void grGetBoundingBox(Rect<double>& bounding_box,
-                        int& border_pixels) const;
+  virtual Rect<double> grGetBoundingBox() const;
 
   /// Get the number of bytes of image data.
   int byteCount() const;

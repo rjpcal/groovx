@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Jul 18 17:07:14 2001
+// written: Thu Jul 19 09:39:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -138,8 +138,7 @@ protected:
   ///////////////
 
 protected:
-  virtual void grGetBoundingBox(Rect<double>& bounding_box,
-                                int& border_pixels) const;
+  virtual Rect<double> grGetBoundingBox() const;
 
 public:
   /// Get the number of bytes of image data.

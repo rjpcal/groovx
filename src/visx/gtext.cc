@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Wed Jul 18 17:07:16 2001
+// written: Thu Jul 19 09:32:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -723,10 +723,12 @@ DOTRACE("Gtext::getText");
 
 void Gtext::setStrokeWidth(int width) {
 DOTRACE("Gtext::setStrokeWidth");
-  if (width > 0) {
-    itsStrokeWidth = width;
-    sendStateChangeMsg();
-  }
+  if (width > 0)
+    {
+      itsStrokeWidth = width;
+      setPixelBorder(itsStrokeWidth+2);
+      sendStateChangeMsg();
+    }
 }
 
 int Gtext::getStrokeWidth() const {
@@ -734,15 +736,15 @@ DOTRACE("Gtext::getStrokeWidth");
   return itsStrokeWidth;
 }
 
-void Gtext::grGetBoundingBox(Rect<double>& bbox,
-                             int& border_pixels) const {
+Rect<double> Gtext::grGetBoundingBox() const {
 DOTRACE("Gtext::grGetBoundingBox");
 
+  Rect<double> bbox;
   bbox.left() = 0.0;
   bbox.right() = (5*itsText.length()) - 1;
   bbox.bottom() = -1.0;
   bbox.top() = 6.0;
-  border_pixels = 2 + itsStrokeWidth;
+  return bbox;
 }
 
 void Gtext::grRender(GWT::Canvas&, DrawMode) const {

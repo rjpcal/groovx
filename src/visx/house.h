@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:15 1999
-// written: Wed Jul 18 17:07:14 2001
+// written: Thu Jul 19 09:41:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -113,8 +113,7 @@ public:
   static const FieldMap& classFields();
 
 protected:
-  virtual void grGetBoundingBox(Rect<double>& bbox,
-                                int& border_pixels) const;
+  virtual Rect<double> grGetBoundingBox() const;
 
   virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const;
 

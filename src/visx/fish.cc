@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Jul 18 17:07:17 2001
+// written: Thu Jul 19 09:30:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -400,14 +400,16 @@ DOTRACE("Fish::readCoordFile");
   }
 }
 
-void Fish::grGetBoundingBox(Rect<double>& bbox,
-                            int& border_pixels) const {
+Rect<double> Fish::grGetBoundingBox() const {
 DOTRACE("Fish::grGetBoundingBox");
+
+  Rect<double> bbox;
   bbox.left() = -0.75;
   bbox.right() = 0.75;
   bbox.bottom() = -0.5;
   bbox.top() = 0.5;
-  border_pixels = 4;
+
+  return bbox;
 }
 
 void Fish::grRender(GWT::Canvas&, DrawMode) const {

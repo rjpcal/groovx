@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Jul 18 17:07:17 2001
+// written: Thu Jul 19 09:31:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -114,15 +114,16 @@ DOTRACE("Gabor::writeTo");
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
-void Gabor::grGetBoundingBox(Rect<double>& bbox,
-                             int& border_pixels) const {
+Rect<double> Gabor::grGetBoundingBox() const {
 DOTRACE("Gabor::grGetBoundingBox");
+
+  Rect<double> bbox;
   bbox.left() = -0.5;
   bbox.right() = 0.5;
   bbox.bottom() = -0.5;
   bbox.top() = 0.5;
 
-  border_pixels = 2;
+  return bbox;
 }
 
 void Gabor::grRender(GWT::Canvas&, DrawMode) const {
