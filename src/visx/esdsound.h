@@ -162,7 +162,8 @@ DOTRACE("Sound::haveSound");
 void Sound::closeSound()
 {
 DOTRACE("Sound::closeSound");
-  esd_audio_close();
+  if (haveSound()) 
+    esd_audio_close();
 }
 
 Sound* Sound::make()
