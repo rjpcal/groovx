@@ -2,7 +2,7 @@
 // expttcl.h
 // Rob Peters
 // created: Mon Mar  8 03:18:35 1999
-// written: Thu Jun 10 18:52:39 1999
+// written: Thu Jun 17 12:48:58 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -15,8 +15,6 @@ typedef int (Tcl_PackageInitProc) (Tcl_Interp* interp);
 class Expt;
 
 namespace ExptTcl {
-  Expt& getExpt();
-
   Tcl_PackageInitProc Expt_Init;
 }
 
