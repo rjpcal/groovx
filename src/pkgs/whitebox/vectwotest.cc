@@ -62,7 +62,7 @@ namespace
   {
     vec2d v(0.6, 0.8);
     v.set_length(5.0);
-    TEST_REQUIRE(approxEq(v.length(), 5.0));
+    TEST_REQUIRE_APPROX(v.length(), 5.0, 1e-40);
     TEST_REQUIRE(v == vec2d(3.0, 4.0));
   }
 

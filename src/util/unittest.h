@@ -41,78 +41,81 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-namespace
+namespace rutz
 {
-  void testRequireImpl(bool expr, const char* exprString,
-                       const rutz::file_pos& pos)
+  void test_require(bool expr,
+                    const char* expr_string,
+                    const rutz::file_pos& pos)
   {
-    dbg_print(3, exprString); dbg_eval_nl(3, expr);
+    dbg_print(3, expr_string); dbg_eval_nl(3, expr);
     if (!expr)
       throw rutz::error(rutz::fstring(pos.m_file_name, ":",
                                       pos.m_line_no, ":\n"
                                       "\texpected: ",
-                                      exprString, "\n"), pos);
+                                      expr_string, "\n"), pos);
   }
 
   template <class T, class U>
-  void testRequireEqImpl(const T& expr1,
-                         const U& expr2,
-                         const char* exprString1,
-                         const char* exprString2,
-                         const rutz::file_pos& pos)
+  void test_require_eq(const T& expr1,
+                       const U& expr2,
+                       const char* expr_string1,
+                       const char* expr_string2,
+                       const rutz::file_pos& pos)
   {
-    dbg_print(3, exprString1); dbg_eval_nl(3, expr1);
-    dbg_print(3, exprString2); dbg_eval_nl(3, expr2);
+    dbg_print(3, expr_string1); dbg_eval_nl(3, expr1);
+    dbg_print(3, expr_string2); dbg_eval_nl(3, expr2);
     if (!(expr1 == expr2))
       {
         rutz::fstring msg(pos.m_file_name, ":", pos.m_line_no,
                           ": failed test:\n");
-        msg.append("\texpected ", exprString1, " (lhs) "
-                   "== ", exprString2, " (rhs)\n");
-        msg.append("\tgot: (lhs) ", exprString1, " == ", expr1, "\n");
-        msg.append("\t     (rhs) ", exprString2, " == ", expr2, "\n");
+        msg.append("\texpected ", expr_string1, " (lhs) "
+                   "== ", expr_string2, " (rhs)\n");
+        msg.append("\tgot: (lhs) ", expr_string1, " == ", expr1, "\n");
+        msg.append("\t     (rhs) ", expr_string2, " == ", expr2, "\n");
         throw rutz::error(msg, pos);
       }
   }
 
-  double APPROX_TOL = 1e-40;
+  const double APPROX_TOL = 1e-40;
 
-  bool approxEq(double a, double b, double tol = APPROX_TOL)
+  bool approx_eq(double a, double b, double tol = APPROX_TOL)
   {
     return fabs(a-b) < tol;
   }
 
-  void testRequireApproxImpl(double expr1,
-                             double expr2,
-                             double tol,
-                             const char* exprString1,
-                             const char* exprString2,
-                             const rutz::file_pos& pos)
+  void test_require_approx_eq(double expr1,
+                              double expr2,
+                              double tol,
+                              const char* expr_string1,
+                              const char* expr_string2,
+                              const rutz::file_pos& pos)
   {
-    dbg_print(3, exprString1); dbg_eval_nl(3, expr1);
-    dbg_print(3, exprString2); dbg_eval_nl(3, expr2);
+    dbg_print(3, expr_string1); dbg_eval_nl(3, expr1);
+    dbg_print(3, expr_string2); dbg_eval_nl(3, expr2);
     dbg_eval_nl(3, tol);
-    if (!approxEq(expr1, expr2, tol))
+    if (!approx_eq(expr1, expr2, tol))
       {
         rutz::fstring msg(pos.m_file_name, ":", pos.m_line_no,
                           ": failed test:\n");
-        msg.append("\texpected ", exprString1, " (lhs) "
-                   "~= ", exprString2, " (rhs)\n");
-        msg.append("\tgot: (lhs) ", exprString1, " == ", expr1, "\n");
-        msg.append("\t     (rhs) ", exprString2, " == ", expr2, "\n");
+        msg.append("\texpected ", expr_string1, " (lhs) "
+                   "~= ", expr_string2, " (rhs)\n");
+        msg.append("\tgot: (lhs) ", expr_string1, " == ", expr1, "\n");
+        msg.append("\t     (rhs) ", expr_string2, " == ", expr2, "\n");
         throw rutz::error(msg, pos);
       }
   }
 }
 
 #define TEST_REQUIRE(expr) \
-  testRequireImpl(bool(expr), #expr, SRC_POS)
+  rutz::test_require(bool(expr), #expr, SRC_POS)
 
 #define TEST_REQUIRE_EQ(expr1, expr2) \
-  testRequireEqImpl(expr1, expr2, #expr1, #expr2, SRC_POS)
+  rutz::test_require_eq(expr1, expr2, \
+                        #expr1, #expr2, SRC_POS)
 
 #define TEST_REQUIRE_APPROX(expr1, expr2, tol) \
-  testRequireApproxImpl(expr1, expr2, tol, #expr1, #expr2, SRC_POS)
+  rutz::test_require_approx_eq(expr1, expr2, tol, \
+                               #expr1, #expr2, SRC_POS)
 
 #define DEF_TEST(pkg, func) pkg->def(#func, "", &func, SRC_POS)
 
