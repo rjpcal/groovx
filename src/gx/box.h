@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  3 15:03:23 2002
-// written: Thu Nov 14 18:37:43 2002
+// written: Thu Nov 14 19:11:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include "gx/rect.h"
 
 #include "util/algo.h"
+#include "util/debug.h"
 
 namespace Gfx
 {
@@ -158,12 +159,16 @@ public:
 
   void merge(const Gfx::Vec3<V>& p)
   {
-    xx0 = Util::min(xx0, p.x());
-    xx1 = Util::max(xx1, p.x());
-    yy0 = Util::min(yy0, p.y());
-    yy1 = Util::max(yy1, p.y());
-    zz0 = Util::min(zz0, p.z());
-    zz1 = Util::max(zz1, p.z());
+    if (p.x() < xx0) xx0 = p.x(); else if (p.x() > xx1) xx1 = p.x();
+    if (p.y() < yy0) yy0 = p.y(); else if (p.y() > yy1) yy1 = p.y();
+    if (p.z() < zz0) zz0 = p.z(); else if (p.z() > zz1) zz1 = p.z();
+  }
+
+  void debugDump() const
+  {
+    dbgEval(0, xx0); dbgEvalNL(0, xx1);
+    dbgEval(0, yy0); dbgEvalNL(0, yy1);
+    dbgEval(0, zz0); dbgEvalNL(0, zz1);
   }
 };
 
