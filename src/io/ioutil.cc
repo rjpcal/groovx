@@ -3,7 +3,7 @@
 // stringifycmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:28 1999
-// written: Tue Nov  2 21:37:30 1999
+// written: Tue Dec  7 18:19:56 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,8 @@
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
+
+namespace Tcl {
 
 void StringifyCmd::invoke() {
 DOTRACE("StringifyCmd::invoke");
@@ -109,6 +111,8 @@ DOTRACE("ReadCmd::invoke");
   AsciiStreamReader reader(ist);
   reader.readRoot(&io);
 }
+
+} // end namespace Tcl
 
 static const char vcid_stringifycmd_cc[] = "$Header$";
 #endif // !STRINGIFYCMD_CC_DEFINED

@@ -3,7 +3,7 @@
 // stringifycmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:43 1999
-// written: Mon Oct 18 18:42:36 1999
+// written: Tue Dec  7 18:19:24 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #endif
 
 class IO;
+
+namespace Tcl {
 
 class StringifyCmd : public TclCmd {
 public:
@@ -70,5 +72,7 @@ private:
   virtual void invoke();
 };
 
+} // end namespace Tcl
+ 
 static const char vcid_stringifycmd_h[] = "$Header$";
 #endif // !STRINGIFYCMD_H_DEFINED
