@@ -3,7 +3,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Fri Sep 29 14:36:06 2000
+// written: Thu Oct 19 11:57:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,9 +111,6 @@ private:
 
   /// Check all invariants and return true if everything is OK.
   bool check() const;
-
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
 };
 
 static const char vcid_face_h[] = "$Header$";
