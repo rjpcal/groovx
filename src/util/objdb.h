@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Oct 25 16:45:27 2000
+// written: Wed Oct 25 16:47:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,8 +24,8 @@
  *
  * \c IoPtrList extends \c PtrListBase by adding and implementing the
  * \c IO interface. This class remains abstract, however, because the
- * cast from \c void* to \c IO* is delegated to subclasses by way of
- * the pure virtual function \c fromVoidToIO().
+ * ensureCorrectType() function from PtrListBase is not implemented
+ * here.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
