@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Mon Nov 15 15:48:46 1999
+// written: Mon Nov 15 16:05:48 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,7 @@
 #include "bezier.h"
 #include "gfxattribs.h"
 #include "reader.h"
+#include "rect.h"
 #include "writer.h"
 
 #define NO_TRACE

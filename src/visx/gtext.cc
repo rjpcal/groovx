@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Mon Nov 15 15:45:50 1999
+// written: Mon Nov 15 16:04:18 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 #include "objtogl.h"
 #include "toglconfig.h"
 #include "reader.h"
+#include "rect.h"
 #include "writer.h"
 
 #define NO_TRACE

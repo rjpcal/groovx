@@ -3,7 +3,7 @@
 // maskhatch.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Mon Nov 15 15:47:45 1999
+// written: Mon Nov 15 16:05:18 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include <string>
 
 #include "reader.h"
+#include "rect.h"
 #include "writer.h"
 
 #define NO_TRACE

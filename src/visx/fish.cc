@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Mon Nov 15 15:43:04 1999
+// written: Mon Nov 15 16:01:39 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,7 @@
 
 #include "error.h"
 #include "reader.h"
+#include "rect.h"
 #include "writer.h"
 
 #define NO_TRACE
