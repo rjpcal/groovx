@@ -4409,3 +4409,65 @@
 
   Aha. This reveals a lot of tests that are run multiple times without
   any actual variation.
+
+* (12-Oct-2004) Make it easier to debug+test timing sequences
+
+  Need to generalize Tcl::Timer into something that includes a
+  Scheduler interface. The usual Scheduler interface would just rely
+  on Tcl_CreateTimerHandler, but we could have a DebugScheduler that
+  would allow us to manually step through events.
+
+  How to do this incrementally?
+
+  (1-done) Just implement a Tcl::TimerScheduler, then have Tcl::Timer
+	   rely on that.
+
+  (2-done) Make a generic Util::Scheduler, and have Tcl::Timer depend
+	   on that instead of the specific Tcl::TimerScheduler
+	   implementation. OK, but who is going to feed the specific
+	   Util::Scheduler object to Tcl::Timer? This depends on the
+	   location in which we wish to inject a choice between
+	   "normal" and "debug" scheduling. Is it another global
+	   choice, where we just have a global "current scheduler"?
+	   No, that's no good... we might want to have multiple
+	   schedulers operating simultaneously (e.g. scene update
+	   "normal", experiment progress in "debug" mode). So maybe
+	   the scheduler is stored in ExptDriver, and passed along the
+	   Element object hieararchy? Does that move ExptDriver too
+	   much in the direction of a God class?
+
+	   Essentially Util::Scheduler is doing the "Abstract Factory"
+	   pattern, where it creates Util::TimerToken objects.
+
+  (3-done) Now Tcl::Timer doesn't depend on Tcl, so move it elsewhere
+	   (maybe down into Util?).
+
+  (4-done) Change Tcl::TimerScheduler to hold a Tcl::Interp, to which
+	   it can direct background errors; this way we don't need
+	   Tcl::Main::interp() in Tcl::Timer. Maybe we get this by
+	   having Tcl::Interp itself create the Tcl::TimerScheduler,
+	   i.e. interp.getScheduler().
+
+  (5-done) OK, now we have all the smarts in Util::Timer, but we still
+	   have a Tcl::Timer class whose only purpose is to hook up a
+	   Util::Timer object with a Tcl::TimerScheduler. Need to move
+	   this logic elsewhere. First, need to get clients to rely on
+	   Util::Timer instead of Tcl::Timer.
+
+           Who uses Tcl::Timer?
+
+           --> GxScene
+           --> TrialEvent
+
+           OK, now those guys just use a Util::Timer and do their own
+           hooking up with a Tcl::TimerScheduler.
+
+  (6-done) Hmmm... right now Util::Timer holds a
+	   shared_ptr<Scheduler>, but only uses it in
+	   Util::Timer::schedule(). Should we instead pass the
+	   Scheduler object to schedule()?
+
+           Just going by names, it seems like TimingHdlr should be the
+           one to hold the Scheduler object, since that would also be
+           the logical point of customization for the scheduling
+           algorithm.
