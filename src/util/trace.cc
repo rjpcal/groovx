@@ -18,10 +18,12 @@
 
 #include "util/minivec.h"
 
+#include <algorithm>
 #include <cstdio>
-#include <fstream.h>
-#include <iostream.h>
-#include <iomanip.h>
+#include <fstream>
+#include <functional>
+#include <iostream>
+#include <iomanip>
 #include <sys/resource.h>
 
 #define TRACE_WALL_CLOCK_TIME
