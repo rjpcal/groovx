@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Mar 13 17:58:02 2001
+// written: Tue Mar 13 18:08:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,6 +112,9 @@ public:
 		s += *i;
 	 return s;
   }
+
+  double mean() const
+    { return sum()/itsNelems; }
 
   static double dot(const ConstSlice& s1, const ConstSlice& s2)
   {
