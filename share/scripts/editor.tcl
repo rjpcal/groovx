@@ -25,73 +25,214 @@ package require Iwidgets
 
 set ::statusInfo "VisEdit started."
 
+set ::COUNTER 0
+
+proc AUTO {} { return "::object[incr ::COUNTER]" }
+
 proc debug {msg} {
 	 if {0} { puts $msg }
 }
 
-#
-# FieldControls class definition
-#
+proc buildScale {path label min max step callback} {
+	  scale $path -label $label \
+				 -from $min -to $max \
+				 -resolution $step \
+				 -bigincrement $step \
+				 -digits [string length $step] \
+				 -repeatdelay 500 -repeatinterval 250 \
+				 -orient horizontal \
+				 -command $callback
+}
 
-itcl::class FieldControls {
-	 private variable itsObjType
-	 private variable itsNames
+itcl::class FieldInfo {
+	 private variable itsName
+	 private variable itsMin
+	 private variable itsMax
+	 private variable itsRes
+	 private variable itsStartsNewGroup
 	 private variable isItTransient
 	 private variable isItString
 	 private variable isItMulti
 	 private variable isItGettable
 	 private variable isItSettable
 	 private variable isItBoolean
+	 private variable isItPrivate
+
+	 constructor {finfo} {
+		  set itsName [namespace tail [lindex $finfo 0]]
+		  set itsMin  [lindex $finfo 1]
+		  set itsMax  [lindex $finfo 2]
+		  set itsRes  [lindex $finfo 3]
+
+		  set flags [lindex $finfo 4]
+
+		  set itsStartsNewGroup [expr [lsearch $flags NEW_GROUP] != -1]
+		  set isItTransient [expr [lsearch $flags TRANSIENT] != -1]
+		  set isItString    [expr [lsearch $flags STRING] != -1]
+		  set isItMulti     [expr [lsearch $flags MULTI] != -1]
+		  set isItGettable  [expr [lsearch $flags NO_GET] == -1]
+		  set isItSettable  [expr [lsearch $flags NO_SET] == -1]
+		  set isItBoolean   [expr [lsearch $flags BOOLEAN] != -1]
+		  set isItPrivate   [expr [lsearch $flags PRIVATE] != -1]
+	 }
+
+	 public method name {} { return $itsName }
+	 public method max {} { return $itsMax }
+	 public method min {} { return $itsMin }
+	 public method res {} { return $itsRes }
+	 public method startsNewGroup {} { return $itsStartsNewGroup }
+
+	 public method isTransient {} { return $isItTransient }
+	 public method isString    {} { return $isItString }
+	 public method isMulti     {} { return $isItMulti }
+	 public method isGettable  {} { return $isItGettable }
+	 public method isSettable  {} { return $isItSettable }
+	 public method isBoolean   {} { return $isItBoolean }
+	 public method isPrivate   {} { return $isItPrivate }
+}
+
+itcl::class StringController {
+	 private variable itsWidget
+
+	 private common toBeAligned
+
+	 constructor {finfo parent command} {
+		  set fname [$finfo name]
+
+		  set itsWidget [iwidgets::entryfield $parent.$fname \
+					 -labeltext $fname -labelpos n \
+					 -width 15 \
+					 -command $command]
+
+		  lappend toBeAligned $parent.$fname
+	 }
+
+	 public method setVal {val} {
+		  $itsWidget delete 0 end
+		  $itsWidget insert 0 $val
+	 }
+
+	 public method getVal {} {
+		  return [$itsWidget get]
+	 }
+
+	 public proc alignUs {} {
+		  eval iwidgets::Labeledwidget::alignlabels $toBeAligned
+	 }
+}
+
+itcl::class MultiController {
+	 private variable itsWidgets
+
+	 constructor {finfo parent command} {
+		  set itsWidgets [list]
+
+		  set fname [$finfo name]
+
+		  set theFrame [frame $parent.$fname -relief ridge -borderwidth 2]
+
+		  label $theFrame.label -text "$fname" -foreground darkgreen
+
+		  pack $theFrame.label -side top -anchor nw
+
+		  set i 0
+
+		  foreach min [$finfo min] max [$finfo max] res [$finfo res] {
+				set path $theFrame.multi$i
+				incr i
+
+				buildScale $path "" $min $max $res $command
+
+				pack $path -side top
+
+				lappend itsWidgets $path
+		  }
+
+	 }
+
+	 public method setVal {val} {
+		  foreach widg $itsWidgets v $val {
+				$widg set $v
+		  }
+	 }
+
+	 public method getVal {} {
+		  set val [list]
+		  foreach widg $itsWidgets {
+				lappend val [$widg get]
+		  }
+		  return $val
+	 }
+}
+
+itcl::class BooleanController {
+	 private variable itsWidget
+	 private variable itsFname
+
+	 constructor {finfo parent command} {
+		  set itsFname [$finfo name]
+
+		  set itsWidget [iwidgets::checkbox $parent.$itsFname -borderwidth 0]
+
+		  $itsWidget add $itsFname -text $itsFname -command $command
+
+		  $itsWidget configure -foreground brown
+	 }
+
+	 public method setVal {val} {
+		  if { $val } {
+				$itsWidget select $itsFname
+		  } else {
+				$itsWidget deselect $itsFname
+		  }
+	 }
+
+	 public method getVal {} {
+		  return [$itsWidget get $itsFname]
+	 }
+}
+
+itcl::class ScaleController {
+	 private variable itsWidget
+
+	 constructor {finfo parent command} {
+		  set fname [$finfo name]
+		  set itsWidget [buildScale $parent.$fname $fname \
+					 [$finfo min] [$finfo max] [$finfo res] \
+					 $command]
+	 }
+
+	 public method setVal {val} {
+		  $itsWidget set $val
+	 }
+
+	 public method getVal {} {
+		  return [$itsWidget get]
+	 }
+}
+
+#
+# FieldControlSet class definition
+#
+
+itcl::class FieldControlSet {
+	 private variable itsObjType
+	 private variable itsFieldInfos
 	 private variable itsFrame
-	 private variable itsControls
-	 private variable itsMultiControls
+	 private variable itsControllers
 	 private variable itsCachedValues
+	 private variable itsCallback
 
 	 private method setControl {fname val} {
-		  set control $itsControls($fname)
+		  $itsControllers($fname) setVal $val
 
-		  if { $isItString($fname) } {
-				$control delete 0 end
-				$control insert 0 $val
-		  } elseif { $isItMulti($fname) } {
-				foreach ctrl $itsMultiControls($fname) v $val {
-					 $ctrl set $v
-				}
-		  } elseif { $isItBoolean($fname) } {
-				if { $val } {
-					 $control select $fname
-				} else {
-					 $control deselect $fname
-				}
-		  } else {
-				$control set $val
-		  }
 		  set itsCachedValues($fname) $val
 	 }
 
-	 private method onControl {callback fname {val {}}} {
-		  if { $isItString($fname) } {
-				set val [$itsControls($fname) get]
-		  } elseif { $isItMulti($fname) } {
-				set val [list]
-				foreach ctrl $itsMultiControls($fname) {
-					 lappend val [$ctrl get]
-				}
-		  } elseif { $isItBoolean($fname) } {
-				set val [$itsControls($fname) get $fname]
-		  }
-		  $callback $fname $val
-	 }
+	 private method onControl {fname {val {}}} {
+		  set val [$itsControllers($fname) getVal]
 
-	 private method buildScale {path label min max step callback} {
-		  scale $path -label $label \
-					 -from $min -to $max \
-					 -resolution $step \
-					 -bigincrement $step \
-					 -digits [string length $step] \
-					 -repeatdelay 500 -repeatinterval 250 \
-					 -orient horizontal \
-					 -command $callback
+		  $itsCallback $fname $val
 	 }
 
 	 constructor {panes objtype setCallback} {
@@ -100,109 +241,58 @@ itcl::class FieldControls {
 		  set parent [$panes childsite $objtype]
 
 		  set itsObjType $objtype
-		  set itsNames [list]
+
+		  set itsCallback $setCallback
 
 		  set itsFrame [frame $parent.fields]
 
-		  set currentframe ""
-
-		  set align_us [list]
+		  set subframe ""
 
 		  set column 0
 
-		  foreach finfo [${objtype}::allFields] {
-				set fname [namespace tail [lindex $finfo 0]]
-				set lower [lindex $finfo 1]
-				set upper [lindex $finfo 2]
-				set step [lindex $finfo 3]
-				set flags [lindex $finfo 4]
+		  foreach fdata [${objtype}::allFields] {
+				set finfo [FieldInfo [::AUTO] $fdata]
 
-				set is_private [expr [lsearch $flags PRIVATE] != -1]
+				if { [$finfo isPrivate] } { itcl::delete object $finfo; continue }
 
-				if {$is_private} { continue }
+				set fname [$finfo name]
 
-				set isItTransient($fname) [expr [lsearch $flags TRANSIENT] != -1]
-				set isItString($fname) [expr [lsearch $flags STRING] != -1]
-				set isItMulti($fname) [expr [lsearch $flags MULTI] != -1]
-				set isItGettable($fname) [expr [lsearch $flags NO_GET] == -1]
-				set isItSettable($fname) [expr [lsearch $flags NO_SET] == -1]
-				set isItBoolean($fname) [expr [lsearch $flags BOOLEAN] != -1]
-				set startsnewgroup [expr [lsearch $flags NEW_GROUP] != -1]
-
-				if {$startsnewgroup} {
-					 set currentframe [frame $itsFrame.column$column]
-					 incr column
-					 pack $currentframe -side left -fill y -expand yes
-				}
-
-				lappend itsNames $fname
 				set itsCachedValues($fname) 0
 
-				set pane $currentframe
+				set itsFieldInfos($fname) $finfo
 
-				if { $isItString($fname) } {
-					 iwidgets::entryfield $pane.$fname \
-								-labeltext $fname -labelpos n \
-								-width 15 \
-								-command [itcl::code $this onControl $setCallback $fname]
-					 lappend align_us $pane.$fname
-
-					 set itsControls($fname) $pane.$fname
-				} elseif { $isItMulti($fname) } {
-					 frame $pane.$fname -relief ridge -borderwidth 2
-
-					 label $pane.$fname.label -text "$fname" -foreground darkgreen
-
-					 pack $pane.$fname.label -side top -anchor nw
-
-					 set itsMultiControls($fname) [list]
-
-					 set i 0
-
-					 foreach min $lower max $upper res $step {
-						  set path $pane.$fname.multi$i
-						  incr i
-
-						  buildScale $path "" $min $max $res \
-									 [itcl::code $this onControl $setCallback $fname]
-
-						  pack $path -side top
-
-						  lappend itsMultiControls($fname) $path
-					 }
-					 set itsControls($fname) $pane.$fname
-				} elseif { $isItBoolean($fname) } {
-
-					 set itsControls($fname) [iwidgets::checkbox $pane.$fname \
-								-borderwidth 0]
-
-					 $pane.$fname add $fname -text $fname \
-								-command [itcl::code $this onControl $setCallback $fname]
-
-					 $pane.$fname configure -foreground brown
-				} else {
-
-					 buildScale $pane.$fname $fname $lower $upper $step \
-								[itcl::code $this onControl $setCallback $fname]
-					 set itsControls($fname) $pane.$fname
+				if { [$finfo startsNewGroup] } {
+					 set subframe [frame $itsFrame.column$column]
+					 incr column
+					 pack $subframe -side left -fill y -expand yes
 				}
 
-				if {$isItTransient($fname)} {
-					 $pane.$fname configure -foreground blue
+				set type ScaleController
+
+				if { [$finfo isString] } { set type StringController }
+				if { [$finfo isMulti] }  { set type MultiController }
+				if { [$finfo isBoolean] } { set type BooleanController }
+
+				set itsControllers($fname) [$type [::AUTO] \
+						  $finfo $subframe \
+						  [itcl::code $this onControl $fname]]
+
+				if { [$finfo isTransient] } {
+					 $subframe.$fname configure -foreground blue
 				}
 
-				pack $pane.$fname -side top
+				pack $subframe.$fname -side top
 		  }
 
-		  eval iwidgets::Labeledwidget::alignlabels $align_us
+		  StringController::alignUs
 
 		  pack $itsFrame -fill y -side left		  
 	 }
 
 	 public method update {obj} {
-		  foreach fname $itsNames {
+		  foreach fname [array names itsFieldInfos] {
 				set val ""
-				if { $isItGettable($fname) } {
+				if { [$itsFieldInfos($fname) isGettable] } {
 					 set val [${itsObjType}::$fname $obj]
 				}
 				setControl $fname $val
@@ -211,7 +301,7 @@ itcl::class FieldControls {
 
 	 public method setAttribForObjs {objs fname val} {
 		  debug "setting $objs $fname to $val"
-		  if { $isItSettable($fname) } {
+		  if { [$itsFieldInfos($fname) isSettable] } {
 				set val [subst $val]
 				if { $itsCachedValues($fname) != $val } {
 					 ${itsObjType}::$fname $objs $val
@@ -455,7 +545,7 @@ itcl::class Editor {
 		  if { ![info exists itsControlSets($objtype)] } {
 
 				set itsControlSets($objtype) \
-						  [FieldControls #auto $itsPanes $objtype \
+						  [FieldControlSet [::AUTO] $itsPanes $objtype \
 						  [itcl::code $this setAttrib]]
 
 		  }
@@ -732,8 +822,8 @@ itcl::class Menuapp {
 		  pack $itsFrame -fill both -expand yes
 		  pack $itsHelpEntry -anchor sw -fill x -expand yes
 
-		  set itsEditor [Editor #auto $itsFrame]
+		  set itsEditor [Editor [::AUTO] $itsFrame]
 	 }
 }
 
-set app [Menuapp #auto]
+set app [Menuapp [::AUTO]]
