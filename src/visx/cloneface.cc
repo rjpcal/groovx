@@ -3,7 +3,7 @@
 // cloneface.cc
 // Rob Peters
 // created: Thu Apr 29 09:19:26 1999
-// written: Thu Oct 19 15:38:50 2000
+// written: Fri Oct 20 16:54:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,11 @@
 // CloneFace member functions
 //
 ///////////////////////////////////////////////////////////////////////
+
+CloneFace* CloneFace::make() {
+DOTRACE("CloneFace::make");
+  return new CloneFace;
+}
 
 CloneFace::CloneFace () : 
   Face(), itsEyeAspect(0.0), itsVertOffset(0.0) 
