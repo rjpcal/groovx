@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Mon Sep 20 16:36:45 1999
+// written: Thu Sep 23 14:30:11 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,10 @@
 
 #ifndef GROBJ_H_DEFINED
 #include "grobj.h"
+#endif
+
+#ifndef RECT_H_DEFINED
+#include "rect.h"
 #endif
 
 #ifndef STRING_DEFINED
@@ -49,12 +53,14 @@ public:
   public:    void loadPbmFile(const char* filename);
 
   public:    void grabScreenRect(int left, int top, int right, int bottom);
+  public:    void grabScreenRect(const Rect<int>& rect);
   public:    void grabWorldRect(double left, double top,
 										  double right, double bottom);
+  public:    void grabWorldRect(const Rect<double>& rect);
   // These routines grab pixels from a rectanglur area of the screen
-  // buffer into the Bitmap's pixel array. Two functions are provided
-  // so that the coordinates of the rectangle may be specified in
-  // pixel values, or in OpenGL coordinate values.
+  // buffer into the Bitmap's pixel array. The coordinates of the
+  // rectangle may be specified in pixel values (ScreenRect) or in
+  // OpenGL coordinate values (WorldRect).
 
   protected: virtual void bytesChangeHook(unsigned char* /* theBytes */,
 														int /* width */,
@@ -90,10 +96,11 @@ public:
   // accessors //
   ///////////////
 
-public:
-  virtual bool getBoundingBox(double& left, double& top,
-										double& right, double& bottom) const;
+  protected: virtual bool grGetBoundingBox(double& left, double& top,
+														 double& right, double& bottom,
+														 int& border_pixels) const;
 
+public:
   virtual int getCategory() const { return -1; }
 
   int byteCount() const;
