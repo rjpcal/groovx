@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Wed Oct 13 17:35:46 1999
+// written: Thu Oct 14 13:22:18 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 
 #include "io.h"
 
+#include <cctype>
 #include <typeinfo>
 #include <strstream.h>
 #include <vector>
@@ -45,6 +46,8 @@ const IO::IOFlag IO::NO_FLAGS;
 const IO::IOFlag IO::TYPENAME;
 const IO::IOFlag IO::BASES;
 
+const char IO::SEP;
+
 IO::IO() : itsId(++idCounter) {
 DOTRACE("IO::IO");
   DebugEvalNL(itsId);
@@ -58,6 +61,14 @@ DOTRACE("IO::~IO");
 unsigned long IO::id() {
 DOTRACE("IO::id");
  return itsId;
+}
+
+int IO::eatWhitespace(istream& is) {
+DOTRACE("IO::eatWhitespace");
+  int c=0;
+  while ( isspace(is.peek()) )
+	 { is.get(); ++c; }
+  return c;
 }
 
 void IO::readTypename(istream& is, const string& correctNames, bool doCheck) {

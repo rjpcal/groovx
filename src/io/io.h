@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Thu Jun 24 11:24:24 1999
+// written: Thu Oct 14 13:20:15 1999
 // $Id$
 //
 // This file defines the IO abstract interface. This interface
@@ -53,6 +53,9 @@ public:
   static const IOFlag TYPENAME   = 1 << 0; // The class's name is written/read
   static const IOFlag BASES      = 1 << 1; // The class's bases is written/read
 
+  // A default separator to be used between elements in a serialized object.
+  static const char SEP = ' ';
+
   IO();
   virtual ~IO() = 0;
   virtual void serialize(ostream& os, IOFlag flag) const = 0;
@@ -62,6 +65,11 @@ public:
 
   // Returns a unique id for this object
   unsigned long id();
+
+  // This function removes all whitespace characters from the istream,
+  // until the first non-whitespace character is seen. It returns the
+  // number of whitespace characters that were removed from the stream.
+  static int eatWhitespace(istream& is);
 
   // This function reads the next word from the istream is, and
   // compares it to the correct names in correctNames. correctNames
