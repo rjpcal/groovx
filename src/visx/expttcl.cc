@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Apr  3 17:47:42 2002
+// written: Tue Apr 30 11:54:02 2002
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -75,6 +75,9 @@ namespace ExptTcl
 
     // Create the quit key binding
     widget->bind("<Control-KeyPress-q>", "Expt::storeData; exit");
+
+    // Create the quit-without-save key binding
+    widget->bind("<Control-Alt-KeyPress-x>", "exit");
 
     // Create the save key binding
     widget->bind("<Control-KeyPress-s>", "Expt::storeData");
