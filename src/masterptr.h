@@ -3,7 +3,7 @@
 // masterptr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct  9 08:18:28 2000
-// written: Mon Oct  9 08:56:16 2000
+// written: Mon Oct  9 11:41:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,8 @@
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * MasterPtrBase
+ * MasterPtrBase is a reference counting base class for master
+ * pointers.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -119,6 +120,15 @@ public:
 
   virtual bool operator==(const MasterPtrBase& other);
 };
+
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * PtrHandle<T> is a stack-based wrapper for ref-counted MasterPtr<T>'s.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
 
 template <class T>
 class PtrHandle {
