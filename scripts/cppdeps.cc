@@ -51,6 +51,21 @@ using std::set;
 using std::string;
 using std::cerr;
 
+struct include_spec
+{
+  include_spec(const string& t, const string& s = string())
+    : target(t), source(s)
+  {}
+
+  string target;
+  string source;
+};
+
+bool operator<(const include_spec& i1, const include_spec& i2)
+{
+  return i1.target < i2.target;
+}
+
 /// A class for doing fast include-file dependency analysis.
 /** Several shortcuts (er, hacks...) are taken to make the parsing
     extremely fast and cheap, but at worst this makes the computed
@@ -64,7 +79,7 @@ class cppdeps
   vector<string> m_src_files;
   string m_objdir;
 
-  typedef vector<string> include_list_t;
+  typedef vector<include_spec> include_list_t;
 
   typedef map<string, include_list_t> include_map_t;
   include_map_t m_nested_includes;
@@ -106,14 +121,14 @@ public:
 
   static bool resolve_one(const char* include_name,
                           int include_length,
-                          const string& filename,
+                          const string& src_fname,
                           const string& dirname,
                           const vector<string>& ipath,
                           include_list_t& vec);
 
-  const include_list_t& get_direct_includes(const string& filename);
+  const include_list_t& get_direct_includes(const string& src_fname);
 
-  const include_list_t& get_nested_includes(const string& filename);
+  const include_list_t& get_nested_includes(const string& src_fname);
 
   void batch_build();
 };
@@ -357,7 +372,7 @@ int cppdeps::is_cc_or_h_filename(const char* fname)
 
 bool cppdeps::resolve_one(const char* include_name,
                           int include_length,
-                          const string& filename,
+                          const string& src_fname,
                           const string& dirname_with_slash,
                           const vector<string>& ipath,
                           cppdeps::include_list_t& vec)
@@ -370,7 +385,7 @@ bool cppdeps::resolve_one(const char* include_name,
 
       if (file_exists(fullpath.c_str()))
         {
-          vec.push_back(fullpath);
+          vec.push_back(include_spec(fullpath, src_fname));
           return true;
         }
     }
@@ -382,7 +397,7 @@ bool cppdeps::resolve_one(const char* include_name,
 
   if (file_exists(fullpath.c_str()))
     {
-      vec.push_back(fullpath);
+      vec.push_back(include_spec(fullpath, src_fname));
       return true;
     }
 
@@ -392,8 +407,8 @@ bool cppdeps::resolve_one(const char* include_name,
   // from which this program was invoked.
   if (file_exists(include_string.c_str()))
     {
-      if (filename != include_string)
-        vec.push_back(include_string);
+      if (src_fname != include_string)
+        vec.push_back(include_spec(include_string, src_fname));
       return true;
     }
 
@@ -401,20 +416,20 @@ bool cppdeps::resolve_one(const char* include_name,
 }
 
 const cppdeps::include_list_t&
-cppdeps::get_direct_includes(const string& filename)
+cppdeps::get_direct_includes(const string& src_fname)
 {
   {
-    include_map_t::iterator itr = m_direct_includes.find(filename);
+    include_map_t::iterator itr = m_direct_includes.find(src_fname);
     if (itr != m_direct_includes.end())
       return (*itr).second;
   }
 
-  string dirname_with_slash = filename.substr(0, filename.find_last_of('/'));
+  string dirname_with_slash = src_fname.substr(0, src_fname.find_last_of('/'));
   dirname_with_slash += '/';
 
-  include_list_t& vec = m_direct_includes[filename];
+  include_list_t& vec = m_direct_includes[src_fname];
 
-  mapped_file f(filename.c_str());
+  mapped_file f(src_fname.c_str());
 
   const char* fptr = static_cast<const char*>(f.memory());
   const char* const stop = fptr + f.length();
@@ -488,18 +503,18 @@ cppdeps::get_direct_includes(const string& filename)
 
       const int include_length = fptr - include_name;
 
-      if (resolve_one(include_name, include_length, filename,
+      if (resolve_one(include_name, include_length, src_fname,
                       dirname_with_slash, m_user_ipath, vec))
         continue;
 
       if (m_check_sys_includes &&
-          resolve_one(include_name, include_length, filename,
+          resolve_one(include_name, include_length, src_fname,
                       dirname_with_slash, m_sys_ipath, vec))
         continue;
 
       const string include_string(include_name, include_length);
       if (!m_quiet)
-        cerr << "WARNING: in " << filename
+        cerr << "WARNING: in " << src_fname
              << ": couldn\'t resolve #include \""
              << include_string << "\"\n";
     }
@@ -508,22 +523,22 @@ cppdeps::get_direct_includes(const string& filename)
 }
 
 const cppdeps::include_list_t&
-cppdeps::get_nested_includes(const string& filename)
+cppdeps::get_nested_includes(const string& src_fname)
 {
   {
-    include_map_t::iterator itr = m_nested_includes.find(filename);
+    include_map_t::iterator itr = m_nested_includes.find(src_fname);
     if (itr != m_nested_includes.end())
       return (*itr).second;
   }
 
-  if (m_parse_states[filename] == IN_PROGRESS)
+  if (m_parse_states[src_fname] == IN_PROGRESS)
     {
-      cerr << "ERROR: in " << filename
+      cerr << "ERROR: in " << src_fname
            << ": untrapped nested #include recursion\n";
       exit(1);
     }
 
-  m_parse_states[filename] = IN_PROGRESS;
+  m_parse_states[src_fname] = IN_PROGRESS;
 
   // use a set to build up the list of #includes, so that
   //   (1) we automatically avoid duplicates
@@ -532,11 +547,11 @@ cppdeps::get_nested_includes(const string& filename)
   // this turns out to be cheaper than building up the list in a
   // std::vector and then doing a big std::sort, std::unique(), and
   // vec.erase() at the end
-  std::set<string> includes_set;
+  std::set<include_spec> includes_set;
 
-  includes_set.insert(filename);
+  includes_set.insert(src_fname);
 
-  const include_list_t& direct = get_direct_includes(filename);
+  const include_list_t& direct = get_direct_includes(src_fname);
 
   for (include_list_t::const_iterator
          i = direct.begin(),
@@ -545,28 +560,28 @@ cppdeps::get_nested_includes(const string& filename)
        ++i)
     {
       // Check for self-inclusion to avoid infinite recursion.
-      if (*i == filename)
+      if ((*i).target == src_fname)
         continue;
 
       // Check for other recursion cycles
-      if (m_parse_states[*i] == IN_PROGRESS)
+      if (m_parse_states[(*i).target] == IN_PROGRESS)
         {
           if (!m_quiet)
-            cerr << "WARNING: in " << filename
-                 << ": recursive #include cycle with " << *i << "\n";
+            cerr << "WARNING: in " << src_fname
+                 << ": recursive #include cycle with " << (*i).target << "\n";
         }
       else
         {
-          const include_list_t& indirect = get_nested_includes(*i);
+          const include_list_t& indirect = get_nested_includes((*i).target);
           includes_set.insert(indirect.begin(), indirect.end());
         }
     }
 
-  include_list_t& result = m_nested_includes[filename];
+  include_list_t& result = m_nested_includes[src_fname];
   assert(result.empty());
   result.assign(includes_set.begin(), includes_set.end());
 
-  m_parse_states[filename] = COMPLETE;
+  m_parse_states[src_fname] = COMPLETE;
 
   return result;
 }
@@ -615,8 +630,6 @@ void cppdeps::batch_build()
                 const int ext_len = is_cc_filename(current_file.c_str());
                 if (ext_len > 0)
                   {
-                    const include_list_t& includes = get_nested_includes(current_file);
-
                     string stripped_filename = current_file;
 
                     if (strncmp(current_file.c_str(),
@@ -636,13 +649,16 @@ void cppdeps::batch_build()
                            m_objdir.c_str(),
                            stripped_filename.c_str());
 
+                    const include_list_t& includes =
+                      get_nested_includes(current_file);
+
                     for (include_list_t::const_iterator
                            itr = includes.begin(),
                            stop = includes.end();
                          itr != stop;
                          ++itr)
                       {
-                        printf(" %s", (*itr).c_str());
+                        printf(" %s", (*itr).target.c_str());
                       }
 
                     printf("\n");
@@ -660,7 +676,7 @@ void cppdeps::batch_build()
                       ? get_direct_includes(current_file)
                       : get_nested_includes(current_file);
 
-                    printf("%s: ", current_file.c_str());
+                    printf("%s:: ", current_file.c_str());
 
                     for (include_list_t::const_iterator
                            itr = includes.begin(),
@@ -668,7 +684,9 @@ void cppdeps::batch_build()
                          itr != stop;
                          ++itr)
                       {
-                        printf(" %s", (*itr).c_str());
+                        printf(" %s:%s",
+                               (*itr).target.c_str(),
+                               (*itr).source.c_str());
                       }
 
                     printf("\n");
