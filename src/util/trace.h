@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri May 11 19:52:42 2001
+// written: Sat May 12 09:02:22 2001
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -134,6 +134,7 @@ public:
   static void setMode(Mode new_mode);
   static Mode getMode();
 
+  static void printStackTrace(); // just print on cerr
   static void printStackTrace(ostream& os);
 
   Trace(Prof& p, bool useMsg);

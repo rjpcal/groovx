@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri May 11 19:53:54 2001
+// written: Sat May 12 09:03:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,6 +120,10 @@ void Util::Trace::printStackTrace(ostream& os) {
     os << "\t[" << i << "] " << callStack[i]->name() << '\n';
   }
   os << flush;
+}
+
+void Util::Trace::printStackTrace() {
+  printStackTrace(cerr);
 }
 
 void Util::Trace::setMode(Mode new_mode) {
