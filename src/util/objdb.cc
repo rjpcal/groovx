@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Sun Aug 19 17:02:36 2001
+// written: Mon Aug 20 08:26:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -232,10 +232,9 @@ ObjDb::Iterator::operator++()
   return *this;
 }
 
-Util::WeakRef<Util::Object> ObjDb::Iterator::operator*() const
+const Util::WeakRef<Util::Object>& ObjDb::Iterator::operator*() const
 {
-  return Util::WeakRef<Util::Object>
-    ((*(itsImpl->itsIter)).second.get(), false, Util::WEAK);
+  return (*(itsImpl->itsIter)).second;
 }
 
 ///////////////////////////////////////////////////////////////////////

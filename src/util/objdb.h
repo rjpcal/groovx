@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Sun Aug 19 16:02:57 2001
+// written: Mon Aug 20 08:24:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ public:
 
     Iterator& operator++();
 
-    Util::WeakRef<Util::Object> operator*() const;
+    const Util::WeakRef<Util::Object>& operator*() const;
   };
 
   Iterator begin() const;
