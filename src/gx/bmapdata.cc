@@ -3,7 +3,7 @@
 // bmapdata.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jan 20 00:37:03 2000
-// written: Thu Jan 20 01:41:16 2000
+// written: Thu Jan 20 02:12:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include <algorithm>
 #include <cstring>				  // for memcpy
 
-#define LOCAL_TRACE
+#define NO_TRACE
 #include "util/trace.h"
 #include "util/debug.h"
 
