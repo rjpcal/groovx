@@ -4,7 +4,7 @@ dnl Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 dnl
 dnl $Revision$
 
-AC_INIT(grsh, [0.8a8], [rjpeters@klab.caltech.edu])
+AC_INIT(GroovX, [1.0a1], [rjpeters@klab.caltech.edu])
 AC_PREREQ(2.53)
 AC_REVISION($Revision$)
 
