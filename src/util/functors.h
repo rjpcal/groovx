@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Sep  7 15:07:16 2001
-// written: Wed Jan 30 21:03:17 2002
+// written: Tue May 14 19:34:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -320,6 +320,18 @@ namespace Util
       itsBound(other.itsBound)
     {}
 
+    // Workaround for g++-3.1's overeager "implicit typename" warnings
+    typedef FuncTraits<BoundFirst<BaseFunctor, Bound_t> > Traits;
+    typedef typename Traits::Retn_t   Retn_t;
+    typedef typename Traits::Arg1_t   Arg1_t;
+    typedef typename Traits::Arg2_t   Arg2_t;
+    typedef typename Traits::Arg3_t   Arg3_t;
+    typedef typename Traits::Arg4_t   Arg4_t;
+    typedef typename Traits::Arg5_t   Arg5_t;
+    typedef typename Traits::Arg6_t   Arg6_t;
+    typedef typename Traits::Arg7_t   Arg7_t;
+    typedef typename Traits::Arg8_t   Arg8_t;;
+
     //
     // All versions of operator() are provided, but only the one that
     // involves the correct call to itsHeldFunc() will compile
@@ -415,6 +427,18 @@ namespace Util
       FuncHolder<BaseFunctor>(other),
       itsBound(other.itsBound)
     {}
+
+    // Workaround for g++-3.1's overeager "implicit typename" warnings
+    typedef FuncTraits<BoundLast<BaseFunctor, Bound_t> > Traits;
+    typedef typename Traits::Retn_t   Retn_t;
+    typedef typename Traits::Arg1_t   Arg1_t;
+    typedef typename Traits::Arg2_t   Arg2_t;
+    typedef typename Traits::Arg3_t   Arg3_t;
+    typedef typename Traits::Arg4_t   Arg4_t;
+    typedef typename Traits::Arg5_t   Arg5_t;
+    typedef typename Traits::Arg6_t   Arg6_t;
+    typedef typename Traits::Arg7_t   Arg7_t;
+    typedef typename Traits::Arg8_t   Arg8_t;;
 
     //
     // All versions of operator() are provided, but only the one that
