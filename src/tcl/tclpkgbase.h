@@ -130,8 +130,20 @@ public:
   /// Returns the Tcl interpreter that was passed to the constructor.
   Tcl::Interp& interp();
 
-  /// Returns the package name.
+  /// Returns the package's "namespace name".
+  /** Note that the "namespace name" will be the same as the "package name"
+      except possibly for capitalization. The "namespace name" is the name
+      of the namespace that is used as the default prefix all commands
+      contained in the package. */
   const char* namespName();
+
+  /// Return the package's "package name".
+  /** Note that the "package name" will be the same as the "namespace name"
+      except possibly for capitalization. The "package name" is the name
+      that is passed to Tcl_PkgProvide() and Tcl_PkgProvide(), and has a
+      well-defined capitalization scheme: first character uppercase, all
+      remaining letters lowercase. */
+  const char* pkgName();
 
   /// Returns the package version string.
   const char* version();
