@@ -3,7 +3,7 @@
 // blocklist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:22:16 1999
-// written: Thu Jun  1 13:54:44 2000
+// written: Wed Oct 25 16:49:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,8 @@ private:
   static BlockList theInstance;
 
 protected:
-  /// Construct and reserve space for \a size objects.
-  BlockList(int size);
+  /// Default constructor makes an empty list.
+  BlockList();
 
   /// Virtual destructor.
   virtual ~BlockList();

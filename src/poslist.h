@@ -3,7 +3,7 @@
 // poslist.h
 // Rob Peters
 // created: Fri Mar 12 17:13:53 1999
-// written: Mon May 15 22:26:57 2000
+// written: Wed Oct 25 16:50:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,8 @@ private:
   static PosList theInstance;
 
 protected:
-  /// Construct and reserve space for \a size objects.
-  PosList(int size);
+  /// Default constructor makes an empty list.
+  PosList();
 
   /// Virtual destructor.
   virtual ~PosList();

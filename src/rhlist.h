@@ -3,7 +3,7 @@
 // rhlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:28 1999
-// written: Wed Oct 11 14:31:49 2000
+// written: Wed Oct 25 16:51:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,8 @@ private:
   static RhList theInstance;
 
 protected:
-  /// Construct and reserve space for \a size objects.
-  RhList(int size);
+  /// Default constructor makes an empty list.
+  RhList();
 
   /// Virtual destructor.
   virtual ~RhList();

@@ -3,7 +3,7 @@
 // soundlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:44:40 1999
-// written: Thu Jun  1 13:58:04 2000
+// written: Wed Oct 25 16:52:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,8 @@ private:
   static SoundList theInstance;
 
 protected:
-  /// Construct and reserve space for \a size objects. 
-  SoundList(int size);
+  /// Default constructor makes an empty list.
+  SoundList();
 
   /// Virtual destructor.
   virtual ~SoundList();

@@ -3,7 +3,7 @@
 // thlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:05:36 1999
-// written: Thu Jun  1 13:58:30 2000
+// written: Wed Oct 25 16:52:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,8 @@ private:
   static ThList theInstance;
 
 protected:
-  /// Construct and reserve space for \a size objects.
-  ThList(int size);
+  /// Default constructor makes an empty list.
+  ThList();
 
   /// Virtual destructor.
   virtual ~ThList();

@@ -3,7 +3,7 @@
 // objlist.h 
 // Rob Peters
 // Created: Nov-98
-// written: Mon May 15 22:28:41 2000
+// written: Wed Oct 25 16:48:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,8 @@ private:
   static ObjList theInstance;
 
 protected:
-  /// Construct and reserve space for \a size objects.
-  ObjList (int size);
+  /// Default constructor makes an empty list.
+  ObjList();
 
   /// Virtual destructor.
   virtual ~ObjList();

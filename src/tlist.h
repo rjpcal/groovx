@@ -3,7 +3,7 @@
 // tlist.h
 // Rob Peters
 // created: Fri Mar 12 13:23:02 1999
-// written: Thu Oct 19 14:58:23 2000
+// written: Wed Oct 25 16:53:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,8 +34,8 @@ private:
   static Tlist theInstance;
 
 protected:
-  /// Construct and reserve space for \a size objects.
-  Tlist(int size);
+  /// Default constructor makes an empty list.
+  Tlist();
 
   /// Virtual destructor.
   virtual ~Tlist();
