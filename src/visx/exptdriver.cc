@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Oct 30 11:22:38 2000
+// written: Tue Oct 31 11:32:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,8 +30,8 @@
 #include "tcl/tclerror.h"
 #include "tcl/tclevalcmd.h"
 
-#include "util/arrays.h"
 #include "util/errorhandler.h"
+#include "util/minivec.h"
 #include "util/stopwatch.h"
 #include "util/strings.h"
 
@@ -39,7 +39,6 @@
 #include <iostream.h>
 #include <fstream.h>
 #include <sys/time.h>
-#include <vector>
 
 #define DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
 #include "util/trace.h"
@@ -236,7 +235,8 @@ private:
 
   int itsAutosavePeriod;
 
-  std::vector<IdItem<Block> > itsBlocks;
+  typedef minivec<IdItem<Block> > BlocksType;
+  BlocksType itsBlocks;
 
   int itsCurrentBlockIdx;
 
