@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Wed Mar  8 11:41:29 2000
+// written: Wed Mar  8 11:58:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -131,7 +131,9 @@ DOTRACE("IO::readTypename");
 
   // If we got here, then none of the substrings matched so we must
   // raise an exception.
-  throw InputError(first_candidate + " typename");
+  InputError err("couldn't read typename for ");
+  err.appendMsg(first_candidate.c_str());
+  throw err;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -204,13 +206,14 @@ DOTRACE("IoError::IoError(const type_info&)");
 
 void IoError::setMsg(const char* str) {
 DOTRACE("IoError::setMsg(const char*)");
-  ErrorWithMsg::setMsg(demangle(typeid(*this).name()) + ": " + str);
+  ErrorWithMsg::setMsg(demangle_cstr(typeid(*this).name()));
+  ErrorWithMsg::appendMsg(": ");
+  ErrorWithMsg::appendMsg(str);
 }
 
 void IoError::setMsg(const type_info& ti) {
 DOTRACE("IoError::setMsg(const type_info&)");
-  string msg = demangle(typeid(*this).name()) + ": " + demangle(ti.name())
-  ErrorWithMsg::setMsg(msg.c_str());
+  IoError::setMsg(demangle_cstr(ti.name()));
 }
 
 InputError::InputError(const char* str) {
