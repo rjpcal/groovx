@@ -93,16 +93,43 @@
    build and install. A short test suite (takes ~10 seconds on a 1GHz
    Pentium III Linux machine) is run at the end of every "make" invocation.
 
-   Depending on the architecture, either the debug or production version
-   will be the default version that is built with "make". To override the
-   default, type either "make MODE=prod" for the production version, or
-   "make MODE=debug" for the debug version. The two versions build separate
-   object files and shared libraries, so it is possible for builds of both
-   types to peacefully coexist.
+   * debug vs. production
 
-   On Linux, you need to make sure that your LD_LIBRARY_PATH environment
-   variable includes the paths to wherever you have installed the libraries
-   associated with this package.
+     Depending on the architecture, either the debug or production version
+     will be the default version that is built with "make". To override the
+     default, type either "make MODE=prod" for the production version, or
+     "make MODE=debug" for the debug version. The two versions build
+     separate object files and shared libraries, so it is possible for
+     builds of both types to peacefully coexist.
+
+     By convention, the debug executable is called "testsh", while the
+     production executable is called "grshX.X", where "X.X" specifies the
+     version number of the program.
+
+   * environment variables
+
+     LD_LIBRARY_PATH
+
+     On Linux, you need to make sure that your LD_LIBRARY_PATH environment
+     variable includes the paths to wherever you have installed the
+     libraries associated with this package.
+
+     GRSH_LIB_DIR
+
+     Some components of the grsh software that are accessed at runtime are
+     found in the directory that is specified by the environment variable
+     GRSH_LIB_DIR. These components include the default audio files,
+     various accessory and demo scripts that can be run using the grsh
+     shell, and sample serialized object databases that can be loaded into
+     the program.
+
+     All of these components are found in the share/ subdirectory of the
+     source tree. If you plan to keep the source tree around, you can just
+     set your GRSH_LIB_DIR environment variable to
+     /path/to/source/share. If you delete the source tree, then you should
+     first copy the share/ subdirectory to a more permanent location, and
+     then set your GRSH_LIB_DIR environment variable to
+     /path/to/install/share.
 
 6. Portability
 
