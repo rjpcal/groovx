@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Mon May 12 14:46:56 2003
+// written: Tue May 13 08:21:12 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -38,7 +38,9 @@
 #include "util/arrays.h"
 
 #include "visx/gaborpatch.h"
-#include "visx/snake.h"
+
+class Element;
+class Snake;
 
 namespace Gfx
 {
@@ -46,6 +48,8 @@ namespace Gfx
   template <class T> class Vec2;
 }
 
+/// GaborArray represents an 2-D spatial array of gabor patches.
+/** The array has manipulable spacing properties. */
 class GaborArray : public GxShapeKit
 {
 public:
@@ -67,7 +71,6 @@ protected:
   virtual void grRender(Gfx::Canvas& canvas) const;
 
 private:
-  const Snake snake;
   const double gaborPeriod;
   const double gaborSigma;
   const int sizeX;
@@ -85,7 +88,7 @@ private:
 
   bool tryPush(const Element& e);
   bool tooClose(const Gfx::Vec2<double>& v, int except);
-  void insideElements();
+  void insideElements(const Snake& snake);
   void hexGridElements();
   void fillElements();
   void jitterElement();

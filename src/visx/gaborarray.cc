@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Mon May 12 14:53:37 2003
+// written: Tue May 13 08:21:07 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -42,8 +42,11 @@
 #include "gx/vec2.h"
 
 #include "gfx/canvas.h"
+#include "gfx/gxaligner.h"
 
 #include "util/error.h"
+
+#include "visx/snake.h"
 
 #include <cstdio>
 
@@ -91,7 +94,7 @@ bool GaborArray::tooClose(const Vec2d& v, int except)
   return false;
 }
 
-void GaborArray::insideElements()
+void GaborArray::insideElements(const Snake& snake)
 {
 DOTRACE("GaborArray::insideElements");
 
@@ -235,7 +238,6 @@ GaborArray::GaborArray(double gaborPeriod_, double gaborSigma_,
                        double backgIniSpacing_,
                        double backgMinSpacing_)
   :
-  snake(foregNumber, foregSpacing),
   gaborPeriod(gaborPeriod_),
   gaborSigma(gaborSigma_),
   sizeX(sizeX_),
@@ -250,6 +252,10 @@ GaborArray::GaborArray(double gaborPeriod_, double gaborSigma_,
   array(MAX_GABOR_NUMBER)
 {
 DOTRACE("GaborArray::GaborArray");
+
+  setAlignmentMode(GxAligner::CENTER_ON_CENTER);
+
+  Snake snake(foregNumber, foregSpacing);
 
   // pull in elements from the snake
   for (int n = 0; n < snake.getLength(); ++n)
@@ -270,7 +276,7 @@ DOTRACE("GaborArray::GaborArray");
       fillElements();
     }
 
-  insideElements();
+  insideElements(snake);
 
   printf(" FOREG_NUMBER %d    PATCH_NUMBER %d    TOTAL_NUMBER %d\n",
           snake.getLength(), insideNumber, totalNumber);
