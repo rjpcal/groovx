@@ -23,6 +23,8 @@
 
 namespace Util
 {
+  enum RefType { WEAK, STRONG };
+
   template <class T> class Ref;
   template <class T> class WeakRef;
 }
@@ -217,28 +219,35 @@ private:
   // get() (an exception will be raised if this would fail)
   class WeakHandle {
   private:
-    Util::RefCounts* getCounts(T* master)
+    static Util::RefCounts* getCounts(T* master, RefType tp)
     {
-      return (master && master->isVolatile()) ? master->refCounts() : 0;
+      return (master && (tp == WEAK || master->isVolatile())) ?
+		  master->refCounts() : 0;
     }
 
+	 RefType refType() const
+	 {
+		return (itsMaster && itsCounts) ? WEAK : STRONG;
+	 }
+
   public:
-    explicit WeakHandle(T* master) : itsMaster(master),
-                                     itsCounts(getCounts(master))
+    explicit WeakHandle(T* master, RefType tp) : 
+		 itsMaster(master),
+		 itsCounts(getCounts(master, tp))
     { acquire(); }
 
     ~WeakHandle()
     { release(); }
 
     WeakHandle(const WeakHandle& other) : itsMaster(other.itsMaster),
-                                          itsCounts(getCounts(itsMaster))
+														itsCounts(other.itsCounts)
     { acquire(); }
 
     template <class U> friend class WeakHandle;
 
     template <class U>
     WeakHandle(const WeakHandle<U>& other) : itsMaster(other.itsMaster),
-                                             itsCounts(getCounts(itsMaster))
+															itsCounts(other.itsCounts)
     { acquire(); }
 
     WeakHandle& operator=(const WeakHandle& other)
@@ -330,25 +339,28 @@ private:
   }
 
 public:
-  WeakRef() : itsHandle(0) {}
+  WeakRef() : itsHandle(0, STRONG) {}
 
-  explicit WeakRef(Util::UID id) :
+  explicit WeakRef(Util::UID id, RefType tp = STRONG) :
     itsHandle(RefHelper::isValidId(id) ?
-              RefHelper::getCastedItem<T>(id) : 0)
+              RefHelper::getCastedItem<T>(id) : 0,
+				  tp)
   {}
 
-  explicit WeakRef(T* master) : itsHandle(master)
+  explicit WeakRef(T* master, RefType tp = STRONG) : itsHandle(master, tp)
   { insertItem(); }
 
-  WeakRef(T* master, bool /*noInsert*/) : itsHandle(master) {}
+  WeakRef(T* master, bool /*noInsert*/, RefType tp = STRONG) :
+	 itsHandle(master,tp)
+  {}
 
 
   template <class U>
   WeakRef(const WeakRef<U>& other) :
-    itsHandle(other.isValid() ? other.get() : 0) {}
+    itsHandle(other.isValid() ? other.get() : 0, STRONG) {}
 
   template <class U>
-  WeakRef(const Ref<U>& other) : itsHandle(other.get()) {}
+  WeakRef(const Ref<U>& other) : itsHandle(other.get(), STRONG) {}
 
   // Default destructor, copy constructor, operator=() are fine
 
