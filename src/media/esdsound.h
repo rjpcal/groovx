@@ -190,12 +190,34 @@ void media::esd_sound_rep::play()
 
   int frames_read;
 
+#ifdef DEBUG_SAMPLES
+  FILE* fout = fopen("samples.txt", "w");
+#endif
+
   while ((frames_read = afReadFrames(in_file, AF_DEFAULT_TRACK,
                                      buf, buf_frames)) != 0)
     {
+#ifdef DEBUG_SAMPLES
+      if (fout != 0)
+        for (int i = 0; i < frames_read; ++i)
+          {
+            int val = 0;
+
+            for (int j = 0; j < bytes_per_frame; ++j)
+              val += (buf[i * bytes_per_frame + j] << (j*8));
+
+            fprintf(fout, "%d\n", val);
+          }
+#endif
+
       if (write(out_sock, buf, frames_read * bytes_per_frame) <= 0)
         break;
     }
+
+#ifdef DEBUG_SAMPLES
+  if (fout != 0)
+    fclose(fout);
+#endif
 
   // close up and go home
   close(out_sock);
