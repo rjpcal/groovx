@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Tue Nov 14 11:33:28 2000
+// written: Tue Nov 14 11:42:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,10 +96,10 @@ public:
   TPtrField<double> mouthCoord;
 
   /// Selects the current part for editing.
-  TBoundedField<int, 0, 3, 1> currentPart;
+  TBoundedField<int> currentPart;
 
   /// Selects the current end point for editing.
-  TBoundedField<int, 0, 3, 1> currentEndPt;
+  TBoundedField<int> currentEndPt;
 
   /// Controls the part referred to by the current end point.
   TPtrField<int> endPt_Part;

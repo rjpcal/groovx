@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Mon Nov 13 22:24:55 2000
+// written: Tue Nov 14 11:48:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -232,7 +232,7 @@ MorphyFace::MorphyFace() :
   pupilXpos(this, 0.0),
   pupilYpos(this, 0.0),
   pupilSize(this, 0.6),
-  pupilDilation(this, 0.5),
+  pupilDilation(this, 0.5, 0.0, 0.999),
 
   eyebrowXpos(this, 0.0),
   eyebrowYpos(this, 0.5),

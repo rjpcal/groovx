@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Tue Nov 14 07:16:28 2000
+// written: Tue Nov 14 11:45:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -131,8 +131,8 @@ Fish::Fish(const char* splinefile, const char* coordfile, int index) :
   tailFinCoord(this, itsCoords[1]),
   lowerFinCoord(this, itsCoords[2]),
   mouthCoord(this, itsCoords[3]),
-  currentPart(this, 0),
-  currentEndPt(this, 0),
+  currentPart(this, 0, 0, 3),
+  currentEndPt(this, 0, 0, 3),
   endPt_Part(this, dummy),
   endPt_Bkpt(this, dummy),
   itsFishParts(new FishPart[4]),
@@ -302,10 +302,10 @@ DOTRACE("Fish::receiveStateChangeMsg");
 //    else {
 //  	 GrObj::receiveStateChangeMsg(obj);
 //    }
- 
+
   endPt_Part.reseat(itsEndPts[currentEndPt()].itsPart);
   endPt_Bkpt.reseat(itsEndPts[currentEndPt()].itsBkpt);
-   
+
   GrObj::receiveStateChangeMsg(obj);
 }
 
@@ -395,7 +395,7 @@ DOTRACE("Fish::readCoordFile");
 	 getline(ifs, dummy, '\n');
   }
 
-  ifs >> fishCategory();
+  int temp; ifs >> temp; fishCategory.setNative(temp);
 
   for (int i = 0; i < 4; ++i) {
 	 ifs >> itsCoords[i];

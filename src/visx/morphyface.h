@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:37:45 1999
-// written: Tue Nov 14 11:33:40 2000
+// written: Tue Nov 14 11:48:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ public:
     ///< The y-position of the pupils, relative to the center of the eye.
   TField<double> pupilSize;
     ///< The diameter of the pupils, relative to the height of the eye.
-  TBoundedField<double, 0, 999, 1000> pupilDilation;
+  TBoundedField<double> pupilDilation;
     ///< The dilation of the pupil, on a scale of [0,1).
 
   TField<double> eyebrowXpos;

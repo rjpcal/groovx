@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Mon Nov 13 19:04:09 2000
+// written: Tue Nov 14 11:47:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,10 +53,10 @@ public:
   ////////////////
 
   /// The number of lines that will be rendered in each direction.
-  TBoundedField<int, 0, 1000, 1> numLines;
+  TBoundedField<int> numLines;
 
   /// The pixel-width of each line.
-  TBoundedField<int, 0, 1000, 1> lineWidth;
+  TBoundedField<int> lineWidth;
 
   static const FieldMap& classFields();
 
