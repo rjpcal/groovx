@@ -260,6 +260,19 @@ namespace
 
 } // end unnamed namespace
 
+class file_info;
+
+// Typedefs and enums
+typedef vector<file_info*>      dep_list_t;
+typedef map<string, dep_list_t> dep_map_t;
+
+enum parse_state
+  {
+    NOT_STARTED = 0,
+    IN_PROGRESS = 1,
+    COMPLETE = 2
+  };
+
 class file_info
 {
 public:
@@ -278,9 +291,11 @@ public:
 
   typedef map<string, file_info*> info_map_t;
 
-  string target;
-  string source;
-  bool literal; // if true, then we don't try to look up nested includes
+  string      target;
+  string      source;
+  bool        literal; // if true, then we don't try to look up nested includes
+  parse_state cdep_parse_state;
+  parse_state ldep_parse_state;
 
 private:
   file_info(const string& t)
@@ -410,16 +425,6 @@ public:
 class cppdeps
 {
 private:
-  // Typedefs and enums
-  typedef vector<file_info*>      dep_list_t;
-  typedef map<string, dep_list_t> dep_map_t;
-
-  enum parse_state
-    {
-      NOT_STARTED = 0,
-      IN_PROGRESS = 1,
-      COMPLETE = 2
-    };
 
   static const int MAKEFILE_CDEPS      = (1 << 0);
   static const int DIRECT_INCLUDE_TREE = (1 << 1);
@@ -447,9 +452,6 @@ private:
   dep_map_t                m_nested_cdeps;
   dep_map_t                m_direct_ldeps;
   dep_map_t                m_nested_ldeps;
-
-  map<string, parse_state> m_cdep_parse_states;
-  map<string, parse_state> m_ldep_parse_states;
 
   string                   m_strip_prefix;
 
@@ -814,7 +816,7 @@ bool cppdeps::resolve_one(const string& include_name,
                           const string& dirname_without_slash,
                           const vector<string>& ipath,
                           const vector<string>& literal,
-                          cppdeps::dep_list_t& vec)
+                          dep_list_t& vec)
 {
   for (unsigned int i = 0; i < ipath.size(); ++i)
     {
@@ -874,8 +876,7 @@ bool cppdeps::resolve_one(const string& include_name,
   return false;
 }
 
-const cppdeps::dep_list_t&
-cppdeps::get_direct_cdeps(const string& src_fname)
+const dep_list_t& cppdeps::get_direct_cdeps(const string& src_fname)
 {
   {
     dep_map_t::iterator itr = m_direct_cdeps.find(src_fname);
@@ -1020,8 +1021,7 @@ cppdeps::get_direct_cdeps(const string& src_fname)
   return vec;
 }
 
-const cppdeps::dep_list_t&
-cppdeps::get_nested_cdeps(const string& src_fname)
+const dep_list_t& cppdeps::get_nested_cdeps(const string& src_fname)
 {
   {
     dep_map_t::iterator itr = m_nested_cdeps.find(src_fname);
@@ -1029,14 +1029,16 @@ cppdeps::get_nested_cdeps(const string& src_fname)
       return (*itr).second;
   }
 
-  if (m_cdep_parse_states[src_fname] == IN_PROGRESS)
+  file_info* src_finfo = file_info::get(src_fname);
+
+  if (src_finfo->cdep_parse_state == IN_PROGRESS)
     {
       cerr << "ERROR: in " << src_fname
            << ": untrapped nested #include recursion\n";
       exit(1);
     }
 
-  m_cdep_parse_states[src_fname] = IN_PROGRESS;
+  src_finfo->cdep_parse_state = IN_PROGRESS;
 
   // use a set to build up the list of #includes, so that
   //   (1) we automatically avoid duplicates
@@ -1047,7 +1049,7 @@ cppdeps::get_nested_cdeps(const string& src_fname)
   // vec.erase() at the end
   std::set<file_info*, file_info_cmp> dep_set;
 
-  dep_set.insert(file_info::get(src_fname));
+  dep_set.insert(src_finfo);
 
   const dep_list_t& direct = get_direct_cdeps(src_fname);
 
@@ -1072,7 +1074,7 @@ cppdeps::get_nested_cdeps(const string& src_fname)
         }
 
       // Check for other recursion cycles
-      if (m_cdep_parse_states[(*i)->target] == IN_PROGRESS)
+      if ((*i)->cdep_parse_state == IN_PROGRESS)
         {
           if (!m_cfg_quiet)
             warning() << "in " << src_fname
@@ -1091,13 +1093,12 @@ cppdeps::get_nested_cdeps(const string& src_fname)
   assert(result.empty());
   result.assign(dep_set.begin(), dep_set.end());
 
-  m_cdep_parse_states[src_fname] = COMPLETE;
+  src_finfo->cdep_parse_state = COMPLETE;
 
   return result;
 }
 
-const cppdeps::dep_list_t&
-cppdeps::get_direct_ldeps(const string& src_fname_orig)
+const dep_list_t& cppdeps::get_direct_ldeps(const string& src_fname_orig)
 {
   const string src_fname = make_normpath(src_fname_orig);
 
@@ -1136,8 +1137,7 @@ cppdeps::get_direct_ldeps(const string& src_fname_orig)
   return result;
 }
 
-const cppdeps::dep_list_t&
-cppdeps::get_nested_ldeps(const string& src_fname_orig)
+const dep_list_t& cppdeps::get_nested_ldeps(const string& src_fname_orig)
 {
   const string src_fname = make_normpath(src_fname_orig);
 
@@ -1147,14 +1147,16 @@ cppdeps::get_nested_ldeps(const string& src_fname_orig)
       return (*itr).second;
   }
 
-  if (m_ldep_parse_states[src_fname] == IN_PROGRESS)
+  file_info* src_finfo = file_info::get(src_fname);
+
+  if (src_finfo->ldep_parse_state == IN_PROGRESS)
     {
       cerr << "ERROR: in " << src_fname
            << ": untrapped nested link-dep recursion\n";
       exit(1);
     }
 
-  m_ldep_parse_states[src_fname] = IN_PROGRESS;
+  src_finfo->ldep_parse_state = IN_PROGRESS;
 
   if (m_cfg_verbose)
     {
@@ -1165,7 +1167,7 @@ cppdeps::get_nested_ldeps(const string& src_fname_orig)
 
   vector<file_info*> to_handle;
 
-  to_handle.push_back(file_info::get(src_fname));
+  to_handle.push_back(src_finfo);
 
   while (to_handle.size() > 0)
     {
@@ -1207,7 +1209,7 @@ cppdeps::get_nested_ldeps(const string& src_fname_orig)
   assert(result.empty());
   result.assign(deps_set.begin(), deps_set.end());
 
-  m_ldep_parse_states[src_fname] = COMPLETE;
+  src_finfo->ldep_parse_state = COMPLETE;
 
   return result;
 }
