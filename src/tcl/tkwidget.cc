@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Tue Dec 10 13:13:29 2002
+// written: Tue Dec 10 13:17:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -273,7 +273,7 @@ void Tcl::TkWidget::destroyWidget()
 DOTRACE("Tcl::TkWidget::destroyWidget");
 
   // If we are exiting, don't bother destroying the widget; otherwise...
-  if ( !Tcl_InterpDeleted(rep->interp.intp()) )
+  if ( !rep->interp.interpDeleted() )
     {
       Tk_DestroyWindow(rep->tkWin);
     }

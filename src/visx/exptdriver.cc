@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Tue Dec 10 13:13:29 2002
+// written: Tue Dec 10 13:25:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ private:
 
 public:
   Impl() :
-    interp(Tcl::Main::safeInterp()),
+    interp(Tcl::Main::interp()),
     widget(),
     hostname(""),
     subject(""),

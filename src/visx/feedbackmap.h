@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 16:58:49 2001
-// written: Tue Dec 10 13:13:29 2002
+// written: Tue Dec 10 13:25:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,11 +89,11 @@ private:
       itsResultCmd(res)
     {}
 
-    bool invokeIfTrue(Tcl::Interp& safeInterp)
+    bool invokeIfTrue(Tcl::Interp& interp)
     {
-      if (safeInterp.evalBooleanExpr(itsCondition))
+      if (interp.evalBooleanExpr(itsCondition))
         {
-          safeInterp.eval(itsResultCmd, Util::ThrowingErrorHandler::get());
+          interp.eval(itsResultCmd, Util::ThrowingErrorHandler::get());
           return true;
         }
       return false;

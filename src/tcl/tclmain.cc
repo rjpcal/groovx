@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Fri Nov 22 15:53:18 2002
+// written: Tue Dec 10 13:25:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,9 +101,7 @@ public:
 
   bool isInteractive() const { return isItInteractive; }
 
-  Tcl_Interp* interp() const { return itsSafeInterp.intp(); }
-
-  Tcl::Interp& safeInterp() { return itsSafeInterp; }
+  Tcl::Interp& interp() { return itsSafeInterp; }
 
   void run();
 
@@ -183,7 +181,7 @@ DOTRACE("Tcl::MainImpl::historyNext");
 #else
   Tcl::ObjPtr obj = itsSafeInterp.getResult<Tcl_Obj*>();
 
-  Tcl_GlobalEval(interp(), "history nextid");
+  Tcl_GlobalEval(interp().intp(), "history nextid");
 
   int result = itsSafeInterp.getResult<int>();
 
@@ -218,7 +216,8 @@ DOTRACE("Tcl::MainImpl::doPrompt");
       // someone has transferred stdout out of this interpreter with
       // "interp transfer".
 
-      Tcl_Channel outChannel = Tcl_GetChannel(interp(), "stdout", NULL);
+      Tcl_Channel outChannel = Tcl_GetChannel(interp().intp(),
+                                              "stdout", NULL);
       Tcl_WriteChars(outChannel, text, length);
       Tcl_Flush(outChannel);
     }
@@ -350,7 +349,7 @@ DOTRACE("Tcl::MainImpl::handleLine");
       prompt(itsGotPartial ? PARTIAL : FULL);
     }
 
-  Tcl_ResetResult(interp());
+  itsSafeInterp.resetResult();
 }
 
 //---------------------------------------------------------------------
@@ -392,7 +391,7 @@ DOTRACE("Tcl::MainImpl::execCommand");
 
   if (status == -1 || status == 2) // display expansion?
     {
-      Tcl_AppendResult(interp(), expansion, (char*) 0);
+      itsSafeInterp.appendResult(expansion);
       should_display_result = true;
     }
 
@@ -427,7 +426,8 @@ DOTRACE("Tcl::MainImpl::execCommand");
 
       if (len > 0)
         {
-          int code = Tcl_RecordAndEval(interp(), trimmed, TCL_EVAL_GLOBAL);
+          int code = Tcl_RecordAndEval(itsSafeInterp.intp(),
+                                       trimmed, TCL_EVAL_GLOBAL);
 
 #ifdef WITH_READLINE
           char c = trimmed[len-1];
@@ -440,10 +440,10 @@ DOTRACE("Tcl::MainImpl::execCommand");
           trimmed[len-1] = c;
 #endif
 
-          dbgEvalNL(3, Tcl_GetStringResult(interp()));
+          dbgEvalNL(3, itsSafeInterp.getResult<const char*>());
 
           should_display_result =
-            (Tcl_GetStringResult(interp())[0] != '\0') &&
+            ((itsSafeInterp.getResult<const char*>())[0] != '\0') &&
             ((code != TCL_OK) || isItInteractive);
         }
     }
@@ -453,7 +453,7 @@ DOTRACE("Tcl::MainImpl::execCommand");
       Tcl_Channel outChan = Tcl_GetStdChannel(TCL_STDOUT);
       if (outChan)
         {
-          Tcl_WriteObj(outChan, Tcl_GetObjResult(interp()));
+          Tcl_WriteObj(outChan, itsSafeInterp.getResult<Tcl_Obj*>());
           Tcl_WriteChars(outChan, "\n", 1);
         }
     }
@@ -506,22 +506,22 @@ DOTRACE("Tcl::MainImpl::run");
   if (itsStartupFileName != NULL)
     {
       itsSafeInterp.resetResult();
-      int code = Tcl_EvalFile(this->interp(), itsStartupFileName);
+      int code = Tcl_EvalFile(itsSafeInterp.intp(), itsStartupFileName);
       if (code != TCL_OK)
         {
           // ensure errorInfo is set properly:
-          Tcl_AddErrorInfo(this->interp(), "");
+          Tcl_AddErrorInfo(itsSafeInterp.intp(), "");
 
           std::cerr << itsSafeInterp.getGlobalVar<const char*>("errorInfo")
                     << "\nError in startup script\n";
-          Tcl_DeleteInterp(this->interp());
+          Tcl_DeleteInterp(itsSafeInterp.intp());
           Tcl_Exit(1);
         }
     }
   else
     {
       // Evaluate the .rc file, if one has been specified.
-      Tcl_SourceRCFile(this->interp());
+      Tcl_SourceRCFile(itsSafeInterp.intp());
 
       // Set up a stdin channel handler.
       itsInChannel = Tcl_GetStdChannel(TCL_STDIN);
@@ -550,7 +550,7 @@ DOTRACE("Tcl::MainImpl::run");
     {
       Tcl_DoOneEvent(0);
     }
-  Tcl_DeleteInterp(this->interp());
+  Tcl_DeleteInterp(itsSafeInterp.intp());
   Tcl_Exit(0);
 }
 
@@ -573,14 +573,9 @@ bool Tcl::Main::isInteractive()
   return Tcl::MainImpl::get()->isInteractive();
 }
 
-Tcl_Interp* Tcl::Main::interp()
+Tcl::Interp& Tcl::Main::interp()
 {
   return Tcl::MainImpl::get()->interp();
-}
-
-Tcl::Interp& Tcl::Main::safeInterp()
-{
-  return Tcl::MainImpl::get()->safeInterp();
 }
 
 void Tcl::Main::run()

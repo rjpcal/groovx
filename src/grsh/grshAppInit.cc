@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Sat Dec  7 18:08:40 2002
+// written: Tue Dec 10 13:26:01 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -174,34 +174,34 @@ DOTRACE("main");
                     << "Rob Peters <rjpeters@klab.caltech.edu>\n";
         }
 
-      Tcl::Interp& safeIntp = app.safeInterp();
+      Tcl::Interp& interp = app.interp();
 
       for (size_t i = 0; i < sizeof(IMMEDIATE_PKGS)/sizeof(PackageInfo); ++i)
         {
 #ifdef LOCAL_TRACE
           std::cerr << "initializing " << IMMEDIATE_PKGS[i].pkgName << '\n';
 #endif
-          int result = IMMEDIATE_PKGS[i].pkgInitProc(app.interp());
+          int result = IMMEDIATE_PKGS[i].pkgInitProc(interp.intp());
           if (result != TCL_OK)
             {
               std::cerr << "initialization failed: "
                         << IMMEDIATE_PKGS[i].pkgName << '\n';
-              fstring msg = safeIntp.getResult<const char*>();
+              fstring msg = interp.getResult<const char*>();
               if ( !msg.is_empty() )
                 std::cerr << '\t' << msg << '\n';
-              safeIntp.resetResult();
+              interp.resetResult();
             }
         }
 
-      Tcl::List path = safeIntp.getGlobalVar<Tcl::List>("auto_path");
+      Tcl::List path = interp.getGlobalVar<Tcl::List>("auto_path");
 
       path.append(VISX_LIB_DIR);
 
-      safeIntp.setGlobalVar("auto_path", path.asObj());
+      interp.setGlobalVar("auto_path", path.asObj());
 
       // specifies a file to be 'source'd upon startup
-      safeIntp.setGlobalVar("tcl_rcFileName",
-                            Tcl::toTcl("./grsh_startup.tcl"));
+      interp.setGlobalVar("tcl_rcFileName",
+                          Tcl::toTcl("./grsh_startup.tcl"));
 
       app.run();
       return 0;

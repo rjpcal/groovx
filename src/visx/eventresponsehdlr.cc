@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Thu Dec  5 15:53:41 2002
+// written: Tue Dec 10 13:25:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -233,7 +233,7 @@ Util::Tracer EventResponseHdlr::tracer;
 EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner) :
   itsOwner(owner),
   itsState(0),
-  itsInterp(Tcl::Main::safeInterp()),
+  itsInterp(Tcl::Main::interp()),
   itsCmdCallback(Tcl::makeCmd(itsInterp.intp(), &handleResponseCallback,
                               uniqCmdName("handler").c_str(), "<private>")),
   itsFeedbackMap(),

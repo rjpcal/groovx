@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Tue Dec 10 13:13:29 2002
+// written: Tue Dec 10 13:17:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ bool Tcl::Interp::interpDeleted() const
 {
 DOTRACE("Tcl::Interp::interpDeleted");
 
-  return bool(Tcl_InterpDeleted(intp()));
+  return !hasInterp() || bool(Tcl_InterpDeleted(intp()));
 }
 
 void Tcl::Interp::forgetInterp()
