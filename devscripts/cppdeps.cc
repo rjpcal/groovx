@@ -37,6 +37,7 @@
 #include <cstdlib>     // for atoi()
 #include <cstring>     // for strerror()
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <map>
 #include <set>
@@ -268,6 +269,145 @@ namespace
         if (i+1 < subspecs.size())
           normpath += '/';
       }
+  }
+
+  //----------------------------------------------------------
+  //
+  // shared_ptr class
+  //
+  //----------------------------------------------------------
+
+  template<class T>
+  class shared_ptr
+  {
+  public:
+    typedef T element_type;
+
+    /// Construct with pointer to given object (or null).
+    explicit shared_ptr(T* p =0) :
+      px(p), pn(0)
+    {
+      try { pn = new long(1); }  // fix: prevent leak if new throws
+      catch (...) { delete p; throw; }
+    }
+
+    /// Copy construct.
+    shared_ptr(const shared_ptr& r) throw() :
+      px(r.px), pn(r.pn)
+    {
+      ++(*pn);
+    }
+
+    /// Destructor.
+    ~shared_ptr() { dispose(); }
+
+    /// Assignment operator.
+    shared_ptr& operator=(const shared_ptr& r)
+    {
+      share(r.px,r.pn);
+      return *this;
+    }
+
+    /// Copy constructor from pointer to related type.
+    template<class TT>
+    shared_ptr(const shared_ptr<TT>& r) throw() :
+      px(r.px), pn(r.pn)
+    {
+      ++(*pn);
+    }
+
+    /// Assignment operator from pointer to related type.
+    template<class TT>
+    shared_ptr& operator=(const shared_ptr<TT>& r)
+    {
+      share(r.px,r.pn);
+      return *this;
+    }
+
+    /// Reset with a pointer to a different object (or null).
+    void reset(T* p=0)
+    {
+      if ( px == p ) return;  // fix: self-assignment safe
+      if (--*pn == 0) { delete px; }
+      else { // allocate new reference counter
+        try { pn = new long; }  // fix: prevent leak if new throws
+        catch (...)
+          {
+            ++*pn;  // undo effect of --*pn above to meet effects guarantee
+            delete p;
+            throw;
+          } // catch
+      } // allocate new reference counter
+      *pn = 1;
+      px = p;
+    }
+
+    /// Dereference.
+    T& operator*() const throw()
+    { return *px; }
+
+    /// Dereference for member access.
+    T* operator->() const throw()
+    { return px; }
+
+    /// Get a pointer to the referred-to object.
+    T* get() const throw()
+    { return px; }
+
+    /// Get the current reference count.
+    long use_count() const throw()
+    { return *pn; }
+
+    /// Query whether the pointee is unique (i.e. refcount == 1).
+    bool unique() const throw()
+    { return *pn == 1; }
+
+    /// Swap pointees with another shared_ptr.
+    void swap(shared_ptr<T>& other) throw()
+    {
+      std::swap(px, other.px);
+      std::swap(pn, other.pn);
+    }
+
+  private:
+
+    T*     px;     // contained pointer
+    long*  pn;     // ptr to reference counter
+
+    template<class TT> friend class shared_ptr;
+
+    void dispose() { if (--*pn == 0) { delete px; delete pn; } }
+
+    void share(T* rpx, long* rpn)
+    {
+      if (pn != rpn)
+        {
+          dispose();
+          px = rpx;
+          ++*(pn = rpn);
+        }
+    }
+  };
+
+  /// Equality for shared_ptr
+  template<class T, class U>
+  inline bool operator==(const shared_ptr<T>& a, const shared_ptr<U>& b)
+  {
+    return a.get() == b.get();
+  }
+
+  /// Inequality for shared_ptr
+  template<class T, class U>
+  inline bool operator!=(const shared_ptr<T>& a, const shared_ptr<U>& b)
+  {
+    return a.get() != b.get();
+  }
+
+  /// Less-than for shared_ptr
+  template<class T, class U>
+  inline bool operator<(const shared_ptr<T>& a, const shared_ptr<U>& b)
+  {
+    return a.get() < b.get();
   }
 
   //----------------------------------------------------------
@@ -614,6 +754,20 @@ namespace
     }
   };
 
+  class ldep_group
+  {
+    ldep_group(const ldep_group&);
+    ldep_group& operator=(const ldep_group&);
+
+  public:
+    ldep_group()             : m_members() { }
+    ldep_group(file_info* f) : m_members() { m_members.push_back(f); }
+
+    string bigname() const;
+
+    vector<file_info*>  m_members;
+  };
+
   class file_info
   {
   public:
@@ -658,6 +812,31 @@ namespace
     const string& name() const { return m_fname; }
     const string& stripped_name() const { return m_stripped_name; }
 
+    static void merge_ldep_groups(file_info* f1,
+                                  file_info* f2)
+    {
+      assert(f1->m_ldep_group.get() != 0);
+      assert(f2->m_ldep_group.get() != 0);
+
+      const ldep_group& g1 = *f1->m_ldep_group;
+      const ldep_group& g2 = *f2->m_ldep_group;
+
+      set<file_info*> new_members;
+      new_members.insert(g1.m_members.begin(), g1.m_members.end());
+      new_members.insert(g2.m_members.begin(), g2.m_members.end());
+
+      shared_ptr<ldep_group> new_group(new ldep_group);
+
+      new_group->m_members.assign(new_members.begin(), new_members.end());
+
+      for (unsigned int i = 0;
+           i < new_group->m_members.size();
+           ++i)
+        {
+          new_group->m_members[i]->m_ldep_group = new_group;
+        }
+    }
+
     static void dump()
     {
       for (info_map_t::const_iterator
@@ -668,6 +847,36 @@ namespace
         {
           cerr << (*itr).second->m_nested_ldeps_done
                << ' ' << (*itr).second->m_fname << '\n';;
+        }
+    }
+
+    static void dump_ldep_groups()
+    {
+      typedef set<shared_ptr<ldep_group> > all_groups_t;
+      all_groups_t all_groups;
+
+      for (info_map_t::const_iterator
+             itr = s_info_map.begin(),
+             stop = s_info_map.end();
+           itr != stop;
+           ++itr)
+        {
+          file_info* finfo = (*itr).second;
+
+          if (!finfo->is_cc_file())
+            continue;
+
+          all_groups.insert(finfo->m_ldep_group);
+        }
+
+      for (all_groups_t::const_iterator
+             itr = all_groups.begin(),
+             stop = all_groups.end();
+           itr != stop;
+           ++itr)
+        {
+          std::cout << std::setw(4) << (*itr)->m_members.size() << "  "
+                    << (*itr)->bigname() << '\n';;
         }
     }
 
@@ -690,6 +899,7 @@ namespace
     dep_list_t              m_direct_ldeps;
     bool                    m_nested_ldeps_done;
     dep_list_t              m_nested_ldeps;
+    shared_ptr<ldep_group>  m_ldep_group;
 
     int                     m_epoch;
   };
@@ -701,6 +911,24 @@ namespace
       return f1->name() < f2->name();
     }
   };
+
+  //----------------------------------------------------------
+  //
+  // ldep_group member definitions
+  //
+  //----------------------------------------------------------
+
+  string ldep_group::bigname() const
+  {
+    string result;
+    for (unsigned int i = 0; i < m_members.size(); ++i)
+      {
+        result += m_members[i]->name();
+        if (i+1 < m_members.size())
+          result += " + ";
+      }
+    return result;
+  }
 
   //----------------------------------------------------------
   //
@@ -1212,6 +1440,9 @@ namespace
 
     this->m_direct_ldeps_done = true;
 
+    assert(this->m_ldep_group.get() == 0);
+    this->m_ldep_group.reset(new ldep_group(this));
+
     return this->m_direct_ldeps;
   }
 
@@ -1263,6 +1494,8 @@ namespace
                   cfg.warning() << " in " << this->m_fname
                                 << ": recursive link-dep cycle with "
                                 << f->m_fname << "\n";
+
+                file_info::merge_ldep_groups(this, f);
                 continue;
               }
 
@@ -1306,6 +1539,7 @@ private:
   static const int MAKEFILE_CDEPS      = (1 << 0);
   static const int MAKEFILE_LDEPS      = (1 << 1);
   static const int DIRECT_CDEPS        = (1 << 2);
+  static const int LDEP_GROUPS         = (1 << 3);
 
   // Member variables
 
@@ -1534,6 +1768,11 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
   else if (strcmp(option, "--output-link-deps") == 0)
     {
       cfg.output_mode |= MAKEFILE_LDEPS;
+      return false;
+    }
+  else if (strcmp(option, "--output-ldep-groups") == 0)
+    {
+      cfg.output_mode |= LDEP_GROUPS;
       return false;
     }
   else if (strcmp(option, "--literal") == 0)
@@ -1908,6 +2147,12 @@ void cppdeps::traverse_sources()
               print_link_deps(finfo);
             }
 
+          if (cfg.output_mode & LDEP_GROUPS)
+            {
+              if (finfo->is_cc_file())
+                (void) finfo->get_nested_ldeps();
+            }
+
           --cfg.nest_level;
 
           if (cfg.verbosity >= NOISY)
@@ -1916,6 +2161,11 @@ void cppdeps::traverse_sources()
     }
 
   cfg.exe_formats.give_warnings();
+
+  if (cfg.output_mode & LDEP_GROUPS)
+    {
+      file_info::dump_ldep_groups();
+    }
 }
 
 int main(int argc, char** argv)
