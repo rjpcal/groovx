@@ -49,7 +49,8 @@ class Tcl::CommandGroup
 {
 public:
   /// Find the command associated with a given name.
-  /** Returns null if no such command. */
+  /** Returns null if no such command. FIXME Fix this so that it works
+      with inherited commands. */
   static CommandGroup* lookup(Tcl::Interp& interp,
                               const char* name) throw();
 
