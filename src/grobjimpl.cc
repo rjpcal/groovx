@@ -3,7 +3,7 @@
 // grobjimpl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:57 2000
-// written: Thu Mar 23 19:12:03 2000
+// written: Sat Mar 25 11:15:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -223,28 +223,32 @@ DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
 	 glMatrixMode(GL_MODELVIEW);
 	 Canvas::StateSaver state(canvas);
 
-	 glPushAttrib(GL_PIXEL_MODE_BIT|GL_COLOR_BUFFER_BIT);
+	 glPushAttrib(GL_COLOR_BUFFER_BIT|GL_PIXEL_MODE_BIT);
 	 {
 		glDrawBuffer(GL_FRONT);
-		glReadBuffer(GL_FRONT);
 		
 		obj->doScaling();
 		obj->doAlignment();
 		
 		obj->grRender(canvas);
+
+		Assert(obj->hasBB());
+
+		glReadBuffer(GL_FRONT);
+		Rect<double> bmapbox_init = obj->getRawBB();
+		Rect<int> screen_rect = canvas.getScreenFromWorld(bmapbox_init);
+		screen_rect.widenByStep(2);
+		screen_rect.heightenByStep(2);
+		Rect<double> bmapbox = canvas.getWorldFromScreen(screen_rect);
+
+		DebugEval(bmapbox.left()); DebugEval(bmapbox.top());
+		DebugEval(bmapbox.right()); DebugEvalNL(bmapbox.bottom());
+		itsBitmapCache->grabWorldRect(bmapbox);
+		itsBitmapCache->setRasterX(bmapbox.left());
+		itsBitmapCache->setRasterY(bmapbox.bottom());
 	 }
 	 glPopAttrib();
   }
-		
-  Assert(obj->hasBB());
-
-  Rect<double> bmapbox;
-  obj->getBoundingBox(canvas, bmapbox);
-  DebugEval(bmapbox.left()); DebugEval(bmapbox.top());
-  DebugEval(bmapbox.right()); DebugEvalNL(bmapbox.bottom());
-  itsBitmapCache->grabWorldRect(bmapbox);
-  itsBitmapCache->setRasterX(bmapbox.left());
-  itsBitmapCache->setRasterY(bmapbox.bottom());
 
   DebugEvalNL(itsMode);
 
