@@ -181,13 +181,11 @@ ifeq ($(COMPILER),MIPSpro)
 
 	ifeq ($(MODE),debug)
 		CC_SWITCHES += -g -O0
-		LD_OPTIONS +=
 	endif
 
 # Tests showed that -O3 provided little improvement over -O2 for this app
 	ifeq ($(MODE),prod)
 		CC_SWITCHES += -O2
-		LD_OPTIONS +=
 	endif
 
 	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
@@ -215,12 +213,10 @@ ifeq ($(COMPILER),g++)
 
 	ifeq ($(MODE),debug)
 		CC_SWITCHES += -g -O0
-		LD_OPTIONS +=
 	endif
 
 	ifeq ($(MODE),prod)
 		CC_SWITCHES += -O3
-		LD_OPTIONS +=
 	endif
 
 	SHLIB_CMD := $(CC) -shared -o
@@ -254,12 +250,9 @@ ifeq ($(COMPILER),ppc-g++-2)
 		CC_SWITCHES += -O3
 	endif
 
-#	SHLIB_CMD := libtool -dynamic -flat_namespace -undefined suppress -o
+# Need to use -install_name ${LIB_RUNTIME_DIR}/libname?
 	SHLIB_CMD := c++ -dynamiclib -flat_namespace -undefined suppress -o
-# -install_name ${LIB_RUNTIME_DIR}/libname
 	STATLIB_CMD := libtool -static -o
-	LD_OPTIONS += -Wl,-m
-# -Wl,-multiply_defined,warning
 	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
 endif
 
@@ -274,13 +267,11 @@ ifeq ($(COMPILER),g++3)
 
 	ifeq ($(MODE),debug)
 		CC_SWITCHES += -O1 -g
-		LD_OPTIONS +=
 	endif
 
 # can't use -O3 with g++301, since we get core dumps...
 	ifeq ($(MODE),prod)
 		CC_SWITCHES += -O2
-		LD_OPTIONS +=
 	endif
 
 	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
@@ -461,14 +452,6 @@ ldeps: $(ALL_SOURCES) $(ALL_HEADERS)
 #
 #-------------------------------------------------------------------------
 
-# ifeq ($(PLATFORM),ppc)
-#	LIBS_STYLE := none
-# endif
-
-ifeq ($(LIBS_STYLE),none)
-	PROJECT_LIBS := 
-endif
-
 ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(PROJECT_LIBS))
 ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(PROJECT_LIBS))
 
@@ -479,8 +462,10 @@ ifeq ($(MODE),prod)
 	EXECUTABLE := $(LOCAL_BIN)/grsh$(VERSION)
 endif
 
-all: dir_structure TAGS $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
+all: build
 	$(EXECUTABLE) ./testing/grshtest.tcl
+
+build: dir_structure TAGS $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
 
 GRSH_STATIC_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/grsh/*.cc)))
@@ -491,19 +476,10 @@ ifeq ($(MODE),debug)
 	endif
 endif
 
-ifneq ($(LIBS_STYLE),none)
 CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
 	$(PROJECT_LIBS) $(EXTERNAL_LIBS)
 $(EXECUTABLE): $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
 	$(CC) -o $(TMP_FILE) $(CMDLINE) && mv $(TMP_FILE) $@
-endif
-
-ifeq ($(LIBS_STYLE),none)
-CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(PROJECT_OBJS) \
-	$(LIB_PATH) $(EXTERNAL_LIBS)
-$(EXECUTABLE): $(GRSH_STATIC_OBJS) $(PROJECT_OBJS)
-	$(CC) -o $(TMP_FILE) $(CMDLINE) && mv $(TMP_FILE) $@
-endif
 
 
 #-------------------------------------------------------------------------
