@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Thu Oct 21 13:05:47 1999
+// written: Mon Nov 15 15:55:02 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "grobj.h"
 #include "objlist.h"
 #include "listitempkg.h"
+#include "rect.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -38,13 +39,13 @@ public:
 	 TclItemCmd<GrObj>(pkg, cmd_name, "objid", 2, 2) {}
 protected:
   virtual void invoke() {
-	 double left, top, right, bottom;
-	 bool have_box = getItem()->getBoundingBox(left, top, right, bottom);
+	 Rect<double> bbox;
+	 bool have_box = getItem()->getBoundingBox(bbox);
 	 if (have_box) {
-		lappendVal(left);
-		lappendVal(top);
-		lappendVal(right);
-		lappendVal(bottom);
+		lappendVal(bbox.left());
+		lappendVal(bbox.top());
+		lappendVal(bbox.right());
+		lappendVal(bbox.bottom());
 	 }
   }
 };
