@@ -250,6 +250,11 @@ INCLUDE_PATH += -I$(LOCAL_ARCH)/include -I$(SRC)
 
 LIB_PATH += -L$(LOCAL_LIB)
 
+INCLUDE_PATH += -I/usr/local/matlab/extern/include
+LIB_PATH += -L/usr/local/matlab/extern/lib/glnx86
+LIB_PATH += -Wl,-rpath,/usr/local/matlab/extern/lib/glnx86
+CPP_DEFINES += -DHAVE_MATLAB
+
 ifeq ($(PLATFORM),i686)
 	LIB_PATH += -L/usr/X11R6/lib
 endif
@@ -261,6 +266,8 @@ EXTERNAL_LIBS := \
 	-lz \
 	$(AUDIO_LIB) \
 	-lm
+
+EXTERNAL_LIBS += -leng -lmx -lut -lmat -lmi -lmatlb
 
 #-------------------------------------------------------------------------
 #
@@ -311,13 +318,13 @@ LIBDEEPVISION := $(LOCAL_LIB)/libDeepVision$(LIB_EXT)
 GWT_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/gwt/*.cc)))
 
-GX_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/gx/*.cc)))
+GFX_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/gfx/*.cc)))
 
 IO_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/io/*.cc)))
 
-DEEPAPPL_OBJS := $(GWT_OBJS) $(GX_OBJS) $(IO_OBJS)
+DEEPAPPL_OBJS := $(GWT_OBJS) $(GFX_OBJS) $(IO_OBJS)
 
 LIBDEEPAPPL := $(LOCAL_LIB)/libDeepAppl$(LIB_EXT)
 
@@ -484,14 +491,18 @@ cleaner: clean
 	 $(OBJ)/ii_files/*.ii $(OBJ)/*/ii_files/*.ii
 
 # Count the lines in all source files
-count:
-	wc -l $(ALL_SOURCES) $(ALL_HEADERS)
+count: $(ALL_SOURCES) $(ALL_HEADERS)
+	wc -l $+
+
+counts: $(ALL_SOURCES) $(ALL_HEADERS)
+	wc -l $+ | sort -n > counts
 
 do_sizes:
 	ls -lLR obj/$(PLATFORM) | grep "\.do" | sort -n +4 > do_sizes
 
 docs: $(DOC)/DoxygenConfig $(SRC)/*.h $(SRC)/*.doc
 	(doxygen $(DOC)/DoxygenConfig > $(DOC)/DocLog) >& $(DOC)/DocErrors
+	cd ~/www/grsh; chmod -R og+r *
 
 # Generate tags file based only on header files
 H_TAGS: $(ALL_HEADERS)
@@ -502,8 +513,12 @@ ldeps: cdeps
 		> $(IDEP)/Ldeps || /bin/true
 
 # Count the number of non-commented source lines
-ncsl:
-	NCSL $(ALL_SOURCES) $(ALL_HEADERS)
+ncsl: $(ALL_SOURCES) $(ALL_HEADERS)
+	NCSL $+
+
+# Count the number of non-commented source lines
+ncsls: $(ALL_SOURCES) $(ALL_HEADERS)
+	NCSL $+ | sort -n > ncsls
 
 # Remove all object files and build a new production executable from scratch
 new: cleaner $(EXECUTABLE)
