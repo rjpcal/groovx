@@ -3,7 +3,7 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Wed Mar 22 16:47:04 2000
+// written: Thu Mar 23 19:13:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,6 +47,7 @@ public:
   virtual void deserialize(istream &is, IOFlag flag);
   virtual int charCount() const;
 
+  virtual unsigned long serialVersionId() const;
   virtual void readFrom(Reader* reader);
   virtual void writeTo(Writer* writer) const;
 
