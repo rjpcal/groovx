@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Sat May 19 11:44:06 2001
+// written: Sat May 19 14:28:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ public:
 		  return (*itr).second;
 		}
 
-	 void assignObjectForId(unsigned long id, IO::IoObject* object)
+	 void assignObjectForId(unsigned long id, IdItem<IO::IoObject> object)
 		{
 		  MapType::const_iterator itr = itsMap.find(id);
 
@@ -138,7 +138,7 @@ public:
 			 throw err;
 		  }
 
-		  itsMap.insert(MapType::value_type(id, IdItem<IO::IoObject>(object)));
+		  itsMap.insert(MapType::value_type(id, object));
 		}
 
 	 void clear() { itsMap.clear(); }
@@ -225,7 +225,7 @@ private:
 	 }
 
   void inflateObject(IO::Reader* reader, STD_IO::istream& buf,
-							const fixed_string& obj_tag, IO::IoObject* obj);
+							const fixed_string& obj_tag, IdItem<IO::IoObject> obj);
 
   // Delegands -- this is the public interface that AsciiStreamReader
   // forwards to in implementing its own member functions.
@@ -401,7 +401,7 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 
 void AsciiStreamReader::Impl::inflateObject(
   IO::Reader* reader, STD_IO::istream& buf,
-  const fixed_string& obj_tag, IO::IoObject* obj
+  const fixed_string& obj_tag, IdItem<IO::IoObject> obj
 ) {
 DOTRACE("AsciiStreamReader::Impl::inflateObject");
 
@@ -496,7 +496,7 @@ DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
   if ( id == 0 )
 	 throw IO::ReadError("owned object had object id of 0");
 
-  itsObjects.assignObjectForId(id, obj.get());
+  itsObjects.assignObjectForId(id, obj);
 }
 
 void AsciiStreamReader::Impl::readBaseClass(
@@ -511,7 +511,7 @@ DOTRACE("AsciiStreamReader::Impl::readBaseClass");
 
   ist >> bracket;
 
-  inflateObject(reader, ist, baseClassName, basePart.get());
+  inflateObject(reader, ist, baseClassName, basePart);
 
   ist >> bracket >> ws;
 }
@@ -546,14 +546,15 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 		rootid = id;
 		
 		if (given_root != 0) 
-		  itsObjects.assignObjectForId(rootid, given_root);
+		  itsObjects.assignObjectForId(rootid,
+												 IdItem<IO::IoObject>(given_root));
 
 		haveReadRoot = true;
 	 }
 
 	 IdItem<IO::IoObject> obj = itsObjects.fetchObject(type, id);
 
-	 inflateObject(reader, itsBuf, type, obj.get());
+	 inflateObject(reader, itsBuf, type, obj);
 
 	 itsBuf >> bracket >> ws;
 
