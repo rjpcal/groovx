@@ -52,6 +52,8 @@
 
 #include "visx/tlistutils.h"
 
+#include <cstring> // for strncmp()
+
 #define DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
 #include "util/trace.h"
 #include "util/debug.h"
@@ -67,7 +69,7 @@ Util::Tracer ExptDriver::tracer;
 
 namespace
 {
-  const IO::VersionId EXPTDRIVER_SERIAL_VERSION_ID = 4;
+  const IO::VersionId EXPTDRIVER_SERIAL_VERSION_ID = 5;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -193,6 +195,33 @@ DOTRACE("ExptDriver::readFrom");
   else
     {
       reader.readOwnedObject("doWhenComplete", rep->doWhenComplete);
+
+      // Oops... I added the "filePrefix" attribute without bumping the
+      // serialVersionId from 4 to 5... therefore some v4 files have a
+      // "filePrefix" and others don't. So we have to just attempt reading
+      // it and be ready to catch a "no such attribute" exception.
+      try
+        {
+          reader.readValue("filePrefix", rep->filePrefix);
+        }
+      catch (Util::Error& err)
+        {
+          if (strncmp(err.msg().c_str(),
+                      "no attribute named 'filePrefix' for ExptDriver",
+                      46) == 0)
+            {
+              // eat the exception
+              rep->filePrefix = "expt";
+            }
+          else
+            {
+              throw;
+            }
+        }
+    }
+
+  if (svid >= 5)
+    {
       reader.readValue("filePrefix", rep->filePrefix);
     }
 }
@@ -201,7 +230,7 @@ void ExptDriver::writeTo(IO::Writer& writer) const
 {
 DOTRACE("ExptDriver::writeTo");
 
-  writer.ensureWriteVersionId("ExptDriver", EXPTDRIVER_SERIAL_VERSION_ID, 4,
+  writer.ensureWriteVersionId("ExptDriver", EXPTDRIVER_SERIAL_VERSION_ID, 5,
                               "Try groovx0.8a7");
 
   writer.writeValue("hostname", rep->hostname);
