@@ -34,6 +34,7 @@
 
 #include "mtx.h"
 
+#include "util/cstrstream.h"
 #include "util/error.h"
 #include "util/fstring.h"
 
@@ -567,7 +568,7 @@ DOTRACE("mtx::print");
   if (mtx_name != 0 && mtx_name[0] != '\0')
     s << mtx_name << '\n';
 
-  s << "mrows = " << mrows() << ", ncols = " << ncols() << '\n';
+  s << "mrows " << mrows() << " ncols " << ncols() << '\n';
   for(int i = 0; i < mrows(); ++i)
     {
       for(int j = 0; j < ncols(); ++j)
@@ -581,6 +582,65 @@ void mtx::print_stdout() const
 {
 DOTRACE("mtx::print_stdout");
   print(std::cout);
+}
+
+void mtx::scan(std::istream& s)
+{
+DOTRACE("mtx::scan");
+
+  fstring buf;
+  int mrows = -1;
+  int ncols = -1;
+
+  s >> buf;
+  if (buf != "mrows")
+    throw rutz::error(fstring("parse error while scanning mtx "
+                              "from stream: expected 'mrows', got '",
+                              buf, "'"),
+                      SRC_POS);
+
+  s >> mrows;
+  if (mrows < 0)
+    throw rutz::error("parse error while scanning mtx "
+                      "from stream: expected mrows>=0", SRC_POS);
+
+  s >> buf;
+  if (buf != "ncols")
+    throw rutz::error(fstring("parse error while scanning mtx "
+                              "from stream: expected 'ncols', got '",
+                              buf, "'"),
+                      SRC_POS);
+
+  s >> ncols;
+  if (ncols < 0)
+    throw rutz::error("parse error while scanning mtx "
+                      "from stream: expected ncols>=0", SRC_POS);
+
+  mtx result = mtx::zeros(mrows, ncols);
+
+  for (int r = 0; r < mrows; ++r)
+    for (int c = 0; c < ncols; ++c)
+      {
+        if (s.eof())
+          throw rutz::error("premature EOF while scanning mtx "
+                            "from stream", SRC_POS);
+        double d = 0.0;
+        s >> d;
+        result.at(r,c) = d;
+      }
+
+  if (s.fail())
+    throw rutz::error("error while scanning mtx from stream", SRC_POS);
+
+  *this = result;
+}
+
+void mtx::scan_string(const char* s)
+{
+DOTRACE("mtx::scan_string");
+
+  rutz::imemstream ms(s);
+  scan(ms);
 }
 
 void mtx::reorder_rows(const mtx& index_)

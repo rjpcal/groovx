@@ -858,6 +858,12 @@ public:
   /// Print the mtx to stdout
   void print_stdout() const;
 
+  /// Read the mtx from the given istream
+  void scan(std::istream& s);
+
+  /// Read the mtx from the given string
+  void scan_string(const char* s);
+
   //
   // Iteration
   //

@@ -51,6 +51,7 @@ DOTRACE("Mtx_Init");
   Tcl::defGenericObjCmds<MtxObj>(pkg, SRC_POS);
 
   pkg->defAction<MtxObj>("print", &mtx::print_stdout, SRC_POS);
+  pkg->defSetter<MtxObj, const char*>("scan", &MtxObj::scan_string, SRC_POS);
 
   pkg->defGetter<MtxObj, int>("mrows", &mtx::mrows, SRC_POS);
   pkg->defGetter<MtxObj, int>("ncols", &mtx::ncols, SRC_POS);
