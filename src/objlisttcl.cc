@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Wed Dec 15 17:43:08 1999
+// written: Wed Jan 26 11:42:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,8 @@ class ObjlistTcl::LoadObjectsCmd : public Tcl::TclCmd {
 public:
   LoadObjectsCmd(Tcl_Interp* interp, const char* cmd_name) :
 	 Tcl::TclCmd(interp, cmd_name,
-					 "filename ?num_to_read? ?typename?", 2, 4, false)
+					 "filename ?num_to_read=-1? ?typename=\"\"? ?use_bases=no?",
+					 2, 5, false)
   {}
 
 protected:
@@ -49,13 +50,12 @@ protected:
 };
 
 void ObjlistTcl::LoadObjectsCmd::invoke() {
-  const char* file = getCstringFromArg(1);
+  static const int ALL = -1; // indicates to read all objects until eof
 
-  int num_to_read = -1;			  // -1 indicates to read to eof
-  if (objc() >= 3) { num_to_read = getIntFromArg(2); }
-
-  const char* given_type = 0;
-  if (objc() >= 4) { given_type = getCstringFromArg(3); }
+  const char* file        =                             getCstringFromArg(1);
+  int         num_to_read =      (objc() < 3) ? ALL   : getIntFromArg(2);
+  const char* given_type  =      (objc() < 4) ?  ""   : getCstringFromArg(3);
+  bool        use_bases   = bool((objc() < 5) ? false : getBoolFromArg(4));
 
   ifstream ifs(file);
   if (ifs.fail()) { throw Tcl::TclError("unable to open file"); }
@@ -70,7 +70,7 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 
   IO::eatWhitespace(ifs);
 
-  while ( (num_to_read < 0 || num_read < num_to_read)
+  while ( (num_to_read == ALL || num_read < num_to_read)
 			 && (ifs.peek() != EOF) ) {
 
 	 // allow for whole-line comments between objects beginning with '#'
@@ -79,9 +79,11 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 		continue;
 	 }
 	 
+	 bool reading_typenames = (given_type[0] == 0);
+
 	 string type;
-	 if (given_type == 0) { ifs >> type; } 
-	 else                 { type = given_type; }
+	 if (reading_typenames) { ifs >> type; }
+	 else                   { type = given_type; }
 
 	 IO* io = IoMgr::newIO(type.c_str());
 	 
@@ -90,7 +92,9 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 		throw InputError("ObjlistTcl::loadObjects");
 	 }
 	 
-	 io->deserialize(ifs, IO::NO_FLAGS);
+	 IO::IOFlag flags = use_bases ? IO::BASES : IO::NO_FLAGS;
+
+	 io->deserialize(ifs, flags);
 	 
 	 int objid = olist.insert(p);
 	 ids.push_back(objid);
@@ -112,7 +116,8 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 class ObjlistTcl::SaveObjectsCmd : public Tcl::TclCmd {
 public:
   SaveObjectsCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "objids filename", 3, 3)
+	 Tcl::TclCmd(interp, cmd_name,
+					 "objids filename ?use_typename=yes? ?use_bases=yes?", 3, 5)
   {}
 protected:
   virtual void invoke() {
@@ -121,14 +126,21 @@ protected:
 
 	 const char* filename = arg(2).getCstring();
 
+	 bool use_typename = arg(3).getBool();
+	 bool use_bases    = arg(4).getBool();
+
 	 ofstream ofs(filename);
 	 if (ofs.fail()) {
 		throw Tcl::TclError(string("error opening file: ") + filename);
 	 }
 
+	 IO::IOFlag flags = IO::NO_FLAGS;
+	 if (use_typename) flags |= IO::TYPENAME;
+	 if (use_bases)    flags |= IO::BASES;
+
 	 for (size_t i = 0; i < objids.size(); ++i) {
 		ObjList::theObjList().getCheckedPtr(objids[i])->
-		  serialize(ofs, IO::TYPENAME | IO::BASES);
+		  serialize(ofs, flags);
 		ofs << endl;
 	 }
   }
