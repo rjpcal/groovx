@@ -3,7 +3,7 @@
 // system.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Nov 17 15:05:41 1999
-// written: Thu Mar 30 12:31:29 2000
+// written: Tue Sep 19 16:52:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "util/arrays.h"
 
 #include <cstdio>
+#include <cstdlib>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -79,6 +80,12 @@ DOTRACE("System::getcwd");
 
   return &buf[0];
 }
+
+const char* System::getenv(const char* environment_variable) {
+DOTRACE("System::getenv");
+  return ::getenv(environment_variable); 
+}
+
 
 static const char vcid_system_cc[] = "$Header$";
 #endif // !SYSTEM_CC_DEFINED

@@ -3,7 +3,7 @@
 // system.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Nov 17 15:05:41 1999
-// written: Mon Mar  6 19:43:17 2000
+// written: Tue Sep 19 16:50:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -134,6 +134,17 @@ public:
       directory. Warning: the result of this function is only valid
       until the next call to the function. */
   const char* getcwd();
+
+  /** getenv() searches the environment list for a string of the form
+      name=value, and returns a pointer to the value in the current
+      environment if such a string is present, otherwise a NULL
+      pointer.  name can be either the desired name, null-terminated,
+      or of the form name=value, in which case getenv() uses the
+      portion to the left of the = as the search key.
+
+      getenv() returns a pointer to static data which can be overwritten by
+      subsequent calls. */
+  const char* getenv(const char* environment_variable);
 };
 
 static const char vcid_system_h[] = "$Header$";
