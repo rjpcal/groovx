@@ -47,6 +47,27 @@ DBG_REGISTER
 
 GxCamera::~GxCamera() throw() {}
 
+void GxCamera::reshape(Gfx::Canvas& canvas, int w, int h)
+{
+DOTRACE("GxCamera::reshape");
+
+  dbgEval(3, itsWidth); dbgEvalNL(3, itsHeight);
+
+  itsWidth = w; itsHeight = h;
+
+  dbgEval(3, itsWidth); dbgEvalNL(3, itsHeight);
+
+  // NOTE: We must call draw() here in order to make sure that e.g. the
+  // right viewport() gets set. Without the draw() call, the potential
+  // problem is that the viewport only gets updated inside a redraw
+  // sequence. Since GxScene::render() wraps such a sequence inside a
+  // MatrixSaver, any change to the viewport will be lost following the
+  // redraw sequence. Then we run into problems if e.g. we try to grab
+  // pixels from the current viewport into a GxPixmap, since the viewport
+  // doesn't reflect the full window size.
+  draw(canvas);
+}
+
 GxPerspectiveCamera::GxPerspectiveCamera() :
   GxCamera(),
   FieldContainer(&sigNodeChanged),
@@ -223,6 +244,7 @@ void GxFixedScaleCamera::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxFixedScaleCamera::draw");
 
+  dbgEval(3, width()); dbgEvalNL(3, height());
   canvas.viewport(0, 0, width(), height());
 
   orthoFixed(canvas, width(), height(), itsPixelsPerUnit);

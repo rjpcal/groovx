@@ -55,7 +55,7 @@ public:
   virtual ~GxCamera() throw();
 
   /// Notifies the GxCamera that its window has changed size.
-  void reshape(int w, int h) { itsWidth = w; itsHeight = h; }
+  void reshape(Gfx::Canvas& canvas, int w, int h);
 
   /// Get the width of the camera's window.
   int width() const { return itsWidth; }

@@ -149,7 +149,7 @@ DOTRACE("GxScene::setCamera");
 
   itsCamera = cam;
 
-  itsCamera->reshape(itsWidth, itsHeight);
+  itsCamera->reshape(*itsCanvas, itsWidth, itsHeight);
 
   itsCamera->sigNodeChanged.connect(slotNodeChanged);
 
@@ -185,7 +185,7 @@ void GxScene::reshape(int width, int height)
 DOTRACE("GxScene::reshape");
   itsWidth = width;
   itsHeight = height;
-  itsCamera->reshape(itsWidth, itsHeight);
+  itsCamera->reshape(*itsCanvas, itsWidth, itsHeight);
 }
 
 void GxScene::animate(unsigned int framesPerSecond)

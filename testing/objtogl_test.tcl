@@ -149,3 +149,12 @@ test "GxCamera-viewingDistIn" "err2" {
     delete $c
     set result
 } {viewingDistIn: .*$}
+
+### reshape bugfix ###
+test "GxCamera-reshape" "bugfix" {
+    # Fixed 2-Jun-2004 in gfx/gxcamera.cc
+    set t [Toglet::current]
+    wm geometry . 500x500
+    update idletasks
+    set viewport [glGetInteger $::GL_VIEWPORT]
+} {^0 0 500 500$}
