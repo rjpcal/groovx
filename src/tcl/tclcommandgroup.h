@@ -50,6 +50,7 @@ namespace Tcl
   class Interp;
 }
 
+/// Represents a set of overloaded Tcl::Command objects.
 class Tcl::CommandGroup
 {
 public:
