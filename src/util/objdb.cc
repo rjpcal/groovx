@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri Oct  6 17:17:35 2000
+// written: Sat Oct  7 13:12:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -117,7 +117,7 @@ DOTRACE("IoPtrList::legacyDesrlz");
 
 	 IO::IoObject* obj = lreader->readObject("ptrListItem");
 
-	 insertVoidPtrAt(ptrid, fromIOToVoid(obj));
+	 insertVoidPtrAt(ptrid, new MasterVoidPtr(this, fromIOToVoid(obj)));
   }
 
   firstVacant() = lreader->readInt("itsFirstVacant");
@@ -153,7 +153,7 @@ DOTRACE("IoPtrList::readFrom");
 
   for (size_t i = 0; i < uint_count; ++i)
 	 if (ioBlock[i] != 0) {
-		insertVoidPtrAt(i, fromIOToVoid(ioBlock[i]));
+		insertVoidPtrAt(i, new MasterVoidPtr(this, fromIOToVoid(ioBlock[i])));
 	 }
 }
 

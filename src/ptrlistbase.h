@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Fri Oct  6 16:59:45 2000
+// written: Sat Oct  7 13:15:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,28 +50,20 @@ private:
 
   void swap(MasterVoidPtr& other);
 
-protected:
-  virtual void destroy();
-
 public:
-  explicit MasterVoidPtr(VoidPtrList* vpl);
+  MasterVoidPtr(VoidPtrList* vpl, void* address);
   MasterVoidPtr(const MasterVoidPtr& other);
 
   MasterVoidPtr& operator=(const MasterVoidPtr& other);
 
   virtual ~MasterVoidPtr();
 
-  virtual MasterVoidPtr* clone() const;
-
   void* ptr() const;
 
-  /// Destroy current pointee, and set pointee to new_address
-  void reset(void* new_address);
+  virtual bool isValid() const;
 
-  bool isValid() const;
-
-  bool operator==(const void* other)
-  { return itsPtr == other; }
+  bool operator==(const MasterVoidPtr& other)
+  { return itsPtr == other.itsPtr; }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -126,9 +118,6 @@ public:
       destroyPtr(), which is a pure virtual function. */
   void clear();
 
-  void incrRefCount(int id) const;
-  void decrRefCount(int id) const;
-
 protected:
   /** Return the \c void* at the index given by \a id.  There is no
 		range-check performed; this must be done by the client with
@@ -151,17 +140,17 @@ protected:
 		where it was inserted. If necessary, the list will be expanded
 		to make room for the ptr. The PtrList now assumes control of the
 		memory management for the object *ptr. */
-  int insertVoidPtr(void* ptr);
+  int insertVoidPtr(MasterVoidPtr* ptr);
 
   /** Add obj at index 'id', destroying any the object was previously
 		pointed to from that that location. The list will be expanded if
 		'id' exceeds the size of the list. If id is < 0, the function
 		returns without effect. */
-  void insertVoidPtrAt(int id, void* ptr);
+  void insertVoidPtrAt(int id, MasterVoidPtr* ptr);
 
   /** This function will be called after every insertion into the
       VoidPtrList. The default implementation is a no-op. */
-  virtual void afterInsertHook(int id, void* ptr);
+  virtual void afterInsertHook(int id, MasterVoidPtr* ptr);
 
 public:
   /** Must be overridden to free the memory pointed to by ptr. */

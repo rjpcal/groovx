@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Thu Oct  5 18:23:32 2000
+// written: Sat Oct  7 13:16:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,13 +92,15 @@ public:
 
   /// Insert \a ptr into the list, and return its id.
   int insert(T* ptr)
-	 { return VoidPtrList::insertVoidPtr(castFromT(ptr)); }
+	 { return VoidPtrList::insertVoidPtr(
+                      new MasterVoidPtr(this, castFromT(ptr))); }
 
   /** Insert \a ptr into the list at index \a id. If an object
       previously existed at index \a id, that object will be properly
       destroyed. */
   void insertAt(int id, T* ptr)
-	 { VoidPtrList::insertVoidPtrAt(id, castFromT(ptr)); }
+	 { VoidPtrList::insertVoidPtrAt(id,
+                      new MasterVoidPtr(this, castFromT(ptr))); }
 
 protected:
   /// Safely cast \a ptr to the correct type for this list.
