@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Fri Aug 10 15:08:27 2001
+// written: Mon Aug 13 12:15:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "gtext.h"
 
-#include "rect.h"
+#include "gfx/rect.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -741,11 +741,11 @@ DOTRACE("Gtext::getStrokeWidth");
   return itsStrokeWidth;
 }
 
-Rect<double> Gtext::grGetBoundingBox() const
+Gfx::Rect<double> Gtext::grGetBoundingBox() const
 {
 DOTRACE("Gtext::grGetBoundingBox");
 
-  Rect<double> bbox;
+  Gfx::Rect<double> bbox;
   bbox.left() = 0.0;
   bbox.right() = (5*itsText.length()) - 1;
   bbox.bottom() = -1.0;

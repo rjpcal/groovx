@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 13:36:59 2001
-// written: Fri Aug 10 16:30:56 2001
+// written: Mon Aug 13 12:15:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,9 +18,8 @@
 namespace Gfx
 {
   class Canvas;
+  template <class V> class Rect;
 }
-
-template <class V> class Rect;
 
 class Gnode {
 private:
@@ -42,7 +41,7 @@ public:
 
   virtual void gnodeUndraw(Gfx::Canvas& canvas) const = 0;
 
-  virtual Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const = 0;
+  virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const = 0;
 };
 
 static const char vcid_gnode_h[] = "$Header$";

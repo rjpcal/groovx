@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri Aug 10 10:46:50 2001
+// written: Mon Aug 13 12:15:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "fixpt.h"
 
-#include "rect.h"
+#include "gfx/rect.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -95,10 +95,10 @@ DOTRACE("FixPt::writeTo");
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
-Rect<double> FixPt::grGetBoundingBox() const {
+Gfx::Rect<double> FixPt::grGetBoundingBox() const {
 DOTRACE("FixPt::grGetBoundingBox");
 
-  Rect<double> bbox;
+  Gfx::Rect<double> bbox;
   bbox.left()  = bbox.bottom() = -length()/2.0;
   bbox.right() = bbox.top()    =  length()/2.0;
 

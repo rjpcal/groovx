@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Aug 10 18:57:37 2001
+// written: Mon Aug 13 12:15:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ DOTRACE("GrObj::getBBVisibility");
   return itsImpl->itsBB->isVisible();
 }
 
-void GrObj::getBoundingBox(Gfx::Canvas& canvas, Rect<double>& bbox) const
+void GrObj::getBoundingBox(Gfx::Canvas& canvas, Gfx::Rect<double>& bbox) const
 {
 DOTRACE("GrObj::getBoundingBox");
 

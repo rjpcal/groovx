@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Fri Aug 10 15:04:49 2001
+// written: Mon Aug 13 12:15:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,8 @@
 
 #include "gabor.h"
 
-#include "point.h"
-#include "rect.h"
+#include "gfx/rect.h"
+#include "gfx/vec2.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -122,11 +122,11 @@ DOTRACE("Gabor::writeTo");
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
-Rect<double> Gabor::grGetBoundingBox() const
+Gfx::Rect<double> Gabor::grGetBoundingBox() const
 {
 DOTRACE("Gabor::grGetBoundingBox");
 
-  Rect<double> bbox;
+  Gfx::Rect<double> bbox;
   bbox.left() = -0.5;
   bbox.right() = 0.5;
   bbox.bottom() = -0.5;
@@ -141,7 +141,7 @@ DOTRACE("Gabor::grRender");
   const double xsigma2 = sigma()*aspectRatio() * sigma()*aspectRatio() ;
   const double ysigma2 = sigma() * sigma();
 
-  const Point<double> center(0.0, 0.0);
+  const Gfx::Vec2<double> center(0.0, 0.0);
 
   static const double PI = acos(-1.0);
 
@@ -169,7 +169,7 @@ DOTRACE("Gabor::grRender");
           {
             const double unrotated_y = y_step*res_step - 0.5;
 
-            Point<double> point(unrotated_x, unrotated_y);
+            Gfx::Vec2<double> point(unrotated_x, unrotated_y);
             point.rotateDeg(orientation());
 
             point -= center;

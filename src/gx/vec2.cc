@@ -10,16 +10,16 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef POINT_CC_DEFINED
-#define POINT_CC_DEFINED
+#ifndef VEC2_CC_DEFINED
+#define VEC2_CC_DEFINED
 
-#include "gfx/point.h"
+#include "gfx/vec2.h"
 
 #include "util/algo.h"
 
 #include <cmath>
 
-namespace PointAlgo
+namespace Gfx { namespace PointAlgo
 {
   double deg2rad(double degrees)
   {
@@ -76,15 +76,15 @@ namespace PointAlgo
 
     return quadrantDeg(degrees-360.0);
   }
-}
+}}
 
-double PointAlgo::thetaDeg(double y, double x)
+double Gfx::PointAlgo::thetaDeg(double y, double x)
 {
   return rad2deg(atan2(y,x));
 }
 
-void PointAlgo::setPolarPoint(Point<double>& point,
-                              double length, double degrees)
+void Gfx::PointAlgo::setPolarPoint(Gfx::Vec2<double>& point,
+											  double length, double degrees)
 {
   normDeg(degrees);
 
@@ -105,4 +105,4 @@ void PointAlgo::setPolarPoint(Point<double>& point,
 }
 
 static const char vcid_point_cc[] = "$Header$";
-#endif // !POINT_CC_DEFINED
+#endif // !VEC2_CC_DEFINED

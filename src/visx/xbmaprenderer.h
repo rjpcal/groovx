@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:19:23 1999
-// written: Fri Aug 10 13:01:16 2001
+// written: Mon Aug 13 12:13:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,8 +46,8 @@ public:
 
   virtual void doRender(Gfx::Canvas& canvas,
                         const Gfx::BmapData& data,
-                        const Point<double>& world_pos,
-                        const Point<double>& zoom) const;
+                        const Gfx::Vec2<double>& world_pos,
+                        const Gfx::Vec2<double>& zoom) const;
 
 private:
   void update(const Gfx::BmapData& data) const;

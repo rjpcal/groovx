@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug  9 17:24:29 2001
-// written: Thu Aug  9 17:37:19 2001
+// written: Mon Aug 13 12:15:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #define RECTTCL_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(RECT_H_DEFINED)
-#include "rect.h"
+#include "gfx/rect.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCONVERT_H_DEFINED)
@@ -28,17 +28,17 @@
 namespace Tcl
 {
   template <class T>
-  struct Convert<const Rect<T>& >
+  struct Convert<const Gfx::Rect<T>& >
   {
     typedef T Type;
-    static Rect<T> fromTcl( Tcl_Obj* obj )
+    static Gfx::Rect<T> fromTcl( Tcl_Obj* obj )
     {
       Tcl::List listObj(obj);
-      return Rect<T>(listObj.get(0, (T*)0), listObj.get(1, (T*)0),
-                     listObj.get(2, (T*)0), listObj.get(3, (T*)0));
+      return Gfx::Rect<T>(listObj.get(0, (T*)0), listObj.get(1, (T*)0),
+                          listObj.get(2, (T*)0), listObj.get(3, (T*)0));
     }
 
-    static Tcl::ObjPtr toTcl( const Rect<T>& rect )
+    static Tcl::ObjPtr toTcl( const Gfx::Rect<T>& rect )
     {
       Tcl::List listObj;
       listObj.append(rect.left());
@@ -50,17 +50,17 @@ namespace Tcl
   };
 
   template <class T>
-  struct Convert<Rect<T> >
+  struct Convert<Gfx::Rect<T> >
   {
     typedef T Type;
-    static Rect<T> fromTcl( Tcl_Obj* obj )
+    static Gfx::Rect<T> fromTcl( Tcl_Obj* obj )
     {
-		return Convert<const Rect<T>&>::fromTcl(obj);
-	 }
+      return Convert<const Gfx::Rect<T>&>::fromTcl(obj);
+    }
 
-    static Tcl::ObjPtr toTcl( Rect<T> rect )
+    static Tcl::ObjPtr toTcl( Gfx::Rect<T> rect )
     {
-		return Convert<const Rect<T>&>::toTcl(rect);
+      return Convert<const Gfx::Rect<T>&>::toTcl(rect);
     }
   };
 }

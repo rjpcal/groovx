@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Fri Aug 10 11:44:50 2001
+// written: Mon Aug 13 12:15:36 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -20,9 +20,8 @@
 
 #include "glcanvas.h"
 
-#include "rect.h"
-
 #include "gfx/bmapdata.h"
+#include "gfx/rect.h"
 
 #include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
@@ -357,7 +356,7 @@ long int GLTcl::pixelCheckSum(int x, int y, int w, int h)
 
   Gfx::BmapData data;
 
-  Rect<int> bounds;
+  Gfx::Rect<int> bounds;
   bounds.setRectXYWH(x,y,w,h);
 
   canvas.grabPixels(bounds, data);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:00:57 2001
-// written: Fri Aug 10 14:53:18 2001
+// written: Mon Aug 13 12:15:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,14 +15,15 @@
 
 #include "gmodes.h"
 #include "gnode.h"
-#include "rect.h"
+
+#include "gfx/rect.h"
 
 #include "util/algo.h"
 
 class GrObjScaler : public Gnode {
 public:
   GrObjScaler(shared_ptr<Gnode> child) :
-	 Gnode(child),
+    Gnode(child),
     itsMode(Gmodes::NATIVE_SCALING),
     itsWidthFactor(1.0),
     itsHeightFactor(1.0)
@@ -32,7 +33,7 @@ public:
   Gmodes::ScalingMode getMode() const { return itsMode; }
   void setMode(Gmodes::ScalingMode new_mode);
 
-  void setWidth(double new_width, const Rect<double>& native_bbox)
+  void setWidth(double new_width, const Gfx::Rect<double>& native_bbox)
   {
     double current_width = native_bbox.width() * itsWidthFactor;
 
@@ -51,7 +52,7 @@ public:
       }
   }
 
-  void setHeight(double new_height, const Rect<double>& native_bbox)
+  void setHeight(double new_height, const Gfx::Rect<double>& native_bbox)
   {
     double current_height = native_bbox.height() * itsHeightFactor;
 
@@ -85,7 +86,7 @@ public:
     itsWidthFactor *= change_factor;
   }
 
-  void setMaxDim(double new_max_dimension, const Rect<double>& native_bbox)
+  void setMaxDim(double new_max_dimension, const Gfx::Rect<double>& native_bbox)
   {
     if (itsMode == Gmodes::NATIVE_SCALING) return;
 
@@ -100,17 +101,17 @@ public:
     return (itsHeightFactor != 0.0 ? itsWidthFactor/itsHeightFactor : 0.0);
   }
 
-  double scaledWidth(const Rect<double>& native_bbox)
+  double scaledWidth(const Gfx::Rect<double>& native_bbox)
   {
     return native_bbox.width() * itsWidthFactor;
   }
 
-  double scaledHeight(const Rect<double>& native_bbox)
+  double scaledHeight(const Gfx::Rect<double>& native_bbox)
   {
     return native_bbox.height() * itsHeightFactor;
   }
 
-  double scaledMaxDim(const Rect<double>& native_bbox)
+  double scaledMaxDim(const Gfx::Rect<double>& native_bbox)
   {
     return max(scaledWidth(native_bbox), scaledHeight(native_bbox));
   }
@@ -119,7 +120,7 @@ public:
 
   virtual void gnodeUndraw(Gfx::Canvas& canvas) const;
 
-  virtual Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
+  virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
 
 private:
   Gmodes::ScalingMode itsMode;

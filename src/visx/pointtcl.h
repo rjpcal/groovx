@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug  9 17:47:29 2001
-// written: Thu Aug  9 18:41:21 2001
+// written: Mon Aug 13 12:13:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef POINTTCL_H_DEFINED
 #define POINTTCL_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINT_H_DEFINED)
-#include "point.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VEC2_H_DEFINED)
+#include "gfx/vec2.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCONVERT_H_DEFINED)
@@ -28,16 +28,16 @@
 namespace Tcl
 {
   template <class T>
-  struct Convert<const Point<T>& >
+  struct Convert<const Gfx::Vec2<T>& >
   {
     typedef T Type;
-    static Point<T> fromTcl( Tcl_Obj* obj )
+    static Gfx::Vec2<T> fromTcl( Tcl_Obj* obj )
     {
       Tcl::List listObj(obj);
-      return Point<T>(listObj.get(0, (T*)0), listObj.get(1, (T*)0));
+      return Gfx::Vec2<T>(listObj.get(0, (T*)0), listObj.get(1, (T*)0));
     }
 
-    static Tcl::ObjPtr toTcl( const Point<T>& point )
+    static Tcl::ObjPtr toTcl( const Gfx::Vec2<T>& point )
     {
       Tcl::List listObj;
       listObj.append(point.x());
@@ -47,17 +47,17 @@ namespace Tcl
   };
 
   template <class T>
-  struct Convert<Point<T> >
+  struct Convert<Gfx::Vec2<T> >
   {
     typedef T Type;
-    static Point<T> fromTcl( Tcl_Obj* obj )
+    static Gfx::Vec2<T> fromTcl( Tcl_Obj* obj )
     {
-      return Convert<const Point<T>&>::fromTcl(obj);
+      return Convert<const Gfx::Vec2<T>&>::fromTcl(obj);
     }
 
-    static Tcl::ObjPtr toTcl( Point<T> point )
+    static Tcl::ObjPtr toTcl( Gfx::Vec2<T> point )
     {
-      return Convert<const Point<T>&>::toTcl(point);
+      return Convert<const Gfx::Vec2<T>&>::toTcl(point);
     }
   };
 }

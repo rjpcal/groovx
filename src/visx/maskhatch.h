@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Fri Aug 10 10:46:48 2001
+// written: Mon Aug 13 12:15:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ public:
   virtual void receiveStateChangeMsg(const Util::Observable* obj);
 
 protected:
-  virtual Rect<double> grGetBoundingBox() const;
+  virtual Gfx::Rect<double> grGetBoundingBox() const;
 
   virtual void grRender(Gfx::Canvas& canvas, DrawMode mode) const;
 };

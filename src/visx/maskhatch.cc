@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Fri Aug 10 15:08:55 2001
+// written: Mon Aug 13 12:15:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "maskhatch.h"
 
-#include "rect.h"
+#include "gfx/rect.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -98,10 +98,10 @@ void MaskHatch::receiveStateChangeMsg(const Util::Observable* obj)
   GrObj::receiveStateChangeMsg(obj);
 }
 
-Rect<double> MaskHatch::grGetBoundingBox() const {
+Gfx::Rect<double> MaskHatch::grGetBoundingBox() const {
 DOTRACE("MaskHatch::grGetBoundingBox");
 
-  Rect<double> bbox;
+  Gfx::Rect<double> bbox;
 
   bbox.left() = bbox.bottom() = 0.0;
   bbox.right() = bbox.top() = 1.0;

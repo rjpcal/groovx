@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri Aug 10 18:36:00 2001
+// written: Mon Aug 13 12:09:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,18 @@
 #ifndef RECT_H_DEFINED
 #define RECT_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINT_H_DEFINED)
-#include "point.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VEC2_H_DEFINED)
+#include "gfx/vec2.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
 #include "util/algo.h"
 #endif
+
+namespace Gfx
+{
+  template <class V> class Rect;
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -28,14 +33,14 @@
 ///////////////////////////////////////////////////////////////////////
 
 template<class V>
-class Rect {
+class Gfx::Rect {
 public:
   // Creators
   Rect() : ll(), tt(), rr(), bb() {} // everything inits to zero
 
   Rect(V L, V T, V R, V B) : ll(L), tt(T), rr(R), bb(B) {}
 
-  Rect(const Point<V>& p1, const Point<V>& p2)
+  Rect(const Gfx::Vec2<V>& p1, const Gfx::Vec2<V>& p2)
     { setCorners(p1, p2); }
 
   Rect(const Rect<V>& i) : ll(i.ll), tt(i.tt), rr(i.rr), bb(i.bb) {}
@@ -49,26 +54,26 @@ public:
   void getRectLRBT(V& L, V& R, V& B, V& T) const
     { L = ll; R = rr; B = bb; T = tt; }
 
-  Point<V> bottomLeft() const
-    { return Point<V>(ll, bb); }
+  Gfx::Vec2<V> bottomLeft() const
+    { return Gfx::Vec2<V>(ll, bb); }
 
-  Point<V> bottomRight() const
-    { return Point<V>(rr, bb); }
+  Gfx::Vec2<V> bottomRight() const
+    { return Gfx::Vec2<V>(rr, bb); }
 
-  Point<V> topLeft() const
-    { return Point<V>(ll, tt); }
+  Gfx::Vec2<V> topLeft() const
+    { return Gfx::Vec2<V>(ll, tt); }
 
-  Point<V> topRight() const
-    { return Point<V>(rr, tt); }
+  Gfx::Vec2<V> topRight() const
+    { return Gfx::Vec2<V>(rr, tt); }
 
   V width() const { return (rr-ll); }
   V height() const { return (tt-bb); }
 
-  Point<V> extent() const { return Point<V>(width(), height()); }
+  Gfx::Vec2<V> extent() const { return Gfx::Vec2<V>(width(), height()); }
 
   V aspect() const { return width()/height(); }
 
-  Point<V> center() const { return Point<V>(centerX(), centerY()); }
+  Gfx::Vec2<V> center() const { return Gfx::Vec2<V>(centerX(), centerY()); }
 
   V centerX() const { return (rr+ll)/V(2); }
   V centerY() const { return (tt+bb)/V(2); }
@@ -87,7 +92,7 @@ public:
     tt = bb+Util::abs(h);
   }
 
-  void setCorners(const Point<V>& p1, const Point<V>& p2)
+  void setCorners(const Gfx::Vec2<V>& p1, const Gfx::Vec2<V>& p2)
   {
     ll = Util::min(p1.x(), p2.x());
     rr = Util::max(p1.x(), p2.x());
@@ -95,33 +100,33 @@ public:
     tt = Util::max(p1.y(), p2.y());
   }
 
-  void setBottomLeft(const Point<V>& point)
+  void setBottomLeft(const Gfx::Vec2<V>& point)
     { ll = point.x(); bb = point.y(); }
 
-  void setBottomRight(const Point<V>& point)
+  void setBottomRight(const Gfx::Vec2<V>& point)
     { rr = point.x(); bb = point.y(); }
 
-  void setTopLeft(const Point<V>& point)
+  void setTopLeft(const Gfx::Vec2<V>& point)
     { ll = point.x(); tt = point.y(); }
 
-  void setTopRight(const Point<V>& point)
+  void setTopRight(const Gfx::Vec2<V>& point)
     { rr = point.x(); tt = point.y(); }
 
-  void translate(const Point<V>& dist)
+  void translate(const Gfx::Vec2<V>& dist)
   {
     ll += dist.x(); rr += dist.x();
     bb += dist.y(); tt += dist.y();
   }
 
-  void scale(const Point<V>& factors)
+  void scale(const Gfx::Vec2<V>& factors)
   {
     widenByFactor(factors.x());
     heightenByFactor(factors.y());
   }
 
-  void setCenter(const Point<V>& point)
+  void setCenter(const Gfx::Vec2<V>& point)
   {
-    Point<V> diff = point - center();
+    Gfx::Vec2<V> diff = point - center();
     translate(diff);
   }
 

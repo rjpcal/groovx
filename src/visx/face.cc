@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Mon Aug 13 10:00:50 2001
+// written: Mon Aug 13 12:15:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,8 @@
 
 #include "face.h"
 
-#include "rect.h"
-
 #include "gfx/canvas.h"
+#include "gfx/rect.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -263,11 +262,11 @@ DOTRACE("Face::grRender");
 // Accessors
 ///////////////////////////////////////////////////////////////////////
 
-Rect<double> Face::grGetBoundingBox() const
+Gfx::Rect<double> Face::grGetBoundingBox() const
 {
 DOTRACE("Face::grGetBoundingBox");
 
-  Rect<double> bounding_box;
+  Gfx::Rect<double> bounding_box;
   bounding_box.left() = -0.7;
   bounding_box.right() = 0.7;
   bounding_box.bottom() = 0.2 + 0.75*(-1.7-0.2);

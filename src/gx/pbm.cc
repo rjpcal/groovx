@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 16:41:07 1999
-// written: Fri Aug 10 12:08:46 2001
+// written: Mon Aug 13 12:13:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,8 @@
 
 #include "pbm.h"
 
-#include "point.h"
-
 #include "gfx/bmapdata.h"
+#include "gfx/vec2.h"
 
 #include "util/error.h"
 #include "util/gzstreambuf.h"
@@ -192,7 +191,7 @@ DOTRACE("Pbm::load");
       is.ignore(1000, '\n');
     }
 
-  Point<int> extent;
+  Gfx::Vec2<int> extent;
 
   is >> extent.x();
   is >> extent.y();

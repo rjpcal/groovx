@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 20 00:37:03 2000
-// written: Fri Aug 10 11:43:07 2001
+// written: Mon Aug 13 12:13:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "gfx/bmapdata.h"
 
-#include "point.h"
+#include "gfx/vec2.h"
 
 #include "util/algo.h"
 
@@ -33,7 +33,7 @@
 
 class Gfx::BmapData::Impl {
 public:
-  Impl(const Point<int>& extent, int bits_per_pixel, int byte_alignment) :
+  Impl(const Gfx::Vec2<int>& extent, int bits_per_pixel, int byte_alignment) :
     itsExtent(extent),
     itsBitsPerPixel(bits_per_pixel),
     itsByteAlignment(byte_alignment),
@@ -55,7 +55,7 @@ public:
 
   // default copy-ctor and assn-oper OK
 
-  Point<int> itsExtent;
+  Gfx::Vec2<int> itsExtent;
   int itsBitsPerPixel;
   int itsByteAlignment;
   dynamic_block<unsigned char> itsBytes;
@@ -72,12 +72,12 @@ public:
 Gfx::BmapData::UpdateFunc::~UpdateFunc() {}
 
 Gfx::BmapData::BmapData() :
-  itsImpl(new Impl(Point<int>(0, 0), 1, 1))
+  itsImpl(new Impl(Gfx::Vec2<int>(0, 0), 1, 1))
 {
 DOTRACE("Gfx::BmapData::BmapData");
 }
 
-Gfx::BmapData::BmapData(const Point<int>& extent,
+Gfx::BmapData::BmapData(const Gfx::Vec2<int>& extent,
                         int bits_per_pixel, int byte_alignment) :
   itsImpl(new Impl(extent, bits_per_pixel, byte_alignment))
 {
@@ -130,7 +130,7 @@ DOTRACE("Gfx::BmapData::height");
   return itsImpl->itsExtent.y();
 }
 
-Point<int> Gfx::BmapData::extent() const
+Gfx::Vec2<int> Gfx::BmapData::extent() const
 {
 DOTRACE("Gfx::BmapData::height");
   updateIfNeeded();

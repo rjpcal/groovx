@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:10:45 2000
-// written: Fri Aug 10 10:56:09 2001
+// written: Mon Aug 13 12:17:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@
 template <class T>
 class GbVec3 : public Field, public Value {
 private:
-  Vec3<T> itsData;
+  Gfx::Vec3<T> itsData;
 
 public:
   GbVec3(T x_=T(), T y_=T(), T z_=T());
@@ -39,8 +39,8 @@ public:
         T& z()       { return itsData.z(); }
   const T& z() const { return itsData.z(); }
 
-        Vec3<T>& vec()       { return itsData; }
-  const Vec3<T>& vec() const { return itsData; }
+        Gfx::Vec3<T>& vec()       { return itsData; }
+  const Gfx::Vec3<T>& vec() const { return itsData; }
 
   //
   // Value interface

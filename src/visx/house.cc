@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Fri Aug 10 10:46:50 2001
+// written: Mon Aug 13 12:15:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@
 
 #include "house.h"
 
-#include "rect.h"
+#include "gfx/rect.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -242,10 +242,10 @@ DOTRACE("House::writeTo");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Rect<double> House::grGetBoundingBox() const {
+Gfx::Rect<double> House::grGetBoundingBox() const {
 DOTRACE("House::grGetBoundingBox");
 
-  Rect<double> bbox;
+  Gfx::Rect<double> bbox;
 
   GLdouble main_width = storyAspectRatio();
   GLdouble main_height = numStories() + roofHeight();

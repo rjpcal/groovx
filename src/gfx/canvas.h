@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Fri Aug 10 11:17:08 2001
+// written: Mon Aug 13 12:19:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,14 +13,13 @@
 #ifndef CANVAS_H_DEFINED
 #define CANVAS_H_DEFINED
 
-template <class V> class Point;
-template <class V> class Rect;
-template <class V> class Vec3;
-
 namespace Gfx
 {
   class BmapData;
   class Canvas;
+  template <class V> class Rect;
+  template <class V> class Vec2;
+  template <class V> class Vec3;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -39,22 +38,22 @@ public:
   virtual ~Canvas();
 
   /// Convert a point from world coordinates to screen coordinates.
-  virtual Point<int> getScreenFromWorld(const Point<double>& world_pos) const = 0;
+  virtual Gfx::Vec2<int> screenFromWorld(const Gfx::Vec2<double>& world_pos) const = 0;
 
   /// Convert a point from screen coordinates to world coordinates.
-  virtual Point<double> getWorldFromScreen(const Point<int>& screen_pos) const = 0;
+  virtual Gfx::Vec2<double> worldFromScreen(const Gfx::Vec2<int>& screen_pos) const = 0;
 
   /// Convert a rect from screen coordinates to world coordinates.
-  virtual Rect<int> getScreenFromWorld(const Rect<double>& world_pos) const = 0;
+  virtual Gfx::Rect<int> screenFromWorld(const Gfx::Rect<double>& world_pos) const = 0;
 
   /// Convert a rect from world coordinates to screen coordinates.
-  virtual Rect<double> getWorldFromScreen(const Rect<int>& screen_pos) const = 0;
+  virtual Gfx::Rect<double> worldFromScreen(const Gfx::Rect<int>& screen_pos) const = 0;
 
   /// Get the viewport rect in screen coordinates.
-  virtual Rect<int> getScreenViewport() const = 0;
+  virtual Gfx::Rect<int> getScreenViewport() const = 0;
 
   /// Get the viewport rect in world coordinates.
-  virtual Rect<double> getWorldViewport() const = 0;
+  virtual Gfx::Rect<double> getWorldViewport() const = 0;
 
 
   /// Query whether the drawable is in RGBA mode.
@@ -70,7 +69,7 @@ public:
   virtual unsigned int bitsPerPixel() const = 0;
 
   /// Read pixel data from the screen rect \a bounds into \a data_out.
-  virtual void grabPixels(const Rect<int>& bounds,
+  virtual void grabPixels(const Gfx::Rect<int>& bounds,
                           Gfx::BmapData& data_out) const = 0;
 
   /// Swap the foreground and background colors.
@@ -83,7 +82,7 @@ public:
   virtual void clearColorBuffer() const = 0;
 
   /// Clear a region of the color buffer to the clear color.
-  virtual void clearColorBuffer(const Rect<int>& screen_rect) const = 0;
+  virtual void clearColorBuffer(const Gfx::Rect<int>& screen_rect) const = 0;
 
   /// Select the front buffer for future drawing operations.
   virtual void drawOnFrontBuffer() const = 0;
@@ -117,9 +116,9 @@ public:
     const Canvas& itsCanvas;
   };
 
-  virtual void translate(const Vec3<double>& v) const = 0;
-  virtual void scale(const Vec3<double>& v) const = 0;
-  virtual void rotate(const Vec3<double>& v, double degrees) const = 0;
+  virtual void translate(const Gfx::Vec3<double>& v) const = 0;
+  virtual void scale(const Gfx::Vec3<double>& v) const = 0;
+  virtual void rotate(const Gfx::Vec3<double>& v, double degrees) const = 0;
 
   virtual void throwIfError(const char* where) const = 0;
 

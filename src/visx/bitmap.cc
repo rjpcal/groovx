@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Aug 10 14:57:50 2001
+// written: Mon Aug 13 12:15:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,8 @@
 
 #include "bmaprenderer.h"
 #include "bitmaprep.h"
-#include "rect.h"
+
+#include "gfx/rect.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -98,10 +99,10 @@ DOTRACE("Bitmap::loadPbmFile");
 void Bitmap::savePbmFile(const char* filename) const
   { itsImpl->savePbmFile(filename); sendStateChangeMsg(); }
 
-void Bitmap::grabScreenRect(const Rect<int>& rect)
+void Bitmap::grabScreenRect(const Gfx::Rect<int>& rect)
   { itsImpl->grabScreenRect(rect); sendStateChangeMsg(); }
 
-void Bitmap::grabWorldRect(const Rect<double>& world_rect)
+void Bitmap::grabWorldRect(const Gfx::Rect<double>& world_rect)
   { itsImpl->grabWorldRect(world_rect); sendStateChangeMsg(); }
 
 void Bitmap::flipContrast()
@@ -120,13 +121,13 @@ void Bitmap::grRender(Gfx::Canvas& canvas, DrawMode mode) const
 // accessors //
 ///////////////
 
-Rect<double> Bitmap::grGetBoundingBox() const
+Gfx::Rect<double> Bitmap::grGetBoundingBox() const
   { return itsImpl->grGetBoundingBox(); }
 
-Point<int> Bitmap::size() const
+Gfx::Vec2<int> Bitmap::size() const
   { return itsImpl->size(); }
 
-Point<double> Bitmap::getZoom() const
+Gfx::Vec2<double> Bitmap::getZoom() const
   { return itsImpl->getZoom(); }
 
 bool Bitmap::getUsingZoom() const
@@ -136,7 +137,7 @@ bool Bitmap::getUsingZoom() const
 // manipulators //
 //////////////////
 
-void Bitmap::setZoom(Point<double> zoom)
+void Bitmap::setZoom(Gfx::Vec2<double> zoom)
   { itsImpl->setZoom(zoom); sendStateChangeMsg(); }
 
 void Bitmap::setUsingZoom(bool val)

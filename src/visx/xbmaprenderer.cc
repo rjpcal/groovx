@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:22:34 1999
-// written: Fri Aug 10 13:01:35 2001
+// written: Mon Aug 13 12:18:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,9 @@
 
 #include "xbmaprenderer.h"
 
-#include "point.h"
-
 #include "gfx/bmapdata.h"
 #include "gfx/canvas.h"
+#include "gfx/vec2.h"
 
 #include "util/error.h"
 
@@ -104,8 +103,8 @@ DOTRACE("XBmapRenderer::~XBmapRenderer");
 
 void XBmapRenderer::doRender(Gfx::Canvas& canvas,
                              const Gfx::BmapData& data,
-                             const Point<double>& world_pos,
-                             const Point<double>& /* zoom */) const
+                             const Gfx::Vec2<double>& world_pos,
+                             const Gfx::Vec2<double>& /* zoom */) const
 {
 DOTRACE("XBmapRenderer::doRender");
 
@@ -118,7 +117,7 @@ DOTRACE("XBmapRenderer::doRender");
   if (itsImage == NULL) return;
 
   // Calculate GL window coordinates of lower left corner of image
-  Point<int> screen_pos = canvas.getScreenFromWorld(world_pos);
+  Gfx::Vec2<int> screen_pos = canvas.screenFromWorld(world_pos);
 
   DebugEval(world_pos.x()); DebugEval(world_pos.y());
   DebugEval(screen_pos.x()); DebugEvalNL(screen_pos.y());

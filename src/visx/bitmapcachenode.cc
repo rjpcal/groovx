@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Fri Aug 10 18:10:20 2001
+// written: Mon Aug 13 12:15:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,10 +17,10 @@
 
 #include "bitmaprep.h"
 #include "glbmaprenderer.h"
-#include "rect.h"
 #include "xbmaprenderer.h"
 
 #include "gfx/canvas.h"
+#include "gfx/rect.h"
 
 #include "util/error.h"
 
@@ -87,7 +87,7 @@ DOTRACE("BitmapCacheNode::recacheBitmap");
 
   child()->gnodeUndraw(canvas);
 
-  Rect<double> bmapbox = child()->gnodeBoundingBox(canvas);
+  Gfx::Rect<double> bmapbox = child()->gnodeBoundingBox(canvas);
 
   glPushAttrib(GL_COLOR_BUFFER_BIT);
   {
@@ -124,7 +124,7 @@ DOTRACE("BitmapCacheNode::setMode");
 }
 
 void BitmapCacheNode::saveBitmapCache(Gfx::Canvas& canvas,
-												  const char* filename) const
+                                      const char* filename) const
 {
   if (itsBitmapRep.get() != 0)
     {
@@ -161,7 +161,7 @@ DOTRACE("BitmapCacheNode::gnodeUndraw");
   child()->gnodeUndraw(canvas);
 }
 
-Rect<double> BitmapCacheNode::gnodeBoundingBox(Gfx::Canvas& canvas) const
+Gfx::Rect<double> BitmapCacheNode::gnodeBoundingBox(Gfx::Canvas& canvas) const
 {
   return child()->gnodeBoundingBox(canvas);
 }

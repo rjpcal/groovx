@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 19 17:25:51 2000
-// written: Fri Aug 10 11:42:01 2001
+// written: Mon Aug 13 12:13:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,11 +21,10 @@
 #include "util/pointers.h"
 #endif
 
-template <class V> class Point;
-
 namespace Gfx
 {
   class BmapData;
+  template <class V> class Vec2;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -66,7 +65,7 @@ public:
   BmapData();
 
   /// Construct with the given image data specifications.
-  BmapData(const Point<int>& extent, int bits_per_pixel, int byte_alignment);
+  BmapData(const Gfx::Vec2<int>& extent, int bits_per_pixel, int byte_alignment);
 
   /// Copy constructor.
   BmapData(const BmapData& other);
@@ -101,7 +100,7 @@ public:
   int height() const;
 
   /// Returns the bitmap's extent (x-width, y-height) in pixels.
-  Point<int> extent() const;
+  Gfx::Vec2<int> extent() const;
 
   /// Returns the number of bits used per pixel in the bitmap.
   int bitsPerPixel() const;

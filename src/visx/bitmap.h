@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Aug 10 10:46:49 2001
+// written: Mon Aug 13 12:15:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,8 +19,11 @@
 
 template <class T> class shared_ptr;
 
-template <class V> class Point;
-template <class V> class Rect;
+namespace Gfx
+{
+  template <class V> class Rect;
+  template <class V> class Vec2;
+}
 
 class BitmapRep;
 
@@ -68,12 +71,12 @@ public:
   /** Grabs pixels from a rectangulur area of the screen buffer into
       the Bitmap's pixel array. The coordinates of the rectangle are
       specified in pixel values. */
-  void grabScreenRect(const Rect<int>& rect);
+  void grabScreenRect(const Gfx::Rect<int>& rect);
 
   /** Grabs pixels from a rectangulur area of the screen buffer into
       the Bitmap's pixel array. The coordinates of the rectangle are
       specified in OpenGL coordinates. */
-  void grabWorldRect(const Rect<double>& rect);
+  void grabWorldRect(const Gfx::Rect<double>& rect);
 
   /** Flips the luminance contrast of the bitmap data, in a way that
       may depend on the format of the bitmap data. The polarity of the
@@ -91,10 +94,10 @@ public:
   ///////////////
 
   /// Get the image's size (x-width, y-height) in pixels.
-  Point<int> size() const;
+  Gfx::Vec2<int> size() const;
 
   /// Get the (x,y) factors by which the bitmap will be scaled.
-  Point<double> getZoom() const;
+  Gfx::Vec2<double> getZoom() const;
 
   /// Query whether zooming is currently to be used.
   bool getUsingZoom() const;
@@ -104,7 +107,7 @@ public:
   //////////////////
 
   /// Change the (x,y) factor by which the bitmap will be scaled.
-  void setZoom(Point<double> zoom);
+  void setZoom(Gfx::Vec2<double> zoom);
 
   /// Change whether zooming will be used.
   void setUsingZoom(bool val);
@@ -117,7 +120,7 @@ protected:
       \c BmapRenderer. */
   virtual void grRender(Gfx::Canvas& canvas, DrawMode mode) const;
 
-  virtual Rect<double> grGetBoundingBox() const;
+  virtual Gfx::Rect<double> grGetBoundingBox() const;
 
 private:
   Bitmap(const Bitmap&);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Fri Aug 10 17:49:26 2001
+// written: Mon Aug 13 12:19:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,8 @@
 
 #include "grobjbbox.h"
 
-#include "rect.h"
-
 #include "gfx/canvas.h"
+#include "gfx/rect.h"
 
 #include <GL/gl.h>
 
@@ -25,7 +24,7 @@
 
 namespace
 {
-  void renderRect(const Rect<double>& bounds)
+  void renderRect(const Gfx::Rect<double>& bounds)
   {
     glPushAttrib(GL_LINE_BIT);
     {
@@ -46,18 +45,18 @@ namespace
   }
 }
 
-Rect<double> GrObjBBox::gnodeBoundingBox(Gfx::Canvas& canvas) const
+Gfx::Rect<double> GrObjBBox::gnodeBoundingBox(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjBBox::withBorder");
 
-  const Rect<double> native = child()->gnodeBoundingBox(canvas);
+  const Gfx::Rect<double> native = child()->gnodeBoundingBox(canvas);
 
   // Do the object's internal scaling and alignment, and find the
   // bounding box in screen coordinates
 
-  Rect<int> screen_pos;
+  Gfx::Rect<int> screen_pos;
 
-  screen_pos = canvas.getScreenFromWorld(native);
+  screen_pos = canvas.screenFromWorld(native);
 
   // Add a pixel border around the edges of the image...
   int bp = pixelBorder();
@@ -66,7 +65,7 @@ DOTRACE("GrObjBBox::withBorder");
   screen_pos.heightenByStep(bp);
 
   // ... and project back to world coordinates
-  return canvas.getWorldFromScreen(screen_pos);
+  return canvas.worldFromScreen(screen_pos);
 }
 
 void GrObjBBox::gnodeDraw(Gfx::Canvas& canvas) const
@@ -75,7 +74,7 @@ DOTRACE("GrObjBBox::gnodeDraw");
 
   if (itsIsVisible)
     {
-      Rect<double> bounds = gnodeBoundingBox(canvas);
+      Gfx::Rect<double> bounds = gnodeBoundingBox(canvas);
 
       renderRect(bounds);
     }
@@ -89,7 +88,7 @@ DOTRACE("GrObjBBox::gnodeUndraw");
 
   if (itsIsVisible)
     {
-      Rect<double> bounds = gnodeBoundingBox(canvas);
+      Gfx::Rect<double> bounds = gnodeBoundingBox(canvas);
 
       renderRect(bounds);
     }

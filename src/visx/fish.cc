@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Fri Aug 10 10:46:50 2001
+// written: Mon Aug 13 12:15:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "fish.h"
 
-#include "rect.h"
+#include "gfx/rect.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -423,11 +423,11 @@ DOTRACE("Fish::readCoordFile");
     }
 }
 
-Rect<double> Fish::grGetBoundingBox() const
+Gfx::Rect<double> Fish::grGetBoundingBox() const
 {
 DOTRACE("Fish::grGetBoundingBox");
 
-  Rect<double> bbox;
+  Gfx::Rect<double> bbox;
   bbox.left() = -0.75;
   bbox.right() = 0.75;
   bbox.bottom() = -0.5;

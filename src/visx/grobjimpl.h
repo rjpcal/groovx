@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Sat Aug 11 08:38:37 2001
+// written: Mon Aug 13 12:15:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ public:
   virtual void gnodeUndraw(Gfx::Canvas& canvas) const
   { itsObj->grRender(canvas, GrObj::UNDRAW); }
 
-  virtual Rect<double> gnodeBoundingBox(Gfx::Canvas& /*canvas*/) const
+  virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& /*canvas*/) const
   { return itsObj->grGetBoundingBox(); }
 };
 

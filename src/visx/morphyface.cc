@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Fri Aug 10 15:09:16 2001
+// written: Mon Aug 13 12:15:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,9 +20,9 @@
 #include "morphyface.h"
 
 #include "bezier.h"
-#include "rect.h"
 
 #include "gfx/canvas.h"
+#include "gfx/rect.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -494,11 +494,11 @@ DOTRACE("MorphyFace::grRender");
 // Accessors
 ///////////////////////////////////////////////////////////////////////
 
-Rect<double> MorphyFace::grGetBoundingBox() const
+Gfx::Rect<double> MorphyFace::grGetBoundingBox() const
 {
 DOTRACE("MorphyFace::grGetBoundingBox");
 
-  Rect<double> bbox;
+  Gfx::Rect<double> bbox;
 
   Bezier4 xbezier_top(-1.0, -topWidth(), topWidth(), 1.0);
   Bezier4 xbezier_bottom(1.0, bottomWidth(), -bottomWidth(), -1.0);

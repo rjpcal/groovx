@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 10 16:42:39 2001
-// written: Fri Aug 10 18:25:53 2001
+// written: Mon Aug 13 12:18:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,8 @@
 
 #include "glcachenode.h"
 
-#include "rect.h"
-
 #include "gfx/canvas.h"
+#include "gfx/rect.h"
 
 #include "util/error.h"
 
@@ -72,9 +71,9 @@ void GLCacheNode::gnodeUndraw(Gfx::Canvas& canvas) const
 
   if (itsUnMode == Gmodes::CLEAR_BOUNDING_BOX)
     {
-      Rect<double> world_pos = gnodeBoundingBox(canvas);
+      Gfx::Rect<double> world_pos = gnodeBoundingBox(canvas);
 
-      Rect<int> screen_pos = canvas.getScreenFromWorld(world_pos);
+      Gfx::Rect<int> screen_pos = canvas.screenFromWorld(world_pos);
 
       canvas.clearColorBuffer(screen_pos);
     }
@@ -95,7 +94,7 @@ void GLCacheNode::gnodeUndraw(Gfx::Canvas& canvas) const
   canvas.throwIfError("during GLCacheNode::gnodeUndraw");
 }
 
-Rect<double> GLCacheNode::gnodeBoundingBox(Gfx::Canvas& canvas) const
+Gfx::Rect<double> GLCacheNode::gnodeBoundingBox(Gfx::Canvas& canvas) const
 {
   return child()->gnodeBoundingBox(canvas);
 }

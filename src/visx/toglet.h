@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri Aug 10 10:46:48 2001
+// written: Mon Aug 13 12:15:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,12 @@
 #ifndef TOGLET_H_DEFINED
 #define TOGLET_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
-#include "util/pointers.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(RECT_H_DEFINED)
+#include "gfx/rect.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(RECT_H_DEFINED)
-#include "rect.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
+#include "util/pointers.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TKWIDGET_H_DEFINED)
@@ -68,7 +68,7 @@ public:
   // accessors
   double getAspect() const { return double(getWidth())/getHeight(); }
   double getFixedScale() const;
-  Rect<double> getMinRect() const;
+  Gfx::Rect<double> getMinRect() const;
   int getHeight() const;
   unsigned int getFontListBase() const { return itsFontListBase; }
   Tcl_Interp* getInterp() const;
@@ -128,7 +128,7 @@ private:
   double itsViewingDistance;     // inches
   bool itsFixedScaleFlag;
   double itsFixedScale;
-  Rect<double> itsMinRect;
+  Gfx::Rect<double> itsMinRect;
   unsigned int itsFontListBase;
 };
 

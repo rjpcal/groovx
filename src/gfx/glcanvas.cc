@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Fri Aug 10 11:35:55 2001
+// written: Mon Aug 13 12:19:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,9 @@
 
 #include "glcanvas.h"
 
-#include "point.h"
-#include "rect.h"
-
 #include "gfx/bmapdata.h"
+#include "gfx/rect.h"
+#include "gfx/vec2.h"
 #include "gfx/vec3.h"
 
 #include "util/error.h"
@@ -31,7 +30,9 @@
 
 GLCanvas::~GLCanvas() {}
 
-Point<int> GLCanvas::getScreenFromWorld(const Point<double>& world_pos) const
+Gfx::Vec2<int> GLCanvas::screenFromWorld(
+  const Gfx::Vec2<double>& world_pos
+  ) const
 {
   GLdouble current_mv_matrix[16];
   GLdouble current_proj_matrix[16];
@@ -51,12 +52,14 @@ Point<int> GLCanvas::getScreenFromWorld(const Point<double>& world_pos) const
   DebugEval(status);
 
   if (status == GL_FALSE)
-    throw Util::Error("GrObj::getScreenFromWorld(): gluProject error");
+    throw Util::Error("GrObj::screenFromWorld(): gluProject error");
 
-  return Point<int>(int(temp_screen_x), int(temp_screen_y));
+  return Gfx::Vec2<int>(int(temp_screen_x), int(temp_screen_y));
 }
 
-Point<double> GLCanvas::getWorldFromScreen(const Point<int>& screen_pos) const
+Gfx::Vec2<double> GLCanvas::worldFromScreen(
+  const Gfx::Vec2<int>& screen_pos
+  ) const
 {
   GLdouble current_mv_matrix[16];
   GLdouble current_proj_matrix[16];
@@ -68,7 +71,7 @@ Point<double> GLCanvas::getWorldFromScreen(const Point<int>& screen_pos) const
 
   double dummy_z;
 
-  Point<double> world_pos;
+  Gfx::Vec2<double> world_pos;
 
   GLint status =
     gluUnProject(screen_pos.x(), screen_pos.y(), 0,
@@ -78,44 +81,43 @@ Point<double> GLCanvas::getWorldFromScreen(const Point<int>& screen_pos) const
   DebugEval(status);
 
   if (status == GL_FALSE)
-    throw Util::Error("GrObj::getWorldFromScreen(): gluUnProject error");
+    throw Util::Error("GrObj::worldFromScreen(): gluUnProject error");
 
   return world_pos;
 }
 
 
-Rect<int> GLCanvas::getScreenFromWorld(const Rect<double>& world_pos) const
+Gfx::Rect<int> GLCanvas::screenFromWorld(const Gfx::Rect<double>& world_pos) const
 {
-  Rect<int> screen_rect;
-  screen_rect.setBottomLeft( getScreenFromWorld(world_pos.bottomLeft()) );
-  screen_rect.setTopRight  ( getScreenFromWorld(world_pos.topRight())   );
+  Gfx::Rect<int> screen_rect;
+  screen_rect.setBottomLeft( screenFromWorld(world_pos.bottomLeft()) );
+  screen_rect.setTopRight  ( screenFromWorld(world_pos.topRight())   );
   return screen_rect;
 }
 
-Rect<double> GLCanvas::getWorldFromScreen(const Rect<int>& screen_pos) const
+Gfx::Rect<double> GLCanvas::worldFromScreen(const Gfx::Rect<int>& screen_pos) const
 {
-  Rect<double> world_rect;
-  world_rect.setBottomLeft( getWorldFromScreen(screen_pos.bottomLeft()) );
-  world_rect.setTopRight  ( getWorldFromScreen(screen_pos.topRight())   );
+  Gfx::Rect<double> world_rect;
+  world_rect.setBottomLeft( worldFromScreen(screen_pos.bottomLeft()) );
+  world_rect.setTopRight  ( worldFromScreen(screen_pos.topRight())   );
   return world_rect;
 }
 
-Rect<int> GLCanvas::getScreenViewport() const
+Gfx::Rect<int> GLCanvas::getScreenViewport() const
 {
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT, viewport);
 
-  Rect<int> screen_rect;
-  screen_rect.setBottomLeft(Point<int>(viewport[0], viewport[1]));
-  screen_rect.setTopRight(Point<int>(viewport[0]+viewport[2],
-                                     viewport[1]+viewport[3]));
+  Gfx::Rect<int> screen_rect;
+  screen_rect.setRectXYWH(viewport[0], viewport[1],
+                          viewport[2], viewport[3]);
 
   return screen_rect;
 }
 
-Rect<double> GLCanvas::getWorldViewport() const
+Gfx::Rect<double> GLCanvas::getWorldViewport() const
 {
-  return getWorldFromScreen(getScreenViewport());
+  return worldFromScreen(getScreenViewport());
 }
 
 
@@ -151,7 +153,7 @@ DOTRACE("GLCanvas::bitsPerPixel");
   return 8;
 }
 
-void GLCanvas::grabPixels(const Rect<int>& bounds, Gfx::BmapData& data_out) const
+void GLCanvas::grabPixels(const Gfx::Rect<int>& bounds, Gfx::BmapData& data_out) const
 {
 DOTRACE("GLCanvas::grabPixels");
 
@@ -215,9 +217,9 @@ DOTRACE("GLCanvas::clearColorBuffer");
   glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void GLCanvas::clearColorBuffer(const Rect<int>& screen_rect) const
+void GLCanvas::clearColorBuffer(const Gfx::Rect<int>& screen_rect) const
 {
-DOTRACE("GLCanvas::clearColorBuffer(Rect)");
+DOTRACE("GLCanvas::clearColorBuffer(Gfx::Rect)");
 
   glPushAttrib(GL_SCISSOR_BIT);
   {
@@ -259,19 +261,19 @@ DOTRACE("GLCanvas::popState");
 }
 
 
-void GLCanvas::translate(const Vec3<double>& v) const
+void GLCanvas::translate(const Gfx::Vec3<double>& v) const
 {
 DOTRACE("GLCanvas::translate");
   glTranslated(v.x(), v.y(), v.z());
 }
 
-void GLCanvas::scale(const Vec3<double>& v) const
+void GLCanvas::scale(const Gfx::Vec3<double>& v) const
 {
 DOTRACE("GLCanvas::scale");
   glScaled(v.x(), v.y(), v.z());
 }
 
-void GLCanvas::rotate(const Vec3<double>& v, double angle_in_degrees) const
+void GLCanvas::rotate(const Gfx::Vec3<double>& v, double angle_in_degrees) const
 {
 DOTRACE("GLCanvas::rotate");
   glRotated(angle_in_degrees, v.x(), v.y(), v.z());

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Fri Aug 10 14:51:41 2001
+// written: Mon Aug 13 12:15:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,12 +29,11 @@
 #include "util/tracer.h"
 #endif
 
-template <class V> class Point;
-template <class V> class Rect;
-
 namespace Gfx
 {
   class Canvas;
+  template <class V> class Rect;
+  template <class V> class Vec2;
 }
 
 class GrObjImpl;
@@ -94,11 +93,11 @@ public:
       additional modifications to reflect the scaling mode, alignment
       mode, and pixel border values. */
   void getBoundingBox(Gfx::Canvas& canvas,
-                      Rect<double>& bounding_box) const;
+                      Gfx::Rect<double>& bounding_box) const;
 
   /** Subclasses must override this function to return the bounding
       box in GL coordinates for the object's onscreen image. */
-  virtual Rect<double> grGetBoundingBox() const = 0;
+  virtual Gfx::Rect<double> grGetBoundingBox() const = 0;
 
   /// Returns the current scaling mode.
   Gmodes::ScalingMode getScalingMode() const;

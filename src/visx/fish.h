@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Fri Aug 10 10:46:49 2001
+// written: Mon Aug 13 12:15:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -114,7 +114,7 @@ public:
   /////////////
 
 protected:
-  virtual Rect<double> grGetBoundingBox() const;
+  virtual Gfx::Rect<double> grGetBoundingBox() const;
 
   virtual void grRender(Gfx::Canvas& canvas, DrawMode mode) const;
 

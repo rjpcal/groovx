@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Fri Aug 10 10:55:04 2001
+// written: Mon Aug 13 12:17:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,9 +55,9 @@ struct PositionImpl {
     rt_ang(0.0)
     {}
 
-  Vec3<double> tr;              // x,y,z coord shift
-  Vec3<double> sc;              // x,y,z scaling
-  Vec3<double> rt;              // vector of rotation axis
+  Gfx::Vec3<double> tr;         // x,y,z coord shift
+  Gfx::Vec3<double> sc;         // x,y,z scaling
+  Gfx::Vec3<double> rt;         // vector of rotation axis
   double rt_ang;                // angle in degrees of rotation around axis
 };
 

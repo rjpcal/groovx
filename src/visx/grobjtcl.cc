@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Fri Aug 10 15:02:58 2001
+// written: Mon Aug 13 12:15:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,9 @@
 
 #include "application.h"
 #include "grobj.h"
-#include "rect.h"
 #include "recttcl.h"
+
+#include "gfx/rect.h"
 
 #include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
@@ -29,11 +30,11 @@
 
 namespace GrobjTcl
 {
-  Rect<double> boundingBox(Util::Ref<GrObj> obj)
+  Gfx::Rect<double> boundingBox(Util::Ref<GrObj> obj)
   {
     Gfx::Canvas& canvas = Application::theApp().getCanvas();
 
-    Rect<double> bbox;
+    Gfx::Rect<double> bbox;
     obj->getBoundingBox(canvas, bbox);
 
     return bbox;

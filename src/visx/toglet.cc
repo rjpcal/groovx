@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Fri Aug 10 10:46:49 2001
+// written: Mon Aug 13 12:15:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -213,7 +213,7 @@ DOTRACE("Toglet::getFixedScale");
   return itsFixedScale;
 }
 
-Rect<double> Toglet::getMinRect() const
+Gfx::Rect<double> Toglet::getMinRect() const
 {
 DOTRACE("Toglet::getMinRect");
   return itsMinRect;
@@ -489,7 +489,7 @@ DOTRACE("Toglet::reconfigure");
 
   else // not usingFixedScale (i.e. minRect instead)
     {
-      Rect<double> therect(itsMinRect); // the actual Rect that we'll build
+      Gfx::Rect<double> therect(itsMinRect); // the actual rect that we'll build
 
       // the desired conditions are as follows:
       //    (1) therect contains itsMinRect

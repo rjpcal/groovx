@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:42:42 2001
-// written: Fri Aug 10 14:59:14 2001
+// written: Mon Aug 13 12:15:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,28 +15,29 @@
 
 #include "gmodes.h"
 #include "gnode.h"
-#include "point.h"
+
+#include "gfx/vec2.h"
 
 class GrObjAligner : public Gnode {
 public:
   GrObjAligner(shared_ptr<Gnode> child) :
-	 Gnode(child),
+    Gnode(child),
     itsMode(Gmodes::NATIVE_ALIGNMENT),
     itsCenter(0.0, 0.0)
   {}
 
-  Point<double> getCenter(double width, double height) const
+  Gfx::Vec2<double> getCenter(double width, double height) const
   {
     if (Gmodes::CENTER_ON_CENTER == itsMode)
-      return Point<double>(0.0, 0.0);
+      return Gfx::Vec2<double>(0.0, 0.0);
     else if (Gmodes::NW_ON_CENTER == itsMode)
-      return Point<double>(width/2.0, -height/2.0);
+      return Gfx::Vec2<double>(width/2.0, -height/2.0);
     else if (Gmodes::NE_ON_CENTER == itsMode)
-      return Point<double>(-width/2.0, -height/2.0);
+      return Gfx::Vec2<double>(-width/2.0, -height/2.0);
     else if (Gmodes::SW_ON_CENTER == itsMode)
-      return Point<double>(width/2.0, height/2.0);
+      return Gfx::Vec2<double>(width/2.0, height/2.0);
     else if (Gmodes::SE_ON_CENTER == itsMode)
-      return Point<double>(-width/2.0, height/2.0);
+      return Gfx::Vec2<double>(-width/2.0, height/2.0);
     // else Gmodes::ARBITRARY_ON_CENTER:
     return itsCenter;
   }
@@ -52,14 +53,14 @@ public:
 
   virtual void gnodeUndraw(Gfx::Canvas& canvas) const;
 
-  virtual Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
+  virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
 
 private:
-  void doAlignment(Gfx::Canvas& canvas, const Rect<double>& native) const;
+  void doAlignment(Gfx::Canvas& canvas, const Gfx::Rect<double>& native) const;
 
 public:
   Gmodes::AlignmentMode itsMode;
-  Point<double> itsCenter;
+  Gfx::Vec2<double> itsCenter;
 };
 
 

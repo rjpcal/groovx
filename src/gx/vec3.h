@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 28 18:27:19 2000
-// written: Thu May 10 12:04:38 2001
+// written: Mon Aug 13 12:16:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,13 @@
 #ifndef VEC3_H_DEFINED
 #define VEC3_H_DEFINED
 
+namespace Gfx
+{
+  template <class V> class Vec3;
+}
+
 template <class V>
-class Vec3 {
+class Gfx::Vec3 {
 private:
   V itsData[3];
 
@@ -38,10 +43,10 @@ public:
   const V* data() const { return &itsData[0]; }
 
   Vec3 operator+(const Vec3<V>& rhs) const
-	 { return Vec3<V>(x() + rhs.x(), y() + rhs.y(), z()+rhs.z()); }
+    { return Vec3<V>(x() + rhs.x(), y() + rhs.y(), z()+rhs.z()); }
 
   Vec3 operator-(const Vec3<V>& rhs) const
-	 { return Vec3<V>(x() - rhs.x(), y() - rhs.y(), z()-rhs.z()); }
+    { return Vec3<V>(x() - rhs.x(), y() - rhs.y(), z()-rhs.z()); }
 };
 
 static const char vcid_vec3_h[] = "$Header$";

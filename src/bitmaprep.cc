@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon Aug 13 07:13:50 2001
+// written: Mon Aug 13 12:19:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,11 +18,11 @@
 #include "application.h"
 #include "bmaprenderer.h"
 #include "pbm.h"
-#include "point.h"
-#include "rect.h"
 
 #include "gfx/bmapdata.h"
 #include "gfx/canvas.h"
+#include "gfx/rect.h"
+#include "gfx/vec2.h"
 
 #include "io/io.h"
 #include "io/reader.h"
@@ -41,7 +41,7 @@
 
 namespace
 {
-  Point<double> defaultZoom(1.0, 1.0);
+  Gfx::Vec2<double> defaultZoom(1.0, 1.0);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ public:
     itsData()
   {}
 
-  const Point<double>& getZoom() const
+  const Gfx::Vec2<double>& getZoom() const
   {
     return itsUsingZoom ? itsZoom : defaultZoom;
   }
@@ -74,7 +74,7 @@ public:
   shared_ptr<BmapRenderer> itsRenderer;
 
   fstring itsFilename;
-  Point<double> itsZoom;
+  Gfx::Vec2<double> itsZoom;
   bool itsUsingZoom;
   bool itsContrastFlip;
   bool itsVerticalFlip;
@@ -161,7 +161,7 @@ void BitmapRep::readFrom(IO::Reader* reader)
 {
 DOTRACE("BitmapRep::readFrom");
 
-  Point<int> dummyRaster;
+  Gfx::Vec2<int> dummyRaster;
 
   reader->readValue("filename", itsImpl->itsFilename);
   reader->readValue("rasterX", dummyRaster.x());
@@ -227,7 +227,7 @@ DOTRACE("BitmapRep::savePbmFile");
   Pbm::save(filename, itsImpl->itsData);
 }
 
-void BitmapRep::grabScreenRect(const Rect<int>& rect)
+void BitmapRep::grabScreenRect(const Gfx::Rect<int>& rect)
 {
 DOTRACE("BitmapRep::grabScreenRect");
 
@@ -242,12 +242,12 @@ DOTRACE("BitmapRep::grabScreenRect");
   itsImpl->itsZoom = defaultZoom;
 }
 
-void BitmapRep::grabWorldRect(const Rect<double>& world_rect)
+void BitmapRep::grabWorldRect(const Gfx::Rect<double>& world_rect)
 {
 DOTRACE("BitmapRep::grabWorldRect");
   Gfx::Canvas& canvas = Application::theApp().getCanvas();
 
-  Rect<int> screen_rect = canvas.getScreenFromWorld(world_rect);
+  Gfx::Rect<int> screen_rect = canvas.screenFromWorld(world_rect);
 
   grabScreenRect(screen_rect);
 }
@@ -278,7 +278,7 @@ DOTRACE("BitmapRep::render");
 
   itsImpl->itsRenderer->doRender(canvas,
                                  itsImpl->itsData,
-                                 Point<double>(),
+                                 Gfx::Vec2<double>(),
                                  itsImpl->getZoom());
 }
 
@@ -286,34 +286,34 @@ DOTRACE("BitmapRep::render");
 // accessors //
 ///////////////
 
-Rect<double> BitmapRep::grGetBoundingBox() const
+Gfx::Rect<double> BitmapRep::grGetBoundingBox() const
 {
 DOTRACE("BitmapRep::grGetBoundingBox");
 
   // Get screen coordinates for the lower left corner
   Gfx::Canvas& canvas = Application::theApp().getCanvas();
 
-  Point<int> bottom_left = canvas.getScreenFromWorld(Point<double>());
+  Gfx::Vec2<int> bottom_left = canvas.screenFromWorld(Gfx::Vec2<double>());
 
   // Move the point to the upper right corner
-  Point<int> top_right = bottom_left + (size() * itsImpl->getZoom());
+  Gfx::Vec2<int> top_right = bottom_left + (size() * itsImpl->getZoom());
 
-  Rect<double> bbox;
+  Gfx::Rect<double> bbox;
 
-  bbox.setBottomLeft(Point<double>());
+  bbox.setBottomLeft(Gfx::Vec2<double>());
 
-  bbox.setTopRight(canvas.getWorldFromScreen(top_right));
+  bbox.setTopRight(canvas.worldFromScreen(top_right));
 
   return bbox;
 }
 
-Point<int> BitmapRep::size() const
+Gfx::Vec2<int> BitmapRep::size() const
 {
 DOTRACE("BitmapRep::size");
   return itsImpl->itsData.extent();
 }
 
-Point<double> BitmapRep::getZoom() const
+Gfx::Vec2<double> BitmapRep::getZoom() const
 {
 DOTRACE("BitmapRep::getZoom");
   return itsImpl->getZoom();
@@ -329,7 +329,7 @@ DOTRACE("BitmapRep::getUsingZoom");
 // manipulators //
 //////////////////
 
-void BitmapRep::setZoom(Point<double> zoom)
+void BitmapRep::setZoom(Gfx::Vec2<double> zoom)
 {
 DOTRACE("BitmapRep::setZoomX");
   itsImpl->itsZoom = zoom;

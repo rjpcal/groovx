@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Fri Aug 10 15:03:31 2001
+// written: Mon Aug 13 12:15:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,11 +17,11 @@
 
 #include "gtext.h"
 #include "position.h"
-#include "rect.h"
 #include "trial.h"
 
 #include "gfx/canvas.h"
 #include "gfx/gxseparator.h"
+#include "gfx/rect.h"
 
 #include "io/reader.h"
 
@@ -44,7 +44,7 @@ Util::UID TlistUtils::createPreview(Gfx::Canvas& canvas,
 {
 DOTRACE("TlistUtils::createPreview");
 
-  Rect<double> world_viewport = canvas.getWorldViewport();
+  Gfx::Rect<double> world_viewport = canvas.getWorldViewport();
 
   const double world_width = world_viewport.width();
   const double world_height = world_viewport.height();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:48:47 2001
-// written: Fri Aug 10 18:36:44 2001
+// written: Mon Aug 13 12:17:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,26 +15,25 @@
 
 #include "grobjaligner.h"
 
-#include "rect.h"
-
 #include "gfx/canvas.h"
 #include "gfx/vec3.h"
+#include "gfx/rect.h"
 
 #include "util/trace.h"
 
 void GrObjAligner::doAlignment(Gfx::Canvas& canvas,
-                               const Rect<double>& native) const
+                               const Gfx::Rect<double>& native) const
 {
 DOTRACE("GrObjAligner::doAlignment");
 
   if (Gmodes::NATIVE_ALIGNMENT == itsMode) return;
 
   // This indicates where the center of the object will go
-  Point<double> center = getCenter(native.width(), native.height());
+  Gfx::Vec2<double> center = getCenter(native.width(), native.height());
 
   center -= native.center();
 
-  Vec3<double> vec(center.x(), center.y(), 0.0);
+  Gfx::Vec3<double> vec(center.x(), center.y(), 0.0);
 
   canvas.translate(vec);
 }
@@ -58,11 +57,11 @@ void GrObjAligner::gnodeUndraw(Gfx::Canvas& canvas) const
   child()->gnodeUndraw(canvas);
 }
 
-Rect<double> GrObjAligner::gnodeBoundingBox(Gfx::Canvas& canvas) const
+Gfx::Rect<double> GrObjAligner::gnodeBoundingBox(Gfx::Canvas& canvas) const
 {
-  Rect<double> bounds = child()->gnodeBoundingBox(canvas);
+  Gfx::Rect<double> bounds = child()->gnodeBoundingBox(canvas);
 
-  Point<double> center = getCenter(bounds.width(), bounds.height());
+  Gfx::Vec2<double> center = getCenter(bounds.width(), bounds.height());
 
   bounds.setCenter(center);
 

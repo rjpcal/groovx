@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:41 1999
-// written: Fri Aug 10 10:55:04 2001
+// written: Mon Aug 13 12:16:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,7 +108,8 @@ DOTRACE("Jitter::draw");
 void Jitter::undraw(Gfx::Canvas& canvas) const {
 DOTRACE("Jitter::undraw");
   // Translate
-  canvas.translate(translation.vec()+Vec3<double>(itsXShift, itsYShift, 0.0));
+  canvas.translate(translation.vec()+
+                   Gfx::Vec3<double>(itsXShift, itsYShift, 0.0));
 
   // Scale
   canvas.scale(scaling.vec());
