@@ -291,15 +291,26 @@ public:
 
   typedef map<string, file_info*> info_map_t;
 
-  string      target;
-  string      source;
-  bool        literal; // if true, then we don't try to look up nested includes
-  parse_state cdep_parse_state;
-  parse_state ldep_parse_state;
+  const string target;
+  const string dirname_without_slash;
+  string       source;
+  bool         literal; // if true, then we don't try to look up nested includes
+  parse_state  cdep_parse_state;
+  parse_state  ldep_parse_state;
+  bool         direct_cdeps_done;
+  dep_list_t   direct_cdeps;
 
 private:
   file_info(const string& t)
-    : target(make_normpath(t)), source(), literal(false)
+    :
+    target(make_normpath(t)),
+    dirname_without_slash(get_dirname_of(t)),
+    source(),
+    literal(false),
+    cdep_parse_state(NOT_STARTED),
+    ldep_parse_state(NOT_STARTED),
+    direct_cdeps_done(false),
+    direct_cdeps()
   {}
 
   file_info(const file_info&); // not implemented
@@ -448,7 +459,6 @@ private:
 
   vector<string>           m_src_files;
 
-  dep_map_t                m_direct_cdeps;
   dep_map_t                m_nested_cdeps;
   dep_map_t                m_direct_ldeps;
   dep_map_t                m_nested_ldeps;
@@ -488,7 +498,7 @@ public:
                           const vector<string>& literal,
                           dep_list_t& vec);
 
-  const dep_list_t& get_direct_cdeps(const string& src_fname);
+  const dep_list_t& get_direct_cdeps(file_info* src_finfo);
   const dep_list_t& get_nested_cdeps(const string& src_fname);
   const dep_list_t& get_direct_ldeps(const string& src_fname);
   const dep_list_t& get_nested_ldeps(const string& src_fname);
@@ -876,23 +886,20 @@ bool cppdeps::resolve_one(const string& include_name,
   return false;
 }
 
-const dep_list_t& cppdeps::get_direct_cdeps(const string& src_fname)
+const dep_list_t& cppdeps::get_direct_cdeps(file_info* src_finfo)
 {
-  {
-    dep_map_t::iterator itr = m_direct_cdeps.find(src_fname);
-    if (itr != m_direct_cdeps.end())
-      return (*itr).second;
-  }
+  if (src_finfo->direct_cdeps_done)
+    return src_finfo->direct_cdeps;
 
-  const string dirname_without_slash = get_dirname_of(src_fname);
+  const string dirname_without_slash = src_finfo->dirname_without_slash;
 
-  dep_list_t& vec = m_direct_cdeps[src_fname];
+  dep_list_t& vec = src_finfo->direct_cdeps;
 
-  mapped_file f(src_fname.c_str());
+  mapped_file f(src_finfo->target.c_str());
 
   if (f.mtime() > m_start_time && !m_cfg_quiet)
     {
-      warning() << "for file " << src_fname << ":\n"
+      warning() << "for file " << src_finfo->target << ":\n"
                 << "\tmodification time (" << string_time(f.mtime()) << ") is in the future\n"
                 << "\tvs. current time  (" << string_time(m_start_time) << ")\n";
     }
@@ -988,20 +995,20 @@ const dep_list_t& cppdeps::get_direct_cdeps(const string& src_fname)
       const int include_length = fptr - include_start;
       const string include_name(include_start, include_length);
 
-      if (resolve_one(include_name, src_fname,
+      if (resolve_one(include_name, src_finfo->target,
                       dirname_without_slash, m_cfg_user_ipath,
                       m_cfg_literal_exts, vec))
         continue;
 
       if (m_cfg_check_sys_deps &&
-          resolve_one(include_name, src_fname,
+          resolve_one(include_name, src_finfo->target,
                       dirname_without_slash, m_cfg_sys_ipath,
                       m_cfg_literal_exts, vec))
         continue;
 
       if (!m_cfg_quiet)
         {
-          warning() << "in " << src_fname
+          warning() << "in " << src_finfo->target
                     << ": couldn\'t resolve #include \""
                     << include_name << "\"\n";
 
@@ -1051,7 +1058,7 @@ const dep_list_t& cppdeps::get_nested_cdeps(const string& src_fname)
 
   dep_set.insert(src_finfo);
 
-  const dep_list_t& direct = get_direct_cdeps(src_fname);
+  const dep_list_t& direct = get_direct_cdeps(src_finfo);
 
   for (dep_list_t::const_iterator
          i = direct.begin(),
@@ -1275,10 +1282,12 @@ void cppdeps::print_include_tree(const string& fname)
   if (!get_cc_or_h_fname_stem(fname, fname_stem))
     return;
 
+  file_info* finfo = file_info::get(fname);
+
   const dep_list_t& cdeps =
     (m_cfg_output_mode & DIRECT_INCLUDE_TREE)
-    ? get_direct_cdeps(fname)
-    : get_nested_cdeps(fname);
+    ? get_direct_cdeps(finfo)
+    : get_nested_cdeps(finfo->target);
 
   printf("%s:: ", fname.c_str());
 
