@@ -3,7 +3,7 @@
 // objlist.h 
 // Rob Peters
 // Created: Nov-98
-// written: Thu May 27 11:29:48 1999
+// written: Thu May 27 19:31:28 1999
 // $Id$
 //
 //
@@ -22,9 +22,10 @@
 #ifndef PTRLIST_H_DEFINED
 #include "ptrlist.h"
 #endif
-#ifndef GROBJ_H_DEFINED
-#include "grobj.h"
-#endif
+
+#include "id.h"
+
+class GrObj;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -64,20 +65,22 @@ public:
   // accessors //
   ///////////////
 
+  int capacity() const { return Base::capacity(); }
+
   // returns the number of filled sites in the ObjList
   int objCount() const { return Base::count(); }
 
-  // returns true if 'id' is a valid index into a non-NULL GrObj* in
+  // returns true if 'objid' is a valid index into a non-NULL GrObj* in
   // the ObjList, given its current size
-  bool isValidObjid(int id) const { return Base::isValidId(id); }
+  bool isValidObjid(ObjId objid) const { return Base::isValidId(objid.toInt()); }
 
-  // both functions return the GrObj* at the index given by 'id'.
+  // both functions return the GrObj* at the index given by 'objid'.
   // There is no range-checking--this must be done by the client with
   // isValidObjid().
-  GrObj* getObj (int id) const { return Base::getPtr(id); }
+  GrObj* getObj (ObjId objid) const { return Base::getPtr(objid.toInt()); }
 
   // Puts a list of all valid (i.e. within-range and non-null) objid's
-  // into the vector<int> that is passed in by reference
+  // into the vector<ObjId> that is passed in by reference
   void getValidObjids(vector<int>& vec) const { Base::getValidIds(vec); }
 
   //////////////////
@@ -87,16 +90,16 @@ public:
   // add obj at the next available location, and return the index
   // where it was inserted. If necessary, the list will be expanded to
   // make room for the obj
-  int addObj(GrObj* obj) { return Base::insert(obj); }
+  ObjId addObj(GrObj* obj) { return ObjId(Base::insert(obj)); }
 
-  // add obj at index 'id', destroying any GrObj that previously
-  // occupied that location. The list will be expanded if 'id' exceeds
-  // the size of the list. If id is < 0, the function returns without
+  // add obj at index 'objid', destroying any GrObj that previously
+  // occupied that location. The list will be expanded if 'objid' exceeds
+  // the size of the list. If objid is < 0, the function returns without
   // effect.
-  void addObjAt(int id, GrObj* obj) { Base::insertAt(id, obj); }
+  void addObjAt(ObjId objid, GrObj* obj) { Base::insertAt(objid.toInt(), obj); }
 
   // delete the GrObj at index 'i', and reset the GrObj* to NULL
-  void removeObj(int id) { Base::remove(id); }
+  void removeObj(ObjId objid) { Base::remove(objid.toInt()); }
 
   // delete all GrObj's held by the list, and reset all GrObj*'s to
   // NULL
