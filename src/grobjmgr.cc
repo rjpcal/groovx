@@ -2,7 +2,7 @@
 // grobjmgr.cc
 // Rob Peters
 // created: Mon Mar  8 00:35:50 1999
-// written: Tue Mar 16 19:42:01 1999
+// written: Fri Apr  9 12:24:22 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -34,7 +34,7 @@ GrObj* GrobjMgr::newGrobj(const char* type, istream &is, IO::IOFlag flag) {
     return new FixPt(is, flag);
   }
   else {
-    return NULL;
+	 throw InputError("GrobjMgr");
   }
 }
 
