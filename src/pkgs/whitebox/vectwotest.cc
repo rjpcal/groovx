@@ -34,9 +34,9 @@
 
 #include "geom/vec2.h"
 
-#include "pkgs/testutils.h"
-
 #include "tcl/tclpkg.h"
+
+#include "util/unittest.h"
 
 #include "util/debug.h"
 DBG_REGISTER

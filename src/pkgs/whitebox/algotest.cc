@@ -32,9 +32,8 @@
 #ifndef ALGOTEST_CC_DEFINED
 #define ALGOTEST_CC_DEFINED
 
-#include "pkgs/testutils.h"
-
 #include "util/algo.h"
+#include "util/unittest.h"
 
 #include "tcl/tclpkg.h"
 

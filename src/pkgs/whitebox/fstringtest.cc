@@ -32,11 +32,10 @@
 #ifndef FSTRINGTEST_CC_DEFINED
 #define FSTRINGTEST_CC_DEFINED
 
-#include "util/fstring.h"
-
-#include "pkgs/testutils.h"
-
 #include "tcl/tclpkg.h"
+
+#include "util/fstring.h"
+#include "util/unittest.h"
 
 #include <cstring>
 #include <sstream>

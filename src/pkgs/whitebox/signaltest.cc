@@ -34,9 +34,9 @@
 
 #include "nub/signal.h"
 
-#include "pkgs/testutils.h"
-
 #include "tcl/tclpkg.h"
+
+#include "util/unittest.h"
 
 #include "util/trace.h"
 

@@ -34,12 +34,11 @@
 
 #include "nub/timer.h"
 
-#include "pkgs/testutils.h"
-
 #include "tcl/tclpkg.h"
 #include "tcl/tcltimerscheduler.h"
 
 #include "util/sharedptr.h"
+#include "util/unittest.h"
 
 #include <cstdlib> // for abs()
 #include <tcl.h>

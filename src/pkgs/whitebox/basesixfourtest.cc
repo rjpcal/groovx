@@ -32,12 +32,11 @@
 #ifndef BASESIXFOURTEST_CC_DEFINED
 #define BASESIXFOURTEST_CC_DEFINED
 
-#include "pkgs/testutils.h"
-
 #include "util/base64.h"
 #include "util/bytearray.h"
 #include "util/fstring.h"
 #include "util/rand.h"
+#include "util/unittest.h"
 
 #include "tcl/tclpkg.h"
 

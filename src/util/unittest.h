@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// testutils.h
+// unittest.h
 //
 // Copyright (c) 2001-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
@@ -29,8 +29,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TESTUTILS_H_DEFINED
-#define TESTUTILS_H_DEFINED
+#ifndef UNITTEST_H_DEFINED
+#define UNITTEST_H_DEFINED
 
 #include "util/error.h"
 
@@ -116,5 +116,5 @@ namespace
 
 #define DEF_TEST(pkg, func) pkg->def(#func, "", &func, SRC_POS)
 
-static const char vcid_testutils_h[] = "$Id$ $URL$";
-#endif // !TESTUTILS_H_DEFINED
+static const char vcid_unittest_h[] = "$Id$ $URL$";
+#endif // !UNITTEST_H_DEFINED
