@@ -198,64 +198,110 @@ private:
   // important guarantee: it will never return an invalid pointer from
   // get() (an exception will be raised if this would fail)
   class WeakHandle {
-  private:
-    void acquire() { if (itsMaster != 0) itsMaster->incrRefCount(); }
-
-    void release()
+  public:
+	 explicit WeakHandle(T* master) : itsMaster(master),
+												 itsCounts(0),
+												 itsIsVolatile(isVolatile(master))
 	 {
-		if (itsMaster != 0)
-		  {
-			 itsMaster->decrRefCount();
-			 itsMaster = 0;
-		  }
+		if (itsMaster)
+		  itsCounts = itsMaster->refCounts();
+
+		acquire();
 	 }
 
-  public:
-    explicit WeakHandle(T* master) : itsMaster(master)
-    { acquire(); }
+	 ~WeakHandle()
+	 { release(); }
 
-    ~WeakHandle()
-    { release(); }
+	 WeakHandle(const WeakHandle& other) : itsMaster(other.itsMaster),
+														itsCounts(other.itsCounts),
+														itsIsVolatile(other.itsIsVolatile)
+	 { acquire(); }
 
-    WeakHandle(const WeakHandle& other) : itsMaster(other.itsMaster)
-    { acquire(); }
+	 template <class U> friend class WeakHandle;
 
-    template <class U>
-    WeakHandle(const WeakHandle<U>& other) :
-      itsMaster(other.isValid() ? other.get() : 0)
-    { acquire(); }
+	 template <class U>
+	 WeakHandle(const WeakHandle<U>& other) : itsMaster(other.itsMaster),
+															itsCounts(other.itsCounts),
+															itsIsVolatile(other.itsIsVolatile)
+	 { acquire(); }
 
-    WeakHandle& operator=(const WeakHandle& other)
+	 WeakHandle& operator=(const WeakHandle& other)
     {
       WeakHandle otherCopy(other);
       this->swap(otherCopy);
       return *this;
     }
 
+	 bool isValid() const
+    {
+      if (itsMaster == 0)                             return false;
+      if (itsCounts == 0)                             return false;
+      if (itsCounts->strongCount() == 0) { release(); return false; }
 
-    bool isValid() const { return itsMaster != 0; }
+      return true;
+    }
 
-	 // never returns an invalid pointer; throws an exception if the
-	 // pointer would be invalid
-    T* get() const { ensureValid(); return itsMaster; }
+	 T* get()        const { ensureValid(); return itsMaster; }
 
   private:
-    void ensureValid() const
+	 void acquire()
+    {
+      if (itsCounts)
+        {
+          if (itsIsVolatile)
+            itsCounts->acquireWeak();
+          else
+            itsCounts->acquireStrong();
+        }
+    }
+
+	 void release() const
+    {
+      if (itsCounts)
+        {
+          if (itsIsVolatile)
+            itsCounts->releaseWeak();
+          else
+            itsCounts->releaseStrong();
+        }
+
+      itsCounts = 0; itsMaster = 0; itsIsVolatile = true;
+    }
+
+	 void ensureValid() const
     {
       if (!isValid())
         Util::RefHelper::throwErrorWithMsg(
-                        "attempted to derefence an invalid WeakRef");
+								 "attempt to dereference invalid WeakHandle");
     }
 
-    void swap(WeakHandle& other)
+	 void swap(WeakHandle& other)
     {
       T* otherMaster = other.itsMaster;
       other.itsMaster = this->itsMaster;
       this->itsMaster = otherMaster;
+
+      Util::RefCounts* otherCounts = other.itsCounts;
+      other.itsCounts = this->itsCounts;
+      this->itsCounts = otherCounts;
+
+      bool otherIsVolatile = other.itsIsVolatile;
+      other.itsIsVolatile = this->itsIsVolatile;
+      this->itsIsVolatile = otherIsVolatile;
     }
 
-    T* itsMaster;
-  };
+	 bool isVolatile(T* master)
+	 {
+		if (master == 0) return true;
+		return master->isVolatile();
+	 }
+
+	 mutable T* itsMaster;
+	 mutable Util::RefCounts* itsCounts;
+	 mutable bool itsIsVolatile;
+
+  }; // end helper class WeakHandle
+
 
   mutable WeakHandle itsHandle;
   Util::UID itsId;
