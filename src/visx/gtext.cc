@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Thu Aug 30 16:34:48 2001
+// written: Thu Aug 30 16:42:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -819,7 +819,9 @@ const FieldMap& Gtext::classFields()
   {
     Field("text", &Gtext::itsText, 0, 0, 100, 1,
           Field::NEW_GROUP | Field::STRING),
-    Field("strokeWidth", &Gtext::itsStrokeWidth, 1, 1, 20, 1)
+    Field("strokeWidth",
+          std::make_pair(&Gtext::getStrokeWidth, &Gtext::setStrokeWidth),
+          1, 1, 20, 1)
   };
 
   static FieldMap GTEXT_FIELDS(FIELD_ARRAY, &GrObj::classFields());
@@ -846,7 +848,7 @@ DOTRACE("Gtext::setStrokeWidth");
   if (width > 0)
     {
       itsStrokeWidth = width;
-      setPixelBorder(itsStrokeWidth+2);
+      setPixelBorder(itsStrokeWidth+4);
       this->sigNodeChanged.emit();
     }
 }
