@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Oct 17 11:56:40 2000
+// written: Thu Oct 19 19:00:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,6 +56,7 @@ protected:
 };
 
 void ObjlistTcl::LoadObjectsCmd::invoke() {
+DOTRACE("ObjlistTcl::LoadObjectsCmd::invoke");
   static const int ALL = -1; // indicates to read all objects until eof
 
   const char* file        =                             getCstringFromArg(1);
@@ -81,25 +82,17 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 		ifs.ignore(10000000, '\n');
 		continue;
 	 }
-	 
-	 bool reading_typenames = (given_type[0] == 0);
 
-	 fixed_string type;
-	 if (reading_typenames) { ifs >> type; }
-	 else                   { type = given_type; }
+	 IO::IOFlag flags = use_bases ? IO::BASES : IO::NO_FLAGS;
 
-	 IO::IoObject* io = IO::IoMgr::newIO(type.c_str());
-	 
+	 IO::LegacyReader reader(ifs, flags);
+	 IO::IoObject* io = reader.readRoot(0);
+
 	 GrObj* p = dynamic_cast<GrObj*>(io);
 	 if (!p) {
 		throw IO::InputError("ObjlistTcl::loadObjects");
 	 }
-	 
-	 IO::IOFlag flags = use_bases ? IO::BASES : IO::NO_FLAGS;
 
-	 IO::LegacyReader reader(ifs, flags);
-	 reader.readRoot(io);
-	 
 	 ItemWithId<GrObj> obj(p, ItemWithId<GrObj>::INSERT);
 
 	 lappendVal(obj.id()); // add the current objid to the Tcl result
@@ -138,7 +131,7 @@ protected:
 	 }
 
 	 IO::IOFlag flags = IO::NO_FLAGS;
-	 if (use_typename) flags |= IO::TYPENAME;
+	 if (use_typename) /* do nothing, LegacyWriter always uses the typename  */;
 	 if (use_bases)    flags |= IO::BASES;
 
 	 ObjList& olist = ObjList::theObjList();
@@ -149,7 +142,8 @@ protected:
 			++itr)
 		{
 		  IO::LegacyWriter writer(ofs, flags);
-		  writer.writeRoot(olist.getCheckedPtr(*itr).get());
+		  PtrList<GrObj>::SharedPtr item = olist.getCheckedPtr(*itr);
+		  writer.writeRoot(item.get());
 		  ofs << endl;
 		}
   }
