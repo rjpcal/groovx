@@ -45,6 +45,16 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
+namespace
+{
+#ifdef HAVE_LIMITS
+  const Util::RefCounts::Count REFCOUNT_MAX =
+    std::numeric_limits<Util::RefCounts::Count>::max();
+#else
+  const Util::RefCounts::Count REFCOUNT_MAX = USHRT_MAX;
+#endif
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // RefCounts member definitions
@@ -61,7 +71,11 @@ void Util::RefCounts::operator delete(void* space, size_t /*bytes*/)
   ::operator delete(space);
 }
 
-Util::RefCounts::RefCounts() : itsStrong(0), itsWeak(0), itsOwnerAlive(true)
+Util::RefCounts::RefCounts() :
+  itsStrong(0),
+  itsWeak(0),
+  itsOwnerAlive(true),
+  itsVolatile(false)
 {
 DOTRACE("Util::RefCounts::RefCounts");
 }
@@ -70,18 +84,15 @@ Util::RefCounts::~RefCounts()
 {
 DOTRACE("Util::RefCounts::~RefCounts");
 
-  Assert(itsStrong == 0 && itsWeak == 0);
+  AbortIf(itsStrong > 0);
+  AbortIf(itsWeak > 0);
 }
 
 void Util::RefCounts::acquireWeak()
 {
 DOTRACE("Util::RefCounts::acquireWeak");
 
-#ifdef HAVE_LIMITS
-  Assert(itsWeak < std::numeric_limits<Count>::max());
-#else
-  Assert(itsWeak < USHRT_MAX);
-#endif
+  AbortIf(itsWeak == REFCOUNT_MAX);
 
   ++itsWeak;
 }
@@ -90,28 +101,24 @@ Util::RefCounts::Count Util::RefCounts::releaseWeak()
 {
 DOTRACE("Util::RefCounts::releaseWeak");
 
-  Assert(itsWeak > 0);
+  AbortIf(itsWeak == 0);
 
-  --itsWeak;
+  const Count result = --itsWeak;
 
   if (itsStrong == 0 && itsWeak == 0)
     {
       delete this;
-      return 0;
     }
 
-  return itsWeak;
+  return result;
 }
 
 void Util::RefCounts::acquireStrong()
 {
 DOTRACE("Util::RefCounts::acquireStrong");
 
-#ifdef HAVE_LIMITS
-  Assert(itsStrong < std::numeric_limits<Count>::max());
-#else
-  Assert(itsStrong < USHRT_MAX);
-#endif
+  if (itsVolatile) Panic("attempt to use strong refcount with volatile object");
+  AbortIf(itsStrong == REFCOUNT_MAX);
 
   ++itsStrong;
 }
@@ -120,24 +127,24 @@ Util::RefCounts::Count Util::RefCounts::releaseStrong()
 {
 DOTRACE("Util::RefCounts::releaseStrong");
 
-  Assert(itsStrong > 0);
+  if (itsVolatile) Panic("attempt to use strong refcount with volatile object");
+  AbortIf(itsStrong == 0);
 
-  --itsStrong;
+  const Count result = --itsStrong;
 
   if (itsStrong == 0 && itsWeak == 0)
     {
       delete this;
-      return 0;
     }
 
-  return itsStrong;
+  return result;
 }
 
 void Util::RefCounts::releaseStrongNoDelete()
 {
 DOTRACE("Util::RefCounts::releaseStrongNoDelete");
 
-  Assert(itsStrong > 0);
+  AbortIf(itsStrong == 0);
 
   --itsStrong;
 }
@@ -169,8 +176,7 @@ DOTRACE("Util::RefCounted::operator delete");
 }
 
 Util::RefCounted::RefCounted() :
-  itsRefCounts(new Util::RefCounts),
-  itsVolatile(false)
+  itsRefCounts(new Util::RefCounts)
 {
 DOTRACE("Util::RefCounted::RefCounted");
   dbgPrint(7, "RefCounted ctor"); dbgEvalNL(7, this);
@@ -188,7 +194,7 @@ DOTRACE("Util::RefCounted::~RefCounted");
   // destroyed. Without that guarantee, weak references will be messed up,
   // since they'll think that the object is still alive (i.e. strong count
   // > 0) when it actually is already destroyed.
-  Assert(itsRefCounts->strongCount() == 0);
+  AbortIf(itsRefCounts->itsStrong > 0);
 
   itsRefCounts->itsOwnerAlive = false;
   itsRefCounts->releaseWeak();
@@ -197,8 +203,10 @@ DOTRACE("Util::RefCounted::~RefCounted");
 void Util::RefCounted::markAsVolatile()
 {
 DOTRACE("Util::RefCounted::markAsVolatile");
-  Assert(itsRefCounts->strongCount() == 0);
-  itsVolatile = true;
+  if (itsRefCounts->itsStrong > 0)
+    Panic("can't make volatile object that already has strong refs");
+
+  itsRefCounts->itsVolatile = true;
 }
 
 void Util::RefCounted::incrRefCount() const
@@ -224,7 +232,7 @@ bool Util::RefCounted::isShared() const
 {
 DOTRACE("Util::RefCounted::isShared");
 
-  return (itsRefCounts->strongCount() > 1) || isNotShareable();
+  return (itsRefCounts->itsStrong > 1) || isNotShareable();
   // We check isNotShareable() so that volatile objects always appear
   // shared, so that they cannot be removed from the ObjDb until they
   // become invalid.
@@ -239,16 +247,12 @@ DOTRACE("Util::RefCounted::isUnshared");
 bool Util::RefCounted::isNotShareable() const
 {
 DOTRACE("Util::RefCounted::isNotShareable");
-  return itsVolatile;
+  return itsRefCounts->itsVolatile;
 }
 
-int Util::RefCounted::refCount() const
+int Util::RefCounted::dbg_RefCount() const
 {
-DOTRACE("Util::RefCounted::refCount");
-
-  dbgDump(7, *itsRefCounts);
-
-  return itsRefCounts->strongCount();
+  return itsRefCounts->itsStrong;
 }
 
 Util::RefCounts* Util::RefCounted::refCounts() const
