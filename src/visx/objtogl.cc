@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed Oct 13 17:58:27 1999
+// written: Wed Nov  3 18:09:10 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -259,8 +259,8 @@ protected:
     // call the createCallback as part of Togl's internal creation
     // procedures.
     string create_cmd_str = string("togl ") + pathname + " " + init_args;
-    TclEvalCmd create_cmd(create_cmd_str.c_str());
-    if ( create_cmd.invoke(itsInterp) != TCL_OK ) { throw TclError(); }
+    TclEvalCmd create_cmd(create_cmd_str.c_str(), TclEvalCmd::THROW_EXCEPTION);
+    create_cmd.invoke(itsInterp);
 
     // Make sure that widget creation and the create callback
     // successfully set ObjTogl::widget to point to a struct Togl
@@ -274,8 +274,8 @@ protected:
 	 if (pack) {
 		string pack_cmd_str =
 		  string("pack ") + pathname + " -expand 1 -fill both";
-		TclEvalCmd pack_cmd(pack_cmd_str.c_str());
-		if ( pack_cmd.invoke(itsInterp) != TCL_OK ) { throw TclError(); }
+		TclEvalCmd pack_cmd(pack_cmd_str.c_str(), TclEvalCmd::THROW_EXCEPTION);
+		pack_cmd.invoke(itsInterp);
 	 }
 
     toglCreated = true;
