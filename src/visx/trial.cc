@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue Aug  3 13:16:53 1999
+// written: Fri Sep 10 14:18:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -310,6 +310,7 @@ DOTRACE("Trial::trUndraw");
   glGetIntegerv(GL_CURRENT_INDEX, &foreground);
   glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
   glIndexi(background);
+  glClearIndex(foreground);
 
   for (int i = 0; i < itsIdPairs.size(); ++i) {
     GrObj* obj =
@@ -324,6 +325,7 @@ DOTRACE("Trial::trUndraw");
     glPopMatrix();
   }
   glIndexi(foreground);
+  glClearIndex(background);
 }
 
 void Trial::undoLastResponse() {
