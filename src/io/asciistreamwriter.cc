@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Sat Mar 11 21:32:21 2000
+// written: Tue Mar 14 10:07:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,12 @@
 
 #include "asciistreamwriter.h"
 
+#include "demangle.h"
+#include "io.h"
+#include "value.h"
+#include "util/arrays.h"
+#include "util/strings.h"
+
 #include <cstring>
 #include <iostream.h>
 #include <string>
@@ -20,10 +26,6 @@
 #include <typeinfo>
 #include <vector>
 #include <set>
-
-#include "demangle.h"
-#include "io.h"
-#include "value.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -41,6 +43,7 @@ namespace {
   const char STRING_ENDER = '^';
 
   void addEscapes(string& text) {
+  DOTRACE("AsciiStreamWriter::Impl::addEscapes");
 	 // Escape any special characters
 	 for (size_t pos = 0; pos < text.length(); /* ++ done in loop body */ ) {
 
@@ -70,7 +73,8 @@ private:
 
 public:
   Impl(AsciiStreamWriter* owner, ostream& os) :
-	 itsOwner(owner), itsBuf(os), itsToHandle(), itsWrittenObjects(), itsAttribs()
+	 itsOwner(owner), itsBuf(os), itsToHandle(), itsWrittenObjects(),
+	 itsAttribs()
 #ifndef NO_IOS_EXCEPTIONS
 	 , itsOriginalExceptionState(itsBuf.exceptions())
 #endif
@@ -92,7 +96,7 @@ public:
   ostream& itsBuf;
   set<const IO *> itsToHandle;
   set<const IO *> itsWrittenObjects;
-  vector<string> itsAttribs;
+  vector< dynamic_block<char> > itsAttribs;
 
 #ifndef NO_IOS_EXCEPTIONS
   ios::iostate itsOriginalExceptionState;
@@ -127,33 +131,37 @@ private:
 
   // Delegands
 public:
-  void writeValueObj(const string& name, const Value& value);
+  void writeValueObj(const string_literal& name, const Value& value);
 
   void writeObject(const string& name, const IO* obj);
 
   void writeOwnedObject(const string& name, const IO* obj);
 
   template <class T>
-  void writeBasicType(const string& name, T val) {
-	 vector<char> buf(32 + name.length());
-	 ostrstream ost(&buf[0], 32 + name.length());
-	 ost << demangle_cstr(typeid(T).name()) << " " 
-		  << name << " := "
+  void writeBasicType(const string_literal& name, T val,
+							 const char* string_typename) {
+	 itsAttribs.push_back(dynamic_block<char>());
+	 itsAttribs.back().resize(32 + name.length());
+
+	 ostrstream ost(&(itsAttribs.back()[0]), itsAttribs.back().size());
+	 ost << string_typename << " " 
+		  << name.c_str() << " := "
 		  << val << '\0';
-	 itsAttribs.push_back(&buf[0]);
   }
 
-  void writeStringType(const string& name, const string& val,
+  void writeStringType(const string_literal& name, const char* val,
 							  const char* string_typename) {
 	 string escaped_val(val);
+	 int val_length = escaped_val.length();
 	 addEscapes(escaped_val);
 
-	 vector<char> buf(32 + name.length() + escaped_val.length());
-	 ostrstream ost(&buf[0], 32 + name.length() + escaped_val.length());
+	 itsAttribs.push_back(dynamic_block<char>());
+	 itsAttribs.back().resize(32 + name.length() + val_length);
+
+	 ostrstream ost(&(itsAttribs.back()[0]), itsAttribs.back().size());
 	 ost << string_typename << " "
-		  << name << " := " 
-		  << val.length() << " " << escaped_val << '\0';
-	 itsAttribs.push_back(&buf[0]);
+		  << name.c_str() << " := " 
+		  << val_length << " " << escaped_val << '\0';
   }
 
   void writeRoot(const IO* root);
@@ -197,44 +205,47 @@ DOTRACE("AsciiStreamWriter::Impl::flushAttributes");
   itsBuf << itsAttribs.size() << '\n';
 
   for (size_t i = 0; i < itsAttribs.size(); ++i) {
-	 itsBuf << itsAttribs[i] << STRING_ENDER << '\n';
+	 itsBuf << &(itsAttribs[i][0]) << STRING_ENDER << '\n';
   }
 
   itsAttribs.clear();
 }
 
 void AsciiStreamWriter::Impl::writeValueObj(
-  const string& attrib_name,
+  const string_literal& attrib_name,
   const Value& value
   ) {
 DOTRACE("AsciiStreamWriter::Impl::writeValueObj");
+ 
+  itsAttribs.push_back(dynamic_block<char>());
+  itsAttribs.back().resize(256 + attrib_name.length());
 
-  vector<char> buf(256 + attrib_name.length()); 
-  ostrstream ost(&buf[0], 256 + attrib_name.length());
+  ostrstream ost(&(itsAttribs.back()[0]), itsAttribs.back().size());
 
   ost << value.getNativeTypeName() << " "
-		<< attrib_name << " := "
+		<< attrib_name.c_str() << " := "
 		<< value << '\0';
-
-  itsAttribs.push_back(&buf[0]);
 }
 
-void AsciiStreamWriter::Impl::writeObject(const string& name, const IO* obj) {
+void AsciiStreamWriter::Impl::writeObject(const string& name,
+														const IO* obj) {
 DOTRACE("AsciiStreamWriter::Impl::writeObject");
-  vector<char> buf(32 + name.length());
-  ostrstream ost(&buf[0], 32 + name.length());
+
+  itsAttribs.push_back(dynamic_block<char>());
+  itsAttribs.back().resize(32 + name.length());
+
+  ostrstream ost(&(itsAttribs.back()[0]), itsAttribs.back().size());
 
   if (obj == 0) {
 	 ost << "NULL " << name << " := 0" << '\0';
   }
   else {
-	 ost << demangle_cstr(typeid(*obj).name())
-		  << " " << name << " := " << obj->id() << '\0';
+	 ost << demangle_cstr(typeid(*obj).name()) << " "
+		  << name.c_str() << " := "
+		  << obj->id() << '\0';
 	 
 	 addObjectToBeHandled(obj);
   }
-
-  itsAttribs.push_back(&buf[0]);
 }
 
 void AsciiStreamWriter::Impl::writeOwnedObject(
@@ -264,22 +275,22 @@ DOTRACE("AsciiStreamWriter::~AsciiStreamWriter");
 
 void AsciiStreamWriter::writeChar(const char* name, char val) {
 DOTRACE("AsciiStreamWriter::writeChar");
-  itsImpl.writeBasicType(name, val); 
+  itsImpl.writeBasicType(name, val, "char"); 
 }
 
 void AsciiStreamWriter::writeInt(const char* name, int val) {
 DOTRACE("AsciiStreamWriter::writeInt");
-  itsImpl.writeBasicType(name, val); 
+  itsImpl.writeBasicType(name, val, "int"); 
 }
 
 void AsciiStreamWriter::writeBool(const char* name, bool val) {
 DOTRACE("AsciiStreamWriter::writeBool");
-  itsImpl.writeBasicType(name, val); 
+  itsImpl.writeBasicType(name, val, "bool"); 
 }
 
 void AsciiStreamWriter::writeDouble(const char* name, double val) {
 DOTRACE("AsciiStreamWriter::writeDouble");
-  itsImpl.writeBasicType(name, val); 
+  itsImpl.writeBasicType(name, val, "double"); 
 }
 
 void AsciiStreamWriter::writeCstring(const char* name, const char* val) {
