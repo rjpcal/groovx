@@ -7,7 +7,7 @@
 ###
 ##############################################################################
 
-package require Expt
+package require Exp
 package require Tlist
 package require Toglet
 package require Block
