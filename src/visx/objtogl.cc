@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Dec  7 18:44:24 1999
+// written: Wed Dec  8 00:37:34 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -527,6 +527,11 @@ int Objtogl_Init(Tcl_Interp* interp) {
 DOTRACE("Objtogl_Init");
 
   new ObjTogl::ObjToglPkg(interp); 
+
+#ifdef ACC_COMPILER
+  typeid(out_of_range);
+  typeid(length_error);
+#endif
 
   return TCL_OK;
 }

@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Dec  7 18:56:48 1999
+// written: Wed Dec  8 00:37:46 1999
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -1665,6 +1665,11 @@ DOTRACE("Tclgl_Init");
                          Names_Procs[i].cmdProc,
                          (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   }
+
+#ifdef ACC_COMPILER
+  typeid(out_of_range);
+  typeid(length_error);
+#endif
 
   return TCL_OK;
 }
