@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Tue Nov 26 19:44:23 2002
+// written: Fri Dec 13 10:36:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -130,6 +130,7 @@ DOTRACE("Util::SignalBase::doEmit");
         {
           dbgEval(3, typeid(**ii).name());
           dbgEvalNL(3, (*ii)->refCount());
+          dbgEvalNL(3, (*ii)->exists());
           if ((*ii)->exists())
             {
               (*ii)->doCall(params);
