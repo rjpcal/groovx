@@ -16,6 +16,7 @@
 #include "tcl/tclitempkgbase.h"
 
 #include "tcl/tclcmd.h"
+#include "tcl/tclvalue.h"
 
 #include "util/strings.h"
 
@@ -38,6 +39,7 @@ template class Getter<double>;
 template class Getter<const char*>;
 template class Getter<fixed_string>;
 template class Getter<const fixed_string&>;
+template class Getter<Tcl::TclValue>;
 
 template class Setter<int>;
 template class Setter<unsigned int>;
@@ -46,6 +48,7 @@ template class Setter<bool>;
 template class Setter<double>;
 template class Setter<const char*>;
 template class Setter<const fixed_string&>;
+template class Setter<Tcl::TclValue>;
 
 Tcl::ItemFetcher::~ItemFetcher() {}
 
