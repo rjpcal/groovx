@@ -3,7 +3,7 @@
 // tclpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 11:50:23 1999
-// written: Thu Mar 30 09:40:16 2000
+// written: Fri Sep 22 17:50:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,6 +12,12 @@
 #define TCLPKG_H_DEFINED
 
 struct Tcl_Interp;
+
+#ifdef MIPSPRO_COMPILER
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLERROR_H_DEFINED)
+#include "tcl/tclerror.h"
+#endif
+#endif
 
 namespace Tcl {
   class TclCmd;
