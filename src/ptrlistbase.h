@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sun Nov 21 00:54:35 1999
+// written: Sun Nov 21 01:25:33 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -89,11 +89,11 @@ protected:
   /** Return the void* at the index given by 'id'.  There is no
 		range-check performed; this must be done by the client with
 		isValidId(). */
-  void* getVoidPtr(int id) throw ();
+  void* getVoidPtr(int id) const throw ();
 
   /** Like getVoidPtr(), but checks first if 'id' is a valid index,
 		and throws an InvalidIdError if it is not. */
-  void* getCheckedVoidPtr(int id) throw (InvalidIdError);
+  void* getCheckedVoidPtr(int id) const throw (InvalidIdError);
 
   /** Add ptr at the next available location, and return the index
 		where it was inserted. If necessary, the list will be expanded

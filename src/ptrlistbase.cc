@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sun Nov 21 00:55:01 1999
+// written: Sun Nov 21 01:26:03 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -102,12 +102,12 @@ DOTRACE("VoidPtrList::clear");
   itsFirstVacant = 0;
 }
 
-void* VoidPtrList::getVoidPtr(int id) throw () {
+void* VoidPtrList::getVoidPtr(int id) const throw () {
 DOTRACE("VoidPtrList::getVoidPtr");
   return itsVec[id]; 
 }
 
-void* VoidPtrList::getCheckedVoidPtr(int id) throw (InvalidIdError) {
+void* VoidPtrList::getCheckedVoidPtr(int id) const throw (InvalidIdError) {
 DOTRACE("VoidPtrList::getCheckedVoidPtr");
   if ( !isValidId(id) ) { throw InvalidIdError(); }
   return getVoidPtr(id);
