@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Thu Mar 16 10:43:23 2000
+// written: Thu Mar 16 13:53:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -190,8 +190,8 @@ public:
   /** Attempt to convert argument number \a argn to type \c T, and
       copy the result into \a val. */
   template <class T>
-  void getValFromArg(int argn, T& val)
-	 { val = getValFromObj(itsInterp, itsObjv[argn], (T*)0); }
+  T getValFromArg(int argn, T* /*dummy*/=0)
+	 { return getValFromObj(itsInterp, itsObjv[argn], (T*)0); }
 
   //---------------------------------------------------------------------
   //
