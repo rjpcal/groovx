@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Thu Oct 26 17:52:55 2000
+// written: Fri Oct 27 08:52:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,17 +15,20 @@
 #include "util/tracer.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VALUE_H_DEFINED)
-#include "util/value.h"
-#endif
-
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRIALBASE_H_DEFINED)
 #include "trialbase.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
-#include "iditem.h"
+#ifdef PRESTANDARD_IOSTREAMS
+class istream;
+#else
+#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
+#    include <iosfwd>
+#    define IOSFWD_DEFINED
+#  endif
 #endif
+
+template <class T> class MaybeIdItem;
 
 namespace GWT {
   class Canvas;
