@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Sat Mar  4 02:04:17 2000
+// written: Mon Mar  6 18:32:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,8 @@
 #include "ptrlist.h"
 
 #include "demangle.h"
+#include "util/strings.h"
 
-#include <string>
 #include <typeinfo>
 
 template <class T>
@@ -55,12 +55,19 @@ void PtrList<T>::destroyPtr(void* ptr)
 { delete castToT(ptr); }
 
 template <class T>
-const string& PtrList<T>::alternateIoTags() const {
-  static string result =
-	 IoPtrList::alternateIoTags() +
-	 " PtrList<" + demangle(typeid(T).name()) + ">";
+const char* PtrList<T>::alternateIoTags() const {
+  static dynamic_string result;
 
-  return result;
+  static bool inited = false;
+  if (!inited) {
+	 result = IoPtrList::alternateIoTags();
+	 result += " PtrList<";
+	 result += demangle_cstr(typeid(T).name());
+	 result += ">";
+	 inited = true;
+  }
+
+  return result.c_str();
 }
 
 

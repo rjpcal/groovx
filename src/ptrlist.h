@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Sat Mar  4 02:03:50 2000
+// written: Mon Mar  6 18:28:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -195,7 +195,7 @@ protected:
 
   /** Reimplemented from \c IoPtrList to include "PtrList<T>" with \c
       \a T replaced with the the typename of the actual template argument. */
-  virtual const string& alternateIoTags() const;
+  virtual const char* alternateIoTags() const;
 };
 
 static const char vcid_ptrlist_h[] = "$Header$";

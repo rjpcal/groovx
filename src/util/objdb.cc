@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Sat Mar  4 01:58:27 2000
+// written: Mon Mar  6 18:29:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -163,8 +163,6 @@ DOTRACE("IoPtrList::readFrom");
 
   ReadUtils::readObjectSeq(reader, "itsVec", back_inserter(ioVec), (IO*) 0);
 
-//   vector<void*>& voidVec = VoidPtrList::vec();
-
   voidVecResize(ioVec.size());
 
   for (size_t i = 0, end = ioVec.size();
@@ -191,10 +189,10 @@ DOTRACE("IoPtrList::writeTo");
   WriteUtils::writeObjectSeq(writer, "itsVec", ioVec.begin(), ioVec.end());
 }
 
-const string& IoPtrList::alternateIoTags() const {
+const char* IoPtrList::alternateIoTags() const {
 DOTRACE("IoPtrList::alternateIoTags");
-  static string result = ""; 
-  return result; 
+  static const char* result = ""; 
+  return result;
 }
 
 static const char vcid_ioptrlist_cc[] = "$Header$";

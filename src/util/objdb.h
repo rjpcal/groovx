@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri Feb 18 22:53:45 2000
+// written: Mon Mar  6 18:28:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ protected:
   /** May be overridden by subclasses to provide a list of alternative
       typenames suitable for use in \c IO::readTypename(). The default
       implementation here returns an empty string. */
-  virtual const string& alternateIoTags() const;
+  virtual const char* alternateIoTags() const;
 };
 
 static const char vcid_ioptrlist_h[] = "$Header$";
