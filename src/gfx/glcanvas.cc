@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Mar 19 17:56:06 2003
+// written: Fri Mar 28 17:59:07 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -35,6 +35,7 @@
 
 #include "gfx/glxopts.h"
 #include "gfx/glxwrapper.h"
+#include "gfx/gxfont.h"
 
 #include "gx/bmapdata.h"
 #include "gx/rect.h"
@@ -755,6 +756,14 @@ DOTRACE("GLCanvas::end");
   glEnd();
 }
 
+void GLCanvas::drawText(const fstring& text, const GxFont& font)
+{
+DOTRACE("GLCanvas::drawText");
+  glRasterPos2d( 0.0, 0.0 );
+  glListBase( font.listBase() );
+  glCallLists( text.length(), GL_BYTE, text.c_str() );
+}
+
 void GLCanvas::flushOutput()
 {
 DOTRACE("GLCanvas::flushOutput");
@@ -763,6 +772,133 @@ DOTRACE("GLCanvas::flushOutput");
     rep->glx->swapBuffers();
   else
     glFlush();
+}
+
+int GLCanvas::genLists(int num)
+{
+DOTRACE("GLCanvas::genLists");
+  const int i = glGenLists(num);
+
+  if (i == 0)
+    throw Util::Error("Couldn't allocate GL display list");
+
+  return i;
+}
+
+void GLCanvas::deleteLists(int start, int num)
+{
+DOTRACE("GLCanvas::deleteLists");
+  glDeleteLists(start, num);
+}
+
+void GLCanvas::newList(int i, bool do_execute)
+{
+DOTRACE("GLCanvas::newList");
+
+ glNewList(i,
+           do_execute
+           ? GL_COMPILE_AND_EXECUTE
+           : GL_COMPILE);
+}
+
+void GLCanvas::endList()
+{
+DOTRACE("GLCanvas::endList");
+  glEndList();
+}
+
+bool GLCanvas::isList(int i)
+{
+DOTRACE("GLCanvas::isList");
+  return i != 0 && glIsList(i) == GL_TRUE;
+}
+
+void GLCanvas::callList(int i)
+{
+DOTRACE("GLCanvas::callList");
+  glCallList(i);
+}
+
+void GLCanvas::light(int lightnum,
+                     const Gfx::RgbaColor* spec,
+                     const Gfx::RgbaColor* diff,
+                     const Gfx::RgbaColor* ambi,
+                     const Gfx::Vec3<double>* posi,
+                     const Gfx::Vec3<double>* sdir,
+                     double attenuation,
+                     double spotExponent,
+                     double spotCutoff)
+{
+DOTRACE("GLCanvas::light");
+
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0+lightnum);
+  glEnable(GL_DEPTH_TEST);
+
+  if (spec != 0)
+    {
+      const GLfloat fspecular[] = { spec->r(), spec->g(), spec->b(), spec->a() };
+      glLightfv(GL_LIGHT0+lightnum, GL_SPECULAR, fspecular);
+    }
+
+  if (diff != 0)
+    {
+      const GLfloat fdiffuse[] = { diff->r(), diff->g(), diff->b(), diff->a() };
+      glLightfv(GL_LIGHT0+lightnum, GL_DIFFUSE, fdiffuse);
+    }
+
+  if (ambi != 0)
+    {
+      const GLfloat fambient[] =  { ambi->r(), ambi->g(), ambi->b(), ambi->a() };
+      glLightfv(GL_LIGHT0+lightnum, GL_AMBIENT, fambient);
+    }
+
+  if (posi != 0)
+    {
+      const GLfloat w = (attenuation == 0.0) ? 0.0 : 1.0;
+      const GLfloat m = (attenuation == 0.0) ? 1.0 : (1.0/attenuation);
+
+      const GLfloat fposition[] = { m*posi->x(), m*posi->y(), m*posi->z(), w };
+      glLightfv(GL_LIGHT0+lightnum, GL_POSITION, fposition);
+    }
+
+  if (sdir != 0)
+    {
+      const GLfloat fdirection[] = { sdir->x(), sdir->y(), sdir->z(), 0.0 };
+
+      glLightfv(GL_LIGHT0+lightnum, GL_SPOT_DIRECTION, fdirection);
+      glLightf(GL_LIGHT0+lightnum, GL_SPOT_EXPONENT, spotExponent);
+      glLightf(GL_LIGHT0+lightnum, GL_SPOT_CUTOFF, spotCutoff);
+    }
+}
+
+void GLCanvas::material(const Gfx::RgbaColor* spec,
+                        const Gfx::RgbaColor* diff,
+                        const Gfx::RgbaColor* ambi,
+                        const double* shininess)
+{
+  glEnable(GL_DEPTH_TEST);
+
+  if (spec != 0)
+    {
+      const GLfloat specular[] = { spec->r(), spec->g(), spec->b(), spec->a() };
+      glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+    }
+
+  if (diff != 0)
+    {
+      const GLfloat diffuse[] =  { diff->r(), diff->g(), diff->b(), diff->a() };
+      glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+    }
+
+  if (ambi != 0)
+    {
+      const GLfloat ambient[] =  { ambi->r(), ambi->g(), ambi->b(), ambi->a() };
+      glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
+    }
+
+  if (shininess != 0)
+    glMaterialf(GL_FRONT, GL_SHININESS, *shininess);
 }
 
 static const char vcid_glcanvas_cc[] = "$Header$";

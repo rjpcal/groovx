@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Nov 13 16:45:32 2002
-// written: Wed Mar 19 17:56:00 2003
+// written: Fri Mar 28 17:50:02 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -32,6 +32,8 @@
 #define GXRASTERFONT_CC_DEFINED
 
 #include "gxrasterfont.h"
+
+#include "gfx/glcanvas.h"
 
 #include "gx/bbox.h"
 #include "gx/rect.h"
@@ -167,7 +169,7 @@ DOTRACE("GxRasterFont::GxRasterFont");
   const int last = rep->fontInfo->max_char_or_byte2;     dbgEval(2, last);
 
   rep->listCount = last-first+1;                dbgEvalNL(2, rep->listCount);
-  rep->listBase = glGenLists( last+1 );         dbgEvalNL(2, rep->listBase);
+  rep->listBase = GLCanvas::genLists( last+1 ); dbgEvalNL(2, rep->listBase);
 
   if (rep->listBase==0)
     {
@@ -196,7 +198,7 @@ GxRasterFont::~GxRasterFont()
 {
 DOTRACE("GxRasterFont::~GxRasterFont");
 
-  glDeleteLists(rep->listBase, rep->listCount);
+  GLCanvas::deleteLists(rep->listBase, rep->listCount);
   XFreeFontInfo(NULL, rep->fontInfo, 1);
 
   delete rep;

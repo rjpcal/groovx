@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Wed Mar 19 17:56:06 2003
+// written: Fri Mar 28 17:55:19 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -34,6 +34,9 @@
 #include "util/object.h"
 
 template <class T> class dynamic_block;
+
+class fstring;
+class GxFont;
 
 namespace Gfx
 {
@@ -306,6 +309,8 @@ public:
   virtual void vertex3(const Gfx::Vec3<double>& v) = 0;
 
   virtual void end() = 0;
+
+  virtual void drawText(const fstring& text, const GxFont& font) = 0;
 
   /// Flush all pending drawing requests.
   virtual void flushOutput() = 0;

@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Jul  1 11:54:48 1999 (as gtext.cc)
-// written: Wed Mar 19 17:55:59 2003
+// written: Fri Mar 28 17:57:36 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -42,8 +42,6 @@
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
-
-#include <GL/gl.h>
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -201,9 +199,7 @@ DOTRACE("GxText::grRender");
   Gfx::AttribSaver asaver(canvas);
 
   canvas.setLineWidth(itsStrokeWidth);
-  glRasterPos2d( 0.0, 0.0 );
-  glListBase( itsFont->listBase() );
-  glCallLists( itsText.length(), GL_BYTE, itsText.c_str() );
+  canvas.drawText(itsText, *itsFont);
 }
 
 static const char vcid_gxtext_cc[] = "$Header$";

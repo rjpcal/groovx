@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Aug 27 17:18:49 2001
-// written: Wed Mar 19 17:55:58 2003
+// written: Fri Mar 28 17:55:47 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -163,6 +163,8 @@ public:
   virtual void vertex3(const Gfx::Vec3<double>& v);
 
   virtual void end();
+
+  virtual void drawText(const fstring& text, const GxFont& font);
 
   virtual void flushOutput();
 

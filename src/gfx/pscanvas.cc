@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Aug 27 17:20:09 2001
-// written: Wed Mar 19 17:55:58 2003
+// written: Fri Mar 28 18:00:45 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -989,6 +989,12 @@ void Gfx::PSCanvas::end()
 {
 DOTRACE("Gfx::PSCanvas::end");
   rep->endPrimitive();
+}
+
+void Gfx::PSCanvas::drawText(const fstring& /*text*/, const GxFont& /*font*/)
+{
+DOTRACE("Gfx::PSCanvas::drawText");
+  throw Util::Error("PSCanvas::drawText not implemented");
 }
 
 void Gfx::PSCanvas::flushOutput()

@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Wed Mar 19 17:56:06 2003
+// written: Fri Mar 28 17:56:31 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -171,7 +171,32 @@ public:
 
   virtual void end();
 
+  virtual void drawText(const fstring& text, const GxFont& font);
+
   virtual void flushOutput();
+
+  // OpenGL-specific stuff:
+  static int genLists(int num);
+  static void deleteLists(int start, int num);
+  void newList(int i, bool do_execute);
+  void endList();
+  bool isList(int i);
+  void callList(int i);
+
+  void light(int lightnum,
+             const Gfx::RgbaColor* specular,
+             const Gfx::RgbaColor* diffuse,
+             const Gfx::RgbaColor* ambient,
+             const Gfx::Vec3<double>* position,
+             const Gfx::Vec3<double>* spotDirection,
+             double attenuation,
+             double spotExponent,
+             double spotCutoff);
+
+  void material(const Gfx::RgbaColor* specular,
+                const Gfx::RgbaColor* diffuse,
+                const Gfx::RgbaColor* ambient,
+                const double* shininess);
 
 private:
   GLCanvas(const GLCanvas&);

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Nov 13 14:03:42 2002
-// written: Wed Mar 19 17:56:04 2003
+// written: Fri Mar 28 17:32:59 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -33,9 +33,9 @@
 
 #include "gxcache.h"
 
-#include "util/error.h"
+#include "gfx/glcanvas.h"
 
-#include <GL/gl.h>
+#include "util/error.h"
 
 #include "util/debug.h"
 
@@ -47,37 +47,30 @@ GxCache::GxCache(Util::SoftRef<GxNode> child) :
 
 GxCache::~GxCache()
 {
-  glDeleteLists(itsDisplayList, 1);
+  invalidate();
 }
 
 void GxCache::draw(Gfx::Canvas& canvas) const
 {
-  if (itsMode != GLCOMPILE)
+  GLCanvas* const glcanvas = dynamic_cast<GLCanvas*>(&canvas);
+  if (itsMode != GLCOMPILE || glcanvas == 0)
     {
       child()->draw(canvas);
     }
   else
     {
-      // We must explicitly check that the display list is valid,
-      // since it might be invalid if the object was recently
-      // constructed, for example.
-      if (itsDisplayList != 0 && glIsList(itsDisplayList) == GL_TRUE)
+      if (glcanvas->isList(itsDisplayList))
         {
-          glCallList(itsDisplayList);
+          glcanvas->callList(itsDisplayList);
           dbgEvalNL(3, itsDisplayList);
         }
       else
         {
-          itsDisplayList = glGenLists(1);
+          itsDisplayList = glcanvas->genLists(1);
 
-          if (itsDisplayList == 0)
-            {
-              throw Util::Error("GxCache couldn't allocate GL display list");
-            }
-
-          glNewList(itsDisplayList, GL_COMPILE_AND_EXECUTE);
+          glcanvas->newList(itsDisplayList, true);
           child()->draw(canvas);
-          glEndList();
+          glcanvas->endList();
         }
     }
 }
@@ -89,7 +82,7 @@ void GxCache::getBoundingCube(Gfx::Bbox& bbox) const
 
 void GxCache::invalidate()
 {
-  glDeleteLists(itsDisplayList, 1);
+  GLCanvas::deleteLists(itsDisplayList, 1);
   itsDisplayList = 0;
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jul  5 15:17:06 2002
-// written: Thu Mar 20 15:46:29 2003
+// written: Fri Mar 28 17:47:45 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -115,42 +115,24 @@ DOTRACE("GxLighting::writeTo");
 void GxLighting::getBoundingCube(Gfx::Bbox&) const
 {}
 
-#include <GL/gl.h>
-
 void GxLighting::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxLighting::draw");
 
-  if (dynamic_cast<GLCanvas*>(&canvas) == 0)
+  GLCanvas* glcanvas = dynamic_cast<GLCanvas*>(&canvas);
+
+  if (glcanvas == 0)
     throw Util::Error("can't use GxLighting with non-OpenGL canvas");
 
-  const GLfloat specular[] =
-    { specularColor.r(), specularColor.g(), specularColor.b(), specularColor.a() };
-  const GLfloat diffuse[] =
-    { diffuseColor.r(), diffuseColor.g(), diffuseColor.b(), diffuseColor.a() };
-  const GLfloat ambient[] =
-    { ambientColor.r(), ambientColor.g(), ambientColor.b(), ambientColor.a() };
-
-  const GLfloat w = (attenuation == 0.0) ? 0.0 : 1.0;
-  const GLfloat mul = (attenuation == 0.0) ? 1.0 : (1.0/attenuation);
-
-  const GLfloat fposition[] =
-    { mul*position.x(), mul*position.y(), mul*position.z(), w };
-
-  const GLfloat fdirection[] =
-    { spotDirection.x(), spotDirection.y(), spotDirection.z(), 0.0 };
-
-  glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
-  glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
-  glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-  glLightfv(GL_LIGHT0, GL_POSITION, fposition);
-  glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, spotExponent);
-  glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, spotCutoff);
-  glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, fdirection);
-
-  glEnable(GL_LIGHTING);
-  glEnable(GL_LIGHT0);
-  glEnable(GL_DEPTH_TEST);
+  glcanvas->light(0,
+                  &specularColor,
+                  &diffuseColor,
+                  &ambientColor,
+                  &position,
+                  &spotDirection,
+                  attenuation,
+                  spotExponent,
+                  spotCutoff);
 }
 
 static const char vcid_gxlighting_cc[] = "$Header$";
