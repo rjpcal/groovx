@@ -41,6 +41,11 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+#ifndef XML_STATUS_OK
+#define XML_STATUS_OK    1
+#define XML_STATUS_ERROR 0
+#endif
+
 XmlParser::XmlParser(std::istream& is, int bufsize) :
   itsParser(XML_ParserCreate(/*encoding*/0)),
   itsStream(is),
