@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Tue Jul 20 14:41:10 1999
+// written: Tue Aug  3 13:18:57 1999
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -232,6 +232,7 @@ public:
 
     declareCAttrib("autosaveFile",
 						 &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
+	 declareCAction("reset", &ExptDriver::edResetExpt);
 	 declareCAction("stop", &ExptDriver::edHaltExpt);
 	 declareCAction("writeAndExit", &ExptDriver::writeAndExit);
   }
