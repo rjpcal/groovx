@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Mar  5 14:47:43 2002
+// written: Tue May 14 20:48:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -133,6 +133,8 @@ protected:
     data(d), stride(str), stop(data+str*n) {}
 
 public:
+  typedef std::random_access_iterator_tag iterator_category;
+
   MtxIterBase(const MtxIterBase& other) :
     data(other.data), stride(other.stride), stop(other.stop) {}
 
