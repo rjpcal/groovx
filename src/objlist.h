@@ -3,7 +3,7 @@
 // objlist.h 
 // Rob Peters
 // Created: Nov-98
-// written: Thu May 27 19:31:28 1999
+// written: Fri Jun 11 21:53:00 1999
 // $Id$
 //
 //
@@ -33,7 +33,7 @@ class GrObj;
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ObjList : private PtrList<GrObj> {
+class ObjList : private PtrList<GrObj>, public virtual IO {
 private:
   typedef PtrList<GrObj> Base;
 
