@@ -4543,3 +4543,75 @@
   [Nub] volatileobject              Nub::VolatileObject
 
   OK, moved all this stuff into a new src/nub/ subdirectory.
+
+
+* (18-Oct-2004, done 20-Oct-2004) sift through src/gfx and src/gx
+
+  [geom] src/geom/bezier
+  [geom] src/geom/bezier4
+  [geom] src/geom/box
+  [geom] src/geom/geom
+  [geom] src/geom/rect
+  [geom] src/geom/txform
+  [geom] src/geom/vec2
+  [geom] src/geom/vec3
+
+  [media] src/gx/bmapdata   (depends on rutz and geom)
+  [media] src/gx/imgfile    (depends on rutz and geom; XXX also Nub::log)
+  [media] src/gx/jpegparser (depends on rutz and geom)
+  [media] src/gx/pngparser  (depends on rutz and geom)
+  [media] src/gx/pnmparser  (depends on rutz and geom)
+
+  gb:
+  src/gfx/gbcolor
+  src/gfx/gbvec
+  src/gfx/rgbacolor (used in Canvas, GbColor, GxBounds, Toglet)
+
+  gxnode:
+  src/gfx/gxnode
+    src/gfx/gxbin
+      src/gfx/gxaligner
+      src/gfx/gxbounds
+      src/gfx/gxcache
+      src/gfx/gxscaler
+    src/gfx/gxshapekit
+      src/gfx/gxpixmap
+      src/gfx/gxtext
+    src/gfx/gxcamera
+    src/gfx/gxcolor
+    src/gfx/gxcylinder
+    src/gfx/gxdisk
+    src/gfx/gxdrawstyle
+    src/gfx/gxemptynode
+    src/gfx/gxlighting
+    src/gfx/gxline
+    src/gfx/gxmaterial
+    src/gfx/gxpointset
+    src/gfx/gxseparator
+    src/gfx/gxsphere
+    src/gfx/gxtransform
+  src/gfx/gxtcl
+
+  canvas:
+  src/gfx/bbox (depends on Canvas)
+  src/gfx/canvas
+    src/gfx/glcanvas
+    src/gfx/pscanvas
+  src/gfx/glwindowinterface (depends on Tk in header)
+    src/gfx/aglwrapper
+    src/gfx/glxwrapper
+  src/gfx/glxopts
+  src/gfx/gxfont
+    src/gfx/gxrasterfont
+      src/gfx/aglrasterfont
+      src/gfx/glxrasterfont
+    src/gfx/gxvectorfont
+  src/gfx/toglet (depends on Tk stuff)
+  src/gfx/toglettcl
+  src/gfx/linestrip (depends on Canvas)
+  src/gfx/xbmaprenderer (dead code, should go in glcanvas or glxwrapper)
+
+  src/gfx/gxscene
+
+  src/gfx/pointtcl
+  src/gfx/recttcl
