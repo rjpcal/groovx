@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec 16 15:25:06 1999
-// written: Thu Jul 12 13:12:04 2001
+// written: Thu Jul 12 16:27:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,7 +69,16 @@ namespace Tcl
 {
   class Context;
   class TclItemPkgBase;
+
+  class ItemFetcher;
 }
+
+class Tcl::ItemFetcher {
+public:
+  virtual ~ItemFetcher();
+
+  virtual void* getItemFromContext(Tcl::Context& ctx) = 0;
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -79,7 +88,7 @@ namespace Tcl
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::TclItemPkgBase : public Tcl::TclPkg {
+class Tcl::TclItemPkgBase : public Tcl::TclPkg, public Tcl::ItemFetcher {
 public:
   TclItemPkgBase(Tcl_Interp* interp, const char* name, const char* version,
                  int item_argn);

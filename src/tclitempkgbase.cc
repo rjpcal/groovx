@@ -47,6 +47,8 @@ template class Setter<double>;
 template class Setter<const char*>;
 template class Setter<const fixed_string&>;
 
+Tcl::ItemFetcher::~ItemFetcher() {}
+
 Tcl::TclItemPkgBase::TclItemPkgBase(Tcl_Interp* interp,
                                     const char* name, const char* version,
                                     int item_argn) :
