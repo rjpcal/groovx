@@ -197,6 +197,9 @@ public:
 
   /// FOR TEST/DEBUG ONLY! Returns the object's (strong) reference count.
   int dbg_RefCount() const throw();
+
+  /// FOR TEST/DEBUG ONLY! Returns the object's weak reference count.
+  int dbg_WeakRefCount() const throw();
 };
 
 static const char vcid_refcounted_h[] = "$Header$";
