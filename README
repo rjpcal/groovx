@@ -31,29 +31,23 @@
    (Assume /path/to/install is where you will install local packages)
    (Assume /path/to/source is where you unpack and build these packages)
 
-   This software requires the following packages:
+   This software requires these development packages:
 
-     * Tcl/Tk (version 8.4b1 or later)
-
-       Note that you'll need to install all of the tkInt*.h files to an
-       include directory, in addition to the other tk*.h files that are
-       normally installed as part of tk. That is:
-
-       cd /path/to/source/tk8.4b1
-       cp generic/tkInt*.h /path/to/install/include
-
+     * Tcl/Tk (version 8.4 or later)
      * X11 windowing system
      * OpenGL
      * libz (gzip library)
 
-   The following packages are not critical, but are expected by default in
-   the Makefile, so some source hacking might be necessary to disable them.
+   The following additional packages are optional. The configure script
+   should generally be able to detect whether you have them installed or
+   not and set up the Makefile appropriately.
 
      * libpng (portable network graphics library)
-     * matlab (allows running a matlab engine inside the grsh shell)
+     * libjpeg (jpeg image handling library)
+     * matlab (allows running a matlab engine inside the groovx shell)
 
    The following packages are optional, but are used in some of the scripts
-   that use the grsh software.
+   that use the groovx software.
 
      * itcl and itk (itcl3.2.1_src.tgz)
 
@@ -124,12 +118,12 @@
 
      GRSH_LIB_DIR
 
-     Some components of the grsh software that are accessed at runtime are
-     found in the directory that is specified by the environment variable
-     GRSH_LIB_DIR. These components include the default audio files,
-     various accessory and demo scripts that can be run using the grsh
-     shell, and sample serialized object databases that can be loaded into
-     the program.
+     Some components of the groovx software that are accessed at runtime
+     are found in the directory that is specified by the environment
+     variable GRSH_LIB_DIR. These components include the default audio
+     files, various accessory and demo scripts that can be run using the
+     groovx shell, and sample serialized object databases that can be
+     loaded into the program.
 
      All of these components are found in the share/ subdirectory of the
      source tree. If you plan to keep the source tree around, you can just
@@ -168,5 +162,5 @@
      (626) 395-2882
      rjpeters at klab dot caltech dot edu
      www.klab.caltech.edu/rjpeters/
-     www.klab.caltech.edu/rjpeters/grsh/
+     www.klab.caltech.edu/rjpeters/groovx/
 
