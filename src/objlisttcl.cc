@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Mon Jun 14 14:24:38 1999
+// written: Tue Jun 29 17:41:07 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,11 +19,11 @@
 #include <typeinfo>
 #include <vector>
 
-#include "errmsg.h"
 #include "objlist.h"
 #include "grobj.h"
 #include "id.h"
-#include "tcllistpkg.h"
+#include "tclitempkg.h"
+#include "listpkg.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -37,9 +37,15 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace ObjlistTcl {
-  Tcl_ObjCmdProc allObjsCmd;
-  Tcl_ObjCmdProc objTypeCmd;
+  class AllObjsCmd;
+  class ObjListPkg;
 }
+
+namespace GrobjTcl {
+  class TypeCmd;
+  class CategoryCmd;
+  class GrObjPkg;
+};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -47,68 +53,41 @@ namespace ObjlistTcl {
 //
 ///////////////////////////////////////////////////////////////////////
 
-GrObj* ObjlistTcl::getObjFromArg(Tcl_Interp* interp, Tcl_Obj* const objv[], 
-                                 int argn) {
-DOTRACE("ObjlistTcl::getObjFromArg");
-// XXX remove ObjList argument
-  int id;
-  if ( Tcl_GetIntFromObj(interp, objv[argn], &id) != TCL_OK ) return NULL;
+//---------------------------------------------------------------------
+//
+// ObjlistTcl::AllObjsCmd --
+//
+//---------------------------------------------------------------------
 
-  ObjId objid(id);
+class ObjlistTcl::AllObjsCmd : public TclCmd {
+public:
+  AllObjsCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 TclCmd(interp, cmd_name, NULL, 1, 1) {}
+protected:
+  virtual void invoke() {
+	 vector<int> objids;
+	 ObjList::theObjList().getValidObjids(objids);
 
-  DebugEvalNL(objid);
-
-  // Make sure we have a valid objid ...
-  if ( !objid ) {
-    err_message(interp, objv, bad_objid_msg);
-    return NULL;
+	 returnSequence(objids.begin(), objids.end());
   }
+};
 
-  // ... and get the object to which it refers
-  return objid.get();
-}
+//---------------------------------------------------------------------
+//
+// TypeCmd --
+//
+//---------------------------------------------------------------------
 
-int ObjlistTcl::allObjsCmd(ClientData, Tcl_Interp* interp,
-									int objc, Tcl_Obj* const objv[]) {
-DOTRACE("ObjlistTcl::allObjsCmd");
-  if (objc != 1) {
-    Tcl_WrongNumArgs(interp, 1, objv, NULL);
-    return TCL_ERROR;
+class GrobjTcl::TypeCmd : public TclItemCmd<GrObj> {
+public:
+  TypeCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<GrObj>(pkg, cmd_name, "objid", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 GrObj* p = getItem();
+	 returnCstring(typeid(*p).name());
   }
-
-  ObjList& olist = ObjList::theObjList();
-  vector<int> objids;
-  olist.getValidObjids(objids);
-
-  Tcl_Obj* list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
-
-  for (int i = 0; i < objids.size(); ++i) {
-	 Tcl_Obj* id_obj = Tcl_NewIntObj(objids[i]);
-	 if (Tcl_ListObjAppendElement(interp, list_out, id_obj) != TCL_OK)
-		return TCL_ERROR;
-  }
-  Tcl_SetObjResult(interp, list_out);
-  return TCL_OK;
-}
-
-// return an object's name
-int ObjlistTcl::objTypeCmd(ClientData, Tcl_Interp* interp,
-                           int objc, Tcl_Obj* const objv[]) {
-DOTRACE("ObjlistTcl::objTypeCmd");
-  if (objc != 2)  {
-    Tcl_WrongNumArgs(interp, 1, objv, "objid");
-    return TCL_ERROR;
-  }
-
-  GrObj* g = getObjFromArg(interp, objv, 1);
-  if ( g == NULL ) return TCL_ERROR;
-
-  const char* name = typeid(*g).name();
-  if ( name != NULL ) {
-    Tcl_SetObjResult(interp, Tcl_NewStringObj(name,-1));
-  }
-  return TCL_OK;
-}
+};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -116,40 +95,47 @@ DOTRACE("ObjlistTcl::objTypeCmd");
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ObjListPkg : public TclListPkg {
+class ObjlistTcl::ObjListPkg : public ListPkg<ObjList> {
 public:
   ObjListPkg(Tcl_Interp* interp) :
-	 TclListPkg(interp, "ObjList", "2.5")
+	 ListPkg<ObjList>(interp, "ObjList", "3.0") {}
+
+  virtual IO& getIoFromId(int) { 
+	 return dynamic_cast<IO&>(ObjList::theObjList());
+  }
+  virtual ObjList* getCItemFromId(int) { return &(ObjList::theObjList()); }
+};
+
+///////////////////////////////////////////////////////////////////////
+//
+// GrObjPkg class definition
+//
+///////////////////////////////////////////////////////////////////////
+
+class GrobjTcl::GrObjPkg : public CTclIoItemPkg<GrObj> {
+public:
+  GrObjPkg(Tcl_Interp* interp) :
+	 CTclIoItemPkg<GrObj>(interp, "Grobj", "2.5")
   {
-	 Tcl_CreateObjCommand(interp, "ObjList::objType", ObjlistTcl::objTypeCmd,
-								 (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-	 Tcl_CreateObjCommand(interp, "ObjList::allObjs", ObjlistTcl::allObjsCmd,
-								 (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+	 addCommand( new TypeCmd(this, "GrObj::type") );
+	 declareAttrib("category", new CAttrib<GrObj, int>(&GrObj::getCategory,
+																		&GrObj::setCategory));
 
-	 Tcl_Eval(interp, 
-				 "namespace eval ObjList {\n"
-				 "  proc resetObjList {} { ObjList::reset }\n"
-				 "  proc objCount {} { return [ObjList::count] }\n"
-				 "  namespace export objType\n"
-				 "  namespace export resetObjList\n"
-				 "  namespace export objCount\n"
-				 "}");
 	 Tcl_Eval(interp,
-				 "namespace import ObjList::objType\n"
-				 "namespace import ObjList::resetObjList\n"
-				 "namespace import ObjList::objCount\n");
+				 "proc objType {id} { return [GrObj::type $id] }\n");
   }
 
-  virtual IO& getList() { return ObjList::theObjList(); }
-  virtual int getBufSize() { 
-	 //   20 chars for first line with ObjList ...
-	 //   40 chars for each GrObj in list
-	 //   10 chars for last line
-	 return (20 + 40*ObjList::theObjList().objCount() + 10);
+  virtual GrObj* getCItemFromId(int id) {
+	 ObjId objid(id);
+	 if ( !objid ) {
+		throw TclError("objid out of range");
+	 }
+	 return objid.get();
   }
 
-  virtual void reset() { ObjList::theObjList().clearObjs(); }
-  virtual int count() { return ObjList::theObjList().objCount(); }
+  virtual IO& getIoFromId(int id) {
+	 return dynamic_cast<IO&>( *(getCItemFromId(id)) );
+  }
 };
 
 //---------------------------------------------------------------------
@@ -158,10 +144,11 @@ public:
 //
 //---------------------------------------------------------------------
 
-int ObjlistTcl::Objlist_Init(Tcl_Interp* interp) {
-DOTRACE("ObjlistTcl::Objlist_Init");
+int Objlist_Init(Tcl_Interp* interp) {
+DOTRACE("Objlist_Init");
 
-  new ObjListPkg(interp);
+  new ObjlistTcl::ObjListPkg(interp);
+  new GrobjTcl::GrObjPkg(interp);
 
   return TCL_OK;
 }
