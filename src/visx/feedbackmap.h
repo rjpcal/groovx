@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 16:58:49 2001
-// written: Sun Aug 26 08:35:14 2001
+// written: Thu Sep 13 10:52:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,34 @@
 #ifndef FEEDBACKMAP_H_DEFINED
 #define FEEDBACKMAP_H_DEFINED
 
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCODE_H_DEFINED)
 #include "tcl/tclcode.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLLISTOBJ_H_DEFINED)
 #include "tcl/tcllistobj.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLOBJPTR_H_DEFINED)
 #include "tcl/tclobjptr.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLSAFEINTERP_H_DEFINED)
 #include "tcl/tclsafeinterp.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
+#include "util/error.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(MINIVEC_H_DEFINED)
 #include "util/minivec.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STRINGS_H_DEFINED)
 #include "util/strings.h"
+#endif
 
 class FeedbackMap
 {
