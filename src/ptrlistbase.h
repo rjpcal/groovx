@@ -3,7 +3,7 @@
 // ptrlistbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Oct 25 14:15:04 2000
+// written: Wed Oct 25 14:39:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,6 +97,24 @@ public:
 
   PtrIterator beginPtrs() const { return begin(); }
   PtrIterator endPtrs() const { return end(); }
+
+  class Inserter;
+  friend class Inserter;
+
+  class Inserter {
+	 PtrListBase* itsList;
+  public:
+	 Inserter(PtrListBase* list_) : itsList(list_) {}
+
+	 Inserter& operator=(IO::IoObject* obj)
+		{ itsList->insertPtrBase(obj); return *this; }
+
+	 Inserter& operator*() { return *this; }
+	 Inserter& operator++() { return *this; }
+	 Inserter& operator++(int) { return *this; }
+  };
+
+  Inserter inserter() { return Inserter(this); }
 
 protected:
   /// Construct a PtrList with an initial reserve capacity of 'size'
