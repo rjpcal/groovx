@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Fri Jan 18 16:07:05 2002
+// written: Mon Jan 28 11:44:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -240,7 +240,7 @@ DOTRACE("Tcl::Interp::getProcBody");
       Tcl::ObjPtr cmd_obj("info body ");
       cmd_obj.append(proc_name);
 
-      Tcl::Code cmd(cmd_obj, Tcl::Code::NONE);
+      Tcl::Code cmd(cmd_obj, Tcl::Code::IGNORE_ERRORS);
 
       if (cmd.invoke(intp()))
         {
