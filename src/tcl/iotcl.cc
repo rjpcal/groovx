@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Sat Sep  8 14:16:51 2001
+// written: Wed Sep 12 15:51:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,11 @@
 #ifndef IOTCL_CC_DEFINED
 #define IOTCL_CC_DEFINED
 
+#include "tcl/iotcl.h"
+
 #include "io/io.h"
 #include "io/iolegacy.h"
+#include "io/ioutil.h"
 
 #include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
@@ -26,6 +29,19 @@
 #include <fstream.h>
 
 #include "util/trace.h"
+
+void Tcl::defIoCommands(Tcl::Pkg* pkg)
+{
+DOTRACE("Tcl::defIoCommands");
+  pkg->defVec( "stringify", "item_id(s)", IO::stringify );
+  pkg->defVec( "destringify", "item_id(s) string(s)", IO::destringify );
+
+  pkg->defVec( "write", "item_id(s)", IO::write );
+  pkg->defVec( "read", "item_id(s) string(s)", IO::read );
+
+  pkg->def( "save", "item_id filename", IO::saveASW );
+  pkg->def( "load", "item_id filename", IO::loadASR );
+}
 
 namespace
 {
@@ -182,7 +198,7 @@ DOTRACE("Io_Init");
   Tcl::Pkg* pkg3 = new Tcl::Pkg(interp, "IO", "$Revision$");
 
   Tcl::defGenericObjCmds<IO::IoObject>(pkg3);
-  pkg3->defIoCommands();
+  Tcl::defIoCommands(pkg3);
   pkg3->defGetter("type", &IO::IoObject::ioTypename);
 
   return Tcl::Pkg::initStatus(pkg1, pkg2, pkg3);
