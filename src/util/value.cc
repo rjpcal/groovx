@@ -3,7 +3,7 @@
 // value.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:21:32 1999
-// written: Tue Oct 12 10:52:35 1999
+// written: Tue Oct 19 15:52:20 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,6 +86,19 @@ template <> void TValue<double>::get(double& val) const { val = itsVal; }
 template <> void TValue<const char*>::get(const char*& val) const { val = itsVal; }
 template <> void TValue<string>::get(string& val) const { val = itsVal; }
 
+template <class T> void TValue<T>::setInt(int) { throw ValueError(); }
+template <class T> void TValue<T>::setLong(long) { throw ValueError(); }
+template <class T> void TValue<T>::setBool(bool) { throw ValueError(); }
+template <class T> void TValue<T>::setDouble(double) { throw ValueError(); }
+template <class T> void TValue<T>::setCstring(const char*) { throw ValueError(); }
+template <class T> void TValue<T>::setString(const string&) { throw ValueError(); }
+
+template <> void TValue<int>::setInt(int val) { itsVal = val; }
+template <> void TValue<long>::setLong(long val) { itsVal = val; }
+template <> void TValue<bool>::setBool(bool val) { itsVal = val; }
+template <> void TValue<double>::setDouble(double val) { itsVal = val; }
+template <> void TValue<const char*>::setCstring(const char* val) { itsVal = val; }
+template <> void TValue<string>::setString(const string& val) { itsVal = val; }
 
 // Explicit instantiations
 template class TValue<int>;
@@ -159,6 +172,20 @@ template <> void TValuePtr<bool>::get(bool& val) const { val = *itsValPtr; }
 template <> void TValuePtr<double>::get(double& val) const { val = *itsValPtr; }
 template <> void TValuePtr<const char*>::get(const char*& val) const { val = *itsValPtr; }
 template <> void TValuePtr<string>::get(string& val) const { val = *itsValPtr; }
+
+template <class T> void TValuePtr<T>::setInt(int) { throw ValueError(); }
+template <class T> void TValuePtr<T>::setLong(long) { throw ValueError(); }
+template <class T> void TValuePtr<T>::setBool(bool) { throw ValueError(); }
+template <class T> void TValuePtr<T>::setDouble(double) { throw ValueError(); }
+template <class T> void TValuePtr<T>::setCstring(const char*) { throw ValueError(); }
+template <class T> void TValuePtr<T>::setString(const string&) { throw ValueError(); }
+
+template <> void TValuePtr<int>::setInt(int val) { *itsValPtr = val; }
+template <> void TValuePtr<long>::setLong(long val) { *itsValPtr = val; }
+template <> void TValuePtr<bool>::setBool(bool val) { *itsValPtr = val; }
+template <> void TValuePtr<double>::setDouble(double val) { *itsValPtr = val; }
+template <> void TValuePtr<const char*>::setCstring(const char* val) { *itsValPtr = val; }
+template <> void TValuePtr<string>::setString(const string& val) { *itsValPtr = val; }
 
 
 // Explicit instantiations
