@@ -69,21 +69,25 @@ test "ExptTcl-Expt::load" "fMRI sample" {
 	 PosList::reset
 	 return $dif
 } {^0$}
-test "ExptTcl-Expt::load" "psyphy sample" {
+test "ExptTcl-Expt::load" "psyphy samples" {
 	 set files {expt080905Oct2000.asw.gz train_2_fishes_or.asw.gz pairs_mfaces_s50.asw.gz}
 	 set ocounts {20 10 20}
 	 set tcounts {20 10 400}
-	 srand [clock clicks]
-	 set i [expr int([rand 0 3])]
-    Expt::load $::TEST_DIR/[lindex $files $i]
-	 set odif [expr [ObjList::count] - [lindex $ocounts $i]]
-	 set tdif [expr [Tlist::count] - [lindex $tcounts $i]]
-	 BlockList::reset
-	 Tlist::reset
-	 ObjList::reset
-	 PosList::reset
-	 return "$odif $tdif"
-} {^0 0$}
+
+	 set result ""
+
+	 for {set i 0} {$i < 3} {incr i} {
+		  Expt::load $::TEST_DIR/[lindex $files $i]
+		  set odif [expr [ObjList::count] - [lindex $ocounts $i]]
+		  set tdif [expr [Tlist::count] - [lindex $tcounts $i]]
+		  BlockList::reset
+		  Tlist::reset
+		  ObjList::reset
+		  PosList::reset
+		  append result "$odif $tdif "
+	 }
+	 return $result
+} {^0 0 0 0 0 0 $}
 
 ### Expt::saveCmd ###
 test "ExptTcl-Expt::save" "too few args" {
