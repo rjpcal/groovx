@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Wed May 16 11:36:20 2001
+// written: Mon May 21 14:49:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,11 +37,19 @@ SoundError::~SoundError() {}
 Sound::~Sound () {}
 
 void Sound::setOkSound(IdItem<Sound> ok_sound) {
+#ifndef ACC_COMPILER
   OK_SOUND = ok_sound;
+#else
+  OK_SOUND = MaybeIdItem<Sound>(ok_sound);
+#endif
 }
 
 void Sound::setErrSound(IdItem<Sound> err_sound) {
+#ifndef ACC_COMPILER
   ERR_SOUND = err_sound;
+#else
+  ERR_SOUND = MaybeIdItem<Sound>(err_sound);
+#endif
 }
 
 IdItem<Sound> Sound::getOkSound() {

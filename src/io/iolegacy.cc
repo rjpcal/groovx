@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Sat May 19 15:38:48 2001
+// written: Mon May 21 14:51:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -259,7 +259,11 @@ DOTRACE("IO::LegacyReader::readMaybeObject");
 
   itsImpl->inflateObject(name, obj);
 
+#ifndef ACC_COMPILER
   return obj;
+#else
+  return MaybeIdItem<IO::IoObject>(obj);
+#endif
 }
 
 void IO::LegacyReader::readOwnedObject(const fixed_string& name,
