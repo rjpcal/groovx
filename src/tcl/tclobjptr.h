@@ -5,13 +5,17 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:44:19 1999
-// written: Wed Jul 11 12:04:54 2001
+// written: Thu Jul 12 17:42:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TCLOBJPTR_H_DEFINED
 #define TCLOBJPTR_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CONVERT_H_DEFINED)
+#include "tcl/convert.h"
+#endif
 
 struct Tcl_Obj;
 
@@ -31,7 +35,8 @@ namespace Tcl {
 class ObjPtr {
 public:
   /// Default constructor.
-  ObjPtr(Tcl_Obj* obj) : itsObj(obj) { incrRef(itsObj); }
+  template <class T>
+  ObjPtr(T t) : itsObj(Tcl::toTcl(t)) { incrRef(itsObj); }
 
   /// Destructor.
   ~ObjPtr() { decrRef(itsObj); }
@@ -72,11 +77,11 @@ private:
   void assign(Tcl_Obj* x)
     {
       if (itsObj != x)
-		  {
-			 decrRef(itsObj);
-			 itsObj = x;
-			 incrRef(itsObj);
-		  }
+        {
+          decrRef(itsObj);
+          itsObj = x;
+          incrRef(itsObj);
+        }
     }
 
   Tcl_Obj* itsObj;
