@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Thu May 10 12:04:41 2001
+// written: Fri Jun  1 14:20:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -103,7 +103,7 @@ public:
 
   /** Reimplements the \c GrObj pure virtual function. It renders a
 		face with the appropriate parameters. */
-  protected: virtual void grRender(GWT::Canvas& canvas) const; 
+  protected: virtual void grRender(GWT::Canvas& canvas, DrawMode mode) const; 
 
 private:
   Face(const Face&);

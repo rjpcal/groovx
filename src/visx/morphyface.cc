@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Sat May 19 11:44:06 2001
+// written: Fri Jun  1 14:18:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -292,7 +292,7 @@ DOTRACE("MorphyFace::writeTo");
 // Actions
 ///////////////////////////////////////////////////////////////////////
 
-void MorphyFace::grRender(GWT::Canvas& canvas) const {
+void MorphyFace::grRender(GWT::Canvas& canvas, DrawMode mode) const {
 DOTRACE("MorphyFace::grRender");
   Invariant(check());
 
@@ -302,7 +302,12 @@ DOTRACE("MorphyFace::grRender");
   if (have_antialiasing) {
 	 glPushAttrib(GL_COLOR_BUFFER_BIT | GL_ENABLE_BIT | GL_LINE_BIT);
 	 glEnable(GL_BLEND); // blend incoming RGBA values with old RGBA values
-	 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency 
+
+	 if (mode == DRAW)
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency
+	 else
+		glBlendFunc(GL_ONE, GL_ZERO); // overwrite source into destination
+
 	 glEnable(GL_LINE_SMOOTH);   // use anti-aliasing 
   }
 
