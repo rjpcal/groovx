@@ -136,11 +136,6 @@ private:
   std::set<SoftRef<const IO::IoObject> > itsWrittenObjects;
   IO::WriteIdMap itsIdMap;
 
-  bool haveMoreObjectsToHandle() const
-  {
-    return !itsToHandleV.empty();
-  }
-
   void addObjectToBeHandled(SoftRef<const IO::IoObject> obj)
   {
     if ( !alreadyWritten(obj) )
@@ -153,13 +148,6 @@ private:
   {
     return ( itsWrittenObjects.find(obj) !=
              itsWrittenObjects.end() );
-  }
-
-  SoftRef<const IO::IoObject> getNextObjectToHandle() const
-  {
-    SoftRef<const IO::IoObject> result = itsToHandleV.back();
-    itsToHandleV.pop_back();
-    return result;
   }
 
   void markObjectAsWritten(SoftRef<const IO::IoObject> obj)
@@ -308,9 +296,10 @@ DOTRACE("AsciiStreamWriter::writeRoot");
 
   itsToHandleV.push_back(SoftRef<IO::IoObject>(const_cast<IO::IoObject*>(root)));
 
-  while ( haveMoreObjectsToHandle() )
+  while ( !itsToHandleV.empty() )
     {
-      SoftRef<const IO::IoObject> obj = getNextObjectToHandle();
+      SoftRef<const IO::IoObject> obj = itsToHandleV.back();
+      itsToHandleV.pop_back();
 
       if ( !alreadyWritten(obj) )
         {
