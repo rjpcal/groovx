@@ -63,6 +63,7 @@ DOTRACE("Io_Init");
   pkg->def( "load", "item_id filename", IO::loadASR );
 
   pkg->def( "saveXML", "item_id filename", IO::saveXML );
+  pkg->def( "loadXML", "filename", IO::loadXML );
 
   pkg->def( "retrieve", "filename", IO::retrieveASR );
 
