@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Sat Jul 21 22:36:07 2001
+// written: Sun Jul 22 07:29:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,20 +97,20 @@ public:
     itsActiveState(0)
   {}
 
-private:
   int itsCorrectResponse;
 
+private:
   typedef minivec<Ref<GxSeparator> > GxNodes;
   GxNodes itsGxNodes;
 
   unsigned int itsCurrentNode;
-
+public:
   minivec<Response> itsResponses;
+
   int itsType;
   WeakRef<ResponseHandler> itsRh;
   WeakRef<TimingHdlr> itsTh;
 
-public:
   scoped_ptr<ActiveState> itsActiveState;
 
   bool isActive() const { return itsActiveState.get() != 0; }
@@ -138,36 +138,10 @@ public:
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
 
-  int getCorrectResponse() const { return itsCorrectResponse; }
-  void setCorrectResponse(int response) { itsCorrectResponse = response; }
-
-#ifndef ACC_COMPILER
-  Ref<ResponseHandler> getResponseHandler() const { return itsRh; }
-  void setResponseHandler(Ref<ResponseHandler> rh) { itsRh = rh; }
-
-  Ref<TimingHdlr> getTimingHdlr() const { return itsTh; }
-  void setTimingHdlr(Ref<TimingHdlr> th) { itsTh = th; }
-#else
-  Ref<ResponseHandler> getResponseHandler() const
-    { return Ref<ResponseHandler>(itsRh); }
-  void setResponseHandler(Ref<ResponseHandler> rh)
-    { itsRh = WeakRef<ResponseHandler>(rh); }
-
-  Ref<TimingHdlr> getTimingHdlr() const
-    { return Ref<TimingHdlr>(itsTh); }
-  void setTimingHdlr(Ref<TimingHdlr> th)
-    { itsTh = WeakRef<TimingHdlr>(th); }
-#endif
-
-  int trialType() const;
-  void setType(int t);
-
   const char* description() const;
 
   int lastResponse() const;
   void undoLastResponse();
-  int numResponses() const;
-  void clearResponses();
 
   double avgResponse() const;
   double avgRespTime() const;
@@ -276,12 +250,6 @@ DOTRACE("Trial::Impl::writeTo");
 // accessors //
 ///////////////
 
-int Trial::Impl::trialType() const
-{
-DOTRACE("Trial::Impl::trialType");
-  return itsType;
-}
-
 const char* Trial::Impl::description() const
 {
 DOTRACE("Trial::Impl::description");
@@ -305,12 +273,11 @@ DOTRACE("Trial::Impl::description");
             }
         }
     }
-  }
 
   static dynamic_string buf;
 
   buf = "";
-  buf.append("trial type == " ).append(trialType());
+  buf.append("trial type == " ).append(itsType);
   buf.append(", objs ==").append(objids);
   buf.append(", categories == ").append(cats);
 
@@ -320,13 +287,11 @@ DOTRACE("Trial::Impl::description");
 int Trial::Impl::lastResponse() const
 {
 DOTRACE("Trial::Impl::lastResponse");
-  return itsResponses.back().val();
-}
 
-int Trial::Impl::numResponses() const
-{
-DOTRACE("Trial::Impl::numResponses");
-  return itsResponses.size();
+  if (itsResponses.empty())
+    throw ErrorWithMsg("the trial has no responses yet");
+
+  return itsResponses.back().val();
 }
 
 double Trial::Impl::avgResponse() const
@@ -385,18 +350,6 @@ void Trial::Impl::clearObjs()
 {
 DOTRACE("Trial::Impl::clearObjs");
   itsGxNodes.clear();
-}
-
-void Trial::Impl::setType(int t)
-{
-DOTRACE("Trial::Impl::setType");
-  itsType = t;
-}
-
-void Trial::Impl::clearResponses()
-{
-DOTRACE("Trial::Impl::clearResponses");
-  itsResponses.clear();
 }
 
 /////////////
@@ -624,31 +577,31 @@ WeakRef<GWT::Widget> Trial::getWidget() const
 }
 
 int Trial::getCorrectResponse() const
-  { return itsImpl->getCorrectResponse(); }
+  { return itsImpl->itsCorrectResponse; }
 
 void Trial::setCorrectResponse(int response)
-  { itsImpl->setCorrectResponse(response); }
+  { itsImpl->itsCorrectResponse = response; }
 
 
 Ref<ResponseHandler> Trial::getResponseHandler() const
-  { return itsImpl->getResponseHandler(); }
+  { return Ref<ResponseHandler>(itsImpl->itsRh); }
 
 void Trial::setResponseHandler(Ref<ResponseHandler> rh)
-  { itsImpl->setResponseHandler(rh); }
+  { itsImpl->itsRh = WeakRef<ResponseHandler>(rh); }
 
 
 Ref<TimingHdlr> Trial::getTimingHdlr() const
-  { return itsImpl->getTimingHdlr(); }
+  { return Ref<TimingHdlr>(itsImpl->itsTh); }
 
 void Trial::setTimingHdlr(Ref<TimingHdlr> th)
-  { itsImpl->setTimingHdlr(th); }
+  { itsImpl->itsTh = WeakRef<TimingHdlr>(th); }
 
 
 int Trial::trialType() const
-  { return itsImpl->trialType(); }
+  { return itsImpl->itsType; }
 
 void Trial::setType(int t)
-  { itsImpl->setType(t); }
+  { itsImpl->itsType = t; }
 
 
 const char* Trial::description() const
@@ -660,11 +613,11 @@ int Trial::lastResponse() const
 void Trial::undoLastResponse()
   { itsImpl->undoLastResponse(); }
 
-int Trial::numResponses() const
-  { return itsImpl->numResponses(); }
+unsigned int Trial::numResponses() const
+  { return itsImpl->itsResponses.size(); }
 
 void Trial::clearResponses()
-  { itsImpl->clearResponses(); }
+  { itsImpl->itsResponses.clear(); }
 
 double Trial::avgResponse() const
   { return itsImpl->avgResponse(); }
