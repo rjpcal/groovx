@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 17:16:48 2002
+// written: Mon Sep 16 17:18:18 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -47,8 +47,6 @@
 #include <tcl.h>
 #include <tk.h>
 
-#include <cstring>
-
 #include "util/trace.h"
 #include "util/debug.h"
 
@@ -89,8 +87,6 @@ namespace
   // Defaults
   const char*  DEFAULT_WIDTH     = "400";
   const char*  DEFAULT_HEIGHT    = "400";
-  const char*  DEFAULT_IDENT     = "";
-  const char*  DEFAULT_FONTNAME  = "fixed";
   const char*  DEFAULT_TIME      = "1";
 
   Togl::Callback* DefaultCreateProc = NULL;
