@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Fri Jul 23 12:39:00 1999
+// written: Tue Aug  3 13:12:33 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -440,6 +440,19 @@ DOTRACE("Block::undoPrevTrial");
 
   // ...and erase the last response given to that trial
   getCurTrial().undoLastResponse();
+}
+
+//---------------------------------------------------------------------
+//
+// Block::resetBlock --
+//
+//---------------------------------------------------------------------
+
+void Block::resetBlock() {
+DOTRACE("Block::resetBlock");
+  while (itsCurTrialSeqIdx >= 0) {
+	 undoPrevTrial();
+  }
 }
 
 static const char vcid_block_cc[] = "$Header$";

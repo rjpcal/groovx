@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Fri Jul  2 13:30:04 1999
+// written: Tue Aug  3 13:10:29 1999
 // $Id$
 //
 // This file defines the class Block. Block holds a sequence of trial
@@ -130,6 +130,10 @@ public:
   // and the response to the most recently successfully completed
   // trial is erased.
   virtual void undoPrevTrial();
+
+  // Undo all responses to all of the Trial's in the Block, and put
+  // its trial counter back to the beginning of the block.
+  virtual void resetBlock();
 
 private:
   vector<int> itsTrialSequence; // Ordered sequence of indexes into the Tlist
