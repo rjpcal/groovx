@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Mar 16 09:11:01 2000
+// written: Thu Mar 16 09:31:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,11 +25,8 @@
 #include "writeutils.h"
 
 #include <algorithm>
-#include <functional>
 #include <iostream.h>
 #include <strstream.h>
-#include <sys/time.h>
-#include <list>
 #include <vector>
 
 #define NO_TRACE
@@ -134,33 +131,22 @@ DOTRACE("Block::addTrial");
 void Block::addTrials(int first_trial, int last_trial, int repeat) {
 DOTRACE("Block::addTrials");
 
-  if (first_trial > last_trial) return;
+  // Account for the convention of using -1 to indicate 'beginning'
+  // for first_trial, and 'end' for last_trial.
 
-  list<int> ids;
-  theTlist.insertValidIds(back_inserter(ids));
+  if (first_trial == -1)
+	 first_trial = 0;
 
-  if (first_trial != -1) {
-	 remove_if(ids.begin(), ids.end(), bind2nd(less<int>(), first_trial));
-  }
-  if (last_trial != -1) {
-	 remove_if(ids.begin(), ids.end(), bind2nd(greater<int>(), last_trial));
-  }
+  if (last_trial  == -1 ||
+		last_trial > theTlist.capacity())
+	 last_trial  = theTlist.capacity();
 
-  for (int i = 0; i < repeat; ++i) {
-	 copy(ids.begin(), ids.end(), back_inserter(itsImpl->itsTrialSequence));
-  }
-
-#if 0
-  Tlist::iterator start =
-	 (first_trial == -1) ? theTlist.begin() : theTlist.at(first_trial);
-  Tlist::iterator finish =
-	 (last_trial == -1)  ? theTlist.end()   : theTlist.at(last_trial+1);
-
-  while (start != finish) {
-	 addTrial(start.toInt(), repeat);
-	 ++start;
-  }
-#endif
+  while (first_trial < last_trial)
+	 {
+		if (theTlist.isValidId(first_trial))
+		  addTrial(first_trial, repeat);
+		++first_trial;
+	 }
 }
 
 void Block::shuffle(int seed) {
