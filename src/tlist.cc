@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Mon Oct 23 11:45:41 2000
+// written: Mon Oct 23 11:50:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,9 +52,6 @@ DOTRACE("Tlist::theTlist");
 #include "trialbase.h"
 #include "ptrlist.cc"
 template class PtrList<TrialBase>;
-#include "itemwithid.cc"
-template class ItemWithId<TrialBase>;
-template class NullableItemWithId<TrialBase>;
 
 template <>
 PtrList<TrialBase>& ItemWithId<TrialBase>::ptrList()
@@ -63,6 +60,10 @@ PtrList<TrialBase>& ItemWithId<TrialBase>::ptrList()
 template <>
 PtrList<TrialBase>& NullableItemWithId<TrialBase>::ptrList()
 { return Tlist::theTlist(); }
+
+#include "itemwithid.cc"
+template class ItemWithId<TrialBase>;
+template class NullableItemWithId<TrialBase>;
 
 static const char vcid_tlist_cc[] = "$Header$";
 #endif // !TLIST_CC_DEFINED
