@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Jan 23 09:52:06 2002
+// written: Wed Jan 23 10:46:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -571,7 +571,7 @@ DOTRACE("Toglet::writeEpsFile");
   }
 
   // redisplay original image
-  display();
+  fullRender();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -600,12 +600,12 @@ void Toglet_Impl::displayCallback(Togl* togl)
 {
 DOTRACE("Toglet_Impl::displayCallback");
 
-  Toglet* config = static_cast<Toglet*>(togl->getClientData());
-  DebugEvalNL((void*) config);
+  Toglet* toglet = static_cast<Toglet*>(togl->getClientData());
+  DebugEvalNL((void*) toglet);
 
   try
     {
-      config->display();
+      toglet->fullRender();
     }
   catch (...)
     {

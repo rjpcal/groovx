@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Fri Jan 18 16:06:59 2002
+// written: Wed Jan 23 10:47:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -229,7 +229,7 @@ DOTRACE("DrawEvent::invoke");
     {
       trial.installSelf(widget);
       widget->setVisibility(true);
-      widget->display();
+      widget->fullRender();
     }
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Jan 23 09:31:35 2002
+// written: Wed Jan 23 10:45:33 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -104,7 +104,7 @@ namespace ObjTogl
   {
     widg->setDrawable(item);
     widg->setVisibility(true);
-    widg->display();
+    widg->fullRender();
     return item->id();
   }
 
@@ -143,7 +143,7 @@ namespace ObjTogl
   {
     trial->installSelf(toglet);
     toglet->setVisibility(true);
-    toglet->display();
+    toglet->fullRender();
   }
 
   class TogletPkg;
