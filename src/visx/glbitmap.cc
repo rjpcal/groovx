@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:17 1999
-// written: Fri Nov 10 17:04:00 2000
+// written: Tue Nov 14 15:03:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,32 +76,26 @@ DOTRACE("GLBitmap::serialVersionId");
 void GLBitmap::readFrom(IO::Reader* reader) {
 DOTRACE("GLBitmap::readFrom");
 
+  reader->ensureReadVersionId("GLBitmap", 2, "Try grsh0.8a4");
+
   bool val;
   reader->readValue("usingGlBitmap", val); 
   itsRenderer->setUsingGlBitmap(val);
 
-  IO::VersionId svid = reader->readSerialVersionId();
-  if (svid < 2)
-	 Bitmap::readFrom(reader);
-  else if (svid == 2)
-	 {
-		IO::IoProxy<Bitmap> baseclass(this);
-		reader->readBaseClass("Bitmap", &baseclass);
-	 }
+  IO::IoProxy<Bitmap> baseclass(this);
+  reader->readBaseClass("Bitmap", &baseclass);
 }
 
 void GLBitmap::writeTo(IO::Writer* writer) const {
 DOTRACE("GLBitmap::writeTo");
 
+  writer->ensureWriteVersionId("GLBitmap", GLBITMAP_SERIAL_VERSION_ID, 2,
+										 "Try grsh0.8a4");
+
   writer->writeValue("usingGlBitmap", itsRenderer->getUsingGlBitmap());
 
-  if (GLBITMAP_SERIAL_VERSION_ID < 2)
-	 Bitmap::writeTo(writer);
-  else if (GLBITMAP_SERIAL_VERSION_ID == 2)
-	 {
-		IO::ConstIoProxy<Bitmap> baseclass(this);
-		writer->writeBaseClass("Bitmap", &baseclass);
-	 }
+  IO::ConstIoProxy<Bitmap> baseclass(this);
+  writer->writeBaseClass("Bitmap", &baseclass);
 }
 
 bool GLBitmap::getUsingGlBitmap() const {

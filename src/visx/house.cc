@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Mon Nov 13 22:16:23 2000
+// written: Tue Nov 14 15:06:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -216,30 +216,24 @@ DOTRACE("House::serialVersionId");
 void House::readFrom(IO::Reader* reader) {
 DOTRACE("House::readFrom");
 
+  reader->ensureReadVersionId("House", 2, "Try grsh0.8a4");
+
   readFieldsFrom(reader);
 
-  IO::VersionId svid = reader->readSerialVersionId();
-  if (svid < 2)
-	 GrObj::readFrom(reader);
-  else if (svid == 2)
-	 {
-		IO::IoProxy<GrObj> baseclass(this);
-		reader->readBaseClass("GrObj", &baseclass);
-	 }
+  IO::IoProxy<GrObj> baseclass(this);
+  reader->readBaseClass("GrObj", &baseclass);
 }
 
 void House::writeTo(IO::Writer* writer) const {
 DOTRACE("House::writeTo");
 
+  writer->ensureWriteVersionId("House", HOUSE_SERIAL_VERSION_ID, 2,
+										 "Try grsh0.8a4");
+
   writeFieldsTo(writer);
 
-  if (HOUSE_SERIAL_VERSION_ID < 2)
-	 GrObj::writeTo(writer);
-  else if (HOUSE_SERIAL_VERSION_ID == 2)
-	 {
-		IO::ConstIoProxy<GrObj> baseclass(this);
-		writer->writeBaseClass("GrObj", &baseclass);
-	 }
+  IO::ConstIoProxy<GrObj> baseclass(this);
+  writer->writeBaseClass("GrObj", &baseclass);
 }
 
 ///////////////////////////////////////////////////////////////////////

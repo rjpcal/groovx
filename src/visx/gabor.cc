@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Mon Nov 13 22:07:58 2000
+// written: Tue Nov 14 15:02:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -93,32 +93,24 @@ DOTRACE("Gabor::serialVersionId");
 void Gabor::readFrom(IO::Reader* reader) {
 DOTRACE("Gabor::readFrom");
 
-  readFieldsFrom(reader); 
+  reader->ensureReadVersionId("Gabor", 1, "Try grsh0.8a4");
 
-  IO::VersionId svid = reader->readSerialVersionId();
-  if (svid == 0)
-	 GrObj::readFrom(reader);
-  else if (svid == 1)
-	 {
-		IO::IoProxy<GrObj> baseclass(this);
-		reader->readBaseClass("GrObj", &baseclass);
-	 }
+  readFieldsFrom(reader);
 
-  sendStateChangeMsg();
+  IO::IoProxy<GrObj> baseclass(this);
+  reader->readBaseClass("GrObj", &baseclass);
 }
 
 void Gabor::writeTo(IO::Writer* writer) const {
 DOTRACE("Gabor::writeTo");
 
+  writer->ensureWriteVersionId("Gabor", GABOR_SERIAL_VERSION_ID, 1,
+										 "Try grsh0.8a4");
+
   writeFieldsTo(writer);
 
-  if (GABOR_SERIAL_VERSION_ID == 0)
-	 GrObj::writeTo(writer);
-  else if (GABOR_SERIAL_VERSION_ID == 1)
-	 {
-		IO::ConstIoProxy<GrObj> baseclass(this);
-		writer->writeBaseClass("GrObj", &baseclass);
-	 }
+  IO::ConstIoProxy<GrObj> baseclass(this);
+  writer->writeBaseClass("GrObj", &baseclass);
 }
 
 void Gabor::grGetBoundingBox(Rect<double>& bbox,

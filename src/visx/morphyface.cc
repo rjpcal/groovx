@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Tue Nov 14 11:48:27 2000
+// written: Tue Nov 14 15:09:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -267,32 +267,24 @@ DOTRACE("MorphyFace::serialVersionId");
 void MorphyFace::readFrom(IO::Reader* reader) {
 DOTRACE("MorphyFace::readFrom");
 
+  reader->ensureReadVersionId("MorphyFace", 1, "Try grsh0.8a4");
+
   readFieldsFrom(reader);
 
-  IO::VersionId svid = reader->readSerialVersionId();
-  if (svid == 0)
-	 GrObj::readFrom(reader);
-  else if (svid == 1)
-	 {
-		IO::IoProxy<GrObj> baseclass(this);
-		reader->readBaseClass("GrObj", &baseclass);
-	 }
-
-  sendStateChangeMsg();
+  IO::IoProxy<GrObj> baseclass(this);
+  reader->readBaseClass("GrObj", &baseclass);
 }
 
 void MorphyFace::writeTo(IO::Writer* writer) const {
 DOTRACE("MorphyFace::writeTo");
 
+  writer->ensureWriteVersionId("MorphyFace", MFACE_SERIAL_VERSION_ID, 1,
+										 "Try grsh0.8a4");
+
   writeFieldsTo(writer);
 
-  if (MFACE_SERIAL_VERSION_ID == 0)
-	 GrObj::writeTo(writer);
-  else if (MFACE_SERIAL_VERSION_ID == 1)
-	 {
-		IO::IoProxy<GrObj> baseclass(const_cast<MorphyFace*>(this));
-		writer->writeBaseClass("GrObj", &baseclass);
-	 }
+  IO::IoProxy<GrObj> baseclass(const_cast<MorphyFace*>(this));
+  writer->writeBaseClass("GrObj", &baseclass);
 }
 
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Fri Nov 10 17:27:06 2000
+// written: Tue Nov 14 14:58:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -524,15 +524,7 @@ DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
 void ExptDriver::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("ExptDriver::Impl::readFrom");
 
-  IO::VersionId svid = reader->readSerialVersionId();
-
-  if (svid < 3)
-	 {
-		throw IO::ReadVersionError("ExptDriver", svid, 3,
-											"Try grsh0.8a3");
-	 }
-
-  Assert(svid >= 3);
+  reader->ensureReadVersionId("ExptDriver", 3, "Try grsh0.8a3");
 
   reader->readValue("hostname", itsHostname);
   reader->readValue("subject", itsSubject);
@@ -555,14 +547,8 @@ DOTRACE("ExptDriver::Impl::readFrom");
 void ExptDriver::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("ExptDriver::Impl::writeTo");
 
-  if (EXPTDRIVER_SERIAL_VERSION_ID < 3)
-	 {
-		throw IO::WriteVersionError("ExptDriver",
-											 EXPTDRIVER_SERIAL_VERSION_ID, 3,
-											 "Try grsh0.8a3");
-	 }
-
-  Assert(EXPTDRIVER_SERIAL_VERSION_ID >= 3);
+  writer->ensureWriteVersionId("ExptDriver", EXPTDRIVER_SERIAL_VERSION_ID, 3,
+										 "Try grsh0.8a3");
 
   writer->writeValue("hostname", itsHostname);
   writer->writeValue("subject", itsSubject);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Fri Nov 10 17:03:58 2000
+// written: Tue Nov 14 15:11:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -132,12 +132,7 @@ DOTRACE("TimingHdlr::serialVersionId");
 void TimingHdlr::readFrom(IO::Reader* reader) {
 DOTRACE("TimingHdlr::readFrom");
 
-  IO::VersionId svid = reader->readSerialVersionId(); 
-  if (svid == 0)
-	 {
-		int dummy_autosave_period;
-		reader->readValue("autosavePeriod", dummy_autosave_period);
-	 }
+  reader->ensureReadVersionId("TimingHdlr", 1, "Try grsh0.8a4");
 
   itsImpl->deleteAll(itsImpl->itsImmediateEvents);
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "immediateEvents",
@@ -159,11 +154,8 @@ DOTRACE("TimingHdlr::readFrom");
 void TimingHdlr::writeTo(IO::Writer* writer) const {
 DOTRACE("TimingHdlr::writeTo");
 
-  if (TIMINGHDLR_SERIAL_VERSION_ID == 0)
-	 {
-		int dummy_autosave_period;
-		writer->writeValue("autosavePeriod", dummy_autosave_period);
-	 }
+  writer->ensureWriteVersionId("TimingHdlr", TIMINGHDLR_SERIAL_VERSION_ID, 1,
+										 "Try grsh0.8a4");
 
   IO::WriteUtils::writeObjectSeq(writer, "immediateEvents",
 								 itsImpl->itsImmediateEvents.begin(), itsImpl->itsImmediateEvents.end());

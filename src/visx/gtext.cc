@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Fri Nov 10 17:04:00 2000
+// written: Tue Nov 14 15:17:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -690,32 +690,26 @@ DOTRACE("Gtext::serialVersionId");
 void Gtext::readFrom(IO::Reader* reader) {
 DOTRACE("Gtext::readFrom");
 
+  reader->ensureReadVersionId("Gtext", 2, "Try grsh0.8a4");
+
   reader->readValue("text", itsText);
   reader->readValue("strokeWidth", itsStrokeWidth);
- 
-  IO::VersionId svid = reader->readSerialVersionId();
-  if (svid < 2)
-	 GrObj::readFrom(reader);
-  else if (svid == 2)
-	 {
-		IO::IoProxy<GrObj> baseclass(this);
-		reader->readBaseClass("GrObj", &baseclass);
-	 }
+
+  IO::IoProxy<GrObj> baseclass(this);
+  reader->readBaseClass("GrObj", &baseclass);
 }
 
 void Gtext::writeTo(IO::Writer* writer) const {
 DOTRACE("Gtext::writeTo");
 
+  writer->ensureWriteVersionId("Gtext", GTEXT_SERIAL_VERSION_ID, 2,
+										 "Try grsh0.8a4");
+
   writer->writeValue("text", itsText);
   writer->writeValue("strokeWidth", itsStrokeWidth);
 
-  if (GTEXT_SERIAL_VERSION_ID < 2)
-	 GrObj::writeTo(writer);
-  else if (GTEXT_SERIAL_VERSION_ID == 2)
-	 {
-		IO::ConstIoProxy<GrObj> baseclass(this);
-		writer->writeBaseClass("GrObj", &baseclass);
-	 }
+  IO::ConstIoProxy<GrObj> baseclass(this);
+  writer->writeBaseClass("GrObj", &baseclass);
 }
 
 void Gtext::setText(const char* text) {

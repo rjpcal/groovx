@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Tue Nov 14 11:33:05 2000
+// written: Tue Nov 14 14:59:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -106,30 +106,24 @@ DOTRACE("Face::serialVersionId");
 void Face::readFrom(IO::Reader* reader) {
 DOTRACE("Face::readFrom");
 
-  readFieldsFrom(reader); 
+  reader->ensureReadVersionId("Face", 1, "Try grsh0.8a4");
 
-  IO::VersionId svid = reader->readSerialVersionId();
-  if (svid == 0)
-	 GrObj::readFrom(reader);
-  else if (svid == 1)
-	 {
-		IO::IoProxy<GrObj> baseclass(this);
-		reader->readBaseClass("GrObj", &baseclass);
-	 }
+  readFieldsFrom(reader);
+
+  IO::IoProxy<GrObj> baseclass(this);
+  reader->readBaseClass("GrObj", &baseclass);
 }
 
 void Face::writeTo(IO::Writer* writer) const {
 DOTRACE("Face::writeTo");
 
+  writer->ensureWriteVersionId("Face", FACE_SERIAL_VERSION_ID, 1,
+										 "Try grsh0.8a4");
+
   writeFieldsTo(writer);
 
-  if (FACE_SERIAL_VERSION_ID == 0)
-	 GrObj::writeTo(writer);
-  else if (FACE_SERIAL_VERSION_ID == 1)
-	 {
-		IO::ConstIoProxy<GrObj> baseclass(this);
-		writer->writeBaseClass("GrObj", &baseclass);
-	 }
+  IO::ConstIoProxy<GrObj> baseclass(this);
+  writer->writeBaseClass("GrObj", &baseclass);
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri Nov 10 17:27:04 2000
+// written: Tue Nov 14 15:12:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -214,14 +214,7 @@ DOTRACE("Trial::Impl::readFrom");
 
   itsState = INACTIVE;
 
-  IO::VersionId svid = reader->readSerialVersionId();
-
-  if (svid < 3)
-	 {
-		throw IO::ReadVersionError("Trial", svid, 3, "Try grsh0.8a3");
-	 }
-
-  Assert(svid >= 3);
+  reader->ensureReadVersionId("Trial", 3, "Try grsh0.8a3");
 
   itsGxNodes.clear();
 
@@ -249,13 +242,8 @@ DOTRACE("Trial::Impl::readFrom");
 void Trial::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("Trial::Impl::writeTo");
 
-  if (TRIAL_SERIAL_VERSION_ID < 3)
-	 {
-		throw IO::WriteVersionError("Trial", TRIAL_SERIAL_VERSION_ID, 3,
-											 "Try grsh0.8a3");
-	 }
-
-  Assert(TRIAL_SERIAL_VERSION_ID >= 3);
+  writer->ensureWriteVersionId("Trial", TRIAL_SERIAL_VERSION_ID, 3,
+										 "Try grsh0.8a3");
 
   IO::WriteUtils::writeSmartPtrSeq(writer, "gxObjects",
 											  itsGxNodes.begin(), itsGxNodes.end());

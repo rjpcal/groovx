@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Tue Nov 14 11:45:45 2000
+// written: Tue Nov 14 15:00:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -263,32 +263,24 @@ DOTRACE("Fish::serialVersionId");
 void Fish::readFrom(IO::Reader* reader) {
 DOTRACE("Fish::readFrom");
 
-  readFieldsFrom(reader); 
+  reader->ensureReadVersionId("Fish", 2, "Try grsh0.8a4"); 
 
-  IO::VersionId svid = reader->readSerialVersionId();
-  if (svid < 2)
-	 GrObj::readFrom(reader);
-  else if (svid == 2)
-	 {
-		IO::IoProxy<GrObj> baseclass(this);
-		reader->readBaseClass("GrObj", &baseclass);
-	 }
+  readFieldsFrom(reader);
 
-  sendStateChangeMsg();
+  IO::IoProxy<GrObj> baseclass(this);
+  reader->readBaseClass("GrObj", &baseclass);
 }
 
 void Fish::writeTo(IO::Writer* writer) const {
 DOTRACE("Fish::writeTo");
 
+  writer->ensureWriteVersionId("Fish", FISH_SERIAL_VERSION_ID, 2,
+										 "Try grsh0.8a4");
+
   writeFieldsTo(writer);
 
-  if (FISH_SERIAL_VERSION_ID < 2)
-	 GrObj::writeTo(writer);
-  else if (FISH_SERIAL_VERSION_ID == 2)
-	 {
-		IO::ConstIoProxy<GrObj> baseclass(this);
-		writer->writeBaseClass("GrObj", &baseclass);
-	 }
+  IO::ConstIoProxy<GrObj> baseclass(this);
+  writer->writeBaseClass("GrObj", &baseclass);
 }
 
 void Fish::receiveStateChangeMsg(const Observable* obj) {

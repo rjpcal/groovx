@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Tue Nov 14 11:47:21 2000
+// written: Tue Nov 14 15:09:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -72,31 +72,24 @@ DOTRACE("MaskHatch::serialVersionId");
 void MaskHatch::readFrom(IO::Reader* reader) {
 DOTRACE("MaskHatch::readFrom");
 
-  readFieldsFrom(reader); 
+  reader->ensureReadVersionId("MaskHatch", 2, "Try grsh0.8a4");
 
-  IO::VersionId svid = reader->readSerialVersionId();
+  readFieldsFrom(reader);
 
-  if (svid < 2)
-	 GrObj::readFrom(reader);
-  else if (svid == 2)
-	 {
-		IO::IoProxy<GrObj> baseclass(this);
-		reader->readBaseClass("GrObj", &baseclass);
-	 }
+  IO::IoProxy<GrObj> baseclass(this);
+  reader->readBaseClass("GrObj", &baseclass);
 }
 
 void MaskHatch::writeTo(IO::Writer* writer) const {
 DOTRACE("MaskHatch::writeTo");
 
+  writer->ensureWriteVersionId("MaskHatch", MASKHATCH_SERIAL_VERSION_ID, 2,
+										 "Try grsh0.8a4");
+
   writeFieldsTo(writer);
 
-  if (MASKHATCH_SERIAL_VERSION_ID < 2)
-	 GrObj::writeTo(writer);
-  else if (MASKHATCH_SERIAL_VERSION_ID == 2)
-	 {
-		IO::ConstIoProxy<GrObj> baseclass(this);
-		writer->writeBaseClass("GrObj", &baseclass);
-	 }
+  IO::ConstIoProxy<GrObj> baseclass(this);
+  writer->writeBaseClass("GrObj", &baseclass);
 }
 
 void MaskHatch::grGetBoundingBox(Rect<double>& bbox,

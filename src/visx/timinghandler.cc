@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 19 21:39:51 1999
-// written: Fri Nov 10 17:27:04 2000
+// written: Tue Nov 14 15:10:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,26 +70,20 @@ DOTRACE("TimingHandler::serialVersionId");
 void TimingHandler::readFrom(IO::Reader* reader) {
 DOTRACE("TimingHandler::readFrom");
 
-  IO::VersionId svid = reader->readSerialVersionId();
-  if (svid < 2)
-	 TimingHdlr::readFrom(reader);
-  else if (svid == 2)
-	 {
-		IO::IoProxy<TimingHdlr> baseclass(this);
-		reader->readBaseClass("TimingHdlr", &baseclass);
-	 }
+  reader->ensureReadVersionId("TimingHandler", 2, "Try grsh0.8a4");
+
+  IO::IoProxy<TimingHdlr> baseclass(this);
+  reader->readBaseClass("TimingHdlr", &baseclass);
 }
 
 void TimingHandler::writeTo(IO::Writer* writer) const {
 DOTRACE("TimingHandler::writeTo");
 
-  if (TIMINGHANDLER_SERIAL_VERSION_ID < 2)
-	 TimingHdlr::writeTo(writer);
-  else if (TIMINGHANDLER_SERIAL_VERSION_ID == 2)
-	 {
-		IO::ConstIoProxy<TimingHdlr> baseclass(this);
-		writer->writeBaseClass("TimingHdlr", &baseclass);
-	 }
+  writer->ensureWriteVersionId("TimingHandler",
+		      TIMINGHANDLER_SERIAL_VERSION_ID, 2, "Try grsh0.8a4");
+
+  IO::ConstIoProxy<TimingHdlr> baseclass(this);
+  writer->writeBaseClass("TimingHdlr", &baseclass);
 }
 
 int TimingHandler::getAbortWait() const { 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:37:04 1999
-// written: Fri Nov 10 17:03:58 2000
+// written: Tue Nov 14 15:13:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,26 +81,20 @@ DOTRACE("XBitmap::serialVersionId");
 void XBitmap::readFrom(IO::Reader* reader) {
 DOTRACE("XBitmap::readFrom");
 
-  IO::VersionId svid = reader->readSerialVersionId();
-  if (svid < 2)
-	 Bitmap::readFrom(reader);
-  else if (svid == 2)
-	 {
-		IO::IoProxy<Bitmap> baseclass(this);
-		reader->readBaseClass("Bitmap", &baseclass);
-	 }
+  reader->ensureReadVersionId("XBitmap", 2, "Try grsh0.8a4");
+
+  IO::IoProxy<Bitmap> baseclass(this);
+  reader->readBaseClass("Bitmap", &baseclass);
 }
 
 void XBitmap::writeTo(IO::Writer* writer) const {
 DOTRACE("XBitmap::writeTo");
 
-  if (XBITMAP_SERIAL_VERSION_ID < 2)
-	 Bitmap::writeTo(writer);
-  else if (XBITMAP_SERIAL_VERSION_ID == 2)
-	 {
-		IO::ConstIoProxy<Bitmap> baseclass(this);
-		writer->writeBaseClass("Bitmap", &baseclass);
-	 }
+  writer->ensureWriteVersionId("XBitmap", XBITMAP_SERIAL_VERSION_ID, 2,
+										 "Try grsh0.8a4");
+
+  IO::ConstIoProxy<Bitmap> baseclass(this);
+  writer->writeBaseClass("Bitmap", &baseclass);
 }
 
 static const char vcid_xbitmap_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Fri Nov 10 17:04:02 2000
+// written: Tue Nov 14 14:57:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -171,14 +171,7 @@ DOTRACE("Block::serialVersionId");
 void Block::readFrom(IO::Reader* reader) {
 DOTRACE("Block::readFrom");
 
-  IO::VersionId svid = reader->readSerialVersionId(); 
-
-  if (svid < 1)
-	 {
-		throw IO::ReadVersionError("Block", svid, 1, "Try grsh0.8a3");
-	 }
-
-  Assert(svid >= 1);
+  reader->ensureReadVersionId("Block", 1, "Try grsh0.8a3");
 
   itsImpl->itsTrialSequence.clear();
   IO::ReadUtils::readObjectSeq<TrialBase>(
@@ -198,13 +191,8 @@ DOTRACE("Block::readFrom");
 void Block::writeTo(IO::Writer* writer) const {
 DOTRACE("Block::writeTo");
 
-  if (BLOCK_SERIAL_VERSION_ID < 1)
-	 {
-		throw IO::WriteVersionError("Block", BLOCK_SERIAL_VERSION_ID, 1,
-											 "Try grsh0.8a3");
-	 } 
-
-  Assert(BLOCK_SERIAL_VERSION_ID >= 1);
+  writer->ensureWriteVersionId("Block", BLOCK_SERIAL_VERSION_ID, 1,
+										 "Try grsh0.8a3");
 
   IO::WriteUtils::writeSmartPtrSeq(writer, "trialSeq",
 											  itsImpl->itsTrialSequence.begin(),

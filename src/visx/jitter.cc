@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:41 1999
-// written: Fri Nov 10 17:27:06 2000
+// written: Tue Nov 14 15:08:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,34 +66,28 @@ DOTRACE("Jitter::serialVersionId");
 void Jitter::readFrom(IO::Reader* reader) {
 DOTRACE("Jitter::readFrom");
 
+  reader->ensureReadVersionId("Jitter", 2, "Try grsh0.8a4");
+
   reader->readValue("jitterX", itsXJitter);
   reader->readValue("jitterY", itsYJitter);
   reader->readValue("jitterR", itsRJitter);
 
-  IO::VersionId svid = reader->readSerialVersionId();
-  if (svid < 2)
-	 Position::readFrom(reader);
-  else if (svid == 2)
-	 {
-		IO::IoProxy<Position> baseclass(this);
-		reader->readBaseClass("Position", &baseclass);
-	 }
+  IO::IoProxy<Position> baseclass(this);
+  reader->readBaseClass("Position", &baseclass);
 }
 
 void Jitter::writeTo(IO::Writer* writer) const {
 DOTRACE("Jitter::writeTo");
 
+  writer->ensureWriteVersionId("Jitter", JITTER_SERIAL_VERSION_ID, 2,
+										 "Try grsh0.8a4");
+
   writer->writeValue("jitterX", itsXJitter);
   writer->writeValue("jitterY", itsYJitter);
   writer->writeValue("jitterR", itsRJitter);
 
-  if (JITTER_SERIAL_VERSION_ID < 2)
-	 Position::writeTo(writer);
-  else if (JITTER_SERIAL_VERSION_ID == 2)
-	 {
-		IO::ConstIoProxy<Position> baseclass(this);
-		writer->writeBaseClass("Position", &baseclass);
-	 }
+  IO::ConstIoProxy<Position> baseclass(this);
+  writer->writeBaseClass("Position", &baseclass);
 }
 
 /////////////

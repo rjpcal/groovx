@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Mon Nov 13 18:32:16 2000
+// written: Tue Nov 14 15:01:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -72,32 +72,26 @@ DOTRACE("FixPt::serialVersionId");
 void FixPt::readFrom(IO::Reader* reader) {
 DOTRACE("FixPt::readFrom");
 
-  readFieldsFrom(reader); 
+  reader->ensureReadVersionId("FixPt", 2, "Try grsh0.8a4");
+
+  readFieldsFrom(reader);
 
   DebugEval(length());  DebugEvalNL(width());
 
-  IO::VersionId svid = reader->readSerialVersionId();
-  if (svid < 2)
-	 GrObj::readFrom(reader);
-  else if (svid == 2)
-	 {
-		IO::IoProxy<GrObj> baseclass(this);
-		reader->readBaseClass("GrObj", &baseclass);
-	 }
+  IO::IoProxy<GrObj> baseclass(this);
+  reader->readBaseClass("GrObj", &baseclass);
 }
 
 void FixPt::writeTo(IO::Writer* writer) const {
 DOTRACE("FixPt::writeTo");
 
+  writer->ensureWriteVersionId("FixPt", FIXPT_SERIAL_VERSION_ID, 2,
+										 "Try grsh0.8a4");
+
   writeFieldsTo(writer); 
 
-  if (FIXPT_SERIAL_VERSION_ID < 2)
-	 GrObj::writeTo(writer);
-  else if (FIXPT_SERIAL_VERSION_ID == 2)
-	 {
-		IO::ConstIoProxy<GrObj> baseclass(this);
-		writer->writeBaseClass("GrObj", &baseclass);
-	 }
+  IO::ConstIoProxy<GrObj> baseclass(this);
+  writer->writeBaseClass("GrObj", &baseclass);
 }
 
 void FixPt::grGetBoundingBox(Rect<double>& bbox,

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Fri Nov 10 17:04:00 2000
+// written: Tue Nov 14 15:16:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -395,7 +395,7 @@ DOTRACE("GrObj::Impl::~Impl");
 void GrObj::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("GrObj::Impl::readFrom");
 
-  IO::VersionId svid = reader->readSerialVersionId(); 
+  reader->ensureReadVersionId("GrObj", 1, "Try grsh0.8a4");
 
   reader->readValue("GrObj::category", itsCategory);
 
@@ -403,17 +403,11 @@ DOTRACE("GrObj::Impl::readFrom");
   reader->readValue("GrObj::renderMode", temp);
   itsRenderer.setMode(temp, this);
 
-  if (svid >= 1)
-	 {
-		dynamic_string temp;
-		reader->readValue("GrObj::cacheFilename", temp);
-		itsRenderer.setCacheFilename(temp);
-	 }
+  dynamic_string filename;
+  reader->readValue("GrObj::cacheFilename", filename);
+  itsRenderer.setCacheFilename(filename);
 
-  if (svid == 0)
-	 reader->readValue("GrObj::unRenderMod", itsUnRenderer.itsMode);
-  else if (svid >= 1)
-	 reader->readValue("GrObj::unRenderMode", itsUnRenderer.itsMode);
+  reader->readValue("GrObj::unRenderMode", itsUnRenderer.itsMode);
 
   reader->readValue("GrObj::bbVisibility", itsBB.itsIsVisible);
 
@@ -433,17 +427,16 @@ DOTRACE("GrObj::Impl::readFrom");
 void GrObj::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("GrObj::Impl::writeTo");
 
+  writer->ensureWriteVersionId("GrObj", GROBJ_SERIAL_VERSION_ID, 1,
+										 "Try grsh0.8a4");
+
   writer->writeValue("GrObj::category", itsCategory);
 
   writer->writeValue("GrObj::renderMode", itsRenderer.getMode());
 
-  if (GROBJ_SERIAL_VERSION_ID >= 1)
-	 writer->writeValue("GrObj::cacheFilename", itsRenderer.getCacheFilename());
+  writer->writeValue("GrObj::cacheFilename", itsRenderer.getCacheFilename());
 
-  if (GROBJ_SERIAL_VERSION_ID == 0)
-	 writer->writeValue("GrObj::unRenderMod", itsUnRenderer.itsMode);
-  else if (GROBJ_SERIAL_VERSION_ID >= 1)
-	 writer->writeValue("GrObj::unRenderMode", itsUnRenderer.itsMode);
+  writer->writeValue("GrObj::unRenderMode", itsUnRenderer.itsMode);
 
   writer->writeValue("GrObj::bbVisibility", itsBB.itsIsVisible);
 
