@@ -79,6 +79,12 @@ namespace geom
       return rect<V>().set_lbwh(l, b, w, h);
     }
 
+    /// Set four corners from lower-left corner and width+height values.
+    static rect<V> lbwh(const geom::vec2<V>& xy, const geom::vec2<V>& wh)
+    {
+      return lbwh(xy.x(), xy.y(), wh.x(), wh.y());
+    }
+
     // Accessors
     void get_ltrb(V& L, V& T, V& R, V& B) const
     { L = xx.lo; T = yy.hi; R = xx.hi; B = yy.lo; }
