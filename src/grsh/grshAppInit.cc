@@ -74,6 +74,7 @@ extern "C"
   Tcl_PackageInitProc Gaborarray_Init;
   Tcl_PackageInitProc Gl_Init;
   Tcl_PackageInitProc Gtrace_Init;
+  Tcl_PackageInitProc Gx_Init;
   Tcl_PackageInitProc Gxcolor_Init;
   Tcl_PackageInitProc Gxcylinder_Init;
   Tcl_PackageInitProc Gxdisk_Init;
@@ -161,6 +162,7 @@ PackageInfo DELAYED_PKGS[] =
     { "Genericevent",        Genericevent_Init,        "3.0" },
     { "Gl",                  Gl_Init,                  "1.0" },
     { "Gtrace",              Gtrace_Init,              "1.0" },
+    { "Gx",                  Gx_Init,                  "1.0" },
     { "Gxcolor",             Gxcolor_Init,             "1.0" },
     { "Gxcylinder",          Gxcylinder_Init,          "1.0" },
     { "Gxdisk",              Gxdisk_Init,              "1.0" },
