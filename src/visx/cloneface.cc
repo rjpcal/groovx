@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 29 09:19:26 1999
-// written: Wed Aug 29 16:45:22 2001
+// written: Thu Aug 30 10:19:23 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,8 +18,6 @@
 #include "io/ioproxy.h"
 #include "io/readutils.h"
 #include "io/writeutils.h"
-
-#include <cstring>
 
 #define NO_TRACE
 #include "util/trace.h"
