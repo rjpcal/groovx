@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Fri Sep  7 16:22:53 2001
+// written: Fri Sep  7 17:34:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -273,38 +273,38 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class C>
-  inline Functor<1, R, Util::MemFunctor<R,C, R (C::*)()> >
+  inline Functor<1, R, Util::MemFunctor<R (C::*)()> >
   buildTclFunctor(R (C::*mf)())
   {
-    return Util::MemFunctor<R,C, R (C::*)()>(mf);
+    return Util::MemFunctor<R (C::*)()>(mf);
   }
 
   template <class R, class C, class P1>
-  inline Functor<2, R, Util::MemFunctor<R,C, R (C::*)(P1)> >
+  inline Functor<2, R, Util::MemFunctor<R (C::*)(P1)> >
   buildTclFunctor(R (C::*mf)(P1))
   {
-    return Util::MemFunctor<R,C, R (C::*)(P1)>(mf);
+    return Util::MemFunctor<R (C::*)(P1)>(mf);
   }
 
   template <class R, class C, class P1, class P2>
-  inline Functor<3, R, Util::MemFunctor<R,C, R (C::*)(P1, P2)> >
+  inline Functor<3, R, Util::MemFunctor<R (C::*)(P1, P2)> >
   buildTclFunctor(R (C::*mf)(P1,P2))
   {
-    return Util::MemFunctor<R,C, R (C::*)(P1, P2)>(mf);
+    return Util::MemFunctor<R (C::*)(P1, P2)>(mf);
   }
 
   template <class R, class C, class P1, class P2, class P3>
-  inline Functor<4, R, Util::MemFunctor<R,C, R (C::*)(P1, P2, P3)> >
+  inline Functor<4, R, Util::MemFunctor<R (C::*)(P1, P2, P3)> >
   buildTclFunctor(R (C::*mf)(P1,P2,P3))
   {
-    return Util::MemFunctor<R,C, R (C::*)(P1, P2, P3)>(mf);
+    return Util::MemFunctor<R (C::*)(P1, P2, P3)>(mf);
   }
 
   template <class R, class C, class P1, class P2, class P3, class P4>
-  inline Functor<5, R, Util::MemFunctor<R,C, R (C::*)(P1, P2, P3, P4)> >
+  inline Functor<5, R, Util::MemFunctor<R (C::*)(P1, P2, P3, P4)> >
   buildTclFunctor(R (C::*mf)(P1,P2,P3,P4))
   {
-    return Util::MemFunctor<R,C, R (C::*)(P1, P2, P3, P4)>(mf);
+    return Util::MemFunctor<R (C::*)(P1, P2, P3, P4)>(mf);
   }
 
 
