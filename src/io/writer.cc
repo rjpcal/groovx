@@ -3,7 +3,7 @@
 // writer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:50 1999
-// written: Tue Oct 24 09:39:03 2000
+// written: Tue Oct 31 11:49:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,6 @@
 
 #include "util/strings.h"
 
-#include <string>
 #include <strstream.h>
 
 IO::WriteError::WriteError(const char* msg) :
@@ -66,11 +65,6 @@ void IO::Writer::writeValue<bool>(const char* name, const bool& val) {
 template<>
 void IO::Writer::writeValue<double>(const char* name, const double& val) {
   writeDouble(name, val);
-}
-
-template<>
-void IO::Writer::writeValue<std::string>(const char* name, const std::string& val) {
-  writeCstring(name, val.c_str());
 }
 
 

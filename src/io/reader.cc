@@ -3,7 +3,7 @@
 // reader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:47:00 1999
-// written: Tue Oct 24 09:38:37 2000
+// written: Tue Oct 31 11:51:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "util/strings.h"
 
-#include <string>
+#include <cstddef>
 
 IO::ReadError::ReadError(const char* msg) :
   ErrorWithMsg("IO::ReadError: ")
@@ -65,13 +65,6 @@ void IO::Reader::readValue<bool>(const char* name, bool& return_value) {
 template <>
 void IO::Reader::readValue<double>(const char* name, double& return_value) {
   return_value = readDouble(name);
-}
-
-template <>
-void IO::Reader::readValue<std::string>(const char* name, std::string& return_value) {
-  char* temp = readCstring(name);
-  return_value = temp;
-  delete [] temp;
 }
 
 template <>
