@@ -3,7 +3,7 @@
 // pbm.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:07 1999
-// written: Fri Jul  2 14:07:34 1999
+// written: Mon Sep 20 09:51:11 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ DOTRACE("Pbm::init");
   itsMaxGrey = 0;
   itsBitsPerPixel = 0;
   itsNumBytes = 0;
-  itsBytes = 0;
+  itsBytes.resize(1);
 }
 
 Pbm::Pbm(istream& is) {
@@ -58,22 +58,16 @@ DOTRACE("Pbm::Pbm(const char*)");
 
 Pbm::~Pbm () {
 DOTRACE("Pbm::~Pbm ");
-  DebugEvalNL(itsBytes);
-  delete [] itsBytes;
 }
 
-void Pbm::grabBytes(unsigned char*& bytes, 
+void Pbm::grabBytes(vector<unsigned char>& bytes,
 						  int& width, int& height, int& bits_per_pixel) {
 DOTRACE("Pbm::grabBytes");
-  bytes = itsBytes;
+  itsBytes.swap(bytes);
+  itsBytes.resize(1);
   width = itsImageWidth;
   height = itsImageHeight;
   bits_per_pixel = itsBitsPerPixel;
-
-  // Ownership of the area pointed to by itsBytes has been transferred
-  // to the caller of the functions, so we destroy any reference to
-  // that area.
-  itsBytes = 0;
 }
 
 void Pbm::readStream(istream& is) {
@@ -136,9 +130,7 @@ DOTRACE("Pbm::readStream");
   itsNumBytes = bytes_per_row * itsImageHeight;
   DebugEvalNL(itsNumBytes);
 
-  delete [] itsBytes;
-  itsBytes = new unsigned char[itsNumBytes];
-  DebugEvalNL((void*) itsBytes);
+  itsBytes.resize(itsNumBytes);
 
   switch (itsMode) {
   case 1: parseMode1(is); break;
@@ -193,17 +185,17 @@ DOTRACE("Pbm::parseMode3");
 
 void Pbm::parseMode4(istream& is) {
 DOTRACE("Pbm::parseMode4");
-  is.read(itsBytes, itsNumBytes);
+  is.read(&(itsBytes[0]), itsNumBytes);
 }
 
 void Pbm::parseMode5(istream& is) {
 DOTRACE("Pbm::parseMode5");
-  is.read(itsBytes, itsNumBytes);  
+  is.read(&(itsBytes[0]), itsNumBytes);  
 }
 
 void Pbm::parseMode6(istream& is) {
 DOTRACE("Pbm::parseMode6");
-  is.read(itsBytes, itsNumBytes);
+  is.read(&(itsBytes[0]), itsNumBytes);
 }
 
 static const char vcid_pbm_cc[] = "$Header$";

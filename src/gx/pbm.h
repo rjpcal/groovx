@@ -3,7 +3,7 @@
 // pbm.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:06 1999
-// written: Fri Jul  2 14:04:52 1999
+// written: Mon Sep 20 09:50:49 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,11 @@
 
 #ifndef ERROR_H_DEFINED
 #include "error.h"
+#endif
+
+#ifndef VECTOR_DEFINED
+#include <vector>
+#define VECTOR_DEFINED
 #endif
 
 class istream;
@@ -35,8 +40,8 @@ public:
 
   // This function transfers ownership of itsBytes to the caller of
   // the function.
-  void grabBytes(unsigned char*& bytes, 
-					  int& width, int& height, int& bits_per_pixel);
+  void grabBytes(vector<unsigned char>& bytes,
+ 					  int& width, int& height, int& bits_per_pixel);					  
 
 private:
   void init();
@@ -57,7 +62,7 @@ private:
   int itsBitsPerPixel;
 
   int itsNumBytes;
-  unsigned char* itsBytes;
+  vector<unsigned char> itsBytes;
 };
 
 static const char vcid_pbm_h[] = "$Header$";
