@@ -3,15 +3,13 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Wed Mar 15 11:13:07 2000
+// written: Wed Mar 15 17:50:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef BLOCKTCL_CC_DEFINED
 #define BLOCKTCL_CC_DEFINED
-
-#include <vector>
 
 #include "iofactory.h"
 #include "blocklist.h"
@@ -73,15 +71,16 @@ protected:
   virtual void invoke() {
 	 Block* block = getItem();
 
-	 vector<int> ids;
-	 getSequenceFromArg(2, back_inserter(ids), (int*) 0);
-
 	 int repeat = (objc() < 4)  ?  1 : getIntFromArg(3);
 
- 	 for (size_t i = 0; i < ids.size(); ++i) {
- 		block->addTrial(ids[i], repeat);
- 	 }
-	 returnVoid();
+	 for (Tcl::ListIterator<int>
+			  itr = beginOfArg(2, (int*)0),
+			  end = endOfArg(2, (int*)0);
+			itr != end;
+			++itr)
+		{
+		  block->addTrial(*itr, repeat);
+		}
   }
 };
 
