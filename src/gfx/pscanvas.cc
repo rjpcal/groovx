@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:20:09 2001
-// written: Tue Aug 28 17:30:45 2001
+// written: Wed Aug 29 10:15:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +31,9 @@
 
 class Gfx::PSCanvas::Impl
 {
+  Impl(const Impl&);
+  Impl& operator=(const Impl&);
+
 public:
 
   struct Primitive;
@@ -77,6 +80,7 @@ public:
   {
     typedef Gfx::PSCanvas::Impl PS;
 
+    virtual ~Primitive() {}
     virtual void onBegin(PS* ps) = 0;
     virtual void onVertex(PS* ps, const Gfx::Vec2<double>& v) = 0;
     virtual void onEnd(PS* ps) = 0;
@@ -215,13 +219,15 @@ public:
           break;
         }
     }
-    virtual void onEnd(PS* ps) {}
+    virtual void onEnd(PS*) {}
   };
 
   struct QuadStripPrim : public Primitive
   {
     dlink_list<Gfx::Vec2<double> > itsPts1;
     dlink_list<Gfx::Vec2<double> > itsPts2;
+
+    QuadStripPrim() : itsPts1(), itsPts2() {}
 
     virtual void onBegin(PS*)
     {
@@ -383,14 +389,68 @@ public:
     indent(); itsFstream << "stroke\n\n";
   }
 
-  void setlinewidth(double w)
+  double getLineScaleFactor()
   {
     double factor =
       (itsScales.back().abs().x() + itsScales.back().abs().y()) / 2.0;
 
     DebugEvalNL(factor);
 
-    indent(); push1(w/factor); itsFstream << "setlinewidth\n";
+    return factor;
+  }
+
+  void setlinewidth(double w)
+  {
+    indent(); push1(w/getLineScaleFactor()); itsFstream << "setlinewidth\n";
+  }
+
+  void setdash(unsigned short bit_pattern)
+  {
+    DebugEvalNL((void*) bit_pattern);
+
+    bool prev_bit = (0x8000 & bit_pattern);
+
+    // will hold the lengths of the individual bit runs
+    int lengths[16] = { 0 };
+    int pos = 0;
+
+    for (unsigned short mask = 0x8000; mask != 0; mask >>= 1)
+      {
+        bool bit = (mask & bit_pattern);
+        bool same = (bit == prev_bit);
+
+        if (!same)
+          {
+            ++pos; lengths[pos] = 0;
+          }
+
+        ++lengths[pos];
+
+        prev_bit = bit;
+      }
+
+    ++pos; // so we point at one-past-the-end
+
+    int offset = 0;
+
+    if ((pos % 2) == 1)
+      {
+        offset = lengths[--pos];
+        lengths[0] += offset;
+      }
+
+    double factor = getLineScaleFactor();
+
+    indent();
+
+    push1("[");
+    for (int i = 0; i < pos; ++i)
+      {
+        push1(lengths[i] / factor);
+      }
+    push1("]");
+
+    push1(offset); itsFstream << "setdash\n";
   }
 
   void setrgbcolor(const Gfx::RgbaColor& col)
@@ -399,7 +459,8 @@ public:
     itsFstream << "setrgbcolor\n";
   }
 
-  void push1(double v)
+  template <class T>
+  void push1(T v)
   {
     itsFstream << v << " ";
   }
@@ -467,7 +528,7 @@ DOTRACE("Gfx::PSCanvas::~PSCanvas");
 }
 
 Gfx::Vec2<int> Gfx::PSCanvas::screenFromWorld(
-  const Gfx::Vec2<double>& world_pos
+  const Gfx::Vec2<double>& /*world_pos*/
   ) const
 {
 DOTRACE("Gfx::PSCanvas::screenFromWorld(Gfx::Vec2)");
@@ -477,7 +538,7 @@ DOTRACE("Gfx::PSCanvas::screenFromWorld(Gfx::Vec2)");
 }
 
 Gfx::Vec2<double> Gfx::PSCanvas::worldFromScreen(
-  const Gfx::Vec2<int>& screen_pos
+  const Gfx::Vec2<int>& /*screen_pos*/
   ) const
 {
 DOTRACE("Gfx::PSCanvas::worldFromScreen(Gfx::Vec2)");
@@ -487,7 +548,8 @@ DOTRACE("Gfx::PSCanvas::worldFromScreen(Gfx::Vec2)");
 }
 
 
-Gfx::Rect<int> Gfx::PSCanvas::screenFromWorld(const Gfx::Rect<double>& world_pos) const
+Gfx::Rect<int> Gfx::PSCanvas::screenFromWorld(
+  const Gfx::Rect<double>& /*world_pos*/) const
 {
 DOTRACE("Gfx::PSCanvas::screenFromWorld(Gfx::Rect)");
 // FIXME
@@ -495,7 +557,8 @@ DOTRACE("Gfx::PSCanvas::screenFromWorld(Gfx::Rect)");
   return Gfx::Rect<int>();
 }
 
-Gfx::Rect<double> Gfx::PSCanvas::worldFromScreen(const Gfx::Rect<int>& screen_pos) const
+Gfx::Rect<double> Gfx::PSCanvas::worldFromScreen(
+  const Gfx::Rect<int>& /*screen_pos*/) const
 {
 DOTRACE("Gfx::PSCanvas::worldFromScreen(Gfx::Rect)");
 // FIXME
@@ -548,7 +611,7 @@ void Gfx::PSCanvas::throwIfError(const char* where) const
 {
 DOTRACE("Gfx::PSCanvas::throwIfError");
   if (itsImpl->itsFstream.fail())
-    itsImpl->raiseError("stream failure");
+    itsImpl->raiseError(where);
 }
 
 
@@ -582,19 +645,19 @@ DOTRACE("Gfx::PSCanvas::setColor");
   itsImpl->setrgbcolor(col);
 }
 
-void Gfx::PSCanvas::setClearColor(const Gfx::RgbaColor& col)
+void Gfx::PSCanvas::setClearColor(const Gfx::RgbaColor&)
 {
 DOTRACE("Gfx::PSCanvas::setClearColor");
-//FIXME
+  ;//nothing
 }
 
-void Gfx::PSCanvas::setColorIndex(unsigned int index)
+void Gfx::PSCanvas::setColorIndex(unsigned int /*index*/)
 {
 DOTRACE("Gfx::PSCanvas::setColorIndex");
 // FIXME
 }
 
-void Gfx::PSCanvas::setClearColorIndex(unsigned int index)
+void Gfx::PSCanvas::setClearColorIndex(unsigned int /*index*/)
 {
 DOTRACE("Gfx::PSCanvas::setClearColorIndex");
 // FIXME
@@ -606,6 +669,19 @@ DOTRACE("Gfx::PSCanvas::swapForeBack");
 // FIXME
 }
 
+void Gfx::PSCanvas::setPolygonFill(bool on)
+{
+DOTRACE("Gfx::PSCanvas::setPolygonFill");
+
+  itsImpl->itsPolygonFill = on;
+}
+
+void Gfx::PSCanvas::setPointSize(double /*size*/)
+{
+DOTRACE("Gfx::PSCanvas::setPointSize");
+// FIXME
+}
+
 void Gfx::PSCanvas::setLineWidth(double width)
 {
 DOTRACE("Gfx::PSCanvas::setLineWidth");
@@ -614,11 +690,11 @@ DOTRACE("Gfx::PSCanvas::setLineWidth");
   // arbitrary scaling by 0.5 so lines look "not too thick" in Postscript
 }
 
-void Gfx::PSCanvas::setPolygonFill(bool on)
+void Gfx::PSCanvas::setLineStipple(unsigned short bit_pattern)
 {
-DOTRACE("Gfx::PSCanvas::setPolygonFill");
+DOTRACE("Gfx::PSCanvas::setLineStipple");
 
-  itsImpl->itsPolygonFill = on;
+  itsImpl->setdash(bit_pattern);
 }
 
 void Gfx::PSCanvas::enableAntialiasing()
@@ -660,25 +736,25 @@ DOTRACE("Gfx::PSCanvas::rotate");
 }
 
 
-void Gfx::PSCanvas::drawPixels(const Gfx::BmapData& data,
-                          const Gfx::Vec2<double>& world_pos,
-                          const Gfx::Vec2<double>& zoom)
+void Gfx::PSCanvas::drawPixels(const Gfx::BmapData& /*data*/,
+                               const Gfx::Vec2<double>& /*world_pos*/,
+                               const Gfx::Vec2<double>& /*zoom*/)
 {
 DOTRACE("Gfx::PSCanvas::drawPixels");
 // FIXME
 }
 
-void Gfx::PSCanvas::drawBitmap(const Gfx::BmapData& data,
-                          const Gfx::Vec2<double>& world_pos)
+void Gfx::PSCanvas::drawBitmap(const Gfx::BmapData& /*data*/,
+                               const Gfx::Vec2<double>& /*world_pos*/)
 {
 DOTRACE("Gfx::PSCanvas::drawBitmap");
 // FIXME
 }
 
-void Gfx::PSCanvas::grabPixels(const Gfx::Rect<int>& bounds, Gfx::BmapData& data_out)
+void Gfx::PSCanvas::grabPixels(const Gfx::Rect<int>&, Gfx::BmapData&)
 {
 DOTRACE("Gfx::PSCanvas::grabPixels");
-  itsImpl->raiseError("grabPixels not allowed");
+  itsImpl->raiseError("grabPixels not possible");
 }
 
 void Gfx::PSCanvas::clearColorBuffer()
@@ -687,7 +763,7 @@ DOTRACE("Gfx::PSCanvas::clearColorBuffer");
 // FIXME
 }
 
-void Gfx::PSCanvas::clearColorBuffer(const Gfx::Rect<int>& screen_rect)
+void Gfx::PSCanvas::clearColorBuffer(const Gfx::Rect<int>& /*screen_rect*/)
 {
 DOTRACE("Gfx::PSCanvas::clearColorBuffer(Gfx::Rect)");
 // FIXME
