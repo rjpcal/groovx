@@ -3,7 +3,7 @@
 // morphyfacetcl.cc
 // Rob Peters 
 // created: Wed Sep  8 15:42:36 1999
-// written: Thu Sep  9 18:26:11 1999
+// written: Thu Sep 30 10:55:19 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,6 @@
 #include "debug.h"
 
 namespace MorphyFaceTcl {
-  class LoadFacesCmd;
   class MorphyFacePkg;
 }
 
@@ -40,48 +39,13 @@ namespace MorphyFaceTcl {
 //
 ///////////////////////////////////////////////////////////////////////
 
-/*
-  IoWrapper<double> its\(.*\);
-	 declareCAttrib("\1", &MorphyFace::get\1, &MorphyFace::set\1);
-*/
-
 class MorphyFaceTcl::MorphyFacePkg : public ListItemPkg<MorphyFace, ObjList> {
 public:
   MorphyFacePkg(Tcl_Interp* interp) :
-	 ListItemPkg<MorphyFace, ObjList>(interp, ObjList::theObjList(), "MorphyFace", "2.5")
+	 ListItemPkg<MorphyFace, ObjList>(interp, ObjList::theObjList(),
+												 "MorphyFace", "2.5")
   {
-	 declareCAttrib("faceWidth", &MorphyFace::getFaceWidth, &MorphyFace::setFaceWidth);
-	 declareCAttrib("topWidth", &MorphyFace::getTopWidth, &MorphyFace::setTopWidth);
-	 declareCAttrib("bottomWidth", &MorphyFace::getBottomWidth, &MorphyFace::setBottomWidth);
-	 declareCAttrib("topHeight", &MorphyFace::getTopHeight, &MorphyFace::setTopHeight);
-	 declareCAttrib("bottomHeight", &MorphyFace::getBottomHeight, &MorphyFace::setBottomHeight);
-
-	 declareCAttrib("eyeYpos", &MorphyFace::getEyeYpos, &MorphyFace::setEyeYpos);
-	 declareCAttrib("eyeDist", &MorphyFace::getEyeDist, &MorphyFace::setEyeDist);
-	 declareCAttrib("eyeHeight", &MorphyFace::getEyeHeight, &MorphyFace::setEyeHeight);
-	 declareCAttrib("eyeAspectRatio", &MorphyFace::getEyeAspectRatio, &MorphyFace::setEyeAspectRatio);
-
-	 declareCAttrib("pupilXpos", &MorphyFace::getPupilXpos, &MorphyFace::setPupilXpos);
-	 declareCAttrib("pupilYpos", &MorphyFace::getPupilYpos, &MorphyFace::setPupilYpos);
-	 declareCAttrib("pupilSize", &MorphyFace::getPupilSize, &MorphyFace::setPupilSize);
-	 declareCAttrib("pupilDilation", &MorphyFace::getPupilDilation, &MorphyFace::setPupilDilation);
-
-	 declareCAttrib("eyebrowXpos", &MorphyFace::getEyebrowXpos, &MorphyFace::setEyebrowXpos);
-	 declareCAttrib("eyebrowYpos", &MorphyFace::getEyebrowYpos, &MorphyFace::setEyebrowYpos);
-	 declareCAttrib("eyebrowCurvature", &MorphyFace::getEyebrowCurvature, &MorphyFace::setEyebrowCurvature);
-	 declareCAttrib("eyebrowAngle", &MorphyFace::getEyebrowAngle, &MorphyFace::setEyebrowAngle);
-	 declareCAttrib("eyebrowThickness", &MorphyFace::getEyebrowThickness, &MorphyFace::setEyebrowThickness);
-
-	 declareCAttrib("noseXpos", &MorphyFace::getNoseXpos, &MorphyFace::setNoseXpos);
-	 declareCAttrib("noseYpos", &MorphyFace::getNoseYpos, &MorphyFace::setNoseYpos);
-	 declareCAttrib("noseLen", &MorphyFace::getNoseLen, &MorphyFace::setNoseLen);
-	 declareCAttrib("noseWidth", &MorphyFace::getNoseWidth, &MorphyFace::setNoseWidth);
-
-	 declareCAttrib("mouthXpos", &MorphyFace::getMouthXpos, &MorphyFace::setMouthXpos);
-	 declareCAttrib("mouthYpos", &MorphyFace::getMouthYpos, &MorphyFace::setMouthYpos);
-	 declareCAttrib("mouthWidth", &MorphyFace::getMouthWidth, &MorphyFace::setMouthWidth);
-	 declareCAttrib("mouthCurvature", &MorphyFace::getMouthCurvature, &MorphyFace::setMouthCurvature);
-
+	 declareAllProperties();
   }
 };
   
