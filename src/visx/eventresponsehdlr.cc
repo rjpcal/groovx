@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Jan 30 13:56:17 2002
+// written: Wed Jan 30 16:00:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,10 +53,7 @@ namespace
   {
     static int cmdCounter = 0;
 
-    fstring name = "::__ERHPrivate::";
-    name.append(stem);
-    name.append(++cmdCounter);
-    return name;
+    return fstring("::__ERHPrivate::", stem, ++cmdCounter);
   }
 }
 
@@ -171,9 +168,8 @@ public:
   {
     Util::log( fstring("binding to ", itsCmdCallback->name()) );
 
-    fstring script(itsCmdCallback->name());
-    script.append(" ").append((int)itsOwner->id()).append(" ");
-    script.append("[list ").append(itsBindingSubstitution).append("]");
+    fstring script(itsCmdCallback->name(), ' ', (int)itsOwner->id());
+    script.append(" [list ", itsBindingSubstitution, ']');
 
     itsState.reset(new ActiveState(this, widget, trial,
                                    itsEventSequence, script));
@@ -346,14 +342,13 @@ DOTRACE("EventResponseHdlr::setInputResponseMap");
 
   fstring args("inp");
 
-  fstring body;
-  body.append("set map {").append(s).append("}\n");
-  body.append("foreach pair $map {\n"
-              "  foreach {rx val} $pair {\n"
-              "    if [regexp $rx $inp] { return $val }\n"
-              "  }\n"
-              "}\n"
-              "return -1\n");
+  fstring body("set map {", s, "}\n"
+               "foreach pair $map {\n"
+               "  foreach {rx val} $pair {\n"
+               "    if [regexp $rx $inp] { return $val }\n"
+               "  }\n"
+               "}\n"
+               "return -1\n");
 
   setResponseProc(args, body);
 }
