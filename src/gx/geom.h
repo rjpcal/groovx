@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:16:03 2003
-// written: Mon May 12 12:11:13 2003
+// written: Tue May 13 11:28:04 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -33,28 +33,49 @@
 
 #include <cmath>
 
-inline double zerototwopi(double angle)
+namespace Geom
 {
-  while (angle < 0.0)     angle += 2*M_PI;
-  while (angle >= 2*M_PI) angle -= 2*M_PI;
+  inline double deg2rad(double degrees)
+  {
+    return degrees * M_PI/180.0;
+  }
 
-  return angle;
-}
+  inline double rad2deg(double radians)
+  {
+    return radians * 180.0/M_PI;
+  }
 
-inline double minuspitopi(double angle)
-{
-  while (angle < -M_PI) angle += 2*M_PI;
-  while (angle >= M_PI) angle -= 2*M_PI;
+  inline double deg_n180_180(double degrees)
+  {
+    while (degrees > 180.0) { degrees -= 360.0; }
+    while (degrees <= -180.0) { degrees += 360.0; }
 
-  return angle;
-}
+    return degrees;
+  }
 
-inline double zerotopi(double angle)
-{
-  while (angle < 0.0)   angle += M_PI;
-  while (angle >= M_PI) angle -= M_PI;
+  inline double rad_0_2pi(double angle)
+  {
+    while (angle < 0.0)     angle += 2*M_PI;
+    while (angle >= 2*M_PI) angle -= 2*M_PI;
 
-  return angle;
+    return angle;
+  }
+
+  inline double rad_npi_pi(double angle)
+  {
+    while (angle < -M_PI) angle += 2*M_PI;
+    while (angle >= M_PI) angle -= 2*M_PI;
+
+    return angle;
+  }
+
+  inline double rad_0_pi(double angle)
+  {
+    while (angle < 0.0)   angle += M_PI;
+    while (angle >= M_PI) angle -= M_PI;
+
+    return angle;
+  }
 }
 
 static const char vcid_geom_h[] = "$Header$";

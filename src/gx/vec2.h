@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Jan 28 12:54:13 1999
-// written: Mon May 12 18:50:07 2003
+// written: Tue May 13 11:27:14 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -34,15 +34,6 @@
 #include "gx/geom.h"
 
 #include <cmath>
-
-namespace Geom
-{
-  double deg2rad(double degrees);
-  double rad2deg(double radians);
-
-  void normRad(double& radians); // FIXME dup minuspitopi
-  void normDeg(double& degrees);
-}
 
 namespace Gfx
 {
@@ -106,7 +97,7 @@ public:
   void rotateDeg(double degrees)
   {
     // FIXME should use a real sin(),cos() rotation matrix here?
-    Geom::normDeg(degrees);
+    degrees = Geom::deg_n180_180(degrees);
     if (degrees == 0.0)
       {
         return;
@@ -137,7 +128,7 @@ public:
   /// Result in radians.
   double angleTo(const Vec2<V>& b) const
   {
-    return zerototwopi(atan2(b.y() - y(), b.x() - x()));
+    return rad_0_2pi(atan2(b.y() - y(), b.x() - x()));
   }
 
   double distanceTo(const Vec2<V>& b) const
