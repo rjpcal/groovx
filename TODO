@@ -48,26 +48,70 @@
    (1) Avoid storing the result of the singleton-getters.
    (2) Pass the buck back out to callers.
 
-* (12-Oct-2004) move into rutz:: namespace and de-camel-case
+* (12-Oct-2004) sift through src/util
 
-  error
-  fileposition
-  fstring
-  functors
-  pipe
-  pointers
-  serialport?
-  stderror
-  stopwatch
-  time
+  move some stuff into rutz:: namespace and de-camel-case
 
-  [done] algo
-  [done] base64
-  [done] freelist
-  [done] cstrstream
-  [done] gzstreambuf
-  [done] mappedfile
-  [done] rand
+  the idea that (rutz) is more fundamental than (Util) -- rutz would
+  become the new zero-dependency library
+
+  Probably for backward-compatibility and cvs sanity it would be best
+  to keep all the rutz:: stuff in src/util, and then rename the Util::
+  stuff to a new namespace and move it to a new src/ directory -- this
+  is because there are multiple projects depending on src/util
+  (classmodel and hmax), but only groovx depends on the Util:: stuff.
+
+  How to rename Util::? Ark. Cog. Cue. Gel. Hub. Ion. Rho. Rio.
+  Aloe. Onyx. Nub.
+
+  [-> Util] arrayvalue
+  [-> Util] log (depends on Object)
+  [-> Util] multivalue
+  [-> Util] objdb
+  [-> Util] value
+  [-> rutz] iter
+  [-> rutz] pointers
+  [-> rutz] strings
+  [Util] object
+  [Util] objfactory
+  [Util] objmgr
+  [Util] ref
+  [Util] refcounted
+  [Util] scheduler
+  [Util] signal
+  [Util] timer (depends on signal)
+  [Util] uid
+  [Util] volatileobject
+  [rutz] algo
+  [rutz] arrays
+  [rutz] assocarray
+  [rutz] backtrace
+  [rutz] base64
+  [rutz] bytearray
+  [rutz] cstrstream
+  [rutz] debug
+  [rutz] demangle
+  [rutz] demangle_cxxfilt
+  [rutz] demangle_gcc_v2
+  [rutz] demangle_gcc_v3
+  [rutz] error
+  [rutz] factory
+  [rutz] fileposition
+  [rutz] freelist
+  [rutz] functors
+  [rutz] gzstreambuf
+  [rutz] mappedfile
+  [rutz] pipe
+  [rutz] rand
+  [rutz] serialport
+  [rutz] staticstack
+  [rutz] stderror
+  [rutz] stdiobuf
+  [rutz] stopwatch
+  [rutz] time
+  [rutz] trace
+  [rutz] tracer (rename to rutz::toggle?)
+  [rutz] traits
 
 * (12-Oct-2004) Make it easier to debug+test timing sequences
 
@@ -107,7 +151,7 @@
       logic elsewhere. First, need to get clients to rely on
       Util::Timer instead of Tcl::Timer.
 
-  (4) Change Tcl::TimerScheduler to hold a Tcl::Interp, to which it
+  (5) Change Tcl::TimerScheduler to hold a Tcl::Interp, to which it
       can direct background errors; this way we don't need
       Tcl::Main::interp() in Tcl::Timer. Maybe we get this by having
       Tcl::Interp itself create the Tcl::TimerScheduler,
