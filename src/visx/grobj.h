@@ -221,7 +221,7 @@ public:
   /** Returns the bounding box given by \c grGetBoundingBox(), with
       additional modifications to reflect the scaling mode, alignment
       mode, and pixel border values. */
-  void getBoundingBox(const GWT::Canvas& canvas,
+  void getBoundingBox(GWT::Canvas& canvas,
                       Rect<double>& bounding_box) const;
 
 protected:
