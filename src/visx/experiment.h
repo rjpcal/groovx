@@ -3,7 +3,7 @@
 // experiment.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 10:52:17 1999
-// written: Wed May 10 14:09:53 2000
+// written: Wed May 10 14:37:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,9 +49,6 @@ public:
 
   virtual void edBeginTrial() = 0;
   ///< Begin the next trial.
-
-  virtual void edResponseSeen() = 0;
-  ///< Tell the Experiment that a response has occurred.
 
   virtual void edProcessResponse(const Response& response) = 0;
   /**< Tell the Experiment to process a response.

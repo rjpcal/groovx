@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed May 10 14:10:08 2000
+// written: Wed May 10 14:37:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,7 +101,6 @@ public:
   virtual void edBeginExpt();
 
   virtual void edBeginTrial();
-  virtual void edResponseSeen();
   virtual void edProcessResponse(const Response& response);
   virtual void edAbortTrial();
   virtual void edEndTrial();
