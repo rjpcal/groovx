@@ -36,7 +36,6 @@
 
 #include "tcl/tclpkg.h"
 
-#include "util/time.h"
 #include "util/unittest.h"
 
 #include "util/trace.h"
@@ -61,26 +60,24 @@ namespace
     TEST_REQUIRE_APPROX(dash::erfc(2), 2-dash::erfc(-2), 1e-5);
 
 
-    double x = 0.0;
+    static rutz::prof p1("testprof/erfc/custom", __FILE__, __LINE__);
+    static rutz::prof p2("testprof/erfc/builtin", __FILE__, __LINE__);
 
-    const rutz::time t1 = rutz::time::user_rusage();
-    for (int i = 0; i < 2500; ++i)
-      for (int f = 1; f <= 100; ++f)
-        x += dash::erfc(double(i)/1000.0);
-    const rutz::time t2 = rutz::time::user_rusage();
-    const rutz::time custom_erfc = t2-t1;
+    {
+      rutz::trace t(p1, false);
+      double x = 0.0;
+      for (int i = 0; i < 2500; ++i)
+        for (int f = 1; f <= 100; ++f)
+          x += dash::erfc(double(i)/1000.0);
+    }
 
-    x = 0.0;
-
-    const rutz::time t3 = rutz::time::user_rusage();
-    for (int i = 0; i < 2500; ++i)
-      for (int f = 1; f <= 100; ++f)
-        x += ::erfc(double(i)/1000.0);
-    const rutz::time t4 = rutz::time::user_rusage();
-    const rutz::time builtin_erfc = t4-t3;
-
-    dbg_eval_nl(0, custom_erfc.msec());
-    dbg_eval_nl(0, builtin_erfc.msec());
+    {
+      rutz::trace t(p2, false);
+      double x = 0.0;
+      for (int i = 0; i < 2500; ++i)
+        for (int f = 1; f <= 100; ++f)
+          x += ::erfc(double(i)/1000.0);
+    }
   }
 
   void testGammaln()
@@ -89,26 +86,24 @@ namespace
     for (int f = 1; f <= 100; ++f)
       TEST_REQUIRE_APPROX(dash::gammaln(f), ::lgamma(f), 1e-5);
 
-    double x = 0.0;
+    static rutz::prof p1("testprof/gammaln/custom", __FILE__, __LINE__);
+    static rutz::prof p2("testprof/gammaln/builtin", __FILE__, __LINE__);
 
-    const rutz::time t1 = rutz::time::user_rusage();
-    for (int i = 0; i < 2500; ++i)
-      for (int f = 1; f <= 100; ++f)
-        x += dash::gammaln(f);
-    const rutz::time t2 = rutz::time::user_rusage();
-    const rutz::time custom_gammaln = t2-t1;
+    {
+      rutz::trace t(p1, false);
+      double x = 0.0;
+      for (int i = 0; i < 2500; ++i)
+        for (int f = 1; f <= 100; ++f)
+          x += dash::gammaln(f);
+    }
 
-    x = 0.0;
-
-    rutz::time t3 = rutz::time::user_rusage();
-    for (int i = 0; i < 2500; ++i)
-      for (int f = 1; f <= 100; ++f)
-        x += ::lgamma(f);
-    rutz::time t4 = rutz::time::user_rusage();
-    const rutz::time builtin_lgamma = t4-t3;
-
-    dbg_eval_nl(0, custom_gammaln.msec());
-    dbg_eval_nl(0, builtin_lgamma.msec());
+    {
+      rutz::trace t(p2, false);
+      double x = 0.0;
+      for (int i = 0; i < 2500; ++i)
+        for (int f = 1; f <= 100; ++f)
+          x += ::lgamma(f);
+    }
   }
 }
 
