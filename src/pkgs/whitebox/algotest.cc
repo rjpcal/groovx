@@ -36,6 +36,8 @@
 
 #include "util/algo.h"
 
+#include "tcl/tclpkg.h"
+
 #include "util/trace.h"
 
 namespace

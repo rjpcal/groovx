@@ -36,6 +36,7 @@
 
 #include "pkgs/testutils.h"
 
+#include "tcl/tclpkg.h"
 #include "tcl/tcltimerscheduler.h"
 
 #include "util/sharedptr.h"

@@ -34,8 +34,6 @@
 
 #include "util/error.h"
 
-#include "tcl/tclpkg.h"
-
 #include "util/fileposition.h"
 
 #include <cmath>

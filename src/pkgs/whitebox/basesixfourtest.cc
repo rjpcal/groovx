@@ -39,6 +39,8 @@
 #include "util/fstring.h"
 #include "util/rand.h"
 
+#include "tcl/tclpkg.h"
+
 #include <cstring> // for memcmp()
 
 #include "util/trace.h"

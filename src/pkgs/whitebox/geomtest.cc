@@ -36,6 +36,8 @@
 
 #include "pkgs/testutils.h"
 
+#include "tcl/tclpkg.h"
+
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
