@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 29 09:19:25 1999
-// written: Fri Nov 10 17:27:03 2000
+// written: Tue Nov 14 21:38:26 2000
 // $Id$
 //
 // CloneFace is a modified version of Face that allows additional
@@ -58,10 +58,16 @@ public:
 		face features. */
   virtual double getVertOffset() const;
 
+  /// control aspect ratio of eye outline
+  TField<double> eyeAspect;
+
+  /// amount of vertical offset of all features
+  TField<double> vertOffset;
+
+  static const FieldMap& classFields();
+
 private:
   double itsCtrlPnts[24];		  // Bezier control points for face outline
-  double itsEyeAspect;			  // control aspect ratio of eye outline
-  double itsVertOffset;			  // amount of vertical offset of all features
 };
 
 static const char vcid_cloneface_h[] = "$Header$";
