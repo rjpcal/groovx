@@ -64,7 +64,6 @@ public:
   virtual int readInt(const char* name);
   virtual bool readBool(const char* name);
   virtual double readDouble(const char* name);
-  virtual char* readCstring(const char* name);
   virtual void readValueObj(const char* name, Value& value);
 
   virtual IO::IoObject* readObject(const char* name);
@@ -72,6 +71,9 @@ public:
   virtual void readBaseClass(const char* baseClassName, IO::IoObject* basePart);
 
   virtual IO::IoObject* readRoot(IO::IoObject* root=0);
+
+protected:
+  virtual char* readCstring(const char* name);
 
 private:
   STD_IO::istream& itsInStream;
@@ -122,7 +124,6 @@ public:
   virtual void writeInt(const char* name, int val);
   virtual void writeBool(const char* name, bool val);
   virtual void writeDouble(const char* name, double val);
-  virtual void writeCstring(const char* name, const char* val);
   virtual void writeValueObj(const char* name, const Value& value);
 
   virtual void writeObject(const char* name, const IO::IoObject* obj);
@@ -130,6 +131,9 @@ public:
   virtual void writeBaseClass(const char* baseClassName, const IO::IoObject* basePart);
 
   virtual void writeRoot(const IO::IoObject* root);
+
+protected:
+  virtual void writeCstring(const char* name, const char* val);
 
 private:
   STD_IO::ostream& itsOutStream;
