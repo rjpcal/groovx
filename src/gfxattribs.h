@@ -3,7 +3,7 @@
 // gfxattribs.h
 // Rob Peters
 // created: Tue Mar  9 18:28:13 1999
-// written: Sat Nov 20 21:59:59 1999
+// written: Mon Dec  6 16:08:00 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,16 +44,10 @@ public:
     return ((theFlags & flag) != 0);
   }
 
-  ///
-  static double getScreenPpi() { return theScreenPpi; }
-  ///
-  static void setScreenPpi(double f) { theScreenPpi = f; }
-
 private:
   GfxAttribs ();                // this class not to be instantiated
   
   static GfxFlag theFlags;
-  static double theScreenPpi;
 };
 
 static const char vcid_gfxattribs_h[] = "$Header$";
