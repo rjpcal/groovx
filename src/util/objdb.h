@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Sat Jun  9 14:23:59 2001
+// written: Tue Jun 12 10:48:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,6 +51,7 @@ class ObjDb {
 private:
   static ObjDb theInstance;
 
+protected:
   /// Default constructor makes an empty list.
   ObjDb();
 
@@ -70,39 +71,39 @@ public:
 
   class Iterator {
   private:
-	 ItrImpl* itsImpl;
+    ItrImpl* itsImpl;
   public:
-	 Iterator(ItrImpl* impl);
-	 ~Iterator();
-	 Iterator(const Iterator& other);
-	 Iterator& operator=(const Iterator& other);
+    Iterator(ItrImpl* impl);
+    ~Iterator();
+    Iterator(const Iterator& other);
+    Iterator& operator=(const Iterator& other);
 
-	 bool operator==(const Iterator& other) const;
+    bool operator==(const Iterator& other) const;
 
-	 bool operator!=(const Iterator& other) const
-		{ return !(this->operator==(other)); }
+    bool operator!=(const Iterator& other) const
+      { return !(this->operator==(other)); }
 
-	 Iterator& operator++();
+    Iterator& operator++();
 
-	 int getId() const;
+    int getId() const;
 
-	 Util::Object* getObject() const;
+    Util::Object* getObject() const;
   };
 
   class IdIterator : public Iterator {
-	 IdIterator();
+    IdIterator();
   public:
-	 IdIterator(const Iterator& other) : Iterator(other) {}
+    IdIterator(const Iterator& other) : Iterator(other) {}
 
-	 int operator*() const { return getId(); }
+    int operator*() const { return getId(); }
   };
 
   class PtrIterator : public Iterator {
-	 PtrIterator();
+    PtrIterator();
   public:
-	 PtrIterator(const Iterator& other) : Iterator(other) {}
+    PtrIterator(const Iterator& other) : Iterator(other) {}
 
-	 Util::Object* operator*() const { return getObject(); }
+    Util::Object* operator*() const { return getObject(); }
   };
 
   Iterator begin() const;
@@ -116,32 +117,32 @@ public:
 
   template <class T>
   class CastingIterator {
-	 Iterator itsItr;
-	 const Iterator itsEnd;
+    Iterator itsItr;
+    const Iterator itsEnd;
 
-	 void advanceToValid()
-	 {
-		while ((itsItr != itsEnd) && (dynamic_cast<T*>(itsItr.getObject())==0))
-		  ++itsItr;
-	 }
+    void advanceToValid()
+    {
+      while ((itsItr != itsEnd) && (dynamic_cast<T*>(itsItr.getObject())==0))
+        ++itsItr;
+    }
 
   public:
-	 CastingIterator(const Iterator& begin) :
-		itsItr(begin), itsEnd(ObjDb::theDb().end()) { advanceToValid(); }
+    CastingIterator(const Iterator& begin) :
+      itsItr(begin), itsEnd(ObjDb::theDb().end()) { advanceToValid(); }
 
-	 CastingIterator& operator++() { ++itsItr; advanceToValid(); return *this; }
+    CastingIterator& operator++() { ++itsItr; advanceToValid(); return *this; }
 
-	 bool operator==(const CastingIterator& other)
-	   { return itsItr == other.itsItr; }
+    bool operator==(const CastingIterator& other)
+      { return itsItr == other.itsItr; }
 
-	 bool operator!=(const CastingIterator& other)
-	   { return itsItr != other.itsItr; }
+    bool operator!=(const CastingIterator& other)
+      { return itsItr != other.itsItr; }
 
-	 T* operator*() const
-	   { return &(dynamic_cast<T&>(*itsItr.getObject())); }
+    T* operator*() const
+      { return &(dynamic_cast<T&>(*itsItr.getObject())); }
 
-	 T* operator->() const
-	   { return operator*(); }
+    T* operator->() const
+      { return operator*(); }
   };
 
   //
@@ -152,7 +153,7 @@ public:
   int count() const;
 
   /** Returns true if 'id' is a valid index into a non-NULL T* in
-		the PtrList, given its current size. */
+      the PtrList, given its current size. */
   bool isValidId(Util::UID id) const;
 
   /** If the object at \a id is unshared, removes reference to the
@@ -181,14 +182,14 @@ public:
   void clearOnExit();
 
   /** Return the \c Util::Object* at the index given by \a id. Checks
-		first if \a id is a valid index, and throws an \c InvalidIdError
-		if it is not. */
+      first if \a id is a valid index, and throws an \c InvalidIdError
+      if it is not. */
   Util::Object* getCheckedPtrBase(Util::UID id) throw (InvalidIdError);
 
   /** Add ptr at the next available location, and return the index
-		where it was inserted. If necessary, the list will be expanded
-		to make room for the ptr. The PtrList now assumes control of the
-		memory management for the object *ptr. */
+      where it was inserted. If necessary, the list will be expanded
+      to make room for the ptr. The PtrList now assumes control of the
+      memory management for the object *ptr. */
   void insertPtrBase(Util::Object* ptr);
 
 private:
