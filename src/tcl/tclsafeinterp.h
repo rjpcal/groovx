@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// tclutil.h
+// tclsafeinterp.h
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,8 +10,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLUTIL_H_DEFINED
-#define TCLUTIL_H_DEFINED
+#ifndef TCLSAFEINTERP_H_DEFINED
+#define TCLSAFEINTERP_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCONVERT_H_DEFINED)
 #include "tcl/tclconvert.h"
@@ -102,5 +102,5 @@ private:
   borrowed_ptr<Tcl_Interp> const itsInterp;
 };
 
-static const char vcid_tclutil_h[] = "$Header$";
-#endif // !TCLUTIL_H_DEFINED
+static const char vcid_tclsafeinterp_h[] = "$Header$";
+#endif // !TCLSAFEINTERP_H_DEFINED

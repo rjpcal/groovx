@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Thu Jul 19 15:46:49 2001
+// written: Thu Jul 19 21:14:29 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -27,7 +27,7 @@
 
 #include "tcl/tclcode.h"
 #include "tcl/tclpkg.h"
-#include "tcl/tclutil.h"
+#include "tcl/tclsafeinterp.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"

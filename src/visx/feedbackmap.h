@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 16:58:49 2001
-// written: Thu Jul 19 17:01:18 2001
+// written: Thu Jul 19 21:14:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "tcl/tclcode.h"
 #include "tcl/tcllistobj.h"
 #include "tcl/tclobjptr.h"
-#include "tcl/tclutil.h"
+#include "tcl/tclsafeinterp.h"
 #include "util/minivec.h"
 #include "util/strings.h"
 

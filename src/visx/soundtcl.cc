@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Wed Jul 18 12:27:38 2001
+// written: Thu Jul 19 21:14:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 #include "sound.h"
 
 #include "tcl/tclpkg.h"
-#include "tcl/tclutil.h"
+#include "tcl/tclsafeinterp.h"
 
 #include "util/objfactory.h"
 #include "util/strings.h"

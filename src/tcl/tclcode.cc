@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:29:16 2001
-// written: Mon Jul 16 14:47:30 2001
+// written: Thu Jul 19 21:14:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #include "tcl/tclcode.h"
 
 #include "tcl/tclerror.h"
-#include "tcl/tclutil.h"
+#include "tcl/tclsafeinterp.h"
 
 #include "util/errorhandler.h"
 

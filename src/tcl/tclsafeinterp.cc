@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// tclutil.cc
+// tclsafeinterp.cc
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,10 +10,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef TCLUTIL_CC_DEFINED
-#define TCLUTIL_CC_DEFINED
+#ifndef TCLSAFEINTERP_CC_DEFINED
+#define TCLSAFEINTERP_CC_DEFINED
 
-#include "tcl/tclutil.h"
+#include "tcl/tclsafeinterp.h"
 
 #include "tcl/tclcode.h"
 #include "tcl/tclerror.h"
@@ -219,5 +219,5 @@ DOTRACE("Tcl::SafeInterp::handleError");
   throw TclError(msg);
 }
 
-static const char vcid_tclutil_cc[] = "$Header$";
-#endif // !TCLUTIL_CC_DEFINED
+static const char vcid_tclsafeinterp_cc[] = "$Header$";
+#endif // !TCLSAFEINTERP_CC_DEFINED
