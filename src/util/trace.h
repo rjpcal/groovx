@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Sat May 12 09:02:22 2001
+// written: Tue Jun 19 14:24:03 2001
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -23,7 +23,7 @@
 //
 // The behavior of the control macros are as follows:
 //
-// 1) if LOCAL_PROF is defined, profiling will always occur 
+// 1) if LOCAL_PROF is defined, profiling will always occur
 // 2) if LOCAL_TRACE is defined, profiling AND tracing will always occur
 // 3) if TRACE is defined, profiling AND tracing will occur, EXCEPT:
 // 4) if NO_TRACE is defined, TRACE is ignored
@@ -88,35 +88,35 @@ public:
   int count() const { return callCount; }
 
   void add(timeval t)
-	 {
-		totalTime.tv_sec += t.tv_sec; 
-		totalTime.tv_usec += t.tv_usec;
-		// avoid overflow
-		while (totalTime.tv_usec >= 1000000) {
-		  ++(totalTime.tv_sec);
-		  totalTime.tv_usec -= 1000000;
-		}
-		// avoid underflow
-		while (totalTime.tv_usec <= -1000000) {
-		  --(totalTime.tv_sec);
-		  totalTime.tv_usec += 1000000;
-		}
-		++callCount; 
-	 }
+    {
+      totalTime.tv_sec += t.tv_sec;
+      totalTime.tv_usec += t.tv_usec;
+      // avoid overflow
+      while (totalTime.tv_usec >= 1000000) {
+        ++(totalTime.tv_sec);
+        totalTime.tv_usec -= 1000000;
+      }
+      // avoid underflow
+      while (totalTime.tv_usec <= -1000000) {
+        --(totalTime.tv_sec);
+        totalTime.tv_usec += 1000000;
+      }
+      ++callCount;
+    }
 
   const char* name() const { return funcName; }
 
   double avgTime() const
-	 { 
-		return (double(totalTime.tv_sec)*1000000 + totalTime.tv_usec)
-		  / callCount; 
-	 }
+    {
+      return (double(totalTime.tv_sec)*1000000 + totalTime.tv_usec)
+        / callCount;
+    }
 
-  void printProfData(ostream& os) const;
+  void printProfData(STD_IO::ostream& os) const;
 
   static void resetAllProfData();
 
-  static void printAllProfData(ostream& os);
+  static void printAllProfData(STD_IO::ostream& os);
 
 private:
   Prof(const Prof&);
@@ -135,7 +135,7 @@ public:
   static Mode getMode();
 
   static void printStackTrace(); // just print on cerr
-  static void printStackTrace(ostream& os);
+  static void printStackTrace(STD_IO::ostream& os);
 
   Trace(Prof& p, bool useMsg);
   ~Trace();
