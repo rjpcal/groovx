@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 10 18:57:59 2001
-// written: Mon Sep 10 18:58:40 2001
+// written: Mon Sep 10 19:00:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "tcl/tclpkg.h"
 
 #define TEST_REQUIRE(expr) \
-    if (!expr) \
+    if (!(expr)) \
       throw Util::Error(fstring("test for '", #expr, "' failed"));
 
 #define DEF_TEST(pkg, func) pkg->def(#func, "", &func)
