@@ -3,97 +3,45 @@
 // listpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 29 17:23:03 1999
-// written: Tue Dec  7 18:34:57 1999
+// written: Wed Dec 15 17:39:25 1999
 // $Id$
 //
-// This file defines a template TclPkg intended to be used with List's
-// that implement the basic PtrList interface.
+// This file defines a TclPkg to be used with IoPtrList's.
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef LISTPKG_H_DEFINED
 #define LISTPKG_H_DEFINED
 
-#ifndef VECTOR_DEFINED
-#include <vector>
-#define VECTOR_DEFINED
-#endif
-
 #ifndef TCLITEMPKG_H_DEFINED
 #include "tclitempkg.h"
 #endif
 
+#ifndef IOPTRLIST_H_DEFINED
+#include "ioptrlist.h"
+#endif
+
 namespace Tcl {
+  class IoPtrListPkg;
+}
 
 //---------------------------------------------------------------------
 //
-// GetValidIdsCmd --
+// Tcl::IoPtrListPkg --
 //
 //---------------------------------------------------------------------
 
-template <class List>
-class GetValidIdsCmd : public TclItemCmd<List> {
+class Tcl::IoPtrListPkg : public Tcl::CTclIoItemPkg<IoPtrList> {
 public:
-  GetValidIdsCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<List>(pkg, cmd_name, NULL, 1, 1) {}
-protected:
-  virtual void invoke() {
-	 vector<int> ids;
-	 List* list = TclItemCmd<List>::getItem();
-	 list->getValidIds(ids);
-	 TclCmd::returnSequence(ids.begin(), ids.end());
-  }
-};
+  IoPtrListPkg(Tcl_Interp* interp, IoPtrList& aList,
+					const char* pkg_name, const char* version);
 
-//---------------------------------------------------------------------
-//
-// IsValidIdCmd --
-//
-//---------------------------------------------------------------------
+  virtual IO& getIoFromId(int);
+  virtual IoPtrList* getCItemFromId(int);
 
-template <class List>
-class IsValidIdCmd : public TclItemCmd<List> {
-public:
-  IsValidIdCmd(TclItemPkg* pkg, const char* cmd_name) :
-	 TclItemCmd<List>(pkg, cmd_name, "item_id", 2, 2) {}
-protected:
-  virtual void invoke() {
-	 int id = TclCmd::getIntFromArg(1);
-	 List* list = TclItemCmd<List>::getItem();
-	 TclCmd::returnBool(list->isValidId(id));
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// ListPkg --
-//
-//---------------------------------------------------------------------
-
-template <class List>
-class ListPkg : public CTclIoItemPkg<List> {
-public:
-  ListPkg(Tcl_Interp* interp, List& aList,
-			 const char* pkg_name, const char* version) :
-	 CTclIoItemPkg<List>(interp, pkg_name, version, 0),
-	 itsList(aList)
-  {
-	 declareGetter("count", new CGetter<List, int>(&List::count));
-	 declareAction("reset", new CAction<List>(&List::clear));
-	 declareSetter("remove", new CSetter<List, int>(&List::remove), "item_id");
-	 addCommand( new GetValidIdsCmd<List>(this, 
-											 TclPkg::makePkgCmdName("getValidIds")) );
-	 addCommand( new IsValidIdCmd<List>(this,
-											 TclPkg::makePkgCmdName("isValidId")) );
-  }
-
-  virtual IO& getIoFromId(int) { return dynamic_cast<IO&>(itsList); }
-  virtual List* getCItemFromId(int) { return &itsList; }
 private:
-  List& itsList;
+  IoPtrList& itsList;
 };
-
-} // end namespace Tcl
 
 static const char vcid_listpkg_h[] = "$Header$";
 #endif // !LISTPKG_H_DEFINED
