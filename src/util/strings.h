@@ -3,7 +3,7 @@
 // strings.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:16:48 2000
-// written: Mon Mar  6 17:52:46 2000
+// written: Mon Mar  6 19:26:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,6 +31,7 @@ public:
 
   const char* c_str() const { return itsText; }
   unsigned int length() const { return itsLength; }
+  bool empty() const { return (length() == 0); }
 
 private:
   const char* const itsText;
@@ -65,6 +66,7 @@ public:
 
   const char* c_str() const { return itsText; }
   unsigned int length() const { return itsLength; }
+  bool empty() const { return (length() == 0); }
 
 private:
   char* itsText;
@@ -99,6 +101,7 @@ public:
 
   const char* c_str() const;
   unsigned int length() const;
+  bool empty() const { return (length() == 0); }
 
 private:
   struct Impl;
