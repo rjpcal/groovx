@@ -79,6 +79,16 @@ implementation I just retrieve the Canvas from the
 Application->Experiment->Canvas call chain. Thus GLCanvas::theCanvas()
 is eliminated.
 
+(20-Sep-1999, done 19-Jan-2000) Fixed a nasty memory corruption bug
+that was due to neglecting to set GL_PACK_ALIGNMENT appropriately
+before reading pixel data out of the screenbuffer into main
+memory. Since the value for GL_PACK_ALIGNMENT defaults to 4, it is not
+sufficient to allocate (width*height) bytes if the row size is not
+divisible by 4. How to avoid these problems in the future? Include a
+byteAlignment member in Bitmap, add a utility function that
+reallocates appropriate space for a given width and height. [Later]
+OK, this is handled centrally by Gfx::BmapData.
+
 (11-Jan-2000, done 20-Jan-2000) Need a way to defer loading of pbm
 files from when Bitmap's are deserialized until when they are first
 used. This would require a way to for the files to be loaded on
@@ -153,6 +163,14 @@ the convention that {}'s protect ^'s, so in order to have reached the
 end of an attribute, we must see a '^' and be at brace level 0. This
 in turn required that {}'s be treated specially--they must be escaped
 with '\' when occurring within an attribute string. 
+
+(6-Oct-1999, done 23-Mar-2000) GrObj needs a saveBitmapCache()
+function to dump a cached bitmap to file. Or maybe just a
+writeBitmap() function, that would apply even for objects whose mode
+is not one of the bitmap cache modes, and that would generate a
+temporary bitmap if necessary. [Later] This stuff belongs outside of
+the GrObj class, since it needs only the public interface... perhaps
+it should just go in grobjtcl.cc file.
 
 (28-Mar-2000, done 29-Mar-2000) Need to implement SerialRh (response
 handler). This will share a lot of code with EventResponseHdlr, so we
@@ -598,6 +616,11 @@ one. So there is no way to un-corrupt the program state.
 Trial by using a state pattern instead of an enum TrialState. Done for
 EventResponseHdlr, but I'm not sure this helped make things clearer.
 
+(28-Jun-1999, done 11-Oct-2000) Need way for TclCmd's to "own"
+TclEvalCmd's, so that the Tcl_Interp* management can be hidden from
+the client. [Later] OK, this is done fairly well by Tcl::Interp and
+Tcl::Code.
+
 (done 16-Oct-2000) NullablePtrHandle? Allows resources to be
 purged. Done. 
 
@@ -673,6 +696,10 @@ rather than trying to support multiple formats. Hopefully this is less
 of a problem with ASW format than with the Legacy format. I need to
 add a bunch of test cases that ensure that various old files
 (e.g. from psychophysics, fMRI) are still readable with each version.
+
+(3-Jul-1999, done 24-Oct-2000) Tlist makeSingles, etc. could now take
+a sequence/list of objids as an optional argument utilizing
+TclCmd::getSequenceFromArg.
 
 (note 25-Oct-2000) Note to self. std::map is not actually such a slow
 compiler, as long as neither of the types is std::string... only takes

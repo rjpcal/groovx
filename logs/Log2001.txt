@@ -63,6 +63,11 @@ choose not to be automatically inserted in the IoDb, by the addition
 of a "doInsert" argument to the IoObject constructor that defaults to
 true.
 
+(29-Oct-2000, done 27-May-2001) Add a template CastingIterator to
+IoPtrList that "sees" only objects of the template type. This can be a
+simple wrapper around the plain Iterator, needing to override
+operator++ and operator*(), and adding getTypedObject().
+
 +-----
 |
 | (27-May-2001) Split IoObject into two parts: (1) defines the concept
@@ -80,6 +85,14 @@ true.
 | and IoDb now stores Util::Object*'s. IdItem is also moved to util/.
 |
 +-----
+
+(3-Jul-1999, 7-Jun-2001) Need to correctly handle widget destruction
+within the ObjTogl package. The problem is that if a new Togl widget
+is created and then destroyed, the "offical" Togl widget (the
+singleton) is no longer the current glX rendering context... perhaps
+there should be a line in both the create and destroy callbacks that
+resets the "official" widget as the glX-current context. [Later] This
+is handled now in Toglet::currentToglet Tcl command.
 
 +-----
 |
@@ -136,3 +149,203 @@ system...
 event dispatching by calling Tk_CreateEventHandler; then we can add
 event bindings to the widget using C++ only, without having to use Tcl
 script code.
+
++-----
+|
+| 
+| (9-Jul-2001) Big issue: finding a workable computing environment to
+| get going with new models. Main question: which high-level language(s)
+| to use?
+| 
+| Choices:
+| 
+|   Tcl:
+| 
+|     + I already have a lot of time invested here, and a good framework
+| 		for interfacing Tcl with C++.
+| 
+| 	 - poor support for numerics -- I could implement my own objects,
+| 		but even then the syntax is very clumsy (no infix operaters, no
+| 		slices, etc.)
+| 
+| 	 - unfamiliar interface for visualization
+| 
+|   Matlab:
+| 
+|     + Good visualization tools
+| 
+| 	 + Huge numerical library already available
+| 
+| 	 - Slow
+| 
+| 	 - Programming language lacks facilities for modularity
+| 
+| 	 - Clunky C-interface
+| 
+|   Python:
+| 
+|     + Dynamic object-oriented language
+| 
+| 	 + Excellent facilities for modular programming
+| 
+| 	 - Unfamiliar C-interface (but C++ interface is in boost::python)
+| 
+| 	 + NumPy package
+| 
+| 	 - May not work as an experiment scripter (no event loop)
+| 
+| 
+| (done 10-Jul-2001) OK, I have a plan! I tried using the MATLAB engine
+| API, and found it was very easy to set up an embedded MATLAB engine in
+| Tcl, so that we can exchange arrays with the MATLAB workspace, and can
+| run arbitrary MATLAB commands in the engine (including visualization,
+| etc.).
+| 
+| So, for now, I can keep using the Tcl interface as I have been, and
+| now introduce the classification models there.
+| 
+| In the future, I can switch over to Python/C++/MATLAB, but this is not
+| urgent now.
+| 
+|
++-----
+
+(10-Jul-2001, done 11-Jul-2001) Refactor all the Tcl_Obj* conversions:
+we should have one set of template free functions
+Tcl::getValFromObj<>, which do not require a Tcl_Interp*. These can be
+used in TclCmd and in TclValue. Then TclValue will not need a
+Tcl_Interp*.
+
+(4-Jun-2001, done 11-Jul-2001) Could have a CmdContext class that
+represents the arguments and return value of a Tcl command invocation,
+and change the interface of TclCmd::invoke() to
+TcmCmd::invoke(CmdInvocation& inv). Right now the CmdInvocation stuff
+is just rolled right into TclCmd.
+
+(10-Jul-2001, done 12-Jul-2001) Implement VecCmd.
+
+(27-Jun-1999, done 13-Jul-2001) could perhaps use TclCmd again in
+KbdResponseHandler to wrap up the event binding... this would allow
+for exceptions during the event handling.
+
+(2-Nov-2000, done 16-Jul-2001) Can replace void*'s in tclitempkg.h
+with something safer?  [16-Jul-2001] Yes... finally this is done, with
+all-generic functor approach to building TclCmd's.
+
+(24-May-2001, done 16-Jul-2001) Should enable objects to be passed
+to/from Tcl by specializing declareGetter(), declareSetter(), etc., so
+that IdItem's are converted to/from IO::UID's as necessary. OK, this
+was done with partial specializations of CGetter and CSetter. But,
+now, is there some way to unify this mechanism with the one that
+extracts the object from the first argument of Tcl commands?
+[16-Jul-2001] OK, this is done now with specializations of the static
+functions in the Tcl::Convert<> template.
+
+(15-Jul-2001, done 18-Jul-2001) Who still uses addCommand? ... after a
+bunch of whittling, I've got it down to just TclItemPkg... so now, we
+can make addCommand() protected in TclPkg. Then, all public clients
+can just use TclItemPkg, so we can rename TclPkg to Tcl::PkgBase, and
+rename TclItemPkg to Tcl::Pkg.
+
+(17-Jan-2000, done 18-Jul-2001) We should have a TclVecItemCmd<C>
+template that parallels TclItemCmd<C> but can handle vectors of
+items. Mainly it would need a getItems() member that returns a
+reference to a vector<C*>. ... no, better would be to have getItems()
+take an insert iterator. Actually, there ought to be some way to get
+the base class to take care of most of the iteration, so that the
+subclasses just need to define what to do for each element. This would
+be similar to the way VecSetterBaseCmd provides a partial
+implementation for TVecSetterCmd. [Later] This need is taken care of
+with the new template-functor approach to Tcl commands.
+
+(10-Nov-1999, done 18-Jul-2001) Had an idea for allowing TclCmd's to
+be more generic... define abstract classes of extractors, which
+provide ways to get C++ types out of Tcl_Obj*'s. The native types
+would be straightforward, but more interesting would be to define
+extractors for STL containers... actually, would this give me anything
+more than I have now with the various getXxxFromArg() methods in
+TclCmd? Answer: Yes -- it would provide a bit more modularity, since
+the extractors would be separate from the commands, and new extractors
+could be introduced without having to add a method to TclCmd by
+subclassing it. [Later] Interesting... this is just about exactly what
+I have implemented with the Tcl::Convert<>::toTcl() and
+Tcl::Convert<>::fromTcl() functions, which work along with a
+Tcl::Context to set up a command invocation.
+
+(18-Jul-2001, done 18-Jul-2001) GrObjImpl is a mess because we don't
+always have a bounding box... why not split off a base class of GrObj
+which doesn't require a bounding box, so that the implementation of
+GrObj can be more demanding and require a bounding box.
+
+(5-Oct-2000, done 20-Jul-2001) Add zstream to Pbm.
+
+(21-Jul-2001, done 6-Aug-2001) Clean up Trial by getting rid of
+GxSeparator's there. Get rid of add(). Then itsGxNodes can be actually
+GxNode's and not GxSeparator's.
+
+(done 8-Aug-2001) Rename fixed_string to fstring or dstring.
+
+(done 8-Aug-2001) Make Error hold a fixed_string by value.
+
+(8-Aug-2001, done 9-Aug-2001) Dump Error template constructors and
+template append()'s.
+
+(8-Aug-2001, done 9-Aug-2001) Dump string_literal.
+
+(19-Jan-2000, done Jul-2001) Does BitmapRep really need to implement
+grUnRender(), or can we just use GrObj's GROBJ_CLEAR_BOUNDING_BOX
+mode? ... the latter.
+
+(10-Aug-2001, done 10-Aug-2001) GrObj:
+
+-- make GLCacheNode (extract it out of GrObjRenderer), and put it on
+	top of the GrObjNode
+
+	this will handle GLCOMPILE, SWAP_FORE_BACK and CLEAR_BOUNDING_BOX
+
+-- make BitmapCache (what is left of GrObjRenderer), and put it on top
+   of the hierarchy
+
+	this will handle GL_BITMAP_CACHE and X11_BITMAP_CACHE
+
+(14-Aug-2001, done 15-Aug-2001) Migration path for Field:
+
+-- make Field class unnecessary (or at least trivial)
+
+-- real functionality should go into FieldContainer, FieldInfo, and
+   FieldMemberPtr
+
+(done 15-Aug-2001) Rename FieldInfo to Field.
+
+(8-Oct-1999, 15-Aug-2001) GrObj should use Property's, so that GrObj
+attributes can be added to the list of a subclass's
+attributes. [Later] OK, made GrObj a FieldContainer.
+
+(5-Jun-2001, done 20-Aug-2001) Use a virtual iterator w/
+envelope/letter pattern for my custom iterators that wrap STL
+iterators (such as IoDb::Iterator).  [Later] This would come in quite
+handy in allowing read/write sequences to be virtual functions of
+Reader+Writer rather than external templates in
+Read/WriteUtils. [Later still] OK, implemented Util::FwdIter<>,
+Util::BidirIter<>, and Util::RxsIter<>, which are all implemented as
+handles to an appropriate interface. Adapters are provided which
+implement these interfaces from STL-style iterators or raw pointers.
+
+(14-Oct-1999, done 21-Aug-2001) Gabor should have a
+patchWidth/patchHeight attribute, that controls not the size of the
+object inside the patch, but the size of the patch itself (i.e. how
+big the window onto the Gabor patch is). [Later] This is accomplished
+with the resolution and pointSize fields.
+
+(15-Oct-1999, nixed 21-Aug-2001) There's a unifying force behind two
+things: 1) Tcl's idea of dual representation-- native rep/string rep;
+and 2) idea of serializing objects to a stream by converting them into
+a string format. I don't know exactly what to make of it at this
+point, but it seems like it could be useful... This is parallel to the
+duality of makeIoList and getProperties()... these should really be
+merged. Dual-rep objects (perhaps a new DynamicValue subclass of
+Value) could be used in the implementation of
+AsciiStreamReader. [Later] Unfortunately this scheme won't work, since
+in a round-trip conversion to+from string, objects lose their
+identity--i.e., if we have two identical string-reps, do they refer to
+the same object, or to different but identical objects?
