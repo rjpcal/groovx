@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Mon Jul 16 07:10:07 2001
+// written: Mon Jul 16 07:32:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ Tcl::StringifyCmd::~StringifyCmd() {}
 void Tcl::StringifyCmd::invoke(Tcl::Context& ctx)
 {
 DOTRACE("Tcl::StringifyCmd::invoke");
-  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, (Util::UID*)0));
+  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
 
   DebugEval(typeid(*item).name());
 
@@ -110,7 +110,7 @@ DOTRACE("Tcl::DestringifyCmd::invoke");
 
   IO::LegacyReader reader(ist);
 
-  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, (Util::UID*)0));
+  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
 
   reader.readRoot(item.get());
 }
@@ -131,7 +131,7 @@ Tcl::WriteCmd::~WriteCmd() {}
 void Tcl::WriteCmd::invoke(Tcl::Context& ctx)
 {
 DOTRACE("Tcl::WriteCmd::invoke");
-  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, (Util::UID*)0));
+  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
 
   ostrstream ost;
 
@@ -178,7 +178,7 @@ Tcl::ReadCmd::~ReadCmd() {}
 void Tcl::ReadCmd::invoke(Tcl::Context& ctx)
 {
 DOTRACE("Tcl::ReadCmd::invoke");
-  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, (Util::UID*)0));
+  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
 
   const char* str = ctx.getCstringFromArg(ctx.objc() - 1);
 
@@ -204,7 +204,7 @@ Tcl::ASWSaveCmd::~ASWSaveCmd() {}
 void Tcl::ASWSaveCmd::invoke(Tcl::Context& ctx)
 {
 DOTRACE("Tcl::ASWSaveCmd::invoke");
-  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, (Util::UID*)0));
+  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
   fixed_string filename = ctx.getCstringFromArg(2);
 
   STD_IO::ofstream ofs(filename.c_str());
@@ -251,7 +251,7 @@ void Tcl::ASRLoadCmd::invoke(Tcl::Context& ctx)
 {
 DOTRACE("Tcl::ASRLoadCmd::invoke");
 
-  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, (Util::UID*)0));
+  Util::Ref<IO::IoObject> item(ctx.getValFromArg(1, TypeCue<Util::UID>()));
   fixed_string filename = ctx.getCstringFromArg(2);
 
   STD_IO::ifstream ifs(filename.c_str());

@@ -143,7 +143,7 @@ public:
 protected:
   virtual void invoke(Tcl::Context& ctx)
   {
-    Ref<ExptDriver> ed(ctx.getValFromArg(1, (unsigned int*)0));
+    Ref<ExptDriver> ed(ctx.getValFromArg(1, TypeCue<unsigned int>()));
     ed->edHaltExpt();
 
     ed->addLogInfo("Experiment paused.");

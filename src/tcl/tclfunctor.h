@@ -141,7 +141,7 @@ namespace Tcl
     void operator()(Tcl::Context& ctx)
     {
       ctx.setResult(itsFunc(
-          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0)
+          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>())
           ));
     }
 
@@ -157,7 +157,7 @@ namespace Tcl
     void operator()(Tcl::Context& ctx)
     {
       itsFunc(
-          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0)
+          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>())
           );
     }
 
@@ -180,8 +180,8 @@ namespace Tcl
     void operator()(Tcl::Context& ctx)
     {
       ctx.setResult(itsFunc(
-          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
-          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0)
+          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
+          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>())
           ));
     }
 
@@ -197,8 +197,8 @@ namespace Tcl
     void operator()(Tcl::Context& ctx)
     {
       itsFunc(
-          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
-          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0)
+          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
+          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>())
           );
     }
 
@@ -221,9 +221,9 @@ namespace Tcl
     void operator()(Tcl::Context& ctx)
     {
       ctx.setResult(itsFunc(
-          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
-          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0),
-          ctx.getValFromArg(3, (typename FuncTraits<Func>::Arg3_t*)0)
+          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
+          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>()),
+          ctx.getValFromArg(3, TypeCue<typename FuncTraits<Func>::Arg3_t>())
           ));
     }
 
@@ -239,9 +239,9 @@ namespace Tcl
     void operator()(Tcl::Context& ctx)
     {
       itsFunc(
-          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
-          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0),
-          ctx.getValFromArg(3, (typename FuncTraits<Func>::Arg3_t*)0)
+          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
+          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>()),
+          ctx.getValFromArg(3, TypeCue<typename FuncTraits<Func>::Arg3_t>())
           );
     }
 
@@ -264,10 +264,10 @@ namespace Tcl
     void operator()(Tcl::Context& ctx)
     {
       ctx.setResult(itsFunc(
-          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
-          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0),
-          ctx.getValFromArg(3, (typename FuncTraits<Func>::Arg3_t*)0),
-          ctx.getValFromArg(4, (typename FuncTraits<Func>::Arg4_t*)0)
+          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
+          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>()),
+          ctx.getValFromArg(3, TypeCue<typename FuncTraits<Func>::Arg3_t>()),
+          ctx.getValFromArg(4, TypeCue<typename FuncTraits<Func>::Arg4_t>())
           ));
     }
 
@@ -283,10 +283,10 @@ namespace Tcl
     void operator()(Tcl::Context& ctx)
     {
       itsFunc(
-          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
-          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0),
-          ctx.getValFromArg(3, (typename FuncTraits<Func>::Arg3_t*)0),
-          ctx.getValFromArg(4, (typename FuncTraits<Func>::Arg4_t*)0)
+          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
+          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>()),
+          ctx.getValFromArg(3, TypeCue<typename FuncTraits<Func>::Arg3_t>()),
+          ctx.getValFromArg(4, TypeCue<typename FuncTraits<Func>::Arg4_t>())
           );
     }
 
@@ -309,11 +309,11 @@ namespace Tcl
     void operator()(Tcl::Context& ctx)
     {
       ctx.setResult(itsFunc(
-          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
-          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0),
-          ctx.getValFromArg(3, (typename FuncTraits<Func>::Arg3_t*)0),
-          ctx.getValFromArg(4, (typename FuncTraits<Func>::Arg4_t*)0),
-          ctx.getValFromArg(5, (typename FuncTraits<Func>::Arg5_t*)0)
+          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
+          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>()),
+          ctx.getValFromArg(3, TypeCue<typename FuncTraits<Func>::Arg3_t>()),
+          ctx.getValFromArg(4, TypeCue<typename FuncTraits<Func>::Arg4_t>()),
+          ctx.getValFromArg(5, TypeCue<typename FuncTraits<Func>::Arg5_t>())
           ));
     }
 
@@ -329,11 +329,11 @@ namespace Tcl
     void operator()(Tcl::Context& ctx)
     {
       itsFunc(
-          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
-          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0),
-          ctx.getValFromArg(3, (typename FuncTraits<Func>::Arg3_t*)0),
-          ctx.getValFromArg(4, (typename FuncTraits<Func>::Arg4_t*)0),
-          ctx.getValFromArg(5, (typename FuncTraits<Func>::Arg5_t*)0)
+          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
+          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>()),
+          ctx.getValFromArg(3, TypeCue<typename FuncTraits<Func>::Arg3_t>()),
+          ctx.getValFromArg(4, TypeCue<typename FuncTraits<Func>::Arg4_t>()),
+          ctx.getValFromArg(5, TypeCue<typename FuncTraits<Func>::Arg5_t>())
           );
     }
 
@@ -356,12 +356,12 @@ namespace Tcl
     void operator()(Tcl::Context& ctx)
     {
       ctx.setResult(itsFunc(
-          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
-          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0),
-          ctx.getValFromArg(3, (typename FuncTraits<Func>::Arg3_t*)0),
-          ctx.getValFromArg(4, (typename FuncTraits<Func>::Arg4_t*)0),
-          ctx.getValFromArg(5, (typename FuncTraits<Func>::Arg5_t*)0),
-          ctx.getValFromArg(6, (typename FuncTraits<Func>::Arg6_t*)0)
+          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
+          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>()),
+          ctx.getValFromArg(3, TypeCue<typename FuncTraits<Func>::Arg3_t>()),
+          ctx.getValFromArg(4, TypeCue<typename FuncTraits<Func>::Arg4_t>()),
+          ctx.getValFromArg(5, TypeCue<typename FuncTraits<Func>::Arg5_t>()),
+          ctx.getValFromArg(6, TypeCue<typename FuncTraits<Func>::Arg6_t>())
           ));
     }
 
@@ -377,12 +377,12 @@ namespace Tcl
     void operator()(Tcl::Context& ctx)
     {
       itsFunc(
-          ctx.getValFromArg(1, (typename FuncTraits<Func>::Arg1_t*)0),
-          ctx.getValFromArg(2, (typename FuncTraits<Func>::Arg2_t*)0),
-          ctx.getValFromArg(3, (typename FuncTraits<Func>::Arg3_t*)0),
-          ctx.getValFromArg(4, (typename FuncTraits<Func>::Arg4_t*)0),
-          ctx.getValFromArg(5, (typename FuncTraits<Func>::Arg5_t*)0),
-          ctx.getValFromArg(6, (typename FuncTraits<Func>::Arg6_t*)0)
+          ctx.getValFromArg(1, TypeCue<typename FuncTraits<Func>::Arg1_t>()),
+          ctx.getValFromArg(2, TypeCue<typename FuncTraits<Func>::Arg2_t>()),
+          ctx.getValFromArg(3, TypeCue<typename FuncTraits<Func>::Arg3_t>()),
+          ctx.getValFromArg(4, TypeCue<typename FuncTraits<Func>::Arg4_t>()),
+          ctx.getValFromArg(5, TypeCue<typename FuncTraits<Func>::Arg5_t>()),
+          ctx.getValFromArg(6, TypeCue<typename FuncTraits<Func>::Arg6_t>())
           );
     }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:16:22 1999
-// written: Mon Jul 16 06:44:10 2001
+// written: Mon Jul 16 07:32:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ void Tcl::TVecSetterCmd<T>::invoke(Tcl::Context& ctx)
 {
 DOTRACE("Tcl::TVecSetterCmd<>::invoke");
   void* item = itsFetcher->getItemFromContext(ctx);
-  stack_type val = ctx.getValFromArg(2, (stack_type*)0);
+  stack_type val = ctx.getValFromArg(2, TypeCue<stack_type>());
   itsSetter->set(item, val);
 }
 

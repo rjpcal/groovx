@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Thu Jul 12 13:03:44 2001
+// written: Mon Jul 16 07:33:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,6 +33,12 @@ namespace Tcl
   class TclCmd;
   class Context;
 }
+
+template <class T>
+struct TypeCue
+{
+  typedef T Type;
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -173,10 +179,10 @@ public:
 
   /** Attempt to convert argument number \a argn to type \c T, and
       copy the result into \a val. */
-  template <class T>
-  T getValFromArg(unsigned int argn, T* /*dummy*/=0)
+  template <class Cue>
+  typename Cue::Type getValFromArg(unsigned int argn, Cue)
     {
-      return Tcl::Convert<T>::fromTcl(getObjv(argn));
+      return Tcl::Convert<typename Cue::Type>::fromTcl(getObjv(argn));
     }
 
   //---------------------------------------------------------------------
@@ -194,14 +200,14 @@ public:
   /** Attempts to convert argument number \a argn into a sequence of
       elements of type \c T, and inserts these through the insert
       iterator \a itr. */
-  template <class T, class Iterator>
-  void getSequenceFromArg(unsigned int argn, Iterator itr, T* /* dummy */)
+  template <class Cue, class Iterator>
+  void getSequenceFromArg(unsigned int argn, Iterator itr, Cue)
     {
       Tcl::List elements(getObjv(argn));
 
       for (unsigned int i = 0; i < elements.length(); ++i)
         {
-          *itr = Tcl::Convert<T>::fromTcl(elements[i]);
+          *itr = Tcl::Convert<typename Cue::Type>::fromTcl(elements[i]);
           ++itr;
         }
     }
