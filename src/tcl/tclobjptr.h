@@ -2,7 +2,7 @@
 // tclobjlock.h
 // Rob Peters
 // created: Tue May 11 13:44:19 1999
-// written: Mon Dec  6 13:38:20 1999
+// written: Tue Dec  7 18:13:00 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -10,6 +10,8 @@
 #define TCLOBJLOCK_H_DEFINED
 
 struct Tcl_Obj;
+
+namespace Tcl {
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -108,6 +110,8 @@ public:
 private:
   Tcl_Obj* itsObj;
 };
+
+} // end namespace Tcl
 
 static const char vcid_tclobjlock_h[] = "$Header$";
 #endif // !TCLOBJLOCK_H_DEFINED
