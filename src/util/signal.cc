@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Wed Jun 13 16:32:54 2001
+// written: Sat Jun 23 13:02:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,12 +68,14 @@ void Util::Observable::attach(Util::Observer* obs) {
 DOTRACE("Util::Observable::attach");
   if (!obs) return;
   itsImpl.itsObservers.push_back(ObsRef(obs, Util::WEAK));
+  DebugEvalNL(itsImpl.itsObservers.size());
 }
 
 void Util::Observable::detach(Util::Observer* obs) {
 DOTRACE("Util::Observable::detach");
   if (!obs) return;
   itsImpl.itsObservers.remove(ObsRef(obs, Util::WEAK));
+  DebugEvalNL(itsImpl.itsObservers.size());
 }
 
 void Util::Observable::sendStateChangeMsg() const {
@@ -85,6 +87,7 @@ DOTRACE("Util::Observable::sendStateChangeMsg");
        ii != end;
        ++ii)
     {
+      DebugPrintNL("sending state change...");
       if ((*ii).isValid())
         (*ii)->receiveStateChangeMsg(this);
     }
