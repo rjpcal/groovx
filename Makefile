@@ -438,17 +438,8 @@ ALL_HEADERS := $(wildcard $(SRC)/*.h)  $(wildcard $(SRC)/[a-z]*/*.h)
 
 DEP_FILE := $(DEP)/alldepends
 
-# (1) We don't need to give any -D options to mkdep.pl, since it is
-# conservative and assumes that all #include directives are actually
-# in effect, even if they might actually be conditionally compiled
-# away. (2) We don't need to give any -I options to mkdep.pl, since we
-# are only interested in dependencies within the current project (and
-# not on the standard headers, for example).
-
 $(DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS)
-	$(SCRIPTS)/splitnewlines $+ > make.files
-	mkdep.pl | $(SCRIPTS)/filterdep > $@
-	rm make.files make.ofiles
+	$(SCRIPTS)/pydep.py $(SRC) > $@
 
 include $(DEP_FILE)
 
