@@ -3,7 +3,7 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Wed Mar  8 16:36:05 2000
+// written: Thu Mar  9 17:44:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,10 +32,10 @@
 //---------------------------------------------------------------------
 
 namespace SoundTcl {
-  string_literal ok_sound_file =
-	 "/cit/rjpeters/face/audio/saw50_500Hz_300ms.au";
-  string_literal err_sound_file =
-	 "/cit/rjpeters/face/audio/saw50_350Hz_300ms.au";
+  const string_literal ok_sound_file(
+	 "/cit/rjpeters/face/audio/saw50_500Hz_300ms.au");
+  const string_literal err_sound_file(
+	 "/cit/rjpeters/face/audio/saw50_350Hz_300ms.au");
 
   class SoundCmd;
   class HaveAudioCmd;
