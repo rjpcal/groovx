@@ -3,7 +3,7 @@
 // subject.cc
 // Rob Peters
 // created: Dec-98
-// written: Thu Oct 21 18:47:52 1999
+// written: Thu Oct 21 23:12:05 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,6 @@
 #include "subject.h"
 
 #include <iostream.h>
-#include <string>
-#include <cstring>
 
 #include "ioutils.h"
 #include "reader.h"
@@ -46,25 +44,13 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 Subject::Subject(const char* name, const char* dir) : 
-  itsName(NULL), itsDirectory(NULL)
+  itsName(name ? name : ""), itsDirectory(dir ? dir : "")
 {
 DOTRACE("Subject::Subject");
-  if (name != NULL) {
-    itsName = new char[strlen(name)+1];
-    strcpy(itsName, name);
-  }
-  if (dir != NULL) {
-    itsDirectory = new char[strlen(dir)+1];
-    strcpy(itsDirectory, dir);
-  }
 }
 
 Subject::~Subject() {
 DOTRACE("Subject::~Subject");
-  if (itsName != NULL)
-    delete [] itsName;
-  if (itsDirectory != NULL)
-    delete [] itsDirectory;
 }
 
 Subject::Subject(istream &is, IOFlag flag) :
@@ -81,8 +67,9 @@ DOTRACE("Subject::serialize");
   char sep = ' ';
   if (flag & TYPENAME) { os << ioTag << sep; }
 
-  serializeCstring(os, itsName, sep);
-  serializeCstring(os, itsDirectory, sep);
+  os << itsName << endl;
+  os << itsDirectory << endl;
+
   if (os.fail()) throw OutputError(ioTag);
 }
 
@@ -91,15 +78,16 @@ DOTRACE("Subject::deserialize");
   if (flag & BASES) { /* there are no bases to deserialize */ }
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
-  deserializeCstring(is, itsName);
-  deserializeCstring(is, itsDirectory);
+  getline(is, itsName, '\n');
+  getline(is, itsDirectory, '\n');
+
   if (is.fail()) throw InputError(ioTag);
 }
 
 int Subject::charCount() const {
   return (ioTag.size() + 1
-			 + 2 + strlen(itsName) + 1	// 2 chars for its length
-			 + 2 + strlen(itsDirectory) + 1 // 2 chars for its length
+			 + itsName.length() + 1
+			 + itsDirectory.length() + 1
 			 + 5);// fudge factor
 }
 
@@ -118,17 +106,11 @@ DOTRACE("Subject::writeTo");
 }
 
 void Subject::setName(const char* name) {
-  if (itsName != NULL)
-    delete [] itsName;
-  itsName = new char[strlen(name)+1];
-  strcpy(itsName, name);
+  itsName = name;
 }
 
 void Subject::setDirectory(const char* dir) {
-  if (itsDirectory != NULL)
-    delete [] itsDirectory;
-  itsDirectory = new char[strlen(dir)+1];
-  strcpy(itsDirectory, dir);
+  itsDirectory = dir;
 }
 
 static const char vcid_subject_cc[] = "$Header$";
