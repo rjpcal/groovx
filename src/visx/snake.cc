@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:20 2003
-// written: Mon May 12 12:23:30 2003
+// written: Mon May 12 12:56:53 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -37,9 +37,9 @@
 #include "gx/vec2.h"
 
 #include <algorithm>
-#include <assert.h>
-#include <math.h>
-#include <stdlib.h>
+#include <cmath>
+
+#include "util/debug.h"
 
 using namespace Gfx;
 
@@ -259,19 +259,12 @@ namespace
     Vec2d c;
 
     for (int n = 0; n < length; ++n)
-      {
-        c.x() += nodes[n].x();
-        c.y() += nodes[n].y();
-      }
+      c += nodes[n];
 
-    c.x() /= length;
-    c.y() /= length;
+    c /= length;
 
     for (int n = 0; n < length; ++n)
-      {
-        nodes[n].x() -= c.x();
-        nodes[n].y() -= c.y();
-      }
+      nodes[n] -= c;
   }
 }
 
@@ -282,14 +275,13 @@ Snake::Snake(int l, double sp) :
 {
   const double radius = (itsLength * itsSpacing) / (2*M_PI);
 
-  const double alpha_off = 2 * M_PI * drand48();
+  const double alpha_start = 2 * M_PI * drand48();
 
   for (int n = 0; n < itsLength; ++n)
     {
-      const double alpha = 2 * M_PI * n / itsLength;
+      const double alpha = alpha_start + 2 * M_PI * n / itsLength;
 
-      itsElem[n].x() =  radius * cos(alpha+alpha_off);
-      itsElem[n].y() = -radius * sin(alpha+alpha_off);
+      itsElem[n].setPolarRad(radius, -alpha);
     }
 
   const int ITERS = 400;
@@ -309,7 +301,7 @@ Snake::~Snake()
 
 Element Snake::getElement(int n) const
 {
-  assert(n < itsLength);
+  Assert(n < itsLength);
 
   Element result;
 

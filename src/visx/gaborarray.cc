@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Mon May 12 12:00:12 2003
+// written: Mon May 12 12:55:13 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -43,11 +43,11 @@
 
 #include "gfx/canvas.h"
 
-#include <assert.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <vector>
+#include "util/error.h"
 
+#include <cstdio>
+
+#include "util/debug.h"
 #include "util/trace.h"
 
 using namespace Gfx;
@@ -55,6 +55,8 @@ using namespace Gfx;
 namespace
 {
   const double SQRT3 = 1.7320508075;
+
+  const int MAX_GABOR_NUMBER = 1800;
 }
 
 bool GaborArray::tryPush(const Element& e)
@@ -63,8 +65,8 @@ bool GaborArray::tryPush(const Element& e)
 
   if (totalNumber >= MAX_GABOR_NUMBER)
     {
-      printf(" More than %d elements!\n", MAX_GABOR_NUMBER);
-      exit(1);
+      throw Util::Error(fstring(" More than ", MAX_GABOR_NUMBER,
+                                " elements!\n"));
     }
 
   array[totalNumber++] = e;
@@ -166,7 +168,7 @@ void GaborArray::fillElements()
         tryPush(Element(x, y, 2 * M_PI * drand48(), Element::OUTSIDE));
       }
 
-  backgAveSpacing = sqrt(2.0*sizeX*sizeY/(SQRT3*totalNumber));
+  const double backgAveSpacing = sqrt(2.0*sizeX*sizeY/(SQRT3*totalNumber));
   printf(" %d elements, ave spacing %f\n", totalNumber, backgAveSpacing);
 }
 
@@ -233,15 +235,15 @@ GaborArray::GaborArray(double gaborPeriod, double gaborSigma, int gaborSize,
   backgMinSpacing(backgMinSpacing_),
   backgMinSpacingSqr(backgMinSpacing*backgMinSpacing),
   insideNumber(0),
-  totalNumber(0)
+  totalNumber(0),
+  array(MAX_GABOR_NUMBER)
 {
   // pull in elements from the snake
   for (int n = 0; n < snake.getLength(); ++n)
     {
       if (!tryPush(snake.getElement(n)))
         {
-          printf("snake elements were too close together!\n");
-          exit(1);
+          throw Util::Error("snake elements were too close together!\n");
         }
     }
 
@@ -261,45 +263,9 @@ GaborArray::GaborArray(double gaborPeriod, double gaborSigma, int gaborSize,
           snake.getLength(), insideNumber, totalNumber);
 }
 
-void GaborArray::writeArray(const char* filestem, int displayCount) const
-{
-  char fname[256];
-  snprintf(fname, 256, "%s.snk", filestem);
-
-  FILE* fp = fopen(fname, "a");
-  if (fp == 0)
-    {
-      printf("cannot append to %s\n", fname);
-      exit(0);
-    }
-
-  fprintf(fp, "%-19s %d\n", "DISPLAY_COUNT", displayCount);
-  fprintf(fp, "%-19s %d\n", "TOTAL_NUMBER", totalNumber);
-  fprintf(fp, "%-19s %d\n", "FOREG_NUMBER", snake.getLength());
-  fprintf(fp, "%-19s %d\n", "PATCH_NUMBER", insideNumber);
-  fprintf(fp, "%-19s %.2f\n", "FOREG_SPACING", snake.getSpacing());
-  fprintf(fp, "%-19s %.2f\n", "BACKG_AVE_SPACING", backgAveSpacing);
-  fprintf(fp, "%-19s %.2f\n", "BACKG_INI_SPACING", backgIniSpacing);
-  fprintf(fp, "%-19s %.2f\n", "BACKG_MIN_SPACING", backgMinSpacing);
-
-  const double RAD2DEG = (180./M_PI);
-
-  for (int i = 0; i < totalNumber; ++i)
-    {
-      const int o = int(RAD2DEG * array[i].theta + 0.5);
-      const int x = int(array[i].pos.x() + 0.5);
-      const int y = int(array[i].pos.y() + 0.5);
-      const int s = int(array[i].type);
-
-      fprintf(fp, "%-5d %-5d %-5d %-5d\n", x, y, o, s);
-    }
-
-  fclose(fp);
-}
-
 void GaborArray::renderInto(BmapData& data) const
 {
-  std::vector<double> win(sizeX*sizeY);
+  fixed_block<double> win(sizeX*sizeY);
 
   for (int i = 0; i < sizeX*sizeY; ++i)
     win[i] = 0.0;
@@ -342,8 +308,8 @@ void GaborArray::renderInto(BmapData& data) const
   for (int k = 0; k < sizeX*sizeY; ++k)
     {
       const int val = int((win[k]+1.0)/2.0*255);
-      assert(val >= 0);
-      assert(val <= 255);
+      Assert(val >= 0);
+      Assert(val <= 255);
       *bytes++ = val;
     }
 

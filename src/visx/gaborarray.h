@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Mon May 12 12:00:31 2003
+// written: Mon May 12 12:50:11 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -35,8 +35,10 @@
 
 #include "gx/bmapdata.h"
 
-#include "gaborset.h"
-#include "snake.h"
+#include "util/arrays.h"
+
+#include "visx/gaborset.h"
+#include "visx/snake.h"
 
 namespace Gfx
 {
@@ -56,8 +58,6 @@ public:
 
   static GaborArray* make() { return new GaborArray; }
 
-  void writeArray(const char* filestem, int displayCount) const;
-
   void renderInto(Gfx::BmapData& data) const;
 
   void saveImage(const char* filename) const;
@@ -68,8 +68,6 @@ protected:
   virtual void grRender(Gfx::Canvas& canvas) const;
 
 private:
-  static const int MAX_GABOR_NUMBER = 1800;
-
   const Snake snake;
   const GaborSet gabors;
   const int sizeX;
@@ -81,8 +79,7 @@ private:
   const double backgMinSpacingSqr;
   int insideNumber;
   int totalNumber;
-  Element array[ MAX_GABOR_NUMBER ];
-  double backgAveSpacing;
+  fixed_block<Element> array;
 
   void dumpFrame() const;
 
