@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Thu Sep  5 16:45:12 2002
+// written: Thu Sep  5 16:49:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #include "tcl/tclmain.h"
 
 #include "tcl/tclsafeinterp.h"
+
+#include "util/strings.h"
 
 #include <iostream>
 #include <tk.h>
@@ -39,7 +41,7 @@ private:
   const char* itsStartupFileName;
   Tcl_Channel itsInChannel;
 
-  Tcl_DString itsCommand;     /* Used to assemble lines of terminal input
+  fstring itsCommand;         /* Used to assemble lines of terminal input
                                * into Tcl commands. */
   Tcl_DString itsLine;        /* Used to read the next line from the
                                * terminal input. */
@@ -93,13 +95,13 @@ namespace
 Tcl::MainImpl::MainImpl(int argc, char** argv) :
   itsSafeInterp(Tcl_CreateInterp()),
   itsStartupFileName(0),
-  itsInChannel(0)
+  itsInChannel(0),
+  itsCommand()
 {
 DOTRACE("Tcl::MainImpl::MainImpl");
 
   Tcl_FindExecutable(argv[0]);
 
-  Tcl_DStringInit(&itsCommand);
   Tcl_DStringInit(&itsLine);
 
   isItInteractive = isatty(0);
@@ -245,10 +247,9 @@ void Tcl::MainImpl::stdinProc(ClientData /*clientData*/, int /*mask*/)
         }
     }
 
-  Tcl_DStringAppend(&rep->itsCommand, Tcl_DStringValue(&rep->itsLine), -1);
-  char* cmd = Tcl_DStringAppend(&rep->itsCommand, "\n", -1);
+  rep->itsCommand.append(Tcl_DStringValue(&rep->itsLine), "\n");
   Tcl_DStringFree(&rep->itsLine);
-  if (!Tcl_CommandComplete(cmd))
+  if (!Tcl_CommandComplete(rep->itsCommand.c_str()))
     {
       gotPartial = 1;
     }
@@ -266,7 +267,8 @@ void Tcl::MainImpl::stdinProc(ClientData /*clientData*/, int /*mask*/)
 
       Tcl_CreateChannelHandler(rep->itsInChannel, 0,
                                &stdinProc, (ClientData) 0);
-      int code = Tcl_RecordAndEval(interp, cmd, TCL_EVAL_GLOBAL);
+      int code = Tcl_RecordAndEval(interp, rep->itsCommand.c_str(),
+                                   TCL_EVAL_GLOBAL);
 
       rep->itsInChannel = Tcl_GetStdChannel(TCL_STDIN);
       if (rep->itsInChannel)
@@ -274,7 +276,9 @@ void Tcl::MainImpl::stdinProc(ClientData /*clientData*/, int /*mask*/)
           Tcl_CreateChannelHandler(rep->itsInChannel, TCL_READABLE,
                                    &stdinProc, (ClientData) 0);
         }
-      Tcl_DStringFree(&rep->itsCommand);
+
+      rep->itsCommand = "";
+
       if (Tcl_GetStringResult(interp)[0] != '\0')
         {
           if ((code != TCL_OK) || (rep->isItInteractive))
