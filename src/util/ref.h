@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Wed Jun 13 09:07:03 2001
+// written: Wed Jun 13 12:27:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -203,31 +203,42 @@ private:
   // important guarantee: it will never return an invalid pointer from
   // get() (an exception will be raised if this would fail)
   class WeakHandle {
+  private:
+    Util::RefCounts* getCounts(T* master)
+    {
+      return master ? master->refCounts() : 0;
+    }
+
+    bool isVolatile(T* master)
+    {
+      return master ? master->isVolatile() : true;
+    }
+
+    static void ensure(bool expr, const char* where)
+    {
+      if (!expr) RefHelper::throwErrorWithMsg(where);
+    }
+
   public:
     explicit WeakHandle(T* master) : itsMaster(master),
-                                     itsCounts(0),
-                                     itsIsVolatile(isVolatile(master))
-    {
-      if (itsMaster)
-        itsCounts = itsMaster->refCounts();
-
-      acquire();
-    }
+                                     itsCounts(getCounts(master)),
+                                     itsIsWeakRef(isVolatile(master))
+    { acquire(); }
 
     ~WeakHandle()
     { release(); }
 
     WeakHandle(const WeakHandle& other) : itsMaster(other.itsMaster),
-                                          itsCounts(other.itsCounts),
-                                          itsIsVolatile(other.itsIsVolatile)
+                                          itsCounts(getCounts(itsMaster)),
+                                          itsIsWeakRef(isVolatile(itsMaster))
     { acquire(); }
 
     template <class U> friend class WeakHandle;
 
     template <class U>
     WeakHandle(const WeakHandle<U>& other) : itsMaster(other.itsMaster),
-                                             itsCounts(other.itsCounts),
-                                             itsIsVolatile(other.itsIsVolatile)
+                                             itsCounts(getCounts(itsMaster)),
+                                             itsIsWeakRef(isVolatile(itsMaster))
     { acquire(); }
 
     WeakHandle& operator=(const WeakHandle& other)
@@ -249,28 +260,28 @@ private:
     T* get()        const { ensureValid(); return itsMaster; }
 
   private:
-    void acquire()
+    void acquire() const
     {
+      ensure(bool(itsMaster) == bool(itsCounts), "WeakHandle::acquire");
+
       if (itsCounts)
         {
-          if (itsIsVolatile)
-            itsCounts->acquireWeak();
-          else
-            itsCounts->acquireStrong();
+          if (itsIsWeakRef) itsCounts->acquireWeak();
+          else              itsMaster->incrRefCount();
         }
     }
 
     void release() const
     {
+      ensure(bool(itsMaster) == bool(itsCounts), "WeakHandle::release");
+
       if (itsCounts)
         {
-          if (itsIsVolatile)
-            itsCounts->releaseWeak();
-          else
-            itsCounts->releaseStrong();
+          if (itsIsWeakRef) itsCounts->releaseWeak();
+          else              itsMaster->decrRefCount();
         }
 
-      itsCounts = 0; itsMaster = 0; itsIsVolatile = true;
+      itsCounts = 0; itsMaster = 0; itsIsWeakRef = true;
     }
 
     void ensureValid() const
@@ -290,20 +301,14 @@ private:
       other.itsCounts = this->itsCounts;
       this->itsCounts = otherCounts;
 
-      bool otherIsVolatile = other.itsIsVolatile;
-      other.itsIsVolatile = this->itsIsVolatile;
-      this->itsIsVolatile = otherIsVolatile;
-    }
-
-    bool isVolatile(T* master)
-    {
-      if (master == 0) return true;
-      return master->isVolatile();
+      bool otherIsVolatile = other.itsIsWeakRef;
+      other.itsIsWeakRef = this->itsIsWeakRef;
+      this->itsIsWeakRef = otherIsVolatile;
     }
 
     mutable T* itsMaster;
     mutable Util::RefCounts* itsCounts;
-    mutable bool itsIsVolatile;
+    mutable bool itsIsWeakRef;
 
   }; // end helper class WeakHandle
 
