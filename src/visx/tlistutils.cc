@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Mon Aug  6 10:58:20 2001
+// written: Mon Aug  6 11:13:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,15 +94,15 @@ DOTRACE("TlistUtils::createPreview");
       label_pos->scaling.vec().set(parcel_side, parcel_side, 1.0);
 
       Ref<GxSeparator> obj_pair(GxSeparator::make());
-      obj_pair->addChild(obj_pos.id());
-      obj_pair->addChild(obj.id());
+      obj_pair->addChild(obj_pos);
+      obj_pair->addChild(obj);
 
       Ref<GxSeparator> label_pair(GxSeparator::make());
-      label_pair->addChild(label_pos.id());
-      label_pair->addChild(label.id());
+      label_pair->addChild(label_pos);
+      label_pair->addChild(label);
 
-      preview_trial->addChild(obj_pair.id());
-      preview_trial->addChild(label_pair.id());
+      preview_trial->addChild(obj_pair);
+      preview_trial->addChild(label_pair);
     }
 
   return preview_trial.id();

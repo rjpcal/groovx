@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Sun Aug  5 19:40:32 2001
+// written: Mon Aug  6 11:13:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -158,7 +158,7 @@ public:
     catch (...)
       {
         Ref<GxSeparator> sep(GxSeparator::make());
-        sep->addChild(id);
+        sep->addChild(obj);
         itsGxNodes.push_back(sep);
       }
   }
@@ -332,17 +332,15 @@ DOTRACE("Trial::Impl::add");
 
   Ref<GxSeparator> sepitem(GxSeparator::make());
 
-  sepitem->addChild(posid);
-  sepitem->addChild(objid);
+  sepitem->addChild(Ref<GxNode>(posid));
+  sepitem->addChild(Ref<GxNode>(objid));
 
   if (itsGxNodes.size() == 0)
     {
-      itsGxNodes.push_back(sepitem);
+      itsGxNodes.push_back(Ref<GxSeparator>(GxSeparator::make()));
     }
-  else
-    {
-      itsGxNodes[0]->addChild(sepitem.id());
-    }
+
+  itsGxNodes[0]->addChild(sepitem);
 }
 
 void Trial::Impl::clearObjs()
