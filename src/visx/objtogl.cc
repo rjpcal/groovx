@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Sep 27 11:44:08 1999
+// written: Tue Oct 12 17:45:49 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -233,7 +233,8 @@ class ObjTogl::InitCmd : public TclCmd {
 public:
   InitCmd(Tcl_Interp* interp, const char* cmd_name) :
     TclCmd(interp, cmd_name,
-           "init_args ?viewing_dist=30? ?gl_unit_angle=2.05?", 2, 4),
+           "init_args ?viewing_dist=30?"
+			  "?gl_unit_angle=2.05? ?pack=yes?", 2, 5),
     itsInterp(interp)
   {
     Togl_CreateFunc(createCallback);
@@ -250,6 +251,7 @@ protected:
     const char* init_args     = getCstringFromArg(1);
     int         viewing_dist  = (objc() < 3) ? 30 : getIntFromArg(2);
     double      gl_unit_angle = (objc() < 4) ? 2.05 : getDoubleFromArg(3);
+	 bool        pack          = (objc() < 5) ? true : getBoolFromArg(4);
 
     const char* pathname = ".togl_private";
 
@@ -269,9 +271,12 @@ protected:
     // degrees visual angle
     ObjTogl::theConfig = new TlistToglConfig(ObjTogl::widget, 30, 2.05);
     
-    string pack_cmd_str = string("pack ") + pathname + " -expand 1 -fill both";
-    TclEvalCmd pack_cmd(pack_cmd_str.c_str());
-    if ( pack_cmd.invoke(itsInterp) != TCL_OK ) { throw TclError(); }
+	 if (pack) {
+		string pack_cmd_str =
+		  string("pack ") + pathname + " -expand 1 -fill both";
+		TclEvalCmd pack_cmd(pack_cmd_str.c_str());
+		if ( pack_cmd.invoke(itsInterp) != TCL_OK ) { throw TclError(); }
+	 }
 
     toglCreated = true;
 
