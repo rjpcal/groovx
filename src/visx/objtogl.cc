@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Fri Jan 14 12:08:43 2000
+// written: Sat Jan 15 11:03:00 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -489,6 +489,7 @@ public:
     declareCAttrib("height",
                    &ToglConfig::getHeight, &ToglConfig::setHeight);
 	 declareCAction("refresh", &ToglConfig::refresh);
+	 declareCAction("takeFocus", &ToglConfig::takeFocus);
 	 declareCAction("undraw", &ToglConfig::undraw);
 
     declareCSetter("scaleRect", &ToglConfig::scaleRect, "scale");
