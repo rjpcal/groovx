@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Mon Jul 16 10:18:03 2001
+// written: Mon Jul 16 12:51:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -126,7 +126,7 @@ Tcl::IsCmd::~IsCmd() {}
 
 void Tcl::IsCmd::invoke(Tcl::Context& ctx)
 {
-  int id = ctx.getIntFromArg(1);
+  int id = ctx.getValFromArg(1, TypeCue<int>());
   ctx.setResult(itsCaster->isIdMyType(id));
 }
 

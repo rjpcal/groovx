@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct  5 13:51:43 2000
-// written: Mon Jul 16 12:15:01 2001
+// written: Mon Jul 16 12:51:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ namespace HookTcl
 
     for (int i = 1; i < ctx.objc(); ++i)
       {
-        isum += ctx.getIntFromArg(i);
+        isum += ctx.getValFromArg(i, TypeCue<int>());
       }
 
     ctx.setResult(isum);
