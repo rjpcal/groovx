@@ -107,16 +107,28 @@ test "BitmapTcl-Bitmap::flipVertical" "normal use" {
 test "BitmapTcl-Bitmap::flipVertical" "error" {} {^$} $no_test
 
 ### Bitmap::centerCmd ###
-test "BitmapTcl-Bitmap::center" "too few args" {} {^$} $must_implement
-test "BitmapTcl-Bitmap::center" "too many args" {} {^$} $must_implement
-test "BitmapTcl-Bitmap::center" "normal use" {} {^$} $must_implement
-test "BitmapTcl-Bitmap::center" "error" {} {^$} $no_test
+test "BitmapTcl-Bitmap::center" "too few args" {
+	 Bitmap::center
+} {^wrong \# args: should be "Bitmap::center item_id\(s\)"$}
+test "BitmapTcl-Bitmap::center" "too many args" {
+	 Bitmap::center $::BITMAP junk
+} {^wrong \# args: should be "Bitmap::center item_id\(s\)"$}
+test "BitmapTcl-Bitmap::center" "normal use" {
+	 Bitmap::center $::BITMAP
+} {^$}
 
 ### Bitmap::rasterX/YCmd ###
-test "BitmapTcl-Bitmap::rasterX/Y" "too few args" {} {^$} $must_implement
-test "BitmapTcl-Bitmap::rasterX/Y" "too many args" {} {^$} $must_implement
-test "BitmapTcl-Bitmap::rasterX/Y" "normal use" {} {^$} $must_implement
-test "BitmapTcl-Bitmap::rasterX/Y" "error" {} {^$} $no_test
+test "BitmapTcl-Bitmap::rasterX/Y" "too few args" {
+	 Bitmap::rasterX
+} {^wrong \# args: should be "Bitmap::rasterX item_id\(s\) \?new_value\(s\)\?"$}
+test "BitmapTcl-Bitmap::rasterX/Y" "too many args" {
+	 Bitmap::rasterY $::BITMAP 3.5 junk
+} {^wrong \# args: should be "Bitmap::rasterY item_id\(s\) \?new_value\(s\)\?"$}
+test "BitmapTcl-Bitmap::rasterX/Y" "normal use" {
+	 Bitmap::rasterX $::BITMAP 1.2
+	 Bitmap::rasterY $::BITMAP 3.67
+	 return "[Bitmap::rasterX $::BITMAP] [Bitmap::rasterY $::BITMAP]"
+} {^1\.2 3\.67$}
 
 ### Bitmap::zoomX/YCmd ###
 test "BitmapTcl-Bitmap::zoomX/Y" "too few args" {
@@ -127,6 +139,9 @@ test "BitmapTcl-Bitmap::zoomX/Y" "too many args" {
 } {^wrong \# args: should be "Bitmap::zoomY item_id\(s\) \?new_value\(s\)\?"$}
 test "BitmapTcl-Bitmap::zoomX/Y" "normal use" {
 	 GLBitmap::usingGlBitmap $::BITMAP no
+
+	 Bitmap::rasterX $::BITMAP 0.0
+	 Bitmap::rasterY $::BITMAP 0.0
 
 	 Bitmap::zoomX $::BITMAP 0.5
 	 Bitmap::zoomY $::BITMAP 0.5
