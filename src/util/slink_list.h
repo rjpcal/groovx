@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// lists.h
+// slink_list.h
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,8 +10,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef LISTS_H_DEFINED
-#define LISTS_H_DEFINED
+#ifndef SLINK_LIST_H_DEFINED
+#define SLINK_LIST_H_DEFINED
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -222,5 +222,5 @@ private:
   node* head;
 };
 
-static const char vcid_lists_h[] = "$Header$";
-#endif // !LISTS_H_DEFINED
+static const char vcid_slink_list_h[] = "$Header$";
+#endif // !SLINK_LIST_H_DEFINED
