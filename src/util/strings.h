@@ -3,7 +3,7 @@
 // strings.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:16:48 2000
-// written: Mon Mar 13 14:39:58 2000
+// written: Thu Mar 23 11:40:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -139,6 +139,13 @@ public:
   const char* c_str() const;
   unsigned int length() const;
   bool empty() const { return (length() == 0); }
+
+protected:
+  /** This template is instantiated only for std::string, to allow
+      subclasses to get a handle to the internal representation with
+      out having to explicitly name std::string in this file. */
+  template <class StringType>
+  StringType& rep(StringType* /*dummy*/ = 0);
 
 private:
   struct Impl;

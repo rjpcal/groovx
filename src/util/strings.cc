@@ -3,7 +3,7 @@
 // strings.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:42:44 2000
-// written: Wed Mar 15 10:23:11 2000
+// written: Thu Mar 23 11:41:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -211,6 +211,12 @@ const char* dynamic_string::c_str() const
 unsigned int dynamic_string::length() const
 {
   return itsImpl->text.length();
+}
+
+template <>
+string& dynamic_string::rep(string*)
+{
+  return itsImpl->text;
 }
 
 //---------------------------------------------------------------------
