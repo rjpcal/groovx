@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Fri Nov  3 14:50:13 2000
+// written: Fri Nov  3 19:05:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,12 +18,14 @@
 
 #include "util/arrays.h"
 #include "util/lists.h"
+#include "util/pointers.h"
 #include "util/strings.h"
 #include "util/value.h"
 
 #include <iostream.h>
 #include <strstream.h>
 #include <map>
+#include <list>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -52,77 +54,6 @@ public:
 		appendMsg(attrib_name.c_str());
 	 }
 };
-
-namespace {
-  const char STRING_ENDER = '^';
-
-  fixed_block<char> READ_BUFFER(4096);
-}
-
-namespace Escape {
-  void readAndUnEscape(STD_IO::istream& is, fixed_string& text_out);
-}
-
-void Escape::readAndUnEscape(STD_IO::istream& is, fixed_string& text_out) {
-DOTRACE("Escape::readAndUnEscape");
-
-  int brace_level = 0;
-
-  fixed_block<char>::iterator
-	 itr = READ_BUFFER.begin(),
-	 stop = READ_BUFFER.end();
-
-  int ch = 0;
-
-  while ( (ch = is.get()) != EOF &&
-			 !(brace_level == 0 && ch == STRING_ENDER) )
-	 {
-		if (itr >= stop)
-		  {
-			 IO::ReadError err("AsciiStreamReader exceeded "
-									 "read buffer capacity\n"
-									 "buffer contents: \n");
-			 READ_BUFFER[ READ_BUFFER.size() - 1 ] = '\0';
-			 err.appendMsg(&(READ_BUFFER[0]));
-			 throw err;
-		  }
-
-		if (ch != '\\')
-		  {
-			 if (ch == '{') ++brace_level;
-			 if (ch == '}') --brace_level;
-			 *itr++ = char(ch);
-			 continue;
-		  }
-		else
-		  {
-			 int ch2 = is.get();
-			 if (ch2 == EOF || ch2 == STRING_ENDER)
-				throw IO::ReadError("missing character after trailing backslash");
-			 switch (ch2) {
-			 case '\\':
-				*itr++ = '\\';
-				break;
-			 case 'c':
-				*itr++ = '^';
-				break;
-			 case '{':
-				*itr++ = '{';
-				break;
-			 case '}':
-				*itr++ = '}';
-				break;
-			 default:
-				throw IO::ReadError("invalid escape character");
-				break;
-			 }
-		  }
-	 }
-
-  *itr = '\0';
-
-  text_out = READ_BUFFER.begin();
-}
 
 class AsciiStreamReader::Impl {
 private:
@@ -214,6 +145,13 @@ public:
   };
 
   struct Attrib {
+  private:
+	 Attrib(); // not implemented
+
+  public:
+	 Attrib(const fixed_string& t, const fixed_string& v) :
+		type(t), value(v) {}
+
 	 fixed_string type;
 	 fixed_string value;
   };
@@ -222,8 +160,11 @@ public:
   private:
 	 fixed_string itsObjTag;
 
-	 typedef std::map<fixed_string, Attrib> MapType;
-	 MapType itsMap;
+	 typedef std::pair<fixed_string, Attrib> ValueType;
+	 typedef list<ValueType> ListType;
+
+	 ListType itsMap;
+
 	 IO::VersionId itsSerialVersionId;
 
   public:
@@ -237,31 +178,31 @@ public:
 	 const Attrib& operator[](const fixed_string& attrib_name)
 		{
 		  // DOTRACE("AsciiStreamReader::Impl::AttribMap::operator[]");
-		  MapType::const_iterator itr = itsMap.find(attrib_name);
-		  if ( itr == itsMap.end() )
+		  ListType::iterator itr = itsMap.begin(), end = itsMap.end();
+		  while (itr != end)
 			 {
-				IO::ReadError err("no attribute named '");
-				err.appendMsg(attrib_name.c_str());
-				err.appendMsg("' for ", itsObjTag.c_str());
-				throw err;
+				if ((*itr).first == attrib_name)
+				  {
+					 itsMap.push_back(*itr);
+					 itsMap.erase(itr);
+					 return itsMap.back().second;
+				  }
+				++itr;
 			 }
 
-		  return (*itr).second;
+		  IO::ReadError err("no attribute named '");
+		  err.appendMsg(attrib_name.c_str());
+		  err.appendMsg("' for ", itsObjTag.c_str());
+		  throw err;
 		}
 
   private:
-	 Attrib& getNewAttrib(const fixed_string& attrib_name)
+	 fixed_string readAndUnEscape(STD_IO::istream& is);
+
+	 void addNewAttrib(const fixed_string& attrib_name,
+							 const fixed_string& type, const fixed_string& value)
 		{
-		  // DOTRACE("AsciiStreamReader::Impl::AttribMap::getNewAttrib");
-		  Attrib& attrib = itsMap[attrib_name];
-		  if ( !attrib.type.empty() )
-			 {
-				IO::ReadError err("object input stream contains"
-								  "multiple attributes with name: ");
-				err.appendMsg(attrib_name.c_str());
-				throw err;
-			 }
-		  return attrib;
+		  itsMap.push_back(ValueType(attrib_name, Attrib(type,value)));
 		}
   };
 
@@ -269,7 +210,7 @@ public:
 private:
   STD_IO::istream& itsBuf;
   ObjectMap itsObjects;
-  slink_list<AttribMap> itsAttribs;
+  slink_list<shared_ptr<AttribMap> > itsAttribs;
 
 #ifndef NO_IOS_EXCEPTIONS
   ios::iostate itsOriginalExceptionState;
@@ -281,7 +222,7 @@ private:
 		if ( itsAttribs.empty() )
 		  throw IO::ReadError("attempted to read attribute "
 								"when no attribute map was active");
-		return itsAttribs.front();
+		return *(itsAttribs.front());
 	 }
 
   void inflateObject(IO::Reader* reader, STD_IO::istream& buf,
@@ -327,6 +268,75 @@ public:
 // AsciiStreamReader::Impl::AttribMap member definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+namespace {
+  const char STRING_ENDER = '^';
+
+  fixed_block<char> READ_BUFFER(4096);
+}
+
+fixed_string AsciiStreamReader::Impl::AttribMap::readAndUnEscape(
+  STD_IO::istream& is
+) {
+DOTRACE("AsciiStreamReader::Impl::AttribMap::readAndUnEscape");
+
+  int brace_level = 0;
+
+  fixed_block<char>::iterator
+	 itr = READ_BUFFER.begin(),
+	 stop = READ_BUFFER.end();
+
+  int ch = 0;
+
+  while ( (ch = is.get()) != EOF &&
+			 !(brace_level == 0 && ch == STRING_ENDER) )
+	 {
+		if (itr >= stop)
+		  {
+			 IO::ReadError err("AsciiStreamReader exceeded "
+									 "read buffer capacity\n"
+									 "buffer contents: \n");
+			 READ_BUFFER[ READ_BUFFER.size() - 1 ] = '\0';
+			 err.appendMsg(&(READ_BUFFER[0]));
+			 throw err;
+		  }
+
+		if (ch != '\\')
+		  {
+			 if (ch == '{') ++brace_level;
+			 if (ch == '}') --brace_level;
+			 *itr++ = char(ch);
+			 continue;
+		  }
+		else
+		  {
+			 int ch2 = is.get();
+			 if (ch2 == EOF || ch2 == STRING_ENDER)
+				throw IO::ReadError("missing character after trailing backslash");
+			 switch (ch2) {
+			 case '\\':
+				*itr++ = '\\';
+				break;
+			 case 'c':
+				*itr++ = '^';
+				break;
+			 case '{':
+				*itr++ = '{';
+				break;
+			 case '}':
+				*itr++ = '}';
+				break;
+			 default:
+				throw IO::ReadError("invalid escape character");
+				break;
+			 }
+		  }
+	 }
+
+  *itr = '\0';
+
+  return fixed_string(READ_BUFFER.begin());
+}
 
 void AsciiStreamReader::Impl::AttribMap::readAttributes(STD_IO::istream& buf) {
 DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
@@ -380,11 +390,7 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 		throw err;
 	 }
 
-	 Attrib& attrib = getNewAttrib(name);
-
-	 attrib.type = type;
-
-	 Escape::readAndUnEscape(buf, attrib.value);
+	 addNewAttrib(name, type, readAndUnEscape(buf));
   }
 }
 
@@ -400,10 +406,10 @@ void AsciiStreamReader::Impl::inflateObject(
 ) {
 DOTRACE("AsciiStreamReader::Impl::inflateObject");
 
-  itsAttribs.push_front(AttribMap(obj_tag));
+  itsAttribs.push_front(shared_ptr<AttribMap>(new AttribMap(obj_tag)));
 
   //   ...read the object's attributes from the stream...
-  itsAttribs.front().readAttributes(buf);
+  itsAttribs.front()->readAttributes(buf);
 
   //   ...now the object can query us for its attributes...
   obj->readFrom(reader);
