@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Jul 26 15:17:42 1999
+// written: Tue Aug  3 15:43:49 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -52,6 +52,7 @@ namespace ObjTogl {
   class InitCmd;
   class DestroyCmd;
 
+  class BindCmd;
   class DumpCmapCmd;
   class DumpEpsCmd;
   class InitedCmd;
@@ -134,6 +135,26 @@ protected:
       // delete's the toglConfig.
       ObjTogl::theToglConfig()->destroyWidget();
     }
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// ObjTogl::BindCmd --
+//
+//---------------------------------------------------------------------
+
+class ObjTogl::BindCmd : public TclItemCmd<ToglConfig> {
+public:
+  BindCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<ToglConfig>(pkg, cmd_name, "event_sequence binding_script",
+									3, 3) {}
+protected:
+  virtual void invoke() {
+	 const char* event_sequence = getCstringFromArg(1);
+	 const char* binding_script = getCstringFromArg(2);
+	 
+	 getItem()->bind(event_sequence, binding_script);
   }
 };
 
@@ -366,6 +387,7 @@ public:
   {
     Tcl_PkgProvide(interp, "Objtogl", "3.2");
 
+	 addCommand( new BindCmd       (this, "Togl::bind") );
     addCommand( new DestroyCmd    (interp, "Togl::destroy") );
     addCommand( new DumpCmapCmd   (this, "Togl::dumpCmap") );
     addCommand( new DumpEpsCmd    (this, "Togl::dumpEps") );
