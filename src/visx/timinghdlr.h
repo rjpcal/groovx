@@ -3,7 +3,7 @@
 // timinghdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:55 1999
-// written: Thu Nov 18 10:41:19 1999
+// written: Wed Dec  1 14:14:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,7 @@
 #endif
 
 class TrialEvent;
+class Experiment;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -76,11 +77,11 @@ public:
   // actions //
   /////////////
 
-  virtual void thBeginTrial();
-  virtual void thAbortTrial();
-  virtual void thResponseSeen();
+  virtual void thBeginTrial(Experiment* expt);
+  virtual void thAbortTrial(Experiment* expt);
+  virtual void thResponseSeen(Experiment* expt);
 
-  virtual void thHaltExpt();
+  virtual void thHaltExpt(Experiment* expt);
 
 private:
   void scheduleAll(vector<TrialEvent*>& events);
