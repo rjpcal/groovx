@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:46:08 1999
-// written: Thu May 17 10:53:41 2001
+// written: Thu May 17 15:11:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -132,11 +132,6 @@ public:
   template <class T>
   void readValue(const fixed_string& name, T& returnValue);
 
-  /** Get a pointer to the \c IO object associated with the tag \a
-      name. A new object of the appropriate type will be created, if
-      necessary. */
-  virtual IO::IoObject* readObjectImpl(const fixed_string& name) = 0;
-
   /** Get an \c IdItem associated with the tag \a name. A new object
       of the appropriate type will be created and inserted into the \c
       IoDb, if necessary. */
@@ -172,6 +167,11 @@ public:
 protected:
   /// Read the string attribute associated with the tag \a name.
   virtual fixed_string readStringImpl(const fixed_string& name) = 0;
+
+  /** Get a pointer to the \c IO object associated with the tag \a
+      name, creating a new object of the appropriate type, if
+      necessary. */
+  virtual IO::IoObject* readObjectImpl(const fixed_string& name) = 0;
 };
 
 static const char vcid_reader_h[] = "$Header$";
