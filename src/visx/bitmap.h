@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Aug  8 11:34:58 2001
+// written: Wed Aug  8 11:36:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -103,11 +103,6 @@ public:
       so that it can be maintained throughout IO operations. */
   void flipContrast();
 
-protected:
-  /// Does the actual bit-twiddling to flip the contrast.
-  void doFlipContrast();
-
-public:
   /** Vertically inverts the image. The polarity of the orientation
       relative to its original value is computed and stored, so that
       it can be maintained throughout IO operations. */

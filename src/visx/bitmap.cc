@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Aug  8 11:34:41 2001
+// written: Wed Aug  8 11:36:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -119,9 +119,6 @@ void Bitmap::grabWorldRect(const Rect<double>& world_rect)
 
 void Bitmap::flipContrast()
   { itsImpl->flipContrast(); sendStateChangeMsg(); }
-
-void Bitmap::doFlipContrast()
-  { itsImpl->doFlipContrast(); sendStateChangeMsg(); }
 
 void Bitmap::flipVertical()
   { itsImpl->flipVertical(); sendStateChangeMsg(); }
