@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Tue Aug 14 11:51:44 2001
+// written: Tue Aug 14 12:05:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,7 +91,8 @@ Gfx::Rect<int> GLCanvas::screenFromWorld(const Gfx::Rect<double>& world_pos) con
 {
   Gfx::Rect<int> screen_rect;
   screen_rect.setBottomLeft( screenFromWorld(world_pos.bottomLeft()) );
-  screen_rect.setTopRight  ( screenFromWorld(world_pos.topRight())   );
+  screen_rect.setTopRight  ( screenFromWorld(world_pos.topRight()) +
+                             Gfx::Vec2<int>(1,1) );
   return screen_rect;
 }
 
