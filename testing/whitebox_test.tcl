@@ -12,6 +12,7 @@ set pkgs {
     Basesixfourtest
     Fstringtest
     Geomtest
+    Mtxtest
     Numtest
     Signaltest
     Tcltimertest
