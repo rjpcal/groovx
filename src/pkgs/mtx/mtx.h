@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Wed Jul 31 16:23:00 2002
+// written: Thu Aug  1 10:50:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -558,6 +558,21 @@ protected:
   const double* address(int row, int col) const
   { return data_.storage() + offsetFromStorage(row, col); }
 
+  // Does the same thing as address_nc(), but doesn't range-check, since
+  // this result is assumed to be some kind of "one-past-the-end" offset.
+  ptrdiff_t end_offsetFromStorage(int r, int c) const
+  { return MtxSpecs::offsetFromStorage(r, c); }
+
+  // Does the same thing as address_nc(), but doesn't range-check, since
+  // this result is assumed to be some kind of "one-past-the-end" address.
+  double* end_address_nc(int row, int col)
+  { return data_.storage_nc() + end_offsetFromStorage(row, col); }
+
+  // Does the same thing as address(), but doesn't range-check, since
+  // this result is assumed to be some kind of "one-past-the-end" address.
+  const double* end_address(int row, int col) const
+  { return data_.storage() + end_offsetFromStorage(row, col); }
+
   const double* storage() const { return data_.storage(); }
   double* storage_nc() { return data_.storage_nc(); }
 
@@ -727,13 +742,13 @@ public:
   { return colmaj_iter(rowgap(), rowstride(), address_nc(0,0)); }
 
   colmaj_iter colmaj_end_nc()
-  { return colmaj_iter(rowgap(), rowstride(), address_nc(0,ncols())); }
+  { return colmaj_iter(rowgap(), rowstride(), end_address_nc(0,ncols())); }
 
   const_colmaj_iter colmaj_begin() const
   { return const_colmaj_iter(rowgap(), rowstride(), address(0,0)); }
 
   const_colmaj_iter colmaj_end() const
-  { return const_colmaj_iter(rowgap(), rowstride(), address(0,ncols())); }
+  { return const_colmaj_iter(rowgap(), rowstride(), end_address(0,ncols())); }
 
 
   /// Row-major iterator for Mtx class.
