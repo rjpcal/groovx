@@ -114,7 +114,7 @@ public:
        bool exact_objc,
        const rutz::file_pos& src_pos);
 
-  /// Virtual destructor ensures proper destruction of subclasses.
+  /// Non-virtual destructor since this class is not for use as a base class.
   ~Command() throw();
 
   /// Returns a string describing the arguments expected by this command.
