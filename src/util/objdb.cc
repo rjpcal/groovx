@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Oct 25 11:17:14 2000
+// written: Wed Oct 25 15:11:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,6 @@
 
 #include "io/readutils.h"
 #include "io/writeutils.h"
-
-#include "util/arrays.h"
-#include "util/ptrhandle.h"
-#include "util/strings.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -56,22 +52,8 @@ DOTRACE("IoPtrList::readFrom");
 
   Assert(svid >= 1);
 
-  int count = IO::ReadUtils::readSequenceCount(reader, "itsVec"); DebugEvalNL(count);
-
-  Assert(count >= 0);
-  unsigned int uint_count = (unsigned int) count;
-
-  fixed_block<IO::IoObject*> ioBlock(uint_count);
-
-  IO::ReadUtils::readObjectSeq<IO::IoObject>(
-                   reader, "itsVec", ioBlock.begin(), count);
-
   clear();
-
-  for (size_t i = 0; i < uint_count; ++i)
-	 if (ioBlock[i] != 0) {
-		insertPtrBase(ioBlock[i]);
-	 }
+  IO::ReadUtils::readObjectSeq<IO::IoObject>(reader, "itsVec", inserter());
 }
 
 void IoPtrList::writeTo(IO::Writer* writer) const {
@@ -86,27 +68,8 @@ DOTRACE("IoPtrList::writeTo");
 
   Assert(IOPTRLIST_SERIAL_VERSION_ID >= 1); 
 
-  fixed_block<IO::IoObject*> ioBlock(capacity());
-
-  for (size_t i = 0; i < capacity(); ++i)
-	 {
-		DebugEval(i);
-
-		if (isValidId(i))
-		  {
-			 IO::IoObject* obj = getCheckedPtrBase(i);
-			 Assert(obj != 0);
-			 ioBlock[i] = obj;
-		  }
-		else
-		  {
-			 ioBlock[i] = 0;
-		  }
-
-		DebugEvalNL(ioBlock[i]);
-	 }
-
-  IO::WriteUtils::writeObjectSeq(writer, "itsVec", ioBlock.begin(), ioBlock.end());
+  IO::WriteUtils::writeObjectSeq(writer, "itsVec",
+											beginPtrs(), endPtrs());
 }
 
 static const char vcid_ioptrlist_cc[] = "$Header$";
