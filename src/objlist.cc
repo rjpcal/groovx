@@ -2,7 +2,7 @@
 // objlist.cc
 // Rob Peters
 // created: Nov-98
-// written: Fri Mar 12 17:25:29 1999
+// written: Sat Mar 13 13:14:52 1999
 static const char vcid_objlist_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
@@ -16,7 +16,6 @@ static const char vcid_objlist_cc[] = "$Id$";
 
 #include "randutils.h"
 #include "grobjmgr.h"
-#include "scaleable.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -123,24 +122,6 @@ DOTRACE("ObjList::readRangeObjs");
   for (int i = 0; i < count; i++) {
 	 istrstream ist(line_array[i]);
 	 addObjAt(first+i, GrobjMgr::newGrobj(type, ist));
-  }
-}
-
-void ObjList::scaleRangeObjs(int first, int count,
-									  double t_x, double t_y, double s_x, double s_y,
-									  double t_jitter, double r_jitter) {
-  Scaleable *p = NULL;
-  for (int i = 0; i < count; i++) {
-	 if ( (p = dynamic_cast<Scaleable *>(itsObjVec[first+i])) != NULL ) {
-		p->setTranslate(t_x, t_y+randDoubleRange(-t_jitter, t_jitter), 0.0);
-		p->setScale(s_x, s_y, 0.0);
-		p->setAngle(randDoubleRange(-r_jitter, r_jitter));
-	 }
-#ifdef LOCAL_DEBUG
-	 else {
-		cerr << "dynamic_cast<Scaleable *> failed.\n";
-	 }
-#endif
   }
 }
 

@@ -2,7 +2,7 @@
 // objlist.h 
 // Rob Peters
 // Created: Nov-98
-// written: Fri Mar 12 17:57:01 1999
+// written: Sat Mar 13 13:14:09 1999
 //
 // The ObjList class implements a list of GrObj pointers. The
 // interface allows for management of a collection of GrObj's (i.e.,
@@ -105,10 +105,6 @@ public:
 
   void clearObjs();
   // delete all GrObj's held by the list, and reset all GrObj*'s to NULL
-
-  void scaleRangeObjs(int first, int count,
-							 double t_x, double t_y, double s_x, double s_y,
-							 double t_jitter, double r_jitter);
 
   /////////////
   // actions //
