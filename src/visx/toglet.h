@@ -3,7 +3,7 @@
 // toglconfig.h
 // Rob Peters 
 // created: Jan-99
-// written: Fri Jul 23 13:41:43 1999
+// written: Tue Sep  7 14:24:08 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,12 @@
 
 struct Togl;
 struct Tcl_Obj;
+
+#ifndef _XLIB_H_
+struct _XDisplay;
+typedef struct _XDisplay Display;
+typedef unsigned long Window;
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -53,6 +59,10 @@ public:
   }
   void queryColor(unsigned int color_index, Color& color) const;
   bool usingFixedScale() const;
+
+  Display* getX11Display() const;
+  int getX11ScreenNumber() const;
+  Window getX11Window() const;
 
   // manipulators
   void destroyWidget();

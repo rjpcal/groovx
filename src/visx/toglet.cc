@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Fri Jul 23 13:58:47 1999
+// written: Tue Sep  7 14:26:37 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -207,6 +207,21 @@ DOTRACE("ToglConfig::queryColor");
 bool ToglConfig::usingFixedScale() const {
 DOTRACE("ToglConfig::usingFixedScale"); 
   return itsFixedScaleFlag; 
+}
+
+Display* ToglConfig::getX11Display() const {
+DOTRACE("getX11Display");
+  return Togl_Display(itsWidget);
+}
+
+int ToglConfig::getX11ScreenNumber() const {
+DOTRACE("getX11ScreenNumber");
+  return Togl_ScreenNumber(itsWidget); 
+}
+
+Window ToglConfig::getX11Window() const {
+DOTRACE("getX11Window");
+  return Togl_Window(itsWidget);
 }
 
 //////////////////
