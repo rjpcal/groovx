@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:20 2003
-// written: Mon May 12 11:54:49 2003
+// written: Mon May 12 12:23:30 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -84,33 +84,20 @@ namespace
     std::sort(i, i+4);
   }
 
-  // FIXME put this elsewhere?
-  double distance(const Vec2d& n1, const Vec2d& n2)
-  {
-    const double dx = n1.x() - n2.x();
-    const double dy = n1.y() - n2.y();
-    return sqrt(dx*dx + dy*dy);
-  }
-
   Tuple4 getEdgeLengths(const Vec2d no[4])
   {
-    return Tuple4(distance(no[0], no[1]),
-                  distance(no[1], no[2]),
-                  distance(no[2], no[3]),
-                  distance(no[3], no[0]));
-  }
-
-  double getTheta(const Vec2d& n1, const Vec2d& n2)
-  {
-    return zerototwopi(atan2(n1.y() - n2.y(), n1.x() - n2.x()));
+    return Tuple4(no[0].distanceTo(no[1]),
+                  no[1].distanceTo(no[2]),
+                  no[2].distanceTo(no[3]),
+                  no[3].distanceTo(no[0]));
   }
 
   Tuple4 getThetas(const Vec2d no[4])
   {
-    return Tuple4(getTheta(no[1], no[0]),
-                  getTheta(no[2], no[1]),
-                  getTheta(no[3], no[2]),
-                  getTheta(no[0], no[3]));
+    return Tuple4(no[0].angleTo(no[1]),
+                  no[1].angleTo(no[2]),
+                  no[2].angleTo(no[3]),
+                  no[3].angleTo(no[0]));
   }
 
   Tuple4 getAlphas(const Tuple4& theta)
@@ -132,7 +119,7 @@ namespace
       // Here we adjust the position of node-1 by jiggling its angle with
       // respect to node-0:
 
-      const double d = distance(old_0, old_1);
+      const double d = old_0.distanceTo(old_1);
 
       new_1->x() = old_0.x() + d * cos(new_theta);
       new_1->y() = old_0.y() + d * sin(new_theta);
@@ -201,9 +188,9 @@ namespace
 
     */
 
-    const double a = distance(old_3, *new_1);
-    const double b = distance(old_1, old_2);
-    const double c = distance(old_2, old_3);
+    const double a = old_3.distanceTo(*new_1);
+    const double b = old_1.distanceTo(old_2);
+    const double c = old_2.distanceTo(old_3);
 
     const double cos_ang = (old_3.x() - new_1->x()) / a;  // adjac / hypot
     const double sin_ang = (old_3.y() - new_1->y()) / a;  // oppos / hypot
@@ -234,8 +221,8 @@ namespace
       (new_1->x() + xp*cos_ang + yp*sin_ang,
        new_1->y() + xp*sin_ang - yp*cos_ang);
 
-    const double d_2_2a = distance(new_2a, old_2);
-    const double d_2_2b = distance(new_2b, old_2);
+    const double d_2_2a = new_2a.distanceTo(old_2);
+    const double d_2_2b = new_2b.distanceTo(old_2);
 
     *new_0 = old_0;
     *new_2 = (d_2_2a < d_2_2b) ? new_2a : new_2b;
@@ -329,7 +316,7 @@ Element Snake::getElement(int n) const
   result.type = Element::CONTOUR;
   result.pos.x() = 0.5 * (elem(n).x() + elem(n+1).x());
   result.pos.y() = 0.5 * (elem(n).y() + elem(n+1).y());
-  result.theta = zerototwopi(-getTheta(elem(n+1), elem(n)));
+  result.theta = zerototwopi(-elem(n).angleTo(elem(n+1)));
 
   return result;
 }
@@ -381,10 +368,10 @@ void Snake::jiggle()
   const Tuple4 old_alpha = getAlphas(old_theta);
 
   const Tuple4 old_delta
-    (minuspitopi(getTheta(elem(i[0]+1), elem(i[0])) - getTheta(elem(i[0]), elem(i[0]-1))),
-     minuspitopi(getTheta(elem(i[1]+1), elem(i[1])) - getTheta(elem(i[1]), elem(i[1]-1))),
-     minuspitopi(getTheta(elem(i[2]+1), elem(i[2])) - getTheta(elem(i[2]), elem(i[2]-1))),
-     minuspitopi(getTheta(elem(i[3]+1), elem(i[3])) - getTheta(elem(i[3]), elem(i[3]-1))));
+    (minuspitopi(elem(i[0]).angleTo(elem(i[0]+1)) - elem(i[0]-1).angleTo(elem(i[0]))),
+     minuspitopi(elem(i[1]).angleTo(elem(i[1]+1)) - elem(i[1]-1).angleTo(elem(i[1]))),
+     minuspitopi(elem(i[2]).angleTo(elem(i[2]+1)) - elem(i[2]-1).angleTo(elem(i[2]))),
+     minuspitopi(elem(i[3]).angleTo(elem(i[3]+1)) - elem(i[3]-1).angleTo(elem(i[3]))));
 
   Vec2d new_pos[4];
 
@@ -465,11 +452,11 @@ void Snake::transformPath(int i1, const Vec2d& new1,
   /*    a21  a12              sin a'-a    cos a'-a                     */
   /*                                                                   */
 
-  const double d = distance(old2, old1);
-  const double a = getTheta(old2, old1);
+  const double d = old1.distanceTo(old2);
+  const double a = old1.angleTo(old2);
 
-  const double dp = distance(new2, new1);
-  const double ap = getTheta(new2, new1);
+  const double dp = new1.distanceTo(new2);
+  const double ap = new1.angleTo(new2);
 
   const double diff_a = ap - a;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Jan 28 12:54:13 1999
-// written: Mon May 12 11:49:51 2003
+// written: Mon May 12 12:22:12 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -31,6 +31,8 @@
 #ifndef VEC2_H_DEFINED
 #define VEC2_H_DEFINED
 
+#include "gx/geom.h"
+
 #include <cmath>
 
 namespace Gfx
@@ -39,20 +41,19 @@ namespace Gfx
 
   namespace PointAlgo
   {
-    const double PI = 3.14159265359;
-
     double deg2rad(double degrees);
     double rad2deg(double radians);
 
     void normRad(double& radians);
     void normDeg(double& degrees);
 
-    double thetaDeg(double y, double x);
+    inline double thetaDeg(double y, double x)
+    {
+      return rad2deg(atan2(y,x));
+    }
 
     void setPolarPoint(Vec2<double>& point,
                        double length, double degrees);
-
-    double lengthHelper(double x, double y, double z = 0.0);
   }
 
 /// Gfx::Vec2 is a 2-D vector class for representing 2-D points or distances.
@@ -102,6 +103,7 @@ public:
 
   void rotateDeg(double degrees)
   {
+    // FIXME should use a real sin(),cos() rotation matrix here?
     PointAlgo::normDeg(degrees);
     if (degrees == 0.0)
       {
@@ -128,6 +130,19 @@ public:
       {
         setThetaDeg(thetaDeg() + degrees);
       }
+  }
+
+  /// Result in radians.
+  double angleTo(const Vec2<V>& b) const
+  {
+    return zerototwopi(atan2(b.y() - y(), b.x() - x()));
+  }
+
+  double distanceTo(const Vec2<V>& b) const
+  {
+    const double dx = x() - b.x();
+    const double dy = y() - b.y();
+    return sqrt(dx*dx + dy*dy);
   }
 
   //

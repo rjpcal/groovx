@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:16:03 2003
-// written: Mon May 12 11:16:05 2003
+// written: Mon May 12 12:11:13 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -31,7 +31,7 @@
 #ifndef GEOM_H_DEFINED
 #define GEOM_H_DEFINED
 
-#include <math.h>
+#include <cmath>
 
 inline double zerototwopi(double angle)
 {

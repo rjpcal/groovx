@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Aug  9 14:38:13 2001
-// written: Wed Mar 19 17:55:56 2003
+// written: Mon May 12 12:06:52 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -43,18 +43,18 @@ namespace Gfx { namespace PointAlgo
 {
   double deg2rad(double degrees)
   {
-    return degrees * PI/180.0;
+    return degrees * M_PI/180.0;
   }
 
   double rad2deg(double radians)
   {
-    return radians * 180.0/PI;
+    return radians * 180.0/M_PI;
   }
 
   void normRad(double& radians)
   {
-    while (radians > PI) { radians -= 2*PI; }
-    while (radians <= -PI) { radians += 2*PI; }
+    while (radians > M_PI) { radians -= 2*M_PI; }
+    while (radians <= -M_PI) { radians += 2*M_PI; }
   }
 
   void normDeg(double& degrees)
@@ -63,13 +63,13 @@ namespace Gfx { namespace PointAlgo
     while (degrees <= -180.0) { degrees += 360.0; }
   }
 
-  const char X_POS = 1;
-  const char Y_POS = 2;
+  const char X_POSITIVE = 1;
+  const char Y_POSITIVE = 2;
 
-  const char QUAD_1 = X_POS | Y_POS;
-  const char QUAD_2 = Y_POS;
+  const char QUAD_1 = X_POSITIVE | Y_POSITIVE;
+  const char QUAD_2 = Y_POSITIVE;
   const char QUAD_3 = 0;
-  const char QUAD_4 = X_POS;
+  const char QUAD_4 = X_POSITIVE;
 
   char quadrantDeg(double degrees)
   {
@@ -98,11 +98,6 @@ namespace Gfx { namespace PointAlgo
   }
 }}
 
-double Gfx::PointAlgo::thetaDeg(double y, double x)
-{
-  return rad2deg(atan2(y,x));
-}
-
 void Gfx::PointAlgo::setPolarPoint(Gfx::Vec2<double>& point,
                                    double length, double degrees)
 {
@@ -121,13 +116,8 @@ DOTRACE("Gfx::PointAlgo::setPolarPoint");
 
   char quadrant = quadrantDeg(degrees);
 
-  if ( !(quadrant & X_POS) ) { point.x() *= -1.0; }
-  if ( !(quadrant & Y_POS) ) { point.y() *= -1.0; }
-}
-
-double Gfx::PointAlgo::lengthHelper(double x, double y, double z)
-{
-  return sqrt(x*x + y*y + z*z);
+  if ( !(quadrant & X_POSITIVE) ) { point.x() *= -1.0; }
+  if ( !(quadrant & Y_POSITIVE) ) { point.y() *= -1.0; }
 }
 
 static const char vcid_point_cc[] = "$Header$";
