@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Sun Nov  3 13:55:31 2002
+// written: Fri Dec 20 09:55:08 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -234,7 +234,7 @@ fstring::~fstring()
 {
 DOTRACE("fstring::~fstring");
 
-  dbgDump(4, *this);
+  dbgDump(7, *this);
 
   if (itsRep->decrRefCount() == 0)
     itsRep = (string_rep*)0xdeadbeef;
