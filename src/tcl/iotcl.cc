@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Aug  8 14:41:24 2001
+// written: Thu Aug  9 07:00:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,8 +79,7 @@ namespace
     STD_IO::ofstream ofs(filename);
     if (ofs.fail())
       {
-        Tcl::TclError err; err.append("error opening file: ", filename);
-        throw err;
+        throw Tcl::TclError(fstring("error opening file: ", filename));
       }
 
     IO::LegacyWriter writer(ofs, use_bases);

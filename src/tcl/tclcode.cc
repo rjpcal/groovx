@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:29:16 2001
-// written: Wed Aug  8 15:59:41 2001
+// written: Thu Aug  9 07:11:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,15 +25,11 @@
 class Tcl::Code::EvalError : public Tcl::TclError {
 public:
   EvalError(Tcl_Obj* cmd_obj) :
-    Tcl::TclError("error while evaluating ")
-  {
-    append(Tcl_GetString(cmd_obj));
-  }
+    Tcl::TclError(fstring("error while evaluating ", Tcl_GetString(cmd_obj)))
+  {}
 
   EvalError(const char* msg) :
     Tcl::TclError(msg) {}
-
-  FIX_COPY_CTOR(EvalError, Tcl::TclError);
 };
 
 Tcl::Code::Code() :

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:09:12 2001
-// written: Wed Aug  8 15:29:29 2001
+// written: Thu Aug  9 07:06:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,8 @@ namespace
     Tcl_RegExp regexp = Tcl_GetRegExpFromObj(0, patternObj, flags);
     if (!regexp)
       {
-        throw Tcl::TclError("error getting a Tcl_RegExp from '",
-                            Tcl_GetString(patternObj), "'");
+        throw Tcl::TclError(fstring("error getting a Tcl_RegExp from '",
+                                    Tcl_GetString(patternObj), "'"));
       }
     return regexp;
   }

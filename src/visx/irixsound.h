@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 14 11:23:12 1999
-// written: Wed Aug  8 20:16:38 2001
+// written: Thu Aug  9 07:06:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -159,7 +159,7 @@ DOTRACE("IrixAudioSound::setFile");
   AFfilehandle audiofile = afOpenFile(filename, "r", (AFfilesetup) 0);
   if (audiofile == AF_NULL_FILEHANDLE)
     {
-      throw Util::Error("couldn't open sound file ", itsFilename);
+      throw Util::Error(fstring("couldn't open sound file ", itsFilename));
     }
 
   // We don't actually set itsFilename to the new value until we are
@@ -177,8 +177,8 @@ DOTRACE("IrixAudioSound::setFile");
   itsNumChannels = afGetChannels(audiofile, AF_DEFAULT_TRACK);
   if (itsNumChannels == -1)
     {
-      throw Util::Error("error reading the number of channels in sound file ",
-                              itsFilename);
+      throw Util::Error(fstring("error reading the number of channels "
+                                "in sound file ", itsFilename));
     }
   alSetChannels(itsAudioConfig, itsNumChannels);
 
@@ -186,8 +186,8 @@ DOTRACE("IrixAudioSound::setFile");
   itsFrameCount = afGetFrameCount(audiofile, AF_DEFAULT_TRACK);
   if (itsFrameCount < 0)
     {
-      throw Util::Error("error reading the frame count in sound file ",
-                        itsFilename);
+      throw Util::Error(fstring("error reading the frame count "
+                                "in sound file ", itsFilename));
     }
 
   // Sample format and sample width
@@ -227,14 +227,15 @@ DOTRACE("IrixAudioSound::setFile");
   if (readResult == -1)
     {
       itsSamples.resize(0);
-      throw Util::Error("error reading sound data from file ", itsFilename);
+      throw Util::Error(fstring("error reading sound data "
+                                "from file ", itsFilename));
     }
 
   // If the close failed, we keep the data that were read, but report
   // the error
   if (closeResult == -1)
     {
-      throw Util::Error("error closing sound file ", itsFilename);
+      throw Util::Error(fstring("error closing sound file ", itsFilename));
     }
 }
 

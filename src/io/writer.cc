@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:50 1999
-// written: Wed Aug  8 20:16:39 2001
+// written: Thu Aug  9 07:15:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,13 +25,13 @@ IO::WriteError::~WriteError() {}
 IO::WriteVersionError::WriteVersionError(const char* classname,
                                          IO::VersionId attempted_id,
                                          IO::VersionId lowest_supported_id,
-                                         const char* msg) :
+                                         const char* info) :
   Util::Error()
 {
-  append("IO::WriteVersionError: ");
-  append("in ", classname, ", serial version ");
-  append(attempted_id, " is not supported. The lowest supported version is ");
-  append(lowest_supported_id, ". ", msg);
+  msg().append("IO::WriteVersionError: ");
+  msg().append("in ", classname, ", serial version ");
+  msg().append(attempted_id, " is not supported. The lowest supported version is ");
+  msg().append(lowest_supported_id, ". ", info);
 }
 
 IO::WriteVersionError::~WriteVersionError() {}

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Aug  8 20:16:37 2001
+// written: Thu Aug  9 07:08:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,8 +101,6 @@ class IO::FilenameError : public Util::Error {
 public:
   /// Default constructor.
   FilenameError(const char* filename);
-
-  FIX_COPY_CTOR(FilenameError, Util::Error);
 
   /// Virtual destructor
   virtual ~FilenameError();

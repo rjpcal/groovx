@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Aug  8 20:16:40 2001
+// written: Thu Aug  9 07:06:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -331,7 +331,7 @@ DOTRACE("Fish::readSplineFile");
   STD_IO::ifstream ifs(splinefile);
   if (ifs.fail())
     {
-      throw Util::Error("error opening file '", splinefile, "'");
+      throw Util::Error(fstring("error opening file '", splinefile, "'"));
     }
 
   for(i = 0; i < 4; ++i)
@@ -367,7 +367,7 @@ DOTRACE("Fish::readSplineFile");
 
       if (ifs.fail())
         {
-          throw Util::Error("error reading file '", splinefile, "'");
+          throw Util::Error(fstring("error reading file '", splinefile, "'"));
         }
     }
 
@@ -388,7 +388,7 @@ DOTRACE("Fish::readSplineFile");
 
       if (ifs.fail())
         {
-          throw Util::Error("error reading file '", splinefile, "'");
+          throw Util::Error(fstring("error reading file '", splinefile, "'"));
         }
     }
 }
@@ -401,7 +401,7 @@ DOTRACE("Fish::readCoordFile");
   STD_IO::ifstream ifs(coordfile);
   if (ifs.fail())
     {
-      throw Util::Error("error opening file '", coordfile, "'");
+      throw Util::Error(fstring("error opening file '", coordfile, "'"));
     }
 
   // Skip (index-1) lines
@@ -419,7 +419,7 @@ DOTRACE("Fish::readCoordFile");
 
   if (ifs.fail())
     {
-      throw Util::Error("error reading file '", coordfile, "'");
+      throw Util::Error(fstring("error reading file '", coordfile, "'"));
     }
 }
 

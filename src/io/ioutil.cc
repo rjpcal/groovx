@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Wed Aug  8 20:16:39 2001
+// written: Thu Aug  9 06:59:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,14 +62,14 @@ namespace
       }
     catch (Util::Error& err)
       {
-        err.append(" with buffer contents ==\n");
+        err.msg().append(" with buffer contents ==\n");
 
         ost << '\0';
-        err.append(ost.str());
+        err.msg().append(ost.str());
 
         ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
 
-        throw err;
+        throw;
       }
     catch (...)
       {

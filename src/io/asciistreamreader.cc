@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Wed Aug  8 20:54:35 2001
+// written: Thu Aug  9 07:12:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,12 +48,9 @@
 class AttributeReadError : public IO::ReadError {
 public:
   AttributeReadError(const fstring& attrib_name) :
-    IO::ReadError()
-  {
-    append("input failed while reading attribute: ", attrib_name.c_str());
-  }
-
-  FIX_COPY_CTOR(AttributeReadError, IO::ReadError);
+    IO::ReadError(fstring("input failed while reading attribute: ",
+                          attrib_name.c_str()))
+  {}
 };
 
 class AsciiStreamReader::Impl {
@@ -87,8 +84,8 @@ public:
         MapType::const_iterator itr = itsMap.find(id);
         if ( itr == itsMap.end() )
           {
-            throw IO::ReadError("no object was found for the given id:",
-                                      id);
+            throw IO::ReadError(fstring("no object was found "
+                                        "for the given id:", id));
           }
 
         return (*itr).second;
@@ -120,11 +117,11 @@ public:
         // See if an object has already been created for this id
         if ( itr != itsMap.end() )
           {
-            IO::ReadError err;
-            err.append("object has already been created\n");
-            err.append("\ttype: ", object->ioTypename().c_str(), "\n");
-            err.append("\tid: ", id);
-            throw err;
+            fstring msg;
+            msg.append("object has already been created\n");
+            msg.append("\ttype: ", object->ioTypename().c_str(), "\n");
+            msg.append("\tid: ", id);
+            throw IO::ReadError(msg);
           }
 
         itsMap.insert(MapType::value_type(id, object));
@@ -178,9 +175,9 @@ public:
             ++itr;
           }
 
-        throw IO::ReadError("no attribute named '",
-                            attrib_name.c_str(), "' for ",
-                            itsObjTag.c_str());
+        throw IO::ReadError(fstring("no attribute named '",
+                                    attrib_name.c_str(), "' for ",
+                                    itsObjTag.c_str()));
       }
 
   private:
@@ -280,10 +277,10 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAndUnEscape");
       if (itr >= stop)
         {
           READ_BUFFER[ READ_BUFFER.size() - 1 ] = '\0';
-          throw IO::ReadError("AsciiStreamReader exceeded "
-                              "read buffer capacity\n"
-                              "buffer contents: \n",
-                              &(READ_BUFFER[0]));
+          throw IO::ReadError(fstring("AsciiStreamReader exceeded "
+                                      "read buffer capacity\n"
+                                      "buffer contents: \n",
+                                      &(READ_BUFFER[0])));
         }
 
       if (ch != '\\')
@@ -352,13 +349,14 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 
   if (attrib_count < 0)
     {
-      throw IO::ReadError("found a negative attribute count: ", attrib_count);
+      throw IO::ReadError(fstring("found a negative attribute count: ",
+                                  attrib_count));
     }
 
   if ( buf.fail() )
     {
-      throw IO::ReadError("input failed while reading attribute count: ",
-                          attrib_count);
+      throw IO::ReadError(fstring("input failed while reading "
+                                  "attribute count: ", attrib_count));
     }
 
   // Loop and load all the attributes
@@ -370,12 +368,13 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 
       if ( buf.fail() )
         {
-          IO::ReadError err;
-          err.append("input failed while reading attribute type and name\n");
-          type[63] = '\0'; err.append("\ttype: ", type, "\n");
-          name[63] = '\0'; err.append("\tname: ", name, "\n");
-          equal[15] = '\0'; err.append("\tequal: ", equal);
-          throw err;
+          type[63] = '\0'; name[63] = '\0'; equal[15] = '\0';
+          fstring msg;
+          msg.append("input failed while reading attribute type and name\n");
+          msg.append("\ttype: ", type, "\n");
+          msg.append("\tname: ", name, "\n");
+          msg.append("\tequal: ", equal);
+          throw IO::ReadError(msg);
         }
 
       addNewAttrib(name, type, readAndUnEscape(buf));
@@ -419,8 +418,8 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
 
   if (len < 0)
     {
-      throw IO::ReadError("found a negative length "
-                          "for a string attribute: ", len);
+      throw IO::ReadError(fstring("found a negative length "
+                                  "for a string attribute: ", len));
     }
 
   fstring new_string; new_string.make_space(len);
@@ -537,13 +536,13 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
       if ( itsBuf.fail() )
         {
           type[63] = '\0'; equal[15] = '\0'; bracket[15] = '\0';
-          IO::ReadError err;
-          err.append("input failed while reading typename and object id\n");
-          err.append("\ttype: ", type, "\n");
-          err.append("id: ", id, "\n");
-          err.append("\tequal: ", equal, "\n");
-          err.append("\tbracket: ", bracket);
-          throw err;
+          fstring msg;
+          msg.append("input failed while reading typename and object id\n");
+          msg.append("\ttype: ", type, "\n");
+          msg.append("id: ", id, "\n");
+          msg.append("\tequal: ", equal, "\n");
+          msg.append("\tbracket: ", bracket);
+          throw IO::ReadError(msg);
         }
 
       if ( !haveReadRoot )
@@ -566,9 +565,9 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
       if ( itsBuf.fail() )
         {
           bracket[15] = '\0';
-          throw IO::ReadError("input failed "
-                              "while parsing ending bracket\n",
-                              "\tbracket: ", bracket);
+          throw IO::ReadError(fstring("input failed "
+                                      "while parsing ending bracket\n",
+                                      "\tbracket: ", bracket));
         }
     }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Aug  8 15:29:30 2001
+// written: Thu Aug  9 07:06:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -232,7 +232,7 @@ DOTRACE("GLCanvas::throwIfError");
     {
       const char* msg =
         reinterpret_cast<const char*>(gluErrorString(status));
-      throw Util::Error("GL error: ", msg, " ", where);
+      throw Util::Error(fstring("GL error: ", msg, " ", where));
     }
 }
 

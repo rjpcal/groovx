@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Aug  8 15:59:00 2001
+// written: Thu Aug  9 07:08:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,9 +33,7 @@
 
 class InvalidIdError : public Util::Error {
 public:
-  INHERIT_ERROR_CTORS(InvalidIdError);
-
-  FIX_COPY_CTOR(InvalidIdError, Util::Error);
+  InvalidIdError(const fstring& msg) : Util::Error(msg) {};
 
   /// Virtual destructor.
   virtual ~InvalidIdError();

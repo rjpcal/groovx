@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:19:17 1999
-// written: Wed Aug  8 15:59:06 2001
+// written: Thu Aug  9 07:08:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,9 +39,7 @@ class ostream;
  **/
 class ValueError : public Util::Error {
 public:
-  INHERIT_ERROR_CTORS(ValueError);
-
-  FIX_COPY_CTOR(ValueError, Util::Error);
+  ValueError(const fstring& msg) : Util::Error(msg) {};
 
   /// Virtual destructor.
   virtual ~ValueError();

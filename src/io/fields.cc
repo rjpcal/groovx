@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Wed Aug  8 20:16:39 2001
+// written: Thu Aug  9 07:06:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -221,7 +221,7 @@ const FieldInfo& FieldMap::info(const fstring& name) const {
     }
   else
     {
-      throw Util::Error("no such field: '", name.c_str(), "'");
+      throw Util::Error(fstring("no such field: '", name.c_str(), "'"));
     }
 }
 

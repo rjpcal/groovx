@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Wed Aug  8 20:54:40 2001
+// written: Thu Aug  9 07:06:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,8 +73,8 @@ public:
       {
         // If we got here, then none of the substrings matched so we must
         // raise an exception.
-        throw IO::ReadError("couldn't read typename for ",
-                                  correct_name.c_str());
+        throw IO::ReadError(fstring("couldn't read typename for ",
+                                    correct_name.c_str()));
       }
   }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 20 13:13:22 2001
-// written: Wed Aug  8 20:16:39 2001
+// written: Thu Aug  9 07:06:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,11 +62,13 @@ Util::gzstreambuf::gzstreambuf(const char* name, int om, bool throw_exception) :
     {
       if (om & STD_IO::ios::in)
         {
-          throw Util::Error("couldn't open file '", name, "' for reading");
+          throw Util::Error(fstring("couldn't open file '",
+                                    name, "' for reading"));
         }
       else if (om & STD_IO::ios::out)
         {
-          throw Util::Error("couldn't open file '", name, "' for writing");
+          throw Util::Error(fstring("couldn't open file '", name,
+                                    "' for writing"));
         }
     }
 }

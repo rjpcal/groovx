@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 20 22:37:31 1999
-// written: Wed Aug  8 20:16:39 2001
+// written: Thu Aug  9 07:06:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@
 
 void FactoryError::throwForType(const char* type)
 {
-  throw Util::Error("unknown object type '", type, "'");
+  throw Util::Error(fstring("unknown object type '", type, "'"));
 }
 
 void FactoryError::throwForType(const fstring& type)

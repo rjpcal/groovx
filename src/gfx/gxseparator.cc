@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Mon Aug  6 11:10:19 2001
+// written: Thu Aug  9 06:56:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -159,7 +159,8 @@ Ref<GxNode> GxSeparator::getChild(ChildId index) const
 DOTRACE("GxSeparator::getChild");
   if (index >= itsImpl->itsChildren.size())
     {
-      throw Util::Error("GxSeparator has no child with index '", index, "'");
+      throw Util::Error(fstring("GxSeparator has no child with index '",
+                                index, "'"));
     }
 
   return itsImpl->itsChildren[index];

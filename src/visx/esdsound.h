@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 24 18:13:53 2001
-// written: Wed Aug  8 20:16:39 2001
+// written: Thu Aug  9 07:06:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -118,14 +118,16 @@ DOTRACE("EsdSound::setFile");
 
       if (audiofile == AF_NULL_FILEHANDLE)
         {
-          throw Util::Error("couldn't open sound file '", filename, "'");
+          throw Util::Error(fstring("couldn't open sound file '",
+                                    filename, "'"));
         }
 
       int closeResult = afCloseFile(audiofile);
 
       if (closeResult == -1)
         {
-          throw Util::Error("error closing sound file '", filename, "'");
+          throw Util::Error(fstring("error closing sound file '",
+                                    filename, "'"));
         }
 
       itsFilename = filename;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:46:08 1999
-// written: Wed Aug  8 20:16:37 2001
+// written: Thu Aug  9 07:08:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,9 +45,7 @@ class Value;
 
 class IO::ReadError : public Util::Error {
 public:
-  INHERIT_ERROR_CTORS(ReadError);
-
-  FIX_COPY_CTOR(ReadError, Util::Error);
+  ReadError(const fstring& msg) : Util::Error(msg) {};
 
   virtual ~ReadError();
 };
@@ -69,8 +67,6 @@ public:
                    IO::VersionId attempted_id,
                    IO::VersionId lowest_supported_id,
                    const char* msg);
-
-  FIX_COPY_CTOR(ReadVersionError, Util::Error);
 
   virtual ~ReadVersionError();
 };

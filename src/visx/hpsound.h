@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Wed Aug  8 20:16:38 2001
+// written: Thu Aug  9 07:06:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ namespace HPSOUND_CC_LOCAL
 
     DebugEvalNL(buf);
 
-    throw Util::Error("HP Audio Error: ", buf);
+    throw Util::Error(fstring("HP Audio Error: ", buf));
 
     // we'll never get here, but we need to placate the compiler
     return 0;

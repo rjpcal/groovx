@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Aug  8 15:34:31 2001
+// written: Thu Aug  9 07:03:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -130,7 +130,8 @@ public:
       MapType::iterator itr = itsPtrMap.find(id);
       if (!isValidItr(itr))
         {
-          throw InvalidIdError("attempted to access invalid object '", id, "'");
+          throw InvalidIdError(fstring("attempted to access "
+                                       "invalid object '", id, "'"));
         }
 
       return (*itr).second.get();

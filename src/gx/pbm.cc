@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 16:41:07 1999
-// written: Wed Aug  8 20:16:40 2001
+// written: Thu Aug  9 06:55:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,9 +100,8 @@ void Pbm::Impl::setBytes(const dynamic_block<unsigned char>& bytes,
     break;
   default:
     {
-      PbmError err;
-      err.append("invalid bits_per_pixel value: ", itsBitsPerPixel);
-      throw err;
+      throw PbmError(fstring("invalid bits_per_pixel value: ",
+                             itsBitsPerPixel));
     }
     break;
   }
@@ -182,8 +181,7 @@ DOTRACE("Pbm::readStream");
   int c = is.get();
   if (c != 'P')
     {
-      PbmError err; err.append("bad magic number while reading pbm file: ", c);
-      throw err;
+      throw PbmError(fstring("bad magic number while reading pbm file: ", c));
     }
 
   is >> itsImpl->itsMode;
@@ -191,9 +189,8 @@ DOTRACE("Pbm::readStream");
 
   if (itsImpl->itsMode < 1 || itsImpl->itsMode > 6)
     {
-      PbmError err;
-      err.append("invalid mode seen while reading pbm file: ", itsImpl->itsMode);
-      throw err;
+      throw PbmError(fstring("invalid mode seen while reading pbm file: ",
+                             itsImpl->itsMode));
     }
 
   while ( isspace(is.peek()) )

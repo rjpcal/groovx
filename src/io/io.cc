@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  9 20:25:02 1999
-// written: Wed Aug  8 20:16:39 2001
+// written: Thu Aug  9 07:14:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -99,10 +99,10 @@ DOTRACE("IO::IoObject::ioTypename");
 //
 ///////////////////////////////////////////////////////////////////////
 
-IO::FilenameError::FilenameError(const char* str)
+IO::FilenameError::FilenameError(const char* str) :
+  Util::Error(fstring("couldn't use file '", str, "'"))
 {
 DOTRACE("IO::FilenameError::FilenameError");
-  append("couldn't use file '", str, "'");
 }
 
 IO::FilenameError::~FilenameError() {}

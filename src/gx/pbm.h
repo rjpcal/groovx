@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 16:41:06 1999
-// written: Wed Aug  8 15:57:27 2001
+// written: Thu Aug  9 07:08:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,9 +33,7 @@ class BmapData;
     during parsing of the bitmap data. */
 class PbmError : public Util::Error {
 public:
-  INHERIT_ERROR_CTORS(PbmError);
-
-  FIX_COPY_CTOR(PbmError, Util::Error);
+  PbmError(const fstring& msg) : Util::Error(msg) {};
 
   /// Virtual destructor.
   virtual ~PbmError();
