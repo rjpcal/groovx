@@ -3,13 +3,15 @@
 // tlistutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 02:58:20 1999
-// written: Mon Oct 23 12:50:15 2000
+// written: Tue Oct 24 12:36:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TLISTUTILS_H_DEFINED
 #define TLISTUTILS_H_DEFINED
+
+template <class T> class dynamic_block;
 
 #ifdef PRESTANDARD_IOSTREAMS
 class istream;
@@ -31,30 +33,6 @@ public:
 									int* objids, unsigned int objids_size,
 									int pixel_width,
 									int pixel_height);
-
-
-  /** Clear all trials currently in the Tlist, then make new Trial's
-		so that there is one Trial for each valid object in the
-		ObjList. In addition, the trialid for each generated Trial will
-		be the same as the objid of the object it refers to. Returns the
-		number of trials that were created. */
-  static int makeSingles(int posid);
-
-  /** Clear all trials currently in the Tlist, then make new Trial's
-		so that there is one Trial for each ordered pair of valid
-		objects in the ObjList. Returns the number of trials created. */
-  static int makePairs(int posid1, int posid2);
-
-  /** Clear all trials currently in the Tlist, then make new Trial's
-		such that there is one Trial for each ordered triad of valid
-		objects in the ObjList. Returns the number of trials created. */
-  static int makeTriads(int posid[]);
-
-  /** Make a trial that contains all the objects in the ObjList on a
-		grid. New Position's will be created as necessary. Return the id
-		of the trial that was created. */
-  static int makeSummaryTrial(int trialid, int num_cols, double scale,
-										double xstep, double ystep);
 
   /** Write a file containing a summary of the responses to each Trial
 		in the Tlist. */
@@ -87,11 +65,6 @@ public:
 		Trial. Returns the number of trials that were loaded. */
   static int readFromObjidsOnly(STD_IO::istream& is,
 										  int num_lines, int offset = 0);
-
-  /** This function adds an object/position pair (specified by their
-		id#'s in the ObjList and PosList) to a specified trial in a
-		Tlist. */
-  static void addObject(int trial, int objid, int posid);
 };
 
 static const char vcid_tlistutils_h[] = "$Header$";

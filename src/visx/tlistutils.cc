@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Mon Oct 23 16:54:25 2000
+// written: Tue Oct 24 12:40:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,9 +14,7 @@
 #include "tlistutils.h"
 
 #include "gtext.h"
-#include "objlist.h"
 #include "position.h"
-#include "poslist.h"
 #include "rect.h"
 #include "trial.h"
 #include "tlist.h"
@@ -80,7 +78,7 @@ DOTRACE("TlistUtils::createPreview");
 	 ++x_step;
 	 if (x_step == num_cols) { x_step = 0; ++y_step; }
 
-	 ObjList::SharedPtr obj = ObjList::theObjList().getCheckedPtr(objids[i]);
+	 NullableItemWithId<GrObj> obj(objids[i]);
 	 bool haveBB = obj->getBoundingBox(canvas, bbxs[i]);
 
 	 if ( !haveBB ) {
@@ -122,198 +120,6 @@ DOTRACE("TlistUtils::createPreview");
   return preview_trial.id();
 }
 
-int TlistUtils::makeSingles(int posid) {
-DOTRACE("TlistUtils::makeSingles");
-
-  Tlist& tlist = Tlist::theTlist(); 
-
-  if ( !PosList::thePosList().isValidId(posid) )
-	 { throw ErrorWithMsg(bad_posid_msg); }
-
-  const ObjList& olist = ObjList::theObjList();
-
-  fixed_block<int> vec(olist.count());
-  olist.insertValidIds(&vec[0]);
-
-  tlist.clear();
-
-  // This loop runs through all valid objid's and does two things: 
-  // 1) it adds the objid and the given posid to the trial
-  // 2) it sets the Trial's type to the category of its single GrObj
-  for (size_t i=0; i < vec.size(); ++i) {
-	 int id = vec[i];
-	 Trial* t = Trial::make();
-	 tlist.insertAt(id, Tlist::Ptr(t));
-	 t->add(id, posid);
-	 const ObjList::SharedPtr obj = olist.getCheckedPtr(id);
-	 t->setType(obj->getCategory());
-  }
-
-  return vec.size();
-}
-
-int TlistUtils::makePairs(int posid1, int posid2) {
-DOTRACE("TlistUtils::makePairs");
-
-  Tlist& tlist = Tlist::theTlist(); 
-
-  if ( !PosList::thePosList().isValidId(posid1) ||
-		 !PosList::thePosList().isValidId(posid2) )
-	 { throw ErrorWithMsg(bad_posid_msg); }
-  
-  fixed_block<int> vec(ObjList::theObjList().count());
-  ObjList::theObjList().insertValidIds(&vec[0]);
-  
-  tlist.clear();
-  
-  // This loop runs through all the trials and does two things:
-  // 1) it adds the appropriate objids and the given posids to the trial
-  // 2) it sets the Trial's type to zero if the objids are different, and to
-  //    one if the objids are the same.
-  int trialid = 0;
-  for (size_t i = 0; i < vec.size(); ++i) {
-	 for (size_t j = 0; j < vec.size(); ++j) {
-		Trial* t = Trial::make();
-		tlist.insertAt(trialid, Tlist::Ptr(t));
-		t->add(vec[i], posid1);
-		t->add(vec[j], posid2);
-		t->setType( i == j );
-		
-		++trialid;
-	 }
-  }
-
-  // Return the number of trials generated.
-  return trialid;
-}
-
-int TlistUtils::makeTriads(int posid[]) {
-DOTRACE("TlistUtils::makeTriads");
-
-  Tlist& tlist = Tlist::theTlist(); 
-
-  if ( !PosList::thePosList().isValidId(posid[0]) ||
-		 !PosList::thePosList().isValidId(posid[1]) ||
-		 !PosList::thePosList().isValidId(posid[2]) ) { 
-	 throw ErrorWithMsg(bad_posid_msg);
-  }
-
-  DebugEval(posid[0]); DebugEval(posid[1]); DebugEvalNL(posid[3]);
-
-  fixed_block<int> vec(ObjList::theObjList().count());
-  ObjList::theObjList().insertValidIds(&vec[0]);
-	 
-  tlist.clear();
-
-  const int NUM_PERMS = 18;
-  static int permutations[NUM_PERMS][3] = { 
-	 {0, 0, 1},
-	 {0, 0, 2},
-	 {1, 1, 0},
-	 {1, 1, 2},
-	 {2, 2, 0},
-	 {2, 2, 1},
-	 {0, 1, 1},
-	 {0, 2, 2},
-	 {1, 0, 0},
-	 {2, 0, 0},
-	 {2, 1, 1},
-	 {1, 2, 2},
-	 {0, 1, 2},
-	 {0, 2, 1},
-	 {1, 0, 2},
-	 {1, 2, 0},
-	 {2, 0, 1},
-	 {2, 1, 0} };
-  
-  size_t num_objs = vec.size();
-
-  // We need at least three objects in order to make any triads
-  if ( num_objs < 3 ) return 0;
-
-  int base_triad[3];
-    
-  int trial = 0;
-
-  // loops over i,j,k construct all possible base triads
-  for (size_t i = 0; i < num_objs-2; ++i) {
-	 base_triad[0] = vec[i];
-	 for (size_t j = i+1; j < num_objs; ++j) {
-		base_triad[1] = vec[j];
-		for (size_t k = j+1; k < num_objs; ++k) {
-		  base_triad[2] = vec[k];
-
-		  DebugEval(i); DebugEval(j); DebugEval(k); DebugEvalNL(trial);
-
-		  // loops over p,e run through all permutations
-		  for (int p = 0; p < NUM_PERMS; ++p) {
-			 Trial* t = Trial::make();
-			 tlist.insertAt(trial, Tlist::Ptr(t));
-			 for (int e = 0; e < 3; ++e) {
-				t->add(base_triad[permutations[p][e]], posid[e]);
-			 }
-			 ++trial;
-		  } // end p
-
-		} // end k
-	 } // end j
-  } // end i
-
-  // Return the number of trials generated
-  return trial;
-}
-
-int TlistUtils::makeSummaryTrial(int trialid, int num_cols, double scale,
-											double xstep, double ystep) {
-DOTRACE("TlistUtils::makeSummaryTrial");
-
-  Tlist& tlist = Tlist::theTlist(); 
-
-  ObjList& olist = ObjList::theObjList();
-  int num_objs = olist.count();
-	 
-  // Figure number of columns-- (num_objs-1)/num_cols gives one fewer
-  // than the number of rows that we need, so add 1 to it
-  int num_rows = 1 + (num_objs-1)/num_cols;
-
-  fixed_block<int> objids(olist.count());
-  olist.insertValidIds(&objids[0]);
-	 
-  // Coords of upper left corner of viewing area
-  const double x0 = scale * (0.0 - xstep*(num_cols-1)/2.0);
-  const double y0 = scale * (0.0 + ystep*(num_rows-1)/2.0);
-
-  DebugEval(num_objs); DebugEval(num_cols); DebugEvalNL(num_rows);
-  DebugEval(scale); DebugEval(xstep); DebugEval(ystep); 
-  DebugEval(x0); DebugEvalNL(y0);
-
-  PosList& plist = PosList::thePosList();
-
-  Trial* t = Trial::make();
-	 
-  tlist.insertAt(trialid, Tlist::Ptr(t));
-
-  for (size_t i=0; i < objids.size(); ++i) {
-	 int row = i / num_cols;
-	 int col = i % num_cols;
-	 Position* p = Position::make();
-	 double xpos = x0+col*xstep*scale;
-	 double ypos = y0-row*ystep*scale;
-		
-	 DebugEval(xpos);
-	 DebugEvalNL(ypos);
-		
-	 p->setTranslate(xpos, ypos, 0.0);
-	 p->setScale(scale, scale, 1.0);
-	 ItemWithId<Position> pos(p, ItemWithId<Position>::INSERT);
-
-	 t->add(objids[i], pos.id());
-  }
-
-  // Return the id of the trial generated.
-  return trialid;
-}
-
 void TlistUtils::writeResponses(const char* filename) {
 DOTRACE("TlistUtils::writeResponses");
 
@@ -335,7 +141,7 @@ DOTRACE("TlistUtils::writeResponses");
   ofs.setf(ios::fixed);
   ofs.precision(2);
   for (size_t i = 0; i < trialids.size(); ++i) {
-	 Tlist::SharedPtr tb = tlist.getPtr(trialids[i]);
+	 NullableItemWithId<TrialBase> tb(trialids[i]);
 
 	 Trial* t = dynamic_cast<Trial*>(tb.get());
 
@@ -364,7 +170,7 @@ DOTRACE("TlistUtils::writeIncidenceMatrix");
   STD_IO::ofstream ofs(filename);
 	 
   for (size_t i = 0; i < trialids.size(); ++i) {
-	 Tlist::SharedPtr tb = tlist.getPtr(trialids[i]);
+	 NullableItemWithId<TrialBase> tb(trialids[i]);
 
 	 Trial* t = dynamic_cast<Trial*>(tb.get());
 
@@ -395,6 +201,8 @@ DOTRACE("TlistUtils::readFromObjidsOnly");
 
   Tlist& tlist = Tlist::theTlist(); 
 
+  // FIXME this will not really do what we want anymore -- need to
+  // return a list of the trial ids that are created
   // Remove all trials and resize itsTrials to 0
   tlist.clear();
 
@@ -441,7 +249,7 @@ DOTRACE("TlistUtils::writeMatlab");
   ofs.setf(ios::fixed);
   ofs.precision(2);
   for (size_t i = 0; i < trialids.size(); ++i) {
-	 Tlist::SharedPtr tb = tlist.getPtr(trialids[i]);
+	 NullableItemWithId<TrialBase> tb(trialids[i]);
 
 	 Trial* t = dynamic_cast<Trial*>(tb.get());
 
@@ -457,30 +265,6 @@ DOTRACE("TlistUtils::writeMatlab");
 		  ofs << t->avgResponse() << endl;
 		}
   }
-}
-
-void TlistUtils::addObject(int trialid, int objid, int posid) {
-DOTRACE("TlistUtils::addObject");
-
-  Tlist& tlist = Tlist::theTlist(); 
-
-  if ( trialid < 0 ) { throw ErrorWithMsg(bad_trial_msg); }
-
-  if ( !ObjList::theObjList().isValidId(objid) )
-	 { throw ErrorWithMsg(bad_objid_msg); }
-
-  if ( !PosList::thePosList().isValidId(posid) )
-	 { throw ErrorWithMsg(bad_posid_msg); }
-
-  if ( !tlist.isValidId(trialid) ) {
-	 tlist.insertAt(trialid, Tlist::Ptr(Trial::make()));
-  }
-
-  Tlist::SharedPtr tb = tlist.getPtr(trialid);
-
-  Trial& t = dynamic_cast<Trial&>(*(tb.get()));
-
-  t.add(objid, posid);
 }
 
 static const char vcid_tlistutils_cc[] = "$Header$";
