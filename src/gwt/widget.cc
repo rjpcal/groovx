@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Thu Aug 16 10:05:42 2001
+// written: Thu Aug 16 10:29:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,6 @@
 #include "util/observer.h"
 #include "util/ref.h"
 
-#define NO_TRACE
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
@@ -83,6 +82,7 @@ public:
 
   void setVisibility(bool val)
   {
+    DOTRACE("GWT::Widget::Impl::setVisibility");
     isItVisible = val;
     if (isItVisible == false)
       {
@@ -166,23 +166,23 @@ DOTRACE("GWT::Widget::Impl::display");
     }
 
 
-  if ( !isItVisible ) return;
-
-  try
+  if ( isItVisible )
     {
-      DebugPrintNL("drawing the node...");
-      itsDrawNode->draw(canvas);
-      itsUndrawNode = itsDrawNode;
+      try
+        {
+          itsDrawNode->draw(canvas);
+          itsUndrawNode = itsDrawNode;
 
-      isItRefreshed = true;
+          isItRefreshed = true;
+        }
+      catch (...)
+        {
+          // Here, either the trial id or some other id was invalid
+          setVisibility(false);
+        }
+    }
 
-      doFlush(canvas);
-    }
-  catch (...)
-    {
-      // Here, either the trial id or some other id was invalid
-      setVisibility(false);
-    }
+  doFlush(canvas);
 }
 
 void GWT::Widget::Impl::clearscreen(Gfx::Canvas& canvas)
