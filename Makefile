@@ -50,28 +50,20 @@ MAKEFLAGS += --warn-undefined-variables
 
 #-------------------------------------------------------------------------
 #
-# Platform selection
-#
-#-------------------------------------------------------------------------
-
-PLATFORM := $(ARCH)
-
-#-------------------------------------------------------------------------
-#
 # Directories for different file types
 #
 #-------------------------------------------------------------------------
 
 SRC := src
-DEP := ./dep/$(PLATFORM)
-OBJ := obj/$(PLATFORM)
+DEP := ./dep/$(ARCH)
+OBJ := obj/$(ARCH)
 LOGS := ./logs
 DOC := ./doc
 SCRIPTS := ./scripts
 
 CPPFLAGS += -I$(SRC)
 
-TMP_DIR := ./tmp/$(PLATFORM)
+TMP_DIR := ./tmp/$(ARCH)
 TMP_FILE := $(TMP_DIR)/tmpfile
 
 #-------------------------------------------------------------------------
@@ -80,7 +72,7 @@ TMP_FILE := $(TMP_DIR)/tmpfile
 #
 #-------------------------------------------------------------------------
 
-ifeq ($(PLATFORM),irix6)
+ifeq ($(ARCH),irix6)
 	COMPILER := MIPSpro
 	SHLIB_EXT := so
 	STATLIB_EXT := a
@@ -90,7 +82,7 @@ ifeq ($(PLATFORM),irix6)
 	AUDIO_LIB := -laudio -laudiofile
 endif
 
-ifeq ($(PLATFORM),i686)
+ifeq ($(ARCH),i686)
 	COMPILER := g++3
 	SHLIB_EXT := so
 	STATLIB_EXT := a
@@ -102,7 +94,7 @@ ifeq ($(PLATFORM),i686)
 	AUDIO_LIB := -lesd -laudiofile
 endif
 
-ifeq ($(PLATFORM),ppc)
+ifeq ($(ARCH),ppc)
 	COMPILER := g++2
 	SHLIB_EXT := dylib
 	STATLIB_EXT := a
@@ -173,7 +165,7 @@ ifeq ($(COMPILER),g++2)
 		CXXFLAGS += -O3
 	endif
 
-ifeq ($(PLATFORM),ppc)
+ifeq ($(ARCH),ppc)
 	CXXFLAGS += -dynamic
 
 # Need to use -install_name ${LIB_RUNTIME_DIR}/libname?
@@ -225,7 +217,7 @@ LIBS += \
 	$(AUDIO_LIB) \
 	-lm
 
-ifeq ($(PLATFORM),ppc)
+ifeq ($(ARCH),ppc)
 	LIBS += -lcc_dynamic
 endif
 
@@ -279,12 +271,12 @@ $(SRC)/%.preh : $(SRC)/%.h
 #
 #-------------------------------------------------------------------------
 
-ifneq ($(PLATFORM),ppc)
+ifneq ($(ARCH),ppc)
 %.$(SHLIB_EXT):
 	$(SHLIB_CMD) $(TMP_DIR)/$(notdir $@) $(LDFLAGS) $^ && mv $(TMP_DIR)/$(notdir $@) $@
 endif
 
-ifeq ($(PLATFORM),ppc)
+ifeq ($(ARCH),ppc)
 %.$(SHLIB_EXT):
 	$(SHLIB_CMD) $@ $(LDFLAGS) $^ -lcc_dynamic
 endif
@@ -340,7 +332,7 @@ $(DEP_FILE).deps: $(DEP)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
 	touch $@
 
 $(DEP_FILE): $(DEP_FILE).deps
-	time $(SCRIPTS)/cppdeps.tcl --src $(SRC) --objdir obj/$(ARCH)/ > $@
+	time $(SCRIPTS)/cppdeps.tcl --src $(SRC) --objdir $(OBJ)/ > $@
 
 include $(DEP_FILE)
 
@@ -469,7 +461,7 @@ count_sort: $(LOGS)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
 	wc $(ALL_SOURCES) $(ALL_HEADERS) | sort -n | tee $(LOGS)/count_sort
 
 do_sizes:
-	ls -lLR obj/$(PLATFORM) | grep "\.do" | sort -n +4 > do_sizes
+	ls -lLR $(OBJ) | grep "\.do" | sort -n +4 > do_sizes
 
 docs: $(DOC)/DoxygenConfig $(DOC)/*.doc $(ALL_HEADERS)
 	(doxygen $(DOC)/DoxygenConfig > $(DOC)/DocLog) >& $(DOC)/DocErrors
@@ -488,7 +480,7 @@ ncsl_sort: $(LOGS)/.timestamp
 	NCSL $(ALL_SOURCES) $(ALL_HEADERS) | sort -n | tee $(LOGS)/ncsl_sort
 
 o_sizes:
-	ls -lLR obj/$(PLATFORM) | grep "\.o" | sort -n +4 > o_sizes
+	ls -lLR $(OBJ) | grep "\.o" | sort -n +4 > o_sizes
 
 .PHONY: showpid
 showpid:
