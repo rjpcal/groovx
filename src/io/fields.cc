@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:24:47 2000
-// written: Mon Sep  3 13:54:15 2001
+// written: Mon Sep  3 14:19:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,6 @@
 
 #include "io/reader.h"
 #include "io/writer.h"
-
-#include "tcl/tclvalue.h"
 
 #include "util/iter.h"
 #include "util/signal.h"

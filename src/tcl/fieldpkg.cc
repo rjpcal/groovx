@@ -18,7 +18,6 @@
 #include "io/fields.h"
 
 #include "tcl/tcllistobj.h"
-#include "tcl/tclvalue.h"
 #include "tcl/tclveccmd.h"
 
 #include "util/iter.h"
