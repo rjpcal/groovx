@@ -3,7 +3,7 @@
 // nullresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:36 1999
-// written: Thu Oct 21 18:24:54 1999
+// written: Mon Nov  8 16:30:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,8 +56,8 @@ DOTRACE("NullResponseHdlr::writeTo");
 }
 
 // manipulators/accessors
-void NullResponseHdlr::setInterp(Tcl_Interp* interp) {
-  itsInterp = interp;
+void NullResponseHdlr::setInterp(Tcl_Interp*) {
+  // do nothing, since we don't need a Tcl_Interp* for this class
 }
 
 // actions
