@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Tue Jun 12 11:18:32 2001
+// written: Tue Jun 19 14:20:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,7 @@
 #include "util/ref.h"
 
 #include <algorithm>
+#include <iostream>
 #include <strstream.h>
 
 #define DYNAMIC_TRACE_EXPR Block::tracer.status()
@@ -311,7 +312,7 @@ DOTRACE("Block::beginTrial");
   itsImpl->itsHasBegun = true;
 
   if (itsImpl->itsVerbose) {
-    cerr << trialDescription() << endl;
+    std::cerr << trialDescription() << std::endl;
   }
 
   itsImpl->setExpt(expt);
@@ -347,7 +348,7 @@ DOTRACE("Block::processResponse");
   if (isComplete()) return;
 
   if (itsImpl->itsVerbose) {
-    cerr << "response: " << response << '\n';
+    std::cerr << "response: " << response << '\n';
   }
 
   DebugEval(response.correctVal());
