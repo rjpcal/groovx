@@ -145,7 +145,7 @@ namespace
   {
     SoftRef<Util::Object> obj(Util::ObjMgr::newObj(type));
 
-    for(unsigned int i = 0; i+1 < init_args.length(); i+=2)
+    for (unsigned int i = 0; i+1 < init_args.length(); i+=2)
       {
         Tcl::List cmd_str;
         cmd_str.append("::->");
