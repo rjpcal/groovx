@@ -32,6 +32,7 @@
 
 #define NO_TRACE
 #include "util/trace.h"
+#define LOCAL_ASSERT
 #include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////
@@ -48,25 +49,15 @@ public:
 namespace GLTcl {
   class GLPkg;
 
-  class glBeginCmd;
   class glBlendFuncCmd;
-  class glCallListCmd;
-  class glClearCmd;
   class glClearColorCmd;
-  class glClearIndexCmd;
   class glColorCmd;
   class glDeleteListsCmd;
-  class glDrawBufferCmd;
-  class glEnableCmd;
   class glFrustumCmd;
   class glGenListsCmd;
   class glGetCmd;
-  class glIndexiCmd;
   class glIsListCmd;
-  class glLineWidthCmd;
-  class glListBaseCmd;
   class glLoadMatrixCmd;
-  class glMatrixModeCmd;
   class glNewListCmd;
   class glOrthoCmd;
   class glPolygonModeCmd;
@@ -103,66 +94,76 @@ namespace GLTcl {
     }
   }
 
-  typedef void (*FuncP0R0)();
-
+  template <class Func>
   class GLCmdP0R0 : public Tcl::TclCmd {
   public:
 
-	 GLCmdP0R0(Tcl::TclPkg* pkg, FuncP0R0 f, const char* cmd_name) :
-		Tcl::TclCmd(pkg->interp(), cmd_name, (char*)0, 1),
-		itsFunc(f)
-	 {}
+    GLCmdP0R0(Tcl::TclPkg* pkg, Func f, const char* cmd_name) :
+      Tcl::TclCmd(pkg->interp(), cmd_name, (char*)0, 1),
+      itsFunc(f)
+    {}
+
+  protected:
+    virtual void invoke()
+    {
+      itsFunc();
+    }
+
+  private:
+    GLCmdP0R0(const GLCmdP0R0&);
+    GLCmdP0R0& operator=(const GLCmdP0R0&);
+
+    Func itsFunc;
+  };
+
+  template <class P1>
+  class GLCmdP1R0 : public Tcl::TclCmd {
+  public:
+    typedef void (*Func)(P1);
+
+    GLCmdP1R0(Tcl::TclPkg* pkg, Func f, const char* cmd_name,
+              const char* usage) :
+      Tcl::TclCmd(pkg->interp(), cmd_name, usage, 2),
+      itsFunc(f)
+    {}
 
   protected:
 	 virtual void invoke()
 	 {
-		itsFunc();
-		checkGL();
+		P1 p1 = getValFromArg(1, (P1*)0);
+
+		DebugEvalNL(p1);
+		itsFunc(p1);
 	 }
 
   private:
-	 GLCmdP0R0(const GLCmdP0R0&);
-	 GLCmdP0R0& operator=(const GLCmdP0R0&);
+	 GLCmdP1R0(const GLCmdP1R0&);
+	 GLCmdP1R0& operator=(const GLCmdP1R0&);
 
-	 FuncP0R0 itsFunc;
+	 Func itsFunc;
   };
 
 
-  Tcl::TclCmd* makeCmd(Tcl::TclPkg* pkg, FuncP0R0 f, const char* cmd_name)
-  { return new GLCmdP0R0(pkg, f, cmd_name); }
+  template <class Func>
+  inline Tcl::TclCmd* makeCmd(Tcl::TclPkg* pkg, Func f,
+  										const char* cmd_name, const char* usage);
+
+  template <>
+  inline Tcl::TclCmd* makeCmd(Tcl::TclPkg* pkg, void (*f)(),
+										const char* cmd_name, const char* /*usage*/)
+  {
+    return new GLTcl::GLCmdP0R0<void (*)()>(pkg, f, cmd_name);
+  }
+
+  template <class P1>
+  inline Tcl::TclCmd* makeCmd(Tcl::TclPkg* pkg,
+										void (*f)(P1), // typename GLCmdP1R0<P1>::Func
+										const char* cmd_name, const char* usage)
+  {
+    return new GLTcl::GLCmdP1R0<P1>(pkg, f, cmd_name, usage);
+  }
 
 } // end namespace GLTcl
-
-//--------------------------------------------------------------------
-//
-// GLTcl::glBeginCmd --
-//
-//--------------------------------------------------------------------
-
-class GLTcl::glBeginCmd : public Tcl::TclCmd {
-public:
-  glBeginCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "mode", 2, 2)
-  {
-    pkg->linkVarCopy("GL_POINTS",         GL_POINTS);
-    pkg->linkVarCopy("GL_LINES",          GL_LINES);
-    pkg->linkVarCopy("GL_LINE_STRIP",     GL_LINE_STRIP);
-    pkg->linkVarCopy("GL_LINE_LOOP",      GL_LINE_LOOP);
-    pkg->linkVarCopy("GL_TRIANGLES",      GL_TRIANGLES);
-    pkg->linkVarCopy("GL_TRIANGLE_STRIP", GL_TRIANGLE_STRIP);
-    pkg->linkVarCopy("GL_TRIANGLE_FAN",   GL_TRIANGLE_FAN);
-    pkg->linkVarCopy("GL_QUADS",          GL_QUADS);
-    pkg->linkVarCopy("GL_QUAD_STRIP",     GL_QUAD_STRIP);
-    pkg->linkVarCopy("GL_POLYGON",        GL_POLYGON);
-  }
-
-protected:
-  virtual void invoke() {
-    GLenum mode = getIntFromArg(1);
-    glBegin(mode);
-    checkGL();
-  }
-};
 
 //---------------------------------------------------------------------
 //
@@ -200,47 +201,6 @@ protected:
 
 //---------------------------------------------------------------------
 //
-// GLTcl::glCallListCmd --
-//
-//---------------------------------------------------------------------
-
-class GLTcl::glCallListCmd : public Tcl::TclCmd {
-public:
-  glCallListCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "list", 2, 2) {}
-protected:
-  virtual void invoke() {
-    GLuint list_id = getIntFromArg(1);
-    glCallList(list_id);
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// GLTcl::glClearCmd --
-//
-//---------------------------------------------------------------------
-
-class GLTcl::glClearCmd : public Tcl::TclCmd {
-public:
-  glClearCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "mask_bits", 2, 2)
-  {
-    pkg->linkVarCopy("GL_COLOR_BUFFER_BIT", GL_COLOR_BUFFER_BIT);
-    pkg->linkVarCopy("GL_DEPTH_BUFFER_BIT", GL_DEPTH_BUFFER_BIT);
-    pkg->linkVarCopy("GL_ACCUM_BUFFER_BIT", GL_ACCUM_BUFFER_BIT);
-    pkg->linkVarCopy("GL_STENCIL_BUFFER_BIT", GL_STENCIL_BUFFER_BIT);
-  }
-protected:
-  virtual void invoke() {
-    GLbitfield mask = getIntFromArg(1);
-    glClear(mask);
-    checkGL();
-  }
-};
-
-//---------------------------------------------------------------------
-//
 // GLTcl::glClearColorCmd --
 //
 //---------------------------------------------------------------------
@@ -257,25 +217,6 @@ protected:
     GLclampf alpha = getDoubleFromArg(4);
 
     glClearColor(red, green, blue, alpha);
-    checkGL();
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// GLTcl::glClearIndexCmd --
-//
-//---------------------------------------------------------------------
-
-class GLTcl::glClearIndexCmd : public Tcl::TclCmd {
-public:
-  glClearIndexCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "index", 2, 2) {}
-protected:
-  virtual void invoke() {
-    // For some reason OpenGL takes float's for color-indices
-    GLfloat index = getIntFromArg(1);
-    glClearIndex(index);
     checkGL();
   }
 };
@@ -316,139 +257,6 @@ protected:
     GLuint list_id = getIntFromArg(1);
     GLsizei range = getIntFromArg(2);
     glDeleteLists(list_id, range);
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// GLTcl::glDrawBufferCmd --
-//
-//---------------------------------------------------------------------
-
-class GLTcl::glDrawBufferCmd : public Tcl::TclCmd {
-public:
-  glDrawBufferCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "mode", 2, 2)
-  {
-    pkg->linkVarCopy("GL_NONE", GL_NONE);
-    pkg->linkVarCopy("GL_FRONT_LEFT", GL_FRONT_LEFT);
-    pkg->linkVarCopy("GL_FRONT_RIGHT", GL_FRONT_RIGHT);
-    pkg->linkVarCopy("GL_BACK_LEFT", GL_BACK_LEFT);
-    pkg->linkVarCopy("GL_BACK_RIGHT", GL_BACK_RIGHT);
-    pkg->linkVarCopy("GL_FRONT", GL_FRONT);
-    pkg->linkVarCopy("GL_BACK", GL_BACK);
-    pkg->linkVarCopy("GL_LEFT", GL_LEFT);
-    pkg->linkVarCopy("GL_RIGHT", GL_RIGHT);
-    pkg->linkVarCopy("GL_FRONT_AND_BACK", GL_FRONT_AND_BACK);
-  }
-protected:
-  virtual void invoke() {
-    GLenum mode = getIntFromArg(1);
-    glDrawBuffer(mode);
-    checkGL();
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// GLTcl::glEnableCmd --
-//
-//---------------------------------------------------------------------
-
-class GLTcl::glEnableCmd : public Tcl::TclCmd {
-private:
-  static void initEnums(Tcl::TclPkg* pkg) {
-    static bool inited = false;
-
-    if (inited) return;
-
-    pkg->linkVarCopy("GL_ALPHA_TEST",  GL_ALPHA_TEST);
-    pkg->linkVarCopy("GL_BLEND",  GL_BLEND);
-    pkg->linkVarCopy("GL_FOG",  GL_FOG);
-    pkg->linkVarCopy("GL_LIGHTING",  GL_LIGHTING);
-//     pkg->linkVarCopy("GL_TEXTURE_1D",  GL_TEXTURE_1D);
-//     pkg->linkVarCopy("GL_TEXTURE_2D",  GL_TEXTURE_2D);
-//     pkg->linkVarCopy("GL_TEXTURE_3D_EXT",  GL_TEXTURE_3D_EXT);
-    pkg->linkVarCopy("GL_LINE_STIPPLE",  GL_LINE_STIPPLE);
-    pkg->linkVarCopy("GL_POLYGON_STIPPLE",  GL_POLYGON_STIPPLE);
-    pkg->linkVarCopy("GL_CULL_FACE",  GL_CULL_FACE);
-    pkg->linkVarCopy("GL_INDEX_LOGIC_OP",  GL_INDEX_LOGIC_OP);
-    pkg->linkVarCopy("GL_COLOR_LOGIC_OP",  GL_COLOR_LOGIC_OP);
-    pkg->linkVarCopy("GL_DITHER",  GL_DITHER);
-    pkg->linkVarCopy("GL_STENCIL_TEST",  GL_STENCIL_TEST);
-    pkg->linkVarCopy("GL_DEPTH_TEST",  GL_DEPTH_TEST);
-//     pkg->linkVarCopy("GL_CLIP_PLANE0",  GL_CLIP_PLANE0);
-//     pkg->linkVarCopy("GL_CLIP_PLANE1",  GL_CLIP_PLANE1);
-//     pkg->linkVarCopy("GL_CLIP_PLANE2",  GL_CLIP_PLANE2);
-//     pkg->linkVarCopy("GL_CLIP_PLANE3",  GL_CLIP_PLANE3);
-//     pkg->linkVarCopy("GL_CLIP_PLANE4",  GL_CLIP_PLANE4);
-//     pkg->linkVarCopy("GL_CLIP_PLANE5",  GL_CLIP_PLANE5);
-//     pkg->linkVarCopy("GL_LIGHT0",  GL_LIGHT0);
-//     pkg->linkVarCopy("GL_LIGHT1",  GL_LIGHT1);
-//     pkg->linkVarCopy("GL_LIGHT2",  GL_LIGHT2);
-//     pkg->linkVarCopy("GL_LIGHT3",  GL_LIGHT3);
-//     pkg->linkVarCopy("GL_LIGHT4",  GL_LIGHT4);
-//     pkg->linkVarCopy("GL_LIGHT5",  GL_LIGHT5);
-//     pkg->linkVarCopy("GL_LIGHT6",  GL_LIGHT6);
-//     pkg->linkVarCopy("GL_LIGHT7",  GL_LIGHT7);
-//     pkg->linkVarCopy("GL_TEXTURE_GEN_S",  GL_TEXTURE_GEN_S);
-//     pkg->linkVarCopy("GL_TEXTURE_GEN_T",  GL_TEXTURE_GEN_T);
-//     pkg->linkVarCopy("GL_TEXTURE_GEN_R",  GL_TEXTURE_GEN_R);
-//     pkg->linkVarCopy("GL_TEXTURE_GEN_Q",  GL_TEXTURE_GEN_Q);
-    pkg->linkVarCopy("GL_MAP1_VERTEX_3",  GL_MAP1_VERTEX_3);
-    pkg->linkVarCopy("GL_MAP1_VERTEX_4",  GL_MAP1_VERTEX_4);
-    pkg->linkVarCopy("GL_MAP1_COLOR_4",  GL_MAP1_COLOR_4);
-    pkg->linkVarCopy("GL_MAP1_INDEX",  GL_MAP1_INDEX);
-    pkg->linkVarCopy("GL_MAP1_NORMAL",  GL_MAP1_NORMAL);
-//     pkg->linkVarCopy("GL_MAP1_TEXTURE_COORD_1",  GL_MAP1_TEXTURE_COORD_1);
-//     pkg->linkVarCopy("GL_MAP1_TEXTURE_COORD_2",  GL_MAP1_TEXTURE_COORD_2);
-//     pkg->linkVarCopy("GL_MAP1_TEXTURE_COORD_3",  GL_MAP1_TEXTURE_COORD_3);
-//     pkg->linkVarCopy("GL_MAP1_TEXTURE_COORD_4",  GL_MAP1_TEXTURE_COORD_4);
-//     pkg->linkVarCopy("GL_MAP2_VERTEX_3",  GL_MAP2_VERTEX_3);
-//     pkg->linkVarCopy("GL_MAP2_VERTEX_4",  GL_MAP2_VERTEX_4);
-//     pkg->linkVarCopy("GL_MAP2_COLOR_4",  GL_MAP2_COLOR_4);
-//     pkg->linkVarCopy("GL_MAP2_INDEX",  GL_MAP2_INDEX);
-//     pkg->linkVarCopy("GL_MAP2_NORMAL",  GL_MAP2_NORMAL);
-//     pkg->linkVarCopy("GL_MAP2_TEXTURE_COORD_1",  GL_MAP2_TEXTURE_COORD_1);
-//     pkg->linkVarCopy("GL_MAP2_TEXTURE_COORD_2",  GL_MAP2_TEXTURE_COORD_2);
-//     pkg->linkVarCopy("GL_MAP2_TEXTURE_COORD_3",  GL_MAP2_TEXTURE_COORD_3);
-//     pkg->linkVarCopy("GL_MAP2_TEXTURE_COORD_4",  GL_MAP2_TEXTURE_COORD_4);
-    pkg->linkVarCopy("GL_POINT_SMOOTH",  GL_POINT_SMOOTH);
-    pkg->linkVarCopy("GL_LINE_SMOOTH",  GL_LINE_SMOOTH);
-    pkg->linkVarCopy("GL_POLYGON_SMOOTH",  GL_POLYGON_SMOOTH);
-    pkg->linkVarCopy("GL_SCISSOR_TEST",  GL_SCISSOR_TEST);
-    pkg->linkVarCopy("GL_COLOR_MATERIAL",  GL_COLOR_MATERIAL);
-    pkg->linkVarCopy("GL_NORMALIZE",  GL_NORMALIZE);
-    pkg->linkVarCopy("GL_AUTO_NORMAL",  GL_AUTO_NORMAL);
-    pkg->linkVarCopy("GL_VERTEX_ARRAY",  GL_VERTEX_ARRAY);
-    pkg->linkVarCopy("GL_NORMAL_ARRAY",  GL_NORMAL_ARRAY);
-    pkg->linkVarCopy("GL_COLOR_ARRAY",  GL_COLOR_ARRAY);
-    pkg->linkVarCopy("GL_INDEX_ARRAY",  GL_INDEX_ARRAY);
-    pkg->linkVarCopy("GL_TEXTURE_COORD_ARRAY",  GL_TEXTURE_COORD_ARRAY);
-    pkg->linkVarCopy("GL_EDGE_FLAG_ARRAY",  GL_EDGE_FLAG_ARRAY);
-    pkg->linkVarCopy("GL_POLYGON_OFFSET_POINT",  GL_POLYGON_OFFSET_POINT);
-    pkg->linkVarCopy("GL_POLYGON_OFFSET_LINE",  GL_POLYGON_OFFSET_LINE);
-    pkg->linkVarCopy("GL_POLYGON_OFFSET_FILL",  GL_POLYGON_OFFSET_FILL);
-    pkg->linkVarCopy("GL_RESCALE_NORMAL_EXT",  GL_RESCALE_NORMAL_EXT);
-
-    inited = true;
-  }
-
-public:
-  glEnableCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "capability", 2, 2)
-  {
-    initEnums(pkg);
-  }
-protected:
-  virtual void invoke() {
-    const char* func = getCstringFromArg(0);
-    GLenum cap = getIntFromArg(1);
-
-         if ( func[2] == 'E' ) { glEnable(cap); }
-    else if ( func[2] == 'D' ) { glDisable(cap); }
-
-    checkGL();
   }
 };
 
@@ -826,23 +634,6 @@ template <>
 void GLTcl::glGetTypeCmd<GLint>::extractValues(GLenum tag, GLint* vals_out)
 { glGetIntegerv(tag, vals_out); }
 
-//--------------------------------------------------------------------
-//
-// GLTcl::glIndexiCmd --
-//
-//--------------------------------------------------------------------
-
-class GLTcl::glIndexiCmd : public Tcl::TclCmd {
-public:
-  glIndexiCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "index", 2, 2) {}
-protected:
-  virtual void invoke() {
-    int index = getIntFromArg(1);
-    glIndexi(index);
-  }
-};
-
 //---------------------------------------------------------------------
 //
 // GLTcl::glIsListCmd --
@@ -860,42 +651,6 @@ protected:
     checkGL();
     if (is_list == GL_TRUE) returnBool(true);
     else returnBool(false);
-  }
-};
-
-//--------------------------------------------------------------------
-//
-// GLTcl::glLineWidthCmd --
-//
-//--------------------------------------------------------------------
-
-class GLTcl::glLineWidthCmd : public Tcl::TclCmd {
-public:
-  glLineWidthCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "width", 2, 2) {}
-protected:
-  virtual void invoke() {
-    GLdouble w = getDoubleFromArg(1);
-    glLineWidth(w);
-    checkGL();
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// GLTcl::glListBaseCmd --
-//
-//---------------------------------------------------------------------
-
-class GLTcl::glListBaseCmd : public Tcl::TclCmd {
-public:
-  glListBaseCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "base", 2, 2) {}
-protected:
-  virtual void invoke() {
-    GLuint base = getIntFromArg(1);
-    glListBase(base);
-    checkGL();
   }
 };
 
@@ -928,29 +683,6 @@ protected:
     }
 
     glLoadMatrixd(&matrix[0]);
-    checkGL();
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// GLTcl::glMatrixModeCmd --
-//
-//---------------------------------------------------------------------
-
-class GLTcl::glMatrixModeCmd : public Tcl::TclCmd {
-public:
-  glMatrixModeCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "width", 2, 2)
-  {
-    pkg->linkVarCopy("GL_MODELVIEW",  GL_MODELVIEW);
-    pkg->linkVarCopy("GL_PROJECTION", GL_PROJECTION);
-    pkg->linkVarCopy("GL_TEXTURE",    GL_TEXTURE);
-  }
-protected:
-  virtual void invoke() {
-    GLenum mode = getIntFromArg(1);
-    glMatrixMode(mode);
     checkGL();
   }
 };
@@ -1511,51 +1243,150 @@ public:
   GLPkg(Tcl_Interp* interp) :
     Tcl::TclPkg(interp, "Tclgl", "$Revision$")
   {
-    addCommand( new glBeginCmd        (this, "glBegin") );
+
+	 // for glBegin
+    this->linkVarCopy("GL_POINTS",         GL_POINTS);
+    this->linkVarCopy("GL_LINES",          GL_LINES);
+    this->linkVarCopy("GL_LINE_STRIP",     GL_LINE_STRIP);
+    this->linkVarCopy("GL_LINE_LOOP",      GL_LINE_LOOP);
+    this->linkVarCopy("GL_TRIANGLES",      GL_TRIANGLES);
+    this->linkVarCopy("GL_TRIANGLE_STRIP", GL_TRIANGLE_STRIP);
+    this->linkVarCopy("GL_TRIANGLE_FAN",   GL_TRIANGLE_FAN);
+    this->linkVarCopy("GL_QUADS",          GL_QUADS);
+    this->linkVarCopy("GL_QUAD_STRIP",     GL_QUAD_STRIP);
+    this->linkVarCopy("GL_POLYGON",        GL_POLYGON);
+
+	 // for glClear
+    this->linkVarCopy("GL_COLOR_BUFFER_BIT", GL_COLOR_BUFFER_BIT);
+    this->linkVarCopy("GL_DEPTH_BUFFER_BIT", GL_DEPTH_BUFFER_BIT);
+    this->linkVarCopy("GL_ACCUM_BUFFER_BIT", GL_ACCUM_BUFFER_BIT);
+    this->linkVarCopy("GL_STENCIL_BUFFER_BIT", GL_STENCIL_BUFFER_BIT);
+
+	 // for glDrawBuffer
+    this->linkVarCopy("GL_NONE", GL_NONE);
+    this->linkVarCopy("GL_FRONT_LEFT", GL_FRONT_LEFT);
+    this->linkVarCopy("GL_FRONT_RIGHT", GL_FRONT_RIGHT);
+    this->linkVarCopy("GL_BACK_LEFT", GL_BACK_LEFT);
+    this->linkVarCopy("GL_BACK_RIGHT", GL_BACK_RIGHT);
+    this->linkVarCopy("GL_FRONT", GL_FRONT);
+    this->linkVarCopy("GL_BACK", GL_BACK);
+    this->linkVarCopy("GL_LEFT", GL_LEFT);
+    this->linkVarCopy("GL_RIGHT", GL_RIGHT);
+    this->linkVarCopy("GL_FRONT_AND_BACK", GL_FRONT_AND_BACK);
+
+	 // for glEnable/glDisable
+
+    this->linkVarCopy("GL_ALPHA_TEST",  GL_ALPHA_TEST);
+    this->linkVarCopy("GL_BLEND",  GL_BLEND);
+    this->linkVarCopy("GL_FOG",  GL_FOG);
+    this->linkVarCopy("GL_LIGHTING",  GL_LIGHTING);
+//     this->linkVarCopy("GL_TEXTURE_1D",  GL_TEXTURE_1D);
+//     this->linkVarCopy("GL_TEXTURE_2D",  GL_TEXTURE_2D);
+//     this->linkVarCopy("GL_TEXTURE_3D_EXT",  GL_TEXTURE_3D_EXT);
+    this->linkVarCopy("GL_LINE_STIPPLE",  GL_LINE_STIPPLE);
+    this->linkVarCopy("GL_POLYGON_STIPPLE",  GL_POLYGON_STIPPLE);
+    this->linkVarCopy("GL_CULL_FACE",  GL_CULL_FACE);
+    this->linkVarCopy("GL_INDEX_LOGIC_OP",  GL_INDEX_LOGIC_OP);
+    this->linkVarCopy("GL_COLOR_LOGIC_OP",  GL_COLOR_LOGIC_OP);
+    this->linkVarCopy("GL_DITHER",  GL_DITHER);
+    this->linkVarCopy("GL_STENCIL_TEST",  GL_STENCIL_TEST);
+    this->linkVarCopy("GL_DEPTH_TEST",  GL_DEPTH_TEST);
+//     this->linkVarCopy("GL_CLIP_PLANE0",  GL_CLIP_PLANE0);
+//     this->linkVarCopy("GL_CLIP_PLANE1",  GL_CLIP_PLANE1);
+//     this->linkVarCopy("GL_CLIP_PLANE2",  GL_CLIP_PLANE2);
+//     this->linkVarCopy("GL_CLIP_PLANE3",  GL_CLIP_PLANE3);
+//     this->linkVarCopy("GL_CLIP_PLANE4",  GL_CLIP_PLANE4);
+//     this->linkVarCopy("GL_CLIP_PLANE5",  GL_CLIP_PLANE5);
+//     this->linkVarCopy("GL_LIGHT0",  GL_LIGHT0);
+//     this->linkVarCopy("GL_LIGHT1",  GL_LIGHT1);
+//     this->linkVarCopy("GL_LIGHT2",  GL_LIGHT2);
+//     this->linkVarCopy("GL_LIGHT3",  GL_LIGHT3);
+//     this->linkVarCopy("GL_LIGHT4",  GL_LIGHT4);
+//     this->linkVarCopy("GL_LIGHT5",  GL_LIGHT5);
+//     this->linkVarCopy("GL_LIGHT6",  GL_LIGHT6);
+//     this->linkVarCopy("GL_LIGHT7",  GL_LIGHT7);
+//     this->linkVarCopy("GL_TEXTURE_GEN_S",  GL_TEXTURE_GEN_S);
+//     this->linkVarCopy("GL_TEXTURE_GEN_T",  GL_TEXTURE_GEN_T);
+//     this->linkVarCopy("GL_TEXTURE_GEN_R",  GL_TEXTURE_GEN_R);
+//     this->linkVarCopy("GL_TEXTURE_GEN_Q",  GL_TEXTURE_GEN_Q);
+    this->linkVarCopy("GL_MAP1_VERTEX_3",  GL_MAP1_VERTEX_3);
+    this->linkVarCopy("GL_MAP1_VERTEX_4",  GL_MAP1_VERTEX_4);
+    this->linkVarCopy("GL_MAP1_COLOR_4",  GL_MAP1_COLOR_4);
+    this->linkVarCopy("GL_MAP1_INDEX",  GL_MAP1_INDEX);
+    this->linkVarCopy("GL_MAP1_NORMAL",  GL_MAP1_NORMAL);
+//     this->linkVarCopy("GL_MAP1_TEXTURE_COORD_1",  GL_MAP1_TEXTURE_COORD_1);
+//     this->linkVarCopy("GL_MAP1_TEXTURE_COORD_2",  GL_MAP1_TEXTURE_COORD_2);
+//     this->linkVarCopy("GL_MAP1_TEXTURE_COORD_3",  GL_MAP1_TEXTURE_COORD_3);
+//     this->linkVarCopy("GL_MAP1_TEXTURE_COORD_4",  GL_MAP1_TEXTURE_COORD_4);
+//     this->linkVarCopy("GL_MAP2_VERTEX_3",  GL_MAP2_VERTEX_3);
+//     this->linkVarCopy("GL_MAP2_VERTEX_4",  GL_MAP2_VERTEX_4);
+//     this->linkVarCopy("GL_MAP2_COLOR_4",  GL_MAP2_COLOR_4);
+//     this->linkVarCopy("GL_MAP2_INDEX",  GL_MAP2_INDEX);
+//     this->linkVarCopy("GL_MAP2_NORMAL",  GL_MAP2_NORMAL);
+//     this->linkVarCopy("GL_MAP2_TEXTURE_COORD_1",  GL_MAP2_TEXTURE_COORD_1);
+//     this->linkVarCopy("GL_MAP2_TEXTURE_COORD_2",  GL_MAP2_TEXTURE_COORD_2);
+//     this->linkVarCopy("GL_MAP2_TEXTURE_COORD_3",  GL_MAP2_TEXTURE_COORD_3);
+//     this->linkVarCopy("GL_MAP2_TEXTURE_COORD_4",  GL_MAP2_TEXTURE_COORD_4);
+    this->linkVarCopy("GL_POINT_SMOOTH",  GL_POINT_SMOOTH);
+    this->linkVarCopy("GL_LINE_SMOOTH",  GL_LINE_SMOOTH);
+    this->linkVarCopy("GL_POLYGON_SMOOTH",  GL_POLYGON_SMOOTH);
+    this->linkVarCopy("GL_SCISSOR_TEST",  GL_SCISSOR_TEST);
+    this->linkVarCopy("GL_COLOR_MATERIAL",  GL_COLOR_MATERIAL);
+    this->linkVarCopy("GL_NORMALIZE",  GL_NORMALIZE);
+    this->linkVarCopy("GL_AUTO_NORMAL",  GL_AUTO_NORMAL);
+    this->linkVarCopy("GL_VERTEX_ARRAY",  GL_VERTEX_ARRAY);
+    this->linkVarCopy("GL_NORMAL_ARRAY",  GL_NORMAL_ARRAY);
+    this->linkVarCopy("GL_COLOR_ARRAY",  GL_COLOR_ARRAY);
+    this->linkVarCopy("GL_INDEX_ARRAY",  GL_INDEX_ARRAY);
+    this->linkVarCopy("GL_TEXTURE_COORD_ARRAY",  GL_TEXTURE_COORD_ARRAY);
+    this->linkVarCopy("GL_EDGE_FLAG_ARRAY",  GL_EDGE_FLAG_ARRAY);
+    this->linkVarCopy("GL_POLYGON_OFFSET_POINT",  GL_POLYGON_OFFSET_POINT);
+    this->linkVarCopy("GL_POLYGON_OFFSET_LINE",  GL_POLYGON_OFFSET_LINE);
+    this->linkVarCopy("GL_POLYGON_OFFSET_FILL",  GL_POLYGON_OFFSET_FILL);
+    this->linkVarCopy("GL_RESCALE_NORMAL_EXT",  GL_RESCALE_NORMAL_EXT);
+
+	 // for glMatrixMode
+    this->linkVarCopy("GL_MODELVIEW",  GL_MODELVIEW);
+    this->linkVarCopy("GL_PROJECTION", GL_PROJECTION);
+    this->linkVarCopy("GL_TEXTURE",    GL_TEXTURE);
+
+    addCommand( makeCmd (this, glBegin, "glBegin", "mode") );
+    addCommand( makeCmd (this, glCallList, "glCallList", "list") );
+    addCommand( makeCmd (this, glClear, "glClear", "mask_bits") );
+    addCommand( makeCmd (this, glClearIndex, "glClearIndex", "index") );
+    addCommand( makeCmd (this, glDrawBuffer, "glDrawBuffer", "mode") );
+    addCommand( makeCmd (this, glEnable, "glEnable", "capability") );
+    addCommand( makeCmd (this, glDisable, "glDisable", "capability") );
+    addCommand( makeCmd (this, glEnd, "glEnd", 0) );
+    addCommand( makeCmd (this, glEndList, "glEndList", 0) );
+    addCommand( makeCmd (this, glFlush, "glFlush", 0) );
+    addCommand( makeCmd (this, checkGL, "glGetError", 0) );
+    addCommand( makeCmd (this, glIndexi, "glIndexi", "index") );
+    addCommand( makeCmd (this, glLineWidth, "glLineWidth", "width") );
+    addCommand( makeCmd (this, glListBase, "glListBase", "base") );
+    addCommand( makeCmd (this, glLoadIdentity, "glLoadIdentity", 0) );
+    addCommand( makeCmd (this, glMatrixMode, "glMatrixMode", "mode") );
+    addCommand( makeCmd (this, glPopMatrix, "glPopMatrix", 0) );
+    addCommand( makeCmd (this, glPushMatrix, "glPushMatrix", 0) );
+
     addCommand( new glBlendFuncCmd    (this, "glBlendFunc") );
-    addCommand( new glCallListCmd     (this, "glCallList") );
-    addCommand( new glClearCmd        (this, "glClear") );
     addCommand( new glClearColorCmd   (this, "glClearColor") );
-    addCommand( new glClearIndexCmd   (this, "glClearIndex") );
     addCommand( new glColorCmd        (this, "glColor") );
     addCommand( new glDeleteListsCmd  (this, "glDeleteLists") );
-    addCommand( new glDrawBufferCmd   (this, "glDrawBuffer") );
-    addCommand( new glEnableCmd       (this, "glDisable") );
-    addCommand( new glEnableCmd       (this, "glEnable") );
-
-    addCommand( GLTcl::makeCmd (this, glEnd, "glEnd") );
-    addCommand( GLTcl::makeCmd (this, glEndList, "glEndList") );
-    addCommand( GLTcl::makeCmd (this, glFlush, "glFlush") );
-
     addCommand( new glFrustumCmd      (this, "glFrustum") );
     addCommand( new glGenListsCmd     (this, "glGenLists") );
-
-    addCommand( GLTcl::makeCmd (this, checkGL, "glGetError") );
-
     addCommand( new glGetTypeCmd<GLboolean>(this, "glGetBoolean") );
     addCommand( new glGetTypeCmd<GLdouble>(this, "glGetDouble") );
     addCommand( new glGetTypeCmd<GLint>(this, "glGetInteger") );
-    addCommand( new glIndexiCmd       (this, "glIndexi") );
     addCommand( new glIsListCmd       (this, "glIsList") );
-    addCommand( new glLineWidthCmd    (this, "glLineWidth") );
-    addCommand( new glListBaseCmd     (this, "glListBase") );
-
-    addCommand( GLTcl::makeCmd (this, glLoadIdentity, "glLoadIdentity") );
-
     addCommand( new glLoadMatrixCmd   (this, "glLoadMatrix") );
-    addCommand( new glMatrixModeCmd   (this, "glMatrixMode") );
     addCommand( new glNewListCmd      (this, "glNewList") );
     addCommand( new glOrthoCmd        (this, "glOrtho") );
     addCommand( new glPolygonModeCmd  (this, "glPolygonMode") );
-
-    addCommand( GLTcl::makeCmd (this, glPopMatrix, "glPopMatrix") );
-    addCommand( GLTcl::makeCmd (this, glPushMatrix, "glPushMatrix") );
-
     addCommand( new glRotateCmd       (this, "glRotate") );
     addCommand( new glScaleCmd        (this, "glScale") );
     addCommand( new glTranslateCmd    (this, "glTranslate") );
     addCommand( new glVertexCmd       (this, "glVertex") );
-
     addCommand( new gluLookAtCmd      (this, "gluLookAt") );
     addCommand( new gluPerspectiveCmd (this, "gluPerspective") );
   }
