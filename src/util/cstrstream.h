@@ -61,7 +61,7 @@ private:
   icstrbuf& operator=(const icstrbuf&);
 
 public:
-  /// Create with a reference to a FILE object.
+  /// Create using the given char array as the input buffer.
   icstrbuf(const char* s) :
     itsLen(strlen(s)),
     itsBuf(new char[itsLen+1])
