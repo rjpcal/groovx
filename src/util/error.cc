@@ -3,7 +3,7 @@
 // error.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 22 14:59:48 1999
-// written: Wed May 10 12:28:26 2000
+// written: Wed May 10 15:45:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #include "util/error.h"
 
 #include "util/strings.h"
+
+#include <strstream.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -92,6 +94,22 @@ DOTRACE("ErrorWithMsg::appendMsg");
   *itsInfo += addMsg3; 
   DebugEvalNL(*itsInfo);
   return *this;
+}
+
+ErrorWithMsg& ErrorWithMsg::appendNumber(int i) {
+DOTRACE("ErrorWithMsg::appendNumber");
+  char buf[32];
+  ostrstream ost(buf, 30);
+  ost << i << '\0';
+  return appendMsg(buf);
+}
+
+ErrorWithMsg& ErrorWithMsg::appendNumber(double d) {
+DOTRACE("ErrorWithMsg::appendNumber");
+  char buf[32];
+  ostrstream ost(buf, 30);
+  ost << d << '\0';
+  return appendMsg(buf);
 }
 
 void ErrorWithMsg::setMsg(const char* str) {

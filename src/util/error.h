@@ -3,7 +3,7 @@
 // error.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 22 14:59:47 1999
-// written: Wed Mar 15 20:39:48 2000
+// written: Wed May 10 15:42:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,6 +70,12 @@ public:
       returns a reference to the invoking object, so several \c
       appendMsg() calls can be chained together. */
   ErrorWithMsg& appendMsg(const char* addMsg1, const char* addMsg2, const char* addMsg3);
+
+  /// Append an integer to the error message.
+  ErrorWithMsg& appendNumber(int i);
+
+  /// Append a floating-point number to the error message.
+  ErrorWithMsg& appendNumber(double d);
 
 protected:
   /// Change the informative message to \a newMessage.
