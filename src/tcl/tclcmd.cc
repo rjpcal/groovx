@@ -174,38 +174,6 @@ DOTRACE("Tcl::TclCmd::arg");
   return TclValue(itsObjv[argn]);
 }
 
-// Extracting arguments
-
-int Tcl::TclCmd::getIntFromArg(int argn) {
-  return Tcl::fromTcl<int>(itsObjv[argn]);
-}
-
-long Tcl::TclCmd::getLongFromArg(int argn) {
-  return Tcl::fromTcl<long>(itsObjv[argn]);
-}
-
-bool Tcl::TclCmd::getBoolFromArg(int argn) {
-  return Tcl::fromTcl<bool>(itsObjv[argn]);
-}
-
-double Tcl::TclCmd::getDoubleFromArg(int argn) {
-  return Tcl::fromTcl<double>(itsObjv[argn]);
-}
-
-const char* Tcl::TclCmd::getCstringFromArg(int argn) {
-  return Tcl::fromTcl<const char*>(itsObjv[argn]);
-}
-
-void Tcl::TclCmd::safeSplitList(Tcl_Obj* obj, int* count_return,
-                                Tcl_Obj*** elements_return) {
-DOTRACE("Tcl::TclCmd::safeSplitList");
-  if ( Tcl_ListObjGetElements(0, obj, count_return, elements_return)
-       != TCL_OK)
-    {
-      throw TclError("couldn't split Tcl list");
-    }
-}
-
 unsigned int Tcl::TclCmd::safeListLength(Tcl_Obj* obj) {
 DOTRACE("Tcl::TclCmd::safeListLength");
   int length;
@@ -375,95 +343,6 @@ DOTRACE("Tcl::TclCmd::invokeCallback");
 
   DebugEvalNL(theCmd->itsResult == TCL_OK);
   return theCmd->itsResult;
-}
-
-
-///////////////////////////////////////////////////////////////////////
-//
-// Tcl::ListIterator member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-
-Tcl::ListIteratorBase::ListIteratorBase(Tcl_Interp* interp,
-                                        Tcl_Obj* aList, Pos pos) :
-  itsInterp(interp),
-  itsList(aList),
-  itsListElements(0),
-  itsElementCount(0),
-  itsIndex(0)
-{
-DOTRACE("Tcl::ListIteratorBase::ListIteratorBase");
-  if (itsList == 0)
-    throw TclError("attempted to construct ListIterator with null Tcl_Obj*");
-
-  Tcl_IncrRefCount(itsList);
-  int count;
-  TclCmd::safeSplitList(itsList, &count, &itsListElements);
-
-  Assert(count >= 0);
-  itsElementCount = (unsigned int) count;
-
-  if (pos == END)
-    itsIndex = itsElementCount;
-}
-
-Tcl::ListIteratorBase::ListIteratorBase(const ListIteratorBase& other) :
-  itsInterp(other.itsInterp),
-  itsList(other.itsList),
-  itsListElements(other.itsListElements),
-  itsElementCount(other.itsElementCount),
-  itsIndex(other.itsIndex)
-{
-DOTRACE("Tcl::ListIteratorBase::ListIteratorBase(copy ctor)");
-  Tcl_IncrRefCount(itsList);
-}
-
-Tcl::ListIteratorBase::~ListIteratorBase()
-{
-DOTRACE("Tcl::ListIteratorBase::~ListIteratorBase");
-  Tcl_DecrRefCount(itsList);
-}
-
-Tcl::ListIteratorBase& Tcl::ListIteratorBase::operator=(
-  const ListIteratorBase& other)
-{
-DOTRACE("Tcl::ListIterator::operator=");
-  ListIteratorBase other_copy(other);
-  this->swap(other_copy);
-  return *this;
-}
-
-namespace {
-  template <class T>
-    inline void local_swap(T& a, T& b)
-    {
-      T b_copy = b;
-      b = a;
-      a = b_copy;
-    }
-}
-
-void Tcl::ListIteratorBase::swap(ListIteratorBase& other)
-{
-DOTRACE("Tcl::ListIteratorBase::swap");
-  local_swap(itsInterp, other.itsInterp);
-  local_swap(itsList, other.itsList);
-  local_swap(itsListElements, other.itsListElements);
-  local_swap(itsElementCount, other.itsElementCount);
-  local_swap(itsIndex, other.itsIndex);
-}
-
-Tcl_Obj* Tcl::ListIteratorBase::current() const
-{
-DOTRACE("Tcl::ListIteratorBase::current");
-  if (!isValid())
-    throw TclError("index is too large");
-
-  DebugEval((void*)itsInterp); DebugEval(itsIndex);
-  DebugEvalNL(itsListElements[itsIndex]);
-
-  return itsListElements[itsIndex];
 }
 
 static const char vcid_tclcmd_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Jul 11 10:08:58 2001
+// written: Wed Jul 11 12:58:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CONVERT_H_DEFINED)
 #include "tcl/convert.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLLISTOBJ_H_DEFINED)
+#include "tcl/tcllistobj.h"
 #endif
 
 #ifdef HP9000S700
@@ -36,90 +40,6 @@ namespace Tcl
   class TclValue;
   class TclCmd;
 }
-
-
-namespace Tcl {
-
-class ListIteratorBase {
-public:
-  typedef int difference_type;
-
-  enum Pos { BEGIN, END };
-
-  ListIteratorBase(Tcl_Interp* interp, Tcl_Obj* aList, Pos pos = BEGIN);
-  ListIteratorBase(const ListIteratorBase& other);
-  ~ListIteratorBase();
-
-  ListIteratorBase& operator=(const ListIteratorBase& other);
-
-  ListIteratorBase& operator++()
-    { ++itsIndex; return *this; }
-
-  ListIteratorBase operator++(int)
-    { ListIteratorBase temp(*this); ++itsIndex; return temp; }
-
-  difference_type operator-(const ListIteratorBase& other) const
-    {
-      if (this->itsIndex > other.itsIndex)
-        return int(this->itsIndex - other.itsIndex);
-      else
-        return -(int(other.itsIndex - this->itsIndex));
-    }
-
-  bool operator==(const ListIteratorBase& other) const
-    { return (itsIndex == other.itsIndex && itsList == other.itsList); }
-
-  bool operator!=(const ListIteratorBase& other) const
-    { return (itsIndex != other.itsIndex || itsList != other.itsList); }
-
-  bool isValid() const
-    { return itsIndex < itsElementCount; }
-
-  bool hasMore() const
-    { return itsIndex < (itsElementCount-1); }
-
-  bool nelems() const
-    { return itsElementCount; }
-
-private:
-  void swap(ListIteratorBase& other);
-
-protected:
-  // Throws an exception if the index is out of range
-  Tcl_Obj* current() const;
-
-  Tcl_Interp* itsInterp;
-  Tcl_Obj* itsList;
-  Tcl_Obj** itsListElements;
-  unsigned int itsElementCount;
-  unsigned int itsIndex;
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * \c ListIterator is an adapter that provides an STL-style iterator
- * interface to Tcl list objects. \c ListIterator is a model of \c
- * input \c iterator.
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-class ListIterator : public ListIteratorBase {
-public:
-  ListIterator(Tcl_Interp* interp, Tcl_Obj* aList, Pos pos = BEGIN) :
-    ListIteratorBase(interp, aList, pos) {}
-
-  typedef T value_type;
-
-  T operator*() const
-  {
-    return Tcl::fromTcl<T>(current());
-  }
-};
-
-} // end namespace Tcl
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -192,26 +112,26 @@ public:
   TclValue arg(int argn);
 
   /// Attempts to retrieve an \c int from argument number \a argn.
-  int getIntFromArg(int argn);
+  int getIntFromArg(int argn) { return Tcl::fromTcl<int>(itsObjv[argn]); }
 
   /// Attempts to retrieve a \c long from argument number \a argn.
-  long getLongFromArg(int argn);
+  long getLongFromArg(int argn) { return Tcl::fromTcl<long>(itsObjv[argn]); }
 
   /// Attempts to retrieve a \c bool from argument number \a argn.
-  bool getBoolFromArg(int argn);
+  bool getBoolFromArg(int argn) { return Tcl::fromTcl<bool>(itsObjv[argn]); }
 
   /// Attempts to retrieve a \c double from argument number \a argn.
-  double getDoubleFromArg(int argn);
+  double getDoubleFromArg(int argn) { return Tcl::fromTcl<double>(itsObjv[argn]); }
 
   /// Attempts to retrieve a C-style string (\c char*) from argument number \a argn.
-  const char* getCstringFromArg(int argn);
+  const char* getCstringFromArg(int argn) { return getStringFromArg(argn, (const char**) 0); }
 
   /** Attempts to retrieve an string type from argument number \a
       argn. The templated type must be assignable from const char*. */
   template <class Str>
-  Str getStringTypeFromArg(int argn, Str* /* dummy */ = 0)
+  Str getStringFromArg(int argn, Str* /* dummy */ = 0)
     {
-      return Str(getCstringFromArg(argn));
+      return Str(Tcl::fromTcl<const char*>(itsObjv[argn]));
     }
 
   /** Attempt to convert argument number \a argn to type \c T, and
@@ -227,9 +147,9 @@ public:
   // Functions to treat the arguments of the current invocation as Tcl
   // lists. There are two ways to handle arguments in such a way: one
   // is to transfer the whole list through an STL-style insert
-  // iterator, and the other is to use a \c ListIterator, which
+  // iterator, and the other is to use a \c Tcl::List::Iterator, which
   // iterates through a Tcl list and converts each value to a type
-  // specified by the template argument of \c ListIterator.
+  // specified by the template argument of \c List::Iterator.
   //
   //---------------------------------------------------------------------
 
@@ -245,11 +165,9 @@ public:
       iterator \a itr. */
   template <class T, class Iterator>
   void getSequenceFromArg(int argn, Iterator itr, T* /* dummy */) {
-    Tcl_Obj** elements;
-    int count;
-    safeSplitList(itsObjv[argn], &count, &elements);
+    Tcl::List elements(itsObjv[argn]);
 
-    for (int i = 0; i < count; ++i) {
+    for (unsigned int i = 0; i < elements.length(); ++i) {
       *itr = Tcl::fromTcl<T>(elements[i]);
       ++itr;
     }
@@ -259,9 +177,9 @@ public:
       if successful, returns an iterator pointing to the beginning of
       that list. */
   template <class T>
-  ListIterator<T> beginOfArg(int argn, T* /*dummy*/=0)
+  List::Iterator<T> beginOfArg(int argn, T* /*dummy*/=0)
     {
-      return ListIterator<T>(itsInterp, itsObjv[argn], ListIterator<T>::BEGIN);
+      return List::Iterator<T>(itsObjv[argn], List::Iterator<T>::BEGIN);
     }
 
 
@@ -269,9 +187,9 @@ public:
       if successful, returns an iterator pointing to the
       one-past-the-end element of that list. */
   template <class T>
-  ListIterator<T> endOfArg(int argn, T* /*dummy*/=0)
+  List::Iterator<T> endOfArg(int argn, T* /*dummy*/=0)
     {
-      return ListIterator<T>(itsInterp, itsObjv[argn], ListIterator<T>::END);
+      return List::Iterator<T>(itsObjv[argn], List::Iterator<T>::END);
     }
 
   //---------------------------------------------------------------------
@@ -290,8 +208,8 @@ public:
   template <class T>
   void returnVal(T t)
     {
-		returnTclObj(Tcl::toTcl<T>(t));
-	 }
+      returnTclObj(Tcl::toTcl<T>(t));
+    }
 
   /** Return satisfactorily with the string type result \a val. The
       templated type must have a c_str() function returning const char*. */
@@ -392,17 +310,11 @@ protected:
   void returnTclObj(Tcl_Obj* obj);
 
 private:
-  friend class ListIteratorBase;
-  template <class T> friend class ListIterator;
-
   /// The procedure that is actually registered with the Tcl C API.
   static int invokeCallback(ClientData clientData, Tcl_Interp* interp,
                             int objc, Tcl_Obj *const objv[]);
 
   int invokeTemplate();
-
-  static void safeSplitList(Tcl_Obj* obj, int* count_return,
-                            Tcl_Obj*** elements_return);
 
   static unsigned int safeListLength(Tcl_Obj* obj);
 
