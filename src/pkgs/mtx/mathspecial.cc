@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// num.cc
+// mathspecial.cc
 //
 // Copyright (c) 2001-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Thu Mar  8 16:28:26 2001
+// created: Thu Mar  8 16:28:26 2001 (split from num.h)
 // commit: $Id$
 //
 // --------------------------------------------------------------------
@@ -29,10 +29,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef NUM_CC_DEFINED
-#define NUM_CC_DEFINED
+#ifndef MATHSPECIAL_CC_DEFINED
+#define MATHSPECIAL_CC_DEFINED
 
-#include "num.h"
+#include "mathspecial.h"
 
 #include "util/trace.h"
 
@@ -58,5 +58,5 @@ DOTRACE("dash::detail::gammaln_engine");
   return -tmp+log(2.5066282746310005*ser/xx);
 }
 
-static const char vcid_num_cc[] = "$Id$ $URL$";
-#endif // !NUM_CC_DEFINED
+static const char vcid_mathspecial_cc[] = "$Id$ $URL$";
+#endif // !MATHSPECIAL_CC_DEFINED

@@ -15,8 +15,8 @@
 
 #include "mtxops.h"
 
+#include "mtx/arithfunctor.h"
 #include "mtx/mtx.h"
-#include "mtx/num.h"
 
 #include "util/error.h"
 

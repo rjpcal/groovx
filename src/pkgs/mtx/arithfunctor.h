@@ -1,11 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// num.h
+// arithfunctor.h
 //
 // Copyright (c) 2001-2005
 // Rob Peters <rjpeters at klab dot caltech dot edu>
 //
-// created: Thu Mar  8 16:27:36 2001
+// created: Thu Mar  8 16:27:36 2001 (split from num.h)
 // commit: $Id$
 //
 // --------------------------------------------------------------------
@@ -29,70 +29,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef NUM_H_DEFINED
-#define NUM_H_DEFINED
+#ifndef ARITHFUNCTOR_H_DEFINED
+#define ARITHFUNCTOR_H_DEFINED
 
 #include <cmath>
-
-/// Numeric operations.
-namespace dash
-{
-  namespace detail
-  {
-    double gammaln_engine(double xx);
-  }
-
-  /// natural-log of the gamma function
-  inline double gammaln(double xx)
-  {
-    static bool filled = false;
-    static const int TABLE_SIZE = 101;
-    static double lookup[TABLE_SIZE] = { 0.0 };
-
-
-    const double tol = 1e-50;
-
-    const int ival = int(xx);
-
-    if ( (ival < TABLE_SIZE) && (xx - double(ival) < tol) )
-      {
-        if (!filled)
-          {
-            for (int i = 0; i < TABLE_SIZE; ++i)
-              lookup[i] = dash::detail::gammaln_engine(double(i));
-
-            filled = true;
-          }
-        return lookup[ival];
-      }
-    else
-      {
-        return dash::detail::gammaln_engine(xx);
-      }
-  }
-
-  /// the error function
-  inline double erfc(const double x)
-  {
-    const double z = fabs(x);
-
-    const double t = 1.0/(1.0+0.5*fabs(x));
-
-    const double ans =
-      t*exp(-z*z-1.26551223+t*(1.00002368+t*(0.37409196+t*(0.09678418+
-      t*(-0.18628806+t*(0.27886807+t*(-1.13520398+t*(1.48851587+
-      t*(-0.82215223+t*0.17087277)))))))))
-      ;
-
-    return x >= 0.0 ? ans : 2.0-ans;
-  }
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// Functors
-//
-///////////////////////////////////////////////////////////////////////
 
 /// Functor for "multiply argument by x" operation.
 struct Mul
@@ -161,5 +101,5 @@ struct Setter
   double operator()(double) { return v; }
 };
 
-static const char vcid_num_h[] = "$Id$ $URL$";
-#endif // !NUM_H_DEFINED
+static const char vcid_arithfunctor_h[] = "$Id$ $URL$";
+#endif // !ARITHFUNCTOR_H_DEFINED

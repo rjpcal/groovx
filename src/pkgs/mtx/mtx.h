@@ -34,7 +34,7 @@
 
 #include "datablock.h"
 
-#include "num.h"
+#include "arithfunctor.h"
 
 #include <iterator>
 
