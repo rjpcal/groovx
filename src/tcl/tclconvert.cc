@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 08:58:53 2001
-// written: Tue Aug  7 15:41:05 2001
+// written: Wed Aug  8 14:47:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,7 +97,7 @@ DOTRACE("Tcl::Convert<int>::fromTcl");
   if ( Tcl_GetIntFromObj(0, safeobj.get(), &val) != TCL_OK )
     {
       TclError err("expected integer but got ");
-      err.appendMsg("\"", Tcl_GetString(obj), "\"");
+      err.append("\"", Tcl_GetString(obj), "\"");
       throw err;
     }
   return val;
@@ -127,7 +127,7 @@ DOTRACE("Tcl::Convert<long>::fromTcl");
   if ( Tcl_GetLongFromObj(0, safeobj.get(), &val) != TCL_OK )
     {
       TclError err("expected long value but got ");
-      err.appendMsg("\"", Tcl_GetString(obj), "\"");
+      err.append("\"", Tcl_GetString(obj), "\"");
       throw err;
     }
   return val;
@@ -157,7 +157,7 @@ DOTRACE("Tcl::Convert<bool>::fromTcl");
   if ( Tcl_GetBooleanFromObj(0, safeobj.get(), &int_val) != TCL_OK )
     {
       TclError err("expected boolean value but got ");
-      err.appendMsg("\"", Tcl_GetString(obj), "\"");
+      err.append("\"", Tcl_GetString(obj), "\"");
       throw err;
     }
   return bool(int_val);
@@ -175,7 +175,7 @@ DOTRACE("Tcl::Convert<double>::fromTcl");
   if ( Tcl_GetDoubleFromObj(0, safeobj.get(), &val) != TCL_OK )
     {
       TclError err("expected floating-point number but got ");
-      err.appendMsg("\"", Tcl_GetString(obj), "\"");
+      err.append("\"", Tcl_GetString(obj), "\"");
       throw err;
     }
   return val;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Jun 20 15:10:26 1999
-// written: Wed Aug  8 12:27:56 2001
+// written: Wed Aug  8 15:58:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,8 +31,10 @@ namespace Tcl
 
 class Tcl::TclError : public Util::Error {
 public:
-  TclError();
-  TclError(const char* msg);
+  INHERIT_ERROR_CTORS(TclError);
+
+  FIX_COPY_CTOR(TclError, Util::Error);
+
   virtual ~TclError();
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 24 18:13:53 2001
-// written: Sun Jul 22 17:46:59 2001
+// written: Wed Aug  8 15:29:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+#include "util/error.h"
 #include "util/strings.h"
 
 #include <esd.h>
@@ -33,17 +34,6 @@
 // API.
 //
 ///////////////////////////////////////////////////////////////////////
-
-class SoundFilenameError : public SoundError {
-public:
-  SoundFilenameError() : SoundError() {}
-  SoundFilenameError(const char* filename) :
-    SoundError("bad or nonexistent file '")
-    {
-      appendMsg(filename);
-      appendMsg("'");
-    }
-};
 
 class EsdSound : public Sound {
 public:
@@ -81,11 +71,13 @@ DOTRACE("EsdSound::EsdSound");
   setFile(filename);
 }
 
-EsdSound::~EsdSound() {
+EsdSound::~EsdSound()
+{
 DOTRACE("EsdSound::~EsdSound");
 }
 
-void EsdSound::readFrom(IO::Reader* reader) {
+void EsdSound::readFrom(IO::Reader* reader)
+{
 DOTRACE("EsdSound::readFrom");
 
   reader->readValue("filename", itsFilename);
@@ -96,24 +88,27 @@ DOTRACE("EsdSound::readFrom");
     setFile(itsFilename.c_str());
 }
 
-void EsdSound::writeTo(IO::Writer* writer) const {
+void EsdSound::writeTo(IO::Writer* writer) const
+{
 DOTRACE("EsdSound::writeTo");
 
   writer->writeValue("filename", itsFilename);
 }
 
-void EsdSound::play() {
+void EsdSound::play()
+{
 DOTRACE("EsdSound::play");
 
   if (!itsFilename.empty())
     {
       int res = esd_play_file("", itsFilename.c_str(), 0);
       if (res == 0)
-        throw SoundFilenameError(itsFilename.c_str());
+        throw IO::FilenameError(itsFilename.c_str());
     }
 }
 
-void EsdSound::setFile(const char* filename) {
+void EsdSound::setFile(const char* filename)
+{
 DOTRACE("EsdSound::setFile");
   if (filename != 0 && filename[0] != '\0')
     {
@@ -121,19 +116,17 @@ DOTRACE("EsdSound::setFile");
       // a readable+valid file
       AFfilehandle audiofile = afOpenFile(filename, "r", (AFfilesetup) 0);
 
-      if (audiofile == AF_NULL_FILEHANDLE) {
-        SoundError err("couldn't open sound file ");
-        err.appendMsg("'", filename, "'");
-        throw err;
-      }
+      if (audiofile == AF_NULL_FILEHANDLE)
+        {
+          throw Util::Error("couldn't open sound file '", filename, "'");
+        }
 
       int closeResult = afCloseFile(audiofile);
 
-      if (closeResult == -1) {
-        SoundError err("error closing sound file ");
-        err.appendMsg("'", filename, "'");
-        throw err;
-      }
+      if (closeResult == -1)
+        {
+          throw Util::Error("error closing sound file '", filename, "'");
+        }
 
       itsFilename = filename;
     }
@@ -146,32 +139,38 @@ DOTRACE("EsdSound::setFile");
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
+namespace
+{
   int ESD = -1;
 }
 
-bool Sound::initSound() {
+bool Sound::initSound()
+{
 DOTRACE("Sound::initSound");
   ESD = esd_audio_open();
   return haveSound();
 }
 
-bool Sound::haveSound() {
+bool Sound::haveSound()
+{
 DOTRACE("Sound::haveSound");
   return (ESD > 0);
 }
 
-void Sound::closeSound() {
+void Sound::closeSound()
+{
 DOTRACE("Sound::closeSound");
   esd_audio_close();
 }
 
-Sound* Sound::make() {
+Sound* Sound::make()
+{
 DOTRACE("Sound::make");
   return new EsdSound();
 }
 
-Sound* Sound::newPlatformSound(const char* soundfile) {
+Sound* Sound::newPlatformSound(const char* soundfile)
+{
 DOTRACE("Sound::newPlatformSound");
   return new EsdSound(soundfile);
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 21:43:28 1999
-// written: Fri Jul 20 13:20:31 2001
+// written: Wed Aug  8 14:47:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,24 +55,27 @@ namespace
   {
     ostrstream ost;
 
-    try {
-      streamWrite<Writer>(obj, ost);
-      ost << '\0';
-    }
-    catch (IO::IoError& err) {
-      err.appendMsg(" with buffer contents ==\n");
+    try
+      {
+        streamWrite<Writer>(obj, ost);
+        ost << '\0';
+      }
+    catch (Util::Error& err)
+      {
+        err.append(" with buffer contents ==\n");
 
-      ost << '\0';
-      err.appendMsg(ost.str());
+        ost << '\0';
+        err.append(ost.str());
 
-      ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
+        ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
 
-      throw err;
-    }
-    catch (...) {
-      ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
-      throw;
-    }
+        throw err;
+      }
+    catch (...)
+      {
+        ost.rdbuf()->freeze(0); // avoids leaking the buffer memory
+        throw;
+      }
 
     fixed_string result(ost.str());
 

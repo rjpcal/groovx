@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Mon Aug  6 16:51:17 2001
+// written: Wed Aug  8 16:03:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -283,7 +283,8 @@ Tcl::List TlistTcl::loadObjidFile(const char* objid_file,
       if (line[0] == '#')
         continue;
 
-      if (ifs.fail()) throw IO::InputError("Tlist::loadObjidFile");
+      if (ifs.fail())
+        throw Util::Error("error reading objid file");
 
       istrstream ist(line);
 
@@ -302,7 +303,7 @@ Tcl::List TlistTcl::loadObjidFile(const char* objid_file,
         }
 
       if (ist.fail() && !ist.eof())
-        throw IO::InputError("Tlist::loadObjidFile");
+        throw Util::Error("error reading objid file");
 
       trial->addNode(sep);
 

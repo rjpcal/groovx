@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Sun Aug  5 19:24:03 2001
+// written: Wed Aug  8 13:21:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ public:
             ERR = err_sound.id();
             linkConstVar("Sound::err", ERR);
           }
-        catch (SoundError& err)
+        catch (Util::Error& err)
           {
             DebugPrintNL("error creating sounds during startup");
             interp.appendResult("SoundPkg: ");

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Sun Jul 22 23:40:02 2001
+// written: Wed Aug  8 15:29:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,10 +33,12 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace HPSOUND_CC_LOCAL {
+namespace HPSOUND_CC_LOCAL
+{
   Audio* theAudio = 0;
 
-  static long audioErrorHandler(Audio* audio, AErrorEvent *errEvent) {
+  static long audioErrorHandler(Audio* audio, AErrorEvent *errEvent)
+  {
   DOTRACE("audioErrorhandler");
 
     static char buf[128];
@@ -44,9 +46,7 @@ namespace HPSOUND_CC_LOCAL {
 
     DebugEvalNL(buf);
 
-    SoundError err("HP Audio Error: ");
-    err.appendMsg(buf);
-    throw err;
+    throw Util::Error("HP Audio Error: ", buf);
 
     // we'll never get here, but we need to placate the compiler
     return 0;
@@ -63,17 +63,6 @@ using namespace HPSOUND_CC_LOCAL;
 // API.
 //
 ///////////////////////////////////////////////////////////////////////
-
-class SoundFilenameError : public SoundError {
-public:
-  SoundFilenameError() : SoundError() {}
-  SoundFilenameError(const char* filename) :
-    SoundError("bad or nonexistent file '")
-    {
-      appendMsg(filename);
-      appendMsg("'");
-    }
-};
 
 class HpAudioSound : public Sound {
 public:
@@ -115,7 +104,8 @@ HpAudioSound::HpAudioSound(const char* filename) :
   itsPlayParams()
 {
 DOTRACE("HpAudioSound::HpAudioSound");
-  if ( !theAudio ) { throw SoundError("invalid HP audio server connection"); }
+  if ( !theAudio )
+    throw Util::Error("invalid HP audio server connection");
 
   itsPlayParams.pause_first = 0;
   itsPlayParams.start_offset.type = ATTSamples;
@@ -131,7 +121,8 @@ DOTRACE("HpAudioSound::HpAudioSound");
   setFile(filename);
 }
 
-HpAudioSound::~HpAudioSound() {
+HpAudioSound::~HpAudioSound()
+{
 DOTRACE("HpAudioSound::~HpAudioSound");
   if ( theAudio != 0 ) {
     if (itsSBucket)
@@ -139,7 +130,8 @@ DOTRACE("HpAudioSound::~HpAudioSound");
   }
 }
 
-void HpAudioSound::readFrom(IO::Reader* reader) {
+void HpAudioSound::readFrom(IO::Reader* reader)
+{
 DOTRACE("HpAudioSound::readFrom");
 
   reader->readValue("filename", itsFilename);
@@ -150,32 +142,37 @@ DOTRACE("HpAudioSound::readFrom");
     setFile(itsFilename.c_str());
 }
 
-void HpAudioSound::writeTo(IO::Writer* writer) const {
+void HpAudioSound::writeTo(IO::Writer* writer) const
+{
 DOTRACE("HpAudioSound::writeTo");
 
   writer->writeValue("filename", itsFilename);
 }
 
-void HpAudioSound::play() {
+void HpAudioSound::play()
+{
 DOTRACE("HpAudioSound::play");
-  if ( !theAudio ) { throw SoundError("invalid audio server connection"); }
+  if ( !theAudio )
+    throw Util::Error("invalid audio server connection");
 
   if (itsSBucket)
     ATransID xid = APlaySBucket( theAudio, itsSBucket, &itsPlayParams, NULL );
 }
 
-void HpAudioSound::setFile(const char* filename) {
+void HpAudioSound::setFile(const char* filename)
+{
 DOTRACE("HpAudioSound::setFile");
 
   if (filename != 0 && filename[0] != '\0')
     {
       if ( !theAudio )
-        { throw SoundError("invalid audio server connection"); }
+        throw Util::Error("invalid audio server connection");
 
       STD_IO::ifstream ifs(filename);
-      if (ifs.fail()) {
-        throw SoundFilenameError(filename);
-      }
+      if (ifs.fail())
+        {
+          throw IO::FilenameError(filename);
+        }
       ifs.close();
 
       AFileFormat fileFormat = AFFUnknown;
@@ -196,7 +193,8 @@ DOTRACE("HpAudioSound::setFile");
 //
 ///////////////////////////////////////////////////////////////////////
 
-bool Sound::initSound() {
+bool Sound::initSound()
+{
 DOTRACE("Sound::initSound");
   if (theAudio != 0) return true;
 
@@ -210,37 +208,44 @@ DOTRACE("Sound::initSound");
   const char* ServerName = "";
   long status = 0;
   theAudio = AOpenAudio( const_cast<char *>(ServerName), &status );
-  if ( status != 0 ) {
-    theAudio = NULL;
-    retVal = false;
-  }
-  else {
-    ASetCloseDownMode( theAudio, AKeepTransactions, NULL );
-    retVal = true;
-  }
+  if ( status != 0 )
+    {
+      theAudio = NULL;
+      retVal = false;
+    }
+  else
+    {
+      ASetCloseDownMode( theAudio, AKeepTransactions, NULL );
+      retVal = true;
+    }
 
   return retVal;
 }
 
-bool Sound::haveSound() {
+bool Sound::haveSound()
+{
 DOTRACE("Sound::haveSound");
   return (theAudio != 0);
 }
 
-void Sound::closeSound() {
+void Sound::closeSound()
+{
 DOTRACE("Sound::closeSound");
-  if ( theAudio ) {
-    ACloseAudio( theAudio, NULL );
-    theAudio = 0;
-  }
+  if ( theAudio )
+    {
+      ACloseAudio( theAudio, NULL );
+      theAudio = 0;
+    }
 }
 
-Sound* Sound::make() {
+Sound* Sound::make()
+{
 DOTRACE("Sound::make");
   return new HpAudioSound();
 }
 
-Sound* Sound::newPlatformSound(const char* soundfile) {
+Sound* Sound::newPlatformSound(const char* soundfile)
+{
 DOTRACE("Sound::newPlatformSound");
   return new HpAudioSound(soundfile);
 }

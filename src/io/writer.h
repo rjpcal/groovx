@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:49 1999
-// written: Wed Aug  8 13:13:00 2001
+// written: Wed Aug  8 15:58:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,10 +46,10 @@ class Value;
 ///////////////////////////////////////////////////////////////////////
 
 class IO::WriteError : public Util::Error {
-
 public:
-  /// Construct with a descriptive message \a msg.
-  WriteError(const char* msg);
+  INHERIT_ERROR_CTORS(WriteError);
+
+  FIX_COPY_CTOR(WriteError, Util::Error);
 
   virtual ~WriteError();
 };
@@ -71,6 +71,8 @@ public:
                    IO::VersionId attempted_id,
                    IO::VersionId lowest_supported_id,
                    const char* msg);
+
+  FIX_COPY_CTOR(WriteVersionError, Util::Error);
 
   virtual ~WriteVersionError();
 };

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Wed Aug  8 12:27:24 2001
+// written: Wed Aug  8 15:34:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,10 +25,6 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
-
-InvalidIdError::InvalidIdError() : Util::Error() {}
-
-InvalidIdError::InvalidIdError(const char* msg) : Util::Error(msg) {}
 
 InvalidIdError::~InvalidIdError() {}
 
@@ -132,11 +128,10 @@ public:
   Util::Object* getCheckedPtrBase(Util::UID id) throw (InvalidIdError)
     {
       MapType::iterator itr = itsPtrMap.find(id);
-      if (!isValidItr(itr)) {
-        InvalidIdError err("attempted to access invalid object '");
-        err.appendNumber(id).appendMsg("'");
-        throw err;
-      }
+      if (!isValidItr(itr))
+        {
+          throw InvalidIdError("attempted to access invalid object '", id, "'");
+        }
 
       return (*itr).second.get();
     }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 20 22:37:31 1999
-// written: Wed Aug  8 12:56:48 2001
+// written: Wed Aug  8 15:29:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,9 +25,7 @@
 
 void FactoryError::throwForType(const char* type)
 {
-  Util::Error err("unknown object type ");
-  err.appendMsg("'", type, "'");
-  throw err;
+  throw Util::Error("unknown object type '", type, "'");
 }
 
 void FactoryError::throwForType(const fixed_string& type)

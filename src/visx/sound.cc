@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Wed Aug  8 12:27:26 2001
+// written: Wed Aug  8 13:24:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,10 +32,6 @@ namespace
   WeakRef<Sound> OK_SOUND;
   WeakRef<Sound> ERR_SOUND;
 }
-
-SoundError::SoundError() : Util::Error() {}
-SoundError::SoundError(const char* msg) : Util::Error(msg) {}
-SoundError::~SoundError() {}
 
 Sound::~Sound () {}
 

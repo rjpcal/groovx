@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Tue Aug  7 15:22:13 2001
+// written: Wed Aug  8 14:41:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,8 +79,7 @@ namespace
     STD_IO::ofstream ofs(filename);
     if (ofs.fail())
       {
-        Tcl::TclError err("error opening file: ");
-        err.appendMsg(filename);
+        Tcl::TclError err; err.append("error opening file: ", filename);
         throw err;
       }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  9 20:25:02 1999
-// written: Wed Aug  8 12:27:25 2001
+// written: Wed Aug  8 14:47:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,64 +95,14 @@ DOTRACE("IO::IoObject::ioTypename");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// IoError member function definitions
+// IoFilenameError member function definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-IO::IoError::IoError() :
-  Util::Error()
+IO::FilenameError::FilenameError(const char* str)
 {
-DOTRACE("IO::IoError::IoError");
-}
-
-IO::IoError::IoError(const char* str) :
-  Util::Error(demangle_cstr(typeid(*this).name()))
-{
-DOTRACE("IO::IoError::IoError");
-  appendMsg(": ");
-  appendMsg(str);
-}
-
-IO::IoError::~IoError() {}
-
-void IO::IoError::setMsg(const char* str) {
-DOTRACE("IO::IoError::setMsg(const char*)");
-  Util::Error::setMsg(demangle_cstr(typeid(*this).name()));
-  Util::Error::appendMsg(": ");
-  Util::Error::appendMsg(str);
-}
-
-IO::InputError::InputError(const char* str) {
-DOTRACE("IO::InputError::InputError");
-  setMsg(str);
-}
-
-IO::InputError::~InputError() {}
-
-IO::OutputError::OutputError(const char* str) {
-DOTRACE("IO::OutputError::OutputError");
-  setMsg(str);
-}
-
-IO::OutputError::~OutputError() {}
-
-IO::LogicError::LogicError(const char* str) {
-DOTRACE("IO::LogicError::LogicError");
-  setMsg(str);
-}
-
-IO::LogicError::~LogicError() {}
-
-IO::ValueError::ValueError(const char* str) {
-DOTRACE("IO::ValueError::ValueError");
-  setMsg(str);
-}
-
-IO::ValueError::~ValueError() {}
-
-IO::FilenameError::FilenameError(const char* str) {
 DOTRACE("IO::FilenameError::FilenameError");
-  setMsg(str);
+  append("couldn't use file '", str, "'");
 }
 
 IO::FilenameError::~FilenameError() {}

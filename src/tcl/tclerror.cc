@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Jun 20 15:10:13 1999
-// written: Wed Aug  8 12:27:56 2001
+// written: Wed Aug  8 15:34:05 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,22 +22,8 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-namespace Tcl
-{
-  TclError::TclError() :
-    Util::Error()
-  {
-    DOTRACE("TclError::TclError");
-  }
 
-  TclError::TclError(const char* msg) :
-    Util::Error(msg)
-  {
-    DOTRACE("TclError::TclError");
-  }
-
-  TclError::~TclError() {}
-}
+Tcl::TclError::~TclError() {}
 
 
 void Tcl::BkdErrorHandler::raiseBackgroundError(const char* msg) {

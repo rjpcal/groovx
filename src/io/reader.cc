@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:47:00 1999
-// written: Wed Aug  8 12:27:25 2001
+// written: Wed Aug  8 15:34:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,25 +24,18 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-IO::ReadError::ReadError(const char* msg) :
-  Util::Error("IO::ReadError: ")
-{
-  appendMsg(msg);
-}
-
 IO::ReadError::~ReadError() {}
 
 IO::ReadVersionError::ReadVersionError(const char* classname,
                                        IO::VersionId attempted_id,
                                        IO::VersionId lowest_supported_id,
                                        const char* msg) :
-  Util::Error("IO::ReadVersionError: ")
+  Util::Error()
 {
-  appendMsg("in ", classname, ", serial version ");
-  appendNumber(int(attempted_id));
-  appendMsg(" is not supported. The lowest supported version is ");
-  appendNumber(int(lowest_supported_id));
-  appendMsg(". ", msg);
+  append("IO::ReadVersionError: ");
+  append("in ", classname, ", serial version ");
+  append(attempted_id, " is not supported. The lowest supported version is ");
+  append(lowest_supported_id, ". ", msg);
 }
 
 IO::ReadVersionError::~ReadVersionError() {}

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Aug  8 12:27:25 2001
+// written: Wed Aug  8 15:29:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -149,9 +149,7 @@ public:
   {
     if (nodeNumber >= itsGxNodes.size())
       {
-        Util::Error err("invalid node number ");
-        err.appendNumber(nodeNumber);
-        throw err;
+        throw Util::Error("invalid node number ", nodeNumber);
       }
     itsCurrentNode = nodeNumber;
   }

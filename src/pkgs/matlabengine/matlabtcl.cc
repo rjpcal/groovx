@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jul 10 12:16:44 2001
-// written: Wed Aug  8 12:27:26 2001
+// written: Wed Aug  8 15:29:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,9 +67,7 @@ public:
     mxArray* arr = engGetArray(itsEngine, name);
     if (arr == 0)
       {
-        Util::Error err("no such MATLAB variable: ");
-        err.appendMsg("'",name,"'");
-        throw err;
+        throw Util::Error("no such MATLAB variable: '", name, "'");
       }
 
     Ref<MtxObj> mtx(new MtxObj(arr, Mtx::COPY));

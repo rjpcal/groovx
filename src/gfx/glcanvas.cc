@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Aug  8 12:27:26 2001
+// written: Wed Aug  8 15:29:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -224,16 +224,15 @@ DOTRACE("GLCanvas::rotate");
   glRotated(angle_in_degrees, v.x(), v.y(), v.z());
 }
 
-void GLCanvas::throwIfError(const char* where) const {
+void GLCanvas::throwIfError(const char* where) const
+{
 DOTRACE("GLCanvas::throwIfError");
   GLenum status = glGetError();
   if (status != GL_NO_ERROR)
     {
       const char* msg =
         reinterpret_cast<const char*>(gluErrorString(status));
-      Util::Error err("GL error: ");
-      err.appendMsg(msg, " ", where);
-      throw err;
+      throw Util::Error("GL error: ", msg, " ", where);
     }
 }
 

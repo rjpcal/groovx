@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 14 11:23:12 1999
-// written: Thu May 10 12:04:40 2001
+// written: Wed Aug  8 15:29:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@
 
 #include <dmedia/audio.h>
 #include <dmedia/audiofile.h>
-#include <fstream.h>				  // to check if files exist
+#include <fstream.h>            // to check if files exist
 #include <unistd.h>
 
 #define NO_TRACE
@@ -38,17 +38,6 @@
 // sound API.
 //
 ///////////////////////////////////////////////////////////////////////
-
-class SoundFilenameError : public SoundError {
-public:
-  SoundFilenameError() : SoundError() {}
-  SoundFilenameError(const char* filename) :
-	 SoundError("bad or nonexistent file '")
-	 {
-		appendMsg(filename);
-		appendMsg("'");
-	 }
-};
 
 class IrixAudioSound : public Sound {
 public:
@@ -92,77 +81,86 @@ IrixAudioSound::IrixAudioSound(const char* filename) :
   itsSamples()
 {
 DOTRACE("IrixAudioSound::IrixAudioSound");
-  if (itsAudioConfig == 0) {
-	 throw SoundError("error creating an ALconfig while creating Sound");
-  }
+  if (itsAudioConfig == 0)
+    throw Util::Error("error creating an ALconfig while creating Sound");
 
   if (filename)
-	 setFile(filename);
+    setFile(filename);
 }
 
-IrixAudioSound::~IrixAudioSound() {
+IrixAudioSound::~IrixAudioSound()
+{
 DOTRACE("IrixAudioSound::~IrixAudioSound");
-  if (itsAudioConfig != 0) {
-	 alFreeConfig(itsAudioConfig);
-  }
+  if (itsAudioConfig != 0)
+    {
+      alFreeConfig(itsAudioConfig);
+    }
 }
 
-void IrixAudioSound::readFrom(IO::Reader* reader) {
+void IrixAudioSound::readFrom(IO::Reader* reader)
+{
 DOTRACE("IrixAudioSound::readFrom");
 
   reader->readValue("filename", itsFilename);
   setFile(itsFilename.c_str());
 }
 
-void IrixAudioSound::writeTo(IO::Writer* writer) const {
+void IrixAudioSound::writeTo(IO::Writer* writer) const
+{
 DOTRACE("IrixAudioSound::writeTo");
 
   writer->writeValue("filename", itsFilename);
 }
 
-void IrixAudioSound::play() {
+void IrixAudioSound::play()
+{
 DOTRACE("IrixAudioSound::play");
   if (itsSamples.size() == 0) return;
 
   ALport audioPort = alOpenPort("Sound::play", "w", itsAudioConfig);
   DebugEvalNL((void*) audioPort);
-  if (audioPort == 0) {
-	 throw SoundError("error opening an audio port during Sound::play");
-  }
+  if (audioPort == 0)
+    {
+      throw Util::Error("error opening an audio port during Sound::play");
+    }
 
   int writeResult =
-	 alWriteFrames(audioPort, static_cast<void*>(&itsSamples[0]), itsFrameCount);
-  if (writeResult == -1) {
-	 throw SoundError("error writing to the audio port during Sound::play");
-  }
+    alWriteFrames(audioPort, static_cast<void*>(&itsSamples[0]), itsFrameCount);
+  if (writeResult == -1)
+    {
+      throw Util::Error("error writing to the audio port during Sound::play");
+    }
 
-  while (alGetFilled(audioPort) > 0) {
-	 usleep(5000);
-  }
+  while (alGetFilled(audioPort) > 0)
+    {
+      usleep(5000);
+    }
 
   int closeResult = alClosePort(audioPort);
-  if (closeResult == -1) {
-	 throw SoundError("error closing the audio port during Sound::play");
-  }
+  if (closeResult == -1)
+    {
+      throw Util::Error("error closing the audio port during Sound::play");
+    }
 }
 
-void IrixAudioSound::setFile(const char* filename) {
+void IrixAudioSound::setFile(const char* filename)
+{
 DOTRACE("IrixAudioSound::setFile");
   STD_IO::ifstream ifs(filename);
-  if (ifs.fail()) {
-	 throw SoundFilenameError(filename);
-  }
+  if (ifs.fail())
+    {
+      throw IO::FilenameError(filename);
+    }
   ifs.close();
 
   // Open itsFilename as an audio file for reading. We pass a NULL
   // AFfilesetup to indicate that file setup parameters should be
   // taken from the file itself.
   AFfilehandle audiofile = afOpenFile(filename, "r", (AFfilesetup) 0);
-  if (audiofile == AF_NULL_FILEHANDLE) {
-	 SoundError err("couldn't open sound file ");
-	 err.appendMsg(itsFilename.c_str());
-	 throw err;
-  }
+  if (audiofile == AF_NULL_FILEHANDLE)
+    {
+      throw Util::Error("couldn't open sound file ", itsFilename);
+    }
 
   // We don't actually set itsFilename to the new value until we are
   // sure that the file exists and is readable as a sound file.
@@ -177,24 +175,24 @@ DOTRACE("IrixAudioSound::setFile");
 
   // Number of audio channels (i.e. mono == 1, stereo == 2)
   itsNumChannels = afGetChannels(audiofile, AF_DEFAULT_TRACK);
-  if (itsNumChannels == -1) {
-	 SoundError err("error reading the number of channels in sound file ");
-	 err.appendMsg(itsFilename.c_str());
-	 throw err;
-  }
+  if (itsNumChannels == -1)
+    {
+      throw Util::Error("error reading the number of channels in sound file ",
+                              itsFilename);
+    }
   alSetChannels(itsAudioConfig, itsNumChannels);
 
   // Frame count
   itsFrameCount = afGetFrameCount(audiofile, AF_DEFAULT_TRACK);
-  if (itsFrameCount < 0) {
-	 SoundError err("error reading the frame count in sound file ");
-	 err.appendMsg(itsFilename.c_str());
-	 throw err;
-  }
+  if (itsFrameCount < 0)
+    {
+      throw Util::Error("error reading the frame count in sound file ",
+                        itsFilename);
+    }
 
   // Sample format and sample width
   afGetSampleFormat(audiofile, AF_DEFAULT_TRACK,
-						  &itsSampleFormat, &itsSampleWidth);
+                    &itsSampleFormat, &itsSampleWidth);
   alSetSampFmt(itsAudioConfig, itsSampleFormat);
   alSetWidth(itsAudioConfig, itsSampleWidth);
 
@@ -219,27 +217,25 @@ DOTRACE("IrixAudioSound::setFile");
   itsSamples.resize(itsFrameCount*itsNumChannels*itsBytesPerSample);
 
   int readResult = afReadFrames(audiofile, AF_DEFAULT_TRACK,
-										  static_cast<void*>(&itsSamples[0]),
-										  itsFrameCount);
+                                static_cast<void*>(&itsSamples[0]),
+                                itsFrameCount);
   DebugEvalNL(readResult);
 
   int closeResult = afCloseFile(audiofile);
 
   // If the read failed, we dump any data stored in itsSamples
-  if (readResult == -1) {
-	 itsSamples.resize(0);
-	 SoundError err("error reading sound data from file ");
-	 err.appendMsg(itsFilename.c_str());
-	 throw err;
-  }
+  if (readResult == -1)
+    {
+      itsSamples.resize(0);
+      throw Util::Error("error reading sound data from file ", itsFilename);
+    }
 
   // If the close failed, we keep the data that were read, but report
   // the error
-  if (closeResult == -1) {
-	 SoundError err("error closing sound file ");
-	 err.appendMsg(itsFilename.c_str());
-	 throw err;
-  }
+  if (closeResult == -1)
+    {
+      throw Util::Error("error closing sound file ", itsFilename);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -248,26 +244,31 @@ DOTRACE("IrixAudioSound::setFile");
 //
 ///////////////////////////////////////////////////////////////////////
 
-bool Sound::initSound() {
+bool Sound::initSound()
+{
 DOTRACE("Sound::initSound");
   return true;
 }
 
-bool Sound::haveSound() {
+bool Sound::haveSound()
+{
 DOTRACE("Sound::haveSound");
   return true;
 }
 
-void Sound::closeSound() {
+void Sound::closeSound()
+{
 DOTRACE("Sound::closeSound");
 }
 
-Sound* Sound::make() {
+Sound* Sound::make()
+{
 DOTRACE("Sound::make");
   return new IrixAudioSound();
 }
 
-Sound* Sound::newPlatformSound(const char* soundfile) {
+Sound* Sound::newPlatformSound(const char* soundfile)
+{
 DOTRACE("Sound::newPlatformSound");
   return new IrixAudioSound(soundfile);
 }

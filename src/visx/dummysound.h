@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 12 13:03:47 1999
-// written: Mon Jun 11 15:08:15 2001
+// written: Wed Aug  8 13:19:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 
 #include "util/strings.h"
 
-#include <fstream.h>				  // to check if files exist
+#include <fstream.h>            // to check if files exist
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -33,17 +33,6 @@
 // API.
 //
 ///////////////////////////////////////////////////////////////////////
-
-class SoundFilenameError : public SoundError {
-public:
-  SoundFilenameError() : SoundError() {}
-  SoundFilenameError(const char* filename) :
-	 SoundError("bad or nonexistent file '")
-	 {
-		appendMsg(filename);
-		appendMsg("'");
-	 }
-};
 
 class DummySound : public Sound {
 public:
@@ -61,7 +50,7 @@ public:
 
   void swap(DummySound& other)
   {
-	 itsFilename.swap(other.itsFilename);
+    itsFilename.swap(other.itsFilename);
   }
 
 private:
@@ -81,11 +70,13 @@ DOTRACE("DummySound::DummySound");
   setFile(filename);
 }
 
-DummySound::~DummySound() {
+DummySound::~DummySound()
+{
 DOTRACE("DummySound::~DummySound");
 }
 
-void DummySound::readFrom(IO::Reader* reader) {
+void DummySound::readFrom(IO::Reader* reader)
+{
 DOTRACE("DummySound::readFrom");
 
   reader->readValue("filename", itsFilename);
@@ -93,31 +84,35 @@ DOTRACE("DummySound::readFrom");
   DebugEval(itsFilename.length()); DebugEvalNL(itsFilename);
 
   if (!itsFilename.empty())
-	 setFile(itsFilename.c_str());
+    setFile(itsFilename.c_str());
 }
 
-void DummySound::writeTo(IO::Writer* writer) const {
+void DummySound::writeTo(IO::Writer* writer) const
+{
 DOTRACE("DummySound::writeTo");
 
-  writer->writeValue("filename", itsFilename); 
+  writer->writeValue("filename", itsFilename);
 }
 
-void DummySound::play() {
+void DummySound::play()
+{
 DOTRACE("DummySound::play");
 }
 
-void DummySound::setFile(const char* filename) {
+void DummySound::setFile(const char* filename)
+{
 DOTRACE("DummySound::setFile");
   if (filename != 0 && filename[0] != '\0')
-	 {
-		STD_IO::ifstream ifs(filename);
-		if (ifs.fail()) {
-		  throw SoundFilenameError(filename);
-		}
-		ifs.close();
+    {
+      STD_IO::ifstream ifs(filename);
+      if (ifs.fail())
+        {
+          throw IO::FilenameError(filename);
+        }
+      ifs.close();
 
-		itsFilename = filename;
-	 }
+      itsFilename = filename;
+    }
 }
 
 
@@ -127,27 +122,31 @@ DOTRACE("DummySound::setFile");
 //
 ///////////////////////////////////////////////////////////////////////
 
-bool Sound::initSound() {
+bool Sound::initSound()
+{
 DOTRACE("Sound::initSound");
-
   return true;
 }
 
-bool Sound::haveSound() {
+bool Sound::haveSound()
+{
 DOTRACE("Sound::haveSound");
   return true;
 }
 
-void Sound::closeSound() {
+void Sound::closeSound()
+{
 DOTRACE("Sound::closeSound");
 }
 
-Sound* Sound::make() {
+Sound* Sound::make()
+{
 DOTRACE("Sound::make");
   return new DummySound();
 }
 
-Sound* Sound::newPlatformSound(const char* soundfile) {
+Sound* Sound::newPlatformSound(const char* soundfile)
+{
 DOTRACE("Sound::newPlatformSound");
   return new DummySound(soundfile);
 }

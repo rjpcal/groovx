@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:29:16 2001
-// written: Wed Aug  8 12:27:57 2001
+// written: Wed Aug  8 15:59:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,10 +27,13 @@ public:
   EvalError(Tcl_Obj* cmd_obj) :
     Tcl::TclError("error while evaluating ")
   {
-    appendMsg(Tcl_GetString(cmd_obj));
+    append(Tcl_GetString(cmd_obj));
   }
+
   EvalError(const char* msg) :
     Tcl::TclError(msg) {}
+
+  FIX_COPY_CTOR(EvalError, Tcl::TclError);
 };
 
 Tcl::Code::Code() :

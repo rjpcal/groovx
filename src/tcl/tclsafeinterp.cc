@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Wed Aug  8 12:27:25 2001
+// written: Wed Aug  8 15:29:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -253,9 +253,8 @@ DOTRACE("Tcl::Interp::getProcBody");
         }
       else
         {
-          Tcl::TclError err("couldn't get the proc body for ");
-          err.appendMsg("'", proc_name, "'");
-          throw err;
+          throw Tcl::TclError("couldn't get the proc body for '",
+                              proc_name, "'");
         }
     }
 

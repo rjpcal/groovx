@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Aug  8 12:27:24 2001
+// written: Wed Aug  8 15:57:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -93,103 +93,17 @@ public:
 };
 
 
-
-///////////////////////////////////////////////////////////////////////
 /**
- * These exception classes represent the various types of errors that
- * may occur during IO operations. The base class for this group of
- * classes is IoError. All IO-related exception classes defined by
- * clients should also derive from IoError.
+ * A subclass of Util::Error for invalid filenames or filenames
+ * referring to inaccessible files.
  **/
-///////////////////////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////////////////////////
-/**
- * IoError is base class for the various exception types that may be
- * thrown in IO's input and output methods. All IO-related exception
- * classes defined by clients should also derive from IoError.
- **/
-///////////////////////////////////////////////////////////////////////
-
-class IO::IoError : public Util::Error {
+class IO::FilenameError : public Util::Error {
 public:
-  /// Default constructor
-  IoError();
-  /// Construct, and call \c setMsg(message)
-  IoError(const char* message);
-  /// Virtual destructor
-  virtual ~IoError();
-protected:
-  /// Change the message associated with the exception to \a newMessage
-  virtual void setMsg(const char* newMessage);
-};
-
-/**
- * A subclass of IoError for general input errors.
- **/
-class IO::InputError : public IO::IoError {
-public:
-  ///
-  InputError() : IoError() {}
-  ///
-  InputError(const char* str);
-  /// Virtual destructor
-  virtual ~InputError();
-};
-
-/**
- * A subclass of IoError for general output errors.
- **/
-class IO::OutputError : public IO::IoError {
-public:
-  ///
-  OutputError() : IoError() {}
-  ///
-  OutputError(const char* str);
-  /// Virtual destructor
-  virtual ~OutputError();
-};
-
-/**
- * A subclass of IoError for "can't-happen" errors that are discovered
- * during input or output. This type of error suggests that either the
- * object or its legacySrlzd description has been corrupted.
- **/
-class IO::LogicError : public IO::IoError {
-public:
-  ///
-  LogicError() : IoError() {}
-  ///
-  LogicError(const char* str);
-  /// Virtual destructor
-  virtual ~LogicError();
-};
-
-/**
- * A subclass of IoError for out-of-bounds values that are encountered
- * during input or output.
- **/
-class IO::ValueError : public IO::IoError {
-public:
-  ///
-  ValueError() : IoError() {}
-  ///
-  ValueError(const char* str);
-  /// Virtual destructor
-  virtual ~ValueError();
-};
-
-/**
- * A subclass of IoError for invalid filenames or filenames referring
- * to inaccessible files.
- **/
-class IO::FilenameError : public IO::IoError {
-public:
-  ///
-  FilenameError() : IoError() {}
-  ///
+  /// Default constructor.
   FilenameError(const char* filename);
+
+  FIX_COPY_CTOR(FilenameError, Util::Error);
+
   /// Virtual destructor
   virtual ~FilenameError();
 };

@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Aug  8 12:27:25 2001
+// written: Wed Aug  8 15:29:29 2001
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben

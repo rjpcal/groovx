@@ -159,10 +159,7 @@ Ref<GxNode> GxSeparator::getChild(ChildId index) const
 DOTRACE("GxSeparator::getChild");
   if (index >= itsImpl->itsChildren.size())
     {
-      Util::Error err("GxSeparator has no child with index '");
-      err.appendNumber(index);
-      err.appendMsg("'");
-      throw err;
+      throw Util::Error("GxSeparator has no child with index '", index, "'");
     }
 
   return itsImpl->itsChildren[index];
