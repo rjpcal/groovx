@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Fri Sep  6 13:55:59 2002
+// written: Fri Sep  6 13:59:26 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@
 #include <tk.h>
 #include <unistd.h>
 
-#ifdef USE_READLINE
+#ifdef WITH_READLINE
 #  include <readline/readline.h>
 #  include <readline/history.h>
 #endif
@@ -85,7 +85,7 @@ public:
 
   void run();
 
-#ifdef USE_READLINE
+#ifdef WITH_READLINE
   static void readlineLineComplete(char* line);
 #endif
 };
@@ -142,7 +142,7 @@ DOTRACE("Tcl::MainImpl::MainImpl");
                              ((itsStartupFileName == NULL) && isItInteractive)
                              ? 1 : 0);
 
-#ifdef USE_READLINE
+#ifdef WITH_READLINE
   using_history();
 #endif
 }
@@ -157,7 +157,7 @@ int Tcl::MainImpl::historyNext()
 {
 DOTRACE("Tcl::MainImpl::historyNext");
 
-#ifdef USE_READLINE
+#ifdef WITH_READLINE
   return history_length+1;
 #else
   Tcl::ObjPtr obj = itsSafeInterp.getResult<Tcl_Obj*>();
@@ -182,7 +182,7 @@ void Tcl::MainImpl::doPrompt(const char* text, unsigned int length)
 {
 DOTRACE("Tcl::MainImpl::doPrompt");
 
-#ifdef USE_READLINE
+#ifdef WITH_READLINE
   rl_callback_handler_install(text, readlineLineComplete);
 #else
   if (length > 0)
@@ -214,7 +214,7 @@ DOTRACE("Tcl::MainImpl::prompt");
     }
   else
     {
-#ifdef USE_READLINE
+#ifdef WITH_READLINE
       fstring text(itsArgv0, " ", historyNext(), ">>> ");
 #else
       fstring text(itsArgv0, " ", historyNext(), "> ");
@@ -231,7 +231,7 @@ DOTRACE("Tcl::MainImpl::prompt");
 //
 //---------------------------------------------------------------------
 
-#ifdef USE_READLINE
+#ifdef WITH_READLINE
 
 void Tcl::MainImpl::readlineLineComplete(char* line)
 {
@@ -257,7 +257,7 @@ void Tcl::MainImpl::grabInput()
 {
 DOTRACE("Tcl::MainImpl::grabInput");
 
-#ifndef USE_READLINE
+#ifndef WITH_READLINE
   Tcl_DString line;
 
   Tcl_DStringInit(&line);
@@ -268,7 +268,7 @@ DOTRACE("Tcl::MainImpl::grabInput");
 
   Tcl_DStringFree(&line);
 
-#else // USE_READLINE
+#else // WITH_READLINE
   rl_callback_read_char();
 #endif
 }
@@ -345,7 +345,7 @@ DOTRACE("Tcl::MainImpl::execCommand");
 
   bool display_result = false;
 
-#ifdef USE_READLINE
+#ifdef WITH_READLINE
   char* expansion = 0;
   const int status = history_expand(const_cast<char*>(itsCommand.c_str()),
                                     &expansion);
@@ -381,7 +381,7 @@ DOTRACE("Tcl::MainImpl::execCommand");
 
   if (status == 0 || status == 1) // execute expansion?
     {
-#ifdef USE_READLINE
+#ifdef WITH_READLINE
       int code = Tcl_GlobalEval(interp(), expansion);
 
       size_t len = strlen(expansion);
@@ -424,7 +424,7 @@ DOTRACE("Tcl::MainImpl::execCommand");
 
   itsCommand = "";
 
-#ifdef USE_READLINE
+#ifdef WITH_READLINE
   free(expansion);
 #endif
 }
