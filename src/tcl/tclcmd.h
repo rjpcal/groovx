@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Sun Dec 15 21:01:42 2002
+// written: Wed Dec 18 08:21:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,12 +101,15 @@ public:
   /// Change the Tcl::Dispatcher for this command.
   void setDispatcher(shared_ptr<Dispatcher> dpx);
 
-  class Impl;
+  /// Find the command associated with a given name.
+  /** Returns null if no such command. */
+  static Tcl::Command* lookup(const char* name);
 
 private:
   Command(const Command&);
   Command& operator=(const Command&);
 
+  class Impl;
   friend class Impl;
   Impl* const rep;
 };

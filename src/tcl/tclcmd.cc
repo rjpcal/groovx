@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Sun Dec 15 21:20:54 2002
+// written: Wed Dec 18 08:32:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,6 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
-
-class HelpCmd;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -114,12 +112,6 @@ namespace
 #ifdef TRACE_USE_COUNT
   STD_IO::ofstream* USE_COUNT_STREAM = new STD_IO::ofstream("tclprof.out");
 #endif
-
-  HelpCmd* theHelpCmd = 0;
-  bool firstTime = true;
-  // we need this extra 'firstTime' flag to avoid endless recursion
-  // when trying to create theHelpCmd (i.e., otherwise the constructor
-  // for HelpCmd will also try to create theHelpCmd, etc...)
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -153,32 +145,6 @@ namespace
   shared_ptr<DefaultDispatcher>
     theDefaultDispatcher(new DefaultDispatcher);
 }
-
-///////////////////////////////////////////////////////////////////////
-//
-// HelpCmd class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-class HelpCmd : public Tcl::Command
-{
-public:
-  HelpCmd(Tcl::Interp& interp) :
-    Tcl::Command(interp, "?", "commandName", 2, 2) {}
-
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-  {
-    const char* cmd_name = ctx.getValFromArg<const char*>(1);
-
-    Tcl::Command* cmd = commandTable()[cmd_name];
-
-    if (cmd == 0)
-      throw Util::Error("no such Tcl::Command");
-
-    ctx.setResult(cmd->usage());
-  }
-};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -316,12 +282,6 @@ DOTRACE("Tcl::Command::Command");
     }
 
   rep->overloads->add(this);
-
-  if (firstTime)
-    {
-      firstTime = false;
-      theHelpCmd = new HelpCmd(interp);
-    }
 }
 
 Tcl::Command::~Command()
@@ -406,6 +366,12 @@ void Tcl::Command::setDispatcher(shared_ptr<Tcl::Dispatcher> dpx)
 {
 DOTRACE("Tcl::Command::setDispatcher");
   rep->dispatcher = dpx;
+}
+
+Tcl::Command* Tcl::Command::lookup(const char* name)
+{
+DOTRACE("Tcl::Command::lookup");
+  return commandTable()[name];
 }
 
 

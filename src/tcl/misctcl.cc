@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Wed Jul 31 18:45:53 2002
+// written: Wed Dec 18 08:28:08 2002
 // $Id$
 //
 // this file contains the implementations for some simple Tcl functions
@@ -18,6 +18,8 @@
 #define MISCTCL_C_DEFINED
 
 #include "tcl/tclpkg.h"
+
+#include "tcl/tclcmd.h"
 
 #include "util/error.h"
 #include "util/rand.h"
@@ -50,6 +52,16 @@ namespace
 
     return result;
   }
+
+  fstring cmdUsage(const char* name)
+  {
+    Tcl::Command* cmd = Tcl::Command::lookup(name);
+
+    if (cmd == 0)
+      throw Util::Error("no such Tcl::Command");
+
+    return cmd->usage();
+  }
 }
 
 extern "C"
@@ -66,22 +78,21 @@ DOTRACE("Misc_Init");
   pkg->def( "::srand", "seed",
             bindFirst(memFunc(&Randint::seed), &generator) );
 
-  pkg->def( "::sleep", "secs", &::sleep );
   // use the standard library sleep() to sleep a specified # of seconds
   //
   // performance: performance is pretty good, considering that we're on
   // a seconds timescale with this command. It seems to use an extra
   // 9msec more than the specified delay
+  pkg->def( "::sleep", "secs", &::sleep );
 
-  pkg->def( "::usleep", "usecs", &::usleep );
   // use the standard library usleep() to sleep a specified # of microseconds
   //
   // performance: in a real Tcl script, this command chews up an
   // additional 9000usec more than the specified delay, unless the
   // specified number is < 10000, in which case this command invariably
   // takes ~19000 us (ugh)
+  pkg->def( "::usleep", "usecs", &::usleep );
 
-  pkg->def( "::usleepr", "usecs reps", &usleepr );
   // use the standard library usleep() to repeatedly sleep a specified #
   // of microseconds
   //
@@ -89,8 +100,11 @@ DOTRACE("Misc_Init");
   // here. It is typically an extra 10000usec per loop iteration, but
   // again, as in usleepCmd, there seemse to be a minimum of ~20000usec
   // per iteration, even if the specified delay is 1.
+  pkg->def( "::usleepr", "usecs reps", &usleepr );
 
   pkg->def( "::bt", "", &backTrace );
+
+  pkg->def( "::?", "cmd_name", &cmdUsage );
 
   return pkg->initStatus();
 }
