@@ -55,6 +55,38 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+namespace
+{
+  void missingAttr(const char* attname, const char* eltype,
+                   const char* elname)
+  {
+    throw Util::Error(fstring("missing '", attname,
+                              "' attribute for <",
+                              eltype, "> element with name: ", elname));
+  }
+
+  void invalidAttr(const char* attname, const char* eltype,
+                   const char* elname)
+  {
+    throw Util::Error(fstring("invalid '", attname,
+                              "' attribute for <",
+                              eltype, "> element with name: ", elname));
+  }
+
+  const char* findAttr(const char** attr, const char* attname,
+                       const char* eltype, const char* elname)
+  {
+    for (int i = 0; attr[i] != 0; i += 2)
+      {
+        if (strcmp(attr[i], attname) == 0)
+          return attr[i+1];
+      }
+
+    missingAttr(attname, eltype, elname);
+    Assert(0);
+    return 0; // can't happen
+  }
+}
 
 using Util::Ref;
 using Util::SoftRef;
@@ -68,7 +100,14 @@ class XmlElement
 public:
   virtual ~XmlElement();
 
-  virtual void addChild(const char* /*name*/, ElPtr /*elp*/) { Assert(0); }
+  virtual void addChild(const char* /*name*/, ElPtr /*elp*/)
+  {
+    throw Util::Error(fstring("child elements not allowed "
+                              "within elements of type: ",
+                              demangled_name(typeid(*this))));
+  }
+
+  virtual void characterData(const char* /*text*/, int /*len*/) { }
 
   virtual void print(std::ostream& os,
                      int depth, const char* name) const = 0;
@@ -81,7 +120,6 @@ XmlElement::~XmlElement() {}
 template <class T>
 T& elementCast(XmlElement* elp, const fstring& name)
 {
-  const char* demangled_name(const std::type_info& info);
   if (elp == 0)
     throw Util::Error(fstring("no element with name: ", name));
   T* t = dynamic_cast<T*>(elp);
@@ -97,7 +135,7 @@ template <class T>
 class BasicElement : public XmlElement
 {
 public:
-  BasicElement(T t) : itsVal(t) {}
+  BasicElement(const char* str, const char* name);
   virtual ~BasicElement() {}
 
   virtual void print(std::ostream& os,
@@ -110,15 +148,71 @@ public:
   T itsVal;
 };
 
+template <>
+BasicElement<double>::BasicElement(const char* str, const char* name) :
+  itsVal(0.0)
+{
+  int n = sscanf(str, "%lf", &itsVal);
+  if (n != 1)
+    {
+      invalidAttr("value", "double", name);
+    }
+}
+
+template <>
+BasicElement<int>::BasicElement(const char* str, const char* name) :
+  itsVal(0)
+{
+  int n = sscanf(str, "%d", &itsVal);
+  if (n != 1)
+    {
+      invalidAttr("value", "int", name);
+    }
+}
+
+template <>
+BasicElement<bool>::BasicElement(const char* str, const char* name) :
+  itsVal(true)
+{
+  int i = 0;
+  int n = sscanf(str, "%d", &i);
+  if (n != 1)
+    {
+      invalidAttr("value", "bool", name);
+    }
+  itsVal = bool(i);
+}
+
+class StringElement : public XmlElement
+{
+public:
+  StringElement() : itsVal() {}
+  virtual ~StringElement() {}
+
+  virtual void print(std::ostream& os,
+                     int depth, const char* name) const
+  {
+    for (int i = 0; i < depth; ++i) os << "  ";
+    os << name << "(string) value=" << itsVal << "\n";
+  }
+
+  virtual void characterData(const char* text, int len)
+  {
+    Util::CharData cdata(text, len);
+    itsVal.append(cdata);
+  }
+
+  fstring itsVal;
+};
+
 typedef BasicElement<double> DoubleElement;
 typedef BasicElement<int> IntElement;
 typedef BasicElement<bool> BoolElement;
-typedef BasicElement<fstring> StringElement;
 
 class ValueElement : public XmlElement
 {
 public:
-  ValueElement(const char* val) : itsVal(val) {}
+  ValueElement(const char* val, const char* /*name*/) : itsVal(val) {}
   virtual ~ValueElement() {}
 
   virtual void print(std::ostream& os,
@@ -134,20 +228,27 @@ public:
 class ObjrefElement : public XmlElement
 {
 public:
-  ObjrefElement(const char** attr, shared_ptr<IO::ObjectMap> objmap) :
+  ObjrefElement(const char** attr, const char* eltype, const char* name,
+                shared_ptr<IO::ObjectMap> objmap) :
     itsType(""),
     itsId(-1),
     itsObjects(objmap)
   {
-    for (int i = 0; attr[i] != 0; i += 2)
+    itsId = atoi(findAttr(attr, "id", eltype, name));
+    itsType = findAttr(attr, "type", eltype, name);
+
+    if (itsId < 0)
       {
-        if (strcmp(attr[i], "id") == 0)
-          itsId = atoi(attr[i+1]);
-        else if (strcmp(attr[i], "type") == 0)
-          itsType = attr[i+1];
+        invalidAttr("id", eltype, name);
       }
 
     Assert(itsId >= 0);
+
+    if (itsType.empty())
+      {
+        invalidAttr("type", eltype, name);
+      }
+
     Assert(!itsType.empty());
   }
 
@@ -173,22 +274,19 @@ public:
 class GroupElement : public ObjrefElement, public IO::Reader
 {
 public:
-  GroupElement(const char** attr, shared_ptr<IO::ObjectMap> objmap) :
-    ObjrefElement(attr, objmap),
+  GroupElement(const char** attr, const char* eltype, const char* name,
+               shared_ptr<IO::ObjectMap> objmap) :
+    ObjrefElement(attr, eltype, name, objmap),
     itsVersion(-1),
-    itsAttribCount(-1),
     itsElems()
   {
-    for (int i = 0; attr[i] != 0; i += 2)
-      {
-        if (strcmp(attr[i], "version") == 0)
-          itsVersion = atoi(attr[i+1]);
-        else if (strcmp(attr[i], "attribCount") == 0)
-          itsAttribCount = atoi(attr[i+1]);
-      }
+    itsVersion = atoi(findAttr(attr, "version", eltype, name));
 
+    if (itsVersion < 0)
+      {
+        invalidAttr("version", eltype, name);
+      }
     Assert(itsVersion >= 0);
-    Assert(itsAttribCount >= 0);
   }
 
   virtual ~GroupElement() throw() {}
@@ -291,7 +389,6 @@ protected:
 
 public:
   int itsVersion;
-  int itsAttribCount;
   typedef std::map<fstring, ElPtr> MapType;
   MapType itsElems;
 };
@@ -299,8 +396,8 @@ public:
 class ObjectElement : public GroupElement
 {
 public:
-  ObjectElement(const char** attr, shared_ptr<IO::ObjectMap> objmap) :
-    GroupElement(attr, objmap)
+  ObjectElement(const char** attr, const char* name, shared_ptr<IO::ObjectMap> objmap) :
+    GroupElement(attr, "object", name, objmap)
   {
     // Return the object for this id, creating a new object if necessary:
     itsObject = objmap->fetchObject(itsType.c_str(), itsId);
@@ -343,83 +440,53 @@ public:
   ElPtr itsChild;
 };
 
-ElPtr makeBasicElement(const char* el, const char** attr)
-{
-  Assert(strcmp(el, "object") != 0);
-
-  const char* name = 0;
-  const char* val = 0;
-
-  for (int i = 0; attr[i] != 0; i += 2)
-    {
-      if (strcmp(attr[i], "name") == 0)
-        name = attr[i+1];
-      else if (strcmp(attr[i], "value") == 0)
-        val = attr[i+1];
-    }
-
-  if (val == 0 || name == 0)
-    {
-      fprintf(stderr, "el = %s\n", el);
-    }
-
-  Assert(name != 0);
-  Assert(val != 0);
-
-  if (strcmp(el, "double") == 0)
-    {
-      double d = 0.0;
-      sscanf(val, "%lf", &d);
-      return ElPtr(new DoubleElement(d));
-    }
-  else if (strcmp(el, "int") == 0)
-    {
-      int i = 0;
-      sscanf(val, "%d", &i);
-      return ElPtr(new IntElement(i));
-    }
-  else if (strcmp(el, "bool") == 0)
-    {
-      int i = 0;
-      sscanf(val, "%d", &i);
-      return ElPtr(new BoolElement(bool(i)));
-    }
-  else if (strcmp(el, "cstring") == 0)
-    {
-      return ElPtr(new StringElement(val));
-    }
-  else if (strcmp(el, "valobj") == 0)
-    {
-      return ElPtr(new ValueElement(val));
-    }
-  else
-    {
-      throw Util::Error(fstring("unknown element type: ", el));
-    }
-}
-
-ElPtr makeElement(const char* el, const char** attr,
+ElPtr makeElement(const char* el, const char** attr, const char* name,
                   shared_ptr<IO::ObjectMap> objmap)
 {
   if (strcmp(el, "object") == 0)
     {
-      return ElPtr(new ObjectElement(attr, objmap));
+      return ElPtr(new ObjectElement(attr, name, objmap));
     }
   else if (strcmp(el, "ownedobj") == 0)
     {
-      return ElPtr(new GroupElement(attr, objmap));
+      return ElPtr(new GroupElement(attr, "ownedobj", name, objmap));
     }
   else if (strcmp(el, "baseclass") == 0)
     {
-      return ElPtr(new GroupElement(attr, objmap));
+      return ElPtr(new GroupElement(attr, "baseclass", name, objmap));
     }
   else if (strcmp(el, "objref") == 0)
     {
-      return ElPtr(new ObjrefElement(attr, objmap));
+      return ElPtr(new ObjrefElement(attr, "objref", name, objmap));
+    }
+  else if (strcmp(el, "string") == 0)
+    {
+      return ElPtr(new StringElement);
     }
   else
     {
-      return makeBasicElement(el, attr);
+      const char* val = findAttr(attr, "value", el, name);
+
+      if (strcmp(el, "double") == 0)
+        {
+          return ElPtr(new DoubleElement(val, name));
+        }
+      else if (strcmp(el, "int") == 0)
+        {
+          return ElPtr(new IntElement(val, name));
+        }
+      else if (strcmp(el, "bool") == 0)
+        {
+          return ElPtr(new BoolElement(val, name));
+        }
+      else if (strcmp(el, "valobj") == 0)
+        {
+          return ElPtr(new ValueElement(val, name));
+        }
+      else
+        {
+          throw Util::Error(fstring("unknown element type: ", el));
+        }
     }
 }
 
@@ -454,6 +521,7 @@ public:
 protected:
   virtual void elementStart(const char* el, const char** attr);
   virtual void elementEnd(const char* el);
+  virtual void characterData(const char* text, int length);
 
 private:
   shared_ptr<RootElement> itsRoot;
@@ -471,20 +539,11 @@ void TreeBuilder::elementStart(const char* el, const char** attr)
   ++itsStartCount;
   ++itsDepth;
 
-  const char* name = 0;
-
-  for (int i = 0; attr[i] != 0; i += 2)
-    {
-      if (strcmp(attr[i], "name") == 0)
-        {
-          name = attr[i+1];
-          break;
-        }
-    }
+  const char* name = findAttr(attr, "name", el, "(noname)");
 
   Assert(name != 0);
 
-  ElPtr elp = makeElement(el, attr, itsObjects);
+  ElPtr elp = makeElement(el, attr, name, itsObjects);
 
   if (itsStack.size() == 0)
     itsRoot->addChild(name, elp);
@@ -511,6 +570,13 @@ void TreeBuilder::elementEnd(const char* /*el*/)
   itsStack.back()->finish();
   itsStack.pop_back();
   --itsDepth;
+}
+
+void TreeBuilder::characterData(const char* text, int length)
+{
+  Assert(itsStack.size() > 0);
+  Assert(itsStack.back().get() != 0);
+  itsStack.back()->characterData(text, length);
 }
 
 
