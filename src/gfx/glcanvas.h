@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Mon Aug 13 12:19:14 2001
+// written: Mon Aug 13 14:32:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,6 +36,13 @@ public:
   virtual bool isDoubleBuffered() const;
 
   virtual unsigned int bitsPerPixel() const;
+
+  virtual void drawPixels(const Gfx::BmapData& data,
+                          const Gfx::Vec2<double>& world_pos,
+                          const Gfx::Vec2<double>& zoom) const;
+
+  virtual void drawBitmap(const Gfx::BmapData& data,
+								  const Gfx::Vec2<double>& world_pos) const;
 
   virtual void grabPixels(const Gfx::Rect<int>& bounds,
                           Gfx::BmapData& data_out) const;

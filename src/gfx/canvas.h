@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Mon Aug 13 12:19:14 2001
+// written: Mon Aug 13 14:39:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,6 +67,15 @@ public:
 
   /// Query the number of bytes per pixel.
   virtual unsigned int bitsPerPixel() const = 0;
+
+  /// Draw pixmap data at the specified position.
+  virtual void drawPixels(const Gfx::BmapData& data,
+                          const Gfx::Vec2<double>& world_pos,
+                          const Gfx::Vec2<double>& zoom) const = 0;
+
+  /// Draw bitmap data at the specified position.
+  virtual void drawBitmap(const Gfx::BmapData& data,
+                          const Gfx::Vec2<double>& world_pos) const = 0;
 
   /// Read pixel data from the screen rect \a bounds into \a data_out.
   virtual void grabPixels(const Gfx::Rect<int>& bounds,

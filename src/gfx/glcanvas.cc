@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Mon Aug 13 12:19:14 2001
+// written: Mon Aug 13 14:37:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -151,6 +151,55 @@ DOTRACE("GLCanvas::bitsPerPixel");
 
   if (isRgba()) return 24;
   return 8;
+}
+
+void GLCanvas::drawPixels(const Gfx::BmapData& data,
+                          const Gfx::Vec2<double>& world_pos,
+                          const Gfx::Vec2<double>& zoom) const
+{
+DOTRACE("GLCanvas::drawPixels");
+
+  glRasterPos2d(world_pos.x(), world_pos.y());
+  glPixelZoom(zoom.x(), zoom.y());
+
+  glPixelStorei(GL_UNPACK_ALIGNMENT, data.byteAlignment());
+
+  if (data.bitsPerPixel() == 24)
+    {
+      glDrawPixels(data.width(), data.height(), GL_RGB, GL_UNSIGNED_BYTE,
+                   static_cast<GLvoid*>(data.bytesPtr()));
+    }
+  else if (data.bitsPerPixel() == 8)
+    {
+      glDrawPixels(data.width(), data.height(), GL_COLOR_INDEX, GL_UNSIGNED_BYTE,
+                   static_cast<GLvoid*>(data.bytesPtr()));
+    }
+  else if (data.bitsPerPixel() == 1)
+    {
+      if (isRgba())
+        {
+          GLfloat simplemap[] = {0.0, 1.0};
+
+          glPixelMapfv(GL_PIXEL_MAP_I_TO_R, 2, simplemap);
+          glPixelMapfv(GL_PIXEL_MAP_I_TO_G, 2, simplemap);
+          glPixelMapfv(GL_PIXEL_MAP_I_TO_B, 2, simplemap);
+          glPixelMapfv(GL_PIXEL_MAP_I_TO_A, 2, simplemap);
+        }
+
+      glDrawPixels(data.width(), data.height(), GL_COLOR_INDEX, GL_BITMAP,
+                   static_cast<GLvoid*>(data.bytesPtr()));
+    }
+}
+
+void GLCanvas::drawBitmap(const Gfx::BmapData& data,
+                          const Gfx::Vec2<double>& world_pos) const
+{
+DOTRACE("GLCanvas::drawBitmap");
+
+  glRasterPos2d(world_pos.x(), world_pos.y());
+
+  glBitmap(data.width(), data.height(), 0.0, 0.0, 0.0, 0.0,
+           static_cast<GLubyte*>(data.bytesPtr()));
 }
 
 void GLCanvas::grabPixels(const Gfx::Rect<int>& bounds, Gfx::BmapData& data_out) const
