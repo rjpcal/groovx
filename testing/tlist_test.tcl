@@ -22,36 +22,36 @@ test "TlistTcl-Tlist::loadObjidFile" "too many args" {
     Tlist::loadObjidFile j u n k y
 } {wrong \# args: should be}
 test "TlistTcl-Tlist::loadObjidFile" "normal read" {
-	 set objids [new Face 11]
-	 set posids [new Position 4]
+	 set objids [newarr Face 11]
+	 set posids [newarr Position 4]
 	 set trials [Tlist::loadObjidFile $::TEST_DIR/objid_file $objids $posids -1]
 	 ObjDb::clear
 	 llength $trials
 } {^3$}
 test "TlistTcl-Tlist::loadObjidFile" "read with fixed # lines" {
-	 set objids [new Face 11]
-	 set posids [new Position 4]
+	 set objids [newarr Face 11]
+	 set posids [newarr Position 4]
 	 set trials [Tlist::loadObjidFile $::TEST_DIR/objid_file $objids $posids 2]
 	 ObjDb::clear
 	 llength $trials
 } {^2$}
 test "TlistTcl-Tlist::loadObjidFile" "read empty file" {
-	 set objids [new Face 11]
-	 set posids [new Position 4]
+	 set objids [newarr Face 11]
+	 set posids [newarr Position 4]
 	 set trials [Tlist::loadObjidFile $::TEST_DIR/empty_file $objids $posids -1]
 	 ObjDb::clear
 	 llength $trials
 } {^0$}
 test "TlistTcl-Tlist::loadObjidFile" "error on junk text file" {
-	 set o [new Face 11]
-	 set p [new Position 4]
+	 set o [newarr Face 11]
+	 set p [newarr Position 4]
 	 set trials [Tlist::loadObjidFile $::TEST_DIR/junk_text_file $o $p -1]
 	 ObjDb::clear
 	 llength $trials
 } {Tlist::loadObjidFile:}
 test "TlistTcl-Tlist::loadObjidFile" "error on junk binary file" {
-	 set o [new Face 11]
-	 set p [new Position 4]
+	 set o [newarr Face 11]
+	 set p [newarr Position 4]
 	 set before [Trial::countAll]
 	 catch {Tlist::loadObjidFile $::TEST_DIR/junk_bin_file $o $p -1} trials
 	 set result "[llength $trials] [expr [Trial::countAll]-$before]"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Fri Jan 18 16:07:06 2002
+// written: Wed Jan 30 20:34:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -184,11 +184,12 @@ DOTRACE("Io_Init");
 
   pkg2->defVec( "type", "item_id(s)", &objType );
 
-  pkg2->def( "new", "typename array_size=1", &objNew );
   pkg2->def( "new", "typename", Util::bindLast(&objNew, 1) );
+  pkg2->def( "newarr", "typename array_size=1", &objNew );
   pkg2->def( "delete", "item_id(s)", &objDelete );
 
   pkg2->eval("proc new {args} { eval Obj::new $args }");
+  pkg2->eval("proc newarr {args} { eval Obj::newarr $args }");
   pkg2->eval("proc delete {args} { eval Obj::delete $args }");
 
   //
