@@ -475,7 +475,7 @@ namespace eval pl {
 
 proc looper { delay } {
     after cancel $::LOOP_HANDLE
-    set ::LOOP_HANDLE [after $delay "::looper 4000"]
+    set ::LOOP_HANDLE [after $delay "::looper 150"]
     pl::spin 1
     pl::show
 }
@@ -493,12 +493,25 @@ proc spinInput {} {
     return 1
 }
 
+set IN_LOOP 0
+
 set LOOP_HANDLE 0
+
+proc toggleLoop {} {
+    if { $::IN_LOOP } {
+	after cancel $::LOOP_HANDLE
+	set ::IN_LOOP 0
+	.f.loop configure -text "start loop"
+    } else {
+	::looper 150
+	set ::IN_LOOP 1
+	.f.loop configure -text "stop loop"
+    }
+}
 
 frame .f
 
-button .f.loop -text "loop" -command "::looper 4000"
-button .f.noloop -text "stop loop" -command {after cancel $::LOOP_HANDLE}
+button .f.loop -text "start loop" -command "::toggleLoop"
 
 button .f.shuffler -text "shuffle" -command {pl::shuffle}
 button .f.sorter -text "sort" -command {pl::sort}
@@ -510,7 +523,7 @@ button .f.rot270 -text "rotate ccw" -command {pl::rotate 270}
 
 bind Canvas <ButtonRelease> {pl::show}
 
-pack .f.loop .f.noloop .f.shuffler .f.sorter \
+pack .f.loop .f.shuffler .f.sorter \
     .f.hide .f.rot90 .f.rot270 \
     -side left -expand no
 
@@ -543,6 +556,7 @@ bind all <Shift-Key-Down> {pl::mode spinning; pl::remove; pl::show}
 bind all <Key-Return> {pl::save}
 bind all <Key-x> {pl::purge; pl::reshow 1}
 bind all <Key-Escape> { -> [Toglet::current] setVisible 0; pl::purge; exit }
+bind all <Key-l> {::toggleLoop}
 
 if { $show_buttons } {
     -> $t height [expr [winfo screenheight .] - 100]
