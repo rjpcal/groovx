@@ -3,7 +3,7 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed Oct 11 12:20:22 2000
+// written: Mon Oct 30 10:26:57 2000
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -37,6 +37,7 @@ extern "C" {
   Tcl_PackageInitProc Grobj_Init;
   Tcl_PackageInitProc Gtext_Init;
   Tcl_PackageInitProc House_Init;
+  Tcl_PackageInitProc Io_Init;
   Tcl_PackageInitProc Jitter_Init;
   Tcl_PackageInitProc Mask_Init;
   Tcl_PackageInitProc Misc_Init;
@@ -76,6 +77,7 @@ PkgName_PkgProc Names_Procs[] = {
   , { "Grobj",    Grobj_Init     }
   , { "Gtext",    Gtext_Init     }
   , { "House",    House_Init     }
+  , { "Io",       Io_Init        }
   , { "Jitter",   Jitter_Init    }
   , { "Mask",     Mask_Init      }
   , { "Misc",     Misc_Init      }
