@@ -16,6 +16,8 @@
 #
 ##########################################################################
 
+default: all
+
 VERSION := 0.8a7
 
 TCL_VERSION := 8.3
@@ -121,6 +123,7 @@ endif
 ifeq ($(MODE),debug)
 	OBJ_EXT := .do
 	LIB_SUFFIX := .d
+	CPP_DEFINES += -DPROF
 endif
 
 ifeq ($(MODE),prod)
@@ -272,155 +275,6 @@ EXTERNAL_LIBS += -leng -lmx -lut -lmat -lmi -lmatlb
 
 #-------------------------------------------------------------------------
 #
-# List of object files
-#
-#-------------------------------------------------------------------------
-
-#
-# static objects
-#
-
-STATIC_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/grsh/*.cc)))
-
-GRSH_STATIC_OBJS := $(STATIC_OBJS)
-
-#
-# libDeepVision
-#
-
-TOGL_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/togl/*.cc)))
-
-DEEPVISION_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/visx/*.cc)))
-
-DEEPVISION_OBJS += $(TOGL_OBJS)
-
-LIBDEEPVISION := $(LOCAL_LIB)/libDeepVision$(LIB_EXT)
-
-#
-# libDeepGfx
-#
-
-DEEPGFX_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/gfx/*.cc)))
-
-LIBDEEPGFX := $(LOCAL_LIB)/libDeepGfx$(LIB_EXT)
-
-#
-# libDeepGwt
-#
-
-DEEPGWT_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/gwt/*.cc)))
-
-LIBDEEPGWT := $(LOCAL_LIB)/libDeepGWT$(LIB_EXT)
-
-#
-# libDeepTcl
-#
-
-DEEPTCL_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/tcl/*.cc)))
-
-LIBDEEPTCL := $(LOCAL_LIB)/libDeepTcl$(LIB_EXT)
-
-#
-# libDeepIO
-#
-
-DEEPIO_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/io/*.cc)))
-
-LIBDEEPIO := $(LOCAL_LIB)/libDeepIO$(LIB_EXT)
-
-#
-# libDeepGx
-#
-
-DEEPGX_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/gx/*.cc)))
-
-LIBDEEPGX := $(LOCAL_LIB)/libDeepGx$(LIB_EXT)
-
-#
-# libDeepUtil
-#
-
-SYS_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/system/*.cc)))
-
-DEEPUTIL_OBJS := $(SYS_OBJS) \
-	$(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/util/*.cc))) \
-	$(LOCAL_LIB)/libzstream.a $(LOCAL_LIB)/libz.a
-
-LIBDEEPUTIL := $(LOCAL_LIB)/libDeepUtil$(LIB_EXT)
-
-#
-# all project libs
-#
-
-PROJECT_LIBS := $(LIBDEEPVISION) $(LIBDEEPTCL) \
-	$(LIBDEEPGFX) $(LIBDEEPGWT) $(LIBDEEPIO) $(LIBDEEPGX) $(LIBDEEPUTIL)
-
-#
-# test libs
-#
-
-PKG_SRCS := $(wildcard $(SRC)/pkgs/*/*.cc)
-
-PKG_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(PKG_SRCS)))
-
-PKG_DIRS := $(sort $(dir $(PKG_SRCS)))
-
-PKG_LIBS := $(subst $(SRC),$(LOCAL_LIB),\
-	$(subst /.,.,\
-	$(addsuffix .$(SHLIB_EXT),\
-	$(subst pkgs/,visx/,$(PKG_DIRS)))))
-
-#-------------------------------------------------------------------------
-#
-# Info for executable targets
-#
-#-------------------------------------------------------------------------
-
-ifeq ($(MODE),debug)
-	EXECUTABLE := $(LOCAL_BIN)/testsh
-	CPP_DEFINES += -DPROF
-endif
-ifeq ($(MODE),prod)
-	EXECUTABLE := $(LOCAL_BIN)/grsh$(VERSION)
-endif
-
-ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(PROJECT_LIBS))
-ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(PROJECT_LIBS))
-
-ifeq ($(MODE),debug)
-	ifeq ($(PLATFORM),hp9000s700)
-		GRSH_STATIC_OBJS += /opt/langtools/lib/end.o
-	endif
-endif
-
-#-------------------------------------------------------------------------
-#
-# Build rules for production and test/debug executables
-#
-#-------------------------------------------------------------------------
-
-all: dir_structure TAGS $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
-	$(EXECUTABLE) ./testing/grshtest.tcl
-
-CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
-	$(PROJECT_LIBS) $(EXTERNAL_LIBS)
-
-$(EXECUTABLE): $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
-	$(CC) -o $(TMP_FILE) $(CMDLINE) && mv $(TMP_FILE) $@
-
-#-------------------------------------------------------------------------
-#
 # Build rules for object files
 #
 #-------------------------------------------------------------------------
@@ -453,14 +307,6 @@ $(SRC)/%.preh : $(SRC)/%.h
 %.$(STATLIB_EXT):
 	$(STATLIB_CMD) $(TMP_DIR)/$(notdir $@) $^ && mv $(TMP_DIR)/$(notdir $@) $@
 
-$(LIBDEEPVISION): $(DEEPVISION_OBJS)
-$(LIBDEEPTCL):    $(DEEPTCL_OBJS)
-$(LIBDEEPGFX):    $(DEEPGFX_OBJS)
-$(LIBDEEPGWT):    $(DEEPGWT_OBJS)
-$(LIBDEEPIO):     $(DEEPIO_OBJS)
-$(LIBDEEPGX):     $(DEEPGX_OBJS)
-$(LIBDEEPUTIL):   $(DEEPUTIL_OBJS)
-
 # this is just a convenience target so that we don't have to specify
 # the entire pathnames of the different library targets
 lib%: $(LOCAL_LIB)/lib%$(LIB_EXT)
@@ -468,7 +314,7 @@ lib%: $(LOCAL_LIB)/lib%$(LIB_EXT)
 
 #-------------------------------------------------------------------------
 #
-# Dependencies
+# Dependencies 
 #
 #-------------------------------------------------------------------------
 
@@ -476,7 +322,7 @@ ALL_SOURCES := $(wildcard $(SRC)/[a-z]*/*.cc $(SRC)/[a-z]*/[a-z]*/*.cc)
 ALL_HEADERS := $(wildcard $(SRC)/[a-z]*/*.h  $(SRC)/[a-z]*/[a-z]*/*.h)
 
 
-# this file contains dependencies of object files on source+header files
+# dependencies of object files on source+header files
 
 DEP_FILE := $(DEP)/alldepends
 
@@ -486,16 +332,42 @@ $(DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS)
 include $(DEP_FILE)
 
 
-# this file contains dependencies of package shlib's on object files
+# dependencies of package shlib's on object files
 
 PKG_DEP_FILE := $(DEP)/pkgdepends
 
-.PHONY: $(PKG_DEP_FILE)
-$(PKG_DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS)
+$(PKG_DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS) \
+	Makefile src/pkgs/buildPkgDeps.tcl
 	src/pkgs/buildPkgDeps.tcl
 
 include $(PKG_DEP_FILE)
 
+
+# dependencies of main project shlib's on object files
+
+LIB_DEP_FILE := $(DEP)/libdepends
+
+$(LIB_DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS) \
+  Makefile $(SCRIPTS)/build_lib_rules.tcl
+	$(SCRIPTS)/build_lib_rules.tcl \
+		--libdir $(LOCAL_LIB) \
+		--libprefix libDeep \
+		--libext $(LIB_EXT) \
+		--srcroot $(SRC) \
+		--objroot $(OBJ) \
+		--objext $(OBJ_EXT) \
+		--module Gfx \
+		--module GWT \
+		--module Tcl \
+		--module IO \
+		--module Gx \
+		--module Visx \
+		--module Togl \
+		--module System \
+		--module Util \
+		> $@
+
+include $(LIB_DEP_FILE)
 
 
 cdeps: $(ALL_SOURCES) $(ALL_HEADERS)
@@ -516,6 +388,40 @@ ALLDIRS := $(subst $(SRC), $(OBJ), $(SRCDIRS)) $(TMP_DIR)
 .PHONY: dir_structure
 dir_structure:
 	for dr in $(ALLDIRS); do if [ ! -d $$dr ]; then mkdir $$dr; fi; done
+
+#-------------------------------------------------------------------------
+#
+# Build rules for production and debug executables
+#
+#-------------------------------------------------------------------------
+
+ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(PROJECT_LIBS))
+ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(PROJECT_LIBS))
+
+ifeq ($(MODE),debug)
+	EXECUTABLE := $(LOCAL_BIN)/testsh
+endif
+ifeq ($(MODE),prod)
+	EXECUTABLE := $(LOCAL_BIN)/grsh$(VERSION)
+endif
+
+all: dir_structure TAGS $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
+	$(EXECUTABLE) ./testing/grshtest.tcl
+
+GRSH_STATIC_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/grsh/*.cc)))
+
+ifeq ($(MODE),debug)
+	ifeq ($(PLATFORM),hp9000s700)
+		GRSH_STATIC_OBJS += /opt/langtools/lib/end.o
+	endif
+endif
+
+CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
+	$(PROJECT_LIBS) $(EXTERNAL_LIBS)
+
+$(EXECUTABLE): $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
+	$(CC) -o $(TMP_FILE) $(CMDLINE) && mv $(TMP_FILE) $@
 
 #-------------------------------------------------------------------------
 #
