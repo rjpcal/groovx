@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:27:36 2001
-// written: Thu Mar  8 16:31:01 2001
+// written: Fri Mar  9 17:43:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #define NUM_H_DEFINED
 
 #include <cmath>
+
+class Slice;
 
 class Num {
 public:
@@ -51,7 +53,7 @@ public:
   static const double SQRT_2 = 1.41421356237;
 
   static void linearCombo(int nelems, const double* w, int w_stride,
-								  const double* const* elems, int elems_stride, int dim,
+								  const Slice* elems, int dim,
 								  double* result);
 
 private:

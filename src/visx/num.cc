@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:28:26 2001
-// written: Thu Mar  8 16:32:07 2001
+// written: Fri Mar  9 17:50:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,13 +15,15 @@
 
 #include "num.h"
 
+#include "rutil.h"
+
 #include "trace.h"
 
 bool Num::filled = false;
 double Num::lookup[TABLE_SIZE] = { 0.0 };
 
 void Num::linearCombo(int nelems, const double* w, int w_stride,
-							 const double* const* elems, int elems_stride, int dim,
+							 const Slice* elems, int dim,
 							 double* result)
 {
 DOTRACE("Num::linearCombo");
@@ -38,7 +40,9 @@ DOTRACE("Num::linearCombo");
 	 {
 		result[d] = 0.0;
 		for (int elem = 0; elem < nelems; ++elem)
-		  result[d] += w[elem*w_stride] * elems[elem][d*elems_stride];
+		  {
+			 result[d] += w[elem*w_stride] * (elems[elem][d]);
+		  }
 	 }
 }
 
