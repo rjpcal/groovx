@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  9 20:25:02 1999
-// written: Thu May 10 12:04:43 2001
+// written: Sat May 19 09:04:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "io/io.h"
 
+#include "io/iodb.h"
 #include "io/iomap.h"
 #include "io/writer.h"
 
@@ -66,21 +67,14 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-void* IO::IoObject::operator new(size_t bytes) {
-DOTRACE("IO::IoObject::operator new");
-  return ::operator new(bytes);
-}
-
-void IO::IoObject::operator delete(void* space, size_t bytes) {
-DOTRACE("IO::IoObject::operator delete");
-  ::operator delete(space);
-}
-
 IO::IoObject::IoObject() : itsId(++idCounter) {
 DOTRACE("IO::IoObject::IoObject");
   DebugEvalNL(itsId);
 
   IoMap::theIoMap().insertObject(this);
+
+  DebugEvalNL(this);
+  IoDb::theDb().insertPtrBase(this);
 }
 
 // Must be defined out of line to avoid duplication of IO's vtable
