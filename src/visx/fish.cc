@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Tue Oct  5 12:39:00 1999
+// written: Thu Oct  7 18:24:37 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,18 @@
 #define NO_TRACE
 #include "trace.h"
 #include "debug.h"
+
+///////////////////////////////////////////////////////////////////////
+//
+// File scope data
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace {
+  const string ioTag = "Fish";
+
+  int dummy=0; // We need a dummy int to attach various CPtrProperty's
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -67,17 +79,38 @@ struct Fish::EndPt {
 //
 ///////////////////////////////////////////////////////////////////////
 
-Fish::Fish() :
-  currentPart(0),
-  currentEndPt(0),
+Fish::Fish(const char* splinefile, const char* coordfile, int index) :
   coord0(itsCoords[0]),
   coord1(itsCoords[1]),
   coord2(itsCoords[2]),
-  coord3(itsCoords[3])
+  coord3(itsCoords[3]),
+  currentPart(0),
+  currentEndPt(0),
+  endPt_Part(dummy),
+  endPt_Bkpt(dummy)
 {
+DOTRACE("Fish::Fish");
   itsFishParts = new FishPart[4];
   itsEndPts = new EndPt[4];
 
+  if (splinefile != 0 && coordfile != 0) {
+	 readSplineFile(splinefile);
+	 readCoordFile(coordfile, index);
+  }
+  else {
+	 restoreToDefault();
+  }
+
+//    currentPart.attach(this);
+//    currentEndPt.attach(this);
+
+//    currentPart.sendStateChangeMsg();
+//    currentEndPt.sendStateChangeMsg();
+  sendStateChangeMsg();
+}
+
+void Fish::restoreToDefault() {
+DOTRACE("Fish::restoreToDefault");
   itsFishParts[3].itsOrder = itsFishParts[2].itsOrder = itsFishParts[1].itsOrder = itsFishParts[0].itsOrder = 4;
 
   static GLfloat default_knots[] = {0.0, 0.0, 0.0, 0.0, 0.1667, 0.3333, 0.5000, 0.6667, 0.8333, 1.0, 1.0, 1.0, 1.0};
@@ -141,27 +174,83 @@ Fish::Fish() :
   itsCoords[0] = itsCoords[1] = itsCoords[2] = itsCoords[3] = 0.0;
 }
 
-Fish::Fish(const char* splinefile, const char* coordfile, int index) :
-  currentPart(0),
-  currentEndPt(0),
-  coord0(itsCoords[0]),
-  coord1(itsCoords[1]),
-  coord2(itsCoords[2]),
-  coord3(itsCoords[3])
-{
-DOTRACE("Fish::Fish");
-  itsFishParts = new FishPart[4];
-  itsEndPts = new EndPt[4];
-
-  read_splinefile(splinefile);
-  read_coordfile(coordfile, index);
-}
-
-
 Fish::~Fish () {
 DOTRACE("Fish::~Fish");
   delete [] itsFishParts;
   delete [] itsEndPts;
+}
+
+void Fish::serialize(ostream& os, IOFlag flag) const {
+DOTRACE("Fish::serialize");
+
+  char sep = ' ';
+  if (flag & TYPENAME) { os << ioTag << sep; }
+
+  vector<const IO *> ioList;
+  makeIoList(ioList);
+  for (vector<const IO *>::const_iterator ii = ioList.begin();
+		 ii != ioList.end(); ++ii) {
+	 (*ii)->serialize(os, flag);
+  }
+
+  if (os.fail()) throw OutputError(ioTag);
+
+  if (flag & BASES) { GrObj::serialize(os, flag); }  
+}
+
+void Fish::deserialize(istream& is, IOFlag flag) {
+DOTRACE("Fish::deserialize");
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+
+  vector<IO *> ioList;
+  makeIoList(ioList);
+  for (vector<IO *>::iterator ii = ioList.begin(); ii != ioList.end(); ii++) {
+	 (*ii)->deserialize(is, flag);
+  }
+
+  try {
+	 if (is.fail()) throw InputError(ioTag);
+  }
+  catch (IoError&) { 
+	 throw;
+  }
+
+  if (flag & BASES) { GrObj::deserialize(is, flag); }
+
+  sendStateChangeMsg();
+}
+
+int Fish::charCount() const {
+DOTRACE("Fish::charCount");
+  int result = ioTag.length() + 1;
+
+  vector<const IO*> ioList;
+  makeIoList(ioList);
+
+  for (int i = 0; i < ioList.size(); ++i) {
+	 result += ioList[i]->charCount() + 1; 
+  }
+
+  result += 5;						  // fudge factor
+  return result;
+}
+
+void Fish::receiveStateChangeMsg(const Observable* obj) {
+DOTRACE("Fish::receiveStateChangeMsg");
+//    if (obj == &currentPart) {
+//    } 
+//    else if (obj == &currentEndPt) {
+//  	 endPt_Part.reseat(itsEndPts[currentEndPt()].itsPart);
+//  	 endPt_Bkpt.reseat(itsEndPts[currentEndPt()].itsBkpt);
+//    }
+//    else {
+//  	 GrObj::receiveStateChangeMsg(obj);
+//    }
+ 
+  endPt_Part.reseat(itsEndPts[currentEndPt()].itsPart);
+  endPt_Bkpt.reseat(itsEndPts[currentEndPt()].itsBkpt);
+   
+  GrObj::receiveStateChangeMsg(obj);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -185,13 +274,16 @@ DOTRACE("Fish::getPropertyInfos");
 	 p.push_back(PInfo("coord3", &F::coord3, -2.0, 2.0, 0.1));
 
 	 p.push_back(PInfo("currentPart", &F::currentPart, 0, 3, 1, true));
-	 p.push_back(PInfo("currentEndPt", &F::currentEndPt, 0, 3, 1));
+
+	 p.push_back(PInfo("currentEndPt", &F::currentEndPt, 0, 3, 1, true));
+	 p.push_back(PInfo("endPt_Part", &F::endPt_Part, 1, 4, 1));
+	 p.push_back(PInfo("endPt_Bkpt", &F::endPt_Bkpt, 1, 10, 1));
   }
   return p;
 }
 
-void Fish::read_splinefile(const char* splinefile) {
-DOTRACE("Fish::read_splinefile");
+void Fish::readSplineFile(const char* splinefile) {
+DOTRACE("Fish::readSplineFile");
   int i, j, k, splnb, endptnb;
   string dummy;
 
@@ -253,8 +345,8 @@ DOTRACE("Fish::read_splinefile");
   }
 }
 
-void Fish::read_coordfile(const char* coordfile, int index) {
-DOTRACE("Fish::read_coordfile");
+void Fish::readCoordFile(const char* coordfile, int index) {
+DOTRACE("Fish::readCoordFile");
   string dummy;
 
   ifstream ifs(coordfile);
@@ -276,6 +368,19 @@ DOTRACE("Fish::read_coordfile");
   if (ifs.fail()) {
 	 throw ErrorWithMsg(string("error reading file '") + coordfile + "'");
   }
+}
+
+bool Fish::grGetBoundingBox(double& left, double& top,
+									 double& right, double& bottom,
+									 int& border_pixels) const {
+DOTRACE("Fish::grGetBoundingBox");
+  left = -0.75;
+  right = 0.75;
+  bottom = -0.5;
+  top = 0.5;
+  border_pixels = 4;
+  
+  return true;
 }
 
 void Fish::grRender() const {
@@ -338,8 +443,7 @@ DOTRACE("Fish::makeIoList");
   makeIoList(reinterpret_cast<vector<const IO *> &>(vec)); 
 }
 
-void Fish::
-makeIoList(vector<const IO *>& vec) const {
+void Fish::makeIoList(vector<const IO *>& vec) const {
 DOTRACE("Fish::makeIoList const");
   vec.clear();
 
