@@ -3,7 +3,7 @@
 // ioptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Fri Sep 29 14:36:06 2000
+// written: Sat Oct  7 20:05:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,21 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
 #include "io/io.h"
 #endif
+
+class MasterIoPtr : public MasterPtrBase {
+private:
+  IO::IoObject* itsPtr;
+
+public:
+  MasterIoPtr(IO::IoObject* ptr);
+  virtual ~MasterIoPtr();
+
+  IO::IoObject* ioPtr() const { return itsPtr; }
+
+  virtual bool isValid() const;
+
+  virtual bool operator==(const MasterPtrBase& other);
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -42,11 +57,6 @@ public:
   virtual void writeTo(IO::Writer* writer) const;
 
 protected:
-  /// Subclasses must override this to cast the void* to an IO*.
-  virtual IO::IoObject* fromVoidToIO(void* ptr) const = 0;
-  /// Subclasses must override this to cast the IO* to a void*.
-  virtual void* fromIOToVoid(IO::IoObject* ptr) const = 0;
-
   /** May be overridden by subclasses to provide a list of alternative
       typenames suitable for use in \c IO::readTypename(). The default
       implementation here returns an empty string. */

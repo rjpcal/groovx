@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Mon Jun 26 12:14:52 2000
+// written: Sat Oct  7 20:06:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,36 +28,6 @@ template <class T>
 PtrList<T>::~PtrList() {
   clear();
 }
-
-template <class T>
-T* PtrList<T>::castToT(void* ptr) const { return static_cast<T*>(ptr); }
-
-template <class T>
-void* PtrList<T>::castFromT(T* ptr) const { return static_cast<void*>(ptr); }
-
-template <class T>
-IO::IoObject* PtrList<T>::fromVoidToIO(void* ptr) const
-{
-  if (ptr == 0) return 0;
-
-  IO::IoObject* io = dynamic_cast<IO::IoObject*>(castToT(ptr));
-  if ( io == 0 ) { throw ErrorWithMsg("bad cast in fromVoidToIO"); }
-  return io;
-}
-
-template <class T>
-void* PtrList<T>::fromIOToVoid(IO::IoObject* obj) const
-{
-  if (obj == 0) return 0;
-
-  void* v = castFromT(dynamic_cast<T*>(obj));
-  if ( v == 0 ) { throw ErrorWithMsg("bad cast in fromIOToVoid"); }
-  return v;
-}
-
-template <class T>
-void PtrList<T>::destroyPtr(void* ptr)
-{ delete castToT(ptr); }
 
 template <class T>
 const char* PtrList<T>::alternateIoTags() const {

@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sat Oct  7 13:15:55 2000
+// written: Sat Oct  7 20:05:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,32 +38,27 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * MasterVoidPtr
+ * MasterPtrBase
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class MasterVoidPtr {
+class MasterPtrBase {
 private:
-  VoidPtrList* itsList;
-  void* itsPtr;
 
-  void swap(MasterVoidPtr& other);
+  // These are disallowed since MasterPtrBase's should always be in
+  // one-to-one correspondence with their pointee's.
+  MasterPtrBase(const MasterPtrBase& other);
+  MasterPtrBase& operator=(const MasterPtrBase& other);
 
 public:
-  MasterVoidPtr(VoidPtrList* vpl, void* address);
-  MasterVoidPtr(const MasterVoidPtr& other);
+  MasterPtrBase();
 
-  MasterVoidPtr& operator=(const MasterVoidPtr& other);
+  virtual ~MasterPtrBase();
 
-  virtual ~MasterVoidPtr();
+  virtual bool isValid() const = 0;
 
-  void* ptr() const;
-
-  virtual bool isValid() const;
-
-  bool operator==(const MasterVoidPtr& other)
-  { return itsPtr == other.itsPtr; }
+  virtual bool operator==(const MasterPtrBase& other) = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -122,11 +117,11 @@ protected:
   /** Return the \c void* at the index given by \a id.  There is no
 		range-check performed; this must be done by the client with
 		\c isValidId(). */
-  MasterVoidPtr* getVoidPtr(int id) const throw ();
+  MasterPtrBase* getVoidPtr(int id) const throw ();
 
   /** Like \c getVoidPtr(), but checks first if \a id is a valid index,
 		and throws an \c InvalidIdError if it is not. */
-  MasterVoidPtr* getCheckedVoidPtr(int id) const throw (InvalidIdError);
+  MasterPtrBase* getCheckedVoidPtr(int id) const throw (InvalidIdError);
 
 #if 0
   /** Releases the \c void* at the given index from the management of
@@ -140,21 +135,17 @@ protected:
 		where it was inserted. If necessary, the list will be expanded
 		to make room for the ptr. The PtrList now assumes control of the
 		memory management for the object *ptr. */
-  int insertVoidPtr(MasterVoidPtr* ptr);
+  int insertVoidPtr(MasterPtrBase* ptr);
 
   /** Add obj at index 'id', destroying any the object was previously
 		pointed to from that that location. The list will be expanded if
 		'id' exceeds the size of the list. If id is < 0, the function
 		returns without effect. */
-  void insertVoidPtrAt(int id, MasterVoidPtr* ptr);
+  void insertVoidPtrAt(int id, MasterPtrBase* ptr);
 
   /** This function will be called after every insertion into the
       VoidPtrList. The default implementation is a no-op. */
-  virtual void afterInsertHook(int id, MasterVoidPtr* ptr);
-
-public:
-  /** Must be overridden to free the memory pointed to by ptr. */
-  virtual void destroyPtr(void* ptr) = 0;
+  virtual void afterInsertHook(int id, MasterPtrBase* ptr);
 
 protected:
   int& firstVacant();

@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Sat Oct  7 13:16:46 2000
+// written: Sat Oct  7 20:07:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,7 +67,12 @@ public:
       valid object, the pointer returned may be null. */
   SharedPtr getPtr(int id) const throw () 
     {
-		return DumbPtr<T>(castToT(VoidPtrList::getVoidPtr(id)->ptr()));
+		MasterPtrBase* voidPtr = VoidPtrList::getVoidPtr(id);
+		MasterIoPtr* ioPtr = dynamic_cast<MasterIoPtr*>(voidPtr);
+		if (ioPtr == 0) throw InvalidIdError("IO cast failed");
+		T* t = dynamic_cast<T*>(ioPtr->ioPtr());
+		if (t == 0) throw InvalidIdError("T cast failed");
+		return SharedPtr(t);
 	 }
 
   /** Returns the object at index \a id, after a check is performed to
@@ -75,7 +80,12 @@ public:
       the check fails, an \c InvalidIdError exception is thrown. */
   SharedPtr getCheckedPtr(int id) const throw (InvalidIdError)
 	 {
-		return DumbPtr<T>(castToT(VoidPtrList::getCheckedVoidPtr(id)->ptr()));
+		MasterPtrBase* voidPtr = VoidPtrList::getCheckedVoidPtr(id);
+		MasterIoPtr* ioPtr = dynamic_cast<MasterIoPtr*>(voidPtr);
+		if (ioPtr == 0) throw InvalidIdError("IO cast failed");
+		T* t = dynamic_cast<T*>(ioPtr->ioPtr());
+		if (t == 0) throw InvalidIdError("T cast failed");
+		return SharedPtr(t);
 	 }
 
   //////////////////
@@ -92,32 +102,15 @@ public:
 
   /// Insert \a ptr into the list, and return its id.
   int insert(T* ptr)
-	 { return VoidPtrList::insertVoidPtr(
-                      new MasterVoidPtr(this, castFromT(ptr))); }
+	 { return VoidPtrList::insertVoidPtr(new MasterIoPtr(ptr)); }
 
   /** Insert \a ptr into the list at index \a id. If an object
       previously existed at index \a id, that object will be properly
       destroyed. */
   void insertAt(int id, T* ptr)
-	 { VoidPtrList::insertVoidPtrAt(id,
-                      new MasterVoidPtr(this, castFromT(ptr))); }
+	 { VoidPtrList::insertVoidPtrAt(id, new MasterIoPtr(ptr)); }
 
 protected:
-  /// Safely cast \a ptr to the correct type for this list.
-  T* castToT(void* ptr) const;
-
-  /// Cast \a ptr back to \c void*.
-  void* castFromT(T* ptr) const;
-
-  /// Reimplemented from \c IoPtrList.
-  virtual IO::IoObject* fromVoidToIO(void* ptr) const;
-
-  /// Reimplemented from \c IoPtrList.
-  virtual void* fromIOToVoid(IO::IoObject* ptr) const;
-
-  /// Casts \a ptr to the correct type, then \c delete's it.
-  virtual void destroyPtr(void* ptr);
-
   /** Reimplemented from \c IoPtrList to include "PtrList<T>" with \c
       \a T replaced with the the typename of the actual template argument. */
   virtual const char* alternateIoTags() const;
