@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Fri Jun 15 06:52:00 2001
+// written: Thu Jul 19 15:56:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,8 +28,6 @@
 struct Tcl_Interp;
 
 class Block;
-class ResponseHandler;
-class TimingHdlr;
 
 class fixed_string;
 
