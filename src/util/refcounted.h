@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:19 2000
-// written: Mon Jun  4 15:06:25 2001
+// written: Tue Jun  5 10:23:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,10 @@
 #define CSTDLIB_DEFINED
 #endif
 
+namespace Util
+{
+  class RefCounted;
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -27,7 +31,7 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class RefCounted {
+class Util::RefCounted {
 private:
   mutable int itsRefCount;
 
