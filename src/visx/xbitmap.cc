@@ -3,7 +3,7 @@
 // xbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:37:04 1999
-// written: Tue Nov  2 22:33:28 1999
+// written: Wed Nov 24 12:09:50 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 #include <GL/gl.h>
 #include <GL/glx.h>
 #include <GL/glu.h>
+#include <string>
 
 #include "toglconfig.h"
 #include "objtogl.h"
