@@ -55,7 +55,15 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#define EVENT_MASK ExposureMask|StructureNotifyMask|KeyPressMask|ButtonPressMask
+namespace
+{
+  unsigned long EVENT_MASK = (ExposureMask |
+                              StructureNotifyMask |
+                              KeyPressMask |
+                              ButtonPressMask |
+                              EnterWindowMask |
+                              LeaveWindowMask);
+}
 
 class TkWidgImpl : public Util::VolatileObject
 {
@@ -128,7 +136,7 @@ public:
     widg->sigKeyPressed.emit(ev);
   }
 
-  static void cEventCallback(ClientData clientData, XEvent* rawEvent);
+  static void cEventCallback(ClientData clientData, XEvent* rawEvent) throw();
 
   static void cRenderCallback(ClientData clientData) throw();
 
@@ -136,6 +144,19 @@ public:
   {
     Tcl::TkWidget* widg = reinterpret_cast<Tcl::TkWidget*>(clientData);
     widg->decrRefCount();
+  }
+
+  static void cTakeFocusCallback(ClientData clientData) throw()
+  {
+    Tcl::TkWidget* widg = reinterpret_cast<Tcl::TkWidget*>(clientData);
+    try
+      {
+        widg->takeFocus();
+      }
+    catch (...)
+      {
+        widg->rep->interp.handleLiveException("cEventCallback", true);
+      }
   }
 };
 
@@ -178,7 +199,7 @@ DOTRACE("TkWidgImpl::~TkWidgImpl");
   Tk_DestroyWindow(tkWin);
 }
 
-void TkWidgImpl::cEventCallback(ClientData clientData, XEvent* rawEvent)
+void TkWidgImpl::cEventCallback(ClientData clientData, XEvent* rawEvent) throw()
 {
 DOTRACE("TkWidgImpl::cEventCallback");
 
@@ -207,10 +228,17 @@ DOTRACE("TkWidgImpl::cEventCallback");
             widg->requestRedisplay();
           }
           break;
+        case EnterNotify:
+          widg->grabKeyboard();
+          break;
+        case LeaveNotify:
+          widg->ungrabKeyboard();
+          break;
         case KeyPress:
           keyEventProc(widg, (XKeyEvent*) rawEvent);
           break;
         case ButtonPress:
+          widg->takeFocus();
           buttonEventProc(widg, (XButtonEvent*) rawEvent);
           break;
         case MapNotify:
@@ -404,7 +432,15 @@ DOTRACE("Tcl::TkWidget::grabKeyboard");
       throw Util::Error("couldn't grab keyboard: pointer already frozen");
     }
 
-  takeFocus();
+  // Oddly enough, we can't just call takeFocus() directly here. In
+  // particular, we run into problems if grabKeyboard() is called from an
+  // EnterNotify callback. In that case, if we call takeFocus() during that
+  // callback, Tk somehow seems to erase our focus request by the time
+  // control returns back to the main event loop. So, if we make the call
+  // as an idle callback instead, then we don't switch focus until after Tk
+  // is completely finished processing the EnterNotify event.
+  Tcl_DoWhenIdle(TkWidgImpl::cTakeFocusCallback,
+                 static_cast<ClientData>(this));
 }
 
 void Tcl::TkWidget::ungrabKeyboard()
@@ -475,7 +511,6 @@ DOTRACE("Tcl::TkWidget::requestRedisplay");
 
 void Tcl::TkWidget::hook()
 {
-  sigButtonPressed.connect(rep, &TkWidgImpl::onButtonPress);
   sigButtonPressed.connect(rep, &TkWidgImpl::onButtonPress);
   sigKeyPressed.connect(rep, &TkWidgImpl::onKeyPress);
 }
