@@ -3,11 +3,81 @@ $Id$
 
 *** FRONT of priority queue ***
 
+(8-Feb-2000) Should think about doing dynamic tracing generically,
+perhaps with a mixin base class.
+
+========================================================================
+GOAL #1
+(24-Jan-2000) More flexible behavior by putting trial behavior in
+Trial rather than in ExptDriver.
+
+Goal: ExptDriver should not have to know anything about TimingHdlr's
+or ResponseHdlr's.
+
+Goal: ExptDriver shouldn't have to know about any lists except maybe
+BlockList. As for serializing, the lists should register themselves
+with ExptDriver at application startup. Experiment base class should
+declare an abstract manageObject(const char* name, IO* object)
+function. The lists should call this in in their Tcl_PkgInitProc's.
+
+To do this, as usual we should try an easy migration path.
+1) make Trial an abstract class, and move current Trial implementation
+into a derived class
+2) set up abstract Trial functions to take on behavior of Experiment
+functions. At first, ExptDriver can just forward stuff to Trial so
+that we don't have to redefine the handlers' interfaces right away.
+
 (20-Jan-2000) We should set up a way for Trial's to have a prepare()
 function which would do things like update its GrObj's (and flush
 pending requests like loading bitmap data). Then Block's could have a
 prepareNextTrial() function which could be called during the preceding
 trial.
+
+------------------------------------------------------------------------
+
+========================================================================
+GOAL #2
+(24-Jan-2000) Allow a more flexible description of the scene graph, a
+la Open Inventor.
+------------------------------------------------------------------------
+
+========================================================================
+GOAL #3
+(24-Jan-2000) Implement reference counting so that smart pointers can
+be used within C++ instead of integer id's.
+
+OK, forget the traditional ref-counted pointers. Instead, we'll put
+the reference counting right into the list. This will avoid the
+problems with maintaining the VoidPtrList <- IoPtrList <- PtrList
+hierarchy. VoidPtrList will be able to hold the ref counts, and
+maintain the ref counting logic; it will just have to forward object
+destruction to a derived class via a virtual function, as it does now.
+
+Clients will use a ListItem, containing an integer id and a pointer to
+a PtrList. The ListItem's constructors and destructor will manage the
+ref counts via calls to PtrList member functions. ListItem will offer
+an operator-> so it can be used as a smart pointer.
+
+In order to hide PtrList from clients, we can define the necessary
+functions out of line.
+
+At the expense of some size, we can cache a C* inside ListItem so that
+we don't have to call a PtrList member function every time ListItem is
+used. Basically, PtrList would keep a counter that is incremented
+every time the list is modified. ListItems would maintain a const* to
+this count, and would also store the value of the counter from the
+last time their C* was cached. Then checking that the cache is current
+just involves dereferencing the const* counter and comparing it to the
+stored counter value.
+
+Problem: how to handle derived classes with a ListItem?
+------------------------------------------------------------------------
+
+========================================================================
+GOAL #4
+(24-Jan-2000) Develop a more coherent view of the screen-update model:
+Who gets to do it, and when?
+------------------------------------------------------------------------
 
 (19-Jan-2000) GLBitmap should use auto_ptr for itsRenderer and fix
 initialization order (eliminate tempRenderer). Same for XBitmap.
@@ -33,12 +103,6 @@ forcing a relink on the main executable. ... Yes, but we need to be
 able to account for whether static or dynamic linking is being used.
 
 (11-Jan-2000) ObjList::saveObjects should not save base classes, perhaps?
-
-(11-Jan-2000) Need a way to defer loading of pbm files from when
-Bitmap's are deserialized until when they are first used. This would
-require a way to for the files to be loaded on demand. It would have
-the added benefit that in an fMRI script, we would only have to load
-the bitmaps that are actually used in the experiment.
 
 (8-Jan-2000) How to read/write CountedPtr's? This is the big barrier
 to establishing CountedPtr's as a better way to manage objects between
@@ -2546,4 +2610,11 @@ order to implement this function was Bitmap(Rep), so for this
 implementation I just retrieve the Canvas from the
 Application->Experiment->Canvas call chain. Thus GLCanvas::theCanvas()
 is eliminated.
+
+(11-Jan-2000, done 20-Jan-2000) Need a way to defer loading of pbm
+files from when Bitmap's are deserialized until when they are first
+used. This would require a way to for the files to be loaded on
+demand. It would have the added benefit that in an fMRI script, we
+would only have to load the bitmaps that are actually used in the
+experiment. Done using BmapData to handle the actuall caching process.
 
