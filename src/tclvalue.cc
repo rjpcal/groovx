@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:23:55 1999
-// written: Fri Jul 13 10:24:42 2001
+// written: Thu Jul 19 21:05:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "tcl/tclvalue.h"
 
-#include "tcl/convert.h"
+#include "tcl/tclconvert.h"
 
 #include "util/strings.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Mon Jul 16 12:54:30 2001
+// written: Thu Jul 19 21:05:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef TCLCMD_H_DEFINED
 #define TCLCMD_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CONVERT_H_DEFINED)
-#include "tcl/convert.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCONVERT_H_DEFINED)
+#include "tcl/tclconvert.h"
 #endif
 
 struct Tcl_Interp;

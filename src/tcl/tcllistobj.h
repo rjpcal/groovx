@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:00:17 2001
-// written: Sun Jul 15 15:18:39 2001
+// written: Thu Jul 19 21:05:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef TCLLISTOBJ_H_DEFINED
 #define TCLLISTOBJ_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CONVERT_H_DEFINED)
-#include "tcl/convert.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCONVERT_H_DEFINED)
+#include "tcl/tclconvert.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLOBJPTR_H_DEFINED)
@@ -87,12 +87,12 @@ public:
   template <class Itr>
   void appendRange(Itr itr, Itr end)
     {
-		while (itr != end)
-		  {
-			 append(*itr);
-			 ++itr;
-		  }
-	 }
+      while (itr != end)
+        {
+          append(*itr);
+          ++itr;
+        }
+    }
 
   class IteratorBase;
   template <class T> class Iterator;

@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// convert.h
+// tclconvert.h
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,8 +10,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef CONVERT_H_DEFINED
-#define CONVERT_H_DEFINED
+#ifndef TCLCONVERT_H_DEFINED
+#define TCLCONVERT_H_DEFINED
 
 struct Tcl_Obj;
 
@@ -45,5 +45,5 @@ namespace Tcl
 
 }
 
-static const char vcid_convert_h[] = "$Header$";
-#endif // !CONVERT_H_DEFINED
+static const char vcid_tclconvert_h[] = "$Header$";
+#endif // !TCLCONVERT_H_DEFINED

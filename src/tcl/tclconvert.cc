@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// convert.cc
+// tclconvert.cc
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,10 +10,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef CONVERT_CC_DEFINED
-#define CONVERT_CC_DEFINED
+#ifndef TCLCONVERT_CC_DEFINED
+#define TCLCONVERT_CC_DEFINED
 
-#include "tcl/convert.h"
+#include "tcl/tclconvert.h"
 
 #include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
@@ -398,5 +398,5 @@ DOTRACE("Tcl::Convert<Tcl_Obj*>::toTcl");
   return val;
 }
 
-static const char vcid_convert_cc[] = "$Header$";
-#endif // !CONVERT_CC_DEFINED
+static const char vcid_tclconvert_cc[] = "$Header$";
+#endif // !TCLCONVERT_CC_DEFINED
