@@ -59,6 +59,7 @@ itcl::class Playlist {
     private variable itsPixmapCache
     private variable itsMatch
     private variable itsRandSeq
+    private variable itsPurgeList
 
     constructor { argv widget } {
 	set fname [lindex $argv end]
@@ -86,7 +87,7 @@ itcl::class Playlist {
 	    }
 
 	} else {
-	    set itsListFile ${fname}
+	    set itsListFile $fname
 	}
 
 	set fd [open $itsListFile r]
@@ -116,12 +117,16 @@ itcl::class Playlist {
 	set itsPixmap [new GxPixmap]
 	-> $itsPixmap purgeable 1
 
+	set itsPurgeList [list]
+
 	set itsRandSeq [RandSeq \#auto]
 	::srand [clock clicks]
     }
 
     public method save {} {
 	puts "writing playlist"
+	file delete ${itsListFile}.bkp
+	file rename $itsListFile ${itsListFile}.bkp
 	set fd [open $itsListFile w]
 	puts $fd [join $itsList "\n"]
 	close $fd
@@ -130,7 +135,10 @@ itcl::class Playlist {
     public method spin { step } {
 	set itsIdx [expr ($itsIdx + $step) % [llength $itsList]]
 
-	set itsGuessNext [expr ($itsIdx + $step) % [llength $itsList]]
+	set guesstep $step
+	if { $guesstep == 0 } { set guesstep 1 }
+
+	set itsGuessNext [expr ($itsIdx + $guesstep) % [llength $itsList]]
     }
 
     public method jump {} {
@@ -147,9 +155,26 @@ itcl::class Playlist {
     }
 
     public method remove {} {
+	set target [lindex $itsList $itsIdx]
+	puts "removing $target from the list"
+	lappend itsPurgeList $target
 	set itsList [lreplace $itsList $itsIdx $itsIdx]
-	$this save
 	$this spin 0
+    }
+
+    public method purge {} {
+	puts "purging..."
+	foreach f $itsPurgeList {
+	    puts "deleting $f"
+	    set dir [file dirname $f]
+	    set tail [file tail $f]
+	    set stubfile ${dir}/.${tail}.deleted
+	    set fd [open $stubfile w]
+	    close $fd
+	    file delete $f
+	}
+	set itsPurgeList [list]
+	save
     }
 
     public method shuffle {} {
@@ -164,6 +189,11 @@ itcl::class Playlist {
 
 	set i $itsGuessNext
 	set f [lindex $itsList $i]
+	while { ![file exists $f] } {
+	    set itsList [lreplace $itsList $i $i]
+	    set i [expr $i % [llength $itsList]]
+	    set f [lindex $itsList $i]
+	}
 	set itsPixmapCache($f) \
 	    [build_scaled_pixmap $f [-> $itsWidget size]]
 	puts "inserted $f in cache"
@@ -228,6 +258,7 @@ proc looper {} {
 
 proc hide {} {
     $::PLAYLIST remove
+    $::PLAYLIST save
     updateText
     $::PLAYLIST show
 }
@@ -307,6 +338,9 @@ set PLAYLIST [Playlist PLAYLIST $argv $t]
 -> $t bind <Key-Left> {spinPic -1; PLAYLIST show}
 -> $t bind <Key-Right> {spinPic 1; PLAYLIST show}
 -> $t bind <Key-Up> {jumpPic; PLAYLIST show}
+-> $t bind <Key-Down> {PLAYLIST remove; updateText; PLAYLIST show}
+-> $t bind <Key-Return> {PLAYLIST save}
+-> $t bind <Key-x> {PLAYLIST purge}
 
 -> $t height 975
 -> $t width 1400
