@@ -5,5 +5,5 @@
 # standard configuration for my imac
 
 ./configure \
-    --prefix=/Users/rjpeters/local/groovx \
+    --prefix=/Users/rjpeters/local/groovx-x11 \
     --with-tcltk=/Users/rjpeters/local/tcl8.5a1
