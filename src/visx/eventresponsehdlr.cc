@@ -67,61 +67,47 @@ private:
   TclProcWrapper(const TclProcWrapper&);
   TclProcWrapper& operator=(const TclProcWrapper&);
 
-  fstring itsName;
-  fstring itsArgs;
-  fstring itsBody;
-  Tcl::Interp* itsInterp;
+  const fstring itsName;
+  const fstring itsArgs;
+  const fstring itsBody;
+  Tcl::Interp& itsInterp;
 
 public:
-  TclProcWrapper() : itsName(), itsArgs(), itsBody(), itsInterp(0) {}
-
-  ~TclProcWrapper() { destroy(); }
-
-  void create(Tcl::Interp& intp,
-              const fstring& name, const fstring& args, const fstring& body)
+  TclProcWrapper(Tcl::Interp& intp, const fstring& name,
+		 const fstring& args, const fstring& body) :
+    itsName(name),
+    itsArgs(args),
+    itsBody(body),
+    itsInterp(intp)
   {
-    destroy();
-
-    itsName = name;
-    itsArgs = args;
-    itsBody = body;
-    itsInterp = &intp;
-
-    itsInterp->createProc("", itsName.c_str(),
-                          itsArgs.c_str(), itsBody.c_str());
+    itsInterp.createProc("", itsName.c_str(),
+			 itsArgs.c_str(), itsBody.c_str());
   }
 
-  void destroy()
+  ~TclProcWrapper()
   {
-    if (exists())
+    // We must check hasInterp() in case we are here because the application
+    // is being exited, causing the interpreter to be deleted, in which case
+    // we can't use the intrepeter (and don't need to, since it will destroy
+    // the proc on its own)
+    if (itsInterp.hasInterp())
       {
-        Assert( itsInterp != 0 );
-        itsInterp->deleteProc("", itsName.c_str());
-
-        itsName = itsArgs = itsBody = fstring();
+        itsInterp.deleteProc("", itsName.c_str());
       }
-
-    Postcondition( !exists() );
   }
-
-  bool exists() const { return !itsName.is_empty(); }
 
   template <class T>
   T call(const fstring& args) const
   {
-    Precondition( exists() );
-
-    Assert( itsInterp != 0 );
-
     fstring cmd = itsName; cmd.append(" ").append(args);
 
     Tcl::Code code(cmd, Tcl::Code::THROW_EXCEPTION);
 
     // might throw if Tcl code raises an error:
-    code.invoke(*itsInterp);
+    code.invoke(itsInterp);
 
     // might throw if conversion to T fails:
-    return itsInterp->template getResult<T>();
+    return itsInterp.template getResult<T>();
   }
 
   const fstring& name() const { return itsName; }
@@ -212,10 +198,10 @@ public:
 
       Util::log( fstring("event_info: ", event_info) );
 
-      if (impl->itsResponseProc.exists())
+      if (impl->itsResponseProc2.get() != 0)
         {
           try {
-	    theResponse.setVal(impl->itsResponseProc.call<int>(event_info));
+	    theResponse.setVal(impl->itsResponseProc2->call<int>(event_info));
           } catch (...) {
 	    theResponse.setVal(Response::INVALID_VALUE);
 	  }
@@ -291,7 +277,7 @@ public:
 
   bool itsAbortInvalidResponses;
 
-  TclProcWrapper itsResponseProc;
+  scoped_ptr<TclProcWrapper> itsResponseProc2;
 
   unsigned int itsMaxResponses;
 };
@@ -323,7 +309,7 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
   itsEventSequence("<KeyPress>"),
   itsBindingSubstitution("%K"),
   itsAbortInvalidResponses(true),
-  itsResponseProc(),
+  itsResponseProc2(0),
   itsMaxResponses(1)
 {
 DOTRACE("EventResponseHdlr::Impl::Impl");
@@ -364,7 +350,7 @@ DOTRACE("EventResponseHdlr::Impl::readFrom");
   reader->readValue("eventSequence", itsEventSequence);
   reader->readValue("bindingSubstitution", itsBindingSubstitution);
 
-  itsResponseProc.destroy();
+  itsResponseProc2.reset( 0 );
 
   if (svid >= 2)
     {
@@ -372,8 +358,9 @@ DOTRACE("EventResponseHdlr::Impl::readFrom");
       reader->readValue("responseProcArgs", args);
       reader->readValue("responseProcBody", body);
 
-      itsResponseProc.create(itsInterp,
-                             uniqueCmdName("responseProc"), args, body);
+      itsResponseProc2.reset
+	(new TclProcWrapper(itsInterp, uniqueCmdName("responseProc"),
+			    args, body));
     }
 }
 
@@ -390,8 +377,16 @@ DOTRACE("EventResponseHdlr::Impl::writeTo");
   writer->writeValue("eventSequence", itsEventSequence);
   writer->writeValue("bindingSubstitution", itsBindingSubstitution);
 
-  writer->writeValue("responseProcArgs", itsResponseProc.args());
-  writer->writeValue("responseProcBody", itsResponseProc.body());
+  if (itsResponseProc2.get() != 0)
+    {
+      writer->writeValue("responseProcArgs", itsResponseProc2->args());
+      writer->writeValue("responseProcBody", itsResponseProc2->body());
+    }
+  else
+    {
+      writer->writeValue("responseProcArgs", fstring());
+      writer->writeValue("responseProcBody", fstring());
+    }
 }
 
 
@@ -480,8 +475,9 @@ void EventResponseHdlr::setBindingSubstitution(const fstring& sub)
 void EventResponseHdlr::setResponseProc(const fstring& args,
                                         const fstring& body)
 {
-  itsImpl->itsResponseProc.create(itsImpl->itsInterp,
-                                  uniqueCmdName("responseProc"), args, body);
+  itsImpl->itsResponseProc2.reset
+    (new TclProcWrapper(itsImpl->itsInterp, uniqueCmdName("responseProc"),
+			args, body));
 }
 
 void EventResponseHdlr::abortInvalidResponses()
