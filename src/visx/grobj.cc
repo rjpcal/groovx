@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Thu Nov  4 10:11:43 1999
+// written: Wed Nov 10 11:50:33 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -1457,10 +1457,6 @@ int GrObj::grDisplayList() const {
 
 bool GrObj::grIsCurrent() const {
   return itsImpl->isCurrent();
-}
-
-void GrObj::grPostUpdated() const {
-  itsImpl->postUpdated();
 }
 
 static const char vcid_grobj_cc[] = "$Header$";
