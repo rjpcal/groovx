@@ -3,7 +3,7 @@
 // iolegacy.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 27 08:40:04 2000
-// written: Mon Oct  2 16:32:16 2000
+// written: Wed Oct 18 14:32:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -300,8 +300,17 @@ DOTRACE("IO::LegacyReader::readCstring");
 	 break;
   case IO::CHAR_COUNT:
 	 {
-		int numchars;
+		int numchars = 0;
 		itsImpl->itsInStream >> numchars;
+
+		// If the read failed on the number, we assume the string is not
+		// present, and let numchars remain at 0
+		if ( itsImpl->itsInStream.fail() )
+		  {
+			 itsImpl->itsInStream.clear();
+			 numchars = 0;
+		  }
+		  
 		if (itsImpl->itsInStream.peek() == '\n') { itsImpl->itsInStream.get(); }
 		if ( numchars > 0 )
 		  {
