@@ -183,17 +183,20 @@ class DepBuilder:
 
         return self.itsCLevels[file]
 
-    def printOneCdepLevel(self, file, stream, marks, indentlevel, maxindent):
-        indents = '\t' * indentlevel
+    def printOneCdepLevel(self, file, stream, marks,
+                          indentlevel, maxindent, indenter, separator):
+        indents = indenter * indentlevel
 
         if not marks.has_key(file):
-            stream.write('%s%s (%d)\n' % (indents, file, self.getCdepLevel(file)))
+            stream.write('%s%s (%d)%s' %
+                         (indents, file, self.getCdepLevel(file), separator))
             marks[file] = 1
 
         if indentlevel < maxindent:
             for dep in sort(self.itsDirectIncludes.get(file)):
                 self.printOneCdepLevel(dep, stream, marks,
-                                       indentlevel+1, maxindent)
+                                       indentlevel+1, maxindent,
+                                       indenter, separator)
 
     def printCdepLevels(self, stream, maxlevel):
         backmap = {}
@@ -210,7 +213,8 @@ class DepBuilder:
             for file in backmap[level]:
                 stream.write('\n\n')
                 marks.clear()
-                self.printOneCdepLevel(file, stream, marks, 0, maxlevel)
+                self.printOneCdepLevel(file, stream, marks, 0, maxlevel,
+                                       '\t', '\n')
 
         stream.write('\n')
 
@@ -264,15 +268,16 @@ class DepBuilder:
         self.doMarkLdeps(file, marks)
         return len(marks)
 
-    def printOneLdepLevel(self, file, stream, marks, level, maxlevel):
+    def printOneLdepLevel(self, file, stream, marks, level, maxlevel,
+                          indenter, separator):
 
         if not marks.has_key(file):
-            #indents = '\t' * (len(marks) > 0)
-            indents = '\t' * level
+            indents = indenter * level
 
             if (level <= maxlevel):
-                stream.write('%s%s (%d)\n' % (indents, file,
-                                              self.getLdepLevel([], file)))
+                stream.write('%s%s (%d)%s' %
+                             (indents, file, self.getLdepLevel([], file),
+                              separator))
 
             marks[file] = 1
 
@@ -283,7 +288,8 @@ class DepBuilder:
 
                     if (os.path.isfile(dep)):
                         self.printOneLdepLevel(dep, stream, marks,
-                                               level+1, maxlevel)
+                                               level+1, maxlevel,
+                                               indenter, separator)
 
     def printLdepLevels(self, stream, maxlevel):
         backmap = {}
@@ -304,7 +310,8 @@ class DepBuilder:
             for file in backmap[density]:
                 stream.write('\n<%d> ' % density)
                 marks.clear()
-                self.printOneLdepLevel(file, stream, marks, 0, maxlevel)
+                self.printOneLdepLevel(file, stream, marks, 0, maxlevel,
+                                       '\t', '\n')
                 CCD += density
 
         stream.write('\n')
