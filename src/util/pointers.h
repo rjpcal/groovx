@@ -5,7 +5,7 @@
 // Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  7 14:52:52 2000
-// written: Fri Nov 10 17:04:29 2000
+// written: Mon May 14 15:57:22 2001
 // $Id$
 //
 // -------------------------------------------------------------------
@@ -193,6 +193,9 @@ inline bool operator!=(const shared_ptr<T>& a, const shared_ptr<U>& b)
 {
   return a.get() != b.get();
 }
+
+template <class T>
+shared_ptr<T> make_shared(T* t) { return shared_ptr<T>(t); }
 
 static const char vcid_pointers_h[] = "$Header$";
 #endif // !POINTERS_H_DEFINED
