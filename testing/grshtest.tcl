@@ -39,6 +39,7 @@ set files {
 	 maskhatch_test.tcl
 	 misc_test.tcl
 	 morphyface_test.tcl
+	 nullrh_test.tcl
 	 objlist_test.tcl
 	 objtogl_test.tcl
 	 position_test.tcl
