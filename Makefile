@@ -385,7 +385,7 @@ dir_structure:
 
 # dependencies of object files on source+header files
 
-DEP_FILE := $(DEP)/alldepends
+DEP_FILE := $(DEP)/alldepends.$(MODE)
 
 $(DEP):
 	mkdir -p $@
@@ -398,7 +398,7 @@ include $(DEP_FILE)
 
 # dependencies of package shlib's on object files
 
-PKG_DEP_FILE := $(DEP)/pkgdepends
+PKG_DEP_FILE := $(DEP)/pkgdepends.$(MODE)
 
 $(PKG_DEP_FILE): $(DEP) $(ALL_SOURCES) $(ALL_HEADERS) \
 	Makefile src/pkgs/buildPkgDeps.tcl
@@ -409,7 +409,7 @@ include $(PKG_DEP_FILE)
 
 # dependencies of main project shlib's on object files
 
-LIB_DEP_FILE := $(DEP)/libdepends
+LIB_DEP_FILE := $(DEP)/libdepends.$(MODE)
 
 $(LIB_DEP_FILE): $(DEP) $(ALL_SOURCES) $(ALL_HEADERS) \
   Makefile $(SCRIPTS)/build_lib_rules.tcl
