@@ -159,6 +159,10 @@ DOTRACE("Tcl::CommandGroup::usageWarning");
   return warning;
 }
 
+#ifdef REAL_BACKTRACE
+#include <execinfo.h>
+#endif
+
 int Tcl::CommandGroup::Impl::cInvokeCallback(
     ClientData clientData,
     Tcl_Interp* interp,
@@ -169,6 +173,23 @@ int Tcl::CommandGroup::Impl::cInvokeCallback(
 
   ASSERT(c != 0);
   ASSERT(interp == c->rep->interp.intp());
+
+#ifdef REAL_BACKTRACE
+  typedef void* voidp;
+
+  voidp addresses[64];
+
+  const int n = backtrace(&addresses[0], 64);
+
+  char** names = backtrace_symbols(&addresses[0], n);
+
+  for (int i = 0; i < n; ++i)
+    {
+      dbg_print_nl(0, names[i]);
+    }
+
+  free(names);
+#endif
 
   return c->rawInvoke(s_objc, objv);
 }
