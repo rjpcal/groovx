@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Thu Aug 16 10:19:32 2001
+// written: Thu Aug 16 10:48:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #include "grobj.h"
 
 #include "grobjimpl.h"
+
+#include "gfx/canvas.h"
 
 #define DYNAMIC_TRACE_EXPR GrObj::tracer.status()
 #include "util/trace.h"
@@ -362,7 +364,13 @@ DOTRACE("GrObj::draw");
 void GrObj::undraw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObj::undraw");
-  itsImpl->itsTopNode->gnodeUndraw(canvas);
+
+  Gfx::Rect<double> world_box;
+  getBoundingBox(canvas, world_box);
+
+  Gfx::Rect<int> screen_box = canvas.screenFromWorld(world_box);
+
+  canvas.clearColorBuffer(screen_box);
 }
 
 static const char vcid_grobj_cc[] = "$Header$";
