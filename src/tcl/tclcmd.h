@@ -85,18 +85,9 @@ public:
   /// Returns a string describing the command's proper usage.
   virtual const char* usage();
 
-#ifndef BROKEN_TEMPLATE_FRIEND
-protected:
-#else
-public:
-#endif
-
   /** This is overridden by subclasses to implement the specific
       functionality for the command that is represented. */
   virtual void invoke() = 0;
-
-  /// Append \a msg as an error message to the Tcl interpreter's result.
-  void errorMessage(const char* msg);
 
 
   //---------------------------------------------------------------------
@@ -107,9 +98,6 @@ public:
 
   /// Return the number of arguments in the current invocation.
   int objc() { return itsObjc; }
-
-  /// Returns the argument number \a argn of the current invocation.
-  TclValue arg(int argn);
 
   /// Attempts to retrieve an \c int from argument number \a argn.
   int getIntFromArg(int argn) { return Tcl::fromTcl<int>(itsObjv[argn]); }
@@ -158,14 +146,16 @@ public:
       elements of type \c T, and inserts these through the insert
       iterator \a itr. */
   template <class T, class Iterator>
-  void getSequenceFromArg(int argn, Iterator itr, T* /* dummy */) {
-    Tcl::List elements(itsObjv[argn]);
+  void getSequenceFromArg(int argn, Iterator itr, T* /* dummy */)
+    {
+		Tcl::List elements(itsObjv[argn]);
 
-    for (unsigned int i = 0; i < elements.length(); ++i) {
-      *itr = Tcl::fromTcl<T>(elements[i]);
-      ++itr;
-    }
-  }
+		for (unsigned int i = 0; i < elements.length(); ++i)
+		  {
+			 *itr = Tcl::fromTcl<T>(elements[i]);
+			 ++itr;
+		  }
+	 }
 
   /** Attempts to convert argument number \a argn into a Tcl list, and
       if successful, returns an iterator pointing to the beginning of
@@ -192,12 +182,6 @@ public:
   //
   //---------------------------------------------------------------------
 
-  /// Return satisfactorily with a void result.
-  void returnVoid();
-
-  /// Return an error condition with a void result.
-  void returnError();
-
   /// Return satisfactorily with the result \a t of type \c T.
   template <class T>
   void returnVal(T t)
@@ -214,50 +198,18 @@ public:
     }
 
 
-  /// Append to the result a list element with the generic \c Value \a val.
-  void lappendVal(const Value& val) { lappendValue(val); }
-
-  /// Append to the result a list element with the \c unsigned \c char value \a val.
-  void lappendVal(unsigned char val) { lappendInt(int(val)); }
-
-  /// Append to the result a list element with the \c int value \a val.
-  void lappendVal(int val) { lappendInt(val); }
-
-  /// Append to the result a list element with the \c unsigned int value \a val.
-  void lappendVal(unsigned int val) { lappendLong(long(val)); }
-
-  /// Append to the result a list element with the \c long value \a val.
-  void lappendVal(long val) { lappendLong(val); }
-
-  /// Append to the result a list element with the \c unsigned long value \a val.
-  void lappendVal(unsigned long val) { lappendLong(long(val)); }
-
-  /// Append to the result a list element with the \c bool value \a val.
-  void lappendVal(bool val) { lappendBool(val); }
-
-  /// Append to the result a list element with the \c double value \a val.
-  void lappendVal(double val) { lappendDouble(val); }
-
-  /// Append to the result a list element with the C-style string (\c char*) value \a val.
-  void lappendVal(const char* val) { lappendCstring(val); }
-
-  /** Append to the result a list element with the string value \a
-      val. The templated type must have a c_str() function returning
-      const char*. */
-  template <class Str>
-  void lappendStringType(Str val)
-    {
-      lappendVal(Util::StringTraits<Str>::c_str(val));
-    }
-
   /// Return the sequence of values referred to by the range [\a begin, \a end).
   template <class Itr>
-  void returnSequence(Itr begin, Itr end) {
-    while (begin != end) {
-      lappendVal(*begin);
-      ++begin;
-    }
-  }
+  void returnSequence(Itr begin, Itr end)
+    {
+		Tcl::List result;
+		while (begin != end)
+		  {
+			 result.append(*begin);
+			 ++begin;
+		  }
+		returnVal(result);
+	 }
 
   /** \c ResultAppender is an inserter (as well as an output iterator)
       that appends elements of type \c T to the result of the \c
@@ -267,17 +219,23 @@ public:
   public:
     /// Construct with a \c TclCmd whose result should be appended to.
     ResultAppender(TclCmd* aCmd) :
-      itsCmd(aCmd) {}
+      itsCmd(aCmd), itsList() {}
+
+    /// Destructor actually returns the value to the TclCmd.
+    ~ResultAppender()
+      { itsCmd->returnVal(itsList); }
+
     /// Copy constructor.
     ResultAppender(const ResultAppender& other) :
-      itsCmd(other.itsCmd) {}
+      itsCmd(other.itsCmd), itsList(other.itsList) {}
+
     /// Assignment operator.
     ResultAppender& operator=(const ResultAppender& other)
-      { itsCmd = other.itsCmd; return *this; }
+      { itsCmd = other.itsCmd; itsList = other.itsList; return *this; }
 
     /// Output assignment: \a val will be appended to the \c TclCmd's result.
     ResultAppender& operator=(const T& val)
-      { itsCmd->lappendVal(val); return *this; }
+      { itsList.append(val); return *this; }
 
     /// Dereference.
     ResultAppender& operator*() { return *this; }
@@ -288,9 +246,8 @@ public:
 
   private:
     TclCmd* itsCmd;
+    Tcl::List itsList;
   };
-
-  template <class T> friend class ResultAppender;
 
   /// Return a \c ResultAppender of the given type for this \c TclCmd.
   template <class T>
@@ -309,13 +266,6 @@ private:
                             int objc, Tcl_Obj *const objv[]);
 
   int invokeTemplate();
-
-  void lappendValue(const Value& val);
-  void lappendInt(int val);
-  void lappendLong(long val);
-  void lappendBool(bool val);
-  void lappendDouble(double val);
-  void lappendCstring(const char* val);
 
   TclCmd(const TclCmd&);
   TclCmd& operator=(const TclCmd&);
