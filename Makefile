@@ -69,7 +69,7 @@ LOGS := ./logs
 DOC := ./doc
 SCRIPTS := ./scripts
 
-CPPFLAGS += -I$(with_tcltk)/include -I$(SRC)
+CPPFLAGS += -I$(SRC)
 
 TMP_DIR := ./tmp/$(PLATFORM)
 TMP_FILE := $(TMP_DIR)/tmpfile
@@ -106,8 +106,6 @@ ifeq ($(PLATFORM),i686)
 	DEFAULT_MODE := debug
 
 	AUDIO_LIB := -lesd -laudiofile
-
-	LDFLAGS += -Wl,-rpath,$(with_tcltk)/lib
 endif
 
 ifeq ($(PLATFORM),ppc)
@@ -224,8 +222,6 @@ endif
 # Directories to search for include files and code libraries
 #
 #-------------------------------------------------------------------------
-
-LDFLAGS += -L$(exec_prefix)/lib -L$(with_tcltk)/lib
 
 LIBS += \
 	-lGLU -lGL \
