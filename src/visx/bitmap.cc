@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Apr  3 17:58:39 2002
+// written: Thu Apr 25 09:50:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "gfx/canvas.h"
 
 #include "gx/bmapdata.h"
-#include "gx/pbm.h"
+#include "gx/imgfile.h"
 #include "gx/rect.h"
 #include "gx/vec2.h"
 
@@ -44,15 +44,15 @@ namespace
 
 ///////////////////////////////////////////////////////////////////////
 //
-// PbmUpdater class definition
+// ImageUpdater class definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class PbmUpdater : public Gfx::BmapData::UpdateFunc
+class ImageUpdater : public Gfx::BmapData::UpdateFunc
 {
 public:
-  PbmUpdater(const fstring& filename, fstring& owner_filename,
-             bool contrast, bool vertical) :
+  ImageUpdater(const fstring& filename, fstring& owner_filename,
+               bool contrast, bool vertical) :
     itsFilename(filename),
     itsOwnerFilename(owner_filename),
     itsFlipContrast(contrast),
@@ -80,13 +80,13 @@ private:
   bool itsFlipVertical;
 };
 
-void PbmUpdater::update(Gfx::BmapData& update_me)
+void ImageUpdater::update(Gfx::BmapData& update_me)
 {
-DOTRACE("PbmUpdater::update");
+DOTRACE("ImageUpdater::update");
 
   try
     {
-      Pbm::load(itsFilename.c_str(), update_me);
+      ImgFile::load(itsFilename.c_str(), update_me);
     }
   // If there was an error while reading the file, it means we should
   // forget about itsOwnerFilename
@@ -129,13 +129,13 @@ public:
   bool itsPurgeable;
   mutable Gfx::BmapData itsData;
 
-  void queuePbmFile(const char* filename)
+  void queueImage(const char* filename)
   {
     shared_ptr<Gfx::BmapData::UpdateFunc> updater
-      (new PbmUpdater(filename,
-                      itsFilename,
-                      itsContrastFlip,
-                      itsVerticalFlip));
+      (new ImageUpdater(filename,
+                        itsFilename,
+                        itsContrastFlip,
+                        itsVerticalFlip));
 
     itsData.queueUpdate(updater);
   }
@@ -145,14 +145,14 @@ public:
     if (!itsFilename.is_empty())
       {
         // NOTE: it's important that this functionality be separate from
-        // Bitmap's own version of queuePbmFile(), since that function
+        // Bitmap's own version of queueImage(), since that function
         // immediately calls sigNodeChanged, which means that we notify
         // everyone else that the data have been purged, so the bitmap might
         // never have a chance to be drawn on the screen
 
         itsData.clear();
 
-        queuePbmFile(itsFilename.c_str());
+        queueImage(itsFilename.c_str());
       }
   }
 
@@ -209,7 +209,7 @@ DOTRACE("Bitmap::readFrom");
     }
   else
     {
-      queuePbmFile(itsImpl->itsFilename.c_str());
+      queueImage(itsImpl->itsFilename.c_str());
     }
 
   reader->readBaseClass("GrObj", IO::makeProxy<GrObj>(this));
@@ -237,31 +237,31 @@ DOTRACE("Bitmap::writeTo");
 // actions //
 /////////////
 
-void Bitmap::loadPbmFile(const char* filename)
+void Bitmap::loadImage(const char* filename)
 {
-DOTRACE("Bitmap::loadPbmFile");
+DOTRACE("Bitmap::loadImage");
 
-  queuePbmFile(filename);
+  ImgFile::load(filename, itsImpl->itsData);
 
-  itsImpl->itsData.updateIfNeeded();
+  itsImpl->itsFilename = filename;
 
   this->sigNodeChanged.emit();
 }
 
-void Bitmap::queuePbmFile(const char* filename)
+void Bitmap::queueImage(const char* filename)
 {
-DOTRACE("Bitmap::queuePbmFile");
+DOTRACE("Bitmap::queueImage");
 
-  itsImpl->queuePbmFile(filename);
+  itsImpl->queueImage(filename);
 
   this->sigNodeChanged.emit();
 }
 
-void Bitmap::savePbmFile(const char* filename) const
+void Bitmap::saveImage(const char* filename) const
 {
-DOTRACE("Bitmap::savePbmFile");
+DOTRACE("Bitmap::saveImage");
 
-  Pbm::save(filename, itsImpl->itsData);
+  ImgFile::save(filename, itsImpl->itsData);
 }
 
 void Bitmap::grabScreenRect(const Gfx::Rect<int>& rect)

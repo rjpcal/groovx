@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Tue Apr  2 11:57:36 2002
+// written: Thu Apr 25 09:50:41 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@
 #include "gfx/canvas.h"
 
 #include "gx/bmapdata.h"
-#include "gx/pbm.h"
+#include "gx/imgfile.h"
 #include "gx/rect.h"
 
 #include "util/error.h"
@@ -85,7 +85,7 @@ DOTRACE("BitmapCacheNode::recacheBitmap");
   if ( !itsCacheFilename.is_empty() )
     {
       itsBmapData.reset(new Gfx::BmapData());
-      Pbm::load(fullCacheFilename().c_str(), *itsBmapData);
+      ImgFile::load(fullCacheFilename().c_str(), *itsBmapData);
       return;
     }
 
@@ -133,7 +133,7 @@ void BitmapCacheNode::saveBitmapCache(Gfx::Canvas& /*canvas*/,
   if (itsBmapData.get() != 0)
     {
       itsCacheFilename = filename;
-      Pbm::save(fullCacheFilename().c_str(), *itsBmapData);
+      ImgFile::save(fullCacheFilename().c_str(), *itsBmapData);
     }
 }
 

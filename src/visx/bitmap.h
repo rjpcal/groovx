@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Apr  3 17:57:55 2002
+// written: Thu Apr 25 09:56:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,16 +63,18 @@ public:
   // actions //
   /////////////
 
-  /// Loads PBM bitmap data from the PBM file at \a filename.
-  void loadPbmFile(const char* filename);
+  /// Loads bitmap data from the image file at \a filename.
+  /** The file must be in one of the supported image formats. */
+  void loadImage(const char* filename);
 
-  /// Queues the PBM file \a filename for loading.
-  /** The PBM image will not actually be retrieved from the file until it
-      is needed. */
-  void queuePbmFile(const char* filename);
+  /// Queues the image file \a filename for loading.
+  /** The image will not actually be retrieved from the file until it is
+      needed. */
+  void queueImage(const char* filename);
 
-  /// Writes PBM bitmap data to the file \a filename.
-  void savePbmFile(const char* filename) const;
+  /// Writes bitmap data to the file \a filename.
+  /** The image file format is inferred from the given filename. */
+  void saveImage(const char* filename) const;
 
   /// Grabs pixels from a rectangular area of the screen buffer.
   /** The pixels are loaded into the Bitmap's pixel array. The coordinates
