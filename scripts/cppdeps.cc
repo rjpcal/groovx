@@ -68,6 +68,15 @@ class cppdeps
   include_map_t nested_includes;
   include_map_t direct_includes;
 
+  enum ParseState
+    {
+      NOT_STARTED = 0,
+      IN_PROGRESS = 1,
+      COMPLETE = 2
+    };
+
+  map<string, ParseState> parse_states;
+
 public:
   cppdeps(char** argv);
 
@@ -327,6 +336,14 @@ cppdeps::get_nested_includes(const string& filename)
       return (*itr).second;
   }
 
+  if (parse_states[filename] == IN_PROGRESS)
+    {
+      cerr << "nested includes recursion " << filename << '\n';
+      exit(1);
+    }
+
+  parse_states[filename] = IN_PROGRESS;
+
   include_list_t vec;
 
   vec.push_back(filename);
@@ -339,6 +356,10 @@ cppdeps::get_nested_includes(const string& filename)
        i != istop;
        ++i)
     {
+      // Check for self-inclusion to avoid infinite recursion.
+      if (*i == filename)
+	continue;
+
       const include_list_t& indirect = get_nested_includes(*i);
 
       vec.insert(vec.end(), indirect.begin(), indirect.end());
@@ -346,6 +367,8 @@ cppdeps::get_nested_includes(const string& filename)
 
   include_list_t& result = nested_includes[filename];
   result.swap(vec);
+
+  parse_states[filename] = COMPLETE;
 
   return result;
 }
