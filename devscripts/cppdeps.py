@@ -97,6 +97,9 @@ class DepBuilder:
     # private interface
 
     def addRecursiveDeps(self, target, rootdep):
+        # use the next line to avoid recursion
+        #if not self.itsFullIncludes[target].has_key(rootdep):
+
         self.itsFullIncludes[target][rootdep] = 1
 
         for dep in self.itsDirectIncludes.get(rootdep):
