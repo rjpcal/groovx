@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Jul 11 13:33:42 2001
+// written: Wed Jul 11 14:16:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,6 +108,8 @@ protected:
   virtual void invoke() {
     int posid = getIntFromArg(2);
 
+    Tcl::List result;
+
     for (Tcl::List::Iterator<int>
            itr = beginOfArg(1, (int*)0),
            end = endOfArg(1, (int*)0);
@@ -121,8 +123,10 @@ protected:
         Ref<GxNode> obj(*itr);
         trial->setType(obj->category());
 
-        lappendVal(trial.id());
+        result.append(trial.id());
       }
+
+    returnVal(result);
   }
 };
 
@@ -141,6 +145,8 @@ protected:
     int posid1 = getIntFromArg(3);
     int posid2 = getIntFromArg(4);
 
+    Tcl::List result;
+
     for (Tcl::List::Iterator<int>
            itr1 = beginOfArg(1, (int*)0),
            end1 = endOfArg(1, (int*)0);
@@ -158,8 +164,10 @@ protected:
           trial->add(*itr2, posid2);
           trial->setType(*itr1 == *itr2);
 
-          lappendVal(trial.id());
+          result.append(trial.id());
         }
+
+    returnVal(result);
   }
 };
 
@@ -216,6 +224,8 @@ protected:
 
     int base_triad[3];
 
+    Tcl::List result;
+
     for (unsigned int i = 0; i < objids.size(); ++i) {
       base_triad[0] = objids[i];
 
@@ -231,12 +241,13 @@ protected:
             for (int e = 0; e < 3; ++e) {
               trial->add(base_triad[permutations[p][e]], posids[e]);
             }
-            lappendVal(trial.id());
+            result.append(trial.id());
           } // end p
         } // end itr3
       } // end itr2
     } // end itr1
 
+    returnVal(result);
   }
 };
 
@@ -271,6 +282,8 @@ protected:
     const int BUF_SIZE = 200;
     char line[BUF_SIZE];
 
+    Tcl::List result;
+
     int num_read = 0;
     while ( (read_to_eof || num_read < num_lines)
             && ifs.getline(line, BUF_SIZE) )
@@ -304,11 +317,12 @@ protected:
 
         trial->addNode(sep->id());
 
-        lappendVal(trial->id());
+        result.append(trial->id());
 
         ++num_read;
       }
 
+    returnVal(result);
   }
 };
 

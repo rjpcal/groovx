@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Jul 11 12:54:00 2001
+// written: Wed Jul 11 14:18:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -176,12 +176,16 @@ protected:
       }
     else
       {
+        Tcl::List result;
+
         int array_size = getIntFromArg(2);
         while (array_size-- > 0)
           {
             WeakRef<Util::Object> item(Util::ObjMgr::newObj(type));
-            lappendVal(item.id());
+            result.append(item.id());
           }
+
+        returnVal(result);
       }
   }
 };

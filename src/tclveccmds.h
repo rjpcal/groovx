@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:11:41 1999
-// written: Wed Jul 11 12:53:59 2001
+// written: Wed Jul 11 14:22:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ protected:
   virtual void invoke();
 
   virtual void doReturnValForItem(void* item) = 0;
-  virtual void doAppendValForItem(void* item) = 0;
+  virtual void doAppendValForItem(void* item, Tcl::List& listObj) = 0;
 
 private:
   VecGetterBaseCmd(const VecGetterBaseCmd&);
@@ -91,7 +91,7 @@ public:
 
 protected:
   virtual void doReturnValForItem(void* item);
-  virtual void doAppendValForItem(void* item);
+  virtual void doAppendValForItem(void* item, Tcl::List& listObj);
 
 private:
   shared_ptr< Getter<ValType> > itsGetter;

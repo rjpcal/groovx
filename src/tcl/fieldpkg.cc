@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Wed Jul 11 13:33:47 2001
+// written: Wed Jul 11 14:21:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -131,9 +131,13 @@ DOTRACE("Tcl::FieldVecCmd::invoke");
         returnVal<const Value&>( *(item->field(itsFinfo).value()) );
       }
     else
-      for (size_t i = 0; i < ids.size(); ++i) {
-        Ref<FieldContainer> item(ids[i]);
-        lappendVal( *(item->field(itsFinfo).value()) );
+      {
+        Tcl::List result;
+        for (size_t i = 0; i < ids.size(); ++i) {
+          Ref<FieldContainer> item(ids[i]);
+          result.append<const Value&>( *(item->field(itsFinfo).value()) );
+        }
+        returnVal(result);
       }
 
   }

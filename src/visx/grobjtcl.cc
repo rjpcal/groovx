@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Wed Jun 13 15:16:02 2001
+// written: Wed Jul 11 14:14:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -52,12 +52,16 @@ protected:
     Rect<double> bbox;
     bool have_box = getItem()->getBoundingBox(canvas, bbox);
 
+    Tcl::List result;
+
     if (have_box) {
-      lappendVal(bbox.left());
-      lappendVal(bbox.top());
-      lappendVal(bbox.right());
-      lappendVal(bbox.bottom());
+      result.append(bbox.left());
+      result.append(bbox.top());
+      result.append(bbox.right());
+      result.append(bbox.bottom());
     }
+
+    returnVal(result);
   }
 };
 

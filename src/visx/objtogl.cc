@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jul 11 11:02:50 2001
+// written: Wed Jul 11 14:14:42 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -167,6 +167,8 @@ protected:
     Toglet* config = getItem();
     Toglet::Color color;
 
+    Tcl::List result;
+
     for (int i = start; i <= end; ++i) {
       buf[0] = '\0';
       ostrstream ost(buf, BUF_SIZE);
@@ -176,8 +178,10 @@ protected:
           << setprecision(3) << color.red << '\t'
           << setprecision(3) << color.green << '\t'
           << setprecision(3) << color.blue << '\n' << '\0';
-      lappendVal(buf);
+      result.append(buf);
     }
+
+    returnVal(result);
   }
 };
 

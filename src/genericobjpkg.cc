@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec 11 14:38:13 2000
-// written: Wed Jul 11 11:03:02 2001
+// written: Wed Jul 11 14:17:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -109,6 +109,8 @@ void Tcl::FindAllCmd::invoke() {
   ObjDb& theDb = ObjDb::theDb();
 
 #if 1
+  Tcl::List result;
+
   for (ObjDb::PtrIterator
          itr = theDb.beginPtrs(),
          end = theDb.endPtrs();
@@ -116,8 +118,10 @@ void Tcl::FindAllCmd::invoke() {
        ++itr)
     {
       if (itsCaster->isMyType(*itr))
-        lappendVal(itr.getId());
+        result.append(itr.getId());
     }
+
+  returnVal(result);
 
   /*
     STL-style functional implementation... unfortunately, this is

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:16:22 1999
-// written: Wed Jul 11 12:53:59 2001
+// written: Wed Jul 11 14:20:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,12 +60,16 @@ DOTRACE("Tcl::VecGetterBaseCmd::invoke");
       }
     else
       {
+        Tcl::List result;
+
         while (id_itr != end)
           {
             void* item = itsPkg->getItemFromId(*id_itr);
-            doAppendValForItem(item);
+            doAppendValForItem(item, result);
             ++id_itr;
           }
+
+        returnVal(result);
       }
   }
   else {
@@ -96,8 +100,9 @@ void Tcl::TVecGetterCmd<ValType>::doReturnValForItem(void* item) {
 }
 
 template <class ValType>
-void Tcl::TVecGetterCmd<ValType>::doAppendValForItem(void* item) {
-  lappendVal(itsGetter->get(item));
+void Tcl::TVecGetterCmd<ValType>::doAppendValForItem(void* item,
+                                                     Tcl::List& listObj) {
+  listObj.append(itsGetter->get(item));
 }
 
 // Specializations for fixed_string
@@ -107,8 +112,9 @@ void Tcl::TVecGetterCmd<fixed_string>::doReturnValForItem(void* item) {
 }
 
 template <>
-void Tcl::TVecGetterCmd<fixed_string>::doAppendValForItem(void* item) {
-  lappendVal(itsGetter->get(item).c_str());
+void Tcl::TVecGetterCmd<fixed_string>::doAppendValForItem(void* item,
+                                                          Tcl::List& listObj) {
+  listObj.append(itsGetter->get(item).c_str());
 }
 template <>
 void Tcl::TVecGetterCmd<const fixed_string&>::doReturnValForItem(void* item) {
@@ -116,8 +122,9 @@ void Tcl::TVecGetterCmd<const fixed_string&>::doReturnValForItem(void* item) {
 }
 
 template <>
-void Tcl::TVecGetterCmd<const fixed_string&>::doAppendValForItem(void* item) {
-  lappendVal(itsGetter->get(item).c_str());
+void Tcl::TVecGetterCmd<const fixed_string&>::doAppendValForItem(void* item,
+                                                                 Tcl::List& listObj) {
+  listObj.append(itsGetter->get(item).c_str());
 }
 
 

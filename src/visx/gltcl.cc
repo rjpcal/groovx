@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jul 11 12:52:27 2001
+// written: Wed Jul 11 14:11:20 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -652,8 +652,14 @@ protected:
       glGetDoublev(GL_LINE_WIDTH_RANGE, &range[0]);
       glGetDoublev(GL_LINE_WIDTH_GRANULARITY, &gran);
 
-      lappendVal("range"); lappendVal(range[0]), lappendVal(range[1]);
-      lappendVal("granularity"); lappendVal(gran);
+      Tcl::List result;
+      result.append("range");
+      result.append(range[0]);
+      result.append(range[1]);
+      result.append("granularity");
+      result.append(gran);
+
+      returnVal(result);
     }
 };
 
