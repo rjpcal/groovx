@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Tue Oct 17 12:03:57 2000
+// written: Fri Oct 20 17:58:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ DOTRACE("TlistUtils::createPreview");
 
   fixed_block<Rect<double> > bbxs(objids_size);
 
-  Trial* preview = new Trial;
+  Trial* preview = Trial::make();
   ItemWithId<TrialBase> preview_trial(preview, ItemWithId<TrialBase>::INSERT);
 
   double window_area = world_width*world_height;
@@ -96,19 +96,20 @@ DOTRACE("TlistUtils::createPreview");
 	 ostrstream ost(id_string, 31);
 	 ost << objids[i] << '\0';
 
-	 Gtext* label = new Gtext(id_string);
+	 Gtext* label = Gtext::make();
+	 label->setText(id_string);
 	 ItemWithId<GrObj> label_obj(label, ItemWithId<GrObj>::INSERT);
 	 label->setAlignmentMode(GrObj::CENTER_ON_CENTER);
 	 label->setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
 	 label->setHeight(0.1);
 
-	 ItemWithId<Position> obj_pos(new Position, ItemWithId<Position>::INSERT);
+	 ItemWithId<Position> obj_pos(Position::make(), ItemWithId<Position>::INSERT);
 	 double obj_x = -world_width/2.0 + (x_step+0.5)*parcel_side;
 	 double obj_y = world_height/2.0 - (y_step+0.45)*parcel_side;
 	 obj_pos->setTranslate(obj_x, obj_y, 0.0);
 	 obj_pos->setScale(parcel_side, parcel_side, 1.0);
 
-	 ItemWithId<Position> label_pos(new Position, ItemWithId<Position>::INSERT);
+	 ItemWithId<Position> label_pos(Position::make(), ItemWithId<Position>::INSERT);
 	 double label_x = obj_x;
 	 double label_y = obj_y - 0.50*parcel_side;
 	 label_pos->setTranslate(label_x, label_y, 0.0);
@@ -139,7 +140,7 @@ DOTRACE("TlistUtils::makeSingles");
   // 2) it sets the Trial's type to the category of its single GrObj
   for (size_t i=0; i < vec.size(); ++i) {
 	 int id = vec[i];
-	 Trial* t = new Trial;
+	 Trial* t = Trial::make();
 	 tlist.insertAt(id, Tlist::Ptr(t));
 	 t->add(id, posid);
 	 const ObjList::SharedPtr obj = olist.getCheckedPtr(id);
@@ -167,7 +168,7 @@ DOTRACE("TlistUtils::makePairs");
   int trialid = 0;
   for (size_t i = 0; i < vec.size(); ++i) {
 	 for (size_t j = 0; j < vec.size(); ++j) {
-		Trial* t = new Trial;
+		Trial* t = Trial::make();
 		tlist.insertAt(trialid, Tlist::Ptr(t));
 		t->add(vec[i], posid1);
 		t->add(vec[j], posid2);
@@ -238,7 +239,7 @@ DOTRACE("TlistUtils::makeTriads");
 
 		  // loops over p,e run through all permutations
 		  for (int p = 0; p < NUM_PERMS; ++p) {
-			 Trial* t = new Trial;
+			 Trial* t = Trial::make();
 			 tlist.insertAt(trial, Tlist::Ptr(t));
 			 for (int e = 0; e < 3; ++e) {
 				t->add(base_triad[permutations[p][e]], posid[e]);
@@ -278,14 +279,14 @@ DOTRACE("TlistUtils::makeSummaryTrial");
 
   PosList& plist = PosList::thePosList();
 
-  Trial* t = new Trial;
+  Trial* t = Trial::make();
 	 
   tlist.insertAt(trialid, Tlist::Ptr(t));
 
   for (size_t i=0; i < objids.size(); ++i) {
 	 int row = i / num_cols;
 	 int col = i % num_cols;
-	 Position* p = new Position;
+	 Position* p = Position::make();
 	 double xpos = x0+col*xstep*scale;
 	 double ypos = y0-row*ystep*scale;
 		
@@ -395,7 +396,7 @@ DOTRACE("TlistUtils::readFromObjidsOnly");
 	 if (line[0] == '#')
 		continue;
 	 istrstream ist(line);
-	 Trial* t = new Trial;
+	 Trial* t = Trial::make();
 	 t->readFromObjidsOnly(ist, offset);
     tlist.insert(Tlist::Ptr(t));
     ++trial;
@@ -447,7 +448,7 @@ DOTRACE("TlistUtils::addObject");
 	 { throw ErrorWithMsg(bad_posid_msg); }
 
   if ( !tlist.isValidId(trialid) ) {
-	 tlist.insertAt(trialid, Tlist::Ptr(new Trial));
+	 tlist.insertAt(trialid, Tlist::Ptr(Trial::make()));
   }
 
   Tlist::SharedPtr tb = tlist.getPtr(trialid);
