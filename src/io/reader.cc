@@ -3,7 +3,7 @@
 // reader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:47:00 1999
-// written: Fri Mar  3 23:11:06 2000
+// written: Mon Mar  6 12:21:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,6 @@
 #include "reader.h"
 
 #include <string>
-#include <strstream.h>
 
 Reader::~Reader() {}
 
