@@ -3,7 +3,7 @@
 // tclpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 12:55:27 1999
-// written: Mon Oct 18 19:14:38 1999
+// written: Mon Dec  6 15:05:26 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ DOTRACE("TclPkg::TclPkg");
 
 	 pkgname[0] = toupper(pkgname[0]);
 	 
-	 for (int i = 1; i < pkgname.length(); ++i) {
+	 for (size_t i = 1; i < pkgname.length(); ++i) {
 		pkgname[i] = tolower(pkgname[i]);
 	 }
 
@@ -86,7 +86,7 @@ DOTRACE("TclPkg::TclPkg");
 
 TclPkg::~TclPkg() {
 DOTRACE("TclPkg::~TclPkg");
-  for (int i = 0; i < itsCmds.size(); i++) {
+  for (size_t i = 0; i < itsCmds.size(); i++) {
 	 DebugEval(i); DebugEval(itsCmds.size()); DebugEvalNL((void*)itsCmds[i]);
 	 DebugEvalNL(typeid(*itsCmds[i]).name());
 	 
