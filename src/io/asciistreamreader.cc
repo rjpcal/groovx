@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu Aug  9 07:12:46 2001
+// written: Mon Aug 20 15:24:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -166,6 +166,7 @@ public:
         ListType::iterator itr = itsMap.begin(), end = itsMap.end();
         while (itr != end)
           {
+            DebugEval(attrib_name); DebugEvalNL((*itr).first);
             if ((*itr).first == attrib_name)
               {
                 Attrib result = (*itr).second;
@@ -294,8 +295,7 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAndUnEscape");
         {
           int ch2 = is.get();
           if (ch2 == EOF || ch2 == STRING_ENDER)
-            throw IO::ReadError("missing character "
-                                "after trailing backslash");
+            throw IO::ReadError("missing character after trailing backslash");
           switch (ch2)
             {
             case '\\':
@@ -319,7 +319,8 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAndUnEscape");
 
   *itr = '\0';
 
-  return fstring(READ_BUFFER.begin());
+  return fstring(Util::CharData(READ_BUFFER.begin(),
+                                itr - READ_BUFFER.begin()));
 }
 
 void AsciiStreamReader::Impl::AttribMap::readAttributes(STD_IO::istream& buf)
@@ -360,7 +361,9 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
     }
 
   // Loop and load all the attributes
-  char type[64], name[64], equal[16];
+  fstring type;
+  fstring name;
+  fstring equal;
 
   for (int i = 0; i < attrib_count; ++i)
     {
@@ -368,7 +371,6 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 
       if ( buf.fail() )
         {
-          type[63] = '\0'; name[63] = '\0'; equal[15] = '\0';
           fstring msg;
           msg.append("input failed while reading attribute type and name\n");
           msg.append("\ttype: ", type, "\n");
@@ -422,10 +424,8 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
                                   "for a string attribute: ", len));
     }
 
-  fstring new_string; new_string.make_space(len);
-  if (len > 0)
-    ist.read(new_string.data(), len);
-  new_string.data()[len] = '\0';
+  fstring new_string;
+  new_string.readsome(ist, (unsigned int) len);
 
   if (ist.fail())
     {
@@ -525,17 +525,18 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
   bool haveReadRoot = false;
   Util::UID rootid = 0;
 
+  fstring type;
+  fstring equal;
+  fstring bracket;
+  Util::UID id;
+
   while ( itsBuf.peek() != EOF )
     {
-      char type[64], equal[16], bracket[16];
-      Util::UID id;
-
       itsBuf >> type >> id >> equal >> bracket;
       DebugEval(type); DebugEvalNL(id);
 
       if ( itsBuf.fail() )
         {
-          type[63] = '\0'; equal[15] = '\0'; bracket[15] = '\0';
           fstring msg;
           msg.append("input failed while reading typename and object id\n");
           msg.append("\ttype: ", type, "\n");
@@ -564,7 +565,6 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 
       if ( itsBuf.fail() )
         {
-          bracket[15] = '\0';
           throw IO::ReadError(fstring("input failed "
                                       "while parsing ending bracket\n",
                                       "\tbracket: ", bracket));
@@ -642,14 +642,14 @@ void AsciiStreamReader::readValueObj(const fstring& name, Value& value)
 Ref<IO::IoObject>
 AsciiStreamReader::readObject(const fstring& name)
 {
-  DebugEvalNL(attrib_name);
+  DebugEvalNL(name);
   return Ref<IO::IoObject>(itsImpl.readMaybeObject(name));
 }
 
 WeakRef<IO::IoObject>
 AsciiStreamReader::readMaybeObject(const fstring& name)
 {
-  DebugEvalNL(attrib_name);
+  DebugEvalNL(name);
   return itsImpl.readMaybeObject(name);
 }
 
