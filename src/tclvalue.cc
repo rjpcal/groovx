@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:23:55 1999
-// written: Tue Aug  7 11:52:00 2001
+// written: Thu Aug  9 07:29:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,10 +56,10 @@ DOTRACE("Tcl::TclValue::clone");
   return new TclValue(itsObjPtr);
 }
 
-const char* Tcl::TclValue::getNativeTypeName() const
+fstring Tcl::TclValue::getNativeTypeName() const
 {
 DOTRACE("Tcl::TclValue::getNativeTypeName");
-  return itsObjPtr.typeName();
+  return fstring(itsObjPtr.typeName());
 }
 
 void Tcl::TclValue::printTo(STD_IO::ostream& os) const
@@ -118,7 +118,7 @@ void Tcl::TclValue::assignTo(Value& other) const
 {
 DOTRACE("Tcl::TclValue::assignTo");
 
-  string_literal type_name(getNativeTypeName());
+  fstring type_name(getNativeTypeName());
 
   if (type_name.equals("int"))
     {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:21:32 1999
-// written: Wed Aug  8 15:35:29 2001
+// written: Thu Aug  9 07:36:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #define VALUE_CC_DEFINED
 
 #include "util/value.h"
+
+#include "util/strings.h"
 
 #include <iostream.h>
 
@@ -75,16 +77,28 @@ void TValue<bool>::scanFrom(STD_IO::istream& is)
 
 
 template <>
-const char* TValue<int>::getNativeTypeName() const { return "int"; }
+fstring TValue<int>::getNativeTypeName() const
+{
+  static fstring name("int"); return name;
+}
 
 template <>
-const char* TValue<long>::getNativeTypeName() const { return "long"; }
+fstring TValue<long>::getNativeTypeName() const
+{
+  static fstring name("long"); return name;
+}
 
 template <>
-const char* TValue<bool>::getNativeTypeName() const { return "bool"; }
+fstring TValue<bool>::getNativeTypeName() const
+{
+  static fstring name("bool"); return name;
+}
 
 template <>
-const char* TValue<double>::getNativeTypeName() const { return "double"; }
+fstring TValue<double>::getNativeTypeName() const
+{
+  static fstring name("double"); return name;
+}
 
 
 //
@@ -150,16 +164,28 @@ void TValuePtr<bool>::scanFrom(STD_IO::istream& is)
 
 
 template <>
-const char* TValuePtr<int>::getNativeTypeName() const { return "int"; }
+fstring TValuePtr<int>::getNativeTypeName() const
+{
+  static fstring name("int"); return name;
+}
 
 template <>
-const char* TValuePtr<long>::getNativeTypeName() const { return "long"; }
+fstring TValuePtr<long>::getNativeTypeName() const
+{
+  static fstring name("long"); return name;
+}
 
 template <>
-const char* TValuePtr<bool>::getNativeTypeName() const { return "bool"; }
+fstring TValuePtr<bool>::getNativeTypeName() const
+{
+  static fstring name("bool"); return name;
+}
 
 template <>
-const char* TValuePtr<double>::getNativeTypeName() const { return "double"; }
+fstring TValuePtr<double>::getNativeTypeName() const
+{
+  static fstring name("double"); return name;
+}
 
 
 //

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 13 18:33:17 2000
-// written: Wed Aug  8 20:16:40 2001
+// written: Thu Aug  9 07:27:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,10 +39,10 @@ DOTRACE("Response::clone");
   return new Response(*this);
 }
 
-const char* Response::getNativeTypeName() const
+fstring Response::getNativeTypeName() const
 {
 DOTRACE("Response::getNativeTypeName");
-  return "Response";
+  static fstring name("Response"); return name;
 }
 
 void Response::printTo(STD_IO::ostream& os) const

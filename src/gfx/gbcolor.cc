@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:10:25 2000
-// written: Wed Aug  8 20:16:40 2001
+// written: Thu Aug  9 07:28:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,8 @@
 
 #include "io/reader.h"
 #include "io/writer.h"
+
+#include "util/strings.h"
 
 #include <strstream.h>
 
@@ -44,13 +46,19 @@ GbColor::~GbColor() {}
 //
 
 Value* GbColor::clone() const
-{ return new GbColor(*this);}
+{
+  return new GbColor(*this);
+}
 
-const char* GbColor::getNativeTypeName() const
-{ return "GbColor"; }
+fstring GbColor::getNativeTypeName() const
+{
+  static fstring name("GbColor"); return name;
+}
 
 void GbColor::printTo(STD_IO::ostream& os) const
-{ os << r() << " " << g()  << " " << b() << " " << a(); }
+{
+  os << r() << " " << g()  << " " << b() << " " << a();
+}
 
 void GbColor::scanFrom(STD_IO::istream& is)
 {
@@ -76,7 +84,9 @@ const char* GbColor::get(Util::TypeCue<const char*>) const
 }
 
 void GbColor::assignTo(Value& other) const
-{ other.set(this->get(Util::TypeCue<const char*>())); }
+{
+  other.set(this->get(Util::TypeCue<const char*>()));
+}
 
 //
 // Field interface

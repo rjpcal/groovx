@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:19:17 1999
-// written: Thu Aug  9 07:08:50 2001
+// written: Thu Aug  9 07:32:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,6 +30,8 @@ class ostream;
 #    define IOSFWD_DEFINED
 #  endif
 #endif
+
+class fstring;
 
 /**
  *
@@ -77,7 +79,7 @@ public:
   virtual Value* clone() const = 0;
 
   /// Return a string giving the name of the native type.
-  virtual const char* getNativeTypeName() const = 0;
+  virtual fstring getNativeTypeName() const = 0;
 
   /// Write the value to an \c STD_IO::ostream.
   virtual void printTo(STD_IO::ostream& os) const;
@@ -162,7 +164,7 @@ public:
 
   virtual Value* clone() const;
 
-  virtual const char* getNativeTypeName() const;
+  virtual fstring getNativeTypeName() const;
 
   virtual void printTo(STD_IO::ostream& os) const;
   virtual void scanFrom(STD_IO::istream& is);
@@ -222,7 +224,7 @@ public:
 
   virtual Value* clone() const;
 
-  virtual const char* getNativeTypeName() const;
+  virtual fstring getNativeTypeName() const;
 
   virtual void printTo(STD_IO::ostream& os) const;
   virtual void scanFrom(STD_IO::istream& is);

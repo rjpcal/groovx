@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:09:31 2000
-// written: Wed Aug  8 20:16:38 2001
+// written: Thu Aug  9 07:32:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ public:
 
 public:
   virtual Value* clone() const;
-  virtual const char* getNativeTypeName() const;
+  virtual fstring getNativeTypeName() const;
   virtual void printTo(STD_IO::ostream& os) const;
   virtual void scanFrom(STD_IO::istream& is);
 

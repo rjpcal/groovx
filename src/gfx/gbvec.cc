@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:11:19 2000
-// written: Wed Aug  8 20:16:40 2001
+// written: Thu Aug  9 07:28:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,8 @@
 
 #include "io/reader.h"
 #include "io/writer.h"
+
+#include "util/strings.h"
 
 #include <strstream.h>
 
@@ -45,15 +47,21 @@ GbVec3<T>::~GbVec3() {}
 
 template <class T>
 Value* GbVec3<T>::clone() const
-{ return new GbVec3(*this);}
+{
+  return new GbVec3(*this);
+}
 
 template <class T>
-const char* GbVec3<T>::getNativeTypeName() const
-{ return "GbVec3"; }
+fstring GbVec3<T>::getNativeTypeName() const
+{
+  static fstring name("GbVec3"); return name;
+}
 
 template <class T>
 void GbVec3<T>::printTo(STD_IO::ostream& os) const
-{ os << x() << " " << y()  << " " << z(); }
+{
+  os << x() << " " << y()  << " " << z();
+}
 
 template <class T>
 void GbVec3<T>::scanFrom(STD_IO::istream& is)
