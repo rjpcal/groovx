@@ -342,17 +342,21 @@ DOTRACE("MorphyFace::grRender");
                        itsEyeHeight,
                        1.0);
 
+        ls.closeLoop(true);
         ls.begin(canvas, 0.01*itsStrokeWidth);
-        // Two bezier curves end to end, sharing a common vertex in the middle
+        // Two bezier curves end to end, sharing common vertices in the middle
         ls.drawBezier4(s1*eye_ctrlpnts[3], s1*eye_ctrlpnts[2],
                        s1*eye_ctrlpnts[1], s1*eye_ctrlpnts[0],
-                       eye_subdivisions);
+                       eye_subdivisions, 1 /* skip the first vertex since
+                                              it will be wrapped around to
+                                              in the next bezier curve */);
         ls.drawBezier4(s2*eye_ctrlpnts[0], s2*eye_ctrlpnts[1],
                        s2*eye_ctrlpnts[2], s2*eye_ctrlpnts[3],
                        eye_subdivisions, 1 /* skip the first vertex since
                                               it was already covered by the
                                               previous bezier curve */);
         ls.end();
+        ls.closeLoop(false);
       }
 
       // Draw eyebrow
@@ -402,6 +406,7 @@ DOTRACE("MorphyFace::grRender");
   // Draw face outline.
   //
 
+  ls.closeLoop(true);
   ls.begin(canvas, 0.015*itsStrokeWidth);
   ls.drawBezier4(Vec3d(itsFaceWidth, 0.0, 0.0),
                  Vec3d(itsBottomWidth*itsFaceWidth,
@@ -409,8 +414,16 @@ DOTRACE("MorphyFace::grRender");
                  Vec3d(-itsBottomWidth*itsFaceWidth,
                        itsBottomHeight*4.0/3.0, 0.0),
                  Vec3d(-itsFaceWidth, 0.0, 0.0),
-                 50);
+                 50, 1);
+  ls.drawBezier4(Vec3d(-itsFaceWidth, 0.0, 0.0),
+                 Vec3d(-itsTopWidth*itsFaceWidth,
+                       itsTopHeight*4.0/3.0, 0.0),
+                 Vec3d(itsTopWidth*itsFaceWidth,
+                       itsTopHeight*4.0/3.0, 0.0),
+                 Vec3d(itsFaceWidth, 0.0, 0.0),
+                 50, 1);
   ls.end();
+  ls.closeLoop(false);
 
   //
   // Draw nose.
