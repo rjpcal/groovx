@@ -3,7 +3,7 @@
 // xbmaprenderer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 17:22:34 1999
-// written: Mon Dec  6 23:10:07 1999
+// written: Wed Jan 12 15:48:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,6 @@
 
 #define NO_TRACE
 #include "trace.h"
-#define LOCAL_DEBUG
 #define LOCAL_ASSERT
 #include "debug.h"
 
