@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 17:45:52 2001
-// written: Wed Aug 22 17:55:59 2001
+// written: Wed Aug 22 18:38:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,10 @@
 
 #include "gfx/gxcolor.h"
 
+#include "gfx/canvas.h"
+
 #include "io/reader.h"
 #include "io/writer.h"
-
-#include <GL/gl.h>
 
 namespace
 {
@@ -65,14 +65,14 @@ const FieldMap& GxColor::classFields()
   return GXCOLOR_FIELDS;
 }
 
-void GxColor::draw(Gfx::Canvas&) const
+void GxColor::draw(Gfx::Canvas& canvas) const
 {
-  glColor4dv(rgbaColor.color().data());
+  canvas.setColor(rgbaColor);
 }
 
-void GxColor::undraw(Gfx::Canvas&) const
+void GxColor::undraw(Gfx::Canvas& canvas) const
 {
-  glColor4dv(rgbaColor.color().data());
+  canvas.setColor(rgbaColor);
 }
 
 static const char vcid_gxcolor_cc[] = "$Header$";
