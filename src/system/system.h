@@ -3,13 +3,18 @@
 // system.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Nov 17 15:05:41 1999
-// written: Wed Nov 17 15:45:00 1999
+// written: Wed Nov 17 17:40:49 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SYSTEM_H_DEFINED
 #define SYSTEM_H_DEFINED
+
+#ifndef STRING_DEFINED
+#include <string>
+#define STRING_DEFINED
+#endif
 
 ///
 class System {
@@ -76,6 +81,40 @@ public:
                resolving path.
        EIO     An I/O error occurred. */
   int chmod(const char* path, mode_t mode);
+
+
+  /**  DESCRIPTION
+       rename  renames  a  file, moving it between directories if
+       required.
+
+       Any other hard links to the file (as created  using  link)
+       are unaffected.
+
+       If  newpath already exists it will be atomically overwrit-
+       ten (subject to a few conditions - see ERRORS  below),  so
+       that there is no point at which another process attempting
+       to access newpath will find it missing.
+
+       If newpath exists but the operation fails for some  reason
+       or  the  system  crashes  rename  guarantees  to  leave an
+       instance of newpath in place.
+
+       However, when overwriting there will probably be a  window
+       in  which both oldpath and newpath refer to the file being
+       renamed.
+
+       If oldpath refers to a symbolic link the link is  renamed;
+       if  newpath  refers  to  a  symbolic link the link will be
+       overwritten.
+
+		 RETURN VALUE
+       On success, zero is returned.  On error, -1  is  returned,
+       and errno is set appropriately. */
+  int rename(const char* oldpath, const char* newpath);
+
+
+  /// Get the absolute pathname of the current working directory
+  string getcwd();
 };
 
 static const char vcid_system_h[] = "$Header$";
