@@ -255,7 +255,7 @@ DOTRACE("slice::get_sort_order");
 
   std::sort(buf.begin(), buf.end());
 
-  mtx index(1,nelems());
+  mtx index = mtx::uninitialized(1, this->nelems());
 
   for (int i = 0; i < nelems(); ++i)
     {
@@ -293,7 +293,7 @@ DOTRACE("slice::reorder");
   if (index.mrows() != nelems())
     throw rutz::error("dimension mismatch in slice::reorder", SRC_POS);
 
-  mtx neworder(nelems(), 1);
+  mtx neworder = mtx::uninitialized(this->nelems(), 1);
 
   for (int i = 0; i < nelems(); ++i)
     neworder.at(i,0) = (*this)[int(index.at(i,0))];
@@ -499,16 +499,14 @@ mtx::mtx(double* data, int mrows, int ncols, storage_policy s) :
 DOTRACE("mtx::mtx(double*, int, int, storage_policy)");
 }
 
-mtx::mtx(int mrows, int ncols, init_policy p) :
-  Base(mrows, ncols, data_holder(mrows, ncols, p))
+mtx mtx::zeros(const mtx_shape& s)
 {
-DOTRACE("mtx::mtx(int, int, init_policy)");
+  return mtx(s, data_holder(s.mrows(), s.ncols(), ZEROS));
 }
 
-mtx::mtx(const mtx_shape& s, init_policy p) :
-  Base(s.mrows(), s.ncols(), data_holder(s.mrows(), s.ncols(), p))
+mtx mtx::uninitialized(const mtx_shape& s)
 {
-DOTRACE("mtx::mtx(const mtx_shape&, init_policy)");
+  return mtx(s, data_holder(s.mrows(), s.ncols(), NO_INIT));
 }
 
 const mtx& mtx::empty_mtx()
@@ -517,7 +515,7 @@ DOTRACE("mtx::empty_mtx");
   static mtx* m = 0;
   if (m == 0)
     {
-      m = new mtx(0,0);
+      m = new mtx(mtx::zeros(0,0));
     }
   return *m;
 }
@@ -538,7 +536,7 @@ DOTRACE("mtx::resize");
     return;
   else
     {
-      mtx newsize(mrows_new, ncols_new, ZEROS);
+      mtx newsize = mtx::zeros(mrows_new, ncols_new);
       this->swap(newsize);
     }
 }
@@ -549,7 +547,7 @@ DOTRACE("mtx::contig");
   if (mrows() == rowstride())
     return *this;
 
-  mtx result(this->mrows(), this->ncols(), NO_INIT);
+  mtx result = mtx::uninitialized(this->shape());
 
   std::copy(this->colmaj_begin(), this->colmaj_end(),
             result.colmaj_begin_nc());
@@ -585,7 +583,7 @@ DOTRACE("mtx::reorder_rows");
     throw rutz::error("dimension mismatch in mtx::reorder_rows",
                       SRC_POS);
 
-  mtx neworder(mrows(), ncols());
+  mtx neworder = mtx::uninitialized(this->shape());
 
   for (int r = 0; r < mrows(); ++r)
     neworder.row(r) = row(int(index.at(r,0)));
@@ -603,7 +601,7 @@ DOTRACE("mtx::reorder_columns");
     throw rutz::error("dimension mismatch in mtx::reorder_columns",
                       SRC_POS);
 
-  mtx neworder(mrows(), ncols());
+  mtx neworder = mtx::uninitialized(this->shape());
 
   for (int c = 0; c < ncols(); ++c)
     neworder.column(c) = column(int(index.at(c,0)));
@@ -624,7 +622,7 @@ mtx mtx::mean_row() const
 {
 DOTRACE("mtx::mean_row");
 
-  mtx res(1, ncols());
+  mtx res = mtx::uninitialized(1, ncols());
 
   mtx_iter resiter = res.row(0).begin_nc();
 
@@ -638,7 +636,7 @@ mtx mtx::mean_column() const
 {
 DOTRACE("mtx::mean_column");
 
-  mtx res(mrows(), 1);
+  mtx res = mtx::uninitialized(mrows(), 1);
 
   mtx_iter resiter = res.column(0).begin_nc();
 
@@ -785,7 +783,7 @@ namespace
   template <class Op>
   mtx unary_op(const mtx& src, Op op)
   {
-    mtx result(src.mrows(), src.ncols(), mtx::NO_INIT);
+    mtx result = mtx::uninitialized(src.shape());
 
     std::transform(src.colmaj_begin(), src.colmaj_end(),
                    result.colmaj_begin_nc(),
@@ -825,7 +823,7 @@ namespace
       throw rutz::error("dimension mismatch in binary_op(mtx, mtx)",
                         SRC_POS);
 
-    mtx result(m1.mrows(), m1.ncols(), mtx::NO_INIT);
+    mtx result = mtx::uninitialized(m1.shape());
 
     std::transform(m1.colmaj_begin(), m1.colmaj_end(),
                    m2.colmaj_begin(),

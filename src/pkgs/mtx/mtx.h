@@ -805,9 +805,15 @@ public:
 
   mtx(double* data, int mrows, int ncols, storage_policy s = COPY);
 
-  mtx(const mtx_shape& s, init_policy p = ZEROS);
+  static mtx zeros(const mtx_shape& s);
 
-  mtx(int mrows, int ncols, init_policy p = ZEROS);
+  static mtx uninitialized(const mtx_shape& s);
+
+  static mtx zeros(int mrows, int ncols)
+  { return zeros(mtx_shape(mrows, ncols)); }
+
+  static mtx uninitialized(int mrows, int ncols)
+  { return uninitialized(mtx_shape(mrows, ncols)); }
 
   mtx(const slice& s);
 
