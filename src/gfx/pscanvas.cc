@@ -55,6 +55,7 @@ DBG_REGISTER
 
 using geom::vec2i;
 using geom::vec2d;
+using geom::vec3i;
 using geom::vec3d;
 
 class Gfx::PSCanvas::Impl
@@ -658,24 +659,24 @@ DOTRACE("Gfx::PSCanvas::~PSCanvas");
   delete rep;
 }
 
-vec2i Gfx::PSCanvas::screenFromWorld(
-  const vec2d& /*world_pos*/
+vec3i Gfx::PSCanvas::screenFromWorld(
+  const vec3d& /*world_pos*/
   ) const
 {
-DOTRACE("Gfx::PSCanvas::screenFromWorld(vec2d)");
+DOTRACE("Gfx::PSCanvas::screenFromWorld(vec3d)");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
-  return vec2i();
+  return vec3i();
 }
 
-vec2d Gfx::PSCanvas::worldFromScreen(
-  const vec2i& /*screen_pos*/
+vec3d Gfx::PSCanvas::worldFromScreen(
+  const vec3i& /*screen_pos*/
   ) const
 {
-DOTRACE("Gfx::PSCanvas::worldFromScreen(vec2i)");
+DOTRACE("Gfx::PSCanvas::worldFromScreen(vec3i)");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
-  return vec2d();
+  return vec3d();
 }
 
 
