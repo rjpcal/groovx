@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 13 09:07:00 2001
-// written: Fri Jul 13 14:28:32 2001
+// written: Fri Jul 13 15:04:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,6 +86,12 @@ namespace Tcl
       return (obj.get()->*itsMemFunc)(p1, p2, p3);
     }
 
+    template <class P1, class P2, class P3, class P4>
+    R operator()(Ref<C> obj, P1 p1, P2 p2, P3 p3, P4 p4)
+    {
+      return (obj.get()->*itsMemFunc)(p1, p2, p3, p4);
+    }
+
   private:
     MemFunc itsMemFunc;
   };
@@ -131,6 +137,17 @@ namespace Tcl
     typedef P3 Arg4_t;
   };
 
+  template <class R, class C, class P1, class P2, class P3, class P4>
+  struct FuncTraits<R (C::*)(P1, P2, P3, P4)>
+  {
+    enum { numArgs = 4 };
+    typedef Ref<C> Arg1_t;
+    typedef P1 Arg2_t;
+    typedef P2 Arg3_t;
+    typedef P3 Arg4_t;
+    typedef P4 Arg5_t;
+  };
+
   template <class R, class C, class MF>
   struct FuncTraits<MemFunctor<R,C,MF> > : public FuncTraits<MF> {};
 
@@ -167,6 +184,13 @@ namespace Tcl
   wrapFunc(R (C::*mf)(P1,P2,P3))
   {
     return MemFunctor<R,C, R (C::*)(P1, P2, P3)>(mf);
+  }
+
+  template <class R, class C, class P1, class P2, class P3, class P4>
+  inline Functor5<R, MemFunctor<R,C, R (C::*)(P1, P2, P3, P4)> >
+  wrapFunc(R (C::*mf)(P1,P2,P3,P4))
+  {
+    return MemFunctor<R,C, R (C::*)(P1, P2, P3, P4)>(mf);
   }
 
 }
