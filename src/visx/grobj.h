@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Wed Mar 22 16:47:04 2000
+// written: Thu Mar 23 09:54:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -221,6 +221,7 @@ public:
   virtual void deserialize(istream &is, IOFlag flag);
   virtual int charCount() const;
 
+  virtual unsigned long serialVersionId() const;
   virtual void readFrom(Reader* reader);
   virtual void writeTo(Writer* writer) const;
 
