@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Tue Aug 21 14:24:22 2001
+// written: Tue Aug 21 14:55:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,12 +17,21 @@
 
 #include "util/dlink_list.h"
 #include "util/ref.h"
-#include "util/slot.h"
 
 #define NO_TRACE
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
+
+///////////////////////////////////////////////////////////////////////
+//
+// Slot members
+//
+///////////////////////////////////////////////////////////////////////
+
+Util::Slot::~Slot() {
+DOTRACE("Util::Slot::~Slot");
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -62,34 +71,24 @@ DOTRACE("Util::Signal::~Signal");
   delete itsImpl;
 }
 
-Util::UID Util::Signal::connect(Util::Slot* obs)
-{
-DOTRACE("Util::Signal::connect");
-  return doConnect(ObsRef(obs, Util::WEAK));
-}
-
-void Util::Signal::disconnect(Util::UID obs)
+void Util::Signal::disconnect(Util::WeakRef<Util::Slot> slot)
 {
 DOTRACE("Util::Signal::disconnect");
-  if (obs == 0) return;
+  if (!slot.isValid()) return;
 
-  ObsRef ref(obs, Util::WEAK);
-
-  itsImpl->itsSlots.remove(ref);
+  itsImpl->itsSlots.remove(slot);
 
   DebugEvalNL(itsImpl->itsSlots.size());
 }
 
-Util::UID Util::Signal::doConnect(Util::WeakRef<Util::Slot> obs)
+void Util::Signal::connect(Util::WeakRef<Util::Slot> slot)
 {
-DOTRACE("Util::Signal::doConnect");
-  if (!obs.isValid()) return 0;
+DOTRACE("Util::Signal::connect");
+  if (!slot.isValid()) return;
 
-  itsImpl->itsSlots.push_back(obs);
+  itsImpl->itsSlots.push_back(ObsRef(slot.get(), Util::WEAK));
 
   DebugEvalNL(itsImpl->itsSlots.size());
-
-  return obs.id();
 }
 
 void Util::Signal::emitSignal() const
@@ -100,11 +99,20 @@ DOTRACE("Util::Signal::emitSignal");
          ii = itsImpl->itsSlots.begin(),
          end = itsImpl->itsSlots.end();
        ii != end;
-       ++ii)
+       /* incr in loop */)
     {
       DebugPrintNL("sending state change...");
       if ((*ii).isValid())
-        (*ii)->receiveSignal();
+        {
+          (*ii)->receiveSignal();
+          ++ii;
+        }
+      else
+        {
+          ListType::iterator erase_me = ii;
+          ++ii;
+          itsImpl->itsSlots.erase(erase_me);
+        }
     }
 }
 

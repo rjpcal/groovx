@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Tue Aug 21 14:24:43 2001
+// written: Tue Aug 21 14:52:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef SIGNAL_H_DEFINED
 #define SIGNAL_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(SLOT_H_DEFINED)
-#include "util/slot.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
+#include "util/object.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REF_H_DEFINED)
@@ -27,6 +27,29 @@ namespace Util
   template <class C, class MF> class SlotAdapter;
   class Signal;
 }
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * Along with Signal, implements the Slot design pattern. An Slot can
+ * be informed of changes in an Signal by calling connect() on that
+ * Signal. Thereafter, the Slot will receive notifications of changes
+ * in the Signal via receiveSignal().
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+class Util::Slot : public virtual Util::Object {
+public:
+  /// Virtual destructor.
+  virtual ~Slot();
+
+  template<class C, class MF>
+  static Util::WeakRef<Util::Slot> make(C* obj, MF mf);
+
+  /// Informs the Slot that one of its subjects has changed.
+  virtual void receiveSignal() = 0;
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -51,25 +74,23 @@ public:
   virtual ~Signal();
 
   /// Add a Slot to the list of those watching this Signal.
-  Util::UID connect(Slot* obs);
+  void connect(Util::WeakRef<Util::Slot> slot);
 
   /** Connect an object to this Signal, so that when the signal is
       triggered, \a mem_func will be called on \a obj. \c connect()
       returns the Util::UID of the connection object that is
       created. */
   template <class C, class MF>
-  Util::UID connect(C* obj, MF mem_func);
+  void connect(C* obj, MF mem_func);
 
   /// Remove a Slot from the list of those watching this Signal.
-  void disconnect(Util::UID obs);
+  void disconnect(Util::WeakRef<Util::Slot> slot);
 
   /** Informs all this object's Slots that this Signal's state
       has changed */
   void emitSignal() const;
 
 private:
-  // Returns the id of the Slot object.
-  Util::UID doConnect(Util::WeakRef<Util::Slot> obs);
 
   Signal(const Signal&);
   Signal& operator=(const Signal&);
@@ -78,6 +99,16 @@ private:
 
   SigImpl* itsImpl;
 };
+
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * SlotAdapter class implements the slot interface from a target
+ * object and a member function to apply to that object.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
 
 template <class C, class MF>
 class Util::SlotAdapter : public Util::Slot
@@ -98,17 +129,24 @@ public:
   }
 };
 
+
+///////////////////////////////////////////////////////////////////////
+//
+// Inline function definitions
+//
+///////////////////////////////////////////////////////////////////////
+
 template <class C, class MF>
-Util::WeakRef<Util::Slot> makeSlot(C* obj, MF mf)
+inline Util::WeakRef<Util::Slot> Util::Slot::make(C* obj, MF mf)
 {
   return Util::WeakRef<Util::Slot>
     (Util::SlotAdapter<C, MF>::make(obj, mf));
 };
 
 template <class C, class MF>
-inline Util::UID Util::Signal::connect(C* obj, MF mem_func)
+inline void Util::Signal::connect(C* obj, MF mem_func)
 {
-  return doConnect(makeSlot(obj, mem_func));
+  connect(Slot::make(obj, mem_func));
 }
 
 static const char vcid_signal_h[] = "$Header$";
