@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Tue Jun 12 10:48:26 2001
+// written: Fri Jun 15 14:46:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,8 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILFWD_H_DEFINED)
 #include "util/utilfwd.h"
 #endif
+
+#include <iterator>
 
 /**
  *
@@ -95,6 +97,12 @@ public:
   public:
     IdIterator(const Iterator& other) : Iterator(other) {}
 
+    typedef forward_iterator_tag iterator_category;
+    typedef int value_type;
+    typedef ptrdiff_t difference_type;
+    typedef void pointer;
+    typedef void reference;
+
     int operator*() const { return getId(); }
   };
 
@@ -102,6 +110,12 @@ public:
     PtrIterator();
   public:
     PtrIterator(const Iterator& other) : Iterator(other) {}
+
+    typedef forward_iterator_tag iterator_category;
+    typedef Util::Object* value_type;
+    typedef ptrdiff_t difference_type;
+    typedef void pointer;
+    typedef void reference;
 
     Util::Object* operator*() const { return getObject(); }
   };
