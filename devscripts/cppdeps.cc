@@ -51,11 +51,12 @@
 #include <time.h>      // for time()
 #include <unistd.h>
 
-using std::vector;
+using std::cerr;
 using std::map;
+using std::ostream;
 using std::set;
 using std::string;
-using std::cerr;
+using std::vector;
 
 namespace
 {
@@ -174,7 +175,7 @@ namespace
     return p;
   }
 
-  void print_stringvec(std::ostream& out, const vector<string>& v)
+  void print_stringvec(ostream& out, const vector<string>& v)
   {
     out << "[";
     for (unsigned int i = 0; i < v.size(); ++i)
@@ -578,14 +579,14 @@ namespace
 
     bool should_prune() const;
 
-    std::ostream& info()
+    static ostream& info()
     {
       if (cfg.verbosity >= NOISY)
         for (int i = 0; i < s_nest_level; ++i) cerr << '\t';
       return cerr;
     }
 
-    std::ostream& warning()
+    static ostream& warning()
     {
       if (cfg.verbosity >= NOISY)
         for (int i = 0; i < s_nest_level; ++i) cerr << '\t';
@@ -1048,7 +1049,7 @@ namespace
     // this turns out to be cheaper than building up the list in a
     // std::vector and then doing a big std::sort, std::unique(), and
     // vec.erase() at the end
-    std::set<file_info*, file_info_cmp> dep_set;
+    set<file_info*, file_info_cmp> dep_set;
 
     dep_set.insert(this);
 
@@ -1123,7 +1124,7 @@ namespace
         return this->m_direct_ldeps;
       }
 
-    std::set<file_info*> deps_set;
+    set<file_info*> deps_set;
 
     ++file_info::s_nest_level;
     const dep_list_t& cdeps = this->get_nested_cdeps();
@@ -1663,8 +1664,7 @@ void cppdeps::print_link_deps(file_info* finfo)
 
   const dep_list_t& ldeps = finfo->get_nested_ldeps();
 
-  // FIXME just store pointers here
-  std::set<string> links;
+  set<string> links;
 
   for (dep_list_t::const_iterator
          itr = ldeps.begin(),
@@ -1680,7 +1680,7 @@ void cppdeps::print_link_deps(file_info* finfo)
         }
     }
 
-  for (std::set<string>::iterator
+  for (set<string>::iterator
          itr = links.begin(),
          stop = links.end();
        itr != stop;
@@ -1705,7 +1705,7 @@ void cppdeps::print_link_deps(file_info* finfo)
         }
     }
 
-  for (std::set<string>::iterator
+  for (set<string>::iterator
          itr = links.begin(),
          stop = links.end();
        itr != stop;
