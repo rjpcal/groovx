@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Thu Oct  5 18:42:52 2000
+// written: Fri Oct  6 10:08:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -221,6 +221,14 @@ DOTRACE("VoidPtrList::insertVoidPtrAt");
   }
 
   Assert(itsImpl->itsVec.size() > uid);
+
+  if (itsImpl->itsVec[uid].ptr != 0)
+	 {
+		InvalidIdError err("object already exists at id '");
+		err.appendNumber(id);
+		err.appendMsg("' in ", demangle_cstr(typeid(*this).name()));
+		throw err;
+	 }
 
   // Check to see if we are attempting to insert the same object that
   // is already at location 'id'; if so, we return immediately, since
