@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Thu May 25 15:52:52 2000
+// written: Tue May 30 16:56:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,9 +111,6 @@ ToglConfig::ToglConfig(Tcl_Interp* interp, const char* pathname,
   itsFixedScale(1.0),
   itsMinRect(),
   itsFontListBase(0),
-  itsUsingRgba(false),
-  itsHasPrivateCmap(false),
-  itsIsDoubleBuffered(false),
   itsDestroyCallback(0)
 {
 DOTRACE("ToglConfig::ToglConfig"); 
@@ -127,16 +124,12 @@ DOTRACE("ToglConfig::ToglConfig");
   
   setUnitAngle(unit_angle);
 
-  itsUsingRgba = (getIntParam("rgba") != 0);
-  itsHasPrivateCmap = (getIntParam("privatecmap") != 0);
-  itsIsDoubleBuffered = (getIntParam("double") != 0);
-
-  if ( itsUsingRgba ) {
+  if ( itsWidget->usesRgba() ) {
     glColor4f(1.0, 1.0, 1.0, 1.0);
     glClearColor(0.0, 0.0, 0.0, 1.0);
   }
   else { // not using rgba
-    if ( itsHasPrivateCmap ) {
+    if ( itsWidget->hasPrivateCmap() ) {
       glClearIndex(0);
       glIndexi(1);
     }
@@ -185,53 +178,9 @@ DOTRACE("ToglConfig::getMinRect");
   return itsMinRect;
 }
 
-Tcl_Obj* ToglConfig::getParamValue(const char* param) const {
-DOTRACE("ToglConfig::getParamValue");
-  // Build a Tcl command string to fetch the value of param
-  // command will look like:
-  //     pathname configure -param
-  dynamic_string cmd_str = pathname(itsWidget);
-  cmd_str += " configure -";
-  cmd_str += param;
-
-  Tcl::TclEvalCmd cmd(cmd_str.c_str(), Tcl::TclEvalCmd::BACKGROUND_ERROR);
-
-  // Execute the command
-  Tcl_Interp* interp = itsWidget->interp();
-  if ( cmd.invoke(interp) != TCL_OK ) return NULL;
-
-  // The resulting list will look like:
-  //          -rgba rgba Rgba true 0
-  // (i.e.)   -cmd_name all_lower with_upper default_val current_val
-  // So...
-  // get the current value, the fifth object from the resulting list 
-  Tcl_Obj* list = Tcl_GetObjResult(interp);
-  Tcl_Obj* obj = NULL;
-  if ( Tcl_ListObjIndex(interp, list, 4, &obj) != TCL_OK ) return NULL;
-  Tcl_IncrRefCount(obj);
-
-  // Restore the previous result value
-  Tcl_ResetResult(interp);
-  return obj;
-}
-
 Tcl_Interp* ToglConfig::getInterp() const {
 DOTRACE("ToglConfig::getInterp");
   return itsWidget->interp();
-}
-
-int ToglConfig::getIntParam(const char* param) const {
-DOTRACE("ToglConfig::getIntParam");
-  Tcl_Obj* obj = getParamValue(param);
-  int value;
-  if ( Tcl_GetIntFromObj(itsWidget->interp(), obj, &value) != TCL_OK ) {
-	 Tcl_DecrRefCount(obj);
-	 ToglError err("couldn't get integer parameter: ");
-	 err.appendMsg(param);
-	 throw err;
-  }
-  Tcl_DecrRefCount(obj);
-  return value;
 }
 
 int ToglConfig::getHeight() const {
@@ -564,7 +513,7 @@ DOTRACE("ToglConfig::writeEpsFile");
   {
 	 // Set fore/background colors to extremes for the purposes of EPS
 	 // rendering
-	 if ( itsUsingRgba ) {
+	 if ( itsWidget->usesRgba() ) {
 		glColor4d(0.0, 0.0, 0.0, 1.0);
 		glClearColor(1.0, 1.0, 1.0, 1.0);
 	 }

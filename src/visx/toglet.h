@@ -3,7 +3,7 @@
 // toglconfig.h
 // Rob Peters 
 // created: Jan-99
-// written: Thu May 25 14:45:52 2000
+// written: Tue May 30 16:56:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,8 +61,6 @@ public:
   int getHeight() const;
   unsigned int getFontListBase() const { return itsFontListBase; }
   Tcl_Interp* getInterp() const;
-  int getIntParam(const char* param) const;
-  Tcl_Obj* getParamValue(const char* param) const;
   int getWidth() const;
   Color queryColor(unsigned int color_index) const {
 	 Color col;
@@ -125,10 +123,6 @@ private:
   double itsFixedScale;
   Rect<double> itsMinRect;
   unsigned int itsFontListBase;
-
-  bool itsUsingRgba;
-  bool itsHasPrivateCmap;
-  bool itsIsDoubleBuffered;
 
   scoped_ptr<DestroyCallback> itsDestroyCallback;
 };
