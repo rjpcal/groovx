@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Wed Mar 14 15:19:39 2001
+// written: Wed Mar 14 15:54:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -149,8 +149,10 @@ void Mtx::leftMultAndAssign(const ConstSlice& vec, Slice& result) const
 		 (result.nelems() != ncols_) )
 	 throw ErrorWithMsg("dimension mismatch in Mtx::leftMultAndAssign");
 
+  ConstSlice::ConstIterator veciter = vec.begin();
+
   for (int col = 0; col < ncols_; ++col)
-	 result[col] = Slice::dot(vec, this->column(col));
+	 result[col] = Slice::dot(veciter, this->colIter(col));
 }
 
 void Mtx::makeUnique()
