@@ -89,6 +89,9 @@ public:
   /// Get a string describing the current cursor.
   const char* getCursor() const;
 
+  /// Move the mouse pointer (cursor) to the given coordinates within the widget.
+  void warpPointer(int x, int y) const;
+
   void pack();
 
   void iconify();
