@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Wed Aug 22 18:16:05 2001
+// written: Wed Aug 22 18:21:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,11 +105,11 @@ public:
   /// Restore the previously saved matrix.
   virtual void popMatrix() const = 0;
 
-  /// Save the entire current state.
-  virtual void pushFullState() const = 0;
+  /// Save the entire current attrib set.
+  virtual void pushAttribs() const = 0;
 
-  /// Restore the previously saved entire state.
-  virtual void popFullState() const = 0;
+  /// Restore the previously saved entire attrib set.
+  virtual void popAttribs() const = 0;
 
   typedef void (Gfx::Canvas::* Manip)() const;
 
@@ -140,10 +140,10 @@ public:
   typedef Saver<&Gfx::Canvas::pushMatrix, &Gfx::Canvas::popMatrix>
   MatrixSaver;
 
-  /** \c MatrixSaver handles saving and restoring of the full canvas
-      state within a lexical scope. */
-  typedef Saver<&Gfx::Canvas::pushFullState, &Gfx::Canvas::popFullState>
-  FullSaver;
+  /** \c MatrixSaver handles saving and restoring of all of the canvas
+      attribs within a lexical scope. */
+  typedef Saver<&Gfx::Canvas::pushAttribs, &Gfx::Canvas::popAttribs>
+  AttribSaver;
 
   virtual void translate(const Gfx::Vec3<double>& v) const = 0;
   virtual void scale(const Gfx::Vec3<double>& v) const = 0;

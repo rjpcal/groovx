@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Aug 22 18:19:16 2001
+// written: Wed Aug 22 18:21:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -318,15 +318,15 @@ DOTRACE("GLCanvas::popMatrix");
   glPopMatrix();
 }
 
-void GLCanvas::pushFullState() const
+void GLCanvas::pushAttribs() const
 {
-DOTRACE("GLCanvas::pushFullState");
+DOTRACE("GLCanvas::pushAttribs");
   glPushAttrib(GL_ALL_ATTRIB_BITS);
 }
 
-void GLCanvas::popFullState() const
+void GLCanvas::popAttribs() const
 {
-DOTRACE("GLCanvas::popFullState");
+DOTRACE("GLCanvas::popAttribs");
   glPopAttrib(GL_ALL_ATTRIB_BITS);
 }
 
