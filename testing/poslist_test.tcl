@@ -8,4 +8,4 @@
 ##############################################################################
 
 source ${::TEST_DIR}/list_test.tcl
-List::testList PoslistTcl PosList Pos Position Jitter
+List::testList Pos Position Jitter

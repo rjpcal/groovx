@@ -8,4 +8,4 @@
 ##############################################################################
 	 
 source ${::TEST_DIR}/list_test.tcl
-List::testList ObjlistTcl ObjList GrObj Face Fish
+List::testList GrObj Face Fish
