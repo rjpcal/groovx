@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Feb 25 13:52:11 2003
-// written: Tue Feb 25 14:02:24 2003
+// written: Wed Feb 26 08:48:20 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,29 +24,28 @@
 void Util::stdiobuf::init(FILE* f, int om, bool throw_exception)
 {
 DOTRACE("Util::stdiobuf::init");
-  file = f;
+  itsFile = f;
 
-  if (file != NULL)
+  if (itsFile != NULL)
     {
-      opened = true;
-      mode = om;
+      itsMode = om;
     }
 
-  if (throw_exception && !opened)
+  if (throw_exception && !is_open())
     {
       throw Util::Error("couldn't open file stdiobuf");
     }
 }
 
 Util::stdiobuf::stdiobuf(FILE* f, int om, bool throw_exception) :
-  opened(false), mode(0), file(0)
+  itsMode(0), itsFile(0)
 {
 DOTRACE("Util::stdiobuf::stdiobuf(FILE*)");
   init(f, om, throw_exception);
 }
 
 Util::stdiobuf::stdiobuf(int fd, int om, bool throw_exception) :
-  opened(false), mode(0), file(0)
+  itsMode(0), itsFile(0)
 {
 DOTRACE("Util::stdiobuf::stdiobuf(int)");
   FILE* f = 0;
@@ -85,11 +84,13 @@ DOTRACE("Util::stdiobuf::stdiobuf(int)");
 void Util::stdiobuf::close()
 {
 DOTRACE("Util::stdiobuf::close");
-  if (opened)
+  if (is_open())
     {
       sync();
-      opened = false;
-      fclose(file);
+      // No fclose(itsFile) here since we leave that up to whoever
+      // instantiated this stdiobuf.
+      itsFile = 0;
+      itsMode = 0;
     }
 }
 
@@ -117,9 +118,9 @@ DOTRACE("Util::stdiobuf::underflow");
     }
 
   // read new characters
-  size_t num = fread(buffer+pbackSize, 1, bufSize-pbackSize, file);
+  size_t num = fread(buffer+pbackSize, 1, bufSize-pbackSize, itsFile);
 
-  if (num == 0 && (feof(file) || ferror(file)))
+  if (num == 0 && (feof(itsFile) || ferror(itsFile)))
     return EOF;
 
   // reset buffer pointers
@@ -138,7 +139,7 @@ DOTRACE("Util::stdiobuf::underflow");
 int Util::stdiobuf::overflow(int c)
 {
 DOTRACE("Util::stdiobuf::overflow");
-  if (!(mode & std::ios::out) || !opened) return EOF;
+  if (!(itsMode & std::ios::out) || !is_open()) return EOF;
 
   if (c != EOF)
     {
@@ -166,10 +167,10 @@ int Util::stdiobuf::sync()
 
 int Util::stdiobuf::flushoutput()
 {
-  if (!(mode & std::ios::out) || !opened) return EOF;
+  if (!(itsMode & std::ios::out) || !is_open()) return EOF;
 
   int num = pptr()-pbase();
-  if ( fwrite(pbase(), 1, num, file) != num )
+  if ( fwrite(pbase(), 1, num, itsFile) != num )
     {
       return EOF;
     }
