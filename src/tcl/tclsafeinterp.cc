@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Thu May 10 12:04:42 2001
+// written: Wed Jul 11 11:15:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,23 +42,6 @@ DOTRACE("Tcl::SafeInterface::handleError");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::SafeInterface -- Ints
-//
-///////////////////////////////////////////////////////////////////////
-
-int Tcl::SafeInterface::getInt(Tcl_Obj* intObj) const throw(Tcl::TclError) {
-DOTRACE("Tcl::SafeInterface::getInt");
-
-  int return_val=-1;
-  // OK if interp is 0
-  if (Tcl_GetIntFromObj(itsInterp, intObj, &return_val) != TCL_OK) {
-	 handleError("error getting int from Tcl_Obj");
-  }
-  return return_val;
-}
-
-///////////////////////////////////////////////////////////////////////
-//
 // Tcl::SafeInterface -- Lists
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,19 +53,19 @@ DOTRACE("Tcl::SafeInterface::listLength");
   int length;
   // OK if itsInterp is 0
   if (Tcl_ListObjLength(itsInterp, tcllist, &length) != TCL_OK) {
-	 handleError("error getting list length");
+    handleError("error getting list length");
   }
   return length;
 }
 
 Tcl_Obj* Tcl::SafeInterface::listElement(Tcl_Obj* tcllist,
-													  int index) const throw(Tcl::TclError) {
+                                         int index) const throw(Tcl::TclError) {
 DOTRACE("Tcl::SafeInterface::listElement");
 
   Tcl_Obj* element = 0;
   // OK if interp is 0
   if (Tcl_ListObjIndex(itsInterp, tcllist, index, &element) != TCL_OK) {
-	 handleError("error getting list element");
+    handleError("error getting list element");
   }
 
   Postcondition(element != 0);
@@ -90,13 +73,13 @@ DOTRACE("Tcl::SafeInterface::listElement");
 }
 
 void Tcl::SafeInterface::splitList(Tcl_Obj* tcllist, Tcl_Obj**& elements_out,
-											  int& length_out) const throw(Tcl::TclError) {
+                                   int& length_out) const throw(Tcl::TclError) {
 DOTRACE("Tcl::SafeInterface::splitList");
 
   // OK if itsInterp is 0
   if ( Tcl_ListObjGetElements(itsInterp, tcllist,
-										&length_out, &elements_out) != TCL_OK ) {
-	 handleError("error splitting list");
+                              &length_out, &elements_out) != TCL_OK ) {
+    handleError("error splitting list");
   }
 }
 
@@ -127,9 +110,9 @@ DOTRACE("Tcl::SafeInterp::evalBooleanExpr");
   int expr_result;
 
   if (Tcl_ExprBooleanObj(itsInterp, obj, &expr_result) != TCL_OK)
-	 {
-		handleError("error evaluating boolean expression");
-	 }
+    {
+      handleError("error evaluating boolean expression");
+    }
 
   return bool(expr_result);
 }
@@ -143,7 +126,7 @@ DOTRACE("Tcl::SafeInterp::evalBooleanExpr");
 bool Tcl::SafeInterp::interpDeleted() const {
 DOTRACE("Tcl::SafeInterp::interpDeleted");
 
-  Invariant(itsInterp != 0); 
+  Invariant(itsInterp != 0);
   return bool(Tcl_InterpDeleted(itsInterp));
 }
 
@@ -169,20 +152,20 @@ void Tcl::SafeInterp::setGlobalVar(const char* var_name, Tcl_Obj* var) const {
 DOTRACE("Tcl::SafeInterp::setGlobalVar");
 
   if (Tcl_SetVar2Ex(itsInterp, const_cast<char*>(var_name), /*name2*/0,
-						  var, TCL_GLOBAL_ONLY) == 0)
-	 {
-		handleError("couldn't set global variable");
-	 }
+                    var, TCL_GLOBAL_ONLY) == 0)
+    {
+      handleError("couldn't set global variable");
+    }
 }
 
 void Tcl::SafeInterp::unsetGlobalVar(const char* var_name) const {
 DOTRACE("Tcl::SafeInterp::unsetGlobalVar");
 
   if (Tcl_UnsetVar(itsInterp, const_cast<char*>(var_name),
-						 TCL_GLOBAL_ONLY) != TCL_OK)
-	 {
-		handleError("couldn't unset global variable");
-	 }
+                   TCL_GLOBAL_ONLY) != TCL_OK)
+    {
+      handleError("couldn't unset global variable");
+    }
 }
 
 static const char vcid_tclutil_cc[] = "$Header$";

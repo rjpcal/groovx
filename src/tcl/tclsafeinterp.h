@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Thu May 10 12:04:36 2001
+// written: Wed Jul 11 11:15:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,10 +57,7 @@ public:
   Tcl_Obj* listElement(Tcl_Obj* tcllist, int index) const throw(TclError);
 
   void splitList(Tcl_Obj* tcllist, Tcl_Obj**& elements_out,
-					  int& length_out) const throw(TclError);
-
-  // Ints
-  int getInt(Tcl_Obj* intObj) const throw(TclError);
+                 int& length_out) const throw(TclError);
 };
 
 ///////////////////////////////////////////////////////////////////////
