@@ -230,12 +230,12 @@ benchmarks: $(EXECUTABLE)
 	$(EXECUTABLE) $(SCRIPTS)/benchmarks.tcl -output $(LOGS)/benchmarks.txt
 
 # Remove all backups, temporaries, and coredumps
-clean:
+neat:
 	find . -name \*~ -exec rm -f {} \;
 	rm -f ./expt*2002.asw ./resp*2002 ./\#* ./core
 
 # Make clean, and also remove all debug object files
-cleaner: clean
+cleaner: neat
 	find $(OBJ) -follow -name \*.$(OBJEXT) -exec rm -f {} \;
 	find $(OBJ) -follow -name \*.ii -exec rm -f {} \;
 
