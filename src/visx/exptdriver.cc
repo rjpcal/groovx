@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Jun  6 15:54:58 2001
+// written: Wed Jun  6 16:27:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -198,9 +198,8 @@ public:
 
   GWT::Widget* getWidget()
 	 {
-		GWT::Widget* widg = ObjTogl::theGwtWidget();
-		Assert(widg != 0);
-		return widg;
+		Assert(itsWidget != 0);
+		return itsWidget;
 	 }
 
   GWT::Canvas* getCanvas()
@@ -228,6 +227,8 @@ private:
   ExptDriver* itsOwner;
 
   Tcl_Interp* itsInterp;
+
+  GWT::Widget* itsWidget;
 
   fixed_string itsHostname;	  // Host computer on which Expt was begun
   fixed_string itsSubject;		  // Id of subject on whom Expt was performed
@@ -261,6 +262,7 @@ ExptDriver::Impl::Impl(int argc, char** argv,
 							  ExptDriver* owner, Tcl_Interp* interp) :
   itsOwner(owner),
   itsInterp(interp),
+  itsWidget(ObjTogl::initTogl(interp)),
   itsHostname(""),
   itsSubject(""),
   itsBeginDate(""),

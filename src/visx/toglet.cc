@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Jun  6 16:12:09 2001
+// written: Wed Jun  6 16:30:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -149,7 +149,7 @@ DOTRACE("ToglConfig::ToglConfig");
   if (pack) {
 	 dynamic_string pack_cmd_str = "pack ";
 	 pack_cmd_str += itsTogl->pathname();
-	 pack_cmd_str += " -expand 1 -fill both";
+	 pack_cmd_str += " -expand 1 -fill both; update";
 	 Tcl::TclEvalCmd pack_cmd(pack_cmd_str.c_str(),
 									  Tcl::TclEvalCmd::THROW_EXCEPTION);
 	 pack_cmd.invoke(interp);

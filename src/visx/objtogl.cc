@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Jun  6 16:10:59 2001
+// written: Wed Jun  6 16:28:55 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -78,11 +78,6 @@ namespace ObjTogl {
 //
 ///////////////////////////////////////////////////////////////////////
 
-bool ObjTogl::toglHasBeenCreated() {
-DOTRACE("ObjTogl::toglHasBeenCreated");
-  return toglCreated;
-}
-
 GWT::Widget* ObjTogl::theGwtWidget() {
 DOTRACE("ObjTogl::theGwtWidget");
   return theToglConfig(); 
@@ -93,6 +88,46 @@ DOTRACE("ObjTogl::theToglConfig");
   if (!toglCreated) { throw Tcl::TclError("Togl not yet initialized"); }
   Assert(theWidget != 0);
   return theWidget;
+}
+
+  class WidgetDestroyCallback : public ToglConfig::DestroyCallback {
+  public:
+	 virtual void onDestroy(ToglConfig* config)
+		{
+		  if (ObjTogl::theWidget == config)
+			 {
+				ObjTogl::theWidget = 0;
+				ObjTogl::toglCreated = false;
+			 }
+		}
+  };
+
+GWT::Widget* ObjTogl::initTogl(Tcl_Interp* interp) {
+DOTRACE("ObjTogl::initTogl");
+
+  if (!toglCreated)
+	 {
+		const char* init_args = "-stereo false";
+
+		// Generate an argc/argv array of configuration options
+		int config_argc = 0;
+		char** config_argv = 0;
+		Tcl_SplitList(interp, init_args, &config_argc, &config_argv);
+
+		// Create a new ToglConfig object with the specified conguration
+		// options, viewing distance, and visual angle per GL unit
+		ObjTogl::theWidget = new ToglConfig(interp,
+														config_argc, config_argv);
+
+		Tcl_Free((char*) config_argv);
+
+		ObjTogl::theWidget->setDestroyCallback(new WidgetDestroyCallback);
+
+		toglCreated = true;
+	 }
+
+  Assert(ObjTogl::theWidget != 0);
+  return ObjTogl::theWidget;
 }
 
 //---------------------------------------------------------------------
@@ -233,49 +268,9 @@ public:
     Tcl::TclCmd(interp, cmd_name, 0, 1, 1) {}
 
 protected:
-  class WidgetDestroyCallback : public ToglConfig::DestroyCallback {
-  public:
-	 virtual void onDestroy(ToglConfig* config)
-		{
-		  if (ObjTogl::theWidget == config)
-			 {
-				ObjTogl::theWidget = 0;
-				ObjTogl::toglCreated = false;
-			 }
-		}
-  };
 
-  virtual void invoke();
+  virtual void invoke() { initTogl(interp()); }
 };
-
-void ObjTogl::InitCmd::invoke() {
-DOTRACE("ObjTogl::InitCmd::invoke");
-  if (toglCreated) { throw Tcl::TclError("Togl widget already initialized"); }
-
-  const char* dflt = "-stereo false";
-
-  const char* init_args     =      (objc() < 2) ? dflt : getCstringFromArg(1);
-  bool        pack          = bool((objc() < 5) ? true : getBoolFromArg(4));
-
-  // Generate an argc/argv array of configuration options
-  int config_argc = 0;
-  char** config_argv = 0;
-  Tcl_SplitList(interp(), init_args, &config_argc, &config_argv);
-
-  // Create a new ToglConfig object with the specified conguration
-  // options, viewing distance, and visual angle per GL unit
-  ObjTogl::theWidget = new ToglConfig(interp(),
-												  config_argc, config_argv,
-												  pack);
-
-  Tcl_Free((char*) config_argv);
-
-  ObjTogl::theWidget->setDestroyCallback(new WidgetDestroyCallback);
-
-  toglCreated = true;
-
-  returnVoid();
-}
 
 //---------------------------------------------------------------------
 //
@@ -507,6 +502,7 @@ public:
 //
 //---------------------------------------------------------------------
 
+extern "C"
 int Objtogl_Init(Tcl_Interp* interp) {
 DOTRACE("Objtogl_Init");
 
