@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Oct 26 16:20:34 2000
+// written: Thu Oct 26 16:57:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -184,6 +184,12 @@ public:
   void addBlock(int block_id)
 	 {
 		itsBlocks.push_back(ItemWithId<Block>(block_id));
+	 }
+
+  int currentBlock() const
+	 {
+		if ( !haveValidBlock() ) return -1;
+		return itsBlocks.at(itsCurrentBlockIdx).id();
 	 }
 
   Util::ErrorHandler& getErrorHandler()
@@ -853,6 +859,9 @@ void ExptDriver::addLogInfo(const char* message)
 
 void ExptDriver::addBlock(int block_id)
   { itsImpl->addBlock(block_id); }
+
+int ExptDriver::currentBlock() const
+  { return itsImpl->currentBlock(); }
 
 Util::ErrorHandler& ExptDriver::getErrorHandler()
   { return itsImpl->getErrorHandler(); }

@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Oct 26 14:07:12 2000
+// written: Thu Oct 26 16:55:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,6 +95,7 @@ public:
   void addLogInfo(const char* message);
 
   void addBlock(int block_id);
+  int currentBlock() const;
 
   virtual Util::ErrorHandler& getErrorHandler();
 
