@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Aug  5 11:04:14 2002
+// written: Mon Aug  5 11:31:54 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -78,10 +78,31 @@ namespace
   const Togl::Impl* currentImpl = 0;
 }
 
-#define ALL_EVENTS_MASK \
-KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask| \
-EnterWindowMask|LeaveWindowMask|PointerMotionMask|ExposureMask|   \
-VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
+struct ToglOpts
+{
+  void toDefaults()
+  {
+    width = 0;
+    height = 0;
+    time = 0;
+    privateCmapFlag = 0;
+    overlayFlag = 0;
+#ifndef NO_TK_CURSOR
+    cursor = None;
+#endif
+    glx.toDefaults();
+  }
+
+  int width;
+  int height;
+  int time;
+  int privateCmapFlag;
+  int overlayFlag;
+#ifndef NO_TK_CURSOR
+  Tk_Cursor cursor;          /* The widget's cursor */
+#endif
+  GlxOpts glx;
+};
 
 class Togl::Impl
 {
@@ -123,7 +144,7 @@ public:
 
   void swapBuffers() const
   {
-    if (itsGlxOpts.doubleFlag)
+    if (itsOpts.glx.doubleFlag)
       {
         glXSwapBuffers( itsDisplay, windowId() );
       }
@@ -133,12 +154,12 @@ public:
       }
   }
 
-  int width() const { return itsWidth; }
-  int height() const { return itsHeight; }
-  bool isRgba() const { return itsGlxOpts.rgbaFlag; }
-  bool isDoubleBuffered() const { return itsGlxOpts.doubleFlag; }
+  int width() const { return itsOpts.width; }
+  int height() const { return itsOpts.height; }
+  bool isRgba() const { return itsOpts.glx.rgbaFlag; }
+  bool isDoubleBuffered() const { return itsOpts.glx.doubleFlag; }
   unsigned int bitsPerPixel() const { return itsBitsPerPixel; }
-  bool hasPrivateCmap() const { return itsPrivateCmapFlag; }
+  bool hasPrivateCmap() const { return itsOpts.privateCmapFlag; }
   Tcl_Interp* interp() const { return itsInterp; }
   Tk_Window tkWin() const { return itsTkWin; }
   const char* pathname() const
@@ -146,13 +167,13 @@ public:
 
   bool ensureSharedColormap(const char* where) const
   {
-    if (itsGlxOpts.rgbaFlag)
+    if (itsOpts.glx.rgbaFlag)
       {
         fprintf(stderr, "Error: %s illegal in RGBA mode.\n", where);
         return false;
       }
 
-    if (itsPrivateCmapFlag)
+    if (itsOpts.privateCmapFlag)
       {
         fprintf(stderr, "Error: %s illegal with private colormap\n", where);
         return false;
@@ -168,9 +189,9 @@ public:
   void showOverlay();
   void hideOverlay();
   void postOverlayRedisplay();
-  int existsOverlay() const { return itsOverlayFlag; }
+  int existsOverlay() const { return itsOpts.overlayFlag; }
   int getOverlayTransparentValue() const { return itsOverlayTransparentPixel; }
-  int isMappedOverlay() const { return (itsOverlayFlag && itsOverlayIsMapped); }
+  int isMappedOverlay() const { return (itsOpts.overlayFlag && itsOverlayIsMapped); }
   unsigned long allocColorOverlay(float red, float green, float blue) const;
   void freeColorOverlay(unsigned long pixel) const;
 
@@ -203,19 +224,17 @@ public:
   Tk_Window itsTkWin;           /* Tk window structure */
   Tcl_Interp* itsInterp;        /* Tcl interpreter */
   Tcl_Command itsWidgetCmd;     /* Token for togl's widget command */
-#ifndef NO_TK_CURSOR
-  Tk_Cursor itsCursor;          /* The widget's cursor */
-#endif
-  int itsWidth;
-  int itsHeight;                /* Dimensions of window */
-  int itsTime;                  /* Time value for timer */
+//   int itsWidth;
+//   int itsHeight;                /* Dimensions of window */
+//   int itsTime;                  /* Time value for timer */
   Tcl_TimerToken itsTimerHandler; /* Token for togl's timer handler */
 
-  GlxOpts itsGlxOpts;
+  ToglOpts itsOpts;
 
-  int itsPrivateCmapFlag;
-  int itsOverlayFlag;
-  int itsStereoFlag;
+//   GlxOpts itsOpts.glx;
+
+//   int itsPrivateCmapFlag;
+//   int itsOpts.overlayFlag;
 
   int itsBitsPerPixel;
 
@@ -246,13 +265,13 @@ public:
  * Setup Togl widget configuration options:
  */
 
-static Tk_ConfigSpec configSpecs[] =
+static Tk_ConfigSpec configSpecsNew[] =
 {
   {TK_CONFIG_PIXELS, (char*)"-height", (char*)"height", (char*)"Height",
-   (char*)DEFAULT_HEIGHT, Tk_Offset(Togl::Impl, itsHeight), 0, NULL},
+   (char*)DEFAULT_HEIGHT, Tk_Offset(ToglOpts, height), 0, NULL},
 
   {TK_CONFIG_PIXELS, (char*)"-width", (char*)"width", (char*)"Width",
-   (char*)DEFAULT_WIDTH, Tk_Offset(Togl::Impl, itsWidth), 0, NULL},
+   (char*)DEFAULT_WIDTH, Tk_Offset(ToglOpts, width), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-rgba", (char*)"rgba", (char*)"Rgba",
 #ifndef NO_RGBA
@@ -260,19 +279,19 @@ static Tk_ConfigSpec configSpecs[] =
 #else
    (char*)"false",
 #endif
-   Tk_Offset(Togl::Impl, itsGlxOpts.rgbaFlag), 0, NULL},
+   Tk_Offset(ToglOpts, glx.rgbaFlag), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-redsize", (char*)"redsize", (char*)"RedSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.rgbaRed), 0, NULL},
+   (char*)"1", Tk_Offset(ToglOpts, glx.rgbaRed), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-greensize", (char*)"greensize", (char*)"GreenSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.rgbaGreen), 0, NULL},
+   (char*)"1", Tk_Offset(ToglOpts, glx.rgbaGreen), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-bluesize", (char*)"bluesize", (char*)"BlueSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.rgbaBlue), 0, NULL},
+   (char*)"1", Tk_Offset(ToglOpts, glx.rgbaBlue), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-colorindexsize", (char*)"colorindexsize", (char*)"ColorIndexSize",
-   (char*)"8", Tk_Offset(Togl::Impl, itsGlxOpts.colorIndexSize), 0, NULL},
+   (char*)"8", Tk_Offset(ToglOpts, glx.colorIndexSize), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-double", (char*)"double", (char*)"Double",
 #ifndef NO_DOUBLE_BUFFER
@@ -280,63 +299,60 @@ static Tk_ConfigSpec configSpecs[] =
 #else
    (char*)"false",
 #endif
-   Tk_Offset(Togl::Impl, itsGlxOpts.doubleFlag), 0, NULL},
+   Tk_Offset(ToglOpts, glx.doubleFlag), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-depth", (char*)"depth", (char*)"Depth",
-   (char*)"true", Tk_Offset(Togl::Impl, itsGlxOpts.depthFlag), 0, NULL},
+   (char*)"true", Tk_Offset(ToglOpts, glx.depthFlag), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-depthsize", (char*)"depthsize", (char*)"DepthSize",
-   (char*)"8", Tk_Offset(Togl::Impl, itsGlxOpts.depthSize), 0, NULL},
+   (char*)"8", Tk_Offset(ToglOpts, glx.depthSize), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-accum", (char*)"accum", (char*)"Accum",
-   (char*)"false", Tk_Offset(Togl::Impl, itsGlxOpts.accumFlag), 0, NULL},
+   (char*)"false", Tk_Offset(ToglOpts, glx.accumFlag), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-accumredsize", (char*)"accumredsize", (char*)"AccumRedSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.accumRed), 0, NULL},
+   (char*)"1", Tk_Offset(ToglOpts, glx.accumRed), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-accumgreensize", (char*)"accumgreensize", (char*)"AccumGreenSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.accumGreen), 0, NULL},
+   (char*)"1", Tk_Offset(ToglOpts, glx.accumGreen), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-accumbluesize", (char*)"accumbluesize", (char*)"AccumBlueSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.accumBlue), 0, NULL},
+   (char*)"1", Tk_Offset(ToglOpts, glx.accumBlue), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-accumalphasize", (char*)"accumalphasize", (char*)"AccumAlphaSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.accumAlpha), 0, NULL},
+   (char*)"1", Tk_Offset(ToglOpts, glx.accumAlpha), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-alpha", (char*)"alpha", (char*)"Alpha",
-   (char*)"false", Tk_Offset(Togl::Impl, itsGlxOpts.alphaFlag), 0, NULL},
+   (char*)"false", Tk_Offset(ToglOpts, glx.alphaFlag), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-alphasize", (char*)"alphasize", (char*)"AlphaSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.alphaSize), 0, NULL},
+   (char*)"1", Tk_Offset(ToglOpts, glx.alphaSize), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-stencil", (char*)"stencil", (char*)"Stencil",
-   (char*)"false", Tk_Offset(Togl::Impl, itsGlxOpts.stencilFlag), 0, NULL},
+   (char*)"false", Tk_Offset(ToglOpts, glx.stencilFlag), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-stencilsize", (char*)"stencilsize", (char*)"StencilSize",
-   (char*)"1", Tk_Offset(Togl::Impl, itsGlxOpts.stencilSize), 0, NULL},
+   (char*)"1", Tk_Offset(ToglOpts, glx.stencilSize), 0, NULL},
 
   {TK_CONFIG_INT, (char*)"-auxbuffers", (char*)"auxbuffers", (char*)"AuxBuffers",
-   (char*)"0", Tk_Offset(Togl::Impl, itsGlxOpts.auxNumber), 0, NULL},
+   (char*)"0", Tk_Offset(ToglOpts, glx.auxNumber), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-privatecmap", (char*)"privateCmap", (char*)"PrivateCmap",
-   (char*)"false", Tk_Offset(Togl::Impl, itsPrivateCmapFlag), 0, NULL},
+   (char*)"false", Tk_Offset(ToglOpts, privateCmapFlag), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-overlay", (char*)"overlay", (char*)"Overlay",
-   (char*)"false", Tk_Offset(Togl::Impl, itsOverlayFlag), 0, NULL},
-
-  {TK_CONFIG_BOOLEAN, (char*)"-stereo", (char*)"stereo", (char*)"Stereo",
-   (char*)"false", Tk_Offset(Togl::Impl, itsStereoFlag), 0, NULL},
+   (char*)"false", Tk_Offset(ToglOpts, overlayFlag), 0, NULL},
 
 #ifndef NO_TK_CURSOR
   { TK_CONFIG_ACTIVE_CURSOR, (char*)"-cursor", (char*)"cursor", (char*)"Cursor",
-    (char*)"", Tk_Offset(Togl::Impl, itsCursor), TK_CONFIG_NULL_OK, NULL },
+    (char*)"", Tk_Offset(ToglOpts, cursor), TK_CONFIG_NULL_OK, NULL },
 #endif
 
   {TK_CONFIG_INT, (char*)"-time", (char*)"time", (char*)"Time",
-   (char*)DEFAULT_TIME, Tk_Offset(Togl::Impl, itsTime), 0, NULL},
+   (char*)DEFAULT_TIME, Tk_Offset(ToglOpts, time), 0, NULL},
 
   {TK_CONFIG_BOOLEAN, (char*)"-indirect", (char*)"indirect", (char*)"Indirect",
-   (char*)"false", Tk_Offset(Togl::Impl, itsGlxOpts.indirect), 0, NULL},
+   (char*)"false", Tk_Offset(ToglOpts, glx.indirect), 0, NULL},
 
   {TK_CONFIG_END, (char *) NULL, (char *) NULL, (char *) NULL,
    (char *) NULL, 0, 0, NULL}
@@ -474,8 +490,8 @@ DOTRACE("<togl.cc>::Togl_WidgetCmd");
       if (argc == 2)
         {
           /* Return list of all configuration parameters */
-          result = Tk_ConfigureInfo(interp, impl->tkWin(), configSpecs,
-                                    (char *)impl, (char *)NULL, 0);
+          result = Tk_ConfigureInfo(interp, impl->tkWin(), configSpecsNew,
+                                    (char*) &impl->itsOpts, (char*)NULL, 0);
         }
       else if (argc == 3)
         {
@@ -489,8 +505,8 @@ DOTRACE("<togl.cc>::Togl_WidgetCmd");
           else
             {
               /* Return a specific configuration parameter */
-              result = Tk_ConfigureInfo(interp, impl->tkWin(), configSpecs,
-                                        (char *)impl, argv[2], 0);
+              result = Tk_ConfigureInfo(interp, impl->tkWin(), configSpecsNew,
+                                        (char*) &impl->itsOpts, argv[2], 0);
             }
         }
       else
@@ -689,17 +705,13 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsTkWin(0),
   itsInterp(interp),
   itsWidgetCmd(0),
-#ifndef NO_TK_CURSOR
-  itsCursor(None),
-#endif
-  itsWidth(0),
-  itsHeight(0),
-  itsTime(0),
+//   itsOpts.width(0),
+//   itsOpts.height(0),
+//   itsOpts.time(0),
   itsTimerHandler(0),
-  itsGlxOpts(),
-  itsPrivateCmapFlag(0),
-  itsOverlayFlag(0),
-  itsStereoFlag(0),
+//   itsOpts.glx(),
+//   itsPrivateCmapFlag(0),
+//   itsOpts.overlayFlag(0),
   itsBitsPerPixel(-1),
   itsClientData(DefaultClientData),
   itsUpdatePending(false),
@@ -716,6 +728,8 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsOverlayIsMapped(0)
 {
 DOTRACE("Togl::Impl::Impl");
+
+  itsOpts.toDefaults();
 
   /* Create the window. */
   Tk_Window mainwin = Tk_MainWindow(interp);
@@ -743,7 +757,7 @@ DOTRACE("Togl::Impl::Impl");
   else
     {
       // Generate a default argc/argv array
-      const char* init_args = "-stereo false";
+      const char* init_args = "-time 1";
 
       Tcl_SplitList(interp, init_args, &config_argc, &config_argv);
 
@@ -781,7 +795,7 @@ DOTRACE("Togl::Impl::Impl");
 
   if (itsTimerProc)
     {
-      Tk_CreateTimerHandler( itsTime, Togl::Impl::dummyTimerCallback,
+      Tk_CreateTimerHandler( itsOpts.time, Togl::Impl::dummyTimerCallback,
                              static_cast<ClientData>(this) );
     }
 
@@ -797,14 +811,8 @@ Togl::Impl::~Impl()
 {
 DOTRACE("Togl::Impl::~Impl");
 
-  Tk_FreeOptions(configSpecs, (char *) this, itsDisplay, 0);
+  Tk_FreeOptions(configSpecsNew, (char*) &itsOpts, itsDisplay, 0);
 
-#ifndef NO_TK_CURSOR
-  if (itsCursor != None)
-    {
-      Tk_FreeCursor(itsDisplay, itsCursor);
-    }
-#endif
   if (itsDestroyProc)
     {
       itsDestroyProc(itsOwner);
@@ -823,52 +831,53 @@ int Togl::Impl::configure(Tcl_Interp* interp,
 {
 DOTRACE("Togl::Impl::configure");
 
-  int oldRgbaFlag       = itsGlxOpts.rgbaFlag;
-  int oldRgbaRed        = itsGlxOpts.rgbaRed;
-  int oldRgbaGreen      = itsGlxOpts.rgbaGreen;
-  int oldRgbaBlue       = itsGlxOpts.rgbaBlue;
-  int oldColorIndexSize = itsGlxOpts.colorIndexSize;
-  int oldDoubleFlag     = itsGlxOpts.doubleFlag;
-  int oldDepthFlag      = itsGlxOpts.depthFlag;
-  int oldDepthSize      = itsGlxOpts.depthSize;
-  int oldAccumFlag      = itsGlxOpts.accumFlag;
-  int oldAccumRed       = itsGlxOpts.accumRed;
-  int oldAccumGreen     = itsGlxOpts.accumGreen;
-  int oldAccumBlue      = itsGlxOpts.accumBlue;
-  int oldAccumAlpha     = itsGlxOpts.accumAlpha;
-  int oldAlphaFlag      = itsGlxOpts.alphaFlag;
-  int oldAlphaSize      = itsGlxOpts.alphaSize;
-  int oldStencilFlag    = itsGlxOpts.stencilFlag;
-  int oldStencilSize    = itsGlxOpts.stencilSize;
-  int oldAuxNumber      = itsGlxOpts.auxNumber;
+  int oldRgbaFlag       = itsOpts.glx.rgbaFlag;
+  int oldRgbaRed        = itsOpts.glx.rgbaRed;
+  int oldRgbaGreen      = itsOpts.glx.rgbaGreen;
+  int oldRgbaBlue       = itsOpts.glx.rgbaBlue;
+  int oldColorIndexSize = itsOpts.glx.colorIndexSize;
+  int oldDoubleFlag     = itsOpts.glx.doubleFlag;
+  int oldDepthFlag      = itsOpts.glx.depthFlag;
+  int oldDepthSize      = itsOpts.glx.depthSize;
+  int oldAccumFlag      = itsOpts.glx.accumFlag;
+  int oldAccumRed       = itsOpts.glx.accumRed;
+  int oldAccumGreen     = itsOpts.glx.accumGreen;
+  int oldAccumBlue      = itsOpts.glx.accumBlue;
+  int oldAccumAlpha     = itsOpts.glx.accumAlpha;
+  int oldAlphaFlag      = itsOpts.glx.alphaFlag;
+  int oldAlphaSize      = itsOpts.glx.alphaSize;
+  int oldStencilFlag    = itsOpts.glx.stencilFlag;
+  int oldStencilSize    = itsOpts.glx.stencilSize;
+  int oldAuxNumber      = itsOpts.glx.auxNumber;
 
-  if (Tk_ConfigureWidget(interp, itsTkWin, configSpecs,
+  if (Tk_ConfigureWidget(interp, itsTkWin, configSpecsNew,
                          argc, const_cast<char**>(argv),
-                         reinterpret_cast<char *>(this), flags) == TCL_ERROR)
+                         reinterpret_cast<char *>(&itsOpts), flags)
+      == TCL_ERROR)
     {
       return TCL_ERROR;
     }
 
-  Tk_GeometryRequest(itsTkWin, itsWidth, itsHeight);
+  Tk_GeometryRequest(itsTkWin, itsOpts.width, itsOpts.height);
 
-  if (itsGlxOpts.rgbaFlag != oldRgbaFlag
-      || itsGlxOpts.rgbaRed != oldRgbaRed
-      || itsGlxOpts.rgbaGreen != oldRgbaGreen
-      || itsGlxOpts.rgbaBlue != oldRgbaBlue
-      || itsGlxOpts.colorIndexSize != oldColorIndexSize
-      || itsGlxOpts.doubleFlag != oldDoubleFlag
-      || itsGlxOpts.depthFlag != oldDepthFlag
-      || itsGlxOpts.depthSize != oldDepthSize
-      || itsGlxOpts.accumFlag != oldAccumFlag
-      || itsGlxOpts.accumRed != oldAccumRed
-      || itsGlxOpts.accumGreen != oldAccumGreen
-      || itsGlxOpts.accumBlue != oldAccumBlue
-      || itsGlxOpts.accumAlpha != oldAccumAlpha
-      || itsGlxOpts.alphaFlag != oldAlphaFlag
-      || itsGlxOpts.alphaSize != oldAlphaSize
-      || itsGlxOpts.stencilFlag != oldStencilFlag
-      || itsGlxOpts.stencilSize != oldStencilSize
-      || itsGlxOpts.auxNumber != oldAuxNumber)
+  if (itsOpts.glx.rgbaFlag != oldRgbaFlag
+      || itsOpts.glx.rgbaRed != oldRgbaRed
+      || itsOpts.glx.rgbaGreen != oldRgbaGreen
+      || itsOpts.glx.rgbaBlue != oldRgbaBlue
+      || itsOpts.glx.colorIndexSize != oldColorIndexSize
+      || itsOpts.glx.doubleFlag != oldDoubleFlag
+      || itsOpts.glx.depthFlag != oldDepthFlag
+      || itsOpts.glx.depthSize != oldDepthSize
+      || itsOpts.glx.accumFlag != oldAccumFlag
+      || itsOpts.glx.accumRed != oldAccumRed
+      || itsOpts.glx.accumGreen != oldAccumGreen
+      || itsOpts.glx.accumBlue != oldAccumBlue
+      || itsOpts.glx.accumAlpha != oldAccumAlpha
+      || itsOpts.glx.alphaFlag != oldAlphaFlag
+      || itsOpts.glx.alphaSize != oldAlphaSize
+      || itsOpts.glx.stencilFlag != oldStencilFlag
+      || itsOpts.glx.stencilSize != oldStencilSize
+      || itsOpts.glx.auxNumber != oldAuxNumber)
     {
       /* Have to recreate the window and GLX context */
       if (makeWindowExist()==TCL_ERROR)
@@ -930,7 +939,7 @@ DOTRACE("Togl::Impl::dummyTimerCallback");
   Impl* impl = static_cast<Impl*>(clientData);
   impl->itsTimerProc(impl->itsOwner);
   impl->itsTimerHandler =
-    Tcl_CreateTimerHandler( impl->itsTime, dummyTimerCallback,
+    Tcl_CreateTimerHandler( impl->itsOpts.time, dummyTimerCallback,
                             static_cast<ClientData>(impl) );
 }
 
@@ -957,7 +966,7 @@ void Togl::Impl::dummyOverlayRenderCallback(ClientData clientData)
 DOTRACE("Togl::Impl::dummyOverlayRenderCallback");
   Impl* impl = static_cast<Impl*>(clientData);
 
-  if (impl->itsOverlayFlag && impl->itsOverlayDisplayProc)
+  if (impl->itsOpts.overlayFlag && impl->itsOverlayDisplayProc)
     {
       impl->itsOverlayGlx->makeCurrent(impl->itsOverlayWindow);
       impl->itsOverlayDisplayProc(impl->itsOwner);
@@ -969,15 +978,15 @@ DOTRACE("Togl::Impl::dummyOverlayRenderCallback");
 void Togl::Impl::postReconfigure()
 {
 DOTRACE("Togl::Impl::postReconfigure");
-  if (itsWidth != Tk_Width(itsTkWin) || itsHeight != Tk_Height(itsTkWin))
+  if (itsOpts.width != Tk_Width(itsTkWin) || itsOpts.height != Tk_Height(itsTkWin))
     {
-      itsWidth = Tk_Width(itsTkWin);
-      itsHeight = Tk_Height(itsTkWin);
-      XResizeWindow(itsDisplay, windowId(), itsWidth, itsHeight);
+      itsOpts.width = Tk_Width(itsTkWin);
+      itsOpts.height = Tk_Height(itsTkWin);
+      XResizeWindow(itsDisplay, windowId(), itsOpts.width, itsOpts.height);
 
-      if (itsOverlayFlag)
+      if (itsOpts.overlayFlag)
       {
-        XResizeWindow( itsDisplay, itsOverlayWindow, itsWidth, itsHeight );
+        XResizeWindow( itsDisplay, itsOverlayWindow, itsOpts.width, itsOpts.height );
         XRaiseWindow( itsDisplay, itsOverlayWindow );
       }
       makeCurrent();
@@ -989,11 +998,11 @@ DOTRACE("Togl::Impl::postReconfigure");
     }
   else
     {
-      glViewport(0, 0, itsWidth, itsHeight);
-      if (itsOverlayFlag)
+      glViewport(0, 0, itsOpts.width, itsOpts.height);
+      if (itsOpts.overlayFlag)
         {
           useLayer( TOGL_OVERLAY );
-          glViewport( 0, 0, itsWidth, itsHeight );
+          glViewport( 0, 0, itsOpts.width, itsOpts.height );
           useLayer( TOGL_NORMAL );
         }
     }
@@ -1102,7 +1111,7 @@ unsigned long Togl::Impl::allocColorOverlay(float red, float green,
                                             float blue) const
 {
 DOTRACE("Togl::Impl::allocColorOverlay");
-  if (itsOverlayFlag && itsOverlayCmap)
+  if (itsOpts.overlayFlag && itsOverlayCmap)
     {
       XColor xcol;
       xcol.red   = (short) (red* 65535.0);
@@ -1123,7 +1132,7 @@ void Togl::Impl::freeColorOverlay(unsigned long pixel) const
 {
 DOTRACE("Togl::Impl::freeColorOverlay");
 
-  if (itsOverlayFlag && itsOverlayCmap)
+  if (itsOpts.overlayFlag && itsOverlayCmap)
     {
       XFreeColors( itsDisplay, itsOverlayCmap, &pixel, 1, 0 );
     }
@@ -1138,7 +1147,7 @@ DOTRACE("Togl::Impl::dumpToEpsFile");
 
   glFlush();
 
-  return GLUtil::generateEPS( filename, inColor, itsWidth, itsHeight);
+  return GLUtil::generateEPS( filename, inColor, itsOpts.width, itsOpts.height);
 }
 
 void Togl::Impl::eventProc(XEvent* eventPtr)
@@ -1156,7 +1165,7 @@ DOTRACE("Togl::Impl::eventProc");
             {
               postRedisplay();
             }
-          if (!itsOverlayUpdatePending && itsOverlayFlag
+          if (!itsOverlayUpdatePending && itsOpts.overlayFlag
               && itsOverlayIsMapped
               && eventPtr->xexpose.window==itsOverlayWindow)
             {
@@ -1279,16 +1288,16 @@ DOTRACE("Togl::Impl::makeWindowExist");
 
   try
     {
-      itsGlx.reset( GlxWrapper::make(itsDisplay, itsGlxOpts) );
+      itsGlx.reset( GlxWrapper::make(itsDisplay, itsOpts.glx) );
 
       Colormap cmap =
         X11Util::findColormap(itsDisplay, itsGlx->visInfo(),
-                              itsGlxOpts.rgbaFlag, itsPrivateCmapFlag);
+                              itsOpts.glx.rgbaFlag, itsOpts.privateCmapFlag);
 
       TkUtil::createWindow(itsTkWin, itsGlx->visInfo(),
-                           itsWidth, itsHeight, cmap);
+                           itsOpts.width, itsOpts.height, cmap);
 
-      if (!itsGlxOpts.rgbaFlag)
+      if (!itsOpts.glx.rgbaFlag)
         {
           X11Util::hackInstallColormap(itsDisplay, windowId(), cmap);
         }
@@ -1308,7 +1317,7 @@ DOTRACE("Togl::Impl::makeWindowExist");
       makeCurrent();
 
       // Check for a single/double buffering snafu
-      if (itsGlxOpts.doubleFlag == 0 && itsGlx->isDoubleBuffered())
+      if (itsOpts.glx.doubleFlag == 0 && itsGlx->isDoubleBuffered())
         {
           // We requested single buffering but had to accept a double buffered
           // visual.  Set the GL draw buffer to be the front buffer to
@@ -1343,12 +1352,12 @@ DOTRACE("Togl::Impl::checkForGLX");
 void Togl::Impl::setupOverlayIfNeeded()
 {
 DOTRACE("Togl::Impl::setupOverlayIfNeeded");
-  if (itsOverlayFlag)
+  if (itsOpts.overlayFlag)
     {
       if (setupOverlay() == TCL_ERROR)
         {
           fprintf(stderr,"Warning: couldn't setup overlay.\n");
-          itsOverlayFlag = 0;
+          itsOpts.overlayFlag = 0;
         }
     }
 }
@@ -1411,7 +1420,7 @@ DOTRACE("Togl::Impl::setupOverlay");
   /* share display lists with normal layer context */
 
   itsOverlayGlx.reset( new GlxWrapper(itsDisplay, visinfo,
-                                      !itsGlxOpts.indirect, itsGlx.get()) );
+                                      !itsOpts.glx.indirect, itsGlx.get()) );
 
   XSetWindowAttributes swa;
   swa.colormap = XCreateColormap( itsDisplay,
@@ -1419,11 +1428,16 @@ DOTRACE("Togl::Impl::setupOverlay");
                                   visinfo->visual, AllocNone );
   itsOverlayCmap = swa.colormap;
 
+#define ALL_EVENTS_MASK \
+KeyPressMask|KeyReleaseMask|ButtonPressMask|ButtonReleaseMask| \
+EnterWindowMask|LeaveWindowMask|PointerMotionMask|ExposureMask|   \
+VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
+
   swa.border_pixel = 0;
   swa.event_mask = ALL_EVENTS_MASK;
   itsOverlayWindow = XCreateWindow( itsDisplay, windowId(),
                                     0, 0,
-                                    itsWidth, itsHeight, 0,
+                                    itsOpts.width, itsOpts.height, 0,
                                     visinfo->depth, InputOutput,
                                     visinfo->visual,
                                     CWBorderPixel|CWColormap|CWEventMask,
