@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 12 12:15:46 2001
-// written: Thu Jul 12 12:41:56 2001
+// written: Thu Jul 12 13:04:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,25 +23,30 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
+namespace Tcl
+{
+  class VecContext;
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
-// Tcl::VecCmd::VecContext implements the Context interface in such a
-// way as to treat each of the arguments as lists, and provide access
-// to slices across those lists, thus allowing "vectorized" command
+// Tcl::VecContext implements the Context interface in such a way as
+// to treat each of the arguments as lists, and provide access to
+// slices across those lists, thus allowing "vectorized" command
 // invocations.
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::VecCmd::VecContext : public Tcl::TclCmd::Context {
+class Tcl::VecContext : public Tcl::Context {
 public:
-  VecContext(Tcl_Interp* interp, int objc, Tcl_Obj* const objv[],
+  VecContext(Tcl_Interp* interp, unsigned int objc, Tcl_Obj* const objv[],
              unsigned int num_calls) :
-    Tcl::TclCmd::Context(interp, objc, objv),
+    Tcl::Context(interp, objc, objv),
     itsArgs(),
     itsNumCalls(num_calls),
     itsResult()
   {
-    for (int i = 0; i < objc; ++i)
+    for (unsigned int i = 0; i < objc; ++i)
       {
         Tcl::List arg(objv[i]);
         if (arg.length() == 0)
@@ -54,7 +59,7 @@ public:
 
   virtual ~VecContext()
   {
-    Tcl::TclCmd::Context::setObjResult(itsResult.asObj());
+    Tcl::Context::setObjResult(itsResult.asObj());
   }
 
   void next()
@@ -67,7 +72,7 @@ public:
   }
 
 protected:
-  virtual Tcl_Obj* getObjv(int argn)
+  virtual Tcl_Obj* getObjv(unsigned int argn)
   {
     return *(itsArgs.at(argn));
   }
@@ -81,7 +86,7 @@ private:
   typedef Tcl::List::Iterator<Tcl_Obj*> Iter;
 
   minivec<Iter> itsArgs;
-  unsigned int itsNumCalls;
+  unsigned int const itsNumCalls;
   Tcl::List itsResult;
 };
 
@@ -93,7 +98,8 @@ Tcl::VecCmd::VecCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage,
   itsKeyArgn(key_argn)
 {}
 
-void Tcl::VecCmd::rawInvoke(Tcl_Interp* interp, int objc, Tcl_Obj* const objv[])
+void Tcl::VecCmd::rawInvoke(Tcl_Interp* interp, unsigned int objc,
+                            Tcl_Obj* const objv[])
 {
 DOTRACE("Tcl::VecCmd::rawInvoke");
 
