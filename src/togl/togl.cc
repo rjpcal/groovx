@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed May 24 00:26:48 2000
+// written: Wed May 24 07:25:44 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -24,6 +24,9 @@
 
 /*
  * $Log$
+ * Revision 2.4  2000/05/24 14:28:12  rjpeters
+ * Made Togl::configure().
+ *
  * Revision 2.3  2000/05/24 14:13:40  rjpeters
  * Changed all names of Togl members to 'its...', and made a constructor
  * with the code that used to be in Togl_Cmd().
@@ -160,6 +163,8 @@ class Togl
 {
 public:
   Togl(Tcl_Interp* interp, Tk_Window mainwin, int argc, char** argv);
+
+  int configure(Tcl_Interp* interp, int argc, char* argv[], int flags);
 
   Togl* itsNext;           /* next in linked list */
 
@@ -740,65 +745,7 @@ DOTRACE("<togl.cc>::RenderOverlay");
 int Togl_Configure(Tcl_Interp *interp, Togl* togl,
                    int argc, char *argv[], int flags)
 {
-DOTRACE("<togl.cc>::Togl_Configure");
-
-  int oldRgbaFlag    = togl->itsRgbaFlag;
-  int oldRgbaRed     = togl->itsRgbaRed;
-  int oldRgbaGreen   = togl->itsRgbaGreen;
-  int oldRgbaBlue    = togl->itsRgbaBlue;
-  int oldDoubleFlag  = togl->itsDoubleFlag;
-  int oldDepthFlag   = togl->itsDepthFlag;
-  int oldDepthSize   = togl->itsDepthSize;
-  int oldAccumFlag   = togl->itsAccumFlag;
-  int oldAccumRed    = togl->itsAccumRed;
-  int oldAccumGreen  = togl->itsAccumGreen;
-  int oldAccumBlue   = togl->itsAccumBlue;
-  int oldAccumAlpha  = togl->itsAccumAlpha;
-  int oldAlphaFlag   = togl->itsAlphaFlag;
-  int oldAlphaSize   = togl->itsAlphaSize;
-  int oldStencilFlag = togl->itsStencilFlag;
-  int oldStencilSize = togl->itsStencilSize;
-  int oldAuxNumber   = togl->itsAuxNumber;
-
-  if (Tk_ConfigureWidget(interp, togl->itsTkWin, configSpecs,
-								 argc, argv, (char *)togl, flags) == TCL_ERROR) {
-	 return TCL_ERROR;
-  }
-
-  Tk_GeometryRequest(togl->itsTkWin, togl->itsWidth, togl->itsHeight);
-
-  if (togl->itsRgbaFlag != oldRgbaFlag
-		|| togl->itsRgbaRed != oldRgbaRed
-		|| togl->itsRgbaGreen != oldRgbaGreen
-		|| togl->itsRgbaBlue != oldRgbaBlue
-		|| togl->itsDoubleFlag != oldDoubleFlag
-		|| togl->itsDepthFlag != oldDepthFlag
-		|| togl->itsDepthSize != oldDepthSize
-		|| togl->itsAccumFlag != oldAccumFlag
-		|| togl->itsAccumRed != oldAccumRed
-		|| togl->itsAccumGreen != oldAccumGreen
-		|| togl->itsAccumBlue != oldAccumBlue
-		|| togl->itsAccumAlpha != oldAccumAlpha
-		|| togl->itsAlphaFlag != oldAlphaFlag
-		|| togl->itsAlphaSize != oldAlphaSize
-		|| togl->itsStencilFlag != oldStencilFlag
-		|| togl->itsStencilSize != oldStencilSize
-		|| togl->itsAuxNumber != oldAuxNumber) {
-#ifdef MESA_COLOR_HACK
-	 free_default_color_cells( Tk_Display(togl->itsTkWin),
-										Tk_Colormap(togl->itsTkWin) );
-#endif
-	 /* Have to recreate the window and GLX context */
-	 if (Togl_MakeWindowExist(togl)==TCL_ERROR) {
-		return TCL_ERROR;
-	 }
-  }
-
-#if defined(__sgi) && defined(STEREO)
-  stereoInit(togl,togl->itsStereoFlag);
-#endif
-
-  return TCL_OK;
+  togl->configure(interp, argc, argv, flags);
 }
 
 
@@ -2614,13 +2561,13 @@ DOTRACE("Togl::Togl");
   /* Create command event handler */
   itsWidgetCmd = Tcl_CreateCommand(itsInterp, Tk_PathName(itsTkWin),
 											  Togl_Widget,
-											  (ClientData)this,
+											  static_cast<ClientData>(this),
 											  (Tcl_CmdDeleteProc*) ToglCmdDeletedProc);
 
   Tk_CreateEventHandler(itsTkWin,
 								ExposureMask | StructureNotifyMask,
 								Togl_EventProc,
-								(ClientData)this);
+								static_cast<ClientData>(this));
 
   /* Configure Togl widget */
   if (Togl_Configure(itsInterp, this, argc-2, argv+2, 0) == TCL_ERROR) {
@@ -2653,13 +2600,75 @@ DOTRACE("Togl::Togl");
   /* If defined, setup timer */
   if (itsTimerProc) {
 	 Tk_CreateTimerHandler( itsTime, Togl_Timer,
-									(ClientData)this );
+									static_cast<ClientData>(this) );
   }
 
   Tcl_AppendResult(itsInterp, Tk_PathName(itsTkWin), NULL);
 
   /* Add to linked list */
   AddToList(this);
+}
+
+int Togl::configure(Tcl_Interp* interp, int argc, char* argv[], int flags) {
+DOTRACE("Togl::configure");
+
+  int oldRgbaFlag    = itsRgbaFlag;
+  int oldRgbaRed     = itsRgbaRed;
+  int oldRgbaGreen   = itsRgbaGreen;
+  int oldRgbaBlue    = itsRgbaBlue;
+  int oldDoubleFlag  = itsDoubleFlag;
+  int oldDepthFlag   = itsDepthFlag;
+  int oldDepthSize   = itsDepthSize;
+  int oldAccumFlag   = itsAccumFlag;
+  int oldAccumRed    = itsAccumRed;
+  int oldAccumGreen  = itsAccumGreen;
+  int oldAccumBlue   = itsAccumBlue;
+  int oldAccumAlpha  = itsAccumAlpha;
+  int oldAlphaFlag   = itsAlphaFlag;
+  int oldAlphaSize   = itsAlphaSize;
+  int oldStencilFlag = itsStencilFlag;
+  int oldStencilSize = itsStencilSize;
+  int oldAuxNumber   = itsAuxNumber;
+
+  if (Tk_ConfigureWidget(interp, itsTkWin, configSpecs,
+								 argc, argv, (char *)this, flags) == TCL_ERROR) {
+	 return TCL_ERROR;
+  }
+
+  Tk_GeometryRequest(itsTkWin, itsWidth, itsHeight);
+
+  if (itsRgbaFlag != oldRgbaFlag
+		|| itsRgbaRed != oldRgbaRed
+		|| itsRgbaGreen != oldRgbaGreen
+		|| itsRgbaBlue != oldRgbaBlue
+		|| itsDoubleFlag != oldDoubleFlag
+		|| itsDepthFlag != oldDepthFlag
+		|| itsDepthSize != oldDepthSize
+		|| itsAccumFlag != oldAccumFlag
+		|| itsAccumRed != oldAccumRed
+		|| itsAccumGreen != oldAccumGreen
+		|| itsAccumBlue != oldAccumBlue
+		|| itsAccumAlpha != oldAccumAlpha
+		|| itsAlphaFlag != oldAlphaFlag
+		|| itsAlphaSize != oldAlphaSize
+		|| itsStencilFlag != oldStencilFlag
+		|| itsStencilSize != oldStencilSize
+		|| itsAuxNumber != oldAuxNumber) {
+#ifdef MESA_COLOR_HACK
+	 free_default_color_cells( Tk_Display(itsTkWin),
+										Tk_Colormap(itsTkWin) );
+#endif
+	 /* Have to recreate the window and GLX context */
+	 if (Togl_MakeWindowExist(this)==TCL_ERROR) {
+		return TCL_ERROR;
+	 }
+  }
+
+#if defined(__sgi) && defined(STEREO)
+  stereoInit(this,itsStereoFlag);
+#endif
+
+  return TCL_OK; 
 }
 
 static const char vcid_togl_cc[] = "$Header$";
