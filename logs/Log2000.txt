@@ -1186,3 +1186,52 @@ PosList singletons.
 problems. Should really use vector<unsigned char> rather than C-style
 arrays to hold the info in Bitmap's and Pbm's, and use checked access
 through at() especially when algorithms are untested.
+
+(May-1999, obsolete 6-Dec-2000) Trial's should hold more info-- in
+particular, they should know their own correct response, or at least
+have a virtual function to determine if a particular response is
+correct/valid or not. The derived classes could be "BinaryTrial",
+"AnalogTrial", etc. This would avoid having to implement the
+feedback/correctness check at a high level. Also, Trial's might know
+their own timing info, although they may not necessarily implement the
+timing themselves.
+
+(14-Dec-1999, obsolete 11-Dec-2000) The implementation of GrObj should
+be moved into a separate component since it is fairly
+heavyweight. Subclasses would then be required to provide this
+implementation upon construction. This method would allow clients, but
+not subclasses, of GrObj to avoid dependencies on such components as
+bitmaprep, etc. But, how to avoid having to make all GrObj functions
+virtual? We'd like some to stay non-virtual. Aha! The new lightweight
+GrObj shouldn't even have the grRender(), grUnRender(), or
+grGetBoundingBox() functions... these will first be defined in
+GrObjImpl. [Later] ... ok, this is moot now because of the addition of
+GxNode, which is a lightweight abstract class that serves the needs of
+most clients.
+
++-----
+|
+| (29-Oct-2000, tabled 11-Dec-2000) We could make a lot of IoPtrList Tcl
+| commands very generic, by allowing a predicate argument to determine
+| which objects are to be acted upon. See batch.tcl. This could be
+| called IoDb::batch. ... I'll table this idea for now; most of this can
+| be more simply done by creating the relevant commands in each
+| IoItemPkg (such as removeAll, countAll, findAll).
+| 
+| (9-Dec-2000, done 11-Dec-2000) Replace all of the PtrList Tcl packages
+| with a few commands that are added to each ItemPkg... these include
+| findAll, countAll, removeAll. ObjList::save/loadObjects should move to
+| IoDb.
+| 
+| (1-Nov-2000, done 11-Dec-2000) IoPtrList --> IoDb.
+| 
+| (29-Oct-2000, done 11-Dec-2000) ObjList::LoadObjectCmd can be replaced
+| with something generic that works for all IoObject types. Maybe these
+| should go in ReadUtils/WriteUtils? Templated on the Reader/Writer
+| type? OK, this stuff is in the IoDb package now.
+| 
+| (27-Oct-2000, done 11-Dec-2000) Do we still need separate Tcl packages
+| for the different PtrList's? I think no. We should be able to have a
+| single IoDb:: namespace in Tcl.
+|
++-----
