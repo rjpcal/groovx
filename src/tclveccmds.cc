@@ -3,7 +3,7 @@
 // tclveccmds.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:16:22 1999
-// written: Tue Dec  7 16:34:06 1999
+// written: Tue Dec  7 18:21:30 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,8 @@
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
+
+namespace Tcl {
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -269,6 +271,8 @@ DOTRACE("VecActionCmd::invoke");
 	 void* item = itsPkg->getItemFromId(ids[i]);
 	 itsAction->action(item);
   }
+}
+
 }
 
 static const char vcid_tclveccmds_cc[] = "$Header$";

@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Tue Dec  7 16:25:34 1999
+// written: Tue Dec  7 18:21:09 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,6 +27,9 @@ template <class T> class Setter;
 template <class T> class Attrib;
 
 class Action;
+
+
+namespace Tcl {
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -121,6 +124,8 @@ private:
   int itsItemArgn;
 
 };
+
+} // end namespace Tcl
 
 static const char vcid_tclveccmds_h[] = "$Header$";
 #endif // !TCLVECCMDS_H_DEFINED
