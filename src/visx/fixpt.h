@@ -2,7 +2,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Tue Mar 16 19:43:36 1999
+// written: Sun Apr 25 12:50:04 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -23,18 +23,19 @@ public:
   FixPt (istream &is, IOFlag flag);
   virtual ~FixPt ();
 
-  virtual IOResult serialize(ostream &os, IOFlag flag = NO_FLAGS) const;
-  virtual IOResult deserialize(istream &is, IOFlag flag = NO_FLAGS);
-
-  virtual void grRecompile() const;
+  virtual void serialize(ostream &os, IOFlag flag) const;
+  virtual void deserialize(istream &is, IOFlag flag);
 
   void setLength(float len) { grPostRecompile(); itsLength = len; }
   void setWidth(int wid) { grPostRecompile(); itsWidth = wid; }
   virtual void setCategory(int) {}
+  virtual int getCategory() const { return -1; }
 
   float getLength() const { return itsLength; }
   int getWidth() const { return itsWidth; }
-  virtual int getCategory() const { return -1; }
+
+protected:
+  virtual void grRecompile() const;
 
 private:
   float itsLength;               // length of crosshairs in GL coordinates

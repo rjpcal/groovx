@@ -2,7 +2,7 @@
 // ioutils.cc
 // Rob Peters 
 // created: Jan-99
-// written: Tue Mar 16 19:39:45 1999
+// written: Mon Apr 19 13:45:34 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -20,20 +20,20 @@
 // IOUtils definitions
 ///////////////////////////////////////////////////////////////////////
 
-IOResult serializeCstring(ostream &os, const char* str, const char sep) {
+void serializeCstring(ostream &os, const char* str, const char sep) {
   int len = strlen(str);
   os << len << sep << str << sep;
-  return checkStream(os);
+  if (os.fail()) throw OutputError("Cstring");
 }
 
-IOResult deserializeCstring(istream &is, char*& str) {
+void deserializeCstring(istream &is, char*& str) {
   int len;
   is >> len;
   if (str != NULL) 
     delete [] str;
   str = new char[len+1];
-  is >> str;  
-  return checkStream(is);
+  is.getline(str, len+1);
+  if (is.fail()) throw InputError("Cstring");
 }
 
 void fatalInputError(const char* type) {

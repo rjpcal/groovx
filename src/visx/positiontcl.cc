@@ -2,7 +2,7 @@
 // positiontcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:53:34 1999
-// written: Tue Mar 16 19:35:28 1999
+// written: Sun Apr 25 13:13:28 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -14,10 +14,10 @@
 #include <tcl.h>
 #include <strstream.h>
 
-#include "errmsg.h"
 #include "position.h"
 #include "poslist.h"
 #include "poslisttcl.h"
+#include "errmsg.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -27,10 +27,10 @@ namespace PositionTcl {
   const int BUF_SIZE = 200;
   
   Tcl_ObjCmdProc positionCmd;
-  Tcl_ObjCmdProc translateCmd;
-  Tcl_ObjCmdProc scaleCmd;
   Tcl_ObjCmdProc rotateCmd;
-  Tcl_ObjCmdProc stringify_positionCmd;
+  Tcl_ObjCmdProc scaleCmd;
+  Tcl_ObjCmdProc stringifyCmd;
+  Tcl_ObjCmdProc translateCmd;
 }
 
 // create a new Position object, insert it into the PosList, and
@@ -47,11 +47,6 @@ DOTRACE("PositionTcl::positionCmd");
   
   PosList& plist = PoslistTcl::getPosList();
   int id = plist.addPos(p);
-  if (id < 0) {
-    err_message(interp, objv, PoslistTcl::cant_make_pos);
-    delete p;
-    return TCL_ERROR;
-  }
 
   Tcl_SetObjResult(interp, Tcl_NewIntObj(id));
   return TCL_OK;
@@ -61,7 +56,7 @@ DOTRACE("PositionTcl::positionCmd");
 int PositionTcl::translateCmd(ClientData, Tcl_Interp *interp,
                                 int objc, Tcl_Obj *const objv[]) {
 DOTRACE("PositionTcl::translateCmd");
-  if (objc > 5 || objc < 2)  {
+  if (objc < 4 || objc > 5)  {
     Tcl_WrongNumArgs(interp, 1, objv, "posid new_x new_y [new_z]");
     return TCL_ERROR;
   }
@@ -94,7 +89,7 @@ DOTRACE("PositionTcl::translateCmd");
 int PositionTcl::scaleCmd(ClientData, Tcl_Interp *interp,
                             int objc, Tcl_Obj *const objv[]) {
 DOTRACE("PositionTcl::scaleCmd");
-  if (objc > 5 || objc < 2)  {
+  if (objc < 3 || objc > 5)  {
     Tcl_WrongNumArgs(interp, 1, objv, "posid scale_x [scale_y] [scale_z]");
     return TCL_ERROR;
   }
@@ -158,9 +153,9 @@ DOTRACE("PositionTcl::rotateCmd");
   return TCL_OK;
 }
 
-int PositionTcl::stringify_positionCmd(ClientData, Tcl_Interp *interp,
+int PositionTcl::stringifyCmd(ClientData, Tcl_Interp *interp,
                                int objc, Tcl_Obj *const objv[]) {
-DOTRACE("PositionTcl::stringify_positionCmd");
+DOTRACE("PositionTcl::stringifyCmd");
   if (objc != 2) {
     Tcl_WrongNumArgs(interp, 1, objv, "posid");
     return TCL_ERROR;
@@ -172,7 +167,14 @@ DOTRACE("PositionTcl::stringify_positionCmd");
 
   char buf[BUF_SIZE];
   ostrstream ost(buf, BUF_SIZE);
-  p->serialize(ost, IO::IOFlag(IO::TYPENAME|IO::BASES));
+  try {
+	 p->serialize(ost, IO::TYPENAME|IO::BASES);
+	 ost << '\0';
+  }
+  catch (IoError& err) {
+	 err_message(interp, objv, err.info().c_str());
+	 return TCL_ERROR;
+  }
 
   Tcl_SetObjResult(interp, Tcl_NewStringObj(buf, -1));
 
@@ -181,16 +183,27 @@ DOTRACE("PositionTcl::stringify_positionCmd");
 
 int PositionTcl::Position_Init(Tcl_Interp *interp) {
 DOTRACE("PositionTcl::Position_Init");
-  Tcl_CreateObjCommand(interp, "position", positionCmd,
+  // Add all commands to ::Pos namespace
+  Tcl_CreateObjCommand(interp, "Pos::position", positionCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "translate", translateCmd,
+  Tcl_CreateObjCommand(interp, "Pos::translate", translateCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "scale", scaleCmd,
+  Tcl_CreateObjCommand(interp, "Pos::scale", scaleCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "rotate", rotateCmd,
+  Tcl_CreateObjCommand(interp, "Pos::rotate", rotateCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "stringify_position", stringify_positionCmd,
+  Tcl_CreateObjCommand(interp, "Pos::stringify", stringifyCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+
+  Tcl_Eval(interp,
+			  "namespace eval Pos {\n"
+			  "  namespace export translate\n"
+			  "  namespace export rotate\n"
+			  "}");
+  Tcl_Eval(interp,
+			  "namespace import Pos::translate\n"
+			  "namespace import Pos::rotate\n");
+
   Tcl_PkgProvide(interp, "Position", "2.1");
   return TCL_OK;
 }

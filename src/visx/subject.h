@@ -2,7 +2,7 @@
 // subject.h
 // Rob Peters
 // created: Dec-98
-// written: Tue Mar 16 19:32:28 1999
+// written: Sun Apr 25 14:12:53 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -20,11 +20,11 @@
 class Subject : public virtual IO {
 public:
   Subject(const char *name, const char* dir);
-  Subject(istream &is);
+  Subject(istream &is, IOFlag flag);
   virtual ~Subject();
 
-  virtual IOResult serialize(ostream &os, IOFlag flag = NO_FLAGS) const;
-  virtual IOResult deserialize(istream &is, IOFlag flag = NO_FLAGS);
+  virtual void serialize(ostream &os, IOFlag flag) const;
+  virtual void deserialize(istream &is, IOFlag flag);
 
   const char* getName() const { return itsName; }
   void setName(const char* name);

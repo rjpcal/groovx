@@ -2,7 +2,7 @@
 // jitter.h
 // Rob Peters
 // created: Wed Apr  7 13:46:40 1999
-// written: Wed Apr  7 14:32:12 1999
+// written: Mon Apr 26 21:21:44 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -21,8 +21,8 @@ public:
   Jitter(istream &is, IOFlag flag);
   virtual ~Jitter();
 
-  IOResult serialize(ostream &os, IOFlag flag = NO_FLAGS) const;
-  IOResult deserialize(istream &is, IOFlag flag = NO_FLAGS);
+  virtual void serialize(ostream &os, IOFlag flag) const;
+  virtual void deserialize(istream &is, IOFlag flag);
 
   //////////////////
   // manipulators //

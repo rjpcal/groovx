@@ -2,7 +2,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue Mar 16 19:21:13 1999
+// written: Sun Apr 25 13:19:25 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -32,6 +32,10 @@
 // Trial member functions
 ///////////////////////////////////////////////////////////////////////
 
+//////////////
+// creators //
+//////////////
+
 Trial::Trial(istream &is, IOFlag flag, 
              const ObjList& olist, const PosList &plist) :
   itsObjList(olist), itsPosList(plist), 
@@ -42,12 +46,12 @@ DOTRACE("Trial::Trial");
 }
 
 
-IOResult Trial::serialize(ostream &os, IOFlag flag) const {
+void Trial::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("Trial::serialize");
-  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+  if (flag & BASES) { /* there are no bases to deserialize */ }
 
   char sep = ' ';
-  if (flag & IO::TYPENAME) { os << typeid(Trial).name() << sep; }
+  if (flag & TYPENAME) { os << typeid(Trial).name() << sep; }
 
   // itsIdPairs
   os << itsIdPairs.size() << sep;
@@ -57,56 +61,90 @@ DOTRACE("Trial::serialize");
     os << (*ii).first << sep << (*ii).second << sep << sep;
   }
   // itsResponses
-  serializeVecInt(os, itsResponses);
+  os << itsResponses.size() << sep << sep;
+  for (int i = 0; i < itsResponses.size(); i++) {
+	 os << itsResponses[i].val << sep << itsResponses[i].msec << sep;
+  }
   // itsType
   os << itsType << endl;
 
-  return checkStream(os);
+  if (os.fail()) throw OutputError(typeid(Trial));
 }
 
-IOResult Trial::deserialize(istream &is, IOFlag flag) {
+void Trial::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Trial::deserialize");
-  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
-  if (flag & IO::TYPENAME) {
+  if (flag & BASES) { /* there are no bases to deserialize */ }
+  if (flag & TYPENAME) {
     string name;
     is >> name;
-    if (name != string(typeid(Trial).name())) { return IO_ERROR; }
+    if (name != typeid(Trial).name()) { 
+		throw InputError(typeid(Trial));
+	 }
   }
   
   // itsIdPairs
   itsIdPairs.clear();
   int size;
   is >> size;
+  if (size < 0) {
+	 throw IoValueError(typeid(Trial));
+  }
   int objid, posid;
   for (int i = 0; i < size; i++) {
     is >> objid >> posid;
+	 if (objid < 0 || posid < 0) {
+		throw IoValueError(typeid(Trial));
+	 }
     add(objid, posid);
   }
   // itsResponses
-  deserializeVecInt(is, itsResponses);
+  int resp_size;
+  is >> resp_size;
+  itsResponses.resize(resp_size);
+  for (int j = 0; j < resp_size; j++) {
+	 is >> itsResponses[j].val >> itsResponses[j].msec;
+  }
   // itsType
   is >> itsType;
-  return checkStream(is);
+  if (is.fail()) throw InputError(typeid(Trial));
 }
 
-int Trial::readFromObjidsOnly(istrstream &ist, int offset) {
+int Trial::readFromObjidsOnly(istream &is, int offset) {
 DOTRACE("Trial::readFromObjidsOnly");
   int posid = 0;
   int objid;
   if (offset == 0) {
-    while (ist >> objid) {
+    while (is >> objid) {
+		if (objid < 0) {
+		  throw IoValueError(typeid(Trial));
+		}
       add(objid, posid);
       posid++;
     }
   }
   else { // offset != 0
-    while (ist >> objid) {
+    while (is >> objid) {
+		if ( (objid+offset) < 0) {
+		  throw IoValueError(typeid(Trial));
+		}
       add(objid+offset, posid);
       posid++;
     }
   }
-  return posid;                 // return the number of objid's read
+
+  // Throw an exception if the stream has failed. However, since
+  // istrstream's seem to always fail at eof, even if nothing went
+  // wrong, we must only throw the exception if we have fail'ed with
+  // out reaching eof. This should catch most mistakes.
+  if (is.fail() && !is.eof()) throw InputError(typeid(Trial));
+
+  // return the number of objid's read
+  return posid;
 }
+
+///////////////
+// accessors //
+///////////////
 
 const char* Trial::description() const {
 DOTRACE("Trial::description");
@@ -134,25 +172,56 @@ DOTRACE("Trial::description");
   return buf;
 }
 
+double Trial::avgResponse() const {
+DOTRACE("Trial::avgResponse");
+  int sum = 0;
+  for (vector<Response>::const_iterator ii = itsResponses.begin();
+		 ii != itsResponses.end();
+		 ii++) {
+	 sum += ii->val;
+  }
+  return (itsResponses.size() > 0) ? double(sum)/itsResponses.size() : 0.0;
+}
+
+double Trial::avgRespTime() const {
+DOTRACE("Trial::avgRespTime");
+  int sum = 0;
+  for (vector<Response>::const_iterator ii = itsResponses.begin();
+		 ii != itsResponses.end();
+		 ii++) {
+	 sum += ii->msec;
+#ifdef LOCAL_DEBUG
+	 DUMP_VAL1(sum);
+	 DUMP_VAL2(sum/itsResponses.size());
+#endif
+  }
+  return (itsResponses.size() > 0) ? double(sum)/itsResponses.size() : 0.0;
+}
+
+/////////////
+// actions //
+/////////////
+
 void Trial::action() const {
 DOTRACE("Trial::action");
   for (int i = 0; i < itsIdPairs.size(); i++) {
     GrObj *obj = itsObjList.getObj(itsIdPairs[i].first);
+    Assert(obj);
     Position *pos = itsPosList.getPos(itsIdPairs[i].second);
+    Assert(pos);
 #ifdef LOCAL_DEBUG
     DUMP_VAL1(itsIdPairs[i].first);
     DUMP_VAL2((void *) obj);
     DUMP_VAL1(itsIdPairs[i].second);
     DUMP_VAL2((void *) pos);
 #endif
-    Assert(obj);
-    Assert(pos);
-    glMatrixMode(GL_MODELVIEW);
 
+    glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
-      pos->translate();
-      pos->scale();
-      pos->rotate();
+//       pos->translate();
+//       pos->scale();
+//       pos->rotate();
+	   pos->go();
       obj->grAction();
     glPopMatrix();
   }

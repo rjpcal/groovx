@@ -2,17 +2,17 @@
 // rect.h
 // Rob Peters
 // created: Jan-99
-// written: Tue Mar 16 19:33:10 1999
+// written: Fri Apr  2 16:27:02 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef RECT_H_DEFINED
 #define RECT_H_DEFINED
 
-class rect {
+class Rect {
 public:
-  rect() : l(0.0), t(0.0), r(0.0), b(0.0) {}
-  rect(const rect& i) : l(i.l), t(i.t), r(i.r), b(i.b) {}
+  Rect() : l(0.0), t(0.0), r(0.0), b(0.0) {}
+  Rect(const Rect& i) : l(i.l), t(i.t), r(i.r), b(i.b) {}
   
   float l, t, r, b;
   void setRectLTRB(float L, float T, float R, float B)

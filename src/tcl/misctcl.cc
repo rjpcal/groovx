@@ -2,7 +2,7 @@
 // misctcl.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Mar 15 16:09:20 1999
+// written: Mon Apr 12 12:07:46 1999
 // $Id$
 //
 // this file contains the implementations for some simple Tcl functions
@@ -18,6 +18,8 @@
 #include <tcl.h>
 #include <cstdlib>
 #include <unistd.h>
+
+#include "randutils.h"
 
 ///////////////////////////////////////////////////////////////////////
 // MiscTcl Tcl package declarations
@@ -46,7 +48,7 @@ int MiscTcl::randCmd(ClientData, Tcl_Interp *interp,
   if (Tcl_GetDoubleFromObj(interp, objv[1], &min) != TCL_OK) return TCL_ERROR;
   if (Tcl_GetDoubleFromObj(interp, objv[2], &max) != TCL_OK) return TCL_ERROR;
 
-  double result = (double(rand()) / RAND_MAX) * (max-min) + min;
+  double result = randDoubleRange(min, max);
   Tcl_SetObjResult(interp, Tcl_NewDoubleObj(result));
   return TCL_OK;
 }
@@ -72,8 +74,10 @@ int MiscTcl::srandCmd(ClientData, Tcl_Interp *interp,
 // 9msec more than the specified delay
 int MiscTcl::sleepCmd(ClientData, Tcl_Interp *interp,
                       int objc, Tcl_Obj *const objv[]) {
+  if (objc != 2) return TCL_ERROR;
   int secs=0;
   Tcl_GetIntFromObj(interp, objv[1], &secs);
+  if (secs < 0) return TCL_ERROR;
   sleep(secs);
   return TCL_OK;
 }
@@ -86,8 +90,10 @@ int MiscTcl::sleepCmd(ClientData, Tcl_Interp *interp,
 // takes ~19000 us (ugh)
 int MiscTcl::usleepCmd(ClientData, Tcl_Interp *interp,
                        int objc, Tcl_Obj *const objv[]) {
+  if (objc != 2) return TCL_ERROR;
   int usecs=0;
   Tcl_GetIntFromObj(interp, objv[1], &usecs);
+  if (usecs < 0) return TCL_ERROR;
   usleep(usecs);
   return TCL_OK;  
 }
@@ -101,9 +107,11 @@ int MiscTcl::usleepCmd(ClientData, Tcl_Interp *interp,
 // per iteration, even if the specified delay is 1.
 int MiscTcl::usleeprCmd(ClientData, Tcl_Interp *interp,
                         int objc, Tcl_Obj *const objv[]) {
+  if (objc != 3) return TCL_ERROR;
   int usecs=0, reps=0;
   Tcl_GetIntFromObj(interp, objv[1], &usecs);
   Tcl_GetIntFromObj(interp, objv[2], &reps);
+  if (usecs < 0 || reps < 0) return TCL_ERROR;
   for ( ; reps > 0; reps--) usleep(usecs);
   return TCL_OK;  
 }

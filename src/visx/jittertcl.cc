@@ -2,7 +2,7 @@
 // jittertcl.cc
 // Rob Peters
 // created: Wed Apr  7 14:58:40 1999
-// written: Wed Apr  7 15:25:15 1999
+// written: Fri Apr 16 18:25:53 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@
 #include "poslist.h"
 #include "poslisttcl.h"
 
-#define LOCAL_TRACE
+#define NO_TRACE
 #include "trace.h"
 #include "debug.h"
 
@@ -58,7 +58,7 @@ DOTRACE("JitterTcl::setJitterCmd");
   if ( p == NULL ) return TCL_ERROR;
   Jitter *j = dynamic_cast<Jitter *>(p);
   if ( j == NULL ) {
-	 err_message(interp, objv, ": position not of type jitter");
+	 err_message(interp, objv, "position not of type jitter");
 	 return TCL_ERROR;
   }
 
@@ -75,10 +75,20 @@ DOTRACE("JitterTcl::setJitterCmd");
 
 int JitterTcl::Jitter_Init(Tcl_Interp *interp) {
 DOTRACE("JitterTcl::Jitter_Init");
-  Tcl_CreateObjCommand(interp, "jitter", jitterCmd,
+  // Add all commands to ::Jitter namespace
+  Tcl_CreateObjCommand(interp, "Jitter::jitter", jitterCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "setJitter", setJitterCmd,
+  Tcl_CreateObjCommand(interp, "Jitter::setJitter", setJitterCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+  Tcl_Eval(interp,
+			  "namespace eval Jitter {\n"
+			  "  namespace export jitter\n"
+			  "  namespace export setJitter\n"
+			  "}");
+  Tcl_Eval(interp,
+			  "namespace import Jitter::jitter\n"
+			  "namespace import Jitter::setJitter\n");
+
   Tcl_PkgProvide(interp, "Jitter", "2.1");
   return TCL_OK;
 }

@@ -2,7 +2,7 @@
 // jitter.cc
 // Rob Peters
 // created: Wed Apr  7 13:46:41 1999
-// written: Wed Apr  7 14:43:19 1999
+// written: Sun Apr 25 13:19:31 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -20,6 +20,7 @@
 
 #define NO_TRACE
 #include "trace.h"
+
 #define LOCAL_ASSERT
 #include "debug.h"
 
@@ -35,7 +36,9 @@ DOTRACE("Jitter::Jitter");
   // empty
 }
 
-Jitter::Jitter(istream &is, IOFlag flag) {
+Jitter::Jitter(istream &is, IOFlag flag) : 
+  Position() 
+{
 DOTRACE("Jitter::Jitter");
   deserialize(is, flag);
 }
@@ -50,33 +53,42 @@ DOTRACE("Jitter::~Jitter");
 // before the base class (Position), since the first thing that the
 // PosMgr virtual constructor sees must be the name of the most fully
 // derived class, in order to invoke the proper constructor.
-IOResult Jitter::serialize(ostream &os, IOFlag flag) const {
+void Jitter::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("Jitter::serialize");
   char sep = ' ';
-  if (flag & IO::TYPENAME) { os << typeid(Jitter).name() << sep; }
+  if (flag & TYPENAME) { os << typeid(Jitter).name() << sep; }
 
   os << itsXJitter << sep
 	  << itsYJitter << sep
 	  << itsRJitter << endl;
 
-  // The base class is always serialized, regardless of flag.
-  Position::serialize(os, flag);
-  return checkStream(os);
+  // The base class (Position) is always serialized, regardless of flag.
+  // The typename in the base class is always used, regardless of flag.
+  Position::serialize(os, IOFlag(flag | TYPENAME));
+  if (os.fail()) throw OutputError(typeid(Jitter));
 }
 
-IOResult Jitter::deserialize(istream &is, IOFlag flag) {
+void Jitter::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Jitter::deserialize");
-  if (flag & IO::TYPENAME) {
+  if (flag & TYPENAME) {
     string name;
     is >> name;
-    if (name != string(typeid(Jitter).name())) { return IO_ERROR; }
+    if (name != typeid(Jitter).name()) {
+		throw InputError(typeid(Jitter));
+	 }
   }
 
   is >> itsXJitter >> itsYJitter >> itsRJitter;
-
-  // The base class is always deserialized, regardless of flag.
-  Position::deserialize(is, flag);
-  return checkStream(is);
+#ifdef LOCAL_DEBUG
+  DUMP_VAL1(flag);
+  DUMP_VAL1(itsXJitter);
+  DUMP_VAL1(itsYJitter);
+  DUMP_VAL2(itsRJitter);
+#endif
+  // The base class (Position) is always deserialized, regardless of flag.
+  // The typename in the base class is always used, regardless of flag.
+  Position::deserialize(is, IOFlag(flag | TYPENAME));
+  if (is.fail()) throw InputError(typeid(Jitter));
 }
 
 /////////////

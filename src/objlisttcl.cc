@@ -2,7 +2,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Mar 16 19:37:36 1999
+// written: Sun Apr 25 13:13:28 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -11,9 +11,11 @@
 
 #include "objlisttcl.h"
 
+#include <tcl.h>
+#include <string>
 #include <strstream.h>
 #include <typeinfo>
-#include <tcl.h>
+#include <vector>
 
 #include "errmsg.h"
 #include "objlist.h"
@@ -28,10 +30,11 @@
 
 namespace ObjlistTcl {
   Tcl_ObjCmdProc resetObjListCmd;
-  Tcl_ObjCmdProc numObjsCmd;
+  Tcl_ObjCmdProc allObjsCmd;
+  Tcl_ObjCmdProc objCountCmd;
   Tcl_ObjCmdProc objTypeCmd;
-  Tcl_ObjCmdProc stringify_objlistCmd;
-  Tcl_ObjCmdProc destringify_objlistCmd;
+  Tcl_ObjCmdProc stringifyCmd;
+  Tcl_ObjCmdProc destringifyCmd;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -53,7 +56,7 @@ DOTRACE("ObjlistTcl::getObjFromArg");
   // Make sure we have a valid objid
   if ( Tcl_GetIntFromObj(interp, objv[argn], &id) != TCL_OK ) return NULL;
 #ifdef LOCAL_DEBUG
-  DUMP_VAL1(olist->nobjs());
+  DUMP_VAL1(olist->objCount());
   DUMP_VAL2(id);
 #endif
   if ( !olist.isValidObjid(id) ) {
@@ -63,6 +66,29 @@ DOTRACE("ObjlistTcl::getObjFromArg");
 
   // Get the object
   return olist.getObj(id);
+}
+
+int ObjlistTcl::allObjsCmd(ClientData, Tcl_Interp *interp,
+                          int objc, Tcl_Obj *const objv[]) {
+DOTRACE("ObjlistTcl::allObjsCmd");
+  if (objc != 1) {
+    Tcl_WrongNumArgs(interp, 1, objv, NULL);
+    return TCL_ERROR;
+  }
+
+  ObjList& olist = getObjList();
+  vector<int> objids;
+  olist.getValidObjids(objids);
+
+  Tcl_Obj *list_out = Tcl_NewListObj(0, (Tcl_Obj **) NULL);
+
+  for (int i = 0; i < objids.size(); i++) {
+	 Tcl_Obj *id_obj = Tcl_NewIntObj(objids[i]);
+	 if (Tcl_ListObjAppendElement(interp, list_out, id_obj) != TCL_OK)
+		return TCL_ERROR;
+  }
+  Tcl_SetObjResult(interp, list_out);
+  return TCL_OK;
 }
 
 // clear the ObjList of all GrObj's by calling ObjList::clearObjs()
@@ -81,16 +107,16 @@ DOTRACE("ObjlistTcl::resetObjListCmd");
 }
 
 // return the number of objects in theObjList
-int ObjlistTcl::numObjsCmd(ClientData, Tcl_Interp *interp,
+int ObjlistTcl::objCountCmd(ClientData, Tcl_Interp *interp,
                            int objc, Tcl_Obj *const objv[]) {
-DOTRACE("ObjlistTcl::numObjsCmd");
+DOTRACE("ObjlistTcl::objCountCmd");
   if (objc > 1) {
     Tcl_WrongNumArgs(interp, 1, objv, NULL);
     return TCL_ERROR;
   }
 
   const ObjList& olist = getObjList();
-  Tcl_SetObjResult(interp, Tcl_NewIntObj(olist.nobjs()));
+  Tcl_SetObjResult(interp, Tcl_NewIntObj(olist.objCount()));
   return TCL_OK;
 }
 
@@ -114,9 +140,9 @@ DOTRACE("ObjlistTcl::objTypeCmd");
   return TCL_OK;
 }
 
-int ObjlistTcl::stringify_objlistCmd(ClientData, Tcl_Interp *interp,
+int ObjlistTcl::stringifyCmd(ClientData, Tcl_Interp *interp,
                                      int objc, Tcl_Obj *const objv[]) {
-DOTRACE("ObjlistTcl::stringify_objlistCmd");
+DOTRACE("ObjlistTcl::stringifyCmd");
   if (objc != 1)  {
     Tcl_WrongNumArgs(interp, 1, objv, NULL);
     return TCL_ERROR;
@@ -124,18 +150,33 @@ DOTRACE("ObjlistTcl::stringify_objlistCmd");
 
   const ObjList& olist = getObjList();
 
-  const int BUF_SIZE = 200;
-  char buf[BUF_SIZE];
-  ostrstream ost(buf, BUF_SIZE);
+  // Try to guess (conservatively) how much space we'll need to avoid
+  // overflows when possible
+  //
+  //   20 chars for first line with ObjList ...
+  //   40 chars for each object in list
+  //   10 chars for last line
+  int BUF_SIZE = 20 + 40*olist.objCount() + 10;
 
-  olist.serialize(ost, IO::IOFlag(IO::BASES|IO::TYPENAME));
-  Tcl_SetObjResult(interp, Tcl_NewStringObj(buf, -1));
+  auto_ptr<char> buf(new char[BUF_SIZE]);
+  ostrstream ost(buf.get(), BUF_SIZE);
+
+  try {
+	 olist.serialize(ost, IO::BASES|IO::TYPENAME);
+	 ost << '\0';
+  }
+  catch (IoError& err) {
+	 string msg = ": " + err.info();
+	 err_message(interp, objv, msg.c_str());
+	 return TCL_ERROR;
+  }	 
+  Tcl_SetObjResult(interp, Tcl_NewStringObj(buf.get(), -1));
   return TCL_OK;
 }
 
-int ObjlistTcl::destringify_objlistCmd(ClientData, Tcl_Interp *interp,
+int ObjlistTcl::destringifyCmd(ClientData, Tcl_Interp *interp,
                                      int objc, Tcl_Obj *const objv[]) {
-DOTRACE("ObjlistTcl::destringify_objlistCmd");
+DOTRACE("ObjlistTcl::destringifyCmd");
   if (objc != 2)  {
     Tcl_WrongNumArgs(interp, 1, objv, "string");
     return TCL_ERROR;
@@ -148,22 +189,40 @@ DOTRACE("ObjlistTcl::destringify_objlistCmd");
 
   istrstream ist(buf);
 
-  olist.deserialize(ist, IO::IOFlag(IO::BASES|IO::TYPENAME));
+  try {
+	 olist.deserialize(ist, IO::BASES|IO::TYPENAME);
+  }
+  catch (IoError& err) {
+	 err_message(interp, objv, err.info().c_str());
+	 return TCL_ERROR;
+  }
   return TCL_OK;
 }
 
 int ObjlistTcl::Objlist_Init(Tcl_Interp *interp) {
 DOTRACE("ObjlistTcl::Objlist_Init");
-  Tcl_CreateObjCommand(interp, "resetObjList", resetObjListCmd,
+  // Add all commands to the ::ObjList namespace
+  Tcl_CreateObjCommand(interp, "ObjList::resetObjList", resetObjListCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "numObjs", numObjsCmd,
+  Tcl_CreateObjCommand(interp, "ObjList::objCount", objCountCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "objType", objTypeCmd,
+  Tcl_CreateObjCommand(interp, "ObjList::objType", objTypeCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "stringify_objlist", stringify_objlistCmd,
+  Tcl_CreateObjCommand(interp, "ObjList::stringify", stringifyCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
-  Tcl_CreateObjCommand(interp, "destringify_objlist", destringify_objlistCmd,
+  Tcl_CreateObjCommand(interp, "ObjList::destringify", destringifyCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+
+  Tcl_Eval(interp, 
+			  "namespace eval ObjList {\n"
+			  "  namespace export objType\n"
+			  "  namespace export resetObjList\n"
+			  "  namespace export objCount\n"
+			  "}");
+  Tcl_Eval(interp,
+			  "namespace import ObjList::objType\n"
+			  "namespace import ObjList::resetObjList\n"
+			  "namespace import ObjList::objCount\n");
 
   Tcl_PkgProvide(interp, "Objlist", "2.1");
   return TCL_OK;

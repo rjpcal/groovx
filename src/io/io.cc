@@ -2,7 +2,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Tue Mar 16 19:40:47 1999
+// written: Mon Apr 26 14:32:20 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -11,17 +11,32 @@
 
 #include "io.h"
 
-#include <iostream.h>
+#include <typeinfo>
 
-IOResult checkStream(ostream &os) {
-  return (!os.bad() ? IO_OK : IO_ERROR);
+#define NO_TRACE
+#include "trace.h"
+
+IoError::IoError(const string& str) :
+  itsInfo(string(typeid(*this).name()) + ": " + str)
+{
+DOTRACE("IoError::IoError(const string&)");
 }
 
-IOResult checkStream(istream &is) {
-  return (!is.bad() ? IO_OK : IO_ERROR);
+IoError::IoError(const type_info& ti) :
+  itsInfo(string(typeid(*this).name()) + ": " + ti.name())
+{
+DOTRACE("IoError::IoError(const type_info&");
 }
 
-IOResult IO::deserialize(istream &is, IOFlag flag) { return IO_OK; }
+void IoError::setInfo(const string& str) {
+DOTRACE("IoError::setInfo(const string&)");
+  itsInfo = string(typeid(*this).name()) + ": " + str;
+}
+
+void IoError::setInfo(const type_info& ti) {
+DOTRACE("IoError::setInfo(const type_info&");
+  itsInfo = string(typeid(*this).name()) + ": " + ti.name();
+}
 
 static const char vcid_io_cc[] = "$Header$";
 #endif // !IO_CC_DEFINED

@@ -2,7 +2,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Mar 16 19:43:52 1999
+// written: Sun Apr 25 13:19:31 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -29,27 +29,29 @@ FixPt::FixPt(istream &is, IOFlag flag) {
 
 FixPt::~FixPt() {}
 
-IOResult FixPt::serialize(ostream &os, IOFlag flag) const {
-  if (flag & IO::BASES) { GrObj::serialize(os, flag); }
+void FixPt::serialize(ostream &os, IOFlag flag) const {
+  if (flag & BASES) { GrObj::serialize(os, flag); }
 
   char sep = ' ';
-  if (flag & IO::TYPENAME) { os << typeid(FixPt).name() << sep; }
+  if (flag & TYPENAME) { os << typeid(FixPt).name() << sep; }
 
   os << itsLength << sep;
   os << itsWidth << endl;
-  return checkStream(os);
+  if (os.fail()) throw OutputError(typeid(FixPt));
 }
 
-IOResult FixPt::deserialize(istream &is, IOFlag flag) {
-  if (flag & IO::BASES) { GrObj::deserialize(is, flag); }
-  if (flag & IO::TYPENAME) {
+void FixPt::deserialize(istream &is, IOFlag flag) {
+  if (flag & BASES) { GrObj::deserialize(is, flag); }
+  if (flag & TYPENAME) {
     string name;
     is >> name;
-    if (name != string(typeid(FixPt).name())) { return IO_ERROR; }
+    if (name != typeid(FixPt).name()) { 
+		throw InputError(typeid(FixPt));
+	 }
   }
   is >> itsLength;
   is >> itsWidth;
-  return checkStream(is);
+  if (is.fail()) throw InputError(typeid(FixPt));
 }
 
 void FixPt::grRecompile() const {

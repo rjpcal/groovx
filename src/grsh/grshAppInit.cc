@@ -2,7 +2,7 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Mar 15 17:14:17 1999
+// written: Tue Apr 13 14:31:03 1999
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -23,11 +23,13 @@
 namespace ExptTcl       { Tcl_PackageInitProc Expt_Init;        }
 namespace FaceTcl       { Tcl_PackageInitProc Face_Init;        }
 namespace FixptTcl      { Tcl_PackageInitProc Fixpt_Init;       }
+namespace JitterTcl     { Tcl_PackageInitProc Jitter_Init;      }
 namespace MiscTcl       { Tcl_PackageInitProc Misc_Init;        }
 namespace ObjlistTcl    { Tcl_PackageInitProc Objlist_Init;     }
 namespace ObjTogl       { Tcl_PackageInitProc Objtogl_Init;     }
 namespace PositionTcl   { Tcl_PackageInitProc Position_Init;    }
 namespace PoslistTcl    { Tcl_PackageInitProc Poslist_Init;     }
+namespace SoundTcl      { Tcl_PackageInitProc Sound_Init;       }
 namespace SubjectTcl    { Tcl_PackageInitProc Subject_Init;     }
 namespace Tcldlist      { Tcl_PackageInitProc Tcldlist_Init;    }
 namespace TclGL         { Tcl_PackageInitProc Tclgl_Init;       }
@@ -48,19 +50,21 @@ DOTRACE("Tcl_AppInit");
   if (Tcl_Init(interp)                  != TCL_OK)   { return TCL_ERROR; }
   if (Tk_Init(interp)                   != TCL_OK)   { return TCL_ERROR; }
   if (Togl_Init(interp)                 != TCL_OK)   { return TCL_ERROR; }
+
+  if (ExptTcl::Expt_Init(interp)        != TCL_OK)   { return TCL_ERROR; }
   if (FaceTcl::Face_Init(interp)        != TCL_OK)   { return TCL_ERROR; }
   if (FixptTcl::Fixpt_Init(interp)      != TCL_OK)   { return TCL_ERROR; }
+  if (JitterTcl::Jitter_Init(interp)    != TCL_OK)   { return TCL_ERROR; }
   if (MiscTcl::Misc_Init(interp)        != TCL_OK)   { return TCL_ERROR; }
   if (ObjlistTcl::Objlist_Init(interp)  != TCL_OK)   { return TCL_ERROR; }
   if (ObjTogl::Objtogl_Init(interp)     != TCL_OK)   { return TCL_ERROR; }
   if (PositionTcl::Position_Init(interp) != TCL_OK)  { return TCL_ERROR; }
   if (PoslistTcl::Poslist_Init(interp)  != TCL_OK)   { return TCL_ERROR; }
+  if (SoundTcl::Sound_Init(interp)      != TCL_OK)   { return TCL_ERROR; }
   if (SubjectTcl::Subject_Init(interp)  != TCL_OK)   { return TCL_ERROR; }
   if (Tcldlist::Tcldlist_Init(interp)   != TCL_OK)   { return TCL_ERROR; }
   if (TclGL::Tclgl_Init(interp)         != TCL_OK)   { return TCL_ERROR; }
   if (TlistTcl::Tlist_Init(interp)      != TCL_OK)   { return TCL_ERROR; }
-
-  if (ExptTcl::Expt_Init(interp)        != TCL_OK)   { return TCL_ERROR; }
 
   // set prompt to "grsh[n]% " where n is the history event number
   Tcl_SetVar(interp, "tcl_prompt1", 

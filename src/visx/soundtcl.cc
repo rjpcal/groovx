@@ -2,7 +2,7 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Wed Apr 14 19:56:15 1999
+// written: Tue Apr 27 11:27:13 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@
 
 #include "errmsg.h"
 
-#define NO_TRACE
+#define LOCAL_TRACE
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
@@ -29,7 +29,19 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  class SoundError {};
+  class SoundError {
+  public:
+	 SoundError() : itsInfo() {}
+	 SoundError(const string& filename) { setInfo(filename); }
+	 const string& info() { return itsInfo; }
+  protected:
+	 void setInfo(const string& filename) {
+		itsInfo = string("SoundError: bad or nonexistent file '") + filename + "'";
+	 }
+  private:
+	 string itsInfo;
+  };
+
   class Sound {
   public:
 	 Sound(Audio* audio, const string& filename);
@@ -59,13 +71,13 @@ namespace SoundTcl {
   Tcl_ObjCmdProc play_err_soundCmd;
 
   string ok_sound_file =  "/cit/rjpeters/face/audio/saw50_500Hz_300ms.au";
-  string err_sound_file = "/cit/rjpeters/face/audio/saw50_200Hz_300ms.au";
+  string err_sound_file = "/cit/rjpeters/face/audio/saw50_350Hz_300ms.au";
 
-  Audio *audio;
+  Audio* audio;
 
   // Error messages
-  const char* bad_filename_msg = ": file does not exist";
-  const char* bad_sound_msg = ": sound does not exist";
+  const char* const bad_filename_msg = "sound file does not exist";
+  const char* const bad_sound_msg = "sound does not exist";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -104,7 +116,7 @@ DOTRACE("Sound::setFile");
 
   ifstream ifs(filename.c_str());
   if (ifs.fail()) {
-	 throw SoundError();
+	 throw SoundError(filename);
   }
   ifs.close();
   itsFilename = filename;
@@ -154,8 +166,8 @@ DOTRACE("SoundTcl::setCmd");
 		  theSoundMap[sound]->setFile(Tcl_GetString(objv[2]));
 		}
 	 }
-	 catch (SoundError) {
- 		err_message(interp, objv, bad_filename_msg);
+	 catch (SoundError& err) {
+ 		err_message(interp, objv, err.info().c_str());
 		return TCL_ERROR;
 	 }
   }
@@ -184,14 +196,36 @@ DOTRACE("SoundTcl::playCmd");
 
 int SoundTcl::Sound_Init(Tcl_Interp *interp) {
 DOTRACE("SoundTcl::Sound_Init");
-  const char *ServerName = "";
-  audio = AOpenAudio( const_cast<char *>(ServerName), NULL );
+  // Open an audio connection to the default audio server, then check
+  // to make sure connection succeeded. If the connection fails,
+  // 'audio' is set to NULL. In this case, all procedures in the
+  // Sound:: namespace will have no effect but will return without
+  // error.
+  const char* ServerName = "";
+  long status = 0;
+  audio = AOpenAudio( const_cast<char *>(ServerName), &status );
+  if ( status != 0 ) {
+	 audio = NULL;
+	 return TCL_OK;
+  }
   ASetCloseDownMode( audio, AKeepTransactions, NULL );
+#ifdef LOCAL_DEBUG
+  DUMP_VAL2(AAudioString(audio));
+#endif
 
-  theSoundMap["ok"] = new Sound(audio, ok_sound_file);
-  theSoundMap["err"] = new Sound(audio, err_sound_file);
+  // Try to initialize the default 'ok' and 'err' sounds.
+  // These will fail if the default sound files are missing.
+  try {
+	 theSoundMap["ok"] = new Sound(audio, ok_sound_file);
+	 theSoundMap["err"] = new Sound(audio, err_sound_file);
+  }
+  catch (SoundError& err) {
+	 Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
+									"Sound_Init: ", err.info().c_str(), NULL);
+	 return TCL_ERROR;
+  }
 
-  // Add to ::Sound namespace
+  // Add commands to ::Sound namespace.
   Tcl_CreateObjCommand(interp, "Sound::set", setCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   Tcl_CreateObjCommand(interp, "Sound::play", playCmd,

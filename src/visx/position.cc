@@ -2,7 +2,7 @@
 // position.cc
 // Rob Peters
 // created: Wed Mar 10 21:33:15 1999
-// written: Tue Mar 16 19:36:05 1999
+// written: Mon Apr 26 15:09:42 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -18,7 +18,7 @@
 
 #define NO_TRACE
 #include "trace.h"
-#define LOCAL_ASSERT
+#define INVARIANT
 #include "debug.h"
 
 ///////////////////////////////////////////////////////////////////////
@@ -28,15 +28,18 @@
 struct PositionImpl {
   PositionImpl(float tx = 0.0, float ty = 0.0, float tz = 0.0,
                float sx = 1.0, float sy = 1.0, float sz = 1.0,
-               float rx = 0.0, float ry = 0.0, float rz = 1.0, float ra = 0.0) :
+               float rx = 0.0, float ry = 0.0, float rz = 1.0, float ra = 0.0,
+					float r = 1.0, float g = 1.0, float b = 1.0) :
   tr_x(tx), tr_y(ty), tr_z(tz),
   sc_x(sx), sc_y(sy), sc_z(sz),
-  rt_x(rx), rt_y(ry), rt_z(rz), rt_ang(ra) {}
+  rt_x(rx), rt_y(ry), rt_z(rz), rt_ang(ra),
+  red(r), green(g), blue(b) {}
 
   float tr_x, tr_y, tr_z;       // x,y,z coord shift
   float sc_x, sc_y, sc_z;       // x,y,z scaling
   float rt_x, rt_y, rt_z;       // vector of rotation axis
   float rt_ang;                 // angle in degrees of rotation around axis
+  float red, blue, green;		  // RGB color values ( 0.0 <= val <= 1.0 )
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -51,6 +54,7 @@ DOTRACE("Position::Position()");
   DUMP_VAL2((void *) itsImpl);
 #endif
   // empty
+  Invariant(check());
 }
 
 Position::Position (istream &is, IOFlag flag) : 
@@ -65,13 +69,13 @@ DOTRACE("Position::~Position");
   delete itsImpl;
 }
 
-IOResult Position::serialize(ostream &os, IOFlag flag) const {
+void Position::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("Position::serialize");
-  Assert(itsImpl!=0);
-  if (flag & IO::BASES) { /* there are no bases to serialize */ }
+  Invariant(check());
+  if (flag & BASES) { /* there are no bases to serialize */ }
 
   char sep = ' ';
-  if (flag & IO::TYPENAME) { os << typeid(Position).name() << sep; }
+  if (flag & TYPENAME) { os << typeid(Position).name() << sep; }
 
   os << itsImpl->tr_x << sep
      << itsImpl->tr_y << sep
@@ -83,20 +87,25 @@ DOTRACE("Position::serialize");
      << itsImpl->rt_y << sep
      << itsImpl->rt_z << sep
      << itsImpl->rt_ang << endl;
-  return checkStream(os);
+  if (os.fail()) throw OutputError(typeid(Position));
 }
 
-IOResult Position::deserialize(istream &is, IOFlag flag) {
+void Position::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Position::deserialize");
-  Assert(itsImpl!=0);
-  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
-  if (flag & IO::TYPENAME) {
+  Invariant(check());
+#ifdef LOCAL_DEBUG
+  DUMP_VAL2(flag);
+#endif
+  if (flag & BASES) { /* there are no bases to deserialize */ }
+  if (flag & TYPENAME) {
     string name;
     is >> name;
 #ifdef LOCAL_DEBUG
     DUMP_VAL2(name);
 #endif
-    if (name != string(typeid(Position).name())) { return IO_ERROR; }
+    if (name != typeid(Position).name()) { 
+		throw InputError(typeid(Position));
+	 }
   }
 
   is >> itsImpl->tr_x;
@@ -109,7 +118,11 @@ DOTRACE("Position::deserialize");
   is >> itsImpl->rt_y;
   is >> itsImpl->rt_z;
   is >> itsImpl->rt_ang;
-  return checkStream(is);
+#ifdef LOCAL_DEBUG
+  DUMP_VAL1(itsImpl->tr_x);
+  DUMP_VAL2(itsImpl->rt_ang);
+#endif
+  if (is.fail()) throw InputError(typeid(Position));
 }
 
 ///////////////
@@ -118,7 +131,7 @@ DOTRACE("Position::deserialize");
 
 void Position::getRotate(float &a, float &x, float &y, float &z) const {
 DOTRACE("Position::getRotate");
-  Assert(itsImpl!=0);
+  Invariant(check());
   a = itsImpl->rt_ang;
   x = itsImpl->rt_x;
   y = itsImpl->rt_y;
@@ -127,7 +140,7 @@ DOTRACE("Position::getRotate");
 
 void Position::getTranslate(float &x, float &y, float &z) const {
 DOTRACE("Position::getTranslate");
-  Assert(itsImpl!=0);
+  Invariant(check());
   x = itsImpl->tr_x;
   y = itsImpl->tr_y;
   z = itsImpl->tr_z;
@@ -135,7 +148,7 @@ DOTRACE("Position::getTranslate");
 
 void Position::getScale(float &x, float &y, float &z) const {
 DOTRACE("Position::getScale");
-  Assert(itsImpl!=0);
+  Invariant(check());
   x = itsImpl->sc_x;
   y = itsImpl->sc_y;
   z = itsImpl->sc_z;
@@ -147,13 +160,13 @@ DOTRACE("Position::getScale");
 
 void Position::setAngle(float a) {
 DOTRACE("Position::setAngle");
-  Assert(itsImpl!=0);
+  Invariant(check());
   itsImpl->rt_ang = a;
 }
 
 void Position::setRotate(float a, float x, float y, float z) {
 DOTRACE("Position::setRotate");
-  Assert(itsImpl!=0);
+  Invariant(check());
   itsImpl->rt_ang = a;
   itsImpl->rt_x = x;
   itsImpl->rt_y = y;
@@ -162,7 +175,7 @@ DOTRACE("Position::setRotate");
 
 void Position::setScale(float x, float y, float z) {
 DOTRACE("Position::setScale");
-  Assert(itsImpl!=0);
+  Invariant(check());
   itsImpl->sc_x = x;
   itsImpl->sc_y = y;
   itsImpl->sc_z = z;
@@ -170,7 +183,7 @@ DOTRACE("Position::setScale");
 
 void Position::setTranslate(float x, float y, float z) {
 DOTRACE("Position::setTranslate");
-  Assert(itsImpl!=0);
+  Invariant(check());
   itsImpl->tr_x = x;
   itsImpl->tr_y = y;
   itsImpl->tr_z = z;
@@ -185,20 +198,36 @@ DOTRACE("Position::translate");
 #ifdef LOCAL_DEBUG
   DUMP_VAL2((void *) itsImpl);
 #endif
-  Assert(itsImpl!=0);
+  Invariant(check());
   glTranslatef(itsImpl->tr_x, itsImpl->tr_y, itsImpl->tr_z);
 }
 
 void Position::scale() const {
 DOTRACE("Position::scale");
-  Assert(itsImpl!=0);
+  Invariant(check());
   glScalef(itsImpl->sc_x, itsImpl->sc_y, itsImpl->sc_z);
 }
 
 void Position::rotate() const {
 DOTRACE("Position::rotate");
-  Assert(itsImpl!=0);
+  Invariant(check());
   glRotatef(itsImpl->rt_ang, itsImpl->rt_x, itsImpl->rt_y, itsImpl->rt_z);
+}
+
+void Position::go() const {
+DOTRACE("Position::go");
+  Invariant(check());
+  translate();
+  scale();
+  rotate();
+}
+
+bool Position::check() const {
+DOTRACE("Position::check");
+  return ( (itsImpl != 0) &&
+			  (0.0 <= itsImpl->red)   && (itsImpl->red <= 1.0) &&
+			  (0.0 <= itsImpl->green) && (itsImpl->green <= 1.0) &&
+			  (0.0 <= itsImpl->blue)  && (itsImpl->blue <= 1.0) );
 }
 
 static const char vcid_position_cc[] = "$Header$";

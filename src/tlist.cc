@@ -2,7 +2,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Tue Mar 16 19:24:24 1999
+// written: Sun Apr 25 13:19:30 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -21,6 +21,7 @@
 #include "objlist.h"
 #include "poslist.h"
 
+#define NO_TRACE
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
@@ -47,12 +48,12 @@ DOTRACE("Tlist::~Tlist");
   clearAllTrials();
 }
 
-IOResult Tlist::serialize(ostream &os, IOFlag flag) const {
+void Tlist::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("Tlist::serialize");
-  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+  if (flag & BASES) { /* there are no bases to deserialize */ }
 
   char sep = ' ';
-  if (flag & IO::TYPENAME) { os << typeid(Tlist).name() << sep; }
+  if (flag & TYPENAME) { os << typeid(Tlist).name() << sep; }
 
   // itsObjList
   itsObjList.serialize(os, flag);
@@ -89,22 +90,28 @@ DOTRACE("Tlist::serialize");
   DUMP_VAL1(c);
   DUMP_VAL2(num_non_null);
 #endif
-  Assert(c==num_non_null);      // make sure we have counted correctly
-
+  if ( c != num_non_null ) {	  // make sure we have counted correctly
+	 throw IoLogicError(typeid(Tlist));
+  }
   // itsCurTrial
   os << itsCurTrial << sep;
   // itsVisibility
   os << itsVisibility << sep;
-  return checkStream(os);
+  if (os.fail()) throw OutputError(typeid(Tlist));
 }
 
-IOResult Tlist::deserialize(istream &is, IOFlag flag) {
+void Tlist::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Tlist::deserialize");
-  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
-  if (flag & IO::TYPENAME) {
+  if (flag & BASES) { /* there are no bases to deserialize */ }
+  if (flag & TYPENAME) {
     string name;
     is >> name;
-    if (name != string(typeid(Tlist).name())) { return IO_ERROR; }
+#ifdef LOCAL_DEBUG
+	 DUMP_VAL2(name);
+#endif
+    if (name != typeid(Tlist).name()) { 
+		throw InputError(typeid(Tlist));
+	 }
   }
 
   // itsObjList
@@ -117,26 +124,46 @@ DOTRACE("Tlist::deserialize");
   clearAllTrials();
   int size, num_non_null;
   is >> size >> num_non_null;
-  Assert( num_non_null <= size );
+#ifdef LOCAL_DEBUG
+  DUMP_VAL1(size);
+  DUMP_VAL2(num_non_null);
+#endif
+  if ( size < 0 || num_non_null < 0 || num_non_null > size ) {
+	 throw IoValueError(typeid(Tlist));
+  }
   itsTrials.resize(size, NULL);
   int trial;
   for (int i = 0; i < num_non_null; i++) {
     is >> trial;
+#ifdef LOCAL_DEBUG
+	 DUMP_VAL2(trial);
+#endif
+	 if ( trial < 0 ) {
+		throw IoValueError(typeid(Tlist));
+	 }
     itsTrials[trial] = new Trial(is, flag, itsObjList, itsPosList);
   }
   
   // itsCurTrial
   is >> itsCurTrial;
+#ifdef LOCAL_DEBUG
+  DUMP_VAL2(itsCurTrial);
+#endif
+  if ( itsCurTrial < 0 || itsCurTrial > itsTrials.size() ) {
+	 throw IoValueError(typeid(Tlist));
+  }
   // itsVisibility
   int vis;
   is >> vis;
   itsVisibility = bool(vis);    // can't read directly into the bool
-  return checkStream(is);
+  if (is.fail()) throw InputError(typeid(Tlist));
 }
 
-IOResult Tlist::readFromObjidsOnly(istream &is, int num_trials, int offset) {
+void Tlist::readFromObjidsOnly(istream &is, int num_trials, int offset) {
 DOTRACE("Tlist::readFromObjidsOnly");
+  // Remove all trials and resize itsTrials to 0
   clearAllTrials();
+  itsTrials.resize(0);
 
   // Determine whether we will read to the end of the input stream, or
   // whether we will read only num_trials lines from the stream,
@@ -148,18 +175,30 @@ DOTRACE("Tlist::readFromObjidsOnly");
   int trial = 0;
   while ( (read_to_eof || trial < num_trials) 
           && is.getline(line, BUF_SIZE) ) {
-    istrstream ist(line);
+	 // Allow for whole-line comments beginning with '#'
+	 if (line[0] == '#')
+		continue;
+	 istrstream ist(line);
     itsTrials.push_back(new Trial(itsObjList, itsPosList));
     itsTrials.back()->readFromObjidsOnly(ist, offset);
     trial++;
   }                          
-
-  return checkStream(is);
+  if (is.bad()) throw InputError(typeid(Tlist));
 }
 
 ///////////////
 // accessors //
 ///////////////
+
+int Tlist::trialCount() const {
+DOTRACE("Tlist::trialCount");
+  int count=0;
+  for (vector<Trial *>::const_iterator ii = itsTrials.begin(); 
+       ii != itsTrials.end(); ii++) {
+    if (*ii != NULL) count++;
+  }
+  return count;
+}
 
 bool Tlist::isValidTrial(int trial) const {
 DOTRACE("Tlist::isValidTrial");
@@ -168,10 +207,22 @@ DOTRACE("Tlist::isValidTrial");
            itsTrials[trial] != NULL );
 }
 
-Trial* Tlist::getTrial(int trial) const {
+Trial& Tlist::getTrial(int trial) {
 DOTRACE("Tlist::getTrial");
-  if (!isValidTrial(trial)) return NULL;
-  return itsTrials[trial];
+  Assert( trial >= 0 );
+  if ( trial >= itsTrials.size() ) {
+    itsTrials.resize(trial + RESIZE_CHUNK, NULL);
+  }
+  if (itsTrials[trial] == NULL) {
+    itsTrials[trial] = new Trial(itsObjList, itsPosList);
+  }
+  return *(itsTrials[trial]);
+}
+
+Trial& Tlist::getTrial(int trial) const {
+DOTRACE("Tlist::getTrial const");
+  Assert( isValidTrial(trial) );
+  return *(itsTrials[trial]);
 }
 
 void Tlist::getValidTrials(vector<int>& vec) const {
@@ -198,14 +249,7 @@ DOTRACE("Tlist::setCurTrial");
 
 void Tlist::addToTrial(int trial, int objid, int posid) {
 DOTRACE("Tlist::addToTrial");
-  if ( trial < 0 ) return;
-  if ( trial >= itsTrials.size() ) {
-    itsTrials.resize(trial + RESIZE_CHUNK, NULL);
-  }
-  if (itsTrials[trial] == NULL) {
-    itsTrials[trial] = new Trial(itsObjList, itsPosList);
-  }
-  itsTrials[trial]->add(objid, posid);
+  getTrial(trial).add(objid, posid);
 }
 
 void Tlist::clearTrial(int trial) {
@@ -225,6 +269,7 @@ DOTRACE("Tlist::clearAllTrials");
     // way there is only one function that gets to delete a Trial
     clearTrial(i);
   }
+  itsCurTrial = 0;
 }
 
 /////////////

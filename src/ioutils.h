@@ -2,7 +2,7 @@
 // ioutils.h
 // Rob Peters
 // created: Jan-99
-// written: Tue Mar 16 19:39:29 1999
+// written: Thu Apr  8 18:11:16 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -13,8 +13,8 @@
 #include "io.h"
 #endif
 
-IOResult serializeCstring(ostream &os, const char* str, const char sep='\t');
-IOResult deserializeCstring(istream &is, char*& str);
+void serializeCstring(ostream &os, const char* str, const char sep='\t');
+void deserializeCstring(istream &is, char*& str);
 
 void fatalInputError(const char* type);
 

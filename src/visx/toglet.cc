@@ -2,7 +2,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue Mar 16 19:22:35 1999
+// written: Fri Apr  2 16:27:02 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -49,7 +49,7 @@ void ToglConfig::setFixedScale(float s) {
   itsFixedScale = s; 
 }
 
-rect ToglConfig::getMinRect() const { 
+Rect ToglConfig::getMinRect() const { 
   return itsMinRect; 
 }
 

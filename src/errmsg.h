@@ -2,7 +2,7 @@
 // errmsg.h
 // Rob Peters
 // created: Dec-98
-// written: Tue Mar 16 19:46:28 1999
+// written: Wed Apr 14 20:22:55 1999
 // $Id$
 //
 // this provides a simple inlined function that appends a Tcl function name
@@ -16,16 +16,17 @@ namespace {
 
   inline void err_message(Tcl_Interp *interp, Tcl_Obj *const objv[],
                           const char * err_msg) {
-#if (TCL_MAJOR_VERSION > 8) || \
-    ( (TCL_MAJOR_VERSION == 8) && (TCL_MINOR_VERSION >= 1) )
-      Tcl_AppendObjToObj(Tcl_GetObjResult(interp), objv[0]);
-    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
-                           err_msg, (char *) NULL); 
-#else
+
+	 Tcl_AppendObjToObj(Tcl_GetObjResult(interp), objv[0]);
     Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-                           Tcl_GetStringFromObj(objv[0], (int *) NULL), 
-                           err_msg, (char *) NULL); 
-#endif
+									": ", err_msg, (char *) NULL); 
+  }
+
+  inline void err_message(Tcl_Interp *interp, char *argv[],
+                          const char * err_msg) {
+
+    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), argv[0], 
+									": ", err_msg, (char *) NULL); 
   }
 
 }

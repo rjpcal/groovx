@@ -2,7 +2,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Tue Mar 16 19:20:40 1999
+// written: Sun Apr 25 12:50:01 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -24,19 +24,35 @@ class istrstream;
 ///////////////////////////////////////////////////////////////////////
 
 class Trial : public virtual IO {
-private:
-  typedef pair<int, int> IdPair;
-
 public:
+  //////////////
+  // typedefs //
+  //////////////
+  typedef pair<int, int> IdPair;
+  typedef vector<IdPair> ObjGrp;
+
+  /////////////
+  // structs //
+  /////////////
+  struct Response {
+	 Response(int v = -1, int m = -1) : val(v), msec(m) {}
+	 int val;
+	 int msec;
+  };
+
+  //////////////
+  // creators //
+  //////////////
+
   Trial (const ObjList& olist, const PosList &plist) : 
     itsObjList(olist), itsPosList(plist), 
     itsIdPairs(), itsResponses(), itsType(-1) {}
   Trial(istream &is, IOFlag flag, const ObjList& olist, const PosList &plist); 
-  ~Trial () {}
+  virtual ~Trial () {}
 
   // write/read the object's state from/to an output/input stream
-  virtual IOResult serialize(ostream &os, IOFlag flag = NO_FLAGS) const;
-  virtual IOResult deserialize(istream &is, IOFlag flag = NO_FLAGS);
+  virtual void serialize(ostream &os, IOFlag flag) const;
+  virtual void deserialize(istream &is, IOFlag flag);
   
   // this function reads from an istream that is assumed to contain
   // objid's only; posid's are implied by the position in the input
@@ -46,43 +62,50 @@ public:
   // offset is non-zero, it will be added to each incoming objid
   // before the objid is inserted into the Trial. The function returns
   // the number of objid's read from the stream.
-  int readFromObjidsOnly(istrstream &ist, int offset = 0);
+  int readFromObjidsOnly(istream &is, int offset = 0);
 
-  typedef vector<IdPair> ObjGrp;
+  ///////////////
+  // accessors //
+  ///////////////
 
-  const ObjGrp& objs() { return itsIdPairs; }
+  const ObjGrp& objs() const { return itsIdPairs; }
 
-  void add(int objid, int posid) { itsIdPairs.push_back(IdPair(objid, posid)); }
-
-  virtual int trialType() const { return itsType; } 
   // returns some info about relationship between objects in trial
-
-  void action() const;
+  int trialType() const { return itsType; } 
 
   const char* description() const;
 
-  void recordResponse(int resp) { itsResponses.push_back(resp); }
-  int lastResponse() const { return itsResponses.back(); }
+  int lastResponse() const { return itsResponses.back().val; }
+
+  int numResponses() const { return itsResponses.size(); }
+
+  double avgResponse() const;
+  double avgRespTime() const;
+
+  //////////////////
+  // manipulators //
+  //////////////////
+
+  void add(int objid, int posid) { itsIdPairs.push_back(IdPair(objid, posid)); }
+
+  void setType(int t) { itsType = t; }
+
+  void recordResponse(int val, int msec) { 
+	 itsResponses.push_back(Response(val, msec));
+  }
+
+  /////////////
+  // actions //
+  /////////////
+
+  void action() const;
 
 private:
   const ObjList& itsObjList;
   const PosList& itsPosList;
   ObjGrp itsIdPairs;
-  vector<int> itsResponses;
+  vector<Response> itsResponses;
   int itsType;
-};
-
-///////////////////////////////////////////////////////////////////////
-// declarations of simple derivations from Trial
-///////////////////////////////////////////////////////////////////////
-
-class SingleTrial : public Trial {
-};
-
-class PairTrial : public Trial {
-};
-
-class TripleTrial : public Trial {
 };
 
 static const char vcid_trial_h[] = "$Id$";

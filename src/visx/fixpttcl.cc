@@ -2,7 +2,7 @@
 // fixpttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Mar 16 19:43:22 1999
+// written: Wed Apr 14 20:24:49 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -38,9 +38,8 @@ namespace FixptTcl {
   Tcl_PackageInitProc Fixpt_Init;
 
   // these constants are passed to err_message() in case of error
-  using ObjlistTcl::cant_make_obj;
   using ObjlistTcl::wrong_type_msg;
-  const char* const bad_command = ": invalid command";
+  const char* const bad_command = "invalid command";
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -52,10 +51,10 @@ FixPt* FixptTcl::getFixptFromArg(Tcl_Interp *interp, Tcl_Obj *const objv[],
 DOTRACE("FixptTcl::getFixptFromArg");
   // Get the object
   GrObj *g = ObjlistTcl::getObjFromArg(interp, objv, olist, argn);
-  
+  if ( g == NULL ) return NULL;
+
   // Make sure it's a fixpt object
   FixPt *p = dynamic_cast<FixPt *>(g);
-
   if ( p == NULL ) {
     err_message(interp, objv, wrong_type_msg);
   }
@@ -66,18 +65,13 @@ int FixptTcl::fixptCmd(ClientData, Tcl_Interp *interp,
                        int objc, Tcl_Obj *const objv[]) {
 DOTRACE("FixptTcl::fixptCmd");
   ObjList& olist = ObjlistTcl::getObjList();
-  int id;
 
   float len=0.1;
   int wid=1;
   if (objc == 1) {              // make new object
     FixPt *p = new FixPt(len, wid);
 
-    if ( (id = olist.addObj(p)) < 0) {
-      err_message(interp, objv, cant_make_obj);
-      delete p;
-      return TCL_ERROR;
-    }
+	 int id = olist.addObj(p);
 
     Tcl_SetObjResult(interp, Tcl_NewIntObj(id));
     return TCL_OK;
@@ -102,18 +96,16 @@ DOTRACE("FixptTcl::fixptCmd");
 int FixptTcl::lengthCmd(const ObjList& olist, Tcl_Interp *interp,
                         int objc, Tcl_Obj *const objv[]) {
 DOTRACE("FixptTcl::lengthCmd");
-  FixPt *p = NULL;
-  double len;
-  
   if (objc != 4) {
     Tcl_WrongNumArgs(interp, 2, objv, "objid length_val");
     return TCL_ERROR;
   }
   
   // Get the fixpt
-  if ( (p = getFixptFromArg(interp, objv, olist, 2)) == NULL )
-    return TCL_ERROR;
+  FixPt *p = getFixptFromArg(interp, objv, olist, 2);
+  if ( p == NULL ) return TCL_ERROR;
 
+  double len;
   if ( Tcl_GetDoubleFromObj(interp, objv[3], &len) != TCL_OK ) return TCL_ERROR;
 
   p->setLength(len);
@@ -126,18 +118,16 @@ DOTRACE("FixptTcl::lengthCmd");
 int FixptTcl::widthCmd(const ObjList& olist, Tcl_Interp *interp,
                        int objc, Tcl_Obj *const objv[]) {
 DOTRACE("FixptTcl::widthCmd");
-  FixPt *p = NULL;
-  int wid;
-  
   if (objc != 4) {
     Tcl_WrongNumArgs(interp, 2, objv, "objid width_val");
     return TCL_ERROR;
   }
   
   // Get the fixpt
-  if ( (p = getFixptFromArg(interp, objv, olist, 2)) == NULL )
-    return TCL_ERROR;
+  FixPt *p = getFixptFromArg(interp, objv, olist, 2);
+  if ( p == NULL ) return TCL_ERROR;
 
+  int wid;
   if ( Tcl_GetIntFromObj(interp, objv[3], &wid) != TCL_OK ) return TCL_ERROR;
 
   p->setWidth(wid);

@@ -2,7 +2,7 @@
 // toglconfig.h
 // Rob Peters 
 // created: Jan-99
-// written: Tue Mar 16 19:22:23 1999
+// written: Fri Apr  2 16:27:01 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -27,7 +27,7 @@ public:
   float getFixedScale() const;
   void setFixedScale(float s);
 
-  rect getMinRect() const;
+  Rect getMinRect() const;
   void setMinRectLTRB(float L, float T, float R, float B);
 
   int usingFixedScale() const;
@@ -42,7 +42,7 @@ private:
   float itsViewingDistance;     // inches
   int itsFixedScaleFlag;
   float itsFixedScale;
-  rect itsMinRect;
+  Rect itsMinRect;
 };
 
 static const char vcid_toglconfig_h[] = "$Header$";

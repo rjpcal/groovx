@@ -2,19 +2,17 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Tue Mar 16 19:40:31 1999
+// written: Sun Apr 25 13:24:42 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef IO_H_DEFINED
 #define IO_H_DEFINED
 
+#include <string>
+
 class istream; class ostream;
-
-enum IOResult {IO_ERROR=0, IO_OK=1};
-
-IOResult checkStream(ostream &os);
-IOResult checkStream(istream &is);
+class type_info;
 
 ///////////////////////////////////////////////////////////////////////
 // IO class
@@ -22,13 +20,70 @@ IOResult checkStream(istream &is);
 
 class IO {
 public:
-  enum IOFlag { NO_FLAGS        = 0,
-                TYPENAME        = 1 << 0,
-                BASES           = 1 << 1 };
+  // The following flags may be OR'ed together and passed to the flag
+  // argument of serialize/deserialize to control different aspects of
+  // the formatting used to read and write objects. In general, the
+  // same flags muyst be used to read an object as were used to write
+  // it.
+  typedef int IOFlag;
+  static const IOFlag NO_FLAGS   = 0;
+  static const IOFlag TYPENAME   = 1 << 0; // The class's name is written/read
+  static const IOFlag BASES      = 1 << 1; // The class's bases is written/read
 
   virtual ~IO() {}
-  virtual IOResult serialize(ostream &os, IOFlag flag = NO_FLAGS) const=0;
-  virtual IOResult deserialize(istream &is, IOFlag flag = NO_FLAGS);
+  virtual void serialize(ostream &os, IOFlag flag) const=0;
+  virtual void deserialize(istream &is, IOFlag flag) = 0;
+};
+
+///////////////////////////////////////////////////////////////////////
+// IO exception classes
+///////////////////////////////////////////////////////////////////////
+
+class IoError {
+public:
+  IoError() : itsInfo() {}
+  IoError(const string& str);
+  IoError(const type_info& ti);
+  virtual const string& info() { return itsInfo; }
+protected:
+  void setInfo(const string& str);
+  void setInfo(const type_info& ti);
+private:
+  string itsInfo;
+};
+
+class InputError : public IoError {
+public:
+  InputError() : IoError() {}
+  InputError(const string& str) { setInfo(str); }
+  InputError(const type_info& ti) { setInfo(ti); }
+};
+
+class OutputError : public IoError {
+public:
+  OutputError() : IoError() {}
+  OutputError(const string& str) { setInfo(str); }
+  OutputError(const type_info& ti) { setInfo(ti); }
+};
+
+class IoLogicError : public IoError {
+public:
+  IoLogicError() : IoError() {}
+  IoLogicError(const string& str) { setInfo(str); }
+  IoLogicError(const type_info& ti) { setInfo(ti); }
+};
+
+class IoValueError : public IoError {
+public:
+  IoValueError() : IoError() {}
+  IoValueError(const string& str) { setInfo(str); }
+  IoValueError(const type_info& ti) { setInfo(ti); }
+};
+
+class IoFilenameError : public IoError {
+public:
+  IoFilenameError() : IoError() {}
+  IoFilenameError(const string& filename) { setInfo(filename); }
 };
 
 static const char vcid_io_h[] = "$Header$";

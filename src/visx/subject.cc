@@ -2,7 +2,7 @@
 // subject.cc
 // Rob Peters
 // created: Dec-98
-// written: Tue Mar 16 19:32:51 1999
+// written: Sun Apr 25 14:13:53 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -31,7 +31,9 @@
 ///////////////////////////////////////////////////////////////////////
 
 Subject::Subject(const char *name, const char* dir) : 
-  itsName(NULL), itsDirectory(NULL) {
+  itsName(NULL), itsDirectory(NULL)
+{
+DOTRACE("Subject::Subject");
   if (name != NULL) {
     itsName = new char[strlen(name)+1];
     strcpy(itsName, name);
@@ -43,41 +45,46 @@ Subject::Subject(const char *name, const char* dir) :
 }
 
 Subject::~Subject() {
+DOTRACE("Subject::~Subject");
   if (itsName != NULL)
     delete [] itsName;
   if (itsDirectory != NULL)
     delete [] itsDirectory;
 }
 
-Subject::Subject(istream &is) {
-  deserialize(is);
-  if (checkStream(is) != IO_OK) fatalInputError("Subject");
+Subject::Subject(istream &is, IOFlag flag) :
+  itsName(NULL), itsDirectory(NULL)
+{
+DOTRACE("Subject::Subject");
+  deserialize(is, flag);
 }
 
-IOResult Subject::serialize(ostream &os, IOFlag flag) const {
+void Subject::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("Subject::serialize");
-  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
+  if (flag & BASES) { /* there are no bases to deserialize */ }
 
   char sep = ' ';
-  if (flag & IO::TYPENAME) { os << typeid(Subject).name() << sep; }
+  if (flag & TYPENAME) { os << typeid(Subject).name() << sep; }
 
   serializeCstring(os, itsName, sep);
   serializeCstring(os, itsDirectory, sep);
-  return checkStream(os);
+  if (os.fail()) throw OutputError(typeid(Subject));
 }
 
-IOResult Subject::deserialize(istream &is, IOFlag flag) {
+void Subject::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Subject::deserialize");
-  if (flag & IO::BASES) { /* there are no bases to deserialize */ }
-  if (flag & IO::TYPENAME) {
+  if (flag & BASES) { /* there are no bases to deserialize */ }
+  if (flag & TYPENAME) {
     string name;
     is >> name;
-    if (name != string(typeid(Subject).name())) { return IO_ERROR; }
+    if (name != typeid(Subject).name()) { 
+		throw InputError(typeid(Subject));
+	 }
   }
 
   deserializeCstring(is, itsName);
   deserializeCstring(is, itsDirectory);
-  return checkStream(is);
+  if (is.fail()) throw InputError(typeid(Subject));
 }
 
 void Subject::setName(const char* name) {

@@ -2,7 +2,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Tue Mar 16 19:42:36 1999
+// written: Mon Apr 26 21:10:35 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -13,7 +13,6 @@
 
 #include <iostream.h>           // for serialize
 #include <GL/gl.h>
-#include <cstdlib>              // for exit
 
 #define NO_TRACE
 #include "trace.h"
@@ -31,7 +30,8 @@
 GrObj::GrObj(int categ) : 
   itsIsCurrent(0), itsDisplayList(-1)
 {
-    itsDisplayList = glGenLists(1);
+DOTRACE("GrObj::GrObj");
+  itsDisplayList = glGenLists(1);
 }
 
 // read the object's state from an input stream. The input stream must
@@ -39,25 +39,25 @@ GrObj::GrObj(int categ) :
 GrObj::GrObj(istream &is) :
   itsIsCurrent(0), itsDisplayList(-1)
 {
-  deserialize(is);
+DOTRACE("GrObj::GrObj");
+  deserialize(is, IO::NO_FLAGS);
   itsDisplayList = glGenLists(1);
 }
 
 // GrObj destructor
 GrObj::~GrObj() {
+DOTRACE("GrObj::~GrObj");
   glDeleteLists(itsDisplayList, 1);
 }
 
 // write the object's state to an output stream. The output stream must
 // already be open and connected to an appropriate file.
-IOResult GrObj::serialize(ostream &os, IOFlag flag) const {
+void GrObj::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("GrObj::serialize");
-  return IO_OK;
 }
 
-IOResult GrObj::deserialize(istream &is, IOFlag flag) {
+void GrObj::deserialize(istream &is, IOFlag flag) {
 DOTRACE("GrObj::deserialize");
-  return IO_OK;
 }
 
 void GrObj::grAction() const {
@@ -74,7 +74,7 @@ DOTRACE("GrObj::grNewList");
   itsDisplayList = glGenLists(1); 
   if (itsDisplayList == 0) {     
     cerr << "GrObj::grNewList: couldn't allocate display list\n";
-    exit(-1);
+	 throw;
   }
 }
 

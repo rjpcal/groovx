@@ -2,7 +2,7 @@
 // poslisttcl.h
 // Rob Peters
 // created: Sat Mar 13 12:43:01 1999
-// written: Tue Mar 16 19:33:39 1999
+// written: Wed Apr 14 20:30:04 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -28,8 +28,8 @@ namespace PoslistTcl {
   Position* getPosFromArg(Tcl_Interp *interp, Tcl_Obj *const objv[], 
                           const PosList& plist, int argn);
 
-  const char* const cant_make_pos = ": error creating position";
-  const char* const bad_posid_msg = ": posid out of range";
+  const char* const cant_make_pos = "error creating position";
+  const char* const bad_posid_msg = "posid out of range";
 
   Tcl_PackageInitProc Poslist_Init;
 }

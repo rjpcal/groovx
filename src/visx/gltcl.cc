@@ -2,7 +2,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Mar 16 19:26:46 1999
+// written: Wed Apr 14 20:29:02 1999
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -35,7 +35,7 @@
 namespace TclGL {
   // utility maps for GLenums
   typedef map<string,GLenum> GLenum_map;
-  const char* const no_such_enum = ": invalid GLenum constant";
+  const char* const no_such_enum = "invalid GLenum constant";
 
   GLenum_map glBegin_mode;
   void glBegin_mode_init(GLenum_map& m);
@@ -319,6 +319,11 @@ DOTRACE("antialiasCmd");
 int TclGL::lineInfoCmd(ClientData, Tcl_Interp *interp,
                        int objc, Tcl_Obj *const objv[]) {
 DOTRACE("lineInfoCmd");
+  if (objc != 1) {
+	 Tcl_WrongNumArgs(interp, 1, objv, NULL);
+	 return TCL_ERROR;
+  }
+
   GLdouble range[2] = {-1.0,-1.0}, gran=-1.0;
   glGetDoublev(GL_LINE_WIDTH_RANGE, &range[0]);
   glGetDoublev(GL_LINE_WIDTH_GRANULARITY, &gran);

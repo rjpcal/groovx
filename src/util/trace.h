@@ -2,61 +2,118 @@
 // trace.h
 // Rob Peters
 // created: Jan-99
-// written: Tue Mar 16 19:21:30 1999
+// written: Tue Apr 27 11:16:33 1999
 // $Id$
+//
+// This file defines two classes and several macros that can be used
+// to achieve function profiling and tracing. The basic idea is that
+// for each function for which profiling is enabled, a static Prof
+// object is created. This object maintains the call count and total
+// elapsed time for that function. The job of measuring and recording
+// such information falls to the Trace class. An automatic object of
+// the Trace class is constructed on entry to a function, and it is
+// destructed just prior to function exit. If LOCAL_TRACE is defined,
+// the Trace object will emit "entering" and "leaving" messages as it
+// is constructed and destructed, respectively. In any case, the Trace
+// object takes care of teling the static Prof object to 1) increment
+// its counter, and 2) record the elapsed time.
+//
+// The behavior of the control macros are as follows:
+//
+// 1) if LOCAL_PROF is defined, profiling will always occur 
+// 2) if LOCAL_TRACE is defined, profiling AND tracing will always occur
+// 3) if TRACE is defined, profiling AND tracing will occur, EXCEPT:
+// 4) if NO_TRACE is defined, TRACE is ignored
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TRACE_H_DEFINED
-#define TRACE_H_DEFINEd
+#define TRACE_H_DEFINED
 
 #if (defined(TRACE) && !defined(NO_TRACE))
 #define LOCAL_TRACE
 #endif
 
 #ifdef LOCAL_TRACE
-
-#ifndef IOSTREAM_H_INCLUDED
-#include <iostream.h>
-#define IOSTREAM_H_INCLUDED
-#endif
-#ifndef STRING_INCLUDED
-#include <string>
-#define STRING_INCLUDED
+#define LOCAL_PROF
 #endif
 
-const int MAX_TRACE_LEVEL = 4;
+#ifdef LOCAL_PROF
+#  include <iostream.h>
+#  include <sys/time.h>
+
+const int MAX_TRACE_LEVEL = 6;
 
 extern int TRACE_LEVEL;
 const char *const TRACE_TAB = "  ";
+// struct timeval {
+//                unsigned long  tv_sec;   /* seconds since Jan. 1, 1970 */
+//                long           tv_usec;  /* and microseconds */
+//            };
+
+class Prof {
+public:
+  Prof(const char* s) : funcName(s), callCount(0) {
+	 totalTime.tv_sec = 0;
+	 totalTime.tv_usec = 0;
+  }
+  ~Prof() { 
+	 cerr << funcName << " called " << count() << " times, "
+			<< "average time == " << avgTime() << "usec\n";
+  }
+  int count() const { return callCount; }
+  void add(timeval t) { 
+	 totalTime.tv_sec += t.tv_sec; 
+	 totalTime.tv_usec += t.tv_usec;
+	 callCount++; 
+  }
+  const char* name() const { return funcName; }
+  double avgTime() const { 
+	 return (double(totalTime.tv_sec)*1000000 + totalTime.tv_usec)/callCount; 
+  }
+private:
+  const char* funcName;
+  int callCount;
+  timeval totalTime;
+};
 
 class Trace {
 public:
-  Trace(string s) : str(s) {
-    if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
+  Trace(Prof& p) : prof(p) {
+#ifdef LOCAL_TRACE
+	 if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
       for (int i=0; i < TRACE_LEVEL; i++)
         cerr << TRACE_TAB;
-      cerr << "entering " << str << "...\n";
+      cerr << "entering " << prof.name() << "...\n";
     }
+#endif
     TRACE_LEVEL++;
+	 gettimeofday(&start, NULL);
   }
   
   ~Trace() {
+	 gettimeofday(&finish, NULL);
+	 elapsed.tv_sec = finish.tv_sec - start.tv_sec;
+	 elapsed.tv_usec = finish.tv_usec - start.tv_usec;
+	 prof.add(elapsed);
+#ifdef LOCAL_TRACE
     TRACE_LEVEL--;
     if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
       for (int i=0; i < TRACE_LEVEL; i++)
         cerr << TRACE_TAB;
-      cerr << "leaving " << str << ".\n";
+      cerr << "leaving " << prof.name() << ".\n";
     }
     if (TRACE_LEVEL == 0) cerr << endl;
+#endif
   }
 private:
-  string str;
+  Prof& prof;
+  timeval start, finish, elapsed;
 };
 
-#define DOTRACE(x) Trace __T(x)
-#else // !LOCAL_TRACE
+#define DOTRACE(x) static Prof P__(x); Trace T__(P__);
+#else // !defined(LOCAL_PROF)
 #define DOTRACE(x) {}
-#endif // !LOCAL_TRACE
+#endif // !defined(LOCAL_PROF)
 
 static const char vcid_trace_h[] = "$Header$";
 #endif // !TRACE_H_DEFINED

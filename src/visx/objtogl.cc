@@ -2,7 +2,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Mar 16 19:37:08 1999
+// written: Fri Apr 16 16:14:14 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
@@ -14,12 +14,14 @@
 
 #include "objtogl.h"
 
-#include <iostream.h>           // for dumpcmap
+#include <strstream.h>
 #include <GL/gl.h>
-#include "togl.h"
+#include <togl.h>
 #include <tk.h>
 #include <X11/Xlib.h>
+#include <string>
 
+#include "errmsg.h"
 #include "gfxattribs.h"
 #include "tlist.h"
 #include "tlisttcl.h"
@@ -30,7 +32,7 @@
 #include "debug.h"
   
 ///////////////////////////////////////////////////////////////////////
-// togl functions
+// ObjTogl namespace declarations
 ///////////////////////////////////////////////////////////////////////
 
 namespace ObjTogl {
@@ -53,14 +55,21 @@ namespace ObjTogl {
   void toglDisplayCallback(struct Togl *togl);
   void toglEpsCallback(const struct Togl *togl);
   void toglReshapeCallback(struct Togl *togl);
+
+  const char* const bad_index_msg = "colormap index out of range";
+  const char* const bad_scale_msg = "invalid scaling factor";
 }
+
+///////////////////////////////////////////////////////////////////////
+// ObjTogl namespace definitions
+///////////////////////////////////////////////////////////////////////
 
 int ObjTogl::dumpCmapCmd(struct Togl *togl, int argc, char *argv[]) {
 DOTRACE("ObjTogl::dumpCmapCmd");
   Tcl_Interp *interp = Togl_Interp(togl);
   if (argc < 2 || argc > 4) {
     Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
-                           "wrong # args: should be: \"pathname",
+                           "wrong # args: should be \"pathname ",
                            argv[1], " [start_index] [end_index]\"",
                            (char *) NULL);
     return TCL_ERROR;
@@ -68,25 +77,34 @@ DOTRACE("ObjTogl::dumpCmapCmd");
 
   int start=0;
   int end=255;
-  
   if (argc > 2)
     if (Tcl_GetInt(interp, argv[2], &start) != TCL_OK) return TCL_ERROR;
   if (argc > 3)
     if (Tcl_GetInt(interp, argv[3], &end) != TCL_OK) return TCL_ERROR;
+
+  if (start < 0 || end < 0 || start > 255 || end > 255) {
+	 err_message(interp, argv+1, bad_index_msg);
+	 return TCL_ERROR;
+  }
 
   Tk_Window tkwin = Togl_TkWin(togl);
   Display *display = Tk_Display(reinterpret_cast<Tk_FakeWin *>(tkwin));
   Colormap cmap = Togl_Colormap(togl);
   XColor col;
 
+  const int BUF_SIZE = 40;
+  char buf[BUF_SIZE];
   int i;
   for (i = start; i <= end; i++) {
+	 buf[0] = '\0';
+	 ostrstream ost(buf, BUF_SIZE);
     col.pixel = i;
     XQueryColor(display, cmap, &col);
-    cerr << dec << i << '\t' 
-         << hex << (col.red / 256) << '\t' 
-         << hex << (col.green / 256) << '\t' 
-         << hex << (col.blue / 256) << '\n';
+    ost << dec << i << '\t' 
+		  << hex << (col.red / 256) << '\t' 
+		  << hex << (col.green / 256) << '\t' 
+		  << hex << (col.blue / 256) << '\n' << '\0';
+    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), buf, NULL);
   }
   return TCL_OK;
 }
@@ -96,7 +114,7 @@ DOTRACE("ObjTogl::dumpEpsCmd");
   Tcl_Interp *interp = Togl_Interp(togl);
   if (argc != 3) {
     Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-                           "wrong # args: should be: \"pathname",
+                           "wrong # args: should be \"pathname ",
                            argv[1], " dest_file\"", (char *) NULL);
     // this will have to wait until Togl supports Tcl objects
     //    Tcl_WrongNumArgs(interp, 1, objv, "dest_file");
@@ -117,24 +135,39 @@ DOTRACE("ObjTogl::dumpEpsCmd");
 }
 
 Tcl_Obj* ObjTogl::getParamValue(const struct Togl *togl, char *param) {
-  // build the command string
-  Tcl_Obj* cmd = Tcl_NewStringObj(".togl configure -",-1);
-  Tcl_AppendToObj(cmd, param, -1);
+  // Build a Tcl command string to fetch the value of param
+  // command will look like:
+  //     pathname configure -param
+  string cmd_str = 
+	 string(Tk_PathName(reinterpret_cast<Tk_FakeWin *>(Togl_TkWin(togl))));
+  cmd_str += " configure -";
+  cmd_str += param;
+  Tcl_Obj* cmd = Tcl_NewStringObj(cmd_str.c_str(),-1);
 
-  // execute the command
+  // Remember the old value of the interp's result
   Tcl_Interp *interp = Togl_Interp(togl);
-  if ( Tcl_EvalObj(interp, cmd, 0) != TCL_OK ) return NULL;
+  Tcl_Obj* old_result = Tcl_GetObjResult(interp);
 
-  // get the fifth object from the resulting list
+  // Execute the command
+  if ( Tcl_EvalObjEx(interp, cmd, 0) != TCL_OK ) return NULL;
+
+  // The resulting list will look like:
+  //          -rgba rgba Rgba true 0
+  // (i.e.)   -cmd_name all_lower with_upper default_val current_val
+  // So...
+  // get the current value, the fifth object from the resulting list 
   Tcl_Obj* list = Tcl_GetObjResult(interp);
   Tcl_Obj* obj = NULL;
   if ( Tcl_ListObjIndex(interp, list, 4, &obj) != TCL_OK ) return NULL;
+
+  // Restore the previous result value
+  Tcl_SetObjResult(interp, old_result);
   return obj;
 }
 
 inline void ObjTogl::reconfigureGL(const struct Togl *togl) {
 DOTRACE("ObjTogl::reconfigureGL");
-  ToglConfig *config = (ToglConfig *) Togl_GetClientData(togl);
+  ToglConfig *config = static_cast<ToglConfig *>(Togl_GetClientData(togl));
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -151,8 +184,8 @@ DOTRACE("ObjTogl::reconfigureGL");
 
   else { // not usingFixedScale (i.e. minRect instead)
 
-    const rect minrect = config->getMinRect(); // the minimum rect
-    rect therect(minrect);        // the actual rect that we'll build
+    const Rect minrect = config->getMinRect(); // the minimum Rect
+    Rect therect(minrect);        // the actual Rect that we'll build
   
     // the desired conditions are as follows:
     //    (1) therect contains minrect
@@ -188,7 +221,7 @@ DOTRACE("ObjTogl::setColorCmd");
   Tcl_Interp *interp = Togl_Interp(togl);
   if (argc != 6) {
     Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-                           "wrong # args: should be: \"pathname ",
+                           "wrong # args: should be \"pathname ",
                            argv[1], " index r g b\"", (char *) NULL);
     //Tcl_WrongNumArgs(interp, 2, objv, "index r g b");
     return TCL_ERROR;
@@ -201,6 +234,11 @@ DOTRACE("ObjTogl::setColorCmd");
   if (Tcl_GetDouble(interp, argv[4], &g) != TCL_OK) return TCL_ERROR;
   if (Tcl_GetDouble(interp, argv[5], &b) != TCL_OK) return TCL_ERROR;
 
+  if (i<0 || i>255) {
+	 err_message(interp, argv+1, bad_index_msg);
+	 return TCL_ERROR;
+  }
+
   Togl_SetColor(togl, i, r, g, b);
   return TCL_OK;
 }
@@ -211,7 +249,7 @@ DOTRACE("ObjTogl::setFixedScaleCmd");
   Tcl_Interp *interp = Togl_Interp(togl);
   if (argc != 3) {
     Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-                           "wrong # args: should be \"pathname",
+                           "wrong # args: should be \"pathname ",
                            argv[1], " scale\"", (char *) NULL);
     //    Tcl_WrongNumArgs(interp, 2, objv, "left top right bottom");
     return TCL_ERROR;
@@ -219,21 +257,25 @@ DOTRACE("ObjTogl::setFixedScaleCmd");
 
   double s;
   if (Tcl_GetDouble(interp, argv[2], &s) != TCL_OK) return TCL_ERROR;
+  if (s <= 0.0) {
+	 err_message(interp, argv+1, bad_scale_msg);
+	 return TCL_ERROR;
+  }
 
-  ToglConfig *config = (ToglConfig *) Togl_GetClientData(togl);
+  ToglConfig *config = static_cast<ToglConfig *>(Togl_GetClientData(togl));
   config->setFixedScale(s);
   reconfigureGL(togl);
   return TCL_OK;
 }
 
-// this function sets the minimum rect that will be requested when
+// this function sets the minimum Rect that will be requested when
 // OpenGL sets up its projection
 int ObjTogl::setMinRectCmd(struct Togl *togl, int argc, char *argv[]) {
 DOTRACE("ObjTogl::setMinRectCmd");
   Tcl_Interp *interp = Togl_Interp(togl);
   if (argc != 6) {
     Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-                           "wrong # args: should be \"pathname",
+                           "wrong # args: should be \"pathname ",
                            argv[1], " left top right bottom\"", (char *) NULL);
     return TCL_ERROR;
   }
@@ -244,7 +286,15 @@ DOTRACE("ObjTogl::setMinRectCmd");
   if (Tcl_GetDouble(interp, argv[4], &r) != TCL_OK) return TCL_ERROR;
   if (Tcl_GetDouble(interp, argv[5], &b) != TCL_OK) return TCL_ERROR;
 
-  ToglConfig *config = (ToglConfig *) Togl_GetClientData(togl);
+  // Test for valid rect: right > left && top > bottom. In particular,
+  // we must not have right == left or top == bottom since this
+  // collapses the space onto one dimension.
+  if (r <= l || t <= b) {
+	 err_message(interp, argv+1, "invalid rect");
+	 return TCL_ERROR;
+  }
+
+  ToglConfig *config = static_cast<ToglConfig *>(Togl_GetClientData(togl));
   config->setMinRectLTRB(l,t,r,b);
   reconfigureGL(togl);
   return TCL_OK;
@@ -256,15 +306,19 @@ DOTRACE("ObjTogl::setUnitAngleCmd");
   Tcl_Interp *interp = Togl_Interp(togl);
   if (argc != 3) {
     Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-                           "wrong # args: should be \"pathname",
+                           "wrong # args: should be \"pathname ",
                            argv[1], " angle_in_degrees\"", (char *) NULL);
     return TCL_ERROR;
   }
 
   double deg;
   if (Tcl_GetDouble(interp, argv[2], &deg) != TCL_OK) return TCL_ERROR;
+  if (deg <= 0) {
+	 err_message(interp, argv+1, "invalid value of unit angle");
+	 return TCL_ERROR;
+  }
 
-  ToglConfig *config = (ToglConfig *) Togl_GetClientData(togl);
+  ToglConfig *config = static_cast<ToglConfig *>(Togl_GetClientData(togl));
   config->setUnitAngle(deg);
   reconfigureGL(togl);
   return TCL_OK;
@@ -276,7 +330,7 @@ DOTRACE("ObjTogl::setViewingDistanceCmd");
   Tcl_Interp *interp = Togl_Interp(togl);
   if (argc != 3) {
     Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-                           "wrong # args: should be \"pathname",
+                           "wrong # args: should be \"pathname ",
                            argv[1], " viewing_distance\"", (char *) NULL);
     return TCL_ERROR;
   }
@@ -285,26 +339,33 @@ DOTRACE("ObjTogl::setViewingDistanceCmd");
   if (Tcl_GetDouble(interp, argv[2], &d) != TCL_OK) return TCL_ERROR;
 
   if (d <= 0.0) {
-    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
-                           "look out! you'll hurt your nose trying to view",
-                           "the screen from that distance! try another value",
-                           (char *) NULL);
+	 const char* const bad_distance_msg = 
+		"look out! you'll hurt your nose trying to view "
+		"the screen from that distance! try another value";
+	 err_message(interp, argv+1, bad_distance_msg);
     return TCL_ERROR;
   }
+  if (d > 1000.0) {
+	 const char* const too_far_msg =
+		"if you really insist on trying to view the screen from so far away, "
+		"you should really invest in a good telescope! try another value";
+	 err_message(interp, argv+1, too_far_msg);
+	 return TCL_ERROR;
+  }
 
-  ToglConfig *config = (ToglConfig *) Togl_GetClientData(togl);
+  ToglConfig *config = static_cast<ToglConfig *>(Togl_GetClientData(togl));
   config->setViewingDistIn(d);
   reconfigureGL(togl);
   return TCL_OK;
 }
 
-// this function scales the minimum rect
+// this function scales the minimum Rect
 int ObjTogl::scaleRectCmd(struct Togl *togl, int argc, char *argv[]) {
 DOTRACE("ObjTogl::scaleRectCmd");
   Tcl_Interp *interp = Togl_Interp(togl);
   if (argc != 3) {
     Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-                           "wrong # args: should be \"pathname",
+                           "wrong # args: should be \"pathname ",
                            argv[1], " scale\"", (char *) NULL);
     //    Tcl_WrongNumArgs(interp, 2, objv, "left top right bottom");
     return TCL_ERROR;
@@ -312,9 +373,13 @@ DOTRACE("ObjTogl::scaleRectCmd");
 
   double s;
   if (Tcl_GetDouble(interp, argv[2], &s) != TCL_OK) return TCL_ERROR;
+  if (s <= 0.0) {
+	 err_message(interp, argv+1, bad_scale_msg);
+	 return TCL_ERROR;
+  }
 
-  ToglConfig *config = (ToglConfig *) Togl_GetClientData(togl);
-  rect rct = config->getMinRect();
+  ToglConfig *config = static_cast<ToglConfig *>(Togl_GetClientData(togl));
+  Rect rct = config->getMinRect();
 
   config->setMinRectLTRB(s*rct.l,s*rct.t,s*rct.r,s*rct.b);
   reconfigureGL(togl);
@@ -323,7 +388,9 @@ DOTRACE("ObjTogl::scaleRectCmd");
 
 void ObjTogl::toglCreateCallback(struct Togl *togl) {
 DOTRACE("ObjTogl::toglCreateCallback");
-  // viewing distance = 30 inches, one GL unit == 2.05 degrees visual angle
+  // Create a new ToglConfig object using the following default
+  // settings: viewing distance = 30 inches, one GL unit == 2.05
+  // degrees visual angle
   ToglConfig *config = new ToglConfig(TlistTcl::getTlist(), 30, 2.05);
   Togl_SetClientData(togl, (ClientData) config);
 
@@ -332,47 +399,37 @@ DOTRACE("ObjTogl::toglCreateCallback");
   Tcl_Obj* rgba_obj = getParamValue(togl, "rgba");
   Tcl_GetIntFromObj(Togl_Interp(togl), rgba_obj, &rgba_val);
   GfxAttribs::setFlagsIf(GfxAttribs::RGBA_FLAG, rgba_val);
-#ifdef LOCAL_DEBUG
-  DUMP_VAL2(rgba_val);
-  DUMP_VAL2(GfxAttribs::isTrue(GfxAttribs::RGBA_FLAG));
-#endif
   
   int cmap_val=0;
   Tcl_Obj* cmap_obj = getParamValue(togl, "privatecmap");
   Tcl_GetIntFromObj(Togl_Interp(togl), cmap_obj, &cmap_val);
   GfxAttribs::setFlagsIf(GfxAttribs::PRIVATE_CMAP_FLAG, cmap_val);
-#ifdef LOCAL_DEBUG
-  DUMP_VAL2(cmap_val);
-  DUMP_VAL2(GfxAttribs::isTrue(GfxAttribs::PRIVATE_CMAP_FLAG));
-#endif
 
-  if (GfxAttribs::isTrue(GfxAttribs::RGBA_FLAG)==true) {
-    glColor3f(0.0, 0.0, 0.0);
-    glClearColor(1.0, 1.0, 1.0, 1.0);
+  if (GfxAttribs::isTrue(GfxAttribs::RGBA_FLAG)) {
+    glColor3f(1.0, 1.0, 1.0);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
   }
   else { // not using rgba
     if (GfxAttribs::isTrue(GfxAttribs::PRIVATE_CMAP_FLAG)) {
-      glClearIndex(1);
-      glIndexi(0);
+      glClearIndex(0);
+      glIndexi(1);
     }
     else {
-      glClearIndex(Togl_AllocColor(togl, 1.0, 1.0, 1.0));
-      glIndexi(Togl_AllocColor(togl, 0.0, 0.0, 0.0));
+      glClearIndex(Togl_AllocColor(togl, 0.0, 0.0, 0.0));
+      glIndexi(Togl_AllocColor(togl, 1.0, 1.0, 1.0));
     }
   }
-
-  glLineWidth(2.0);
 }
 
 void ObjTogl::toglDestroyCallback(struct Togl *togl) {
 DOTRACE("ObjTogl::toglDestroyCallback");
-  ToglConfig *config = (ToglConfig *) Togl_GetClientData(togl);
+  ToglConfig *config = static_cast<ToglConfig *>(Togl_GetClientData(togl));
   delete config;
 }
 
 void ObjTogl::toglDisplayCallback(struct Togl *togl) {
 DOTRACE("ObjTogl::toglDisplayCallback");
-  ToglConfig *config = (ToglConfig *) Togl_GetClientData(togl);
+  ToglConfig *config = static_cast<ToglConfig *>(Togl_GetClientData(togl));
   const Tlist& tlist = config->getTlist();
 
   glClear(GL_COLOR_BUFFER_BIT);
@@ -382,7 +439,7 @@ DOTRACE("ObjTogl::toglDisplayCallback");
 
 void ObjTogl::toglEpsCallback(const struct Togl *togl) {
 DOTRACE("ObjTogl::toglEpsCallback");
-  ToglConfig *config = (ToglConfig *) Togl_GetClientData(togl);
+  ToglConfig *config = static_cast<ToglConfig *>(Togl_GetClientData(togl));
   const Tlist& tlist = config->getTlist();
 
   // save the old color indices for foreground and background

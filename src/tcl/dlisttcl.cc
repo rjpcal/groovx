@@ -2,7 +2,7 @@
 // tcldlist.cc
 // Rob Peters 
 // created: Dec-98
-// written: Tue Mar 16 19:27:18 1999
+// written: Wed Apr 14 20:28:10 1999
 // $Id$
 //
 // This package provides additional list manipulation functions using
@@ -87,14 +87,17 @@ DOTRACE("Tcldlist::dlist_chooseCmd");
 #ifdef LOCAL_DEBUG
     DUMP_VAL2(index);
 #endif
+	 // Check index for valid value
+	 if (index < 0 || index >= src_len) {
+		err_message(interp, objv, "index out of range");
+		return TCL_ERROR;
+	 }
     // use that int as an index into source list, getting the
     // corresponding list element and appending it to the output list
-    if (index < src_len) {
-      if (Tcl_ListObjIndex(interp, objv[1], index, &src_elem) != TCL_OK)
-        return TCL_ERROR;
-      if (Tcl_ListObjAppendElement(interp, list_out, src_elem) != TCL_OK)
-        return TCL_ERROR;
-    }
+	 if (Tcl_ListObjIndex(interp, objv[1], index, &src_elem) != TCL_OK)
+		return TCL_ERROR;
+	 if (Tcl_ListObjAppendElement(interp, list_out, src_elem) != TCL_OK)
+		return TCL_ERROR;
   }
   // make the interpreters result point to the output list
   Tcl_SetObjResult(interp, list_out);
@@ -191,7 +194,7 @@ DOTRACE("Tcldlist::dlist_pickoneCmd");
   int src_len;
   if (Tcl_ListObjLength(interp, objv[1], &src_len) != TCL_OK) return TCL_ERROR;
   if (src_len == 0) {
-    err_message(interp, objv, ": source_list is empty");
+    err_message(interp, objv, "source_list is empty");
     return TCL_ERROR;
   }
 
@@ -313,7 +316,7 @@ DOTRACE("Tcldlist::dlist_selectCmd");
   if (Tcl_ListObjLength(interp, objv[2], &flg_len) != TCL_OK) return TCL_ERROR;
 
   if (flg_len < src_len) {
-    err_message(interp, objv, ": flags list must be as long as source_list");
+    err_message(interp, objv, "flags list must be as long as source_list");
     return TCL_ERROR;
   }
 

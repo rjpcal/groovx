@@ -2,7 +2,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Tue Mar 16 19:45:23 1999
+// written: Mon Apr 26 19:20:41 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -12,6 +12,7 @@
 #include "face.h"
 
 #include <iostream.h>           // for serialize
+#include <iomanip.h>				  // for setw in serialize
 #include <string>
 #include <typeinfo>
 #include <GL/gl.h>
@@ -21,6 +22,8 @@
 
 #define NO_TRACE
 #include "trace.h"
+#define LOCAL_ASSERT
+#define INVARIANT
 #include "debug.h"
 
 ///////////////////////////////////////////////////////////////////////
@@ -40,13 +43,11 @@ Face::Face(float eh, float es, float nl, float mh, int categ) :
   itsCategory(categ)
 {
 DOTRACE("Face::Face");
-  // Default to white 
-  itsColor[0] = itsColor[1] = itsColor[2] = 1.0;
-
   setEyeHgt(eh);
   setEyeDist(es);
   setNoseLen(nl);
   setMouthHgt(mh);
+  Invariant(check());
 }
 
 // read the object's state from an input stream. The input stream must
@@ -54,36 +55,43 @@ DOTRACE("Face::Face");
 Face::Face(istream &is, IOFlag flag) {
 DOTRACE("Face::Face");
   deserialize(is, flag);
+  Invariant(check());
 }
 
 Face::~Face() {
+DOTRACE("Face::~Face");
 }
 
 // write the object's state to an output stream. The output stream must
 // already be open and connected to an appropriate file.
-IOResult Face::serialize(ostream &os, IOFlag flag) const {
+void Face::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("Face::serialize");
-  if (flag & IO::BASES) { GrObj::serialize(os, flag); }
+  Invariant(check());
+  if (flag & BASES) { GrObj::serialize(os, flag); }
 
   char sep = ' ';
-  if (flag & IO::TYPENAME) { os << typeid(Face).name() << sep; }
+  if (flag & TYPENAME) { os << typeid(Face).name() << sep; }
 
   os << itsCategory << sep;
-  os << getEyeHgt() << sep;
-  os << getEyeDist() << sep;
-  os << getNoseLen() << sep;
-  os << getMouthHgt();
+  os.setf(ios::fixed);
+  os.precision(2);
+  os << setw(4) << getEyeHgt() << sep;
+  os << setw(4) << getEyeDist() << sep;
+  os << setw(4) << getNoseLen() << sep;
+  os << setw(4) << getMouthHgt();
   os << endl;
-  return checkStream(os);
+  if (os.fail()) throw OutputError(typeid(Face));
 }
 
-IOResult Face::deserialize(istream &is, IOFlag flag) {
+void Face::deserialize(istream &is, IOFlag flag) {
 DOTRACE("Face::deserialize");
-  if (flag & IO::BASES) { GrObj::deserialize(is, flag); }
-  if (flag & IO::TYPENAME) {
+  if (flag & BASES) { GrObj::deserialize(is, flag); }
+  if (flag & TYPENAME) {
     string name;
     is >> name;
-    if (name != string(typeid(Face).name())) { return IO_ERROR; }
+    if (name != typeid(Face).name()) { 
+		throw InputError(typeid(Face));
+	 }
   }
 
   int cat;
@@ -93,10 +101,26 @@ DOTRACE("Face::deserialize");
   is >> val; setEyeDist(val);
   is >> val; setNoseLen(val);
   is >> val; setMouthHgt(val);
+
+  // Mysterious bug in HP compiler (aCC) requires the following
+  // contorted code; if the exception is not first caught in this
+  // function, then re-thrown, it causes a bus error when compiled
+  // with optimization on, although there is no problem with
+  // optimization off. Somehow adding the catch and re-throw avoids
+  // the problem, without changing the program's behavior.
+  try {
+	 if (is.fail()) throw InputError(typeid(Face));
+  }
+  catch (IoError& err) {
+ 	 throw;
+  }
+  Invariant(check());
 }
 
 void Face::grRecompile() const {
 DOTRACE("Face::grRecompile");
+  Invariant(check());
+
   // dump old display list and get new one
   grNewList();
 
@@ -123,7 +147,7 @@ DOTRACE("Face::grRecompile");
                                        -.6, -1.7, 0,
                                        -.7, 0.2, 0};
   
-  const int use_antialiasing = GfxAttribs::usingRgba();
+  const bool use_antialiasing = GfxAttribs::usingRgba();
 
   // make the big display list
   glNewList(grDisplayList(), GL_COMPILE);
@@ -181,6 +205,14 @@ DOTRACE("Face::grRecompile");
   glEndList();
 
   grPostCompiled();
+}
+
+bool Face::check() const {
+DOTRACE("Face::check");
+  return ( (itsNose[0]<=0.0) &&
+			  (itsNose[1]>=0.0) &&
+			  (itsEye[0]<=0.0) &&
+			  (itsEye[1]>=0.0) );
 }
 
 static const char vcid_face_cc[] = "$Header$";

@@ -2,7 +2,7 @@
 // objlisttcl.h
 // Rob Peters
 // created: Jan-99
-// written: Tue Mar 16 19:37:23 1999
+// written: Mon Apr 19 17:05:35 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -28,9 +28,8 @@ namespace ObjlistTcl {
   GrObj* getObjFromArg(Tcl_Interp *interp, Tcl_Obj *const objv[], 
                        const ObjList& olist, int argn);
 
-  const char* const cant_make_obj = ": error creating object";
-  const char* const bad_objid_msg = ": objid out of range";
-  const char* const wrong_type_msg = ": object not of correct type";
+  const char* const bad_objid_msg = "objid out of range";
+  const char* const wrong_type_msg = "object not of correct type";
 
   Tcl_PackageInitProc Objlist_Init;
 }
