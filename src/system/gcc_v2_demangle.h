@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 19 16:58:19 2001
-// written: Wed Feb 26 16:36:14 2003
+// written: Thu Feb 27 16:18:30 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-std::string gcc_v2_demangle(const std::string& in);
+std::string demangle_impl(const std::string& in);
 
 namespace
 {
@@ -126,9 +126,9 @@ namespace
   }
 }
 
-std::string gcc_v2_demangle(const std::string& in)
+std::string demangle_impl(const std::string& in)
 {
-DOTRACE("gcc_v2_demangle");
+DOTRACE("demangle_impl");
   std::string out=in;
 
   dbgEvalNL(3, out.c_str());

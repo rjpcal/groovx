@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 13 10:41:19 1999
-// written: Mon Jan 13 11:04:47 2003
+// written: Thu Feb 27 16:24:27 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,31 +19,59 @@
 
 const char* demangle_cstr(const char* in) { return in; }
 
-#elif defined(__GNUC__)
+#else
 
-#if __GNUC__ < 3
-#  include "system/gcc_v2_demangle.h"
+// Here we pick the appropriate system-dependent header that defines a
+// function for demangling mangled names with the following prototype:
+
+//   std::string demangle_impl(const std::string& mangled)
+
+#  if defined(__GNUC__)
+#    if __GNUC__ < 3
+#      include "system/gcc_v2_demangle.h"
+#    else
+#      include "system/gcc_v3_demangle.h"
+#    endif
+#  else
+#    error no method specified for typename demangling
+#  endif
+
+#include <map>
+#include <string>
+
+#include "util/debug.h"
+#include "util/trace.h"
+
+namespace
+{
+  typedef std::map<std::string, std::string> Cache;
+  Cache nameCache;
+}
 
 const char* demangle_cstr(const char* in)
 {
-  static std::string result;
-  result = gcc_v2_demangle(in);
-  return result.c_str();
+DOTRACE("demangle_cstr");
+
+  const std::string mangled = in;
+
+  Cache::iterator itr = nameCache.find(in);
+
+  if (itr != nameCache.end())
+    {
+      return (*itr).second.c_str();
+    }
+
+  const std::string demangled = demangle_impl(in);
+
+  std::pair<Cache::iterator, bool> result =
+    nameCache.insert(Cache::value_type(in, demangled));
+
+  Assert(result.second == true);
+
+  return (*result.first).second.c_str();
 }
 
-#else
-#  include "system/gcc_v3_demangle.h"
-
-const char* demangle_cstr(const char* in)
-{
-  return gcc_v3_demangle(in);
-}
-
-#endif
-
-#else
-#error no method specified for typename demangling
-#endif // switch on compiler macro
+#endif // !defined(NO_TYPENAME_MANGLING)
 
 static const char vcid_demangle_cc[] = "$Header$";
 #endif // !DEMANGLE_CC_DEFINED

@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 19 17:00:38 2001
-// written: Thu Feb 27 16:11:59 2003
+// written: Thu Feb 27 16:23:35 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,24 +17,29 @@
 
 #include <cstdlib>
 #include <cxxabi.h>
+#include <string>
 
 #include "util/debug.h"
 #include "util/trace.h"
 
-const char* gcc_v3_demangle(const char* mangled)
+std::string demangle_impl(const std::string& mangled)
 {
-DOTRACE("gcc_v3_demangle");
+DOTRACE("demangle_impl");
 
   int status = 0;
 
   static unsigned int length = 256;
   static char* demangled = static_cast<char*>(malloc(length));
 
-  demangled = abi::__cxa_demangle(mangled, demangled, &length, &status);
+  demangled = abi::__cxa_demangle(mangled.c_str(), demangled, &length, &status);
 
-  if (status == 0) return demangled;
+  if (status == 0)
+    {
+      Assert(demangled != 0);
+      return demangled;
+    }
 
-  fstring msg("while demangling '", mangled, "': ");
+  fstring msg("while demangling '", mangled.c_str(), "': ");
 
   switch (status)
     {
