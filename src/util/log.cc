@@ -96,7 +96,7 @@ DOTRACE("Util::Log::addScope");
 void Util::Log::removeScope(const fstring& name)
 {
 DOTRACE("Util::Log::removeScope");
-  for (int i = int(scopes.size()) - 1; i > 0; --i)
+  for (int i = int(scopes.size()) - 1; i >= 0; --i)
     {
       if (scopes.at(i).itsName == name)
         {
