@@ -53,8 +53,8 @@
 
 * (2-Jun-2004) Toglet::size doesn't work for resizing
 
-  works OK unless the toplevel window has been manually resized (e.g. by
-  dragging in the window manager)
+  works OK unless the toplevel window has been manually resized
+  (e.g. by dragging in the window manager)
 
 * (1-Jun-2004) Serialization goodies
 
