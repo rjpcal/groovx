@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Thu Aug 30 10:42:49 2001
+// written: Thu Aug 30 16:54:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,11 +62,12 @@ const FieldMap& Position::classFields()
   {
     Field("translation", Field::ValueType(), &Position::translation,
           "0. 0. 0.", "-10. -10. -10.", "10. 10. 10.", "0.1 0.1 0.1",
-          Field::NEW_GROUP),
+          Field::NEW_GROUP | Field::MULTI),
     Field("scaling", Field::ValueType(), &Position::scaling,
-          "1. 1. 1.", "0.1 0.1 0.1", "10. 10. 10.", "0.1 0.1 0.1"),
+          "1. 1. 1.", "0.1 0.1 0.1", "10. 10. 10.", "0.1 0.1 0.1",
+          Field::MULTI),
     Field("rotationAxis", Field::ValueType(), &Position::rotationAxis,
-          "0. 0. 1.", "-1. -1. -1.", "1. 1. 1.", "0.1 0.1 0.1"),
+          "0. 0. 1.", "-1. -1. -1.", "1. 1. 1.", "0.1 0.1 0.1", Field::MULTI),
     Field("rotationAngle",
           &Position::itsRotationAngle, 0., 0., 360., 1.)
   };
