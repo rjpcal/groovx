@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed Mar 29 23:13:28 2000
+// written: Mon May 22 13:00:10 2000
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -982,7 +982,7 @@ protected:
   virtual void invoke() {
 	 fixed_block<GLdouble> matrix(16);
 
-	 int i = 0;
+	 unsigned int i = 0;
 	 for (Tcl::ListIterator<GLdouble>
 			  itr = beginOfArg(2, (GLdouble*)0),
 			  end = endOfArg(2, (GLdouble*)0);
@@ -1570,7 +1570,7 @@ DOTRACE("TclGL::pixelCheckSumCmd");
   glReadPixels(x,y,w,h,GL_COLOR_INDEX, GL_UNSIGNED_BYTE, &pixels[0]);
 
   long int sum = 0;
-  for (int i = 0; i < pixels.size(); ++i) {
+  for (unsigned int i = 0; i < pixels.size(); ++i) {
 	 sum += pixels[i];
   }
 
