@@ -3,16 +3,13 @@
 // expttesttcl.cc
 // Rob Peters
 // created: Tue May 11 13:13:41 1999
-// written: Tue Dec  7 19:16:02 1999
+// written: Wed Mar  8 16:29:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef EXPTTESTTCL_CC_DEFINED
 #define EXPTTESTTCL_CC_DEFINED
-
-#include <tcl.h>
-#include <vector>
 
 #include "tcllink.h"
 
@@ -22,8 +19,7 @@
 //
 //--------------------------------------------------------------------
 
-extern "C" int Expttest_Init(Tcl_Interp* interp);
-
+extern "C"
 int Expttest_Init(Tcl_Interp* interp) {
   static int haveTest=0;
 
