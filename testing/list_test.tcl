@@ -52,8 +52,8 @@ proc testResetCmd { objname } {
     eval ::test $testname {"check number of objects"} {"
         $cmdname
         set before_count \[${this(baseclass)}::countAll\]
-        IO::new ${this(subclass1)}
-        IO::new ${this(subclass2)}
+        Obj::new ${this(subclass1)}
+        Obj::new ${this(subclass2)}
         $cmdname
         set after_count \[${this(baseclass)}::countAll\]
 		  return \[expr \$before_count - \$after_count\]
@@ -72,8 +72,8 @@ proc testCountCmd { objname } {
     "} {$usage}
     eval ::test $testname {"normal use"} {"
 	     set before_count \[$cmdname\]
-        IO::new ${this(subclass1)}
-        IO::new ${this(subclass2)}
+        Obj::new ${this(subclass1)}
+        Obj::new ${this(subclass2)}
         set after_count \[$cmdname\]
 		  return \[expr \$after_count - \$before_count\]
     "} {"^2$"}
@@ -82,7 +82,7 @@ proc testCountCmd { objname } {
 proc testDeleteCmd { objname } {
     upvar $objname this
 
-    set cmdname "IO::delete"
+    set cmdname "Obj::delete"
     set usage "wrong \# args: should be \"$cmdname item_id\\(s\\)\""
     set testname "${this(packagename)}-${cmdname}"
 
@@ -95,7 +95,7 @@ proc testDeleteCmd { objname } {
 	 "} {$usage}
 
 	 eval ::test $testname {"normal use"} {"
-        set id \[IO::new ${this(subclass1)}\]
+        set id \[Obj::new ${this(subclass1)}\]
 	     $cmdname \$id
 	     IO::is \$id
  	 "} {"^0$"}
@@ -113,10 +113,10 @@ proc testGetValidIdsCmd { objname } {
 	 "} {$usage}
 
 	 eval ::test $testname {"normal use on filled list"} {"
-        IO::new ${this(subclass1)}
-        set remove_me \[IO::new ${this(subclass1)}\]
-        IO::new ${this(subclass2)}
-		  IO::delete \$remove_me
+        Obj::new ${this(subclass1)}
+        set remove_me \[Obj::new ${this(subclass1)}\]
+        Obj::new ${this(subclass2)}
+		  Obj::delete \$remove_me
 		  set count \[${this(baseclass)}::countAll\]
 		  set num_ids \[llength \[$cmdname\]\]
 		  set removed_id \[lsearch -exact \[$cmdname\] \$remove_me\]
@@ -140,13 +140,13 @@ proc testIsValidIdCmd { objname } {
 	 "} {$usage}
 
 	 eval ::test $testname {"normal use on valid id"} {"
-        set id \[IO::new ${this(subclass1)}\]
+        set id \[Obj::new ${this(subclass1)}\]
 	     $cmdname \$id
 	 "} {"^1$"}
 
 	 eval ::test $testname {"normal use on valid id"} {"
-        set id \[IO::new ${this(subclass1)}\]
-	     IO::delete \$id
+        set id \[Obj::new ${this(subclass1)}\]
+	     Obj::delete \$id
 	     $cmdname \$id
 	 "} {"^0$"}
 }

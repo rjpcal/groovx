@@ -10,9 +10,9 @@
 package require Gxseparator
 package require Face
 
-### IO::new GxSeparator ###
-test "GxSepTcl-IO::new GxSeparator" "normal use" {
-	 set gxsep [IO::new GxSeparator]
+### Obj::new GxSeparator ###
+test "GxSepTcl-Obj::new GxSeparator" "normal use" {
+	 set gxsep [Obj::new GxSeparator]
 	 set is_gxnode [GxNode::is $gxsep]
 	 set is_gxsep [GxSeparator::is $gxsep]
 	 return "$gxsep $is_gxnode $is_gxsep"
@@ -20,31 +20,31 @@ test "GxSepTcl-IO::new GxSeparator" "normal use" {
 
 ### GxSeparator::addChild ###
 test "GxSepTcl-GxSeparator::addChild" "normal use" {
-	 set gxsep [IO::new GxSeparator]
-	 set face [IO::new Face]
+	 set gxsep [Obj::new GxSeparator]
+	 set face [Obj::new Face]
 	 set child_id1 [GxSeparator::addChild $gxsep $face]
 	 set child_id2 [GxSeparator::addChild $gxsep $face]
 	 return "$child_id1 $child_id2"
 } {^0 1$}
 
 test "GxSepTcl-GxSeparator::addChild" "try to add self" {
-	 set gxsep [IO::new GxSeparator]
-	 set face [IO::new Face]
+	 set gxsep [Obj::new GxSeparator]
+	 set face [Obj::new Face]
 	 GxSeparator::addChild $gxsep $face
 	 set code [catch {GxSeparator::addChild $gxsep $gxsep} result]
 	 return "$code $result"
 } {^1 GxSeparator::addChild}
 
 test "GxSepTcl-GxSeparator::addChild" "try to add node containing self" {
-	 set gxsep1 [IO::new GxSeparator]
-	 set face [IO::new Face]
+	 set gxsep1 [Obj::new GxSeparator]
+	 set face [Obj::new Face]
 	 GxSeparator::addChild $gxsep1 $face
 
-	 set gxsep2 [IO::new GxSeparator]
+	 set gxsep2 [Obj::new GxSeparator]
 
 	 GxSeparator::addChild $gxsep2 $gxsep1
 
-	 set gxsep3 [IO::new GxSeparator]
+	 set gxsep3 [Obj::new GxSeparator]
 
 	 GxSeparator::addChild $gxsep3 $gxsep2
 
@@ -54,19 +54,19 @@ test "GxSepTcl-GxSeparator::addChild" "try to add node containing self" {
 
 ### GxSeparator::contains ###
 test "GxSepTcl-GxSeparator::contains" "test unrelated object" {
-	 set gxsep [IO::new GxSeparator]
-	 set face [IO::new Face]
+	 set gxsep [Obj::new GxSeparator]
+	 set face [Obj::new Face]
 	 GxNode::contains $gxsep $face
 } {^0$}
 
 test "GxSepTcl-GxSeparator::contains" "test self" {
-	 set gxsep [IO::new GxSeparator]
+	 set gxsep [Obj::new GxSeparator]
 	 GxNode::contains $gxsep $gxsep
 } {^1$}
 
 test "GxSepTcl-GxSeparator::contains" "check contains containee" {
-	 set gxsep1 [IO::new GxSeparator]
-	 set gxsep2 [IO::new GxSeparator]
+	 set gxsep1 [Obj::new GxSeparator]
+	 set gxsep2 [Obj::new GxSeparator]
 	 GxSeparator::addChild $gxsep1 $gxsep2
 
 	 set 1_contains_2 [GxNode::contains $gxsep1 $gxsep2]
@@ -76,17 +76,17 @@ test "GxSepTcl-GxSeparator::contains" "check contains containee" {
 } {^1 0$}
 
 test "GxSepTcl-GxSeparator::contains" "check recursive contains" {
-	 set gxsep1 [IO::new GxSeparator]
+	 set gxsep1 [Obj::new GxSeparator]
 
-	 set gxsep2 [IO::new GxSeparator]
+	 set gxsep2 [Obj::new GxSeparator]
 
 	 GxSeparator::addChild $gxsep1 $gxsep2
 
-	 set gxsep3 [IO::new GxSeparator]
+	 set gxsep3 [Obj::new GxSeparator]
 
 	 GxSeparator::addChild $gxsep2 $gxsep3
 
-	 set face [IO::new Face]
+	 set face [Obj::new Face]
 	 GxSeparator::addChild $gxsep3 $face
 
 	 GxNode::contains $gxsep1 $face
@@ -94,21 +94,21 @@ test "GxSepTcl-GxSeparator::contains" "check recursive contains" {
 
 ### GxSeparator::numChildren ###
 test "GxSepTcl-GxSeparator::numChildren" "use when empty" {
-	 set gxsep [IO::new GxSeparator]
+	 set gxsep [Obj::new GxSeparator]
 	 GxSeparator::numChildren $gxsep
 } {^0$}
 
 test "GxSepTcl-GxSeparator::numChildren" "use with some children" {
-	 set gxsep [IO::new GxSeparator]
-	 set face [IO::new Face]
+	 set gxsep [Obj::new GxSeparator]
+	 set face [Obj::new Face]
 	 set child_id1 [GxSeparator::addChild $gxsep $face]
 	 set child_id2 [GxSeparator::addChild $gxsep $face]
 	 GxSeparator::numChildren $gxsep
 } {^2$}
 
 test "GxSepTcl-GxSeparator::numChildren" "use after a remove" {
-	 set gxsep [IO::new GxSeparator]
-	 set face [IO::new Face]
+	 set gxsep [Obj::new GxSeparator]
+	 set face [Obj::new Face]
 	 set child_id1 [GxSeparator::addChild $gxsep $face]
 	 set child_id2 [GxSeparator::addChild $gxsep $face]
 	 GxSeparator::removeChildId $gxsep $child_id1
@@ -117,20 +117,20 @@ test "GxSepTcl-GxSeparator::numChildren" "use after a remove" {
 
 ### GxSeparator::removeChildId ###
 test "GxSepTcl-GxSeparator::removeChildId" "id too small" {
-	 set gxsep [IO::new GxSeparator]
+	 set gxsep [Obj::new GxSeparator]
 	 GxSeparator::removeChildId $gxsep -1
 	 GxSeparator::numChildren $gxsep
 } {^0$}
 
 test "GxSepTcl-GxSeparator::removeChildId" "use when empty" {
-	 set gxsep [IO::new GxSeparator]
+	 set gxsep [Obj::new GxSeparator]
 	 GxSeparator::removeChildId $gxsep 0
 	 GxSeparator::numChildren $gxsep
 } {^0$}
 
 test "GxSepTcl-GxSeparator::removeChildId" "use when filled" {
-	 set gxsep [IO::new GxSeparator]
-	 set face [IO::new Face]
+	 set gxsep [Obj::new GxSeparator]
+	 set face [Obj::new Face]
 	 GxSeparator::addChild $gxsep $face
 	 GxSeparator::addChild $gxsep $face
 	 GxSeparator::removeChildId $gxsep 0
@@ -138,8 +138,8 @@ test "GxSepTcl-GxSeparator::removeChildId" "use when filled" {
 } {^1$}
 
 test "GxSepTcl-GxSeparator::removeChildId" "id too large" {
-	 set gxsep [IO::new GxSeparator]
-	 set face [IO::new Face]
+	 set gxsep [Obj::new GxSeparator]
+	 set face [Obj::new Face]
 	 GxSeparator::addChild $gxsep $face
 	 GxSeparator::addChild $gxsep $face
 	 GxSeparator::removeChildId $gxsep 2
@@ -149,16 +149,16 @@ test "GxSepTcl-GxSeparator::removeChildId" "id too large" {
 
 ### GxSeparator::removeChildUid ###
 test "GxSepTcl-GxSeparator::removeChildUid" "try non-contained item" {
-	 set gxsep [IO::new GxSeparator]
-	 set face [IO::new Face]
+	 set gxsep [Obj::new GxSeparator]
+	 set face [Obj::new Face]
 	 GxSeparator::removeChildUid $gxsep $face
 	 GxSeparator::numChildren $gxsep
 } {^0$}
 
 test "GxSepTcl-GxSeparator::removeChildUid" "use when filled" {
-	 set gxsep [IO::new GxSeparator]
-	 set pos [IO::new Position]
-	 set face [IO::new Face]
+	 set gxsep [Obj::new GxSeparator]
+	 set pos [Obj::new Position]
+	 set face [Obj::new Face]
 	 GxSeparator::addChild $gxsep $pos
 	 GxSeparator::addChild $gxsep $face
 	 GxSeparator::removeChildUid $gxsep $face
@@ -167,9 +167,9 @@ test "GxSepTcl-GxSeparator::removeChildUid" "use when filled" {
 
 source ${::TEST_DIR}/io_test.tcl
 
-set ::GXSEP [IO::new GxSeparator]
-set ::FACE [IO::new Face]
-set ::POS [IO::new Position]
+set ::GXSEP [Obj::new GxSeparator]
+set ::FACE [Obj::new Face]
+set ::POS [Obj::new Position]
 
 GxSeparator::addChild $::GXSEP $::POS
 GxSeparator::addChild $::GXSEP $::FACE

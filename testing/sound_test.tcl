@@ -13,7 +13,7 @@ if { [catch {package require Sound}] != 0 } { return }
 #set AUDIO [Sound::haveAudio]
 set AUDIO 0							  ;# disable sound tests
 
-set TEST_SOUND [IO::new Sound]
+set TEST_SOUND [Obj::new Sound]
 Sound::file $TEST_SOUND $::TEST_DIR/sound1.au
 
 source ${::TEST_DIR}/io_test.tcl
@@ -23,9 +23,9 @@ IO::testDestringifyCmd SoundTcl IO 1 $::TEST_SOUND
 IO::testWriteCmd SoundTcl IO 1 $::TEST_SOUND
 IO::testReadCmd SoundTcl IO 1 $::TEST_SOUND
 
-### IO::new Sound ###
-test "SoundTcl-IO::new Sound" "normal sound create" {
-	 set ::TEST_SOUND [IO::new Sound]
+### Obj::new Sound ###
+test "SoundTcl-Obj::new Sound" "normal sound create" {
+	 set ::TEST_SOUND [Obj::new Sound]
 	 Sound::file $::TEST_SOUND $::TEST_DIR/sound1.au
 	 expr {$::TEST_SOUND >= 0}
 } {^1$}

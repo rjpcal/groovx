@@ -7,7 +7,7 @@
 ###
 ##############################################################################
 
-set ::BLOCK [IO::new Block]
+set ::BLOCK [Obj::new Block]
 
 source ${::TEST_DIR}/io_test.tcl
 

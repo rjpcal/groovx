@@ -13,12 +13,12 @@ source ${::TEST_DIR}/grobj_test.tcl
 
 GrObj::testSubclass Fixpt FixPt
 
-### IO::new FixPt ###
-test "FixptTcl-IO::new FixPt" "normal create" {
-	 IO::new FixPt
+### Obj::new FixPt ###
+test "FixptTcl-Obj::new FixPt" "normal create" {
+	 Obj::new FixPt
 } {^[0-9]+$}
 
-set fix [IO::new FixPt]
+set fix [Obj::new FixPt]
 
 ### lengthCmd ###
 test "FixptTcl-length" "too few args" {
@@ -37,7 +37,7 @@ test "FixptTcl-length" "error from bad objid" {
     FixPt::length -1 1.0
 } {^FixPt::length: attempt to access invalid id '.*' in}
 test "FixptTcl-length" "error from wrong type" {
-    set f [IO::new Face]
+    set f [Obj::new Face]
 	 FixPt::length $f 1.0
 } {^FixPt::length: an error of type (std::)?bad_cast occurred:.*$}
 
@@ -58,7 +58,7 @@ test "FixptTcl-width" "error from bad objid" {
     FixPt::width -1 5
 } {^FixPt::width: attempt to access invalid id '.*' in}
 test "FixptTcl-width" "error from wrong type" {
-    set f [IO::new Face]
+    set f [Obj::new Face]
 	 FixPt::width $f 5
 } {^FixPt::width: an error of type (std::)?bad_cast occurred:.*$}
 test "FixptTcl-width" "error from non-integral number" {

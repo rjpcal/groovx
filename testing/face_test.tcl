@@ -14,15 +14,15 @@ source ${::TEST_DIR}/grobj_test.tcl
 GrObj::testSubclass Face Face
 
 ### faceCmd ###
-test "FaceTcl-IO::new Face" "too many args" {
-	 IO::new Face junk junk
-} {wrong \# args: should be "IO::new typename \?array_size=1\?"}
-test "FaceTcl-IO::new Face" "normal face creation" {
-	 IO::new Face
+test "FaceTcl-Obj::new Face" "too many args" {
+	 Obj::new Face junk junk
+} {wrong \# args: should be "Obj::new typename \?array_size=1\?"}
+test "FaceTcl-Obj::new Face" "normal face creation" {
+	 Obj::new Face
 } {[0-9]+}
 
 set EPS 0.00001 ;# floating-point precision required of next four commands
-set faceid [IO::new Face] ;# guaranteed face id for next operations
+set faceid [Obj::new Face] ;# guaranteed face id for next operations
 
 ### eyeHeightCmd ###
 test "FaceTcl-eyeHeight" "too few args" {
@@ -121,18 +121,18 @@ unset EPS
 
 ### IO::destringifyCmd ###
 test "FaceTcl-IO::destringify" "error from wrong type" {
-    set fx [IO::new FixPt]
+    set fx [Obj::new FixPt]
 	 IO::destringify $fx junk
 } {^IO::destringify: .*$}
 test "FaceTcl-IO::destringify" "stringify/destringify check" {
-	 set faceid [IO::new Face]
+	 set faceid [Obj::new Face]
 	 Face::noseLength $faceid -1.2
 	 Face::mouthHeight $faceid -0.6
 	 Face::eyeHeight $faceid 0.4
 	 Face::eyeDistance $faceid 0.6
 	 set str1 [IO::stringify $faceid]
 
-	 set faceid2 [IO::new Face]
+	 set faceid2 [Obj::new Face]
 	 IO::destringify $faceid2 $str1
 	 set str2 [IO::stringify $faceid2]
 

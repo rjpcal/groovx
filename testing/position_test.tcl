@@ -10,7 +10,7 @@
 package require Pos
 package require Jitter
 
-set ::POS [IO::new Position]
+set ::POS [Obj::new Position]
 
 source ${::TEST_DIR}/io_test.tcl
 
@@ -19,15 +19,15 @@ IO::testDestringifyCmd PositionTcl IO 1 $::POS
 IO::testWriteCmd PositionTcl IO 1 $::POS
 IO::testReadCmd PositionTcl IO 1 $::POS
 
-### IO::new Position ###
-test "PositionTcl-IO::new Position" "too many args" {
-    IO::new Position junk junk
-} {wrong \# args: should be "IO::new typename \?array_size=1\?"}
-test "PositionTcl-IO::new Position" "normal create" {
-	 IO::new Position
+### Obj::new Position ###
+test "PositionTcl-Obj::new Position" "too many args" {
+    Obj::new Position junk junk
+} {wrong \# args: should be "Obj::new typename \?array_size=1\?"}
+test "PositionTcl-Obj::new Position" "normal create" {
+	 Obj::new Position
 } {^[0-9]+$}
 
-set pos [IO::new Position]
+set pos [Obj::new Position]
 
 ### Pos::rotationAxis ###
 test "PositionTcl-Pos::rotationAxis" "too few args" {
@@ -104,11 +104,11 @@ test "PositionTcl-IO::type" "args" {
     IO::type
 } {wrong \# args: should be "IO::type item_id\(s\)"}
 test "PositionTcl-IO::type" "normal use on Position" { 
-	 set f [IO::new Position]
+	 set f [Obj::new Position]
 	 IO::type $f
 } {Position}
 test "PositionTcl-IO::type" "normal use on Jitter" {
-	 set f [IO::new Jitter]
+	 set f [Obj::new Jitter]
 	 IO::type $f
 } {Jitter}
 test "PositionTcl-IO::type" "error on too small posid" {

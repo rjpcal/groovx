@@ -73,15 +73,15 @@ test "TlistTcl-Tlist::dealSingles" "too many args" {
     Tlist::dealSingles j u n
 } {wrong \# args: should be "Tlist::dealSingles objid\(s\) posid"}
 test "TlistTcl-Tlist::dealSingles" "normal use with several GrObj's" {
-	 set f1 [IO::new Face]
-	 set f2 [IO::new Face]
-	 set f3 [IO::new Face]
-	 set p [IO::new Position]
+	 set f1 [Obj::new Face]
+	 set f2 [Obj::new Face]
+	 set f3 [Obj::new Face]
+	 set p [Obj::new Position]
 	 set trials [Tlist::dealSingles "$f1 $f2 $f3" $p]
 	 llength $trials
 } {^3$}
 test "TlistTcl-Tlist::dealSingles" "normal use with empty ObjList" {
-	 set p [IO::new Position]
+	 set p [Obj::new Position]
 	 set trials [Tlist::dealSingles "" $p]
 	 llength $trials
 } {^0$}
@@ -94,16 +94,16 @@ test "TlistTcl-Tlist::dealPairs" "too many args" {
     Tlist::dealPairs j u n k y
 } {wrong \# args: should be "Tlist::dealPairs objids1 objids2 posid1 posid2"}
 test "TlistTcl-Tlist::dealPairs" "normal use on two GrObj's" {
-	 set o1 [IO::new Face]
-	 set o2 [IO::new Face]
-	 set p1 [IO::new Position]
-	 set p2 [IO::new Position]
+	 set o1 [Obj::new Face]
+	 set o2 [Obj::new Face]
+	 set p1 [Obj::new Position]
+	 set p2 [Obj::new Position]
 	 set trials [Tlist::dealPairs "$o1 $o2" "$o1 $o2" $p1 $p2]
 	 llength $trials
 } {^4$}
 test "TlistTcl-Tlist::dealPairs" "normal use with empty objids" {
-	 set p1 [IO::new Position]
-	 set p2 [IO::new Position]
+	 set p1 [Obj::new Position]
+	 set p2 [Obj::new Position]
 	 set trials [Tlist::dealPairs "" "" $p1 $p2]
 	 llength $trials
 } {^0$}
@@ -116,23 +116,23 @@ test "TlistTcl-Tlist::dealTriads" "too many args" {
     Tlist::dealTriads a b c d e
 } {wrong \# args: should be "Tlist::dealTriads objids posid1 posid2 posid3"}
 test "TlistTcl-Tlist::dealTriads" "normal use on three GrObj's" {
-	 set objs "[IO::new Face] [IO::new Face] [IO::new Face]"
-	 set p1 [IO::new Position]
-	 set p2 [IO::new Position]
-	 set p3 [IO::new Position]
+	 set objs "[Obj::new Face] [Obj::new Face] [Obj::new Face]"
+	 set p1 [Obj::new Position]
+	 set p2 [Obj::new Position]
+	 set p3 [Obj::new Position]
 	 set trials [Tlist::dealTriads $objs $p1 $p2 $p3]
 	 llength $trials
 } {^18$}
 test "TlistTcl-Tlist::dealTriads" "normal use on two GrObj's" {
-	 set objs "[IO::new Face] [IO::new Face]"
-	 set p1 [IO::new Position]
-	 set p2 [IO::new Position]
-	 set p3 [IO::new Position]
+	 set objs "[Obj::new Face] [Obj::new Face]"
+	 set p1 [Obj::new Position]
+	 set p2 [Obj::new Position]
+	 set p3 [Obj::new Position]
 	 set trials [Tlist::dealTriads $objs $p1 $p2 $p3]
 	 llength $trials
 } {^0$}
 test "TlistTcl-Tlist::dealTriads" "normal use on empty ObjList" {
-	 set p1 [IO::new Position]
+	 set p1 [Obj::new Position]
 	 set trials [Tlist::dealTriads "" $p1 $p1 $p1]
 	 llength $trials
 } {^0$}

@@ -31,7 +31,7 @@ proc testSubclass { package {subclass "GrObj"} {objid -1} } {
 	 set testObj(subclass) $subclass
 	 if { $testObj(testsubclass) } {
 		  if { $objid == -1 } {
-				set testObj(objid) [eval IO::new $subclass ]
+				set testObj(objid) [eval Obj::new $subclass ]
 		  } else {
 				set testObj(objid) $objid
 		  }
@@ -189,8 +189,8 @@ proc testDrawCmd { objname } {
 		  if { ![Togl::inited] } { Togl::init; ::update }
 
 		  eval ::test $testname {"normal use"} {"
-		      set trial \[IO::new Trial\]
-		      set pos \[IO::new Position\]
+		      set trial \[Obj::new Trial\]
+		      set pos \[Obj::new Position\]
 		      Trial::add \$trial $this(objid) \$pos
 		      clearscreen
 		      set pix1 \[pixelCheckSum\]

@@ -9,7 +9,7 @@
 
 source ${::TEST_DIR}/io_test.tcl
 
-set ::JITTER [IO::new Jitter]
+set ::JITTER [Obj::new Jitter]
 
 IO::testStringifyCmd JitterTcl IO 1 $::JITTER
 IO::testDestringifyCmd JitterTcl IO 1 $::JITTER
@@ -18,15 +18,15 @@ IO::testReadCmd JitterTcl IO 1 $::JITTER
 
 unset ::JITTER
 
-### IO::new Jitter ###
-test "JitterTcl-IO::new Jitter" "too many args" {
-	 IO::new Jitter junk junk
-} {wrong \# args: should be "IO::new typename \?array_size=1\?"}
-test "JitterTcl-IO::new Jitter" "normal create" {
-	 IO::new Jitter
+### Obj::new Jitter ###
+test "JitterTcl-Obj::new Jitter" "too many args" {
+	 Obj::new Jitter junk junk
+} {wrong \# args: should be "Obj::new typename \?array_size=1\?"}
+test "JitterTcl-Obj::new Jitter" "normal create" {
+	 Obj::new Jitter
 } {[0-9]+}
 
-set jit [IO::new Jitter]
+set jit [Obj::new Jitter]
 
 ### Jitter::setJitterCmd ###
 test "JitterTcl-Jitter::setJitter" "too few args" {
@@ -42,7 +42,7 @@ test "JitterTcl-Jitter::setJitter" "error from non-numeric input" {
     Jitter::setJitter $::jit junk 1.0 1.0
 } {expected floating-point number but got "junk"}
 test "JitterTcl-Jitter::setJitter" "error from wrong type" {
-    set p [IO::new Position]
+    set p [Obj::new Position]
 	 Jitter::setJitter $p 1 1 1
 } {^Jitter::setJitter: an error of type (std::)?bad_cast occurred:.*$}
 

@@ -9,7 +9,7 @@
 
 package require Trial
 
-set TRIAL [IO::new Trial]
+set TRIAL [Obj::new Trial]
 
 source ${::TEST_DIR}/io_test.tcl
 
@@ -20,16 +20,16 @@ IO::testReadCmd TrialTcl IO 1 $::TRIAL
 
 ### Trial::description ###
 test "TrialTcl-Trial::description" "use when empty" {
-    set tr [IO::new Trial]
+    set tr [Obj::new Trial]
     set str [Trial::description $tr]
     regexp {objs ==([0-9 ]*),} $str fullmatch objs
     return "[llength $objs]"
 } {^0$}
 
 test "TrialTcl-Trial::description" "use with one object" {
-    set face [IO::new Face]
-    set pos [IO::new Position]
-    set tr [IO::new Trial]
+    set face [Obj::new Face]
+    set pos [Obj::new Position]
+    set tr [Obj::new Trial]
     Trial::add $tr $face $pos
     set str [Trial::description $tr]
     regexp {objs == ([0-9 ]*),} $str fullmatch objs
@@ -37,11 +37,11 @@ test "TrialTcl-Trial::description" "use with one object" {
 } {^1 1$}
 
 test "TrialTcl-Trial::description" "use with several objects" {
-    set face [IO::new Face]
-    set pos [IO::new Position]
-    set fixpt [IO::new FixPt]
-    set house [IO::new House]
-    set tr [IO::new Trial]
+    set face [Obj::new Face]
+    set pos [Obj::new Position]
+    set fixpt [Obj::new FixPt]
+    set house [Obj::new House]
+    set tr [Obj::new Trial]
     Trial::add $tr $face $pos
     Trial::add $tr $fixpt $pos
     Trial::add $tr $house $pos
@@ -54,16 +54,16 @@ test "TrialTcl-Trial::description" "use with several objects" {
 } {^3 0 1 2$}
 
 test "TrialTcl-Trial::description" "use with nested objects" {
-    set face [IO::new Face]
-    set pos [IO::new Position]
+    set face [Obj::new Face]
+    set pos [Obj::new Position]
 
-    set sep [IO::new GxSeparator]
-    set fixpt [IO::new FixPt]
-    set house [IO::new House]
+    set sep [Obj::new GxSeparator]
+    set fixpt [Obj::new FixPt]
+    set house [Obj::new House]
     GxSeparator::addChild $sep $fixpt
     GxSeparator::addChild $sep $house
 
-    set tr [IO::new Trial]
+    set tr [Obj::new Trial]
     Trial::add $tr $sep $pos
     Trial::add $tr $face $pos
 

@@ -9,7 +9,7 @@
 
 source ${::TEST_DIR}/io_test.tcl
 
-set ::NULLRH [IO::new NullResponseHdlr]
+set ::NULLRH [Obj::new NullResponseHdlr]
 
 source ${::TEST_DIR}/io_test.tcl
 

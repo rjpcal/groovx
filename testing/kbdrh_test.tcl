@@ -7,7 +7,7 @@
 ###
 ##############################################################################
 
-set ::KBDRH [IO::new KbdResponseHdlr]
+set ::KBDRH [Obj::new KbdResponseHdlr]
 KbdRh::keyRespPairs $::KBDRH { {{^[aA]$} 0} {{^[lL]$} 1} }
 
 source ${::TEST_DIR}/io_test.tcl
@@ -17,12 +17,12 @@ IO::testDestringifyCmd KbdRhTcl IO 1 $::KBDRH
 IO::testWriteCmd KbdRhTcl IO 1 $::KBDRH
 IO::testReadCmd KbdRhTcl IO 1 $::KBDRH
 
-### IO::new KbdRh ###
-test "KbdRhTcl-IO::new KbdRh" "too many args" {
-    IO::new KbdResponseHdlr junk junk
-} {^wrong \# args: should be "IO::new typename \?array_size=1\?"$}
-test "KbdRhTcl-IO::new KbdRh" "normal use" {
-	 catch {IO::new KbdResponseHdlr}
+### Obj::new KbdRh ###
+test "KbdRhTcl-Obj::new KbdRh" "too many args" {
+    Obj::new KbdResponseHdlr junk junk
+} {^wrong \# args: should be "Obj::new typename \?array_size=1\?"$}
+test "KbdRhTcl-Obj::new KbdRh" "normal use" {
+	 catch {Obj::new KbdResponseHdlr}
 } {^0$}
 
 ### KbdRh::useFeedbackCmd ###

@@ -7,7 +7,7 @@
 ###
 ##############################################################################
 
-set ::EVENTRH [IO::new EventResponseHdlr]
+set ::EVENTRH [Obj::new EventResponseHdlr]
 
 source ${::TEST_DIR}/io_test.tcl
 
@@ -16,12 +16,12 @@ IO::testDestringifyCmd EventRhTcl IO 1 $::EVENTRH
 IO::testWriteCmd EventRhTcl IO 1 $::EVENTRH
 IO::testReadCmd EventRhTcl IO 1 $::EVENTRH
 
-### IO::new EventRh ###
-test "EventRhTcl-IO::new EventRh" "too many args" {
-    IO::new EventResponseHdlr junk junk
-} {^wrong \# args: should be "IO::new typename \?array_size=1\?"$}
-test "EventRhTcl-IO::new EventRh" "normal use" {
-	 catch {IO::new EventResponseHdlr}
+### Obj::new EventRh ###
+test "EventRhTcl-Obj::new EventRh" "too many args" {
+    Obj::new EventResponseHdlr junk junk
+} {^wrong \# args: should be "Obj::new typename \?array_size=1\?"$}
+test "EventRhTcl-Obj::new EventRh" "normal use" {
+	 catch {Obj::new EventResponseHdlr}
 } {^0$}
 
 ### EventRh::useFeedbackCmd ###
