@@ -2,7 +2,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Fri Mar 12 12:58:17 1999
+// written: Sat Mar 13 14:35:58 1999
 static const char vcid_face_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
@@ -66,7 +66,7 @@ DOTRACE("Face::serialize");
   if (flag & IO::BASES) { GrObj::serialize(os, flag); }
 
   char sep = ' ';
-  if (flag & IO::TYPENAME) { os << typeid(this).name() << sep; }
+  if (flag & IO::TYPENAME) { os << typeid(Face).name() << sep; }
 
   os << itsCategory << sep;
   os << getEyeHgt() << sep;
@@ -83,7 +83,7 @@ DOTRACE("Face::deserialize");
   if (flag & IO::TYPENAME) {
 	 string name;
 	 is >> name;
-	 if (name != string(typeid(this).name())) { return IO_ERROR; }
+	 if (name != string(typeid(Face).name())) { return IO_ERROR; }
   }
 
   int cat;
