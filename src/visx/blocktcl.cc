@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Tue Oct 24 13:05:36 2000
+// written: Wed Oct 25 20:15:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,15 +42,20 @@ namespace BlockTcl {
 	 if (first_trial == -1)
 		first_trial = 0;
 
-	 if (last_trial  == -1 ||
-		  last_trial > Tlist::theTlist().capacity())
-		last_trial  = Tlist::theTlist().capacity();
+	 bool testing_last_trial = (last_trial != -1);
 
-	 while (first_trial < last_trial)
+	 for (Tlist::Iterator
+			  itr = Tlist::theTlist().begin(),
+			  end = Tlist::theTlist().end();
+			itr != end;
+			++itr)
 		{
-		  if (Tlist::theTlist().isValidId(first_trial))
-			 block->addTrial(NullableItemWithId<TrialBase>(first_trial), repeat);
-		  ++first_trial;
+		  int id = itr.getId();
+
+		  if (id < first_trial) continue;
+		  if (testing_last_trial && (id > last_trial)) continue;
+
+		  block->addTrial(NullableItemWithId<TrialBase>(id), repeat);
 		}
   }
 }
