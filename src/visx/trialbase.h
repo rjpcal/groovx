@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jan 25 18:41:19 2000
-// written: Thu May 10 12:04:39 2001
+// written: Wed May 23 18:48:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,6 +53,7 @@ public:
 
   virtual void trAbortTrial() = 0;
   virtual void trEndTrial() = 0;
+  virtual void trNextNode() = 0;
   virtual void trNextTrial() = 0;
   virtual void trHaltExpt() = 0;
   virtual void trResponseSeen() = 0;
