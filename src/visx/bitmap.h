@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Mar 22 16:47:06 2000
+// written: Thu Mar 23 12:38:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,9 +67,6 @@ public:
 
   /// Loads PBM bitmap data from the stream \a input.
   void loadPbmFile(istream& input);
-
-  /// Loads PBM bitmap data from the gzip'ed PBM file at \a filename.
-  void loadPbmGzFile(const char* filename);
 
   /// Writes PBM bitmap data to the file \a filename.
   void writePbmFile(const char* filename) const;

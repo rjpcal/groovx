@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Mon Mar  6 11:57:28 2000
+// written: Thu Mar 23 12:39:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,6 @@
 #include "bitmap.h"
 
 #include "bitmaprep.h"
-#include "util/pipe.h"
 #include "util/strings.h"
 
 #define NO_TRACE
@@ -102,19 +101,6 @@ void Bitmap::loadPbmFile(istream& is) {
 DOTRACE("Bitmap::loadPbmFile");
   itsImpl->loadPbmFile(is);
   sendStateChangeMsg(); 
-}
-
-void Bitmap::loadPbmGzFile(const char* filename) {
-DOTRACE("Bitmap::loadPbmFile");
-
-  dynamic_string cmd("gunzip -c ");
-  cmd += filename;
-
-  Util::Pipe pipe(cmd.c_str(), "r");
-
-  loadPbmFile(pipe.stream());
-
-  sendStateChangeMsg();
 }
 
 void Bitmap::writePbmFile(const char* filename) const
