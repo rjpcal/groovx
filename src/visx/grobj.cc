@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Thu Nov 18 19:19:37 1999
+// written: Tue Nov 30 16:54:18 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ public:
   //////////////
 
   Impl(GrObj* obj);
-  ~Impl();
+  virtual ~Impl();
 
   virtual void serialize(ostream &os, IO::IOFlag flag) const;
   virtual void deserialize(istream &is, IO::IOFlag flag);
@@ -485,7 +485,7 @@ DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
 		itsBitmapCache->setRasterX(obj->getRawBB().left());
 		itsBitmapCache->setRasterY(obj->getRawBB().bottom());
 	 }
-	 glPopAttrib;
+	 glPopAttrib();
   }
   glPopMatrix();
   
@@ -1017,7 +1017,7 @@ DOTRACE("GrObj::Impl::doAlignment");
   double height = nativeHeight();
 	 
   // These indicate where the center of the object will go
-  double centerX, centerY;
+  double centerX=0.0, centerY=0.0;
 	 
   switch (itsAligner.itsMode) {
   case GrObj::CENTER_ON_CENTER:
