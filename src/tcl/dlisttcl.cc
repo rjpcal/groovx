@@ -2,7 +2,7 @@
 // tcldlist.cc
 // Rob Peters 
 // created: Dec-98
-// written: Fri Mar 12 12:54:02 1999
+// written: Sun Mar 14 19:36:38 1999
 static const char vcid_tcldlist_cc[] = "$Id$";
 //
 // This package provides additional list manipulation functions using
@@ -453,6 +453,8 @@ DOTRACE("Tcldlist::Tcldlist_Init");
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   Tcl_CreateObjCommand(interp, "dlist_pickone", dlist_pickoneCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+  
+  Tcl_PkgProvide(interp, "Tcldlist", "$Revision$");
   return TCL_OK;
 }
 
