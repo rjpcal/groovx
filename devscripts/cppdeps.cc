@@ -33,6 +33,7 @@
 
 #include <cassert>
 #include <cctype>
+#include <cstring>     // for strerror()
 #include <iostream>
 #include <map>
 #include <set>
