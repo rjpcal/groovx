@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Sun Oct  3 19:58:54 1999
+// written: Wed Oct 13 20:17:18 1999
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -49,12 +49,15 @@ namespace TclGL {
   class GLCmd;
 
   class glBeginCmd;
+  class glBlendFuncCmd;
   class glCallListCmd;
   class glClearCmd;
+  class glClearColorCmd;
   class glClearIndexCmd;
   class glColorCmd;
   class glDeleteListsCmd;
   class glDrawBufferCmd;
+  class glEnableCmd;
   class glEndCmd;
   class glEndListCmd;
   class glFlushCmd;
@@ -159,6 +162,40 @@ protected:
 
 //---------------------------------------------------------------------
 //
+// TclGL::glBlendFuncCmd --
+//
+//---------------------------------------------------------------------
+
+class TclGL::glBlendFuncCmd : public TclGL::GLCmd {
+public:
+  glBlendFuncCmd(TclPkg* pkg, const char* cmd_name) :
+	 GLCmd(pkg, cmd_name, "sfactor dfactor", 3, 3)
+  {
+	 pkg->linkVarCopy("GL_ZERO", GL_ZERO);
+	 pkg->linkVarCopy("GL_ONE", GL_ONE);
+	 pkg->linkVarCopy("GL_DST_COLOR", GL_DST_COLOR);
+	 pkg->linkVarCopy("GL_ONE_MINUS_DST_COLOR", GL_ONE_MINUS_DST_COLOR);
+	 pkg->linkVarCopy("GL_SRC_COLOR", GL_SRC_COLOR);
+	 pkg->linkVarCopy("GL_ONE_MINUS_SRC_COLOR", GL_ONE_MINUS_SRC_COLOR);
+	 pkg->linkVarCopy("GL_SRC_ALPHA", GL_SRC_ALPHA);
+	 pkg->linkVarCopy("GL_ONE_MINUS_SRC_ALPHA", GL_ONE_MINUS_SRC_ALPHA);
+	 pkg->linkVarCopy("GL_DST_ALPHA", GL_DST_ALPHA);
+	 pkg->linkVarCopy("GL_ONE_MINUS_DST_ALPHA", GL_ONE_MINUS_DST_ALPHA);
+	 pkg->linkVarCopy("GL_SRC_ALPHA_SATURATE", GL_SRC_ALPHA_SATURATE);
+  }
+
+protected:
+  virtual void invoke() {
+	 GLenum sfactor = getIntFromArg(1);
+	 GLenum dfactor = getIntFromArg(2);
+
+	 glBlendFunc(sfactor, dfactor);
+	 checkGL();
+  }
+};
+
+//---------------------------------------------------------------------
+//
 // TclGL::glCallListCmd --
 //
 //---------------------------------------------------------------------
@@ -194,6 +231,28 @@ protected:
   virtual void invoke() {
 	 GLbitfield mask = getIntFromArg(1);
 	 glClear(mask);
+	 checkGL();
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// TclGL::glClearColorCmd --
+//
+//---------------------------------------------------------------------
+
+class TclGL::glClearColorCmd : public TclGL::GLCmd {
+public:
+  glClearColorCmd(TclPkg* pkg, const char* cmd_name) :
+	 GLCmd(pkg, cmd_name, "red green blue alpha", 5, 5) {}
+protected:
+  virtual void invoke() {
+	 GLclampf red   = getDoubleFromArg(1);
+	 GLclampf green = getDoubleFromArg(2);
+	 GLclampf blue  = getDoubleFromArg(3);
+	 GLclampf alpha = getDoubleFromArg(4);
+
+	 glClearColor(red, green, blue, alpha);
 	 checkGL();
   }
 };
@@ -282,6 +341,109 @@ protected:
   virtual void invoke() {
 	 GLenum mode = getIntFromArg(1);
 	 glDrawBuffer(mode);
+	 checkGL();
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// TclGL::glEnableCmd --
+//
+//---------------------------------------------------------------------
+
+class TclGL::glEnableCmd : public TclGL::GLCmd {
+private:
+  static void initEnums(TclPkg* pkg) {
+	 static bool inited = false;
+
+	 if (inited) return;
+
+	 pkg->linkVarCopy("GL_ALPHA_TEST",  GL_ALPHA_TEST);
+	 pkg->linkVarCopy("GL_BLEND",  GL_BLEND);
+	 pkg->linkVarCopy("GL_FOG",  GL_FOG);
+	 pkg->linkVarCopy("GL_LIGHTING",  GL_LIGHTING);
+// 	 pkg->linkVarCopy("GL_TEXTURE_1D",  GL_TEXTURE_1D);
+// 	 pkg->linkVarCopy("GL_TEXTURE_2D",  GL_TEXTURE_2D);
+// 	 pkg->linkVarCopy("GL_TEXTURE_3D_EXT",  GL_TEXTURE_3D_EXT);
+	 pkg->linkVarCopy("GL_LINE_STIPPLE",  GL_LINE_STIPPLE);
+	 pkg->linkVarCopy("GL_POLYGON_STIPPLE",  GL_POLYGON_STIPPLE);
+	 pkg->linkVarCopy("GL_CULL_FACE",  GL_CULL_FACE);
+	 pkg->linkVarCopy("GL_INDEX_LOGIC_OP",  GL_INDEX_LOGIC_OP);
+	 pkg->linkVarCopy("GL_COLOR_LOGIC_OP",  GL_COLOR_LOGIC_OP);
+	 pkg->linkVarCopy("GL_DITHER",  GL_DITHER);
+	 pkg->linkVarCopy("GL_STENCIL_TEST",  GL_STENCIL_TEST);
+	 pkg->linkVarCopy("GL_DEPTH_TEST",  GL_DEPTH_TEST);
+// 	 pkg->linkVarCopy("GL_CLIP_PLANE0",  GL_CLIP_PLANE0);
+// 	 pkg->linkVarCopy("GL_CLIP_PLANE1",  GL_CLIP_PLANE1);
+// 	 pkg->linkVarCopy("GL_CLIP_PLANE2",  GL_CLIP_PLANE2);
+// 	 pkg->linkVarCopy("GL_CLIP_PLANE3",  GL_CLIP_PLANE3);
+// 	 pkg->linkVarCopy("GL_CLIP_PLANE4",  GL_CLIP_PLANE4);
+// 	 pkg->linkVarCopy("GL_CLIP_PLANE5",  GL_CLIP_PLANE5);
+// 	 pkg->linkVarCopy("GL_LIGHT0",  GL_LIGHT0);
+// 	 pkg->linkVarCopy("GL_LIGHT1",  GL_LIGHT1);
+// 	 pkg->linkVarCopy("GL_LIGHT2",  GL_LIGHT2);
+// 	 pkg->linkVarCopy("GL_LIGHT3",  GL_LIGHT3);
+// 	 pkg->linkVarCopy("GL_LIGHT4",  GL_LIGHT4);
+// 	 pkg->linkVarCopy("GL_LIGHT5",  GL_LIGHT5);
+// 	 pkg->linkVarCopy("GL_LIGHT6",  GL_LIGHT6);
+// 	 pkg->linkVarCopy("GL_LIGHT7",  GL_LIGHT7);
+// 	 pkg->linkVarCopy("GL_TEXTURE_GEN_S",  GL_TEXTURE_GEN_S);
+// 	 pkg->linkVarCopy("GL_TEXTURE_GEN_T",  GL_TEXTURE_GEN_T);
+// 	 pkg->linkVarCopy("GL_TEXTURE_GEN_R",  GL_TEXTURE_GEN_R);
+// 	 pkg->linkVarCopy("GL_TEXTURE_GEN_Q",  GL_TEXTURE_GEN_Q);
+	 pkg->linkVarCopy("GL_MAP1_VERTEX_3",  GL_MAP1_VERTEX_3);
+	 pkg->linkVarCopy("GL_MAP1_VERTEX_4",  GL_MAP1_VERTEX_4);
+	 pkg->linkVarCopy("GL_MAP1_COLOR_4",  GL_MAP1_COLOR_4);
+	 pkg->linkVarCopy("GL_MAP1_INDEX",  GL_MAP1_INDEX);
+	 pkg->linkVarCopy("GL_MAP1_NORMAL",  GL_MAP1_NORMAL);
+// 	 pkg->linkVarCopy("GL_MAP1_TEXTURE_COORD_1",  GL_MAP1_TEXTURE_COORD_1);
+// 	 pkg->linkVarCopy("GL_MAP1_TEXTURE_COORD_2",  GL_MAP1_TEXTURE_COORD_2);
+// 	 pkg->linkVarCopy("GL_MAP1_TEXTURE_COORD_3",  GL_MAP1_TEXTURE_COORD_3);
+// 	 pkg->linkVarCopy("GL_MAP1_TEXTURE_COORD_4",  GL_MAP1_TEXTURE_COORD_4);
+// 	 pkg->linkVarCopy("GL_MAP2_VERTEX_3",  GL_MAP2_VERTEX_3);
+// 	 pkg->linkVarCopy("GL_MAP2_VERTEX_4",  GL_MAP2_VERTEX_4);
+// 	 pkg->linkVarCopy("GL_MAP2_COLOR_4",  GL_MAP2_COLOR_4);
+// 	 pkg->linkVarCopy("GL_MAP2_INDEX",  GL_MAP2_INDEX);
+// 	 pkg->linkVarCopy("GL_MAP2_NORMAL",  GL_MAP2_NORMAL);
+// 	 pkg->linkVarCopy("GL_MAP2_TEXTURE_COORD_1",  GL_MAP2_TEXTURE_COORD_1);
+// 	 pkg->linkVarCopy("GL_MAP2_TEXTURE_COORD_2",  GL_MAP2_TEXTURE_COORD_2);
+// 	 pkg->linkVarCopy("GL_MAP2_TEXTURE_COORD_3",  GL_MAP2_TEXTURE_COORD_3);
+// 	 pkg->linkVarCopy("GL_MAP2_TEXTURE_COORD_4",  GL_MAP2_TEXTURE_COORD_4);
+	 pkg->linkVarCopy("GL_POINT_SMOOTH",  GL_POINT_SMOOTH);
+	 pkg->linkVarCopy("GL_LINE_SMOOTH",  GL_LINE_SMOOTH);
+	 pkg->linkVarCopy("GL_POLYGON_SMOOTH",  GL_POLYGON_SMOOTH);
+	 pkg->linkVarCopy("GL_SCISSOR_TEST",  GL_SCISSOR_TEST);
+	 pkg->linkVarCopy("GL_COLOR_MATERIAL",  GL_COLOR_MATERIAL);
+	 pkg->linkVarCopy("GL_NORMALIZE",  GL_NORMALIZE);
+	 pkg->linkVarCopy("GL_AUTO_NORMAL",  GL_AUTO_NORMAL);
+	 pkg->linkVarCopy("GL_VERTEX_ARRAY",  GL_VERTEX_ARRAY);
+	 pkg->linkVarCopy("GL_NORMAL_ARRAY",  GL_NORMAL_ARRAY);
+	 pkg->linkVarCopy("GL_COLOR_ARRAY",  GL_COLOR_ARRAY);
+	 pkg->linkVarCopy("GL_INDEX_ARRAY",  GL_INDEX_ARRAY);
+	 pkg->linkVarCopy("GL_TEXTURE_COORD_ARRAY",  GL_TEXTURE_COORD_ARRAY);
+	 pkg->linkVarCopy("GL_EDGE_FLAG_ARRAY",  GL_EDGE_FLAG_ARRAY);
+	 pkg->linkVarCopy("GL_POLYGON_OFFSET_POINT",  GL_POLYGON_OFFSET_POINT);
+	 pkg->linkVarCopy("GL_POLYGON_OFFSET_LINE",  GL_POLYGON_OFFSET_LINE);
+	 pkg->linkVarCopy("GL_POLYGON_OFFSET_FILL",  GL_POLYGON_OFFSET_FILL);
+	 pkg->linkVarCopy("GL_RESCALE_NORMAL_EXT",  GL_RESCALE_NORMAL_EXT);
+
+	 inited = true;
+  }
+
+public:
+  glEnableCmd(TclPkg* pkg, const char* cmd_name) :
+	 GLCmd(pkg, cmd_name, "capability", 2, 2)
+  {
+	 initEnums(pkg);
+  }
+protected:
+  virtual void invoke() {
+	 const char* func = getCstringFromArg(0);
+	 GLenum cap = getIntFromArg(1);
+
+	      if ( func[2] == 'E' ) { glEnable(cap); }
+	 else if ( func[2] == 'D' ) { glDisable(cap); }
+
 	 checkGL();
   }
 };
@@ -1423,12 +1585,16 @@ public:
 	 TclPkg(interp, "Tclgl", "2.0")
   {
 	 addCommand( new glBeginCmd        (this, "glBegin") );
+	 addCommand( new glBlendFuncCmd    (this, "glBlendFunc") );
 	 addCommand( new glCallListCmd     (this, "glCallList") );
 	 addCommand( new glClearCmd        (this, "glClear") );
+	 addCommand( new glClearColorCmd   (this, "glClearColor") );
 	 addCommand( new glClearIndexCmd   (this, "glClearIndex") );
 	 addCommand( new glColorCmd        (this, "glColor") );
 	 addCommand( new glDeleteListsCmd  (this, "glDeleteLists") );
 	 addCommand( new glDrawBufferCmd   (this, "glDrawBuffer") );
+	 addCommand( new glEnableCmd       (this, "glDisable") );
+	 addCommand( new glEnableCmd       (this, "glEnable") );
 	 addCommand( new glEndCmd          (this, "glEnd") );
 	 addCommand( new glEndListCmd      (this, "glEndList") );
 	 addCommand( new glFlushCmd        (this, "glFlush") );
