@@ -17,26 +17,6 @@ List::testList TlistTcl Tlist Trial Trial Trial
 
 if { ![Togl::inited] } { Togl::init "-rgba false"; update }
 
-### Tlist::setVisibleCmd ###
-test "TlistTcl-Tlist::setVisible" "too few args" {
-    Tlist::setVisible
-} {wrong \# args: should be "Tlist::setVisible new_value"}
-test "TlistTcl-Tlist::setVisible" "too many args" {
-    Tlist::setVisible j u
-} {wrong \# args: should be "Tlist::setVisible new_value"}
-test "TlistTcl-Tlist::setVisible" "normal set off" {
-	 catch {Tlist::setVisible 0}
-} {^0$}
-test "TlistTcl-Tlist::setVisible" "normal set on" {
-	 catch {Tlist::setVisible 1}
-} {^0$}
-test "TlistTcl-Tlist::setVisible" "unusual set on" {
-	 catch {Tlist::setVisible -1}
-} {^0$}
-test "TlistTcl-Tlist::setVisible" "error on non-numeric input" {
-    Tlist::setVisible junk
-} {expected boolean value but got "junk"}
-
 ### Tlist::addObjectCmd ###
 test "TlistTcl-Tlist::addObject" "too few args" {
     Tlist::addObject
@@ -62,27 +42,6 @@ test "TlistTcl-Tlist::addObject" "error on bad trial id" {
 	 set p [Pos::Pos]
     Tlist::addObject -1 $f $p
 } {Tlist::addObject: invalid trial id}
-
-### Tlist::setCurTrialCmd ###
-test "TlistTcl-Tlist::setCurTrial" "too few args" {
-    Tlist::setCurTrial
-} {wrong \# args: should be "Tlist::setCurTrial trial_id"}
-test "TlistTcl-Tlist::setCurTrial" "too many args" {
-    Tlist::setCurTrial j u
-} {wrong \# args: should be "Tlist::setCurTrial trial_id"}
-test "TlistTcl-Tlist::setCurTrial" "normal use" {
-	 set f [Face::Face]
-	 set p [Pos::Pos]
-	 Tlist::addObject 0 0 0
-	 catch {Tlist::setCurTrial 0}
-} {^0$}
-test "TlistTcl-Tlist::setCurTrial" "error on too low trial id" {
-    Tlist::setCurTrial -1
-} {Tlist::setCurTrial: invalid trial id}
-test "TlistTcl-Tlist::setCurTrial" "error on too large trial id" {
-	 Tlist::reset
-    Tlist::setCurTrial 10000
-} {Tlist::setCurTrial: invalid trial id}
 
 ### Tlist::loadObjidFileCmd ###
 test "TlistTcl-Tlist::loadObjidFile" "too few args" {

@@ -47,7 +47,7 @@ test "ObjTogl-Togl::refresh" "normal use" {
 	 set f [Face::Face]
 	 set p [Pos::Pos]
 	 Tlist::addObject 0 $f $p
-	 Tlist::setCurTrial 0
+	 Togl::setCurTrial 0
 	 setForeground 1
 	 setBackground 0
 	 Togl::refresh
@@ -81,6 +81,47 @@ test "ObjTogl-Togl::show" "normal use on invalid trial id" {
 	 catch {Togl::show -1}
 } {^0$}
 test "ObjTogl-Togl::show" "no error" {} $BLANK $no_test
+
+### Togl::setVisibleCmd ###
+test "ObjTogl-Togl::setVisible" "too few args" {
+    Togl::setVisible
+} {wrong \# args: should be "Togl::setVisible visibility"}
+test "ObjTogl-Togl::setVisible" "too many args" {
+    Togl::setVisible j u
+} {wrong \# args: should be "Togl::setVisible visibility"}
+test "ObjTogl-Togl::setVisible" "normal set off" {
+	 catch {Togl::setVisible 0}
+} {^0$}
+test "ObjTogl-Togl::setVisible" "normal set on" {
+	 catch {Togl::setVisible 1}
+} {^0$}
+test "ObjTogl-Togl::setVisible" "unusual set on" {
+	 catch {Togl::setVisible -1}
+} {^0$}
+test "ObjTogl-Togl::setVisible" "error on non-numeric input" {
+    Togl::setVisible junk
+} {expected boolean value but got "junk"}
+
+### Togl::setCurTrialCmd ###
+test "ObjTogl-Togl::setCurTrial" "too few args" {
+    Togl::setCurTrial
+} {wrong \# args: should be "Togl::setCurTrial trial_id"}
+test "ObjTogl-Togl::setCurTrial" "too many args" {
+    Togl::setCurTrial j u
+} {wrong \# args: should be "Togl::setCurTrial trial_id"}
+test "ObjTogl-Togl::setCurTrial" "normal use" {
+	 set f [Face::Face]
+	 set p [Pos::Pos]
+	 Tlist::addObject 0 0 0
+	 catch {Togl::setCurTrial 0}
+} {^0$}
+test "ObjTogl-Togl::setCurTrial" "error on too low trial id" {
+    Togl::setCurTrial -1
+} {Togl::setCurTrial: invalid trial id}
+test "ObjTogl-Togl::setCurTrial" "error on too large trial id" {
+	 Tlist::reset
+    Togl::setCurTrial 10000
+} {Togl::setCurTrial: invalid trial id}
 
 ### Togl::loadFontCmd ###
 test "$PACKAGE-Togl::loadFont" "too many args" {
