@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 20 15:15:50 2002
-// written: Wed Nov 20 15:16:47 2002
+// written: Tue Nov 26 19:46:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,27 +44,21 @@ struct GxTransformImpl
 {
   GxTransformImpl(GxTransform* p) :
     owner(p),
-    txformDirty(true),
     txformCache()
   {}
 
   GxTransform* owner;
 
-  mutable bool txformDirty;
 private:
   mutable Gfx::Txform txformCache;
 
 public:
   const Gfx::Txform& getTxform() const
   {
-    if (txformDirty)
-      {
-        txformCache = Gfx::Txform(owner->translation,
-                                  owner->scaling,
-                                  owner->rotationAxis,
-                                  owner->itsRotationAngle);
-        txformDirty = false;
-      }
+    txformCache = Gfx::Txform(owner->translation,
+                              owner->scaling,
+                              owner->rotationAxis,
+                              owner->itsRotationAngle);
 
     return txformCache;
   }
@@ -121,8 +115,6 @@ DOTRACE("GxTransform::GxTransform");
   dbgEvalNL(3, (void *) rep);
 
   setFieldMap(GxTransform::classFields());
-
-  sigNodeChanged.connect(this, &GxTransform::onChange);
 }
 
 GxTransform::~GxTransform()
@@ -229,11 +221,6 @@ DOTRACE("GxTransform::draw");
       canvas.vertex3(Gfx::Vec3<double>(0.0, 0.0, -d));
       canvas.vertex3(Gfx::Vec3<double>(0.0, 0.0,  d));
     }
-}
-
-void GxTransform::onChange()
-{
-  rep->txformDirty = true;
 }
 
 static const char vcid_gxtransform_cc[] = "$Header$";
