@@ -38,42 +38,6 @@
 
 const double Num::SQRT_2 = 1.41421356237;
 
-namespace
-{
-  double fastexpImpl(double xx)
-  {
-    static const double one_over[] = {
-      1.0, /* 1/0 -- undefined, really */
-      1.0,
-      0.5,
-      0.333333333333333333333333,
-      0.25,
-      0.2,
-      0.166666666666666666666667,
-      0.142857142857142857142857,
-      0.125,
-      0.111111111111111111111111,
-      0.1
-    };
-
-    return
-      1.0 + (xx * one_over[1])
-      * (1.0 + (xx * one_over[2])
-         * (1.0 + (xx * one_over[3])
-            * (1.0 + (xx * one_over[4])
-               * (1.0 + (xx * one_over[5])
-                  * (1.0 + (xx * one_over[6])
-                     * (1.0 + (xx * one_over[7])
-                        )
-                     )
-                  )
-               )
-            )
-         )
-      ;
-  }
-}
-
 double dash::detail::gammaln_engine(const double xx)
 {
 DOTRACE("dash::detail::gammaln_engine");
@@ -94,11 +58,6 @@ DOTRACE("dash::detail::gammaln_engine");
   const double tmp = tmp1 - (xx+0.5)*log(tmp1);
 
   return -tmp+log(2.5066282746310005*ser/xx);
-}
-
-double Num::fastexp7(double x)
-{
-  return x < 0 ? 1.0/fastexpImpl(-x) : fastexpImpl(x);
 }
 
 static const char vcid_num_cc[] = "$Id$ $URL$";

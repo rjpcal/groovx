@@ -93,10 +93,6 @@ class Num
 {
 public:
 
-  /// A speedy version of the exponential function.
-  /** Computes the result to the seventh term of the Taylor series. */
-  static double fastexp7(double xx);
-
   static const double SQRT_2;
 };
 
