@@ -32,14 +32,19 @@ test "TclGL-glVertex4" "error" {} {^$}
 test "TclGL-glIndexi" "args" {
 	 glIndexi
 } {wrong \# args: should be "glIndexi index"}
-test "TclGL-glIndexi" "normal use" {} {^$}
-test "TclGL-glIndexi" "error" {} {^$}
+test "TclGL-glIndexi" "normal use" {
+	 glIndexi 3
+	 glGetInteger $::GL_CURRENT_INDEX
+} {^3$}
 
 ### glLineWidthCmd ###
 test "TclGL-glLineWidth" "args" {
 	 glLineWidth
 } {wrong \# args: should be "glLineWidth width"}
-test "TclGL-glLineWidth" "normal use" {} {^$}
+test "TclGL-glLineWidth" "normal use" {
+	 glLineWidth 2.0
+	 glGetDouble $::GL_LINE_WIDTH
+} {^2.0$}
 test "TclGL-glLineWidth" "error" {} {^$}
 
 ### glFlushCmd ###
