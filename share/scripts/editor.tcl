@@ -28,6 +28,23 @@ set ::statusInfo "VisEdit started."
 
 set ::COUNTER 0
 
+set ::SCREENWIDTH [winfo screenwidth .]
+set ::SCREENHEIGHT [winfo screenheight .]
+
+if { $::SCREENWIDTH < 1500 || $::SCREENHEIGHT < 1100 } {
+    set ::FONT {-size 10}
+    set ::SCALE_WIDTH 5
+    set ::MAINPANE_WIDTH 600
+    set ::MAINPANE_HEIGHT 700
+} else {
+    set ::FONT {-size 12}
+    set ::SCALE_WIDTH 15
+    set ::MAINPANE_WIDTH 900
+    set ::MAINPANE_WIDTH 1000
+}
+
+set ::TOGLET_WIDTH [expr $::SCREENWIDTH - $::MAINPANE_WIDTH - 50]
+
 proc AUTO {} { return "::object[incr ::COUNTER]" }
 
 proc debug {msg} {
@@ -42,7 +59,9 @@ proc buildScale {path label min max step callback} {
 	    -digits [string length $step] \
 	    -repeatdelay 500 -repeatinterval 250 \
 	    -orient horizontal \
-	    -command $callback
+	    -command $callback \
+	    -width $::SCALE_WIDTH \
+	    -font $::FONT
 }
 
 itcl::class FieldInfo {
@@ -103,7 +122,8 @@ itcl::class StringController {
 	set itsWidget [iwidgets::entryfield $parent.$fname \
 		-labeltext $fname -labelpos n \
 		-width 15 \
-		-command $command]
+		-command $command \
+		-labelfont $::FONT]
 
 	lappend toBeAligned $parent.$fname
     }
@@ -132,7 +152,10 @@ itcl::class MultiController {
 
 	set theFrame [frame $parent.$fname -relief ridge -borderwidth 2]
 
-	label $theFrame.label -text "$fname" -foreground darkgreen
+	label $theFrame.label \
+		-text "$fname" \
+		-foreground darkgreen \
+		-font $::FONT
 
 	pack $theFrame.label -side top -anchor nw
 
@@ -173,7 +196,9 @@ itcl::class BooleanController {
     constructor {finfo parent command} {
 	set itsFname [$finfo name]
 
-	set itsWidget [iwidgets::checkbox $parent.$itsFname -borderwidth 0]
+	set itsWidget [iwidgets::checkbox $parent.$itsFname \
+		-borderwidth 0 \
+		-labelfont $::FONT]
 
 	$itsWidget add $itsFname -text $itsFname -command $command
 
@@ -565,7 +590,7 @@ itcl::class Editor {
 
     constructor {parent {objtype Gabor} } {
 	set itsPanes [iwidgets::panedwindow $parent.panes \
-		-width 900 -height 1000]
+		-width $::MAINPANE_WIDTH -height $::MAINPANE_HEIGHT]
 
 	$itsPanes add controls
 
@@ -577,6 +602,7 @@ itcl::class Editor {
 
 	scale $itsControls.viewingdist -showvalue false \
 		-from 1 -to 200 -orient horizontal \
+		-width $::SCALE_WIDTH \
 		-command [itcl::code $this viewingDist]
 	$itsControls.viewingdist set 60
 	pack $itsControls.viewingdist -side top -fill x
@@ -584,7 +610,8 @@ itcl::class Editor {
 	set itsButtons [frame $itsControls.buttons]
 
 	iwidgets::optionmenu $itsButtons.objtypes -labeltext "Object type:" \
-		-command [itcl::code $this showFieldControls]
+		-command [itcl::code $this showFieldControls] \
+		-font $::FONT
 	$itsButtons.objtypes insert 0 \
 	    Face \
 	    Fish \
@@ -605,24 +632,29 @@ itcl::class Editor {
 	pack $itsButtons.objtypes -side top -anchor nw
 
 	button $itsButtons.new -text "New Object" -relief raised \
-		-command [itcl::code $this addNewObject]
+		-command [itcl::code $this addNewObject] \
+		-font $::FONT
 	pack $itsButtons.new -side top -anchor nw
 
 	button $itsButtons.preview -text "Make Preview" -relief raised \
-		-command [itcl::code $this makePreviewObj]
+		-command [itcl::code $this makePreviewObj] \
+		-font $::FONT
 	pack $itsButtons.preview -side top -anchor nw
 
 	button $itsButtons.redraw -text "Redraw" -relief raised \
-		-command [itcl::code $this requestDraw]
+		-command [itcl::code $this requestDraw] \
+		-font $::FONT
 	pack $itsButtons.redraw -side top -anchor nw
 
 	button $itsButtons.refreshlist -text "Refresh list" -relief raised \
-		-command [itcl::code $this refreshLists]
+		-command [itcl::code $this refreshLists] \
+		-font $::FONT
 	pack $itsButtons.refreshlist -side top -anchor nw
 
 	iwidgets::entryfield $itsButtons.runcmd \
 		-labeltext "Run command" -labelpos n \
-		-command [itcl::code $this runCmd]
+		-command [itcl::code $this runCmd] \
+		-labelfont $::FONT
 	pack $itsButtons.runcmd -side top -anchor nw
 
 	pack $itsButtons -side left -anchor nw
@@ -630,13 +662,17 @@ itcl::class Editor {
 	iwidgets::scrolledlistbox $itsControls.editobjlist \
 		-labeltext "Edit objects:" -hscrollmode dynamic \
 		-selectmode extended -exportselection false \
-		-selectioncommand [itcl::code $this onEditObjSelect]
+		-selectioncommand [itcl::code $this onEditObjSelect] \
+		-labelfont $::FONT \
+		-textfont $::FONT
 	pack $itsControls.editobjlist -side left -anchor nw
 
 	iwidgets::scrolledlistbox $itsControls.viewobjlist \
 		-labeltext "View object: " -hscrollmode dynamic \
 		-selectmode browse -exportselection false \
-		-selectioncommand [itcl::code $this onViewObjSelect]
+		-selectioncommand [itcl::code $this onViewObjSelect] \
+		-labelfont $::FONT \
+		-textfont $::FONT
 	pack $itsControls.viewobjlist -side left -anchor nw
 
 	#
@@ -645,7 +681,7 @@ itcl::class Editor {
 
 	Toglet::defaultParent $parent
 	set itsToglet [new Toglet]
-	Toglet::width $itsToglet 600
+	Toglet::width $itsToglet $::TOGLET_WIDTH
 	Toglet::currentToglet $itsToglet
 
 	showFieldControls
@@ -691,9 +727,6 @@ itcl::class Editor {
 	return [llength $objs]
     }
 }
-
-# get rid of the default widget
-Toglet::destroy [Toglet::currentToglet]
 
 itcl::class Menuapp {
     private variable itsFrame
@@ -785,7 +818,8 @@ itcl::class Menuapp {
 	set itsFrame [frame .fr]
 
 	set itsHelpEntry [label .ef -textvariable statusInfo \
-		-relief sunken -anchor w -foreground darkgreen]
+		-relief sunken -anchor w -foreground darkgreen \
+		-font $::FONT]
 
 	iwidgets::menubar .mb -helpvariable statusInfo -menubuttons {
 	    menubutton file -text File -menu {
@@ -839,4 +873,13 @@ itcl::class Menuapp {
     }
 }
 
+wm withdraw .
+
+# get rid of the default widget
+Toglet::destroy [Toglet::currentToglet]
+
 set app [Menuapp [::AUTO]]
+
+update idletasks
+
+wm deiconify .
