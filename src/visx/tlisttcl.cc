@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed May 23 10:31:33 2001
+// written: Fri Jun  1 18:11:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -258,6 +258,8 @@ public:
 					 4, 5, false) {}
 protected:
   virtual void invoke() {
+  DOTRACE("TlistTcl::LoadObjidFileCmd::invoke");
+
 	 const char* objid_file =                 getCstringFromArg(1);
 	 int         num_lines  = (objc() >= 5) ? getIntFromArg(4) : -1;
 
