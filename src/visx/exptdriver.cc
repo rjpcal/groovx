@@ -151,18 +151,7 @@ ExptDriver::ExptDriver() :
 {
 DOTRACE("ExptDriver::ExptDriver");
 
-  int argc = Tcl::Main::argc();
-  const char* const* argv = Tcl::Main::argv();
-
-  fstring cmd_line("command line: ");
-
-  for (int i = 0; i < argc; ++i)
-  {
-    cmd_line.append(argv[i]);
-    cmd_line.append(" ");
-  }
-
-  rep->addLogInfo(cmd_line.c_str());
+  rep->addLogInfo(Tcl::Main::commandLine().c_str());
 }
 
 ExptDriver::~ExptDriver() throw()
@@ -385,9 +374,10 @@ DOTRACE("ExptDriver::edBeginExpt");
 
   claimLogFile();
 
-  Util::log(fstring("expt begin ", rep->beginDate));
-  Util::log(fstring("hostname ", rep->hostname));
-  Util::log(fstring("cwd ", System::theSystem().getcwd()));
+  Util::log(fstring("expt begin: ", rep->beginDate));
+  Util::log(fstring("hostname: ", rep->hostname));
+  Util::log(fstring("cwd: ", System::theSystem().getcwd()));
+  Util::log(fstring("cmdline: ", Tcl::Main::commandLine()));
 
   currentElement()->vxRun(*this);
 }
