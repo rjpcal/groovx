@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Mon Jun 11 14:49:19 2001
+// written: Mon Jun 11 18:20:15 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -259,7 +259,7 @@ ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :
   GrshApp* grshapp = dynamic_cast<GrshApp*>(&app);
 
   if (grshapp != 0) {
-	 grshapp->installExperiment(itsExptDriver.get());
+	 grshapp->installCanvas(*(itsExptDriver->getCanvas()));
   }
 }
 
