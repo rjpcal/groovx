@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Wed Jul 18 12:27:38 2001
+// written: Mon Aug  6 11:10:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,8 +69,8 @@ public:
 
       def( "addChild", "item_id child_item_id", &GxSeparator::addChild );
       defGetter("numChildren", &GxSeparator::numChildren);
-      defSetter("removeChildId", &GxSeparator::removeChildId);
-      defSetter("removeChildUid", &GxSeparator::removeChildUid);
+      defSetter("removeChildAt", &GxSeparator::removeChildAt);
+      defSetter("removeChild", &GxSeparator::removeChild);
       Util::ObjFactory::theOne().registerCreatorFunc(&GxSeparator::make);
     }
 };
