@@ -2,7 +2,8 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Tue Mar  9 21:33:47 1999
+// written: Fri Mar 12 10:59:35 1999
+static const char vcid[] = "$Id$";
 //
 // This is the abstract base class for graphic objects that are to be
 // held and manipulated in ObjList's and Glist's. Classes derived from
@@ -32,18 +33,22 @@
 
 class GrObj : public virtual IO {
 public:
-  GrObj ();
+  GrObj (int categ = -1);
   GrObj (istream &is);
   virtual ~GrObj ();
 
   // write the object's state from/to an output/input stream
   virtual IOResult serialize(ostream &os, IOFlag flag = NO_FLAGS) const;
+  virtual IOResult deserialize(istream &is, IOFlag flag = NO_FLAGS);
 
   // must be overridden in the derived classes
   virtual void grRecompile() const = 0;
 
   // may be overridden, but defaults to simply calling the display list
   virtual void grAction() const;
+
+  virtual int getCategory() const = 0;
+  virtual void setCategory(int val) {}
 
 protected:
   bool grIsCurrent() const { return itsIsCurrent; }
