@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Fri Sep  7 16:20:00 2001
+// written: Fri Sep  7 16:36:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,6 @@
 
 #include "tcl/tcllistobj.h"
 
-#define NO_TRACE
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
@@ -50,102 +49,63 @@ bool Tcl::ObjCaster::isIdMyType(Util::UID uid)
   return (item.isValid() && isMyType(item.get()));
 }
 
-namespace Tcl
+namespace
 {
-
-  struct CountAllFunc
+  int countAll(shared_ptr<Tcl::ObjCaster> caster)
   {
-    shared_ptr<ObjCaster> itsCaster;
+    ObjDb& theDb = ObjDb::theDb();
+    int count = 0;
+    for (ObjDb::Iterator itr(theDb.objects()); itr.isValid(); ++itr)
+      {
+        if (caster->isMyType((*itr).getWeak()))
+          ++count;
+      }
+    return count;
+  }
 
-    CountAllFunc(shared_ptr<ObjCaster> caster) : itsCaster(caster) {}
-
-    typedef void Retn_t;
-
-    void operator()(Tcl::Context& ctx)
-    {
-      ObjDb& theDb = ObjDb::theDb();
-      int count = 0;
-      for (ObjDb::Iterator itr(theDb.objects()); itr.isValid(); ++itr)
-        {
-          if (itsCaster->isMyType((*itr).getWeak()))
-            ++count;
-        }
-      ctx.setResult(count);
-    }
-  };
-
-  struct FindAllFunc
+  Tcl::List findAll(shared_ptr<Tcl::ObjCaster> caster)
   {
-    shared_ptr<ObjCaster> itsCaster;
+    ObjDb& theDb = ObjDb::theDb();
 
-    FindAllFunc(shared_ptr<ObjCaster> caster) : itsCaster(caster) {}
+    Tcl::List result;
 
-    typedef void Retn_t;
+    for (ObjDb::Iterator itr(theDb.objects()); itr.isValid(); ++itr)
+      {
+        if (caster->isMyType((*itr).getWeak()))
+          result.append((*itr).id());
+      }
 
-    void operator()(Tcl::Context& ctx)
-    {
-      ObjDb& theDb = ObjDb::theDb();
+    return result;
+  }
 
-      Tcl::List result;
-
-      for (ObjDb::Iterator itr(theDb.objects()); itr.isValid(); ++itr)
-        {
-          if (itsCaster->isMyType((*itr).getWeak()))
-            result.append((*itr).id());
-        }
-
-      ctx.setResult(result);
-    }
-  };
-
-  struct RemoveAllFunc
+  void removeAll(shared_ptr<Tcl::ObjCaster> caster)
   {
-    shared_ptr<ObjCaster> itsCaster;
+    ObjDb& theDb = ObjDb::theDb();
+    for (ObjDb::Iterator itr(theDb.objects());
+         itr.isValid();
+         /* increment done in loop body */)
+      {
+        DebugEval((*itr)->id());
+        DebugEval((*itr)->refCounts()->strongCount());
+        DebugEvalNL((*itr)->refCounts()->weakCount());
 
-    RemoveAllFunc(shared_ptr<ObjCaster> caster) : itsCaster(caster) {}
+        if (caster->isMyType((*itr).getWeak()) && (*itr)->isUnshared())
+          {
+            Util::UID remove_me = (*itr)->id();
+            ++itr;
+            theDb.remove(remove_me);
+          }
+        else
+          {
+            ++itr;
+          }
+      }
+  }
 
-    typedef void Retn_t;
-
-    void operator()(Tcl::Context&)
-    {
-      ObjDb& theDb = ObjDb::theDb();
-      for (ObjDb::Iterator itr(theDb.objects());
-           itr.isValid();
-           /* increment done in loop body */)
-        {
-          DebugEval((*itr)->id());
-          DebugEval((*itr)->refCounts()->strongCount());
-          DebugEvalNL((*itr)->refCounts()->weakCount());
-
-          if (itsCaster->isMyType((*itr).getWeak()) && (*itr)->isUnshared())
-            {
-              Util::UID remove_me = (*itr)->id();
-              ++itr;
-              theDb.remove(remove_me);
-            }
-          else
-            {
-              ++itr;
-            }
-        }
-    }
-  };
-
-  struct IsFunc
+  bool isMyType(shared_ptr<Tcl::ObjCaster> caster, Util::UID id)
   {
-    shared_ptr<ObjCaster> itsCaster;
-
-    IsFunc(shared_ptr<ObjCaster> caster) : itsCaster(caster) {}
-
-    typedef void Retn_t;
-
-    void operator()(Tcl::Context& ctx)
-    {
-      Util::UID id = ctx.getValFromArg(1, TypeCue<Util::UID>());
-      ctx.setResult(itsCaster->isIdMyType(id));
-    }
-  };
-
+    return caster->isIdMyType(id);
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -196,10 +156,11 @@ DOTRACE("Tcl::Pkg::defIoCommands");
 
 void Tcl::Pkg::defGenericObjCmds(shared_ptr<Tcl::ObjCaster> caster)
 {
-  defVecRaw( "is", 1, "item_id(s)", IsFunc(caster) );
-  defRaw( "countAll", 0, "", CountAllFunc(caster) );
-  defRaw( "findAll", 0, "", FindAllFunc(caster) );
-  defRaw( "removeAll", 0, "", RemoveAllFunc(caster) );
+DOTRACE("Tcl::Pkg::defGenericObjCmds");
+  defVec( "is", "item_id(s)", Util::bindFirst(isMyType, caster) );
+  def( "countAll", "", Util::bindFirst(countAll, caster) );
+  def( "findAll", "", Util::bindFirst(findAll, caster) );
+  def( "removeAll", "", Util::bindFirst(removeAll, caster) );
 }
 
 static const char vcid_tclpkg_cc[] = "$Header$";
