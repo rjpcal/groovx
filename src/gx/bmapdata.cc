@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 20 00:37:03 2000
-// written: Sun Jul 22 23:37:42 2001
+// written: Wed Aug  8 11:04:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #define BMAPDATA_CC_DEFINED
 
 #include "bmapdata.h"
+
+#include "point.h"
 
 #include "util/algo.h"
 
@@ -31,17 +33,20 @@
 
 class BmapData::Impl {
 public:
-  Impl(int width, int height, int bits_per_pixel, int byte_alignment) :
-    itsWidth(width),
-    itsHeight(height),
+  Impl(const Point<int>& extent, int bits_per_pixel, int byte_alignment) :
+    itsExtent(extent),
     itsBitsPerPixel(bits_per_pixel),
     itsByteAlignment(byte_alignment),
     itsBytes(),
     itsUpdater(0)
-    {}
+  {
+    Precondition(extent.x() >= 0); Precondition(extent.y() >= 0);
+    int num_bytes = (extent.x()*bits_per_pixel/8 + 1) * extent.y()  + 1;
+    Assert(num_bytes > 0);
+    itsBytes.resize( num_bytes );
+  }
 
-  int itsWidth;
-  int itsHeight;
+  Point<int> itsExtent;
   int itsBitsPerPixel;
   int itsByteAlignment;
   dynamic_block<unsigned char> itsBytes;
@@ -58,101 +63,118 @@ public:
 BmapData::UpdateFunc::~UpdateFunc() {}
 
 BmapData::BmapData() :
-  itsImpl(new Impl(0, 0, 1, 1))
+  itsImpl(new Impl(Point<int>(0, 0), 1, 1))
 {
 DOTRACE("BmapData::BmapData");
-  clear();
 }
 
-BmapData::BmapData(int width, int height,
+BmapData::BmapData(const Point<int>& extent,
                    int bits_per_pixel, int byte_alignment) :
-  itsImpl(new Impl(width, height, bits_per_pixel, byte_alignment))
+  itsImpl(new Impl(extent, bits_per_pixel, byte_alignment))
 {
 DOTRACE("BmapData::BmapData");
-  Precondition(width >= 0); Precondition(height > 0);
-  int num_bytes = (width/8 + 1) * height  + 1;
-  Assert(num_bytes > 0);
-  itsImpl->itsBytes.resize( num_bytes );
 }
 
-BmapData::~BmapData() {
+BmapData::~BmapData()
+{
   delete itsImpl;
 }
 
-unsigned char* BmapData::bytesPtr() const {
+unsigned char* BmapData::bytesPtr() const
+{
 DOTRACE("BmapData::bytesPtr");
   updateIfNeeded();
   return const_cast<unsigned char*>(&(itsImpl->itsBytes[0]));
 }
 
-dynamic_block<unsigned char>& BmapData::bytesVec() {
+dynamic_block<unsigned char>& BmapData::bytesVec()
+{
   updateIfNeeded();
   return itsImpl->itsBytes;
 }
 
-const dynamic_block<unsigned char>& BmapData::bytesVec() const {
+const dynamic_block<unsigned char>& BmapData::bytesVec() const
+{
   updateIfNeeded();
   return itsImpl->itsBytes;
 }
 
-int BmapData::width() const {
+int BmapData::width() const
+{
 DOTRACE("BmapData::width");
   updateIfNeeded();
-  return itsImpl->itsWidth;
+  return itsImpl->itsExtent.x();
 }
 
-int BmapData::height() const {
+int BmapData::height() const
+{
 DOTRACE("BmapData::height");
   updateIfNeeded();
-  return itsImpl->itsHeight;
+  return itsImpl->itsExtent.y();
 }
 
-int BmapData::bitsPerPixel() const {
+Point<int> BmapData::extent() const
+{
+DOTRACE("BmapData::height");
+  return itsImpl->itsExtent;
+}
+
+int BmapData::bitsPerPixel() const
+{
 DOTRACE("BmapData::bitsPerPixel");
   return itsImpl->itsBitsPerPixel;
 }
 
-int BmapData::byteAlignment() const {
+int BmapData::byteAlignment() const
+{
 DOTRACE("BmapData::byteAlignment");
   return itsImpl->itsByteAlignment;
 }
 
-int BmapData::byteCount() const {
+int BmapData::byteCount() const
+{
 DOTRACE("BmapData::byteCount");
   updateIfNeeded();
-  return bytesPerRow() * itsImpl->itsHeight;
+  return bytesPerRow() * itsImpl->itsExtent.y();
 }
 
-int BmapData::bytesPerRow() const {
+int BmapData::bytesPerRow() const
+{
 DOTRACE("BmapData::bytesPerRow");
   updateIfNeeded();
-  return ( (itsImpl->itsWidth*itsImpl->itsBitsPerPixel - 1)/8 + 1 );
+  return ( (itsImpl->itsExtent.x()*itsImpl->itsBitsPerPixel - 1)/8 + 1 );
 }
 
-void BmapData::flipContrast() {
+void BmapData::flipContrast()
+{
 DOTRACE("BmapData::flipContrast");
   updateIfNeeded();
 
-  int num_bytes = itsImpl->itsBytes.size();
+  unsigned int num_bytes = itsImpl->itsBytes.size();
 
   // In this case we want to flip each bit
-  if (itsImpl->itsBitsPerPixel == 1) {
-    for (int i = 0; i < num_bytes; ++i) {
-      itsImpl->itsBytes[i] =
-        static_cast<unsigned char>(0xff ^ itsImpl->itsBytes[i]);
+  if (itsImpl->itsBitsPerPixel == 1)
+    {
+      for (unsigned int i = 0; i < num_bytes; ++i)
+        {
+          itsImpl->itsBytes[i] =
+            static_cast<unsigned char>(0xff ^ itsImpl->itsBytes[i]);
+        }
     }
-  }
   // In this case we want to reflect the value of each byte around the
   // middle value, 127.5
-  else {
-    for (int i = 0; i < num_bytes; ++i) {
-      itsImpl->itsBytes[i] =
-        static_cast<unsigned char>(0xff - itsImpl->itsBytes[i]);
+  else
+    {
+      for (unsigned int i = 0; i < num_bytes; ++i)
+        {
+          itsImpl->itsBytes[i] =
+            static_cast<unsigned char>(0xff - itsImpl->itsBytes[i]);
+        }
     }
-  }
 }
 
-void BmapData::flipVertical() {
+void BmapData::flipVertical()
+{
 DOTRACE("BmapData::flipVertical");
   updateIfNeeded();
 
@@ -161,58 +183,62 @@ DOTRACE("BmapData::flipVertical");
 
   dynamic_block<unsigned char> new_bytes(num_bytes);
 
-  for (int row = 0; row < itsImpl->itsHeight; ++row) {
-    int new_row = (itsImpl->itsHeight-1)-row;
-    memcpy(static_cast<void*> (&(new_bytes[new_row * bytes_per_row])),
-           static_cast<void*> (&(itsImpl->itsBytes [row     * bytes_per_row])),
-           bytes_per_row);
-  }
+  for (int row = 0; row < itsImpl->itsExtent.y(); ++row)
+    {
+      int new_row = (itsImpl->itsExtent.y()-1)-row;
+      memcpy(static_cast<void*> (&(new_bytes[new_row * bytes_per_row])),
+             static_cast<void*> (&(itsImpl->itsBytes [row     * bytes_per_row])),
+             bytes_per_row);
+    }
 
   itsImpl->itsBytes.swap(new_bytes);
 }
 
-void BmapData::clear() {
+void BmapData::clear()
+{
 DOTRACE("BmapData::clear");
   itsImpl->itsBytes.resize(1);
-  itsImpl->itsHeight = 1;
-  itsImpl->itsWidth = 1;
+  itsImpl->itsExtent.set(1,1);
   itsImpl->itsBitsPerPixel = 1;
   itsImpl->itsByteAlignment = 1;
 
   itsImpl->itsUpdater.reset(0);
 }
 
-void BmapData::swap(BmapData& other) {
+void BmapData::swap(BmapData& other)
+{
 DOTRACE("BmapData::swap");
   updateIfNeeded();
 
   itsImpl->itsBytes.swap(other.itsImpl->itsBytes);
 
-  Util::swap(itsImpl->itsWidth, other.itsImpl->itsWidth);
-  Util::swap(itsImpl->itsHeight, other.itsImpl->itsHeight);
+  Util::swap(itsImpl->itsExtent, other.itsImpl->itsExtent);
   Util::swap(itsImpl->itsBitsPerPixel, other.itsImpl->itsBitsPerPixel);
   Util::swap(itsImpl->itsByteAlignment, other.itsImpl->itsByteAlignment);
 }
 
 void BmapData::swap(dynamic_block<unsigned char>& bytes, int& width, int& height,
-                    int& bits_per_pixel, int& byte_alignment) {
+                    int& bits_per_pixel, int& byte_alignment)
+{
 DOTRACE("BmapData::swap");
   updateIfNeeded();
 
   itsImpl->itsBytes.swap(bytes);
 
-  Util::swap(itsImpl->itsWidth, width);
-  Util::swap(itsImpl->itsHeight, height);
+  Util::swap(itsImpl->itsExtent.x(), width);
+  Util::swap(itsImpl->itsExtent.y(), height);
   Util::swap(itsImpl->itsBitsPerPixel, bits_per_pixel);
   Util::swap(itsImpl->itsByteAlignment, byte_alignment);
 }
 
-void BmapData::queueUpdate(shared_ptr<UpdateFunc> updater) const {
+void BmapData::queueUpdate(shared_ptr<UpdateFunc> updater) const
+{
 DOTRACE("BmapData::queueUpdate");
   itsImpl->itsUpdater = updater;
 }
 
-void BmapData::updateIfNeeded() const {
+void BmapData::updateIfNeeded() const
+{
 DOTRACE("BmapData::updateIfNeeded");
   if (itsImpl->itsUpdater.get() != 0)
     {
@@ -226,7 +252,8 @@ DOTRACE("BmapData::updateIfNeeded");
     }
 }
 
-void BmapData::clearQueuedUpdate() const {
+void BmapData::clearQueuedUpdate() const
+{
 DOTRACE("BmapData::clearQueuedUpdate");
   itsImpl->itsUpdater.reset(0);
 }
