@@ -270,8 +270,9 @@ cleaner: neat
 count:
 	@wc $(ALL_SRCS) | sort -n | tee $(LOGS)/count
 
-count_sort: $(ALL_SRCS)
-	@wc $(ALL_SRCS) | sort -n | tee $(LOGS)/count_sort
+# Count the number of non-commented source lines
+ncsl:
+	@NCSL $(ALL_SRCS) | sort -n | tee $(LOGS)/ncsl
 
 docs: $(DOC)/DoxyConfig
 	mkdir -p $(BUILD)/html
@@ -282,14 +283,6 @@ docs: $(DOC)/DoxyConfig
 # Generate tags file based only on header files
 H_TAGS: $(ALL_SRCS)
 	find $(SRC) -name \*.h | etags - -o $@
-
-# Count the number of non-commented source lines
-ncsl:
-	@NCSL $(ALL_SRCS) | tee $(LOGS)/ncsl
-
-# Count the number of non-commented source lines and sort
-ncsl_sort:
-	@NCSL $(ALL_SRCS) | sort -n | tee $(LOGS)/ncsl_sort
 
 obj_sizes:
 	ls -lLR $(OBJ) | grep "\.$(OBJEXT)" | sort -n +4 | tee $(LOGS)/obj_sizes
