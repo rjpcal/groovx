@@ -3,7 +3,7 @@
 // listpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 29 17:23:03 1999
-// written: Thu Oct  5 13:05:37 2000
+// written: Fri Oct 27 16:00:06 2000
 // $Id$
 //
 // This file defines a TclPkg to be used with IoPtrList's.
@@ -22,8 +22,6 @@
 #endif
 
 namespace Tcl {
-  class IoPtrListPkg;
-}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -33,7 +31,7 @@ namespace Tcl {
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::IoPtrListPkg : public Tcl::CTclIoItemPkg<IoPtrList> {
+class IoPtrListPkg : public CTclIoItemPkg<IoPtrList> {
 public:
   IoPtrListPkg(Tcl_Interp* interp, IoPtrList& aList,
 					const char* pkg_name, const char* version);
@@ -43,9 +41,34 @@ public:
   virtual IO::IoObject& getIoFromId(int);
   virtual IoPtrList* getCItemFromId(int);
 
+  virtual bool isMyType(IO::IoObject* obj) = 0;
+
 private:
   IoPtrList& itsList;
 };
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * Tcl::PtrListPkg<C>
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+template <class C>
+class PtrListPkg : public IoPtrListPkg {
+public:
+  PtrListPkg(Tcl_Interp* interp, IoPtrList& aList,
+					const char* pkg_name, const char* version) :
+	 IoPtrListPkg(interp, aList, pkg_name, version) {}
+
+  virtual ~PtrListPkg() {}
+
+  virtual bool isMyType(IO::IoObject* obj)
+    { return dynamic_cast<C*>(obj) != 0; }
+};
+
+} // end namespace Tcl
 
 static const char vcid_listpkg_h[] = "$Header$";
 #endif // !LISTPKG_H_DEFINED
