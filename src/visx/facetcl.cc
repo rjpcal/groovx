@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Wed Mar  8 16:30:06 2000
+// written: Sat Mar 11 23:11:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "cloneface.h"
+#include "iofactory.h"
 #include "iomgr.h"
 #include "objlist.h"
 #include "face.h"
