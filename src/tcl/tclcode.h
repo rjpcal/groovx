@@ -3,7 +3,7 @@
 // tclevalcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jun 17 10:38:13 1999
-// written: Tue May 16 00:00:46 2000
+// written: Tue May 16 00:09:07 2000
 // $Id$
 //
 // TclEvalCmd serves as a wrapper for a Tcl command string that is to
@@ -38,6 +38,8 @@ public:
 		{
 		  appendMsg(Tcl_GetString(cmd_obj));
 		}
+	 EvalError(const char* msg) :
+		Tcl::TclError(msg) {}
   };
 
   enum ErrorHandlingMode { NONE, THROW_EXCEPTION, BACKGROUND_ERROR };
@@ -55,6 +57,9 @@ public:
 	 itsFlags(flags) {}
 
   int invoke(Tcl_Interp* interp) { 
+	 if (interp == 0)
+		throw EvalError("Tcl_Interp* was null in TclEvalCmd::invoke");
+
 	 int tclresult = Tcl_EvalObjEx(interp, itsCmdObj, itsFlags);
 
 	 if (NONE == itsErrorMode) { return tclresult; }
