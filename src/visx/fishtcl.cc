@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 12:00:53 1999
-// written: Thu Jul 12 13:23:44 2001
+// written: Fri Jul 13 15:23:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,36 +17,22 @@
 
 #include "tcl/fieldpkg.h"
 #include "tcl/genericobjpkg.h"
+#include "tcl/objfunctor.h"
 #include "tcl/tracertcl.h"
 
 #include "util/objfactory.h"
 
-namespace FishTcl {
-  class FishCmd;
+namespace FishTcl
+{
+  Util::UID makeFish(const char* spline_file, const char* coord_file,
+                     int index)
+  {
+    Ref<Fish> obj(Fish::makeFromFiles(spline_file, coord_file, index));
+    return obj.id();
+  }
+
   class FishPkg;
 }
-
-class FishTcl::FishCmd : public Tcl::TclCmd {
-public:
-  FishCmd(Tcl_Interp* interp, const char* cmd_name) :
-    Tcl::TclCmd(interp, cmd_name, "spline_file coord_file index", 1, 4) {}
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-  {
-    if (ctx.objc() == 1) {
-      Ref<Fish> obj(Fish::make());
-      ctx.setResult(obj.id());
-    }
-    else if (ctx.objc() == 4) {
-      const char* spline_file = ctx.getCstringFromArg(1);
-      const char* coord_file = ctx.getCstringFromArg(2);
-      int index = ctx.getIntFromArg(3);
-
-      Ref<Fish> obj(Fish::makeFromFiles(spline_file, coord_file, index));
-      ctx.setResult(obj.id());
-    }
-  }
-};
 
 class FishTcl::FishPkg : public Tcl::GenericObjPkg<Fish> {
 public:
@@ -55,14 +41,16 @@ public:
   {
     Tcl::addTracing(this, Fish::tracer);
 
-    addCommand( new FishCmd(interp, "Fish::Fish") );
+    Tcl::defVec(this, &FishTcl::makeFish,
+                "Fish::make", "spline_file coord_file index");
+
     Tcl::declareAllFields(this, Fish::classFields());
   }
 };
 
 extern "C"
-int Fish_Init(Tcl_Interp* interp) {
-
+int Fish_Init(Tcl_Interp* interp)
+{
   Tcl::TclPkg* pkg = new FishTcl::FishPkg(interp);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Fish::make);
