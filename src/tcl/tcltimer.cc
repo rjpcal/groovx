@@ -45,9 +45,22 @@
 #include "util/debug.h"
 DBG_REGISTER
 
+Tcl::TimerScheduler::TimerScheduler()
+{
+DOTRACE("Tcl::TimerScheduler::TimerScheduler");
+}
+
+Tcl_TimerToken
+Tcl::TimerScheduler::schedule(int msec, void (*callback)(void*),
+                              void* clientdata)
+{
+DOTRACE("Tcl::TimerScheduler::schedule");
+  return Tcl_CreateTimerHandler(msec, callback, clientdata);
+}
 
 Tcl::Timer::Timer(unsigned int msec, bool repeat) :
   sigTimeOut(),
+  itsScheduler(),
   itsToken(0),
   itsMsecDelay(msec),
   isItRepeating(repeat),
@@ -86,9 +99,9 @@ DOTRACE("Tcl::Timer::schedule");
     }
   else
     {
-      itsToken = Tcl_CreateTimerHandler(itsMsecDelay,
-                                        dummyCallback,
-                                        static_cast<ClientData>(this));
+      itsToken = itsScheduler.schedule(itsMsecDelay,
+                                       dummyCallback,
+                                       static_cast<ClientData>(this));
     }
 }
 

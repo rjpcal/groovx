@@ -42,7 +42,18 @@ typedef void* ClientData;
 namespace Tcl
 {
   class Timer;
+
+  class TimerScheduler;
 }
+
+class Tcl::TimerScheduler
+{
+public:
+  TimerScheduler();
+
+  Tcl_TimerToken schedule(int msec, void (*callback)(void*),
+                          void* clientdata);
+};
 
 /// Wraps a signal/slot interface around the Tcl timer callback mechansim.
 class Tcl::Timer
@@ -71,6 +82,8 @@ private:
 
   Timer(const Timer&);
   Timer& operator=(const Timer&);
+
+  Tcl::TimerScheduler itsScheduler;
 
   Tcl_TimerToken itsToken;
   unsigned int itsMsecDelay;
