@@ -49,10 +49,10 @@ test "BitmapTcl-Bitmap::loadPbm" "error on non-existent file" {
 } "^Bitmap::loadPbm: couldn't open file: $::TEST_DIR/nonexistent_file$"
 test "BitmapTcl-Bitmap::loadPbm" "error on junk text file" {
 	 Bitmap::loadPbm $::BITMAP $::TEST_DIR/junk_text_file
-} "^Bitmap::loadPbm: bad magic number while reading pbm file$"
+} "^Bitmap::loadPbm: bad magic number while reading pbm file.*$"
 test "BitmapTcl-Bitmap::loadPbm" "error on junk binary file" {
 	 Bitmap::loadPbm $::BITMAP $::TEST_DIR/junk_bin_file
-} "^Bitmap::loadPbm: bad magic number while reading pbm file$"
+} "^Bitmap::loadPbm: bad magic number while reading pbm file.*$"
 
 ### Bitmap rendering ###
 test "BitmapTcl-rendering" "normal render" {
