@@ -37,8 +37,8 @@
 void Util::throwBadCast(const std::type_info& to,
                         const std::type_info& from)
 {
-  throw Util::Error(fstring("failed cast to ", demangle_cstr(to.name()),
-                            " from ", demangle_cstr(from.name())));
+  throw Util::Error(fstring("failed cast to ", demangled_name(to),
+                            " from ", demangled_name(from)));
 }
 
 static const char vcid_stderror_cc[] = "$Header$";

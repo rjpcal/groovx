@@ -30,9 +30,10 @@
 #ifndef DEMANGLE_H_DEFINED
 #define DEMANGLE_H_DEFINED
 
-/// Returns a demangled version of the given mangled typename.
-/** The input is expected to be of the form returned by typeid(x).name(). */
-const char* demangle(const char* in);
+#include <typeinfo>
+
+/// Returns a demangled typename for the given type.
+const char* demangled_name(const std::type_info& info);
 
 static const char vcid_demangle_h[] = "$Header$";
 #endif // !DEMANGLE_H_DEFINED

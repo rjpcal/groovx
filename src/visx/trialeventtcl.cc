@@ -63,7 +63,7 @@ namespace
   Tcl::Pkg* initEventType(Tcl_Interp* interp)
   {
     Tcl::Pkg* pkg = new Tcl::Pkg(interp,
-                                 demangle(typeid(EventType).name()),
+                                 demangled_name(typeid(EventType)),
                                  "$Revision$");
     Tcl::defCreator<EventType>(pkg);
     pkg->inheritPkg("TrialEvent");

@@ -59,21 +59,21 @@ void Util::RefHelper::insertItemWeak(Util::Object* obj)
 void Util::RefHelper::throwRefNull(const std::type_info& info)
 {
   throw Util::Error(fstring("attempted to construct a Ref<",
-                            demangle_cstr(info.name()),
+                            demangled_name(info),
                             "> with a null pointer"));
 }
 
 void Util::RefHelper::throwRefUnshareable(const std::type_info& info)
 {
   throw Util::Error(fstring("attempted to construct a Ref<",
-                            demangle_cstr(info.name()),
+                            demangled_name(info),
                             "> with an unshareable object"));
 }
 
 void Util::RefHelper::throwSoftRefInvalid(const std::type_info& info)
 {
   throw Util::Error(fstring("attempted to access invalid object in SoftRef<",
-                            demangle_cstr(info.name()), ">"));
+                            demangled_name(info), ">"));
 }
 
 static const char vcid_ref_cc[] = "$Header$";

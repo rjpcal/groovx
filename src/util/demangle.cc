@@ -64,27 +64,28 @@ std::string demangle_impl(const char* in) { return std::string(in); }
 
 namespace
 {
+  // FIXME why can't we make this a map<type_info, string>?
   typedef std::map<std::string, std::string> Cache;
   Cache nameCache;
 }
 
-const char* demangle(const char* in)
+const char* demangled_name(const std::type_info& info)
 {
-DOTRACE("demangle");
+DOTRACE("demangled_name");
 
-  const std::string mangled = in;
+  const std::string mangled = info.name();
 
-  Cache::iterator itr = nameCache.find(in);
+  Cache::iterator itr = nameCache.find(mangled);
 
   if (itr != nameCache.end())
     {
       return (*itr).second.c_str();
     }
 
-  const std::string demangled = demangle_impl(in);
+  const std::string demangled = demangle_impl(info.name());
 
   std::pair<Cache::iterator, bool> result =
-    nameCache.insert(Cache::value_type(in, demangled));
+    nameCache.insert(Cache::value_type(mangled, demangled));
 
   Assert(result.second == true);
 
