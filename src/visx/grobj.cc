@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Tue Aug 14 11:34:42 2001
+// written: Tue Aug 14 13:03:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ void GrObj::getBoundingBox(Gfx::Canvas& canvas, Gfx::Rect<double>& bbox) const
 {
 DOTRACE("GrObj::getBoundingBox");
 
-  bbox = itsImpl->itsBitmapCache->gnodeBoundingBox(canvas);
+  bbox = itsImpl->itsTopNode->gnodeBoundingBox(canvas);
 }
 
 Gmodes::ScalingMode GrObj::getScalingMode() const
@@ -290,12 +290,12 @@ void GrObj::update(Gfx::Canvas& canvas) const
 
 void GrObj::draw(Gfx::Canvas& canvas) const
 {
-  itsImpl->draw(canvas);
+  itsImpl->itsTopNode->gnodeDraw(canvas);
 }
 
 void GrObj::undraw(Gfx::Canvas& canvas) const
 {
-  itsImpl->undraw(canvas);
+  itsImpl->itsTopNode->gnodeUndraw(canvas);
 }
 
 static const char vcid_grobj_cc[] = "$Header$";
