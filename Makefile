@@ -16,7 +16,7 @@
 #
 ##########################################################################
 
-VERSION := 0.8a5
+VERSION := 0.8a6
 EXTRA_STATISTICS := 0
 
 TCLTK_VERSION := 8.2
@@ -56,6 +56,8 @@ SRC := src
 DEP := ./dep/$(ARCH)
 OBJ := ./obj/$(PLATFORM)
 LIB := $(PROJECT)/lib/$(PLATFORM)
+#PKG := ./pkg/$(PLATFORM)
+#PKG_DBG := ./pkg_dbg/$(PLATFORM)
 LOG := ./logs
 DOC := ./doc
 IDEP := ./idep
@@ -220,13 +222,10 @@ GRSH_STATIC_OBJS := \
 	$(OBJ)/grobjimpl.do \
 	$(OBJ)/gtext.do \
 	$(OBJ)/house.do \
-	$(OBJ)/jitter.do \
 	$(OBJ)/maskhatch.do \
 	$(OBJ)/morphyface.do \
 	$(OBJ)/objtogl.do \
-	$(OBJ)/position.do \
 	$(OBJ)/tclgl.do \
-	$(OBJ)/tlistwidget.do \
 	$(OBJ)/togl/togl.do \
 	$(OBJ)/toglconfig.do \
 	$(OBJ)/xbitmap.do \
@@ -266,6 +265,7 @@ VISX_OBJS := \
 	$(OBJ)/grshapp.do \
 	$(OBJ)/gtexttcl.do \
 	$(OBJ)/housetcl.do \
+	$(OBJ)/jitter.do \
 	$(OBJ)/jittertcl.do \
 	$(OBJ)/kbdresponsehdlr.do \
 	$(OBJ)/masktcl.do \
@@ -273,6 +273,7 @@ VISX_OBJS := \
 	$(OBJ)/nullresponsehdlr.do \
 	$(OBJ)/objlisttcl.do \
 	$(OBJ)/pbm.do \
+	$(OBJ)/position.do \
 	$(OBJ)/positiontcl.do \
 	$(OBJ)/poslisttcl.do \
 	$(OBJ)/response.do \
@@ -296,11 +297,12 @@ APPWORKS_OBJS := \
 	$(OBJ)/application.do \
 	$(OBJ)/gwt/canvas.do \
 	$(OBJ)/gwt/widget.do \
+	$(OBJ)/gx/gbcolor.do \
+	$(OBJ)/gx/gbvec.do \
 	$(OBJ)/gx/gxnode.do \
 	$(OBJ)/gx/gxseparator.do \
 	$(OBJ)/gx/gxtcl.do \
 	$(OBJ)/gx/gxtraversal.do \
-	$(OBJ)/gx/gxvec.do \
 	$(OBJ)/io/asciistreamreader.do \
 	$(OBJ)/io/asciistreamwriter.do \
 	$(OBJ)/io/fields.do \
@@ -348,6 +350,8 @@ TCLWORKS_OBJS := \
 	$(OBJ)/tcl/tclveccmds.do \
 	$(OBJ)/tcl/tracertcl.do \
 
+#PACKAGES := \
+#	$(PKG)/face.sl
 
 #-------------------------------------------------------------------------
 #
@@ -357,7 +361,7 @@ TCLWORKS_OBJS := \
 
 DEBUG_TARGET := $(BIN_DIR)/testsh
 
-DEBUG_DEFS := -DPROF -DASSERT -DINVARIANT -DTEST
+DEBUG_DEFS := -DPROF -DASSERT -DINVARIANT -DTEST -DDEBUG_BUILD
 
 DEBUG_GRSH_MAIN_OBJ := $(GRSH_MAIN_OBJ)
 DEBUG_GRSH_STATIC_OBJS := $(GRSH_STATIC_OBJS)
@@ -365,6 +369,8 @@ DEBUG_GRSH_DYNAMIC_OBJS := $(GRSH_DYNAMIC_OBJS)
 DEBUG_VISX_OBJS := $(VISX_OBJS)
 DEBUG_TCLWORKS_OBJS := $(TCLWORKS_OBJS)
 DEBUG_APPWORKS_OBJS := $(APPWORKS_OBJS)
+
+#DEBUG_PACKAGES := $(subst $(PKG),$(PKG_DBG),$(PACKAGES))
 
 DEBUG_LIBGRSH := $(LIB)/libgrsh.d.$(DEBUGLIB_EXT)
 DEBUG_LIBVISX := $(LIB)/libvisx.d.$(DEBUGLIB_EXT)
@@ -397,6 +403,8 @@ PROD_GRSH_STATIC_OBJS := $(DEBUG_GRSH_STATIC_OBJS:.do=.o)
 PROD_VISX_OBJS := $(DEBUG_VISX_OBJS:.do=.o)
 PROD_TCLWORKS_OBJS := $(DEBUG_TCLWORKS_OBJS:.do=.o)
 PROD_APPWORKS_OBJS := $(DEBUG_APPWORKS_OBJS:.do=.o)
+
+#PROD_PACKAGES := $(PACKAGES)
 
 # Note: exception handling does not work with shared libraries in the
 # current version of g++ (2.95.1), so on irix6 we must make the
@@ -495,6 +503,9 @@ $(PROD_LIBTCLWORKS):   $(PROD_TCLWORKS_OBJS)
 $(DEBUG_LIBAPPWORKS):  $(DEBUG_APPWORKS_OBJS)
 $(PROD_LIBAPPWORKS):   $(PROD_APPWORKS_OBJS)
 
+#$(PKG)/face.sl:     $(OBJ)/face.o $(OBJ)/cloneface.o $(OBJ)/facetcl.o
+#$(PKG_DBG)/face.sl: $(OBJ)/face.do $(OBJ)/cloneface.do $(OBJ)/facetcl.do
+
 #-------------------------------------------------------------------------
 #
 # Dependencies
@@ -506,7 +517,6 @@ ALL_SOURCES := $(wildcard $(SRC)/*.cc) $(wildcard $(SRC)/[a-z]*/*.cc)
 ALL_HEADERS := $(SRC)/*.h $(SRC)/[a-z]*/*.h
 
 DEP_TEMP := $(patsubst %.cc,%.d,$(ALL_SOURCES))
-ALL_DEPS := $(subst src/,dep/,$(DEP_TEMP))
 
 MAKEDEP := $(SCRIPTS)/makedep
 
