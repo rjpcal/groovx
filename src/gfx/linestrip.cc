@@ -50,7 +50,8 @@ Gfx::LineStrip::LineStrip() :
   canvas(0),
   pts(0),
   width(1.0),
-  join(false)
+  join(false),
+  loop(false)
 {
 DOTRACE("Gfx::LineStrip::LineStrip");
 }
@@ -59,6 +60,12 @@ void Gfx::LineStrip::lineJoin(bool doJoin)
 {
 DOTRACE("Gfx::LineStrip::lineJoin");
   join = doJoin;
+}
+
+void Gfx::LineStrip::closeLoop(bool doClose)
+{
+DOTRACE("Gfx::LineStrip::closeLoop");
+  loop = doClose;
 }
 
 void Gfx::LineStrip::begin(Gfx::Canvas& c, double w)
@@ -129,45 +136,77 @@ DOTRACE("Gfx::LineStrip::drawSimpleLineStrip");
   canvas->end();
 }
 
+namespace
+{
+  // Given two line segments with unit-normalized slopes of d1 and d2,
+  // return the appropriate normal vector at the join point. The angle of
+  // this result will be halfway between that of the normal vectors to d1
+  // and d2, and the length of the result will be determined by the angle
+  // of the intersection.
+  Vec2d joinedNormal(const Vec2d& d1, const Vec2d& d2)
+  {
+    const Vec2d n1 = normalTo(d1);
+    const Vec2d n2 = normalTo(d2);
+
+    double c = 0.0;
+    if      (d1.x()+d2.x() != 0.0) { c = (n2.x() - n1.x()) / (d1.x() + d2.x()); }
+    else if (d1.y()+d2.y() != 0.0) { c = (n2.y() - n1.y()) / (d1.y() + d2.y()); }
+
+    return Vec2d(n2 - d2 * c);
+  }
+}
+
 void Gfx::LineStrip::drawJoinedLineStrip()
 {
 DOTRACE("drawJoinedLineStrip");
   canvas->beginQuadStrip();
 
-  Vec2d n1;
   Vec2d d1;
+  Vec2d d2;
 
-  for (unsigned int i = 1; i < pts.size(); ++i)
+  Vec2d start_pt1;
+  Vec2d start_pt2;
+
+  for (unsigned int i = 1; i <= pts.size(); ++i)
     {
-      const Vec2d d2 = makeUnitLength(pts[i] - pts[i-1]);
-      const Vec2d n2 = normalTo(d2);
+      if (i == pts.size())
+        {
+          if (loop) d2 = makeUnitLength(pts[0] - pts[i-1]);
+          else      d2 = d1;
+        }
+      else
+        {
+          d2 = makeUnitLength(pts[i] - pts[i-1]);
+        }
 
       if (i == 1)
         {
-          n1 = n2;
-          d1 = d2;
+          if (loop) d1 = makeUnitLength(pts[0] - pts.back());
+          else      d1 = d2;
         }
 
-      double c = 0.0;
-      if      (d1.x()+d2.x() != 0.0) { c = (n2.x() - n1.x()) / (d1.x() + d2.x()); }
-      else if (d1.y()+d2.y() != 0.0) { c = (n2.y() - n1.y()) / (d1.y() + d2.y()); }
+      const Vec2d use_n = joinedNormal(d1, d2);
 
-      const Vec2d use_n(n2 - d2 * c);
+      const Vec2d pt1 = pts[i-1] - use_n*width;
+      const Vec2d pt2 = pts[i-1] + use_n*width;
 
-      canvas->vertex2(pts[i-1] - use_n*width);
-      canvas->vertex2(pts[i-1] + use_n*width);
+      canvas->vertex2(pt1);
+      canvas->vertex2(pt2);
 
-      n1 = n2;
+      if (i == 1)
+        {
+          start_pt1 = pt1;
+          start_pt2 = pt2;
+        }
+
       d1 = d2;
     }
 
-  const Vec2d pt1(pts.back().x() - width*n1.x(),
-                  pts.back().y() - width*n1.y());
-  const Vec2d pt2(pts.back().x() + width*n1.x(),
-                  pts.back().y() + width*n1.y());
-
-  canvas->vertex2(pt1);
-  canvas->vertex2(pt2);
+  if (loop)
+    {
+      canvas->vertex2(start_pt1);
+      canvas->vertex2(start_pt2);
+    }
 
   canvas->end();
 }

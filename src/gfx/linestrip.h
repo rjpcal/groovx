@@ -46,6 +46,7 @@ namespace Gfx
     std::vector<Gfx::Vec2<double> > pts;
     double width;
     bool join;
+    bool loop;
 
   public:
     LineStrip();
@@ -53,6 +54,8 @@ namespace Gfx
     // default copy c-tor and destructor OK
 
     void lineJoin(bool doJoin);
+
+    void closeLoop(bool doClose);
 
     void begin(Gfx::Canvas& c, double w);
 
