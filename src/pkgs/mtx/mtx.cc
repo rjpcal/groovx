@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar  4 11:38:19 2002
+// written: Mon Mar  4 12:19:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -515,6 +515,30 @@ void Mtx::swapColumns(int c1, int c2)
   memswap(itsImpl.address_nc(0,c1), itsImpl.address_nc(0,c2), mrows());
 }
 
+Mtx Mtx::meanRow() const
+{
+  Mtx res(1, ncols());
+
+  MtxIter resiter = res.row(0).beginNC();
+
+  for (int c = 0; c < ncols(); ++c, ++resiter)
+    *resiter = column(c).mean();
+
+  return res;
+}
+
+Mtx Mtx::meanColumn() const
+{
+  Mtx res(mrows(), 1);
+
+  MtxIter resiter = res.column(0).beginNC();
+
+  for (int r = 0; r < mrows(); ++r, ++resiter)
+    *resiter = row(r).mean();
+
+  return res;
+}
+
 Mtx::const_iterator Mtx::find_min() const
 {
   if (nelems() == 0)
@@ -572,6 +596,15 @@ Mtx& Mtx::operator-=(const Mtx& other)
     column(i) -= other.column(i);
 
   return *this;
+}
+
+bool Mtx::operator==(const Mtx& other) const
+{
+  if ( (mrows() != other.mrows()) || (ncols() != other.ncols()) )
+    return false;
+  for (int c = 0; c < ncols(); ++c)
+    if ( column(c) != other.column(c) ) return false;
+  return true;
 }
 
 void Mtx::VMmul_assign(const Slice& vec, const Mtx& mtx,
