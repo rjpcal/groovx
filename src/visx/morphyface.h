@@ -3,7 +3,7 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Wed Sep 29 13:25:32 1999
+// written: Wed Sep 29 20:34:14 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,24 +24,26 @@
 #include "grobj.h"
 #endif
 
+#ifndef PROPERTY_H_DEFINED
+#include "property.h"
+#endif
+
 #ifdef PROPERTY
 #error PROPERTY macro already defined
 #else
 #define PROPERTY(type, name) \
-  private: IoWrapper<type> its##name; \
-  public:  type get##name() const { return its##name(); } \
-  public:  void set##name(type val) { its##name() = val; sendStateChangeMsg(); }
+  public: CTProperty<MorphyFace, type> its##name; \
+  public:  type get##name() const { return getNative(&MorphyFace::its##name); } \
+  public:  void set##name(type val) { setNative(&MorphyFace::its##name, val); }
 #endif
 
 #ifdef BOUNDED_PROPERTY
 #error BOUNDED_PROPERTY macro already defined
 #else
-#define BOUNDED_PROPERTY(type, name, min, max) \
-  private: IoWrapper<type> its##name; \
-  public:  type get##name() const { return its##name(); } \
-  public:  void set##name(type val) { \
-				  if (val >= min && val <= max) its##name() = val; \
-				  sendStateChangeMsg(); }
+#define BOUNDED_PROPERTY(type, name, min, max, div) \
+  public: CTBoundedProperty<MorphyFace, type, min, max, div> its##name; \
+  public:  type get##name() const { return getNative(&MorphyFace::its##name); } \
+  public:  void set##name(type val) { setNative(&MorphyFace::its##name, val); }
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +52,7 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-class MorphyFace : public GrObj {
+class MorphyFace : public GrObj, public PropFriend<MorphyFace> {
 public:
   //////////////
   // creators //
@@ -70,16 +72,12 @@ public:
   
   virtual int charCount() const;
 
-  ///////////////
-  // accessors //
-  ///////////////
-
-  virtual bool grGetBoundingBox(double& left, double& top,
-										  double& right, double& bottom,
-										  int& border_pixels) const;
   ////////////////
   // properties //
   ////////////////
+
+  typedef PropertyInfo<MorphyFace> PInfo;
+  static const vector<PInfo>& getPropertyInfos();
 
   PROPERTY(int, Category);	  // holds an arbitrary category specification
 
@@ -100,7 +98,8 @@ public:
   PROPERTY(double, PupilXpos);
   PROPERTY(double, PupilYpos);
   PROPERTY(double, PupilSize);
-  BOUNDED_PROPERTY(double, PupilDilation, 0.0, 0.999);
+
+  BOUNDED_PROPERTY(double, PupilDilation, 0, 999, 1000);
 
   PROPERTY(double, EyebrowXpos);
   PROPERTY(double, EyebrowYpos);
@@ -119,6 +118,9 @@ public:
   PROPERTY(double, MouthCurvature);
 
 protected:
+  virtual bool grGetBoundingBox(double& left, double& top,
+										  double& right, double& bottom,
+										  int& border_pixels) const;
   virtual void grRender() const; 
   // This overrides GrObj pure virtual function. It renders a face
   // with the appropriate parameters.
