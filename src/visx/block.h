@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Thu Mar  9 17:08:59 2000
+// written: Mon Mar 13 18:50:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,8 @@
 class Trial;
 
 class Experiment;
+
+class Response;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -152,7 +154,7 @@ public:
       incremented. In this way, the next call to drawTrial will start
       the next trial. Also, the next call to prevResponse will return
       the response that was recorded in the present command. */
-  virtual void processResponse(int response, Experiment* expt);
+  virtual void processResponse(const Response& response, Experiment* expt);
 
   /** Prepares the Block to start the next trial by incrementing the
       trial sequence index. */
