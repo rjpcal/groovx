@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Mon Aug 27 17:16:37 2001
+// written: Tue Aug 28 11:38:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -206,11 +206,11 @@ DOTRACE("Face::grRender");
         canvas.translate(Gfx::Vec3<double>(eye_pos * eye_x, itsEyeHeight, 0.0));
         canvas.scale(eyeball_scale);
 
-        canvas.drawCircle(0.0, outer_radius, num_slices, num_loops);
+        canvas.drawCircle(0.0, outer_radius, false, num_slices, num_loops);
 
         canvas.scale(pupil_scale);
 
-        canvas.drawCircle(0.0, outer_radius, num_slices, num_loops);
+        canvas.drawCircle(0.0, outer_radius, false, num_slices, num_loops);
       }
 
     //
