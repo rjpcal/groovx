@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:03 2002
-// written: Mon Sep 16 11:51:14 2002
+// written: Mon Sep 16 11:54:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,11 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REF_H_DEFINED)
 #include "util/ref.h"
 #endif
+
+namespace Gfx
+{
+  class Canvas;
+}
 
 class GLCanvas;
 
@@ -51,7 +56,7 @@ public:
 
   XVisualInfo* visInfo() const { return itsVisInfo; }
 
-  GLCanvas& canvas() const;
+  Canvas& canvas() const;
 };
 
 static const char vcid_glxwrapper_h[] = "$Header$";
