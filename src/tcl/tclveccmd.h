@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 12 12:14:43 2001
-// written: Thu Jul 12 12:45:13 2001
+// written: Thu Jul 12 13:02:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,9 +44,8 @@ public:
   virtual void invoke(Context& cx) = 0;
 
 protected:
-  class VecContext;
-
-  virtual void rawInvoke(Tcl_Interp* interp, int objc, Tcl_Obj* const objv[]);
+  virtual void rawInvoke(Tcl_Interp* interp, unsigned int objc,
+                         Tcl_Obj* const objv[]);
 
 private:
   unsigned int itsKeyArgn;
