@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Sun Nov  3 09:09:17 2002
+// written: Wed Nov 20 15:08:26 2002
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -213,8 +213,7 @@ DOTRACE("Expt_Init");
 
   Tcl::Pkg* pkg = new ExptTcl::ExpPkg(interp);
 
-  Util::ObjFactory::theOne().registerCreatorFunc(&ExptDriver::make);
-  Util::ObjFactory::theOne().registerAlias( "ExptDriver", "Expt" );
+  Tcl::defCreator<ExptDriver>(pkg, "Expt");
 
   return pkg->initStatus();
 }

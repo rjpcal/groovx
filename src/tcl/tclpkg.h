@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Nov 20 15:03:15 2002
+// written: Wed Nov 20 15:08:00 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,9 +25,13 @@ namespace Tcl
   class Pkg;
 
   template <class C>
-  void defCreator(Pkg*)
+  void defCreator(Pkg*, const char* aliasName = 0)
   {
-    Util::ObjFactory::theOne().registerCreatorFunc(&C::make);
+    const char* origName =
+      Util::ObjFactory::theOne().registerCreatorFunc(&C::make);
+
+    if (aliasName != 0)
+      Util::ObjFactory::theOne().registerAlias(origName, aliasName);
   }
 }
 
