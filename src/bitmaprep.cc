@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Wed Aug  8 20:16:41 2001
+// written: Thu Aug  9 16:57:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -109,14 +109,11 @@ private:
   bool itsFlipVertical;
 };
 
-void PbmUpdater::update(BmapData& update_me) {
+void PbmUpdater::update(BmapData& update_me)
+{
 DOTRACE("PbmUpdater::update");
 
-  // Create a Pbm object by reading pbm data from 'filename'.
-  Pbm pbm(itsFilename.c_str());
-
-  // Grab ownership of the bitmap data from pbm into this's itsData
-  pbm.swapInto( update_me );
+  Pbm::load(itsFilename.c_str(), update_me);
 
   if (itsFlipContrast) { update_me.flipContrast(); }
   if (itsFlipVertical) { update_me.flipVertical(); }
@@ -212,9 +209,10 @@ DOTRACE("BitmapRep::loadPbmFile(const char*)");
     {
       itsImpl->itsData.updateIfNeeded();
     }
-  // If there was a PbmError, it means we couldn't read the file
-  // 'filename' so we should forget about 'filename' locally
-  catch (PbmError&)
+  // If there was an error while reading the file, it means we
+  // couldn't read the file 'filename' so we should forget about
+  // 'filename' locally
+  catch (...)
     {
       itsImpl->itsFilename = "";
       throw;
@@ -249,9 +247,8 @@ DOTRACE("BitmapRep::queuePbmFile");
 void BitmapRep::writePbmFile(const char* filename) const
 {
 DOTRACE("BitmapRep::writePbmFile");
-  Pbm pbm(itsImpl->itsData);
 
-  pbm.write(filename);
+  Pbm::save(filename, itsImpl->itsData);
 }
 
 void BitmapRep::grabScreenRect(int left, int top, int right, int bottom)
