@@ -3,7 +3,7 @@
 // iditem.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 26 17:50:59 2000
-// written: Fri Oct 27 13:14:23 2000
+// written: Fri Oct 27 14:10:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,8 +48,8 @@ private:
 
 public:
   IdItem(int id);
-  IdItem(T* master, int id_) : itsHandle(master) {}
-  IdItem(PtrHandle<T> item_, int id_) : itsHandle(item_) {}
+  IdItem(T* master) : itsHandle(master) {}
+  IdItem(PtrHandle<T> item_) : itsHandle(item_) {}
 
   // Default destructor, copy constructor, operator=() are fine
 

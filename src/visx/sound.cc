@@ -3,7 +3,7 @@
 // sound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  8 11:43:07 1999
-// written: Fri Oct 27 09:03:07 2000
+// written: Fri Oct 27 14:16:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,11 +43,11 @@ void Sound::setErrSound(IdItem<Sound> err_sound) {
 }
 
 IdItem<Sound> Sound::getOkSound() {
-  return IdItem<Sound>(OK_SOUND.get(), OK_SOUND.id());
+  return IdItem<Sound>(OK_SOUND.get());
 }
 
 IdItem<Sound> Sound::getErrSound() {
-  return IdItem<Sound>(ERR_SOUND.get(), ERR_SOUND.id());
+  return IdItem<Sound>(ERR_SOUND.get());
 }
 
 static const char vcid_sound_cc[] = "$Header$";
