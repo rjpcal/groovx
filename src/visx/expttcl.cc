@@ -51,46 +51,48 @@ namespace
   // current Expt. Record the time when the experiment
   // began. edBeginExpt is called, which displays a trial, and
   // generates the timer callbacks associated with a trial.
-  void beginExpt(Util::Ref<ExptDriver> expt)
+  void beginExpt(Util::Ref<ExptDriver> xp)
   {
-    Util::SoftRef<Toglet> widget = expt->getWidget();
+    Util::SoftRef<Toglet> w = xp->getWidget();
 
     // Create the begin key binding
-    widget->bind("<Control-KeyPress-b>", "Togl::takeFocus; Expt::begin");
+    w->bind("<Control-KeyPress-b>",
+            fstring("-> ", w.id(), " takeFocus; -> ", xp.id(), " begin"));
 
     // Create the quit key binding
-    widget->bind("<Control-KeyPress-q>", "Expt::storeData; exit");
+    w->bind("<Control-KeyPress-q>",
+            fstring("-> ", xp.id(), " storeData; exit"));
 
     // Create the quit-without-save key binding
-    widget->bind("<Control-Alt-KeyPress-x>", "exit");
+    w->bind("<Control-Alt-KeyPress-x>", "exit");
 
     // Create the save key binding
-    widget->bind("<Control-KeyPress-s>", "Expt::storeData");
+    w->bind("<Control-KeyPress-s>", fstring("-> ", xp.id(), " storeData"));
 
     // Create the stop key binding
-    widget->bind("<Control-KeyPress-c>", "Expt::stop");
+    w->bind("<Control-KeyPress-c>", fstring("-> ", xp.id(), " stop"));
 
     // Create the reset key binding
-    widget->bind("<Control-KeyPress-r>", "Expt::reset");
+    w->bind("<Control-KeyPress-r>", fstring("-> ", xp.id(), " reset"));
 
     // Create the pause key binding
-    widget->bind("<KeyPress-p>", "Expt::pause");
+    w->bind("<KeyPress-p>", fstring("-> ", xp.id(), " pause"));
 
     // Destroy the experiment start key binding
-    widget->bind("<KeyPress-s>", "");
+    w->bind("<KeyPress-s>", "");
 
     // Force the focus to the widget
-    widget->takeFocus();
+    w->takeFocus();
 
-    expt->edBeginExpt();
+    xp->edBeginExpt();
   }
 
-  void setStartCommand(Ref<ExptDriver> expt, const char* command)
+  void waitStartKey(Ref<ExptDriver> xp)
   {
-    Util::SoftRef<Toglet> widget = expt->getWidget();
+    Util::SoftRef<Toglet> w = xp->getWidget();
 
-    widget->bind("<KeyPress-s>", command);
-    widget->takeFocus();
+    w->bind("<KeyPress-s>", fstring("-> ", xp.id(), " begin"));
+    w->takeFocus();
   }
 }
 
@@ -101,13 +103,13 @@ DOTRACE("Exptdriver_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "ExptDriver", "$Revision$");
   pkg->inheritPkg("IO");
-  Tcl::defCreator<ExptDriver>(pkg, "Expt");
+  Tcl::defCreator<ExptDriver>(pkg);
   Tcl::defGenericObjCmds<ExptDriver>(pkg);
 
   Tcl::defTracing(pkg, ExptDriver::tracer);
 
   pkg->def( "begin", "expt_id", &beginExpt );
-  pkg->def( "setStartCommand", "expt_id command", &setStartCommand );
+  pkg->def( "waitStartKey", "expt_id", &waitStartKey );
 
   pkg->def("addBlock", "expt_id block_id",
            Util::bindLast(Util::memFunc(&ExptDriver::addElement), 1));
