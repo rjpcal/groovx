@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sun Nov 21 00:50:32 1999
+// written: Sun Nov 21 00:54:35 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,10 +57,10 @@ public:
 
   /** Returns the size of the internal array. The number returned also
 		refers to the one-past-the-end index into the PtrList. */
-  int capacity();
+  int capacity() const;
 
   /** Returns the number of filled sites in the PtrList. */
-  int count();
+  int count() const;
 
   /** Returns true if 'id' is a valid index into a non-NULL T* in
 		the PtrList, given its current size. */

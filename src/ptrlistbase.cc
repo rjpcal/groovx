@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sun Nov 21 00:15:41 1999
+// written: Sun Nov 21 00:55:01 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,11 +48,11 @@ VoidPtrList::~VoidPtrList() {
 DOTRACE("VoidPtrList::~VoidPtrList");
 }
 
-int VoidPtrList::capacity() {
+int VoidPtrList::capacity() const {
 DOTRACE("VoidPtrList::capacity");
 }
 
-int VoidPtrList::count() {
+int VoidPtrList::count() const {
 DOTRACE("VoidPtrList::count");
   // Count the number of null pointers. In the STL call count, we must
   // cast the value (NULL) so that template deduction treats it as a
