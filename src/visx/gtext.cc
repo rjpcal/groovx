@@ -875,9 +875,9 @@ void Gtext::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("Gtext::grRender");
 
-  Gfx::Canvas::MatrixSaver msaver(canvas);
+  Gfx::MatrixSaver msaver(canvas);
 
-  Gfx::Canvas::AttribSaver asaver(canvas);
+  Gfx::AttribSaver asaver(canvas);
 
   canvas.setLineWidth(itsStrokeWidth);
   glListBase( itsListBase );

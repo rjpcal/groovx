@@ -142,7 +142,7 @@ DOTRACE("Face::grRender");
   // Drawing commands begin here...
   //
 
-  Gfx::Canvas::AttribSaver attribSaver(canvas);
+  Gfx::AttribSaver attribSaver(canvas);
 
   canvas.enableAntialiasing();
 
@@ -169,7 +169,7 @@ DOTRACE("Face::grRender");
     }
 
   {
-    Gfx::Canvas::MatrixSaver saver(canvas);
+    Gfx::MatrixSaver saver(canvas);
 
     canvas.translate(Gfx::Vec3<double>(0.0, getVertOffset(), 0.0));
 
@@ -212,7 +212,7 @@ DOTRACE("Face::grRender");
       {
         for (int eye_pos = -1; eye_pos < 2; eye_pos += 2)
           {
-            Gfx::Canvas::MatrixSaver eyesaver(canvas);
+            Gfx::MatrixSaver eyesaver(canvas);
 
             canvas.translate(Gfx::Vec3<double>(eye_pos * eye_x,
                                                itsEyeHeight,
@@ -240,7 +240,7 @@ DOTRACE("Face::grRender");
                                      -nose_bottom.y());
 
     {
-      Gfx::Canvas::LinesBlock block(canvas);
+      Gfx::LinesBlock block(canvas);
 
       if ( !(itsPartsMask & MOUTH_PART_MASK) )
         {

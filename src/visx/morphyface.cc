@@ -95,11 +95,11 @@ namespace
   void drawHairStrip(Gfx::Canvas& canvas,
                      const double* vertices, double x_scale, double y_scale)
   {
-    Gfx::Canvas::MatrixSaver saver(canvas);
+    Gfx::MatrixSaver saver(canvas);
 
     canvas.scale(Gfx::Vec3<double>(x_scale, y_scale, 1.0));
 
-    Gfx::Canvas::QuadStripBlock block(canvas);
+    Gfx::QuadStripBlock block(canvas);
 
     for (unsigned int i = 0; i < NUM_HAIR_POINTS; ++i)
       {
@@ -268,7 +268,7 @@ void MorphyFace::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("MorphyFace::grRender");
 
-  Gfx::Canvas::AttribSaver attribSaver(canvas);
+  Gfx::AttribSaver attribSaver(canvas);
 
   canvas.enableAntialiasing();
 
@@ -288,7 +288,7 @@ DOTRACE("MorphyFace::grRender");
 
   for (int left_right = -1; left_right < 2; left_right += 2)
     {
-      Gfx::Canvas::MatrixSaver msaver(canvas);
+      Gfx::MatrixSaver msaver(canvas);
 
       // Do appropriate reflection
       canvas.scale(Gfx::Vec3<double>(left_right*1.0, 1.0, 1.0));
@@ -302,7 +302,7 @@ DOTRACE("MorphyFace::grRender");
         {
           DOTRACE("MorphyFace::grRender-draw eye outline");
 
-          Gfx::Canvas::MatrixSaver msaver2(canvas);
+          Gfx::MatrixSaver msaver2(canvas);
 
           canvas.scale(Gfx::Vec3<double>(itsEyeHeight*itsEyeAspectRatio,
                                          itsEyeHeight*top_bottom,
@@ -317,7 +317,7 @@ DOTRACE("MorphyFace::grRender");
       {
         DOTRACE("MorphyFace::grRender-draw eyebrow");
 
-        Gfx::Canvas::MatrixSaver msaver3(canvas);
+        Gfx::MatrixSaver msaver3(canvas);
 
         canvas.translate(Gfx::Vec3<double>(itsEyebrowXpos, itsEyebrowYpos, 0.0));
         canvas.rotate(Gfx::Vec3<double>::unitZ(), itsEyebrowAngle);
@@ -325,7 +325,7 @@ DOTRACE("MorphyFace::grRender");
                                        itsEyeHeight*itsEyebrowCurvature,
                                        1.0));
 
-        Gfx::Canvas::AttribSaver asaver(canvas);
+        Gfx::AttribSaver asaver(canvas);
 
         canvas.setLineWidth(itsEyebrowThickness);
 
@@ -338,7 +338,7 @@ DOTRACE("MorphyFace::grRender");
       {
         DOTRACE("MorphyFace::grRender-draw pupil");
 
-        Gfx::Canvas::MatrixSaver msaver4(canvas);
+        Gfx::MatrixSaver msaver4(canvas);
 
         canvas.translate(Gfx::Vec3<double>(left_right*itsPupilXpos,
                                            itsPupilYpos, 0.0));
@@ -372,13 +372,13 @@ DOTRACE("MorphyFace::grRender");
   {
     DOTRACE("MorphyFace::grRender-draw nose");
 
-    Gfx::Canvas::MatrixSaver msaver5(canvas);
+    Gfx::MatrixSaver msaver5(canvas);
 
     canvas.translate(Gfx::Vec3<double>(itsNoseXpos, itsNoseYpos, 0.0));
     canvas.scale(Gfx::Vec3<double>(Util::abs(itsNoseWidth)/2.0,
                                    Util::abs(itsNoseLength), 1.0));
 
-    Gfx::Canvas::LineStripBlock block(canvas);
+    Gfx::LineStripBlock block(canvas);
 
     canvas.vertex2(Gfx::Vec2<double>(-0.75, 0.5));
     canvas.vertex2(Gfx::Vec2<double>(-1.0,  0.0));
@@ -398,7 +398,7 @@ DOTRACE("MorphyFace::grRender");
   {
     DOTRACE("MorphyFace::grRender-draw mouth");
 
-    Gfx::Canvas::MatrixSaver msaver6(canvas);
+    Gfx::MatrixSaver msaver6(canvas);
 
     canvas.translate(Gfx::Vec3<double>(itsMouthXpos, itsMouthYpos, 0.0));
     canvas.scale(Gfx::Vec3<double>(itsMouthWidth, itsMouthCurvature, 1.0));
@@ -417,7 +417,7 @@ DOTRACE("MorphyFace::grRender");
   {
     DOTRACE("MorphyFace::grRender-draw hair");
 
-    Gfx::Canvas::AttribSaver saver(canvas);
+    Gfx::AttribSaver saver(canvas);
 
     canvas.setPolygonFill((itsHairStyle == 0));
 

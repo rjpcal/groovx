@@ -42,7 +42,7 @@ DOTRACE("GrObjAligner::doAlignment");
 
 void GrObjAligner::gnodeDraw(Gfx::Canvas& canvas) const
 {
-  Gfx::Canvas::MatrixSaver state(canvas);
+  Gfx::MatrixSaver state(canvas);
 
   doAlignment(canvas, child()->gnodeBoundingBox(canvas));
 

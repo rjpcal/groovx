@@ -261,8 +261,8 @@ DOTRACE("GxSeparator::draw");
 
  if (!itsImpl->itsChildren.empty())
    {
-     Gfx::Canvas::MatrixSaver state(canvas);
-     Gfx::Canvas::AttribSaver attribs(canvas);
+     Gfx::MatrixSaver state(canvas);
+     Gfx::AttribSaver attribs(canvas);
 
      for(Impl::VecType::iterator
            itr = itsImpl->itsChildren.begin(),
@@ -281,8 +281,8 @@ DOTRACE("GxSeparator::undraw");
 
   if (!itsImpl->itsChildren.empty())
     {
-      Gfx::Canvas::MatrixSaver state(canvas);
-      Gfx::Canvas::AttribSaver attribs(canvas);
+      Gfx::MatrixSaver state(canvas);
+      Gfx::AttribSaver attribs(canvas);
 
       for(Impl::VecType::iterator
             itr = itsImpl->itsChildren.begin(),

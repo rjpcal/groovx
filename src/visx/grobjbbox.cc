@@ -84,7 +84,7 @@ DOTRACE("GrObjBBox::gnodeDraw");
       itsMask = ~itsMask;
 #endif
 
-      Gfx::Canvas::AttribSaver saver(canvas);
+      Gfx::AttribSaver saver(canvas);
 
       canvas.setColor(Gfx::RgbaColor(0.0, 0.0, 1.0, 1.0));
 
@@ -96,7 +96,7 @@ DOTRACE("GrObjBBox::gnodeDraw");
       canvas.setPointSize(4.0);
 
       {
-        Gfx::Canvas::PointsBlock block(canvas);
+        Gfx::PointsBlock block(canvas);
 
         canvas.vertex2(bounds.bottomLeft());
         canvas.vertex2(bounds.bottomRight());

@@ -542,7 +542,7 @@ DOTRACE("Toglet::writeEpsFile");
   itsTogl->makeCurrent();
 
   {
-    Gfx::Canvas::AttribSaver saver(*itsCanvas);
+    Gfx::AttribSaver saver(*itsCanvas);
 
     // Set fore/background colors to extremes for the purposes of EPS
     // rendering

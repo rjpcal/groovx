@@ -94,7 +94,7 @@ DOTRACE("BitmapCacheNode::recacheBitmap");
   Gfx::Rect<int> screen_rect = canvas.screenFromWorld(bmapbox);
 
   {
-    Gfx::Canvas::AttribSaver saver(canvas);
+    Gfx::AttribSaver saver(canvas);
 
     canvas.drawOnFrontBuffer();
 

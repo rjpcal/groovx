@@ -111,12 +111,12 @@ void FixPt::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("FixPt::grRender");
 
-  Gfx::Canvas::AttribSaver saver(canvas);
+  Gfx::AttribSaver saver(canvas);
 
   canvas.setLineWidth(itsWidth);
 
   {
-    Gfx::Canvas::LinesBlock block(canvas);
+    Gfx::LinesBlock block(canvas);
 
     canvas.vertex2(Gfx::Vec2<double>(0.0, -itsLength/2.0));
     canvas.vertex2(Gfx::Vec2<double>(0.0, itsLength/2.0));

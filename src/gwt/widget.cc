@@ -183,8 +183,8 @@ DOTRACE("GWT::Widget::Impl::render");
 
   try
     {
-      Gfx::Canvas::MatrixSaver msaver(canvas);
-      Gfx::Canvas::AttribSaver asaver(canvas);
+      Gfx::MatrixSaver msaver(canvas);
+      Gfx::AttribSaver asaver(canvas);
 
       itsDrawNode->draw(canvas);
       itsUndrawNode = itsDrawNode;

@@ -478,17 +478,17 @@ DOTRACE("Fish::grRender");
       if (showControlPoints)
         {
           {
-            Gfx::Canvas::AttribSaver saver(canvas);
+            Gfx::AttribSaver saver(canvas);
             canvas.setPointSize(4.0);
 
-            Gfx::Canvas::PointsBlock block(canvas);
+            Gfx::PointsBlock block(canvas);
             for (unsigned int i = 0; i < ctrlpnts.size(); ++i)
               {
                 canvas.vertex3(ctrlpnts[i]);
               }
           }
           {
-            Gfx::Canvas::LinesBlock block(canvas);
+            Gfx::LinesBlock block(canvas);
             canvas.vertex3(itsParts[i].itsPt0);
             canvas.vertex3(itsParts[i].itsPt1);
           }

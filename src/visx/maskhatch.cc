@@ -117,11 +117,11 @@ DOTRACE("MaskHatch::grRender");
 
   if (itsNumLines == 0) return;
 
-  Gfx::Canvas::AttribSaver attribSaver(canvas);
+  Gfx::AttribSaver attribSaver(canvas);
 
   canvas.setLineWidth(itsLineWidth);
 
-  Gfx::Canvas::LinesBlock b(canvas);
+  Gfx::LinesBlock b(canvas);
 
   for (int i = 0; i < itsNumLines; ++i)
     {
