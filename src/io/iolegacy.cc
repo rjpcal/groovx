@@ -3,7 +3,7 @@
 // iolegacy.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 27 08:40:04 2000
-// written: Wed Oct 18 14:32:39 2000
+// written: Thu Oct 19 16:03:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,8 +22,9 @@
 #include <string>
 #include <iostream.h>
 
-#define NO_TRACE
+#define LOCAL_TRACE
 #include "util/trace.h"
+#define LOCAL_DEBUG
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
@@ -36,6 +37,8 @@ namespace IO {
   // info. If doCheck is false, the function does nothing except read
   // a word from theStream.
   void readTypename(STD_IO::istream& is, const char* correctNames_cstr);
+
+  const char DEFAULT_SEP = ' ';
 }
 
 void IO::readTypename(STD_IO::istream& is, const char* correctNames_cstr) {
@@ -119,10 +122,12 @@ DOTRACE("IO::readTypename");
 
 class IO::LegacyReader::Impl {
 public:
-  Impl(STD_IO::istream& is, IO::IOFlag flag) :
+  Impl(IO::LegacyReader* owner, STD_IO::istream& is, IO::IOFlag flag) :
+	 itsOwner(owner),
 	 itsInStream(is),
 	 itsFlags(flag),
-	 itsStringMode(IO::CHAR_COUNT)
+	 itsStringMode(IO::CHAR_COUNT),
+	 itsLegacyVersionId(0)
   {}
 
   void throwIfError(const char* type) {
@@ -144,9 +149,66 @@ public:
   };
 #endif
 
+  IO::LegacyReader* itsOwner;
   STD_IO::istream& itsInStream;
   IO::IOFlag itsFlags;
   LegacyStringMode itsStringMode;
+  int itsLegacyVersionId;
+
+  int getLegacyVersionId()
+  {
+	 while ( isspace(itsInStream.peek()) )
+		{ itsInStream.get(); }
+
+	 int version = -1;
+
+	 if (itsInStream.peek() == '@') {
+		int c = itsInStream.get();
+		Assert(c == '@');
+
+		itsInStream >> version;
+		DebugEvalNL(version);
+		throwIfError("versionId");
+	 }
+	 else {
+		throw IO::InputError("missing legacy versionId");
+	 }
+
+	 return version;
+  }
+
+  void grabLeftBrace()
+  {
+	 char brace;
+	 itsInStream >> brace;
+	 if (brace != '{') {
+		DebugPrintNL("grabLeftBrace failed");
+		throw IO::InputError("missing left-brace");
+	 }
+  }
+
+  void grabRightBrace()
+  {
+	 char brace;
+	 itsInStream >> brace;
+	 if (brace != '}') {
+		DebugPrintNL("grabRightBrace failed");
+		throw IO::InputError("missing right-brace");
+	 }
+  }
+
+  void inflateObject(const char* name, IO::IoObject* obj)
+  {
+	 itsLegacyVersionId = getLegacyVersionId();
+	 if (itsLegacyVersionId != -1) 
+		{
+		  grabLeftBrace();
+		  obj->readFrom(itsOwner);
+		  grabRightBrace();
+		}
+
+	 throwIfError(name);
+  }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -156,7 +218,7 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 IO::LegacyReader::LegacyReader(STD_IO::istream& is, IO::IOFlag flag) :
-  itsImpl(new Impl(is, flag))
+  itsImpl(new Impl(this, is, flag))
 {
 DOTRACE("IO::LegacyReader::LegacyReader");
 }
@@ -173,45 +235,24 @@ DOTRACE("IO::LegacyReader::flags");
 
 void IO::LegacyReader::setFlags(IO::IOFlag new_flags) {
 DOTRACE("IO::LegacyReader::setFlags");
+  DebugEval(itsImpl->itsFlags); DebugEval(new_flags);
   itsImpl->itsFlags = new_flags;
+  DebugEvalNL(itsImpl->itsFlags);
 }
 
 int IO::LegacyReader::getLegacyVersionId() {
 DOTRACE("IO::LegacyReader::getLegacyVersionId");
-
-  while ( isspace(itsImpl->itsInStream.peek()) )
-	 { itsImpl->itsInStream.get(); }
-
-  int version = 0;
-
-  if (itsImpl->itsInStream.peek() == '@') {
-	 int c = itsImpl->itsInStream.get();
-	 Assert(c == '@');
-
-	 itsImpl->itsInStream >> version;
-	 DebugEvalNL(version);
-	 itsImpl->throwIfError("versionId");
-  }
-
-  return version;
+  return itsImpl->getLegacyVersionId();
 }
 
 void IO::LegacyReader::grabLeftBrace() {
 DOTRACE("IO::LegacyReader::grabLeftBrace");
-  char brace;
-  itsImpl->itsInStream >> brace;
-  if (brace != '{') {
-	 throw IO::LogicError("missing left-brace");
-  }
+  itsImpl->grabLeftBrace();
 }
 
 void IO::LegacyReader::grabRightBrace() {
 DOTRACE("IO::LegacyReader::grabRightBrace");
-  char brace;
-  itsImpl->itsInStream >> brace;
-  if (brace != '}') {
-	 throw IO::LogicError("missing left-brace");
-  }
+  itsImpl->grabRightBrace();
 }
 
 void IO::LegacyReader::grabNewline() {
@@ -228,7 +269,8 @@ DOTRACE("IO::LegacyReader::setStringMode");
 
 IO::VersionId IO::LegacyReader::readSerialVersionId() {
 DOTRACE("IO::LegacyReader::readSerialVersionId");
-  return -1;
+  DebugEvalNL(itsImpl->itsLegacyVersionId);
+  return itsImpl->itsLegacyVersionId;
 }
 
 char IO::LegacyReader::readChar(const char* name) {
@@ -358,9 +400,9 @@ DOTRACE("IO::LegacyReader::readObject");
   DebugEvalNL(obj->ioTypename());
 
   IO::LRFlagJanitor jtr_(*this, itsImpl->itsFlags & ~IO::TYPENAME);
-  obj->readFrom(this);
 
-  itsImpl->throwIfError(name);
+  itsImpl->inflateObject(name, obj);
+
   return obj;
 }
 
@@ -372,27 +414,26 @@ DOTRACE("IO::LegacyReader::readOwnedObject");
 	 IO::readTypename(itsImpl->itsInStream,
 							obj->legacyValidTypenames().c_str());
   }
-  obj->readFrom(this);
-  itsImpl->throwIfError(name);
+
+  itsImpl->inflateObject(name, obj);
 }
 
 void IO::LegacyReader::readBaseClass(const char* baseClassName,
 												 IO::IoObject* basePart) {
 DOTRACE("IO::LegacyReader::readBaseClass");
-  if (itsImpl->itsFlags & IO::BASES) {
-	 DebugEvalNL(baseClassName);
-	 IO::LRFlagJanitor jtr_(*this, itsImpl->itsFlags | IO::TYPENAME);
-	 
-	 // This test should always succeed since we just set flags to
-	 // include IO::TYPENAME with the FlagJanitor
-	 if (itsImpl->itsFlags & IO::TYPENAME) {
-		IO::readTypename(itsImpl->itsInStream,
-							  basePart->legacyValidTypenames().c_str());
-	 }
+  DebugEval(IO::BASES); DebugEvalNL(itsImpl->itsFlags);
 
-	 basePart->readFrom(this);
+  DebugEvalNL(baseClassName);
+  IO::LRFlagJanitor jtr_(*this, itsImpl->itsFlags | IO::TYPENAME);
+
+  // This test should always succeed since we just set flags to
+  // include IO::TYPENAME with the FlagJanitor
+  if (itsImpl->itsFlags & IO::TYPENAME) {
+	 IO::readTypename(itsImpl->itsInStream,
+							basePart->legacyValidTypenames().c_str());
   }
-  itsImpl->throwIfError(baseClassName);
+
+  itsImpl->inflateObject(baseClassName, basePart);
 }
 
 IO::IoObject* IO::LegacyReader::readRoot(IO::IoObject* root) {
@@ -405,7 +446,9 @@ DOTRACE("IO::LegacyReader::readRoot");
 	 IO::readTypename(itsImpl->itsInStream,
 							root->legacyValidTypenames().c_str());
   }
-  root->readFrom(this);
+
+  itsImpl->inflateObject("rootObject", root);
+
   return root;
 }
 
@@ -417,10 +460,11 @@ DOTRACE("IO::LegacyReader::readRoot");
 
 class IO::LegacyWriter::Impl {
 public:
-  Impl(STD_IO::ostream& os, IO::IOFlag flag) :
+  Impl(IO::LegacyWriter* owner, STD_IO::ostream& os, IO::IOFlag flag) :
+	 itsOwner(owner),
 	 itsOutStream(os),
 	 itsFlags(flag),
-	 itsFSep(IO::SEP),
+	 itsFSep(DEFAULT_SEP),
 	 itsStringMode(IO::CHAR_COUNT)
   {}
 
@@ -432,10 +476,34 @@ public:
 	 }
   }
 
+  IO::LegacyWriter* itsOwner;
   STD_IO::ostream& itsOutStream;
   IO::IOFlag itsFlags;
   char itsFSep;				  // field separator
   LegacyStringMode itsStringMode;
+
+  void resetFieldSeparator()
+  { itsFSep = DEFAULT_SEP; }
+
+  void flattenObject(const char* obj_name, const IO::IoObject* obj)
+  {
+
+	 DebugEvalNL(itsFlags & IO::TYPENAME); 
+
+	 if (itsFlags & IO::TYPENAME) {
+		itsOutStream << obj->ioTypename() << itsFSep;
+		throwIfError(obj->ioTypename().c_str());
+	 }
+
+	 itsOutStream << '@' << obj->serialVersionId() << " { ";
+
+	 obj->writeTo(itsOwner);
+	 resetFieldSeparator();
+
+	 itsOutStream << " } ";
+
+	 throwIfError(obj_name);
+  }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -446,7 +514,7 @@ public:
 
 
 IO::LegacyWriter::LegacyWriter(STD_IO::ostream& os, IO::IOFlag flag) :
-  itsImpl(new Impl(os, flag))
+  itsImpl(new Impl(this, os, flag))
 {
 DOTRACE("IO::LegacyWriter::LegacyWriter");
 }
@@ -473,7 +541,7 @@ DOTRACE("IO::LegacyWriter::setFieldSeparator");
 
 void IO::LegacyWriter::resetFieldSeparator() {
 DOTRACE("IO::LegacyWriter::resetFieldSeparator");
-  itsImpl->itsFSep = IO::SEP;
+  itsImpl->resetFieldSeparator();
 }
 
 void IO::LegacyWriter::insertChar(char c) {
@@ -544,16 +612,7 @@ void IO::LegacyWriter::writeObject(const char* name, const IO::IoObject* obj) {
 DOTRACE("IO::LegacyWriter::writeObject");
   resetFieldSeparator();
 
-  DebugEvalNL(itsImpl->itsFlags & IO::TYPENAME); 
-
-  if (itsImpl->itsFlags & IO::TYPENAME) {
-	 itsImpl->itsOutStream << obj->ioTypename() << itsImpl->itsFSep;
-	 itsImpl->throwIfError(obj->ioTypename().c_str());
-  }
-
-  obj->writeTo(this); 
-  resetFieldSeparator();
-  itsImpl->throwIfError(name);
+  itsImpl->flattenObject(name, obj);
 }
 
 void IO::LegacyWriter::writeOwnedObject(const char* name,
@@ -561,16 +620,7 @@ void IO::LegacyWriter::writeOwnedObject(const char* name,
 DOTRACE("IO::LegacyWriter::writeOwnedObject");
   resetFieldSeparator();
 
-  DebugEvalNL(itsImpl->itsFlags & IO::TYPENAME); 
-
-  if (itsImpl->itsFlags & IO::TYPENAME) {
-	 itsImpl->itsOutStream << obj->ioTypename() << itsImpl->itsFSep;
-	 itsImpl->throwIfError(obj->ioTypename().c_str());
-  }
-
-  obj->writeTo(this); 
-  resetFieldSeparator();
-  itsImpl->throwIfError(name);
+  itsImpl->flattenObject(name, obj);
 }
 
 void IO::LegacyWriter::writeBaseClass(const char* baseClassName,
@@ -580,34 +630,16 @@ DOTRACE("IO::LegacyWriter::writeBaseClass");
 	 resetFieldSeparator();
 	 IO::LWFlagJanitor jtr_(*this, itsImpl->itsFlags | IO::TYPENAME);
 
-
-	 DebugEvalNL(itsImpl->itsFlags & IO::TYPENAME); 
-
-	 if (itsImpl->itsFlags & IO::TYPENAME) {
-		itsImpl->itsOutStream << basePart->ioTypename() << itsImpl->itsFSep;
-		itsImpl->throwIfError(basePart->ioTypename().c_str());
-	 }
-
-	 basePart->writeTo(this);
-	 resetFieldSeparator();
+	 itsImpl->flattenObject(baseClassName, basePart);
   }
-  itsImpl->throwIfError(baseClassName);
 }
 
 void IO::LegacyWriter::writeRoot(const IO::IoObject* root) {
 DOTRACE("IO::LegacyWriter::writeRoot");
+
   resetFieldSeparator();
 
-
-  DebugEvalNL(itsImpl->itsFlags & IO::TYPENAME); 
-
-  if (itsImpl->itsFlags & IO::TYPENAME) {
-	 itsImpl->itsOutStream << root->ioTypename() << itsImpl->itsFSep;
-	 itsImpl->throwIfError(root->ioTypename().c_str());
-  }
-
-  root->writeTo(this);
-  resetFieldSeparator();
+  itsImpl->flattenObject("rootObject", root);
 }
 
 static const char vcid_iolegacy_cc[] = "$Header$";
