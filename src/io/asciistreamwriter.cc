@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:57 1999
-// written: Wed Jun 13 13:15:55 2001
+// written: Wed Jun 20 17:44:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,7 @@
 #include "util/value.h"
 
 #include <iostream.h>
+#include <fstream.h>
 #include <string>
 #include <set>
 
@@ -33,10 +34,6 @@
 
 #if defined(IRIX6) || defined(HP9000S700)
 #define AsciiStreamWriter ASW
-#endif
-
-#ifdef PRESTANDARD_IOSTREAMS
-#define NO_IOS_EXCEPTIONS
 #endif
 
 namespace {
@@ -81,32 +78,28 @@ private:
 
 public:
   Impl(AsciiStreamWriter* owner, STD_IO::ostream& os) :
-    itsOwner(owner), itsBuf(os), itsToHandle(), itsWrittenObjects()
-#ifndef NO_IOS_EXCEPTIONS
-    , itsOriginalExceptionState(itsBuf.exceptions())
-#endif
-    {
-#ifndef NO_IOS_EXCEPTIONS
-    itsOriginalExceptionState = itsBuf.exceptions();
-    itsBuf.exceptions( ios::eofbit | ios::badbit | ios::failbit );
-#endif
-    }
+    itsOwner(owner), itsFstream(0), itsBuf(os),
+    itsToHandle(), itsWrittenObjects()
+  {}
+
+  Impl(AsciiStreamWriter* owner, const char* filename) :
+    itsOwner(owner), itsFstream(new STD_IO::ofstream(filename)),
+    itsBuf(*itsFstream),
+    itsToHandle(), itsWrittenObjects()
+  {
+	 if (itsFstream->fail()) throw IO::FilenameError(filename);
+  }
 
   ~Impl()
     {
-#ifndef NO_IOS_EXCEPTIONS
-      itsBuf.exceptions(itsOriginalExceptionState);
-#endif
+      delete itsFstream;
     }
 
   AsciiStreamWriter* itsOwner;
+  STD_IO::ofstream* itsFstream;
   STD_IO::ostream& itsBuf;
   std::set<const IO::IoObject *> itsToHandle;
   std::set<const IO::IoObject *> itsWrittenObjects;
-
-#ifndef NO_IOS_EXCEPTIONS
-  ios::iostate itsOriginalExceptionState;
-#endif
 
   // Helper functions
 private:
@@ -289,11 +282,16 @@ DOTRACE("AsciiStreamWriter::Impl::writeBaseClass");
 //
 ///////////////////////////////////////////////////////////////////////
 
-AsciiStreamWriter::AsciiStreamWriter (STD_IO::ostream& os) :
+AsciiStreamWriter::AsciiStreamWriter(STD_IO::ostream& os) :
   itsImpl( *(new Impl(this, os)) )
 {
 DOTRACE("AsciiStreamWriter::AsciiStreamWriter");
-  // nothing
+}
+
+AsciiStreamWriter::AsciiStreamWriter(const char* filename) :
+  itsImpl( *(new Impl(this, filename)) )
+{
+DOTRACE("AsciiStreamWriter::AsciiStreamWriter(const char*)");
 }
 
 AsciiStreamWriter::~AsciiStreamWriter () {
