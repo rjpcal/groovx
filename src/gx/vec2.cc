@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug  9 14:38:13 2001
-// written: Thu Aug  9 15:18:31 2001
+// written: Mon Aug 13 11:56:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef POINT_CC_DEFINED
 #define POINT_CC_DEFINED
 
-#include "point.h"
+#include "gfx/point.h"
 
 #include "util/algo.h"
 
