@@ -206,6 +206,7 @@ DOTRACE("Obj_Init");
   Tcl::defGenericObjCmds<Nub::Object>(pkg, SRC_POS);
 
   pkg->defGetter("refCount", &Nub::Object::dbg_RefCount, SRC_POS);
+  pkg->defGetter("weakRefCount", &Nub::Object::dbg_WeakRefCount, SRC_POS);
   pkg->defAction("incrRefCount", &Nub::Object::incrRefCount, SRC_POS);
   pkg->defAction("decrRefCount", &Nub::Object::decrRefCount, SRC_POS);
 
