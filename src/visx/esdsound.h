@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 24 18:13:53 2001
-// written: Sat Aug 10 11:32:54 2002
+// written: Mon Sep  9 12:04:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -148,7 +148,7 @@ DOTRACE("Sound::initSound");
 bool Sound::haveSound()
 {
 DOTRACE("Sound::haveSound");
-#ifndef PPC
+#ifndef ESD_WORKAROUND
   return (ESD > 0);
 #else
   // for some strange reason, sounds seem to play ok under Mac OS X even if
