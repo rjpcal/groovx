@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 14:21:51 2002
+// written: Mon Mar  4 14:51:10 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -440,7 +440,7 @@ private:
 
   DataHolder data_;
 
-public:
+protected:
   void swap(MtxBase& other);
 
   MtxBase(const MtxBase& other);
@@ -528,6 +528,7 @@ public:
   const double* storage() const { return data_.storage(); }
   double* storage_nc() { return data_.storage_nc(); }
 
+public:
   void makeUnique() { data_.makeUnique(); }
 };
 
@@ -540,7 +541,7 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Mtx : public WithPolicies
+class Mtx : public MtxBase // public WithPolicies
 {
 public:
 
@@ -550,28 +551,28 @@ public:
 
   static const Mtx& emptyMtx();
 
-  Mtx(mxArray* a, StoragePolicy s = COPY) : itsImpl(a, s) {}
+  Mtx(mxArray* a, StoragePolicy s = COPY) : MtxBase(a, s) {}
 
   /** With a const mxArray*, only BORROW or COPY are allowed as storage
       policies, in order to preserve const-correctness. */
-  Mtx(const mxArray* a, StoragePolicy s = COPY) : itsImpl(a, s) {}
+  Mtx(const mxArray* a, StoragePolicy s = COPY) : MtxBase(a, s) {}
 
   Mtx(double* data, int mrows, int ncols, StoragePolicy s = COPY) :
-    itsImpl(data, mrows, ncols, s) {}
+    MtxBase(data, mrows, ncols, s) {}
 
   Mtx(int mrows, int ncols, InitPolicy p = ZEROS) :
-    itsImpl(mrows, ncols, p) {}
+    MtxBase(mrows, ncols, p) {}
 
   Mtx(const Slice& s);
 
-  Mtx(const Mtx& other) : itsImpl(other.itsImpl) {}
+  Mtx(const Mtx& other) : MtxBase(other) {}
 
   virtual ~Mtx();
 
   Mtx& operator=(const Mtx& other)
   {
     Mtx temp(other);
-    this->itsImpl.swap(temp.itsImpl);
+    MtxBase::swap(temp);
     return *this;
   }
 
@@ -702,20 +703,16 @@ public:
   typedef colmaj_iter_base<const double> const_colmaj_iter;
 
   colmaj_iter colmaj_begin_nc()
-  { return colmaj_iter(itsImpl.rowgap(), itsImpl.rowstride(),
-                       itsImpl.address_nc(0,0)); }
+  { return colmaj_iter(rowgap(), rowstride(), address_nc(0,0)); }
 
   colmaj_iter colmaj_end_nc()
-  { return colmaj_iter(itsImpl.rowgap(), itsImpl.rowstride(),
-                       itsImpl.address_nc(0,ncols())); }
+  { return colmaj_iter(rowgap(), rowstride(), address_nc(0,ncols())); }
 
   const_colmaj_iter colmaj_begin() const
-  { return const_colmaj_iter(itsImpl.rowgap(), itsImpl.rowstride(),
-                             itsImpl.address(0,0)); }
+  { return const_colmaj_iter(rowgap(), rowstride(), address(0,0)); }
 
   const_colmaj_iter colmaj_end() const
-  { return const_colmaj_iter(itsImpl.rowgap(), itsImpl.rowstride(),
-                             itsImpl.address(0,ncols())); }
+  { return const_colmaj_iter(rowgap(), rowstride(), address(0,ncols())); }
 
 
   template <class T>
@@ -767,46 +764,32 @@ public:
   typedef rowmaj_iter_base<const double> const_rowmaj_iter;
 
   rowmaj_iter rowmaj_begin_nc()
-  { return rowmaj_iter(itsImpl.rowstride(), ncols(),
-                       itsImpl.address_nc(0,0)); }
+  { return rowmaj_iter(rowstride(), ncols(), address_nc(0,0)); }
 
   rowmaj_iter rowmaj_end_nc()
-  { return rowmaj_iter(itsImpl.rowstride(), ncols(),
-                       itsImpl.address_nc(mrows(),0)); }
+  { return rowmaj_iter(rowstride(), ncols(), address_nc(mrows(),0)); }
 
   const_rowmaj_iter rowmaj_begin() const
-  { return const_rowmaj_iter(itsImpl.rowstride(), ncols(),
-                             itsImpl.address(0,0)); }
+  { return const_rowmaj_iter(rowstride(), ncols(), address(0,0)); }
 
   const_rowmaj_iter rowmaj_end() const
-  { return const_rowmaj_iter(itsImpl.rowstride(), ncols(),
-                             itsImpl.address(mrows(),0)); }
+  { return const_rowmaj_iter(rowstride(), ncols(), address(mrows(),0)); }
 
   //
   // Data access
   //
 
   double& at(int row, int col)
-    { return itsImpl.at_nc(itsImpl.offsetFromStart(row, col)); }
+    { return MtxBase::at_nc(offsetFromStart(row, col)); }
 
   const double& at(int row, int col) const
-    { return itsImpl.at(itsImpl.offsetFromStart(row, col)); }
+    { return MtxBase::at(offsetFromStart(row, col)); }
 
   double& at(int elem)
-    { return itsImpl.at_nc(itsImpl.offsetFromStart(elem)); }
+    { return MtxBase::at_nc(offsetFromStart(elem)); }
 
   const double& at(int elem) const
-    { return itsImpl.at(itsImpl.offsetFromStart(elem)); }
-
-  void reshape(int mrows, int ncols) { itsImpl.reshape(mrows, ncols); }
-
-  int length() const { return itsImpl.length(); }
-
-  int nelems() const { return itsImpl.nelems(); }
-
-  int mrows() const { return itsImpl.mrows(); }
-
-  int ncols() const { return itsImpl.ncols(); }
+    { return MtxBase::at(offsetFromStart(elem)); }
 
   bool sameSize(const Mtx& x) const
   { return (mrows() == x.mrows()) && (ncols() == x.ncols()); }
@@ -816,16 +799,13 @@ public:
   //
 
   Slice row(int r) const
-    { return Slice(*this, itsImpl.offsetFromStorage(r,0),
-                   itsImpl.rowstride(), itsImpl.ncols()); }
+    { return Slice(*this, offsetFromStorage(r,0), rowstride(), ncols()); }
 
   MtxIter rowIter(int r)
-    { return MtxIter(itsImpl.address_nc(r,0),
-                     itsImpl.rowstride(), itsImpl.ncols()); }
+    { return MtxIter(address_nc(r,0), rowstride(), ncols()); }
 
   MtxConstIter rowIter(int r) const
-    { return MtxConstIter(itsImpl.address(r,0),
-                          itsImpl.rowstride(), itsImpl.ncols()); }
+    { return MtxConstIter(address(r,0), rowstride(), ncols()); }
 
   Mtx operator()(const RowRange& rng) const;
 
@@ -837,16 +817,13 @@ public:
 
 
   Slice column(int c) const
-    { return Slice(*this, itsImpl.offsetFromStorage(0,c),
-                   itsImpl.colstride(), mrows()); }
+    { return Slice(*this, offsetFromStorage(0,c), colstride(), mrows()); }
 
   MtxIter columnIter(int c)
-    { return MtxIter(itsImpl.address_nc(0,c),
-                     itsImpl.colstride(), mrows()); }
+    { return MtxIter(address_nc(0,c), colstride(), mrows()); }
 
   MtxConstIter columnIter(int c) const
-    { return MtxConstIter(itsImpl.address(0,c),
-                          itsImpl.colstride(), mrows()); }
+    { return MtxConstIter(address(0,c), colstride(), mrows()); }
 
   Mtx operator()(const ColRange& rng) const;
 
@@ -876,10 +853,8 @@ public:
 
   double mean() const { return sum() / nelems(); }
 
-  void apply(double func(double)) { itsImpl.apply(func); }
-
   template <class F>
-  void applyF(F func) { itsImpl.applyFF(func); }
+  void applyF(F func) { MtxBase::applyFF(func); }
 
   struct Setter
   {
@@ -912,18 +887,11 @@ public:
   // this = m1 * m2;
   void assign_MMmul(const Mtx& m1, const Mtx& m2);
 
-  void makeUnique() { itsImpl.makeUnique(); }
-
 private:
-  const double* storage() const { return itsImpl.storage(); }
-  double* storage_nc() { return itsImpl.storage_nc(); }
-
   friend class MtxIterBase<double>;
   friend class MtxIterBase<const double>;
 
   friend class Slice;
-
-  MtxBase itsImpl;
 };
 
 ///////////////////////////////////////////////////////////////////////

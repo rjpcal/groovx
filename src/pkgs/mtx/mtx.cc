@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Mon Mar  4 14:21:22 2002
+// written: Mon Mar  4 14:50:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -463,7 +463,7 @@ const Mtx& Mtx::emptyMtx()
 }
 
 Mtx::Mtx(const Slice& s) :
-  itsImpl(const_cast<double*>(s.dataStart()), s.nelems(), 1, COPY)
+  MtxBase(const_cast<double*>(s.dataStart()), s.nelems(), 1, COPY)
 {
   if (s.itsStride != 1)
     throw Util::Error("can't initialize Mtx from Slice with stride != 1");
@@ -489,8 +489,8 @@ DOTRACE("Mtx::resize");
     return;
   else
     {
-      MtxBase newImpl(mrowsNew, ncolsNew, ZEROS);
-      this->itsImpl.swap(newImpl);
+      Mtx newsize(mrowsNew, ncolsNew, ZEROS);
+      this->swap(newsize);
     }
 }
 
@@ -516,7 +516,7 @@ Mtx Mtx::operator()(const RowRange& rng) const
 {
   Mtx result(*this);
 
-  result.itsImpl.selectRows(rng);
+  result.selectRows(rng);
 
   return result;
 }
@@ -540,7 +540,7 @@ Mtx Mtx::operator()(const ColRange& rng) const
 {
   Mtx result(*this);
 
-  result.itsImpl.selectCols(rng);
+  result.selectCols(rng);
 
   return result;
 }
@@ -564,7 +564,7 @@ void Mtx::swapColumns(int c1, int c2)
 {
   if (c1 == c2) return;
 
-  memswap(itsImpl.address_nc(0,c1), itsImpl.address_nc(0,c2), mrows());
+  memswap(address_nc(0,c1), address_nc(0,c2), mrows());
 }
 
 Mtx Mtx::meanRow() const
