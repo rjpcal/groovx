@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Nov 17 19:22:10 1999
+// written: Thu Nov 18 10:09:45 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,14 +69,14 @@ namespace {
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ExptDriver::ExptImpl utility class
+// ExptDriver::Impl utility class
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ExptDriver::ExptImpl {
+class ExptDriver::Impl {
 public:
-  ExptImpl(ExptDriver* owner);
-  ~ExptImpl();
+  Impl();
+  ~Impl();
 
   //////////////////////
   // helper functions //
@@ -167,8 +167,6 @@ public:
   //////////////////
 
 private:
-  ExptDriver* self;
-
   Tcl_Interp* itsInterp;
 
   string itsHostname;			  // Host computer on which Expt was begun
@@ -188,28 +186,27 @@ private:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ExptDriver::ExptImpl member definitions
+// ExptDriver::Impl member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-ExptDriver::ExptImpl::ExptImpl(ExptDriver* owner) :
+ExptDriver::Impl::Impl() :
   itsInterp(0),
   itsAutosaveFile("__autosave_file"),
   itsBlockId(0),
   itsRhId(0),
-  itsThId(0),
-  self(owner)
+  itsThId(0)
 {
-DOTRACE("ExptDriver::ExptImpl::ExptImpl");
+DOTRACE("ExptDriver::Impl::Impl");
 }
 
-ExptDriver::ExptImpl::~ExptImpl() {
-DOTRACE("ExptDriver::ExptImpl::~ExptImpl");
+ExptDriver::Impl::~Impl() {
+DOTRACE("ExptDriver::Impl::~Impl");
 //   Tcl_Release(itsInterp);
 }
 
-bool ExptDriver::ExptImpl::doesDoUponCompletionExist() const {
-DOTRACE("ExptDriver::ExptImpl::doesDoUponCompletionExist");
+bool ExptDriver::Impl::doesDoUponCompletionExist() const {
+DOTRACE("ExptDriver::Impl::doesDoUponCompletionExist");
   Tcl_ResetResult(itsInterp);
   int tclresult =
 	 Tcl_GlobalEval(itsInterp,
@@ -234,8 +231,8 @@ DOTRACE("ExptDriver::ExptImpl::doesDoUponCompletionExist");
   return (llength > 0);
 }
 
-void ExptDriver::ExptImpl::updateDoUponCompletionBody() const {
-DOTRACE("ExptDriver::ExptImpl::updateDoUponCompletionBody");
+void ExptDriver::Impl::updateDoUponCompletionBody() const {
+DOTRACE("ExptDriver::Impl::updateDoUponCompletionBody");
   if (doesDoUponCompletionExist()) {
 	 Tcl_ResetResult(itsInterp);
 	 int tclresult =
@@ -254,8 +251,8 @@ DOTRACE("ExptDriver::ExptImpl::updateDoUponCompletionBody");
   }
 }
 
-void ExptDriver::ExptImpl::recreateDoUponCompletionProc() const {
-DOTRACE("ExptDriver::ExptImpl::recreateDoUponCompletionProc");
+void ExptDriver::Impl::recreateDoUponCompletionProc() const {
+DOTRACE("ExptDriver::Impl::recreateDoUponCompletionProc");
   try {
 	 string proc_cmd_str = "namespace eval Expt { proc doUponCompletion {} {"
 		+ itsDoUponCompletionBody + "} }";
@@ -267,31 +264,31 @@ DOTRACE("ExptDriver::ExptImpl::recreateDoUponCompletionProc");
   }
 }
 
-void ExptDriver::ExptImpl::raiseBackgroundError(const char* msg) const {
-DOTRACE("ExptDriver::ExptImpl::raiseBackgroundError");
+void ExptDriver::Impl::raiseBackgroundError(const char* msg) const {
+DOTRACE("ExptDriver::Impl::raiseBackgroundError");
   Tcl_AppendResult(itsInterp, msg, (char*) 0);
   Tcl_BackgroundError(itsInterp);
 }
 
-void ExptDriver::ExptImpl::raiseBackgroundError(const string& msg) const {
-DOTRACE("ExptDriver::ExptImpl::raiseBackgroundError");
+void ExptDriver::Impl::raiseBackgroundError(const string& msg) const {
+DOTRACE("ExptDriver::Impl::raiseBackgroundError");
   Tcl_AppendResult(itsInterp, msg.c_str(), (char*) 0);
   Tcl_BackgroundError(itsInterp);
 }
 
-void ExptDriver::ExptImpl::doAutosave() {
-DOTRACE("ExptDriver::ExptImpl::doAutosave");
+void ExptDriver::Impl::doAutosave() {
+DOTRACE("ExptDriver::Impl::doAutosave");
   try {
-	 DebugEvalNL(self->getAutosaveFile().c_str());
-	 self->write(self->getAutosaveFile().c_str());
+	 DebugEvalNL(getAutosaveFile().c_str());
+	 write(getAutosaveFile().c_str());
   }
   catch (TclError& err) {
 	 raiseBackgroundError(err.msg().c_str());
   }
 }
 
-Block& ExptDriver::ExptImpl::block() const {
-DOTRACE("ExptDriver::ExptImpl::block");
+Block& ExptDriver::Impl::block() const {
+DOTRACE("ExptDriver::Impl::block");
   try {
 #ifdef LOCAL_DEBUG
 	 Block* block = BlockList::theBlockList().getCheckedPtr(itsBlockId);
@@ -306,8 +303,8 @@ DOTRACE("ExptDriver::ExptImpl::block");
   }
 }
 
-ResponseHandler& ExptDriver::ExptImpl::responseHandler() const {
-DOTRACE("ExptDriver::ExptImpl::responseHandler");
+ResponseHandler& ExptDriver::Impl::responseHandler() const {
+DOTRACE("ExptDriver::Impl::responseHandler");
   try {
 #ifdef LOCAL_DEBUG
 	 ResponseHandler* rh = RhList::theRhList().getCheckedPtr(itsRhId);
@@ -322,8 +319,8 @@ DOTRACE("ExptDriver::ExptImpl::responseHandler");
   }  
 }
 
-TimingHdlr& ExptDriver::ExptImpl::timingHdlr() const {
-DOTRACE("ExptDriver::ExptImpl::timingHdlr");
+TimingHdlr& ExptDriver::Impl::timingHdlr() const {
+DOTRACE("ExptDriver::Impl::timingHdlr");
   try {
 #ifdef LOCAL_DEBUG
 	 TimingHdlr* th = ThList::theThList().getCheckedPtr(itsThId);
@@ -351,8 +348,8 @@ DOTRACE("ExptDriver::ExptImpl::timingHdlr");
 //
 //---------------------------------------------------------------------
 
-inline bool ExptDriver::ExptImpl::assertIds() const {
-DOTRACE("ExptDriver::ExptImpl::assertIds");
+inline bool ExptDriver::Impl::assertIds() const {
+DOTRACE("ExptDriver::Impl::assertIds");
   if ( BlockList::theBlockList().isValidId(itsBlockId) &&
 		 RhList::theRhList().isValidId(itsRhId) &&
 		 ThList::theThList().isValidId(itsThId) ) {
@@ -378,8 +375,8 @@ DOTRACE("ExptDriver::ExptImpl::assertIds");
 //
 //--------------------------------------------------------------------
 
-bool ExptDriver::ExptImpl::needAutosave() const {
-DOTRACE("ExptDriver::ExptImpl::needAutosave");
+bool ExptDriver::Impl::needAutosave() const {
+DOTRACE("ExptDriver::Impl::needAutosave");
   if ( !assertIds() ) return false;
 
   int period = timingHdlr().getAutosavePeriod();
@@ -388,8 +385,8 @@ DOTRACE("ExptDriver::ExptImpl::needAutosave");
 			  !(itsAutosaveFile.empty()) );
 }
 
-bool ExptDriver::ExptImpl::gotoNextValidBlock() {
-DOTRACE("ExptDriver::ExptImpl::gotoNextValidBlock");
+bool ExptDriver::Impl::gotoNextValidBlock() {
+DOTRACE("ExptDriver::Impl::gotoNextValidBlock");
   BlockList& blist = BlockList::theBlockList();
 
   // This increments itsImpl->itsBlockId until we have either run out of
@@ -400,8 +397,8 @@ DOTRACE("ExptDriver::ExptImpl::gotoNextValidBlock");
   return blist.isValidId(itsBlockId);
 }
 
-bool ExptDriver::ExptImpl::safeTclGlobalEval(const char* script) const {
-DOTRACE("ExptDriver::ExptImpl::safeTclGlobalEval");
+bool ExptDriver::Impl::safeTclGlobalEval(const char* script) const {
+DOTRACE("ExptDriver::Impl::safeTclGlobalEval");
   vector<char> temp_buf(script, script + strlen(script) + 1);
 
   int tclresult = Tcl_GlobalEval(itsInterp, &temp_buf[0]);
@@ -413,22 +410,22 @@ DOTRACE("ExptDriver::ExptImpl::safeTclGlobalEval");
   return false;
 }
 
-void ExptDriver::ExptImpl::doUponCompletion() const {
-DOTRACE("ExptDriver::ExptImpl::doUponCompletion");
+void ExptDriver::Impl::doUponCompletion() const {
+DOTRACE("ExptDriver::Impl::doUponCompletion");
   if (doesDoUponCompletionExist()) {
 	 safeTclGlobalEval("Expt::doUponCompletion");
   }
 }
 
-void ExptDriver::ExptImpl::noteElapsedTime() const {
-DOTRACE("ExptDriver::ExptImpl::noteElapsedTime");
+void ExptDriver::Impl::noteElapsedTime() const {
+DOTRACE("ExptDriver::Impl::noteElapsedTime");
   cout << "expt completed in "
 		 << elapsedMsecSince(itsBeginTime)
 		 << " milliseconds\n";
 }
 
-void ExptDriver::ExptImpl::getCurrentTimeDateString(string& date_out) const {
-DOTRACE("ExptDriver::ExptImpl::getCurrentTimeDateString");
+void ExptDriver::Impl::getCurrentTimeDateString(string& date_out) const {
+DOTRACE("ExptDriver::Impl::getCurrentTimeDateString");
   static TclEvalCmd dateStringCmd("clock format [clock seconds]",
 											 TclEvalCmd::THROW_EXCEPTION);
 
@@ -436,8 +433,8 @@ DOTRACE("ExptDriver::ExptImpl::getCurrentTimeDateString");
   date_out = Tcl_GetStringResult(itsInterp);
 }
 
-void ExptDriver::ExptImpl::getHostname(string& hostname_out) const {
-DOTRACE("ExptDriver::ExptImpl::getHostname");
+void ExptDriver::Impl::getHostname(string& hostname_out) const {
+DOTRACE("ExptDriver::Impl::getHostname");
   char* temp = Tcl_GetVar2(itsInterp, "env", "HOST",
 									TCL_GLOBAL_ONLY|TCL_LEAVE_ERR_MSG);;
 
@@ -445,8 +442,8 @@ DOTRACE("ExptDriver::ExptImpl::getHostname");
   hostname_out = temp;
 }
 
-void ExptDriver::ExptImpl::getSubjectKey(string& subjectkey_out) const {
-DOTRACE("ExptDriver::ExptImpl::getSubjectKey");
+void ExptDriver::Impl::getSubjectKey(string& subjectkey_out) const {
+DOTRACE("ExptDriver::Impl::getSubjectKey");
 
   // Get the subject's initials as the tail of the current directory
   static TclEvalCmd subjectKeyCmd("file tail [pwd]",
@@ -463,8 +460,8 @@ DOTRACE("ExptDriver::ExptImpl::getSubjectKey");
   subjectkey_out = key;
 }
 
-string ExptDriver::ExptImpl::makeUniqueFileExtension() const {
-DOTRACE("ExptDriver::ExptImpl::makeUniqueFileExtension");
+string ExptDriver::Impl::makeUniqueFileExtension() const {
+DOTRACE("ExptDriver::Impl::makeUniqueFileExtension");
 
   // Format the current time into a unique filename extension
   static TclEvalCmd uniqueFilenameCmd(
@@ -477,12 +474,12 @@ DOTRACE("ExptDriver::ExptImpl::makeUniqueFileExtension");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ExptDriver::ExptImpl delegand functions
+// ExptDriver::Impl delegand functions
 //
 ///////////////////////////////////////////////////////////////////////
 
-void ExptDriver::ExptImpl::serialize(ostream& os, IO::IOFlag flag) const {
-DOTRACE("ExptDriver::ExptImpl::serialize");
+void ExptDriver::Impl::serialize(ostream& os, IO::IOFlag flag) const {
+DOTRACE("ExptDriver::Impl::serialize");
 
   if (flag & TYPENAME) { os << ioTag << IO::SEP; }
 
@@ -511,8 +508,8 @@ DOTRACE("ExptDriver::ExptImpl::serialize");
   if (os.fail()) throw OutputError(ioTag);
 }
 
-void ExptDriver::ExptImpl::deserialize(istream& is, IO::IOFlag flag) {
-DOTRACE("ExptDriver::ExptImpl::deserialize");
+void ExptDriver::Impl::deserialize(istream& is, IO::IOFlag flag) {
+DOTRACE("ExptDriver::Impl::deserialize");
 
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
@@ -551,8 +548,8 @@ DOTRACE("ExptDriver::ExptImpl::deserialize");
   if (is.fail()) throw InputError(ioTag);
 }
 
-int ExptDriver::ExptImpl::charCount() const {
-DOTRACE("ExptDriver::ExptImpl::charCount");
+int ExptDriver::Impl::charCount() const {
+DOTRACE("ExptDriver::Impl::charCount");
   return (0
 			 + (ObjList::   theObjList()   .charCount()) + 1
 			 + (PosList::   thePosList()   .charCount()) + 1
@@ -573,8 +570,8 @@ DOTRACE("ExptDriver::ExptImpl::charCount");
 			 + 5); // fudge factor
 }
 
-void ExptDriver::ExptImpl::readFrom(Reader* reader) {
-DOTRACE("ExptDriver::ExptImpl::readFrom");
+void ExptDriver::Impl::readFrom(Reader* reader) {
+DOTRACE("ExptDriver::Impl::readFrom");
 
   reader->readOwnedObject("theObjList", &ObjList::theObjList());
   reader->readOwnedObject("thePosList", &PosList::thePosList());
@@ -597,8 +594,8 @@ DOTRACE("ExptDriver::ExptImpl::readFrom");
   recreateDoUponCompletionProc();
 }
 
-void ExptDriver::ExptImpl::writeTo(Writer* writer) const {
-DOTRACE("ExptDriver::ExptImpl::writeTo");
+void ExptDriver::Impl::writeTo(Writer* writer) const {
+DOTRACE("ExptDriver::Impl::writeTo");
 
   writer->writeOwnedObject("theObjList", &ObjList::theObjList());
   writer->writeOwnedObject("thePosList", &PosList::thePosList());
@@ -621,16 +618,16 @@ DOTRACE("ExptDriver::ExptImpl::writeTo");
   writer->writeValue("doUponCompletionScript", itsDoUponCompletionBody);
 }
 
-void ExptDriver::ExptImpl::init() {
-DOTRACE("ExptDriver::ExptImpl::init");
+void ExptDriver::Impl::init() {
+DOTRACE("ExptDriver::Impl::init");
 
   getCurrentTimeDateString(itsBeginDate);
   getHostname(itsHostname);
   getSubjectKey(itsSubject);
 }
 
-void ExptDriver::ExptImpl::setInterp(Tcl_Interp* interp) {
-DOTRACE("ExptDriver::ExptImpl::setInterp");
+void ExptDriver::Impl::setInterp(Tcl_Interp* interp) {
+DOTRACE("ExptDriver::Impl::setInterp");
   // itsImpl->itsInterp can only be set once
   if (itsInterp == NULL) {
 	 itsInterp = interp;
@@ -650,8 +647,8 @@ DOTRACE("ExptDriver::ExptImpl::setInterp");
 //
 //---------------------------------------------------------------------
 
-void ExptDriver::ExptImpl::draw() {
-DOTRACE("ExptDriver::ExptImpl::draw");
+void ExptDriver::Impl::draw() {
+DOTRACE("ExptDriver::Impl::draw");
   if ( !assertIds() ) return;
 
   try {
@@ -662,8 +659,8 @@ DOTRACE("ExptDriver::ExptImpl::draw");
   }
 }
 
-void ExptDriver::ExptImpl::undraw() {
-DOTRACE("ExptDriver::ExptImpl::undraw");
+void ExptDriver::Impl::undraw() {
+DOTRACE("ExptDriver::Impl::undraw");
   if ( !assertIds() ) return;
 
   try {
@@ -674,8 +671,8 @@ DOTRACE("ExptDriver::ExptImpl::undraw");
   }
 }
 
-void ExptDriver::ExptImpl::edSwapBuffers() {
-DOTRACE("ExptDriver::ExptImpl::edSwapBuffers");
+void ExptDriver::Impl::edSwapBuffers() {
+DOTRACE("ExptDriver::Impl::edSwapBuffers");
   try { 
 	 ObjTogl::theToglConfig()->swapBuffers();
   }
@@ -690,8 +687,8 @@ DOTRACE("ExptDriver::ExptImpl::edSwapBuffers");
 //
 //---------------------------------------------------------------------
 
-void ExptDriver::ExptImpl::edBeginExpt() {
-DOTRACE("ExptDriver::ExptImpl::edBeginExpt");
+void ExptDriver::Impl::edBeginExpt() {
+DOTRACE("ExptDriver::Impl::edBeginExpt");
 
   init();
 
@@ -706,8 +703,8 @@ DOTRACE("ExptDriver::ExptImpl::edBeginExpt");
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::ExptImpl::edBeginTrial() {
-DOTRACE("ExptDriver::ExptImpl::edBeginTrial");
+void ExptDriver::Impl::edBeginTrial() {
+DOTRACE("ExptDriver::Impl::edBeginTrial");
   if ( !assertIds() ) return;
 
   if (block().isComplete()) return;
@@ -737,8 +734,8 @@ DOTRACE("ExptDriver::ExptImpl::edBeginTrial");
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::ExptImpl::edResponseSeen() {
-DOTRACE("ExptDriver::ExptImpl::edResponseSeen");
+void ExptDriver::Impl::edResponseSeen() {
+DOTRACE("ExptDriver::Impl::edResponseSeen");
   if ( !assertIds() ) return;
 
   TimeTraceNL("edResponseSeen", timingHdlr().getElapsedMsec());
@@ -756,8 +753,8 @@ DOTRACE("ExptDriver::ExptImpl::edResponseSeen");
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::ExptImpl::edProcessResponse(int response) {
-DOTRACE("ExptDriver::ExptImpl::edProcessResponse");
+void ExptDriver::Impl::edProcessResponse(int response) {
+DOTRACE("ExptDriver::Impl::edProcessResponse");
   if ( !assertIds() ) return;
 
   TimeTraceNL("edProcessResponse", timingHdlr().getElapsedMsec());
@@ -771,8 +768,8 @@ DOTRACE("ExptDriver::ExptImpl::edProcessResponse");
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::ExptImpl::edAbortTrial() {
-DOTRACE("ExptDriver::ExptImpl::edAbortTrial");
+void ExptDriver::Impl::edAbortTrial() {
+DOTRACE("ExptDriver::Impl::edAbortTrial");
   if ( !assertIds() ) return;
 
   TimeTraceNL("edAbortTrial", timingHdlr().getElapsedMsec());
@@ -788,7 +785,7 @@ DOTRACE("ExptDriver::ExptImpl::edAbortTrial");
 //
 //---------------------------------------------------------------------
 
-void ExptDriver::ExptImpl::edEndTrial() {
+void ExptDriver::Impl::edEndTrial() {
   if ( !assertIds() ) return;
 
   TimeTraceNL("edEndTrial", timingHdlr().getElapsedMsec());
@@ -822,8 +819,8 @@ void ExptDriver::ExptImpl::edEndTrial() {
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::ExptImpl::edHaltExpt() const {
-DOTRACE("ExptDriver::ExptImpl::edHaltExpt");
+void ExptDriver::Impl::edHaltExpt() const {
+DOTRACE("ExptDriver::Impl::edHaltExpt");
   if ( ThList::theThList().isValidId(itsThId) ) { 
 	 TimeTraceNL("edHaltExpt", timingHdlr().getElapsedMsec());
   }
@@ -845,8 +842,8 @@ DOTRACE("ExptDriver::ExptImpl::edHaltExpt");
 //
 //---------------------------------------------------------------------
 
-void ExptDriver::ExptImpl::edResetExpt() {
-DOTRACE("ExptDriver::ExptImpl::edResetExpt");
+void ExptDriver::Impl::edResetExpt() {
+DOTRACE("ExptDriver::Impl::edResetExpt");
   edHaltExpt();
 
   while (1) {
@@ -865,8 +862,8 @@ DOTRACE("ExptDriver::ExptImpl::edResetExpt");
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::ExptImpl::read(const char* filename) {
-DOTRACE("ExptDriver::ExptImpl::read");
+void ExptDriver::Impl::read(const char* filename) {
+DOTRACE("ExptDriver::Impl::read");
   try {
 	 ifstream ifs(filename);
 	 if (ifs.fail()) throw IoFilenameError(filename);
@@ -884,8 +881,8 @@ DOTRACE("ExptDriver::ExptImpl::read");
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::ExptImpl::write(const char* filename) const {
-DOTRACE("ExptDriver::ExptImpl::write");
+void ExptDriver::Impl::write(const char* filename) const {
+DOTRACE("ExptDriver::Impl::write");
   try {
     ofstream ofs(filename);
     if (ofs.fail()) throw IoFilenameError(filename);
@@ -906,8 +903,8 @@ DOTRACE("ExptDriver::ExptImpl::write");
 //
 //--------------------------------------------------------------------
 
-void ExptDriver::ExptImpl::storeData() {
-DOTRACE("ExptDriver::ExptImpl::storeData");
+void ExptDriver::Impl::storeData() {
+DOTRACE("ExptDriver::Impl::storeData");
   Assert(itsInterp != 0);
 
   edHaltExpt();
@@ -959,7 +956,7 @@ DOTRACE("ExptDriver::ExptImpl::storeData");
 ///////////////////////////////////////////////////////////////////////
 
 ExptDriver::ExptDriver() :
-  itsImpl(new ExptImpl(this)) 
+  itsImpl(new Impl()) 
 {
 DOTRACE("ExptDriver::ExptDriver");
 }
