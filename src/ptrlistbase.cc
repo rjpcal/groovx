@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Dec  1 14:57:23 1999
+// written: Wed Dec  1 15:01:24 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,7 +111,10 @@ DOTRACE("VoidPtrList::getVoidPtr");
 
 void* VoidPtrList::getCheckedVoidPtr(int id) const throw (InvalidIdError) {
 DOTRACE("VoidPtrList::getCheckedVoidPtr");
-  if ( !isValidId(id) ) { throw InvalidIdError(typeid(*this).name()); }
+  if ( !isValidId(id) ) {
+	 throw InvalidIdError(string("attempt to access invalid id in ")
+								 + typeid(*this).name());
+  }
   return getVoidPtr(id);
 }
 
