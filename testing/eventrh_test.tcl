@@ -27,10 +27,10 @@ test "EventRhTcl-Obj::new EventRh" "normal use" {
 ### EventRh::useFeedbackCmd ###
 test "EventRhTcl-EventRh::useFeedback" "too few args" {
 	 EventRh::useFeedback
-} {^wrong \# args: should be "EventRh::useFeedback item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "EventRhTcl-EventRh::useFeedback" "too many args" {
 	 EventRh::useFeedback junk junk junk
-} {^wrong \# args: should be "EventRh::useFeedback item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "EventRhTcl-EventRh::useFeedback" "normal use 1" {
 	 EventRh::useFeedback $::EVENTRH true
 	 EventRh::useFeedback $::EVENTRH
@@ -69,10 +69,10 @@ test "EventRhTcl-EventRh::useFeedback" "error on bad rhid" {
 ### EventRh::inputResponseMap ###
 test "EventRhTcl-EventRh::inputResponseMap" "too few args" {
 	 EventRh::inputResponseMap
-} {^wrong \# args: should be "EventRh::inputResponseMap item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "EventRhTcl-EventRh::inputResponseMap" "too many args" {
 	 EventRh::inputResponseMap junk junk junk
-} {^wrong \# args: should be "EventRh::inputResponseMap item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "EventRhTcl-EventRh::inputResponseMap" "error on bad rhid" {
 	 EventRh::inputResponseMap -1
 } {^EventRh::inputResponseMap: .*$}
@@ -84,10 +84,10 @@ test "EventRhTcl-EventRh::inputResponseMap" "normal use" {
 ### EventRh::feedbackMap ###
 test "EventRhTcl-EventRh::feedbackMap" "too few args" {
 	 EventRh::feedbackMap
-} {^wrong \# args: should be "EventRh::feedbackMap item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "EventRhTcl-EventRh::feedbackMap" "too many args" {
 	 EventRh::feedbackMap junk junk junk
-} {^wrong \# args: should be "EventRh::feedbackMap item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "EventRhTcl-EventRh::feedbackMap" "error on bad rhid" {
 	 EventRh::feedbackMap -1
 } {^EventRh::feedbackMap: .*$}

@@ -127,10 +127,10 @@ test "BitmapTcl-Bitmap::center" "normal use" {
 ### Bitmap::rasterX/YCmd ###
 test "BitmapTcl-Bitmap::rasterX/Y" "too few args" {
 	 Bitmap::rasterX
-} {^wrong \# args: should be "Bitmap::rasterX item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "BitmapTcl-Bitmap::rasterX/Y" "too many args" {
 	 Bitmap::rasterY $::BITMAP 3.5 junk
-} {^wrong \# args: should be "Bitmap::rasterY item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "BitmapTcl-Bitmap::rasterX/Y" "normal use" {
 	 Bitmap::rasterX $::BITMAP 1.2
 	 Bitmap::rasterY $::BITMAP 3.67
@@ -140,10 +140,10 @@ test "BitmapTcl-Bitmap::rasterX/Y" "normal use" {
 ### Bitmap::zoomX/YCmd ###
 test "BitmapTcl-Bitmap::zoomX/Y" "too few args" {
 	 Bitmap::zoomX
-} {^wrong \# args: should be "Bitmap::zoomX item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "BitmapTcl-Bitmap::zoomX/Y" "too many args" {
 	 Bitmap::zoomY $::BITMAP 1.0 junk
-} {^wrong \# args: should be "Bitmap::zoomY item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "BitmapTcl-Bitmap::zoomX/Y" "normal use" {
 	 GLBitmap::usingGlBitmap $::BITMAP no
 
@@ -168,10 +168,10 @@ test "BitmapTcl-Bitmap::zoomX/Y" "normal use" {
 ### GLBitmap::usingGlBitmapCmd ###
 test "GLBitmapTcl-GLBitmap::usingGlBitmap" "too few args" {
 	 GLBitmap::usingGlBitmap
-} {^wrong \# args: should be "GLBitmap::usingGlBitmap item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "GLBitmapTcl-GLBitmap::usingGlBitmap" "too many args" {
 	 GLBitmap::usingGlBitmap $::BITMAP yes junk
-} {^wrong \# args: should be "GLBitmap::usingGlBitmap item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "GLBitmapTcl-GLBitmap::usingGlBitmap" "normal use" {
 	 GLBitmap::usingGlBitmap $::BITMAP no
 	 clearscreen

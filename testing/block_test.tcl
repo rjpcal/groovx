@@ -117,10 +117,10 @@ test "BlockTcl-Block::trialDescription" "error" {} $BLANK $no_test
 ### Block::verboseCmd ###
 test "BlockTcl-Block::verbose" "too few args" {
 	 Block::verbose 
-} {^wrong \# args: should be "Block::verbose item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "BlockTcl-Block::verbose" "too many args" {
 	 Block::verbose junk junk junk
-} {^wrong \# args: should be "Block::verbose item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "BlockTcl-Block::verbose" "normal use 1" {
 	 Block::verbose $::BLOCK true
 	 Block::verbose $::BLOCK

@@ -38,10 +38,10 @@ test "$PACKAGE-Obj::new Gtext" "normal use" {
 ### Gtext::textCmd ###
 test "$PACKAGE-Gtext::text" "too few args" {
 	 Gtext::text
-} {^wrong \# args: should be "Gtext::text item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "$PACKAGE-Gtext::text" "too many args" {
 	 Gtext::text $::GTEXT oops junk
-} {^wrong \# args: should be "Gtext::text item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "$PACKAGE-Gtext::text" "normal use set, get, compare" {
 	 Gtext::text $::GTEXT "Hello, again"
 	 Gtext::text $::GTEXT

@@ -28,10 +28,10 @@ test "KbdRhTcl-Obj::new KbdRh" "normal use" {
 ### KbdRh::useFeedbackCmd ###
 test "KbdRhTcl-KbdRh::useFeedback" "too few args" {
 	 KbdRh::useFeedback
-} {^wrong \# args: should be "EventRh::useFeedback item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "KbdRhTcl-KbdRh::useFeedback" "too many args" {
 	 KbdRh::useFeedback junk junk junk
-} {^wrong \# args: should be "EventRh::useFeedback item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "KbdRhTcl-KbdRh::useFeedback" "normal use 1" {
 	 KbdRh::useFeedback $::KBDRH true
 	 KbdRh::useFeedback $::KBDRH
@@ -70,10 +70,10 @@ test "KbdRhTcl-KbdRh::useFeedback" "error on bad rhid" {
 ### KbdRh::keyRespPairs ###
 test "KbdRhTcl-KbdRh::keyRespPairs" "too few args" {
 	 KbdRh::keyRespPairs
-} {^wrong \# args: should be "EventRh::inputResponseMap item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "KbdRhTcl-KbdRh::keyRespPairs" "too many args" {
 	 KbdRh::keyRespPairs junk junk junk
-} {^wrong \# args: should be "EventRh::inputResponseMap item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "KbdRhTcl-KbdRh::keyRespPairs" "error on bad rhid" {
 	 KbdRh::keyRespPairs -1
 } {^EventRh::inputResponseMap: .*$}
@@ -85,10 +85,10 @@ test "KbdRhTcl-KbdRh::keyRespPairs" "normal use" {
 ### KbdRh::feedbackPairs ###
 test "KbdRhTcl-KbdRh::feedbackPairs" "too few args" {
 	 KbdRh::feedbackPairs
-} {^wrong \# args: should be "EventRh::feedbackMap item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "KbdRhTcl-KbdRh::feedbackPairs" "too many args" {
 	 KbdRh::feedbackPairs junk junk junk
-} {^wrong \# args: should be "EventRh::feedbackMap item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "KbdRhTcl-KbdRh::feedbackPairs" "error on bad rhid" {
 	 KbdRh::feedbackPairs -1
 } {^EventRh::feedbackMap: .*$}

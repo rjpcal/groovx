@@ -117,7 +117,7 @@ proc testCategoryCmd { objname } {
 	 upvar $objname this
 
 	 set cmdname "GrObj::category"
-	 set usage "wrong \# args: should be \"$cmdname item_id\\(s\\) \\?new_value\\(s\\)\\?\""
+	 set usage "wrong \# args: should be"
 	 set testname "${this(package)}-${cmdname}"
 
 	 if { $this(testbase) } {

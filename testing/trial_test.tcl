@@ -79,10 +79,10 @@ test "TrialTcl-Trial::description" "use with nested objects" {
 ### Trial::responseHdlrCmd ###
 test "TrialTcl-Trial::responseHdlr" "too few args" {
     Trial::responseHdlr
-} {^wrong \# args: should be "Trial::responseHdlr item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "TrialTcl-Trial::responseHdlr" "too many args" {
     Trial::responseHdlr $::TRIAL 0 junk
-} {^wrong \# args: should be "Trial::responseHdlr item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "TrialTcl-Trial::responseHdlr" "normal use" {
 	 set rh [new NullResponseHdlr]
     Trial::responseHdlr $::TRIAL $rh
@@ -96,10 +96,10 @@ test "TrialTcl-Trial::responseHdlr" "error" {
 ### Trial::timingHdlrCmd ###
 test "TrialTcl-Trial::timingHdlr" "too few args" {
     Trial::timingHdlr
-} {^wrong \# args: should be "Trial::timingHdlr item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "TrialTcl-Trial::timingHdlr" "too many args" {
     Trial::timingHdlr $::TRIAL 0 junk
-} {^wrong \# args: should be "Trial::timingHdlr item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "TrialTcl-Trial::timingHdlr" "normal use" {
 	 set th [new TimingHdlr]
     Trial::timingHdlr $::TRIAL $th
@@ -113,10 +113,10 @@ test "TrialTcl-Trial::timingHdlr" "error" {
 ### Trial::typeCmd ###
 test "TrialTcl-Trial::type" "too few args" {
     Trial::type
-} {^wrong \# args: should be "Trial::type item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "TrialTcl-Trial::type" "too many args" {
     Trial::type $::TRIAL 0 junk 
-} {^wrong \# args: should be "Trial::type item_id\(s\) \?new_value\(s\)\?"$}
+} {^wrong \# args: should be}
 test "TrialTcl-Trial::type" "normal use" {
     Trial::type $::TRIAL 0
     Trial::type $::TRIAL

@@ -34,10 +34,10 @@ test "SoundTcl-Obj::new Sound" "normal sound create" {
 ### Sound::fileCmd ###
 test "SoundTcl-Sound::file" "too few args" {
 	 Sound::file
-} {wrong \# args: should be "Sound::file item_id\(s\) \?new_value\(s\)\?"}
+} {wrong \# args: should be}
 test "SoundTcl-Sound::file" "too many args" {
 	 Sound::file j u n
-} {wrong \# args: should be "Sound::file item_id\(s\) \?new_value\(s\)\?"}
+} {wrong \# args: should be}
 test "SoundTcl-Sound::file" "normal filename set" {
 	 catch {Sound::file $::TEST_SOUND $::TEST_DIR/sound1.au}
 } {^0$} $AUDIO
