@@ -3,7 +3,7 @@
 // reader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:46:08 1999
-// written: Thu Oct 21 19:26:49 1999
+// written: Thu Oct 21 23:13:22 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,8 +74,9 @@ public:
 	 int count = readInt(name+"Count");
 
 	 for (int i = 0; i < count; ++i) {
-		*inserter = T();
-		readValue(name+makeNumberString(i), *inserter);
+		T temp;
+		readValue(name+makeNumberString(i), temp);
+		*inserter = temp;
 		++inserter;
 	 }
   }
