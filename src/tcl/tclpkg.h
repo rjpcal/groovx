@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Thu Jun 24 15:28:59 1999
+// written: Thu Jun 24 17:47:46 1999
 // $Id$
 //
 //
@@ -101,25 +101,6 @@ public:
 
   virtual IO& getIoFromId(int id) = 0;
   virtual int getBufSize() = 0;
-};
-
-///////////////////////////////////////////////////////////////////////
-//
-// CTclIoItemPkg class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-template <class C>
-class CTclIoItemPkg : public TclIoItemPkg {
-public:
-  CTclIoItemPkg(Tcl_Interp* interp, const char* name, const char* version,
-					 int item_argn=1) :
-	 TclIoItemPkg(interp, name, version, item_argn) {}
-
-  virtual C* getCItemFromId(int id) = 0;
-  virtual void* getItemFromId(int id) {
-	 return static_cast<void*>(getCItemFromId(id));
-  }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -246,6 +227,28 @@ public:
 
 private:
   Action_f itsAction_f;
+};
+
+///////////////////////////////////////////////////////////////////////
+//
+// CTclIoItemPkg class definition
+//
+///////////////////////////////////////////////////////////////////////
+
+template <class C>
+class CTclIoItemPkg : public TclIoItemPkg {
+public:
+  CTclIoItemPkg(Tcl_Interp* interp, const char* name, const char* version,
+					 int item_argn=1) :
+	 TclIoItemPkg(interp, name, version, item_argn) 
+  {
+	 declareGetter("charCount", new CGetter<C, int>(&C::charCount));
+  }
+
+  virtual C* getCItemFromId(int id) = 0;
+  virtual void* getItemFromId(int id) {
+	 return static_cast<void*>(getCItemFromId(id));
+  }
 };
 
 static const char vcid_tclitempkg_h[] = "$Header$";
