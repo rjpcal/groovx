@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Thu Oct  5 17:10:06 2000
+// written: Thu Oct  5 18:25:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,6 +84,9 @@ public:
       call clear() in its own destructor because clear() calls
       destroyPtr(), which is a pure virtual function. */
   void clear();
+
+  void incrRefCount(int id) const;
+  void decrRefCount(int id) const;
 
 protected:
   /** Return the \c void* at the index given by \a id.  There is no
