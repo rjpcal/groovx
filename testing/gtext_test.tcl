@@ -7,7 +7,6 @@
 ###
 ##############################################################################
 
-package require Objlist
 package require Gtext
 package require Objtogl
 package require Tclgl

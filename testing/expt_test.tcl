@@ -9,7 +9,6 @@
 
 package require Expt
 package require Objtogl
-package require Objlist
 package require Tlist
 package require Block
 package require Rhlist

@@ -9,7 +9,6 @@
 
 package require Bitmap
 package require Glbitmap
-package require Objlist
 package require Objtogl
 package require Tclgl
 package require Tlist

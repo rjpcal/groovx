@@ -10,7 +10,6 @@
 # Multiple inclusion guard
 if { [info exists GrObj::TEST_DEFINED] } return;
 
-package require Objlist
 package require Grobj
 
 source ${::TEST_DIR}/io_test.tcl

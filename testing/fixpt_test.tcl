@@ -8,7 +8,6 @@
 ##############################################################################
 
 package require Fixpt
-package require Objlist
 
 source ${::TEST_DIR}/grobj_test.tcl
 
