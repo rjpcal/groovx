@@ -378,6 +378,7 @@ BMAPRENDERER_H = bmaprenderer.h
 CANVAS_H = canvas.h
 DEBUG_H = util/debug.h
 DEMANGLE_H = demangle.h
+DUMBPTR_H = dumbptr.h
 ERRMSG_H = errmsg.h
 ERROR_H = util/error.h
 EXPERIMENT_H = experiment.h
@@ -399,6 +400,7 @@ TCLOBJLOCK_H = tclobjlock.h
 TCLPKG_H = tclpkg.h
 TLISTUTILS_H = tlistutils.h
 TRACE_H = util/trace.h
+TRACER_H = util/tracer.h
 WIDGET_H = widget.h
 
 #
@@ -426,7 +428,7 @@ XBMAPRENDERER_H = $(BMAPRENDERER_H) xbmaprenderer.h
 ASCIISTREAMWRITER_H = $(WRITER_H) asciistreamwriter.h
 BLOCK_H = $(IO_H) $(STOPWATCH_H) block.h
 EXPTDRIVER_H = $(IO_H) $(ERROR_H) $(EXPERIMENT_H) exptdriver.h
-GROBJ_H = $(IO_H) $(OBSERVABLE_H) $(OBSERVER_H) grobj.h
+GROBJ_H = $(IO_H) $(OBSERVABLE_H) $(OBSERVER_H) $(TRACER_H) grobj.h
 GRSHAPP_H = $(APPLICATION_H) $(ERROR_H) grshapp.h
 IOFACTORY_H = $(FACTORY_H) $(IO_H) iofactory.h
 IOPTRLIST_H = $(VOIDPTRLIST_H) $(IO_H) ioptrlist.h
@@ -463,7 +465,7 @@ JITTER_H = $(POSITION_H) jitter.h
 MASKHATCH_H = $(GROBJ_H) $(PROPERTY_H) maskhatch.h
 MORPHYFACE_H = $(GROBJ_H) $(PROPERTY_H) morphyface.h
 NULLRESPONSEHDLR_H = $(RESPONSEHANDLER_H) nullresponsehdlr.h
-PTRLIST_H = $(IOPTRLIST_H) ptrlist.h
+PTRLIST_H = $(DUMBPTR_H) $(IOPTRLIST_H) ptrlist.h
 READUTILS_H = $(READER_H) $(IO_H) readutils.h
 TCLCMD_H = $(TCLVALUE_H) $(TCLERROR_H) tclcmd.h
 TIMINGHANDLER_H = $(TIMINGHDLR_H) timinghandler.h
@@ -478,7 +480,7 @@ GLBITMAP_H = $(BITMAP_H) glbitmap.h
 KBDRESPONSEHDLR_H = $(EVENTRESPONSEHDLR_H) kbdresponsehdlr.h
 OBJLIST_H = $(PTRLIST_H) objlist.h
 POSLIST_H = $(PTRLIST_H) poslist.h
-PTRLIST_CC = $(PTRLIST_H) ptrlist.cc
+PTRLIST_CC = $(PTRLIST_H) $(DEMANGLE_H) ptrlist.cc
 RHLIST_H = $(PTRLIST_H) rhlist.h
 SOUNDLIST_H = $(PTRLIST_H) soundlist.h
 STRINGIFYCMD_H = $(TCLCMD_H) stringifycmd.h
@@ -970,8 +972,7 @@ edit: clean
 	emacs $(ALL_SOURCES) Makefile testing/grshtest.tcl Log.txt
 
 docs: DoxygenConfig *.h
-	doxygen DoxygenConfig
-#	/cit/rjpeters/packages/docxx/bin/doc++ -H -B /cit/rjpeters/grsh/Doc/footer.html -d /cit/rjpeters/www/grsh Docs.hh
+	(doxygen DoxygenConfig > DocLog) >& DocErrors
 
 AdepAliases: FileList *.h *.cc
 	adep -s -fFileList > AdepAliases
