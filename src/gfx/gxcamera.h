@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 21 15:18:58 2002
-// written: Thu Nov 21 15:26:13 2002
+// written: Thu Nov 21 15:42:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,11 @@
 #define GXCAMERA_H_DEFINED
 
 #include "gx/rect.h"
+
+namespace Gfx
+{
+  class Canvas;
+}
 
 // ####################################################################
 
@@ -55,7 +60,8 @@ public:
   // For PERSPECTIVE modes:
   void setPerspective(double fovy, double zNear, double zFar);
 
-  void reconfigure(const int width, const int height);
+  void reconfigure(const int width, const int height,
+                   Gfx::Canvas& canvas);
 
 private:
   ResizePolicy itsPolicy;

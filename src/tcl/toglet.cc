@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Nov 21 15:29:46 2002
+// written: Thu Nov 21 15:46:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -306,7 +306,7 @@ void Toglet::displayCallback()
 {
 DOTRACE("Toglet::displayCallback");
 
-  rep->canvas->makeCurrent(Tk_WindowId(rep->tkWin));
+  makeCurrent();
   fullRender();
 }
 
@@ -316,7 +316,7 @@ DOTRACE("Toglet::reshapeCallback");
 
   makeCurrent();
 
-  rep->camera->reconfigure(width(), height());
+  rep->camera->reconfigure(width(), height(), *(rep->canvas));
 
   requestRedisplay();
 }

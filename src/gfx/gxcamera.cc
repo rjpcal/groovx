@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 21 15:22:25 2002
-// written: Thu Nov 21 15:29:36 2002
+// written: Thu Nov 21 15:50:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,11 +15,11 @@
 
 #include "gxcamera.h"
 
+#include "gfx/canvas.h"
+
 #include "util/error.h"
 
 #include <cmath>
-#include <GL/gl.h>
-#include <GL/glu.h>
 
 #include "util/debug.h"
 #include "util/trace.h"
@@ -110,13 +110,12 @@ DOTRACE("GxCamera::setPerspective");
   itsPerspective.zFar = zFar;
 }
 
-void GxCamera::reconfigure(const int width, const int height)
+void GxCamera::reconfigure(const int width, const int height,
+                           Gfx::Canvas& canvas)
 {
 DOTRACE("GxCamera::reconfigure");
 
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glViewport(0, 0, width, height);
+  canvas.viewport(0, 0, width, height);
 
   switch (itsPolicy)
     {
@@ -126,13 +125,12 @@ DOTRACE("GxCamera::reconfigure");
         const double r =      (width  / 2.0) / itsPixelsPerUnit;
         const double b = -1 * (height / 2.0) / itsPixelsPerUnit;
         const double t =      (height / 2.0) / itsPixelsPerUnit;
-        glOrtho(l, r, b, t, -10.0, 10.0);
+        canvas.orthographic(Gfx::RectLTRB<double>(l, r, b, t), -10.0, 10.0);
       }
       break;
     case FIXED_RECT:
       {
-        glOrtho(itsRect.left(), itsRect.right(),
-                itsRect.bottom(), itsRect.top(), -10.0, 10.0);
+        canvas.orthographic(itsRect, -10.0, 10.0);
       }
       break;
     case MIN_RECT:
@@ -158,16 +156,15 @@ DOTRACE("GxCamera::reconfigure");
             port.scaleY(ratio_of_aspects); // so use some extra height
           }
 
-        glOrtho(port.left(), port.right(),
-                port.bottom(), port.top(), -10.0, 10.0);
+        canvas.orthographic(port, -10.0, 10.0);
       }
       break;
     case PERSPECTIVE:
       {
-        gluPerspective(itsPerspective.fovy,
-                       double(width) / double(height),
-                       itsPerspective.zNear,
-                       itsPerspective.zFar);
+        canvas.perspective(itsPerspective.fovy,
+                           double(width) / double(height),
+                           itsPerspective.zNear,
+                           itsPerspective.zFar);
       }
       break;
     default:
