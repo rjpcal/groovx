@@ -41,6 +41,7 @@
 
 #include "util/error.h"
 #include "util/strings.h"
+#include "util/time.h"
 
 #include <cstdlib> // for atoi()
 #include <cstring> // for strcmp()
@@ -249,11 +250,10 @@ DOTRACE("main");
 
       Tcl::Interp& interp = app.interp();
 
+      const Util::Time start1 = Util::Time::wallClockNow();
+
       for (size_t i = 0; i < sizeof(IMMEDIATE_PKGS)/sizeof(PackageInfo); ++i)
         {
-#ifdef LOCAL_TRACE
-          std::cerr << "initializing " << IMMEDIATE_PKGS[i].pkgName << '\n';
-#endif
           int result = IMMEDIATE_PKGS[i].pkgInitProc(interp.intp());
           if (result != TCL_OK)
             {
@@ -265,6 +265,15 @@ DOTRACE("main");
               interp.resetResult();
             }
         }
+
+      if (Tcl::Main::isInteractive())
+        {
+          const Util::Time t = Util::Time::wallClockNow() - start1;
+
+          fprintf(stderr, "\tstartup time (tcl+tk) %6.3fs\n", t.sec());
+        }
+
+      const Util::Time start2 = Util::Time::wallClockNow();
 
       for (size_t i = 0; i < sizeof(DELAYED_PKGS)/sizeof(PackageInfo); ++i)
         {
@@ -303,6 +312,13 @@ DOTRACE("main");
                 std::cerr << '\t' << msg << '\n';
               interp.resetResult();
             }
+        }
+
+      if (Tcl::Main::isInteractive())
+        {
+          const Util::Time t = Util::Time::wallClockNow() - start2;
+
+          fprintf(stderr, "\tstartup time (GroovX) %6.3fs\n", t.sec());
         }
 
       Tcl::List path = interp.getGlobalVar<Tcl::List>("auto_path");
