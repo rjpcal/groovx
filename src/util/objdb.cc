@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Sat Jun  9 14:23:59 2001
+// written: Tue Jun 12 11:55:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "system/demangle.h"
 
 #include "util/object.h"
-#include "util/ptrhandle.h"
+#include "util/ref.h"
 
 #include <typeinfo>
 #include <map>
@@ -49,106 +49,108 @@ private:
 
 public:
 
-  typedef PtrHandle<Util::Object> IoPtrHandle;
+  typedef Util::Ref<Util::Object> ObjRef;
 
-  typedef std::map<Util::UID, IoPtrHandle> MapType;
+  typedef std::map<Util::UID, ObjRef> MapType;
   MapType itsPtrMap;
 
   Impl(ObjDb* owner) :
-	 itsOwner(owner),
-	 itsPtrMap()
-	 {}
+    itsOwner(owner),
+    itsPtrMap()
+    {}
 
   int count() const
-	 { return itsPtrMap.size(); }
+    { return itsPtrMap.size(); }
 
   bool isValidId(Util::UID id) const
-	 {
-		DebugEval(id);
-		MapType::const_iterator itr = itsPtrMap.find(id);
-		return ( (itr != itsPtrMap.end()) );
-	 }
+    {
+      DebugEval(id);
+      MapType::const_iterator itr = itsPtrMap.find(id);
+      return ( (itr != itsPtrMap.end()) );
+    }
 
   void release(Util::UID id)
-	 {
-		MapType::iterator itr = itsPtrMap.find(id);
+    {
+      MapType::iterator itr = itsPtrMap.find(id);
 
-		itsPtrMap.erase(itr);
-	 }
+      itsPtrMap.erase(itr);
+    }
 
   void remove(Util::UID id)
-	 {
-		MapType::iterator itr = itsPtrMap.find(id);
-		if (itr == itsPtrMap.end()) return;
+    {
+      MapType::iterator itr = itsPtrMap.find(id);
+      if (itr == itsPtrMap.end()) return;
 
-		if ( (*itr).second.get()->isShared() )
-		  throw ErrorWithMsg("can't remove a shared object");
+      if ( (*itr).second.get()->isShared() )
+        throw ErrorWithMsg("can't remove a shared object");
 
-		itsPtrMap.erase(itr);
-	 }
+      itsPtrMap.erase(itr);
+    }
 
   // Return the number of items removed
   int purge()
-	 {
-		MapType new_map;
+    {
+      MapType new_map;
 
-		int num_removed = 0;
+      int num_removed = 0;
 
-		for (MapType::const_iterator
-				 itr = itsPtrMap.begin(),
-				 end = itsPtrMap.end();
-			  itr != end;
-			  ++itr)
-		  {
-			 // If the object is shared, we'll be saving the object, so
-			 // copy it into the new_map,
-			 if ( (*itr).second.get()->isShared() )
-				{
-				  new_map.insert(*itr);
-				}
-			 else
-				{
-				  ++num_removed;
-				}
-		  }
+      for (MapType::const_iterator
+             itr = itsPtrMap.begin(),
+             end = itsPtrMap.end();
+           itr != end;
+           ++itr)
+        {
+          // If the object is shared, we'll be saving the object, so
+          // copy it into the new_map,
+          if ( (*itr).second.get()->isShared() )
+            {
+              new_map.insert(*itr);
+            }
+          else
+            {
+              ++num_removed;
+            }
+        }
 
-		// Now swap maps so that the old map gets cleared and everything erased
-		itsPtrMap.swap(new_map);
-		return num_removed;
-	 }
+      // Now swap maps so that the old map gets cleared and everything erased
+      itsPtrMap.swap(new_map);
+      return num_removed;
+    }
 
   void clearAll()
     { itsPtrMap.clear(); }
 
   Util::Object* getCheckedPtrBase(Util::UID id) throw (InvalidIdError)
-	 {
-		MapType::iterator itr = itsPtrMap.find(id);
-		if (itr == itsPtrMap.end()) {
-		  InvalidIdError err("attempt to access invalid id '");
-		  err.appendNumber(id);
-		  err.appendMsg("' in ", demangle_cstr(typeid(*itsOwner).name()));
-		  throw err;
-		}
+    {
+      MapType::iterator itr = itsPtrMap.find(id);
+      if (itr == itsPtrMap.end()) {
+        InvalidIdError err("attempt to access invalid id '");
+        err.appendNumber(id);
+        err.appendMsg("' in ", demangle_cstr(typeid(*itsOwner).name()));
+        throw err;
+      }
 
-		return (*itr).second.get();
-	 }
+      return (*itr).second.get();
+    }
 
   void insertPtrBase(Util::Object* ptr)
-	 {
-		Precondition(ptr != 0);
+    {
+      Precondition(ptr != 0);
 
-		// Check if the object is already in the map
-		MapType::iterator existing_site = itsPtrMap.find(ptr->id());
-		if (existing_site != itsPtrMap.end())
-		  {
-			 // Make sure the existing object is the same as the object
-			 // that we're trying to insert
-			 Assert( (*existing_site).second.get() == ptr );
-		  }
+      // Check if the object is already in the map
+      MapType::iterator existing_site = itsPtrMap.find(ptr->id());
+      if (existing_site != itsPtrMap.end())
+        {
+          // Make sure the existing object is the same as the object
+          // that we're trying to insert
+          Assert( (*existing_site).second.get() == ptr );
+        }
 
-		const int new_id = ptr->id();
-		itsPtrMap.insert(MapType::value_type(new_id, IoPtrHandle(ptr)));
-	 }
+      const int new_id = ptr->id();
+
+      // Must create the ObjRef with "noInsert" to avoid endless recursion
+      itsPtrMap.insert(MapType::value_type(new_id, ObjRef(ptr, true)));
+    }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -251,7 +253,7 @@ DOTRACE("ObjDb::ObjDb");
 
 ObjDb::~ObjDb() {
 DOTRACE("ObjDb::~ObjDb");
-  delete itsImpl; 
+  delete itsImpl;
 }
 
 int ObjDb::count() const {
@@ -285,12 +287,12 @@ void ObjDb::clear() {
 DOTRACE("ObjDb::clear");
   // Call purge until no more items can be removed
   while ( itsImpl->purge() != 0 )
-	 { ; }
+    { ; }
 }
 
 void ObjDb::clearOnExit() {
 DOTRACE("ObjDb::clearOnExit");
-  itsImpl->clearAll(); 
+  itsImpl->clearAll();
 }
 
 Util::Object* ObjDb::getCheckedPtrBase(Util::UID id) throw (InvalidIdError) {
