@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 31 14:24:31 2000
-// written: Fri Jan 18 16:06:55 2002
+// written: Mon Jan 21 14:25:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -296,7 +296,7 @@ public:
   const_iterator begin() const { return const_iterator(the_node->next); }
   const_iterator end()   const { return const_iterator(the_node); }
 
-  bool empty() const { return begin() == end(); }
+  bool is_empty() const { return begin() == end(); }
 
   size_type size() const
     {
@@ -324,7 +324,7 @@ public:
   const_iterator find(const T& val) const
     { return const_cast<dlink_list*>(this)->find(val); }
 
-  void clear() { while ( !empty() ) pop_front(); }
+  void clear() { while ( !is_empty() ) pop_front(); }
 
   void swap(dlink_list& other)
     {
