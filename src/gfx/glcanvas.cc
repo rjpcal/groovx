@@ -467,6 +467,16 @@ DOTRACE("GLCanvas::transform");
   glMultMatrixd(tx.col_major_data());
 }
 
+namespace
+{
+  bool rasterPositionValid() throw()
+  {
+    GLboolean value = GL_FALSE;
+    glGetBooleanv(GL_CURRENT_RASTER_POSITION_VALID, &value);
+    return (value == GL_TRUE);
+  }
+}
+
 void GLCanvas::rasterPos(const geom::vec2<double>& world_pos)
 {
 DOTRACE("GLCanvas::rasterPos");
@@ -494,11 +504,17 @@ DOTRACE("GLCanvas::rasterPos");
       const vec2d lower_left = worldFromScreen2(vec2i(0,0));
       dbg_eval(3, lower_left.x()); dbg_eval_nl(3, lower_left.y());
       glRasterPos2d(lower_left.x(), lower_left.y());
+
+      if (!rasterPositionValid())
+        throw rutz::error("couldn't set valid raster position", SRC_POS);
+
       glBitmap(0, 0, 0.0f, 0.0f,
                screen_pos.x(),
                screen_pos.y(),
                static_cast<const GLubyte*>(0));
     }
+
+  POSTCONDITION(rasterPositionValid());
 }
 
 void GLCanvas::drawPixels(const media::bmap_data& data,
