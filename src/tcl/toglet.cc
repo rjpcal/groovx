@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Sat Nov 23 14:41:46 2002
+// written: Sat Nov 23 14:47:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,8 @@
 class Scene : public Util::VolatileObject
 {
 public:
-  Scene(Toglet* owner) :
+  Scene(Toglet* owner, Util::SoftRef<Gfx::Canvas> canvas) :
+    itsCanvas(canvas),
     itsDrawNode(GxEmptyNode::make()),
     itsUndrawNode(GxEmptyNode::make()),
     isItVisible(false),
@@ -59,34 +60,32 @@ public:
     itsCamera->sigNodeChanged.connect(slotNodeChanged);
   }
 
-  static Scene* make(Toglet* owner) { return new Scene(owner); }
+  void undraw();
 
-  void undraw(Gfx::Canvas& canvas);
+  void render(int width, int height);
 
-  void render(Gfx::Canvas& canvas, int width, int height);
+  void fullRender(int width, int height);
 
-  void fullRender(Gfx::Canvas& canvas, int width, int height);
-
-  void clearscreen(Gfx::Canvas& canvas)
+  void clearscreen()
   {
-    canvas.clearColorBuffer();
+    itsCanvas->clearColorBuffer();
     setDrawable(Util::Ref<GxNode>(GxEmptyNode::make()));
     itsUndrawNode = Util::Ref<GxNode>(GxEmptyNode::make());
     isItVisible = false;
   }
 
-  void fullClearscreen(Gfx::Canvas& canvas)
+  void fullClearscreen()
   {
-    clearscreen(canvas);
-    doFlush(canvas);
+    clearscreen();
+    itsCanvas->flushOutput();
   }
 
-  void setVisibility(Gfx::Canvas& canvas, bool val)
+  void setVisibility(bool val)
   {
     isItVisible = val;
     if ( !isItVisible )
       {
-        fullClearscreen(canvas);
+        fullClearscreen();
       }
   }
 
@@ -108,27 +107,23 @@ public:
     itsDrawNode->sigNodeChanged.connect(slotNodeChanged);
   }
 
-  void flushChanges(Gfx::Canvas& canvas, int width, int height)
+  void flushChanges(int width, int height)
   {
     if (isItRefreshing && !isItRefreshed)
-      fullRender(canvas, width, height);
+      fullRender(width, height);
   }
 
-  void onNodeChange(Gfx::Canvas& canvas, int width, int height)
+  void onNodeChange(int width, int height)
   {
     isItRefreshed = false;
-    flushChanges(canvas, width, height);
+    flushChanges(width, height);
   }
 
 private:
-  void doFlush(Gfx::Canvas& canvas)
-  {
-    canvas.flushOutput();
-  }
-
   Scene(const Scene&);
   Scene& operator=(const Scene&);
 
+  Util::SoftRef<Gfx::Canvas> itsCanvas;
   Util::Ref<GxNode> itsDrawNode;
   Util::Ref<GxNode> itsUndrawNode;
   bool isItVisible;
@@ -150,18 +145,18 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Scene::render(Gfx::Canvas& canvas, int width, int height)
+void Scene::render(int width, int height)
 {
 DOTRACE("Scene::render");
 
   try
     {
-      Gfx::MatrixSaver msaver(canvas);
-      Gfx::AttribSaver asaver(canvas);
+      Gfx::MatrixSaver msaver(*itsCanvas);
+      Gfx::AttribSaver asaver(*itsCanvas);
 
       itsCamera->reshape(width, height);
-      itsCamera->draw(canvas);
-      itsDrawNode->draw(canvas);
+      itsCamera->draw(*itsCanvas);
+      itsDrawNode->draw(*itsCanvas);
       itsUndrawNode = itsDrawNode;
 
       isItRefreshed = true;
@@ -169,35 +164,35 @@ DOTRACE("Scene::render");
   catch (...)
     {
       // Here, something failed during rendering, so just go invisible
-      setVisibility(canvas, false);
+      setVisibility(false);
     }
 }
 
-void Scene::fullRender(Gfx::Canvas& canvas, int width, int height)
+void Scene::fullRender(int width, int height)
 {
 DOTRACE("Scene::fullRender");
 
   // (1) Clear the screen (but only if we are not "holding")
   if( !isItHolding )
     {
-      canvas.clearColorBuffer();
+      itsCanvas->clearColorBuffer();
     }
 
   // (2) Render the current object
   if ( isItVisible )
     {
-      render(canvas, width, height);
+      render(width, height);
     }
 
   // (3) Flush the graphics stream
-  doFlush(canvas);
+  itsCanvas->flushOutput();
 }
 
-void Scene::undraw(Gfx::Canvas& canvas)
+void Scene::undraw()
 {
 DOTRACE("Scene::undraw");
-  itsUndrawNode->undraw(canvas);
-  doFlush(canvas);
+  itsUndrawNode->undraw(*itsCanvas);
+  itsCanvas->flushOutput();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -357,7 +352,7 @@ namespace
 Toglet::Toglet(bool pack) :
   Tcl::TkWidget(Tcl::Main::interp(), "Toglet", widgetName(id())),
   rep(new Impl(this)),
-  itsScene(Scene::make(this))
+  itsScene(new Scene(this, rep->canvas))
 {
 DOTRACE("Toglet::Toglet");
 
@@ -410,33 +405,33 @@ DOTRACE("Toglet::swapBuffers");
 
 void Toglet::render()
 {
-  itsScene->render(getCanvas(), width(), height());
+  itsScene->render(width(), height());
 }
 
 void Toglet::fullRender()
 {
-  itsScene->fullRender(getCanvas(), width(), height());
+  itsScene->fullRender(width(), height());
 }
 
 void Toglet::clearscreen()
 {
-  itsScene->clearscreen(getCanvas());
+  itsScene->clearscreen();
 }
 
 void Toglet::fullClearscreen()
 {
-  itsScene->fullClearscreen(getCanvas());
+  itsScene->fullClearscreen();
 }
 
 void Toglet::undraw()
 {
-  itsScene->undraw(getCanvas());
+  itsScene->undraw();
 }
 
 void Toglet::setVisibility(bool vis)
 {
 DOTRACE("Toglet::setVisibility");
-  itsScene->setVisibility(getCanvas(), vis);
+  itsScene->setVisibility(vis);
 }
 
 void Toglet::setHold(bool hold_on)
@@ -449,7 +444,7 @@ void Toglet::allowRefresh(bool allow)
 {
 DOTRACE("Toglet::allowRefresh");
   itsScene->isItRefreshing = allow;
-  itsScene->flushChanges(getCanvas(), width(), height());
+  itsScene->flushChanges(width(), height());
 }
 
 const Util::Ref<GxCamera>& Toglet::getCamera() const
@@ -489,7 +484,7 @@ DOTRACE("Toglet::animate");
 
 void Toglet::onNodeChange()
 {
-  itsScene->onNodeChange(getCanvas(), width(), height());
+  itsScene->onNodeChange(width(), height());
 }
 
 Toglet::Color Toglet::queryColor(unsigned int color_index) const
