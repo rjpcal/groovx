@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Sun Sep  9 14:30:24 2001
+// written: Mon Sep 10 13:33:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCONVERT_H_DEFINED)
 #include "tcl/tclconvert.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLCMD_H_DEFINED)
+#include "tcl/tclcmd.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLVECCMD_H_DEFINED)
@@ -361,57 +365,16 @@ namespace Tcl
   }
 
 
-///////////////////////////////////////////////////////////////////////
-//
-// GenericVecCmd
-//
-///////////////////////////////////////////////////////////////////////
-
-  template <class R, class Functor>
-  class GenericVecCmd : public VecCmd, private Util::FuncHolder<Functor>
-  {
-  public:
-    GenericVecCmd<R, Functor>(Tcl_Interp* interp, Functor f,
-                              const char* cmd_name, const char* usage,
-                              int nargs, unsigned int keyarg) :
-      VecCmd(interp, cmd_name, usage, keyarg, nargs+1),
-      Util::FuncHolder<Functor>(f)
-    {}
-
-  protected:
-    virtual void invoke(Tcl::Context& ctx)
-    {
-      R res(itsHeldFunc(ctx)); ctx.setResult(res);
-    }
-  };
-
-  template <class Functor>
-  class GenericVecCmd<void, Functor> : public VecCmd,
-                                       private Util::FuncHolder<Functor>
-  {
-  public:
-    GenericVecCmd<void, Functor>(Tcl_Interp* interp, Functor f,
-                                 const char* cmd_name, const char* usage,
-                                 int nargs, unsigned int keyarg) :
-      VecCmd(interp, cmd_name, usage, keyarg, nargs+1),
-      Util::FuncHolder<Functor>(f)
-    {}
-
-  protected:
-    virtual void invoke(Tcl::Context& ctx)
-    {
-      itsHeldFunc(ctx);
-    }
-  };
-
-
   template <class Functor>
   inline Command* makeGenericVecCmd(Tcl_Interp* interp, Functor f,
                                     const char* cmd_name, const char* usage,
                                     int nargs, unsigned int keyarg)
   {
-    return new GenericVecCmd<typename Util::FuncTraits<Functor>::Retn_t, Functor>
-      (interp, f, cmd_name, usage, nargs, keyarg);
+    Command* cmd =
+      new GenericCmd<typename Util::FuncTraits<Functor>::Retn_t, Functor>
+      (interp, f, cmd_name, usage, nargs);
+    Tcl::useVecDispatch(cmd, keyarg);
+    return cmd;
   }
 
 ///////////////////////////////////////////////////////////////////////

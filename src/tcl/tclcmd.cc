@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Sun Sep  9 14:48:58 2001
+// written: Mon Sep 10 13:28:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -93,6 +93,33 @@ namespace
 
 ///////////////////////////////////////////////////////////////////////
 //
+// Tcl::DefaultDispatcher
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace Tcl
+{
+  class DefaultDispatcher : public Dispatcher
+  {
+  public:
+    virtual void dispatch(Tcl_Interp* interp,
+                          unsigned int objc, Tcl_Obj* const objv[],
+                          Tcl::Command& cmd)
+    {
+      Tcl::Context ctx(interp, objc, objv);
+      cmd.invoke(ctx);
+    }
+  };
+}
+
+namespace
+{
+  shared_ptr<Tcl::DefaultDispatcher>
+    theDefaultDispatcher(new Tcl::DefaultDispatcher);
+}
+
+///////////////////////////////////////////////////////////////////////
+//
 // HelpCmd class definition
 //
 ///////////////////////////////////////////////////////////////////////
@@ -131,6 +158,7 @@ public:
        int objc_min, int objc_max, bool exact_objc) :
     itsOwner(owner),
     itsInterp(interp),
+    itsDispatcher(theDefaultDispatcher),
     itsUsage(usage ? usage : ""),
     itsObjcMin(objc_min < 0 ? 0 : (unsigned int) objc_min),
     itsObjcMax( (objc_max > 0) ? (unsigned int) objc_max : itsObjcMin),
@@ -144,7 +172,7 @@ public:
 
     if (firstTime)
       {
-		  firstTime = false;
+        firstTime = false;
         theHelpCmd = new HelpCmd(interp);
       }
   }
@@ -327,6 +355,9 @@ private:
   // These are set once per command object
   Tcl::Command* const itsOwner;
   Tcl_Interp* const itsInterp;
+public:
+  shared_ptr<Tcl::Dispatcher> itsDispatcher;
+private:
   const fstring itsUsage;
   const unsigned int itsObjcMin;
   const unsigned int itsObjcMax;
@@ -376,7 +407,7 @@ DOTRACE("Tcl::Command::Impl::invokeCallback");
   // ...and try the matching overload and catch all possible exceptions
   try
     {
-      theImpl->itsOwner->rawInvoke(interp, objc, objv);
+      theImpl->itsDispatcher->dispatch(interp, objc, objv, *(theImpl->itsOwner));
       return TCL_OK;
     }
   catch (Util::Error& err)
@@ -438,12 +469,16 @@ DOTRACE("Tcl::Command::usage");
   return itsImpl->usage();
 }
 
-void Tcl::Command::rawInvoke(Tcl_Interp* interp,
-                             unsigned int objc, Tcl_Obj* const objv[])
+shared_ptr<Tcl::Dispatcher> Tcl::Command::getDispatcher() const
 {
-DOTRACE("Tcl::Command::rawInvoke");
-  Context ctx(interp, objc, objv);
-  invoke(ctx);
+DOTRACE("Tcl::Command::getDispatcher");
+  return itsImpl->itsDispatcher;
+}
+
+void Tcl::Command::setDispatcher(shared_ptr<Tcl::Dispatcher> dpx)
+{
+DOTRACE("Tcl::Command::setDispatcher");
+  itsImpl->itsDispatcher = dpx;
 }
 
 

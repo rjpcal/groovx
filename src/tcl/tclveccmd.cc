@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 12 12:15:46 2001
-// written: Sun Sep  9 14:30:24 2001
+// written: Mon Sep 10 13:24:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,12 @@
 
 #include "tcl/tclveccmd.h"
 
+#include "tcl/tclcmd.h"
 #include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
 
 #include "util/minivec.h"
+#include "util/pointers.h"
 
 #include "util/trace.h"
 #define LOCAL_ASSERT
@@ -92,18 +94,41 @@ private:
   Tcl::List itsResult;
 };
 
-
-Tcl::VecCmd::VecCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage,
-                    unsigned int key_argn,
-                    int objc_min=0, int objc_max=-1, bool exact_objc=false) :
-  Tcl::Command(interp, cmd_name, usage, objc_min, objc_max, exact_objc),
-  itsKeyArgn(key_argn)
-{}
-
-void Tcl::VecCmd::rawInvoke(Tcl_Interp* interp, unsigned int objc,
-                            Tcl_Obj* const objv[])
+namespace Tcl
 {
-DOTRACE("Tcl::VecCmd::rawInvoke");
+  class VecDispatcher;
+}
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * \c Tcl::VecDispatcher reimplements dispatch() to use a specialized
+ * \c Context class that treats each of the arguments as lists, and
+ * provide access to slices across those lists, thus allowing
+ * "vectorized" command invocations.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+class Tcl::VecDispatcher : public Tcl::Dispatcher
+{
+public:
+  VecDispatcher(unsigned int key_argn) : itsKeyArgn(key_argn) {}
+
+  virtual void dispatch(Tcl_Interp* interp,
+                        unsigned int objc, Tcl_Obj* const objv[],
+                        Tcl::Command& cmd);
+
+private:
+  unsigned int itsKeyArgn;
+};
+
+
+void Tcl::VecDispatcher::dispatch(Tcl_Interp* interp,
+                                  unsigned int objc, Tcl_Obj* const objv[],
+                                  Tcl::Command& cmd)
+{
+DOTRACE("Tcl::VecDispatcher::dispatch");
 
   unsigned int ncalls = Tcl::List::getLength(objv[itsKeyArgn]);
 
@@ -113,18 +138,25 @@ DOTRACE("Tcl::VecCmd::rawInvoke");
 
       for (unsigned int c = 0; c < ncalls; ++c)
         {
-          invoke(cx);
+          cmd.invoke(cx);
           cx.next();
         }
     }
   else if (ncalls == 1)
     {
-      Tcl::Command::rawInvoke(interp, objc, objv);
+      Context cx(interp, objc, objv);
+      cmd.invoke(cx);
     }
   else // (ncalls == 0)
     {
       ;// do nothing, so we gracefully handle empty lists
     }
+}
+
+
+void Tcl::useVecDispatch(Tcl::Command* cmd, unsigned int key_argn)
+{
+  cmd->setDispatcher(shared_ptr<Tcl::Dispatcher>(new VecDispatcher(key_argn)));
 }
 
 static const char vcid_tclveccmd_cc[] = "$Header$";

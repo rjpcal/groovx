@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Sun Sep  9 14:49:13 2001
+// written: Mon Sep 10 13:26:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,10 +26,13 @@ struct Tcl_Obj;
 
 class fstring;
 
+template <class T> class shared_ptr;
+
 namespace Tcl
 {
   class Command;
   class Context;
+  class Dispatcher;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -88,16 +91,11 @@ public:
       and allows the interpreter's result to be set.*/
   virtual void invoke(Context& ctx) = 0;
 
-protected:
-  /** This may be overridden by subclasses that need to provide a
-      different interface to the raw Tcl arguments (such as for
-      vectorizing a function over a set of arguments). The default
-      implementation just sets up a \c Context and calls \a invoke().
-      Errors should be signaled by throwing appropriate exceptions,
-      which will be caught and translated back to the Tcl interpreter
-      by \a invokeCallback(). */
-  virtual void rawInvoke(Tcl_Interp* interp, unsigned int objc,
-                         Tcl_Obj* const objv[]);
+  /// Get the current Tcl::Dispatcher for this command.
+  shared_ptr<Dispatcher> getDispatcher() const;
+
+  /// Change the Tcl::Dispatcher for this command.
+  void setDispatcher(shared_ptr<Dispatcher> dpx);
 
 private:
   Command(const Command&);
@@ -108,6 +106,27 @@ private:
   Impl* const itsImpl;
 };
 
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * \c Tcl::Dispatcher. This may be subclassed in order to provide a
+ * different interface to the raw Tcl arguments (such as for
+ * vectorizing a function over a set of arguments). The default
+ * dispatcher used by Tcl::Command's implementation just sets up a \c
+ * Context and calls \a invoke().  Errors should be signaled by
+ * throwing appropriate exceptions, which will be caught and
+ * translated back to the Tcl interpreter by \a invokeCallback().
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+class Tcl::Dispatcher
+{
+public:
+  virtual void dispatch(Tcl_Interp* interp,
+                        unsigned int objc, Tcl_Obj* const objv[],
+                        Tcl::Command& cmd) = 0;
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
