@@ -2,7 +2,7 @@
 // iostl.cc
 // Rob Peters
 // created: Sat Mar 13 15:21:33 1999
-// written: Wed May 26 21:27:58 1999
+// written: Mon Dec  6 22:03:17 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -19,7 +19,7 @@
 void serializeVecInt(ostream &os, const vector<int>& vec) {
   char sep = ' ';
   os << vec.size() << sep << sep;
-  for (int i = 0; i < vec.size(); ++i) {
+  for (size_t i = 0; i < vec.size(); ++i) {
     os << vec[i] << sep;
   }
   if (os.fail()) throw OutputError("VecInt");
@@ -29,7 +29,7 @@ void deserializeVecInt(istream &is, vector<int>& vec) {
   int size;
   is >> size;
   vec.resize(size, 0);
-  for (int i = 0; i < size; ++i) {
+  for (size_t i = 0; i < size; ++i) {
     is >> vec[i];
   }
   if (is.fail()) throw InputError("VecInt");
@@ -37,7 +37,7 @@ void deserializeVecInt(istream &is, vector<int>& vec) {
 
 int charCountVecInt(const vector<int>& vec) {
   int count = gCharCount<int>(vec.size()) + 1;
-  for (int i = 0; i < vec.size(); ++i) {
+  for (size_t i = 0; i < vec.size(); ++i) {
 	 count += gCharCount<int>(vec[i]);
 	 ++count;
   }
