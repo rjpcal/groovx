@@ -77,13 +77,13 @@ CPPFLAGS += -I$(SRC)
 ifeq ($(MODE),debug)
 	LIB_SUFFIX := .d
 	DEFS += -DPROF
+	CXXFLAGS += $(DEBUG_CXXFLAGS)
 endif
 
 ifeq ($(MODE),prod)
 	LIB_SUFFIX := $(PACKAGE_VERSION)
+	CXXFLAGS += $(PROD_CXXFLAGS)
 endif
-
-LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
 
 #-------------------------------------------------------------------------
 #
@@ -115,13 +115,7 @@ LIBS += \
 	@[ -d ${@D} ] || mkdir -p ${@D}
 	@[ -f $@ ] || touch $@
 
-ifeq ($(MODE),debug)
-	ALL_CXXFLAGS := $(DEBUG_CXXFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
-endif
-
-ifeq ($(MODE),prod)
-	ALL_CXXFLAGS := $(PROD_CXXFLAGS) $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
-endif
+ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
 
 $(OBJ)/%.$(OBJEXT) : $(SRC)/%.cc
 	@mkdir -p $(LOGS) $(dir $@)
@@ -217,7 +211,7 @@ $(exec_prefix)/lib/visx/matlabengine.so: \
 LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
 		--libdir $(exec_prefix)/lib \
 		--libprefix libDeep \
-		--libext $(LIB_EXT) \
+		--libext $(LIB_SUFFIX).$(SHLIB_EXT) \
 		--srcroot $(SRC) \
 		--objroot $(OBJ) \
 		--objext .$(OBJEXT) \
@@ -267,8 +261,6 @@ all:
 	make $(PKG_LIBS)
 	make $(EXECUTABLE)
 	make check
-
-#build: dir_structure TAGS $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
 
 GRSH_STATIC_OBJS := $(subst .cc,.$(OBJEXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/grsh/*.cc)))
