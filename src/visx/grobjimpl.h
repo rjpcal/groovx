@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Fri Aug 10 13:59:44 2001
+// written: Fri Aug 10 15:11:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,24 +70,6 @@ public:
 
   void undrawDirectRender(Gfx::Canvas& canvas) const;
   void undrawClearBoundingBox(Gfx::Canvas& canvas) const;
-
-  //
-  // Forwards to GrObj's protected members
-  //
-
-//    void grRender(Gfx::Canvas& canvas, GrObj::DrawMode mode) const
-//      {
-//        if (mode == GrObj::DRAW)
-//          itsObjNode->gnodeDraw(canvas);
-//        else
-//          itsObjNode->gnodeUndraw(canvas);
-//      }
-
-//    Rect<double> grGetBoundingBox() const
-//      {
-//        Gfx::Canvas& canvas = Application::theApp().getCanvas();
-//        return itsObjNode->gnodeBoundingBox(canvas);
-//      }
 
   //
   // Data members
