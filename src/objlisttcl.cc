@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Wed Mar 15 18:03:43 2000
+// written: Fri Mar 24 13:46:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "objlist.h"
 
 #include "tcl/listpkg.h"
+#include "tcl/stringifycmd.h"
 
 #include "util/strings.h"
 
@@ -30,6 +31,7 @@
 namespace ObjlistTcl {
   class LoadObjectsCmd;
   class SaveObjectsCmd;
+  class LoadMoreCmd;
   class ObjListPkg;  
 }
 
@@ -151,6 +153,47 @@ protected:
 
 //---------------------------------------------------------------------
 //
+// LoadMoreCmd --
+//
+//---------------------------------------------------------------------
+
+class ObjlistTcl::LoadMoreCmd : public Tcl::ASRLoadCmd {
+public:
+  LoadMoreCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 ASRLoadCmd(interp, cmd_name, "filename", 2), itsSandbox(0) {}
+
+protected:
+  virtual IO& getIO() { return itsSandbox; }
+  virtual const char* getFilename() { return getCstringFromArg(1); }
+
+  virtual void beforeLoadHook()
+	 {
+		Assert(itsSandbox.count() == 0);
+	 }
+
+  virtual void afterLoadHook()
+	 {
+		ObjList& olist = ObjList::theObjList();
+
+		for (int id = 0; id < itsSandbox.capacity(); ++id)
+		  {
+			 if (itsSandbox.isValidId(id))
+				{
+				  PtrList<GrObj>::Ptr obj = itsSandbox.release(id);
+				  int newid = olist.insert(obj);
+				  lappendVal(newid);
+				}
+		  }
+
+		Assert(itsSandbox.count() == 0);
+	 }
+
+private:
+  PtrList<GrObj> itsSandbox;
+};
+
+//---------------------------------------------------------------------
+//
 // ObjListPkg class definition
 //
 //---------------------------------------------------------------------
@@ -162,6 +205,7 @@ public:
   {
 	 addCommand( new LoadObjectsCmd(interp, "ObjList::loadObjects") );
 	 addCommand( new SaveObjectsCmd(interp, "ObjList::saveObjects") );
+	 addCommand( new LoadMoreCmd(interp, "ObjList::loadMore") );
   }
 };
 
