@@ -2,7 +2,7 @@
 // objlist.h 
 // Rob Peters
 // Created: Nov-98
-// written: Mon Mar 15 13:07:08 1999
+// written: Mon Mar 15 13:30:16 1999
 //
 // The ObjList class implements a list of GrObj pointers. The
 // interface allows for management of a collection of GrObj's (i.e.,
@@ -58,6 +58,10 @@ public:
   // both functions return the GrObj* at the index given by 'id'.
   // There is no range-checking--this must be done by the client with
   // isValidObjid().
+
+  void getValidObjids(vector<int>& vec) const;
+  // Puts a list of all valid (i.e. within-range and non-null) objid's
+  // into the vector<int> that is passed in by reference
 
   //////////////////
   // manipulators //
