@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Thu Mar 15 15:52:37 2001
+// written: Thu Mar 15 15:56:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -197,7 +197,7 @@ class Slice : public ConstSlice {
 
 public:
 
-  Slice rightmost(int n)
+  Slice rightmostNC(int n)
   {
 	 int first = itsNelems - n;
 	 if (first < 0) first = 0;
@@ -205,7 +205,7 @@ public:
 	 return Slice(itsOwner, storageOffset(first), itsStride, n);
   }
 
-  Slice leftmost(int n)
+  Slice leftmostNC(int n)
   {
 	 return Slice(itsOwner, storageOffset(0), itsStride, n);
   }
@@ -218,14 +218,14 @@ public:
 
   void apply(double func(double))
   {
-	 for (MtxIter i = begin(); i.hasMore(); ++i)
+	 for (MtxIter i = beginNC(); i.hasMore(); ++i)
 		*i = func(*i);
   }
 
   template <class F>
   void apply(F func)
   {
-	 for (MtxIter i = begin(); i.hasMore(); ++i)
+	 for (MtxIter i = beginNC(); i.hasMore(); ++i)
 		*i = func(*i);
   }
 
@@ -235,7 +235,7 @@ public:
   // Iteration
   //
 
-  MtxIter begin()
+  MtxIter beginNC()
     { return MtxIter(itsOwner, storageOffset(0), itsStride, itsNelems); }
 };
 

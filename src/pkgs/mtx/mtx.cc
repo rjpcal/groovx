@@ -39,7 +39,7 @@ Slice& Slice::operator=(const ConstSlice& other)
 
   MtxConstIter rhs = other.begin();
 
-  for (MtxIter lhs = begin(); lhs.hasMore(); ++lhs, ++rhs)
+  for (MtxIter lhs = beginNC(); lhs.hasMore(); ++lhs, ++rhs)
     *lhs = *rhs;
 
   return *this;
@@ -167,7 +167,7 @@ void Mtx::VMmul_assign(const ConstSlice& vec, const Mtx& mtx,
 
   MtxConstIter veciter = vec.begin();
 
-  MtxIter resultIter = result.begin();
+  MtxIter resultIter = result.beginNC();
 
   for (int col = 0; col < mtx.ncols(); ++col, ++resultIter)
     *resultIter = innerProduct(veciter, mtx.colIter(col));
