@@ -3,7 +3,7 @@
 // gxnode.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Nov  1 18:26:45 2000
-// written: Thu Nov  2 13:50:42 2000
+// written: Thu Nov  2 14:50:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ public:
   virtual ~GxNode();
 
   /// Get the value of the user-defined category. Default returns -1.
-  virtual int getCategory() const;
+  virtual int category() const;
 
   /** Returns true if \a other is contained within this node in the
       scene graph. The default implementation (for leaf nodes) returns
