@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Tue Oct 24 15:44:22 2000
+// written: Tue Oct 24 18:07:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,6 +69,46 @@ protected:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
+ * IncrRefCountCmd
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+template <class C>
+class IncrRefCountCmd : public TclItemCmd<C> {
+public:
+  IncrRefCountCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<C>(pkg, cmd_name, "item_id", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 C* p = TclItemCmd<C>::getItem();
+	 p->incrRefCount();
+  }
+};
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * DecrRefCountCmd
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+template <class C>
+class DecrRefCountCmd : public TclItemCmd<C> {
+public:
+  DecrRefCountCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<C>(pkg, cmd_name, "item_id", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 C* p = TclItemCmd<C>::getItem();
+	 p->decrRefCount();
+  }
+};
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
  * AbstractListItemPkg
  *
  **/
@@ -84,6 +124,10 @@ public:
   {
   	 addCommand( new TypeCmd<C>(this, TclPkg::makePkgCmdName("type")) );
 	 addCommand( new RefCountCmd<C>(this, TclPkg::makePkgCmdName("refCount")));
+	 addCommand( new IncrRefCountCmd<C>(this,
+                        TclPkg::makePkgCmdName("incrRefCount")));
+	 addCommand( new DecrRefCountCmd<C>(this,
+								TclPkg::makePkgCmdName("decrRefCount")));
   }
 
   List& theList() { return itsList; }
