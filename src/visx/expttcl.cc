@@ -137,8 +137,8 @@ public:
 
     Tcl::defTracing(this, ExptDriver::tracer);
 
-    def( "currentExp", "expt_id", &ExptTcl::setCurrentExpt );
-    def( "currentExp", 0, &ExptTcl::getCurrentExpt );
+    def( "current", "expt_id", &ExptTcl::setCurrentExpt );
+    def( "current", 0, &ExptTcl::getCurrentExpt );
 
     def( "begin", "expt_id", ExptTcl::begin );
     def( "setStartCommand", "expt_id command", ExptTcl::setStartCommand );
@@ -163,7 +163,7 @@ public:
     defSetter("doWhenComplete", &ExptDriver::setDoWhenComplete);
 
     Pkg::eval("foreach cmd [info commands ::ExptDriver::*] {"
-              "  namespace eval Expt { proc [namespace tail $cmd] {args} \" eval $cmd \\[ExptDriver::currentExp\\] \\$args \" } }\n"
+              "  namespace eval Expt { proc [namespace tail $cmd] {args} \" eval $cmd \\[ExptDriver::current\\] \\$args \" } }\n"
               "namespace eval Expt { namespace export * }"
               );
   }

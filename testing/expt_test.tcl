@@ -16,10 +16,10 @@ package require Timinghdlr
 
 source ${::TEST_DIR}/io_test.tcl
 
-IO::testStringifyCmd ExptTcl IO 1 [ExptDriver::currentExp]
-IO::testDestringifyCmd ExptTcl IO 1 [ExptDriver::currentExp]
-IO::testWriteCmd ExptTcl IO 1 [ExptDriver::currentExp]
-IO::testReadCmd ExptTcl IO 1 [ExptDriver::currentExp]
+IO::testStringifyCmd ExptTcl IO 1 [ExptDriver::current]
+IO::testDestringifyCmd ExptTcl IO 1 [ExptDriver::current]
+IO::testWriteCmd ExptTcl IO 1 [ExptDriver::current]
+IO::testReadCmd ExptTcl IO 1 [ExptDriver::current]
 
 # need to add checks on appropriate returns from all functions that use
 # isComplete()
