@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:56 1999
-// written: Sat Nov 11 10:18:18 2000
+// written: Mon Nov 13 21:49:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,8 @@
 #include "grobj.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H_DEFINED)
-#include "io/property.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
+#include "io/fields.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRACER_H_DEFINED)
@@ -35,7 +35,7 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Fish : public GrObj, public PropFriend<Fish> {
+class Fish : public GrObj, public FieldContainer {
 public:
   /// This tracer dynamically controls the tracing of \c Fish member functions.
   static Util::Tracer tracer;
@@ -76,45 +76,38 @@ public:
   // properties //
   ////////////////
 
-  /// Info about a \c Fish property.
-  typedef PropertyInfo<Fish> PInfo;
-
-  /// Return the number of \c Fish properties.
-  static unsigned int numPropertyInfos();
-
-  /// Return info on the i'th \c Fish property.
-  static const PInfo& getPropertyInfo(unsigned int i);
-
   /** The category of the fish. The semantics of \a category are
       defined by the client. */
-  TProperty<int> fishCategory;
+  TField<int> fishCategory;
 
   virtual int category() const { return fishCategory.getNative(); }
   virtual void setCategory(int val) { fishCategory.setNative(val); }
 
   /// Controls the shape of the dorsal fin.
-  TPtrProperty<double> dorsalFinCoord;
+  TPtrField<double> dorsalFinCoord;
 
   /// Controls the shape of the tail fin.
-  TPtrProperty<double> tailFinCoord;
+  TPtrField<double> tailFinCoord;
 
   /// Controls the shape of the lower fin (one fin vs. two fins).
-  TPtrProperty<double> lowerFinCoord;
+  TPtrField<double> lowerFinCoord;
 
   /// Controls the shape of the mouth
-  TPtrProperty<double> mouthCoord;
+  TPtrField<double> mouthCoord;
 
   /// Selects the current part for editing.
-  TBoundedProperty<int, 0, 3, 1> currentPart;
+  TBoundedField<int, 0, 3, 1> currentPart;
 
   /// Selects the current end point for editing.
-  TBoundedProperty<int, 0, 3, 1> currentEndPt;
+  TBoundedField<int, 0, 3, 1> currentEndPt;
 
   /// Controls the part referred to by the current end point.
-  TPtrProperty<int> endPt_Part;
+  TPtrField<int> endPt_Part;
 
   /// Controls the breakpoint referred to by the current end point.
-  TPtrProperty<int> endPt_Bkpt;
+  TPtrField<int> endPt_Bkpt;
+
+  static const FieldMap& classFields();
 
   /////////////
   // actions //
