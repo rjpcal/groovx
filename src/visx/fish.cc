@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Mon Sep  3 10:54:45 2001
+// written: Mon Sep  3 15:57:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,7 @@
 
 #include "util/arrays.h"
 #include "util/error.h"
+#include "util/ref.h"
 #include "util/strings.h"
 
 #include <fstream.h>
@@ -179,6 +180,8 @@ DOTRACE("Fish::Fish");
       restoreToDefault();
     }
 
+  Util::FloatingRef<Fish> ref(this);
+
   this->sigNodeChanged.connect(this, &Fish::updatePtrs);
 
   this->sigNodeChanged.emit();
@@ -307,8 +310,6 @@ DOTRACE("Fish::writeTo");
 void Fish::updatePtrs()
 {
 DOTRACE("Fish::updatePtrs");
-
- DebugPrintNL("updatePtrs!");
 
   itsEndPt_Bkpt = &(itsParts[itsCurrentPart].itsBkpt);
 }
@@ -486,14 +487,21 @@ DOTRACE("Fish::grRender");
 
       if (showControlPoints)
         {
-          Gfx::Canvas::AttribSaver saver(canvas);
-          canvas.setPointSize(4.0);
+          {
+            Gfx::Canvas::AttribSaver saver(canvas);
+            canvas.setPointSize(4.0);
 
-          Gfx::Canvas::PointsBlock block(canvas);
-          for (unsigned int i = 0; i < ctrlpnts.size(); ++i)
-            {
-              canvas.vertex3(ctrlpnts[i]);
-            }
+            Gfx::Canvas::PointsBlock block(canvas);
+            for (unsigned int i = 0; i < ctrlpnts.size(); ++i)
+              {
+                canvas.vertex3(ctrlpnts[i]);
+              }
+          }
+          {
+            Gfx::Canvas::LinesBlock block(canvas);
+            canvas.vertex3(itsParts[i].itsPt0);
+            canvas.vertex3(itsParts[i].itsPt1);
+          }
         }
     }
 }
