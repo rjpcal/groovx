@@ -40,11 +40,9 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-std::string demangle_impl(const std::string& in);
-
 namespace
 {
-  int munchInt(std::string& str, std::string::size_type pos)
+  int munch_int(std::string& str, std::string::size_type pos)
   {
     int val = 0;
     while ( isdigit(str[pos]) )
@@ -56,7 +54,7 @@ namespace
     return val;
   }
 
-  void putInt(int val, std::string& str, std::string::size_type pos)
+  void put_int(int val, std::string& str, std::string::size_type pos)
   {
     while (val != 0)
       {
@@ -65,7 +63,7 @@ namespace
       }
   }
 
-  std::string readModifiers(std::string& str, std::string::size_type& pos)
+  std::string read_modifiers(std::string& str, std::string::size_type& pos)
   {
     std::string modifiers("");
     std::string array_dims("");
@@ -79,8 +77,8 @@ namespace
             array_dims.append("[");
             if ( isdigit(str[pos]) )
               {
-                int dim_size = munchInt(str, pos);
-                putInt(dim_size+1,array_dims,array_dims.length());
+                int dim_size = munch_int(str, pos);
+                put_int(dim_size+1,array_dims,array_dims.length());
               }
             array_dims.append("]");
             break;
@@ -108,7 +106,7 @@ namespace
     return modifiers;
   }
 
-  void insertBuiltinTypename(std::string& str, std::string::size_type& pos)
+  void insert_builtin_typename(std::string& str, std::string::size_type& pos)
   {
     char typecode = str[pos];
     str.erase(pos, 1);
@@ -144,125 +142,125 @@ namespace
         break;
       }
   }
-}
 
-std::string demangle_impl(const std::string& in)
-{
-DOTRACE("demangle_impl");
-  std::string out=in;
+  std::string demangle_gcc_v2(const std::string& in)
+  {
+    DOTRACE("demangle_impl");
+    std::string out=in;
 
-  dbg_eval_nl(3, out.c_str());
+    dbg_eval_nl(3, out.c_str());
 
-  bool isTemplate = false;
+    bool isTemplate = false;
 
-  if (out.length() == 0) return out;
+    if (out.length() == 0) return out;
 
-  std::string::size_type pos = 0;
+    std::string::size_type pos = 0;
 
-  // Check if we have namespace qualifiers...
-  if (out[0] == 'Q')
-    {
-      out.erase(0, 1);
-      int num_levels = 0;
-      // get the number of nesting levels...
-      if (out[0] == '_')
-        {
-          out.erase(0, 1);
-          num_levels = munchInt(out, 0);
-          dbg_eval_nl(3, num_levels);
-          ASSERT(out[0] == '_');
-          out.erase(0, 1);
-        }
-      else
-        {
-          num_levels = out[0] - '0';
-          out.erase(0, 1);
-        }
-      while (num_levels > 1)
-        {
-          // Get the length of the current qualifier
-          int length = munchInt(out, pos);
-          // Skip over the qualifier itself
-          pos += length;
-          // Insert a scope resolution operator after the qualifier "::"
-          out.insert(pos, "::");
-          // Skip over the just-inserted "::"
-          pos += 2;
-          --num_levels;
-        }
-    }
+    // Check if we have namespace qualifiers...
+    if (out[0] == 'Q')
+      {
+        out.erase(0, 1);
+        int num_levels = 0;
+        // get the number of nesting levels...
+        if (out[0] == '_')
+          {
+            out.erase(0, 1);
+            num_levels = munch_int(out, 0);
+            dbg_eval_nl(3, num_levels);
+            ASSERT(out[0] == '_');
+            out.erase(0, 1);
+          }
+        else
+          {
+            num_levels = out[0] - '0';
+            out.erase(0, 1);
+          }
+        while (num_levels > 1)
+          {
+            // Get the length of the current qualifier
+            int length = munch_int(out, pos);
+            // Skip over the qualifier itself
+            pos += length;
+            // Insert a scope resolution operator after the qualifier "::"
+            out.insert(pos, "::");
+            // Skip over the just-inserted "::"
+            pos += 2;
+            --num_levels;
+          }
+      }
 
-  dbg_eval_nl(3, out.c_str());
+    dbg_eval_nl(3, out.c_str());
 
-  if (out[pos] == 't')
-    {
-      isTemplate = true;
-      out.erase(pos, 1);
-    }
+    if (out[pos] == 't')
+      {
+        isTemplate = true;
+        out.erase(pos, 1);
+      }
 
-  if ( !isTemplate )
-    {
-      while ( isdigit(out[pos]) )
-        {
-          out.erase(pos, 1);
-        }
-      dbg_eval_nl(3, out.c_str());
-    }
-  else
-    {
-      // Read length of template base name and skip over it
-      int base_length = munchInt(out, pos);
-      pos += base_length;
+    if ( !isTemplate )
+      {
+        while ( isdigit(out[pos]) )
+          {
+            out.erase(pos, 1);
+          }
+        dbg_eval_nl(3, out.c_str());
+      }
+    else
+      {
+        // Read length of template base name and skip over it
+        int base_length = munch_int(out, pos);
+        pos += base_length;
 
-      // Insert left bracket
-      out.insert(pos++, 1, '<');
+        // Insert left bracket
+        out.insert(pos++, 1, '<');
 
-      dbg_eval_nl(3, out.c_str());
+        dbg_eval_nl(3, out.c_str());
 
-      int num_parameters = munchInt(out, pos);;
+        int num_parameters = munch_int(out, pos);;
 
-      for (int n = 0; n < num_parameters; ++n)
-        {
-          // Template parameters must start with 'Z'
-          ASSERT( out[pos] == 'Z' );
-          out.erase(pos, 1);
+        for (int n = 0; n < num_parameters; ++n)
+          {
+            // Template parameters must start with 'Z'
+            ASSERT( out[pos] == 'Z' );
+            out.erase(pos, 1);
 
-          dbg_eval_nl(3, out.c_str());
+            dbg_eval_nl(3, out.c_str());
 
-          // Get the parameter name:
-          std::string modifiers = readModifiers(out, pos);
+            // Get the parameter name:
+            std::string modifiers = read_modifiers(out, pos);
 
-          if ( !isdigit(out[pos]) )
-            {
-              insertBuiltinTypename(out, pos);
-            }
-          else
-            {
-              // Read length of template parameter name and skip over it
-              int param_length = munchInt(out, pos);
-              pos += param_length;
-            }
+            if ( !isdigit(out[pos]) )
+              {
+                insert_builtin_typename(out, pos);
+              }
+            else
+              {
+                // Read length of template parameter name and skip over it
+                int param_length = munch_int(out, pos);
+                pos += param_length;
+              }
 
-          out.insert(pos, modifiers);
-          pos += modifiers.length();
+            out.insert(pos, modifiers);
+            pos += modifiers.length();
 
-          // Insert a comma if this is not the last parameter
-          if (n < (num_parameters-1))
-            {
-              out.insert(pos++, 1, ',');
-              out.insert(pos++, 1, ' ');
-            }
+            // Insert a comma if this is not the last parameter
+            if (n < (num_parameters-1))
+              {
+                out.insert(pos++, 1, ',');
+                out.insert(pos++, 1, ' ');
+              }
 
-          dbg_eval_nl(3, out.c_str());
-        }
+            dbg_eval_nl(3, out.c_str());
+          }
 
-      // Insert right bracket
-      out.insert(pos++, 1, '>');
-    }
+        // Insert right bracket
+        out.insert(pos++, 1, '>');
+      }
 
-  dbg_eval_nl(3, out.c_str());
+    dbg_eval_nl(3, out.c_str());
 
-  return out;
+    return out;
+  }
 }
 
 static const char vcid_demangle_gcc_v2_h[] = "$Header$";

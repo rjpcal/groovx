@@ -372,7 +372,7 @@ DOTRACE("Tcl::Interp::handleLiveException");
         {
           fstring msg;
 
-          msg.append(demangled_name(typeid(err)), " caught at ",
+          msg.append(rutz::demangled_name(typeid(err)), " caught at ",
                      pos.fileName, ":", pos.lineNo, ":\n");
 
           if (where != 0 && where[0] != '\0')

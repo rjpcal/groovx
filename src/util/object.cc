@@ -64,7 +64,7 @@ Util::UID Util::Object::id() const throw()
 fstring Util::Object::realTypename() const
 {
 DOTRACE("Util::Object::realTypename");
-  return demangled_name(typeid(*this));
+  return rutz::demangled_name(typeid(*this));
 }
 
 fstring Util::Object::objTypename() const

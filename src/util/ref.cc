@@ -62,7 +62,7 @@ void Util::RefHelper::throwRefNull(const std::type_info& info,
                                    const FilePosition& pos)
 {
   throw Util::Error(fstring("attempted to construct a Ref<",
-                            demangled_name(info),
+                            rutz::demangled_name(info),
                             "> with a null pointer"),
                     pos);
 }
@@ -71,7 +71,7 @@ void Util::RefHelper::throwRefUnshareable(const std::type_info& info,
                                           const FilePosition& pos)
 {
   throw Util::Error(fstring("attempted to construct a Ref<",
-                            demangled_name(info),
+                            rutz::demangled_name(info),
                             "> with an unshareable object"),
                     pos);
 }
@@ -80,7 +80,7 @@ void Util::RefHelper::throwSoftRefInvalid(const std::type_info& info,
                                           const FilePosition& pos)
 {
   throw Util::Error(fstring("attempted to access invalid object "
-                            "in SoftRef<", demangled_name(info), ">"),
+                            "in SoftRef<", rutz::demangled_name(info), ">"),
                     pos);
 }
 

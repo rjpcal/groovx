@@ -36,7 +36,12 @@
 
 #if defined(NO_TYPENAME_MANGLING)
 
-std::string demangle_impl(const char* in) { return std::string(in); }
+namespace
+{
+  const char* demangle_impl(const char* in) { return in; }
+}
+
+#  define DEMANGLE_IMPL demangle_impl
 
 #else
 
@@ -46,11 +51,14 @@ std::string demangle_impl(const char* in) { return std::string(in); }
 //   std::string demangle_impl(const std::string& mangled)
 
 #  if defined(HAVE_CXXABI_H)
-#      include "util/demangle_gcc_v3.h"
+#    include "util/demangle_gcc_v3.h"
+#    define DEMANGLE_IMPL demangle_gcc_v3
 #  elif defined(__GNUC__) && __GNUC__ < 3
-#      include "util/demangle_gcc_v2.h"
+#    include "util/demangle_gcc_v2.h"
+#    define DEMANGLE_IMPL demangle_gcc_v2
 #  elif defined(HAVE_PROG_CXXFILT)
 #    include "util/demangle_cxxfilt.h"
+#    define DEMANGLE_IMPL demangle_cxxfilt
 #  else
 #    error no method specified for typename demangling
 #  endif
@@ -72,9 +80,9 @@ namespace
   Cache nameCache;
 }
 
-const char* demangled_name(const std::type_info& info)
+const char* rutz::demangled_name(const std::type_info& info)
 {
-DOTRACE("demangled_name");
+DOTRACE("rutz::demangled_name");
 
   const std::string mangled = info.name();
 
@@ -85,7 +93,7 @@ DOTRACE("demangled_name");
       return (*itr).second.c_str();
     }
 
-  const std::string demangled = demangle_impl(info.name());
+  const std::string demangled = DEMANGLE_IMPL(info.name());
 
   std::pair<Cache::iterator, bool> result =
     nameCache.insert(Cache::value_type(mangled, demangled));

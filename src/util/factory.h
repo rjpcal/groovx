@@ -228,7 +228,7 @@ public:
   const char* registerCreatorFunc(DerivedPtr (*func) (), const char* name = 0)
   {
     if (name == 0)
-      name = demangled_name
+      name = rutz::demangled_name
         (typeid(typename rutz::type_traits<DerivedPtr>::pointee_t));
 
     itsMap.setPtrForName(name,

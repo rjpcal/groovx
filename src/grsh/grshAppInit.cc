@@ -385,7 +385,7 @@ DOTRACE("main");
   catch (std::exception& err)
     {
       std::cerr << "caught in main: ("
-                << demangled_name(typeid(err))
+                << rutz::demangled_name(typeid(err))
                 << "): " << err.what() << '\n';
     }
   catch (...)

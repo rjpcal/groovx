@@ -42,24 +42,28 @@
 DBG_REGISTER
 #include "util/trace.h"
 
-std::string demangle_impl(const std::string& mangled)
+namespace
 {
-DOTRACE("demangle_impl");
+  std::string demangle_cxxfilt(const std::string& mangled)
+  {
+    DOTRACE("demangle_cxxfilt");
 
-  fstring command("c++filt ", mangled.c_str());
+    fstring command("c++filt ", mangled.c_str());
 
-  Util::ShellPipe pipe(command.c_str(), "r");
+    Util::ShellPipe pipe(command.c_str(), "r");
 
-  if (pipe.isClosed())
-    {
-      throw Util::Error(fstring("while demangling '", mangled.c_str(),
-                                "': couldn't open pipe to c++filt"), SRC_POS);
-    }
+    if (pipe.isClosed())
+      {
+        throw Util::Error(fstring("while demangling '", mangled.c_str(),
+                                  "': couldn't open pipe to c++filt"),
+                          SRC_POS);
+      }
 
-  std::string demangled;
-  std::getline(pipe.stream(), demangled);
+    std::string demangled;
+    std::getline(pipe.stream(), demangled);
 
-  return demangled;
+    return demangled;
+  }
 }
 
 static const char vcid_demangle_cxxfilt_h[] = "$Header$";

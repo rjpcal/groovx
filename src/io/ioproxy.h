@@ -75,7 +75,7 @@ public:
     { return itsReferand->C::serialVersionId(); }
 
   virtual fstring objTypename() const
-    { return demangled_name(typeid(C)); }
+    { return rutz::demangled_name(typeid(C)); }
 
 private:
   IoProxy(const IoProxy&);
@@ -115,7 +115,7 @@ public:
     { return itsReferand->C::serialVersionId(); }
 
   virtual fstring objTypename() const
-    { return demangled_name(typeid(C)); }
+    { return rutz::demangled_name(typeid(C)); }
 
 private:
   ConstIoProxy(const ConstIoProxy&);

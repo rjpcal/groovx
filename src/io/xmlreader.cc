@@ -104,7 +104,7 @@ namespace
     {
       throw Util::Error(fstring("child elements not allowed "
                                 "within elements of type: ",
-                                demangled_name(typeid(*this))),
+                                rutz::demangled_name(typeid(*this))),
                         SRC_POS);
     }
 
@@ -127,9 +127,9 @@ namespace
     T* t = dynamic_cast<T*>(elp);
     if (t == 0)
       throw Util::Error(fstring("wrong element type; expected ",
-                                demangled_name(typeid(T)),
+                                rutz::demangled_name(typeid(T)),
                                 ", got ",
-                                demangled_name(typeid(*elp))),
+                                rutz::demangled_name(typeid(*elp))),
                         pos);
     return *t;
   }

@@ -34,8 +34,11 @@
 
 #include <typeinfo>
 
-/// Returns a demangled typename for the given type.
-const char* demangled_name(const std::type_info& info);
+namespace rutz
+{
+  /// Returns a demangled typename for the given type.
+  const char* demangled_name(const std::type_info& info);
+}
 
 static const char vcid_demangle_h[] = "$Header$";
 #endif // !DEMANGLE_H_DEFINED

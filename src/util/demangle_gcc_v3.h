@@ -41,43 +41,47 @@
 #include "util/debug.h"
 #include "util/trace.h"
 
-std::string demangle_impl(const std::string& mangled)
+namespace
 {
-DOTRACE("demangle_impl");
+  std::string demangle_gcc_v3(const std::string& mangled)
+  {
+    DOTRACE("demangle_gcc_v3");
 
-  int status = 0;
+    int status = 0;
 
-  static std::size_t length = 256;
-  static char* demangled = static_cast<char*>(malloc(length));
+    static std::size_t length = 256;
+    static char* demangled = static_cast<char*>(malloc(length));
 
-  demangled = abi::__cxa_demangle(mangled.c_str(), demangled, &length, &status);
+    demangled = abi::__cxa_demangle(mangled.c_str(), demangled,
+                                    &length, &status);
 
-  if (status == 0)
-    {
-      ASSERT(demangled != 0);
-      return demangled;
-    }
+    if (status == 0)
+      {
+        ASSERT(demangled != 0);
+        return demangled;
+      }
 
-  fstring msg("while demangling '", mangled.c_str(), "': ");
+    fstring msg("while demangling '", mangled.c_str(), "': ");
 
-  switch (status)
-    {
-    case -1:
-      throw Util::Error(fstring(msg, "memory allocation error"), SRC_POS);
-      break;
-    case -2:
-      throw Util::Error(fstring(msg, "invalid mangled name"), SRC_POS);
-      break;
-    case -3:
-      throw Util::Error(fstring(msg, "invalid arguments"
-                                " (e.g. buf non-NULL and length NULL'"), SRC_POS);
-      break;
-    default:
-      throw Util::Error(fstring(msg, "unknown error code"), SRC_POS);
-    }
+    switch (status)
+      {
+      case -1:
+        throw Util::Error(fstring(msg, "memory allocation error"), SRC_POS);
+        break;
+      case -2:
+        throw Util::Error(fstring(msg, "invalid mangled name"), SRC_POS);
+        break;
+      case -3:
+        throw Util::Error(fstring(msg, "invalid arguments"
+                                  " (e.g. buf non-NULL and length NULL'"), SRC_POS);
+        break;
+      default:
+        throw Util::Error(fstring(msg, "unknown error code"), SRC_POS);
+      }
 
-  ASSERT(false);
-  return "can't happen"; // can't happen, but placate compiler
+    ASSERT(false);
+    return "can't happen"; // can't happen, but placate compiler
+  }
 }
 
 //
