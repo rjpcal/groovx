@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Mon Dec 11 14:29:48 2000
+// written: Mon Dec 11 15:39:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,6 @@
 #include "io/iofactory.h"
 
 #include "tcl/ioitempkg.h"
-#include "tcl/listpkg.h"
 #include "tcl/tracertcl.h"
 
 #include "util/serialport.h"
@@ -254,8 +253,6 @@ public:
 extern "C"
 int Rh_Init(Tcl_Interp* interp) {
 DOTRACE("Rh_Init");
-
-  new Tcl::PtrListPkg<ResponseHandler>(interp, "RhList", "$Revision$");
 
   new Tcl::IoItemPkg<ResponseHandler>(interp, "Rh", "$Revision$");
 
