@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Mar 22 16:47:01 2000
+// written: Thu Mar 23 20:31:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,14 +84,20 @@ public:
   void clear();
 
 protected:
-  /** Return the void* at the index given by 'id'.  There is no
+  /** Return the \c void* at the index given by \a id.  There is no
 		range-check performed; this must be done by the client with
-		isValidId(). */
+		\c isValidId(). */
   void* getVoidPtr(int id) const throw ();
 
-  /** Like getVoidPtr(), but checks first if 'id' is a valid index,
-		and throws an InvalidIdError if it is not. */
+  /** Like \c getVoidPtr(), but checks first if \a id is a valid index,
+		and throws an \c InvalidIdError if it is not. */
   void* getCheckedVoidPtr(int id) const throw (InvalidIdError);
+
+  /** Releases the \c void* at the given index from the management of
+      the \c VoidPtrList. Ownership of the pointed-to object is
+      transferred to the caller, and the \c void* is removed from the
+      \c VoidPtrList. */
+  void* releaseVoidPtr(int id) throw (InvalidIdError);
 
   /** Add ptr at the next available location, and return the index
 		where it was inserted. If necessary, the list will be expanded

@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Mar 15 10:17:24 2000
+// written: Thu Mar 23 20:33:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -142,6 +142,17 @@ DOTRACE("VoidPtrList::getCheckedVoidPtr");
 	 throw err;
   }
   return getVoidPtr(id);
+}
+
+void* VoidPtrList::releaseVoidPtr(int id) throw (InvalidIdError) {
+DOTRACE("VoidPtrList::releaseVoidPtr");
+  void* ptr = getCheckedVoidPtr(id);
+  itsImpl->itsVec[id] = 0;
+
+  // reset itsImpl->itsFirstVacant in case i would now be the first vacant
+  if (itsImpl->itsFirstVacant > id) itsImpl->itsFirstVacant = id;
+
+  return ptr;
 }
 
 int VoidPtrList::insertVoidPtr(void* ptr) {
