@@ -46,9 +46,9 @@ PLATFORM := $(ARCH)
 LOCAL_ARCH := $(HOME)/local/$(PLATFORM)
 
 PROJECT = $(HOME)/sorcery/grsh
-SRC := ./src
+SRC := src
 DEP := ./dep/$(PLATFORM)
-OBJ := ./obj/$(PLATFORM)
+OBJ := obj/$(PLATFORM)
 LOGS := ./logs
 DOC := ./doc
 IDEP := ./idep
@@ -102,7 +102,7 @@ ifeq ($(PLATFORM),i686)
 	SHLIB_EXT := so
 	STATLIB_EXT := a
 
-	CPP_DEFINES += -DI686
+	CPP_DEFINES += -DI686 -march=i686
 
 	DEFAULT_MODE := debug
 
@@ -217,18 +217,20 @@ ifeq ($(COMPILER),g++)
 endif
 
 ifeq ($(COMPILER),g++3)
-	CC := time g++3
+	CC := time g++301
 # Filter the compiler output...
 	FILTER := |& $(SCRIPTS)/filter_gcc_v3
 
-	CC_SWITCHES += -W -Wdeprecated -Wno-system-headers -Wall -Wsign-promo -Wwrite-strings -Weffc++
+	WARNINGS := -W -Wdeprecated -Wno-system-headers -Wall -Wsign-promo -Wwrite-strings -Weffc++
+	CC_SWITCHES += $(WARNINGS)
 	CPP_DEFINES += -DGCC_COMPILER=3 -DSTD_IO=std -DFUNCTIONAL_OK
 
 	ifeq ($(MODE),debug)
-		CC_SWITCHES += -g -O0
+		CC_SWITCHES += -O1
 		LD_OPTIONS +=
 	endif
 
+# can't use -O3 with g++301, since we get core dumps...
 	ifeq ($(MODE),prod)
 		CC_SWITCHES += -O2
 		LD_OPTIONS +=
@@ -293,8 +295,8 @@ TOGL_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/togl/*.cc)))
 
 STATIC_SRCS := \
-	$(shell grep -l 'GL/gl\.h' $(SRC)/*.cc) \
-	$(shell grep -l 'int main' $(SRC)/*.cc)
+	$(shell grep -l 'GL/gl\.h' $(SRC)/visx/*.cc) \
+	$(shell grep -l 'int main' $(SRC)/visx/*.cc)
 
 STATIC_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(STATIC_SRCS)))
@@ -305,7 +307,7 @@ GRSH_STATIC_OBJS := $(STATIC_OBJS) $(TOGL_OBJS)
 # libDeepVision
 #
 
-DEEPVISION_SRCS := $(filter-out $(STATIC_SRCS),$(wildcard $(SRC)/*.cc))
+DEEPVISION_SRCS := $(filter-out $(STATIC_SRCS),$(wildcard $(SRC)/visx/*.cc))
 DEEPVISION_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(DEEPVISION_SRCS)))
 
@@ -350,9 +352,27 @@ DEEPTCL_OBJS := $(subst .cc,$(OBJ_EXT),\
 
 LIBDEEPTCL := $(LOCAL_LIB)/libDeepTcl$(LIB_EXT)
 
-
+#
+# all project libs
+#
 
 PROJECT_LIBS := $(LIBDEEPVISION) $(LIBDEEPTCL) $(LIBDEEPAPPL) $(LIBDEEPUTIL)
+
+#
+# test libs
+#
+
+PKG_SRCS := $(wildcard $(SRC)/pkgs/*/*.cc)
+
+PKG_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(PKG_SRCS)))
+
+PKG_DIRS := $(sort $(dir $(PKG_SRCS)))
+
+PKG_LIBS := $(subst $(SRC),$(LOCAL_LIB),\
+	$(subst /.,.,\
+	$(addsuffix .$(SHLIB_EXT),\
+	$(subst pkgs/,visx/,$(PKG_DIRS)))))
 
 #-------------------------------------------------------------------------
 #
@@ -362,11 +382,10 @@ PROJECT_LIBS := $(LIBDEEPVISION) $(LIBDEEPTCL) $(LIBDEEPAPPL) $(LIBDEEPUTIL)
 
 ifeq ($(MODE),debug)
 	EXECUTABLE := $(LOCAL_BIN)/testsh
-	CPP_DEFINES += -DPROF -DASSERT
+	CPP_DEFINES += -DPROF
 endif
 ifeq ($(MODE),prod)
 	EXECUTABLE := $(LOCAL_BIN)/grsh$(VERSION)
-	CPP_DEFINES += -DPROF -DASSERT
 endif
 
 ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(PROJECT_LIBS))
@@ -384,7 +403,8 @@ endif
 #
 #-------------------------------------------------------------------------
 
-all: dir_structure TAGS $(ALL_SHLIBS) $(EXECUTABLE)
+all: dir_structure TAGS $(ALL_SHLIBS) $(PKG_LIBS) $(EXECUTABLE)
+	echo $(PKG_LIBS)
 	$(EXECUTABLE) ./testing/grshtest.tcl
 
 CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
@@ -404,6 +424,9 @@ ALL_CC_OPTIONS := $(CC_SWITCHES) $(INCLUDE_PATH) $(CPP_DEFINES)
 $(OBJ)/%$(OBJ_EXT) : $(SRC)/%.cc
 	echo $< >> $(LOGS)/CompileStats
 	csh -fc "($(CC) -c $< -o $@ $(ALL_CC_OPTIONS)) $(FILTER)"
+
+# to avoid deleting any intermediate targets
+.SECONDARY:
 
 $(SRC)/%.precc : $(SRC)/%.cc
 	$(CC) -E $< $(ALL_CC_OPTIONS) > $@
@@ -440,15 +463,36 @@ lib%: $(LOCAL_LIB)/lib%$(LIB_EXT)
 #
 #-------------------------------------------------------------------------
 
-ALL_SOURCES := $(wildcard $(SRC)/*.cc) $(wildcard $(SRC)/[a-z]*/*.cc)
-ALL_HEADERS := $(wildcard $(SRC)/*.h)  $(wildcard $(SRC)/[a-z]*/*.h)
+ALL_SOURCES := $(wildcard $(SRC)/[a-z]*/*.cc $(SRC)/[a-z]*/[a-z]*/*.cc)
+ALL_HEADERS := $(wildcard $(SRC)/[a-z]*/*.h  $(SRC)/[a-z]*/[a-z]*/*.h)
+
+
+# this file contains dependencies of object files on source+header files
 
 DEP_FILE := $(DEP)/alldepends
 
 $(DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS)
-	pydep.py $(SRC) > $@
+	time pydep.py $(SRC) > $@
 
 include $(DEP_FILE)
+
+
+# this file contains dependencies of package shlib's on object files
+
+PKG_DEP_FILE := $(DEP)/pkgdepends
+
+$(PKG_DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS)
+	time src/pkgs/buildPkgDeps.tcl
+
+include $(PKG_DEP_FILE)
+
+
+
+cdeps: $(ALL_SOURCES) $(ALL_HEADERS)
+	time cdeplevels.py $(SRC) -L 1000 > $(LOGS)/cdeps
+
+ldeps: $(ALL_SOURCES) $(ALL_HEADERS)
+	time ldeplevels.py $(SRC) -L 1000 > $(LOGS)/ldeps
 
 #-------------------------------------------------------------------------
 #
@@ -459,6 +503,7 @@ include $(DEP_FILE)
 SRCDIRS := $(sort $(dir $(ALL_SOURCES)))
 ALLDIRS := $(subst $(SRC), $(OBJ), $(SRCDIRS)) $(TMP_DIR)
 
+.PHONY: dir_structure
 dir_structure:
 	for dr in $(ALLDIRS); do if [ ! -d $$dr ]; then mkdir $$dr; fi; done
 
@@ -477,9 +522,6 @@ backup:
 benchmarks: $(EXECUTABLE)
 	$(EXECUTABLE) $(SCRIPTS)/benchmarks.tcl -output $(LOGS)/benchmarks.txt
 
-cdeps: $(ALL_SOURCES) $(ALL_HEADERS)
-	cdep -i$(IDEP)/CdepSearchpath $+ > $(IDEP)/CdepDeps
-
 # Remove all backups, temporaries, and coredumps
 clean:
 	rm -f ./*~ ./expt*2001.asw ./resp*2001 ./\#* ./core $(DOC)/*~ $(LOGS)/*~ \
@@ -492,25 +534,21 @@ cleaner: clean
 
 # Count the lines in all source files
 count: $(ALL_SOURCES) $(ALL_HEADERS)
-	wc -l $+
+	wc -lc $+
 
 counts: $(ALL_SOURCES) $(ALL_HEADERS)
-	wc -l $+ | sort -n > counts
+	wc -lc $+ | sort -n > counts
 
 do_sizes:
 	ls -lLR obj/$(PLATFORM) | grep "\.do" | sort -n +4 > do_sizes
 
-docs: $(DOC)/DoxygenConfig $(SRC)/*.h $(SRC)/*.doc
+docs: $(DOC)/DoxygenConfig $(DOC)/*.doc $(ALL_HEADERS)
 	(doxygen $(DOC)/DoxygenConfig > $(DOC)/DocLog) >& $(DOC)/DocErrors
 	cd ~/www/grsh; chmod -R og+r *
 
 # Generate tags file based only on header files
 H_TAGS: $(ALL_HEADERS)
 	$(ETAGS) -fH_TAGS $(ALL_HEADERS)
-
-ldeps: cdeps
-	ldep -d$(IDEP)/CdepDeps -U./src -U./src/tcl -U./src/util  \
-		> $(IDEP)/Ldeps || /bin/true
 
 # Count the number of non-commented source lines
 ncsl: $(ALL_SOURCES) $(ALL_HEADERS)
