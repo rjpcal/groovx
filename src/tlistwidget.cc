@@ -3,7 +3,7 @@
 // tlistwidget.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:46:38 1999
-// written: Sat Dec  4 02:41:56 1999
+// written: Sun Dec  5 15:53:18 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,7 +78,6 @@ DOTRACE("TlistWidget::refresh");
   clearColorBuffer(); 
   safeDrawTrial(itsCurTrial, this);
   swapBuffers();
-  clearColorBuffer(); 
   glFlush();
 }
 
