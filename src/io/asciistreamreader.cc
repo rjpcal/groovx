@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Sat Sep 23 15:32:24 2000
+// written: Sat Sep 23 16:13:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@
 #define AsciiStreamReader ASR
 #endif
 
-#ifdef ACC_COMPILER
+#ifdef PRESTANDARD_IOSTREAMS
 #define NO_IOS_EXCEPTIONS
 #endif
 
@@ -46,8 +46,8 @@
 
 class AttributeReadError : public IO::ReadError {
 public:
-  AttributeReadError(const string& attrib_name) :
-	 ReadError("input failed while reading attribute: ")
+  AttributeReadError(const std::string& attrib_name) :
+	 IO::ReadError("input failed while reading attribute: ")
 	 {
 		appendMsg(attrib_name.c_str());
 	 }
@@ -60,10 +60,10 @@ namespace {
 }
 
 namespace Escape {
-  void readAndUnEscape(STD_IO::istream& is, string& text_out);
+  void readAndUnEscape(STD_IO::istream& is, std::string& text_out);
 }
 
-void Escape::readAndUnEscape(STD_IO::istream& is, string& text_out) {
+void Escape::readAndUnEscape(STD_IO::istream& is, std::string& text_out) {
 DOTRACE("Escape::readAndUnEscape");
 
   int brace_level = 0;
@@ -143,7 +143,7 @@ public:
 
   class ObjectMap {
   private:
-	 map<unsigned long, IO::IoObject*> itsMap;
+	 std::map<unsigned long, IO::IoObject*> itsMap;
 
   public:
 	 ObjectMap() : itsMap() {}
@@ -196,13 +196,13 @@ public:
   };
 
   struct Attrib {
-	 string type;
-	 string value;
+	 std::string type;
+	 std::string value;
   };
 
   class AttribMap {
   private:
-	 map<string, Attrib> itsMap;
+	 std::map<std::string, Attrib> itsMap;
 	 unsigned long itsSerialVersionId;
 
   public:
@@ -212,7 +212,7 @@ public:
 
 	 unsigned long getSerialVersionId() const { return itsSerialVersionId; }
 
-	 const Attrib& operator[](const string& attrib_name)
+	 const Attrib& operator[](const std::string& attrib_name)
 		{
 		  // DOTRACE("AsciiStreamReader::Impl::AttribMap::operator[]");
 		  const Attrib& attrib = itsMap[attrib_name];
@@ -227,7 +227,7 @@ public:
 		}
 
   private:
-	 Attrib& getNewAttrib(const string& attrib_name)
+	 Attrib& getNewAttrib(const std::string& attrib_name)
 		{
 		  // DOTRACE("AsciiStreamReader::Impl::AttribMap::getNewAttrib");
 		  Attrib& attrib = itsMap[attrib_name];
@@ -267,7 +267,7 @@ private:
   // forwards to in implementing its own member functions.
 public:
   template <class T>
-  T readBasicType(const string& name, T* /* dummy */) {
+  T readBasicType(const std::string& name, T* /* dummy */) {
 	 istrstream ist(currentAttribs()[name].value.c_str());
 
 	 T return_val;
@@ -284,13 +284,13 @@ public:
 	 { return currentAttribs().getSerialVersionId(); }
 
   // Returns a new dynamically allocated char array
-  char* readStringType(const string& name);
+  char* readStringType(const std::string& name);
 
-  IO::IoObject* readObject(const string& attrib_name);
+  IO::IoObject* readObject(const std::string& attrib_name);
 
-  void readValueObj(const string& name, Value& value);
+  void readValueObj(const std::string& name, Value& value);
 
-  void readOwnedObject(const string& name, IO::IoObject* obj);
+  void readOwnedObject(const std::string& name, IO::IoObject* obj);
 
   void readBaseClass(IO::Reader* reader, const char* baseClassName, IO::IoObject* basePart);
 
@@ -373,7 +373,7 @@ DOTRACE("AsciiStreamReader::Impl::inflateObject");
   itsAttribs.pop_front();
 }
 
-char* AsciiStreamReader::Impl::readStringType(const string& name) {
+char* AsciiStreamReader::Impl::readStringType(const std::string& name) {
 DOTRACE("AsciiStreamReader::Impl::readStringType");
 
   istrstream ist(currentAttribs()[name].value.c_str());
@@ -400,7 +400,7 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
   return new_cstring;
 }
 
-IO::IoObject* AsciiStreamReader::Impl::readObject(const string& attrib_name) {
+IO::IoObject* AsciiStreamReader::Impl::readObject(const std::string& attrib_name) {
 DOTRACE("AsciiStreamReader::Impl::readObject");
 
   const Attrib& attrib = currentAttribs()[attrib_name];
@@ -419,7 +419,7 @@ DOTRACE("AsciiStreamReader::Impl::readObject");
 }
 
 void AsciiStreamReader::Impl::readValueObj(
-  const string& attrib_name,
+  const std::string& attrib_name,
   Value& value
   ) {
 DOTRACE("AsciiStreamReader::Impl::readValueObj");
@@ -433,7 +433,7 @@ DOTRACE("AsciiStreamReader::Impl::readValueObj");
 }
 
 void AsciiStreamReader::Impl::readOwnedObject(
-  const string& attrib_name, IO::IoObject* obj
+  const std::string& attrib_name, IO::IoObject* obj
   ) {
 DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
 

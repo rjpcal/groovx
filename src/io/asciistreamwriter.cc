@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Sat Sep 23 15:32:24 2000
+// written: Sat Sep 23 16:15:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,14 +32,14 @@
 #define AsciiStreamWriter ASW
 #endif
 
-#ifdef ACC_COMPILER
+#ifdef PRESTANDARD_IOSTREAMS
 #define NO_IOS_EXCEPTIONS
 #endif
 
 namespace {
   const char* ATTRIB_ENDER = "^\n";
 
-  void addEscapes(string& text) {
+  void addEscapes(std::string& text) {
   DOTRACE("AsciiStreamWriter::Impl::addEscapes");
 	 // Escape any special characters
 	 for (size_t pos = 0; pos < text.length(); /* ++ done in loop body */ ) {
@@ -98,8 +98,8 @@ public:
 
   AsciiStreamWriter* itsOwner;
   STD_IO::ostream& itsBuf;
-  set<const IO::IoObject *> itsToHandle;
-  set<const IO::IoObject *> itsWrittenObjects;
+  std::set<const IO::IoObject *> itsToHandle;
+  std::set<const IO::IoObject *> itsWrittenObjects;
 
 #ifndef NO_IOS_EXCEPTIONS
   ios::iostate itsOriginalExceptionState;
@@ -152,13 +152,13 @@ public:
 
   void writeStringType(const char* name, const char* val,
 							  const char* string_typename) {
-	 string escaped_val(val);
+	 std::string escaped_val(val);
 	 int val_length = escaped_val.length();
 	 addEscapes(escaped_val);
 
 	 itsBuf << string_typename << " "
 			  << name << " := " 
-			  << val_length << " " << escaped_val << ATTRIB_ENDER;
+			  << val_length << " " << escaped_val.c_str() << ATTRIB_ENDER;
   }
 
   void writeRoot(const IO::IoObject* root);
