@@ -47,7 +47,7 @@ proc testList { packagename listname baseclass subclass1 subclass2 } {
 proc testResetCmd { objname } {
     upvar $objname this
 
-    set cmdname "${this(listname)}::reset"
+    set cmdname "${this(baseclass)}::removeAll"
     set usage "wrong \# args: should be \"$cmdname\""
     set testname "${this(packagename)}-${cmdname}"
 
@@ -109,7 +109,7 @@ proc testDeleteCmd { objname } {
 proc testGetValidIdsCmd { objname } {
     upvar $objname this
 
-    set cmdname "${this(listname)}::getValidIds"
+    set cmdname "${this(baseclass)}::findAll"
     set usage "wrong \# args: should be \"$cmdname\""
     set testname "${this(packagename)}-${cmdname}"
 
@@ -161,8 +161,8 @@ proc testStringifyCmd { objname } {
 
 	 purgeAll
 
-    set stringify "${this(listname)}::stringify"
-    set destringify "${this(listname)}::destringify"
+    set stringify "IoDb::stringify"
+    set destringify "IoDb::destringify"
     set usage "wrong \# args: should be \"$stringify\""
     set testname "${this(packagename)}-${stringify}"
 
@@ -170,7 +170,7 @@ proc testStringifyCmd { objname } {
         $stringify junk
     "} {$usage}
     eval ::test $testname {"use on empty list"} {"
-        ${this(listname)}::reset
+        ${this(baseclass)}::removeAll
         set str \[$stringify\]
         IO::new ${this(subclass1)}
         IO::new ${this(subclass2)}
@@ -178,12 +178,12 @@ proc testStringifyCmd { objname } {
         ${this(baseclass)}::countAll
     "} {"^0$"}
     eval ::test $testname {"use on filled list"} {"
-        ${this(listname)}::reset
+        ${this(baseclass)}::removeAll
 
         set id1 \[IO::new ${this(subclass1)}\]
         set id2 \[IO::new ${this(subclass2)}\]
 
-	     set ids_before \[${this(listname)}::getValidIds\]
+	     set ids_before \[${this(baseclass)}::findAll\]
         set idx1 \[lsearch \$ids_before \$id1\]
         set idx2 \[lsearch \$ids_before \$id2\]
 
@@ -192,10 +192,10 @@ proc testStringifyCmd { objname } {
 
         set str \[$stringify\]
 
-        ${this(listname)}::reset
+        ${this(baseclass)}::removeAll
         $destringify \$str
 
-	     set ids_after \[${this(listname)}::getValidIds\]
+	     set ids_after \[${this(baseclass)}::findAll\]
         set id1_after \[lindex \$ids_after \$idx1\]
         set id2_after \[lindex \$ids_after \$idx2\]
 
@@ -214,8 +214,8 @@ proc testDestringifyCmd { objname } {
 
 	 purgeAll
 
-    set stringify "${this(listname)}::stringify"
-    set destringify "${this(listname)}::destringify"
+    set stringify "IoDb::stringify"
+    set destringify "IoDb::destringify"
     set usage "wrong \# args: should be \"$destringify string\""
     set testname "${this(packagename)}-${destringify}"
 
@@ -242,8 +242,8 @@ proc testWriteCmd { objname } {
 
 	 purgeAll
 
-    set writecmd "${this(listname)}::write"
-    set readcmd "${this(listname)}::read"
+    set writecmd "IoDb::write"
+    set readcmd "IoDb::read"
     set usage "wrong \# args: should be \"$writecmd\""
     set testname "${this(packagename)}-${writecmd}"
 
@@ -251,7 +251,7 @@ proc testWriteCmd { objname } {
         $writecmd junk
     "} {$usage}
     eval ::test $testname {"use on empty list"} {"
-        ${this(listname)}::reset
+        ${this(baseclass)}::removeAll
         set str \[$writecmd\]
         IO::new ${this(subclass1)}
         IO::new ${this(subclass2)}
@@ -259,12 +259,12 @@ proc testWriteCmd { objname } {
         ${this(baseclass)}::countAll
     "} {"^0$"}
     eval ::test $testname {"use on filled list"} {"
-        ${this(listname)}::reset
+        ${this(baseclass)}::removeAll
 
         set id1 \[IO::new ${this(subclass1)}\]
         set id2 \[IO::new ${this(subclass2)}\]
 
-	     set ids_before \[${this(listname)}::getValidIds\]
+	     set ids_before \[${this(baseclass)}::findAll\]
         set idx1 \[lsearch \$ids_before \$id1\]
         set idx2 \[lsearch \$ids_before \$id2\]
 
@@ -273,10 +273,10 @@ proc testWriteCmd { objname } {
 
         set str \[$writecmd\]
 
-        ${this(listname)}::reset
+        ${this(baseclass)}::removeAll
         $readcmd \$str
 
-	     set ids_after \[${this(listname)}::getValidIds\]
+	     set ids_after \[${this(baseclass)}::findAll\]
         set id1_after \[lindex \$ids_after \$idx1\]
         set id2_after \[lindex \$ids_after \$idx2\]
 
@@ -295,8 +295,8 @@ proc testReadCmd { objname } {
 
 	 purgeAll
 
-    set writecmd "${this(listname)}::write"
-    set readcmd "${this(listname)}::read"
+    set writecmd "IoDb::write"
+    set readcmd "IoDb::read"
     set usage "wrong \# args: should be \"$readcmd string\""
     set testname "${this(packagename)}-${readcmd}"
 
