@@ -114,7 +114,7 @@ DOTRACE("GLCanvas::drawBufferBack");
   glDrawBuffer(GL_BACK);
 }
 
-vec3i GLCanvas::screenFromWorld3(const vec3d& world_pos) const
+vec3d GLCanvas::screenFromWorld3(const vec3d& world_pos) const
 {
 DOTRACE("GLCanvas::screenFromWorld3");
 
@@ -141,9 +141,8 @@ DOTRACE("GLCanvas::screenFromWorld3");
 
   dbg_dump(3, world_pos);
   dbg_dump(3, screen_pos);
-  dbg_dump(3, vec3i(screen_pos));
 
-  return vec3i(screen_pos);
+  return screen_pos;
 }
 
 vec3d GLCanvas::worldFromScreen3(const vec3i& screen_pos) const
@@ -485,12 +484,12 @@ DOTRACE("GLCanvas::rasterPos");
 
   const geom::rect<int> viewport = getScreenViewport();
 
-  const vec2i screen_pos = screenFromWorld2(world_pos);
+  const vec2d screen_pos = screenFromWorld2(world_pos);
 
   dbg_dump(3, world_pos);
   dbg_dump(3, screen_pos);
 
-  if (viewport.contains(screen_pos))
+  if (viewport.contains(vec2i(screen_pos)))
     {
       glRasterPos2d(world_pos.x(), world_pos.y());
     }

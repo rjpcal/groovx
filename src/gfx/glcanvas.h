@@ -62,7 +62,7 @@ public:
   void drawBufferFront() throw();
   void drawBufferBack() throw();
 
-  virtual geom::vec3<int> screenFromWorld3(const geom::vec3<double>& world_pos) const;
+  virtual geom::vec3<double> screenFromWorld3(const geom::vec3<double>& world_pos) const;
   virtual geom::vec3<double> worldFromScreen3(const geom::vec3<int>& screen_pos) const;
 
   virtual geom::rect<int> getScreenViewport() const;

@@ -266,7 +266,7 @@ DOTRACE("GaborArray::grGetBoundingBox");
 
   const vec2d world_origin(0.0, 0.0);
 
-  const vec2i screen_origin = bbox.screenFromWorld2(world_origin);
+  const vec2i screen_origin = vec2i(bbox.screenFromWorld2(world_origin));
 
   geom::rect<int> screen_rect;
   screen_rect.set_lbwh(screen_origin, vec2i(itsSizeX, itsSizeY));

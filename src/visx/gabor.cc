@@ -187,7 +187,7 @@ DOTRACE("Gabor::grGetBoundingBox");
 
   const vec2d world_origin(0.0, 0.0);
 
-  const vec2i screen_origin = bbox.screenFromWorld2(world_origin);
+  const vec2i screen_origin = vec2i(bbox.screenFromWorld2(world_origin));
 
   const vec2i size(itsResolution * itsPointSize,
                    itsResolution * itsPointSize);

@@ -105,7 +105,7 @@ void Gfx::Bbox::pop()
   rep->txforms.pop_back();
 }
 
-vec2i Gfx::Bbox::screenFromWorld2(const vec2d& world_pos) const
+vec2d Gfx::Bbox::screenFromWorld2(const vec2d& world_pos) const
 {
   // FIXME need to install our own modelview matrix here first...
   return rep->canvas.screenFromWorld2(world_pos);

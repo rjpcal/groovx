@@ -659,14 +659,14 @@ DOTRACE("Gfx::PSCanvas::~PSCanvas");
   delete rep;
 }
 
-vec3i Gfx::PSCanvas::screenFromWorld3(
+vec3d Gfx::PSCanvas::screenFromWorld3(
   const vec3d& /*world_pos*/
   ) const
 {
 DOTRACE("Gfx::PSCanvas::screenFromWorld3");
 // FIXME
   rep->raiseError("not implemented", SRC_POS);
-  return vec3i();
+  return vec3d();
 }
 
 vec3d Gfx::PSCanvas::worldFromScreen3(
