@@ -23,9 +23,15 @@ package require Iwidgets
 #     parent.itsPanes.itsControls.viewobjlist
 #   parent.itsToglet
 
+set ::statusInfo "VisEdit started."
+
 proc debug {msg} {
 	 if {0} { puts $msg }
 }
+
+#
+# FieldControls class definition
+#
 
 itcl::class FieldControls {
 	 private variable itsObjType
@@ -194,6 +200,11 @@ itcl::class FieldControls {
 		  }
 	 }
 }
+
+
+#
+# Editor class definition
+#
 
 itcl::class Editor {
 	 private variable itsPanes
@@ -434,6 +445,13 @@ itcl::class Editor {
 		  $itsPanes fraction 75 25
 	 }
 
+	 private method runCmd {} {
+		  set cmd [$itsButtons.runcmd get]
+		  catch { eval $cmd } result
+		  set ::statusInfo "\[$cmd\] --> $result"
+		  $itsButtons.runcmd clear
+	 }
+
 	 constructor {parent {objtype Gabor} } {
 		  set itsPanes [iwidgets::panedwindow $parent.panes \
 					 -width 900 -height 1000]
@@ -478,6 +496,11 @@ itcl::class Editor {
 		  button $itsButtons.refreshlist -text "Refresh list" -relief raised \
 					 -command [itcl::code $this refreshLists]
 		  pack $itsButtons.refreshlist -side top -anchor nw
+
+		  iwidgets::entryfield $itsButtons.runcmd \
+					 -labeltext "Run command" -labelpos n \
+					 -command [itcl::code $this runCmd]
+		  pack $itsButtons.runcmd -side top -anchor nw
 
 		  pack $itsButtons -side left -anchor nw
 
@@ -637,7 +660,9 @@ itcl::class Menuapp {
 
 	 constructor {} {
 		  set itsFrame [frame .fr]
-		  set itsHelpEntry [entry .ef -textvariable statusInfo]
+
+		  set itsHelpEntry [label .ef -textvariable statusInfo \
+					 -relief sunken -anchor w -foreground darkgreen]
 
 		  iwidgets::menubar .mb -helpvariable statusInfo -menubuttons {
 				menubutton file -text File -menu {
