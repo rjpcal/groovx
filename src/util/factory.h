@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Wed Jun 30 17:04:44 1999
+// written: Thu Jul  1 15:47:45 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,6 +57,17 @@ class Factory {
 private:
   typedef map<string, CreatorBase<Base>* > MapType;
 
+  MapType itsMap;
+
+  void clear() {
+  	 for (typename MapType::iterator ii = itsMap.begin();
+ 			ii != itsMap.end(); 
+ 			++ii) {
+  		delete (ii->second);
+  		ii->second = 0;
+  	 }
+  }
+
 protected:
   Factory() {}
   virtual ~Factory() { clear(); }
@@ -88,20 +99,6 @@ public:
 		throw FactoryError(bad_create_msg + type);
 	 }
 	 return d;
-  }
-
-private:
-  MapType itsMap;
-
-  void clear() {
-#if 0
-  	 for (MapType::const_iterator ii = itsMap.begin();
- 			ii != itsMap.end(); 
- 			++ii) {
-  		delete (ii->second);
-  		ii->second = 0;
-  	 }
-#endif
   }
 };
 
