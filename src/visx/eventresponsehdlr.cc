@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Sep 27 17:56:37 2000
+// written: Thu Sep 28 18:55:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ public:
   void setInputResponseMap(const fixed_string& s)
 	 {
 		itsInputResponseMap = s;
-		updateRegexps();
+		itsRegexpsAreDirty = true;
 	 }
 
   bool getUseFeedback() const
@@ -101,7 +101,7 @@ public:
   void setFeedbackMap(const char* feedback_string)
 	 {
 		itsFeedbackMap = feedback_string;
-		updateFeedbacks();
+		itsFeedbacksAreDirty = true;
 	 }
 
   const fixed_string& getEventSequence() const
@@ -184,8 +184,8 @@ private:
   void handleResponse(const char* keysym) const;
   int getRespFromKeysym(const char* keysym) const;
   void feedback(int response) const;
-  void updateFeedbacks();
-  void updateRegexps();
+  void updateFeedbacksIfNeeded() const;
+  void updateRegexpsIfNeeded() const;
 
   int getCheckedListLength(Tcl_Obj* tcllist) const throw(ErrorWithMsg);
 
@@ -320,6 +320,8 @@ private:
   fixed_string itsInputResponseMap;
   mutable dynamic_block<RegExp_ResponseVal> itsRegexps;
 
+  mutable bool itsRegexpsAreDirty;
+
   class Condition_Feedback {
   public:
 	 // This no-argument constructor puts the object in an invalid
@@ -372,6 +374,8 @@ private:
   fixed_string itsFeedbackMap;
   mutable dynamic_block<Condition_Feedback> itsFeedbacks;
 
+  mutable bool itsFeedbacksAreDirty;
+
   bool itsUseFeedback;
 
   fixed_string itsEventSequence;
@@ -404,8 +408,10 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
   itsPrivateCmdName(getUniqueCmdName().c_str()),
   itsInputResponseMap(input_response_map),
   itsRegexps(),
+  itsRegexpsAreDirty(true),
   itsFeedbackMap(),
   itsFeedbacks(),
+  itsFeedbacksAreDirty(true),
   itsUseFeedback(true),
   itsEventSequence("<KeyPress>"),
   itsBindingSubstitution("%K"),
@@ -448,11 +454,9 @@ DOTRACE("EventResponseHdlr::Impl::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 
-	 lwriter->writeTypename(ioTag.c_str());
+	 oldLegacySrlz(writer);
 
 	 ostream& os = lwriter->output();
-
-	 oldLegacySrlz(writer);
 
 	 os << itsEventSequence << endl;
 	 os << itsBindingSubstitution << endl;
@@ -465,8 +469,6 @@ void EventResponseHdlr::Impl::legacyDesrlz(IO::Reader* reader) {
 DOTRACE("EventResponseHdlr::Impl::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
-
-	 lreader->readTypename(ioTag.c_str());
 
 	 oldLegacyDesrlz(reader);
 
@@ -510,11 +512,11 @@ DOTRACE("EventResponseHdlr::Impl::oldLegacyDesrlz");
 	 }
 
 	 getline(is, itsInputResponseMap, '\n');
-	 updateRegexps();
+	 itsRegexpsAreDirty = true;
 
 	 DebugEvalNL(is.peek());
 	 getline(is, itsFeedbackMap, '\n');
-	 updateFeedbacks();
+	 itsFeedbacksAreDirty = true;
 
 	 int val;
 	 is >> val;
@@ -541,8 +543,8 @@ DOTRACE("EventResponseHdlr::Impl::readFrom");
   reader->readValue("eventSequence", itsEventSequence);
   reader->readValue("bindingSubstitution", itsBindingSubstitution);
 
-  updateRegexps();
-  updateFeedbacks();
+  itsRegexpsAreDirty = true;
+  itsFeedbacksAreDirty = true;
 }
 
 void EventResponseHdlr::Impl::writeTo(IO::Writer* writer) const {
@@ -690,6 +692,8 @@ DOTRACE("EventResponseHdlr::Impl::getRespFromKeysym");
 
   DebugEvalNL(response_string);
 
+  updateRegexpsIfNeeded();
+
   DebugEvalNL(itsRegexps.size());
 
   for (size_t i = 0; i < itsRegexps.size(); ++i) {
@@ -710,6 +714,8 @@ DOTRACE("EventResponseHdlr::Impl::feedback");
 
   DebugEvalNL(response);
 
+  updateFeedbacksIfNeeded();
+
   Tcl_SetVar2Ex(itsInterp, "resp_val", NULL,
 					 Tcl_NewIntObj(response), TCL_GLOBAL_ONLY);
 
@@ -724,13 +730,15 @@ DOTRACE("EventResponseHdlr::Impl::feedback");
 
 //---------------------------------------------------------------------
 //
-// EventResponseHdlr::updateFeedacks --
+// EventResponseHdlr::updateFeedacksIfNeeded --
 //
 //---------------------------------------------------------------------
 
-void EventResponseHdlr::Impl::updateFeedbacks() {
-DOTRACE("EventResponseHdlr::Impl::updateFeedbacks");
+void EventResponseHdlr::Impl::updateFeedbacksIfNeeded() const {
+DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
   Assert(itsInterp != 0);
+
+  if (!itsFeedbacksAreDirty) return;
 
   Tcl_Obj** pairs;
   int num_pairs=0;
@@ -750,7 +758,7 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacks");
 	 // Check that the length of the "pair" is really 2
 	 if (getCheckedListLength(current_pair) != 2) {
 		raiseBackgroundError("\"pair\" did not have length 2 "
-									"in EventResponseHdlr::updateFeedbacks");
+									"in EventResponseHdlr::updateFeedbacksIfNeeded");
 		return;
 	 }
 
@@ -760,12 +768,14 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacks");
 	 itsFeedbacks.at(i) = Impl::Condition_Feedback(condition, result);
   }
 
-  DebugPrintNL("updateFeedbacks success!");
+  itsFeedbacksAreDirty = false;
+
+  DebugPrintNL("updateFeedbacksIfNeeded success!");
 }
 
 //--------------------------------------------------------------------
 //
-// EventResponseHdlr::updateRegexps --
+// EventResponseHdlr::updateRegexpsIfNeeded --
 //
 // Recompiles the internal table of regexps to correspond with the
 // list of regexps and response values stored in the string
@@ -773,9 +783,11 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacks");
 //
 //--------------------------------------------------------------------
 
-void EventResponseHdlr::Impl::updateRegexps() {
-DOTRACE("EventResponseHdlr::updateRegexps");
+void EventResponseHdlr::Impl::updateRegexpsIfNeeded() const {
+DOTRACE("EventResponseHdlr::updateRegexpsIfNeeded");
   Assert(itsInterp != 0);
+
+  if (!itsRegexpsAreDirty) return;
 
   Tcl_Obj** pairs;
   int num_pairs=0;
@@ -794,7 +806,7 @@ DOTRACE("EventResponseHdlr::updateRegexps");
 	 // Check that the length of the "pair" is really 2
 	 if (getCheckedListLength(current_pair) != 2) {
 		raiseBackgroundError("\"pair\" did not have length 2 "
-									"in EventResponseHdlr::updateRegexps");
+									"in EventResponseHdlr::updateRegexpsIfNeeded");
 		return;
 	 }
 
@@ -806,7 +818,9 @@ DOTRACE("EventResponseHdlr::updateRegexps");
 	 itsRegexps.at(i) = Impl::RegExp_ResponseVal(patternObj, response_val);
   }
 
-  DebugPrintNL("updateRegexps success!");
+  itsRegexpsAreDirty = false;
+
+  DebugPrintNL("updateRegexpsIfNeeded success!");
 }
 
 int EventResponseHdlr::Impl::getCheckedListLength(
