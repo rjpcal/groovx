@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 25 09:06:51 2002
-// written: Thu Apr 25 13:00:26 2002
+// written: Mon Nov 11 15:42:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "imgfile.h"
 
+#include "gx/jpegparser.h"
 #include "gx/pbm.h"
 #include "gx/pngparser.h"
 
@@ -42,6 +43,7 @@ namespace
   enum ImageType
     {
       UNKNOWN,
+      JPEG,
       PBM,
       PNG
     };
@@ -59,6 +61,12 @@ namespace
       {
         return PNG;
       }
+    else if (filename.ends_with(".jpg")
+             || filename.ends_with(".jpeg")
+             || filename.ends_with(".JPG"))
+      {
+        return JPEG;
+      }
     // else...
     return UNKNOWN;
   }
@@ -74,6 +82,7 @@ DOTRACE("ImgFile::load");
     {
     case PBM:  Pbm::load(filename_cstr, data); break;
     case PNG:  Png::load(filename_cstr, data); break;
+    case JPEG: Jpeg::load(filename_cstr, data); break;
     default:
       throw Util::Error(fstring("unknown file format: ", filename_cstr));
     }
