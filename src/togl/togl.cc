@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Jul  2 15:12:54 2001
+// written: Wed Jul 18 10:43:58 2001
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -25,8 +25,6 @@
 #define TOGL_CC_DEFINED
 
 #include "togl/togl.h"
-
-#include "tcl/tclpkg.h"
 
 #include "util/error.h"
 
@@ -2666,22 +2664,16 @@ DOTRACE("ToglTcl::ToglCmd");
   return TCL_OK;
 }
 
-class ToglTcl::ToglPkg : public Tcl::TclPkg {
-public:
-  ToglPkg(Tcl_Interp* interp) :
-    Tcl::TclPkg(interp, "Togl", TOGL_VERSION)
-    {
-      Tcl_CreateCommand(interp, "togl", ToglTcl::ToglCmd,
-                        (ClientData) 0, NULL);
-      Tcl_InitHashTable(&CommandTable, TCL_STRING_KEYS);
-    }
-};
-
 extern "C" int Togl_Init(Tcl_Interp *interp)
 {
 DOTRACE("Togl_Init");
 
-  new ToglTcl::ToglPkg(interp);
+  Tcl_PkgProvide(interp, "Togl", TOGL_VERSION);
+
+  Tcl_CreateCommand(interp, "togl", ToglTcl::ToglCmd,
+                    (ClientData) 0, NULL);
+
+  Tcl_InitHashTable(&CommandTable, TCL_STRING_KEYS);
 
   return TCL_OK;
 }
