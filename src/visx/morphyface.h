@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:37:45 1999
-// written: Sat Nov 11 10:21:38 2000
+// written: Mon Nov 13 22:18:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,8 @@
 #include "grobj.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H_DEFINED)
-#include "io/property.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
+#include "io/fields.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class MorphyFace : public GrObj, public PropFriend<MorphyFace> {
+class MorphyFace : public GrObj, public FieldContainer {
   //////////////
   // creators //
   //////////////
@@ -54,84 +54,77 @@ public:
   // properties //
   ////////////////
 
-  /// Info about a \c MorphyFace property.
-  typedef PropertyInfo<MorphyFace> PInfo;
-
-  /// Return the number of \c MorphyFace properties.
-  static unsigned int numPropertyInfos();
-
-  /// Return info on the i'th \c MorphyFace property.
-  static const PInfo& getPropertyInfo(unsigned int i);
-
   /** The category of the face. The semantics of \a category are
       defined by the client. */
-  TProperty<int> mfaceCategory;
+  TField<int> mfaceCategory;
 
   virtual int category() const { return mfaceCategory.getNative(); }
   virtual void setCategory(int val) { mfaceCategory.setNative(val); }
 
-  TProperty<double> faceWidth;
+  TField<double> faceWidth;
     ///< The width of the face.
-  TProperty<double> topWidth;
+  TField<double> topWidth;
     ///< The width of the top of the face, as a fraction of \a faceWidth.
-  TProperty<double> bottomWidth;
+  TField<double> bottomWidth;
     ///< The width of the bottom of the face, as a fraction of \a faceWidth.
-  TProperty<double> topHeight;
+  TField<double> topHeight;
     ///< The height of the top of the face.
-  TProperty<double> bottomHeight;
+  TField<double> bottomHeight;
     ///< The height of the bottom of the face.
 
-  TProperty<double> hairWidth;
+  TField<double> hairWidth;
     ///< The width of the hair.
-  TProperty<int> hairStyle;
+  TField<int> hairStyle;
     ///< The style of the hair.
 
-  TProperty<double> eyeYpos;
+  TField<double> eyeYpos;
     ///< The y-position of the eyes, relative to the face midline.
-  TProperty<double> eyeDistance;
+  TField<double> eyeDistance;
     ///< The distance between the centers of the eyes.
-  TProperty<double> eyeHeight;
+  TField<double> eyeHeight;
     ///< The height of the eyes themselves.
-  TProperty<double> eyeAspectRatio;
+  TField<double> eyeAspectRatio;
     ///< The aspect ratio of the eyes (width over height).
 
-  TProperty<double> pupilXpos;
+  TField<double> pupilXpos;
     ///< The x-position of the pupils, relative to the center of the eye.
-  TProperty<double> pupilYpos;
+  TField<double> pupilYpos;
     ///< The y-position of the pupils, relative to the center of the eye.
-  TProperty<double> pupilSize;
+  TField<double> pupilSize;
     ///< The diameter of the pupils, relative to the height of the eye.
-  TBoundedProperty<double, 0, 999, 1000> pupilDilation;
+  TBoundedField<double, 0, 999, 1000> pupilDilation;
     ///< The dilation of the pupil, on a scale of [0,1).
 
-  TProperty<double> eyebrowXpos;
+  TField<double> eyebrowXpos;
     ///< The x-position of the eyebrows, relative to the eye.
-  TProperty<double> eyebrowYpos;
+  TField<double> eyebrowYpos;
     ///< The y-position of the eyebrows, relative to the top of the eye.
-  TProperty<double> eyebrowCurvature;
+  TField<double> eyebrowCurvature;
     ///< The degree of eyebrow curvature, relative to that of the eye.
-  TProperty<double> eyebrowAngle;
+  TField<double> eyebrowAngle;
     ///< The angle of image-plane rotation of the eyebrow.
-  TProperty<double> eyebrowThickness;
+  TField<double> eyebrowThickness;
     ///< The thickness of the eyebrow, relative to the default thickness.
 
-  TProperty<double> noseXpos;
+  TField<double> noseXpos;
     ///< The x-position of the nose, relative to the face midline.
-  TProperty<double> noseYpos;
+  TField<double> noseYpos;
     ///< The y-position of the nose, relative to the face midline.
-  TProperty<double> noseLength;
+  TField<double> noseLength;
     ///< The length of the nose.
-  TProperty<double> noseWidth;
+  TField<double> noseWidth;
     ///< The width of the nose.
 
-  TProperty<double> mouthXpos;
+  TField<double> mouthXpos;
     ///< The x-position of the mouth, relative to the face midline.
-  TProperty<double> mouthYpos;
+  TField<double> mouthYpos;
     ///< The y-position of the mouth, relative to the face midline.
-  TProperty<double> mouthWidth;
+  TField<double> mouthWidth;
     ///< The width of the mouth.
-  TProperty<double> mouthCurvature;
+  TField<double> mouthCurvature;
     ///< The degree of curvature of the mouth.
+
+  static const FieldMap& classFields();
 
 protected:
   virtual void grGetBoundingBox(Rect<double>& bbox,

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Fri Nov 10 17:27:06 2000
+// written: Mon Nov 13 22:24:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,12 +37,6 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-#ifdef MIPSPRO_COMPILER
-#  define SGI_IDIOT_CAST(to, from) reinterpret_cast<to>(from)
-#else
-#  define SGI_IDIOT_CAST(to, from) (from)
-#endif
-
 ///////////////////////////////////////////////////////////////////////
 //
 // File scope definitions
@@ -59,104 +53,48 @@ namespace {
 
   typedef MorphyFace MF;
 
-  const MorphyFace::PInfo PINFOS[] = {
-	 MF::PInfo("category",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::mfaceCategory),
-				  0, 10, 1, true),
+  const FieldInfo FINFOS[] = {
+	 FieldInfo("category", &MF::mfaceCategory, 0, 0, 10, 1, true),
 
-	 MF::PInfo("faceWidth",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::faceWidth),
-				  1.5, 3.5, 0.1),
-	 MF::PInfo("topWidth",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::topWidth),
-				  0.05, 2.0, 0.05),
-	 MF::PInfo("bottomWidth",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::bottomWidth),
-				  0.05, 2.0, 0.05),
-	 MF::PInfo("topHeight",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::topHeight),
-				  0.5, 5.0, 0.25),
-	 MF::PInfo("bottomHeight",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::bottomHeight),
-				  -5.0, -0.5, 0.25),
+	 FieldInfo("faceWidth", &MF::faceWidth, 2.75, 1.5, 3.5, 0.1),
+	 FieldInfo("topWidth", &MF::topWidth, 1.15, 0.05, 2.0, 0.05),
+	 FieldInfo("bottomWidth", &MF::bottomWidth, 1.0, 0.05, 2.0, 0.05),
+	 FieldInfo("topHeight", &MF::topHeight, 3.8, 0.5, 5.0, 0.25),
+	 FieldInfo("bottomHeight", &MF::bottomHeight, -3.0, -5.0, -0.5, 0.25),
 	 
-	 MF::PInfo("hairWidth",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::hairWidth),
-				  0.00, 0.5, 0.02, true),
-	 MF::PInfo("hairStyle",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::hairStyle),
-				  0, 1, 1),
+	 FieldInfo("hairWidth", &MF::hairWidth, 0.20, 0.00, 0.5, 0.02, true),
+	 FieldInfo("hairStyle", &MF::hairStyle, 0, 0, 1, 1),
 	 
-	 MF::PInfo("eyeYpos",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::eyeYpos),
-				  -2.0, 2.0, 0.1, true),
-	 MF::PInfo("eyeDistance",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::eyeDistance),
-				  0.0, 5.0, 0.25),
-	 MF::PInfo("eyeHeight",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::eyeHeight),
-				  0.0, 2.0, 0.1),
-	 MF::PInfo("eyeAspectRatio",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::eyeAspectRatio),
-				  0.1, 5.0, 0.1),
+	 FieldInfo("eyeYpos", &MF::eyeYpos, 0.375, -2.0, 2.0, 0.1, true),
+	 FieldInfo("eyeDistance", &MF::eyeDistance, 2.25, 0.0, 5.0, 0.25),
+	 FieldInfo("eyeHeight", &MF::eyeHeight, 0.9, 0.0, 2.0, 0.1),
+	 FieldInfo("eyeAspectRatio", &MF::eyeAspectRatio, 1.555556, 0.1, 5.0, 0.1),
 	 
-	 MF::PInfo("pupilXpos",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::pupilXpos),
-				  -0.5, 0.5, 0.05, true),
-	 MF::PInfo("pupilYpos",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::pupilYpos),
-				  -0.5, 0.5, 0.05),
-	 MF::PInfo("pupilSize",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::pupilSize),
-				  0.0, 1.0, 0.05),
-	 MF::PInfo("pupilDilation",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::pupilDilation),
-				  0.0, 1.0, 0.05),
+	 FieldInfo("pupilXpos", &MF::pupilXpos, 0.0, -0.5, 0.5, 0.05, true),
+	 FieldInfo("pupilYpos", &MF::pupilYpos, 0.0, -0.5, 0.5, 0.05),
+	 FieldInfo("pupilSize", &MF::pupilSize, 0.6, 0.0, 1.0, 0.05),
+	 FieldInfo("pupilDilation", &MF::pupilDilation, 0.5, 0.0, 1.0, 0.05),
 	 
-	 MF::PInfo("eyebrowXpos",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::eyebrowXpos),
-				  -0.5, 0.5, 0.02, true),
-	 MF::PInfo("eyebrowYpos",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::eyebrowYpos),
-				  0.0, 1.5, 0.05),
-	 MF::PInfo("eyebrowCurvature",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::eyebrowCurvature),
-				  -2.0, 2.0, 0.1),
-	 MF::PInfo("eyebrowAngle",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::eyebrowAngle),
-				  -50, 50, 1),
-	 MF::PInfo("eyebrowThickness",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::eyebrowThickness),
-				  0.1, 4.0, 0.1),
+	 FieldInfo("eyebrowXpos", &MF::eyebrowXpos, 0.0, -0.5, 0.5, 0.02, true),
+	 FieldInfo("eyebrowYpos", &MF::eyebrowYpos, 0.5, 0.0, 1.5, 0.05),
+	 FieldInfo("eyebrowCurvature", &MF::eyebrowCurvature, 0.8, -2.0, 2.0, 0.1),
+	 FieldInfo("eyebrowAngle", &MF::eyebrowAngle, -5, -50, 50, 1),
+	 FieldInfo("eyebrowThickness", &MF::eyebrowThickness, 2.0, 0.1, 4.0, 0.1),
 	
-	 MF::PInfo("noseXpos",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::noseXpos),
-				  -1.0, 1.0, 0.05, true),
-	 MF::PInfo("noseYpos",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::noseYpos),
-				  -2.0, 2.0, 0.1),
-	 MF::PInfo("noseLength",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::noseLength),
-				  0.0, 2.0, 0.1),
-	 MF::PInfo("noseWidth",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::noseWidth),
-				  0.0, 3.0, 0.1),
+	 FieldInfo("noseXpos", &MF::noseXpos, 0.0, -1.0, 1.0, 0.05, true),
+	 FieldInfo("noseYpos", &MF::noseYpos, -0.825, -2.0, 2.0, 0.1),
+	 FieldInfo("noseLength", &MF::noseLength, 0.75, 0.0, 2.0, 0.1),
+	 FieldInfo("noseWidth", &MF::noseWidth, 1.5, 0.0, 3.0, 0.1),
 	 
-	 MF::PInfo("mouthXpos",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::mouthXpos),
-				  -2.0, 2.0, 0.1, true),
-	 MF::PInfo("mouthYpos",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::mouthYpos),
-				  -3.0, 1.0, 0.1),
-	 MF::PInfo("mouthWidth",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::mouthWidth),
-				  0.0, 5.0, 0.25),
-	 MF::PInfo("mouthCurvature",
-				  SGI_IDIOT_CAST(Property MorphyFace::*, &MF::mouthCurvature),
-				  -2.0, 2.0, 0.1)
+	 FieldInfo("mouthXpos", &MF::mouthXpos, 0.0, -2.0, 2.0, 0.1, true),
+	 FieldInfo("mouthYpos", &MF::mouthYpos, -2.0, -3.0, 1.0, 0.1),
+	 FieldInfo("mouthWidth", &MF::mouthWidth, 2.5, 0.0, 5.0, 0.25),
+	 FieldInfo("mouthCurvature", &MF::mouthCurvature, 0.6, -2.0, 2.0, 0.1)
   };
 
-  const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(MF::PInfo);
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+
+  const FieldMap MFACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
 
   void draw_hairstyle1(GWT::Canvas& canvas) {
 	 const GLdouble hair_vertices[] = {
@@ -264,6 +202,8 @@ namespace {
 // Creators
 ///////////////////////////////////////////////////////////////////////
 
+const FieldMap& MorphyFace::classFields() { return MFACE_FIELDS; }
+
 MorphyFace* MorphyFace::make() {
 DOTRACE("MorphyFace::make");
   return new MorphyFace;
@@ -271,43 +211,44 @@ DOTRACE("MorphyFace::make");
 
 MorphyFace::MorphyFace() :
   GrObj(GROBJ_GL_COMPILE, GROBJ_CLEAR_BOUNDING_BOX),
+  FieldContainer(MFACE_FIELDS),
 
-  mfaceCategory(0),
+  mfaceCategory(this, 0),
 
-  faceWidth(2.75),
-  topWidth(1.15),
-  bottomWidth(1.0),
-  topHeight(3.8),
-  bottomHeight(-3.0),
+  faceWidth(this, 2.75),
+  topWidth(this, 1.15),
+  bottomWidth(this, 1.0),
+  topHeight(this, 3.8),
+  bottomHeight(this, -3.0),
 
-  hairWidth(0.20),
-  hairStyle(0),
+  hairWidth(this, 0.20),
+  hairStyle(this, 0),
 
-  eyeYpos(0.375),
-  eyeDistance(2.25),
-  eyeHeight(0.9),
-  eyeAspectRatio(1.555556),
+  eyeYpos(this, 0.375),
+  eyeDistance(this, 2.25),
+  eyeHeight(this, 0.9),
+  eyeAspectRatio(this, 1.555556),
 
-  pupilXpos(0.0),
-  pupilYpos(0.0),
-  pupilSize(0.6),
-  pupilDilation(0.5),
+  pupilXpos(this, 0.0),
+  pupilYpos(this, 0.0),
+  pupilSize(this, 0.6),
+  pupilDilation(this, 0.5),
 
-  eyebrowXpos(0.0),
-  eyebrowYpos(0.5),
-  eyebrowCurvature(0.8),
-  eyebrowAngle(-5),
-  eyebrowThickness(2.0),
+  eyebrowXpos(this, 0.0),
+  eyebrowYpos(this, 0.5),
+  eyebrowCurvature(this, 0.8),
+  eyebrowAngle(this, -5),
+  eyebrowThickness(this, 2.0),
 
-  noseXpos(0.0),
-  noseYpos(-0.825),
-  noseLength(0.75),
-  noseWidth(1.5),
+  noseXpos(this, 0.0),
+  noseYpos(this, -0.825),
+  noseLength(this, 0.75),
+  noseWidth(this, 1.5),
 
-  mouthXpos(0.0),
-  mouthYpos(-2.0),
-  mouthWidth(2.5),
-  mouthCurvature(0.6)
+  mouthXpos(this, 0.0),
+  mouthYpos(this, -2.0),
+  mouthWidth(this, 2.5),
+  mouthCurvature(this, 0.6)
 {
 DOTRACE("MorphyFace::MorphyFace");
   Invariant(check());
@@ -326,10 +267,7 @@ DOTRACE("MorphyFace::serialVersionId");
 void MorphyFace::readFrom(IO::Reader* reader) {
 DOTRACE("MorphyFace::readFrom");
 
-  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-	 reader->readValueObj(PINFOS[i].name(),
-								 const_cast<Value&>(get(PINFOS[i].property())));
-  }
+  readFieldsFrom(reader);
 
   IO::VersionId svid = reader->readSerialVersionId();
   if (svid == 0)
@@ -346,9 +284,7 @@ DOTRACE("MorphyFace::readFrom");
 void MorphyFace::writeTo(IO::Writer* writer) const {
 DOTRACE("MorphyFace::writeTo");
 
-  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-	 writer->writeValueObj(PINFOS[i].name_cstr(), get(PINFOS[i].property()));
-  }
+  writeFieldsTo(writer);
 
   if (MFACE_SERIAL_VERSION_ID == 0)
 	 GrObj::writeTo(writer);
@@ -357,22 +293,6 @@ DOTRACE("MorphyFace::writeTo");
 		IO::IoProxy<GrObj> baseclass(const_cast<MorphyFace*>(this));
 		writer->writeBaseClass("GrObj", &baseclass);
 	 }
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// Properties
-//
-///////////////////////////////////////////////////////////////////////
-
-unsigned int MorphyFace::numPropertyInfos() {
-DOTRACE("MorphyFace::numPropertyInfos");
-  return NUM_PINFOS;
-}
-
-const MorphyFace::PInfo& MorphyFace::getPropertyInfo(unsigned int i) {
-DOTRACE("MorphyFace::getPropertyInfo");
-  return PINFOS[i];
 }
 
 

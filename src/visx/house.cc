@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Fri Nov 10 17:04:00 2000
+// written: Mon Nov 13 22:16:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,12 +32,6 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-#ifdef MIPSPRO_COMPILER
-#  define SGI_IDIOT_CAST(to, from) reinterpret_cast<to>(from)
-#else
-#  define SGI_IDIOT_CAST(to, from) (from)
-#endif
-
 ///////////////////////////////////////////////////////////////////////
 //
 // File scope data
@@ -50,71 +44,39 @@ namespace {
   template <class T>
   inline T max(const T& t1, const T& t2) { return (t1 > t2) ? t1 : t2; }
 
-  const House::PInfo PINFOS[] = {
-	 House::PInfo("storyAspectRatio",
-					  SGI_IDIOT_CAST(Property House::*, &House::storyAspectRatio), 
-					  0.5, 10.0, 0.05, true),
-	 House::PInfo("numStories",
-					  SGI_IDIOT_CAST(Property House::*, &House::numStories), 
-					  1, 5, 1),
+  const FieldInfo FINFOS[] = {
+	 FieldInfo("storyAspectRatio",
+				  &House::storyAspectRatio, 3.0, 0.5, 10.0, 0.05, true),
+	 FieldInfo("numStories", &House::numStories, 2, 1, 5, 1),
 
-	 House::PInfo("doorPosition",
-					  SGI_IDIOT_CAST(Property House::*, &House::doorPosition), 
-					  0, 5, 1, true),
-	 House::PInfo("doorWidth",
-					  SGI_IDIOT_CAST(Property House::*, &House::doorWidth), 
-					  0.05, 1.0, 0.05),
-	 House::PInfo("doorHeight",
-					  SGI_IDIOT_CAST(Property House::*, &House::doorHeight), 
-					  0.05, 1.0, 0.05),
-	 House::PInfo("doorOrientation",
-					  SGI_IDIOT_CAST(Property House::*, &House::doorOrientation), 
-					  0, 1, 1),
+	 FieldInfo("doorPosition", &House::doorPosition, 2, 0, 5, 1, true),
+	 FieldInfo("doorWidth", &House::doorWidth, 0.75, 0.05, 1.0, 0.05),
+	 FieldInfo("doorHeight", &House::doorHeight, 0.75, 0.05, 1.0, 0.05),
+	 FieldInfo("doorOrientation",
+				  &House::doorOrientation, false, false, true, true),
 
-	 House::PInfo("numWindows",
-					  SGI_IDIOT_CAST(Property House::*, &House::numWindows), 
-					  2, 6, 1, true),
-	 House::PInfo("windowWidth",
-					  SGI_IDIOT_CAST(Property House::*, &House::windowWidth), 
-					  0.05, 1.0, 0.05),
-	 House::PInfo("windowHeight",
-					  SGI_IDIOT_CAST(Property House::*, &House::windowHeight), 
-					  0.05, 1.0, 0.05),
-	 House::PInfo("windowVertBars",
-					  SGI_IDIOT_CAST(Property House::*, &House::windowVertBars), 
-					  0, 5, 1),
-	 House::PInfo("windowHorizBars",
-					  SGI_IDIOT_CAST(Property House::*, &House::windowHorizBars), 
-					  0, 5, 1),
+	 FieldInfo("numWindows", &House::numWindows, 5, 2, 6, 1, true),
+	 FieldInfo("windowWidth", &House::windowWidth, 0.75, 0.05, 1.0, 0.05),
+	 FieldInfo("windowHeight", &House::windowHeight, 0.5, 0.05, 1.0, 0.05),
+	 FieldInfo("windowVertBars", &House::windowVertBars, 1, 0, 5, 1),
+	 FieldInfo("windowHorizBars", &House::windowHorizBars, 1, 0, 5, 1),
 
-	 House::PInfo("roofShape",
-					  SGI_IDIOT_CAST(Property House::*, &House::roofShape), 
-					  0, 2, 1, true),
-	 House::PInfo("roofHeight",
-					  SGI_IDIOT_CAST(Property House::*, &House::roofHeight), 
-					  0.05, 2.0, 0.05),
-	 House::PInfo("roofOverhang",
-					  SGI_IDIOT_CAST(Property House::*, &House::roofOverhang), 
-					  0.0, 0.5, 0.05),
-	 House::PInfo("roofColor",
-					  SGI_IDIOT_CAST(Property House::*, &House::roofColor), 
-					  0, 1, 1),
+	 FieldInfo("roofShape", &House::roofShape, 0, 0, 2, 1, true),
+	 FieldInfo("roofHeight", &House::roofHeight, 0.05, 0.05, 2.0, 0.05),
+	 FieldInfo("roofOverhang", &House::roofOverhang, 0.75, 0.0, 0.5, 0.05),
+	 FieldInfo("roofColor", &House::roofColor, 1, 0, 1, 1),
 
-	 House::PInfo("chimneyXPosition",
-					  SGI_IDIOT_CAST(Property House::*, &House::chimneyXPosition), 
-					  -0.5, 0.5, 0.05, true),
-	 House::PInfo("chimneyYPosition",
-					  SGI_IDIOT_CAST(Property House::*, &House::chimneyYPosition), 
-					  0.0, 1.0, 0.05),
-	 House::PInfo("chimneyWidth",
-					  SGI_IDIOT_CAST(Property House::*, &House::chimneyWidth), 
-					  0.01, 0.30, 0.01),
-	 House::PInfo("chimneyHeight",
-					  SGI_IDIOT_CAST(Property House::*, &House::chimneyHeight), 
-					  0.05, 2.0, 0.1)
+	 FieldInfo("chimneyXPosition",
+				  &House::chimneyXPosition, 0.2, -0.5, 0.5, 0.05, true),
+	 FieldInfo("chimneyYPosition",
+				  &House::chimneyYPosition, 0.5, 0.0, 1.0, 0.05),
+	 FieldInfo("chimneyWidth", &House::chimneyWidth, 0.06, 0.01, 0.30, 0.01),
+	 FieldInfo("chimneyHeight", &House::chimneyHeight, 0.5, 0.05, 2.0, 0.1)
   };
 
-  const unsigned int NUM_PINFOS = sizeof(PINFOS)/sizeof(House::PInfo);
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+
+  const FieldMap HOUSE_FIELDS(FINFOS, FINFOS+NUM_FINFOS);
 
   void drawWindow(int num_vert_bars, int num_horiz_bars) {
 	 // Draw 1x1 window centered on (0,0)
@@ -206,35 +168,38 @@ namespace {
 //
 ///////////////////////////////////////////////////////////////////////
 
+const FieldMap& House::classFields() { return HOUSE_FIELDS; }
+
 House* House::make() {
 DOTRACE("House::make");
   return new House;
 }
 
 House::House() :
-  storyAspectRatio(3.0), 
-  numStories(2),
+  FieldContainer(HOUSE_FIELDS),
+  storyAspectRatio(this, 3.0),
+  numStories(this, 2),
 
-  doorPosition(2),
-  doorWidth(0.75),
-  doorHeight(0.75),
-  doorOrientation(false),
+  doorPosition(this, 2),
+  doorWidth(this, 0.75),
+  doorHeight(this, 0.75),
+  doorOrientation(this, false),
 
-  numWindows(5),
-  windowWidth(0.75),
-  windowHeight(0.5),
-  windowVertBars(1),
-  windowHorizBars(1),
+  numWindows(this, 5),
+  windowWidth(this, 0.75),
+  windowHeight(this, 0.5),
+  windowVertBars(this, 1),
+  windowHorizBars(this, 1),
 
-  roofShape(0),
-  roofOverhang(0.05),
-  roofHeight(0.75),
-  roofColor(1),
+  roofShape(this, 0),
+  roofOverhang(this, 0.05),
+  roofHeight(this, 0.75),
+  roofColor(this, 1),
 
-  chimneyXPosition(0.2),
-  chimneyYPosition(0.5),
-  chimneyWidth(0.06),
-  chimneyHeight(0.5)
+  chimneyXPosition(this, 0.2),
+  chimneyYPosition(this, 0.5),
+  chimneyWidth(this, 0.06),
+  chimneyHeight(this, 0.5)
 {
 DOTRACE("House::House");
 }
@@ -251,10 +216,7 @@ DOTRACE("House::serialVersionId");
 void House::readFrom(IO::Reader* reader) {
 DOTRACE("House::readFrom");
 
-  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-	 reader->readValueObj(PINFOS[i].name(),
-								 const_cast<Value&>(get(PINFOS[i].property())));
-  }
+  readFieldsFrom(reader);
 
   IO::VersionId svid = reader->readSerialVersionId();
   if (svid < 2)
@@ -264,17 +226,12 @@ DOTRACE("House::readFrom");
 		IO::IoProxy<GrObj> baseclass(this);
 		reader->readBaseClass("GrObj", &baseclass);
 	 }
-
-  sendStateChangeMsg();
 }
 
 void House::writeTo(IO::Writer* writer) const {
 DOTRACE("House::writeTo");
 
-  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-	 writer->writeValueObj(PINFOS[i].name_cstr(),
-								  get(PINFOS[i].property()));
-  }
+  writeFieldsTo(writer);
 
   if (HOUSE_SERIAL_VERSION_ID < 2)
 	 GrObj::writeTo(writer);
@@ -283,22 +240,6 @@ DOTRACE("House::writeTo");
 		IO::ConstIoProxy<GrObj> baseclass(this);
 		writer->writeBaseClass("GrObj", &baseclass);
 	 }
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// Properties
-//
-///////////////////////////////////////////////////////////////////////
-
-unsigned int House::numPropertyInfos() {
-DOTRACE("House::numPropertyInfos");
-  return NUM_PINFOS;
-}
-
-const House::PInfo& House::getPropertyInfo(unsigned int i) {
-DOTRACE("House::getPropertyInfo");
-  return PINFOS[i];
 }
 
 ///////////////////////////////////////////////////////////////////////
