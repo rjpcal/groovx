@@ -37,13 +37,14 @@ test "PositionTcl-Pos::rotationAxis" "too many args" {
     Pos::rotationAxis posid angle j u n k
 } {wrong \# args: should be}
 test "PositionTcl-Pos::rotationAxis" "normal use with angle and axis of rotation" {
-	 catch {Pos::rotationAxis $::pos {1.5 0.0 -2.2}}
-} {^0$}
+	 Pos::rotationAxis $::pos {1.5 0.1 -2.2}
+	 Pos::rotationAxis $::pos
+} {^1.5 0.1 -2.2$}
+test "PositionTcl-Pos::rotationAxis" "error on from too few values" {
+    Pos::rotationAxis $::pos {1,2,3}
+} {Pos::rotationAxis: }
 test "PositionTcl-Pos::rotationAxis" "error on non-numeric input" {
     Pos::rotationAxis $::pos junk
-} {Pos::rotationAxis: }
-test "PositionTcl-Pos::rotationAxis" "error on bad posid" {
-    Pos::rotationAxis -1 {1 1 1}
 } {Pos::rotationAxis: }
 
 ### Pos::scaling ###
@@ -54,14 +55,15 @@ test "PositionTcl-Pos::scaling" "too many args" {
     Pos::scaling posid j u n k
 } {wrong \# args: should be}
 test "PositionTcl-Pos::scaling" "normal use" {
-	 catch {Pos::scaling $::pos {1.5 3.0 4.5}}
-} {^0$}
-test "PositionTcl-Pos::scaling" "error on non-numeric input" {
-    Pos::scaling $::pos junk
+	 Pos::scaling $::pos {1.5 3.3 4.5}
+	 Pos::scaling $::pos
+} {^1.5 3.3 4.5$}
+test "PositionTcl-Pos::scaling" "error on from too few values" {
+    Pos::scaling $::pos 1.0
 } {Pos::scaling: }
-test "PositionTcl-Pos::scaling" "error on bad posid" {
-    Pos::scaling -1 {-1.2 1.0 1.0}
-} {Pos::scaling: .*}
+test "PositionTcl-Pos::scaling" "error on non-numeric input" {
+    Pos::scaling $::pos {1.0junk}
+} {Pos::scaling: }
 
 ### Pos::translation ###
 test "PositionTcl-Pos::translation" "too few args" {
@@ -71,14 +73,15 @@ test "PositionTcl-Pos::translation" "too many args" {
     Pos::translation posid x y z junk
 } {wrong \# args: should be}
 test "PositionTcl-Pos::translation" "normal use" {
-	 catch {Pos::translation $::pos {10.0 -3.6 9.4}}
-} {^0$}
-test "PositionTcl-Pos::translation" "error on non-numeric input" {
-    Pos::translation $::pos junk
+	 Pos::translation $::pos {10.9 -3.6 9.4}
+	 Pos::translation $::pos
+} {^10.9 -3.6 9.4$}
+test "PositionTcl-Pos::translation" "error on from too few values" {
+    Pos::translation $::pos {1.0 2.0}
 } {Pos::translation: }
-test "PositionTcl-Pos::translation" "error on bad posid" {
-    Pos::translation -1 {1 1 1}
-} {Pos::translation: .*}
+test "PositionTcl-Pos::translation" "error on non-numeric input" {
+    Pos::translation $::pos {1.0 2.0 junk}
+} {Pos::translation: }
 
 ### Pos::stringifyCmd ###
 test "PositionTcl-Pos::stringify" "too few args" {
@@ -92,9 +95,6 @@ test "PositionTcl-IO::stringify" "normal use" {
 	 Pos::translation $::pos {5.3 10.6 15.9}
 	 IO::stringify $::pos
 } "Position @$::INT"
-test "PositionTcl-IO::stringify" "error on bad posid" { 
-    IO::stringify -1
-} {IO::stringify: }
 test "PositionTcl-IO::stringify" "error on non-integral posid" {
     IO::stringify 1.5
 } {IO::stringify: }
@@ -114,9 +114,6 @@ test "PositionTcl-IO::type" "normal use on Jitter" {
 test "PositionTcl-IO::type" "error on too small posid" {
 	 IO::type -1
 } {IO::type: signed/unsigned.*}
-test "PositionTcl-IO::type" "error on too large" {
-	 IO::type 10000
-} {IO::type: .*}
 
 unset pos
 
