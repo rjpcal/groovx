@@ -16,8 +16,9 @@ package require Pos
 
 source ${::TEST_DIR}/grobj_test.tcl
 
-GrObj::testSubclass Gtext Gtext [Gtext::Gtext "Gtext"]
-
+set ::GTEXT [Gtext::Gtext]
+Gtext::text $::GTEXT "Gtext"
+GrObj::testSubclass Gtext Gtext $::GTEXT
 
 
 if { ![Togl::inited] } { Togl::init "-rgba false"; update }
@@ -28,9 +29,11 @@ set PACKAGE GtextTcl
 ### Gtext::GtextCmd ###
 test "$PACKAGE-Gtext::Gtext" "too many args" {
 	 Gtext::Gtext junk junk
-} {^wrong \# args: should be "Gtext::Gtext \?text\?"$}
+} {^wrong \# args: should be "Gtext::Gtext"$}
 test "$PACKAGE-Gtext::Gtext" "normal use" {
-	 set ::GTEXT [Gtext::Gtext "Hello, World!"]
+	 set ::GTEXT [Gtext::Gtext]
+	 Gtext::text $::GTEXT "Hello, World!"
+	 return $::GTEXT
 } "^${INT}$"
 test "$PACKAGE-Gtext::Gtext" "error" {} {^$} $no_test
 
