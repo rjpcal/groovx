@@ -35,15 +35,12 @@
 namespace media
 {
   class bmap_data;
-}
 
-namespace Png
-{
   /// Load \a data in PNG format from the file \a filename.
-  void load(const char* filename, media::bmap_data& data);
+  void load_png(const char* filename, media::bmap_data& data);
 
   /// Write \a data in PNG format to the file \a filename.
-  void save(const char* filename, const media::bmap_data& data);
+  void save_png(const char* filename, const media::bmap_data& data);
 }
 
 static const char vcid_pngparser_h[] = "$Header$";

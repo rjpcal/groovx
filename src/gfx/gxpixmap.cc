@@ -111,7 +111,7 @@ DOTRACE("ImageUpdater::update");
 
   try
     {
-      ImgFile::load(itsFilename.c_str(), update_me);
+      media::load_image(itsFilename.c_str(), update_me);
     }
   // If there was an error while reading the file, it means we should
   // forget about itsOwnerFilename
@@ -255,7 +255,7 @@ DOTRACE("GxPixmap::readFrom");
         {
           rutz::imemstream s(reinterpret_cast<const char*>(&imgdata.vec[0]),
                              imgdata.vec.size());
-          Pbm::load(s, rep->itsData);
+          media::load_pnm(s, rep->itsData);
         }
 #endif
     }
@@ -304,7 +304,7 @@ void GxPixmap::loadImage(const char* filename)
 {
 DOTRACE("GxPixmap::loadImage");
 
-  ImgFile::load(filename, rep->itsData);
+  media::load_image(filename, rep->itsData);
 
   rep->itsFilename = filename;
 
@@ -315,7 +315,7 @@ void GxPixmap::loadImageStream(std::istream& ist)
 {
 DOTRACE("GxPixmap::loadImageStream");
 
-  Pbm::load(ist, rep->itsData);
+  media::load_pnm(ist, rep->itsData);
   rep->itsFilename = "";
   this->sigNodeChanged.emit();
 }
@@ -324,7 +324,7 @@ void GxPixmap::reload()
 {
 DOTRACE("GxPixmap::reload");
 
-  ImgFile::load(rep->itsFilename.c_str(), rep->itsData);
+  media::load_image(rep->itsFilename.c_str(), rep->itsData);
 
   this->sigNodeChanged.emit();
 }
@@ -342,7 +342,7 @@ void GxPixmap::saveImage(const char* filename) const
 {
 DOTRACE("GxPixmap::saveImage");
 
-  ImgFile::save(filename, rep->itsData);
+  media::save_image(filename, rep->itsData);
 }
 
 void GxPixmap::grabScreenRect(const geom::rect<int>& rect)

@@ -35,15 +35,12 @@
 namespace media
 {
   class bmap_data;
-}
 
-namespace ImgFile
-{
   /// Load \a data from \a filename, which must be in a supported format.
-  void load(const char* filename, media::bmap_data& data);
+  void load_image(const char* filename, media::bmap_data& data);
 
   /// Save \a data to \a filename (file format is inferred from the filename).
-  void save(const char* filename, const media::bmap_data& data);
+  void save_image(const char* filename, const media::bmap_data& data);
 }
 
 static const char vcid_imgfile_h[] = "$Header$";

@@ -35,12 +35,9 @@
 namespace media
 {
   class bmap_data;
-}
 
-namespace Jpeg
-{
   /// Load \a data in JPEG format from the file \a filename.
-  void load(const char* filename, media::bmap_data& data);
+  void load_jpeg(const char* filename, media::bmap_data& data);
 }
 
 static const char vcid_jpegparser_h[] = "$Header$";

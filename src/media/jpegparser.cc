@@ -38,7 +38,7 @@
 
 #include "util/error.h"
 
-void Jpeg::load(const char* /*filename*/, media::bmap_data& /*data*/)
+void media::load_jpeg(const char* /*filename*/, media::bmap_data& /*data*/)
 {
   throw rutz::error("jpeg image files are not supported in this build",
                     SRC_POS);
@@ -62,7 +62,7 @@ extern "C"
 
 namespace
 {
-  struct JpegAux
+  struct jpeg_aux
   {
     FILE* infile;
     jmp_buf* jmp_state;
@@ -72,20 +72,20 @@ namespace
   {
     DOTRACE("<jpegparser.cc>::cleanup");
 
-    JpegAux* aux = static_cast<JpegAux*>(cinfo->client_data);
+    jpeg_aux* aux = static_cast<jpeg_aux*>(cinfo->client_data);
     if (aux->infile != 0)
       fclose(aux->infile);
     jpeg_destroy_decompress(cinfo);
   }
 
-  void jpegErrorExit(j_common_ptr cinfo)
+  void jpeg_error_exit(j_common_ptr cinfo)
   {
     // Since we longjmp out of here, DON'T use any C++ objects that need to
     // have destructors run!
 
     cinfo->err->output_message(cinfo);
 
-    JpegAux* aux = static_cast<JpegAux*>(cinfo->client_data);
+    jpeg_aux* aux = static_cast<jpeg_aux*>(cinfo->client_data);
     longjmp(*(aux->jmp_state), 1);
   }
 }
@@ -102,9 +102,9 @@ do {                                                     \
     }                                                    \
 } while (0)
 
-void Jpeg::load(const char* filename, media::bmap_data& data)
+void media::load_jpeg(const char* filename, media::bmap_data& data)
 {
-DOTRACE("Jpeg::load");
+DOTRACE("media::load_jpeg");
 
   if (BITS_IN_JSAMPLE != 8)
     {
@@ -118,13 +118,13 @@ DOTRACE("Jpeg::load");
   jpeg_decompress_struct cinfo;
   jpeg_error_mgr jerr;
 
-  JpegAux aux;
+  jpeg_aux aux;
   aux.infile = 0;
   aux.jmp_state = &state;
   cinfo.client_data = static_cast<void*>(&aux);
 
   cinfo.err = jpeg_std_error(&jerr);
-  cinfo.err->error_exit = &jpegErrorExit;
+  cinfo.err->error_exit = &jpeg_error_exit;
 
   SETJMP_TRY(jpeg_create_decompress(&cinfo));
 

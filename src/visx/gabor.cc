@@ -302,7 +302,7 @@ DOTRACE("Gabor::saveImage");
   media::bmap_data data;
   getBmapData(data);
 
-  ImgFile::save(filename, data);
+  media::save_image(filename, data);
 }
 
 void Gabor::grRender(Gfx::Canvas& canvas) const

@@ -63,7 +63,7 @@ namespace
     return result;
   }
 
-  enum ImageType
+  enum image_file_type
     {
       UNKNOWN,
       JPEG,
@@ -72,8 +72,7 @@ namespace
       GIF
     };
 
-
-  ImageType getImageType(const char* filename)
+  image_file_type get_image_file_type(const char* filename)
   {
     // Conver to lowercase so we can do case-insensitive tests of the
     // filename extension.
@@ -105,10 +104,10 @@ namespace
 
   // A fallback function to try to read an image by filtering it
   // through a pipe that will convert it to PNM format.
-  void pipeLoad(const char* progname,
-                const char* filename, media::bmap_data& data)
+  void pipe_load(const char* progname,
+                 const char* filename, media::bmap_data& data)
   {
-  DOTRACE("<imgfile.cc>::pipeLoad");
+  DOTRACE("<imgfile.cc>::pipe_load");
 
     if (access(progname, R_OK|X_OK) != 0)
       throw rutz::error(fstring("couldn't access program '", progname, "'"), SRC_POS);
@@ -120,31 +119,31 @@ namespace
 
     rutz::exec_pipe p("r", argv);
 
-    Pbm::load(p.stream(), data);
+    media::load_pnm(p.stream(), data);
 
     if (p.exit_status() != 0)
       throw rutz::error("child process exited abnormally", SRC_POS);
   }
 }
 
-void ImgFile::load(const char* filename, media::bmap_data& data)
+void media::load_image(const char* filename, media::bmap_data& data)
 {
-DOTRACE("ImgFile::load");
+DOTRACE("media::load_image");
 
-  switch (getImageType(filename))
+  switch (get_image_file_type(filename))
     {
-    case PNM:  Pbm::load(filename, data); break;
-    case PNG:  Png::load(filename, data); break;
-    case JPEG: Jpeg::load(filename, data); break;
+    case PNM:  media::load_pnm(filename, data); break;
+    case PNG:  media::load_png(filename, data); break;
+    case JPEG: media::load_jpeg(filename, data); break;
 #ifdef GIFTOPNM_PROG
-    case GIF:  pipeLoad(GIFTOPNM_PROG, filename, data); break;
+    case GIF:  pipe_load(GIFTOPNM_PROG, filename, data); break;
 #endif
 #ifdef ANYTOPNM_PROG
       // A fallback to try to read just about any image type, given
       // that the program "anytopnm" is installed on the host
       // machine. In that case, we can process the image file with
       // anytopnm, and pipe the output via a stream into a pnm parser.
-    default:   pipeLoad(ANYTOPNM_PROG, filename, data); break;
+    default:   pipe_load(ANYTOPNM_PROG, filename, data); break;
 #else
     default:   throw rutz::error(fstring("unknown image file format: ",
                                          filename), SRC_POS);
@@ -155,12 +154,13 @@ DOTRACE("ImgFile::load");
   Nub::log(fstring("loaded image file ", filename));
 }
 
-void ImgFile::save(const char* filename, const media::bmap_data& data)
+void media::save_image(const char* filename,
+                       const media::bmap_data& data)
 {
-  switch (getImageType(filename))
+  switch (get_image_file_type(filename))
     {
-    case PNM:  Pbm::save(filename, data); break;
-    case PNG:  Png::save(filename, data); break;
+    case PNM:  media::save_pnm(filename, data); break;
+    case PNG:  media::save_png(filename, data); break;
     default:
       throw rutz::error(fstring("unknown file format: ", filename), SRC_POS);
     }

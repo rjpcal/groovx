@@ -42,22 +42,18 @@ class ostream;
 namespace media
 {
   class bmap_data;
-}
 
-
-namespace Pbm
-{
   /// Load \a data in PBM format from the file \a filename.
-  void load(const char* filename, media::bmap_data& data);
+  void load_pnm(const char* filename, media::bmap_data& data);
 
   /// Load \a data in PBM format from the \c std::ostream \a os.
-  void load(STD_IO::istream& is, media::bmap_data& data);
+  void load_pnm(STD_IO::istream& is, media::bmap_data& data);
 
   /// Save \a data in PBM format to the file \a filename.
-  void save(const char* filename, const media::bmap_data& data);
+  void save_pnm(const char* filename, const media::bmap_data& data);
 
   /// Save \a data in PBM format to the \c std::ostream \a os.
-  void save(STD_IO::ostream& os, const media::bmap_data& data);
+  void save_pnm(STD_IO::ostream& os, const media::bmap_data& data);
 };
 
 static const char vcid_pbm_h[] = "$Header$";

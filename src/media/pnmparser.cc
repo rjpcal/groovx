@@ -56,7 +56,7 @@ DBG_REGISTER
 
 namespace
 {
-  int modeForBitDepth(int depth)
+  int mode_for_bit_depth(int depth)
   {
     switch (depth)
       {
@@ -71,7 +71,7 @@ namespace
     ASSERT(0); return 0; // can't get here
   }
 
-  int bitDepthForMode(int mode)
+  int bit_depth_for_mode(int mode)
   {
     switch (mode)
       {
@@ -86,9 +86,9 @@ namespace
     ASSERT(0); return 0; // can't happen
   }
 
-  void parsePbmMode1(STD_IO::istream& is, media::bmap_data& data)
+  void parse_pbm_mode_1(STD_IO::istream& is, media::bmap_data& data)
   {
-    DOTRACE("parsePbmMode1");
+    DOTRACE("parse_pbm_mode_1");
 
     int position = 0;
     int val = 0;
@@ -106,10 +106,10 @@ namespace
       }
   }
 
-  void parsePbmMode23(STD_IO::istream& is, media::bmap_data& data,
-                      int max_grey)
+  void parse_pbm_mode_23(STD_IO::istream& is, media::bmap_data& data,
+                         int max_grey)
   {
-  DOTRACE("parsePbmMode23");
+  DOTRACE("parse_pbm_mode_23");
 
     const double scale = 255.0/double(max_grey);
 
@@ -129,16 +129,16 @@ namespace
       }
   }
 
-  void parsePbmMode456(STD_IO::istream& is, media::bmap_data& data)
+  void parse_pbm_mode_456(STD_IO::istream& is, media::bmap_data& data)
   {
-  DOTRACE("parsePbmMode456");
+  DOTRACE("parse_pbm_mode_456");
     dbg_eval_nl(3, data.byte_count());
     is.read(reinterpret_cast<char*>(data.bytes_ptr()), data.byte_count());
     unsigned int numread = is.gcount();
     if (numread < data.byte_count())
-      throw rutz::error("stream underflow in parsePbmMode456", SRC_POS);
+      throw rutz::error("stream underflow in parse_pbm_mode_456", SRC_POS);
     if (is.fail() && !is.eof())
-      throw rutz::error("input stream failed in parsePbmMode456", SRC_POS);
+      throw rutz::error("input stream failed in parse_pbm_mode_456", SRC_POS);
   }
 }
 
@@ -148,19 +148,19 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Pbm::save(const char* filename, const media::bmap_data& data)
+void media::save_pnm(const char* filename, const media::bmap_data& data)
 {
   rutz::shared_ptr<STD_IO::ostream> os
     (rutz::ogzopen(filename, std::ios::binary));
 
-  save(*os, data);
+  save_pnm(*os, data);
 }
 
-void Pbm::save(STD_IO::ostream& os, const media::bmap_data& data)
+void media::save_pnm(STD_IO::ostream& os, const media::bmap_data& data)
 {
-DOTRACE("Pbm::save");
+DOTRACE("media::save_pnm");
 
-  int mode = modeForBitDepth(data.bits_per_pixel());
+  int mode = mode_for_bit_depth(data.bits_per_pixel());
 
   os << 'P' << mode
      << ' ' << data.size().x()
@@ -179,17 +179,17 @@ DOTRACE("Pbm::save");
              data.bytes_per_row());
 }
 
-void Pbm::load(const char* filename, media::bmap_data& data)
+void media::load_pnm(const char* filename, media::bmap_data& data)
 {
   rutz::shared_ptr<STD_IO::istream> is
     (rutz::igzopen(filename, std::ios::binary));
 
-  load(*is, data);
+  load_pnm(*is, data);
 }
 
-void Pbm::load(STD_IO::istream& is, media::bmap_data& data)
+void media::load_pnm(STD_IO::istream& is, media::bmap_data& data)
 {
-DOTRACE("Pbm::load");
+DOTRACE("media::load_pnm");
   if (is.fail())
     {
       throw rutz::error("input stream failed before reading pnm file",
@@ -214,7 +214,7 @@ DOTRACE("Pbm::load");
   is >> mode;
   dbg_eval_nl(3, mode);
 
-  int bit_depth = bitDepthForMode(mode);
+  int bit_depth = bit_depth_for_mode(mode);
 
   while ( isspace(is.peek()) )
     {
@@ -239,7 +239,7 @@ DOTRACE("Pbm::load");
 
   dbg_eval_nl(3, max_grey);
 
-  // read one more character of whitespace from the stream after MaxGrey
+  // one more character of whitespace after max_grey
   c = is.get();
   if ( !isspace(c) )
     {
@@ -251,9 +251,9 @@ DOTRACE("Pbm::load");
 
   switch (mode)
     {
-    case 1:                 parsePbmMode1(is, new_data); break;
-    case 2: case 3:         parsePbmMode23(is, new_data, max_grey); break;
-    case 4: case 5: case 6: parsePbmMode456(is, new_data); break;
+    case 1:                 parse_pbm_mode_1(is, new_data); break;
+    case 2: case 3:         parse_pbm_mode_23(is, new_data, max_grey); break;
+    case 4: case 5: case 6: parse_pbm_mode_456(is, new_data); break;
     default: ASSERT(false); break;
     }
 

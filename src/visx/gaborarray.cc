@@ -83,7 +83,7 @@ namespace
     char fname[256];
     snprintf(fname, 256, "frame_%06d.png", framecount++);
 
-    ImgFile::save(fname, *bmap);
+    media::save_image(fname, *bmap);
   }
 }
 
@@ -191,7 +191,7 @@ DOTRACE("GaborArray::saveImage");
 
   update();
 
-  ImgFile::save(filename, *itsBmap);
+  media::save_image(filename, *itsBmap);
 }
 
 void GaborArray::saveContourOnlyImage(const char* filename) const
@@ -255,7 +255,7 @@ DOTRACE("GaborArray::saveContourOnlyImage");
       *bytes++ = val;
     }
 
-  ImgFile::save(filename, *result);
+  media::save_image(filename, *result);
 }
 
 void GaborArray::grGetBoundingBox(Bbox& bbox) const
