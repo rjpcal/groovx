@@ -3,7 +3,7 @@
 // fish.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:56 1999
-// written: Tue Oct  5 17:54:26 1999
+// written: Wed Oct  6 10:24:51 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,12 +32,13 @@
 
 class Fish : public GrObj, public PropFriend<Fish> {
 public:
-  Fish();
-  Fish(const char* splinefile, const char* coordfile, int index);
+  Fish(const char* splinefile=0, const char* coordfile=0, int index=0);
 
 private:
-  void read_splinefile(const char* splinefile);
-  void read_coordfile(const char* coordfile, int index);
+  void restoreToDefault();
+
+  void readSplineFile(const char* splinefile);
+  void readCoordFile(const char* coordfile, int index);
 
 public:
   virtual ~Fish();
@@ -48,6 +49,8 @@ public:
   // stream. Both functions are defined, but are no-ops for GrObj.
 
   virtual int charCount() const;
+
+  virtual void receiveStateChangeMsg(const Observable* obj);
 
   ////////////////
   // properties //
@@ -66,7 +69,10 @@ public:
   CTPtrProperty<Fish, double> coord3;
 
   CTBoundedProperty<Fish, int, 0, 3, 1> currentPart;
+
   CTBoundedProperty<Fish, int, 0, 3, 1> currentEndPt;
+  CTPtrProperty<Fish, int> endPt_Part;
+  CTPtrProperty<Fish, int> endPt_Bkpt;
 
   /////////////
   // actions //
@@ -76,15 +82,15 @@ protected:
   virtual void grRender() const;
 
 private:
+  void makeIoList(vector<IO *>& vec);
+  void makeIoList(vector<const IO *>& vec) const;
+
   struct EndPt;
   struct FishPart;
 
   FishPart* itsFishParts;
   EndPt* itsEndPts;
   double itsCoords[4];
-
-  void makeIoList(vector<IO *>& vec);
-  void makeIoList(vector<const IO *>& vec) const;
 };
 
 static const char vcid_fish_h[] = "$Header$";
