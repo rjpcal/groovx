@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri Aug 10 12:19:40 2001
+// written: Mon Aug 13 07:13:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,6 @@
 #include "util/pointers.h"
 #include "util/strings.h"
 
-#include <GL/gl.h>
-#include <GL/glu.h>
 #include <cctype>
 
 #define NO_TRACE
@@ -280,7 +278,7 @@ DOTRACE("BitmapRep::render");
 
   itsImpl->itsRenderer->doRender(canvas,
                                  itsImpl->itsData,
-											Point<double>(),
+                                 Point<double>(),
                                  itsImpl->getZoom());
 }
 
