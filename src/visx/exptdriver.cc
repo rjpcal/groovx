@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Tue Jun 12 11:18:32 2001
+// written: Wed Jun 13 09:06:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -228,7 +228,7 @@ private:
 
   Tcl_Interp* itsInterp;
 
-  Ref<Toglet> itsWidget;
+  MaybeRef<Toglet> itsWidget;
 
   fixed_string itsHostname;     // Host computer on which Expt was begun
   fixed_string itsSubject;      // Id of subject on whom Expt was performed
@@ -251,6 +251,9 @@ private:
 
   mutable Tcl::BkdErrorHandler itsErrHandler;
 };
+
+#include <typeinfo>
+void dummy() { Toglet* t; typeid(*t); }
 
 ///////////////////////////////////////////////////////////////////////
 //
