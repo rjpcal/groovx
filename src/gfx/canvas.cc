@@ -212,20 +212,20 @@ DOTRACE("Gfx::Canvas::drawNurbsCurve");
     }
 }
 
-void Gfx::Canvas::begin(Gfx::Canvas::VertexStyle s)
+void Gfx::Canvas::begin(Gfx::Canvas::VertexStyle s, const char* comment)
 {
   switch (s)
     {
-    case POINTS:         beginPoints(); break;
-    case LINES:          beginLines(); break;
-    case LINE_STRIP:     beginLineStrip(); break;
-    case LINE_LOOP:      beginLineLoop(); break;
-    case TRIANGLES:      beginTriangles(); break;
-    case TRIANGLE_STRIP: beginTriangleStrip(); break;
-    case TRIANGLE_FAN:   beginTriangleFan(); break;
-    case QUADS:          beginQuads(); break;
-    case QUAD_STRIP:     beginQuadStrip(); break;
-    case POLYGON:        beginPolygon(); break;
+    case POINTS:         beginPoints(comment); break;
+    case LINES:          beginLines(comment); break;
+    case LINE_STRIP:     beginLineStrip(comment); break;
+    case LINE_LOOP:      beginLineLoop(comment); break;
+    case TRIANGLES:      beginTriangles(comment); break;
+    case TRIANGLE_STRIP: beginTriangleStrip(comment); break;
+    case TRIANGLE_FAN:   beginTriangleFan(comment); break;
+    case QUADS:          beginQuads(comment); break;
+    case QUAD_STRIP:     beginQuadStrip(comment); break;
+    case POLYGON:        beginPolygon(comment); break;
     }
 }
 

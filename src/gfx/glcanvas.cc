@@ -259,7 +259,7 @@ namespace
   }
 }
 
-void GLCanvas::pushAttribs()
+void GLCanvas::pushAttribs(const char* /*comment*/)
 {
 DOTRACE("GLCanvas::pushAttribs");
   glPushAttrib(GL_ALL_ATTRIB_BITS);
@@ -420,7 +420,7 @@ DOTRACE("GLCanvas::perspective");
 }
 
 
-void GLCanvas::pushMatrix()
+void GLCanvas::pushMatrix(const char* /*comment*/)
 {
 DOTRACE("GLCanvas::pushMatrix");
   glMatrixMode(GL_MODELVIEW);
@@ -737,34 +737,34 @@ DOTRACE("GLCanvas::drawBezierFill4");
 #endif
 }
 
-void GLCanvas::beginPoints()
+void GLCanvas::beginPoints(const char* /*comment*/)
 { DOTRACE("GLCanvas::beginPoints"); glBegin(GL_POINTS); }
 
-void GLCanvas::beginLines()
+void GLCanvas::beginLines(const char* /*comment*/)
 { DOTRACE("GLCanvas::beginLines"); glBegin(GL_LINES); }
 
-void GLCanvas::beginLineStrip()
+void GLCanvas::beginLineStrip(const char* /*comment*/)
 { DOTRACE("GLCanvas::beginLineStrip"); glBegin(GL_LINE_STRIP); }
 
-void GLCanvas::beginLineLoop()
+void GLCanvas::beginLineLoop(const char* /*comment*/)
 { DOTRACE("GLCanvas::beginLineLoop"); glBegin(GL_LINE_LOOP); }
 
-void GLCanvas::beginTriangles()
+void GLCanvas::beginTriangles(const char* /*comment*/)
 { DOTRACE("GLCanvas::beginTriangles"); glBegin(GL_TRIANGLES); }
 
-void GLCanvas::beginTriangleStrip()
+void GLCanvas::beginTriangleStrip(const char* /*comment*/)
 { DOTRACE("GLCanvas::beginTriangleStrip"); glBegin(GL_TRIANGLE_STRIP); }
 
-void GLCanvas::beginTriangleFan()
+void GLCanvas::beginTriangleFan(const char* /*comment*/)
 { DOTRACE("GLCanvas::beginTriangleFan"); glBegin(GL_TRIANGLE_FAN); }
 
-void GLCanvas::beginQuads()
+void GLCanvas::beginQuads(const char* /*comment*/)
 { DOTRACE("GLCanvas::beginQuads"); glBegin(GL_QUADS); }
 
-void GLCanvas::beginQuadStrip()
+void GLCanvas::beginQuadStrip(const char* /*comment*/)
 { DOTRACE("GLCanvas::beginQuadStrip"); glBegin(GL_QUAD_STRIP); }
 
-void GLCanvas::beginPolygon()
+void GLCanvas::beginPolygon(const char* /*comment*/)
 { DOTRACE("GLCanvas::beginPolygon"); glBegin(GL_POLYGON); }
 
 void GLCanvas::vertex2(const Vec2d& v)
