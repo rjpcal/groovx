@@ -3,7 +3,7 @@
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Mar  6 12:19:30 2000
+// written: Mon Mar  6 16:08:28 2000
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -24,7 +24,6 @@
 #include "toglconfig.h"
 #include "xbmaprenderer.h"
 
-#include <stdexcept>
 #include <strstream.h>
 #include <iomanip.h>
 #include <togl.h>
@@ -528,11 +527,6 @@ int Objtogl_Init(Tcl_Interp* interp) {
 DOTRACE("Objtogl_Init");
 
   new ObjTogl::ObjToglPkg(interp); 
-
-#ifdef ACC_COMPILER
-  typeid(out_of_range);
-  typeid(length_error);
-#endif
 
   return TCL_OK;
 }
