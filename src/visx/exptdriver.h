@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Thu Oct 21 18:09:41 1999
+// written: Wed Nov  3 07:55:43 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,8 +96,10 @@ public:
   void read(const char* filename);
   void write(const char* filename) const;
 
-  // Note: this function calls Tcl_Exit(), so it will never return.
-  void writeAndExit();
+  // This saves the experiment file and a summary-of-responses file
+  // under unique filenames, and optionally quits the application if
+  // quitApplication is true.
+  void writeAndExit(bool quitApplication=false);
 
 protected:
   void init();
