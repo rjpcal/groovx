@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Thu May 10 12:04:43 2001
+// written: Fri May 11 21:25:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,6 +45,9 @@ private:
   int itsObjcGet;
   int itsObjcSet;
 
+  FieldVecCmd(const FieldVecCmd&);
+  FieldVecCmd& operator=(const FieldVecCmd&);
+
 public:
   FieldVecCmd(TclItemPkg* pkg, const FieldInfo& finfo);
   virtual ~FieldVecCmd();
@@ -64,6 +67,9 @@ private:
   Tcl_Interp* itsInterp;
   const FieldMap& itsFields;
   Tcl_Obj* itsFieldList;
+
+  FieldsCmd(const FieldsCmd&);
+  FieldsCmd& operator=(const FieldsCmd&);
 
 public:
   FieldsCmd(TclPkg* pkg, const FieldMap& fields);
