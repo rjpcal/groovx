@@ -52,10 +52,10 @@ test "$PACKAGE-Gtext::text" "error" {} {^$} $no_test
 ### Gtext::stringifyCmd ###
 ### Gtext::destringifyCmd ###
 test "$PACKAGE-Gtext::stringify" "stringify, destringify, and compare" {
-	 set str1 [Gtext::stringify $::GTEXT]
+	 set str1 [IO::stringify $::GTEXT]
 	 set ::GTEXT [IO::new Gtext]
-	 Gtext::destringify $::GTEXT $str1
-	 set str2 [Gtext::stringify $::GTEXT]
+	 IO::destringify $::GTEXT $str1
+	 set str2 [IO::stringify $::GTEXT]
 	 string equal $str1 $str2
 } {^1$}
 

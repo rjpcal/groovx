@@ -119,28 +119,22 @@ test "FaceTcl-mouthHeight" "error from bad objid" {
 unset faceid
 unset EPS
 
-### Face::stringifyCmd ###
-test "FaceTcl-Face::stringify" "error from wrong type" {
+### IO::destringifyCmd ###
+test "FaceTcl-IO::destringify" "error from wrong type" {
     set fx [IO::new FixPt]
-	 Face::stringify $fx
-} {^Face::stringify: an error of type (std::)?bad_cast occurred:.*$}
-
-### Face::destringifyCmd ###
-test "FaceTcl-Face::destringify" "error from wrong type" {
-    set fx [IO::new FixPt]
-	 Face::destringify $fx junk
-} {^Face::destringify: an error of type (std::)?bad_cast occurred:.*$}
-test "FaceTcl-Face::destringify" "stringify/destringify check" {
+	 IO::destringify $fx junk
+} {^IO::destringify: .*$}
+test "FaceTcl-IO::destringify" "stringify/destringify check" {
 	 set faceid [IO::new Face]
 	 Face::noseLength $faceid -1.2
 	 Face::mouthHeight $faceid -0.6
 	 Face::eyeHeight $faceid 0.4
 	 Face::eyeDistance $faceid 0.6
-	 set str1 [Face::stringify $faceid]
+	 set str1 [IO::stringify $faceid]
 
 	 set faceid2 [IO::new Face]
-	 Face::destringify $faceid2 $str1
-	 set str2 [Face::stringify $faceid2]
+	 IO::destringify $faceid2 $str1
+	 set str2 [IO::stringify $faceid2]
 
 	 expr [string compare $str1 $str2] == 0
 } {^1$}
