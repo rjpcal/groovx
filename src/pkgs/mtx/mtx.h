@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Feb 19 13:58:27 2002
+// written: Tue Feb 19 14:08:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,7 +104,7 @@ protected:
   // This call syntax is used to indicate that we need to get a unique copy of
   // the storage first
   MtxIterBase(Mtx& m, ptrdiff_t storageOffset, int s, int n) :
-    data(m.makeUnique().storageStart() + storageOffset),
+    data(m.makeUnique().storageStart_nc() + storageOffset),
     stride(s),
     stop(data+stride*n)
   {}
@@ -429,7 +429,7 @@ public:
     return datablock_->itsData[i+offset_];
   }
 
-  double& at(int i)
+  double& at_nc(int i)
   {
     RC_less(i+offset_, storageLength());
     return datablock_->itsData[i+offset_];
@@ -453,7 +453,7 @@ public:
   ptrdiff_t offsetFromStorage(int row, int col) const
   { return RCR_less(offset_ + offsetFromStart(row, col), storageLength()); }
 
-  double* address(int row, int col)
+  double* address_nc(int row, int col)
   { return datablock_->itsData + offsetFromStorage(row, col); }
 
   const double* address(int row, int col) const
@@ -503,19 +503,10 @@ public:
 #  undef APPLY_IMPL
 #endif // APPLY_IMPL
 
-  struct Setter
-  {
-    double v;
-    Setter(double v_) : v(v_) {}
-    double operator()(double) { return v; }
-  };
-
-  void setAll(double x) { applyFF(Setter(x)); }
-
   void makeUnique();
 
   const double* storageStart() const { return datablock_->itsData; }
-  double* storageStart() { return datablock_->itsData; }
+  double* storageStart_nc() { return datablock_->itsData; }
 
 private:
   int storageLength() const { return datablock_->itsLength; }
@@ -728,10 +719,17 @@ public:
 
   template <class F> void applyF(F func);
 
+  struct Setter
+  {
+    double v;
+    Setter(double v_) : v(v_) {}
+    double operator()(double) { return v; }
+  };
+
   void setAll(double x)
   {
     makeUnique();
-    itsImpl.setAll(x);
+    applyF(Setter(x));
   }
 
   Mtx& operator+=(double x) { applyF(Add(x)); return *this; }
@@ -765,7 +763,7 @@ public:
 
 private:
   const double* storageStart() const { return itsImpl.storageStart(); }
-  double* storageStart() { return itsImpl.storageStart(); }
+  double* storageStart_nc() { return itsImpl.storageStart_nc(); }
 
   friend class MtxIterBase<double>;
   friend class MtxIterBase<const double>;
@@ -785,7 +783,7 @@ inline double ElemProxy::value() const
 { return m.itsImpl.at(i); }
 
 inline double& ElemProxy::uniqueRef()
-{ m.makeUnique(); return m.itsImpl.at(i); }
+{ m.makeUnique(); return m.itsImpl.at_nc(i); }
 
 inline double& ElemProxy::operator=(double d)
 { return (uniqueRef() = d); }

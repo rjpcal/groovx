@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Feb 19 13:58:47 2002
+// written: Tue Feb 19 14:09:00 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -418,7 +418,7 @@ void Mtx::swapColumns(int c1, int c2)
 
   makeUnique();
 
-  memswap(itsImpl.address(0,c1), itsImpl.address(0,c2), mrows());
+  memswap(itsImpl.address_nc(0,c1), itsImpl.address_nc(0,c2), mrows());
 }
 
 Mtx& Mtx::operator+=(const Mtx& other)
