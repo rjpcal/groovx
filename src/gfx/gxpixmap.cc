@@ -345,11 +345,10 @@ DOTRACE("GxPixmap::saveImage");
   media::save_image(filename, rep->itsData);
 }
 
-void GxPixmap::grabScreenRect(const geom::rect<int>& rect)
+void GxPixmap::grabScreenRect(Nub::SoftRef<Gfx::Canvas> canvas,
+                              const geom::rect<int>& rect)
 {
 DOTRACE("GxPixmap::grabScreenRect");
-
-  Nub::SoftRef<Gfx::Canvas> canvas = Gfx::Canvas::current();
 
   canvas->grabPixels(rect, rep->itsData);
 
@@ -362,26 +361,23 @@ DOTRACE("GxPixmap::grabScreenRect");
   this->sigNodeChanged.emit();
 }
 
-void GxPixmap::grabScreen()
+void GxPixmap::grabScreen(Nub::SoftRef<Gfx::Canvas> canvas)
 {
 DOTRACE("GxPixmap::grabScreen");
 
-  Nub::SoftRef<Gfx::Canvas> canvas = Gfx::Canvas::current();
-
   geom::rect<int> bounds = canvas->getScreenViewport();
 
-  grabScreenRect(bounds);
+  grabScreenRect(canvas, bounds);
 }
 
-void GxPixmap::grabWorldRect(const geom::rect<double>& world_rect)
+void GxPixmap::grabWorldRect(Nub::SoftRef<Gfx::Canvas> canvas,
+                             const geom::rect<double>& world_rect)
 {
 DOTRACE("GxPixmap::grabWorldRect");
 
-  Nub::SoftRef<Gfx::Canvas> canvas = Gfx::Canvas::current();
-
   geom::rect<int> screen_rect = canvas->screenFromWorld(world_rect);
 
-  grabScreenRect(screen_rect);
+  grabScreenRect(canvas, screen_rect);
 
   this->sigNodeChanged.emit();
 }

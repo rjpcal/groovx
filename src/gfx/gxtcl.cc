@@ -434,11 +434,11 @@ DOTRACE("Gxpixmap_Init");
   pkg->defGetter("filename", &GxPixmap::filename, SRC_POS );
   pkg->defAction("flipContrast", &GxPixmap::flipContrast, SRC_POS);
   pkg->defAction("flipVertical", &GxPixmap::flipVertical, SRC_POS);
-  pkg->defVec("grabScreenRect", "objref(s) {left top right bottom}",
+  pkg->defVec("grabScreenRect", "objref(s) canvas {left top right bottom}",
               &GxPixmap::grabScreenRect, 1,
               SRC_POS );
-  pkg->defVec("grabScreen", "objref(s)", &GxPixmap::grabScreen, 1, SRC_POS );
-  pkg->defVec("grabWorldRect", "objref(s) {left top right bottom}",
+  pkg->defVec("grabScreen", "objref(s) canvas", &GxPixmap::grabScreen, 1, SRC_POS );
+  pkg->defVec("grabWorldRect", "objref(s) canvas {left top right bottom}",
               &GxPixmap::grabWorldRect, 1,
               SRC_POS );
   pkg->defRaw("loadImageStream", 2, "objref channame", &loadImageStream, SRC_POS);

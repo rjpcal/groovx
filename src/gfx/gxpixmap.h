@@ -104,15 +104,17 @@ public:
   /// Grabs pixels from a rectangular area of the screen buffer.
   /** The pixels are loaded into the GxPixmap's pixel array. The
       rectangle is specified in screen coordinates. */
-  void grabScreenRect(const geom::rect<int>& rect);
+  void grabScreenRect(Nub::SoftRef<Gfx::Canvas> canvas,
+                      const geom::rect<int>& rect);
 
   /// Like grabScreen(), but grab pixels from the entire canvas window.
-  void grabScreen();
+  void grabScreen(Nub::SoftRef<Gfx::Canvas> canvas);
 
   /// Grabs pixels from a rectangular area of the screen buffer.
   /** The pixels are loaded into the GxPixmap's pixel array. The
       rectangle is specified in world coordinates. */
-  void grabWorldRect(const geom::rect<double>& rect);
+  void grabWorldRect(Nub::SoftRef<Gfx::Canvas> canvas,
+                     const geom::rect<double>& rect);
 
   /// Flips the luminance contrast of the bitmap data.
   /** The actual math depends on the format of the bitmap data. The
