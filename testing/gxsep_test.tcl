@@ -165,6 +165,20 @@ test "GxSepTcl-GxSeparator::removeChild" "use when filled" {
 	 return "[GxSeparator::numChildren $gxsep] [GxNode::contains $gxsep $face]"
 } {^1 0$}
 
+### GxSeparator::bugfix ###
+test "GxSepTcl-GxSeparator::bugfixes" "destroy after attach" {
+	 set gxsep [Obj::new GxSeparator]
+	 set fixpt [Obj::new FixPt]
+	 GxSeparator::addChild $gxsep $fixpt
+	 see $gxsep
+	 FixPt::length $fixpt 0.4
+	 clearscreen
+	 delete $gxsep
+	 see $fixpt
+	 FixPt::length $fixpt 0.2
+	 delete $fixpt
+} {}
+
 source ${::TEST_DIR}/io_test.tcl
 
 set ::GXSEP [Obj::new GxSeparator]
