@@ -40,8 +40,7 @@
 #include "geom/rect.h"
 
 #include "gfx/canvas.h"
-
-#include "media/bmapdata.h"
+#include "gfx/glcanvas.h"
 
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
@@ -71,25 +70,13 @@
 
 namespace GLTcl
 {
-  void loadMatrix(Tcl::List entries);
+  void loadMatrix(Nub::SoftRef<GLCanvas> canvas, Tcl::List entries);
   void lookAt(Tcl::List args);
   void antialias(bool on_off);
   void drawOneLine(GLdouble x1, GLdouble y1, GLdouble x2, GLdouble y2);
   void drawThickLine(GLdouble x1, GLdouble y1,
                      GLdouble x2, GLdouble y2, GLdouble thickness);
   Tcl::List lineInfo();
-  long int pixelCheckSum(int x, int y, int w, int h);
-  long int pixelCheckSumAll()
-  {
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
-    return pixelCheckSum(viewport[0], viewport[1], viewport[2], viewport[3]);
-  }
-
-  void checkGL()
-  {
-    Gfx::Canvas::current()->throwIfError("checkGL", SRC_POS);
-  }
 
   // Just converts to char from unsigned char
   const char* getString(GLenum name)
@@ -319,7 +306,7 @@ namespace GLTcl
 //
 //---------------------------------------------------------------------
 
-void GLTcl::loadMatrix(Tcl::List entries)
+void GLTcl::loadMatrix(Nub::SoftRef<GLCanvas> canvas, Tcl::List entries)
 {
   rutz::fixed_block<GLdouble> matrix(entries.begin<GLdouble>(),
                                      entries.end<GLdouble>());
@@ -332,7 +319,7 @@ void GLTcl::loadMatrix(Tcl::List entries)
 
   glLoadMatrixd(&matrix[0]);
 
-  Gfx::Canvas::current()->throwIfError("loadMatrix", SRC_POS);
+  canvas->throwIfError("loadMatrix", SRC_POS);
 }
 
 //---------------------------------------------------------------------
@@ -460,31 +447,6 @@ Tcl::List GLTcl::lineInfo()
 
 //--------------------------------------------------------------------
 //
-// GLTcl::pixelCheckSum --
-//
-// This command returns the sum of the color indices of all the pixels
-// in a specified rectangle. It can be used as an easy way to see if
-// something is present within a given rectangle on the screen. For
-// example, if the background is index 0, and the foreground is index
-// 1, than this command can tell how many pixels were drawn by a
-// particular drawing command. However-- it is not at all speedy, so
-// it is best used for testing only.
-//
-//--------------------------------------------------------------------
-
-long int GLTcl::pixelCheckSum(int x, int y, int w, int h)
-{
-  media::bmap_data data;
-
-  const geom::rect<int> bounds = geom::rect<int>().set_lbwh(x, y, w, h);
-
-  Gfx::Canvas::current()->grabPixels(bounds, data);
-
-  return data.bytes_sum();
-}
-
-//--------------------------------------------------------------------
-//
 // Gltcl_Init --
 //
 //--------------------------------------------------------------------
@@ -519,13 +481,12 @@ DOTRACE("Gl_Init");
   pkg->def( "::glFlush", 0, glFlush, SRC_POS );
   pkg->def( "::glFrustum", "left right bottom top zNear zFar", glFrustum, SRC_POS );
   pkg->def( "::glGenLists", "range", glGenLists, SRC_POS );
-  pkg->def( "::glGetError", 0, GLTcl::checkGL, SRC_POS );
   pkg->def( "::glIndexi", "index", glIndexi, SRC_POS );
   pkg->def( "::glIsList", "list_id", glIsList, SRC_POS );
   pkg->def( "::glLineWidth", "width", glLineWidth, SRC_POS );
   pkg->def( "::glListBase", "base", glListBase, SRC_POS );
   pkg->def( "::glLoadIdentity", 0, glLoadIdentity, SRC_POS );
-  pkg->def( "::glLoadMatrix", "4x4_column_major_matrix", GLTcl::loadMatrix, SRC_POS );
+  pkg->def( "::glLoadMatrix", "glcanvas 4x4_column_major_matrix", GLTcl::loadMatrix, SRC_POS );
   pkg->def( "::glMatrixMode", "mode", glMatrixMode, SRC_POS );
   pkg->def( "::glNewList", "list_id mode", glNewList, SRC_POS );
   pkg->def( "::glOrtho", "left right bottom top zNear zFar", glOrtho, SRC_POS );
@@ -566,8 +527,6 @@ DOTRACE("Gl_Init");
   pkg->def( "::drawOneLine", "x1 y1 x2 y2", GLTcl::drawOneLine, SRC_POS );
   pkg->def( "::drawThickLine", "x1 y1 x2 y2 thickness", GLTcl::drawThickLine, SRC_POS );
   pkg->def( "::lineInfo", 0, GLTcl::lineInfo, SRC_POS );
-  pkg->def( "::pixelCheckSum", "x y w h", GLTcl::pixelCheckSum, SRC_POS );
-  pkg->def( "::pixelCheckSum", 0, GLTcl::pixelCheckSumAll, SRC_POS );
 
   PKG_RETURN;
 }

@@ -36,10 +36,51 @@
 #include "gfx/glcanvas.h"
 #include "gfx/recttcl.h"
 
+#include "media/bmapdata.h"
+
 #include "tcl/objpkg.h"
 #include "tcl/tclpkg.h"
 
 #include "util/trace.h"
+
+namespace
+{
+  //--------------------------------------------------------------------
+  //
+  // pixelCheckSum --
+  //
+  // This command returns the sum of the color indices of all the pixels
+  // in a specified rectangle. It can be used as an easy way to see if
+  // something is present within a given rectangle on the screen. For
+  // example, if the background is index 0, and the foreground is index
+  // 1, than this command can tell how many pixels were drawn by a
+  // particular drawing command. However-- it is not at all speedy, so
+  // it is best used for testing only.
+  //
+  //--------------------------------------------------------------------
+
+  long int pixelCheckSum(Nub::SoftRef<GLCanvas> canvas,
+                         int x, int y, int w, int h)
+  {
+    media::bmap_data data;
+
+    const geom::rect<int> bounds = geom::rect<int>().set_lbwh(x, y, w, h);
+
+    canvas->grabPixels(bounds, data);
+
+    return data.bytes_sum();
+  }
+
+  long int pixelCheckSumAll(Nub::SoftRef<GLCanvas> canvas)
+  {
+    const geom::rect<int> viewport = canvas->getScreenViewport();
+    return pixelCheckSum(canvas,
+                         viewport.left(),
+                         viewport.bottom(),
+                         viewport.width(),
+                         viewport.height());
+  }
+}
 
 extern "C"
 int Canvas_Init(Tcl_Interp* interp)
@@ -50,7 +91,15 @@ DOTRACE("Canvas_Init");
   pkg->inheritPkg("Obj");
   Tcl::defGenericObjCmds<Gfx::Canvas>(pkg, SRC_POS);
 
+  using rutz::bind_last;
+  using rutz::mem_func;
+
   pkg->defGetter("worldViewport", &Gfx::Canvas::getWorldViewport, SRC_POS);
+
+  pkg->def("current", "", &Gfx::Canvas::current, SRC_POS);
+  pkg->def("throwIfError", "",
+           bind_last(bind_last(mem_func(&Gfx::Canvas::throwIfError), SRC_POS), ""),
+           SRC_POS);
 
   PKG_RETURN;
 }
@@ -63,6 +112,9 @@ DOTRACE("Glcanvas_Init");
   PKG_CREATE(interp, "GLCanvas", "$Revision$");
   pkg->inheritPkg("Canvas");
   Tcl::defGenericObjCmds<GLCanvas>(pkg, SRC_POS);
+
+  pkg->def( "pixelCheckSum", "glcanvas x y w h", &pixelCheckSum, SRC_POS );
+  pkg->def( "pixelCheckSum", "glcanvas", &pixelCheckSumAll, SRC_POS );
 
   PKG_RETURN;
 }
