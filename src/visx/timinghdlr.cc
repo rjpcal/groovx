@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Wed Dec  1 14:26:48 1999
+// written: Wed Dec  1 14:49:42 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ namespace {
 
   void scheduleAll(vector<TrialEvent*>& events, Experiment* expt) {
   DOTRACE("scheduleAll");
-    for (int i = 0; i < events.size(); ++i) {
+    for (size_t i = 0; i < events.size(); ++i) {
 		events[i]->schedule(expt);
 	 }
 #if 0
@@ -43,7 +43,7 @@ namespace {
 
   void cancelAll(vector<TrialEvent*>& events) {
   DOTRACE("cancelAll");
-    for (int i = 0; i < events.size(); ++i) {
+    for (size_t i = 0; i < events.size(); ++i) {
 		events[i]->cancel();
 	 }
 #if 0
@@ -53,7 +53,7 @@ namespace {
 
   void deleteAll(vector<TrialEvent*>& events) {
   DOTRACE("deleteAll");
-    for (int i = 0; i < events.size(); ++i) {
+    for (size_t i = 0; i < events.size(); ++i) {
 		delete events[i];
 		events[i] = 0;
 	 }
