@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Mon Aug 20 14:43:09 2001
+// written: Mon Aug 20 15:10:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,14 +25,6 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
-
-namespace
-{
-  unsigned int safestrlen(const char* str)
-  {
-    return str ? strlen(str) : 0;
-  }
-}
 
 //---------------------------------------------------------------------
 //
@@ -55,11 +47,11 @@ void string_rep::operator delete(void* space)
   repList.deallocate(space);
 }
 
-void string_rep::realloc(std::size_t bufsize)
+void string_rep::realloc(std::size_t capacity)
 {
   Precondition(itsRefCount <= 1);
 
-  string_rep new_rep(Util::max(itsCapacity*2 + 32, bufsize), 0);
+  string_rep new_rep(Util::max(itsCapacity*2 + 32, capacity), 0);
 
   new_rep.append(this->itsLength, this->itsText);
 
@@ -68,14 +60,22 @@ void string_rep::realloc(std::size_t bufsize)
   Util::swap(itsText, new_rep.itsText);
 }
 
-void string_rep::make_space(std::size_t maxlen)
+void string_rep::reserve(std::size_t capacity)
 {
-  realloc(maxlen+1); itsLength = maxlen;
+  if (itsCapacity < capacity)
+    realloc(capacity);
 }
 
 void string_rep::add_terminator()
 {
   itsText[itsLength] = '\0';
+}
+
+void string_rep::set_length(std::size_t length)
+{
+  Precondition(length+1 < itsCapacity);
+  itsLength = length;
+  add_terminator();
 }
 
 void string_rep::append_no_terminate(char c)
@@ -319,11 +319,23 @@ DOTRACE("fstring::read");
           is.unget();
           break;
         }
-//        append(char(c));
       itsRep->append_no_terminate(char(c));
     }
 
   itsRep->add_terminator();
+}
+
+void fstring::readsome(STD_IO::istream& is, unsigned int count)
+{
+DOTRACE("fstring::readsome");
+
+  if (count > 0)
+    {
+      string_rep::makeUnique(itsRep);
+      itsRep->reserve(count+1);
+      unsigned int numread = is.readsome(itsRep->data(), count);
+      itsRep->set_length(numread);
+    }
 }
 
 void fstring::write(STD_IO::ostream& os) const
@@ -346,7 +358,6 @@ DOTRACE("fstring::readline");
       int c = is.get();
       if (c == EOF || c == eol)
         break;
-//        append(char(c));
       itsRep->append_no_terminate(char(c));
     }
 
