@@ -8,7 +8,7 @@
 ##############################################################################
 
 set ::KBDRH [Obj::new KbdResponseHdlr]
-KbdRh::keyRespPairs $::KBDRH { {{^[aA]$} 0} {{^[lL]$} 1} }
+KbdRh::inputResponseMap $::KBDRH { {{^[aA]$} 0} {{^[lL]$} 1} }
 
 source ${::TEST_DIR}/io_test.tcl
 
@@ -67,24 +67,23 @@ test "KbdRhTcl-KbdRh::useFeedback" "error on bad rhid" {
 	 KbdRh::useFeedback -1
 } {useFeedback: .*$}
 
-### KbdRh::keyRespPairs ###
-test "KbdRhTcl-KbdRh::keyRespPairs" "normal use" {
-	 KbdRh::keyRespPairs $::KBDRH { {{^[aA]$} 0} {{^[lL]$} 1} }
+### KbdRh::inputResponseMap ###
+test "KbdRhTcl-KbdRh::inputResponseMap" "normal use" {
+	 KbdRh::inputResponseMap $::KBDRH { {{^[aA]$} 0} {{^[lL]$} 1} }
 	 EventRh::responseProc $::KBDRH
 } {\{\{\^\[aA\]\$\} 0\} \{\{\^\[lL\]\$\} 1\}}
 
-### KbdRh::feedbackPairs ###
-test "KbdRhTcl-KbdRh::feedbackPairs" "too few args" {
-	 KbdRh::feedbackPairs
+### KbdRh::feedbackMap ###
+test "KbdRhTcl-KbdRh::feedbackMap" "too few args" {
+	 KbdRh::feedbackMap
 } {^wrong \# args: should be}
-test "KbdRhTcl-KbdRh::feedbackPairs" "too many args" {
-	 KbdRh::feedbackPairs junk junk junk
+test "KbdRhTcl-KbdRh::feedbackMap" "too many args" {
+	 KbdRh::feedbackMap junk junk junk
 } {^wrong \# args: should be}
-test "KbdRhTcl-KbdRh::feedbackPairs" "error on bad rhid" {
-	 KbdRh::feedbackPairs -1
+test "KbdRhTcl-KbdRh::feedbackMap" "error on bad rhid" {
+	 KbdRh::feedbackMap -1
 } {feedbackMap: .*$}
-test "KbdRhTcl-KbdRh::feedbackPairs" "normal use" {
-	 KbdRh::feedbackPairs $::KBDRH { {x 5} {z 9} }
-	 KbdRh::feedbackPairs $::KBDRH
+test "KbdRhTcl-KbdRh::feedbackMap" "normal use" {
+	 KbdRh::feedbackMap $::KBDRH { {x 5} {z 9} }
+	 KbdRh::feedbackMap $::KBDRH
 } {^ \{x 5\} \{z 9\} $}
-
