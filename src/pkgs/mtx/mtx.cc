@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Apr 10 10:32:56 2001
+// written: Mon Apr 16 11:48:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,7 @@
 #include "mtx.h"
 
 #include "error.h"
+#include "strings.h"
 
 #include "libmatlb.h"
 
@@ -289,6 +290,16 @@ DOTRACE("Mtx::extractStructField");
 	 }
 
   return Mtx(field, COPY);
+}
+
+fixed_string Mtx::extractString(const mxArray* arr)
+{
+DOTRACE("Mtx::extractString");
+  fixed_string str(mxGetM(arr) * mxGetN(arr) * sizeof(mxChar));
+
+  mxGetString(arr, str.data(), str.length() + 1);
+
+  return str;
 }
 
 void Mtx::print() const

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Apr 10 10:29:13 2001
+// written: Mon Apr 16 11:47:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,8 @@
 
 #include "datablock.h"
 #include "num.h"
+
+class fixed_string;
 
 namespace RC // Range checking
 {
@@ -309,6 +311,8 @@ public:
 
   static Mtx extractStructField(mxArray* structArray, const char* fieldName,
 										  int indexIntoArray = 0);
+
+  static fixed_string extractString(const mxArray* arr);
 
   mxArray* makeMxArray() const;
 
