@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999 (as bitmap.h)
-// written: Thu Nov 21 12:28:05 2002
+// written: Wed Dec 25 12:52:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -125,6 +125,9 @@ public:
 
   /// Change the (x,y) factor by which the bitmap will be scaled.
   void setZoom(Gfx::Vec2<double> zoom);
+
+  /// Zoom to a given size.
+  void zoomTo(Gfx::Vec2<int> sz);
 
   /// Change whether zooming will be used.
   void setUsingZoom(bool val);

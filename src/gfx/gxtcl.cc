@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Tue Nov 26 18:50:24 2002
+// written: Wed Dec 25 12:56:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -300,6 +300,7 @@ DOTRACE("Gx_Init");
   pkg15->defAction("flipVertical", &GxPixmap::flipVertical);
   pkg15->defGetter("size", &GxPixmap::size);
   pkg15->defAttrib("zoom", &GxPixmap::getZoom, &GxPixmap::setZoom);
+  pkg15->defSetter("zoomTo", &GxPixmap::zoomTo);
   pkg15->defAttrib("usingZoom", &GxPixmap::getUsingZoom, &GxPixmap::setUsingZoom);
   pkg15->defAttrib("purgeable", &GxPixmap::isPurgeable, &GxPixmap::setPurgeable);
   pkg15->defAttrib("asBitmap", &GxPixmap::getAsBitmap, &GxPixmap::setAsBitmap);

@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999 (as bitmap.cc)
-// written: Tue Dec 24 20:53:21 2002
+// written: Wed Dec 25 12:57:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -397,10 +397,24 @@ DOTRACE("GxPixmap::getAsBitmap");
 //////////////////
 
 void GxPixmap::setZoom(Gfx::Vec2<double> zoom)
-  { rep->itsZoom = zoom; this->sigNodeChanged.emit(); }
+{
+DOTRACE("GxPixmap::setZoom");
+  rep->itsZoom = zoom; this->sigNodeChanged.emit();
+}
+
+void GxPixmap::zoomTo(Gfx::Vec2<int> sz)
+{
+DOTRACE("GxPixmap::zoomTo");
+  double x_ratio = double(sz.x()) / rep->itsData.width();
+  double y_ratio = double(sz.y()) / rep->itsData.height();
+  double ratio = Util::min(x_ratio, y_ratio);
+  setUsingZoom(true);
+  setZoom(Gfx::Vec2<double>(ratio, ratio));
+}
 
 void GxPixmap::setUsingZoom(bool val)
 {
+DOTRACE("GxPixmap::setUsingZoom");
   rep->itsUsingZoom = val;
 
   // glPixelZoom() does not work with glBitmap()
@@ -411,7 +425,10 @@ void GxPixmap::setUsingZoom(bool val)
 }
 
 void GxPixmap::setPurgeable(bool val)
-  { rep->itsPurgeable = val; this->sigNodeChanged.emit(); }
+{
+DOTRACE("GxPixmap::setPurgeable");
+  rep->itsPurgeable = val; this->sigNodeChanged.emit();
+}
 
 void GxPixmap::setAsBitmap(bool val)
 {
