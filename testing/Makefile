@@ -1,6 +1,6 @@
 # $Id$
 
-TAGS:
+TAGS: *.tcl
 	etags *.tcl
 
 count:
