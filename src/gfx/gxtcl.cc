@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Thu Nov 21 12:28:05 2002
+// written: Thu Nov 21 12:40:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,69 +95,42 @@ namespace GxTcl
   // pretty easily, just by captuing the screen bounds into a BmapData
   // object and then saving that.
 #if 0
-  void saveBitmap(Util::Ref<GxShapeKit> obj, const char* filename)
+  void saveBitmap(Util::Ref<GxNode> obj, const char* filename)
   {
     obj->saveBitmapCache(Gfx::Canvas::current(), filename);
   }
 #endif
 }
 
-namespace
-{
-  const IO::VersionId XBITMAP_SVID = 2;
-  const IO::VersionId GLBITMAP_SVID = 3;
-}
-
-class XBitmap : public GxPixmap
+// This class is for backward-compatibility, to allow us to deserialize
+// XBitmap and GLBitmap objects from old expt files.
+class CompatBitmap : public GxPixmap
 {
 public:
-  XBitmap() : GxPixmap() {}
+  bool isGL;
 
-  static XBitmap* make() { return new XBitmap; }
+  CompatBitmap(bool gl) : GxPixmap(), isGL(gl) {}
 
-  virtual ~XBitmap() {}
+  static CompatBitmap* makeGL() { return new CompatBitmap(true); }
+  static CompatBitmap* makeX() { return new CompatBitmap(false); }
+
+  // no writeTo() or serialVersionId() overrides since we just want
+  // GxPixmap's versions
 
   virtual fstring ioTypename() const { return fstring("GxPixmap"); }
 
-  virtual IO::VersionId serialVersionId() const { return XBITMAP_SVID; }
-
   virtual void readFrom(IO::Reader* reader)
   {
-    reader->ensureReadVersionId("XBitmap", 2, "Try grsh0.8a4");
+    int svid = reader->ensureReadVersionId("CompatBitmap", 2, "Try grsh0.8a4");
 
-    reader->readBaseClass("Bitmap", IO::makeProxy<GxPixmap>(this));
-  }
-
-  // no writeTo() override since we just want GxPixmap's writeTo()
-};
-
-class GLBitmap : public GxPixmap
-{
-public:
-  GLBitmap() : GxPixmap() {}
-
-  static GLBitmap* make() { return new GLBitmap; }
-
-  virtual ~GLBitmap() {}
-
-  virtual fstring ioTypename() const { return fstring("GxPixmap"); }
-
-  virtual IO::VersionId serialVersionId() const { return GLBITMAP_SVID; }
-
-  virtual void readFrom(IO::Reader* reader)
-  {
-    int svid = reader->ensureReadVersionId("GLBitmap", 2, "Try grsh0.8a4");
-
-    if (svid <= 2)
+    if (isGL && svid <= 2)
       {
-        bool val;
-        reader->readValue("usingGlBitmap", val);
+        bool dummy;
+        reader->readValue("usingGlBitmap", dummy);
       }
 
     reader->readBaseClass("Bitmap", IO::makeProxy<GxPixmap>(this));
   }
-
-  // no writeTo() override since we just want GxPixmap's writeTo()
 };
 
 extern "C"
@@ -329,11 +302,9 @@ DOTRACE("Gx_Init");
   pkg15->defAttrib("purgeable", &GxPixmap::isPurgeable, &GxPixmap::setPurgeable);
   pkg15->defAttrib("asBitmap", &GxPixmap::getAsBitmap, &GxPixmap::setAsBitmap);
 
-  // GLBitmap for backward-compatibility
-  Tcl::defCreator<GLBitmap>(pkg15);
-
-  // XBitmap for backward-compatability
-  Tcl::defCreator<XBitmap>(pkg15);
+  // For GLBitmap/XBitmap backward-compatibility
+  Util::ObjFactory::theOne().registerCreatorFunc(&CompatBitmap::makeGL, "GLBitmap");
+  Util::ObjFactory::theOne().registerCreatorFunc(&CompatBitmap::makeX, "XBitmap");
 
   status = pkg15->combineStatus(status);
 
