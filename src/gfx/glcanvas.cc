@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Jan 23 10:09:10 2002
+// written: Mon Feb 25 10:53:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -315,7 +315,8 @@ DOTRACE("GLCanvas::enableAntialiasing");
 
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency
 
-      glEnable(GL_LINE_SMOOTH);   // use anti-aliasing
+      // use anti-aliasing for lines (but not polygons):
+      glEnable(GL_LINE_SMOOTH);
     }
 }
 
@@ -502,6 +503,39 @@ DOTRACE("GLCanvas::drawBezier4");
 
   glMapGrid1d(subdivisions, 0.0, 1.0);
   glEvalMesh1(GL_LINE, 0, subdivisions);
+}
+
+void GLCanvas::drawBezierFill4(const Gfx::Vec3<double>& center,
+                               const Gfx::Vec3<double>& p1,
+                               const Gfx::Vec3<double>& p2,
+                               const Gfx::Vec3<double>& p3,
+                               const Gfx::Vec3<double>& p4,
+                               unsigned int subdivisions)
+{
+DOTRACE("GLCanvas::drawBezierFill4");
+
+  Gfx::Vec3<double> points[] =
+  {
+    p1, p2, p3, p4
+  };
+
+  glEnable(GL_MAP1_VERTEX_3);
+  glMap1d(GL_MAP1_VERTEX_3,
+          0.0,                  // beginning of domain range
+          double(subdivisions), // end of domain range
+          3,                    // stride (i.e. skip between array points)
+          4,                    // order (i.e. number of control points)
+          points[0].data());
+
+  glMapGrid1d(subdivisions, 0.0, 1.0);
+
+  glBegin(GL_TRIANGLE_FAN);
+  vertex3(center);
+  for (int d = 0; d <= subdivisions; ++d)
+    {
+      glEvalCoord1d(double(d));
+    }
+  glEnd();
 }
 
 void GLCanvas::beginPoints()        { glBegin(GL_POINTS); }
