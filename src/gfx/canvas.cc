@@ -78,6 +78,15 @@ DOTRACE("Gfx::Canvas::current");
 
 Gfx::Canvas::~Canvas() throw() {}
 
+void Gfx::Canvas::drawRect(const Gfx::Rect<double>& rect, bool filled)
+{
+  Gfx::AttribSaver saver(*this);
+
+  this->setPolygonFill(filled);
+
+  drawRect(rect);
+}
+
 void Gfx::Canvas::drawBox(const Gfx::Box<double>& box)
 {
   AttribSaver saver(*this);
