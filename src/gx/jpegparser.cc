@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 11 15:16:06 2002
-// written: Mon Nov 11 16:58:42 2002
+// written: Mon Nov 11 17:17:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,9 +20,9 @@
 
 #include "util/error.h"
 
+#include <csetjmp>
 #include <cstdio>
 #include <jpeglib.h>
-#include <setjmp.h>
 
 #include "util/trace.h"
 
@@ -46,7 +46,8 @@ namespace
 
   void jpegErrorExit(j_common_ptr cinfo)
   {
-    DOTRACE("<jpegparser.cc>::jpegErrorExit");
+    // Since we longjmp out of here, DON'T use any C++ objects that need to
+    // have destructors run!
 
     cinfo->err->output_message(cinfo);
 
