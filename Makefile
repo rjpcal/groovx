@@ -238,15 +238,7 @@ endif
 
 ALL_CXXFLAGS := $(CXXFLAGS) $(CPPFLAGS) $(DEFS)
 
-$(OBJ)/%.o : $(SRC)/%.cc
-	@mkdir -p $(LOGS)
-	@echo $< >> $(LOGS)/CompileStats
-	@echo ""
-	$(CXX) $(ALL_CXXFLAGS) \
-		-c $< \
-		-o $@
-
-$(OBJ)/%.do : $(SRC)/%.cc
+$(OBJ)/%.$(OBJEXT) : $(SRC)/%.cc
 	@mkdir -p $(LOGS)
 	@echo $< >> $(LOGS)/CompileStats
 	@echo ""
@@ -465,9 +457,6 @@ count: $(LOGS)/.timestamp
 count_sort: $(LOGS)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
 	wc $(ALL_SOURCES) $(ALL_HEADERS) | sort -n | tee $(LOGS)/count_sort
 
-do_sizes:
-	ls -lLR $(OBJ) | grep "\.do" | sort -n +4 > do_sizes
-
 docs: $(DOC)/DoxygenConfig $(DOC)/*.doc $(ALL_HEADERS)
 	(doxygen $(DOC)/DoxygenConfig > $(DOC)/DocLog) >& $(DOC)/DocErrors
 	cd ~/www/grsh; chmod -R og+r *
@@ -484,8 +473,8 @@ ncsl: $(LOGS)/.timestamp
 ncsl_sort: $(LOGS)/.timestamp
 	NCSL $(ALL_SOURCES) $(ALL_HEADERS) | sort -n | tee $(LOGS)/ncsl_sort
 
-o_sizes:
-	ls -lLR $(OBJ) | grep "\.o" | sort -n +4 > o_sizes
+obj_sizes:
+	ls -lLR $(OBJ) | grep "\.$(OBJEXT)" | sort -n +4 > obj_sizes
 
 .PHONY: showpid
 showpid:
