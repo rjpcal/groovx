@@ -3,7 +3,7 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Tue Sep 19 13:54:29 2000
+// written: Tue Sep 19 17:39:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,6 +11,7 @@
 #ifndef SOUNDTCL_CC_DEFINED
 #define SOUNDTCL_CC_DEFINED
 
+#include "application.h"
 #include "soundlist.h"
 #include "sound.h"
 
@@ -34,10 +35,8 @@
 //---------------------------------------------------------------------
 
 namespace SoundTcl {
-  const string_literal ok_sound_file(
-	 "/cit/rjpeters/science/face/audio/saw50_500Hz_300ms.au");
-  const string_literal err_sound_file(
-	 "/cit/rjpeters/science/face/audio/saw50_350Hz_300ms.au");
+  const char* ok_sound_file = "/audio/saw50_500Hz_300ms.au";
+  const char* err_sound_file = "/audio/saw50_350Hz_300ms.au";
 
   class SoundCmd;
   class HaveAudioCmd;
@@ -99,15 +98,25 @@ public:
 									  NULL);
 	 }
 	 else {
+		dynamic_string lib_dir(Application::theApp().getLibraryDirectory());
+		DebugEvalNL(lib_dir);
+
+		dynamic_string full_ok_file(lib_dir);
+		full_ok_file.append(ok_sound_file);     DebugEvalNL(full_ok_file);
+
+		dynamic_string full_err_file(lib_dir);
+		full_err_file.append(err_sound_file);     DebugEvalNL(full_err_file);
+
+		static int OK = 0;
+		static int ERR = 1;
+
 		try {
-		  static int OK = 0;
 		  theList().insertAt(
-			 OK, SoundList::Ptr(Sound::newPlatformSound(ok_sound_file.c_str())));
+			 OK, SoundList::Ptr(Sound::newPlatformSound(full_ok_file.c_str())));
 		  linkConstVar("Sound::ok", OK);
 
-		  static int ERR = 1;
 		  theList().insertAt(
-          ERR, SoundList::Ptr(Sound::newPlatformSound(err_sound_file.c_str())));
+          ERR, SoundList::Ptr(Sound::newPlatformSound(full_err_file.c_str())));
 		  linkConstVar("Sound::err", ERR);
 		}
 		catch (SoundError& err) {
