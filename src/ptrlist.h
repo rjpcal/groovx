@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Sun Nov 21 02:58:19 1999
+// written: Tue Nov 30 17:11:58 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,14 +56,14 @@ public:
 	 
 	 // The index is not checked.
 	 iterator (PtrList<T>& aList, int index) :
-		itsList(&aList),
-		itsIndex(index) {}
+		itsIndex(index),
+		itsList(&aList) {}
 
 	 // 'bool check' is a dummy argument to indicate that the index
 	 // must be checked
 	 iterator (PtrList<T>& aList, int index, bool check) :
-		itsList(&aList),
-		itsIndex(index)
+		itsIndex(index),
+		itsList(&aList)
 	 {
 		while ( itsIndex > itsList->capacity() ) { --itsIndex; }
 		while ( itsIndex < -1 ) { ++itsIndex; }
@@ -75,8 +75,8 @@ public:
 
 	 ///
 	 iterator (const iterator& rhs) :
-		itsList(rhs.itsList),
-		itsIndex(rhs.itsIndex) {}
+		itsIndex(rhs.itsIndex),
+		itsList(rhs.itsList) {}
 
 	 ///
 	 iterator& operator=(const iterator& rhs) 
