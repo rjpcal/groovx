@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 21 15:22:25 2002
-// written: Thu Nov 21 18:31:46 2002
+// written: Thu Nov 21 18:47:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -145,8 +145,13 @@ DOTRACE("GxFixedScaleCamera::classFields");
     Field("pixelsPerUnit",
           make_mypair(&GxFixedScaleCamera::getPixelsPerUnit,
                       &GxFixedScaleCamera::setPixelsPerUnit),
-          2.05, 0.1, 100.0, 0.1,
-          Field::NEW_GROUP)
+          2.05, 1.0, 10000.0, 1.0,
+          Field::NEW_GROUP),
+    Field("logPixelsPerUnit",
+          make_mypair(&GxFixedScaleCamera::getLogPixelsPerUnit,
+                      &GxFixedScaleCamera::setLogPixelsPerUnit),
+          0.5, 0.0, 5.0, 0.025,
+          Field::TRANSIENT)
   };
 
   static FieldMap FIELD_MAP(FIELD_ARRAY);
@@ -164,6 +169,16 @@ void GxFixedScaleCamera::writeTo(IO::Writer* writer) const
 {
 DOTRACE("GxFixedScaleCamera::writeTo");
   writeFieldsTo(writer, classFields());
+}
+
+double GxFixedScaleCamera::getLogPixelsPerUnit() const
+{
+  return log10(itsPixelsPerUnit);
+}
+
+void GxFixedScaleCamera::setLogPixelsPerUnit(double s)
+{
+  setPixelsPerUnit(pow(10.0, s));
 }
 
 void GxFixedScaleCamera::setPixelsPerUnit(double s)
