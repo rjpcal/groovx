@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Sun Dec  8 14:22:45 2002
+// written: Thu Dec 19 18:26:00 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,13 +112,6 @@ DOTRACE("Block::writeTo");
 // Block's Element interface
 //
 ///////////////////////////////////////////////////////////////////////
-
-Util::ErrorHandler& Block::getErrorHandler() const
-{
-DOTRACE("Block::getErrorHandler");
-  Precondition( itsParent != 0 );
-  return itsParent->getErrorHandler();
-}
 
 const Util::SoftRef<Toglet>& Block::getWidget() const
 {

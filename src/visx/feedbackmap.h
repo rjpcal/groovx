@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 16:58:49 2001
-// written: Tue Dec 10 13:25:42 2002
+// written: Thu Dec 19 18:56:47 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,6 @@
 #include "tcl/tclsafeinterp.h"
 
 #include "util/error.h"
-#include "util/errorhandler.h"
 #include "util/minivec.h"
 #include "util/strings.h"
 
@@ -93,7 +92,7 @@ private:
     {
       if (interp.evalBooleanExpr(itsCondition))
         {
-          interp.eval(itsResultCmd, Util::ThrowingErrorHandler::get());
+          interp.eval(itsResultCmd);
           return true;
         }
       return false;

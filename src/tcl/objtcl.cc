@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 14 16:24:33 2002
-// written: Tue Dec 10 13:13:29 2002
+// written: Thu Dec 19 18:56:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -136,7 +136,7 @@ namespace
         cmd_str.append(obj.id());
         cmd_str.append(init_args[i]);
         cmd_str.append(init_args[i+1]);
-        interp.eval(cmd_str.asObj(), Util::ThrowingErrorHandler::get());
+        interp.eval(cmd_str.asObj());
       }
 
     return obj;

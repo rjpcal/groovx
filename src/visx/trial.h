@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Sun Dec  8 14:22:45 2002
+// written: Thu Dec 19 18:27:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -94,8 +94,6 @@ public:
   //
   // Element interface
   //
-
-  virtual Util::ErrorHandler& getErrorHandler() const;
 
   virtual const Util::SoftRef<Toglet>& getWidget() const;
 

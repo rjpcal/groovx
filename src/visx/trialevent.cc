@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Fri Dec 13 11:06:12 2002
+// written: Thu Dec 19 18:12:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,6 @@
 
 #include "util/algo.h"
 #include "util/error.h"
-#include "util/errorhandler.h"
 #include "util/log.h"
 #include "util/ref.h"
 
@@ -48,7 +47,6 @@
 TrialEvent::TrialEvent(unsigned int msec) :
   itsTimer(msec, false),
   itsRequestedDelay(msec),
-  itsErrorHandler(0),
   itsTrial(0),
   itsEstimatedOffset(0.0),
   itsTotalOffset(0.0),
@@ -88,14 +86,11 @@ DOTRACE("TrialEvent::writeTo");
   writer->writeValue("requestedDelay", itsRequestedDelay);
 }
 
-unsigned int TrialEvent::schedule(Trial& trial,
-                                  Util::ErrorHandler& errhdlr,
-                                  unsigned int minimum_msec)
+unsigned int TrialEvent::schedule(Trial& trial, unsigned int minimum_msec)
 {
 DOTRACE("TrialEvent::schedule");
 
   // Remember the participants
-  itsErrorHandler = &errhdlr;
   itsTrial = &trial;
 
   // If the requested time is zero -- i.e., immediate -- don't bother
@@ -128,52 +123,39 @@ void TrialEvent::invokeTemplate()
 {
 DOTRACE("TrialEvent::invokeTemplate");
 
-  try
+  const double msec = itsTimer.elapsedMsec();
+  const double error = itsTimer.delayMsec() - msec;
+
+  fstring scopename(demangle_cstr(typeid(*this).name()), " ",
+                    IO::IoObject::id());
+
+  Util::Log::addScope(scopename);
+
+  Util::log( fstring("req ", itsRequestedDelay,
+                     " - ", -itsEstimatedOffset) );
+
+  itsTotalOffset += error;
+  itsTotalError += (itsRequestedDelay - msec);
+
+  ++itsInvokeCount;
+
+  // Positive error means we expect the event to occur sooner than expected
+  // Negative error means we expect the event to occur later than expected
+  // (round towards negative infinity)
+  const double moving_average_ratio = 1.0 / Util::min(10, itsInvokeCount);
+  itsEstimatedOffset =
+    (1.0 - moving_average_ratio) * itsEstimatedOffset +
+    moving_average_ratio  * error;
+
+  // Do the actual event callback.
+  if ( itsTrial != 0 )
     {
-      const double msec = itsTimer.elapsedMsec();
-      const double error = itsTimer.delayMsec() - msec;
-
-      fstring scopename(demangle_cstr(typeid(*this).name()), " ",
-                        IO::IoObject::id());
-
-      Util::Log::addScope(scopename);
-
-      Util::log( fstring("req ", itsRequestedDelay,
-                         " - ", -itsEstimatedOffset) );
-
-      itsTotalOffset += error;
-      itsTotalError += (itsRequestedDelay - msec);
-
-      ++itsInvokeCount;
-
-      // Positive error means we expect the event to occur sooner than expected
-      // Negative error means we expect the event to occur later than expected
-      // (round towards negative infinity)
-      const double moving_average_ratio = 1.0 / Util::min(10, itsInvokeCount);
-      itsEstimatedOffset =
-        (1.0 - moving_average_ratio) * itsEstimatedOffset +
-        moving_average_ratio  * error;
-
-      // Do the actual event callback.
-      if ( itsTrial != 0 )
-        {
-          invoke(*itsTrial);
-        }
-
-      Util::log( "event complete" );
-
-      Util::Log::removeScope(scopename);
+      invoke(*itsTrial);
     }
-  catch (Util::Error& err)
-    {
-      if (itsErrorHandler != 0) itsErrorHandler->handleError(err);
-    }
-  catch (...)
-    {
-      if (itsErrorHandler != 0)
-        itsErrorHandler->handleMsg
-          ("an error of unknown type occured during a TrialEvent callback");
-    }
+
+  Util::log( "event complete" );
+
+  Util::Log::removeScope(scopename);
 }
 
 ///////////////////////////////////////////////////////////////////////

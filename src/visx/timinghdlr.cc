@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Wed Dec  4 18:41:16 2002
+// written: Thu Dec 19 18:23:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,6 @@ public:
     itsResponseEvents(),
     itsAbortEvents(),
     itsTimer(),
-    itsErrorHandler(0),
     itsTrial(0)
     {}
 
@@ -91,7 +90,6 @@ public:
   { return const_cast<Impl*>(this)->eventsAt(time_point); }
 
 private:
-  Util::ErrorHandler* itsErrorHandler;
   Trial* itsTrial;
 
   void scheduleAll(EventGroup& events);
@@ -102,7 +100,7 @@ public:
   void thHaltExpt();
   void thAbortTrial();
   void thResponseSeen();
-  void thBeginTrial(Trial& trial, Util::ErrorHandler& eh);
+  void thBeginTrial(Trial& trial);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -251,7 +249,6 @@ void TimingHdlr::Impl::scheduleAll(EventGroup& events)
 {
 DOTRACE("TimingHdlr::Impl::scheduleAll");
   Precondition(itsTrial != 0);
-  Precondition(itsErrorHandler != 0);
 
   // In order to ensure that events get scheduled in the proper order, even if
   // the whole event loop is getting bogged down, we do two things: (1) sort
@@ -265,8 +262,7 @@ DOTRACE("TimingHdlr::Impl::scheduleAll");
 
   for (size_t i = 0; i < events.size(); ++i)
     {
-      int scheduled_delay =
-        events[i]->schedule(*itsTrial, *itsErrorHandler, minimum_delay);
+      int scheduled_delay = events[i]->schedule(*itsTrial, minimum_delay);
       minimum_delay = scheduled_delay+1;
     }
 }
@@ -286,13 +282,12 @@ DOTRACE("TimingHdlr::Impl::cancelAll");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void TimingHdlr::Impl::thBeginTrial(Trial& trial, Util::ErrorHandler& eh)
+void TimingHdlr::Impl::thBeginTrial(Trial& trial)
 {
 DOTRACE("TimingHdlr::Impl::thBeginTrial");
 
   itsTimer.restart();
 
-  itsErrorHandler = &eh;
   itsTrial = &trial;
 
   cancelAll(itsResponseEvents);
@@ -345,8 +340,8 @@ void TimingHdlr::thAbortTrial()
 void TimingHdlr::thResponseSeen()
   { itsImpl->thResponseSeen(); }
 
-void TimingHdlr::thBeginTrial(Trial& trial, Util::ErrorHandler& eh)
-  { itsImpl->thBeginTrial(trial, eh); }
+void TimingHdlr::thBeginTrial(Trial& trial)
+  { itsImpl->thBeginTrial(trial); }
 
 static const char vcid_timinghdlr_cc[] = "$Header$";
 #endif // !TIMINGHDLR_CC_DEFINED

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Fri Dec 13 11:05:22 2002
+// written: Thu Dec 19 18:11:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,11 +20,6 @@
 
 #include "util/stopwatch.h"
 #include "util/ref.h"
-
-namespace Util
-{
-  class ErrorHandler;
-};
 
 class Trial;
 
@@ -78,8 +73,7 @@ public:
       The minimum_msec parameter specifies a minimum delay time; this may
       be used to ensure that proper relative ordering of TrialEvent's is
       maintained, even if the event loop is getting slowed down overall.  */
-  unsigned int schedule(Trial& trial, Util::ErrorHandler& errhdlr,
-                        unsigned int minimum_msec = 0);
+  unsigned int schedule(Trial& trial, unsigned int minimum_msec = 0);
 
   /** Cancels a pending event. That is, if \c cancel() is called after
       \c schedule() has been called but before \c invoke() has been
@@ -104,7 +98,6 @@ private:
 
   Tcl::Timer itsTimer;
   unsigned int itsRequestedDelay;
-  Util::ErrorHandler* itsErrorHandler;
   Trial* itsTrial;
 
   // Diagnostic stuff

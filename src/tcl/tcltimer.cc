@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug 23 14:50:36 2001
-// written: Thu Dec 19 18:10:09 2002
+// written: Thu Dec 19 18:31:39 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "tcl/tcltimer.h"
 
+#include "tcl/tclmain.h"
 #include "tcl/tclsafeinterp.h"
 
 #include <tcl.h>

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Thu Dec 19 18:30:53 2002
+// written: Thu Dec 19 18:55:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -181,7 +181,7 @@ DOTRACE("Tcl::MainImpl::historyNext");
 #else
   Tcl::ObjPtr obj = itsSafeInterp.getResult<Tcl_Obj*>();
 
-  itsSafeInterp.eval("history nextid", 0);
+  itsSafeInterp.eval("history nextid", Tcl::IGNORE_ERROR);
 
   int result = itsSafeInterp.getResult<int>();
 

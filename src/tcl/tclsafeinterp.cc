@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Sun Dec 15 14:10:40 2002
+// written: Thu Dec 19 18:53:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -151,19 +151,19 @@ DOTRACE("Tcl::Interp::evalBooleanExpr");
 //
 ///////////////////////////////////////////////////////////////////////
 
-bool Tcl::Interp::eval(const char* code, Util::ErrorHandler* handler)
+bool Tcl::Interp::eval(const char* code, Tcl::ErrorStrategy strategy)
 {
   Tcl::ObjPtr obj(Tcl::toTcl(code));
-  return eval(obj, handler);
+  return eval(obj, strategy);
 }
 
-bool Tcl::Interp::eval(const fstring& code, Util::ErrorHandler* handler)
+bool Tcl::Interp::eval(const fstring& code, Tcl::ErrorStrategy strategy)
 {
   Tcl::ObjPtr obj(Tcl::toTcl(code));
-  return eval(obj, handler);
+  return eval(obj, strategy);
 }
 
-bool Tcl::Interp::eval(const Tcl::ObjPtr& code, Util::ErrorHandler* handler)
+bool Tcl::Interp::eval(const Tcl::ObjPtr& code, Tcl::ErrorStrategy strategy)
 {
 DOTRACE("Tcl::Interp::eval");
 
@@ -175,12 +175,16 @@ DOTRACE("Tcl::Interp::eval");
 
   // else, there was some error during the Tcl eval...
 
-  if (handler != 0)
+  switch (strategy)
     {
-      fstring msg("error while evaluating ", Tcl_GetString(code.obj()),
-                  ":\n", getResult<const char*>());
-
-      handler->handleMsg(msg.c_str());
+    case THROW_ERROR:
+      throw Util::Error(fstring("error while evaluating ",
+                                Tcl_GetString(code.obj()),
+                                ":\n", getResult<const char*>()));
+      break;
+    case IGNORE_ERROR:
+      return false;
+      break;
     }
 
   return false; // to indicate error
@@ -451,8 +455,7 @@ DOTRACE("Tcl::Interp::getProcBody");
     {
       resetResult();
 
-      if (eval(fstring("info body ", proc_name),
-               Util::ThrowingErrorHandler::get()))
+      if (eval(fstring("info body ", proc_name)))
         {
           fstring result = getResult<const char*>();
           resetResult();
@@ -480,7 +483,7 @@ DOTRACE("Tcl::Interp::createProc");
     proc_cmd.append(args);
   proc_cmd.append("} {", body, "} }");
 
-  eval(proc_cmd, Util::ThrowingErrorHandler::get());
+  eval(proc_cmd);
 }
 
 void Tcl::Interp::deleteProc(const char* namesp, const char* proc_name)
@@ -499,7 +502,7 @@ DOTRACE("Tcl::Interp::deleteProc");
   // by renaming to the empty string "", we delete the Tcl proc
   cmd_str.append("::", proc_name, " \"\"");
 
-  eval(cmd_str, Util::ThrowingErrorHandler::get());
+  eval(cmd_str);
 }
 
 static const char vcid_tclsafeinterp_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Tue Dec 10 16:49:10 2002
+// written: Thu Dec 19 18:56:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "tcl/tclcmd.h"
 #include "tcl/tclerror.h"
+#include "tcl/tclsafeinterp.h"
 
 #include "util/pointers.h"
 #include "util/slink_list.h"
@@ -161,7 +162,7 @@ namespace
   {
     fstring cmd("namespace eval ", from, " { namespace export * }");
 
-    interp.eval(cmd, Util::ThrowingErrorHandler::get());
+    interp.eval(cmd);
   }
 
   void exportInto(Tcl::Interp& interp, const char* from, const char* to)
@@ -169,7 +170,7 @@ namespace
     fstring cmd("namespace eval ", to, " { namespace import ::");
     cmd.append(from, "::* }");
 
-    interp.eval(cmd, Util::ThrowingErrorHandler::get());
+    interp.eval(cmd);
   }
 }
 
@@ -226,7 +227,7 @@ void Tcl::PkgBase::eval(const char* script)
 {
 DOTRACE("Tcl::PkgBase::eval");
 
-  rep->interp.eval(script, Util::ThrowingErrorHandler::get());
+  rep->interp.eval(script);
 }
 
 void Tcl::PkgBase::addCommand(Command* cmd)

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Tue Dec 10 13:25:42 2002
+// written: Thu Dec 19 18:56:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,6 @@
 #include "tcl/toglet.h"
 
 #include "util/error.h"
-#include "util/errorhandler.h"
 #include "util/iter.h"
 #include "util/log.h"
 #include "util/minivec.h"
@@ -79,7 +78,6 @@ public:
     autosaveFile("__autosave_file"),
     infoLog(),
     autosavePeriod(10),
-    errorHandler(interp),
     doWhenComplete(new Tcl::ProcWrapper(interp)),
     numTrialsCompleted(0)
   {}
@@ -103,8 +101,6 @@ public:
   fstring infoLog;
 
   int autosavePeriod;
-
-  Tcl::BkdErrorHandler errorHandler;
 
   Ref<Tcl::ProcWrapper> doWhenComplete;
 
@@ -210,12 +206,6 @@ DOTRACE("ExptDriver::writeTo");
 // ExptDriver's Element interface
 //
 ///////////////////////////////////////////////////////////////////////
-
-Util::ErrorHandler& ExptDriver::getErrorHandler() const
-{
-DOTRACE("ExptDriver::getErrorHandler");
-  return rep->errorHandler;
-}
 
 const Util::SoftRef<Toglet>& ExptDriver::getWidget() const
 {
@@ -379,7 +369,7 @@ DOTRACE("ExptDriver::pause");
 
   addLogInfo("Experiment paused.");
 
-  rep->interp.eval(pauseMsgCmd, Util::ThrowingErrorHandler::get());
+  rep->interp.eval(pauseMsgCmd);
 
   Tcl::Interp::clearEventQueue();
 

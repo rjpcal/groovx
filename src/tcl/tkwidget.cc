@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Sat Dec 14 17:19:31 2002
+// written: Thu Dec 19 18:56:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,6 @@
 #include "tcl/tclsafeinterp.h"
 
 #include "util/error.h"
-#include "util/errorhandler.h"
 #include "util/ref.h"
 #include "util/strings.h"
 
@@ -321,7 +320,7 @@ DOTRACE("Tcl::TkWidget::pack");
   fstring pack_cmd = "pack ";
   pack_cmd.append( pathname() );
   pack_cmd.append( " -side left -expand 1 -fill both; update" );
-  rep->interp.eval(pack_cmd, Util::ThrowingErrorHandler::get());
+  rep->interp.eval(pack_cmd);
 }
 
 void Tcl::TkWidget::bind(const char* event_sequence, const char* script)
@@ -332,7 +331,7 @@ DOTRACE("Tcl::TkWidget::bind");
   cmd_str.append( event_sequence, " ");
   cmd_str.append("{ ", script, " }");
 
-  rep->interp.eval(cmd_str, Util::ThrowingErrorHandler::get());
+  rep->interp.eval(cmd_str);
 }
 
 void Tcl::TkWidget::takeFocus()
@@ -341,7 +340,7 @@ DOTRACE("Tcl::TkWidget::takeFocus");
 
   fstring cmd("focus -force ", pathname());
 
-  rep->interp.eval(cmd, Util::ThrowingErrorHandler::get());
+  rep->interp.eval(cmd);
 }
 
 void Tcl::TkWidget::requestRedisplay()

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  4 15:35:37 2002
-// written: Sun Dec  8 14:22:45 2002
+// written: Thu Dec 19 18:35:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,6 @@
 
 namespace Util
 {
-  class ErrorHandler;
   template <class T> class SoftRef;
 };
 
@@ -43,9 +42,6 @@ public:
       CHILD_ABORTED,
       CHILD_REPEAT
     };
-
-  /// Return an \c ErrorHandler that can deal with error messages.
-  virtual Util::ErrorHandler& getErrorHandler() const = 0;
 
   /// Return the Widget in which the experiment is running.
   virtual const Util::SoftRef<Toglet>& getWidget() const = 0;

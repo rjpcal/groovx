@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 30 11:47:10 2002
-// written: Tue Dec 10 17:03:19 2002
+// written: Thu Dec 19 18:56:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,6 @@
 
 #include "io/reader.h"
 #include "io/writer.h"
-
-#include "util/errorhandler.h"
 
 namespace
 {
@@ -89,7 +87,7 @@ void Tcl::ProcWrapper::invoke(const fstring& args)
 
   fstring cmd(itsName, " ", args);
 
-  itsInterp.eval(cmd, Util::ThrowingErrorHandler::get());
+  itsInterp.eval(cmd);
 }
 
 fstring Tcl::ProcWrapper::fullSpec() const

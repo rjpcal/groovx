@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 18 16:21:09 1999
-// written: Wed Dec  4 18:41:16 2002
+// written: Thu Dec 19 18:37:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,6 @@
 
 namespace Util
 {
-  class ErrorHandler;
   template <class T> class SoftRef;
 };
 

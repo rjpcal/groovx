@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Sun Dec 15 13:46:19 2002
+// written: Thu Dec 19 18:53:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,11 +26,12 @@ class fstring;
 namespace Tcl
 {
   class Interp;
-}
 
-namespace Util
-{
-  class ErrorHandler;
+  enum ErrorStrategy
+    {
+      THROW_ERROR,
+      IGNORE_ERROR
+    };
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -64,9 +65,9 @@ public:
   bool evalBooleanExpr(const Tcl::ObjPtr& obj) const;
 
   // Evaluating code
-  bool eval(const char* code, Util::ErrorHandler* handler);
-  bool eval(const fstring& code, Util::ErrorHandler* handler);
-  bool eval(const Tcl::ObjPtr& code, Util::ErrorHandler* handler);
+  bool eval(const char* code, ErrorStrategy strategy = THROW_ERROR);
+  bool eval(const fstring& code, ErrorStrategy strategy = THROW_ERROR);
+  bool eval(const Tcl::ObjPtr& code, ErrorStrategy strategy = THROW_ERROR);
 
   bool evalFile(const char* fname);
   void sourceRCFile();

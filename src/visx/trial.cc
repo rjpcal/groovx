@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Sun Dec  8 15:23:37 2002
+// written: Thu Dec 19 18:33:15 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,6 @@
 
 #include "tcl/toglet.h"
 
-#include "util/errorhandler.h"
 #include "util/iter.h"
 #include "util/log.h"
 #include "util/minivec.h"
@@ -220,12 +219,6 @@ DOTRACE("Trial::writeTo");
   writer->writeObject("th", rep->th);
 }
 
-Util::ErrorHandler& Trial::getErrorHandler() const
-{
-  Precondition( rep->isActive() );
-  return rep->activeState->parent->getErrorHandler();
-}
-
 const SoftRef<Toglet>& Trial::getWidget() const
 {
   Precondition( rep->isActive() );
@@ -396,16 +389,13 @@ DOTRACE("Trial::vxRun");
   Precondition(&parent != 0);
 
   SoftRef<Toglet> widget = parent.getWidget();
-  Util::ErrorHandler& errhdlr = parent.getErrorHandler();
 
   Precondition(widget.isValid());
-  Precondition(&errhdlr != 0);
 
   if ( rep->rh.isInvalid() || rep->th.isInvalid() )
     {
-      errhdlr.handleMsg("the trial did not have a valid timing handler "
+      throw Util::Error("the trial did not have a valid timing handler "
                         "and response handler");
-      return;
     }
 
   rep->becomeActive(&parent, widget);
@@ -415,7 +405,7 @@ DOTRACE("Trial::vxRun");
   rep->currentNode = 0;
 
   rep->activeState->rh->rhBeginTrial(widget, *this);
-  rep->activeState->th->thBeginTrial(*this, errhdlr);
+  rep->activeState->th->thBeginTrial(*this);
 }
 
 double Trial::trElapsedMsec()
