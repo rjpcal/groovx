@@ -39,8 +39,13 @@ namespace
 
     void print(const timeval* now) const
     {
-      std::cerr << itsName << " @ "
-                << std::showpoint << std::fixed << std::setprecision(2)
+      std::cerr << itsName << " @ ";
+#if defined(GCC_COMPILER) && GCC_COMPILER == 2
+      std::cerr.setf(std::ios::showpoint | std::ios::fixed);
+#else
+      std::cerr << std::showpoint << std::fixed;
+#endif
+      std::cerr << std::setprecision(2)
                 << itsTimer.elapsedMsec(*now) << "/ ";
     }
   };
