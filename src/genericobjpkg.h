@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Mon Oct 30 11:38:33 2000
+// written: Mon Oct 30 15:20:02 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,8 +37,8 @@ public:
 protected:
   virtual void invoke() {
 	 int id = TclCmd::getIntFromArg(1);
-	 IdItem<IO::IoObject> item(id);
-	 returnBool(dynamic_cast<C*>(item.get()) != 0);
+	 MaybeIdItem<IO::IoObject> item(id);
+	 returnBool(item.isValid() && dynamic_cast<C*>(item.get()) != 0);
   }
 };
 
