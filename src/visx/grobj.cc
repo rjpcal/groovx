@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Tue Feb  8 16:47:06 2000
+// written: Tue Feb  8 17:55:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,8 +27,7 @@
 #include "writer.h"
 #include "xbmaprenderer.h"
 
-#define LOCAL_TRACE
-#define DYNAMIC_TRACE_EXPR TRACE_IS_ON
+#define DYNAMIC_TRACE_EXPR GrObj::tracer.status()
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
@@ -49,8 +48,6 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  bool TRACE_IS_ON = false;
-
   GLenum BITMAP_CACHE_BUFFER = GL_FRONT;
 #ifdef LOCAL_DEBUG
   inline void checkForGlError(const char* where) throw (GrObjError) {
@@ -66,12 +63,7 @@ namespace {
 
 }
 
-void GrObj::traceOn() { TRACE_IS_ON = true; }
-
-void GrObj::traceOff() { TRACE_IS_ON = false; }
-
-void GrObj::traceToggle() { TRACE_IS_ON = !TRACE_IS_ON; }
-
+Util::Tracer GrObj::tracer;
 
 ///////////////////////////////////////////////////////////////////////
 //

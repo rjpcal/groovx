@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Tue Feb  8 15:17:57 2000
+// written: Tue Feb  8 17:51:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,6 +21,10 @@
 
 #ifndef OBSERVER_H_DEFINED
 #include "observer.h"
+#endif
+
+#ifndef TRACER_H_DEFINED
+#include "util/tracer.h"
 #endif
 
 template <class V> class Point;
@@ -54,14 +58,7 @@ class GrObj : public virtual Observable,
 {
 public:
 
-  /// Turns on tracing for all GrObj functions
-  static void traceOn();
-
-  /// Turns off tracing for all GrObj functions
-  static void traceOff();
-
-  /// Toggles the tracing state for all GrObj functions
-  static void traceToggle();
+  static Util::Tracer tracer;
 
   /**@name   Rendering modes
 	*
