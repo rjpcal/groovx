@@ -12,6 +12,9 @@
 /* Darwin esd workaround */
 #undef ESD_WORKAROUND
 
+/* full path to giftopnm program */
+#undef GIFTOPNM_PROG
+
 /* use Apple OpenGL windowsystem interface (agl) */
 #undef GL_PLATFORM_AGL
 
