@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Thu Nov 11 12:27:43 1999
+// written: Tue Nov 16 12:46:11 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -119,6 +119,8 @@ private:
 
   // Delegands
 public:
+  void writeValueObj(const string& name, const Value& value);
+
   void writeObject(const string& name, const IO* obj);
 
   void writeOwnedObject(const string& name, const IO* obj);
@@ -189,6 +191,22 @@ DOTRACE("AsciiStreamWriter::Impl::flushAttributes");
   }
 
   itsAttribs.clear();
+}
+
+void AsciiStreamWriter::Impl::writeValueObj(
+  const string& attrib_name,
+  const Value& value
+  ) {
+DOTRACE("AsciiStreamWriter::Impl::writeValueObj");
+
+  vector<char> buf(256 + attrib_name.length()); 
+  ostrstream ost(&buf[0], 256 + attrib_name.length());
+
+  ost << value.getNativeTypeName() << " "
+		<< attrib_name << " := "
+		<< value << '\0';
+
+  itsAttribs.push_back(&buf[0]);
 }
 
 void AsciiStreamWriter::Impl::writeObject(const string& name, const IO* obj) {
@@ -266,29 +284,7 @@ DOTRACE("AsciiStreamWriter::writeCstring");
 
 void AsciiStreamWriter::writeValueObj(const string& name, const Value& value) {
 DOTRACE("AsciiStreamWriter::writeValueObj");
-  switch (value.getNativeType()) {
-  case Value::INT:
-	 writeInt(name, value.getInt());
-	 break;
-  case Value::LONG:
-	 writeInt(name, value.getInt());
-	 break;
-  case Value::BOOL:
-	 writeBool(name, value.getBool());
-	 break;
-  case Value::DOUBLE:
-	 writeDouble(name, value.getDouble());
-	 break;
-  case Value::CSTRING:
-	 writeCstring(name, value.getCstring());
-	 break;
-  case Value::STRING:
-	 writeString(name, value.getString());
-	 break;
-  default:
-	 throw WriteError("couldn't handle Value type");
-	 break;
-  }
+  itsImpl.writeValueObj(name, value);
 }
 
 void AsciiStreamWriter::writeObject(const string& name, const IO* obj) {
