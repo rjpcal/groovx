@@ -102,6 +102,9 @@ namespace geom
     V center_x() const { return xx.center(); }
     V center_y() const { return yy.center(); }
 
+    const span<V>& x_span() const { return xx; }
+    const span<V>& y_span() const { return yy; }
+
     const V& left() const { return xx.lo; }
     const V& right() const { return xx.hi; }
     const V& bottom() const { return yy.lo; }
