@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Sat Aug 18 08:13:05 2001
+// written: Sat Aug 25 12:15:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 
 #include "house.h"
 
+#include "gfx/canvas.h"
 #include "gfx/rect.h"
 
 #include "io/ioproxy.h"
@@ -283,7 +284,7 @@ DOTRACE("House::grGetBoundingBox");
   return bbox;
 }
 
-void House::grRender(Gfx::Canvas&) const
+void House::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("House::grRender");
   GLdouble total_width = itsStoryAspectRatio;
@@ -292,10 +293,9 @@ DOTRACE("House::grRender");
   GLdouble max_dimension =
     (total_height > total_width) ? total_height : total_width;
 
-  glMatrixMode(GL_MODELVIEW);
-
-  glPushMatrix();
   {
+    Gfx::Canvas::MatrixSaver msaver(canvas);
+
     // Scale so that the larger dimension (of width and height)
     // extends across 1.0 units in GL coordinates. The smaller
     // dimension will extend across less than 1.0 GL units.
@@ -306,8 +306,9 @@ DOTRACE("House::grRender");
     // story to be drawn.
     glTranslated(0.0, -total_height/2.0 + 0.5, 0.0);
 
-    glPushAttrib(GL_POLYGON_BIT);
     {
+      Gfx::Canvas::AttribSaver asaver(canvas);
+
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 
@@ -319,29 +320,27 @@ DOTRACE("House::grRender");
           // Loop over window positions.
           for (int w = 0; w < itsNumWindows; ++w)
             {
-              glPushMatrix();
-              {
-                GLdouble x_pos = double(w+0.5)/itsNumWindows - 0.5;
-                if (s == 0 && w == itsDoorPosition )
-                  {
-                    // Draw door.
-                    glTranslated(x_pos, -0.5, 0.0);
-                    glScaled(itsDoorWidth/itsNumWindows, itsDoorHeight, 1.0);
-                    if (itsDoorOrientation)
-                      {
-                        glScaled(-1.0, 1.0, 1.0);
-                      }
-                    drawDoor();
-                  }
-                else
-                  {
-                    // Draw window.
-                    glTranslated(x_pos, 0.0, 0.0);
-                    glScaled(itsWindowWidth/itsNumWindows, itsWindowHeight, 1.0);
-                    drawWindow(itsWindowVertBars, itsWindowHorizBars);
-                  }
-              }
-              glPopMatrix();
+              Gfx::Canvas::MatrixSaver msaver(canvas);
+
+              GLdouble x_pos = double(w+0.5)/itsNumWindows - 0.5;
+              if (s == 0 && w == itsDoorPosition )
+                {
+                  // Draw door.
+                  glTranslated(x_pos, -0.5, 0.0);
+                  glScaled(itsDoorWidth/itsNumWindows, itsDoorHeight, 1.0);
+                  if (itsDoorOrientation)
+                    {
+                      glScaled(-1.0, 1.0, 1.0);
+                    }
+                  drawDoor();
+                }
+              else
+                {
+                  // Draw window.
+                  glTranslated(x_pos, 0.0, 0.0);
+                  glScaled(itsWindowWidth/itsNumWindows, itsWindowHeight, 1.0);
+                  drawWindow(itsWindowVertBars, itsWindowHorizBars);
+                }
             }
 
           glTranslated(0.0, 1.0, 0.0);
@@ -351,12 +350,13 @@ DOTRACE("House::grRender");
       // Draw roof.
       glTranslated(0.0, -0.5, 0.0);
 
-      glPushMatrix();
       {
+        Gfx::Canvas::MatrixSaver msaver(canvas);
+
         glScaled(1.0+itsRoofOverhang, itsRoofHeight, 1.0);
 
-        glPushAttrib(GL_POLYGON_BIT);
         {
+          Gfx::Canvas::AttribSaver asaver(canvas);
           if (itsRoofColor == 0)
             {
               glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -379,32 +379,23 @@ DOTRACE("House::grRender");
               drawSquareRoof();
             }
         }
-        glPopAttrib();
-
       }
-      glPopMatrix();
 
       // Draw chimney.
-      glPushMatrix();
       {
+        Gfx::Canvas::MatrixSaver msaver(canvas);
+
         glTranslated(itsChimneyXPosition, itsChimneyYPosition, 0.0);
         glScaled(itsChimneyWidth, itsChimneyHeight, 0.0);
 
-        glPushAttrib(GL_POLYGON_BIT);
         {
+          Gfx::Canvas::AttribSaver asaver(canvas);
           glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
           drawChimney();
         }
-        glPopAttrib();
-
       }
-      glPopMatrix();
-
     }
-    glPopAttrib();
-
   }
-  glPopMatrix();
 }
 
 static const char vcid_house_cc[] = "$Header$";
