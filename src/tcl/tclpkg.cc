@@ -85,18 +85,24 @@ namespace
     std::string::size_type dollar2 = s.find_last_of("$");
 
     if (dollar1 == dollar2)
-      return std::string();
+      return s;
 
     const std::string r = s.substr(dollar1,dollar2+1-dollar1);
 
     std::string::size_type n1 = r.find_first_of("0123456789");
     std::string::size_type n2 = r.find_last_of("0123456789");
 
-    const std::string n = r.substr(n1,n2+1-n1);
-
     std::string result(s);
 
-    result.replace(dollar1, dollar2+1-dollar1, n);
+    if (n1 != std::string::npos)
+      {
+        const std::string n = r.substr(n1,n2+1-n1);
+        result.replace(dollar1, dollar2+1-dollar1, n);
+      }
+    else
+      {
+        result.replace(dollar1, dollar2+1-dollar1, "0");
+      }
 
     return result;
   }
@@ -211,9 +217,11 @@ DOTRACE("Tcl::Pkg::Impl::~Impl");
 
 Tcl::Pkg::Pkg(Tcl_Interp* interp,
               const char* name, const char* version) :
-  rep(new Impl(interp, name, version))
+  rep(0)
 {
 DOTRACE("Tcl::Pkg::Pkg");
+
+  rep = new Impl(interp, name, version);
 
   if ( !rep->pkgName.empty() && !rep->version.empty() )
     {
