@@ -53,75 +53,6 @@
    (1) Avoid storing the result of the singleton-getters.
    (2) Pass the buck back out to callers.
 
-* (12-Oct-2004) sift through src/util
-
-  move some stuff into rutz:: namespace and de-camel-case
-
-  the idea that (rutz) is more fundamental than (Util) -- rutz would
-  become the new zero-dependency library
-
-  Probably for backward-compatibility and cvs sanity it would be best
-  to keep all the rutz:: stuff in src/util, and then rename the Util::
-  stuff to a new namespace and move it to a new src/ directory -- this
-  is because there are multiple projects depending on src/util
-  (classmodel and hmax), but only groovx depends on the Util:: stuff.
-
-  How to rename Util::? Ark. Cog. Cue. Gel. Hub. Ion. Rho. Rio.
-  Aloe. Onyx. Nub. Opal. Opus.
-
-  [Util] scheduler
-
-  [-> Util] log (depends on Object)
-  [-> Util] objdb
-  [Util] object
-  [Util] objfactory
-  [Util] objmgr
-  [Util] ref
-  [Util] refcounted
-  [Util] signal (depends on object)
-  [Util] timer (depends on signal)
-  [Util] uid
-  [Util] volatileobject
-
-  OK, all the rutz stuff is now moved to the right namespace.
-
-  [rutz] algo
-  [rutz] arrays
-  [rutz] arrayvalue
-  [rutz] assocarray
-  [rutz] backtrace
-  [rutz] base64
-  [rutz] bytearray
-  [rutz] cstrstream
-  [rutz] debug
-  [rutz] demangle
-  [rutz] demangle_cxxfilt
-  [rutz] demangle_gcc_v2
-  [rutz] demangle_gcc_v3
-  [rutz] error
-  [rutz] factory
-  [rutz] fileposition
-  [rutz] freelist
-  [rutz] functors
-  [rutz] gzstreambuf
-  [rutz] iter
-  [rutz] mappedfile
-  [rutz] multivalue
-  [rutz] pipe
-  [rutz] pointers
-  [rutz] rand
-  [rutz] serialport
-  [rutz] staticstack
-  [rutz] stderror
-  [rutz] stdiobuf
-  [rutz] stopwatch
-  [rutz] strings
-  [rutz] time
-  [rutz] trace
-  [rutz] tracer (rename to rutz::toggle?)
-  [rutz] traits
-  [rutz] value
-
 * (9-Oct-2004) Fix GLCanvas::grabPixels() to work with 16-bit framebuffer
 
   This is a problem under my YellowDog Linux install. Should be able
@@ -139,9 +70,9 @@
   GLCanvas::bitsPerPixel()
     --> GlWindowInterface::bitsPerPixel()
         --> GlxWrapper::bitsPerPixel()
-	    --> XVisualInfo::depth
+            --> XVisualInfo::depth
         --> AglWrapper::bitsPerPixel()
-	    --> aglDescribePixelFormat()
+            --> aglDescribePixelFormat()
 
   Need BmapData to be able to handle bitsperpixel values other than 8
   and 24.
@@ -155,7 +86,7 @@
     boost::format -- 34KLOC
     boost::function -- 26KLOC (to replace or complement util/functors.h and tcl/tclfunctor.h)
     boost::shared_ptr -- 15KLOC (to replace util/pointers.h)
-		      -- compile time up ~20% from 5:15 to 6:16
+                      -- compile time up ~20% from 5:15 to 6:16
 
     std::auto_ptr -- 10KLOC
     boost::type_traits -- 5.5KLOC (to replace util/traits.h)
@@ -323,7 +254,7 @@
   makefile-compatible format.
 
   (1-done) Figure out on which .o files a given .cc file depends. OK,
-	   ldeps::get_batch can do this now.
+           ldeps::get_batch can do this now.
 
   (2-done) Figure out where those .o files are to be found (as
            individual .o files, in a static archive, in a dynamic
@@ -331,8 +262,8 @@
            linkdeps.tcl.
 
   (3-done) Figure out what to do with a new .o file (keep it separate,
-	   or put it in a dynamic library). OK, this is handled by
-	   build_lib_rules.tcl.
+           or put it in a dynamic library). OK, this is handled by
+           build_lib_rules.tcl.
 
   (4) specify these results to a makefile
 
@@ -345,7 +276,7 @@
         automatically linked
 
      -- other #include's require some kind of user defined map, such
-	as <engine.h> requires libmatlabengine
+        as <engine.h> requires libmatlabengine
 
   -- Start simple: let's get a script to build the LIBDEEP... targets
      and dependencies for us. The only thing that the rest of the

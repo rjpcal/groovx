@@ -4471,3 +4471,75 @@
            one to hold the Scheduler object, since that would also be
            the logical point of customization for the scheduling
            algorithm.
+
+* (12-Oct-2004) sift through src/util
+
+  move some stuff into rutz:: namespace and de-camel-case
+
+  the idea that (rutz) is more fundamental than (Util) -- rutz would
+  become the new zero-dependency library
+
+  Probably for backward-compatibility and cvs sanity it would be best
+  to keep all the rutz:: stuff in src/util, and then rename the Util::
+  stuff to a new namespace and move it to a new src/ directory -- this
+  is because there are multiple projects depending on src/util
+  (classmodel and hmax), but only groovx depends on the Util:: stuff.
+
+  OK, all the rutz stuff is now moved to the right namespace.
+
+  [rutz] algo
+  [rutz] arrays
+  [rutz] arrayvalue
+  [rutz] assocarray
+  [rutz] backtrace
+  [rutz] base64
+  [rutz] bytearray
+  [rutz] cstrstream
+  [rutz] debug
+  [rutz] demangle
+  [rutz] demangle_cxxfilt
+  [rutz] demangle_gcc_v2
+  [rutz] demangle_gcc_v3
+  [rutz] error
+  [rutz] factory
+  [rutz] fileposition
+  [rutz] freelist
+  [rutz] functors
+  [rutz] gzstreambuf
+  [rutz] iter
+  [rutz] mappedfile
+  [rutz] multivalue
+  [rutz] pipe
+  [rutz] pointers
+  [rutz] rand
+  [rutz] serialport
+  [rutz] staticstack
+  [rutz] stderror
+  [rutz] stdiobuf
+  [rutz] stopwatch
+  [rutz] strings
+  [rutz] time
+  [rutz] trace
+  [rutz] tracer (rename to rutz::toggle?)
+  [rutz] traits
+  [rutz] value
+
+* (12-Oct-2004, done 18-Oct-2004) sift through src/util
+
+  How to rename Util::? Ark. Cog. Cue. Gel. Hub. Ion. Rho. Rio.
+  Aloe. Onyx. Nub. Opal. Opus.
+
+  [Nub] log (depends on Object)     Nub::Log::log()
+  [Nub] objdb                       Nub::ObjDb
+  [Nub] object                      Nub::Object
+  [Nub] objfactory                  Nub::ObjFactory
+  [Nub] objmgr                      Nub::ObjMgr
+  [Nub] ref                         Nub::Ref, Nub::SoftRef
+  [Nub] refcounted                  Nub::RefCounted
+  [Nub] scheduler                   Nub::Scheduler
+  [Nub] signal (depends on object)  Nub::Signal
+  [Nub] timer (depends on signal)   Nub::Timer
+  [Nub] uid                         Nub::UID
+  [Nub] volatileobject              Nub::VolatileObject
+
+  OK, moved all this stuff into a new src/nub/ subdirectory.
