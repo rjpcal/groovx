@@ -36,6 +36,30 @@ Psychophysics experiments
 
   acuity
 
+* (13-Sep-2002) Hacks to work around broken MIPSpro compiler
+
+** problems with template arg-dependent lookup:
+
+template <class F> struct Traits { enum { num = 1 }; };
+
+template <int N> struct Functor {};
+
+template <class F> struct Return
+{ typedef Functor<Traits<F>::num> Type; };
+
+// template <class F> Functor<Traits<F>::num> buildTclFunctor(F f);
+template <class F> typename Return<F>::Type buildTclFunctor(F f);
+
+void bar(int) {}
+
+void test() { buildTclFunctor(bar); }
+
+** return void not supported in templates
+
+** overeager lookup of template arg-dependent names
+
+** no <cheader> include files so e.g. size_t not in std:: namespace
+
 * (11-Oct-1999) "GWT::Widget" wrapper for Tk widgets
 Could write a Widget class that encapsulates the details of Tk
 widgets. Then we could extend with subclasses... for example one subclass
@@ -48,7 +72,6 @@ lightweight and not have any Tk- or GL-specific stuff in it.
 Should be GWT::Widget <-- Tcl::TkWidget <-- Toglet (or GLWidget)
 
 * (23-Feb-2002) Remaining OS X issues:
-  set TMPDIR environment variable to a fast drive for gcc temp files
   explicit template instantiation does not work (e.g. util/multivalue.cc)
 
 * (25-Jan-2002) Logging goodies
@@ -121,15 +144,9 @@ equivalent to "allowRefresh false".
 we don't need multiple TclCmd objects, instead we just need to register the
 same TclCmd object under multiple names.
 
-* (16-Aug-2001) How to implement bounding boxes at the level of GxNode?
-How do we allow a Position, for example, to return/transform a
-bounding box? ... OK, the GxNode function takes a Rect reference, so
-that subclasses can either transform or extend that Rect.
-
 * (6-Jun-2001) refactoring Trial/TimingHdlr/ResponseHandler
 
-I'm getting the feeling these are
-starting to become inherently buggy.
+I'm getting the feeling these are starting to become inherently buggy.
 
 For example, need to make sure I haven't broken anything by changing
 trHaltExpt() to not call trAbortTrial() and trEndTrial().
@@ -137,11 +154,7 @@ trHaltExpt() to not call trAbortTrial() and trEndTrial().
 Need to have a useful way of debugging TimingHdlr/Trial sequences.
 
 
-* (12-Jun-2001) Need to work on ObjTogl a bit
-Should be able to split the Tcl pkg's into two: one that exposes only
-GWT::Widget functionality, and the other which exposes Toglet
-functionality.
-
+* (12-Jun-2001) Refactor ObjTogl into separate Toglet/TkWidget/Widget groups
 
 * (2-Jun-2001) writeRoot() should take a MaybeIdItem
 
