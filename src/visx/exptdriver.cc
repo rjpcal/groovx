@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Jun 13 13:15:55 2001
+// written: Wed Jun 13 15:36:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -252,8 +252,11 @@ private:
   mutable Tcl::BkdErrorHandler itsErrHandler;
 };
 
+// This little hack is to ensure that typeid<Toglet> is instantiated here
+#ifdef GCC_COMPILER
 #include <typeinfo>
-void dummy() { Toglet* t; typeid(*t); }
+void dummy() { Toglet* t=0; typeid(*t); }
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 //
