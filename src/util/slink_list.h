@@ -3,7 +3,7 @@
 // lists.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Mar 18 11:22:40 2000
-// written: Mon Mar 20 15:24:13 2000
+// written: Wed May 17 13:50:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,11 @@ public:
   struct node {
 	 node(const T& v, node* n) : val(v), next(n) {}
 
+	 node(const node& other) : val(other.val), next(other.next) {}
+
+	 node& operator=(const node& other)
+	   { val = other.val; next = other.next; return *this; }
+
 	 T val;
 	 node* next;
   };
@@ -43,6 +48,11 @@ public:
 	 typedef T& reference;
 
 	 iterator(node* n = 0) : nn(n) {}
+
+	 iterator(const iterator& other) : nn(other.nn) {}
+
+	 iterator& operator=(const iterator& other)
+	   { nn = other.nn; return *this; }
 
 	 reference operator*() { return nn->val; }
 	 pointer operator->() { return &(nn->val); }
@@ -67,6 +77,10 @@ public:
 
 	 const_iterator(node* n = 0) : nn(n) {}
 	 const_iterator(const iterator& other) : nn (other.nn) {}
+
+	 const_iterator(const const_iterator& other) : nn(other.nn) {}
+	 const_iterator& operator=(const const_iterator& other)
+	   { nn = other.nn; return *this; }
 
 	 const_reference operator*() { return nn->val; }
 	 const_pointer operator->() { return &(nn->val); }
