@@ -3,7 +3,7 @@
 // tclveccmds.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:11:41 1999
-// written: Wed Mar 29 14:07:31 2000
+// written: Wed May 17 13:57:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -141,9 +141,10 @@ private:
 template <class T>
 class TVecSetterCmd : public TrVecSetterCmd< SetterCmdTraits<T> > {
 public:
-  typedef TrVecSetterCmd< SetterCmdTraits<T> > Base;
-  TVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name, Setter<T>* setter,
-                const char* usage, int item_argn);
+  typedef TVecSetterCmd::T Type;
+  typedef TrVecSetterCmd< SetterCmdTraits<Type> > Base;
+  TVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
+					 Setter<Type>* setter, const char* usage, int item_argn);
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -157,8 +158,9 @@ public:
 template <class T>
 class TVecAttribCmd : public TVecGetterCmd<T>, public TVecSetterCmd<T> {
 public:
-  TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name, Attrib<T>* attrib,
-                const char* usage, int item_argn);
+  typedef TVecAttribCmd::T Type
+  TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name,
+					 Attrib<Type>* attrib, const char* usage, int item_argn);
 
 protected:
   virtual void invoke();
