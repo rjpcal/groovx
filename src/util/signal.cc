@@ -3,7 +3,7 @@
 // observable.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 25 18:39:27 1999
-// written: Wed May 26 11:12:40 1999
+// written: Wed May 26 11:51:27 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,13 +75,24 @@ DOTRACE("Observable::sendStateChangeMsg");
 
 void Observable::sendDestroyMsg() {
 DOTRACE("Observable::sendDestroyMsg");
-  for (list<Observer *>::iterator ii = itsImpl.itsObservers.begin();
-		 ii != itsImpl.itsObservers.end();
-		 ii++) {
+  list<Observer *>& theList = itsImpl.itsObservers;
+
+  // WARNING! This loop _cannot_ be done with a simple for loop that
+  // iterates over the elements of theList, since theList is changed
+  // within the loop by detach() (which removes an element from
+  // theList), and therefore the loop iterator would be invalidated.
+  while (!theList.empty()) {
+	 DebugEval(itsImpl.itsObservers.size());
+
+	 Observer* obs = theList.front();
+
+	 DebugEval((void *) this);
+	 DebugEvalNL((void *) obs);
+
 	 // Let the observer know that 'this' is being destroyed ...
-	 (*ii)->receiveDestroyMsg(this);
+	 obs->receiveDestroyMsg(this);
 	 // ... and remove it from the list of observers
-	 detach(*ii);
+	 detach(obs);
   }
 }
 
