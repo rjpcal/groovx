@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:28 2000
-// written: Sun Aug 19 17:10:53 2001
+// written: Fri Aug 31 17:02:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,16 @@
 // RefCounts member definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+void* Util::RefCounts::operator new(size_t bytes)
+{
+  return ::operator new(bytes);
+}
+
+void Util::RefCounts::operator delete(void* space, size_t /*bytes*/)
+{
+  ::operator delete(space);
+}
 
 Util::RefCounts::RefCounts() : itsStrong(0), itsWeak(0)
 {
@@ -160,8 +170,8 @@ bool Util::RefCounted::isShared() const
 {
 DOTRACE("Util::RefCounted::isShared");
 
-  return (itsRefCounts->strongCount() > 1) || isVolatile();
-  // We check isVolatile() so that volatile objects always appear
+  return (itsRefCounts->strongCount() > 1) || isNotShareable();
+  // We check isNotShareable() so that volatile objects always appear
   // shared, so that they cannot be removed from the ObjDb until they
   // become invalid.
 }
@@ -172,9 +182,9 @@ DOTRACE("Util::RefCounted::isUnshared");
   return !isShared();
 }
 
-bool Util::RefCounted::isVolatile() const
+bool Util::RefCounted::isNotShareable() const
 {
-DOTRACE("Util::RefCounted::isVolatile");
+DOTRACE("Util::RefCounted::isNotShareable");
   return false;
 }
 

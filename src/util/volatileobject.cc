@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Aug 21 17:17:51 2001
-// written: Tue Aug 21 17:20:13 2001
+// written: Fri Aug 31 17:02:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ void Util::VolatileObject::destroy()
   this->decrRefCount();
 }
 
-bool Util::VolatileObject::isVolatile() const
+bool Util::VolatileObject::isNotShareable() const
 {
   return true;
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:19 2000
-// written: Sun Aug 26 08:36:36 2001
+// written: Fri Aug 31 17:02:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,6 +50,9 @@ protected:
 public:
   RefCounts();
 
+  void* operator new(size_t bytes);
+  void operator delete(void* space, size_t bytes);
+
   friend class Util::RefCounted;
 
   typedef unsigned short Count;
@@ -84,13 +87,13 @@ private:
  * clients that need to know if a Util::RefCounted object is still
  * around can check the strong count of its Util::RefCounts
  * object. Finally, subclasses of Util::RefCounted can declare
- * themselves volatile (by overriding isVolatile() to return true), in
- * which case it is assumed that their lifetime cannot be fully
- * controlled by reference-counting, so clients of volatile objects
- * should use weak reference counts only. A volatile objects should
- * keep maintain the lone strong reference to itself; then, when some
- * external signal requires the object to be deleted, it can achieve
- * this by releasing the long strong reference.
+ * themselves volatile (by overriding isNotShareable() to return
+ * true), in which case it is assumed that their lifetime cannot be
+ * fully controlled by reference-counting, so clients of volatile
+ * objects should use weak reference counts only. A volatile objects
+ * should keep maintain the lone strong reference to itself; then,
+ * when some external signal requires the object to be deleted, it can
+ * achieve this by releasing the long strong reference.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -147,12 +150,12 @@ public:
   /// Returns true if the reference count is one or less.
   bool isUnshared() const;
 
-  /** Returns true if the object should not be acquired by any strong
-      references, because its lifespan is volatile (such as objects
+  /** Returns true if the object is not shareable for any reason.
+      This could be because its lifespan is volatile (such as objects
       representing on-screen windows that can be dismissed by the
       user). The default implementation provided by RefCounted returns
       false. */
-  virtual bool isVolatile() const;
+  virtual bool isNotShareable() const;
 
   /// Returns the object's (strong) reference count.
   int refCount() const;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Sun Aug 26 08:53:51 2001
+// written: Fri Aug 31 17:02:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ public:
 
   virtual ~Toglet();
 
-  virtual bool isVolatile() const { return true; }
+  virtual bool isNotShareable() const { return true; }
 
   // accessors
   double getAspect() const { return double(getWidth())/getHeight(); }

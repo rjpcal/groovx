@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Sun Aug 26 08:38:29 2001
+// written: Fri Aug 31 17:02:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -113,8 +113,8 @@ private:
       if (master == 0) Util::RefHelper::throwError(
                             "attempted to construct a Ref with a null pointer");
 
-      if (master->isVolatile()) Util::RefHelper::throwError(
-                         "attempted to construct a Ref with a volatile object");
+      if (master->isNotShareable()) Util::RefHelper::throwError(
+                     "attempted to construct a Ref with an unshareable object");
 
       itsMaster->incrRefCount();
     }
@@ -231,7 +231,7 @@ private:
   private:
     static Util::RefCounts* getCounts(T* master, RefType tp)
     {
-      return (master && (tp == WEAK || master->isVolatile())) ?
+      return (master && (tp == WEAK || master->isNotShareable())) ?
         master->refCounts() : 0;
     }
 

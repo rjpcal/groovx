@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Aug 21 17:16:15 2001
-// written: Sun Aug 26 08:35:08 2001
+// written: Fri Aug 31 17:02:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ public:
 
   void destroy();
 
-  virtual bool isVolatile() const;
+  virtual bool isNotShareable() const;
 };
 
 static const char vcid_volatileobject_h[] = "$Header$";
