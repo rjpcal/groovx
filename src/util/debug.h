@@ -3,7 +3,7 @@
 // debug.h
 // Rob Peters
 // created: Jan-99
-// written: Wed Jun 16 15:08:05 1999
+// written: Mon Oct  9 18:43:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,29 +58,28 @@
 #  define DebugPrintNL(str) {}
 #endif
 
-#if defined(LOCAL_ASSERT) || defined(LOCAL_INVARIANT) || defined(LOCAL_CONTRACT)
-#  include <cassert>
-#endif
+namespace Debug {
+  void AssertImpl        (const char* what, const char* where, int line_no);
+  void PreconditionImpl  (const char* what, const char* where, int line_no);
+  void PostconditionImpl (const char* what, const char* where, int line_no);
+  void InvariantImpl     (const char* what, const char* where, int line_no);
+}
 
 #ifdef LOCAL_ASSERT
-#  define Assert(expression) assert((expression))
+#  define Assert(expr) \
+        if ( !(expr) ) { Debug::AssertImpl(#expr, __FILE__, __LINE__); }
+#  define Invariant(expr) \
+        if ( !(expr) ) { Debug::InvariantImpl(#expr, __FILE__, __LINE__); }
+#  define Precondition(expr) \
+        if ( !(expr) ) { Debug::PreconditionImpl(#expr, __FILE__, __LINE__); }
+#  define Postcondition(expr) \
+        if ( !(expr) ) { Debug::PostconditionImpl(#expr, __FILE__, __LINE__); }
 #else // !LOCAL_ASSERT
 #  define Assert(x) {}
-#endif // !LOCAL_ASSERT
-
-#ifdef LOCAL_INVARIANT
-#  define Invariant(expression) assert((expression))
-#else // !INVARIANT
 #  define Invariant(x) {}
-#endif // !INVARIANT
-
-#ifdef LOCAL_CONTRACT
-#  define Precondition(expression) assert((expression))
-#  define Postcondition(expression) assert((expression))
-#else
 #  define Precondition(x) {}
 #  define Postcondition(x) {}
-#endif
+#endif // !LOCAL_ASSERT
 
 static const char vcid_debug_h[] = "$Id$";
 #endif // !DEBUG_H_DEFINED
