@@ -3,7 +3,7 @@
 // tlistwidget.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:46:38 1999
-// written: Fri Dec  3 14:52:49 1999
+// written: Fri Dec  3 15:12:40 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,6 +45,13 @@ DOTRACE("TlistWidget::display");
   
   DebugPrintNL("clearing back buffer...");
   glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void TlistWidget::clearscreen() {
+DOTRACE("TlistWidget::clearscreen");
+  Tlist::theTlist().setVisible(false);
+  glClear(GL_COLOR_BUFFER_BIT);
+  glFlush();
 }
 
 static const char vcid_tlistwidget_cc[] = "$Header$";
