@@ -66,9 +66,9 @@ set POS [Pos::Pos]
 ### Gtext rendering ###
 test "$PACKAGE-rendering" "normal render" {
 	 clearscreen
-	 Tlist::makeSingles $::POS
+	 set trial [Tlist::dealSingles $::GTEXT $::POS]
 	 Togl::loadFont
-	 show $::GTEXT
+	 show $trial
 	 expr {[pixelCheckSum] != 0}
 } {^1$}
 

@@ -58,9 +58,9 @@ test "BitmapTcl-Bitmap::loadPbm" "error on junk binary file" {
 test "BitmapTcl-rendering" "normal render" {
 	 BlockList::reset
 	 Tlist::reset
-	 Tlist::makeSingles $::POS
+	 set ::BITMAP_TRIAL [Tlist::dealSingles $::BITMAP $::POS]
 	 clearscreen
-	 show $::BITMAP
+	 show $::BITMAP_TRIAL
 	 set sum [pixelCheckSum]
 	 return "[expr $sum != 0] $sum"
 } {^1}
@@ -75,12 +75,12 @@ test "BitmapTcl-Bitmap::flipContrast" "too many args" {
 test "BitmapTcl-Bitmap::flipContrast" "normal use" {
 	 Bitmap::flipContrast $::BITMAP
 	 clearscreen
-	 show $::BITMAP
+	 show $::BITMAP_TRIAL
 	 set count1 [pixelCheckSum]
 	 
 	 Bitmap::flipContrast $::BITMAP
 	 clearscreen
-	 show $::BITMAP
+	 show $::BITMAP_TRIAL
 	 set count2 [pixelCheckSum]
 	 
 	 return "[expr $count1 != $count2] $count1 $count2"
@@ -97,12 +97,12 @@ test "BitmapTcl-Bitmap::flipVertical" "too many args" {
 test "BitmapTcl-Bitmap::flipVertical" "normal use" {
 	 Bitmap::flipVertical $::BITMAP
 	 clearscreen
-	 show $::BITMAP
+	 show $::BITMAP_TRIAL
 	 set count1 [pixelCheckSum]
 	 
 	 Bitmap::flipVertical $::BITMAP
 	 clearscreen
-	 show $::BITMAP
+	 show $::BITMAP_TRIAL
 	 set count2 [pixelCheckSum]
 	 
 	 expr { $count1 == $count2 }
@@ -149,13 +149,13 @@ test "BitmapTcl-Bitmap::zoomX/Y" "normal use" {
 	 Bitmap::zoomX $::BITMAP 0.5
 	 Bitmap::zoomY $::BITMAP 0.5
 	 clearscreen
-	 show $::BITMAP
+	 show $::BITMAP_TRIAL
 	 set count1 [pixelCheckSum]
 	 
 	 Bitmap::zoomX $::BITMAP 1.0
 	 Bitmap::zoomY $::BITMAP 1.0
 	 clearscreen
-	 show $::BITMAP
+	 show $::BITMAP_TRIAL
 	 set count2 [pixelCheckSum]
 
 	 expr { $count1 != $count2 }
@@ -172,11 +172,11 @@ test "GLBitmapTcl-GLBitmap::usingGlBitmap" "too many args" {
 test "GLBitmapTcl-GLBitmap::usingGlBitmap" "normal use" {
 	 GLBitmap::usingGlBitmap $::BITMAP no
 	 clearscreen
-	 set time1 [lindex [time {show $::BITMAP}] 0]
+	 set time1 [lindex [time {show $::BITMAP_TRIAL}] 0]
 
 	 GLBitmap::usingGlBitmap $::BITMAP yes
 	 clearscreen
-	 set time2 [lindex [time {show $::BITMAP}] 0]
+	 set time2 [lindex [time {show $::BITMAP_TRIAL}] 0]
 
 	 # Rendering should always be faster with glBitmap than with glDrawPixels
 	 expr { $time1 > $time2 }
