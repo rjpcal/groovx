@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Sun Dec  8 14:22:45 2002
+// written: Sun Dec  8 15:23:37 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,22 +51,28 @@ namespace
 
   struct ActiveState
   {
-    ActiveState(Element* parent, SoftRef<Toglet> widget,
-                Ref<ResponseHandler> rh, Ref<TimingHdlr> th) :
-      itsParent(parent),
-      itsWidget(widget),
-      itsRh(rh),
-      itsTh(th),
-      itsStatus(Element::CHILD_OK)
+    ActiveState(Element* p, SoftRef<Toglet> w,
+                Ref<ResponseHandler> r, Ref<TimingHdlr> t) :
+      parent(p),
+      widget(w),
+      rh(r),
+      th(t),
+      status(Element::CHILD_OK)
     {
       Precondition(parent != 0);
+      Util::Log::addScope("Trial");
     }
 
-    Element* itsParent;
-    SoftRef<Toglet> itsWidget;
-    Ref<ResponseHandler> itsRh;
-    Ref<TimingHdlr> itsTh;
-    Element::ChildStatus itsStatus;
+    ~ActiveState()
+    {
+      Util::Log::removeScope("Trial");
+    }
+
+    Element* parent;
+    SoftRef<Toglet> widget;
+    Ref<ResponseHandler> rh;
+    Ref<TimingHdlr> th;
+    Element::ChildStatus status;
   };
 }
 
@@ -84,150 +90,186 @@ private:
 
 public:
   Impl(Trial*) :
-    itsCorrectResponse(Response::ALWAYS_CORRECT),
-    itsGxNodes(),
-    itsCurrentNode(0),
-    itsResponses(),
-    itsType(-1),
-    itsRh(),
-    itsTh(),
-    itsActiveState(0)
+    correctResponse(Response::ALWAYS_CORRECT),
+    gxNodes(),
+    currentNode(0),
+    responses(),
+    trialType(-1),
+    rh(),
+    th(),
+    activeState(0)
   {}
 
-  int itsCorrectResponse;
+  int correctResponse;
 
   typedef minivec<Ref<GxNode> > GxNodes;
-  GxNodes itsGxNodes;
+  GxNodes gxNodes;
 
-  unsigned int itsCurrentNode;
+  unsigned int currentNode;
 
-  minivec<Response> itsResponses;
+  minivec<Response> responses;
 
-  int itsType;
-  SoftRef<ResponseHandler> itsRh;
-  SoftRef<TimingHdlr> itsTh;
+  int trialType;
+  SoftRef<ResponseHandler> rh;
+  SoftRef<TimingHdlr> th;
 
-  scoped_ptr<ActiveState> itsActiveState;
+  scoped_ptr<ActiveState> activeState;
 
-  bool isActive() const { return itsActiveState.get() != 0; }
-  bool isInactive() const { return itsActiveState.get() == 0; }
+  bool isActive() const { return activeState.get() != 0; }
 
   void becomeActive(Element* parent, SoftRef<Toglet> widget)
   {
-    itsActiveState.reset(new ActiveState(parent, widget, itsRh, itsTh));
-    Util::Log::addScope("Trial");
+    activeState.reset(new ActiveState(parent, widget, rh, th));
   }
 
   void becomeInactive()
   {
-    Util::Log::removeScope("Trial");
-    itsActiveState.reset(0);
+    activeState.reset(0);
   }
-
-public:
-
-  void readFrom(IO::Reader* reader);
-  void writeTo(IO::Writer* writer) const;
-
-  fstring status() const;
-
-  int lastResponse() const;
-  void vxUndo();
-
-  double avgResponse() const;
-  double avgRespTime() const;
-
-  void trNextNode() { setCurrentNode(itsCurrentNode+1); }
-
-  void setCurrentNode(unsigned int nodeNumber)
-  {
-    if (nodeNumber >= itsGxNodes.size())
-      {
-        throw Util::Error(fstring("invalid node number ", nodeNumber));
-      }
-    itsCurrentNode = nodeNumber;
-  }
-
-  void clearObjs();
-
-  void vxRun(Trial* self, Element& parent);
-  double trElapsedMsec();
-  void trAbort();
-  void trEndTrial();
-  void vxHalt();
-  void trResponseSeen();
-  void trProcessResponse(Response& response);
-  void trAllowResponses(Trial* self);
-  void trDenyResponses();
-
-  void installSelf(SoftRef<Toglet> widget) const;
 };
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Trial::Impl member definitions
+// Trial member functions
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Trial::Impl::readFrom(IO::Reader* reader)
-{
-DOTRACE("Trial::Impl::readFrom");
+//////////////
+// creators //
+//////////////
 
-  becomeInactive();
+const FieldMap& Trial::classFields()
+{
+  static const Field FIELD_ARRAY[] =
+  {
+    Field("tType", make_mypair(&Trial::trialType, &Trial::setType),
+          -1, -10, 10, 1, Field::NEW_GROUP)
+  };
+
+  static FieldMap TRIAL_FIELDS(FIELD_ARRAY);
+
+  return TRIAL_FIELDS;
+}
+
+Trial* Trial::make()
+{
+DOTRACE("Trial::make");
+  return new Trial;
+}
+
+Trial::Trial() :
+  FieldContainer(0),
+  rep( new Impl(this) )
+{
+DOTRACE("Trial::Trial()");
+
+  setFieldMap(Trial::classFields());
+}
+
+Trial::~Trial()
+{
+DOTRACE("Trial::~Trial");
+  delete rep;
+}
+
+IO::VersionId Trial::serialVersionId() const
+  { return TRIAL_SERIAL_VERSION_ID; }
+
+void Trial::readFrom(IO::Reader* reader)
+{
+DOTRACE("Trial::readFrom");
+
+  rep->becomeInactive();
 
   reader->ensureReadVersionId("Trial", 4, "Try grsh0.8a4");
 
-  itsGxNodes.clear();
-  IO::ReadUtils::readObjectSeq<GxNode>(
-          reader, "gxObjects", std::back_inserter(itsGxNodes));
+  rep->gxNodes.clear();
+  IO::ReadUtils::readObjectSeq<GxNode>
+    (reader, "gxObjects", std::back_inserter(rep->gxNodes));
 
-  itsResponses.clear();
-  IO::ReadUtils::readValueObjSeq<Response>(
-          reader, "responses", std::back_inserter(itsResponses));
+  rep->responses.clear();
+  IO::ReadUtils::readValueObjSeq<Response>
+    (reader, "responses", std::back_inserter(rep->responses));
 
-  reader->readValue("correctResponse", itsCorrectResponse);
+  reader->readValue("correctResponse", rep->correctResponse);
 
-  reader->readValue("type", itsType);
+  reader->readValue("type", rep->trialType);
 
-  itsRh = dynamicCast<ResponseHandler>(reader->readMaybeObject("rh"));
-  itsTh = dynamicCast<TimingHdlr>(reader->readMaybeObject("th"));
+  rep->rh = dynamicCast<ResponseHandler>(reader->readMaybeObject("rh"));
+  rep->th = dynamicCast<TimingHdlr>(reader->readMaybeObject("th"));
 }
 
-void Trial::Impl::writeTo(IO::Writer* writer) const
+void Trial::writeTo(IO::Writer* writer) const
 {
-DOTRACE("Trial::Impl::writeTo");
+DOTRACE("Trial::writeTo");
 
   writer->ensureWriteVersionId("Trial", TRIAL_SERIAL_VERSION_ID, 3,
                                "Try grsh0.8a3");
 
   IO::WriteUtils::writeObjectSeq(writer, "gxObjects",
-                                 itsGxNodes.begin(), itsGxNodes.end());
+                                 rep->gxNodes.begin(), rep->gxNodes.end());
 
   IO::WriteUtils::writeValueObjSeq(writer, "responses",
-                                   itsResponses.begin(), itsResponses.end());
+                                   rep->responses.begin(), rep->responses.end());
 
-  writer->writeValue("correctResponse", itsCorrectResponse);
+  writer->writeValue("correctResponse", rep->correctResponse);
 
-  writer->writeValue("type", itsType);
+  writer->writeValue("type", rep->trialType);
 
-  writer->writeObject("rh", itsRh);
-  writer->writeObject("th", itsTh);
+  writer->writeObject("rh", rep->rh);
+  writer->writeObject("th", rep->th);
 }
 
-///////////////
-// accessors //
-///////////////
-
-fstring Trial::Impl::status() const
+Util::ErrorHandler& Trial::getErrorHandler() const
 {
-DOTRACE("Trial::Impl::status");
+  Precondition( rep->isActive() );
+  return rep->activeState->parent->getErrorHandler();
+}
+
+const SoftRef<Toglet>& Trial::getWidget() const
+{
+  Precondition( rep->isActive() );
+  return rep->activeState->widget;
+}
+
+int Trial::getCorrectResponse() const
+  { return rep->correctResponse; }
+
+void Trial::setCorrectResponse(int response)
+  { rep->correctResponse = response; }
+
+
+Ref<ResponseHandler> Trial::getResponseHandler() const
+  { return Ref<ResponseHandler>(rep->rh); }
+
+void Trial::setResponseHandler(Ref<ResponseHandler> rh)
+  { rep->rh = SoftRef<ResponseHandler>(rh); }
+
+
+Ref<TimingHdlr> Trial::getTimingHdlr() const
+  { return Ref<TimingHdlr>(rep->th); }
+
+void Trial::setTimingHdlr(Ref<TimingHdlr> th)
+  { rep->th = SoftRef<TimingHdlr>(th); }
+
+
+int Trial::trialType() const
+  { return rep->trialType; }
+
+void Trial::setType(int t)
+  { rep->trialType = t; }
+
+
+fstring Trial::status() const
+{
+DOTRACE("Trial::status");
 
   fstring objids;
   fstring cats;
 
-  for (GxNodes::const_iterator
-         ii = itsGxNodes.begin(),
-         end = itsGxNodes.end();
+  for (Impl::GxNodes::const_iterator
+         ii = rep->gxNodes.begin(),
+         end = rep->gxNodes.end();
        ii != end;
        ++ii)
     {
@@ -246,70 +288,111 @@ DOTRACE("Trial::Impl::status");
 
   fstring buf;
 
-  buf.append("trial type == ", itsType);
+  buf.append("trial type == ", rep->trialType);
   buf.append(", objs ==", objids, ", categories == ", cats);
 
   return buf;
 }
 
-int Trial::Impl::lastResponse() const
+int Trial::lastResponse() const
 {
-DOTRACE("Trial::Impl::lastResponse");
+DOTRACE("Trial::lastResponse");
 
-  if (itsResponses.empty())
+  if (rep->responses.empty())
     throw Util::Error("the trial has no responses yet");
 
-  return itsResponses.back().val();
+  return rep->responses.back().val();
 }
 
-double Trial::Impl::avgResponse() const
+void Trial::vxUndo()
 {
-DOTRACE("Trial::Impl::avgResponse");
+DOTRACE("Trial::vxUndo");
+  if ( !rep->responses.empty() )
+    rep->responses.pop_back();
+}
+
+unsigned int Trial::numResponses() const
+  { return rep->responses.size(); }
+
+void Trial::clearResponses()
+  { rep->responses.clear(); }
+
+double Trial::avgResponse() const
+{
+DOTRACE("Trial::avgResponse");
   int sum = 0;
-  for (minivec<Response>::const_iterator ii = itsResponses.begin();
-       ii != itsResponses.end();
+  for (minivec<Response>::const_iterator ii = rep->responses.begin();
+       ii != rep->responses.end();
        ++ii)
     {
       sum += ii->val();
     }
-  return (itsResponses.size() > 0) ? double(sum)/itsResponses.size() : 0.0;
+  return (rep->responses.size() > 0) ? double(sum)/rep->responses.size() : 0.0;
 }
 
-double Trial::Impl::avgRespTime() const
+double Trial::avgRespTime() const
 {
-DOTRACE("Trial::Impl::avgRespTime");
+DOTRACE("Trial::avgRespTime");
   int sum = 0;
-  for (minivec<Response>::const_iterator ii = itsResponses.begin();
-       ii != itsResponses.end();
+  for (minivec<Response>::const_iterator ii = rep->responses.begin();
+       ii != rep->responses.end();
        ++ii)
     {
       sum += ii->msec();
 
       dbgEval(3, sum);
-      dbgEvalNL(3, sum/itsResponses.size());
+      dbgEvalNL(3, sum/rep->responses.size());
     }
-  return (itsResponses.size() > 0) ? double(sum)/itsResponses.size() : 0.0;
+  return (rep->responses.size() > 0) ? double(sum)/rep->responses.size() : 0.0;
 }
 
-//////////////////
-// manipulators //
-//////////////////
 
-void Trial::Impl::clearObjs()
+void Trial::addNode(Util::Ref<GxNode> item)
 {
-DOTRACE("Trial::Impl::clearObjs");
-  itsGxNodes.clear();
+DOTRACE("Trial::addNode");
+  rep->gxNodes.push_back(item);
 }
 
-/////////////
-// actions //
-/////////////
-
-void Trial::Impl::vxRun(Trial* self, Element& parent)
+void Trial::trNextNode()
 {
-DOTRACE("Trial::Impl::vxRun");
+DOTRACE("Trial::trNextNode");
+  setCurrentNode(rep->currentNode+1);
+}
 
-  Precondition(self != 0);
+Util::FwdIter<Util::Ref<GxNode> > Trial::nodes() const
+{
+DOTRACE("Trial::nodes");
+  return Util::FwdIter<Util::Ref<GxNode> >
+    (rep->gxNodes.begin(), rep->gxNodes.end());
+}
+
+unsigned int Trial::getCurrentNode() const
+{
+DOTRACE("Trial::getCurrentNode");
+  return rep->currentNode;
+}
+
+void Trial::setCurrentNode(unsigned int nodeNumber)
+{
+DOTRACE("Trial::setCurrentNode");
+  if (nodeNumber >= rep->gxNodes.size())
+    {
+      throw Util::Error(fstring("invalid node number ", nodeNumber));
+    }
+  rep->currentNode = nodeNumber;
+}
+
+void Trial::clearObjs()
+{
+DOTRACE("Trial::clearObjs");
+  rep->gxNodes.clear();
+}
+
+
+void Trial::vxRun(Element& parent)
+{
+DOTRACE("Trial::vxRun");
+
   Precondition(&parent != 0);
 
   SoftRef<Toglet> widget = parent.getWidget();
@@ -318,102 +401,114 @@ DOTRACE("Trial::Impl::vxRun");
   Precondition(widget.isValid());
   Precondition(&errhdlr != 0);
 
-  if ( itsRh.isInvalid() || itsTh.isInvalid() )
+  if ( rep->rh.isInvalid() || rep->th.isInvalid() )
     {
       errhdlr.handleMsg("the trial did not have a valid timing handler "
                         "and response handler");
       return;
     }
 
-  becomeActive(&parent, widget);
+  rep->becomeActive(&parent, widget);
 
   Util::log("Trial::vxRun");
 
-  itsCurrentNode = 0;
+  rep->currentNode = 0;
 
-  itsActiveState->itsRh->rhBeginTrial(widget, *self);
-  itsActiveState->itsTh->thBeginTrial(*self, errhdlr);
+  rep->activeState->rh->rhBeginTrial(widget, *this);
+  rep->activeState->th->thBeginTrial(*this, errhdlr);
 }
 
-double Trial::Impl::trElapsedMsec()
+double Trial::trElapsedMsec()
 {
-DOTRACE("Trial::Impl::trElapsedMsec");
+DOTRACE("Trial::trElapsedMsec");
 
-  Precondition( isActive() );
+  Precondition( rep->isActive() );
 
-  return itsActiveState->itsTh->getElapsedMsec();
+  return rep->activeState->th->getElapsedMsec();
 }
 
-void Trial::Impl::trAbort()
+void Trial::trAbort()
 {
-DOTRACE("Trial::Impl::trAbort");
+DOTRACE("Trial::trAbort");
 
-  Precondition( isActive() );
+  Precondition( rep->isActive() );
 
   Util::log("trAbort");
 
-  itsActiveState->itsStatus = CHILD_ABORTED;
-  itsActiveState->itsRh->rhAbortTrial();
-  itsActiveState->itsTh->thAbortTrial();
+  rep->activeState->status = CHILD_ABORTED;
+  rep->activeState->rh->rhAbortTrial();
+  rep->activeState->th->thAbortTrial();
 }
 
-void Trial::Impl::trEndTrial()
+void Trial::vxReturn(ChildStatus /*s*/)
 {
-DOTRACE("Trial::Impl::trEndTrial");
+  // FIXME
+  Assert(false);
+}
 
-  Precondition( isActive() );
+void Trial::trEndTrial()
+{
+DOTRACE("Trial::trEndTrial");
+
+  Precondition( rep->isActive() );
 
   Util::log("Trial::trEndTrial");
 
-  itsActiveState->itsRh->rhEndTrial();
-  itsActiveState->itsParent->vxEndTrialHook();
+  rep->activeState->rh->rhEndTrial();
+  rep->activeState->parent->vxEndTrialHook();
 
-  Element* parent = itsActiveState->itsParent;
-  Element::ChildStatus status = itsActiveState->itsStatus;
+  Element* parent = rep->activeState->parent;
+  Element::ChildStatus status = rep->activeState->status;
 
-  becomeInactive();
+  rep->becomeInactive();
 
   parent->vxReturn(status);
 }
 
-void Trial::Impl::vxHalt()
+void Trial::vxHalt() const
 {
-DOTRACE("Trial::Impl::vxHalt");
+DOTRACE("Trial::vxHalt");
 
-  if (isInactive()) return;
+  if (!rep->isActive()) return;
 
   Util::log("Trial::vxHalt");
 
-  if (itsActiveState->itsWidget.isValid())
-    itsActiveState->itsWidget->undraw();
+  if (rep->activeState->widget.isValid())
+    rep->activeState->widget->undraw();
 
-  itsActiveState->itsRh->rhHaltExpt();
-  itsActiveState->itsTh->thHaltExpt();
+  rep->activeState->rh->rhHaltExpt();
+  rep->activeState->th->thHaltExpt();
 
-  becomeInactive();
+  rep->becomeInactive();
 }
 
-void Trial::Impl::trResponseSeen()
+void Trial::vxReset()
 {
-DOTRACE("Trial::Impl::trResponseSeen");
+DOTRACE("Trial::vxReset");
+  rep->responses.clear();
+}
 
-  Precondition( isActive() );
+void Trial::trResponseSeen()
+{
+DOTRACE("Trial::trResponseSeen");
+
+  Precondition( rep->isActive() );
 
   Util::log("trResponseSeen");
 
-  itsActiveState->itsTh->thResponseSeen();
+  rep->activeState->th->thResponseSeen();
 }
 
-void Trial::Impl::trProcessResponse(Response& response)
+void Trial::trProcessResponse(Response& response)
 {
-DOTRACE("Trial::Impl::trProcessResponse");
+DOTRACE("Trial::trProcessResponse");
 
-  Precondition( isActive() );
+  Precondition( rep->isActive() );
 
   Util::log("trProcessResponse");
-  response.setCorrectVal(itsCorrectResponse);
+  response.setCorrectVal(rep->correctResponse);
 
-  itsResponses.push_back(response);
+  rep->responses.push_back(response);
 
   dbgEval(3, response.correctVal());
   dbgEvalNL(3, response.val());
@@ -422,228 +517,40 @@ DOTRACE("Trial::Impl::trProcessResponse");
   // kindly repeat this trial
   if (!response.isCorrect())
     {
-      itsActiveState->itsStatus = CHILD_REPEAT;
+      rep->activeState->status = CHILD_REPEAT;
     }
 }
 
-void Trial::Impl::trAllowResponses(Trial* self)
+void Trial::trAllowResponses()
 {
-DOTRACE("Trial::Impl::trAllowResponses");
+DOTRACE("Trial::trAllowResponses");
 
-  Precondition( isActive() );
+  Precondition( rep->isActive() );
 
   Util::log("trAllowResponses");
 
-  itsActiveState->itsRh->rhAllowResponses(itsActiveState->itsWidget, *self);
+  rep->activeState->rh->rhAllowResponses
+    (rep->activeState->widget, *this);
 }
 
-void Trial::Impl::trDenyResponses()
+void Trial::trDenyResponses()
 {
-DOTRACE("Trial::Impl::trDenyResponses");
+DOTRACE("Trial::trDenyResponses");
 
-  Precondition( isActive() );
+  Precondition( rep->isActive() );
 
   Util::log("trDenyResponses");
 
-  itsActiveState->itsRh->rhDenyResponses();
+  rep->activeState->rh->rhDenyResponses();
 }
-
-void Trial::Impl::installSelf(SoftRef<Toglet> widget) const
-{
-DOTRACE("Trial::Impl::installSelf");
-
-  if (itsCurrentNode < itsGxNodes.size())
-    widget->setDrawable(Ref<GxNode>(itsGxNodes[itsCurrentNode]));
-}
-
-void Trial::Impl::vxUndo()
-{
-DOTRACE("Trial::Impl::vxUndo");
-  if ( !itsResponses.empty() )
-    itsResponses.pop_back();
-}
-
-void Trial::vxReset()
-{
-DOTRACE("Trial::vxReset");
-  rep->itsResponses.clear();
-}
-
-
-///////////////////////////////////////////////////////////////////////
-//
-// Trial member functions
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace
-{
-  const Field FIELD_ARRAY[] =
-  {
-    Field("tType", make_mypair(&Trial::trialType, &Trial::setType),
-          -1, -10, 10, 1, Field::NEW_GROUP)
-  };
-
-  FieldMap TRIAL_FIELDS(FIELD_ARRAY);
-}
-
-//////////////
-// creators //
-//////////////
-
-const FieldMap& Trial::classFields() { return TRIAL_FIELDS; }
-
-Trial* Trial::make()
-{
-DOTRACE("Trial::make");
-  return new Trial;
-}
-
-Trial::Trial() :
-  FieldContainer(0),
-  rep( new Impl(this) )
-{
-DOTRACE("Trial::Trial()");
-
-  setFieldMap(TRIAL_FIELDS);
-}
-
-Trial::~Trial()
-{
-DOTRACE("Trial::~Trial");
-  delete rep;
-}
-
-////////////////////////////////
-// delegations to Trial::Impl //
-////////////////////////////////
-
-IO::VersionId Trial::serialVersionId() const
-  { return TRIAL_SERIAL_VERSION_ID; }
-
-void Trial::readFrom(IO::Reader* reader)
-  { rep->readFrom(reader); }
-
-void Trial::writeTo(IO::Writer* writer) const
-  { rep->writeTo(writer); }
-
-Util::ErrorHandler& Trial::getErrorHandler() const
-{
-  Precondition( rep->isActive() );
-  return rep->itsActiveState->itsParent->getErrorHandler();
-}
-
-const SoftRef<Toglet>& Trial::getWidget() const
-{
-  Precondition( rep->isActive() );
-  return rep->itsActiveState->itsWidget;
-}
-
-int Trial::getCorrectResponse() const
-  { return rep->itsCorrectResponse; }
-
-void Trial::setCorrectResponse(int response)
-  { rep->itsCorrectResponse = response; }
-
-
-Ref<ResponseHandler> Trial::getResponseHandler() const
-  { return Ref<ResponseHandler>(rep->itsRh); }
-
-void Trial::setResponseHandler(Ref<ResponseHandler> rh)
-  { rep->itsRh = SoftRef<ResponseHandler>(rh); }
-
-
-Ref<TimingHdlr> Trial::getTimingHdlr() const
-  { return Ref<TimingHdlr>(rep->itsTh); }
-
-void Trial::setTimingHdlr(Ref<TimingHdlr> th)
-  { rep->itsTh = SoftRef<TimingHdlr>(th); }
-
-
-int Trial::trialType() const
-  { return rep->itsType; }
-
-void Trial::setType(int t)
-  { rep->itsType = t; }
-
-
-fstring Trial::status() const
-  { return rep->status(); }
-
-int Trial::lastResponse() const
-  { return rep->lastResponse(); }
-
-void Trial::vxUndo()
-  { rep->vxUndo(); }
-
-unsigned int Trial::numResponses() const
-  { return rep->itsResponses.size(); }
-
-void Trial::clearResponses()
-  { rep->itsResponses.clear(); }
-
-double Trial::avgResponse() const
-  { return rep->avgResponse(); }
-
-double Trial::avgRespTime() const
-  { return rep->avgRespTime(); }
-
-
-void Trial::addNode(Util::Ref<GxNode> item)
-  { rep->itsGxNodes.push_back(item); }
-
-void Trial::trNextNode()
-  { rep->trNextNode(); }
-
-Util::FwdIter<Util::Ref<GxNode> > Trial::nodes() const
-{
-  return Util::FwdIter<Util::Ref<GxNode> >
-    (rep->itsGxNodes.begin(),
-     rep->itsGxNodes.end());
-}
-
-unsigned int Trial::getCurrentNode() const
-  { return rep->itsCurrentNode; }
-
-void Trial::setCurrentNode(unsigned int nodeNumber)
-  { rep->setCurrentNode(nodeNumber); }
-
-void Trial::clearObjs()
-  { rep->clearObjs(); }
-
-
-void Trial::vxRun(Element& parent)
-  { rep->vxRun(this, parent); }
-
-double Trial::trElapsedMsec()
-  { return rep->trElapsedMsec(); }
-
-void Trial::trAbort()
-  { rep->trAbort(); }
-
-void Trial::vxReturn(ChildStatus /*s*/)
-  { Assert(false); }
-
-void Trial::trEndTrial()
-  { rep->trEndTrial(); }
-
-void Trial::vxHalt() const
-  { rep->vxHalt(); }
-
-void Trial::trResponseSeen()
-  { rep->trResponseSeen(); }
-
-void Trial::trProcessResponse(Response& response)
-  { rep->trProcessResponse(response); }
-
-void Trial::trAllowResponses()
-  { rep->trAllowResponses(this); }
-
-void Trial::trDenyResponses()
-  { rep->trDenyResponses(); }
 
 void Trial::installSelf(SoftRef<Toglet> widget) const
-  { rep->installSelf(widget); }
+{
+DOTRACE("Trial::installSelf");
+
+  if (rep->currentNode < rep->gxNodes.size())
+    widget->setDrawable(Ref<GxNode>(rep->gxNodes[rep->currentNode]));
+}
 
 static const char vcid_trial_cc[] = "$Header$";
 #endif // !TRIAL_CC_DEFINED
