@@ -294,12 +294,28 @@ DOTRACE("TimingHdlr::Impl::cancelAll");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void TimingHdlr::thHaltExpt()
+void TimingHdlr::thBeginTrial(Trial& trial)
 {
-DOTRACE("TimingHdlr::thHaltExpt");
-  rep->cancelAll(rep->startEvents);
+DOTRACE("TimingHdlr::thBeginTrial");
+
+  rep->timer.restart();
+
+  rep->trial = &trial;
+
   rep->cancelAll(rep->responseEvents);
   rep->cancelAll(rep->abortEvents);
+  rep->scheduleAll(rep->immediateEvents);
+  rep->scheduleAll(rep->startEvents);
+}
+
+void TimingHdlr::thResponseSeen()
+{
+DOTRACE("TimingHdlr::thResponseSeen");
+  if (rep->responseEvents.size() > 0)
+    {
+      rep->cancelAll(rep->startEvents);
+      rep->scheduleAll(rep->responseEvents);
+    }
 }
 
 void TimingHdlr::thAbortTrial()
@@ -313,28 +329,21 @@ DOTRACE("TimingHdlr::thAbortTrial");
     }
 }
 
-void TimingHdlr::thResponseSeen()
+void TimingHdlr::thEndTrial()
 {
-DOTRACE("TimingHdlr::thResponseSeen");
-  if (rep->responseEvents.size() > 0)
-    {
-      rep->cancelAll(rep->startEvents);
-      rep->scheduleAll(rep->responseEvents);
-    }
-}
-
-void TimingHdlr::thBeginTrial(Trial& trial)
-{
-DOTRACE("TimingHdlr::thBeginTrial");
-
-  rep->timer.restart();
-
-  rep->trial = &trial;
-
+DOTRACE("TimingHdlr::thEndTrial");
+  rep->cancelAll(rep->immediateEvents);
+  rep->cancelAll(rep->startEvents);
   rep->cancelAll(rep->responseEvents);
   rep->cancelAll(rep->abortEvents);
-  rep->scheduleAll(rep->immediateEvents);
-  rep->scheduleAll(rep->startEvents);
+}
+
+void TimingHdlr::thHaltExpt()
+{
+DOTRACE("TimingHdlr::thHaltExpt");
+  rep->cancelAll(rep->startEvents);
+  rep->cancelAll(rep->responseEvents);
+  rep->cancelAll(rep->abortEvents);
 }
 
 static const char vcid_timinghdlr_cc[] = "$Header$";

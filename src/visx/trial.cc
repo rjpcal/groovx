@@ -467,6 +467,7 @@ DOTRACE("Trial::trEndTrial");
   Util::log("Trial::trEndTrial");
 
   rep->activeState->rh->rhEndTrial();
+  rep->activeState->th->thEndTrial();
   rep->activeState->parent->vxEndTrialHook();
 
   Element* parent = rep->activeState->parent;

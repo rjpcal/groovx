@@ -88,11 +88,12 @@ public:
   // actions //
   /////////////
 
-  virtual void thBeginTrial(Trial& trial);
-  virtual void thResponseSeen();
-  virtual void thAbortTrial();
+  void thBeginTrial(Trial& trial);
+  void thResponseSeen();
+  void thAbortTrial();
+  void thEndTrial();
 
-  virtual void thHaltExpt();
+  void thHaltExpt();
 
 private:
   TimingHdlr(const TimingHdlr&);
