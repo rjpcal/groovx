@@ -3,7 +3,7 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Wed Mar 15 10:17:29 2000
+// written: Wed May 17 15:55:28 2000
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -98,7 +98,9 @@ public:
   DOTRACE("TclApp::TclApp(Tcl_Interp*)");
 
     for (size_t i = 0; i < sizeof(Names_Procs)/sizeof(PkgName_PkgProc); ++i) {
-		//		cerr << "initializing " << Names_Procs[i].PkgName << endl << flush;
+#ifdef LOCAL_TRACE		
+		cerr << "initializing " << Names_Procs[i].PkgName << endl << flush;
+#endif
 		int result = Names_Procs[i].PkgProc(interp);
 		if (result != TCL_OK) { itsStatus = result; }
 	 }
