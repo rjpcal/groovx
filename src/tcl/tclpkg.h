@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Sep 27 10:16:07 2000
+// written: Thu Oct  5 12:56:29 2000
 // $Id$
 //
 //
@@ -174,11 +174,12 @@ private:
 
 namespace Tcl {
 
-
 ///////////////////////////////////////////////////////////////////////
-//
-// TclItemPkg class definition
-//
+/**
+ *
+ * TclItemPkg class definition
+ *
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 class TclItemPkg : public TclItemPkgBase {
@@ -215,13 +216,15 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-//
-// TclIoItemPkg class definition
-//
-// This subclass of TclItemPkg automatically creates appropriate
-// "stringify" and "destringify" commands in the Tcl package. To do
-// this, it requires overriding a function to retrieve an IO reference.
-//
+/**
+ *
+ * TclIoItemPkg class definition                                       
+ *	                                                                    
+ *	This subclass of TclItemPkg automatically creates appropriate       
+ * "stringify" and "destringify" commands in the Tcl package. To do    
+ * this, it requires overriding a function to retrieve an IO reference.
+ *
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 class TclIoItemPkg : public TclItemPkg {
@@ -235,9 +238,11 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////
-//
-// TclItemCmd class definition
-//
+/**
+ *
+ * TclItemCmd class definition
+ *
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
@@ -263,9 +268,11 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-//
-// CTclItemPkg class definition
-//
+/**
+ *
+ * CTclItemPkg class definition
+ *
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class C>
@@ -313,9 +320,11 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////
-//
-// CTclIoItemPkg class definition
-//
+/**
+ *
+ * CTclIoItemPkg class definition
+ *
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class C>
@@ -369,9 +378,11 @@ public:
 };
 
 ///////////////////////////////////////////////////////////////////////
-//
-// CVecPropertyCmd
-//
+/**
+ *
+ * CVecPropertyCmd
+ *
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 class VecPropertyCmdBase : public TclCmd {
@@ -428,9 +439,11 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-//
-// CPropertiesCmd
-//
+/**
+ *
+ * CPropertiesCmd
+ *
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 class PropertiesCmdBase : public TclCmd {
