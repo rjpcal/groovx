@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 20 00:37:03 2000
-// written: Fri Aug 10 11:05:57 2001
+// written: Fri Aug 10 11:43:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,6 +100,20 @@ unsigned char* Gfx::BmapData::bytesPtr() const
 DOTRACE("Gfx::BmapData::bytesPtr");
   updateIfNeeded();
   return const_cast<unsigned char*>(&(itsImpl->itsBytes[0]));
+}
+
+long int Gfx::BmapData::checkSum() const
+{
+DOTRACE("Gfx::BmapData::checkSum");
+
+  long int sum = 0;
+  unsigned int byte_count = byteCount();
+  unsigned char* bytes = bytesPtr();
+  while (byte_count > 0)
+    {
+      sum += bytes[--byte_count];
+    }
+  return sum;
 }
 
 int Gfx::BmapData::width() const

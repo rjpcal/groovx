@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Wed Aug  8 15:29:30 2001
+// written: Fri Aug 10 11:44:50 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -17,6 +17,12 @@
 
 #ifndef GLTCL_CC_DEFINED
 #define GLTCL_CC_DEFINED
+
+#include "glcanvas.h"
+
+#include "rect.h"
+
+#include "gfx/bmapdata.h"
 
 #include "tcl/tclerror.h"
 #include "tcl/tcllistobj.h"
@@ -51,8 +57,8 @@ namespace GLTcl
   void drawThickLine(GLdouble x1, GLdouble y1,
                      GLdouble x2, GLdouble y2, GLdouble thickness);
   Tcl::List lineInfo();
-  GLdouble pixelCheckSum(int x, int y, int w, int h);
-  GLdouble pixelCheckSumAll()
+  long int pixelCheckSum(int x, int y, int w, int h);
+  long int pixelCheckSumAll()
   {
     GLint viewport[4];
     glGetIntegerv(GL_VIEWPORT, viewport);
@@ -345,45 +351,18 @@ Tcl::List GLTcl::lineInfo()
 //
 //--------------------------------------------------------------------
 
-GLdouble GLTcl::pixelCheckSum(int x, int y, int w, int h)
+long int GLTcl::pixelCheckSum(int x, int y, int w, int h)
 {
-  GLboolean isRgba;
-  glGetBooleanv(GL_RGBA_MODE, &isRgba);
+  GLCanvas canvas;
 
-  if (GL_TRUE == isRgba)
-    {
-      fixed_block<GLfloat> pixels(w*h*3);
-      glPixelStorei(GL_PACK_ALIGNMENT, 1);
+  Gfx::BmapData data;
 
-      glPushAttrib(GL_PIXEL_MODE_BIT);
-      glReadBuffer(GL_FRONT);
-      glReadPixels(x,y,w,h,GL_RGB, GL_FLOAT, &pixels[0]);
-      glPopAttrib();
+  Rect<int> bounds;
+  bounds.setRectXYWH(x,y,w,h);
 
-      GLfloat sum = 0;
-      for (unsigned int i = 0; i < pixels.size(); ++i)
-        {
-          sum += pixels[i];
-        }
-      return sum;
-    }
-  else
-    {
-      fixed_block<GLubyte> pixels(w*h);
-      glPixelStorei(GL_PACK_ALIGNMENT, 1);
+  canvas.grabPixels(bounds, data);
 
-      glPushAttrib(GL_PIXEL_MODE_BIT);
-      glReadBuffer(GL_FRONT);
-      glReadPixels(x,y,w,h,GL_COLOR_INDEX, GL_UNSIGNED_BYTE, &pixels[0]);
-      glPopAttrib();
-
-      long int sum = 0;
-      for (unsigned int i = 0; i < pixels.size(); ++i)
-        {
-          sum += pixels[i];
-        }
-      return sum;
-    }
+  return data.checkSum();
 }
 
 //---------------------------------------------------------------------

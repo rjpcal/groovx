@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Fri Aug 10 10:42:24 2001
+// written: Fri Aug 10 11:17:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@ template <class V> class Vec3;
 
 namespace Gfx
 {
+  class BmapData;
   class Canvas;
 }
 
@@ -64,6 +65,13 @@ public:
 
   /// Query whether the drawable is double-buffered.
   virtual bool isDoubleBuffered() const = 0;
+
+  /// Query the number of bytes per pixel.
+  virtual unsigned int bitsPerPixel() const = 0;
+
+  /// Read pixel data from the screen rect \a bounds into \a data_out.
+  virtual void grabPixels(const Rect<int>& bounds,
+                          Gfx::BmapData& data_out) const = 0;
 
   /// Swap the foreground and background colors.
   virtual void swapForeBack() const = 0;

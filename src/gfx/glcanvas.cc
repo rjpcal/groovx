@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Fri Aug 10 10:55:04 2001
+// written: Fri Aug 10 11:35:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "point.h"
 #include "rect.h"
 
+#include "gfx/bmapdata.h"
 #include "gfx/vec3.h"
 
 #include "util/error.h"
@@ -30,7 +31,8 @@
 
 GLCanvas::~GLCanvas() {}
 
-Point<int> GLCanvas::getScreenFromWorld(const Point<double>& world_pos) const {
+Point<int> GLCanvas::getScreenFromWorld(const Point<double>& world_pos) const
+{
   GLdouble current_mv_matrix[16];
   GLdouble current_proj_matrix[16];
   GLint current_viewport[4];
@@ -54,7 +56,8 @@ Point<int> GLCanvas::getScreenFromWorld(const Point<double>& world_pos) const {
   return Point<int>(int(temp_screen_x), int(temp_screen_y));
 }
 
-Point<double> GLCanvas::getWorldFromScreen(const Point<int>& screen_pos) const {
+Point<double> GLCanvas::getWorldFromScreen(const Point<int>& screen_pos) const
+{
   GLdouble current_mv_matrix[16];
   GLdouble current_proj_matrix[16];
   GLint current_viewport[4];
@@ -81,21 +84,24 @@ Point<double> GLCanvas::getWorldFromScreen(const Point<int>& screen_pos) const {
 }
 
 
-Rect<int> GLCanvas::getScreenFromWorld(const Rect<double>& world_pos) const {
+Rect<int> GLCanvas::getScreenFromWorld(const Rect<double>& world_pos) const
+{
   Rect<int> screen_rect;
   screen_rect.setBottomLeft( getScreenFromWorld(world_pos.bottomLeft()) );
   screen_rect.setTopRight  ( getScreenFromWorld(world_pos.topRight())   );
   return screen_rect;
 }
 
-Rect<double> GLCanvas::getWorldFromScreen(const Rect<int>& screen_pos) const {
+Rect<double> GLCanvas::getWorldFromScreen(const Rect<int>& screen_pos) const
+{
   Rect<double> world_rect;
   world_rect.setBottomLeft( getWorldFromScreen(screen_pos.bottomLeft()) );
   world_rect.setTopRight  ( getWorldFromScreen(screen_pos.topRight())   );
   return world_rect;
 }
 
-Rect<int> GLCanvas::getScreenViewport() const {
+Rect<int> GLCanvas::getScreenViewport() const
+{
   GLint viewport[4];
   glGetIntegerv(GL_VIEWPORT, viewport);
 
@@ -107,70 +113,110 @@ Rect<int> GLCanvas::getScreenViewport() const {
   return screen_rect;
 }
 
-Rect<double> GLCanvas::getWorldViewport() const {
+Rect<double> GLCanvas::getWorldViewport() const
+{
   return getWorldFromScreen(getScreenViewport());
 }
 
 
-bool GLCanvas::isRgba() const {
+bool GLCanvas::isRgba() const
+{
 DOTRACE("GLCanvas::isRgba");
   GLboolean val;
   glGetBooleanv(GL_RGBA_MODE, &val);
   return (val == GL_TRUE);
 }
 
-bool GLCanvas::isColorIndex() const {
+bool GLCanvas::isColorIndex() const
+{
 DOTRACE("GLCanvas::isColorIndex");
   GLboolean val;
   glGetBooleanv(GL_INDEX_MODE, &val);
   return (val == GL_TRUE);
 }
 
-bool GLCanvas::isDoubleBuffered() const {
+bool GLCanvas::isDoubleBuffered() const
+{
 DOTRACE("GLCanvas::isDoubleBuffered");
   GLboolean val;
   glGetBooleanv(GL_DOUBLEBUFFER, &val);
   return (val == GL_TRUE);
 }
 
-void GLCanvas::swapForeBack() const {
-DOTRACE("GLCanvas::swapForeBack");
-  if ( this->isRgba() ) {
-    GLdouble foreground[4];
-    GLdouble background[4];
-    glGetDoublev(GL_CURRENT_COLOR, &foreground[0]);
-    glGetDoublev(GL_COLOR_CLEAR_VALUE, &background[0]);
+unsigned int GLCanvas::bitsPerPixel() const
+{
+DOTRACE("GLCanvas::bitsPerPixel");
 
-    glColor4d(background[0],
-              background[1],
-              background[2],
-              foreground[3]); // <-- note we keep the foreground alpha value
-
-    glClearColor(foreground[0],
-                 foreground[1],
-                 foreground[2],
-                 background[3]); // <-- note we keep the background alpha value
-  }
-  else {
-    GLint foreground, background;
-    glGetIntegerv(GL_CURRENT_INDEX, &foreground);
-    glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
-    glIndexi(background);
-    glClearIndex(foreground);
-  }
+  if (isRgba()) return 24;
+  return 8;
 }
 
-void GLCanvas::flushOutput() const {
+void GLCanvas::grabPixels(const Rect<int>& bounds, Gfx::BmapData& data_out) const
+{
+DOTRACE("GLCanvas::grabPixels");
+
+  const int pixel_alignment = 1;
+
+  Gfx::BmapData new_data(bounds.extent(), bitsPerPixel(), pixel_alignment);
+
+  glPixelStorei(GL_PACK_ALIGNMENT, pixel_alignment);
+
+  glPushAttrib(GL_PIXEL_MODE_BIT);
+  {
+    glReadBuffer(GL_FRONT);
+    glReadPixels(bounds.left(), bounds.bottom(), bounds.width(), bounds.height(),
+                 (isRgba() ? GL_RGB : GL_COLOR_INDEX),
+                 GL_UNSIGNED_BYTE, new_data.bytesPtr());
+  }
+  glPopAttrib();
+
+  data_out.swap(new_data);
+}
+
+void GLCanvas::swapForeBack() const
+{
+DOTRACE("GLCanvas::swapForeBack");
+  if ( this->isRgba() )
+    {
+      GLdouble foreground[4];
+      GLdouble background[4];
+      glGetDoublev(GL_CURRENT_COLOR, &foreground[0]);
+      glGetDoublev(GL_COLOR_CLEAR_VALUE, &background[0]);
+
+      glColor4d(background[0],
+                background[1],
+                background[2],
+                foreground[3]); // <-- note we keep the foreground alpha value
+
+      glClearColor(foreground[0],
+                   foreground[1],
+                   foreground[2],
+                   background[3]); // <-- note we keep the background alpha value
+    }
+  else
+    {
+      GLint foreground, background;
+      glGetIntegerv(GL_CURRENT_INDEX, &foreground);
+      glGetIntegerv(GL_INDEX_CLEAR_VALUE, &background);
+      glIndexi(background);
+      glClearIndex(foreground);
+    }
+}
+
+void GLCanvas::flushOutput() const
+{
 DOTRACE("GLCanvas::flushOutput");
   glFlush();
 }
 
-void GLCanvas::clearColorBuffer() const {
+void GLCanvas::clearColorBuffer() const
+{
 DOTRACE("GLCanvas::clearColorBuffer");
   glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void GLCanvas::clearColorBuffer(const Rect<int>& screen_rect) const {
+void GLCanvas::clearColorBuffer(const Rect<int>& screen_rect) const
+{
 DOTRACE("GLCanvas::clearColorBuffer(Rect)");
 
   glPushAttrib(GL_SCISSOR_BIT);
@@ -186,40 +232,47 @@ DOTRACE("GLCanvas::clearColorBuffer(Rect)");
   glPopAttrib();
 }
 
-void GLCanvas::drawOnFrontBuffer() const {
+void GLCanvas::drawOnFrontBuffer() const
+{
 DOTRACE("GLCanvas::drawOnFrontBuffer");
   glDrawBuffer(GL_FRONT);
 }
 
-void GLCanvas::drawOnBackBuffer() const {
+void GLCanvas::drawOnBackBuffer() const
+{
 DOTRACE("GLCanvas::drawOnBackBuffer");
   glDrawBuffer(GL_BACK);
 }
 
-void GLCanvas::pushState() const {
+void GLCanvas::pushState() const
+{
 DOTRACE("GLCanvas::pushState");
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
 }
 
-void GLCanvas::popState() const {
+void GLCanvas::popState() const
+{
 DOTRACE("GLCanvas::popState");
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
 }
 
 
-void GLCanvas::translate(const Vec3<double>& v) const {
+void GLCanvas::translate(const Vec3<double>& v) const
+{
 DOTRACE("GLCanvas::translate");
   glTranslated(v.x(), v.y(), v.z());
 }
 
-void GLCanvas::scale(const Vec3<double>& v) const {
+void GLCanvas::scale(const Vec3<double>& v) const
+{
 DOTRACE("GLCanvas::scale");
   glScaled(v.x(), v.y(), v.z());
 }
 
-void GLCanvas::rotate(const Vec3<double>& v, double angle_in_degrees) const {
+void GLCanvas::rotate(const Vec3<double>& v, double angle_in_degrees) const
+{
 DOTRACE("GLCanvas::rotate");
   glRotated(angle_in_degrees, v.x(), v.y(), v.z());
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Wed Aug  8 08:17:00 2001
+// written: Fri Aug 10 11:31:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINT_H_DEFINED)
 #include "point.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
+#include "util/algo.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -27,38 +31,38 @@ template<class V>
 class Rect {
 public:
   // Creators
-  Rect() : l(), t(), r(), b() {} // everything inits to zero
+  Rect() : ll(), tt(), rr(), bb() {} // everything inits to zero
 
-  Rect(V L, V T, V R, V B) : l(L), t(T), r(R), b(B) {}
+  Rect(V L, V T, V R, V B) : ll(L), tt(T), rr(R), bb(B) {}
 
   Rect(const Point<V>& p1, const Point<V>& p2)
     { setCorners(p1, p2); }
 
-  Rect(const Rect<V>& i) : l(i.l), t(i.t), r(i.r), b(i.b) {}
+  Rect(const Rect<V>& i) : ll(i.ll), tt(i.tt), rr(i.rr), bb(i.bb) {}
 
   Rect<V>& operator=(const Rect<V>& i)
-    { l=i.l; t=i.t; r=i.r; b=i.b; return *this; }
+    { ll=i.ll; tt=i.tt; rr=i.rr; bb=i.bb; return *this; }
 
   // Accessors
   void getRectLTRB(V& L, V& T, V& R, V& B) const
-    { L = l; T = t; R = r; B = b; }
+    { L = ll; T = tt; R = rr; B = bb; }
   void getRectLRBT(V& L, V& R, V& B, V& T) const
-    { L = l; R = r; B = b; T = t; }
+    { L = ll; R = rr; B = bb; T = tt; }
 
   Point<V> bottomLeft() const
-    { return Point<V>(l, b); }
+    { return Point<V>(ll, bb); }
 
   Point<V> bottomRight() const
-    { return Point<V>(r, b); }
+    { return Point<V>(rr, bb); }
 
   Point<V> topLeft() const
-    { return Point<V>(l, t); }
+    { return Point<V>(ll, tt); }
 
   Point<V> topRight() const
-    { return Point<V>(r, t); }
+    { return Point<V>(rr, tt); }
 
-  V width() const { return (r-l); }
-  V height() const { return (t-b); }
+  V width() const { return (rr-ll); }
+  V height() const { return (tt-bb); }
 
   Point<V> extent() const { return Point<V>(width(), height()); }
 
@@ -66,64 +70,72 @@ public:
 
   Point<V> center() const { return Point<V>(centerX(), centerY()); }
 
-  V centerX() const { return (r+l)/V(2); }
-  V centerY() const { return (t+b)/V(2); }
+  V centerX() const { return (rr+ll)/V(2); }
+  V centerY() const { return (tt+bb)/V(2); }
 
   // Manipulators
   void setRectLTRB(V L, V T, V R, V B)
-    { l = L; t = T; r = R; b = B; }
+    { ll = L; tt = T; rr = R; bb = B; }
   void setRectLRBT(V L, V R, V B, V T)
-    { l = L; r = R; b = B; t = T; }
+    { ll = L; rr = R; bb = B; tt = T; }
+
+  void setRectXYWH(V x, V y, V w, V h)
+  {
+    ll = x;
+    bb = y;
+    rr = ll+Util::abs(w);
+    tt = bb+Util::abs(h);
+  }
 
   void setCorners(const Point<V>& p1, const Point<V>& p2)
-    {
-      l = p1.x() < p2.x() ? p1.x() : p2.x();
-      r = p1.x() > p2.x() ? p1.x() : p2.x();
-      b = p1.y() < p2.y() ? p1.y() : p2.y();
-      t = p1.y() > p2.y() ? p1.y() : p2.y();
-    }
+  {
+    ll = Util::min(p1.x(), p2.x());
+    rr = Util::max(p1.x(), p2.x());
+    bb = Util::min(p1.y(), p2.y());
+    tt = Util::max(p1.y(), p2.y());
+  }
 
   void setBottomLeft(const Point<V>& point)
-    { l = point.x(); b = point.y(); }
+    { ll = point.x(); bb = point.y(); }
 
   void setBottomRight(const Point<V>& point)
-    { r = point.x(); b = point.y(); }
+    { rr = point.x(); bb = point.y(); }
 
   void setTopLeft(const Point<V>& point)
-    { l = point.x(); t = point.y(); }
+    { ll = point.x(); tt = point.y(); }
 
   void setTopRight(const Point<V>& point)
-    { r = point.x(); t = point.y(); }
+    { rr = point.x(); tt = point.y(); }
 
-  void widenByFactor(V factor) { l *= factor; r *= factor; }
-  void heightenByFactor(V factor) { t *= factor; b *= factor; }
+  void widenByFactor(V factor) { ll *= factor; rr *= factor; }
+  void heightenByFactor(V factor) { tt *= factor; bb *= factor; }
 
-  void widenByStep(V step) { l -= step; r += step; }
-  void heightenByStep(V step) { b -= step; t += step; }
+  void widenByStep(V step) { ll -= step; rr += step; }
+  void heightenByStep(V step) { bb -= step; tt += step; }
 
-  void isVoid() const { return (t == b) || (l == r); }
+  void isVoid() const { return (tt == bb) || (ll == rr); }
 
   void unionize(const Rect<double>& other)
   {
-    l = (l < other.l) ? l : other.l;
-    r = (r > other.r) ? r : other.r;
-    b = (b < other.b) ? b : other.b;
-    t = (t > other.t) ? t : other.t;
+    ll = Util::min(ll, other.ll);
+    rr = Util::max(rr, other.rr);
+    bb = Util::min(bb, other.bb);
+    tt = Util::max(tt, other.tt);
   }
 
-  V& left() { return l; }
-  V& right() { return r; }
-  V& bottom() { return b; }
-  V& top() { return t; }
+  V& left() { return ll; }
+  V& right() { return rr; }
+  V& bottom() { return bb; }
+  V& top() { return tt; }
 
-  const V& left() const { return l; }
-  const V& right() const { return r; }
-  const V& bottom() const { return b; }
-  const V& top() const { return t; }
+  const V& left() const { return ll; }
+  const V& right() const { return rr; }
+  const V& bottom() const { return bb; }
+  const V& top() const { return tt; }
 
 private:
   // Data members
-  V l, t, r, b;
+  V ll, tt, rr, bb;
 };
 
 static const char vcid_rect_h[] = "$Header$";

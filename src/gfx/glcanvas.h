@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Fri Aug 10 10:56:09 2001
+// written: Fri Aug 10 11:36:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,11 @@ public:
   virtual bool isRgba() const;
   virtual bool isColorIndex() const;
   virtual bool isDoubleBuffered() const;
+
+  virtual unsigned int bitsPerPixel() const;
+
+  virtual void grabPixels(const Rect<int>& bounds,
+                          Gfx::BmapData& data_out) const;
 
   /** Swaps the foreground and background colors, in a way that is
       appropriate to color-index/RGBA modes. In order to be able to
