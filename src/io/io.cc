@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  9 20:25:02 1999
-// written: Mon Jun 11 14:49:18 2001
+// written: Tue Jun 12 11:17:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@
 
 #include "system/demangle.h"
 
-#include "util/iditem.h"
+#include "util/ref.h"
 #include "util/strings.h"
 
 #include <typeinfo>
@@ -85,7 +85,7 @@ DOTRACE("IO::IoObject::ioAttribCount");
 
 IO::VersionId IO::IoObject::serialVersionId() const {
 DOTRACE("IO::IoObject::serialVersionId");
-  return 0; 
+  return 0;
 }
 
 fixed_string IO::IoObject::ioTypename() const {

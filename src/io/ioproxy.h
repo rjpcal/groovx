@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 22 21:41:38 2000
-// written: Mon Jun 11 14:49:17 2001
+// written: Tue Jun 12 11:17:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef IOPROXY_H_DEFINED
 #define IOPROXY_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
-#include "util/iditem.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REF_H_DEFINED)
+#include "util/ref.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(STRINGS_H_DEFINED)
@@ -47,16 +47,16 @@ public:
     { return Util::Ref<IoObject>( new IoProxy(ref), true ); }
 
   virtual void readFrom(Reader* reader)
-	 { itsReferand->C::readFrom(reader); }
+    { itsReferand->C::readFrom(reader); }
 
   virtual void writeTo(Writer* writer) const
-	 { itsReferand->C::writeTo(writer); }
+    { itsReferand->C::writeTo(writer); }
 
   virtual VersionId serialVersionId() const
-	 { return itsReferand->C::serialVersionId(); }
+    { return itsReferand->C::serialVersionId(); }
 
   virtual fixed_string ioTypename() const
-	 { return demangle_cstr(typeid(C).name()); }
+    { return demangle_cstr(typeid(C).name()); }
 
 private:
   IoProxy(const IoProxy&);
@@ -81,16 +81,16 @@ public:
     { return Util::Ref<const IoObject>( new ConstIoProxy(ref), true ); }
 
   virtual void readFrom(Reader* reader)
-	 { itsReferand->C::readFrom(reader); }
+    { itsReferand->C::readFrom(reader); }
 
   virtual void writeTo(Writer* writer) const
-	 { itsReferand->C::writeTo(writer); }
+    { itsReferand->C::writeTo(writer); }
 
   virtual VersionId serialVersionId() const
-	 { return itsReferand->C::serialVersionId(); }
+    { return itsReferand->C::serialVersionId(); }
 
   virtual fixed_string ioTypename() const
-	 { return demangle_cstr(typeid(C).name()); }
+    { return demangle_cstr(typeid(C).name()); }
 
 private:
   ConstIoProxy(const ConstIoProxy&);

@@ -1,19 +1,19 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// iditem.cc
+// ref.cc
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Oct 27 17:07:31 2000
-// written: Mon Jun 11 14:41:17 2001
+// written: Tue Jun 12 11:13:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IDITEM_CC_DEFINED
-#define IDITEM_CC_DEFINED
+#ifndef REF_CC_DEFINED
+#define REF_CC_DEFINED
 
-#include "util/iditem.h"
+#include "util/ref.h"
 
 #include "util/objdb.h"
 
@@ -29,5 +29,5 @@ void Util::RefHelper::insertItem(Util::Object* obj) {
   ObjDb::theDb().insertPtrBase(obj);
 }
 
-static const char vcid_iditem_cc[] = "$Header$";
-#endif // !IDITEM_CC_DEFINED
+static const char vcid_ref_cc[] = "$Header$";
+#endif // !REF_CC_DEFINED

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Mon Jun 11 14:49:19 2001
+// written: Tue Jun 12 11:18:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,8 +32,8 @@
 
 #include "util/arrays.h"
 #include "util/error.h"
-#include "util/iditem.h"
 #include "util/pointers.h"
+#include "util/ref.h"
 #include "util/strings.h"
 
 #include <tcl.h>
@@ -82,91 +82,91 @@ public:
 
   class ERHState {
   protected:
-	 ERHState() {}
+    ERHState() {}
 
   public:
-	 virtual ~ERHState() {}
+    virtual ~ERHState() {}
 
-	 virtual void rhAbortTrial() = 0;
-	 virtual void rhEndTrial() = 0;
-	 virtual void rhHaltExpt() = 0;
+    virtual void rhAbortTrial() = 0;
+    virtual void rhEndTrial() = 0;
+    virtual void rhHaltExpt() = 0;
 
-	 virtual void handleResponse(const char* keysym) = 0;
+    virtual void handleResponse(const char* keysym) = 0;
 
-	 virtual void onDestroy() = 0;
+    virtual void onDestroy() = 0;
 
-	 static shared_ptr<ERHState> activeState(const EventResponseHdlr::Impl* erh,
-														  GWT::Widget& widget,
-														  TrialBase& trial);
-	 static shared_ptr<ERHState> inactiveState();
+    static shared_ptr<ERHState> activeState(const EventResponseHdlr::Impl* erh,
+                                            GWT::Widget& widget,
+                                            TrialBase& trial);
+    static shared_ptr<ERHState> inactiveState();
   };
 
   class ERHInactiveState : public ERHState {
   public:
-	 virtual ~ERHInactiveState() {}
+    virtual ~ERHInactiveState() {}
 
-	 virtual void rhAbortTrial() {}
-	 virtual void rhEndTrial() {}
-	 virtual void rhHaltExpt() {}
+    virtual void rhAbortTrial() {}
+    virtual void rhEndTrial() {}
+    virtual void rhHaltExpt() {}
 
-	 virtual void handleResponse(const char*) {}
+    virtual void handleResponse(const char*) {}
 
-	 virtual void onDestroy() {};
+    virtual void onDestroy() {};
   };
 
   class ERHActiveState : public ERHState {
   private:
-	 const EventResponseHdlr::Impl& itsErh;
-	 GWT::Widget& itsWidget;
-	 TrialBase& itsTrial;
+    const EventResponseHdlr::Impl& itsErh;
+    GWT::Widget& itsWidget;
+    TrialBase& itsTrial;
 
-	 bool check()
-	 { return (&itsErh != 0) && (&itsWidget != 0) && (&itsTrial != 0); }
+    bool check()
+    { return (&itsErh != 0) && (&itsWidget != 0) && (&itsTrial != 0); }
 
   public:
-	 virtual ~ERHActiveState()
-	 { itsErh.ignore(itsWidget); }
+    virtual ~ERHActiveState()
+    { itsErh.ignore(itsWidget); }
 
-	 ERHActiveState(const EventResponseHdlr::Impl* erh,
-						 GWT::Widget& widget, TrialBase& trial) :
-		itsErh(*erh),
-		itsWidget(widget),
-		itsTrial(trial)
-	 {
-		Invariant(check());
-		itsErh.attend(itsWidget);
-	 }
+    ERHActiveState(const EventResponseHdlr::Impl* erh,
+                   GWT::Widget& widget, TrialBase& trial) :
+      itsErh(*erh),
+      itsWidget(widget),
+      itsTrial(trial)
+    {
+      Invariant(check());
+      itsErh.attend(itsWidget);
+    }
 
-	 virtual void rhAbortTrial()
-	 {
-		Invariant(check());
-		itsErh.ignore(itsWidget);
+    virtual void rhAbortTrial()
+    {
+      Invariant(check());
+      itsErh.ignore(itsWidget);
 
-		Ref<Sound> p = Sound::getErrSound();
-		p->play();
-	 }
+      Ref<Sound> p = Sound::getErrSound();
+      p->play();
+    }
 
-	 virtual void rhEndTrial()
-	 {
-		Invariant(check());
-		itsErh.ignore(itsWidget);
-		itsErh.changeState(ERHState::inactiveState());
-	 }
+    virtual void rhEndTrial()
+    {
+      Invariant(check());
+      itsErh.ignore(itsWidget);
+      itsErh.changeState(ERHState::inactiveState());
+    }
 
-	 virtual void rhHaltExpt()
-	 {
-		Invariant(check());
-		itsErh.ignore(itsWidget);
-		itsErh.changeState(ERHState::inactiveState());
-	 }
+    virtual void rhHaltExpt()
+    {
+      Invariant(check());
+      itsErh.ignore(itsWidget);
+      itsErh.changeState(ERHState::inactiveState());
+    }
 
-	 virtual void handleResponse(const char* keysym);
+    virtual void handleResponse(const char* keysym);
 
-	 virtual void onDestroy()
-	 {
-		Invariant(check());
-		itsErh.ignore(itsWidget);
-	 };
+    virtual void onDestroy()
+    {
+      Invariant(check());
+      itsErh.ignore(itsWidget);
+    };
   };
 
   void changeState(shared_ptr<ERHState> new_state) const
@@ -178,55 +178,55 @@ public:
   void writeTo(IO::Writer* writer) const;
 
   const fixed_string& getInputResponseMap() const
-	 { return itsInputResponseMap; }
+    { return itsInputResponseMap; }
 
   void setInputResponseMap(const fixed_string& s)
-	 {
-		itsInputResponseMap = s;
-		itsRegexpsAreDirty = true;
-		updateRegexpsIfNeeded();
-	 }
+    {
+      itsInputResponseMap = s;
+      itsRegexpsAreDirty = true;
+      updateRegexpsIfNeeded();
+    }
 
   bool getUseFeedback() const
-	 { return itsUseFeedback; }
+    { return itsUseFeedback; }
 
   void setUseFeedback(bool val)
-	 { itsUseFeedback = val; }
+    { itsUseFeedback = val; }
 
   const char* getFeedbackMap() const
-	 { return itsFeedbackMap.c_str(); }
+    { return itsFeedbackMap.c_str(); }
 
   void setFeedbackMap(const char* feedback_string)
-	 {
-		itsFeedbackMap = feedback_string;
-		itsFeedbacksAreDirty = true;
-		updateFeedbacksIfNeeded();
-	 }
+    {
+      itsFeedbackMap = feedback_string;
+      itsFeedbacksAreDirty = true;
+      updateFeedbacksIfNeeded();
+    }
 
   const fixed_string& getEventSequence() const
-	 { return itsEventSequence; }
+    { return itsEventSequence; }
 
   void setEventSequence(const fixed_string& seq)
-	 { itsEventSequence = seq; }
+    { itsEventSequence = seq; }
 
   const fixed_string& getBindingSubstitution() const
-	 { return itsBindingSubstitution; }
+    { return itsBindingSubstitution; }
 
   void setBindingSubstitution(const fixed_string& sub)
-	 { itsBindingSubstitution = sub.c_str(); }
+    { itsBindingSubstitution = sub.c_str(); }
 
   void abortInvalidResponses()
-	 { itsAbortInvalidResponses = true; }
+    { itsAbortInvalidResponses = true; }
 
   void ignoreInvalidResponses()
-	 { itsAbortInvalidResponses = false; }
+    { itsAbortInvalidResponses = false; }
 
   void rhBeginTrial(GWT::Widget& widget, TrialBase& trial) const
-	 {
-		clearEventQueue();
+    {
+      clearEventQueue();
 
-		itsState = ERHState::activeState(this, widget, trial);
-	 }
+      itsState = ERHState::activeState(this, widget, trial);
+    }
 
   void rhAbortTrial() const { itsState->rhAbortTrial(); }
 
@@ -267,40 +267,40 @@ private:
   void updateRegexpsIfNeeded() const;
 
   dynamic_string getBindingScript() const
-	 {
-		return dynamic_string("{ ")
-		  .append(itsPrivateCmdName).append(" ")
-		  .append(itsBindingSubstitution).append(" }");
-	 }
+    {
+      return dynamic_string("{ ")
+        .append(itsPrivateCmdName).append(" ")
+        .append(itsBindingSubstitution).append(" }");
+    }
 
   void clearEventQueue() const
-	 {
-		while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
-		  { /* Empty loop body */ }
-	 }
+    {
+      while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
+        { /* Empty loop body */ }
+    }
 
   // We take the last character of the string as the response, in
   // order to handle the numeric keypad, where the keysysms are
   // 'KP_0', 'KP_3', etc., wheras we want just the 0 or the 3.
   const char* extractStringFromKeysym(const char* text) const
-	 {
-		while ( *(++text) != '\0' )
-		  { ; }
-		return (text-1);
-	 }
+    {
+      while ( *(++text) != '\0' )
+        { ; }
+      return (text-1);
+    }
 
   fixed_string getUniqueCmdName()
-	 {
-		const string_literal privateHandleCmdName(
-		  "__EventResponseHdlrPrivate::handle");
+    {
+      const string_literal privateHandleCmdName(
+        "__EventResponseHdlrPrivate::handle");
 
-		static unsigned long cmdCounter = 0;
+      static unsigned long cmdCounter = 0;
 
-		fixed_block<char> buf(privateHandleCmdName.length() + 32);
-		ostrstream ost(&buf[0], buf.size());
-		ost << privateHandleCmdName << ++cmdCounter << '\0';
-		return &buf[0];
-	 }
+      fixed_block<char> buf(privateHandleCmdName.length() + 32);
+      ostrstream ost(&buf[0], buf.size());
+      ost << privateHandleCmdName << ++cmdCounter << '\0';
+      return &buf[0];
+    }
 
   // data
 private:
@@ -316,71 +316,71 @@ private:
   class RegExp_ResponseVal {
   public:
     RegExp_ResponseVal(Tcl::TclObjPtr obj = theNullObject, int rv = -1) :
-		itsPatternObj(obj),
-		itsRespVal(rv)
-		{}
+      itsPatternObj(obj),
+      itsRespVal(rv)
+      {}
 
-	 RegExp_ResponseVal(const RegExp_ResponseVal& other) :
-		itsPatternObj(other.itsPatternObj),
-		itsRespVal(other.itsRespVal)
-		{}
+    RegExp_ResponseVal(const RegExp_ResponseVal& other) :
+      itsPatternObj(other.itsPatternObj),
+      itsRespVal(other.itsRespVal)
+      {}
 
-	 RegExp_ResponseVal& operator=(const RegExp_ResponseVal& other)
-		{
-		  itsPatternObj = other.itsPatternObj;
-		  itsRespVal = other.itsRespVal;
-		  return *this;
-		}
+    RegExp_ResponseVal& operator=(const RegExp_ResponseVal& other)
+      {
+        itsPatternObj = other.itsPatternObj;
+        itsRespVal = other.itsRespVal;
+        return *this;
+      }
 
-	 bool matchesString(const char* string_to_match) throw(ErrorWithMsg)
-		{
-		  static const int REGEX_ERROR        = -1;
-		  static const int REGEX_NO_MATCH     =  0;
-		  static const int REGEX_FOUND_MATCH  =  1;
+    bool matchesString(const char* string_to_match) throw(ErrorWithMsg)
+      {
+        static const int REGEX_ERROR        = -1;
+        static const int REGEX_NO_MATCH     =  0;
+        static const int REGEX_FOUND_MATCH  =  1;
 
-		  DebugEval(string_to_match); DebugEvalNL(Tcl_GetString(itsPatternObj));
+        DebugEval(string_to_match); DebugEvalNL(Tcl_GetString(itsPatternObj));
 
-		  Tcl_RegExp regexp = getCheckedRegexp(itsPatternObj);
+        Tcl_RegExp regexp = getCheckedRegexp(itsPatternObj);
 
-		  // OK to pass Tcl_Interp*==0
-		  int regex_result =
-			 Tcl_RegExpExec(0, regexp, string_to_match, string_to_match);
+        // OK to pass Tcl_Interp*==0
+        int regex_result =
+          Tcl_RegExpExec(0, regexp, string_to_match, string_to_match);
 
-		  switch (regex_result) {
-		  case REGEX_ERROR:
-			 throw ErrorWithMsg("error executing regular expression "
-									  "for EventResponseHdlr");
+        switch (regex_result) {
+        case REGEX_ERROR:
+          throw ErrorWithMsg("error executing regular expression "
+                             "for EventResponseHdlr");
 
-		  case REGEX_NO_MATCH:
-			 return false;
+        case REGEX_NO_MATCH:
+          return false;
 
-		  case REGEX_FOUND_MATCH:
-			 return true;
+        case REGEX_FOUND_MATCH:
+          return true;
 
-		  default: // "can't happen"
-			 Assert(false);
-		  }
+        default: // "can't happen"
+          Assert(false);
+        }
 
-		  return false;
-		}
+        return false;
+      }
 
-	 int responseValue() { return itsRespVal; }
+    int responseValue() { return itsRespVal; }
 
   private:
-	 static Tcl_RegExp getCheckedRegexp(Tcl::TclObjPtr patternObj)
-		throw(ErrorWithMsg)
-		{
-		  const int flags = 0;
-		  // OK to pass Tcl_Interp*==0
-		  Tcl_RegExp regexp = Tcl_GetRegExpFromObj(0, patternObj, flags);
-		  if (!regexp) {
-			 throw ErrorWithMsg("error getting a Tcl_RegExp from ")
-				      .appendMsg("'", Tcl_GetString(patternObj), "'");
-		  }
-		  return regexp;
-		}
+    static Tcl_RegExp getCheckedRegexp(Tcl::TclObjPtr patternObj)
+      throw(ErrorWithMsg)
+      {
+        const int flags = 0;
+        // OK to pass Tcl_Interp*==0
+        Tcl_RegExp regexp = Tcl_GetRegExpFromObj(0, patternObj, flags);
+        if (!regexp) {
+          throw ErrorWithMsg("error getting a Tcl_RegExp from ")
+                  .appendMsg("'", Tcl_GetString(patternObj), "'");
+        }
+        return regexp;
+      }
 
-	 Tcl::TclObjPtr itsPatternObj;
+    Tcl::TclObjPtr itsPatternObj;
     int itsRespVal;
   };
 
@@ -391,45 +391,45 @@ private:
 
   class Condition_Feedback {
   public:
-	 // This no-argument constructor puts the object in an invalid
-	 // state, which we mark with itsIsValid=false. In order for the
-	 // object to be used, it must be assigned to with the default
-	 // assignment constructor.
-  	 Condition_Feedback() :
-		itsIsValid(false),
-  		itsCondition(theNullObject),
- 		itsResultCmd(theNullObject)
-		{}
+    // This no-argument constructor puts the object in an invalid
+    // state, which we mark with itsIsValid=false. In order for the
+    // object to be used, it must be assigned to with the default
+    // assignment constructor.
+    Condition_Feedback() :
+      itsIsValid(false),
+      itsCondition(theNullObject),
+      itsResultCmd(theNullObject)
+      {}
 
-  	 Condition_Feedback(Tcl_Obj* cond, Tcl_Obj* res) :
-		itsIsValid(false),
-  		itsCondition(cond),
- 		itsResultCmd(res, Tcl::TclEvalCmd::THROW_EXCEPTION, TCL_EVAL_GLOBAL)
-		{
-		  if (cond != 0 && res != 0)
-			 itsIsValid = true;
-		}
+    Condition_Feedback(Tcl_Obj* cond, Tcl_Obj* res) :
+      itsIsValid(false),
+      itsCondition(cond),
+      itsResultCmd(res, Tcl::TclEvalCmd::THROW_EXCEPTION, TCL_EVAL_GLOBAL)
+      {
+        if (cond != 0 && res != 0)
+          itsIsValid = true;
+      }
 
-	 bool invokeIfTrue(const Tcl::SafeInterp& safeInterp) throw (ErrorWithMsg)
-		{
-		  if (isTrue(safeInterp))
-			 { invoke(safeInterp); return true; }
-		  return false;
-		}
+    bool invokeIfTrue(const Tcl::SafeInterp& safeInterp) throw (ErrorWithMsg)
+      {
+        if (isTrue(safeInterp))
+          { invoke(safeInterp); return true; }
+        return false;
+      }
 
   private:
-	 bool isTrue(const Tcl::SafeInterp& safeInterp) throw(ErrorWithMsg)
-		{
-		  Precondition(itsIsValid);
-		  return safeInterp.evalBooleanExpr(itsCondition);
-		}
+    bool isTrue(const Tcl::SafeInterp& safeInterp) throw(ErrorWithMsg)
+      {
+        Precondition(itsIsValid);
+        return safeInterp.evalBooleanExpr(itsCondition);
+      }
 
-	 void invoke(const Tcl::SafeInterp& safeInterp) throw(ErrorWithMsg)
-		{ itsResultCmd.invoke(safeInterp.intp()); }
+    void invoke(const Tcl::SafeInterp& safeInterp) throw(ErrorWithMsg)
+      { itsResultCmd.invoke(safeInterp.intp()); }
 
-	 bool itsIsValid;
-	 Tcl::TclObjPtr itsCondition;
- 	 Tcl::TclEvalCmd itsResultCmd;
+    bool itsIsValid;
+    Tcl::TclObjPtr itsCondition;
+    Tcl::TclEvalCmd itsResultCmd;
   };
 
   fixed_string itsFeedbackMap;
@@ -494,13 +494,13 @@ DOTRACE("EventResponseHdlr::Impl::ERHActiveState::handleResponse");
   DebugEvalNL(theResponse.val());
 
   if ( !theResponse.isValid() ) {
-	 if ( itsErh.itsAbortInvalidResponses )
-		itsTrial.trAbortTrial();
+    if ( itsErh.itsAbortInvalidResponses )
+      itsTrial.trAbortTrial();
   }
 
   else {
-	 itsTrial.trRecordResponse(theResponse);
-	 itsErh.feedback(theResponse.val());
+    itsTrial.trRecordResponse(theResponse);
+    itsErh.feedback(theResponse.val());
   }
 }
 
@@ -511,7 +511,7 @@ DOTRACE("EventResponseHdlr::Impl::ERHActiveState::handleResponse");
 ///////////////////////////////////////////////////////////////////////
 
 EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
-										const char* input_response_map) :
+                              const char* input_response_map) :
   itsOwner(owner),
   itsState(ERHState::inactiveState()),
   itsSafeIntp(dynamic_cast<GrshApp&>(Application::theApp()).getInterp()),
@@ -531,10 +531,10 @@ EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
 DOTRACE("EventResponseHdlr::Impl::Impl");
 
   itsTclCmdToken =
-	 Tcl_CreateObjCommand(itsSafeIntp.intp(),
-								 const_cast<char*>(itsPrivateCmdName.c_str()),
-								 privateHandleCmd, static_cast<ClientData>(this),
-								 (Tcl_CmdDeleteProc *) NULL);
+    Tcl_CreateObjCommand(itsSafeIntp.intp(),
+                         const_cast<char*>(itsPrivateCmdName.c_str()),
+                         privateHandleCmd, static_cast<ClientData>(this),
+                         (Tcl_CmdDeleteProc *) NULL);
 }
 
 EventResponseHdlr::Impl::~Impl() {
@@ -548,26 +548,26 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
   // its own destruction will delete all commands associated with it.
 
   if ( !itsSafeIntp.interpDeleted() ) {
-	 try
-		{
-		  itsState->onDestroy();
+    try
+      {
+        itsState->onDestroy();
 
-		  DebugPrint("deleting Tcl command "); DebugPrintNL(itsPrivateCmdName);
+        DebugPrint("deleting Tcl command "); DebugPrintNL(itsPrivateCmdName);
 
-		  DebugEvalNL((void*) itsTclCmdToken);
-		  Tcl_DeleteCommandFromToken(itsSafeIntp.intp(), itsTclCmdToken);
-		}
-	 catch (ErrorWithMsg& err)
-		{ DebugEvalNL(err.msg_cstr()); }
-	 catch (...)
-		{ DebugPrintNL("an unknown error occurred"); }
+        DebugEvalNL((void*) itsTclCmdToken);
+        Tcl_DeleteCommandFromToken(itsSafeIntp.intp(), itsTclCmdToken);
+      }
+    catch (ErrorWithMsg& err)
+      { DebugEvalNL(err.msg_cstr()); }
+    catch (...)
+      { DebugPrintNL("an unknown error occurred"); }
   }
 }
 
 void EventResponseHdlr::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("EventResponseHdlr::Impl::readFrom");
 
-  itsState = ERHState::inactiveState(); 
+  itsState = ERHState::inactiveState();
 
   reader->readValue("inputResponseMap", itsInputResponseMap);
   reader->readValue("feedbackMap", itsFeedbackMap);
@@ -628,18 +628,18 @@ DOTRACE("EventResponseHdlr::Impl::privateHandleCmd");
   Assert(objc==2);
 
   EventResponseHdlr::Impl* impl =
-	 static_cast<EventResponseHdlr::Impl *>(clientData);
+    static_cast<EventResponseHdlr::Impl *>(clientData);
 
   try {
-	 impl->itsState->handleResponse(Tcl_GetString(objv[1]));
+    impl->itsState->handleResponse(Tcl_GetString(objv[1]));
   }
   catch (ErrorWithMsg& err) {
-	 impl->itsSafeIntp.appendResult(err.msg_cstr());
-	 return TCL_ERROR;
+    impl->itsSafeIntp.appendResult(err.msg_cstr());
+    return TCL_ERROR;
   }
   catch (...) {
-	 impl->itsSafeIntp.appendResult("an error of unknown type occurred");
-	 return TCL_ERROR;
+    impl->itsSafeIntp.appendResult("an error of unknown type occurred");
+    return TCL_ERROR;
   }
 
   return TCL_OK;
@@ -669,11 +669,11 @@ DOTRACE("EventResponseHdlr::Impl::getRespFromKeysym");
 
   for (size_t i = 0; i < itsRegexps.size(); ++i) {
 
-	 DebugEvalNL(i);
+    DebugEvalNL(i);
 
-	 if (itsRegexps[i].matchesString(response_string)) {
-		return itsRegexps[i].responseValue();
-	 }
+    if (itsRegexps[i].matchesString(response_string)) {
+      return itsRegexps[i].responseValue();
+    }
   }
 
   return ResponseHandler::INVALID_RESPONSE;
@@ -694,7 +694,7 @@ DOTRACE("EventResponseHdlr::Impl::feedback");
 
   bool feedbackGiven = false;
   for (size_t i = 0; i<itsFeedbacks.size() && !feedbackGiven; ++i) {
-	 feedbackGiven = itsFeedbacks[i].invokeIfTrue(itsSafeIntp);
+    feedbackGiven = itsFeedbacks[i].invokeIfTrue(itsSafeIntp);
   }
 
   itsSafeIntp.unsetGlobalVar("resp_val");
@@ -726,18 +726,18 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
 
   for (unsigned int i = 0; i < uint_num_pairs; ++i) {
 
-	 Tcl::TclObjPtr current_pair = pairs[i];
+    Tcl::TclObjPtr current_pair = pairs[i];
 
-	 // Check that the length of the "pair" is really 2
-	 if (itsSafeIntp.listLength(current_pair) != 2) {
-		throw ErrorWithMsg("\"pair\" did not have length 2 "
-								 "in EventResponseHdlr::updateFeedbacksIfNeeded");
-	 }
+    // Check that the length of the "pair" is really 2
+    if (itsSafeIntp.listLength(current_pair) != 2) {
+      throw ErrorWithMsg("\"pair\" did not have length 2 "
+                         "in EventResponseHdlr::updateFeedbacksIfNeeded");
+    }
 
-  	 Tcl_Obj *condition = itsSafeIntp.listElement(current_pair, 0);
-  	 Tcl_Obj *result = itsSafeIntp.listElement(current_pair, 1);
+    Tcl_Obj *condition = itsSafeIntp.listElement(current_pair, 0);
+    Tcl_Obj *result = itsSafeIntp.listElement(current_pair, 1);
 
-	 itsFeedbacks.at(i) = Impl::Condition_Feedback(condition, result);
+    itsFeedbacks.at(i) = Impl::Condition_Feedback(condition, result);
   }
 
   itsFeedbacksAreDirty = false;
@@ -773,20 +773,20 @@ DOTRACE("EventResponseHdlr::updateRegexpsIfNeeded");
 
   for (unsigned int i = 0; i < uint_num_pairs; ++i) {
 
-	 Tcl::TclObjPtr current_pair = pairs[i];
+    Tcl::TclObjPtr current_pair = pairs[i];
 
-	 // Check that the length of the "pair" is really 2
-	 if (itsSafeIntp.listLength(current_pair) != 2) {
-		throw ErrorWithMsg("\"pair\" did not have length 2 "
-								 "in EventResponseHdlr::updateFeedbacksIfNeeded");
-	 }
+    // Check that the length of the "pair" is really 2
+    if (itsSafeIntp.listLength(current_pair) != 2) {
+      throw ErrorWithMsg("\"pair\" did not have length 2 "
+                         "in EventResponseHdlr::updateFeedbacksIfNeeded");
+    }
 
-	 Tcl::TclObjPtr patternObj = itsSafeIntp.listElement(current_pair, 0);
-	 Tcl::TclObjPtr response_valObj = itsSafeIntp.listElement(current_pair, 1);
+    Tcl::TclObjPtr patternObj = itsSafeIntp.listElement(current_pair, 0);
+    Tcl::TclObjPtr response_valObj = itsSafeIntp.listElement(current_pair, 1);
 
-	 int response_val = itsSafeIntp.getInt(response_valObj);
+    int response_val = itsSafeIntp.getInt(response_valObj);
 
-	 itsRegexps.at(i) = Impl::RegExp_ResponseVal(patternObj, response_val);
+    itsRegexps.at(i) = Impl::RegExp_ResponseVal(patternObj, response_val);
   }
 
   itsRegexpsAreDirty = false;
@@ -857,7 +857,7 @@ DOTRACE("EventResponseHdlr::setFeedbackMap");
   itsImpl->setFeedbackMap(feedback_string);
 }
 
-const fixed_string& EventResponseHdlr::getEventSequence() const 
+const fixed_string& EventResponseHdlr::getEventSequence() const
   { return itsImpl->getEventSequence(); }
 
 void EventResponseHdlr::setEventSequence(const fixed_string& seq)
@@ -888,7 +888,7 @@ void EventResponseHdlr::rhHaltExpt() const
   { itsImpl->rhHaltExpt(); }
 
 void EventResponseHdlr::rhAllowResponses(GWT::Widget& widget,
-													  TrialBase& trial) const
+                                         TrialBase& trial) const
   { itsImpl->rhAllowResponses(widget, trial); }
 
 void EventResponseHdlr::rhDenyResponses() const

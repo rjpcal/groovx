@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Mon Jun 11 15:08:17 2001
+// written: Tue Jun 12 11:18:32 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -28,8 +28,8 @@
 #include "tcl/tclevalcmd.h"
 #include "tcl/tclitempkg.h"
 
-#include "util/iditem.h"
 #include "util/objfactory.h"
+#include "util/ref.h"
 
 // This hack causes this file to be compiled into the main executable
 // (through the rules in place in the Makefile), rather than a shared
@@ -81,10 +81,10 @@ class WidgetDestroyCallback : public Toglet::DestroyCallback {
 public:
   virtual void onDestroy(Toglet* config)
   {
-	 if (ObjTogl::theWidget.isValid() && ObjTogl::theWidget.get() == config)
-		{
-  		  ObjTogl::theWidget = MaybeRef<Toglet>();
-		}
+    if (ObjTogl::theWidget.isValid() && ObjTogl::theWidget.get() == config)
+      {
+        ObjTogl::theWidget = MaybeRef<Toglet>();
+      }
   }
 };
 
@@ -104,15 +104,15 @@ DOTRACE("ObjTogl::setCurrentTogl");
 class ObjTogl::BindCmd : public Tcl::TclItemCmd<Toglet> {
 public:
   BindCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<Toglet>(pkg, cmd_name,
-									 "event_sequence binding_script",
-									 pkg->itemArgn()+3) {}
+    Tcl::TclItemCmd<Toglet>(pkg, cmd_name,
+                            "event_sequence binding_script",
+                            pkg->itemArgn()+3) {}
 protected:
   virtual void invoke() {
-	 const char* event_sequence = getCstringFromArg(afterItemArg(1));
-	 const char* binding_script = getCstringFromArg(afterItemArg(2));
+    const char* event_sequence = getCstringFromArg(afterItemArg(1));
+    const char* binding_script = getCstringFromArg(afterItemArg(2));
 
-	 getItem()->bind(event_sequence, binding_script);
+    getItem()->bind(event_sequence, binding_script);
   }
 };
 
@@ -125,19 +125,19 @@ protected:
 class ObjTogl::CurrentTogletCmd : public Tcl::TclCmd {
 public:
   CurrentTogletCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "?item_id?", 1, 2) {}
+    Tcl::TclCmd(interp, cmd_name, "?item_id?", 1, 2) {}
 
 protected:
   virtual void invoke() {
-	 if (objc() < 2)
-		{
-		  returnInt(theWidget.id());
-		}
-	 else
-		{
-		  theWidget = Ref<Toglet>( getIntFromArg(1) );
-		  theWidget->makeCurrent();
-		}
+    if (objc() < 2)
+      {
+        returnInt(theWidget.id());
+      }
+    else
+      {
+        theWidget = Ref<Toglet>( getIntFromArg(1) );
+        theWidget->makeCurrent();
+      }
   }
 };
 
@@ -151,8 +151,8 @@ class ObjTogl::DumpCmapCmd : public Tcl::TclItemCmd<Toglet> {
 public:
   DumpCmapCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<Toglet>(pkg, cmd_name,
-									 "?start_index=0? ?end_index=255?",
-									 pkg->itemArgn()+1, pkg->itemArgn()+3, false) {}
+                            "?start_index=0? ?end_index=255?",
+                            pkg->itemArgn()+1, pkg->itemArgn()+3, false) {}
 protected:
   virtual void invoke() {
     int start = (objc() < 2) ? 0   : getIntFromArg(afterItemArg(1));
@@ -174,9 +174,9 @@ protected:
       ostrstream ost(buf, BUF_SIZE);
       config->queryColor(i, color);
       ost.setf(ios::fixed);
-      ost << i << '\t' 
-          << setprecision(3) << color.red << '\t' 
-          << setprecision(3) << color.green << '\t' 
+      ost << i << '\t'
+          << setprecision(3) << color.red << '\t'
+          << setprecision(3) << color.green << '\t'
           << setprecision(3) << color.blue << '\n' << '\0';
       lappendVal(buf);
     }
@@ -211,18 +211,18 @@ protected:
 class ObjTogl::SeeCmd : public Tcl::TclItemCmd<Toglet> {
 public:
   SeeCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "item_id", pkg->itemArgn()+2) {}
+    Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "item_id", pkg->itemArgn()+2) {}
 protected:
   virtual void invoke() {
   DOTRACE("SeeCmd::invoke");
-	 int id = getIntFromArg(afterItemArg(1));
+    int id = getIntFromArg(afterItemArg(1));
 
-	 GWT::Widget* widg = getItem();
+    GWT::Widget* widg = getItem();
 
-	 widg->setDrawable(Ref<GxNode>(id));
-	 widg->setVisibility(true);
+    widg->setDrawable(Ref<GxNode>(id));
+    widg->setVisibility(true);
 
-	 widg->display();
+    widg->display();
   }
 };
 
@@ -262,12 +262,12 @@ protected:
 class ObjTogl::SetCurTrialCmd : public Tcl::TclItemCmd<Toglet> {
 public:
   SetCurTrialCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "trial_id", pkg->itemArgn()+2) {}
+    Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "trial_id", pkg->itemArgn()+2) {}
 protected:
   virtual void invoke() {
-	 int trial = getIntFromArg(afterItemArg(1));
+    int trial = getIntFromArg(afterItemArg(1));
 
-	 Ref<TrialBase>(trial)->installSelf(*getItem());
+    Ref<TrialBase>(trial)->installSelf(*getItem());
   }
 };
 
@@ -281,7 +281,7 @@ class ObjTogl::SetMinRectCmd : public Tcl::TclItemCmd<Toglet> {
 public:
   SetMinRectCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
     Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "left top right bottom",
-									 pkg->itemArgn()+5) {}
+                            pkg->itemArgn()+5) {}
 protected:
   virtual void invoke() {
     double l = getDoubleFromArg(afterItemArg(1));
@@ -311,19 +311,19 @@ protected:
 class ObjTogl::ShowCmd : public Tcl::TclItemCmd<Toglet> {
 public:
   ShowCmd(Tcl::CTclItemPkg<Toglet>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "trial_id", pkg->itemArgn()+2) {}
+    Tcl::TclItemCmd<Toglet>(pkg, cmd_name, "trial_id", pkg->itemArgn()+2) {}
 
 protected:
   virtual void invoke() {
   DOTRACE("ShowCmd::invoke");
-	 int id = getIntFromArg(afterItemArg(1));
+    int id = getIntFromArg(afterItemArg(1));
 
-	 GWT::Widget* widg = getItem();
+    GWT::Widget* widg = getItem();
 
-	 Ref<TrialBase>(id)->installSelf(*widg);
-	 widg->setVisibility(true);
+    Ref<TrialBase>(id)->installSelf(*widg);
+    widg->setVisibility(true);
 
-	 widg->display();
+    widg->display();
   }
 };
 
@@ -340,24 +340,24 @@ public:
   {
     Tcl_PkgProvide(interp, "Objtogl", "$Revision$");
 
-	 addCommand( new BindCmd       (this, "Togl::bind") );
+    addCommand( new BindCmd       (this, "Togl::bind") );
     addCommand( new DumpCmapCmd   (this, "Togl::dumpCmap") );
     addCommand( new InitedCmd     (interp, "Togl::inited") );
-	 addCommand( new SeeCmd        (this, "Togl::see") );
+    addCommand( new SeeCmd        (this, "Togl::see") );
     addCommand( new SetColorCmd   (this, "Togl::setColor") );
-	 addCommand( new SetCurTrialCmd(this, "Togl::setCurTrial") );
+    addCommand( new SetCurTrialCmd(this, "Togl::setCurTrial") );
     addCommand( new SetMinRectCmd (this, "Togl::setMinRect") );
-	 addCommand( new ShowCmd       (this, "Togl::show") );
+    addCommand( new ShowCmd       (this, "Togl::show") );
 
-	 declareCAction("clearscreen", &Toglet::clearscreen);
-	 declareCAction("destroy", &Toglet::destroyWidget);
-	 declareCSetter("dumpEps", &Toglet::writeEpsFile, "filename");
+    declareCAction("clearscreen", &Toglet::clearscreen);
+    declareCAction("destroy", &Toglet::destroyWidget);
+    declareCSetter("dumpEps", &Toglet::writeEpsFile, "filename");
     declareCAttrib("height", &Toglet::getHeight, &Toglet::setHeight);
-	 declareCSetter("hold", &Toglet::setHold, "hold_on?");
-	 declareCAction("loadDefaultFont", &Toglet::loadDefaultFont);
-	 declareCSetter("loadFont", &Toglet::loadFont);
-	 declareCSetter("loadFonti", &Toglet::loadFonti);
-	 declareCAction("refresh", &Toglet::refresh);
+    declareCSetter("hold", &Toglet::setHold, "hold_on?");
+    declareCAction("loadDefaultFont", &Toglet::loadDefaultFont);
+    declareCSetter("loadFont", &Toglet::loadFont);
+    declareCSetter("loadFonti", &Toglet::loadFonti);
+    declareCAction("refresh", &Toglet::refresh);
     declareCSetter("scaleRect", &Toglet::scaleRect, "scale");
     declareCSetter("setFixedScale", &Toglet::setFixedScale, "scale");
     declareCSetter("setUnitAngle", &Toglet::setUnitAngle, "angle_in_degrees");
@@ -365,30 +365,30 @@ public:
                    "distance_in_inches");
     declareCSetter("setVisible", &Toglet::setVisibility, "visibility");
     declareCAction("swapBuffers", &Toglet::swapBuffers);
-	 declareCAction("takeFocus", &Toglet::takeFocus);
-	 declareCAction("undraw", &Toglet::undraw);
+    declareCAction("takeFocus", &Toglet::takeFocus);
+    declareCAction("undraw", &Toglet::undraw);
     declareCGetter("usingFixedScale", &Toglet::usingFixedScale);
     declareCAttrib("width", &Toglet::getWidth, &Toglet::setWidth);
 
-	 Tcl_Eval(interp,
-				 "namespace eval Togl { proc init {} {} }\n"
-				 "proc clearscreen {} { Togl::clearscreen }\n"
-				 "proc see {id} { Togl::see $id }\n"
-				 "proc show {id} { Togl::show $id }\n"
-				 "proc undraw {} { Togl::undraw }\n"
-				 "proc redraw {} { Togl::refresh }\n");
+    Tcl_Eval(interp,
+             "namespace eval Togl { proc init {} {} }\n"
+             "proc clearscreen {} { Togl::clearscreen }\n"
+             "proc see {id} { Togl::see $id }\n"
+             "proc show {id} { Togl::show $id }\n"
+             "proc undraw {} { Togl::undraw }\n"
+             "proc redraw {} { Togl::refresh }\n");
   }
 
   virtual ~ObjToglPkg() {
-	 if (ObjTogl::theWidget.isValid()) {
-  		ObjTogl::theWidget->setVisibility(false);
-	 }
+    if (ObjTogl::theWidget.isValid()) {
+      ObjTogl::theWidget->setVisibility(false);
+    }
   }
 
   Toglet* getCItemFromId(int) {
-	 if (!theWidget.isValid()) { throw Tcl::TclError("no valid Togl exists"); }
+    if (!theWidget.isValid()) { throw Tcl::TclError("no valid Togl exists"); }
 
-	 return ObjTogl::theWidget.get();
+    return ObjTogl::theWidget.get();
   }
 };
 
@@ -398,24 +398,24 @@ public:
   TogletPkg(Tcl_Interp* interp) :
     Tcl::IoItemPkg<Toglet>(interp, "Toglet", "$Revision$")
   {
-	 addCommand( new BindCmd       (this, "Toglet::bind") );
-	 addCommand( new CurrentTogletCmd (interp, "Toglet::currentToglet") );
+    addCommand( new BindCmd       (this, "Toglet::bind") );
+    addCommand( new CurrentTogletCmd (interp, "Toglet::currentToglet") );
     addCommand( new DumpCmapCmd   (this, "Toglet::dumpCmap") );
-	 addCommand( new SeeCmd        (this, "Toglet::see") );
+    addCommand( new SeeCmd        (this, "Toglet::see") );
     addCommand( new SetColorCmd   (this, "Toglet::setColor") );
-	 addCommand( new SetCurTrialCmd(this, "Toglet::setCurTrial") );
+    addCommand( new SetCurTrialCmd(this, "Toglet::setCurTrial") );
     addCommand( new SetMinRectCmd (this, "Toglet::setMinRect") );
-	 addCommand( new ShowCmd       (this, "Toglet::show") );
+    addCommand( new ShowCmd       (this, "Toglet::show") );
 
-	 declareCAction("clearscreen", &Toglet::clearscreen);
-	 declareCAction("destroy", &Toglet::destroyWidget);
-	 declareCSetter("dumpEps", &Toglet::writeEpsFile, "item_id(s) filename");
+    declareCAction("clearscreen", &Toglet::clearscreen);
+    declareCAction("destroy", &Toglet::destroyWidget);
+    declareCSetter("dumpEps", &Toglet::writeEpsFile, "item_id(s) filename");
     declareCAttrib("height", &Toglet::getHeight, &Toglet::setHeight);
-	 declareCSetter("hold", &Toglet::setHold, "item_id(s) hold_on?");
-	 declareCAction("loadDefaultFont", &Toglet::loadDefaultFont);
-	 declareCSetter("loadFont", &Toglet::loadFont);
-	 declareCSetter("loadFonti", &Toglet::loadFonti);
-	 declareCAction("refresh", &Toglet::refresh);
+    declareCSetter("hold", &Toglet::setHold, "item_id(s) hold_on?");
+    declareCAction("loadDefaultFont", &Toglet::loadDefaultFont);
+    declareCSetter("loadFont", &Toglet::loadFont);
+    declareCSetter("loadFonti", &Toglet::loadFonti);
+    declareCAction("refresh", &Toglet::refresh);
     declareCSetter("scaleRect", &Toglet::scaleRect, "item_id(s) scale");
     declareCSetter("setFixedScale", &Toglet::setFixedScale, "item_id(s) scale");
     declareCSetter("setUnitAngle", &Toglet::setUnitAngle,
@@ -423,10 +423,10 @@ public:
     declareCSetter("setViewingDistance", &Toglet::setViewingDistIn,
                    "item_id(s) distance_in_inches");
     declareCSetter("setVisible", &Toglet::setVisibility,
-						 "item_id(s) visibility");
+                   "item_id(s) visibility");
     declareCAction("swapBuffers", &Toglet::swapBuffers);
-	 declareCAction("takeFocus", &Toglet::takeFocus);
-	 declareCAction("undraw", &Toglet::undraw);
+    declareCAction("takeFocus", &Toglet::takeFocus);
+    declareCAction("undraw", &Toglet::undraw);
     declareCGetter("usingFixedScale", &Toglet::usingFixedScale);
     declareCAttrib("width", &Toglet::getWidth, &Toglet::setWidth);
   }
@@ -443,10 +443,10 @@ namespace {
 
   Toglet* makeToglet()
   {
-	 if (toglCreateInterp == 0)
-		FactoryError::throwForType("Toglet");
+    if (toglCreateInterp == 0)
+      FactoryError::throwForType("Toglet");
 
-	 return Toglet::make(toglCreateInterp);
+    return Toglet::make(toglCreateInterp);
   }
 }
 
@@ -454,9 +454,9 @@ extern "C"
 int Objtogl_Init(Tcl_Interp* interp) {
 DOTRACE("Objtogl_Init");
 
-  new ObjTogl::ObjToglPkg(interp); 
+  new ObjTogl::ObjToglPkg(interp);
 
-  new ObjTogl::TogletPkg(interp); 
+  new ObjTogl::TogletPkg(interp);
 
   toglCreateInterp = interp;
 

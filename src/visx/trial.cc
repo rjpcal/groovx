@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Mon Jun 11 15:08:16 2001
+// written: Tue Jun 12 11:18:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,8 +31,8 @@
 #include "gwt/widget.h"
 
 #include "util/errorhandler.h"
-#include "util/iditem.h"
 #include "util/minivec.h"
+#include "util/ref.h"
 
 #include <strstream.h>
 
@@ -72,17 +72,17 @@ public:
   enum TrialState { ACTIVE, INACTIVE };
 
   Impl(Trial*) :
-	 itsCorrectResponse(Response::ALWAYS_CORRECT),
-	 itsGxNodes(),
-	 itsCurrentNode(0),
-	 itsResponses(),
-	 itsType(-1),
-	 itsRh(),
-	 itsTh(),
-	 itsState(INACTIVE),
-	 itsWidget(0),
-	 itsBlock(0)
-	 {}
+    itsCorrectResponse(Response::ALWAYS_CORRECT),
+    itsGxNodes(),
+    itsCurrentNode(0),
+    itsResponses(),
+    itsType(-1),
+    itsRh(),
+    itsTh(),
+    itsState(INACTIVE),
+    itsWidget(0),
+    itsBlock(0)
+    {}
 
 private:
   int itsCorrectResponse;
@@ -103,64 +103,64 @@ private:
   Block* itsBlock;
 
   bool assertIdsOrHalt()
-	 {
-		if ( itsRh.isValid() && itsTh.isValid() )
-		  return true;
+    {
+      if ( itsRh.isValid() && itsTh.isValid() )
+        return true;
 
-		DebugPrintNL("Trial::assertIdsOrHalt failed");
-		DebugEval(itsRh.id()); DebugEvalNL(itsTh.id());
+      DebugPrintNL("Trial::assertIdsOrHalt failed");
+      DebugEval(itsRh.id()); DebugEvalNL(itsTh.id());
 
-		trHaltExpt();
+      trHaltExpt();
 
-		return false;
-	 }
+      return false;
+    }
 
   GWT::Widget& getWidget() const
-	 {
-		Precondition(itsState == ACTIVE);
-		Precondition(itsWidget != 0);
-		return *itsWidget;
-	 }
+    {
+      Precondition(itsState == ACTIVE);
+      Precondition(itsWidget != 0);
+      return *itsWidget;
+    }
 
   ResponseHandler& responseHandler()
-	 {
-		Precondition(itsState == ACTIVE);
-		Precondition( itsRh.isValid() );
-		return *(itsRh.get());
-	 }
+    {
+      Precondition(itsState == ACTIVE);
+      Precondition( itsRh.isValid() );
+      return *(itsRh.get());
+    }
 
   const ResponseHandler& responseHandler() const
-	 {
-		Precondition(itsState == ACTIVE);
-		Precondition( itsRh.isValid() );
-		return *(itsRh.get());
-	 }
+    {
+      Precondition(itsState == ACTIVE);
+      Precondition( itsRh.isValid() );
+      return *(itsRh.get());
+    }
 
   TimingHdlr& timingHdlr()
-	 {
-		Precondition(itsState == ACTIVE);
-		Precondition( itsTh.isValid() );
-		return *(itsTh.get());
-	 }
+    {
+      Precondition(itsState == ACTIVE);
+      Precondition( itsTh.isValid() );
+      return *(itsTh.get());
+    }
 
   const TimingHdlr& timingHdlr() const
-	 {
-		Precondition(itsState == ACTIVE);
-		Precondition( itsTh.isValid() );
-		return *(itsTh.get());
-	 }
+    {
+      Precondition(itsState == ACTIVE);
+      Precondition( itsTh.isValid() );
+      return *(itsTh.get());
+    }
 
   Block& getBlock() const
-	 {
-		Precondition(itsState == ACTIVE);
-		Precondition(itsBlock != 0);
-		return *itsBlock;
-	 }
+    {
+      Precondition(itsState == ACTIVE);
+      Precondition(itsBlock != 0);
+      return *itsBlock;
+    }
 
   inline void timeTrace(const char* loc) {
 #ifdef TIME_TRACE
-	 cerr << "in " << loc
-			<< "@ elapsed time == " << timingHdlr().getElapsedMsec() << endl;
+    cerr << "in " << loc
+         << "@ elapsed time == " << timingHdlr().getElapsedMsec() << endl;
 #endif
   }
 
@@ -209,16 +209,16 @@ public:
 
   void addNode(Util::UID id)
   {
-	 Ref<GxNode> obj(id);
-	 try {
-		Ref<GxSeparator> sep = dynamicCast<GxSeparator>(obj);
-		itsGxNodes.push_back(sep);		
-	 }
-	 catch (...) {
-		Ref<GxSeparator> sep(GxSeparator::make());
-		sep->addChild(id);
-		itsGxNodes.push_back(sep);
-	 }
+    Ref<GxNode> obj(id);
+    try {
+      Ref<GxSeparator> sep = dynamicCast<GxSeparator>(obj);
+      itsGxNodes.push_back(sep);
+    }
+    catch (...) {
+      Ref<GxSeparator> sep(GxSeparator::make());
+      sep->addChild(id);
+      itsGxNodes.push_back(sep);
+    }
   }
 
   void trNextNode() { setCurrentNode(itsCurrentNode+1); }
@@ -226,19 +226,19 @@ public:
   unsigned int getCurrentNode() const { return itsCurrentNode; }
   void setCurrentNode(unsigned int nodeNumber)
   {
-	 if (nodeNumber >= itsGxNodes.size())
-		{
-		  ErrorWithMsg err("invalid node number ");
-		  err.appendNumber(nodeNumber);
-		  throw err;
-		}
-	 itsCurrentNode = nodeNumber;
+    if (nodeNumber >= itsGxNodes.size())
+      {
+        ErrorWithMsg err("invalid node number ");
+        err.appendNumber(nodeNumber);
+        throw err;
+      }
+    itsCurrentNode = nodeNumber;
   }
 
   void clearObjs();
 
   void trDoTrial(Trial* self, GWT::Widget& widget,
-					  Util::ErrorHandler& errhdlr, Block& block);
+                 Util::ErrorHandler& errhdlr, Block& block);
   int trElapsedMsec();
   void trAbortTrial();
   void trEndTrial();
@@ -285,13 +285,13 @@ void Trial::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("Trial::Impl::writeTo");
 
   writer->ensureWriteVersionId("Trial", TRIAL_SERIAL_VERSION_ID, 3,
-										 "Try grsh0.8a3");
+                               "Try grsh0.8a3");
 
   IO::WriteUtils::writeObjectSeq(writer, "gxObjects",
-											itsGxNodes.begin(), itsGxNodes.end());
+                                 itsGxNodes.begin(), itsGxNodes.end());
 
   IO::WriteUtils::writeValueObjSeq(writer, "responses",
-											  itsResponses.begin(), itsResponses.end());
+                                   itsResponses.begin(), itsResponses.end());
 
   writer->writeValue("correctResponse", itsCorrectResponse);
 
@@ -305,18 +305,18 @@ void Trial::Impl::writeMatlab(STD_IO::ostream& os) const {
 DOTRACE("Trial::Impl::writeMatlab");
 
   for (GxNodes::const_iterator
-			ii = itsGxNodes.begin(),
-			end = itsGxNodes.end();
-		 ii != end;
-		 ++ii)
-	 {
-		for (GxTraversal tr(ii->get()); tr.hasMore(); tr.advance())
-		  {
-			 const GrObj* g = dynamic_cast<const GrObj*>(tr.current());
-			 if (g)
-				os << g->id() << ' ';
-		  }
-	 }
+         ii = itsGxNodes.begin(),
+         end = itsGxNodes.end();
+       ii != end;
+       ++ii)
+    {
+      for (GxTraversal tr(ii->get()); tr.hasMore(); tr.advance())
+        {
+          const GrObj* g = dynamic_cast<const GrObj*>(tr.current());
+          if (g)
+            os << g->id() << ' ';
+        }
+    }
 }
 
 ///////////////
@@ -326,7 +326,7 @@ DOTRACE("Trial::Impl::writeMatlab");
 int Trial::Impl::trialType() const {
 DOTRACE("Trial::Impl::trialType");
   return itsType;
-} 
+}
 
 const char* Trial::Impl::description() const {
 DOTRACE("Trial::Impl::description");
@@ -341,35 +341,35 @@ DOTRACE("Trial::Impl::description");
 
 
   {for (GxNodes::const_iterator
-			 ii = itsGxNodes.begin(),
-			 end = itsGxNodes.end();
-		  ii != end;
-		  ++ii)
-	 {
-		for (GxTraversal tr(ii->get()); tr.hasMore(); tr.advance())
-		  {
-			 const GrObj* g = dynamic_cast<const GrObj*>(tr.current());
-			 if (g)
-				ost << ' ' << g->id();
-		  }
-	 }
+          ii = itsGxNodes.begin(),
+          end = itsGxNodes.end();
+        ii != end;
+        ++ii)
+    {
+      for (GxTraversal tr(ii->get()); tr.hasMore(); tr.advance())
+        {
+          const GrObj* g = dynamic_cast<const GrObj*>(tr.current());
+          if (g)
+            ost << ' ' << g->id();
+        }
+    }
   }
 
   ost << ", categories == ";
 
   {for (GxNodes::const_iterator
-			 ii = itsGxNodes.begin(),
-			 end = itsGxNodes.end();
-		  ii != end;
-		  ++ii)
-	 {
-		for (GxTraversal tr(ii->get()); tr.hasMore(); tr.advance())
-		  {
-			 const GrObj* g = dynamic_cast<const GrObj*>(tr.current());
-			 if (g)
-				ost << ' ' << g->category();
-		  }
-	 }
+          ii = itsGxNodes.begin(),
+          end = itsGxNodes.end();
+        ii != end;
+        ++ii)
+    {
+      for (GxTraversal tr(ii->get()); tr.hasMore(); tr.advance())
+        {
+          const GrObj* g = dynamic_cast<const GrObj*>(tr.current());
+          if (g)
+            ost << ' ' << g->category();
+        }
+    }
   }
 
   ost << '\0';
@@ -391,9 +391,9 @@ double Trial::Impl::avgResponse() const {
 DOTRACE("Trial::Impl::avgResponse");
   int sum = 0;
   for (minivec<Response>::const_iterator ii = itsResponses.begin();
-		 ii != itsResponses.end();
-		 ++ii) {
-	 sum += ii->val();
+       ii != itsResponses.end();
+       ++ii) {
+    sum += ii->val();
   }
   return (itsResponses.size() > 0) ? double(sum)/itsResponses.size() : 0.0;
 }
@@ -402,12 +402,12 @@ double Trial::Impl::avgRespTime() const {
 DOTRACE("Trial::Impl::avgRespTime");
   int sum = 0;
   for (minivec<Response>::const_iterator ii = itsResponses.begin();
-		 ii != itsResponses.end();
-		 ++ii) {
-	 sum += ii->msec();
+       ii != itsResponses.end();
+       ++ii) {
+    sum += ii->msec();
 
-	 DebugEval(sum);
-	 DebugEvalNL(sum/itsResponses.size());
+    DebugEval(sum);
+    DebugEvalNL(sum/itsResponses.size());
   }
   return (itsResponses.size() > 0) ? double(sum)/itsResponses.size() : 0.0;
 }
@@ -425,10 +425,10 @@ DOTRACE("Trial::Impl::add");
   sepitem->addChild(objid);
 
   if (itsGxNodes.size() == 0) {
-	 itsGxNodes.push_back(sepitem);
+    itsGxNodes.push_back(sepitem);
   }
   else {
-	 itsGxNodes[0]->addChild(sepitem.id());
+    itsGxNodes[0]->addChild(sepitem.id());
   }
 }
 
@@ -452,9 +452,9 @@ DOTRACE("Trial::Impl::clearResponses");
 /////////////
 
 void Trial::Impl::trDoTrial(Trial* self, GWT::Widget& widget,
-									 Util::ErrorHandler& errhdlr, Block& block) {
+                            Util::ErrorHandler& errhdlr, Block& block) {
 DOTRACE("Trial::Impl::trDoTrial");
-  Precondition(self != 0); 
+  Precondition(self != 0);
   Precondition(&widget != 0);
   Precondition(&errhdlr != 0);
   Precondition(&block != 0);
@@ -474,7 +474,7 @@ DOTRACE("Trial::Impl::trDoTrial");
   responseHandler().rhBeginTrial(widget, *self);
 
   timingHdlr().thBeginTrial(widget, errhdlr, *self);
-  timeTrace("trDoTrial"); 
+  timeTrace("trDoTrial");
 }
 
 int Trial::Impl::trElapsedMsec() {
@@ -533,20 +533,20 @@ void Trial::Impl::trHaltExpt() {
 DOTRACE("Trial::Impl::trHaltExpt");
   if (INACTIVE == itsState) return;
 
-  if ( itsTh.isValid() ) { 
-	 timeTrace("trHaltExpt");
+  if ( itsTh.isValid() ) {
+    timeTrace("trHaltExpt");
   }
 
   getWidget().undraw();
 
   if ( itsRh.isValid() ) {
-	 responseHandler().rhHaltExpt();
+    responseHandler().rhHaltExpt();
   }
 
   // This must come last in order to ensure that we cancel any timer
   // callbacks that were scheduled in trAbortTrial().
-  if ( itsTh.isValid() ) { 
-	 timingHdlr().thHaltExpt();
+  if ( itsTh.isValid() ) {
+    timingHdlr().thHaltExpt();
   }
 
   itsState = INACTIVE;
@@ -597,13 +597,13 @@ void Trial::Impl::installSelf(GWT::Widget& widget) const {
 DOTRACE("Trial::Impl::installSelf");
 
   if (itsCurrentNode < itsGxNodes.size())
-	 widget.setDrawable(Ref<GxNode>(itsGxNodes[itsCurrentNode]));
+    widget.setDrawable(Ref<GxNode>(itsGxNodes[itsCurrentNode]));
 }
 
 void Trial::Impl::undoLastResponse() {
 DOTRACE("Trial::Impl::undoLastResponse");
   if ( !itsResponses.empty() )
-	 itsResponses.pop_back();
+    itsResponses.pop_back();
 }
 
 
@@ -615,7 +615,7 @@ DOTRACE("Trial::Impl::undoLastResponse");
 
 namespace {
   const FieldInfo FINFOS[] = {
-	 FieldInfo("tType", &Trial::tType, -1, -10, 10, 1, true)
+    FieldInfo("tType", &Trial::tType, -1, -10, 10, 1, true)
   };
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
@@ -641,7 +641,7 @@ Trial::Trial() :
 {
 DOTRACE("Trial::Trial()");
 
-  setFieldMap(TRIAL_FIELDS); 
+  setFieldMap(TRIAL_FIELDS);
 }
 
 Trial::~Trial() {
@@ -736,7 +736,7 @@ void Trial::clearObjs()
 
 
 void Trial::trDoTrial(GWT::Widget& widget,
-							 Util::ErrorHandler& errhdlr, Block& block)
+                      Util::ErrorHandler& errhdlr, Block& block)
   { itsImpl->trDoTrial(this, widget, errhdlr, block); }
 
 int Trial::trElapsedMsec()

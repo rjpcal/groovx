@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:57 1999
-// written: Mon Jun 11 14:49:18 2001
+// written: Tue Jun 12 11:18:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,9 +21,9 @@
 #include "io/writeutils.h"
 
 #include "util/error.h"
-#include "util/iditem.h"
 #include "util/minivec.h"
 #include "util/objmgr.h"
+#include "util/ref.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -53,15 +53,15 @@ private:
 
 public:
   Impl() :
-	 itsImmediateEvents(),
-	 itsStartEvents(),
-	 itsResponseEvents(),
-	 itsAbortEvents(),
-	 itsTimer(),
-	 itsWidget(0),
-	 itsErrorHandler(0),
-	 itsTrial(0)
-	 {}
+    itsImmediateEvents(),
+    itsStartEvents(),
+    itsResponseEvents(),
+    itsAbortEvents(),
+    itsTimer(),
+    itsWidget(0),
+    itsErrorHandler(0),
+    itsTrial(0)
+    {}
 
   typedef minivec<Ref<TrialEvent> > EventGroup;
 
@@ -134,32 +134,32 @@ DOTRACE("TimingHdlr::readFrom");
 
   itsImpl->itsImmediateEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "immediateEvents",
-				std::back_inserter(itsImpl->itsImmediateEvents));
+            std::back_inserter(itsImpl->itsImmediateEvents));
 
   itsImpl->itsStartEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "startEvents",
-				std::back_inserter(itsImpl->itsStartEvents));
+            std::back_inserter(itsImpl->itsStartEvents));
 
   itsImpl->itsResponseEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "responseEvents",
-				std::back_inserter(itsImpl->itsResponseEvents));
+            std::back_inserter(itsImpl->itsResponseEvents));
 
   itsImpl->itsAbortEvents.clear();
   IO::ReadUtils::readObjectSeq<TrialEvent>(reader, "abortEvents",
-				std::back_inserter(itsImpl->itsAbortEvents));
+            std::back_inserter(itsImpl->itsAbortEvents));
 }
 
 void TimingHdlr::writeTo(IO::Writer* writer) const {
 DOTRACE("TimingHdlr::writeTo");
 
   writer->ensureWriteVersionId("TimingHdlr", TIMINGHDLR_SERIAL_VERSION_ID, 1,
-										 "Try grsh0.8a4");
+                               "Try grsh0.8a4");
 
   IO::WriteUtils::writeObjectSeq(writer, "immediateEvents",
-	 itsImpl->itsImmediateEvents.begin(), itsImpl->itsImmediateEvents.end());
+    itsImpl->itsImmediateEvents.begin(), itsImpl->itsImmediateEvents.end());
 
   IO::WriteUtils::writeObjectSeq(writer, "startEvents",
-	 itsImpl->itsStartEvents.begin(), itsImpl->itsStartEvents.end());
+    itsImpl->itsStartEvents.begin(), itsImpl->itsStartEvents.end());
 
   IO::WriteUtils::writeObjectSeq(writer, "responseEvents",
     itsImpl->itsResponseEvents.begin(), itsImpl->itsResponseEvents.end());
@@ -176,20 +176,20 @@ Ref<TrialEvent> TimingHdlr::getEvent(TimePoint time_point, int index) const {
 DOTRACE("TimingHdlr::getEvent");
   switch (time_point) {
   case IMMEDIATE:
-	 return itsImpl->itsImmediateEvents.at(index);
-	 break;
+    return itsImpl->itsImmediateEvents.at(index);
+    break;
   case FROM_START:
-	 return itsImpl->itsStartEvents.at(index);
-	 break;
+    return itsImpl->itsStartEvents.at(index);
+    break;
   case FROM_RESPONSE:
-	 return itsImpl->itsResponseEvents.at(index);
-	 break;
+    return itsImpl->itsResponseEvents.at(index);
+    break;
   case FROM_ABORT:
-	 return itsImpl->itsAbortEvents.at(index);
-	 break;
+    return itsImpl->itsAbortEvents.at(index);
+    break;
   default:
-	 break;
-  }  
+    break;
+  }
   return Ref<TrialEvent>(Util::UID(0)); // will raise an exception
 }
 
@@ -207,39 +207,39 @@ DOTRACE("TimingHdlr::addEvent");
 
   switch (time_point) {
   case IMMEDIATE:
-	 event_item->setDelay(0);
-	 itsImpl->itsImmediateEvents.push_back(event_item);
-	 return itsImpl->itsImmediateEvents.size() - 1;
-	 break;
+    event_item->setDelay(0);
+    itsImpl->itsImmediateEvents.push_back(event_item);
+    return itsImpl->itsImmediateEvents.size() - 1;
+    break;
   case FROM_START:
-	 itsImpl->itsStartEvents.push_back(event_item);
-	 return itsImpl->itsStartEvents.size() - 1;
-	 break;
+    itsImpl->itsStartEvents.push_back(event_item);
+    return itsImpl->itsStartEvents.size() - 1;
+    break;
   case FROM_RESPONSE:
-	 itsImpl->itsResponseEvents.push_back(event_item);
-	 return itsImpl->itsResponseEvents.size() - 1;
-	 break;
+    itsImpl->itsResponseEvents.push_back(event_item);
+    return itsImpl->itsResponseEvents.size() - 1;
+    break;
   case FROM_ABORT:
-	 itsImpl->itsAbortEvents.push_back(event_item);
-	 return itsImpl->itsAbortEvents.size() - 1;
-	 break;
+    itsImpl->itsAbortEvents.push_back(event_item);
+    return itsImpl->itsAbortEvents.size() - 1;
+    break;
   default:
-	 break;
+    break;
   }
 
   return -1;
 }
 
 int TimingHdlr::addEventByName(const char* event_type, TimePoint timepoint,
-										 int msec_delay) {
+                               int msec_delay) {
 DOTRACE("TimingHdlr::addEventByName");
 
   try {
-	 Ref<TrialEvent> event_item(
+    Ref<TrialEvent> event_item(
                          Util::ObjMgr::newTypedObj<TrialEvent>(event_type));
 
-	 event_item->setDelay(msec_delay);
-	 return addEvent(event_item, timepoint);
+    event_item->setDelay(msec_delay);
+    return addEvent(event_item, timepoint);
   }
   catch(...) { return -1; }
 }
@@ -257,14 +257,14 @@ DOTRACE("TimingHdlr::Impl::scheduleAll");
   Precondition(itsErrorHandler != 0);
 
   for (size_t i = 0; i < events.size(); ++i) {
-	 events[i]->schedule(*itsWidget, *itsErrorHandler, *itsTrial);
+    events[i]->schedule(*itsWidget, *itsErrorHandler, *itsTrial);
   }
 }
 
 void TimingHdlr::Impl::cancelAll(EventGroup& events) {
 DOTRACE("TimingHdlr::Impl::cancelAll");
   for (size_t i = 0; i < events.size(); ++i) {
-	 events[i]->cancel();
+    events[i]->cancel();
   }
 }
 
@@ -275,7 +275,7 @@ DOTRACE("TimingHdlr::Impl::cancelAll");
 ///////////////////////////////////////////////////////////////////////
 
 void TimingHdlr::Impl::thBeginTrial(GWT::Widget& widget,
-												Util::ErrorHandler& eh, TrialBase& trial) {
+                                    Util::ErrorHandler& eh, TrialBase& trial) {
 DOTRACE("TimingHdlr::Impl::thBeginTrial");
 
   itsTimer.restart();
@@ -292,9 +292,9 @@ DOTRACE("TimingHdlr::Impl::thBeginTrial");
 
 void TimingHdlr::Impl::thResponseSeen() {
 DOTRACE("TimingHdlr::Impl::thResponseSeen");
-  if (itsResponseEvents.size() > 0) { 
-	 cancelAll(itsStartEvents);
-	 scheduleAll(itsResponseEvents);
+  if (itsResponseEvents.size() > 0) {
+    cancelAll(itsStartEvents);
+    scheduleAll(itsResponseEvents);
   }
 }
 
@@ -328,7 +328,7 @@ void TimingHdlr::thResponseSeen()
   { itsImpl->thResponseSeen(); }
 
 void TimingHdlr::thBeginTrial(GWT::Widget& widget,
-										Util::ErrorHandler& eh, TrialBase& trial)
+                              Util::ErrorHandler& eh, TrialBase& trial)
   { itsImpl->thBeginTrial(widget, eh, trial); }
 
 static const char vcid_timinghdlr_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Mon Jun 11 18:23:26 2001
+// written: Tue Jun 12 11:17:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@
 #include "tcl/tclpkg.h"
 
 #include "util/arrays.h"
-#include "util/iditem.h"
+#include "util/ref.h"
 
 #include <fstream.h>
 #include <strstream.h>
@@ -72,25 +72,25 @@ namespace TlistTcl {
 class TlistTcl::CreatePreviewCmd : public Tcl::TclCmd {
 public:
   CreatePreviewCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "objids pixel_width pixel_height",
-			  4, 4, false) {}
+    Tcl::TclCmd(interp, cmd_name, "objids pixel_width pixel_height",
+           4, 4, false) {}
 protected:
   virtual void invoke() {
-	 unsigned int num_ids = getSequenceLengthOfArg(1);
-	 fixed_block<int> objids(num_ids);
+    unsigned int num_ids = getSequenceLengthOfArg(1);
+    fixed_block<int> objids(num_ids);
 
-	 getSequenceFromArg(1, &objids[0], (int*) 0);
+    getSequenceFromArg(1, &objids[0], (int*) 0);
 
-	 int pixel_width = arg(2).getInt();
-	 int pixel_height = arg(3).getInt();
+    int pixel_width = arg(2).getInt();
+    int pixel_height = arg(3).getInt();
 
-	 GWT::Canvas& canvas = Application::theApp().getCanvas();
+    GWT::Canvas& canvas = Application::theApp().getCanvas();
 
-	 int previewid = TlistUtils::createPreview(canvas,
-															 &objids[0], objids.size(),
-															 pixel_width, pixel_height);
+    int previewid = TlistUtils::createPreview(canvas,
+                                              &objids[0], objids.size(),
+                                              pixel_width, pixel_height);
 
-	 returnInt(previewid);
+    returnInt(previewid);
   }
 };
 
@@ -106,26 +106,26 @@ protected:
 class TlistTcl::DealSinglesCmd : public Tcl::TclCmd {
 public:
   DealSinglesCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "objid(s) posid", 3, 3) {}
+    Tcl::TclCmd(interp, cmd_name, "objid(s) posid", 3, 3) {}
 protected:
   virtual void invoke() {
-	 int posid = getIntFromArg(2);
+    int posid = getIntFromArg(2);
 
-	 for (Tcl::ListIterator<int>
-			  itr = beginOfArg(1, (int*)0),
-			  end = endOfArg(1, (int*)0);
-			itr != end;
-			++itr)
-		{
-		  Ref<Trial> trial(Trial::make());
+    for (Tcl::ListIterator<int>
+           itr = beginOfArg(1, (int*)0),
+           end = endOfArg(1, (int*)0);
+         itr != end;
+         ++itr)
+      {
+        Ref<Trial> trial(Trial::make());
 
-		  trial->add(*itr, posid);
+        trial->add(*itr, posid);
 
-		  Ref<GxNode> obj(*itr);
-		  trial->setType(obj->category());
+        Ref<GxNode> obj(*itr);
+        trial->setType(obj->category());
 
-		  lappendVal(trial.id());
-		}
+        lappendVal(trial.id());
+      }
   }
 };
 
@@ -138,31 +138,31 @@ protected:
 class TlistTcl::DealPairsCmd : public Tcl::TclCmd {
 public:
   DealPairsCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "objids1 objids2 posid1 posid2", 5, 5) {}
+    Tcl::TclCmd(interp, cmd_name, "objids1 objids2 posid1 posid2", 5, 5) {}
 protected:
   virtual void invoke() {
-	 int posid1 = getIntFromArg(3);
-	 int posid2 = getIntFromArg(4);
+    int posid1 = getIntFromArg(3);
+    int posid2 = getIntFromArg(4);
 
-	 for (Tcl::ListIterator<int>
-			  itr1 = beginOfArg(1, (int*)0),
-			  end1 = endOfArg(1, (int*)0);
-			itr1 != end1;
-			++itr1)
-		for (Tcl::ListIterator<int>
-				 itr2 = beginOfArg(2, (int*)0),
-				 end2 = endOfArg(2, (int*)0);
-			  itr2 != end2;
-			  ++itr2)
-		  {
-			 Ref<Trial> trial(Trial::make());
+    for (Tcl::ListIterator<int>
+           itr1 = beginOfArg(1, (int*)0),
+           end1 = endOfArg(1, (int*)0);
+         itr1 != end1;
+         ++itr1)
+      for (Tcl::ListIterator<int>
+             itr2 = beginOfArg(2, (int*)0),
+             end2 = endOfArg(2, (int*)0);
+           itr2 != end2;
+           ++itr2)
+        {
+          Ref<Trial> trial(Trial::make());
 
-			 trial->add(*itr1, posid1);
-			 trial->add(*itr2, posid2);
-			 trial->setType(*itr1 == *itr2);
+          trial->add(*itr1, posid1);
+          trial->add(*itr2, posid2);
+          trial->setType(*itr1 == *itr2);
 
-			 lappendVal(trial.id());
-		  }
+          lappendVal(trial.id());
+        }
   }
 };
 
@@ -175,70 +175,70 @@ protected:
 class TlistTcl::DealTriadsCmd : public Tcl::TclCmd {
 public:
   DealTriadsCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name,
-					 "objids posid1 posid2 posid3", 5, 5) {}
+    Tcl::TclCmd(interp, cmd_name,
+                "objids posid1 posid2 posid3", 5, 5) {}
 protected:
   virtual void invoke() {
-	 int posids[3] = { getIntFromArg(2), getIntFromArg(3), getIntFromArg(4) };
+    int posids[3] = { getIntFromArg(2), getIntFromArg(3), getIntFromArg(4) };
 
-	 const int NUM_PERMS = 18;
-	 static int permutations[NUM_PERMS][3] = { 
-		{0, 0, 1},
-		{0, 0, 2},
-		{1, 1, 0},
-		{1, 1, 2},
-		{2, 2, 0},
-		{2, 2, 1},
-		{0, 1, 1},
-		{0, 2, 2},
-		{1, 0, 0},
-		{2, 0, 0},
-		{2, 1, 1},
-		{1, 2, 2},
-		{0, 1, 2},
-		{0, 2, 1},
-		{1, 0, 2},
-		{1, 2, 0},
-		{2, 0, 1},
-		{2, 1, 0} };
+    const int NUM_PERMS = 18;
+    static int permutations[NUM_PERMS][3] = {
+      {0, 0, 1},
+      {0, 0, 2},
+      {1, 1, 0},
+      {1, 1, 2},
+      {2, 2, 0},
+      {2, 2, 1},
+      {0, 1, 1},
+      {0, 2, 2},
+      {1, 0, 0},
+      {2, 0, 0},
+      {2, 1, 1},
+      {1, 2, 2},
+      {0, 1, 2},
+      {0, 2, 1},
+      {1, 0, 2},
+      {1, 2, 0},
+      {2, 0, 1},
+      {2, 1, 0} };
 
-	 Tcl::ListIterator<int>
-		itr = beginOfArg(1, (int*)0),
-		end = endOfArg(1, (int*)0);
+    Tcl::ListIterator<int>
+      itr = beginOfArg(1, (int*)0),
+      end = endOfArg(1, (int*)0);
 
-	 int id_count = end - itr;
+    int id_count = end - itr;
 
-	 fixed_block<int> objids(id_count);
+    fixed_block<int> objids(id_count);
 
-	 {for (unsigned int i = 0; i < objids.size(); ++i)
-		{
-		  objids[i] = *itr;
-		  ++itr;
-		}
-	 }
+    {for (unsigned int i = 0; i < objids.size(); ++i)
+      {
+        objids[i] = *itr;
+        ++itr;
+      }
+    }
 
-	 int base_triad[3];
+    int base_triad[3];
 
-	 for (unsigned int i = 0; i < objids.size(); ++i) {
-		base_triad[0] = objids[i];
+    for (unsigned int i = 0; i < objids.size(); ++i) {
+      base_triad[0] = objids[i];
 
-		for (unsigned int j = i+1; j < objids.size(); ++j) {
-		  base_triad[1] = objids[j];
+      for (unsigned int j = i+1; j < objids.size(); ++j) {
+        base_triad[1] = objids[j];
 
-		  for (unsigned int k = j+1; k < objids.size(); ++k) {
-			 base_triad[2] = objids[k];
+        for (unsigned int k = j+1; k < objids.size(); ++k) {
+          base_triad[2] = objids[k];
 
-			 // loops over p,e run through all permutations
-			 for (int p = 0; p < NUM_PERMS; ++p) {
-				Ref<Trial> trial(Trial::make());
-				for (int e = 0; e < 3; ++e) {
-				  trial->add(base_triad[permutations[p][e]], posids[e]);
-				}
-				lappendVal(trial.id());
-			 } // end p
-		  } // end itr3
-		} // end itr2
-	 } // end itr1
+          // loops over p,e run through all permutations
+          for (int p = 0; p < NUM_PERMS; ++p) {
+            Ref<Trial> trial(Trial::make());
+            for (int e = 0; e < 3; ++e) {
+              trial->add(base_triad[permutations[p][e]], posids[e]);
+            }
+            lappendVal(trial.id());
+          } // end p
+        } // end itr3
+      } // end itr2
+    } // end itr1
 
   }
 };
@@ -252,69 +252,69 @@ protected:
 class TlistTcl::LoadObjidFileCmd : public Tcl::TclCmd {
 public:
   LoadObjidFileCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "objid_file objids posids ?num_lines=-1?",
-					 4, 5, false) {}
+    Tcl::TclCmd(interp, cmd_name, "objid_file objids posids ?num_lines=-1?",
+                4, 5, false) {}
 protected:
   virtual void invoke() {
   DOTRACE("TlistTcl::LoadObjidFileCmd::invoke");
 
-	 const char* objid_file =                 getCstringFromArg(1);
-	 int         num_lines  = (objc() >= 5) ? getIntFromArg(4) : -1;
+    const char* objid_file =                 getCstringFromArg(1);
+    int         num_lines  = (objc() >= 5) ? getIntFromArg(4) : -1;
 
-	 // Determine whether we will read to the end of the input stream, or
-	 // whether we will read only num_lines lines from the stream.
-	 bool read_to_eof = (num_lines < 0);
+    // Determine whether we will read to the end of the input stream, or
+    // whether we will read only num_lines lines from the stream.
+    bool read_to_eof = (num_lines < 0);
 
-	 int num_objids = getSequenceLengthOfArg(2);
-	 fixed_block<int> objids(num_objids);
-	 getSequenceFromArg(2, objids.begin(), (int*)0);
+    int num_objids = getSequenceLengthOfArg(2);
+    fixed_block<int> objids(num_objids);
+    getSequenceFromArg(2, objids.begin(), (int*)0);
 
-	 int num_posids = getSequenceLengthOfArg(3);
-	 fixed_block<int> posids(num_posids);
-	 getSequenceFromArg(3, posids.begin(), (int*)0);
+    int num_posids = getSequenceLengthOfArg(3);
+    fixed_block<int> posids(num_posids);
+    getSequenceFromArg(3, posids.begin(), (int*)0);
 
-	 STD_IO::ifstream ifs(objid_file);
+    STD_IO::ifstream ifs(objid_file);
 
-	 const int BUF_SIZE = 200;
-	 char line[BUF_SIZE];
+    const int BUF_SIZE = 200;
+    char line[BUF_SIZE];
 
-	 int num_read = 0;
-	 while ( (read_to_eof || num_read < num_lines) 
-				&& ifs.getline(line, BUF_SIZE) )
-		{
-		  // Allow for whole-line comments beginning with '#'. If '#' is
-		  // seen, skip this line and continue with the next line. The trial
-		  // count is unaffected.
-		  if (line[0] == '#')
-			 continue;
+    int num_read = 0;
+    while ( (read_to_eof || num_read < num_lines)
+            && ifs.getline(line, BUF_SIZE) )
+      {
+        // Allow for whole-line comments beginning with '#'. If '#' is
+        // seen, skip this line and continue with the next line. The trial
+        // count is unaffected.
+        if (line[0] == '#')
+          continue;
 
-		  if (ifs.fail()) throw IO::InputError("Tlist::loadObjidFile");
+        if (ifs.fail()) throw IO::InputError("Tlist::loadObjidFile");
 
-		  istrstream ist(line);
+        istrstream ist(line);
 
-		  Ref<Trial> trial(Trial::make());
-		  Ref<GxSeparator> sep(GxSeparator::make());
+        Ref<Trial> trial(Trial::make());
+        Ref<GxSeparator> sep(GxSeparator::make());
 
-		  int objn = 0;
-		  int posn = 0;
-		  while (ist >> objn)
-			 {
-				Ref<GxSeparator> innersep(GxSeparator::make());
-				innersep->addChild(posids[posn]);
-				innersep->addChild(objids[objn-1]);
-				sep->addChild(innersep->id());
-				++posn;
-			 }
+        int objn = 0;
+        int posn = 0;
+        while (ist >> objn)
+          {
+            Ref<GxSeparator> innersep(GxSeparator::make());
+            innersep->addChild(posids[posn]);
+            innersep->addChild(objids[objn-1]);
+            sep->addChild(innersep->id());
+            ++posn;
+          }
 
-		  if (ist.fail() && !ist.eof())
-			 throw IO::InputError("Tlist::loadObjidFile");
+        if (ist.fail() && !ist.eof())
+          throw IO::InputError("Tlist::loadObjidFile");
 
-		  trial->addNode(sep->id());
+        trial->addNode(sep->id());
 
-		  lappendVal(trial->id());
+        lappendVal(trial->id());
 
-		  ++num_read;
-		}
+        ++num_read;
+      }
 
   }
 };
@@ -328,12 +328,12 @@ protected:
 class TlistTcl::WriteResponsesCmd : public Tcl::TclCmd {
 public:
   WriteResponsesCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "filename", 2, 2) {}
+    Tcl::TclCmd(interp, cmd_name, "filename", 2, 2) {}
 protected:
   virtual void invoke() {
-	 const char* filename = getCstringFromArg(1);
+    const char* filename = getCstringFromArg(1);
 
-	 TlistUtils::writeResponses(filename);
+    TlistUtils::writeResponses(filename);
   }
 };
 
@@ -346,11 +346,11 @@ protected:
 class TlistTcl::WriteIncidenceMatrixCmd : public Tcl::TclCmd {
 public:
   WriteIncidenceMatrixCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "filename", 2, 2) {}
+    Tcl::TclCmd(interp, cmd_name, "filename", 2, 2) {}
 protected:
   virtual void invoke() {
-	 const char* filename = getCstringFromArg(1);	 
-	 TlistUtils::writeIncidenceMatrix(filename);
+    const char* filename = getCstringFromArg(1);
+    TlistUtils::writeIncidenceMatrix(filename);
   }
 };
 
@@ -363,11 +363,11 @@ protected:
 class TlistTcl::WriteMatlabCmd : public Tcl::TclCmd {
 public:
   WriteMatlabCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 Tcl::TclCmd(interp, cmd_name, "filename", 2, 2) {}
+    Tcl::TclCmd(interp, cmd_name, "filename", 2, 2) {}
 protected:
   virtual void invoke() {
-	 const char* filename = getCstringFromArg(1);
-	 TlistUtils::writeMatlab(filename);
+    const char* filename = getCstringFromArg(1);
+    TlistUtils::writeMatlab(filename);
   }
 };
 
@@ -380,19 +380,19 @@ protected:
 class TlistTcl::TlistPkg : public Tcl::TclPkg {
 public:
   TlistPkg(Tcl_Interp* interp) :
-	 Tcl::TclPkg(interp, "Tlist", "$Revision$")
+    Tcl::TclPkg(interp, "Tlist", "$Revision$")
   {
-	 addCommand( new CreatePreviewCmd(interp, "Tlist::createPreview") );
+    addCommand( new CreatePreviewCmd(interp, "Tlist::createPreview") );
 
-	 addCommand( new DealSinglesCmd(interp, "Tlist::dealSingles") );
-	 addCommand( new DealPairsCmd(interp, "Tlist::dealPairs") );
-	 addCommand( new DealTriadsCmd(interp, "Tlist::dealTriads") );
+    addCommand( new DealSinglesCmd(interp, "Tlist::dealSingles") );
+    addCommand( new DealPairsCmd(interp, "Tlist::dealPairs") );
+    addCommand( new DealTriadsCmd(interp, "Tlist::dealTriads") );
 
-	 addCommand( new LoadObjidFileCmd(interp, "Tlist::loadObjidFile") );
-	 addCommand( new WriteMatlabCmd(interp, "Tlist::writeMatlab") );
-	 addCommand( new WriteIncidenceMatrixCmd(interp,
-														  "Tlist::writeIncidenceMatrix") );
-	 addCommand( new WriteResponsesCmd(interp, "Tlist::write_responses") );
+    addCommand( new LoadObjidFileCmd(interp, "Tlist::loadObjidFile") );
+    addCommand( new WriteMatlabCmd(interp, "Tlist::writeMatlab") );
+    addCommand( new WriteIncidenceMatrixCmd(interp,
+                                            "Tlist::writeIncidenceMatrix") );
+    addCommand( new WriteResponsesCmd(interp, "Tlist::write_responses") );
   }
 };
 

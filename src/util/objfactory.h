@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:06 1999
-// written: Mon Jun 11 14:49:16 2001
+// written: Tue Jun 12 11:18:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,12 +17,12 @@
 #include "util/factory.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
-#include "util/iditem.h"
-#endif
-
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
 #include "util/object.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REF_H_DEFINED)
+#include "util/ref.h"
 #endif
 
 namespace Util

@@ -1,6 +1,6 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// iditem.h
+// ref.h
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
@@ -10,8 +10,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef IDITEM_H_DEFINED
-#define IDITEM_H_DEFINED
+#ifndef REF_H_DEFINED
+#define REF_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
 #include "util/error.h"
@@ -284,5 +284,5 @@ inline Util::Ref<T>::Ref(const MaybeRef<U>& other) :
   itsHandle(other.get())
 {}
 
-static const char vcid_iditem_h[] = "$Header$";
-#endif // !IDITEM_H_DEFINED
+static const char vcid_ref_h[] = "$Header$";
+#endif // !REF_H_DEFINED

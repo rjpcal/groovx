@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Mon Jun 11 14:49:18 2001
+// written: Tue Jun 12 11:18:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,8 +21,8 @@
 #include "io/writeutils.h"
 
 #include "util/error.h"
-#include "util/iditem.h"
 #include "util/minivec.h"
+#include "util/ref.h"
 
 #include "util/trace.h"
 
@@ -35,28 +35,28 @@ public:
   ~Impl() {}
 
   bool contains(GxNode* other) const
-	 {
-		if (itsOwner == other) return true;
+    {
+      if (itsOwner == other) return true;
 
-		for(VecType::const_iterator
-				itr = itsChildren.begin(),
-				end = itsChildren.end();
-			 itr != end;
-			 ++itr)
-		  {
-			 if ((*itr)->contains(other)) return true;
-		  }
+      for(VecType::const_iterator
+            itr = itsChildren.begin(),
+            end = itsChildren.end();
+          itr != end;
+          ++itr)
+        {
+          if ((*itr)->contains(other)) return true;
+        }
 
-		return false;
-	 }
+      return false;
+    }
 
   void ensureNoCycle(GxNode* other) const
-	 {
-		if (other->contains(itsOwner))
-		  {
-			 throw ErrorWithMsg("couldn't add node without generating a cycle");
-		  }
-	 }
+    {
+      if (other->contains(itsOwner))
+        {
+          throw ErrorWithMsg("couldn't add node without generating a cycle");
+        }
+    }
 
   GxSeparator* itsOwner;
 
@@ -90,8 +90,8 @@ DOTRACE("GxSeparator::readFrom");
 void GxSeparator::writeTo(IO::Writer* writer) const {
 DOTRACE("GxSeparator::writeTo");
   IO::WriteUtils::writeObjectSeq(writer, "children",
-											itsImpl->itsChildren.begin(),
-											itsImpl->itsChildren.end());
+                                 itsImpl->itsChildren.begin(),
+                                 itsImpl->itsChildren.end());
 }
 
 GxSeparator::ChildId GxSeparator::addChild(Util::UID ioUid) {
@@ -113,32 +113,32 @@ DOTRACE("GxSeparator::insertChild");
   itsImpl->ensureNoCycle(item.get());
 
   if (at_index > itsImpl->itsChildren.size())
-	 at_index = itsImpl->itsChildren.size();
+    at_index = itsImpl->itsChildren.size();
 
   itsImpl->itsChildren.insert(itsImpl->itsChildren.begin()+at_index,
-										item);
+                              item);
 }
 
 void GxSeparator::removeChildId(ChildId index) {
 DOTRACE("GxSeparator::removeChildId");
   if (index < itsImpl->itsChildren.size())
-	 itsImpl->itsChildren.erase(itsImpl->itsChildren.begin()+index);
+    itsImpl->itsChildren.erase(itsImpl->itsChildren.begin()+index);
 }
 
 void GxSeparator::removeChildUid(Util::UID io_uid) {
 DOTRACE("GxSeparator::removeChildUid");
   for(Impl::VecType::iterator
-		  itr = itsImpl->itsChildren.begin(),
-		  end = itsImpl->itsChildren.end();
-		itr != end;
-		++itr)
-	 {
-		if ( (*itr)->id() == io_uid )
-		  {
-			 itsImpl->itsChildren.erase(itr);
-			 break;
-		  }
-	 }   
+        itr = itsImpl->itsChildren.begin(),
+        end = itsImpl->itsChildren.end();
+      itr != end;
+      ++itr)
+    {
+      if ( (*itr)->id() == io_uid )
+        {
+          itsImpl->itsChildren.erase(itr);
+          break;
+        }
+    }
 }
 
 int GxSeparator::numChildren() const {
@@ -149,12 +149,12 @@ DOTRACE("GxSeparator::numChildren");
 Ref<GxNode> GxSeparator::getChild(ChildId index) const {
 DOTRACE("GxSeparator::getChild");
   if (index >= itsImpl->itsChildren.size())
-	 {
-		ErrorWithMsg err("GxSeparator has no child with index '");
-		err.appendNumber(index);
-		err.appendMsg("'");
-		throw err;
-	 }
+    {
+      ErrorWithMsg err("GxSeparator has no child with index '");
+      err.appendNumber(index);
+      err.appendMsg("'");
+      throw err;
+    }
 
   return itsImpl->itsChildren[index];
 }
@@ -190,11 +190,11 @@ DOTRACE("GxSeparator::draw");
   GWT::Canvas::StateSaver state(canvas);
 
   for(ConstChildItr itr = beginChildren(), end = endChildren();
-		itr != end;
-		++itr)
-	 {
-		(*itr)->draw(canvas);
-	 }
+      itr != end;
+      ++itr)
+    {
+      (*itr)->draw(canvas);
+    }
 }
 
 void GxSeparator::undraw(GWT::Canvas& canvas) const {
@@ -203,11 +203,11 @@ DOTRACE("GxSeparator::undraw");
   GWT::Canvas::StateSaver state(canvas);
 
   for(ConstChildItr itr = beginChildren(), end = endChildren();
-		itr != end;
-		++itr)
-	 {
-		(*itr)->undraw(canvas);
-	 }
+      itr != end;
+      ++itr)
+    {
+      (*itr)->undraw(canvas);
+    }
 }
 
 static const char vcid_gxseparator_cc[] = "$Header$";

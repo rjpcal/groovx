@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Mon Jun 11 18:33:36 2001
+// written: Tue Jun 12 11:18:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,9 +24,9 @@
 #include "io/writer.h"
 #include "io/writeutils.h"
 
-#include "util/iditem.h"
-#include "util/rand.h"
 #include "util/minivec.h"
+#include "util/rand.h"
+#include "util/ref.h"
 
 #include <algorithm>
 #include <strstream.h>

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Mon Jun 11 18:38:03 2001
+// written: Tue Jun 12 11:18:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,8 +21,8 @@
 
 #include "io/io.h"
 
-#include "util/iditem.h"
 #include "util/observer.h"
+#include "util/ref.h"
 
 #include "util/trace.h"
 #define LOCAL_ASSERT

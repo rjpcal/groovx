@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Mon Jun 11 15:08:16 2001
+// written: Tue Jun 12 11:18:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,10 +18,10 @@
 #include "io/io.h"
 
 #include "util/arrays.h"
-#include "util/iditem.h"
 #include "util/lists.h"
 #include "util/objmgr.h"
 #include "util/pointers.h"
+#include "util/ref.h"
 #include "util/strings.h"
 #include "util/value.h"
 
@@ -52,10 +52,10 @@
 class AttributeReadError : public IO::ReadError {
 public:
   AttributeReadError(const fixed_string& attrib_name) :
-	 IO::ReadError("input failed while reading attribute: ")
-	 {
-		appendMsg(attrib_name.c_str());
-	 }
+    IO::ReadError("input failed while reading attribute: ")
+    {
+      appendMsg(attrib_name.c_str());
+    }
 };
 
 class AsciiStreamReader::Impl {
@@ -66,144 +66,144 @@ private:
   // Creators
 public:
   Impl(AsciiStreamReader* /*owner*/, STD_IO::istream& is) :
-	 itsBuf(is), itsObjects(), itsAttribs()
+    itsBuf(is), itsObjects(), itsAttribs()
 #ifndef NO_IOS_EXCEPTIONS
-	 , itsOriginalExceptionState(itsBuf.exceptions())
+    , itsOriginalExceptionState(itsBuf.exceptions())
 #endif
   {
 #ifndef NO_IOS_EXCEPTIONS
-	 itsBuf.exceptions( ios::badbit | ios::failbit );
+    itsBuf.exceptions( ios::badbit | ios::failbit );
 #endif
   }
 
   ~Impl()
-	 {
+    {
 #ifndef NO_IOS_EXCEPTIONS
-		itsBuf.exceptions(itsOriginalExceptionState);
+      itsBuf.exceptions(itsOriginalExceptionState);
 #endif
-	 }
+    }
 
   // Nested types
 public:
 
   class ObjectMap {
   private:
-	 typedef std::map<Util::UID, Ref<IO::IoObject> > MapType;
-	 MapType itsMap;
+    typedef std::map<Util::UID, Ref<IO::IoObject> > MapType;
+    MapType itsMap;
 
   public:
-	 ObjectMap() : itsMap() {}
+    ObjectMap() : itsMap() {}
 
-	 // This returns the object for the given id; the object must
-	 // already have been created, otherwise an exception will be thrown.
-	 Ref<IO::IoObject> getObject(Util::UID id)
-		{
-		  MapType::const_iterator itr = itsMap.find(id);
-		  if ( itr == itsMap.end() ) {
-			 IO::ReadError err("no object was found for the given id\n");
-			 err.appendMsg("\tid: ").appendNumber(int(id));
-			 throw err;
-		  }
+    // This returns the object for the given id; the object must
+    // already have been created, otherwise an exception will be thrown.
+    Ref<IO::IoObject> getObject(Util::UID id)
+      {
+        MapType::const_iterator itr = itsMap.find(id);
+        if ( itr == itsMap.end() ) {
+          IO::ReadError err("no object was found for the given id\n");
+          err.appendMsg("\tid: ").appendNumber(int(id));
+          throw err;
+        }
 
-		  return (*itr).second;
-		}
+        return (*itr).second;
+      }
 
-	 // This will create an object for the id if one has not yet been
-	 // created, then return the object for that id.
-	 Ref<IO::IoObject> fetchObject(const fixed_string& type, Util::UID id)
-	   {
-		  MapType::const_iterator itr = itsMap.find(id);
+    // This will create an object for the id if one has not yet been
+    // created, then return the object for that id.
+    Ref<IO::IoObject> fetchObject(const fixed_string& type, Util::UID id)
+      {
+        MapType::const_iterator itr = itsMap.find(id);
 
-		  if ( itr == itsMap.end() )
-			 {
-				Ref<IO::IoObject> obj(
+        if ( itr == itsMap.end() )
+          {
+            Ref<IO::IoObject> obj(
                      Util::ObjMgr::newTypedObj<IO::IoObject>(type));
 
-				itsMap.insert(MapType::value_type(id, obj));
+            itsMap.insert(MapType::value_type(id, obj));
 
-				return obj;
-			 }
+            return obj;
+          }
 
-		  return (*itr).second;
-		}
+        return (*itr).second;
+      }
 
-	 void assignObjectForId(Util::UID id, Ref<IO::IoObject> object)
-		{
-		  MapType::const_iterator itr = itsMap.find(id);
+    void assignObjectForId(Util::UID id, Ref<IO::IoObject> object)
+      {
+        MapType::const_iterator itr = itsMap.find(id);
 
-		  // See if an object has already been created for this id
-		  if ( itr != itsMap.end() ) {
-			 IO::ReadError err("object has already been created\n");
-			 err.appendMsg("\ttype: ", object->ioTypename().c_str(), "\n");
-			 err.appendMsg("\tid: ").appendNumber(int(id));
-			 throw err;
-		  }
+        // See if an object has already been created for this id
+        if ( itr != itsMap.end() ) {
+          IO::ReadError err("object has already been created\n");
+          err.appendMsg("\ttype: ", object->ioTypename().c_str(), "\n");
+          err.appendMsg("\tid: ").appendNumber(int(id));
+          throw err;
+        }
 
-		  itsMap.insert(MapType::value_type(id, object));
-		}
+        itsMap.insert(MapType::value_type(id, object));
+      }
 
-	 void clear() { itsMap.clear(); }
+    void clear() { itsMap.clear(); }
   };
 
   struct Attrib {
   private:
-	 Attrib(); // not implemented
+    Attrib(); // not implemented
 
   public:
-	 Attrib(const fixed_string& t, const fixed_string& v) :
-		type(t), value(v) {}
+    Attrib(const fixed_string& t, const fixed_string& v) :
+      type(t), value(v) {}
 
-	 fixed_string type;
-	 fixed_string value;
+    fixed_string type;
+    fixed_string value;
   };
 
   class AttribMap {
   private:
-	 fixed_string itsObjTag;
+    fixed_string itsObjTag;
 
-	 typedef std::pair<fixed_string, Attrib> ValueType;
-	 typedef std::list<ValueType> ListType;
+    typedef std::pair<fixed_string, Attrib> ValueType;
+    typedef std::list<ValueType> ListType;
 
-	 ListType itsMap;
+    ListType itsMap;
 
-	 IO::VersionId itsSerialVersionId;
+    IO::VersionId itsSerialVersionId;
 
   public:
-	 AttribMap(const fixed_string& obj_tag) :
-		itsObjTag(obj_tag), itsMap(), itsSerialVersionId(0) {}
+    AttribMap(const fixed_string& obj_tag) :
+      itsObjTag(obj_tag), itsMap(), itsSerialVersionId(0) {}
 
-	 void readAttributes(STD_IO::istream& buf);
+    void readAttributes(STD_IO::istream& buf);
 
-	 IO::VersionId getSerialVersionId() const { return itsSerialVersionId; }
+    IO::VersionId getSerialVersionId() const { return itsSerialVersionId; }
 
-	 Attrib get(const fixed_string& attrib_name)
-		{
-		  ListType::iterator itr = itsMap.begin(), end = itsMap.end();
-		  while (itr != end)
-			 {
-				if ((*itr).first == attrib_name)
-				  {
-					 Attrib result = (*itr).second;
-					 itsMap.erase(itr);
-					 return result;
-				  }
-				++itr;
-			 }
+    Attrib get(const fixed_string& attrib_name)
+      {
+        ListType::iterator itr = itsMap.begin(), end = itsMap.end();
+        while (itr != end)
+          {
+            if ((*itr).first == attrib_name)
+              {
+                Attrib result = (*itr).second;
+                itsMap.erase(itr);
+                return result;
+              }
+            ++itr;
+          }
 
-		  IO::ReadError err("no attribute named '");
-		  err.appendMsg(attrib_name.c_str());
-		  err.appendMsg("' for ", itsObjTag.c_str());
-		  throw err;
-		}
+        IO::ReadError err("no attribute named '");
+        err.appendMsg(attrib_name.c_str());
+        err.appendMsg("' for ", itsObjTag.c_str());
+        throw err;
+      }
 
   private:
-	 fixed_string readAndUnEscape(STD_IO::istream& is);
+    fixed_string readAndUnEscape(STD_IO::istream& is);
 
-	 void addNewAttrib(const fixed_string& attrib_name,
-							 const fixed_string& type, const fixed_string& value)
-		{
-		  itsMap.push_back(ValueType(attrib_name, Attrib(type,value)));
-		}
+    void addNewAttrib(const fixed_string& attrib_name,
+                      const fixed_string& type, const fixed_string& value)
+      {
+        itsMap.push_back(ValueType(attrib_name, Attrib(type,value)));
+      }
   };
 
   // Data members
@@ -218,36 +218,36 @@ private:
 
   // Helper functions
   AttribMap& currentAttribs()
-	 {
-		if ( itsAttribs.empty() )
-		  throw IO::ReadError("attempted to read attribute "
-								"when no attribute map was active");
-		return *(itsAttribs.front());
-	 }
+    {
+      if ( itsAttribs.empty() )
+        throw IO::ReadError("attempted to read attribute "
+                        "when no attribute map was active");
+      return *(itsAttribs.front());
+    }
 
   void inflateObject(IO::Reader* reader, STD_IO::istream& buf,
-							const fixed_string& obj_tag, Ref<IO::IoObject> obj);
+                     const fixed_string& obj_tag, Ref<IO::IoObject> obj);
 
   // Delegands -- this is the public interface that AsciiStreamReader
   // forwards to in implementing its own member functions.
 public:
   template <class T>
   T readBasicType(const fixed_string& name) {
-	 Attrib a = currentAttribs().get(name);
-	 istrstream ist(a.value.c_str());
+    Attrib a = currentAttribs().get(name);
+    istrstream ist(a.value.c_str());
 
-	 T return_val;
-	 ist >> return_val;
-	 DebugEval(a.value); DebugEvalNL(return_val);
+    T return_val;
+    ist >> return_val;
+    DebugEval(a.value); DebugEvalNL(return_val);
 
-	 if (ist.fail())
-		throw AttributeReadError(name);
+    if (ist.fail())
+      throw AttributeReadError(name);
 
-	 return return_val;
+    return return_val;
   }
 
   IO::VersionId readSerialVersionId()
-	 { return currentAttribs().getSerialVersionId(); }
+    { return currentAttribs().getSerialVersionId(); }
 
   // Returns a new dynamically allocated char array
   fixed_string readStringType(const fixed_string& name);
@@ -259,7 +259,7 @@ public:
   void readOwnedObject(const fixed_string& name, Ref<IO::IoObject> obj);
 
   void readBaseClass(IO::Reader* reader, const fixed_string& baseClassName,
-							Ref<IO::IoObject> basePart);
+                     Ref<IO::IoObject> basePart);
 
   Ref<IO::IoObject> readRoot(IO::Reader* reader, IO::IoObject* given_root);
 };
@@ -284,55 +284,55 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAndUnEscape");
   int brace_level = 0;
 
   fixed_block<char>::iterator
-	 itr = READ_BUFFER.begin(),
-	 stop = READ_BUFFER.end();
+    itr = READ_BUFFER.begin(),
+    stop = READ_BUFFER.end();
 
   int ch = 0;
 
   while ( (ch = is.get()) != EOF &&
-			 !(brace_level == 0 && ch == STRING_ENDER) )
-	 {
-		if (itr >= stop)
-		  {
-			 IO::ReadError err("AsciiStreamReader exceeded "
-									 "read buffer capacity\n"
-									 "buffer contents: \n");
-			 READ_BUFFER[ READ_BUFFER.size() - 1 ] = '\0';
-			 err.appendMsg(&(READ_BUFFER[0]));
-			 throw err;
-		  }
+          !(brace_level == 0 && ch == STRING_ENDER) )
+    {
+      if (itr >= stop)
+        {
+          IO::ReadError err("AsciiStreamReader exceeded "
+                            "read buffer capacity\n"
+                            "buffer contents: \n");
+          READ_BUFFER[ READ_BUFFER.size() - 1 ] = '\0';
+          err.appendMsg(&(READ_BUFFER[0]));
+          throw err;
+        }
 
-		if (ch != '\\')
-		  {
-			 if (ch == '{') ++brace_level;
-			 if (ch == '}') --brace_level;
-			 *itr++ = char(ch);
-			 continue;
-		  }
-		else
-		  {
-			 int ch2 = is.get();
-			 if (ch2 == EOF || ch2 == STRING_ENDER)
-				throw IO::ReadError("missing character after trailing backslash");
-			 switch (ch2) {
-			 case '\\':
-				*itr++ = '\\';
-				break;
-			 case 'c':
-				*itr++ = '^';
-				break;
-			 case '{':
-				*itr++ = '{';
-				break;
-			 case '}':
-				*itr++ = '}';
-				break;
-			 default:
-				throw IO::ReadError("invalid escape character");
-				break;
-			 }
-		  }
-	 }
+      if (ch != '\\')
+        {
+          if (ch == '{') ++brace_level;
+          if (ch == '}') --brace_level;
+          *itr++ = char(ch);
+          continue;
+        }
+      else
+        {
+          int ch2 = is.get();
+          if (ch2 == EOF || ch2 == STRING_ENDER)
+            throw IO::ReadError("missing character after trailing backslash");
+          switch (ch2) {
+          case '\\':
+            *itr++ = '\\';
+            break;
+          case 'c':
+            *itr++ = '^';
+            break;
+          case '{':
+            *itr++ = '{';
+            break;
+          case '}':
+            *itr++ = '}';
+            break;
+          default:
+            throw IO::ReadError("invalid escape character");
+            break;
+          }
+        }
+    }
 
   *itr = '\0';
 
@@ -348,31 +348,31 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 
   // Check if there is a version id in the stream
   if (buf.peek() == 'v')
-	 {
-		int ch = buf.get();  Assert(ch == 'v');
-		buf >> itsSerialVersionId;
-		if ( buf.fail() )
-		  throw IO::ReadError("input failed while reading serialization version id");
-	 }
+    {
+      int ch = buf.get();  Assert(ch == 'v');
+      buf >> itsSerialVersionId;
+      if ( buf.fail() )
+        throw IO::ReadError("input failed while reading serialization version id");
+    }
   else
-	 {
-		itsSerialVersionId = 0;
-	 }
+    {
+      itsSerialVersionId = 0;
+    }
 
   // Get the attribute count
   int attrib_count;
   buf >> attrib_count;    DebugEvalNL(attrib_count);
 
   if (attrib_count < 0) {
-	 IO::ReadError err("found a negative attribute count: ");
-	 err.appendNumber(attrib_count);
-	 throw err;
+    IO::ReadError err("found a negative attribute count: ");
+    err.appendNumber(attrib_count);
+    throw err;
   }
 
   if ( buf.fail() ) {
-	 IO::ReadError err("input failed while reading attribute count: ");
-	 err.appendNumber(attrib_count);
-	 throw err;
+    IO::ReadError err("input failed while reading attribute count: ");
+    err.appendNumber(attrib_count);
+    throw err;
   }
 
   // Loop and load all the attributes
@@ -380,17 +380,17 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 
   for (int i = 0; i < attrib_count; ++i) {
 
- 	 buf >> type >> name >> equal;   DebugEval(type); DebugEvalNL(name); 
+    buf >> type >> name >> equal;   DebugEval(type); DebugEvalNL(name);
 
-	 if ( buf.fail() ) {
-		IO::ReadError err("input failed while reading attribute type and name\n");
-		type[63] = '\0'; err.appendMsg("\ttype: ", type, "\n");
-		name[63] = '\0'; err.appendMsg("\tname: ", name, "\n");
-		equal[15] = '\0'; err.appendMsg("\tequal: ", equal);
-		throw err;
-	 }
+    if ( buf.fail() ) {
+      IO::ReadError err("input failed while reading attribute type and name\n");
+      type[63] = '\0'; err.appendMsg("\ttype: ", type, "\n");
+      name[63] = '\0'; err.appendMsg("\tname: ", name, "\n");
+      equal[15] = '\0'; err.appendMsg("\tequal: ", equal);
+      throw err;
+    }
 
-	 addNewAttrib(name, type, readAndUnEscape(buf));
+    addNewAttrib(name, type, readAndUnEscape(buf));
   }
 }
 
@@ -428,20 +428,20 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
   ist.get(); // ignore one char of whitespace after the length
 
   if (len < 0) {
-	 IO::ReadError err("found a negative length for a string attribute: ");
-	 err.appendNumber(len);
-	 throw err;
+    IO::ReadError err("found a negative length for a string attribute: ");
+    err.appendNumber(len);
+    throw err;
   }
 
   fixed_string new_string(len+1);
   if (len > 0)
-	 ist.read(new_string.data(), len);
+    ist.read(new_string.data(), len);
   new_string.data()[len] = '\0';
 
   if (ist.fail())
-	 {
-		throw AttributeReadError(name);
-	 }  
+    {
+      throw AttributeReadError(name);
+    }
 
   DebugEval(a.value); DebugEvalNL(new_string);
   return new_string;
@@ -458,7 +458,7 @@ DOTRACE("AsciiStreamReader::Impl::readMaybeObject");
   ist >> id;
 
   if (ist.fail())
-	 throw AttributeReadError(attrib_name);
+    throw AttributeReadError(attrib_name);
 
   if (id == 0) { return MaybeRef<IO::IoObject>(); }
 
@@ -482,7 +482,7 @@ DOTRACE("AsciiStreamReader::Impl::readValueObj");
   ist >> value;
 
   if (ist.fail())
-	 throw AttributeReadError(attrib_name);
+    throw AttributeReadError(attrib_name);
 }
 
 void AsciiStreamReader::Impl::readOwnedObject(
@@ -496,10 +496,10 @@ DOTRACE("AsciiStreamReader::Impl::readOwnedObject");
   ist >> id;
 
   if (ist.fail())
-	 throw AttributeReadError(attrib_name);
+    throw AttributeReadError(attrib_name);
 
   if ( id == 0 )
-	 throw IO::ReadError("owned object had object id of 0");
+    throw IO::ReadError("owned object had object id of 0");
 
   itsObjects.assignObjectForId(id, obj);
 }
@@ -532,42 +532,42 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
   Util::UID rootid = 0;
 
   while ( itsBuf.peek() != EOF ) {
-	 char type[64], equal[16], bracket[16];
-	 Util::UID id;
+    char type[64], equal[16], bracket[16];
+    Util::UID id;
 
-	 itsBuf >> type >> id >> equal >> bracket;
-	 DebugEval(type); DebugEvalNL(id);
+    itsBuf >> type >> id >> equal >> bracket;
+    DebugEval(type); DebugEvalNL(id);
 
-	 if ( itsBuf.fail() ) {
-		IO::ReadError err("input failed while reading typename and object id\n");
-		type[63] = '\0'; err.appendMsg("\ttype: ", type, "\n");
-		err.appendMsg("id: ").appendNumber(int(id)).appendMsg("\n");
-		equal[15] = '\0'; err.appendMsg("\tequal: ", equal, "\n");
-		bracket[15] = '\0'; err.appendMsg("\tbracket: ", bracket);
-		throw err;
-	 }
+    if ( itsBuf.fail() ) {
+      IO::ReadError err("input failed while reading typename and object id\n");
+      type[63] = '\0'; err.appendMsg("\ttype: ", type, "\n");
+      err.appendMsg("id: ").appendNumber(int(id)).appendMsg("\n");
+      equal[15] = '\0'; err.appendMsg("\tequal: ", equal, "\n");
+      bracket[15] = '\0'; err.appendMsg("\tbracket: ", bracket);
+      throw err;
+    }
 
-	 if ( !haveReadRoot ) {
-		rootid = id;
+    if ( !haveReadRoot ) {
+      rootid = id;
 
-		if (given_root != 0) 
-		  itsObjects.assignObjectForId(rootid,
-												 Ref<IO::IoObject>(given_root));
+      if (given_root != 0)
+        itsObjects.assignObjectForId(rootid,
+                                     Ref<IO::IoObject>(given_root));
 
-		haveReadRoot = true;
-	 }
+      haveReadRoot = true;
+    }
 
-	 Ref<IO::IoObject> obj = itsObjects.fetchObject(type, id);
+    Ref<IO::IoObject> obj = itsObjects.fetchObject(type, id);
 
-	 inflateObject(reader, itsBuf, type, obj);
+    inflateObject(reader, itsBuf, type, obj);
 
-	 itsBuf >> bracket >> ws;
+    itsBuf >> bracket >> ws;
 
-	 if ( itsBuf.fail() ) {
-		IO::ReadError err("input failed while parsing ending bracket\n");
-		bracket[15] = '\0'; err.appendMsg("\tbracket: ", bracket);
-		throw err;
-	 }
+    if ( itsBuf.fail() ) {
+      IO::ReadError err("input failed while parsing ending bracket\n");
+      bracket[15] = '\0'; err.appendMsg("\tbracket: ", bracket);
+      throw err;
+    }
   }
 
   return itsObjects.getObject(rootid);
@@ -588,7 +588,7 @@ DOTRACE("AsciiStreamReader::AsciiStreamReader");
 
 AsciiStreamReader::~AsciiStreamReader () {
 DOTRACE("AsciiStreamReader::~AsciiStreamReader");
-  delete &itsImpl; 
+  delete &itsImpl;
 }
 
 IO::VersionId AsciiStreamReader::readSerialVersionId() {
@@ -598,13 +598,13 @@ DOTRACE("AsciiStreamReader::readSerialVersionId");
 
 char AsciiStreamReader::readChar(const fixed_string& name) {
 DOTRACE("AsciiStreamReader::readChar");
-  DebugEvalNL(name); 
+  DebugEvalNL(name);
   return itsImpl.template readBasicType<char>(name);
 }
 
 int AsciiStreamReader::readInt(const fixed_string& name) {
 DOTRACE("AsciiStreamReader::readInt");
-  DebugEvalNL(name); 
+  DebugEvalNL(name);
   return itsImpl.template readBasicType<int>(name);
 }
 
@@ -616,18 +616,18 @@ DOTRACE("AsciiStreamReader::readBool");
 
 double AsciiStreamReader::readDouble(const fixed_string& name) {
 DOTRACE("AsciiStreamReader::readDouble");
-  DebugEvalNL(name); 
+  DebugEvalNL(name);
   return itsImpl.template readBasicType<double>(name);
 }
 
 fixed_string AsciiStreamReader::readStringImpl(const fixed_string& name) {
-  DebugEvalNL(name); 
+  DebugEvalNL(name);
   return itsImpl.readStringType(name);
 }
 
 void AsciiStreamReader::readValueObj(const fixed_string& name, Value& value) {
-  DebugEvalNL(name); 
-  itsImpl.readValueObj(name, value); 
+  DebugEvalNL(name);
+  itsImpl.readValueObj(name, value);
 }
 
 Ref<IO::IoObject>
@@ -645,15 +645,15 @@ AsciiStreamReader::readMaybeObject(const fixed_string& name)
 }
 
 void AsciiStreamReader::readOwnedObject(const fixed_string& name,
-													 Ref<IO::IoObject> obj) {
-  DebugEvalNL(name); 
+                                        Ref<IO::IoObject> obj) {
+  DebugEvalNL(name);
   itsImpl.readOwnedObject(name, obj);
 }
 
 void AsciiStreamReader::readBaseClass(
   const fixed_string& baseClassName, Ref<IO::IoObject> basePart
 ) {
-  DebugEvalNL(baseClassName); 
+  DebugEvalNL(baseClassName);
   itsImpl.readBaseClass(this, baseClassName, basePart);
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  7 13:17:04 1999
-// written: Mon Jun 11 14:49:17 2001
+// written: Tue Jun 12 11:17:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef IOITEMPKG_H_DEFINED
 #define IOITEMPKG_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IDITEM_H_DEFINED)
-#include "util/iditem.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REF_H_DEFINED)
+#include "util/ref.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
@@ -121,22 +121,22 @@ template <class C>
 class IoItemPkg : public CTclItemPkg<C>, public IoCaster {
 public:
   IoItemPkg(Tcl_Interp* interp, const char* name, const char* version) :
-	 CTclItemPkg<C>(interp, name, version, 1)
+    CTclItemPkg<C>(interp, name, version, 1)
   {
-	 addCommand( new IsCmd(interp, this, TclPkg::makePkgCmdName("is")));
-	 addCommand( new CountAllCmd(interp, this,
-										  TclPkg::makePkgCmdName("countAll")));
-	 addCommand( new FindAllCmd(interp, this,
-										 TclPkg::makePkgCmdName("findAll")));
-	 addCommand( new RemoveAllCmd(interp, this,
-											TclPkg::makePkgCmdName("removeAll")));
+    addCommand( new IsCmd(interp, this, TclPkg::makePkgCmdName("is")));
+    addCommand( new CountAllCmd(interp, this,
+                                TclPkg::makePkgCmdName("countAll")));
+    addCommand( new FindAllCmd(interp, this,
+                               TclPkg::makePkgCmdName("findAll")));
+    addCommand( new RemoveAllCmd(interp, this,
+                                 TclPkg::makePkgCmdName("removeAll")));
   }
 
   virtual C* getCItemFromId(int id)
     {
-		Util::Ref<C> item(id);
-		return item.get();
-	 }
+      Util::Ref<C> item(id);
+      return item.get();
+    }
 
   virtual bool isMyType(const Util::Object* obj)
     { return (obj != 0 && dynamic_cast<const C*>(obj) != 0); }

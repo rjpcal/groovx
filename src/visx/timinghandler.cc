@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 19 21:39:51 1999
-// written: Wed Jun  6 15:54:58 2001
+// written: Tue Jun 12 11:17:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
-#include "util/iditem.h"
+#include "util/ref.h"
 
 #include <cstring>
 
@@ -81,34 +81,34 @@ void TimingHandler::writeTo(IO::Writer* writer) const {
 DOTRACE("TimingHandler::writeTo");
 
   writer->ensureWriteVersionId("TimingHandler",
-		      TIMINGHANDLER_SERIAL_VERSION_ID, 2, "Try grsh0.8a4");
+            TIMINGHANDLER_SERIAL_VERSION_ID, 2, "Try grsh0.8a4");
 
   writer->writeBaseClass("TimingHdlr", IO::makeConstProxy<TimingHdlr>(this));
 }
 
-int TimingHandler::getAbortWait() const { 
+int TimingHandler::getAbortWait() const {
   return getEvent(FROM_ABORT, abortwait_abort_id)->getDelay();
 }
-int TimingHandler::getInterTrialInterval() const { 
+int TimingHandler::getInterTrialInterval() const {
   return getEvent(FROM_RESPONSE, iti_response_id)->getDelay();
 }
-int TimingHandler::getStimDur() const { 
+int TimingHandler::getStimDur() const {
   return getEvent(FROM_START, stimdur_start_id)->getDelay();
 }
-int TimingHandler::getTimeout() const { 
+int TimingHandler::getTimeout() const {
   return getEvent(FROM_START, timeout_start_id)->getDelay();
 }
 
-void TimingHandler::setAbortWait(int val) { 
+void TimingHandler::setAbortWait(int val) {
   getEvent(FROM_ABORT, abortwait_abort_id)->setDelay(val);
 }
-void TimingHandler::setInterTrialInterval(int val) { 
+void TimingHandler::setInterTrialInterval(int val) {
   getEvent(FROM_RESPONSE, iti_response_id)->setDelay(val);
 }
-void TimingHandler::setStimDur(int val) { 
+void TimingHandler::setStimDur(int val) {
   getEvent(FROM_START, stimdur_start_id)->setDelay(val);
 }
-void TimingHandler::setTimeout(int val) { 
+void TimingHandler::setTimeout(int val) {
   getEvent(FROM_START, timeout_start_id)->setDelay(val);
 }
 

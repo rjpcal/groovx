@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Mon Jun 11 14:49:18 2001
+// written: Tue Jun 12 11:18:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,8 +18,8 @@
 #include "io/fields.h"
 
 #include "util/arrays.h"
-#include "util/iditem.h"
 #include "util/minivec.h"
+#include "util/ref.h"
 #include "util/strings.h"
 
 #include <tcl.h>
@@ -90,8 +90,8 @@ protected:
 
 Tcl::FieldVecCmd::FieldVecCmd(TclItemPkg* pkg, const FieldInfo& finfo) :
   TclCmd(pkg->interp(), pkg->makePkgCmdName(finfo.name().c_str()),
-			(pkg->itemArgn() ? "item_id(s) ?new_value(s)?" : "?new_value?"),
-			pkg->itemArgn()+1, pkg->itemArgn()+2, false),
+         (pkg->itemArgn() ? "item_id(s) ?new_value(s)?" : "?new_value?"),
+         pkg->itemArgn()+1, pkg->itemArgn()+2, false),
   itsPkg(pkg),
   itsFinfo(finfo),
   itsItemArgn(pkg->itemArgn()),
@@ -108,67 +108,67 @@ DOTRACE("Tcl::FieldVecCmd::invoke");
   DebugEvalNL(getCstringFromArg(0));
 
   // Fetch the item ids
-  dynamic_block<int> ids(1); 
+  dynamic_block<int> ids(1);
 
   if (itsItemArgn) {
-	 unsigned int num_ids = getSequenceLengthOfArg(itsItemArgn);
-	 DebugEvalNL(num_ids);
-	 ids.resize(num_ids);
-	 getSequenceFromArg(itsItemArgn, &ids[0], (int*) 0);
+    unsigned int num_ids = getSequenceLengthOfArg(itsItemArgn);
+    DebugEvalNL(num_ids);
+    ids.resize(num_ids);
+    getSequenceFromArg(itsItemArgn, &ids[0], (int*) 0);
   }
   else {
-	 // -1 is the cue to use the default item
-	 ids.at(0) = -1;
+    // -1 is the cue to use the default item
+    ids.at(0) = -1;
   }
 
   // If we are getting...
   if (TclCmd::objc() == itsObjcGet) {
-	 if ( ids.size() == 0 )
-		/* return an empty Tcl result since the list of ids was empty */
-		return;
-	 else if ( ids.size() == 1 )
-		{
-		  Ref<FieldContainer> item(ids[0]);
-		  returnVal( *(item->field(itsFinfo).value()) );
-		}
-	 else
-		for (size_t i = 0; i < ids.size(); ++i) {
-		  Ref<FieldContainer> item(ids[i]);
-		  lappendVal( *(item->field(itsFinfo).value()) );
-		}
+    if ( ids.size() == 0 )
+      /* return an empty Tcl result since the list of ids was empty */
+      return;
+    else if ( ids.size() == 1 )
+      {
+        Ref<FieldContainer> item(ids[0]);
+        returnVal( *(item->field(itsFinfo).value()) );
+      }
+    else
+      for (size_t i = 0; i < ids.size(); ++i) {
+        Ref<FieldContainer> item(ids[i]);
+        lappendVal( *(item->field(itsFinfo).value()) );
+      }
 
   }
   // ... or if we are setting
   else if (TclCmd::objc() == itsObjcSet) {
 
-	 if (ids.size() == 1)
-		{
-		  TclValue val = getValFromArg(itsValArgn, (TclValue*)0);
+    if (ids.size() == 1)
+      {
+        TclValue val = getValFromArg(itsValArgn, (TclValue*)0);
 
-		  Ref<FieldContainer> item(ids[0]);
-		  item->field(itsFinfo).setValue(val);
-		}
-	 else
-		{
-		  Tcl::ListIterator<Tcl::TclValue>
-			 val_itr = beginOfArg(itsValArgn, (TclValue*)0),
-			 val_end = endOfArg(itsValArgn, (TclValue*)0);
+        Ref<FieldContainer> item(ids[0]);
+        item->field(itsFinfo).setValue(val);
+      }
+    else
+      {
+        Tcl::ListIterator<Tcl::TclValue>
+          val_itr = beginOfArg(itsValArgn, (TclValue*)0),
+          val_end = endOfArg(itsValArgn, (TclValue*)0);
 
-		  TclValue val = *val_itr;
+        TclValue val = *val_itr;
 
-		  for (size_t i = 0; i < ids.size(); ++i) {
-			 Ref<FieldContainer> item(ids[i]);
-			 item->field(itsFinfo).setValue(val);
+        for (size_t i = 0; i < ids.size(); ++i) {
+          Ref<FieldContainer> item(ids[i]);
+          item->field(itsFinfo).setValue(val);
 
-			 // Only fetch a new value if there are more values to
-			 // get... if we run out of values before we run out of ids,
-			 // then we just keep on using the last value in the sequence
-			 // of values.
-			 if (val_itr != val_end)
-				if (++val_itr != val_end)
-				  val = *val_itr;
-		  }
-		}
+          // Only fetch a new value if there are more values to
+          // get... if we run out of values before we run out of ids,
+          // then we just keep on using the last value in the sequence
+          // of values.
+          if (val_itr != val_end)
+            if (++val_itr != val_end)
+              val = *val_itr;
+        }
+      }
   }
   // ... or ... "can't happen"
   else {  Assert(0);  }
@@ -194,41 +194,41 @@ void Tcl::FieldsCmd::invoke() {
 DOTRACE("Tcl::FieldsCmd::invoke");
   if (itsFieldList == 0) {
 
-	 minivec<Tcl_Obj*> elements;
+    minivec<Tcl_Obj*> elements;
 
-	 for (FieldMap::Iterator itr = itsFields.begin(), end = itsFields.end();
-			itr != end;
-			++itr)
-		{
-		  fixed_block<Tcl_Obj*> sub_elements(5);
+    for (FieldMap::Iterator itr = itsFields.begin(), end = itsFields.end();
+         itr != end;
+         ++itr)
+      {
+        fixed_block<Tcl_Obj*> sub_elements(5);
 
-		  const FieldInfo& finfo = *itr;
+        const FieldInfo& finfo = *itr;
 
-		  // property name
-		  sub_elements.at(0) = Tcl_NewStringObj(finfo.name().c_str(), -1);
+        // property name
+        sub_elements.at(0) = Tcl_NewStringObj(finfo.name().c_str(), -1);
 
-		  // min value
-		  TclValue min(itsInterp, finfo.min());
-		  sub_elements.at(1) = min.getObj();
+        // min value
+        TclValue min(itsInterp, finfo.min());
+        sub_elements.at(1) = min.getObj();
 
-		  // max value
-		  TclValue max(itsInterp, finfo.max());
-		  sub_elements.at(2) = max.getObj();
+        // max value
+        TclValue max(itsInterp, finfo.max());
+        sub_elements.at(2) = max.getObj();
 
-		  // resolution value
-		  TclValue res(itsInterp, finfo.res());
-		  sub_elements.at(3) = res.getObj();
+        // resolution value
+        TclValue res(itsInterp, finfo.res());
+        sub_elements.at(3) = res.getObj();
 
-		  // start new group flag
-		  sub_elements.at(4) = Tcl_NewBooleanObj(finfo.startsNewGroup());
+        // start new group flag
+        sub_elements.at(4) = Tcl_NewBooleanObj(finfo.startsNewGroup());
 
-		  elements.push_back(Tcl_NewListObj(sub_elements.size(),
-														&(sub_elements[0])));
-		}
+        elements.push_back(Tcl_NewListObj(sub_elements.size(),
+                                          &(sub_elements[0])));
+      }
 
-	 itsFieldList = Tcl_NewListObj(elements.size(), &(elements[0]));
+    itsFieldList = Tcl_NewListObj(elements.size(), &(elements[0]));
 
-	 Tcl_IncrRefCount(itsFieldList);
+    Tcl_IncrRefCount(itsFieldList);
   }
 
   returnVal(TclValue(itsInterp, itsFieldList));
@@ -248,11 +248,11 @@ DOTRACE("Tcl::declareField");
 void Tcl::declareAllFields(Tcl::TclItemPkg* pkg, const FieldMap& fmap){
 DOTRACE("Tcl::declareAllFields");
   for (FieldMap::Iterator itr = fmap.begin(), end = fmap.end();
-		 itr != end;
-		 ++itr)
-	 {
-		declareField(pkg, *itr);
-	 }
+       itr != end;
+       ++itr)
+    {
+      declareField(pkg, *itr);
+    }
 
   pkg->addCommand( new FieldsCmd(pkg, fmap) );
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Nov  3 00:24:54 2000
-// written: Wed Jun  6 15:54:58 2001
+// written: Tue Jun 12 11:17:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,55 +18,55 @@
 #include "gx/gxseparator.h"
 
 #include "util/dlink_list.h"
-#include "util/iditem.h"
+#include "util/ref.h"
 
 #include "util/trace.h"
 
 class GxTraversal::Impl {
 public:
   Impl(const GxNode* root) :
-	 itsNodes()
-	 {
-		addNode(root);
-	 }
+    itsNodes()
+    {
+      addNode(root);
+    }
 
   void addNode(const GxNode* node)
-	 {
-	 DOTRACE("GxTraversal::Impl::addNode");
-		if (node == 0) return;
+    {
+    DOTRACE("GxTraversal::Impl::addNode");
+      if (node == 0) return;
 
-		const GxSeparator* sep = dynamic_cast<const GxSeparator*>(node);
-		if (sep == 0)
-		  {
-			 itsNodes.push_back(node);
-		  }
-		else
-		  {
-			 for(GxSeparator::ConstChildItr
-					 itr = sep->beginChildren(),
-					 end = sep->endChildren();
-				  itr != end;
-				  ++itr)
-				{
-				  addNode(itr->get());
-				}
-		  }
-	 }
+      const GxSeparator* sep = dynamic_cast<const GxSeparator*>(node);
+      if (sep == 0)
+        {
+          itsNodes.push_back(node);
+        }
+      else
+        {
+          for(GxSeparator::ConstChildItr
+                itr = sep->beginChildren(),
+                end = sep->endChildren();
+              itr != end;
+              ++itr)
+            {
+              addNode(itr->get());
+            }
+        }
+    }
 
   bool hasMore() const
-	 {
-		return !itsNodes.empty();
-	 }
+    {
+      return !itsNodes.empty();
+    }
 
   const GxNode* current() const
-	 {
-		return itsNodes.front();
-	 }
+    {
+      return itsNodes.front();
+    }
 
   void advance()
-	 {
-		if (!itsNodes.empty()) itsNodes.pop_front();
-	 }
+    {
+      if (!itsNodes.empty()) itsNodes.pop_front();
+    }
 
 private:
   dlink_list<const GxNode*> itsNodes;
