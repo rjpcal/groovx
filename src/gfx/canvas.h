@@ -147,6 +147,10 @@ public:
   AttribSaver;
 
   virtual void setColor(const Gfx::RgbaColor& rgba) const = 0;
+  virtual void setClearColor(const Gfx::RgbaColor& rgba) const = 0;
+
+  virtual void setColorIndex(unsigned int index) const = 0;
+  virtual void setClearColorIndex(unsigned int index) const = 0;
 
   virtual void translate(const Gfx::Vec3<double>& v) const = 0;
   virtual void scale(const Gfx::Vec3<double>& v) const = 0;

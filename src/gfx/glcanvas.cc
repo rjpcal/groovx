@@ -338,6 +338,24 @@ DOTRACE("GLCanvas::setColor");
   glColor4dv(rgba.data());
 }
 
+void GLCanvas::setClearColor(const Gfx::RgbaColor& rgba) const
+{
+DOTRACE("GLCanvas::setClearColor");
+  glClearColor(rgba.r(), rgba.g(), rgba.b(), rgba.a());
+}
+
+void GLCanvas::setColorIndex(unsigned int index) const
+{
+DOTRACE("GLCanvas::setColorIndex");
+  glIndexi(index);
+}
+
+void GLCanvas::setClearColorIndex(unsigned int index) const
+{
+DOTRACE("GLCanvas::setClearColorIndex");
+  glClearIndex(index);
+}
+
 
 void GLCanvas::translate(const Gfx::Vec3<double>& v) const
 {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Wed Aug 22 18:34:58 2001
+// written: Thu Aug 23 11:11:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,6 +69,10 @@ public:
   virtual void popAttribs() const;
 
   virtual void setColor(const Gfx::RgbaColor& rgba) const;
+  virtual void setClearColor(const Gfx::RgbaColor& rgba) const;
+
+  virtual void setColorIndex(unsigned int index) const;
+  virtual void setClearColorIndex(unsigned int index) const;
 
   virtual void translate(const Gfx::Vec3<double>& v) const;
   virtual void scale(const Gfx::Vec3<double>& v) const;
