@@ -1,8 +1,9 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Sun Apr 25 21:09:52 1999
+// written: Thu May 27 20:05:23 1999
 // $Id$
 //
 // PtrList is type-parameterized container for pointers. PtrList is
@@ -10,22 +11,25 @@
 // it holds pointers. There are no operations on the capacity of
 // PtrList; any necessary resizing is done when necessary in an insert
 // call.
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef PTRLIST_H_DEFINED
 #define PTRLIST_H_DEFINED
 
-#ifndef VECTOR_INCLUDED
+#ifndef VECTOR_DEFINED
 #include <vector>
-#define VECTOR_INCLUDED
+#define VECTOR_DEFINED
 #endif
 
-#ifndef IO_H_INCLUDED
+#ifndef IO_H_DEFINED
 #include "io.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
+//
 // PtrList class
+//
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
@@ -43,15 +47,21 @@ public:
 
   virtual void serialize(ostream &os, IOFlag flag) const;
   virtual void deserialize(istream &is, IOFlag flag);
-  // These functions rite/read the object's state from/to an
+  // These functions write/read the object's state from/to an
   // output/input stream. All objects that are contained by pointer in
   // the PtrList will be written and read. A PtrList that is written
   // and then re-read will have all of the same objects available at
   // the same indices as before the first serialize operation.
 
+  virtual int charCount() const;
+
   ///////////////
   // accessors //
   ///////////////
+
+  int capacity() const;
+  // Returns the size of the internal array. The number returned also
+  // refers to the one-past-the-end index into the PtrList.
 
   int count() const;
   // Returns the number of filled sites in the PtrList.
@@ -60,7 +70,7 @@ public:
   // Returns true if 'id' is a valid index into a non-NULL T* in
   // the PtrList, given its current size.
 
-  T* getPtr (int id) const { return static_cast<T *>(itsVec[id]); }
+  T* getPtr (int id) const { return itsVec[id]; }
   // Return the T* at the index given by 'id'.  There is no
   // range-check performed; this must be done by the client with
   // isValidId().
@@ -96,7 +106,7 @@ private:
   PtrList& operator=(const PtrList&); // assignment operator not to be used
 
   int itsFirstVacant;           // smallest index of a vacant array site
-  vector<void *> itsVec;			  // array of T*'s
+  vector<T *> itsVec;		  // array of T*'s
 };
 
 static const char vcid_ptrlist_h[] = "$Header$";
