@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  5 16:43:54 2002
-// written: Thu Dec  5 18:04:11 2002
+// written: Fri Dec  6 14:22:11 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ DOTRACE("ElementContainer::readFrom");
     }
 }
 
-void ElementContainer::writeTo(IO::Writer* writer)
+void ElementContainer::writeTo(IO::Writer* writer) const
 {
 DOTRACE("ElementContainer::writeTo");
   IO::WriteUtils::writeObjectSeq(writer, "trialSeq",

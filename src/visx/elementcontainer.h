@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  5 16:43:50 2002
-// written: Thu Dec  5 18:03:48 2002
+// written: Fri Dec  6 14:22:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ public:
 
   virtual void readFrom(IO::Reader* reader);
 
-  virtual void writeTo(IO::Writer* writer);
+  virtual void writeTo(IO::Writer* writer) const;
 
   //
   // Element base interface
