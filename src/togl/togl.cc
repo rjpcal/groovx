@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Thu May 25 13:43:26 2000
+// written: Thu May 25 15:53:59 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -34,7 +34,6 @@
 #define X11
 
 // Standard C headers
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -62,6 +61,7 @@
 
 #define NO_TRACE
 #include "util/trace.h"
+#define LOCAL_ASSERT
 #include "util/debug.h"
 
 
@@ -129,6 +129,8 @@ public:
 		  itsUpdatePending = GL_TRUE;
 		}
 	 }
+
+  void postReconfigure();
 
   void swapBuffers() const
 	 {
@@ -563,6 +565,9 @@ DOTRACE("Togl::createCommand");
 
 void Togl::postRedisplay()
   { itsImpl->postRedisplay(); }
+
+void Togl::postReconfigure()
+  { itsImpl->postReconfigure(); }
 
 void Togl::swapBuffers() const
   { itsImpl->swapBuffers(); }
@@ -1579,6 +1584,33 @@ DOTRACE("Togl::Impl::findTogl");
   return NULL;
 }
 
+void Togl::Impl::postReconfigure() {
+DOTRACE("Togl::Impl::postReconfigure");
+  if (itsWidth != Tk_Width(itsTkWin) || itsHeight != Tk_Height(itsTkWin))
+	 {
+		itsWidth = Tk_Width(itsTkWin);
+		itsHeight = Tk_Height(itsTkWin);
+		XResizeWindow(itsDisplay, windowId(), itsWidth, itsHeight);
+
+		if (itsOverlayFlag) {
+		  XResizeWindow( itsDisplay, itsOverlayWindow, itsWidth, itsHeight );
+		  XRaiseWindow( itsDisplay, itsOverlayWindow );
+		}
+		makeCurrent();
+	 }
+  if (itsReshapeProc) {
+	 itsReshapeProc(itsOwner);
+  }
+  else {
+	 glViewport(0, 0, itsWidth, itsHeight);
+	 if (itsOverlayFlag) {
+		useLayer( TOGL_OVERLAY );
+		glViewport( 0, 0, itsWidth, itsHeight );
+		useLayer( TOGL_NORMAL );
+	 }
+  }
+}
+
 unsigned long Togl::Impl::allocColor(float red, float green, float blue) const {
 DOTRACE("Togl::Impl::allocColor");
   XColor xcol;
@@ -1714,7 +1746,7 @@ DOTRACE("Togl::Impl::loadBitmapFont");
 	 name = fontname;
   }
 
-  assert( name );
+  Assert( name );
 
   XFontStruct *fontinfo = XLoadQueryFont( Tk_Display(this->itsTkWin), name );
   if (!fontinfo) {
@@ -1885,29 +1917,7 @@ DOTRACE("Togl::Impl::eventProc");
 	 break;
   case ConfigureNotify:
 	 DebugPrintNL("ConfigureNotify");
-	 if (itsWidth != Tk_Width(itsTkWin) || itsHeight != Tk_Height(itsTkWin))
-		{
-		  itsWidth = Tk_Width(itsTkWin);
-		  itsHeight = Tk_Height(itsTkWin);
-		  XResizeWindow(itsDisplay, windowId(), itsWidth, itsHeight);
-
-		  if (itsOverlayFlag) {
-			 XResizeWindow( itsDisplay, itsOverlayWindow, itsWidth, itsHeight );
-			 XRaiseWindow( itsDisplay, itsOverlayWindow );
-		  }
-		  makeCurrent();
-		  if (itsReshapeProc) {
-			 itsReshapeProc(itsOwner);
-		  }
-		  else {
-			 glViewport(0, 0, itsWidth, itsHeight);
-			 if (itsOverlayFlag) {
-				useLayer( TOGL_OVERLAY );
-				glViewport( 0, 0, itsWidth, itsHeight );
-				useLayer( TOGL_NORMAL );
-			 }
-		  }
-		}
+	 postReconfigure();
 	 break;
   case MapNotify:
 	 DebugPrintNL("MapNotify");
@@ -2066,8 +2076,8 @@ DOTRACE("Togl::Impl::setupVisInfoAndContext");
   if (itsShareContext && findTogl(itsShareContext)) {
 	 /* share OpenGL context with existing Togl widget */
 	 Impl* shareWith = findTogl(itsShareContext);
-	 assert(shareWith);
-	 assert(shareWith->itsGLXContext);
+	 Assert(shareWith);
+	 Assert(shareWith->itsGLXContext);
 	 itsGLXContext = shareWith->itsGLXContext;
 	 itsVisInfo = shareWith->itsVisInfo;
 	 printf("SHARE CTX\n");
