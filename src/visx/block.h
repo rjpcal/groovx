@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Tue Aug  3 13:23:06 1999
+// written: Tue Oct 12 10:31:57 1999
 // $Id$
 //
 // This file defines the class Block. Block holds a sequence of trial
@@ -32,7 +32,11 @@
 #define STRING_DEFINED
 #endif
 
-struct timeval;
+#ifndef TIME_H_DEFINED
+#include <sys/time.h>
+#define TIME_H_DEFINED
+#endif
+
 class Trial;
 
 ///////////////////////////////////////////////////////////////////////
