@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Aug  8 11:36:54 2001
+// written: Wed Aug  8 11:38:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,7 +96,6 @@ public:
       specified in OpenGL coordinates. */
   void grabWorldRect(const Rect<double>& rect);
 
-public:
   /** Flips the luminance contrast of the bitmap data, in a way that
       may depend on the format of the bitmap data. The polarity of the
       contrast relative to its original value is computed and stored,
@@ -108,11 +107,6 @@ public:
       it can be maintained throughout IO operations. */
   void flipVertical();
 
-protected:
-  /// Does the actual bit-twiddling to vertically flip the image.
-  void doFlipVertical();
-
-public:
   /** Centers the image so that its center coincides with the origin
       in the graphics environment when it is rendered. */
   void center();
