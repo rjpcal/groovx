@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Nov 13 14:07:54 2002
+// written: Wed Nov 13 14:10:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,12 @@
 
 #include "visx/grobj.h"
 
-#include "visx/grobjimpl.h"
-
 #include "gfx/canvas.h"
+#include "gfx/gxaligner.h"
+#include "gfx/gxbin.h"
+#include "gfx/gxbounds.h"
+#include "gfx/gxcache.h"
+#include "gfx/gxscaler.h"
 
 #include "grsh/grsh.h"
 
@@ -26,9 +29,89 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+#include "util/volatileobject.h"
+
 #define DYNAMIC_TRACE_EXPR GrObj::tracer.status()
 #include "util/trace.h"
 #include "util/debug.h"
+
+//  ###################################################################
+//  ===================================================================
+
+/// GxBin wrapper for the GrObj core.
+
+class GrObjNode : public GxBin
+{
+  borrowed_ptr<GrObj> itsObj;
+
+public:
+  GrObjNode(GrObj* obj) : GxBin(), itsObj(obj) {}
+
+  virtual ~GrObjNode() {}
+
+  virtual void readFrom(IO::Reader* /*reader*/) {};
+  virtual void writeTo(IO::Writer* /*writer*/) const {};
+
+  virtual void draw(Gfx::Canvas& canvas) const
+  { itsObj->grRender(canvas); }
+
+  virtual void getBoundingCube(Gfx::Box<double>& cube,
+                               Gfx::Canvas& canvas) const
+  { return cube.unionize(itsObj->grGetBoundingBox(canvas)); }
+};
+
+//  ###################################################################
+//  ===================================================================
+
+/// Implementation class for GrObj.
+
+class GrObjImpl : public Util::VolatileObject
+{
+private:
+  GrObjImpl(const GrObjImpl&);
+  GrObjImpl& operator=(const GrObjImpl&);
+
+public:
+
+  //
+  // Data members
+  //
+
+  int itsCategory;
+
+  Util::Ref<GrObjNode> itsNativeNode;
+  Util::Ref<GxBounds> itsBB;
+  Util::Ref<GxCache> itsCache;
+  Util::Ref<GxAligner> itsAligner;
+  Util::Ref<GxScaler> itsScaler;
+
+  Util::Ref<GxNode> itsTopNode;
+
+  //
+  // Methods
+  //
+
+  static GrObjImpl* make(GrObj* obj) { return new GrObjImpl(obj); }
+
+  GrObjImpl(GrObj* obj) :
+    itsCategory(-1),
+    itsNativeNode(new GrObjNode(obj), Util::PRIVATE),
+    itsBB(new GxBounds(itsNativeNode), Util::PRIVATE),
+    itsCache(new GxCache(itsBB), Util::PRIVATE),
+    itsAligner(new GxAligner(itsCache), Util::PRIVATE),
+    itsScaler(new GxScaler(itsAligner), Util::PRIVATE),
+    itsTopNode(itsScaler)
+  {
+    // We connect to sigNodeChanged in order to update any caches
+    // according to state changes.
+    obj->sigNodeChanged.connect(this, &GrObjImpl::invalidateCaches);
+  }
+
+  void invalidateCaches()
+  {
+    itsCache->invalidate();
+  }
+};
 
 namespace
 {
