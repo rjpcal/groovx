@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:11:19 2000
-// written: Tue Nov 28 18:32:25 2000
+// written: Wed Nov 29 13:15:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,9 +31,9 @@ void GxVecLocal::raiseScanError() {
 }
 
 template <class T>
-GxVec3<T>::GxVec3(FieldContainer* owner) :
+GxVec3<T>::GxVec3(FieldContainer* owner, double x_, double y_, double z_) :
   Field(owner),
-  itsData()
+  itsData(x_, y_, z_)
 {}
 
 template <class T>
