@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Tue Aug 21 16:31:14 2001
+// written: Tue Aug 21 17:39:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,6 +46,11 @@ public:
 
   template<class C, class MF>
   static Util::SoftRef<Util::Slot> make(C* obj, MF mf);
+
+  /** Answers whether the components of this Slot still exist. This
+      allows SlotAdapter, for example, to indicate if its target
+      object has disappeared. */
+  virtual bool exists() const = 0;
 
   /// Informs the Slot that one of its subjects has changed.
   virtual void call() = 0;
@@ -122,6 +127,8 @@ class Util::SlotAdapter : public Util::Slot
 public:
   static Util::SlotAdapter<C, MF>* make(C* obj, MF mf)
   { return new Util::SlotAdapter<C, MF>(obj, mf); }
+
+  virtual bool exists() const { return itsObject.isValid(); }
 
   virtual void call()
   {
