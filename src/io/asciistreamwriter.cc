@@ -3,7 +3,7 @@
 // asciistreamwriter.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:57 1999
-// written: Thu Mar  9 17:01:09 2000
+// written: Sat Mar 11 21:32:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -185,17 +185,19 @@ DOTRACE("AsciiStreamWriter::Impl::writeRoot");
 
 	 markObjectAsWritten(obj);
 
-	 itsBuf << '}' << endl;
+	 itsBuf << '}' << '\n';
   }
+
+  itsBuf.flush();
 }
 
 void AsciiStreamWriter::Impl::flushAttributes() {
 DOTRACE("AsciiStreamWriter::Impl::flushAttributes");
 
-  itsBuf << itsAttribs.size() << endl;
+  itsBuf << itsAttribs.size() << '\n';
 
   for (size_t i = 0; i < itsAttribs.size(); ++i) {
-	 itsBuf << itsAttribs[i] << STRING_ENDER << endl;
+	 itsBuf << itsAttribs[i] << STRING_ENDER << '\n';
   }
 
   itsAttribs.clear();
