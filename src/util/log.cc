@@ -46,8 +46,6 @@
 
 namespace
 {
-  StopWatch theTimer;
-
   struct ScopeInfo
   {
     ScopeInfo(const fstring& name) : itsName(name), itsTimer() {}
@@ -62,7 +60,7 @@ namespace
 
       std::cerr.setf(std::ios::showpoint | std::ios::fixed);
 
-      std::cerr << std::setprecision(2)
+      std::cerr << std::setprecision(3)
                 << itsTimer.elapsedMsec(*now) << " / ";
     }
   };
