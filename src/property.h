@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Wed Sep 27 11:42:54 2000
+// written: Thu Sep 28 10:44:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,12 +39,6 @@ public:
 
   ///
   virtual ~Property();
-
-  virtual void legacySrlz(IO::Writer* writer) const = 0;
-  virtual void legacyDesrlz(IO::Reader* reader) = 0;
-
-  virtual void readFrom(IO::Reader* reader) = 0;
-  virtual void writeTo(IO::Writer* writer) const = 0;
 
 public:
 
@@ -82,12 +76,6 @@ public:
 
   ///
   template <class C> friend class PropFriend;
-
-  virtual void legacySrlz(IO::Writer* writer) const;
-  virtual void legacyDesrlz(IO::Reader* reader);
-
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
 
 public:
 
@@ -228,12 +216,6 @@ public:
   ///
   void reseat(T& valRef) { itsVal.reseat(valRef); }
 
-  virtual void legacySrlz(IO::Writer* writer) const ;
-  virtual void legacyDesrlz(IO::Reader* reader);
-
-  virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
-  
   virtual void set(const Value& new_val) { new_val.get(itsVal()); }
   virtual const Value& get() const { return itsVal; }
 

@@ -3,7 +3,7 @@
 // property.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:57:34 1999
-// written: Wed Sep 27 11:23:52 2000
+// written: Thu Sep 28 10:46:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,43 +28,6 @@ TProperty<T>::TProperty(const T& init) : itsVal(init) {}
 template <class T>
 TProperty<T>::~TProperty() {}
 
-template <class T>
-void TProperty<T>::legacySrlz(IO::Writer* writer) const 
-{
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 ostream& os = lwriter->output();
-	 os << itsVal.itsVal << ' ';
-  }
-}
-
-template <class T>
-void TProperty<T>::legacyDesrlz(IO::Reader* reader)
-{
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 istream& is = lreader->input();
-	 is >> itsVal.itsVal;
-  }
-}
-
-template <>
-void TProperty<bool>::legacyDesrlz(IO::Reader* reader) {
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 istream& is = lreader->input();
-	 int temp; is >> temp; itsVal.itsVal = bool(temp);
-  }
-}
-
-template <class T>
-void TProperty<T>::readFrom(IO::Reader* reader)
-  { reader->readValue("value", itsVal.itsVal); }
-
-template <class T>
-void TProperty<T>::writeTo(IO::Writer* writer) const
-  { writer->writeValue("value", itsVal.itsVal); }
-
 template class TProperty<int>;
 template class TProperty<bool>;
 template class TProperty<double>;
@@ -75,45 +38,6 @@ TPtrProperty<T>::TPtrProperty(T& valRef) : itsVal(valRef) {}
 
 template <class T>
 TPtrProperty<T>::~TPtrProperty() {}
-
-template <class T>
-void TPtrProperty<T>::legacySrlz(IO::Writer* writer) const 
-{
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 ostream& os = lwriter->output();
-	 os << itsVal() << ' ';
-  }
-}
-
-template <class T>
-void TPtrProperty<T>::legacyDesrlz(IO::Reader* reader)
-{
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 istream& is = lreader->input();
-	 is >> itsVal();
-  }
-}
-
-template <>
-void TPtrProperty<bool>::legacyDesrlz(IO::Reader* reader)
-{
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 istream& is = lreader->input();
-	 int temp; is >> temp; itsVal() = bool(temp);
-  }
-}
-
-template <class T>
-void TPtrProperty<T>::readFrom(IO::Reader* reader)
-	 { reader->readValue("value", itsVal()); }
-
-template <class T>
-void TPtrProperty<T>::writeTo(IO::Writer* writer) const
-	 { writer->writeValue("value", itsVal()); }
-  
 
 template class TPtrProperty<int>;
 template class TPtrProperty<bool>;
