@@ -44,14 +44,48 @@
 
 #if defined(HAVE_ALIB_H)
 #  include "visx/hpsound.h"
+
+Sound* Sound::newPlatformSoundRep(const char* soundfile)
+{
+DOTRACE("Sound::newPlatformSoundRep(hpsound)");
+  return new HpAudioSoundRep(soundfile);
+}
+
 #elif defined(HAVE_DMEDIA_AUDIO_H)
 #  include "visx/irixsound.h"
+
+Sound* Sound::newPlatformSoundRep(const char* soundfile)
+{
+DOTRACE("Sound::newPlatformSound(irixsound)");
+  return new IrixAudioSoundRep(soundfile);
+}
+
 #elif defined(HAVE_QUICKTIME_MOVIES_H)
 #  include "visx/quicktimesound.h"
+
+SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
+{
+DOTRACE("Sound::newPlatformSoundRep(quicktimesound)");
+  return new QuickTimeSoundRep(soundfile);
+}
+
 #elif defined(HAVE_ESD_H)
 #  include "visx/esdsound.h"
+SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
+{
+DOTRACE("SoundRep::newPlatformSoundRep(esdsound)");
+  return new EsdSoundRep(soundfile);
+}
+
 #else
 #  include "visx/dummysound.h"
+
+SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
+{
+DOTRACE("Sound::newPlatformSoundRep(dummysound)");
+  return new DummySoundRep(soundfile);
+}
+
 #endif
 
 #ifdef HAVE_FSTREAM

@@ -50,6 +50,9 @@ public:
 
   virtual void play();
 
+  bool initSound();
+  void closeSound();
+
   short itsFileRefNum;
   Movie itsMovie;
 };
@@ -57,6 +60,8 @@ public:
 QuickTimeSoundRep::QuickTimeSoundRep(const char* filename)
 {
 DOTRACE("QuickTimeSoundRep::QuickTimeSoundRep");
+
+  initSound();
 
   // (1) Get an FSRef from the filename
   FSRef ref;
@@ -117,20 +122,14 @@ DOTRACE("QuickTimeSoundRep::play");
     }
 }
 
-///////////////////////////////////////////////////////////////////////
-//
-// Sound static member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
 namespace
 {
   bool quicktimeInited = false;
 }
 
-bool Sound::initSound()
+bool QuickTimeSoundRep::initSound()
 {
-DOTRACE("Sound::initSound");
+DOTRACE("QuickTimeSoundRep::initSound");
   if (!quicktimeInited)
     {
       const OSErr err = EnterMovies();
@@ -142,25 +141,13 @@ DOTRACE("Sound::initSound");
   return quicktimeInited;
 }
 
-bool Sound::haveSound()
+void QuickTimeSoundRep::closeSound()
 {
-DOTRACE("Sound::haveSound");
-  return quicktimeInited;
-}
-
-void Sound::closeSound()
-{
-DOTRACE("Sound::closeSound");
+DOTRACE("QuickTimeSoundRep::closeSound");
   if (quicktimeInited)
     {
       ExitMovies();
     }
-}
-
-SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
-{
-DOTRACE("Sound::newPlatformSoundRep");
-  return new QuickTimeSoundRep(soundfile);
 }
 
 static const char vcid_quicktimesound_h[] = "$Header$";

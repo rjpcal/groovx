@@ -196,34 +196,5 @@ DOTRACE("IrixAudioSoundRep::play");
     }
 }
 
-///////////////////////////////////////////////////////////////////////
-//
-// Sound static member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-bool Sound::initSound()
-{
-DOTRACE("Sound::initSound");
-  return true;
-}
-
-bool Sound::haveSound()
-{
-DOTRACE("Sound::haveSound");
-  return true;
-}
-
-void Sound::closeSound()
-{
-DOTRACE("Sound::closeSound");
-}
-
-Sound* Sound::newPlatformSoundRep(const char* soundfile)
-{
-DOTRACE("Sound::newPlatformSound");
-  return new IrixAudioSoundRep(soundfile);
-}
-
 static const char vcid_irixsound_h[] = "$Header$";
 #endif // !IRIXSOUND_H_DEFINED

@@ -56,54 +56,30 @@ DOTRACE("Sound_Init");
   Tcl::Interp intp(interp);
   PKG_CREATE(interp, "Sound", "$Revision$");
 
-  pkg->onExit(&Sound::closeSound);
-
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<Sound>(pkg, SRC_POS);
 
   Nub::ObjFactory::theOne().register_creator(&Sound::make);
 
-  pkg->def( "haveAudio", 0, &Sound::haveSound, SRC_POS );
-
   pkg->defAction("play", &Sound::play, SRC_POS);
   pkg->defAction("forceLoad", &Sound::forceLoad, SRC_POS);
   pkg->defAttrib("file", &Sound::getFile, &Sound::setFile, SRC_POS);
 
-  bool haveSound = Sound::initSound();
+  const rutz::fstring ok_file(GROOVX_AUDIO_DIR "/saw50_500Hz_300ms.au");
+  const rutz::fstring err_file(GROOVX_AUDIO_DIR "/saw50_350Hz_2x120ms.au");
 
-  if (!haveSound)
-    {
-      intp.appendResult("SoundPkg: couldn't initialize sound system");
-      pkg->setInitStatusError();
-    }
-  else
-    {
-      const rutz::fstring ok_file(GROOVX_AUDIO_DIR "/saw50_500Hz_300ms.au");
-      const rutz::fstring err_file(GROOVX_AUDIO_DIR "/saw50_350Hz_2x120ms.au");
+  static int OK = -1;
+  static int ERR = -1;
 
-      static int OK = -1;
-      static int ERR = -1;
+  Nub::Ref<Sound> ok_sound(Sound::makeFrom(ok_file.c_str()));
+  Sound::setOkSound(ok_sound);
+  OK = ok_sound.id();
+  pkg->linkVarConst("Sound::ok", OK);
 
-      try
-        {
-          Nub::Ref<Sound> ok_sound(Sound::makeFrom(ok_file.c_str()));
-          Sound::setOkSound(ok_sound);
-          OK = ok_sound.id();
-          pkg->linkVarConst("Sound::ok", OK);
-
-          Nub::Ref<Sound> err_sound(Sound::makeFrom(err_file.c_str()));
-          Sound::setErrSound(err_sound);
-          ERR = err_sound.id();
-          pkg->linkVarConst("Sound::err", ERR);
-        }
-      catch (std::exception& err)
-        {
-          dbg_print_nl(3, "error creating sounds during startup");
-          intp.appendResult("SoundPkg: ");
-          intp.appendResult(err.what());
-          pkg->setInitStatusError();
-        }
-    }
+  Nub::Ref<Sound> err_sound(Sound::makeFrom(err_file.c_str()));
+  Sound::setErrSound(err_sound);
+  ERR = err_sound.id();
+  pkg->linkVarConst("Sound::err", ERR);
 
   PKG_RETURN;
 }

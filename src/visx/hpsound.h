@@ -78,6 +78,46 @@ public:
 private:
   SBucket* itsSBucket;
   SBPlayParams itsPlayParams;
+
+  bool initSound()
+  {
+    DOTRACE("HpAudioSoundRep::initSound");
+
+    if (theAudio != 0) return true;
+
+    ASetErrorHandler(audioErrorHandler);
+
+    bool retVal = false;
+
+    // Open an audio connection to the default audio server, then
+    // check to make sure connection succeeded. If the connection
+    // fails, 'audio' is set to NULL.
+    const char* ServerName = "";
+    long status = 0;
+    theAudio = AOpenAudio( const_cast<char *>(ServerName), &status );
+    if ( status != 0 )
+      {
+        theAudio = NULL;
+        retVal = false;
+      }
+    else
+      {
+        ASetCloseDownMode( theAudio, AKeepTransactions, NULL );
+        retVal = true;
+      }
+
+    return retVal;
+  }
+
+  void Sound::closeSound()
+  {
+    DOTRACE("HpAudioSoundRep::closeSound");
+    if ( theAudio )
+      {
+        ACloseAudio( theAudio, NULL );
+        theAudio = 0;
+      }
+  }
 };
 
 HpAudioSoundRep::HpAudioSoundRep(const char* filename) :
@@ -85,6 +125,7 @@ HpAudioSoundRep::HpAudioSoundRep(const char* filename) :
   itsPlayParams()
 {
 DOTRACE("HpAudioSoundRep::HpAudioSoundRep");
+  initSound();
   if ( !theAudio )
     throw rutz::error("invalid HP audio server connection", SRC_POS);
 
@@ -122,69 +163,12 @@ DOTRACE("HpAudioSoundRep::~HpAudioSoundRep");
 void HpAudioSoundRep::play()
 {
 DOTRACE("HpAudioSoundRep::play");
+  initSound();
   if ( !theAudio )
     throw rutz::error("invalid audio server connection", SRC_POS);
 
   if (itsSBucket)
     ATransID xid = APlaySBucket( theAudio, itsSBucket, &itsPlayParams, NULL );
-}
-
-
-///////////////////////////////////////////////////////////////////////
-//
-// Sound static member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-bool Sound::initSound()
-{
-DOTRACE("Sound::initSound");
-  if (theAudio != 0) return true;
-
-  ASetErrorHandler(audioErrorHandler);
-
-  bool retVal = false;
-
-  // Open an audio connection to the default audio server, then
-  // check to make sure connection succeeded. If the connection
-  // fails, 'audio' is set to NULL.
-  const char* ServerName = "";
-  long status = 0;
-  theAudio = AOpenAudio( const_cast<char *>(ServerName), &status );
-  if ( status != 0 )
-    {
-      theAudio = NULL;
-      retVal = false;
-    }
-  else
-    {
-      ASetCloseDownMode( theAudio, AKeepTransactions, NULL );
-      retVal = true;
-    }
-
-  return retVal;
-}
-
-bool Sound::haveSound()
-{
-DOTRACE("Sound::haveSound");
-  return (theAudio != 0);
-}
-
-void Sound::closeSound()
-{
-DOTRACE("Sound::closeSound");
-  if ( theAudio )
-    {
-      ACloseAudio( theAudio, NULL );
-      theAudio = 0;
-    }
-}
-
-Sound* Sound::newPlatformSoundRep(const char* soundfile)
-{
-DOTRACE("Sound::newPlatformSoundRep");
-  return new HpAudioSoundRep(soundfile);
 }
 
 static const char vcid_hpsound_h[] = "$Header$";

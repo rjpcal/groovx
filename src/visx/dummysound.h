@@ -64,35 +64,5 @@ void DummySoundRep::play()
 DOTRACE("DummySoundRep::play");
 }
 
-
-///////////////////////////////////////////////////////////////////////
-//
-// Sound static member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-bool Sound::initSound()
-{
-DOTRACE("Sound::initSound");
-  return true;
-}
-
-bool Sound::haveSound()
-{
-DOTRACE("Sound::haveSound");
-  return true;
-}
-
-void Sound::closeSound()
-{
-DOTRACE("Sound::closeSound");
-}
-
-SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
-{
-DOTRACE("Sound::newPlatformSoundRep");
-  return new DummySoundRep(soundfile);
-}
-
 static const char vcid_dummysound_h[] = "$Header$";
 #endif // !DUMMYSOUND_H_DEFINED

@@ -109,35 +109,5 @@ DOTRACE("EsdSoundRep::play");
     }
 }
 
-
-///////////////////////////////////////////////////////////////////////
-//
-// Sound static member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-bool Sound::initSound()
-{
-DOTRACE("Sound::initSound");
-  return true;
-}
-
-bool Sound::haveSound()
-{
-DOTRACE("Sound::haveSound");
-  return true;
-}
-
-void Sound::closeSound()
-{
-DOTRACE("Sound::closeSound");
-}
-
-SoundRep* Sound::newPlatformSoundRep(const char* soundfile)
-{
-DOTRACE("SoundRep::newPlatformSoundRep");
-  return new EsdSoundRep(soundfile);
-}
-
 static const char vcid_esdsound_h[] = "$Header$";
 #endif // !ESDSOUND_H_DEFINED

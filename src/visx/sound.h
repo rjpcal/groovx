@@ -62,19 +62,6 @@ protected:
 class Sound : public IO::IoObject
 {
 public:
-  /// Attempts to do any platform-dependent initialization
-  /** Returns true on success, or false on failure. */
-  static bool initSound();
-
-  /// Check whether the sound system has been successfully initialized.
-  /** Returns true if the necessary initSound() has been previously
-      called with success, and returns false if initSound() has not
-      been called, or if initSound() failed. */
-  static bool haveSound();
-
-  /// Shuts down sound capability in a platform-appropriate way.
-  static void closeSound();
-
   /// Returns a pointer to a new platform-appropriate Sound object.
   /** The caller is responsible for destroying the Sound object. */
   static Sound* make();
