@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Fri Jun 14 16:34:57 2002
+// written: Mon Jun 24 15:50:14 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -184,14 +184,17 @@ DOTRACE("TclApp::TclApp(Tcl_Interp*)");
 
 namespace
 {
+  // Just an ugly hack to communicate argc+argv from main() into
+  // Grsh_AppInit()
   int LOCAL_ARGC = 0;
   char** LOCAL_ARGV = 0;
 }
 
 // procedure to initialize a TclApp
-int Tcl_AppInit(Tcl_Interp* interp)
+extern "C"
+int Grsh_AppInit(Tcl_Interp* interp)
 {
-DOTRACE("Tcl_AppInit");
+DOTRACE("Grsh_AppInit");
   try
     {
       Tcl::Interp safeIntp(interp);
@@ -222,7 +225,7 @@ int main(int argc, char** argv)
 {
   LOCAL_ARGC = argc;
   LOCAL_ARGV = argv;
-  Tk_Main(argc, argv, Tcl_AppInit);
+  Tk_Main(argc, argv, Grsh_AppInit);
   return 0;
 }
 
