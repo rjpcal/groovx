@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Jul 30 19:30:13 2002
+// written: Wed Jul 31 17:52:12 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -170,46 +170,85 @@ public:
 
 class GlxWrapper
 {
-public:
-  GlxWrapper(Display* dpy, XVisualInfo* visinfo, bool direct,
-             GlxWrapper* share = 0) :
-    context(0),
-    itsDisplay(dpy),
-    itsVisInfo(visinfo)
+private:
+  Display* itsDisplay;
+  XVisualInfo* itsVisInfo;
+  GLXContext itsContext;
+
+  void createContext(bool direct, GlxWrapper* share = 0)
   {
-    context = glXCreateContext(dpy,
-                               visinfo,
-                               share ? share->context : None,
-                               direct ? GL_TRUE : GL_FALSE);
+    itsContext = glXCreateContext(itsDisplay,
+                                  itsVisInfo,
+                                  share ? share->itsContext : None,
+                                  direct ? GL_TRUE : GL_FALSE);
 
-    DebugEvalNL(context);
+    DebugEvalNL(itsContext);
 
-    if (context == 0)
+    if (itsContext == 0)
       {
         throw Util::Error("could not create GL rendering context");
       }
   }
 
+public:
+  GlxWrapper(Display* dpy, XVisualInfo* visinfo, bool direct,
+             GlxWrapper* share = 0) :
+    itsContext(0),
+    itsDisplay(dpy),
+    itsVisInfo(visinfo)
+  {
+    createContext(direct, share);
+  }
+
+  GlxWrapper(Display* dpy, GlxAttribs& attribs, bool direct,
+             GlxWrapper* share = 0) :
+    itsDisplay(dpy),
+    itsVisInfo(0),
+    itsContext(0)
+  {
+    itsVisInfo = glXChooseVisual(itsDisplay,
+                                 DefaultScreen(itsDisplay),
+                                 attribs.get());
+
+    // If we had requested single-buffering, then now try for
+    // double-buffering, since that can emulate single-buffering
+    if (itsVisInfo == 0)
+      {
+        attribs.doubleBuffer();
+        itsVisInfo = glXChooseVisual(itsDisplay,
+                                     DefaultScreen(itsDisplay),
+                                     attribs.get());
+      }
+
+    // If we still didn't get a matching visual, then bail out
+    if (itsVisInfo == 0)
+      {
+        throw Util::Error("couldn't find a matching visual");
+      }
+
+    DebugEvalNL((void*)itsVisInfo->visualid);
+    DebugEvalNL(itsVisInfo->depth);
+    DebugEvalNL(itsVisInfo->bits_per_rgb);
+
+    createContext(direct, share);
+  }
+
   ~GlxWrapper()
   {
-    glXDestroyContext(itsDisplay, context);
+    glXDestroyContext(itsDisplay, itsContext);
   }
 
   bool isDirect() const
   {
-    return glXIsDirect(itsDisplay, context) == True ? true : false;
+    return glXIsDirect(itsDisplay, itsContext) == True ? true : false;
   }
 
   void makeCurrent(Window win) const
   {
-    glXMakeCurrent(itsDisplay, win, context);
+    glXMakeCurrent(itsDisplay, win, itsContext);
   }
 
-  GLXContext context;
-
-private:
-  Display* itsDisplay;
-  XVisualInfo* itsVisInfo;
+  XVisualInfo* visInfo() const { return itsVisInfo; }
 };
 
 class Togl::Impl
@@ -2027,37 +2066,14 @@ DOTRACE("Togl::Impl::setupVisInfoAndContext");
 
   shared_ptr<GlxAttribs> attribs = buildAttribList();
 
-  itsVisInfo = glXChooseVisual( itsDisplay,
-                                DefaultScreen(itsDisplay),
-                                attribs->get() );
-
-  if (itsVisInfo == 0)
-    {
-      // If we had requested single-buffering, then now try for
-      // double-buffering, since that can emulate single-buffering
-      if (itsDoubleFlag == false)
-        {
-          itsDoubleFlag = true;
-          setupVisInfoAndContext();
-          return;
-        }
-      else
-        {
-          throw Util::Error("Togl couldn't find a matching visual");
-        }
-    }
-
-  // else... found a GLX visual!
-  itsBitsPerPixel = itsVisInfo->depth;
-
-  DebugEvalNL((void*)itsVisInfo->visualid);
-  DebugEvalNL(itsVisInfo->depth);
-  DebugEvalNL(itsVisInfo->bits_per_rgb);
-
   // Create a new OpenGL rendering context.
   Assert( itsGlx == 0 );
 
-  itsGlx = new GlxWrapper(itsDisplay, itsVisInfo, !itsIndirect);
+  itsGlx = new GlxWrapper(itsDisplay, *attribs, !itsIndirect);
+
+  itsVisInfo = itsGlx->visInfo();
+
+  itsBitsPerPixel = itsVisInfo->depth;
 
   // Make sure we don't try to use a depth buffer with indirect rendering
   if ( !itsGlx->isDirect() && itsDepthFlag == true )
