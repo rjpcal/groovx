@@ -116,9 +116,10 @@ ifeq ($(PLATFORM),ppc)
 	CPP_DEFINES += -DPPC
 	DEFAULT_MODE := debug
 	ETAGS := etags
-	AUDIO_LIB :=
-	LIB_PATH += -L/usr/X11R6/lib
-	INCLUDE_PATH += -I/usr/X11R6/include
+	AUDIO_LIB := -lesd -laudiofile
+# The /sw/lib and /sw/include directories are managed by Fink
+	LIB_PATH += -L/usr/X11R6/lib -L/sw/lib
+	INCLUDE_PATH += -I/usr/X11R6/include -I/sw/include
 endif
 
 ifndef MODE
