@@ -16,6 +16,8 @@
 #
 ##########################################################################
 
+VERSION = 0.8a1
+
 #-------------------------------------------------------------------------
 #
 # C++ Compiler, Architecture flags
@@ -274,17 +276,17 @@ DEBUG_TCLWORKS_OBJS := $(TCLWORKS_OBJS)
 #
 #-------------------------------------------------------------------------
 
-PROD_TARGET := $(HOME)/bin/$(ARCH)/grsh0.7a2
+PROD_TARGET := $(HOME)/bin/$(ARCH)/grsh$(VERSION)
 
-PROD_LIBVISX := $(GRSH)/libvisx.$(SHLIB_EXT)
-PROD_LIBTCLWORKS := $(GRSH)/libtclworks.$(SHLIB_EXT)
+PROD_LIBVISX := $(GRSH)/libvisx$(VERSION).$(SHLIB_EXT)
+PROD_LIBTCLWORKS := $(GRSH)/libtclworks$(VERSION).$(SHLIB_EXT)
 
 # Note: exception handling does not work with shared libraries in the
 # current version of g++ (2.95.1), so on irix6 we must make the
 # libvisx library as an archive library.
 ifeq ($(ARCH),irix6)
-	PROD_LIBVISX := $(GRSH)/libvisx.$(STATLIB_EXT)
-	PROD_LIBTCLWORKS := $(GRSH)/libtclworks.$(STATLIB_EXT)
+	PROD_LIBVISX := $(GRSH)/libvisx$(VERSION).$(STATLIB_EXT)
+	PROD_LIBTCLWORKS := $(GRSH)/libtclworks$(VERSION).$(STATLIB_EXT)
 endif
 
 PROD_GRSH_STATIC_OBJS := $(DEBUG_GRSH_STATIC_OBJS:.do=.o)
@@ -332,7 +334,8 @@ ALL_DEBUG_DEPENDS := \
 	$(DEBUG_LIBTCLWORKS)
 
 $(DEBUG_TARGET): $(ALL_DEBUG_DEPENDS)
-	$(CC) $(DEBUG_LINK_OPTIONS) -o $@ $(DEBUG_GRSH_STATIC_OBJS) /opt/langtools/lib/end.o \
+	$(CC) $(DEBUG_LINK_OPTIONS) -o $@ $(DEBUG_GRSH_STATIC_OBJS) \
+	 /opt/langtools/lib/end.o \
 	$(LIB_DIRS) -lvisx.d -ltclworks.d $(LIBRARIES) 
 
 grsh: TAGS $(PROD_TARGET)
@@ -345,7 +348,7 @@ ALL_PROD_DEPENDS := \
 
 $(PROD_TARGET): $(ALL_PROD_DEPENDS)
 	$(CC) $(PROD_LINK_OPTIONS) -o $@ $(PROD_GRSH_STATIC_OBJS) \
-	$(LIB_DIRS) -lvisx -ltclworks $(LIBRARIES)
+	$(LIB_DIRS) -lvisx$(VERSION) -ltclworks$(VERSION) $(LIBRARIES)
 
 #-------------------------------------------------------------------------
 #
