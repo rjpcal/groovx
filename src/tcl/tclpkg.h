@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Sat May 26 17:52:15 2001
+// written: Sat Jun  2 09:08:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ public:
   typedef IdItem<T> (C::* Getter_f) () const;
 
   /// Construct with a member function pointer.
-  CGetter(Getter_f getter) : itsGetter_f(getter) {}
+  CGetter<C, IdItem<T> >(Getter_f getter) : itsGetter_f(getter) {}
 
   /// Casts \a item to type \c C* and calls the stored member function.
   virtual int get(void *item) const {
@@ -76,8 +76,8 @@ public:
   }
 
 private:
-  CGetter(const CGetter&);
-  CGetter& operator=(const CGetter&);
+  CGetter<C, IdItem<T> >(const CGetter<C, IdItem<T> >&);
+  CGetter<C, IdItem<T> >& operator=(const CGetter<C, IdItem<T> >&);
 
   Getter_f itsGetter_f;
 };
@@ -119,7 +119,7 @@ public:
   typedef void (C::* Setter_f) (IdItem<T>);
 
   /// Construct with a member function pointer.
-  CSetter(Setter_f setter) : itsSetter_f(setter) {}
+  CSetter<C, IdItem<T> >(Setter_f setter) : itsSetter_f(setter) {}
 
   /// Casts \a item to type \c C* and calls the stored member function.
   virtual void set(void* item, int val) {
@@ -128,8 +128,8 @@ public:
   }
 
 private:
-  CSetter(const CSetter&);
-  CSetter& operator=(const CSetter&);
+  CSetter<C, IdItem<T> >(const CSetter<C, IdItem<T> >&);
+  CSetter<C, IdItem<T> >& operator=(const CSetter<C, IdItem<T> >&);
 
   Setter_f itsSetter_f;
 };
