@@ -1,8 +1,9 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // tcldlist.h
 // Rob Peters
 // created: Dec-98
-// written: Tue Mar 16 19:27:03 1999
+// written: Thu May 27 20:17:30 1999
 // $Id$
 //
 // This package provides additional list manipulation functions using
@@ -17,13 +18,14 @@
 //      dlist_select    choose a subset of a list's elements
 //      dlist_not       form the element-wise logical not of a list
 //      dlist_pickone   return a randomly chosen list element
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TCLDLIST_H_DEFINED
 #define TCLDLIST_H_DEFINED
 
 struct Tcl_Interp;
-typedef int (Tcl_PackageInitProc) (Tcl_Interp *interp);
+typedef int (Tcl_PackageInitProc) (Tcl_Interp* interp);
 
 namespace Tcldlist {
   Tcl_PackageInitProc Tcldlist_Init;
