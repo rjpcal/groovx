@@ -214,18 +214,18 @@ public:
     Tcl::def( this, &ExptTcl::setStartCommand,
               "Expt::setStartCommand", "expt_id start_command" );
 
-    declareCSetter("addBlock", &ExptDriver::addBlock);
-    declareCAttrib("autosaveFile",
-                   &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
-    declareCAttrib("autosavePeriod",
-                   &ExptDriver::getAutosavePeriod,
-                   &ExptDriver::setAutosavePeriod);
-    declareCAction("clear", &ExptDriver::edClearExpt);
-    declareCGetter("currentBlock", &ExptDriver::currentBlock);
-    declareCAction("reset", &ExptDriver::edResetExpt);
-    declareCAction("stop", &ExptDriver::edHaltExpt);
-    declareCAction("storeData", &ExptDriver::storeData);
-    declareCAttrib("widget", &ExptDriver::widget, &ExptDriver::setWidget);
+    defSetter("addBlock", &ExptDriver::addBlock);
+    defAttrib("autosaveFile",
+				  &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
+    defAttrib("autosavePeriod",
+				  &ExptDriver::getAutosavePeriod,
+				  &ExptDriver::setAutosavePeriod);
+    defAction("clear", &ExptDriver::edClearExpt);
+    defGetter("currentBlock", &ExptDriver::currentBlock);
+    defAction("reset", &ExptDriver::edResetExpt);
+    defAction("stop", &ExptDriver::edHaltExpt);
+    defAction("storeData", &ExptDriver::storeData);
+    defAttrib("widget", &ExptDriver::widget, &ExptDriver::setWidget);
 
     TclPkg::eval("foreach cmd [info commands ::Exp::*] {"
                  "  proc ::Expt::[namespace tail $cmd] {args} \" eval $cmd \\[Exp::currentExp\\] \\$args \" }\n"

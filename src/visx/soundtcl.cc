@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Apr 13 14:09:59 1999
-// written: Fri Jul 13 18:05:59 2001
+// written: Mon Jul 16 09:43:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,8 +96,8 @@ public:
 
     Tcl::def( this, &Sound::haveSound, "Sound::haveAudio", 0 );
 
-    declareCAction("play", &Sound::play);
-    declareCAttrib("file", &Sound::getFile, &Sound::setFile);
+    defAction("play", &Sound::play);
+    defAttrib("file", &Sound::getFile, &Sound::setFile);
   }
 
   ~SoundPkg()

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Mon Jul 16 09:03:51 2001
+// written: Mon Jul 16 09:32:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,14 +20,9 @@
 #include "tcl/tclitempkg.h"
 
 #include "tcl/stringifycmd.h"
-#include "tcl/tclcmd.h"
-#include "tcl/tclveccmds.h"
-
-#include "util/strings.h"
 
 #define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_DEBUG
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
@@ -44,12 +39,6 @@ Tcl::TclItemPkg::TclItemPkg(Tcl_Interp* interp,
 
 Tcl::TclItemPkg::~TclItemPkg() {}
 
-void* Tcl::TclItemPkg::getItemFromContext(Tcl::Context& ctx)
-{
-  int id = ctx.getIntFromArg(1);
-  return getItemFromId(id);
-}
-
 const char* Tcl::TclItemPkg::actionUsage(const char* usage)
 {
   return usage ? usage : "item_id(s)";
@@ -63,68 +52,6 @@ const char* Tcl::TclItemPkg::getterUsage(const char* usage)
 const char* Tcl::TclItemPkg::setterUsage(const char* usage)
 {
   return usage ? usage : "item_id(s) new_value(s)";
-}
-
-// NOTE: aCC won't compile these TclItemPkg functions if they are
-// defined inside a namespace Tcl {} block. So, as a workaround, we
-// must define them at global scope, using explicit Tcl:: qualifiers
-
-template <class T>
-void Tcl::TclItemPkg::declareGetter(const char* cmd_name,
-                                    shared_ptr<Getter<T> > getter,
-                                    const char* usage)
-{
-  addCommand(new Tcl::TVecGetterCmd<T>(interp(), this,
-                                       makePkgCmdName(cmd_name),
-                                       getter,
-                                       usage));
-}
-
-template <class T>
-void Tcl::TclItemPkg::declareSetter(const char* cmd_name,
-                                    shared_ptr<Setter<T> > setter,
-                                    const char* usage)
-{
-  addCommand(new Tcl::TVecSetterCmd<T>(interp(), this,
-                                       makePkgCmdName(cmd_name),
-                                       setter,
-                                       usage));
-}
-
-template <class T>
-void Tcl::TclItemPkg::declareAttrib(const char* attrib_name,
-                                    shared_ptr<Getter<T> > getter,
-                                    shared_ptr<Setter<T> > setter,
-                                    const char* usage)
-{
-  declareGetter<T>(attrib_name, getter, usage);
-  declareSetter<T>(attrib_name, setter, usage);
-}
-
-void Tcl::TclItemPkg::instantiate()
-{
-#define DUMMY_INST(type) \
-  declareGetter(0,shared_ptr<Getter<type> >(0),0); \
-  declareSetter(0,shared_ptr<Setter<type> >(0),0); \
-  declareAttrib(0,shared_ptr<Getter<type> >(0),shared_ptr<Setter<type> >(0),0);
-
-  DUMMY_INST(int);
-  DUMMY_INST(unsigned int);
-  DUMMY_INST(unsigned long);
-  DUMMY_INST(bool);
-  DUMMY_INST(double);
-  DUMMY_INST(const char*);
-  DUMMY_INST(fixed_string);
-  DUMMY_INST(const fixed_string&);
-#undef DUMMY_INST
-}
-
-void Tcl::TclItemPkg::declareAction(const char* action_name,
-                                    shared_ptr<Action> action,
-                                    const char* usage)
-{
-  addCommand( new VecActionCmd(interp(), this, makePkgCmdName(action_name),
-                               action, usage) );
 }
 
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 12:30:38 1999
-// written: Wed Jun 13 15:16:02 2001
+// written: Mon Jul 16 09:43:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,9 +39,9 @@ public:
   GtextPkg(Tcl_Interp* interp) :
     Tcl::GenericObjPkg<Gtext>(interp, "Gtext", "$Revision$")
   {
-    declareCAttrib("text", &Gtext::getText, &Gtext::setText);
-    declareCAttrib("strokeWidth",
-                   &Gtext::getStrokeWidth, &Gtext::setStrokeWidth);
+    defAttrib("text", &Gtext::getText, &Gtext::setText);
+    defAttrib("strokeWidth",
+              &Gtext::getStrokeWidth, &Gtext::setStrokeWidth);
   }
 };
 

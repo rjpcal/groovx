@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Fri Jul 13 18:39:17 2001
+// written: Mon Jul 16 09:43:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,11 +65,11 @@ public:
   GxSeparatorPkg(Tcl_Interp* interp) :
     Tcl::GenericObjPkg<GxSeparator>(interp, "GxSeparator", "$Revision$")
     {
-		Tcl::def( this, &GxSeparator::addChild,
-					 "GxSeparator::addChild", "item_id child_item_id" );
-      declareCGetter("numChildren", &GxSeparator::numChildren);
-      declareCSetter("removeChildId", &GxSeparator::removeChildId);
-      declareCSetter("removeChildUid", &GxSeparator::removeChildUid);
+      Tcl::def( this, &GxSeparator::addChild,
+                "GxSeparator::addChild", "item_id child_item_id" );
+      defGetter("numChildren", &GxSeparator::numChildren);
+      defSetter("removeChildId", &GxSeparator::removeChildId);
+      defSetter("removeChildUid", &GxSeparator::removeChildUid);
       Util::ObjFactory::theOne().registerCreatorFunc(&GxSeparator::make);
     }
 };

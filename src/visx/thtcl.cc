@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Sat Jul 14 11:27:23 2001
+// written: Mon Jul 16 09:43:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -97,18 +97,18 @@ public:
   SimpleThPkg(Tcl_Interp* interp) :
     Tcl::GenericObjPkg<TimingHandler>(interp, "SimpleTh", "$Revision$")
   {
-    declareCAttrib("abortWait",
-                   &TimingHandler::getAbortWait,
-                   &TimingHandler::setAbortWait);
-    declareCAttrib("interTrialInterval",
-                   &TimingHandler::getInterTrialInterval,
-                   &TimingHandler::setInterTrialInterval);
-    declareCAttrib("stimDur",
-                   &TimingHandler::getStimDur,
-                   &TimingHandler::setStimDur);
-    declareCAttrib("timeout",
-                   &TimingHandler::getTimeout,
-                   &TimingHandler::setTimeout);
+    defAttrib("abortWait",
+              &TimingHandler::getAbortWait,
+              &TimingHandler::setAbortWait);
+    defAttrib("interTrialInterval",
+              &TimingHandler::getInterTrialInterval,
+              &TimingHandler::setInterTrialInterval);
+    defAttrib("stimDur",
+              &TimingHandler::getStimDur,
+              &TimingHandler::setStimDur);
+    defAttrib("timeout",
+              &TimingHandler::getTimeout,
+              &TimingHandler::setTimeout);
   }
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Mon Jul 16 07:50:41 2001
+// written: Mon Jul 16 09:43:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -164,25 +164,25 @@ public:
   {
     Tcl::addTracing(this, EventResponseHdlr::tracer);
 
-    declareCAction("abortInvalidResponses",
-                   &EventResponseHdlr::abortInvalidResponses);
-    declareCAction("ignoreInvalidResponses",
-                   &EventResponseHdlr::ignoreInvalidResponses);
-    declareCAttrib("useFeedback",
-                   &EventResponseHdlr::getUseFeedback,
-                   &EventResponseHdlr::setUseFeedback);
-    declareCAttrib("inputResponseMap",
-                   &EventResponseHdlr::getInputResponseMap,
-                   &EventResponseHdlr::setInputResponseMap);
-    declareCAttrib("feedbackMap",
-                   &EventResponseHdlr::getFeedbackMap,
-                   &EventResponseHdlr::setFeedbackMap);
-    declareCAttrib("eventSequence",
-                   &EventResponseHdlr::getEventSequence,
-                   &EventResponseHdlr::setEventSequence);
-    declareCAttrib("bindingSubstitution",
-                   &EventResponseHdlr::getBindingSubstitution,
-                   &EventResponseHdlr::setBindingSubstitution);
+    defAction("abortInvalidResponses",
+              &EventResponseHdlr::abortInvalidResponses);
+    defAction("ignoreInvalidResponses",
+              &EventResponseHdlr::ignoreInvalidResponses);
+    defAttrib("useFeedback",
+              &EventResponseHdlr::getUseFeedback,
+              &EventResponseHdlr::setUseFeedback);
+    defAttrib("inputResponseMap",
+              &EventResponseHdlr::getInputResponseMap,
+              &EventResponseHdlr::setInputResponseMap);
+    defAttrib("feedbackMap",
+              &EventResponseHdlr::getFeedbackMap,
+              &EventResponseHdlr::setFeedbackMap);
+    defAttrib("eventSequence",
+              &EventResponseHdlr::getEventSequence,
+              &EventResponseHdlr::setEventSequence);
+    defAttrib("bindingSubstitution",
+              &EventResponseHdlr::getBindingSubstitution,
+              &EventResponseHdlr::setBindingSubstitution);
 
   }
 };

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 09:51:54 1999
-// written: Fri Jul 13 18:35:22 2001
+// written: Mon Jul 16 09:43:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,25 +49,25 @@ public:
 
     Tcl::def( this, &Trial::add, "Trial::add", "trialid objid posid" );
 
-    declareCSetter("addNode", &Trial::addNode);
-    declareCGetter("avgResponse", &Trial::avgResponse);
-    declareCGetter("avgRespTime", &Trial::avgRespTime);
-    declareCAction("clearObjs", &Trial::clearObjs);
-    declareCAction("clearResponses", &Trial::clearResponses);
-    declareCAttrib("correctResponse",
-                   &Trial::getCorrectResponse, &Trial::setCorrectResponse);
-    declareCAttrib("currentNode",
-                   &Trial::getCurrentNode, &Trial::setCurrentNode);
-    declareCGetter("description", &Trial::description);
-    declareCGetter("lastResponse", &Trial::lastResponse);
-    declareCAction("nextNode", &Trial::trNextNode);
-    declareCGetter("numResponses", &Trial::numResponses);
-    declareCAttrib("responseHdlr",
-                   &Trial::getResponseHandler, &Trial::setResponseHandler);
-    declareCAttrib("timingHdlr",
-                  &Trial::getTimingHdlr, &Trial::setTimingHdlr);
-    declareCAttrib("type", &Trial::trialType, &Trial::setType);
-    declareCAction("undoLastResponse", &Trial::undoLastResponse);
+    defSetter("addNode", &Trial::addNode);
+    defGetter("avgResponse", &Trial::avgResponse);
+    defGetter("avgRespTime", &Trial::avgRespTime);
+    defAction("clearObjs", &Trial::clearObjs);
+    defAction("clearResponses", &Trial::clearResponses);
+    defAttrib("correctResponse",
+              &Trial::getCorrectResponse, &Trial::setCorrectResponse);
+    defAttrib("currentNode",
+              &Trial::getCurrentNode, &Trial::setCurrentNode);
+    defGetter("description", &Trial::description);
+    defGetter("lastResponse", &Trial::lastResponse);
+    defAction("nextNode", &Trial::trNextNode);
+    defGetter("numResponses", &Trial::numResponses);
+    defAttrib("responseHdlr",
+              &Trial::getResponseHandler, &Trial::setResponseHandler);
+    defAttrib("timingHdlr",
+              &Trial::getTimingHdlr, &Trial::setTimingHdlr);
+    defAttrib("type", &Trial::trialType, &Trial::setType);
+    defAction("undoLastResponse", &Trial::undoLastResponse);
   }
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:43:45 1999
-// written: Fri Jul 13 15:06:43 2001
+// written: Mon Jul 16 09:43:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,15 +74,15 @@ public:
       this,
       (void(Bitmap::*)(double,double,double,double)) &Bitmap::grabWorldRect,
       "Bitmap::grabWorldRect", "item_id(s) left top right bottom");
-    declareCAction("flipContrast", &Bitmap::flipContrast);
-    declareCAction("flipVertical", &Bitmap::flipVertical);
-    declareCAction("center", &Bitmap::center);
-    declareCGetter("width", &Bitmap::width);
-    declareCGetter("height", &Bitmap::height);
-    declareCAttrib("rasterX", &Bitmap::getRasterX, &Bitmap::setRasterX);
-    declareCAttrib("rasterY", &Bitmap::getRasterY, &Bitmap::setRasterY);
-    declareCAttrib("zoomX", &Bitmap::getZoomX, &Bitmap::setZoomX);
-    declareCAttrib("zoomY", &Bitmap::getZoomY, &Bitmap::setZoomY);
+    defAction("flipContrast", &Bitmap::flipContrast);
+    defAction("flipVertical", &Bitmap::flipVertical);
+    defAction("center", &Bitmap::center);
+    defGetter("width", &Bitmap::width);
+    defGetter("height", &Bitmap::height);
+    defAttrib("rasterX", &Bitmap::getRasterX, &Bitmap::setRasterX);
+    defAttrib("rasterY", &Bitmap::getRasterY, &Bitmap::setRasterY);
+    defAttrib("zoomX", &Bitmap::getZoomX, &Bitmap::setZoomX);
+    defAttrib("zoomY", &Bitmap::getZoomY, &Bitmap::setZoomY);
   }
 };
 
@@ -101,8 +101,8 @@ public:
   GLBitmapPkg(Tcl_Interp* interp) :
     Tcl::GenericObjPkg<GLBitmap>(interp, "GLBitmap", "$Revision$")
   {
-    declareCAttrib("usingGlBitmap",
-                   &GLBitmap::getUsingGlBitmap, &GLBitmap::setUsingGlBitmap);
+    defAttrib("usingGlBitmap",
+              &GLBitmap::getUsingGlBitmap, &GLBitmap::setUsingGlBitmap);
   }
 };
 

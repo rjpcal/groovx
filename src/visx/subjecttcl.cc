@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Mon Jun 25 06:40:28 2001
+// written: Mon Jul 16 09:43:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,9 +33,9 @@ public:
   SubjectPkg(Tcl_Interp* interp) :
     Tcl::GenericObjPkg<Subject>(interp, "Subject", "$Revision$")
   {
-    declareCAttrib("name", &Subject::getName, &Subject::setName);
-    declareCAttrib("directory", &Subject::getDirectory,
-                   &Subject::setDirectory);
+    defAttrib("name", &Subject::getName, &Subject::setName);
+    defAttrib("directory", &Subject::getDirectory,
+              &Subject::setDirectory);
   }
 };
 

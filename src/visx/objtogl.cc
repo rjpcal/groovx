@@ -194,29 +194,29 @@ public:
               "Toglet::setMinRect", "left top right bottom" );
     Tcl::def( this, &ObjTogl::show, "Toglet::show", "toglet_id trial_id" );
 
-    declareCAction("clearscreen", &Toglet::clearscreen);
-    declareCAction("destroy", &Toglet::destroyWidget);
-    declareCSetter("dumpEps", &Toglet::writeEpsFile, "item_id(s) filename");
-    declareCAttrib("height", &Toglet::getHeight, &Toglet::setHeight);
-    declareCSetter("hold", &Toglet::setHold, "item_id(s) hold_on?");
-    declareCAction("loadDefaultFont", &Toglet::loadDefaultFont);
-    declareCSetter("loadFont", &Toglet::loadFont);
-    declareCSetter("loadFonti", &Toglet::loadFonti);
-    declareCGetter("pathname", &Toglet::pathname);
-    declareCAction("refresh", &Toglet::refresh);
-    declareCSetter("scaleRect", &Toglet::scaleRect, "item_id(s) scale");
-    declareCSetter("setFixedScale", &Toglet::setFixedScale, "item_id(s) scale");
-    declareCSetter("setUnitAngle", &Toglet::setUnitAngle,
-                   "item_id(s) angle_in_degrees");
-    declareCSetter("setViewingDistance", &Toglet::setViewingDistIn,
-                   "item_id(s) distance_in_inches");
-    declareCSetter("setVisible", &Toglet::setVisibility,
-                   "item_id(s) visibility");
-    declareCAction("swapBuffers", &Toglet::swapBuffers);
-    declareCAction("takeFocus", &Toglet::takeFocus);
-    declareCAction("undraw", &Toglet::undraw);
-    declareCGetter("usingFixedScale", &Toglet::usingFixedScale);
-    declareCAttrib("width", &Toglet::getWidth, &Toglet::setWidth);
+    defAction("clearscreen", &Toglet::clearscreen);
+    defAction("destroy", &Toglet::destroyWidget);
+    defSetter("dumpEps", &Toglet::writeEpsFile, "item_id(s) filename");
+    defAttrib("height", &Toglet::getHeight, &Toglet::setHeight);
+    defSetter("hold", &Toglet::setHold, "item_id(s) hold_on?");
+    defAction("loadDefaultFont", &Toglet::loadDefaultFont);
+    defSetter("loadFont", &Toglet::loadFont);
+    defSetter("loadFonti", &Toglet::loadFonti);
+    defGetter("pathname", &Toglet::pathname);
+    defAction("refresh", &Toglet::refresh);
+    defSetter("scaleRect", &Toglet::scaleRect, "item_id(s) scale");
+    defSetter("setFixedScale", &Toglet::setFixedScale, "item_id(s) scale");
+    defSetter("setUnitAngle", &Toglet::setUnitAngle,
+				  "item_id(s) angle_in_degrees");
+    defSetter("setViewingDistance", &Toglet::setViewingDistIn,
+				  "item_id(s) distance_in_inches");
+    defSetter("setVisible", &Toglet::setVisibility,
+				  "item_id(s) visibility");
+    defAction("swapBuffers", &Toglet::swapBuffers);
+    defAction("takeFocus", &Toglet::takeFocus);
+    defAction("undraw", &Toglet::undraw);
+    defGetter("usingFixedScale", &Toglet::usingFixedScale);
+    defAttrib("width", &Toglet::getWidth, &Toglet::setWidth);
 
     setCurrentTogl(WeakRef<Toglet>(Toglet::make(interp)));
 

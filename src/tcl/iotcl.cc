@@ -168,7 +168,7 @@ public:
   {
     TclItemPkg::addIoCommands();
 
-    declareCGetter("type", &IO::IoObject::ioTypename);
+    defGetter("type", &IO::IoObject::ioTypename);
   }
 };
 
@@ -178,9 +178,9 @@ public:
   ObjectPkg(Tcl_Interp* interp) :
     GenericObjPkg<Util::Object>(interp, "Obj", "$Revision$")
   {
-    declareCGetter("refCount", &Util::Object::refCount);
-    declareCAction("incrRefCount", &Util::Object::incrRefCount);
-    declareCAction("decrRefCount", &Util::Object::decrRefCount);
+    defGetter("refCount", &Util::Object::refCount);
+    defAction("incrRefCount", &Util::Object::incrRefCount);
+    defAction("decrRefCount", &Util::Object::decrRefCount);
 
     Tcl::def( this, &Tcl::objNew, "Obj::new", "typename array_size=1" );
     Tcl::def( this, &Tcl::objNewOne, "Obj::new", "typename" );

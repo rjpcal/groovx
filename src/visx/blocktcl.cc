@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Fri Jul 13 15:14:27 2001
+// written: Mon Jul 16 09:43:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,18 +67,18 @@ public:
     Tcl::defVec(this, &BlockTcl::addTrialIds2,
                 "Block::addTrialIds", "item_id(s) trial_id(s) repeat=1");
 
-    declareCGetter("currentTrial", &Block::currentTrial);
-    declareCGetter("currentTrialType", &Block::currentTrialType);
-    declareCGetter("isComplete", &Block::isComplete);
-    declareCGetter("numCompleted", &Block::numCompleted);
-    declareCGetter("numTrials", &Block::numTrials);
-    declareCGetter("prevResponse", &Block::prevResponse);
-    declareCAction("removeAllTrials", &Block::removeAllTrials);
-    declareCAction("reset", &Block::resetBlock);
-    declareCSetter("shuffle", &Block::shuffle, "item_id rand_seed");
-    declareCGetter("trialDescription", &Block::trialDescription);
-    declareCAction("undoPrevTrial", &Block::undoPrevTrial);
-    declareCAttrib("verbose", &Block::getVerbose, &Block::setVerbose);
+    defGetter("currentTrial", &Block::currentTrial);
+    defGetter("currentTrialType", &Block::currentTrialType);
+    defGetter("isComplete", &Block::isComplete);
+    defGetter("numCompleted", &Block::numCompleted);
+    defGetter("numTrials", &Block::numTrials);
+    defGetter("prevResponse", &Block::prevResponse);
+    defAction("removeAllTrials", &Block::removeAllTrials);
+    defAction("reset", &Block::resetBlock);
+    defSetter("shuffle", &Block::shuffle, "item_id rand_seed");
+    defGetter("trialDescription", &Block::trialDescription);
+    defAction("undoPrevTrial", &Block::undoPrevTrial);
+    defAttrib("verbose", &Block::getVerbose, &Block::setVerbose);
   }
 };
 

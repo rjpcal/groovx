@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Thu Jul 12 16:29:49 2001
+// written: Mon Jul 16 09:43:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,22 +28,22 @@ namespace Tcl
   template <class T>
   struct Convert<Rect<T> >
   {
-	 typedef T Type;
-	 static Rect<T> fromTcl( Tcl_Obj* obj )
-	 {
-		Tcl::List listObj(obj);
-		return Rect<T>(listObj.get(0, (T*)0), listObj.get(1, (T*)0),
-							listObj.get(2, (T*)0), listObj.get(3, (T*)0));
-	 }
+    typedef T Type;
+    static Rect<T> fromTcl( Tcl_Obj* obj )
+    {
+      Tcl::List listObj(obj);
+      return Rect<T>(listObj.get(0, (T*)0), listObj.get(1, (T*)0),
+                     listObj.get(2, (T*)0), listObj.get(3, (T*)0));
+    }
 
-	 static Tcl_Obj* toTcl( Rect<T> rect )
-	 {
-		Tcl::List listObj;
-		listObj.append(rect.left());
-		listObj.append(rect.top());
-		listObj.append(rect.right());
-		listObj.append(rect.bottom());
-	 }
+    static Tcl_Obj* toTcl( Rect<T> rect )
+    {
+      Tcl::List listObj;
+      listObj.append(rect.left());
+      listObj.append(rect.top());
+      listObj.append(rect.right());
+      listObj.append(rect.bottom());
+    }
   };
 }
 
@@ -59,13 +59,13 @@ namespace GrobjTcl
   {
     GWT::Canvas& canvas = Application::theApp().getCanvas();
 
-	 Rect<double> bbox;
-	 bool have_box = obj->getBoundingBox(canvas, bbox);
+    Rect<double> bbox;
+    bool have_box = obj->getBoundingBox(canvas, bbox);
 
-	 if (!have_box)
-		throw Tcl::TclError("object did not define a bounding box");
+    if (!have_box)
+      throw Tcl::TclError("object did not define a bounding box");
 
-	 return bbox;
+    return bbox;
   }
 
   void saveBitmapCache(Util::Ref<GrObj> obj, const char* filename)
@@ -96,36 +96,36 @@ public:
   {
     Tcl::addTracing(this, GrObj::tracer);
 
-	 Tcl::defVec( this, &GrobjTcl::boundingBox,
-					  "GrObj::boundingBox", "item_id(s)" );
-	 Tcl::defVec( this, &GrobjTcl::saveBitmapCache,
-					  "GrObj::saveBitmapCache", "item_id(s) filename(s)" );
-    declareCAction("restoreBitmapCache", &GrObj::restoreBitmapCache);
-	 Tcl::defVec( this, &GrobjTcl::update,
-					  "GrObj::update", "item_id(s)" );
+    Tcl::defVec( this, &GrobjTcl::boundingBox,
+                 "GrObj::boundingBox", "item_id(s)" );
+    Tcl::defVec( this, &GrobjTcl::saveBitmapCache,
+                 "GrObj::saveBitmapCache", "item_id(s) filename(s)" );
+    defAction("restoreBitmapCache", &GrObj::restoreBitmapCache);
+    Tcl::defVec( this, &GrobjTcl::update,
+                 "GrObj::update", "item_id(s)" );
 
-	 Tcl::def( this, &GrObj::setBitmapCacheDir,
-				  "GrObj::setBitmapCacheDir", "filename" );
+    Tcl::def( this, &GrObj::setBitmapCacheDir,
+              "GrObj::setBitmapCacheDir", "filename" );
 
-    declareCAttrib("alignmentMode",
-                   &GrObj::getAlignmentMode, &GrObj::setAlignmentMode);
-    declareCAttrib("aspectRatio",
-                   &GrObj::getAspectRatio, &GrObj::setAspectRatio);
-    declareCAttrib("bbVisibility",
-                   &GrObj::getBBVisibility, &GrObj::setBBVisibility);
-    declareCAttrib("category", &GrObj::category, &GrObj::setCategory);
-    declareCAttrib("centerX", &GrObj::getCenterX, &GrObj::setCenterX);
-    declareCAttrib("centerY", &GrObj::getCenterY, &GrObj::setCenterY);
-    declareCAttrib("height", &GrObj::getHeight, &GrObj::setHeight);
-    declareCAttrib("maxDimension",
-                   &GrObj::getMaxDimension, &GrObj::setMaxDimension);
-    declareCAttrib("renderMode",
-                   &GrObj::getRenderMode, &GrObj::setRenderMode);
-    declareCAttrib("scalingMode",
-                   &GrObj::getScalingMode, &GrObj::setScalingMode);
-    declareCAttrib("unRenderMode",
-                   &GrObj::getUnRenderMode, &GrObj::setUnRenderMode);
-    declareCAttrib("width", &GrObj::getWidth, &GrObj::setWidth);
+    defAttrib("alignmentMode",
+              &GrObj::getAlignmentMode, &GrObj::setAlignmentMode);
+    defAttrib("aspectRatio",
+              &GrObj::getAspectRatio, &GrObj::setAspectRatio);
+    defAttrib("bbVisibility",
+              &GrObj::getBBVisibility, &GrObj::setBBVisibility);
+    defAttrib("category", &GrObj::category, &GrObj::setCategory);
+    defAttrib("centerX", &GrObj::getCenterX, &GrObj::setCenterX);
+    defAttrib("centerY", &GrObj::getCenterY, &GrObj::setCenterY);
+    defAttrib("height", &GrObj::getHeight, &GrObj::setHeight);
+    defAttrib("maxDimension",
+              &GrObj::getMaxDimension, &GrObj::setMaxDimension);
+    defAttrib("renderMode",
+              &GrObj::getRenderMode, &GrObj::setRenderMode);
+    defAttrib("scalingMode",
+              &GrObj::getScalingMode, &GrObj::setScalingMode);
+    defAttrib("unRenderMode",
+              &GrObj::getUnRenderMode, &GrObj::setUnRenderMode);
+    defAttrib("width", &GrObj::getWidth, &GrObj::setWidth);
 
     linkVarCopy("GrObj::DIRECT_RENDER", GrObj::DIRECT_RENDER);
     linkVarCopy("GrObj::GLCOMPILE", GrObj::GLCOMPILE);
