@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Dec  1 15:42:31 1999
+// written: Thu Dec  2 15:31:42 1999
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -25,8 +25,7 @@
 #include "exptdriver.h"
 #include "tclitempkg.h"
 #include "tclcmd.h"
-#include "objtogl.h"
-#include "toglconfig.h"
+#include "widget.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -85,25 +84,24 @@ private:
 void ExptTcl::BeginCmd::invoke() {
 DOTRACE("BeginCmd::beginCmd");
 
-  ToglConfig* config = ObjTogl::theToglConfig();
+  ExptDriver* ed = getItem();
+  Widget* widget = ed->getWidget();
 
   // Create the quit key binding
-  config->bind("<Control-KeyPress-q>", "{ Expt::storeData; exit }");
+  widget->bind("<Control-KeyPress-q>", "{ Expt::storeData; exit }");
 
   // Create the save key binding
-  config->bind("<Control-KeyPress-s>", "{ Expt::storeData }");
+  widget->bind("<Control-KeyPress-s>", "{ Expt::storeData }");
 
   // Create the pause key binding
-  config->bind("<KeyPress-p>", "{ Expt::pause }");
+  widget->bind("<KeyPress-p>", "{ Expt::pause }");
 
   // Destroy the experiment start key binding
-  config->bind("<KeyPress-s>", "{}");
+  widget->bind("<KeyPress-s>", "{}");
 
   // Force the focus to the Togl widget
-  config->takeFocus();
+  widget->takeFocus();
 
-
-  ExptDriver* ed = getItem();
   ed->edBeginExpt();
 }
 
@@ -185,10 +183,11 @@ protected:
 	 start_command += getCstringFromArg(1);
 	 start_command += " }";
 
-	 ToglConfig* config = ObjTogl::theToglConfig();
+	 ExptDriver* ed = getItem();
+	 Widget* widget = ed->getWidget();
 
-	 config->bind("<KeyPress-s>", start_command.c_str());
-	 config->takeFocus();
+	 widget->bind("<KeyPress-s>", start_command.c_str());
+	 widget->takeFocus();
   }
 };
 
