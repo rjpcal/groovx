@@ -36,12 +36,12 @@ ConstSlice::ConstSlice() :
 Slice& Slice::operator=(const ConstSlice& other)
 {
   if (itsNelems != other.nelems())
-	 throw ErrorWithMsg("dimension mismatch in Slice::operator=");
+    throw ErrorWithMsg("dimension mismatch in Slice::operator=");
 
   ConstIterator rhs = other.begin();
 
   for (Iterator lhs = begin(); lhs.hasMore(); ++lhs, ++rhs)
-	 *lhs = *rhs;
+    *lhs = *rhs;
 
   return *this;
 }
@@ -55,9 +55,9 @@ Slice& Slice::operator=(const ConstSlice& other)
 void Mtx::initialize(double* data, int mrows, int ncols, StoragePolicy s)
 {
   if (s == COPY)
-	 storage_ = DataBlock::makeDataCopy(data, mrows*ncols);
+    storage_ = DataBlock::makeDataCopy(data, mrows*ncols);
   else
-	 storage_ = DataBlock::makeBorrowed(data, mrows*ncols);
+    storage_ = DataBlock::makeBorrowed(data, mrows*ncols);
 
   mrows_ = mrows;
   rowstride_ = mrows;
@@ -91,7 +91,7 @@ Mtx::Mtx(int mrows, int ncols) :
 Mtx::Mtx(const ConstSlice& s)
 {
   if (s.itsStride != 1)
-	 throw ErrorWithMsg("can't initialize Mtx from Slice with stride != 1");
+    throw ErrorWithMsg("can't initialize Mtx from Slice with stride != 1");
 
   initialize(s.data(), s.nelems(), 1, BORROW);
 }
@@ -110,7 +110,7 @@ mxArray* Mtx::makeMxArray() const
   double* matdata = mxGetPr(result_mx);
 
   for (int i = 0; i < n; ++i)
-	 matdata[i] = start_[i];
+    matdata[i] = start_[i];
 
   return result_mx;
 }
@@ -119,21 +119,21 @@ void Mtx::print() const
 {
   mexPrintf("mrows = %d, ncols = %d\n", mrows_, ncols_);
   for(int i = 0; i < mrows_; ++i)
-	 {
-		for(int j = 0; j < ncols_; ++j)
-		  mexPrintf("%7.4f   ", at(i,j));
-		mexPrintf("\n");
-	 }
+    {
+      for(int j = 0; j < ncols_; ++j)
+        mexPrintf("%7.4f   ", at(i,j));
+      mexPrintf("\n");
+    }
   mexPrintf("\n");
 }
 
 void Mtx::reshape(int mrows, int ncols)
 {
   if (mrows*ncols != mrows_*ncols_)
-	 throw ErrorWithMsg("dimension mismatch in Mtx::reshape");
+    throw ErrorWithMsg("dimension mismatch in Mtx::reshape");
 
   if (rowstride_ != mrows_)
-	 throw ErrorWithMsg("reshape not allowed for submatrix");
+    throw ErrorWithMsg("reshape not allowed for submatrix");
 
   mrows_ = mrows;
   rowstride_ = mrows;
@@ -142,6 +142,9 @@ void Mtx::reshape(int mrows, int ncols)
 
 Mtx Mtx::rows(int r, int nr) const
 {
+  if ((r+nr) > mrows_)
+    throw ErrorWithMsg("attempted to index more rows than are available");
+
   Mtx result(*this);
   result.start_ += r;
   result.mrows_ = nr;
@@ -160,32 +163,32 @@ void Mtx::leftMultAndAssign(const ConstSlice& vec, Slice& result) const
   // [ w1*e11+w2*e21+w3*e31  w1*e12+w2*e22+w3*e32  ... ]
 
   if ( (vec.nelems() != mrows()) ||
-		 (result.nelems() != ncols()) )
-	 throw ErrorWithMsg("dimension mismatch in Mtx::leftMultAndAssign");
+       (result.nelems() != ncols()) )
+    throw ErrorWithMsg("dimension mismatch in Mtx::leftMultAndAssign");
 
   ConstSlice::ConstIterator veciter = vec.begin();
 
   for (int col = 0; col < ncols(); ++col)
-	 result[col] = Slice::dot(veciter, this->colIter(col));
+    result[col] = Slice::dot(veciter, this->colIter(col));
 }
 
 void Mtx::multAndAssign(const Mtx& m1, const Mtx& m2)
 {
   for (int n = 0; n < mrows(); ++n)
-	 {
-		Slice result(row(n));
-		m2.leftMultAndAssign(m1.row(n), result);
-	 }
+    {
+      Slice result(row(n));
+      m2.leftMultAndAssign(m1.row(n), result);
+    }
 }
 
 void Mtx::makeUnique()
 {
   if ( !storage_->isUnique() )
-	 {
-		ptrdiff_t offset = start_ - storage_->itsData;
-		DataBlock::makeUnique(storage_);
-		start_ = storage_->itsData + offset;
-	 }
+    {
+      ptrdiff_t offset = start_ - storage_->itsData;
+      DataBlock::makeUnique(storage_);
+      start_ = storage_->itsData + offset;
+    }
 }
 
 static const char vcid_mtx_cc[] = "$Header$";
