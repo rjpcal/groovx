@@ -70,7 +70,9 @@ test "ExptTcl-Expt::load" "fMRI sample" {
 	 set ocounts {113 166 76}
 	 srand [clock clicks]
 	 set i [expr int([rand 0 3])]
-    Expt::load $::TEST_DIR/[lindex $files $i]
+	 set filename [lindex $files $i]
+	 puts "filename $filename"
+    Expt::load $::TEST_DIR/$filename
 	 set dif [expr [ObjList::count] - [lindex $ocounts $i]]
 	 return $dif
 } {^0$}
