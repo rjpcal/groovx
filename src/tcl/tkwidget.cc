@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Fri May 16 11:03:31 2003
+// written: Fri May 16 11:16:05 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -104,9 +104,13 @@ public:
     // This is an escape hatch for top-level frameless windows gone
     // awry... need to always provide a reliable way to iconify the window
     // since the title bar and "minimize" button might not exist.
-    if (controlPressed && shiftPressed && eventPtr->button == 3)
+    if (controlPressed && shiftPressed)
       {
-        widg->destroyWidget();
+        switch (eventPtr->button)
+          {
+          case 1: widg->minimize(); return;
+          case 3: widg->destroyWidget(); return;
+          }
       }
 
     GWT::ButtonPressEvent ev = {eventPtr->button, eventPtr->x, eventPtr->y};
@@ -410,6 +414,33 @@ DOTRACE("Tcl::TkWidget::grabKeyboard");
     }
 
   takeFocus();
+}
+
+void Tcl::TkWidget::ungrabKeyboard()
+{
+DOTRACE("Tcl::TkWidget::ungrabKeyboard");
+
+  XUngrabKeyboard(Tk_Display(rep->tkWin), CurrentTime);
+}
+
+void Tcl::TkWidget::maximize()
+{
+DOTRACE("Tcl::TkWidget::maximize");
+
+  const int w = XWidthOfScreen(Tk_Screen(rep->tkWin));
+  const int h = XWidthOfScreen(Tk_Screen(rep->tkWin));
+  setSize(Gfx::Vec2<int>(w, h));
+
+  grabKeyboard();
+}
+
+void Tcl::TkWidget::minimize()
+{
+DOTRACE("Tcl::TkWidget::minimize");
+
+  ungrabKeyboard();
+
+  setSize(Gfx::Vec2<int>(200, 200));
 }
 
 void Tcl::TkWidget::bind(const char* event_sequence, const char* script)

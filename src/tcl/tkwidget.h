@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Fri May 16 10:38:04 2003
+// written: Fri May 16 11:15:32 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -88,7 +88,17 @@ public:
 
   void iconify();
 
+  /// Grab the keyboard and take the keyboard focus.
   void grabKeyboard();
+
+  /// Ungrab the keyboard.
+  void ungrabKeyboard();
+
+  /// Make the window fullscreen and grab the keyboard
+  void maximize();
+
+  /// Make the window small (200x200 or less) and ungrab the keyboard.
+  void minimize();
 
   virtual void displayCallback() = 0;
 
