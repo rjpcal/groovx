@@ -69,6 +69,11 @@ DOTRACE("MasterPtrBase::refCount");
   return itsRefCount;
 }
 
+bool MasterPtrBase::isValid() const {
+DOTRACE("MasterPtrBase::isValid");
+  return !isNull();
+}
+
 ///////////////////////////////////////////////////////////////////////
 //
 // NullMasterPtr member definitions
@@ -85,9 +90,9 @@ NullMasterPtr::~NullMasterPtr() {
 DOTRACE("NullMasterPtr::~NullMasterPtr");
 }
 
-bool NullMasterPtr::isValid() const {
-DOTRACE("NullMasterPtr::isValid");
-  return false;
+bool NullMasterPtr::isNull() const {
+DOTRACE("NullMasterPtr::isNull");
+  return true;
 }
 
 bool NullMasterPtr::operator==(const MasterPtrBase& other) { 

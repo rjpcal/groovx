@@ -3,7 +3,7 @@
 // masterptrt.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct  9 08:32:17 2000
-// written: Mon Oct  9 08:32:47 2000
+// written: Mon Oct  9 13:37:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,9 +32,9 @@ IO::IoObject* MasterPtr<T>::ioPtr() const
 }
 
 template <class T>
-bool MasterPtr<T>::isValid() const
+bool MasterPtr<T>::isNull() const
 {
-  return (itsPtr != 0);
+  return (itsPtr == 0);
 }
 
 template <class T>
