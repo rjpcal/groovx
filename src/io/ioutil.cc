@@ -3,7 +3,7 @@
 // stringifycmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 21:43:28 1999
-// written: Tue Dec  7 18:19:56 1999
+// written: Tue Dec  7 23:13:37 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,10 +28,8 @@
 #define LOCAL_ASSERT
 #include "debug.h"
 
-namespace Tcl {
-
-void StringifyCmd::invoke() {
-DOTRACE("StringifyCmd::invoke");
+void Tcl::StringifyCmd::invoke() {
+DOTRACE("Tcl::StringifyCmd::invoke");
   IO& io = getIO();
 
   int buf_size = io.charCount();
@@ -63,8 +61,8 @@ DOTRACE("StringifyCmd::invoke");
   returnCstring(&(buf[0]));
 }
 
-void DestringifyCmd::invoke() {
-DOTRACE("DestringifyCmd::invoke");
+void Tcl::DestringifyCmd::invoke() {
+DOTRACE("Tcl::DestringifyCmd::invoke");
 
   // We assume that the string is contained in the last argument in the command
   const char* buf = getCstringFromArg(objc() - 1);
@@ -81,8 +79,8 @@ DOTRACE("DestringifyCmd::invoke");
   returnVoid();
 }
 
-void WriteCmd::invoke() {
-DOTRACE("WriteCmd::invoke");
+void Tcl::WriteCmd::invoke() {
+DOTRACE("Tcl::WriteCmd::invoke");
   IO& io = getIO();   
 
   int buf_size = 4096;
@@ -100,8 +98,8 @@ DOTRACE("WriteCmd::invoke");
   returnCstring(&(buf[0]));
 }
 
-void ReadCmd::invoke() {
-DOTRACE("ReadCmd::invoke");
+void Tcl::ReadCmd::invoke() {
+DOTRACE("Tcl::ReadCmd::invoke");
   IO& io = getIO();
 
   const char* str = arg(objc() - 1).getCstring();
@@ -111,8 +109,6 @@ DOTRACE("ReadCmd::invoke");
   AsciiStreamReader reader(ist);
   reader.readRoot(&io);
 }
-
-} // end namespace Tcl
 
 static const char vcid_stringifycmd_cc[] = "$Header$";
 #endif // !STRINGIFYCMD_CC_DEFINED
