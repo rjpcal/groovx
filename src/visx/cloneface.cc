@@ -3,7 +3,7 @@
 // cloneface.cc
 // Rob Peters
 // created: Thu Apr 29 09:19:26 1999
-// written: Thu Oct 21 19:29:49 1999
+// written: Wed Dec  1 11:39:51 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,8 +16,8 @@
 #include <iostream.h>			  // for serialize
 #include <string>
 
-#include "reader.h"
-#include "writer.h"
+#include "readutils.h"
+#include "writeutils.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -122,7 +122,7 @@ DOTRACE("CloneFace::charCount");
 void CloneFace::readFrom(Reader* reader) {
 DOTRACE("CloneFace::readFrom");
 
-  reader->readValueSeq("ctrlPnts", itsCtrlPnts, (double*)0);
+  ReadUtils::readValueSeq(reader, "ctrlPnts", itsCtrlPnts, (double*)0);
   reader->readValue("eyeAspect", itsEyeAspect);
   reader->readValue("vertOffset", itsVertOffset);
 }
@@ -130,7 +130,7 @@ DOTRACE("CloneFace::readFrom");
 void CloneFace::writeTo(Writer* writer) const {
 DOTRACE("CloneFace::writeTo");
 
-  writer->writeValueSeq("ctrlPnts", itsCtrlPnts, itsCtrlPnts+24);
+  WriteUtils::writeValueSeq(writer, "ctrlPnts", itsCtrlPnts, itsCtrlPnts+24);
   writer->writeValue("eyeAspect", itsEyeAspect);
   writer->writeValue("vertOffset", itsVertOffset);
 }

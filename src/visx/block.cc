@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Tue Nov 30 17:47:24 1999
+// written: Wed Dec  1 11:38:12 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,9 +24,11 @@
 #include "rand.h"
 #include "iostl.h"
 #include "reader.h"
+#include "readutils.h"
 #include "tlist.h"
 #include "trial.h"
 #include "writer.h"
+#include "writeutils.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -174,7 +176,8 @@ int Block::charCount() const {
 void Block::readFrom(Reader* reader) {
 DOTRACE("Block::readFrom");
   itsTrialSequence.clear();
-  reader->readValueSeq("trialSeq", back_inserter(itsTrialSequence), (int*)0);
+  ReadUtils::readValueSeq(
+		 reader, "trialSeq", back_inserter(itsTrialSequence), (int*)0);
   reader->readValue("randSeed", itsRandSeed);
   reader->readValue("curTrialSeqdx", itsCurTrialSeqIdx);
   reader->readValue("verbose", itsVerbose);
@@ -183,8 +186,8 @@ DOTRACE("Block::readFrom");
 void Block::writeTo(Writer* writer) const {
 DOTRACE("Block::writeTo");
 
-  writer->writeValueSeq("trialSeq",
-								itsTrialSequence.begin(), itsTrialSequence.end());
+  WriteUtils::writeValueSeq(
+        writer, "trialSeq", itsTrialSequence.begin(), itsTrialSequence.end());
   writer->writeValue("randSeed", itsRandSeed);
   writer->writeValue("curTrialSeqdx", itsCurTrialSeqIdx);
   writer->writeValue("verbose", itsVerbose);
