@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Wed Apr 18 13:00:21 2001
+// written: Fri May 11 16:32:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,17 +15,17 @@
 
 #include "mtx.h"
 
-#include "error.h"
-#include "minivec.h"
-#include "strings.h"
+#include "util/error.h"
+#include "util/minivec.h"
+#include "util/strings.h"
 
 #include <algorithm>
 #include <iostream.h>
 #include <iomanip.h>
 #include "libmatlb.h"
 
-#include "trace.h"
-#include "debug.h"
+#include "util/trace.h"
+#include "util/debug.h"
 
 namespace {
   inline void domemswap(double* buf1, double* buf2,
@@ -61,9 +61,6 @@ namespace RC
 void RC::raiseException(const char* msg, const char* f, int ln)
 {
   DebugPrintNL(msg);
-#ifdef LOCAL_PROF
-  Util::Trace::printStackTrace();
-#endif
   ErrorWithMsg err("Range check failed in file '");
   err.appendMsg(f).appendMsg("' at line #").appendNumber(ln).appendMsg(": ");
   err.appendMsg(msg);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 18:04:40 2001
-// written: Fri Apr  6 16:49:54 2001
+// written: Fri May 11 16:29:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,8 +20,8 @@
 #include <cstring>
 
 #define LOCAL_ASSERT
-#include "debug.h"
-#include "trace.h"
+#include "util/debug.h"
+#include "util/trace.h"
 
 namespace {
   struct FreeNode {

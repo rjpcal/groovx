@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:28:26 2001
-// written: Fri Apr  6 10:27:19 2001
+// written: Fri May 11 16:29:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 
 #include "mtx.h"
 
-#include "trace.h"
+#include "util/trace.h"
 
 const double Num::SQRT_2 = 1.41421356237;
 
