@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 23 17:42:51 2002
-// written: Mon Nov 25 11:49:13 2002
+// written: Tue Nov 26 19:10:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,6 +30,8 @@ GxScene::GxScene(Util::SoftRef<Gfx::Canvas> canvas) :
   itsUndrawNode(GxEmptyNode::make()),
   isItVisible(false),
   itsCamera(new GxFixedScaleCamera()),
+  itsWidth(0),
+  itsHeight(0),
   isItHolding(false),
   isItRefreshing(true),
   isItRefreshed(false),
@@ -123,6 +125,8 @@ DOTRACE("GxScene::setCamera");
 
   itsCamera = cam;
 
+  itsCamera->reshape(itsWidth, itsHeight);
+
   itsCamera->sigNodeChanged.connect(slotNodeChanged);
 
   fullRender();
@@ -155,7 +159,9 @@ DOTRACE("GxScene::onNodeChange");
 void GxScene::reshape(int width, int height)
 {
 DOTRACE("GxScene::reshape");
-  itsCamera->reshape(width, height);
+  itsWidth = width;
+  itsHeight = height;
+  itsCamera->reshape(itsWidth, itsHeight);
 }
 
 void GxScene::animate(unsigned int framesPerSecond)

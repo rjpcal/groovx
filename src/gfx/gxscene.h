@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 23 17:42:38 2002
-// written: Mon Nov 25 11:49:13 2002
+// written: Tue Nov 26 19:09:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,6 +83,8 @@ private:
   bool isItVisible;
 
   Util::Ref<GxCamera> itsCamera;
+  int itsWidth;
+  int itsHeight;
   bool isItHolding;
   bool isItRefreshing;
   bool isItRefreshed;
