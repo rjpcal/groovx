@@ -370,7 +370,7 @@ LDFLAGS="$LDFLAGS $X_LIBS"
 AC_CHECK_HEADERS([limits iosfwd iostream istream ostream fstream sstream \
 		  streambuf ios ext/stdio_filebuf.h cxxabi.h \
 		  png.h jpeglib.h fcntl.h termios.h sys/time.h unistd.h \
-		  ],,,-)
+		  expat.h],,,-)
 
 AC_CHECK_HEADER([dmedia/audio.h],
 		[AC_DEFINE(HAVE_DMEDIA_AUDIO_H,1,[have dmedia/audio.h?])
@@ -419,6 +419,9 @@ AC_CHECK_LIB_CXX(GL, [#include <GL/gl.h>], [glEnd()],
 
 AC_CHECK_LIB_CXX(GLU, [#include <GL/glu.h>], [gluErrorString(0)],
 		 [LIBS="-lGLU $LIBS"], [AC_MSG_ERROR(libGLU check failed)])
+
+AC_CHECK_LIB_CXX(expat, [#include <expat.h>], [XML_ParserFree(0)],
+		 [LIBS="-lexpat $LIBS"], [AC_MSG_ERROR(libexpat check failed)])
 
 # add -lefence to LIBS for Electric Fence mem debugging
 
