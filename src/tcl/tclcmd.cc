@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Tue Jun 19 15:14:13 2001
+// written: Tue Jul 10 18:26:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -632,7 +632,7 @@ T Tcl::ListIterator<T>::operator*() const
 {
 DOTRACE("Tcl::ListIterator::operator*");
   if (itsIndex >= itsElementCount)
-    throw TclError("index is too larg");
+    throw TclError("index is too large");
 
   DebugEval((void*)itsInterp); DebugEval(itsIndex);
   DebugEvalNL(itsListElements[itsIndex]);
