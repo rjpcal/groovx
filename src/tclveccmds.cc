@@ -3,7 +3,7 @@
 // tclveccmds.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Dec  7 12:16:22 1999
-// written: Sat Mar  4 04:11:01 2000
+// written: Tue Mar  7 19:08:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,7 @@
 #include "tclveccmds.h"
 
 #include "tclitempkgbase.h"
+#include "util/strings.h"
 
 #include <vector>
 
@@ -81,9 +82,9 @@ void Tcl::TVecGetterCmd<ValType>::doAppendValForItem(void* item) {
   lappendVal(itsGetter->get(item));
 }
 
-// Oddly, aCC requires this specialization of invoke() for the type
-// 'const string&', even though the code is *exactly the same* as in
-// the generic templated version of invoke() above.
+// Oddly, aCC requires these specializations for 'const string&', even
+// though the code is *exactly the same* as in the generic templated
+// versions above.
 template <>
 void Tcl::TVecGetterCmd<const string&>::doReturnValForItem(void* item) {
   returnVal(itsGetter->get(item));
@@ -94,6 +95,17 @@ void Tcl::TVecGetterCmd<const string&>::doAppendValForItem(void* item) {
   lappendVal(itsGetter->get(item));
 }
 
+// Specializations for fixed_string
+template <>
+void Tcl::TVecGetterCmd<const fixed_string&>::doReturnValForItem(void* item) {
+  returnVal(itsGetter->get(item).c_str());
+}
+
+template <>
+void Tcl::TVecGetterCmd<const fixed_string&>::doAppendValForItem(void* item) {
+  lappendVal(itsGetter->get(item).c_str());
+}
+
 // Explicit instatiation requests
 namespace Tcl {
 template class TVecGetterCmd<int>;
@@ -101,6 +113,7 @@ template class TVecGetterCmd<bool>;
 template class TVecGetterCmd<double>;
 template class TVecGetterCmd<const char*>;
 template class TVecGetterCmd<const string&>;
+template class TVecGetterCmd<const fixed_string&>;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -227,6 +240,39 @@ void Tcl::TVecSetterCmd<const string&>::destroyValVec(void* val_vec) {
   delete vals;
 }
 
+
+// Specialization for T=const fixed_string&
+template <>
+void* Tcl::TVecSetterCmd<const fixed_string&>::getValVec(
+  int val_argn, int num_ids, size_t& num_vals
+) {
+  vector<fixed_string>* vals = new vector<fixed_string>;
+  if (num_ids == 1) {
+	 vals->push_back(fixed_string());
+	 vals->back() = getCstringFromArg(val_argn);
+  }
+  else {
+	 getSequenceFromArg(val_argn, back_inserter(*vals), (const char**) 0);
+  }
+  num_vals = vals->size();
+  return static_cast<void*>(vals);
+}
+
+template <>
+void Tcl::TVecSetterCmd<const fixed_string&>::setValForItem(
+  void* item, void* val_vec, size_t valn
+) {
+  vector<fixed_string>& vals = *(static_cast<vector<fixed_string>*>(val_vec));
+  itsSetter->set(item, vals[valn]);
+}
+
+template <>
+void Tcl::TVecSetterCmd<const fixed_string&>::destroyValVec(void* val_vec)
+{
+  vector<fixed_string>* vals = static_cast<vector<fixed_string>*>(val_vec);
+  delete vals;
+}
+
 // Explicit instatiation requests
 namespace Tcl {
 template class TVecSetterCmd<int>;
@@ -234,6 +280,7 @@ template class TVecSetterCmd<bool>;
 template class TVecSetterCmd<double>;
 template class TVecSetterCmd<const char*>;
 template class TVecSetterCmd<const string&>;
+template class TVecSetterCmd<const fixed_string&>;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -273,6 +320,7 @@ template class TVecAttribCmd<bool>;
 template class TVecAttribCmd<double>;
 template class TVecAttribCmd<const char*>;
 template class TVecAttribCmd<const string&>;
+template class TVecAttribCmd<const fixed_string&>;
 }
 
 ///////////////////////////////////////////////////////////////////////
