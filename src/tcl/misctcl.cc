@@ -101,6 +101,9 @@ namespace
     result.append(cmd->usage());
     return result;
   }
+
+  unsigned long getGlobalSeed() { return Util::globalRandSeed; }
+  void setGlobalSeed(unsigned long x) { Util::globalRandSeed = x; }
 }
 
 extern "C"
@@ -144,6 +147,9 @@ DOTRACE("Misc_Init");
   pkg->def( "::usleepr", "usecs reps", &usleepr, SRC_POS );
 
   pkg->def( "::bt", "", &backTrace, SRC_POS );
+
+  pkg->def( "::globalRandSeed", "", &getGlobalSeed, SRC_POS );
+  pkg->def( "::globalRandSeed", "seed", &setGlobalSeed, SRC_POS );
 
   pkg->defRaw( "::?", 1, "cmd_name", &cmdUsage, SRC_POS );
 
