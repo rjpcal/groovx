@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Sat Jun  2 15:43:26 2001
+// written: Tue Jun  5 10:41:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,8 @@
 #include "util/error.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IODECLS_H_DEFINED)
-#include "io/iodecls.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILFWD_H_DEFINED)
+#include "util/utilfwd.h"
 #endif
 
 namespace IO { class IoObject; }
@@ -155,16 +155,16 @@ public:
 
   /** Returns true if 'id' is a valid index into a non-NULL T* in
 		the PtrList, given its current size. */
-  bool isValidId(IO::UID id) const;
+  bool isValidId(Util::UID id) const;
 
   /** If the object at \a id is unshared, removes reference to the
       object at index \a id, causing the object to be destroyed since
       it was unshared. If the object is shared, this operation throws
       an exception. */
-  void remove(IO::UID id);
+  void remove(Util::UID id);
 
   /** Removes reference to the object at \a id. */
-  void release(IO::UID id);
+  void release(Util::UID id);
 
   /** Releases references to all unshared objects held by the
       list. Since the objects are unshared, they will be destroyed in
@@ -185,7 +185,7 @@ public:
   /** Return the \c IO::IoObject* at the index given by \a id. Checks
 		first if \a id is a valid index, and throws an \c InvalidIdError
 		if it is not. */
-  IO::IoObject* getCheckedPtrBase(IO::UID id) throw (InvalidIdError);
+  IO::IoObject* getCheckedPtrBase(Util::UID id) throw (InvalidIdError);
 
   /** Add ptr at the next available location, and return the index
 		where it was inserted. If necessary, the list will be expanded
