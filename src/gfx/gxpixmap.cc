@@ -48,6 +48,9 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+#include "util/bytearray.h"
+#include "util/cstrstream.h"
+#include "util/mappedfile.h"
 #include "util/pointers.h"
 #include "util/strings.h"
 #include "util/pointers.h"
@@ -58,7 +61,7 @@ namespace
 {
   const Gfx::Vec2<double> defaultZoom(1.0, 1.0);
 
-  const IO::VersionId BITMAP_SERIAL_VERSION_ID = 4;
+  const IO::VersionId BITMAP_SERIAL_VERSION_ID = 5;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -218,8 +221,8 @@ void GxPixmap::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxPixmap::readFrom");
 
-  reader.ensureReadVersionId("GxPixmap", 4,
-                             "Try cvs tag xml_conversion_20040526");
+  int svid = reader.ensureReadVersionId("GxPixmap", 4,
+                                        "Try cvs tag xml_conversion_20040526");
 
   reader.readValue("filename", rep->itsFilename);
   reader.readValue("zoomX", rep->itsZoom.x());
@@ -239,6 +242,20 @@ DOTRACE("GxPixmap::readFrom");
       queueImage(rep->itsFilename.c_str());
     }
 
+#if 0
+  if (svid >= 5)
+    {
+      rutz::byte_array imgdata;
+      reader.readRawData("image", imgdata);
+      if (imgdata.vec.size() > 0)
+        {
+          rutz::imemstream s(reinterpret_cast<const char*>(&imgdata.vec[0]),
+                             imgdata.vec.size());
+          Pbm::load(s, rep->itsData);
+        }
+    }
+#endif
+
   reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
 }
 
@@ -246,7 +263,7 @@ void GxPixmap::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxPixmap::writeTo");
 
-  writer.ensureWriteVersionId("GxPixmap", BITMAP_SERIAL_VERSION_ID, 4,
+  writer.ensureWriteVersionId("GxPixmap", BITMAP_SERIAL_VERSION_ID, 5,
                               "Try groovx0.8a7");
 
   writer.writeValue("filename", rep->itsFilename);
@@ -257,6 +274,20 @@ DOTRACE("GxPixmap::writeTo");
   writer.writeValue("verticalFlip", rep->itsVerticalFlip);
   writer.writeValue("purgeable", rep->itsPurgeable);
   writer.writeValue("asBitmap", rep->itsAsBitmap);
+
+#if 0
+  if ( !rep->itsFilename.is_empty() )
+    {
+      rutz::mapped_file m(rep->itsFilename.c_str());
+      writer.writeRawData("image",
+                          static_cast<const unsigned char*>(m.memory()),
+                          m.length());
+    }
+  else
+    {
+      writer.writeRawData("image", 0, 0);
+    }
+#endif
 
   writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }
