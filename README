@@ -79,18 +79,12 @@ Table of contents:
 
      - itcl and itk (itcl3.2.1_src.tgz)
 
+       Note that the itcl+itk configure script expects to find the
+       tcl+tk sources sitting in the location where you built
+       them... so, don't remove the tcl+tk sources until after you
+       build and install itcl+itk.
+
        \code
-
-       # note that the itcl+itk configure script expects to find the
-         tcl+tk sources sitting in the location where you built
-         them... so, don't remove the tcl+tk sources until after you
-         build and install itcl+itk
-
-       # might need to do
-       #   export SHLIB_LDFLAGS=-L/path/to/install/lib
-       # before running ./configure so that the configuration script
-       # looks for e.g. libtclstub8.x.a in the install directory
-       # rather than in the tcl's apparent build directory
 
        cd /path/to/source
        tar xfz itcl3.2.1_src.tgz
@@ -101,14 +95,24 @@ Table of contents:
 
        \endcode
 
-     - iwidgets (iwidgets4.0.1.tar.gz)
+       Note, you might need to do this:
 
        \code
+       export SHLIB_LDFLAGS=-L/path/to/install/lib
+       \endcode
 
-       # again, note that iwidgets expects to still be able to find
-         the source code from the itcl/itk build, so don't remove the
-         itcl+itk sources until after you've configured and installed
-         iwidgets
+       before running ./configure so that the configuration script
+       looks for e.g. libtclstub8.x.a in the install directory rather
+       than in the tcl's apparent build directory.
+
+     - iwidgets (iwidgets4.0.1.tar.gz)
+
+       Again, note that iwidgets expects to still be able to find the
+       source code from the itcl/itk build, so don't remove the
+       itcl+itk sources until after you've configured and installed
+       iwidgets.
+
+       \code
 
        cd /path/to/source
        tar xfz iwidgets4.0.1.tar.gz
@@ -116,15 +120,23 @@ Table of contents:
        ./configure  --prefix=/path/to/install \
          --with-itcl=/path/to/source/itcl3.2.1 \
          --with-itk=/path/to/source/itcl3.2.1
-       # no need to do "make", just do "make install"
-       make install
 
+       \endcode
+
+       Then, there is no need to do "make" for iwidgets; just do "make
+       install":
+
+       \code
+       make install
        \endcode
 
      - Mac OS X Tcl/Tk build notes
 
+       Notes for doing a custom Tcl/Tk build for Aqua (i.e. not for
+       X11 on Mac OS X).
+
        Used the following Makefile fragment for Tcl (in
-       pathtosrc/tcl/macosx/Makefile)
+       pathtosrc/tcl/macosx/Makefile):
 
        \code
 
@@ -146,7 +158,7 @@ Table of contents:
        \endcode
 
        Used the following Makefile fragment for Tk (in
-       pathtosrc/tk/macosx/Makefile)
+       pathtosrc/tk/macosx/Makefile):
 
        \code
 
@@ -175,13 +187,13 @@ Table of contents:
         - Tk install requires 'chmod' with '-RH' options. But, the
           Fink version of chmod in /sw/bin/chmod doesn't recognize the
           '-H' option. So, need to point the installation to
-          /bin/chmod instead. For now, just put a link from /bin/chmod
-          to ~/local/bin/chmod, since ~/local/bin is higher in $PATH
-          than is /sw/bin.
+          /bin/chmod instead. For now, just put a link from
+          ~/local/bin/chmod to /bin/chmod, since ~/local/bin is higher
+          in $PATH than is /sw/bin.
 
         - Tk install expects to find 'Wish Shell.app' in
           ~/Library/Frameworks/Tk.Frame/Versions/8.5/Resources/. But,
-          my Makefile fragment puts 'Wish Shell.app' in
+          the Makefile fragment above puts 'Wish Shell.app' in
           ~/Applications/Utilities instead. So, for now just do:
 
           \code
@@ -195,8 +207,9 @@ Table of contents:
 
 \section configuration 4. Configuration
 
-   Configuration is done with a standard autoconf-generated configure
-   script. To run the script with the default options, just do:
+   Configuration of GroovX is done with a standard autoconf-generated
+   configure script. To run the script with the default options, just
+   do:
 
    \code
 
@@ -212,7 +225,7 @@ Table of contents:
 
    \endcode
 
-   Some important options:
+   Some important configuration options:
 
        - --enable-debug={no|yes} [default is yes]
 
@@ -241,7 +254,14 @@ Table of contents:
 
      On Linux, you need to make sure that your LD_LIBRARY_PATH
      environment variable includes the paths to wherever you have
-     installed the libraries associated with this package.
+     installed the libraries associated with this package; e.g. in
+     bash:
+
+     \code
+
+     export LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:/path/to/install"
+
+     \endcode
 
 <!--############################################################--><hr>
 
