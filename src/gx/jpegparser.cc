@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov 11 15:16:06 2002
-// written: Wed Mar 19 17:55:57 2003
+// written: Thu May  1 17:43:33 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -32,6 +32,17 @@
 #define JPEGPARSER_CC_DEFINED
 
 #include "jpegparser.h"
+
+#ifndef HAVE_LIBJPEG
+
+#include "util/error.h"
+
+void Jpeg::load(const char* /*filename*/, Gfx::BmapData& /*data*/)
+{
+  throw Util::Error("jpeg image files are not supported in this build");
+}
+
+#else
 
 #include "gx/bmapdata.h"
 #include "gx/vec2.h"
@@ -158,6 +169,8 @@ DOTRACE("Jpeg::load");
 
   data.swap(new_data);
 }
+
+#endif // HAVE_LIBJPEG
 
 static const char vcid_jpegparser_cc[] = "$Header$";
 #endif // !JPEGPARSER_CC_DEFINED
