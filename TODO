@@ -7,34 +7,19 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
-* (23-Nov-2002) Rework GWT::Widget
+* (25-Nov-2002) What is GWT::Widget's raison d'etre?
 
-  Need to rework the Widget inheritance hierarchy. Right now we have a
-  bloated base class in GWT::Widget. That class should become much more
-  lightweight and not have any Tk- or GL-specific stuff in it.
+  OK, now I've got Widget cleaned out. But... now, what's its reason to
+  exist? It barely has any abstract interface. Basically it's serving as a
+  glorified mult-arg Signal.
 
-  Most of GWT::Widget should be like a "Gfx::Scene class", which should be
-  similar to a GxNode.
+* (11-Oct-1999) wrapper for Tk widgets
 
-  Clients that need the "Scene" interface shouldn't have to know that
-  they're dealing with a Widget/TkWidget/Toglet... so right now that's why
-  we have "Scene" functionality in the Widget base class. But that doesn't
-  really make sense because not all Widgets should be Scenes.
+  Could write a Widget class that encapsulates the details of Tk
+  widgets. Then we could extend with subclasses... for example one
+  subclass could be designed to edit Property's of another class.
 
-  GWT::Widget's implementation has basically two parts: (1) stuff for Scene
-  management, and (2) lists of Listeners. The Listeners should stay since
-  those belong in a generic widget interface.
-
-  For now we should just "tell it like it is", and move all the GL-related
-  stuff into Toglet. Expt/Block/Trial should then deal with Toglet instead
-  of GWT::Widget, since they're implicitly requiring that right now
-  anyway. That gives us a starting point for refactoring.
-
-** (11-Oct-1999) wrapper for Tk widgets
-
-   Could write a Widget class that encapsulates the details of Tk
-   widgets. Then we could extend with subclasses... for example one
-   subclass could be designed to edit Property's of another class.
+  Should make some wrappers for other Tk widgets?
 
 * (22-Nov-2002) Make Tcl::Command and Tcl::Pkg into Util::Object subclasses?
   ... for the ultimate in reflexion!
@@ -182,9 +167,6 @@ test script, and specify this information in a makefile-compatible format.
      dependencies for us. The only thing that the rest of the Makefile will
      depend on is the $(PROJECT_LIBS) variable.
 
-* (22-Aug-2001) Allow args in the Signal/Slot callbacks
-e.g. for event handlers
-
 * (4-Sep-2001) A Connection class to manage Signal/Slot connections
 
 * (24-Aug-2001) How to get animation working?
@@ -226,13 +208,6 @@ Need to have a useful way of debugging TimingHdlr/Trial sequences.
 
 * (27-May-2001) Refactor away the list_test.tcl module
 and the dependent blocklist_test.tcl, objlist_test.tcl, etc.
-
-* (24-May-2001) Maybe Togl should be a canvas
-
-or we should have a ToglCanvas, so that swapBuffers() can go in Canvas,
-where it seems to belong, rather than in Widget, where it sits now
-(basically to allow Toglet to implement swapBuffers by calling Togl
-something).
 
 * (30-Nov-2000) a event type to install a GxNode?
 Now that screen-update is better controlled, we could introduce a new

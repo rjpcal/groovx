@@ -283,3 +283,44 @@ will be needed, and then they can be phased out.
   Actually, the stuff in tclpkg.h now should go to a new "objpkg.h".
   And I'll leave Tcl::Pkg in place since it introduces a lot of #include
   overhead beyond Tcl::PkgBase, so it's nice to keep that isolated.
+
+* (22-Aug-2001, done 25-Nov-2002) Allow args in the Signal/Slot callbacks
+  e.g. for event handlers
+
+  Now I've got SlotBase <-- Slot0 <-- SlotAdapter0.
+
+  But instead of Slot0 <-- SlotAdapter0, should just have the Slot0 class
+  hold an appropriate Util::Functor.
+
+  OK, multi-arg Slot+Signal is off the ground now. Still might want to use
+  Util::Functor there at some point.
+
+* (done 23-Nov-2002) Rework GWT::Widget
+
+  Need to rework the Widget inheritance hierarchy. Right now we have a
+  bloated base class in GWT::Widget. That class should become much more
+  lightweight and not have any Tk- or GL-specific stuff in it.
+
+  Most of GWT::Widget should be like a "Gfx::Scene class", which should be
+  similar to a GxNode.
+
+  Clients that need the "Scene" interface shouldn't have to know that
+  they're dealing with a Widget/TkWidget/Toglet... so right now that's why
+  we have "Scene" functionality in the Widget base class. But that doesn't
+  really make sense because not all Widgets should be Scenes.
+
+  GWT::Widget's implementation has basically two parts: (1) stuff for Scene
+  management, and (2) lists of Listeners. The Listeners should stay since
+  those belong in a generic widget interface.
+
+  For now we should just "tell it like it is", and move all the GL-related
+  stuff into Toglet. Expt/Block/Trial should then deal with Toglet instead
+  of GWT::Widget, since they're implicitly requiring that right now
+  anyway. That gives us a starting point for refactoring.
+
+* (24-May-2001, obsolete 25-Nov-2002 ) Maybe Togl should be a canvas
+
+  or we should have a ToglCanvas, so that swapBuffers() can go in Canvas,
+  where it seems to belong, rather than in Widget, where it sits now
+  (basically to allow Toglet to implement swapBuffers by calling Togl
+  something).
