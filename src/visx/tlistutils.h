@@ -34,6 +34,11 @@
 
 #include "nub/uid.h"
 
+namespace geom
+{
+  template <class T> class rect;
+}
+
 namespace Tcl
 {
   class List;
@@ -59,7 +64,9 @@ namespace TlistUtils
   void writeMatlab(const char* filename);
 
   Nub::UID createPreview(Tcl::List objid_list,
-                         int num_cols_hit, bool use_text_labels);
+                         const geom::rect<double>& world_viewport,
+                         int num_cols_hint,
+                         bool use_text_labels);
 
   Tcl::List dealSingles(Tcl::List objids, Nub::UID posid);
 

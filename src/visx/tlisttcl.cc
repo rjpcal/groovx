@@ -32,6 +32,8 @@
 #ifndef TLISTTCL_CC_DEFINED
 #define TLISTTCL_CC_DEFINED
 
+#include "gfx/recttcl.h"
+
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
 
@@ -39,22 +41,16 @@
 
 #include "util/trace.h"
 
-//--------------------------------------------------------------------
-//
-// Tlist_Init --
-//
-//--------------------------------------------------------------------
-
 extern "C"
 int Tlist_Init(Tcl_Interp* interp)
 {
 DOTRACE("Tlist_Init");
 
   PKG_CREATE(interp, "Tlist", "$Revision$");
-  pkg->def( "createPreview", "objids num_cols_hint use_text_labels",
+  pkg->def( "createPreview", "objids viewport num_cols_hint use_text_labels",
             &TlistUtils::createPreview,
             SRC_POS );
-  pkg->def( "createPreview", "objids",
+  pkg->def( "createPreview", "objids viewport",
             rutz::bind_last(rutz::bind_last(&TlistUtils::createPreview,
                                             true), -1),
             SRC_POS );

@@ -36,7 +36,6 @@
 
 #include "geom/rect.h"
 
-#include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
 #include "gfx/gxscaler.h"
 #include "gfx/gxseparator.h"
@@ -67,15 +66,13 @@ using Nub::Ref;
 
 namespace
 {
-  Nub::UID doCreatePreview(Gfx::Canvas& canvas,
+  Nub::UID doCreatePreview(const geom::rect<double>& world_viewport,
                            Nub::UID* objids,
                            unsigned int objids_size,
                            int num_cols_hint = -1,
                            bool text_labels = true)
   {
     DOTRACE("<tlisttcl.cc>::doCreatePreview");
-
-    geom::rect<double> world_viewport = canvas.getWorldViewport();
 
     const double world_width = world_viewport.width();
     const double world_height = world_viewport.height();
@@ -307,13 +304,14 @@ DOTRACE("TlistUtils::writeMatlab");
 //---------------------------------------------------------------------
 
 Nub::UID TlistUtils::createPreview(Tcl::List objid_list,
+                                   const geom::rect<double>& world_viewport,
                                    int num_cols_hint = -1,
                                    bool text_labels = true)
 {
   rutz::fixed_block<Nub::UID> objids(objid_list.begin<Nub::UID>(),
                                      objid_list.end<Nub::UID>());
 
-  return doCreatePreview(Gfx::Canvas::current(),
+  return doCreatePreview(world_viewport,
                          &objids[0], objids.size(),
                          num_cols_hint, text_labels);
 }
