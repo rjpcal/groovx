@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Sat Jun 23 12:45:08 2001
+// written: Thu Jul 19 20:44:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,6 +19,7 @@
 
 #include "gx/gxnode.h"
 
+#include "util/dlink_list.h"
 #include "util/observer.h"
 #include "util/ref.h"
 
@@ -64,7 +65,9 @@ public:
     itsDrawNode(EmptyNode::make()),
     itsUndrawNode(EmptyNode::make()),
     itsVisibility(false),
-    itsHoldOn(false)
+    itsHoldOn(false),
+    itsButtonListeners(),
+    itsKeyListeners()
   {}
 
   virtual bool isVolatile() const { return true; }
@@ -138,6 +141,14 @@ private:
   Util::Ref<GxNode> itsUndrawNode;
   bool itsVisibility;
   bool itsHoldOn;
+
+public:
+
+  typedef dlink_list<Util::Ref<GWT::ButtonListener> > Buttons;
+  typedef dlink_list<Util::Ref<GWT::KeyListener> >    Keys;
+
+  Buttons itsButtonListeners;
+  Keys itsKeyListeners;
 };
 
 
@@ -220,17 +231,56 @@ DOTRACE("GWT::Widget::~Widget");
   itsImpl->decrRefCount();
 }
 
+void GWT::Widget::addButtonListener(Util::Ref<GWT::ButtonListener> b)
+{
+  itsImpl->itsButtonListeners.push_back(b);
+}
+
+void GWT::Widget::addKeyListener(Util::Ref<GWT::KeyListener> k)
+{
+  itsImpl->itsKeyListeners.push_back(k);
+}
+
+bool GWT::Widget::hasButtonListeners() const
+{
+  return !(itsImpl->itsButtonListeners.empty());
+}
+
+bool GWT::Widget::hasKeyListeners() const
+{
+  return !(itsImpl->itsKeyListeners.empty());
+}
+
+
+void GWT::Widget::removeButtonListeners()
+{
+  itsImpl->itsButtonListeners.clear();
+}
+
+void GWT::Widget::removeKeyListeners()
+{
+  itsImpl->itsKeyListeners.clear();
+}
+
 void GWT::Widget::display()
-  { itsImpl->display(getCanvas()); }
+{
+  itsImpl->display(getCanvas());
+}
 
 void GWT::Widget::clearscreen()
-  { itsImpl->clearscreen(getCanvas()); }
+{
+  itsImpl->clearscreen(getCanvas());
+}
 
 void GWT::Widget::refresh()
-  { itsImpl->refresh(getCanvas()); }
+{
+  itsImpl->refresh(getCanvas());
+}
 
 void GWT::Widget::undraw()
-  { itsImpl->undraw(getCanvas()); }
+{
+  itsImpl->undraw(getCanvas());
+}
 
 void GWT::Widget::setVisibility(bool vis) {
 DOTRACE("GWT::Widget::setVisibility");
@@ -245,6 +295,35 @@ DOTRACE("GWT::Widget::setHold");
 void GWT::Widget::setDrawable(const Ref<GxNode>& node) {
 DOTRACE("GWT::Widget::setDrawable");
   itsImpl->setDrawable(node);
+}
+
+void GWT::Widget::dispatchButtonEvent(unsigned int button, int x, int y)
+{
+  for (Impl::Buttons::iterator
+         itr = itsImpl->itsButtonListeners.begin(),
+         end = itsImpl->itsButtonListeners.end();
+       itr != end;
+       ++itr)
+    {
+      EventStatus status = (*itr)->onButtonPress(button, x, y);
+      if (status == HANDLED)
+        break;
+    }
+}
+
+void GWT::Widget::dispatchKeyEvent(unsigned int modifiers, const char* keys,
+                                   int x, int y)
+{
+  for (Impl::Keys::iterator
+         itr = itsImpl->itsKeyListeners.begin(),
+         end = itsImpl->itsKeyListeners.end();
+       itr != end;
+       ++itr)
+    {
+      EventStatus status = (*itr)->onKeyPress(modifiers, keys, x, y);
+      if (status == HANDLED)
+        break;
+    }
 }
 
 static const char vcid_widget_cc[] = "$Header$";

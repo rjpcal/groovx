@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Sat Jun 16 07:24:11 2001
+// written: Thu Jul 19 20:15:52 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,8 @@ namespace GWT
 
   class ButtonListener;
   class KeyListener;
+
+  enum EventStatus { HANDLED, NOT_HANDLED };
 }
 
 class GxNode;
@@ -38,13 +40,13 @@ namespace Util { template <class T> class WeakRef; }
 
 class GWT::ButtonListener : public Util::Object {
 public:
-  virtual void onButtonPress(unsigned int button, int x, int y) = 0;
+  virtual EventStatus onButtonPress(unsigned int button, int x, int y) = 0;
 };
 
 class GWT::KeyListener : public Util::Object {
 public:
-  virtual void onKeyPress(unsigned int modifiers, const char* keys,
-                          int x, int y) = 0;
+  virtual EventStatus onKeyPress(unsigned int modifiers, const char* keys,
+                                 int x, int y) = 0;
 };
 
 
@@ -66,8 +68,14 @@ public:
 
   virtual Canvas& getCanvas() = 0;
 
-  virtual void addButtonListener (Util::Ref<GWT::ButtonListener> b) = 0;
-  virtual void addKeyListener    (Util::Ref<GWT::KeyListener> k) = 0;
+  virtual void addButtonListener (Util::Ref<GWT::ButtonListener> b);
+  virtual void addKeyListener    (Util::Ref<GWT::KeyListener> k);
+
+  bool hasButtonListeners() const;
+  bool hasKeyListeners() const;
+
+  virtual void removeButtonListeners();
+  virtual void removeKeyListeners();
 
   virtual void bind(const char* event_sequence, const char* script) = 0;
   virtual void takeFocus() = 0;
@@ -86,6 +94,10 @@ public:
   void setHold(bool hold_on);
 
   void setDrawable(const Util::Ref<GxNode>& node);
+
+  void dispatchButtonEvent(unsigned int button, int x, int y);
+  void dispatchKeyEvent(unsigned int modifiers, const char* keys,
+                        int x, int y);
 
 private:
   Widget(const Widget&);
