@@ -3,7 +3,7 @@
 // fishtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 12:00:53 1999
-// written: Thu Sep 30 12:15:20 1999
+// written: Tue Oct  5 18:09:48 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 
 #include <tcl.h>
 
+#include "iomgr.h"
 #include "objlist.h"
 #include "listitempkg.h"
 #include "fish.h"
@@ -25,17 +26,24 @@ namespace FishTcl {
 class FishTcl::FishCmd : public TclCmd {
 public:
   FishCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 TclCmd(interp, cmd_name, "spline_file coord_file index", 4, 4) {}
+	 TclCmd(interp, cmd_name, "spline_file coord_file index", 1, 4) {}
 protected:
   virtual void invoke() {
-	 const char* spline_file = arg(1).getCstring();
-	 const char* coord_file = arg(2).getCstring();
-	 int index = arg(3).getInt();
-
-	 Fish* p = new Fish(spline_file, coord_file, index);
-
-	 int objid = ObjList::theObjList().insert(p);
-	 returnInt(objid);
+	 if (objc() == 1) {
+		Fish* p = new Fish();
+		int objid = ObjList::theObjList().insert(p);
+		returnInt(objid);
+	 }
+	 else if (objc() == 4) {
+		const char* spline_file = arg(1).getCstring();
+		const char* coord_file = arg(2).getCstring();
+		int index = arg(3).getInt();
+		
+		Fish* p = new Fish(spline_file, coord_file, index);
+		
+		int objid = ObjList::theObjList().insert(p);
+		returnInt(objid);
+	 }
   }
 };
 
@@ -46,6 +54,7 @@ public:
 													"Fish", "1.1")
   {
 	 addCommand( new FishCmd(interp, "Fish::Fish") );
+	 declareAllProperties();
   }
 };
 
@@ -53,11 +62,12 @@ extern "C" Tcl_PackageInitProc Fish_Init;
 
 int Fish_Init(Tcl_Interp* interp) {
 
+  FactoryRegistrar<IO, Fish> registrar1(IoFactory::theOne());
+
   new FishTcl::FishPkg(interp);
 
   return TCL_OK;
 }
-
 
 static const char vcid_fishtcl_cc[] = "$Header$";
 #endif // !FISHTCL_CC_DEFINED
