@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Thu May 10 12:04:44 2001
+// written: Mon May 14 17:31:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -411,9 +411,9 @@ DOTRACE("ToglConfig::loadFont");
 void ToglConfig::loadFonti(int fontnumber) {
 DOTRACE("ToglConfig::loadFonti");
 
-  // This function core dumps on irix6 using g++, so we throw an error
-  // for now.
-#ifndef IRIX6
+  // This function core dumps on irix6 or i686 using g++, so we throw
+  // an error for now.
+#if !defined(IRIX6) && !defined(I686)
   GLuint newListBase =
 	 itsTogl->loadBitmapFont(reinterpret_cast<char*>(fontnumber));
 #else
