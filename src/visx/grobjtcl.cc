@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Thu Aug  9 11:40:55 2001
+// written: Thu Aug  9 17:27:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,36 +16,10 @@
 #include "application.h"
 #include "grobj.h"
 #include "rect.h"
+#include "recttcl.h"
 
-#include "tcl/tclerror.h"
-#include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"
 #include "tcl/tracertcl.h"
-
-namespace Tcl
-{
-  template <class T>
-  struct Convert<Rect<T> >
-  {
-    typedef T Type;
-    static Rect<T> fromTcl( Tcl_Obj* obj )
-    {
-      Tcl::List listObj(obj);
-      return Rect<T>(listObj.get(0, (T*)0), listObj.get(1, (T*)0),
-                     listObj.get(2, (T*)0), listObj.get(3, (T*)0));
-    }
-
-    static Tcl_Obj* toTcl( Rect<T> rect )
-    {
-      Tcl::List listObj;
-      listObj.append(rect.left());
-      listObj.append(rect.top());
-      listObj.append(rect.right());
-      listObj.append(rect.bottom());
-      return listObj.asObj();
-    }
-  };
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
