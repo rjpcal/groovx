@@ -166,10 +166,6 @@ public:
 	 { PtrListBase::insertPtrBaseAt(id, item.handle().masterPtr()); }
 
 protected:
-  /** Reimplemented from \c IoPtrList to include "PtrList<T>" with \c
-      \a T replaced with the the typename of the actual template argument. */
-  virtual const char* alternateIoTags() const;
-
   /** Reimplemented from \c IoPtrList to return an MasterPtr<T>* that
       points to \a obj. */
   virtual MasterIoPtr* makeMasterIoPtr(IO::IoObject* obj) const;

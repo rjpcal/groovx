@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Mon Oct  9 08:33:05 2000
+// written: Thu Oct 19 17:36:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,22 +26,6 @@ PtrList<T>::PtrList(int size) :
 
 template <class T>
 PtrList<T>::~PtrList() {}
-
-template <class T>
-const char* PtrList<T>::alternateIoTags() const {
-  static dynamic_string result;
-
-  static bool inited = false;
-  if (!inited) {
-	 result = IoPtrList::alternateIoTags();
-	 result += " PtrList<";
-	 result += demangle_cstr(typeid(T).name());
-	 result += ">";
-	 inited = true;
-  }
-
-  return result.c_str();
-}
 
 template <class T>
 MasterIoPtr* PtrList<T>::makeMasterIoPtr(IO::IoObject* obj) const {
