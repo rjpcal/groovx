@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Mon Dec  6 15:10:19 1999
+// written: Mon Dec  6 15:22:27 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -213,11 +213,15 @@ DOTRACE("TlistUtils::makeTriads");
 	 {2, 1, 0} };
   
   size_t num_objs = vec.size();
+
+  // We need at least three objects in order to make any triads
+  if ( num_objs < 3 ) return 0;
+
   int base_triad[3];
     
   int trial = 0;
 
-	 // loops over i,j,k construct all possible base triads
+  // loops over i,j,k construct all possible base triads
   for (size_t i = 0; i < num_objs-2; ++i) {
 	 base_triad[0] = vec[i];
 	 for (size_t j = i+1; j < num_objs; ++j) {
