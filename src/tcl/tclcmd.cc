@@ -96,7 +96,7 @@ private:
 
 public:
   Impl(shared_ptr<Tcl::Callback> cback,
-       const char* cmd_name, const char* usg,
+       const char* usg,
        int objc_min, int objc_max, bool exact_objc)
     :
     callback(cback),
@@ -125,10 +125,11 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 Tcl::Command::Command(shared_ptr<Tcl::Callback> callback,
-                      const char* cmd_name, const char* usage,
+                      // FIXME cmd_name not needed here:
+                      const char* /*cmd_name*/, const char* usage,
                       int objc_min, int objc_max, bool exact_objc)
   :
-  rep(new Impl(callback, cmd_name, usage, objc_min, objc_max, exact_objc))
+  rep(new Impl(callback, usage, objc_min, objc_max, exact_objc))
 {
 DOTRACE("Tcl::Command::Command");
 }
