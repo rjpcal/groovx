@@ -3,7 +3,7 @@
 // error.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 22 14:59:48 1999
-// written: Wed Mar  8 11:33:43 2000
+// written: Mon Mar 13 13:58:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,6 +68,20 @@ DOTRACE("ErrorWithMsg::msg_cstr");
 void ErrorWithMsg::appendMsg(const char* addMsg) {
 DOTRACE("ErrorWithMsg::appendMsg");
   *itsInfo += addMsg; 
+}
+
+void ErrorWithMsg::appendMsg(const char* addMsg1, const char* addMsg2) {
+DOTRACE("ErrorWithMsg::appendMsg");
+  *itsInfo += addMsg1; 
+  *itsInfo += addMsg2; 
+}
+
+void ErrorWithMsg::appendMsg(const char* addMsg1, const char* addMsg2,
+									  const char* addMsg3) {
+DOTRACE("ErrorWithMsg::appendMsg");
+  *itsInfo += addMsg1; 
+  *itsInfo += addMsg2; 
+  *itsInfo += addMsg3; 
 }
 
 void ErrorWithMsg::setMsg(const char* str) {
