@@ -49,11 +49,6 @@ void FieldAux::throwNotAllowed(const char* what)
                             "not allowed for that field"));
 }
 
-void FieldAux::throwBadCast()
-{
-  throw Util::Error("couldn't cast FieldContainer to target type");
-}
-
 FieldImpl::~FieldImpl() {}
 
 ///////////////////////////////////////////////////////////////////////

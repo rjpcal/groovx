@@ -76,12 +76,5 @@ void Util::RefHelper::throwSoftRefInvalid(const std::type_info& info)
                             demangle_cstr(info.name()), ">"));
 }
 
-void Util::RefHelper::throwBadCast(const std::type_info& to,
-                                   const std::type_info& from)
-{
-  throw Util::Error(fstring("failed cast to ", demangle_cstr(to.name()),
-                            " from ", demangle_cstr(from.name())));
-}
-
 static const char vcid_ref_cc[] = "$Header$";
 #endif // !REF_CC_DEFINED
