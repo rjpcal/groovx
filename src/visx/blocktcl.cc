@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Mon Jul 12 13:01:39 1999
+// written: Tue Aug  3 13:25:02 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -129,7 +129,8 @@ public:
 	 declareCGetter("numCompleted", &Block::numCompleted);
 	 declareCGetter("numTrials", &Block::numTrials);
 	 declareCGetter("prevResponse", &Block::prevResponse);
-	 declareCAction("reset", &Block::reset);
+	 declareCAction("removeAllTrials", &Block::removeAllTrials);
+	 declareCAction("reset", &Block::resetBlock);
 	 declareCSetter("shuffle", &Block::shuffle, "item_id rand_seed");
 	 declareCGetter("trialDescription", &Block::trialDescription);
 	 declareCAction("undoPrevTrial", &Block::undoPrevTrial);
