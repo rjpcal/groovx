@@ -9,102 +9,94 @@
 
 package require Toglet
 
-namespace eval Objtest {
+proc testClassCmds { bc sc1 sc2 } {
+    -> [Toglet::current] setVisible 0
+    ObjDb::clear
 
-    variable TEST_DEFINED 1
+    # class::removeAll
+    ::test "${bc}::removeAll" "too many args" [format {
+	%s::removeAll junk
+    } $bc] {wrong \# args: should be}
 
-    proc testClass { bc sc1 sc2 } {
-        -> [Toglet::current] setVisible 0
-        ObjDb::clear
+    ::test "${bc}::removeAll" "check number of objects" [format {
+	set bc %s
+	${bc}::removeAll
+	set before_count [${bc}::countAll]
+	Obj::new %s
+	Obj::new %s
+	${bc}::removeAll
+	set after_count [${bc}::countAll]
+	return [expr $before_count - $after_count]
+    } $bc $sc1 $sc2] {^0$}
 
-	# class::removeAll
-        ::test "${bc}::removeAll" "too many args" [format {
-            %s::removeAll junk
-        } $bc] {wrong \# args: should be}
+    # class::countAll
+    ::test ${bc}::countAll "too many args" [format {
+	%s::countAll junk
+    } $bc] {wrong \# args: should be}
 
-        ::test "${bc}::removeAll" "check number of objects" [format {
-	    set bc %s
-            ${bc}::removeAll
-            set before_count [${bc}::countAll]
-            Obj::new %s
-            Obj::new %s
-            ${bc}::removeAll
-            set after_count [${bc}::countAll]
-            return [expr $before_count - $after_count]
-        } $bc $sc1 $sc2] {^0$}
+    ::test ${bc}::countAll "normal use" [format {
+	set before_count [%s::countAll]
+	Obj::new %s
+	Obj::new %s
+	set after_count [%s::countAll]
+	return [expr $after_count - $before_count]
+    } $bc $sc1 $sc2 $bc] {^2$}
 
-	# class::countAll
-        eval ::test ${bc}::countAll {"too many args"} {"
-            ${bc}::countAll junk
-        "} {"wrong \# args: should be"}
+    # Obj::delete
+    ::test Obj::delete "too few args" {
+	Obj::delete
+    } {wrong \# args: should be}
 
-        eval ::test ${bc}::countAll {"normal use"} {"
-            set before_count \[${bc}::countAll\]
-            Obj::new ${sc1}
-            Obj::new ${sc2}
-            set after_count \[${bc}::countAll\]
-            return \[expr \$after_count - \$before_count\]
-        "} {"^2$"}
+    ::test Obj::delete "too many args" {
+	Obj::delete junk junk
+    } {wrong \# args: should be}
 
-	# Obj::delete
-        eval ::test Obj::delete {"too few args"} {"
-            Obj::delete
-        "} {"wrong \# args: should be"}
+    ::test Obj::delete "normal use" [format {
+	set id [Obj::new %s]
+	Obj::delete $id
+	Obj::is $id
+    } $sc1] {^0$}
 
-        eval ::test Obj::delete {"too many args"} {"
-            Obj::delete junk junk
-        "} {"wrong \# args: should be"}
+    # class::findAll
+    ::test ${bc}::findAll "too many args" [format {
+	%s::findAll junk
+    } $bc] {wrong \# args: should be}
 
-        eval ::test Obj::delete {"normal use"} {"
-            set id \[Obj::new ${sc1}\]
-            Obj::delete \$id
-            IO::is \$id
-         "} {"^0$"}
+    ::test ${bc}::findAll "normal use on filled list" [format {
+	Obj::new %s
+	set remove_me [Obj::new %s]
+	Obj::new %s
+	Obj::delete $remove_me
+	set count [%s::countAll]
+	set num_ids [llength [%s::findAll]]
+	set removed_id [lsearch -exact [%s::findAll] $remove_me]
+	return "[expr $count - $num_ids] $removed_id"
+    } $sc1 $sc1 $sc2 $bc $bc $bc] {^0 -1$}
 
-	# class::findAll
-        eval ::test ${bc}::findAll {"too many args"} {"
-            ${bc}::findAll junk
-        "} {"wrong \# args: should be"}
+    # class::is
+    ::test ${bc}::is "too few args" [format {
+	%s::is
+    } $bc] {wrong \# args: should be}
 
-        eval ::test ${bc}::findAll {"normal use on filled list"} {"
-            Obj::new ${sc1}
-            set remove_me \[Obj::new ${sc1}\]
-            Obj::new ${sc2}
-            Obj::delete \$remove_me
-            set count \[${bc}::countAll\]
-            set num_ids \[llength \[${bc}::findAll\]\]
-            set removed_id \[lsearch -exact \[${bc}::findAll\] \$remove_me\]
-            return \"\[expr \$count - \$num_ids\] \$removed_id\"
-        "} {"^0 -1$"}
+    ::test ${bc}::is "too many args" [format {
+	%s::is 0 junk
+    } $bc] {wrong \# args: should be}
 
-	# class::is
-        eval ::test ${bc}::is {"too few args"} {"
-            ${bc}::is
-        "} {"wrong \# args: should be"}
+    ::test ${bc}::is "normal use on valid id" [format {
+	set id [Obj::new %s]
+	%s::is $id
+    } $sc1 $bc] {^1$}
 
-        eval ::test ${bc}::is {"too many args"} {"
-            ${bc}::is 0 junk
-        "} {"wrong \# args: should be"}
-
-        eval ::test ${bc}::is {"normal use on valid id"} {"
-            set id \[Obj::new ${sc1}\]
-            ${bc}::is \$id
-        "} {"^1$"}
-
-        eval ::test ${bc}::is {"normal use on valid id"} {"
-            set id \[Obj::new ${sc1}\]
-            Obj::delete \$id
-            ${bc}::is \$id
-        "} {"^0$"}
-    }
-
-    namespace export testClass
-
+    ::test ${bc}::is "normal use on valid id" [format {
+	set id [Obj::new %s]
+	Obj::delete $id
+	%s::is $id
+    } $sc1 $bc] {^0$}
 }
 
-Objtest::testClass Block Block Block
-Objtest::testClass GxShapeKit Face Fish
-Objtest::testClass GxTransform GxTransform Jitter
-Objtest::testClass ResponseHandler KbdResponseHdlr NullResponseHdlr
-Objtest::testClass TimingHdlr TimingHdlr TimingHandler
-Objtest::testClass Trial Trial Trial
+::testClassCmds Block Block Block
+::testClassCmds GxShapeKit Face Fish
+::testClassCmds GxTransform GxTransform Jitter
+::testClassCmds ResponseHandler KbdResponseHdlr NullResponseHdlr
+::testClassCmds TimingHdlr TimingHdlr TimingHandler
+::testClassCmds Trial Trial Trial
