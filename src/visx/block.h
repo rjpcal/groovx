@@ -3,7 +3,7 @@
 // block.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:33 1999
-// written: Tue Aug  3 13:10:29 1999
+// written: Tue Aug  3 13:23:06 1999
 // $Id$
 //
 // This file defines the class Block. Block holds a sequence of trial
@@ -62,7 +62,7 @@ public:
   void shuffle(int seed=0);
 
   // Clear the Block's list of trialids.
-  void reset();
+  void removeAllTrials();
 
   // These I/O functions write/read the _entire_ state of the Block,
   // including the global Tlist, ObjList, and PosList.

@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Tue Aug  3 13:12:33 1999
+// written: Tue Aug  3 13:24:28 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -109,8 +109,8 @@ DOTRACE("Block::shuffle");
 					  generator);
 }
 
-void Block::reset() {
-DOTRACE("Block::reset");
+void Block::removeAllTrials() {
+DOTRACE("Block::removeAllTrials");
   itsTrialSequence.clear();
   itsCurTrialSeqIdx = 0;
 }
