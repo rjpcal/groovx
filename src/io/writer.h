@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jun  7 12:49:49 1999
-// written: Wed Mar 19 17:55:53 2003
+// written: Tue May 13 14:35:58 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -32,6 +32,7 @@
 #define WRITER_H_DEFINED
 
 #include "util/error.h"
+#include "util/strings.h"
 
 #include "io/iodecls.h"
 
@@ -135,11 +136,39 @@ public:
   /// Store the \c Value attribute \a val in association with the tag \a name.
   virtual void writeValueObj(const char* name, const Value& value) = 0;
 
-  /** This generic function stores a value attribute of any basic
-      type, or of type \c Value. The value \a val will be stored in
-      association with the tag \a name. */
-  template <class T>
-  void writeValue(const char* name, const T& val);
+  /** @name Overloaded write functions
+
+      These functions offer a set of overloads to provide compile-time
+      polymorphism so that any supported type (any basic type, or Value, a
+      string type) or can be written with the same source code.
+  */
+  //@{
+
+  void writeValue(const char* name, char val)
+  { writeChar(name, val); }
+
+  void writeValue(const char* name, int val)
+  { writeInt(name, val); }
+
+  void writeValue(const char* name, unsigned int val)
+  { writeInt(name, val); }
+
+  void writeValue(const char* name, unsigned long val)
+  { writeInt(name, val); }
+
+  void writeValue(const char* name, bool val)
+  { writeBool(name, val); }
+
+  void writeValue(const char* name, double val)
+  { writeDouble(name, val); }
+
+  void writeValue(const char* name, const fstring& val)
+  { writeCstring(name, val.c_str()); }
+
+  void writeValue(const char* name, const Value& value)
+  { writeValueObj(name, value); }
+
+  //@}
 
   /// Store the \c IO object \a val in association with the tag \a name.
   virtual void writeObject(const char* name,
