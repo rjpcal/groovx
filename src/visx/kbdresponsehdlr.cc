@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Tue Jul 20 14:09:15 1999
+// written: Tue Jul 20 16:15:08 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -109,6 +109,7 @@ DOTRACE("KbdResponseHdlr::deserialize");
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
   getline(is, itsKeyRespPairs, '\n');
+  updateRegexps();
 
   int val;
   is >> val;
