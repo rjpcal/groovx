@@ -579,7 +579,7 @@ public:
 
   void pushxy(const Vec2d& v)
   {
-    Vec3d t = state().txform.applyTo(Vec3d(v.x(), v.y(), 0.0));
+    Vec2d t = state().txform.applyTo(v);
     itsFstream << t.x() << " " << t.y() << " ";
   }
 
