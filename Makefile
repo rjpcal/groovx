@@ -110,7 +110,7 @@ ifeq ($(PLATFORM),i686)
 endif
 
 ifeq ($(PLATFORM),ppc)
-	COMPILER := g++
+	COMPILER := ppc-g++-2
 	SHLIB_EXT := dylib
 	STATLIB_EXT := a
 	CPP_DEFINES += -DPPC
@@ -199,7 +199,6 @@ endif
 ifeq ($(COMPILER),g++)
 	CC := time g++
 # This filter removes warnings that are triggered by standard library files
-ifneq ($(PLATFORM),ppc)
 	FILTER := |& sed \
 		-e '/g++-3.*warning/d;' \
 		-e '/In file included.*g++-3/,/:/d;' \
@@ -209,14 +208,8 @@ ifneq ($(PLATFORM),ppc)
 		-e '/In instantiation of/,/has a non-virtual destructor/d' \
 		-e '/has a non-virtual destructor/d'
 	CC_SWITCHES += -Wall -W -Wsign-promo -Weffc++
-endif
 	CPP_DEFINES += -DGCC_COMPILER=2 -DSTD_IO= -DPRESTANDARD_IOSTREAMS \
 		-DFUNCTIONAL_OK
-
-ifeq ($(PLATFORM),ppc)
-	CPP_DEFINES += -Dlrand48=rand
-	CC_SWITCHES += -dynamic
-endif
 
 	INCLUDE_PATH += -I$(HOME)/local/$(PLATFORM)/include/g++-3
 
@@ -230,13 +223,39 @@ endif
 		LD_OPTIONS +=
 	endif
 
-
-ifneq ($(PLATFORM),ppc)
 	SHLIB_CMD := $(CC) -shared -o
 	STATLIB_CMD := ar rus
 	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
 endif
-ifeq ($(PLATFORM),ppc)
+
+ifeq ($(COMPILER),ppc-g++-2)
+	CC := time g++
+# This filter removes warnings that are triggered by standard library files
+	FILTER := |& sed \
+		-e '/darwin.*warning/d;' \
+		-e '/In file included.*darwin/,/:/d;' \
+		-e '/darwin.*In method/d;' \
+		-e '/darwin.*At top level/d;' \
+		-e '/darwin.*In instantiation of/,/instantiated from here/d' \
+		-e '/In instantiation of/,/has a non-virtual destructor/d' \
+		-e '/has a non-virtual destructor/d'
+	CC_SWITCHES += -Wall -W -Wsign-promo -Weffc++
+	CPP_DEFINES += -DGCC_COMPILER=2 -DSTD_IO= -DPRESTANDARD_IOSTREAMS \
+		-DFUNCTIONAL_OK
+
+	CPP_DEFINES += -Dlrand48=rand
+	CC_SWITCHES += -dynamic
+
+	ifeq ($(MODE),debug)
+		CC_SWITCHES += -g -O0
+		LD_OPTIONS +=
+	endif
+
+	ifeq ($(MODE),prod)
+		CC_SWITCHES += -O3
+		LD_OPTIONS +=
+	endif
+
 #	SHLIB_CMD := libtool -dynamic -flat_namespace -undefined suppress -o
 	SHLIB_CMD := cc -dynamiclib -flat_namespace -undefined suppress -o
 # -install_name ${LIB_RUNTIME_DIR}/libname
@@ -244,8 +263,6 @@ ifeq ($(PLATFORM),ppc)
 	LD_OPTIONS += -Wl,-m
 # -Wl,-multiply_defined,warning
 	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
-endif
-
 endif
 
 ifeq ($(COMPILER),g++3)
