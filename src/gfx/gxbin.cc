@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 12:32:03 2002
-// written: Wed Nov 13 12:32:26 2002
+// written: Thu Nov 14 17:04:31 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,11 @@
 
 #include "gxbin.h"
 
-GxBin::GxBin() : itsChild() {}
+#include "gfx/gxemptynode.h"
 
-GxBin::GxBin(Util::SoftRef<GxNode> child) : itsChild(child) {}
+GxBin::GxBin() : itsChild(GxEmptyNode::make()) {}
+
+GxBin::GxBin(Util::Ref<GxNode> child) : itsChild(child) {}
 
 GxBin::~GxBin() {}
 

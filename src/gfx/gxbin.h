@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 12:31:35 2002
-// written: Wed Nov 13 12:33:50 2002
+// written: Thu Nov 14 17:04:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,18 +25,18 @@
 class GxBin : public GxNode
 {
 private:
-  Util::SoftRef<GxNode> itsChild;
+  Util::Ref<GxNode> itsChild;
 
 public:
   GxBin();
 
-  GxBin(Util::SoftRef<GxNode> child);
+  GxBin(Util::Ref<GxNode> child);
 
   virtual ~GxBin();
 
-  const Util::SoftRef<GxNode>& child() const { return itsChild; }
+  const Util::Ref<GxNode>& child() const { return itsChild; }
 
-  void setChild(Util::SoftRef<GxNode> child) { itsChild = child; }
+  void setChild(Util::Ref<GxNode> child) { itsChild = child; }
 };
 
 static const char vcid_gxbin_h[] = "$Header$";
