@@ -24,7 +24,6 @@ set RUN_IF_EQUAL 1
 set files {
     { bitmap_test.tcl 1 }
     { block_test.tcl 1 }
-    { blocklist_test.tcl 1 }
     { dlist_test.tcl 1 }
     { expt_test.tcl 1 }
     { eventrh_test.tcl 1 }
@@ -43,12 +42,10 @@ set files {
     { misc_test.tcl 1 }
     { morphyface_test.tcl 1 }
     { nullrh_test.tcl 1 }
+    { obj_test.tcl 1 }
     { objdb_test.tcl 1 }
-    { objlist_test.tcl 1 }
     { objtogl_test.tcl 1 }
     { position_test.tcl 1 }
-    { poslist_test.tcl 1 }
-    { rhlist_test.tcl 1 }
     { sound_test.tcl 1 }
     { subject_test.tcl 1 }
     { th_test.tcl 1 }
