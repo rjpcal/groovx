@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 17 15:05:41 1999
-// written: Thu Aug  9 07:06:04 2001
+// written: Mon Aug 20 17:38:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,19 +41,23 @@ namespace
   }
 }
 
-System::System () {
+System::System ()
+{
 DOTRACE("System::System ");
 }
 
-System& System::theSystem() {
+System& System::theSystem()
+{
 DOTRACE("System::theSystem");
-  if (theSingleton == 0) {
-    theSingleton = new System;
-  }
+  if (theSingleton == 0)
+    {
+      theSingleton = new System;
+    }
   return *theSingleton;
 }
 
-System::~System () {
+System::~System ()
+{
 DOTRACE("System::~System ");
 }
 
@@ -75,38 +79,44 @@ DOTRACE("System::chmod");
     throwErrno("System::chmod");
 }
 
-void System::rename(const char* oldpath, const char* newpath) {
+void System::rename(const char* oldpath, const char* newpath)
+{
 DOTRACE("System::rename");
 
   if ( ::rename(oldpath, newpath) != 0 )
     throwErrno("System::rename");
 }
 
-void System::remove(const char* pathname) {
+void System::remove(const char* pathname)
+{
 DOTRACE("System::remove");
 
   if ( ::remove(pathname) != 0 )
     throwErrno("System::remove");
 }
 
-const char* System::getcwd() {
+const char* System::getcwd()
+{
 DOTRACE("System::getcwd");
   const int INIT_SIZE = 256;
   static dynamic_block<char> buf(INIT_SIZE);
 
-  while ( !::getcwd(&buf[0], buf.size()) ) {
-    buf.resize(buf.size() * 2);
-  }
+  while ( !::getcwd(&buf[0], buf.size()) )
+	 {
+		buf.resize(buf.size() * 2);
+	 }
 
   return &buf[0];
 }
 
-const char* System::getenv(const char* environment_variable) {
+const char* System::getenv(const char* environment_variable)
+{
 DOTRACE("System::getenv");
   return ::getenv(environment_variable);
 }
 
-void System::sleep(unsigned int seconds) {
+void System::sleep(unsigned int seconds)
+{
 DOTRACE("System::sleep");
   ::sleep(seconds);
 }
@@ -121,9 +131,9 @@ DOTRACE("System::formattedTime");
 
   char buf[512];
 
-  strftime(buf, 512, format, tt);
+  std::size_t count = strftime(buf, 512, format, tt);
 
-  return fstring(buf);
+  return fstring(Util::CharData(&buf[0], count));
 }
 
 static const char vcid_system_cc[] = "$Header$";
