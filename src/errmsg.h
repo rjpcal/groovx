@@ -2,7 +2,7 @@
 // errmsg.h
 // Rob Peters
 // created: Dec-98
-// written: Tue Dec  7 18:00:25 1999
+// written: Wed Mar  8 15:40:43 2000
 // $Id$
 //
 // This file provides several simple inlined functions that append a
@@ -15,6 +15,11 @@
 // name.
 //
 ///////////////////////////////////////////////////////////////////////
+
+#ifndef TCL_H_DEFINED
+#include <tcl.h>
+#define TCL_H_DEFINED
+#endif
 
 namespace Tcl {
 
