@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Wed Mar  8 14:24:20 2000
+// written: Wed Mar  8 15:29:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -201,26 +201,44 @@ protected:
 		returnCstring(val.c_str());
 	 }
 
-  /** Return satisfactorily with the generic type result \a val. The
-      default behavior is to attempt to convert \a val to a const
-      char* with a \c c_str() function, but specializations for the
-      basic builtin types override this default. */
-  template <class T>
-  void returnVal(const T& val)
-	 {
-		returnVal(val.c_str());
-	 }
-  
-  /** Append to the result a list element with generic type and the
-      value \a val. The default version of \c lappendVal attempts to
-      convert the value to const char* with a c_str() function, but
-      specializations for the basic builtin types override this
-      default. */
-  template <class T>
-  void lappendVal(const T& val)
-	 {
-		lappendVal(val.c_str());
-	 }
+
+  /// Return satisfactorily with the generic \c Value result \a val.
+  void returnVal(const Value& val) { returnValue(val); }
+
+  /// Return satisfactorily with the \c int result \a val.
+  void returnVal(int val) { returnInt(val); }
+
+  /// Return satisfactorily with the \c long result \a val.
+  void returnVal(long val) { returnInt(val); }
+
+  /// Return satisfactorily with the \c bool result \a val.
+  void returnVal(bool val) { returnBool(val); }
+
+  /// Return satisfactorily with the \c double result \a val.
+  void returnVal(double val) { returnDouble(val); }
+
+  /// Return satisfactorily with the C-style string (\c char*) result \a val.
+  void returnVal(const char* val) { returnCstring(val); }
+
+
+  /// Append to the result a list element with the generic \c Value \a val.
+  void lappendVal(const Value& val) { lappendValue(val); }
+
+  /// Append to the result a list element with the \c int value \a val.
+  void lappendVal(int val) { lappendInt(val); }
+
+  /// Append to the result a list element with the \c long value \a val.
+  void lappendVal(long val) { lappendLong(val); }
+
+  /// Append to the result a list element with the \c bool value \a val.
+  void lappendVal(bool val) { lappendBool(val); }
+
+  /// Append to the result a list element with the \c double value \a val.
+  void lappendVal(double val) { lappendDouble(val); }
+
+  /// Append to the result a list element with the C-style string (\c char*) value \a val.
+  void lappendVal(const char* val) { lappendCstring(val); }
+
 
   /// Return the sequence of values referred to by the range [\a begin, \a end).
   template <class Itr>
@@ -258,57 +276,6 @@ private:
 
   int itsResult;
 };
-
-//---------------------------------------------------------------------
-//
-// Specializations of TclCmd::returnVal
-//
-//---------------------------------------------------------------------
-
-template <> inline void Tcl::TclCmd::returnVal(const Value& val)
-  { returnValue(val); }
-
-template <> inline void Tcl::TclCmd::returnVal(int val)
-  { returnInt(val); }
-
-template <> inline void Tcl::TclCmd::returnVal(long val)
-  { returnInt(val); }
-
-template <> inline void Tcl::TclCmd::returnVal(bool val)
-  { returnBool(val); }
-
-template <> inline void Tcl::TclCmd::returnVal(double val)
-  { returnDouble(val); }
-
-template <> inline void Tcl::TclCmd::returnVal(const char* val)
-  { returnCstring(val); }
-
-//---------------------------------------------------------------------
-//
-// Specializations of TclCmd::lappendVal
-//
-//---------------------------------------------------------------------
-
-template <> inline void Tcl::TclCmd::lappendVal(const Value& val)
-  { lappendValue(val); }
-
-template <> inline void Tcl::TclCmd::lappendVal(const int& val)
-  { lappendInt(val); }
-
-template <> inline void Tcl::TclCmd::lappendVal(const long& val)
-  { lappendLong(val); }
-
-template <> inline void Tcl::TclCmd::lappendVal(const bool& val)
-  { lappendBool(val); }
-
-template <> inline void Tcl::TclCmd::lappendVal(const double& val)
-  { lappendDouble(val); }
-
-template <> inline void Tcl::TclCmd::lappendVal(char* const& val)
-  { lappendCstring(val); }
-
-template <> inline void Tcl::TclCmd::lappendVal(const char* const& val)
-  { lappendCstring(val); }
 
 static const char vcid_tclcmd_h[] = "$Header$";
 #endif // !TCLCMD_H_DEFINED
