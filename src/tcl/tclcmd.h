@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Thu May 10 12:04:37 2001
+// written: Fri May 11 21:21:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -322,7 +322,10 @@ public:
   void returnVal(int val) { returnInt(val); }
 
   /// Return satisfactorily with the \c long result \a val.
-  void returnVal(long val) { returnInt(val); }
+  void returnVal(long val) { returnLong(val); }
+
+  /// Return satisfactorily with the \c unsigned long result \a val.
+  void returnVal(unsigned long val) { returnLong(long(val)); }
 
   /// Return satisfactorily with the \c bool result \a val.
   void returnVal(bool val) { returnBool(val); }
@@ -345,6 +348,9 @@ public:
 
   /// Append to the result a list element with the \c long value \a val.
   void lappendVal(long val) { lappendLong(val); }
+
+  /// Append to the result a list element with the \c unsigned long value \a val.
+  void lappendVal(unsigned long val) { lappendLong(long(val)); }
 
   /// Append to the result a list element with the \c bool value \a val.
   void lappendVal(bool val) { lappendBool(val); }
