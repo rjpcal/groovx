@@ -55,8 +55,7 @@ SCRIPTS := ./scripts
 LOCAL_ARCH := $(HOME)/local/$(PLATFORM)
 
 BIN_DIR := $(LOCAL_ARCH)/bin
-
-LOCAL_LIB_DIR := $(LOCAL_ARCH)/lib
+TMP_DIR := ./tmp/$(PLATFORM)
 
 #-------------------------------------------------------------------------
 #
@@ -103,12 +102,12 @@ ifeq ($(PLATFORM),i686)
 	SHLIB_EXT := so
 	STATLIB_EXT := a
 
-	CPP_DEFINES += -DI686 -D__restrict=
+	CPP_DEFINES += -DI686 -DHAVE_ZSTREAM
 
 	DEFAULT_MODE := debug
 
 	AUDIO_LIB :=
-	ZSTREAM_LIB :=
+	ZSTREAM_LIB := -lzstream
 endif
 
 ifndef MODE
@@ -193,7 +192,9 @@ ifeq ($(COMPILER),g++)
 		-e '/In file included.*g++-3/,/:/d;' \
 		-e '/g++-3.*In method/d;' \
 		-e '/g++-3.*At top level/d;' \
-		-e '/g++-3.*In instantiation of/,/instantiated from here/d'
+		-e '/g++-3.*In instantiation of/,/instantiated from here/d' \
+		-e '/In instantiation of/,/has a non-virtual destructor/d' \
+		-e '/has a non-virtual destructor/d'
 	CC_SWITCHES += -Wall -W -Wsign-promo -Weffc++
 	CPP_DEFINES += -DGCC_COMPILER -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
@@ -209,9 +210,9 @@ ifeq ($(COMPILER),g++)
 		LD_OPTIONS +=
 	endif
 
-	LIB_EXT := $(LIB_SUFFIX).$(STATLIB_EXT)
+	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
 
-	SHLIB_CMD := ld -n32 -shared -check_registry /usr/lib32/so_locations
+	SHLIB_CMD := $(CC) -shared -o
 	STATLIB_CMD := ar rus
 endif
 
@@ -223,7 +224,7 @@ endif
 
 INCLUDE_PATH += -I$(LOCAL_ARCH)/include -I$(SRC)
 
-LIB_PATH += -L$(LIB) -L$(LOCAL_LIB_DIR)
+LIB_PATH += -L$(LIB) -L$(LOCAL_ARCH)/lib
 
 ifeq ($(PLATFORM),i686)
 	LIB_PATH += -L/usr/X11R6/lib
@@ -231,7 +232,7 @@ endif
 
 EXTERNAL_LIBS := \
 	-lGLU -lGL \
-	-ltk -ltcl \
+	$(LOCAL_ARCH)/lib/libtcl.$(SHLIB_EXT) $(LOCAL_ARCH)/lib/libtk.$(SHLIB_EXT) \
 	-lXmu -lX11 -lXext \
 	$(ZSTREAM_LIB) \
 	$(AUDIO_LIB) \
@@ -352,14 +353,20 @@ endif
 #
 #-------------------------------------------------------------------------
 
-all: $(SRC)/TAGS $(ALL_SHLIBS) $(EXECUTABLE)
+all: showpid TAGS $(ALL_SHLIBS) $(EXECUTABLE)
 	$(EXECUTABLE) ./testing/grshtest.tcl
+
+.PHONY: showpid
+showpid:
+ifeq ($(PLATFORM),i686)
+	ps -ef | grep make
+endif
 
 CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
 	$(PROJECT_LIBS) $(EXTERNAL_LIBS)
 
 $(EXECUTABLE): $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
-	$(CC) -o $@ $(CMDLINE)
+	$(CC) -o $(TMP_DIR)/tmpfile $(CMDLINE); mv $(TMP_DIR)/tmpfile $@
 
 #-------------------------------------------------------------------------
 #
@@ -387,10 +394,10 @@ $(SRC)/%.preh : $(SRC)/%.h
 #-------------------------------------------------------------------------
 
 %.$(SHLIB_EXT):
-	$(SHLIB_CMD) $@ $^
+	$(SHLIB_CMD) $(TMP_DIR)/tmpfile $^; mv $(TMP_DIR)/tmpfile $@
 
 %.$(STATLIB_EXT):
-	$(STATLIB_CMD) $@ $^
+	$(STATLIB_CMD) $(TMP_DIR)/tmpfile $^; mv $(TMP_DIR)/tmpfile $@
 
 $(LIBDEEPVISION): $(DEEPVISION_OBJS)
 $(LIBDEEPTCL):    $(DEEPTCL_OBJS)
@@ -447,11 +454,11 @@ cleaner: clean
 	 $(OBJ)/ii_files/*.ii $(OBJ)/*/ii_files/*.ii
 
 # Generate TAGS file based on all source files
-$(SRC)/TAGS: $(ALL_SOURCES) $(ALL_HEADERS)
-	$(ETAGS) -f$(SRC)/TAGS $(ALL_SOURCES) $(ALL_HEADERS)
+TAGS: $(ALL_SOURCES) $(ALL_HEADERS)
+	$(ETAGS) -fTAGS $(ALL_SOURCES) $(ALL_HEADERS)
 
-$(SRC)/H_TAGS: $(ALL_HEADERS)
-	$(ETAGS) -f$(SRC)/H_TAGS $(ALL_HEADERS)
+H_TAGS: $(ALL_HEADERS)
+	$(ETAGS) -fH_TAGS $(ALL_HEADERS)
 
 # Count the lines in all source files
 count:
