@@ -22,7 +22,6 @@ set RUN_IF_EQUAL 1
 
 ### Run test procedures
 set files {
-    { bitmap_test.tcl 1 }
     { block_test.tcl 1 }
     { dlist_test.tcl 1 }
     { eventrh_test.tcl 1 }
@@ -33,6 +32,7 @@ set files {
     { gabor_test.tcl 1 }
     { gl_test.tcl 1 }
     { gtext_test.tcl 1 }
+    { gxpixmap_test.tcl 1 }
     { gxsep_test.tcl 1 }
     { gxshapekit_test.tcl 1 }
     { gxtransform_test.tcl 1 }
