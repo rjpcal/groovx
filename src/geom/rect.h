@@ -97,8 +97,8 @@ namespace geom
 
     geom::vec2<V> center() const { return geom::vec2<V>(center_x(), center_y()); }
 
-    V center_x() const { return (xx.hi+xx.lo)/V(2); }
-    V center_y() const { return (yy.hi+yy.lo)/V(2); }
+    V center_x() const { return xx.center(); }
+    V center_y() const { return yy.center(); }
 
     const V& left() const { return xx.lo; }
     const V& right() const { return xx.hi; }
@@ -106,7 +106,7 @@ namespace geom
     const V& top() const { return yy.hi; }
 
     bool contains(const geom::vec2<V>& pt) const
-    { return pt.x()>=xx.lo && pt.x()<=xx.hi && pt.y()>=yy.lo && pt.y()<=yy.hi; }
+    { return xx.contains(pt.x()) && yy.contains(pt.y()); }
 
     //
     // Manipulators
@@ -114,78 +114,47 @@ namespace geom
 
     /// Set four corners from x-left/y-top/x-right/y-bottom values.
     rect<V>& set_ltrb(V L, V T, V R, V B)
-    { xx.lo = L; yy.hi = T; xx.hi = R; yy.lo = B; return *this; }
+    { xx = span<V>(L,R); yy = span<V>(B,T); return *this; }
 
     /// Set four corners from x-left/x-right/y-bottom/y-top values.
     rect<V>& set_lrbt(V L, V R, V B, V T)
-    { xx.lo = L; xx.hi = R; yy.lo = B; yy.hi = T; return *this; }
+    { xx = span<V>(L,R); yy = span<V>(B,T); return *this; }
 
     /// Set four corners from x-left/y-bottom/x-width/y-height values.
     rect<V>& set_lbwh(V x, V y, V w, V h)
     {
-      xx.lo = x;
-      yy.lo = y;
-      xx.hi = xx.lo+rutz::abs(w);
-      yy.hi = yy.lo+rutz::abs(h);
+      xx = span<V>(x, x+rutz::abs(w));
+      yy = span<V>(y, y+rutz::abs(h));
       return *this;
     }
 
     /// Set four corners from lower-left corner and width+height values.
     rect<V>& set_lbwh(const geom::vec2<V>& xy, const geom::vec2<V>& wh)
     {
-      xx.lo = xy.x();
-      yy.lo = xy.y();
-      xx.hi = xx.lo+rutz::abs(wh.x());
-      yy.hi = yy.lo+rutz::abs(wh.y());
-      return *this;
+      return set_lbwh(xy.x(), xy.y(), wh.x(), wh.y());
     }
 
     /// Set four corners from positions of two diagonally-opposed corners.
     rect<V>& set_corners(const geom::vec2<V>& p1, const geom::vec2<V>& p2)
     {
-      xx.lo = rutz::min(p1.x(), p2.x());
-      xx.hi = rutz::max(p1.x(), p2.x());
-      yy.lo = rutz::min(p1.y(), p2.y());
-      yy.hi = rutz::max(p1.y(), p2.y());
+      xx = span<V>::from_any(p1.x(), p2.x());
+      yy = span<V>::from_any(p1.y(), p2.y());
       return *this;
     }
 
-    rect<V>& set_bottom_left(const geom::vec2<V>& point)
-    { xx.lo = point.x(); yy.lo = point.y(); return *this; }
+    void incr_width(V w)  { xx = xx.incr_width(w); }
+    void incr_height(V h) { yy = yy.incr_width(h); }
 
-    rect<V>& set_bottom_right(const geom::vec2<V>& point)
-    { xx.hi = point.x(); yy.lo = point.y(); return *this; }
+    void set_width(V w)  { xx = xx.with_width(w); }
+    void set_height(V h) { yy = yy.with_width(h); }
 
-    rect<V>& set_top_left(const geom::vec2<V>& point)
-    { xx.lo = point.x(); yy.hi = point.y(); return *this; }
-
-    rect<V>& set_top_right(const geom::vec2<V>& point)
-    { xx.hi = point.x(); yy.hi = point.y(); return *this; }
-
-    void incr_width(V w)
-    {
-      V half = V(0.5*w);
-      xx.lo -= half;
-      xx.hi += (w-half); // in case V(0.5*h) != 0.5*h (e.g. integer math)
-    }
-
-    void incr_height(V h)
-    {
-      V half = V(0.5*h);
-      yy.lo -= half;
-      yy.hi += (h-half); // in case V(0.5*h) != 0.5*h (e.g. integer math)
-    }
-
-    void set_width(V w)  { incr_width(w - width()); }
-    void set_height(V h) { incr_height(h - height()); }
-
-    void scale_x(V factor) { set_width(width() * factor); }
-    void scale_y(V factor) { set_height(height() * factor); }
+    void scale_x(V factor) { xx = xx.scaled_by(factor); }
+    void scale_y(V factor) { yy = yy.scaled_by(factor); }
 
     void translate(const geom::vec2<V>& dist)
     {
-      xx.lo += dist.x(); xx.hi += dist.x();
-      yy.lo += dist.y(); yy.hi += dist.y();
+      xx = xx.shifted_by(dist.x());
+      yy = yy.shifted_by(dist.y());
     }
 
     void scale(const geom::vec2<V>& factors)
@@ -200,28 +169,15 @@ namespace geom
       translate(diff);
     }
 
-    bool is_void() const { return (yy.hi <= yy.lo) || (xx.hi <= xx.lo); }
+    bool is_void() const { return (xx.is_void() || yy.is_void()); }
 
     void unionize(const rect<V>& other)
     {
-      if (!other.is_void())
-        {
-          if (this->is_void())
-            {
-              operator=(other);
-            }
-          else
-            {
-              xx.lo = rutz::min(xx.lo, other.xx.lo);
-              xx.hi = rutz::max(xx.hi, other.xx.hi);
-              yy.lo = rutz::min(yy.lo, other.yy.lo);
-              yy.hi = rutz::max(yy.hi, other.yy.hi);
-            }
-        }
+      xx = xx.union_with(other);
+      yy = yy.union_with(other);
     }
 
   private:
-    // Data members
     geom::span<V> xx;
     geom::span<V> yy;
   };
