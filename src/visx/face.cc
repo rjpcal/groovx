@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Tue Nov  2 22:30:11 1999
+// written: Wed Nov 10 11:21:37 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,13 +13,12 @@
 
 #include "face.h"
 
+#include <cmath>					  // for abs()
 #include <iostream.h>           // for serialize
 #include <iomanip.h>				  // for setw in serialize
 #include <string>
 #include <GL/gl.h>
 #include <GL/glu.h>
-
-#include <cctype>
 
 #include "gfxattribs.h"
 #include "reader.h"
