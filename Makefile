@@ -152,16 +152,16 @@ include $(DEP)/pkgdepends
 
 ifeq ($(enable_matlab),yes)
 $(exec_prefix)/lib/visx/mtx.so: \
-	/usr/local/matlab/extern/lib/glnx86/libmx.so \
-	/usr/local/matlab/extern/lib/glnx86/libmatlb.so
+	$(matlab_lib)/libmx.so \
+	$(matlab_lib)/libmatlb.so
 
 $(exec_prefix)/lib/visx/matlabengine.so: \
-	/usr/local/matlab/extern/lib/glnx86/libeng.so \
-	/usr/local/matlab/extern/lib/glnx86/libmx.so \
-	/usr/local/matlab/extern/lib/glnx86/libut.so \
-	/usr/local/matlab/extern/lib/glnx86/libmat.so \
-	/usr/local/matlab/extern/lib/glnx86/libmi.so \
-	/usr/local/matlab/extern/lib/glnx86/libmatlb.so
+	$(matlab_lib)/libeng.so \
+	$(matlab_lib)/libmx.so \
+	$(matlab_lib)/libut.so \
+	$(matlab_lib)/libmat.so \
+	$(matlab_lib)/libmi.so \
+	$(matlab_lib)/libmatlb.so
 endif
 
 # dependencies of main project shlib's on object files
