@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:46:08 1999
-// written: Thu May 17 15:46:14 2001
+// written: Sat May 19 11:37:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -147,7 +147,7 @@ public:
       tag \a name. The \c Reader will not create a new object, but
       will use the IO* provided here. */
   virtual void readOwnedObject(const fixed_string& name,
-										 IO::IoObject* obj) = 0;
+										 IdItem<IO::IoObject> obj) = 0;
 
   /** Read the named base class into the IO object \a obj, which
       should be arranged to point or refer to the appropriate base
@@ -155,7 +155,7 @@ public:
       functions must NOT call the fully derived versions. This effect
       can be best accomplished with an \c IO::IoProxy. */
   virtual void readBaseClass(const fixed_string& baseClassName,
-									  IO::IoObject* basePart) = 0;
+									  IdItem<IO::IoObject> basePart) = 0;
 
   /** Restore an entire object hierarchy, starting with the root
 		object. If \a root is non-null, the function will use \a root as
