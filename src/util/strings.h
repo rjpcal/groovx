@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Thu Aug  9 13:16:54 2001
+// written: Sun Aug 19 09:07:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -184,33 +184,34 @@ public:
   // Appending
   //
 
+  /// Append a character to the fstring.
   fstring& append(char c)
   {
     append_text(1, &c); return *this;
   }
 
-  /** Append additional text to the error message. */
+  /// Append additional text to the fstring.
   template <class T1>
   fstring& append(const T1& part1)
   {
     do_append(part1); return *this;
   }
 
-  /** Append additional text to the error message. */
+  /// Append additional text to the fstring.
   template <class T1, class T2>
   fstring& append(const T1& part1, const T2& part2)
   {
     do_append(part1); do_append(part2); return *this;
   }
 
-  /** Append additional text to the error message. */
+  /// Append additional text to the fstring.
   template <class T1, class T2, class T3>
   fstring& append(const T1& part1, const T2& part2, const T3& part3)
   {
     do_append(part1); do_append(part2); do_append(part3); return *this;
   }
 
-  /** Append additional text to the error message. */
+  /// Append additional text to the fstring.
   template <class T1, class T2, class T3, class T4>
   fstring& append(const T1& part1, const T2& part2, const T3& part3,
                   const T4& part4)
