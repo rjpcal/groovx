@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Fri Aug 10 10:50:04 2001
+// written: Thu Aug 16 09:24:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,6 +96,8 @@ public:
   void setVisibility(bool vis);
 
   void setHold(bool hold_on);
+
+  void allowRefresh(bool allow);
 
   void setDrawable(const Util::Ref<GxNode>& node);
 
