@@ -301,13 +301,13 @@ namespace
 {
   GbVec3<double> data[4];
 
-  TArrayValue<GbVec3<double> > arraydata;
+  rutz::array_value<GbVec3<double> > arraydata;
 
-  const TArrayValue<GbVec3<double> >& getArray() { return arraydata; }
+  const rutz::array_value<GbVec3<double> >& getArray() { return arraydata; }
 
   unsigned int getArraySize() { return arraydata.arraySize(); }
 
-  void setArray(const TArrayValue<GbVec3<double> >& a) { arraydata = a; }
+  void setArray(const rutz::array_value<GbVec3<double> >& a) { arraydata = a; }
 
   rutz::fwd_iter<GbVec3<double > > getData()
   {

@@ -65,7 +65,7 @@ public:
   ////////////
 
   /// The array of vertices that will be drawn onscreen.
-  TArrayValue<GbVec3<double> > itsPoints;
+  rutz::array_value<GbVec3<double> > itsPoints;
 
 private:
   int itsStyle;

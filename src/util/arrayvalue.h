@@ -38,47 +38,50 @@
 #include <iomanip>
 #include <vector>
 
-/// A rutz::value subclass representing a fixed-size set of homogeneous values.
-template <class T>
-class TArrayValue : public rutz::value
+namespace rutz
 {
-public:
-  TArrayValue() : itsArray() {}
-  TArrayValue(const rutz::fstring& s) { set_string(s); }
-  virtual ~TArrayValue() {}
-
-  virtual rutz::fstring value_typename() const
+  /// A rutz::value subclass representing a fixed-size set of homogeneous values.
+  template <class T>
+  class array_value : public rutz::value
   {
-    return rutz::fstring("TArrayValue");
-  }
+  public:
+    array_value() : itsArray() {}
+    array_value(const rutz::fstring& s) { set_string(s); }
+    virtual ~array_value() {}
 
-  virtual void print_to(STD_IO::ostream& os) const
-  {
-    for (unsigned int i = 0; i < itsArray.size(); ++i)
-      os << itsArray[i] << "   ";
-  }
+    virtual rutz::fstring value_typename() const
+    {
+      return rutz::fstring("array_value");
+    }
 
-  virtual void scan_from(STD_IO::istream& is)
-  {
-    std::vector<T> newarray;
+    virtual void print_to(STD_IO::ostream& os) const
+    {
+      for (unsigned int i = 0; i < itsArray.size(); ++i)
+        os << itsArray[i] << "   ";
+    }
 
-    while (!is.eof() && !is.fail())
-      {
-        T val;
-        is >> val >> std::ws;
-        newarray.push_back(val);
-      }
-    itsArray.swap(newarray);
-  }
+    virtual void scan_from(STD_IO::istream& is)
+    {
+      std::vector<T> newarray;
 
-  unsigned int arraySize() const { return itsArray.size(); }
+      while (!is.eof() && !is.fail())
+        {
+          T val;
+          is >> val >> std::ws;
+          newarray.push_back(val);
+        }
+      itsArray.swap(newarray);
+    }
 
-        T& arrayAt(unsigned int i)       { return itsArray[i]; }
-  const T& arrayAt(unsigned int i) const { return itsArray[i]; }
+    unsigned int arraySize() const { return itsArray.size(); }
 
-private:
-  std::vector<T> itsArray;
-};
+    T& arrayAt(unsigned int i)       { return itsArray[i]; }
+    const T& arrayAt(unsigned int i) const { return itsArray[i]; }
+
+  private:
+    std::vector<T> itsArray;
+  };
+}
 
 static const char vcid_arrayvalue_h[] = "$Header$";
 #endif // !ARRAYVALUE_H_DEFINED
