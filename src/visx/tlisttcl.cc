@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Fri Aug 10 10:55:03 2001
+// written: Tue Aug 14 11:10:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -295,10 +295,8 @@ Tcl::List TlistTcl::loadObjidFile(const char* objid_file,
       int posn = 0;
       while (ist >> objn)
         {
-          Ref<GxSeparator> innersep(GxSeparator::make());
-          innersep->addChild(Ref<GxNode>(posids[posn]));
-          innersep->addChild(Ref<GxNode>(objids[objn-1]));
-          sep->addChild(innersep);
+          sep->addChild(makeSepPair(Ref<GxNode>(posids[posn]),
+                                    Ref<GxNode>(objids[objn-1])));
           ++posn;
         }
 
