@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Thu Sep 12 13:19:38 2002
+// written: Thu Nov  7 18:19:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -139,15 +139,16 @@ DOTRACE("Tcl::MainImpl::MainImpl");
   // Make command-line arguments available in the Tcl variables "argc" and
   // "argv".
 
-  itsSafeInterp.setGlobalVar("argc", argc-1);
+  itsSafeInterp.setGlobalVar("argc", Tcl::toTcl(argc-1));
 
   char* args = Tcl_Merge(argc-1, (const char **)argv+1);
-  itsSafeInterp.setGlobalVar("argv", args);
+  itsSafeInterp.setGlobalVar("argv", Tcl::toTcl(args));
   Tcl_Free(args);
 
-  itsSafeInterp.setGlobalVar("argv0", itsArgv0);
+  itsSafeInterp.setGlobalVar("argv0", Tcl::toTcl(itsArgv0));
 
-  itsSafeInterp.setGlobalVar("tcl_interactive", isItInteractive ? 1 : 0);
+  itsSafeInterp.setGlobalVar("tcl_interactive",
+                             Tcl::toTcl(isItInteractive ? 1 : 0));
 
 #ifdef WITH_READLINE
   using_history();
@@ -250,7 +251,7 @@ void Tcl::MainImpl::readlineLineComplete(char* line)
 {
 DOTRACE("Tcl::MainImpl::readlineLineComplete");
 
-  DebugEvalNL(line);
+  dbgEvalNL(3, line);
 
   rl_callback_handler_remove();
 
@@ -318,7 +319,7 @@ DOTRACE("Tcl::MainImpl::handleLine");
 
   itsCommand.append(line, "\n");
 
-  DebugEvalNL(itsCommand.c_str());
+  dbgEvalNL(3, itsCommand.c_str());
 
   if (itsCommand.length() > 0 &&
       Tcl_CommandComplete(itsCommand.c_str()))
@@ -356,7 +357,7 @@ DOTRACE("Tcl::MainImpl::execCommand");
 
   Tcl_CreateChannelHandler(itsInChannel, 0, &stdinProc, (ClientData) 0);
 
-  bool display_result = false;
+  bool should_display_result = false;
 
 #ifdef WITH_READLINE
   char* expansion = 0;
@@ -367,9 +368,9 @@ DOTRACE("Tcl::MainImpl::execCommand");
   const int status = 0;
 #endif
 
-  DebugEvalNL(itsCommand.c_str());
-  DebugEvalNL(expansion);
-  DebugEvalNL(status);
+  dbgEvalNL(3, itsCommand.c_str());
+  dbgEvalNL(3, expansion);
+  dbgEvalNL(3, status);
 
   // status: -1 --> error
   //          0 --> no expansions occurred
@@ -379,7 +380,7 @@ DOTRACE("Tcl::MainImpl::execCommand");
   if (status == -1 || status == 2) // display expansion?
     {
       Tcl_AppendResult(interp(), expansion, (char*) 0);
-      display_result = true;
+      should_display_result = true;
     }
 
   if (status == 1)
@@ -394,30 +395,47 @@ DOTRACE("Tcl::MainImpl::execCommand");
 
   if (status == 0 || status == 1) // execute expansion?
     {
+      // The idea here is that we want to keep the readline history and the
+      // Tcl history in sync. Tcl's "history add" command will skip adding
+      // the string if it is empty or has whitespace only. So, we need to
+      // make that same check here before adding to the readline
+      // history. In fact, if we find that the command is empty, we can
+      // just skip executing it altogether.
+
+      // Skip over leading whitespace
+      char* trimmed = expansion;
+
+      while (isspace(trimmed[0]) && trimmed[0] != '\0')
+        {
+          ++trimmed;
+        }
+
+      size_t len = strlen(trimmed);
+
+      if (len > 0)
+        {
+          int code = Tcl_RecordAndEval(interp(), trimmed, TCL_EVAL_GLOBAL);
+
 #ifdef WITH_READLINE
-      int code = Tcl_GlobalEval(interp(), expansion);
+          char c = trimmed[len-1];
 
-      size_t len = strlen(expansion);
-      char c = expansion[len-1];
+          if (c == '\n')
+            trimmed[len-1] = '\0';
 
-      if (c == '\n')
-        expansion[len-1] = '\0';
+          add_history(trimmed);
 
-      add_history(expansion);
-
-      expansion[len-1] = c;
-#else
-      int code = Tcl_RecordAndEval(interp(), expansion, TCL_EVAL_GLOBAL);
+          trimmed[len-1] = c;
 #endif
 
-      DebugEvalNL(Tcl_GetStringResult(interp()));
+          dbgEvalNL(3, Tcl_GetStringResult(interp()));
 
-      display_result =
-        (Tcl_GetStringResult(interp())[0] != '\0') &&
-        ((code != TCL_OK) || isItInteractive);
+          should_display_result =
+            (Tcl_GetStringResult(interp())[0] != '\0') &&
+            ((code != TCL_OK) || isItInteractive);
+        }
     }
 
-  if (display_result)
+  if (should_display_result)
     {
       Tcl_Channel outChan = Tcl_GetStdChannel(TCL_STDOUT);
       if (outChan)
@@ -435,7 +453,7 @@ DOTRACE("Tcl::MainImpl::execCommand");
                                &stdinProc, (ClientData) 0);
     }
 
-  itsCommand = "";
+  itsCommand.clear();
 
 #ifdef WITH_READLINE
   free(expansion);
