@@ -2,7 +2,7 @@
 // iomgr.h
 // Rob Peters
 // created: Fri Apr 23 01:12:37 1999
-// written: Wed Jun 30 16:28:25 1999
+// written: Sat Mar 11 22:52:58 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -11,10 +11,6 @@
 
 #ifndef IO_H_DEFINED
 #include "io.h"
-#endif
-
-#ifndef IOFACTORY_H_DEFINED
-#include "iofactory.h"
 #endif
 
 class istream;
