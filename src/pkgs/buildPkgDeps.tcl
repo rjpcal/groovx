@@ -53,7 +53,7 @@ proc setup_package { pkgname ccfiles libdir } {
 
     set shlib $libdir/${pkgname}[info sharedlibextension]
 
-    regsub -all {\.cc} $ccfiles .do files
+    regsub -all {\.cc} $ccfiles .${::OBJEXT} files
 
     print $::depfile "PKG_LIBS += ${shlib}\n\n"
 
@@ -98,7 +98,7 @@ proc setup_package { pkgname ccfiles libdir } {
 source [file dirname [info script]]/../../scripts/parse_cmdline.tcl
 
 # We are depending on the following command-line args:
-#   --depfile, --objdir, --pkgdir, and --libdir
+#   --depfile, --objdir, --objext, --pkgdir, and --libdir
 parse_cmdline $argv
 
 set indexfile [open ${::LIBDIR}/pkgIndex.tcl w]
