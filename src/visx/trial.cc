@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri Sep 10 14:23:52 1999
+// written: Mon Sep 27 10:32:37 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@
 #include "grobj.h"
 #include "position.h"
 
-#define NO_TRACE
+#define LOCAL_TRACE
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
@@ -63,6 +63,9 @@ DOTRACE("Trial::Trial(istream&, IOFlag)");
   deserialize(is, flag);
 }
 
+Trial::~Trial() {
+DOTRACE("Trial::~Trial");
+}
 
 void Trial::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("Trial::serialize");
