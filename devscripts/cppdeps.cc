@@ -502,10 +502,18 @@ namespace
       COMPLETE = 2
     };
 
+  struct string_cmp
+  {
+    bool operator()(const char* p1, const char* p2)
+    {
+      return (strcmp(p1, p2) == -1);
+    }
+  };
+
   class file_info
   {
   public:
-    typedef map<string, file_info*> info_map_t;
+    typedef map<const char*, file_info*, string_cmp> info_map_t;
 
   private:
     static info_map_t s_info_map;
@@ -595,6 +603,8 @@ namespace
     dep_list_t              m_direct_ldeps;
     bool                    m_nested_ldeps_done;
     dep_list_t              m_nested_ldeps;
+
+    int                     m_epoch;
   };
 
   struct file_info_cmp
@@ -633,7 +643,8 @@ namespace
     m_direct_ldeps_done(false),
     m_direct_ldeps(),
     m_nested_ldeps_done(false),
-    m_nested_ldeps()
+    m_nested_ldeps(),
+    m_epoch(0)
   {
     assert(this->m_dirname_without_slash.length() > 0); // must be at least '.'
     assert(this->m_dirname_without_slash[this->m_dirname_without_slash.length()-1] != '/');
@@ -664,13 +675,16 @@ namespace
   file_info* file_info::get(const string& fname_orig)
   {
     const string fname = make_normpath(fname_orig);
-    info_map_t::iterator p = s_info_map.find(fname);
+
+    info_map_t::iterator p = s_info_map.find(fname.c_str());
     if (p != s_info_map.end())
       return (*p).second;
 
+    file_info* finfo = new file_info(fname);
+
     info_map_t::iterator i =
       s_info_map.insert(info_map_t::value_type
-                        (fname, new file_info(fname))).first;
+                        (finfo->m_fname.c_str(), finfo)).first;
 
     return (*i).second;
   }
@@ -1052,7 +1066,7 @@ namespace
         return this->m_direct_ldeps;
       }
 
-    std::set<file_info*, file_info_cmp> deps_set;
+    std::set<file_info*> deps_set;
 
     ++file_info::s_nest_level;
     const dep_list_t& cdeps = this->get_nested_cdeps();
@@ -1092,15 +1106,19 @@ namespace
     assert(!computing_ldeps);
     computing_ldeps = true;
 
+    static int epoch = 0;
+    ++epoch;
+
     if (cfg.verbosity >= NOISY)
       {
         info() << "start ldeps for " << this->m_fname << '\n';
       }
 
-    std::set<file_info*, file_info_cmp> deps_set;
+    assert(this->m_nested_ldeps.empty());
 
     vector<file_info*> to_handle;
 
+    this->m_epoch = epoch;
     to_handle.push_back(this);
 
     while (to_handle.size() > 0)
@@ -1108,10 +1126,9 @@ namespace
         file_info* f = to_handle.back();
         to_handle.pop_back();
 
-        if (deps_set.find(f) != deps_set.end())
-          continue;
+        assert(f->m_epoch == epoch);
 
-        deps_set.insert(f);
+        this->m_nested_ldeps.push_back(f);
 
         const dep_list_t& direct = f->get_direct_ldeps();
 
@@ -1130,7 +1147,11 @@ namespace
                 continue;
               }
 
-            to_handle.push_back(*itr);
+            if ((*itr)->m_epoch != epoch)
+              {
+                (*itr)->m_epoch = epoch;
+                to_handle.push_back(*itr);
+              }
           }
       }
 
@@ -1138,9 +1159,6 @@ namespace
       {
         info() << "...end ldeps for " << this->m_fname << '\n';
       }
-
-    assert(this->m_nested_ldeps.empty());
-    this->m_nested_ldeps.assign(deps_set.begin(), deps_set.end());
 
     this->m_nested_ldeps_done = true;
     computing_ldeps = false;
