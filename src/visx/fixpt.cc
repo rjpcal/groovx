@@ -2,8 +2,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Sat Mar 13 14:36:26 1999
-static const char vcid_fixpt_cc[] = "$Id$";
+// written: Sun Mar 14 18:19:17 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FIXPT_CC_DEFINED
@@ -23,8 +22,8 @@ static const char vcid_fixpt_cc[] = "$Id$";
 FixPt::FixPt(float len, int wid) : 
   itsLength(len), itsWidth(wid) {}
 
-FixPt::FixPt(istream &is) {
-  deserialize(is);
+FixPt::FixPt(istream &is, IOFlag flag) {
+  deserialize(is, flag);
 }
 
 FixPt::~FixPt() {}
@@ -73,4 +72,5 @@ void FixPt::grRecompile() const {
   grPostCompiled();
 }
 
+static const char vcid_fixpt_cc[] = "$Id$";
 #endif // !FIXPT_CC_DEFINED

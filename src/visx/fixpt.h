@@ -2,7 +2,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 13:08:05 1999
+// written: Sun Mar 14 18:18:44 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FIXPT_H_DEFINED
@@ -19,7 +19,7 @@
 class FixPt : public GrObj {
 public:
   FixPt (float len, int wid);
-  FixPt (istream &is);
+  FixPt (istream &is, IOFlag flag);
   virtual ~FixPt ();
 
   virtual IOResult serialize(ostream &os, IOFlag flag = NO_FLAGS) const;

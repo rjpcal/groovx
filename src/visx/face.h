@@ -2,7 +2,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Sat Mar 13 15:02:47 1999
+// written: Sun Mar 14 18:17:36 1999
 //
 // The Face class is a derived class of Scaleable (itself derived from
 // GrObj). As such, Face*'s may be stored and manipulated in ObjList's
@@ -27,7 +27,7 @@
 class Face : public GrObj {
 public:
   Face (float eh, float es, float nl, float mh, int categ=0);
-  Face (istream &is);
+  Face (istream &is, IOFlag flag);
   virtual ~Face ();
 
   // write/read the object's state from/to an output/input stream

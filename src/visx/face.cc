@@ -2,7 +2,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Sat Mar 13 14:35:58 1999
+// written: Sun Mar 14 18:18:18 1999
 static const char vcid_face_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
@@ -51,9 +51,9 @@ DOTRACE("Face::Face");
 
 // read the object's state from an input stream. The input stream must
 // already be open and connected to an appropriate file.
-Face::Face(istream &is) {
+Face::Face(istream &is, IOFlag flag) {
 DOTRACE("Face::Face");
-  deserialize(is);
+  deserialize(is, flag);
 }
 
 Face::~Face() {
