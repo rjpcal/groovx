@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Tue Mar  7 20:09:31 2000
+// written: Wed Mar  8 11:41:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -82,12 +82,11 @@ DOTRACE("IO::eatWhitespace");
   return c;
 }
 
-void IO::readTypename(istream& is, const char* correctNames, bool doCheck) {
-  readTypename(is, string(correctNames), doCheck);
-}
-
-void IO::readTypename(istream& is, const string& correctNames, bool doCheck) {
+void IO::readTypename(istream& is, const char* correctNames_cstr,
+							 bool doCheck) {
 DOTRACE("IO::readTypename");
+  string correctNames = correctNames_cstr;
+
   string name;
   is >> name;
 
@@ -187,28 +186,31 @@ IoError::IoError() :
 DOTRACE("IoError::IoError");
 }
 
-IoError::IoError(const string& str) :
-  ErrorWithMsg(demangle(typeid(*this).name()) + ": " + str)
+IoError::IoError(const char* str) :
+  ErrorWithMsg(demangle_cstr(typeid(*this).name()))
 {
 DOTRACE("IoError::IoError(const string&)");
+  appendMsg(": ");
+  appendMsg(str);
 }
 
 IoError::IoError(const type_info& ti) :
-  ErrorWithMsg(demangle(typeid(*this).name()) + ": " +
-					demangle(ti.name()))
+  ErrorWithMsg(demangle_cstr(typeid(*this).name()))
 {
 DOTRACE("IoError::IoError(const type_info&)");
+  appendMsg(": ");
+  appendMsg(demangle_cstr(ti.name()));
 }
 
-void IoError::setMsg(const string& str) {
-DOTRACE("IoError::setMsg(const string&)");
+void IoError::setMsg(const char* str) {
+DOTRACE("IoError::setMsg(const char*)");
   ErrorWithMsg::setMsg(demangle(typeid(*this).name()) + ": " + str);
 }
 
 void IoError::setMsg(const type_info& ti) {
 DOTRACE("IoError::setMsg(const type_info&)");
-  ErrorWithMsg::setMsg(demangle(typeid(*this).name()) + ": " +
-							  demangle(ti.name()));
+  string msg = demangle(typeid(*this).name()) + ": " + demangle(ti.name())
+  ErrorWithMsg::setMsg(msg.c_str());
 }
 
 InputError::InputError(const char* str) {

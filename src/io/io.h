@@ -3,17 +3,13 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Tue Mar  7 20:07:47 2000
+// written: Wed Mar  8 11:41:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef IO_H_DEFINED
 #define IO_H_DEFINED
-
-#ifndef STRINGFWD_H_DEFINED
-#include "stringfwd.h"
-#endif
 
 #ifndef ERROR_H_DEFINED
 #include "util/error.h"
@@ -116,10 +112,6 @@ public:
       false, the function does nothing except read a word from \a
       theStream. */
   static void readTypename(istream& theStream,
-									const string& correctNames,
-									bool doCheck = true);
-
-  static void readTypename(istream& theStream,
 									const char* correctNames,
 									bool doCheck = true);
 
@@ -176,12 +168,12 @@ public:
   /// Default constructor
   IoError();
   /// Construct, and call \c setMsg(message)
-  IoError(const string& message);
+  IoError(const char* message);
   /// Construct, and call \c setMsg(typeInfo)
   IoError(const type_info& typeInfo);
 protected:
   /// Change the message associated with the exception to \a newMessage
-  virtual void setMsg(const string& newMessage);
+  virtual void setMsg(const char* newMessage);
   /// Change the message associated with the exception to \c typeInfo.name()
   virtual void setMsg(const type_info& typeInfo);
 };
@@ -198,8 +190,6 @@ public:
   ///
   InputError(const char* str);
   ///
-  InputError(const string& str) { setMsg(str); }
-  ///
   InputError(const type_info& ti) { setMsg(ti); }
 };
 
@@ -214,8 +204,6 @@ public:
   OutputError() : IoError() {}
   ///
   OutputError(const char* str);
-  ///
-  OutputError(const string& str) { setMsg(str); }
   ///
   OutputError(const type_info& ti) { setMsg(ti); }
 };
@@ -234,8 +222,6 @@ public:
   ///
   IoLogicError(const char* str);
   ///
-  IoLogicError(const string& str) { setMsg(str); }
-  ///
   IoLogicError(const type_info& ti) { setMsg(ti); }
 };
 
@@ -252,8 +238,6 @@ public:
   ///
   IoValueError(const char* str);
   ///
-  IoValueError(const string& str) { setMsg(str); }
-  ///
   IoValueError(const type_info& ti) { setMsg(ti); }
 };
 
@@ -269,8 +253,6 @@ public:
   IoFilenameError() : IoError() {}
   ///
   IoFilenameError(const char* filename);
-  ///
-  IoFilenameError(const string& filename) { setMsg(filename); }
 };
 
 static const char vcid_io_h[] = "$Header$";
