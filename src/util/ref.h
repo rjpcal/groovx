@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Wed Aug  8 12:27:56 2001
+// written: Sun Aug 19 15:51:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -247,7 +247,7 @@ private:
       return *this;
     }
 
-    bool isValid() const
+    bool isValid() const throw()
     {
       if (itsCounts == 0) // implies we are using strong ref's
         {
@@ -261,7 +261,8 @@ private:
       release(); return false;
     }
 
-    T* get()        const { ensureValid(); return itsMaster; }
+    T* get()     const         { ensureValid(); return itsMaster; }
+    T* getWeak() const throw() { return isValid() ? itsMaster : 0; }
 
     bool operator==(const WeakHandle& other) const
     {
@@ -349,11 +350,16 @@ public:
 
   // Default destructor, copy constructor, operator=() are fine
 
-  T* operator->() const { return itsHandle.get(); }
-  T& operator*()  const { return *(itsHandle.get()); }
+  T* operator->()      const { return itsHandle.get(); }
+  T& operator*()       const { return *(itsHandle.get()); }
 
-  T* get()        const { return itsHandle.get(); }
+  /** Returns the pointee, or if throws an exception if there is not a
+      valid pointee. */
+  T* get()     const         { return itsHandle.get(); }
 
+  /** Returns the pointee, or returns null if there is not a valid
+      pointee. Will not throw an exception. */
+  T* getWeak() const throw() { return itsHandle.getWeak(); }
 
   bool isValid() const { return itsHandle.isValid(); }
   bool isInvalid() const { return !(isValid()); }
