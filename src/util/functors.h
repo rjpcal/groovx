@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Sep  7 15:07:16 2001
-// written: Fri Jan 18 16:06:55 2002
+// written: Wed Jan 30 21:03:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -250,12 +250,6 @@ namespace Util
     }
   };
 
-  template <class MF>
-  inline MemFunctorBase<MF> memFunc(MF mf)
-  {
-    return mf;
-  }
-
 ///////////////////////////////////////////////////////////////////////
 //
 // MemFunctor wraps a member function and exposes it through ordinary
@@ -276,6 +270,12 @@ namespace Util
   {
     typedef SoftRef<typename MemFunctor<MF>::C> Arg1_t;
   };
+
+  template <class MF>
+  inline MemFunctor<MF> memFunc(MF mf)
+  {
+    return mf;
+  }
 
 
 ///////////////////////////////////////////////////////////////////////
