@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Mon Aug 13 16:42:59 2001
+// written: Tue Aug 14 11:34:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -171,6 +171,7 @@ DOTRACE("GrObj::setBitmapCacheDir");
 void GrObj::setBBVisibility(bool visibility)
 {
   itsImpl->itsBB->setVisible(visibility);
+  sendStateChangeMsg();
 }
 
 void GrObj::setScalingMode(Gmodes::ScalingMode val)
