@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:55 1999
-// written: Mon Jun 11 14:49:17 2001
+// written: Sat Jul 21 20:16:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,10 +21,17 @@
 #include "util/stopwatch.h"
 #endif
 
-namespace GWT { class Widget; }
-namespace Util { class ErrorHandler; }
+namespace GWT
+{
+  class Widget;
+}
 
-namespace Util { template <class T> class Ref; };
+namespace Util
+{
+  class ErrorHandler;
+  template <class T> class Ref;
+  template <class T> class WeakRef;
+}
 
 class TrialBase;
 class TrialEvent;
@@ -68,14 +75,14 @@ public:
 
   int addEvent(Util::Ref<TrialEvent> event, TimePoint time_point);
   int addEventByName(const char* event_type,
-							TimePoint time_point, int msec_delay);
+                     TimePoint time_point, int msec_delay);
 
   /////////////
   // actions //
   /////////////
 
-  virtual void thBeginTrial(GWT::Widget& widget,
-									 Util::ErrorHandler& eh, TrialBase& trial);
+  virtual void thBeginTrial(Util::WeakRef<GWT::Widget> widget,
+                            Util::ErrorHandler& eh, TrialBase& trial);
   virtual void thResponseSeen();
   virtual void thAbortTrial();
 
