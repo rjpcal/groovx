@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Nov 21 17:59:39 2002
+// written: Fri Nov 22 15:40:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ public:
 
   static Window cClassCreateProc(Tk_Window tkwin,
                                  Window parent,
-                                 ClientData clientData);
+                                 ClientData clientData) throw();
 };
 
 
@@ -79,7 +79,7 @@ Tk_ClassProcs toglProcs =
 Toglet::Impl::Impl(Toglet* p) :
   owner(p),
   tkWin(owner->tkWin()),
-  canvas()
+  canvas(GLCanvas::make(Tk_Display(tkWin)), Util::STRONG, Util::PROTECTED)
 {
 DOTRACE("Toglet::Impl::Impl");
 
@@ -94,14 +94,12 @@ DOTRACE("Toglet::Impl::Impl");
 }
 
 Window Toglet::Impl::cClassCreateProc(Tk_Window tkwin,
-                                    Window parent,
-                                    ClientData clientData)
+                                      Window parent,
+                                      ClientData clientData) throw()
 {
   Toglet::Impl* rep = static_cast<Toglet::Impl*>(clientData);
 
   Display* dpy = Tk_Display(tkwin);
-
-  rep->canvas = Util::SoftRef<GLCanvas>(GLCanvas::make(dpy));
 
   Visual* visual = rep->canvas->visual();
   int screen = rep->canvas->screen();
