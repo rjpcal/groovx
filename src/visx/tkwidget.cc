@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Thu Jul 19 20:53:47 2001
+// written: Sat Jul 21 18:28:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,6 +55,7 @@ public:
   {
     std::cerr << "KeyPress: "
               << "keys " << keys
+              << " mods " << modifiers
               << " x " << x << " y " << y << std::endl;
 
     return GWT::HANDLED;
@@ -68,13 +69,13 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Tcl::TkWidget::TkWidgImpl {};
-
-namespace
+class Tcl::TkWidget::TkWidgImpl
 {
-  void buttonEventProc(ClientData clientData, XEvent* rawEvent)
+public:
+
+  static void buttonEventProc(ClientData clientData, XEvent* rawEvent)
   {
-    DOTRACE("buttonEventProc");
+    DOTRACE("Tcl::TkWidget::TkWidgImpl::buttonEventProc");
 
     Tcl::TkWidget* widg = static_cast<Tcl::TkWidget*>(clientData);
 
@@ -85,9 +86,9 @@ namespace
     widg->dispatchButtonEvent(eventPtr->button, eventPtr->x, eventPtr->y);
   }
 
-  void keyEventProc(ClientData clientData, XEvent* rawEvent)
+  static void keyEventProc(ClientData clientData, XEvent* rawEvent)
   {
-    DOTRACE("keyEventProc");
+    DOTRACE("Tcl::TkWidget::TkWidgImpl::keyEventProc");
 
     Tcl::TkWidget* widg = static_cast<Tcl::TkWidget*>(clientData);
 
@@ -104,7 +105,39 @@ namespace
     widg->dispatchKeyEvent(eventPtr->state, &buf[0],
                            eventPtr->x, eventPtr->y);
   }
-}
+
+  enum EventType { KEY, BUTTON };
+
+  static void createEventHandler(Tcl::TkWidget* widg, EventType type)
+  {
+    switch (type)
+      {
+      case KEY:
+        Tk_CreateEventHandler(widg->tkWin(), KeyPressMask, keyEventProc,
+                              static_cast<void*>(widg));
+        break;
+      case BUTTON:
+        Tk_CreateEventHandler(widg->tkWin(), ButtonPressMask, buttonEventProc,
+                              static_cast<void*>(widg));
+        break;
+      }
+  }
+
+  static void destroyEventHandler(Tcl::TkWidget* widg, EventType type)
+  {
+    switch (type)
+      {
+      case KEY:
+        Tk_DeleteEventHandler(widg->tkWin(), KeyPressMask, keyEventProc,
+                              static_cast<void*>(widg));
+        break;
+      case BUTTON:
+        Tk_DeleteEventHandler(widg->tkWin(), ButtonPressMask, buttonEventProc,
+                              static_cast<void*>(widg));
+        break;
+      }
+  }
+};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -114,14 +147,18 @@ namespace
 
 Tcl::TkWidget::TkWidget() : itsImpl(new TkWidgImpl) {}
 
-Tcl::TkWidget::~TkWidget() { delete itsImpl; }
+Tcl::TkWidget::~TkWidget()
+{
+  TkWidgImpl::destroyEventHandler(this, TkWidgImpl::BUTTON);
+  TkWidgImpl::destroyEventHandler(this, TkWidgImpl::KEY);
+  delete itsImpl;
+}
 
 void Tcl::TkWidget::addButtonListener(Util::Ref<GWT::ButtonListener> b)
 {
   if (!hasButtonListeners())
     {
-      Tk_CreateEventHandler(tkWin(), ButtonPressMask, buttonEventProc,
-                            static_cast<void*>(this));
+      TkWidgImpl::createEventHandler(this, TkWidgImpl::BUTTON);
     }
 
   GWT::Widget::addButtonListener(b);
@@ -131,8 +168,7 @@ void Tcl::TkWidget::addKeyListener(Util::Ref<GWT::KeyListener> k)
 {
   if (!hasKeyListeners())
     {
-      Tk_CreateEventHandler(tkWin(), KeyPressMask, keyEventProc,
-                            static_cast<void*>(this));
+      TkWidgImpl::createEventHandler(this, TkWidgImpl::KEY);
     }
 
   GWT::Widget::addKeyListener(k);
@@ -144,8 +180,7 @@ void Tcl::TkWidget::removeButtonListeners()
 
   if (!hasButtonListeners())
     {
-      Tk_DeleteEventHandler(tkWin(), ButtonPressMask, buttonEventProc,
-                            static_cast<void*>(this));
+      TkWidgImpl::destroyEventHandler(this, TkWidgImpl::BUTTON);
     }
 }
 
@@ -155,8 +190,7 @@ void Tcl::TkWidget::removeKeyListeners()
 
   if (!hasKeyListeners())
     {
-      Tk_DeleteEventHandler(tkWin(), KeyPressMask, keyEventProc,
-                            static_cast<void*>(this));
+      TkWidgImpl::destroyEventHandler(this, TkWidgImpl::KEY);
     }
 }
 
