@@ -148,6 +148,15 @@ public:
   {
     activeState.reset(0);
   }
+
+  void installCurrentNode() const
+  {
+    Precondition( isActive() );
+    if (activeState->widget.isValid() && currentNode < gxNodes.size())
+      {
+        activeState->widget->setDrawable(gxNodes[currentNode]);
+      }
+  }
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -533,7 +542,7 @@ DOTRACE("Trial::trDraw");
   Util::SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     {
-      installSelf(widget);
+      rep->installCurrentNode();
       widget->setVisibility(true);
       widget->fullRender();
     }
@@ -545,7 +554,7 @@ DOTRACE("Trial::trRender");
   Util::SoftRef<Toglet> widget = getWidget();
   if (widget.isValid())
     {
-      installSelf(widget);
+      rep->installCurrentNode();
       widget->setVisibility(true);
       widget->render();
     }
@@ -621,14 +630,6 @@ DOTRACE("Trial::trDenyResponses");
   Util::log("trDenyResponses");
 
   rep->activeState->rh->rhDenyResponses();
-}
-
-void Trial::installSelf(SoftRef<Toglet> widget) const
-{
-DOTRACE("Trial::installSelf");
-
-  if (rep->currentNode < rep->gxNodes.size())
-    widget->setDrawable(rep->gxNodes[rep->currentNode]);
 }
 
 static const char vcid_trial_cc[] = "$Header$";

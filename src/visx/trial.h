@@ -152,8 +152,6 @@ public:
   void trAbortTrial();
   void trEndTrial();
 
-  void installSelf(Util::SoftRef<Toglet> widget) const;
-
 private:
   Trial(const Trial&);
   Trial& operator=(const Trial&);
