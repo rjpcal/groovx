@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Thu Mar 30 09:54:55 2000
+// written: Tue Jun 27 16:28:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -125,8 +125,8 @@ protected:
 
 	 const char* filename = arg(2).getCstring();
 
-	 bool use_typename = arg(3).getBool();
-	 bool use_bases    = arg(4).getBool();
+	 bool use_typename = objc() < 4 ? true : arg(3).getBool();
+	 bool use_bases    = objc() < 5 ? true : arg(4).getBool();
 
 	 ofstream ofs(filename);
 	 if (ofs.fail()) {
