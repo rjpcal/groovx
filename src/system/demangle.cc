@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 13 10:41:19 1999
-// written: Sun Aug 26 08:53:53 2001
+// written: Sat Sep  8 08:54:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "system/demangle.h"
 
-#if defined(ACC_COMPILER) || defined(MIPSPRO_COMPILER)
+#if defined(MIPSPRO_COMPILER)
 
 const char* demangle_cstr(const char* in) { return in; }
 

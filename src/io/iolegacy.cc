@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Thu Aug 30 10:29:59 2001
+// written: Sat Sep  8 08:56:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -270,11 +270,7 @@ DOTRACE("IO::LegacyReader::readMaybeObject");
 
   itsImpl->inflateObject(name, obj);
 
-#ifndef ACC_COMPILER
   return obj;
-#else
-  return SoftRef<IO::IoObject>(obj);
-#endif
 }
 
 void IO::LegacyReader::readOwnedObject(const fstring& name,

@@ -5,17 +5,13 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Wed Sep  5 17:28:41 2001
+// written: Sat Sep  8 08:53:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef HOUSE_CC_DEFINED
 #define HOUSE_CC_DEFINED
-
-#ifdef ACC_COMPILER
-#pragma OPT_LEVEL 1
-#endif
 
 #include "house.h"
 

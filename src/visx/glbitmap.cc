@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:17 1999
-// written: Thu Aug 30 10:28:32 2001
+// written: Sat Sep  8 08:51:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,13 +36,7 @@ DOTRACE("GLBitmap::make");
 
 GLBitmap::GLBitmap() :
   GLRHolder(make_shared(new GLBmapRenderer())),
-  Bitmap(
-#ifndef ACC_COMPILER
-         itsRenderer
-#else
-         shared_ptr<BmapRenderer>(itsRenderer)
-#endif
-         )
+  Bitmap(itsRenderer)
 {
 DOTRACE("GLBitmap::GLBitmap");
   setRenderMode(Gmodes::GLCOMPILE);

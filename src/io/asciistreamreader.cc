@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Sun Aug 26 08:36:36 2001
+// written: Sat Sep  8 08:56:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -458,11 +458,7 @@ DOTRACE("AsciiStreamReader::Impl::readMaybeObject");
   if (id == 0) { return SoftRef<IO::IoObject>(); }
 
   // Return the object for this id, creating a new object if necessary:
-#ifndef ACC_COMPILER
   return itsObjects.fetchObject(attrib.type, id);
-#else
-  return SoftRef<IO::IoObject>(itsObjects.fetchObject(attrib.type, id));
-#endif
 }
 
 void AsciiStreamReader::Impl::readValueObj(

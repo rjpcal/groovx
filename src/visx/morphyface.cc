@@ -5,17 +5,13 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Wed Sep  5 17:32:41 2001
+// written: Sat Sep  8 08:53:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef MORPHYFACE_CC_DEFINED
 #define MORPHYFACE_CC_DEFINED
-
-#ifdef ACC_COMPILER
-#pragma OPT_LEVEL 1
-#endif
 
 #include "morphyface.h"
 

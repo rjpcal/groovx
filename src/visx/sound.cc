@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Tue Aug 21 15:22:44 2001
+// written: Sat Sep  8 08:56:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,20 +37,12 @@ Sound::~Sound () {}
 
 void Sound::setOkSound(Ref<Sound> ok_sound)
 {
-#ifndef ACC_COMPILER
   OK_SOUND = ok_sound;
-#else
-  OK_SOUND = SoftRef<Sound>(ok_sound);
-#endif
 }
 
 void Sound::setErrSound(Ref<Sound> err_sound)
 {
-#ifndef ACC_COMPILER
   ERR_SOUND = err_sound;
-#else
-  ERR_SOUND = SoftRef<Sound>(err_sound);
-#endif
 }
 
 Ref<Sound> Sound::getOkSound()

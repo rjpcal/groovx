@@ -5,17 +5,13 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Fri Sep  7 16:36:50 2001
+// written: Sat Sep  8 08:54:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TCLPKG_CC_DEFINED
 #define TCLPKG_CC_DEFINED
-
-#ifdef ACC_COMPILER // aCC needs this to be happy with the header
-#include "util/ref.h"
-#endif
 
 #include "tcl/tclpkg.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Mon Aug 27 16:27:29 2001
+// written: Sat Sep  8 08:53:30 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -63,25 +63,7 @@ namespace GLTcl
     return pixelCheckSum(viewport[0], viewport[1], viewport[2], viewport[3]);
   }
 
-  class glGetCmd;
-
   void checkGL() { Application::theApp().getCanvas().throwIfError("checkGL"); }
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// GLTcl Tcl package definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-//---------------------------------------------------------------------
-//
-// GLTcl::glGetCmd --
-//
-//---------------------------------------------------------------------
-
-namespace GLTcl
-{
 
 #define NAMEVAL(x) #x, x
 
@@ -272,7 +254,12 @@ namespace GLTcl
 
 }
 
-// Specializations of glGetTypeCmd::extractValues for basic types
+//---------------------------------------------------------------------
+//
+// Specializations of GLTcl::extractValues for boolean, double, and
+// int types
+//
+//---------------------------------------------------------------------
 
 template <>
 void GLTcl::extractValues<GLboolean>(GLenum tag, GLboolean* vals_out)
@@ -520,11 +507,6 @@ DOTRACE("Gltcl_Init");
   pkg->def( "::lineInfo", 0, GLTcl::lineInfo );
   pkg->def( "::pixelCheckSum", "x y w h", GLTcl::pixelCheckSum );
   pkg->def( "::pixelCheckSum", 0, GLTcl::pixelCheckSumAll );
-
-#ifdef ACC_COMPILER
-//   typeid(out_of_range);
-//   typeid(length_error);
-#endif
 
   return pkg->initStatus();
 }

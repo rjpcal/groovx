@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Mon Sep  3 15:42:05 2001
+// written: Sat Sep  8 08:55:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,24 +57,13 @@ namespace Util
 
     void throwError(const char* msg);
 
-#ifndef ACC_COMPILER
-#  define DYNCAST dynamic_cast
-#else
-    template <class T, class U>
-    T DYNCAST(U& u) { return dynamic_cast<T>(u); }
-#endif
-
     template <class T>
     inline T* getCastedItem(Util::UID id)
     {
       Util::Object* obj = getCheckedItem(id);
-      T& t = DYNCAST<T&>(*obj);
+      T& t = dynamic_cast<T&>(*obj);
       return &t;
     }
-
-#ifdef DYNCAST
-#undef DYNCAST
-#endif
 
     template <>
     inline Util::Object* getCastedItem<Util::Object>(Util::UID id)

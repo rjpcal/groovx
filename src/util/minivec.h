@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 31 11:01:16 2000
-// written: Sun Aug 26 08:38:29 2001
+// written: Sat Sep  8 08:55:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -117,17 +117,8 @@ public:
   typedef T*          iterator;
   typedef const T*    const_iterator;
 
-#ifdef ACC_COMPILER
-  typedef std::reverse_iterator<iterator, value_type,
-                                reference, pointer, difference_type>
-          reverse_iterator;
-  typedef std::reverse_iterator<const_iterator, value_type, const_reference,
-                                const_pointer, difference_type>
-          const_reverse_iterator;
-#else
   typedef std::reverse_iterator<iterator>       reverse_iterator;
   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
-#endif
 
 private:
   iterator start;
