@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Sat Aug  3 16:38:29 2002
+// written: Sat Aug  3 16:49:04 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -143,7 +143,7 @@ public:
   int height() const { return itsHeight; }
   bool isRgba() const { return itsRgbaFlag; }
   bool isDoubleBuffered() const { return itsDoubleFlag; }
-  unsigned int bitsPerPixel() const { return itsBitsPerPixel; }
+  unsigned int bitsPerPixel() const { return itsVisInfo->depth; }
   bool hasPrivateCmap() const { return itsPrivateCmapFlag; }
   Tcl_Interp* interp() const { return itsInterp; }
   Tk_Window tkWin() const { return itsTkWin; }
@@ -259,8 +259,6 @@ public:
   /* for DumpToEpsFile: Added by Miguel A. de Riera Pasenau 10.01.1997 */
   XVisualInfo* itsVisInfo;    /* Visual info of the current */
                               /* context needed for DumpToEpsFile */
-
-  unsigned int itsBitsPerPixel;
 };
 
 
@@ -1045,9 +1043,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsOverlayCmap(),
   itsOverlayTransparentPixel(),
   itsOverlayIsMapped(0),
-  itsVisInfo(0),
-
-  itsBitsPerPixel(0)
+  itsVisInfo(0)
 {
 DOTRACE("Togl::Impl::Impl");
 
@@ -1841,8 +1837,6 @@ DOTRACE("Togl::Impl::setupVisInfoAndContext");
   itsGlx = new GlxWrapper(itsDisplay, *attribs, !itsIndirect);
 
   itsVisInfo = itsGlx->visInfo();
-
-  itsBitsPerPixel = itsVisInfo->depth;
 
   // Make sure we don't try to use a depth buffer with indirect rendering
   if ( !itsGlx->isDirect() && itsDepthFlag == true )
