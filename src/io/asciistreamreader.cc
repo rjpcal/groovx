@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu Nov  4 16:31:40 1999
+// written: Thu Nov  4 16:48:03 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,11 +62,11 @@ namespace {
 class AsciiStreamReader::Impl {
 public:
   Impl(istream& is) :
-	 itsBuf(is), itsHandled(), itsAttribs() {}
+	 itsBuf(is), itsCreatedObjects(), itsAttribs() {}
 
   istream& itsBuf;
 
-  map<unsigned long, IO*> itsHandled;
+  map<unsigned long, IO*> itsCreatedObjects;
   
   struct Type_Value {
 	 Type_Value(const char* t=0, const char* v=0) :
@@ -197,7 +197,7 @@ DOTRACE("AsciiStreamReader::readObject");
   if (id == 0) { return 0; }
 
   // If we need to create a new object for this id:
-  if ( itsImpl.itsHandled[id] == 0 ) {
+  if ( itsImpl.itsCreatedObjects[id] == 0 ) {
 
 	 // If 'name' is not in the itsAttribs map, then type will be
 	 // returned as an empty string. This, in turn, will cause
@@ -210,21 +210,21 @@ DOTRACE("AsciiStreamReader::readObject");
 	 // exception, so we should never pass this point with a NULL obj.
 	 Assert(obj != 0);
 
-	 itsImpl.itsHandled[id] = obj;
+	 itsImpl.itsCreatedObjects[id] = obj;
   }
 
   // ...otherwise we use the previously created object for this id:
-  else obj = itsImpl.itsHandled[id];
+  else obj = itsImpl.itsCreatedObjects[id];
 
   return obj;
 }
 
 IO* AsciiStreamReader::readRoot(IO* root) {
 DOTRACE("AsciitStreamReader::readRoot");
-  itsImpl.itsHandled.clear();
+  itsImpl.itsCreatedObjects.clear();
 
   if (root != 0) {
-	 itsImpl.itsHandled[root->id()] = root;
+	 itsImpl.itsCreatedObjects[root->id()] = root;
   }
 
   while ( !itsImpl.itsBuf.eof() ) {
@@ -235,13 +235,13 @@ DOTRACE("AsciitStreamReader::readRoot");
 	 itsImpl.itsBuf >> type >> id >> equal >> bracket;
 	 DebugEval(type); DebugEvalNL(id);
 
-	 if ( itsImpl.itsHandled[id] != 0 ) {
-		obj = itsImpl.itsHandled[id];
+	 if ( itsImpl.itsCreatedObjects[id] != 0 ) {
+		obj = itsImpl.itsCreatedObjects[id];
 	 }
 	 else {
 		obj = IoMgr::newIO(type.c_str());
 		Assert(obj != 0);
-		itsImpl.itsHandled[id] = obj;
+		itsImpl.itsCreatedObjects[id] = obj;
 		if (!root) root = obj;
 	 }
 	 
