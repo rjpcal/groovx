@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Sat May 19 08:44:07 2001
+// written: Sat May 19 10:40:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,8 +42,10 @@ class fixed_string;
 
 class IO::IoObject : public RefCounted {
 protected:
-  /// Default constructor
-  IoObject();
+  /** Default constructor. If \a doInsert is true (the default), then
+      the object is inserted into the IoDb. Otherwise, the object is
+      not inserted automatically into the IoDb. */
+  IoObject(bool doInsert = true);
 
   /// Virtual destructor to ensure correct destruction of subclasses
   virtual ~IoObject() = 0;

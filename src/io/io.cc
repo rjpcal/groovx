@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Mar  9 20:25:02 1999
-// written: Sat May 19 09:04:26 2001
+// written: Sat May 19 10:41:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,14 +67,14 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-IO::IoObject::IoObject() : itsId(++idCounter) {
+IO::IoObject::IoObject(bool doInsert) : itsId(++idCounter) {
 DOTRACE("IO::IoObject::IoObject");
-  DebugEvalNL(itsId);
+  DebugEval(itsId); DebugEvalNL(this);
 
   IoMap::theIoMap().insertObject(this);
 
-  DebugEvalNL(this);
-  IoDb::theDb().insertPtrBase(this);
+  if (doInsert)
+	 IoDb::theDb().insertPtrBase(this);
 }
 
 // Must be defined out of line to avoid duplication of IO's vtable
