@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Mon Aug 27 17:31:50 2001
+// written: Tue Aug 28 17:38:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,6 +40,19 @@ namespace GxTcl
 
     item->draw(canvas);
   }
+
+  void addChildren(Ref<GxSeparator> sep, Tcl::List objs)
+  {
+    Tcl::List::Iterator<Ref<GxNode> >
+      itr = objs.begin<Ref<GxNode> >(),
+      end = objs.end<Ref<GxNode> >();
+
+    while (itr != end)
+      {
+        sep->addChild(*itr);
+        ++itr;
+      }
+  }
 }
 
 extern "C"
@@ -59,6 +72,7 @@ DOTRACE("Gx_Init");
   Tcl::defGenericObjCmds<GxSeparator>(pkg2);
 
   pkg2->def( "addChild", "item_id child_item_id", &GxSeparator::addChild );
+  pkg2->def( "addChildren", "item_id children_id(s)", &GxTcl::addChildren );
   pkg2->defGetter("children", &GxSeparator::children);
   pkg2->defGetter("numChildren", &GxSeparator::numChildren);
   pkg2->defSetter("removeChildAt", &GxSeparator::removeChildAt);
