@@ -13,8 +13,8 @@
 #ifndef TCLCMD_H_DEFINED
 #define TCLCMD_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TRAITS_H_DEFINED)
-#include "util/traits.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
+#include "util/pointers.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(CONVERT_H_DEFINED)
@@ -84,6 +84,12 @@ public:
       and allows the interpreter's result to be set.*/
   virtual void invoke(Context& ctx) = 0;
 
+  /** Makes \a other an overloaded version of \a this. Overloading is
+      done by argument counts. The first TclCmd in an overload
+      sequence to match the argument count of the context will be
+      used. */
+  void addOverload(Tcl_Interp* interp, shared_ptr<TclCmd> other);
+
 protected:
   /** This may be overridden by subclasses that need to provide a
       different interface to the raw Tcl arguments (such as for
@@ -96,14 +102,11 @@ protected:
                          Tcl_Obj* const objv[]);
 
 private:
-  /// The procedure that is actually registered with the Tcl C API.
-  static int invokeCallback(ClientData clientData, Tcl_Interp* interp,
-                            int objc, Tcl_Obj *const objv[]);
-
   TclCmd(const TclCmd&);
   TclCmd& operator=(const TclCmd&);
 
   class Impl;
+  friend class Impl;
   Impl* const itsImpl;
 };
 
