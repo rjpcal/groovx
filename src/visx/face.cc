@@ -2,7 +2,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Wed Mar 10 11:06:55 1999
+// written: Fri Mar 12 10:50:46 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FACE_CC_DEFINED
@@ -11,6 +11,8 @@
 #include "face.h"
 
 #include <iostream.h>			  // for serialize
+#include <string>
+#include <typeinfo>
 #include <GL/gl.h>
 #include <GL/glu.h>
 
@@ -34,7 +36,7 @@ namespace {
 ///////////////////////////////////////////////////////////////////////
 
 Face::Face(float eh, float es, float nl, float mh, int categ) : 
-  Scaleable(), itsCategory(categ)
+  itsCategory(categ)
 {
 DOTRACE("Face::Face");
   // Default to white 
@@ -48,15 +50,9 @@ DOTRACE("Face::Face");
 
 // read the object's state from an input stream. The input stream must
 // already be open and connected to an appropriate file.
-Face::Face(istream &is) : Scaleable() {
+Face::Face(istream &is) {
 DOTRACE("Face::Face");
-  int cat;
-  is >> cat; itsCategory = cat;
-  float val;
-  is >> val; setEyeHgt(val);
-  is >> val; setEyeDist(val);
-  is >> val; setNoseLen(val);
-  is >> val; setMouthHgt(val);
+  deserialize(is);
 }
 
 Face::~Face() {
@@ -66,7 +62,11 @@ Face::~Face() {
 // already be open and connected to an appropriate file.
 IOResult Face::serialize(ostream &os, IOFlag flag) const {
 DOTRACE("Face::serialize");
-  char sep = '\t';
+  if (flag & IO::BASES) { GrObj::serialize(os, flag); }
+
+  char sep = ' ';
+  if (flag & IO::TYPENAME) { os << typeid(this).name() << sep; }
+
   os << itsCategory << sep;
   os << getEyeHgt() << sep;
   os << getEyeDist() << sep;
@@ -74,6 +74,24 @@ DOTRACE("Face::serialize");
   os << getMouthHgt();
   os << endl;
   return checkStream(os);
+}
+
+IOResult Face::deserialize(istream &is, IOFlag flag) {
+DOTRACE("Face::deserialize");
+  if (flag & IO::BASES) { GrObj::deserialize(is, flag); }
+  if (flag & IO::TYPENAME) {
+	 string name;
+	 is >> name;
+	 if (name != string(typeid(this).name())) { return IO_ERROR; }
+  }
+
+  int cat;
+  is >> cat; itsCategory = cat;
+  float val;
+  is >> val; setEyeHgt(val);
+  is >> val; setEyeDist(val);
+  is >> val; setNoseLen(val);
+  is >> val; setMouthHgt(val);
 }
 
 void Face::grRecompile() const {
@@ -115,20 +133,8 @@ DOTRACE("Face::grRecompile");
 		glEnable(GL_LINE_SMOOTH);   // use anti-aliasing 
 	 }
 
-    // do the main translation and scaling
+    // prepare to push and pop modelview matrices
     glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-	 doTranslate();
-	 doRotate();
-	 doScale();
-#ifdef LOCAL_DEBUG
-	 DUMP_VAL1(tx);
-	 DUMP_VAL1(ty);
-	 DUMP_VAL2(tz);
-	 DUMP_VAL1(sx);
-	 DUMP_VAL1(sy);
-	 DUMP_VAL2(sz);
-#endif
 
     // draw left eye
     glPushMatrix();
@@ -167,9 +173,6 @@ DOTRACE("Face::grRecompile");
     glVertex2f(theirNose_x, itsNose[0]);
     glVertex2f(theirNose_x, itsNose[1]);
     glEnd();
-
-    // undo the main translation and scaling
-    glPopMatrix();
 
 	 if (use_antialiasing) {
 		glPopAttrib();
