@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:07 2002
-// written: Tue Sep 17 22:42:06 2002
+// written: Tue Sep 17 23:09:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,6 +41,7 @@ GlxWrapper::GlxWrapper(Display* dpy, GlxOpts& opts, GlxWrapper* share) :
   itsDisplay(dpy),
   itsVisInfo(0),
   itsContext(0),
+  itsOpts(opts),
   itsCanvas()
 {
 DOTRACE("GlxWrapper::GlxWrapper");
@@ -101,6 +102,15 @@ DOTRACE("GlxWrapper::GlxWrapper");
       itsCanvas->setColorIndex(0);
       itsCanvas->setClearColorIndex(1);
     }
+
+  // Check for a single/double buffering snafu
+  if (opts.doubleFlag == 0 && isDoubleBuffered())
+    {
+      // We requested single buffering but had to accept a double buffered
+      // visual.  Set the GL draw buffer to be the front buffer to
+      // simulate single buffering.
+      glDrawBuffer(GL_FRONT);
+    }
 }
 
 GlxWrapper::~GlxWrapper()
@@ -159,6 +169,18 @@ DOTRACE("GlxWrapper::isDoubleBuffered");
 Gfx::Canvas& GlxWrapper::canvas() const
 {
   return *itsCanvas;
+}
+
+void GlxWrapper::flush(Window window) const
+{
+  if (itsOpts.doubleFlag)
+    {
+      glXSwapBuffers(itsDisplay, window);
+    }
+  else
+    {
+      glFlush();
+    }
 }
 
 static const char vcid_glxwrapper_cc[] = "$Header$";

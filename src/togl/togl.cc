@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 22:42:02 2002
+// written: Tue Sep 17 23:02:18 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -94,8 +94,6 @@ public:
   Togl::Color queryColor(unsigned int color_index) const;
 
   void loadFontList(GLuint newListBase);
-
-  Gfx::Canvas& canvas() const { return itsGlx->canvas(); }
 };
 
 
@@ -184,14 +182,8 @@ DOTRACE("Togl::Impl::cTimerCallback");
 void Togl::Impl::swapBuffers() const
 {
 DOTRACE("Togl::Impl::swapBuffers");
-  if (itsOpts->doubleFlag)
-    {
-      glXSwapBuffers(Tk_Display(itsTkWin), Tk_WindowId(itsTkWin));
-    }
-  else
-    {
-      glFlush();
-    }
+
+  itsGlx->flush(Tk_WindowId(itsTkWin));
 }
 
 Togl::Color Togl::Impl::queryColor(unsigned int color_index) const
@@ -290,15 +282,6 @@ VisibilityChangeMask|FocusChangeMask|PropertyChangeMask|ColormapChangeMask
 
   // Bind the context to the window and make it the current context
   rep->itsGlx->makeCurrent(win);
-
-  // Check for a single/double buffering snafu
-  if (rep->itsOpts->doubleFlag == 0 && rep->itsGlx->isDoubleBuffered())
-    {
-      // We requested single buffering but had to accept a double buffered
-      // visual.  Set the GL draw buffer to be the front buffer to
-      // simulate single buffering.
-      glDrawBuffer(GL_FRONT);
-    }
 
   return win;
 }

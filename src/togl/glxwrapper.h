@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:03 2002
-// written: Mon Sep 16 12:02:06 2002
+// written: Tue Sep 17 23:09:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,14 @@
 #ifndef GLXWRAPPER_H_DEFINED
 #define GLXWRAPPER_H_DEFINED
 
-#include <GL/glx.h>
-#include <X11/Xlib.h>
+#include "togl/glxopts.h"
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REF_H_DEFINED)
 #include "util/ref.h"
 #endif
+
+#include <GL/glx.h>
+#include <X11/Xlib.h>
 
 namespace Gfx
 {
@@ -36,6 +38,7 @@ private:
   Display* itsDisplay;
   XVisualInfo* itsVisInfo;
   GLXContext itsContext;
+  GlxOpts itsOpts;
   Util::SoftRef<GLCanvas> itsCanvas;
 
 public:
@@ -57,6 +60,9 @@ public:
   XVisualInfo* visInfo() const { return itsVisInfo; }
 
   Gfx::Canvas& canvas() const;
+
+  /// Flushes or swaps buffers for single- or double-buffering, respectively.
+  void flush(Window window) const;
 };
 
 static const char vcid_glxwrapper_h[] = "$Header$";
