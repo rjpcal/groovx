@@ -143,10 +143,8 @@ fstring ElementContainer::status() const
 DOTRACE("ElementContainer::status");
   if (isComplete()) return fstring("complete");
 
-  fstring msg;
-  msg.append("next element ", currentElement().id(), ", ")
-    .append(currentElement()->status())
-    .append(", completed ", numCompleted(), " of ", numElements());
+  fstring msg("current element ", currentElement()->uniqueName(),
+              ", completed ", numCompleted(), " of ", numElements());
 
   return msg;
 }
