@@ -15,7 +15,7 @@ package require Objtogl
 source ${::TEST_DIR}/list_test.tcl
 List::testList TlistTcl Tlist Trial Trial Trial
 
-if { ![Togl::inited] } { Togl::init "-rgba false"; update }
+if { ![Togl::inited] } { Togl::init; update }
 
 ### Tlist::loadObjidFileCmd ###
 test "TlistTcl-Tlist::loadObjidFile" "too few args" {

@@ -21,7 +21,7 @@ IO::testDestringifyCmd ExptTcl Expt -1
 IO::testWriteCmd ExptTcl Expt -1
 IO::testReadCmd ExptTcl Expt -1
 
-if { ![Togl::inited] } { Togl::init "-rgba false"; update }
+if { ![Togl::inited] } { Togl::init; update }
 
 # need to add checks on appropriate returns from all functions that use
 # isComplete()

@@ -26,7 +26,7 @@ IO::testDestringifyCmd GLBitmapTcl IO 1 $::GLBITMAP
 IO::testWriteCmd GLBitmapTcl IO 1 $::GLBITMAP
 IO::testReadCmd GLBitmapTcl IO 1 $::GLBITMAP
 
-if { ![Togl::inited] } { Togl::init "-rgba false"; update }
+if { ![Togl::inited] } { Togl::init; update }
 
 set POS [IO::new Position]
 
