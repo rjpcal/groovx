@@ -3,7 +3,7 @@
 // strings.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:42:44 2000
-// written: Thu Nov  2 18:23:26 2000
+// written: Fri Nov  3 15:24:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ bool string_literal::equals(const string_literal& other) const
 
 //---------------------------------------------------------------------
 //
-// fixed_string member definitions
+// fixed_string::Rep member definitions
 //
 //---------------------------------------------------------------------
 
@@ -72,39 +72,100 @@ void fixed_string::Rep::operator delete(void* space) {
   fsFreeList = (FreeNode*)space;
 }
 
-fixed_string::Rep::Rep(const char* text)
-{
-  if (text == 0) text = "";
+fixed_string::Rep::Rep() {}
 
-  itsRefCount = 0; 
-  itsLength = strlen(text);
-  itsText = new char[itsLength+1];
-
-  memcpy(itsText, text, itsLength+1);
+fixed_string::Rep::~Rep() {
+  delete [] itsText;
 }
 
-fixed_string::Rep::~Rep()
-{ delete [] itsText; }
+fixed_string::Rep* fixed_string::Rep::getEmptyRep() {
+  static Rep* empty_rep = 0;
+  if (empty_rep == 0)
+	 {
+		empty_rep = new Rep;
+
+		empty_rep->itsRefCount = 1; 
+		empty_rep->itsLength = 0;
+		empty_rep->itsText = new char[1];
+		empty_rep->itsText[0] = '\0';
+	 }
+
+  return empty_rep;
+}
+
+fixed_string::Rep* fixed_string::Rep::makeTextCopy(const char* text,
+																	int str_length)
+{
+  if (text == 0 || text[0] == '\0')
+	 return getEmptyRep();
+
+  Rep* p = new Rep;
+
+  p->itsRefCount = 0; 
+  p->itsLength = str_length;
+  p->itsText = new char[str_length+1];
+
+  memcpy(p->itsText, text, str_length+1);
+
+  return p;
+}
+
+fixed_string::Rep* fixed_string::Rep::makeBlank(int length) {
+  if (length <= 0)
+	 return getEmptyRep();
+
+  Rep* p = new Rep;
+
+  p->itsRefCount = 0;
+  p->itsLength = length;
+  p->itsText = new char[p->itsLength+1];
+
+  p->itsText[0] = '\0';
+
+  return p;
+}
+
+void fixed_string::Rep::makeUnique(fixed_string::Rep*& rep) {
+  if (rep->itsRefCount <= 1) return;
+
+  Rep* new_rep = new Rep;
+
+  new_rep->itsRefCount = 0;
+  new_rep->itsLength = rep->itsLength;
+  new_rep->itsText = new char[new_rep->itsLength+1];
+
+  memcpy(new_rep->itsText, rep->itsText, new_rep->itsLength+1);
+
+  rep->decrRefCount();
+  new_rep->incrRefCount();
+
+  rep = new_rep;
+
+  Postcondition(new_rep->itsRefCount == 1);
+}
+
+//---------------------------------------------------------------------
+//
+// fixed_string member definitions
+//
+//---------------------------------------------------------------------
+
+fixed_string::fixed_string(int length) :
+  itsRep(0)
+{
+DOTRACE("fixed_string::fixed_string(int)");
+
+  itsRep = Rep::makeBlank(length);
+
+  itsRep->incrRefCount();
+}
 
 fixed_string::fixed_string(const char* text) :
   itsRep(0)
 {
 DOTRACE("fixed_string::fixed_string(const char*)");
 
-  static Rep* empty_rep = 0;
-  if (text == 0 || text[0] == '\0')
-	 {
-		if (empty_rep == 0)
-		  {
-			 empty_rep = Rep::make("");
-			 empty_rep->incrRefCount();
-		  }
-
-		itsRep = empty_rep;
-	 }
-  else {
-	 itsRep = Rep::make(text);
-  }
+  itsRep = Rep::makeTextCopy(text, strlen(text));
 
   itsRep->incrRefCount();
 }
@@ -135,7 +196,7 @@ fixed_string& fixed_string::operator=(const char* text)
 DOTRACE("fixed_string::operator=(const char*)");
 
   Rep* old_rep = itsRep;
-  itsRep = Rep::make(text);
+  itsRep = Rep::makeTextCopy(text, strlen(text));
   itsRep->incrRefCount();
   old_rep->decrRefCount();
 
