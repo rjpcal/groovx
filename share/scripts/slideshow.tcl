@@ -27,12 +27,15 @@ proc image_file_exists { fname } {
     return 1
 }
 
+set FAST_RESIZE_CUTOFF 0
+
 proc build_scaled_pixmap { fname size } {
     set px [new GxPixmap]
     -> $px purgeable 1
 
     set code [catch {
-	if { 0 } {
+	set fsize [file size $fname]
+	if { $fsize < $::FAST_RESIZE_CUTOFF } {
 	    set cmd "|anytopnm $fname | pnmscale -xysize $size"
 	    slideshow::msg "resize load" $fname
 	    set fd [open $cmd r]
@@ -108,7 +111,7 @@ itcl::class RandSeq {
     private variable next
 
     constructor {} {
-	::srand [clock clicks]
+	::srand [expr [clock clicks] / 2]
 
 	set current [::rand 0.0 1.0]
 	set next [::rand 0.0 1.0]
@@ -218,7 +221,6 @@ itcl::class Playlist {
 	set itsPurgeList [list]
 
 	set itsRandSeq [RandSeq \#auto]
-	::srand [clock clicks]
 
 	set itsMode spinning
 	set itsDelCount 0
@@ -296,7 +298,10 @@ itcl::class Playlist {
 
     public method purge {} {
 	puts "purging..."
+	set N [llength $itsPurgeList]
+	set n 0
 	foreach f $itsPurgeList {
+	    slideshow::msg "purging" "[incr n] of $N"
 	    if { [llength [info proc ::slideshowDeleteHook]] > 0 } {
 		slideshow::msg "deleteHook" $f
 		::slideshowDeleteHook $f
@@ -495,7 +500,7 @@ bind all <Key-Down> {PLAYLIST remove; updateText; PLAYLIST show}
 bind all <Shift-Key-Down> {PLAYLIST mode spinning; PLAYLIST remove; updateText; PLAYLIST show}
 bind all <Key-Return> {PLAYLIST save}
 bind all <Key-x> {PLAYLIST purge}
-bind all <Key-Escape> {PLAYLIST purge; exit }
+bind all <Key-Escape> { -> [Toglet::current] setVisible 0; PLAYLIST purge; exit }
 
 if { $show_buttons } {
     -> $t height [expr [winfo screenheight .] - 100]
