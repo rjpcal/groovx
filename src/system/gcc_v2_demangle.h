@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 19 16:58:19 2001
-// written: Mon Jan 13 11:04:47 2003
+// written: Wed Feb 26 16:36:14 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,7 +81,7 @@ namespace
           }
         str.erase(pos, 1);
       }
-    dbgEvalNL(3, str);
+    dbgEvalNL(3, str.c_str());
 
     modifiers.append(array_dims);
 
@@ -131,7 +131,7 @@ std::string gcc_v2_demangle(const std::string& in)
 DOTRACE("gcc_v2_demangle");
   std::string out=in;
 
-  dbgEvalNL(3, out);
+  dbgEvalNL(3, out.c_str());
 
   bool isTemplate = false;
 
@@ -172,7 +172,7 @@ DOTRACE("gcc_v2_demangle");
         }
     }
 
-  dbgEvalNL(3, out);
+  dbgEvalNL(3, out.c_str());
 
   if (out[pos] == 't')
     {
@@ -186,7 +186,7 @@ DOTRACE("gcc_v2_demangle");
         {
           out.erase(pos, 1);
         }
-      dbgEvalNL(3, out);
+      dbgEvalNL(3, out.c_str());
     }
   else
     {
@@ -197,7 +197,7 @@ DOTRACE("gcc_v2_demangle");
       // Insert left bracket
       out.insert(pos++, 1, '<');
 
-      dbgEvalNL(3, out);
+      dbgEvalNL(3, out.c_str());
 
       int num_parameters = munchInt(out, pos);;
 
@@ -207,7 +207,7 @@ DOTRACE("gcc_v2_demangle");
           Assert( out[pos] == 'Z' );
           out.erase(pos, 1);
 
-          dbgEvalNL(3, out);
+          dbgEvalNL(3, out.c_str());
 
           // Get the parameter name:
           std::string modifiers = readModifiers(out, pos);
@@ -233,14 +233,14 @@ DOTRACE("gcc_v2_demangle");
               out.insert(pos++, 1, ' ');
             }
 
-          dbgEvalNL(3, out);
+          dbgEvalNL(3, out.c_str());
         }
 
       // Insert right bracket
       out.insert(pos++, 1, '>');
     }
 
-  dbgEvalNL(3, out);
+  dbgEvalNL(3, out.c_str());
 
   return out;
 }
