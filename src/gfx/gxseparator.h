@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:20:15 2000
-// written: Fri Jul  5 14:11:35 2002
+// written: Tue Jul 30 10:36:21 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,6 +69,12 @@ public:
   virtual void getBoundingCube(Gfx::Box<double>& cube,
                                Gfx::Canvas& canvas) const;
 
+  /// Query whether debug-mode drawing is turned on.
+  bool getDebugMode() const;
+
+  /// Turn debug-mode drawing on or off.
+  void setDebugMode(bool b);
+
   /// Draw all of the contained objects on \a canvas.
   virtual void draw(Gfx::Canvas& canvas) const;
 
@@ -77,7 +83,7 @@ private:
   GxSeparator& operator=(const GxSeparator&);
 
   class Impl;
-  Impl* const itsImpl;
+  Impl* const rep;
 };
 
 static const char vcid_gxseparator_h[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Fri Jul  5 18:36:59 2002
+// written: Tue Jul 30 10:49:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,21 +38,23 @@ class GxSeparator::Impl : public Util::VolatileObject
   Impl& operator=(const Impl&);
 
 public:
-  Impl(GxSeparator* owner) :
-    itsOwner(owner),
-    itsChildren()
+  Impl(GxSeparator* p) :
+    owner(p),
+    children(),
+    debugMode(false)
   {}
+
   ~Impl() {}
 
   static Impl* make(GxSeparator* owner) { return new Impl(owner); }
 
   bool contains(GxNode* other) const
     {
-      if (itsOwner == other) return true;
+      if (owner == other) return true;
 
       for(VecType::const_iterator
-            itr = itsChildren.begin(),
-            end = itsChildren.end();
+            itr = children.begin(),
+            end = children.end();
           itr != end;
           ++itr)
         {
@@ -64,16 +66,18 @@ public:
 
   void ensureNoCycle(GxNode* other) const
     {
-      if (other->contains(itsOwner))
+      if (other->contains(owner))
         {
           throw Util::Error("couldn't add node without generating a cycle");
         }
     }
 
-  GxSeparator* itsOwner;
+  GxSeparator* owner;
 
   typedef minivec<Ref<GxNode> > VecType;
-  VecType itsChildren;
+  VecType children;
+
+  bool debugMode;
 };
 
 GxSeparator* GxSeparator::make()
@@ -83,7 +87,7 @@ DOTRACE("GxSeparator::make");
 }
 
 GxSeparator::GxSeparator() :
-  itsImpl(Impl::make(this))
+  rep(Impl::make(this))
 {
 DOTRACE("GxSeparator::GxSeparator");
 }
@@ -91,26 +95,26 @@ DOTRACE("GxSeparator::GxSeparator");
 GxSeparator::~GxSeparator()
 {
 DOTRACE("GxSeparator::~GxSeparator");
-  itsImpl->destroy();
+  rep->destroy();
 }
 
 void GxSeparator::readFrom(IO::Reader* reader)
 {
 DOTRACE("GxSeparator::readFrom");
 
-  for(unsigned int i = 0; i < itsImpl->itsChildren.size(); ++i)
+  for(unsigned int i = 0; i < rep->children.size(); ++i)
     {
-      itsImpl->itsChildren[i]->sigNodeChanged
+      rep->children[i]->sigNodeChanged
         .disconnect(this->sigNodeChanged.slot());
     }
 
-  itsImpl->itsChildren.clear();
+  rep->children.clear();
   IO::ReadUtils::readObjectSeq<GxNode>(
-          reader, "children", std::back_inserter(itsImpl->itsChildren));
+          reader, "children", std::back_inserter(rep->children));
 
-  for(unsigned int i = 0; i < itsImpl->itsChildren.size(); ++i)
+  for(unsigned int i = 0; i < rep->children.size(); ++i)
     {
-      itsImpl->itsChildren[i]->sigNodeChanged
+      rep->children[i]->sigNodeChanged
         .connect(this->sigNodeChanged.slot());
     }
 
@@ -121,36 +125,35 @@ void GxSeparator::writeTo(IO::Writer* writer) const
 {
 DOTRACE("GxSeparator::writeTo");
   IO::WriteUtils::writeObjectSeq(writer, "children",
-                                 itsImpl->itsChildren.begin(),
-                                 itsImpl->itsChildren.end());
+                                 rep->children.begin(),
+                                 rep->children.end());
 }
 
 GxSeparator::ChildId GxSeparator::addChild(Util::Ref<GxNode> item)
 {
 DOTRACE("GxSeparator::addChild");
 
-  itsImpl->ensureNoCycle(item.get());
+  rep->ensureNoCycle(item.get());
 
-  itsImpl->itsChildren.push_back(item);
+  rep->children.push_back(item);
 
   item->sigNodeChanged.connect(this->sigNodeChanged.slot());
 
   this->sigNodeChanged.emit();
 
-  return (itsImpl->itsChildren.size() - 1);
+  return (rep->children.size() - 1);
 }
 
 void GxSeparator::insertChild(Util::Ref<GxNode> item, ChildId at_index)
 {
 DOTRACE("GxSeparator::insertChild");
 
-  itsImpl->ensureNoCycle(item.get());
+  rep->ensureNoCycle(item.get());
 
-  if (at_index > itsImpl->itsChildren.size())
-    at_index = itsImpl->itsChildren.size();
+  if (at_index > rep->children.size())
+    at_index = rep->children.size();
 
-  itsImpl->itsChildren.insert(itsImpl->itsChildren.begin()+at_index,
-                              item);
+  rep->children.insert(rep->children.begin()+at_index, item);
 
   item->sigNodeChanged.connect(this->sigNodeChanged.slot());
 
@@ -160,11 +163,11 @@ DOTRACE("GxSeparator::insertChild");
 void GxSeparator::removeChildAt(ChildId index)
 {
 DOTRACE("GxSeparator::removeChildAt");
-  if (index < itsImpl->itsChildren.size())
+  if (index < rep->children.size())
     {
-      itsImpl->itsChildren[index]->sigNodeChanged
+      rep->children[index]->sigNodeChanged
         .disconnect(this->sigNodeChanged.slot());
-      itsImpl->itsChildren.erase(itsImpl->itsChildren.begin()+index);
+      rep->children.erase(rep->children.begin()+index);
 
       this->sigNodeChanged.emit();
     }
@@ -177,15 +180,15 @@ DOTRACE("GxSeparator::removeChild");
   const Util::UID target = item.id();
 
   for(Impl::VecType::iterator
-        itr = itsImpl->itsChildren.begin(),
-        end = itsImpl->itsChildren.end();
+        itr = rep->children.begin(),
+        end = rep->children.end();
       itr != end;
       ++itr)
     {
       if ( (*itr)->id() == target )
         {
           (*itr)->sigNodeChanged.disconnect(this->sigNodeChanged.slot());
-          itsImpl->itsChildren.erase(itr);
+          rep->children.erase(itr);
           this->sigNodeChanged.emit();
           break;
         }
@@ -195,27 +198,27 @@ DOTRACE("GxSeparator::removeChild");
 unsigned int GxSeparator::numChildren() const
 {
 DOTRACE("GxSeparator::numChildren");
-  return itsImpl->itsChildren.size();
+  return rep->children.size();
 }
 
 Ref<GxNode> GxSeparator::getChild(ChildId index) const
 {
 DOTRACE("GxSeparator::getChild");
-  if (index >= itsImpl->itsChildren.size())
+  if (index >= rep->children.size())
     {
       throw Util::Error(fstring("GxSeparator has no child with index '",
                                 index, "'"));
     }
 
-  return itsImpl->itsChildren[index];
+  return rep->children[index];
 }
 
 Util::FwdIter<Util::Ref<GxNode> > GxSeparator::children() const
 {
 DOTRACE("GxSeparator::children");
 
-  return Util::FwdIter<Util::Ref<GxNode> >(itsImpl->itsChildren.begin(),
-                                           itsImpl->itsChildren.end());
+  return Util::FwdIter<Util::Ref<GxNode> >(rep->children.begin(),
+                                           rep->children.end());
 }
 
 class GxSepIter : public Util::FwdIterIfx<const Util::Ref<GxNode> >
@@ -269,7 +272,7 @@ DOTRACE("GxSeparator::deepChildren");
 bool GxSeparator::contains(GxNode* other) const
 {
 DOTRACE("GxSeparator::contains");
-  return itsImpl->contains(other);
+  return rep->contains(other);
 }
 
 void GxSeparator::getBoundingCube(Gfx::Box<double>& bbox,
@@ -279,14 +282,14 @@ DOTRACE("GxSeparator::getBoundingCube");
 
   Gfx::Box<double> mybox;
 
-  if (!itsImpl->itsChildren.empty())
+  if (!rep->children.empty())
     {
       Gfx::MatrixSaver state(canvas);
       Gfx::AttribSaver attribs(canvas);
 
       for(Impl::VecType::reverse_iterator
-            itr = itsImpl->itsChildren.rbegin(),
-            end = itsImpl->itsChildren.rend();
+            itr = rep->children.rbegin(),
+            end = rep->children.rend();
           itr != end;
           ++itr)
         {
@@ -297,24 +300,43 @@ DOTRACE("GxSeparator::getBoundingCube");
   bbox.unionize(mybox);
 }
 
+bool GxSeparator::getDebugMode() const
+{
+DOTRACE("GxSeparator::getDebugMode");
+
+  return rep->debugMode;
+}
+
+void GxSeparator::setDebugMode(bool b)
+{
+DOTRACE("GxSeparator::setDebugMode");
+
+  if (rep->debugMode != b)
+    {
+      rep->debugMode = b;
+      this->sigNodeChanged.emit();
+    }
+}
+
 void GxSeparator::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxSeparator::draw");
 
-  Gfx::Box<double> cube;
+  if (rep->debugMode)
+    {
+      Gfx::Box<double> cube;
+      getBoundingCube(cube, canvas);
+      canvas.drawBox(cube);
+    }
 
-  getBoundingCube(cube, canvas);
-
-  canvas.drawBox(cube);
-
-  if (!itsImpl->itsChildren.empty())
+  if (!rep->children.empty())
     {
       Gfx::MatrixSaver state(canvas);
       Gfx::AttribSaver attribs(canvas);
 
       for(Impl::VecType::iterator
-            itr = itsImpl->itsChildren.begin(),
-            end = itsImpl->itsChildren.end();
+            itr = rep->children.begin(),
+            end = rep->children.end();
           itr != end;
           ++itr)
         {

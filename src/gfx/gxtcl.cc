@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Fri Jul  5 16:10:54 2002
+// written: Tue Jul 30 10:44:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,7 +64,8 @@ namespace GxTcl
     static fstring result =
       "{addChildren 0 10 1 {NEW_GROUP STRING NO_GET}} "
       "{removeChild 0 10 1 {STRING NO_GET}} "
-      "{children 0 20 1 {STRING NO_SET}} ";
+      "{children 0 20 1 {STRING NO_SET}} "
+      "{debugMode 0 1 1 {BOOLEAN TRANSIENT}} ";
     return result;
   }
 }
@@ -92,6 +93,9 @@ DOTRACE("Gx_Init");
   pkg2->def( "addChild", "item_id child_item_id", &GxSeparator::addChild );
   pkg2->def( "addChildren", "item_id children_id(s)", &GxTcl::addChildren );
   pkg2->defGetter("children", &GxSeparator::children);
+  pkg2->defAttrib("debugMode",
+                  &GxSeparator::getDebugMode,
+                  &GxSeparator::setDebugMode);
   pkg2->defGetter("numChildren", &GxSeparator::numChildren);
   pkg2->def("removeChildAt", "sep_id(s) child_indices", &GxSeparator::removeChildAt);
   pkg2->def("removeChild","sep_id(s) child_id(s)", &GxSeparator::removeChild);
