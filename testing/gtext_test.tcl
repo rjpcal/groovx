@@ -16,7 +16,7 @@ package require Pos
 
 source ${::TEST_DIR}/grobj_test.tcl
 
-GrObj::testSubclass Gtext Gtext
+GrObj::testSubclass Gtext Gtext [Gtext::Gtext "Gtext"]
 
 
 
