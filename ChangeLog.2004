@@ -11,3 +11,11 @@
   [DONE] remove util/hash.h (not used anywhere)
   [DONE] remove util/slink_list.h (use autoconf test for #include <ext/slist> and __gnu_cxx::slist<> instead)
   [DONE] remove util/randutils.h (use util/rand.h instead)
+
+* (25-Nov-2002, done 2-Aug-2004) What is GWT::Widget's raison d'etre?
+
+  OK, now I've got Widget cleaned out. But... now, what's its reason to
+  exist? It barely has any abstract interface. Basically it's serving as a
+  glorified mult-arg Signal.
+
+  OK, eliminated GWT::Widget by rolling it into Tcl::TkWidget.

@@ -110,12 +110,6 @@
 
       <filename type="relative" base="$::env(HOME)">somedir/somefile</filename>
 
-* (25-Nov-2002) What is GWT::Widget's raison d'etre?
-
-  OK, now I've got Widget cleaned out. But... now, what's its reason to
-  exist? It barely has any abstract interface. Basically it's serving as a
-  glorified mult-arg Signal.
-
 * (11-Oct-1999) wrapper for Tk widgets
 
   Could write a Widget class that encapsulates the details of Tk
