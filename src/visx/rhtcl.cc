@@ -152,7 +152,7 @@ int Responsehandler_Init(Tcl_Interp* interp)
 DOTRACE("Responsehandler_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "ResponseHandler", "$Revision$");
-  pkg->inherit("IO");
+  pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<ResponseHandler>(pkg);
   pkg->namespaceAlias("Rh");
 
@@ -166,7 +166,7 @@ DOTRACE("Eventresponsehdlr_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "EventResponseHdlr",
                                "$Revision$");
-  pkg->inherit("ResponseHandler");
+  pkg->inheritPkg("ResponseHandler");
   Tcl::defTracing(pkg, EventResponseHdlr::tracer);
 
   Tcl::defGenericObjCmds<EventResponseHdlr>(pkg);
@@ -206,7 +206,7 @@ int Kbdresponsehdlr_Init(Tcl_Interp* interp)
 DOTRACE("Kbdresponsehdlr_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "KbdResponseHdlr", "$Revision$");
-  pkg->inherit("EventResponseHdlr");
+  pkg->inheritPkg("EventResponseHdlr");
   Tcl::defGenericObjCmds<KbdResponseHdlr>(pkg);
 
   pkg->namespaceAlias("KbdRh");
@@ -221,7 +221,7 @@ DOTRACE("Nullresponsehdlr_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "NullResponseHdlr",
                                "$Revision$");
-  pkg->inherit("ResponseHandler");
+  pkg->inheritPkg("ResponseHandler");
   Tcl::defGenericObjCmds<NullResponseHdlr>(pkg);
   pkg->namespaceAlias("NullRh");
 

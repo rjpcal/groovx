@@ -132,9 +132,9 @@ public:
   {
     theExptDriver = Ref<ExptDriver>(ExptDriver::make());
 
-    Tcl::defGenericObjCmds<ExptDriver>(this);
+    this->inheritPkg("IO");
 
-    Tcl::defIoCommands(this);
+    Tcl::defGenericObjCmds<ExptDriver>(this);
 
     Tcl::defTracing(this, ExptDriver::tracer);
 

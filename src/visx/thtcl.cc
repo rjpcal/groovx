@@ -59,7 +59,7 @@ namespace
     Tcl::Pkg* pkg = new Tcl::Pkg(interp,
                                  demangle_cstr(typeid(EventType).name()),
                                  "$Revision$");
-    pkg->inherit("TrialEvent");
+    pkg->inheritPkg("TrialEvent");
 
     return pkg;
   }
@@ -74,7 +74,7 @@ DOTRACE("Timinghdlr_Init");
   Util::ObjFactory::theOne().registerCreatorFunc(&TimingHandler::make);
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "TimingHdlr", "$Revision$");
-  pkg->inherit("IO");
+  pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<TimingHdlr>(pkg);
 
   pkg->def( "addImmediateEvent", "th_id event_type msec_delay",
@@ -110,7 +110,7 @@ int Timinghandler_Init(Tcl_Interp* interp)
 DOTRACE("Timinghandler_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "TimingHandler", "$Revision$");
-  pkg->inherit("IO");
+  pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<TimingHandler>(pkg);
 
   pkg->defAttrib("abortWait",
@@ -137,6 +137,7 @@ int Trialevent_Init(Tcl_Interp* interp)
 DOTRACE("Trialevent_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "TrialEvent", "$Revision$");
+  pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<TrialEvent>(pkg);
 
   pkg->defAttrib("delay", &TrialEvent::getDelay, &TrialEvent::setDelay);

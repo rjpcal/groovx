@@ -157,15 +157,16 @@ int Gxnode_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxnode_Init");
 
-  Tcl::Pkg* pkg1 = new Tcl::Pkg(interp, "GxNode", "$Revision$");
-  Tcl::defGenericObjCmds<GxNode>(pkg1);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxNode", "$Revision$");
+  pkg->inheritPkg("IO");
+  Tcl::defGenericObjCmds<GxNode>(pkg);
 
-  pkg1->def( "contains", "item_id other_id", &GxTcl::contains );
-  pkg1->defVec("deepChildren", "item_id(s)", &GxNode::deepChildren);
-  pkg1->defVec("boundingBox", "item_id(s)", &GxTcl::boundingBox );
-  pkg1->def( "savePS", "item_id filename", &GxTcl::savePS );
+  pkg->def( "contains", "item_id other_id", &GxTcl::contains );
+  pkg->defVec("deepChildren", "item_id(s)", &GxNode::deepChildren);
+  pkg->defVec("boundingBox", "item_id(s)", &GxTcl::boundingBox );
+  pkg->def( "savePS", "item_id filename", &GxTcl::savePS );
 
-  return pkg1->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -173,25 +174,25 @@ int Gxseparator_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxseparator_Init");
 
-  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "GxSeparator", "$Revision$");
-  pkg2->inherit("GxNode");
-  Tcl::defGenericObjCmds<GxSeparator>(pkg2);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxSeparator", "$Revision$");
+  pkg->inheritPkg("GxNode");
+  Tcl::defGenericObjCmds<GxSeparator>(pkg);
 
-  pkg2->def( "fields", "", &GxTcl::gxsepFields );
-  pkg2->def( "allFields", "", &GxTcl::gxsepFields );
+  pkg->def( "fields", "", &GxTcl::gxsepFields );
+  pkg->def( "allFields", "", &GxTcl::gxsepFields );
 
-  pkg2->def( "addChild", "item_id child_item_id", &GxSeparator::addChild );
-  pkg2->def( "addChildren", "item_id children_id(s)", &GxTcl::addChildren );
-  pkg2->defGetter("children", &GxSeparator::children);
-  pkg2->defAttrib("debugMode",
-                  &GxSeparator::getDebugMode,
-                  &GxSeparator::setDebugMode);
-  pkg2->defGetter("numChildren", &GxSeparator::numChildren);
-  pkg2->def("removeChildAt", "sep_id(s) child_indices", &GxSeparator::removeChildAt);
-  pkg2->def("removeChild","sep_id(s) child_id(s)", &GxSeparator::removeChild);
+  pkg->def( "addChild", "item_id child_item_id", &GxSeparator::addChild );
+  pkg->def( "addChildren", "item_id children_id(s)", &GxTcl::addChildren );
+  pkg->defGetter("children", &GxSeparator::children);
+  pkg->defAttrib("debugMode",
+                 &GxSeparator::getDebugMode,
+                 &GxSeparator::setDebugMode);
+  pkg->defGetter("numChildren", &GxSeparator::numChildren);
+  pkg->def("removeChildAt", "sep_id(s) child_indices", &GxSeparator::removeChildAt);
+  pkg->def("removeChild","sep_id(s) child_id(s)", &GxSeparator::removeChild);
   Util::ObjFactory::theOne().registerCreatorFunc(&GxSeparator::make);
 
-  return pkg2->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -199,12 +200,12 @@ int Gxcolor_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxcolor_Init");
 
-  Tcl::Pkg* pkg3 = new Tcl::Pkg(interp, "GxColor", "$Revision$");
-  pkg3->inherit("GxNode");
-  Tcl::defFieldContainer<GxColor>(pkg3);
-  Tcl::defCreator<GxColor>(pkg3);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxColor", "$Revision$");
+  pkg->inheritPkg("GxNode");
+  Tcl::defFieldContainer<GxColor>(pkg);
+  Tcl::defCreator<GxColor>(pkg);
 
-  return pkg3->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -212,12 +213,12 @@ int Gxdrawstyle_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxdrawstyle_Init");
 
-  Tcl::Pkg* pkg4 = new Tcl::Pkg(interp, "GxDrawStyle", "$Revision$");
-  pkg4->inherit("GxNode");
-  Tcl::defFieldContainer<GxDrawStyle>(pkg4);
-  Tcl::defCreator<GxDrawStyle>(pkg4);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxDrawStyle", "$Revision$");
+  pkg->inheritPkg("GxNode");
+  Tcl::defFieldContainer<GxDrawStyle>(pkg);
+  Tcl::defCreator<GxDrawStyle>(pkg);
 
-  return pkg4->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -225,12 +226,12 @@ int Gxline_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxline_Init");
 
-  Tcl::Pkg* pkg5 = new Tcl::Pkg(interp, "GxLine", "$Revision$");
-  pkg5->inherit("GxNode");
-  Tcl::defFieldContainer<GxLine>(pkg5);
-  Tcl::defCreator<GxLine>(pkg5);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxLine", "$Revision$");
+  pkg->inheritPkg("GxNode");
+  Tcl::defFieldContainer<GxLine>(pkg);
+  Tcl::defCreator<GxLine>(pkg);
 
-  return pkg5->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -238,12 +239,12 @@ int Gxcylinder_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxcylinder_Init");
 
-  Tcl::Pkg* pkg6 = new Tcl::Pkg(interp, "GxCylinder", "$Revision$");
-  pkg6->inherit("GxNode");
-  Tcl::defFieldContainer<GxCylinder>(pkg6);
-  Tcl::defCreator<GxCylinder>(pkg6);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxCylinder", "$Revision$");
+  pkg->inheritPkg("GxNode");
+  Tcl::defFieldContainer<GxCylinder>(pkg);
+  Tcl::defCreator<GxCylinder>(pkg);
 
-  return pkg6->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -251,12 +252,12 @@ int Gxsphere_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxsphere_Init");
 
-  Tcl::Pkg* pkg7 = new Tcl::Pkg(interp, "GxSphere", "$Revision$");
-  pkg7->inherit("GxNode");
-  Tcl::defFieldContainer<GxSphere>(pkg7);
-  Tcl::defCreator<GxSphere>(pkg7);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxSphere", "$Revision$");
+  pkg->inheritPkg("GxNode");
+  Tcl::defFieldContainer<GxSphere>(pkg);
+  Tcl::defCreator<GxSphere>(pkg);
 
-  return pkg7->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -264,12 +265,12 @@ int Gxlighting_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxlighting_Init");
 
-  Tcl::Pkg* pkg8 = new Tcl::Pkg(interp, "GxLighting", "$Revision$");
-  pkg8->inherit("GxNode");
-  Tcl::defFieldContainer<GxLighting>(pkg8);
-  Tcl::defCreator<GxLighting>(pkg8);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxLighting", "$Revision$");
+  pkg->inheritPkg("GxNode");
+  Tcl::defFieldContainer<GxLighting>(pkg);
+  Tcl::defCreator<GxLighting>(pkg);
 
-  return pkg8->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -277,12 +278,12 @@ int Gxmaterial_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxmaterial_Init");
 
-  Tcl::Pkg* pkg9 = new Tcl::Pkg(interp, "GxMaterial", "$Revision$");
-  pkg9->inherit("GxNode");
-  Tcl::defFieldContainer<GxMaterial>(pkg9);
-  Tcl::defCreator<GxMaterial>(pkg9);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxMaterial", "$Revision$");
+  pkg->inheritPkg("GxNode");
+  Tcl::defFieldContainer<GxMaterial>(pkg);
+  Tcl::defCreator<GxMaterial>(pkg);
 
-  return pkg9->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -290,12 +291,12 @@ int Gxpointset_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxpointset_Init");
 
-  Tcl::Pkg* pkg10 = new Tcl::Pkg(interp, "GxPointSet", "$Revision$");
-  pkg10->inherit("GxNode");
-  Tcl::defFieldContainer<GxPointSet>(pkg10);
-  Tcl::defCreator<GxPointSet>(pkg10);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxPointSet", "$Revision$");
+  pkg->inheritPkg("GxNode");
+  Tcl::defFieldContainer<GxPointSet>(pkg);
+  Tcl::defCreator<GxPointSet>(pkg);
 
-  return pkg10->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -303,19 +304,19 @@ int Gxscaler_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxscaler_Init");
 
-  Tcl::Pkg* pkg11 = new Tcl::Pkg(interp, "GxScaler", "$Revision$");
-  pkg11->inherit("GxNode");
-  Tcl::defCreator<GxScaler>(pkg11);
-  pkg11->defAttrib("child", &GxScaler::child, &GxScaler::setChild);
-  pkg11->defAttrib("mode", &GxScaler::getMode, &GxScaler::setMode);
-  pkg11->defAttrib("width", &GxScaler::scaledWidth, &GxScaler::setWidth);
-  pkg11->defAttrib("height", &GxScaler::scaledHeight, &GxScaler::setHeight);
-  pkg11->defAttrib("maxDim", &GxScaler::scaledMaxDim, &GxScaler::setMaxDim);
-  pkg11->defAttrib("aspect", &GxScaler::aspectRatio, &GxScaler::setAspectRatio);
-  pkg11->defAttrib("widthFactor", &GxScaler::widthFactor, &GxScaler::setWidthFactor);
-  pkg11->defAttrib("heightFactor", &GxScaler::heightFactor, &GxScaler::setHeightFactor);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxScaler", "$Revision$");
+  pkg->inheritPkg("GxNode");
+  Tcl::defCreator<GxScaler>(pkg);
+  pkg->defAttrib("child", &GxScaler::child, &GxScaler::setChild);
+  pkg->defAttrib("mode", &GxScaler::getMode, &GxScaler::setMode);
+  pkg->defAttrib("width", &GxScaler::scaledWidth, &GxScaler::setWidth);
+  pkg->defAttrib("height", &GxScaler::scaledHeight, &GxScaler::setHeight);
+  pkg->defAttrib("maxDim", &GxScaler::scaledMaxDim, &GxScaler::setMaxDim);
+  pkg->defAttrib("aspect", &GxScaler::aspectRatio, &GxScaler::setAspectRatio);
+  pkg->defAttrib("widthFactor", &GxScaler::widthFactor, &GxScaler::setWidthFactor);
+  pkg->defAttrib("heightFactor", &GxScaler::heightFactor, &GxScaler::setHeightFactor);
 
-  return pkg11->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -323,11 +324,11 @@ int Gxemptynode_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxemptynode_Init");
 
-  Tcl::Pkg* pkg12 = new Tcl::Pkg(interp, "GxEmptyNode", "$Revision$");
-  pkg12->inherit("GxNode");
-  Tcl::defCreator<GxEmptyNode>(pkg12);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxEmptyNode", "$Revision$");
+  pkg->inheritPkg("GxNode");
+  Tcl::defCreator<GxEmptyNode>(pkg);
 
-  return pkg12->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -335,11 +336,12 @@ int Gxtransform_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxtransform_Init");
 
-  Tcl::Pkg* pkg13 = new Tcl::Pkg(interp, "GxTransform", "$Revision$");
-  Tcl::defCreator<GxTransform>(pkg13, "Position");
-  Tcl::defFieldContainer<GxTransform>(pkg13);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxTransform", "$Revision$");
+  pkg->inheritPkg("GxNode");
+  Tcl::defCreator<GxTransform>(pkg, "Position");
+  Tcl::defFieldContainer<GxTransform>(pkg);
 
-  return pkg13->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -347,35 +349,35 @@ int Gxshapekit_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxshapekit_Init");
 
-  Tcl::Pkg* pkg14 = new Tcl::Pkg(interp, "GxShapeKit", "$Revision$");
-  pkg14->inherit("GxNode");
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxShapeKit", "$Revision$");
+  pkg->inheritPkg("GxNode");
 
-  Tcl::defTracing(pkg14, GxShapeKit::tracer);
+  Tcl::defTracing(pkg, GxShapeKit::tracer);
 
-  Tcl::defFieldContainer<GxShapeKit>(pkg14);
+  Tcl::defFieldContainer<GxShapeKit>(pkg);
 
 #if 0
-  pkg14->defVec( "saveBitmap", "item_id(s) filename(s)", &GxTcl::saveBitmap );
+  pkg->defVec( "saveBitmap", "item_id(s) filename(s)", &GxTcl::saveBitmap );
 #endif
 
-  pkg14->defAttrib("category", &GxShapeKit::category, &GxShapeKit::setCategory);
+  pkg->defAttrib("category", &GxShapeKit::category, &GxShapeKit::setCategory);
 
-  pkg14->linkVarCopy("GxShapeKit::DIRECT", GxCache::DIRECT);
-  pkg14->linkVarCopy("GxShapeKit::GLCOMPILE", GxCache::GLCOMPILE);
+  pkg->linkVarCopy("GxShapeKit::DIRECT", GxCache::DIRECT);
+  pkg->linkVarCopy("GxShapeKit::GLCOMPILE", GxCache::GLCOMPILE);
 
-  pkg14->linkVarCopy("GxShapeKit::NATIVE_SCALING", GxScaler::NATIVE_SCALING);
-  pkg14->linkVarCopy("GxShapeKit::MAINTAIN_ASPECT_SCALING", GxScaler::MAINTAIN_ASPECT_SCALING);
-  pkg14->linkVarCopy("GxShapeKit::FREE_SCALING", GxScaler::FREE_SCALING);
+  pkg->linkVarCopy("GxShapeKit::NATIVE_SCALING", GxScaler::NATIVE_SCALING);
+  pkg->linkVarCopy("GxShapeKit::MAINTAIN_ASPECT_SCALING", GxScaler::MAINTAIN_ASPECT_SCALING);
+  pkg->linkVarCopy("GxShapeKit::FREE_SCALING", GxScaler::FREE_SCALING);
 
-  pkg14->linkVarCopy("GxShapeKit::NATIVE_ALIGNMENT", GxAligner::NATIVE_ALIGNMENT);
-  pkg14->linkVarCopy("GxShapeKit::CENTER_ON_CENTER", GxAligner::CENTER_ON_CENTER);
-  pkg14->linkVarCopy("GxShapeKit::NW_ON_CENTER", GxAligner::NW_ON_CENTER);
-  pkg14->linkVarCopy("GxShapeKit::NE_ON_CENTER", GxAligner::NE_ON_CENTER);
-  pkg14->linkVarCopy("GxShapeKit::SW_ON_CENTER", GxAligner::SW_ON_CENTER);
-  pkg14->linkVarCopy("GxShapeKit::SE_ON_CENTER", GxAligner::SE_ON_CENTER);
-  pkg14->linkVarCopy("GxShapeKit::ARBITRARY_ON_CENTER", GxAligner::ARBITRARY_ON_CENTER);
+  pkg->linkVarCopy("GxShapeKit::NATIVE_ALIGNMENT", GxAligner::NATIVE_ALIGNMENT);
+  pkg->linkVarCopy("GxShapeKit::CENTER_ON_CENTER", GxAligner::CENTER_ON_CENTER);
+  pkg->linkVarCopy("GxShapeKit::NW_ON_CENTER", GxAligner::NW_ON_CENTER);
+  pkg->linkVarCopy("GxShapeKit::NE_ON_CENTER", GxAligner::NE_ON_CENTER);
+  pkg->linkVarCopy("GxShapeKit::SW_ON_CENTER", GxAligner::SW_ON_CENTER);
+  pkg->linkVarCopy("GxShapeKit::SE_ON_CENTER", GxAligner::SE_ON_CENTER);
+  pkg->linkVarCopy("GxShapeKit::ARBITRARY_ON_CENTER", GxAligner::ARBITRARY_ON_CENTER);
 
-  return pkg14->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -383,34 +385,34 @@ int Gxpixmap_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxpixmap_Init");
 
-  Tcl::Pkg* pkg15 = new Tcl::Pkg(interp, "GxPixmap", "$Revision$");
-  pkg15->inherit("GxShapeKit");
-  Tcl::defCreator<GxPixmap>(pkg15, "Bitmap");
-  Tcl::defGenericObjCmds<GxPixmap>(pkg15);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxPixmap", "$Revision$");
+  pkg->inheritPkg("GxShapeKit");
+  Tcl::defCreator<GxPixmap>(pkg, "Bitmap");
+  Tcl::defGenericObjCmds<GxPixmap>(pkg);
 
-  pkg15->defGetter( "filename", &GxPixmap::filename );
-  pkg15->defVec( "loadImage", "item_id(s) filename(s)", &GxPixmap::loadImage );
-  pkg15->defVec( "queueImage", "item_id(s) filename(s)", &GxPixmap::queueImage );
-  pkg15->defVec( "saveImage", "item_id(s) filename(s)", &GxPixmap::saveImage );
-  pkg15->defVec( "grabScreenRect", "item_id(s) {left top right bottom}",
-                 &GxPixmap::grabScreenRect );
-  pkg15->defVec( "grabWorldRect", "item_id(s) {left top right bottom}",
-                 &GxPixmap::grabWorldRect );
-  pkg15->defAction("flipContrast", &GxPixmap::flipContrast);
-  pkg15->defAction("flipVertical", &GxPixmap::flipVertical);
-  pkg15->defGetter("size", &GxPixmap::size);
-  pkg15->defAttrib("zoom", &GxPixmap::getZoom, &GxPixmap::setZoom);
-  pkg15->defSetter("zoomTo", &GxPixmap::zoomTo);
-  pkg15->defAttrib("usingZoom", &GxPixmap::getUsingZoom, &GxPixmap::setUsingZoom);
-  pkg15->defAttrib("purgeable", &GxPixmap::isPurgeable, &GxPixmap::setPurgeable);
-  pkg15->defAttrib("asBitmap", &GxPixmap::getAsBitmap, &GxPixmap::setAsBitmap);
-  pkg15->defGetter("checkSum", &GxPixmap::checkSum);
+  pkg->defGetter( "filename", &GxPixmap::filename );
+  pkg->defVec( "loadImage", "item_id(s) filename(s)", &GxPixmap::loadImage );
+  pkg->defVec( "queueImage", "item_id(s) filename(s)", &GxPixmap::queueImage );
+  pkg->defVec( "saveImage", "item_id(s) filename(s)", &GxPixmap::saveImage );
+  pkg->defVec( "grabScreenRect", "item_id(s) {left top right bottom}",
+               &GxPixmap::grabScreenRect );
+  pkg->defVec( "grabWorldRect", "item_id(s) {left top right bottom}",
+               &GxPixmap::grabWorldRect );
+  pkg->defAction("flipContrast", &GxPixmap::flipContrast);
+  pkg->defAction("flipVertical", &GxPixmap::flipVertical);
+  pkg->defGetter("size", &GxPixmap::size);
+  pkg->defAttrib("zoom", &GxPixmap::getZoom, &GxPixmap::setZoom);
+  pkg->defSetter("zoomTo", &GxPixmap::zoomTo);
+  pkg->defAttrib("usingZoom", &GxPixmap::getUsingZoom, &GxPixmap::setUsingZoom);
+  pkg->defAttrib("purgeable", &GxPixmap::isPurgeable, &GxPixmap::setPurgeable);
+  pkg->defAttrib("asBitmap", &GxPixmap::getAsBitmap, &GxPixmap::setAsBitmap);
+  pkg->defGetter("checkSum", &GxPixmap::checkSum);
 
   // For GLBitmap/XBitmap backward-compatibility
   Util::ObjFactory::theOne().registerCreatorFunc(&CompatBitmap::makeGL, "GLBitmap");
   Util::ObjFactory::theOne().registerCreatorFunc(&CompatBitmap::makeX, "XBitmap");
 
-  return pkg15->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -418,13 +420,13 @@ int Gxtext_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxtext_Init");
 
-  Tcl::Pkg* pkg16 = new Tcl::Pkg(interp, "GxText", "$Revision$");
-  pkg16->inherit("GxShapeKit");
-  Tcl::defCreator<GxText>(pkg16, "Gtext");
-  Tcl::defGenericObjCmds<GxText>(pkg16);
-  Tcl::defAllFields(pkg16, GxText::classFields());
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxText", "$Revision$");
+  pkg->inheritPkg("GxShapeKit");
+  Tcl::defCreator<GxText>(pkg, "Gtext");
+  Tcl::defGenericObjCmds<GxText>(pkg);
+  Tcl::defAllFields(pkg, GxText::classFields());
 
-  return pkg16->initStatus();
+  return pkg->initStatus();
 }
 
 
@@ -437,13 +439,13 @@ int Gxfixedscalecamera_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxfixedscalecamera_Init");
 
-  Tcl::Pkg* pkg17 = new Tcl::Pkg(interp, "GxFixedScaleCamera", "$Revision$");
-  pkg17->inherit("GxNode");
-  Tcl::defCreator<GxFixedScaleCamera>(pkg17);
-  Tcl::defGenericObjCmds<GxFixedScaleCamera>(pkg17);
-  Tcl::defFieldContainer<GxFixedScaleCamera>(pkg17);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxFixedScaleCamera", "$Revision$");
+  pkg->inheritPkg("GxNode");
+  Tcl::defCreator<GxFixedScaleCamera>(pkg);
+  Tcl::defGenericObjCmds<GxFixedScaleCamera>(pkg);
+  Tcl::defFieldContainer<GxFixedScaleCamera>(pkg);
 
-  return pkg17->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -451,13 +453,13 @@ int Gxpsyphycamera_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxpsyphycamera_Init");
 
-  Tcl::Pkg* pkg18 = new Tcl::Pkg(interp, "GxPsyphyCamera", "$Revision$");
-  pkg18->inherit("GxNode");
-  Tcl::defCreator<GxPsyphyCamera>(pkg18);
-  Tcl::defGenericObjCmds<GxPsyphyCamera>(pkg18);
-  Tcl::defFieldContainer<GxPsyphyCamera>(pkg18);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxPsyphyCamera", "$Revision$");
+  pkg->inheritPkg("GxNode");
+  Tcl::defCreator<GxPsyphyCamera>(pkg);
+  Tcl::defGenericObjCmds<GxPsyphyCamera>(pkg);
+  Tcl::defFieldContainer<GxPsyphyCamera>(pkg);
 
-  return pkg18->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -465,13 +467,13 @@ int Gxperspectivecamera_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gxperspectivecamera_Init");
 
-  Tcl::Pkg* pkg19 = new Tcl::Pkg(interp, "GxPerspectiveCamera", "$Revision$");
-  pkg19->inherit("GxNode");
-  Tcl::defCreator<GxPerspectiveCamera>(pkg19);
-  Tcl::defGenericObjCmds<GxPerspectiveCamera>(pkg19);
-  Tcl::defFieldContainer<GxPerspectiveCamera>(pkg19);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxPerspectiveCamera", "$Revision$");
+  pkg->inheritPkg("GxNode");
+  Tcl::defCreator<GxPerspectiveCamera>(pkg);
+  Tcl::defGenericObjCmds<GxPerspectiveCamera>(pkg);
+  Tcl::defFieldContainer<GxPerspectiveCamera>(pkg);
 
-  return pkg19->initStatus();
+  return pkg->initStatus();
 }
 
 extern "C"
@@ -480,7 +482,7 @@ int Gxdisk_Init(Tcl_Interp* interp)
 DOTRACE("Gxdisk_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GxDisk", "$Revision$");
-  pkg->inherit("GxNode");
+  pkg->inheritPkg("GxNode");
   Tcl::defCreator<GxDisk>(pkg);
   Tcl::defGenericObjCmds<GxDisk>(pkg);
   Tcl::defFieldContainer<GxDisk>(pkg);

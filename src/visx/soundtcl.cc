@@ -51,6 +51,7 @@ public:
   SoundPkg(const Tcl::Interp& interp) :
     Tcl::Pkg(interp.intp(), "Sound", "$Revision$")
   {
+    this->inheritPkg("IO");
     Tcl::defGenericObjCmds<Sound>(this);
 
     bool haveSound = Sound::initSound();

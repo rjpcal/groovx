@@ -110,6 +110,7 @@ public:
   TogletPkg(Tcl_Interp* interp) :
     Tcl::Pkg(interp, "Toglet", "$Revision$")
   {
+    this->inheritPkg("Obj");
     Tcl::defGenericObjCmds<Toglet>(this);
 
     def( "bind", "event_sequence binding_script", &Toglet::bind );

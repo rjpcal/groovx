@@ -51,6 +51,7 @@ int Trial_Init(Tcl_Interp* interp)
 DOTRACE("Trial_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Trial", "$Revision$");
+  pkg->inheritPkg("IO");
   Tcl::defTracing(pkg, Trial::tracer);
 
   Tcl::defFieldContainer<Trial>(pkg);

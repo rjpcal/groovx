@@ -60,7 +60,7 @@ int Face_Init(Tcl_Interp* interp)
 DOTRACE("Face_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Face", "$Revision$");
-  pkg->inheritPkg("IO");
+  pkg->inheritPkg("GxShapeKit");
   Tcl::defFieldContainer<Face>(pkg);
   Tcl::defCreator<Face>(pkg);
 

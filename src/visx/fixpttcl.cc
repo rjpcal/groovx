@@ -42,6 +42,7 @@ int Fixpt_Init(Tcl_Interp* interp)
 DOTRACE("Fixpt_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "FixPt", "$Revision$");
+  pkg->inheritPkg("GxShapeKit");
   Tcl::defFieldContainer<FixPt>(pkg);
   Tcl::defCreator<FixPt>(pkg);
 

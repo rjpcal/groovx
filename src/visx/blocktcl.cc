@@ -68,6 +68,7 @@ int Block_Init(Tcl_Interp* interp)
 DOTRACE("Block_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Block", "$Revision$");
+  pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<Block>(pkg);
 
   Tcl::defTracing(pkg, Block::tracer);

@@ -206,8 +206,8 @@ DOTRACE("Obj_Init");
   pkg->defAction("incrRefCount", &Util::Object::incrRefCount);
   pkg->defAction("decrRefCount", &Util::Object::decrRefCount);
 
-  pkg->defVec( "type", "item_id(s)", &Util::Object::objTypename );
-  pkg->defVec( "realType", "item_id(s)", &Util::Object::realTypename );
+  pkg->defGetter( "type", "item_id(s)", &Util::Object::objTypename );
+  pkg->defGetter( "realType", "item_id(s)", &Util::Object::realTypename );
 
   pkg->def( "new", "typename", &objNew );
   pkg->def( "new", "typename {cmd1 arg1 cmd2 arg2 ...}",
