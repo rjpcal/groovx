@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Feb 25 13:27:36 2003
-// written: Sat Mar 29 12:38:23 2003
+// written: Fri May  2 14:27:52 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -39,9 +39,16 @@
 #include <streambuf.h>
 #endif
 
+#ifdef HAVE_ISTREAM
+#include <istream>
+#else
+#include <istream.h>
+#endif
+
 namespace Util
 {
   class stdiobuf;
+  class stdiostream;
 }
 
 /// A C++ streambuf that wraps a standard posix file descriptor.
@@ -75,13 +82,13 @@ public:
       to open the file descriptor). */
   stdiobuf(int fd, int om, bool throw_exception=false);
 
-  /// Destructor closes the underlying file descriptor.
+  /// Destructor flushes buffer, but DOES NOT CLOSE the file descriptor.
   ~stdiobuf() { close(); }
 
-  /// Check whether there we have an open file descriptor.
+  /// Check whether we have an open file descriptor.
   bool is_open() const { return itsFiledes >= 0; }
 
-  /// Close the underlying file descriptor.
+  /// Flushes the buffer and forgets the file descriptor, but DOESN'T CLOSE IT.
   void close();
 
   /// Get more data from the underlying file descriptor.
@@ -94,6 +101,41 @@ public:
 
   /// Flush the current buffer contents to the underlying file descriptor.
   virtual int sync();
+};
+
+class Util::stdiostream : public STD_IO::iostream
+{
+private:
+  Util::stdiobuf itsBuf;
+
+public:
+  /// Create with a reference to a FILE object.
+  /** The stdiobuf will NOT close the FILE on destruction, that is left
+      up to the caller (since the caller must also have been the one to
+      open the FILE object). */
+  stdiostream(FILE* f, int om, bool throw_exception=false) :
+    STD_IO::iostream(0),
+    itsBuf(f, om, throw_exception)
+  {
+    rdbuf(&itsBuf);
+  }
+
+  /// Create with a reference to a file descriptor.
+  /** The stdiobuf will NOT close the descriptor on destruction, that is
+      left up to the caller (since the caller must also have been the one
+      to open the file descriptor). */
+  stdiostream(int fd, int om, bool throw_exception=false) :
+    STD_IO::iostream(0),
+    itsBuf(fd, om, throw_exception)
+  {
+    rdbuf(&itsBuf);
+  }
+
+  /// Check whether we have an open file descriptor.
+  bool is_open() const { return itsBuf.is_open(); }
+
+  /// Flushes the buffer and forgets the file descriptor, but DOESN'T CLOSE IT.
+  void close() { itsBuf.close(); }
 };
 
 static const char vcid_stdiobuf_h[] = "$Header$";
