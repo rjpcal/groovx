@@ -1,3 +1,5 @@
+.config-h-in.stamp
+.config-h.stamp
 Makefile
 autom4te-2.53.cache
 autom4te.cache
