@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Tue Mar  7 20:13:18 2000
+// written: Tue Mar  7 21:00:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ DOTRACE("IoPtrList::deserialize");
 int IoPtrList::charCount() const {
 DOTRACE("IoPtrList::charCount");
   fixed_string ioTag = IO::ioTypename();
-  int ch_count = ioTag.size() + 1
+  int ch_count = ioTag.length() + 1
 	 + gCharCount<int>(voidVecSize()) + 1;
   int num_non_null = VoidPtrList::count();
   ch_count += 
