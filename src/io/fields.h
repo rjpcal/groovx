@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Sun Aug 26 08:35:11 2001
+// written: Wed Aug 29 16:44:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -305,9 +305,12 @@ private:
   shared_ptr<Value> itsMin;
   shared_ptr<Value> itsMax;
   shared_ptr<Value> itsRes;
-  bool itsStartsNewGroup;
+  unsigned int itsFlags;
 
 public:
+
+  static const unsigned int NEW_GROUP = 1 << 0;
+  static const unsigned int TRANSIENT = 1 << 1;
 
   struct BoundsCheck {};
 
@@ -344,40 +347,40 @@ public:
   template <class T, class C, class V>
   Field(const fstring& name, ValueType, V C::* value_ptr,
         const T& def, const T& min, const T& max, const T& res,
-        bool new_group=false) :
+        unsigned int flags=0) :
     itsName(name),
     itsFieldImpl(new ValueFieldImpl<C,V>(value_ptr)),
     itsDefaultValue(new TValue<T>(def)),
     itsMin(new TValue<T>(min)),
     itsMax(new TValue<T>(max)),
     itsRes(new TValue<T>(res)),
-    itsStartsNewGroup(new_group)
+    itsFlags(flags)
   {}
 
   template <class T, class M>
   Field(const fstring& name, M member_ptr_init,
         const T& def, const T& min, const T& max, const T& res,
-        bool new_group=false) :
+        unsigned int flags=0) :
     itsName(name),
     itsFieldImpl(makeImpl(member_ptr_init)),
     itsDefaultValue(new TValue<T>(def)),
     itsMin(new TValue<T>(min)),
     itsMax(new TValue<T>(max)),
     itsRes(new TValue<T>(res)),
-    itsStartsNewGroup(new_group)
+    itsFlags(flags)
   {}
 
   template <class T, class M>
   Field(const fstring& name, BoundsCheck, M member_ptr_init,
         const T& def, const T& min, const T& max, const T& res,
-        bool new_group=false) :
+        unsigned int flags=0) :
     itsName(name),
     itsFieldImpl(makeImpl(member_ptr_init, min, max)),
     itsDefaultValue(new TValue<T>(def)),
     itsMin(new TValue<T>(min)),
     itsMax(new TValue<T>(max)),
     itsRes(new TValue<T>(res)),
-    itsStartsNewGroup(new_group)
+    itsFlags(flags)
   {}
 
   const fstring& name() const { return itsName; }
@@ -387,7 +390,9 @@ public:
   const Value& max() const { return *itsMax; }
   const Value& res() const { return *itsRes; }
 
-  bool startsNewGroup() const { return itsStartsNewGroup; }
+  bool startsNewGroup() const { return itsFlags & NEW_GROUP; }
+
+  bool isTransient() const { return itsFlags & TRANSIENT; }
 
   void setValue(FieldContainer* obj, const Value& new_val) const
   {
