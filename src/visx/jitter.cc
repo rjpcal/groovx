@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:41 1999
-// written: Wed Aug 22 17:12:09 2001
+// written: Mon Sep 10 12:18:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,9 +101,9 @@ DOTRACE("Jitter::writeTo");
 void Jitter::rejitter() const
 {
 DOTRACE("Jitter::rejitter");
-  itsXShift = Util::randDoubleRange(-itsXJitter, itsXJitter);
-  itsYShift = Util::randDoubleRange(-itsYJitter, itsYJitter);
-  itsRShift = Util::randDoubleRange(-itsRJitter, itsRJitter);
+  itsXShift = Util::randRange(-itsXJitter, itsXJitter);
+  itsYShift = Util::randRange(-itsYJitter, itsYJitter);
+  itsRShift = Util::randRange(-itsRJitter, itsRJitter);
 }
 
 void Jitter::draw(Gfx::Canvas& canvas) const

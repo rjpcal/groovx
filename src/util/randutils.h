@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 02:35:53 1999
-// written: Sun Aug 26 08:53:50 2001
+// written: Mon Sep 10 12:17:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,14 +20,10 @@
 
 namespace Util
 {
-  inline int randIntRange(int min, int max)
+  template <class T>
+  inline T randRange(const T& min, const T& max)
   {
-    return int( (double(rand()) / (double(RAND_MAX)+1.0)) * (max-min) + min );
-  }
-
-  inline double randDoubleRange(double min, double max)
-  {
-    return ( (double(rand()) / (double(RAND_MAX)+1.0)) * (max-min) + min );
+    return T( (double(rand()) / (double(RAND_MAX)+1.0)) * (max-min) + min );
   }
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Sep  5 18:57:07 2001
+// written: Mon Sep 10 12:17:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -232,7 +232,7 @@ DOTRACE("Gabor::grRender");
           else if ( itsColorMode == BW_DITHER_POINT ||
                     itsColorMode == BW_DITHER_RECT )
             {
-              *bytes++ = (Util::randDoubleRange(0.0, 1.0) < gabor) ? 255 : 0;
+              *bytes++ = (Util::randRange(0.0, 1.0) < gabor) ? 255 : 0;
             }
         }
     }
