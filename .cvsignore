@@ -4,6 +4,7 @@ build
 config.h
 config.log
 config.status
+ilabx
 local
 prof.out
 reconfigure
