@@ -3,7 +3,7 @@
 // propitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct  4 15:42:59 1999
-// written: Fri Oct 20 17:59:59 2000
+// written: Mon Oct 30 11:13:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,17 +24,16 @@ namespace Tcl {
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Tcl::PropertyListItemPkg
+ * Tcl::PropItemPkg
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-template <class C, class List>
-class PropertyListItemPkg : public ListItemPkg<C, List> {
+template <class C>
+class PropItemPkg : public ItemPkg<C> {
 public:
-  PropertyListItemPkg(Tcl_Interp* interp, List& aList,
-							 const char* name, const char* version) :
-	 ListItemPkg<C, List>(interp, aList, name, version)
+  PropItemPkg(Tcl_Interp* interp, const char* name, const char* version) :
+	 ItemPkg<C>(interp, name, version)
   {
 	 CTclIoItemPkg<C>::declareAllProperties();
 	 IO::IoFactory::theOne().registerCreatorFunc(&C::make);

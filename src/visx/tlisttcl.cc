@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Fri Oct 27 18:40:40 2000
+// written: Mon Oct 30 10:12:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,6 @@
 #include "application.h"
 #include "experiment.h"
 #include "grobj.h"
-#include "ioptrlist.h"
-#include "ioptrlist.h"
 #include "tlistutils.h"
 #include "trial.h"
 
@@ -55,9 +53,6 @@ namespace TlistTcl {
 namespace {
   // error messages
   const char* const bad_trial_msg = "invalid trial id";
-
-  // local reference to the global Tlist singleton
-  IoPtrList& theTlist = IoPtrList::theList();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -147,8 +142,6 @@ protected:
 	 int posid1 = getIntFromArg(3);
 	 int posid2 = getIntFromArg(4);
 
-	 IoPtrList& tlist = IoPtrList::theList();
-
 	 for (Tcl::ListIterator<int>
 			  itr1 = beginOfArg(1, (int*)0),
 			  end1 = endOfArg(1, (int*)0);
@@ -186,8 +179,6 @@ public:
 protected:
   virtual void invoke() {
 	 int posids[3] = { getIntFromArg(2), getIntFromArg(3), getIntFromArg(4) };
-
-	 IoPtrList& tlist = IoPtrList::theList();
 
 	 const int NUM_PERMS = 18;
 	 static int permutations[NUM_PERMS][3] = { 
@@ -340,7 +331,7 @@ protected:
 class TlistTcl::TlistPkg : public Tcl::PtrListPkg<Trial> {
 public:
   TlistPkg(Tcl_Interp* interp) :
-	 Tcl::PtrListPkg<Trial>(interp, IoPtrList::theList(), "Tlist", "3.0")
+	 Tcl::PtrListPkg<Trial>(interp, "Tlist", "$Revision$")
   {
 	 addCommand( new CreatePreviewCmd(interp, "Tlist::createPreview") );
 

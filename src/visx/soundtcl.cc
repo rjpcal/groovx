@@ -3,7 +3,7 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Fri Oct 27 18:40:09 2000
+// written: Mon Oct 30 10:11:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,6 @@
 #define SOUNDTCL_CC_DEFINED
 
 #include "application.h"
-#include "ioptrlist.h"
 #include "sound.h"
 
 #include "io/iofactory.h"
@@ -86,11 +85,10 @@ protected:
 //---------------------------------------------------------------------
 
 class SoundTcl::SoundPkg :
-  public Tcl::AbstractListItemPkg<Sound, IoPtrList> {
+  public Tcl::ItemPkg<Sound> {
 public:
   SoundPkg(Tcl_Interp* interp) :
-	 Tcl::AbstractListItemPkg<Sound, IoPtrList>(
-			 interp, IoPtrList::theList(), "Sound", "1.3")
+	 Tcl::ItemPkg<Sound>(interp, "Sound", "$Revision$")
   {
 	 bool haveSound = Sound::initSound();
 
@@ -159,8 +157,7 @@ namespace SoundListTcl {
 class SoundListTcl::SoundListPkg : public Tcl::PtrListPkg<Sound> {
 public:
   SoundListPkg(Tcl_Interp* interp) :
-	 Tcl::PtrListPkg<Sound>(interp, IoPtrList::theList(),
-									"SoundList", "$Revision$") {}
+	 Tcl::PtrListPkg<Sound>(interp, "SoundList", "$Revision$") {}
 };
 
 //---------------------------------------------------------------------

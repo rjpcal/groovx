@@ -2,7 +2,7 @@
 // jittertcl.cc
 // Rob Peters
 // created: Wed Apr  7 14:58:40 1999
-// written: Fri Oct 27 18:44:40 2000
+// written: Mon Oct 30 11:12:29 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -10,7 +10,6 @@
 #define JITTERTCL_CC_DEFINED
 
 #include "jitter.h"
-#include "ioptrlist.h"
 
 #include "io/iofactory.h"
 
@@ -52,11 +51,10 @@ protected:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class JitterTcl::JitterPkg : public Tcl::ListItemPkg<Jitter, IoPtrList> {
+class JitterTcl::JitterPkg : public Tcl::ItemPkg<Jitter> {
 public:
   JitterPkg(Tcl_Interp* interp) : 
-	 Tcl::ListItemPkg<Jitter, IoPtrList>(interp, IoPtrList::theList(),
-													 "Jitter", "2.3")
+	 Tcl::ItemPkg<Jitter>(interp, "Jitter", "$Revision$")
   {
 	 addCommand( new SetJitterCmd(this, "Jitter::setJitter") );
   }

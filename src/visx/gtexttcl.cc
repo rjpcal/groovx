@@ -3,7 +3,7 @@
 // gtexttcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 12:30:38 1999
-// written: Fri Oct 27 18:44:37 2000
+// written: Mon Oct 30 11:12:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,6 @@
 #ifndef GTEXTTCL_CC_DEFINED
 #define GTEXTTCL_CC_DEFINED
 
-#include "ioptrlist.h"
 #include "gtext.h"
 
 #include "io/iofactory.h"
@@ -33,11 +32,10 @@ namespace GtextTcl {
 //
 //---------------------------------------------------------------------
 
-class GtextTcl::GtextPkg : public Tcl::ListItemPkg<Gtext, IoPtrList> {
+class GtextTcl::GtextPkg : public Tcl::ItemPkg<Gtext> {
 public:
   GtextPkg(Tcl_Interp* interp) :
-	 Tcl::ListItemPkg<Gtext, IoPtrList>(interp, IoPtrList::theList(),
-												 "Gtext", "1.1")
+	 Tcl::ItemPkg<Gtext>(interp, "Gtext", "$Revision$")
   {
 	 declareCAttrib("text", &Gtext::getText, &Gtext::setText);
 	 declareCAttrib("strokeWidth",

@@ -3,7 +3,7 @@
 // positiontcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:53:34 1999
-// written: Fri Oct 27 18:40:40 2000
+// written: Mon Oct 30 11:12:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,13 +12,10 @@
 #define POSITIONTCL_CC_DEFINED
 
 #include "position.h"
-#include "ioptrlist.h"
 
 #include "io/iofactory.h"
 
 #include "tcl/listitempkg.h"
-
-#include <tcl.h>
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -118,19 +115,14 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class PosTcl::PosPkg : public Tcl::ListItemPkg<Position, IoPtrList> {
+class PosTcl::PosPkg : public Tcl::ItemPkg<Position> {
 public:
   PosPkg(Tcl_Interp* interp) :
-	 Tcl::ListItemPkg<Position, IoPtrList>(interp, IoPtrList::theList(),
-														"Pos", "2.3")
+	 Tcl::ItemPkg<Position>(interp, "Pos", "$Revision$")
   {
 	 addCommand( new RotateCmd(this, "Pos::rotate") );
 	 addCommand( new TranslateCmd(this, "Pos::translate") );
 	 addCommand( new ScaleCmd(this, "Pos::scale") );
-
-	 Tcl_Eval(interp,
-				 "namespace eval Pos { proc position {} { return Pos } }\n"
-				 "proc posType {id} { return [Position::type $id] }\n");
   }
 };
 

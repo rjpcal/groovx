@@ -3,7 +3,7 @@
 // blocktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun 16 19:46:54 1999
-// written: Fri Oct 27 18:40:39 2000
+// written: Mon Oct 30 11:12:30 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,6 @@
 #define BLOCKTCL_CC_DEFINED
 
 #include "block.h"
-#include "ioptrlist.h"
 #include "trialbase.h"
 
 #include "io/iofactory.h"
@@ -140,11 +139,10 @@ protected:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class BlockTcl::BlockPkg : public Tcl::ListItemPkg<Block, IoPtrList> {
+class BlockTcl::BlockPkg : public Tcl::ItemPkg<Block> {
 public:
   BlockPkg(Tcl_Interp* interp) :
-	 Tcl::ListItemPkg<Block, IoPtrList>(interp, IoPtrList::theList(),
-													"Block", "1.1")
+	 Tcl::ItemPkg<Block>(interp, "Block", "$Revision$")
   {
 	 Tcl::addTracing(this, Block::tracer);
 
@@ -179,8 +177,7 @@ DOTRACE("Block_Init");
 
   Tcl::TclPkg* pkg1 = new BlockTcl::BlockPkg(interp);
   Tcl::TclPkg* pkg2 =
-	 new Tcl::PtrListPkg<Block>(interp, IoPtrList::theList(),
-										 "BlockList", "$Revision$");
+	 new Tcl::PtrListPkg<Block>(interp, "BlockList", "$Revision$");
 
   IO::IoFactory::theOne().registerCreatorFunc(&Block::make);
 

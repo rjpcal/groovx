@@ -3,7 +3,7 @@
 // fishtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 12:00:53 1999
-// written: Fri Oct 27 18:44:32 2000
+// written: Mon Oct 30 10:18:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,6 @@
 #ifndef FISHTCL_CC_DEFINED
 #define FISHTCL_CC_DEFINED
 
-#include "ioptrlist.h"
 #include "fish.h"
 
 #include "io/iofactory.h"
@@ -48,11 +47,10 @@ protected:
   }
 };
 
-class FishTcl::FishPkg : public Tcl::AbstractListItemPkg<Fish, IoPtrList> {
+class FishTcl::FishPkg : public Tcl::ItemPkg<Fish> {
 public:
   FishPkg(Tcl_Interp* interp) :
-	 Tcl::AbstractListItemPkg<Fish, IoPtrList>(interp, IoPtrList::theList(),
-														  "Fish", "$Revision$")
+	 Tcl::ItemPkg<Fish>(interp, "Fish", "$Revision$")
   {
 	 Tcl::addTracing(this, Fish::tracer);
 

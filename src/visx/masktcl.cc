@@ -3,7 +3,7 @@
 // masktcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 18:19:05 1999
-// written: Fri Oct 27 18:44:41 2000
+// written: Mon Oct 30 11:12:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,6 @@
 #define MASKTCL_CC_DEFINED
 
 #include "maskhatch.h"
-#include "ioptrlist.h"
 
 #include "tcl/propitempkg.h"
 
@@ -24,8 +23,8 @@ extern "C"
 int Mask_Init(Tcl_Interp* interp) {
 DOTRACE("Mask_Init");
 
-  Tcl::TclPkg* pkg = new Tcl::PropertyListItemPkg<MaskHatch, IoPtrList>(
-            interp, IoPtrList::theList(), "MaskHatch", "1.1");
+  Tcl::TclPkg* pkg =
+	 new Tcl::PropItemPkg<MaskHatch>(interp, "MaskHatch", "$Revision$");
 
   return pkg->initStatus();
 }

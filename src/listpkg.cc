@@ -3,7 +3,7 @@
 // listpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec 15 17:27:51 1999
-// written: Fri Oct 27 16:27:27 2000
+// written: Mon Oct 30 10:15:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -194,10 +194,9 @@ private:
 
 } // end namespace Tcl
 
-Tcl::IoPtrListPkg::IoPtrListPkg(Tcl_Interp* interp, IoPtrList& aList,
+Tcl::IoPtrListPkg::IoPtrListPkg(Tcl_Interp* interp,
 										  const char* pkg_name, const char* version) :
-  CTclIoItemPkg<IoPtrList>(interp, pkg_name, version, 0),
-  itsList(aList)
+  CTclIoItemPkg<IoPtrList>(interp, pkg_name, version, 0)
 {
 DOTRACE("Tcl::IoPtrListPkg::IoPtrListPkg");
   addCommand( new ListItemCountCmd(this, 
@@ -217,12 +216,12 @@ Tcl::IoPtrListPkg::~IoPtrListPkg() {}
 
 IO::IoObject& Tcl::IoPtrListPkg::getIoFromId(int) {
 DOTRACE("Tcl::IoPtrListPkg::getIoFromId");
-  return dynamic_cast<IO::IoObject&>(itsList);
+  return dynamic_cast<IO::IoObject&>(IoPtrList::theList());
 }
 
 IoPtrList* Tcl::IoPtrListPkg::getCItemFromId(int) {
 DOTRACE("Tcl::IoPtrListPkg::getCItemFromId");
-  return &itsList;
+  return &(IoPtrList::theList());
 }
 
 static const char vcid_listpkg_cc[] = "$Header$";

@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Fri Oct 27 18:44:46 2000
+// written: Mon Oct 30 11:12:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,6 @@
 #define RHTCL_CC_DEFINED
 
 #include "eventresponsehdlr.h"
-#include "ioptrlist.h"
 #include "responsehandler.h"
 #include "kbdresponsehdlr.h"
 #include "nullresponsehdlr.h"
@@ -158,11 +157,10 @@ namespace EventRhTcl {
 }
 
 class EventRhTcl::EventRhPkg :
-  public Tcl::ListItemPkg<EventResponseHdlr, IoPtrList> {
+  public Tcl::ItemPkg<EventResponseHdlr> {
 public:
   EventRhPkg(Tcl_Interp* interp) :
-	 Tcl::ListItemPkg<EventResponseHdlr, IoPtrList>(
-       interp, IoPtrList::theList(), "EventRh", "$Revision$")
+	 Tcl::ItemPkg<EventResponseHdlr>(interp, "EventRh", "$Revision$")
   {
 	 Tcl::addTracing(this, EventResponseHdlr::tracer);
 
@@ -201,11 +199,10 @@ namespace KbdRhTcl {
 }
 
 class KbdRhTcl::KbdRhPkg :
-  public Tcl::ListItemPkg<KbdResponseHdlr, IoPtrList> {
+  public Tcl::ItemPkg<KbdResponseHdlr> {
 public:
   KbdRhPkg(Tcl_Interp* interp) :
-	 Tcl::ListItemPkg<KbdResponseHdlr, IoPtrList>(interp, IoPtrList::theList(),
-																 "KbdRh", "$Revision$")
+	 Tcl::ItemPkg<KbdResponseHdlr>(interp, "KbdRh", "$Revision$")
   {
 	 Tcl_Eval(interp,
 				 "namespace eval KbdRh {\n"
@@ -235,11 +232,10 @@ namespace NullRhTcl {
 }
 
 class NullRhTcl::NullRhPkg :
-  public Tcl::ListItemPkg<NullResponseHdlr, IoPtrList> {
+  public Tcl::ItemPkg<NullResponseHdlr> {
 public:
   NullRhPkg(Tcl_Interp* interp) :
-	 Tcl::ListItemPkg<NullResponseHdlr, IoPtrList>(
-          interp, IoPtrList::theList(), "NullRh", "$Revision$")
+	 Tcl::ItemPkg<NullResponseHdlr>(interp, "NullRh", "$Revision$")
   {
 	 Tcl_Eval(interp,
 			"namespace eval NullRh {proc nullResponseHdlr {} {return NullRh}}");
@@ -257,11 +253,10 @@ extern "C"
 int Rh_Init(Tcl_Interp* interp) {
 DOTRACE("Rh_Init");
 
-  new Tcl::PtrListPkg<ResponseHandler>(interp, IoPtrList::theList(),
-													"RhList", "$Revision$");
+  new Tcl::PtrListPkg<ResponseHandler>(interp, "RhList", "$Revision$");
 
-  new Tcl::AbstractListItemPkg<ResponseHandler, IoPtrList>(
-		  interp, IoPtrList::theList(), "Rh", "$Revision$");
+  new Tcl::ItemPkg<ResponseHandler>(interp, "Rh", "$Revision$");
+
   new EventRhTcl::EventRhPkg(interp);
   new KbdRhTcl::KbdRhPkg(interp);
   new NullRhTcl::NullRhPkg(interp);

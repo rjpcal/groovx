@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Oct 27 18:39:40 2000
+// written: Mon Oct 30 11:25:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,6 @@
 #define OBJLISTTCL_CC_DEFINED
 
 #include "grobj.h"
-#include "ioptrlist.h"
 
 #include "io/iolegacy.h"
 
@@ -59,8 +58,6 @@ DOTRACE("ObjlistTcl::LoadObjectsCmd::invoke");
   STD_IO::ifstream ifs(file);
   if (ifs.fail()) { throw Tcl::TclError("unable to open file"); }
   
-  IoPtrList& olist = IoPtrList::theList();
-
   int num_read = 0;
 
   ifs >> ws;
@@ -118,7 +115,6 @@ protected:
 		throw err;
 	 }
 
-	 IoPtrList& olist = IoPtrList::theList();
 	 for (Tcl::ListIterator<int>
 			  itr = beginOfArg(1, (int*)0),
 			  end = endOfArg(1, (int*)0);
@@ -142,7 +138,7 @@ protected:
 class ObjlistTcl::ObjListPkg : public Tcl::PtrListPkg<GrObj> {
 public:
   ObjListPkg(Tcl_Interp* interp) :
-	 Tcl::PtrListPkg<GrObj>(interp, IoPtrList::theList(), "ObjList", "3.0")
+	 Tcl::PtrListPkg<GrObj>(interp, "ObjList", "$Revision$")
   {
 	 addCommand( new LoadObjectsCmd(interp, "ObjList::loadObjects") );
 	 addCommand( new SaveObjectsCmd(interp, "ObjList::saveObjects") );

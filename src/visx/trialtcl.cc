@@ -3,7 +3,7 @@
 // trialtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 09:51:54 1999
-// written: Fri Oct 27 18:44:49 2000
+// written: Mon Oct 30 11:12:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,6 @@
 #define TRIALTCL_CC_DEFINED
 
 #include "trial.h"
-#include "ioptrlist.h"
 
 #include "io/iofactory.h"
 
@@ -59,10 +58,10 @@ protected:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class TrialTcl::TrialPkg : public Tcl::ListItemPkg<Trial, IoPtrList> {
+class TrialTcl::TrialPkg : public Tcl::ItemPkg<Trial> {
 public:
   TrialPkg(Tcl_Interp* interp) :
-	 Tcl::ListItemPkg<Trial, IoPtrList>(interp, IoPtrList::theList(), "Trial", "1.1")
+	 Tcl::ItemPkg<Trial>(interp, "Trial", "$Revision$")
   {
 	 Tcl::addTracing(this, Trial::tracer);
 
