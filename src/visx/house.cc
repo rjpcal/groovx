@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Tue Nov  2 22:32:04 1999
+// written: Mon Nov 15 15:46:53 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -270,8 +270,7 @@ DOTRACE("House::getPropertyInfos");
 //
 ///////////////////////////////////////////////////////////////////////
 
-bool House::grGetBoundingBox(double& left, double& top,
-									  double& right, double& bottom,
+bool House::grGetBoundingBox(Rect<double>& bbox,
 									  int& border_pixels) const {
 DOTRACE("House::grGetBoundingBox");
   GLdouble main_width = storyAspectRatio();
@@ -279,16 +278,16 @@ DOTRACE("House::grGetBoundingBox");
 
   GLdouble max_dimension = max(main_height, main_width);
 
-  left   = -main_width/2.0 * (1 + max(roofOverhang(), 0.0)) / max_dimension;
-  right  =  main_width/2.0 * (1 + max(roofOverhang(), 0.0)) / max_dimension;
-  bottom = -main_height/2.0 / max_dimension;
+  bbox.left()   = -main_width/2.0 * (1 + max(roofOverhang(), 0.0)) / max_dimension;
+  bbox.right()  =  main_width/2.0 * (1 + max(roofOverhang(), 0.0)) / max_dimension;
+  bbox.bottom() = -main_height/2.0 / max_dimension;
 
-  top    =  main_height/2.0;
+  bbox.top()    =  main_height/2.0;
   if ( (chimneyYPosition() + chimneyHeight()) > roofHeight() ) {
-	 top += chimneyYPosition() + chimneyHeight() - roofHeight();
+	 bbox.top() += chimneyYPosition() + chimneyHeight() - roofHeight();
   }
 
-  top   /= max_dimension;
+  bbox.top()   /= max_dimension;
 
   border_pixels = 4;
 

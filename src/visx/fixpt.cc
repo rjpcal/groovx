@@ -3,7 +3,7 @@
 // fixpt.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Nov  2 22:30:47 1999
+// written: Mon Nov 15 15:43:59 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -108,11 +108,10 @@ const vector<FixPt::PInfo>& FixPt::getPropertyInfos() {
   return p;
 }
 
-bool FixPt::grGetBoundingBox(double& left, double& top,
-									  double& right, double& bottom,
+bool FixPt::grGetBoundingBox(Rect<double>& bbox,
 									  int& border_pixels) const {
-  left  = bottom = -length()/2.0;
-  right = top    =  length()/2.0;
+  bbox.left()  = bbox.bottom() = -length()/2.0;
+  bbox.right() = bbox.top()    =  length()/2.0;
   
   border_pixels = 4;
 

@@ -3,7 +3,7 @@
 // fish.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:56 1999
-// written: Wed Oct 20 10:05:00 1999
+// written: Mon Nov 15 15:43:27 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,8 +80,7 @@ public:
   /////////////
 
 protected:
-  virtual bool grGetBoundingBox(double& left, double& top,
-										  double& right, double& bottom,
+  virtual bool grGetBoundingBox(Rect<double>& bbox,
 										  int& border_pixels) const;
 
   virtual void grRender() const;

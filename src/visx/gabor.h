@@ -3,7 +3,7 @@
 // gabor.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Nov 10 15:36:39 1999
+// written: Mon Nov 15 15:45:07 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,8 +105,7 @@ public:
 
 protected:
   ///
-  virtual bool grGetBoundingBox(double& left, double& top,
-										  double& right, double& bottom,
+  virtual bool grGetBoundingBox(Rect<double>& bbox,
 										  int& border_pixels) const;
 
   ///

@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Tue Nov  2 22:32:28 1999
+// written: Mon Nov 15 15:48:46 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -650,8 +650,7 @@ DOTRACE("MorphyFace::grRender");
 // Accessors
 ///////////////////////////////////////////////////////////////////////
 
-bool MorphyFace::grGetBoundingBox(double& left, double& top,
-											 double& right, double& bottom,
+bool MorphyFace::grGetBoundingBox(Rect<double>& bbox,
 											 int& border_pixels) const {
 DOTRACE("MorphyFace::grGetBoundingBox");
   Bezier4 xbezier_top(-1.0, -topWidth(), topWidth(), 1.0);
@@ -666,10 +665,10 @@ DOTRACE("MorphyFace::grGetBoundingBox");
 
   DebugEvalNL(max_width);
 
-  left   = -max_width      * faceWidth() * (1 + hairWidth());
-  right  =  max_width      * faceWidth() * (1 + hairWidth());
-  top    =  topHeight() * (1 + hairWidth());
-  bottom =  bottomHeight();
+  bbox.left()   = -max_width      * faceWidth() * (1 + hairWidth());
+  bbox.right()  =  max_width      * faceWidth() * (1 + hairWidth());
+  bbox.top()    =  topHeight() * (1 + hairWidth());
+  bbox.bottom() =  bottomHeight();
 
   border_pixels = 4;
 

@@ -3,7 +3,7 @@
 // maskhatch.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Sep 23 15:49:58 1999
-// written: Wed Oct 20 10:19:30 1999
+// written: Mon Nov 15 15:48:01 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,8 +54,7 @@ public:
   CTBoundedProperty<MaskHatch, int, 0, 1000, 1> lineWidth;
 
 protected:
-  virtual bool grGetBoundingBox(double& left, double& top,
-										  double& right, double& bottom,
+  virtual bool grGetBoundingBox(Rect<double>& bbox,
 										  int& border_pixels) const;
 
   virtual void grRender() const; 

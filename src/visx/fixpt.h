@@ -3,7 +3,7 @@
 // fixpt.h
 // Rob Peters
 // created: Jan-99
-// written: Wed Nov 10 15:27:48 1999
+// written: Mon Nov 15 15:44:16 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -71,8 +71,7 @@ public:
 
 protected:
   ///
-  virtual bool grGetBoundingBox(double& left, double& top,
-										  double& right, double& bottom,
+  virtual bool grGetBoundingBox(Rect<double>& bbox,
 										  int& border_pixels) const;
 
   ///

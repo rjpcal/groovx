@@ -3,7 +3,7 @@
 // house.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:15 1999
-// written: Wed Oct 20 10:17:09 1999
+// written: Mon Nov 15 15:47:16 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,8 +74,7 @@ public:
   CTProperty<House, double> chimneyWidth;
   CTProperty<House, double> chimneyHeight;
 
-  virtual bool grGetBoundingBox(double& left, double& top,
-										  double& right, double& bottom,
+  virtual bool grGetBoundingBox(Rect<double>& bbox,
 										  int& border_pixels) const;
 
 protected:

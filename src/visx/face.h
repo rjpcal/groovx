@@ -3,7 +3,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu Nov 11 11:34:48 1999
+// written: Mon Nov 15 15:41:27 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -114,15 +114,13 @@ public:
   ///
   virtual void setCategory(int val) { category.setNative(val); }
 
-protected:
   ///
-  virtual bool grGetBoundingBox(double& left, double& top,
-										  double& right, double& bottom,
-										  int& border_pixels) const;
+  protected: virtual bool grGetBoundingBox(Rect<double>& bounding_box,
+														 int& border_pixels) const;
 
   /** This overrides GrObj pure virtual function. It renders a face
 		with the appropriate parameters. */
-  virtual void grRender() const; 
+  protected: virtual void grRender() const; 
 
 private:
   /// Check all invariants and return true if everything is OK.

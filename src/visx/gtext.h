@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Tue Nov  2 10:21:35 1999
+// written: Mon Nov 15 15:46:10 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,8 +48,7 @@ public:
   int getStrokeWidth() const;
 
 protected:
-  virtual bool grGetBoundingBox(double& left, double& top,
-										  double& right, double& bottom,
+  virtual bool grGetBoundingBox(Rect<double>& bbox,
 										  int& border_pixels) const;
 
   virtual void grRender() const;
