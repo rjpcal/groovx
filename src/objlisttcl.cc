@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Tue Oct  5 14:28:25 1999
+// written: Fri Oct  8 15:49:10 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,7 @@
 
 namespace ObjlistTcl {
   class LoadObjectsCmd;
+  class SaveObjectsCmd;
   class ObjListPkg;  
 
   void eatWhitespace(istream& is) {
@@ -37,7 +38,7 @@ namespace ObjlistTcl {
 
 //---------------------------------------------------------------------
 //
-// LoadFacesCmd --
+// LoadObjectsCmd --
 //
 //---------------------------------------------------------------------
 
@@ -109,6 +110,36 @@ void ObjlistTcl::LoadObjectsCmd::invoke() {
 
 //---------------------------------------------------------------------
 //
+// SaveObjectsCmd --
+//
+//---------------------------------------------------------------------
+
+class ObjlistTcl::SaveObjectsCmd : public TclCmd {
+public:
+  SaveObjectsCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 TclCmd(interp, cmd_name, "filename objids", 3, 3)
+  {}
+protected:
+  virtual void invoke() {
+	 const char* filename = arg(1).getCstring();
+	 vector<int> objids;
+	 getSequenceFromArg(2, back_inserter(objids), (int*) 0);
+
+	 ofstream ofs(filename);
+	 if (ofs.fail()) {
+		throw TclError(string("error opening file: ") + filename);
+	 }
+
+	 for (int i = 0; i < objids.size(); ++i) {
+		ObjList::theObjList().getCheckedPtr(objids[i])->
+		  serialize(ofs, IO::TYPENAME | IO::BASES);
+		ofs << endl;
+	 }
+  }
+};
+
+//---------------------------------------------------------------------
+//
 // ObjListPkg class definition
 //
 //---------------------------------------------------------------------
@@ -119,6 +150,7 @@ public:
 	 ListPkg<ObjList>(interp, ObjList::theObjList(), "ObjList", "3.0")
   {
 	 addCommand( new LoadObjectsCmd(interp, "ObjList::loadObjects") );
+	 addCommand( new SaveObjectsCmd(interp, "ObjList::saveObjects") );
   }
 };
 
