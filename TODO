@@ -7,6 +7,36 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
+* (15-May-2003) Problem with premature destruction of VolatileObject's.
+
+  OK: we have
+      RefCounted->Object->GWT::Widget->TkWidget->Toglet
+
+  TkWidget calls incrRefCount() in its constructor, to make sure that the
+  ref count stays. But then Toglet's constructor does something that
+  throws. This causes any fully-constructed subobjects (such as TkWidget)
+  to have their destructors run. Eventually this leads to ~RefCounted()
+  with refcount != 0. Where is the design flaw here?
+
+  Seems like the problem is with TkWidget calling incrRefCount(). Ideally,
+  we'd like the "last" constructor to call incrRefCount() just before it
+  finishes. Hmmm... in fact it's not even TkWidget that is the "volatile"
+  object -- it's really Toglet since that's where we override
+  isNotShareable(). So (1) the solution is that Toglet should handle the
+  incrRefCount() call, and (2) it probably makes more sense to put that
+  incrRefCount() into Toglet::make() rather than directly into Toglet().
+
+  OK, come to think of it, why do we need to have the true refcount > 0 for
+  volatile objects EVER? In principle we should make the refCount()
+  function return 1 always for volatile objects. Maybe the problem is that
+  we have isNotShareable() as a virtual function... it'd be better if it
+  were a boolean flag inside RefCounts... then we could do more with it.
+
+  * rename isNotShared() to isVolatile()
+  * should add a boolean isVolatile flag to RefCounts
+  * should never call RefCounted::incr/decrRefCount() for volatile objects
+  * RefCounts::getStrong() should just return 1 if isVolatile is true
+
 * (25-Nov-2002) What is GWT::Widget's raison d'etre?
 
   OK, now I've got Widget cleaned out. But... now, what's its reason to
