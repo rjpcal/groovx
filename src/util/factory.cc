@@ -3,7 +3,7 @@
 // factory.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 22:37:31 1999
-// written: Tue Oct 31 12:17:34 2000
+// written: Tue Oct 31 13:41:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,10 @@
 
 #include "util/strings.h"
 
-#include <map>
+#include "util/hash.h"
+
+#define NO_TRACE
+#include "util/trace.h"
 
 namespace {
   const char* bad_create_msg = "unable to create object of type ";
@@ -34,37 +37,50 @@ void FactoryError::throwForType(const char* type) {
 struct CreatorMapBase::Impl {
   Impl() : itsMap() {}
 
-  std::map<fixed_string, void*> itsMap;
+  typedef hash_array<fixed_string, void*,
+ 	 string_hasher<fixed_string> > 
+  MapType;
+
+  MapType itsMap;
 };
 
 CreatorMapBase::CreatorMapBase() :
   itsImpl(new Impl)
-{}
+{
+DOTRACE("CreatorMapBase::CreatorMapBase");
+}
 
-CreatorMapBase::~CreatorMapBase() {}
+CreatorMapBase::~CreatorMapBase() {
+DOTRACE("CreatorMapBase::~CreatorMapBase");
+}
 
 void CreatorMapBase::clear() {
-  for (std::map<fixed_string, void*>::iterator ii = itsImpl->itsMap.begin();
+DOTRACE("CreatorMapBase::clear");
+  for (Impl::MapType::iterator ii = itsImpl->itsMap.begin();
 		 ii != itsImpl->itsMap.end();
 		 ++ii) {
-	 killPtr(ii->second);
-	 ii->second = 0;
+ 	 killPtr(ii->value);
+ 	 ii->value = 0;
   }
 
   delete itsImpl;
 }
 
 void* CreatorMapBase::getPtrForName(const char* name) const {
+DOTRACE("CreatorMapBase::getPtrForName");
   return itsImpl->itsMap[fixed_string(name)];
 }
 
 void CreatorMapBase::setPtrForName(const char* name, void* ptr) {
+DOTRACE("CreatorMapBase::setPtrForName");
   fixed_string sname(name);
   killPtr(itsImpl->itsMap[sname]);
   itsImpl->itsMap[sname] = ptr;
 }
 
-FactoryBase::~FactoryBase() {}
+FactoryBase::~FactoryBase() {
+DOTRACE("FactoryBase::~FactoryBase");
+}
 
 static const char vcid_factory_cc[] = "$Header$";
 #endif // !FACTORY_CC_DEFINED
