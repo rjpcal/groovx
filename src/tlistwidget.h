@@ -3,7 +3,7 @@
 // tlistwidget.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:45:34 1999
-// written: Fri Dec  3 15:25:31 1999
+// written: Sat Dec  4 01:10:49 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,17 @@ public:
   virtual void clearscreen();
   virtual void refresh();
   virtual void undraw();
+
+  // Change the global visibility, which determines whether anything
+  // will be displayed by a "redraw" command, or by remap events sent
+  // to the screen window.
+  void setVisibility(bool vis) { itsVisibility = vis; }
+  
+  void setCurTrial(int trial);
+
+private:
+  int itsCurTrial;
+  bool itsVisibility;
 };
 
 static const char vcid_tlistwidget_h[] = "$Header$";
