@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Sat Jun 16 06:59:59 2001
+// written: Mon Jun 18 10:14:39 2001
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -27,6 +27,8 @@
 #include "togl/togl.h"
 
 #include "tcl/tclpkg.h"
+
+#include "util/error.h"
 
 // Currently support only X11
 #define X11
@@ -1379,7 +1381,7 @@ DOTRACE("Togl::Impl::Impl");
                                      const_cast<char*>(pathname),
                                      (char *) 0);
   if (itsTkWin == NULL) {
-    throw TCL_ERROR;
+    throw ErrorWithMsg("Togl constructor couldn't create Tk_Window");
   }
 
   itsDisplay = Tk_Display( itsTkWin );
@@ -1390,7 +1392,7 @@ DOTRACE("Togl::Impl::Impl");
   if (config_argc > 0 ) {
     if (configure(itsInterp, config_argc, config_argv, 0) == TCL_ERROR) {
       Tk_DestroyWindow(itsTkWin);
-      throw TCL_ERROR;
+      throw ErrorWithMsg("Togl constructor couldn't configure widget");
     }
   }
   else {
@@ -1401,7 +1403,7 @@ DOTRACE("Togl::Impl::Impl");
 
     if (configure(itsInterp, config_argc, config_argv, 0) == TCL_ERROR) {
       Tk_DestroyWindow(itsTkWin);
-      throw TCL_ERROR;
+      throw ErrorWithMsg("Togl constructor couldn't configure widget");
     }
 
     Tcl_Free((char*) config_argv);
@@ -1414,7 +1416,7 @@ DOTRACE("Togl::Impl::Impl");
   if (!itsGLXContext) {
     if (makeWindowExist() == TCL_ERROR) {
       Tk_DestroyWindow(itsTkWin);
-      throw TCL_ERROR;
+      throw ErrorWithMsg("Togl constructor couldn't create window");
     }
   }
 
