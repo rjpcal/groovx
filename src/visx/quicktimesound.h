@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 19 07:38:09 2003
-// written: Mon May 19 09:29:52 2003
+// written: Mon May 19 09:46:55 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,8 @@ DOTRACE("QuickTimeSoundRep::QuickTimeSoundRep");
   // (1) Get an FSRef from the filename
   FSRef ref;
 
-  OSErr err = FSPathMakeRef(filename, &ref, 0);
+  OSErr err = FSPathMakeRef(reinterpret_cast<const UInt8*>(filename),
+                            &ref, 0);
 
   if (noErr != err)
     throw Util::Error(fstring("error in FSPathMakeRef: ", err));
