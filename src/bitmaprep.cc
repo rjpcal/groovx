@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon Dec  6 20:34:23 1999
+// written: Mon Dec  6 21:49:23 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -309,9 +309,10 @@ DOTRACE("BitmapRep::center");
   itsRasterY *= abs(itsZoomY);
 }
 
-void BitmapRep::grRender() const {
+void BitmapRep::grRender(Canvas& canvas) const {
 DOTRACE("BitmapRep::grRender");
-  itsRenderer->doRender(const_cast<unsigned char*>(&(itsBytes[0])),
+  itsRenderer->doRender(canvas,
+								const_cast<unsigned char*>(&(itsBytes[0])),
 								itsRasterX, itsRasterY,
 								itsWidth, itsHeight,
 								itsBitsPerPixel,
@@ -319,7 +320,7 @@ DOTRACE("BitmapRep::grRender");
 								itsZoomX, itsZoomY);
 }
 
-void BitmapRep::grUnRender() const {
+void BitmapRep::grUnRender(Canvas& canvas) const {
 DOTRACE("BitmapRep::grUnRender"); 
   Rect<double> world_rect;
   int border_pixels;
@@ -330,7 +331,8 @@ DOTRACE("BitmapRep::grUnRender");
   screen_pos.widenByStep(border_pixels + 1);
   screen_pos.heightenByStep(border_pixels + 1);
 
-  itsRenderer->doUndraw( screen_pos.left(),
+  itsRenderer->doUndraw( canvas,
+								 screen_pos.left(),
 								 screen_pos.bottom(),
 								 screen_pos.width(),
 								 abs(screen_pos.height()) );
