@@ -3,7 +3,7 @@
 // tlistutils.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 03:04:32 1999
-// written: Wed Mar 15 10:19:31 2000
+// written: Wed Mar 15 20:24:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,6 @@
 #include <strstream.h>
 #include <iomanip.h>
 #include <cmath>
-#include <vector>
 
 #include "canvas.h"
 #include "util/error.h"
@@ -29,6 +28,8 @@
 #include "rect.h"
 #include "trial.h"
 #include "tlist.h"
+
+#include "util/arrays.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -59,7 +60,7 @@ DOTRACE("TlistUtils::createPreview");
   world_width -= world_origin_x;
   world_height -= world_origin_y;
 
-  vector<Rect<double> > bbxs(objids_size);
+  fixed_block<Rect<double> > bbxs(objids_size);
 
   Trial* preview = new Trial();
   int previewid = tlist.insert(Tlist::Ptr(preview));
@@ -128,9 +129,10 @@ DOTRACE("TlistUtils::makeSingles");
   if ( !PosList::thePosList().isValidId(posid) )
 	 { throw ErrorWithMsg(bad_posid_msg); }
 
-  vector<int> vec;
   const ObjList& olist = ObjList::theObjList();
-  olist.insertValidIds(back_inserter(vec));
+
+  fixed_block<int> vec(olist.count());
+  olist.insertValidIds(&vec[0]);
 
   tlist.clear();
 
@@ -157,8 +159,8 @@ DOTRACE("TlistUtils::makePairs");
 		 !PosList::thePosList().isValidId(posid2) )
 	 { throw ErrorWithMsg(bad_posid_msg); }
   
-  vector<int> vec;
-  ObjList::theObjList().insertValidIds(back_inserter(vec));
+  fixed_block<int> vec(ObjList::theObjList().count());
+  ObjList::theObjList().insertValidIds(&vec[0]);
   
   tlist.clear();
   
@@ -195,8 +197,8 @@ DOTRACE("TlistUtils::makeTriads");
 
   DebugEval(posid[0]); DebugEval(posid[1]); DebugEvalNL(posid[3]);
 
-  vector<int> vec;
-  ObjList::theObjList().insertValidIds(back_inserter(vec));
+  fixed_block<int> vec(ObjList::theObjList().count());
+  ObjList::theObjList().insertValidIds(&vec[0]);
 	 
   tlist.clear();
 
@@ -271,8 +273,8 @@ DOTRACE("TlistUtils::makeSummaryTrial");
   // than the number of rows that we need, so add 1 to it
   int num_rows = 1 + (num_objs-1)/num_cols;
 
-  vector<int> objids;
-  olist.insertValidIds(back_inserter(objids));
+  fixed_block<int> objids(olist.count());
+  olist.insertValidIds(&objids[0]);
 	 
   // Coords of upper left corner of viewing area
   const double x0 = scale * (0.0 - xstep*(num_cols-1)/2.0);
@@ -313,8 +315,8 @@ DOTRACE("TlistUtils::makeSummaryTrial");
 
 void TlistUtils::writeResponses(Tlist& tlist, const char* filename) {
 DOTRACE("TlistUtils::writeResponses");
-  vector<int> trialids;
-  tlist.insertValidIds(back_inserter(trialids));
+  fixed_block<int> trialids(tlist.count());
+  tlist.insertValidIds(&trialids[0]);
 
   DebugEvalNL(trialids.size());
 
@@ -341,8 +343,8 @@ DOTRACE("TlistUtils::writeResponses");
 
 void TlistUtils::writeIncidenceMatrix(Tlist& tlist, const char* filename) {
 DOTRACE("TlistUtils::writeIncidenceMatrix");
-  vector<int> trialids;
-  tlist.insertValidIds(back_inserter(trialids));
+  fixed_block<int> trialids(tlist.count());
+  tlist.insertValidIds(&trialids[0]);
 	 
   DebugEvalNL(trialids.size());
 	 
@@ -405,8 +407,8 @@ DOTRACE("TlistUtils::readFromObjidsOnly");
 
 void TlistUtils::writeMatlab(Tlist& tlist, const char* filename) {
 DOTRACE("TlistUtils::writeMatlab");
-  vector<int> trialids;
-  tlist.insertValidIds(back_inserter(trialids));
+  fixed_block<int> trialids(tlist.count());
+  tlist.insertValidIds(&trialids[0]);
 
   DebugEvalNL(trialids.size());
 
