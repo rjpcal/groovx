@@ -4,7 +4,7 @@
 #
 # Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 #
-# This is the Makefile for the grsh shell. This shell provides the
+# This is the Makefile for the grsh shell. This shell includes the
 # following functionality:
 # 
 # 	1) Tcl/Tk core
@@ -16,23 +16,12 @@
 #
 ##########################################################################
 
-#-------------------------------------------------------------------------
-#
-# Top-level configuration options
-#
-#-------------------------------------------------------------------------
+###
+### All configuration options should be selected via the configure script,
+### which will generate an appropriate Makedefs file, which is included here:
+###
 
-# Path to the top-level directory where this program should be installed
-INSTALL_DIR := $(HOME)/local/$(ARCH)
-
-# Path to the top-level directory where Tcl+Tk are installed
-TCLTK_DIR := $(HOME)/local/$(ARCH)/tcl8.4b2
-
-# Whether to include a matlab interface
-WITH_MATLAB := 1
-
-# Whether to use GNU readline library in shell interface
-WITH_READLINE := 1
+include Makedefs
 
 ###
 ### SHOULDN'T NEED TO MODIFY ANYTHING BELOW THIS POINT
@@ -45,8 +34,6 @@ WITH_READLINE := 1
 #-------------------------------------------------------------------------
 
 default: all
-
-VERSION := 0.8a8
 
 TCL_VERSION := 8.4
 TK_VERSION := 8.4
@@ -80,7 +67,7 @@ LOGS := ./logs
 DOC := ./doc
 SCRIPTS := ./scripts
 
-INCLUDE_PATH += -I$(TCLTK_DIR)/include -I$(SRC)
+INCLUDE_PATH += -I$(with_tcltk)/include -I$(SRC)
 
 TMP_DIR := ./tmp/$(PLATFORM)
 TMP_FILE := $(TMP_DIR)/tmpfile
@@ -104,7 +91,7 @@ ifeq ($(PLATFORM),irix6)
 
 	AUDIO_LIB := -laudio -laudiofile
 
-	LIB_PATH += -Wl,-rpath,$(INSTALL_DIR)/lib
+	LIB_PATH += -Wl,-rpath,$(exec_prefix)/lib
 endif
 
 ifeq ($(PLATFORM),i686)
@@ -118,7 +105,7 @@ ifeq ($(PLATFORM),i686)
 
 	AUDIO_LIB := -lesd -laudiofile
 
-	LIB_PATH += -Wl,-rpath,$(TCLTK_DIR)/lib
+	LIB_PATH += -Wl,-rpath,$(with_tcltk)/lib
 endif
 
 ifeq ($(PLATFORM),ppc)
@@ -152,7 +139,7 @@ endif
 
 ifeq ($(MODE),prod)
 	OBJ_EXT := .o
-	LIB_SUFFIX := $(VERSION)
+	LIB_SUFFIX := $(PACKAGE_VERSION)
 endif
 
 LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
@@ -166,7 +153,7 @@ ifeq ($(COMPILER),MIPSpro)
 
 	CPP_DEFINES += -DMIPSPRO_COMPILER -DSTD_IO= -DPRESTANDARD_IOSTREAMS
 
-	INCLUDE_PATH += -I$(INSTALL_DIR)/include/cppheaders
+	INCLUDE_PATH += -I$(HOME)/local/$(ARCH)/include/cppheaders
 
 	ifeq ($(MODE),debug)
 		CC_SWITCHES += -g -O0
@@ -237,7 +224,7 @@ endif
 #
 #-------------------------------------------------------------------------
 
-LIB_PATH += -L$(INSTALL_DIR)/lib -L$(TCLTK_DIR)/lib
+LIB_PATH += -L$(exec_prefix)/lib -L$(with_tcltk)/lib
 
 EXTERNAL_LIBS := \
 	-lGLU -lGL \
@@ -248,13 +235,13 @@ EXTERNAL_LIBS := \
 	$(AUDIO_LIB) \
 	-lm
 
-ifneq ($(WITH_READLINE), 0)
+ifeq ($(enable_readline), yes)
 	EXTERNAL_LIBS += -lreadline -ltermcap
 	CPP_DEFINES += -DWITH_READLINE
 endif
 
-ifneq ($(WITH_MATLAB), 0)
-	LIB_PATH += -Wl,-rpath,$(INSTALL_DIR)/lib
+ifeq ($(enable_matlab), yes)
+	LIB_PATH += -Wl,-rpath,$(exec_prefix)/lib
 
 	INCLUDE_PATH += -I/usr/local/matlab/extern/include
 	LIB_PATH += -L/usr/local/matlab/extern/lib/glnx86
@@ -335,7 +322,7 @@ endif
 
 # this is just a convenience target so that we don't have to specify
 # the entire pathnames of the different library targets
-lib%: $(INSTALL_DIR)/lib/.timestamp $(INSTALL_DIR)/lib/lib%$(LIB_EXT)
+lib%: $(exec_prefix)/lib/.timestamp $(exec_prefix)/lib/lib%$(LIB_EXT)
 	true
 
 #-------------------------------------------------------------------------
@@ -387,7 +374,7 @@ include $(DEP_FILE)
 
 # dependencies of package shlib's on object files
 
-VISX_LIB_DIR := $(INSTALL_DIR)/lib/visx
+VISX_LIB_DIR := $(exec_prefix)/lib/visx
 
 PKG_DEP_FILE := $(DEP)/pkgdepends.$(MODE)
 
@@ -401,11 +388,11 @@ $(PKG_DEP_FILE): $(PKG_DEP_FILE).deps
 include $(PKG_DEP_FILE)
 
 
-$(INSTALL_DIR)/lib/visx/mtx.so: \
+$(exec_prefix)/lib/visx/mtx.so: \
 	/usr/local/matlab/extern/lib/glnx86/libmx.so \
 	/usr/local/matlab/extern/lib/glnx86/libmatlb.so
 
-$(INSTALL_DIR)/lib/visx/matlabengine.so: \
+$(exec_prefix)/lib/visx/matlabengine.so: \
 	/usr/local/matlab/extern/lib/glnx86/libeng.so \
 	/usr/local/matlab/extern/lib/glnx86/libmx.so \
 	/usr/local/matlab/extern/lib/glnx86/libut.so \
@@ -419,7 +406,7 @@ $(INSTALL_DIR)/lib/visx/matlabengine.so: \
 LIB_DEP_FILE := $(DEP)/libdepends.$(MODE)
 
 LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
-		--libdir $(INSTALL_DIR)/lib \
+		--libdir $(exec_prefix)/lib \
 		--libprefix libDeep \
 		--libext $(LIB_EXT) \
 		--srcroot $(SRC) \
@@ -461,10 +448,10 @@ ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(PROJECT_LIBS))
 ALL_SHLIBS   := $(filter %.$(SHLIB_EXT),$(PROJECT_LIBS))
 
 ifeq ($(MODE),debug)
-	EXECUTABLE := $(INSTALL_DIR)/bin/testsh
+	EXECUTABLE := $(exec_prefix)/bin/testsh
 endif
 ifeq ($(MODE),prod)
-	EXECUTABLE := $(INSTALL_DIR)/bin/grsh$(VERSION)
+	EXECUTABLE := $(exec_prefix)/bin/grsh$(PACKAGE_VERSION)
 endif
 
 all: build
@@ -478,7 +465,7 @@ GRSH_STATIC_OBJS := $(subst .cc,$(OBJ_EXT),\
 CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
 	$(PROJECT_LIBS) $(EXTERNAL_LIBS)
 
-$(EXECUTABLE): $(INSTALL_DIR)/bin/.timestamp $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
+$(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
 	$(CXX) -o $(TMP_FILE) $(CMDLINE) && mv $(TMP_FILE) $@
 
 #-------------------------------------------------------------------------
