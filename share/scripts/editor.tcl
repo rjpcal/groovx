@@ -317,7 +317,7 @@ itcl::class Editor {
 		  $itsPanes fraction 75 25
 	 }
 
-	 constructor {parent objtype} {
+	 constructor {parent {objtype Gabor} } {
 		  set itsPanes [iwidgets::panedwindow $parent.panes \
 					 -width 900 -height 900]
 
@@ -566,7 +566,7 @@ itcl::class Menuapp {
 		  pack $itsFrame -fill both -expand yes
 		  pack $itsHelpEntry -anchor sw -fill x -expand yes
 
-		  set itsEditor [Editor #auto $itsFrame [lindex $::argv end]]
+		  set itsEditor [Editor #auto $itsFrame]
 	 }
 }
 
