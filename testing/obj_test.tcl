@@ -13,13 +13,11 @@ namespace eval Objtest {
 
     variable TEST_DEFINED 1
 
-    proc purgeAll {} {
+    proc testClass { bc sc1 sc2 } {
         -> [Toglet::current] setVisible 0
         ObjDb::clear
-    }
 
-    proc testResetCmd { bc sc1 sc2 } {
-
+	# class::removeAll
         ::test "${bc}::removeAll" "too many args" [format {
             %s::removeAll junk
         } $bc] {wrong \# args: should be}
@@ -34,10 +32,8 @@ namespace eval Objtest {
             set after_count [${bc}::countAll]
             return [expr $before_count - $after_count]
         } $bc $sc1 $sc2] {^0$}
-    }
 
-    proc testCountAllCmd { bc sc1 sc2 } {
-
+	# class::countAll
         eval ::test ${bc}::countAll {"too many args"} {"
             ${bc}::countAll junk
         "} {"wrong \# args: should be"}
@@ -49,10 +45,8 @@ namespace eval Objtest {
             set after_count \[${bc}::countAll\]
             return \[expr \$after_count - \$before_count\]
         "} {"^2$"}
-    }
 
-    proc testDeleteCmd { bc sc1 sc2 } {
-
+	# Obj::delete
         eval ::test Obj::delete {"too few args"} {"
             Obj::delete
         "} {"wrong \# args: should be"}
@@ -66,10 +60,8 @@ namespace eval Objtest {
             Obj::delete \$id
             IO::is \$id
          "} {"^0$"}
-    }
 
-    proc testFindAllCmd { bc sc1 sc2 } {
-
+	# class::findAll
         eval ::test ${bc}::findAll {"too many args"} {"
             ${bc}::findAll junk
         "} {"wrong \# args: should be"}
@@ -84,10 +76,8 @@ namespace eval Objtest {
             set removed_id \[lsearch -exact \[${bc}::findAll\] \$remove_me\]
             return \"\[expr \$count - \$num_ids\] \$removed_id\"
         "} {"^0 -1$"}
-    }
 
-    proc testIsCmd { bc sc1 sc2 } {
-
+	# class::is
         eval ::test ${bc}::is {"too few args"} {"
             ${bc}::is
         "} {"wrong \# args: should be"}
@@ -106,16 +96,6 @@ namespace eval Objtest {
             Obj::delete \$id
             ${bc}::is \$id
         "} {"^0$"}
-    }
-
-    proc testClass { baseclass subclass1 subclass2 } {
-        purgeAll
-
-        testResetCmd $baseclass $subclass1 $subclass2
-        testCountAllCmd $baseclass $subclass1 $subclass2
-        testDeleteCmd $baseclass $subclass1 $subclass2
-        testFindAllCmd $baseclass $subclass1 $subclass2
-        testIsCmd $baseclass $subclass1 $subclass2
     }
 
     namespace export testClass
