@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Fri Nov 10 17:27:06 2000
+// written: Wed Dec  6 13:29:57 2000
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -21,12 +21,10 @@
 #define NO_TRACE
 #include "util/trace.h"
 
-namespace {
-  int LOCAL_ARGC = 0;
-  char** LOCAL_ARGV = 0;
-}
-
+//
 // Forward declarations of package init procedures
+//
+
 extern "C" {
   Tcl_PackageInitProc Bitmap_Init;
   Tcl_PackageInitProc Block_Init;
@@ -60,22 +58,28 @@ extern "C" {
   Tcl_PackageInitProc Trial_Init;
 }
 
-struct PkgName_PkgProc {
-  const char* PkgName;
-  Tcl_PackageInitProc *PkgProc;
+//
+// Info about the packages to be loaded
+//
+
+namespace {
+
+struct PackageInfo {
+  const char* pkgName;
+  Tcl_PackageInitProc *pkgInitProc;
 };
 
-PkgName_PkgProc Names_Procs[] = {
+PackageInfo IMMEDIATE_PKGS[] = {
   { "Tcl",      Tcl_Init       }
   , { "Tk",       Tk_Init        }
   , { "Togl",     Togl_Init      }
   , { "Bitmap",   Bitmap_Init    }
   , { "Block",    Block_Init     }
   , { "Expt",     Expt_Init      }
-  , { "ExptTest", Expttest_Init  }
+  , { "Expttest", Expttest_Init  }
   , { "Face",     Face_Init      }
   , { "Fish",     Fish_Init      }
-  , { "FixPt",    Fixpt_Init     }
+  , { "Fixpt",    Fixpt_Init     }
   , { "Gabor",    Gabor_Init     }
   , { "Grobj",    Grobj_Init     }
   , { "Gtext",    Gtext_Init     }
@@ -85,20 +89,31 @@ PkgName_PkgProc Names_Procs[] = {
   , { "Jitter",   Jitter_Init    }
   , { "Mask",     Mask_Init      }
   , { "Misc",     Misc_Init      }
-  , { "MorphyFace",Morphyface_Init}
-  , { "ObjList",  Objlist_Init   }
+  , { "Morphyface",Morphyface_Init}
+  , { "Objlist",  Objlist_Init   }
   , { "Objtogl",  Objtogl_Init   }
   , { "Pos",      Pos_Init       }
-  , { "PosList",  Poslist_Init   }
+  , { "Poslist",  Poslist_Init   }
   , { "Rh",       Rh_Init        }
   , { "Sound",    Sound_Init     }
   , { "Subject",  Subject_Init   }
   , { "Tcldlist", Tcldlist_Init  }
-  , { "TclGL",    Tclgl_Init     }
+  , { "Tclgl",    Tclgl_Init     }
   , { "Th",       Th_Init        }
   , { "Tlist",    Tlist_Init     }
   , { "Trial",    Trial_Init     }
 };
+
+PackageInfo DELAYED_PKGS[] = {};
+
+} // end anonymous namespace
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// TclApp class definition
+//
+///////////////////////////////////////////////////////////////////////
 
 class TclApp : public GrshApp {
 public:
@@ -115,13 +130,20 @@ TclApp::TclApp(int argc, char** argv, Tcl_Interp* interp) :
 {
 DOTRACE("TclApp::TclApp(Tcl_Interp*)");
 
-  for (size_t i = 0; i < sizeof(Names_Procs)/sizeof(PkgName_PkgProc); ++i) {
+  {for (size_t i = 0; i < sizeof(IMMEDIATE_PKGS)/sizeof(PackageInfo); ++i) {
 #ifdef LOCAL_TRACE		
-	 cerr << "initializing " << Names_Procs[i].PkgName << endl << flush;
+	 cerr << "initializing " << IMMEDIATE_PKGS[i].pkgName << endl << flush;
 #endif
-	 int result = Names_Procs[i].PkgProc(interp);
+	 int result = IMMEDIATE_PKGS[i].pkgInitProc(interp);
 	 if (result != TCL_OK) { itsStatus = result; }
-  }
+  }}
+
+  {for (size_t i = 0; i < sizeof(DELAYED_PKGS)/sizeof(PackageInfo); ++i) {
+	 Tcl_StaticPackage((Tcl_Interp*) 0,
+							 const_cast<char*>(DELAYED_PKGS[i].pkgName),
+							 DELAYED_PKGS[i].pkgInitProc,
+							 0);
+  }}
 
   // set prompt to "cmd[n]% " where cmd is the name of the program,
   // and n is the history event number
@@ -133,7 +155,19 @@ DOTRACE("TclApp::TclApp(Tcl_Interp*)");
   Tcl_SetVar(interp, "tcl_rcFileName", "./grsh_startup.tcl", TCL_GLOBAL_ONLY);
 }
 
-// initialize all the necessary packages
+
+///////////////////////////////////////////////////////////////////////
+//
+// main
+//
+///////////////////////////////////////////////////////////////////////
+
+namespace {
+  int LOCAL_ARGC = 0;
+  char** LOCAL_ARGV = 0;
+}
+
+// procedure to initialize a TclApp
 int Tcl_AppInit(Tcl_Interp* interp) {
 DOTRACE("Tcl_AppInit");
   static TclApp theApp(LOCAL_ARGC, LOCAL_ARGV, interp);
