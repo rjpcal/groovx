@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Tue May 13 09:47:34 2003
+// written: Tue May 13 10:07:19 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -39,7 +39,6 @@
 #include "gx/bmapdata.h"
 #include "gx/imgfile.h"
 #include "gx/rect.h"
-#include "gx/vec2.h"
 
 #include "gfx/canvas.h"
 #include "gfx/gxaligner.h"
@@ -65,16 +64,15 @@ namespace
 
 GaborArray::GaborArray(double gaborPeriod_, double gaborSigma_,
                        int foregNumber, double foregSpacing,
-                       int sizeX_, int sizeY_,
+                       int sizeX, int sizeY,
                        double backgIniSpacing_,
                        double backgMinSpacing_)
   :
   itsForegNumber(foregNumber),
   itsForegSpacing(foregSpacing),
+  itsSize(sizeX, sizeY),
   gaborPeriod(gaborPeriod_),
   gaborSigma(gaborSigma_),
-  sizeX(sizeX_),
-  sizeY(sizeY_),
   backgIniSpacing(backgIniSpacing_),
   backgMinSpacing(backgMinSpacing_),
   backgMinSpacingSqr(backgMinSpacing*backgMinSpacing),
@@ -92,9 +90,9 @@ void GaborArray::renderInto(BmapData& data) const
 {
 DOTRACE("GaborArray::renderInto");
 
-  fixed_block<double> win(sizeX*sizeY);
+  fixed_block<double> win(itsSize.x()*itsSize.y());
 
-  for (int i = 0; i < sizeX*sizeY; ++i)
+  for (int i = 0; i < itsSize.x()*itsSize.y(); ++i)
     win[i] = 0.0;
 
   for (int i = 0; i < totalNumber; ++i)
@@ -107,8 +105,8 @@ DOTRACE("GaborArray::renderInto");
         ? zerototwopi(array[i].theta + M_PI_2)
         : array[i].theta;
 
-      const int xcenter = int(array[i].pos.x() + sizeX / 2.0 + 0.5);
-      const int ycenter = int(array[i].pos.y() + sizeY / 2.0 + 0.5);
+      const int xcenter = int(array[i].pos.x() + itsSize.x() / 2.0 + 0.5);
+      const int ycenter = int(array[i].pos.y() + itsSize.y() / 2.0 + 0.5);
 
       const GaborPatch& p =
         GaborPatch::lookup(gaborSigma, 2*M_PI/gaborPeriod, theta, phi, 1.0);
@@ -123,17 +121,16 @@ DOTRACE("GaborArray::renderInto");
       for (int y = y0; y < y1; ++y)
         for (int x = x0; x < x1; ++x)
           {
-            if (x >= 0 && x < sizeX && y >=0 && y < sizeY)
-              win[x+y*sizeX] += p.at(x-x0, y-y0);
+            if (x >= 0 && x < itsSize.x() && y >=0 && y < itsSize.y())
+              win[x+y*itsSize.x()] += p.at(x-x0, y-y0);
           }
     }
 
-  BmapData dest(Gfx::Vec2i(sizeX, sizeY), // FIXME
-                8, 1);
+  BmapData dest(itsSize, 8, 1);
 
   unsigned char* bytes = dest.bytesPtr();
 
-  for (int k = 0; k < sizeX*sizeY; ++k)
+  for (int k = 0; k < itsSize.x()*itsSize.y(); ++k)
     {
       const int val = int((win[k]+1.0)/2.0*255);
       Assert(val >= 0);
@@ -161,13 +158,12 @@ DOTRACE("GaborArray::grGetBoundingBox");
 
   // FIXME this heavily duplicates Gabor::grGetBoundingBox()
 
-  Vec2d world_origin;
+  const Vec2d world_origin(0.0, 0.0);
 
-  Vec2i screen_origin = bbox.screenFromWorld(world_origin);
+  const Vec2i screen_origin = bbox.screenFromWorld(world_origin);
 
   Rect<int> screen_rect;
-  screen_rect.setRectXYWH(screen_origin.x(), screen_origin.y(),
-                          sizeX, sizeY);
+  screen_rect.setXYWH(screen_origin, itsSize);
 
   Rect<double> world_rect = bbox.worldFromScreen(screen_rect);
 
@@ -300,8 +296,8 @@ DOTRACE("GaborArray::hexGridElements");
   const double dx = backgIniSpacing;
   const double dy = SQRT3 * backgIniSpacing / 2.0;
 
-  const int nx = int((sizeX - backgMinSpacing) / dx - 0.5);
-  const int ny = int((sizeY - backgMinSpacing) / dy);
+  const int nx = int((itsSize.x() - backgMinSpacing) / dx - 0.5);
+  const int ny = int((itsSize.y() - backgMinSpacing) / dy);
 
   double y = -0.5 * (ny-1) * dy;
 
@@ -328,8 +324,8 @@ DOTRACE("GaborArray::fillElements");
 
   const double dx = sqrt(tryFillArea);
 
-  const double halfX = 0.5 * sizeX;
-  const double halfY = 0.5 * sizeY;
+  const double halfX = 0.5 * itsSize.x();
+  const double halfY = 0.5 * itsSize.y();
 
   for (double x = -halfX; x <= halfX; x += dx)
     for (double y = -halfY; y <= halfY; y += dx)
@@ -337,7 +333,7 @@ DOTRACE("GaborArray::fillElements");
         tryPush(Element(x, y, 2 * M_PI * drand48(), Element::OUTSIDE));
       }
 
-  const double backgAveSpacing = sqrt(2.0*sizeX*sizeY/(SQRT3*totalNumber));
+  const double backgAveSpacing = sqrt(2.0*itsSize.x()*itsSize.y()/(SQRT3*totalNumber));
   printf(" %d elements, ave spacing %f\n", totalNumber, backgAveSpacing);
 }
 
@@ -349,8 +345,8 @@ DOTRACE("GaborArray::jitterElement");
 
   const int backgroundIters = 1000;
 
-  const double halfX = 0.5 * sizeX;
-  const double halfY = 0.5 * sizeY;
+  const double halfX = 0.5 * itsSize.x();
+  const double halfY = 0.5 * itsSize.y();
 
   for (int niter = 0; niter < backgroundIters; ++niter)
     {
@@ -363,10 +359,10 @@ DOTRACE("GaborArray::jitterElement");
           v.x() = array[n].pos.x() + jitter*(2*drand48() - 1);
           v.y() = array[n].pos.y() + jitter*(2*drand48() - 1);
 
-          if (v.x() < -halfX) v.x() += sizeX;
-          if (v.x() >  halfX) v.x() -= sizeX;
-          if (v.y() < -halfY) v.y() += sizeY;
-          if (v.y() >  halfY) v.y() -= sizeY;
+          if (v.x() < -halfX) v.x() += itsSize.x();
+          if (v.x() >  halfX) v.x() -= itsSize.x();
+          if (v.y() < -halfY) v.y() += itsSize.y();
+          if (v.y() >  halfY) v.y() -= itsSize.y();
 
           if (!tooClose(v, n))
             {

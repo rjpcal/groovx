@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Tue May 13 09:47:04 2003
+// written: Tue May 13 10:07:17 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -33,6 +33,8 @@
 
 #include "gfx/gxshapekit.h"
 
+#include "gx/vec2.h"
+
 #include "util/arrays.h"
 
 class Element;
@@ -41,7 +43,6 @@ class Snake;
 namespace Gfx
 {
   class BmapData;
-  template <class T> class Vec2;
 }
 
 /// GaborArray represents an 2-D spatial array of gabor patches.
@@ -51,7 +52,7 @@ class GaborArray : public GxShapeKit
 public:
   GaborArray(double gaborPeriod_ = 15.0, double gaborSigma_ = 7.5,
              int foregNumber = 24, double foregSpacing = 45.0,
-             int sizeX_ = 512, int sizeY_ = 512,
+             int sizeX = 512, int sizeY = 512,
              double backgIniSpacing_ = 48.0,
              double backgMinSpacing_ = 36.0);
 
@@ -69,10 +70,9 @@ protected:
 private:
   int itsForegNumber;
   double itsForegSpacing;
+  Gfx::Vec2<int> itsSize;
   double gaborPeriod;
   double gaborSigma;
-  int sizeX;
-  int sizeY;
   double backgIniSpacing;
   double backgMinSpacing;
   double backgMinSpacingSqr;
