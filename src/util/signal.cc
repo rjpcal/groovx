@@ -3,7 +3,7 @@
 // observable.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 25 18:39:27 1999
-// written: Sat Jul  3 16:43:34 1999
+// written: Tue Oct 12 16:19:09 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,8 +29,10 @@
 
 struct ObservableImpl {
 public:
-  ObservableImpl() : itsObservers() {}
-  ~ObservableImpl() {}
+  ObservableImpl() : itsObservers()
+	 { DOTRACE("ObservableImpl::ObservableImpl"); }
+  ~ObservableImpl()
+	 { DOTRACE("ObservableImpl::~ObservableImpl"); }
   list<Observer *> itsObservers;
 };
 
@@ -76,6 +78,8 @@ DOTRACE("Observable::sendStateChangeMsg");
 void Observable::sendDestroyMsg() {
 DOTRACE("Observable::sendDestroyMsg");
   list<Observer *>& theList = itsImpl.itsObservers;
+
+  DebugEval(itsImpl.itsObservers.size());
 
   // WARNING! This loop _cannot_ be done with a simple for loop that
   // iterates over the elements of theList, since theList is changed
