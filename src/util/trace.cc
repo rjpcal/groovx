@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Jan 21 13:16:23 2002
+// written: Mon Jan 21 13:31:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,6 +40,8 @@ namespace
 #endif
   }
 
+  unsigned int MAX_TRACE_LEVEL = 12;
+
   bool GLOBAL_TRACE = false;
 
   const char* PDATA_FILE = "prof.out";
@@ -70,8 +72,6 @@ namespace
 }
 
 
-int MAX_TRACE_LEVEL = 12;
-
 ///////////////////////////////////////////////////////////////////////
 //
 // Util::Prof member definitions
@@ -97,6 +97,38 @@ Util::Prof::~Prof()
     {
       STD_IO::cerr << "profile stream not good\n";
     }
+}
+
+int Util::Prof::count() const { return callCount; }
+
+void Util::Prof::add(timeval t)
+{
+  totalTime.tv_sec += t.tv_sec;
+  totalTime.tv_usec += t.tv_usec;
+  // avoid overflow
+  while (totalTime.tv_usec >= 1000000)
+    {
+      ++(totalTime.tv_sec);
+      totalTime.tv_usec -= 1000000;
+    }
+  // avoid underflow
+  while (totalTime.tv_usec <= -1000000)
+    {
+      --(totalTime.tv_sec);
+      totalTime.tv_usec += 1000000;
+    }
+  ++callCount;
+}
+
+const char* Util::Prof::name() const
+{
+  return funcName;
+}
+
+double Util::Prof::avgTime() const
+{
+  return (double(totalTime.tv_sec)*1000000 + totalTime.tv_usec)
+    / callCount;
 }
 
 void Util::Prof::printProfData(ostream& os) const
@@ -151,6 +183,16 @@ bool Util::Trace::getGlobalTrace()
 void Util::Trace::setGlobalTrace(bool on_off)
 {
   GLOBAL_TRACE = on_off;
+}
+
+unsigned int Util::Trace::getMaxLevel()
+{
+  return MAX_TRACE_LEVEL;
+}
+
+void Util::Trace::setMaxLevel(unsigned int lev)
+{
+  MAX_TRACE_LEVEL = lev;
 }
 
 void Util::Trace::printStackTrace(ostream& os)
@@ -214,9 +256,9 @@ void Util::Trace::printIn()
 
   if (callStack.size() < MAX_TRACE_LEVEL)
     {
-      for (int i=0; i < callStack.size(); ++i)
+      for (unsigned int i=0; i < callStack.size(); ++i)
         STD_IO::cerr << TRACE_TAB;
-      STD_IO::cerr << "entering " << prof.name() << "...";
+      STD_IO::cerr << "--> " << prof.name();
 
       if (Util::Trace::getMode() == STEP)
         {
@@ -233,9 +275,9 @@ void Util::Trace::printOut()
 {
   if (callStack.size() < MAX_TRACE_LEVEL)
     {
-      for (int i=0; i < callStack.size(); ++i)
+      for (unsigned int i=0; i < callStack.size(); ++i)
         STD_IO::cerr << TRACE_TAB;
-      STD_IO::cerr << "leaving " << prof.name() << ".";
+      STD_IO::cerr << "<-- " << prof.name();
 
       if (Util::Trace::getMode() == STEP)
         {
@@ -245,8 +287,8 @@ void Util::Trace::printOut()
         {
           STD_IO::cerr << '\n';
         }
-
   }
+
   if (callStack.size() == 0) STD_IO::cerr << '\n';
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Jan 21 12:45:21 2002
+// written: Mon Jan 21 13:28:55 2002
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -70,9 +70,6 @@ class ostream;
 //            };
 
 
-extern int MAX_TRACE_LEVEL;
-
-extern int TRACE_LEVEL;
 const char* const TRACE_TAB = "  ";
 
 namespace Util
@@ -87,34 +84,13 @@ public:
   Prof(const char* s);
   ~Prof();
 
-  int count() const { return callCount; }
+  int count() const;
 
-  void add(timeval t)
-    {
-      totalTime.tv_sec += t.tv_sec;
-      totalTime.tv_usec += t.tv_usec;
-      // avoid overflow
-      while (totalTime.tv_usec >= 1000000)
-        {
-          ++(totalTime.tv_sec);
-          totalTime.tv_usec -= 1000000;
-        }
-      // avoid underflow
-      while (totalTime.tv_usec <= -1000000)
-        {
-          --(totalTime.tv_sec);
-          totalTime.tv_usec += 1000000;
-        }
-      ++callCount;
-    }
+  void add(timeval t);
 
-  const char* name() const { return funcName; }
+  const char* name() const;
 
-  double avgTime() const
-    {
-      return (double(totalTime.tv_sec)*1000000 + totalTime.tv_usec)
-        / callCount;
-    }
+  double avgTime() const;
 
   void printProfData(STD_IO::ostream& os) const;
 
@@ -142,6 +118,9 @@ public:
   static bool getGlobalTrace();
   static void setGlobalTrace(bool on_off);
 
+  static unsigned int getMaxLevel();
+  static void setMaxLevel(unsigned int lev);
+
   static void printStackTrace(); // just print on cerr
   static void printStackTrace(STD_IO::ostream& os);
 
@@ -158,8 +137,8 @@ private:
 };
 
 #ifdef LOCAL_PROF
-#  define DOTRACE(x) static Util::Prof P__(x); \
-                     Util::Trace T__(P__, DYNAMIC_TRACE_EXPR);
+#  define DOTRACE(x) static Util::Prof P_x_(x); \
+                     Util::Trace T_x_(P_x_, DYNAMIC_TRACE_EXPR);
 #else
 #  define DOTRACE(x) {}
 #endif
