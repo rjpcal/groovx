@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Fri Aug 10 10:55:04 2001
+// written: Mon Aug 13 15:24:01 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -230,7 +230,11 @@ public:
   {
     if (ObjTogl::theWidget.isValid())
       {
-        ObjTogl::theWidget->setVisibility(false);
+        try
+          {
+            ObjTogl::theWidget->setVisibility(false);
+          }
+        catch (...) { /* nothing */ }
       }
   }
 };
