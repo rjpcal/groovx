@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Sep 27 17:44:38 2000
+// written: Thu Sep 28 21:20:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -564,8 +564,6 @@ DOTRACE("ExptDriver::Impl::legacySrlz");
   IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
   if (lwriter != 0) {
 
-	 lwriter->writeTypename(ioTag.c_str());
-
 	 writer->writeOwnedObject("theObjList", &ObjList::theObjList());
 	 writer->writeOwnedObject("thePosList", &PosList::thePosList());
 	 writer->writeOwnedObject("theTlist", &Tlist::theTlist());
@@ -573,13 +571,12 @@ DOTRACE("ExptDriver::Impl::legacySrlz");
 	 writer->writeOwnedObject("theThList", &ThList::theThList());
 	 writer->writeOwnedObject("theBlockList", &BlockList::theBlockList());
 
-	 ostream& os = lwriter->output();
-
-	 os << itsHostname       << '\n';
-	 os << itsSubject        << '\n';
-	 os << itsBeginDate      << '\n';
-	 os << itsEndDate        << '\n';
-	 os << itsAutosaveFile   << '\n';
+	 lwriter->setStringMode(IO::GETLINE_NEWLINE);
+	 writer->writeValue("hostname", itsHostname);
+	 writer->writeValue("subject", itsSubject);
+	 writer->writeValue("beginDate", itsBeginDate);
+	 writer->writeValue("endDate", itsEndDate);
+	 writer->writeValue("autosaveFile", itsAutosaveFile);
 
 	 writer->writeValue("blockId", itsBlockId);
 	 writer->writeValue("rhId", itsDummyRhId);
@@ -588,10 +585,8 @@ DOTRACE("ExptDriver::Impl::legacySrlz");
 
 	 updateDoUponCompletionBody();
 
-	 os << itsDoUponCompletionBody.length() << endl
-		 << itsDoUponCompletionBody << endl;
-
-	 lwriter->throwIfError(ioTag.c_str());
+	 lwriter->setStringMode(IO::CHAR_COUNT);
+	 writer->writeValue("doUponCompletionScript", itsDoUponCompletionBody);
   }
 }
 
@@ -600,8 +595,6 @@ DOTRACE("ExptDriver::Impl::legacyDesrlz");
   IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
   if (lreader != 0) {
 
-	 lreader->readTypename(ioTag.c_str());
-
 	 reader->readOwnedObject("theObjList", &ObjList::theObjList());
 	 reader->readOwnedObject("thePosList", &PosList::thePosList());
 	 reader->readOwnedObject("theTlist", &Tlist::theTlist());
@@ -609,36 +602,21 @@ DOTRACE("ExptDriver::Impl::legacyDesrlz");
 	 reader->readOwnedObject("theThList", &ThList::theThList());
 	 reader->readOwnedObject("theBlockList", &BlockList::theBlockList());
 
-	 istream& is = lreader->input();
-
-	 getline(is, itsHostname,     '\n');
-	 getline(is, itsSubject,      '\n');
-	 getline(is, itsBeginDate,    '\n');
-	 getline(is, itsEndDate,      '\n');
-	 getline(is, itsAutosaveFile, '\n');
+	 lreader->setStringMode(IO::GETLINE_NEWLINE);
+	 reader->readValue("hostname", itsHostname);
+	 reader->readValue("subject", itsSubject);
+	 reader->readValue("beginDate", itsBeginDate);
+	 reader->readValue("endDate", itsEndDate);
+	 reader->readValue("autosaveFile", itsAutosaveFile);
 
 	 reader->readValue("blockId", itsBlockId);
 	 reader->readValue("rhId", itsDummyRhId);
 	 reader->readValue("thId", itsDummyThId);
 
-	 int numchars;
-	 is >> numchars;
-	 if (is.peek() == '\n') { is.get(); }
-
-	 if ( numchars > 0 ) {
-		fixed_block<char> buf(numchars+1);
-		is.read(&buf[0], numchars);
-		buf[numchars] = '\0';
-
-		itsDoUponCompletionBody = &buf[0];
-	 }
-	 else {
-		itsDoUponCompletionBody = "";
-	 }
+	 lreader->setStringMode(IO::CHAR_COUNT);
+	 reader->readValue("doUponCompletionScript", itsDoUponCompletionBody);
 
 	 recreateDoUponCompletionProc();
-
-	 lreader->throwIfError(ioTag.c_str());
   }
 }
 
