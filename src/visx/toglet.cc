@@ -166,7 +166,7 @@ DOTRACE("Toglet::Toglet");
   if (pack) {
     dynamic_string pack_cmd_str = "pack ";
     pack_cmd_str += pathname();
-    pack_cmd_str += " -expand 1 -fill both; update";
+    pack_cmd_str += " -side left -expand 1 -fill both; update";
     Tcl::TclEvalCmd pack_cmd(pack_cmd_str.c_str(),
                              Tcl::TclEvalCmd::THROW_EXCEPTION);
     pack_cmd.invoke(interp);
