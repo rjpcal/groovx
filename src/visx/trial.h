@@ -171,5 +171,5 @@ private:
   Impl* const rep;
 };
 
-static const char vcid_trial_h[] = "$Id$";
+static const char vcid_trial_h[] = "$Header$";
 #endif // !TRIAL_H_DEFINED

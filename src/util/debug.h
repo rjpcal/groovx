@@ -88,7 +88,7 @@ static inline int CONCAT(dbgLevel, ext) ()                              \
 #define DBG_REGISTER DO_DBG_REGISTER(1)
 #define GET_DBG_LEVEL dbgLevel1
 
-static const char vcid_debug_h[] = "$Id$";
+static const char vcid_debug_h[] = "$Header$";
 
 #else // DEBUG_H_DEFINED
 
