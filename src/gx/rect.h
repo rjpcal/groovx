@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Nov 13 11:03:34 2002
+// written: Tue Dec 24 20:45:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -109,11 +109,22 @@ public:
   void setTopRight(const Gfx::Vec2<V>& point)
     { rr = point.x(); tt = point.y(); }
 
-  void setWidth(V w)
-    { V diff = w - width(); ll -= 0.5*diff; rr += 0.5*diff; }
+  void addWidth(V w)
+  {
+    V half = V(0.5*w);
+    ll -= half;
+    rr += (w-half); // in case V(0.5*h) != 0.5*h (e.g. integer math)
+  }
 
-  void setHeight(V h)
-    { V diff = h - height(); bb -= 0.5*diff; tt += 0.5*diff; }
+  void addHeight(V h)
+  {
+    V half = V(0.5*h);
+    bb -= half;
+    tt += (h-half); // in case V(0.5*h) != 0.5*h (e.g. integer math)
+  }
+
+  void setWidth(V w)  { addWidth(w - width()); }
+  void setHeight(V h) { addHeight(h - height()); }
 
   void scaleX(V factor) { setWidth(width() * factor); }
   void scaleY(V factor) { setHeight(height() * factor); }
