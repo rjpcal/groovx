@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Fri Nov 10 17:03:57 2000
+// written: Wed Nov 15 13:33:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -179,7 +179,6 @@ public:
 
 	 Attrib get(const fixed_string& attrib_name)
 		{
-		  // DOTRACE("AsciiStreamReader::Impl::AttribMap::operator[]");
 		  ListType::iterator itr = itsMap.begin(), end = itsMap.end();
 		  while (itr != end)
 			 {
@@ -234,7 +233,7 @@ private:
   // forwards to in implementing its own member functions.
 public:
   template <class T>
-  T readBasicType(const fixed_string& name, T* /* dummy */) {
+  T readBasicType(const fixed_string& name) {
 	 Attrib a = currentAttribs().get(name);
 	 istrstream ist(a.value.c_str());
 
@@ -341,10 +340,9 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAndUnEscape");
   return fixed_string(READ_BUFFER.begin());
 }
 
-void AsciiStreamReader::Impl::AttribMap::readAttributes(STD_IO::istream& buf) {
+void AsciiStreamReader::Impl::AttribMap::readAttributes(STD_IO::istream& buf)
+{
 DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
-
-  itsMap.clear();
 
   // Skip all whitespace
   buf >> ws;
@@ -594,25 +592,25 @@ DOTRACE("AsciiStreamReader::readSerialVersionId");
 char AsciiStreamReader::readChar(const fixed_string& name) {
 DOTRACE("AsciiStreamReader::readChar");
   DebugEvalNL(name); 
-  return itsImpl.readBasicType(name, (char*) 0);
+  return itsImpl.template readBasicType<char>(name);
 }
 
 int AsciiStreamReader::readInt(const fixed_string& name) {
 DOTRACE("AsciiStreamReader::readInt");
   DebugEvalNL(name); 
-  return itsImpl.readBasicType(name, (int*) 0);
+  return itsImpl.template readBasicType<int>(name);
 }
 
 bool AsciiStreamReader::readBool(const fixed_string& name) {
 DOTRACE("AsciiStreamReader::readBool");
   DebugEvalNL(name); 
-  return bool(itsImpl.readBasicType(name, (int*) 0));
+  return bool(itsImpl.template readBasicType<int>(name));
 }
 
 double AsciiStreamReader::readDouble(const fixed_string& name) {
 DOTRACE("AsciiStreamReader::readDouble");
   DebugEvalNL(name); 
-  return itsImpl.readBasicType(name, (double*) 0);
+  return itsImpl.template readBasicType<double>(name);
 }
 
 fixed_string AsciiStreamReader::readStringImpl(const fixed_string& name) {
