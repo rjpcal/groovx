@@ -3,7 +3,7 @@
 // tclitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:59 1999
-// written: Mon Oct  4 12:29:30 1999
+// written: Tue Oct 12 09:50:42 1999
 // $Id$
 //
 //
@@ -475,17 +475,18 @@ private:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// CTclIoItemPkg definitions
+// CTclIoItemPkg out-of-line member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
 template <class C>
-void CTclIoItemPkg::declareProperty(const PropertyInfo<C>& pinfo) {
+void CTclIoItemPkg<C>::declareProperty(const PropertyInfo<C>& pinfo) {
   addCommand( new CVecPropertyCmd<C>(this, pinfo) );
 }
-  
+
+
 template <class C>
-void CTclIoItemPkg::declareAllProperties() {
+void CTclIoItemPkg<C>::declareAllProperties() {
   const vector<PropertyInfo<C> >& pinfos = C::getPropertyInfos();
 
   for (int i = 0; i < pinfos.size(); ++i) {
