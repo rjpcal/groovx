@@ -3,7 +3,7 @@
 // poslist.h
 // Rob Peters
 // created: Fri Mar 12 17:13:53 1999
-// written: Thu May 27 11:35:26 1999
+// written: Thu May 27 20:03:59 1999
 // $Id$
 //
 // This file defines PosList, a singleton class whose instance is a
@@ -21,9 +21,10 @@
 #ifndef PTRLIST_H_DEFINED
 #include "ptrlist.h"
 #endif
-#ifndef POSITION_H_DEFINED
-#include "position.h"
-#endif
+
+class Position;
+
+#include "id.h"
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -63,17 +64,19 @@ public:
   // accessors //
   ///////////////
 
+  int capacity() const { return Base::capacity(); }
+
   // returns the number of (both filled and unfilled) sites in the PosList
   int posCount() const { return Base::count(); }
 
-  // returns true if 'id' is a valid index into a non-NULL Position* in
+  // returns true if 'posid' is a valid index into a non-NULL Position* in
   // the PosList, given its current size
-  bool isValidPosid(int id) const { return Base::isValidId(id); }
+  bool isValidPosid(PosId posid) const { return Base::isValidId(posid.toInt()); }
 
-  // both functions return the Position* at the index given by 'id'.
+  // both functions return the Position* at the index given by 'posid'.
   // There is no range-checking--this must be done by the client with
   // olIsValidId().
-  Position* getPos(int id) const { return Base::getPtr(id); }
+  Position* getPos(PosId posid) const { return Base::getPtr(posid.toInt()); }
 
   //////////////////
   // manipulators //
@@ -82,16 +85,16 @@ public:
   // add pos at the next available location, and return the index
   // where it was inserted. If necessary, the list will be expanded to
   // make room for the pos
-  int addPos(Position* pos) { return Base::insert(pos); }
+  PosId addPos(Position* pos) { return PosId(Base::insert(pos)); }
 
-  // add pos at index 'id', destroying any Position that previously
-  // occupied that location. The list will be expanded if 'id' exceeds
-  // the size of the list. If id is < 0, the function returns without
+  // add pos at index 'posid', destroying any Position that previously
+  // occupied that location. The list will be expanded if 'posid' exceeds
+  // the size of the list. If posid is < 0, the function returns without
   // effect.
-  void addPosAt(int id, Position* pos) { Base::insertAt(id, pos); }
+  void addPosAt(PosId posid, Position* pos) { Base::insertAt(posid.toInt(), pos); }
 
   // delete the Position at index 'i', and reset the Position* to NULL
-  void removePos(int id) { Base::remove(id); }
+  void removePos(PosId posid) { Base::remove(posid.toInt()); }
 
   // delete all Position's held by the list, and reset all Position*'s
   // to NULL
