@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:37:02 1999
-// written: Thu May 10 12:04:36 2001
+// written: Tue Jun  5 10:51:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,11 @@
 #ifndef OBSERVER_H_DEFINED
 #define OBSERVER_H_DEFINED
 
-class Observable;
+namespace Util
+{
+  class Observable;
+  class Observer;
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -28,7 +32,7 @@ class Observable;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Observer {
+class Util::Observer {
 public:
   ///
   virtual ~Observer();

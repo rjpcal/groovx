@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:26:45 2000
-// written: Mon Jun  4 18:50:27 2001
+// written: Tue Jun  5 10:56:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ namespace GWT { class Canvas; }
 ///////////////////////////////////////////////////////////////////////
 
 class GxNode : public virtual IO::IoObject,
-					public virtual Observable
+					public virtual Util::Observable
 {
 private:
   GxNode(const GxNode&);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Mon Jun  4 18:59:13 2001
+// written: Tue Jun  5 10:58:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class GWT::Widget::Impl : public Observer {
+class GWT::Widget::Impl : public Util::Observer {
 public:
   Impl(GWT::Widget* owner) :
 	 itsOwner(owner),
@@ -107,12 +107,12 @@ public:
 		itsDrawNode->attach(this);
 	 }
 
-  virtual void receiveStateChangeMsg(const Observable*)
+  virtual void receiveStateChangeMsg(const Util::Observable*)
     {
 		refresh(*(itsOwner->getCanvas()));
 	 }
 
-  virtual void receiveDestroyMsg(const Observable*) {}
+  virtual void receiveDestroyMsg(const Util::Observable*) {}
 
 private:
   void doFlush(GWT::Canvas& canvas)

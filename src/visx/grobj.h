@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Mon Jun  4 18:50:15 2001
+// written: Tue Jun  5 10:56:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ namespace GWT {
 ///////////////////////////////////////////////////////////////////////
 
 class GrObj : public GxNode,
-				  public Observer
+				  public Util::Observer
 {
 public:
 

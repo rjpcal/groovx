@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Fri May 11 20:23:42 2001
+// written: Tue Jun  5 10:57:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -317,7 +317,7 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 class FieldContainer : public virtual IO::IoObject,
-							  public virtual Observable
+							  public virtual Util::Observable
 {
 private:
   const FieldMap* itsFieldMap;
