@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Thu Oct 26 16:57:58 2000
+// written: Wed Nov  1 17:39:24 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -201,7 +201,9 @@ protected:
 //
 //---------------------------------------------------------------------
 
-class ExptTcl::ExptPkg : public Tcl::CTclIoItemPkg<ExptDriver> {
+class ExptTcl::ExptPkg : public Tcl::CTclItemPkg<ExptDriver>,
+					          public Tcl::IoFetcher
+{
 public:
   ExptPkg(Tcl_Interp* interp);
 
@@ -216,12 +218,14 @@ private:
 };
 
 ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :
-  Tcl::CTclIoItemPkg<ExptDriver>(interp, "Expt", "2.7", 0),
+  Tcl::CTclItemPkg<ExptDriver>(interp, "Expt", "2.7", 0),
   itsExptDriver(Application::theApp().argc(),
 					 Application::theApp().argv(),
 					 interp)
 {
   DOTRACE("ExptPkg::ExptPkg");
+
+  TclItemPkg::addIoCommands(this);
 
   Tcl::addTracing(this, ExptDriver::tracer);
 

@@ -3,7 +3,7 @@
 // listpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec 15 17:27:51 1999
-// written: Mon Oct 30 15:28:51 2000
+// written: Wed Nov  1 17:41:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -125,9 +125,11 @@ private:
 
 Tcl::IoPtrListPkg::IoPtrListPkg(Tcl_Interp* interp,
 										  const char* pkg_name, const char* version) :
-  CTclIoItemPkg<IoPtrList>(interp, pkg_name, version, 0)
+  CTclItemPkg<IoPtrList>(interp, pkg_name, version, 0)
 {
 DOTRACE("Tcl::IoPtrListPkg::IoPtrListPkg");
+  TclItemPkg::addIoCommands(this);
+
   addCommand( new ListItemCountCmd(this, 
 											  TclPkg::makePkgCmdName("count")) );
   addCommand( new ListResetCmd(this, 

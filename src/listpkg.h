@@ -3,7 +3,7 @@
 // listpkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 29 17:23:03 1999
-// written: Mon Oct 30 11:54:03 2000
+// written: Wed Nov  1 17:40:53 2000
 // $Id$
 //
 // This file defines a TclPkg to be used with IoPtrList's.
@@ -31,7 +31,9 @@ namespace Tcl {
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class IoPtrListPkg : public CTclIoItemPkg<IoPtrList> {
+class IoPtrListPkg : public CTclItemPkg<IoPtrList>,
+                     public IoFetcher
+{
 public:
   IoPtrListPkg(Tcl_Interp* interp,
 					const char* pkg_name, const char* version);

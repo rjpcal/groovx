@@ -3,7 +3,7 @@
 // propitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct  4 15:42:59 1999
-// written: Mon Oct 30 11:13:44 2000
+// written: Wed Nov  1 17:43:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ public:
   PropItemPkg(Tcl_Interp* interp, const char* name, const char* version) :
 	 ItemPkg<C>(interp, name, version)
   {
-	 CTclIoItemPkg<C>::declareAllProperties();
+	 CTclItemPkg<C>::declareAllProperties();
 	 IO::IoFactory::theOne().registerCreatorFunc(&C::make);
   }
 };

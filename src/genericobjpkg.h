@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Mon Oct 30 15:20:02 2000
+// written: Wed Nov  1 17:42:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,11 +51,14 @@ protected:
 ///////////////////////////////////////////////////////////////////////
 
 template <class C>
-class ItemPkg : public CTclIoItemPkg<C> {
+class ItemPkg : public CTclItemPkg<C>,
+                public IoFetcher
+{
 public:
   ItemPkg(Tcl_Interp* interp, const char* name, const char* version) :
-	 CTclIoItemPkg<C>(interp, name, version, 1)
+	 CTclItemPkg<C>(interp, name, version, 1)
   {
+	 TclItemPkg::addIoCommands(this);
 	 addCommand( new IsCmd<C>(this, TclPkg::makePkgCmdName("is")));
   }
 
