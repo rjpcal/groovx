@@ -3,7 +3,7 @@
 // io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Thu Oct 19 17:37:19 2000
+// written: Sun Oct 22 16:01:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,8 @@
 #include "system/demangle.h"
 
 #include "util/strings.h"
+
+#include <typeinfo>
 
 #define NO_TRACE
 #include "util/trace.h"
