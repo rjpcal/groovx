@@ -59,6 +59,12 @@ namespace
     Tcl_GetCommandFullName(interp.intp(), token, result.obj());
     return fstring(result.as<const char*>());
   }
+
+  void appendUsage(fstring& dest, const fstring& usage)
+  {
+    if (!usage.is_empty())
+      dest.append(" ", usage);
+  }
 }
 
 class Tcl::CommandGroup::Impl
@@ -95,19 +101,22 @@ public:
 
   fstring usageWarning(const fstring& argv0) const;
 
+  static int cInvokeCallback(ClientData clientData,
+                             Tcl_Interp* interp,
+                             int s_objc,
+                             Tcl_Obj *const objv[]) throw();
+
+  static void cDeleteCallback(ClientData clientData) throw();
+
+  static void cExitCallback(ClientData clientData) throw();
+
+  static Tcl::CommandGroup* lookupHelper(Tcl::Interp& interp,
+                                         const char* name) throw();
+
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 };
-
-namespace
-{
-  void appendUsage(fstring& dest, const fstring& usage)
-  {
-    if (!usage.is_empty())
-      dest.append(" ", usage);
-  }
-}
 
 fstring Tcl::CommandGroup::Impl::usageWarning(const fstring& argv0) const
 {
@@ -147,6 +156,69 @@ DOTRACE("Tcl::CommandGroup::usageWarning");
   return warning;
 }
 
+int Tcl::CommandGroup::Impl::cInvokeCallback(
+    ClientData clientData,
+    Tcl_Interp* interp,
+    int s_objc,
+    Tcl_Obj *const objv[]) throw()
+{
+  CommandGroup* c = static_cast<CommandGroup*>(clientData);
+
+  Assert(c != 0);
+  Assert(interp == c->rep->interp.intp());
+
+  return c->rawInvoke(s_objc, objv);
+}
+
+void Tcl::CommandGroup::Impl::cDeleteCallback(
+    ClientData clientData) throw()
+{
+DOTRACE("Tcl::CommandGroup::Impl::cDeleteCallback");
+  CommandGroup* c = static_cast<CommandGroup*>(clientData);
+  Assert(c != 0);
+  delete c;
+}
+
+void Tcl::CommandGroup::Impl::cExitCallback(
+    ClientData clientData) throw()
+{
+DOTRACE("Tcl::CommandGroup::cExitCallback");
+  CommandGroup* c = static_cast<CommandGroup*>(clientData);
+  Assert(c != 0);
+  Tcl_DeleteCommandFromToken(c->rep->interp.intp(), c->rep->cmdToken);
+}
+
+Tcl::CommandGroup* Tcl::CommandGroup::Impl::lookupHelper(
+    Tcl::Interp& interp,
+    const char* name) throw()
+{
+DOTRACE("Tcl::CommandGroup::Impl::lookupHelper");
+
+  /*
+    typedef struct Tcl_CmdInfo {
+    int isNativeObjectProc;
+    Tcl_ObjCmdProc *objProc;
+    ClientData objClientData;
+    Tcl_CmdProc *proc;
+    ClientData clientData;
+    Tcl_CmdDeleteProc *deleteProc;
+    ClientData deleteData;
+    Tcl_Namespace *namespacePtr;
+    } Tcl_CmdInfo;
+  */
+  Tcl_CmdInfo info;
+  const int result = Tcl_GetCommandInfo(interp.intp(), name, &info);
+
+  if (result == 1 &&
+      info.isNativeObjectProc == 1 &&
+      info.objProc == &Impl::cInvokeCallback &&
+      info.deleteProc == &Impl::cDeleteCallback)
+    {
+      return static_cast<CommandGroup*>(info.objClientData);
+    }
+  return 0;
+}
+
 Tcl::CommandGroup::CommandGroup(Tcl::Interp& interp,
                                 const fstring& cmd_name,
                                 const FilePosition& src_pos)
@@ -169,12 +241,12 @@ DOTRACE("Tcl::CommandGroup::CommandGroup");
   Assert(result == 1);
   Assert(info.isNativeObjectProc == 1);
   info.objClientData = static_cast<ClientData>(this);
-  info.objProc = &cInvokeCallback;
+  info.objProc = &Impl::cInvokeCallback;
   info.deleteData = static_cast<ClientData>(this);
-  info.deleteProc = &cDeleteCallback;
+  info.deleteProc = &Impl::cDeleteCallback;
   Tcl_SetCommandInfoFromToken(rep->cmdToken, &info);
 
-  Tcl_CreateExitHandler(&cExitCallback,
+  Tcl_CreateExitHandler(&Impl::cExitCallback,
                         static_cast<ClientData>(this));
 }
 
@@ -198,7 +270,7 @@ Tcl::CommandGroup::~CommandGroup() throw()
 {
 DOTRACE("Tcl::CommandGroup::~CommandGroup");
 
-  Tcl_DeleteExitHandler(&cExitCallback,
+  Tcl_DeleteExitHandler(&Impl::cExitCallback,
                         static_cast<ClientData>(this));
 
   delete rep;
@@ -208,29 +280,8 @@ Tcl::CommandGroup* Tcl::CommandGroup::lookup(Tcl::Interp& interp,
                                              const char* name) throw()
 {
 DOTRACE("Tcl::CommandGroup::lookup");
-  /*
-     typedef struct Tcl_CmdInfo {
-       int isNativeObjectProc;
-       Tcl_ObjCmdProc *objProc;
-       ClientData objClientData;
-       Tcl_CmdProc *proc;
-       ClientData clientData;
-       Tcl_CmdDeleteProc *deleteProc;
-       ClientData deleteData;
-       Tcl_Namespace *namespacePtr;
-     } Tcl_CmdInfo;
-  */
-  Tcl_CmdInfo info;
-  const int result = Tcl_GetCommandInfo(interp.intp(), name, &info);
 
-  if (result == 1 &&
-      info.isNativeObjectProc == 1 &&
-      info.objProc == cInvokeCallback &&
-      info.deleteProc == cDeleteCallback)
-    {
-      return static_cast<CommandGroup*>(info.objClientData);
-    }
-  return 0;
+  return Impl::lookupHelper(interp, name);
 }
 
 Tcl::CommandGroup* Tcl::CommandGroup::lookupOriginal(
@@ -247,19 +298,7 @@ DOTRACE("Tcl::CommandGroup::lookupOriginal");
 
   // else...
   const fstring original = interp.getResult<fstring>();
-
-  Tcl_CmdInfo info;
-  const int result = Tcl_GetCommandInfo(interp.intp(),
-                                        original.c_str(), &info);
-
-  if (result == 1 &&
-      info.isNativeObjectProc == 1 &&
-      info.objProc == cInvokeCallback &&
-      info.deleteProc == cDeleteCallback)
-    {
-      return static_cast<CommandGroup*>(info.objClientData);
-    }
-  return 0;
+  return Impl::lookupHelper(interp, original.c_str());
 }
 
 Tcl::CommandGroup* Tcl::CommandGroup::make(Tcl::Interp& interp,
@@ -375,35 +414,6 @@ DOTRACE("Tcl::CommandGroup::rawInvoke");
     }
 
   return TCL_ERROR;
-}
-
-int Tcl::CommandGroup::cInvokeCallback(ClientData clientData,
-                                       Tcl_Interp* interp,
-                                       int s_objc,
-                                       Tcl_Obj *const objv[]) throw()
-{
-  CommandGroup* c = static_cast<CommandGroup*>(clientData);
-
-  Assert(c != 0);
-  Assert(interp == c->rep->interp.intp());
-
-  return c->rawInvoke(s_objc, objv);
-}
-
-void Tcl::CommandGroup::cDeleteCallback(ClientData clientData) throw()
-{
-DOTRACE("Tcl::CommandGroup::cDeleteCallback");
-  CommandGroup* c = static_cast<CommandGroup*>(clientData);
-  Assert(c != 0);
-  delete c;
-}
-
-void Tcl::CommandGroup::cExitCallback(ClientData clientData) throw()
-{
-DOTRACE("Tcl::CommandGroup::cExitCallback");
-  CommandGroup* c = static_cast<CommandGroup*>(clientData);
-  Assert(c != 0);
-  Tcl_DeleteCommandFromToken(c->rep->interp.intp(), c->rep->cmdToken);
 }
 
 static const char vcid_tclcommandgroup_cc[] = "$Header$";

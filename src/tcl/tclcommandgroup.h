@@ -62,13 +62,15 @@ public:
   static CommandGroup* lookupOriginal(Tcl::Interp& interp,
                                       const char* name) throw();
 
-  /// Find the command for the given name, making a new one if necessary.
+  /// Find the named command, making a new one if necessary.
   static CommandGroup* make(Tcl::Interp& interp,
                             const fstring& cmd_name,
                             const FilePosition& src_pos);
 
+  /// Add the given Tcl::Command to this group's overload list.
   void add(shared_ptr<Tcl::Command> p);
 
+  /// Get this group's fully namespace-qualified command name.
   fstring cmdName() const;
 
   /// Returns a string giving the command's proper usage, including overloads.
@@ -78,23 +80,18 @@ public:
 
 private:
   class Impl;
+  friend class Impl;
   Impl* const rep;
 
+  /// Private constructor since clients should use CommandGroup::make().
   CommandGroup(Tcl::Interp& interp, const fstring& cmd_name,
                const FilePosition& src_pos);
+
+  /// Private destructor since destruction is automated by Tcl.
   ~CommandGroup() throw();
 
   CommandGroup(const CommandGroup&); // not implemented
   CommandGroup& operator=(const CommandGroup&); // not implemented
-
-  static int cInvokeCallback(ClientData clientData,
-                             Tcl_Interp* interp,
-                             int s_objc,
-                             Tcl_Obj *const objv[]) throw();
-
-  static void cDeleteCallback(ClientData clientData) throw();
-
-  static void cExitCallback(ClientData clientData) throw();
 };
 
 static const char vcid_tclcommandgroup_h[] = "$Header$";
