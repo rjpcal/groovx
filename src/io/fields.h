@@ -125,7 +125,9 @@ public:
 
 class Field {
 private:
-  FieldContainer* itsOwner;
+  FieldContainer* const itsOwner;
+
+  Field& operator=(const Field& other);
 
 protected:
   virtual void doSetValue(const Value& new_val) = 0;
@@ -134,8 +136,6 @@ public:
   Field(FieldContainer* owner);
 
   Field(const Field& other) : itsOwner(other.itsOwner) {}
-  Field& operator=(const Field& other)
-    { itsOwner = other.itsOwner; return *this; }
 
   virtual ~Field();
 
