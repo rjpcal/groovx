@@ -83,6 +83,12 @@ public:
   const char* pathname() const;
   double pixelsPerInch() const;
 
+  /// Change the cursor for this window to the one specified by the given string.
+  void setCursor(const char* cursor_spec);
+
+  /// Get a string describing the current cursor.
+  const char* getCursor() const;
+
   void pack();
 
   void iconify();
