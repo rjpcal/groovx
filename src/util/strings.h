@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Thu May 10 12:04:35 2001
+// written: Fri May 11 15:17:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -131,6 +131,8 @@ private:
 
 	 // Class-specific operator delete.
 	 void operator delete(void* space);
+
+	 friend class DummyFriend; // to eliminate compiler warning
 
 	 Rep();
 	 ~Rep();
