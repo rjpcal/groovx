@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Tue May 13 15:05:00 2003
+// written: Tue May 13 15:37:43 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -114,8 +114,6 @@ private:
   void update() const;
   bool tryPush(const Element& e) const;
   bool tooClose(const Gfx::Vec2<double>& v, int except) const;
-  /// Mark inside elements and return how many there were.
-  int insideElements() const;
   void backgHexGrid() const;
   void backgFill() const;
   void backgJitter(Util::Urand& urand) const;

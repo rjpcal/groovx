@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Tue May 13 15:28:45 2003
+// written: Tue May 13 15:41:33 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -236,7 +236,42 @@ DOTRACE("GaborArray::updateBackg");
       backgFill();
     }
 
-  const int insideNumber = insideElements();
+  int insideNumber = itsForegNumber;
+
+  for (int n = 0; n < itsTotalNumber; ++n)
+    {
+      if (itsArray[n].type == Element::CONTOUR)
+        continue;
+
+      bool inside = true;
+
+      for (int i = 0; i < itsForegNumber; ++i)
+        {
+          const int j = (i+1) % itsForegNumber;
+
+          // This is the vector perpendicular to the line connecting
+          // contour nodes i and j
+          const double Yij = itsArray[i].pos.x() - itsArray[j].pos.x();
+          const double Xij = itsArray[j].pos.y() - itsArray[i].pos.y();
+
+          // This is the vector connecting from contour node i to the
+          // background node
+          const double Xin = itsArray[n].pos.x() - itsArray[i].pos.x();
+          const double Yin = itsArray[n].pos.y() - itsArray[i].pos.y();
+
+          // If the dot product of those two vectors is less than zero,
+          // then the background node is "outside".
+          const double vp = Xij*Xin + Yij*Yin;
+
+          if (vp < 0.0) { inside = false; break; }
+        }
+
+      if (inside)
+        {
+          itsArray[n].type = Element::INSIDE;
+          ++insideNumber;
+        }
+    }
 
   printf(" FOREG_NUMBER %d    PATCH_NUMBER %d    TOTAL_NUMBER %d\n",
          itsForegNumber.val, insideNumber, itsTotalNumber);
@@ -247,7 +282,7 @@ DOTRACE("GaborArray::updateBackg");
   itsGridSpacing.save();
   itsMinSpacing.save();
 
-  itsThetaSeed.touch(); // to force a redo of rendering
+  itsThetaSeed.touch(); // to force a redo in updateBmap()
 }
 
 void GaborArray::updateBmap() const
@@ -380,48 +415,6 @@ bool GaborArray::tooClose(const Vec2d& v, int except) const
     }
 
   return false;
-}
-
-int GaborArray::insideElements() const
-{
-DOTRACE("GaborArray::insideElements");
-
-  int count = itsForegNumber;
-
-  for (int n = 0; n < itsTotalNumber; ++n)
-    {
-      if (itsArray[n].type == Element::CONTOUR)
-        continue;
-
-      bool inside = true;
-
-      for (int i = 0; i < itsForegNumber; ++i)
-        {
-          const int j = (i+1) % itsForegNumber;
-
-          const double Yij = itsArray[i].pos.x() - itsArray[j].pos.x();
-          const double Xij = itsArray[j].pos.y() - itsArray[i].pos.y();
-
-          const double Xin = itsArray[n].pos.x() - itsArray[i].pos.x();
-          const double Yin = itsArray[n].pos.y() - itsArray[i].pos.y();
-
-          const double vp = Xij*Xin + Yij*Yin;
-
-          if (vp < 0.0)
-            {
-              inside = false;
-              break;
-            }
-        }
-
-      if (inside)
-        {
-          itsArray[n].type = Element::INSIDE;
-          ++count;
-        }
-    }
-
-  return count;
 }
 
 void GaborArray::backgHexGrid() const
