@@ -2,8 +2,8 @@
 // misctcl.cc
 // Rob Peters
 // created: Nov-98
-// written: Fri Mar 12 12:56:07 1999
-static const char vcid_misctcl_cc[] = "$Id$";
+// written: Mon Mar 15 15:54:45 1999
+// $Id$
 //
 // this file contains the implementations for some simple Tcl functions
 // that are basically wrappers for standard C library functions, such
@@ -108,7 +108,7 @@ int MiscTcl::usleeprCmd(ClientData, Tcl_Interp *interp,
   return TCL_OK;  
 }
 
-int MiscTcl::Misctcl_Init(Tcl_Interp *interp) {
+int MiscTcl::Misc_Init(Tcl_Interp *interp) {
   Tcl_CreateObjCommand(interp, "rand", randCmd,
                     (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   Tcl_CreateObjCommand(interp, "srand", srandCmd,
@@ -119,7 +119,9 @@ int MiscTcl::Misctcl_Init(Tcl_Interp *interp) {
                     (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
   Tcl_CreateObjCommand(interp, "usleepr", usleeprCmd,
                     (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+  Tcl_PkgProvide(interp, "Misc", "1.4")
   return TCL_OK;
 }
 
+static const char vcid_misctcl_cc[] = "$Header$";
 #endif // !MISCTCL_C_DEFINED
