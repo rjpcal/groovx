@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Wed Jun 30 15:38:01 1999
+// written: Wed Jun 30 16:16:11 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,11 @@
 #include "error.h"
 #endif
 
-class FactoryError : public Error {};
+class FactoryError : public ErrorWithMsg {
+public:
+  FactoryError() : ErrorWithMsg() {}
+  FactoryError(const string& str) : ErrorWithMsg(str) {}
+};
 
 template <class Base>
 class CreatorBase {
@@ -75,7 +79,10 @@ public:
   Derived* newTypedObject(const string& type, Derived* dummy) {
 	 Base* b = newCheckedObject(type);
 	 Derived* d = dynamic_cast<Derived*>(b);
-	 if (d == 0) { delete b; throw FactoryError(); }
+	 if (d == 0) { 
+		delete b;
+		throw FactoryError(string("unknown type \"") + type + "\"");
+	 }
 	 return d;
   }
 
