@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:47:00 1999
-// written: Thu May 10 12:04:43 2001
+// written: Thu May 17 11:05:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,9 @@
 #define READER_CC_DEFINED
 
 #include "io/reader.h"
+
+#include "io/io.h"
+#include "io/iditem.h"
 
 #include <cstddef>
 
@@ -103,6 +106,16 @@ template <>
 void IO::Reader::readValue<Value>(const fixed_string& name,
 											 Value& return_value) {
   readValueObj(name, return_value);
+}
+
+IdItem<IO::IoObject> IO::Reader::readObject(const fixed_string& name)
+{
+  return IdItem<IO::IoObject>(readObjectImpl(name));
+}
+
+MaybeIdItem<IO::IoObject> IO::Reader::readMaybeObject(const fixed_string& name)
+{
+  return MaybeIdItem<IO::IoObject>(readObjectImpl(name));
 }
 
 static const char vcid_reader_cc[] = "$Header$";
