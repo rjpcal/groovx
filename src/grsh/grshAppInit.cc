@@ -237,6 +237,8 @@ DOTRACE("main");
   signal(SIGFPE, &sigHandler);
   signal(SIGBUS, &sigHandler);
 
+  bool minimal = false;
+
   try
     {
       // Quick check argv to optionally turn on global tracing and/or set
@@ -258,6 +260,10 @@ DOTRACE("main");
           else if (strcmp(argv[i], "-showinit") == 0)
             {
               Tcl::Pkg::verboseInit(true);
+            }
+          else if (strcmp(argv[i], "-minimal") == 0)
+            {
+              minimal = true;
             }
         }
 
@@ -328,22 +334,25 @@ DOTRACE("main");
           interp.eval(ifneededcmd);
         }
 
-      for (size_t i = 0; i < sizeof(DELAYED_PKGS)/sizeof(PackageInfo); ++i)
+      if (!minimal)
         {
-          const char* ver =
-            Tcl_PkgRequire(interp.intp(),
-                           DELAYED_PKGS[i].pkgName,
-                           DELAYED_PKGS[i].pkgVersion,
-                           0);
-
-          if (ver == 0)
+          for (size_t i = 0; i < sizeof(DELAYED_PKGS)/sizeof(PackageInfo); ++i)
             {
-              std::cerr << "initialization error (package '"
-                        << DELAYED_PKGS[i].pkgName << "'):\n";
-              fstring msg = interp.getResult<const char*>();
-              if ( !msg.is_empty() )
-                std::cerr << '\t' << msg << '\n';
-              interp.resetResult();
+              const char* ver =
+                Tcl_PkgRequire(interp.intp(),
+                               DELAYED_PKGS[i].pkgName,
+                               DELAYED_PKGS[i].pkgVersion,
+                               0);
+
+              if (ver == 0)
+                {
+                  std::cerr << "initialization error (package '"
+                            << DELAYED_PKGS[i].pkgName << "'):\n";
+                  fstring msg = interp.getResult<const char*>();
+                  if ( !msg.is_empty() )
+                    std::cerr << '\t' << msg << '\n';
+                  interp.resetResult();
+                }
             }
         }
 
