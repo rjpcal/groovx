@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Thu Feb 14 13:19:40 2002
+// written: Mon Feb 18 14:19:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -323,7 +323,7 @@ const Mtx& Mtx::emptyMtx()
 }
 
 Mtx::Mtx(const Slice& s) :
-  itsImpl(const_cast<double*>(s.dataStart()), s.nelems(), 1, BORROW)
+  itsImpl(const_cast<double*>(s.dataStart()), s.nelems(), 1, COPY)
 {
   if (s.itsStride != 1)
     throw Util::Error("can't initialize Mtx from Slice with stride != 1");
