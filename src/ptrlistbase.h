@@ -3,7 +3,7 @@
 // ptrlistbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Oct 25 11:54:58 2000
+// written: Wed Oct 25 12:13:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,8 +68,8 @@ public:
 	 int operator*() const;
   };
 
-  IdIterator beginIds();
-  IdIterator endIds();
+  IdIterator beginIds() const;
+  IdIterator endIds() const;
 
 protected:
   /// Construct a PtrList with an initial reserve capacity of 'size'
@@ -94,12 +94,12 @@ public:
       iterator \a itr. **/
   template <class Iterator>
   void insertValidIds(Iterator itr) const {
-	 for (unsigned int i = 0, end = capacity();
-			i < end;
-			++i) {
-		if (isValidId(i)) 
-		  *itr++ = i;
-	 }
+	 for(IdIterator id_itr = beginIds(), end = endIds();
+		  !(id_itr == end);
+		  ++id_itr)
+		{
+		  *itr++ = *id_itr;
+		}
   }
 
   /** If the object at \a id is unshared, removes reference to the
