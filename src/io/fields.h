@@ -66,22 +66,22 @@ public:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * FieldMemberPtr is used to encapsulate a pointer-to-member of a
+ * FieldImpl is used to encapsulate a pointer-to-member of a
  * FieldContainer in a typesafe way.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
 
-class FieldMemberPtr {
+class FieldImpl {
 public:
-  virtual ~FieldMemberPtr();
+  virtual ~FieldImpl();
 
   virtual void set(FieldContainer* obj, const Value& new_val) const = 0;
   virtual shared_ptr<Value> get(const FieldContainer* obj) const = 0;
 
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader* reader, const fstring& name) = 0;
+                             IO::Reader* reader, const fstring& name) const = 0;
   virtual void writeValueTo(const FieldContainer* obj,
                             IO::Writer* writer, const fstring& name) const = 0;
 };
@@ -127,16 +127,16 @@ namespace
 
 
 
-/** DataAttrib */
+/** DataMemberFieldImpl */
 template <class C, class T>
-class DataAttrib : public FieldMemberPtr {
+class DataMemberFieldImpl : public FieldImpl {
 public:
 
   typedef Deref<T>::Type DerefT;
 
-  DataAttrib(T C::* memptr) : itsDataMember(memptr), itsChecker(0) {}
+  DataMemberFieldImpl(T C::* memptr) : itsDataMember(memptr), itsChecker(0) {}
 
-  DataAttrib(T C::* memptr, shared_ptr<BoundsChecker<DerefT> > checker) :
+  DataMemberFieldImpl(T C::* memptr, shared_ptr<BoundsChecker<DerefT> > checker) :
     itsDataMember(memptr), itsChecker(checker) {}
 
   virtual void set(FieldContainer* obj, const Value& new_val) const
@@ -158,7 +158,7 @@ public:
   }
 
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader* reader, const fstring& name)
+                             IO::Reader* reader, const fstring& name) const
   {
     C& cobj = dynamic_cast<C&>(*obj);
 
@@ -174,19 +174,19 @@ public:
   }
 
 private:
-  DataAttrib& operator=(const DataAttrib&);
-  DataAttrib(const DataAttrib&);
+  DataMemberFieldImpl& operator=(const DataMemberFieldImpl&);
+  DataMemberFieldImpl(const DataMemberFieldImpl&);
 
   T C::* itsDataMember;
   shared_ptr<BoundsChecker<DerefT> > itsChecker;
 };
 
-/** ValueAttrib */
+/** ValueFieldImpl */
 template <class C, class V>
-class ValueAttrib : public FieldMemberPtr {
+class ValueFieldImpl : public FieldImpl {
 public:
 
-  ValueAttrib(V C::* memptr) : itsValueMember(memptr) {}
+  ValueFieldImpl(V C::* memptr) : itsValueMember(memptr) {}
 
   virtual void set(FieldContainer* obj, const Value& new_val) const
   {
@@ -203,7 +203,7 @@ public:
   }
 
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader* reader, const fstring& name)
+                             IO::Reader* reader, const fstring& name) const
   {
     C& cobj = dynamic_cast<C&>(*obj);
 
@@ -219,26 +219,26 @@ public:
   }
 
 private:
-  ValueAttrib& operator=(const ValueAttrib&);
-  ValueAttrib(const ValueAttrib&);
+  ValueFieldImpl& operator=(const ValueFieldImpl&);
+  ValueFieldImpl(const ValueFieldImpl&);
 
   V C::* itsValueMember;
 };
 
-/** ReadWriteAttrib */
+/** FuncMemberFieldImpl */
 template <class C, class T>
-class ReadWriteAttrib : public FieldMemberPtr {
+class FuncMemberFieldImpl : public FieldImpl {
   typedef T (C::* Getter)() const;
   typedef void (C::* Setter)(T);
 
   Getter itsGetter;
   Setter itsSetter;
 
-  ReadWriteAttrib& operator=(const ReadWriteAttrib&);
-  ReadWriteAttrib(const ReadWriteAttrib&);
+  FuncMemberFieldImpl& operator=(const FuncMemberFieldImpl&);
+  FuncMemberFieldImpl(const FuncMemberFieldImpl&);
 
 public:
-  ReadWriteAttrib(Getter g, Setter s) : itsGetter(g), itsSetter(s) {}
+  FuncMemberFieldImpl(Getter g, Setter s) : itsGetter(g), itsSetter(s) {}
 
   virtual void set(FieldContainer* obj, const Value& new_val) const
   {
@@ -255,7 +255,7 @@ public:
   }
 
   virtual void readValueFrom(FieldContainer* obj,
-                             IO::Reader* reader, const fstring& name)
+                             IO::Reader* reader, const fstring& name) const
   {
     C& cobj = dynamic_cast<C&>(*obj);
 
@@ -285,7 +285,7 @@ public:
 class FieldInfo {
 private:
   const fstring itsName;
-  shared_ptr<FieldMemberPtr> itsMemberPtr;
+  shared_ptr<FieldImpl> itsFieldImpl;
   shared_ptr<Value> itsDefaultValue;
   shared_ptr<Value> itsMin;
   shared_ptr<Value> itsMax;
@@ -299,29 +299,29 @@ public:
   struct ValueType {};
 
   template <class C, class T>
-  static shared_ptr<FieldMemberPtr> makeMemPtr(T C::* member_ptr)
+  static shared_ptr<FieldImpl> makeImpl(T C::* member_ptr)
   {
-    return shared_ptr<FieldMemberPtr>(new DataAttrib<C,T>(member_ptr));
+    return shared_ptr<FieldImpl>(new DataMemberFieldImpl<C,T>(member_ptr));
   }
 
   template <class C, class T>
-  static shared_ptr<FieldMemberPtr> makeMemPtr(T C::* member_ptr,
-                                               const T& min, const T& max)
+  static shared_ptr<FieldImpl> makeImpl(T C::* member_ptr,
+													 const T& min, const T& max)
   {
-    return shared_ptr<FieldMemberPtr>
-      (new DataAttrib<C,T>(member_ptr,
-                           BoundsChecker<Deref<T>::Type>::make(min, max)));
+    return shared_ptr<FieldImpl>
+      (new DataMemberFieldImpl<C,T>
+		 (member_ptr, BoundsChecker<Deref<T>::Type>::make(min, max)));
   }
 
   template <class C, class T>
-  static shared_ptr<FieldMemberPtr>
-  makeMemPtr(std::pair<T (C::*)() const, void (C::*)(T)> funcs)
+  static shared_ptr<FieldImpl>
+  makeImpl(std::pair<T (C::*)() const, void (C::*)(T)> funcs)
   {
-    return shared_ptr<FieldMemberPtr>(new ReadWriteAttrib<C,T>(funcs.first,
-                                                               funcs.second));
+    return shared_ptr<FieldImpl>
+		(new FuncMemberFieldImpl<C,T>(funcs.first, funcs.second));
   }
 
-  static shared_ptr<FieldMemberPtr> makeMemPtr(shared_ptr<FieldMemberPtr> ptr)
+  static shared_ptr<FieldImpl> makeImpl(shared_ptr<FieldImpl> ptr)
   {
     return ptr;
   }
@@ -331,7 +331,7 @@ public:
             const T& def, const T& min, const T& max, const T& res,
             bool new_group=false) :
     itsName(name),
-    itsMemberPtr(new ValueAttrib<C,V>(value_ptr)),
+    itsFieldImpl(new ValueFieldImpl<C,V>(value_ptr)),
     itsDefaultValue(new TValue<T>(def)),
     itsMin(new TValue<T>(min)),
     itsMax(new TValue<T>(max)),
@@ -344,7 +344,7 @@ public:
             const T& def, const T& min, const T& max, const T& res,
             bool new_group=false) :
     itsName(name),
-    itsMemberPtr(makeMemPtr(member_ptr_init)),
+    itsFieldImpl(makeImpl(member_ptr_init)),
     itsDefaultValue(new TValue<T>(def)),
     itsMin(new TValue<T>(min)),
     itsMax(new TValue<T>(max)),
@@ -357,7 +357,7 @@ public:
             const T& def, const T& min, const T& max, const T& res,
             bool new_group=false) :
     itsName(name),
-    itsMemberPtr(makeMemPtr(member_ptr_init, min, max)),
+    itsFieldImpl(makeImpl(member_ptr_init, min, max)),
     itsDefaultValue(new TValue<T>(def)),
     itsMin(new TValue<T>(min)),
     itsMax(new TValue<T>(max)),
@@ -374,7 +374,27 @@ public:
 
   bool startsNewGroup() const { return itsStartsNewGroup; }
 
-  FieldMemberPtr& memberPtr() const { return *itsMemberPtr; }
+  void setValue(FieldContainer* obj, const Value& new_val) const
+  {
+	 itsFieldImpl->set(obj, new_val);
+  }
+
+  shared_ptr<Value> getValue(const FieldContainer* obj) const
+  {
+	 return itsFieldImpl->get(obj);
+  }
+
+  void readValueFrom(FieldContainer* obj,
+							IO::Reader* reader, const fstring& name) const
+  {
+	 itsFieldImpl->readValueFrom(obj, reader, name);
+  }
+
+  void writeValueTo(const FieldContainer* obj,
+						  IO::Writer* writer, const fstring& name) const
+  {
+	 itsFieldImpl->writeValueTo(obj, writer, name);
+  }
 };
 
 ///////////////////////////////////////////////////////////////////////

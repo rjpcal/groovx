@@ -26,7 +26,7 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-FieldMemberPtr::~FieldMemberPtr() {}
+FieldImpl::~FieldImpl() {}
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -172,7 +172,7 @@ shared_ptr<Value> FieldContainer::getField(const fstring& name) const
 
 shared_ptr<Value> FieldContainer::getField(const FieldInfo& pinfo) const
 {
-  return pinfo.memberPtr().get(this);
+  return pinfo.getValue(this);
 }
 
 void FieldContainer::setField(const fstring& name, const Value& new_val)
@@ -182,7 +182,7 @@ void FieldContainer::setField(const fstring& name, const Value& new_val)
 
 void FieldContainer::setField(const FieldInfo& pinfo, const Value& new_val)
 {
-  pinfo.memberPtr().set(this, new_val);
+  pinfo.setValue(this, new_val);
   if (itsObservable)
     itsObservable->sendStateChangeMsg();
 }
@@ -197,7 +197,7 @@ DOTRACE("FieldContainer::readFieldsFrom");
        itr != end;
        ++itr)
     {
-      itr->memberPtr().readValueFrom(this, reader, itr->name());
+      itr->readValueFrom(this, reader, itr->name());
     }
 
   if (itsObservable)
@@ -214,7 +214,7 @@ DOTRACE("FieldContainer::writeFieldsTo");
        itr != end;
        ++itr)
     {
-      itr->memberPtr().writeValueTo(this, writer, itr->name());
+      itr->writeValueTo(this, writer, itr->name());
     }
 }
 
