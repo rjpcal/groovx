@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Feb 19 18:09:19 2002
+// written: Tue Feb 19 18:13:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -591,64 +591,53 @@ Mtx operator/(const Mtx& m, double x)
 }
 
 
+namespace
+{
+  template <class Op>
+  Mtx binaryOp(const Mtx& m1, const Mtx& m2, Op op)
+  {
+    if (! m1.sameSize(m2) )
+      throw Util::Error("dimension mismatch in binaryOp(Mtx, Mtx)");
+
+    Mtx result(m1.mrows(), m1.ncols(), Mtx::NO_INIT);
+
+    std::transform(m1.begin(), m1.end(),
+                   m2.begin(),
+                   result.begin_nc(),
+                   op);
+
+    return result;
+  }
+}
+
 Mtx operator+(const Mtx& m1, const Mtx& m2)
 {
-  if (! m1.sameSize(m2) )
-    throw Util::Error("dimension mismatch in +(Mtx, Mtx)");
-
-  Mtx result(m1.mrows(), m1.ncols(), Mtx::NO_INIT);
-
-  std::transform(m1.begin(), m1.end(),
-                 m2.begin(),
-                 result.begin_nc(),
-                 std::plus<double>());
-
-  return result;
+  return binaryOp(m1, m2, std::plus<double>());
 }
 
 Mtx operator-(const Mtx& m1, const Mtx& m2)
 {
-  if (! m1.sameSize(m2) )
-    throw Util::Error("dimension mismatch in -(Mtx, Mtx)");
+  return binaryOp(m1, m2, std::minus<double>());
+}
 
-  Mtx result(m1.mrows(), m1.ncols(), Mtx::NO_INIT);
+Mtx arr_mul(const Mtx& m1, const Mtx& m2)
+{
+  return binaryOp(m1, m2, std::multiplies<double>());
+}
 
-  std::transform(m1.begin(), m1.end(),
-                 m2.begin(),
-                 result.begin_nc(),
-                 std::minus<double>());
-
-  return result;
+Mtx arr_div(const Mtx& m1, const Mtx& m2)
+{
+  return binaryOp(m1, m2, std::divides<double>());
 }
 
 Mtx min(const Mtx& m1, const Mtx& m2)
 {
-  if (! m1.sameSize(m2) )
-    throw Util::Error("dimension mismatch in min(Mtx, Mtx)");
-
-  Mtx result(m1.mrows(), m1.ncols(), Mtx::NO_INIT);
-
-  std::transform(m1.begin(), m1.end(),
-                 m2.begin(),
-                 result.begin_nc(),
-                 Min());
-
-  return result;
+  return binaryOp(m1, m2, Min());
 }
 
 Mtx max(const Mtx& m1, const Mtx& m2)
 {
-  if (! m1.sameSize(m2) )
-    throw Util::Error("dimension mismatch in max(Mtx, Mtx)");
-
-  Mtx result(m1.mrows(), m1.ncols(), Mtx::NO_INIT);
-
-  std::transform(m1.begin(), m1.end(),
-                 m2.begin(),
-                 result.begin_nc(),
-                 Max());
-
-  return result;
+  return binaryOp(m1, m2, Max());
 }
 
 static const char vcid_mtx_cc[] = "$Header$";
