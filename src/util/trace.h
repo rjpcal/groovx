@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Jun 26 12:23:32 2002
+// written: Wed Jul 31 17:16:21 2002
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -74,6 +74,7 @@ namespace Util
 {
   class Prof;
   class Trace;
+  class BackTrace;
 }
 
 /// Accumulates profiling information for a given execution context.
@@ -136,9 +137,6 @@ public:
   static unsigned int getMaxLevel();
   static void setMaxLevel(unsigned int lev);
 
-  static void printStackTrace(); // just print on cerr
-  static void printStackTrace(STD_IO::ostream& os);
-
   Trace(Prof& p, bool useMsg);
   ~Trace();
 
@@ -149,6 +147,50 @@ private:
   Prof& prof;
   timeval start, finish, elapsed;
   const bool giveTraceMsg;
+};
+
+/// Represents an instantaneous state of the call stack.
+class Util::BackTrace
+{
+public:
+  /// Default construct an empty call stack.
+  BackTrace();
+
+  /// Copy constructor.
+  BackTrace(const BackTrace& other);
+
+  /// Destructor.
+  ~BackTrace() throw();
+
+  /// Access the current call stack.
+  static BackTrace& current();
+
+  /// Push a new element onto the call stack.
+  void push(Util::Prof* p);
+
+  /// Pop the most recent element off of the call stack.
+  void pop() throw();
+
+  /// Get the number of elements in the call stack.
+  unsigned int size() const throw();
+
+  /// Will return a null pointer if i is out of range.
+  Util::Prof* at(unsigned int i) const throw();
+
+  /// Shorthand for at(i).
+  Util::Prof* operator[](unsigned int i) const throw() { return at(i); }
+
+  /// Print the call stack on stderr.
+  void print() const;
+
+  /// Print the call stack to the given stream.
+  void print(STD_IO::ostream& os) const;
+
+private:
+  BackTrace& operator=(const BackTrace&);
+
+  struct Impl;
+  Impl* const rep;
 };
 
 #ifdef LOCAL_PROF

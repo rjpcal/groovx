@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct  9 18:48:38 2000
-// written: Tue May 14 20:52:28 2002
+// written: Wed Jul 31 17:19:52 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ void Debug::AssertImpl(const char* what, const char* where, int line_no)
 {
   STD_IO::cerr << "Assertion failed: '" << what << "' in "
                << where << " line " << line_no << '\n';
-  Util::Trace::printStackTrace(STD_IO::cerr);
+  Util::BackTrace::current().print(STD_IO::cerr);
   abort();
 }
 
@@ -33,7 +33,7 @@ void Debug::PreconditionImpl(const char* what, const char* where, int line_no)
 {
   STD_IO::cerr << "Precondition failed: '" << what << "' in "
                << where << " line " << line_no << '\n';
-  Util::Trace::printStackTrace(STD_IO::cerr);
+  Util::BackTrace::current().print(STD_IO::cerr);
   abort();
 }
 
@@ -41,7 +41,7 @@ void Debug::PostconditionImpl(const char* what, const char* where, int line_no)
 {
   STD_IO::cerr << "Postcondition failed: '" << what << "' in "
                << where << " line " << line_no << '\n';
-  Util::Trace::printStackTrace(STD_IO::cerr);
+  Util::BackTrace::current().print(STD_IO::cerr);
   abort();
 }
 
@@ -49,7 +49,7 @@ void Debug::InvariantImpl(const char* what, const char* where, int line_no)
 {
   STD_IO::cerr << "Invariant failed: '" << what << "' in "
                << where << " line " << line_no << '\n';
-  Util::Trace::printStackTrace(STD_IO::cerr);
+  Util::BackTrace::current().print(STD_IO::cerr);
   abort();
 }
 

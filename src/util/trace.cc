@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Mar  4 11:17:33 2002
+// written: Wed Jul 31 17:18:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,99 @@
 
 #define TRACE_WALL_CLOCK_TIME
 //  #define TRACE_CPU_TIME
+
+///////////////////////////////////////////////////////////////////////
+//
+// Util::BackTrace member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+struct Util::BackTrace::Impl
+{
+  typedef minivec<Util::Prof*> VecType;
+  VecType vec;
+};
+
+Util::BackTrace::BackTrace() :
+  rep(new Impl)
+{}
+
+Util::BackTrace::BackTrace(const BackTrace& other) :
+  rep(new Impl(*other.rep))
+{}
+
+Util::BackTrace::~BackTrace() throw()
+{
+  delete rep;
+}
+
+Util::BackTrace& Util::BackTrace::current()
+{
+  static Util::BackTrace* ptr = 0;
+  if (ptr == 0)
+    {
+      ptr = new Util::BackTrace;
+    }
+  return *ptr;
+}
+
+void Util::BackTrace::push(Util::Prof* p)
+{
+  rep->vec.push_back(p);
+}
+
+void Util::BackTrace::pop() throw()
+{
+  rep->vec.pop_back();
+}
+
+unsigned int Util::BackTrace::size() const throw()
+{
+  return rep->vec.size();
+}
+
+Util::Prof* Util::BackTrace::at(unsigned int i) const throw()
+{
+  return (i < size()) ? rep->vec[i] : 0;
+}
+
+void Util::BackTrace::print() const
+{
+  printf("stack trace:\n");
+
+  const unsigned int end = size();
+
+  unsigned int i = 0;
+  unsigned int ri = end-1;
+
+  for (; i < end; ++i, --ri)
+    {
+      printf("\t[%d] %s\n", int(i), rep->vec[ri]->name());
+    }
+}
+
+void Util::BackTrace::print(STD_IO::ostream& os) const
+{
+  os << "stack trace:\n";
+
+  const unsigned int end = size();
+
+  unsigned int i = 0;
+  unsigned int ri = end-1;
+
+  for (; i < end; ++i, --ri)
+    {
+      os << "\t[" << i << "] " << rep->vec[ri]->name() << '\n';
+    }
+
+  os << std::flush;
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// File-scope helper functions and data
+//
+///////////////////////////////////////////////////////////////////////
 
 namespace
 {
@@ -72,16 +165,6 @@ namespace
 
   typedef minivec<Util::Prof*> ProfVec;
 
-  ProfVec& callStack()
-  {
-    static ProfVec* ptr = 0;
-    if (ptr == 0)
-      {
-        ptr = new ProfVec;
-      }
-    return *ptr;
-  }
-
   ProfVec& allProfs()
   {
     static ProfVec* ptr = 0;
@@ -92,7 +175,6 @@ namespace
     return *ptr;
   }
 }
-
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -243,34 +325,6 @@ void Util::Trace::setMaxLevel(unsigned int lev)
   MAX_TRACE_LEVEL = lev;
 }
 
-void Util::Trace::printStackTrace(std::ostream& os)
-{
-  os << "stack trace:\n";
-
-  unsigned int i = 0;
-  unsigned int ri = callStack().size()-1;
-
-  for (; i < callStack().size(); ++i, --ri)
-    {
-      os << "\t[" << i << "] " << callStack()[ri]->name() << '\n';
-    }
-
-  os << std::flush;
-}
-
-void Util::Trace::printStackTrace()
-{
-  printf("stack trace:\n");
-
-  unsigned int i = 0;
-  unsigned int ri = callStack().size()-1;
-
-  for (; i < callStack().size(); ++i, --ri)
-    {
-      printf("\t[%d] %s\n", int(i), callStack()[ri]->name());
-    }
-}
-
 Util::Trace::Trace(Prof& p, bool useMsg) :
   prof(p),
   start(), finish(), elapsed(),
@@ -281,7 +335,7 @@ Util::Trace::Trace(Prof& p, bool useMsg) :
       printIn();
     }
 
-  callStack().push_back(&p);
+  Util::BackTrace::current().push(&p);
 
   getTime(start);
 }
@@ -292,7 +346,7 @@ Util::Trace::~Trace()
   elapsed.tv_sec = finish.tv_sec - start.tv_sec;
   elapsed.tv_usec = finish.tv_usec - start.tv_usec;
   prof.add(elapsed);
-  callStack().pop_back();
+  Util::BackTrace::current().pop();
   if (GLOBAL_TRACE || giveTraceMsg)
     {
       printOut();
@@ -301,11 +355,13 @@ Util::Trace::~Trace()
 
 void Util::Trace::printIn()
 {
-  if (callStack().size() < MAX_TRACE_LEVEL)
+  const unsigned int n = Util::BackTrace::current().size();
+
+  if (n < MAX_TRACE_LEVEL)
     {
-      if (callStack().size() > 0)
+      if (n > 0)
         {
-          for (unsigned int i=0; i < callStack().size()-1; ++i)
+          for (unsigned int i=0; i+1 < n; ++i)
             {
               STD_IO::cerr << "|   ";
             }
@@ -327,7 +383,7 @@ void Util::Trace::printIn()
 
 void Util::Trace::printOut()
 {
-  if (callStack().size() == 0) STD_IO::cerr << '\n';
+  if (Util::BackTrace::current().size() == 0) STD_IO::cerr << '\n';
 }
 
 static const char vcid_trace_cc[] = "$Header$";
