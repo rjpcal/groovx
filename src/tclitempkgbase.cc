@@ -3,7 +3,7 @@
 // tclitempkgbase.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed May 31 18:32:51 2000
-// written: Wed May 31 18:38:45 2000
+// written: Wed May 31 19:00:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ Tcl::TclItemPkgBase::TclItemPkgBase(Tcl_Interp* interp,
   TclPkg(interp, name, version)
 {}
 
-virtual ~TclItemPkgBase();
+Tcl::TclItemPkgBase::~TclItemPkgBase() {}
 
 static const char vcid_tclitempkgbase_cc[] = "$Header$";
 #endif // !TCLITEMPKGBASE_CC_DEFINED
