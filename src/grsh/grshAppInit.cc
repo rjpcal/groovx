@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Thu Sep 13 11:32:13 2001
+// written: Fri Sep 14 13:32:21 2001
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -53,10 +53,8 @@ extern "C"
   Tcl_PackageInitProc Io_Init;
   Tcl_PackageInitProc Jitter_Init;
   Tcl_PackageInitProc Mask_Init;
-  Tcl_PackageInitProc Matlab_Init;
   Tcl_PackageInitProc Misc_Init;
   Tcl_PackageInitProc Morphyface_Init;
-  Tcl_PackageInitProc Mtx_Init;
   Tcl_PackageInitProc Objtogl_Init;
   Tcl_PackageInitProc Position_Init;
   Tcl_PackageInitProc Rh_Init;
@@ -103,10 +101,8 @@ PackageInfo IMMEDIATE_PKGS[] =
   , { "Io",       Io_Init        }
   , { "Jitter",   Jitter_Init    }
   , { "Mask",     Mask_Init      }
-  , { "Matlab",   Matlab_Init    }
   , { "Misc",     Misc_Init      }
   , { "Morphyface",Morphyface_Init}
-  , { "Mtx",      Mtx_Init       }
   , { "Objtogl",  Objtogl_Init   }
   , { "Position", Position_Init  }
   , { "Rh",       Rh_Init        }
