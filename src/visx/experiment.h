@@ -3,7 +3,7 @@
 // experiment.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 10:52:17 1999
-// written: Wed May 10 13:23:42 2000
+// written: Wed May 10 14:09:53 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,6 +73,9 @@ public:
   virtual void edSetCurrentTrial(int trial) = 0;
   /**< Changes the current trial that should be redrawn in the case
        that a redraw or refresh event is sent to its Widget. */
+
+  virtual void edRaiseBackgroundError(const char* msg) const = 0;
+  ///< Generates a background error with the message \a msg.
 };
 
 static const char vcid_experiment_h[] = "$Header$";

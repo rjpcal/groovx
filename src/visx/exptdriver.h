@@ -3,7 +3,7 @@
 // exptdriver.h
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed May 10 13:23:54 2000
+// written: Wed May 10 14:10:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,6 +112,8 @@ public:
   /// Returns the id of the current trial
   virtual int edGetCurrentTrial() const;
   virtual void edSetCurrentTrial(int trial);
+
+  virtual void edRaiseBackgroundError(const char* msg) const;
 
   /// Uses \c deserialize() to read an experiment from \a filename.
   void read(const char* filename);
