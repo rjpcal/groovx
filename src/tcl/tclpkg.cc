@@ -41,6 +41,7 @@
 
 #include <tcl.h>
 #include <cctype>
+#include <iostream>
 #include <typeinfo>
 #include <string>
 
@@ -80,6 +81,8 @@ namespace
 
     return result;
   }
+
+  bool VERBOSE_INIT = false;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -283,12 +286,12 @@ const char* Tcl::Pkg::namespName() throw()
   return rep->namespName.c_str();
 }
 
-const char* Tcl::Pkg::pkgName() throw()
+const char* Tcl::Pkg::pkgName() const throw()
 {
   return rep->pkgName.c_str();
 }
 
-const char* Tcl::Pkg::version() throw()
+const char* Tcl::Pkg::version() const throw()
 {
   return rep->version.c_str();
 }
@@ -380,6 +383,21 @@ void Tcl::Pkg::setInitStatusError() throw()
 {
 DOTRACE("Tcl::Pkg::setInitStatusError");
   rep->initStatus = TCL_ERROR;
+}
+
+void Tcl::Pkg::verboseInit(bool verbose) throw()
+{
+DOTRACE("Tcl::Pkg::verboseInit");
+
+  VERBOSE_INIT = verbose;
+}
+
+void Tcl::Pkg::finishInit() const
+{
+DOTRACE("Tcl::Pkg::finishInit");
+
+  if (VERBOSE_INIT)
+    std::cerr << pkgName() << " initialized.\n";
 }
 
 const char* Tcl::Pkg::actionUsage(const char* usage)
