@@ -108,8 +108,8 @@ private:
 
   void indent()
   {
-    for (int i = 0; i < itsIndentLevel; ++i)
-      itsBuf << "  ";
+    for (int i = 0; i < itsNestLevel; ++i)
+      itsBuf << '\t';
   }
 
   void writeEscaped(const char* text);
@@ -117,7 +117,7 @@ private:
   shared_ptr<STD_IO::ostream> itsOwnedStream;
   STD_IO::ostream& itsBuf;
   std::set<Util::UID> itsWrittenObjects;
-  int itsIndentLevel;
+  int itsNestLevel;
   IO::WriteIdMap itsIdMap;
 };
 
@@ -131,7 +131,7 @@ XMLWriter::XMLWriter(STD_IO::ostream& os) :
   itsOwnedStream(0),
   itsBuf(os),
   itsWrittenObjects(),
-  itsIndentLevel(0)
+  itsNestLevel(0)
 {
 DOTRACE("XMLWriter::XMLWriter");
 }
@@ -140,7 +140,7 @@ XMLWriter::XMLWriter(const char* filename) :
   itsOwnedStream(Util::ogzopen(filename)),
   itsBuf(*itsOwnedStream),
   itsWrittenObjects(),
-  itsIndentLevel(0)
+  itsNestLevel(0)
 {
 DOTRACE("XMLWriter::XMLWriter(const char*)");
 }
@@ -272,9 +272,9 @@ DOTRACE("XMLWriter::flattenObject");
          << " name=\"" << name << "\""
          << " version=\"" << obj->serialVersionId() << "\">\n";
 
-  ++itsIndentLevel;
+  ++itsNestLevel;
   obj->writeTo(*this);
-  --itsIndentLevel;
+  --itsNestLevel;
 
   markObjectAsWritten(obj);
 
