@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 20:05:41 2002
-// written: Wed Nov 13 20:09:30 2002
+// written: Wed Nov 13 21:33:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -761,7 +761,7 @@ unsigned int GxVectorFont::listBase() const
 }
 
 Gfx::Rect<double> GxVectorFont::sizeOf(const char* text,
-                                       Gfx::Canvas& canvas) const
+                                       Gfx::Canvas& /*canvas*/) const
 {
   Gfx::Rect<double> size;
   size.left() = 0.0;
