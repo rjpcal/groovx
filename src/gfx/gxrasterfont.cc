@@ -39,6 +39,8 @@
 
 #include "system/system.h"
 
+#include "tcl/tcllistobj.h"
+
 #include "util/cstrstream.h"
 #include "util/error.h"
 #include "util/strings.h"
@@ -97,11 +99,22 @@ DOTRACE("GxRasterFont::Impl::pickXFont");
       const char* rgstry  = "*"; // e.g. iso8859
       const char* encdng  = "*";
 
-      Util::icstrstream ist(spec);
-      ist >> family;
-      ist >> pxlsize;
-      fstring mods;
-      ist >> mods;
+      fstring     mods    = "";
+
+      // Parse the spec as a Tcl list. This is useful for font names with
+      // embedded spaces, such that the spec needs quotes or
+      // braces... e.g., {"luxi mono" 34 ib}. In cases like that, we can't
+      // just split the spec on whitespace.
+      Tcl::List specitems = Tcl::toTcl(spec);
+
+      if (specitems.length() >= 1)
+        family = specitems.get<const char*>(0);
+
+      if (specitems.length() >= 2)
+        pxlsize = specitems.get<const char*>(1);
+
+      if (specitems.length() >= 3)
+        mods = specitems.get<const char*>(2);
 
       const char* mod = mods.c_str();
       while (*mod != '\0')
