@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 17:14:19 2002
+// written: Tue Sep 17 17:21:23 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -456,9 +456,8 @@ DOTRACE("Togl::Impl::makeWindowExist");
 
   itsGlx.reset(GlxWrapper::make(dpy, itsOpts->glx));
 
-  Colormap cmap =
-    X11Util::findColormap(dpy, itsGlx->visInfo(),
-                          itsOpts->glx.rgbaFlag, itsOpts->privateCmapFlag);
+  Colormap cmap = X11Util::findColormap(dpy, itsGlx->visInfo(),
+                                        itsOpts->privateCmapFlag);
 
   TkUtil::createWindow(itsTkWin, itsGlx->visInfo(),
                        itsOwner->width(), itsOwner->height(), cmap);
