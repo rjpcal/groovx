@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Thu May 10 12:04:39 2001
+// written: Thu May 31 17:59:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,6 +105,7 @@ public:
   virtual void takeFocus();
 
   // actions
+  void loadDefaultFont();
   void loadFont(const char* fontname);
   void loadFonti(int fontnumber);
   void writeEpsFile(const char* filename);

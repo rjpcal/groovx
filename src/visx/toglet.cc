@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon May 14 17:31:15 2001
+// written: Thu May 31 18:00:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -382,6 +382,8 @@ DOTRACE("ToglConfig::bind");
   try { cmd.invoke(itsTogl->interp()); }
   catch (Tcl::TclError&) { throw; }
 }
+
+void ToglConfig::loadDefaultFont() { loadFont(0); }
 
 void ToglConfig::loadFont(const char* fontname) {
 DOTRACE("ToglConfig::loadFont");
