@@ -214,6 +214,9 @@ public:
   NullableItemWithId(NullablePtrHandle<T> item_, int id_) :
 	 itsHandle(item_), itsId(id_) {}
 
+  NullableItemWithId(const ItemWithId<T> other) :
+	 itsHandle(other.handle()), itsId(other.id()) {}
+
   // Default destructor, copy constructor, operator=() are fine
 
         T* operator->()       { refreshPtr(); return itsHandle.get(); }
