@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Mar 13 16:59:45 2001
+// written: Tue Mar 13 17:58:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,10 +30,18 @@ class Mtx;
 class ElemProxy {
   Mtx& m;
   int i;
+
+  double& uniqueRef();
+
 public:
   ElemProxy(Mtx& m_, int i_) : m(m_), i(i_) {}
 
   double& operator=(double d);
+  double& operator+=(double d);
+  double& operator-=(double d);
+  double& operator*=(double d);
+  double& operator/=(double d);
+
   operator double();
 };
 
@@ -58,9 +66,10 @@ protected:
 
   friend class Mtx;
 
-public:
   ConstSlice(const double* d, int s, int n) :
 	 itsData(const_cast<double*>(d)), itsStride(s), itsNelems(n) {}
+
+public:
 
   // Forms a dummy empty slice
   ConstSlice();
@@ -157,9 +166,10 @@ class Slice : public ConstSlice {
 
   double* address(int i) { return itsData + itsStride*i; }
 
-public:
   Slice(double* d, int s, int n) :
 	 ConstSlice(d,s,n) {}
+
+public:
 
   double& operator[](int i) { return *(address(i)); }
 
@@ -376,8 +386,23 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 
+inline double& ElemProxy::uniqueRef()
+{ m.makeUnique(); return m.start_[i]; }
+
 inline double& ElemProxy::operator=(double d)
-{ m.makeUnique(); double& r = m.start_[i]; r = d; return r; }
+{ return (uniqueRef() = d); }
+
+inline double& ElemProxy::operator+=(double d)
+{ return (uniqueRef() += d); }
+
+inline double& ElemProxy::operator-=(double d)
+{ return (uniqueRef() -= d); }
+
+inline double& ElemProxy::operator*=(double d)
+{ return (uniqueRef() *= d); }
+
+inline double& ElemProxy::operator/=(double d)
+{ return (uniqueRef() /= d); }
 
 inline ElemProxy::operator double() { return m.start_[i]; }
 
