@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Thu Aug 30 10:17:57 2001
+// written: Wed Sep  5 17:02:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,7 +51,8 @@ const FieldMap& Gabor::classFields()
     Field("colorMode", &Gabor::itsColorMode, 2, 1, 4, 1, Field::NEW_GROUP),
     Field("contrast", &Gabor::itsContrast, 1.0, 0.0, 1.0, 0.05),
     Field("spatialFreq", &Gabor::itsSpatialFreq, 3.5, 0.5, 10.0, 0.5),
-    Field("phase", &Gabor::itsPhase, 0, -180, 179, 1),
+    Field("phase", &Gabor::itsPhase, 0, 0, 359, 1),
+    Field("drift", &Gabor::itsDrift, 0, 0, 359, 1, Field::TRANSIENT),
     Field("sigma", &Gabor::itsSigma, 0.15, 0.025, 0.5, 0.025),
     Field("aspectRatio", &Gabor::itsAspectRatio, 1.0, 0.1, 10.0, 0.1),
     Field("orientation", &Gabor::itsOrientation, 0, -180, 179, 1),
@@ -75,6 +76,8 @@ Gabor::Gabor() :
   itsContrast(1.0),
   itsSpatialFreq(3.5),
   itsPhase(0),
+  itsDrift(0),
+  itsDrawnPhase(0),
   itsSigma(0.15),
   itsAspectRatio(1.0),
   itsOrientation(0),
@@ -151,6 +154,16 @@ DOTRACE("Gabor::grRender");
 
   static const double PI = acos(-1.0);
 
+  if (itsDrift == 0)
+    {
+      itsDrawnPhase = itsPhase;
+    }
+  else
+    {
+      itsDrawnPhase += itsDrift;
+      itsDrawnPhase %= 360;
+    }
+
   //                      1            ( -(x-mean)^2 / (2*sigma)^2 )
   // gaussian(x) = ---------------- * e
   //               sigma*sqrt(2*pi)
@@ -188,7 +201,7 @@ DOTRACE("Gabor::grRender");
                  (point.y())*(point.y()) / (-4.0*ysigma2) );
 
           const double sin_x =
-            sin(2*PI*itsSpatialFreq*point.x() + itsPhase*PI/180.0);
+            sin(2*PI*itsSpatialFreq*point.x() + itsDrawnPhase*PI/180.0);
 
           const double gabor = 0.5*sin_x*gauss_xy*itsContrast + 0.5;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Sun Aug 26 08:35:14 2001
+// written: Wed Sep  5 17:02:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,7 +78,15 @@ private:
   double itsSpatialFreq;
 
   /// Phase of the sine grating, in degrees.
-  int itsPhase;
+  unsigned int itsPhase;
+
+  /** Number of degrees by which itsPhase will drift each time the
+      patch is drawn. */
+  unsigned int itsDrift;
+
+  /** The actual phase with which the patch is drawn; this may differ
+      from itsPhase if the grating is drifting. */
+  mutable unsigned int itsDrawnPhase;
 
   /// The base standard deviation for the Gaussian.
   double itsSigma;
