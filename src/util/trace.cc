@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Fri Apr 11 00:50:53 2003
+// written: Thu May 15 16:25:16 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -61,7 +61,9 @@ public:
 
   static_stack& operator=(const static_stack& other) throw()
   {
-    for (unsigned int i = 0; i < other.sz; ++i)
+    sz = other.sz;
+
+    for (unsigned int i = 0; i < sz; ++i)
       {
         vec[i] = other.vec[i];
       }
@@ -492,7 +494,6 @@ void Util::Trace::printIn() throw()
               STD_IO::cerr << "|   ";
             }
           STD_IO::cerr << "|-->> ";
-        }
 
       STD_IO::cerr << itsProf.name();
 
