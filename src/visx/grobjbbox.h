@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 09:06:14 2001
-// written: Tue Sep  4 08:20:45 2001
+// written: Wed Sep  5 16:07:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,10 +17,6 @@
 
 #include "gfx/rect.h"
 
-#include "tcl/tcltimer.h"
-
-#define ANIMATE_BBOX
-
 class GrObjBBox : public Gnode
 {
 private:
@@ -28,32 +24,12 @@ private:
   GrObjBBox& operator=(const GrObjBBox&);
 
 public:
-  GrObjBBox(Util::SoftRef<Gnode> child, Util::Signal& sig);
+  GrObjBBox(Util::SoftRef<Gnode> child);
 
   virtual ~GrObjBBox();
 
   bool isVisible() const { return isItVisible; }
-  void setVisible(bool val)
-  {
-    if (isItVisible == val) return;
-
-    isItVisible = val;
-
-#ifdef ANIMATE_BBOX
-    if (isItVisible)
-      {
-        ++theirTimerCount;
-        if (theirTimerCount == 1)
-          theirTimer.schedule();
-      }
-    else
-      {
-        --theirTimerCount;
-        if (theirTimerCount == 0)
-          theirTimer.cancel();
-      }
-#endif
-  }
+  void setVisible(bool val) { isItVisible = val; }
 
   void setPixelBorder(int pixels) { itsPixelBorder = pixels; }
   int pixelBorder() const { return itsPixelBorder; }
@@ -63,14 +39,9 @@ public:
   virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
 
 private:
-  Util::Signal& itsTargetSignal;
-
   bool isItVisible;
 
-  mutable int itsPixelBorder;
-
-  static unsigned int theirTimerCount;
-  static Tcl::Timer theirTimer;
+  int itsPixelBorder;
 
   mutable unsigned short itsStipple;
   mutable unsigned short itsMask;

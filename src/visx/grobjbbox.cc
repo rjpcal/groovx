@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Tue Sep  4 08:21:26 2001
+// written: Wed Sep  5 16:08:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,9 +23,6 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-unsigned int GrObjBBox::theirTimerCount = 0;
-Tcl::Timer GrObjBBox::theirTimer(100, true);
-
 namespace
 {
   Gfx::Rect<double> addPixelBorder(Gfx::Canvas& canvas,
@@ -42,21 +39,15 @@ namespace
   }
 }
 
-GrObjBBox::GrObjBBox(Util::SoftRef<Gnode> child, Util::Signal& sig) :
+GrObjBBox::GrObjBBox(Util::SoftRef<Gnode> child) :
   Gnode(child),
-  itsTargetSignal(sig),
   isItVisible(false),
   itsPixelBorder(4),
   itsStipple(0x0F0F), // 0000111100001111
   itsMask(0x3333)     // 0011001100110011
-{
-  theirTimer.sigTimeOut.connect(itsTargetSignal.slot());
-}
+{}
 
-GrObjBBox::~GrObjBBox()
-{
-  theirTimer.sigTimeOut.disconnect(itsTargetSignal.slot());
-}
+GrObjBBox::~GrObjBBox() {}
 
 Gfx::Rect<double> GrObjBBox::gnodeBoundingBox(Gfx::Canvas& canvas) const
 {
@@ -84,6 +75,8 @@ DOTRACE("GrObjBBox::gnodeDraw");
         addPixelBorder(canvas,
                        child()->gnodeBoundingBox(canvas),
                        itsPixelBorder);
+
+#define ANIMATE_BBOX
 
 #ifdef ANIMATE_BBOX
       itsStipple ^= itsMask;
