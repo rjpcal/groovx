@@ -118,15 +118,46 @@ public:
 		itsPtrVec.reserve(size);
 	 }
 
-
   int itsFirstVacant;
   typedef std::vector<VoidPtrHandle> VecType;
   VecType itsPtrVec;
+
+  void ensureNotDuplicate(MasterPtrBase* ptr);
 
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 };
+
+///////////////////////////////////////////////////////////////////////
+//
+// PtrListBase::Impl member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+// Asserts that there are no duplicate MasterPtr's in the list, as
+// well as no duplicate pointees.
+void PtrListBase::Impl::ensureNotDuplicate(MasterPtrBase* ptr) {
+DOTRACE("PtrListBase::Impl::ensureNotDuplicate");
+
+#ifdef LOCAL_ASSERT
+  // First make sure that the we have no duplicates of ptr in the list
+  for (int i = 0; i < itsPtrVec.size(); ++i) 
+	 {
+		DebugEvalNL(i);
+		Assert(ptr != itsPtrVec[i].masterPtr());
+	 }
+
+  // Next make sure that if ptr's pointee is non-null, that there are
+  // no other pointers referring to that pointee
+  if (ptr->isValid())
+	 for (int j = 0; j < itsPtrVec.size(); ++j)
+		{
+		  DebugEvalNL(i);
+		  Assert( !(*ptr == *(itsPtrVec[j].masterPtr())) );
+		}
+#endif
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -275,6 +306,11 @@ DOTRACE("PtrListBase::insertPtrBaseAt");
   // the "new" pointer would then be dangling).
   if ( *(itsImpl->itsPtrVec[uid].masterPtr()) == *ptr) return;
 
+  itsImpl->ensureNotDuplicate(ptr);
+
+  //
+  // The actual insertion
+  //
   itsImpl->itsPtrVec[uid] = VoidPtrHandle(ptr);
 
   // It is possible that ptr is not valid, in this case, we might need
