@@ -3,7 +3,7 @@
 // tclpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 12:55:27 1999
-// written: Thu Mar 30 10:02:58 2000
+// written: Fri May 19 19:17:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,6 +29,7 @@
 
 #define NO_TRACE
 #include "util/trace.h"
+#define LOCAL_ASSERT
 #include "util/debug.h"
 
 namespace {
@@ -36,6 +37,7 @@ namespace {
 void exitHandler(ClientData clientData) {
 DOTRACE("exitHandler");
   Tcl::TclPkg* pkg = static_cast<Tcl::TclPkg*>(clientData);
+  DebugEvalNL(typeid(*pkg).name());
   delete pkg;
 }
 
