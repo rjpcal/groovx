@@ -14,7 +14,6 @@
 #include "io/io.h"
 
 #include "io/writer.h"
-#include "io/iolegacy.h"
 
 #include "system/demangle.h"
 
