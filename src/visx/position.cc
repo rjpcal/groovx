@@ -3,7 +3,7 @@
 // position.cc
 // Rob Peters
 // created: Wed Mar 10 21:33:15 1999
-// written: Fri Sep 29 16:10:58 2000
+// written: Mon Oct  9 18:44:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,7 @@
 
 #define NO_TRACE
 #include "util/trace.h"
-#define LOCAL_INVARIANT
+#define LOCAL_ASSERT
 #include "util/debug.h"
 
 ///////////////////////////////////////////////////////////////////////

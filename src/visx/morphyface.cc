@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Fri Sep 29 18:51:11 2000
+// written: Mon Oct  9 18:44:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,6 @@
 #define NO_TRACE
 #include "util/trace.h"
 #define LOCAL_ASSERT
-#define LOCAL_INVARIANT
 #include "util/debug.h"
 
 #ifdef MIPSPRO_COMPILER

@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Fri Sep 29 18:50:46 2000
+// written: Mon Oct  9 18:43:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,6 @@
 #define NO_TRACE
 #include "util/trace.h"
 #define LOCAL_ASSERT
-#define LOCAL_INVARIANT
 #include "util/debug.h"
 
 #ifdef MIPSPRO_COMPILER
