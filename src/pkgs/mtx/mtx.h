@@ -19,7 +19,6 @@
 class Mtx;
 
 
-
 ///////////////////////////////////////////////////////////////////////
 //
 // ElemProxy class definition
@@ -301,6 +300,8 @@ public:
     { return MtxConstIter(itsImpl.address(0,c), itsImpl.colstride(), mrows()); }
 
 
+  Mtx columns(int c, int nc) const;
+
 
   //
   // Functions
@@ -401,6 +402,7 @@ private:
 	 void reshape(int mrows, int ncols);
 
 	 void selectRowRange(int r, int nr);
+	 void selectColumnRange(int c, int nc);
 
 	 int offsetFromStart(int row, int col) const
       { return row + (col*rowstride_); }

@@ -73,6 +73,15 @@ void Mtx::MtxImpl::selectRowRange(int r, int nr)
   mrows_ = nr;
 }
 
+void Mtx::MtxImpl::selectColumnRange(int c, int nc)
+{
+  if ((c+nc) > ncols_)
+    throw ErrorWithMsg("attempted to index more columns than are available");
+
+  offset_ += c*rowstride_;
+  ncols_ = nc;
+}
+
 void Mtx::MtxImpl::makeUnique()
 {
   if ( !storage_->isUnique() )
@@ -132,6 +141,15 @@ Mtx Mtx::rows(int r, int nr) const
   Mtx result(*this);
 
   result.itsImpl.selectRowRange(r, nr);
+
+  return result;
+}
+
+Mtx Mtx::columns(int c, int nc) const
+{
+  Mtx result(*this);
+
+  result.itsImpl.selectColumnRange(c, nc);
 
   return result;
 }
