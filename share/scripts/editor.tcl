@@ -662,13 +662,13 @@ itcl::class Editor {
     }
 
     public method saveObjects {filename} {
-	set objs [getEditAll] 
-	ObjDb::saveObjects $filename no
+	set objs [getEditSelection] 
+	ObjDb::saveObjects $objs $filename no
 	return [llength $objs]
     }
 
     public method saveBitmaps {basename} {
-	set objs [getEditAll]
+	set objs [getEditSelection]
 	set grobjs [dlist::select $objs [GrObj::is $objs]]
 	foreach obj $grobjs {
 	    GrObj::renderMode $obj $GrObj::GL_BITMAP_CACHE
