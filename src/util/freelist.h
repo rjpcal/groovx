@@ -68,21 +68,24 @@ public:
 
 /// Typesafe wrapper of FreeListBase for maintaining free-list memory pools.
 template <class T>
-class FreeList : private FreeListBase
+class FreeList
 {
+private:
+  FreeListBase itsBase;;
+
 public:
   /// Construct an (empty) free list.
   /** All objects allocated from this list must be of size sizeof(T). */
-  FreeList() : FreeListBase(sizeof(T)) {}
+  FreeList() : itsBase(sizeof(T)) {}
 
   void* allocate(std::size_t bytes)
   {
-    return FreeListBase::allocate(bytes);
+    return itsBase.allocate(bytes);
   }
 
   void deallocate(void* space)
   {
-    FreeListBase::deallocate(space);
+    itsBase.deallocate(space);
   }
 };
 
