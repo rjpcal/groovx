@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Thu Sep 12 18:04:07 2002
+// written: Mon Sep 16 11:07:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,7 @@
 
 #include "visx/toglet.h"
 
-#include "visx/xbmaprenderer.h"
-
-#include "gfx/glcanvas.h"
+#include "gfx/canvas.h"
 
 #include "grsh/grsh.h"
 
@@ -34,6 +32,8 @@
 #include "util/error.h"
 #include "util/ref.h"
 #include "util/strings.h"
+
+#include "visx/xbmaprenderer.h"
 
 #include <X11/Xlib.h>
 #include <GL/gl.h>
@@ -292,7 +292,6 @@ class TogletImpl
 {
 public:
   Togl* const togl;
-  Util::Ref<Gfx::Canvas> canvas;
   scoped_ptr<TogletSizer> sizer;
   unsigned int fontListBase;
 
@@ -312,8 +311,6 @@ public:
 TogletImpl::TogletImpl(Toglet* owner, Util::UID uid)
   :
   togl(new Togl(Tcl::Main::interp(), widgetName(uid))),
-  canvas(GLCanvas::make(togl->bitsPerPixel(),
-                        togl->isRgba(), togl->isDoubleBuffered())),
   sizer(new TogletSizer),
   fontListBase(0)
 {
@@ -327,20 +324,20 @@ TogletImpl::TogletImpl(Toglet* owner, Util::UID uid)
 
   if ( togl->isRgba() )
     {
-      canvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
-      canvas->setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
+      togl->getCanvas().setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
+      togl->getCanvas().setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
     }
   else
     { // not using rgba
       if ( togl->hasPrivateCmap() )
         {
-          canvas->setColorIndex(0);
-          canvas->setClearColorIndex(1);
+          togl->getCanvas().setColorIndex(0);
+          togl->getCanvas().setClearColorIndex(1);
         }
       else
         {
-          canvas->setColorIndex(togl->allocColor(0.0, 0.0, 0.0));
-          canvas->setClearColorIndex(togl->allocColor(1.0, 1.0, 1.0));
+          togl->getCanvas().setColorIndex(togl->allocColor(0.0, 0.0, 0.0));
+          togl->getCanvas().setClearColorIndex(togl->allocColor(1.0, 1.0, 1.0));
         }
     }
 }
@@ -565,7 +562,7 @@ Gfx::Canvas& Toglet::getCanvas()
 {
 DOTRACE("Toglet::getCanvas");
   rep->togl->makeCurrent();
-  return *rep->canvas;
+  return rep->togl->getCanvas();
 }
 
 //////////////////
@@ -742,23 +739,23 @@ DOTRACE("Toglet::writeEpsFile");
   rep->togl->makeCurrent();
 
   {
-    Gfx::AttribSaver saver(*rep->canvas);
+    Gfx::AttribSaver saver(getCanvas());
 
     // Set fore/background colors to extremes for the purposes of EPS
     // rendering
     if ( rep->togl->isRgba() )
       {
-        rep->canvas->setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
-        rep->canvas->setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
+        getCanvas().setColor(Gfx::RgbaColor(0.0, 0.0, 0.0, 1.0));
+        getCanvas().setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
       }
     else
       {
-        rep->canvas->setColorIndex(0);
-        rep->canvas->setClearColorIndex(255);
+        getCanvas().setColorIndex(0);
+        getCanvas().setClearColorIndex(255);
       }
 
     // get a clear buffer
-    rep->canvas->clearColorBuffer();
+    getCanvas().clearColorBuffer();
     swapBuffers();
 
     fullRender();

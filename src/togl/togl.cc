@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Aug  7 11:40:14 2002
+// written: Mon Sep 16 11:04:53 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -26,6 +26,8 @@
 
 #include "togl/togl.h"
 
+#include "gfx/glcanvas.h"
+
 #include "togl/glutil.h"
 #include "togl/glxopts.h"
 #include "togl/glxoverlay.h"
@@ -35,6 +37,7 @@
 
 #include "util/error.h"
 #include "util/pointers.h"
+#include "util/ref.h"
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
@@ -232,6 +235,7 @@ public:
 
   GlxOverlay* itsOverlay;
 
+  Util::SoftRef<GLCanvas> itsCanvas;
 
   Impl(Togl* owner, Tcl_Interp* interp, const char* pathname);
   ~Impl() throw();
@@ -396,6 +400,10 @@ DOTRACE("Togl::Impl::Impl");
   guard.dismiss();
 
   Tcl_AppendResult(itsInterp, Tk_PathName(itsTkWin), NULL);
+
+  itsCanvas = Util::SoftRef<GLCanvas>(GLCanvas::make(itsGlx->visInfo()->depth,
+                                                     itsOpts.glx.rgbaFlag,
+                                                     itsOpts.glx.doubleFlag));
 }
 
 Togl::Impl::~Impl() throw()
@@ -912,6 +920,8 @@ Screen* Togl::screen() const    { return Tk_Screen(rep->itsTkWin); }
 int Togl::screenNumber() const  { return Tk_ScreenNumber(rep->itsTkWin); }
 Colormap Togl::colormap() const { return Tk_Colormap(rep->itsTkWin); }
 Window Togl::windowId() const   { return Tk_WindowId(rep->itsTkWin); }
+
+Gfx::Canvas& Togl::getCanvas() const { return *(rep->itsCanvas); }
 
 ///////////////////////////////////////////////////////////////////////
 //

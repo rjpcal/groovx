@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Wed Aug  7 11:41:30 2002
+// written: Mon Sep 16 11:04:14 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -26,9 +26,12 @@
 
 #include <tcl.h>
 #include <tk.h>
-#ifdef TOGL_X11
 #include <X11/Xlib.h>
-#endif
+
+namespace Gfx
+{
+  class Canvas;
+}
 
 #define TOGL_VERSION "1.5"
 #define TOGL_MAJOR_VERSION 1
@@ -126,6 +129,9 @@ public:
   int screenNumber() const;
   Colormap colormap() const;
   Window windowId() const;
+
+  // Canvas
+  Gfx::Canvas& getCanvas() const;
 
   class Impl;
   friend class Impl;
