@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon Jun 11 18:27:31 2001
+// written: Fri Jul 13 14:47:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@
 namespace {
   template <class T>
   inline T abs(const T& val)
-	 { return (val < 0) ? -val : val; }
+    { return (val < 0) ? -val : val; }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -64,15 +64,15 @@ private:
 
 public:
   Impl(shared_ptr<BmapRenderer> renderer, const char* filename="") :
-	 itsRenderer(renderer),
-	 itsFilename(filename),
-	 itsRasterX(0.0), itsRasterY(0.0),
-	 itsZoomX(0.0), itsZoomY(0.0),
-	 itsUsingZoom(false),
-	 itsContrastFlip(false),
-	 itsVerticalFlip(false),
-	 itsData()
-	 {}
+    itsRenderer(renderer),
+    itsFilename(filename),
+    itsRasterX(0.0), itsRasterY(0.0),
+    itsZoomX(0.0), itsZoomY(0.0),
+    itsUsingZoom(false),
+    itsContrastFlip(false),
+    itsVerticalFlip(false),
+    itsData()
+    {}
 
   shared_ptr<BmapRenderer> itsRenderer;
 
@@ -97,11 +97,11 @@ public:
 class PbmUpdater : public BmapData::UpdateFunc {
 public:
   PbmUpdater(const char* filename,
-				  bool contrast = false, bool vertical = false) :
-	 itsFilename(filename),
-	 itsFlipContrast(contrast),
-	 itsFlipVertical(vertical)
-	 {}
+              bool contrast = false, bool vertical = false) :
+    itsFilename(filename),
+    itsFlipContrast(contrast),
+    itsFlipVertical(vertical)
+    {}
 
   virtual void update(BmapData& update_me);
 
@@ -145,7 +145,7 @@ DOTRACE("BitmapRep::BitmapRep");
   loadPbmFile(filename);
 }
 
-BitmapRep::~BitmapRep() 
+BitmapRep::~BitmapRep()
 {
 DOTRACE("BitmapRep::~BitmapRep");
   delete itsImpl;
@@ -175,10 +175,10 @@ DOTRACE("BitmapRep::readFrom");
   reader->readValue("verticalFlip", itsImpl->itsVerticalFlip);
 
   if ( itsImpl->itsFilename.empty() ) {
-	 clearBytes();
+    clearBytes();
   }
   else {
-	 queuePbmFile(itsImpl->itsFilename.c_str());
+    queuePbmFile(itsImpl->itsFilename.c_str());
   }
 }
 
@@ -205,13 +205,13 @@ DOTRACE("BitmapRep::loadPbmFile(const char*)");
   queuePbmFile(filename);
 
   try {
-	 itsImpl->itsData.updateIfNeeded();
+    itsImpl->itsData.updateIfNeeded();
   }
   // If there was a PbmError, it means we couldn't read the file
   // 'filename' so we should forget about 'filename' locally
   catch (PbmError&) {
-	 itsImpl->itsFilename = "";
-	 throw;
+    itsImpl->itsFilename = "";
+    throw;
   }
 }
 
@@ -220,7 +220,7 @@ DOTRACE("BitmapRep::queuePbmFile");
 
   shared_ptr<BmapData::UpdateFunc> updater(
     new PbmUpdater(filename, itsImpl->itsContrastFlip,
-						 itsImpl->itsVerticalFlip));
+                   itsImpl->itsVerticalFlip));
 
   itsImpl->itsData.queueUpdate(updater);
 
@@ -228,18 +228,18 @@ DOTRACE("BitmapRep::queuePbmFile");
   // it is a temp file, and therefore we don't save this filename in
   // itsImpl->itsFilename.
   if ( filename[0] != '.' ) {
-	 itsImpl->itsFilename = filename;
+    itsImpl->itsFilename = filename;
   }
   else {
-	 itsImpl->itsFilename = "";
+    itsImpl->itsFilename = "";
   }
 
   itsImpl->itsRenderer->notifyBytesChanged();
 }
 
-void BitmapRep::loadPbmFile(STD_IO::istream& is) {
-DOTRACE("BitmapRep::loadPbmFile(STD_IO::istream&)");
-  // Create a Pbm object by reading pbm data from 'filename'.
+void BitmapRep::loadPbmData(STD_IO::istream& is) {
+DOTRACE("BitmapRep::loadPbmData(STD_IO::istream&)");
+  // Create a Pbm object by reading pbm data from the stream.
   Pbm pbm(is);
 
   // Grab ownership of the bitmap data from pbm into this object's itsImpl->itsBytes.
@@ -277,7 +277,7 @@ DOTRACE("BitmapRep::grabScreenRect");
 
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
   glReadPixels(rect.left(), rect.bottom(), newData.width(), newData.height(),
-					GL_COLOR_INDEX, GL_BITMAP, newData.bytesPtr());
+               GL_COLOR_INDEX, GL_BITMAP, newData.bytesPtr());
 
   itsImpl->itsData.swap( newData );
 
@@ -285,7 +285,7 @@ DOTRACE("BitmapRep::grabScreenRect");
 }
 
 void BitmapRep::grabWorldRect(double left, double top,
-									double right, double bottom) {
+                           double right, double bottom) {
   grabWorldRect(Rect<double>(left, top, right, bottom));
 }
 
@@ -361,12 +361,12 @@ void BitmapRep::render(GWT::Canvas& canvas) const {
 DOTRACE("BitmapRep::render");
 
   itsImpl->itsRenderer->doRender(canvas,
-								itsImpl->itsData.bytesPtr(),
-								itsImpl->itsRasterX, itsImpl->itsRasterY,
-								itsImpl->itsData.width(), itsImpl->itsData.height(),
-								itsImpl->itsData.bitsPerPixel(),
-								itsImpl->itsData.byteAlignment(),
-								itsImpl->itsZoomX, itsImpl->itsZoomY);
+                        itsImpl->itsData.bytesPtr(),
+                        itsImpl->itsRasterX, itsImpl->itsRasterY,
+                        itsImpl->itsData.width(), itsImpl->itsData.height(),
+                        itsImpl->itsData.bitsPerPixel(),
+                        itsImpl->itsData.byteAlignment(),
+                        itsImpl->itsZoomX, itsImpl->itsZoomY);
 }
 
 void BitmapRep::unRender(GWT::Canvas& canvas) const {
@@ -382,10 +382,10 @@ DOTRACE("BitmapRep::unRender");
   screen_pos.heightenByStep(border_pixels + 1);
 
   itsImpl->itsRenderer->doUndraw( canvas,
-											 screen_pos.left(),
-											 screen_pos.bottom(),
-											 screen_pos.width(),
-											 abs(screen_pos.height()) );
+                                  screen_pos.left(),
+                                  screen_pos.bottom(),
+                                  screen_pos.width(),
+                                  abs(screen_pos.height()) );
 }
 
 ///////////////
@@ -393,7 +393,7 @@ DOTRACE("BitmapRep::unRender");
 ///////////////
 
 void BitmapRep::grGetBoundingBox(Rect<double>& bbox,
-											int& border_pixels) const {
+                                 int& border_pixels) const {
 DOTRACE("BitmapRep::grGetBoundingBox");
 
   border_pixels = 2;
@@ -406,18 +406,18 @@ DOTRACE("BitmapRep::grGetBoundingBox");
   GWT::Canvas& canvas = Application::theApp().getCanvas();
 
   Point<int> screen_point =
-	 canvas.getScreenFromWorld(Point<double>(itsImpl->itsRasterX, itsImpl->itsRasterY));
+    canvas.getScreenFromWorld(Point<double>(itsImpl->itsRasterX, itsImpl->itsRasterY));
 
   if (itsImpl->itsZoomX < 0.0) {
-	 screen_point.x() += int(width()*itsImpl->itsZoomX);
+    screen_point.x() += int(width()*itsImpl->itsZoomX);
   }
   if (itsImpl->itsZoomY < 0.0) {
-	 screen_point.y() += int(height()*itsImpl->itsZoomY);
+    screen_point.y() += int(height()*itsImpl->itsZoomY);
   }
 
   // Move the point to the upper right corner
   screen_point += Point<double>(width()*abs(itsImpl->itsZoomX),
-										  height()*abs(itsImpl->itsZoomY));
+                                height()*abs(itsImpl->itsZoomY));
 
   bbox.setTopRight(canvas.getWorldFromScreen(screen_point));
 }
@@ -469,7 +469,7 @@ DOTRACE("BitmapRep::getZoomY");
 
 bool BitmapRep::getUsingZoom() const {
 DOTRACE("BitmapRep::getUsingZoom");
-  return itsImpl->itsUsingZoom; 
+  return itsImpl->itsUsingZoom;
 }
 
 //////////////////
@@ -500,17 +500,17 @@ DOTRACE("BitmapRep::setZoomY");
 
 void BitmapRep::setUsingZoom(bool val) {
 DOTRACE("BitmapRep::setUsingZoom");
-  itsImpl->itsUsingZoom = val; 
+  itsImpl->itsUsingZoom = val;
 
   if (!itsImpl->itsUsingZoom) {
-	 itsImpl->itsZoomX = 1.0;
-	 itsImpl->itsZoomY = 1.0;
+    itsImpl->itsZoomX = 1.0;
+    itsImpl->itsZoomY = 1.0;
   }
 }
 
 void BitmapRep::clearBytes() {
 DOTRACE("BitmapRep::clearBytes");
-  itsImpl->itsData.clear(); 
+  itsImpl->itsData.clear();
   itsImpl->itsRenderer->notifyBytesChanged();
 }
 

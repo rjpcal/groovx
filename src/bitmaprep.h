@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri Jun  1 14:26:27 2001
+// written: Fri Jul 13 14:46:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,30 +84,30 @@ public:
   void queuePbmFile(const char* filename);
 
   /// Loads PBM bitmap data from an STD_IO::istream.
-  void loadPbmFile(STD_IO::istream& is);
+  void loadPbmData(STD_IO::istream& is);
 
   /// Writes PBM bitmap data to the file \a filename.
   void writePbmFile(const char* filename) const;
 
   /** Grabs pixels from a rectangulur area of the screen buffer into
-		the Bitmap's pixel array. The coordinates of the rectangle are
-		specified in pixel values. */
+      the Bitmap's pixel array. The coordinates of the rectangle are
+      specified in pixel values. */
   void grabScreenRect(int left, int top, int right, int bottom);
 
   /** Grabs pixels from a rectangulur area of the screen buffer into
-		the Bitmap's pixel array. The coordinates of the rectangle are
-		specified in pixel values. */
+      the Bitmap's pixel array. The coordinates of the rectangle are
+      specified in pixel values. */
   void grabScreenRect(const Rect<int>& rect);
 
   /** Grabs pixels from a rectangulur area of the screen buffer into
-		the Bitmap's pixel array. The coordinates of the rectangle are
-		specified in OpenGL coordinates. */
+      the Bitmap's pixel array. The coordinates of the rectangle are
+      specified in OpenGL coordinates. */
   void grabWorldRect(double left, double top,
-							double right, double bottom);
+                     double right, double bottom);
 
   /** Grabs pixels from a rectangulur area of the screen buffer into
-		the Bitmap's pixel array. The coordinates of the rectangle are
-		specified in OpenGL coordinates. */
+      the Bitmap's pixel array. The coordinates of the rectangle are
+      specified in OpenGL coordinates. */
   void grabWorldRect(const Rect<double>& rect);
 
   /** Flips the luminance contrast of the bitmap data, in a way that
@@ -136,7 +136,7 @@ public:
   void render(GWT::Canvas& canvas) const;
 
   /** Implements the unrendering operation. This function delegates the
-      work to itsRenderer. */ 
+      work to itsRenderer. */
  void unRender(GWT::Canvas& canvas) const;
 
   ///////////////
@@ -145,7 +145,7 @@ public:
 
   /// Conforms to the \c GrObj interface.
   void grGetBoundingBox(Rect<double>& bounding_box,
-								int& border_pixels) const;
+                        int& border_pixels) const;
 
   /// Conforms to the \c GrObj interface.
   bool grHasBoundingBox() const;
@@ -169,11 +169,11 @@ public:
   double getRasterY() const;
 
   /** Change the x value of the location of the image's lower left
-		corner to \a val. */
+      corner to \a val. */
   void setRasterX(double val);
 
   /** Change the y value of the location of the image's lower left
-		corner to \a val. */
+      corner to \a val. */
   void setRasterY(double val);
 
   /// Get the factor by which the bitmap will be scaled in the x direction.

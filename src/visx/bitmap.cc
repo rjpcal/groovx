@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Jun  8 18:46:39 2001
+// written: Fri Jul 13 14:46:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,7 +79,7 @@ DOTRACE("Bitmap::writeTo");
   itsImpl->writeTo(writer);
 
   writer->ensureWriteVersionId("Bitmap", BITMAP_SERIAL_VERSION_ID, 2,
-										 "Try grsh0.8a4");
+                               "Try grsh0.8a4");
 
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
@@ -94,10 +94,10 @@ DOTRACE("Bitmap::loadPbmFile");
   sendStateChangeMsg();
 }
 
-void Bitmap::loadPbmFile(STD_IO::istream& is) {
-DOTRACE("Bitmap::loadPbmFile");
-  itsImpl->loadPbmFile(is);
-  sendStateChangeMsg(); 
+void Bitmap::loadPbmData(STD_IO::istream& is) {
+DOTRACE("Bitmap::loadPbmData");
+  itsImpl->loadPbmData(is);
+  sendStateChangeMsg();
 }
 
 void Bitmap::writePbmFile(const char* filename) const
@@ -110,7 +110,7 @@ void Bitmap::grabScreenRect(const Rect<int>& rect)
   { itsImpl->grabScreenRect(rect); sendStateChangeMsg(); }
 
 void Bitmap::grabWorldRect(double left, double top,
-									double right, double bottom)
+                           double right, double bottom)
   { itsImpl->grabWorldRect(left, top, right, bottom); sendStateChangeMsg(); }
 
 void Bitmap::grabWorldRect(const Rect<double>& world_rect)
@@ -134,9 +134,9 @@ void Bitmap::center()
 void Bitmap::grRender(GWT::Canvas& canvas, DrawMode mode) const
 {
   if (mode == DRAW)
-	 itsImpl->render(canvas);
+    itsImpl->render(canvas);
   else
-	 itsImpl->unRender(canvas);
+    itsImpl->unRender(canvas);
 }
 
 ///////////////
@@ -144,7 +144,7 @@ void Bitmap::grRender(GWT::Canvas& canvas, DrawMode mode) const
 ///////////////
 
 void Bitmap::grGetBoundingBox(Rect<double>& bbox,
-										int& border_pixels) const
+                              int& border_pixels) const
   { itsImpl->grGetBoundingBox(bbox, border_pixels); }
 
 bool Bitmap::grHasBoundingBox() const
