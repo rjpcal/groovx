@@ -527,10 +527,10 @@ tardist: clean
 		--exclude *.a --exclude *.sl \
 		--exclude *,v --exclude *~ --exclude a.out
 
-SNAPSHOT := snapshots/grsh-`date +%Y_%m_%d`
+SNAPSHOT := grsh-`date +%Y_%m_%d`
 
 export: snapshots/.timestamp
-	cvs -d `cat ./CVS/Root` export -r HEAD -d $(SNAPSHOT) grsh
-	rm -r $(SNAPSHOT)/logs
-	rm -r $(SNAPSHOT)/old_src
-	tar cfz $(SNAPSHOT).tar.gz $(SNAPSHOT)
+	cvs -d `cat ./CVS/Root` export -r HEAD -d snapshots/$(SNAPSHOT) grsh
+	rm -r snapshots/$(SNAPSHOT)/logs
+	rm -r snapshots/$(SNAPSHOT)/old_src
+	cd snapshots; tar cfz $(SNAPSHOT).tar.gz $(SNAPSHOT)
