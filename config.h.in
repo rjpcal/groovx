@@ -1,0 +1,154 @@
+/* config.h.in.  Generated from configure.in by autoheader.  */
+
+/* full path to anytopnm program */
+#undef ANYTOPNM_PROG
+
+/* broken OpenGL display lists? */
+#undef BROKEN_GL_DISPLAY_LISTS
+
+/* can take address of template funtions? */
+#undef BROKEN_TEMPLATE_FUNCTIONS
+
+/* Darwin esd workaround */
+#undef ESD_WORKAROUND
+
+/* use Apple OpenGL windowsystem interface (agl) */
+#undef GL_PLATFORM_AGL
+
+/* use X11 OpenGL windowsystem interface (glx) */
+#undef GL_PLATFORM_GLX
+
+/* have Alib.h? */
+#undef HAVE_ALIB_H
+
+/* Define to 1 if you have the <cxxabi.h> header file. */
+#undef HAVE_CXXABI_H
+
+/* have dmedia/audio.h? */
+#undef HAVE_DMEDIA_AUDIO_H
+
+/* have esd.h? */
+#undef HAVE_ESD_H
+
+/* Define to 1 if you have the <expat.h> header file. */
+#undef HAVE_EXPAT_H
+
+/* Define to 1 if you have the <ext/stdio_filebuf.h> header file. */
+#undef HAVE_EXT_STDIO_FILEBUF_H
+
+/* Define to 1 if you have the <fcntl.h> header file. */
+#undef HAVE_FCNTL_H
+
+/* Define to 1 if you have the <fstream> header file. */
+#undef HAVE_FSTREAM
+
+/* Define to 1 if you have the <ios> header file. */
+#undef HAVE_IOS
+
+/* Define to 1 if you have the <iosfwd> header file. */
+#undef HAVE_IOSFWD
+
+/* Define to 1 if you have the <iostream> header file. */
+#undef HAVE_IOSTREAM
+
+/* Define to 1 if you have the <istream> header file. */
+#undef HAVE_ISTREAM
+
+/* Define to 1 if you have the <jpeglib.h> header file. */
+#undef HAVE_JPEGLIB_H
+
+/* libjpeg present and working? */
+#undef HAVE_LIBJPEG
+
+/* libpng present and working? */
+#undef HAVE_LIBPNG
+
+/* Define to 1 if you have the <limits> header file. */
+#undef HAVE_LIMITS
+
+/* Define to 1 if you have the <ostream> header file. */
+#undef HAVE_OSTREAM
+
+/* Define to 1 if you have the <png.h> header file. */
+#undef HAVE_PNG_H
+
+/* do we have a 'c++filt' program? */
+#undef HAVE_PROG_CXXFILT
+
+/* have QuickTime/Movies.h? */
+#undef HAVE_QUICKTIME_MOVIES_H
+
+/* Define to 1 if you have the <readline/history.h> header file. */
+#undef HAVE_READLINE_HISTORY_H
+
+/* Define to 1 if you have the <readline/readline.h> header file. */
+#undef HAVE_READLINE_READLINE_H
+
+/* Define to 1 if you have the <sstream> header file. */
+#undef HAVE_SSTREAM
+
+/* Define to 1 if you have the <streambuf> header file. */
+#undef HAVE_STREAMBUF
+
+/* Define to 1 if you have the <sys/time.h> header file. */
+#undef HAVE_SYS_TIME_H
+
+/* Define to 1 if you have the <termios.h> header file. */
+#undef HAVE_TERMIOS_H
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* use Mac OS X aqua port of Tk */
+#undef MAC_OSX_TK
+
+/* statically turn off all debug statements? */
+#undef NO_DEBUG
+
+/* use indirect instead of direct-rendering? */
+#undef NO_DIRECT_RENDER
+
+/* use single- instead of double-buffering? */
+#undef NO_DOUBLE_BUFFER
+
+/* disable rgba color? */
+#undef NO_RGBA
+
+/* is typeid().name() unmangled? */
+#undef NO_TYPENAME_MANGLING
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* prestandard iostreams? */
+#undef PRESTANDARD_IOSTREAMS
+
+/* enable profiling? */
+#undef PROF
+
+/* shorten symbol names? */
+#undef SHORTEN_SYMBOL_NAMES
+
+/* iostreams are in global namespace */
+#undef STD_IO
+
+/* with matlab support? */
+#undef WITH_MATLAB
+
+/* with readline support? */
+#undef WITH_READLINE
+
+/* Define to 1 if the X Window System is missing or not being used. */
+#undef X_DISPLAY_MISSING
