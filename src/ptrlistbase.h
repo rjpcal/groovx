@@ -3,7 +3,7 @@
 // voidptrlist.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sun Oct  8 16:25:52 2000
+// written: Sun Oct  8 16:58:27 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -128,14 +128,6 @@ protected:
   /** Like \c getVoidPtr(), but checks first if \a id is a valid index,
 		and throws an \c InvalidIdError if it is not. */
   MasterPtrBase* getCheckedVoidPtr(int id) const throw (InvalidIdError);
-
-#if 0
-  /** Releases the \c void* at the given index from the management of
-		the \c VoidPtrList. Ownership of the pointed-to object is
-		transferred to the caller, and the \c void* is removed from the
-		\c VoidPtrList. */
-  void* releaseVoidPtr(int id) throw (InvalidIdError);
-#endif
 
   /** Add ptr at the next available location, and return the index
 		where it was inserted. If necessary, the list will be expanded
