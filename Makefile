@@ -72,14 +72,13 @@ ifeq ($(PLATFORM),hp9000s700)
 	SHLIB_EXT := sl
 	STATLIB_EXT := a
 
-	CPP_DEFINES += -DHP9000S700 -DHAVE_ZSTREAM
+	CPP_DEFINES += -DHP9000S700
 
 	DEFAULT_MODE := debug
 
 	ETAGS := echo "no etags"
 
 	AUDIO_LIB := -lAlib
-	ZSTREAM_LIB := -lzstream
 
 	LIB_PATH += -L/opt/graphics/OpenGL/lib -L/opt/audio/lib
 endif
@@ -89,27 +88,25 @@ ifeq ($(PLATFORM),irix6)
 	SHLIB_EXT := so
 	STATLIB_EXT := a
 
-	CPP_DEFINES += -DIRIX6 -DHAVE_ZSTREAM
+	CPP_DEFINES += -DIRIX6
 
 	DEFAULT_MODE := prod
 
 	AUDIO_LIB := -laudio -laudiofile
-	ZSTREAM_LIB := -lzstream
 
 	LIB_PATH += -Wl,-rpath,$(LOCAL_LIB)
 endif
 
 ifeq ($(PLATFORM),i686)
-	COMPILER := g++
+	COMPILER := g++3
 	SHLIB_EXT := so
 	STATLIB_EXT := a
 
-	CPP_DEFINES += -DI686 -DHAVE_ZSTREAM -DFUNCTIONAL_OK
+	CPP_DEFINES += -DI686
 
 	DEFAULT_MODE := debug
 
 	AUDIO_LIB := -lesd -laudiofile-0.2.1
-	ZSTREAM_LIB := -lzstream
 endif
 
 ifndef MODE
@@ -198,7 +195,8 @@ ifeq ($(COMPILER),g++)
 		-e '/In instantiation of/,/has a non-virtual destructor/d' \
 		-e '/has a non-virtual destructor/d'
 	CC_SWITCHES += -Wall -W -Wsign-promo -Weffc++
-	CPP_DEFINES += -DGCC_COMPILER -DSTD_IO= -DPRESTANDARD_IOSTREAMS
+	CPP_DEFINES += -DGCC_COMPILER=2 -DSTD_IO= -DPRESTANDARD_IOSTREAMS \
+		-DFUNCTIONAL_OK
 
 	INCLUDE_PATH += -I$(HOME)/local/$(PLATFORM)/include/g++-3
 
@@ -209,6 +207,30 @@ ifeq ($(COMPILER),g++)
 
 	ifeq ($(MODE),prod)
 		CC_SWITCHES += -O3
+		LD_OPTIONS +=
+	endif
+
+	LIB_EXT := $(LIB_SUFFIX).$(SHLIB_EXT)
+
+	SHLIB_CMD := $(CC) -shared -o
+	STATLIB_CMD := ar rus
+endif
+
+ifeq ($(COMPILER),g++3)
+	CC := time g++3
+# Filter the compiler output...
+	FILTER := |& $(SCRIPTS)/filter_gcc_v3
+
+	CC_SWITCHES += -W -Wdeprecated -Wno-system-headers -Wall -Wsign-promo -Wwrite-strings -Weffc++
+	CPP_DEFINES += -DGCC_COMPILER=3 -DSTD_IO=std -DFUNCTIONAL_OK
+
+	ifeq ($(MODE),debug)
+		CC_SWITCHES += -g -O0
+		LD_OPTIONS +=
+	endif
+
+	ifeq ($(MODE),prod)
+		CC_SWITCHES += -O2
 		LD_OPTIONS +=
 	endif
 
@@ -236,7 +258,7 @@ EXTERNAL_LIBS := \
 	-lGLU -lGL \
 	-ltcl$(TCL_VERSION) -ltk$(TK_VERSION) \
 	-lXmu -lX11 -lXext \
-	$(ZSTREAM_LIB) \
+	-lz \
 	$(AUDIO_LIB) \
 	-lm
 
