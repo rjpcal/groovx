@@ -120,7 +120,8 @@ private:
   Impl& operator=(const Impl&);
 };
 
-fstring Tcl::CommandGroup::Impl::usageWarning(const fstring& argv0) const
+fstring Tcl::CommandGroup::Impl::usageWarning(
+                                      const fstring& argv0) const
 {
 DOTRACE("Tcl::CommandGroup::usageWarning");
   fstring warning("wrong # args: should be ");
@@ -303,9 +304,10 @@ DOTRACE("Tcl::CommandGroup::lookupOriginal");
   return Impl::lookupHelper(interp, original.c_str());
 }
 
-Tcl::CommandGroup* Tcl::CommandGroup::make(Tcl::Interp& interp,
-                                           const fstring& cmd_name,
-                                           const rutz::file_pos& src_pos)
+Tcl::CommandGroup* Tcl::CommandGroup::make(
+                                   Tcl::Interp& interp,
+                                   const fstring& cmd_name,
+                                   const rutz::file_pos& src_pos)
 {
 DOTRACE("Tcl::CommandGroup::make");
   CommandGroup* const c =
@@ -354,7 +356,8 @@ DOTRACE("Tcl::CommandGroup::usage");
   return result;
 }
 
-int Tcl::CommandGroup::rawInvoke(int s_objc, Tcl_Obj *const objv[]) throw()
+int Tcl::CommandGroup::rawInvoke(int s_objc,
+                                 Tcl_Obj *const objv[]) throw()
 {
 DOTRACE("Tcl::CommandGroup::rawInvoke");
 
