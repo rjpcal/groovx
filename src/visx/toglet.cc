@@ -3,7 +3,7 @@
 // toglconfig.cc
 // Rob Peters
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue Oct 12 10:09:13 1999
+// written: Thu Oct 14 12:39:34 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,7 +104,7 @@ DOTRACE("ToglConfig::ToglConfig");
 								 getIntParam("double"));
 
   if (GfxAttribs::isTrue(GfxAttribs::RGBA_FLAG)) {
-    glColor3f(1.0, 1.0, 1.0);
+    glColor4f(1.0, 1.0, 1.0, 1.0);
     glClearColor(0.0, 0.0, 0.0, 1.0);
   }
   else { // not using rgba
@@ -393,8 +393,16 @@ DOTRACE("ToglConfig::loadFont");
 
 void ToglConfig::loadFonti(int fontnumber) {
 DOTRACE("ToglConfig::loadFonti");
+
+  // This function core dumps on irix6 using g++, so we throw an error
+  // for now.
+#ifndef IRIX6
   GLuint newListBase =
 	 Togl_LoadBitmapFont(itsWidget, reinterpret_cast<char*>(fontnumber));
+#else
+  GLuint newListBase = 0;		  // this will force an exception to be thrown
+#endif
+  
 
   // Check if font loading succeeded...
   try {
