@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:10:25 2000
-// written: Fri Aug 10 10:56:09 2001
+// written: Wed Aug 15 17:47:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ void GbColorLocal::raiseScanError()
   throw ValueError("couldn't scan data for GbColor");
 }
 
-GbColor::GbColor(double v) : RgbaColor(v), Field() {}
+GbColor::GbColor(double v) : RgbaColor(v) {}
 
 GbColor::~GbColor() {}
 
@@ -84,26 +84,6 @@ void GbColor::assignTo(Value& other) const
 {
   other.set(this->get(Util::TypeCue<const char*>()));
 }
-
-//
-// Field interface
-//
-
-void GbColor::doSetValue(const Value& new_val)
-{
-  istrstream ist(new_val.get(Util::TypeCue<const char*>()));
-  DebugEvalNL(new_val.get(Util::TypeCue<const char*>()));
-  scanFrom(ist);
-}
-
-void GbColor::readValueFrom(IO::Reader* reader, const fstring& name)
-{ reader->readValueObj(name, *this); }
-
-void GbColor::writeValueTo(IO::Writer* writer, const fstring& name) const
-{ writer->writeValueObj(name.c_str(), *this); }
-
-shared_ptr<Value> GbColor::value() const
-{ return shared_ptr<Value>(this->clone()); }
 
 static const char vcid_gbcolor_cc[] = "$Header$";
 #endif // !GBCOLOR_CC_DEFINED

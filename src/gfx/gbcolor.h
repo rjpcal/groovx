@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:09:31 2000
-// written: Fri Aug 10 10:56:09 2001
+// written: Wed Aug 15 17:47:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,7 +21,7 @@
 #include "gfx/rgbacolor.h"
 #endif
 
-class GbColor : public RgbaColor, public Field, public Value {
+class GbColor : public RgbaColor, public Value {
 public:
   GbColor(double v = 1.0);
   virtual ~GbColor();
@@ -39,17 +39,6 @@ public:
   virtual const char* get(Util::TypeCue<const char*>) const;
 
   virtual void assignTo(Value& other) const;
-
-  //
-  // Field interface
-  //
-
-protected:
-  virtual void doSetValue(const Value& new_val);
-public:
-  virtual void readValueFrom(IO::Reader* reader, const fstring& name);
-  virtual void writeValueTo(IO::Writer* writer, const fstring& name) const;
-  virtual shared_ptr<Value> value() const;
 };
 
 static const char vcid_gbcolor_h[] = "$Header$";
