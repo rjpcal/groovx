@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Mon Sep 27 11:03:13 1999
+// written: Tue Oct 12 09:57:43 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 
 #include "ptrlist.h"
 
+#include <algorithm> // for ::count
 #include <iostream.h>
 #include <string>
 #include <typeinfo>
@@ -45,25 +46,25 @@ namespace {
 //////////////
 
 template <class T>
-PtrList::PtrList(int size):
+PtrList<T>::PtrList(int size):
   itsFirstVacant(0), 
-  itsVec(size, NULL) 
+  itsVec(size, (T*) 0)
 {
-DOTRACE("PtrList::PtrList");
+DOTRACE("PtrList<T>::PtrList");
 
   DebugEvalNL(itsVec.size());
 
 }
 
 template <class T>
-PtrList::~PtrList() {
-DOTRACE("PtrList::~PtrList");
+PtrList<T>::~PtrList() {
+DOTRACE("PtrList<T>::~PtrList");
   clear();
 }
 
 template <class T>
-void PtrList::serialize(ostream &os, IOFlag flag) const {
-DOTRACE("PtrList::serialize");
+void PtrList<T>::serialize(ostream &os, IOFlag flag) const {
+DOTRACE("PtrList<T>::serialize");
   static string ioTag = typeid(PtrList).name();	 
 
   if (flag & BASES) { /* there are no bases to deserialize */ }
@@ -78,7 +79,7 @@ DOTRACE("PtrList::serialize");
   // serialize (so that deserialize knows when to stop reading).
   os << itsVec.size() << sep;
 
-  int num_non_null = PtrList::count();
+  int num_non_null = PtrList<T>::count();
   os << num_non_null << endl;
 
   // Serialize all non-null ptr's.
@@ -103,8 +104,8 @@ DOTRACE("PtrList::serialize");
 }
 
 template <class T>
-void PtrList::deserialize(istream &is, IOFlag flag) {
-DOTRACE("PtrList::deserialize");
+void PtrList<T>::deserialize(istream &is, IOFlag flag) {
+DOTRACE("PtrList<T>::deserialize");
   static string ioTag = typeid(PtrList).name();	 
 
   if (flag & BASES) { /* there are no bases to deserialize */ }
@@ -151,11 +152,11 @@ DOTRACE("PtrList::deserialize");
 }
 
 template <class T>
-int PtrList::charCount() const {
+int PtrList<T>::charCount() const {
   static string ioTag = typeid(PtrList).name();	 
   int ch_count = ioTag.size() + 1
 	 + gCharCount<int>(itsVec.size()) + 1;
-  int num_non_null = PtrList::count();
+  int num_non_null = PtrList<T>::count();
   ch_count += 
 	 gCharCount<int>(num_non_null) + 1;
   
@@ -175,14 +176,14 @@ int PtrList::charCount() const {
 ///////////////
 
 template <class T>
-int PtrList::capacity() const {
-DOTRACE("PtrList::capacity");
+int PtrList<T>::capacity() const {
+DOTRACE("PtrList<T>::capacity");
   return itsVec.size();
 }
 
 template <class T>
-int PtrList::count() const {
-DOTRACE("PtrList::count"); 
+int PtrList<T>::count() const {
+DOTRACE("PtrList<T>::count"); 
   // Count the number of null pointers. In the STL call count, we must
   // cast the value (NULL) so that template deduction treats it as a
   // pointer rather than an int. Then return the number of non-null
@@ -195,8 +196,8 @@ DOTRACE("PtrList::count");
 }
 
 template <class T>
-bool PtrList::isValidId(int id) const {
-DOTRACE("PtrList::isValidId");
+bool PtrList<T>::isValidId(int id) const {
+DOTRACE("PtrList<T>::isValidId");
 
   DebugEval(id);
   DebugEval(id>=0);
@@ -209,8 +210,8 @@ DOTRACE("PtrList::isValidId");
 }
 
 template <class T>
-T* PtrList::getCheckedPtr(int id) const throw (InvalidIdError) {
-DOTRACE("PtrList::getCheckedPtr");
+T* PtrList<T>::getCheckedPtr(int id) const throw (InvalidIdError) {
+DOTRACE("PtrList<T>::getCheckedPtr");
   if ( !isValidId(id) ) { throw InvalidIdError(); }
   return getPtr(id);
 }
@@ -220,16 +221,16 @@ DOTRACE("PtrList::getCheckedPtr");
 //////////////////
 
 template <class T>
-int PtrList::insert(T* ptr) {
-DOTRACE("PtrList::insert");
+int PtrList<T>::insert(T* ptr) {
+DOTRACE("PtrList<T>::insert");
   int new_site = itsFirstVacant;
   insertAt(new_site, ptr);
   return new_site;              // return the id of the inserted T*
 }
 
 template <class T>
-void PtrList::insertAt(int id, T* ptr) {
-DOTRACE("PtrList::insertAt");
+void PtrList<T>::insertAt(int id, T* ptr) {
+DOTRACE("PtrList<T>::insertAt");
   if (id < 0) return;
 
   if (id >= itsVec.size()) {
@@ -252,8 +253,8 @@ DOTRACE("PtrList::insertAt");
 
 // this member function delete's the T pointed to by itsVec[i]
 template <class T>
-void PtrList::remove(int id) {
-DOTRACE("PtrList::remove");
+void PtrList<T>::remove(int id) {
+DOTRACE("PtrList<T>::remove");
   if (!isValidId(id)) return;
 
   delete itsVec[id];
@@ -264,8 +265,8 @@ DOTRACE("PtrList::remove");
 }
 
 template <class T>
-void PtrList::clear() {
-DOTRACE("PtrList::clear");
+void PtrList<T>::clear() {
+DOTRACE("PtrList<T>::clear");
   for (int i = 0; i < itsVec.size(); ++i) {
 	 DebugEval(i); DebugEvalNL(itsVec.size());
 	 delete itsVec[i];
