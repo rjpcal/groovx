@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Wed May 31 00:13:39 2000
+// written: Wed May 31 18:45:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,6 +32,15 @@
 // TclItemPkg member definitions
 //
 ///////////////////////////////////////////////////////////////////////
+
+Tcl::TclItemPkg::TclItemPkg(Tcl_Interp* interp,
+									 const char* name, const char* version,
+									 int item_argn) :
+  TclItemPkgBase(interp, name, version), 
+  itsItemArgn(item_argn)
+{}
+
+Tcl::TclItemPkg::~TclItemPkg() {}
 
 // NOTE: aCC won't compile these TclItemPkg functions if they are
 // defined inside a namespace Tcl {} block. So, as a workaround, we
@@ -259,6 +268,8 @@ TclIoItemPkg::TclIoItemPkg(Tcl_Interp* interp, const char* name,
   addCommand( new ItemASRLoadCmd(this, itemArgn()) );
 }
 
+TclIoItemPkg::~TclIoItemPkg() {}
+
 } // end namespace Tcl
 
 ///////////////////////////////////////////////////////////////////////
@@ -280,6 +291,8 @@ Tcl::VecPropertyCmdBase::VecPropertyCmdBase(TclItemPkg* pkg,
 {
 DOTRACE("Tcl::VecPropertyCmdBase::VecPropertyCmdBase");
 }
+
+Tcl::VecPropertyCmdBase::~VecPropertyCmdBase() {}
 
 void Tcl::VecPropertyCmdBase::invoke() {
 DOTRACE("Tcl::VecPropertyCmdBase::invoke");
@@ -348,6 +361,8 @@ Tcl::PropertiesCmdBase::PropertiesCmdBase(Tcl_Interp* interp,
 {
 DOTRACE("Tcl::PropertiesCmdBase::PropertiesCmdBase");
 }
+
+Tcl::PropertiesCmdBase::~PropertiesCmdBase() {}
 
 void Tcl::PropertiesCmdBase::invoke() {
 DOTRACE("Tcl::PropertiesCmdBase::invoke");
