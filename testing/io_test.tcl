@@ -38,10 +38,10 @@ proc testStringifyCmd { packagename classname item_argn {item_id -1} } {
 		  "} {$usage}
 		  eval ::test $testname {"error from negative id"} {"
 				$cmdname -1
-		  "} {"${cmdname}: attempt to access invalid id in .*$"}
+		  "} {"${cmdname}: attempt to access invalid id .*$"}
 		  eval ::test $testname {"error from too large id"} {"
 				$cmdname 10000
-		  "} {"${cmdname}: attempt to access invalid id in .*$"}
+		  "} {"${cmdname}: attempt to access invalid id .*$"}
 		  eval ::test $testname {"error from non-integral id"} {"
 				$cmdname 1.5
 		  "} {"expected integer but got \"1\.5\""}
@@ -79,10 +79,10 @@ proc testDestringifyCmd { packagename classname item_argn {item_id -1} } {
 		  "} {$usage}
 		  eval ::test $testname {"error from negative id"} {"
 		      $cmdname -1 junk
-		  "} {"${cmdname}: attempt to access invalid id in .*$"}
+		  "} {"${cmdname}: attempt to access invalid id .*$"}
 		  eval ::test $testname {"error from too large id"} {"
 		      $cmdname 10000 junk
-		  "} {"${cmdname}: attempt to access invalid id in .*$"}
+		  "} {"${cmdname}: attempt to access invalid id .*$"}
 		  eval ::test $testname {"error from non-integral id"} {"
 				$cmdname 1.5 junk
 		  "} {"expected integer but got \"1\.5\""}
@@ -123,10 +123,10 @@ proc testWriteCmd { packagename classname item_argn {item_id -1} } {
 		  "} {$usage}
 		  eval ::test $testname {"error from negative id"} {"
 				$cmdname -1
-		  "} {"${cmdname}: attempt to access invalid id in .*$"}
+		  "} {"${cmdname}: attempt to access invalid id .*$"}
 		  eval ::test $testname {"error from too large id"} {"
 				$cmdname 10000
-		  "} {"${cmdname}: attempt to access invalid id in .*$"}
+		  "} {"${cmdname}: attempt to access invalid id .*$"}
 		  eval ::test $testname {"error from non-integral id"} {"
 				$cmdname 1.5
 		  "} {"expected integer but got \"1\.5\""}
@@ -164,10 +164,10 @@ proc testReadCmd { packagename classname item_argn {item_id -1} } {
 		  "} {$usage}
 		  eval ::test $testname {"error from negative id"} {"
 		      $readcmd -1 junk
-		  "} {"${readcmd}: attempt to access invalid id in .*$"}
+		  "} {"${readcmd}: attempt to access invalid id .*$"}
 		  eval ::test $testname {"error from too large id"} {"
 		      $readcmd 10000 junk
-		  "} {"${readcmd}: attempt to access invalid id in .*$"}
+		  "} {"${readcmd}: attempt to access invalid id .*$"}
 		  eval ::test $testname {"error from non-integral id"} {"
 				$readcmd 1.5 junk
 		  "} {"expected integer but got \"1\.5\""}

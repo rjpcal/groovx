@@ -43,7 +43,7 @@ test "PositionTcl-Pos::rotate" "error on non-numeric input" {
 } {expected floating-point number but got "junk"}
 test "PositionTcl-Pos::rotate" "error on bad posid" {
     Pos::rotate -1 1 1 1 1
-} {Pos::rotate: attempt to access invalid id in PosList}
+} {Pos::rotate: attempt to access invalid id '.*' in PosList}
 
 ### scaleCmd ###
 test "PositionTcl-Pos::scale" "too few args" {
@@ -60,7 +60,7 @@ test "PositionTcl-Pos::scale" "error on non-numeric input" {
 } {expected floating-point number but got "junk"}
 test "PositionTcl-Pos::scale" "error on bad posid" {
     Pos::scale -1 -1.2 1.0 1.0
-} {Pos::scale: attempt to access invalid id in PosList}
+} {Pos::scale: attempt to access invalid id '.*' in PosList}
 
 ### Pos::translateCmd ###
 test "PositionTcl-Pos::translate" "too few args" {
@@ -77,7 +77,7 @@ test "PositionTcl-Pos::translate" "error on non-numeric input" {
 } {expected floating-point number but got "junk"}
 test "PositionTcl-Pos::translate" "error on bad posid" {
     Pos::translate -1 1 1 1
-} {Pos::translate: attempt to access invalid id in PosList}
+} {Pos::translate: attempt to access invalid id '.*' in PosList}
 
 ### Pos::stringifyCmd ###
 test "PositionTcl-Pos::stringify" "too few args" {
@@ -94,7 +94,7 @@ test "PositionTcl-Pos::stringify" "normal use" {
 } {Position 5\.3 10\.6 15\.9 1 2\.5 4 1\.5 0 -2\.2 3}
 test "PositionTcl-Pos::stringify" "error on bad posid" {
     Pos::stringify -1
-} {Pos::stringify: attempt to access invalid id in PosList}
+} {Pos::stringify: attempt to access invalid id '.*' in PosList}
 test "PositionTcl-Pos::stringify" "error on non-integral posid" {
     Pos::stringify 1.5
 } {expected integer but got "1\.5"}
@@ -113,10 +113,10 @@ test "PositionTcl-Pos::type" "normal use on Jitter" {
 } {Jitter}
 test "PositionTcl-Pos::type" "error on too small posid" {
 	 Pos::type -1
-} {Pos::type: attempt to access invalid id in PosList}
+} {Pos::type: attempt to access invalid id '.*' in PosList}
 test "PositionTcl-Pos::type" "error on too large" {
 	 Pos::type 10000
-} {Pos::type: attempt to access invalid id in PosList}
+} {Pos::type: attempt to access invalid id '.*' in PosList}
 
 PosList::reset
 unset pos

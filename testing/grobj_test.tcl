@@ -84,10 +84,10 @@ proc testTypeCmd { objname } {
 		  "} {$usage}
 		  eval ::test $testname {"error from bad objid"} {"
 		      $cmdname -1
-		  "} {"${cmdname}: attempt to access invalid id in ObjList"}
+		  "} {"${cmdname}: attempt to access invalid id '.*' in ObjList"}
 		  eval ::test $testname {"error from too large objid"} {"
 		      $cmdname 10000
-		  "} {"${cmdname}: attempt to access invalid id in ObjList"}
+		  "} {"${cmdname}: attempt to access invalid id '.*' in ObjList"}
 	 }
 
 	 if { $this(testsubclass) } {
