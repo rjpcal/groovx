@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Fri Feb  1 11:09:35 2002
+// written: Mon Feb 25 16:56:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -153,6 +153,14 @@ public:
     itsRep(0)
   {
     do_init(part1); append(part2, part3, part4);
+  }
+
+  template <class T1, class T2, class T3, class T4, class T5>
+  fstring(const T1& part1, const T2& part2, const T3& part3,
+          const T4& part4, const T5& part5) :
+    itsRep(0)
+  {
+    do_init(part1); append(part2, part3, part4, part5);
   }
 
   void swap(fstring& other);
