@@ -240,8 +240,7 @@ public:
   PngWriter() :
     itsFile(0),
     itsPngPtr(0),
-    itsInfoPtr(0),
-    itsEndPtr(0)
+    itsInfoPtr(0)
   {}
 
   ~PngWriter() { close(); }
@@ -257,7 +256,6 @@ private:
   FILE* itsFile;
   png_structp itsPngPtr;
   png_infop itsInfoPtr;
-  png_infop itsEndPtr;
 };
 
 void PngWriter::close()
