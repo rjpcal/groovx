@@ -3,7 +3,7 @@
 // gabor.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Oct 20 10:09:40 1999
+// written: Wed Nov 10 15:36:39 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,47 +24,92 @@
 #include "property.h"
 #endif
 
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * Gabor implements a psychophysical Gabor patch. There are several
+ * rendering modes, for rendering in grayscale or in black-and-white.
+ *
+ * @memo Subclass of GrObj for drawing psychophysical Gabor patches.
+ **/
+
 class Gabor : public GrObj, public PropFriend<Gabor> {
 public:
+  ///
   Gabor();
+  ///
   virtual ~Gabor();
 
+  ///
   virtual void serialize(ostream &os, IOFlag flag) const;
+  ///
   virtual void deserialize(istream &is, IOFlag flag);
 
+  ///
   virtual int charCount() const;
 
+  ///
   virtual void readFrom(Reader* reader);
+  ///
   virtual void writeTo(Writer* writer) const;
 
+  /** @name    Color modes   */
+  //@{
+  ///
   typedef int ColorMode;
+  /** Each point in the patch is rendered with a gray color whose
+      luminance is proportional to the value of the Gabor function. */
   static const ColorMode GRAYSCALE = 1;
+  /** Each point in the patch is rendered black with a probability
+      proportional to the value of the Gabor function. */
   static const ColorMode BW_DITHER_POINT = 2;
+  /** The patch is subdivided into rectangles, and each rectangle in
+      the patch is rendered black with a probability proportional to
+      the value of the Gabor function. */
   static const ColorMode BW_DITHER_RECT = 3;
+  //@}
 
+  ///
   typedef PropertyInfo<Gabor> PInfo;
+  ///
   static const vector<PInfo>& getPropertyInfos();
 
+  ///
   CTProperty<Gabor, ColorMode> colorMode;
 
+  /// Contrast of the sine grating
   CTProperty<Gabor, double> contrast;
 
-  CTProperty<Gabor, double> spatialFreq; // in cycles per unit
-  CTProperty<Gabor, int> phase;          // in degrees
+  /// The spatial frequency of the sine grating, in cycles per OpenGL unit
+  CTProperty<Gabor, double> spatialFreq;
 
+  /// Phase of the sine grating, in degrees
+  CTProperty<Gabor, int> phase;
+
+  /// The base standard deviation for the Gaussian
   CTProperty<Gabor, double> sigma;
-  CTProperty<Gabor, double> aspectRatio; // width/height
 
-  CTProperty<Gabor, int> orientation; // in degrees
+  /// The ratio of standard deviations width/height
+  CTProperty<Gabor, double> aspectRatio;
 
-  CTProperty<Gabor, int> resolution;     // subdivisions per unit
+  /// Orientation of the sine grating, in degrees
+  CTProperty<Gabor, int> orientation;
+
+  /** Number of rectangle subdivisions per OpenGL unit (note that this
+		applies only when the colorMode is BW_DITHER_RECT */
+  CTProperty<Gabor, int> resolution;
+
+  /** The size of the points used when colorMode is either GRAYSCALE
+      or BW_DITHER_POINT */
   CTProperty<Gabor, int> pointSize;
 
 protected:
+  ///
   virtual bool grGetBoundingBox(double& left, double& top,
 										  double& right, double& bottom,
 										  int& border_pixels) const;
 
+  ///
   virtual void grRender() const;
 };
 
