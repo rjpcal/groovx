@@ -30,8 +30,6 @@
 #endif
 
 
-namespace IO { class IoObject; }
-
 template <class T> class IdItem;
 template <class T> class MaybeIdItem;
 
@@ -44,9 +42,9 @@ template <class T> class MaybeIdItem;
 
 namespace IdItemUtils {
   bool isValidId(Util::UID id);
-  IO::IoObject* getCheckedItem(Util::UID id);
+  Util::Object* getCheckedItem(Util::UID id);
 
-  void insertItem(IO::IoObject* obj);
+  void insertItem(Util::Object* obj);
 
 #ifndef ACC_COMPILER
 #  define DYNCAST dynamic_cast
@@ -58,7 +56,7 @@ namespace IdItemUtils {
   template <class T>
   inline T* getCastedItem(Util::UID id)
   {
-	 IO::IoObject* obj = getCheckedItem(id);
+	 Util::Object* obj = getCheckedItem(id);
 	 T& t = DYNCAST<T&>(*obj);
 	 return &t;
   }
@@ -68,7 +66,7 @@ namespace IdItemUtils {
 #endif
 
   template <>
-  inline IO::IoObject* getCastedItem<IO::IoObject>(Util::UID id)
+  inline Util::Object* getCastedItem<Util::Object>(Util::UID id)
   { return getCheckedItem(id); }
 }
 
