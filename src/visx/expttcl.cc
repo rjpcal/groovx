@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Fri Jul 13 15:17:22 2001
+// written: Sun Jul 15 17:35:38 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -26,6 +26,7 @@
 #include "system/system.h"
 
 #include "tcl/genericobjpkg.h"
+#include "tcl/objfunctor.h"
 #include "tcl/tclevalcmd.h"
 #include "tcl/tclitempkg.h"
 #include "tcl/tracertcl.h"
@@ -47,95 +48,76 @@
 
 namespace ExptTcl
 {
-  class BeginCmd;
   class PauseCmd;
-  class SetStartCommandCmd;
-
-  class ExptPkg;
   class ExpPkg;
-};
 
-class ExptTcl::ExptPkg : public Tcl::CTclItemPkg<ExptDriver>,
-                         public Tcl::IoFetcher
-{
-public:
-  ExptPkg(Tcl_Interp* interp);
+  WeakRef<ExptDriver> theExptDriver;
 
-  virtual ~ExptPkg()
-    {
-      itsExptDriver->edClearExpt();
-    }
-
-  virtual IO::IoObject& getIoFromId(int) { return *itsExptDriver; }
-
-  virtual ExptDriver* getCItemFromId(int) {
-    return itsExptDriver.get();
+  void setCurrentExpt(Ref<ExptDriver> expt)
+  {
+    theExptDriver = expt;
   }
 
-private:
-  Ref<ExptDriver> itsExptDriver;
-};
+  Ref<ExptDriver> getCurrentExpt()
+  {
+    return theExptDriver;
+  }
+
+  // Creates the necessary screen bindings for start, pause, and quit,
+  // then begins the current trial (probably the first trial) of the
+  // current Expt. Record the time when the experiment
+  // began. edBeginExpt is called, which displays a trial, and
+  // generates the timer callbacks associated with a trial.
+  void begin(Ref<ExptDriver> expt)
+  {
+    GWT::Widget& widget = expt->getWidget();
+
+    // Create the begin key binding
+    widget.bind("<Control-KeyPress-b>", "{ Togl::takeFocus; Expt::begin }");
+
+    // Create the quit key binding
+    widget.bind("<Control-KeyPress-q>", "{ Expt::storeData; exit }");
+
+    // Create the save key binding
+    widget.bind("<Control-KeyPress-s>", "{ Expt::storeData }");
+
+    // Create the stop key binding
+    widget.bind("<Control-KeyPress-c>", "{ Expt::stop }");
+
+    // Create the reset key binding
+    widget.bind("<Control-KeyPress-r>", "{ Expt::reset }");
+
+    // Create the pause key binding
+    widget.bind("<KeyPress-p>", "{ Expt::pause }");
+
+    // Destroy the experiment start key binding
+    widget.bind("<KeyPress-s>", "{}");
+
+    // Force the focus to the Togl widget
+    widget.takeFocus();
+
+    expt->edBeginExpt();
+  }
+
+  void setStartCommand(Ref<ExptDriver> expt, const char* command)
+  {
+    // Build the script to be executed when the start key is pressed
+    dynamic_string start_command = "{ ";
+    start_command += command;
+    start_command += " }";
+
+    GWT::Widget& widget = expt->getWidget();
+
+    widget.bind("<KeyPress-s>", start_command.c_str());
+    widget.takeFocus();
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
 // Expt Tcl definitions
 //
 ///////////////////////////////////////////////////////////////////////
-
-//--------------------------------------------------------------------
-//
-// BeginCmd --
-//
-// Creates the necessary screen bindings for start, pause, and quit,
-// then begins the current trial (probably the first trial) of the
-// current Expt. Record the time when the experiment
-// began. edBeginExpt is called, which displays a trial, and generates
-// the timer callbacks associated with a trial.
-//
-//--------------------------------------------------------------------
-
-class ExptTcl::BeginCmd : public Tcl::TclItemCmd<ExptDriver> {
-public:
-  BeginCmd(Tcl::CTclItemPkg<ExptDriver>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, NULL, pkg->itemArgn()+1)
-    {}
-protected:
-  virtual void invoke(Tcl::Context& ctx);
-};
-
-void ExptTcl::BeginCmd::invoke(Tcl::Context& ctx)
-{
-DOTRACE("ExptTcl::BeginCmd::beginCmd");
-
-  ExptDriver* ed = getItem(ctx);
-  GWT::Widget& widget = ed->getWidget();
-
-  // Create the begin key binding
-  widget.bind("<Control-KeyPress-b>", "{ Togl::takeFocus; Expt::begin }");
-
-  // Create the quit key binding
-  widget.bind("<Control-KeyPress-q>", "{ Expt::storeData; exit }");
-
-  // Create the save key binding
-  widget.bind("<Control-KeyPress-s>", "{ Expt::storeData }");
-
-  // Create the stop key binding
-  widget.bind("<Control-KeyPress-c>", "{ Expt::stop }");
-
-  // Create the reset key binding
-  widget.bind("<Control-KeyPress-r>", "{ Expt::reset }");
-
-  // Create the pause key binding
-  widget.bind("<KeyPress-p>", "{ Expt::pause }");
-
-  // Destroy the experiment start key binding
-  widget.bind("<KeyPress-s>", "{}");
-
-  // Force the focus to the Togl widget
-  widget.takeFocus();
-
-  ed->edBeginExpt();
-}
 
 //--------------------------------------------------------------------
 //
@@ -147,10 +129,10 @@ DOTRACE("ExptTcl::BeginCmd::beginCmd");
 //
 //--------------------------------------------------------------------
 
-class ExptTcl::PauseCmd : public Tcl::TclItemCmd<ExptDriver> {
+class ExptTcl::PauseCmd : public Tcl::TclCmd {
 public:
-  PauseCmd(Tcl::CTclItemPkg<ExptDriver>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, (char*)0, pkg->itemArgn()+1),
+  PauseCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
+    Tcl::TclCmd(pkg->interp(), cmd_name, "expt_id", 2),
     itsPauseMsgCmd(
             "tk_messageBox -default ok -icon info "
             "-title \"Pause\" -type ok "
@@ -161,7 +143,7 @@ public:
 protected:
   virtual void invoke(Tcl::Context& ctx)
   {
-    ExptDriver* ed = getItem(ctx);
+    Ref<ExptDriver> ed(ctx.getValFromArg(1, (unsigned int*)0));
     ed->edHaltExpt();
 
     ed->addLogInfo("Experiment paused.");
@@ -201,79 +183,44 @@ private:
 
 //---------------------------------------------------------------------
 //
-// SetStartCommandCmd --
-//
-//---------------------------------------------------------------------
-
-class ExptTcl::SetStartCommandCmd : public Tcl::TclItemCmd<ExptDriver> {
-public:
-  SetStartCommandCmd(Tcl::CTclItemPkg<ExptDriver>* pkg, const char* cmd_name) :
-    Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "start_command",
-                                pkg->itemArgn()+2) {}
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-  {
-    // Build the script to be executed when the start key is pressed
-    dynamic_string start_command = "{ ";
-    start_command += ctx.getCstringFromArg(1);
-    start_command += " }";
-
-    ExptDriver* ed = getItem(ctx);
-    GWT::Widget& widget = ed->getWidget();
-
-    widget.bind("<KeyPress-s>", start_command.c_str());
-    widget.takeFocus();
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// ExptPkg definitions
-//
-//---------------------------------------------------------------------
-
-ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :
-  Tcl::CTclItemPkg<ExptDriver>(interp, "Expt", "$Revision$", 0),
-  itsExptDriver(ExptDriver::make(Application::theApp().argc(),
-                                 Application::theApp().argv(),
-                                 interp))
-{
-  DOTRACE("ExptPkg::ExptPkg");
-
-  Tcl::TclItemPkg::addIoCommands(this);
-
-  Tcl::addTracing(this, ExptDriver::tracer);
-
-  addCommand( new BeginCmd(this, "Expt::begin") );
-  addCommand( new PauseCmd(this, "Expt::pause") );
-  addCommand( new SetStartCommandCmd(this, "Expt::setStartCommand") );
-
-  declareCSetter("addBlock", &ExptDriver::addBlock);
-  declareCAttrib("autosaveFile",
-                 &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
-  declareCAttrib("autosavePeriod",
-                 &ExptDriver::getAutosavePeriod,
-                 &ExptDriver::setAutosavePeriod);
-  declareCAction("clear", &ExptDriver::edClearExpt);
-  declareCGetter("currentBlock", &ExptDriver::currentBlock);
-  declareCAction("reset", &ExptDriver::edResetExpt);
-  declareCAction("stop", &ExptDriver::edHaltExpt);
-  declareCAction("storeData", &ExptDriver::storeData);
-  declareCAttrib("widget", &ExptDriver::widget, &ExptDriver::setWidget);
-}
-
-//---------------------------------------------------------------------
-//
 // ExpPkg definition
 //
 //---------------------------------------------------------------------
 
 class ExptTcl::ExpPkg : public Tcl::GenericObjPkg<ExptDriver>
 {
+private:
+  class ExptFetcher : public Tcl::IoFetcher {
+  public:
+    virtual IO::IoObject& getIoFromId(int) { return *theExptDriver; }
+  };
+
+  ExptFetcher itsExptFetcher;
+
 public:
   ExpPkg(Tcl_Interp* interp) :
-    Tcl::GenericObjPkg<ExptDriver>(interp, "Exp", "$Revision$")
+    Tcl::GenericObjPkg<ExptDriver>(interp, "Exp", "$Revision$"),
+    itsExptFetcher()
   {
+    theExptDriver = Ref<ExptDriver>
+      (ExptDriver::make(Application::theApp().argc(),
+                        Application::theApp().argv(),
+                        interp));
+
+    Tcl::TclItemPkg::addIoCommands(&itsExptFetcher);
+
+    Tcl::addTracing(this, ExptDriver::tracer);
+
+    Tcl::def( this, &ExptTcl::setCurrentExpt,
+              "Exp::currentExp", "expt_id" );
+    Tcl::def( this, &ExptTcl::getCurrentExpt,
+              "Exp::currentExp", 0 );
+
+    Tcl::def( this, &ExptTcl::begin, "Exp::begin", "expt_id" );
+    addCommand( new PauseCmd(this, "Exp::pause") );
+    Tcl::def( this, &ExptTcl::setStartCommand,
+              "Expt::setStartCommand", "expt_id start_command" );
+
     declareCSetter("addBlock", &ExptDriver::addBlock);
     declareCAttrib("autosaveFile",
                    &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
@@ -286,7 +233,18 @@ public:
     declareCAction("stop", &ExptDriver::edHaltExpt);
     declareCAction("storeData", &ExptDriver::storeData);
     declareCAttrib("widget", &ExptDriver::widget, &ExptDriver::setWidget);
+
+    TclPkg::eval("foreach cmd [info commands ::Exp::*] {"
+                 "  proc ::Expt::[namespace tail $cmd] {args} \" eval $cmd \\[Exp::currentExp\\] \\$args \" }\n"
+                 "namespace eval Expt { namespace export * }"
+                 );
   }
+
+  virtual ~ExpPkg()
+    {
+      if (theExptDriver.isValid())
+        theExptDriver->edClearExpt();
+    }
 };
 
 //---------------------------------------------------------------------
@@ -309,18 +267,19 @@ namespace {
   }
 }
 
-extern "C" int Expt_Init(Tcl_Interp* interp) {
+extern "C"
+int Expt_Init(Tcl_Interp* interp)
+{
 DOTRACE("Expt_Init");
 
-  Tcl::TclPkg* pkg1 = new ExptTcl::ExptPkg(interp);
-  Tcl::TclPkg* pkg2 = new ExptTcl::ExpPkg(interp);
+  Tcl::TclPkg* pkg = new ExptTcl::ExpPkg(interp);
 
   exptCreateInterp = interp;
 
   Util::ObjFactory::theOne().registerCreatorFunc( makeExptDriver );
   Util::ObjFactory::theOne().registerAlias( "ExptDriver", "Expt" );
 
-  return pkg1->combineStatus(pkg2->initStatus());
+  return pkg->initStatus();
 }
 
 static const char vcid_expttcl_cc[] = "$Header$";
