@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 20 17:47:13 2001
-// written: Wed Jun 20 18:06:29 2001
+// written: Wed Jun 20 18:24:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,6 +36,8 @@ namespace Util
     Log& operator<<(const char* n);
     Log& operator<<(int n);
     Log& operator<<(unsigned int n);
+    Log& operator<<(long n);
+    Log& operator<<(unsigned long n);
     Log& operator<<(double d);
   };
 

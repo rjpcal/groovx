@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 20 17:49:28 2001
-// written: Wed Jun 20 18:07:22 2001
+// written: Wed Jun 20 18:25:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,6 +38,16 @@ Util::Log& Util::Log::operator<<(int n)
 }
 
 Util::Log& Util::Log::operator<<(unsigned int n)
+{
+  itsOs << n; return *this;
+}
+
+Util::Log& Util::Log::operator<<(long n)
+{
+  itsOs << n; return *this;
+}
+
+Util::Log& Util::Log::operator<<(unsigned long n)
 {
   itsOs << n; return *this;
 }
