@@ -3,7 +3,7 @@
 // glcanvas.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Dec  6 20:28:36 1999
-// written: Sun Jan 16 23:11:01 2000
+// written: Fri Feb 18 22:45:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -192,6 +192,7 @@ DOTRACE("GLCanvas::popState");
 //    glRotate(angle_in_degrees, v.x(), v.y(), v.z());
 //  }
 
+#if 0
 
 void GLCanvas::beginPoints() const {
   glBegin(GL_POINTS);
@@ -238,6 +239,7 @@ void GLCanvas::end() const {
   glEnd();
 }
 
+#endif
 
 //  void GLCanvas::vertex(const Vector3<double>& v) const {
 //    glVertex3d(v.x(), v.y(), v.z());
