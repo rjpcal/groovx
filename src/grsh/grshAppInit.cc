@@ -63,6 +63,7 @@ extern "C"
   Tcl_PackageInitProc Eventresponsehdlr_Init;
   Tcl_PackageInitProc Exptdriver_Init;
   Tcl_PackageInitProc Face_Init;
+  Tcl_PackageInitProc Filewriteevent_Init;
   Tcl_PackageInitProc Fish_Init;
   Tcl_PackageInitProc Fixpt_Init;
   Tcl_PackageInitProc Gabor_Init;
@@ -101,6 +102,7 @@ extern "C"
   Tcl_PackageInitProc Nullresponsehdlr_Init;
   Tcl_PackageInitProc Obj_Init;
   Tcl_PackageInitProc Objdb_Init;
+  Tcl_PackageInitProc Outputfile_Init;
   Tcl_PackageInitProc Prof_Init;
   Tcl_PackageInitProc Responsehandler_Init;
   Tcl_PackageInitProc Serialrh_Init;
@@ -142,6 +144,7 @@ PackageInfo DELAYED_PKGS[] =
     { "Eventresponsehdlr",   Eventresponsehdlr_Init,   "3.0" },
     { "Exptdriver",          Exptdriver_Init,          "2.0" },
     { "Face",                Face_Init,                "2.0" },
+    { "Filewriteevent",      Filewriteevent_Init,      "3.0" },
     { "Fish",                Fish_Init,                "1.0" },
     { "Fixpt",               Fixpt_Init,               "2.0" },
     { "Gabor",               Gabor_Init,               "1.0" },
@@ -181,6 +184,7 @@ PackageInfo DELAYED_PKGS[] =
     { "Nullresponsehdlr",    Nullresponsehdlr_Init,    "3.0" },
     { "Obj",                 Obj_Init,                 "1.0" },
     { "Objdb",               Objdb_Init,               "1.0" },
+    { "Outputfile",          Outputfile_Init,          "1.0" },
     { "Prof",                Prof_Init,                "1.0" },
     { "Responsehandler",     Responsehandler_Init,     "3.0" },
     { "Serialrh",            Serialrh_Init,            "3.0" },
