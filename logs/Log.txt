@@ -3,6 +3,11 @@ $Id$
 
 *** FRONT of priority queue ***
 
+(23-Feb-2002) Remaining OS X issues:
+  need cc -keep_private_externs?
+  need cc +e0 or +e1?
+  set TMPDIR environment variable to a fast drive for gcc temp files
+
 (25-Jan-2002) Logging goodies: log levels, and multiple log targets with
 separate log levels for each?
 
@@ -515,3 +520,14 @@ that refers to a non-Tcl::Command command (such as a tcl proc). Apparently my
 idiom of dynamic_cast<>(static_cast<>()) was not sufficient to test whether we
 actually had a valid Tcl::Command*; instead I now just manage a
 std::set<void*> holding the addresses of valid Tcl::Command's.
+
+(23-Feb-2002, done 23-Feb-2002) How to get shared libraries working on OS X?
+
+  with SHLIB_CMD := cc -dynamiclib -flat_namespace -undefined suppress -o
+    --> libraries build ok
+    --> executable links ok
+    --> executable fails at startup due to undefined c++ iostream symbols
+    --> adding -lcc_dynamic to each of the link commands doesn't help
+
+  Aha! need to use "c++" instead of "cc", with -lcc_dynamic, so we have:
+    c++ -dynamiclib -flat_namespace -undefined suppress -o {name} -lcc_dynamic
