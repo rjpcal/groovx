@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Mon May  5 16:39:38 2003
+// written: Thu May 15 16:24:42 2003
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -225,7 +225,7 @@ DOTRACE("main");
     }
 
   // if we got here, then some error occurred
-  return -1;
+  return 1;
 }
 
 static const char vcid_grshAppInit_cc[] = "$Header$";
