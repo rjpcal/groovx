@@ -146,12 +146,7 @@ public:
     {
       Response theResponse;
 
-      theResponse.setMsec(int(itsTrial.trElapsedMsec()));
-
-      itsTrial.trResponseSeen();
-
-      if (++itsResponseCount >= rep->itsMaxResponses)
-        ignore();
+      theResponse.setMsec(int(itsTrial.trElapsedMsec() + 0.5));
 
       Util::log( fstring("event_info: ", event_info) );
 
@@ -166,6 +161,12 @@ public:
 
       Util::log( fstring("response val: ", theResponse.val()) );
 
+      if (theResponse.shouldIgnore())
+        return;
+
+      if (++itsResponseCount >= rep->itsMaxResponses)
+        ignore();
+
       if ( !theResponse.isValid() )
         {
           if ( rep->itsAbortInvalidResponses )
@@ -173,6 +174,7 @@ public:
         }
       else
         {
+          itsTrial.trResponseSeen();
           itsTrial.trProcessResponse(theResponse);
           rep->itsFeedbackMap.giveFeedback(rep->itsInterp, theResponse.val());
         }
