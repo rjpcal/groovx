@@ -85,14 +85,15 @@ test "Dlist-dlist::pickone" "error" {
 ### dlist::range ###
 test "Dlist-dlist::range" "args" {
     dlist::range
-} {wrong \# args: should be "dlist::range begin end"}
-test "Dlist-dlist::range" "norm1" { 
-	 dlist::range 0 0
-} {^0$}
-test "Dlist-dlist::range" "norm2" { 
-	 dlist::range 0 5
-} {0 1 2 3 4 5}
-test "Dlist-dlist::range" "norm3" { dlist::range 0 -1} {^$}
+} {wrong \# args: should be one of}
+test "Dlist-dlist::range" "norm1" { dlist::range 0  0}   {^0$}
+test "Dlist-dlist::range" "norm2" { dlist::range 0  5}   {0 1 2 3 4 5}
+test "Dlist-dlist::range" "norm3" { dlist::range 0 -1}   {^$}
+test "Dlist-dlist::range" "step0" { dlist::range 5 10 0} {^$}
+test "Dlist-dlist::range" "empty1" { dlist::range 5 10 -1} {^$}
+test "Dlist-dlist::range" "empty1" { dlist::range 10 5  1} {^$}
+test "Dlist-dlist::range" "step+" { dlist::range 2 11  3} {^2 5 8 11$}
+test "Dlist-dlist::range" "step-" { dlist::range 12 1 -3} {^12 9 6 3$}
 test "Dlist-dlist::range" "err1" {
     dlist::range 0.5 6
 } {expected integer but got "0\.5"}
