@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Sat Feb  9 12:03:25 2002
+// written: Mon Feb 25 10:44:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -103,6 +103,9 @@ private:
 
   /// Each bit can cause one of the face parts to be hidden when it is drawn.
   int itsPartsMask;
+
+  /// Whether the face is drawn as filled, or just as outlines (default false).
+  bool isItFilled;
 
   Face(const Face&);
   Face& operator=(const Face&);
