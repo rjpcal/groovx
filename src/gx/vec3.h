@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 28 18:27:19 2000
-// written: Sun Aug 26 08:35:12 2001
+// written: Mon Aug 27 16:59:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,10 @@ private:
 
 public:
   Vec3() { itsData[0] = itsData[1] = itsData[2] = V(); }
+
   Vec3(V x_, V y_, V z_) { set(x_, y_, z_); }
+
+  Vec3(const V* arr) { set(arr[0], arr[1], arr[2]); }
 
         V& x()       { return itsData[0]; }
   const V& x() const { return itsData[0]; }
