@@ -3,7 +3,7 @@
 // asciistreamwriter.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:56 1999
-// written: Wed Mar 22 16:47:06 2000
+// written: Wed Mar 22 23:46:04 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,6 +55,7 @@ public:
 
   virtual void writeObject(const char* name, const IO* obj);
   virtual void writeOwnedObject(const char* name, const IO* obj);
+  virtual void writeBaseClass(const char* baseClassName, const IO* basePart);
 
   virtual void writeRoot(const IO* root);
 
