@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun  5 10:47:29 2001
-// written: Tue Aug 21 11:43:02 2001
+// written: Tue Aug 21 14:23:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@ namespace Util
   class Object;
 
   class Signal;
-  class Observer;
+  class Slot;
 
   /// This type is used for IoObject unique identifiers
   typedef unsigned long UID;

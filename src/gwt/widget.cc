@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Tue Aug 21 13:24:43 2001
+// written: Tue Aug 21 14:24:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@
 #include "gfx/gxnode.h"
 
 #include "util/dlink_list.h"
-#include "util/observer.h"
+#include "util/slot.h"
 #include "util/ref.h"
 
 #include "util/trace.h"
@@ -56,7 +56,7 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class GWT::Widget::Impl : public Util::Observer {
+class GWT::Widget::Impl : public Util::Slot {
 public:
   Impl(GWT::Widget* owner) :
     itsOwner(owner),

@@ -1,17 +1,17 @@
 ///////////////////////////////////////////////////////////////////////
 //
-// observer.h
+// slot.h
 //
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:37:02 1999
-// written: Tue Aug 21 11:49:45 2001
+// written: Tue Aug 21 14:24:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef OBSERVER_H_DEFINED
-#define OBSERVER_H_DEFINED
+#ifndef SLOT_H_DEFINED
+#define SLOT_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
 #include "util/object.h"
@@ -19,28 +19,28 @@
 
 namespace Util
 {
-  class Observer;
+  class Slot;
 }
 
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Along with Signal, implements the Observer design pattern. An
- * Observer can be informed of changes in an Signal by calling
- * connect() on that Signal. Thereafter, the Observer will receive
- * notifications of changes in the Signal via receiveSignal().
+ * Along with Signal, implements the Slot design pattern. An Slot can
+ * be informed of changes in an Signal by calling connect() on that
+ * Signal. Thereafter, the Slot will receive notifications of changes
+ * in the Signal via receiveSignal().
  *
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Util::Observer : public virtual Util::Object {
+class Util::Slot : public virtual Util::Object {
 public:
   /// Virtual destructor.
-  virtual ~Observer();
+  virtual ~Slot();
 
-  /// Informs the Observer that one of its subjects has changed.
+  /// Informs the Slot that one of its subjects has changed.
   virtual void receiveSignal() = 0;
 };
 
-static const char vcid_observer_h[] = "$Header$";
-#endif // !OBSERVER_H_DEFINED
+static const char vcid_slot_h[] = "$Header$";
+#endif // !SLOT_H_DEFINED

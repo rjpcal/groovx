@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Tue Aug 21 13:32:47 2001
+// written: Tue Aug 21 14:24:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,8 +16,8 @@
 #include "util/signal.h"
 
 #include "util/dlink_list.h"
-#include "util/observer.h"
 #include "util/ref.h"
+#include "util/slot.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -32,16 +32,16 @@
 
 namespace
 {
-  typedef Util::WeakRef<Util::Observer> ObsRef;
+  typedef Util::WeakRef<Util::Slot> ObsRef;
 
   typedef dlink_list<ObsRef> ListType;
 }
 
 struct Util::Signal::SigImpl
 {
-  SigImpl() : itsObservers() {}
+  SigImpl() : itsSlots() {}
 
-  ListType itsObservers;
+  ListType itsSlots;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -62,7 +62,7 @@ DOTRACE("Util::Signal::~Signal");
   delete itsImpl;
 }
 
-Util::UID Util::Signal::connect(Util::Observer* obs)
+Util::UID Util::Signal::connect(Util::Slot* obs)
 {
 DOTRACE("Util::Signal::connect");
   return doConnect(ObsRef(obs, Util::WEAK));
@@ -75,19 +75,19 @@ DOTRACE("Util::Signal::disconnect");
 
   ObsRef ref(obs, Util::WEAK);
 
-  itsImpl->itsObservers.remove(ref);
+  itsImpl->itsSlots.remove(ref);
 
-  DebugEvalNL(itsImpl->itsObservers.size());
+  DebugEvalNL(itsImpl->itsSlots.size());
 }
 
-Util::UID Util::Signal::doConnect(Util::WeakRef<Util::Observer> obs)
+Util::UID Util::Signal::doConnect(Util::WeakRef<Util::Slot> obs)
 {
 DOTRACE("Util::Signal::doConnect");
   if (!obs.isValid()) return 0;
 
-  itsImpl->itsObservers.push_back(obs);
+  itsImpl->itsSlots.push_back(obs);
 
-  DebugEvalNL(itsImpl->itsObservers.size());
+  DebugEvalNL(itsImpl->itsSlots.size());
 
   return obs.id();
 }
@@ -97,8 +97,8 @@ void Util::Signal::emitSignal() const
 DOTRACE("Util::Signal::emitSignal");
 
   for (ListType::iterator
-         ii = itsImpl->itsObservers.begin(),
-         end = itsImpl->itsObservers.end();
+         ii = itsImpl->itsSlots.begin(),
+         end = itsImpl->itsSlots.end();
        ii != end;
        ++ii)
     {

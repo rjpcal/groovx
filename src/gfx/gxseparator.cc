@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Tue Aug 21 13:29:07 2001
+// written: Tue Aug 21 14:23:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,12 +24,12 @@
 #include "util/error.h"
 #include "util/iter.h"
 #include "util/minivec.h"
-#include "util/observer.h"
 #include "util/ref.h"
+#include "util/slot.h"
 
 #include "util/trace.h"
 
-class GxSeparator::Impl : public Util::Observer {
+class GxSeparator::Impl : public Util::Slot {
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 
