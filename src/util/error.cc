@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:48 1999
-// written: Wed Jul 31 17:15:02 2002
+// written: Wed Jul 31 18:44:39 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,11 +23,21 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
+namespace
+{
+  static Util::BackTrace* last = 0;
+}
+
 Util::Error::Error() :
   itsInfo(),
   itsBackTrace(new BackTrace(Util::BackTrace::current()))
 {
 DOTRACE("Util::Error::Error()");
+
+  if (last == 0)
+    last = new BackTrace(*itsBackTrace);
+  else
+    *last = *itsBackTrace;
 }
 
 Util::Error::Error(const fstring& msg) :
@@ -35,6 +45,11 @@ Util::Error::Error(const fstring& msg) :
   itsBackTrace(new BackTrace(Util::BackTrace::current()))
 {
 DOTRACE("Util::Error::Error(fstring)");
+
+  if (last == 0)
+    last = new BackTrace(*itsBackTrace);
+  else
+    *last = *itsBackTrace;
 }
 
 Util::Error::Error(const Util::Error& other) :
@@ -49,6 +64,14 @@ Util::Error::~Error()
 {
 DOTRACE("Util::Error::~Error");
   delete itsBackTrace;
+}
+
+const Util::BackTrace& Util::Error::lastBackTrace()
+{
+  if (last == 0)
+    last = new BackTrace();
+
+  return *last;
 }
 
 static const char vcid_error_cc[] = "$Header$";
