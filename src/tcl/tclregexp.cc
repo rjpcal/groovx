@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:09:12 2001
-// written: Thu Sep 13 11:31:14 2001
+// written: Mon Sep 17 11:30:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@
 
 namespace
 {
-  Tcl_RegExp getCheckedRegexp(Tcl::ObjPtr patternObj)
+  Tcl_RegExp getCheckedRegexp(const Tcl::ObjPtr& patternObj)
   {
     const int flags = 0;
     // OK to pass Tcl_Interp*==0

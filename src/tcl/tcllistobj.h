@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:00:17 2001
-// written: Sun Aug 26 08:35:10 2001
+// written: Mon Sep 17 11:30:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ public:
   /// Default constructor makes an empty list
   List();
 
-  List(Tcl::ObjPtr listObj);
+  List(const Tcl::ObjPtr& listObj);
 
   List(const List& other) :
     itsList(other.itsList),
@@ -125,7 +125,7 @@ public:
   static unsigned int getLength(Tcl_Obj* obj);
 
 private:
-  void doAppend(Tcl::ObjPtr obj, unsigned int times);
+  void doAppend(const Tcl::ObjPtr& obj, unsigned int times);
 
   void update() const
     {

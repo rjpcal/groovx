@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:25:36 2000
-// written: Sun Aug 26 08:35:10 2001
+// written: Mon Sep 17 11:31:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ public:
   void forgetInterp();
 
   // Expressions
-  bool evalBooleanExpr(Tcl::ObjPtr obj) const;
+  bool evalBooleanExpr(const Tcl::ObjPtr& obj) const;
 
   // Interpreter
   bool interpDeleted() const;
@@ -74,7 +74,7 @@ public:
   }
 
   // Variables
-  void setGlobalVar(const char* var_name, Tcl::ObjPtr var) const;
+  void setGlobalVar(const char* var_name, const Tcl::ObjPtr& var) const;
   void unsetGlobalVar(const char* var_name) const;
 
   template <class Cue>

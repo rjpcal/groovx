@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:32:35 2001
-// written: Thu Sep 13 11:31:14 2001
+// written: Mon Sep 17 11:30:15 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ DOTRACE("Tcl::List::List");
   split();
 }
 
-Tcl::List::List(Tcl::ObjPtr listObj) :
+Tcl::List::List(const Tcl::ObjPtr& listObj) :
   itsList(listObj),
   itsElements(0),
   itsLength(0)
@@ -54,7 +54,7 @@ DOTRACE("Tcl::List::split");
   itsLength = (unsigned int) count;
 }
 
-void Tcl::List::doAppend(Tcl::ObjPtr obj, unsigned int times)
+void Tcl::List::doAppend(const Tcl::ObjPtr& obj, unsigned int times)
 {
 DOTRACE("Tcl::List::doAppend");
 

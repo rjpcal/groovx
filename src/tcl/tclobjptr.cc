@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 18:30:47 2001
-// written: Thu Sep 13 11:31:14 2001
+// written: Mon Sep 17 11:25:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ namespace
 
 Tcl::ObjPtr::ObjPtr() : itsObj(theNullObject.itsObj) { incrRef(itsObj); }
 
-void Tcl::ObjPtr::append(Tcl::ObjPtr other)
+void Tcl::ObjPtr::append(const Tcl::ObjPtr& other)
 {
   ensureUnique();
   Tcl_AppendObjToObj(itsObj, other.itsObj);
@@ -37,7 +37,7 @@ bool Tcl::ObjPtr::isShared() const
   return Tcl_IsShared(itsObj);
 }
 
-void Tcl::ObjPtr::ensureUnique()
+void Tcl::ObjPtr::ensureUnique() const
 {
   if (isShared())
     {

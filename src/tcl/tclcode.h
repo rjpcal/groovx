@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jun 17 10:38:13 1999
-// written: Sun Aug 26 08:35:11 2001
+// written: Mon Sep 17 11:29:17 2001
 // $Id$
 //
 // Tcl::Code serves as a wrapper for a Tcl command string that is to
@@ -55,9 +55,9 @@ public:
 
   Code();
 
-  Code(Tcl::ObjPtr cmd, ErrorHandlingMode mode = NONE);
+  Code(const Tcl::ObjPtr& cmd, ErrorHandlingMode mode = NONE);
 
-  Code(Tcl::ObjPtr cmd, Util::ErrorHandler* errHandler);
+  Code(const Tcl::ObjPtr& cmd, Util::ErrorHandler* errHandler);
 
   /// Returns true on success, false on failure.
   bool invoke(Tcl_Interp* interp);

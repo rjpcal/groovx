@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Thu Sep 13 11:31:14 2001
+// written: Mon Sep 17 11:28:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -505,7 +505,7 @@ Tcl::Context::Context(Tcl_Interp* interp,
 Tcl::Context::~Context()
 {}
 
-void Tcl::Context::setObjResult(Tcl::ObjPtr obj)
+void Tcl::Context::setObjResult(const Tcl::ObjPtr& obj)
 {
 DOTRACE("Tcl::Context::setObjResult");
   Tcl_SetObjResult(itsInterp, obj.obj());

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:44:19 1999
-// written: Sun Aug 26 08:35:10 2001
+// written: Mon Sep 17 11:25:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,20 +75,20 @@ public:
 
   typedef Tcl_Obj* Tcl_ObjPtr;
 
-  Tcl_Obj* obj() { return itsObj; }
+  Tcl_Obj* obj() const { return itsObj; }
 
   template <class Cue>
-  typename Cue::Type as(Cue)
+  typename Cue::Type as(Cue) const
   {
     return Tcl::Convert<typename Cue::Type>::fromTcl(itsObj);
   }
 
-  void append(Tcl::ObjPtr other);
+  void append(const Tcl::ObjPtr& other);
 
   bool isShared() const;
   bool isUnique() const { return !isShared(); }
 
-  void ensureUnique();
+  void ensureUnique() const;
 
   const char* typeName() const;
 
@@ -96,7 +96,7 @@ private:
   static void incrRef(Tcl_Obj* obj);
   static void decrRef(Tcl_Obj* obj);
 
-  void assign(Tcl_Obj* x)
+  void assign(Tcl_Obj* x) const
     {
       if (itsObj != x)
         {
@@ -106,7 +106,7 @@ private:
         }
     }
 
-  Tcl_Obj* itsObj;
+  mutable Tcl_Obj* itsObj;
 };
 
 } // end namespace Tcl

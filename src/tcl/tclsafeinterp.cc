@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 11 10:27:35 2000
-// written: Thu Sep 13 11:32:13 2001
+// written: Mon Sep 17 11:31:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ void Tcl::Interp::forgetInterp()
 //
 ///////////////////////////////////////////////////////////////////////
 
-bool Tcl::Interp::evalBooleanExpr(Tcl::ObjPtr obj) const
+bool Tcl::Interp::evalBooleanExpr(const Tcl::ObjPtr& obj) const
 {
 DOTRACE("Tcl::Interp::evalBooleanExpr");
 
@@ -137,7 +137,7 @@ DOTRACE("Tcl::Interp::getObjResult");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Tcl::Interp::setGlobalVar(const char* var_name, Tcl::ObjPtr var) const
+void Tcl::Interp::setGlobalVar(const char* var_name, const Tcl::ObjPtr& var) const
 {
 DOTRACE("Tcl::Interp::setGlobalVar");
 
@@ -160,7 +160,7 @@ DOTRACE("Tcl::Interp::unsetGlobalVar");
 }
 
 Tcl_Obj* Tcl::Interp::getObjGlobalVar(const char* name1,
-                                          const char* name2) const
+                                      const char* name2) const
 {
 DOTRACE("Tcl::Interp::getObjGlobalVar");
   Tcl_Obj* obj = Tcl_GetVar2Ex(intp(),
@@ -259,7 +259,7 @@ DOTRACE("Tcl::Interp::getProcBody");
 }
 
 void Tcl::Interp::createProc(const char* namesp, const char* proc_name,
-                                 const char* args, const char* body)
+                             const char* args, const char* body)
 {
 DOTRACE("Tcl::Interp::createProc");
   Tcl::ObjPtr proc_cmd_str;

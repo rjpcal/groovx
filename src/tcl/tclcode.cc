@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 16 13:29:16 2001
-// written: Sun Aug 26 08:35:15 2001
+// written: Mon Sep 17 11:29:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,14 +40,14 @@ Tcl::Code::Code() :
   itsErrHandler()
 {}
 
-Tcl::Code::Code(Tcl::ObjPtr cmd, ErrorHandlingMode mode) :
+Tcl::Code::Code(const Tcl::ObjPtr& cmd, ErrorHandlingMode mode) :
   itsCodeObj(cmd),
   itsErrorMode(mode),
   itsFlags(TCL_EVAL_GLOBAL),
   itsErrHandler(0)
 {}
 
-Tcl::Code::Code(Tcl::ObjPtr cmd, Util::ErrorHandler* handler) :
+Tcl::Code::Code(const Tcl::ObjPtr& cmd, Util::ErrorHandler* handler) :
   itsCodeObj(cmd),
   itsErrorMode(NONE),
   itsFlags(TCL_EVAL_GLOBAL),

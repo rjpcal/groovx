@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Mon Sep 10 13:41:29 2001
+// written: Mon Sep 17 11:28:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -185,7 +185,7 @@ protected:
   virtual Tcl_Obj* getObjv(unsigned int n) { return itsObjv[n]; }
 
   /// Return a Tcl_Obj*.
-  virtual void setObjResult(Tcl::ObjPtr obj);
+  virtual void setObjResult(const Tcl::ObjPtr& obj);
 
 private:
   Context(const Context&);

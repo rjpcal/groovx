@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Thu Sep 13 11:31:15 2001
+// written: Mon Sep 17 11:27:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,8 @@ namespace Tcl
     return item->getField(field);
   }
 
-  void setField(const Field& field, Ref<FieldContainer> item, Tcl::ObjPtr newValue)
+  void setField(const Field& field, Ref<FieldContainer> item,
+                const Tcl::ObjPtr& newValue)
   {
     return item->setField(field, newValue);
   }

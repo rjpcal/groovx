@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 12 12:15:46 2001
-// written: Thu Sep 13 11:31:14 2001
+// written: Mon Sep 17 11:28:49 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ protected:
     return *(itsArgs.at(argn));
   }
 
-  virtual void setObjResult(Tcl::ObjPtr obj)
+  virtual void setObjResult(const Tcl::ObjPtr& obj)
   {
     itsResult.append(obj);
   }

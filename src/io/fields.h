@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Wed Sep  5 17:50:59 2001
+// written: Mon Sep 17 11:21:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ protected:
 public:
   virtual ~FieldImpl();
 
-  virtual void set(FieldContainer* obj, Tcl::ObjPtr& new_val) const = 0;
+  virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const = 0;
   virtual Tcl::ObjPtr get(const FieldContainer* obj) const = 0;
 
   virtual void readValueFrom(FieldContainer* obj,
@@ -157,7 +157,7 @@ public:
   DataMemberFieldImpl(T C::* memptr, shared_ptr<BoundsChecker<T> > checker) :
     itsDataMember(memptr), itsChecker(checker) {}
 
-  virtual void set(FieldContainer* obj, Tcl::ObjPtr& new_val) const
+  virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
   {
     C& cobj = dynamic_cast<C&>(*obj);
 
@@ -205,7 +205,7 @@ class ValueFieldImpl : public FieldImpl
 public:
   ValueFieldImpl(V C::* memptr) : itsValueMember(memptr) {}
 
-  virtual void set(FieldContainer* obj, Tcl::ObjPtr& new_val) const
+  virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
   {
     C& cobj = dynamic_cast<C&>(*obj);
 
@@ -262,7 +262,7 @@ class FuncMemberFieldImpl : public FieldImpl
 public:
   FuncMemberFieldImpl(Getter g, Setter s) : itsGetter(g), itsSetter(s) {}
 
-  virtual void set(FieldContainer* obj, Tcl::ObjPtr& new_val) const
+  virtual void set(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
   {
     if (itsSetter == 0) throwNotAllowed("set");
 
@@ -463,7 +463,7 @@ public:
   const fstring& res() const { return itsRes; }
 
   /// Set the value of this field for \a obj.
-  void setValue(FieldContainer* obj, Tcl::ObjPtr& new_val) const
+  void setValue(FieldContainer* obj, const Tcl::ObjPtr& new_val) const
   {
     itsFieldImpl->set(obj, new_val);
   }
@@ -574,8 +574,8 @@ public:
   Tcl::ObjPtr getField(const fstring& name) const;
   Tcl::ObjPtr getField(const Field& field) const;
 
-  void setField(const fstring& name, Tcl::ObjPtr& new_val);
-  void setField(const Field& field, Tcl::ObjPtr& new_val);
+  void setField(const fstring& name, const Tcl::ObjPtr& new_val);
+  void setField(const Field& field, const Tcl::ObjPtr& new_val);
 
   void readFieldsFrom(IO::Reader* reader, const FieldMap& fields);
   void writeFieldsTo(IO::Writer* writer, const FieldMap& fields) const;
