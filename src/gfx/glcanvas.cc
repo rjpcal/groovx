@@ -35,6 +35,8 @@ Gfx::Vec2<int> GLCanvas::screenFromWorld(
   const Gfx::Vec2<double>& world_pos
   ) const
 {
+DOTRACE("GLCanvas::screenFromWorld(Gfx::Vec2)");
+
   GLdouble current_mv_matrix[16];
   GLdouble current_proj_matrix[16];
   GLint current_viewport[4];
@@ -62,6 +64,8 @@ Gfx::Vec2<double> GLCanvas::worldFromScreen(
   const Gfx::Vec2<int>& screen_pos
   ) const
 {
+DOTRACE("GLCanvas::worldFromScreen(Gfx::Vec2)");
+
   GLdouble current_mv_matrix[16];
   GLdouble current_proj_matrix[16];
   GLint current_viewport[4];
@@ -90,6 +94,8 @@ Gfx::Vec2<double> GLCanvas::worldFromScreen(
 
 Gfx::Rect<int> GLCanvas::screenFromWorld(const Gfx::Rect<double>& world_pos) const
 {
+DOTRACE("GLCanvas::screenFromWorld(Gfx::Rect)");
+
   Gfx::Rect<int> screen_rect;
   screen_rect.setBottomLeft( screenFromWorld(world_pos.bottomLeft()) );
   screen_rect.setTopRight  ( screenFromWorld(world_pos.topRight()) +
@@ -99,6 +105,8 @@ Gfx::Rect<int> GLCanvas::screenFromWorld(const Gfx::Rect<double>& world_pos) con
 
 Gfx::Rect<double> GLCanvas::worldFromScreen(const Gfx::Rect<int>& screen_pos) const
 {
+DOTRACE("GLCanvas::worldFromScreen(Gfx::Rect)");
+
   Gfx::Rect<double> world_rect;
   world_rect.setBottomLeft( worldFromScreen(screen_pos.bottomLeft()) );
   world_rect.setTopRight  ( worldFromScreen(screen_pos.topRight())   );
