@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Wed Dec 15 16:12:33 1999
+// written: Wed Dec 15 16:28:33 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -389,6 +389,62 @@ DOTRACE("Tcl::VecPropertyCmdBase::invoke");
   }
   // ... or ... "can't happen"
   else { /* Assert(0); */ }
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// PropertiesCmdBase member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+Tcl::PropertiesCmdBase::PropertiesCmdBase(Tcl_Interp* interp, 
+														const char* cmd_name) :
+  TclCmd(interp, cmd_name, NULL, 1, 1),
+  itsInterp(interp),
+  itsPropertyList(0)
+{
+DOTRACE("Tcl::PropertiesCmdBase::PropertiesCmdBase");
+}
+
+void Tcl::PropertiesCmdBase::invoke() {
+DOTRACE("Tcl::PropertiesCmdBase::invoke");
+  if (itsPropertyList == 0) {
+
+	 vector<Tcl_Obj*> elements;
+		
+	 int num_infos = numInfos();
+
+	 for (size_t i = 0; i < num_infos; ++i) {
+		vector<Tcl_Obj*> sub_elements;
+		  
+		// property name
+		sub_elements.push_back(Tcl_NewStringObj(getName(i), -1));
+		  
+		// min value
+		TclValue min(itsInterp, getMin(i));
+		sub_elements.push_back(min.getObj());
+		  
+		// max value
+		TclValue max(itsInterp, getMax(i));
+		sub_elements.push_back(max.getObj());
+		  
+		// resolution value
+		TclValue res(itsInterp, getRes(i));
+		sub_elements.push_back(res.getObj());
+		  
+		// start new group flag
+		sub_elements.push_back(Tcl_NewBooleanObj(getStartNewGroup(i)));
+		  
+		elements.push_back(Tcl_NewListObj(sub_elements.size(),
+													 &(sub_elements[0])));
+	 }
+
+	 itsPropertyList = Tcl_NewListObj(elements.size(), &(elements[0]));
+
+	 Tcl_IncrRefCount(itsPropertyList);
+  }
+
+  returnVal(TclValue(itsInterp, itsPropertyList));
 }
 
 #ifdef ACC_COMPILER
