@@ -54,12 +54,16 @@ XmlParser::XmlParser(std::istream& is, int bufsize) :
   XML_SetUserData(itsParser, this);
 
   XML_SetElementHandler(itsParser, &elementStartC, &elementEndC);
+
+  XML_SetCharacterDataHandler(itsParser, &characterDataC);
 }
 
 XmlParser::~XmlParser()
 {
   XML_ParserFree(itsParser);
 }
+
+void XmlParser::characterData(const char* text, int length) {}
 
 void XmlParser::elementStartC(void* data, const char* el, const char** attr)
 {
@@ -73,6 +77,13 @@ void XmlParser::elementEndC(void* data, const char* el)
   XmlParser* p = static_cast<XmlParser*>(data);
   Assert(p != 0);
   p->elementEnd(el);
+}
+
+void XmlParser::characterDataC(void* data, const char* text, int length)
+{
+  XmlParser* p = static_cast<XmlParser*>(data);
+  Assert(p != 0);
+  p->characterData(text, length);
 }
 
 void XmlParser::parse()

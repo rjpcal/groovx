@@ -46,12 +46,16 @@ protected:
   virtual void elementStart(const char* el, const char** attr) = 0;
   virtual void elementEnd(const char* el) = 0;
 
+  /// Default is no-op; override if needed.
+  virtual void characterData(const char* text, int length);
+
 private:
   XmlParser(const XmlParser&);
   XmlParser& operator=(const XmlParser&);
 
   static void elementStartC(void* data, const char* el, const char** attr);
   static void elementEndC(void* data, const char* el);
+  static void characterDataC(void* data, const char* text, int length);
 
   XML_Parser const itsParser;
   std::istream& itsStream;
