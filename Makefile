@@ -341,17 +341,6 @@ ALL_HEADERS := $(wildcard $(SRC)/[a-z]*/*.h  $(SRC)/[a-z]*/[a-z]*/*.h)
 SRCDIRS := $(sort $(dir $(ALL_SOURCES)))
 ALLDIRS := $(subst $(SRC), $(OBJ), $(SRCDIRS)) $(TMP_DIR) $(DEP)
 
-.PHONY: dir_structure
-dir_structure:
-	for dr in $(ALLDIRS); do if [ ! -d $$dr ]; then mkdir -p $$dr; fi; done
-
-#-------------------------------------------------------------------------
-#
-# Dependencies 
-#
-#-------------------------------------------------------------------------
-
-
 # This build rule helps to create subdirectories that don't need to be part of
 # the CVS repository, but do need to exist to hold generated files during the
 # build process in sandboxes..
@@ -359,16 +348,40 @@ dir_structure:
 	@[ -d ${@D} ] || mkdir -p ${@D}
 	@[ -f $@ ] || touch $@
 
+.PHONY: dir_structure
+dir_structure:
+	@echo "building directory structure"
+	@for dr in $(ALLDIRS); do if [ ! -d $$dr ]; then mkdir -p $$dr; fi; done
+
+#-------------------------------------------------------------------------
+#
+# Dependencies 
+#
+#-------------------------------------------------------------------------
+
+# For each of the dependencies that get built and then "include"d into the
+# Makefile, we have to use a two-target method to get them built, in order
+# to avoid some thorny issues with time stamps etc. Without the two-step
+# method, the potential problem is the following: if we are doing either a
+# "make --assume-new" or if there is any clock skew involving one of the ,
+# then we get an infinite loop of rebuilding the file to be "include"d,
+# because after the inclusion, the entire makefile is reprocessed again,
+# which forces the included file to be rebuilt, and so on. In the two-step
+# process, the dependencies apply to a dummy file that is NOT "include"d
+# into the makefile, and then the "include"d file depends on the dummy
+# file. This avoids infinite looping.
 
 # dependencies of object files on source+header files
 
 DEP_FILE := $(DEP)/alldepends.$(MODE)
 
-$(DEP_FILE): $(DEP)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
+$(DEP_FILE).deps: $(DEP)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS)
+	touch $@
+
+$(DEP_FILE): $(DEP_FILE).deps
 	time ./pydep/pydep.py $(SRC) --objdir obj/$(ARCH)/ > $@
 
 include $(DEP_FILE)
-
 
 # dependencies of package shlib's on object files
 
@@ -376,12 +389,15 @@ VISX_LIB_DIR := $(LOCAL_ARCH)/lib/visx
 
 PKG_DEP_FILE := $(DEP)/pkgdepends.$(MODE)
 
-$(PKG_DEP_FILE): $(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
-		$(ALL_SOURCES) $(ALL_HEADERS) \
-		Makefile src/pkgs/buildPkgDeps.tcl
+$(PKG_DEP_FILE).deps: $(DEP)/.timestamp $(VISX_LIB_DIR)/.timestamp \
+		$(ALL_SOURCES) $(ALL_HEADERS) src/pkgs/buildPkgDeps.tcl
+	touch $@
+
+$(PKG_DEP_FILE): $(PKG_DEP_FILE).deps
 	src/pkgs/buildPkgDeps.tcl $@
 
 include $(PKG_DEP_FILE)
+
 
 $(LOCAL_LIB)/visx/mtx.so: \
 	/usr/local/matlab/extern/lib/glnx86/libmx.so \
@@ -400,9 +416,7 @@ $(LOCAL_LIB)/visx/matlabengine.so: \
 
 LIB_DEP_FILE := $(DEP)/libdepends.$(MODE)
 
-$(LIB_DEP_FILE): $(DEP)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS) \
-		Makefile $(SCRIPTS)/build_lib_rules.tcl
-	$(SCRIPTS)/build_lib_rules.tcl \
+LIB_DEP_CMD := 	$(SCRIPTS)/build_lib_rules.tcl \
 		--libdir $(LOCAL_LIB) \
 		--libprefix libDeep \
 		--libext $(LIB_EXT) \
@@ -418,10 +432,16 @@ $(LIB_DEP_FILE): $(DEP)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS) \
 		--module Togl \
 		--module System \
 		--module Util \
-		> $@
+		>
+
+$(LIB_DEP_FILE).deps: $(DEP)/.timestamp $(ALL_SOURCES) $(ALL_HEADERS) \
+		$(SCRIPTS)/build_lib_rules.tcl
+	touch $@
+
+$(LIB_DEP_FILE): $(LIB_DEP_FILE).deps
+	$(LIB_DEP_CMD) $@
 
 include $(LIB_DEP_FILE)
-
 
 cdeps: $(ALL_SOURCES) $(ALL_HEADERS)
 	time cdeplevels.py $(SRC) -L 1000 > $(LOGS)/cdeps
