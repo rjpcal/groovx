@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 14:45:43 2003
-// written: Mon May 12 14:46:06 2003
+// written: Wed May 14 14:12:54 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -66,8 +66,6 @@ public:
                                   double theta, double phi, double contrast);
 
   int size() const { return itsSize; }
-
-  double operator[](int i) const { return itsData[i]; }
 
   double at(int x, int y) const { return itsData[x + y*itsSize]; }
 
