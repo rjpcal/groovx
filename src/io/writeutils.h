@@ -3,7 +3,7 @@
 // writeutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:18:36 1999
-// written: Mon Mar  6 12:35:01 2000
+// written: Fri Mar 10 20:25:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,51 +22,65 @@ public:
       value types. */
   template <class Itr>
   static void writeValueSeq(Writer* writer,
-									 const char* name, Itr begin, Itr end) {
-	 int count = 0;
+									 const char* name, Itr begin, Itr end)
+	 {
+		writer->writeValue(makeSeqCountString(name),
+								 computeCount(begin, end));
 
-	 while (begin != end) {
-		writer->writeValue(makeElementNameString(name, count), *begin);
-		++count;
-		++begin;
+		int count = 0;
+	 
+		while (begin != end) {
+		  writer->writeValue(makeElementNameString(name, count), *begin);
+		  ++begin;
+		  ++count;
+		}
 	 }
-
-	 writer->writeInt(makeSeqCountString(name), count);
-  }
 
   /** A generic interface for handling containers, sequences, etc. of
 		objects of Value subtypes */
   template <class Itr>
   static void writeValueObjSeq(Writer* writer,
-										 const char* name, Itr begin, Itr end) {
-	 int count = 0;
+										 const char* name, Itr begin, Itr end)
+	 {
+		writer->writeValue(makeSeqCountString(name),
+								 computeCount(begin, end));
 
-	 while (begin != end) {
-		writer->writeValueObj(makeElementNameString(name, count), *begin);
-		++count;
-		++begin;
+		int count = 0;
+	 
+		while (begin != end) {
+		  writer->writeValueObj(makeElementNameString(name, count), *begin);
+		  ++begin;
+		  ++count;
+		}
 	 }
-
-	 writer->writeInt(makeSeqCountString(name), count);
-  }
 
 
   /// A generic interface for handling containers, sequences, etc. of objects
   template <class Itr>
   static void writeObjectSeq(Writer* writer,
-									  const char* name, Itr begin, Itr end) {
-	 int count = 0;
+									  const char* name, Itr begin, Itr end)
+	 {
+		writer->writeValue(makeSeqCountString(name),
+								 computeCount(begin, end));
+
+		int count = 0;
 	 
-	 while (begin != end) {
-		writer->writeObject(makeElementNameString(name, count), *begin);
-		++count;
-		++begin;
+		while (begin != end) {
+		  writer->writeObject(makeElementNameString(name, count), *begin);
+		  ++begin;
+		  ++count;
+		}
 	 }
 
-	 writer->writeValue(makeSeqCountString(name), count);
-  }
-
 private:
+  template <class Itr>
+  static int computeCount(Itr begin, Itr end)
+	 {
+		int count = 0;
+		while (begin != end) { ++count; ++begin; }
+		return count;
+	 }
+
   // Warning: the return value of these functions is only valid up
   // until the next call to the function.
   static const char* makeElementNameString(const char* seq_name,
