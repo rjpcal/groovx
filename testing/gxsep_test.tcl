@@ -120,7 +120,7 @@ test "GxSepTcl-GxSeparator::removeChildId" "id too small" {
 	 set gxsep [Obj::new GxSeparator]
 	 GxSeparator::removeChildId $gxsep -1
 	 GxSeparator::numChildren $gxsep
-} {^0$}
+} {^GxSeparator::removeChildId: signed/unsigned conversion failed$}
 
 test "GxSepTcl-GxSeparator::removeChildId" "use when empty" {
 	 set gxsep [Obj::new GxSeparator]
