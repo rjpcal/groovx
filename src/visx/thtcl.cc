@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Mar 29 23:57:19 2000
+// written: Thu Mar 30 09:38:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ class ThTcl::ThPkg: public Tcl::ListItemPkg<TimingHdlr, ThList> {
 public:
   ThPkg(Tcl_Interp* interp) :
 	 Tcl::ListItemPkg<TimingHdlr, ThList>(interp, ThList::theThList(),
-													  "Th", "1.1", "timingHdlr")
+													  "Th", "1.1")
   {
 	 addCommand( new AddEventCmd(this, "Th::addImmediateEvent",
 										  TimingHdlr::IMMEDIATE));
@@ -85,6 +85,9 @@ public:
 	 declareCAttrib("autosavePeriod",
 						 &TimingHdlr::getAutosavePeriod,
 						 &TimingHdlr::setAutosavePeriod);
+
+	 TclPkg::eval("namespace eval Th { "
+					  "    proc timingHdlr {} { return [Th] } }");
   }
 };
 
@@ -102,7 +105,7 @@ class SimpleThTcl::SimpleThPkg : public Tcl::ListItemPkg<TimingHandler, ThList> 
 public:
   SimpleThPkg(Tcl_Interp* interp) :
 	 Tcl::ListItemPkg<TimingHandler, ThList>(interp, ThList::theThList(),
-														  "SimpleTh", "1.1", "timingHandler")
+														  "SimpleTh", "1.1")
   {
 	 declareCAttrib("abortWait",  
 						 &TimingHandler::getAbortWait,
@@ -116,6 +119,9 @@ public:
 	 declareCAttrib("timeout",
 						 &TimingHandler::getTimeout,
 						 &TimingHandler::setTimeout);
+
+	 TclPkg::eval("namespace eval SimpleTh { "
+					  "    proc timingHandler {} { return [SimpleTh] } }");
   }
 };
 
@@ -148,17 +154,17 @@ DOTRACE("Th_Init");
   Tcl::TclPkg* pkg2 = new SimpleThTcl::SimpleThPkg(interp);
   Tcl::TclPkg* pkg3 = new ThlistTcl::ThListPkg(interp);
 
-  FactoryRegistrar<IO, TimingHdlr>       :: registerWith(IoFactory::theOne());
-  FactoryRegistrar<IO, TimingHandler>    :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, TimingHdlr>       :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, TimingHandler>    :: registerWith(IoFactory::theOne());
 
-  FactoryRegistrar<IO, AbortTrialEvent>  :: registerWith(IoFactory::theOne());
-  FactoryRegistrar<IO, DrawEvent>        :: registerWith(IoFactory::theOne());
-  FactoryRegistrar<IO, UndrawEvent>      :: registerWith(IoFactory::theOne());
-  FactoryRegistrar<IO, EndTrialEvent>    :: registerWith(IoFactory::theOne());
-  FactoryRegistrar<IO, SwapBuffersEvent> :: registerWith(IoFactory::theOne());
-  FactoryRegistrar<IO, RenderBackEvent>  :: registerWith(IoFactory::theOne());
-  FactoryRegistrar<IO, RenderFrontEvent> :: registerWith(IoFactory::theOne());
-  FactoryRegistrar<IO, ClearBufferEvent> :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, AbortTrialEvent>  :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, DrawEvent>        :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, UndrawEvent>      :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, EndTrialEvent>    :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, SwapBuffersEvent> :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, RenderBackEvent>  :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, RenderFrontEvent> :: registerWith(IoFactory::theOne());
+  FactoryRegistrar<IO::IoObject, ClearBufferEvent> :: registerWith(IoFactory::theOne());
 
   return pkg1->combineStatus(pkg2->combineStatus(pkg3->initStatus()));
 }
