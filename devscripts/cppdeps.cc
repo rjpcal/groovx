@@ -92,7 +92,8 @@ namespace
 
   bool should_ignore_file(const char* fname)
   {
-    return (fname[0] == '.' ||
+    return (strcmp(fname, ".") == 0 ||
+            strcmp(fname, "..") == 0 ||
             strcmp(fname, "RCS") == 0 ||
             strcmp(fname, "CVS") == 0);
   }
