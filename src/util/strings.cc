@@ -18,7 +18,8 @@
 #include "util/algo.h"
 #include "util/freelist.h"
 
-#include <iostream.h>
+#include <cctype>
+#include <iostream>
 
 #define NO_PROF
 #include "util/trace.h"
@@ -332,8 +333,15 @@ DOTRACE("fstring::readsome");
     {
       string_rep::makeUnique(itsRep);
       itsRep->reserve(count+1);
+#ifndef PRESTANDARD_IOSTREAMS
       unsigned int numread = is.readsome(itsRep->data(), count);
       itsRep->set_length(numread);
+#else
+      is.read(itsRep->data(), count);
+      if (is.eof()) is.clear();
+      unsigned int numread = is.gcount();
+      itsRep->set_length(numread);
+#endif
     }
 }
 
