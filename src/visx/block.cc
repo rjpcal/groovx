@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Dec  5 15:16:19 2002
+// written: Thu Dec  5 15:34:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -292,9 +292,9 @@ DOTRACE("Block::vxEndTrialHook");
     rep->parent->vxEndTrialHook();
 }
 
-void Block::vxNext()
+void Block::vxChildFinished()
 {
-DOTRACE("Block::vxNext");
+DOTRACE("Block::vxChildFinished");
   Assert( !isComplete() );
 
   switch (rep->childStatus)
@@ -354,7 +354,7 @@ DOTRACE("Block::vxNext");
       // Release our current parent, then pass control onto it.
       Element& p = rep->getParent();
       rep->parent = 0;
-      p.vxNext();
+      p.vxChildFinished();
     }
 }
 

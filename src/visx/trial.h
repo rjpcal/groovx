@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Thu Dec  5 15:15:52 2002
+// written: Thu Dec  5 15:36:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,7 +112,7 @@ public:
 
   virtual void vxAbort();
 
-  virtual void vxNext();
+  virtual void vxChildFinished();
 
   virtual void vxProcessResponse(Response& response);
 
@@ -124,13 +124,14 @@ public:
   // actions //
   /////////////
 
-  virtual double trElapsedMsec();
+  double trElapsedMsec();
 
-  virtual void trResponseSeen();
-  virtual void trAllowResponses();
-  virtual void trDenyResponses();
+  void trResponseSeen();
+  void trAllowResponses();
+  void trDenyResponses();
+  void trEndTrial();
 
-  virtual void installSelf(Util::SoftRef<Toglet> widget) const;
+  void installSelf(Util::SoftRef<Toglet> widget) const;
 
 private:
   Trial(const Trial&);

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  4 15:35:37 2002
-// written: Thu Dec  5 15:13:14 2002
+// written: Thu Dec  5 15:34:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,7 +62,8 @@ public:
       such as timekeeping, autosaving, etc. Default version is a no-op. */
   virtual void vxEndTrialHook();
 
-  virtual void vxNext() = 0;
+  /// Called when an element's child finishes running.
+  virtual void vxChildFinished() = 0;
 
   virtual void vxProcessResponse(Response& response) = 0;
 

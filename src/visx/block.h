@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Thu Dec  5 15:16:09 2002
+// written: Thu Dec  5 15:34:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -99,7 +99,7 @@ public:
   virtual fstring status() const;
 
   /// Starts the current element.
-  /** This will be called by vxNext() as needed. */
+  /** This will be called by vxChildFinished() as needed. */
   void vxRun(Element& parent);
 
   /// Undraws, aborts, and ends the current element.
@@ -117,7 +117,7 @@ public:
   virtual void vxEndTrialHook();
 
   /// Begins the next element, moving on to the next Block if necessary.
-  virtual void vxNext();
+  virtual void vxChildFinished();
 
   /// Records a response to the current element in the Block.
   /** Also, prepares the Block for the next element. The response is
