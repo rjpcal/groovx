@@ -3,7 +3,7 @@
 // writer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:50 1999
-// written: Thu Mar 30 10:02:17 2000
+// written: Thu Jun  1 12:23:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,8 @@ IO::WriteError::WriteError(const char* msg) :
 {
   appendMsg(msg);
 }
+
+IO::WriteError::~WriteError() {}
 
 IO::Writer::~Writer () {}
 
