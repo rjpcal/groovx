@@ -3,7 +3,7 @@
 // fish.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:56 1999
-// written: Tue Oct  5 12:36:04 1999
+// written: Tue Oct  5 17:54:26 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,12 +42,12 @@ private:
 public:
   virtual ~Fish();
 
-  virtual void serialize(ostream &os, IOFlag flag) const {}
-  virtual void deserialize(istream &is, IOFlag flag) {}
+  virtual void serialize(ostream &os, IOFlag flag) const;
+  virtual void deserialize(istream &is, IOFlag flag);
   // These functions write the object's state from/to an output/input
   // stream. Both functions are defined, but are no-ops for GrObj.
 
-  virtual int charCount() const { return 0; }
+  virtual int charCount() const;
 
   ////////////////
   // properties //
