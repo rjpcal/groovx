@@ -508,5 +508,17 @@ DOTRACE("geom::txform::debug_dump");
   dbg_print(0, m_mtx[3]); dbg_print(0, m_mtx[7]); dbg_print(0, m_mtx[11]); dbg_print_nl(0, m_mtx[15]);
 }
 
+double geom::txform::debug_sse(const txform& ref) const
+{
+DOTRACE("geom::txform::debug_sse");
+  double result = 0.0;
+  for (int i = 0; i < 16; ++i)
+    {
+      const double diff = this->m_mtx[i] - ref.m_mtx[i];
+      result += (diff*diff);
+    }
+  return result;
+}
+
 static const char vcid_txform_cc[] = "$Header$";
 #endif // !TXFORM_CC_DEFINED

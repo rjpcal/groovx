@@ -93,6 +93,9 @@ namespace geom
 
     void debug_dump() const;
 
+    /// FOR TESTING/DEBUGGING: compute the sum-squared-error to a reference matrix.
+    double debug_sse(const txform& ref) const;
+
   private:
     double m_mtx[16];
   };
