@@ -3,7 +3,7 @@
 // soundtcl.cc
 // Rob Peters
 // created: Tue Apr 13 14:09:59 1999
-// written: Wed Mar 15 11:13:31 2000
+// written: Tue Sep 19 13:54:29 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,9 +35,9 @@
 
 namespace SoundTcl {
   const string_literal ok_sound_file(
-	 "/cit/rjpeters/face/audio/saw50_500Hz_300ms.au");
+	 "/cit/rjpeters/science/face/audio/saw50_500Hz_300ms.au");
   const string_literal err_sound_file(
-	 "/cit/rjpeters/face/audio/saw50_350Hz_300ms.au");
+	 "/cit/rjpeters/science/face/audio/saw50_350Hz_300ms.au");
 
   class SoundCmd;
   class HaveAudioCmd;
@@ -114,6 +114,7 @@ public:
 		  DebugPrintNL("error creating sounds during startup");
 		  Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
 										 "SoundPkg: ", err.msg_cstr(), NULL);
+		  setInitStatusError();
 		}
 	 }
 
@@ -151,8 +152,7 @@ public:
 //
 //---------------------------------------------------------------------
 
-extern "C"
-int Sound_Init(Tcl_Interp* interp) {
+extern "C" int Sound_Init(Tcl_Interp* interp) {
 DOTRACE("Sound_Init");
 
   Tcl::TclPkg* pkg1 = new SoundTcl::SoundPkg(interp);
