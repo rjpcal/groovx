@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Tue Apr  2 16:12:07 2002
+// written: Tue Apr  2 16:29:08 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,7 +73,7 @@ public:
   void destroyWidget();
   void scaleRect(double factor);
   void setColor(const Color& color);
-  void setFixedScale(double s);
+  void setPixelsPerUnit(double s);
   void setMinRectLTRB(double L, double T, double R, double B);
   void setHeight(int val);
   void setWidth(int val);

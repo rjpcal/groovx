@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue Apr  2 16:22:50 2002
+// written: Tue Apr  2 16:31:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -136,12 +136,12 @@ public:
   Sizer(double dist = 30.0) :
     itsPolicy(FIXED_SCALE),
     itsViewingDistance(dist),
-    itsFixedScale(1.0),
+    itsPixelsPerUnit(1.0),
     itsMinRect()
   {}
 
   // For FIXED_SCALE mode:
-  void setFixedScale(double s);
+  void setPixelsPerUnit(double s);
   void setUnitAngle(double deg, double screen_ppi);
   void setViewingDistIn(double inches);
   bool usingFixedScale() const { return itsPolicy == FIXED_SCALE; }
@@ -155,31 +155,33 @@ public:
 private:
   ResizePolicy itsPolicy;
   double itsViewingDistance;    // inches
-  double itsFixedScale;         // pixels per GLunit
+  double itsPixelsPerUnit;         // pixels per GLunit
   Gfx::Rect<double> itsMinRect;
 };
 
-void Toglet::Sizer::setFixedScale(double s)
+void Toglet::Sizer::setPixelsPerUnit(double s)
 {
   if (s <= 0.0)
     throw Util::Error("invalid scaling factor");
 
   itsPolicy = Sizer::FIXED_SCALE;
-  itsFixedScale = s;
+  itsPixelsPerUnit = s;
 }
 
-void Toglet::Sizer::setUnitAngle(double deg, double screen_ppi)
+void Toglet::Sizer::setUnitAngle(double deg_per_unit, double screen_ppi)
 {
-  if (deg <= 0.0)
+  if (deg_per_unit <= 0.0)
     throw Util::Error("unit angle must be positive");
 
   static const double deg_to_rad = 3.141593/180.0;
-  itsPolicy = Sizer::FIXED_SCALE;
-  // tan(deg) == screen_unit_dist/viewing_dist;
-  // screen_unit_dist == 1.0 * itsFixedScale / screepPpi;
-  double screen_unit_dist = tan(deg*deg_to_rad) * itsViewingDistance;
 
-  itsFixedScale = int(screen_unit_dist * screen_ppi);
+  // tan(deg_per_unit) == screen_inches_per_unit/viewing_dist;
+  // screen_inches_per_unit == 1.0 * itsPixelsPerUnit / screepPpi;
+  const double screen_inches_per_unit =
+    tan(deg_per_unit*deg_to_rad) * itsViewingDistance;
+
+  itsPixelsPerUnit = int(screen_inches_per_unit * screen_ppi);
+  itsPolicy = Sizer::FIXED_SCALE;
 }
 
 void Toglet::Sizer::setViewingDistIn(double inches)
@@ -190,7 +192,7 @@ void Toglet::Sizer::setViewingDistIn(double inches)
   // according to similar triangles,
   //   new_dist / old_dist == new_scale / old_scale;
   const double factor = inches / itsViewingDistance;
-  itsFixedScale *= factor;
+  itsPixelsPerUnit *= factor;
   itsViewingDistance = inches;
 }
 
@@ -221,10 +223,10 @@ DOTRACE("Toglet::Sizer::reconfigure");
     {
     case FIXED_SCALE:
       {
-        const double l = -1 * (width  / 2.0) / itsFixedScale;
-        const double r =      (width  / 2.0) / itsFixedScale;
-        const double b = -1 * (height / 2.0) / itsFixedScale;
-        const double t =      (height / 2.0) / itsFixedScale;
+        const double l = -1 * (width  / 2.0) / itsPixelsPerUnit;
+        const double r =      (width  / 2.0) / itsPixelsPerUnit;
+        const double b = -1 * (height / 2.0) / itsPixelsPerUnit;
+        const double t =      (height / 2.0) / itsPixelsPerUnit;
         glOrtho(l, r, b, t, -1.0, 1.0);
       }
       break;
@@ -477,10 +479,10 @@ DOTRACE("Toglet::setColor");
   itsTogl->setColor(color.pixel, color.red, color.green, color.blue);
 }
 
-void Toglet::setFixedScale(double s)
+void Toglet::setPixelsPerUnit(double s)
 {
-DOTRACE("Toglet::setFixedScale");
-  itsSizer->setFixedScale(s);
+DOTRACE("Toglet::setPixelsPerUnit");
+  itsSizer->setPixelsPerUnit(s);
   reconfigure();
 }
 

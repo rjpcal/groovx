@@ -182,22 +182,22 @@ test "ObjTogl-setColor" "error" {
 	 Togl::setColor -1 0.5 0.5 0.5
 } {^Toglet::setColor:}
 
-### setFixedScaleCmd ###
-test "ObjTogl-setFixedScale" "args" {
-    Togl::setFixedScale
+### pixelsPerUnitCmd ###
+test "ObjTogl-pixelsPerUnit" "args" {
+    Togl::pixelsPerUnit
 } {^wrong \# args: should be}
-test "ObjTogl-setFixedScale" "norm1" {
-	 catch {Togl::setFixedScale 1}
+test "ObjTogl-pixelsPerUnit" "norm1" {
+	 catch {Togl::pixelsPerUnit 1}
 } {^0$}
-test "ObjTogl-setFixedScale" "norm2" {
-	 catch {Togl::setFixedScale 1.5}
+test "ObjTogl-pixelsPerUnit" "norm2" {
+	 catch {Togl::pixelsPerUnit 1.5}
 } {^0$}
-test "ObjTogl-setFixedScale" "err1" {
-    Togl::setFixedScale 0
-} {^Toglet::setFixedScale: invalid scaling factor$}
-test "ObjTogl-setFixedScale" "err2" {
-    Togl::setFixedScale -1.2
-} {^Toglet::setFixedScale: invalid scaling factor$}
+test "ObjTogl-pixelsPerUnit" "err1" {
+    Togl::pixelsPerUnit 0
+} {^Toglet::pixelsPerUnit: invalid scaling factor$}
+test "ObjTogl-pixelsPerUnit" "err2" {
+    Togl::pixelsPerUnit -1.2
+} {^Toglet::pixelsPerUnit: invalid scaling factor$}
 
 ### setMinRectCmd ###
 test "ObjTogl-setMinRect" "args" {
