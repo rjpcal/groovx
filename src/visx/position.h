@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:14 1999
-// written: Fri Jan 18 16:06:52 2002
+// written: Fri Jun 21 12:03:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,8 +75,16 @@ protected:
   /// The angle of rotation in degrees.
   double itsRotationAngle;
 
+  int itsMtxMode;
+
 public:
   static const FieldMap& classFields();
+
+  ///////////////
+  // accessors //
+  ///////////////
+
+  void getTransformation(double* result) const;
 
   /////////////
   // actions //
