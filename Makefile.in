@@ -155,8 +155,13 @@ ALL_SRCS := $(shell find $(SRC) -name \*.h -or -name \*.cc)
 
 # dependencies of object files on source+header files
 
-$(DEP)/cppdepends: $(DEP)/.timestamp $(ALL_SRCS)
+$(SCRIPTS)/cppdeps: $(SCRIPTS)/cppdeps.cc
+	$(CXX) -O2 -Wall $^ -o $@
+
+$(DEP)/cppdepends: $(SCRIPTS)/cppdeps $(DEP)/.timestamp $(ALL_SRCS)
 	time $(SCRIPTS)/cppdeps.tcl --src $(SRC) --objdir $(OBJ)/ > $@
+	time $(SCRIPTS)/cppdeps --src $(SRC) --objdir $(OBJ)/ |sort> $(DEP)/altdeps
+	diff $@ $(DEP)/altdeps
 
 # dependencies of package shlib's on object files
 
