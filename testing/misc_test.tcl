@@ -36,10 +36,10 @@ test "MiscTcl-srand" "normal use" {
 } {^1$}
 test "MiscTcl-srand" "error from non-numeric input" {
     srand junk
-} {expected integer but got "junk"}
+} {expected long value but got "junk"}
 test "MiscTcl-srand" "error from non-integral number" {
     srand 1.5
-} {expected integer but got "1\.5"}
+} {expected long value but got "1\.5"}
 
 ### sleepCmd ###
 test "MiscTcl-sleep" "too few args" {
