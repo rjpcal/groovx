@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Thu Aug  9 08:07:26 2001
+// written: Fri Aug 10 12:27:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,14 @@
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
+
+namespace
+{
+  unsigned int safestrlen(const char* str)
+  {
+    return str ? strlen(str) : 0;
+  }
+}
 
 //---------------------------------------------------------------------
 //
@@ -191,7 +199,7 @@ fstring::fstring(const char* text) :
 {
 DOTRACE("fstring::fstring(const char*)");
 
-  itsRep = string_rep::make(strlen(text), text);
+  itsRep = string_rep::make(safestrlen(text), text);
 
   itsRep->incrRefCount();
 }
@@ -221,7 +229,7 @@ fstring& fstring::operator=(const char* text)
 DOTRACE("fstring::operator=(const char*)");
 
   string_rep* old_rep = itsRep;
-  itsRep = string_rep::make(strlen(text), text);
+  itsRep = string_rep::make(safestrlen(text), text);
   itsRep->incrRefCount();
   old_rep->decrRefCount();
 
@@ -285,7 +293,7 @@ bool fstring::operator>(const char* other) const
 void fstring::do_append(const char* text)
 {
 DOTRACE("fstring::do_append");
-  if (text) append_text(strlen(text), text);
+  if (text) append_text(safestrlen(text), text);
 }
 
 void fstring::append_text(std::size_t length, const char* text)
