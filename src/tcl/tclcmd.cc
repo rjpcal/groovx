@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Sat Mar  4 02:15:41 2000
+// written: Wed Mar  8 11:06:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -334,15 +334,15 @@ DOTRACE("Tcl::TclCmd::dummyInvoke");
   }
   catch (TclError& err) {
 	 DebugPrintNL("catch (TclError&)");
-	 if (err.msg() != "") {
-		Tcl::err_message(interp, theCmd->itsObjv, err.msg().c_str());
+	 if (string(err.msg_cstr()) != "") {
+		Tcl::err_message(interp, theCmd->itsObjv, err.msg_cstr());
 	 }
 	 theCmd->itsResult = TCL_ERROR;
   }
   catch (ErrorWithMsg& err) {
 	 DebugPrintNL("catch (ErrorWithMsg&)");
-	 if (err.msg() != "") {
-		Tcl::err_message(interp, theCmd->itsObjv, err.msg().c_str());
+	 if (string(err.msg_cstr()) != "") {
+		Tcl::err_message(interp, theCmd->itsObjv, err.msg_cstr());
 	 }
 	 else {
 		string msg = "an error of type ";

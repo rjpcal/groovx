@@ -3,7 +3,7 @@
 // tlistwidget.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:46:38 1999
-// written: Fri Jan 14 12:01:00 2000
+// written: Wed Mar  8 11:07:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ DOTRACE("TlistWidget::safeDrawTrial");
 		return;
 	 }
 	 catch (InvalidIdError& err) {
-		DebugEvalNL(err.msg());
+		DebugEvalNL(err.msg_cstr());
 	 }
   }
 

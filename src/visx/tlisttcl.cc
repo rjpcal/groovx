@@ -3,7 +3,7 @@
 // tlisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:38:37 1999
-// written: Tue Mar  7 16:08:19 2000
+// written: Wed Mar  8 11:06:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -218,7 +218,7 @@ protected:
 		returnInt(num_loaded);
 	 }
 	 catch (IoError& err) {
-		throw Tcl::TclError(err.msg());
+		throw Tcl::TclError(err.msg_cstr());
 	 }
   }
 };

@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Tue Feb  1 18:05:36 2000
+// written: Wed Mar  8 11:05:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -114,8 +114,8 @@ void FaceTcl::LoadFacesCmd::invoke() {
   }
   catch (ErrorWithMsg& err) {
 	 DebugEval(typeid(err).name());
-	 DebugEvalNL(err.msg());
-	 throw Tcl::TclError(err.msg());
+	 DebugEvalNL(err.msg_cstr());
+	 throw Tcl::TclError(err.msg_cstr());
   }
 
   // Return the ids of all the faces created
