@@ -68,7 +68,7 @@ const char* sformat_partial(char x, fstring& str, const char* format,
     {
       if (*p == x)
         {
-          str.append(Util::CharData(format, p - format));
+          str.append_range(format, p - format);
           str.append(arg);
           return p+1;
         }

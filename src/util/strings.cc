@@ -234,12 +234,12 @@ DOTRACE("fstring::init_empty");
   itsRep->incr_ref_count();
 }
 
-void fstring::init(Util::CharData cdata)
+void fstring::init_range(char_range r)
 {
 DOTRACE("fstring::init");
   Precondition(itsRep == 0);
 
-  itsRep = string_rep::make(cdata.len, cdata.text);
+  itsRep = string_rep::make(r.len, r.text);
 
   itsRep->incr_ref_count();
 }
@@ -339,9 +339,30 @@ DOTRACE("fstring::operator>");
   return strcmp(c_str(), other) > 0;
 }
 
-void fstring::append_text(std::size_t length, const char* text)
+namespace
 {
-DOTRACE("fstring::append_text");
+  const int SZ = 64;
+}
+
+void fstring::do_append(char c) { append_range(&c, 1); }
+void fstring::do_append(const char* s) { if (s != 0) append_range(s, strlen(s)); }
+void fstring::do_append(const fstring& s) { append_range(s.c_str(), s.length()); }
+
+#define APPEND(fmt, val) \
+  char buf[SZ]; int n = snprintf(buf, SZ, fmt, (val)); Assert(n > 0 && n < SZ); append_range(&buf[0], std::size_t(n))
+
+void fstring::do_append(bool x)          { APPEND("%d", int(x)); }
+void fstring::do_append(int x)           { APPEND("%d", x); }
+void fstring::do_append(unsigned int x)  { APPEND("%u", x); }
+void fstring::do_append(long x)          { APPEND("%ld", x); }
+void fstring::do_append(unsigned long x) { APPEND("%lu", x); }
+void fstring::do_append(double x)        { APPEND("%g", x); }
+
+#undef APPEND
+
+void fstring::append_range(const char* text, std::size_t length)
+{
+DOTRACE("fstring::append_range");
 
   if (length > 0)
     {

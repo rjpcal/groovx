@@ -123,8 +123,7 @@ namespace
           }
       } // while loop
 
-    return fstring(Util::CharData(&buffer[0],
-                                  buffer.size()));
+    return fstring(char_range(&buffer[0], buffer.size()));
   }
 }
 

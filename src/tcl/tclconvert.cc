@@ -221,7 +221,7 @@ DOTRACE("Tcl::fromTcl(fstring*)");
 
   Assert(length >= 0);
 
-  return fstring(Util::CharData(text, (unsigned int) length));
+  return fstring(char_range(text, (unsigned int) length));
 }
 
 Tcl::Dict Tcl::fromTcl(Tcl_Obj* obj, Tcl::Dict*)

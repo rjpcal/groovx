@@ -198,8 +198,7 @@ namespace
 
     virtual void characterData(const char* text, int len)
     {
-      Util::CharData cdata(text, len);
-      itsVal.append(cdata);
+      itsVal.append_range(text, len);
     }
 
     fstring itsVal;

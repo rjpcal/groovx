@@ -32,8 +32,6 @@
 
 #include <cstddef>
 
-#include "util/tostring.h"
-
 #ifdef HAVE_IOSFWD
 #  include <iosfwd>
 #else
@@ -118,6 +116,16 @@ private:
   char* itsText;
 };
 
+struct char_range
+{
+  char_range(const char* t, unsigned int n) : text(t), len(n) {}
+
+  // default copy, dtor, assignment OK
+
+  const char*  const text;
+  unsigned int const len;
+};
+
 ///////////////////////////////////////////////////////////////////////
 /**
  *
@@ -146,7 +154,14 @@ public:
   fstring(const char* s) :
     itsRep(0)
   {
-    init(Util::CharData(s));
+    init_empty(); append(s);
+  }
+
+  /// Construct from a character range (pointer plus length).
+  fstring(char_range r) :
+    itsRep(0)
+  {
+    init_range(r);
   }
 
   /// Construct by converting args to strings and concatenating.
@@ -280,6 +295,9 @@ public:
   // Appending
   //
 
+  /// Append a range of characters.
+  void append_range(const char* text, std::size_t length);
+
   /// Convert args to string and append to the fstring.
   template <class T1>
   fstring& append(const T1& part1)
@@ -368,42 +386,25 @@ public:
   void debugDump() const throw();
 
 private:
-  void do_append(const char& c)
-  { append_text(1, &c); }
+  void do_append(char c);
+  void do_append(const char* s);
+  void do_append(const fstring& s);
 
-  void do_append(Util::CharData cdata)
-  { append_text(cdata.len, cdata.text); }
-
-  void do_append(const fstring& other)
-  { append_text(other.length(), other.c_str()); }
-
-  template <class T>
-  void do_append(const T& x)
-  {
-    do_append(Util::Convert<T>::toString(x));
-  }
-
-  void append_text(std::size_t length, const char* text);
+  void do_append(bool x);
+  void do_append(int x);
+  void do_append(unsigned int x);
+  void do_append(long x);
+  void do_append(unsigned long x);
+  void do_append(double x);
 
   void init_empty();
 
-  void init(Util::CharData cdata);
+  void init_range(char_range r);
 
   string_rep* itsRep;
 };
 
 
-
-namespace Util
-{
-  /// Specialization for fstring.
-  template <>
-  struct Convert<fstring>
-  {
-    static CharData toString(const fstring& x)
-    { return CharData(x.c_str(), x.length()); }
-  };
-}
 
 ///////////////////////////////////////////////////////////////////////
 //

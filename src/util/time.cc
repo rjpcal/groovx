@@ -68,7 +68,7 @@ fstring Util::Time::format(const char* formatcode) const
 
   std::size_t count = strftime(buf, 512, formatcode, tt);
 
-  return fstring(Util::CharData(&buf[0], count));
+  return fstring(char_range(&buf[0], count));
 }
 
 static const char vcid_time_cc[] = "$Header$";
