@@ -1,17 +1,19 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // randutils.h
 // Rob Peters
 // created: Mon Mar  8 02:35:53 1999
-// written: Mon Apr  5 16:33:48 1999
+// written: Thu May 27 20:08:12 1999
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef RANDUTILS_H_DEFINED
 #define RANDUTILS_H_DEFINED
 
-#ifndef CSTDLIB_INCLUDED
+#ifndef CSTDLIB_DEFINED
 #include <cstdlib>
-#define CSTDLIB_INCLUDED
+#define CSTDLIB_DEFINED
 #endif
 
 namespace {
