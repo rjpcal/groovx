@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Tue Oct 19 15:27:03 1999
+// written: Mon Nov 15 15:27:00 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,8 +100,7 @@ public:
   // accessors //
   ///////////////
 
-  protected: virtual bool grGetBoundingBox(double& left, double& top,
-														 double& right, double& bottom,
+  protected: virtual bool grGetBoundingBox(Rect<double>& bounding_box,
 														 int& border_pixels) const;
 
 public:
