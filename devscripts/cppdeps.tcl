@@ -163,38 +163,100 @@ namespace eval cdeps {
 
 }
 
+namespace eval ldeps {
+    proc get_1 { filename search_path } {
+	if { ![info exists ::LINK_DEPENDS($filename)] } {
+	    set includes [cdeps::get_nested_includes $filename $search_path]
+
+	    set deps [list $filename]
+
+	    foreach f $includes {
+		set cc_file [file rootname $f].cc
+		if { [file exists $cc_file] } {
+		    if { [info exists ::LDEPS(${filename},${cc_file})] } {
+			continue
+		    }
+		    set ::LDEPS(${filename},${cc_file}) 1
+		    foreach nested [get_1 $cc_file $search_path] {
+			lappend deps $nested
+		    }
+		}
+	    }
+
+	    set ::LINK_DEPENDS($filename) [lsort -unique $deps]
+	}
+	return $::LINK_DEPENDS($filename)
+    }
+
+    proc get_batch { glob_patterns search_path } {
+	set deps [list]
+
+	set filename_list [glob -nocomplain $glob_patterns]
+
+	foreach f $filename_list {
+
+	    if { [file isdirectory $f] } {
+		puts "dir: $f"
+		set deps [concat $deps [get_batch ${f}/*.cc $search_path]]
+		set deps [concat $deps [get_batch ${f}/*/ $search_path]]
+
+	    } elseif { [file isfile $f] } {
+		set deps [concat $deps [get_1 $f $search_path]]
+	    }
+	}
+
+	return [lsort -unique $deps]
+    }
+
+    proc condense { dep_list } {
+	set dirs [list]
+
+	foreach d $dep_list {
+	    lappend dirs [file dirname $d]
+	}
+
+	return [lsort -unique $dirs]
+    }
+
+    proc get_condensed { glob_patterns search_path } {
+	return [condense [get_batch $glob_patterns $search_path]]
+    }
+}
+
 set lmapping {
     {src/* obj/i686/*}
     {}
 }
 
-namespace eval ldeps {
-}
+proc run { argv } {
 
-set USER_IPATH [list]
+    set user_ipath [list]
 
-set SYS_IPATH {
-    /cit/rjpeters/local/i686/include
-    /cit/rjpeters/local/i686/gcc-3.0.2/include/
-    /cit/rjpeters/local/i686/gcc-3.0.2/include/g++-v3
-    /cit/rjpeters/local/i686/gcc-3.0.2/include/g++-v3/backward
-    /cit/rjpeters/local/i686/gcc-3.0.2/include/g++-v3/i686-pc-linux-gnu
-    /usr/include
-    /usr/include/linux
-    /usr/local/matlab/extern/include
-}
-
-set SRC_DIRS [list]
-
-for {set i 0} {$i < [llength $argv]} {incr i} {
-    set arg [lindex $argv $i]
-    if { [string equal $arg "--include"] } {
-	lappend ::USER_IPATH [lindex $argv [incr i]]
-    } elseif { [string equal $arg "--src"] } {
-	set dir [lindex $argv [incr i]]
-	lappend ::SRC_DIRS $dir
-	lappend ::USER_IPATH $dir
+    set sys_ipath {
+	/cit/rjpeters/local/i686/include
+	/cit/rjpeters/local/i686/gcc-3.0.2/include/
+	/cit/rjpeters/local/i686/gcc-3.0.2/include/g++-v3
+	/cit/rjpeters/local/i686/gcc-3.0.2/include/g++-v3/backward
+	/cit/rjpeters/local/i686/gcc-3.0.2/include/g++-v3/i686-pc-linux-gnu
+	/usr/include
+	/usr/include/linux
+	/usr/local/matlab/extern/include
     }
+
+    set src_dirs [list]
+
+    for {set i 0} {$i < [llength $argv]} {incr i} {
+	set arg [lindex $argv $i]
+	if { [string equal $arg "--include"] } {
+	    lappend user_ipath [lindex $argv [incr i]]
+	} elseif { [string equal $arg "--src"] } {
+	    set dir [lindex $argv [incr i]]
+	    lappend src_dirs $dir
+	    lappend user_ipath $dir
+	}
+    }
+
+    cdeps::batch_print $src_dirs $user_ipath
 }
 
-cdeps::batch_print $argv $USER_IPATH
+# run $argv
