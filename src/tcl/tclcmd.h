@@ -119,7 +119,7 @@ public:
 
   /// Find the command associated with a given name.
   /** Returns null if no such command. */
-  static Tcl::Command* lookup(const char* name);
+  static Tcl::Command* lookup(Tcl::Interp& interp, const char* name);
 
 private:
   Command(const Command&);

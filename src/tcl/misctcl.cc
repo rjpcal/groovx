@@ -70,9 +70,10 @@ namespace
     return result;
   }
 
-  fstring cmdUsage(const char* name)
+  fstring cmdUsage(Tcl::Context& ctx)
   {
-    Tcl::Command* cmd = Tcl::Command::lookup(name);
+    const char* name = ctx.getValFromArg<const char*>(1);
+    Tcl::Command* cmd = Tcl::Command::lookup(ctx.interp(), name);
 
     if (cmd == 0)
       throw Util::Error("no such Tcl::Command");
@@ -121,7 +122,7 @@ DOTRACE("Misc_Init");
 
   pkg->def( "::bt", "", &backTrace );
 
-  pkg->def( "::?", "cmd_name", &cmdUsage );
+  pkg->defRaw( "::?", 1, "cmd_name", &cmdUsage );
 
   PKG_RETURN;
 }

@@ -119,7 +119,7 @@ namespace
     }
 
   public:
-    static Overloads* lookup(Tcl::Interp& interp, const fstring& cmd_name);
+    static Overloads* make(Tcl::Interp& interp, const fstring& cmd_name);
 
     void add(Tcl::Command* p)
     {
@@ -228,9 +228,9 @@ DOTRACE("Overloads::~Overloads");
                         static_cast<ClientData>(this));
 }
 
-Overloads* Overloads::lookup(Tcl::Interp& interp, const fstring& cmd_name)
+Overloads* Overloads::make(Tcl::Interp& interp, const fstring& cmd_name)
 {
-DOTRACE("Overloads::lookup");
+DOTRACE("Overloads::make");
   CmdTable::iterator pos = commandTable().find(cmd_name);
   if (pos != commandTable().end())
     {
@@ -427,7 +427,7 @@ Tcl::Command::Command(Tcl::Interp& interp,
 {
 DOTRACE("Tcl::Command::Command");
 
-  rep->overloads = Overloads::lookup(interp, cmd_name);
+  rep->overloads = Overloads::make(interp, cmd_name);
 
   Assert(rep->overloads != 0);
 
@@ -494,7 +494,7 @@ DOTRACE("Tcl::Command::setDispatcher");
   rep->dispatcher = dpx;
 }
 
-Tcl::Command* Tcl::Command::lookup(const char* name)
+Tcl::Command* Tcl::Command::lookup(Tcl::Interp&, const char* name)
 {
 DOTRACE("Tcl::Command::lookup");
   Overloads* const ov = commandTable()[name];
