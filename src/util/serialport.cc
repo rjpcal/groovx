@@ -3,7 +3,7 @@
 // serialport.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Mar 29 13:46:11 2000
-// written: Wed May 17 14:34:06 2000
+// written: Wed May 17 14:37:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,11 @@
 
 #include <cstdio>
 #include <termios.h>
-#include <sys/fcntl.h>
+#if !defined(IRIX6)
+#  include <sys/fcntl.h>
+#else
+#  include <fcntl.h>
+#endif
 #include <unistd.h>
 
 #define NO_TRACE
