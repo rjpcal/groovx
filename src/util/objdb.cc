@@ -3,7 +3,7 @@
 // ioptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Nov 21 00:26:29 1999
-// written: Tue Oct 24 16:22:49 2000
+// written: Wed Oct 25 07:30:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,10 +63,10 @@ DOTRACE("IoPtrList::readFrom");
 
   fixed_block<IO::IoObject*> ioBlock(uint_count);
 
-  IO::ReadUtils::template readObjectSeq<IO::IoObject>(
+  IO::ReadUtils::readObjectSeq<IO::IoObject>(
                    reader, "itsVec", ioBlock.begin(), count);
 
-  PtrListBase::clear();
+  clear();
 
   for (size_t i = 0; i < uint_count; ++i)
 	 if (ioBlock[i] != 0) {
