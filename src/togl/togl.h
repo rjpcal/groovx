@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Tue May 23 15:37:57 2000
+// written: Wed May 24 14:10:58 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -27,6 +27,10 @@
 
 /*
  * $Log$
+ * Revision 2.3  2000/05/24 21:11:18  rjpeters
+ * Removed Togl_SetCreateFunc() since it makes no sense to set a create
+ * callback on an object that's already been created.
+ *
  * Revision 2.2  2000/05/24 14:14:11  rjpeters
  * Changed 'struct Togl' to 'class Togl'.
  *
@@ -169,8 +173,6 @@ extern void Togl_ResetDefaultCallbacks( void );
 /*
  * Change callbacks for existing widget
  */
-
-extern void Togl_SetCreateFunc( Togl* togl, Togl_Callback *proc );
 
 extern void Togl_SetDisplayFunc( Togl* togl, Togl_Callback *proc );
 

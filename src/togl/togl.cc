@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed May 24 09:31:47 2000
+// written: Wed May 24 14:10:48 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -553,16 +553,6 @@ DOTRACE("<togl.cc>::Togl_ResetDefaultCallbacks");
   DefaultOverlayDisplayProc = NULL;
   DefaultTimerProc = NULL;
   DefaultClientData = NULL;
-}
-
-
-/*
- * Chnage the create callback for a specific Togl widget.
- */
-void Togl_SetCreateFunc( Togl* togl, Togl_Callback *proc )
-{
-DOTRACE("<togl.cc>::Togl_SetCreateFunc");
-  togl->itsCreateProc = proc;
 }
 
 
