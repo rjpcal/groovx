@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Fri May 11 21:58:11 2001
+// written: Fri May 18 17:27:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -306,14 +306,6 @@ public:
   /// Return a Tcl_Obj*.
   void returnTclObj(Tcl_Obj* obj);
 
-  /** Return satisfactorily with the string type result \a val. The
-      templated type must have a c_str() function returning const char*. */
-  template <class Str>
-  void returnStringType(const Str& val)
-	 {
-		returnCstring(val.c_str());
-	 }
-
 
   /// Return satisfactorily with the generic \c Value result \a val.
   void returnVal(const Value& val) { returnValue(val); }
@@ -338,6 +330,14 @@ public:
 
   /// Return satisfactorily with the C-style string (\c char*) result \a val.
   void returnVal(const char* val) { returnCstring(val); }
+
+  /** Return satisfactorily with the string type result \a val. The
+      templated type must have a c_str() function returning const char*. */
+  template <class Str>
+  void returnVal(const Str& val)
+	 {
+		returnCstring(val.c_str());
+	 }
 
 
   /// Append to the result a list element with the generic \c Value \a val.
@@ -367,6 +367,14 @@ public:
   /// Append to the result a list element with the C-style string (\c char*) value \a val.
   void lappendVal(const char* val) { lappendCstring(val); }
 
+  /** Append to the result a list element with the string value \a
+      val. The templated type must have a c_str() function returning
+      const char*. */
+  template <class Str>
+  void lappendVal(const Str& val)
+	 {
+		returnCstring(val.c_str());
+	 }
 
   /// Return the sequence of values referred to by the range [\a begin, \a end).
   template <class Itr>
