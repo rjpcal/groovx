@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:16:22 1999
-// written: Thu Jul 12 14:35:19 2001
+// written: Thu Jul 12 15:45:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -135,30 +135,16 @@ Tcl::TVecAttribCmd<T>::TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name,
                                      shared_ptr<Setter<T> > setter,
                                      const char* usage,
                                      unsigned int item_argn) :
-  TVecGetterCmd<T>(pkg, 0, getter, 0, item_argn),
-  TVecSetterCmd<T>(pkg, 0, setter, 0, item_argn),
-  VecCmd(pkg->interp(), cmd_name,
-         usage ? usage : (item_argn ?
-                          "item_id(s) ?new_value(s)?" : "?new_value?"),
-         item_argn,
-         item_argn+1, item_argn+2, false),
-  itsObjcGet(item_argn+1),
-  itsObjcSet(item_argn+2)
+  TVecGetterCmd<T>(pkg, cmd_name, getter, usage, item_argn)
 {
 DOTRACE("Tcl::TVecAttribCmd<>::TVecAttribCmd");
+
+  addOverload( pkg->interp(), make_shared(
+    new TVecSetterCmd<T>(pkg, cmd_name, setter, usage, item_argn)));
 }
 
 template <class T>
 Tcl::TVecAttribCmd<T>::~TVecAttribCmd() {}
-
-template <class T>
-void Tcl::TVecAttribCmd<T>::invoke(Tcl::Context& ctx)
-{
-DOTRACE("Tcl::TVecAttribCmd<>::invoke");
-  if      (ctx.objc() == itsObjcGet) { TVecGetterCmd<T>::invoke(ctx); }
-  else if (ctx.objc() == itsObjcSet) { TVecSetterCmd<T>::invoke(ctx); }
-  else    /* "can't happen" */       { Assert(0); }
-}
 
 // Explicit instatiation requests
 namespace Tcl

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:11:41 1999
-// written: Thu Jul 12 14:35:02 2001
+// written: Thu Jul 12 15:44:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ class TclItemPkgBase;
 ///////////////////////////////////////////////////////////////////////
 
 template <class ValType>
-class TVecGetterCmd : public virtual Tcl::VecCmd {
+class TVecGetterCmd : public Tcl::VecCmd {
 public:
   TVecGetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
                 shared_ptr<Getter<ValType> > getter,
@@ -94,7 +94,7 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class TVecSetterCmd : public virtual Tcl::VecCmd {
+class TVecSetterCmd : public Tcl::VecCmd {
 public:
   typedef typename SetterCmdTraits<T>::value_type value_type;
   typedef typename SetterCmdTraits<T>::stack_type stack_type;
@@ -127,7 +127,7 @@ private:
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class TVecAttribCmd : public TVecGetterCmd<T>, public TVecSetterCmd<T> {
+class TVecAttribCmd : public TVecGetterCmd<T> {
 public:
   TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name,
                 shared_ptr<Getter<T> > getter,
@@ -135,13 +135,6 @@ public:
                 const char* usage, unsigned int item_argn);
 
   virtual ~TVecAttribCmd();
-
-protected:
-  virtual void invoke(Context& ctx);
-
-private:
-  unsigned int itsObjcGet;
-  unsigned int itsObjcSet;
 };
 
 } // end namespace Tcl
