@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 17:42:48 2001
-// written: Wed Jun 26 12:52:41 2002
+// written: Fri Jul  5 13:37:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,6 +48,10 @@ public:
   virtual void writeTo(IO::Writer* writer) const;
 
   static const FieldMap& classFields();
+
+  /// This is a no-op since GxColor doesn't actually draw anything onscreen.
+  virtual void getBoundingCube(Gfx::Box<double>& cube,
+                               Gfx::Canvas& canvas) const;
 
   virtual void draw(Gfx::Canvas& canvas) const;
   virtual void undraw(Gfx::Canvas& canvas) const;

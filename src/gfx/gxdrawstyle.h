@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 29 10:16:30 2001
-// written: Wed Jun 26 12:53:12 2002
+// written: Fri Jul  5 13:38:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,6 +49,10 @@ public:
   virtual void writeTo(IO::Writer* writer) const;
 
   static const FieldMap& classFields();
+
+  /// A no-op since GxDrawStyle doesn't actually draw anything onscreen.
+  virtual void getBoundingCube(Gfx::Box<double>& cube,
+                               Gfx::Canvas& canvas) const;
 
   virtual void draw(Gfx::Canvas& canvas) const;
   virtual void undraw(Gfx::Canvas& canvas) const;

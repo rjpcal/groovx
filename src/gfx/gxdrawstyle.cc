@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 29 10:19:31 2001
-// written: Fri Jan 18 16:07:07 2002
+// written: Fri Jul  5 13:39:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -72,6 +72,11 @@ const FieldMap& GxDrawStyle::classFields()
   static FieldMap GXDRAWSTYLE_FIELDS(FIELD_ARRAY);
 
   return GXDRAWSTYLE_FIELDS;
+}
+
+void GxDrawStyle::getBoundingCube(Gfx::Box<double>&, Gfx::Canvas&) const
+{
+  ; // do nothing, since GxDrawStyle doesn't actually draw anything on-screen
 }
 
 void GxDrawStyle::draw(Gfx::Canvas& canvas) const

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Tue May 14 19:43:05 2002
+// written: Fri Jul  5 13:33:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,8 @@
 #include "visx/grobjimpl.h"
 
 #include "gfx/canvas.h"
+
+#include "gx/box.h"
 
 #include "io/reader.h"
 #include "io/writer.h"
@@ -143,6 +145,20 @@ void GrObj::getBoundingBox(Gfx::Rect<double>& bbox, Gfx::Canvas& canvas) const
 DOTRACE("GrObj::getBoundingBox");
 
   bbox.unionize(itsImpl->itsTopNode->gnodeBoundingBox(canvas));
+}
+
+void GrObj::getBoundingCube(Gfx::Box<double>& cube,
+                            Gfx::Canvas& canvas) const
+{
+DOTRACE("GrObj::getBoundingBox");
+
+  Gfx::Rect<double> rect = cube.rect();
+
+  rect.unionize(itsImpl->itsTopNode->gnodeBoundingBox(canvas));
+
+  cube.setXXYYZZ(rect.left(), rect.right(),
+                 rect.bottom(), rect.top(),
+                 cube.z0(), cube.z1());
 }
 
 Gmodes::ScalingMode GrObj::getScalingMode() const

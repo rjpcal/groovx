@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Fri Jan 18 16:06:52 2002
+// written: Fri Jul  5 13:32:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -92,6 +92,10 @@ public:
       not boundingBox(). */
   virtual void getBoundingBox(Gfx::Rect<double>& bbox,
                               Gfx::Canvas& canvas) const;
+
+  /// Overridden from GxNode.
+  virtual void getBoundingCube(Gfx::Box<double>& cube,
+                               Gfx::Canvas& canvas) const;
 
   /** Subclasses must override this function to return the bounding
       box in GL coordinates for the object's onscreen image. */
