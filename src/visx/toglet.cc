@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Tue Apr  2 15:41:04 2002
+// written: Tue Apr  2 15:55:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -109,6 +109,12 @@ public:
   }
 };
 
+///////////////////////////////////////////////////////////////////////
+//
+// Toglet::Sizer
+//
+///////////////////////////////////////////////////////////////////////
+
 struct Toglet::Sizer
 {
   Sizer(double dist = 30.0) :
@@ -122,7 +128,53 @@ struct Toglet::Sizer
   bool itsFixedScaleFlag;
   double itsFixedScale;
   Gfx::Rect<double> itsMinRect;
+
+  void reconfigure(const int width, const int height);
 };
+
+void Toglet::Sizer::reconfigure(const int width, const int height)
+{
+DOTRACE("Toglet::Sizer::reconfigure");
+
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glViewport(0, 0, width, height);
+
+  if (itsFixedScaleFlag)
+    {
+      const double l = -1 * (width  / 2.0) / itsFixedScale;
+      const double r =      (width  / 2.0) / itsFixedScale;
+      const double b = -1 * (height / 2.0) / itsFixedScale;
+      const double t =      (height / 2.0) / itsFixedScale;
+      glOrtho(l, r, b, t, -1.0, 1.0);
+    }
+  else // not usingFixedScale (i.e. minRect instead)
+    {
+      // the actual rect that we'll build:
+      Gfx::Rect<double> port(itsMinRect);
+
+      // the desired conditions are as follows:
+      //    (1) port contains itsMinRect
+      //    (2) port.aspect() == getAspect()
+      //    (3) port is the smallest rectangle that meets (1) and (2)
+
+      const double window_aspect = double(width) / double(height);
+
+      const double ratio_of_aspects = itsMinRect.aspect() / window_aspect;
+
+      if ( ratio_of_aspects < 1 ) // the available space is too wide...
+        {
+          port.widenByFactor(1/ratio_of_aspects); // so use some extra width
+        }
+      else                        // the available space is too tall...
+        {
+          port.heightenByFactor(ratio_of_aspects); // so use some extra height
+        }
+
+      glOrtho(port.left(), port.right(),
+              port.bottom(), port.top(), -1.0, 1.0);
+    }
+}
 
 namespace
 {
@@ -219,18 +271,6 @@ DOTRACE("Toglet::~Toglet");
 ///////////////
 // accessors //
 ///////////////
-
-double Toglet::getFixedScale() const
-{
-DOTRACE("Toglet::getFixedScale");
-  return itsSizer->itsFixedScale;
-}
-
-Gfx::Rect<double> Toglet::getMinRect() const
-{
-DOTRACE("Toglet::getMinRect");
-  return itsSizer->itsMinRect;
-}
 
 Tcl_Interp* Toglet::getInterp() const
 {
@@ -475,42 +515,7 @@ DOTRACE("Toglet::reconfigure");
 
   itsTogl->makeCurrent();
 
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glViewport(0, 0, getWidth(), getHeight());
-
-  if (usingFixedScale())
-    {
-      double l = -1 * (getWidth()  / 2.0) / itsSizer->itsFixedScale;
-      double r =      (getWidth()  / 2.0) / itsSizer->itsFixedScale;
-      double b = -1 * (getHeight() / 2.0) / itsSizer->itsFixedScale;
-      double t =      (getHeight() / 2.0) / itsSizer->itsFixedScale;
-      glOrtho(l, r, b, t, -1.0, 1.0);
-    }
-
-  else // not usingFixedScale (i.e. minRect instead)
-    {
-      Gfx::Rect<double> therect(itsSizer->itsMinRect); // the actual rect that we'll build
-
-      // the desired conditions are as follows:
-      //    (1) therect contains itsMinRect
-      //    (2) therect.aspect() == getAspect()
-      //    (3) therect is the smallest rectangle that meets (1) and (2)
-
-      double ratio_of_aspects = itsSizer->itsMinRect.aspect() / getAspect();
-
-      if ( ratio_of_aspects < 1 ) // the available space is too wide...
-        {
-          therect.widenByFactor(1/ratio_of_aspects); // so use some extra width
-        }
-      else                        // the available space is too tall...
-        {
-          therect.heightenByFactor(ratio_of_aspects); // so use some extra height
-        }
-
-      glOrtho(therect.left(), therect.right(),
-              therect.bottom(), therect.top(), -1.0, 1.0);
-    }
+  itsSizer->reconfigure(getWidth(), getHeight());
 
   itsTogl->postRedisplay();
 }

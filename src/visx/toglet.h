@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Tue Apr  2 15:41:34 2002
+// written: Tue Apr  2 15:49:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,11 +25,6 @@ struct Togl;
 struct Tcl_Interp;
 
 class Toglet_Impl;
-
-namespace Gfx
-{
-  template <class V> class Rect;
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -61,11 +56,7 @@ public:
   virtual bool isNotShareable() const { return true; }
 
   // accessors
-  double getAspect() const { return double(getWidth())/getHeight(); }
-  double getFixedScale() const;
-  Gfx::Rect<double> getMinRect() const;
   int getHeight() const;
-  unsigned int getFontListBase() const { return itsFontListBase; }
   Tcl_Interp* getInterp() const;
   int getWidth() const;
   const char* pathname() const;
@@ -105,6 +96,7 @@ private:
   Toglet(const Toglet&); // no copy constructor
   Toglet& operator=(const Toglet&); // no assignment operator
 
+  unsigned int getFontListBase() const { return itsFontListBase; }
   void reconfigure();
 
   friend class Toglet_Impl;
