@@ -44,9 +44,6 @@
 #include "util/debug.h"
 DBG_REGISTER
 
-#define TRACE_WALL_CLOCK_TIME
-//  #define TRACE_CPU_TIME
-
 template <typename T, unsigned int N>
 class static_stack
 {
@@ -231,14 +228,20 @@ void Util::BackTrace::print(STD_IO::ostream& os) const throw()
 //
 ///////////////////////////////////////////////////////////////////////
 
+#define TRACE_WALL_CLOCK_TIME
+//#define TRACE_CPU_TIME
+
 namespace
 {
+
   inline Util::Time getTime() throw()
   {
 #if defined(TRACE_WALL_CLOCK_TIME)
     return Util::Time::wallClockNow();
 #elif defined(TRACE_CPU_TIME)
-    return Util::Time::rusageUserNow();
+    return Util::Time::rusageUserNow() + Util::Time::rusageSysNow();
+#else
+#  error must define either TRACE_WALL_CLOCK_TIME or TRACE_CPU_TIME
 #endif
   }
 
