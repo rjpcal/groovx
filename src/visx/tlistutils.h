@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 02:58:20 1999
-// written: Fri Aug 10 10:50:04 2001
+// written: Tue Aug 21 15:29:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,8 @@
 #ifndef TLISTUTILS_H_DEFINED
 #define TLISTUTILS_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILFWD_H_DEFINED)
-#include "util/utilfwd.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UID_H_DEFINED)
+#include "util/uid.h"
 #endif
 
 namespace Gfx
