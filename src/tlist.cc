@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Fri Dec  3 15:34:05 1999
+// written: Sat Dec  4 02:00:05 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -206,16 +206,6 @@ DOTRACE("Tlist::readFromObjidsOnly");
 // manipulators //
 //////////////////
 
-void Tlist::setVisible(bool vis) {
-DOTRACE("Tlist::setVisible");
-  itsVisibility = vis;
-}
-
-void Tlist::setCurTrial(int trial) {
-DOTRACE("Tlist::setCurTrial");
-  if (isValidId(trial)) itsCurTrial = trial;
-}
-
 void Tlist::clear() {
 DOTRACE("Tlist::clear");
   PtrList<Trial>::clear();
@@ -228,16 +218,16 @@ DOTRACE("Tlist::clear");
 
 void Tlist::drawTrial(int trial) {
 DOTRACE("Tlist::drawTrial");
-  setCurTrial(trial);
-  setVisible(true);
+  if (isValidId(trial)) itsCurTrial = trial;
+  itsVisibility = true;
   drawCurTrial();
   glFlush();
 }
 
 void Tlist::undrawTrial(int trial) {
 DOTRACE("Tlist::undrawTrial");
-  setCurTrial(trial);
-  setVisible(false);
+  if (isValidId(trial)) itsCurTrial = trial;
+  itsVisibility = false;
   undrawCurTrial();
   glFlush();
 }

@@ -3,7 +3,7 @@
 // tlist.h
 // Rob Peters
 // created: Fri Mar 12 13:23:02 1999
-// written: Fri Dec  3 15:33:47 1999
+// written: Sat Dec  4 02:00:12 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -72,12 +72,6 @@ public:
   // manipulators //
   //////////////////
 
-  // Change the global visibility of a Tlist. This determines whether
-  // anything will be displayed by a "redraw" command, or by remap
-  // events sent to the screen window.
-  void setVisible(bool vis);
-
-  void setCurTrial(int trial);
   void clear();
 
   /////////////
