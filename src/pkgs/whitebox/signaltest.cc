@@ -46,6 +46,9 @@ namespace
   void v0_callback0() { ++v0; }
   void v1_callback0() { --v1; }
 
+  void v0_callback1(int i) { v0 += i; }
+  void v1_callback1(int i) { v1 -= i; }
+
   void testSlotAdapterFreeFunc0()
   {
     Util::Signal0 sig0;
@@ -143,6 +146,40 @@ namespace
     sig2.emit(); TEST_REQUIRE_EQ(v0, 2);
     sig3.emit(); TEST_REQUIRE_EQ(v0, 3);
   }
+
+  void testSlotAdapterFreeFunc1()
+  {
+    Util::Signal1<int> sig1;
+
+    v0 = 0;
+    v1 = 0;
+    TEST_REQUIRE_EQ(v0, 0);
+    TEST_REQUIRE_EQ(v1, 0);
+
+    sig1.emit(1);
+    TEST_REQUIRE_EQ(v0, 0);
+    TEST_REQUIRE_EQ(v1, 0);
+
+    Util::SoftRef<Util::Slot1<int> > s0 = sig1.connect(&v0_callback1);
+    sig1.emit(2);
+    TEST_REQUIRE_EQ(v0, 2);
+    TEST_REQUIRE_EQ(v1, 0);
+
+    Util::SoftRef<Util::Slot1<int> > s1 = sig1.connect(&v1_callback1);
+    sig1.emit(3);
+    TEST_REQUIRE_EQ(v0, 5);
+    TEST_REQUIRE_EQ(v1, -3);
+
+    sig1.disconnect(s0);
+    sig1.emit(4);
+    TEST_REQUIRE_EQ(v0, 5);
+    TEST_REQUIRE_EQ(v1, -7);
+
+    sig1.disconnect(s1);
+    sig1.emit(5);
+    TEST_REQUIRE_EQ(v0, 5);
+    TEST_REQUIRE_EQ(v1, -7);
+  }
 }
 
 extern "C"
@@ -155,6 +192,7 @@ DOTRACE("Signaltest_Init");
   DEF_TEST(pkg, testSlotAdapterFreeFunc0);
   DEF_TEST(pkg, testSignalSlotChain);
   DEF_TEST(pkg, testCyclicSignalSlotChain);
+  DEF_TEST(pkg, testSlotAdapterFreeFunc1);
 
   PKG_RETURN;
 }
