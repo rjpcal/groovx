@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct 13 10:41:19 1999
-// written: Fri Jan 18 16:07:06 2002
+// written: Thu May 23 16:51:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,9 +36,7 @@ const char* demangle_cstr(const char* in)
 
 const char* demangle_cstr(const char* in)
 {
-  static std::string result;
-  result = gcc_v3_demangle(in);
-  return result.c_str();
+  return gcc_v3_demangle(in);
 }
 
 #endif
