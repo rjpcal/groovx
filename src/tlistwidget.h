@@ -3,7 +3,7 @@
 // tlistwidget.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Dec  3 14:45:34 1999
-// written: Wed Oct  4 10:40:18 2000
+// written: Tue Oct 17 16:17:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,12 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TOGLCONFIG_H_DEFINED)
 #include "toglconfig.h"
 #endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PTRLIST_H_DEFINED)
+#include "ptrlist.h"
+#endif
+
+class TrialBase;
 
 class TlistWidget : public ToglConfig {
 public:
@@ -31,18 +37,20 @@ public:
   // Change the global visibility, which determines whether anything
   // will be displayed by a "redraw" command, or by remap events sent
   // to the screen window.
-  void setVisibility(bool vis) { itsVisibility = vis; }
+  void setVisibility(bool vis);
   
-  void setCurTrial(int trial);
+  void setCurTrial(const NullableItemWithId<TrialBase>& item);
 
-  void setHold(bool hold_on) { itsHoldOn = hold_on; }
+  void setHold(bool hold_on);
 
 private:
   void safeDrawTrial();
 
-  int itsCurTrial;
-  bool itsVisibility;
-  bool itsHoldOn;
+  TlistWidget(const TlistWidget&);
+  TlistWidget& operator=(const TlistWidget&);
+
+  class Impl;
+  Impl* const itsImpl;
 };
 
 static const char vcid_tlistwidget_h[] = "$Header$";
