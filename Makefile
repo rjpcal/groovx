@@ -339,10 +339,12 @@ $(HOME)/bin/$(ARCH)/$(PROD_TARGET): $(ALL_PROD_DEPENDS)
 #-------------------------------------------------------------------------
 
 %.$(SHLIB_EXT):
-	$(SHLIB_CMD) $@ $^
+	$(SHLIB_CMD) $(HOME)/ftp/$@ $^
+	mv $(HOME)/ftp/$@ ./$@
 
 %.$(STATLIB_EXT):
-	$(STATLIB_CMD) $@ $^
+	$(STATLIB_CMD) $(HOME)/ftp/$@ $^
+	mv $(HOME)/ftp/$@ ./$@
 
 $(DEBUG_LIBVISX):      $(DEBUG_GRSH_DYNAMIC_OBJS)
 $(PROD_LIBVISX):       $(PROD_GRSH_DYNAMIC_OBJS)
