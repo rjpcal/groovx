@@ -46,19 +46,19 @@ namespace
   void testErfc()
   {
     // Compare our erfc() function with the one from cmath
-    TEST_REQUIRE_APPROX(Num::erfc(0), ::erfc(0), 1e-5);
-    TEST_REQUIRE_APPROX(Num::erfc(1), ::erfc(1), 1e-5);
-    TEST_REQUIRE_APPROX(Num::erfc(-1), ::erfc(-1), 1e-5);
+    TEST_REQUIRE_APPROX(dash::erfc(0), ::erfc(0), 1e-5);
+    TEST_REQUIRE_APPROX(dash::erfc(1), ::erfc(1), 1e-5);
+    TEST_REQUIRE_APPROX(dash::erfc(-1), ::erfc(-1), 1e-5);
 
     // Compare our erfc() function with known values
-    TEST_REQUIRE_APPROX(Num::erfc(0), 1, 1e-5);
-    TEST_REQUIRE_APPROX(Num::erfc(1), 0.1573, 1e-5);
-    TEST_REQUIRE_APPROX(Num::erfc(-1), 1.8427, 1e-5);
+    TEST_REQUIRE_APPROX(dash::erfc(0), 1, 1e-5);
+    TEST_REQUIRE_APPROX(dash::erfc(1), 0.1573, 1e-5);
+    TEST_REQUIRE_APPROX(dash::erfc(-1), 1.8427, 1e-5);
 
     // Check the symmetry properties of our erfc function
     //  erfc(x)+erfc(-x) == 2
-    TEST_REQUIRE_APPROX(Num::erfc(1), 2-Num::erfc(-1), 1e-5);
-    TEST_REQUIRE_APPROX(Num::erfc(2), 2-Num::erfc(-2), 1e-5);
+    TEST_REQUIRE_APPROX(dash::erfc(1), 2-dash::erfc(-1), 1e-5);
+    TEST_REQUIRE_APPROX(dash::erfc(2), 2-dash::erfc(-2), 1e-5);
 
 
     double x = 0.0;
@@ -66,7 +66,7 @@ namespace
     const rutz::time t1 = rutz::time::user_rusage();
     for (int i = 0; i < 2500; ++i)
       for (int f = 1; f <= 100; ++f)
-        x += Num::erfc(double(i)/1000.0);
+        x += dash::erfc(double(i)/1000.0);
     const rutz::time t2 = rutz::time::user_rusage();
     const rutz::time custom_erfc = t2-t1;
 

@@ -70,14 +70,9 @@ namespace dash
         return dash::detail::gammaln_engine(xx);
       }
   }
-}
 
-/// Numeric operations.
-class Num
-{
-public:
   /// the error function
-  static double erfc(const double x)
+  inline double erfc(const double x)
   {
     const double z = fabs(x);
 
@@ -91,6 +86,12 @@ public:
 
     return x >= 0.0 ? ans : 2.0-ans;
   }
+}
+
+/// Numeric operations.
+class Num
+{
+public:
 
   /// A speedy version of the exponential function.
   /** Computes the result to the seventh term of the Taylor series. */
