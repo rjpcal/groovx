@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 22 09:07:27 2001
-// written: Tue Aug  7 17:31:42 2001
+// written: Thu Aug  9 11:37:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,6 +104,21 @@ namespace Tcl
   typename FuncTraits<Func>::Arg##N##_t p##N = \
   ctx.getValFromArg(N, TypeCue<typename FuncTraits<Func>::Arg##N##_t>());
 
+  template <class Func>
+  struct FuncHolder
+  {
+    FuncHolder<Func>(Func f) : itsFunc(f) {}
+
+    FuncHolder<Func>(const FuncHolder<Func>& other) : itsFunc(other.itsFunc) {}
+
+    FuncHolder<Func>& operator=(const FuncHolder<Func>& other)
+    {
+      itsFunc = other.itsFunc; return *this;
+    }
+
+    Func itsFunc;
+  };
+
 ///////////////////////////////////////////////////////////////////////
 //
 // zero arguments -- Functor0
@@ -111,31 +126,25 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor0 {
+  class Functor0 : private FuncHolder<Func> {
   public:
-    Functor0<R, Func>(Func f) : itsFunc(f) {}
+    Functor0<R, Func>(Func f) : FuncHolder<Func>(f) {}
 
     void operator()(Tcl::Context& ctx)
     {
       R res(itsFunc()); ctx.setResult(res);
     }
-
-  private:
-    Func itsFunc;
   };
 
   template <class Func>
-  class Functor0<void, Func> {
+  class Functor0<void, Func> : private FuncHolder<Func> {
   public:
-    Functor0<void, Func>(Func f) : itsFunc(f) {}
+    Functor0<void, Func>(Func f) : FuncHolder<Func>(f) {}
 
     void operator()(Tcl::Context& ctx)
     {
       itsFunc();
     }
-
-  private:
-    Func itsFunc;
   };
 
 
@@ -146,33 +155,27 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor1 {
+  class Functor1 : private FuncHolder<Func> {
   public:
-    Functor1<R, Func>(Func f) : itsFunc(f) {}
+    Functor1<R, Func>(Func f) : FuncHolder<Func>(f) {}
 
     void operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1);
       R res(itsFunc(p1)); ctx.setResult(res);
     }
-
-  private:
-    Func itsFunc;
   };
 
   template <class Func>
-  class Functor1<void, Func> {
+  class Functor1<void, Func> : private FuncHolder<Func> {
   public:
-    Functor1<void, Func>(Func f) : itsFunc(f) {}
+    Functor1<void, Func>(Func f) : FuncHolder<Func>(f) {}
 
     void operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1);
       itsFunc(p1);
     }
-
-  private:
-    Func itsFunc;
   };
 
 
@@ -183,33 +186,27 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor2 {
+  class Functor2 : private FuncHolder<Func> {
   public:
-    Functor2<R, Func>(Func f) : itsFunc(f) {}
+    Functor2<R, Func>(Func f) : FuncHolder<Func>(f) {}
 
     void operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2);
       R res(itsFunc(p1, p2)); ctx.setResult(res);
     }
-
-  private:
-    Func itsFunc;
   };
 
   template <class Func>
-  class Functor2<void, Func> {
+  class Functor2<void, Func> : private FuncHolder<Func> {
   public:
-    Functor2<void, Func>(Func f) : itsFunc(f) {}
+    Functor2<void, Func>(Func f) : FuncHolder<Func>(f) {}
 
     void operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2);
       itsFunc(p1, p2);
     }
-
-  private:
-    Func itsFunc;
   };
 
 
@@ -220,33 +217,27 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor3 {
+  class Functor3 : private FuncHolder<Func> {
   public:
-    Functor3<R, Func>(Func f) : itsFunc(f) {}
+    Functor3<R, Func>(Func f) : FuncHolder<Func>(f) {}
 
     void operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
       R res(itsFunc(p1, p2, p3)); ctx.setResult(res);
     }
-
-  private:
-    Func itsFunc;
   };
 
   template <class Func>
-  class Functor3<void, Func> {
+  class Functor3<void, Func> : private FuncHolder<Func> {
   public:
-    Functor3<void, Func>(Func f) : itsFunc(f) {}
+    Functor3<void, Func>(Func f) : FuncHolder<Func>(f) {}
 
     void operator()(Tcl::Context& ctx)
     {
       EXTRACT_PARAM(1); EXTRACT_PARAM(2); EXTRACT_PARAM(3);
       itsFunc(p1, p2, p3);
     }
-
-  private:
-    Func itsFunc;
   };
 
 
@@ -257,9 +248,9 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor4 {
+  class Functor4 : private FuncHolder<Func> {
   public:
-    Functor4<R, Func>(Func f) : itsFunc(f) {}
+    Functor4<R, Func>(Func f) : FuncHolder<Func>(f) {}
 
     void operator()(Tcl::Context& ctx)
     {
@@ -267,15 +258,12 @@ namespace Tcl
       EXTRACT_PARAM(4);
       R res(itsFunc(p1, p2, p3, p4)); ctx.setResult(res);
     }
-
-  private:
-    Func itsFunc;
   };
 
   template <class Func>
-  class Functor4<void, Func> {
+  class Functor4<void, Func> : private FuncHolder<Func> {
   public:
-    Functor4<void, Func>(Func f) : itsFunc(f) {}
+    Functor4<void, Func>(Func f) : FuncHolder<Func>(f) {}
 
     void operator()(Tcl::Context& ctx)
     {
@@ -283,9 +271,6 @@ namespace Tcl
       EXTRACT_PARAM(4);
       itsFunc(p1, p2, p3, p4);
     }
-
-  private:
-    Func itsFunc;
   };
 
 
@@ -296,9 +281,9 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor5 {
+  class Functor5 : private FuncHolder<Func> {
   public:
-    Functor5<R, Func>(Func f) : itsFunc(f) {}
+    Functor5<R, Func>(Func f) : FuncHolder<Func>(f) {}
 
     void operator()(Tcl::Context& ctx)
     {
@@ -306,15 +291,12 @@ namespace Tcl
       EXTRACT_PARAM(4); EXTRACT_PARAM(5);
       R res(itsFunc(p1, p2, p3, p4, p5)); ctx.setResult(res);
     }
-
-  private:
-    Func itsFunc;
   };
 
   template <class Func>
-  class Functor5<void, Func> {
+  class Functor5<void, Func> : private FuncHolder<Func> {
   public:
-    Functor5<void, Func>(Func f) : itsFunc(f) {}
+    Functor5<void, Func>(Func f) : FuncHolder<Func>(f) {}
 
     void operator()(Tcl::Context& ctx)
     {
@@ -322,9 +304,6 @@ namespace Tcl
       EXTRACT_PARAM(4); EXTRACT_PARAM(5);
       itsFunc(p1, p2, p3, p4, p5);
     }
-
-  private:
-    Func itsFunc;
   };
 
 
@@ -335,9 +314,9 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class R, class Func>
-  class Functor6 {
+  class Functor6 : private FuncHolder<Func> {
   public:
-    Functor6<R, Func>(Func f) : itsFunc(f) {}
+    Functor6<R, Func>(Func f) : FuncHolder<Func>(f) {}
 
     void operator()(Tcl::Context& ctx)
     {
@@ -345,15 +324,12 @@ namespace Tcl
       EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
       R res(itsFunc(p1, p2, p3, p4, p5, p6)); ctx.setResult(res);
     }
-
-  private:
-    Func itsFunc;
   };
 
   template <class Func>
-  class Functor6<void, Func> {
+  class Functor6<void, Func> : private FuncHolder<Func> {
   public:
-    Functor6<void, Func>(Func f) : itsFunc(f) {}
+    Functor6<void, Func>(Func f) : FuncHolder<Func>(f) {}
 
     void operator()(Tcl::Context& ctx)
     {
@@ -361,9 +337,6 @@ namespace Tcl
       EXTRACT_PARAM(4); EXTRACT_PARAM(5); EXTRACT_PARAM(6);
       itsFunc(p1, p2, p3, p4, p5, p6);
     }
-
-  private:
-    Func itsFunc;
   };
 
 #undef EXTRACT_PARAM
@@ -431,23 +404,20 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class Functor>
-  class GenericCmd : public TclCmd {
+  class GenericCmd : public TclCmd, private FuncHolder<Functor> {
   public:
 
     GenericCmd<Functor>(Tcl_Interp* interp, Functor f, const char* cmd_name,
                         const char* usage, int nargs) :
       TclCmd(interp, cmd_name, usage, nargs+1),
-      itsFunctor(f)
+      FuncHolder<Functor>(f)
     {}
 
   protected:
     virtual void invoke(Tcl::Context& ctx)
     {
-      itsFunctor(ctx);
+      itsFunc(ctx);
     }
-
-  private:
-    Functor itsFunctor;
   };
 
 
@@ -467,24 +437,20 @@ namespace Tcl
 ///////////////////////////////////////////////////////////////////////
 
   template <class Functor>
-  class GenericVecCmd : public VecCmd {
+  class GenericVecCmd : public VecCmd, private FuncHolder<Functor> {
   public:
-
     GenericVecCmd<Functor>(Tcl_Interp* interp, Functor f, const char* cmd_name,
                            const char* usage, int nargs, unsigned int keyarg)
       :
       VecCmd(interp, cmd_name, usage, keyarg, nargs+1),
-      itsFunctor(f)
+      FuncHolder<Functor>(f)
     {}
 
   protected:
     virtual void invoke(Tcl::Context& ctx)
     {
-      itsFunctor(ctx);
+      itsFunc(ctx);
     }
-
-  private:
-    Functor itsFunctor;
   };
 
 
