@@ -247,6 +247,7 @@ TCLWORKS_OBJS = \
 	$(GRSH)/tclpkg.do \
 	$(GRSH)/tclvalue.do \
 	$(GRSH)/tclveccmds.do \
+	$(GRSH)/tracertcl.do \
 
 
 #-------------------------------------------------------------------------
@@ -401,6 +402,7 @@ TCLPKG_H = tclpkg.h
 TLISTUTILS_H = tlistutils.h
 TRACE_H = util/trace.h
 TRACER_H = util/tracer.h
+TRACERTCL_H = tracertcl.h
 WIDGET_H = widget.h
 
 #
@@ -582,7 +584,8 @@ FACTORY_CC = $(FACTORY_H) factory.cc
 FISH_CC = $(FISH_H) $(ERROR_H) $(READER_H) $(RECT_H) $(WRITER_H) \
 	$(TRACE_H) $(DEBUG_H) fish.cc
 
-FISHTCL_CC = $(IOFACTORY_H) $(OBJLIST_H) $(LISTITEMPKG_H) $(FISH_H) fishtcl.cc
+FISHTCL_CC = $(IOFACTORY_H) $(OBJLIST_H) $(LISTITEMPKG_H) $(FISH_H) \
+	$(TRACERTCL_H) fishtcl.cc
 
 FIXPT_CC = $(FIXPT_H) $(READER_H) $(RECT_H) $(WRITER_H) \
 	$(TRACE_H) $(DEBUG_H) fixpt.cc
@@ -608,7 +611,8 @@ GROBJ_CC = $(GROBJ_H) $(BITMAPREP_H) $(CANVAS_H) \
 	$(WRITER_H) $(XBMAPRENDERER_H) $(TRACE_H) $(DEBUG_H) grobj.cc
 
 GROBJTCL_CC = $(APPLICATION_H) $(EXPERIMENT_H) $(GROBJ_H) \
-	$(OBJLIST_H) $(LISTITEMPKG_H) $(RECT_H) $(TCLVECCMDS_H) grobjtcl.cc
+	$(OBJLIST_H) $(LISTITEMPKG_H) $(RECT_H) $(TCLVECCMDS_H) \
+	$(TRACERTCL_CC) grobjtcl.cc
 
 GRSHAPP_CC = $(GRSHAPP_H) $(TRACE_H) grshapp.cc
 
@@ -790,6 +794,9 @@ TOGLCONFIG_CC = $(TOGLCONFIG_H) $(ERROR_H) $(GLCANVAS_H) \
 
 TRACE_CC = $(TRACE_H) util/trace.cc
 
+TRACERTCL_CC = $(TRACERTCL_H) $(TCLCMD_H) $(TCLPKG_H) $(TRACER_H) \
+	$(DEBUG_H) tracertcl.cc
+
 TRIAL_CC = $(TRIAL_H) $(CANVAS_H) \
 	$(OBJLIST_H) $(POSLIST_H) $(GROBJ_H) $(POSITION_H) \
 	$(READER_H) $(READUTILS_H) $(WRITER_H) $(WRITEUTILS_H) \
@@ -922,6 +929,7 @@ $(GRSH)/tlistutils.*[ol]:        $(TLISTUTILS_CC)
 $(GRSH)/tlistwidget.*[ol]:       $(TLISTWIDGET_CC)
 $(GRSH)/toglconfig.*[ol]:        $(TOGLCONFIG_CC)
 $(UTIL)/trace.*[ol]:             $(TRACE_CC)
+$(GRSH)/tracertcl.*[ol]:         $(TRACERTCL_CC)
 $(GRSH)/trial.*[ol]:             $(TRIAL_CC)
 $(GRSH)/trialevent.*[ol]:        $(TRIALEVENT_CC)
 $(GRSH)/trialtcl.*[ol]:          $(TRIALTCL_CC)
