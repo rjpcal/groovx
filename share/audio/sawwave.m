@@ -1,6 +1,9 @@
-function snd = sawwave(freq, secs, sample_freq, width)
+function snd = sawwave(freq, secs, sample_freq, width, phase)
+
+if nargin < 5
+  phase = 0;
+end
 
 num_samples = secs * sample_freq;
-x = 0:(num_samples-1);
-x = x./sample_freq;
-snd = sawtooth(2*pi*freq*x,width);
+t = (0:(num_samples-1)) ./ sample_freq;
+snd = sawtooth(phase + 2*pi*freq*t, width);
