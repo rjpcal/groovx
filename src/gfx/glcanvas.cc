@@ -29,7 +29,26 @@
 #include "util/debug.h"
 #include "util/trace.h"
 
-GLCanvas::~GLCanvas() {}
+class GLCanvas::Impl
+{
+public:
+  Impl(bool is_rgba, bool is_db) :
+    isItRgba(is_rgba),
+    isItDoubleBuffered(is_db)
+  {}
+
+  bool isItRgba;
+  bool isItDoubleBuffered;
+};
+
+GLCanvas::GLCanvas(bool is_rgba, bool is_db) :
+  itsImpl(new Impl(is_rgba, is_db))
+{}
+
+GLCanvas::~GLCanvas()
+{
+  delete itsImpl;
+}
 
 Gfx::Vec2<int> GLCanvas::screenFromWorld(
   const Gfx::Vec2<double>& world_pos
@@ -134,25 +153,22 @@ Gfx::Rect<double> GLCanvas::getWorldViewport() const
 bool GLCanvas::isRgba() const
 {
 DOTRACE("GLCanvas::isRgba");
-  GLboolean val;
-  glGetBooleanv(GL_RGBA_MODE, &val);
-  return (val == GL_TRUE);
+
+  return itsImpl->isItRgba;
 }
 
 bool GLCanvas::isColorIndex() const
 {
 DOTRACE("GLCanvas::isColorIndex");
-  GLboolean val;
-  glGetBooleanv(GL_INDEX_MODE, &val);
-  return (val == GL_TRUE);
+
+  return !(itsImpl->isItRgba);
 }
 
 bool GLCanvas::isDoubleBuffered() const
 {
 DOTRACE("GLCanvas::isDoubleBuffered");
-  GLboolean val;
-  glGetBooleanv(GL_DOUBLEBUFFER, &val);
-  return (val == GL_TRUE);
+
+  return itsImpl->isItDoubleBuffered;
 }
 
 unsigned int GLCanvas::bitsPerPixel() const
