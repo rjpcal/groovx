@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug 23 11:42:34 2001
-// written: Fri Dec 13 10:57:15 2002
+// written: Thu Dec 19 18:10:06 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ public:
   double elapsedMsec() const { return itsStopWatch.elapsedMsec(); }
 
 private:
-  static void dummyCallback(ClientData clientData);
+  static void dummyCallback(ClientData clientData) throw();
 
   Timer(const Timer&);
   Timer& operator=(const Timer&);

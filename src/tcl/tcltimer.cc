@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug 23 14:50:36 2001
-// written: Fri Dec 13 10:59:45 2002
+// written: Thu Dec 19 18:10:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,6 +14,8 @@
 #define TCLTIMER_CC_DEFINED
 
 #include "tcl/tcltimer.h"
+
+#include "tcl/tclsafeinterp.h"
 
 #include <tcl.h>
 
@@ -60,22 +62,29 @@ DOTRACE("Tcl::Timer::cancel");
   itsToken = 0;
 }
 
-void Tcl::Timer::dummyCallback(ClientData clientData)
+void Tcl::Timer::dummyCallback(ClientData clientData) throw()
 {
 DOTRACE("Tcl::Timer::dummyCallback");
   Tcl::Timer* timer = static_cast<Tcl::Timer*>(clientData);
 
   Assert(timer != 0);
 
-  timer->itsToken = 0;
-
-  dbgEvalNL(3, timer->itsStopWatch.elapsedMsec());
-
-  timer->sigTimeOut.emit();
-
-  if (timer->isItRepeating)
+  try
     {
-      timer->schedule();
+      timer->itsToken = 0;
+
+      dbgEvalNL(3, timer->itsStopWatch.elapsedMsec());
+
+      timer->sigTimeOut.emit();
+
+      if (timer->isItRepeating)
+        {
+          timer->schedule();
+        }
+    }
+  catch(...)
+    {
+      Tcl::Main::interp().handleLiveException("Tcl::Timer callback", true);
     }
 }
 
