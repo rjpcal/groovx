@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Thu Sep 12 14:55:27 2002
+// written: Mon Sep 16 12:25:08 2002
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -62,6 +62,12 @@ namespace GLTcl
   }
 
   void checkGL() { Grsh::canvas().throwIfError("checkGL"); }
+
+  // Just converts to char from unsigned char
+  const char* getString(GLenum name)
+  {
+    return (const char*) glGetString(name);
+  }
 
 #define NAMEVAL(x) #x, x
 
@@ -460,6 +466,8 @@ DOTRACE("Gltcl_Init");
   GLTcl::loadGet(pkg);
   GLTcl::loadEnums(pkg);
 
+  using Util::bindFirst;
+
   pkg->def( "::glBegin", "mode", glBegin );
   pkg->def( "::glBlendFunc", "sfactor dfactor", glBlendFunc );
   pkg->def( "::glCallList", "list", glCallList );
@@ -474,6 +482,7 @@ DOTRACE("Gltcl_Init");
   pkg->def( "::glEnable", "capability", glEnable );
   pkg->def( "::glEnd", 0, glEnd );
   pkg->def( "::glEndList", 0, glEndList );
+  pkg->def( "::glExtensions", 0, bindFirst(GLTcl::getString, GL_EXTENSIONS));
   pkg->def( "::glFlush", 0, glFlush );
   pkg->def( "::glFrustum", "left right bottom top zNear zFar", glFrustum );
   pkg->def( "::glGenLists", "range", glGenLists );
@@ -490,9 +499,12 @@ DOTRACE("Gltcl_Init");
   pkg->def( "::glPolygonMode", "face mode", glPolygonMode );
   pkg->def( "::glPopMatrix", 0, glPopMatrix );
   pkg->def( "::glPushMatrix", 0, glPushMatrix );
+  pkg->def( "::glRenderer", 0, bindFirst(GLTcl::getString, GL_RENDERER));
   pkg->def( "::glRotate", "angle_in_degrees x y z", glRotated );
   pkg->def( "::glScale", "x y z", glScaled );
   pkg->def( "::glTranslate", "x y z", glTranslated );
+  pkg->def( "::glVendor", 0, bindFirst(GLTcl::getString, GL_VENDOR));
+  pkg->def( "::glVersion", 0, bindFirst(GLTcl::getString, GL_VERSION));
   pkg->def( "::glVertex2", "x y", glVertex2d );
   pkg->def( "::glVertex3", "x y z", glVertex3d );
   pkg->def( "::glVertex4", "x y z w", glVertex4d );
