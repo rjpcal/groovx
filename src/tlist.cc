@@ -3,7 +3,7 @@
 // tlist.cc
 // Rob Peters
 // created: Fri Mar 12 14:39:39 1999
-// written: Thu Oct 14 16:13:58 1999
+// written: Thu Oct 21 13:48:35 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -105,7 +105,16 @@ DOTRACE("Tlist::deserialize");
   // itsCurTrial
   is >> itsCurTrial;  DebugEvalNL(itsCurTrial);
 
-  if ( !isValidId(itsCurTrial) ) { throw IoValueError(ioTag); }
+  // If itsCurTrial is not a valid id...
+  if ( !isValidId(itsCurTrial) ) {
+	 // ...then we throw an exception, as long as we don't have the
+	 // special case where the current trial is zero because the list
+	 // is empty
+	 if ( itsCurTrial != 0 || count() != 0 ) {
+		itsVisibility = false;
+		throw IoValueError(ioTag);
+	 }
+  }
 
   // itsVisibility
   int vis;
