@@ -319,6 +319,8 @@ class cppdeps
   const time_t m_start_time;  // so we can check to see if any source files
                               // have timestamps in the future
 
+  vector<string> m_obj_exts;
+
 public:
   cppdeps(int argc, char** argv);
 
@@ -362,6 +364,11 @@ cppdeps::cppdeps(int argc, char** argv) :
          "    --objdir [dir]        specify a path prefix indicating where the object\n"
          "                          (.o) files should be placed (the default\n"
          "                          is no prefix, or just './')\n"
+         "    --objext [.ext]       make .ext be one of the suffixes used in target\n"
+         "                          rules in the makefile; there may be more than one\n"
+         "                          such extension, in which case each rule emitted\n"
+         "                          will have more than one target; the default is for\n"
+         "                          the list of extensions to include just '.o'\n"
          "    --checksys            force tracking of dependencies in #include <...>\n"
          "                          directives (default is to not record <...> files\n"
          "                          as dependencies)\n"
@@ -426,6 +433,10 @@ cppdeps::cppdeps(int argc, char** argv) :
       else if (strcmp(*argv, "--literal") == 0)
         {
           m_literal_exts.push_back(*++argv);
+        }
+      else if (strcmp(*argv, "--objext") == 0)
+        {
+          m_obj_exts.push_back(*++argv);
         }
       // treat any unrecognized arguments as src files
       else
@@ -858,12 +869,35 @@ void cppdeps::batch_build()
                         m_objdir += '/';
                       }
 
-                    // Use C-style stdio here since it came out running
-                    // quite a bit faster than iostreams, at least under
-                    // g++-3.2.
-                    printf("%s%s.o: ",
-                           m_objdir.c_str(),
-                           stripped_filename.c_str());
+                    // If the user didn't specify any object-filename
+                    // extensions, then we just use the default '.o'.
+                    if (m_obj_exts.size() == 0)
+                      {
+                        // Use C-style stdio here since it came out
+                        // running quite a bit faster than iostreams,
+                        // at least under g++-3.2.
+                        printf("%s%s.o: ",
+                               m_objdir.c_str(),
+                               stripped_filename.c_str());
+                      }
+                    else
+                      {
+                        printf("%s%s%s",
+                               m_objdir.c_str(),
+                               stripped_filename.c_str(),
+                               m_obj_exts[0].c_str());
+
+                        for (unsigned int i = 1;
+                             i < m_obj_exts.size(); ++i)
+                          {
+                            printf(" %s%s%s",
+                                   m_objdir.c_str(),
+                                   stripped_filename.c_str(),
+                                   m_obj_exts[i].c_str());
+                          }
+
+                        printf(": ");
+                      }
 
                     const include_list_t& includes =
                       get_nested_includes(current_file);
