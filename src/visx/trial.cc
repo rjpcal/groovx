@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Sat May 26 13:33:50 2001
+// written: Sat May 26 17:59:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -174,11 +174,11 @@ public:
   int getCorrectResponse() const { return itsCorrectResponse; }
   void setCorrectResponse(int response) { itsCorrectResponse = response; }
 
-  int getResponseHandler() const;
-  void setResponseHandler(int rhid);
+  IdItem<ResponseHandler> getResponseHandler() const { return itsRh; }
+  void setResponseHandler(IdItem<ResponseHandler> rh) { itsRh = rh; }
 
-  int getTimingHdlr() const;
-  void setTimingHdlr(int thid);
+  IdItem<TimingHdlr> getTimingHdlr() const { return itsTh; }
+  void setTimingHdlr(IdItem<TimingHdlr> th) { itsTh = th; }
 
   int trialType() const;
   void setType(int t);
@@ -309,18 +309,6 @@ DOTRACE("Trial::Impl::writeMatlab");
 // accessors //
 ///////////////
 
-int Trial::Impl::getResponseHandler() const {
-DOTRACE("Trial::Impl::getResponseHandler");
-  DebugEvalNL(itsRh.id());
-  return itsRh.id();
-}
-
-int Trial::Impl::getTimingHdlr() const {
-DOTRACE("Trial::Impl::getTimingHdlr");
-  DebugEvalNL(itsTh.id());
-  return itsTh.id();
-}
-
 int Trial::Impl::trialType() const {
 DOTRACE("Trial::Impl::trialType");
   return itsType;
@@ -438,20 +426,6 @@ DOTRACE("Trial::Impl::clearObjs");
 void Trial::Impl::setType(int t) {
 DOTRACE("Trial::Impl::setType");
   itsType = t;
-}
-
-void Trial::Impl::setResponseHandler(int rhid) {
-DOTRACE("Trial::Impl::setResponseHandler");
-  if (rhid < 0)
-	 throw ErrorWithMsg("response handler id was negative");
-  itsRh = MaybeIdItem<ResponseHandler>(rhid);
-}
-
-void Trial::Impl::setTimingHdlr(int thid) {
-DOTRACE("Trial::Impl::setTimingHdlr");
-  if (thid < 0)
-	 throw ErrorWithMsg("timing handler id was negative");
-  itsTh = MaybeIdItem<TimingHdlr>(thid);
 }
 
 void Trial::Impl::clearResponses() {
@@ -651,18 +625,18 @@ void Trial::setCorrectResponse(int response)
   { itsImpl->setCorrectResponse(response); }
 
 
-int Trial::getResponseHandler() const
+IdItem<ResponseHandler> Trial::getResponseHandler() const
   { return itsImpl->getResponseHandler(); }
 
-void Trial::setResponseHandler(int rhid)
-  { itsImpl->setResponseHandler(rhid); }
+void Trial::setResponseHandler(IdItem<ResponseHandler> rh)
+  { itsImpl->setResponseHandler(rh); }
 
 
-int Trial::getTimingHdlr() const
+IdItem<TimingHdlr> Trial::getTimingHdlr() const
   { return itsImpl->getTimingHdlr(); }
 
-void Trial::setTimingHdlr(int thid)
-  { itsImpl->setTimingHdlr(thid); }
+void Trial::setTimingHdlr(IdItem<TimingHdlr> th)
+  { itsImpl->setTimingHdlr(th); }
 
 
 int Trial::trialType() const

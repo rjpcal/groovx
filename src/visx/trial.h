@@ -47,6 +47,8 @@ namespace Util { class ErrorHandler; }
 class Position;
 class Block;
 class Response;
+class ResponseHandler;
+class TimingHdlr;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -85,11 +87,11 @@ public:
   int getCorrectResponse() const;
   void setCorrectResponse(int response);
 
-  int getResponseHandler() const;
-  void setResponseHandler(int rhid);
+  IdItem<ResponseHandler> getResponseHandler() const;
+  void setResponseHandler(IdItem<ResponseHandler> rh);
 
-  int getTimingHdlr() const;
-  void setTimingHdlr(int thid);
+  IdItem<TimingHdlr> getTimingHdlr() const;
+  void setTimingHdlr(IdItem<TimingHdlr> th);
 
   // returns some info about relationship between objects in trial
   virtual int trialType() const;
