@@ -36,6 +36,7 @@ template <class T> class shared_ptr;
 
 namespace Gfx
 {
+  class BmapData;
   template <class V> class Rect;
   template <class V> class Vec2;
 }
@@ -137,6 +138,9 @@ public:
   //////////////////
   // manipulators //
   //////////////////
+
+  /// Mutable access to internal bitmap data representation.
+  Gfx::BmapData& data();
 
   /// Change the (x,y) factor by which the bitmap will be scaled.
   void setZoom(Gfx::Vec2<double> zoom);

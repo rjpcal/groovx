@@ -416,6 +416,12 @@ long int GxPixmap::checkSum() const
 // manipulators //
 //////////////////
 
+Gfx::BmapData& GxPixmap::data()
+{
+DOTRACE("GxPixmap::data");
+  return rep->itsData;
+}
+
 void GxPixmap::setZoom(Gfx::Vec2<double> zoom)
 {
 DOTRACE("GxPixmap::setZoom");
