@@ -30,7 +30,7 @@
 #
 ##########################################################################
 
-default: install
+default: all
 
 MAKEFLAGS += --warn-undefined-variables
 
