@@ -3,7 +3,7 @@
 // value.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:19:17 1999
-// written: Wed Feb 16 09:12:49 2000
+// written: Wed Feb 16 09:17:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,8 +23,15 @@
 class istream;
 class ostream;
 
+/**
+ *
+ * Exception class to be thrown from failed calls to get/set a \c
+ * Value object.
+ *
+ **/
 class ValueError : public ErrorWithMsg {
 public:
+  /// Construct with an informative message \c msg.
   ValueError(const string& msg="");
 };
 
