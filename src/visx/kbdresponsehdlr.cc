@@ -3,7 +3,7 @@
 // kbdresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:09:12 1999
-// written: Wed Oct 13 16:21:18 1999
+// written: Wed Oct 13 17:44:09 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -109,9 +109,15 @@ DOTRACE("KbdResponseHdlr::deserialize");
   if (flag & BASES) { /* no bases to deserialize */ }
   if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
 
-  // Pull off the separator following the typename
+  // XXX This is some sort of strange platform dependency..if the next
+  // character in the stream is a space (the separator following the
+  // typename), then we must pull it off the stream; however, in some
+  // cases (using aCC/hp9000s700), the space is already gone by the
+  // time we get here.
   DebugEvalNL(is.peek());
-  is.get();
+  if ( is.peek() == ' ' ) {
+	 is.get();
+  }
 
   getline(is, itsKeyRespPairs, '\n');
   updateRegexps();
