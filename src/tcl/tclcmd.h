@@ -25,10 +25,6 @@
 #include "tcl/tcllistobj.h"
 #endif
 
-#ifdef HP9000S700
-#define BROKEN_TEMPLATE_FRIEND
-#endif
-
 struct Tcl_Interp;
 struct Tcl_Obj;
 typedef void* ClientData;
@@ -264,8 +260,6 @@ private:
   /// The procedure that is actually registered with the Tcl C API.
   static int invokeCallback(ClientData clientData, Tcl_Interp* interp,
                             int objc, Tcl_Obj *const objv[]);
-
-  int invokeTemplate();
 
   TclCmd(const TclCmd&);
   TclCmd& operator=(const TclCmd&);
