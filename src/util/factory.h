@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 23:40:55 1999
-// written: Fri May 11 20:27:54 2001
+// written: Thu May 17 16:49:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -210,22 +210,6 @@ public:
 	 Base* p = newObject(type);
 	 if (p == 0) FactoryError::throwForType(type);
 	 return p;
-  }
-
-  /** A convenience function for the case where a Derived* rather than
-      Base* to a derived object is desired. A new object is created
-      with newCheckedObject, and the result is down-casted to the
-      specified Derived class. If the downcast fails, a FactorError is
-      thrown. */
-  template <class Derived>
-  Derived* newTypedObject(const fixed_string& type, Derived* /*dummy*/) {
-	 Base* b = newCheckedObject(type);
-	 Derived* d = dynamic_cast<Derived*>(b);
-	 if (d == 0) { 
-		delete b;
-		FactoryError::throwForType(type);
-	 }
-	 return d;
   }
 };
 
