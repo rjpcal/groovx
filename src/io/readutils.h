@@ -3,7 +3,7 @@
 // readutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:25:40 1999
-// written: Sat Mar 11 23:21:33 2000
+// written: Sun Mar 12 01:10:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,51 +29,69 @@ public:
   /// Get the number of elements in the stored sequence \a seq_name.
   static int readSequenceCount(Reader* reader, const char* seq_name)
 	 {
-		return reader->readInt(makeSeqCountString(name));
+		int count = reader->readInt(makeSeqCountString(seq_name));
+ 		if (0 > count)
+ 		  throw ReadError("read negative value for sequence count");
+		return count;
 	 }
 
   /** Provides a generic interface for handling containers, sequences,
-		etc. of value types. */
+		etc. of value types. If the count has already been read from the
+		reader, this value can be passed as \c known_count, so that we
+		avoid reading the value twice (this may be important if the
+		reader does not support random access to the attributes). */
   template <class Inserter, class T>
-  static void readValueSeq(Reader* reader,
-									const char* name, Inserter inserter, T* = 0)
+  static void readValueSeq(Reader* reader, const char* seq_name,
+									Inserter inserter, T* /*dummy*/,
+									int known_count = -1)
 	 {
-		int count = readSequenceCount(reader, name);
+		int count = (known_count == -1) ?
+		  readSequenceCount(reader, seq_name) : known_count;
 
 		for (int i = 0; i < count; ++i) {
 		  T temp;
-		  reader->readValue(makeElementNameString(name, i), temp);
+		  reader->readValue(makeElementNameString(seq_name, i), temp);
 		  *inserter = temp;
 		  ++inserter;
 		}
 	 }
 
   /** Provides a generic interface for handling containers, sequences,
-		etc. of Value subtypes. */
+		etc. of Value subtypes. If the count has already been read from
+		the reader, this value can be passed as \c known_count, so that
+		we avoid reading the value twice (this may be important if the
+		reader does not support random access to the attributes). */
   template <class Inserter, class T>
-  static void readValueObjSeq(Reader* reader,
-										const char* name, Inserter inserter, T* = 0)
+  static void readValueObjSeq(Reader* reader, const char* seq_name,
+										Inserter inserter, T* /*dummy*/,
+										int known_count = -1)
 	 {
-		int count = readSequenceCount(reader, name);
+		int count = (known_count == -1) ?
+		  readSequenceCount(reader, seq_name) : known_count;
 
 		for (int i = 0; i < count; ++i) {
 		  T temp;
-		  reader->readValueObj(makeElementNameString(name, i), temp);
+		  reader->readValueObj(makeElementNameString(seq_name, i), temp);
 		  *inserter = temp;
 		  ++inserter;
 		}
 	 }
 
   /** Provides a generic interface for handling containers, sequences,
-      etc. of IO objects */
+      etc. of IO objects. If the count has already been read from
+		the reader, this value can be passed as \c known_count, so that
+		we avoid reading the value twice (this may be important if the
+		reader does not support random access to the attributes). */
   template <class Inserter, class C>
-  static void readObjectSeq(Reader* reader,
-									 const char* name, Inserter inserter, C* /*dummy*/)
+  static void readObjectSeq(Reader* reader, const char* seq_name,
+									 Inserter inserter, C* /*dummy*/,
+									 int known_count = -1)
 	 {
-		int count = readSequenceCount(reader, name);
+		int count = (known_count == -1) ?
+		  readSequenceCount(reader, seq_name) : known_count;
 
 		for (int i = 0; i < count; ++i) {
-		  IO* io = reader->readObject(makeElementNameString(name, i));
+		  IO* io = reader->readObject(makeElementNameString(seq_name, i));
 
 		  if (io == 0) {
 			 *inserter = static_cast<C*>(0);
