@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Mar  5 13:47:07 2002
+// written: Tue Mar  5 14:16:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -334,10 +334,12 @@ struct MtxShape
 {
   MtxShape(int mr, int nc) : mrows_(mr), ncols_(nc) {}
 
-  int length() const { return (mrows_ > ncols_) ? mrows_ : ncols_; }
-
   int mrows() const { return mrows_; }
   int ncols() const { return ncols_; }
+
+  int length() const { return (mrows_ > ncols_) ? mrows_ : ncols_; }
+
+  int nelems() const { return mrows_*ncols_; }
 
 private:
   int mrows_;
@@ -369,12 +371,7 @@ public:
 
   void swap(MtxSpecs& other);
 
-  void reshape(const MtxShape& s) { reshape(s.mrows(), s.ncols()); }
-
-  void reshape(int mr, int nc);
-
-  MtxSpecs as_shape(const MtxShape& s) const
-  { MtxSpecs result(*this); result.reshape(s); return result; }
+  MtxSpecs as_shape(const MtxShape& s) const;
 
   MtxSpecs as_shape(int mr, int nc) const { return as_shape(MtxShape(mr,nc)); }
 
@@ -966,8 +963,7 @@ public:
 
   Mtx operator()(const RowRange& rng) const;
 
-  Mtx asRow() const
-    { Mtx result(*this); result.reshape(1, nelems()); return result; }
+  Mtx asRow() const { return as_shape(1, nelems()); }
 
   void reorderRows(const Mtx& index);
 
@@ -984,8 +980,7 @@ public:
 
   Mtx operator()(const ColRange& rng) const;
 
-  Mtx asColumn() const
-    { Mtx result(*this); result.reshape(nelems(), 1); return result; }
+  Mtx asColumn() const { return as_shape(nelems(), 1); }
 
   void reorderColumns(const Mtx& index);
 

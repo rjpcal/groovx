@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Mar  5 13:46:07 2002
+// written: Tue Mar  5 14:16:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -295,22 +295,25 @@ void MtxSpecs::swap(MtxSpecs& other)
   std::swap(offset_, other.offset_);
 }
 
-void MtxSpecs::reshape(int mr, int nc)
+MtxSpecs MtxSpecs::as_shape(const MtxShape& s) const
 {
-  if (mr*nc != nelems())
+  if (s.nelems() != this->nelems())
     {
       fstring msg;
-      msg.append("dimension mismatch in Mtx::reshape: ");
+      msg.append("as_shape(): dimension mismatch: ");
       msg.append("current nelems == ", nelems(), "; requested ");
-      msg.append(mr, "x", nc);
+      msg.append(s.mrows(), "x", s.ncols());
       throw Util::Error(msg);
     }
 
   if (rowstride_ != mrows())
-    throw Util::Error("reshape not allowed for submatrix");
+    throw Util::Error("as_shape(): cannot reshape a submatrix");
 
-  shape_ = MtxShape(mr, nc);
-  rowstride_ = mr;
+  MtxSpecs result = *this;
+  result.shape_ = s;
+  result.rowstride_ = s.mrows();
+
+  return result;
 }
 
 void MtxSpecs::selectRows(const RowRange& rng)
