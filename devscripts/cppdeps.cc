@@ -510,7 +510,7 @@ public:
   bool is_cc_or_h_fname(const file_info* finfo) const;
 
   // Find the source file that corresponds to the given header file
-  string find_source_for_header(const string& header) const;
+  file_info* find_source_for_header(file_info* header) const;
 
   static bool resolve_one(const string& include_name,
                           file_info* finfo,
@@ -820,18 +820,16 @@ bool cppdeps::is_cc_or_h_fname(const file_info* finfo) const
   return false;
 }
 
-string cppdeps::find_source_for_header(const string& header) const
+file_info* cppdeps::find_source_for_header(file_info* header) const
 {
-  const string::size_type suff = header.find_last_of('.');
-
   for (unsigned int i = 0; i < m_cfg_source_exts.size(); ++i)
     {
-      const string result = header.substr(0, suff) + m_cfg_source_exts[i];
+      const string result = header->rootname + m_cfg_source_exts[i];
       if (file_exists(result.c_str()))
-        return result;
+        return file_info::get(result);
     }
 
-  return string();
+  return 0;
 }
 
 bool cppdeps::resolve_one(const string& include_name,
@@ -1129,15 +1127,14 @@ const dep_list_t& cppdeps::get_direct_ldeps(file_info* finfo)
        i != istop;
        ++i)
     {
-      const string ccfile = find_source_for_header((*i)->fname);
-      if (ccfile.length() == 0)
+      file_info* ccfile = find_source_for_header(*i);
+      if (ccfile == 0)
         continue;
 
-      // FIXME: just do pointer comparison here:
-      if (ccfile == finfo->fname)
+      if (ccfile == finfo)
         continue;
 
-      deps_set.insert(file_info::get(ccfile));
+      deps_set.insert(ccfile);
     }
 
   assert(finfo->direct_ldeps.empty());
