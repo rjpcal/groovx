@@ -3,7 +3,7 @@
 // pbm.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:06 1999
-// written: Fri Sep 24 18:46:23 1999
+// written: Thu Jan 20 00:30:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,10 @@
 #define VECTOR_DEFINED
 #endif
 
+#ifndef BMAPDATA_H_DEFINED
+#include "bmapdata.h"
+#endif
+
 class istream;
 
 class PbmError : public ErrorWithMsg {
@@ -36,6 +40,7 @@ class Pbm {
 public:
   Pbm(const vector<unsigned char>& bytes,
 		int width, int height, int bits_per_pixel);
+  Pbm(const BmapData& data);
   Pbm(istream& is);
   Pbm(const char* filename);
   virtual ~Pbm();
@@ -47,6 +52,10 @@ public:
 
   void setBytes(const vector<unsigned char>& bytes,
 					 int width, int height, int bits_per_pixel);
+
+  void setBytes(const BmapData& data);
+
+  void swapInto(BmapData& data);
 
   void write(ostream& os) const;
   void write(const char* filename) const;
