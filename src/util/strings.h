@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:16:48 2000
-// written: Fri Jul 20 07:53:38 2001
+// written: Fri Jul 20 08:33:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ public:
   bool equals(const string_literal& other) const;
 
   const char* c_str() const { return itsText; }
-  unsigned int length() const { return itsLength; }
+  std::size_t length() const { return itsLength; }
   bool empty() const { return (length() == 0); }
 
 private:
@@ -54,9 +54,57 @@ private:
   string_literal& operator=(const string_literal&);
 
   const char* const itsText;
-  const unsigned int itsLength;
+  const std::size_t itsLength;
 };
 
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * \c string_rep is a helper class for fixed_string that handles
+ * memory management and reference-counting. \c string_rep should not
+ * be used by public clients.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+class string_rep {
+private:
+  string_rep(const string_rep& other); // not implemented
+  string_rep& operator=(const string_rep& other); // not implemented
+
+  // Class-specific operator new.
+  void* operator new(std::size_t bytes);
+
+  // Class-specific operator delete.
+  void operator delete(void* space);
+
+  friend class DummyFriend; // to eliminate compiler warning
+
+  // length here does NOT need to include the null-terminator
+  string_rep(std::size_t length);
+  ~string_rep();
+
+  static string_rep* getEmptyRep();
+
+public:
+  static string_rep* makeTextCopy(const char* text, std::size_t str_length);
+
+  static string_rep* makeBlank(std::size_t length);
+
+  string_rep* clone() const; // Return a copy with ref-count 0
+
+  static void makeUnique(string_rep*& rep);
+
+  void incrRefCount() { ++itsRefCount; }
+  void decrRefCount() { if (--itsRefCount <= 0) delete this; }
+
+private:
+  unsigned int itsRefCount;
+
+public:
+  char* itsText;
+  std::size_t itsLength;
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -75,8 +123,8 @@ public:
   friend class string_literal;
   friend class dynamic_string;
 
-  fixed_string(int length);
-  fixed_string(const char* text = "");
+  fixed_string(std::size_t length = 0);
+  fixed_string(const char* text);
   fixed_string(const fixed_string& other);
   ~fixed_string();
 
@@ -89,10 +137,10 @@ public:
   bool equals(const string_literal& other) const;
   bool equals(const fixed_string& other) const;
 
-  char* data() { Rep::makeUnique(itsRep); return itsRep->itsText; }
+  char* data() { string_rep::makeUnique(itsRep); return itsRep->itsText; }
 
   const char* c_str() const { return itsRep->itsText; }
-  unsigned int length() const { return itsRep->itsLength; }
+  std::size_t length() const { return itsRep->itsLength; }
   bool empty() const { return (length() == 0); }
 
   bool ends_with(const fixed_string& ext) const;
@@ -125,44 +173,8 @@ public:
       return strcmp(itsRep->itsText, other.c_str()) > 0;
     }
 
-//  private:
-  class Rep {
-  private:
-    Rep(const Rep& other); // not implemented
-    Rep& operator=(const Rep& other); // not implemented
-
-    // Class-specific operator new.
-    void* operator new(size_t bytes);
-
-    // Class-specific operator delete.
-    void operator delete(void* space);
-
-    friend class DummyFriend; // to eliminate compiler warning
-
-    Rep();
-    ~Rep();
-
-    static Rep* getEmptyRep();
-
-  public:
-    static Rep* makeTextCopy(const char* text, int str_length);
-
-    static Rep* makeBlank(int length);
-
-    static void makeUnique(Rep*& rep);
-
-    void incrRefCount() { ++itsRefCount; }
-    void decrRefCount() { if (--itsRefCount <= 0) delete this; }
-
-  private:
-    int itsRefCount;
-
-  public:
-    char* itsText;
-    unsigned int itsLength;
-  };
-
-  Rep* itsRep;
+private:
+  string_rep* itsRep;
 };
 
 
@@ -213,7 +225,7 @@ public:
   bool equals(const dynamic_string& other) const;
 
   const char* c_str() const;
-  unsigned int length() const;
+  std::size_t length() const;
   bool empty() const { return (length() == 0); }
 
   //
