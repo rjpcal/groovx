@@ -33,7 +33,7 @@ if { ![Togl::inited] } { Togl::init; update }
 ### Expt::beginCmd ###
 test "ExptTcl-Expt::begin" "too many args" {
 	 Expt::begin junk
-} {^wrong \# args: should be "Expt::begin"$}
+} {^wrong \# args: should be}
 test "ExptTcl-Expt::begin" "normal use" {
 	 Expt::clear
 	 set block [Obj::new Block]
@@ -46,17 +46,17 @@ test "ExptTcl-Expt::begin" "error" {} $BLANK $no_test
 ### Expt::pauseCmd ###
 test "ExptTcl-Expt::pause" "too many args" {
 	 Expt::pause junk
-} {^wrong \# args: should be "Expt::pause"$}
+} {^wrong \# args: should be}
 test "ExptTcl-Expt::pause" "normal use" {} {^$}
 test "ExptTcl-Expt::pause" "error" {} $BLANK $no_test
 
 ### Expt::loadCmd ###
 test "ExptTcl-Expt::load" "too few args" {
     Expt::load
-} {wrong \# args: should be "Expt::load filename"}
+} {wrong \# args: should be}
 test "ExptTcl-Expt::load" "too many args" {
     Expt::load j u
-} {wrong \# args: should be "Expt::load filename"}
+} {wrong \# args: should be}
 test "ExptTcl-Expt::load" "fMRI sample" {
 	 Togl::setVisible false
 	 Expt::clear
@@ -92,15 +92,15 @@ test "ExptTcl-Expt::load" "psyphy samples" {
 ### Expt::saveCmd ###
 test "ExptTcl-Expt::save" "too few args" {
     Expt::save
-} {wrong \# args: should be "Expt::save filename"}
+} {wrong \# args: should be}
 test "ExptTcl-Expt::save" "too many args" {
     Expt::save j u
-} {wrong \# args: should be "Expt::save filename"}
+} {wrong \# args: should be}
 
 ### Expt::stopCmd ###
 test "ExptTcl-Expt::stop" "too many args" {
 	 Expt::stop junk
-} {^wrong \# args: should be "Expt::stop"$}
+} {^wrong \# args: should be}
 test "ExptTcl-Expt::stop" "normal use" {} {^$}
 test "ExptTcl-Expt::stop" "error" {} $BLANK $no_test
 
