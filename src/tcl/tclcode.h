@@ -42,11 +42,9 @@ public:
 	 BACKGROUND_ERROR
   };
 
-  Code(const char* tcl_cmd, ErrorHandlingMode mode = NONE,
-		 int flags = TCL_EVAL_GLOBAL);
+  Code(const char* tcl_cmd, ErrorHandlingMode mode = NONE);
 
-  Code(Tcl_Obj* cmd_object, ErrorHandlingMode mode = NONE,
-		 int flags = TCL_EVAL_GLOBAL);
+  Code(Tcl_Obj* cmd_object, ErrorHandlingMode mode = NONE);
 
   int invoke(Tcl_Interp* interp);
 
