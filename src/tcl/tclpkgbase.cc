@@ -3,7 +3,7 @@
 // tclpkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 14 12:55:27 1999
-// written: Tue Dec  7 18:10:46 1999
+// written: Wed Dec  8 00:56:27 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,9 +26,7 @@
 #include "trace.h"
 #include "debug.h"
 
-namespace Tcl {
-
-struct TclPkg::PrivateRep {
+struct Tcl::TclPkg::PrivateRep {
   vector<int*> ownedInts;
   vector<double*> ownedDoubles;
   vector<char**> ownedCstrings;
@@ -50,7 +48,8 @@ struct TclPkg::PrivateRep {
   }
 };
 
-TclPkg::TclPkg(Tcl_Interp* interp, const char* name, const char* version) :
+Tcl::TclPkg::TclPkg(Tcl_Interp* interp,
+						  const char* name, const char* version) :
   itsInterp(interp),
   itsCmds(),
   itsPkgName(name ? name : ""),
@@ -86,7 +85,7 @@ DOTRACE("TclPkg::TclPkg");
   Tcl_CreateExitHandler(exitHandler, static_cast<ClientData>(this));
 }
 
-TclPkg::~TclPkg() {
+Tcl::TclPkg::~TclPkg() {
 DOTRACE("TclPkg::~TclPkg");
   for (size_t i = 0; i < itsCmds.size(); i++) {
 	 DebugEval(i); DebugEval(itsCmds.size()); DebugEvalNL((void*)itsCmds[i]);
@@ -100,36 +99,36 @@ DOTRACE("TclPkg::~TclPkg");
   delete itsPrivateRep;
 }
 
-const char* TclPkg::makePkgCmdName(const char* cmd_name) {
-DOTRACE("TclPkg::makePkgCmdName");
+const char* Tcl::TclPkg::makePkgCmdName(const char* cmd_name) {
+DOTRACE("Tcl::TclPkg::makePkgCmdName");
   static string name;
   name = pkgName() + "::" + cmd_name;
   return name.c_str();
 }
 
-void TclPkg::linkVar(const char* varName, int& var) throw (TclError) {
-DOTRACE("TclPkg::linkVar int");
+void Tcl::TclPkg::linkVar(const char* varName, int& var) throw (Tcl::TclError) {
+DOTRACE("Tcl::TclPkg::linkVar int");
   DebugEvalNL(varName);
   if (Tcl_LinkInt(itsInterp, varName, &var, 0) != TCL_OK)
 	 throw TclError();
 }
 
-void TclPkg::linkVar(const char* varName, double& var) throw (TclError) {
-DOTRACE("TclPkg::linkVar double");
+void Tcl::TclPkg::linkVar(const char* varName, double& var) throw (Tcl::TclError) {
+DOTRACE("Tcl::TclPkg::linkVar double");
   DebugEvalNL(varName);
   if (Tcl_LinkDouble(itsInterp, varName, &var, 0) != TCL_OK)
 	 throw TclError();
 }
 
-void TclPkg::linkVar(const char* varName, char*& var) throw (TclError) {
-DOTRACE("TclPkg::linkVar char*");
+void Tcl::TclPkg::linkVar(const char* varName, char*& var) throw (Tcl::TclError) {
+DOTRACE("Tcl::TclPkg::linkVar char*");
   DebugEvalNL(varName);
   if (Tcl_LinkString(itsInterp, varName, &var, 0) != TCL_OK)
 	 throw TclError();
 }
 
-void TclPkg::linkVarCopy(const char* varName, int var) throw (TclError) {
-DOTRACE("TclPkg::linkVarCopy int");
+void Tcl::TclPkg::linkVarCopy(const char* varName, int var) throw (Tcl::TclError) {
+DOTRACE("Tcl::TclPkg::linkVarCopy int");
   DebugEvalNL(varName);
   int* copy = new int(var);
   itsPrivateRep->ownedInts.push_back(copy);
@@ -138,8 +137,8 @@ DOTRACE("TclPkg::linkVarCopy int");
 	 throw TclError();
 }
 
-void TclPkg::linkVarCopy(const char* varName, double var) throw (TclError) {
-DOTRACE("TclPkg::linkVarCopy double");
+void Tcl::TclPkg::linkVarCopy(const char* varName, double var) throw (Tcl::TclError) {
+DOTRACE("Tcl::TclPkg::linkVarCopy double");
   double* copy = new double(var);
   itsPrivateRep->ownedDoubles.push_back(copy);
   if (Tcl_LinkDouble(itsInterp, varName, copy, TCL_LINK_READ_ONLY)
@@ -147,8 +146,8 @@ DOTRACE("TclPkg::linkVarCopy double");
 	 throw TclError();
 }
 
-void TclPkg::linkVarCopy(const char* varName, const char* var) throw (TclError) {
-DOTRACE("TclPkg::linkVarCopy char*");
+void Tcl::TclPkg::linkVarCopy(const char* varName, const char* var) throw (Tcl::TclError) {
+DOTRACE("Tcl::TclPkg::linkVarCopy char*");
   DebugEvalNL(varName);
   char* copy = new char[strlen(var)+1];
   strcpy(copy, var);
@@ -159,37 +158,35 @@ DOTRACE("TclPkg::linkVarCopy char*");
 	 throw TclError();
 }
 
-void TclPkg::linkConstVar(const char* varName, int& var) throw (TclError) {
-DOTRACE("TclPkg::linkConstVar int");
+void Tcl::TclPkg::linkConstVar(const char* varName, int& var) throw (Tcl::TclError) {
+DOTRACE("Tcl::TclPkg::linkConstVar int");
   DebugEvalNL(varName);
   if (Tcl_LinkInt(itsInterp, varName, &var, TCL_LINK_READ_ONLY)
 		!= TCL_OK)
 	 throw TclError();
 }
 
-void TclPkg::linkConstVar(const char* varName, double& var) throw (TclError) {
-DOTRACE("TclPkg::linkConstVar double");
+void Tcl::TclPkg::linkConstVar(const char* varName, double& var) throw (Tcl::TclError) {
+DOTRACE("Tcl::TclPkg::linkConstVar double");
   DebugEvalNL(varName);
   if (Tcl_LinkDouble(itsInterp, varName, &var, TCL_LINK_READ_ONLY)
 		!= TCL_OK)
 	 throw TclError();
 }
 
-void TclPkg::linkConstVar(const char* varName, char*& var) throw (TclError) {
-DOTRACE("TclPkg::linkConstVar char*");
+void Tcl::TclPkg::linkConstVar(const char* varName, char*& var) throw (Tcl::TclError) {
+DOTRACE("Tcl::TclPkg::linkConstVar char*");
   DebugEvalNL(varName);
   if (Tcl_LinkString(itsInterp, varName, &var, TCL_LINK_READ_ONLY)
 		!= TCL_OK)
 	 throw TclError();
 }
 
-void TclPkg::exitHandler(ClientData clientData) {
-DOTRACE("TclPkg::exitHandler");
+void Tcl::TclPkg::exitHandler(ClientData clientData) {
+DOTRACE("Tcl::TclPkg::exitHandler");
   TclPkg* pkg = static_cast<TclPkg*>(clientData);
   delete pkg;
 }
-
-} // end namespace Tcl
 
 static const char vcid_tclpkg_cc[] = "$Header$";
 #endif // !TCLPKG_CC_DEFINED
