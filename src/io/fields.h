@@ -5,13 +5,17 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Mon Sep  3 13:25:57 2001
+// written: Mon Sep  3 13:38:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FIELDS_H_DEFINED
 #define FIELDS_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TCLOBJPTR_H_DEFINED)
+#include "tcl/tclobjptr.h"
+#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
 #include "util/algo.h"
@@ -50,11 +54,6 @@ namespace Util
 {
   template <class T> class FwdIter;
   class Signal;
-}
-
-namespace Tcl
-{
-  class ObjPtr;
 }
 
 template <class T>
@@ -100,7 +99,7 @@ public:
   virtual ~FieldImpl();
 
   virtual void set(FieldContainer* obj, const Value& new_val) const = 0;
-  virtual shared_ptr<Value> get(const FieldContainer* obj) const = 0;
+  virtual Tcl::ObjPtr get(const FieldContainer* obj) const = 0;
 
   virtual void readValueFrom(FieldContainer* obj,
                              IO::Reader* reader, const fstring& name) const = 0;
@@ -172,12 +171,11 @@ public:
       itsChecker.get() == 0 ? raw : itsChecker->limit(raw);
   }
 
-  virtual shared_ptr<Value> get(const FieldContainer* obj) const
+  virtual Tcl::ObjPtr get(const FieldContainer* obj) const
   {
     const C& cobj = dynamic_cast<const C&>(*obj);
 
-    return shared_ptr<Value>(new TValue<DerefT>
-                             (dereference(cobj, itsDataMember)));
+    return Tcl::Convert<DerefT>::toTcl(dereference(cobj, itsDataMember));
   }
 
   virtual void readValueFrom(FieldContainer* obj,
@@ -219,11 +217,13 @@ public:
     dereference(cobj, itsValueMember).assignFrom(new_val);
   }
 
-  virtual shared_ptr<Value> get(const FieldContainer* obj) const
+  virtual Tcl::ObjPtr get(const FieldContainer* obj) const
   {
     const C& cobj = dynamic_cast<const C&>(*obj);
 
-    return shared_ptr<Value>(dereference(cobj, itsValueMember).clone());
+    const Value& val = dereference(cobj, itsValueMember);
+
+    return Tcl::Convert<const Value&>::toTcl(val);
   }
 
   virtual void readValueFrom(FieldContainer* obj,
@@ -274,13 +274,13 @@ public:
     (cobj.*itsSetter)(new_val.get(Util::TypeCue<T>()));
   }
 
-  virtual shared_ptr<Value> get(const FieldContainer* obj) const
+  virtual Tcl::ObjPtr get(const FieldContainer* obj) const
   {
     if (itsGetter == 0) throwNotAllowed("get");
 
     const C& cobj = dynamic_cast<const C&>(*obj);
 
-    return shared_ptr<Value>(new TValue<T>((cobj.*itsGetter)()));
+    return Tcl::Convert<T>::toTcl((cobj.*itsGetter)());
   }
 
   virtual void readValueFrom(FieldContainer* obj,
@@ -462,7 +462,7 @@ public:
   }
 
   /// Get the value of this field for \a obj.
-  shared_ptr<Value> getValue(const FieldContainer* obj) const
+  Tcl::ObjPtr getValue(const FieldContainer* obj) const
   {
     return itsFieldImpl->get(obj);
   }
