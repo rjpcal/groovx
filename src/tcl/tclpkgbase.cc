@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Sun Aug 26 08:53:52 2001
+// written: Tue Aug 28 06:21:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,17 +83,6 @@ namespace Tcl
     if ( Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
                      flag | TCL_LINK_BOOLEAN) != TCL_OK )
       throw TclError("error while linking boolean variable");
-  }
-
-  inline void linkString(Tcl_Interp* interp, const char* varName,
-                         char** addr, int flag)
-  {
-    DebugEvalNL(varName);
-    fstring temp = varName;
-    flag &= TCL_LINK_READ_ONLY;
-    if ( Tcl_LinkVar(interp, temp.data(), reinterpret_cast<char *>(addr),
-                     flag | TCL_LINK_STRING) != TCL_OK )
-      throw TclError("error while linking string variable");
   }
 }
 
