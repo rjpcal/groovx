@@ -48,57 +48,57 @@ namespace
   };
 
   FreeNode* fsFreeList = 0;
+
+  class SharedDataBlock : public DataBlock
+  {
+  public:
+    SharedDataBlock(int length);
+    virtual ~SharedDataBlock();
+
+    virtual bool isUnique() const { return refCount() <= 1; }
+  };
+
+  SharedDataBlock::SharedDataBlock(int length) :
+    DataBlock(new double[length], length)
+  {
+    DOTRACE("SharedDataBlock::SharedDataBlock");
+    dbgEval(3, this); dbgEvalNL(3, itsData);
+  }
+
+  SharedDataBlock::~SharedDataBlock()
+  {
+    DOTRACE("SharedDataBlock::~SharedDataBlock");
+    dbgEval(3, this); dbgEvalNL(3, itsData);
+    delete [] itsData;
+  }
+
+  class BorrowedDataBlock : public DataBlock
+  {
+  public:
+    BorrowedDataBlock(double* borrowedData, unsigned int dataLength) :
+      DataBlock(borrowedData, dataLength)
+    {}
+
+    virtual ~BorrowedDataBlock()
+    { /* don't delete the data, since they are 'borrowed' */ }
+
+    // Since the data are borrowed, we always return false here.
+    virtual bool isUnique() const { return false; }
+  };
+
+  class ReferredDataBlock : public DataBlock
+  {
+  public:
+    ReferredDataBlock(double* borrowedData, unsigned int dataLength) :
+      DataBlock(borrowedData, dataLength)
+    {}
+
+    virtual ~ReferredDataBlock()
+    { /* don't delete the data, since they are 'borrowed' */ }
+
+    virtual bool isUnique() const { return refCount() <= 1; }
+  };
 }
-
-class SharedDataBlock : public DataBlock
-{
-public:
-  SharedDataBlock(int length);
-  virtual ~SharedDataBlock();
-
-  virtual bool isUnique() const { return refCount() <= 1; }
-};
-
-SharedDataBlock::SharedDataBlock(int length) :
-  DataBlock(new double[length], length)
-{
-  DOTRACE("SharedDataBlock::SharedDataBlock");
-  dbgEval(3, this); dbgEvalNL(3, itsData);
-}
-
-SharedDataBlock::~SharedDataBlock()
-{
-  DOTRACE("SharedDataBlock::~SharedDataBlock");
-  dbgEval(3, this); dbgEvalNL(3, itsData);
-  delete [] itsData;
-}
-
-class BorrowedDataBlock : public DataBlock
-{
-public:
-  BorrowedDataBlock(double* borrowedData, unsigned int dataLength) :
-    DataBlock(borrowedData, dataLength)
-  {}
-
-  virtual ~BorrowedDataBlock()
-  { /* don't delete the data, since they are 'borrowed' */ }
-
-  // Since the data are borrowed, we always return false here.
-  virtual bool isUnique() const { return false; }
-};
-
-class ReferredDataBlock : public DataBlock
-{
-public:
-  ReferredDataBlock(double* borrowedData, unsigned int dataLength) :
-    DataBlock(borrowedData, dataLength)
-  {}
-
-  virtual ~ReferredDataBlock()
-  { /* don't delete the data, since they are 'borrowed' */ }
-
-  virtual bool isUnique() const { return refCount() <= 1; }
-};
 
 void* DataBlock::operator new(size_t bytes)
 {
