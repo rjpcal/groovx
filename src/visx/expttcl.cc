@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Sat Sep 23 15:46:49 2000
+// written: Mon Sep 25 08:52:20 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -137,6 +137,8 @@ protected:
 	 ExptDriver* ed = getItem();
 	 ed->edHaltExpt();
 
+	 ed->addLogInfo("Experiment paused.");
+
 	 itsPauseMsgCmd.invoke(interp());
 
 	 // Clear the event queue
@@ -159,6 +161,8 @@ protected:
 	 // Clear the event queue
 	 while (Tcl_DoOneEvent(TCL_ALL_EVENTS|TCL_DONT_WAIT) != 0)
 		{ }
+
+	 ed->addLogInfo("Resuming experiment.");
 
 	 ed->edResumeExpt();
   }

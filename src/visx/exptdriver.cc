@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Sat Sep 23 15:32:26 2000
+// written: Mon Sep 25 08:54:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ Util::Tracer ExptDriver::tracer;
 
 namespace {
 
-  const unsigned long EXPTDRIVER_SERIAL_VERSION_ID = 1;
+  const unsigned long EXPTDRIVER_SERIAL_VERSION_ID = 2;
 
   const string_literal ioTag("ExptDriver");
 
@@ -160,6 +160,21 @@ public:
 
   void setAutosavePeriod(int period) { itsAutosavePeriod = period; }
 
+  const char* getInfoLog() const
+    { return itsInfoLog.c_str(); }
+
+  void addLogInfo(const char* message)
+  {
+	 fixed_string date_string;
+	 getCurrentTimeDateString(date_string);
+
+	 itsInfoLog.append("@");
+	 itsInfoLog.append(date_string);
+	 itsInfoLog.append(" ");
+	 itsInfoLog.append(message);
+	 itsInfoLog.append("\n");
+  }
+
   Util::ErrorHandler& getErrorHandler()
 	 { return itsErrorHandler; }
 
@@ -201,6 +216,8 @@ private:
   fixed_string itsBeginDate;	  // Date(+time) when Expt was begun
   fixed_string itsEndDate;		  // Date(+time) when Expt was stopped
   fixed_string itsAutosaveFile; // Filename used for autosaves
+
+  dynamic_string itsInfoLog;
 
   int itsAutosavePeriod;
 
@@ -266,6 +283,7 @@ ExptDriver::Impl::Impl(ExptDriver* owner, Tcl_Interp* interp) :
   itsBeginDate(""),
   itsEndDate(""),
   itsAutosaveFile("__autosave_file"),
+  itsInfoLog(),
   itsAutosavePeriod(10),
   itsBlockId(0),
   itsDummyRhId(0),
@@ -642,6 +660,9 @@ DOTRACE("ExptDriver::Impl::readFrom");
   if (svid >= 1)
 	 reader->readValue("autosavePeriod", itsAutosavePeriod);
 
+  if (svid >= 2)
+	 reader->readValue("infoLog", itsInfoLog);
+
   reader->readValue("blockId", itsBlockId);
   reader->readValue("rhId", itsDummyRhId);
   reader->readValue("thId", itsDummyThId);
@@ -668,6 +689,9 @@ DOTRACE("ExptDriver::Impl::writeTo");
 
   if (EXPTDRIVER_SERIAL_VERSION_ID >= 1)
 	 writer->writeValue("autosavePeriod", itsAutosavePeriod);
+
+  if (EXPTDRIVER_SERIAL_VERSION_ID >= 2)
+	 writer->writeValue("infoLog", itsInfoLog);
 
   writer->writeValue("blockId", itsBlockId);
   writer->writeValue("rhId", itsDummyRhId);
@@ -704,6 +728,8 @@ DOTRACE("ExptDriver::Impl::init");
 
 void ExptDriver::Impl::edBeginExpt() {
 DOTRACE("ExptDriver::Impl::edBeginExpt");
+
+  addLogInfo("Beginning experiment.");
 
   init();
 
@@ -902,7 +928,7 @@ void ExptDriver::Impl::storeData() {
 DOTRACE("ExptDriver::Impl::storeData");
   Assert(itsInterp != 0);
 
-  edHaltExpt();
+  edHaltExpt();  
 
   try {
 	 getCurrentTimeDateString(itsEndDate);
@@ -933,6 +959,8 @@ DOTRACE("ExptDriver::Impl::storeData");
 		edRaiseBackgroundError("error during System::chmod");
 		return;
 	 }
+
+	 addLogInfo("Experiment saved.");
   }
   catch (IO::IoError& err) {
 	 edRaiseBackgroundError(err.msg_cstr());
@@ -1000,6 +1028,12 @@ int ExptDriver::getAutosavePeriod() const
 
 void ExptDriver::setAutosavePeriod(int period)
   { itsImpl->setAutosavePeriod(period); }
+
+const char* ExptDriver::getInfoLog() const
+  { return itsImpl->getInfoLog(); }
+
+void ExptDriver::addLogInfo(const char* message)
+  { itsImpl->addLogInfo(message); }
 
 Util::ErrorHandler& ExptDriver::getErrorHandler()
   { return itsImpl->getErrorHandler(); }
