@@ -3,7 +3,7 @@
 // demangle.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct 13 10:41:19 1999
-// written: Wed May 17 14:02:43 2000
+// written: Sat Sep 23 18:03:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,14 +13,11 @@
 
 #include "system/demangle.h"
 
-#ifdef ACC_COMPILER
+#if defined(ACC_COMPILER) || defined(MIPSPRO_COMPILER)
 
 const char* demangle_cstr(const char* in) { return in; }
 
-#endif // ACC_COMPILER
-
-
-#ifdef GCC_COMPILER
+#elif defined(GCC_COMPILER)
 
 #include <cctype>
 #include <cstdlib>
@@ -241,7 +238,10 @@ DOTRACE("demangle");
 
   return out;
 }
-#endif // GCC_COMPILER
+
+#else
+#error no compiler macro is defined
+#endif // switch on compiler macro
 
 static const char vcid_demangle_cc[] = "$Header$";
 #endif // !DEMANGLE_CC_DEFINED
