@@ -3,7 +3,7 @@
 // propitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct  4 15:42:59 1999
-// written: Thu Mar 30 12:09:09 2000
+// written: Thu Oct  5 13:07:21 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,14 @@
 #endif
 
 namespace Tcl {
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * Tcl::PropertyListItemPkg
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
 
 template <class C, class List>
 class PropertyListItemPkg : public ListItemPkg<C, List> {

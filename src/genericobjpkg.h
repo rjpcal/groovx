@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Thu Mar 30 12:29:39 2000
+// written: Thu Oct  5 13:05:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,9 +27,11 @@
 namespace Tcl {
 
 ///////////////////////////////////////////////////////////////////////
-//
-// TypeCmd --
-//
+/**
+ *
+ * TypeCmd
+ *
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class C>
@@ -45,9 +47,11 @@ protected:
 };
 
 ///////////////////////////////////////////////////////////////////////
-//
-// AbstractListItemPkg --
-//
+/**
+ *
+ * AbstractListItemPkg
+ *
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class C, class List>
@@ -78,9 +82,12 @@ private:
 };
 
 ///////////////////////////////////////////////////////////////////////
-//
-// ListItemPkg (for concrete list items) --
-//
+/**
+ *
+ * ListItemPkg is a subclass of AbstractListItemPkg for concrete list
+ * items.
+ *
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 template <class C, class List>
@@ -90,6 +97,12 @@ public:
 				  const char* name, const char* version,
 				  const char* creator_cmd_name = 0);
 };
+
+/**
+ *
+ * DefaultCreatorCmd
+ *
+ **/
 
 template <class C, class List>
 class DefaultCreatorCmd : public TclCmd {
