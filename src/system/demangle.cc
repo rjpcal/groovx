@@ -3,7 +3,7 @@
 // demangle.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct 13 10:41:19 1999
-// written: Thu Mar 30 13:59:08 2000
+// written: Wed May 17 14:02:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,8 +60,6 @@ namespace {
   string readModifiers(string& str, string::size_type& pos) {
 	 string modifiers("");
 	 string array_dims("");
-
-	 bool have_array = false;
 
 	 while ( isupper(str[pos]) ) {
 		switch (str[pos]) {
