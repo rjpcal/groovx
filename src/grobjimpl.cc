@@ -3,7 +3,7 @@
 // grobjimpl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:57 2000
-// written: Fri Sep 29 16:08:39 2000
+// written: Thu Oct 19 14:09:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,6 @@
 
 #include "grobjimpl.h"
 
-#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -391,60 +390,8 @@ GrObj::Impl::~Impl() {
 DOTRACE("GrObj::Impl::~Impl");
 }
 
-void GrObj::Impl::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("GrObj::Impl::legacySrlz");
-  lwriter->writeValue("GrObj::category", itsCategory);
-
-  lwriter->writeValue("GrObj::renderMode", itsRenderer.getMode());
-
-  lwriter->writeValue("GrObj::unRenderMode", itsUnRenderer.itsMode);
-
-  lwriter->writeValue("GrObj::bbVisibility", itsBB.itsIsVisible);
-
-  lwriter->writeValue("GrObj::scalingMode", itsScaler.getMode());
-  lwriter->writeValue("GrObj::widthFactor", itsScaler.itsWidthFactor);
-  lwriter->writeValue("GrObj::heightFactor", itsScaler.itsHeightFactor);
-
-  lwriter->writeValue("GrObj::alignmentMode", itsAligner.itsMode);
-  lwriter->writeValue("GrObj::centerX", itsAligner.itsCenterX);
-  lwriter->setFieldSeparator('\n');
-  lwriter->writeValue("GrObj::centerY", itsAligner.itsCenterY);
-}
-
-void GrObj::Impl::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("GrObj::Impl::legacyDesrlz");
-
-  lreader->readValue("GrObj::category", itsCategory);
-
-  int temp;
-  lreader->readValue("GrObj::renderMode", temp);
-  itsRenderer.setMode(temp, this);
-
-  lreader->readValue("GrObj::unRenderMode", itsUnRenderer.itsMode);
-
-  lreader->readValue("GrObj::bbVisibility", itsBB.itsIsVisible);
-
-  lreader->readValue("GrObj::scalingMode", temp);
-  itsScaler.setMode(temp, this);
-
-  lreader->readValue("GrObj::widthFactor", itsScaler.itsWidthFactor);
-  lreader->readValue("GrObj::heightFactor", itsScaler.itsHeightFactor);
-
-  lreader->readValue("GrObj::alignmentMode", itsAligner.itsMode);
-  lreader->readValue("GrObj::centerX", itsAligner.itsCenterX);
-  lreader->readValue("GrObj::centerY", itsAligner.itsCenterY);
-
-  invalidateCaches();
-}
-
 void GrObj::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("GrObj::Impl::readFrom");
-
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
 
   IO::VersionId svid = reader->readSerialVersionId(); 
 
@@ -483,12 +430,6 @@ DOTRACE("GrObj::Impl::readFrom");
 
 void GrObj::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("GrObj::Impl::writeTo");
-
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
 
   writer->writeValue("GrObj::category", itsCategory);
 

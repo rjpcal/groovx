@@ -3,7 +3,7 @@
 // irixsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Oct 14 11:23:12 1999
-// written: Fri Sep 29 16:09:50 2000
+// written: Thu Oct 19 14:25:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,6 @@
 #ifndef IRIXSOUND_CC_DEFINED
 #define IRIXSOUND_CC_DEFINED
 
-#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -65,9 +64,6 @@ private:
   IrixAudioSound(const IrixAudioSound&);
   IrixAudioSound& operator=(const IrixAudioSound&);
 
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
-
   fixed_string itsFilename;
 
   ALconfig itsAudioConfig;
@@ -106,28 +102,8 @@ DOTRACE("IrixAudioSound::~IrixAudioSound");
   }
 }
 
-void IrixAudioSound::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("IrixAudioSound::legacySrlz");
-  lwriter->setStringMode(IO::GETLINE_NEWLINE);
-  lwriter->writeValue("filename", itsFilename);
-}
-
-void IrixAudioSound::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("IrixAudioSound::legacyDesrlz");
-  lreader->setStringMode(IO::GETLINE_NEWLINE);
-  lreader->readValue("filename", itsFilename);
-
-  setFile(itsFilename.c_str());
-}
-
 void IrixAudioSound::readFrom(IO::Reader* reader) {
 DOTRACE("IrixAudioSound::readFrom");
-
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
 
   reader->readValue("filename", itsFilename);
   setFile(itsFilename.c_str());
@@ -135,12 +111,6 @@ DOTRACE("IrixAudioSound::readFrom");
 
 void IrixAudioSound::writeTo(IO::Writer* writer) const {
 DOTRACE("IrixAudioSound::writeTo");
-
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
 
   writer->writeValue("filename", itsFilename);
 }

@@ -3,7 +3,7 @@
 // hpsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 12 13:03:47 1999
-// written: Fri Sep 29 16:09:16 2000
+// written: Thu Oct 19 14:24:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,6 @@
 #ifndef HPSOUND_CC_DEFINED
 #define HPSOUND_CC_DEFINED
 
-#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -82,9 +81,6 @@ public:
   virtual const char* getFile() const { return itsFilename.c_str(); }
 
 private:
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
-
   fixed_string itsFilename;
   SBucket* itsSBucket;
   SBPlayParams itsPlayParams;
@@ -123,28 +119,8 @@ DOTRACE("HpAudioSound::~HpAudioSound");
   }
 }
 
-void HpAudioSound::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("HpAudioSound::legacySrlz");
-  lwriter->setStringMode(IO::GETLINE_NEWLINE);
-  lwriter->writeValue("filename", itsFilename);
-}
-
-void HpAudioSound::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("HpAudioSound::legacyDesrlz");
-  lreader->setStringMode(IO::GETLINE_NEWLINE);
-  lreader->readValue("filename", itsFilename);
-
-  setFile(itsFilename.c_str());
-}
-
 void HpAudioSound::readFrom(IO::Reader* reader) {
 DOTRACE("HpAudioSound::readFrom");
-
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
 
   reader->readValue("filename", itsFilename);
   setFile(itsFilename.c_str());
@@ -152,12 +128,6 @@ DOTRACE("HpAudioSound::readFrom");
 
 void HpAudioSound::writeTo(IO::Writer* writer) const {
 DOTRACE("HpAudioSound::writeTo");
-
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
 
   writer->writeValue("filename", itsFilename); 
 }

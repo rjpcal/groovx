@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Fri Sep 29 16:08:51 2000
+// written: Thu Oct 19 14:16:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,6 @@
 
 #include "rect.h"
 
-#include "io/iolegacy.h"
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
@@ -648,6 +647,8 @@ namespace {
 	 return listBase;
   }
 
+
+  const IO::VersionId GTEXT_SERIAL_VERSION_ID = 2;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -674,54 +675,40 @@ Gtext::~Gtext() {
 DOTRACE("Gtext::~Gtext");
 }
 
-void Gtext::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("Gtext::legacySrlz");
-
-  lwriter->setStringMode(IO::GETLINE_NEWLINE);
-  lwriter->writeValue("text", itsText);
-
-  IO::ConstIoProxy<GrObj> baseclass(this);
-  lwriter->writeBaseClass("GrObj", &baseclass);
-}
-
-void Gtext::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("Gtext::legacyDesrlz");
-
-  lreader->setStringMode(IO::GETLINE_NEWLINE);
-  lreader->readValue("text", itsText);
-
-  IO::IoProxy<GrObj> baseclass(this);
-  lreader->readBaseClass("GrObj", &baseclass);
+IO::VersionId Gtext::serialVersionId() const {
+DOTRACE("Gtext::serialVersionId");
+  return GTEXT_SERIAL_VERSION_ID;
 }
 
 void Gtext::readFrom(IO::Reader* reader) {
 DOTRACE("Gtext::readFrom");
 
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
-
   reader->readValue("text", itsText);
   reader->readValue("strokeWidth", itsStrokeWidth);
  
-  GrObj::readFrom(reader); 
+  IO::VersionId svid = reader->readSerialVersionId();
+  if (svid < 2)
+	 GrObj::readFrom(reader);
+  else if (svid == 2)
+	 {
+		IO::IoProxy<GrObj> baseclass(this);
+		reader->readBaseClass("GrObj", &baseclass);
+	 }
 }
 
 void Gtext::writeTo(IO::Writer* writer) const {
 DOTRACE("Gtext::writeTo");
 
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
-
   writer->writeValue("text", itsText);
   writer->writeValue("strokeWidth", itsStrokeWidth);
 
-  GrObj::writeTo(writer);
+  if (GTEXT_SERIAL_VERSION_ID < 2)
+	 GrObj::writeTo(writer);
+  else if (GTEXT_SERIAL_VERSION_ID == 2)
+	 {
+		IO::ConstIoProxy<GrObj> baseclass(this);
+		writer->writeBaseClass("GrObj", &baseclass);
+	 }
 }
 
 void Gtext::setText(const char* text) {

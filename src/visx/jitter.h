@@ -3,7 +3,7 @@
 // jitter.h
 // Rob Peters
 // created: Wed Apr  7 13:46:40 1999
-// written: Fri Sep 29 14:36:06 2000
+// written: Thu Oct 19 14:26:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,6 +30,7 @@ public:
   Jitter();
   virtual ~Jitter();
 
+  virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
@@ -58,9 +59,6 @@ public:
 
 private:
   void rejitter() const;
-
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
 
   // These specify the amount of jitter that will be effected by the
   // translate() or rotate() calls; the actual value used will be in

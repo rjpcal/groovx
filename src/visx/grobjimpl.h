@@ -3,7 +3,7 @@
 // grobjimpl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:54 2000
-// written: Fri Sep 29 14:36:06 2000
+// written: Thu Oct 19 14:04:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -389,9 +389,6 @@ public:
   //////////////////
 private:
   GrObj* const self;
-
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
 
   int itsCategory;
   BoundingBox itsBB;

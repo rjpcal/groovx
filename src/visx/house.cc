@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Fri Sep 29 16:09:05 2000
+// written: Thu Oct 19 14:22:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,6 @@
 
 #include "rect.h"
 
-#include "io/iolegacy.h"
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
@@ -44,6 +43,8 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
+  const IO::VersionId HOUSE_SERIAL_VERSION_ID = 2;
+
   template <class T>
   inline T max(const T& t1, const T& t2) { return (t1 > t2) ? t1 : t2; }
 
@@ -235,47 +236,27 @@ House::~House() {
 DOTRACE("House::~House");
 }
 
-void House::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("House::legacySrlz");
-
-  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-	 lwriter->writeValueObj(PINFOS[i].name_cstr(),
-									get(PINFOS[i].property()));
-  }
-
-  IO::ConstIoProxy<GrObj> baseclass(this);
-  lwriter->writeBaseClass("GrObj", &baseclass);
-}
-
-void House::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("House::legacyDesrlz");
-
-  for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
-	 lreader->readValueObj(PINFOS[i].name_cstr(),
-								  const_cast<Value&>(get(PINFOS[i].property())));
-  }
-
-  IO::IoProxy<GrObj> baseclass(this);
-  lreader->readBaseClass("GrObj", &baseclass);
-
-  sendStateChangeMsg();
+IO::VersionId House::serialVersionId() const {
+DOTRACE("House::serialVersionId");
+  return HOUSE_SERIAL_VERSION_ID;
 }
 
 void House::readFrom(IO::Reader* reader) {
 DOTRACE("House::readFrom");
-
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
 
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 reader->readValueObj(PINFOS[i].name_cstr(),
 								 const_cast<Value&>(get(PINFOS[i].property())));
   }
 
-  GrObj::readFrom(reader);
+  IO::VersionId svid = reader->readSerialVersionId();
+  if (svid < 2)
+	 GrObj::readFrom(reader);
+  else if (svid == 2)
+	 {
+		IO::IoProxy<GrObj> baseclass(this);
+		reader->readBaseClass("GrObj", &baseclass);
+	 }
 
   sendStateChangeMsg();
 }
@@ -283,18 +264,18 @@ DOTRACE("House::readFrom");
 void House::writeTo(IO::Writer* writer) const {
 DOTRACE("House::writeTo");
 
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
-
   for (unsigned int i = 0; i < NUM_PINFOS; ++i) {
 	 writer->writeValueObj(PINFOS[i].name_cstr(),
 								  get(PINFOS[i].property()));
   }
 
-  GrObj::writeTo(writer);
+  if (HOUSE_SERIAL_VERSION_ID < 2)
+	 GrObj::writeTo(writer);
+  else if (HOUSE_SERIAL_VERSION_ID == 2)
+	 {
+		IO::ConstIoProxy<GrObj> baseclass(this);
+		writer->writeBaseClass("GrObj", &baseclass);
+	 }
 }
 
 ///////////////////////////////////////////////////////////////////////
