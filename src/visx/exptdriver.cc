@@ -723,7 +723,7 @@ DOTRACE("ExptDriver::Impl::edBeginTrial");
 
   block().beginTrial();
   timingHdlr().thBeginTrial(itsOwner);
-  responseHandler().rhBeginTrial();
+  responseHandler().rhBeginTrial(itsOwner);
 }
 
 //--------------------------------------------------------------------
@@ -777,7 +777,7 @@ DOTRACE("ExptDriver::Impl::edAbortTrial");
 
   TimeTraceNL("edAbortTrial", timingHdlr().getElapsedMsec());
   
-  responseHandler().rhAbortTrial();
+  responseHandler().rhAbortTrial(itsOwner);
   block().abortTrial();
   timingHdlr().thAbortTrial(itsOwner);
 }
@@ -793,7 +793,7 @@ void ExptDriver::Impl::edEndTrial() {
 
   TimeTraceNL("edEndTrial", timingHdlr().getElapsedMsec());
   
-  responseHandler().rhEndTrial();
+  responseHandler().rhEndTrial(itsOwner);
   block().endTrial();
 
   if ( needAutosave() ) { doAutosave(); }
@@ -836,7 +836,7 @@ DOTRACE("ExptDriver::Impl::edHaltExpt");
 	 block().haltExpt();
   }
   if ( RhList::theRhList().isValidId(itsRhId) ) {
-	 responseHandler().rhHaltExpt();
+	 responseHandler().rhHaltExpt(itsOwner);
   }
   if ( ThList::theThList().isValidId(itsThId) ) {
 	 timingHdlr().thHaltExpt(itsOwner);

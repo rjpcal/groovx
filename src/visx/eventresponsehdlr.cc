@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Dec  1 11:24:17 1999
+// written: Wed Dec  1 14:42:30 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,8 +40,6 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  Experiment& getExpt() { return Experiment::getExperiment(); }
-
   const string ioTag = "EventResponseHdlr";
 
   const string nullScript = "{}";
@@ -110,19 +108,26 @@ public:
   void setBindingSubstitution(const string& sub)
 	 { itsBindingSubstitution = sub; }
 
-  void rhBeginTrial() const
-	 { attend(); }
+  void rhBeginTrial(Experiment* expt) const
+	 { itsExperiment = expt; attend(); }
 
-  void rhAbortTrial() const;
+  void rhAbortTrial(Experiment* expt) const;
 
-  void rhEndTrial() const
-	 { ignore(); }
+  void rhEndTrial(Experiment* expt) const
+	 { itsExperiment = expt; ignore(); }
 
-  void rhHaltExpt() const
-	 { ignore(); }
+  void rhHaltExpt(Experiment* expt) const
+	 { itsExperiment = expt; ignore(); }
 
   // Helper functions
 private:
+  Experiment& getExpt() const
+	 {
+		if (itsExperiment == 0)
+		  { throw ErrorWithMsg("EventResponseHdlr::itsExperiment is NULL"); }
+		return *itsExperiment;
+	 }
+
   // When this procedure is invoked, the program listens to the events
   // that are pertinent to the response policy. This procedure should
   // be called when a trial is begun, and should be cancelled with
@@ -200,6 +205,8 @@ private:
   // data
 private:
   EventResponseHdlr* itsOwner;
+
+  mutable Experiment* itsExperiment;
 
   Tcl_Interp* itsInterp;
 
@@ -296,6 +303,7 @@ private:
 EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner,
 										const string& input_response_map) :
   itsOwner(owner),
+  itsExperiment(0),
   itsInterp(0),
   itsTclCmdToken(0),
   itsPrivateCmdName(getUniqueCmdName()),
@@ -450,8 +458,10 @@ DOTRACE("EventResponseHdlr::Impl::setInterp");
   }
 }
 
-void EventResponseHdlr::Impl::rhAbortTrial() const {
+void EventResponseHdlr::Impl::rhAbortTrial(Experiment* expt) const {
 DOTRACE("EventResponseHdlr::Impl::rhAbortTrial");
+  itsExperiment = expt; 
+
   Assert(itsInterp != 0);
 
   ignore();
@@ -847,17 +857,17 @@ void EventResponseHdlr::setBindingSubstitution(const string& sub) {
   itsImpl->setBindingSubstitution(sub);
 }
 
-void EventResponseHdlr::rhBeginTrial() const
-  { itsImpl->rhBeginTrial(); }
+void EventResponseHdlr::rhBeginTrial(Experiment* expt) const
+  { itsImpl->rhBeginTrial(expt); }
 
-void EventResponseHdlr::rhAbortTrial() const
-  { itsImpl->rhAbortTrial(); }
+void EventResponseHdlr::rhAbortTrial(Experiment* expt) const
+  { itsImpl->rhAbortTrial(expt); }
 
-void EventResponseHdlr::rhEndTrial() const
-  { itsImpl->rhEndTrial(); }
+void EventResponseHdlr::rhEndTrial(Experiment* expt) const
+  { itsImpl->rhEndTrial(expt); }
 
-void EventResponseHdlr::rhHaltExpt() const
-  { itsImpl->rhHaltExpt(); }
+void EventResponseHdlr::rhHaltExpt(Experiment* expt) const
+  { itsImpl->rhHaltExpt(expt); }
 
 void EventResponseHdlr::oldSerialize(ostream &os, IOFlag flag) const {
   itsImpl->oldSerialize(os, flag);
