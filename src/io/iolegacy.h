@@ -3,7 +3,7 @@
 // iolegacy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 26 18:47:31 2000
-// written: Thu Oct 19 15:41:53 2000
+// written: Thu Oct 19 18:50:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,8 +43,6 @@ namespace IO {
 
   /// Neither the class's name or its bases will be written/read
   const IOFlag NO_FLAGS   = 0;
-  /// The class's name is written/read
-  const IOFlag TYPENAME   = 1 << 0;
   /// The class's bases are written/read
   const IOFlag BASES      = 1 << 1;
 }
@@ -58,11 +56,6 @@ namespace IO {
 namespace IO {
   class LegacyReader;
   class LegacyWriter;
-
-  class LRFlagJanitor;
-  class LWFlagJanitor;
-
-  enum LegacyStringMode { GETLINE_NEWLINE, GETLINE_TAB, CHAR_COUNT };
 }
 
 
@@ -76,15 +69,6 @@ class IO::LegacyReader : public IO::Reader {
 public:
   LegacyReader(STD_IO::istream& is, IO::IOFlag flag);
   virtual ~LegacyReader();
-
-  IO::IOFlag flags() const;
-
-  int getLegacyVersionId();
-  void grabLeftBrace();
-  void grabRightBrace();
-  void grabNewline();
-
-  void setStringMode(LegacyStringMode mode);
 
   virtual IO::VersionId readSerialVersionId();
 
@@ -104,9 +88,6 @@ protected:
   virtual char* readCstring(const char* name);
 
 private:
-  friend class IO::LRFlagJanitor;
-  void setFlags(IO::IOFlag new_flags);
-
   class Impl;
   friend class Impl;
 
@@ -125,15 +106,6 @@ public:
   LegacyWriter(STD_IO::ostream& os, IO::IOFlag flag);
   virtual ~LegacyWriter();
 
-  IO::IOFlag flags() const;
-
-  void setFieldSeparator(char sep);
-  void resetFieldSeparator();
-
-  void insertChar(char c);
-
-  void setStringMode(LegacyStringMode mode);
-
   virtual void writeChar(const char* name, char val);
   virtual void writeInt(const char* name, int val);
   virtual void writeBool(const char* name, bool val);
@@ -150,58 +122,10 @@ protected:
   virtual void writeCstring(const char* name, const char* val);
 
 private:
-  friend class IO::LWFlagJanitor;
-  void setFlags(IO::IOFlag new_flags);
-
   class Impl;
   friend class Impl;
 
   Impl* const itsImpl;
-};
-
-
-///////////////////////////////////////////////////////////////////////
-//
-// FlagJanitors class definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-class IO::LRFlagJanitor {
-public:
-  LRFlagJanitor(IO::LegacyReader& rdr, IO::IOFlag new_flags) :
-	 itsReader(rdr),
-	 itsOldFlags(rdr.flags())
-  {
-	 itsReader.setFlags(new_flags);
-  }
-
-  ~LRFlagJanitor()
-  {
-	 itsReader.setFlags(itsOldFlags);
-  }
-
-private:
-  IO::LegacyReader& itsReader;
-  IO::IOFlag itsOldFlags;
-};
-
-class IO::LWFlagJanitor {
-public:
-  LWFlagJanitor(IO::LegacyWriter& wrtr, IO::IOFlag new_flags) :
-	 itsWriter(wrtr),
-	 itsOldFlags(wrtr.flags())
-  {
-	 itsWriter.setFlags(new_flags);
-  }
-
-  ~LWFlagJanitor()
-  {
-	 itsWriter.setFlags(itsOldFlags);
-  }
-
-private:
-  IO::LegacyWriter& itsWriter;
-  IO::IOFlag itsOldFlags;
 };
 
 static const char vcid_iolegacy_h[] = "$Header$";
