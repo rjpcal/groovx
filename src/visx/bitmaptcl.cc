@@ -3,7 +3,7 @@
 // bitmaptcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:43:45 1999
-// written: Tue Sep 28 18:49:07 1999
+// written: Tue Nov 23 15:45:26 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -79,44 +79,47 @@ public:
 							  3, 4),
 	 itsInterp(pkg->interp()) {}
 protected:
-  virtual void invoke() {
-	 Bitmap* bm = getItem();
- 	 const char* filename = getCstringFromArg(2);
-	 const char* tempfilename =
-		(objc() >= 4) ? getCstringFromArg(3) : ".temp.pbm";
-
-	 // zcat the file to a temp file
-	 string cmd = "exec gunzip -c ";
-	 cmd += filename;
-	 cmd += ".gz > ";
-	 cmd += tempfilename;
-	 vector<char> cmd_cstr(cmd.length()+1);
-	 strcpy(&cmd_cstr[0], cmd.c_str());
-	 int result = Tcl_Eval(itsInterp, &cmd_cstr[0]);
-
-	 if (result != TCL_OK) {
-		throw TclError("error gunzip-ing file");
-	 }
-
-	 // load the file
-	 bm->loadPbmFile(tempfilename);
-
-	 // remove the temp file
-	 cmd = "exec rm ";
-	 cmd += tempfilename;
-	 cmd_cstr.resize(cmd.length()+1);
-	 strcpy(&cmd_cstr[0], cmd.c_str());
-	 result = Tcl_Eval(itsInterp, &cmd_cstr[0]);
-
-	 if (result != TCL_OK) {
-		throw TclError("error removing temp file");
-	 }
-
-  }
+  virtual void invoke();
 
 private:
   Tcl_Interp* itsInterp;
 };
+
+void BitmapTcl::LoadPbmGzCmd::invoke() {
+DOTRACE("BitmapTcl::LoadPbmGzCmd::invoke");
+  Bitmap* bm = getItem();
+  const char* filename = getCstringFromArg(2);
+  const char* tempfilename =
+	 (objc() >= 4) ? getCstringFromArg(3) : ".temp.pbm";
+  
+  // zcat the file to a temp file
+  string cmd = "exec gunzip -c ";
+  cmd += filename;
+  cmd += ".gz > ";
+  cmd += tempfilename;
+  vector<char> cmd_cstr(cmd.length()+1);
+  strcpy(&cmd_cstr[0], cmd.c_str());
+  int result = Tcl_Eval(itsInterp, &cmd_cstr[0]);
+  
+  if (result != TCL_OK) {
+	 throw TclError("error gunzip-ing file");
+  }
+  
+  // load the file
+  bm->loadPbmFile(tempfilename);
+
+  // remove the temp file
+  cmd = "exec rm ";
+  cmd += tempfilename;
+  cmd_cstr.resize(cmd.length()+1);
+  strcpy(&cmd_cstr[0], cmd.c_str());
+  result = Tcl_Eval(itsInterp, &cmd_cstr[0]);
+  
+  if (result != TCL_OK) {
+	 throw TclError("error removing temp file");
+  }
+  
+}
 
 //---------------------------------------------------------------------
 //
