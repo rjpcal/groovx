@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Sat Oct  2 21:24:17 1999
+// written: Tue Oct  5 12:39:00 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,16 +15,13 @@
 
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <cstdio>
-#include <cstring>
-#include <cstdlib>
-#include <vector>
+#include <fstream.h>
+#include <strstream.h>
 
 #include "error.h"
 
-#define LOCAL_TRACE
+#define NO_TRACE
 #include "trace.h"
-#define LOCAL_DEBUG
 #include "debug.h"
 
 ///////////////////////////////////////////////////////////////////////
@@ -70,13 +67,87 @@ struct Fish::EndPt {
 //
 ///////////////////////////////////////////////////////////////////////
 
+Fish::Fish() :
+  currentPart(0),
+  currentEndPt(0),
+  coord0(itsCoords[0]),
+  coord1(itsCoords[1]),
+  coord2(itsCoords[2]),
+  coord3(itsCoords[3])
+{
+  itsFishParts = new FishPart[4];
+  itsEndPts = new EndPt[4];
+
+  itsFishParts[3].itsOrder = itsFishParts[2].itsOrder = itsFishParts[1].itsOrder = itsFishParts[0].itsOrder = 4;
+
+  static GLfloat default_knots[] = {0.0, 0.0, 0.0, 0.0, 0.1667, 0.3333, 0.5000, 0.6667, 0.8333, 1.0, 1.0, 1.0, 1.0};
+  itsFishParts[0].itsKnots.assign(default_knots, default_knots+13);
+  itsFishParts[1].itsKnots.assign(default_knots, default_knots+13);
+  itsFishParts[2].itsKnots.assign(default_knots, default_knots+13);
+  itsFishParts[3].itsKnots.assign(default_knots, default_knots+13);
+
+  // coefficients 0
+  static GLfloat coefs0_0[] = {-0.2856, -0.2140, -0.2176, -0.0735, 0.0168, 0.1101, 0.3049, 0.0953, 0.1597};
+  static GLfloat coefs0_1[] = {0.2915, 0.2866, 0.2863, 0.4670, 0.3913, 0.3071, 0.1048, 0.1800, 0.1538};
+  itsFishParts[0].itsCoefs[0].assign(coefs0_0, coefs0_0+9);
+  itsFishParts[0].itsCoefs[1].assign(coefs0_1, coefs0_1+9);
+
+  // coefficients 1
+  static GLfloat coefs1_0[] = {0.1597, 0.2992, 0.2864, 0.7837, 0.4247, 0.6362, 0.3379, 0.3137, 0.1573};
+  static GLfloat coefs1_1[] = {0.1538, 0.1016, 0.1044, 0.1590, 0.0155, -0.3203, -0.0706, 0.0049, -0.0401};
+  itsFishParts[1].itsCoefs[0].assign(coefs1_0, coefs1_0+9);
+  itsFishParts[1].itsCoefs[1].assign(coefs1_1, coefs1_1+9);
+
+  // coefficients 2
+  static GLfloat coefs2_0[] = {0.1573, 0.2494, 0.1822, -0.0208, -0.0632, -0.1749, -0.1260, -0.3242, -0.2844};
+  static GLfloat coefs2_1[] = {-0.0401, -0.0294, -0.0877, -0.3236, -0.3412, -0.1120, -0.4172, -0.1818, -0.1840};
+  itsFishParts[2].itsCoefs[0].assign(coefs2_0, coefs2_0+9);
+  itsFishParts[2].itsCoefs[1].assign(coefs2_1, coefs2_1+9);
+
+  // coefficients 3
+  static GLfloat coefs3_0[] = {-0.2844, -0.3492, -0.4554, -0.6135, -0.7018, -0.5693, -0.4507, -0.3393, -0.2856};
+  static GLfloat coefs3_1[] = {-0.1840, -0.1834, -0.1489, -0.0410, 0.0346, 0.1147, 0.2227, 0.2737, 0.2915};
+  itsFishParts[3].itsCoefs[0].assign(coefs3_0, coefs3_0+9);
+  itsFishParts[3].itsCoefs[1].assign(coefs3_1, coefs3_1+9);
+
+  itsEndPts[0].itsPart = 1;
+  itsEndPts[0].itsBkpt = 6;
+  itsEndPts[0].itsX[0] = 0.2380;
+  itsEndPts[0].itsX[1] = -0.0236;
+  itsEndPts[0].itsY[0] = 0.3416;
+  itsEndPts[0].itsY[1] = 0.2711;
+
+  itsEndPts[1].itsPart = 2;
+  itsEndPts[1].itsBkpt = 5;
+  itsEndPts[1].itsX[0] = 0.6514;
+  itsEndPts[1].itsX[1] = 0.2433;
+  itsEndPts[1].itsY[0] = -0.0305;
+  itsEndPts[1].itsY[1] = 0.0523;
+
+  itsEndPts[2].itsPart = 3;
+  itsEndPts[2].itsBkpt = 6;
+  itsEndPts[2].itsX[0] = -0.2121;
+  itsEndPts[2].itsX[1] = -0.1192;
+  itsEndPts[2].itsY[0] = 0.0083;
+  itsEndPts[2].itsY[1] = -0.2925;
+
+  itsEndPts[3].itsPart = 4;
+  itsEndPts[3].itsBkpt = 5;
+  itsEndPts[3].itsX[0] = -0.7015;
+  itsEndPts[3].itsX[1] = -0.7022;
+  itsEndPts[3].itsY[0] = 0.1584;
+  itsEndPts[3].itsY[1] = -0.1054;
+
+  itsCoords[0] = itsCoords[1] = itsCoords[2] = itsCoords[3] = 0.0;
+}
+
 Fish::Fish(const char* splinefile, const char* coordfile, int index) :
   currentPart(0),
   currentEndPt(0),
   coord0(itsCoords[0]),
-  coord1(itsCoords[0]),
-  coord2(itsCoords[0]),
-  coord3(itsCoords[0])
+  coord1(itsCoords[1]),
+  coord2(itsCoords[2]),
+  coord3(itsCoords[3])
 {
 DOTRACE("Fish::Fish");
   itsFishParts = new FishPart[4];
@@ -84,7 +155,6 @@ DOTRACE("Fish::Fish");
 
   read_splinefile(splinefile);
   read_coordfile(coordfile, index);
-
 }
 
 
@@ -108,167 +178,104 @@ DOTRACE("Fish::getPropertyInfos");
   typedef Fish F;
 
   if (p.size() == 0) {
-	 p.push_back(PInfo("currentPart", &F::currentPart, 0, 3, 1, true));
-	 p.push_back(PInfo("currentEndPt", &F::currentEndPt, 0, 3, 1));
-
+	 p.push_back(PInfo("category", &F::category, 0, 10, 1, true));
 	 p.push_back(PInfo("coord0", &F::coord0, -2.0, 2.0, 0.1));
 	 p.push_back(PInfo("coord1", &F::coord1, -2.0, 2.0, 0.1));
 	 p.push_back(PInfo("coord2", &F::coord2, -2.0, 2.0, 0.1));
 	 p.push_back(PInfo("coord3", &F::coord3, -2.0, 2.0, 0.1));
+
+	 p.push_back(PInfo("currentPart", &F::currentPart, 0, 3, 1, true));
+	 p.push_back(PInfo("currentEndPt", &F::currentEndPt, 0, 3, 1));
   }
   return p;
 }
+
 void Fish::read_splinefile(const char* splinefile) {
 DOTRACE("Fish::read_splinefile");
-  int   i, j, k, rval_int, splnb, endptnb;
-  char *nb_ptr, line[256], *rval_ptr;
-  FILE  *fp;
+  int i, j, k, splnb, endptnb;
+  string dummy;
 
   // reads in the spline knots and coefficient
-  fp = fopen(splinefile, "r");
+  ifstream ifs(splinefile);
+  if (ifs.fail()) {
+	 throw ErrorWithMsg(string("error opening file '") + splinefile + "'");
+  }
 
   for(i = 0; i < 4; ++i) {
     // spline number and order
-    rval_ptr = fgets(line, 256, fp);
-    if ( rval_ptr == NULL ){
-		throw ErrorWithMsg(string("error reading line: ") + line);
-    }
-    rval_int = sscanf(line, "%*s %i %*s %i", &splnb, &(itsFishParts[i].itsOrder));
-    if ( rval_int != 2 ){
-      throw ErrorWithMsg(string("error scanning the spline line: ")
-										  /* + rval_int */);
-    }
+	 ifs >> dummy >> splnb >> dummy >> itsFishParts[i].itsOrder;
 
     // number of knots
-    rval_ptr = fgets(line, 256, fp);
-    if ( rval_ptr == NULL ){
-      throw ErrorWithMsg(string("error reading line: ") + line);
-    }
-
 	 int nknots;
-
-    rval_int = sscanf(line, "%*s %i", &nknots);
-    if ( rval_int != 1 ){
-      throw ErrorWithMsg(string("error scanning the spline line: ")
-										  /* + rval_int */);
-    }
+	 ifs >> dummy >> nknots;
 
     // allocates space and reads in the successive knots
 	 itsFishParts[i].itsKnots.resize(nknots);
-    rval_ptr = fgets(line, 256, fp);
-    if ( rval_ptr == NULL ){
-		throw ErrorWithMsg(string("error reading line: ") + line);
-    }
-
-    nb_ptr = strtok(line, " ");
-    sscanf(nb_ptr, "%f", &(itsFishParts[i].itsKnots[0]));
-    for (j = 1; j < itsFishParts[i].itsKnots.size();j++){
-      nb_ptr = strtok(NULL, " ");
-      sscanf(nb_ptr, "%f", &(itsFishParts[i].itsKnots[j]));
-    }
+	 for (j = 0; j < itsFishParts[i].itsKnots.size(); ++j) {
+		ifs >> itsFishParts[i].itsKnots[j];
+	 }
 
     // number of coefficients
-    rval_ptr = fgets(line, 256, fp);
-    if ( rval_ptr == NULL ){
-      throw ErrorWithMsg(string("error reading line: ") + line);
-    }
-
 	 int ncoefs;
-
-    rval_int = sscanf(line, "%*s %i", &ncoefs);
-    if ( rval_int != 1 ){
-      throw ErrorWithMsg(string("error scanning the spline line: ")
-										  /* + rval_int */);
-    }
+	 ifs >> dummy >> ncoefs;
 
     // allocates space and reads in the successive coefficients
-    for (j = 0; j < 2; ++j){
-
+    for (j = 0; j < 2; ++j) {
   		itsFishParts[i].itsCoefs[j].resize(ncoefs);
 
-      rval_ptr = fgets(line, 256, fp);
-      if ( rval_ptr == NULL ){
-		  throw ErrorWithMsg(string("error reading line: ") + line);
-      }
-
-      nb_ptr = strtok(line, " ");
-		sscanf(nb_ptr, "%f", &(itsFishParts[i].itsCoefs[j][0]));
-      for (k = 1; k < ncoefs; ++k) {
-        nb_ptr = strtok(NULL, " ");
-  		  sscanf(nb_ptr, "%f", &(itsFishParts[i].itsCoefs[j][k]));
-      }
+		for (k = 0; k < ncoefs; ++k) {
+		  ifs >> itsFishParts[i].itsCoefs[j][k];
+		}
     }
+
+	 if (ifs.fail()) {
+		throw ErrorWithMsg(string("error reading file '") + splinefile + "'");
+	 }
   }
 
 
   for(i = 0; i < 4; ++i) {
     // endpt number, associated part and breakpoint
-    rval_ptr = fgets(line, 256, fp);
-    if ( rval_ptr == NULL ){
-		throw ErrorWithMsg(string("error reading line: ") + line);
-    }
-    rval_int = sscanf(line, "%*s %i %*s %i %*s %i",
-		      &endptnb, &(itsEndPts[i].itsPart), &(itsEndPts[i].itsBkpt));
-    if ( rval_int != 3 ){
-      throw ErrorWithMsg(
-			string("error scanning the endpoint "
-					 "definition line: ") /* + rval_int */);
-    }
+	 ifs >> dummy >> endptnb
+		  >> dummy >> itsEndPts[i].itsPart
+		  >> dummy >> itsEndPts[i].itsBkpt;
 
     // skip the next line
-    rval_ptr = fgets(line, 256, fp);
-    if ( rval_ptr == NULL ){
-		throw ErrorWithMsg(string("error reading line: ") + line);
-    }
+	 ifs >> dummy >> dummy;
 
-    // x coordinates
-    rval_ptr = fgets(line, 256, fp);
-    if ( rval_ptr == NULL ){
-		throw ErrorWithMsg(string("error reading line: ") + line);
-    }
-    nb_ptr = strtok(line, " ");
-    sscanf(nb_ptr, "%f", &(itsEndPts[i].itsX[0]));
-    nb_ptr = strtok(NULL, " ");
-    sscanf(nb_ptr, "%f", &(itsEndPts[i].itsX[1]));
+    // x&y coordinates
+	 ifs >> itsEndPts[i].itsX[0] >> itsEndPts[i].itsX[1]
+		  >> itsEndPts[i].itsY[0] >> itsEndPts[i].itsY[1];
 
-
-    // y coordinates
-    rval_ptr = fgets(line, 256, fp);
-    if ( rval_ptr == NULL ){
-		throw ErrorWithMsg(string("error reading line: ") + line);
-    }
-    nb_ptr = strtok(line, " ");
-    sscanf(nb_ptr, "%f", &(itsEndPts[i].itsY[0]));
-    nb_ptr = strtok(NULL, " ");
-    sscanf(nb_ptr, "%f", &(itsEndPts[i].itsY[1]));
-
+	 if (ifs.fail()) {
+		throw ErrorWithMsg(string("error reading file '") + splinefile + "'");
+	 }
   }
 }
 
 void Fish::read_coordfile(const char* coordfile, int index) {
 DOTRACE("Fish::read_coordfile");
-  int class1;
-  char *next_ptr, line[256];
+  string dummy;
 
-  FILE *fp = fopen(coordfile, "r");
-
-  // Read 'index' number of lines, the last one (the index'th one) is
-  // the keeper.
-  for (int j = 0; j < index; ++j) {
-    fgets(line, 256, fp);
+  ifstream ifs(coordfile);
+  if (ifs.fail()) {
+	 throw ErrorWithMsg(string("error opening file '") + coordfile + "'");
   }
 
-  next_ptr = strtok(line, " ");
-
-  sscanf(next_ptr, "%d", &class1);
-  DebugPrintNL(class1);
-
-  for (int i = 0; i < 4; ++i){
-    next_ptr = strtok(NULL, " ");
-    sscanf(next_ptr, "%lf", itsCoords+i);
-	 DebugEval(itsCoords[i]);
+  // Skip (index-1) lines
+  for (int j = 0; j < index-1; ++j) {
+	 getline(ifs, dummy, '\n');
   }
-  DebugPrintNL("");
+
+  ifs >> category();
+
+  for (int i = 0; i < 4; ++i) {
+	 ifs >> itsCoords[i];
+  }
+
+  if (ifs.fail()) {
+	 throw ErrorWithMsg(string("error reading file '") + coordfile + "'");
+  }
 }
 
 void Fish::grRender() const {
@@ -290,7 +297,7 @@ DOTRACE("Fish::grRender");
 	 vector<GLfloat> coefs(totcoefs);
 
 	 for (j = 0; j < itsFishParts[i].itsCoefs[0].size(); ++j) {
-      for (k = 0; k < 2; ++k){
+      for (k = 0; k < 2; ++k) {
   		  coefs[3*j+k] = (GLfloat) itsFishParts[i].itsCoefs[k][j];
       }
       coefs[3*j+2] = (GLfloat) 0.0;
@@ -325,6 +332,24 @@ DOTRACE("Fish::grRender");
   // Must free theNurb here
   gluDeleteNurbsRenderer(theNurb);
 }
+
+void Fish::makeIoList(vector<IO *>& vec) {
+DOTRACE("Fish::makeIoList");
+  makeIoList(reinterpret_cast<vector<const IO *> &>(vec)); 
+}
+
+void Fish::
+makeIoList(vector<const IO *>& vec) const {
+DOTRACE("Fish::makeIoList const");
+  vec.clear();
+
+  vec.push_back(&category);
+  vec.push_back(&coord0);
+  vec.push_back(&coord1);
+  vec.push_back(&coord2);
+  vec.push_back(&coord3);
+}
+
 
 static const char vcid_fish_cc[] = "$Header$";
 #endif // !FISH_CC_DEFINED
