@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Thu May 10 12:04:47 2001
+// written: Wed May 16 09:25:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -264,6 +264,11 @@ DOTRACE("GrObj::setCategory");
 void GrObj::setRenderMode(GrObjRenderMode mode) {
 DOTRACE("GrObj::setRenderMode");
 
+#ifdef I686
+  // display lists don't work at present with i686/linux/mesa
+  if (mode == GROBJ_GL_COMPILE) mode = GROBJ_DIRECT_RENDER; 
+#endif
+
   itsImpl->setRenderMode(mode); 
   sendStateChangeMsg();
 }
@@ -277,7 +282,11 @@ DOTRACE("GrObj::setUnRenderMode");
 
 void GrObj::receiveStateChangeMsg(const Observable* obj) {
 DOTRACE("GrObj::receiveStateChangeMsg");
-  DebugEval((void*)this); DebugEvalNL((void*)obj);
+  DebugEval((void*)this);
+  DebugEval((void*)dynamic_cast<GrObj*>(this));
+  DebugEval((void*)dynamic_cast<Observer*>(this));
+  DebugEval((void*)dynamic_cast<Observable*>(this));
+  DebugEvalNL((void*)obj);
   if (obj == this) {
 	 DebugEval((void*)this); DebugEvalNL((void*)itsImpl);
 	 itsImpl->invalidateCaches();
