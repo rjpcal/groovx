@@ -13,3 +13,4 @@ t = (0:(num_samples-1)) ./ sample_freq;
 snd = amp .* sin(phase + 2*pi*freq*t);
 snd(snd > 1) = 1;
 snd(snd < -1) = -1;
+snd = snd(:);
