@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Mon Dec  6 13:59:58 1999
+// written: Mon Dec  6 21:09:11 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,8 @@
 
 template <class V> class Point;
 template <class V> class Rect;
+
+class Canvas;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -313,21 +315,21 @@ public:
 
   /** This function draws the object according to the GrRenderMode
 		selected with setRenderMode(). */
-  void draw() const;
+  void draw(Canvas& canvas) const;
 
   /** This function undraws the object according to the GrRenderMode
 		selected with setUnRenderMode(). */
-  void undraw() const;
+  void undraw(Canvas& canvas) const;
 
 protected:
   /** This function must be overridden in derived classes to execute
 		the actual OpenGL commands that render the object. */
-  virtual void grRender() const = 0;
+  virtual void grRender(Canvas& canvas) const = 0;
 
   /** This function will be called if the unrendering mode is set to
 		GROBJ_DIRECT_RENDER or to any of the compile or cache modes. The
 		default implementation provided by GrObj does nothing. */
-  virtual void grUnRender() const;
+  virtual void grUnRender(Canvas& canvas) const;
 
 private:
   class Impl;
