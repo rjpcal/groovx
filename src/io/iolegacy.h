@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 26 18:47:31 2000
-// written: Wed Aug  8 20:16:37 2001
+// written: Tue Aug 21 15:24:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,9 +59,8 @@ public:
   virtual double readDouble(const fstring& name);
   virtual void readValueObj(const fstring& name, Value& value);
 
-  virtual Util::Ref<IO::IoObject> readObject(const fstring& name);
-  virtual Util::WeakRef<IO::IoObject>
-    readMaybeObject(const fstring& name);
+  virtual Util::Ref    <IO::IoObject>      readObject(const fstring& name);
+  virtual Util::SoftRef<IO::IoObject> readMaybeObject(const fstring& name);
 
   virtual void readOwnedObject(const fstring& name,
                                Util::Ref<IO::IoObject> obj);
@@ -105,7 +104,7 @@ public:
   virtual void writeValueObj(const char* name, const Value& value);
 
   virtual void writeObject(const char* name,
-                           Util::WeakRef<const IO::IoObject> obj);
+                           Util::SoftRef<const IO::IoObject> obj);
 
   virtual void writeOwnedObject(const char* name,
                                 Util::Ref<const IO::IoObject> obj);

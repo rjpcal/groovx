@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Mon Aug 20 15:24:26 2001
+// written: Tue Aug 21 15:22:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -234,7 +234,7 @@ public:
   // Returns a new dynamically allocated char array
   fstring readStringType(const fstring& name);
 
-  WeakRef<IO::IoObject> readMaybeObject(const fstring& attrib_name);
+  SoftRef<IO::IoObject> readMaybeObject(const fstring& attrib_name);
 
   void readValueObj(const fstring& name, Value& value);
 
@@ -436,7 +436,7 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
   return new_string;
 }
 
-WeakRef<IO::IoObject>
+SoftRef<IO::IoObject>
 AsciiStreamReader::Impl::readMaybeObject(const fstring& attrib_name)
 {
 DOTRACE("AsciiStreamReader::Impl::readMaybeObject");
@@ -450,13 +450,13 @@ DOTRACE("AsciiStreamReader::Impl::readMaybeObject");
   if (ist.fail())
     throw AttributeReadError(attrib_name);
 
-  if (id == 0) { return WeakRef<IO::IoObject>(); }
+  if (id == 0) { return SoftRef<IO::IoObject>(); }
 
   // Return the object for this id, creating a new object if necessary:
 #ifndef ACC_COMPILER
   return itsObjects.fetchObject(attrib.type, id);
 #else
-  return WeakRef<IO::IoObject>(itsObjects.fetchObject(attrib.type, id));
+  return SoftRef<IO::IoObject>(itsObjects.fetchObject(attrib.type, id));
 #endif
 }
 
@@ -646,7 +646,7 @@ AsciiStreamReader::readObject(const fstring& name)
   return Ref<IO::IoObject>(itsImpl.readMaybeObject(name));
 }
 
-WeakRef<IO::IoObject>
+SoftRef<IO::IoObject>
 AsciiStreamReader::readMaybeObject(const fstring& name)
 {
   DebugEvalNL(name);

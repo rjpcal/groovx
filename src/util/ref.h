@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Sun Aug 19 16:39:51 2001
+// written: Tue Aug 21 15:22:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,11 +30,11 @@ namespace Util
   enum RefType { WEAK, STRONG };
 
   template <class T> class Ref;
-  template <class T> class WeakRef;
+  template <class T> class SoftRef;
 }
 
 using Util::Ref;
-using Util::WeakRef;
+using Util::SoftRef;
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -152,9 +152,9 @@ public:
   template <class U>
   Ref(const Ref<U>& other) : itsHandle(other.get()) {}
 
-  // Will raise an exception if the WeakRef is invalid
+  // Will raise an exception if the SoftRef is invalid
   template <class U>
-  Ref(const WeakRef<U>& other);
+  Ref(const SoftRef<U>& other);
 
   T* operator->() const { return get(); }
   T& operator*()  const { return *(get()); }
@@ -194,12 +194,12 @@ namespace Util {
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Util::WeakRef<T> is a ref-counted smart pointer (like
+ * Util::SoftRef<T> is a ref-counted smart pointer (like
  * Util::Ref<T>) for holding RefCounted objects. Construction of a
- * Util::WeakRef<T> is guaranteed not to fail. Because of this,
- * however, a Util::WeakRef<T> is not guaranteed to always point to a
+ * Util::SoftRef<T> is guaranteed not to fail. Because of this,
+ * however, a Util::SoftRef<T> is not guaranteed to always point to a
  * valid object (this must be tested with isValid() before
- * dereferencing). With these characteristics, a Util::WeakRef<T> can
+ * dereferencing). With these characteristics, a Util::SoftRef<T> can
  * be used with volatile RefCounted objects for which only weak
  * references are available.
  *
@@ -207,7 +207,7 @@ namespace Util {
 ///////////////////////////////////////////////////////////////////////
 
 template <class T>
-class WeakRef {
+class SoftRef {
 private:
 
   // This internal helper class manages memory etc., and provides one
@@ -260,9 +260,9 @@ private:
     T* getWeak() const throw() { return isValid() ? itsMaster : 0; }
 
     RefType refType() const
-	 {
-		return (itsMaster && !itsCounts) ? STRONG : WEAK;
-	 }
+    {
+      return (itsMaster && !itsCounts) ? STRONG : WEAK;
+    }
 
     bool operator==(const WeakHandle& other) const
     {
@@ -325,28 +325,28 @@ private:
   }
 
 public:
-  WeakRef() : itsHandle(0, STRONG) {}
+  SoftRef() : itsHandle(0, STRONG) {}
 
-  explicit WeakRef(Util::UID id, RefType tp = STRONG) :
+  explicit SoftRef(Util::UID id, RefType tp = STRONG) :
     itsHandle(RefHelper::isValidId(id) ?
               RefHelper::getCastedItem<T>(id) : 0,
               tp)
   {}
 
-  explicit WeakRef(T* master, RefType tp = STRONG) : itsHandle(master, tp)
+  explicit SoftRef(T* master, RefType tp = STRONG) : itsHandle(master, tp)
   { insertItem(); }
 
-  WeakRef(T* master, bool /*noInsert*/, RefType tp = STRONG) :
+  SoftRef(T* master, bool /*noInsert*/, RefType tp = STRONG) :
     itsHandle(master,tp)
   {}
 
 
   template <class U>
-  WeakRef(const WeakRef<U>& other) :
+  SoftRef(const SoftRef<U>& other) :
     itsHandle(other.isValid() ? other.get() : 0, STRONG) {}
 
   template <class U>
-  WeakRef(const Ref<U>& other) : itsHandle(other.get(), STRONG) {}
+  SoftRef(const Ref<U>& other) : itsHandle(other.get(), STRONG) {}
 
   // Default destructor, copy constructor, operator=() are fine
 
@@ -366,35 +366,35 @@ public:
   bool isValid() const { return itsHandle.isValid(); }
   bool isInvalid() const { return !(isValid()); }
 
-  bool operator==(const WeakRef& other) const
+  bool operator==(const SoftRef& other) const
   { return itsHandle == other.itsHandle; }
 
-  bool operator!=(const WeakRef& other) const
+  bool operator!=(const SoftRef& other) const
   { return !(operator==(other)); }
 
   Util::UID id() const
     { return itsHandle.isValid() ? itsHandle.get()->id() : 0; }
 };
 
-// TypeTraits specialization for WeakRef smart pointer
+// TypeTraits specialization for SoftRef smart pointer
 
   template <class T>
-  struct TypeTraits<WeakRef<T> > {
+  struct TypeTraits<SoftRef<T> > {
     typedef T Pointee;
   };
 
 } // end namespace Util
 
 template <class To, class Fr>
-WeakRef<To> dynamicCast(WeakRef<Fr> p)
+SoftRef<To> dynamicCast(SoftRef<Fr> p)
 {
   if (p.isValid())
     {
       Fr* f = p.get();
       To& t = dynamic_cast<To&>(*f); // will throw bad_cast on failure
-      return WeakRef<To>(&t);
+      return SoftRef<To>(&t);
     }
-  return WeakRef<To>(p.id());
+  return SoftRef<To>(p.id());
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -405,7 +405,7 @@ WeakRef<To> dynamicCast(WeakRef<Fr> p)
 
 template <class T>
 template <class U>
-inline Util::Ref<T>::Ref(const WeakRef<U>& other) :
+inline Util::Ref<T>::Ref(const SoftRef<U>& other) :
   itsHandle(other.get())
 {}
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Aug  8 20:16:41 2001
+// written: Tue Aug 21 15:22:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -230,10 +230,10 @@ DOTRACE("Block::numCompleted");
   return itsImpl->itsCurTrialSeqIdx;
 }
 
-Util::WeakRef<TrialBase> Block::currentTrial() const
+Util::SoftRef<TrialBase> Block::currentTrial() const
 {
 DOTRACE("Block::currentTrial");
-  if (isComplete()) return Util::WeakRef<TrialBase>();
+  if (isComplete()) return Util::SoftRef<TrialBase>();
 
   return itsImpl->currentTrial();
 }

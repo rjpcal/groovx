@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:19 2000
-// written: Sun Aug 19 16:31:26 2001
+// written: Tue Aug 21 15:22:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ namespace Util
  * Util::RefCounted object's Util::RefCounts, and then check whether
  * the strongCount() is greater than 0 to see if the Util::RefCounted
  * object is still alive. This technique is implemented by
- * Util::WeakRef. The Util::RefCounts object will delete itself when
+ * Util::SoftRef. The Util::RefCounts object will delete itself when
  * both its strong and weak counts go to 0.
  *
  **/

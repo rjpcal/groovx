@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov  1 18:26:45 2000
-// written: Tue Aug 21 13:18:14 2001
+// written: Tue Aug 21 15:35:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,10 +21,6 @@
 #include "util/signal.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILFWD_H_DEFINED)
-#include "util/utilfwd.h"
-#endif
-
 namespace Gfx
 {
   class Canvas;
@@ -33,6 +29,7 @@ namespace Gfx
 
 namespace Util
 {
+  template <class T> class FwdIter;
   template <class T> class Ref;
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:57 1999
-// written: Mon Aug 20 12:01:07 2001
+// written: Tue Aug 21 15:22:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -140,7 +140,7 @@ private:
 public:
   void writeValueObj(const char* name, const Value& value);
 
-  void writeObject(const char* name, WeakRef<const IO::IoObject> obj);
+  void writeObject(const char* name, SoftRef<const IO::IoObject> obj);
 
   void writeOwnedObject(const char* name, Ref<const IO::IoObject> obj);
 
@@ -247,7 +247,7 @@ DOTRACE("AsciiStreamWriter::Impl::writeValueObj");
 }
 
 void AsciiStreamWriter::Impl::writeObject(const char* name,
-                                          WeakRef<const IO::IoObject> obj)
+                                          SoftRef<const IO::IoObject> obj)
 {
 DOTRACE("AsciiStreamWriter::Impl::writeObject");
 
@@ -348,7 +348,7 @@ void AsciiStreamWriter::writeValueObj(const char* name, const Value& value)
 }
 
 void AsciiStreamWriter::writeObject(const char* name,
-                                    WeakRef<const IO::IoObject> obj)
+                                    SoftRef<const IO::IoObject> obj)
 {
   itsImpl.writeObject(name, obj);
 }

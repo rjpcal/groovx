@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Tue Aug 14 21:38:07 2001
+// written: Tue Aug 21 15:22:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@
 namespace Util
 {
   template <class T> class Ref;
-  template <class T> class WeakRef;
+  template <class T> class SoftRef;
 };
 
 class TrialBase;
@@ -96,7 +96,7 @@ public:
   int numCompleted() const;
 
   /// Get the trial id (an index into Tlist) of the current trial.
-  Util::WeakRef<TrialBase> currentTrial() const;
+  Util::SoftRef<TrialBase> currentTrial() const;
 
   /** Returns the integer type of the current trial (the result of
       TrialBase::trialType(). */

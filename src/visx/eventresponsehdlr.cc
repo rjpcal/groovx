@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Aug  8 20:16:40 2001
+// written: Tue Aug 21 15:22:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,7 +60,7 @@ public:
 
   class ERHActiveState {
   private:
-    Util::WeakRef<GWT::Widget> itsWidget;
+    Util::SoftRef<GWT::Widget> itsWidget;
     TrialBase& itsTrial;
     fstring itsEventSequence;
     fstring itsBindingScript;
@@ -81,7 +81,7 @@ public:
     ~ERHActiveState() { ignore(); }
 
     ERHActiveState(const EventResponseHdlr::Impl* erh,
-                   Util::WeakRef<GWT::Widget> widget, TrialBase& trial,
+                   Util::SoftRef<GWT::Widget> widget, TrialBase& trial,
                    const fstring& seq, const fstring& script) :
       itsWidget(widget),
       itsTrial(trial),
@@ -132,7 +132,7 @@ public:
     }
   };
 
-  void becomeActive(Util::WeakRef<GWT::Widget> widget, TrialBase& trial) const
+  void becomeActive(Util::SoftRef<GWT::Widget> widget, TrialBase& trial) const
   {
     fstring script(itsCmdCallback->name());
     script.append(" ").append((int)itsOwner->id());
@@ -351,7 +351,7 @@ void EventResponseHdlr::abortInvalidResponses()
 void EventResponseHdlr::ignoreInvalidResponses()
   { itsImpl->itsAbortInvalidResponses = false; }
 
-void EventResponseHdlr::rhBeginTrial(Util::WeakRef<GWT::Widget> widget,
+void EventResponseHdlr::rhBeginTrial(Util::SoftRef<GWT::Widget> widget,
                                      TrialBase& trial) const
 {
   Precondition( itsImpl->isInactive() );
@@ -382,7 +382,7 @@ void EventResponseHdlr::rhHaltExpt() const
   itsImpl->becomeInactive();
 }
 
-void EventResponseHdlr::rhAllowResponses(Util::WeakRef<GWT::Widget> widget,
+void EventResponseHdlr::rhAllowResponses(Util::SoftRef<GWT::Widget> widget,
                                          TrialBase& trial) const
 {
   itsImpl->becomeActive(widget, trial);

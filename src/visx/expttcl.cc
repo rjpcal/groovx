@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Sun Aug  5 19:06:57 2001
+// written: Tue Aug 21 15:22:44 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -49,7 +49,7 @@ namespace ExptTcl
 {
   class ExpPkg;
 
-  WeakRef<ExptDriver> theExptDriver;
+  SoftRef<ExptDriver> theExptDriver;
 
   void setCurrentExpt(Ref<ExptDriver> expt)
   {
@@ -68,7 +68,7 @@ namespace ExptTcl
   // generates the timer callbacks associated with a trial.
   void begin(Ref<ExptDriver> expt)
   {
-    Util::WeakRef<GWT::Widget> widget = expt->getWidget();
+    Util::SoftRef<GWT::Widget> widget = expt->getWidget();
 
     // Create the begin key binding
     widget->bind("<Control-KeyPress-b>", "Togl::takeFocus; Expt::begin");
@@ -117,7 +117,7 @@ namespace ExptTcl
 
     Tcl::Interp::clearEventQueue();
 
-    Util::WeakRef<GWT::Widget> widget = ed->getWidget();
+    Util::SoftRef<GWT::Widget> widget = ed->getWidget();
     widget->clearscreen();
     widget->swapBuffers();
     widget->clearscreen();
@@ -139,7 +139,7 @@ namespace ExptTcl
 
   void setStartCommand(Ref<ExptDriver> expt, const char* command)
   {
-    Util::WeakRef<GWT::Widget> widget = expt->getWidget();
+    Util::SoftRef<GWT::Widget> widget = expt->getWidget();
 
     widget->bind("<KeyPress-s>", command);
     widget->takeFocus();

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:54:36 1999
-// written: Sat Jul 21 20:10:23 2001
+// written: Tue Aug 21 15:22:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ DOTRACE("NullResponseHdlr::writeTo");
 }
 
 // actions
-void NullResponseHdlr::rhBeginTrial(Util::WeakRef<GWT::Widget>,
+void NullResponseHdlr::rhBeginTrial(Util::SoftRef<GWT::Widget>,
                                     TrialBase&) const
 {
 DOTRACE("NullResponseHdlr::rhBeginTrial");
@@ -70,7 +70,7 @@ void NullResponseHdlr::rhHaltExpt() const
 DOTRACE("NullResponseHdlr::rhHaltExpt");
 }
 
-void NullResponseHdlr::rhAllowResponses(Util::WeakRef<GWT::Widget>,
+void NullResponseHdlr::rhAllowResponses(Util::SoftRef<GWT::Widget>,
                                         TrialBase&) const
 {
 DOTRACE("NullResponseHdlr::rhAllowResponses");

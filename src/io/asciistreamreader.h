@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:54 1999
-// written: Wed Aug  8 20:16:38 2001
+// written: Tue Aug 21 15:22:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ public:
   virtual void readValueObj(const fstring& name, Value& value);
 
   virtual Util::Ref<IO::IoObject> readObject(const fstring& name);
-  virtual Util::WeakRef<IO::IoObject>
+  virtual Util::SoftRef<IO::IoObject>
     readMaybeObject(const fstring& name);
 
   virtual void readOwnedObject(const fstring& name,

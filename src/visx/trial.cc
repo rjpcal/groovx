@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Sat Aug 18 08:13:34 2001
+// written: Tue Aug 21 15:22:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ namespace
   const IO::VersionId TRIAL_SERIAL_VERSION_ID = 4;
 
   struct ActiveState {
-    ActiveState(Block* block, WeakRef<GWT::Widget> widget,
+    ActiveState(Block* block, SoftRef<GWT::Widget> widget,
                 Ref<ResponseHandler> rh, Ref<TimingHdlr> th) :
       itsBlock(block),
       itsWidget(widget),
@@ -65,7 +65,7 @@ namespace
     }
 
     Block* itsBlock;
-    WeakRef<GWT::Widget> itsWidget;
+    SoftRef<GWT::Widget> itsWidget;
     Ref<ResponseHandler> itsRh;
     Ref<TimingHdlr> itsTh;
   };
@@ -104,15 +104,15 @@ public:
   minivec<Response> itsResponses;
 
   int itsType;
-  WeakRef<ResponseHandler> itsRh;
-  WeakRef<TimingHdlr> itsTh;
+  SoftRef<ResponseHandler> itsRh;
+  SoftRef<TimingHdlr> itsTh;
 
   scoped_ptr<ActiveState> itsActiveState;
 
   bool isActive() const { return itsActiveState.get() != 0; }
   bool isInactive() const { return itsActiveState.get() == 0; }
 
-  void becomeActive(Block* block, WeakRef<GWT::Widget> widget)
+  void becomeActive(Block* block, SoftRef<GWT::Widget> widget)
   {
     itsActiveState.reset(new ActiveState(block, widget, itsRh, itsTh));
   }
@@ -155,7 +155,7 @@ public:
 
   void clearObjs();
 
-  void trDoTrial(Trial* self, WeakRef<GWT::Widget> widget,
+  void trDoTrial(Trial* self, SoftRef<GWT::Widget> widget,
                  Util::ErrorHandler& errhdlr, Block& block);
   int trElapsedMsec();
   void trAbortTrial();
@@ -167,7 +167,7 @@ public:
   void trAllowResponses(Trial* self);
   void trDenyResponses();
 
-  void installSelf(WeakRef<GWT::Widget> widget) const;
+  void installSelf(SoftRef<GWT::Widget> widget) const;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -314,7 +314,7 @@ DOTRACE("Trial::Impl::clearObjs");
 // actions //
 /////////////
 
-void Trial::Impl::trDoTrial(Trial* self, WeakRef<GWT::Widget> widget,
+void Trial::Impl::trDoTrial(Trial* self, SoftRef<GWT::Widget> widget,
                             Util::ErrorHandler& errhdlr, Block& block)
 {
 DOTRACE("Trial::Impl::trDoTrial");
@@ -453,7 +453,7 @@ DOTRACE("Trial::Impl::trDenyResponses");
   itsActiveState->itsRh->rhDenyResponses();
 }
 
-void Trial::Impl::installSelf(WeakRef<GWT::Widget> widget) const
+void Trial::Impl::installSelf(SoftRef<GWT::Widget> widget) const
 {
 DOTRACE("Trial::Impl::installSelf");
 
@@ -526,7 +526,7 @@ void Trial::readFrom(IO::Reader* reader)
 void Trial::writeTo(IO::Writer* writer) const
   { itsImpl->writeTo(writer); }
 
-WeakRef<GWT::Widget> Trial::getWidget() const
+SoftRef<GWT::Widget> Trial::getWidget() const
 {
   Precondition( itsImpl->isActive() );
   return itsImpl->itsActiveState->itsWidget;
@@ -543,14 +543,14 @@ Ref<ResponseHandler> Trial::getResponseHandler() const
   { return Ref<ResponseHandler>(itsImpl->itsRh); }
 
 void Trial::setResponseHandler(Ref<ResponseHandler> rh)
-  { itsImpl->itsRh = WeakRef<ResponseHandler>(rh); }
+  { itsImpl->itsRh = SoftRef<ResponseHandler>(rh); }
 
 
 Ref<TimingHdlr> Trial::getTimingHdlr() const
   { return Ref<TimingHdlr>(itsImpl->itsTh); }
 
 void Trial::setTimingHdlr(Ref<TimingHdlr> th)
-  { itsImpl->itsTh = WeakRef<TimingHdlr>(th); }
+  { itsImpl->itsTh = SoftRef<TimingHdlr>(th); }
 
 
 int Trial::trialType() const
@@ -598,7 +598,7 @@ void Trial::clearObjs()
   { itsImpl->clearObjs(); }
 
 
-void Trial::trDoTrial(WeakRef<GWT::Widget> widget,
+void Trial::trDoTrial(SoftRef<GWT::Widget> widget,
                       Util::ErrorHandler& errhdlr, Block& block)
   { itsImpl->trDoTrial(this, widget, errhdlr, block); }
 
@@ -629,7 +629,7 @@ void Trial::trAllowResponses()
 void Trial::trDenyResponses()
   { itsImpl->trDenyResponses(); }
 
-void Trial::installSelf(WeakRef<GWT::Widget> widget) const
+void Trial::installSelf(SoftRef<GWT::Widget> widget) const
   { itsImpl->installSelf(widget); }
 
 static const char vcid_trial_cc[] = "$Header$";

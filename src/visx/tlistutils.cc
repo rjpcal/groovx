@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 03:04:32 1999
-// written: Mon Aug 20 12:06:33 2001
+// written: Tue Aug 21 15:22:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -174,7 +174,7 @@ public:
   virtual void writeCstring(const char*, const char*) {}
 
   virtual void writeObject(const char*,
-                           Util::WeakRef<const IO::IoObject> obj)
+                           Util::SoftRef<const IO::IoObject> obj)
   {
     if (obj.isValid() && dynamic_cast<const GrObj*>(obj.get()) != 0)
       {

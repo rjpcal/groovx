@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:54:35 1999
-// written: Sat Jul 21 20:11:10 2001
+// written: Tue Aug 21 15:22:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,12 +29,12 @@ public:
   virtual void writeTo(IO::Writer* writer) const;
 
   // actions
-  virtual void rhBeginTrial(Util::WeakRef<GWT::Widget> widget,
+  virtual void rhBeginTrial(Util::SoftRef<GWT::Widget> widget,
                             TrialBase& trial) const;
   virtual void rhAbortTrial() const;
   virtual void rhEndTrial() const;
   virtual void rhHaltExpt() const;
-  virtual void rhAllowResponses(Util::WeakRef<GWT::Widget> widget,
+  virtual void rhAllowResponses(Util::SoftRef<GWT::Widget> widget,
                                 TrialBase& trial) const;
   virtual void rhDenyResponses() const;
 };

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Fri Aug 10 10:55:03 2001
+// written: Tue Aug 21 15:22:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -226,7 +226,7 @@ DrawEvent::~DrawEvent() {}
 void DrawEvent::invoke(TrialBase& trial)
 {
 DOTRACE("DrawEvent::invoke");
-  Util::WeakRef<GWT::Widget> widget = trial.getWidget();
+  Util::SoftRef<GWT::Widget> widget = trial.getWidget();
   if (widget.isValid())
     {
       trial.installSelf(widget);
@@ -283,7 +283,7 @@ UndrawEvent::~UndrawEvent() {}
 void UndrawEvent::invoke(TrialBase& trial)
 {
 DOTRACE("UndrawEvent::invoke");
-  Util::WeakRef<GWT::Widget> widget = trial.getWidget();
+  Util::SoftRef<GWT::Widget> widget = trial.getWidget();
   if (widget.isValid())
     widget->undraw();
 }
@@ -295,7 +295,7 @@ SwapBuffersEvent::~SwapBuffersEvent() {}
 void SwapBuffersEvent::invoke(TrialBase& trial)
 {
 DOTRACE("SwapBuffersEvent::invoke");
-  Util::WeakRef<GWT::Widget> widget = trial.getWidget();
+  Util::SoftRef<GWT::Widget> widget = trial.getWidget();
   if (widget.isValid())
     widget->swapBuffers();
 }
@@ -307,7 +307,7 @@ RenderBackEvent::~RenderBackEvent() {}
 void RenderBackEvent::invoke(TrialBase& trial)
 {
 DOTRACE("RenderBackEvent::invoke");
-  Util::WeakRef<GWT::Widget> widget = trial.getWidget();
+  Util::SoftRef<GWT::Widget> widget = trial.getWidget();
   if (widget.isValid())
     widget->getCanvas().drawOnBackBuffer();
 }
@@ -319,7 +319,7 @@ RenderFrontEvent::~RenderFrontEvent() {}
 void RenderFrontEvent::invoke(TrialBase& trial)
 {
 DOTRACE("RenderFrontEvent::invoke");
-  Util::WeakRef<GWT::Widget> widget = trial.getWidget();
+  Util::SoftRef<GWT::Widget> widget = trial.getWidget();
   if (widget.isValid())
     widget->getCanvas().drawOnFrontBuffer();
 }
@@ -331,7 +331,7 @@ ClearBufferEvent::~ClearBufferEvent() {}
 void ClearBufferEvent::invoke(TrialBase& trial)
 {
 DOTRACE("ClearBufferEvent::invoke");
-  Util::WeakRef<GWT::Widget> widget = trial.getWidget();
+  Util::SoftRef<GWT::Widget> widget = trial.getWidget();
   if (widget.isValid())
     widget->clearscreen();
 }

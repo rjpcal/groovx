@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Mon Aug 20 12:20:50 2001
+// written: Tue Aug 21 15:22:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -160,7 +160,7 @@ private:
   Tcl::Interp itsInterp;
 
 public:
-  WeakRef<GWT::Widget> itsWidget;
+  SoftRef<GWT::Widget> itsWidget;
 
   fstring itsHostname;     // Host computer on which Expt was begun
   fstring itsSubject;      // Id of subject on whom Expt was performed
@@ -532,10 +532,10 @@ Ref<Block> ExptDriver::currentBlock() const
 Util::ErrorHandler& ExptDriver::getErrorHandler() const
   { return itsImpl->itsErrorHandler; }
 
-Util::WeakRef<GWT::Widget> ExptDriver::getWidget() const
+Util::SoftRef<GWT::Widget> ExptDriver::getWidget() const
   { return itsImpl->itsWidget; }
 
-void ExptDriver::setWidget(Util::WeakRef<GWT::Widget> widg)
+void ExptDriver::setWidget(Util::SoftRef<GWT::Widget> widg)
   { itsImpl->itsWidget = widg; }
 
 Gfx::Canvas& ExptDriver::getCanvas() const

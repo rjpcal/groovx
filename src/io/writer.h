@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:49 1999
-// written: Thu Aug  9 07:08:51 2001
+// written: Tue Aug 21 15:22:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@
 namespace Util
 {
   template <class T> class Ref;
-  template <class T> class WeakRef;
+  template <class T> class SoftRef;
 };
 
 namespace IO
@@ -126,7 +126,7 @@ public:
 
   /// Store the \c IO object \a val in association with the tag \a name.
   virtual void writeObject(const char* name,
-                           Util::WeakRef<const IO::IoObject> obj) = 0;
+                           Util::SoftRef<const IO::IoObject> obj) = 0;
 
   /** Store the owned \c IO object \a obj in association with the tag
       \a name. This function should only be used if \a obj is \b owned

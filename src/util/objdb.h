@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Mon Aug 20 08:52:30 2001
+// written: Tue Aug 21 15:36:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,13 +17,15 @@
 #include "util/error.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILFWD_H_DEFINED)
-#include "util/utilfwd.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UID_H_DEFINED)
+#include "util/uid.h"
 #endif
 
 namespace Util
 {
-  template <class T> class WeakRef;
+  class Object;
+  template <class T> class FwdIter;
+  template <class T> class SoftRef;
 };
 
 /**
@@ -48,7 +50,7 @@ public:
  * ObjDb is a database for storing Util::Object's, which can be
  * accessed by the objects' Util::UID's. Most clients will not need to
  * use the ObjDb directly, but can instead manage Util::Object's
- * indirectly with the Util::Ref and Util::WeakRef smart pointers.
+ * indirectly with the Util::Ref and Util::SoftRef smart pointers.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -75,7 +77,7 @@ public:
   // Iterators
   //
 
-  typedef Util::FwdIter<const Util::WeakRef<Util::Object> > Iterator;
+  typedef Util::FwdIter<const Util::SoftRef<Util::Object> > Iterator;
 
   Iterator objects() const;
 

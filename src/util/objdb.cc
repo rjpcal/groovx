@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Mon Aug 20 08:56:29 2001
+// written: Tue Aug 21 15:22:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ private:
 
 public:
 
-  typedef Util::WeakRef<Util::Object> ObjRef;
+  typedef Util::SoftRef<Util::Object> ObjRef;
 
   typedef std::map<Util::UID, ObjRef> MapType;
   mutable MapType itsPtrMap;
@@ -166,7 +166,7 @@ public:
 namespace
 {
   class ObjDbIter :
-    public Util::FwdIterIfx<const Util::WeakRef<Util::Object> >
+    public Util::FwdIterIfx<const Util::SoftRef<Util::Object> >
   {
   public:
     typedef ObjDb::Impl::MapType MapType;

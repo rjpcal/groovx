@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Aug 17 11:05:24 2001
-// written: Mon Aug 20 08:57:57 2001
+// written: Tue Aug 21 15:32:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,14 +13,25 @@
 #ifndef ITER_H_DEFINED
 #define ITER_H_DEFINED
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
 #include "util/pointers.h"
+#endif
 
-#include "util/utilfwd.h"
-
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILITY_DEFINED)
 #include <utility>
+#define UTILITY_DEFINED
+#endif
 
 namespace Util
 {
+  struct IterEnd_t {};
+
+  const IterEnd_t IterEnd = IterEnd_t();
+
+  template <class T> class FwdIter;
+  template <class T> class BidirIter;
+  template <class T> class RxsIter;
+
   template <class T> class FwdIterIfx;
   template <class T> class BidirIterIfx;
   template <class T> class RxsIterIfx;

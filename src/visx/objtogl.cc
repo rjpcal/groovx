@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Thu Aug 16 10:01:32 2001
+// written: Tue Aug 21 15:22:44 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -49,9 +49,9 @@
 
 namespace ObjTogl
 {
-  WeakRef<Toglet> theWidget;
+  SoftRef<Toglet> theWidget;
 
-  void ObjTogl::setCurrentTogl(WeakRef<Toglet> toglet)
+  void ObjTogl::setCurrentTogl(SoftRef<Toglet> toglet)
   {
     DOTRACE("ObjTogl::setCurrentTogl");
 
@@ -68,12 +68,12 @@ namespace ObjTogl
     toglet->makeCurrent();
   }
 
-  WeakRef<Toglet> getCurrentTogl()
+  SoftRef<Toglet> getCurrentTogl()
   {
     return theWidget;
   }
 
-  Tcl::List dumpCmap(WeakRef<Toglet> config, unsigned int start, unsigned end)
+  Tcl::List dumpCmap(SoftRef<Toglet> config, unsigned int start, unsigned end)
   {
     if (start > 255 || end > 255)
       {
@@ -98,7 +98,7 @@ namespace ObjTogl
     return result;
   }
 
-  Tcl::List dumpCmapAll(WeakRef<Toglet> toglet)
+  Tcl::List dumpCmapAll(SoftRef<Toglet> toglet)
   {
     return dumpCmap(toglet, 0, 255);
   }
@@ -110,14 +110,14 @@ namespace ObjTogl
 
   // Make a specified GxNode the widget's current drawable, and draw
   // it in the OpenGL window. The widget's visibility is set to true.
-  void see(WeakRef<GWT::Widget> widg, Ref<GxNode> item)
+  void see(SoftRef<GWT::Widget> widg, Ref<GxNode> item)
   {
     widg->setDrawable(item);
     widg->setVisibility(true);
     widg->display();
   }
 
-  void setColor(WeakRef<Toglet> toglet, unsigned int i,
+  void setColor(SoftRef<Toglet> toglet, unsigned int i,
                 double r, double g, double b)
   {
     toglet->setColor(Toglet::Color(i, r, g, b));
@@ -127,12 +127,12 @@ namespace ObjTogl
   // current trial is the one that will be displayed by a subsequent
   // call to "redraw", or by remap events sent to the screen
   // window. Returns an error if the specified trial id is not valid.
-  void setCurTrial(WeakRef<Toglet> toglet, Ref<TrialBase> trial)
+  void setCurTrial(SoftRef<Toglet> toglet, Ref<TrialBase> trial)
   {
     trial->installSelf(toglet);
   }
 
-  void setMinRect(WeakRef<Toglet> toglet,
+  void setMinRect(SoftRef<Toglet> toglet,
                   double l, double t, double r, double b)
   {
     // Test for valid rect: right > left && top > bottom. In
@@ -148,7 +148,7 @@ namespace ObjTogl
 
   // Make a specified trial the widget's current trial, and draw it in
   // the OpenGL window. The widget's visibility is set to true.
-  void show(WeakRef<Toglet> toglet, Ref<TrialBase> trial)
+  void show(SoftRef<Toglet> toglet, Ref<TrialBase> trial)
   {
     trial->installSelf(toglet);
     toglet->setVisibility(true);
@@ -209,7 +209,7 @@ public:
 
     defAction("hook", &Tcl::TkWidget::hook);
 
-    setCurrentTogl(WeakRef<Toglet>(Toglet::make(interp)));
+    setCurrentTogl(SoftRef<Toglet>(Toglet::make(interp)));
 
     Pkg::eval("namespace eval Togl { proc init {} {} }\n"
               "proc clearscreen {} { Togl::clearscreen }\n"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 13:05:56 1999
-// written: Wed Jun 20 17:41:40 2001
+// written: Tue Aug 21 15:22:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ public:
   virtual void writeValueObj(const char* name, const Value& value);
 
   virtual void writeObject(const char* name,
-                           Util::WeakRef<const IO::IoObject> obj);
+                           Util::SoftRef<const IO::IoObject> obj);
 
   virtual void writeOwnedObject(const char* name,
                                 Util::Ref<const IO::IoObject> obj);

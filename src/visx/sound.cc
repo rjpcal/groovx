@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  8 11:43:07 1999
-// written: Wed Aug  8 13:24:33 2001
+// written: Tue Aug 21 15:22:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,8 +29,8 @@
 
 namespace
 {
-  WeakRef<Sound> OK_SOUND;
-  WeakRef<Sound> ERR_SOUND;
+  SoftRef<Sound> OK_SOUND;
+  SoftRef<Sound> ERR_SOUND;
 }
 
 Sound::~Sound () {}
@@ -40,7 +40,7 @@ void Sound::setOkSound(Ref<Sound> ok_sound)
 #ifndef ACC_COMPILER
   OK_SOUND = ok_sound;
 #else
-  OK_SOUND = WeakRef<Sound>(ok_sound);
+  OK_SOUND = SoftRef<Sound>(ok_sound);
 #endif
 }
 
@@ -49,7 +49,7 @@ void Sound::setErrSound(Ref<Sound> err_sound)
 #ifndef ACC_COMPILER
   ERR_SOUND = err_sound;
 #else
-  ERR_SOUND = WeakRef<Sound>(err_sound);
+  ERR_SOUND = SoftRef<Sound>(err_sound);
 #endif
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 13 09:07:00 2001
-// written: Thu Aug  9 18:43:12 2001
+// written: Tue Aug 21 15:22:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,15 +50,15 @@ namespace Tcl
   };
 
   template <class T>
-  struct Convert<WeakRef<T> >
+  struct Convert<SoftRef<T> >
   {
-    static WeakRef<T> fromTcl(Tcl_Obj* obj)
+    static SoftRef<T> fromTcl(Tcl_Obj* obj)
     {
       Util::UID uid = Convert<Util::UID>::fromTcl(obj);
-      return WeakRef<T>(uid);
+      return SoftRef<T>(uid);
     }
 
-    static Tcl::ObjPtr toTcl(WeakRef<T> obj)
+    static Tcl::ObjPtr toTcl(SoftRef<T> obj)
     {
       return Convert<Util::UID>::toTcl(obj.id());
     }
@@ -78,31 +78,31 @@ namespace Tcl
 
     MemFunctor(MemFunc f) : itsMemFunc(f) {}
 
-    R operator()(WeakRef<C> obj)
+    R operator()(SoftRef<C> obj)
     {
       return (obj.get()->*itsMemFunc)();
     }
 
     template <class P1>
-    R operator()(WeakRef<C> obj, P1 p1)
+    R operator()(SoftRef<C> obj, P1 p1)
     {
       return (obj.get()->*itsMemFunc)(p1);
     }
 
     template <class P1, class P2>
-    R operator()(WeakRef<C> obj, P1 p1, P2 p2)
+    R operator()(SoftRef<C> obj, P1 p1, P2 p2)
     {
       return (obj.get()->*itsMemFunc)(p1, p2);
     }
 
     template <class P1, class P2, class P3>
-    R operator()(WeakRef<C> obj, P1 p1, P2 p2, P3 p3)
+    R operator()(SoftRef<C> obj, P1 p1, P2 p2, P3 p3)
     {
       return (obj.get()->*itsMemFunc)(p1, p2, p3);
     }
 
     template <class P1, class P2, class P3, class P4>
-    R operator()(WeakRef<C> obj, P1 p1, P2 p2, P3 p3, P4 p4)
+    R operator()(SoftRef<C> obj, P1 p1, P2 p2, P3 p3, P4 p4)
     {
       return (obj.get()->*itsMemFunc)(p1, p2, p3, p4);
     }
@@ -122,14 +122,14 @@ namespace Tcl
   struct FuncTraits<R (C::*)()>
   {
     enum { numArgs = 1 };
-    typedef WeakRef<C> Arg1_t;
+    typedef SoftRef<C> Arg1_t;
   };
 
   template <class R, class C, class P1>
   struct FuncTraits<R (C::*)(P1)>
   {
     enum { numArgs = 2 };
-    typedef WeakRef<C> Arg1_t;
+    typedef SoftRef<C> Arg1_t;
     typedef P1 Arg2_t;
   };
 
@@ -137,7 +137,7 @@ namespace Tcl
   struct FuncTraits<R (C::*)(P1, P2)>
   {
     enum { numArgs = 3 };
-    typedef WeakRef<C> Arg1_t;
+    typedef SoftRef<C> Arg1_t;
     typedef P1 Arg2_t;
     typedef P2 Arg3_t;
   };
@@ -146,7 +146,7 @@ namespace Tcl
   struct FuncTraits<R (C::*)(P1, P2, P3)>
   {
     enum { numArgs = 4 };
-    typedef WeakRef<C> Arg1_t;
+    typedef SoftRef<C> Arg1_t;
     typedef P1 Arg2_t;
     typedef P2 Arg3_t;
     typedef P3 Arg4_t;
@@ -156,7 +156,7 @@ namespace Tcl
   struct FuncTraits<R (C::*)(P1, P2, P3, P4)>
   {
     enum { numArgs = 4 };
-    typedef WeakRef<C> Arg1_t;
+    typedef SoftRef<C> Arg1_t;
     typedef P1 Arg2_t;
     typedef P2 Arg3_t;
     typedef P3 Arg4_t;

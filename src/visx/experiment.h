@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 10:52:17 1999
-// written: Fri Aug 10 10:50:05 2001
+// written: Tue Aug 21 15:22:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ namespace Gfx
 namespace Util
 {
   class ErrorHandler;
-  template <class T> class WeakRef;
+  template <class T> class SoftRef;
 };
 
 class Response;
@@ -40,7 +40,7 @@ public:
   virtual Util::ErrorHandler& getErrorHandler() const = 0;
   ///< Return an \c ErrorHandler that can deal with error messages.
 
-  virtual Util::WeakRef<GWT::Widget> getWidget() const = 0;
+  virtual Util::SoftRef<GWT::Widget> getWidget() const = 0;
   ///< Return the Widget in which the experiment is running.
 
   virtual Gfx::Canvas& getCanvas() const = 0;

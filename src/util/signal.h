@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Tue Aug 21 14:52:12 2001
+// written: Tue Aug 21 15:22:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ public:
   virtual ~Slot();
 
   template<class C, class MF>
-  static Util::WeakRef<Util::Slot> make(C* obj, MF mf);
+  static Util::SoftRef<Util::Slot> make(C* obj, MF mf);
 
   /// Informs the Slot that one of its subjects has changed.
   virtual void receiveSignal() = 0;
@@ -74,7 +74,7 @@ public:
   virtual ~Signal();
 
   /// Add a Slot to the list of those watching this Signal.
-  void connect(Util::WeakRef<Util::Slot> slot);
+  void connect(Util::SoftRef<Util::Slot> slot);
 
   /** Connect an object to this Signal, so that when the signal is
       triggered, \a mem_func will be called on \a obj. \c connect()
@@ -84,7 +84,7 @@ public:
   void connect(C* obj, MF mem_func);
 
   /// Remove a Slot from the list of those watching this Signal.
-  void disconnect(Util::WeakRef<Util::Slot> slot);
+  void disconnect(Util::SoftRef<Util::Slot> slot);
 
   /** Informs all this object's Slots that this Signal's state
       has changed */
@@ -113,7 +113,7 @@ private:
 template <class C, class MF>
 class Util::SlotAdapter : public Util::Slot
 {
-  Util::WeakRef<C> itsObject;
+  Util::SoftRef<C> itsObject;
   MF itsMemFunc;
 
   SlotAdapter(C* obj, MF mf) : itsObject(obj, Util::WEAK), itsMemFunc(mf) {}
@@ -137,9 +137,9 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 template <class C, class MF>
-inline Util::WeakRef<Util::Slot> Util::Slot::make(C* obj, MF mf)
+inline Util::SoftRef<Util::Slot> Util::Slot::make(C* obj, MF mf)
 {
-  return Util::WeakRef<Util::Slot>
+  return Util::SoftRef<Util::Slot>
     (Util::SlotAdapter<C, MF>::make(obj, mf));
 };
 

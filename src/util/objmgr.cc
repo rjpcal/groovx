@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Apr 23 01:13:16 1999
-// written: Wed Aug  8 20:16:39 2001
+// written: Tue Aug 21 15:22:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,15 +21,15 @@
 #define NO_TRACE
 #include "util/trace.h"
 
-WeakRef<Util::Object> Util::ObjMgr::newObj(const char* type)
+SoftRef<Util::Object> Util::ObjMgr::newObj(const char* type)
 {
   return newObj(fstring(type));
 }
 
-WeakRef<Util::Object> Util::ObjMgr::newObj(const fstring& type)
+SoftRef<Util::Object> Util::ObjMgr::newObj(const fstring& type)
 {
 DOTRACE("Util::ObjMgr::newObj(const fstring&)");
-  return WeakRef<Util::Object>(Util::ObjFactory::theOne().newCheckedObject(type));
+  return SoftRef<Util::Object>(Util::ObjFactory::theOne().newCheckedObject(type));
 }
 
 static const char vcid_objmgr_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Mon Aug 20 08:50:25 2001
+// written: Tue Aug 21 15:22:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ Tcl::ObjCaster::~ObjCaster() {}
 
 bool Tcl::ObjCaster::isIdMyType(Util::UID uid)
 {
-  WeakRef<Util::Object> item(uid);
+  SoftRef<Util::Object> item(uid);
   return (item.isValid() && isMyType(item.get()));
 }
 

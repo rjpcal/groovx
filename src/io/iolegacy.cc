@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Mon Aug 20 15:07:33 2001
+// written: Tue Aug 21 15:22:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -253,7 +253,7 @@ DOTRACE("IO::LegacyReader::readObject");
   return Ref<IO::IoObject>(readMaybeObject(name));
 }
 
-WeakRef<IO::IoObject>
+SoftRef<IO::IoObject>
 IO::LegacyReader::readMaybeObject(const fstring& name)
 {
 DOTRACE("IO::LegacyReader::readMaybeObject");
@@ -263,7 +263,7 @@ DOTRACE("IO::LegacyReader::readMaybeObject");
 
   if (type == "NULL")
     {
-      return WeakRef<IO::IoObject>();
+      return SoftRef<IO::IoObject>();
     }
 
   Ref<IO::IoObject> obj(Util::ObjMgr::newTypedObj<IO::IoObject>(type));
@@ -274,7 +274,7 @@ DOTRACE("IO::LegacyReader::readMaybeObject");
 #ifndef ACC_COMPILER
   return obj;
 #else
-  return WeakRef<IO::IoObject>(obj);
+  return SoftRef<IO::IoObject>(obj);
 #endif
 }
 
@@ -426,7 +426,7 @@ public:
   void noWhitespaceNeeded() { itsNeedsWhitespace = false; }
 
   void flattenObject(const char* obj_name,
-                     WeakRef<const IO::IoObject> obj,
+                     SoftRef<const IO::IoObject> obj,
                      bool stub_out = false)
   {
     if (itsIndentLevel > 0)
@@ -547,7 +547,7 @@ DOTRACE("IO::LegacyWriter::writeValueObj");
 }
 
 void IO::LegacyWriter::writeObject(const char* name,
-                                   WeakRef<const IO::IoObject> obj)
+                                   SoftRef<const IO::IoObject> obj)
 {
 DOTRACE("IO::LegacyWriter::writeObject");
 
@@ -580,7 +580,7 @@ void IO::LegacyWriter::writeRoot(const IO::IoObject* root)
 {
 DOTRACE("IO::LegacyWriter::writeRoot");
 
-  itsImpl->flattenObject("rootObject", WeakRef<const IO::IoObject>(root, true));
+  itsImpl->flattenObject("rootObject", SoftRef<const IO::IoObject>(root, true));
 }
 
 static const char vcid_iolegacy_cc[] = "$Header$";

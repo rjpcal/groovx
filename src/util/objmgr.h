@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Apr 23 01:12:37 1999
-// written: Wed Aug  8 20:16:37 2001
+// written: Tue Aug 21 15:27:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,16 +19,18 @@
 
 class fstring;
 
-namespace Util {
-  namespace ObjMgr {
+namespace Util
+{
+  namespace ObjMgr
+  {
     /// Will not return 0; will throw an exception on failure.
-    Util::WeakRef<Util::Object> newObj(const char* type);
+    Util::SoftRef<Util::Object> newObj(const char* type);
 
     /// Will not return 0; will throw an exception on failure.
-    Util::WeakRef<Util::Object> newObj(const fstring& type);
+    Util::SoftRef<Util::Object> newObj(const fstring& type);
 
     template <class T, class S>
-    Util::WeakRef<T> newTypedObj(S type)
+    Util::SoftRef<T> newTypedObj(S type)
     {
       return dynamicCast<T>(newObj(type));
     }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun  5 10:23:15 2001
-// written: Sun Jul 22 17:58:54 2001
+// written: Tue Aug 21 15:33:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,14 +13,18 @@
 #ifndef OBJECT_H_DEFINED
 #define OBJECT_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UTILFWD_H_DEFINED)
-#include "util/utilfwd.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(UID_H_DEFINED)
+#include "util/uid.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(REFCOUNTED_H_DEFINED)
 #include "util/refcounted.h"
 #endif
 
+namespace Util
+{
+  class Object;
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -29,7 +33,7 @@
  * a scripting language. Associates with each object a unique integer
  * identifier. Util::Object's are reference counted for automatic
  * memory management, and are generally passed around via Util::Ref's
- * or Util::WeakRef's, which automatically manage the reference
+ * or Util::SoftRef's, which automatically manage the reference
  * count. Subclass IO::IoObject provides persistence facilities.
  *
  **/

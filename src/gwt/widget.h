@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  2 15:05:17 1999
-// written: Thu Aug 16 10:04:56 2001
+// written: Tue Aug 21 15:24:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,8 +34,10 @@ namespace GWT
 
 class GxNode;
 
-namespace Util { template <class T> class Ref; };
-namespace Util { template <class T> class WeakRef; }
+namespace Util
+{
+  template <class T> class Ref;
+};
 
 
 //

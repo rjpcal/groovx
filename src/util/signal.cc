@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Tue Aug 21 14:55:43 2001
+// written: Tue Aug 21 15:23:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,7 +29,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-Util::Slot::~Slot() {
+Util::Slot::~Slot()
+{
 DOTRACE("Util::Slot::~Slot");
 }
 
@@ -41,7 +42,7 @@ DOTRACE("Util::Slot::~Slot");
 
 namespace
 {
-  typedef Util::WeakRef<Util::Slot> ObsRef;
+  typedef Util::SoftRef<Util::Slot> ObsRef;
 
   typedef dlink_list<ObsRef> ListType;
 }
@@ -71,7 +72,7 @@ DOTRACE("Util::Signal::~Signal");
   delete itsImpl;
 }
 
-void Util::Signal::disconnect(Util::WeakRef<Util::Slot> slot)
+void Util::Signal::disconnect(Util::SoftRef<Util::Slot> slot)
 {
 DOTRACE("Util::Signal::disconnect");
   if (!slot.isValid()) return;
@@ -81,7 +82,7 @@ DOTRACE("Util::Signal::disconnect");
   DebugEvalNL(itsImpl->itsSlots.size());
 }
 
-void Util::Signal::connect(Util::WeakRef<Util::Slot> slot)
+void Util::Signal::connect(Util::SoftRef<Util::Slot> slot)
 {
 DOTRACE("Util::Signal::connect");
   if (!slot.isValid()) return;

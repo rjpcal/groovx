@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mar-99
-// written: Wed Aug 15 10:48:11 2001
+// written: Tue Aug 21 15:22:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ public:
   // accessors+manipulators //
   ////////////////////////////
 
-  virtual Util::WeakRef<GWT::Widget> getWidget() const;
+  virtual Util::SoftRef<GWT::Widget> getWidget() const;
 
   int getCorrectResponse() const;
   void setCorrectResponse(int response);
@@ -114,7 +114,7 @@ public:
   // actions //
   /////////////
 
-  virtual void trDoTrial(Util::WeakRef<GWT::Widget> widget,
+  virtual void trDoTrial(Util::SoftRef<GWT::Widget> widget,
                          Util::ErrorHandler& errhdlr, Block& block);
 
   virtual int trElapsedMsec();
@@ -128,7 +128,7 @@ public:
   virtual void trAllowResponses();
   virtual void trDenyResponses();
 
-  virtual void installSelf(Util::WeakRef<GWT::Widget> widget) const;
+  virtual void installSelf(Util::SoftRef<GWT::Widget> widget) const;
 
 private:
   Trial(const Trial&);

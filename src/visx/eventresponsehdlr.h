@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:30:54 1999
-// written: Wed Aug  8 20:16:38 2001
+// written: Tue Aug 21 15:22:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -152,12 +152,12 @@ public:
   // Actions //
   /////////////
 
-  virtual void rhBeginTrial(Util::WeakRef<GWT::Widget> widget,
+  virtual void rhBeginTrial(Util::SoftRef<GWT::Widget> widget,
                             TrialBase& trial) const;
   virtual void rhAbortTrial() const;
   virtual void rhEndTrial() const;
   virtual void rhHaltExpt() const;
-  virtual void rhAllowResponses(Util::WeakRef<GWT::Widget> widget,
+  virtual void rhAllowResponses(Util::SoftRef<GWT::Widget> widget,
                                 TrialBase& trial) const;
   virtual void rhDenyResponses() const;
 

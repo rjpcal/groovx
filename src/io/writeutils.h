@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 16 14:18:36 1999
-// written: Mon Aug 20 12:33:23 2001
+// written: Tue Aug 21 15:22:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,7 +43,7 @@ public:
       while (begin != end)
         {
           writer->writeValue(makeElementNameString(name, count).c_str(),
-									  *begin);
+                             *begin);
           ++begin;
           ++count;
         }
@@ -66,7 +66,7 @@ public:
       while (begin != end)
         {
           writer->writeValueObj(makeElementNameString(name, count).c_str(),
-										  *begin);
+                                *begin);
           ++begin;
           ++count;
         }
@@ -89,7 +89,7 @@ public:
       while (begin != end)
         {
           writer->writeObject(makeElementNameString(name, count).c_str(),
-                              WeakRef<const IO::IoObject>(*begin));
+                              SoftRef<const IO::IoObject>(*begin));
           ++begin;
           ++count;
         }

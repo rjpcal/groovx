@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Tue Aug 14 21:38:07 2001
+// written: Tue Aug 21 15:22:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,7 +34,7 @@ class fstring;
 namespace Util
 {
   template <class T> class Ref;
-  template <class T> class WeakRef;
+  template <class T> class SoftRef;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -98,8 +98,8 @@ public:
 
   virtual Util::ErrorHandler& getErrorHandler() const;
 
-  Util::WeakRef<GWT::Widget> getWidget() const;
-  void setWidget(Util::WeakRef<GWT::Widget> widg);
+  Util::SoftRef<GWT::Widget> getWidget() const;
+  void setWidget(Util::SoftRef<GWT::Widget> widg);
 
   virtual Gfx::Canvas& getCanvas() const;
 

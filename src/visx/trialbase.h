@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jan 25 18:41:19 2000
-// written: Tue Aug 14 21:38:06 2001
+// written: Tue Aug 21 15:22:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,7 +30,7 @@ namespace GWT
 namespace Util
 {
   class ErrorHandler;
-  template <class T> class WeakRef;
+  template <class T> class SoftRef;
 };
 
 class Block;
@@ -50,13 +50,13 @@ public:
   virtual int trialType() const = 0;
   virtual int lastResponse() const = 0;
   virtual const char* description() const = 0;
-  virtual Util::WeakRef<GWT::Widget> getWidget() const = 0;
+  virtual Util::SoftRef<GWT::Widget> getWidget() const = 0;
 
   // manipulators
   virtual void undoLastResponse() = 0;
 
   // actions
-  virtual void trDoTrial(Util::WeakRef<GWT::Widget> widget,
+  virtual void trDoTrial(Util::SoftRef<GWT::Widget> widget,
                          Util::ErrorHandler& errhdlr, Block& block) = 0;
 
   virtual int trElapsedMsec() = 0;
@@ -71,7 +71,7 @@ public:
   virtual void trAllowResponses() = 0;
   virtual void trDenyResponses() = 0;
 
-  virtual void installSelf(Util::WeakRef<GWT::Widget> widget) const = 0;
+  virtual void installSelf(Util::SoftRef<GWT::Widget> widget) const = 0;
 };
 
 static const char vcid_trialbase_h[] = "$Header$";

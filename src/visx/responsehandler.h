@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 18 16:21:09 1999
-// written: Tue Aug 14 21:38:06 2001
+// written: Tue Aug 21 15:22:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ namespace GWT
 namespace Util
 {
   class ErrorHandler;
-  template <class T> class WeakRef;
+  template <class T> class SoftRef;
 };
 
 class Block;
@@ -57,7 +57,7 @@ public:
   /** Will be called by a \c TrialBase at the beginning of a trial. \c
       ResponseHandler subclasses implement this function to prepare
       listening for responses, etc. */
-  virtual void rhBeginTrial(Util::WeakRef<GWT::Widget> widget,
+  virtual void rhBeginTrial(Util::SoftRef<GWT::Widget> widget,
                             TrialBase& trial) const = 0;
 
   /** Will by called by a \c TrialBase if a trial is aborted. \c
@@ -76,7 +76,7 @@ public:
   virtual void rhHaltExpt() const = 0;
 
   /// Subclasses implement this function to attend to responses.
-  virtual void rhAllowResponses(Util::WeakRef<GWT::Widget> widget,
+  virtual void rhAllowResponses(Util::SoftRef<GWT::Widget> widget,
                                 TrialBase& trial) const = 0;
 
   /// Subclasses implement this function to stop attending to responses.

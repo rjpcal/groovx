@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Thu Aug  9 07:00:33 2001
+// written: Tue Aug 21 15:22:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ namespace
 
     while (array_size-- > 0)
       {
-        WeakRef<Util::Object> item(Util::ObjMgr::newObj(type));
+        SoftRef<Util::Object> item(Util::ObjMgr::newObj(type));
         result.append(item.id());
       }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 13:09:55 1999
-// written: Tue Aug 14 21:38:06 2001
+// written: Tue Aug 21 15:22:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ namespace Util
 {
   class ErrorHandler;
   template <class T> class Ref;
-  template <class T> class WeakRef;
+  template <class T> class SoftRef;
 }
 
 class TrialBase;
