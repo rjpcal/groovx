@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:42:42 2001
-// written: Fri Aug 10 14:52:26 2001
+// written: Fri Aug 10 14:59:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,13 @@
 
 #include "gmodes.h"
 #include "point.h"
+
+template <class V> class Rect;
+
+namespace Gfx
+{
+  class Canvas;
+}
 
 class GrObjAligner {
 public:
