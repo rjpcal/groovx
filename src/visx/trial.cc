@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Mon Dec  6 21:57:02 1999
+// written: Mon Dec  6 22:26:46 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,8 +16,8 @@
 #include <iostream.h>
 #include <strstream.h>
 #include <string>
-#include <GL/gl.h>
 
+#include "canvas.h"
 #include "objlist.h"
 #include "poslist.h"
 #include "grobj.h"
@@ -393,14 +393,14 @@ DOTRACE("Trial::trDraw");
     DebugEvalNL((void *) pos);
 
 
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-	   pos->go();
-      obj->draw(canvas);
-    glPopMatrix();
+	 { 
+		Canvas::StateSaver state(canvas);
+		pos->go();
+		obj->draw(canvas);
+	 }
   }
 
-  if (flush) glFlush();
+  if (flush) canvas.flushOutput();
 }
 
 void Trial::trUndraw(Canvas& canvas, bool flush) const {
@@ -411,14 +411,14 @@ DOTRACE("Trial::trUndraw");
     Position* pos =
 		PosList::thePosList().getCheckedPtr(itsIdPairs[i].posid);
 
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-	   pos->rego();
-      obj->undraw(canvas);
-    glPopMatrix();
+	 {
+		Canvas::StateSaver state(canvas);
+		pos->rego();
+		obj->undraw(canvas);
+	 }
   }
 
-  if (flush) glFlush();
+  if (flush) canvas.flushOutput();
 }
 
 void Trial::undoLastResponse() {
