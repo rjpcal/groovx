@@ -108,15 +108,5 @@ void IO::Reader::readValue<Value>(const fixed_string& name,
   readValueObj(name, return_value);
 }
 
-IdItem<IO::IoObject> IO::Reader::readObject(const fixed_string& name)
-{
-  return IdItem<IO::IoObject>(readObjectImpl(name));
-}
-
-MaybeIdItem<IO::IoObject> IO::Reader::readMaybeObject(const fixed_string& name)
-{
-  return MaybeIdItem<IO::IoObject>(readObjectImpl(name));
-}
-
 static const char vcid_reader_cc[] = "$Header$";
 #endif // !READER_CC_DEFINED

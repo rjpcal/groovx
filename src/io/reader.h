@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:46:08 1999
-// written: Thu May 17 15:29:19 2001
+// written: Thu May 17 15:46:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -135,13 +135,13 @@ public:
   /** Get an \c IdItem associated with the tag \a name. A new object
       of the appropriate type will be created and inserted into the \c
       IoDb, if necessary. */
-  IdItem<IO::IoObject> readObject(const fixed_string& name);
+  virtual IdItem<IO::IoObject> readObject(const fixed_string& name) = 0;
 
   /** Get a \c MaybeIdItem associated with the tag \a name. If no such
       object exists, a null object is returned; otherwise, a new
       object of the appropriate type will be created and inserted into
       the \c IoDb, if necessary. */
-  MaybeIdItem<IO::IoObject> readMaybeObject(const fixed_string& name);
+  virtual MaybeIdItem<IO::IoObject> readMaybeObject(const fixed_string& name) = 0;
 
   /** Restore the state of the IO object \a obj, associated with the
       tag \a name. The \c Reader will not create a new object, but
@@ -167,11 +167,6 @@ public:
 protected:
   /// Read the string attribute associated with the tag \a name.
   virtual fixed_string readStringImpl(const fixed_string& name) = 0;
-
-  /** Get a pointer to the \c IO object associated with the tag \a
-      name, creating a new object of the appropriate type, if
-      necessary. */
-  virtual IO::IoObject* readObjectImpl(const fixed_string& name) = 0;
 };
 
 static const char vcid_reader_h[] = "$Header$";
