@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:29:04 1999
-// written: Thu May 10 12:04:36 2001
+// written: Tue Jun  5 10:53:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,8 +13,11 @@
 #ifndef OBSERVABLE_H_DEFINED
 #define OBSERVABLE_H_DEFINED
 
-class Observer;
-class ObservableImpl;
+namespace Util
+{
+  class Observer;
+  class Observable;
+}
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -32,7 +35,7 @@ class ObservableImpl;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class Observable {
+class Util::Observable {
 protected:
   /** Constructor is protected so that Observable cannot be directly
 		instantiated.  */
@@ -56,7 +59,9 @@ private:
       observers. This is done only in Observable's destructor. */
   void sendDestroyMsg();
 
-  ObservableImpl& itsImpl;
+  class ObsImpl;
+
+  ObsImpl& itsImpl;
 };
 
 static const char vcid_observable_h[] = "$Header$";

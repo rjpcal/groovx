@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 25 18:39:27 1999
-// written: Tue May 22 12:19:17 2001
+// written: Tue Jun  5 10:55:36 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,19 +25,20 @@
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ObservableImpl class
+// Observable::ObsImpl class
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
-  typedef dlink_list<Observer*> ListType;
+namespace
+{
+  typedef dlink_list<Util::Observer*> ListType;
 }
 
-struct ObservableImpl {
+struct Util::Observable::ObsImpl {
 public:
-  ObservableImpl() : itsObservers()
+  ObsImpl() : itsObservers()
 	 { }
-  ~ObservableImpl()
+  ~ObsImpl()
 	 { }
   ListType itsObservers;
 };
@@ -48,33 +49,33 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-Observable::Observable() :
-  itsImpl(*(new ObservableImpl))
+Util::Observable::Observable() :
+  itsImpl(*(new ObsImpl))
 {
-DOTRACE("Observable::Observable");
+DOTRACE("Util::Observable::Observable");
 }
 
-Observable::~Observable() {
-DOTRACE("Observable::~Observable");
+Util::Observable::~Observable() {
+DOTRACE("Util::Observable::~Observable");
   sendDestroyMsg();
   delete &itsImpl;
 }
 
-void Observable::attach(Observer* obs) {
-DOTRACE("Observable::attach");
+void Util::Observable::attach(Util::Observer* obs) {
+DOTRACE("Util::Observable::attach");
   if (!obs) return;
   DebugEvalNL((void*)obs);
   itsImpl.itsObservers.push_back(obs);
 }
 
-void Observable::detach(Observer* obs) {
-DOTRACE("Observable::detach");
+void Util::Observable::detach(Util::Observer* obs) {
+DOTRACE("Util::Observable::detach");
   if (!obs) return;
   itsImpl.itsObservers.remove(obs);
 }
 
-void Observable::sendStateChangeMsg() const {
-DOTRACE("Observable::sendStateChangeMsg");
+void Util::Observable::sendStateChangeMsg() const {
+DOTRACE("Util::Observable::sendStateChangeMsg");
   for (ListType::iterator ii = itsImpl.itsObservers.begin();
 		 ii != itsImpl.itsObservers.end();
 		 ii++) {
@@ -84,8 +85,8 @@ DOTRACE("Observable::sendStateChangeMsg");
   }
 }
 
-void Observable::sendDestroyMsg() {
-DOTRACE("Observable::sendDestroyMsg");
+void Util::Observable::sendDestroyMsg() {
+DOTRACE("Util::Observable::sendDestroyMsg");
   ListType& theList = itsImpl.itsObservers;
 
   DebugEval(itsImpl.itsObservers.size());
@@ -97,7 +98,7 @@ DOTRACE("Observable::sendDestroyMsg");
   while (!theList.empty()) {
 	 DebugEval(itsImpl.itsObservers.size());
 
-	 Observer* obs = theList.front();
+	 Util::Observer* obs = theList.front();
 
 	 DebugEval((void *) this);
 	 DebugEvalNL((void *) obs);
