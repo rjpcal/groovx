@@ -216,7 +216,7 @@ ifeq ($(COMPILER),g++)
 endif
 
 ifeq ($(COMPILER),g++3)
-	CC := time g++301
+	CC := time g++302
 # Filter the compiler output...
 	FILTER := |& $(SCRIPTS)/filter_gcc_v3
 
@@ -313,21 +313,49 @@ DEEPVISION_OBJS := $(subst .cc,$(OBJ_EXT),\
 LIBDEEPVISION := $(LOCAL_LIB)/libDeepVision$(LIB_EXT)
 
 #
-# libDeepAppl
+# libDeepGfx
 #
 
-GWT_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/gwt/*.cc)))
-
-GFX_OBJS := $(subst .cc,$(OBJ_EXT),\
+DEEPGFX_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/gfx/*.cc)))
 
-IO_OBJS := $(subst .cc,$(OBJ_EXT),\
+LIBDEEPGFX := $(LOCAL_LIB)/libDeepGfx$(LIB_EXT)
+
+#
+# libDeepGwt
+#
+
+DEEPGWT_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/gwt/*.cc)))
+
+LIBDEEPGWT := $(LOCAL_LIB)/libDeepGWT$(LIB_EXT)
+
+#
+# libDeepTcl
+#
+
+DEEPTCL_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/tcl/*.cc)))
+
+LIBDEEPTCL := $(LOCAL_LIB)/libDeepTcl$(LIB_EXT)
+
+#
+# libDeepIO
+#
+
+DEEPIO_OBJS := $(subst .cc,$(OBJ_EXT),\
 	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/io/*.cc)))
 
-DEEPAPPL_OBJS := $(GWT_OBJS) $(GFX_OBJS) $(IO_OBJS)
+LIBDEEPIO := $(LOCAL_LIB)/libDeepIO$(LIB_EXT)
 
-LIBDEEPAPPL := $(LOCAL_LIB)/libDeepAppl$(LIB_EXT)
+#
+# libDeepGx
+#
+
+DEEPGX_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/gx/*.cc)))
+
+LIBDEEPGX := $(LOCAL_LIB)/libDeepGx$(LIB_EXT)
 
 #
 # libDeepUtil
@@ -343,19 +371,11 @@ DEEPUTIL_OBJS := $(SYS_OBJS) \
 LIBDEEPUTIL := $(LOCAL_LIB)/libDeepUtil$(LIB_EXT)
 
 #
-# libDeepTcl
-#
-
-DEEPTCL_OBJS := $(subst .cc,$(OBJ_EXT),\
-	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/tcl/*.cc)))
-
-LIBDEEPTCL := $(LOCAL_LIB)/libDeepTcl$(LIB_EXT)
-
-#
 # all project libs
 #
 
-PROJECT_LIBS := $(LIBDEEPVISION) $(LIBDEEPTCL) $(LIBDEEPAPPL) $(LIBDEEPUTIL)
+PROJECT_LIBS := $(LIBDEEPVISION) $(LIBDEEPTCL) \
+	$(LIBDEEPGFX) $(LIBDEEPGWT) $(LIBDEEPIO) $(LIBDEEPGX) $(LIBDEEPUTIL)
 
 #
 # test libs
@@ -447,7 +467,10 @@ $(SRC)/%.preh : $(SRC)/%.h
 
 $(LIBDEEPVISION): $(DEEPVISION_OBJS)
 $(LIBDEEPTCL):    $(DEEPTCL_OBJS)
-$(LIBDEEPAPPL):   $(DEEPAPPL_OBJS)
+$(LIBDEEPGFX):    $(DEEPGFX_OBJS)
+$(LIBDEEPGWT):    $(DEEPGWT_OBJS)
+$(LIBDEEPIO):     $(DEEPIO_OBJS)
+$(LIBDEEPGX):     $(DEEPGX_OBJS)
 $(LIBDEEPUTIL):   $(DEEPUTIL_OBJS)
 
 # this is just a convenience target so that we don't have to specify
