@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Sep 16 19:31:38 2002
+// written: Mon Sep 16 19:40:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -272,7 +272,6 @@ DOTRACE("TogletSizer::reconfigure");
 
 Toglet::Toglet(bool pack) :
   Togl(Tcl::Main::interp(), widgetName(id())),
-  Tcl::TkWidget(),
   itsSizer(new TogletSizer)
 {
 DOTRACE("Toglet::Toglet");
@@ -295,8 +294,6 @@ DOTRACE("Toglet::Toglet");
       Tcl::Code pack_cmd(pack_cmd_str.c_str(), Tcl::Code::THROW_EXCEPTION);
       pack_cmd.invoke(Togl::interp());
     }
-
-  TkWidget::setTkWin(tkwin);
 }
 
 Toglet::~Toglet()

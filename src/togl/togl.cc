@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Sep 16 19:35:41 2002
+// written: Mon Sep 16 19:41:31 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -823,9 +823,12 @@ DOTRACE("Togl::Impl::setupOverlay");
 ///////////////////////////////////////////////////////////////////////
 
 Togl::Togl(Tcl_Interp* interp, const char* pathname) :
+  Tcl::TkWidget(),
   rep(new Impl(this, interp, pathname))
 {
 DOTRACE("Togl::Togl");
+
+  TkWidget::setTkWin(rep->itsTkWin);
 
   incrRefCount();
 }

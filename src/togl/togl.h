@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Mon Sep 16 19:31:30 2002
+// written: Mon Sep 16 19:40:58 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -24,8 +24,8 @@
 #ifndef TOGL_H_DEFINED
 #define TOGL_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
-#include "util/object.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TKWIDGET_H_DEFINED)
+#include "visx/tkwidget.h"
 #endif
 
 struct Tcl_Interp;
@@ -44,7 +44,7 @@ namespace Gfx
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Togl : public virtual Util::Object
+class Togl : public Tcl::TkWidget
 {
 private:
   Togl(const Togl&);
@@ -53,6 +53,8 @@ private:
 public:
   Togl(Tcl_Interp* interp, const char* pathname);
   virtual ~Togl();
+
+  virtual bool isNotShareable() const { return true; }
 
   // Callbacks
   virtual void displayCallback();

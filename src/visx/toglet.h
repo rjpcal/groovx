@@ -5,17 +5,13 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Sep 16 19:31:32 2002
+// written: Mon Sep 16 19:40:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TOGLET_H_DEFINED
 #define TOGLET_H_DEFINED
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TKWIDGET_H_DEFINED)
-#include "visx/tkwidget.h"
-#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TOGL_H_DEFINED)
 #include "togl/togl.h"
@@ -30,7 +26,7 @@ class TogletSizer;
 
 /// Toglet is an OpenGL Tk widget implemented with the "Togl" library.
 
-class Toglet : public Togl, public Tcl::TkWidget
+class Toglet : public Togl
 {
 protected:
   Toglet(bool pack=true);
@@ -40,8 +36,6 @@ public:
   static Toglet* make() { return new Toglet; }
 
   virtual ~Toglet();
-
-  virtual bool isNotShareable() const { return true; }
 
   // accessors
   bool usingFixedScale() const;
