@@ -2,7 +2,7 @@
 // gfxattribs.h
 // Rob Peters
 // created: Tue Mar  9 18:28:13 1999
-// written: Tue Jun 22 12:06:28 1999
+// written: Tue Jun 22 12:16:52 1999
 // $Id$
 //
 // This class containing only static members serves as a
@@ -19,7 +19,7 @@ public:
   enum GfxFlag { NO_FLAGS               = 0,
                  RGBA_FLAG              = 1 << 0,
                  PRIVATE_CMAP_FLAG      = 1 << 1,
-					  DOUBLE_BUFFER_FLAG     = 1 << 2, };
+					  DOUBLE_BUFFER_FLAG     = 1 << 2 };
 
   static bool usingRgba() { return isTrue(RGBA_FLAG); }
   static bool usingDoubleBuffer() { return isTrue(DOUBLE_BUFFER_FLAG); }
