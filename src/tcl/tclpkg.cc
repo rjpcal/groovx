@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Tue Nov 30 17:34:55 1999
+// written: Tue Nov 30 17:38:44 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -176,7 +176,7 @@ protected:
 		getSequenceFromArg(itsValArgn, back_inserter(vals), (T*) 0);
 	 }
 
-    int max_valn = vals.size()-1;
+    size_t max_valn = vals.size()-1;
 
     for (size_t i = 0, valn = 0; i < ids.size(); ++i) {
       void* item = itsPkg->getItemFromId(ids[i]);
@@ -216,7 +216,7 @@ void TVecSetterCmd<const string&>::invoke() {
 		getSequenceFromArg(itsValArgn, back_inserter(vals), (string*) 0);
 	 }
 
-    int max_valn = vals.size()-1;
+    size_t max_valn = vals.size()-1;
 
     for (size_t i = 0, valn = 0; i < ids.size(); ++i) {
       void* item = itsPkg->getItemFromId(ids[i]);
