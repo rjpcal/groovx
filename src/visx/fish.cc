@@ -99,16 +99,16 @@ const FieldMap& Fish::classFields()
   static const FieldInfo FINFOS[] =
   {
     FieldInfo("category", &Fish::itsFishCategory, 0, 0, 10, 1, true),
-    FieldInfo("dorsalFinCoord", FieldInfo::OldTag(), &Fish::dorsalFinCoord, 0.0, -2.0, 2.0, 0.1),
-    FieldInfo("tailFinCoord", FieldInfo::OldTag(), &Fish::tailFinCoord, 0.0, -2.0, 2.0, 0.1),
-    FieldInfo("lowerFinCoord", FieldInfo::OldTag(), &Fish::lowerFinCoord, 0.0, -2.0, 2.0, 0.1),
-    FieldInfo("mouthCoord", FieldInfo::OldTag(), &Fish::mouthCoord, 0.0, -2.0, 2.0, 0.1),
+    FieldInfo("dorsalFinCoord", &Fish::itsDorsalFinCoord, 0.0, -2.0, 2.0, 0.1),
+    FieldInfo("tailFinCoord", &Fish::itsTailFinCoord, 0.0, -2.0, 2.0, 0.1),
+    FieldInfo("lowerFinCoord", &Fish::itsLowerFinCoord, 0.0, -2.0, 2.0, 0.1),
+    FieldInfo("mouthCoord", &Fish::itsMouthCoord, 0.0, -2.0, 2.0, 0.1),
 
     FieldInfo("currentPart", FieldInfo::OldTag(), &Fish::currentPart, 0, 0, 3, 1, true),
 
     FieldInfo("currentEndPt", FieldInfo::OldTag(), &Fish::currentEndPt, 0, 0, 3, 1, true),
-    FieldInfo("endPt_Part", FieldInfo::OldTag(), &Fish::endPt_Part, 1, 1, 4, 1),
-    FieldInfo("endPt_Bkpt", FieldInfo::OldTag(), &Fish::endPt_Bkpt, 1, 1, 10, 1)
+    FieldInfo("endPt_Part", &Fish::itsEndPt_Part, 1, 1, 4, 1),
+    FieldInfo("endPt_Bkpt", &Fish::itsEndPt_Bkpt, 1, 1, 10, 1)
   };
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
@@ -134,14 +134,14 @@ DOTRACE("Fish::makeFromFiles");
 
 Fish::Fish(const char* splinefile, const char* coordfile, int index) :
   itsFishCategory(-1),
-  dorsalFinCoord(itsCoords[0]),
-  tailFinCoord(itsCoords[1]),
-  lowerFinCoord(itsCoords[2]),
-  mouthCoord(itsCoords[3]),
+  itsDorsalFinCoord(&itsCoords[0]),
+  itsTailFinCoord(&itsCoords[1]),
+  itsLowerFinCoord(&itsCoords[2]),
+  itsMouthCoord(&itsCoords[3]),
   currentPart(0, 0, 3),
   currentEndPt(0, 0, 3),
-  endPt_Part(dummy),
-  endPt_Bkpt(dummy),
+  itsEndPt_Part(&dummy),
+  itsEndPt_Bkpt(&dummy),
   itsFishParts(new FishPart[4]),
   itsEndPts(new EndPt[4])
 {
@@ -310,15 +310,15 @@ DOTRACE("Fish::receiveStateChangeMsg");
 //    if (obj == &currentPart) {
 //    }
 //    else if (obj == &currentEndPt) {
-//     endPt_Part.reseat(itsEndPts[currentEndPt()].itsPart);
-//     endPt_Bkpt.reseat(itsEndPts[currentEndPt()].itsBkpt);
+//     itsEndPt_Part.reseat(itsEndPts[currentEndPt()].itsPart);
+//     itsEndPt_Bkpt.reseat(itsEndPts[currentEndPt()].itsBkpt);
 //    }
 //    else {
 //     GrObj::receiveStateChangeMsg(obj);
 //    }
 
-  endPt_Part.reseat(itsEndPts[currentEndPt()].itsPart);
-  endPt_Bkpt.reseat(itsEndPts[currentEndPt()].itsBkpt);
+  itsEndPt_Part = &(itsEndPts[currentEndPt()].itsPart);
+  itsEndPt_Bkpt = &(itsEndPts[currentEndPt()].itsBkpt);
 
   GrObj::receiveStateChangeMsg(obj);
 }

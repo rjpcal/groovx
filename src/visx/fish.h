@@ -65,7 +65,7 @@ public:
 
   /** Reimplemented from \c GrObj in order to catch changes to \c
       currentPart and \c currentEndPt, so that we can reseat the
-      referents of \endPt_Part and endPt_Bkpt, respectively. */
+      referents of \itsEndPt_Part and itsEndPt_Bkpt, respectively. */
   virtual void receiveStateChangeMsg(const Util::Observable* obj);
 
   ////////////////
@@ -75,30 +75,38 @@ public:
   virtual int category() const { return itsFishCategory; }
   virtual void setCategory(int val) { itsFishCategory = val; sendStateChangeMsg(); }
 
+private:
+  /** The category of the fish. The semantics of \a category are
+      defined by the client. */
+  int itsFishCategory;
+
   /// Controls the shape of the dorsal fin.
-  TPtrField<double> dorsalFinCoord;
+  double* itsDorsalFinCoord;
 
   /// Controls the shape of the tail fin.
-  TPtrField<double> tailFinCoord;
+  double* itsTailFinCoord;
 
   /// Controls the shape of the lower fin (one fin vs. two fins).
-  TPtrField<double> lowerFinCoord;
+  double* itsLowerFinCoord;
 
   /// Controls the shape of the mouth
-  TPtrField<double> mouthCoord;
+  double* itsMouthCoord;
 
+public:
   /// Selects the current part for editing.
   TBoundedField<int> currentPart;
 
   /// Selects the current end point for editing.
   TBoundedField<int> currentEndPt;
 
+private:
   /// Controls the part referred to by the current end point.
-  TPtrField<int> endPt_Part;
+  int* itsEndPt_Part;
 
   /// Controls the breakpoint referred to by the current end point.
-  TPtrField<int> endPt_Bkpt;
+  int* itsEndPt_Bkpt;
 
+public:
   static const FieldMap& classFields();
 
   /////////////
@@ -113,10 +121,6 @@ protected:
 private:
   Fish(const Fish&);
   Fish& operator=(const Fish&);
-
-  /** The category of the fish. The semantics of \a category are
-      defined by the client. */
-  int itsFishCategory;
 
   struct EndPt;
   struct FishPart;
