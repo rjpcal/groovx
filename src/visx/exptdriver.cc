@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Mon Oct  9 18:31:42 2000
+// written: Mon Oct  9 19:45:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -388,7 +388,7 @@ DOTRACE("ExptDriver::Impl::doAutosave");
 Block& ExptDriver::Impl::block() const {
 DOTRACE("ExptDriver::Impl::block");
 
-  Assert( BlockList::theBlockList().isValidId(itsBlockId) );
+  Precondition( BlockList::theBlockList().isValidId(itsBlockId) );
 
 #ifdef LOCAL_DEBUG
   BlockList::Ptr block = BlockList::theBlockList().getPtr(itsBlockId);
@@ -915,7 +915,7 @@ DOTRACE("ExptDriver::Impl::write");
 
 void ExptDriver::Impl::storeData() {
 DOTRACE("ExptDriver::Impl::storeData");
-  Assert(itsInterp != 0);
+  Precondition(itsInterp != 0);
 
   edHaltExpt();  
 

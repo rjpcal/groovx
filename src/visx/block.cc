@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Fri Sep 29 16:04:56 2000
+// written: Mon Oct  9 19:40:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,12 +91,13 @@ public:
 
   void setExpt(Experiment& expt)
 	 {
+		Precondition( &expt != 0 );
 		itsExperiment = &expt;
 	 }
 
   Experiment& getExpt()
 	 {
-		Assert( itsExperiment != 0 );
+		Precondition( itsExperiment != 0 );
 		return *itsExperiment;
 	 }
 

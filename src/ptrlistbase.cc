@@ -3,7 +3,7 @@
 // voidptrlist.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Mon Oct  9 13:27:10 2000
+// written: Mon Oct  9 19:48:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,27 +54,27 @@ public:
   VoidPtrHandle() :
 	 itsMaster(new NullMasterPtr)
   {
-	 Assert(itsMaster != 0);
+	 Invariant(itsMaster != 0);
 	 itsMaster->incrRefCount();
   }
 
   explicit VoidPtrHandle(MasterPtrBase* master) :
 	 itsMaster(master)
   {
-	 Assert(itsMaster != 0);
+	 Invariant(itsMaster != 0);
 	 itsMaster->incrRefCount();
   }
 
   ~VoidPtrHandle()
   {
-	 Assert(itsMaster != 0);
+	 Invariant(itsMaster != 0);
 	 itsMaster->decrRefCount();
   }
 
   VoidPtrHandle(const VoidPtrHandle& other) :
 	 itsMaster(other.itsMaster)
   {
-	 Assert(itsMaster != 0);
+	 Invariant(itsMaster != 0);
 	 itsMaster->incrRefCount();
   }
 
@@ -82,13 +82,13 @@ public:
   {
 	 VoidPtrHandle otherCopy(other);
 	 this->swap(otherCopy);
-	 Assert(itsMaster != 0);
+	 Invariant(itsMaster != 0);
 	 return *this;
   }
 
   MasterPtrBase* masterPtr()
   {
-	 Assert(itsMaster != 0);
+	 Invariant(itsMaster != 0);
 	 return itsMaster;
   }
 

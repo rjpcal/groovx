@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Thu Oct  5 15:35:10 2000
+// written: Mon Oct  9 19:50:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -272,7 +272,7 @@ DOTRACE("Tcl::TclCmd::safeListLength");
 	 {
 		throw TclError("couldn't get length of Tcl list");
 	 }
-  Assert(length >= 0);
+  Postcondition(length >= 0);
   return (unsigned int) length;
 }
 

@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Oct  5 18:34:52 2000
+// written: Mon Oct  9 19:48:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -114,25 +114,25 @@ private:
 
   GWT::Canvas& getCanvas() const
 	 {
-		Assert(itsCanvas != 0);
+		Precondition(itsCanvas != 0);
 		return *itsCanvas;
 	 }
 
   ResponseHandler& responseHandler() const
 	 {
-		Assert( RhList::theRhList().isValidId(itsRhId) );
+		Precondition( RhList::theRhList().isValidId(itsRhId) );
 		return *(RhList::theRhList().getPtr(itsRhId));
 	 }
 
   TimingHdlr& timingHdlr() const
 	 {
-		Assert( ThList::theThList().isValidId(itsThId) );
+		Precondition( ThList::theThList().isValidId(itsThId) );
 		return *(ThList::theThList().getPtr(itsThId));
 	 }
 
   Block& getBlock() const
 	 {
-		Assert(itsBlock != 0);
+		Precondition(itsBlock != 0);
 		return *itsBlock;
 	 }
 
@@ -482,10 +482,13 @@ DOTRACE("Trial::Impl::clearResponses");
 void Trial::Impl::trDoTrial(Trial* self, GWT::Widget& widget,
 									 Util::ErrorHandler& errhdlr, Block& block) {
 DOTRACE("Trial::Impl::trDoTrial");
+  Precondition(self != 0); 
+  Precondition(&widget != 0);
+  Precondition(&errhdlr != 0);
+  Precondition(&block != 0);
+
   itsCanvas = widget.getCanvas();
   itsBlock = &block;
-
-  Assert(&errhdlr != 0);
 
   if (itsBlock == 0)
 	 errhdlr.handleMsg("Trial::itsBlock was null in trDoTrial");

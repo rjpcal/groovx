@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Mon Oct  9 18:25:47 2000
+// written: Mon Oct  9 19:45:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -152,8 +152,9 @@ private:
 
   void becomeActive(GWT::Widget& widget, TrialBase& trial) const
     {
-		itsWidget = &widget; Assert(&widget != 0);
-		itsTrial = &trial;   Assert(&trial != 0);
+		Precondition(&widget != 0); Precondition(&trial != 0);
+		itsWidget = &widget;
+		itsTrial = &trial;
 
 		itsState = ACTIVE;
 	 }
@@ -168,7 +169,7 @@ private:
   GWT::Widget& getWidget() const
 	 {
 		DebugEval((void*) itsWidget);
-		Assert(itsState == ACTIVE);
+		Precondition(itsState == ACTIVE);
 		Assert(itsWidget != 0);
 		return *itsWidget;
 	 }
@@ -176,7 +177,7 @@ private:
 
   TrialBase& getTrial() const
 	 {
-		Assert(itsState == ACTIVE);
+		Precondition(itsState == ACTIVE);
 		Assert(itsTrial != 0);
 		return *itsTrial;
 	 }
@@ -375,7 +376,7 @@ private:
   private:
 	 bool isTrue(Tcl_Interp* interp) throw(ErrorWithMsg)
 		{
-		  Assert(itsIsValid);
+		  Precondition(itsIsValid);
 		  int expr_result;
 		  if (Tcl_ExprBooleanObj(interp, itsCondition, &expr_result) != TCL_OK)
 			 {
@@ -583,7 +584,7 @@ DOTRACE("EventResponseHdlr::Impl::setInterp");
 void EventResponseHdlr::Impl::rhAbortTrial() const {
 DOTRACE("EventResponseHdlr::Impl::rhAbortTrial");
 
-  Assert(itsInterp != 0);
+  Precondition(itsInterp != 0);
 
   if (INACTIVE == itsState) return;
 
@@ -624,7 +625,7 @@ DOTRACE("EventResponseHdlr::Impl::ignore");
 void EventResponseHdlr::Impl::raiseBackgroundError(const char* msg) const throw() {
 DOTRACE("EventResponseHdlr::Impl::raiseBackgroundError");
   DebugEvalNL(msg);
-  Assert(itsInterp != 0);
+  Precondition(itsInterp != 0);
   Tcl_AppendResult(itsInterp, msg, (char*) 0);
   Tcl_BackgroundError(itsInterp);
 }
@@ -704,7 +705,7 @@ DOTRACE("EventResponseHdlr::Impl::handleResponse");
 
 int EventResponseHdlr::Impl::getRespFromKeysym(const char* keysym) const {
 DOTRACE("EventResponseHdlr::Impl::getRespFromKeysym");
-  Assert(itsInterp != 0);
+  Precondition(itsInterp != 0);
 
   const char* response_string = extractStringFromKeysym(keysym);
 
@@ -728,7 +729,7 @@ DOTRACE("EventResponseHdlr::Impl::getRespFromKeysym");
 
 void EventResponseHdlr::Impl::feedback(int response) const {
 DOTRACE("EventResponseHdlr::Impl::feedback");
-  Assert(itsInterp != 0);
+  Precondition(itsInterp != 0);
 
   DebugEvalNL(response);
 
@@ -754,7 +755,7 @@ DOTRACE("EventResponseHdlr::Impl::feedback");
 
 void EventResponseHdlr::Impl::updateFeedbacksIfNeeded() const {
 DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
-  Assert(itsInterp != 0);
+  Precondition(itsInterp != 0);
 
   if (!itsFeedbacksAreDirty) return;
 
@@ -803,7 +804,7 @@ DOTRACE("EventResponseHdlr::Impl::updateFeedbacksIfNeeded");
 
 void EventResponseHdlr::Impl::updateRegexpsIfNeeded() const {
 DOTRACE("EventResponseHdlr::updateRegexpsIfNeeded");
-  Assert(itsInterp != 0);
+  Precondition(itsInterp != 0);
 
   if (!itsRegexpsAreDirty) return;
 

@@ -3,7 +3,7 @@
 // bmapdata.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jan 20 00:37:03 2000
-// written: Tue Oct  3 13:18:29 2000
+// written: Mon Oct  9 19:41:23 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -83,6 +83,7 @@ BmapData::BmapData(int width, int height,
   itsImpl(new Impl(width, height, bits_per_pixel, byte_alignment))
 {
 DOTRACE("BmapData::BmapData");
+  Precondition(width >= 0); Precondition(height > 0);
   int num_bytes = (width/8 + 1) * height  + 1;
   Assert(num_bytes > 0);
   itsImpl->itsBytes.resize( num_bytes );

@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Fri Sep 29 16:12:01 2000
+// written: Mon Oct  9 19:46:57 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -306,9 +306,9 @@ DOTRACE("TimingHdlr::addEventByName");
 
 void TimingHdlr::Impl::scheduleAll(std::vector<TrialEvent*>& events) {
 DOTRACE("TimingHdlr::Impl::scheduleAll");
-  Assert(itsTrial != 0);
-  Assert(itsWidget != 0);
-  Assert(itsErrorHandler != 0);
+  Precondition(itsTrial != 0);
+  Precondition(itsWidget != 0);
+  Precondition(itsErrorHandler != 0);
 
   for (size_t i = 0; i < events.size(); ++i) {
 	 events[i]->schedule(*itsWidget, *itsErrorHandler, *itsTrial);

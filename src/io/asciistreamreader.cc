@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Mon Oct  2 17:20:21 2000
+// written: Mon Oct  9 19:49:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -181,7 +181,7 @@ public:
 			 itsMap_at_id = obj;
 		  }
 
-		Assert(itsMap_at_id != 0);
+		Postcondition(itsMap_at_id != 0);
 		return itsMap_at_id;
 	 }
 

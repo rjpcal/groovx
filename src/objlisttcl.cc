@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Mon Oct  9 09:22:29 2000
+// written: Mon Oct  9 19:46:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -172,7 +172,7 @@ protected:
 
   virtual void beforeLoadHook()
 	 {
-		Assert(itsSandbox.count() == 0);
+		Precondition(itsSandbox.count() == 0);
 	 }
 
   virtual void afterLoadHook()
@@ -190,7 +190,7 @@ protected:
 				}
 		  }
 
-		Assert(itsSandbox.count() == 0);
+		Postcondition(itsSandbox.count() == 0);
 	 }
 
 private:
