@@ -498,6 +498,7 @@ install-scripts: $(exec_prefix)/bin/.timestamp	\
 $(exec_prefix)/bin/editor.tcl			\
 $(exec_prefix)/bin/make_faces.tcl		\
 $(exec_prefix)/bin/play_img_seq.tcl		\
+$(exec_prefix)/bin/sample_expt.tcl		\
 $(exec_prefix)/bin/slideshow.tcl		\
 $(exec_prefix)/bin/visedit.tcl			\
 
