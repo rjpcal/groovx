@@ -28,7 +28,8 @@
 #include "util/objdb.h"
 #include "util/objmgr.h"
 
-#include <fstream.h>
+#include <fstream>
+#include <typeinfo>
 
 #include "util/trace.h"
 
