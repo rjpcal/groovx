@@ -34,11 +34,6 @@
 
 #include "util/scheduler.h"
 
-namespace rutz
-{
-  template <class T> class shared_ptr;
-}
-
 namespace Tcl
 {
   class TimerScheduler;
