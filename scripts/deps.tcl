@@ -295,6 +295,11 @@ namespace eval ldeps {
 	    }
 	}
 
-	return [lsort -unique $deps]
+	set deps [lsort -unique $deps]
+	set index [lsearch $deps {}]
+	if { $index >= 0 } {
+	    set deps [lreplace $deps $index $index]
+	}
+	return $deps
     }
 }
