@@ -46,6 +46,7 @@
 #include <cstring> // for strcmp()
 #include <exception>
 #include <iostream>
+#include <signal.h>
 #include <tk.h>
 #include <typeinfo>
 
@@ -211,6 +212,17 @@ PackageInfo DELAYED_PKGS[] =
     { "Trialevent",          Trialevent_Init,          "3.0" },
   };
 
+  void sigHandler(int signum)
+  {
+    switch (signum)
+      {
+        case SIGSEGV: Panic("Segmentation fault (SIGSEGV)");
+        case SIGFPE:  Panic("Floating point exception (SIGFPE)");
+        case SIGBUS:  Panic("Bus error (SIGBUS)");
+      }
+    Assert(0);
+  }
+
 } // end anonymous namespace
 
 ///////////////////////////////////////////////////////////////////////
@@ -222,6 +234,10 @@ PackageInfo DELAYED_PKGS[] =
 int main(int argc, char** argv)
 {
 DOTRACE("main");
+
+  signal(SIGSEGV, &sigHandler);
+  signal(SIGFPE, &sigHandler);
+  signal(SIGBUS, &sigHandler);
 
   try
     {
