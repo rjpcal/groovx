@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Thu Sep  5 17:09:58 2002
+// written: Thu Sep  5 20:04:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,13 @@
 #include <iostream>
 #include <tk.h>
 #include <unistd.h>
+
+#define USE_READLINE
+
+#ifdef USE_READLINE
+#  include <readline/readline.h>
+#  include <readline/history.h>
+#endif
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -55,7 +62,9 @@ private:
   void defaultPrompt(bool partial);
   void prompt(bool partial);
 
-  int grabInput();
+  void grabInput();
+
+  void handleLine(const char* line, int count);
 
   void execCommand();
 
@@ -79,6 +88,10 @@ public:
   Tcl::Interp& safeInterp() { return itsSafeInterp; }
 
   void run();
+
+#ifdef USE_READLINE
+  static void readlineLineComplete(char* line);
+#endif
 };
 
 Tcl::MainImpl* Tcl::MainImpl::theMainImpl = 0;
@@ -140,6 +153,7 @@ DOTRACE("Tcl::MainImpl::MainImpl");
 
 void Tcl::MainImpl::defaultPrompt(bool partial)
 {
+DOTRACE("Tcl::MainImpl::defaultPrompt");
   if (!partial)
     {
       /*
@@ -165,6 +179,7 @@ void Tcl::MainImpl::defaultPrompt(bool partial)
 
 void Tcl::MainImpl::prompt(bool partial)
 {
+DOTRACE("Tcl::MainImpl::prompt");
   Tcl_Obj* promptCmd =
     Tcl_GetVar2Ex(interp(),
                   const_cast<char*>
@@ -205,7 +220,36 @@ void Tcl::MainImpl::prompt(bool partial)
             }
         }
     }
+
+#ifdef USE_READLINE
+  rl_callback_handler_install("", readlineLineComplete);
+#endif
 }
+
+//---------------------------------------------------------------------
+//
+// Callback triggered from the readline library when it has a full line of
+// input for us to handle.
+//
+//---------------------------------------------------------------------
+
+#ifdef USE_READLINE
+
+void Tcl::MainImpl::readlineLineComplete(char* line)
+{
+DOTRACE("Tcl::MainImpl::readlineLineComplete");
+
+  DebugEvalNL(line);
+
+  rl_callback_handler_remove();
+
+  if (line != 0 && *line != '\0')
+    add_history(line);
+
+  get()->handleLine(line, line == 0 ? -1 : int(strlen(line)));
+}
+
+#endif
 
 //---------------------------------------------------------------------
 //
@@ -214,15 +258,36 @@ void Tcl::MainImpl::prompt(bool partial)
 //
 //---------------------------------------------------------------------
 
-int Tcl::MainImpl::grabInput()
+void Tcl::MainImpl::grabInput()
 {
 DOTRACE("Tcl::MainImpl::grabInput");
 
+#ifndef USE_READLINE
   Tcl_DString line;
 
   Tcl_DStringInit(&line);
 
   int count = Tcl_Gets(itsInChannel, &line);
+
+  handleLine(Tcl_DStringValue(&line), count);
+
+  Tcl_DStringFree(&line);
+
+#else // USE_READLINE
+  rl_callback_read_char();
+#endif
+}
+
+//---------------------------------------------------------------------
+//
+// Handle a complete line of input (though not necessarily a complete Tcl
+// command).
+//
+//---------------------------------------------------------------------
+
+void Tcl::MainImpl::handleLine(const char* line, int count)
+{
+DOTRACE("Tcl::MainImpl::handleLine");
 
   if (count < 0)
     {
@@ -238,16 +303,32 @@ DOTRACE("Tcl::MainImpl::grabInput");
                                        &stdinProc, (ClientData) 0);
             }
         }
+      return;
     }
 
-  else if (count > 0)
+  Assert(line != 0);
+
+  itsCommand.append(line, "\n");
+
+  DebugEvalNL(itsCommand.c_str());
+
+  if (itsCommand.length() > 0 &&
+      Tcl_CommandComplete(itsCommand.c_str()))
     {
-      itsCommand.append(Tcl_DStringValue(&line), "\n");
+      itsGotPartial = false;
+      execCommand();
+    }
+  else
+    {
+      itsGotPartial = true;
     }
 
-  Tcl_DStringFree(&line);
+  if (isItInteractive)
+    {
+      prompt(itsGotPartial);
+    }
 
-  return count;
+  Tcl_ResetResult(interp());
 }
 
 //---------------------------------------------------------------------
@@ -270,6 +351,8 @@ DOTRACE("Tcl::MainImpl::execCommand");
 
   Tcl_CreateChannelHandler(itsInChannel, 0, &stdinProc, (ClientData) 0);
 
+  DebugEvalNL(itsCommand.c_str());
+
   int code = Tcl_RecordAndEval(interp(), itsCommand.c_str(), TCL_EVAL_GLOBAL);
 
   itsInChannel = Tcl_GetStdChannel(TCL_STDIN);
@@ -281,6 +364,8 @@ DOTRACE("Tcl::MainImpl::execCommand");
     }
 
   itsCommand = "";
+
+  DebugEvalNL(Tcl_GetStringResult(interp()));
 
   if (Tcl_GetStringResult(interp())[0] != '\0')
     {
@@ -307,26 +392,9 @@ DOTRACE("Tcl::MainImpl::execCommand");
 
 void Tcl::MainImpl::stdinProc(ClientData /*clientData*/, int /*mask*/)
 {
-  Tcl::MainImpl* rep = Tcl::MainImpl::get();
+DOTRACE("Tcl::MainImpl::stdinProc");
 
-  if (rep->grabInput() <= 0)
-    return;
-
-  if (Tcl_CommandComplete(rep->itsCommand.c_str()))
-    {
-      rep->itsGotPartial = false;
-      rep->execCommand();
-    }
-  else
-    {
-      rep->itsGotPartial = true;
-    }
-
-  if (rep->isItInteractive)
-    {
-      rep->prompt(rep->itsGotPartial);
-    }
-  Tcl_ResetResult(rep->interp());
+  Tcl::MainImpl::get()->grabInput();
 }
 
 //---------------------------------------------------------------------
