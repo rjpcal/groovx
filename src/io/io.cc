@@ -3,7 +3,7 @@
 // Io.cc
 // Rob Peters
 // created: Tue Mar  9 20:25:02 1999
-// written: Thu Sep 28 11:12:50 2000
+// written: Thu Sep 28 16:12:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,6 @@
 
 #include <cctype>
 #include <cstring>
-#include <string>
 #include <strstream.h>
 #include <typeinfo>
 
@@ -144,61 +143,6 @@ DOTRACE("IO::IoObject::eatWhitespace");
   while ( isspace(is.peek()) )
 	 { is.get(); ++c; }
   return c;
-}
-
-void IO::IoObject::readTypename(STD_IO::istream& is,
-										  const char* correctNames_cstr,
-										  bool doCheck) {
-DOTRACE("IO::IoObject::readTypename");
-  std::string correctNames = correctNames_cstr;
-
-  std::string name;
-  is >> name;
-
-  DebugEval(name); DebugPrintNL("");
-  DebugEvalNL(is.peek());
-
-  // If we aren't checking, then we can skip the rest of the routine.
-  if (!doCheck) return;
-  
-  DebugEval(correctNames);
-  DebugEvalNL(doCheck);
-
-  std::string candidate;
-
-  std::string first_candidate = correctNames.substr(0, correctNames.find(' ', 0));
-
-  std::string::size_type end_pos = 0;
-  std::string::size_type beg_pos = 0;
-
-  // Loop over the space-separated substrings of correctNames.
-  while ( end_pos < std::string::npos ) {
-	 end_pos = correctNames.find(' ', beg_pos);
-
-	 candidate = correctNames.substr(beg_pos, end_pos);
-
-	 DebugEval(name);
-	 DebugEval(candidate);
-	 DebugEval(beg_pos);
-	 DebugEvalNL(end_pos);
-	 
-	 if (name == candidate) {
-		DebugEval(is.peek());
-		DebugPrintNL("found a name match");
-		return;
-	 }
-
-	 // Skip ahead until we find the first non-space character. This
-	 // character will mark the beginning of the next candidate
-	 // typename.
-	 beg_pos = correctNames.find_first_not_of(' ', end_pos+1);
-  }
-
-  // If we got here, then none of the substrings matched so we must
-  // raise an exception.
-  IO::InputError err("couldn't read typename for ");
-  err.appendMsg(first_candidate.c_str());
-  throw err;
 }
 
 ///////////////////////////////////////////////////////////////////////

@@ -111,18 +111,6 @@ public:
 		from \a theStream. */
   static int eatWhitespace(STD_IO::istream& theStream);
 
-  /** This function reads the next word from \a theStream, and
-      compares it to the correct names in \a correctNames. \a
-      correctNames should consist of one or more space-separated
-      words. If the word read from the stream does not match any of
-      these words, and \a doCheck is true, an \c InputError is thrown
-      with the last word in correctNames as its info. If \a doCheck is
-      false, the function does nothing except read a word from \a
-      theStream. */
-  static void readTypename(STD_IO::istream& theStream,
-									const char* correctNames,
-									bool doCheck = true);
-
   /** The old-style function to send an object to a stream. Each
       subclass must implement its own formatting. \c writeTo() should
       be favored over \c legacySrlz(). */
