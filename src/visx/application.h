@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 10:55:51 1999
-// written: Thu May 10 12:04:41 2001
+// written: Mon Jun 11 18:16:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,7 @@
 #include "util/error.h"
 #endif
 
-class Experiment;
-
+namespace GWT { class Canvas; }
 
 /** Exception class that is thrown from Application::theApp() if
     nobody has yet called Application::installApp(). */
@@ -61,7 +60,7 @@ public:
   static Application& theApp();
 
   /// Retrieves the experiment that is running in the application.
-  virtual Experiment* getExperiment() = 0;
+  virtual GWT::Canvas& getCanvas() = 0;
 
   int argc() const;
 
