@@ -3,7 +3,7 @@
 // tclcmd.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:43 1999
-// written: Sat Mar  4 02:15:16 2000
+// written: Wed Mar  8 13:54:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,10 +14,6 @@
 #ifndef TCL_H_DEFINED
 #include <tcl.h>
 #define TCL_H_DEFINED
-#endif
-
-#ifndef STRINGFWD_H_DEFINED
-#include "stringfwd.h"
 #endif
 
 #ifndef TCLVALUE_H_DEFINED
@@ -118,8 +114,13 @@ protected:
   /// Attempts to retrieve a C-style string (\c char*) from argument number \a argn.
   const char* getCstringFromArg(int argn);
 
-  /// Attempts to retrieve an STL-style \c string from argument number \a argn.
-  string getStringFromArg(int argn);
+  /** Attempts to retrieve an string type from argument number \a
+      argn. The templated type must be assignable from const char*. */
+  template <class Str>
+  Str getStringTypeFromArg(int argn, Str* /* dummy */ = 0)
+	 {
+		return Str(getCstringFromArg(argn));
+	 }
 
   /** Attempt to convert argument number \a argn to type \c T, and
       copy the result into \a val. */
@@ -189,8 +190,13 @@ protected:
   /// Return satisfactorily with the C-style string (\c char*) result \a val.
   void returnCstring(const char* val);
 
-  /// Return satisfactorily with the STL-style \c string result \a val.
-  void returnString(const string& val);
+  /** Return satisfactorily with the string type result \a val. The
+      templated type must have a c_str() function returning const char*. */
+  template <class Str>
+  void returnStringType(const Str& val)
+	 {
+		returnCstring(val.c_str());
+	 }
 
   /// Return satisfactorily with the generic \c Value result \a val.
   void returnVal(const Value& val);
@@ -210,8 +216,14 @@ protected:
   /// Return satisfactorily with the C-style string (\c char*) result \a val.
   void returnVal(const char* val) { returnCstring(val); }
 
-  /// Return satisfactorily with the STL-style \c string result \a val.
-  void returnVal(const string& val) { returnString(val); }
+  /** Return satisfactorily with the generic string type result \a
+      val. The templated type must have a c_str() function returning
+      const char*. */
+  template <class Str>
+  void returnVal(const Str& val)
+	 {
+		returnVal(val.c_str());
+	 }
 
   /// Return the sequence of values referred to by the range [\a begin, \a end).
   template <class Itr>
@@ -240,8 +252,14 @@ protected:
   /// Append to the result a list element with the C-style string (\c char*) value \a val.
   void lappendVal(const char* val);
 
-  /// Append to the result a list element with the STL-style \c string value \a val.
-  void lappendVal(const string& val);
+  /** Append to the result a list element with the generic string type
+      value \a val. The templated type must have a c_str() function
+      returning const char*. */
+  template <class Str>
+  void lappendVal(const Str& val)
+	 {
+		lappendVal(val.c_str());
+	 }
 
 private:
   template <class T>
