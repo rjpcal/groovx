@@ -49,11 +49,29 @@ namespace Tcl
   class TimerSchedulerToken;
 }
 
-class Tcl::TimerSchedulerToken
+namespace Util
+{
+  class TimerToken;
+}
+
+class Util::TimerToken
+{
+private:
+  TimerToken(const TimerToken&);
+  TimerToken& operator=(const TimerToken&);
+
+protected:
+  TimerToken();
+
+public:
+  virtual ~TimerToken() throw();
+};
+
+class Tcl::TimerSchedulerToken : public Util::TimerToken
 {
 public:
   TimerSchedulerToken(Tcl_TimerToken tok);
-  virtual ~TimerSchedulerToken();
+  virtual ~TimerSchedulerToken() throw();
 
 private:
   Tcl_TimerToken itsToken;
@@ -65,9 +83,9 @@ public:
   TimerScheduler();
 
   // Tcl_TimerToken
-  shared_ptr<Tcl::TimerSchedulerToken> schedule(int msec,
-                                                void (*callback)(void*),
-                                                void* clientdata);
+  shared_ptr<Util::TimerToken> schedule(int msec,
+                                        void (*callback)(void*),
+                                        void* clientdata);
 };
 
 /// Wraps a signal/slot interface around the Tcl timer callback mechansim.
@@ -100,8 +118,7 @@ private:
 
   Tcl::TimerScheduler itsScheduler;
 
-//   Tcl_TimerToken itsToken;
-  shared_ptr<Tcl::TimerSchedulerToken> itsToken;
+  shared_ptr<Util::TimerToken> itsToken;
   unsigned int itsMsecDelay;
   bool isItRepeating;
 
