@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Thu Jul 12 13:23:44 2001
+// written: Fri Jul 13 15:17:22 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -45,7 +45,8 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace ExptTcl {
+namespace ExptTcl
+{
   class BeginCmd;
   class PauseCmd;
   class SetStartCommandCmd;
@@ -273,10 +274,6 @@ public:
   ExpPkg(Tcl_Interp* interp) :
     Tcl::GenericObjPkg<ExptDriver>(interp, "Exp", "$Revision$")
   {
-    addCommand( new BeginCmd(this, "Exp::begin") );
-    addCommand( new PauseCmd(this, "Exp::pause") );
-    addCommand( new SetStartCommandCmd(this, "Exp::setStartCommand") );
-
     declareCSetter("addBlock", &ExptDriver::addBlock);
     declareCAttrib("autosaveFile",
                    &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
