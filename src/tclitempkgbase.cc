@@ -3,7 +3,7 @@
 // tclitempkgbase.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed May 31 18:32:51 2000
-// written: Wed May 31 19:00:34 2000
+// written: Wed May 31 19:07:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,8 @@ Setter<T>::~Setter() {}
 
 template <class T>
 Attrib<T>::~Attrib() {}
+
+Action::~Action() {}
 
 template class Getter<int>;
 template class Getter<bool>;
