@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Sep 24 19:01:17 1999
+// written: Wed Oct 13 09:24:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -340,10 +340,10 @@ DOTRACE("Bitmap::grGetBoundingBox");
   getScreenFromWorld(itsRasterX, itsRasterY, screen_left, screen_bottom);
 
   if (itsZoomX < 0.0) {
-	 screen_left += itsWidth*itsZoomX;
+	 screen_left += int(itsWidth*itsZoomX);
   }
   if (itsZoomY < 0.0) {
-	 screen_bottom += itsHeight*itsZoomY;
+	 screen_bottom += int(itsHeight*itsZoomY);
   }
 
   // Get object coordinates for the upper right corner
