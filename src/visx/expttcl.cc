@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Mon Sep 25 09:35:18 2000
+// written: Thu Oct 19 18:00:04 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -44,9 +44,7 @@ namespace ExptTcl {
   class BeginCmd;
   class InitCmd;
   class PauseCmd;
-  class ReadCmd;
   class SetStartCommandCmd;
-  class WriteCmd;
 
   class ExptPkg;
 };
@@ -171,32 +169,6 @@ private:
   Tcl::TclEvalCmd itsPauseMsgCmd;
 };
 
-//--------------------------------------------------------------------
-//
-// ReadCmd --
-//
-// Restore the current Expt to a previously saved state by reading a
-// file. Returns an error if the filename provided is invalid, or if
-// the file is corrupt or contains invalid data. The current Expt and
-// all of its components (Tlist, ObjList, PosList) are restored to the
-// state described in the file.
-//
-//--------------------------------------------------------------------
-
-class ExptTcl::ReadCmd : public Tcl::TclItemCmd<ExptDriver> {
-public:
-  ReadCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "filename", 2, 2) {}
-protected:
-  virtual void invoke() {
-  DOTRACE("ExptTcl::ReadCmd::invoke");
-	 ExptDriver* ed = getItem();
-	 const char* filename = getCstringFromArg(1);
-
-	 ed->read(filename);
-	 returnVoid();
-  }
-};
 
 //---------------------------------------------------------------------
 //
@@ -220,27 +192,6 @@ protected:
 
 	 widget->bind("<KeyPress-s>", start_command.c_str());
 	 widget->takeFocus();
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// WriteCmd --
-//
-//---------------------------------------------------------------------
-
-class ExptTcl::WriteCmd : public Tcl::TclItemCmd<ExptDriver> {
-public:
-  WriteCmd(Tcl::TclItemPkg* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<ExptDriver>(pkg, cmd_name, "filename", 2, 2) {}
-protected:
-  virtual void invoke() {
-  DOTRACE("ExptTcl::WriteCmd::invoke");
-	 ExptDriver* ed = getItem();
-    const char* filename = getCstringFromArg(1);
-
-	 ed->write(filename);
-	 returnVoid();
   }
 };
 
@@ -276,9 +227,7 @@ ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :
 
   addCommand( new BeginCmd(this, "Expt::begin") );
   addCommand( new PauseCmd(this, "Expt::pause") );
-  addCommand( new ReadCmd(this, "Expt::read") );
   addCommand( new SetStartCommandCmd(this, "Expt::setStartCommand") );
-  addCommand( new WriteCmd(this, "Expt::write") );
 
   declareCAttrib("autosaveFile",
 					  &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
