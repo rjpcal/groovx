@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 16:51:43 2002
+// written: Mon Mar  4 16:53:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -590,75 +590,6 @@ public:
 
   const_iterator begin() const { return const_iterator(this, 0); }
   const_iterator end() const { return const_iterator(this, nelems()); }
-};
-
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * Mtx class definition
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-class Mtx : public MtxBase<DataHolder>
-{
-public:
-
-  typedef MtxBase<DataHolder> Base;
-
-  //
-  // Constructors + Conversion
-  //
-
-  static const Mtx& emptyMtx();
-
-  Mtx(mxArray* a, StoragePolicy s = COPY) : Base(a, s) {}
-
-  /** With a const mxArray*, only BORROW or COPY are allowed as storage
-      policies, in order to preserve const-correctness. */
-  Mtx(const mxArray* a, StoragePolicy s = COPY) : Base(a, s) {}
-
-  Mtx(double* data, int mrows, int ncols, StoragePolicy s = COPY) :
-    Base(data, mrows, ncols, s) {}
-
-  Mtx(int mrows, int ncols, InitPolicy p = ZEROS) :
-    Base(mrows, ncols, p) {}
-
-  Mtx(const Slice& s);
-
-  Mtx(const Mtx& other) : Base(other) {}
-
-  virtual ~Mtx();
-
-  Mtx& operator=(const Mtx& other)
-  {
-    Mtx temp(other);
-    Base::swap(temp);
-    return *this;
-  }
-
-  // This will destroy any data in the process of changing the size of
-  // the Mtx to the specified dimensions; its only advantage over just
-  // declaring a new Mtx is that it will avoid a deallocate/allocate
-  // cycle if the new dimensions are the same as the current dimensions.
-  void resize(int mrowsNew, int ncolsNew);
-
-  mxArray* makeMxArray() const;
-
-
-  //
-  // I/O
-  //
-
-  void print() const;
-
-  // This version will print the given name before printing the matrix contents
-  void print(const char* mtxName) const;
-
-  //
-  // Iteration
-  //
 
 
   template <class T>
@@ -779,6 +710,76 @@ public:
 
   const_rowmaj_iter rowmaj_end() const
   { return const_rowmaj_iter(rowstride(), ncols(), address(mrows(),0)); }
+};
+
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * Mtx class definition
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+class Mtx : public MtxBase<DataHolder>
+{
+public:
+
+  typedef MtxBase<DataHolder> Base;
+
+  //
+  // Constructors + Conversion
+  //
+
+  static const Mtx& emptyMtx();
+
+  Mtx(mxArray* a, StoragePolicy s = COPY) : Base(a, s) {}
+
+  /** With a const mxArray*, only BORROW or COPY are allowed as storage
+      policies, in order to preserve const-correctness. */
+  Mtx(const mxArray* a, StoragePolicy s = COPY) : Base(a, s) {}
+
+  Mtx(double* data, int mrows, int ncols, StoragePolicy s = COPY) :
+    Base(data, mrows, ncols, s) {}
+
+  Mtx(int mrows, int ncols, InitPolicy p = ZEROS) :
+    Base(mrows, ncols, p) {}
+
+  Mtx(const Slice& s);
+
+  Mtx(const Mtx& other) : Base(other) {}
+
+  virtual ~Mtx();
+
+  Mtx& operator=(const Mtx& other)
+  {
+    Mtx temp(other);
+    Base::swap(temp);
+    return *this;
+  }
+
+  // This will destroy any data in the process of changing the size of
+  // the Mtx to the specified dimensions; its only advantage over just
+  // declaring a new Mtx is that it will avoid a deallocate/allocate
+  // cycle if the new dimensions are the same as the current dimensions.
+  void resize(int mrowsNew, int ncolsNew);
+
+  mxArray* makeMxArray() const;
+
+
+  //
+  // I/O
+  //
+
+  void print() const;
+
+  // This version will print the given name before printing the matrix contents
+  void print(const char* mtxName) const;
+
+  //
+  // Iteration
+  //
+
 
   //
   // Data access
