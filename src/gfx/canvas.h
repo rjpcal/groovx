@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Sun Aug 26 08:35:12 2001
+// written: Mon Aug 27 16:56:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,6 +39,13 @@ public:
   /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~Canvas();
 
+  ///////////////////////////////////////////////////////////////////////
+  //
+  // Accessors
+  //
+  ///////////////////////////////////////////////////////////////////////
+
+
   /// Convert a point from world coordinates to screen coordinates.
   virtual Gfx::Vec2<int> screenFromWorld(const Gfx::Vec2<double>& world_pos) const = 0;
 
@@ -70,50 +77,11 @@ public:
   /// Query the number of bytes per pixel.
   virtual unsigned int bitsPerPixel() const = 0;
 
-  /// Draw pixmap data at the specified position.
-  virtual void drawPixels(const Gfx::BmapData& data,
-                          const Gfx::Vec2<double>& world_pos,
-                          const Gfx::Vec2<double>& zoom) const = 0;
+  virtual void throwIfError(const char* where) const = 0;
 
-  /// Draw bitmap data at the specified position.
-  virtual void drawBitmap(const Gfx::BmapData& data,
-                          const Gfx::Vec2<double>& world_pos) const = 0;
 
-  /// Read pixel data from the screen rect \a bounds into \a data_out.
-  virtual void grabPixels(const Gfx::Rect<int>& bounds,
-                          Gfx::BmapData& data_out) const = 0;
 
-  /// Swap the foreground and background colors.
-  virtual void swapForeBack() const = 0;
-
-  /// Flush all pending drawing requests.
-  virtual void flushOutput() const = 0;
-
-  /// Clear the color buffer to the clear color.
-  virtual void clearColorBuffer() const = 0;
-
-  /// Clear a region of the color buffer to the clear color.
-  virtual void clearColorBuffer(const Gfx::Rect<int>& screen_rect) const = 0;
-
-  /// Select the front buffer for future drawing operations.
-  virtual void drawOnFrontBuffer() const = 0;
-
-  /// Select the back buffer for future drawing operations.
-  virtual void drawOnBackBuffer() const = 0;
-
-  /// Save the current matrix.
-  virtual void pushMatrix() const = 0;
-
-  /// Restore the previously saved matrix.
-  virtual void popMatrix() const = 0;
-
-  /// Save the entire current attrib set.
-  virtual void pushAttribs() const = 0;
-
-  /// Restore the previously saved entire attrib set.
-  virtual void popAttribs() const = 0;
-
-  typedef void (Gfx::Canvas::* Manip)() const;
+  typedef void (Gfx::Canvas::* Manip)();
 
   /** \c MatrixSaver handles saving and restoring of some part of the
       matrix state within a lexical scope, in an exception-safe manner. */
@@ -123,7 +91,7 @@ public:
   public:
     /** Save the state of \a canvas. Its state will be restored to the
         saved state when the \c MatrixSaver is destroyed. */
-    Saver(const Canvas& canvas) :
+    Saver(Canvas& canvas) :
       itsCanvas(canvas)
     { (itsCanvas.*doit)(); }
 
@@ -135,47 +103,120 @@ public:
     Saver(const Saver&);
     Saver& operator=(const Saver&);
 
-    const Canvas& itsCanvas;
+    Canvas& itsCanvas;
   };
 
-  /** \c MatrixSaver handles saving and restoring of the matrix within
-      a lexical scope. */
-  typedef Saver<&Gfx::Canvas::pushMatrix, &Gfx::Canvas::popMatrix>
-  MatrixSaver;
+  ///////////////////////////////////////////////////////////////////////
+  //
+  // Attribs (saved with an AttribSaver)
+  //
+  ///////////////////////////////////////////////////////////////////////
+
+  /// Save the entire current attrib set.
+  virtual void pushAttribs() = 0;
+
+  /// Restore the previously saved entire attrib set.
+  virtual void popAttribs() = 0;
 
   /** \c MatrixSaver handles saving and restoring of all of the canvas
       attribs within a lexical scope. */
   typedef Saver<&Gfx::Canvas::pushAttribs, &Gfx::Canvas::popAttribs>
   AttribSaver;
 
-  virtual void setColor(const Gfx::RgbaColor& rgba) const = 0;
-  virtual void setClearColor(const Gfx::RgbaColor& rgba) const = 0;
+  /// Select the front buffer for future drawing operations.
+  virtual void drawOnFrontBuffer() = 0;
 
-  virtual void setColorIndex(unsigned int index) const = 0;
-  virtual void setClearColorIndex(unsigned int index) const = 0;
+  /// Select the back buffer for future drawing operations.
+  virtual void drawOnBackBuffer() = 0;
 
-  virtual void setLineWidth(double width) const = 0;
+  virtual void setColor(const Gfx::RgbaColor& rgba) = 0;
+  virtual void setClearColor(const Gfx::RgbaColor& rgba) = 0;
 
-  virtual void translate(const Gfx::Vec3<double>& v) const = 0;
-  virtual void scale(const Gfx::Vec3<double>& v) const = 0;
-  virtual void rotate(const Gfx::Vec3<double>& v, double degrees) const = 0;
+  virtual void setColorIndex(unsigned int index) = 0;
+  virtual void setClearColorIndex(unsigned int index) = 0;
 
-  virtual void throwIfError(const char* where) const = 0;
+  /// Swap the foreground and background colors.
+  virtual void swapForeBack() = 0;
 
-  virtual void drawRect(const Gfx::Rect<double>& rect) const = 0;
+  virtual void setLineWidth(double width) = 0;
 
-  virtual void beginPoints() const = 0;
-  virtual void beginLines() const = 0;
-  virtual void beginLineStrip() const = 0;
-  virtual void beginLineLoop() const = 0;
-  virtual void beginTriangles() const = 0;
-  virtual void beginTriangleStrip() const = 0;
-  virtual void beginTriangleFan() const = 0;
-  virtual void beginQuads() const = 0;
-  virtual void beginQuadStrip() const = 0;
-  virtual void beginPolygon() const = 0;
+  virtual void enableAntialiasing() = 0;
 
-  virtual void end() const = 0;
+  ///////////////////////////////////////////////////////////////////////
+  //
+  // Transformation matrix (saved with a MatrixSaver)
+  //
+  ///////////////////////////////////////////////////////////////////////
+
+  /// Save the current transformation matrix.
+  virtual void pushMatrix() = 0;
+
+  /// Restore the previously saved transformation matrix.
+  virtual void popMatrix() = 0;
+
+  /** \c MatrixSaver handles saving and restoring of the matrix within
+      a lexical scope. */
+  typedef Saver<&Gfx::Canvas::pushMatrix, &Gfx::Canvas::popMatrix>
+  MatrixSaver;
+
+  virtual void translate(const Gfx::Vec3<double>& v) = 0;
+  virtual void scale(const Gfx::Vec3<double>& v) = 0;
+  virtual void rotate(const Gfx::Vec3<double>& v, double degrees) = 0;
+
+  ///////////////////////////////////////////////////////////////////////
+  //
+  // Drawing
+  //
+  ///////////////////////////////////////////////////////////////////////
+
+  /// Draw pixmap data at the specified position.
+  virtual void drawPixels(const Gfx::BmapData& data,
+                          const Gfx::Vec2<double>& world_pos,
+                          const Gfx::Vec2<double>& zoom) = 0;
+
+  /// Draw bitmap data at the specified position.
+  virtual void drawBitmap(const Gfx::BmapData& data,
+                          const Gfx::Vec2<double>& world_pos) = 0;
+
+  /// Read pixel data from the screen rect \a bounds into \a data_out.
+  virtual void grabPixels(const Gfx::Rect<int>& bounds,
+                          Gfx::BmapData& data_out) = 0;
+
+  /// Clear the color buffer to the clear color.
+  virtual void clearColorBuffer() = 0;
+
+  /// Clear a region of the color buffer to the clear color.
+  virtual void clearColorBuffer(const Gfx::Rect<int>& screen_rect) = 0;
+
+  virtual void drawRect(const Gfx::Rect<double>& rect) = 0;
+
+  virtual void drawCircle(double inner_radius, double outer_radius,
+                          unsigned int slices, unsigned int loops) = 0;
+
+  virtual void drawBezier4(const Gfx::Vec3<double>& p1,
+                           const Gfx::Vec3<double>& p2,
+                           const Gfx::Vec3<double>& p3,
+                           const Gfx::Vec3<double>& p4,
+                           unsigned int subdivisions) = 0;
+
+  virtual void beginPoints() = 0;
+  virtual void beginLines() = 0;
+  virtual void beginLineStrip() = 0;
+  virtual void beginLineLoop() = 0;
+  virtual void beginTriangles() = 0;
+  virtual void beginTriangleStrip() = 0;
+  virtual void beginTriangleFan() = 0;
+  virtual void beginQuads() = 0;
+  virtual void beginQuadStrip() = 0;
+  virtual void beginPolygon() = 0;
+
+  virtual void vertex2(const Gfx::Vec2<double>& v) = 0;
+  virtual void vertex3(const Gfx::Vec3<double>& v) = 0;
+
+  virtual void end() = 0;
+
+  /// Flush all pending drawing requests.
+  virtual void flushOutput() = 0;
 
 #define BLOCK_TYPEDEF(name) \
   typedef Saver<&Gfx::Canvas::begin##name, &Gfx::Canvas::end> name##Block;
@@ -192,9 +233,6 @@ public:
   BLOCK_TYPEDEF(Polygon);
 
 #undef BLOCK_TYPEDEF
-
-  virtual void vertex2(const Gfx::Vec2<double>& v) const = 0;
-  virtual void vertex3(const Gfx::Vec3<double>& v) const = 0;
 };
 
 static const char vcid_canvas_h[] = "$Header$";
