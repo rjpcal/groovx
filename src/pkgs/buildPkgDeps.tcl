@@ -1,5 +1,8 @@
 #!/usr/bin/env tclsh
-
+#
+# Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
+#
+# $Revision$
 
 
 proc getPkgNameFromPath { path } {
@@ -57,7 +60,7 @@ proc setup_package { pkgname ccfiles libdir } {
     print $::depfile "${shlib}:"
 
     foreach file $files {
-	print $::depfile " \\\n\t${::objdir}/$file"
+	print $::depfile " \\\n\t${::OBJDIR}/$file"
     }
 
     print $::depfile "\n\n"
@@ -92,21 +95,17 @@ proc setup_package { pkgname ccfiles libdir } {
 # Main code
 #
 
-set project_root [pwd]
+source [file dirname [info script]]/../../scripts/parse_cmdline.tcl
 
-set indexfile [open $::env(HOME)/local/$::env(ARCH)/lib/visx/pkgIndex.tcl w]
+# We are depending on the following command-line args:
+#   --depfile, --objdir, --pkgdir, and --libdir
+parse_cmdline $argv
 
-# The name of the output file is given in the command-line args to this
-# script:
-set depfile [open [lindex $argv 0] w]
+set indexfile [open ${::LIBDIR}/pkgIndex.tcl w]
 
-set libdir $::env(HOME)/local/$::env(ARCH)/lib/visx
+set depfile [open $::DEPFILE w]
 
-set objdir obj/$::env(ARCH)/pkgs
-
-set pkgdir ${project_root}/src/pkgs
-
-cd $pkgdir
+cd $PKGDIR
 
 print $::depfile "PKG_LIBS := \n\n"
 
@@ -123,7 +122,7 @@ foreach dir [glob \[a-z\]*/] {
 
 	set ccfiles [glob ${dir}/*.cc]
 
-	setup_package $pkgname $ccfiles $libdir
+	setup_package $pkgname $ccfiles $LIBDIR
     } else {
 
 	# For the special case of the whitebox tests, each .cc file becomes
@@ -135,7 +134,7 @@ foreach dir [glob \[a-z\]*/] {
 	foreach ccfile $ccfiles {
 	    set pkgname [file tail [file rootname $ccfile]]
 
-	    setup_package $pkgname $ccfile $libdir
+	    setup_package $pkgname $ccfile $LIBDIR
 	}
     }
 }
