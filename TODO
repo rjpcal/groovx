@@ -45,8 +45,8 @@
 
 ** Strategy:
 
-    (1) Avoid storing the result of the singleton-getters.
-    (2) Pass the buck back out to callers.
+   (1) Avoid storing the result of the singleton-getters.
+   (2) Pass the buck back out to callers.
 
 * (12-Oct-2004) move into rutz:: namespace and de-camel-case
 
@@ -54,17 +54,18 @@
   fileposition
   fstring
   functors
-  gzstreambuf
   pipe
   pointers
   serialport?
   stderror
   stopwatch
+  time
 
   [done] algo
   [done] base64
   [done] freelist
   [done] cstrstream
+  [done] gzstreambuf
   [done] mappedfile
   [done] rand
 
@@ -77,14 +78,40 @@
 
   How to do this incrementally?
 
-  (1) Just implement a Tcl::TimerScheduler, then have Tcl::Timer rely
-      on that.
+  (1-done) Just implement a Tcl::TimerScheduler, then have Tcl::Timer
+	   rely on that.
 
-  (2) Make a generic Util::Scheduler, and have Tcl::Timer depend on
-      that instead of the specific Tcl::TimerScheduler implementation.
+  (2-done) Make a generic Util::Scheduler, and have Tcl::Timer depend
+	   on that instead of the specific Tcl::TimerScheduler
+	   implementation. OK, but who is going to feed the specific
+	   Util::Scheduler object to Tcl::Timer? This depends on the
+	   location in which we wish to inject a choice between
+	   "normal" and "debug" scheduling. Is it another global
+	   choice, where we just have a global "current scheduler"?
+	   No, that's no good... we might want to have multiple
+	   schedulers operating simultaneously (e.g. scene update
+	   "normal", experiment progress in "debug" mode). So maybe
+	   the scheduler is stored in ExptDriver, and passed along the
+	   Element object hieararchy? Does that move ExptDriver too
+	   much in the direction of a God class?
 
-  (3) Now Tcl::Timer doesn't depend on Tcl, so move it elsewhere
-      (maybe down into Util?).
+	   Essentially Util::Scheduler is doing the "Abstract Factory"
+	   pattern, where it creates Util::TimerToken objects.
+
+  (3-done) Now Tcl::Timer doesn't depend on Tcl, so move it elsewhere
+	   (maybe down into Util?).
+
+  (4) OK, now we have all the smarts in Util::Timer, but we still have
+      a Tcl::Timer class whose only purpose is to hook up a
+      Util::Timer object with a Tcl::TimerScheduler. Need to move this
+      logic elsewhere. First, need to get clients to rely on
+      Util::Timer instead of Tcl::Timer.
+
+  (4) Change Tcl::TimerScheduler to hold a Tcl::Interp, to which it
+      can direct background errors; this way we don't need
+      Tcl::Main::interp() in Tcl::Timer. Maybe we get this by having
+      Tcl::Interp itself create the Tcl::TimerScheduler,
+      i.e. interp.getScheduler().
 
 * (9-Oct-2004) Fix GLCanvas::grabPixels() to work with 16-bit framebuffer
 

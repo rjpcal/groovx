@@ -4357,7 +4357,7 @@
     gxrasterfont.cc -- selects between {Glx,Agl}Rasterfont
     glwindowinterface.cc -- selects between {Glx,Agl}Wrapper
 
-* (22-Nov-2002) Cleaning out the src/visx tree.
+* (22-Nov-2002, done) Cleaning out the src/visx tree.
 
   [ok] gtracetcl.cc --> src/tcl
   [ok] Subject class has never been used at all --> trash it
@@ -4385,3 +4385,27 @@
 ** overeager lookup of template arg-dependent names
 
 ** no <cheader> include files so e.g. size_t not in std:: namespace
+
+* (done 14-Oct-2004) Pass a FilePosition to Tcl::Interp::handleLiveException
+
+  --> Tcl::CommandGroup::rawInvoke
+  --> Tcl::Pkg::~Pkg
+  --> Tcl::Pkg::handleLiveException()
+  --> Tcl::Pkg::namespaceAlias
+  --> Tcl::Pkg::inherit
+  --> Tcl::Pkg::eval
+  --> tclpkg.h::PKG_RETURN
+  --> TkWidgImpl::cEventCallback
+  --> TkWidgImpl::cRenderCallback
+  --> TkWidgImpl::cEventCallback
+  --> Tcl::TimerScheduler::dummyCallback
+
+  Good; now we can report three things:
+  (1) from where an exception was thrown (created)
+  (2) the stack state at the time the exception was thrown
+  (3) the location where the exception was caught
+
+* (done 14-Oct-2004) Lose some "eval"s in the test suite Tcl code
+
+  Aha. This reveals a lot of tests that are run multiple times without
+  any actual variation.
