@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Wed Mar 15 10:17:32 2000
+// written: Tue Mar 21 12:48:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,29 +54,44 @@ public:
 namespace {
   const char STRING_ENDER = '^';
 
-  void unEscape(string& text) {
-  DOTRACE("<asciistreamreader.cc>::unEscape");
-	 // un-escape any special characters
-	 for (size_t pos = 0; pos < text.length(); ++pos) {
+  fixed_block<char> READ_BUFFER(4096);
 
-		if (text[pos] == '\\') {
-		  if ( (pos+1) >= text.length() ) {
-			 throw ReadError("missing character after trailing backslash");
+  void readAndUnEscape(istream& is, string& text_out)
+	 {
+		// DOTRACE("AsciiStreamReader::Impl::readAndUnEscape");
+	   fixed_block<char>::iterator
+		  itr = READ_BUFFER.begin(),
+		  stop = READ_BUFFER.end();
+		int ch = 0;
+		while ( (ch = is.get()) != EOF && ch != STRING_ENDER)
+		  {
+			 if (itr >= stop)
+				throw ("AsciiStreamReader exceeded read buffer capacity");
+			 if (ch != '\\')
+				{
+				  *itr++ = ch;
+				  continue;
+				}
+			 else
+				{
+				  int ch2 = is.get();
+				  if (ch2 == EOF || ch2 == STRING_ENDER)
+					 throw ReadError("missing character after trailing backslash");
+				  switch (ch2) {
+				  case '\\':
+					 *itr++ = '\\';
+					 break;
+				  case 'c':
+					 *itr++ = '^';
+					 break;
+				  default:
+					 throw ReadError("invalid escape character");
+					 break;
+				  }
+				}
 		  }
-		  switch (text[pos+1]) {
-		  case '\\':
-			 text.erase(pos+1, 1);
-			 break;
-		  case 'c':
-			 text.replace(pos, 2, "^");
-			 break;
-		  default:
-			 throw ReadError("invalid escape character");
-			 break;
-		  }
-		}
+		text_out.assign(READ_BUFFER.begin(), itr);
 	 }
-  }
 
 }
 
@@ -115,24 +130,23 @@ public:
   public:
 	 ObjectMap() : itsMap() {}
 
-	 bool hasBeenCreated(unsigned long id) {
-		return (itsMap[id] != 0);
-	 }
-
 	 // This returns the object for the given id; the object must
 	 // already have been created, otherwise an exception will be thrown.
 	 IO* getObject(unsigned long id)
 		{
-		  if ( !hasBeenCreated(id) )
+		  IO* obj = itsMap[id];
+		  if ( obj == 0 )
 			 throw ReadError("no object was found for the given id");
 
-		  return itsMap[id];
+		  return obj;
 		}
 
 	 // This will create an object for the id if one has not yet been
 	 // created, then return the object for that id.
 	 IO* fetchObject(const char* type, unsigned long id) {
-		if ( !hasBeenCreated(id) )
+		IO*& itsMap_at_id = itsMap[id];
+
+		if ( itsMap_at_id == 0 )
 		  {
 			 IO* obj = IoMgr::newIO(type);
 
@@ -142,30 +156,28 @@ public:
 			 DebugEvalNL((void*) obj);
 			 Assert(obj != 0);
 
-			 itsMap[id] = obj;
+			 itsMap_at_id = obj;
 		  }
 
-		Assert(itsMap[id] != 0);
-		return itsMap[id];
+		Assert(itsMap_at_id != 0);
+		return itsMap_at_id;
 	 }
 
 	 void assignObjectForId(unsigned long id, IO* object)
 		{
-		  if ( hasBeenCreated(id) )
+		  IO*& itsMap_at_id = itsMap[id];
+
+		  // See if an object has already been created for this id
+		  if ( itsMap_at_id != 0 )
 			 throw ReadError("object has already been created");
 
-		  itsMap[id] = object;
+		  itsMap_at_id = object;
 		}
 
 	 void clear() { itsMap.clear(); }
   };
 
   struct Attrib {
-	 Attrib(const char* t=0, const char* v=0) :
-		type(t ? t : ""), value(v ? v : "") {}
-
-	 Attrib(const string& t, const string& v) : type(t), value(v) {}
-
 	 string type;
 	 string value;
   };
@@ -179,26 +191,35 @@ public:
 
 	 const Attrib& operator[](const string& attrib_name)
 		{
-		  if ( itsMap[attrib_name].type.empty() )
+		  // DOTRACE("AsciiStreamReader::Impl::AttribMap::operator[]");
+		  const Attrib& attrib = itsMap[attrib_name];
+		  if ( attrib.type.empty() )
 			 {
 				ReadError err("invalid attribute name: ");
 				err.appendMsg(attrib_name.c_str());
 				throw err;
 			 }
 
-		  return itsMap[attrib_name];
+		  return attrib;
 		}
 
-	 void clear() { itsMap.clear(); }
-
-	 void assign(const string& attrib_name,
-					 const char* type, const char* value)
+	 Attrib& getNewAttrib(const string& attrib_name)
 		{
-		DOTRACE("AsciiStreamReader::Impl::AttribMap::assign");
+		  // DOTRACE("AsciiStreamReader::Impl::AttribMap::getNewAttrib");
 		  Attrib& attrib = itsMap[attrib_name];
-		  attrib.type = type;
-		  attrib.value = value;    DebugEvalNL(attrib.value);
-		  unEscape(attrib.value);  DebugEvalNL(attrib.value);
+		  if ( !attrib.type.empty() )
+			 {
+				ReadError err("already created attribute name: ");
+				err.appendMsg(attrib_name.c_str());
+				throw err;
+			 }
+		  return attrib;
+		}
+
+	 void clear()
+		{
+		  // DOTRACE("AsciiStreamReader::Impl::AttribMap::clear");
+		  itsMap.clear();
 		}
   };
 
@@ -221,7 +242,7 @@ public:
 
 	 T return_val;
 	 ist >> return_val;
-	 DebugEval(itsAttribs.[name].value); DebugEvalNL(return_val);
+	 DebugEval(itsAttribs[name].value); DebugEvalNL(return_val);
 
 	 if (ist.fail())
 		throw AttributeReadError(name);
@@ -272,7 +293,7 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
 		throw AttributeReadError(name);
 	 }  
 
-  DebugEval(itsAttribs.[name].value); DebugEvalNL(new_cstring);
+  DebugEval(itsAttribs[name].value); DebugEvalNL(new_cstring);
   return new_cstring;
 }
 
@@ -341,22 +362,18 @@ DOTRACE("AsciiStreamReader::Impl::initAttributes");
 
   char type[64], name[64], equal[16];
 
-  static fixed_block<char> value_buffer(4096);;
-
   for (int i = 0; i < attrib_count; ++i) {
 
-	 itsBuf >> type >> name >> equal;   DebugEval(type); DebugEval(name); 
+ 	 itsBuf >> type >> name >> equal;   DebugEval(type); DebugEval(name); 
 
 	 if ( itsBuf.fail() )
 		throw ReadError("input failed while reading attribute type and name");
 
-  	 itsBuf.getline(&value_buffer[0], value_buffer.size(), STRING_ENDER);
-	 if ( itsBuf.gcount() >= (value_buffer.size() - 1) ) {
-		throw ReadError("value buffer overflow in "
-							 "AsciiStreamReader::initAttributes");
-	 }
+	 Attrib& attrib = itsAttribs.getNewAttrib(name);
 
-	 itsAttribs.assign(name, type, &value_buffer[0]);
+	 attrib.type = type;
+
+	 readAndUnEscape(itsBuf, attrib.value);
   }
 }
 
@@ -446,7 +463,6 @@ char* AsciiStreamReader::readCstring(const char* name) {
 }
 
 void AsciiStreamReader::readValueObj(const char* name, Value& value) {
-DOTRACE("AsciiStreamReader::readValueObj");
   itsImpl.readValueObj(name, value); 
 }
 
