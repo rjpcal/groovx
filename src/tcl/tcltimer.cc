@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug 23 14:50:36 2001
-// written: Thu Aug 23 16:13:33 2001
+// written: Fri Aug 24 16:04:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,16 +17,15 @@
 
 #include <tcl.h>
 
-#define LOCAL_DEBUG
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
 
-Tcl::Timer::Timer(unsigned int msec, bool repeat = false) :
+Tcl::Timer::Timer(unsigned int msec, bool repeat) :
   sigTimeOut(),
   itsMsecDelay(msec),
-  isItRepeating(false),
+  isItRepeating(repeat),
   itsStopWatch(),
   itsToken(0)
 {}
