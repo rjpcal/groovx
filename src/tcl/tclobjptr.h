@@ -1,13 +1,20 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // tclobjlock.h
 // Rob Peters
 // created: Tue May 11 13:44:19 1999
-// written: Tue Dec  7 18:13:00 1999
+// written: Mon Mar  6 12:10:31 2000
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef TCLOBJLOCK_H_DEFINED
 #define TCLOBJLOCK_H_DEFINED
+
+#ifndef TCL_H_DEFINED
+#include <tcl.h>
+#define TCL_H_DEFINED
+#endif
 
 struct Tcl_Obj;
 
