@@ -61,7 +61,7 @@ int Gtrace_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gtrace_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Gtrace", "$Revision$");
+  PKG_CREATE(interp, "Gtrace", "$Revision$");
   pkg->def("::gtrace", "on_off", &Util::Trace::setGlobalTrace);
   pkg->def("::gtrace", "", &Util::Trace::getGlobalTrace);
   pkg->def("maxDepth", "level", &Util::Trace::setMaxLevel);
@@ -70,7 +70,7 @@ DOTRACE("Gtrace_Init");
   pkg->def("::dbglevel", "key level", &setOneLevel);
   pkg->def("::dbgkey", "filename", &Debug::lookupKey);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 extern "C"
@@ -78,11 +78,11 @@ int Prof_Init(Tcl_Interp* interp)
 {
 DOTRACE("Prof_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Prof", "$Revision$");
+  PKG_CREATE(interp, "Prof", "$Revision$");
   pkg->def("summary", "", &profSummary);
   pkg->def("reset", "", &Util::Prof::resetAllProfData);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_gtrace_cc[] = "$Header$";

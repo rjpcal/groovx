@@ -55,7 +55,7 @@ int Timinghdlr_Init(Tcl_Interp* interp)
 {
 DOTRACE("Timinghdlr_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "TimingHdlr", "$Revision$");
+  PKG_CREATE(interp, "TimingHdlr", "$Revision$");
   Tcl::defCreator<TimingHdlr>(pkg);
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<TimingHdlr>(pkg);
@@ -84,7 +84,7 @@ DOTRACE("Timinghdlr_Init");
 
   pkg->namespaceAlias("Th");
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 extern "C"
@@ -92,7 +92,7 @@ int Timinghandler_Init(Tcl_Interp* interp)
 {
 DOTRACE("Timinghandler_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "TimingHandler", "$Revision$");
+  PKG_CREATE(interp, "TimingHandler", "$Revision$");
   Tcl::defCreator<TimingHandler>(pkg);
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<TimingHandler>(pkg);
@@ -112,7 +112,7 @@ DOTRACE("Timinghandler_Init");
 
   pkg->namespaceAlias("SimpleTh");
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_thtcl_cc[] = "$Header$";

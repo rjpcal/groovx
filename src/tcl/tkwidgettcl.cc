@@ -43,7 +43,7 @@ int Tkwidget_Init(Tcl_Interp* interp)
 {
 DOTRACE("Tkwidget_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "TkWidget", "$Revision$");
+  PKG_CREATE(interp, "TkWidget", "$Revision$");
 
   pkg->inheritPkg("Obj");
   Tcl::defGenericObjCmds<Tcl::TkWidget>(pkg);
@@ -63,7 +63,7 @@ DOTRACE("Tkwidget_Init");
 
   pkg->defAction("hook", &Tcl::TkWidget::hook);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_tkwidgettcl_cc[] = "$Header$";

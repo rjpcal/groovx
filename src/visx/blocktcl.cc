@@ -43,14 +43,14 @@ int Block_Init(Tcl_Interp* interp)
 {
 DOTRACE("Block_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Block", "$Revision$");
+  PKG_CREATE(interp, "Block", "$Revision$");
   pkg->inheritPkg("ElementContainer");
   Tcl::defGenericObjCmds<Block>(pkg);
   Tcl::defCreator<Block>(pkg);
 
   Tcl::defTracing(pkg, Block::tracer);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_blocktcl_cc[] = "$Header$";

@@ -101,7 +101,7 @@ int Exptdriver_Init(Tcl_Interp* interp)
 {
 DOTRACE("Exptdriver_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "ExptDriver", "$Revision$");
+  PKG_CREATE(interp, "ExptDriver", "$Revision$");
   pkg->inheritPkg("ElementContainer");
   Tcl::defCreator<ExptDriver>(pkg);
   Tcl::defGenericObjCmds<ExptDriver>(pkg);
@@ -124,7 +124,7 @@ DOTRACE("Exptdriver_Init");
   pkg->defGetter("doWhenComplete", &ExptDriver::getDoWhenComplete);
   pkg->defSetter("doWhenComplete", &ExptDriver::setDoWhenComplete);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_expttcl_cc[] = "$Header$";

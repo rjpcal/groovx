@@ -41,12 +41,12 @@ int Maskhatch_Init(Tcl_Interp* interp)
 {
 DOTRACE("Maskhatch_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "MaskHatch", "$Revision$");
+  PKG_CREATE(interp, "MaskHatch", "$Revision$");
   pkg->inheritPkg("GxShapeKit");
   Tcl::defFieldContainer<MaskHatch>(pkg);
   Tcl::defCreator<MaskHatch>(pkg);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_masktcl_cc[] = "$Header$";

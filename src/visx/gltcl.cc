@@ -476,7 +476,7 @@ int Gl_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gl_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GL", "$Revision$");
+  PKG_CREATE(interp, "GL", "$Revision$");
   GLTcl::loadGet(pkg);
   GLTcl::loadEnums(pkg);
 
@@ -545,7 +545,7 @@ DOTRACE("Gl_Init");
   pkg->def( "::pixelCheckSum", "x y w h", GLTcl::pixelCheckSum );
   pkg->def( "::pixelCheckSum", 0, GLTcl::pixelCheckSumAll );
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_gltcl_cc[] = "$Header$";

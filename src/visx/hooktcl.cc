@@ -557,7 +557,7 @@ namespace
 extern "C"
 int Hook_Init(Tcl_Interp* interp)
 {
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Hook", "$Revision$");
+  PKG_CREATE(interp, "Hook", "$Revision$");
 
   pkg->def( "::hook", "", HookTcl::hook );
   pkg->def( "::memUsage", 0, HookTcl::memUsage );
@@ -584,7 +584,7 @@ int Hook_Init(Tcl_Interp* interp)
   pkg->def( "::getArraySize", 0, getArraySize );
   pkg->def( "::setArray", "list", setArray );
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_hooktcl_cc[] = "$Header$";

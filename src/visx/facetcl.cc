@@ -59,7 +59,8 @@ int Face_Init(Tcl_Interp* interp)
 {
 DOTRACE("Face_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Face", "$Revision$");
+  PKG_CREATE(interp, "Face", "$Revision$");
+
   pkg->inheritPkg("GxShapeKit");
   Tcl::defFieldContainer<Face>(pkg);
   Tcl::defCreator<Face>(pkg);
@@ -70,7 +71,7 @@ DOTRACE("Face_Init");
   Util::ObjFactory::theOne().registerCreatorFunc( &makeFilledFace,
                                                   "FilledFace" );
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 extern "C"
@@ -78,12 +79,12 @@ int Cloneface_Init(Tcl_Interp* interp)
 {
 DOTRACE("Cloneface_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "CloneFace", "$Revision$");
+  PKG_CREATE(interp, "CloneFace", "$Revision$");
   pkg->inheritPkg("Face");
   Tcl::defFieldContainer<CloneFace>(pkg);
   Tcl::defCreator<CloneFace>(pkg);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_facetcl_cc[] = "$Header$";

@@ -53,7 +53,7 @@ int Sound_Init(Tcl_Interp* interp)
 DOTRACE("Sound_Init");
 
   Tcl::Interp intp(interp);
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Sound", "$Revision$");
+  PKG_CREATE(interp, "Sound", "$Revision$");
 
   pkg->onExit(&Sound::closeSound);
 
@@ -107,7 +107,7 @@ DOTRACE("Sound_Init");
         }
     }
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_soundtcl_cc[] = "$Header$";

@@ -88,7 +88,7 @@ DOTRACE("Misc_Init");
 
   using namespace Util;
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Misc", "$Revision$");
+  PKG_CREATE(interp, "Misc", "$Revision$");
 
   pkg->def( "::rand", "min max",
             bindFirst(memFunc(&Urand::fdrawRange), &generator) );
@@ -123,7 +123,7 @@ DOTRACE("Misc_Init");
 
   pkg->def( "::?", "cmd_name", &cmdUsage );
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_misctcl_cc[] = "$Header$";

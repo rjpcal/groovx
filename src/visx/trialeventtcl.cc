@@ -48,27 +48,15 @@ namespace
 {
   typedef TrialEvent* (CreatorFunc)();
 
-  Tcl::Pkg* addEventType(Tcl_Interp* interp,
-                         CreatorFunc* func,
-                         const char* name)
+  int addEventType(Tcl_Interp* interp,
+                   CreatorFunc* func,
+                   const char* name)
   {
-    Tcl::Pkg* pkg = new Tcl::Pkg(interp, name, "$Revision$");
+    PKG_CREATE(interp, name, "$Revision$");
     Util::ObjFactory::theOne().registerCreatorFunc(func, name);
     pkg->inheritPkg("TrialEvent");
 
-    return pkg;
-  }
-
-  template <class EventType>
-  Tcl::Pkg* initEventType(Tcl_Interp* interp)
-  {
-    Tcl::Pkg* pkg = new Tcl::Pkg(interp,
-                                 demangled_name(typeid(EventType)),
-                                 "$Revision$");
-    Tcl::defCreator<EventType>(pkg);
-    pkg->inheritPkg("TrialEvent");
-
-    return pkg;
+    PKG_RETURN;
   }
 
   void addEvents(Util::Ref<MultiEvent> multi, Tcl::List event_ids)
@@ -90,13 +78,11 @@ int Trialevent_Init(Tcl_Interp* interp)
 {
 DOTRACE("Trialevent_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "TrialEvent", "$Revision$");
+  PKG_CREATE(interp, "TrialEvent", "$Revision$");
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<TrialEvent>(pkg);
 
   pkg->defAttrib("delay", &TrialEvent::getDelay, &TrialEvent::setDelay);
-
-  initEventType<NullTrialEvent>(interp);
 
   addEventType(interp, &makeAbortTrialEvent, "AbortTrialEvent");
   addEventType(interp, &makeDrawEvent, "DrawEvent");
@@ -112,7 +98,19 @@ DOTRACE("Trialevent_Init");
   addEventType(interp, &makeClearBufferEvent, "ClearBufferEvent");
   addEventType(interp, &makeFinishDrawingEvent, "FinishDrawingEvent");
 
-  return pkg->initStatus();
+  PKG_RETURN;
+}
+
+extern "C"
+int Nulltrialevent_Init(Tcl_Interp* interp)
+{
+DOTRACE("Nulltrialevent_Init");
+
+  PKG_CREATE(interp, "NullTrialEvent", "$Revision$");
+  pkg->inheritPkg("TrialEvent");
+  Tcl::defCreator<NullTrialEvent>(pkg);
+
+  PKG_RETURN;
 }
 
 extern "C"
@@ -120,7 +118,9 @@ int Filewriteevent_Init(Tcl_Interp* interp)
 {
 DOTRACE("Filewriteevent_Init");
 
-  Tcl::Pkg* pkg = initEventType<FileWriteEvent>(interp);
+  PKG_CREATE(interp, "FileWriteEvent", "$Revision$");
+  pkg->inheritPkg("TrialEvent");
+  Tcl::defCreator<FileWriteEvent>(pkg);
 
   pkg->defAttrib("file",
                  &FileWriteEvent::getFile,
@@ -129,7 +129,7 @@ DOTRACE("Filewriteevent_Init");
                  &FileWriteEvent::getByte,
                  &FileWriteEvent::setByte);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 extern "C"
@@ -137,12 +137,14 @@ int Genericevent_Init(Tcl_Interp* interp)
 {
 DOTRACE("Genericevent_Init");
 
-  Tcl::Pkg* pkg = initEventType<GenericEvent>(interp);
+  PKG_CREATE(interp, "GenericEvent", "$Revision$");
+  pkg->inheritPkg("TrialEvent");
+  Tcl::defCreator<GenericEvent>(pkg);
 
   pkg->defGetter("callback", &GenericEvent::getCallback);
   pkg->defSetter("callback", &GenericEvent::setCallback);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 extern "C"
@@ -150,7 +152,9 @@ int Multievent_Init(Tcl_Interp* interp)
 {
 DOTRACE("Multievent_Init");
 
-  Tcl::Pkg* pkg = initEventType<MultiEvent>(interp);
+  PKG_CREATE(interp, "MultiEvent", "$Revision$");
+  pkg->inheritPkg("TrialEvent");
+  Tcl::defCreator<MultiEvent>(pkg);
 
   pkg->defGetter("events", &MultiEvent::getEvents);
   pkg->def("addEvent", "<this> event_id", &MultiEvent::addEvent);
@@ -158,7 +162,7 @@ DOTRACE("Multievent_Init");
   pkg->def("eraseEventAt", "<this> index", &MultiEvent::eraseEventAt);
   pkg->def("clearEvents", "<this>", &MultiEvent::clearEvents);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_trialeventtcl_cc[] = "$Header$";

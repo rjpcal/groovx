@@ -44,7 +44,7 @@ int Jitter_Init(Tcl_Interp* interp)
 {
 DOTRACE("Jitter_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Jitter", "$Revision$");
+  PKG_CREATE(interp, "Jitter", "$Revision$");
   pkg->inheritPkg("GxTransform");
   Tcl::defGenericObjCmds<Jitter>(pkg);
 
@@ -53,7 +53,7 @@ DOTRACE("Jitter_Init");
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Jitter::make);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_jittertcl_cc[] = "$Header$";

@@ -118,7 +118,7 @@ DOTRACE("Vectwotest_Init");
 
   // Package can't be named "Vec2test" because Tcl doesn't like numerals in
   // package names
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Vectwotest", "$Revision$");
+  PKG_CREATE(interp, "Vectwotest", "$Revision$");
 
   DEF_TEST(pkg, testAbs);
   DEF_TEST(pkg, testLength);
@@ -127,7 +127,7 @@ DOTRACE("Vectwotest_Init");
   DEF_TEST(pkg, testThetaDeg);
   DEF_TEST(pkg, testSetThetaDeg);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_vectwotest_cc[] = "$Header$";

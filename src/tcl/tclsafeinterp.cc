@@ -367,7 +367,10 @@ DOTRACE("Tcl::Interp::handleLiveException");
 
       if (hasInterp())
         {
-          fstring msg(where, ": ");
+          fstring msg;
+
+          if (where != 0 && where[0] != '\0')
+            msg.append(where, ": ");
 
           const char* what = err.what();
 
@@ -384,7 +387,16 @@ DOTRACE("Tcl::Interp::handleLiveException");
       dbgPrintNL(3, "caught (...)");
 
       if (hasInterp())
-        appendResult(fstring(where, ": an error of unknown type occurred"));
+        {
+          fstring msg;
+
+          if (where != 0 && where[0] != '\0')
+            msg.append(where, ": ");
+
+          msg.append("an error of unknown type occurred");
+
+          appendResult(msg);
+        }
     }
 
   if (withBkgdError)

@@ -56,7 +56,7 @@ int Fish_Init(Tcl_Interp* interp)
 {
 DOTRACE("Fish_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Fish", "$Revision$");
+  PKG_CREATE(interp, "Fish", "$Revision$");
 
   Tcl::defTracing(pkg, Fish::tracer);
 
@@ -68,7 +68,7 @@ DOTRACE("Fish_Init");
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Fish::make);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_fishtcl_cc[] = "$Header$";

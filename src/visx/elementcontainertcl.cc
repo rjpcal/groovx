@@ -62,7 +62,7 @@ int Elementcontainer_Init(Tcl_Interp* interp)
 {
 DOTRACE("Elementcontainer_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "ElementContainer", "$Revision$");
+  PKG_CREATE(interp, "ElementContainer", "$Revision$");
   pkg->inheritPkg("Element");
   Tcl::defGenericObjCmds<Element>(pkg);
 
@@ -83,7 +83,7 @@ DOTRACE("Elementcontainer_Init");
   pkg->defSetter("shuffle", "item_id rand_seed", &ElementContainer::shuffle);
   pkg->defGetter("elements", &ElementContainer::getElements);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_elementcontainertcl_cc[] = "$Header$";

@@ -138,7 +138,7 @@ int Dlinktest_Init(Tcl_Interp* interp)
 {
 DOTRACE("Dlinktest_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Dlinktest", "$Revision$");
+  PKG_CREATE(interp, "Dlinktest", "$Revision$");
 
   DEF_TEST(pkg, testEmptyLength);
   DEF_TEST(pkg, testPushFront);
@@ -150,7 +150,7 @@ DOTRACE("Dlinktest_Init");
   DEF_TEST(pkg, testFindFailure);
   DEF_TEST(pkg, testClear);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_dlinktest_cc[] = "$Header$";

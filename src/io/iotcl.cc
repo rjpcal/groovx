@@ -46,7 +46,7 @@ int Io_Init(Tcl_Interp* interp)
 {
 DOTRACE("Io_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "IO", "$Revision$");
+  PKG_CREATE(interp, "IO", "$Revision$");
   pkg->inheritPkg("Obj");
   Tcl::defGenericObjCmds<IO::IoObject>(pkg);
 
@@ -60,7 +60,7 @@ DOTRACE("Io_Init");
   pkg->def( "load", "item_id filename", IO::loadASR );
   pkg->def( "retrieve", "filename", IO::retrieveASR );
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 extern "C"
@@ -68,7 +68,7 @@ int Outputfile_Init(Tcl_Interp* interp)
 {
 DOTRACE("Outputfile_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "OutputFile", "$Revision$");
+  PKG_CREATE(interp, "OutputFile", "$Revision$");
   pkg->inheritPkg("IO");
   Tcl::defCreator<OutputFile>(pkg);
   Tcl::defGenericObjCmds<IO::IoObject>(pkg);
@@ -77,7 +77,7 @@ DOTRACE("Outputfile_Init");
                  &OutputFile::getFilename,
                  &OutputFile::setFilename);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_iotcl_cc[] = "$Header$";

@@ -146,7 +146,7 @@ int Matlabengine_Init(Tcl_Interp* interp)
 {
 DOTRACE("Matlabengine_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "MatlabEngine", "$Revision$");
+  PKG_CREATE(interp, "MatlabEngine", "$Revision$");
   Tcl::defGenericObjCmds<MatlabEngine>(pkg);
 
   pkg->def( "eval", "engine_id command", &MatlabEngine::evalString );
@@ -157,7 +157,7 @@ DOTRACE("Matlabengine_Init");
 
   Util::ObjFactory::theOne().registerCreatorFunc(&MatlabEngine::make);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_matlabtcl_cc[] = "$Header$";

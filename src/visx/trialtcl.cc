@@ -51,7 +51,7 @@ int Trial_Init(Tcl_Interp* interp)
 {
 DOTRACE("Trial_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Trial", "$Revision$");
+  PKG_CREATE(interp, "Trial", "$Revision$");
   pkg->inheritPkg("Element");
   Tcl::defTracing(pkg, Trial::tracer);
 
@@ -82,7 +82,7 @@ DOTRACE("Trial_Init");
 
   Util::ObjFactory::theOne().registerCreatorFunc(&Trial::make);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_trialtcl_cc[] = "$Header$";

@@ -210,6 +210,12 @@ DOTRACE("Tcl::Pkg::interp");
   return rep->interp;
 }
 
+void Tcl::Pkg::handleLiveException() throw()
+{
+DOTRACE("Tcl::Pkg::handleLiveException");
+  rep->interp.handleLiveException("");
+}
+
 namespace
 {
   void exportAll(Tcl::Interp& interp, const char* from)

@@ -46,7 +46,7 @@ int Element_Init(Tcl_Interp* interp)
 {
 DOTRACE("Element_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Element", "$Revision$");
+  PKG_CREATE(interp, "Element", "$Revision$");
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<Element>(pkg);
 
@@ -58,7 +58,7 @@ DOTRACE("Element_Init");
   pkg->defAction("undo", &Element::vxUndo);
   pkg->defAction("reset", &Element::vxReset);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_elementtcl_cc[] = "$Header$";

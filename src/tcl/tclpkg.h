@@ -66,23 +66,23 @@ namespace Tcl
 
 class Tcl::Pkg
 {
-public:
-  /** Construct a \c Tcl::Pkg with a Tcl interpreter, package
-      name, and package version. The version string should be in the
-      form MM.mm where MM is major version, and mm is minor
-      version. This constructor can also correctly parse a version
-      string such as given by the RCS revision tag. */
+private:
+  /// Private constructor. Clients should use the PKG_CREATE macro instead.
   Pkg(Tcl_Interp* interp, const char* name, const char* version);
+
+  /// Destructor destroys all \c Command's owned by the package.
+  ~Pkg() throw();
+
+public:
+  // Don't call this directly! Use the PKG_CREATE macro instead.
+  static Pkg* createInMacro(Tcl_Interp* interp,
+                            const char* name, const char* version)
+  {
+    return new Pkg(interp, name, version);
+  }
 
   typedef void (ExitCallback)();
 
-private:
-  /** Virtual destructor ensures proper destruction of base
-      classes. This destructor will destroy all \c Command's owned by
-      the package. */
-  virtual ~Pkg() throw();
-
-public:
   /// Specify a function to be called when the package is destroyed.
   /** (Package destruction typically occurs at application exit, when the
       Tcl interpreter and all associated objects are destroyed.) */
@@ -263,6 +263,39 @@ private:
   friend struct Impl;
   Impl* rep;
 };
+
+/*
+  These macros make it slightly more convenient to make sure that *_Init()
+  package initialization functions don't leak any exceptions (as they are
+  called directly from C code within the Tcl core).
+ */
+
+/// This macro should go at the top of each *_Init() function.
+/** Constructs a \c Tcl::Pkg with a Tcl interpreter, package name, and
+    package version. The version string should be in the form MM.mm where
+    MM is major version, and mm is minor version. This constructor can also
+    correctly parse a version string such as given by the RCS revision
+    tag. */
+#define PKG_CREATE(interp, pkgname, pkgversion)                         \
+                                                                        \
+Tcl::Pkg* pkg = 0;                                                      \
+                                                                        \
+try { pkg = Tcl::Pkg::createInMacro(interp, pkgname, pkgversion); }     \
+catch (...) { return 1; }                                               \
+                                                                        \
+try                                                                     \
+{
+
+
+/// This macro should go at the end of each *_Init() function.
+#define PKG_RETURN                              \
+  return pkg->initStatus();                     \
+}                                               \
+catch(...)                                      \
+{                                               \
+  pkg->handleLiveException();                   \
+}                                               \
+return 1;
 
 static const char vcid_tclpkg_h[] = "$Header$";
 #endif // !TCLPKG_H_DEFINED

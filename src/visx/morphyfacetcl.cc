@@ -41,12 +41,12 @@ int Morphyface_Init(Tcl_Interp* interp)
 {
 DOTRACE("Morphyface_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "MorphyFace", "$Revision$");
+  PKG_CREATE(interp, "MorphyFace", "$Revision$");
   pkg->inheritPkg("GxShapeKit");
   Tcl::defFieldContainer<MorphyFace>(pkg);
   Tcl::defCreator<MorphyFace>(pkg);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_morphyfacetcl_cc[] = "$Header$";

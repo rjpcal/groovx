@@ -44,7 +44,7 @@ int Mtx_Init(Tcl_Interp* interp)
 {
 DOTRACE("Mtx_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Mtx", "$Revision$");
+  PKG_CREATE(interp, "Mtx", "$Revision$");
   Tcl::defGenericObjCmds<MtxObj>(pkg);
 
   pkg->defAction<MtxObj>("print", &Mtx::print);
@@ -55,7 +55,7 @@ DOTRACE("Mtx_Init");
 
   Util::ObjFactory::theOne().registerCreatorFunc(&MtxObj::make);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_mtxtcl_cc[] = "$Header$";

@@ -171,7 +171,7 @@ int Objdb_Init(Tcl_Interp* interp)
 {
 DOTRACE("Objdb_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "ObjDb", "$Revision$");
+  PKG_CREATE(interp, "ObjDb", "$Revision$");
 
   pkg->onExit( &dbClearOnExit );
 
@@ -184,7 +184,7 @@ DOTRACE("Objdb_Init");
   pkg->def( "saveObjects", "objids filename",
             Util::bindLast(&saveObjects, true) );
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 extern "C"
@@ -192,7 +192,7 @@ int Obj_Init(Tcl_Interp* interp)
 {
 DOTRACE("Obj_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Obj", "$Revision$");
+  PKG_CREATE(interp, "Obj", "$Revision$");
   Tcl::defGenericObjCmds<Util::Object>(pkg);
 
   pkg->defGetter("refCount", &Util::Object::dbg_RefCount);
@@ -221,7 +221,7 @@ DOTRACE("Obj_Init");
             "  namespace eval $namesp $cmd\n"
             "}");
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_objtcl_cc[] = "$Header$";

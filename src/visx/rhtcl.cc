@@ -152,12 +152,12 @@ int Responsehandler_Init(Tcl_Interp* interp)
 {
 DOTRACE("Responsehandler_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "ResponseHandler", "$Revision$");
+  PKG_CREATE(interp, "ResponseHandler", "$Revision$");
   pkg->inheritPkg("IO");
   Tcl::defGenericObjCmds<ResponseHandler>(pkg);
   pkg->namespaceAlias("Rh");
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 extern "C"
@@ -165,8 +165,7 @@ int Eventresponsehdlr_Init(Tcl_Interp* interp)
 {
 DOTRACE("Eventresponsehdlr_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "EventResponseHdlr",
-                               "$Revision$");
+  PKG_CREATE(interp, "EventResponseHdlr", "$Revision$");
   Tcl::defCreator<EventResponseHdlr>(pkg);
   pkg->inheritPkg("ResponseHandler");
   Tcl::defTracing(pkg, EventResponseHdlr::tracer);
@@ -199,7 +198,7 @@ DOTRACE("Eventresponsehdlr_Init");
 
   pkg->namespaceAlias("EventRh");
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 extern "C"
@@ -207,14 +206,14 @@ int Kbdresponsehdlr_Init(Tcl_Interp* interp)
 {
 DOTRACE("Kbdresponsehdlr_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "KbdResponseHdlr", "$Revision$");
+  PKG_CREATE(interp, "KbdResponseHdlr", "$Revision$");
   Tcl::defCreator<KbdResponseHdlr>(pkg);
   pkg->inheritPkg("EventResponseHdlr");
   Tcl::defGenericObjCmds<KbdResponseHdlr>(pkg);
 
   pkg->namespaceAlias("KbdRh");
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 extern "C"
@@ -222,14 +221,13 @@ int Nullresponsehdlr_Init(Tcl_Interp* interp)
 {
 DOTRACE("Nullresponsehdlr_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "NullResponseHdlr",
-                               "$Revision$");
+  PKG_CREATE(interp, "NullResponseHdlr", "$Revision$");
   Tcl::defCreator<NullResponseHdlr>(pkg);
   pkg->inheritPkg("ResponseHandler");
   Tcl::defGenericObjCmds<NullResponseHdlr>(pkg);
   pkg->namespaceAlias("NullRh");
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 extern "C"
@@ -237,14 +235,14 @@ int Serialrh_Init(Tcl_Interp* interp)
 {
 DOTRACE("Serialrh_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "SerialRh", "$Revision$");
+  PKG_CREATE(interp, "SerialRh", "$Revision$");
   pkg->def( "SerialRh::SerialRh", "device=/dev/tty0p0",
             Util::bindFirst(&startSerial, interp) );
   pkg->def( "SerialRh::SerialRh", "",
             Util::bindLast(Util::bindFirst(&startSerial, interp),
                            "/dev/tty0p0") );
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_rhtcl_cc[] = "$Header$";

@@ -422,7 +422,7 @@ int Tlist_Init(Tcl_Interp* interp)
 {
 DOTRACE("Tlist_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Tlist", "$Revision$");
+  PKG_CREATE(interp, "Tlist", "$Revision$");
   pkg->def( "createPreview", "objids num_cols_hint use_text_labels",
             &TlistTcl::createPreview );
   pkg->def( "createPreview", "objids",
@@ -444,7 +444,7 @@ DOTRACE("Tlist_Init");
   pkg->def( "writeIncidenceMatrix", "filename", &TlistUtils::writeIncidenceMatrix );
   pkg->def( "writeMatlab", "filename", &TlistUtils::writeMatlab );
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_tlisttcl_cc[] = "$Header$";

@@ -146,7 +146,7 @@ int Fstringtest_Init(Tcl_Interp* interp)
 {
 DOTRACE("Fstringtest_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Fstringtest", "$Revision$");
+  PKG_CREATE(interp, "Fstringtest", "$Revision$");
 
   DEF_TEST(pkg, testDefaultConstruct);
   DEF_TEST(pkg, testConstruct1);
@@ -159,7 +159,7 @@ DOTRACE("Fstringtest_Init");
   DEF_TEST(pkg, testLessThan);
   DEF_TEST(pkg, testGreaterThan);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_fstringtest_cc[] = "$Header$";

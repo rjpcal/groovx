@@ -42,12 +42,12 @@ int House_Init(Tcl_Interp* interp)
 {
 DOTRACE("House_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "House", "$Revision$");
+  PKG_CREATE(interp, "House", "$Revision$");
   pkg->inheritPkg("GxShapeKit");
   Tcl::defFieldContainer<House>(pkg);
   Tcl::defCreator<House>(pkg);
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_housetcl_cc[] = "$Header$";

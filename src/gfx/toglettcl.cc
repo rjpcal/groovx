@@ -104,7 +104,7 @@ int Toglet_Init(Tcl_Interp* interp)
 {
 DOTRACE("Toglet_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Toglet", "$Revision$");
+  PKG_CREATE(interp, "Toglet", "$Revision$");
 
   pkg->onExit( &clearOnExit );
 
@@ -147,7 +147,7 @@ DOTRACE("Toglet_Init");
             "namespace eval ::Togl { namespace export * }"
             );
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_toglettcl_cc[] = "$Header$";

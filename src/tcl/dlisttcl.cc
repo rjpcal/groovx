@@ -391,7 +391,7 @@ int Dlist_Init(Tcl_Interp* interp)
 {
 DOTRACE("Dlist_Init");
 
-  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "dlist", "$Revision$");
+  PKG_CREATE(interp, "dlist", "$Revision$");
 
   pkg->def( "choose", "source_list index_list", &DlistTcl::choose );
   pkg->def( "index", "list index", &DlistTcl::index );
@@ -409,7 +409,7 @@ DOTRACE("Dlist_Init");
   pkg->def( "sum", "source_list", &DlistTcl::sum );
   pkg->def( "zeros", "num_zeros", &DlistTcl::zeros );
 
-  return pkg->initStatus();
+  PKG_RETURN;
 }
 
 static const char vcid_dlisttcl_cc[] = "$Header$";
