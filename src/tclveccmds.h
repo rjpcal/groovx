@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:11:41 1999
-// written: Thu Jul 12 16:31:21 2001
+// written: Fri Jul 13 11:34:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,25 +112,6 @@ private:
   int itsItemArgn;
   int itsValArgn;
   shared_ptr< Setter<value_type> > itsSetter;
-};
-
-///////////////////////////////////////////////////////////////////////
-/**
- *
- * TVecAttribCmd
- *
- **/
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-class TVecAttribCmd : public TVecGetterCmd<T> {
-public:
-  TVecAttribCmd(Tcl_Interp* interp, ItemFetcher* fetcher, const char* cmd_name,
-                shared_ptr<Getter<T> > getter,
-                shared_ptr<Setter<T> > setter,
-                const char* usage, unsigned int item_argn);
-
-  virtual ~TVecAttribCmd();
 };
 
 } // end namespace Tcl

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:16:22 1999
-// written: Thu Jul 12 16:50:59 2001
+// written: Fri Jul 13 11:34:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -126,43 +126,6 @@ namespace Tcl
   template class TVecSetterCmd<const char*>;
   template class TVecSetterCmd<const fixed_string&>;
   template class TVecSetterCmd<TclValue>;
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// TVecAttribCmd definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-template <class T>
-Tcl::TVecAttribCmd<T>::TVecAttribCmd(Tcl_Interp* interp,
-                                     ItemFetcher* fetcher, const char* cmd_name,
-                                     shared_ptr<Getter<T> > getter,
-                                     shared_ptr<Setter<T> > setter,
-                                     const char* usage,
-                                     unsigned int item_argn) :
-  TVecGetterCmd<T>(interp, fetcher, cmd_name, getter, usage, item_argn)
-{
-DOTRACE("Tcl::TVecAttribCmd<>::TVecAttribCmd");
-
-  addOverload( interp, make_shared(
-    new TVecSetterCmd<T>(interp, fetcher, cmd_name, setter, usage, item_argn)));
-}
-
-template <class T>
-Tcl::TVecAttribCmd<T>::~TVecAttribCmd() {}
-
-// Explicit instatiation requests
-namespace Tcl
-{
-  template class TVecAttribCmd<int>;
-  template class TVecAttribCmd<unsigned int>;
-  template class TVecAttribCmd<unsigned long>;
-  template class TVecAttribCmd<bool>;
-  template class TVecAttribCmd<double>;
-  template class TVecAttribCmd<const char*>;
-  template class TVecAttribCmd<const fixed_string&>;
-  template class TVecAttribCmd<TclValue>;
 }
 
 ///////////////////////////////////////////////////////////////////////
