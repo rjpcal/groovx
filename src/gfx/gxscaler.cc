@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 13:04:32 2002
-// written: Thu Nov 14 17:12:00 2002
+// written: Thu Nov 14 17:31:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,9 +48,10 @@ DOTRACE("GxScaler::setMode");
   itsMode = new_mode;
 }
 
-void GxScaler::setWidth(Gfx::Canvas& canvas, double new_width)
+void GxScaler::setWidth(double new_width)
 {
-  Gfx::Rect<double> native_bbox = child()->getBoundingBox(canvas);
+  Gfx::Rect<double> native_bbox =
+    child()->getBoundingBox(Gfx::Canvas::current());
 
   double current_width = native_bbox.width() * itsWidthFactor;
 
@@ -69,9 +70,10 @@ void GxScaler::setWidth(Gfx::Canvas& canvas, double new_width)
     }
 }
 
-void GxScaler::setHeight(Gfx::Canvas& canvas, double new_height)
+void GxScaler::setHeight(double new_height)
 {
-  Gfx::Rect<double> native_bbox = child()->getBoundingBox(canvas);
+  Gfx::Rect<double> native_bbox =
+    child()->getBoundingBox(Gfx::Canvas::current());
 
   double current_height = native_bbox.height() * itsHeightFactor;
 
@@ -105,11 +107,11 @@ void GxScaler::setAspectRatio(double new_aspect_ratio)
   itsWidthFactor *= change_factor;
 }
 
-void GxScaler::setMaxDim(Gfx::Canvas& canvas, double new_max_dimension)
+void GxScaler::setMaxDim(double new_max_dimension)
 {
   if (itsMode == NATIVE_SCALING) return;
 
-  double scaling_factor = new_max_dimension / scaledMaxDim(canvas);
+  double scaling_factor = new_max_dimension / scaledMaxDim();
 
   itsWidthFactor *= scaling_factor;
   itsHeightFactor *= scaling_factor;
@@ -121,21 +123,23 @@ double GxScaler::aspectRatio() const
     (itsHeightFactor != 0.0 ? itsWidthFactor/itsHeightFactor : 0.0);
 }
 
-double GxScaler::scaledWidth(Gfx::Canvas& canvas)
+double GxScaler::scaledWidth() const
 {
-  Gfx::Rect<double> native_bbox = child()->getBoundingBox(canvas);
+  Gfx::Rect<double> native_bbox =
+    child()->getBoundingBox(Gfx::Canvas::current());
   return native_bbox.width() * itsWidthFactor;
 }
 
-double GxScaler::scaledHeight(Gfx::Canvas& canvas)
+double GxScaler::scaledHeight() const
 {
-  Gfx::Rect<double> native_bbox = child()->getBoundingBox(canvas);
+  Gfx::Rect<double> native_bbox =
+    child()->getBoundingBox(Gfx::Canvas::current());
   return native_bbox.height() * itsHeightFactor;
 }
 
-double GxScaler::scaledMaxDim(Gfx::Canvas& canvas)
+double GxScaler::scaledMaxDim() const
 {
-  return Util::max(scaledWidth(canvas), scaledHeight(canvas));
+  return Util::max(scaledWidth(), scaledHeight());
 }
 
 void GxScaler::draw(Gfx::Canvas& canvas) const

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 13:04:27 2002
-// written: Thu Nov 14 17:11:26 2002
+// written: Thu Nov 14 17:30:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,18 +59,18 @@ public:
   Mode getMode() const { return itsMode; }
   void setMode(Mode new_mode);
 
-  void setWidth(Gfx::Canvas& canvas, double new_width);
-  void setHeight(Gfx::Canvas& canvas, double new_height);
-  void setMaxDim(Gfx::Canvas& canvas, double new_max_dimension);
+  void setWidth(double new_width);
+  void setHeight(double new_height);
+  void setMaxDim(double new_max_dimension);
 
   void setAspectRatio(double new_aspect_ratio);
 
   void setWidthFactor(double f) { itsWidthFactor = f; }
   void setHeightFactor(double f) { itsHeightFactor = f; }
 
-  double scaledWidth(Gfx::Canvas& canvas);
-  double scaledHeight(Gfx::Canvas& canvas);
-  double scaledMaxDim(Gfx::Canvas& canvas);
+  double scaledWidth() const;
+  double scaledHeight() const;
+  double scaledMaxDim() const;
 
   double aspectRatio() const;
 
