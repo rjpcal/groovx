@@ -3,7 +3,7 @@
 // facetcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Fri Sep 29 13:44:31 2000
+// written: Sat Oct  7 13:15:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,21 +101,26 @@ DOTRACE("FaceTcl::LoadFacesCmd::invoke");
 		char c = char(ist.peek());
 		bool saw_alpha = bool(isalpha(c));
 		if (use_virtual_ctor | saw_alpha) {
+		  DOTRACE("using virtual constructor");
 		  IO::LegacyReader lrdr(ist, IO::BASES & IO::TYPENAME);
 		  IO::IoObject* io = lrdr.readRoot();
 		  p = dynamic_cast<Face *>(io);
-		  if (!p) {
+		  if (p == 0) {
 			 throw IO::InputError("FaceTcl::loadFaces");
 		  }
 		}
 		else {
+		  DOTRACE("assuming Face");
 		  p = new Face;
 		  IO::LegacyReader reader(ist, IO::NO_FLAGS);
 		  reader.readRoot(p);
 		}
-		int objid = olist.insert(ObjList::Ptr(p));
 
-		lappendVal(objid); // add the current objid to the Tcl result
+		Assert(p != 0);
+
+  		int objid = olist.insert(ObjList::Ptr(p));
+
+  		lappendVal(objid); // add the current objid to the Tcl result
 
 		++num_read;
 	 }
