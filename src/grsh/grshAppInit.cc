@@ -3,7 +3,7 @@
 // grshAppInit.cc
 // Rob Peters
 // created: Nov-98
-// written: Mon Sep 25 09:40:03 2000
+// written: Wed Oct 11 12:20:22 2000
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -120,7 +120,7 @@ DOTRACE("TclApp::TclApp(Tcl_Interp*)");
   // set prompt to "cmd[n]% " where cmd is the name of the program,
   // and n is the history event number
   Tcl_SetVar(interp, "tcl_prompt1", 
-				 "puts -nonewline \"$argv0\\[[history nextid]\\]% \"",
+				 "puts -nonewline \"([history nextid]) $argv0> \"",
 				 TCL_GLOBAL_ONLY | TCL_LEAVE_ERR_MSG);
 	 
   // specifies a file to be 'source'd upon startup
