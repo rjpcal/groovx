@@ -430,6 +430,7 @@ docs: $(DOC)/DoxyConfig
 	mkdir -p $(BUILD)/html
 	(time $(DOXYGEN_PROG) $(DOC)/DoxyConfig > $(DOC)/DocLog) >& $(DOC)/DocErrors
 	time chmod -R og=u-w $(BUILD)/html
+	mkdir -p $(with_htmldoc)
 	time cp -r --preserve=mode $(BUILD)/html/* $(with_htmldoc)
 
 # Generate tags file based only on header files
