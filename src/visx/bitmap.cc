@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Aug  8 11:22:42 2001
+// written: Wed Aug  8 11:26:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -137,7 +137,9 @@ void Bitmap::doFlipVertical()
   { itsImpl->doFlipVertical(); sendStateChangeMsg(); }
 
 void Bitmap::center()
-  { itsImpl->center(); sendStateChangeMsg(); }
+{
+  setAlignmentMode(GrObj::CENTER_ON_CENTER);
+}
 
 void Bitmap::grRender(GWT::Canvas& canvas, DrawMode mode) const
 {
