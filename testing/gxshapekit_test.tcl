@@ -44,18 +44,6 @@ proc testSubclass { package {subclass "GxShapeKit"} {objid -1} } {
     }
     testCategoryCmd testObj
     testDrawCmd testObj
-    testBoundingBoxCmd testObj
-    testAlignmentModeCmd testObj
-    testAspectRatioCmd testObj
-    testBBVisibilityCmd testObj
-    testCenterXCmd testObj
-    testCenterYCmd testObj
-    testHeightCmd testObj
-    testMaxDimensionCmd testObj
-    testRenderModeCmd testObj
-    testScalingModeCmd testObj
-    testUnRenderModeCmd testObj
-    testWidthCmd testObj
 
     set BASE_CLASS_TESTED 1
 }
@@ -145,55 +133,7 @@ proc testDrawCmd { objname } {
     }
 }
 
-proc testBoundingBoxCmd { objname } {
-    upvar $objname this
 }
-
-proc testAlignmentModeCmd { objname } {
-    upvar $objname this
-}
-
-proc testAspectRatioCmd { objname } {
-    upvar $objname this
-}
-
-proc testBBVisibilityCmd { objname } {
-    upvar $objname this
-}
-
-proc testCenterXCmd { objname } {
-    upvar $objname this
-}
-
-proc testCenterYCmd { objname } {
-    upvar $objname this
-}
-
-proc testHeightCmd { objname } {
-    upvar $objname this
-}
-
-proc testMaxDimensionCmd { objname } {
-    upvar $objname this
-}
-
-proc testRenderModeCmd { objname } {
-    upvar $objname this
-}
-
-proc testScalingModeCmd { objname } {
-    upvar $objname this
-}
-
-proc testUnRenderModeCmd { objname } {
-    upvar $objname this
-}
-
-proc testWidthCmd { objname } {
-    upvar $objname this
-}
-
-} 
 # end namespace GxShapeKit
 
 GxShapeKit::testSubclass Gxshapekit
