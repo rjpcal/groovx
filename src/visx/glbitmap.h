@@ -3,7 +3,7 @@
 // glbitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep  8 11:02:30 1999
-// written: Mon Sep 20 11:51:22 1999
+// written: Mon Sep 20 17:56:58 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,11 +39,6 @@ public:
   virtual int charCount() const;
 
   // Actions
-  protected: virtual void doUndraw(int winRasterX,
-											  int winRasterY,
-											  int winWidthX,
-											  int winHeightY) const;
-
   protected: virtual void doRender(unsigned char* /* bytes */,
 											  double /* x_pos */,
 											  double /* y_pos */,
@@ -55,7 +50,6 @@ public:
 											  double /* zoom_y */) const;
 
   // Accessors/Manipulators
-
   public:    bool getUsingGlBitmap() const;
   public:    void setUsingGlBitmap(bool val);
   
