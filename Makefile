@@ -67,9 +67,7 @@ SRC := src
 DEP := ./dep/$(ARCH)
 OBJ := ./obj/$(PLATFORM)
 LIB := $(PROJECT)/lib/$(PLATFORM)
-#PKG := ./pkg/$(PLATFORM)
-#PKG_DBG := ./pkg_dbg/$(PLATFORM)
-LOG := ./logs
+LOGS := ./logs
 DOC := ./doc
 IDEP := ./idep
 SCRIPTS := ./scripts
@@ -85,6 +83,9 @@ LOCAL_LIB_DIR := $(LOCAL_ARCH)/lib
 # C++ Compiler options for compiling and linking
 #
 #-------------------------------------------------------------------------
+
+CPP_DEFINES :=
+CC_SWITCHES :=
 
 ifeq ($(MODE),debug)
 	OBJ_EXT := .do
@@ -103,20 +104,20 @@ ifeq ($(COMPILER),aCC)
 		-e '/Warning.*usr.include./,/\^\^*/d'
 # 361 == wrongly complains about falling off end of non-void function
 # 392 == 'Conversion unnecessary; expression was already of type...'
-	COMPILER_SWITCHES := +w +W361,392
-	ARCH_CPP_DEFINES := -DACC_COMPILER -DHP9000S700 -DPRESTANDARD_IOSTREAMS \
+	CC_SWITCHES := +w +W361,392
+	CPP_DEFINES += -DACC_COMPILER -DHP9000S700 -DPRESTANDARD_IOSTREAMS \
 		-Dstd= -DSTD_IO= -DHAVE_ZSTREAM
 	ARCH_MAKEDEP_INCLUDES := -I/opt/aCC/include -I/usr -I/opt/aCC/include/iostream \
 		-I/opt/graphics/OpenGL/include -I./scripts/spoofdep
 	STL_INCLUDE_DIR := 
 
 ifeq ($(MODE),debug)
-	CC_OPTIONS := -g1 +Z +p
+	CC_SWITCHES += -g1 +Z +p
 	LD_OPTIONS := -Wl,-B,immediate -Wl,+vallcompatwarnings
 endif
 
 ifeq ($(MODE),prod)
-	CC_OPTIONS := +O2 +Z +p
+	CC_SWITCHES += +O2 +Z +p
 	LD_OPTIONS := -Wl,+vallcompatwarnings
 endif
 
@@ -130,9 +131,9 @@ ifeq ($(COMPILER),MIPSpro)
 	CC := time /opt/MIPSpro/bin/CC
 	FILTER := |& sed -e '/WARNING/,/vcid_.*_cc/d' \
 		-e '/static const char vcid_/,/^ *\^$$/d'
-	COMPILER_SWITCHES := -n32 -ptused -no_prelink \
+	CC_SWITCHES := -n32 -ptused -no_prelink \
 		-no_auto_include -LANG:std -LANG:exceptions=ON 
-	ARCH_CPP_DEFINES := -DMIPSPRO_COMPILER -DIRIX6 -DSTD_IO= \
+	CPP_DEFINES += -DMIPSPRO_COMPILER -DIRIX6 -DSTD_IO= \
 		-DPRESTANDARD_IOSTREAMS -DHAVE_ZSTREAM
 
 	ARCH_MAKEDEP_INCLUDES := -I/usr/include/CC \
@@ -141,13 +142,13 @@ ifeq ($(COMPILER),MIPSpro)
 	STL_INCLUDE_DIR := -I$(HOME)/include/cppheaders
 
 ifeq ($(MODE),debug)
-	CC_OPTIONS := -g -O0
+	CC_SWITCHES += -g -O0
 	LD_OPTIONS :=
 endif
 
 ifeq ($(MODE),prod)
 # Tests showed that -O3 provided little improvement over -O2 for this app
-	CC_OPTIONS := -O2
+	CC_SWITCHES += -O2
 	LD_OPTIONS :=
 endif
 
@@ -166,20 +167,20 @@ ifeq ($(COMPILER),g++)
 		-e '/g++-3.*In method/d;' \
 		-e '/g++-3.*At top level/d;' \
 		-e '/g++-3.*In instantiation of/,/instantiated from here/d'
-	COMPILER_SWITCHES := -Wall -W -Wsign-promo -Weffc++
-	ARCH_CPP_DEFINES := -DGCC_COMPILER -DIRIX6
+	CC_SWITCHES := -Wall -W -Wsign-promo -Weffc++
+	CPP_DEFINES += -DGCC_COMPILER -DIRIX6
 
 	ARCH_MAKEDEP_INCLUDES := -I/cit/rjpeters/gcc/include/g++-3
 
 	STL_INCLUDE_DIR := -I$(HOME)/gcc/include/g++-3
 
 ifeq ($(MODE),debug)
-	CC_OPTIONS := -g -O0
+	CC_SWITCHES += -g -O0
 	LD_OPTIONS :=
 endif
 
 ifeq ($(MODE),prod)
-	CC_OPTIONS := -O3
+	CC_SWITCHES += -O3
 	LD_OPTIONS :=
 endif
 
@@ -189,7 +190,6 @@ endif
 	STATLIB_CMD := ar rus
 endif
 
-CPP_DEFINES := $(ARCH_CPP_DEFINES)
 MAKEDEP_INCLUDES := $(ARCH_MAKEDEP_INCLUDES) -I./scripts/spoofdep
 
 #-------------------------------------------------------------------------
@@ -198,7 +198,7 @@ MAKEDEP_INCLUDES := $(ARCH_MAKEDEP_INCLUDES) -I./scripts/spoofdep
 #
 #-------------------------------------------------------------------------
 
-MY_INCLUDE_PATH := -I$(LOCAL_ARCH)/include -I$(HOME)/include -I$(SRC) \
+INCLUDE_PATH := -I$(LOCAL_ARCH)/include -I$(HOME)/include -I$(SRC) \
 	$(STL_INCLUDE_DIR)
 
 ifeq ($(ARCH),hp9000s700)
@@ -218,7 +218,7 @@ ifeq ($(ARCH),irix6)
 	RPATH_DIR := -Wl,-rpath,$(LIB)
 endif
 
-MY_LIB_PATH :=  -L$(LIB) \
+LIB_PATH :=  -L$(LIB) \
 	-L$(LOCAL_LIB_DIR) \
 	$(OPENGL_LIB_DIR) \
 	$(AUDIO_LIB_DIR) \
@@ -286,11 +286,10 @@ APPWORKS_OBJS := \
 
 LIBAPPWORKS := $(LIB)/libappworks$(LIB_EXT)
 
-TCL_SRCS := $(basename $(notdir $(wildcard $(SRC)/tcl/*.cc)))
-TCLWORKS_OBJS := $(addsuffix $(OBJ_EXT),$(addprefix $(OBJ)/tcl/,$(TCL_SRCS)))
+TCLWORKS_OBJS := $(subst .cc,$(OBJ_EXT),\
+	$(subst $(SRC),$(OBJ), $(wildcard $(SRC)/tcl/*.cc)))
 
 LIBTCLWORKS := $(LIB)/libtclworks$(LIB_EXT)
-
 
 ALL_LIBS := $(LIBVISX) $(LIBTCLWORKS) $(LIBAPPWORKS)
 
@@ -302,11 +301,11 @@ ALL_LIBS := $(LIBVISX) $(LIBTCLWORKS) $(LIBAPPWORKS)
 
 ifeq ($(MODE),debug)
 	EXECUTABLE := $(BIN_DIR)/testsh
-	CC_DEFS := -DPROF -DASSERT -DINVARIANT -DTEST -DDEBUG_BUILD
+	CPP_DEFINES += -DPROF -DASSERT -DINVARIANT -DTEST -DDEBUG_BUILD
 endif
 ifeq ($(MODE),prod)
 	EXECUTABLE := $(BIN_DIR)/grsh$(VERSION)
-	CC_DEFS := -DASSERT -DINVARIANT
+	CPP_DEFINES += -DASSERT -DINVARIANT
 endif
 
 ALL_STATLIBS := $(filter %.$(STATLIB_EXT),$(ALL_LIBS))
@@ -320,16 +319,30 @@ endif
 
 #-------------------------------------------------------------------------
 #
-# Pattern rules to build %.o (production) and %.do (test/debug) object files
+# Build rules for production and test/debug executables
 #
 #-------------------------------------------------------------------------
 
-COMMON_OPTIONS := $(COMPILER_SWITCHES) $(CPP_DEFINES) $(MY_INCLUDE_PATH)
+default: $(SRC)/TAGS $(ALL_SHLIBS) $(EXECUTABLE)
+	$(EXECUTABLE) ./testing/grshtest.tcl
 
-ALL_CC_OPTIONS := $(COMMON_OPTIONS) $(CC_OPTIONS) $(CC_DEFS)
+CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) $(LIB_PATH) \
+	-lvisx$(LIB_SUFFIX) -ltclworks$(LIB_SUFFIX) -lappworks$(LIB_SUFFIX) \
+	$(LIBRARIES)
+
+$(EXECUTABLE): $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
+	$(CC) -o $@ $(CMDLINE)
+
+#-------------------------------------------------------------------------
+#
+# Build rules for object files
+#
+#-------------------------------------------------------------------------
+
+ALL_CC_OPTIONS := $(CC_SWITCHES) $(INCLUDE_PATH) $(CPP_DEFINES)
 
 $(OBJ)/%$(OBJ_EXT) : $(SRC)/%.cc
-	echo $< >> $(LOG)/CompileStats
+	echo $< >> $(LOGS)/CompileStats
 	csh -fc "($(CC) -c $< -o $@ $(ALL_CC_OPTIONS)) $(FILTER)"
 
 $(SRC)/%.precc : $(SRC)/%.cc
@@ -341,39 +354,19 @@ $(SRC)/%.preh : $(SRC)/%.h
 
 #-------------------------------------------------------------------------
 #
-# Build rules for production and test/debug executables
-#
-#-------------------------------------------------------------------------
-
-default: $(SRC)/TAGS $(ALL_SHLIBS) $(EXECUTABLE)
-	$(EXECUTABLE) ./testing/grshtest.tcl
-
-CMDLINE := $(LD_OPTIONS) $(GRSH_STATIC_OBJS) \
-	$(MY_LIB_PATH) \
-	-lvisx$(LIB_SUFFIX) -ltclworks$(LIB_SUFFIX) -lappworks$(LIB_SUFFIX) \
-	$(LIBRARIES) 
-
-$(EXECUTABLE): $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
-	$(CC) -o $@ $(CMDLINE)
-
-#-------------------------------------------------------------------------
-#
 # Build rules for production and debug shared libraries
 #
 #-------------------------------------------------------------------------
 
-%.$(SHLIB_EXT):
+$(LIB)/lib%$(LIB_SUFFIX).$(SHLIB_EXT):
 	$(SHLIB_CMD) $@ $^
 
-%.$(STATLIB_EXT):
+$(LIB)/lib%$(LIB_SUFFIX).$(STATLIB_EXT):
 	$(STATLIB_CMD) $@ $^
 
 $(LIBVISX):      $(VISX_OBJS)
 $(LIBTCLWORKS):  $(TCLWORKS_OBJS)
 $(LIBAPPWORKS):  $(APPWORKS_OBJS)
-
-#$(PKG)/face.sl:     $(OBJ)/face.o $(OBJ)/cloneface.o $(OBJ)/facetcl.o
-#$(PKG_DBG)/face.sl: $(OBJ)/face.do $(OBJ)/cloneface.do $(OBJ)/facetcl.do
 
 #-------------------------------------------------------------------------
 #
@@ -382,17 +375,15 @@ $(LIBAPPWORKS):  $(APPWORKS_OBJS)
 #-------------------------------------------------------------------------
 
 ALL_SOURCES := $(wildcard $(SRC)/*.cc) $(wildcard $(SRC)/[a-z]*/*.cc)
-
 ALL_HEADERS := $(wildcard $(SRC)/*.h)  $(wildcard $(SRC)/[a-z]*/*.h)
 
-MAKEDEP := $(SCRIPTS)/makedep
-
-DEPOPTIONS := $(CPP_DEFINES) $(MY_INCLUDE_PATH) $(MAKEDEP_INCLUDES)
+DEPOPTIONS := $(CPP_DEFINES) $(INCLUDE_PATH) $(MAKEDEP_INCLUDES) \
+	-DNO_EXTERNAL_INCLUDE_GUARDS 
 
 DEP_FILE := $(DEP)/alldepends
 
 $(DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS)
-	$(MAKEDEP) -DNO_EXTERNAL_INCLUDE_GUARDS $(DEPOPTIONS) $(ALL_SOURCES) > $@
+	$(SCRIPTS)/makedep $(DEPOPTIONS) $(ALL_SOURCES) > $@
 
 include $(DEP_FILE)
 
@@ -407,16 +398,13 @@ new: cleaner $(EXECUTABLE)
 
 # Remove all backups, temporaries, and coredumps
 clean:
-	rm -f ./*~ ./expt*2000.asw ./resp*2000 ./\#* ./core $(DOC)/*~ $(LOGS)/*~ \
+	rm -f ./*~ ./expt*2001.asw ./resp*2001 ./\#* ./core $(DOC)/*~ $(LOGS)/*~ \
 		$(SRC)/*~ $(SRC)/*/*~ $(SCRIPTS)/*~ ./testing/*~
 
 # Make clean, and also remove all debug object files
-clean_do: clean
-	rm -f $(OBJ)/*.do $(OBJ)/*/*.do
-
-# Make clean, and also remove all production object files
-clean_o: clean
-	rm -f $(OBJ)/*.o $(OBJ)/*/*.o $(OBJ)/ii_files/*.ii $(OBJ)/*/ii_files/*.ii
+cleaner: clean
+	rm -f $(OBJ)/*$(OBJ_EXT) $(OBJ)/*/*$(OBJ_EXT) \
+	 $(OBJ)/ii_files/*.ii $(OBJ)/*/ii_files/*.ii
 
 # Generate TAGS file based on all source files
 $(SRC)/TAGS: $(ALL_SOURCES) $(ALL_HEADERS)
@@ -439,10 +427,6 @@ do_sizes:
 o_sizes:
 	ls -lR obj/$(PLATFORM) | grep "\.o" | sort -n +5 > o_sizes
 
-# Start emacs and load all source files and Makefile
-edit: clean
-	emacs $(ALL_SOURCES) $(ALL_HEADERS) Makefile $(SRC)/Log.txt
-
 docs: $(DOC)/DoxygenConfig $(SRC)/*.h $(SRC)/*.doc
 	(doxygen $(DOC)/DoxygenConfig > $(DOC)/DocLog) >& $(DOC)/DocErrors
 
@@ -460,4 +444,4 @@ backup:
 	tclsh $(SCRIPTS)/Backup.tcl
 
 benchmarks: $(EXECUTABLE)
-	$(EXECUTABLE) $(SCRIPTS)/benchmarks.tcl -output $(LOG)/benchmarks.txt
+	$(EXECUTABLE) $(SCRIPTS)/benchmarks.tcl -output $(LOGS)/benchmarks.txt
