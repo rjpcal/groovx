@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Fri Aug 24 18:35:50 2001
+// written: Tue Aug 28 12:07:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,7 @@
 
 #include "gfx/canvas.h"
 #include "gfx/rect.h"
+#include "gfx/vec3.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -30,10 +31,6 @@
 
 #include "util/algo.h"
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-
-#define NO_TRACE
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
@@ -65,7 +62,7 @@ namespace
     };
 
     Bezier4 xbezier(-1.0, -top_width, top_width, 1.0);
-    Bezier4 ybezier( 0.0,     4.0/3.0   ,   4.0/3.0  , 0.0);
+    Bezier4 ybezier( 0.0,  4.0/3.0  , 4.0/3.0  , 0.0);
 
     for (unsigned int i = 0; i < NUM_HAIR_POINTS; ++i)
       {
@@ -104,17 +101,15 @@ namespace
   {
     Gfx::Canvas::MatrixSaver saver(canvas);
 
-    glScalef(x_scale, y_scale, 1.0);
+    canvas.scale(Gfx::Vec3<double>(x_scale, y_scale, 1.0));
 
-    glBegin(GL_QUAD_STRIP);
-    {
-      for (unsigned int i = 0; i < NUM_HAIR_POINTS; ++i)
-        {
-          glVertex2d(vertices[4*i  ], vertices[4*i+1]);
-          glVertex2d(vertices[4*i+2], vertices[4*i+3]);
-        }
-    }
-    glEnd();
+    Gfx::Canvas::QuadStripBlock block(canvas);
+
+    for (unsigned int i = 0; i < NUM_HAIR_POINTS; ++i)
+      {
+        canvas.vertex2(Gfx::Vec2<double>(vertices[4*i  ], vertices[4*i+1]));
+        canvas.vertex2(Gfx::Vec2<double>(vertices[4*i+2], vertices[4*i+3]));
+      }
   }
 }
 
@@ -281,37 +276,20 @@ DOTRACE("MorphyFace::grRender");
 
   Gfx::Canvas::AttribSaver attribSaver(canvas);
 
-  if (have_antialiasing)
-    {
-      DOTRACE("MorphyFace::grRender-enable antialiasing");
-
-      glEnable(GL_BLEND); // blend incoming RGBA values with old RGBA values
-
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // use transparency
-
-      glEnable(GL_LINE_SMOOTH);   // use anti-aliasing
-    }
-
-  // Prepare to work with modelview matrices.
-  glMatrixMode(GL_MODELVIEW);
-
+  canvas.enableAntialiasing();
 
   //
   // Draw eyes
   //
 
-  // Create a quadric obj to use for calling gluDisk(). This disk will
-  // be used to render the eyeballs and the pupils.
-  GLUquadricObj* qobj = gluNewQuadric();
-  gluQuadricDrawStyle(qobj, GLU_FILL);
-
-  const double eye_ctrlpnts[] =
+  const Gfx::Vec3<double> eye_ctrlpnts[4] =
   {
-    -3.0/7.0, 0.0,     0.0,
-    -2.0/7.0, 2.0/3.0, 0.0,
-     2.0/7.0, 2.0/3.0, 0.0,
-     4.0/7.0, 0.0,     0.0,
+    Gfx::Vec3<double>(-3.0/7.0, 0.0,     0.0),
+    Gfx::Vec3<double>(-2.0/7.0, 2.0/3.0, 0.0),
+    Gfx::Vec3<double>( 2.0/7.0, 2.0/3.0, 0.0),
+    Gfx::Vec3<double>( 4.0/7.0, 0.0,     0.0)
   };
+
   const int eye_subdivisions = 10;
 
   for (int left_right = -1; left_right < 2; left_right += 2)
@@ -319,10 +297,11 @@ DOTRACE("MorphyFace::grRender");
       Gfx::Canvas::MatrixSaver msaver(canvas);
 
       // Do appropriate reflection
-      glScalef(left_right*1.0, 1.0, 1.0);
+      canvas.scale(Gfx::Vec3<double>(left_right*1.0, 1.0, 1.0));
 
       // Move to the eye position
-      glTranslatef(Util::abs(itsEyeDistance)/2.0, itsEyeYpos, 0.0);
+      canvas.translate(Gfx::Vec3<double>(Util::abs(itsEyeDistance)/2.0,
+                                         itsEyeYpos, 0.0));
 
       // Draw eye outline
       for (int top_bottom = -1; top_bottom < 2; top_bottom += 2)
@@ -331,14 +310,13 @@ DOTRACE("MorphyFace::grRender");
 
           Gfx::Canvas::MatrixSaver msaver2(canvas);
 
-          glScalef(itsEyeHeight*itsEyeAspectRatio,
-                   itsEyeHeight*top_bottom,
-                   1.0);
-          glEnable(GL_MAP1_VERTEX_3);
-          glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, eye_ctrlpnts);
-          // Evaluate the 1-d Bezier curve
-          glMapGrid1d(eye_subdivisions, 0.0, 1.0);
-          glEvalMesh1(GL_LINE, 0, eye_subdivisions);
+          canvas.scale(Gfx::Vec3<double>(itsEyeHeight*itsEyeAspectRatio,
+                                         itsEyeHeight*top_bottom,
+                                         1.0));
+
+          canvas.drawBezier4(eye_ctrlpnts[0], eye_ctrlpnts[1],
+                             eye_ctrlpnts[2], eye_ctrlpnts[3],
+                             eye_subdivisions);
         }
 
       // Draw eyebrow
@@ -347,22 +325,19 @@ DOTRACE("MorphyFace::grRender");
 
         Gfx::Canvas::MatrixSaver msaver3(canvas);
 
-        glTranslatef(itsEyebrowXpos, itsEyebrowYpos, 0.0);
-        glRotatef(itsEyebrowAngle, 0.0, 0.0, 1.0);
-        glScalef(itsEyeHeight*itsEyeAspectRatio,
-                 itsEyeHeight*itsEyebrowCurvature,
-                 1.0);
+        canvas.translate(Gfx::Vec3<double>(itsEyebrowXpos, itsEyebrowYpos, 0.0));
+        canvas.rotate(Gfx::Vec3<double>::unitZ(), itsEyebrowAngle);
+        canvas.scale(Gfx::Vec3<double>(itsEyeHeight*itsEyeAspectRatio,
+                                       itsEyeHeight*itsEyebrowCurvature,
+                                       1.0));
 
-        {
-          Gfx::Canvas::AttribSaver asaver(canvas);
+        Gfx::Canvas::AttribSaver asaver(canvas);
 
-          canvas.setLineWidth(itsEyebrowThickness);
-          glEnable(GL_MAP1_VERTEX_3);
-          glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, eye_ctrlpnts);
-          // Evaluate the 1-d Bezier curve
-          glMapGrid1d(eye_subdivisions, 0.0, 1.0);
-          glEvalMesh1(GL_LINE, 0, eye_subdivisions);
-        }
+        canvas.setLineWidth(itsEyebrowThickness);
+
+        canvas.drawBezier4(eye_ctrlpnts[0], eye_ctrlpnts[1],
+                           eye_ctrlpnts[2], eye_ctrlpnts[3],
+                           eye_subdivisions);
       }
 
       // Draw pupil
@@ -371,50 +346,30 @@ DOTRACE("MorphyFace::grRender");
 
         Gfx::Canvas::MatrixSaver msaver4(canvas);
 
-        glTranslatef(left_right*itsPupilXpos, itsPupilYpos, 0.0);
-        glScalef(itsPupilSize*itsEyeHeight,
-                 itsPupilSize*itsEyeHeight,
-                 1.0);
+        canvas.translate(Gfx::Vec3<double>(left_right*itsPupilXpos,
+                                           itsPupilYpos, 0.0));
+
+        double radius = 0.5 * itsPupilSize * itsEyeHeight;
+
         static const int num_slices = 20;
         static const int num_loops = 1;
-        gluDisk(qobj, 0.5*Util::abs(itsPupilDilation), 0.5,
-                num_slices, num_loops);
+
+        canvas.drawCircle(radius*Util::abs(itsPupilDilation), radius, true,
+                          num_slices, num_loops);
       }
     }
-
-  gluDeleteQuadric(qobj);
 
   //
   // Draw face outline.
   //
 
-  // These parameters control the generation of the Bezier curve for
-  // the face outline.
-  static const int num_subdivisions = 30;
-  static const int nctrlsets = 2;
-  const double ctrlpnts[] =
-  {
-    -itsFaceWidth, 0.0,        0,        // first 4 control points
-    -itsTopWidth*itsFaceWidth,  itsTopHeight*4.0/3.0, 0,
-    itsTopWidth*itsFaceWidth,   itsTopHeight*4.0/3.0, 0,
-    itsFaceWidth,  0.0,        0,
-    itsFaceWidth, 0.0, 0, // second 4 control points
-    itsBottomWidth*itsFaceWidth, itsBottomHeight*4.0/3.0, 0,
-    -itsBottomWidth*itsFaceWidth, itsBottomHeight*4.0/3.0, 0,
-    -itsFaceWidth, 0.0, 0
-  };
-
-  glEnable(GL_MAP1_VERTEX_3);
-  {
-    DOTRACE("MorphyFace::grRender-draw face outline");
-    for (int i = 1; i < nctrlsets; ++i)
-      {
-        glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &ctrlpnts[i*12]);
-        // Evaluate the 1-d Bezier curve
-        glMapGrid1d(num_subdivisions, 0.0, 1.0);
-        glEvalMesh1(GL_LINE, 0, num_subdivisions);
-      }
-  }
+  canvas.drawBezier4(Gfx::Vec3<double>(itsFaceWidth, 0.0, 0.0),
+                     Gfx::Vec3<double>(itsBottomWidth*itsFaceWidth,
+                                       itsBottomHeight*4.0/3.0, 0.0),
+                     Gfx::Vec3<double>(-itsBottomWidth*itsFaceWidth,
+                                       itsBottomHeight*4.0/3.0, 0.0),
+                     Gfx::Vec3<double>(-itsFaceWidth, 0.0, 0.0),
+                     30);
 
   //
   // Draw nose.
@@ -425,19 +380,21 @@ DOTRACE("MorphyFace::grRender");
 
     Gfx::Canvas::MatrixSaver msaver5(canvas);
 
-    glTranslatef(itsNoseXpos, itsNoseYpos, 0.0);
-    glScalef(Util::abs(itsNoseWidth)/2.0, Util::abs(itsNoseLength), 1.0);
-    glBegin(GL_LINE_STRIP);
-      glVertex2d(-0.75, 0.5);
-      glVertex2d(-1.0,  0.0);
-      glVertex2d(-0.75, -0.333333);
-      glVertex2d(-0.25, -0.333333);
-      glVertex2d( 0.0, -0.5);   // CENTER
-      glVertex2d( 0.25, -0.333333);
-      glVertex2d( 0.75, -0.333333);
-      glVertex2d( 1.0,  0.0);
-      glVertex2d( 0.75, 0.5);
-    glEnd();
+    canvas.translate(Gfx::Vec3<double>(itsNoseXpos, itsNoseYpos, 0.0));
+    canvas.scale(Gfx::Vec3<double>(Util::abs(itsNoseWidth)/2.0,
+                                   Util::abs(itsNoseLength), 1.0));
+
+    Gfx::Canvas::LineStripBlock block(canvas);
+
+    canvas.vertex2(Gfx::Vec2<double>(-0.75, 0.5));
+    canvas.vertex2(Gfx::Vec2<double>(-1.0,  0.0));
+    canvas.vertex2(Gfx::Vec2<double>(-0.75, -0.333333));
+    canvas.vertex2(Gfx::Vec2<double>(-0.25, -0.333333));
+    canvas.vertex2(Gfx::Vec2<double>( 0.0, -0.5));   // CENTER
+    canvas.vertex2(Gfx::Vec2<double>( 0.25, -0.333333));
+    canvas.vertex2(Gfx::Vec2<double>( 0.75, -0.333333));
+    canvas.vertex2(Gfx::Vec2<double>( 1.0,  0.0));
+    canvas.vertex2(Gfx::Vec2<double>( 0.75, 0.5));
   }
 
   //
@@ -457,13 +414,14 @@ DOTRACE("MorphyFace::grRender");
 
     Gfx::Canvas::MatrixSaver msaver6(canvas);
 
-    glTranslatef(itsMouthXpos, itsMouthYpos, 0.0);
-    glScalef(itsMouthWidth, itsMouthCurvature, 1.0);
-    glEnable(GL_MAP1_VERTEX_3);
-    glMap1d(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, mouth_ctrlpnts);
-    // Evaluate the 1-d Bezier curve
-    glMapGrid1d(num_subdivisions, 0.0, 1.0);
-    glEvalMesh1(GL_LINE, 0, num_subdivisions);
+    canvas.translate(Gfx::Vec3<double>(itsMouthXpos, itsMouthYpos, 0.0));
+    canvas.scale(Gfx::Vec3<double>(itsMouthWidth, itsMouthCurvature, 1.0));
+
+    canvas.drawBezier4(Gfx::Vec3<double>(-0.5,  0.5,      0.0),
+                       Gfx::Vec3<double>(-0.2, -0.833333, 0.0),
+                       Gfx::Vec3<double>( 0.2, -0.833333, 0.0),
+                       Gfx::Vec3<double>( 0.5,  0.5,      0.0),
+                       30);
   }
 
   //
@@ -475,14 +433,7 @@ DOTRACE("MorphyFace::grRender");
 
     Gfx::Canvas::AttribSaver saver(canvas);
 
-    if (itsHairStyle == 0)
-      {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-      }
-    else
-      {
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-      }
+    canvas.setPolygonFill((itsHairStyle == 0));
 
     const double* hair_vertices = getHairVertices(itsTopWidth, itsHairWidth);
 
