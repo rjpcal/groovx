@@ -3,7 +3,7 @@
 // trialtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 09:51:54 1999
-// written: Thu Jul  8 10:56:44 1999
+// written: Tue Aug  3 13:30:48 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,14 +63,19 @@ public:
   TrialPkg(Tcl_Interp* interp) :
 	 ListItemPkg<Trial, Tlist>(interp, Tlist::theTlist(), "Trial", "1.1")
   {
-	 declareAttrib("responseHdlr",
-						new CAttrib<Trial, int>(&Trial::getResponseHandler,
-														&Trial::setResponseHandler));
-	 declareAttrib("timingHdlr",
-						new CAttrib<Trial, int>(&Trial::getTimingHdlr,
-														&Trial::setTimingHdlr));
-	 declareAttrib("type", new CAttrib<Trial, int>(&Trial::trialType,
-																  &Trial::setType));
+	 declareCGetter("avgResponse", &Trial::avgResponse);
+	 declareCGetter("avgRespTime", &Trial::avgRespTime);
+	 declareCAction("clearObjs", &Trial::clearObjs);
+	 declareCAction("clearResponses", &Trial::clearResponses);
+	 declareCGetter("description", &Trial::description);
+	 declareCGetter("lastResponse", &Trial::lastResponse);
+	 declareCGetter("numResponses", &Trial::numResponses);
+	 declareCAttrib("responseHdlr",
+						 &Trial::getResponseHandler, &Trial::setResponseHandler);
+	 declareCAttrib("timingHdlr",
+						&Trial::getTimingHdlr, &Trial::setTimingHdlr);
+	 declareCAttrib("type", &Trial::trialType, &Trial::setType);
+	 declareCAction("undoLastResponse", &Trial::undoLastResponse);
   }
 };
 
