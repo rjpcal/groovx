@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Mon Aug 13 16:43:09 2001
+// written: Thu Aug 16 09:57:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -63,8 +63,10 @@ public:
     itsOwner(owner),
     itsDrawNode(EmptyNode::make()),
     itsUndrawNode(EmptyNode::make()),
-    itsVisibility(false),
-    itsHoldOn(false),
+    isItVisible(false),
+    isItHolding(false),
+    isItRefreshing(true),
+    isItRefreshed(false),
     itsButtonListeners(),
     itsKeyListeners()
   {}
@@ -73,62 +75,56 @@ public:
 
   static Impl* make(GWT::Widget* owner) { return new Impl(owner); }
 
-  void safeDraw(Gfx::Canvas& canvas);
-
   void display(Gfx::Canvas& canvas);
 
   void clearscreen(Gfx::Canvas& canvas);
 
-  void refresh(Gfx::Canvas& canvas)
-    {
-      DOTRACE("GWT::Widget::Impl::refresh");
-      canvas.clearColorBuffer();
-      safeDraw(canvas);
-      doFlush(canvas);
-    }
-
   void undraw(Gfx::Canvas& canvas);
 
   void setVisibility(bool val)
-    {
-      itsVisibility = val;
-      if (itsVisibility == false)
-        {
-          undraw(itsOwner->getCanvas());
-          setDrawable(Util::Ref<GxNode>(EmptyNode::make()));
-          itsUndrawNode = Util::Ref<GxNode>(EmptyNode::make());
-        }
-    }
-
-  void setHold(bool hold_on)
-    { itsHoldOn = hold_on; }
+  {
+    isItVisible = val;
+    if (isItVisible == false)
+      {
+        itsOwner->getCanvas().clearColorBuffer();
+        doFlush(itsOwner->getCanvas());
+        setDrawable(Util::Ref<GxNode>(EmptyNode::make()));
+        itsUndrawNode = Util::Ref<GxNode>(EmptyNode::make());
+      }
+  }
 
   void setDrawable(const Ref<GxNode>& node)
-    {
-      itsDrawNode->detach(this);
+  {
+    itsDrawNode->detach(this);
 
-      itsDrawNode = node;
+    itsDrawNode = node;
 
-      itsDrawNode->attach(this);
-    }
+    itsDrawNode->attach(this);
+  }
+
+  void flushChanges()
+  {
+    if (isItRefreshing && !isItRefreshed)
+      display(itsOwner->getCanvas());
+  }
 
   virtual void receiveStateChangeMsg(const Util::Observable*)
-    {
-      refresh(itsOwner->getCanvas());
-    }
+  {
+    isItRefreshed = false;
+  }
 
 private:
   void doFlush(Gfx::Canvas& canvas)
-    {
-      if (canvas.isDoubleBuffered())
-        {
-          itsOwner->swapBuffers();
-        }
-      else
-        {
-          canvas.flushOutput();
-        }
-    }
+  {
+    if (canvas.isDoubleBuffered())
+      {
+        itsOwner->swapBuffers();
+      }
+    else
+      {
+        canvas.flushOutput();
+      }
+  }
 
   Impl(const Impl&);
   Impl& operator=(const Impl&);
@@ -136,8 +132,12 @@ private:
   GWT::Widget* itsOwner;
   Util::Ref<GxNode> itsDrawNode;
   Util::Ref<GxNode> itsUndrawNode;
-  bool itsVisibility;
-  bool itsHoldOn;
+  bool isItVisible;
+
+public:
+  bool isItHolding;
+  bool isItRefreshing;
+  bool isItRefreshed;
 
 public:
 
@@ -155,55 +155,44 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-void GWT::Widget::Impl::safeDraw(Gfx::Canvas& canvas) {
-DOTRACE("GWT::Widget::Impl::safeDraw");
+void GWT::Widget::Impl::display(Gfx::Canvas& canvas)
+{
+DOTRACE("GWT::Widget::Impl::display");
 
-  if ( !itsVisibility ) return;
+  // Only erase the previous trial if hold is off
+  if( !isItHolding )
+    {
+      canvas.clearColorBuffer();
+    }
+
+
+  if ( !isItVisible ) return;
 
   try
     {
       DebugPrintNL("drawing the node...");
       itsDrawNode->draw(canvas);
       itsUndrawNode = itsDrawNode;
-      return;
+
+      isItRefreshed = true;
+
+      doFlush(canvas);
     }
-  catch (Util::Error& err)
+  catch (...)
     {
-      DebugEvalNL(err.msg_cstr());
+      // Here, either the trial id or some other id was invalid
+      setVisibility(false);
     }
-
-  // Here, either the trial id or some other id was invalid
-  setVisibility(false);
 }
 
-void GWT::Widget::Impl::display(Gfx::Canvas& canvas) {
-DOTRACE("GWT::Widget::Impl::display");
-
-  // Only erase the previous trial if hold is off
-  if( !itsHoldOn ) {
-    // First we must erase the previous current trial. We ignore any
-    // invalid id errors that occur, and simply clear the screen in
-    // this case.
-    try {
-      itsUndrawNode->undraw(canvas);
-    }
-    catch (...) {
-      canvas.clearColorBuffer();
-    }
-  }
-
-  safeDraw(canvas);
-  doFlush(canvas);
-}
-
-void GWT::Widget::Impl::clearscreen(Gfx::Canvas& canvas) {
+void GWT::Widget::Impl::clearscreen(Gfx::Canvas& canvas)
+{
 DOTRACE("GWT::Widget::Impl::clearscreen");
   setVisibility(false);
-  canvas.clearColorBuffer();
-  doFlush(canvas);
 }
 
-void GWT::Widget::Impl::undraw(Gfx::Canvas& canvas) {
+void GWT::Widget::Impl::undraw(Gfx::Canvas& canvas)
+{
 DOTRACE("GWT::Widget::Impl::undraw");
   itsUndrawNode->undraw(canvas);
   doFlush(canvas);
@@ -273,7 +262,7 @@ void GWT::Widget::clearscreen()
 
 void GWT::Widget::refresh()
 {
-  itsImpl->refresh(getCanvas());
+  itsImpl->display(getCanvas());
 }
 
 void GWT::Widget::undraw()
@@ -281,17 +270,27 @@ void GWT::Widget::undraw()
   itsImpl->undraw(getCanvas());
 }
 
-void GWT::Widget::setVisibility(bool vis) {
+void GWT::Widget::setVisibility(bool vis)
+{
 DOTRACE("GWT::Widget::setVisibility");
   itsImpl->setVisibility(vis);
 }
 
-void GWT::Widget::setHold(bool hold_on) {
+void GWT::Widget::setHold(bool hold_on)
+{
 DOTRACE("GWT::Widget::setHold");
-  itsImpl->setHold(hold_on);
+  itsImpl->isItHolding = hold_on;
 }
 
-void GWT::Widget::setDrawable(const Ref<GxNode>& node) {
+void GWT::Widget::allowRefresh(bool allow)
+{
+DOTRACE("GWT::Widget::allowRefresh");
+  itsImpl->isItRefreshing = allow;
+  itsImpl->flushChanges();
+}
+
+void GWT::Widget::setDrawable(const Ref<GxNode>& node)
+{
 DOTRACE("GWT::Widget::setDrawable");
   itsImpl->setDrawable(node);
 }
