@@ -3,7 +3,7 @@
 // bmaprenderer.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 16:51:34 1999
-// written: Mon Dec  6 21:48:23 1999
+// written: Wed Feb 16 08:38:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,18 @@
 
 class Canvas;
 
-///
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * \c BmapRenderer defines an abstract interface for rendering raw
+ * bitmap data to the screen.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
 class BmapRenderer {
 public:
+  /// Virtual destructor ensures proper destruction of subclasses.
   virtual ~BmapRenderer();
 
   /** This is the operation that subclasses must implement to do the
