@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Thu May 10 12:04:44 2001
+// written: Wed May 23 18:51:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -237,6 +237,15 @@ void EndTrialEvent::invoke(GWT::Widget&, TrialBase& trial) {
 DOTRACE("EndTrialEvent::invoke");
   trial.trEndTrial();
   trial.trNextTrial();
+}
+
+NextNodeEvent::NextNodeEvent(int msec) : TrialEvent(msec) {}
+
+NextNodeEvent::~NextNodeEvent() {}
+
+void NextNodeEvent::invoke(GWT::Widget&, TrialBase& trial) {
+DOTRACE("NextNodeEvent::invoke");
+  trial.trNextNode();
 }
 
 UndrawEvent::UndrawEvent(int msec) : TrialEvent(msec) {}

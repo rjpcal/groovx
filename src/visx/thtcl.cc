@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Thu May 10 12:04:45 2001
+// written: Wed May 23 18:52:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -137,6 +137,7 @@ DOTRACE("Th_Init");
   IO::IoFactory::theOne().registerCreatorFunc(&DrawEvent::make);
   IO::IoFactory::theOne().registerCreatorFunc(&UndrawEvent::make);
   IO::IoFactory::theOne().registerCreatorFunc(&EndTrialEvent::make);
+  IO::IoFactory::theOne().registerCreatorFunc(&NextNodeEvent::make);
   IO::IoFactory::theOne().registerCreatorFunc(&SwapBuffersEvent::make);
   IO::IoFactory::theOne().registerCreatorFunc(&RenderBackEvent::make);
   IO::IoFactory::theOne().registerCreatorFunc(&RenderFrontEvent::make);
