@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Aug  5 10:57:32 2002
+// written: Mon Aug  5 11:04:14 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -53,6 +53,7 @@
 
 #include "util/algo.h"
 #include "util/error.h"
+#include "util/pointers.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -197,7 +198,7 @@ public:
 
   Togl* itsOwner;
 
-  GlxWrapper* itsGlx;           /* Normal planes GLX context */
+  shared_ptr<GlxWrapper> itsGlx; /* Normal planes GLX context */
   Display* itsDisplay;          /* X's token for the window's display. */
   Tk_Window itsTkWin;           /* Tk window structure */
   Tcl_Interp* itsInterp;        /* Tcl interpreter */
@@ -229,7 +230,7 @@ public:
 
   /* Overlay stuff */
   // FIXME move overlay stuff into a separate struct
-  GlxWrapper* itsOverlayGlx;    /* Overlay planes OpenGL context */
+  shared_ptr<GlxWrapper> itsOverlayGlx; /* Overlay planes OpenGL context */
   Window itsOverlayWindow;      /* The overlay window, or 0 */
   Togl_Callback* itsOverlayDisplayProc; /* Overlay redraw proc */
   bool itsOverlayUpdatePending; /* Should overlay be redrawn? */
@@ -759,7 +760,7 @@ DOTRACE("Togl::Impl::Impl");
   // If OpenGL window wasn't already created by configure() we
   // create it now.  We can tell by checking if the GLX context has
   // been initialized.
-  if (itsGlx == 0)
+  if (itsGlx.get() == 0)
     {
       if (makeWindowExist() == TCL_ERROR)
         {
@@ -808,8 +809,6 @@ DOTRACE("Togl::Impl::~Impl");
     {
       itsDestroyProc(itsOwner);
     }
-
-  delete itsGlx;
 }
 
 //---------------------------------------------------------------------
@@ -1235,12 +1234,12 @@ DOTRACE("Togl::Impl::widgetCmdDeletedProc");
     }
 
   /* NEW in togl 1.5 beta 3 */
-  if (itsGlx)
+  if (itsGlx.get() != 0)
     {
-      delete itsGlx;
-      itsGlx = 0;
+      itsGlx.reset( 0 );
     }
-  if (itsOverlayGlx)
+
+  if (itsOverlayGlx.get() != 0)
     {
       Tcl_HashEntry *entryPtr;
       TkWindow *winPtr = (TkWindow *) itsTkWin;
@@ -1250,8 +1249,7 @@ DOTRACE("Togl::Impl::widgetCmdDeletedProc");
                                        (char *) itsOverlayWindow );
           Tcl_DeleteHashEntry(entryPtr);
         }
-      delete itsOverlayGlx;
-      itsOverlayGlx = 0;
+      itsOverlayGlx.reset( 0 );
     }
 
   if (itsTkWin != NULL)
@@ -1281,9 +1279,7 @@ DOTRACE("Togl::Impl::makeWindowExist");
 
   try
     {
-      Assert( itsGlx == 0 );
-
-      itsGlx = GlxWrapper::make(itsDisplay, itsGlxOpts);
+      itsGlx.reset( GlxWrapper::make(itsDisplay, itsGlxOpts) );
 
       Colormap cmap =
         X11Util::findColormap(itsDisplay, itsGlx->visInfo(),
@@ -1393,8 +1389,7 @@ DOTRACE("Togl::Impl::setupOverlay");
       Tcl_AppendResult(itsInterp,Tk_PathName(winPtr),
                        ": No suitable overlay index visual available",
                        (char *) NULL);
-      delete itsOverlayGlx;
-      itsOverlayGlx = 0;
+      itsOverlayGlx.reset( 0 );
       itsOverlayWindow = 0;
       itsOverlayCmap = 0;
       return TCL_ERROR;
@@ -1415,10 +1410,8 @@ DOTRACE("Togl::Impl::setupOverlay");
   /* NEW in Togl 1.5 beta 3 */
   /* share display lists with normal layer context */
 
-  Assert( itsOverlayGlx == 0 );
-
-  itsOverlayGlx = new GlxWrapper(itsDisplay, visinfo,
-                                 !itsGlxOpts.indirect, itsGlx);
+  itsOverlayGlx.reset( new GlxWrapper(itsDisplay, visinfo,
+                                      !itsGlxOpts.indirect, itsGlx.get()) );
 
   XSetWindowAttributes swa;
   swa.colormap = XCreateColormap( itsDisplay,
