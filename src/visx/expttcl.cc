@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Dec  4 18:10:03 2002
+// written: Wed Dec  4 19:08:41 2002
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -170,17 +170,17 @@ public:
     def( "pause", "expt_id", &ExptTcl::pause );
     def( "setStartCommand", "expt_id command", ExptTcl::setStartCommand );
 
-    defSetter("addBlock", &ExptDriver::addBlock);
+    defSetter("addBlock", &ExptDriver::addElement);
     defAttrib("autosaveFile",
               &ExptDriver::getAutosaveFile, &ExptDriver::setAutosaveFile);
     defAttrib("autosavePeriod",
               &ExptDriver::getAutosavePeriod,
               &ExptDriver::setAutosavePeriod);
-    defGetter("blocks", &ExptDriver::blocks);
+    defGetter("blocks", &ExptDriver::getElements);
     defAction("clear", &ExptDriver::edClearExpt);
-    defGetter("currentBlock", &ExptDriver::currentBlock);
+    defGetter("currentBlock", &ExptDriver::currentElement);
     defGetter("infoLog", &ExptDriver::getInfoLog);
-    defAction("reset", &ExptDriver::edResetExpt);
+    defAction("reset", &ExptDriver::vxReset);
     defAction("stop", &ExptDriver::vxHalt);
     defAction("storeData", &ExptDriver::storeData);
     defAttrib("widget", &ExptDriver::getWidget, &ExptDriver::setWidget);

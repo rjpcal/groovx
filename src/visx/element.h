@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  4 15:35:37 2002
-// written: Wed Dec  4 18:29:13 2002
+// written: Wed Dec  4 18:58:29 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,6 +46,8 @@ public:
 
   virtual int trialType() const = 0;
 
+  virtual int numCompleted() const = 0;
+
   virtual int lastResponse() const = 0;
 
   virtual fstring status() const = 0;
@@ -64,6 +66,8 @@ public:
   virtual void vxProcessResponse(Response& response) = 0;
 
   virtual void vxUndo() = 0;
+
+  virtual void vxReset() = 0;
 };
 
 static const char vcid_element_h[] = "$Header$";

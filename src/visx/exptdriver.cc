@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Dec  4 18:20:42 2002
+// written: Wed Dec  4 19:09:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,7 +38,6 @@
 #include "util/ref.h"
 #include "util/strings.h"
 
-#include "visx/block.h"
 #include "visx/tlistutils.h"
 
 #define DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
@@ -80,18 +79,18 @@ public:
 
 private:
 
-  bool haveValidBlock() const
+  bool haveCurrentElement() const
     {
-      return ( itsCurrentBlockIdx < itsBlocks.size() );
+      return ( itsSequenceIdx < itsElements.size() );
     }
 
-  // Ensure that there is a valid Block. If there is not, throw an
-  // exception.
-  void ensureHasBlock() const
+  // Ensure that there is a valid current element. If there is not, throw
+  // an exception.
+  void ensureHasElement() const
     {
-      if ( !haveValidBlock() )
+      if ( !haveCurrentElement() )
         {
-          throw Util::Error("the experiment must have at least one Block "
+          throw Util::Error("the experiment must have at least one Element"
                             "before it can be started");
         }
     }
@@ -110,10 +109,10 @@ public:
 
   fstring status() const
   {
-    if (!haveValidBlock())
+    if (!haveCurrentElement())
       return "not running";
 
-    return currentBlock()->status();
+    return currentElement()->status();
   }
 
   void addLogInfo(const char* message)
@@ -127,20 +126,28 @@ public:
     itsInfoLog.append("\n");
   }
 
-  void addBlock(Ref<Block> block)
-    { itsBlocks.push_back(block); }
+  void addElement(Ref<Element> elem)
+    { itsElements.push_back(elem); }
 
-  Ref<Block> currentBlock() const
+  Ref<Element> currentElement() const
     {
-      if ( !haveValidBlock() )
-        throw Util::Error("no current block exists");
-      return itsBlocks.at(itsCurrentBlockIdx);
+      if ( !haveCurrentElement() )
+        throw Util::Error("no current element exists");
+      return itsElements.at(itsSequenceIdx);
     }
 
-  Util::FwdIter<Util::Ref<Block> > blocks()
+  Util::FwdIter<Util::Ref<Element> > getElements()
     {
-      return Util::FwdIter<Util::Ref<Block> >(itsBlocks.begin(),
-                                              itsBlocks.end());
+      return Util::FwdIter<Util::Ref<Element> >(itsElements.begin(),
+                                                itsElements.end());
+    }
+
+  int numCompleted() const
+    {
+      int num = 0;
+      for (unsigned int i = 0; i < itsElements.size(); ++i)
+        num += itsElements[i]->numCompleted();
+      return num;
     }
 
   void edBeginExpt();
@@ -149,7 +156,7 @@ public:
   void vxHalt() const;
   void edResumeExpt();
   void edClearExpt();
-  void edResetExpt();
+  void vxReset();
 
   void edEndExpt();
 
@@ -178,9 +185,9 @@ public:
   int itsAutosavePeriod;
 
 private:
-  minivec<Ref<Block> > itsBlocks;
+  minivec<Ref<Element> > itsElements;
 
-  unsigned int itsCurrentBlockIdx;
+  unsigned int itsSequenceIdx;
 
 public:
   mutable Tcl::BkdErrorHandler itsErrorHandler;
@@ -205,8 +212,8 @@ ExptDriver::Impl::Impl(ExptDriver* owner) :
   itsAutosaveFile("__autosave_file"),
   itsInfoLog(),
   itsAutosavePeriod(10),
-  itsBlocks(),
-  itsCurrentBlockIdx(0),
+  itsElements(),
+  itsSequenceIdx(0),
   itsErrorHandler(itsInterp.intp()),
   itsDoWhenComplete(new Tcl::ProcWrapper(itsInterp))
 {
@@ -258,10 +265,10 @@ DOTRACE("ExptDriver::Impl::doAutosave");
 bool ExptDriver::Impl::needAutosave() const
 {
 DOTRACE("ExptDriver::Impl::needAutosave");
-  if ( !haveValidBlock() ) return false;
+  if ( !haveCurrentElement() ) return false;
 
   return ( (itsAutosavePeriod > 0) &&
-           ((currentBlock()->numCompleted() % itsAutosavePeriod) == 0) &&
+           ((numCompleted() % itsAutosavePeriod) == 0) &&
            !(itsAutosaveFile.is_empty()) );
 }
 
@@ -285,11 +292,11 @@ DOTRACE("ExptDriver::Impl::readFrom");
   reader->readValue("autosavePeriod", itsAutosavePeriod);
   reader->readValue("infoLog", itsInfoLog);
 
-  reader->readValue("currentBlockIdx", itsCurrentBlockIdx);
+  reader->readValue("currentBlockIdx", itsSequenceIdx);
 
-  itsBlocks.clear();
-  IO::ReadUtils::readObjectSeq<Block>(
-           reader, "blocks", std::back_inserter(itsBlocks));
+  itsElements.clear();
+  IO::ReadUtils::readObjectSeq<Element>(
+           reader, "blocks", std::back_inserter(itsElements));
 
   if (svid < 4)
     {
@@ -318,10 +325,10 @@ DOTRACE("ExptDriver::Impl::writeTo");
   writer->writeValue("autosavePeriod", itsAutosavePeriod);
   writer->writeValue("infoLog", itsInfoLog);
 
-  writer->writeValue("currentBlockIdx", itsCurrentBlockIdx);
+  writer->writeValue("currentBlockIdx", itsSequenceIdx);
 
   IO::WriteUtils::writeObjectSeq(writer, "blocks",
-                                 itsBlocks.begin(), itsBlocks.end());
+                                 itsElements.begin(), itsElements.end());
 
   writer->writeOwnedObject("doWhenComplete", itsDoWhenComplete);
 }
@@ -337,7 +344,7 @@ void ExptDriver::Impl::edBeginExpt()
 {
 DOTRACE("ExptDriver::Impl::edBeginExpt");
 
-  ensureHasBlock();
+  ensureHasElement();
 
   addLogInfo("Beginning experiment.");
 
@@ -348,7 +355,7 @@ DOTRACE("ExptDriver::Impl::edBeginExpt");
   Util::Log::reset(); // to clear any existing timer scopes
   Util::Log::addScope("Expt");
 
-  currentBlock()->vxRun(*itsOwner);
+  currentElement()->vxRun(*itsOwner);
 }
 
 
@@ -364,15 +371,15 @@ void ExptDriver::Impl::vxNext()
 {
 DOTRACE("ExptDriver::Impl::vxNext");
 
-  ++itsCurrentBlockIdx;
+  ++itsSequenceIdx;
 
-  if ( !haveValidBlock() )
+  if ( !haveCurrentElement() )
     {
       edEndExpt();
     }
   else
     {
-      currentBlock()->vxRun(*itsOwner);
+      currentElement()->vxRun(*itsOwner);
     }
 }
 
@@ -381,9 +388,9 @@ void ExptDriver::Impl::vxHalt() const
 {
 DOTRACE("ExptDriver::Impl::vxHalt");
 
-  if ( haveValidBlock() )
+  if ( haveCurrentElement() )
     {
-      currentBlock()->vxHalt();
+      currentElement()->vxHalt();
     }
 }
 
@@ -391,9 +398,9 @@ DOTRACE("ExptDriver::Impl::vxHalt");
 void ExptDriver::Impl::edResumeExpt()
 {
 DOTRACE("ExptDriver::Impl::edResumeExpt");
-  ensureHasBlock();
+  ensureHasElement();
 
-  currentBlock()->vxRun(*itsOwner);
+  currentElement()->vxRun(*itsOwner);
 }
 
 
@@ -402,28 +409,28 @@ void ExptDriver::Impl::edClearExpt()
 DOTRACE("ExptDriver::Impl::edClearExpt");
   vxHalt();
 
-  itsBlocks.clear();
-  itsCurrentBlockIdx = 0;
+  itsElements.clear();
+  itsSequenceIdx = 0;
 }
 
 
-void ExptDriver::Impl::edResetExpt()
+void ExptDriver::Impl::vxReset()
 {
-DOTRACE("ExptDriver::Impl::edResetExpt");
+DOTRACE("ExptDriver::Impl::vxReset");
   vxHalt();
 
   Util::log("resetting experiment");
 
   while (1)
     {
-      if ( haveValidBlock() )
+      if ( haveCurrentElement() )
         {
-          Util::log(fstring("resetting block", itsCurrentBlockIdx));
-          currentBlock()->resetBlock();
+          Util::log(fstring("resetting element", itsSequenceIdx));
+          currentElement()->vxReset();
         }
 
-      if (itsCurrentBlockIdx > 0)
-        --itsCurrentBlockIdx;
+      if (itsSequenceIdx > 0)
+        --itsSequenceIdx;
       else
         break;
     }
@@ -540,10 +547,13 @@ const Util::SoftRef<Toglet>& ExptDriver::getWidget() const
   { return itsImpl->itsWidget; }
 
 int ExptDriver::trialType() const
-  { return itsImpl->currentBlock()->trialType(); }
+  { return itsImpl->currentElement()->trialType(); }
+
+int ExptDriver::numCompleted() const
+  { return itsImpl->numCompleted(); }
 
 int ExptDriver::lastResponse() const
-  { return itsImpl->currentBlock()->lastResponse(); }
+  { return itsImpl->currentElement()->lastResponse(); }
 
 fstring ExptDriver::status() const
   { return itsImpl->status(); }
@@ -567,7 +577,7 @@ void ExptDriver::vxProcessResponse(Response& /*response*/)
   { /* FIXME */ Assert(false); }
 
 void ExptDriver::vxUndo()
-  { itsImpl->currentBlock()->vxUndo(); }
+  { itsImpl->currentElement()->vxUndo(); }
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -593,14 +603,14 @@ const char* ExptDriver::getInfoLog() const
 void ExptDriver::addLogInfo(const char* message)
   { itsImpl->addLogInfo(message); }
 
-void ExptDriver::addBlock(Ref<Block> block)
-  { itsImpl->addBlock(block); }
+void ExptDriver::addElement(Ref<Element> elem)
+  { itsImpl->addElement(elem); }
 
-Ref<Block> ExptDriver::currentBlock() const
-  { return itsImpl->currentBlock(); }
+Ref<Element> ExptDriver::currentElement() const
+  { return itsImpl->currentElement(); }
 
-Util::FwdIter<Util::Ref<Block> > ExptDriver::blocks() const
-  { return itsImpl->blocks(); }
+Util::FwdIter<Util::Ref<Element> > ExptDriver::getElements() const
+  { return itsImpl->getElements(); }
 
 fstring ExptDriver::getDoWhenComplete() const
   { return itsImpl->itsDoWhenComplete->fullSpec(); }
@@ -626,8 +636,8 @@ void ExptDriver::edResumeExpt()
 void ExptDriver::edClearExpt()
   { itsImpl->edClearExpt(); }
 
-void ExptDriver::edResetExpt()
-  { itsImpl->edResetExpt(); }
+void ExptDriver::vxReset()
+  { itsImpl->vxReset(); }
 
 void ExptDriver::storeData()
   { itsImpl->storeData(); }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Wed Dec  4 18:40:51 2002
+// written: Wed Dec  4 18:58:39 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,6 +101,8 @@ public:
   /// returns some user-defined info about relationship between objects in trial
   virtual int trialType() const;
 
+  virtual int numCompleted() const;
+
   virtual int lastResponse() const;
 
   /// Overridden from Element.
@@ -119,6 +121,8 @@ public:
   virtual void vxProcessResponse(Response& response);
 
   virtual void vxUndo();
+
+  virtual void vxReset();
 
   /////////////
   // actions //

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Dec  4 18:29:02 2002
+// written: Wed Dec  4 19:08:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,8 +22,6 @@
 struct Tcl_Interp;
 
 class fstring;
-
-class Block;
 
 namespace Gfx
 {
@@ -82,6 +80,8 @@ public:
 
   virtual int trialType() const;
 
+  virtual int numCompleted() const;
+
   virtual int lastResponse() const;
 
   /// Overridden from Element.
@@ -97,13 +97,17 @@ public:
   /// End the current trial normally, and move on to the next trial.
   virtual void vxEndTrial();
 
-  /** Attempt to start the next block, or stop the experiment if
-      there are no more blocks. */
+  /** Attempt to start the next element, or stop the experiment if there
+      are no more element. */
   virtual void vxNext();
 
   virtual void vxProcessResponse(Response& response);
 
   virtual void vxUndo();
+
+  /** Reset the Experiment, restoring it to a state in which no
+      trials have been run. */
+  virtual void vxReset();
 
   //////////////////////////////
   // Accessors + Manipulators //
@@ -126,11 +130,11 @@ public:
       date/time-stamped. */
   void addLogInfo(const char* message);
 
-  void addBlock(Util::Ref<Block> block);
-  Util::Ref<Block> currentBlock() const;
+  void addElement(Util::Ref<Element> elem);
+  Util::Ref<Element> currentElement() const;
 
-  /// Returns an iterator to all the Block's contained in the experiment.
-  Util::FwdIter<Util::Ref<Block> > blocks() const;
+  /// Returns an iterator to all the Element objects contained in the experiment.
+  Util::FwdIter<Util::Ref<Element> > getElements() const;
 
   fstring getDoWhenComplete() const;
   void setDoWhenComplete(const fstring& script);
@@ -150,10 +154,6 @@ public:
 
   /// Clear the experiment to an empty state.
   void edClearExpt();
-
-  /** Reset the Experiment, restoring it to a state in which no
-      trials have been run. */
-  void edResetExpt();
 
   void pause();
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Dec  4 18:09:23 2002
+// written: Wed Dec  4 19:10:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -444,6 +444,18 @@ DOTRACE("Block::resetBlock");
     {
       vxUndo();
     }
+}
+
+void Block::vxReset()
+{
+DOTRACE("Block::vxReset");
+
+  for (unsigned int i = 0; i < itsImpl->itsElements.size(); ++i)
+    {
+      itsImpl->itsElements[i]->vxReset();
+    }
+
+  itsImpl->itsSequencePos = 0;
 }
 
 static const char vcid_block_cc[] = "$Header$";

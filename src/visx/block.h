@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Wed Dec  4 18:25:02 2002
+// written: Wed Dec  4 18:58:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -88,6 +88,15 @@ public:
   /// Returns the trial type of the current element.
   virtual int trialType() const;
 
+  /// Returns the number of elements that have been successfully completed.
+  /** This number will not include elements that have been aborted either
+      due to an invalid response or due to a timeout. */
+  virtual int numCompleted() const;
+
+  /// Returns the last valid response recorded in the Block.
+  /** But note that "valid" does not necessarily mean "correct". */
+  virtual int lastResponse() const;
+
   /// Returns a human-readable description of the current element.
   /** This description includes the current element's id, its type, the
       id's of its subobjects, the categories of those objects, and the
@@ -109,15 +118,6 @@ public:
       normally, instead of being aborted. */
   virtual void vxAbort();
 
-  /// Undo the previous element.
-  /** The state of the experiment is restored to what it was just prior to
-      the beginning of the most recent successfully completed
-      element. Thus, the current element is changed to its previous value,
-      and the response to the most recently successfully completed element
-      is erased. After a call to vxUndo(), the next invocation of
-      vxRun() will redo the element that was undone in the present command.*/
-  virtual void vxUndo();
-
   /// Prepares the Block to start the next element. */
   virtual void vxEndTrial();
 
@@ -131,6 +131,17 @@ public:
       the response that was recorded in the present command. */
   virtual void vxProcessResponse(Response& response);
 
+  /// Undo the previous element.
+  /** The state of the experiment is restored to what it was just prior to
+      the beginning of the most recent successfully completed
+      element. Thus, the current element is changed to its previous value,
+      and the response to the most recently successfully completed element
+      is erased. After a call to vxUndo(), the next invocation of
+      vxRun() will redo the element that was undone in the present command.*/
+  virtual void vxUndo();
+
+  virtual void vxReset();
+
   ///////////////
   // accessors //
   ///////////////
@@ -141,17 +152,8 @@ public:
   /// Returns an iterator to all the elements contained in the Block.
   Util::FwdIter<Util::Ref<Element> > getElements() const;
 
-  /// Returns the number of elements that have been successfully completed.
-  /** This number will not include elements that have been aborted either
-      due to an invalid response or due to a timeout. */
-  int numCompleted() const;
-
   /// Get a reference to the current element.
   Util::SoftRef<Element> currentElement() const;
-
-  /// Returns the last valid response recorded in the Block.
-  /** But note that "valid" does not necessarily mean "correct". */
-  int lastResponse() const;
 
   /// Returns true if the block is complete, false otherwise.
   /** The block is considered complete if all elements in the sequence

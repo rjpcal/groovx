@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Dec  4 18:23:19 2002
+// written: Wed Dec  4 19:10:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -462,6 +462,12 @@ DOTRACE("Trial::Impl::vxUndo");
     itsResponses.pop_back();
 }
 
+void Trial::vxReset()
+{
+DOTRACE("Trial::vxReset");
+  itsImpl->itsResponses.clear();
+}
+
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -637,6 +643,9 @@ void Trial::trDenyResponses()
 
 void Trial::installSelf(SoftRef<Toglet> widget) const
   { itsImpl->installSelf(widget); }
+
+int Trial::numCompleted() const
+  { return itsImpl->itsResponses.size(); }
 
 void Trial::vxNext()
   { Assert(false); }
