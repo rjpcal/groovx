@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 20 08:50:34 2000
-// written: Fri Nov 10 17:03:48 2000
+// written: Thu Nov 16 12:20:47 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,10 +64,11 @@ size_t default_hasher<key_type>::operator()(const key_type& key)
 }
 
 template <>
-size_t default_hasher<const char*>::operator()(const char* key)
+size_t default_hasher<const char*>::operator()(const char* const& key)
 {
+  const char* ptr = key;
   size_t res = 0;
-  while (*key) res = (res<<1)^*key++;
+  while (*ptr) res = (res<<1)^*ptr++;
   return res;
 };
 
