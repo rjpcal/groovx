@@ -6,9 +6,13 @@
 
 source [file dirname [info script]]/deps.tcl
 
-set args [depconf::parse_argv $argv]
+set default_args \
+    "--src ./src --objdir ./obj/$env(ARCH) --libdir $env(HOME)/local/$env(ARCH)/lib/"
+
+set args [depconf::parse_argv [concat $default_args $argv]]
 
 set lmapping [subst -nobackslashes -nocommands {
+    {.*\\.h {}}
     {${depconf::srcdir}/(.*)\\.cc ${depconf::objdir}/\\1.do}
     {${depconf::objdir}/gfx/.*\\.do ${depconf::libdir}/libDeepGfx.d.so}
     {${depconf::objdir}/gwt/.*\\.do ${depconf::libdir}/libDeepGwt.d.so}
@@ -22,3 +26,5 @@ set lmapping [subst -nobackslashes -nocommands {
 }]
 
 puts [ldeps::get_batch $args $depconf::srcdir $lmapping]
+
+exit
