@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Tue Aug 21 15:22:43 2001
+// written: Fri Sep  7 16:20:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,6 +59,8 @@ namespace Tcl
 
     CountAllFunc(shared_ptr<ObjCaster> caster) : itsCaster(caster) {}
 
+    typedef void Retn_t;
+
     void operator()(Tcl::Context& ctx)
     {
       ObjDb& theDb = ObjDb::theDb();
@@ -77,6 +79,8 @@ namespace Tcl
     shared_ptr<ObjCaster> itsCaster;
 
     FindAllFunc(shared_ptr<ObjCaster> caster) : itsCaster(caster) {}
+
+    typedef void Retn_t;
 
     void operator()(Tcl::Context& ctx)
     {
@@ -99,6 +103,8 @@ namespace Tcl
     shared_ptr<ObjCaster> itsCaster;
 
     RemoveAllFunc(shared_ptr<ObjCaster> caster) : itsCaster(caster) {}
+
+    typedef void Retn_t;
 
     void operator()(Tcl::Context&)
     {
@@ -130,6 +136,8 @@ namespace Tcl
     shared_ptr<ObjCaster> itsCaster;
 
     IsFunc(shared_ptr<ObjCaster> caster) : itsCaster(caster) {}
+
+    typedef void Retn_t;
 
     void operator()(Tcl::Context& ctx)
     {

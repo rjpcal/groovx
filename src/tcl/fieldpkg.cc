@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Fri Sep  7 15:28:42 2001
+// written: Fri Sep  7 15:59:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,6 +51,8 @@ namespace Tcl
       isItRecursive(recurse),
       isItInited(false)
     {}
+
+    typedef void Retn_t;
 
     void operator()(Tcl::Context& ctx);
   };

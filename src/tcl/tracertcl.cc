@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Feb 17 13:34:40 2000
-// written: Thu Aug  9 13:14:12 2001
+// written: Fri Sep  7 16:20:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,6 +38,8 @@ namespace
       itsTracer(tracer),
       itsFunc(func)
     {}
+
+    typedef void Retn_t;
 
     void operator()(Tcl::Context& ctx);
   };
