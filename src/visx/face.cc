@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Thu Sep 23 11:38:15 1999
+// written: Thu Sep 23 13:04:38 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -305,10 +305,11 @@ DOTRACE("Face::grRender");
 bool Face::grGetBoundingBox(double& left, double& top,
 									 double& right, double& bottom,
 									 int& border_pixels) const {
+DOTRACE("Face::grGetBoundingBox");
   left = -0.7;
   right = 0.7;
-  bottom = 0.75*(-1.7);
-  top = 0.75*(1.4);
+  bottom = 0.2 + 0.75*(-1.7-0.2);
+  top = 0.2 + 0.75*(1.4-0.2);
   border_pixels = 4;
   
   return true;
