@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Tue Dec 14 19:44:57 1999
+// written: Sun Jan 16 22:48:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -186,7 +186,7 @@ public:
   /** This will return the bounding box given by grGetBoundingBox(),
 		except that those values will be modified to reflect internal
 		scaling, translation, and pixel border values. */
-  bool getBoundingBox(Rect<double>& bounding_box) const;
+  bool getBoundingBox(const Canvas& canvas, Rect<double>& bounding_box) const;
 
   /** Subclasses may override this function to fill in the parameters
 		with the bounding box in GL coordinates for the object's onscreen
