@@ -58,7 +58,7 @@ public:
   Error(const Error& other);
 
   /// Virtual destructor.
-  virtual ~Error();
+  virtual ~Error() throw();
 
   /// Get the error message.
   fstring& msg() { return itsInfo; }

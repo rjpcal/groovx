@@ -64,7 +64,7 @@ class IO::WriteError : public Util::Error
 public:
   WriteError(const fstring& msg) : Util::Error(msg) {};
 
-  virtual ~WriteError();
+  virtual ~WriteError() throw();
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ public:
                    IO::VersionId lowest_supported_id,
                    const char* msg);
 
-  virtual ~WriteVersionError();
+  virtual ~WriteVersionError() throw();
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -109,7 +109,7 @@ class IO::Writer
 public:
 
   /// Virtual destructor allows correct destruction of subclasses.
-  virtual ~Writer();
+  virtual ~Writer() throw();
 
   /** A convenience function to ensure that the current serial version
       is no less than the \a lowest_supported_version. Returns the \a

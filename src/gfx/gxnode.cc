@@ -68,7 +68,7 @@ GxNode::GxNode() : sigNodeChanged()
 DOTRACE("GxNode::GxNode");
 }
 
-GxNode::~GxNode()
+GxNode::~GxNode() throw()
 {
 DOTRACE("GxNode::~GxNode");
 }

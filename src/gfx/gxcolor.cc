@@ -49,7 +49,7 @@ GxColor::GxColor() :
   setFieldMap(GxColor::classFields());
 }
 
-GxColor::~GxColor() {}
+GxColor::~GxColor() throw() {}
 
 IO::VersionId GxColor::serialVersionId() const
 {

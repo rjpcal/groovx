@@ -56,7 +56,7 @@ public:
   static MorphyFace* make();
 
   /// Virtual destructor.
-  virtual ~MorphyFace ();
+  virtual ~MorphyFace () throw();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

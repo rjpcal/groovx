@@ -73,7 +73,7 @@ public:
   /// Default constructor
   GxShapeKit();
   /// Virtual destructor ensures proper destruction of subclasses.
-  virtual ~GxShapeKit();
+  virtual ~GxShapeKit() throw();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

@@ -54,7 +54,7 @@ public:
   static MaskHatch* make();
 
   /// Virtual destructor.
-  virtual ~MaskHatch();
+  virtual ~MaskHatch() throw();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

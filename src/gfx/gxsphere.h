@@ -50,7 +50,7 @@ public:
   static GxSphere* make();
 
   /// Virtual destructor.
-  virtual ~GxSphere();
+  virtual ~GxSphere() throw();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

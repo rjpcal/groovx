@@ -55,7 +55,7 @@ KbdResponseHdlr::KbdResponseHdlr() :
   setBindingSubstitution("%K");
 }
 
-KbdResponseHdlr::~KbdResponseHdlr() {}
+KbdResponseHdlr::~KbdResponseHdlr() throw() {}
 
 static const char vcid_kbdresponsehdlr_cc[] = "$Header$";
 #endif // !KBDRESPONSEHDLR_CC_DEFINED

@@ -81,7 +81,7 @@ DOTRACE("GxCylinder::GxCylinder");
   setFieldMap(GxCylinder::classFields());
 }
 
-GxCylinder::~GxCylinder()
+GxCylinder::~GxCylinder() throw()
 {
 DOTRACE("GxCylinder::~GxCylinder");
 }

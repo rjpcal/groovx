@@ -58,7 +58,7 @@ Tcl::ProcWrapper::ProcWrapper(const Tcl::Interp& interp, const fstring& name) :
   itsBody()
 {}
 
-Tcl::ProcWrapper::~ProcWrapper()
+Tcl::ProcWrapper::~ProcWrapper() throw()
 {
   // We must check hasInterp() in case we are here because the application
   // is being exited, causing the interpreter to be deleted, in which case

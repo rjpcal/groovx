@@ -69,7 +69,7 @@ public:
   AsciiStreamWriter(const char* filename);
 
   /// Virtual destructor.
-  virtual ~AsciiStreamWriter();
+  virtual ~AsciiStreamWriter() throw();
 
   virtual void writeChar(const char* name, char val);
   virtual void writeInt(const char* name, int val);

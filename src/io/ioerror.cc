@@ -40,7 +40,7 @@ IO::FilenameError::FilenameError(const char* str) :
 DOTRACE("IO::FilenameError::FilenameError");
 }
 
-IO::FilenameError::~FilenameError() {}
+IO::FilenameError::~FilenameError() throw() {}
 
 static const char vcid_ioerror_cc[] = "$Header$";
 #endif // !IOERROR_CC_DEFINED

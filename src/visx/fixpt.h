@@ -53,7 +53,7 @@ public:
   static FixPt* make();
 
   /// Virtual destructor.
-  virtual ~FixPt ();
+  virtual ~FixPt () throw();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

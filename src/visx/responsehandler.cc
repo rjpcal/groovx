@@ -45,7 +45,7 @@ ResponseHandler::ResponseHandler()
 DOTRACE("ResponseHandler::ResponseHandler");
 }
 
-ResponseHandler::~ResponseHandler()
+ResponseHandler::~ResponseHandler() throw()
 {
 DOTRACE("ResponseHandler::~ResponseHandler");
 }

@@ -52,7 +52,7 @@ public:
   static GxLighting* make();
 
   /// Virtual destructor.
-  virtual ~GxLighting();
+  virtual ~GxLighting() throw();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

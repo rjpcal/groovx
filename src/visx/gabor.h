@@ -54,7 +54,7 @@ public:
   static Gabor* make();
 
   /// Virtual destructor.
-  virtual ~Gabor();
+  virtual ~Gabor() throw();
 
   /// Get Gabor's fields.
   static const FieldMap& classFields();

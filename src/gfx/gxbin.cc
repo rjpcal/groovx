@@ -38,7 +38,7 @@ GxBin::GxBin() : itsChild(GxEmptyNode::make()) {}
 
 GxBin::GxBin(Util::Ref<GxNode> child) : itsChild(child) {}
 
-GxBin::~GxBin() {}
+GxBin::~GxBin() throw() {}
 
 void GxBin::setChild(const Util::Ref<GxNode>& child)
 {

@@ -44,7 +44,7 @@ GxCache::GxCache(Util::SoftRef<GxNode> child) :
   itsDisplayList(0)
 {}
 
-GxCache::~GxCache()
+GxCache::~GxCache() throw()
 {
   invalidate();
 }

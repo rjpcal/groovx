@@ -75,7 +75,7 @@ DOTRACE("TimingHandler::TimingHandler");
   abortwait_abort_id = addEventByName("EndTrialEvent", FROM_ABORT, 1000);
 }
 
-TimingHandler::~TimingHandler()
+TimingHandler::~TimingHandler() throw()
 {
 DOTRACE("TimingHandler::~TimingHandler");
 }

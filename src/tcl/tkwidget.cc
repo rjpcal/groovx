@@ -76,7 +76,7 @@ public:
              const char* pathname,
              bool topLevel);
 
-  ~TkWidgImpl();
+  virtual ~TkWidgImpl() throw();
 
   Tcl::TkWidget* owner;
   Tcl::Interp interp;
@@ -140,7 +140,7 @@ DOTRACE("TkWidgImpl::TkWidgImpl");
                         static_cast<void*>(owner));
 }
 
-TkWidgImpl::~TkWidgImpl()
+TkWidgImpl::~TkWidgImpl() throw()
 {
 DOTRACE("TkWidgImpl::~TkWidgImpl");
 
@@ -314,7 +314,7 @@ DOTRACE("Tcl::TkWidget::TkWidget");
   this->markAsVolatile();
 }
 
-Tcl::TkWidget::~TkWidget()
+Tcl::TkWidget::~TkWidget() throw()
 {
 DOTRACE("Tcl::TkWidget::~TkWidget");
   delete rep;

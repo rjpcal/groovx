@@ -90,7 +90,7 @@ DOTRACE("GxLighting::GxLighting");
   setFieldMap(GxLighting::classFields());
 }
 
-GxLighting::~GxLighting()
+GxLighting::~GxLighting() throw()
 {
 DOTRACE("GxLighting::~GxLighting");
 }

@@ -47,7 +47,7 @@ public:
   static Jitter* make();
 
   /// Virtual destructor.
-  virtual ~Jitter();
+  virtual ~Jitter() throw();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

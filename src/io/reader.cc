@@ -35,7 +35,7 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-IO::ReadError::~ReadError() {}
+IO::ReadError::~ReadError() throw() {}
 
 IO::ReadVersionError::ReadVersionError(const char* classname,
                                        IO::VersionId attempted_id,
@@ -49,9 +49,9 @@ IO::ReadVersionError::ReadVersionError(const char* classname,
   msg().append(lowest_supported_id, ". ", info);
 }
 
-IO::ReadVersionError::~ReadVersionError() {}
+IO::ReadVersionError::~ReadVersionError() throw() {}
 
-IO::Reader::~Reader() {}
+IO::Reader::~Reader() throw() {}
 
 int IO::Reader::ensureReadVersionId(const char* name,
                                     IO::VersionId lowest_supported_version,

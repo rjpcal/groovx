@@ -46,7 +46,7 @@ protected:
   GxDrawStyle();
 
 public:
-  virtual ~GxDrawStyle();
+  virtual ~GxDrawStyle() throw();
 
   /// Factory function.
   static GxDrawStyle* make() { return new GxDrawStyle; }

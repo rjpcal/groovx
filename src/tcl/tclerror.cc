@@ -32,7 +32,7 @@
 
 #include "tcl/tclerror.h"
 
-Tcl::TclError::~TclError() {}
+Tcl::TclError::~TclError() throw() {}
 
 static const char vcid_tclerror_cc[] = "$Header$";
 #endif // !TCLERROR_CC_DEFINED

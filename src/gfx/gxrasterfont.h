@@ -39,7 +39,7 @@ public:
   /// Construct from the given X11 font specification.
   GxRasterFont(const char* fontname);
 
-  virtual ~GxRasterFont();
+  virtual ~GxRasterFont() throw();
 
   virtual const char* fontName() const;
 

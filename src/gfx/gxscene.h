@@ -47,6 +47,9 @@ public:
   /// Construct with a canvas in which to draw.
   GxScene(Util::SoftRef<Gfx::Canvas> canvas);
 
+  /// Virtual no-throw destructor.
+  virtual ~GxScene() throw();
+
   /// Undraw the scene from the canvas.
   void undraw();
 

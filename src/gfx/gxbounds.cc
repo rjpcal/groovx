@@ -50,7 +50,7 @@ GxBounds::GxBounds(Util::SoftRef<GxNode> child) :
   itsMask(0x3333)     // 0011001100110011
 {}
 
-GxBounds::~GxBounds() {}
+GxBounds::~GxBounds() throw() {}
 
 void GxBounds::getBoundingCube(Gfx::Bbox& bbox) const
 {

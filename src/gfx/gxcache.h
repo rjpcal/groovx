@@ -65,7 +65,7 @@ public:
   GxCache(Util::SoftRef<GxNode> child);
 
   /// Virtual destructor.
-  virtual ~GxCache();
+  virtual ~GxCache() throw();
 
   /// FIXME
   virtual void readFrom(IO::Reader* /*reader*/) {};

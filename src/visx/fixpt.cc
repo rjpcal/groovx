@@ -86,7 +86,7 @@ FixPt::FixPt(double len, int wid) :
   setFieldMap(FixPt::classFields());
 }
 
-FixPt::~FixPt() {}
+FixPt::~FixPt() throw() {}
 
 IO::VersionId FixPt::serialVersionId() const
 {

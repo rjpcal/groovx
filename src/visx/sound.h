@@ -44,7 +44,7 @@ namespace Util
 class SoundRep
 {
 public:
-  virtual ~SoundRep();
+  virtual ~SoundRep() throw();
 
   virtual void play() = 0;
 
@@ -92,7 +92,7 @@ public:
   /// Construct with the given sound file.
   Sound(const char* filename = 0);
 
-  virtual ~Sound();
+  virtual ~Sound() throw();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

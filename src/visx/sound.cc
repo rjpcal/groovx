@@ -66,7 +66,7 @@ namespace
   SoftRef<Sound> ERR_SOUND;
 }
 
-SoundRep::~SoundRep() {}
+SoundRep::~SoundRep() throw() {}
 
 void SoundRep::checkFilename(const char* filename)
 {
@@ -117,7 +117,7 @@ DOTRACE("Sound::Sound");
   setFile(filename);
 }
 
-Sound::~Sound()
+Sound::~Sound() throw()
 {
 DOTRACE("Sound::~Sound");
 }

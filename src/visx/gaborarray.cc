@@ -101,6 +101,8 @@ DOTRACE("GaborArray::GaborArray");
   setPercentBorder(0);
 }
 
+GaborArray::~GaborArray() throw() {}
+
 const FieldMap& GaborArray::classFields()
 {
   static const Field FIELD_ARRAY[] =

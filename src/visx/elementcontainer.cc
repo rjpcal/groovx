@@ -75,7 +75,7 @@ ElementContainer::ElementContainer() :
 DOTRACE("ElementContainer::ElementContainer");
 }
 
-ElementContainer::~ElementContainer()
+ElementContainer::~ElementContainer() throw()
 {
 DOTRACE("ElementContainer::~ElementContainer");
   delete rep;

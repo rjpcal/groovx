@@ -57,7 +57,7 @@ class IoProxy : public IoObject
 {
 protected:
   IoProxy(C* ref) : IoObject(), itsReferand(ref) {}
-  virtual ~IoProxy() {}
+  virtual ~IoProxy() throw() {}
 
 public:
   static Util::Ref<IoObject> make(C* ref)
@@ -97,7 +97,7 @@ class ConstIoProxy : public IoObject
 {
 protected:
   ConstIoProxy(const C* ref) : IoObject(), itsReferand(const_cast<C*>(ref)) {}
-  virtual ~ConstIoProxy() {}
+  virtual ~ConstIoProxy() throw() {}
 
 public:
   static Util::Ref<const IoObject> make(const C* ref)

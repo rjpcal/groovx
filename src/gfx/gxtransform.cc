@@ -134,7 +134,7 @@ DOTRACE("GxTransform::GxTransform");
   setFieldMap(GxTransform::classFields());
 }
 
-GxTransform::~GxTransform()
+GxTransform::~GxTransform() throw()
 {
 DOTRACE("GxTransform::~GxTransform");
   delete rep;

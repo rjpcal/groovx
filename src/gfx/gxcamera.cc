@@ -44,6 +44,8 @@
 #include "util/debug.h"
 #include "util/trace.h"
 
+GxCamera::~GxCamera() throw() {}
+
 GxPerspectiveCamera::GxPerspectiveCamera() :
   GxCamera(),
   FieldContainer(&sigNodeChanged),
@@ -51,6 +53,8 @@ GxPerspectiveCamera::GxPerspectiveCamera() :
   itsNearZ(1),
   itsFarZ(30)
 {}
+
+GxPerspectiveCamera::~GxPerspectiveCamera() throw() {}
 
 const FieldMap& GxPerspectiveCamera::classFields()
 {
@@ -99,6 +103,8 @@ DOTRACE("GxPerspectiveCamera::draw");
 }
 
 
+GxFixedRectCamera::~GxFixedRectCamera() throw() {}
+
 void GxFixedRectCamera::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxFixedRectCamera::draw");
@@ -106,6 +112,8 @@ DOTRACE("GxFixedRectCamera::draw");
   canvas.viewport(0, 0, width(), height());
   canvas.orthographic(itsRect, -10.0, 10.0);
 }
+
+GxMinRectCamera::~GxMinRectCamera() throw() {}
 
 void GxMinRectCamera::draw(Gfx::Canvas& canvas) const
 {
@@ -155,6 +163,8 @@ GxFixedScaleCamera::GxFixedScaleCamera() :
   FieldContainer(&sigNodeChanged),
   itsPixelsPerUnit(100.0)
 {}
+
+GxFixedScaleCamera::~GxFixedScaleCamera() throw() {}
 
 const FieldMap& GxFixedScaleCamera::classFields()
 {
@@ -223,6 +233,8 @@ GxPsyphyCamera::GxPsyphyCamera() :
   itsDegreesPerUnit(2.05),
   itsViewingDistance(30.0)
 {}
+
+GxPsyphyCamera::~GxPsyphyCamera() throw() {}
 
 const FieldMap& GxPsyphyCamera::classFields()
 {

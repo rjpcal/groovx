@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 19 07:38:09 2003
-// written: Mon May 19 09:46:55 2003
+// written: Thu May 22 08:52:29 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,7 +27,7 @@ class QuickTimeSoundRep : public SoundRep
 public:
   QuickTimeSoundRep(const char* filename);
 
-  virtual ~QuickTimeSoundRep();
+  virtual ~QuickTimeSoundRep() throw();
 
   virtual void play();
 
@@ -74,7 +74,7 @@ DOTRACE("QuickTimeSoundRep::QuickTimeSoundRep");
     }
 }
 
-QuickTimeSoundRep::~QuickTimeSoundRep()
+QuickTimeSoundRep::~QuickTimeSoundRep() throw()
 {
 DOTRACE("QuickTimeSoundRep::~QuickTimeSoundRep");
   DisposeMovie(itsMovie);

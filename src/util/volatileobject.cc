@@ -40,7 +40,7 @@ DOTRACE("Util::VolatileObject::VolatileObject");
   this->markAsVolatile();
 }
 
-Util::VolatileObject::~VolatileObject()
+Util::VolatileObject::~VolatileObject() throw()
 {
 DOTRACE("Util::VolatileObject::~VolatileObject");
 }

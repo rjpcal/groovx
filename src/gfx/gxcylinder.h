@@ -50,7 +50,7 @@ public:
   static GxCylinder* make();
 
   /// Virtual destructor.
-  virtual ~GxCylinder();
+  virtual ~GxCylinder() throw();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

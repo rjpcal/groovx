@@ -36,7 +36,7 @@
 
 #include "util/debug.h"
 
-IO::WriteError::~WriteError() {}
+IO::WriteError::~WriteError() throw() {}
 
 IO::WriteVersionError::WriteVersionError(const char* classname,
                                          IO::VersionId attempted_id,
@@ -50,9 +50,9 @@ IO::WriteVersionError::WriteVersionError(const char* classname,
   msg().append(lowest_supported_id, ". ", info);
 }
 
-IO::WriteVersionError::~WriteVersionError() {}
+IO::WriteVersionError::~WriteVersionError() throw() {}
 
-IO::Writer::~Writer () {}
+IO::Writer::~Writer () throw() {}
 
 int IO::Writer::ensureWriteVersionId(const char* name,
                                      IO::VersionId actual_version,

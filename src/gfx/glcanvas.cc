@@ -78,7 +78,7 @@ DOTRACE("GLCanvas::make");
   return new GLCanvas(dpy);
 }
 
-GLCanvas::~GLCanvas()
+GLCanvas::~GLCanvas() throw()
 {
 DOTRACE("GLCanvas::~GLCanvas");
   delete rep;

@@ -44,7 +44,7 @@ public:
   GxBounds(Util::SoftRef<GxNode> child);
 
   /// Virtual destructor.
-  virtual ~GxBounds();
+  virtual ~GxBounds() throw();
 
   /// Query whether the rect boundary should be drawn.
   bool isVisible() const { return isItVisible; }

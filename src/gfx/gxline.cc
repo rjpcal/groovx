@@ -84,7 +84,7 @@ DOTRACE("GxLine::GxLine");
   setFieldMap(GxLine::classFields());
 }
 
-GxLine::~GxLine()
+GxLine::~GxLine() throw()
 {
 DOTRACE("GxLine::~GxLine");
 }

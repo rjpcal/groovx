@@ -200,7 +200,7 @@ DOTRACE("Fish::Fish");
   this->sigNodeChanged.emit();
 }
 
-Fish::~Fish ()
+Fish::~Fish () throw()
 {
 DOTRACE("Fish::~Fish");
   delete [] itsParts;

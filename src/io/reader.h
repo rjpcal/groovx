@@ -58,7 +58,7 @@ class IO::ReadError : public Util::Error
 public:
   ReadError(const fstring& msg) : Util::Error(msg) {};
 
-  virtual ~ReadError();
+  virtual ~ReadError() throw();
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ public:
                    IO::VersionId lowest_supported_id,
                    const char* msg);
 
-  virtual ~ReadVersionError();
+  virtual ~ReadVersionError() throw();
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -103,7 +103,7 @@ class IO::Reader
 public:
 
   /// Virtual destructor allows correct destruction of subclasses.
-  virtual ~Reader();
+  virtual ~Reader() throw();
 
   /** A convenience function to ensure that the current serial version
       is no less than the \a lowest_supported_version. Returns the

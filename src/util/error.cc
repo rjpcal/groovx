@@ -81,7 +81,7 @@ DOTRACE("Util::Error::Error(copy)");
   dbgDump(4, itsInfo);
 }
 
-Util::Error::~Error()
+Util::Error::~Error() throw()
 {
 DOTRACE("Util::Error::~Error");
   delete itsBackTrace;

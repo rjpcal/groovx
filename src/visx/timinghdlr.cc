@@ -140,7 +140,7 @@ TimingHdlr::TimingHdlr() :
 DOTRACE("TimingHdlr::TimingHdlr");
 }
 
-TimingHdlr::~TimingHdlr()
+TimingHdlr::~TimingHdlr() throw()
 {
 DOTRACE("TimingHdlr::~TimingHdlr");
 

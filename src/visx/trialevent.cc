@@ -71,7 +71,7 @@ DOTRACE("TrialEvent::TrialEvent");
   itsTimer.sigTimeOut.connect(this, &TrialEvent::invokeTemplate);
 }
 
-TrialEvent::~TrialEvent()
+TrialEvent::~TrialEvent() throw()
 {
 DOTRACE("TrialEvent::~TrialEvent");
 
@@ -176,7 +176,7 @@ DOTRACE("TrialEvent::invokeTemplate");
 
 AbortTrialEvent::AbortTrialEvent(unsigned int msec) : TrialEvent(msec) {}
 
-AbortTrialEvent::~AbortTrialEvent() {}
+AbortTrialEvent::~AbortTrialEvent() throw() {}
 
 void AbortTrialEvent::invoke(Trial& trial)
 {
@@ -186,7 +186,7 @@ DOTRACE("AbortTrialEvent::invoke");
 
 DrawEvent::DrawEvent(unsigned int msec) : TrialEvent(msec) {}
 
-DrawEvent::~DrawEvent() {}
+DrawEvent::~DrawEvent() throw() {}
 
 void DrawEvent::invoke(Trial& trial)
 {
@@ -202,7 +202,7 @@ DOTRACE("DrawEvent::invoke");
 
 RenderEvent::RenderEvent(unsigned int msec) : TrialEvent(msec) {}
 
-RenderEvent::~RenderEvent() {}
+RenderEvent::~RenderEvent() throw() {}
 
 void RenderEvent::invoke(Trial& trial)
 {
@@ -218,7 +218,7 @@ DOTRACE("RenderEvent::invoke");
 
 EndTrialEvent::EndTrialEvent(unsigned int msec) : TrialEvent(msec) {}
 
-EndTrialEvent::~EndTrialEvent() {}
+EndTrialEvent::~EndTrialEvent() throw() {}
 
 void EndTrialEvent::invoke(Trial& trial)
 {
@@ -228,7 +228,7 @@ DOTRACE("EndTrialEvent::invoke");
 
 NextNodeEvent::NextNodeEvent(unsigned int msec) : TrialEvent(msec) {}
 
-NextNodeEvent::~NextNodeEvent() {}
+NextNodeEvent::~NextNodeEvent() throw() {}
 
 void NextNodeEvent::invoke(Trial& trial)
 {
@@ -238,7 +238,7 @@ DOTRACE("NextNodeEvent::invoke");
 
 AllowResponsesEvent::AllowResponsesEvent(unsigned int msec) : TrialEvent(msec) {}
 
-AllowResponsesEvent::~AllowResponsesEvent() {}
+AllowResponsesEvent::~AllowResponsesEvent() throw() {}
 
 void AllowResponsesEvent::invoke(Trial& trial)
 {
@@ -248,7 +248,7 @@ DOTRACE("AllowResponsesEvent::invoke");
 
 DenyResponsesEvent::DenyResponsesEvent(unsigned int msec) : TrialEvent(msec) {}
 
-DenyResponsesEvent::~DenyResponsesEvent() {}
+DenyResponsesEvent::~DenyResponsesEvent() throw() {}
 
 void DenyResponsesEvent::invoke(Trial& trial)
 {
@@ -258,7 +258,7 @@ DOTRACE("DenyResponsesEvent::invoke");
 
 UndrawEvent::UndrawEvent(unsigned int msec) : TrialEvent(msec) {}
 
-UndrawEvent::~UndrawEvent() {}
+UndrawEvent::~UndrawEvent() throw() {}
 
 void UndrawEvent::invoke(Trial& trial)
 {
@@ -270,7 +270,7 @@ DOTRACE("UndrawEvent::invoke");
 
 SwapBuffersEvent::SwapBuffersEvent(unsigned int msec) : TrialEvent(msec) {}
 
-SwapBuffersEvent::~SwapBuffersEvent() {}
+SwapBuffersEvent::~SwapBuffersEvent() throw() {}
 
 void SwapBuffersEvent::invoke(Trial& trial)
 {
@@ -282,7 +282,7 @@ DOTRACE("SwapBuffersEvent::invoke");
 
 RenderBackEvent::RenderBackEvent(unsigned int msec) : TrialEvent(msec) {}
 
-RenderBackEvent::~RenderBackEvent() {}
+RenderBackEvent::~RenderBackEvent() throw() {}
 
 void RenderBackEvent::invoke(Trial& trial)
 {
@@ -294,7 +294,7 @@ DOTRACE("RenderBackEvent::invoke");
 
 RenderFrontEvent::RenderFrontEvent(unsigned int msec) : TrialEvent(msec) {}
 
-RenderFrontEvent::~RenderFrontEvent() {}
+RenderFrontEvent::~RenderFrontEvent() throw() {}
 
 void RenderFrontEvent::invoke(Trial& trial)
 {
@@ -306,7 +306,7 @@ DOTRACE("RenderFrontEvent::invoke");
 
 ClearBufferEvent::ClearBufferEvent(unsigned int msec) : TrialEvent(msec) {}
 
-ClearBufferEvent::~ClearBufferEvent() {}
+ClearBufferEvent::~ClearBufferEvent() throw() {}
 
 void ClearBufferEvent::invoke(Trial& trial)
 {
@@ -321,7 +321,7 @@ GenericEvent::GenericEvent(unsigned int msec) :
   itsCallback(new Tcl::ProcWrapper(Tcl::Main::interp()))
 {}
 
-GenericEvent::~GenericEvent() {}
+GenericEvent::~GenericEvent() throw() {}
 
 void GenericEvent::readFrom(IO::Reader* reader)
 {

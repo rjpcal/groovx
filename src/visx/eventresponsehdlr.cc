@@ -287,7 +287,7 @@ EventResponseHdlr::EventResponseHdlr() :
   rep(new Impl(this))
 {}
 
-EventResponseHdlr::~EventResponseHdlr()
+EventResponseHdlr::~EventResponseHdlr() throw()
   { delete rep; }
 
 IO::VersionId EventResponseHdlr::serialVersionId() const

@@ -49,6 +49,9 @@ public:
   /// Construct with reference to the named sound file.
   EsdSoundRep(const char* filename = 0);
 
+  /// Virtual destructor.
+  virtual ~EsdSoundRep() throw();
+
   /// Play the sound (in this case using the ESD daemon).
   virtual void play();
 
@@ -89,6 +92,8 @@ DOTRACE("EsdSoundRep::EsdSoundRep");
 
   itsFilename = filename;
 }
+
+EsdSoundRep::~EsdSoundRep() throw() {}
 
 void EsdSoundRep::play()
 {

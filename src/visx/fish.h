@@ -79,7 +79,7 @@ public:
                              const char* coordfile, int index);
 
   /// Virtual destructor.
-  virtual ~Fish();
+  virtual ~Fish() throw();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

@@ -55,7 +55,7 @@ class IO::LegacyReader : public IO::Reader
 {
 public:
   LegacyReader(STD_IO::istream& is);
-  virtual ~LegacyReader();
+  virtual ~LegacyReader() throw();
 
   virtual IO::VersionId readSerialVersionId();
 
@@ -98,7 +98,7 @@ class IO::LegacyWriter : public IO::Writer
 {
 public:
   LegacyWriter(STD_IO::ostream& os, bool write_bases=true);
-  virtual ~LegacyWriter();
+  virtual ~LegacyWriter() throw();
 
   void usePrettyPrint(bool yes=true);
 

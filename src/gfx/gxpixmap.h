@@ -62,7 +62,7 @@ public:
   static GxPixmap* make();
 
   /// Virtual destructor ensures proper destruction of subclasses.
-  virtual ~GxPixmap();
+  virtual ~GxPixmap() throw();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

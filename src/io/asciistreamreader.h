@@ -67,7 +67,7 @@ public:
   AsciiStreamReader(STD_IO::istream& is);
 
   /// Virtual destructor.
-  virtual ~AsciiStreamReader();
+  virtual ~AsciiStreamReader() throw();
 
   virtual IO::VersionId readSerialVersionId();
 

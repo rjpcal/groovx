@@ -56,11 +56,11 @@ private:
   IoObject& operator=(const IoObject&);
 
 protected:
-  /** Default constructor. */
-  IoObject();
+  /// Default constructor.
+  IoObject() throw();
 
   /// Virtual destructor to ensure correct destruction of subclasses
-  virtual ~IoObject() = 0;
+  virtual ~IoObject() throw();
 
 public:
   /** Subclasses implement this method to save the object's state via

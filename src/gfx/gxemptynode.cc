@@ -34,7 +34,7 @@
 
 GxEmptyNode::GxEmptyNode() {}
 
-GxEmptyNode::~GxEmptyNode() {}
+GxEmptyNode::~GxEmptyNode() throw() {}
 
 void GxEmptyNode::readFrom(IO::Reader*) {}
 void GxEmptyNode::writeTo(IO::Writer*) const {}

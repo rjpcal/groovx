@@ -148,7 +148,7 @@ DOTRACE("ExptDriver::ExptDriver");
   addLogInfo(cmd_line.c_str());
 }
 
-ExptDriver::~ExptDriver()
+ExptDriver::~ExptDriver() throw()
 {
 DOTRACE("ExptDriver::~ExptDriver");
   delete rep;

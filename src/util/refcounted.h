@@ -57,33 +57,36 @@ namespace Util
 
 struct Util::RefCounts
 {
-protected:
-  ~RefCounts();
-
 public:
-  RefCounts();
-
-  void* operator new(size_t bytes);
-  void operator delete(void* space, size_t bytes);
-
   friend class Util::RefCounted;
 
   typedef unsigned short Count;
 
-  bool isOwnerAlive() const { return itsOwnerAlive; }
+  void* operator new(size_t bytes);
+  void operator delete(void* space, size_t bytes);
 
-  void acquireWeak();
-  Count releaseWeak();
-
-  void debugDump() const;
+  RefCounts() throw();
 
 private:
-  RefCounts(const RefCounts&);
-  RefCounts& operator=(const RefCounts&);
+  /// Private destructor since the object destroys itself eventually in releaseWeak().
+  ~RefCounts() throw();
 
-  void acquireStrong();
-  Count releaseStrong();
-  void releaseStrongNoDelete();
+public:
+
+  bool isOwnerAlive() const throw() { return itsOwnerAlive; }
+
+  void acquireWeak() throw();
+  Count releaseWeak() throw();
+
+  void debugDump() const throw();
+
+private:
+  RefCounts(const RefCounts&) throw();
+  RefCounts& operator=(const RefCounts&) throw();
+
+  void acquireStrong() throw();
+  Count releaseStrong() throw();
+  void releaseStrongNoDelete() throw();
 
   Count itsStrong;
   Count itsWeak;
@@ -139,17 +142,17 @@ protected:
       reference count falls to zero or below. Clients are forced to
       create RefCounted objects dynamically using \c new, which is
       what we need in order for 'delete this' to be valid later on. */
-  virtual ~RefCounted();
+  virtual ~RefCounted() throw();
 
   /// Mark this object as a volatile (unshareable) object.
-  void markAsVolatile();
+  void markAsVolatile() throw();
 
 public:
   /// Increment the object's reference count.
   /** This operation (on the strong reference count) is not permitted if
       the object is unshareable. Unshareable objects can only have their
       weak reference counts manipulated. */
-  void incrRefCount() const;
+  void incrRefCount() const throw();
 
   /// Decrement the object's reference count.
   /** If this causes the reference count to fall to zero or below, the
@@ -157,7 +160,7 @@ public:
       this'. This operation (on the strong reference count) is not
       permitted if the object is unshareable. Unshareable objects can only
       have their weak reference counts manipulated. */
-  void decrRefCount() const;
+  void decrRefCount() const throw();
 
   /// Decrement the object's reference count, but don't delete it.
   /** Unlike decrRefCount(), the object will NOT be delete'd if the
@@ -165,32 +168,32 @@ public:
       reference count) is not permitted if the object is
       unshareable. Unshareable objects can only have their weak reference
       counts manipulated. */
-  void decrRefCountNoDelete() const;
+  void decrRefCountNoDelete() const throw();
 
   /// Returns true if no external client has sole ownership of the object.
   /** This may occur if either (1) the reference count is greater than one,
       or (2) the object isNotShareable(), meaning that the object itself is
       the only "owner". */
-  bool isShared() const;
+  bool isShared() const throw();
 
   /// Returns true if there is a sole external owner of the object.
   /** This occurs if the reference count is one or less and the object is
       shareable. */
-  bool isUnshared() const;
+  bool isUnshared() const throw();
 
   /** Returns true if the object is not shareable for any reason. This
       could be because its lifespan is volatile (such as objects
       representing on-screen windows that can be dismissed by the
       user). The default is for objects to be shareable; objects can
       declare themselves as unshareable by calling markAsVolatile(). */
-  bool isNotShareable() const;
+  bool isNotShareable() const throw();
 
   /// Returns the object's reference count manager.
-  RefCounts* refCounts() const;
+  RefCounts* refCounts() const throw();
 
 
   /// FOR TEST/DEBUG ONLY! Returns the object's (strong) reference count.
-  int dbg_RefCount() const;
+  int dbg_RefCount() const throw();
 };
 
 static const char vcid_refcounted_h[] = "$Header$";

@@ -71,7 +71,7 @@ DOTRACE("GxPointSet::GxPointSet");
   setFieldMap(GxPointSet::classFields());
 }
 
-GxPointSet::~GxPointSet()
+GxPointSet::~GxPointSet() throw()
 {
 DOTRACE("GxPointSet::~GxPointSet");
 }

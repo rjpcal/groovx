@@ -47,7 +47,7 @@ public:
   /// Factory function.
   static GLCanvas* make(Display* dpy);
 
-  virtual ~GLCanvas();
+  virtual ~GLCanvas() throw();
 
   /// Get the associated X11 Visual.
   Visual* visual() const;

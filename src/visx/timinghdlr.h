@@ -53,7 +53,7 @@ protected:
   TimingHdlr();
 public:
   static TimingHdlr* make();
-  virtual ~TimingHdlr();
+  virtual ~TimingHdlr() throw();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

@@ -47,7 +47,7 @@
 const int Response::INVALID_VALUE;
 const int Response::ALWAYS_CORRECT;
 
-Response::~Response() {}
+Response::~Response() throw() {}
 
 fstring Response::getNativeTypeName() const
 {

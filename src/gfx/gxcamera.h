@@ -51,6 +51,9 @@ class GxCamera : public GxNode
 public:
   GxCamera() : GxNode(), itsWidth(0), itsHeight(0) {}
 
+  /// Virtual no-throw destructor.
+  virtual ~GxCamera() throw();
+
   /// Notifies the GxCamera that its window has changed size.
   void reshape(int w, int h) { itsWidth = w; itsHeight = h; }
 
@@ -73,6 +76,9 @@ class GxPerspectiveCamera : public GxCamera, public FieldContainer
 public:
   /// Default constructor.
   GxPerspectiveCamera();
+
+  /// Virtual no-throw destructor.
+  virtual ~GxPerspectiveCamera() throw();
 
   /// Factory function.
   static GxPerspectiveCamera* make() { return new GxPerspectiveCamera; }
@@ -102,6 +108,9 @@ public:
     itsRect(Gfx::rectLTRB<double>(-1.0, 1.0, 1.0, -1.0))
   {}
 
+  /// Virtual no-throw destructor.
+  virtual ~GxFixedRectCamera() throw();
+
   virtual void readFrom(IO::Reader* /*reader*/) {}
   virtual void writeTo(IO::Writer* /*writer*/) const {}
 
@@ -127,6 +136,9 @@ public:
     itsRect(Gfx::rectLTRB<double>(-1.0, 1.0, 1.0, -1.0))
   {}
 
+  /// Virtual no-throw destructor.
+  virtual ~GxMinRectCamera() throw();
+
   virtual void readFrom(IO::Reader* /*reader*/) {}
   virtual void writeTo(IO::Writer* /*writer*/) const {}
 
@@ -148,6 +160,9 @@ class GxFixedScaleCamera : public GxCamera, public FieldContainer
 public:
   /// Default constructor.
   GxFixedScaleCamera();
+
+  /// Virtual no-throw destructor.
+  virtual ~GxFixedScaleCamera() throw();
 
   /// Factory function.
   static GxFixedScaleCamera* make() { return new GxFixedScaleCamera; }
@@ -182,6 +197,9 @@ class GxPsyphyCamera : public GxCamera, public FieldContainer
 public:
   /// Default constructor.
   GxPsyphyCamera();
+
+  /// Virtual no-throw destructor.
+  virtual ~GxPsyphyCamera() throw();
 
   /// Factory function.
   static GxPsyphyCamera* make() { return new GxPsyphyCamera; }

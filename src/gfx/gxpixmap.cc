@@ -198,7 +198,7 @@ DOTRACE("GxPixmap::make");
   return new GxPixmap;
 }
 
-GxPixmap::~GxPixmap()
+GxPixmap::~GxPixmap() throw()
 {
 DOTRACE("GxPixmap::~GxPixmap");
   delete rep;

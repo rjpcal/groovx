@@ -57,7 +57,7 @@ public:
   static GxText* make();
 
   /// Virtual destructor.
-  virtual ~GxText();
+  virtual ~GxText() throw();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

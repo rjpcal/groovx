@@ -42,7 +42,7 @@ public:
   Response(int v = INVALID_VALUE, int m = -1, int c = ALWAYS_CORRECT) :
     itsVal(v), itsMsec(m), itsCorrectVal(c) {}
 
-  virtual ~Response();
+  virtual ~Response() throw();
 
   virtual fstring getNativeTypeName() const;
 

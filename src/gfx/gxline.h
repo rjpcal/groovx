@@ -54,7 +54,7 @@ public:
   static GxLine* make();
 
   /// Virtual destructor.
-  virtual ~GxLine();
+  virtual ~GxLine() throw();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

@@ -244,7 +244,7 @@ DOTRACE("MorphyFace::MorphyFace");
   setMaxDimension(1.0);
 }
 
-MorphyFace::~MorphyFace()
+MorphyFace::~MorphyFace() throw()
 {
 DOTRACE("MorphyFace::~MorphyFace");
   // nothing to do

@@ -673,7 +673,7 @@ public:
   FieldContainer(Util::Signal0* sig);
 
   /// Virtual destructor.
-  virtual ~FieldContainer();
+  virtual ~FieldContainer() throw();
 
   /// Set the field map for this object.
   void setFieldMap(const FieldMap& fields);

@@ -50,7 +50,7 @@ public:
   static GxDisk* make();
 
   /// Virtual destructor.
-  virtual ~GxDisk();
+  virtual ~GxDisk() throw();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

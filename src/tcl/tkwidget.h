@@ -67,7 +67,7 @@ public:
            const char* classname,
            const char* pathname,
            bool topLevel = false);
-  virtual ~TkWidget();
+  virtual ~TkWidget() throw();
 
   void destroyWidget();
 

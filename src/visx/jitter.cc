@@ -71,7 +71,7 @@ DOTRACE("Jitter::Jitter");
   // empty
 }
 
-Jitter::~Jitter ()
+Jitter::~Jitter () throw()
 {
 DOTRACE("Jitter::~Jitter");
   // empty

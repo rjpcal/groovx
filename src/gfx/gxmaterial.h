@@ -51,7 +51,7 @@ public:
   static GxMaterial* make();
 
   /// Virtual destructor.
-  virtual ~GxMaterial();
+  virtual ~GxMaterial() throw();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

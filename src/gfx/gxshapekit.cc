@@ -63,7 +63,7 @@ class GxShapeKitNode : public GxBin
 public:
   GxShapeKitNode(GxShapeKit* obj) : GxBin(), itsObj(obj) {}
 
-  virtual ~GxShapeKitNode() {}
+  virtual ~GxShapeKitNode() throw() {}
 
   virtual void readFrom(IO::Reader* /*reader*/) {};
   virtual void writeTo(IO::Writer* /*writer*/) const {};
@@ -125,6 +125,8 @@ public:
     obj->sigNodeChanged.connect(this, &GxShapeKitImpl::invalidateCaches);
   }
 
+  virtual ~GxShapeKitImpl() throw() {}
+
   void invalidateCaches()
   {
     cache->invalidate();
@@ -165,7 +167,7 @@ DOTRACE("GxShapeKit::GxShapeKit");
 }
 
 // GxShapeKit destructor
-GxShapeKit::~GxShapeKit()
+GxShapeKit::~GxShapeKit() throw()
 {
 DOTRACE("GxShapeKit::~GxShapeKit");
   rep->destroy();

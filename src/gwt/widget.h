@@ -68,7 +68,7 @@ public:
   Widget();
 
   /// Virtual destructor.
-  virtual ~Widget();
+  virtual ~Widget() throw();
 
   Util::Signal1<const ButtonPressEvent&> sigButtonPressed;
   Util::Signal1<const KeyPressEvent&> sigKeyPressed;

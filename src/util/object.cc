@@ -44,17 +44,17 @@ namespace
   Util::UID idCounter = 0;
 }
 
-Util::Object::Object() : itsId(++idCounter)
+Util::Object::Object() throw() : itsId(++idCounter)
 {
 DOTRACE("Util::Object::Object");
 }
 
-Util::Object::~Object()
+Util::Object::~Object() throw()
 {
 DOTRACE("Util::Object::~Object");
 }
 
-Util::UID Util::Object::id() const
+Util::UID Util::Object::id() const throw()
 {
   return itsId;
 }

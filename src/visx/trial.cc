@@ -187,7 +187,7 @@ DOTRACE("Trial::Trial()");
   setFieldMap(Trial::classFields());
 }
 
-Trial::~Trial()
+Trial::~Trial() throw()
 {
 DOTRACE("Trial::~Trial");
   delete rep;

@@ -50,7 +50,7 @@ public:
   ElementContainer();
 
   /// Virtual destructor.
-  virtual ~ElementContainer();
+  virtual ~ElementContainer() throw();
 
   virtual void readFrom(IO::Reader* reader);
 

@@ -77,7 +77,7 @@ DOTRACE("GxSphere::GxSphere");
   setFieldMap(GxSphere::classFields());
 }
 
-GxSphere::~GxSphere()
+GxSphere::~GxSphere() throw()
 {
 DOTRACE("GxSphere::~GxSphere");
 }

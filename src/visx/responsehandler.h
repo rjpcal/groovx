@@ -60,7 +60,7 @@ public:
   ResponseHandler();
 
   /// Virtual destructor.
-  virtual ~ResponseHandler();
+  virtual ~ResponseHandler() throw();
 
   virtual void readFrom(IO::Reader* reader) = 0;
   virtual void writeTo(IO::Writer* writer) const = 0;

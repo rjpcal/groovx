@@ -65,7 +65,7 @@ protected:
 public:
   static Trial* make();
 
-  virtual ~Trial ();
+  virtual ~Trial () throw();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

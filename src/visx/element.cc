@@ -32,7 +32,7 @@
 
 #include "visx/element.h"
 
-Element::~Element() {}
+Element::~Element() throw() {}
 
 void Element::vxEndTrialHook() { /* no-op */ }
 

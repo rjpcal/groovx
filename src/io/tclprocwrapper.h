@@ -60,7 +60,7 @@ public:
   /// Define with a given name.
   ProcWrapper(const Tcl::Interp& intp, const fstring& name);
 
-  ~ProcWrapper();
+  virtual ~ProcWrapper() throw();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

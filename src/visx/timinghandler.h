@@ -45,7 +45,7 @@ protected:
 public:
   static TimingHandler* make();
 
-  virtual ~TimingHandler();
+  virtual ~TimingHandler() throw();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

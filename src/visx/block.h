@@ -67,7 +67,7 @@ public:
   static Block* make();
 
   /// Virtual destructor ensures correct destruction of subclasses.
-  virtual ~Block();
+  virtual ~Block() throw();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

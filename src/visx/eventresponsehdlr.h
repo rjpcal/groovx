@@ -100,7 +100,7 @@ public:
   static EventResponseHdlr* make();
 
   /// Virtual destructor.
-  virtual ~EventResponseHdlr();
+  virtual ~EventResponseHdlr() throw();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

@@ -70,7 +70,7 @@ protected:
 public:
   static MatlabEngine* make() { return new MatlabEngine; }
 
-  ~MatlabEngine()
+  virtual ~MatlabEngine() throw()
   {
     delete [] itsBuf;
     engClose(itsEngine);
@@ -117,6 +117,8 @@ private:
 class MatlabEngine : public Util::Object
 {
 public:
+  virtual ~MatlabEngine() throw() {}
+
   static MatlabEngine* make() { return new MatlabEngine; }
 
   void noSupport()

@@ -39,7 +39,7 @@ GWT::Widget::Widget()
 DOTRACE("GWT::Widget::Widget");
 }
 
-GWT::Widget::~Widget()
+GWT::Widget::~Widget() throw()
 {
 DOTRACE("GWT::Widget::~Widget");
 }

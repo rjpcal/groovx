@@ -55,7 +55,7 @@ public:
   static House* make();
 
   /// Virtual destructor.
-  virtual ~House();
+  virtual ~House() throw();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

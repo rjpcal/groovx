@@ -41,7 +41,7 @@ protected:
 public:
   static KbdResponseHdlr* make();
 
-  virtual ~KbdResponseHdlr();
+  virtual ~KbdResponseHdlr() throw();
 };
 
 static const char vcid_kbdresponsehdlr_h[] = "$Header$";

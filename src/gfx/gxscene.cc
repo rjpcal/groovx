@@ -60,6 +60,11 @@ DOTRACE("GxScene::GxScene");
   itsCamera->sigNodeChanged.connect(slotNodeChanged);
 }
 
+GxScene::~GxScene() throw()
+{
+DOTRACE("GxScene::~GxScene");
+}
+
 void GxScene::render()
 {
 DOTRACE("GxScene::render");

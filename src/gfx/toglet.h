@@ -58,7 +58,7 @@ protected:
 
 public:
 
-  virtual ~Toglet();
+  virtual ~Toglet() throw();
 
   /// Returns a new Toglet object.
   /** Note that the object will be "volatile" -- it manages its own

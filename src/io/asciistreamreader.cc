@@ -588,7 +588,7 @@ DOTRACE("AsciiStreamReader::AsciiStreamReader");
   // nothing
 }
 
-AsciiStreamReader::~AsciiStreamReader ()
+AsciiStreamReader::~AsciiStreamReader () throw()
 {
 DOTRACE("AsciiStreamReader::~AsciiStreamReader");
   delete rep;

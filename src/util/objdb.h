@@ -54,7 +54,7 @@ public:
   InvalidIdError(const fstring& msg) : Util::Error(msg) {};
 
   /// Virtual destructor.
-  virtual ~InvalidIdError();
+  virtual ~InvalidIdError() throw();
 };
 
 ///////////////////////////////////////////////////////////////////////

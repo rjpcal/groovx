@@ -246,7 +246,7 @@ DOTRACE("Toglet::Toglet");
   if (pack) Tcl::TkWidget::pack();
 }
 
-Toglet::~Toglet()
+Toglet::~Toglet() throw()
 {
 DOTRACE("Toglet::~Toglet");
 

@@ -566,7 +566,7 @@ Gfx::PSCanvas::PSCanvas(const char* filename) :
 DOTRACE("Gfx::PSCanvas::PSCanvas");
 }
 
-Gfx::PSCanvas::~PSCanvas()
+Gfx::PSCanvas::~PSCanvas() throw()
 {
 DOTRACE("Gfx::PSCanvas::~PSCanvas");
   delete rep;

@@ -45,7 +45,7 @@ class Util::VolatileObject : public virtual Util::Object
 {
 public:
   VolatileObject();
-  virtual ~VolatileObject();
+  virtual ~VolatileObject() throw();
 
   void destroy();
 };

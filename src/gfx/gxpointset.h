@@ -53,7 +53,7 @@ public:
   static GxPointSet* make();
 
   /// Virtual destructor.
-  virtual ~GxPointSet();
+  virtual ~GxPointSet() throw();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

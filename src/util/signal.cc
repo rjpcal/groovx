@@ -52,7 +52,7 @@ Util::SlotBase::SlotBase()
 DOTRACE("Util::SlotBase::SlotBase");
 }
 
-Util::SlotBase::~SlotBase()
+Util::SlotBase::~SlotBase() throw()
 {
 DOTRACE("Util::SlotBase::~SlotBase");
 }
@@ -68,7 +68,7 @@ Util::Slot0::Slot0()
 DOTRACE("Util::Slot0::Slot0");
 }
 
-Util::Slot0::~Slot0()
+Util::Slot0::~Slot0() throw()
 {
 DOTRACE("Util::Slot0::~Slot0");
 }
@@ -127,7 +127,7 @@ Util::SignalBase::SignalBase() :
   rep(new Impl)
 {}
 
-Util::SignalBase::~SignalBase()
+Util::SignalBase::~SignalBase() throw()
 {
   delete rep;
 }
@@ -195,7 +195,7 @@ Util::Signal0::Signal0() :
 DOTRACE("Util::Signal0::Signal0");
 }
 
-Util::Signal0::~Signal0()
+Util::Signal0::~Signal0() throw()
 {
 DOTRACE("Util::Signal0::~Signal0");
 }

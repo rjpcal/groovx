@@ -49,7 +49,7 @@ NullResponseHdlr::NullResponseHdlr()
 DOTRACE("NullResponseHdlr::NullResponseHdlr");
 }
 
-NullResponseHdlr::~NullResponseHdlr()
+NullResponseHdlr::~NullResponseHdlr() throw()
 {
 DOTRACE("NullResponseHdlr::~NullResponseHdlr");
 }

@@ -63,7 +63,7 @@ public:
   static GxTransform* make();
 
   /// Virtual destructor.
-  virtual ~GxTransform();
+  virtual ~GxTransform() throw();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

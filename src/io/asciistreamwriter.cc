@@ -313,7 +313,7 @@ AsciiStreamWriter::AsciiStreamWriter(const char* filename) :
 DOTRACE("AsciiStreamWriter::AsciiStreamWriter(const char*)");
 }
 
-AsciiStreamWriter::~AsciiStreamWriter ()
+AsciiStreamWriter::~AsciiStreamWriter () throw()
 {
 DOTRACE("AsciiStreamWriter::~AsciiStreamWriter");
   delete rep;

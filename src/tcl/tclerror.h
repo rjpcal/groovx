@@ -43,7 +43,7 @@ class Tcl::TclError : public Util::Error
 public:
   TclError(const fstring& msg) : Util::Error(msg) {};
 
-  virtual ~TclError();
+  virtual ~TclError() throw();
 };
 
 static const char vcid_tclerror_h[] = "$Header$";

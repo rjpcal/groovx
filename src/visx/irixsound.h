@@ -55,7 +55,7 @@ class IrixAudioSoundRep : public SoundRep
 {
 public:
   IrixAudioSoundRep(const char* filename = 0);
-  virtual ~IrixAudioSoundRep();
+  virtual ~IrixAudioSoundRep() throw();
 
   virtual void play();
 
@@ -152,7 +152,7 @@ DOTRACE("IrixAudioSoundRep::IrixAudioSoundRep");
     }
 }
 
-IrixAudioSoundRep::~IrixAudioSoundRep()
+IrixAudioSoundRep::~IrixAudioSoundRep() throw()
 {
 DOTRACE("IrixAudioSoundRep::~IrixAudioSoundRep");
   if (itsAudioConfig != 0)

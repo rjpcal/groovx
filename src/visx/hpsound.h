@@ -73,7 +73,7 @@ class HpAudioSoundRep : public SoundRep
 {
 public:
   HpAudioSoundRep(const char* filename = 0);
-  virtual ~HpAudioSoundRep();
+  virtual ~HpAudioSoundRep() throw();
 
   virtual void play();
 
@@ -111,7 +111,7 @@ DOTRACE("HpAudioSoundRep::HpAudioSoundRep");
                           fileFormat, AttribsMask, &Attribs, NULL);
 }
 
-HpAudioSoundRep::~HpAudioSoundRep()
+HpAudioSoundRep::~HpAudioSoundRep() throw()
 {
 DOTRACE("HpAudioSoundRep::~HpAudioSoundRep");
   if ( theAudio != 0 )

@@ -52,7 +52,7 @@ class Element : public IO::IoObject
 {
 public:
   /// Virtual destructor.
-  virtual ~Element();
+  virtual ~Element() throw();
 
   /// Status type for child to tell its parent how it ended.
   enum ChildStatus

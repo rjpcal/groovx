@@ -86,7 +86,7 @@ DOTRACE("MaskHatch::MaskHatch");
   dbgEval(3, getAlignmentMode());
 }
 
-MaskHatch::~MaskHatch()
+MaskHatch::~MaskHatch() throw()
 {
 DOTRACE("MaskHatch::~MaskHatch");
 }

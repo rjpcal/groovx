@@ -68,7 +68,7 @@ protected:
 
 public:
   /// Virtual destructor.
-  virtual ~GxNode();
+  virtual ~GxNode() throw();
 
   /// Signal that will be triggered whenever the node changes state.
   Util::Signal0 sigNodeChanged;

@@ -156,7 +156,7 @@ FieldContainer::FieldContainer(Util::Signal0* sig) :
   itsSignal(sig)
 {}
 
-FieldContainer::~FieldContainer() {}
+FieldContainer::~FieldContainer() throw() {}
 
 void FieldContainer::setFieldMap(const FieldMap& fields)
 {

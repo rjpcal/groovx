@@ -49,7 +49,7 @@ protected:
   GxColor();
 
 public:
-  virtual ~GxColor();
+  virtual ~GxColor() throw();
 
   /// Factory function.
   static GxColor* make() { return new GxColor; }

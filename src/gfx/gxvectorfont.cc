@@ -771,7 +771,7 @@ namespace
 
 GxVectorFont::GxVectorFont() {}
 
-GxVectorFont::~GxVectorFont() {}
+GxVectorFont::~GxVectorFont() throw() {}
 
 const char* GxVectorFont::fontName() const
 {

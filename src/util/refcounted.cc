@@ -71,7 +71,7 @@ void Util::RefCounts::operator delete(void* space, size_t /*bytes*/)
   ::operator delete(space);
 }
 
-Util::RefCounts::RefCounts() :
+Util::RefCounts::RefCounts() throw() :
   itsStrong(0),
   itsWeak(0),
   itsOwnerAlive(true),
@@ -80,7 +80,7 @@ Util::RefCounts::RefCounts() :
 DOTRACE("Util::RefCounts::RefCounts");
 }
 
-Util::RefCounts::~RefCounts()
+Util::RefCounts::~RefCounts() throw()
 {
 DOTRACE("Util::RefCounts::~RefCounts");
 
@@ -88,7 +88,7 @@ DOTRACE("Util::RefCounts::~RefCounts");
   if (itsWeak > 0) Panic("RefCounts object destroyed before weak refcount fell to 0");
 }
 
-void Util::RefCounts::acquireWeak()
+void Util::RefCounts::acquireWeak() throw()
 {
 DOTRACE("Util::RefCounts::acquireWeak");
 
@@ -97,7 +97,7 @@ DOTRACE("Util::RefCounts::acquireWeak");
   ++itsWeak;
 }
 
-Util::RefCounts::Count Util::RefCounts::releaseWeak()
+Util::RefCounts::Count Util::RefCounts::releaseWeak() throw()
 {
 DOTRACE("Util::RefCounts::releaseWeak");
 
@@ -114,7 +114,7 @@ DOTRACE("Util::RefCounts::releaseWeak");
   return result;
 }
 
-void Util::RefCounts::acquireStrong()
+void Util::RefCounts::acquireStrong() throw()
 {
 DOTRACE("Util::RefCounts::acquireStrong");
 
@@ -124,7 +124,7 @@ DOTRACE("Util::RefCounts::acquireStrong");
   ++itsStrong;
 }
 
-Util::RefCounts::Count Util::RefCounts::releaseStrong()
+Util::RefCounts::Count Util::RefCounts::releaseStrong() throw()
 {
 DOTRACE("Util::RefCounts::releaseStrong");
 
@@ -135,7 +135,7 @@ DOTRACE("Util::RefCounts::releaseStrong");
   return --itsStrong;
 }
 
-void Util::RefCounts::releaseStrongNoDelete()
+void Util::RefCounts::releaseStrongNoDelete() throw()
 {
 DOTRACE("Util::RefCounts::releaseStrongNoDelete");
 
@@ -144,7 +144,7 @@ DOTRACE("Util::RefCounts::releaseStrongNoDelete");
   --itsStrong;
 }
 
-void Util::RefCounts::debugDump() const
+void Util::RefCounts::debugDump() const throw()
 {
   dbgEvalNL(0, this);
   dbgEvalNL(0, itsStrong);
@@ -179,7 +179,7 @@ DOTRACE("Util::RefCounted::RefCounted");
   itsRefCounts->acquireWeak();
 }
 
-Util::RefCounted::~RefCounted()
+Util::RefCounted::~RefCounted() throw()
 {
 DOTRACE("Util::RefCounted::~RefCounted");
   dbgPrint(7, "RefCounted dtor"); dbgEvalNL(7, this);
@@ -196,21 +196,24 @@ DOTRACE("Util::RefCounted::~RefCounted");
   itsRefCounts->releaseWeak();
 }
 
-void Util::RefCounted::markAsVolatile()
+void Util::RefCounted::markAsVolatile() throw()
 {
 DOTRACE("Util::RefCounted::markAsVolatile");
   if (itsRefCounts->itsStrong > 0)
     Panic("can't make volatile object that already has strong refs");
 
+  if (itsRefCounts->itsVolatile)
+    Panic("object already marked as volatile");
+
   itsRefCounts->itsVolatile = true;
 }
 
-void Util::RefCounted::incrRefCount() const
+void Util::RefCounted::incrRefCount() const throw()
 {
   itsRefCounts->acquireStrong();
 }
 
-void Util::RefCounted::decrRefCount() const
+void Util::RefCounted::decrRefCount() const throw()
 {
   if (itsRefCounts->releaseStrong() == 0)
     {
@@ -219,12 +222,12 @@ void Util::RefCounted::decrRefCount() const
     }
 }
 
-void Util::RefCounted::decrRefCountNoDelete() const
+void Util::RefCounted::decrRefCountNoDelete() const throw()
 {
   itsRefCounts->releaseStrongNoDelete();
 }
 
-bool Util::RefCounted::isShared() const
+bool Util::RefCounted::isShared() const throw()
 {
 DOTRACE("Util::RefCounted::isShared");
 
@@ -234,27 +237,27 @@ DOTRACE("Util::RefCounted::isShared");
   // become invalid.
 }
 
-bool Util::RefCounted::isUnshared() const
+bool Util::RefCounted::isUnshared() const throw()
 {
 DOTRACE("Util::RefCounted::isUnshared");
   return !isShared();
 }
 
-bool Util::RefCounted::isNotShareable() const
+bool Util::RefCounted::isNotShareable() const throw()
 {
 DOTRACE("Util::RefCounted::isNotShareable");
   return itsRefCounts->itsVolatile;
 }
 
-int Util::RefCounted::dbg_RefCount() const
-{
-  return itsRefCounts->itsStrong;
-}
-
-Util::RefCounts* Util::RefCounted::refCounts() const
+Util::RefCounts* Util::RefCounted::refCounts() const throw()
 {
 DOTRACE("Util::RefCounted::refCounts");
   return itsRefCounts;
+}
+
+int Util::RefCounted::dbg_RefCount() const throw()
+{
+  return itsRefCounts->itsStrong;
 }
 
 static const char vcid_refcounted_cc[] = "$Header$";

@@ -183,7 +183,7 @@ IO::LegacyReader::LegacyReader(STD_IO::istream& is) :
 DOTRACE("IO::LegacyReader::LegacyReader");
 }
 
-IO::LegacyReader::~LegacyReader()
+IO::LegacyReader::~LegacyReader() throw()
 {
 DOTRACE("IO::LegacyReader::~LegacyReader");
   delete rep;
@@ -520,7 +520,7 @@ IO::LegacyWriter::LegacyWriter(STD_IO::ostream& os, bool write_bases) :
 DOTRACE("IO::LegacyWriter::LegacyWriter");
 }
 
-IO::LegacyWriter::~LegacyWriter()
+IO::LegacyWriter::~LegacyWriter() throw()
 {
 DOTRACE("IO::LegacyWriter::~LegacyWriter");
   rep->flushWhitespace();

@@ -63,7 +63,7 @@ public:
     debugMode(false)
   {}
 
-  ~Impl() {}
+  virtual ~Impl() throw() {}
 
   static Impl* make(GxSeparator* owner) { return new Impl(owner); }
 
@@ -111,7 +111,7 @@ GxSeparator::GxSeparator() :
 DOTRACE("GxSeparator::GxSeparator");
 }
 
-GxSeparator::~GxSeparator()
+GxSeparator::~GxSeparator() throw()
 {
 DOTRACE("GxSeparator::~GxSeparator");
   rep->destroy();

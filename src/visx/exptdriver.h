@@ -81,7 +81,7 @@ public:
   static ExptDriver* make() { return new ExptDriver; }
 
   /// Virtual destructor.
-  virtual ~ExptDriver();
+  virtual ~ExptDriver() throw();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

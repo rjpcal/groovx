@@ -52,7 +52,7 @@ GxDrawStyle::GxDrawStyle() :
   setFieldMap(GxDrawStyle::classFields());
 }
 
-GxDrawStyle::~GxDrawStyle() {}
+GxDrawStyle::~GxDrawStyle() throw() {}
 
 IO::VersionId GxDrawStyle::serialVersionId() const
 {

@@ -48,7 +48,7 @@ public:
   FilenameError(const char* filename);
 
   /// Virtual destructor
-  virtual ~FilenameError();
+  virtual ~FilenameError() throw();
 };
 
 static const char vcid_ioerror_h[] = "$Header$";

@@ -242,7 +242,7 @@ DOTRACE("House::House");
   setFieldMap(House::classFields());
 }
 
-House::~House()
+House::~House() throw()
 {
 DOTRACE("House::~House");
 }

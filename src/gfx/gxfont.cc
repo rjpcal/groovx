@@ -48,7 +48,7 @@ GxFont* GxFont::make(const char* name_cstr)
   return new GxRasterFont(name_cstr);
 }
 
-GxFont::~GxFont() {}
+GxFont::~GxFont() throw() {}
 
 static const char vcid_gxfont_cc[] = "$Header$";
 #endif // !GXFONT_CC_DEFINED

@@ -63,7 +63,7 @@ protected:
 
 public:
   /// Destructor cancels any pending callback to \c invoke().
-  virtual ~TrialEvent();
+  virtual ~TrialEvent() throw();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
@@ -140,7 +140,7 @@ public:
   /// Default creator.
   static AbortTrialEvent* make() { return new AbortTrialEvent; }
   /// Virtual destructor.
-  virtual ~AbortTrialEvent();
+  virtual ~AbortTrialEvent() throw();
 protected:
   virtual void invoke(Trial& trial);
 };
@@ -156,7 +156,7 @@ public:
   /// Default creator.
   static DrawEvent* make() { return new DrawEvent; }
   /// Virtual destructor.
-  virtual ~DrawEvent();
+  virtual ~DrawEvent() throw();
 protected:
   virtual void invoke(Trial& trial);
 };
@@ -171,7 +171,7 @@ public:
   /// Default creator.
   static RenderEvent* make() { return new RenderEvent; }
   /// Virtual destructor.
-  virtual ~RenderEvent();
+  virtual ~RenderEvent() throw();
 protected:
   virtual void invoke(Trial& trial);
 };
@@ -186,7 +186,7 @@ public:
   /// Default creator.
   static EndTrialEvent* make() { return new EndTrialEvent; }
   /// Virtual destructor.
-  virtual ~EndTrialEvent();
+  virtual ~EndTrialEvent() throw();
 protected:
   virtual void invoke(Trial& trial);
 };
@@ -201,7 +201,7 @@ public:
   /// Default creator.
   static NextNodeEvent* make() { return new NextNodeEvent; }
   /// Virtual destructor.
-  virtual ~NextNodeEvent();
+  virtual ~NextNodeEvent() throw();
 protected:
   virtual void invoke(Trial& trial);
 };
@@ -216,7 +216,7 @@ public:
   /// Default creator.
   static AllowResponsesEvent* make() { return new AllowResponsesEvent; }
   /// Virtual destructor.
-  virtual ~AllowResponsesEvent();
+  virtual ~AllowResponsesEvent() throw();
 protected:
   virtual void invoke(Trial& trial);
 };
@@ -231,7 +231,7 @@ public:
   /// Default creator.
   static DenyResponsesEvent* make() { return new DenyResponsesEvent; }
   /// Virtual destructor.
-  virtual ~DenyResponsesEvent();
+  virtual ~DenyResponsesEvent() throw();
 protected:
   virtual void invoke(Trial& trial);
 };
@@ -246,7 +246,7 @@ public:
   /// Default creator.
   static UndrawEvent* make() { return new UndrawEvent; }
   /// Virtual destructor.
-  virtual ~UndrawEvent();
+  virtual ~UndrawEvent() throw();
 protected:
   virtual void invoke(Trial& trial);
 };
@@ -261,7 +261,7 @@ public:
   /// Default creator.
   static RenderBackEvent* make() { return new RenderBackEvent; }
   /// Virtual destructor.
-  virtual ~RenderBackEvent();
+  virtual ~RenderBackEvent() throw();
 protected:
   virtual void invoke(Trial& trial);
 };
@@ -276,7 +276,7 @@ public:
   /// Default creator.
   static RenderFrontEvent* make() { return new RenderFrontEvent; }
   /// Virtual destructor.
-  virtual ~RenderFrontEvent();
+  virtual ~RenderFrontEvent() throw();
 protected:
   virtual void invoke(Trial& trial);
 };
@@ -291,7 +291,7 @@ public:
   /// Default creator.
   static SwapBuffersEvent* make() { return new SwapBuffersEvent; }
   /// Virtual destructor.
-  virtual ~SwapBuffersEvent();
+  virtual ~SwapBuffersEvent() throw();
 protected:
   virtual void invoke(Trial& trial);
 };
@@ -306,7 +306,7 @@ public:
   /// Default creator.
   static ClearBufferEvent* make() { return new ClearBufferEvent; }
   /// Virtual destructor.
-  virtual ~ClearBufferEvent();
+  virtual ~ClearBufferEvent() throw();
 protected:
   virtual void invoke(Trial& trial);
 };
@@ -323,7 +323,7 @@ public:
   /// Default creator.
   static GenericEvent* make() { return new GenericEvent; }
   /// Virtual destructor.
-  virtual ~GenericEvent();
+  virtual ~GenericEvent() throw();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

@@ -77,7 +77,7 @@ public:
   SlotBase();
 
   /// Virtual destructor.
-  virtual ~SlotBase();
+  virtual ~SlotBase() throw();
 
   /** Answers whether the components of this Slot still exist. This
       allows SlotAdapter, for example, to indicate if its target
@@ -100,7 +100,7 @@ public:
   Slot0();
 
   /// Virtual destructor.
-  virtual ~Slot0();
+  virtual ~Slot0() throw();
 
   template<class C, class MF>
   static Util::SoftRef<Slot0> make(C* obj, MF mf);
@@ -125,6 +125,8 @@ class SlotAdapter0 : public Slot0
 
   SlotAdapter0(C* obj, MF mf) :
     itsObject(obj, Util::WEAK, Util::PRIVATE), itsMemFunc(mf) {}
+
+  virtual ~SlotAdapter0() throw() {}
 
 public:
   static SlotAdapter0<C, MF>* make(C* obj, MF mf)
@@ -172,7 +174,7 @@ public:
   Slot1() {}
 
   /// Virtual destructor.
-  virtual ~Slot1() {}
+  virtual ~Slot1() throw() {}
 
   template<class C, class MF>
   static Util::SoftRef<Slot1<P1> > make(C* obj, MF mf);
@@ -200,6 +202,8 @@ class SlotAdapter1 : public Slot1<P1>
 
   SlotAdapter1(C* obj, MF mf) :
     itsObject(obj, Util::WEAK, Util::PRIVATE), itsMemFunc(mf) {}
+
+  virtual ~SlotAdapter1() throw() {}
 
 public:
   static SlotAdapter1<P1, C, MF>* make(C* obj, MF mf)
@@ -238,7 +242,7 @@ class SignalBase : public Util::VolatileObject
 {
 protected:
   SignalBase();
-  virtual ~SignalBase();
+  virtual ~SignalBase() throw();
 
   void doEmit(void* params) const;
 
@@ -269,7 +273,7 @@ public:
   Signal0();
 
   /// Virtual destructor.
-  virtual ~Signal0();
+  virtual ~Signal0() throw();
 
   /// Add a Slot to the list of those watching this Signal.
   void connect(Util::SoftRef<Slot0> slot)
@@ -313,7 +317,7 @@ class Signal1 : public SignalBase
 public:
   Signal1() {}
 
-  virtual ~Signal1() {}
+  virtual ~Signal1() throw() {}
 
   void connect(Util::SoftRef<Slot1<P1> > slot)
   { SignalBase::doConnect(slot); }

@@ -40,7 +40,7 @@ protected:
 public:
   static NullResponseHdlr* make();
 
-  virtual ~NullResponseHdlr();
+  virtual ~NullResponseHdlr() throw();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

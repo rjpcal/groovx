@@ -69,7 +69,7 @@ public:
 
 
   /// Virtual destructor ensures proper destruction of subclasses.
-  virtual ~Canvas();
+  virtual ~Canvas() throw();
 
   ///////////////////////////////////////////////////////////////////////
   //

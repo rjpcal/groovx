@@ -122,7 +122,7 @@ DOTRACE("Gabor::Gabor");
   setScalingMode(GxScaler::MAINTAIN_ASPECT_SCALING);
 }
 
-Gabor::~Gabor ()
+Gabor::~Gabor () throw()
 {
 DOTRACE("Gabor::~Gabor");
 }

@@ -57,7 +57,7 @@ public:
   static Face* make();
 
   /// Virtual destructor.
-  virtual ~Face ();
+  virtual ~Face () throw();
 
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);

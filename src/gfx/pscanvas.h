@@ -43,7 +43,7 @@ class Gfx::PSCanvas : public Gfx::Canvas
 public:
   PSCanvas(const char* filename);
 
-  virtual ~PSCanvas();
+  virtual ~PSCanvas() throw();
 
   virtual Gfx::Vec2<int> screenFromWorld(const Gfx::Vec2<double>& world_pos) const;
   virtual Gfx::Vec2<double> worldFromScreen(const Gfx::Vec2<int>& screen_pos) const;

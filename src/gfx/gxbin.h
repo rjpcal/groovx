@@ -57,7 +57,7 @@ public:
   GxBin(Util::Ref<GxNode> child);
 
   /// Virtual destructor.
-  virtual ~GxBin();
+  virtual ~GxBin() throw();
 
   /// Get the bin's child node.
   const Util::Ref<GxNode>& child() const { return itsChild; }

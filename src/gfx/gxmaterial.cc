@@ -78,7 +78,7 @@ DOTRACE("GxMaterial::GxMaterial");
   setFieldMap(GxMaterial::classFields());
 }
 
-GxMaterial::~GxMaterial()
+GxMaterial::~GxMaterial() throw()
 {
 DOTRACE("GxMaterial::~GxMaterial");
 }

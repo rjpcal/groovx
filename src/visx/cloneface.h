@@ -56,7 +56,7 @@ public:
   static CloneFace* make();
 
   /// Virtual destructor.
-  virtual ~CloneFace();
+  virtual ~CloneFace() throw();
 
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;

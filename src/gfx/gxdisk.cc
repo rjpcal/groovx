@@ -79,7 +79,7 @@ DOTRACE("GxDisk::GxDisk");
   setFieldMap(GxDisk::classFields());
 }
 
-GxDisk::~GxDisk()
+GxDisk::~GxDisk() throw()
 {
 DOTRACE("GxDisk::~GxDisk");
 }

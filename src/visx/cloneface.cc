@@ -81,7 +81,7 @@ DOTRACE("CloneFace::CloneFace()");
     }
 }
 
-CloneFace::~CloneFace ()
+CloneFace::~CloneFace () throw()
 {
 DOTRACE("CloneFace::~CloneFace");
 }

@@ -115,7 +115,7 @@ DOTRACE("Face::Face");
   setFieldMap(Face::classFields());
 }
 
-Face::~Face()
+Face::~Face() throw()
 {
 DOTRACE("Face::~Face");
   // nothing to do

@@ -77,7 +77,7 @@ Block::Block() :
 DOTRACE("Block::Block");
 }
 
-Block::~Block()
+Block::~Block() throw()
 {}
 
 IO::VersionId Block::serialVersionId() const

@@ -86,6 +86,8 @@ public:
              double gridSpacing = 48.0,
              double minSpacing = 36.0);
 
+  virtual ~GaborArray() throw();
+
   static GaborArray* make() { return new GaborArray; }
 
   /// Get GaborArray's fields.

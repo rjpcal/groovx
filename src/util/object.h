@@ -58,15 +58,15 @@ class Util::Object : public Util::RefCounted
 {
 protected:
   /// Default constructor.
-  Object();
+  Object() throw();
 
   /// Virtual destructor.
-  virtual ~Object();
+  virtual ~Object() throw();
 
 public:
   /** Returns the unique id for this object. The unique id will always
       be strictly positive; zero is always an invalid unique id. */
-  Util::UID id() const;
+  Util::UID id() const throw();
 
   /// Returns the typename of the full object.
   /** The result is a demangled version of \c typeid(*this).name(), which

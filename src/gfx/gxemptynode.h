@@ -42,7 +42,7 @@ class GxEmptyNode : public GxNode
 private:
   GxEmptyNode();
 public:
-  virtual ~GxEmptyNode();
+  virtual ~GxEmptyNode() throw();
 
   virtual void readFrom(IO::Reader*);
   virtual void writeTo(IO::Writer*) const;

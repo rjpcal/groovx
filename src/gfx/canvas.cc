@@ -75,7 +75,7 @@ DOTRACE("Gfx::Canvas::current");
   return *appCanvas;
 }
 
-Gfx::Canvas::~Canvas() {}
+Gfx::Canvas::~Canvas() throw() {}
 
 void Gfx::Canvas::drawBox(const Gfx::Box<double>& box)
 {

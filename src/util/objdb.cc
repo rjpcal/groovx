@@ -41,7 +41,7 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-InvalidIdError::~InvalidIdError() {}
+InvalidIdError::~InvalidIdError() throw() {}
 
 ///////////////////////////////////////////////////////////////////////
 //

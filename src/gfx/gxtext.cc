@@ -81,7 +81,7 @@ DOTRACE("GxText::GxText(const char*)");
   setHeight(1.0);
 }
 
-GxText::~GxText()
+GxText::~GxText() throw()
 {
 DOTRACE("GxText::~GxText");
 }

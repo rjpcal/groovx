@@ -193,7 +193,7 @@ DOTRACE("GxRasterFont::GxRasterFont");
 #endif
 }
 
-GxRasterFont::~GxRasterFont()
+GxRasterFont::~GxRasterFont() throw()
 {
 DOTRACE("GxRasterFont::~GxRasterFont");
 
