@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Jun  6 17:47:32 2001
+// written: Wed Jun  6 20:43:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -277,35 +277,41 @@ public:
 	 TclItemPkg(interp, name, version, item_argn) {}
 
   void declareCAction(const char* cmd_name, void (C::* actionFunc) (),
-							 const char* usage = 0) {
-	 declareAction(cmd_name, new CAction<C>(actionFunc), usage);
-  }
+							 const char* usage = 0)
+    {
+		declareAction(cmd_name, new CAction<C>(actionFunc), usage);
+	 }
 
   void declareCAction(const char* cmd_name, void (C::* actionFunc) () const,
-							 const char* usage = 0) {
-	 declareAction(cmd_name, new CConstAction<C>(actionFunc), usage);
-  }
+							 const char* usage = 0)
+    {
+		declareAction(cmd_name, new CConstAction<C>(actionFunc), usage);
+	 }
 
-  template <class T>
-  void declareCGetter(const char* cmd_name, T (C::* getterFunc) () const,
-							 const char* usage = 0) {
-	 declareGetter(cmd_name, new CGetter<C,T>(getterFunc), usage);
-  }
+  template <class CC, class T>
+  void declareCGetter(const char* cmd_name, T (CC::* getterFunc) () const,
+							 const char* usage = 0)
+    {
+		declareGetter(cmd_name, new CGetter<C,T>(getterFunc), usage);
+	 }
 
-  template <class T>
-  void declareCSetter(const char* cmd_name, void (C::* setterFunc) (T),
-							 const char* usage = 0) {
-	 declareSetter(cmd_name, new CSetter<C,T>(setterFunc), usage);
-  }
+  template <class CC, class T>
+  void declareCSetter(const char* cmd_name, void (CC::* setterFunc) (T),
+							 const char* usage = 0)
+    {
+		declareSetter(cmd_name, new CSetter<C,T>(setterFunc), usage);
+	 }
 
-  template <class T>
+  template <class CC, class T>
   void declareCAttrib(const char* cmd_name,
-							 T (C::* getterFunc) () const, void (C::* setterFunc) (T),
-							 const char* usage = 0) {
-	 declareAttrib(cmd_name,
-						new CGetter<C,T>(getterFunc), new CSetter<C,T>(setterFunc),
-						usage);
-  }
+							 T (CC::* getterFunc) () const,
+							 void (CC::* setterFunc) (T),
+							 const char* usage = 0)
+    {
+		declareAttrib(cmd_name,
+						  new CGetter<C,T>(getterFunc), new CSetter<C,T>(setterFunc),
+						  usage);
+	 }
 
   virtual C* getCItemFromId(int id) = 0;
   virtual void* getItemFromId(int id) {
