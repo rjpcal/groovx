@@ -3,7 +3,7 @@
 // value.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 28 11:21:32 1999
-// written: Wed Mar  8 17:40:25 2000
+// written: Wed Mar 29 23:42:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,7 +11,7 @@
 #ifndef VALUE_CC_DEFINED
 #define VALUE_CC_DEFINED
 
-#include "value.h"
+#include "util/value.h"
 
 #include <iostream.h>
 

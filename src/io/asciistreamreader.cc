@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu Mar 23 09:33:47 2000
+// written: Wed Mar 29 23:42:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,10 @@
 
 #include "io.h"
 #include "iomgr.h"
-#include "value.h"
+
 #include "util/arrays.h"
 #include "util/lists.h"
+#include "util/value.h"
 
 #include <iostream.h>
 #include <strstream.h>

@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Wed Mar 29 14:07:35 2000
+// written: Wed Mar 29 23:43:00 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VALUE_H_DEFINED)
-#include "value.h"
+#include "util/value.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////

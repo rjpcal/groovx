@@ -3,7 +3,7 @@
 // trial.h
 // Rob Peters
 // created: Mar-99
-// written: Wed Mar 29 22:09:30 2000
+// written: Wed Mar 29 23:43:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VALUE_H_DEFINED)
-#include "value.h"
+#include "util/value.h"
 #endif
 
 namespace GWT {

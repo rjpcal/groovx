@@ -3,7 +3,7 @@
 // response.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar 13 18:30:04 2000
-// written: Wed Mar 29 14:07:35 2000
+// written: Wed Mar 29 23:43:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,7 +12,7 @@
 #define RESPONSE_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VALUE_H_DEFINED)
-#include "value.h"
+#include "util/value.h"
 #endif
 
 class Response : public Value {
