@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Oct 13 11:03:57 1999
+// written: Tue Nov  2 13:45:19 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,6 +13,7 @@
 
 #include "tclcmd.h"
 
+#include <exception>
 #include <typeinfo>
 #include <string>
 
@@ -319,6 +320,13 @@ DOTRACE("TclCmd::dummyInvoke");
 	 msg += " occurred";
  	 err_message(interp, theCmd->itsObjv, msg.c_str());
  	 theCmd->itsResult = TCL_ERROR;
+  }
+  catch (exception& err) {
+	 string msg = "an error of type ";
+	 msg += demangle(typeid(err).name());
+	 msg += " occurred";
+	 err_message(interp, theCmd->itsObjv, msg.c_str());
+	 theCmd->itsResult = TCL_ERROR;
   }
   catch (...) {
  	 DebugPrintNL("catch (...)");
