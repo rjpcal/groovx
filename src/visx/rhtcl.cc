@@ -3,7 +3,7 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Thu May 11 18:37:57 2000
+// written: Wed May 17 13:58:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -132,6 +132,9 @@ protected:
 	 }
 
 private:
+  SerialRhCmd(const SerialRhCmd&);
+  SerialRhCmd& operator=(const SerialRhCmd&);
+
   SerialEventSource* itsEventSource;
 };
 
