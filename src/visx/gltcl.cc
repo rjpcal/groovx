@@ -3,7 +3,7 @@
 // tclgl.cc
 // Rob Peters
 // created: Nov-98
-// written: Thu Oct 14 15:48:41 1999
+// written: Mon Dec  6 21:52:41 1999
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -1288,7 +1288,6 @@ DOTRACE("setBackgroundCmd");
     int i;
     if (Tcl_GetIntFromObj(interp, objv[1], &i) != TCL_OK) return TCL_ERROR;
     glClearIndex(i);
-    return TCL_OK;
   }
   else {
     double r, g, b, a;
@@ -1297,8 +1296,9 @@ DOTRACE("setBackgroundCmd");
     if (Tcl_GetDoubleFromObj(interp, objv[3], &b) != TCL_OK) return TCL_ERROR;
     if (Tcl_GetDoubleFromObj(interp, objv[4], &a) != TCL_OK) return TCL_ERROR;
     glClearColor(r, g, b, a);
-    return TCL_OK;
   }
+
+  return TCL_OK;
 }
   
 //--------------------------------------------------------------------
@@ -1329,7 +1329,6 @@ DOTRACE("setForegroundCmd");
     int i;
     if (Tcl_GetIntFromObj(interp, objv[1], &i) != TCL_OK) return TCL_ERROR;
     glIndexi(i);
-    return TCL_OK;
   }
   else {
     double r, g, b, a;
@@ -1338,8 +1337,9 @@ DOTRACE("setForegroundCmd");
     if (Tcl_GetDoubleFromObj(interp, objv[3], &b) != TCL_OK) return TCL_ERROR;
     if (Tcl_GetDoubleFromObj(interp, objv[4], &a) != TCL_OK) return TCL_ERROR;
     glColor4d(r, g, b, a);
-    return TCL_OK;
   }
+
+  return TCL_OK;
 }
 
 //--------------------------------------------------------------------
@@ -1659,7 +1659,7 @@ DOTRACE("Tclgl_Init");
   };
 
   // Add all commands to the global namespace.
-  for (int i = 0; i < sizeof(Names_Procs)/sizeof(CmdName_CmdProc); ++i) {
+  for (size_t i = 0; i < sizeof(Names_Procs)/sizeof(CmdName_CmdProc); ++i) {
     Tcl_CreateObjCommand(interp, 
                          const_cast<char *>(Names_Procs[i].cmdName),
                          Names_Procs[i].cmdProc,
