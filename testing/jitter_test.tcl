@@ -34,7 +34,7 @@ test "JitterTcl-Jitter::setJitter" "error from non-numeric input" {
 test "JitterTcl-Jitter::setJitter" "error from wrong type" {
     set p [Pos::Pos]
 	 Jitter::setJitter $p 1 1 1
-} {Jitter::setJitter: object not of correct type}
+} {Jitter::setJitter: an error of type bad_cast occurred: bad cast exception thrown}
 
 PosList::reset
 unset jit
