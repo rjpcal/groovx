@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:07 2002
-// written: Sun Aug  4 16:45:30 2002
+// written: Mon Aug  5 13:16:39 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,6 +104,13 @@ DOTRACE("GlxWrapper::make");
   opts.indirect = !glx->isDirect();
 
   return glx;
+}
+
+void GlxWrapper::makeCurrent(Window win) const
+{
+DOTRACE("GlxWrapper::makeCurrent");
+
+  glXMakeCurrent(itsDisplay, win, itsContext);
 }
 
 bool GlxWrapper::isDoubleBuffered() const
