@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Tue Jan 29 19:10:20 2002
+// written: Fri May  3 17:45:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -285,7 +285,11 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAndUnEscape");
                                       &(READ_BUFFER[0])));
         }
 
-      if (ch != '\\')
+      // We only substitute in the escape sequence if we are reading at the
+      // zero-th brace level; otherwise, we leave the escape sequence in
+      // since it will eventually be parsed when the brace-nested object
+      // itself is parsed.
+      if (ch != '\\' || brace_level > 0)
         {
           if (ch == '{') ++brace_level;
           if (ch == '}') --brace_level;
@@ -312,7 +316,10 @@ DOTRACE("AsciiStreamReader::Impl::AttribMap::readAndUnEscape");
               *itr++ = '}';
               break;
             default:
-              throw IO::ReadError("invalid escape character");
+              *itr = '\0';
+              throw IO::ReadError
+                (fstring("invalid escape character '", char(ch2),
+                         "' with buffer contents: ", &READ_BUFFER[0]));
               break;
             }
         }
