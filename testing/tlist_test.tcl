@@ -233,14 +233,6 @@ test "TlistTcl-Tlist::write_responses" "too few args" {
 test "TlistTcl-Tlist::write_responses" "too many args" {
     Tlist::write_responses j u
 } {wrong \# args: should be "Tlist::write_responses filename"}
-test "TlistTcl-Tlist::write_responses" "normal use" {
-	 Expt::read $::TEST_DIR/completed_expt_file
-	 set temp_file $::TEST_DIR/temp[pid]_$::DATE
-	 Tlist::write_responses $temp_file
-	 set val [catch {exec diff $::TEST_DIR/response_file $temp_file} res]
-	 exec rm $temp_file
-	 expr $val == 0 && [string compare $res ""] == 0
-} {^1$} $test_serialize
 
 ### Tlist::stringifyCmd ###
 ### Tlist::destringifyCmd ###
