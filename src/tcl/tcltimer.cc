@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug 23 14:50:36 2001
-// written: Sun Nov  3 13:41:11 2002
+// written: Fri Dec 13 10:30:46 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,10 +23,10 @@
 
 Tcl::Timer::Timer(unsigned int msec, bool repeat) :
   sigTimeOut(),
+  itsToken(0),
   itsMsecDelay(msec),
   isItRepeating(repeat),
-  itsStopWatch(),
-  itsToken(0)
+  itsStopWatch()
 {}
 
 Tcl::Timer::~Timer()
@@ -42,6 +42,8 @@ DOTRACE("Tcl::Timer::schedule");
   cancel();
 
   itsStopWatch.restart();
+
+  dbgEvalNL(3, itsMsecDelay);
 
   itsToken = Tcl_CreateTimerHandler(itsMsecDelay,
                                     dummyCallback,
@@ -59,6 +61,7 @@ DOTRACE("Tcl::Timer::cancel");
 
 void Tcl::Timer::dummyCallback(ClientData clientData)
 {
+DOTRACE("Tcl::Timer::dummyCallback");
   Tcl::Timer* timer = static_cast<Tcl::Timer*>(clientData);
 
   Assert(timer != 0);
