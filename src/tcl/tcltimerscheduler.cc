@@ -37,7 +37,7 @@
 #include "tcl/tclmain.h"
 #include "tcl/tclsafeinterp.h"
 
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 
 #include <tcl.h>
 
@@ -118,7 +118,7 @@ Tcl::TimerScheduler::~TimerScheduler() throw()
 DOTRACE("Tcl::TimerScheduler::~TimerScheduler");
 }
 
-shared_ptr<Util::TimerToken>
+rutz::shared_ptr<Util::TimerToken>
 Tcl::TimerScheduler::schedule(int msec,
                               void (*callback)(void*),
                               void* clientdata)
@@ -133,10 +133,10 @@ DOTRACE("Tcl::TimerScheduler::schedule");
 
       // Return a null pointer, representing the fact that there is no
       // pending callback in this case.
-      return shared_ptr<Util::TimerToken>();
+      return rutz::shared_ptr<Util::TimerToken>();
     }
 
-  return shared_ptr<Util::TimerToken>
+  return rutz::shared_ptr<Util::TimerToken>
     (new Tcl::TimerSchedulerToken(msec, callback, clientdata));
 }
 

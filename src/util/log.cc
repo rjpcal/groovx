@@ -35,7 +35,7 @@
 #include "util/log.h"
 
 #include "util/object.h"
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 #include "util/stopwatch.h"
 #include "util/strings.h"
 
@@ -70,7 +70,7 @@ namespace
   };
 
   std::vector<ScopeInfo> scopes;
-  shared_ptr<std::ofstream> logFile;
+  rutz::shared_ptr<std::ofstream> logFile;
   bool copyToStdout = true;
 
   template <class Str>
@@ -144,7 +144,7 @@ void Util::Log::setLogFilename(const fstring& filename)
 {
 DOTRACE("Util::Log::setLogFilename");
 
-  shared_ptr<std::ofstream> newfile
+  rutz::shared_ptr<std::ofstream> newfile
     (new std::ofstream(filename.c_str(), std::ios::out | std::ios::app));
 
   if (newfile->is_open() && newfile->good())

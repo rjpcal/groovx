@@ -46,8 +46,8 @@
 
 #include "util/fileposition.h"
 #include "util/log.h"
-#include "util/pointers.h"
 #include "util/ref.h"
+#include "util/sharedptr.h"
 #include "util/scopedptr.h"
 #include "util/strings.h"
 
@@ -221,7 +221,7 @@ public:
   Tcl::Interp itsInterp;
 
   fstring itsCallbackName;
-  shared_ptr<Tcl::Command> itsCmdCallback;
+  rutz::shared_ptr<Tcl::Command> itsCmdCallback;
 
   FeedbackMap itsFeedbackMap;
 

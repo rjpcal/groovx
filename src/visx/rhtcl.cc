@@ -38,7 +38,7 @@
 
 #include "util/error.h"
 #include "util/objfactory.h"
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 #include "util/serialport.h"
 #include "util/strings.h"
 
@@ -132,7 +132,7 @@ namespace
     SerialEventSource& operator=(const SerialEventSource&);
   };
 
-  shared_ptr<SerialEventSource> theEventSource;
+  rutz::shared_ptr<SerialEventSource> theEventSource;
 
   void startSerial(Tcl_Interp* interp, const char* device)
   {

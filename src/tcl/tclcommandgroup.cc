@@ -39,7 +39,7 @@
 #include "tcl/tclsafeinterp.h"
 
 #include "util/fileposition.h"
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 #include "util/strings.h"
 
 #include <list>
@@ -90,7 +90,7 @@ public:
 
   ~Impl() throw() {}
 
-  typedef std::list<shared_ptr<Tcl::Command> > List;
+  typedef std::list<rutz::shared_ptr<Tcl::Command> > List;
 
   Tcl::Interp interp;
   const Tcl_Command cmdToken;
@@ -316,7 +316,7 @@ DOTRACE("Tcl::CommandGroup::make");
   return new CommandGroup(interp, cmd_name, src_pos);
 }
 
-void Tcl::CommandGroup::add(shared_ptr<Tcl::Command> p)
+void Tcl::CommandGroup::add(rutz::shared_ptr<Tcl::Command> p)
 {
 DOTRACE("Tcl::CommandGroup::add");
   rep->cmdList.push_back(p);

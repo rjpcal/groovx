@@ -35,12 +35,14 @@
 #include "util/gzstreambuf.h"
 
 #include "util/error.h"
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 #include "util/strings.h"
 
 #include <fstream>
 
 #include "util/trace.h"
+
+using rutz::shared_ptr;
 
 rutz::gzstreambuf::gzstreambuf(const char* name, int om,
                                bool throw_exception)

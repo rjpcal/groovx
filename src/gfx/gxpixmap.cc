@@ -51,9 +51,8 @@
 #include "util/bytearray.h"
 #include "util/cstrstream.h"
 #include "util/mappedfile.h"
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 #include "util/strings.h"
-#include "util/pointers.h"
 
 #include "util/trace.h"
 
@@ -153,7 +152,7 @@ public:
 
   void queueImage(const char* filename)
   {
-    shared_ptr<Gfx::BmapData::UpdateFunc> updater
+    rutz::shared_ptr<Gfx::BmapData::UpdateFunc> updater
       (new ImageUpdater(filename,
                         itsFilename,
                         itsContrastFlip,
@@ -534,7 +533,7 @@ void GxPixmap::scramble(int numsubcols, int numsubrows, int seed,
 {
 DOTRACE("GxPixmap::scramble");
 
-  shared_ptr<Gfx::BmapData> newdata =
+  rutz::shared_ptr<Gfx::BmapData> newdata =
     rep->itsData.makeScrambled(numsubcols, numsubrows, seed,
                                allowMoveSubparts,
                                allowFlipLeftRight,

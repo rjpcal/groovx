@@ -42,8 +42,8 @@
 #include "util/cstrstream.h"
 #include "util/error.h"
 #include "util/gzstreambuf.h"
-#include "util/pointers.h"
 #include "util/ref.h"
+#include "util/sharedptr.h"
 #include "util/strings.h"
 #include "util/value.h"
 

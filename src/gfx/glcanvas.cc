@@ -47,7 +47,7 @@
 #include "gx/vec3.h"
 
 #include "util/error.h"
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 
 #if defined(GL_PLATFORM_GLX)
 #  include <GL/gl.h>
@@ -60,6 +60,8 @@
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
+
+using rutz::shared_ptr;
 
 using namespace Gfx;
 

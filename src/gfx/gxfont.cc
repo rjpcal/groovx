@@ -38,18 +38,18 @@
 #include "gfx/gxvectorfont.h"
 
 #include "util/error.h"
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 #include "util/strings.h"
 
 #include <map>
 
 namespace
 {
-  typedef std::map<fstring, shared_ptr<GxFont> > MapType;
+  typedef std::map<fstring, rutz::shared_ptr<GxFont> > MapType;
   MapType theFontMap;
 }
 
-shared_ptr<GxFont> GxFont::make(const char* name_cstr)
+rutz::shared_ptr<GxFont> GxFont::make(const char* name_cstr)
 {
   fstring name(name_cstr);
 
@@ -60,12 +60,12 @@ shared_ptr<GxFont> GxFont::make(const char* name_cstr)
 
   if (name == "vector")
     {
-      shared_ptr<GxFont> font(new GxVectorFont);
+      rutz::shared_ptr<GxFont> font(new GxVectorFont);
       theFontMap.insert(MapType::value_type(name, font));
       return font;
     }
 
-  shared_ptr<GxFont> font(GxRasterFont::make(name_cstr));
+  rutz::shared_ptr<GxFont> font(GxRasterFont::make(name_cstr));
   theFontMap.insert(MapType::value_type(name, font));
   return font;
 }

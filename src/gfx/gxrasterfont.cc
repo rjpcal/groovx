@@ -34,7 +34,7 @@
 
 #include "gxrasterfont.h"
 
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 
 #include "util/trace.h"
 
@@ -47,20 +47,20 @@ DOTRACE("GxRasterFont::~GxRasterFont");
 
 #include "gfx/glxrasterfont.h"
 
-shared_ptr<GxRasterFont> GxRasterFont::make(const char* fontname)
+rutz::shared_ptr<GxRasterFont> GxRasterFont::make(const char* fontname)
 {
 DOTRACE("GxRasterFont::make[glx]");
-  return shared_ptr<GxRasterFont>(new GlxRasterFont(fontname));
+  return rutz::make_shared(new GlxRasterFont(fontname));
 }
 
 #elif defined(GL_PLATFORM_AGL)
 
 #include "gfx/aglrasterfont.h"
 
-shared_ptr<GxRasterFont> GxRasterFont::make(const char* fontname)
+rutz::shared_ptr<GxRasterFont> GxRasterFont::make(const char* fontname)
 {
 DOTRACE("GxRasterFont::make[agl]");
-  return shared_ptr<GxRasterFont>(new AglRasterFont(fontname));
+  return rutz::make_shared(new AglRasterFont(fontname));
 }
 
 #else

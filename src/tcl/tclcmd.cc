@@ -37,12 +37,14 @@
 #include "tcl/tclcommandgroup.h"
 #include "tcl/tclsafeinterp.h"
 
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 #include "util/strings.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
+
+using rutz::shared_ptr;
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -34,7 +34,7 @@
 
 #include "glwindowinterface.h"
 
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 
 #include "util/trace.h"
 
@@ -45,20 +45,20 @@ DOTRACE("GlWindowInterface::~GlWindowInterface");
 
 #if defined(GL_PLATFORM_GLX)
 #  include "gfx/glxwrapper.h"
-shared_ptr<GlWindowInterface>
+rutz::shared_ptr<GlWindowInterface>
 GlWindowInterface::make(Display* dpy, GlxOpts& opts)
 {
 DOTRACE("GlWindowInterface::make[glx]");
-  return shared_ptr<GlWindowInterface>
+  return rutz::make_shared
     (GlxWrapper::make(dpy, opts, (GlxWrapper*)0 /*shared context*/));
 }
 #elif defined(GL_PLATFORM_AGL)
 #  include "gfx/aglwrapper.h"
-shared_ptr<GlWindowInterface>
+rutz::shared_ptr<GlWindowInterface>
 GlWindowInterface::make(Display* dpy, GlxOpts& opts)
 {
 DOTRACE("GlWindowInterface::make[agl]");
-  return shared_ptr<GlWindowInterface>(AglWrapper::make(dpy, opts));
+  return rutz::make_shared(AglWrapper::make(dpy, opts));
 }
 #else
 #  error no GL_PLATFORM macro defined!

@@ -35,7 +35,7 @@
 #include "tcl/tclchannelbuf.h"
 
 #include "util/error.h"
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 #include "util/strings.h"
 
 #include "util/trace.h"
@@ -164,6 +164,8 @@ namespace
     }
   };
 }
+
+using rutz::shared_ptr;
 
 shared_ptr<std::ostream> Tcl::ochanopen(Tcl_Interp* interp,
                                         const char* channame,

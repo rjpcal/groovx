@@ -41,8 +41,8 @@
 #include "util/demangle.h"
 #include "util/error.h"
 #include "util/gzstreambuf.h"
-#include "util/pointers.h"
 #include "util/ref.h"
+#include "util/sharedptr.h"
 #include "util/strings.h"
 #include "util/value.h"
 
@@ -57,6 +57,8 @@
 #include "util/trace.h"
 #include "util/debug.h"
 DBG_REGISTER
+
+using rutz::shared_ptr;
 
 using Util::Ref;
 using Util::SoftRef;

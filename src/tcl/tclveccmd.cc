@@ -38,7 +38,7 @@
 #include "tcl/tcllistobj.h"
 
 #include "util/error.h"
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 
 #include <vector>
 
@@ -187,7 +187,7 @@ DOTRACE("Tcl::VecDispatcher::dispatch");
 
 void Tcl::useVecDispatch(Tcl::Command& cmd, unsigned int key_argn)
 {
-  cmd.setDispatcher(shared_ptr<Tcl::Dispatcher>(new VecDispatcher(key_argn)));
+  cmd.setDispatcher(rutz::make_shared(new VecDispatcher(key_argn)));
 }
 
 static const char vcid_tclveccmd_cc[] = "$Header$";

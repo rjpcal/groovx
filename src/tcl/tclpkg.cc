@@ -38,7 +38,7 @@
 #include "tcl/tcllistobj.h"
 #include "tcl/tclsafeinterp.h"
 
-#include "util/pointers.h"
+#include "util/sharedptr.h"
 #include "util/strings.h"
 
 #include <tcl.h>
@@ -166,8 +166,8 @@ public:
 
   int initStatus;
 
-  std::vector<shared_ptr<int> > ownedInts;
-  std::vector<shared_ptr<double> > ownedDoubles;
+  std::vector<rutz::shared_ptr<int> > ownedInts;
+  std::vector<rutz::shared_ptr<double> > ownedDoubles;
 
   ExitCallback* exitCallback;
 
@@ -429,7 +429,7 @@ DOTRACE("Tcl::Pkg::linkVar double");
 void Tcl::Pkg::linkVarCopy(const char* varName, int var)
 {
 DOTRACE("Tcl::Pkg::linkVarCopy int");
-  shared_ptr<int> copy(new int(var));
+  rutz::shared_ptr<int> copy(new int(var));
   rep->ownedInts.push_back(copy);
   rep->interp.linkInt(varName, copy.get(), true);
 }
@@ -437,7 +437,7 @@ DOTRACE("Tcl::Pkg::linkVarCopy int");
 void Tcl::Pkg::linkVarCopy(const char* varName, double var)
 {
 DOTRACE("Tcl::Pkg::linkVarCopy double");
-  shared_ptr<double> copy(new double(var));
+  rutz::shared_ptr<double> copy(new double(var));
   rep->ownedDoubles.push_back(copy);
   rep->interp.linkDouble(varName, copy.get(), true);
 }
