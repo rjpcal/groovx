@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 12:00:53 1999
-// written: Mon Jul 16 10:23:16 2001
+// written: Mon Jul 16 11:37:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -43,8 +43,7 @@ public:
 
     Tcl::defGenericObjCmds<Fish>(this);
 
-    Tcl::defVec(this, &FishTcl::makeFish,
-                "Fish::make", "spline_file coord_file index");
+    defVec(&FishTcl::makeFish, "make", "spline_file coord_file index");
 
     Tcl::declareAllFields(this, Fish::classFields());
   }

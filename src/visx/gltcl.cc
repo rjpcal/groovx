@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Thu Jul 12 13:23:44 2001
+// written: Mon Jul 16 11:33:23 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -19,9 +19,9 @@
 #define GLTCL_CC_DEFINED
 
 #include "tcl/functor.h"
-#include "tcl/tclpkg.h"
 #include "tcl/tclcmd.h"
 #include "tcl/tclerror.h"
+#include "tcl/tclitempkg.h"
 
 #include "util/arrays.h"
 
@@ -56,14 +56,14 @@ namespace GLTcl
   void antialias(bool on_off);
   void drawOneLine(GLdouble x1, GLdouble y1, GLdouble x2, GLdouble y2);
   void drawThickLine(GLdouble x1, GLdouble y1,
-							GLdouble x2, GLdouble y2, GLdouble thickness);
+                     GLdouble x2, GLdouble y2, GLdouble thickness);
   Tcl::List lineInfo();
   GLdouble pixelCheckSum(int x, int y, int w, int h);
   GLdouble pixelCheckSumAll()
   {
-	 GLint viewport[4];
-	 glGetIntegerv(GL_VIEWPORT, viewport);
-	 return pixelCheckSum(viewport[0], viewport[1], viewport[2], viewport[3]);
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    return pixelCheckSum(viewport[0], viewport[1], viewport[2], viewport[3]);
   }
 
   class glGetCmd;
@@ -433,12 +433,12 @@ void GLTcl::glGetTypeCmd<GLint>::extractValues(GLenum tag, GLint* vals_out)
 void GLTcl::loadMatrix(Tcl::List entries)
 {
   fixed_block<GLdouble> matrix(entries.begin<GLdouble>(),
-										 entries.end<GLdouble>());
+                               entries.end<GLdouble>());
 
   if (matrix.size() != 16)
-	 {
-		throw Tcl::TclError("matrix must have 16 entries in column-major order");
-	 }
+    {
+      throw Tcl::TclError("matrix must have 16 entries in column-major order");
+    }
 
   glLoadMatrixd(&matrix[0]);
   checkGL();
@@ -453,14 +453,14 @@ void GLTcl::loadMatrix(Tcl::List entries)
 void GLTcl::lookAt(Tcl::List args)
 {
   gluLookAt(args.get<GLdouble>(0),
-				args.get<GLdouble>(1),
-				args.get<GLdouble>(2),
-				args.get<GLdouble>(3),
-				args.get<GLdouble>(4),
-				args.get<GLdouble>(5),
-				args.get<GLdouble>(6),
-				args.get<GLdouble>(7),
-				args.get<GLdouble>(8));
+            args.get<GLdouble>(1),
+            args.get<GLdouble>(2),
+            args.get<GLdouble>(3),
+            args.get<GLdouble>(4),
+            args.get<GLdouble>(5),
+            args.get<GLdouble>(6),
+            args.get<GLdouble>(7),
+            args.get<GLdouble>(8));
 }
 
 //--------------------------------------------------------------------
@@ -477,18 +477,18 @@ void GLTcl::antialias(bool on_off)
 {
 DOTRACE("GLTcl::antialias");
   if (on_off) // turn antialiasing on
-	 {
-		glEnable(GL_BLEND);
-		glEnable(GL_POLYGON_SMOOTH);
-		glEnable(GL_LINE_SMOOTH);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	 }
+    {
+      glEnable(GL_BLEND);
+      glEnable(GL_POLYGON_SMOOTH);
+      glEnable(GL_LINE_SMOOTH);
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
   else // turn antialiasing off
-	 {
-		glDisable(GL_BLEND);
-		glDisable(GL_LINE_SMOOTH);
-		glDisable(GL_POLYGON_SMOOTH);
-	 }
+    {
+      glDisable(GL_BLEND);
+      glDisable(GL_LINE_SMOOTH);
+      glDisable(GL_POLYGON_SMOOTH);
+    }
 }
 
 //--------------------------------------------------------------------
@@ -519,7 +519,7 @@ void GLTcl::drawOneLine(GLdouble x1, GLdouble y1, GLdouble x2, GLdouble y2)
 //--------------------------------------------------------------------
 
 void GLTcl::drawThickLine(GLdouble x1, GLdouble y1,
-								  GLdouble x2, GLdouble y2, GLdouble thickness)
+                          GLdouble x2, GLdouble y2, GLdouble thickness)
 {
   // construct the normal vector
   double a, b, c, d, norm;
@@ -586,39 +586,39 @@ GLdouble GLTcl::pixelCheckSum(int x, int y, int w, int h)
   glGetBooleanv(GL_RGBA_MODE, &isRgba);
 
   if (GL_TRUE == isRgba)
-	 {
-		fixed_block<GLfloat> pixels(w*h*3);
-		glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    {
+      fixed_block<GLfloat> pixels(w*h*3);
+      glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
-		glPushAttrib(GL_PIXEL_MODE_BIT);
-		glReadBuffer(GL_FRONT);
-		glReadPixels(x,y,w,h,GL_RGB, GL_FLOAT, &pixels[0]);
-		glPopAttrib();
+      glPushAttrib(GL_PIXEL_MODE_BIT);
+      glReadBuffer(GL_FRONT);
+      glReadPixels(x,y,w,h,GL_RGB, GL_FLOAT, &pixels[0]);
+      glPopAttrib();
 
-		GLfloat sum = 0;
-		for (unsigned int i = 0; i < pixels.size(); ++i)
-		  {
-			 sum += pixels[i];
-		  }
-		return sum;
-	 }
+      GLfloat sum = 0;
+      for (unsigned int i = 0; i < pixels.size(); ++i)
+        {
+          sum += pixels[i];
+        }
+      return sum;
+    }
   else
-	 {
-		fixed_block<GLubyte> pixels(w*h);
-		glPixelStorei(GL_PACK_ALIGNMENT, 1);
+    {
+      fixed_block<GLubyte> pixels(w*h);
+      glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
-		glPushAttrib(GL_PIXEL_MODE_BIT);
-		glReadBuffer(GL_FRONT);
-		glReadPixels(x,y,w,h,GL_COLOR_INDEX, GL_UNSIGNED_BYTE, &pixels[0]);
-		glPopAttrib();
+      glPushAttrib(GL_PIXEL_MODE_BIT);
+      glReadBuffer(GL_FRONT);
+      glReadPixels(x,y,w,h,GL_COLOR_INDEX, GL_UNSIGNED_BYTE, &pixels[0]);
+      glPopAttrib();
 
-		long int sum = 0;
-		for (unsigned int i = 0; i < pixels.size(); ++i)
-		  {
-			 sum += pixels[i];
-		  }
-		return sum;
-	 }
+      long int sum = 0;
+      for (unsigned int i = 0; i < pixels.size(); ++i)
+        {
+          sum += pixels[i];
+        }
+      return sum;
+    }
 }
 
 //---------------------------------------------------------------------
@@ -627,10 +627,10 @@ GLdouble GLTcl::pixelCheckSum(int x, int y, int w, int h)
 //
 //---------------------------------------------------------------------
 
-class GLTcl::GLPkg : public Tcl::TclPkg {
+class GLTcl::GLPkg : public Tcl::TclItemPkg {
 public:
   GLPkg(Tcl_Interp* interp) :
-    Tcl::TclPkg(interp, "Tclgl", "$Revision$")
+    Tcl::TclItemPkg(interp, "Tclgl", "$Revision$")
   {
 
     // for glBegin
@@ -763,59 +763,56 @@ public:
 
     using namespace Tcl;
 
-    Tcl::def( this, glBegin, "glBegin", "mode" );
-    Tcl::def( this, glBlendFunc, "glBlendFunc", "sfactor dfactor" );
-    Tcl::def( this, glCallList, "glCallList", "list" );
-    Tcl::def( this, glClear, "glClear", "mask_bits" );
-    Tcl::def( this, glClearColor, "glClearColor", "red green blue alpha" );
-    Tcl::def( this, glClearIndex, "glClearIndex", "index" );
-    Tcl::def( this, glColor4d, "glColor", "red green blue alpha" );
-    Tcl::def( this, glDeleteLists, "glDeleteLists", "list_id range" );
-    Tcl::def( this, glDisable, "glDisable", "capability" );
-    Tcl::def( this, glDrawBuffer, "glDrawBuffer", "mode" );
-    Tcl::def( this, glEnable, "glEnable", "capability" );
-    Tcl::def( this, glEnd, "glEnd", 0 );
-    Tcl::def( this, glEndList, "glEndList", 0 );
-    Tcl::def( this, glFlush, "glFlush", 0 );
-    Tcl::def( this, glFrustum, "glFrustum", "left right bottom top zNear zFar" );
-    Tcl::def( this, glGenLists, "glGenLists", "range" );
-    Tcl::def( this, checkGL, "glGetError", 0 );
-    Tcl::def( this, glIndexi, "glIndexi", "index" );
-    Tcl::def( this, glIsList, "glIsList", "list_id" );
-    Tcl::def( this, glLineWidth, "glLineWidth", "width" );
-    Tcl::def( this, glListBase, "glListBase", "base" );
-    Tcl::def( this, glLoadIdentity, "glLoadIdentity", 0 );
-	 Tcl::def( this, GLTcl::loadMatrix,
-				  "glLoadMatrix", "4x4_column_major_matrix" );
-    Tcl::def( this, glMatrixMode, "glMatrixMode", "mode" );
-    Tcl::def( this, glNewList, "glNewList", "list_id mode" );
-    Tcl::def( this, glOrtho, "glOrtho",
-				  "left right bottom top zNear zFar" );
-    Tcl::def( this, glPolygonMode, "glPolygonMode", "face mode" );
-    Tcl::def( this, glPopMatrix, "glPopMatrix", 0 );
-    Tcl::def( this, glPushMatrix, "glPushMatrix", 0 );
-    Tcl::def( this, glRotated, "glRotate", "angle_in_degrees x y z" );
-    Tcl::def( this, glScaled, "glScale", "x y z" );
-    Tcl::def( this, glTranslated, "glTranslate", "x y z" );
-    Tcl::def( this, glVertex2d, "glVertex2", "x y" );
-    Tcl::def( this, glVertex3d, "glVertex3", "x y z" );
-    Tcl::def( this, glVertex4d, "glVertex4", "x y z w" );
-    Tcl::def( this, GLTcl::lookAt, "gluLookAt",
-				  "eyeX eyeY eyeZ targX targY targZ upX upY upZ" );
-    Tcl::def( this, gluPerspective,
-				  "gluPerspective", "field_of_view_y aspect zNear zFar" );
+    def( glBegin, "::glBegin", "mode" );
+    def( glBlendFunc, "::glBlendFunc", "sfactor dfactor" );
+    def( glCallList, "::glCallList", "list" );
+    def( glClear, "::glClear", "mask_bits" );
+    def( glClearColor, "::glClearColor", "red green blue alpha" );
+    def( glClearIndex, "::glClearIndex", "index" );
+    def( glColor4d, "::glColor", "red green blue alpha" );
+    def( glDeleteLists, "::glDeleteLists", "list_id range" );
+    def( glDisable, "::glDisable", "capability" );
+    def( glDrawBuffer, "::glDrawBuffer", "mode" );
+    def( glEnable, "::glEnable", "capability" );
+    def( glEnd, "::glEnd", 0 );
+    def( glEndList, "::glEndList", 0 );
+    def( glFlush, "::glFlush", 0 );
+    def( glFrustum, "::glFrustum", "left right bottom top zNear zFar" );
+    def( glGenLists, "::glGenLists", "range" );
+    def( checkGL, "::glGetError", 0 );
+    def( glIndexi, "::glIndexi", "index" );
+    def( glIsList, "::glIsList", "list_id" );
+    def( glLineWidth, "::glLineWidth", "width" );
+    def( glListBase, "::glListBase", "base" );
+    def( glLoadIdentity, "::glLoadIdentity", 0 );
+    def( GLTcl::loadMatrix, "::glLoadMatrix", "4x4_column_major_matrix" );
+    def( glMatrixMode, "::glMatrixMode", "mode" );
+    def( glNewList, "::glNewList", "list_id mode" );
+    def( glOrtho, "::glOrtho", "left right bottom top zNear zFar" );
+    def( glPolygonMode, "::glPolygonMode", "face mode" );
+    def( glPopMatrix, "::glPopMatrix", 0 );
+    def( glPushMatrix, "::glPushMatrix", 0 );
+    def( glRotated, "::glRotate", "angle_in_degrees x y z" );
+    def( glScaled, "::glScale", "x y z" );
+    def( glTranslated, "::glTranslate", "x y z" );
+    def( glVertex2d, "::glVertex2", "x y" );
+    def( glVertex3d, "::glVertex3", "x y z" );
+    def( glVertex4d, "::glVertex4", "x y z w" );
+    def( GLTcl::lookAt, "::gluLookAt",
+         "eyeX eyeY eyeZ targX targY targZ upX upY upZ" );
+    def( gluPerspective,
+         "::gluPerspective", "field_of_view_y aspect zNear zFar" );
 
-    addCommand( new glGetTypeCmd<GLboolean>(this, "glGetBoolean") );
-    addCommand( new glGetTypeCmd<GLdouble>(this, "glGetDouble") );
-    addCommand( new glGetTypeCmd<GLint>(this, "glGetInteger") );
+    addCommand( new glGetTypeCmd<GLboolean>(this, "::glGetBoolean") );
+    addCommand( new glGetTypeCmd<GLdouble>(this, "::glGetDouble") );
+    addCommand( new glGetTypeCmd<GLint>(this, "::glGetInteger") );
 
-	 Tcl::def( this, GLTcl::antialias, "antialias", "on_off" );
-	 Tcl::def( this, GLTcl::drawOneLine, "drawOneLine", "x1 y1 x2 y2" );
-	 Tcl::def( this, GLTcl::drawThickLine,
-				  "drawThickLine", "x1 y1 x2 y2 thickness" );
-	 Tcl::def( this, GLTcl::lineInfo, "lineInfo", 0 );
-	 Tcl::def( this, GLTcl::pixelCheckSum, "pixelCheckSum", "x y w h" );
-	 Tcl::def( this, GLTcl::pixelCheckSumAll, "pixelCheckSum", 0 );
+    def( GLTcl::antialias, "::antialias", "on_off" );
+    def( GLTcl::drawOneLine, "::drawOneLine", "x1 y1 x2 y2" );
+    def( GLTcl::drawThickLine, "::drawThickLine", "x1 y1 x2 y2 thickness" );
+    def( GLTcl::lineInfo, "::lineInfo", 0 );
+    def( GLTcl::pixelCheckSum, "::pixelCheckSum", "x y w h" );
+    def( GLTcl::pixelCheckSumAll, "::pixelCheckSum", 0 );
   }
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Mon Jul 16 10:23:17 2001
+// written: Mon Jul 16 11:37:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,10 +64,9 @@ public:
 
     Tcl::addTracing(this, Block::tracer);
 
-    Tcl::defVec(this, &BlockTcl::addTrialIds1,
-                "Block::addTrialIds", "item_id(s) trial_id(s)");
-    Tcl::defVec(this, &BlockTcl::addTrialIds2,
-                "Block::addTrialIds", "item_id(s) trial_id(s) repeat=1");
+    defVec(&BlockTcl::addTrialIds1, "addTrialIds", "item_id(s) trial_id(s)");
+    defVec(&BlockTcl::addTrialIds2,
+           "addTrialIds", "item_id(s) trial_id(s) repeat=1");
 
     defGetter("currentTrial", &Block::currentTrial);
     defGetter("currentTrialType", &Block::currentTrialType);

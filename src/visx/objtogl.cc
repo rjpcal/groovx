@@ -178,7 +178,7 @@ public:
     def( &Toglet::defaultParent, "defaultParent", "parent" );
     def( &ObjTogl::dumpCmap, "dumpCmap", "toglet_id start_index end_index" );
     def( &ObjTogl::dumpCmapAll, "dumpCmap", "toglet_id" );
-    Tcl::def( this, &ObjTogl::inited, "Togl::inited", 0 );
+    def( &ObjTogl::inited, "Togl::inited", 0 );
     def( &ObjTogl::see, "see", "gxnode_id" );
     def( &ObjTogl::setColor, "setColor", "index r g b" );
     def( &ObjTogl::setCurTrial, "setCurTrial", "toglet_id widget_id" );

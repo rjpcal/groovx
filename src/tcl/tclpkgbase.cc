@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Tue Jun 19 15:15:00 2001
+// written: Mon Jul 16 11:30:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -155,13 +155,26 @@ const char* Tcl::TclPkg::version() {
   return itsImpl->itsVersion.c_str();
 }
 
-const char* Tcl::TclPkg::makePkgCmdName(const char* cmd_name) {
+const char* Tcl::TclPkg::makePkgCmdName(const char* cmd_name_cstr) {
 DOTRACE("Tcl::TclPkg::makePkgCmdName");
-  static std::string name;
-  name = pkgName();
-  name += "::";
-  name += cmd_name;
-  return name.c_str();
+  std::string cmd_name(cmd_name_cstr);
+
+  // Look for a namespace qualifier "::" -- if there is already one,
+  // then we assume the caller has something special in mind -- if
+  // there is not one, then we do the default thing and prepend the
+  // package name as a namespace qualifier.
+  if (cmd_name.find("::") != std::string::npos)
+    {
+		return cmd_name_cstr;
+    }
+  else
+    {
+		static std::string name;
+      name = pkgName();
+      name += "::";
+      name += cmd_name;
+		return name.c_str();
+    }
 }
 
 void Tcl::TclPkg::eval(const char* script) {
