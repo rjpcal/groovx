@@ -3,7 +3,7 @@
 // io.h
 // Rob Peters 
 // created: Jan-99
-// written: Thu Oct 26 16:27:43 2000
+// written: Mon Oct 30 14:06:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,11 +77,8 @@ public:
 		compile-time constant. **/
   virtual unsigned int ioAttribCount() const;
 
-  /** Returns a unique id for this object. This function should NEVER
-      be overridden by public clients; it will only be overridden by
-      other classes internal to the io system, such as \c IO::IoProxy for
-      example. */
-  virtual IO::UID id() const;
+  /** Returns a unique id for this object. */
+  IO::UID id() const;
 
   /** Returns a serialization version id for the class. The default
       implementation returns zero. Classes should override this when
