@@ -3,7 +3,7 @@
 // error.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 22 14:59:48 1999
-// written: Wed Mar 15 20:38:49 2000
+// written: Wed May 10 12:28:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,20 +30,23 @@ DOTRACE("Error::~Error ");
 ErrorWithMsg::ErrorWithMsg() :
   Error(),
   itsInfo(new dynamic_string(""))
-{}
+{
+  DebugEvalNL(*itsInfo);
+}
 
 
 ErrorWithMsg::ErrorWithMsg(const char* str) :
   itsInfo(new dynamic_string(str))
 {
 DOTRACE("ErrorWithMsg::ErrorWithMsg");
-  DebugEvalNL(*str);
+  DebugEvalNL(*itsInfo);
 }
 
 ErrorWithMsg::ErrorWithMsg(const ErrorWithMsg& other) :
   itsInfo(new dynamic_string(*(other.itsInfo)))
 {
 DOTRACE("ErrorWithMsg::ErrorWithMsg");
+  DebugEvalNL(*itsInfo);
 }
 
 ErrorWithMsg::~ErrorWithMsg() {
@@ -58,6 +61,7 @@ DOTRACE("ErrorWithMsg::operator=");
 	 itsInfo = new dynamic_string(*(other.itsInfo));
   }
   return *this;
+  DebugEvalNL(*itsInfo);
 }
 
 const char* ErrorWithMsg::msg_cstr() const {
@@ -68,6 +72,7 @@ DOTRACE("ErrorWithMsg::msg_cstr");
 ErrorWithMsg& ErrorWithMsg::appendMsg(const char* addMsg) {
 DOTRACE("ErrorWithMsg::appendMsg");
   *itsInfo += addMsg; 
+  DebugEvalNL(*itsInfo);
   return *this;
 }
 
@@ -75,6 +80,7 @@ ErrorWithMsg& ErrorWithMsg::appendMsg(const char* addMsg1, const char* addMsg2) 
 DOTRACE("ErrorWithMsg::appendMsg");
   *itsInfo += addMsg1; 
   *itsInfo += addMsg2; 
+  DebugEvalNL(*itsInfo);
   return *this;
 }
 
@@ -84,12 +90,14 @@ DOTRACE("ErrorWithMsg::appendMsg");
   *itsInfo += addMsg1; 
   *itsInfo += addMsg2; 
   *itsInfo += addMsg3; 
+  DebugEvalNL(*itsInfo);
   return *this;
 }
 
 void ErrorWithMsg::setMsg(const char* str) {
 DOTRACE("ErrorWithMsg::setMsg");
   *itsInfo = str;
+  DebugEvalNL(*itsInfo);
 }
 
 static const char vcid_error_cc[] = "$Header$";
