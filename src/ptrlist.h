@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Mon Mar  6 18:28:40 2000
+// written: Fri Mar 10 00:29:55 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ public:
 
 	 // 'bool check' is a dummy argument to indicate that the index
 	 // must be checked
-	 iterator (PtrList<T>& aList, int index, bool check) :
+	 iterator (PtrList<T>& aList, int index, bool /*check?*/) :
 		itsIndex(index),
 		itsList(&aList)
 	 {
