@@ -47,7 +47,6 @@ PLATFORM := $(ARCH)
 
 LOCAL_ARCH := $(HOME)/local/$(PLATFORM)
 
-PROJECT = $(HOME)/sorcery/grsh
 SRC := src
 DEP := ./dep/$(PLATFORM)
 OBJ := obj/$(PLATFORM)
@@ -318,19 +317,32 @@ lib%: $(LOCAL_LIB)/lib%$(LIB_EXT)
 
 #-------------------------------------------------------------------------
 #
-# Dependencies 
+# Build rules for directory structure
 #
 #-------------------------------------------------------------------------
 
 ALL_SOURCES := $(wildcard $(SRC)/[a-z]*/*.cc $(SRC)/[a-z]*/[a-z]*/*.cc)
 ALL_HEADERS := $(wildcard $(SRC)/[a-z]*/*.h  $(SRC)/[a-z]*/[a-z]*/*.h)
 
+SRCDIRS := $(sort $(dir $(ALL_SOURCES)))
+ALLDIRS := $(subst $(SRC), $(OBJ), $(SRCDIRS)) $(TMP_DIR) $(DEP)
+
+.PHONY: dir_structure
+dir_structure:
+	for dr in $(ALLDIRS); do if [ ! -d $$dr ]; then mkdir -p $$dr; fi; done
+
+#-------------------------------------------------------------------------
+#
+# Dependencies 
+#
+#-------------------------------------------------------------------------
+
 
 # dependencies of object files on source+header files
 
 DEP_FILE := $(DEP)/alldepends
 
-$(DEP_FILE): dir_structure $(ALL_SOURCES) $(ALL_HEADERS)
+$(DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS)
 	time pydep.py $(SRC) --objdir obj/$(ARCH)/ > $@
 
 include $(DEP_FILE)
@@ -340,7 +352,7 @@ include $(DEP_FILE)
 
 PKG_DEP_FILE := $(DEP)/pkgdepends
 
-$(PKG_DEP_FILE): dir_structure $(ALL_SOURCES) $(ALL_HEADERS) \
+$(PKG_DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS) \
 	Makefile src/pkgs/buildPkgDeps.tcl
 	src/pkgs/buildPkgDeps.tcl
 
@@ -351,7 +363,7 @@ include $(PKG_DEP_FILE)
 
 LIB_DEP_FILE := $(DEP)/libdepends
 
-$(LIB_DEP_FILE): dir_structure $(ALL_SOURCES) $(ALL_HEADERS) \
+$(LIB_DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS) \
   Makefile $(SCRIPTS)/build_lib_rules.tcl
 	$(SCRIPTS)/build_lib_rules.tcl \
 		--libdir $(LOCAL_LIB) \
@@ -379,19 +391,6 @@ cdeps: $(ALL_SOURCES) $(ALL_HEADERS)
 
 ldeps: $(ALL_SOURCES) $(ALL_HEADERS)
 	time ldeplevels.py $(SRC) -L 1000 > $(LOGS)/ldeps
-
-#-------------------------------------------------------------------------
-#
-# Build rules for directory structure
-#
-#-------------------------------------------------------------------------
-
-SRCDIRS := $(sort $(dir $(ALL_SOURCES)))
-ALLDIRS := $(subst $(SRC), $(OBJ), $(SRCDIRS)) $(TMP_DIR) $(DEP)
-
-.PHONY: dir_structure
-dir_structure:
-	for dr in $(ALLDIRS); do if [ ! -d $$dr ]; then mkdir $$dr; fi; done
 
 #-------------------------------------------------------------------------
 #
