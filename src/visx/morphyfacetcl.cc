@@ -3,15 +3,13 @@
 // morphyfacetcl.cc
 // Rob Peters 
 // created: Wed Sep  8 15:42:36 1999
-// written: Tue Dec  7 19:15:02 1999
+// written: Wed Mar  8 16:17:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FACETCL_CC_DEFINED
 #define FACETCL_CC_DEFINED
-
-#include <tcl.h>
 
 #include "objlist.h"
 #include "propitempkg.h"
@@ -20,16 +18,15 @@
 #define NO_TRACE
 #include "trace.h"
 
-
-extern "C" Tcl_PackageInitProc Morphyface_Init;
-
+extern "C"
 int Morphyface_Init(Tcl_Interp* interp) {
 DOTRACE("Morphyface_Init");
 
-  new Tcl::PropertyListItemPkg<MorphyFace, ObjList>(
+  Tcl::TclPkg* pkg = 
+	 new Tcl::PropertyListItemPkg<MorphyFace, ObjList>(
               interp, ObjList::theObjList(), "MorphyFace", "1.2");
 
-  return TCL_OK;
+  return pkg->initStatus();
 }
 
 static const char vcid_morphyfacetcl_cc[] = "$Header$";

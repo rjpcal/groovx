@@ -3,7 +3,7 @@
 // grobjtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 14:01:18 1999
-// written: Thu Feb 17 14:00:18 2000
+// written: Wed Mar  8 16:13:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -138,13 +138,12 @@ public:
 //
 //---------------------------------------------------------------------
 
-extern "C" Tcl_PackageInitProc Grobj_Init;
-
+extern "C"
 int Grobj_Init(Tcl_Interp* interp) {
 
-  new GrobjTcl::GrObjPkg(interp);
+  Tcl::TclPkg* pkg = new GrobjTcl::GrObjPkg(interp);
 
-  return TCL_OK;
+  return pkg->initStatus();
 }
 
 static const char vcid_grobjtcl_cc[] = "$Header$";

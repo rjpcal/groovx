@@ -3,7 +3,7 @@
 // objlisttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Mon Mar  6 19:09:03 2000
+// written: Wed Mar  8 16:15:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -169,14 +169,13 @@ public:
 //
 //---------------------------------------------------------------------
 
-extern "C" Tcl_PackageInitProc Objlist_Init;
-
+extern "C"
 int Objlist_Init(Tcl_Interp* interp) {
 DOTRACE("Objlist_Init");
 
-  new ObjlistTcl::ObjListPkg(interp);
+  Tcl::TclPkg* pkg = new ObjlistTcl::ObjListPkg(interp);
 
-  return TCL_OK;
+  return pkg->initStatus();
 }
 
 static const char vcid_objlisttcl_cc[] = "$Header$";

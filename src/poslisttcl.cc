@@ -3,7 +3,7 @@
 // poslisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:46:09 1999
-// written: Wed Dec 15 17:52:55 1999
+// written: Wed Mar  8 16:18:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,15 +23,15 @@
 //
 //---------------------------------------------------------------------
 
-extern "C" Tcl_PackageInitProc Poslist_Init;
-
+extern "C"
 int Poslist_Init(Tcl_Interp* interp) {
 DOTRACE("Poslist_Init");
 
-  new Tcl::IoPtrListPkg(interp, PosList::thePosList(),
-								"PosList", "$Revision$");
+  Tcl::TclPkg* pkg = 
+	 new Tcl::IoPtrListPkg(interp, PosList::thePosList(),
+								  "PosList", "$Revision$");
 
-  return TCL_OK;
+  return pkg->initStatus();
 }
 
 static const char vcid_poslisttcl_cc[] = "$Header$";
