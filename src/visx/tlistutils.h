@@ -3,7 +3,7 @@
 // tlistutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Dec  4 02:58:20 1999
-// written: Sat Dec  4 03:54:39 1999
+// written: Sun Jan 16 22:55:26 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,9 +18,12 @@
 
 class Tlist;
 
+class Canvas;
+
 class TlistUtils {
 public:
   static int createPreview(Tlist& tlist,
+									const Canvas& canvas,
 									const vector<int>& objids,
 									int pixel_width,
 									int pixel_height);
