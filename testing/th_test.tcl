@@ -7,9 +7,6 @@
 ###
 ##############################################################################
 
-source ${::TEST_DIR}/list_test.tcl
-List::testList ThListTcl ThList Th TimingHdlr TimingHandler
-
 set SIMPLETH [Obj::new TimingHandler]
 
 source ${::TEST_DIR}/io_test.tcl

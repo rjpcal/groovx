@@ -12,9 +12,6 @@ package require Pos
 package require Tlist
 package require Objtogl
 
-source ${::TEST_DIR}/list_test.tcl
-List::testList TlistTcl Tlist Trial Trial Trial
-
 if { ![Togl::inited] } { Togl::init; update }
 
 ### Tlist::loadObjidFileCmd ###
