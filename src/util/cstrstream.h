@@ -46,38 +46,67 @@
 #include <streambuf.h>
 #endif
 
-namespace Util
+namespace rutz
 {
-  class icstrbuf;
+  class imembuf;
+  class imemstream;
   class icstrstream;
 }
 
-/// An input streambuf that reads from c-style strings.
-class Util::icstrbuf : public STD_IO::streambuf
+/// An input streambuf that reads from memory.
+class rutz::imembuf : public STD_IO::streambuf
 {
 private:
-  unsigned int itsLen;
-  char* itsBuf;
+  unsigned int m_len;
+  const char* m_buf;
+  char* m_owned_mem;
 
-  icstrbuf(const icstrbuf&);
-  icstrbuf& operator=(const icstrbuf&);
+  imembuf(const imembuf&);
+  imembuf& operator=(const imembuf&);
 
 public:
   /// Create using the given char array as the input buffer.
-  icstrbuf(const char* s) :
-    itsLen(strlen(s)),
-    itsBuf(new char[itsLen+1])
+  imembuf(const char* s) :
+    m_len(strlen(s)),
+    m_buf(s),
+    m_owned_mem(0)
   {
-    strcpy(itsBuf, s);
-    setg(itsBuf, itsBuf, itsBuf + itsLen);
+    setg(const_cast<char*>(m_buf),
+         const_cast<char*>(m_buf),
+         const_cast<char*>(m_buf) + m_len);
+  }
+
+  /// Create using the given char array and length as the input buffer.
+  imembuf(const char* s, unsigned int len) :
+    m_len(len),
+    m_buf(s),
+    m_owned_mem(0)
+  {
+    setg(const_cast<char*>(m_buf),
+         const_cast<char*>(m_buf),
+         const_cast<char*>(m_buf) + m_len);
+  }
+
+  void make_owning()
+  {
+    if (m_owned_mem == 0)
+      {
+        m_owned_mem = new char[m_len+1];
+        memcpy(m_owned_mem, m_buf, m_len+1);
+        m_buf = 0;
+        setg(m_owned_mem, m_owned_mem, m_owned_mem + m_len);
+      }
   }
 
   /// Destructor.
-  ~icstrbuf() { delete [] itsBuf; }
+  ~imembuf()
+  {
+    delete [] m_owned_mem;
+  }
 
   /// Underflow operation.
-  /** Since there's no "external data source", if we've come to the end of
-      our current buffer, then we're just plain out of data. */
+  /** Since there's no "external data source", if we've come to the
+      end of our current buffer, then we're just plain out of data. */
   virtual int underflow()
   {
     if (gptr() < egptr())
@@ -89,14 +118,27 @@ public:
   }
 };
 
-/// An input stream class based on icstrbuf.
-class Util::icstrstream : public STD_IO::istream
+/// An input stream class based on imembuf.
+class rutz::imemstream : public STD_IO::istream
 {
 private:
-  icstrbuf itsBuf;
+  imembuf m_buf;
 public:
   /// Construct using the given char array as the input buffer.
-  icstrstream(const char* s) : STD_IO::istream(&itsBuf), itsBuf(s) {}
+  imemstream(const char* s) : STD_IO::istream(&m_buf), m_buf(s) {}
+};
+
+/// An input stream class based on imembuf that makes a private copy.
+class rutz::icstrstream : public STD_IO::istream
+{
+private:
+  imembuf m_buf;
+public:
+  /// Construct using the given char array as the input buffer.
+  icstrstream(const char* s) : STD_IO::istream(&m_buf), m_buf(s)
+  {
+    m_buf.make_owning();
+  }
 };
 
 static const char vcid_cstrstream_h[] = "$Header$";

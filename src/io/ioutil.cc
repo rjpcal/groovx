@@ -65,7 +65,7 @@ fstring IO::writeLGX(Util::Ref<IO::IoObject> obj)
 
 void IO::readLGX(Util::Ref<IO::IoObject> obj, const char* buf)
 {
-  Util::icstrstream ist(buf);
+  rutz::icstrstream ist(buf);
 
   IO::LegacyReader reader(ist);
   reader.readRoot(obj.get());
@@ -83,7 +83,7 @@ fstring IO::writeASW(Util::Ref<IO::IoObject> obj)
 
 void IO::readASW(Util::Ref<IO::IoObject> obj, const char* buf)
 {
-  Util::icstrstream ist(buf);
+  rutz::icstrstream ist(buf);
 
   shared_ptr<IO::Reader> reader = IO::makeAsciiStreamReader(ist);
   reader->readRoot(obj.get());

@@ -509,7 +509,7 @@ Tcl::List TlistUtils::loadObjidFile(const char* objid_file,
       if (ifs.fail())
         throw Util::Error("error reading objid file");
 
-      Util::icstrstream ist(line);
+      rutz::icstrstream ist(line);
 
       Ref<Trial> trial(Trial::make());
       Ref<GxSeparator> sep(GxSeparator::make());

@@ -188,7 +188,7 @@ private:
     dbgEvalNL(3, name);
 
     AttribMap::Attrib a = currentAttribs().get(name);
-    Util::icstrstream ist(a.value.c_str());
+    rutz::icstrstream ist(a.value.c_str());
 
     T return_val;
     ist >> return_val;
@@ -266,7 +266,7 @@ DOTRACE("AsciiStreamReader::readStringImpl");
   dbgEvalNL(3, name);
 
   AttribMap::Attrib a = currentAttribs().get(name);
-  Util::icstrstream ist(a.value.c_str());
+  rutz::icstrstream ist(a.value.c_str());
 
   int len;
   ist >> len;                     dbgEvalNL(3, len);
@@ -316,7 +316,7 @@ DOTRACE("AsciiStreamReader::readMaybeObject");
 
   AttribMap::Attrib attrib = currentAttribs().get(name);
 
-  Util::icstrstream ist(attrib.value.c_str());
+  rutz::icstrstream ist(attrib.value.c_str());
   Util::UID id;
   ist >> id;
 
@@ -336,7 +336,7 @@ DOTRACE("AsciiStreamReader::readOwnedObject");
   dbgEvalNL(3, name);
 
   AttribMap::Attrib a = currentAttribs().get(name);
-  Util::icstrstream ist(a.value.c_str());
+  rutz::icstrstream ist(a.value.c_str());
   char bracket[16];
 
   ist >> bracket;

@@ -75,7 +75,7 @@ fstring Value::getFstring() const
 void Value::setCstring(const char* str)
 {
 DOTRACE("Value::setCstring");
-  Util::icstrstream ist(str);
+  rutz::icstrstream ist(str);
   scanFrom(ist);
 }
 
