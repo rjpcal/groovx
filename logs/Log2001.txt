@@ -349,3 +349,81 @@ AsciiStreamReader. [Later] Unfortunately this scheme won't work, since
 in a round-trip conversion to+from string, objects lose their
 identity--i.e., if we have two identical string-reps, do they refer to
 the same object, or to different but identical objects?
+
+(15-Jan-2000, done 7-Jun-2001) ExptDriver should really own the
+widget... Then we can eventually have multiple Experiment's at once,
+each with its own widget??? is this right? Eventually, we'd like to
+have a list of Widget's, with ExptDriver maintaining the current one
+for an experiment, so that experiment participants can request it from
+ExptDriver (or it passes the Widget to them). [Later] OK, now we can
+have multiple experiments AND multipl Toglet's.
+
+(27-Nov-1999, obsolete 18-Jun-2001) Who uses theToglet()?
+EventResponseHdlr uses the Widget part in the attend() and ignore() methods
+ExptDriver uses the Canvas part it in swapBuffers().
+ExptTcl uses the Widget part in BeginCmd, SetStartCommand,
+ObjTogl uses the Widget Part in DestroyCmd.
+ObjToglPkg uses it in getCItemFromId().
+xbitmap.cc uses a special X11Widget subclass in init_class().
+
+(27-Nov-1999, done 18-Jun-2001) One important reason for refactoring
+all this Togl stuff is so that we can have more than one active Togl
+widget... then we can improve user interface, e.g. bring up a dialog
+box to edit a GrObj, etc.
+
++-----
+|
+| (17-Aug-2001, done 22-Aug-2001) Get rid of Util::Observer; use
+| templated callbacks instead. OK, I've got Signal+Slot going now, but
+| only with no-arg callbacks.
+| 
+| (done) Rename Observable to Signal.
+| 
+| (done) Rename send/receiveStateChangeMsg() to send/receiveSignal().
+| 
+| (done) No one should inherit from Util::Signal. Instead, they should
+| be contain a Util::Signal.
+| 
+| (done) No one should inherit from Util::Observer.
+|
++-----
+
+(25-Jun-1999, done 22-Aug-2001) Need a coherent way of handling
+colors... [Earlier] Who should own foreground/background information?
+Seems like it could belong to either or both of GrObj and
+Position. Maybe best idea is to use ColoredObj and ColoredPosition as
+derived classes, if necessary. Default behavior of non-colored classes
+would be to use whatever color was active, while colored classes would
+set their own color when they do their action. Useful scenarios would
+be ColoredPosition with regular GrObj, or ColoredObj with regular
+Position. [Later] Maybe new subclasses aren't needed, since this would
+create a dual hierarchy for all other subclasses (i.e. there would
+have to be a regular FixPt and a ColoredFixPt). Part of the state of
+both GrObj and Position could be whether they have a color preference;
+if so, they use it, and if not, they use the current color when they
+are drawn. [15-Jul] Aha! I think I've got it... there should be a
+class GLAttributes that can specify things like foreground/background
+color, line width, etc. and one subclass could be a null subclass that
+just does nothing; a virtual method setAttribs() would arrange to set
+all of the attribs controlled by the class (but how to unset them?
+would be nice to use constructor/destructor via lexical scope). Then
+both GrObj and Position could contain a GLAttributes member which
+would control the appropriate attributes, if any. [3-Aug] What is
+needed is a good abstraction to model what happens when a trial is
+rendered. In particular, how to represent, say, that we should go to a
+Position, then draw a GrObj, then un-go from that Position, then go to
+a new Position... We need some kind of a GraphicParticipant class,
+that has begin() and end() functions, that is able to capture at once
+the current Position and GrObj classes, as well as the forthcoming
+GlAttributes class. I guess this is the composite pattern-- which we
+can use to build an arbitrarily nested list, or tree. [Later
+30-Nov-2000] This will all be real slick now with GxNode/GxSeparator,
+with possible subclasses GxColorIndex and GxRgbaColor. Then colors can
+go into the scene graph. [Later 22-Aug-2001] OK, I've implemented
+GxColor, a GxNode for rgba colors.
+
+(12-Dec-1999, done 23-Aug-2001) Could have an abstract class for timer
+callbacks, one subclass of which could use a Tcl_Interp* to register
+timer callbacks. [Later] OK, now I've got Tcl::Timer, which exposes a
+Util::Signal that can be connect()'ed to, by clients who want to
+receive timer callbacks.
