@@ -126,7 +126,7 @@ public:
   int count() const;
 
   /// Returns true if 'id' is a valid uid.
-  bool isValidId(Util::UID id) const;
+  bool isValidId(Util::UID id) const throw();
 
   /// Releases the object specified by \a id, but only if it is unshared.
   /** This causes the object to be destroyed since it was unshared. If the
