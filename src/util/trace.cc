@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Tue Jan 29 19:02:11 2002
+// written: Thu Feb  7 14:51:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -47,6 +47,8 @@ namespace
   const char* PDATA_FILE = "prof.out";
 
   STD_IO::ofstream* PDATA_STREAM = new STD_IO::ofstream(PDATA_FILE);
+
+  bool PRINT_AT_EXIT = true;
 
   void waitOnStep()
   {
@@ -107,13 +109,16 @@ Util::Prof::Prof(const char* s) :
 
 Util::Prof::~Prof()
 {
-  if (PDATA_STREAM->good())
+  if (PRINT_AT_EXIT)
     {
-      printProfData(*PDATA_STREAM);
-    }
-  else
-    {
-      STD_IO::cerr << "profile stream not good\n";
+      if (PDATA_STREAM->good())
+        {
+          printProfData(*PDATA_STREAM);
+        }
+      else
+        {
+          STD_IO::cerr << "profile stream not good\n";
+        }
     }
 }
 
@@ -155,6 +160,11 @@ void Util::Prof::printProfData(ostream& os) const
      << setw(5) << count() << '\t'
      << setw(14) << long(avgTime()) * count() << '\t'
      << funcName << endl;
+}
+
+void Util::Prof::printAtExit(bool yes_or_no)
+{
+  PRINT_AT_EXIT = yes_or_no;
 }
 
 void Util::Prof::resetAllProfData()
