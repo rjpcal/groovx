@@ -95,8 +95,8 @@ ifeq ($(COMPILER),aCC)
 	PROD_OPTIONS := +O2 +Z +p
 	PROD_LINK_OPTIONS := -Wl,+vallcompatwarnings
 
-	DEBUGLIB_EXT := $(SHLIB_EXT)
-	PRODLIB_EXT := $(SHLIB_EXT)
+	DEBUGLIB_EXT := .d.$(SHLIB_EXT)
+	PRODLIB_EXT := $(VERSION).$(SHLIB_EXT)
 
 	SHLIB_CMD := $(CC) -b -o
 	STATLIB_CMD := ar rus
@@ -123,8 +123,8 @@ ifeq ($(COMPILER),MIPSpro)
 	PROD_OPTIONS := -O2
 	PROD_LINK_OPTIONS :=
 
-	DEBUGLIB_EXT := $(SHLIB_EXT)
-	PRODLIB_EXT := $(SHLIB_EXT)
+	DEBUGLIB_EXT := .d.$(SHLIB_EXT)
+	PRODLIB_EXT := $(VERSION).$(SHLIB_EXT)
 
 	SHLIB_CMD := $(CC) -shared -Wl,-check_registry,/usr/lib32/so_locations -o
 	STATLIB_CMD := $(CC) -ar -o
@@ -152,8 +152,8 @@ ifeq ($(COMPILER),g++)
 	PROD_OPTIONS := -O3
 	PROD_LINK_OPTIONS :=
 
-	DEBUGLIB_EXT := $(STATLIB_EXT)
-	PRODLIB_EXT := $(STATLIB_EXT)
+	DEBUGLIB_EXT := .d.$(STATLIB_EXT)
+	PRODLIB_EXT := $(VERSION).$(STATLIB_EXT)
 
 	SHLIB_CMD := ld -n32 -shared -check_registry /usr/lib32/so_locations
 	STATLIB_CMD := ar rus
@@ -208,30 +208,6 @@ LIBRARIES := \
 #
 #-------------------------------------------------------------------------
 
-GRSH_MAIN_OBJ := $(OBJ)/grshAppInit.do
-
-GRSH_STATIC_OBJS := \
-	$(OBJ)/bitmap.do \
-	$(OBJ)/bitmaprep.do \
-	$(OBJ)/face.do \
-	$(OBJ)/fish.do \
-	$(OBJ)/fixpt.do \
-	$(OBJ)/gabor.do \
-	$(OBJ)/glbitmap.do \
-	$(OBJ)/glcanvas.do \
-	$(OBJ)/glbmaprenderer.do \
-	$(OBJ)/grobjimpl.do \
-	$(OBJ)/gtext.do \
-	$(OBJ)/house.do \
-	$(OBJ)/maskhatch.do \
-	$(OBJ)/morphyface.do \
-	$(OBJ)/objtogl.do \
-	$(OBJ)/tclgl.do \
-	$(OBJ)/togl/togl.do \
-	$(OBJ)/toglconfig.do \
-	$(OBJ)/xbitmap.do \
-	$(OBJ)/xbmaprenderer.do \
-
 # My intent is that libvisx should contain the core classes for the
 # experiment framework, and that libgrsh should contain the
 # application-specific subclasses (like Face, House, etc.). But there
@@ -242,112 +218,42 @@ GRSH_STATIC_OBJS := \
 # Ah, well, now the HP-OpenGL bug is rearing its ugly head again, so
 # I'll have to go back to statically linking the OpenGL stuff.
 
-GRSH_DYNAMIC_OBJS := \
+TOGL_SRCS := $(basename $(notdir $(wildcard $(SRC)/togl/*.cc)))
+TOGL_OBJS := $(addprefix $(OBJ)/togl/,$(TOGL_SRCS))
+
+STATIC_RAW_SRCS := \
+	$(shell grep -l 'GL/gl\.h' src/*.cc) \
+	$(shell grep -l 'int main' src/*.cc)
+STATIC_SRCS := $(basename $(notdir $(STATIC_RAW_SRCS)))
+STATIC_OBJS := $(addprefix $(OBJ)/,$(STATIC_SRCS))
+
+GRSH_STATIC_OBJS := $(sort $(STATIC_OBJS) $(TOGL_OBJS))
+
+VISX_RAW_SRCS := $(filter-out $(STATIC_RAW_SRCS),$(wildcard src/*.cc))
+VISX_SRCS := $(basename $(notdir $(VISX_RAW_SRCS)))
+VISX_OBJS := $(addprefix $(OBJ)/,$(VISX_SRCS))
 
 
-VISX_OBJS := \
-	$(OBJ)/bitmaptcl.do \
-	$(OBJ)/block.do \
-	$(OBJ)/blocktcl.do \
-	$(OBJ)/bmapdata.do \
-	$(OBJ)/bmaprenderer.do \
-	$(OBJ)/cloneface.do \
-	$(OBJ)/eventresponsehdlr.do \
-	$(OBJ)/experiment.do \
-	$(OBJ)/exptdriver.do \
-	$(OBJ)/expttcl.do \
-	$(OBJ)/expttesttcl.do \
-	$(OBJ)/facetcl.do \
-	$(OBJ)/fishtcl.do \
-	$(OBJ)/fixpttcl.do \
-	$(OBJ)/gabortcl.do \
-	$(OBJ)/grobj.do \
-	$(OBJ)/grobjtcl.do \
-	$(OBJ)/grshapp.do \
-	$(OBJ)/gtexttcl.do \
-	$(OBJ)/housetcl.do \
-	$(OBJ)/jitter.do \
-	$(OBJ)/jittertcl.do \
-	$(OBJ)/kbdresponsehdlr.do \
-	$(OBJ)/masktcl.do \
-	$(OBJ)/morphyfacetcl.do \
-	$(OBJ)/nullresponsehdlr.do \
-	$(OBJ)/pbm.do \
-	$(OBJ)/position.do \
-	$(OBJ)/positiontcl.do \
-	$(OBJ)/response.do \
-	$(OBJ)/responsehandler.do \
-	$(OBJ)/rhtcl.do \
-	$(OBJ)/sound.do \
-	$(OBJ)/soundtcl.do \
-	$(OBJ)/subject.do \
-	$(OBJ)/subjecttcl.do \
-	$(OBJ)/thtcl.do \
-	$(OBJ)/timinghandler.do \
-	$(OBJ)/timinghdlr.do \
-	$(OBJ)/tlisttcl.do \
-	$(OBJ)/tlistutils.do \
-	$(OBJ)/trial.do \
-	$(OBJ)/trialbase.do \
-	$(OBJ)/trialevent.do \
-	$(OBJ)/trialtcl.do \
+GWT_SRCS := $(basename $(notdir $(wildcard $(SRC)/gwt/*.cc)))
+GWT_OBJS := $(addprefix $(OBJ)/gwt/,$(GWT_SRCS))
+
+GX_SRCS := $(basename $(notdir $(wildcard $(SRC)/gx/*.cc)))
+GX_OBJS := $(addprefix $(OBJ)/gx/,$(GX_SRCS))
+
+IO_SRCS := $(basename $(notdir $(wildcard $(SRC)/io/*.cc)))
+IO_OBJS := $(addprefix $(OBJ)/io/,$(IO_SRCS))
+
+SYS_SRCS := $(basename $(notdir $(wildcard $(SRC)/system/*.cc)))
+SYS_OBJS := $(addprefix $(OBJ)/system/,$(SYS_SRCS))
+
+UTIL_SRCS := $(basename $(notdir $(wildcard $(SRC)/util/*.cc)))
+UTIL_OBJS := $(addprefix $(OBJ)/util/,$(UTIL_SRCS))
 
 APPWORKS_OBJS := \
-	$(OBJ)/application.do \
-	$(OBJ)/gwt/canvas.do \
-	$(OBJ)/gwt/widget.do \
-	$(OBJ)/gx/gbcolor.do \
-	$(OBJ)/gx/gbvec.do \
-	$(OBJ)/gx/gxnode.do \
-	$(OBJ)/gx/gxseparator.do \
-	$(OBJ)/gx/gxtcl.do \
-	$(OBJ)/gx/gxtraversal.do \
-	$(OBJ)/io/asciistreamreader.do \
-	$(OBJ)/io/asciistreamwriter.do \
-	$(OBJ)/io/fields.do \
-	$(OBJ)/io/iditemutils.do \
-	$(OBJ)/io/io.do \
-	$(OBJ)/io/iodb.do \
-	$(OBJ)/io/iofactory.do \
-	$(OBJ)/io/iolegacy.do \
-	$(OBJ)/io/iomap.do \
-	$(OBJ)/io/iomgr.do \
-	$(OBJ)/io/reader.do \
-	$(OBJ)/io/readutils.do \
-	$(OBJ)/io/writer.do \
-	$(OBJ)/io/writeutils.do \
-	$(OBJ)/system/demangle.do \
-	$(OBJ)/system/system.do \
-	$(OBJ)/util/debug.do \
-	$(OBJ)/util/error.do \
-	$(OBJ)/util/errorhandler.do \
-	$(OBJ)/util/factory.do \
-	$(OBJ)/util/observable.do \
-	$(OBJ)/util/observer.do \
-	$(OBJ)/util/ptrhandle.do \
-	$(OBJ)/util/refcounted.do \
-	$(OBJ)/util/serialport.do \
-	$(OBJ)/util/strings.do \
-	$(OBJ)/util/trace.do \
-	$(OBJ)/util/value.do \
+	$(GWT_OBJS) $(GX_OBJS) $(IO_OBJS) $(SYS_OBJS) $(UTIL_OBJS)
 
-
-TCLWORKS_OBJS := \
-	$(OBJ)/tcl/fieldpkg.do \
-	$(OBJ)/tcl/ioitempkg.do \
-	$(OBJ)/tcl/iotcl.do \
-	$(OBJ)/tcl/misctcl.do \
-	$(OBJ)/tcl/stringifycmd.do \
-	$(OBJ)/tcl/tclcmd.do \
-	$(OBJ)/tcl/tcldlist.do \
-	$(OBJ)/tcl/tclerror.do \
-	$(OBJ)/tcl/tclitempkg.do \
-	$(OBJ)/tcl/tclitempkgbase.do \
-	$(OBJ)/tcl/tclpkg.do \
-	$(OBJ)/tcl/tclutil.do \
-	$(OBJ)/tcl/tclvalue.do \
-	$(OBJ)/tcl/tclveccmds.do \
-	$(OBJ)/tcl/tracertcl.do \
+TCL_SRCS := $(basename $(notdir $(wildcard $(SRC)/tcl/*.cc)))
+TCLWORKS_OBJS := $(addprefix $(OBJ)/tcl/,$(TCL_SRCS))
 
 #PACKAGES := \
 #	$(PKG)/face.sl
@@ -362,19 +268,18 @@ DEBUG_TARGET := $(BIN_DIR)/testsh
 
 DEBUG_DEFS := -DPROF -DASSERT -DINVARIANT -DTEST -DDEBUG_BUILD
 
-DEBUG_GRSH_MAIN_OBJ := $(GRSH_MAIN_OBJ)
-DEBUG_GRSH_STATIC_OBJS := $(GRSH_STATIC_OBJS)
-DEBUG_GRSH_DYNAMIC_OBJS := $(GRSH_DYNAMIC_OBJS)
-DEBUG_VISX_OBJS := $(VISX_OBJS)
-DEBUG_TCLWORKS_OBJS := $(TCLWORKS_OBJS)
-DEBUG_APPWORKS_OBJS := $(APPWORKS_OBJS)
+DEBUG_GRSH_STATIC_OBJS := $(addsuffix .do,$(GRSH_STATIC_OBJS))
+#DEBUG_GRSH_DYNAMIC_OBJS := $(addsuffix .do,$(GRSH_DYNAMIC_OBJS))
+DEBUG_VISX_OBJS := $(addsuffix .do,$(VISX_OBJS))
+DEBUG_TCLWORKS_OBJS := $(addsuffix .do,$(TCLWORKS_OBJS))
+DEBUG_APPWORKS_OBJS := $(addsuffix .do,$(APPWORKS_OBJS))
 
 #DEBUG_PACKAGES := $(subst $(PKG),$(PKG_DBG),$(PACKAGES))
 
-DEBUG_LIBGRSH := $(LIB)/libgrsh.d.$(DEBUGLIB_EXT)
-DEBUG_LIBVISX := $(LIB)/libvisx.d.$(DEBUGLIB_EXT)
-DEBUG_LIBTCLWORKS := $(LIB)/libtclworks.d.$(DEBUGLIB_EXT)
-DEBUG_LIBAPPWORKS := $(LIB)/libappworks.d.$(DEBUGLIB_EXT)
+#DEBUG_LIBGRSH := $(LIB)/libgrsh$(DEBUGLIB_EXT)
+DEBUG_LIBVISX := $(LIB)/libvisx$(DEBUGLIB_EXT)
+DEBUG_LIBTCLWORKS := $(LIB)/libtclworks$(DEBUGLIB_EXT)
+DEBUG_LIBAPPWORKS := $(LIB)/libappworks$(DEBUGLIB_EXT)
 
 ALL_DEBUG_LIBS := $(DEBUG_LIBVISX) $(DEBUG_LIBTCLWORKS) $(DEBUG_LIBAPPWORKS)
 
@@ -396,12 +301,11 @@ PROD_TARGET := $(BIN_DIR)/grsh$(VERSION)
 
 PROD_DEFS := -DASSERT -DINVARIANT
 
-PROD_GRSH_MAIN_OBJ := $(GRSH_MAIN_OBJ:.do=.o)
-PROD_GRSH_STATIC_OBJS := $(DEBUG_GRSH_STATIC_OBJS:.do=.o)
-#PROD_GRSH_DYNAMIC_OBJS := $(DEBUG_GRSH_DYNAMIC_OBJS:.do=.o)
-PROD_VISX_OBJS := $(DEBUG_VISX_OBJS:.do=.o)
-PROD_TCLWORKS_OBJS := $(DEBUG_TCLWORKS_OBJS:.do=.o)
-PROD_APPWORKS_OBJS := $(DEBUG_APPWORKS_OBJS:.do=.o)
+PROD_GRSH_STATIC_OBJS := $(addsuffix .o,$(GRSH_STATIC_OBJS))
+#PROD_GRSH_DYNAMIC_OBJS := $(addsuffix .o,$(GRSH_DYNAMIC_OBJS))
+PROD_VISX_OBJS := $(addsuffix .o,$(VISX_OBJS))
+PROD_TCLWORKS_OBJS := $(addsuffix .o,$(TCLWORKS_OBJS))
+PROD_APPWORKS_OBJS := $(addsuffix .o,$(APPWORKS_OBJS))
 
 #PROD_PACKAGES := $(PACKAGES)
 
@@ -409,10 +313,10 @@ PROD_APPWORKS_OBJS := $(DEBUG_APPWORKS_OBJS:.do=.o)
 # current version of g++ (2.95.1), so on irix6 we must make the
 # libvisx library as an archive library.
 
-#PROD_LIBGRSH := $(LIB)/libgrsh$(VERSION).$(PRODLIB_EXT)
-PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(PRODLIB_EXT)
-PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(PRODLIB_EXT)
-PROD_LIBAPPWORKS := $(LIB)/libappworks$(VERSION).$(PRODLIB_EXT)
+#PROD_LIBGRSH := $(LIB)/libgrsh$(PRODLIB_EXT)
+PROD_LIBVISX := $(LIB)/libvisx$(PRODLIB_EXT)
+PROD_LIBTCLWORKS := $(LIB)/libtclworks$(PRODLIB_EXT)
+PROD_LIBAPPWORKS := $(LIB)/libappworks$(PRODLIB_EXT)
 
 ALL_PROD_LIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS) $(PROD_LIBAPPWORKS)
 
@@ -462,23 +366,21 @@ testsh: $(SRC)/TAGS $(ALL_DEBUG_SHLIBS) $(DEBUG_TARGET)
 	$(DEBUG_TARGET) ./testing/grshtest.tcl
 
 DEBUG_CMDLINE := $(DEBUG_LINK_OPTIONS) $(DEBUG_GRSH_STATIC_OBJS) \
-	 $(DEBUG_GRSH_MAIN_OBJ) $(DEBUG_AUX_OBJ) \
+	$(DEBUG_AUX_OBJ) \
 	$(MY_LIB_PATH) -lvisx.d -ltclworks.d -lappworks.d $(LIBRARIES) 
 
-$(DEBUG_TARGET): $(DEBUG_GRSH_MAIN_OBJ) \
-		$(DEBUG_GRSH_STATIC_OBJS) $(ALL_DEBUG_STATLIBS)
+$(DEBUG_TARGET): $(DEBUG_GRSH_STATIC_OBJS) $(ALL_DEBUG_STATLIBS)
 	$(CC) -o $@ $(DEBUG_CMDLINE)
 
 grsh: $(SRC)/TAGS $(ALL_PROD_SHLIBS) $(PROD_TARGET)
 	$(PROD_TARGET) ./testing/grshtest.tcl
 
 PROD_CMDLINE := $(PROD_LINK_OPTIONS) $(PROD_GRSH_STATIC_OBJS) \
-	$(PROD_GRSH_MAIN_OBJ) $(MY_LIB_PATH) \
+	$(MY_LIB_PATH) \
 	-lvisx$(VERSION) -ltclworks$(VERSION) -lappworks$(VERSION) \
 	$(LIBRARIES) \
 
-$(PROD_TARGET): $(PROD_GRSH_MAIN_OBJ) \
-		$(PROD_GRSH_STATIC_OBJS) $(ALL_PROD_STATLIBS)
+$(PROD_TARGET): $(PROD_GRSH_STATIC_OBJS) $(ALL_PROD_STATLIBS)
 	$(CC) -o $@ $(PROD_CMDLINE)
 
 #-------------------------------------------------------------------------
@@ -493,7 +395,7 @@ $(PROD_TARGET): $(PROD_GRSH_MAIN_OBJ) \
 %.$(STATLIB_EXT):
 	$(STATLIB_CMD) $@ $^
 
-$(DEBUG_LIBGRSH):      $(DEBUG_GRSH_DYNAMIC_OBJS)
+#$(DEBUG_LIBGRSH):      $(DEBUG_GRSH_DYNAMIC_OBJS)
 #$(PROD_LIBGRSH):       $(PROD_GRSH_DYNAMIC_OBJS)
 $(DEBUG_LIBVISX):      $(DEBUG_VISX_OBJS)
 $(PROD_LIBVISX):       $(PROD_VISX_OBJS)
@@ -513,9 +415,7 @@ $(PROD_LIBAPPWORKS):   $(PROD_APPWORKS_OBJS)
 
 ALL_SOURCES := $(wildcard $(SRC)/*.cc) $(wildcard $(SRC)/[a-z]*/*.cc)
 
-ALL_HEADERS := $(SRC)/*.h $(SRC)/[a-z]*/*.h
-
-DEP_TEMP := $(patsubst %.cc,%.d,$(ALL_SOURCES))
+ALL_HEADERS := $(wildcard $(SRC)/*.h)  $(wildcard $(SRC)/[a-z]*/*.h)
 
 MAKEDEP := $(SCRIPTS)/makedep
 
