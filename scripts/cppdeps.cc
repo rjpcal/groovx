@@ -109,9 +109,9 @@ namespace
     errno = 0;
     if (stat(fname, &statbuf) != 0)
       {
-	cerr << strerror(errno) << "\n";
-	cerr << "stat failed " << fname << "\n";
-	exit(1);
+        cerr << strerror(errno) << "\n";
+        cerr << "stat failed " << fname << "\n";
+        exit(1);
       }
 
     return S_ISDIR(statbuf.st_mode);
@@ -120,8 +120,8 @@ namespace
   bool ignore_directory(const char* dirname)
   {
     return (dirname[0] == '.' ||
-	    strcmp(dirname, "RCS") == 0 ||
-	    strcmp(dirname, "CVS") == 0);
+            strcmp(dirname, "RCS") == 0 ||
+            strcmp(dirname, "CVS") == 0);
   }
 }
 
@@ -134,19 +134,19 @@ cppdeps::cppdeps(char** argv)
   while (*argv != 0)
     {
       if (strcmp(*argv, "--include") == 0)
-	{
-	  user_ipath.push_back(*++argv);
-	}
+        {
+          user_ipath.push_back(*++argv);
+        }
       else if (strcmp(*argv, "--src") == 0)
-	{
-	  string dir = trim_dirname(*++argv);
-	  srcdir = dir;
-	  user_ipath.push_back(dir);
-	}
+        {
+          string dir = trim_dirname(*++argv);
+          srcdir = dir;
+          user_ipath.push_back(dir);
+        }
       else if (strcmp(*argv, "--objdir") == 0)
-	{
-	  objdir = trim_dirname(*++argv);
-	}
+        {
+          objdir = trim_dirname(*++argv);
+        }
       ++argv;
     }
 }
@@ -197,10 +197,10 @@ int cppdeps::is_cc_filename(const char* fname)
 }
 
 void cppdeps::resolve_one(const char* include_name,
-			  int include_length,
-			  const string& filename,
-			  const string& dirname_with_slash,
-			  cppdeps::include_list_t& vec)
+                          int include_length,
+                          const string& filename,
+                          const string& dirname_with_slash,
+                          cppdeps::include_list_t& vec)
 {
   for (unsigned int i = 0; i < user_ipath.size(); ++i)
     {
@@ -210,10 +210,10 @@ void cppdeps::resolve_one(const char* include_name,
 
       struct stat statbuf;
       if (stat(fullpath.c_str(), &statbuf) == 0)
-	{
-	  vec.push_back(fullpath);
-	  return;
-	}
+        {
+          vec.push_back(fullpath);
+          return;
+        }
     }
 
   // Try resolving the include by using the directory containing the
@@ -235,12 +235,12 @@ void cppdeps::resolve_one(const char* include_name,
   if (stat(include_string.c_str(), &statbuf) == 0)
     {
       if (filename != include_string)
-	vec.push_back(include_string);
+        vec.push_back(include_string);
       return;
     }
 
   cerr << "warning: couldn\'t resolve #include \""
-	    << include_string << "\" for " << filename << "\n";
+            << include_string << "\" for " << filename << "\n";
 }
 
 const cppdeps::include_list_t&
@@ -273,7 +273,15 @@ cppdeps::get_direct_includes(const string& filename)
       exit(1);
     }
 
-  void* mem = mmap(0, nbytes, PROT_READ, MAP_PRIVATE, fd, 0);
+  errno = 0;
+  void* const mem = mmap(0, nbytes, PROT_READ, MAP_PRIVATE, fd, 0);
+
+  if (mem == (void*)-1)
+    {
+      cerr << strerror(errno) << "\n";
+      cerr << "mmap failed " << filename << "\n";
+      exit(1);
+    }
 
   const char* fptr = static_cast<char*>(mem);
   const char* const stop = fptr + nbytes;
@@ -281,15 +289,15 @@ cppdeps::get_direct_includes(const string& filename)
   for ( ; fptr < stop; ++fptr)
     {
       while (*fptr != '#' && fptr < stop)
-	++fptr;
+        ++fptr;
 
       if (fptr >= stop)
-	break;
+        break;
 
       ++fptr;
 
       while (isspace(*fptr) && fptr < stop)
-	++fptr;
+        ++fptr;
 
       if (*fptr++ != 'i') continue;
       if (*fptr++ != 'n') continue;
@@ -300,25 +308,25 @@ cppdeps::get_direct_includes(const string& filename)
       if (*fptr++ != 'e') continue;
 
       while (isspace(*fptr) && fptr < stop)
-	++fptr;
+        ++fptr;
 
       if (*fptr++ != '\"') continue;
 
       const char* const include_name = fptr;
 
       while (*fptr != '\"' && fptr < stop)
-	++fptr;
+        ++fptr;
 
       if (*fptr != '\"')
-	{
-	  cerr << "found end-of-file before closing double-quote\n";
-	  exit(1);
-	}
+        {
+          cerr << "found end-of-file before closing double-quote\n";
+          exit(1);
+        }
 
       const int include_length = fptr - include_name;
 
       resolve_one(include_name, include_length, filename,
-		  dirname_with_slash, vec);
+                  dirname_with_slash, vec);
     }
 
   munmap(mem, nbytes);
@@ -351,14 +359,14 @@ cppdeps::get_nested_includes(const string& filename)
   const include_list_t& direct = get_direct_includes(filename);
 
   for (include_list_t::const_iterator
-	 i = direct.begin(),
-	 istop = direct.end();
+         i = direct.begin(),
+         istop = direct.end();
        i != istop;
        ++i)
     {
       // Check for self-inclusion to avoid infinite recursion.
       if (*i == filename)
-	continue;
+        continue;
 
       const include_list_t& indirect = get_nested_includes(*i);
 
@@ -389,53 +397,53 @@ void cppdeps::batch_build()
       errno = 0;
       DIR* d = opendir(dirname.c_str());
       if (d == 0)
-	{
-	  cerr << strerror(errno) << "\n";
-	  cerr << "not a directory: " << dirname.c_str() << "\n";
-	  exit(1);
-	}
+        {
+          cerr << strerror(errno) << "\n";
+          cerr << "not a directory: " << dirname.c_str() << "\n";
+          exit(1);
+        }
       for (dirent* e = readdir(d); e != 0; e = readdir(d))
-	{
-	  if (ignore_directory(e->d_name))
-	    continue;
+        {
+          if (ignore_directory(e->d_name))
+            continue;
 
-	  string fullname = dirname;
-	  fullname += "/";
-	  fullname += e->d_name;
+          string fullname = dirname;
+          fullname += "/";
+          fullname += e->d_name;
 
-	  if (is_directory(fullname.c_str()))
-	    {
-	      dirs.push_back(fullname);
-	    }
-	  else
-	    {
-	      const int ext_len = is_cc_filename(e->d_name);
-	      if (ext_len > 0)
-		{
-		  const include_list_t& includes = get_nested_includes(fullname);
+          if (is_directory(fullname.c_str()))
+            {
+              dirs.push_back(fullname);
+            }
+          else
+            {
+              const int ext_len = is_cc_filename(e->d_name);
+              if (ext_len > 0)
+                {
+                  const include_list_t& includes = get_nested_includes(fullname);
 
-		  // This essentially does a unique sort for us.
-		  const set<string> uniq(includes.begin(), includes.end());
+                  // This essentially does a unique sort for us.
+                  const set<string> uniq(includes.begin(), includes.end());
 
-		  // Use C-style stdio here since it came out running quite
-		  // a bit faster than iostreams, at least under g++-3.2.
-		  printf("%s/%s.o: ",
-			 objdir.c_str(),
-			 fullname.substr(offset, fullname.length()-ext_len-offset).c_str());
+                  // Use C-style stdio here since it came out running quite
+                  // a bit faster than iostreams, at least under g++-3.2.
+                  printf("%s/%s.o: ",
+                         objdir.c_str(),
+                         fullname.substr(offset, fullname.length()-ext_len-offset).c_str());
 
-		  for (set<string>::const_iterator
-			 itr = uniq.begin(),
-			 stop = uniq.end();
-		       itr != stop;
-		       ++itr)
-		    {
-		      printf(" %s", (*itr).c_str());
-		    }
+                  for (set<string>::const_iterator
+                         itr = uniq.begin(),
+                         stop = uniq.end();
+                       itr != stop;
+                       ++itr)
+                    {
+                      printf(" %s", (*itr).c_str());
+                    }
 
-		  printf("\n");
-		}
-	    }
-	}
+                  printf("\n");
+                }
+            }
+        }
       closedir(d);
     }
 }
