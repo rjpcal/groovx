@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Jun 12 14:41:48 2002
+// written: Tue Jun 18 09:39:20 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -253,7 +253,6 @@ public:
   int itsAuxNumber;
   int itsIndirect;
   char* itsShareList;             /* name (ident) of Togl to share dlists with */
-  char* itsShareContext;          /* name (ident) to share OpenGL context with */
 
   char* itsIdent;          /* User's identification string */
   ClientData itsClientData;      /* Pointer to user data */
@@ -390,9 +389,6 @@ static Tk_ConfigSpec configSpecs[] =
 
   {TK_CONFIG_STRING, (char*)"-sharelist", (char*)"sharelist", (char*)"ShareList",
    NULL, Tk_Offset(Togl::Impl, itsShareList), 0, NULL},
-
-  {TK_CONFIG_STRING, (char*)"-sharecontext", (char*)"sharecontext", (char*)"ShareContext",
-   NULL, Tk_Offset(Togl::Impl, itsShareContext), 0, NULL},
 
   {TK_CONFIG_STRING, (char*)"-ident", (char*)"ident", (char*)"Ident",
    (char*)DEFAULT_IDENT, Tk_Offset(Togl::Impl, itsIdent), 0, NULL},
@@ -1242,7 +1238,6 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsAuxNumber(0),
   itsIndirect(GL_FALSE),
   itsShareList(NULL),
-  itsShareContext(NULL),
   itsIdent(NULL),
   itsClientData(DefaultClientData),
   itsUpdatePending(GL_FALSE),
@@ -2090,64 +2085,51 @@ int Togl::Impl::setupVisInfoAndContext()
 {
 DOTRACE("Togl::Impl::setupVisInfoAndContext");
 
-  if (itsShareContext && findTogl(itsShareContext))
+  int attrib_list[1000];
+
+  const int MAX_ATTEMPTS = 12;
+
+  static int ci_depths[MAX_ATTEMPTS] =
     {
-      /* share OpenGL context with existing Togl widget */
-      Impl* shareWith = findTogl(itsShareContext);
-      Assert(shareWith);
-      Assert(shareWith->itsGLXContext);
-      itsGLXContext = shareWith->itsGLXContext;
-      itsVisInfo = shareWith->itsVisInfo;
-      printf("SHARE CTX\n");
+      8, 4, 2, 1, 12, 16, 8, 4, 2, 1, 12, 16
+    };
+  static int dbl_flags[MAX_ATTEMPTS] =
+    {
+      0, 0, 0, 0,  0,  0, 1, 1, 1, 1,  1,  1
+    };
+
+  /* It may take a few tries to get a visual */
+  for (int attempt=0; attempt<MAX_ATTEMPTS; attempt++)
+    {
+      DebugEvalNL(attempt);
+      buildAttribList(attrib_list, ci_depths[attempt], dbl_flags[attempt]);
+
+      itsVisInfo = glXChooseVisual( itsDisplay,
+                                    DefaultScreen(itsDisplay), attrib_list );
+
+      if (itsVisInfo)
+        {
+          /* found a GLX visual! */
+          itsBitsPerPixel = itsVisInfo->depth;
+
+          DebugEvalNL((void*)itsVisInfo->visualid);
+          DebugEvalNL(itsVisInfo->depth);
+          DebugEvalNL(itsVisInfo->bits_per_rgb);
+          break;
+        }
     }
-  else /* !(itsShareContext && findTogl(itsShareContext)) */
+
+  if (itsVisInfo==NULL)
     {
-      int attrib_list[1000];
+      return TCL_ERR(itsInterp, "Togl: couldn't get visual");
+    }
 
-      const int MAX_ATTEMPTS = 12;
+  // Create a new OpenGL rendering context.
+  setupGLXContext();   DebugEvalNL(itsGLXContext);
 
-      static int ci_depths[MAX_ATTEMPTS] =
-        {
-          8, 4, 2, 1, 12, 16, 8, 4, 2, 1, 12, 16
-        };
-      static int dbl_flags[MAX_ATTEMPTS] =
-        {
-          0, 0, 0, 0,  0,  0, 1, 1, 1, 1,  1,  1
-        };
-
-      /* It may take a few tries to get a visual */
-      for (int attempt=0; attempt<MAX_ATTEMPTS; attempt++)
-        {
-          DebugEvalNL(attempt);
-          buildAttribList(attrib_list, ci_depths[attempt], dbl_flags[attempt]);
-
-          itsVisInfo = glXChooseVisual( itsDisplay,
-                                        DefaultScreen(itsDisplay), attrib_list );
-
-          if (itsVisInfo)
-            {
-              /* found a GLX visual! */
-              itsBitsPerPixel = itsVisInfo->depth;
-
-              DebugEvalNL((void*)itsVisInfo->visualid);
-              DebugEvalNL(itsVisInfo->depth);
-              DebugEvalNL(itsVisInfo->bits_per_rgb);
-              break;
-            }
-        }
-
-      if (itsVisInfo==NULL)
-        {
-          return TCL_ERR(itsInterp, "Togl: couldn't get visual");
-        }
-
-      // Create a new OpenGL rendering context.
-      setupGLXContext();   DebugEvalNL(itsGLXContext);
-
-      if (itsGLXContext == NULL)
-        {
-          return TCL_ERR(itsInterp, "could not create rendering context");
-        }
+  if (itsGLXContext == NULL)
+    {
+      return TCL_ERR(itsInterp, "could not create rendering context");
     }
 
   return TCL_OK;
