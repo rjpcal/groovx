@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Mar  5 14:16:35 2002
+// written: Tue Mar  5 14:26:09 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -847,6 +847,8 @@ public:
   Mtx(const mxArray* a, StoragePolicy s = COPY);
 
   Mtx(double* data, int mrows, int ncols, StoragePolicy s = COPY);
+
+  Mtx(const MtxShape& s, InitPolicy p = ZEROS);
 
   Mtx(int mrows, int ncols, InitPolicy p = ZEROS);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Tue Mar  5 14:16:19 2002
+// written: Tue Mar  5 14:27:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -543,6 +543,10 @@ Mtx::Mtx(double* data, int mrows, int ncols, StoragePolicy s = COPY) :
 
 Mtx::Mtx(int mrows, int ncols, InitPolicy p = ZEROS) :
   Base(mrows, ncols, DataHolder(mrows, ncols, p))
+{}
+
+Mtx::Mtx(const MtxShape& s, InitPolicy p = ZEROS) :
+  Base(s.mrows(), s.ncols(), DataHolder(s.mrows(), s.ncols(), p))
 {}
 
 const Mtx& Mtx::emptyMtx()
