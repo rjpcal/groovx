@@ -2,8 +2,7 @@
 // subject.h
 // Rob Peters
 // created: Dec-98
-// written: Fri Mar 12 12:54:22 1999
-static const char vcid_subject_h[] = "$Id$";
+// written: Sat Mar 13 15:13:10 1999
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SUBJECT_H_DEFINED
@@ -24,6 +23,7 @@ public:
   virtual ~Subject();
 
   virtual IOResult serialize(ostream &os, IOFlag flag = NO_FLAGS) const;
+  virtual IOResult deserialize(istream &is, IOFlag flag = NO_FLAGS);
 
   const char* getName() const { return itsName; }
   void setName(const char* name);
@@ -34,4 +34,5 @@ private:
   char *itsDirectory;
 };
 
+static const char vcid_subject_h[] = "$Id$";
 #endif // !SUBJECT_H_DEFINED
