@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Jan-99
-// written: Fri May 11 16:21:43 2001
+// written: Fri May 11 19:53:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,7 +100,7 @@ void Util::Prof::printProfData(ostream& os) const {
 
 void Util::Prof::resetAllProfData() {
 
-  for (int i = 0; i < allProfs.size(); ++i) {
+  for (unsigned int i = 0; i < allProfs.size(); ++i) {
     allProfs[i]->callCount = 0;
     allProfs[i]->totalTime.tv_sec = 0;
     allProfs[i]->totalTime.tv_usec = 0;
@@ -109,14 +109,14 @@ void Util::Prof::resetAllProfData() {
 
 void Util::Prof::printAllProfData(ostream& os) {
 
-  for (int i = 0; i < allProfs.size(); ++i) {
+  for (unsigned int i = 0; i < allProfs.size(); ++i) {
     allProfs[i]->printProfData(os);
   }
 }
 
 void Util::Trace::printStackTrace(ostream& os) {
   os << "stack trace:\n";
-  for (int i = 0; i < callStack.size(); ++i) {
+  for (unsigned int i = 0; i < callStack.size(); ++i) {
     os << "\t[" << i << "] " << callStack[i]->name() << '\n';
   }
   os << flush;
