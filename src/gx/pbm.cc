@@ -3,7 +3,7 @@
 // pbm.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:07 1999
-// written: Thu Jan 20 02:12:35 2000
+// written: Sun Feb 20 22:02:52 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,8 +33,8 @@ DOTRACE("Pbm::init");
   itsMode = 0;
   itsImageWidth = 0;
   itsImageHeight = 0;
-  itsMaxGrey = 0;
-  itsBitsPerPixel = 0;
+  itsMaxGrey = 1;
+  itsBitsPerPixel = 1;
   itsNumBytes = 0;
   itsBytes.resize(1);
 }
@@ -75,10 +75,11 @@ void Pbm::grabBytes(vector<unsigned char>& bytes,
 						  int& width, int& height, int& bits_per_pixel) {
 DOTRACE("Pbm::grabBytes");
   itsBytes.swap(bytes);
-  itsBytes.resize(1);
   width = itsImageWidth;
   height = itsImageHeight;
   bits_per_pixel = itsBitsPerPixel;
+
+  init();
 }
 
 void Pbm::setBytes(const vector<unsigned char>& bytes,
