@@ -3,7 +3,7 @@
 // factory.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 22:37:31 1999
-// written: Wed Mar  8 11:35:45 2000
+// written: Thu Mar  9 16:25:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,6 +56,8 @@ void CreatorMapBase::setPtrForName(const char* name, void* ptr) {
   killPtr(itsImpl->itsMap[sname]);
   itsImpl->itsMap[sname] = ptr;
 }
+
+FactoryBase::~FactoryBase() {}
 
 static const char vcid_factory_cc[] = "$Header$";
 #endif // !FACTORY_CC_DEFINED

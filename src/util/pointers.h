@@ -3,7 +3,7 @@
 // pointers.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Mar  7 14:52:52 2000
-// written: Tue Mar  7 15:22:43 2000
+// written: Thu Mar  9 16:31:43 2000
 // $Id$
 //
 // -------------------------------------------------------------------
@@ -86,13 +86,17 @@ public:
   typedef T element_type;
 
   explicit shared_ptr(T* p =0) :
-	 px(p)
+	 px(p), pn(0)
 	 {
 		try { pn = new long(1); }  // fix: prevent leak if new throws
 		catch (...) { delete p; throw; } 
 	 }
 
-  shared_ptr(const shared_ptr& r) throw() : px(r.px) { ++*(pn = r.pn); }
+  shared_ptr(const shared_ptr& r) throw() :
+	 px(r.px), pn(r.pn)
+	 {
+		++(*pn);
+	 }
 
   ~shared_ptr() { dispose(); }
 
@@ -104,9 +108,9 @@ public:
 
   template<class TT>
   shared_ptr(const shared_ptr<TT>& r) throw() :
-	 px(r.px)
+	 px(r.px), pn(r.pn)
 	 { 
-		++*(pn = r.pn); 
+		++(*pn); 
 	 }
 
   template<class TT>

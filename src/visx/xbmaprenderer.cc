@@ -3,7 +3,7 @@
 // xbmaprenderer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 17:22:34 1999
-// written: Fri Mar  3 17:30:14 2000
+// written: Thu Mar  9 16:21:46 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -75,6 +75,8 @@ namespace {
 
 	 XWindowAttributes xwa;
 	 Status status = XGetWindowAttributes(display, win, &xwa);
+	 if (status == 0)
+		  throw XBmapRendererError("couldn't get X11 window attributes");
 	 visual = xwa.visual;
 
 	 x11_ready = true;
@@ -86,11 +88,15 @@ DOTRACE("XBmapRenderer::initClass");
   theTkWin = tkwin;
 }
 
-XBmapRenderer::XBmapRenderer() {
-  itsImage = 0;
+XBmapRenderer::XBmapRenderer() :
+  itsIsCurrent(false),
+  itsImage(0)
+{
+DOTRACE("XBmapRenderer::XBmapRenderer");
 }
 
 XBmapRenderer::~XBmapRenderer() {
+DOTRACE("XBmapRenderer::~XBmapRenderer");
   if (itsImage) XFree(itsImage);
 }
 

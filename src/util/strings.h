@@ -3,7 +3,7 @@
 // strings.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Mar  6 11:16:48 2000
-// written: Thu Mar  9 16:18:35 2000
+// written: Thu Mar  9 16:29:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,9 @@ public:
   bool empty() const { return (length() == 0); }
 
 private:
+  string_literal(const string_literal&);
+  string_literal& operator=(const string_literal&);
+
   const char* const itsText;
   const unsigned int itsLength;
 };
