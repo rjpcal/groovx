@@ -3,7 +3,7 @@
 // listitempkg.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jul  7 13:17:04 1999
-// written: Fri Oct 20 17:20:55 2000
+// written: Sun Oct 22 16:42:25 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,6 +49,26 @@ protected:
 ///////////////////////////////////////////////////////////////////////
 /**
  *
+ * RefCountCmd
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+template <class C>
+class RefCountCmd : public TclItemCmd<C> {
+public:
+  RefCountCmd(TclItemPkg* pkg, const char* cmd_name) :
+	 TclItemCmd<C>(pkg, cmd_name, "item_id", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 C* p = TclItemCmd<C>::getItem();
+	 returnInt(p->refCount());
+  }
+};
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
  * AbstractListItemPkg
  *
  **/
@@ -62,7 +82,8 @@ public:
 	 CTclIoItemPkg<C>(interp, name, version, 1),
 	 itsList(aList)
   {
-	 addCommand( new TypeCmd<C>(this, TclPkg::makePkgCmdName("type")) );
+  	 addCommand( new TypeCmd<C>(this, TclPkg::makePkgCmdName("type")) );
+	 addCommand( new RefCountCmd<C>(this, TclPkg::makePkgCmdName("refCount")));
   }
 
   List& theList() { return itsList; }
