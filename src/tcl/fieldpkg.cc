@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Wed Jul 11 10:16:24 2001
+// written: Wed Jul 11 10:48:06 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -131,7 +131,7 @@ DOTRACE("Tcl::FieldVecCmd::invoke");
     else if ( ids.size() == 1 )
       {
         Ref<FieldContainer> item(ids[0]);
-        returnVal( *(item->field(itsFinfo).value()) );
+        returnVal<const Value&>( *(item->field(itsFinfo).value()) );
       }
     else
       for (size_t i = 0; i < ids.size(); ++i) {
@@ -235,7 +235,7 @@ DOTRACE("Tcl::FieldsCmd::invoke");
     Tcl_IncrRefCount(itsFieldList);
   }
 
-  returnVal(TclValue(itsFieldList));
+  returnVal<const Value&>(TclValue(itsFieldList));
 }
 
 ///////////////////////////////////////////////////////////////////////
