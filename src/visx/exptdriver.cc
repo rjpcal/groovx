@@ -341,7 +341,10 @@ void ExptDriver::edBeginExpt()
 {
 DOTRACE("ExptDriver::edBeginExpt");
 
-  ensureNotComplete();
+  if (isComplete())
+    {
+      throw Util::Error("Can't begin experiment: there are no pending elements");
+    }
 
   addLogInfo("Beginning experiment.");
 
@@ -360,7 +363,10 @@ void ExptDriver::edResumeExpt()
 {
 DOTRACE("ExptDriver::edResumeExpt");
 
-  ensureNotComplete();
+  if (isComplete())
+    {
+      throw Util::Error("Can't resume experiment: there are no pending elements");
+    }
 
   currentElement()->vxRun(*this);
 }

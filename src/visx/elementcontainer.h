@@ -127,9 +127,6 @@ protected:
   /// Hook function to be called when all children have been run.
   virtual void vxAllChildrenFinished() = 0;
 
-  /// Throw an exception if there are not valid children still pending.
-  void ensureNotComplete() const;
-
   /// Read elements from reader.
   void legacyReadElements(IO::Reader& reader, const char* name);
   /// Write elements to writer.

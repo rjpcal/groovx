@@ -349,17 +349,6 @@ DOTRACE("ElementContainer::isComplete");
   return (rep->sequencePos >= rep->elements.size());
 }
 
-void ElementContainer::ensureNotComplete() const
-{
-DOTRACE("ElementContainer::ensureNotComplete");
-
-  if (isComplete())
-    {
-      throw Util::Error("the experiment must have at least one Element"
-                        "before it can be started");
-    }
-}
-
 void ElementContainer::legacyReadElements(IO::Reader& reader,
                                           const char* name)
 {
