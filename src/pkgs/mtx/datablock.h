@@ -45,8 +45,14 @@ protected:
   int refCount() const { return itsRefCount; }
 
 public:
-  static DataBlock* makeDataCopy(const double* data, int data_length);
+  /** Return a new shared DataBlock whose contents are all set to zero */
   static DataBlock* makeBlank(int length);
+
+  /** Return a new shared DataBlock whose contents are uninitialized (i.e. not
+      all set to zero as in makeBlank()) */
+  static DataBlock* makeUninitialized(int length);
+
+  static DataBlock* makeDataCopy(const double* data, int data_length);
 
   // The 'data' are borrowed, but are never considered unique, so
   // attempts to makeUnique() will always duplicate the data.

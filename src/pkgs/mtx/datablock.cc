@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 18:04:40 2001
-// written: Thu Feb 14 11:58:38 2002
+// written: Tue Feb 19 17:33:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -148,6 +148,15 @@ DOTRACE("DataBlock::makeBlank");
   memset(p->itsData, 0, length*sizeof(double));
 
   return p;
+}
+
+DataBlock* DataBlock::makeUninitialized(int length)
+{
+DOTRACE("DataBlock::makeUninitialized");
+  if (length <= 0)
+    return getEmptyDataBlock();
+
+  return new SharedDataBlock(length);
 }
 
 DataBlock* DataBlock::makeBorrowed(double* data, int data_length)
