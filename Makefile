@@ -26,7 +26,7 @@ EXTRA_STATISTICS := 0
 #-------------------------------------------------------------------------
 
 PROJECT = $(HOME)/grsh
-SRC := ./src
+SRC := src
 DEP := ./dep
 OBJ := ./obj/$(ARCH)
 LIB := $(PROJECT)/lib/$(ARCH)
@@ -408,7 +408,7 @@ DEP_TEMP := $(patsubst %.cc,%.d,$(ALL_SOURCES))
 ALL_DEPS := $(subst src/,dep/,$(DEP_TEMP))
 
 $(DEP)/%.d : $(SRC)/%.cc
-	$(MAKEDEP) $(DEPOPTIONS) $< > $@
+	$(MAKEDEP) -DNO_EXTERNAL_INCLUDE_GUARDS $(DEPOPTIONS) $< > $@
 
 # One way to handle the dependencies is to have a separate .d file for
 # each source, but this can be very inefficient since it requires
@@ -423,7 +423,7 @@ $(DEP)/%.d : $(SRC)/%.cc
 #include $(ALL_DEPS)
 
 alldepends: $(ALL_SOURCES) $(ALL_HEADERS)
-	$(MAKEDEP) $(DEPOPTIONS) $+ > $@
+	$(MAKEDEP) $(DEPOPTIONS) $(ALL_SOURCES) > $@
 
 include alldepends
 
