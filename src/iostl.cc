@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // iostl.cc
 // Rob Peters
 // created: Sat Mar 13 15:21:33 1999
-// written: Mon Dec  6 22:17:43 1999
+// written: Tue Feb 22 09:58:46 2000
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef IOSTL_CC_DEFINED
@@ -12,9 +14,9 @@
 #include "iostl.h"
 
 #include <iostream.h>
-#include <string>
 #include <cmath>
-#include <cstring>
+
+#include "io.h"
 
 void serializeVecInt(ostream &os, const vector<int>& vec) {
   char sep = ' ';
