@@ -3,7 +3,7 @@
 // tclitempkg.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 12:33:54 1999
-// written: Wed Mar 15 20:09:05 2000
+// written: Tue Mar 21 19:59:20 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -230,7 +230,9 @@ DOTRACE("Tcl::VecPropertyCmdBase::invoke");
   dynamic_block<int> ids(1); 
 
   if (itsItemArgn) {
-	 ids.resize(getSequenceLengthOfArg(itsItemArgn));
+	 unsigned int num_ids = getSequenceLengthOfArg(itsItemArgn);
+	 DebugEvalNL(num_ids);
+	 ids.resize(num_ids);
 	 getSequenceFromArg(itsItemArgn, &ids[0], (int*) 0);
   }
   else {
@@ -240,11 +242,15 @@ DOTRACE("Tcl::VecPropertyCmdBase::invoke");
 
   // If we are getting...
   if (TclCmd::objc() == itsObjcGet) {
-	 returnVal( getValFromItemId(ids[0]) );
-
-	 for (size_t i = 1; i < ids.size(); ++i) {
-		lappendVal( getValFromItemId(ids[i]) );
-	 }
+	 if ( ids.size() == 0 )
+		/* return an empty Tcl result since the list of ids was empty */
+		return;
+	 else if ( ids.size() == 1 )
+		returnVal( getValFromItemId(ids[0]) );
+	 else
+		for (size_t i = 0; i < ids.size(); ++i) {
+		  lappendVal( getValFromItemId(ids[i]) );
+		}
 
   }
   // ... or if we are setting
