@@ -2,7 +2,8 @@
 // expt.h
 // Rob Peters
 // created: Jan-99
-// written: Wed Mar 10 14:09:17 1999
+// written: Fri Mar 12 08:26:17 1999
+static const char vcid[] = "$Id";
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef EXPT_H_DEFINED
