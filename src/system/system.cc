@@ -42,7 +42,6 @@
 #include <cstring>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <time.h>
 #include <unistd.h>
 
 #include "util/trace.h"
@@ -137,21 +136,6 @@ void System::sleep(unsigned int seconds)
 {
 DOTRACE("System::sleep");
   ::sleep(seconds);
-}
-
-fstring System::formattedTime(const char* format)
-{
-DOTRACE("System::formattedTime");
-
-  time_t t = time(0);
-
-  struct tm* tt = localtime(&t);
-
-  char buf[512];
-
-  std::size_t count = strftime(buf, 512, format, tt);
-
-  return fstring(Util::CharData(&buf[0], count));
 }
 
 static const char vcid_system_cc[] = "$Header$";

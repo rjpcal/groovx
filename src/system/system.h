@@ -166,10 +166,6 @@ public:
   /** Suspend execution of the calling process for the specified
       number of seconds. */
   void sleep(unsigned int seconds);
-
-  /** Return a formatted string representation of the current
-      time. See 'man strftime' for the formatting codes. */
-  fstring formattedTime(const char* format = "%a %b %d %H:%M:%S %Z %Y");
 };
 
 static const char vcid_system_h[] = "$Header$";
