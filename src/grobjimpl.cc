@@ -3,7 +3,7 @@
 // grobjimpl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Mar 23 16:27:57 2000
-// written: Thu Mar 23 18:44:55 2000
+// written: Thu Mar 23 19:12:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -232,17 +232,19 @@ DOTRACE("GrObj::Impl::Renderer::recacheBitmapIfNeeded");
 		obj->doAlignment();
 		
 		obj->grRender(canvas);
-		
-		Assert(obj->hasBB());
-		
-		Rect<double> bbox;
-		obj->getBoundingBox(canvas, bbox);
-		itsBitmapCache->grabWorldRect(bbox);
-		itsBitmapCache->setRasterX(bbox.left());
-		itsBitmapCache->setRasterY(bbox.bottom());
 	 }
 	 glPopAttrib();
   }
+		
+  Assert(obj->hasBB());
+
+  Rect<double> bmapbox;
+  obj->getBoundingBox(canvas, bmapbox);
+  DebugEval(bmapbox.left()); DebugEval(bmapbox.top());
+  DebugEval(bmapbox.right()); DebugEvalNL(bmapbox.bottom());
+  itsBitmapCache->grabWorldRect(bmapbox);
+  itsBitmapCache->setRasterX(bmapbox.left());
+  itsBitmapCache->setRasterY(bmapbox.bottom());
 
   DebugEvalNL(itsMode);
 
@@ -540,6 +542,8 @@ DOTRACE("GrObj::Impl::getBoundingBox");
   if ( !itsBB.bbExists() ) return false;
 
   bbox = itsBB.getFinal(canvas);
+  DebugEval(bbox.left()); DebugEval(bbox.top());
+  DebugEval(bbox.right()); DebugEvalNL(bbox.bottom());
   return true;
 }
 
