@@ -3,13 +3,13 @@
 // rhtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Tue Jun 15 14:52:06 1999
+// written: Tue Jun 15 14:54:11 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifndef THTCL_CC_DEFINED
-#define THTCL_CC_DEFINED
+#ifndef RHTCL_CC_DEFINED
+#define RHTCL_CC_DEFINED
 
 #include <tcl.h>
 #include <strstream.h>
@@ -117,4 +117,4 @@ DOTRACE("RhTcl::Rh_Init");
 }
 
 static const char vcid_rhtcl_cc[] = "$Header$";
-#endif // !THTCL_CC_DEFINED
+#endif // !RHTCL_CC_DEFINED
