@@ -218,6 +218,24 @@ public:
 	 return s;
   }
 
+  double min() const
+  {
+	 MtxConstIter i = begin();
+	 double mn = *i;
+	 for (; i.hasMore(); ++i)
+		if (*i < mn) mn = *i;
+	 return mn;
+  }
+
+  double max() const
+  {
+	 MtxConstIter i = begin();
+	 double mx = *i;
+	 for (; i.hasMore(); ++i)
+		if (*i > mx) mx = *i;
+	 return mx;
+  }
+
   double mean() const
     { return sum()/itsNelems; }
 
