@@ -3,7 +3,7 @@
 // itemwithid.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct 23 11:42:18 2000
-// written: Tue Oct 24 15:35:50 2000
+// written: Wed Oct 25 18:18:05 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,6 +38,13 @@ ItemWithId<T>::ItemWithId(PtrHandle<T> item, Insert /*dummy param*/) :
   itsHandle(item),
   itsId(ptrList().insert(itsHandle).id())
 {}
+
+template <class T>
+ItemWithId<T>& ItemWithId<T>::operator=(T* new_master)
+{
+  itsHandle = PtrHandle<T>(new_master);
+  itsId = ptrList().insert(itsHandle).id();
+}
 
 ///////////////////////////////////////////////////////////////////////
 //

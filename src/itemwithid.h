@@ -3,7 +3,7 @@
 // itemwithid.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct 23 11:41:23 2000
-// written: Tue Oct 24 15:34:06 2000
+// written: Wed Oct 25 18:16:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,6 +40,8 @@ public:
   ItemWithId(T* master, int id_) : itsHandle(master), itsId(id_) {}
   ItemWithId(PtrHandle<T> item_, int id_) : itsHandle(item_), itsId(id_) {}
 
+  // Default destructor, copy constructor, operator=() are fine
+
   /** A symbol to pass to constructors indicating that the item should
 		be inserted into an appropriate PtrList. */
   enum Insert { INSERT };
@@ -47,7 +49,9 @@ public:
   ItemWithId(T* ptr, Insert /*dummy param*/);
   ItemWithId(PtrHandle<T> item, Insert /*dummy param*/);
 
-  // Default destructor, copy constructor, operator=() are fine
+  /** This operation will cause \a new_master to be inserted into an
+      appropriate PtrList. */
+  ItemWithId& operator=(T* new_master);
 
         T* operator->()       { return itsHandle.get(); }
   const T* operator->() const { return itsHandle.get(); }
