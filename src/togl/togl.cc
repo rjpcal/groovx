@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Sep 13 17:09:42 2000
+// written: Sat Sep 23 16:56:08 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -2641,7 +2641,7 @@ DOTRACE("ToglTcl::ToglCmd");
 class ToglTcl::ToglPkg : public Tcl::TclPkg {
 public:
   ToglPkg(Tcl_Interp* interp) :
-	 TclPkg(interp, "Togl", TOGL_VERSION)
+	 Tcl::TclPkg(interp, "Togl", TOGL_VERSION)
 	 {
 		Tcl_CreateCommand(interp, "togl", ToglTcl::ToglCmd,
 								(ClientData) 0, NULL);
