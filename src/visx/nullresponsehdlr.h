@@ -3,7 +3,7 @@
 // nullresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 18:54:35 1999
-// written: Thu Oct 21 18:11:49 1999
+// written: Wed Nov 24 12:42:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,6 +33,7 @@ public:
   // actions
   virtual void rhBeginTrial() const;
   virtual void rhAbortTrial() const;
+  virtual void rhEndTrial() const;
   virtual void rhHaltExpt() const;
 };
 

@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Tue Nov  9 16:25:59 1999
+// written: Wed Nov 24 12:43:47 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -114,6 +114,9 @@ public:
 	 { attend(); }
 
   void rhAbortTrial() const;
+
+  void rhEndTrial() const
+	 { ignore(); }
 
   void rhHaltExpt() const
 	 { ignore(); }
@@ -849,6 +852,9 @@ void EventResponseHdlr::rhBeginTrial() const
 
 void EventResponseHdlr::rhAbortTrial() const
   { itsImpl->rhAbortTrial(); }
+
+void EventResponseHdlr::rhEndTrial() const
+  { itsImpl->rhEndTrial(); }
 
 void EventResponseHdlr::rhHaltExpt() const
   { itsImpl->rhHaltExpt(); }

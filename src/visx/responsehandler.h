@@ -3,7 +3,7 @@
 // responsehandler.h
 // Rob Peters
 // created: Tue May 18 16:21:09 1999
-// written: Wed Nov 10 14:09:54 1999
+// written: Wed Nov 24 12:41:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,6 +67,8 @@ public:
   virtual void rhBeginTrial() const = 0;
   ///
   virtual void rhAbortTrial() const = 0;
+  ///
+  virtual void rhEndTrial() const = 0;
   ///
   virtual void rhHaltExpt() const = 0;
   //@}
