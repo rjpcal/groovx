@@ -3,7 +3,7 @@
 // face.cc
 // Rob Peters
 // created: Dec-98
-// written: Sat Jul  3 16:34:47 1999
+// written: Thu Sep 16 14:45:49 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -164,6 +164,8 @@ DOTRACE("Face::deserialize");
   Invariant(check());
 
   if (flag & BASES) { GrObj::deserialize(is, flag); }
+
+  sendStateChangeMsg();
 }
 
 int Face::charCount() const {
