@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Thu Nov 14 17:19:15 2002
+// written: Thu Nov 14 17:22:14 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,10 +42,10 @@ class Canvas : public virtual Util::Object
 {
 public:
   /// Set the current Canvas.
-  static void installCanvas(Gfx::Canvas& canvas);
+  static void setCurrent(Gfx::Canvas& canvas);
 
   /// Get the current Canvas.
-  static Canvas& canvas();
+  static Canvas& current();
 
 
   /// Virtual destructor ensures proper destruction of subclasses.
