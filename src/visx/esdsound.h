@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 24 18:13:53 2001
-// written: Thu May 24 18:55:23 2001
+// written: Sun Jul 22 17:46:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,11 +38,11 @@ class SoundFilenameError : public SoundError {
 public:
   SoundFilenameError() : SoundError() {}
   SoundFilenameError(const char* filename) :
-	 SoundError("bad or nonexistent file '")
-	 {
-		appendMsg(filename);
-		appendMsg("'");
-	 }
+    SoundError("bad or nonexistent file '")
+    {
+      appendMsg(filename);
+      appendMsg("'");
+    }
 };
 
 class EsdSound : public Sound {
@@ -61,7 +61,7 @@ public:
 
   void swap(EsdSound& other)
   {
-	 itsFilename.swap(other.itsFilename);
+    itsFilename.swap(other.itsFilename);
   }
 
 private:
@@ -93,50 +93,50 @@ DOTRACE("EsdSound::readFrom");
   DebugEval(itsFilename.length()); DebugEvalNL(itsFilename);
 
   if (!itsFilename.empty())
-	 setFile(itsFilename.c_str());
+    setFile(itsFilename.c_str());
 }
 
 void EsdSound::writeTo(IO::Writer* writer) const {
 DOTRACE("EsdSound::writeTo");
 
-  writer->writeValue("filename", itsFilename); 
+  writer->writeValue("filename", itsFilename);
 }
 
 void EsdSound::play() {
 DOTRACE("EsdSound::play");
 
   if (!itsFilename.empty())
-	 {
-		int res = esd_play_file("", itsFilename.c_str(), 0);
-		if (res == 0)
-		  throw SoundFilenameError(itsFilename.c_str());
-	 }
+    {
+      int res = esd_play_file("", itsFilename.c_str(), 0);
+      if (res == 0)
+        throw SoundFilenameError(itsFilename.c_str());
+    }
 }
 
 void EsdSound::setFile(const char* filename) {
 DOTRACE("EsdSound::setFile");
   if (filename != 0 && filename[0] != '\0')
-	 {
-		// We just use afOpenFile to ensure that the filename refers to
-		// a readable+valid file
-		AFfilehandle audiofile = afOpenFile(filename, "r", (AFfilesetup) 0);
+    {
+      // We just use afOpenFile to ensure that the filename refers to
+      // a readable+valid file
+      AFfilehandle audiofile = afOpenFile(filename, "r", (AFfilesetup) 0);
 
-		if (audiofile == AF_NULL_FILEHANDLE) {
-		  SoundError err("couldn't open sound file ");
-		  err.appendMsg("'", filename, "'");
-		  throw err;
-		}
+      if (audiofile == AF_NULL_FILEHANDLE) {
+        SoundError err("couldn't open sound file ");
+        err.appendMsg("'", filename, "'");
+        throw err;
+      }
 
-		int closeResult = afCloseFile(audiofile);
+      int closeResult = afCloseFile(audiofile);
 
-		if (closeResult == -1) {
-		  SoundError err("error closing sound file ");
-		  err.appendMsg("'", filename, "'");
-		  throw err;
-		}
+      if (closeResult == -1) {
+        SoundError err("error closing sound file ");
+        err.appendMsg("'", filename, "'");
+        throw err;
+      }
 
-		itsFilename = filename;
-	 }
+      itsFilename = filename;
+    }
 }
 
 
@@ -152,7 +152,7 @@ namespace {
 
 bool Sound::initSound() {
 DOTRACE("Sound::initSound");
-  ESD = esd_audio_open(); 
+  ESD = esd_audio_open();
   return haveSound();
 }
 
@@ -163,7 +163,7 @@ DOTRACE("Sound::haveSound");
 
 void Sound::closeSound() {
 DOTRACE("Sound::closeSound");
-  esd_audio_close(); 
+  esd_audio_close();
 }
 
 Sound* Sound::make() {
