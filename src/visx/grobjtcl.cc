@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Wed Aug 15 13:37:53 2001
+// written: Thu Aug 16 10:52:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,7 +84,6 @@ public:
     linkVarCopy("GrObj::GLCOMPILE", Gmodes::GLCOMPILE);
     linkVarCopy("GrObj::GL_BITMAP_CACHE", Gmodes::GL_BITMAP_CACHE);
     linkVarCopy("GrObj::X11_BITMAP_CACHE", Gmodes::X11_BITMAP_CACHE);
-    linkVarCopy("GrObj::SWAP_FORE_BACK", Gmodes::SWAP_FORE_BACK);
     linkVarCopy("GrObj::CLEAR_BOUNDING_BOX", Gmodes::CLEAR_BOUNDING_BOX);
 
     linkVarCopy("GrObj::NATIVE_SCALING", Gmodes::NATIVE_SCALING);
