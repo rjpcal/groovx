@@ -122,3 +122,32 @@ test "ExptTcl-Expt::write" "error on bad pathname" {
 } "ExptDriver::write: IoFilenameError: $::TEST_DIR/nonexistent_dir/no_file"
 }
 
+### General experiment tests ###
+test "ExptTcl-Expt::begin" "general sanity test" {
+	 set thid [Th::Th]
+	 Th::addStartEvent $thid EndTrialEvent 100
+
+	 set face [Face::Face]
+	 set pos [Pos::Pos]
+	 Tlist::addObject 0 0 0
+
+	 Trial::timingHdlr 0 $thid
+
+	 BlockList::reset
+	 set block [Block::Block]
+	 Block::addTrialIds $block 0
+
+	 Expt::reset
+
+	 namespace eval ::Expt {
+		  proc doUponCompletion {} { set ::DONE "complete" }
+	 }
+	 after 200 set ::DONE "incomplete"
+	 Expt::begin
+
+	 vwait ::DONE
+
+	 Expt::reset
+
+	 return $::DONE
+} {^complete$}
