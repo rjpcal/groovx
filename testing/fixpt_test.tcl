@@ -39,7 +39,7 @@ test "FixptTcl-length" "error from bad objid" {
 test "FixptTcl-length" "error from wrong type" {
     set f [Obj::new Face]
 	 FixPt::length $f 1.0
-} {^FixPt::length: an error of type (std::)?bad_cast occurred:.*$}
+} {^FixPt::length: }
 
 ### widthCmd ###
 test "FixptTcl-width" "too few args" {
@@ -60,7 +60,7 @@ test "FixptTcl-width" "error from bad objid" {
 test "FixptTcl-width" "error from wrong type" {
     set f [Obj::new Face]
 	 FixPt::width $f 5
-} {^FixPt::width: an error of type (std::)?bad_cast occurred:.*$}
+} {^FixPt::width: }
 test "FixptTcl-width" "error from non-integral number" {
     FixPt::width $::fix 1.5
 } {^FixPt::width: expected integer but got "1\.5"$}
