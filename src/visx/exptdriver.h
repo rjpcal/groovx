@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Sep 25 19:01:23 2002
+// written: Sat Nov 23 13:37:05 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -99,8 +99,8 @@ public:
 
   virtual Util::ErrorHandler& getErrorHandler() const;
 
-  Util::SoftRef<GWT::Widget> getWidget() const;
-  void setWidget(Util::SoftRef<GWT::Widget> widg);
+  const Util::SoftRef<GWT::Widget>& getWidget() const;
+  void setWidget(const Util::SoftRef<GWT::Widget>& widg);
 
   virtual Gfx::Canvas& getCanvas() const;
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 10:52:17 1999
-// written: Fri Jan 18 16:06:53 2002
+// written: Sat Nov 23 13:36:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,7 +41,7 @@ public:
   virtual Util::ErrorHandler& getErrorHandler() const = 0;
   ///< Return an \c ErrorHandler that can deal with error messages.
 
-  virtual Util::SoftRef<GWT::Widget> getWidget() const = 0;
+  virtual const Util::SoftRef<GWT::Widget>& getWidget() const = 0;
   ///< Return the Widget in which the experiment is running.
 
   virtual Gfx::Canvas& getCanvas() const = 0;

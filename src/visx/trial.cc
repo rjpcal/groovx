@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Nov 20 16:10:45 2002
+// written: Sat Nov 23 13:38:04 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -149,7 +149,7 @@ public:
 
   void clearObjs();
 
-  void trDoTrial(Trial* self, SoftRef<GWT::Widget> widget,
+  void trDoTrial(Trial* self, const SoftRef<GWT::Widget>& widget,
                  Util::ErrorHandler& errhdlr, Block& block);
   double trElapsedMsec();
   void trAbortTrial();
@@ -307,7 +307,7 @@ DOTRACE("Trial::Impl::clearObjs");
 // actions //
 /////////////
 
-void Trial::Impl::trDoTrial(Trial* self, SoftRef<GWT::Widget> widget,
+void Trial::Impl::trDoTrial(Trial* self, const SoftRef<GWT::Widget>& widget,
                             Util::ErrorHandler& errhdlr, Block& block)
 {
 DOTRACE("Trial::Impl::trDoTrial");
@@ -598,7 +598,7 @@ void Trial::clearObjs()
   { itsImpl->clearObjs(); }
 
 
-void Trial::trDoTrial(SoftRef<GWT::Widget> widget,
+void Trial::trDoTrial(const SoftRef<GWT::Widget>& widget,
                       Util::ErrorHandler& errhdlr, Block& block)
   { itsImpl->trDoTrial(this, widget, errhdlr, block); }
 

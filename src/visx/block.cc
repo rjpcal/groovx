@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Sun Nov  3 13:41:11 2002
+// written: Sat Nov 23 13:38:17 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,8 +18,6 @@
 #include "visx/experiment.h"
 #include "visx/response.h"
 #include "visx/trialbase.h"
-
-#include "gwt/widget.h"
 
 #include "io/reader.h"
 #include "io/readutils.h"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Sun Nov  3 13:41:11 2002
+// written: Sat Nov 23 13:37:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -562,10 +562,10 @@ void ExptDriver::setDoWhenComplete(const fstring& script)
 Util::ErrorHandler& ExptDriver::getErrorHandler() const
   { return itsImpl->itsErrorHandler; }
 
-Util::SoftRef<GWT::Widget> ExptDriver::getWidget() const
+const Util::SoftRef<GWT::Widget>& ExptDriver::getWidget() const
   { return itsImpl->itsWidget; }
 
-void ExptDriver::setWidget(Util::SoftRef<GWT::Widget> widg)
+void ExptDriver::setWidget(const Util::SoftRef<GWT::Widget>& widg)
   { itsImpl->itsWidget = widg; }
 
 Gfx::Canvas& ExptDriver::getCanvas() const

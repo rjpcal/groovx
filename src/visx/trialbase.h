@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jan 25 18:41:19 2000
-// written: Wed Sep 25 19:03:47 2002
+// written: Sat Nov 23 13:37:35 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,7 +55,7 @@ public:
   virtual void undoLastResponse() = 0;
 
   // actions
-  virtual void trDoTrial(Util::SoftRef<GWT::Widget> widget,
+  virtual void trDoTrial(const Util::SoftRef<GWT::Widget>& widget,
                          Util::ErrorHandler& errhdlr, Block& block) = 0;
 
   virtual double trElapsedMsec() = 0;

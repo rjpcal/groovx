@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 21 18:54:36 1999
-// written: Fri Jan 18 16:07:00 2002
+// written: Sat Nov 23 13:35:28 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,6 @@
 #define NULLRESPONSEHDLR_CC_DEFINED
 
 #include "visx/nullresponsehdlr.h"
-
-#include "gwt/widget.h"
 
 #include "util/ref.h"
 
