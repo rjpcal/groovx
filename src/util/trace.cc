@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Jul 31 18:02:59 2002
+// written: Tue Aug  6 15:46:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,10 +24,65 @@
 #include <functional>
 #include <iostream>
 #include <iomanip>
+#include <new>
 #include <sys/resource.h>
+
+#include "util/debug.h"
 
 #define TRACE_WALL_CLOCK_TIME
 //  #define TRACE_CPU_TIME
+
+namespace
+{
+  template <unsigned int N>
+  class FixedStack
+  {
+  public:
+    FixedStack() throw() : vec(), top(0) {}
+
+    FixedStack(const FixedStack& other) throw() :
+      vec(), top(0)
+    {
+      *this = other;
+    }
+
+    FixedStack& operator=(const FixedStack& other) throw()
+    {
+      for (unsigned int i = 0; i < other.top; ++i)
+        {
+          vec[i] = other.vec[i];
+        }
+
+      return *this;
+    }
+
+    unsigned int size() const throw() { return top; }
+
+    bool push(Util::Prof* p) throw()
+    {
+      if (top >= N)
+        return false;
+
+      vec[top++] = p;
+      return true;
+    }
+
+    void pop() throw()
+    {
+      AbortIf(top == 0);
+      --top;
+    }
+
+    Util::Prof* at(unsigned int i) const throw()
+    {
+      return (i < top) ? vec[i] : 0;
+    }
+
+  private:
+    Util::Prof* vec[N];
+    unsigned int top;
+  };
+}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -37,19 +92,22 @@
 
 struct Util::BackTrace::Impl
 {
-  typedef minivec<Util::Prof*> VecType;
-  VecType vec;
+  FixedStack<256> vec;
 };
 
-Util::BackTrace::BackTrace() :
-  rep(new Impl)
-{}
+Util::BackTrace::BackTrace() throw() :
+  rep(new (std::nothrow) Impl)
+{
+  AbortIf(rep == 0);
+}
 
-Util::BackTrace::BackTrace(const BackTrace& other) :
-  rep(new Impl(*other.rep))
-{}
+Util::BackTrace::BackTrace(const BackTrace& other) throw() :
+  rep(new (std::nothrow) Impl(*other.rep))
+{
+  AbortIf(rep == 0);
+}
 
-Util::BackTrace& Util::BackTrace::operator=(const BackTrace& other)
+Util::BackTrace& Util::BackTrace::operator=(const BackTrace& other) throw()
 {
   *rep = *other.rep;
   return *this;
@@ -60,24 +118,26 @@ Util::BackTrace::~BackTrace() throw()
   delete rep;
 }
 
-Util::BackTrace& Util::BackTrace::current()
+Util::BackTrace& Util::BackTrace::current() throw()
 {
   static Util::BackTrace* ptr = 0;
   if (ptr == 0)
     {
-      ptr = new Util::BackTrace;
+      ptr = new (std::nothrow) Util::BackTrace;
+
+      AbortIf(ptr == 0);
     }
   return *ptr;
 }
 
-void Util::BackTrace::push(Util::Prof* p)
+bool Util::BackTrace::push(Util::Prof* p) throw()
 {
-  rep->vec.push_back(p);
+  return rep->vec.push(p);
 }
 
 void Util::BackTrace::pop() throw()
 {
-  rep->vec.pop_back();
+  rep->vec.pop();
 }
 
 unsigned int Util::BackTrace::size() const throw()
@@ -87,10 +147,10 @@ unsigned int Util::BackTrace::size() const throw()
 
 Util::Prof* Util::BackTrace::at(unsigned int i) const throw()
 {
-  return (i < size()) ? rep->vec[i] : 0;
+  return rep->vec.at(i);
 }
 
-void Util::BackTrace::print() const
+void Util::BackTrace::print() const throw()
 {
   printf("stack trace:\n");
 
@@ -101,11 +161,11 @@ void Util::BackTrace::print() const
 
   for (; i < end; ++i, --ri)
     {
-      printf("\t[%d] %s\n", int(i), rep->vec[ri]->name());
+      printf("\t[%d] %s\n", int(i), rep->vec.at(ri)->name());
     }
 }
 
-void Util::BackTrace::print(STD_IO::ostream& os) const
+void Util::BackTrace::print(STD_IO::ostream& os) const throw()
 {
   os << "stack trace:\n";
 
@@ -116,7 +176,7 @@ void Util::BackTrace::print(STD_IO::ostream& os) const
 
   for (; i < end; ++i, --ri)
     {
-      os << "\t[" << i << "] " << rep->vec[ri]->name() << '\n';
+      os << "\t[" << i << "] " << rep->vec.at(ri)->name() << '\n';
     }
 
   os << std::flush;
@@ -130,7 +190,7 @@ void Util::BackTrace::print(STD_IO::ostream& os) const
 
 namespace
 {
-  inline void getTime(timeval& result)
+  inline void getTime(timeval& result) throw()
   {
 #if defined(TRACE_WALL_CLOCK_TIME)
     gettimeofday(&result, NULL);
@@ -151,7 +211,7 @@ namespace
 
   bool PRINT_AT_EXIT = true;
 
-  void waitOnStep()
+  void waitOnStep() throw()
   {
     static char dummyBuffer[256];
 
@@ -171,12 +231,13 @@ namespace
 
   typedef minivec<Util::Prof*> ProfVec;
 
-  ProfVec& allProfs()
+  ProfVec& allProfs() throw()
   {
     static ProfVec* ptr = 0;
     if (ptr == 0)
       {
-        ptr = new ProfVec;
+        ptr = new (std::nothrow) ProfVec;
+        AbortIf(ptr == 0);
       }
     return *ptr;
   }
@@ -188,7 +249,7 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-Util::Prof::Prof(const char* s) :
+Util::Prof::Prof(const char* s)  throw():
   itsFuncName(s), itsCallCount(0), itsTotalTime()
 {
   itsTotalTime.tv_sec = 0;
@@ -197,7 +258,7 @@ Util::Prof::Prof(const char* s) :
   allProfs().push_back(this);
 }
 
-Util::Prof::~Prof()
+Util::Prof::~Prof() throw()
 {
   if (PRINT_AT_EXIT)
     {
@@ -212,16 +273,19 @@ Util::Prof::~Prof()
     }
 }
 
-void Util::Prof::reset()
+void Util::Prof::reset() throw()
 {
   itsCallCount = 0;
   itsTotalTime.tv_sec = 0;
   itsTotalTime.tv_usec = 0;
 }
 
-int Util::Prof::count() const { return itsCallCount; }
+int Util::Prof::count() const throw()
+{
+  return itsCallCount;
+}
 
-void Util::Prof::add(timeval t)
+void Util::Prof::add(timeval t) throw()
 {
   itsTotalTime.tv_sec += t.tv_sec;
   itsTotalTime.tv_usec += t.tv_usec;
@@ -240,22 +304,22 @@ void Util::Prof::add(timeval t)
   ++itsCallCount;
 }
 
-const char* Util::Prof::name() const
+const char* Util::Prof::name() const throw()
 {
   return itsFuncName;
 }
 
-double Util::Prof::totalTime() const
+double Util::Prof::totalTime() const throw()
 {
   return (double(itsTotalTime.tv_sec)*1000000 + itsTotalTime.tv_usec);
 }
 
-double Util::Prof::avgTime() const
+double Util::Prof::avgTime() const throw()
 {
   return itsCallCount > 0 ? (totalTime() / itsCallCount) : 0.0;
 }
 
-void Util::Prof::printProfData(std::ostream& os) const
+void Util::Prof::printProfData(std::ostream& os) const throw()
 {
   os << std::setw(14) << long(avgTime()) << '\t'
      << std::setw(5) << count() << '\t'
@@ -263,12 +327,12 @@ void Util::Prof::printProfData(std::ostream& os) const
      << itsFuncName << std::endl;
 }
 
-void Util::Prof::printAtExit(bool yes_or_no)
+void Util::Prof::printAtExit(bool yes_or_no) throw()
 {
   PRINT_AT_EXIT = yes_or_no;
 }
 
-void Util::Prof::resetAllProfData()
+void Util::Prof::resetAllProfData() throw()
 {
   std::for_each(allProfs().begin(), allProfs().end(),
                 std::mem_fun(&Util::Prof::reset));
@@ -276,13 +340,13 @@ void Util::Prof::resetAllProfData()
 
 namespace
 {
-  bool compareTotalTime(Util::Prof* p1, Util::Prof* p2)
+  bool compareTotalTime(Util::Prof* p1, Util::Prof* p2) throw()
   {
     return p1->totalTime() < p2->totalTime();
   }
 }
 
-void Util::Prof::printAllProfData(STD_IO::ostream& os)
+void Util::Prof::printAllProfData(STD_IO::ostream& os) throw()
 {
   std::stable_sort(allProfs().begin(), allProfs().end(), compareTotalTime);
 
@@ -301,65 +365,66 @@ void Util::Prof::printAllProfData(STD_IO::ostream& os)
 
 Util::Trace::Mode TRACE_MODE = Util::Trace::RUN;
 
-void Util::Trace::setMode(Mode new_mode)
+void Util::Trace::setMode(Mode new_mode) throw()
 {
   TRACE_MODE = new_mode;
 }
 
-Util::Trace::Mode Util::Trace::getMode()
+Util::Trace::Mode Util::Trace::getMode() throw()
 {
   return TRACE_MODE;
 }
 
-bool Util::Trace::getGlobalTrace()
+bool Util::Trace::getGlobalTrace() throw()
 {
   return GLOBAL_TRACE;
 }
 
-void Util::Trace::setGlobalTrace(bool on_off)
+void Util::Trace::setGlobalTrace(bool on_off) throw()
 {
   GLOBAL_TRACE = on_off;
 }
 
-unsigned int Util::Trace::getMaxLevel()
+unsigned int Util::Trace::getMaxLevel() throw()
 {
   return MAX_TRACE_LEVEL;
 }
 
-void Util::Trace::setMaxLevel(unsigned int lev)
+void Util::Trace::setMaxLevel(unsigned int lev) throw()
 {
   MAX_TRACE_LEVEL = lev;
 }
 
-Util::Trace::Trace(Prof& p, bool useMsg) :
+Util::Trace::Trace(Prof& p, bool useMsg) throw() :
   prof(p),
-  start(), finish(), elapsed(),
-  giveTraceMsg(useMsg)
+  start(),
+  giveTraceMsg(useMsg),
+  shouldPop(true)
 {
   if (GLOBAL_TRACE || giveTraceMsg)
-    {
-      printIn();
-    }
+    printIn();
 
-  Util::BackTrace::current().push(&p);
+  shouldPop = Util::BackTrace::current().push(&p);
 
   getTime(start);
 }
 
-Util::Trace::~Trace()
+Util::Trace::~Trace() throw()
 {
+  timeval finish, elapsed;
   getTime(finish);
   elapsed.tv_sec = finish.tv_sec - start.tv_sec;
   elapsed.tv_usec = finish.tv_usec - start.tv_usec;
   prof.add(elapsed);
-  Util::BackTrace::current().pop();
+
+  if (shouldPop)
+    Util::BackTrace::current().pop();
+
   if (GLOBAL_TRACE || giveTraceMsg)
-    {
-      printOut();
-    }
+    printOut();
 }
 
-void Util::Trace::printIn()
+void Util::Trace::printIn() throw()
 {
   const unsigned int n = Util::BackTrace::current().size();
 
@@ -387,9 +452,10 @@ void Util::Trace::printIn()
     }
 }
 
-void Util::Trace::printOut()
+void Util::Trace::printOut() throw()
 {
-  if (Util::BackTrace::current().size() == 0) STD_IO::cerr << '\n';
+  if (Util::BackTrace::current().size() == 0)
+    STD_IO::cerr << '\n';
 }
 
 static const char vcid_trace_cc[] = "$Header$";

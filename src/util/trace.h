@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Jul 31 18:02:14 2002
+// written: Tue Aug  6 15:45:57 2002
 // $Id$
 //
 // This file defines two classes and several macros that can be used
@@ -81,41 +81,41 @@ namespace Util
 class Util::Prof
 {
 public:
-  Prof(const char* s);
-  ~Prof();
+  Prof(const char* s) throw();
+  ~Prof() throw();
 
   /// Reset the call count and elapsed time to zero.
-  void reset();
+  void reset() throw();
 
   /** Return the number of calls that have been made since the last
       reset(). */
-  int count() const;
+  int count() const throw();
 
-  void add(timeval t);
+  void add(timeval t) throw();
 
-  const char* name() const;
+  const char* name() const throw();
 
   /** Return the total elapsed time in microseconds since the last
       reset(). */
-  double totalTime() const;
+  double totalTime() const throw();
 
   /** Return the per-call average of the elapsed time in microseconds since
       the last reset(). */
-  double avgTime() const;
+  double avgTime() const throw();
 
-  void printProfData(STD_IO::ostream& os) const;
+  void printProfData(STD_IO::ostream& os) const throw();
 
   /** Indicate whether profiling information should be written to the profile
       file at program exit time. */
-  static void printAtExit(bool yes_or_no);
+  static void printAtExit(bool yes_or_no) throw();
 
-  static void resetAllProfData();
+  static void resetAllProfData() throw();
 
-  static void printAllProfData(STD_IO::ostream& os);
+  static void printAllProfData(STD_IO::ostream& os) throw();
 
 private:
-  Prof(const Prof&);
-  Prof& operator=(const Prof&);
+  Prof(const Prof&) throw();
+  Prof& operator=(const Prof&) throw();
 
   const char* itsFuncName;
   int itsCallCount;
@@ -128,25 +128,26 @@ class Util::Trace
 public:
   enum Mode { RUN, STEP };
 
-  static void setMode(Mode new_mode);
-  static Mode getMode();
+  static void setMode(Mode new_mode) throw();
+  static Mode getMode() throw();
 
-  static bool getGlobalTrace();
-  static void setGlobalTrace(bool on_off);
+  static bool getGlobalTrace() throw();
+  static void setGlobalTrace(bool on_off) throw();
 
-  static unsigned int getMaxLevel();
-  static void setMaxLevel(unsigned int lev);
+  static unsigned int getMaxLevel() throw();
+  static void setMaxLevel(unsigned int lev) throw();
 
-  Trace(Prof& p, bool useMsg);
-  ~Trace();
+  Trace(Prof& p, bool useMsg) throw();
+  ~Trace() throw();
 
 private:
-  void printIn();
-  void printOut();
+  void printIn() throw();
+  void printOut() throw();
 
   Prof& prof;
-  timeval start, finish, elapsed;
+  timeval start;
   const bool giveTraceMsg;
+  bool shouldPop;
 };
 
 /// Represents an instantaneous state of the call stack.
@@ -154,22 +155,22 @@ class Util::BackTrace
 {
 public:
   /// Default construct an empty call stack.
-  BackTrace();
+  BackTrace() throw();
 
   /// Copy constructor.
-  BackTrace(const BackTrace& other);
+  BackTrace(const BackTrace& other) throw();
 
   /// Assignment operator.
-  BackTrace& operator=(const BackTrace& other);
+  BackTrace& operator=(const BackTrace& other) throw();
 
   /// Destructor.
   ~BackTrace() throw();
 
   /// Access the current call stack.
-  static BackTrace& current();
+  static BackTrace& current() throw();
 
-  /// Push a new element onto the call stack.
-  void push(Util::Prof* p);
+  /// Push a new element onto the call stack. Returns true if successful.
+  bool push(Util::Prof* p) throw();
 
   /// Pop the most recent element off of the call stack.
   void pop() throw();
@@ -184,10 +185,10 @@ public:
   Util::Prof* operator[](unsigned int i) const throw() { return at(i); }
 
   /// Print the call stack on stderr.
-  void print() const;
+  void print() const throw();
 
   /// Print the call stack to the given stream.
-  void print(STD_IO::ostream& os) const;
+  void print(STD_IO::ostream& os) const throw();
 
 private:
   struct Impl;
