@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Mon Oct  4 11:56:53 1999
+// written: Wed Oct  6 10:02:08 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -141,6 +141,8 @@ public:
   template <class C> friend class PropFriend;
 
 protected:
+  void reseat(T& valRef) { itsVal.reseat(valRef); }
+
   virtual void serialize(ostream& os, IOFlag) const 
 	 { os << itsVal() << ' '; }
   virtual void deserialize(istream& is, IOFlag)
