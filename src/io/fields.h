@@ -5,13 +5,17 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Tue Aug 14 18:57:34 2001
+// written: Tue Aug 14 21:34:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FIELDS_H_DEFINED
 #define FIELDS_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBJECT_H_DEFINED)
+#include "util/object.h"
+#endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(OBSERVABLE_H_DEFINED)
 #include "util/observable.h"
@@ -29,9 +33,11 @@
 #include "util/value.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
-#include "io/io.h"
-#endif
+namespace IO
+{
+  class Reader;
+  class Writer;
+}
 
 class Field;
 class FieldInfo;
@@ -338,7 +344,7 @@ public:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class FieldContainer : public virtual IO::IoObject,
+class FieldContainer : public virtual Util::Object,
                        public virtual Util::Observable
 {
 private:
