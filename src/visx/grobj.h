@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu Nov 18 13:48:45 1999
+// written: Thu Nov 18 13:49:47 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -319,9 +319,6 @@ public:
   void undraw() const;
 
 protected:
-  ///
-  void grDrawBoundingBox() const;
-
   /** This function must be overridden in derived classes to execute
 		the actual OpenGL commands that render the object. */
   virtual void grRender() const = 0;
