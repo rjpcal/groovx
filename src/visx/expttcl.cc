@@ -126,6 +126,7 @@ DOTRACE("Exptdriver_Init");
   pkg->defAttrib("autosavePeriod",
                  &ExptDriver::getAutosavePeriod,
                  &ExptDriver::setAutosavePeriod);
+  pkg->defAction("claimLogFile", &ExptDriver::claimLogFile);
   pkg->defAttrib("filePrefix",
                  &ExptDriver::getFilePrefix, &ExptDriver::setFilePrefix);
   pkg->defGetter("infoLog", &ExptDriver::getInfoLog);

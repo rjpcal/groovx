@@ -95,7 +95,9 @@ public:
     infoLog(),
     autosavePeriod(10),
     doWhenComplete(new Tcl::ProcWrapper(interp)),
-    numTrialsCompleted(0)
+    numTrialsCompleted(0),
+    createTime(Util::Time::wallClockNow()),
+    fileTimestamp(createTime.format("%Y%b%d_%H%M%S"))
   {}
 
   ~Impl() {}
@@ -133,6 +135,9 @@ public:
   Util::Ref<Tcl::ProcWrapper> doWhenComplete;
 
   unsigned int numTrialsCompleted;
+
+  Util::Time createTime;// Timestamp of when the ExptDriver is created
+  fstring fileTimestamp;// Timestamp used in filenames
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -310,6 +315,13 @@ DOTRACE("ExptDriver::setFilePrefix");
   rep->filePrefix = str;
 }
 
+void ExptDriver::claimLogFile() const
+{
+DOTRACE("ExptDriver::claimLogFile");
+  Util::Log::setLogFilename(fstring(rep->filePrefix, "_",
+                                    rep->fileTimestamp, ".log"));
+}
+
 int ExptDriver::getAutosavePeriod() const
 {
 DOTRACE("ExptDriver::getAutosavePeriod");
@@ -371,7 +383,7 @@ DOTRACE("ExptDriver::edBeginExpt");
   Util::Log::reset(); // to clear any existing timer scopes
   Util::Log::addObjScope(*this);
 
-  Util::Log::setLogFilename(fstring(rep->filePrefix, ".log"));
+  claimLogFile();
 
   Util::log(fstring("expt begin ", rep->beginDate));
   Util::log(fstring("hostname ", rep->hostname));
@@ -446,18 +458,16 @@ DOTRACE("ExptDriver::storeData");
 
   rep->endDate = timestamp.format();
 
-  fstring unique_file_extension = timestamp.format("_%Y%b%d_%H%M%S");
-
   // Write the main experiment file
   fstring expt_filename = rep->filePrefix;
-  expt_filename.append(unique_file_extension);
+  expt_filename.append("_", rep->fileTimestamp);
   expt_filename.append(".asw");
   IO::saveASW(Util::Ref<IO::IoObject>(this), expt_filename.c_str());
   Util::log( fstring( "wrote file ", expt_filename.c_str()) );
 
   // Write the responses file
   fstring resp_filename = rep->filePrefix;
-  resp_filename.append(unique_file_extension);
+  resp_filename.append("_", rep->fileTimestamp);
   resp_filename.append(".resp");
   TlistUtils::writeResponses(resp_filename.c_str());
   Util::log( fstring( "wrote file ", resp_filename.c_str()) );
