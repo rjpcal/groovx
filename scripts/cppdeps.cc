@@ -34,17 +34,17 @@
 #include <cassert>
 #include <iostream>
 #include <map>
-#include <vector>
 #include <set>
 #include <string>
+#include <vector>
 
+#include <dirent.h>    // for readdir()
+#include <errno.h>     // for errno
+#include <fcntl.h>     // for open(), O_RDONLY
+#include <sys/mman.h>  // for mmap()
+#include <sys/stat.h>  // for stat()
 #include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
-#include <dirent.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <sys/mman.h>
 
 using std::vector;
 using std::map;
@@ -180,32 +180,31 @@ namespace
   public:
     mapped_file(const char* filename)
       :
-      itsFd(0),
-      itsMem(0)
+      m_statbuf(),
+      m_fileno(0),
+      m_mem(0)
     {
       errno = 0;
 
-      struct stat statbuf;
-      if (stat(filename, &statbuf) == -1)
+      if (stat(filename, &m_statbuf) == -1)
         {
           cerr << "stat() failed for file " << filename << ":\n";
           cerr << strerror(errno) << "\n";
           exit(1);
         }
 
-      itsLength = statbuf.st_size;
-
-      itsFd = open(filename, O_RDONLY);
-      if (itsFd == -1)
+      m_fileno = open(filename, O_RDONLY);
+      if (m_fileno == -1)
         {
           cerr << "open() failed for file " << filename << ":\n";
           cerr << strerror(errno) << "\n";
           exit(1);
         }
 
-      itsMem = mmap(0, itsLength, PROT_READ, MAP_PRIVATE, itsFd, 0);
+      m_mem = mmap(0, m_statbuf.st_size,
+                   PROT_READ, MAP_PRIVATE, m_fileno, 0);
 
-      if (itsMem == (void*)-1)
+      if (m_mem == (void*)-1)
         {
           cerr << "mmap() failed for file " << filename << ":\n";
           cerr << strerror(errno) << "\n";
@@ -215,21 +214,23 @@ namespace
 
     ~mapped_file()
     {
-      munmap(itsMem, itsLength);
-      close(itsFd);
+      munmap(m_mem, m_statbuf.st_size);
+      close(m_fileno);
     }
 
-    const void* memory() const { return itsMem; }
+    const void* memory() const { return m_mem; }
 
-    const off_t length() const { return itsLength; }
+    off_t length() const { return m_statbuf.st_size; }
+
+    time_t mtime() const { return m_statbuf.st_mtime; }
 
   private:
     mapped_file(const mapped_file&);
     mapped_file& operator=(const mapped_file&);
 
-    off_t itsLength;
-    int   itsFd;
-    void* itsMem;
+    struct stat m_statbuf;
+    int         m_fileno;
+    void*       m_mem;
 
   }; // end class mapped_file
 
