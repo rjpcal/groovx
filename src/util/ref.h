@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Thu May 17 10:59:22 2001
+// written: Sat May 19 11:10:57 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -53,15 +53,11 @@ private:
 public:
   // Default destructor, copy constructor, operator=() are fine
 
-  explicit IdItem(IO::UID id) :
-	 itsHandle(IdItemUtils::getCastedItem<T>(id))
-  {}
+  explicit IdItem(IO::UID id) : itsHandle(IdItemUtils::getCastedItem<T>(id)) {}
 
-  explicit IdItem(T* ptr) : itsHandle(ptr)
-    { IdItemUtils::insertItem(ptr); }
+  explicit IdItem(T* ptr) : itsHandle(ptr) {}
 
-  explicit IdItem(PtrHandle<T> item) : itsHandle(item)
-    { IdItemUtils::insertItem(itsHandle.get()); }
+  explicit IdItem(PtrHandle<T> item) : itsHandle(item) {}
 
   template <class U>
   IdItem(const IdItem<U>& other) : itsHandle(other.handle()) {}
@@ -112,41 +108,24 @@ private:
   IO::UID itsId;
 
 public:
-  explicit MaybeIdItem(IO::UID id_) :
-	 itsHandle(0), itsId(id_) {}
+  MaybeIdItem() : itsHandle(0), itsId(0) {}
 
-  MaybeIdItem(T* master, IO::UID id_) :
-	 itsHandle(master), itsId(id_) {}
+  explicit MaybeIdItem(IO::UID id_) : itsHandle(0), itsId(id_) {}
 
-  MaybeIdItem(PtrHandle<T> item_, IO::UID id_) :
-	 itsHandle(item_), itsId(id_) {}
+  MaybeIdItem(T* master) : itsHandle(master), itsId(0)
+  {
+	 if (master != 0) itsId = master->id();
+  }
 
-  MaybeIdItem(NullablePtrHandle<T> item_, IO::UID id_) :
-	 itsHandle(item_), itsId(id_) {}
+  MaybeIdItem(PtrHandle<T> item) : itsHandle(item), itsId(item->id()) {}
+
+  MaybeIdItem(NullablePtrHandle<T> item) : itsHandle(item), itsId(0)
+  {
+	 if (itsHandle.isValid()) itsId = itsHandle->id();
+  }
 
   MaybeIdItem(const IdItem<T> other) :
 	 itsHandle(other.handle()), itsId(other.id()) {}
-
-  // These will cause the item to be inserted into the relevant list.
-  MaybeIdItem(T* master) :
-	 itsHandle(master),
-	 itsId(0)
-  {
-	 if (master != 0)
-		{
-		  IdItemUtils::insertItem(master);
-		  itsId = master->id();
-		}
-  }
-
-  MaybeIdItem() : itsHandle(0), itsId(0) {}
-
-  MaybeIdItem(PtrHandle<T> item) :
-	 itsHandle(item),
-	 itsId(item->id())
-  {
-	 IdItemUtils::insertItem(itsHandle.get());
-  }
 
   // Default destructor, copy constructor, operator=() are fine
 
@@ -197,9 +176,9 @@ MaybeIdItem<To> dynamicCast(MaybeIdItem<Fr> p)
 	 {
 		Fr* f = p.get();
 		To& t = dynamic_cast<To&>(*f); // will throw bad_cast on failure
-		return MaybeIdItem<To>(&t, p.id());
+		return MaybeIdItem<To>(&t);
 	 }
-  return MaybeIdItem<To>((To*)0, p.id());
+  return MaybeIdItem<To>(p.id());
 }
 
 // TypeTraits specialization for MaybeIdItem smart pointer
