@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Aug 15 19:42:08 2001
+// written: Fri Aug 17 16:06:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -239,9 +239,9 @@ DOTRACE("Trial::Impl::description");
        ii != end;
        ++ii)
     {
-      for (GxTraversal tr(ii->get()); tr.hasMore(); tr.advance())
+      for (GxTraversal tr(*ii); tr.isValid(); tr.next())
         {
-          const GrObj* g = dynamic_cast<const GrObj*>(tr.current());
+          const GrObj* g = dynamic_cast<const GrObj*>((*tr).get());
           if (g)
             {
               objids.append(" ").append(g->id());

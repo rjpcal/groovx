@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Nov  3 00:24:54 2000
-// written: Fri Aug 17 15:10:49 2001
+// written: Fri Aug 17 16:09:33 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,84 +23,54 @@
 
 #include "util/trace.h"
 
-class GxTraversal::Impl {
+class GxTraversal::Impl : public Util::FwdIterIfx<const Util::Ref<GxNode> >
+{
 public:
-  Impl(const GxNode* root) :
+  Impl(Util::Ref<GxNode> root) :
     itsNodes()
-    {
-      addNode(root);
-    }
+  {
+    addNode(root);
+  }
 
-  void addNode(const GxNode* node)
-    {
+  void addNode(Util::Ref<GxNode> node)
+  {
     DOTRACE("GxTraversal::Impl::addNode");
-      if (node == 0) return;
 
-      const GxSeparator* sep = dynamic_cast<const GxSeparator*>(node);
-      if (sep == 0)
-        {
-          itsNodes.push_back(node);
-        }
-      else
-        {
-          for(Util::FwdIter<Util::Ref<GxNode> > itr(sep->children());
-              !itr.atEnd();
-              ++itr)
-            {
-              addNode(itr->get());
-            }
-        }
-    }
+    const GxSeparator* sep = dynamic_cast<const GxSeparator*>(node.get());
+    if (sep == 0)
+      {
+        itsNodes.push_back(Util::Ref<GxNode>(node));
+      }
+    else
+      {
+        for (Util::FwdIter<Util::Ref<GxNode> > itr(sep->children());
+             itr.isValid();
+             ++itr)
+          {
+            addNode(*itr);
+          }
+      }
+  }
 
-  bool hasMore() const
-    {
-      return !itsNodes.empty();
-    }
+  typedef const Util::Ref<GxNode> ValType;
 
-  const GxNode* current() const
-    {
-      return itsNodes.front();
-    }
+  virtual Util::FwdIterIfx<ValType>* clone() const
+  {
+    return new Impl(*this);
+  }
 
-  void advance()
-    {
-      if (!itsNodes.empty()) itsNodes.pop_front();
-    }
+  virtual bool     atEnd()  const { return itsNodes.empty(); }
+  virtual ValType&   get()  const { return itsNodes.front(); }
+  virtual void      next()        { if (!atEnd()) itsNodes.pop_front(); }
 
 private:
-  dlink_list<const GxNode*> itsNodes;
+  mutable dlink_list<Util::Ref<GxNode> > itsNodes;
 };
 
-GxTraversal::GxTraversal(const GxNode* root) :
-  itsImpl(new Impl(root))
+GxTraversal::GxTraversal(Util::Ref<GxNode> root) :
+  Util::FwdIter<const Util::Ref<GxNode> >(shared_ptr<Impl>(new Impl(root)))
 {
 DOTRACE("GxTraversal::GxTraversal");
-}
-
-GxTraversal::~GxTraversal()
-{
-DOTRACE("GxTraversal::~GxTraversal");
-  delete itsImpl;
-}
-
-void GxTraversal::addNode(const GxNode* node) {
-DOTRACE("GxTraversal::addNode");
-  itsImpl->addNode(node);
-}
-
-bool GxTraversal::hasMore() const {
-DOTRACE("GxTraversal::hasMore");
-  return itsImpl->hasMore();
-}
-
-const GxNode* GxTraversal::current() const {
-DOTRACE("GxTraversal::current");
-  return itsImpl->current();
-}
-
-void GxTraversal::advance() {
-DOTRACE("GxTraversal::advance");
-  itsImpl->advance();
 }
 
 static const char vcid_gxtraversal_cc[] = "$Header$";
