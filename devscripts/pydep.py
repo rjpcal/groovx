@@ -8,6 +8,13 @@
 
 import cppdeps, os, sys
 
-b = cppdeps.DepBuilder(os.path.normpath(sys.argv[1]))
-b.buildDepTree()
-b.printMakeDeps(sys.stdout)
+import profile
+
+def go(n):
+    for i in range(n):
+        b = cppdeps.DepBuilder(os.path.normpath(sys.argv[1]))
+        b.buildDepTree()
+        b.printMakeDeps(sys.stdout)
+
+#profile.run("go(10)")
+go(1)
