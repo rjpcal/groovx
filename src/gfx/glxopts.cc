@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Aug  4 16:29:23 2002
-// written: Mon Sep 16 11:49:22 2002
+// written: Wed Nov 20 19:46:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,9 @@
 #ifndef GLXOPTS_CC_DEFINED
 #define GLXOPTS_CC_DEFINED
 
-#include "togl/glxopts.h"
+#include "glxopts.h"
 
-#include "togl/glxattribs.h"
+#include "gfx/glxattribs.h"
 
 #include "util/pointers.h"
 

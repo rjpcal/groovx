@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:07 2002
-// written: Thu Nov 14 17:24:45 2002
+// written: Wed Nov 20 19:46:44 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,12 +13,11 @@
 #ifndef GLXWRAPPER_CC_DEFINED
 #define GLXWRAPPER_CC_DEFINED
 
-#include "togl/glxwrapper.h"
+#include "glxwrapper.h"
 
 #include "gfx/glcanvas.h"
-
-#include "togl/glxattribs.h"
-#include "togl/glxopts.h"
+#include "gfx/glxattribs.h"
+#include "gfx/glxopts.h"
 
 #include "util/error.h"
 #include "util/pointers.h"

@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Nov 20 14:43:49 2002
+// written: Wed Nov 20 19:47:05 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -27,13 +27,12 @@
 #include "togl/togl.h"
 
 #include "gfx/canvas.h"
+#include "gfx/glxopts.h"
+#include "gfx/glxwrapper.h"
 
 #include "gx/rgbacolor.h"
 
 #include "tcl/tclsafeinterp.h"
-
-#include "togl/glxopts.h"
-#include "togl/glxwrapper.h"
 
 #include "util/error.h"
 #include "util/pointers.h"

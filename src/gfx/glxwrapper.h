@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:03 2002
-// written: Tue Nov 12 16:08:39 2002
+// written: Wed Nov 20 19:46:54 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef GLXWRAPPER_H_DEFINED
 #define GLXWRAPPER_H_DEFINED
 
-#include "togl/glxopts.h"
+#include "gfx/glxopts.h"
 
 #include "util/ref.h"
 
