@@ -2,7 +2,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Sat Mar 13 15:00:51 1999
+// written: Sat Mar 13 15:02:47 1999
 //
 // The Face class is a derived class of Scaleable (itself derived from
 // GrObj). As such, Face*'s may be stored and manipulated in ObjList's
@@ -19,6 +19,10 @@
 #ifndef GROBJ_H_INCLUDED
 #include "grobj.h"
 #endif
+
+///////////////////////////////////////////////////////////////////////
+// Face class declaration
+///////////////////////////////////////////////////////////////////////
 
 class Face : public GrObj {
 public:
