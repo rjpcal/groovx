@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 21 15:22:25 2002
-// written: Thu Nov 21 15:27:02 2002
+// written: Thu Nov 21 15:29:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "util/error.h"
 
+#include <cmath>
 #include <GL/gl.h>
 #include <GL/glu.h>
 
