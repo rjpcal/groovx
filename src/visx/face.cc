@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Fri Jan 18 16:07:02 2002
+// written: Sat Feb  9 12:16:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,6 +42,11 @@ namespace
 
   const double theirNose_x = 0.0;
   const double theirMouth_x[2] = {-0.2, 0.2};
+
+  const int OUTLINE_PART_MASK   = 1 << 0;
+  const int EYES_PART_MASK      = 1 << 1;
+  const int NOSE_PART_MASK      = 1 << 2;
+  const int MOUTH_PART_MASK     = 1 << 3;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -62,7 +67,8 @@ const FieldMap& Face::classFields()
     Field("eyeHeight", &Face::itsEyeHeight, 0.6, -1.2, 1.2, 0.01),
     Field("eyeDistance", &Face::itsEyeDistance, 0.4, 0.0, 1.8, 0.01),
     Field("noseLength", &Face::itsNoseLength, 0.4, -0.0, 3.0, 0.01),
-    Field("mouthHeight", &Face::itsMouthHeight, 0.8, -1.2, 1.2, 0.01)
+    Field("mouthHeight", &Face::itsMouthHeight, 0.8, -1.2, 1.2, 0.01),
+    Field("partsMask", &Face::itsPartsMask, 0, 0, 15, 1, Field::TRANSIENT)
   };
 
   static FieldMap FACE_FIELDS(FIELD_ARRAY, &GrObj::classFields());
@@ -81,7 +87,8 @@ Face::Face(double eh, double es, double nl, double mh, int categ) :
   itsEyeHeight(eh),
   itsEyeDistance(es),
   itsNoseLength(nl),
-  itsMouthHeight(mh)
+  itsMouthHeight(mh),
+  itsPartsMask(0)
 {
 DOTRACE("Face::Face");
 
@@ -143,19 +150,22 @@ DOTRACE("Face::grRender");
   // Draw face outline.
   //
 
-  // These parameters control the generation of the Bezier curve for
-  // the face outline.
-  static const int num_subdivisions = 30;
-  static const int nctrlsets = 2;
-  const double* const ctrlpnts = getCtrlPnts();
-
-  for (int i = 0; i < nctrlsets; ++i)
+  if ( !(itsPartsMask & OUTLINE_PART_MASK) )
     {
-      canvas.drawBezier4(Gfx::Vec3<double>(ctrlpnts+i*12+0),
-                         Gfx::Vec3<double>(ctrlpnts+i*12+3),
-                         Gfx::Vec3<double>(ctrlpnts+i*12+6),
-                         Gfx::Vec3<double>(ctrlpnts+i*12+9),
-                         num_subdivisions);
+      // These parameters control the generation of the Bezier curve for
+      // the face outline.
+      const int num_subdivisions = 30;
+      const int nctrlsets = 2;
+      const double* const ctrlpnts = getCtrlPnts();
+
+      for (int i = 0; i < nctrlsets; ++i)
+        {
+          canvas.drawBezier4(Gfx::Vec3<double>(ctrlpnts+i*12+0),
+                             Gfx::Vec3<double>(ctrlpnts+i*12+3),
+                             Gfx::Vec3<double>(ctrlpnts+i*12+6),
+                             Gfx::Vec3<double>(ctrlpnts+i*12+9),
+                             num_subdivisions);
+        }
     }
 
   {
@@ -178,7 +188,7 @@ DOTRACE("Face::grRender");
                                           1.0);
 
     // The absolute scale of the pupil.
-    static const Gfx::Vec3<double> pupil_scale_abs(0.07, 0.07, 1.0);
+    const Gfx::Vec3<double> pupil_scale_abs(0.07, 0.07, 1.0);
 
     // The scale of the pupil relative to the eyeball scale. These
     // values are computed since it is more efficient in the drawing
@@ -193,23 +203,28 @@ DOTRACE("Face::grRender");
     const double eye_x = Util::abs(itsEyeDistance)/2.0;
 
     // Parameters for the circles for the eyeballs and the pupils.
-    static const int num_slices = 20;
-    static const int num_loops = 1;
-    static const double outer_radius = 0.5;
+    const int num_slices = 20;
+    const int num_loops = 1;
+    const double outer_radius = 0.5;
 
     // Draw eyes.
-    for (int eye_pos = -1; eye_pos < 2; eye_pos += 2)
+    if ( !(itsPartsMask & EYES_PART_MASK) )
       {
-        Gfx::Canvas::MatrixSaver eyesaver(canvas);
+        for (int eye_pos = -1; eye_pos < 2; eye_pos += 2)
+          {
+            Gfx::Canvas::MatrixSaver eyesaver(canvas);
 
-        canvas.translate(Gfx::Vec3<double>(eye_pos * eye_x, itsEyeHeight, 0.0));
-        canvas.scale(eyeball_scale);
+            canvas.translate(Gfx::Vec3<double>(eye_pos * eye_x,
+                                               itsEyeHeight,
+                                               0.0));
+            canvas.scale(eyeball_scale);
 
-        canvas.drawCircle(0.0, outer_radius, false, num_slices, num_loops);
+            canvas.drawCircle(0.0, outer_radius, false, num_slices, num_loops);
 
-        canvas.scale(pupil_scale);
+            canvas.scale(pupil_scale);
 
-        canvas.drawCircle(0.0, outer_radius, false, num_slices, num_loops);
+            canvas.drawCircle(0.0, outer_radius, false, num_slices, num_loops);
+          }
       }
 
     //
@@ -227,10 +242,17 @@ DOTRACE("Face::grRender");
     {
       Gfx::Canvas::LinesBlock block(canvas);
 
-      canvas.vertex2(Gfx::Vec2<double>(theirMouth_x[0], itsMouthHeight));
-      canvas.vertex2(Gfx::Vec2<double>(theirMouth_x[1], itsMouthHeight));
-      canvas.vertex2(nose_bottom);
-      canvas.vertex2(nose_top);
+      if ( !(itsPartsMask & MOUTH_PART_MASK) )
+        {
+          canvas.vertex2(Gfx::Vec2<double>(theirMouth_x[0], itsMouthHeight));
+          canvas.vertex2(Gfx::Vec2<double>(theirMouth_x[1], itsMouthHeight));
+        }
+
+      if ( !(itsPartsMask & NOSE_PART_MASK) )
+        {
+          canvas.vertex2(nose_bottom);
+          canvas.vertex2(nose_top);
+        }
     }
   }
 }

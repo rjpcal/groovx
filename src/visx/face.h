@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Fri Jan 18 16:06:53 2002
+// written: Sat Feb  9 12:03:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -100,6 +100,9 @@ private:
 
   /// The (negative) height of the mouth below the vertical midline of the face.
   double itsMouthHeight;
+
+  /// Each bit can cause one of the face parts to be hidden when it is drawn.
+  int itsPartsMask;
 
   Face(const Face&);
   Face& operator=(const Face&);
