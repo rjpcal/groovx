@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul  3 15:03:23 2002
-// written: Wed Jul  3 16:49:27 2002
+// written: Fri Jul  5 13:47:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,6 +80,19 @@ public:
     xx0 = x0; xx1 = x1;
     yy0 = y0; yy1 = y1;
     zz0 = z0; zz1 = z1;
+  }
+
+  /// Like setXXYYZZ(), except figure out the right min/max ordering.
+  void setAnyXXYYZZ(V x0, V x1, V y0, V y1, V z0, V z1)
+  {
+    xx0 = Util::min(x0, x1); xx1 = Util::max(x0, x1);
+    yy0 = Util::min(y0, y1); yy1 = Util::max(y0, y1);
+    zz0 = Util::min(z0, z1); zz1 = Util::max(z0, z1);
+  }
+
+  void setCorners(const Gfx::Vec3<double>& p1, const Gfx::Vec3<double>& p2)
+  {
+    setAnyXXYYZZ(p1.x(), p2.x(), p1.y(), p2.y(), p1.z(), p2.z());
   }
 
   bool isVoid() const { return (xx0>=xx1) && (yy0>=yy1) && (zz0>=zz1); }
