@@ -63,6 +63,13 @@
    build and install. A short test suite (takes ~10 seconds on a 1GHz
    Pentium III Linux machine) is run at the end of every "make" invocation.
 
+   Depending on the architecture, either the debug or production version
+   will be the default version that is built with "make". To override the
+   default, type either "make MODE=prod" for the production version, or
+   "make MODE=debug" for the debug version. The two versions build separate
+   object files and shared libraries, so it is possible for builds of both
+   types to peacefully coexist.
+
    On Linux, you need to make sure that your LD_LIBRARY_PATH environment
    variable includes the paths to wherever you have installed the libraries
    associated with this package.
