@@ -54,7 +54,7 @@ namespace Util
       context. Initial value is 0. The most sensible use case involves
       setting this value just once, at or near the beginning of
       program execution. */
-  unsigned long globalRandSeed;
+  extern unsigned long globalRandSeed;
 }
 
 /// Uniform random distribution
