@@ -64,6 +64,7 @@ DBG_REGISTER
 
 using geom::vec2i;
 using geom::vec2d;
+using geom::vec3i;
 using geom::vec3d;
 
 using rutz::shared_ptr;
@@ -168,6 +169,66 @@ DOTRACE("GLCanvas::worldFromScreen2");
 
   if (status == GL_FALSE)
     throw rutz::error("GLCanvas::worldFromScreen2(): gluUnProject error",
+                      SRC_POS);
+
+  return world_pos;
+}
+
+vec3i GLCanvas::screenFromWorld3(const vec3d& world_pos) const
+{
+DOTRACE("GLCanvas::screenFromWorld3");
+
+  GLdouble current_mv_matrix[16];
+  GLdouble current_proj_matrix[16];
+  GLint current_viewport[4];
+
+  glGetDoublev(GL_MODELVIEW_MATRIX, current_mv_matrix);
+  glGetDoublev(GL_PROJECTION_MATRIX, current_proj_matrix);
+  glGetIntegerv(GL_VIEWPORT, current_viewport);
+
+  double screen_x, screen_y, screen_z;
+
+  GLint status =
+    gluProject(world_pos.x(), world_pos.y(), world_pos.z(),
+               current_mv_matrix, current_proj_matrix, current_viewport,
+               &screen_x, &screen_y, &screen_z);
+
+  dbg_eval_nl(3, status);
+
+  if (status == GL_FALSE)
+    throw rutz::error("GLCanvas::screenFromWorld3(): gluProject error",
+                      SRC_POS);
+
+  return vec3i(int(screen_x), int(screen_y), int(screen_z));
+}
+
+vec3d GLCanvas::worldFromScreen3(const vec3i& screen_pos) const
+{
+DOTRACE("GLCanvas::worldFromScreen3");
+
+  dbg_eval(3, screen_pos.x());
+  dbg_eval(3, screen_pos.y());
+  dbg_eval_nl(3, screen_pos.z());
+
+  GLdouble current_mv_matrix[16];
+  GLdouble current_proj_matrix[16];
+  GLint current_viewport[4];
+
+  glGetDoublev(GL_MODELVIEW_MATRIX, current_mv_matrix);
+  glGetDoublev(GL_PROJECTION_MATRIX, current_proj_matrix);
+  glGetIntegerv(GL_VIEWPORT, current_viewport);
+
+  vec3d world_pos;
+
+  GLint status =
+    gluUnProject(screen_pos.x(), screen_pos.y(), 0,
+                 current_mv_matrix, current_proj_matrix, current_viewport,
+                 &world_pos.x(), &world_pos.y(), &world_pos.z());
+
+  dbg_eval_nl(3, status);
+
+  if (status == GL_FALSE)
+    throw rutz::error("GLCanvas::worldFromScreen3(): gluUnProject error",
                       SRC_POS);
 
   return world_pos;

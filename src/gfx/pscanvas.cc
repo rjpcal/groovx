@@ -679,6 +679,26 @@ DOTRACE("Gfx::PSCanvas::worldFromScreen2");
   return vec2d();
 }
 
+vec3i Gfx::PSCanvas::screenFromWorld3(
+  const vec3d& /*world_pos*/
+  ) const
+{
+DOTRACE("Gfx::PSCanvas::screenFromWorld3");
+// FIXME
+  rep->raiseError("not implemented", SRC_POS);
+  return vec3i();
+}
+
+vec3d Gfx::PSCanvas::worldFromScreen3(
+  const vec3i& /*screen_pos*/
+  ) const
+{
+DOTRACE("Gfx::PSCanvas::worldFromScreen3");
+// FIXME
+  rep->raiseError("not implemented", SRC_POS);
+  return vec3d();
+}
+
 
 geom::rect<int> Gfx::PSCanvas::getScreenViewport() const
 {
