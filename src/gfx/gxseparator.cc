@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Thu May 10 12:04:44 2001
+// written: Fri May 11 20:52:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ class GxSeparator::Impl {
   Impl& operator=(const Impl&);
 
 public:
-  Impl(GxSeparator* owner) : itsOwner(owner) {}
+  Impl(GxSeparator* owner) : itsOwner(owner), itsChildren() {}
   ~Impl() {}
 
   bool contains(GxNode* other) const
@@ -95,7 +95,7 @@ DOTRACE("GxSeparator::writeTo");
 											  itsImpl->itsChildren.end());
 }
 
-GxSeparator::ChildId GxSeparator::addChild(int ioUid) {
+GxSeparator::ChildId GxSeparator::addChild(IO::UID ioUid) {
 DOTRACE("GxSeparator::addChild");
 
   IdItem<GxNode> item(ioUid);
@@ -106,15 +106,12 @@ DOTRACE("GxSeparator::addChild");
   return (itsImpl->itsChildren.size() - 1);
 }
 
-void GxSeparator::insertChild(int ioUid, ChildId at_index) {
+void GxSeparator::insertChild(IO::UID ioUid, ChildId at_index) {
 DOTRACE("GxSeparator::insertChild");
 
   IdItem<GxNode> item(ioUid);
 
   itsImpl->ensureNoCycle(item.get());
-
-  if (at_index < 0)
-	 at_index = 0;
 
   if (at_index > itsImpl->itsChildren.size())
 	 at_index = itsImpl->itsChildren.size();
@@ -125,11 +122,11 @@ DOTRACE("GxSeparator::insertChild");
 
 void GxSeparator::removeChildId(ChildId index) {
 DOTRACE("GxSeparator::removeChildId");
-  if (index >= 0 && index < itsImpl->itsChildren.size())
+  if (index < itsImpl->itsChildren.size())
 	 itsImpl->itsChildren.erase(itsImpl->itsChildren.begin()+index);
 }
 
-void GxSeparator::removeChildUid(int io_uid) {
+void GxSeparator::removeChildUid(IO::UID io_uid) {
 DOTRACE("GxSeparator::removeChildUid");
   for(Impl::VecType::iterator
 		  itr = itsImpl->itsChildren.begin(),
@@ -152,7 +149,7 @@ DOTRACE("GxSeparator::numChildren");
 
 IdItem<GxNode> GxSeparator::getChild(ChildId index) const {
 DOTRACE("GxSeparator::getChild");
-  if (index < 0 || index >= itsImpl->itsChildren.size())
+  if (index >= itsImpl->itsChildren.size())
 	 {
 		ErrorWithMsg err("GxSeparator has no child with index '");
 		err.appendNumber(index);

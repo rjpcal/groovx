@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:20:15 2000
-// written: Thu May 10 12:04:38 2001
+// written: Fri May 11 20:51:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,10 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GXNODE_H_DEFINED)
 #include "gx/gxnode.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IODECLS_H_DEFINED)
+#include "io/iodecls.h"
 #endif
 
 template <class T> class IdItem;
@@ -43,12 +47,12 @@ public:
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
-  typedef int ChildId;
+  typedef unsigned int ChildId;
 
-  ChildId addChild(int ioUid);
-  void insertChild(int ioUid, ChildId at_index);
+  ChildId addChild(IO::UID ioUid);
+  void insertChild(IO::UID ioUid, ChildId at_index);
   void removeChildId(ChildId index);
-  void removeChildUid(int ioUid);
+  void removeChildUid(IO::UID ioUid);
 
   int numChildren() const;
   IdItem<GxNode> getChild(ChildId index) const;
