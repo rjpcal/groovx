@@ -45,6 +45,9 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
+using Util::Ref;
+using Util::SoftRef;
+
 ///////////////////////////////////////////////////////////////////////
 //
 // LegacyReader::Impl definition

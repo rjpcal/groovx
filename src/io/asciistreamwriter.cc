@@ -48,6 +48,9 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
+using Util::Ref;
+using Util::SoftRef;
+
 #if defined(SHORTEN_SYMBOL_NAMES)
 #define AsciiStreamWriter ASW
 #endif

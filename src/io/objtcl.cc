@@ -47,6 +47,9 @@
 
 #include "util/trace.h"
 
+using Util::Ref;
+using Util::SoftRef;
+
 namespace
 {
   const int ALL = -1; // indicates to read all objects until eof
