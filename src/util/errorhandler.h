@@ -3,7 +3,7 @@
 // errorhandler.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu May 11 10:15:41 2000
-// written: Thu May 11 10:17:06 2000
+// written: Thu May 11 10:30:10 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,7 @@ class Util::ErrorHandler {
 public:
   virtual ~ErrorHandler();
 
+  virtual void handleUnknownError() = 0;
   virtual void handleError(Error& err) = 0;
   virtual void handleErrorWithMsg(ErrorWithMsg& err) = 0;
 };
