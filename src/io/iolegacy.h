@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 26 18:47:31 2000
-// written: Thu May 17 15:31:27 2001
+// written: Thu May 17 15:47:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,6 +58,9 @@ public:
   virtual bool readBool(const fixed_string& name);
   virtual double readDouble(const fixed_string& name);
   virtual void readValueObj(const fixed_string& name, Value& value);
+
+  virtual IdItem<IO::IoObject> readObject(const fixed_string& name);
+  virtual MaybeIdItem<IO::IoObject> readMaybeObject(const fixed_string& name);
 
   virtual void readOwnedObject(const fixed_string& name, IO::IoObject* obj);
   virtual void readBaseClass(const fixed_string& baseClassName, IO::IoObject* basePart);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Thu May 17 15:41:10 2001
+// written: Thu May 17 15:48:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -236,6 +236,16 @@ DOTRACE("IO::LegacyReader::readValueObj");
   DebugEvalNL(name);
   value.scanFrom(itsImpl->itsInStream);
   itsImpl->throwIfError(name);
+}
+
+IdItem<IO::IoObject> IO::LegacyReader::readObject(const fixed_string& name)
+{
+  return IdItem<IO::IoObject>(readObjectImpl(name));
+}
+
+MaybeIdItem<IO::IoObject> IO::LegacyReader::readMaybeObject(const fixed_string& name)
+{
+  return MaybeIdItem<IO::IoObject>(readObjectImpl(name));
 }
 
 IO::IoObject* IO::LegacyReader::readObjectImpl(const fixed_string& name) {
