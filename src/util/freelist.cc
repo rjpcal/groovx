@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jul 20 08:00:31 2001
-// written: Fri Jul 20 08:01:17 2001
+// written: Fri Jul 20 08:07:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-void* allocate(size_t bytes, size_t size_check)
+void* FreeListBase::allocate(size_t bytes, size_t size_check)
 {
   Assert(bytes == size_check);
   if (itsNodeList == 0)
@@ -28,7 +28,7 @@ void* allocate(size_t bytes, size_t size_check)
   return (void*) node;
 }
 
-void deallocate(void* space)
+void FreeListBase::deallocate(void* space)
 {
   ((Node*)space)->next = itsNodeList;
   itsNodeList = (Node*)space;
