@@ -3,7 +3,7 @@
 // lists.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Mar 18 11:22:40 2000
-// written: Wed May 17 13:50:57 2000
+// written: Wed May 31 14:24:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,9 +11,21 @@
 #ifndef LISTS_H_DEFINED
 #define LISTS_H_DEFINED
 
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * A singly-linked list.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
 template <class T>
 class slink_list {
 public:
+
+  //
+  // Typedefs
+  //
   typedef T value_type;
 
   typedef unsigned int size_type;
@@ -22,6 +34,13 @@ public:
   typedef T& reference;
   typedef const T* const_pointer;
   typedef const T& const_reference;
+
+  class iterator;
+  class const_iterator;
+
+  //
+  // Nested types: node and iterators
+  //
 
   struct node {
 	 node(const T& v, node* n) : val(v), next(n) {}
@@ -93,17 +112,28 @@ public:
 	 bool operator!=(const const_iterator& other) { return nn != other.nn; }
   };
 
+  //
+  // Member functions
+  //
+
   slink_list() : head(0) {}
 
   slink_list(const slink_list& other) :
-	 head(new node(other.head->val, 0))
+	 head(0)
 	 {
-		node* other_next_node = other.head->next;
-		node* this_node = head;
-		while (other_next_node != 0)
+		if ( !other.empty() )
 		  {
-			 this_node->next = new node(other_next_node->val, 0);
-			 other_next_node = other_next_node->next;
+			 head = new node(other.head->val, 0);
+
+			 node* other_next_node = other.head->next;
+			 node* tail = head;
+			 while (other_next_node != 0)
+				{
+				  tail->next = new node(other_next_node->val, 0);
+
+				  other_next_node = other_next_node->next;
+				  tail = tail->next;
+				}
 		  }
 	 }
 
@@ -127,6 +157,15 @@ public:
 		node* new_head = head->next;
 		delete head;
 		head = new_head;
+	 }
+
+  void insert_after(iterator pos, const T& val)
+	 {
+		node* before = pos.nn;
+		node* after = before->next;
+
+		node* current = new node(val, after);
+		before->next = current;
 	 }
 
   reference front() { return head->val; }
