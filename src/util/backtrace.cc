@@ -54,7 +54,7 @@ DBG_REGISTER
 
 struct Util::BackTrace::Impl
 {
-  static_stack<Util::Prof*, 256> vec;
+  static_stack<rutz::prof*, 256> vec;
 };
 
 Util::BackTrace::BackTrace() throw() :
@@ -95,7 +95,7 @@ Util::BackTrace& Util::BackTrace::current() throw()
   return *ptr;
 }
 
-bool Util::BackTrace::push(Util::Prof* p) throw()
+bool Util::BackTrace::push(rutz::prof* p) throw()
 {
   return rep->vec.push(p);
 }
@@ -110,12 +110,12 @@ unsigned int Util::BackTrace::size() const throw()
   return rep->vec.size();
 }
 
-Util::Prof* Util::BackTrace::top() const throw()
+rutz::prof* Util::BackTrace::top() const throw()
 {
   return rep->vec.top();
 }
 
-Util::Prof* Util::BackTrace::at(unsigned int i) const throw()
+rutz::prof* Util::BackTrace::at(unsigned int i) const throw()
 {
   return rep->vec.at(i);
 }
@@ -131,7 +131,8 @@ void Util::BackTrace::print() const throw()
 
   for (; i < end; ++i, --ri)
     {
-      fprintf(stderr, "\t[%d] %s\n", int(i), rep->vec.at(ri)->name());
+      fprintf(stderr, "\t[%d] %s\n", int(i),
+              rep->vec.at(ri)->context_name());
     }
 }
 
@@ -148,7 +149,8 @@ void Util::BackTrace::print(STD_IO::ostream& os) const throw()
 
   for (; i < end; ++i, --ri)
     {
-      os << "\t[" << i << "] " << rep->vec.at(ri)->name() << '\n';
+      os << "\t[" << i << "] "
+         << rep->vec.at(ri)->context_name() << '\n';
     }
 
   os << std::flush;
@@ -170,9 +172,9 @@ fstring Util::BackTrace::format() const
       snprintf(&line[0], LINELEN, "[%*d] %-35s (%s:%d)\n",
                width,
                rep->vec.size() - i,
-               rep->vec[i-1]->name(),
-               rep->vec[i-1]->srcFileName(),
-               rep->vec[i-1]->srcLineNo());
+               rep->vec[i-1]->context_name(),
+               rep->vec[i-1]->src_file_name(),
+               rep->vec[i-1]->src_line_no());
 
       result.append(&line[0]);
     }

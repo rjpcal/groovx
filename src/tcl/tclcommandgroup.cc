@@ -97,7 +97,7 @@ public:
   const fstring initialCmdName;
   List cmdList;
   const fstring profName;
-  Util::Prof prof;
+  rutz::prof prof;
 
   fstring usageWarning(const fstring& argv0) const;
 
@@ -150,8 +150,8 @@ DOTRACE("Tcl::CommandGroup::usageWarning");
     warning.append("resolves to ", initialCmdName, ", ");
 
   warning.append("defined at ",
-                 prof.srcFileName(), ":",
-                 prof.srcLineNo(), ")");
+                 prof.src_file_name(), ":",
+                 prof.src_line_no(), ")");
 
   return warning;
 }
@@ -346,8 +346,8 @@ DOTRACE("Tcl::CommandGroup::usage");
     }
 
   result.append("\t(defined at ",
-                rep->prof.srcFileName(), ":",
-                rep->prof.srcLineNo(), ")");
+                rep->prof.src_file_name(), ":",
+                rep->prof.src_line_no(), ")");
 
   return result;
 }
@@ -356,10 +356,10 @@ int Tcl::CommandGroup::rawInvoke(int s_objc, Tcl_Obj *const objv[]) throw()
 {
 DOTRACE("Tcl::CommandGroup::rawInvoke");
 
-  // This is to use the separate Util::Prof object that each
+  // This is to use the separate rutz::prof object that each
   // CommandGroup has. This way we can trace the timing of individual
   // Tcl commands.
-  Util::Trace tracer(rep->prof, DYNAMIC_TRACE_EXPR);
+  rutz::trace tracer(rep->prof, DYNAMIC_TRACE_EXPR);
 
   // Should always be at least one since there is always the
   // command-name itself as the first argument.

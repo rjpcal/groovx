@@ -48,7 +48,7 @@ namespace
   fstring profSummary()
   {
     std::ostringstream oss;
-    Util::Prof::printAllProfData(oss);
+    rutz::prof::print_all_prof_data(oss);
     return fstring(oss.str().c_str());
   }
 
@@ -79,10 +79,10 @@ int Gtrace_Init(Tcl_Interp* interp)
 DOTRACE("Gtrace_Init");
 
   PKG_CREATE(interp, "Gtrace", "$Revision$");
-  pkg->def("::gtrace", "on_off", &Util::Trace::setGlobalTrace, SRC_POS);
-  pkg->def("::gtrace", "", &Util::Trace::getGlobalTrace, SRC_POS);
-  pkg->def("maxDepth", "level", &Util::Trace::setMaxLevel, SRC_POS);
-  pkg->def("maxDepth", "", &Util::Trace::getMaxLevel, SRC_POS);
+  pkg->def("::gtrace", "on_off", &rutz::trace::set_global_trace, SRC_POS);
+  pkg->def("::gtrace", "", &rutz::trace::get_global_trace, SRC_POS);
+  pkg->def("maxDepth", "level", &rutz::trace::set_max_level, SRC_POS);
+  pkg->def("maxDepth", "", &rutz::trace::get_max_level, SRC_POS);
   pkg->def("::dbglevelg", "global_level", &Debug::setGlobalLevel, SRC_POS);
   pkg->def("::dbglevel", "key level", &setOneLevel, SRC_POS);
   pkg->def("::dbglevelc", "filename level", &setOneLevelc, SRC_POS);
@@ -98,7 +98,7 @@ DOTRACE("Prof_Init");
 
   PKG_CREATE(interp, "Prof", "$Revision$");
   pkg->def("summary", "", &profSummary, SRC_POS);
-  pkg->def("reset", "", &Util::Prof::resetAllProfData, SRC_POS);
+  pkg->def("reset", "", &rutz::prof::reset_all_prof_data, SRC_POS);
 
   PKG_RETURN;
 }

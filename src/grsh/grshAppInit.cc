@@ -257,7 +257,7 @@ DOTRACE("main");
             }
           else if (strcmp(argv[i], "-gtrace") == 0)
             {
-              Util::Trace::setGlobalTrace(true);
+              rutz::trace::set_global_trace(true);
             }
           else if (strcmp(argv[i], "-showinit") == 0)
             {

@@ -43,7 +43,11 @@ class fstring;
 namespace Util
 {
   class BackTrace;
-  class Prof;
+}
+
+namespace rutz
+{
+  class prof;
 }
 
 /// Represents an instantaneous state of the call stack.
@@ -66,7 +70,7 @@ public:
   static BackTrace& current() throw();
 
   /// Push a new element onto the call stack. Returns true if successful.
-  bool push(Util::Prof* p) throw();
+  bool push(rutz::prof* p) throw();
 
   /// Pop the most recent element off of the call stack.
   void pop() throw();
@@ -75,13 +79,13 @@ public:
   unsigned int size() const throw();
 
   /// Get the top stack frame, or null if the backtrace is empty.
-  Util::Prof* top() const throw();
+  rutz::prof* top() const throw();
 
   /// Will return a null pointer if i is out of range.
-  Util::Prof* at(unsigned int i) const throw();
+  rutz::prof* at(unsigned int i) const throw();
 
   /// Shorthand for at(i).
-  Util::Prof* operator[](unsigned int i) const throw() { return at(i); }
+  rutz::prof* operator[](unsigned int i) const throw() { return at(i); }
 
   /// Print the call stack on stderr.
   void print() const throw();
