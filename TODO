@@ -7,9 +7,13 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
-* (25-Oct-2004) fix testing with seed 1259994090
+* (25-Oct-2004) Need to only export certain commands with pkg->inherit()
+  As it is now we end up with strange results like
+  [GxScaler::is [new Face]] == 1
 
-  seed 1384024797
+  Need to prohibit 'is' from being inherited, e.g.
+
+* (25-Oct-2004) fix testing with seed 1384024797
 
 * (20-Oct-2004) make media/imgfile not depend on Nub::log
 
@@ -40,13 +44,26 @@
    need a world/screen mapping in order to determine their bbox; in
    particular it makes a pain for GxScaler.
 
+   GxScaler should be doing its hard work in draw() and
+   getBoundingCube(), where we already have a canvas/bbox available;
+   instead, it's currently doing hard work in setWidth() and
+   scaledWidth().
+
+   We have a weird situation where a GxShapeKit can't say how
+   wide/tall it is without knowing on which canvas it will be drawn.
+
+   The underlying problem is having to call getBoundingBox() outside
+   the context of a draw operation.
+
    Better name for "world" coordinates would be "model" coordinates.
    Better name for "screen" coordinates would be "device" coordinates.
 
-   [x] used in GxScaler::setWidth (passed to getBoundingBox())
-   [x] used in GxScaler::setHeight (passed to getBoundingBox())
-   [x] used in GxScaler::scaledWidth (passed to getBoundingBox())
-   [x] used in GxScaler::scaledHeight (passed to getBoundingBox())
+   --> used in toglettcl.cc::currentCanvas (used as Tcl command)
+   --> used in toglettcl.cc::clearOnExit (used for setVisibility(false))
+   --> used in GxScaler::setWidth (passed to getBoundingBox())
+   --> used in GxScaler::setHeight (passed to getBoundingBox())
+   --> used in GxScaler::scaledWidth (passed to getBoundingBox())
+   --> used in GxScaler::scaledHeight (passed to getBoundingBox())
 
 ** ObjFactory::theOne()
 

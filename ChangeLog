@@ -4650,3 +4650,9 @@
    [x] used in gltcl.cc::pixelCheckSum (passed to grabPixels())
    [x] used in TlistUtils::createPreview (passed to doCreatePreview())
        called from pkg->def (tlisttcl.cc)
+
+* (25-Oct-2004, done 26-Oct-2004) fix problem with rasterPos()
+  This required a lengthy series of changes to make things more
+  robust... ultimately we need to watch out for rounding problems and
+  floating-point inaccuracies when converting between screen and world
+  coordinates.
