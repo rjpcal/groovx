@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:38:07 2002
-// written: Tue Sep 17 23:09:25 2002
+// written: Tue Sep 17 23:19:30 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,6 +45,12 @@ GlxWrapper::GlxWrapper(Display* dpy, GlxOpts& opts, GlxWrapper* share) :
   itsCanvas()
 {
 DOTRACE("GlxWrapper::GlxWrapper");
+
+  int dummy;
+  if (!glXQueryExtension(dpy, &dummy, &dummy))
+    {
+      throw Util::Error("Togl: X server has no OpenGL GLX extension");
+    }
 
   shared_ptr<GlxAttribs> attribs = opts.buildAttribList();
 
