@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Sep  7 15:07:16 2001
-// written: Thu Sep 12 14:26:23 2002
+// written: Fri Sep 13 11:57:23 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -405,7 +405,7 @@ namespace Util
     typedef typename Traits::Arg5_t   Arg5_t;
     typedef typename Traits::Arg6_t   Arg6_t;
     typedef typename Traits::Arg7_t   Arg7_t;
-    typedef typename Traits::Arg8_t   Arg8_t;;
+    typedef typename Traits::Arg8_t   Arg8_t;
 
     //
     // All versions of operator() are provided, but only the one that
@@ -515,7 +515,7 @@ namespace Util
     typedef typename Traits::Arg5_t   Arg5_t;
     typedef typename Traits::Arg6_t   Arg6_t;
     typedef typename Traits::Arg7_t   Arg7_t;
-    typedef typename Traits::Arg8_t   Arg8_t;;
+    typedef typename Traits::Arg8_t   Arg8_t;
 
     //
     // All versions of operator() are provided, but only the one that
