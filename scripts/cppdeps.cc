@@ -48,7 +48,6 @@ using std::map;
 using std::set;
 using std::string;
 using std::cerr;
-using std::cout;
 
 /// A class for doing fast include-file dependency analysis.
 /** Several shortcuts (er, hacks...) are taken to make the parsing
@@ -70,11 +69,11 @@ class cppdeps
   include_map_t direct_includes;
 
 public:
+  cppdeps(char** argv);
+
   void inspect();
 
   string trim_dirname(const string& inp);
-
-  cppdeps(char** argv);
 
   int is_cc_filename(const char* fname);
 
@@ -90,6 +89,58 @@ public:
 
   void batch_build();
 };
+
+namespace
+{
+  // helper functions
+
+  bool is_directory(const char* fname)
+  {
+    struct stat statbuf;
+    errno = 0;
+    if (stat(fname, &statbuf) != 0)
+      {
+	cerr << strerror(errno) << "\n";
+	cerr << "stat failed " << fname << "\n";
+	exit(1);
+      }
+
+    return S_ISDIR(statbuf.st_mode);
+  }
+
+  bool ignore_directory(const char* dirname)
+  {
+    return (dirname[0] == '.' ||
+	    strcmp(dirname, "RCS") == 0 ||
+	    strcmp(dirname, "CVS") == 0);
+  }
+}
+
+cppdeps::cppdeps(char** argv)
+{
+  sys_ipath.push_back("/usr/include");
+  sys_ipath.push_back("/usr/include/linux");
+  sys_ipath.push_back("/usr/local/matlab/extern/include");
+
+  while (*argv != 0)
+    {
+      if (strcmp(*argv, "--include") == 0)
+	{
+	  user_ipath.push_back(*++argv);
+	}
+      else if (strcmp(*argv, "--src") == 0)
+	{
+	  string dir = trim_dirname(*++argv);
+	  srcdir = dir;
+	  user_ipath.push_back(dir);
+	}
+      else if (strcmp(*argv, "--objdir") == 0)
+	{
+	  objdir = trim_dirname(*++argv);
+	}
+      ++argv;
+    }
+}
 
 void cppdeps::inspect()
 {
@@ -121,35 +172,9 @@ string cppdeps::trim_dirname(const string& inp)
   return result;
 }
 
-cppdeps::cppdeps(char** argv)
-{
-  sys_ipath.push_back("/usr/include");
-  sys_ipath.push_back("/usr/include/linux");
-  sys_ipath.push_back("/usr/local/matlab/extern/include");
-
-  while (*argv != 0)
-    {
-      if (strcmp(*argv, "--include") == 0)
-	{
-	  user_ipath.push_back(*++argv);
-	}
-      else if (strcmp(*argv, "--src") == 0)
-	{
-	  string dir = trim_dirname(*++argv);
-	  srcdir = dir;
-	  user_ipath.push_back(dir);
-	}
-      else if (strcmp(*argv, "--objdir") == 0)
-	{
-	  objdir = trim_dirname(*++argv);
-	}
-      ++argv;
-    }
-}
-
 int cppdeps::is_cc_filename(const char* fname)
 {
-  unsigned int len = strlen(fname);
+  const unsigned int len = strlen(fname);
   if (len > 3)
     {
       if (strcmp(".c", fname+len-2) == 0) return 2;
@@ -165,7 +190,7 @@ int cppdeps::is_cc_filename(const char* fname)
 void cppdeps::resolve_one(const char* include_name,
 			  int include_length,
 			  const string& filename,
-			  const string& dirname,
+			  const string& dirname_with_slash,
 			  cppdeps::include_list_t& vec)
 {
   for (unsigned int i = 0; i < user_ipath.size(); ++i)
@@ -184,7 +209,7 @@ void cppdeps::resolve_one(const char* include_name,
 
   // Try resolving the include by using the directory containing the
   // source file currently being examined.
-  string fullpath = dirname;
+  string fullpath = dirname_with_slash;
   fullpath.append(include_name, include_length);
 
   struct stat statbuf;
@@ -218,8 +243,8 @@ cppdeps::get_direct_includes(const string& filename)
       return (*itr).second;
   }
 
-  string dirname = filename.substr(0, filename.find_last_of('/'));
-  dirname += "/";
+  string dirname_with_slash = filename.substr(0, filename.find_last_of('/'));
+  dirname_with_slash += "/";
 
   include_list_t& vec = direct_includes[filename];
 
@@ -283,7 +308,8 @@ cppdeps::get_direct_includes(const string& filename)
 
       const int include_length = fptr - include_name;
 
-      resolve_one(include_name, include_length, filename, dirname, vec);
+      resolve_one(include_name, include_length, filename,
+		  dirname_with_slash, vec);
     }
 
   munmap(mem, nbytes);
@@ -347,24 +373,14 @@ void cppdeps::batch_build()
 	}
       for (dirent* e = readdir(d); e != 0; e = readdir(d))
 	{
-	  if (e->d_name[0] == '.') continue;
-	  if (strcmp(e->d_name, "RCS") == 0) continue;
-	  if (strcmp(e->d_name, "CVS") == 0) continue;
+	  if (ignore_directory(e->d_name))
+	    continue;
 
 	  string fullname = dirname;
 	  fullname += "/";
 	  fullname += e->d_name;
 
-	  struct stat statbuf;
-	  errno = 0;
-	  if (stat(fullname.c_str(), &statbuf) != 0)
-	    {
-	      cerr << strerror(errno) << "\n";
-	      cerr << "stat failed " << e->d_name << "\n";
-	      exit(1);
-	    }
-
-	  if (S_ISDIR(statbuf.st_mode))
+	  if (is_directory(fullname.c_str()))
 	    {
 	      dirs.push_back(fullname);
 	    }
