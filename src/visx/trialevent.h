@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Fri Nov 10 17:03:51 2000
+// written: Tue Nov 28 15:21:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -137,7 +137,7 @@ protected:
   virtual void invoke(GWT::Widget& widget, TrialBase& trial);
 };
 
-/// TrialEvent subclass to call TrialBase::trDrawTrial().
+/// TrialEvent subclass to call TrialBase::installSelf() and Widget::display().
 class DrawEvent : public TrialEvent {
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
@@ -165,7 +165,7 @@ protected:
   virtual void invoke(GWT::Widget& widget, TrialBase& trial);
 };
 
-/// TrialEvent subclass to call TrialBase::trUndrawTrial().
+/// TrialEvent subclass to call Widget::undraw().
 class UndrawEvent : public TrialEvent {
 protected:
   /// Construct with a requested delay of \a msec milliseconds.
