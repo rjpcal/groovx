@@ -98,6 +98,7 @@ extern "C"
   Tcl_PackageInitProc Io_Init;
   Tcl_PackageInitProc Jitter_Init;
   Tcl_PackageInitProc Kbdresponsehdlr_Init;
+  Tcl_PackageInitProc Log_Init;
   Tcl_PackageInitProc Maskhatch_Init;
   Tcl_PackageInitProc Misc_Init;
   Tcl_PackageInitProc Morphyface_Init;
@@ -183,6 +184,7 @@ PackageInfo DELAYED_PKGS[] =
     { "House",               House_Init,               "1.0" },
     { "Io",                  Io_Init,                  "1.0" },
     { "Jitter",              Jitter_Init,              "2.0" },
+    { "Log",                 Log_Init,                 "1.0" },
     { "Kbdresponsehdlr",     Kbdresponsehdlr_Init,     "3.0" },
     { "Maskhatch",           Maskhatch_Init,           "1.0" },
     { "Misc",                Misc_Init,                "1.0" },
