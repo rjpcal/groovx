@@ -3,7 +3,7 @@
 // observable.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 25 18:39:27 1999
-// written: Wed May 26 10:41:46 1999
+// written: Wed May 26 10:52:27 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ DOTRACE("Observable::detach");
   // If the key 'obs' is not present in itsObservers, then the find
   // operation returns itsObserver.end(), and subsequently erasing
   // itsObservers.end() is a harmless no-op.
-  itsImpl.itsObservers.erase(itsObservers.find(obs));
+  itsImpl.itsObservers.erase(itsImpl.itsObservers.find(obs));
 }
 
 void Observable::sendStateChangeMsg() const {
