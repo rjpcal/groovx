@@ -331,7 +331,7 @@ ALL_HEADERS := $(wildcard $(SRC)/[a-z]*/*.h  $(SRC)/[a-z]*/[a-z]*/*.h)
 DEP_FILE := $(DEP)/alldepends
 
 $(DEP_FILE): $(ALL_SOURCES) $(ALL_HEADERS)
-	time pydep.py $(SRC) > $@
+	time pydep.py $(SRC) --objdir obj/$(ARCH)/ > $@
 
 include $(DEP_FILE)
 
@@ -490,7 +490,12 @@ TAGS: $(ALL_SOURCES) $(ALL_HEADERS)
 	$(ETAGS) -fTAGS $(ALL_SOURCES) $(ALL_HEADERS)
 
 tardist: clean
+	touch diststamp
 	cd ..; tar cvfz grsh.tar.gz grsh \
 		--exclude *.o --exclude *.do \
 		--exclude *.a --exclude *.sl \
 		--exclude *,v --exclude *~ --exclude a.out
+	rm diststamp
+
+distpatch: clean
+	cd ..; tar cvfz patch.tar.gz `find grsh -newer grsh/diststamp -type f`
