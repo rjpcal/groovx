@@ -39,7 +39,7 @@ namespace Util
   /// Symbol class for representing generic "end of iteration".
   struct IterEnd_t {};
 
-  const IterEnd_t IterEnd = IterEnd_t();
+  extern const IterEnd_t IterEnd;
 
   template <class T> class FwdIter;
   template <class T> class BidirIter;
