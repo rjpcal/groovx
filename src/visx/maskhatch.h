@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Sat Nov 11 10:30:08 2000
+// written: Mon Nov 13 19:04:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,8 @@
 #include "grobj.h"
 #endif
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(PROPERTY_H_DEFINED)
-#include "io/property.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(FIELDS_H_DEFINED)
+#include "io/fields.h"
 #endif
 
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class MaskHatch : public GrObj, public PropFriend<MaskHatch> {
+class MaskHatch : public GrObj, public FieldContainer {
 protected:
   /// Default constructor.
   MaskHatch();
@@ -51,21 +51,14 @@ public:
   ////////////////
   // properties //
   ////////////////
- 
-  /// Info about a \c MaskHatch property.
-  typedef PropertyInfo<MaskHatch> PInfo;
-
-  /// Return the number of \c MaskHatch properties.
-  static unsigned int numPropertyInfos();
-
-  /// Return info on the i'th \c MaskHatch property.
-  static const PInfo& getPropertyInfo(unsigned int i);
 
   /// The number of lines that will be rendered in each direction.
-  TBoundedProperty<int, 0, 1000, 1> numLines;
+  TBoundedField<int, 0, 1000, 1> numLines;
 
   /// The pixel-width of each line.
-  TBoundedProperty<int, 0, 1000, 1> lineWidth;
+  TBoundedField<int, 0, 1000, 1> lineWidth;
+
+  static const FieldMap& classFields();
 
 protected:
   virtual void grGetBoundingBox(Rect<double>& bbox,
