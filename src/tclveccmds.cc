@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:16:22 1999
-// written: Thu Jul 12 14:06:25 2001
+// written: Thu Jul 12 14:35:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,89 +31,33 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::VecGetterBaseCmd::VecGetterBaseCmd(TclItemPkgBase* pkg,
-                                        const char* cmd_name,
-                                        const char* usage, int item_argn) :
+template <class ValType>
+Tcl::TVecGetterCmd<ValType>::TVecGetterCmd(TclItemPkgBase* pkg,
+                                           const char* cmd_name,
+                                           shared_ptr<Getter<ValType> > getter,
+                                           const char* usage,
+                                           unsigned int item_argn) :
   VecCmd(pkg->interp(), cmd_name,
          usage ? usage : (item_argn ? "item_id(s)" : (char *) 0),
          item_argn,
          item_argn+1, item_argn+1),
   itsPkg(pkg),
-  itsItemArgn(item_argn)
-{
-DOTRACE("Tcl::VecGetterBaseCmd::VecGetterBaseCmd");
-}
-
-Tcl::VecGetterBaseCmd::~VecGetterBaseCmd() {}
-
-void Tcl::VecGetterBaseCmd::invoke(Tcl::Context& ctx)
-{
-DOTRACE("Tcl::VecGetterBaseCmd::invoke");
-  void* item = itsPkg->getItemFromContext(ctx);
-  doReturnValForItem(item, ctx);
-}
-
-template <class ValType>
-Tcl::TVecGetterCmd<ValType>::TVecGetterCmd(TclItemPkgBase* pkg,
-                                           const char* cmd_name,
-                                           shared_ptr<Getter<ValType> > getter,
-                                           const char* usage, int item_argn) :
-  VecCmd(pkg->interp(), cmd_name,
-         usage ? usage : (item_argn ? "item_id(s)" : (char *) 0),
-         item_argn,
-         item_argn+1, item_argn+1),
-  VecGetterBaseCmd(pkg, cmd_name, usage, item_argn),
+  itsItemArgn(item_argn),
   itsGetter(getter)
 {
 DOTRACE("Tcl::TVecGetterCmd<>::TVecGetterCmd");
 }
 
 template <class ValType>
-Tcl::TVecGetterCmd<ValType>::~TVecGetterCmd() {}
+Tcl::TVecGetterCmd<ValType>::~TVecGetterCmd()
+{}
 
 template <class ValType>
-void Tcl::TVecGetterCmd<ValType>::doReturnValForItem(void* item,
-                                                     Context& ctx)
+void Tcl::TVecGetterCmd<ValType>::invoke(Tcl::Context& ctx)
 {
+DOTRACE("Tcl::TVecGetterCmd<>::invoke");
+  void* item = itsPkg->getItemFromContext(ctx);
   ctx.setResult(itsGetter->get(item));
-}
-
-template <class ValType>
-void Tcl::TVecGetterCmd<ValType>::doAppendValForItem(void* item,
-                                                     Tcl::List& listObj)
-{
-  listObj.append(itsGetter->get(item));
-}
-
-// Specializations for fixed_string
-template <>
-void Tcl::TVecGetterCmd<fixed_string>::doReturnValForItem(void* item,
-                                                          Context& ctx)
-{
-  ctx.setResult(itsGetter->get(item).c_str());
-}
-
-template <>
-void Tcl::TVecGetterCmd<fixed_string>::doAppendValForItem(void* item,
-                                                          Tcl::List& listObj)
-{
-  listObj.append(itsGetter->get(item).c_str());
-}
-
-template <>
-void Tcl::TVecGetterCmd<const fixed_string&>::doReturnValForItem(
-  void* item,
-  Context& ctx
-) {
-  ctx.setResult(itsGetter->get(item).c_str());
-}
-
-template <>
-void Tcl::TVecGetterCmd<const fixed_string&>::doAppendValForItem(
-  void* item,
-  Tcl::List& listObj
-) {
-  listObj.append(itsGetter->get(item).c_str());
 }
 
 
@@ -136,9 +80,12 @@ namespace Tcl
 //
 ///////////////////////////////////////////////////////////////////////
 
-Tcl::VecSetterBaseCmd::VecSetterBaseCmd(TclItemPkgBase* pkg,
-                                        const char* cmd_name,
-                                        const char* usage, int item_argn) :
+template <class T>
+Tcl::TVecSetterCmd<T>::TVecSetterCmd(
+  TclItemPkgBase* pkg, const char* cmd_name,
+  shared_ptr<Setter<value_type> > setter,
+  const char* usage, unsigned int item_argn
+) :
   VecCmd(pkg->interp(), cmd_name,
          usage ? usage : (item_argn ?
                           "item_id(s) new_value(s)" : "new_value"),
@@ -146,81 +93,23 @@ Tcl::VecSetterBaseCmd::VecSetterBaseCmd(TclItemPkgBase* pkg,
          item_argn+2, item_argn+2),
   itsPkg(pkg),
   itsItemArgn(item_argn),
-  itsValArgn(item_argn+1)
+  itsValArgn(item_argn+1),
+  itsSetter(setter)
 {
-DOTRACE("Tcl::VecSetterBaseCmd::VecSetterBaseCmd");
+DOTRACE("Tcl::TVecSetterCmd<>::TVecSetterCmd");
 }
-
-Tcl::VecSetterBaseCmd::~VecSetterBaseCmd() {}
-
-void Tcl::VecSetterBaseCmd::invoke(Tcl::Context& ctx)
-{
-DOTRACE("Tcl::VecSetterBaseCmd::invoke");
-  if (itsItemArgn) {
-    invokeForItemArgn(ctx, itsItemArgn, itsValArgn);
-  }
-  else {
-    void* item = itsPkg->getItemFromContext(ctx);
-    setSingleItem(ctx, item, itsValArgn);
-  }
-}
-
-template <class T>
-Tcl::TVecSetterCmd<T>::TVecSetterCmd(TclItemPkgBase* pkg,
-                                     const char* cmd_name,
-                                     shared_ptr<Setter<T> > setter,
-                                     const char* usage, int item_argn) :
-  Base(pkg, cmd_name, setter, usage, item_argn),
-  VecCmd(pkg->interp(), cmd_name,
-         usage ? usage : (item_argn ?
-                          "item_id(s) new_value(s)" : "new_value"),
-         item_argn,
-         item_argn+2, item_argn+2)
-{}
 
 template <class T>
 Tcl::TVecSetterCmd<T>::~TVecSetterCmd() {}
 
-template <class Traits>
-Tcl::TrVecSetterCmd<Traits>::TrVecSetterCmd(
-  TclItemPkgBase* pkg, const char* cmd_name,
-  shared_ptr<Setter<value_type> > setter,
-  const char* usage, int item_argn
-) :
-  VecCmd(pkg->interp(), cmd_name,
-         usage ? usage : (item_argn ?
-                          "item_id(s) new_value(s)" : "new_value"),
-         item_argn,
-         item_argn+2, item_argn+2),
-  VecSetterBaseCmd(pkg, cmd_name, usage, item_argn),
-  itsSetter(setter)
+template <class T>
+void Tcl::TVecSetterCmd<T>::invoke(Tcl::Context& ctx)
 {
-DOTRACE("Tcl::TrVecSetterCmd<>::TrVecSetterCmd");
-}
-
-template <class Traits>
-Tcl::TrVecSetterCmd<Traits>::~TrVecSetterCmd() {}
-
-template <class Traits>
-void Tcl::TrVecSetterCmd<Traits>::setSingleItem(Tcl::Context& ctx,
-                                                void* item, int val_argn)
-{
-DOTRACE("Tcl::TrVecSetterCmd<Traits>::setSingleItem");
-  stack_type val = ctx.getValFromArg(val_argn, (stack_type*)0);
+DOTRACE("Tcl::TVecSetterCmd<>::invoke");
+  void* item = itsPkg->getItemFromContext(ctx);
+  stack_type val = ctx.getValFromArg(itsValArgn, (stack_type*)0);
   itsSetter->set(item, val);
 }
-
-template <class Traits>
-void Tcl::TrVecSetterCmd<Traits>::invokeForItemArgn(Tcl::Context& ctx,
-                                                    int item_argn, int val_argn)
-{
-DOTRACE("Tcl::TrVecSetterCmd<Traits>::invokeForItemArgn");
-
-  void* item = pkg()->getItemFromContext(ctx);
-  stack_type val = ctx.getValFromArg(val_argn, (stack_type*)0);
-  itsSetter->set(item, val);
-}
-
 
 // Explicit instatiation requests
 namespace Tcl
@@ -244,7 +133,8 @@ template <class T>
 Tcl::TVecAttribCmd<T>::TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name,
                                      shared_ptr<Getter<T> > getter,
                                      shared_ptr<Setter<T> > setter,
-                                     const char* usage, int item_argn) :
+                                     const char* usage,
+                                     unsigned int item_argn) :
   TVecGetterCmd<T>(pkg, 0, getter, 0, item_argn),
   TVecSetterCmd<T>(pkg, 0, setter, 0, item_argn),
   VecCmd(pkg->interp(), cmd_name,
@@ -290,7 +180,8 @@ namespace Tcl
 
 Tcl::VecActionCmd::VecActionCmd(TclItemPkgBase* pkg, const char* cmd_name,
                                 shared_ptr<Action> action,
-                                const char* usage, int item_argn) :
+                                const char* usage,
+                                unsigned int item_argn) :
   VecCmd(pkg->interp(), cmd_name,
          usage ? usage : (item_argn ? "item_id(s)" : (char *) 0),
          item_argn,

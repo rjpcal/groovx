@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:11:41 1999
-// written: Thu Jul 12 14:00:51 2001
+// written: Thu Jul 12 14:35:02 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,41 +64,24 @@ class TclItemPkgBase;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class VecGetterBaseCmd : public virtual Tcl::VecCmd {
-public:
-  VecGetterBaseCmd(TclItemPkgBase* pkg, const char* cmd_name,
-                   const char* usage, int item_argn);
-
-  virtual ~VecGetterBaseCmd();
-
-protected:
-  virtual void invoke(Context& ctx);
-
-  virtual void doReturnValForItem(void* item, Context& ctx) = 0;
-  virtual void doAppendValForItem(void* item, Tcl::List& listObj) = 0;
-
-private:
-  VecGetterBaseCmd(const VecGetterBaseCmd&);
-  VecGetterBaseCmd& operator=(const VecGetterBaseCmd&);
-
-  TclItemPkgBase* itsPkg;
-  int itsItemArgn;
-};
-
 template <class ValType>
-class TVecGetterCmd : public VecGetterBaseCmd {
+class TVecGetterCmd : public virtual Tcl::VecCmd {
 public:
   TVecGetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
                 shared_ptr<Getter<ValType> > getter,
-                const char* usage, int item_argn);
+                const char* usage, unsigned int item_argn);
 
   virtual ~TVecGetterCmd();
 
 protected:
-  virtual void doReturnValForItem(void* item, Context& ctx);
-  virtual void doAppendValForItem(void* item, Tcl::List& listObj);
+  virtual void invoke(Context& ctx);
 
 private:
+  TVecGetterCmd(const TVecGetterCmd&);
+  TVecGetterCmd& operator=(const TVecGetterCmd&);
+
+  TclItemPkgBase* itsPkg;
+  int itsItemArgn;
   shared_ptr< Getter<ValType> > itsGetter;
 };
 
@@ -110,60 +93,29 @@ private:
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class VecSetterBaseCmd : public virtual Tcl::VecCmd {
+template <class T>
+class TVecSetterCmd : public virtual Tcl::VecCmd {
 public:
-  VecSetterBaseCmd(TclItemPkgBase* pkg, const char* cmd_name,
-                   const char* usage, int item_argn);
+  typedef typename SetterCmdTraits<T>::value_type value_type;
+  typedef typename SetterCmdTraits<T>::stack_type stack_type;
+  typedef typename SetterCmdTraits<T>::iterator_type iterator_type;
 
-  virtual ~VecSetterBaseCmd();
+  TVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
+                 shared_ptr<Setter<value_type> > setter,
+                 const char* usage, unsigned int item_argn);
 
-protected:
+  virtual ~TVecSetterCmd();
+
   virtual void invoke(Context& ctx);
 
-  virtual void invokeForItemArgn(Context& ctx, int item_argn, int val_argn) = 0;
-  virtual void setSingleItem(Context& ctx, void* item, int val_argn) = 0;
-
-  TclItemPkgBase* pkg() { return itsPkg; }
-
 private:
-  VecSetterBaseCmd(const VecSetterBaseCmd&);
-  VecSetterBaseCmd& operator=(const VecSetterBaseCmd&);
+  TVecSetterCmd(const TVecSetterCmd&);
+  TVecSetterCmd& operator=(const TVecSetterCmd&);
 
   TclItemPkgBase* itsPkg;
   int itsItemArgn;
   int itsValArgn;
-};
-
-template <class Traits>
-class TrVecSetterCmd : public VecSetterBaseCmd {
-protected:
-  typedef typename Traits::value_type value_type;
-  typedef typename Traits::stack_type stack_type;
-  typedef typename Traits::iterator_type iterator_type;
-
-  TrVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
-                 shared_ptr<Setter<value_type> > setter,
-                 const char* usage, int item_argn);
-
-  virtual ~TrVecSetterCmd();
-
-  virtual void invokeForItemArgn(Context& ctx, int item_argn, int val_argn);
-  virtual void setSingleItem(Context& ctx, void* item, int val_argn);
-
-private:
   shared_ptr< Setter<value_type> > itsSetter;
-};
-
-template <class T>
-class TVecSetterCmd : public TrVecSetterCmd< SetterCmdTraits<T> > {
-public:
-  typedef TrVecSetterCmd< SetterCmdTraits<T> > Base;
-
-  TVecSetterCmd(TclItemPkgBase* pkg, const char* cmd_name,
-                shared_ptr<Setter<T> > setter,
-                const char* usage, int item_argn);
-
-  virtual ~TVecSetterCmd();
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -180,7 +132,7 @@ public:
   TVecAttribCmd(TclItemPkgBase* pkg, const char* cmd_name,
                 shared_ptr<Getter<T> > getter,
                 shared_ptr<Setter<T> > setter,
-                const char* usage, int item_argn);
+                const char* usage, unsigned int item_argn);
 
   virtual ~TVecAttribCmd();
 
@@ -188,8 +140,8 @@ protected:
   virtual void invoke(Context& ctx);
 
 private:
-  int itsObjcGet;
-  int itsObjcSet;
+  unsigned int itsObjcGet;
+  unsigned int itsObjcSet;
 };
 
 } // end namespace Tcl
@@ -206,7 +158,7 @@ class Tcl::VecActionCmd : public Tcl::VecCmd {
 public:
   VecActionCmd(TclItemPkgBase* pkg, const char* cmd_name,
                shared_ptr<Action> action,
-               const char* usage, int item_argn);
+               const char* usage, unsigned int item_argn);
   virtual ~VecActionCmd();
 
 protected:
