@@ -3,7 +3,7 @@
 // hpsound.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 12 13:03:47 1999
-// written: Fri Mar  3 23:20:47 2000
+// written: Mon Mar  6 19:29:03 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,10 @@
 
 #include "reader.h"
 #include "writer.h"
+#include "util/strings.h"
 
 #include <Alib.h>
 #include <fstream.h>				  // to check if files exist
-#include <string>
 
 #define NO_TRACE
 #include "trace.h"
@@ -30,14 +30,19 @@
 ///////////////////////////////////////////////////////////////////////
 
 namespace {
-  const string ioTag = "HpAudioSound";
+  const string_literal ioTag = "HpAudioSound";
 
   Audio* theAudio = 0;
 
   static long audioErrorHandler(Audio* audio, AErrorEvent *errEvent) {
 	 static char buf[128];
 	 AGetErrorText(audio, errEvent->error_code, buf, 127);
-	 throw SoundError(string("HP Audio Error: ") + buf);
+
+	 SoundError err("HP Audio Error: ");
+	 err.appendMsg(buf);
+	 throw err;
+
+	 // we'll never get here, but we need to placate the compiler
 	 return 0;
   }
 }
@@ -55,13 +60,17 @@ namespace {
 class SoundFilenameError : public SoundError {
 public:
   SoundFilenameError() : SoundError() {}
-  SoundFilenameError(const string& filename) :
-	 SoundError(string("bad or nonexistent file '") + filename + "'") {}
+  SoundFilenameError(const char* filename) :
+	 SoundError("bad or nonexistent file '")
+	 {
+		appendMsg(filename);
+		appendMsg("'");
+	 }
 };
 
 class HpAudioSound : public Sound {
 public:
-  HpAudioSound(Audio* audio, const string& filename);
+  HpAudioSound(Audio* audio, const char* filename);
   virtual ~HpAudioSound();
 
   virtual void serialize(ostream& os, IOFlag flag) const;
@@ -72,12 +81,12 @@ public:
   virtual void writeTo(Writer* writer) const;
 
   virtual void play();
-  virtual void setFile(const string& filename);
-  virtual const string& getFile() const { return itsFilename; }
+  virtual void setFile(const char* filename);
+  virtual const char* getFile() const { return itsFilename.c_str(); }
 
 private:
   Audio* itsAudio;
-  string itsFilename;
+  fixed_string itsFilename;
   SBucket* itsSBucket;
   SBPlayParams itsPlayParams;
 };
@@ -88,7 +97,7 @@ private:
 //
 ///////////////////////////////////////////////////////////////////////
 
-HpAudioSound::HpAudioSound(Audio* audio, const string& filename) :
+HpAudioSound::HpAudioSound(Audio* audio, const char* filename) :
   itsAudio(audio), itsSBucket(NULL)
 {
 DOTRACE("HpAudioSound::HpAudioSound");
@@ -121,7 +130,7 @@ DOTRACE("HpAudioSound::serialize");
 
   os << itsFilename << endl;
 
-  if (os.fail()) throw OutputError(ioTag);
+  if (os.fail()) throw OutputError(ioTag.c_str());
 
   if (flag & BASES) { /* no bases to deal with */ }
 }
@@ -129,22 +138,22 @@ DOTRACE("HpAudioSound::serialize");
 void HpAudioSound::deserialize(istream& is, IOFlag flag) {
 DOTRACE("HpAudioSound::deserialize");
 
-  if (flag & TYPENAME) { IO::readTypename(is, ioTag); }
+  if (flag & TYPENAME) { IO::readTypename(is, ioTag.c_str()); }
 
   getline(is, itsFilename, '\n');
   
-  if (is.fail()) throw InputError(ioTag);
+  if (is.fail()) throw InputError(ioTag.c_str());
 
   if (flag & BASES) { /* no bases to deal with */ }
 
-  setFile(itsFilename);
+  setFile(itsFilename.c_str());
 }
 
 void HpAudioSound::readFrom(Reader* reader) {
 DOTRACE("HpAudioSound::readFrom");
 
   reader->readValue("filename", itsFilename);
-  setFile(itsFilename);
+  setFile(itsFilename.c_str());
 }
 
 void HpAudioSound::writeTo(Writer* writer) const {
@@ -166,11 +175,11 @@ DOTRACE("HpAudioSound::play");
   ATransID xid = APlaySBucket( itsAudio, itsSBucket, &itsPlayParams, NULL );
 }
 	
-void HpAudioSound::setFile(const string& filename) {
+void HpAudioSound::setFile(const char* filename) {
 DOTRACE("HpAudioSound::setFile");
   if ( !itsAudio ) { throw SoundError("invalid audio server connection"); }
 
-  ifstream ifs(filename.c_str());
+  ifstream ifs(filename);
   if (ifs.fail()) {
 	 throw SoundFilenameError(filename);
   }
@@ -237,7 +246,7 @@ DOTRACE("Sound::closeSound");
   }
 }
 
-Sound* Sound::newPlatformSound(const string& soundfile) {
+Sound* Sound::newPlatformSound(const char* soundfile) {
 DOTRACE("Sound::newPlatformSound");
   return new HpAudioSound(theAudio, soundfile);
 }
