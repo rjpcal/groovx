@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 16 19:46:54 1999
-// written: Thu May 10 12:04:49 2001
+// written: Sun May 27 15:26:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,60 +29,9 @@
 #include "util/debug.h"
 
 namespace BlockTcl {
-  class AddTrialsCmd;
   class AddTrialIdsCmd;
-  class InitCmd;
   class BlockPkg;
-
-  void addTrials(Block* block, int first_trial, int last_trial, int repeat)
-  {
-	 // Account for the convention of using -1 to indicate 'beginning'
-	 // for first_trial, and 'end' for last_trial.
-
-	 if (first_trial == -1)
-		first_trial = 0;
-
-	 bool testing_last_trial = (last_trial != -1);
-
-	 for (IoDb::Iterator
-			  itr = IoDb::theDb().begin(),
-			  end = IoDb::theDb().end();
-			itr != end;
-			++itr)
-		{
-		  int id = itr.getId();
-
-		  if (id < first_trial) continue;
-		  if (testing_last_trial && (id > last_trial)) continue;
-
-		  block->addTrial(IdItem<TrialBase>(id), repeat);
-		}
-  }
 }
-
-//---------------------------------------------------------------------
-//
-// BlockTcl::AddTrialsCmd --
-//
-//---------------------------------------------------------------------
-
-class BlockTcl::AddTrialsCmd : public Tcl::TclItemCmd<Block> {
-public:
-  AddTrialsCmd(Tcl::CTclItemPkg<Block>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<Block>(pkg, cmd_name, 
-							"block_id ?first_trial=-1 last_trial=-1 repeat=1?",
-							2, 5, false) {}
-protected:
-  virtual void invoke() {
-	 Block* block = getItem();
-
-	 int first_trial = (objc() < 3) ? -1 : getIntFromArg(2);
-	 int last_trial  = (objc() < 4) ? -1 : getIntFromArg(3);
-	 int repeat      = (objc() < 5) ?  1 : getIntFromArg(4);
-
-	 addTrials(block, first_trial, last_trial, repeat);
-  }
-};
 
 //---------------------------------------------------------------------
 //
@@ -113,28 +62,6 @@ protected:
   }
 };
 
-//---------------------------------------------------------------------
-//
-// BlockTcl::InitCmd --
-//
-//---------------------------------------------------------------------
-
-class BlockTcl::InitCmd : public Tcl::TclItemCmd<Block> {
-public:
-  InitCmd(Tcl::CTclItemPkg<Block>* pkg, const char* cmd_name) :
-	 Tcl::TclItemCmd<Block>(pkg, cmd_name, "block_id repeat rand_seed", 4, 4) {}
-protected:
-  virtual void invoke() {
-	 Block* block = getItem();
-
-	 int repeat = getIntFromArg(2);
-	 int rand_seed = getIntFromArg(3);
-	 
-	 addTrials(block, -1, -1, repeat);
-	 block->shuffle(rand_seed);
-  }
-};
-
 ///////////////////////////////////////////////////////////////////////
 //
 // BlockPkg class definition
@@ -148,8 +75,6 @@ public:
   {
 	 Tcl::addTracing(this, Block::tracer);
 
-	 addCommand( new InitCmd(this, "Block::init") );
-	 addCommand( new AddTrialsCmd(this, "Block::addTrials") );
 	 addCommand( new AddTrialIdsCmd(this, "Block::addTrialIds") );
 
 	 declareCGetter("currentTrial", &Block::currentTrial);
