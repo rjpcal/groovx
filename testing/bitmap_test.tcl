@@ -163,8 +163,8 @@ test "BitmapTcl-Bitmap::stringify" "stringify, destringify, compare" {
 	 set ::BITMAP [Obj::new GLBitmap]
 	 IO::destringify $::BITMAP $str1
 	 set str2 [IO::stringify $::BITMAP]
-	 string equal $str1 $str2
-} {^1$}
+	 return "[string equal $str1 $str2] $str1 $str2"
+} {^1 }
 
 ### cleanup
 unset BITMAP
