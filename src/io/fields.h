@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Tue Jun  5 10:57:16 2001
+// written: Sun Jun 10 15:49:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -300,6 +300,8 @@ public:
   Iterator begin() const;
   Iterator end() const;
 
+  // Iterates over the FieldInfo's in the order they were declared in
+  // the sequence that was passed to the FieldMap constructor.
   typedef const FieldInfo* IoIterator;
   IoIterator ioBegin() const;
   IoIterator ioEnd() const;
