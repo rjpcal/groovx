@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Thu Oct 14 13:12:46 1999
+// written: Wed Oct 20 10:12:44 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,8 @@
 #include "xbitmap.h"
 #include "error.h"
 #include "rect.h"
+#include "reader.h"
+#include "writer.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -268,6 +270,16 @@ DOTRACE("GrObj::serialize");
 
 void GrObj::deserialize(istream&, IOFlag) {
 DOTRACE("GrObj::deserialize");
+  sendStateChangeMsg();
+}
+
+void GrObj::readFrom(Reader* reader) {
+DOTRACE("GrObj::readFrom");
+  sendStateChangeMsg();
+}
+
+void GrObj::writeTo(Writer* writer) const {
+DOTRACE("GrObj::writeTo");
 }
 
 int GrObj::charCount() const {
