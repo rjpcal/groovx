@@ -3,6 +3,8 @@
 # grshtest.tcl
 # Rob Peters Apr-99
 #
+# $Id$
+#
 # This test script which is to be run on grsh. The spirit of this test file is 
 # to test every nook and cranny of the C++ code that has been used to create
 # various Tcl/Tk extension packages. In practice, this means making sure that
@@ -123,10 +125,10 @@ set faceid [face] ;# guaranteed face id for next operations
 ### eyeHgtCmd ###
 test "FaceTcl-eyeHgt" "too few args" {
 	 Face::eyeHgt
-} {^wrong \# args: should be "Face::eyeHgt faceid \[new_val\]"$}
+} {^wrong \# args: should be "Face::eyeHgt item_id \?new_value\?"$}
 test "FaceTcl-eyeHgt" "too many args" {
 	 Face::eyeHgt j u n
-} {^wrong \# args: should be "Face::eyeHgt faceid \[new_val\]"$}
+} {^wrong \# args: should be "Face::eyeHgt item_id \?new_value\?"$}
 test "FaceTcl-eyeHgt" "normal use set" {
 	 Face::eyeHgt $::faceid 2.0 
 } {^$}
@@ -146,10 +148,10 @@ test "FaceTcl-eyeHgt" "error from bad objid" {
 ### eyeDistCmd ###
 test "FaceTcl-eyeDist" "too few args" {
 	 Face::eyeDist
-} {^wrong \# args: should be "Face::eyeDist faceid \[new_val\]"$}
+} {^wrong \# args: should be "Face::eyeDist item_id \?new_value\?"$}
 test "FaceTcl-eyeDist" "too many args" {
 	 Face::eyeDist j u n
-} {^wrong \# args: should be "Face::eyeDist faceid \[new_val\]"$}
+} {^wrong \# args: should be "Face::eyeDist item_id \?new_value\?"$}
 test "FaceTcl-eyeDist" "normal use set" {
 	 Face::eyeDist $::faceid 2.0 
 } {^$}
@@ -169,10 +171,10 @@ test "FaceTcl-eyeDist" "error from bad objid" {
 ### noseLenCmd ###
 test "FaceTcl-noseLen" "too few args" {
 	 Face::noseLen
-} {^wrong \# args: should be "Face::noseLen faceid \[new_val\]"$}
+} {^wrong \# args: should be "Face::noseLen item_id \?new_value\?"$}
 test "FaceTcl-noseLen" "too many args" {
 	 Face::noseLen j u n
-} {^wrong \# args: should be "Face::noseLen faceid \[new_val\]"$}
+} {^wrong \# args: should be "Face::noseLen item_id \?new_value\?"$}
 test "FaceTcl-noseLen" "normal use set" {
 	 Face::noseLen $::faceid 2.0 
 } {^$}
@@ -192,10 +194,10 @@ test "FaceTcl-noseLen" "error from bad objid" {
 ### mouthHgtCmd ###
 test "FaceTcl-mouthHgt" "too few args" {
 	 Face::mouthHgt
-} {^wrong \# args: should be "Face::mouthHgt faceid \[new_val\]"$}
+} {^wrong \# args: should be "Face::mouthHgt item_id \?new_value\?"$}
 test "FaceTcl-mouthHgt" "too many args" {
 	 Face::mouthHgt j u n
-} {^wrong \# args: should be "Face::mouthHgt faceid \[new_val\]"$}
+} {^wrong \# args: should be "Face::mouthHgt item_id \?new_value\?"$}
 test "FaceTcl-mouthHgt" "normal use set" {
 	 Face::mouthHgt $::faceid 2.0 
 } {^$}
@@ -213,7 +215,7 @@ test "FaceTcl-mouthHgt" "error from bad objid" {
 } {Face::mouthHgt: objid out of range}
 
 unset faceid
-resetObjList
+ObjList::reset
 unset EPS
 
 ### Face::loadFacesCmd ###
@@ -226,40 +228,40 @@ test "FaceTcl-Face::loadFaces" "too many args" {
 } {wrong \# args: should be "Face::loadFaces\
 		  filename \?num_to_read\? \?first_id\? \?use_virtual_ctor\?"}
 test "FaceTcl-Face::loadFaces" "normal file read with no comments" {
-	 resetObjList
+	 ObjList::reset
 	 set num_read [Face::loadFaces $::TEST_DIR/faces_file_no_comments]
-	 expr $num_read == 10 && $num_read == [objCount] \
-				&& [string compare [objType 0] "Face"] == 0
+	 expr $num_read == 10 && $num_read == [ObjList::count] \
+				&& [string compare [GrObj::type 0] "Face"] == 0
 } {^1$}
 test "FaceTcl-Face::loadFaces" "normal file read" {
-	 resetObjList
+	 ObjList::reset
 	 set num_read [Face::loadFaces $::TEST_DIR/faces_file]
-	 expr $num_read == 10 && $num_read == [objCount] \
-				&& [string compare [objType 0] "Face"] == 0
+	 expr $num_read == 10 && $num_read == [ObjList::count] \
+				&& [string compare [GrObj::type 0] "Face"] == 0
 } {^1$}
 test "FaceTcl-Face::loadFaces" "normal file read with limit on # to read" {
-	 resetObjList
+	 ObjList::reset
 	 set num_read [Face::loadFaces $::TEST_DIR/faces_file 5]
-	 expr $num_read == 5 && $num_read == [objCount] \
-				&& [string compare [objType 0] "Face"] == 0
+	 expr $num_read == 5 && $num_read == [ObjList::count] \
+				&& [string compare [GrObj::type 0] "Face"] == 0
 } {^1$}
 test "FaceTcl-Face::loadFaces" "normal file read with starting offset" {
-	 resetObjList
+	 ObjList::reset
 	 set num_read [Face::loadFaces $::TEST_DIR/faces_file -1 3]
-	 expr $num_read == 10 && $num_read == [objCount] \
-				&& [string compare [objType 3] "Face"] == 0
+	 expr $num_read == 10 && $num_read == [ObjList::count] \
+				&& [string compare [GrObj::type 3] "Face"] == 0
 } {^1$}
 test "FaceTcl-Face::loadFaces" "file read with virtual constructor" {
 } {^$} $must_implement
 test "FaceTcl-Face::loadFaces" "empty file read" {
-	 resetObjList
+	 ObjList::reset
 	 set num_read [Face::loadFaces $::TEST_DIR/empty_file]
-	 expr $num_read == 0 && [objCount] == 0
+	 expr $num_read == 0 && [ObjList::count] == 0
 } {^1$}
 test "FaceTcl-Face::loadFaces" "empty file read with limit on # to read" {
-	 resetObjList
+	 ObjList::reset
 	 set num_read [Face::loadFaces $::TEST_DIR/empty_file 5]
-	 expr $num_read == 0 && [objCount] == 0
+	 expr $num_read == 0 && [ObjList::count] == 0
 } {^1$}
 # On bad input, the error may be detected by either Face or IoMgr 
 # depending on which constructor got called.
@@ -277,30 +279,30 @@ test "FaceTcl-Face::loadFaces" "error from junk binary file" {
 ### Face::stringifyCmd ###
 test "FaceTcl-Face::stringify" "too few args" {
     Face::stringify
-} {wrong \# args: should be "Face::stringify faceid"}
+} {wrong \# args: should be "Face::stringify item_id"}
 test "FaceTcl-Face::stringify" "too many args" {
     Face::stringify j u
-} {wrong \# args: should be "Face::stringify faceid"}
+} {wrong \# args: should be "Face::stringify item_id"}
 test "FaceTcl-Face::stringify" "error from bad objid" {
     Face::stringify -1
 } {Face::stringify: objid out of range}
 test "FaceTcl-Face::stringify" "error from wrong type" {
-    set fx [fixpt]
+    set fx [Fixpt::fixpt]
 	 Face::stringify $fx
 } {Face::stringify: object not of correct type}
 
 ### Face::destringifyCmd ###
 test "FaceTcl-Face::destringify" "too few args" {
     Face::destringify
-} {wrong \# args: should be "Face::destringify faceid string"}
+} {wrong \# args: should be "Face::destringify item_id string"}
 test "FaceTcl-Face::destringify" "too many args" {
     Face::destringify j u n
-} {wrong \# args: should be "Face::destringify faceid string"}
+} {wrong \# args: should be "Face::destringify item_id string"}
 test "FaceTcl-Face::destringify" "error from bad objid" {
     Face::destringify -1 junk
 } {Face::destringify: objid out of range}
 test "FaceTcl-Face::destringify" "error from wrong type" {
-    set fx [fixpt]; Face::destringify $fx junk
+    set fx [Fixpt::fixpt]; Face::destringify $fx junk
 } {Face::destringify: object not of correct type}
 test "FaceTcl-Face::destringify" "stringify/destringify check" {
 	 set faceid [face]
@@ -317,7 +319,7 @@ test "FaceTcl-Face::destringify" "stringify/destringify check" {
 	 expr [string compare $str1 $str2] == 0
 } {^1$}
 
-resetObjList
+ObjList::reset
 
 ##############################################################################
 ###
@@ -325,62 +327,71 @@ resetObjList
 ###
 ##############################################################################
 
-### fixptCmd ###
-test "FixptTcl-fixpt" "no args limit" {} $BLANK $no_test
-test "FixptTcl-fixpt" "normal create" {
-	 fixpt
+### Fixpt::fixptCmd ###
+test "FixptTcl-Fixpt::fixpt" "no args limit" {} $BLANK $no_test
+test "FixptTcl-Fixpt::fixpt" "normal create" {
+	 Fixpt::fixpt
 } {^[0-9]+$}
-test "FixptTcl-fixpt" "error from bad subcommand" {
-	 fixpt junk
-} {^fixpt: invalid command$}
 
-set fix [fixpt]
+set fix [Fixpt::fixpt]
 
 ### lengthCmd ###
 test "FixptTcl-length" "too few args" {
-    fixpt length
-} {^wrong \# args: should be "fixpt length objid length_val"$}
+    Fixpt::length
+} {^wrong \# args: should be "Fixpt::length item_id \?new_value\?"$}
 test "FixptTcl-length" "too many args" {
-    fixpt length j u n
-} {^wrong \# args: should be "fixpt length objid length_val"$}
+    Fixpt::length j u n
+} {^wrong \# args: should be "Fixpt::length item_id \?new_value\?"$}
 test "FixptTcl-length" "normal set" {
-	 catch {fixpt length $::fix 1.0}
+	 catch {Fixpt::length $::fix 1.0}
 } {^0$}
 test "FixptTcl-length" "error from non-numeric input" {
-    fixpt length $::fix junk
+    Fixpt::length $::fix junk
 } {^expected floating-point number but got "junk"$}
 test "FixptTcl-length" "error from bad objid" {
-    fixpt length -1 1.0
-} {^fixpt: objid out of range$}
+    Fixpt::length -1 1.0
+} {^Fixpt::length: objid out of range$}
 test "FixptTcl-length" "error from wrong type" {
-    set f [face]; fixpt length $f 1.0
-} {^fixpt: object not of correct type$}
+    set f [face]; Fixpt::length $f 1.0
+} {^Fixpt::length: object not of correct type$}
 
 ### widthCmd ###
 test "FixptTcl-width" "too few args" {
-    fixpt width
-} {wrong \# args: should be "fixpt width objid width_val"}
+    Fixpt::width
+} {wrong \# args: should be "Fixpt::width item_id \?new_value\?"}
 test "FixptTcl-width" "too many args" {
-    fixpt width j u n
-} {wrong \# args: should be "fixpt width objid width_val"}
+    Fixpt::width j u n
+} {wrong \# args: should be "Fixpt::width item_id \?new_value\?"}
 test "FixptTcl-width" "normal set" {
-	 catch {fixpt width $::fix 2}
+	 catch {Fixpt::width $::fix 2}
 } {^0$}
 test "FixptTcl-width" "error from non-numeric input" {
-    fixpt width $::fix junk
+    Fixpt::width $::fix junk
 } {expected integer but got "junk"}
 test "FixptTcl-width" "error from bad obid" {
-    fixpt width -1 junk
-} {fixpt: objid out of range}
+    Fixpt::width -1 junk
+} {Fixpt::width: objid out of range}
 test "FixptTcl-width" "error from wrong type" {
-    set f [face]; fixpt width $f 1.0
-} {fixpt: object not of correct type}
+    set f [face]; Fixpt::width $f 1.0
+} {Fixpt::width: object not of correct type}
 test "FixptTcl-width" "error from non-integral number" {
-    fixpt width $::fix 1.5
+    Fixpt::width $::fix 1.5
 } {expected integer but got "1\.5"}
 
-resetObjList
+ObjList::reset
 unset fix
+
+##############################################################################
+###
+### BitmapTcl
+###
+##############################################################################
+
+### commandCmd ###
+test "package-command" "too few args" {} {^$}
+test "package-command" "too many args" {} {^$}
+test "package-command" "normal use" {} {^$}
+test "package-command" "error" {} {^$}
 
 ##############################################################################
 ###
@@ -388,33 +399,33 @@ unset fix
 ###
 ##############################################################################
 
-### jitterCmd ###
-test "JitterTcl-jitter" "too many args" {
-	 jitter junk
-} {wrong \# args: should be "jitter"}
-test "JitterTcl-jitter" "normal create" {jitter;} {[0-9]+}
-test "JitterTcl-jitter" "no error" {} $BLANK $no_test
+### Jitter::jitterCmd ###
+test "JitterTcl-Jitter::jitter" "too many args" {
+	 Jitter::jitter junk
+} {wrong \# args: should be "Jitter::jitter"}
+test "JitterTcl-Jitter::jitter" "normal create" {Jitter::jitter;} {[0-9]+}
+test "JitterTcl-Jitter::jitter" "no error" {} $BLANK $no_test
 
-set jit [jitter]
+set jit [Jitter::jitter]
 
-### setJitterCmd ###
-test "JitterTcl-setJitter" "too few args" {
-    setJitter
-} {wrong \# args: should be "setJitter posid x_jitter y_jitter r_jitter"}
-test "JitterTcl-setJitter" "too many args" {
-    setJitter j u n k y
-} {wrong \# args: should be "setJitter posid x_jitter y_jitter r_jitter"}
-test "JitterTcl-setJitter" "normal use" {
-	 catch {setJitter $::jit 1.0 1.0 1.0}
+### Jitter::setJitterCmd ###
+test "JitterTcl-Jitter::setJitter" "too few args" {
+    Jitter::setJitter
+} {wrong \# args: should be "Jitter::setJitter posid x_jitter y_jitter r_jitter"}
+test "JitterTcl-Jitter::setJitter" "too many args" {
+    Jitter::setJitter j u n k y
+} {wrong \# args: should be "Jitter::setJitter posid x_jitter y_jitter r_jitter"}
+test "JitterTcl-Jitter::setJitter" "normal use" {
+	 catch {Jitter::setJitter $::jit 1.0 1.0 1.0}
 } {^0$}
-test "JitterTcl-setJitter" "error from non-numeric input" {
-    setJitter $::jit junk 1.0 1.0
+test "JitterTcl-Jitter::setJitter" "error from non-numeric input" {
+    Jitter::setJitter $::jit junk 1.0 1.0
 } {expected floating-point number but got "junk"}
-test "JitterTcl-setJitter" "error from wrong type" {
-    set p [Pos::position]; setJitter $p 1 1 1
-} {setJitter: position not of type jitter}
+test "JitterTcl-Jitter::setJitter" "error from wrong type" {
+    set p [Pos::position]; Jitter::setJitter $p 1 1 1
+} {Jitter::setJitter: position not of type jitter}
 
-resetPosList
+PosList::reset
 unset jit
 
 
@@ -479,7 +490,7 @@ test "MiscTcl-sleep" "error from negative input" {
 	 set exit_code [catch {sleep -1}]
 	 set res [time {catch {sleep -1}} 100]
 	 set us [lindex $res 0]
-	 expr $exit_code == 1 && $us > 0 && $us < 250
+	 expr $exit_code == 1 && $us > 0 && $us < 500
 } {^1$}
 	 
 ### usleepCmd ###
@@ -503,7 +514,7 @@ test "MiscTcl-usleep" "error from negative input" {
 	 set exit_code [catch {usleep -1}]
 	 set res [time {catch {usleep -1}} 100]
 	 set us [lindex $res 0]
-	 expr $exit_code == 1 && $us > 0 && $us < 250
+	 expr $exit_code == 1 && $us > 0 && $us < 500
 } {^1$}
 
 ### usleeprCmd ###
@@ -539,70 +550,71 @@ test "MiscTcl-usleepr" "error from negative input" {
 ### regexp to match ObjList in serializations
 set OBJLIST {ObjList|PtrList<GrObj>}
 	 
-### resetObjListCmd ###
-test "ObjlistTcl-resetObjList" "too many args" {
-    resetObjList junk
-} {wrong \# args: should be "resetObjList"}
-test "ObjlistTcl-resetObjList" "check number of objects -> 0" {
+### ObjList::resetCmd ###
+test "ObjlistTcl-ObjList::reset" "too many args" {
+    ObjList::reset junk
+} {wrong \# args: should be "ObjList::reset"}
+test "ObjlistTcl-ObjList::reset" "check number of objects -> 0" {
 	 face
-	 fixpt
-	 resetObjList
-	 objCount
+	 Fixpt::fixpt
+	 ObjList::reset
+	 ObjList::count
 } {^0$}
-test "ObjlistTcl-resetObjList" "check first vacant -> 0" {
+test "ObjlistTcl-ObjList::reset" "check first vacant -> 0" {
 	 face
-	 fixpt
-	 resetObjList
+	 Fixpt::fixpt
+	 ObjList::reset
 	 face
 } {^0$}
-test "ObjlistTcl-resetObjList" "no error" {} $BLANK $no_test
+test "ObjlistTcl-ObjList::reset" "no error" {} $BLANK $no_test
 
-### objCountCmd ###
-test "ObjlistTcl-objCount" "too many args" {
-    objCount junk
-} {wrong \# args: should be "objCount"}
-test "ObjlistTcl-objCount" "normal use" {
-	 resetObjList
+### ObjList::countCmd ###
+test "ObjlistTcl-ObjList::count" "too many args" {
+    ObjList::count junk
+} {wrong \# args: should be "ObjList::count"}
+test "ObjlistTcl-ObjList::count" "normal use" {
+	 ObjList::reset
 	 face
-	 fixpt
-	 objCount
+	 Fixpt::fixpt
+	 ObjList::count
 } {^2$}
-test "ObjlistTcl-objCount" "no error" {} $BLANK $no_test
+test "ObjlistTcl-ObjList::count" "no error" {} $BLANK $no_test
 
-### objTypeCmd ###
-test "ObjlistTcl-objType" "too few args" {
-    objType
-} {wrong \# args: should be "objType objid"}
-test "ObjlistTcl-objType" "too many args" {
-    objType j u
-} {wrong \# args: should be "objType objid"}
-test "ObjlistTcl-objType" "normal use on Face" {
+### GrObj::typeCmd ###
+test "GrobjTcl-GrObj::type" "too few args" {
+    GrObj::type
+} {wrong \# args: should be "GrObj::type objid"}
+test "GrobjTcl-GrObj::type" "too many args" {
+    GrObj::type j u
+} {wrong \# args: should be "GrObj::type objid"}
+test "GrobjTcl-GrObj::type" "normal use on Face" {
 	 set f [face]
-	 objType $f
+	 GrObj::type $f
 } {Face}
-test "ObjlistTcl-objType" "normal use on FixPt" {
-	 set f [fixpt]
-	 objType $f
+test "GrobjTcl-GrObj::type" "normal use on FixPt" {
+	 set f [Fixpt::fixpt]
+	 GrObj::type $f
 } {FixPt}
-test "ObjlistTcl-objType" "error from bad objid" {
-	 objType -1
-} {objType: objid out of range}
-test "ObjlistTcl-objType" "error from too large objid" {
-	 objType 10000
-} {objType: objid out of range}
+test "GrobjTcl-GrObj::type" "error from bad objid" {
+	 GrObj::type -1
+} {GrObj::type: objid out of range}
+test "GrobjTcl-GrObj::type" "error from too large objid" {
+	 GrObj::type 10000
+} {GrObj::type: objid out of range}
 
 ### ObjList::stringifyCmd ###
 test "ObjlistTcl-ObjList::stringify" "too many args" {
     ObjList::stringify junk
 } {wrong \# args: should be "ObjList::stringify"}
 test "ObjlistTcl-ObjList::stringify" "use on empty list" {
-    resetObjList; ObjList::stringify
+    ObjList::reset
+	 ObjList::stringify
 } {PtrList<GrObj> 100 0
 0}
 test "ObjlistTcl-ObjList::stringify" "use on filled list" {
-	 resetObjList
+	 ObjList::reset
 	 set f [face]
-	 set f [fixpt]
+	 set f [Fixpt::fixpt]
 	 ObjList::stringify
 } "$OBJLIST $INT 2
 0 Face .*
@@ -615,29 +627,29 @@ test "ObjlistTcl-ObjList::destringify" "args" {
     ObjList::destringify
 } {wrong \# args: should be "ObjList::destringify string"}
 test "ObjlistTcl-ObjList::destringify" "use with filled list" {
-	 resetObjList
+	 ObjList::reset
 	 face
-	 fixpt
+	 Fixpt::fixpt
 	 set a [ObjList::stringify]
 	 ObjList::destringify $a
-	 expr [objCount]==2 \
-				&& ([string compare [objType 0] Face] == 0) \
-				&& ([string compare [objType 1] FixPt] == 0)
+	 expr [ObjList::count]==2 \
+				&& ([string compare [GrObj::type 0] Face] == 0) \
+				&& ([string compare [GrObj::type 1] FixPt] == 0)
 } {^1$}
 test "ObjlistTcl-ObjList::destringify" "stringify, destringify, restringify" {
-	 resetObjList
+	 ObjList::reset
 	 face
-	 fixpt
+	 Fixpt::fixpt
 	 set a [ObjList::stringify]
 	 ObjList::destringify $a
 	 set b [ObjList::stringify]
 	 expr [string compare $a $b] == 0
 } {^1$}
 test "ObjlistTcl-ObjList::destringify" "use with empty list" {
-	 resetObjList
+	 ObjList::reset
 	 set a [ObjList::stringify]
 	 ObjList::destringify $a
-	 expr [objCount]==0
+	 expr [ObjList::count]==0
 } {^1$}
 test "ObjlistTcl-ObjList::destringify" "error on incomplete input" {
     ObjList::destringify "ObjList"
@@ -884,10 +896,10 @@ test "PositionTcl-Pos::translate" "error on bad posid" {
 ### Pos::stringifyCmd ###
 test "PositionTcl-Pos::stringify" "too few args" {
     Pos::stringify
-} {wrong \# args: should be "Pos::stringify posid"}
+} {wrong \# args: should be "Pos::stringify item_id"}
 test "PositionTcl-Pos::stringify" "too many args" {
     Pos::stringify posid junk
-} {wrong \# args: should be "Pos::stringify posid"}
+} {wrong \# args: should be "Pos::stringify item_id"}
 test "PositionTcl-Pos::stringify" "normal use" {
 	 Pos::rotate $::pos 3.0 1.5 0.0 -2.2
 	 Pos::scale $::pos 1.0 2.5 4.0
@@ -901,7 +913,7 @@ test "PositionTcl-Pos::stringify" "error on non-integral posid" {
     Pos::stringify 1.5
 } {expected integer but got "1\.5"}
 	 
-resetPosList
+PosList::reset
 unset pos
 
 
@@ -914,70 +926,70 @@ unset pos
 ### regexp to match PosList in serializations
 set POSLIST {PosList|PtrList<Position>}
 
-### resetPosListCmd ###
-test "PoslistTcl-resetPosList" "too many args" {
-    resetPosList junk
-} {wrong \# args: should be "resetPosList"}
-test "PoslistTcl-resetPosList" "check number of positions -> 0" {
+### PosList::resetCmd ###
+test "PoslistTcl-PosList::reset" "too many args" {
+    PosList::reset junk
+} {wrong \# args: should be "PosList::reset"}
+test "PoslistTcl-PosList::reset" "check number of positions -> 0" {
 	 Pos::position
-	 jitter
-	 resetPosList
-	 posCount
+	 Jitter::jitter
+	 PosList::reset
+	 PosList::count
 } {^0$}
-test "PoslistTcl-resetPosList" "check first vacant -> 0" {
+test "PoslistTcl-PosList::reset" "check first vacant -> 0" {
 	 Pos::position
-	 jitter
-	 resetPosList
+	 Jitter::jitter
+	 PosList::reset
 	 Pos::position
 } {^0$}
-test "PoslistTcl-resetPosList" "no error" {} $BLANK $no_test
+test "PoslistTcl-PosList::reset" "no error" {} $BLANK $no_test
 
-### posCountCmd ###
-test "PoslistTcl-posCount" "args" {
-    posCount junk
-} {wrong \# args: should be "posCount"}
-test "PoslistTcl-posCount" "normal use" { 
-	 resetPosList
+### PosList::countCmd ###
+test "PoslistTcl-PosList::count" "args" {
+    PosList::count junk
+} {wrong \# args: should be "PosList::count"}
+test "PoslistTcl-PosList::count" "normal use" { 
+	 PosList::reset
 	 Pos::position
-	 jitter
-	 posCount
+	 Jitter::jitter
+	 PosList::count
 } {^2$}
-test "PoslistTcl-posCount" "no error" {} $BLANK $no_test
+test "PoslistTcl-PosList::count" "no error" {} $BLANK $no_test
 
-### posTypeCmd ###
-test "PoslistTcl-posType" "args" {
-    posType
-} {wrong \# args: should be "posType posid"}
-test "PoslistTcl-posType" "normal use on Position" { 
+### Pos::typeCmd ###
+test "PositionTcl-Pos::type" "args" {
+    Pos::type
+} {wrong \# args: should be "Pos::type posid"}
+test "PositionTcl-Pos::type" "normal use on Position" { 
 	 set f [Pos::position]
-	 posType $f
+	 Pos::type $f
 } {Position}
-test "PoslistTcl-posType" "normal use on Jitter" {
-	 set f [jitter]
-	 posType $f
+test "PositionTcl-Pos::type" "normal use on Jitter" {
+	 set f [Jitter::jitter]
+	 Pos::type $f
 } {Jitter}
-test "PoslistTcl-posType" "error on too small posid" {
-	 posType -1
-} {posType: posid out of range}
-test "PoslistTcl-posType" "error on too large" {
-	 posType 10000
-} {posType: posid out of range}
+test "PositionTcl-Pos::type" "error on too small posid" {
+	 Pos::type -1
+} {Pos::type: posid out of range}
+test "PositionTcl-Pos::type" "error on too large" {
+	 Pos::type 10000
+} {Pos::type: posid out of range}
 
 ### PosList::stringifyCmd ###
 test "PoslistTcl-PosList::stringify" "args" {
     PosList::stringify junk
 } {wrong \# args: should be "PosList::stringify"}
 test "PoslistTcl-PosList::stringify" "stringify a non-empty PosList" {
-	 resetPosList
+	 PosList::reset
 	 set p [Pos::position]
 	 Pos::rotate $p 3.0 1.5 0.0 -2.2
 	 Pos::scale $p 1.0 2.5 4.0
 	 Pos::translate $p 5.3 10.6 15.9
-	 set j [jitter]
+	 set j [Jitter::jitter]
 	 Pos::rotate $j 3.0 1.5 0.0 -2.2
 	 Pos::scale $j 1.0 2.5 4.0
 	 Pos::translate $j 5.3 10.6 15.9
-	 setJitter $j 1.5 3.0 4.5
+	 Jitter::setJitter $j 1.5 3.0 4.5
 	 PosList::stringify
 } "$POSLIST $INT 2
 0 Position 5\.3 10\.6 15\.9 1 2\.5 4 1\.5 0 -2\.2 3
@@ -986,7 +998,7 @@ Position 5\.3 10\.6 15\.9 1 2\.5 4 1\.5 0 -2\.2 3
 2"
 
 test "PoslistTcl-PosList::stringify" "stringify an empty PosList" {
-	 resetPosList
+	 PosList::reset
 	 PosList::stringify
 } "$POSLIST $INT 0
 0"
@@ -997,22 +1009,22 @@ test "PoslistTcl-PosList::destringify" "args" {
     PosList::destringify
 } {wrong \# args: should be "PosList::destringify string"}
 test "PoslistTcl-PosList::destringify" "normal use" {
-	 resetPosList
+	 PosList::reset
 	 set p [Pos::position]
 	 Pos::rotate $p 3.0 1.5 0.0 -2.2
 	 Pos::scale $p 1.0 2.5 4.0
 	 Pos::translate $p 5.3 10.6 15.9
-	 set j [jitter]
+	 set j [Jitter::jitter]
 	 Pos::rotate $j 3.0 1.5 0.0 -2.2
 	 Pos::scale $j 1.0 2.5 4.0
 	 Pos::translate $j 5.3 10.6 15.9
-	 setJitter $j 1.5 3.0 4.5
+	 Jitter::setJitter $j 1.5 3.0 4.5
 	 set str [PosList::stringify]
-	 resetPosList
+	 PosList::reset
 	 PosList::destringify $str
-	 expr [posCount]==2 \
-				&& ([string compare [posType 0] Position] == 0) \
-				&& ([string compare [posType 1] Jitter] == 0)
+	 expr [PosList::count]==2 \
+				&& ([string compare [Pos::type 0] Position] == 0) \
+				&& ([string compare [Pos::type 1] Jitter] == 0)
 } {^1$}
 test "PoslistTcl-PosList::destringify" "error" {
     PosList::destringify "this is all just a bunch of bunk"
@@ -1398,92 +1410,92 @@ unset AUDIO
 ###
 ##############################################################################
 
-### undrawCmd ###
-test "TlistTcl-undraw" "too many args" {
-	 undraw junk
-} {wrong \# args: should be "undraw"}
-test "TlistTcl-undraw" "normal use" {
-	 Tlist::clearAllTrials
+### Tlist::undrawCmd ###
+test "TlistTcl-Tlist::undraw" "too many args" {
+	 Tlist::undraw junk
+} {wrong \# args: should be "Tlist::undraw"}
+test "TlistTcl-Tlist::undraw" "normal use" {
+	 Tlist::reset
 	 set f [face]
 	 set p [Pos::position]
 	 Tlist::addObject 0 $f $p
 	 setForeground 1
 	 setBackground 0
-	 show 0
-	 undraw
+	 Tlist::show 0
+	 Tlist::undraw
 	 pixelCheckSum 0 0 $::TOGL_WIDTH $::TOGL_HEIGHT
 } {^0$}
-test "TlistTcl-undraw" "no error" {} $BLANK $no_test
+test "TlistTcl-Tlist::undraw" "no error" {} $BLANK $no_test
 
-### redrawCmd ###
-test "TlistTcl-redraw" "too many args" {
-	 redraw junk
-} {wrong \# args: should be "redraw"}
-test "TlistTcl-redraw" "normal use" {
-	 Tlist::clearAllTrials
+### Tlist::redrawCmd ###
+test "TlistTcl-Tlist::redraw" "too many args" {
+	 Tlist::redraw junk
+} {wrong \# args: should be "Tlist::redraw"}
+test "TlistTcl-Tlist::redraw" "normal use" {
+	 Tlist::reset
 	 set f [face]
 	 set p [Pos::position]
 	 Tlist::addObject 0 $f $p
 	 Tlist::setCurTrial 0
 	 setForeground 1
 	 setBackground 0
-	 redraw
+	 Tlist::redraw
 	 # check to see if some pixels actually got drawn
 	 expr [pixelCheckSum 0 0 $::TOGL_WIDTH $::TOGL_HEIGHT] > 500
 } {^1$}
-test "TlistTcl-redraw" "no error" {} $BLANK $no_test
+test "TlistTcl-Tlist::redraw" "no error" {} $BLANK $no_test
 
-### clearscreenCmd ###
-test "TlistTcl-clearscreen" "too many args" {
-    clearscreen junk
-} {wrong \# args: should be "clearscreen"}
-test "TlistTcl-clearscreen" "normal use" {
+### Tlist::clearscreenCmd ###
+test "TlistTcl-Tlist::clearscreen" "too many args" {
+    Tlist::clearscreen junk
+} {wrong \# args: should be "Tlist::clearscreen"}
+test "TlistTcl-Tlist::clearscreen" "normal use" {
 	 setBackground 0
-	 clearscreen
+	 Tlist::clearscreen
 	 pixelCheckSum 0 0 $::TOGL_WIDTH $::TOGL_HEIGHT
 } {^0$}
-test "TlistTcl-clearscreen" "no error" {} $BLANK $no_test
+test "TlistTcl-Tlist::clearscreen" "no error" {} $BLANK $no_test
 
-### showCmd ###
-test "TlistTcl-show" "too few args" {
-	 show
-} {wrong \# args: should be "show trial_id"}
-test "TlistTcl-show" "too many args" {
-	 show j u
-} {wrong \# args: should be "show trial_id"}
-test "TlistTcl-show" "normal use on valid trial id" {
-	 catch {show 10}
+### Tlist::showCmd ###
+test "TlistTcl-Tlist::show" "too few args" {
+	 Tlist::show
+} {wrong \# args: should be "Tlist::show trial_id"}
+test "TlistTcl-Tlist::show" "too many args" {
+	 Tlist::show j u
+} {wrong \# args: should be "Tlist::show trial_id"}
+test "TlistTcl-Tlist::show" "normal use on valid trial id" {
+	 catch {Tlist::show 10}
 } {^0$}
-test "TlistTcl-show" "normal use on invalid trial id" { 
-	 catch {show -1}
+test "TlistTcl-Tlist::show" "normal use on invalid trial id" { 
+	 catch {Tlist::show -1}
 } {^0$}
-test "TlistTcl-show" "no error" {} $BLANK $no_test
+test "TlistTcl-Tlist::show" "no error" {} $BLANK $no_test
 
-### Tlist::numTrialsCmd ###
-test "TlistTcl-Tlist::numTrials" "too many args" {
-	 Tlist::numTrials junk
-} {wrong \# args: should be "Tlist::numTrials"}
-test "TlistTcl-Tlist::numTrials" "normal use on empty Tlist" {
-	 Tlist::clearAllTrials
-	 Tlist::numTrials
+### Tlist::countCmd ###
+test "TlistTcl-Tlist::count" "too many args" {
+	 Tlist::count junk
+} {wrong \# args: should be "Tlist::count"}
+test "TlistTcl-Tlist::count" "normal use on empty Tlist" {
+	 Tlist::reset
+	 Tlist::count
 } {^0$}
-test "TlistTcl-Tlist::numTrials" "normal use on non-empty Tlist" {
-	 Tlist::clearAllTrials
+test "TlistTcl-Tlist::count" "normal use on non-empty Tlist" {
+	 Tlist::reset
 	 set f [face]
 	 set p [Pos::position]
 	 Tlist::addObject 0 $f $p
 	 Tlist::addObject 3 $f $p
-	 Tlist::numTrials
+	 Tlist::count
 } {^2$}
-test "TlistTcl-Tlist::numTrials" "no error" {} $BLANK $no_test
+test "TlistTcl-Tlist::count" "no error" {} $BLANK $no_test
 
 ### Tlist::setVisibleCmd ###
 test "TlistTcl-Tlist::setVisible" "too few args" {
     Tlist::setVisible
-} {wrong \# args: should be "Tlist::setVisible visibility"}
+} {wrong \# args: should be "Tlist::setVisible new_value"}
 test "TlistTcl-Tlist::setVisible" "too many args" {
     Tlist::setVisible j u
-} {wrong \# args: should be "Tlist::setVisible visibility"}
+} {wrong \# args: should be "Tlist::setVisible new_value"}
 test "TlistTcl-Tlist::setVisible" "normal set off" {
 	 catch {Tlist::setVisible 0}
 } {^0$}
@@ -1540,22 +1552,22 @@ test "TlistTcl-Tlist::setCurTrial" "error on too low trial id" {
     Tlist::setCurTrial -1
 } {Tlist::setCurTrial: invalid trial id}
 test "TlistTcl-Tlist::setCurTrial" "error on too large trial id" {
-	 Tlist::clearAllTrials
+	 Tlist::reset
     Tlist::setCurTrial 10000
 } {Tlist::setCurTrial: invalid trial id}
 
-### Tlist::clearAllTrialsCmd ###
-test "TlistTcl-Tlist::clearAllTrials" "too many args" {
-	 Tlist::clearAllTrials junk
-} {wrong \# args: should be "Tlist::clearAllTrials"}
-test "TlistTcl-Tlist::clearAllTrials" "normal use" {
-	 resetObjList
-	 resetPosList
+### Tlist::resetCmd ###
+test "TlistTcl-Tlist::reset" "too many args" {
+	 Tlist::reset junk
+} {wrong \# args: should be "Tlist::reset"}
+test "TlistTcl-Tlist::reset" "normal use" {
+	 ObjList::reset
+	 PosList::reset
 	 set f [face]
 	 set p [Pos::position]
 	 Tlist::addObject 0 $f $p
 	 Tlist::addObject 1 $f $p
-	 Tlist::clearAllTrials
+	 Tlist::reset
 	 Tlist::stringify
 } "Tlist $OBJLIST $INT $INT
 0 Face .*
@@ -1565,7 +1577,7 @@ $POSLIST $INT $INT
 1
 $INT 0
 0 $BIT"
-test "TlistTcl-Tlist::clearAllTrials" "no error" {} $BLANK $no_test
+test "TlistTcl-Tlist::reset" "no error" {} $BLANK $no_test
 
 ### Tlist::loadObjidFileCmd ###
 test "TlistTcl-Tlist::loadObjidFile" "too few args" {
@@ -1577,8 +1589,8 @@ test "TlistTcl-Tlist::loadObjidFile" "too many args" {
 } {wrong \# args: should be "Tlist::loadObjidFile\
 		  objid_file num_lines \?offset\?"}
 test "TlistTcl-Tlist::loadObjidFile" "normal read with no offset" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 Tlist::loadObjidFile $::TEST_DIR/objid_file -1 0
 	 Tlist::stringify
 } "Tlist $OBJLIST $INT 0
@@ -1591,8 +1603,8 @@ $POSLIST $INT 0
 2 Trial 4 6 0  3 1  9 2  11 3  0  -1.*
 0 $BIT"
 test "TlistTcl-Tlist::loadObjidFile" "read with fixed # lines, and offset" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 Tlist::loadObjidFile $::TEST_DIR/objid_file 2 1
 	 Tlist::stringify
 } "Tlist $OBJLIST $INT 0
@@ -1604,8 +1616,8 @@ $POSLIST $INT 0
 1 Trial 2 4 0  5 1  0  -1.*
 0 \[01\]"
 test "TlistTcl-Tlist::loadObjidFile" "read empty file" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 Tlist::loadObjidFile $::TEST_DIR/empty_file -1 0
 	 Tlist::stringify
 } "Tlist $OBJLIST $INT 0
@@ -1629,20 +1641,20 @@ test "TlistTcl-Tlist::makeSummaryTrial" "too many args" {
 	 Tlist::makeSummaryTrial 2 3 4 5 6 7
 } {^wrong \# args: should be "Tlist::makeSummaryTrial trialid num_cols scale \?xstep\? \?ystep\?"$}
 test "TlistTcl-Tlist::makeSummaryTrial" "normal use" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 Face::loadFaces $::TEST_DIR/faces_file
 	 Tlist::makeSummaryTrial 0 5 1.0 2.0 3.0
 } {^0$}
 test "TlistTcl-Tlist::makeSummaryTrial" "error on bad trialid" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 Face::loadFaces $::TEST_DIR/faces_file
 	 Tlist::makeSummaryTrial -1 5 1.0 2.0 3.0
 } {^Tlist::makeSummaryTrial: invalid trial id$}
 test "TlistTcl-Tlist::makeSummaryTrial" "error on bad num_cols" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 Face::loadFaces $::TEST_DIR/faces_file
 	 Tlist::makeSummaryTrial 0 -1 1.0 2.0 3.0
 } {^Tlist::makeSummaryTrial: num_cols must be a positive integer$}
@@ -1655,8 +1667,8 @@ test "TlistTcl-Tlist::makeSingles" "too many args" {
     Tlist::makeSingles j u
 } {wrong \# args: should be "Tlist::makeSingles posid"}
 test "TlistTcl-Tlist::makeSingles" "normal use with several GrObj's" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 face; face; face;
 	 set p [Pos::position]
 	 Tlist::makeSingles $p
@@ -1675,8 +1687,8 @@ $INT 3
 2 Trial 1 2 0  0  0.*
 0 $BIT"
 test "TlistTcl-Tlist::makeSingles" "normal use with empty ObjList" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 set p [Pos::position]
 	 Tlist::makeSingles $p
 	 Tlist::stringify
@@ -1688,8 +1700,8 @@ $POSLIST $INT 1
 $INT 0
 0 $BIT"
 test "TlistTcl-Tlist::makeSingles" "error on bad posid" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 Tlist::makeSingles 0
 } {Tlist::makeSingles: posid out of range}
 
@@ -1701,8 +1713,8 @@ test "TlistTcl-Tlist::makePairs" "too many args" {
     Tlist::makePairs j u n
 } {wrong \# args: should be "Tlist::makePairs posid1 posid2"}
 test "TlistTcl-Tlist::makePairs" "normal use on two GrObj's" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 face; face;
 	 set p1 [Pos::position]
 	 set p2 [Pos::position]
@@ -1723,8 +1735,8 @@ $INT 4
 3 Trial 2 1 0  1 1  0  1.*
 0 $BIT"
 test "TlistTcl-Tlist::makePairs" "normal use with empty ObjList" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 set p1 [Pos::position]
 	 set p2 [Pos::position]
 	 Tlist::makePairs $p1 $p2
@@ -1738,8 +1750,8 @@ $POSLIST $INT 2
 $INT 0
 0 $BIT"
 test "TlistTcl-Tlist::makePairs" "error on bad posid" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 Tlist::makePairs 0 1
 } {Tlist::makePairs: posid out of range}
 
@@ -1751,36 +1763,36 @@ test "TlistTcl-Tlist::makeTriads" "too many args" {
     Tlist::makeTriads j u n k
 } {wrong \# args: should be "Tlist::makeTriads posid1 posid2 posid3"}
 test "TlistTcl-Tlist::makeTriads" "normal use on three GrObj's" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 face; face; face;
 	 set p1 [Pos::position]
 	 set p2 [Pos::position]
 	 set p3 [Pos::position]
 	 Tlist::makeTriads $p1 $p2 $p3
-	 Tlist::numTrials
+	 Tlist::count
 } {^18$}
 test "TlistTcl-Tlist::makeTriads" "normal use on two GrObj's" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 face; face;
 	 set p1 [Pos::position]
 	 set p2 [Pos::position]
 	 set p3 [Pos::position]
 	 Tlist::makeTriads $p1 $p2 $p3
-	 Tlist::numTrials
+	 Tlist::count
 } {^0$}
 test "TlistTcl-Tlist::makeTriads" "normal use on empty ObjList" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 set p1 [Pos::position]
 	 Tlist::makeTriads $p1 $p1 $p1
-	 Tlist::numTrials
+	 Tlist::count
 } {^0$}
 test "TlistTcl-Tlist::makeTriads" "check that Tlist is cleared first" {
 	 # Put some random stuff in the Tlist first
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 set f [face]
 	 set p [Pos::position]
 	 Tlist::addObject 0 $f $p
@@ -1788,11 +1800,11 @@ test "TlistTcl-Tlist::makeTriads" "check that Tlist is cleared first" {
 	 # Now, this should clear the Tlist before it does anything else, and since
 	 # there aren't enough GrObj's for triads, it should do nothing else.
 	 Tlist::makeTriads $p $p $p
-	 Tlist::numTrials
+	 Tlist::count
 } {^0$}
 test "TlistTcl-Tlist::makeTriads" "error on bad posid" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 Tlist::makeTriads 0 1 2
 } {Tlist::makeTriads: posid out of range}
 
@@ -1817,9 +1829,9 @@ test "TlistTcl-Tlist::stringify" "too many args" {
     Tlist::stringify junk
 } {wrong \# args: should be "Tlist::stringify"}
 test "TlistTcl-Tlist::stringify" "normal use with everything empty" {
-	 resetObjList
-	 resetPosList
-	 Tlist::clearAllTrials
+	 ObjList::reset
+	 PosList::reset
+	 Tlist::reset
 	 Tlist::stringify
 } "Tlist $OBJLIST $INT 0
 0
@@ -1837,24 +1849,455 @@ test "TlistTcl-Tlist::destringify" "too many args" {
     Tlist::destringify j u
 } {wrong \# args: should be "Tlist::destringify string"}
 test "TlistTcl-Tlist::destringify" "write, read, write and compare" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 face; face;
 	 set p1 [Pos::position]
 	 set p2 [Pos::position]
 	 Tlist::makePairs $p1 $p2
 	 set str [Tlist::stringify]
-	 resetObjList
-	 resetPosList
-	 Tlist::clearAllTrials
+	 ObjList::reset
+	 PosList::reset
+	 Tlist::reset
 	 Tlist::destringify $str
 	 set str2 [Tlist::stringify]
-	 expr [objCount] == 2 && [posCount] == 2 \
+	 expr [ObjList::count] == 2 && [PosList::count] == 2 \
 				&& [string compare $str $str2] == 0
 } {^1$}
 test "TlistTcl-Tlist::destringify" "error on junk input" {
 	 Tlist::destringify "what a bunch of hogwash this is"
 } {Tlist::destringify: InputError: Tlist}
+
+##############################################################################
+###
+### KbdRhTcl
+###
+##############################################################################
+
+### RhList::countCmd ###
+test "KbdRhTcl-KbdRh::countCmd" "too many args" {
+	 RhList::count junk
+} {^wrong \# args: should be "RhList::count"$}
+test "KbdRhTcl-KbdRh::countCmd" "normal use on empty list" {
+	 RhList::reset
+	 RhList::count
+} {^0$}
+test "KbdRhTcl-KbdRh::countCmd" "normal use on filled list" {
+	 RhList::reset
+	 KbdRh::kbdResponseHdlr
+	 KbdRh::kbdResponseHdlr
+	 RhList::count
+} {^2$}
+
+### RhList::resetCmd ###
+test "KbdRhTcl-KbdRh::resetCmd" "too many args" {
+	 RhList::reset junk
+} {^wrong \# args: should be "RhList::reset"$}
+
+### KbdRh::kbdResponseHdlrCmd ###
+test "KbdRhTcl-KbdRh::kbdResponseHdlr" "too many args" {
+    KbdRh::kbdResponseHdlr junk
+} {^wrong \# args: should be "KbdRh::kbdResponseHdlr"$}
+test "KbdRhTcl-KbdRh::kbdResponseHdlr" "normal use" {
+	 catch {KbdRh::kbdResponseHdlr}
+} {^0$}
+
+### KbdRh::useFeedbackCmd ###
+RhList::reset
+set rhid [KbdRh::kbdResponseHdlr]
+test "KbdRhTcl-KbdRh::useFeedback" "too few args" {
+	 KbdRh::useFeedback
+} {^wrong \# args: should be "KbdRh::useFeedback item_id \?new_value\?"$}
+test "KbdRhTcl-KbdRh::useFeedback" "too many args" {
+	 KbdRh::useFeedback junk junk junk
+} {^wrong \# args: should be "KbdRh::useFeedback item_id \?new_value\?"$}
+test "KbdRhTcl-KbdRh::useFeedback" "normal use" {
+	 KbdRh::useFeedback $::rhid true
+	 KbdRh::useFeedback $::rhid
+} {^1$}
+test "KbdRhTcl-KbdRh::useFeedback" "normal use" {
+	 KbdRh::useFeedback $::rhid yes
+	 KbdRh::useFeedback $::rhid
+} {^1$}
+test "KbdRhTcl-KbdRh::useFeedback" "normal use" {
+	 KbdRh::useFeedback $::rhid 1
+	 KbdRh::useFeedback $::rhid
+} {^1$}
+test "KbdRhTcl-KbdRh::useFeedback" "normal use" {
+	 KbdRh::useFeedback $::rhid -1.5
+	 KbdRh::useFeedback $::rhid
+} {^1$}
+test "KbdRhTcl-KbdRh::useFeedback" "normal use" {
+	 KbdRh::useFeedback $::rhid false
+	 KbdRh::useFeedback $::rhid
+} {^0$}
+test "KbdRhTcl-KbdRh::useFeedback" "normal use" {
+	 KbdRh::useFeedback $::rhid no
+	 KbdRh::useFeedback $::rhid
+} {^0$}
+test "KbdRhTcl-KbdRh::useFeedback" "normal use" {
+	 KbdRh::useFeedback $::rhid 0
+	 KbdRh::useFeedback $::rhid
+} {^0$}
+test "KbdRhTcl-KbdRh::useFeedback" "error on non-boolean input" {
+	 KbdRh::useFeedback $::rhid FLASE
+} {^expected boolean value but got "FLASE"$}
+test "KbdRhTcl-KbdRh::useFeedback" "error on bad rhid" {
+	 KbdRh::useFeedback -1
+} {^KbdRh::useFeedback: invalid response handler id$}
+
+### KbdRh::keyRespPairs ###
+test "KbdRhTcl-KbdRh::keyRespPairs" "too few args" {
+	 KbdRh::keyRespPairs
+} {^wrong \# args: should be "KbdRh::keyRespPairs item_id \?new_value\?"$}
+test "KbdRhTcl-KbdRh::keyRespPairs" "too many args" {
+	 KbdRh::keyRespPairs junk junk junk
+} {^wrong \# args: should be "KbdRh::keyRespPairs item_id \?new_value\?"$}
+test "KbdRhTcl-KbdRh::keyRespPairs" "error on bad rhid" {
+	 KbdRh::keyRespPairs -1
+} {^KbdRh::keyRespPairs: invalid response handler id$}
+test "KbdRhTcl-KbdRh::keyRespPairs" "normal use" {
+	 KbdRh::keyRespPairs $::rhid { {{^[aA]$} 0} {{^[lL]$} 1} }
+	 KbdRh::keyRespPairs $::rhid
+} {^ \{\{\^\[aA\]\$\} 0\} \{\{\^\[lL\]\$\} 1\} $}
+
+
+### RhList::stringifyCmd ###
+### RhList::destringifyCmd ###
+test "RhListTcl-RhList::stringify" "too many args" {
+	 RhList::stringify junk
+} {^wrong \# args: should be "RhList::stringify"$}
+test "RhListTcl-RhList::destringify" "too few args" {
+	 RhList::destringify
+} {^wrong \# args: should be "RhList::destringify string"$}
+test "RhListTcl-RhList::destringify" "too many args" {
+	 RhList::destringify junk junk
+} {^wrong \# args: should be "RhList::destringify string"$}
+test "RhListTcl-RhList::stringify" "write, read, write and compare" {
+	 RhList::reset
+	 KbdRh::kbdResponseHdlr
+	 KbdRh::kbdResponseHdlr
+	 set str1 [RhList::stringify]
+	 RhList::reset
+	 RhList::destringify $str1
+	 set str2 [RhList::stringify]
+	 string equal $str1 $str2
+} {^1$}
+
+
+##############################################################################
+###
+### ThTcl
+###
+##############################################################################
+
+### ThList::countCmd ###
+test "ThTcl-SimpleTh::countCmd" "too many args" {
+	 ThList::count junk
+} {^wrong \# args: should be "ThList::count"$}
+test "ThTcl-SimpleTh::countCmd" "normal use on empty list" {
+	 ThList::reset
+	 ThList::count
+} {^0$}
+test "ThTcl-SimpleTh::countCmd" "normal use on filled list" {
+	 ThList::reset
+	 SimpleTh::timingHandler
+	 SimpleTh::timingHandler
+	 ThList::count
+} {^2$}
+
+### ThList::resetCmd ###
+test "ThTcl-SimpleTh::resetCmd" "too many args" {
+	 ThList::reset junk
+} {^wrong \# args: should be "ThList::reset"$}
+
+### SimpleTh::timingHandlerCmd ###
+test "ThTcl-SimpleTh::timingHandler" "too many args" {
+    SimpleTh::timingHandler junk
+} {^wrong \# args: should be "SimpleTh::timingHandler"$}
+test "ThTcl-SimpleTh::timingHandler" "normal use" {
+	 catch {SimpleTh::timingHandler}
+} {^0$}
+
+### ThList::stringifyCmd ###
+### ThList::destringifyCmd ###
+test "ThTcl-ThList::stringify" "too many args" {
+	 ThList::stringify junk
+} {^wrong \# args: should be "ThList::stringify"$}
+test "ThTcl-ThList::destringify" "too few args" {
+	 ThList::destringify
+} {^wrong \# args: should be "ThList::destringify string"$}
+test "ThTcl-ThList::destringify" "too many args" {
+	 ThList::destringify junk junk
+} {^wrong \# args: should be "ThList::destringify string"$}
+test "ThTcl-ThList::stringify" "write, read, write and compare" {
+	 ThList::reset
+	 SimpleTh::timingHandler
+	 SimpleTh::timingHandler
+	 set str1 [ThList::stringify]
+	 ThList::reset
+	 ThList::destringify $str1
+	 set str2 [ThList::stringify]
+	 string equal $str1 $str2
+} {^1$}
+
+
+##############################################################################
+###
+### BlockTcl
+###
+##############################################################################
+
+### Block::currentTrialCmd ###
+test "BlockTcl-Block::currentTrial" "too few args" {
+	 Block::currentTrial
+} {wrong \# args: should be "Block::currentTrial item_id"}
+test "BlockTcl-Block::currentTrial" "too many args" {
+	 Block::currentTrial 0 junk
+} {wrong \# args: should be "Block::currentTrial item_id"}
+
+if {$test_serialize} {
+test "BlockTcl-Block::currentTrial" "normal use on incomplete expt" {
+	 Expt::read $::TEST_DIR/expt_in_progress_file
+	 Block::currentTrial 0
+} {^5$}
+test "BlockTcl-Block::currentTrial" "normal use on complete expt" {
+	 Expt::read $::TEST_DIR/completed_expt_file
+	 Block::currentTrial 0
+} {\-1}
+}
+
+test "BlockTcl-Block::currentTrial" "normal use on empty expt" {
+	 # Make an empty expt by clearing ObjList, then Tlist::makeSingles
+	 ObjList::reset
+	 PosList::reset
+	 set p [Pos::position]
+	 Tlist::makeSingles $p
+	 Block::init 0 1 0
+	 Block::currentTrial 0
+} {^\-1$}
+test "BlockTcl-Block::currentTrial" "no error" {} $BLANK $no_test
+
+### Block::currentTrialTypeCmd ###
+test "BlockTcl-Block::currentTrialType" "too few args" {
+    Block::currentTrialType 
+} {wrong \# args: should be "Block::currentTrialType item_id"}
+test "BlockTcl-Block::currentTrialType" "too many args" {
+    Block::currentTrialType 0 junk
+} {wrong \# args: should be "Block::currentTrialType item_id"}
+
+if {$test_serialize} {
+test "BlockTcl-Block::currentTrialType" "normal use on incomplete expt" {
+	 Expt::read $::TEST_DIR/expt_in_progress_file
+	 Block::currentTrialType 0
+} {^1$}
+test "BlockTcl-Block::currentTrialType" "normal use on completed expt" {
+	 Expt::read $::TEST_DIR/completed_expt_file
+	 # This should be a no-op
+	 Block::currentTrialType 0
+} {^-1$}
+}
+
+test "BlockTcl-Block::currentTrialType" "normal use on empty expt" {
+	 ObjList::reset
+	 PosList::reset
+	 set p [Pos::position]
+	 Tlist::makeSingles $p
+	 Block::init 0 1 0
+	 # This should be a no-op
+	 Block::currentTrialType 0
+} {^-1$}
+test "BlockTcl-Block::currentTrialType" "error" {} $BLANK $no_test
+
+### Block::isCompleteCmd ###
+test "BlockTcl-Block::isComplete" "too few args" {
+    Block::isComplete 
+} {wrong \# args: should be "Block::isComplete item_id"}
+test "BlockTcl-Block::isComplete" "too many args" {
+    Block::isComplete 0 junk
+} {wrong \# args: should be "Block::isComplete item_id"}
+
+if {$test_serialize} {
+test "BlockTcl-Block::isComplete" "normal use on incomplete expt" {
+	 Expt::read $::TEST_DIR/expt_in_progress_file
+	 Block::isComplete 0
+} {^0$}
+test "BlockTcl-Block::isComplete" "normal use on complete expt" {
+	 Expt::read $::TEST_DIR/completed_expt_file
+	 Block::isComplete 0
+} {^1$}
+}
+
+test "BlockTcl-Block::isComplete" "normal use on empty expt" {
+	 # An empty expt is complete (all of its 0 trials are finished)
+	 ObjList::reset
+	 PosList::reset
+	 set p [Pos::position]
+	 Tlist::makeSingles $p
+	 Block::init 0 1 0
+	 Block::isComplete 0
+} {^1$}
+test "BlockTcl-Block::isComplete" "error" {} $BLANK $no_test
+
+### Block::numCompletedCmd ###
+test "BlockTcl-Block::numCompleted" "too few args" {
+	 Block::numCompleted
+} {wrong \# args: should be "Block::numCompleted item_id"}
+test "BlockTcl-Block::numCompleted" "too many args" {
+	 Block::numCompleted 0 junk
+} {wrong \# args: should be "Block::numCompleted item_id"}
+
+if {$test_serialize} {
+test "BlockTcl-Block::numCompleted" "normal use on incomplete expt" {
+	 Expt::read $::TEST_DIR/expt_in_progress_file
+	 Block::numCompleted 0
+} {^4$}
+test "BlockTcl-Block::numCompleted" "normal use on complete expt" {
+	 Expt::read $::TEST_DIR/completed_expt_file
+	 Block::numCompleted 0
+} {^100$}
+}
+
+test "BlockTcl-Block::numCompleted" "use on empty expt" {
+	 # Make an empty expt by clearing ObjList, then Tlist::makeSingles
+	 ObjList::reset
+	 PosList::reset
+	 set p [Pos::position]
+	 Tlist::makeSingles $p
+	 Block::init 0 1 0
+	 Block::numCompleted 0
+} {^0$}
+test "BlockTcl-Block::numCompleted" "no error" {} $BLANK $no_test
+
+### Block::numTrialsCmd ###
+test "BlockTcl-Block::numTrials" "too few args" {
+	 Block::numTrials 
+} {wrong \# args: should be "Block::numTrials item_id"}
+test "BlockTcl-Block::numTrials" "too many args" {
+	 Block::numTrials 0 junk
+} {wrong \# args: should be "Block::numTrials item_id"}
+
+if {$test_serialize} {
+test "BlockTcl-Block::numTrials" "normal use on incomplete expt" {
+	 Expt::read $::TEST_DIR/expt_in_progress_file
+	 Block::numTrials	0 
+} {^10$}
+test "BlockTcl-Block::numTrials" "normal use on complete expt" {
+	 Expt::read $::TEST_DIR/completed_expt_file
+	 Block::numTrials	0
+} {^100$}
+}
+
+test "BlockTcl-Block::numTrials" "use on empty expt" {
+	 # Make an empty expt by clearing ObjList, then Tlist::makeSingles
+	 ObjList::reset
+	 PosList::reset
+	 set p [Pos::position]
+	 Tlist::makeSingles $p
+	 Block::init 0 1 0
+	 Block::numTrials	0 
+} {^0$}
+test "BlockTcl-Block::numTrials" "no error" {} $BLANK $no_test
+
+### Block::prevResponseCmd ###
+test "BlockTcl-Block::prevResponse" "too few args" {
+	 Block::prevResponse 
+} {wrong \# args: should be "Block::prevResponse item_id"}
+test "BlockTcl-Block::prevResponse" "too many args" {
+	 Block::prevResponse 0 junk
+} {wrong \# args: should be "Block::prevResponse item_id"}
+
+if {$test_serialize} {
+test "BlockTcl-Block::prevResponse" "normal use on incomplete expt" {
+	 Expt::read $::TEST_DIR/expt_in_progress_file
+	 Block::prevResponse 0
+} {^0$}
+test "BlockTcl-Block::prevResponse" "normal use on complete expt" {
+	 Expt::read $::TEST_DIR/completed_expt_file
+	 Block::prevResponse 0
+} {^1$}
+}
+
+test "BlockTcl-Block::prevResponse" "normal use on empty expt" {
+	 # Make an empty expt by clearing ObjList, then Tlist::makeSingles
+	 ObjList::reset
+	 PosList::reset
+	 set p [Pos::position]
+	 Tlist::makeSingles $p
+	 Block::init 0 1 0
+	 Block::prevResponse 0
+} {^\-1$}
+test "BlockTcl-Block::prevResponse" "error" {} $BLANK $no_test
+
+### Block::trialDescriptionCmd ###
+test "BlockTcl-Block::trialDescription" "too few args" {
+    Block::trialDescription 
+} {wrong \# args: should be "Block::trialDescription item_id"}
+test "BlockTcl-Block::trialDescription" "too many args" {
+    Block::trialDescription 0 junk
+} {wrong \# args: should be "Block::trialDescription item_id"}
+
+if {$test_serialize} {
+test "BlockTcl-Block::trialDescription" "normal use on incomplete expt" {
+	 Expt::read $::TEST_DIR/expt_in_progress_file
+	 Block::trialDescription 0
+} {trial id == 5, trial type == 1, objs == 5, categories == 1,\
+		  completed 4 of 10}
+test "BlockTcl-Block::trialDescription" "normal use on complete expt" {
+	 Expt::read $::TEST_DIR/completed_expt_file
+	 Block::trialDescription 0
+} {^expt is complete$}
+}
+
+test "BlockTcl-Block::trialDescription" "normal use on empty expt" {
+	 ObjList::reset
+	 PosList::reset
+	 set p [Pos::position]
+	 Tlist::makeSingles $p
+	 Block::init 0 1 0
+	 Block::trialDescription 0
+} {^expt is complete$}
+test "BlockTcl-Block::trialDescription" "error" {} $BLANK $no_test
+
+### Block::verboseCmd ###
+test "BlockTcl-Block::verbose" "too few args" {
+	 Block::verbose 
+} {^wrong \# args: should be "Block::verbose item_id \?new_value\?"$}
+test "BlockTcl-Block::verbose" "too many args" {
+	 Block::verbose junk junk junk
+} {^wrong \# args: should be "Block::verbose item_id \?new_value\?"$}
+test "BlockTcl-Block::verbose" "normal use" {
+	 Block::verbose 0 true
+	 Block::verbose 0
+} {^1$}
+test "BlockTcl-Block::verbose" "normal use" {
+	 Block::verbose 0 yes
+	 Block::verbose 0
+} {^1$}
+test "BlockTcl-Block::verbose" "normal use" {
+	 Block::verbose 0 1
+	 Block::verbose 0
+} {^1$}
+test "BlockTcl-Block::verbose" "normal use" {
+	 Block::verbose 0 -1.5
+	 Block::verbose 0
+} {^1$}
+test "BlockTcl-Block::verbose" "normal use" {
+	 Block::verbose 0 false
+	 Block::verbose 0
+} {^0$}
+test "BlockTcl-Block::verbose" "normal use" {
+	 Block::verbose 0 no
+	 Block::verbose 0
+} {^0$}
+test "BlockTcl-Block::verbose" "normal use" {
+	 Block::verbose 0 0
+	 Block::verbose 0
+} {^0$}
+test "BlockTcl-Block::verbose" "error on non-boolean input" {
+	 Block::verbose 0 FLASE
+} {^expected boolean value but got "FLASE"$}
+
 
 ##############################################################################
 ###
@@ -1882,6 +2325,7 @@ test "ExptTcl-Expt::abortTrial" "normal use on incomplete expt" {
 	 Expt::beginTrial
 	 Expt::recordResponse 5
 	 set val [Expt::prevResponse]
+	 puts "val == $val"
 	 Expt::abortTrial
 	 Expt::beginTrial
 	 expr $val == 5 && [Expt::prevResponse] == $val
@@ -1893,11 +2337,11 @@ test "ExptTcl-Expt::abortTrial" "normal use on completed expt" {
 } {^0$} $Expt::haveTest
 test "ExptTcl-Expt::abortTrial" "normal use on empty expt" {
 	 # abortTrial on empty Expt is a no-op
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 set p [Pos::position]
 	 Tlist::makeSingles $p
-	 Expt::init 1 0
+	 Block::init 0 1 0
 	 catch {Expt::abortTrial}
 } {^0$} $Expt::haveTest
 test "ExptTcl-Expt::abortTrial" "error" {} $BLANK $no_test
@@ -1931,11 +2375,11 @@ test "ExptTcl-Expt::beginTrial" "normal use on completed expt" {
 	 catch {Expt::beginTrial}
 } {^0$} $Expt::haveTest
 test "ExptTcl-Expt::beginTrial" "normal use on empty expt" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 set p [Pos::position]
 	 Tlist::makeSingles $p
-	 Expt::init 1 0
+	 Block::init 0 1 0
 	 # This should be a no-op
 	 catch {Expt::beginTrial}
 } {^0$} $Expt::haveTest
@@ -1943,185 +2387,12 @@ test "ExptTcl-Expt::beginTrial" "normal use on empty expt" {
 
 test "ExptTcl-Expt::beginTrial" "error" {} $BLANK $no_test
 
-### Expt::currentTrialTypeCmd ###
-test "ExptTcl-Expt::currentTrialType" "args" {
-    Expt::currentTrialType junk
-} {wrong \# args: should be "Expt::currentTrialType"}
-
-if {$test_serialize} {
-test "ExptTcl-Expt::currentTrialType" "normal use on incomplete expt" {
-	 Expt::read $::TEST_DIR/expt_in_progress_file
-	 Expt::currentTrialType
-} {^1$}
-test "ExptTcl-Expt::currentTrialType" "normal use on completed expt" {
-	 Expt::read $::TEST_DIR/completed_expt_file
-	 # This should be a no-op
-	 Expt::currentTrialType
-} {^-1$}
-}
-
-test "ExptTcl-Expt::currentTrialType" "normal use on empty expt" {
-	 resetObjList
-	 resetPosList
-	 set p [Pos::position]
-	 Tlist::makeSingles $p
-	 Expt::init 1 0
-	 # This should be a no-op
-	 Expt::currentTrialType
-} {^-1$}
-test "ExptTcl-Expt::currentTrialType" "error" {} $BLANK $no_test
-
-### currentTrialCmd ###
-test "ExptTcl-Expt::currentTrial" "too many args" {
-	 Expt::currentTrial junk
-} {wrong \# args: should be "Expt::currentTrial"}
-
-if {$test_serialize} {
-test "ExptTcl-Expt::currentTrial" "normal use on incomplete expt" {
-	 Expt::read $::TEST_DIR/expt_in_progress_file
-	 Expt::currentTrial
-} {^5$}
-test "ExptTcl-Expt::currentTrial" "normal use on complete expt" {
-	 Expt::read $::TEST_DIR/completed_expt_file
-	 Expt::currentTrial
-} {\-1}
-}
-
-test "ExptTcl-Expt::currentTrial" "normal use on empty expt" {
-	 # Make an empty expt by clearing ObjList, then Tlist::makeSingles
-	 resetObjList
-	 resetPosList
-	 set p [Pos::position]
-	 Tlist::makeSingles $p
-	 Expt::init 1 0
-	 Expt::currentTrial
-} {^\-1$}
-test "ExptTcl-Expt::currentTrial" "no error" {} $BLANK $no_test
-
-### Expt::initCmd ###
-test "ExptTcl-Expt::init" "too few args" {
-    Expt::init
-} {wrong \# args: should be "Expt::init repeat rand_seed"}
-test "ExptTcl-Expt::init" "too many args" {
-    Expt::init j u n
-} {wrong \# args: should be "Expt::init repeat rand_seed"}
-test "ExptTcl-Expt::init" "normal use" {} {^$}
-test "ExptTcl-Expt::init" "error" {} {^$}
-
-### Expt::isCompleteCmd ###
-test "ExptTcl-Expt::isComplete" "args" {
-    Expt::isComplete junk
-} {wrong \# args: should be "Expt::isComplete"}
-
-if {$test_serialize} {
-test "ExptTcl-Expt::isComplete" "normal use on incomplete expt" {
-	 Expt::read $::TEST_DIR/expt_in_progress_file
-	 Expt::isComplete
-} {^0$}
-test "ExptTcl-Expt::isComplete" "normal use on complete expt" {
-	 Expt::read $::TEST_DIR/completed_expt_file
-	 Expt::isComplete
-} {^1$}
-}
-
-test "ExptTcl-Expt::isComplete" "normal use on empty expt" {
-	 # An empty expt is complete (all of its 0 trials are finished)
-	 resetObjList
-	 resetPosList
-	 set p [Pos::position]
-	 Tlist::makeSingles $p
-	 Expt::init 1 0
-	 Expt::isComplete
-} {^1$}
-test "ExptTcl-Expt::isComplete" "error" {} $BLANK $no_test
-
-### numCompletedCmd ###
-test "ExptTcl-Expt::numCompleted" "too many args" {
-	 Expt::numCompleted junk
-} {wrong \# args: should be "Expt::numCompleted"}
-
-if {$test_serialize} {
-test "ExptTcl-Expt::numCompleted" "normal use on incomplete expt" {
-	 Expt::read $::TEST_DIR/expt_in_progress_file
-	 Expt::numCompleted
-} {^4$}
-test "ExptTcl-Expt::numCompleted" "normal use on complete expt" {
-	 Expt::read $::TEST_DIR/completed_expt_file
-	 Expt::numCompleted
-} {^100$}
-}
-
-test "ExptTcl-Expt::numCompleted" "use on empty expt" {
-	 # Make an empty expt by clearing ObjList, then Tlist::makeSingles
-	 resetObjList
-	 resetPosList
-	 set p [Pos::position]
-	 Tlist::makeSingles $p
-	 Expt::init 1 0
-	 Expt::numCompleted
-} {^0$}
-test "ExptTcl-Expt::numCompleted" "no error" {} $BLANK $no_test
-
-### numTrialsCmd ###
-test "ExptTcl-Expt::numTrials" "too many args" {
-	 Expt::numTrials junk
-} {wrong \# args: should be "Expt::numTrials"}
-
-if {$test_serialize} {
-test "ExptTcl-Expt::numTrials" "normal use on incomplete expt" {
-	 Expt::read $::TEST_DIR/expt_in_progress_file
-	 Expt::numTrials	 
-} {^10$}
-test "ExptTcl-Expt::numTrials" "normal use on complete expt" {
-	 Expt::read $::TEST_DIR/completed_expt_file
-	 Expt::numTrials	 
-} {^100$}
-}
-
-test "ExptTcl-Expt::numTrials" "use on empty expt" {
-	 # Make an empty expt by clearing ObjList, then Tlist::makeSingles
-	 resetObjList
-	 resetPosList
-	 set p [Pos::position]
-	 Tlist::makeSingles $p
-	 Expt::init 1 0
-	 Expt::numTrials	 
-} {^0$}
-test "ExptTcl-Expt::numTrials" "no error" {} $BLANK $no_test
-
 ### Expt::pauseCmd ###
 test "ExptTcl-Expt::pause" "too many args" {
 	 Expt::pause junk
 } {^wrong \# args: should be "Expt::pause"$}
 test "ExptTcl-Expt::pause" "normal use" {} {^$}
 test "ExptTcl-Expt::pause" "error" {} $BLANK $no_test
-
-### prevResponseCmd ###
-test "ExptTcl-Expt::prevResponse" "too many args" {
-	 Expt::prevResponse junk
-} {wrong \# args: should be "Expt::prevResponse"}
-
-if {$test_serialize} {
-test "ExptTcl-Expt::prevResponse" "normal use on incomplete expt" {
-	 Expt::read $::TEST_DIR/expt_in_progress_file
-	 Expt::prevResponse
-} {^0$}
-test "ExptTcl-Expt::prevResponse" "normal use on complete expt" {
-	 Expt::read $::TEST_DIR/completed_expt_file
-	 Expt::prevResponse
-} {^1$}
-}
-
-test "ExptTcl-Expt::prevResponse" "normal use on empty expt" {
-	 # Make an empty expt by clearing ObjList, then Tlist::makeSingles
-	 resetObjList
-	 resetPosList
-	 set p [Pos::position]
-	 Tlist::makeSingles $p
-	 Expt::init 1 0
-	 Expt::prevResponse
-} {^\-1$}
-test "ExptTcl-Expt::prevResponse" "error" {} $BLANK $no_test
 
 ### Expt::readCmd ###
 test "ExptTcl-Expt::read" "too few args" {
@@ -2135,8 +2406,8 @@ if {$test_serialize} {
 test "ExptTcl-Expt::read" "normal read of completed expt" {
 	 Expt::read $::TEST_DIR/completed_expt_file
 	 expr [Expt::isComplete] == 1 && \
-				[objCount] == 10 && \
-				[posCount] == 1 && \
+				[ObjList::count] == 10 && \
+				[PosList::count] == 1 && \
 				[Expt::numTrials] == 100 && \
 				[Expt::numCompleted] == 100 && \
 				[Expt::prevResponse] == 1
@@ -2174,11 +2445,11 @@ test "ExptTcl-Expt::recordResponse" "record response on complete expt" {
 }
 
 test "ExptTcl-Expt::recordResponse" "record response on empty expt" {
-	 resetObjList
-	 resetPosList
+	 ObjList::reset
+	 PosList::reset
 	 set p [Pos::position]
 	 Tlist::makeSingles $p
-	 Expt::init 1 0
+	 Block::init 0 1 0
 	 catch {Expt::recordResponse 5}
 } {^0$} $Expt::haveTest
 test "ExptTcl-Expt::recordResponse" "error" {} $BLANK $no_test
@@ -2190,111 +2461,12 @@ test "ExptTcl-Expt::stop" "too many args" {
 test "ExptTcl-Expt::stop" "normal use" {} {^$}
 test "ExptTcl-Expt::stop" "error" {} $BLANK $no_test
 
-### Expt::trialDescriptionCmd ###
-test "ExptTcl-Expt::trialDescription" "too many args" {
-    Expt::trialDescription junk
-} {wrong \# args: should be "Expt::trialDescription"}
-
-if {$test_serialize} {
-test "ExptTcl-Expt::trialDescription" "normal use on incomplete expt" {
-	 Expt::read $::TEST_DIR/expt_in_progress_file
-	 Expt::trialDescription
-} {trial id == 5, trial type == 1, objs == 5, categories == 1,\
-		  completed 4 of 10}
-test "ExptTcl-Expt::trialDescription" "normal use on complete expt" {
-	 Expt::read $::TEST_DIR/completed_expt_file
-	 Expt::trialDescription
-} {^expt is complete$}
-}
-
-test "ExptTcl-Expt::trialDescription" "normal use on empty expt" {
-	 resetObjList
-	 resetPosList
-	 set p [Pos::position]
-	 Tlist::makeSingles $p
-	 Expt::init 1 0
-	 Expt::trialDescription
-} {^expt is complete$}
-test "ExptTcl-Expt::trialDescription" "error" {} $BLANK $no_test
-
 ### Expt::undrawTrialCmd ###
 test "ExptTcl-Expt::undrawTrial" "too many args" {
 	 Expt::undrawTrial junk
 } {^wrong \# args: should be "Expt::undrawTrial"$} $Expt::haveTest
 test "ExptTcl-Expt::undrawTrial" "normal use" {} {^$} $Expt::haveTest
 test "ExptTcl-Expt::undrawTrial" "error" {} $BLANK $no_test
-
-### Expt::useFeedbackCmd ###
-test "ExptTcl-Expt::useFeedback" "too many args" {
-	 Expt::useFeedback junk junk
-} {^wrong \# args: should be "Expt::useFeedback \?new_value\?"$}
-test "ExptTcl-Expt::useFeedback" "normal use" {
-	 Expt::useFeedback true
-	 Expt::useFeedback
-} {^1$}
-test "ExptTcl-Expt::useFeedback" "normal use" {
-	 Expt::useFeedback yes
-	 Expt::useFeedback
-} {^1$}
-test "ExptTcl-Expt::useFeedback" "normal use" {
-	 Expt::useFeedback 1
-	 Expt::useFeedback
-} {^1$}
-test "ExptTcl-Expt::useFeedback" "normal use" {
-	 Expt::useFeedback -1.5
-	 Expt::useFeedback
-} {^1$}
-test "ExptTcl-Expt::useFeedback" "normal use" {
-	 Expt::useFeedback false
-	 Expt::useFeedback
-} {^0$}
-test "ExptTcl-Expt::useFeedback" "normal use" {
-	 Expt::useFeedback no
-	 Expt::useFeedback
-} {^0$}
-test "ExptTcl-Expt::useFeedback" "normal use" {
-	 Expt::useFeedback 0
-	 Expt::useFeedback
-} {^0$}
-test "ExptTcl-Expt::useFeedback" "error on non-boolean input" {
-	 Expt::useFeedback FLASE
-} {^expected boolean value but got "FLASE"$}
-
-### Expt::verboseCmd ###
-test "ExptTcl-Expt::verbose" "too many args" {
-	 Expt::verbose junk junk
-} {^wrong \# args: should be "Expt::verbose \?new_value\?"$}
-test "ExptTcl-Expt::verbose" "normal use" {
-	 Expt::verbose true
-	 Expt::verbose
-} {^1$}
-test "ExptTcl-Expt::verbose" "normal use" {
-	 Expt::verbose yes
-	 Expt::verbose
-} {^1$}
-test "ExptTcl-Expt::verbose" "normal use" {
-	 Expt::verbose 1
-	 Expt::verbose
-} {^1$}
-test "ExptTcl-Expt::verbose" "normal use" {
-	 Expt::verbose -1.5
-	 Expt::verbose
-} {^1$}
-test "ExptTcl-Expt::verbose" "normal use" {
-	 Expt::verbose false
-	 Expt::verbose
-} {^0$}
-test "ExptTcl-Expt::verbose" "normal use" {
-	 Expt::verbose no
-	 Expt::verbose
-} {^0$}
-test "ExptTcl-Expt::verbose" "normal use" {
-	 Expt::verbose 0
-	 Expt::verbose
-} {^0$}
-test "ExptTcl-Expt::verbose" "error on non-boolean input" {
-	 Expt::verbose FLASE
-} {^expected boolean value but got "FLASE"$}
 
 ### Expt::writeCmd ###
 test "ExptTcl-Expt::write" "too few args" {
