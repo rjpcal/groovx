@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Tue Dec  1 08:00:00 1998 (as grobj.h)
-// written: Wed Mar 19 17:55:59 2003
+// written: Fri Apr  4 11:23:59 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -80,6 +80,7 @@ public:
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
+  /// Get GxShapeKit's fields.
   static const FieldMap& classFields();
 
   ///////////////////////////////////////////////////////////////////////

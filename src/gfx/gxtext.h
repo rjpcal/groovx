@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Jul  1 11:54:47 1999 (as gtext.h)
-// written: Wed Mar 19 17:55:59 2003
+// written: Fri Apr  4 11:24:31 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -64,6 +64,7 @@ public:
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
 
+  /// Get GxText's fields.
   static const FieldMap& classFields();
 
   /// Change the text string to \a text.
@@ -78,8 +79,10 @@ public:
   /// Get the current stroke width of the font.
   int getStrokeWidth() const;
 
+  /// Set the font used to render this text.
   void setFont(fstring name);
 
+  /// Get the name of the font used to render this text.
   fstring getFont() const;
 
 protected:

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Wed Nov 20 15:15:24 2002
-// written: Wed Mar 19 17:55:59 2003
+// written: Fri Apr  4 11:26:18 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -55,9 +55,6 @@ namespace Gfx
 
 class GxTransform : public GxNode, public FieldContainer
 {
-  //////////////
-  // creators //
-  //////////////
 protected:
   /// Default constructor.
   GxTransform();
@@ -74,10 +71,6 @@ public:
   virtual void writeTo(IO::Writer* writer) const;
 
 
-  ////////////
-  // fields //
-  ////////////
-
   /// The translation vector.
   GbVec3<double> translation;
 
@@ -91,22 +84,18 @@ protected:
   /// The angle of rotation in degrees.
   double itsRotationAngle;
 
+  /// The mode for computing the matrix transformation.
   int itsMtxMode;
 
+  /// The size of the "jack" drawn at the origin.
   int itsJackSize;
 
 public:
+  /// Get GxTransform's fields.
   static const FieldMap& classFields();
 
-  ///////////////
-  // accessors //
-  ///////////////
-
+  /// Get the associated coordinate transform matrix.
   const Gfx::Txform& getTxform() const;
-
-  /////////////
-  // actions //
-  /////////////
 
   /// Apply our transformation to the bbox.
   virtual void getBoundingCube(Gfx::Bbox& bbox) const;
