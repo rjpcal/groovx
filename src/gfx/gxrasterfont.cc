@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Nov 13 16:45:32 2002
-// written: Thu Nov 14 15:59:51 2002
+// written: Thu Nov 14 16:33:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,7 +68,7 @@ DOTRACE("GxRasterFont::Impl::pickXFont");
       const char* weight  = "medium"; // black, bold, demibold, light, medium, regular
       const char* slant   = "r"; // 'i', 'o', 'r'
       const char* width   = "normal"; // condensed, normal
-      const char* style   = ""; // could by '', 'ja', 'ko', 'medium', 'sans'
+      const char* style   = "*"; // could by '', 'ja', 'ko', 'medium', 'sans'
       fstring     pxlsize = "12";
       const char* ptsize  = "*";
       const char* resx    = "*"; // could be 72, 75, 100
@@ -201,24 +201,42 @@ DOTRACE("GxRasterFont::listBase");
 Gfx::Rect<double> GxRasterFont::sizeOf(const char* text,
                                        Gfx::Canvas& canvas) const
 {
+DOTRACE("GxRasterFont::sizeOf");
+
   int asc = 0;
   int desc = 0;
   int wid = 0;
 
-  while (*text != '\0')
+  dbgEvalNL(2, (void*)this);
+  dbgEvalNL(2, rep->fontInfo);
+
+  dbgEvalNL(2, (void*)rep->fontInfo->per_char);
+
+  if (rep->fontInfo->per_char == 0)
     {
-      XCharStruct& ch = rep->fontInfo->per_char[*text];
-
-      if (ch.ascent > asc)
-        asc = ch.ascent;
-
-      if (ch.descent > desc)
-        desc = ch.descent;
-
-      wid += ch.width;
-
-      ++text;
+      asc = rep->fontInfo->max_bounds.ascent;
+      desc = rep->fontInfo->max_bounds.descent;
+      wid = strlen(text) * rep->fontInfo->max_bounds.width;
     }
+  else
+    {
+      while (*text != '\0')
+        {
+          XCharStruct& ch = rep->fontInfo->per_char[*text];
+
+          if (ch.ascent > asc)
+            asc = ch.ascent;
+
+          if (ch.descent > desc)
+            desc = ch.descent;
+
+          wid += ch.width;
+
+          ++text;
+        }
+    }
+
+  dbgEval(2, asc); dbgEval(2, desc); dbgEvalNL(2, wid);
 
   Gfx::Rect<int> screen = canvas.screenFromWorld(Gfx::Rect<double>());
 
