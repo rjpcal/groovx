@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Thu Jul 19 11:46:42 2001
+// written: Thu Jul 19 13:24:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,9 +22,6 @@
 
 #include "util/error.h"
 
-#include <GL/gl.h>
-#include <GL/glu.h>
-
 #define DYNAMIC_TRACE_EXPR GrObj::tracer.status()
 #include "util/trace.h"
 #define LOCAL_ASSERT
@@ -36,7 +33,10 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-const IO::VersionId GrObjImpl::GROBJ_SERIAL_VERSION_ID;
+namespace
+{
+  const IO::VersionId GROBJ_SERIAL_VERSION_ID = 1;
+}
 
 
 ///////////////////////////////////////////////////////////////////////
@@ -51,12 +51,16 @@ GrObjImpl::GrObjImpl(GrObj* obj) :
   itsBB(this),
   itsScaler(),
   itsAligner(),
-  itsRenderer(),
-  itsUnRenderer()
+  itsRenderer()
 {};
 
 GrObjImpl::~GrObjImpl() {
 DOTRACE("GrObjImpl::~GrObjImpl");
+}
+
+IO::VersionId GrObjImpl::serialVersionId() const
+{
+  return GROBJ_SERIAL_VERSION_ID;
 }
 
 void GrObjImpl::readFrom(IO::Reader* reader) {
@@ -66,15 +70,23 @@ DOTRACE("GrObjImpl::readFrom");
 
   reader->readValue("GrObj::category", itsCategory);
 
-  int temp;
-  reader->readValue("GrObj::renderMode", temp);
-  itsRenderer.setMode(temp);
+  {
+    int temp;
+    reader->readValue("GrObj::renderMode", temp);
+    itsRenderer.setMode(temp);
+  }
 
-  dynamic_string filename;
-  reader->readValue("GrObj::cacheFilename", filename);
-  itsRenderer.setCacheFilename(filename);
+  {
+    dynamic_string filename;
+    reader->readValue("GrObj::cacheFilename", filename);
+    itsRenderer.setCacheFilename(filename);
+  }
 
-  reader->readValue("GrObj::unRenderMode", itsUnRenderer.itsMode);
+  {
+	 int temp;
+	 reader->readValue("GrObj::unRenderMode", temp);
+	 itsRenderer.setUnMode(temp);
+  }
 
   {
     bool val;
@@ -82,8 +94,11 @@ DOTRACE("GrObjImpl::readFrom");
     itsBB.setVisible(val);
   }
 
-  reader->readValue("GrObj::scalingMode", temp);
-  itsScaler.setMode(temp);
+  {
+    int temp;
+    reader->readValue("GrObj::scalingMode", temp);
+    itsScaler.setMode(temp);
+  }
 
   reader->readValue("GrObj::widthFactor", itsScaler.itsWidthFactor);
   reader->readValue("GrObj::heightFactor", itsScaler.itsHeightFactor);
@@ -107,7 +122,7 @@ DOTRACE("GrObjImpl::writeTo");
 
   writer->writeValue("GrObj::cacheFilename", itsRenderer.getCacheFilename());
 
-  writer->writeValue("GrObj::unRenderMode", itsUnRenderer.itsMode);
+  writer->writeValue("GrObj::unRenderMode", itsRenderer.getUnMode());
 
   writer->writeValue("GrObj::bbVisibility", itsBB.isVisible());
 
@@ -154,12 +169,17 @@ void GrObjImpl::undraw(GWT::Canvas& canvas) const {
 DOTRACE("GrObjImpl::undraw");
   canvas.throwIfError("before GrObj::undraw");
 
-  switch (itsUnRenderer.itsMode)
+  switch (itsRenderer.getMode())
     {
-    case GrObj::DIRECT_RENDER:     undrawDirectRender(canvas);     break;
-    case GrObj::SWAP_FORE_BACK:    undrawSwapForeBack(canvas);     break;
-    case GrObj::CLEAR_BOUNDING_BOX:undrawClearBoundingBox(canvas); break;
-    default:                       /* nothing */                   break;
+    case GrObj::DIRECT_RENDER:
+    case GrObj::SWAP_FORE_BACK:
+      undrawDirectRender(canvas);
+      break;
+    case GrObj::CLEAR_BOUNDING_BOX:
+      undrawClearBoundingBox(canvas);
+      break;
+    default:
+      break;
     }
 
   canvas.throwIfError("during GrObj::undraw");
@@ -180,27 +200,9 @@ DOTRACE("GrObjImpl::undrawDirectRender");
   itsScaler.doScaling(canvas);
   itsAligner.doAlignment(canvas, bbox);
 
-  if ( itsRenderer.getMode() == GrObj::GLCOMPILE )
-    {
-      itsRenderer.callList();
-    }
-  else
-    {
-      self->grRender(canvas, GrObj::UNDRAW);
-    }
+  itsRenderer.unrender(this, canvas);
 
   itsBB.draw(bbox, canvas);
-}
-
-void GrObjImpl::undrawSwapForeBack(GWT::Canvas& canvas) const {
-DOTRACE("GrObjImpl::undrawSwapForeBack");
-  glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
-  {
-    canvas.swapForeBack();
-
-    undrawDirectRender(canvas);
-  }
-  glPopAttrib();
 }
 
 void GrObjImpl::undrawClearBoundingBox(GWT::Canvas& canvas) const {
