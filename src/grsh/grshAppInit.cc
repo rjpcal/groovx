@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Thu Nov 21 14:39:32 2002
+// written: Fri Nov 22 12:07:55 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -59,7 +59,6 @@ extern "C"
   Tcl_PackageInitProc Obj_Init;
   Tcl_PackageInitProc Rh_Init;
   Tcl_PackageInitProc Sound_Init;
-  Tcl_PackageInitProc Subject_Init;
   Tcl_PackageInitProc Th_Init;
   Tcl_PackageInitProc Tlist_Init;
   Tcl_PackageInitProc Toglet_Init;
@@ -103,7 +102,6 @@ PackageInfo IMMEDIATE_PKGS[] =
   { "Obj",      Obj_Init       },
   { "Rh",       Rh_Init        },
   { "Sound",    Sound_Init     },
-  { "Subject",  Subject_Init   },
   { "Th",       Th_Init        },
   { "Tlist",    Tlist_Init     },
   { "Toglet",   Toglet_Init    },

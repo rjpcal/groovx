@@ -47,7 +47,6 @@ set files {
     { objdb_test.tcl 1 }
     { objtogl_test.tcl 1 }
     { sound_test.tcl 1 }
-    { subject_test.tcl 1 }
     { th_test.tcl 1 }
     { tlist_test.tcl 1 }
     { trial_test.tcl 1 }
