@@ -2,7 +2,7 @@
 // face.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu Jul  1 13:46:23 1999
+// written: Thu Sep 23 11:35:46 1999
 // $Id$
 //
 // The Face class is derived from GrObj. Face provides the
@@ -91,6 +91,10 @@ public:
   virtual void setCategory(int val) { itsCategory() = val; }
 
 protected:
+  virtual bool grGetBoundingBox(double& left, double& top,
+										  double& right, double& bottom,
+										  int& border_pixels) const;
+
   virtual void grRender() const; 
   // This overrides GrObj pure virtual function. It renders a face
   // with the appropriate parameters.

@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Mon Sep 20 16:14:24 1999
+// written: Thu Sep 23 11:31:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,6 +45,10 @@ public:
   const char* getText() const;
 
 protected:
+  virtual bool grGetBoundingBox(double& left, double& top,
+										  double& right, double& bottom,
+										  int& border_pixels) const;
+
   virtual void grRender() const;
 
 private:
