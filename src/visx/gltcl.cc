@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Thu Aug 23 11:21:31 2001
+// written: Sat Aug 25 21:44:35 2001
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers
@@ -49,8 +49,6 @@
 
 namespace GLTcl
 {
-  class GLPkg;
-
   void loadMatrix(Tcl::List entries);
   void lookAt(Tcl::List args);
   void antialias(bool on_off);
@@ -85,6 +83,9 @@ namespace GLTcl
 
 namespace GLTcl
 {
+
+#define NAMEVAL(x) #x, x
+
   struct AttribInfo
   {
     const char* param_name;
@@ -94,14 +95,10 @@ namespace GLTcl
 
   static std::map<GLenum, const AttribInfo*> theAttribMap;
 
-  void initializeGet(Tcl::Pkg* pkg) {
-    static bool inited = false;
-
-    if ( inited ) return;
-
-#define NAMEVAL(x) #x, x
-
-    static const AttribInfo theAttribs[] = {
+  void loadGet(Tcl::Pkg* pkg)
+  {
+    static const AttribInfo theAttribs[] =
+    {
       { NAMEVAL(GL_ACCUM_CLEAR_VALUE), 4 },
       { NAMEVAL(GL_ACCUM_ALPHA_BITS), 1 },
       { NAMEVAL(GL_ACCUM_BLUE_BITS), 1 },
@@ -134,20 +131,127 @@ namespace GLTcl
       { NAMEVAL(GL_VIEWPORT), 4 },
     };
 
-#undef STRVAL
-
     int num_params = sizeof(theAttribs) / sizeof(AttribInfo);
-    for (int i = 0; i < num_params; ++i) {
-      pkg->linkVarCopy(theAttribs[i].param_name, (int)theAttribs[i].param_tag);
-      theAttribMap[theAttribs[i].param_tag] = &(theAttribs[i]);
-    }
-
-    inited = true;
+    for (int i = 0; i < num_params; ++i)
+      {
+        pkg->linkVarCopy(theAttribs[i].param_name, (int)theAttribs[i].param_tag);
+        theAttribMap[theAttribs[i].param_tag] = &(theAttribs[i]);
+      }
   }
-}
 
-namespace GLTcl
-{
+  struct NameVal
+  {
+    const char* name;
+    int val;
+  };
+
+  void loadEnums(Tcl::Pkg* pkg)
+  {
+    NameVal theEnums [] =
+    {
+      // for glBegin
+      { NAMEVAL(GL_POINTS) },
+      { NAMEVAL(GL_LINES) },
+      { NAMEVAL(GL_LINE_STRIP) },
+      { NAMEVAL(GL_LINE_LOOP) },
+      { NAMEVAL(GL_TRIANGLES) },
+      { NAMEVAL(GL_TRIANGLE_STRIP) },
+      { NAMEVAL(GL_TRIANGLE_FAN) },
+      { NAMEVAL(GL_QUADS) },
+      { NAMEVAL(GL_QUAD_STRIP) },
+      { NAMEVAL(GL_POLYGON) },
+
+      // for glBlendFunc
+      { NAMEVAL(GL_ZERO) },
+      { NAMEVAL(GL_ONE) },
+      { NAMEVAL(GL_DST_COLOR) },
+      { NAMEVAL(GL_ONE_MINUS_DST_COLOR) },
+      { NAMEVAL(GL_SRC_COLOR) },
+      { NAMEVAL(GL_ONE_MINUS_SRC_COLOR) },
+      { NAMEVAL(GL_SRC_ALPHA) },
+      { NAMEVAL(GL_ONE_MINUS_SRC_ALPHA) },
+      { NAMEVAL(GL_DST_ALPHA) },
+      { NAMEVAL(GL_ONE_MINUS_DST_ALPHA) },
+      { NAMEVAL(GL_SRC_ALPHA_SATURATE) },
+
+      // for glClear
+      { NAMEVAL(GL_COLOR_BUFFER_BIT) },
+      { NAMEVAL(GL_DEPTH_BUFFER_BIT) },
+      { NAMEVAL(GL_ACCUM_BUFFER_BIT) },
+      { NAMEVAL(GL_STENCIL_BUFFER_BIT) },
+
+      // for glDrawBuffer
+      { NAMEVAL(GL_NONE) },
+      { NAMEVAL(GL_FRONT_LEFT) },
+      { NAMEVAL(GL_FRONT_RIGHT) },
+      { NAMEVAL(GL_BACK_LEFT) },
+      { NAMEVAL(GL_BACK_RIGHT) },
+      { NAMEVAL(GL_FRONT) },
+      { NAMEVAL(GL_BACK) },
+      { NAMEVAL(GL_LEFT) },
+      { NAMEVAL(GL_RIGHT) },
+      { NAMEVAL(GL_FRONT_AND_BACK) },
+
+      // for glEnable/glDisable
+      { NAMEVAL(GL_ALPHA_TEST) },
+      { NAMEVAL(GL_BLEND) },
+      { NAMEVAL(GL_FOG) },
+      { NAMEVAL(GL_LIGHTING) },
+      { NAMEVAL(GL_LINE_STIPPLE) },
+      { NAMEVAL(GL_POLYGON_STIPPLE) },
+      { NAMEVAL(GL_CULL_FACE) },
+      { NAMEVAL(GL_INDEX_LOGIC_OP) },
+      { NAMEVAL(GL_COLOR_LOGIC_OP) },
+      { NAMEVAL(GL_DITHER) },
+      { NAMEVAL(GL_STENCIL_TEST) },
+      { NAMEVAL(GL_DEPTH_TEST) },
+      { NAMEVAL(GL_MAP1_VERTEX_3) },
+      { NAMEVAL(GL_MAP1_VERTEX_4) },
+      { NAMEVAL(GL_MAP1_COLOR_4) },
+      { NAMEVAL(GL_MAP1_INDEX) },
+      { NAMEVAL(GL_MAP1_NORMAL) },
+      { NAMEVAL(GL_POINT_SMOOTH) },
+      { NAMEVAL(GL_LINE_SMOOTH) },
+      { NAMEVAL(GL_POLYGON_SMOOTH) },
+      { NAMEVAL(GL_SCISSOR_TEST) },
+      { NAMEVAL(GL_COLOR_MATERIAL) },
+      { NAMEVAL(GL_NORMALIZE) },
+      { NAMEVAL(GL_AUTO_NORMAL) },
+      { NAMEVAL(GL_VERTEX_ARRAY) },
+      { NAMEVAL(GL_NORMAL_ARRAY) },
+      { NAMEVAL(GL_COLOR_ARRAY) },
+      { NAMEVAL(GL_INDEX_ARRAY) },
+      { NAMEVAL(GL_TEXTURE_COORD_ARRAY) },
+      { NAMEVAL(GL_EDGE_FLAG_ARRAY) },
+      { NAMEVAL(GL_POLYGON_OFFSET_POINT) },
+      { NAMEVAL(GL_POLYGON_OFFSET_LINE) },
+      { NAMEVAL(GL_POLYGON_OFFSET_FILL) },
+      { NAMEVAL(GL_RESCALE_NORMAL_EXT) },
+
+      // for glMatrixMode
+      { NAMEVAL(GL_MODELVIEW) },
+      { NAMEVAL(GL_PROJECTION) },
+      { NAMEVAL(GL_TEXTURE) },
+
+      // for glNewList
+      { NAMEVAL(GL_COMPILE) },
+      { NAMEVAL(GL_COMPILE_AND_EXECUTE) },
+
+      // for glPolygonMode
+      { NAMEVAL(GL_POINT) },
+      { NAMEVAL(GL_LINE) },
+      { NAMEVAL(GL_FILL) },
+    };
+
+    int num_enums = sizeof(theEnums) / sizeof(NameVal);
+    for (int i = 0; i < num_enums; ++i)
+      {
+        pkg->linkVarCopy(theEnums[i].name, (int)theEnums[i].val);
+      }
+  }
+
+#undef NAMEVAL
+
   template <class T>
   void extractValues(GLenum tag, T* vals_out);
 
@@ -352,205 +456,9 @@ long int GLTcl::pixelCheckSum(int x, int y, int w, int h)
   return data.checkSum();
 }
 
-//---------------------------------------------------------------------
-//
-// GLPkg --
-//
-//---------------------------------------------------------------------
-
-class GLTcl::GLPkg : public Tcl::Pkg {
-public:
-  GLPkg(Tcl_Interp* interp) :
-    Tcl::Pkg(interp, "Tclgl", "$Revision$")
-  {
-
-    // for glBegin
-    this->linkVarCopy("GL_POINTS",         GL_POINTS);
-    this->linkVarCopy("GL_LINES",          GL_LINES);
-    this->linkVarCopy("GL_LINE_STRIP",     GL_LINE_STRIP);
-    this->linkVarCopy("GL_LINE_LOOP",      GL_LINE_LOOP);
-    this->linkVarCopy("GL_TRIANGLES",      GL_TRIANGLES);
-    this->linkVarCopy("GL_TRIANGLE_STRIP", GL_TRIANGLE_STRIP);
-    this->linkVarCopy("GL_TRIANGLE_FAN",   GL_TRIANGLE_FAN);
-    this->linkVarCopy("GL_QUADS",          GL_QUADS);
-    this->linkVarCopy("GL_QUAD_STRIP",     GL_QUAD_STRIP);
-    this->linkVarCopy("GL_POLYGON",        GL_POLYGON);
-
-    // for glBlendFunc
-    this->linkVarCopy("GL_ZERO", GL_ZERO);
-    this->linkVarCopy("GL_ONE", GL_ONE);
-    this->linkVarCopy("GL_DST_COLOR", GL_DST_COLOR);
-    this->linkVarCopy("GL_ONE_MINUS_DST_COLOR", GL_ONE_MINUS_DST_COLOR);
-    this->linkVarCopy("GL_SRC_COLOR", GL_SRC_COLOR);
-    this->linkVarCopy("GL_ONE_MINUS_SRC_COLOR", GL_ONE_MINUS_SRC_COLOR);
-    this->linkVarCopy("GL_SRC_ALPHA", GL_SRC_ALPHA);
-    this->linkVarCopy("GL_ONE_MINUS_SRC_ALPHA", GL_ONE_MINUS_SRC_ALPHA);
-    this->linkVarCopy("GL_DST_ALPHA", GL_DST_ALPHA);
-    this->linkVarCopy("GL_ONE_MINUS_DST_ALPHA", GL_ONE_MINUS_DST_ALPHA);
-    this->linkVarCopy("GL_SRC_ALPHA_SATURATE", GL_SRC_ALPHA_SATURATE);
-
-    // for glClear
-    this->linkVarCopy("GL_COLOR_BUFFER_BIT", GL_COLOR_BUFFER_BIT);
-    this->linkVarCopy("GL_DEPTH_BUFFER_BIT", GL_DEPTH_BUFFER_BIT);
-    this->linkVarCopy("GL_ACCUM_BUFFER_BIT", GL_ACCUM_BUFFER_BIT);
-    this->linkVarCopy("GL_STENCIL_BUFFER_BIT", GL_STENCIL_BUFFER_BIT);
-
-    // for glDrawBuffer
-    this->linkVarCopy("GL_NONE", GL_NONE);
-    this->linkVarCopy("GL_FRONT_LEFT", GL_FRONT_LEFT);
-    this->linkVarCopy("GL_FRONT_RIGHT", GL_FRONT_RIGHT);
-    this->linkVarCopy("GL_BACK_LEFT", GL_BACK_LEFT);
-    this->linkVarCopy("GL_BACK_RIGHT", GL_BACK_RIGHT);
-    this->linkVarCopy("GL_FRONT", GL_FRONT);
-    this->linkVarCopy("GL_BACK", GL_BACK);
-    this->linkVarCopy("GL_LEFT", GL_LEFT);
-    this->linkVarCopy("GL_RIGHT", GL_RIGHT);
-    this->linkVarCopy("GL_FRONT_AND_BACK", GL_FRONT_AND_BACK);
-
-    // for glEnable/glDisable
-
-    this->linkVarCopy("GL_ALPHA_TEST",  GL_ALPHA_TEST);
-    this->linkVarCopy("GL_BLEND",  GL_BLEND);
-    this->linkVarCopy("GL_FOG",  GL_FOG);
-    this->linkVarCopy("GL_LIGHTING",  GL_LIGHTING);
-//     this->linkVarCopy("GL_TEXTURE_1D",  GL_TEXTURE_1D);
-//     this->linkVarCopy("GL_TEXTURE_2D",  GL_TEXTURE_2D);
-//     this->linkVarCopy("GL_TEXTURE_3D_EXT",  GL_TEXTURE_3D_EXT);
-    this->linkVarCopy("GL_LINE_STIPPLE",  GL_LINE_STIPPLE);
-    this->linkVarCopy("GL_POLYGON_STIPPLE",  GL_POLYGON_STIPPLE);
-    this->linkVarCopy("GL_CULL_FACE",  GL_CULL_FACE);
-    this->linkVarCopy("GL_INDEX_LOGIC_OP",  GL_INDEX_LOGIC_OP);
-    this->linkVarCopy("GL_COLOR_LOGIC_OP",  GL_COLOR_LOGIC_OP);
-    this->linkVarCopy("GL_DITHER",  GL_DITHER);
-    this->linkVarCopy("GL_STENCIL_TEST",  GL_STENCIL_TEST);
-    this->linkVarCopy("GL_DEPTH_TEST",  GL_DEPTH_TEST);
-//     this->linkVarCopy("GL_CLIP_PLANE0",  GL_CLIP_PLANE0);
-//     this->linkVarCopy("GL_CLIP_PLANE1",  GL_CLIP_PLANE1);
-//     this->linkVarCopy("GL_CLIP_PLANE2",  GL_CLIP_PLANE2);
-//     this->linkVarCopy("GL_CLIP_PLANE3",  GL_CLIP_PLANE3);
-//     this->linkVarCopy("GL_CLIP_PLANE4",  GL_CLIP_PLANE4);
-//     this->linkVarCopy("GL_CLIP_PLANE5",  GL_CLIP_PLANE5);
-//     this->linkVarCopy("GL_LIGHT0",  GL_LIGHT0);
-//     this->linkVarCopy("GL_LIGHT1",  GL_LIGHT1);
-//     this->linkVarCopy("GL_LIGHT2",  GL_LIGHT2);
-//     this->linkVarCopy("GL_LIGHT3",  GL_LIGHT3);
-//     this->linkVarCopy("GL_LIGHT4",  GL_LIGHT4);
-//     this->linkVarCopy("GL_LIGHT5",  GL_LIGHT5);
-//     this->linkVarCopy("GL_LIGHT6",  GL_LIGHT6);
-//     this->linkVarCopy("GL_LIGHT7",  GL_LIGHT7);
-//     this->linkVarCopy("GL_TEXTURE_GEN_S",  GL_TEXTURE_GEN_S);
-//     this->linkVarCopy("GL_TEXTURE_GEN_T",  GL_TEXTURE_GEN_T);
-//     this->linkVarCopy("GL_TEXTURE_GEN_R",  GL_TEXTURE_GEN_R);
-//     this->linkVarCopy("GL_TEXTURE_GEN_Q",  GL_TEXTURE_GEN_Q);
-    this->linkVarCopy("GL_MAP1_VERTEX_3",  GL_MAP1_VERTEX_3);
-    this->linkVarCopy("GL_MAP1_VERTEX_4",  GL_MAP1_VERTEX_4);
-    this->linkVarCopy("GL_MAP1_COLOR_4",  GL_MAP1_COLOR_4);
-    this->linkVarCopy("GL_MAP1_INDEX",  GL_MAP1_INDEX);
-    this->linkVarCopy("GL_MAP1_NORMAL",  GL_MAP1_NORMAL);
-//     this->linkVarCopy("GL_MAP1_TEXTURE_COORD_1",  GL_MAP1_TEXTURE_COORD_1);
-//     this->linkVarCopy("GL_MAP1_TEXTURE_COORD_2",  GL_MAP1_TEXTURE_COORD_2);
-//     this->linkVarCopy("GL_MAP1_TEXTURE_COORD_3",  GL_MAP1_TEXTURE_COORD_3);
-//     this->linkVarCopy("GL_MAP1_TEXTURE_COORD_4",  GL_MAP1_TEXTURE_COORD_4);
-//     this->linkVarCopy("GL_MAP2_VERTEX_3",  GL_MAP2_VERTEX_3);
-//     this->linkVarCopy("GL_MAP2_VERTEX_4",  GL_MAP2_VERTEX_4);
-//     this->linkVarCopy("GL_MAP2_COLOR_4",  GL_MAP2_COLOR_4);
-//     this->linkVarCopy("GL_MAP2_INDEX",  GL_MAP2_INDEX);
-//     this->linkVarCopy("GL_MAP2_NORMAL",  GL_MAP2_NORMAL);
-//     this->linkVarCopy("GL_MAP2_TEXTURE_COORD_1",  GL_MAP2_TEXTURE_COORD_1);
-//     this->linkVarCopy("GL_MAP2_TEXTURE_COORD_2",  GL_MAP2_TEXTURE_COORD_2);
-//     this->linkVarCopy("GL_MAP2_TEXTURE_COORD_3",  GL_MAP2_TEXTURE_COORD_3);
-//     this->linkVarCopy("GL_MAP2_TEXTURE_COORD_4",  GL_MAP2_TEXTURE_COORD_4);
-    this->linkVarCopy("GL_POINT_SMOOTH",  GL_POINT_SMOOTH);
-    this->linkVarCopy("GL_LINE_SMOOTH",  GL_LINE_SMOOTH);
-    this->linkVarCopy("GL_POLYGON_SMOOTH",  GL_POLYGON_SMOOTH);
-    this->linkVarCopy("GL_SCISSOR_TEST",  GL_SCISSOR_TEST);
-    this->linkVarCopy("GL_COLOR_MATERIAL",  GL_COLOR_MATERIAL);
-    this->linkVarCopy("GL_NORMALIZE",  GL_NORMALIZE);
-    this->linkVarCopy("GL_AUTO_NORMAL",  GL_AUTO_NORMAL);
-    this->linkVarCopy("GL_VERTEX_ARRAY",  GL_VERTEX_ARRAY);
-    this->linkVarCopy("GL_NORMAL_ARRAY",  GL_NORMAL_ARRAY);
-    this->linkVarCopy("GL_COLOR_ARRAY",  GL_COLOR_ARRAY);
-    this->linkVarCopy("GL_INDEX_ARRAY",  GL_INDEX_ARRAY);
-    this->linkVarCopy("GL_TEXTURE_COORD_ARRAY",  GL_TEXTURE_COORD_ARRAY);
-    this->linkVarCopy("GL_EDGE_FLAG_ARRAY",  GL_EDGE_FLAG_ARRAY);
-    this->linkVarCopy("GL_POLYGON_OFFSET_POINT",  GL_POLYGON_OFFSET_POINT);
-    this->linkVarCopy("GL_POLYGON_OFFSET_LINE",  GL_POLYGON_OFFSET_LINE);
-    this->linkVarCopy("GL_POLYGON_OFFSET_FILL",  GL_POLYGON_OFFSET_FILL);
-    this->linkVarCopy("GL_RESCALE_NORMAL_EXT",  GL_RESCALE_NORMAL_EXT);
-
-    // for glMatrixMode
-    this->linkVarCopy("GL_MODELVIEW",  GL_MODELVIEW);
-    this->linkVarCopy("GL_PROJECTION", GL_PROJECTION);
-    this->linkVarCopy("GL_TEXTURE",    GL_TEXTURE);
-
-    // for glNewList
-    this->linkVarCopy("GL_COMPILE", GL_COMPILE);
-    this->linkVarCopy("GL_COMPILE_AND_EXECUTE", GL_COMPILE_AND_EXECUTE);
-
-    // for glPolygonMode
-    this->linkVarCopy("GL_POINT", GL_POINT);
-    this->linkVarCopy("GL_LINE", GL_LINE);
-    this->linkVarCopy("GL_FILL", GL_FILL);
-
-    using namespace Tcl;
-
-    def( "::glBegin", "mode", glBegin );
-    def( "::glBlendFunc", "sfactor dfactor", glBlendFunc );
-    def( "::glCallList", "list", glCallList );
-    def( "::glClear", "mask_bits", glClear );
-    def( "::glClearColor", "red green blue alpha", glClearColor );
-    def( "::glClearIndex", "index", glClearIndex );
-    def( "::glColor", "red green blue alpha", glColor4d );
-    def( "::glDeleteLists", "list_id range", glDeleteLists );
-    def( "::glDisable", "capability", glDisable );
-    def( "::glDrawBuffer", "mode", glDrawBuffer );
-    def( "::glEnable", "capability", glEnable );
-    def( "::glEnd", 0, glEnd );
-    def( "::glEndList", 0, glEndList );
-    def( "::glFlush", 0, glFlush );
-    def( "::glFrustum", "left right bottom top zNear zFar", glFrustum );
-    def( "::glGenLists", "range", glGenLists );
-    def( "::glGetError", 0, checkGL );
-    def( "::glIndexi", "index", glIndexi );
-    def( "::glIsList", "list_id", glIsList );
-    def( "::glLineWidth", "width", glLineWidth );
-    def( "::glListBase", "base", glListBase );
-    def( "::glLoadIdentity", 0, glLoadIdentity );
-    def( "::glLoadMatrix", "4x4_column_major_matrix", GLTcl::loadMatrix );
-    def( "::glMatrixMode", "mode", glMatrixMode );
-    def( "::glNewList", "list_id mode", glNewList );
-    def( "::glOrtho", "left right bottom top zNear zFar", glOrtho );
-    def( "::glPolygonMode", "face mode", glPolygonMode );
-    def( "::glPopMatrix", 0, glPopMatrix );
-    def( "::glPushMatrix", 0, glPushMatrix );
-    def( "::glRotate", "angle_in_degrees x y z", glRotated );
-    def( "::glScale", "x y z", glScaled );
-    def( "::glTranslate", "x y z", glTranslated );
-    def( "::glVertex2", "x y", glVertex2d );
-    def( "::glVertex3", "x y z", glVertex3d );
-    def( "::glVertex4", "x y z w", glVertex4d );
-    def( "::gluLookAt", "eyeX eyeY eyeZ targX targY targZ upX upY upZ",
-         GLTcl::lookAt );
-    def( "::gluPerspective", "field_of_view_y aspect zNear zFar",
-         gluPerspective );
-
-    initializeGet(this);
-    def( "::glGetBoolean", "param_name", GLTcl::get<GLboolean> );
-    def( "::glGetDouble", "param_name", GLTcl::get<GLdouble> );
-    def( "::glGetInteger", "param_name", GLTcl::get<GLint> );
-
-    def( "::antialias", "on_off", GLTcl::antialias );
-    def( "::drawOneLine", "x1 y1 x2 y2", GLTcl::drawOneLine );
-    def( "::drawThickLine", "x1 y1 x2 y2 thickness", GLTcl::drawThickLine );
-    def( "::lineInfo", 0, GLTcl::lineInfo );
-    def( "::pixelCheckSum", "x y w h", GLTcl::pixelCheckSum );
-    def( "::pixelCheckSum", 0, GLTcl::pixelCheckSumAll );
-  }
-};
-
 //--------------------------------------------------------------------
 //
-// GLTcl::Tclgl_Init --
+// Gltcl_Init --
 //
 //--------------------------------------------------------------------
 
@@ -559,7 +467,60 @@ int Gltcl_Init(Tcl_Interp* interp)
 {
 DOTRACE("Gltcl_Init");
 
-  Tcl::Pkg* pkg = new GLTcl::GLPkg(interp);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Tclgl", "$Revision$");
+  GLTcl::loadGet(pkg);
+  GLTcl::loadEnums(pkg);
+
+  pkg->def( "::glBegin", "mode", glBegin );
+  pkg->def( "::glBlendFunc", "sfactor dfactor", glBlendFunc );
+  pkg->def( "::glCallList", "list", glCallList );
+  pkg->def( "::glClear", "mask_bits", glClear );
+  pkg->def( "::glClearColor", "red green blue alpha", glClearColor );
+  pkg->def( "::glClearIndex", "index", glClearIndex );
+  pkg->def( "::glColor", "red green blue alpha", glColor4d );
+  pkg->def( "::glDeleteLists", "list_id range", glDeleteLists );
+  pkg->def( "::glDisable", "capability", glDisable );
+  pkg->def( "::glDrawBuffer", "mode", glDrawBuffer );
+  pkg->def( "::glEnable", "capability", glEnable );
+  pkg->def( "::glEnd", 0, glEnd );
+  pkg->def( "::glEndList", 0, glEndList );
+  pkg->def( "::glFlush", 0, glFlush );
+  pkg->def( "::glFrustum", "left right bottom top zNear zFar", glFrustum );
+  pkg->def( "::glGenLists", "range", glGenLists );
+  pkg->def( "::glGetError", 0, GLTcl::checkGL );
+  pkg->def( "::glIndexi", "index", glIndexi );
+  pkg->def( "::glIsList", "list_id", glIsList );
+  pkg->def( "::glLineWidth", "width", glLineWidth );
+  pkg->def( "::glListBase", "base", glListBase );
+  pkg->def( "::glLoadIdentity", 0, glLoadIdentity );
+  pkg->def( "::glLoadMatrix", "4x4_column_major_matrix", GLTcl::loadMatrix );
+  pkg->def( "::glMatrixMode", "mode", glMatrixMode );
+  pkg->def( "::glNewList", "list_id mode", glNewList );
+  pkg->def( "::glOrtho", "left right bottom top zNear zFar", glOrtho );
+  pkg->def( "::glPolygonMode", "face mode", glPolygonMode );
+  pkg->def( "::glPopMatrix", 0, glPopMatrix );
+  pkg->def( "::glPushMatrix", 0, glPushMatrix );
+  pkg->def( "::glRotate", "angle_in_degrees x y z", glRotated );
+  pkg->def( "::glScale", "x y z", glScaled );
+  pkg->def( "::glTranslate", "x y z", glTranslated );
+  pkg->def( "::glVertex2", "x y", glVertex2d );
+  pkg->def( "::glVertex3", "x y z", glVertex3d );
+  pkg->def( "::glVertex4", "x y z w", glVertex4d );
+  pkg->def( "::gluLookAt", "eyeX eyeY eyeZ targX targY targZ upX upY upZ",
+            GLTcl::lookAt );
+  pkg->def( "::gluPerspective", "field_of_view_y aspect zNear zFar",
+            gluPerspective );
+
+  pkg->def( "::glGetBoolean", "param_name", GLTcl::get<GLboolean> );
+  pkg->def( "::glGetDouble", "param_name", GLTcl::get<GLdouble> );
+  pkg->def( "::glGetInteger", "param_name", GLTcl::get<GLint> );
+
+  pkg->def( "::antialias", "on_off", GLTcl::antialias );
+  pkg->def( "::drawOneLine", "x1 y1 x2 y2", GLTcl::drawOneLine );
+  pkg->def( "::drawThickLine", "x1 y1 x2 y2 thickness", GLTcl::drawThickLine );
+  pkg->def( "::lineInfo", 0, GLTcl::lineInfo );
+  pkg->def( "::pixelCheckSum", "x y w h", GLTcl::pixelCheckSum );
+  pkg->def( "::pixelCheckSum", 0, GLTcl::pixelCheckSumAll );
 
 #ifdef ACC_COMPILER
 //   typeid(out_of_range);

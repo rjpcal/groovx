@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul  9 17:49:07 2001
-// written: Wed Jul 18 11:25:15 2001
+// written: Sat Aug 25 21:52:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,32 +21,19 @@
 
 #include "util/trace.h"
 
-namespace MtxTcl
-{
-  class MtxPkg;
-}
-
-class MtxTcl::MtxPkg : public Tcl::Pkg {
-public:
-  MtxPkg(Tcl_Interp* interp) :
-    Tcl::Pkg(interp, "Mtx", "$Revision$")
-  {
-    Tcl::defGenericObjCmds<MtxObj>(this);
-
-    defAction<MtxObj>("print", &Mtx::print);
-
-    defGetter<MtxObj, int>("mrows", &Mtx::mrows);
-    defGetter<MtxObj, int>("ncols", &Mtx::ncols);
-    defGetter<MtxObj, int>("nelems", &Mtx::nelems);
-  }
-};
-
 extern "C"
 int Mtx_Init(Tcl_Interp* interp)
 {
 DOTRACE("Mtx_Init");
 
-  Tcl::Pkg* pkg = new MtxTcl::MtxPkg(interp);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Mtx", "$Revision$");
+  Tcl::defGenericObjCmds<MtxObj>(pkg);
+
+  pkg->defAction<MtxObj>("print", &Mtx::print);
+
+  pkg->defGetter<MtxObj, int>("mrows", &Mtx::mrows);
+  pkg->defGetter<MtxObj, int>("ncols", &Mtx::ncols);
+  pkg->defGetter<MtxObj, int>("nelems", &Mtx::nelems);
 
   Util::ObjFactory::theOne().registerCreatorFunc(&MtxObj::make);
 

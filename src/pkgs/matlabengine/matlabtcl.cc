@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jul 10 12:16:44 2001
-// written: Thu Aug  9 07:06:04 2001
+// written: Sat Aug 25 21:51:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,8 @@
 
 #include "util/trace.h"
 
-class MatlabEngine : public Util::Object {
+class MatlabEngine : public Util::Object
+{
 private:
   MatlabEngine(const MatlabEngine&);
   MatlabEngine& operator=(const MatlabEngine&);
@@ -92,32 +93,20 @@ private:
   char* itsBuf;
 };
 
-namespace MatlabTcl
-{
-  class MatlabPkg;
-}
-
-class MatlabTcl::MatlabPkg : public Tcl::Pkg {
-public:
-  MatlabPkg(Tcl_Interp* interp) :
-    Tcl::Pkg(interp, "MatlabEngine", "$Revision$")
-  {
-    Tcl::defGenericObjCmds<MatlabEngine>(this);
-
-    def( "eval", "engine_id command", &MatlabEngine::evalString );
-    def( "get", "engine_id mtx_name", &MatlabEngine::getMtx );
-
-    eval("proc meval {args} { return [eval MatlabEngine::eval $args] }");
-    eval("proc getMtx {args} { return [eval MatlabEngine::get $args] }");
-  }
-};
 
 extern "C"
 int Matlab_Init(Tcl_Interp* interp)
 {
 DOTRACE("Matlab_Init");
 
-  Tcl::Pkg* pkg = new MatlabTcl::MatlabPkg(interp);
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "MatlabEngine", "$Revision$");
+  Tcl::defGenericObjCmds<MatlabEngine>(pkg);
+
+  pkg->def( "eval", "engine_id command", &MatlabEngine::evalString );
+  pkg->def( "get", "engine_id mtx_name", &MatlabEngine::getMtx );
+
+  pkg->eval("proc meval {args} { return [eval MatlabEngine::eval $args] }");
+  pkg->eval("proc getMtx {args} { return [eval MatlabEngine::get $args] }");
 
   Util::ObjFactory::theOne().registerCreatorFunc(&MatlabEngine::make);
 
