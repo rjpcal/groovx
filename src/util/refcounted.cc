@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Oct 22 14:40:28 2000
-// written: Mon Jun  4 15:09:45 2001
+// written: Tue Jun  5 10:24:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,38 +28,38 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-void* RefCounted::operator new(size_t bytes) {
-DOTRACE("RefCounted::operator new");
+void* Util::RefCounted::operator new(size_t bytes) {
+DOTRACE("Util::RefCounted::operator new");
   return ::operator new(bytes);
 }
 
-void RefCounted::operator delete(void* space, size_t bytes) {
-DOTRACE("RefCounted::operator delete");
+void Util::RefCounted::operator delete(void* space, size_t bytes) {
+DOTRACE("Util::RefCounted::operator delete");
   ::operator delete(space);
 }
 
-RefCounted::RefCounted() :
+Util::RefCounted::RefCounted() :
   itsRefCount(0)
 {
-DOTRACE("RefCounted::RefCounted");
+DOTRACE("Util::RefCounted::RefCounted");
  DebugEval((void*)this); 
 }
 
-RefCounted::~RefCounted()
+Util::RefCounted::~RefCounted()
 {
-DOTRACE("RefCounted::~RefCounted");
+DOTRACE("Util::RefCounted::~RefCounted");
   DebugEval((void*)this); DebugEvalNL(itsRefCount);
   Assert(itsRefCount <= 0);
 }
 
-void RefCounted::incrRefCount() const {
-DOTRACE("RefCounted::incrRefCount");
+void Util::RefCounted::incrRefCount() const {
+DOTRACE("Util::RefCounted::incrRefCount");
   DebugEval((void*)this);
   ++itsRefCount;
 }
 
-void RefCounted::decrRefCount() const {
-DOTRACE("RefCounted::decrRefCount");
+void Util::RefCounted::decrRefCount() const {
+DOTRACE("Util::RefCounted::decrRefCount");
   DebugEval((void*)this); 
 
   --itsRefCount;
@@ -67,18 +67,18 @@ DOTRACE("RefCounted::decrRefCount");
 	 delete this;
 }
 
-bool RefCounted::isShared() const {
-DOTRACE("RefCounted::isShared");
+bool Util::RefCounted::isShared() const {
+DOTRACE("Util::RefCounted::isShared");
   return (itsRefCount > 1);
 }
 
-bool RefCounted::isUnshared() const {
-DOTRACE("RefCounted::isUnshared");
+bool Util::RefCounted::isUnshared() const {
+DOTRACE("Util::RefCounted::isUnshared");
   return !isShared();
 }
 
-int RefCounted::refCount() const {
-DOTRACE("RefCounted::refCount");
+int Util::RefCounted::refCount() const {
+DOTRACE("Util::RefCounted::refCount");
   return itsRefCount;
 }
 
