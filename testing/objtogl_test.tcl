@@ -26,8 +26,8 @@ test "ObjTogl-Togl::undraw" "too many args" {
 } {wrong \# args: should be "Togl::undraw"}
 test "ObjTogl-Togl::undraw" "normal use" {
 	 set f [Obj::new Face]
-	 setForeground 1
-	 setBackground 0
+	 glIndexi 1
+	 glClearIndex 0
 	 clearscreen
 	 Togl::see $f
 	 Togl::undraw
@@ -46,8 +46,8 @@ test "ObjTogl-Togl::refresh" "normal use" {
 	 set t [Obj::new Trial]
 	 Trial::add $t $f $p
 	 Togl::setCurTrial $t
-	 setForeground 1
-	 setBackground 0
+	 glIndexi 1
+	 glClearIndex 0
 	 Togl::setVisible 1
 	 Togl::refresh
 	 # check to see if some pixels actually got drawn
@@ -60,7 +60,7 @@ test "ObjTogl-Togl::clearscreen" "too many args" {
     Togl::clearscreen junk
 } {wrong \# args: should be "Togl::clearscreen"}
 test "ObjTogl-Togl::clearscreen" "normal use" {
-	 setBackground 0
+	 glClearIndex 0
 	 Togl::clearscreen
 	 set p [pixelCheckSum]
 	 return "[expr $p == 0] $p"
