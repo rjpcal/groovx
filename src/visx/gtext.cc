@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Sun Aug 26 08:53:53 2001
+// written: Thu Aug 30 16:19:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -811,6 +811,20 @@ DOTRACE("Gtext::writeTo");
   writer->writeValue("strokeWidth", itsStrokeWidth);
 
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
+}
+
+const FieldMap& Gtext::classFields()
+{
+  static const Field FIELD_ARRAY[] =
+  {
+    Field("text", &Gtext::itsText, 0, 0, 100, 1,
+          Field::NEW_GROUP | Field::STRING),
+    Field("strokeWidth", &Gtext::itsStrokeWidth, 1, 1, 20, 1)
+  };
+
+  static FieldMap GTEXT_FIELDS(FIELD_ARRAY, &GrObj::classFields());
+
+  return GTEXT_FIELDS;
 }
 
 void Gtext::setText(const fstring& text)
