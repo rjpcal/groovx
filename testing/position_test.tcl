@@ -91,8 +91,8 @@ test "PositionTcl-Pos::stringify" "normal use" {
 	 Pos::scale $::pos 1.0 2.5 4.0
 	 Pos::translate $::pos 5.3 10.6 15.9
 	 Pos::stringify $::pos
-} {Position 5\.3 10\.6 15\.9 1 2\.5 4 1\.5 0 -2\.2 3}
-test "PositionTcl-Pos::stringify" "error on bad posid" {
+} "Position @$::INT { 5\.3 10\.6 15\.9 1 2\.5 4 1\.5 0 -2\.2 3"
+test "PositionTcl-Pos::stringify" "error on bad posid" { 
     Pos::stringify -1
 } {Pos::stringify: attempt to access invalid id '.*' in PosList}
 test "PositionTcl-Pos::stringify" "error on non-integral posid" {
