@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 29 09:19:26 1999
-// written: Wed Aug 15 14:07:38 2001
+// written: Wed Aug 15 14:16:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,20 +25,6 @@
 #include "util/trace.h"
 #include "util/debug.h"
 
-namespace
-{
-  const FieldInfo FINFOS[] =
-  {
-    FieldInfo("eyeAspect", FieldInfo::OldTag(), &CloneFace::eyeAspect, 0.0, 0.0, 1.0, 0.05, true),
-    FieldInfo("vertOffset", FieldInfo::OldTag(), &CloneFace::vertOffset, 0.0, -0.1, 0.1, 0.01)
-  };
-
-  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
-
-  FieldMap CLONEFACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
-                            &Face::classFields());
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // CloneFace member functions
@@ -47,6 +33,17 @@ namespace
 
 const FieldMap& CloneFace::classFields()
 {
+  static const FieldInfo FINFOS[] =
+  {
+    FieldInfo("eyeAspect", &CloneFace::itsEyeAspect, 0.0, 0.0, 1.0, 0.05, true),
+    FieldInfo("vertOffset", &CloneFace::itsVertOffset, 0.0, -0.1, 0.1, 0.01)
+  };
+
+  const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
+
+  static FieldMap CLONEFACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
+                                   &Face::classFields());
+
   return CLONEFACE_FIELDS;
 }
 
@@ -57,11 +54,11 @@ DOTRACE("CloneFace::make");
 }
 
 CloneFace::CloneFace () :
-  Face(), eyeAspect(0.0), vertOffset(0.0)
+  Face(), itsEyeAspect(0.0), itsVertOffset(0.0)
 {
 DOTRACE("CloneFace::CloneFace()");
 
-  setFieldMap(CLONEFACE_FIELDS);
+  setFieldMap(CloneFace::classFields());
 
   // Copy Face's control points into CloneFace's itsCtrlPnts member,
   // so that the default behavior of CloneFace is to mimic Face.
@@ -110,13 +107,13 @@ DOTRACE("CloneFace::getCtrlPnts");
 double CloneFace::getEyeAspect() const
 {
 DOTRACE("CloneFace::getEyeAspect");
-  return eyeAspect();
+  return itsEyeAspect;
 }
 
 double CloneFace::getVertOffset() const
 {
 DOTRACE("CloneFace::getVertOffset");
-  return vertOffset();
+  return itsVertOffset;
 }
 
 static const char vcid_cloneface_cc[] = "$Header$";
