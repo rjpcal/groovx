@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Mon Mar  4 12:07:29 2002
+// written: Mon Mar  4 12:26:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -801,29 +801,9 @@ public:
   // Functions
   //
 
-  Mtx meanRow() const
-  {
-    Mtx res(1, ncols());
+  Mtx meanRow() const;
 
-    MtxIter resiter = res.row(0).beginNC();
-
-    for (int c = 0; c < ncols(); ++c, ++resiter)
-      *resiter = column(c).mean();
-
-    return res;
-  }
-
-  Mtx meanColumn() const
-  {
-    Mtx res(mrows(), 1);
-
-    MtxIter resiter = res.column(0).beginNC();
-
-    for (int r = 0; r < mrows(); ++r, ++resiter)
-      *resiter = row(r).mean();
-
-    return res;
-  }
+  Mtx meanColumn() const;
 
   const_iterator find_min() const;
   const_iterator find_max() const;
@@ -859,14 +839,7 @@ public:
   Mtx& operator+=(const Mtx& other);
   Mtx& operator-=(const Mtx& other);
 
-  bool operator==(const Mtx& other) const
-  {
-    if ( (mrows() != other.mrows()) || (ncols() != other.ncols()) )
-      return false;
-    for (int c = 0; c < ncols(); ++c)
-      if ( column(c) != other.column(c) ) return false;
-    return true;
-  }
+  bool operator==(const Mtx& other) const;
 
   bool operator!=(const Mtx& other) const
   { return !(operator==(other)); }
@@ -918,7 +891,7 @@ inline Slice::Slice(const Mtx& owner, ptrdiff_t offset, int s, int n) :
 ///////////////////////////////////////////////////////////////////////
 
 
-static double innerProduct(MtxConstIter s1, MtxConstIter s2)
+inline double innerProduct(MtxConstIter s1, MtxConstIter s2)
 {
   double result = 0.0;
 
