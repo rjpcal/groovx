@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Fri Oct 20 17:51:29 2000
+// written: Mon Oct 23 23:14:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -136,7 +136,8 @@ public:
   ThListPkg(Tcl_Interp* interp) :
 	 Tcl::IoPtrListPkg(interp, ThList::theThList(), "ThList", "$Revision$")
   {
-	 ThList::theThList().insertAt(0, ThList::Ptr(TimingHandler::make()));
+	 // FIXME
+// 	 ThList::theThList().insertAt(0, ThList::Ptr(TimingHandler::make()));
   }
 };
 
