@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jan 19 17:25:51 2000
-// written: Wed Aug  8 10:37:37 2001
+// written: Thu Aug  9 16:01:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,10 +39,6 @@ template <class V> class Point;
 ///////////////////////////////////////////////////////////////////////
 
 class BmapData {
-private:
-  BmapData(const BmapData& other); // not implemented
-  BmapData& operator=(const BmapData& other); // not implemented
-
 public:
   /// Nested class in allows \c BmapData objects to be updated lazily.
   class UpdateFunc {
@@ -66,6 +62,17 @@ public:
 
   /// Construct with the given image data specifications.
   BmapData(const Point<int>& extent, int bits_per_pixel, int byte_alignment);
+
+  /// Copy constructor.
+  BmapData(const BmapData& other);
+
+  /// Assignment operator
+  BmapData& operator=(const BmapData& other)
+  {
+    BmapData copy(other);
+    this->swap(copy);
+    return *this;
+  }
 
   /// Destructor frees Impl*.
   ~BmapData();
