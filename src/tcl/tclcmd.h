@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Fri Jan 18 16:06:56 2002
+// written: Mon Sep 16 12:45:59 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -160,7 +160,7 @@ public:
   Tcl_Interp* interp() const { return itsInterp; }
 
   /// Return the number of arguments in the current invocation.
-  unsigned int objc() { return itsObjc; }
+  unsigned int objc() const { return itsObjc; }
 
 
   /** Attempt to convert argument number \a argn to type \c T, and
@@ -178,6 +178,12 @@ public:
   void setResult(T t)
     {
       setObjResult(Tcl::Convert<T>::toTcl(t));
+    }
+
+  /// Get the raw objv array.
+  Tcl_Obj* const* getRawArgs() const
+    {
+      return itsObjv;
     }
 
 protected:
