@@ -275,14 +275,24 @@ TCLWORKS_OBJS := \
 
 DEBUG_TARGET := $(HOME)/bin/$(ARCH)/testsh
 
-DEBUG_LIBVISX := $(LIB)/libvisx.d.$(SHLIB_EXT)
-DEBUG_LIBTCLWORKS := $(LIB)/libtclworks.d.$(SHLIB_EXT)
-
 DEBUG_DEFS := -DPROF -DASSERT -DINVARIANT -DTEST
 
 DEBUG_GRSH_STATIC_OBJS := $(GRSH_STATIC_OBJS)
 DEBUG_GRSH_DYNAMIC_OBJS := $(GRSH_DYNAMIC_OBJS)
 DEBUG_TCLWORKS_OBJS := $(TCLWORKS_OBJS)
+
+ifeq ($(ARCH),irix6)
+	DEBUG_LIBVISX := $(LIB)/libvisx.d.$(STATLIB_EXT)
+	DEBUG_LIBTCLWORKS := $(LIB)/libtclworks.d.$(STATLIB_EXT)
+	ALL_DEBUG_STATLIBS := $(DEBUG_LIBVISX) $(DEBUG_LIBTCLWORKS)
+	ALL_DEBUG_SHLIBS :=
+endif
+ifeq ($(ARCH),hp9000s700)
+	DEBUG_LIBVISX := $(LIB)/libvisx.d.$(SHLIB_EXT)
+	DEBUG_LIBTCLWORKS := $(LIB)/libtclworks.d.$(SHLIB_EXT)
+	ALL_DEBUG_STATLIBS :=
+	ALL_DEBUG_SHLIBS := $(DEBUG_LIBVISX) $(DEBUG_LIBTCLWORKS)
+endif
 
 #-------------------------------------------------------------------------
 #
@@ -295,15 +305,19 @@ PROD_TARGET := $(HOME)/bin/$(ARCH)/grsh$(VERSION)
 # Note: exception handling does not work with shared libraries in the
 # current version of g++ (2.95.1), so on irix6 we must make the
 # libvisx library as an archive library.
+
 ifeq ($(ARCH),irix6)
-	LIBEXT := $(STATLIB_EXT)
+	PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(STATLIB_EXT)
+	PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(STATLIB_EXT)
+	ALL_PROD_STATLIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS)
+	ALL_PROD_SHLIBS :=
 endif
 ifeq ($(ARCH),hp9000s700)
-	LIBEXT := $(SHLIB_EXT)
+	PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(SHLIB_EXT)
+	PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(SHLIB_EXT)
+	ALL_PROD_STATLIBS :=
+	ALL_PROD_SHLIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS)
 endif
-
-PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(SHLIB_EXT)
-PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(SHLIB_EXT)
 
 PROD_GRSH_STATIC_OBJS := $(DEBUG_GRSH_STATIC_OBJS:.do=.o)
 PROD_GRSH_DYNAMIC_OBJS := $(DEBUG_GRSH_DYNAMIC_OBJS:.do=.o)
@@ -346,28 +360,18 @@ $(SRC)/%.preh : $(SRC)/%.h
 #
 #-------------------------------------------------------------------------
 
-testsh: $(SRC)/TAGS $(DEBUG_TARGET)
+testsh: $(SRC)/TAGS $(ALL_DEBUG_SHLIBS) $(DEBUG_TARGET)
 	$(DEBUG_TARGET) ./testing/grshtest.tcl
 
-ALL_DEBUG_DEPENDS := \
-	$(DEBUG_GRSH_STATIC_OBJS) \
-	$(DEBUG_LIBVISX) \
-	$(DEBUG_LIBTCLWORKS)
-
-$(DEBUG_TARGET): $(ALL_DEBUG_DEPENDS)
+$(DEBUG_TARGET): $(DEBUG_GRSH_STATIC_OBJS) $(ALL_DEBUG_STATLIBS)
 	$(CC) $(DEBUG_LINK_OPTIONS) -o $@ $(DEBUG_GRSH_STATIC_OBJS) \
 	 /opt/langtools/lib/end.o \
 	$(LIB_DIRS) -lvisx.d -ltclworks.d $(LIBRARIES) 
 
-grsh: $(SRC)/TAGS $(PROD_TARGET)
+grsh: $(SRC)/TAGS $(ALL_PROD_SHLIBS) $(PROD_TARGET)
 	$(PROD_TARGET) ./testing/grshtest.tcl
 
-ALL_PROD_DEPENDS := \
-	$(PROD_GRSH_STATIC_OBJS) \
-	$(PROD_LIBVISX) \
-	$(PROD_LIBTCLWORKS)
-
-$(PROD_TARGET): $(ALL_PROD_DEPENDS)
+$(PROD_TARGET): $(PROD_GRSH_STATIC_OBJS) $(ALL_PROD_STATLIBS)
 	$(CC) $(PROD_LINK_OPTIONS) -o $@ $(PROD_GRSH_STATIC_OBJS) \
 	$(LIB_DIRS) -lvisx$(VERSION) -ltclworks$(VERSION) $(LIBRARIES)
 
