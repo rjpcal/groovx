@@ -18,7 +18,7 @@ AC_DEFUN([AC_CHECK_LIB_CXX],
 	 LIBS="$LIBS -l$1"
 	 AC_TRY_LINK([$2], [$3], [havelib_$1=yes], [havelib_$1=no])
 	 LIBS=$libs_save
-	 if test $havelib_$1=yes; then
+	 if test $havelib_$1 = yes; then
 	    AC_MSG_RESULT(yes)
 	    $4
 	 else
