@@ -15,7 +15,7 @@
 
 #include <cmath>
 
-class Slice;
+class ConstSlice;
 
 class Num {
 public:
@@ -53,7 +53,7 @@ public:
   static const double SQRT_2;
 
   static void linearCombo(int nelems, const double* w, int w_stride,
-								  const Slice* elems, int dim,
+								  const ConstSlice* elems, int dim,
 								  double* result);
 
 private:

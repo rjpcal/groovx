@@ -51,36 +51,58 @@ public:
   unsigned int itsLength;
 };
 
+class Mtx;
 
-class Slice {
-  const double* itsData;
+class ConstSlice {
+protected:
+  double* itsData;
   int itsStride;
   int itsNelems;
 
   const double* address(int i) const { return itsData + itsStride*i; }
 
-public:
-  Slice() : itsData(0), itsStride(0), itsNelems(0) {}
+  friend class Mtx;
 
-  Slice(const double* d, int s, int n) :
-	 itsData(d), itsStride(s), itsNelems(n) {}
+  ConstSlice(const double* d, int s, int n) :
+	 itsData(const_cast<double*>(d)), itsStride(s), itsNelems(n) {}
+
+public:
+  ConstSlice() : itsData(0), itsStride(0), itsNelems(0) {}
+
+  ConstSlice(const ConstSlice& other) :
+	 itsData(other.itsData),
+	 itsStride(other.itsStride),
+	 itsNelems(other.itsNelems)
+  {}
+
+  ConstSlice& operator=(const ConstSlice& other)
+  {
+	 itsData = other.itsData;
+	 itsStride = other.itsStride;
+	 itsNelems = other.itsNelems;
+	 return *this;
+  }
 
   double operator[](int i) const { return *(address(i)); }
 
-  Slice rightmost(int n) const
+  const double* data() const { return itsData; }
+
+  int nelems() const { return itsNelems; }
+
+  ConstSlice rightmost(int n) const
   {
 	 int first = itsNelems - n;
 	 if (first < 0) first = 0;
 
-	 return Slice(address(first), itsStride, n);
+	 return ConstSlice(address(first), itsStride, n);
   }
 
-  Slice leftmost(int n) const
+  ConstSlice leftmost(int n) const
   {
-	 return Slice(itsData, itsStride, n);
+	 return ConstSlice(itsData, itsStride, n);
   }
 
-  static double dot(const Slice& s1, const Slice& s2)
+  static double dot(const ConstSlice& s1, const ConstSlice& s2)
   {
 	 double result = 0.0;
 	 const int n = s1.itsNelems > s2.itsNelems ? s1.itsNelems : s2.itsNelems;
@@ -95,7 +117,7 @@ public:
 
 	 ConstIterator(const double* d, int s) : data(d), stride(s) {}
 
-	 friend class Slice;
+	 friend class ConstSlice;
 
   public:
 
@@ -111,6 +133,28 @@ public:
     { return ConstIterator(itsData, itsStride); }
   ConstIterator end() const
     { return ConstIterator(address(itsNelems), itsStride); }
+};
+
+class Slice : public ConstSlice {
+  friend class Mtx;
+
+  double* address(int i) { return itsData + itsStride*i; }
+
+public:
+  Slice(const double* d, int s, int n) :
+	 ConstSlice(d,s,n) {}
+
+  Slice() : ConstSlice() {}
+
+  double& operator[](int i) { return *(address(i)); }
+
+  Slice rightmost(int n)
+  {
+	 int first = itsNelems - n;
+	 if (first < 0) first = 0;
+
+	 return Slice(address(first), itsStride, n);
+  }
 };
 
 typedef struct mxArray_tag mxArray;
@@ -171,8 +215,14 @@ public:
 
   Mtx columnSlice(int column) const { return Mtx(*this, column); }
 
-  Slice rowSlice(int row) const
+  Slice rowSlice(int row)
     { return Slice(address(row,0), mrows_, ncols_); }
+
+  ConstSlice rowSlice(int row) const
+    { return ConstSlice(address(row,0), mrows_, ncols_); }
+
+  Slice asSlice()
+    { return Slice(start_, 1, nelems()); }
 
 private:
   int index(int row, int col) const { return row + (col*mrows_); }

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:28:26 2001
-// written: Mon Mar 12 12:34:25 2001
+// written: Mon Mar 12 16:44:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ bool Num::filled = false;
 double Num::lookup[TABLE_SIZE] = { 0.0 };
 
 void Num::linearCombo(int nelems, const double* w, int w_stride,
-							 const Slice* elems, int dim,
+							 const ConstSlice* elems, int dim,
 							 double* result)
 {
 DOTRACE("Num::linearCombo");
