@@ -146,9 +146,7 @@ vec3d GLCanvas::worldFromScreen3(const vec3i& screen_pos) const
 {
 DOTRACE("GLCanvas::worldFromScreen3");
 
-  dbg_eval(3, screen_pos.x());
-  dbg_eval(3, screen_pos.y());
-  dbg_eval_nl(3, screen_pos.z());
+  dbg_dump(3, screen_pos);
 
   GLdouble current_mv_matrix[16];
   GLdouble current_proj_matrix[16];
@@ -485,8 +483,8 @@ DOTRACE("GLCanvas::rasterPos");
 
   const vec2i screen_pos = screenFromWorld2(world_pos);
 
-  dbg_eval(3, world_pos.x()); dbg_eval_nl(3, world_pos.y());
-  dbg_eval(3, screen_pos.x()); dbg_eval_nl(3, screen_pos.y());
+  dbg_dump(3, world_pos);
+  dbg_dump(3, screen_pos);
 
   if (viewport.contains(screen_pos))
     {
@@ -505,7 +503,7 @@ DOTRACE("GLCanvas::rasterPos");
       // use the "xmove" and "ymove" arguments to adjust the raster
       // position.
       const vec2d lower_left = worldFromScreen2(vec2i(0,0));
-      dbg_eval(3, lower_left.x()); dbg_eval_nl(3, lower_left.y());
+      dbg_dump(3, lower_left);
       glRasterPos2d(lower_left.x(), lower_left.y());
 
       if (!rasterPositionValid())

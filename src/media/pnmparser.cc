@@ -227,8 +227,10 @@ DOTRACE("media::load_pnm");
 
   geom::vec2<int> extent;
 
-  is >> extent.x(); dbg_eval(3, extent.x());
-  is >> extent.y(); dbg_eval_nl(3, extent.y());
+  is >> extent.x();
+  is >> extent.y();
+
+  dbg_dump(3, extent);
 
   int max_grey = 1;
 

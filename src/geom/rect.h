@@ -37,6 +37,9 @@
 
 #include "util/algo.h"
 
+#include "util/debug.h"
+DBG_REGISTER
+
 namespace geom
 {
 
@@ -180,6 +183,14 @@ namespace geom
     {
       xx = xx.union_with(other);
       yy = yy.union_with(other);
+    }
+
+    void debug_dump() const throw()
+    {
+      dbg_eval(0, left());
+      dbg_eval(0, right());
+      dbg_eval(0, bottom());
+      dbg_eval_nl(0, top());
     }
 
   private:

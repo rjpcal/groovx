@@ -34,6 +34,9 @@
 
 #include "geom/vec2.h"
 
+#include "util/debug.h"
+DBG_REGISTER
+
 namespace geom
 {
   template <class V> class vec3;
@@ -115,6 +118,18 @@ namespace geom
 
     vec3 operator/(const vec3<V>& rhs) const
     { return vec3<V>(x() / rhs.x(), y() / rhs.y(), z() / rhs.z()); }
+
+
+    //
+    // debugging
+    //
+
+    void debug_dump() const throw()
+    {
+      dbg_eval(0, x());
+      dbg_eval(0, y());
+      dbg_eval_nl(0, z());
+    }
   };
 
   typedef vec3<int> vec3i;

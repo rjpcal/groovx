@@ -36,6 +36,9 @@
 
 #include <cmath>
 
+#include "util/debug.h"
+DBG_REGISTER
+
 namespace geom
 {
   /// Gfx::vec2 is a 2-D vector class for representing 2-D points or distances.
@@ -198,6 +201,11 @@ namespace geom
     vec2& operator/=(const vec2<U>& factor)
     { xx /= factor.x(); yy /= factor.y(); return *this; }
 
+    void debug_dump() const throw()
+    {
+      dbg_eval(0, xx);
+      dbg_eval_nl(0, yy);
+    }
 
   private:
     V xx;
