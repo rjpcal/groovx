@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Fri Jan 25 10:16:07 2002
+// written: Wed Jan 30 15:29:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,7 @@
 
 #include "tcl/tclcode.h"
 #include "tcl/tclerror.h"
+#include "tcl/tclprocwrapper.h"
 #include "tcl/tclsafeinterp.h"
 
 #include "util/error.h"
@@ -51,7 +52,7 @@ Util::Tracer ExptDriver::tracer;
 
 namespace
 {
-  const IO::VersionId EXPTDRIVER_SERIAL_VERSION_ID = 3;
+  const IO::VersionId EXPTDRIVER_SERIAL_VERSION_ID = 4;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -94,8 +95,6 @@ private:
 
   bool needAutosave() const;
   void doAutosave();
-
-  void doUponCompletion() const;
 
   //////////////////////////
   // ExptDriver delegands //
@@ -168,6 +167,8 @@ private:
 
 public:
   mutable Tcl::BkdErrorHandler itsErrorHandler;
+
+  Ref<Tcl::ProcWrapper> itsDoWhenComplete;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -190,7 +191,9 @@ ExptDriver::Impl::Impl(int argc, char** argv,
   itsAutosavePeriod(10),
   itsBlocks(),
   itsCurrentBlockIdx(0),
-  itsErrorHandler(interp)
+  itsErrorHandler(interp),
+  itsDoWhenComplete(new Tcl::ProcWrapper(interp,
+                                         "ExptPrivate_onCompletion"))
 {
 DOTRACE("ExptDriver::Impl::Impl");
 
@@ -244,16 +247,6 @@ DOTRACE("ExptDriver::Impl::needAutosave");
            !(itsAutosaveFile.is_empty()) );
 }
 
-void ExptDriver::Impl::doUponCompletion() const
-{
-DOTRACE("ExptDriver::Impl::doUponCompletion");
-  if (itsInterp.hasCommand("Expt::doUponCompletion"))
-    {
-      Tcl::Code cmd("Expt::doUponCompletion", &itsErrorHandler);
-      cmd.invoke(itsInterp);
-    }
-}
-
 ///////////////////////////////////////////////////////////////////////
 //
 // ExptDriver::Impl delegand functions
@@ -264,7 +257,7 @@ void ExptDriver::Impl::readFrom(IO::Reader* reader)
 {
 DOTRACE("ExptDriver::Impl::readFrom");
 
-  reader->ensureReadVersionId("ExptDriver", 3, "Try grsh0.8a3");
+  int svid = reader->ensureReadVersionId("ExptDriver", 3, "Try grsh0.8a3");
 
   reader->readValue("hostname", itsHostname);
   reader->readValue("subject", itsSubject);
@@ -280,17 +273,24 @@ DOTRACE("ExptDriver::Impl::readFrom");
   IO::ReadUtils::readObjectSeq<Block>(
            reader, "blocks", std::back_inserter(itsBlocks));
 
-  fstring proc_body;
-  reader->readValue("doUponCompletionScript", proc_body);
-  itsInterp.createProc("Expt", "doUponCompletion", "", proc_body.c_str());
+  if (svid < 4)
+    {
+      fstring proc_body;
+      reader->readValue("doUponCompletionScript", proc_body);
+      itsDoWhenComplete->define("", proc_body);
+    }
+  else
+    {
+      reader->readOwnedObject("doWhenComplete", itsDoWhenComplete);
+    }
 }
 
 void ExptDriver::Impl::writeTo(IO::Writer* writer) const
 {
 DOTRACE("ExptDriver::Impl::writeTo");
 
-  writer->ensureWriteVersionId("ExptDriver", EXPTDRIVER_SERIAL_VERSION_ID, 3,
-                               "Try grsh0.8a3");
+  writer->ensureWriteVersionId("ExptDriver", EXPTDRIVER_SERIAL_VERSION_ID, 4,
+                               "Try grsh0.8a7");
 
   writer->writeValue("hostname", itsHostname);
   writer->writeValue("subject", itsSubject);
@@ -305,8 +305,7 @@ DOTRACE("ExptDriver::Impl::writeTo");
   IO::WriteUtils::writeObjectSeq(writer, "blocks",
                                  itsBlocks.begin(), itsBlocks.end());
 
-  fstring proc_body = itsInterp.getProcBody("Expt::doUponCompletion");
-  writer->writeValue("doUponCompletionScript", proc_body);
+  writer->writeOwnedObject("doWhenComplete", itsDoWhenComplete);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -416,7 +415,9 @@ DOTRACE("ExptDriver::Impl::edEndExpt");
   addLogInfo("Experiment complete.");
 
   storeData();
-  doUponCompletion();        // Call the user-defined callback
+
+  Util::log( fstring("Expt::doWhenComplete") );
+  itsDoWhenComplete->invoke("");        // Call the user-defined callback
 
   Util::Log::removeScope("Expt");
 }
@@ -531,6 +532,12 @@ void ExptDriver::addBlock(Ref<Block> block)
 
 Ref<Block> ExptDriver::currentBlock() const
   { return itsImpl->currentBlock(); }
+
+fstring ExptDriver::getDoWhenComplete() const
+  { return itsImpl->itsDoWhenComplete->fullSpec(); }
+
+void ExptDriver::setDoWhenComplete(const fstring& script)
+  { itsImpl->itsDoWhenComplete->define("", script); }
 
 Util::ErrorHandler& ExptDriver::getErrorHandler() const
   { return itsImpl->itsErrorHandler; }

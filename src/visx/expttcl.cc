@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Wed Jan 23 11:13:04 2002
+// written: Wed Jan 30 15:28:36 2002
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -183,6 +183,8 @@ public:
     defAction("stop", &ExptDriver::edHaltExpt);
     defAction("storeData", &ExptDriver::storeData);
     defAttrib("widget", &ExptDriver::getWidget, &ExptDriver::setWidget);
+    defGetter("doWhenComplete", &ExptDriver::getDoWhenComplete);
+    defSetter("doWhenComplete", &ExptDriver::setDoWhenComplete);
 
     Pkg::eval("foreach cmd [info commands ::Exp::*] {"
               "  namespace eval Expt { proc [namespace tail $cmd] {args} \" eval $cmd \\[Exp::currentExp\\] \\$args \" } }\n"

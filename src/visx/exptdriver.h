@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Fri Jan 18 16:06:53 2002
+// written: Wed Jan 30 15:27:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,6 +96,9 @@ public:
 
   void addBlock(Util::Ref<Block> block);
   Util::Ref<Block> currentBlock() const;
+
+  fstring getDoWhenComplete() const;
+  void setDoWhenComplete(const fstring& script);
 
   virtual Util::ErrorHandler& getErrorHandler() const;
 
