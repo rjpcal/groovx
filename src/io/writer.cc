@@ -3,7 +3,7 @@
 // writer.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:49:50 1999
-// written: Wed Mar  8 17:23:35 2000
+// written: Fri Mar 10 19:57:54 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,12 @@
 
 #include <string>
 #include <strstream.h>
+
+WriteError::WriteError(const char* msg) :
+  ErrorWithMsg("WriteError: ")
+{
+  appendMsg(msg);
+}
 
 Writer::~Writer () {}
 
