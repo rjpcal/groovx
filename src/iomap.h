@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 24 16:19:25 2000
-// written: Thu May 10 12:04:37 2001
+// written: Fri May 11 20:53:11 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -69,6 +69,9 @@ public:
   Iterator getIterator() const;
 
 private:
+  IoMap(const IoMap&);
+  IoMap& operator=(const IoMap&);
+
   Impl* itsImpl;
 };
 
