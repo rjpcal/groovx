@@ -122,8 +122,8 @@ DOTRACE("TrialEvent::schedule");
   // specified amount of time.
 
   unsigned int actual_request =
-    Util::max(itsRequestedDelay + (unsigned int)itsEstimatedOffset,
-              Util::max(minimum_msec, 0u));
+    Util::max(int(itsRequestedDelay) + int(itsEstimatedOffset),
+              int(minimum_msec));
   itsTimer.setDelayMsec(actual_request);
   itsTimer.schedule();
 
