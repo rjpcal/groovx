@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:30:54 1999
-// written: Mon Jan 28 13:51:47 2002
+// written: Wed Jan 30 10:18:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -141,6 +141,10 @@ public:
       matches in the input response map to determine the integer
       response value. */
   void setBindingSubstitution(const fstring& sub);
+
+  /** Returns the args and body of the Tcl code chunk that will be used to
+      decode responses. */
+  fstring getResponseProc() const;
 
   /** Specify a Tcl proc-style code chunk that will translate its args (which
       are the results of the binding substitution(s)) into an integer result

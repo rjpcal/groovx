@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Tue Jan 29 18:57:42 2002
+// written: Wed Jan 30 10:21:50 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -475,6 +475,15 @@ const fstring& EventResponseHdlr::getBindingSubstitution() const
 
 void EventResponseHdlr::setBindingSubstitution(const fstring& sub)
   { itsImpl->itsBindingSubstitution = sub; }
+
+fstring EventResponseHdlr::getResponseProc() const
+{
+  fstring result;
+  result.append('{').append(itsImpl->itsResponseProc->args()).append("} ");
+  result.append('{').append(itsImpl->itsResponseProc->body()).append('}');
+
+  return result;
+}
 
 void EventResponseHdlr::setResponseProc(const fstring& args,
                                         const fstring& body)
