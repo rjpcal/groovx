@@ -3,7 +3,7 @@
 // xbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:37:04 1999
-// written: Tue Sep 21 12:36:58 1999
+// written: Tue Oct 12 18:35:00 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ namespace {
   Visual* visual;
 
   void init_class() {
-  DOTRACE("<bitmap.cc>::init_class");
+  DOTRACE("<xbitmap.cc>::init_class");
     ToglConfig* config = ObjTogl::theToglConfig();
 
 	 display = config->getX11Display();
