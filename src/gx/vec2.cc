@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug  9 14:38:13 2001
-// written: Mon Aug 13 11:56:52 2001
+// written: Fri Sep 21 10:49:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef VEC2_CC_DEFINED
 #define VEC2_CC_DEFINED
 
-#include "gfx/vec2.h"
+#include "gx/vec2.h"
 
 #include "util/algo.h"
 
@@ -84,7 +84,7 @@ double Gfx::PointAlgo::thetaDeg(double y, double x)
 }
 
 void Gfx::PointAlgo::setPolarPoint(Gfx::Vec2<double>& point,
-											  double length, double degrees)
+                                   double length, double degrees)
 {
   normDeg(degrees);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Thu Sep 13 11:31:13 2001
+// written: Fri Sep 21 10:46:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,8 @@
 #include "visx/xbmaprenderer.h"
 
 #include "gfx/canvas.h"
-#include "gfx/rect.h"
+
+#include "gx/rect.h"
 
 #include "util/error.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 28 18:27:19 2000
-// written: Tue Aug 28 09:18:30 2001
+// written: Fri Sep 21 10:50:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@
 #define VEC3_H_DEFINED
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(VEC2_H_DEFINED)
-#include "gfx/vec2.h"
+#include "gx/vec2.h"
 #endif
 
 namespace Gfx

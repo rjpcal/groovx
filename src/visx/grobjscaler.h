@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:00:57 2001
-// written: Mon Sep 10 17:17:36 2001
+// written: Fri Sep 21 10:48:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 
 #include "visx/application.h"
 
-#include "gfx/rect.h"
+#include "gx/rect.h"
 
 #include "util/algo.h"
 

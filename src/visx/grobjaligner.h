@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 15:42:42 2001
-// written: Mon Sep 10 17:17:36 2001
+// written: Fri Sep 21 10:47:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,8 +16,8 @@
 #include "visx/gmodes.h"
 #include "visx/gnode.h"
 
-#include "gfx/rect.h"
-#include "gfx/vec2.h"
+#include "gx/rect.h"
+#include "gx/vec2.h"
 
 class GrObjAligner : public Gnode
 {

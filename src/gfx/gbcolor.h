@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:09:31 2000
-// written: Mon Sep  3 14:47:46 2001
+// written: Fri Sep 21 10:48:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(RGBACOLOR_H_DEFINED)
-#include "gfx/rgbacolor.h"
+#include "gx/rgbacolor.h"
 #endif
 
 class GbColor : public Gfx::RgbaColor, public TMultiValue<double>

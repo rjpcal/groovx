@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Thu Sep 13 11:31:12 2001
+// written: Fri Sep 21 10:47:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,8 +18,9 @@
 #include "visx/bezier.h"
 
 #include "gfx/canvas.h"
-#include "gfx/rect.h"
-#include "gfx/vec3.h"
+
+#include "gx/rect.h"
+#include "gx/vec3.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"

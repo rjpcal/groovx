@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 16:41:07 1999
-// written: Thu Sep 13 14:02:10 2001
+// written: Fri Sep 21 10:44:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,10 +13,10 @@
 #ifndef PBM_CC_DEFINED
 #define PBM_CC_DEFINED
 
-#include "gfx/pbm.h"
+#include "gx/pbm.h"
 
-#include "gfx/bmapdata.h"
-#include "gfx/vec2.h"
+#include "gx/bmapdata.h"
+#include "gx/vec2.h"
 
 #include "util/error.h"
 #include "util/gzstreambuf.h"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:38 1999
-// written: Mon Sep  3 10:34:24 2001
+// written: Fri Sep 21 10:49:27 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "gfx/canvas.h"
 
-#include "gfx/vec3.h"
+#include "gx/vec3.h"
 
 #include "util/arrays.h"
 

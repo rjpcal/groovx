@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Mar 10 21:33:15 1999
-// written: Mon Sep 10 17:17:38 2001
+// written: Fri Sep 21 10:49:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,8 @@
 #include "visx/position.h"
 
 #include "gfx/canvas.h"
-#include "gfx/vec3.h"
+
+#include "gx/vec3.h"
 
 #include "io/reader.h"
 #include "io/writer.h"

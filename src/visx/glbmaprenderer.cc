@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:52:41 1999
-// written: Mon Sep 10 17:17:40 2001
+// written: Fri Sep 21 10:45:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,9 @@
 
 #include "visx/glbmaprenderer.h"
 
-#include "gfx/bmapdata.h"
 #include "gfx/canvas.h"
+
+#include "gx/bmapdata.h"
 
 #include "util/trace.h"
 

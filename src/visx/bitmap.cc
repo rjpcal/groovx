@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Sep 13 11:32:13 2001
+// written: Fri Sep 21 10:46:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@
 #include "visx/bmaprenderer.h"
 #include "visx/bitmaprep.h"
 
-#include "gfx/rect.h"
+#include "gx/rect.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"

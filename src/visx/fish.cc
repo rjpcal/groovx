@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Thu Sep 13 11:31:13 2001
+// written: Fri Sep 21 10:46:38 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,9 +16,10 @@
 #include "visx/fish.h"
 
 #include "gfx/canvas.h"
-#include "gfx/rect.h"
-#include "gfx/rgbacolor.h"
-#include "gfx/vec3.h"
+
+#include "gx/rect.h"
+#include "gx/rgbacolor.h"
+#include "gx/vec3.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"

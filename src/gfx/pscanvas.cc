@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Aug 27 17:20:09 2001
-// written: Wed Aug 29 10:48:21 2001
+// written: Fri Sep 21 10:44:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,11 +15,11 @@
 
 #include "gfx/pscanvas.h"
 
-#include "gfx/bmapdata.h"
-#include "gfx/rect.h"
-#include "gfx/rgbacolor.h"
-#include "gfx/vec2.h"
-#include "gfx/vec3.h"
+#include "gx/bmapdata.h"
+#include "gx/rect.h"
+#include "gx/rgbacolor.h"
+#include "gx/vec2.h"
+#include "gx/vec3.h"
 
 #include "util/dlink_list.h"
 #include "util/error.h"

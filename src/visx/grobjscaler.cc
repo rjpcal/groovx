@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:01:45 2001
-// written: Mon Sep 10 17:17:39 2001
+// written: Fri Sep 21 10:49:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,8 @@
 #include "visx/grobjscaler.h"
 
 #include "gfx/canvas.h"
-#include "gfx/vec3.h"
+
+#include "gx/vec3.h"
 
 #include "util/trace.h"
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Mon Sep 10 17:17:39 2001
+// written: Fri Sep 21 10:47:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@
 #include "visx/grobj.h"
 #include "visx/recttcl.h"
 
-#include "gfx/rect.h"
+#include "gx/rect.h"
 
 #include "tcl/fieldpkg.h"
 #include "tcl/tclpkg.h"

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 09:06:14 2001
-// written: Mon Sep 10 17:17:36 2001
+// written: Fri Sep 21 10:47:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,7 @@
 
 #include "visx/gnode.h"
 
-#include "gfx/rect.h"
+#include "gx/rect.h"
 
 class GrObjBBox : public Gnode
 {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr  7 13:46:41 1999
-// written: Thu Sep 13 11:32:13 2001
+// written: Fri Sep 21 10:49:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,8 @@
 #include "visx/jitter.h"
 
 #include "gfx/canvas.h"
-#include "gfx/vec3.h"
+
+#include "gx/vec3.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"

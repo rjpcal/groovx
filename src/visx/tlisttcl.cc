@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Thu Sep 13 10:56:03 2001
+// written: Fri Sep 21 10:47:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,8 @@
 #include "gfx/canvas.h"
 #include "gfx/gxnode.h"
 #include "gfx/gxseparator.h"
-#include "gfx/rect.h"
+
+#include "gx/rect.h"
 
 #include "tcl/tcllistobj.h"
 #include "tcl/tclpkg.h"

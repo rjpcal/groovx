@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jan 20 00:37:03 2000
-// written: Thu Sep 13 11:32:14 2001
+// written: Fri Sep 21 10:44:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,9 +13,9 @@
 #ifndef BMAPDATA_CC_DEFINED
 #define BMAPDATA_CC_DEFINED
 
-#include "gfx/bmapdata.h"
+#include "gx/bmapdata.h"
 
-#include "gfx/vec2.h"
+#include "gx/vec2.h"
 
 #include "util/algo.h"
 
