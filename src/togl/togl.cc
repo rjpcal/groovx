@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Tue Sep 17 13:30:12 2002
+// written: Tue Sep 17 16:37:48 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -208,14 +208,7 @@ public:
 
   void swapBuffers() const;
 
-  void ensureSharedColormap(const char* what) const;
-
-  unsigned long allocColor(float red, float green, float blue) const;
-  void freeColor(unsigned long pixel) const;
-  void setColor(unsigned long index, float red, float green, float blue) const;
-  void setColor(const Togl::Color& color) const;
   Togl::Color queryColor(unsigned int color_index) const;
-  void queryColor(unsigned int color_index, Togl::Color& color) const;
 
   void loadFontList(GLuint newListBase);
 
@@ -303,17 +296,10 @@ DOTRACE("Togl::Impl::Impl");
       itsGlx->canvas().setClearColor(Gfx::RgbaColor(1.0, 1.0, 1.0, 1.0));
     }
   else
-    { // not using rgba
-      if (itsOpts->privateCmapFlag)
-        {
-          itsGlx->canvas().setColorIndex(0);
-          itsGlx->canvas().setClearColorIndex(1);
-        }
-      else
-        {
-          itsGlx->canvas().setColorIndex(allocColor(0.0, 0.0, 0.0));
-          itsGlx->canvas().setClearColorIndex(allocColor(1.0, 1.0, 1.0));
-        }
+    {
+      // FIXME use XBlackPixel(), XWhitePixel() here?
+      itsGlx->canvas().setColorIndex(0);
+      itsGlx->canvas().setClearColorIndex(1);
     }
 }
 
@@ -412,89 +398,14 @@ DOTRACE("Togl::Impl::swapBuffers");
     }
 }
 
-void Togl::Impl::ensureSharedColormap(const char* what) const
-{
-DOTRACE("Togl::Impl::ensureSharedColormap");
-  if (itsOpts->glx.rgbaFlag)
-    {
-      throw Util::Error(fstring(what, " not allowed in RGBA mode"));
-    }
-
-  if (itsOpts->privateCmapFlag)
-    {
-      throw Util::Error(fstring(what, " not allowed with private colormap"));
-    }
-}
-
-unsigned long Togl::Impl::allocColor(float red, float green, float blue) const
-{
-DOTRACE("Togl::Impl::allocColor");
-
-  ensureSharedColormap("Togl::allocColor");
-
-  return X11Util::noFaultXAllocColor(Tk_Display(itsTkWin),
-                                     Tk_Colormap(itsTkWin),
-                                     Tk_Visual(itsTkWin)->map_entries,
-                                     red, green, blue);
-}
-
-void Togl::Impl::freeColor(unsigned long pixel) const
-{
-DOTRACE("Togl::Impl::freeColor");
-
-  ensureSharedColormap("Togl::freeColor");
-
-  XFreeColors(Tk_Display(itsTkWin), Tk_Colormap(itsTkWin), &pixel, 1, 0);
-}
-
-void Togl::Impl::setColor(unsigned long index,
-                          float red, float green, float blue) const
-{
-DOTRACE("Togl::Impl::setColor");
-
-  ensureSharedColormap("Togl::allocColor");
-
-  XColor xcol;
-
-  xcol.pixel = index;
-  xcol.red   = (short) (red   * 65535.0);
-  xcol.green = (short) (green * 65535.0);
-  xcol.blue  = (short) (blue  * 65535.0);
-  xcol.flags = DoRed | DoGreen | DoBlue;
-
-  XStoreColor(Tk_Display(itsTkWin), Tk_Colormap(itsTkWin), &xcol);
-}
-
-void Togl::Impl::setColor(const Togl::Color& color) const
-{
-DOTRACE("Toglet::setColor");
-
-  static const char* const bad_val_msg = "RGB values must be in [0.0, 1.0]";
-  static const char* const bad_index_msg = "color index must be in [0, 255]";
-
-  if (                     color.pixel > 255) { throw Util::Error(bad_index_msg); }
-  if (color.red   < 0.0 || color.red   > 1.0) { throw Util::Error(bad_val_msg); }
-  if (color.green < 0.0 || color.green > 1.0) { throw Util::Error(bad_val_msg); }
-  if (color.blue  < 0.0 || color.blue  > 1.0) { throw Util::Error(bad_val_msg); }
-
-  setColor(color.pixel, color.red, color.green, color.blue);
-}
-
 Togl::Color Togl::Impl::queryColor(unsigned int color_index) const
 {
-  Togl::Color col;
-  queryColor(color_index, col);
-  return col;
-}
-
-void Togl::Impl::queryColor(unsigned int color_index, Color& color) const
-{
-DOTRACE("Togl::Impl::queryColor");
-
   XColor col;
 
   col.pixel = color_index;
   XQueryColor(Tk_Display(itsTkWin), Tk_Colormap(itsTkWin), &col);
+
+  Togl::Color color;
 
   color.pixel = (unsigned int)col.pixel;
 #ifdef HAVE_LIMITS
@@ -506,6 +417,8 @@ DOTRACE("Togl::Impl::queryColor");
   color.red   = double(col.red)   / usmax;
   color.green = double(col.green) / usmax;
   color.blue  = double(col.blue)  / usmax;
+
+  return color;
 }
 
 void Togl::Impl::loadFontList(GLuint newListBase)
@@ -626,24 +539,8 @@ bool Togl::isDoubleBuffered() const     { return rep->itsOpts->glx.doubleFlag; }
 unsigned int Togl::bitsPerPixel() const { return rep->itsGlx->visInfo()->depth; }
 bool Togl::hasPrivateCmap() const       { return rep->itsOpts->privateCmapFlag; }
 
-unsigned long Togl::allocColor(float red, float green, float blue) const
-  { return rep->allocColor(red, green, blue); }
-
-void Togl::freeColor(unsigned long pixel) const
-  { rep->freeColor(pixel); }
-
-void Togl::setColor(unsigned long index,
-                    float red, float green, float blue) const
-  { rep->setColor(index, red, green, blue); }
-
-void Togl::setColor(const Togl::Color& color) const
-  { rep->setColor(color); }
-
 Togl::Color Togl::queryColor(unsigned int color_index) const
   { return rep->queryColor(color_index); }
-
-void Togl::queryColor(unsigned int color_index, Color& color) const
-  { rep->queryColor(color_index, color); }
 
 void Togl::loadDefaultFont() const
 {

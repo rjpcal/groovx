@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Tue Sep 17 12:52:17 2002
+// written: Tue Sep 17 16:36:50 2002
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -62,13 +62,11 @@ namespace ObjTogl
         throw Tcl::TclError("colormap index out of range");
       }
 
-    Togl::Color color;
-
     Tcl::List result;
 
     for (unsigned int i = start; i <= end; ++i)
       {
-        toglet->queryColor(i, color);
+        Togl::Color color = toglet->queryColor(i);
         Tcl::List color_list;
         color_list.append(i);
         color_list.append(color.red);
@@ -98,12 +96,6 @@ namespace ObjTogl
     widg->setVisibility(true);
     widg->fullRender();
     return item->id();
-  }
-
-  void setColor(SoftRef<Toglet> toglet, unsigned int i,
-                double r, double g, double b)
-  {
-    toglet->setColor(Toglet::Color(i, r, g, b));
   }
 
   // Change the widget's current trial to a specified trial id. The
@@ -168,7 +160,6 @@ public:
     def( "Togl::inited", 0, &ObjTogl::inited );
     def( "perspective", "toglet_id fovy zNear zFar", &Toglet::setPerspective );
     def( "see", "gxnode_id", &ObjTogl::see );
-    def( "setColor", "index r g b", &ObjTogl::setColor );
     def( "setCurTrial", "toglet_id widget_id", &ObjTogl::setCurTrial );
     def( "show", "toglet_id trial_id", &ObjTogl::show );
 
