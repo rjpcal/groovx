@@ -3,7 +3,7 @@
 // fish.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:56 1999
-// written: Thu Sep 30 12:09:47 1999
+// written: Sat Oct  2 21:15:48 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,38 +48,19 @@ public:
 
   virtual int charCount() const { return 0; }
 
-  //////////////////
-  // nested types //
-  //////////////////
-
-  //fish structure: describes one of the part of the fish (upper fin,
-  //tail, bottom fin or mouth). The descripition is in terms of a
-  //spline curve, with given order, number of knots and x,y
-  //coefficients.
-  struct FISH_PART {
-	 int order;
-	 
-	 int nknots;
-	 float *knots;
-
-	 int ncoefs;
-	 float *coefs[2];
-  };
-
-  //endpoints structure: Each of the endpoint (four in total) is
-  //associated with a breakpoint of one of the parts. This is
-  //described in this structure as well as the x and y coordinates of
-  //the two points which define the boundaries of the endpoint line
-  struct ENDPT {
-	 int part;
-	 int bkpt;
-	 float x[2];
-	 float y[2];
-  };
-
   ////////////////
   // properties //
   ////////////////
+
+  typedef PropertyInfo<Fish> PInfo;
+  static const vector<PInfo>& getPropertyInfos();
+
+  CTBoundedProperty<Fish, int, 0, 3, 1> currentPart;
+  CTBoundedProperty<Fish, int, 0, 3, 1> currentEndPt;
+  CTPtrProperty<Fish, double> coord0;
+  CTPtrProperty<Fish, double> coord1;
+  CTPtrProperty<Fish, double> coord2;
+  CTPtrProperty<Fish, double> coord3;
 
   /////////////
   // actions //
@@ -89,12 +70,18 @@ protected:
   virtual void grRender() const;
 
 private:
-  FISH_PART fish[4];
-  ENDPT endpts[4];
-  float fishcoord[4];
+  //////////////////
+  // nested types //
+  //////////////////
+
+  struct EndPt;
+
+  struct FishPart;
+
+  FishPart* itsFishParts;
+  EndPt* itsEndPts;
+  double itsCoords[4];
 };
 
 static const char vcid_fish_h[] = "$Header$";
 #endif // !FISH_H_DEFINED
-
-
