@@ -3,7 +3,7 @@
 // cloneface.h
 // Rob Peters
 // created: Thu Apr 29 09:19:25 1999
-// written: Mon Dec  6 13:58:21 1999
+// written: Wed Feb 16 11:35:26 2000
 // $Id$
 //
 // CloneFace is a modified version of Face that allows additional
@@ -21,14 +21,13 @@
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * CloneFace is a subclass of Face that adds the ability to control
- * additional paramters for Brunswik face rendering. This is achieved
- * by overriding Face's getCtrlPnts(), getEyeAspect(), and
- * getVertOffset() functions to return CloneFace data members. (In the
- * base class Face, these functions just return constant data.)
+ * \c CloneFace is a subclass of \c Face that adds the ability to
+ * control additional paramters for Brunswik face rendering. This is
+ * achieved by overriding Face's \c getCtrlPnts(), \c getEyeAspect(),
+ * and \c getVertOffset() functions to return CloneFace data
+ * members. (In the base class \c Face, these functions just return
+ * constant data.)
  *
- * @short Subclass of Face that can manipulate additional parameters
- * for rendering Brunswik faces.
  **/
 ///////////////////////////////////////////////////////////////////////
 
@@ -36,21 +35,18 @@ class CloneFace : public Face {
 public:
   /// Default constructor.
   CloneFace();
+
   /// Construct by deserializing from a stream.
   CloneFace(istream &is, IOFlag flag);
-  ///
+
+  /// Virtual destructor.
   virtual ~CloneFace();
   
-  ///
   virtual void serialize(ostream &os, IOFlag flag) const;
-  ///
   virtual void deserialize(istream &is, IOFlag flag);
-  ///
   virtual int charCount() const;
 
-  ///
   virtual void readFrom(Reader* reader);
-  ///
   virtual void writeTo(Writer* writer) const;
 
   /// Returns an array of Bezier control points for face outline.
