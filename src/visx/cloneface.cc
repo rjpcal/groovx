@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 29 09:19:26 1999
-// written: Sat May 19 11:40:01 2001
+// written: Thu Aug  9 11:59:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,14 +27,14 @@
 
 namespace {
   const FieldInfo FINFOS[] = {
-	 FieldInfo("eyeAspect", &CloneFace::eyeAspect, 0.0, 0.0, 1.0, 0.05, true),
-	 FieldInfo("vertOffset", &CloneFace::vertOffset, 0.0, -0.1, 0.1, 0.01)
+    FieldInfo("eyeAspect", &CloneFace::eyeAspect, 0.0, 0.0, 1.0, 0.05, true),
+    FieldInfo("vertOffset", &CloneFace::vertOffset, 0.0, -0.1, 0.1, 0.01)
   };
 
   const unsigned int NUM_FINFOS = sizeof(FINFOS)/sizeof(FieldInfo);
 
   const FieldMap CLONEFACE_FIELDS(FINFOS, FINFOS+NUM_FINFOS,
-											 &Face::classFields());
+                                  &Face::classFields());
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -50,8 +50,8 @@ DOTRACE("CloneFace::make");
   return new CloneFace;
 }
 
-CloneFace::CloneFace () : 
-  Face(), eyeAspect(this, 0.0), vertOffset(this, 0.0)
+CloneFace::CloneFace () :
+  Face(), eyeAspect(0.0), vertOffset(0.0)
 {
 DOTRACE("CloneFace::CloneFace()");
 
@@ -61,7 +61,7 @@ DOTRACE("CloneFace::CloneFace()");
   // so that the default behavior of CloneFace is to mimic Face.
   const double* const face_pnts = Face::getCtrlPnts();
   for (int i = 0; i < 24; ++i) {
-	 itsCtrlPnts[i] = face_pnts[i];
+    itsCtrlPnts[i] = face_pnts[i];
   }
 }
 
@@ -73,7 +73,7 @@ void CloneFace::readFrom(IO::Reader* reader) {
 DOTRACE("CloneFace::readFrom");
 
   IO::ReadUtils::readValueSeq<double>(reader, "ctrlPnts",
-															  itsCtrlPnts, 24);
+                                               itsCtrlPnts, 24);
 
   readFieldsFrom(reader, classFields());
 
@@ -84,7 +84,7 @@ void CloneFace::writeTo(IO::Writer* writer) const {
 DOTRACE("CloneFace::writeTo");
 
   IO::WriteUtils::writeValueSeq(writer, "ctrlPnts",
-										  itsCtrlPnts, itsCtrlPnts+24, true);
+                                itsCtrlPnts, itsCtrlPnts+24, true);
 
   writeFieldsTo(writer, classFields());
 

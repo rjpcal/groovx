@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:09:31 2000
-// written: Thu Aug  9 07:32:49 2001
+// written: Thu Aug  9 11:54:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,7 +23,7 @@
 
 class GbColor : public RgbaColor, public Field, public Value {
 public:
-  GbColor(FieldContainer* owner, double v = 1.0);
+  GbColor(double v = 1.0);
   virtual ~GbColor();
 
   //

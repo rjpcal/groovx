@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Dec-98
-// written: Thu Jul 19 09:30:10 2001
+// written: Thu Aug  9 11:59:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,11 +81,11 @@ DOTRACE("Face::make");
 
 Face::Face(double eh, double es, double nl, double mh, int categ) :
   FieldContainer(),
-  faceCategory(this, categ),
-  eyeHeight(this, eh),
-  eyeDistance(this, es),
-  noseLength(this, nl),
-  mouthHeight(this, mh)
+  faceCategory(categ),
+  eyeHeight(eh),
+  eyeDistance(es),
+  noseLength(nl),
+  mouthHeight(mh)
 {
 DOTRACE("Face::Face");
   Invariant(check());

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Sep 23 15:49:58 1999
-// written: Thu Jul 19 09:37:30 2001
+// written: Thu Aug  9 12:01:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,8 +51,8 @@ DOTRACE("MaskHatch::make");
 MaskHatch::MaskHatch () :
   GrObj(GLCOMPILE, CLEAR_BOUNDING_BOX),
   FieldContainer(),
-  numLines(this, 10, 0, 1000),
-  lineWidth(this, 1, 0, 1000)
+  numLines(10, 0, 1000),
+  lineWidth(1, 0, 1000)
 {
 DOTRACE("MaskHatch::MaskHatch");
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Thu Aug  9 07:06:04 2001
+// written: Thu Aug  9 12:00:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -130,15 +130,15 @@ DOTRACE("Fish::makeFromFiles");
 
 Fish::Fish(const char* splinefile, const char* coordfile, int index) :
   FieldContainer(),
-  fishCategory(this, -1),
-  dorsalFinCoord(this, itsCoords[0]),
-  tailFinCoord(this, itsCoords[1]),
-  lowerFinCoord(this, itsCoords[2]),
-  mouthCoord(this, itsCoords[3]),
-  currentPart(this, 0, 0, 3),
-  currentEndPt(this, 0, 0, 3),
-  endPt_Part(this, dummy),
-  endPt_Bkpt(this, dummy),
+  fishCategory(-1),
+  dorsalFinCoord(itsCoords[0]),
+  tailFinCoord(itsCoords[1]),
+  lowerFinCoord(itsCoords[2]),
+  mouthCoord(itsCoords[3]),
+  currentPart(0, 0, 3),
+  currentEndPt(0, 0, 3),
+  endPt_Part(dummy),
+  endPt_Bkpt(dummy),
   itsFishParts(new FishPart[4]),
   itsEndPts(new EndPt[4])
 {

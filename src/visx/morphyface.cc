@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Mon Aug  6 17:35:51 2001
+// written: Thu Aug  9 12:00:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -190,42 +190,42 @@ MorphyFace::MorphyFace() :
   GrObj(GLCOMPILE, CLEAR_BOUNDING_BOX),
   FieldContainer(),
 
-  mfaceCategory(this, 0),
+  mfaceCategory(0),
 
-  faceWidth(this, 2.75),
-  topWidth(this, 1.15),
-  bottomWidth(this, 1.0),
-  topHeight(this, 3.8),
-  bottomHeight(this, -3.0),
+  faceWidth(2.75),
+  topWidth(1.15),
+  bottomWidth(1.0),
+  topHeight(3.8),
+  bottomHeight(-3.0),
 
-  hairWidth(this, 0.15),
-  hairStyle(this, 0),
+  hairWidth(0.15),
+  hairStyle(0),
 
-  eyeYpos(this, 0.375),
-  eyeDistance(this, 2.25),
-  eyeHeight(this, 0.9),
-  eyeAspectRatio(this, 1.555556),
+  eyeYpos(0.375),
+  eyeDistance(2.25),
+  eyeHeight(0.9),
+  eyeAspectRatio(1.555556),
 
-  pupilXpos(this, 0.0),
-  pupilYpos(this, 0.0),
-  pupilSize(this, 0.6),
-  pupilDilation(this, 0.5, 0.0, 0.999),
+  pupilXpos(0.0),
+  pupilYpos(0.0),
+  pupilSize(0.6),
+  pupilDilation(0.5, 0.0, 0.999),
 
-  eyebrowXpos(this, 0.0),
-  eyebrowYpos(this, 0.5),
-  eyebrowCurvature(this, 0.8),
-  eyebrowAngle(this, -5),
-  eyebrowThickness(this, 2.0),
+  eyebrowXpos(0.0),
+  eyebrowYpos(0.5),
+  eyebrowCurvature(0.8),
+  eyebrowAngle(-5),
+  eyebrowThickness(2.0),
 
-  noseXpos(this, 0.0),
-  noseYpos(this, -0.825),
-  noseLength(this, 0.75),
-  noseWidth(this, 1.5),
+  noseXpos(0.0),
+  noseYpos(-0.825),
+  noseLength(0.75),
+  noseWidth(1.5),
 
-  mouthXpos(this, 0.0),
-  mouthYpos(this, -2.0),
-  mouthWidth(this, 2.5),
-  mouthCurvature(this, 0.6)
+  mouthXpos(0.0),
+  mouthYpos(-2.0),
+  mouthWidth(2.5),
+  mouthCurvature(0.6)
 {
 DOTRACE("MorphyFace::MorphyFace");
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Wed Aug  8 20:16:37 2001
+// written: Thu Aug  9 11:53:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -176,7 +176,7 @@ protected:
   TField& operator=(const TField&); // not implemented
 
 public:
-  TField(FieldContainer* owner, const T& val = T());
+  TField(const T& val = T());
   virtual ~TField();
 
   virtual void readValueFrom(IO::Reader* reader, const fstring& name);
@@ -209,8 +209,7 @@ protected:
   TBoundedField& operator=(const TBoundedField&); // not implemented
 
 public:
-  TBoundedField(FieldContainer* owner, const T& val,
-                const T& min, const T& max);
+  TBoundedField(const T& val, const T& min, const T& max);
 
   virtual ~TBoundedField();
 
@@ -244,7 +243,7 @@ protected:
   TPtrField& operator=(const TPtrField&); // not implemented
 
 public:
-  TPtrField(FieldContainer* owner, T& valRef);
+  TPtrField(T& valRef);
   virtual ~TPtrField();
 
   virtual void readValueFrom(IO::Reader* reader, const fstring& name);

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Sun Jul 22 23:34:22 2001
+// written: Thu Aug  9 12:00:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -177,29 +177,29 @@ DOTRACE("House::make");
 
 House::House() :
   FieldContainer(),
-  storyAspectRatio(this, 3.0),
-  numStories(this, 2),
+  storyAspectRatio(3.0),
+  numStories(2),
 
-  doorPosition(this, 2),
-  doorWidth(this, 0.75),
-  doorHeight(this, 0.75),
-  doorOrientation(this, false),
+  doorPosition(2),
+  doorWidth(0.75),
+  doorHeight(0.75),
+  doorOrientation(false),
 
-  numWindows(this, 5),
-  windowWidth(this, 0.75),
-  windowHeight(this, 0.5),
-  windowVertBars(this, 1),
-  windowHorizBars(this, 1),
+  numWindows(5),
+  windowWidth(0.75),
+  windowHeight(0.5),
+  windowVertBars(1),
+  windowHorizBars(1),
 
-  roofShape(this, 0),
-  roofOverhang(this, 0.05),
-  roofHeight(this, 0.75),
-  roofColor(this, 1),
+  roofShape(0),
+  roofOverhang(0.05),
+  roofHeight(0.75),
+  roofColor(1),
 
-  chimneyXPosition(this, 0.2),
-  chimneyYPosition(this, 0.5),
-  chimneyWidth(this, 0.06),
-  chimneyHeight(this, 0.5)
+  chimneyXPosition(0.2),
+  chimneyYPosition(0.5),
+  chimneyWidth(0.06),
+  chimneyHeight(0.5)
 {
 DOTRACE("House::House");
 

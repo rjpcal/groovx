@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Thu Jul 19 09:31:33 2001
+// written: Thu Aug  9 12:04:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,15 +65,15 @@ DOTRACE("Gabor::make");
 
 Gabor::Gabor() :
   FieldContainer(),
-  colorMode(this, 2),
-  contrast(this, 1.0),
-  spatialFreq(this, 3.5),
-  phase(this, 0.0),
-  sigma(this, 0.15),
-  aspectRatio(this, 1.0),
-  orientation(this, 0.0),
-  resolution(this, 60),
-  pointSize(this, 1)
+  colorMode(2),
+  contrast(1.0),
+  spatialFreq(3.5),
+  phase(0.0),
+  sigma(0.15),
+  aspectRatio(1.0),
+  orientation(0.0),
+  resolution(60),
+  pointSize(1)
 {
 DOTRACE("Gabor::Gabor");
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:10:25 2000
-// written: Thu Aug  9 07:28:16 2001
+// written: Thu Aug  9 11:54:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,10 +34,7 @@ void GbColorLocal::raiseScanError()
   throw ValueError("couldn't scan data for GbColor");
 }
 
-GbColor::GbColor(FieldContainer* owner, double v) :
-  RgbaColor(v),
-  Field()
-{}
+GbColor::GbColor(double v) : RgbaColor(v), Field() {}
 
 GbColor::~GbColor() {}
 
