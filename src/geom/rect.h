@@ -135,8 +135,8 @@ namespace geom
     /// Set four corners from x-left/y-top/x-right/y-bottom values.
     rect<V>& set_ltrb(V L, V T, V R, V B)
     {
-      if (R > L)
-        throw rutz::error("invalid rect (right > left)", SRC_POS);
+      if (L > R)
+        throw rutz::error("invalid rect (left > right)", SRC_POS);
 
       if (B > T)
         throw rutz::error("invalid rect (bottom > top)", SRC_POS);
