@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Wed Jul 11 19:35:56 2001
+// written: Thu Jul 12 13:10:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -284,8 +284,6 @@ public:
 
   virtual void* getItemFromId(int id) = 0;
 
-  int itemArgn() const { return itsItemArgn; }
-
 protected:
   template <class T>
   void declareGetter(const char* cmd_name, Getter<T>* getter,
@@ -307,8 +305,6 @@ protected:
 
 private:
   void instantiate();
-
-  int itsItemArgn;
 };
 
 ///////////////////////////////////////////////////////////////////////
