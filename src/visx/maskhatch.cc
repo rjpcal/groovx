@@ -50,7 +50,7 @@ using namespace Gfx;
 
 namespace
 {
-  const IO::VersionId MASKHATCH_SERIAL_VERSION_ID = 2;
+  const IO::VersionId MASKHATCH_SERIAL_VERSION_ID = 3;
 }
 
 const FieldMap& MaskHatch::classFields()
@@ -102,25 +102,30 @@ void MaskHatch::readFrom(IO::Reader& reader)
 {
 DOTRACE("MaskHatch::readFrom");
 
-  reader.ensureReadVersionId("MaskHatch", 2, "Try groovx0.8a4");
+  int svid = reader.ensureReadVersionId("MaskHatch", 2, "Try groovx0.8a4");
 
   readFieldsFrom(reader, classFields());
 
-  // FIXME change to "GxShapeKit" with next version
-  reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+  if (svid < 3)
+    {
+      reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+    }
+  else
+    {
+      reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+    }
 }
 
 void MaskHatch::writeTo(IO::Writer& writer) const
 {
 DOTRACE("MaskHatch::writeTo");
 
-  writer.ensureWriteVersionId("MaskHatch", MASKHATCH_SERIAL_VERSION_ID, 2,
+  writer.ensureWriteVersionId("MaskHatch", MASKHATCH_SERIAL_VERSION_ID, 3,
                               "Try groovx0.8a4");
 
   writeFieldsTo(writer, classFields());
 
-  // FIXME change to "GxShapeKit" with next version
-  writer.writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
+  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 void MaskHatch::update()

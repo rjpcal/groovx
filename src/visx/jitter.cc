@@ -48,7 +48,7 @@ DBG_REGISTER
 
 namespace
 {
-  const IO::VersionId JITTER_SERIAL_VERSION_ID = 2;
+  const IO::VersionId JITTER_SERIAL_VERSION_ID = 3;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -88,29 +88,34 @@ void Jitter::readFrom(IO::Reader& reader)
 {
 DOTRACE("Jitter::readFrom");
 
-  reader.ensureReadVersionId("Jitter", 2, "Try groovx0.8a4");
+  int svid = reader.ensureReadVersionId("Jitter", 2, "Try groovx0.8a4");
 
   reader.readValue("jitterX", itsXJitter);
   reader.readValue("jitterY", itsYJitter);
   reader.readValue("jitterR", itsRJitter);
 
-  // FIXME change to "GxTransform" with next version
-  reader.readBaseClass("Position", IO::makeProxy<GxTransform>(this));
+  if (svid < 3)
+    {
+      reader.readBaseClass("Position", IO::makeProxy<GxTransform>(this));
+    }
+  else
+    {
+      reader.readBaseClass("GxTransform", IO::makeProxy<GxTransform>(this));
+    }
 }
 
 void Jitter::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Jitter::writeTo");
 
-  writer.ensureWriteVersionId("Jitter", JITTER_SERIAL_VERSION_ID, 2,
+  writer.ensureWriteVersionId("Jitter", JITTER_SERIAL_VERSION_ID, 3,
                               "Try groovx0.8a4");
 
   writer.writeValue("jitterX", itsXJitter);
   writer.writeValue("jitterY", itsYJitter);
   writer.writeValue("jitterR", itsRJitter);
 
-  // FIXME change to "GxTransform" with next version
-  writer.writeBaseClass("Position", IO::makeConstProxy<GxTransform>(this));
+  writer.writeBaseClass("GxTransform", IO::makeConstProxy<GxTransform>(this));
 }
 
 /////////////

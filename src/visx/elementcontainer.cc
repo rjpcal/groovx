@@ -362,15 +362,15 @@ DOTRACE("ElementContainer::legacyReadElements");
   rep->elements.swap(new_elements);
 }
 
-void ElementContainer::legacyWriteElements(IO::Writer& writer,
-                                           const char* name) const
-{
-DOTRACE("ElementContainer::legacyWriteElements");
+// void ElementContainer::legacyWriteElements(IO::Writer& writer,
+//                                            const char* name) const
+// {
+// DOTRACE("ElementContainer::legacyWriteElements");
 
-  IO::WriteUtils::writeObjectSeq(writer, name,
-                                 rep->elements.begin(),
-                                 rep->elements.end());
-}
+//   IO::WriteUtils::writeObjectSeq(writer, name,
+//                                  rep->elements.begin(),
+//                                  rep->elements.end());
+// }
 
 int& ElementContainer::iolegacyRandSeed() const
 { return rep->randSeed; }

@@ -60,7 +60,7 @@ using namespace Gfx;
 
 namespace
 {
-  const IO::VersionId MFACE_SERIAL_VERSION_ID = 1;
+  const IO::VersionId MFACE_SERIAL_VERSION_ID = 2;
 
   const unsigned int NUM_HAIR_POINTS = 15;
   const double* getHairVertices(double top_width, double hair_width)
@@ -261,25 +261,30 @@ void MorphyFace::readFrom(IO::Reader& reader)
 {
 DOTRACE("MorphyFace::readFrom");
 
-  reader.ensureReadVersionId("MorphyFace", 1, "Try groovx0.8a4");
+  int svid = reader.ensureReadVersionId("MorphyFace", 1, "Try groovx0.8a4");
 
   readFieldsFrom(reader, classFields());
 
-  // FIXME change to "GxShapeKit" with next version
-  reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+  if (svid < 2)
+    {
+      reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+    }
+  else
+    {
+      reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+    }
 }
 
 void MorphyFace::writeTo(IO::Writer& writer) const
 {
 DOTRACE("MorphyFace::writeTo");
 
-  writer.ensureWriteVersionId("MorphyFace", MFACE_SERIAL_VERSION_ID, 1,
+  writer.ensureWriteVersionId("MorphyFace", MFACE_SERIAL_VERSION_ID, 2,
                               "Try groovx0.8a4");
 
   writeFieldsTo(writer, classFields());
 
-  // FIXME change to "GxShapeKit" with next version
-  writer.writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
+  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 

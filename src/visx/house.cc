@@ -56,7 +56,7 @@ DBG_REGISTER
 
 namespace
 {
-  const IO::VersionId HOUSE_SERIAL_VERSION_ID = 2;
+  const IO::VersionId HOUSE_SERIAL_VERSION_ID = 3;
 
   void drawWindow(Gfx::Canvas& canvas, int num_vert_bars, int num_horiz_bars)
   {
@@ -268,25 +268,30 @@ void House::readFrom(IO::Reader& reader)
 {
 DOTRACE("House::readFrom");
 
-  reader.ensureReadVersionId("House", 2, "Try groovx0.8a4");
+  int svid = reader.ensureReadVersionId("House", 2, "Try groovx0.8a4");
 
   readFieldsFrom(reader, classFields());
 
-  // FIXME change to "GxShapeKit" with next version
-  reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+  if (svid < 3)
+    {
+      reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+    }
+  else
+    {
+      reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+    }
 }
 
 void House::writeTo(IO::Writer& writer) const
 {
 DOTRACE("House::writeTo");
 
-  writer.ensureWriteVersionId("House", HOUSE_SERIAL_VERSION_ID, 2,
+  writer.ensureWriteVersionId("House", HOUSE_SERIAL_VERSION_ID, 3,
                               "Try groovx0.8a4");
 
   writeFieldsTo(writer, classFields());
 
-  // FIXME change to "GxShapeKit" with next version
-  writer.writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
+  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 ///////////////////////////////////////////////////////////////////////

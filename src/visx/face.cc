@@ -56,7 +56,7 @@ using namespace Gfx;
 
 namespace
 {
-  const IO::VersionId FACE_SERIAL_VERSION_ID = 1;
+  const IO::VersionId FACE_SERIAL_VERSION_ID = 2;
 
   const double theirNose_x = 0.0;
   const double theirMouth_x[2] = {-0.2, 0.2};
@@ -132,25 +132,30 @@ void Face::readFrom(IO::Reader& reader)
 {
 DOTRACE("Face::readFrom");
 
-  reader.ensureReadVersionId("Face", 1, "Try groovx0.8a4");
+  int svid = reader.ensureReadVersionId("Face", 1, "Try groovx0.8a4");
 
   readFieldsFrom(reader, classFields());
 
-  // FIXME change to "GxShapeKit" with next version
-  reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+  if (svid < 2)
+    {
+      reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+    }
+  else
+    {
+      reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+    }
 }
 
 void Face::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Face::writeTo");
 
-  writer.ensureWriteVersionId("Face", FACE_SERIAL_VERSION_ID, 1,
+  writer.ensureWriteVersionId("Face", FACE_SERIAL_VERSION_ID, 2,
                               "Try groovx0.8a4");
 
   writeFieldsTo(writer, classFields());
 
-  // FIXME change to "GxShapeKit" with next version
-  writer.writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
+  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 ///////////////////////////////////////////////////////////////////////

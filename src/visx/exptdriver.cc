@@ -34,6 +34,7 @@
 
 #include "gfx/toglet.h"
 
+#include "io/ioproxy.h"
 #include "io/ioutil.h"
 #include "io/readutils.h"
 #include "io/tclprocwrapper.h"
@@ -69,7 +70,7 @@ Util::Tracer ExptDriver::tracer;
 
 namespace
 {
-  const IO::VersionId EXPTDRIVER_SERIAL_VERSION_ID = 5;
+  const IO::VersionId EXPTDRIVER_SERIAL_VERSION_ID = 6;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -182,9 +183,12 @@ DOTRACE("ExptDriver::readFrom");
   reader.readValue("autosavePeriod", rep->autosavePeriod);
   reader.readValue("infoLog", rep->infoLog);
 
-  reader.readValue("currentBlockIdx", iolegacySequencePos());
+  if (svid < 6)
+    {
+      reader.readValue("currentBlockIdx", iolegacySequencePos());
 
-  ElementContainer::legacyReadElements(reader, "blocks");
+      ElementContainer::legacyReadElements(reader, "blocks");
+    }
 
   if (svid < 4)
     {
@@ -195,7 +199,10 @@ DOTRACE("ExptDriver::readFrom");
   else
     {
       reader.readOwnedObject("doWhenComplete", rep->doWhenComplete);
+    }
 
+  if (svid == 4)
+    {
       // Oops... I added the "filePrefix" attribute without bumping the
       // serialVersionId from 4 to 5... therefore some v4 files have a
       // "filePrefix" and others don't. So we have to just attempt reading
@@ -219,10 +226,15 @@ DOTRACE("ExptDriver::readFrom");
             }
         }
     }
-
-  if (svid >= 5)
+  else if (svid >= 5)
     {
       reader.readValue("filePrefix", rep->filePrefix);
+    }
+
+  if (svid >= 6)
+    {
+      reader.readBaseClass("ElementContainer",
+                           IO::makeProxy<ElementContainer>(this));
     }
 }
 
@@ -241,12 +253,15 @@ DOTRACE("ExptDriver::writeTo");
   writer.writeValue("autosavePeriod", rep->autosavePeriod);
   writer.writeValue("infoLog", rep->infoLog);
 
-  writer.writeValue("currentBlockIdx", iolegacySequencePos());
+//   writer.writeValue("currentBlockIdx", iolegacySequencePos());
 
-  ElementContainer::legacyWriteElements(writer, "blocks");
+//   ElementContainer::legacyWriteElements(writer, "blocks");
 
   writer.writeOwnedObject("doWhenComplete", rep->doWhenComplete);
   writer.writeValue("filePrefix", rep->filePrefix);
+
+  writer.writeBaseClass("ElementContainer",
+                        IO::makeConstProxy<ElementContainer>(this));
 }
 
 

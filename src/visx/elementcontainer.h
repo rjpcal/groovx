@@ -130,7 +130,7 @@ protected:
   /// Read elements from reader.
   void legacyReadElements(IO::Reader& reader, const char* name);
   /// Write elements to writer.
-  void legacyWriteElements(IO::Writer& writer, const char* name) const;
+//   void legacyWriteElements(IO::Writer& writer, const char* name) const;
 
   /// Raw data access needed to support the legacy IO format.
   int& iolegacyRandSeed() const;

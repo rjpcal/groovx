@@ -48,7 +48,7 @@ DBG_REGISTER
 
 namespace
 {
-  const IO::VersionId GTEXT_SERIAL_VERSION_ID = 2;
+  const IO::VersionId GTEXT_SERIAL_VERSION_ID = 3;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -97,27 +97,32 @@ void GxText::readFrom(IO::Reader& reader)
 {
 DOTRACE("GxText::readFrom");
 
-  reader.ensureReadVersionId("GxText", 2, "Try groovx0.8a4");
+  int svid = reader.ensureReadVersionId("GxText", 2, "Try groovx0.8a4");
 
   reader.readValue("text", itsText);
   reader.readValue("strokeWidth", itsStrokeWidth);
 
-  // FIXME change to "GxShapeKit" with next version
-  reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+  if (svid < 3)
+    {
+      reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+    }
+  else
+    {
+      reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+    }
 }
 
 void GxText::writeTo(IO::Writer& writer) const
 {
 DOTRACE("GxText::writeTo");
 
-  writer.ensureWriteVersionId("GxText", GTEXT_SERIAL_VERSION_ID, 2,
+  writer.ensureWriteVersionId("GxText", GTEXT_SERIAL_VERSION_ID, 3,
                               "Try groovx0.8a4");
 
   writer.writeValue("text", itsText);
   writer.writeValue("strokeWidth", itsStrokeWidth);
 
-  // FIXME change to "GxShapeKit" with next version
-  writer.writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
+  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 const FieldMap& GxText::classFields()

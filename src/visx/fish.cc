@@ -64,7 +64,7 @@ namespace
 {
   int dummy_int=0; // We need a dummy int to attach various CPtrField's
 
-  const IO::VersionId FISH_SERIAL_VERSION_ID = 3;
+  const IO::VersionId FISH_SERIAL_VERSION_ID = 4;
 
   typedef Gfx::Vec3<float> Pt3;
 
@@ -302,25 +302,30 @@ void Fish::readFrom(IO::Reader& reader)
 {
 DOTRACE("Fish::readFrom");
 
-  reader.ensureReadVersionId("Fish", 3, "Try groovx0.8a7");
+  int svid = reader.ensureReadVersionId("Fish", 3, "Try groovx0.8a7");
 
   readFieldsFrom(reader, classFields());
 
-  // FIXME change to "GxShapeKit" with next version
-  reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+  if (svid < 4)
+    {
+      reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+    }
+  else
+    {
+      reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+    }
 }
 
 void Fish::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Fish::writeTo");
 
-  writer.ensureWriteVersionId("Fish", FISH_SERIAL_VERSION_ID, 3,
+  writer.ensureWriteVersionId("Fish", FISH_SERIAL_VERSION_ID, 4,
                               "Try groovx0.8a7");
 
   writeFieldsTo(writer, classFields());
 
-  // FIXME change to "GxShapeKit" with next version
-  writer.writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
+  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 void Fish::updatePtrs()

@@ -32,6 +32,7 @@
 
 #include "visx/block.h"
 
+#include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/readutils.h"
 #include "io/writer.h"
@@ -56,7 +57,7 @@ Util::Tracer Block::tracer;
 
 namespace
 {
-  IO::VersionId BLOCK_SERIAL_VERSION_ID = 2;
+  IO::VersionId BLOCK_SERIAL_VERSION_ID = 3;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -92,19 +93,28 @@ DOTRACE("Block::readFrom");
 
   int svid = reader.ensureReadVersionId("Block", 1, "Try groovx0.8a3");
 
-  ElementContainer::legacyReadElements(reader, "trialSeq");
+  if (svid < 3)
+    {
+      ElementContainer::legacyReadElements(reader, "trialSeq");
 
-  reader.readValue("randSeed", iolegacyRandSeed());
-  reader.readValue("curTrialSeqdx", iolegacySequencePos());
+      reader.readValue("randSeed", iolegacyRandSeed());
+      reader.readValue("curTrialSeqdx", iolegacySequencePos());
+
+      if (svid < 2)
+        {
+          bool dummy;
+          reader.readValue("verbose", dummy);
+        }
+    }
+  else
+    {
+      reader.readBaseClass("ElementContainer",
+                           IO::makeProxy<ElementContainer>(this));
+    }
+
   if (numCompleted() > numElements())
     {
       throw Util::Error("Block");
-    }
-
-  if (svid < 2)
-    {
-      bool dummy;
-      reader.readValue("verbose", dummy);
     }
 }
 
@@ -112,13 +122,16 @@ void Block::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Block::writeTo");
 
-  writer.ensureWriteVersionId("Block", BLOCK_SERIAL_VERSION_ID, 2,
+  writer.ensureWriteVersionId("Block", BLOCK_SERIAL_VERSION_ID, 3,
                               "Try groovx0.8a7");
 
-  ElementContainer::legacyWriteElements(writer, "trialSeq");
+//   ElementContainer::legacyWriteElements(writer, "trialSeq");
 
-  writer.writeValue("randSeed", iolegacyRandSeed());
-  writer.writeValue("curTrialSeqdx", iolegacySequencePos());
+//   writer.writeValue("randSeed", iolegacyRandSeed());
+//   writer.writeValue("curTrialSeqdx", iolegacySequencePos());
+
+  writer.writeBaseClass("ElementContainer",
+                        IO::makeConstProxy<ElementContainer>(this));
 }
 
 ///////////////////////////////////////////////////////////////////////

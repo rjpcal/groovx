@@ -58,7 +58,7 @@ using namespace Gfx;
 
 namespace
 {
-  const IO::VersionId GABOR_SERIAL_VERSION_ID = 1;
+  const IO::VersionId GABOR_SERIAL_VERSION_ID = 2;
 }
 
 const Gabor::ColorMode Gabor::GRAYSCALE;
@@ -139,25 +139,30 @@ void Gabor::readFrom(IO::Reader& reader)
 {
 DOTRACE("Gabor::readFrom");
 
-  reader.ensureReadVersionId("Gabor", 1, "Try groovx0.8a4");
+  int svid = reader.ensureReadVersionId("Gabor", 1, "Try groovx0.8a4");
 
   readFieldsFrom(reader, classFields());
 
-  // FIXME change to "GxShapeKit" with next version
-  reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+  if (svid < 2)
+    {
+      reader.readBaseClass("GrObj", IO::makeProxy<GxShapeKit>(this));
+    }
+  else
+    {
+      reader.readBaseClass("GxShapeKit", IO::makeProxy<GxShapeKit>(this));
+    }
 }
 
 void Gabor::writeTo(IO::Writer& writer) const
 {
 DOTRACE("Gabor::writeTo");
 
-  writer.ensureWriteVersionId("Gabor", GABOR_SERIAL_VERSION_ID, 1,
+  writer.ensureWriteVersionId("Gabor", GABOR_SERIAL_VERSION_ID, 2,
                               "Try groovx0.8a4");
 
   writeFieldsTo(writer, classFields());
 
-  // FIXME change to "GxShapeKit" with next version
-  writer.writeBaseClass("GrObj", IO::makeConstProxy<GxShapeKit>(this));
+  writer.writeBaseClass("GxShapeKit", IO::makeConstProxy<GxShapeKit>(this));
 }
 
 void Gabor::setLogContrast(double logContrast)
