@@ -54,10 +54,6 @@ public:
 
   static const double SQRT_2;
 
-  static void linearCombo(const ConstSlice& vec,
-								  const Mtx& mtx,
-								  Slice& result);
-
 private:
   static bool filled;
   static const int TABLE_SIZE = 101;
