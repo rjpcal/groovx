@@ -156,7 +156,7 @@ public:
   explicit fstring(const T1& part1) :
     itsRep(0)
   {
-    do_init(part1);
+    init_empty(); append(part1);
   }
 
   /// Construct by converting args to strings and concatenating.
@@ -164,7 +164,7 @@ public:
   fstring(const T1& part1, const T2& part2) :
     itsRep(0)
   {
-    do_init(part1); append(part2);
+    init_empty(); append(part1); append(part2);
   }
 
   /// Construct by converting args to strings and concatenating.
@@ -172,7 +172,7 @@ public:
   fstring(const T1& part1, const T2& part2, const T3& part3) :
     itsRep(0)
   {
-    do_init(part1); append(part2, part3);
+    init_empty(); append(part1); append(part2, part3);
   }
 
   /// Construct by converting args to strings and concatenating.
@@ -181,7 +181,7 @@ public:
           const T4& part4) :
     itsRep(0)
   {
-    do_init(part1); append(part2, part3, part4);
+    init_empty(); append(part1); append(part2, part3, part4);
   }
 
   /// Construct by converting args to strings and concatenating.
@@ -190,7 +190,7 @@ public:
           const T4& part4, const T5& part5) :
     itsRep(0)
   {
-    do_init(part1); append(part2, part3, part4, part5);
+    init_empty(); append(part1); append(part2, part3, part4, part5);
   }
 
   /// Construct by converting args to strings and concatenating.
@@ -199,7 +199,7 @@ public:
           const T4& part4, const T5& part5, const T6& part6) :
     itsRep(0)
   {
-    do_init(part1); append(part2, part3, part4, part5, part6);
+    init_empty(); append(part1); append(part2, part3, part4, part5, part6);
   }
 
   /// Construct by converting args to strings and concatenating.
@@ -209,7 +209,7 @@ public:
           const T7& part7) :
     itsRep(0)
   {
-    do_init(part1); append(part2, part3, part4, part5, part6, part7);
+    init_empty(); append(part1); append(part2, part3, part4, part5, part6, part7);
   }
 
   /// Swap contents with another fstring object.
@@ -387,13 +387,9 @@ private:
 
   void append_text(std::size_t length, const char* text);
 
-  void init(Util::CharData cdata);
+  void init_empty();
 
-  template <class T>
-  void do_init(const T& x)
-  {
-    init(Util::Convert<T>::toString(x));
-  }
+  void init(Util::CharData cdata);
 
   string_rep* itsRep;
 };

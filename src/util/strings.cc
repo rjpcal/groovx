@@ -224,6 +224,16 @@ void string_rep::debugDump() const throw()
 //
 //---------------------------------------------------------------------
 
+void fstring::init_empty()
+{
+DOTRACE("fstring::init_empty");
+  Precondition(itsRep == 0);
+
+  itsRep = string_rep::make(0, 0);
+
+  itsRep->incrRefCount();
+}
+
 void fstring::init(Util::CharData cdata)
 {
 DOTRACE("fstring::init");
