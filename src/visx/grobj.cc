@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Mon Nov 15 16:28:59 1999
+// written: Tue Nov 16 13:53:28 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -412,10 +412,38 @@ DOTRACE("GrObj::Impl::charCount");
 
 void GrObj::Impl::readFrom(Reader* reader) {
 DOTRACE("GrObj::Impl::readFrom");
+  reader->readValue("category", itsCategory);
+
+  reader->readValue("renderMode", itsRenderer.itsMode);
+  reader->readValue("unRenderMod", itsUnRenderer.itsMode);
+
+  reader->readValue("bbVisibility", itsBB.itsIsVisible);
+
+  reader->readValue("scalingMode", itsScaler.itsMode);
+  reader->readValue("widthFactor", itsScaler.itsWidthFactor);
+  reader->readValue("heightFactor", itsScaler.itsHeightFactor);
+
+  reader->readValue("alignmentMode", itsAligner.itsMode);
+  reader->readValue("centerX", itsAligner.itsCenterX);
+  reader->readValue("centerY", itsAligner.itsCenterY);
 }
 
 void GrObj::Impl::writeTo(Writer* writer) const {
 DOTRACE("GrObj::Impl::writeTo");
+  writer->writeValue("category", itsCategory);
+
+  writer->writeValue("renderMode", itsRenderer.itsMode);
+  writer->writeValue("unRenderMod", itsUnRenderer.itsMode);
+
+  writer->writeValue("bbVisibility", itsBB.itsIsVisible);
+
+  writer->writeValue("scalingMode", itsScaler.itsMode);
+  writer->writeValue("widthFactor", itsScaler.itsWidthFactor);
+  writer->writeValue("heightFactor", itsScaler.itsHeightFactor);
+
+  writer->writeValue("alignmentMode", itsAligner.itsMode);
+  writer->writeValue("centerX", itsAligner.itsCenterX);
+  writer->writeValue("centerY", itsAligner.itsCenterY);
 }
 
 
