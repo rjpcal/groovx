@@ -1,12 +1,14 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // objtogl.cc
 // Rob Peters
 // created: Nov-98
-// written: Tue Jun 29 12:01:40 1999
+// written: Tue Jun 29 12:56:37 1999
 // $Id$
 //
 // This package provides functionality that allows a Togl widget to
 // work with a Tlist, controlling its display, reshaping, etc.
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef OBJTOGL_CC_DEFINED
@@ -34,7 +36,9 @@
 #include "debug.h"
 
 ///////////////////////////////////////////////////////////////////////
+//
 // ObjTogl namespace declarations
+//
 ///////////////////////////////////////////////////////////////////////
 
 namespace ObjTogl {
@@ -45,21 +49,20 @@ namespace ObjTogl {
   class ToglCmd;
 
   class InitCmd;
+  class DumpCmapCmd;
+  class DumpEpsCmd;
+  class ScaleRectCmd;
+  class SetColorCmd;
+  class SetFixedScaleCmd;
+  class SetMinRectCmd;
+  class SetUnitAngleCmd;
   class SetViewingDistanceCmd;
+
   class ObjToglPkg;
 
   inline double Togl_Aspect(const struct Togl* togl) {
     return double(Togl_Width(togl)) / double(Togl_Height(togl));
   }
-
-  Togl_CmdProc dumpCmapCmd;
-  Togl_CmdProc dumpEpsCmd;
-  Togl_CmdProc scaleRectCmd;
-  Togl_CmdProc setColorCmd;
-  Togl_CmdProc setFixedScaleCmd;
-  Togl_CmdProc setMinRectCmd;
-  Togl_CmdProc setUnitAngleCmd;
-  Togl_CmdProc setViewingDistanceCmd;
 
   Tcl_Obj* getParamValue(const struct Togl* togl, char* param);
   void reconfigureGL(const struct Togl* togl);
@@ -75,7 +78,9 @@ namespace ObjTogl {
 }
 
 ///////////////////////////////////////////////////////////////////////
+//
 // ObjTogl namespace definitions
+//
 ///////////////////////////////////////////////////////////////////////
 
 const char* ObjTogl::thePathname() {
@@ -92,92 +97,11 @@ DOTRACE("ObjTogl::theWidget");
   return widget;
 }
 
-class ObjTogl::ToglCmd : public TclCmd {
-public:
-  ToglCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage,
-			 int objc_min, int objc_max, bool exact_objc=false) :
-	 TclCmd(interp, cmd_name, usage, objc_min, objc_max, exact_objc) {}
-protected:
-  virtual void invoke() = 0;
-  Togl* getTogl() {
-	 if (ObjTogl::widget == 0) { throw TclError("Togl not yet initialized"); }
-	 else return ObjTogl::widget;
-  }
-  ToglConfig* getToglConfig() {
-	 if (ObjTogl::widget == 0) { throw TclError("Togl not yet initialized"); }
-	 else return static_cast<ToglConfig *>(Togl_GetClientData(ObjTogl::widget));
-  }
-};
-
-int ObjTogl::dumpCmapCmd(struct Togl* togl, int argc, char* argv[]) {
-DOTRACE("ObjTogl::dumpCmapCmd");
-  Tcl_Interp* interp = Togl_Interp(togl);
-  if (argc < 2 || argc > 4) {
-    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp),
-                           "wrong # args: should be \"pathname ",
-                           argv[1], " ?start_index=0? ?end_index=255?\"",
-                           (char *) NULL);
-    return TCL_ERROR;
-  }
-
-  int start=0;
-  int end=255;
-  if (argc > 2)
-    if (Tcl_GetInt(interp, argv[2], &start) != TCL_OK) return TCL_ERROR;
-  if (argc > 3)
-    if (Tcl_GetInt(interp, argv[3], &end) != TCL_OK) return TCL_ERROR;
-
-  if (start < 0 || end < 0 || start > 255 || end > 255) {
-	 err_message(interp, argv+1, bad_index_msg);
-	 return TCL_ERROR;
-  }
-
-  Tk_Window tkwin = Togl_TkWin(togl);
-  Display* display = Tk_Display(reinterpret_cast<Tk_FakeWin *>(tkwin));
-  Colormap cmap = Togl_Colormap(togl);
-  XColor col;
-
-  const int BUF_SIZE = 40;
-  char buf[BUF_SIZE];
-  int i;
-  for (i = start; i <= end; ++i) {
-	 buf[0] = '\0';
-	 ostrstream ost(buf, BUF_SIZE);
-    col.pixel = i;
-    XQueryColor(display, cmap, &col);
-    ost << dec << i << '\t' 
-		  << hex << (col.red / 256) << '\t' 
-		  << hex << (col.green / 256) << '\t' 
-		  << hex << (col.blue / 256) << '\n' << '\0';
-    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), buf, NULL);
-  }
-  return TCL_OK;
-}
-
-int ObjTogl::dumpEpsCmd(struct Togl* togl, int argc, char* argv[]) {
-DOTRACE("ObjTogl::dumpEpsCmd");
-  Tcl_Interp* interp = Togl_Interp(togl);
-  if (argc != 3) {
-    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-                           "wrong # args: should be \"pathname ",
-                           argv[1], " filename\"", (char *) NULL);
-    // this will have to wait until Togl supports Tcl objects
-    //    Tcl_WrongNumArgs(interp, 1, objv, "dest_file");
-    return TCL_ERROR;
-  }
-
-  char* dest_file = argv[2];
-  if (dest_file == NULL) {
-    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), argv[1],
-                           ": bad filename", (char *) NULL);
-    return TCL_ERROR;
-  }
-
-  const int rgbFlag = 0;
-  Togl_DumpToEpsFile(togl, dest_file, rgbFlag, toglEpsCallback);
-  toglDisplayCallback(togl);
-  return TCL_OK;
-}
+//---------------------------------------------------------------------
+//
+// getParamValue --
+//
+//---------------------------------------------------------------------
 
 Tcl_Obj* ObjTogl::getParamValue(const struct Togl* togl, char* param) {
 DOTRACE("ObjTogl::getParamValue");
@@ -210,6 +134,12 @@ DOTRACE("ObjTogl::getParamValue");
   Tcl_ResetResult(interp);
   return obj;
 }
+
+//---------------------------------------------------------------------
+//
+// reconfigureGL --
+//
+//---------------------------------------------------------------------
 
 inline void ObjTogl::reconfigureGL(const struct Togl* togl) {
 DOTRACE("ObjTogl::reconfigureGL");
@@ -262,201 +192,6 @@ DOTRACE("ObjTogl::reconfigureGL");
          << ", b=" << therect.b << ", t=" << therect.t << ", -1.0, 1.0)" << endl;
 #endif
   } // end not usingFixedScale
-}
-
-int ObjTogl::setColorCmd(struct Togl* togl, int argc, char* argv[]) {
-DOTRACE("ObjTogl::setColorCmd");
-  Tcl_Interp* interp = Togl_Interp(togl);
-  if (argc != 6) {
-    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-                           "wrong # args: should be \"pathname ",
-                           argv[1], " index r g b\"", (char *) NULL);
-    //Tcl_WrongNumArgs(interp, 2, objv, "index r g b");
-    return TCL_ERROR;
-  }
-
-  int i;
-  double r,g,b;
-  if (Tcl_GetInt(interp, argv[2], &i) != TCL_OK) return TCL_ERROR;
-  if (Tcl_GetDouble(interp, argv[3], &r) != TCL_OK) return TCL_ERROR;
-  if (Tcl_GetDouble(interp, argv[4], &g) != TCL_OK) return TCL_ERROR;
-  if (Tcl_GetDouble(interp, argv[5], &b) != TCL_OK) return TCL_ERROR;
-
-  if (i<0 || i>255) {
-	 err_message(interp, argv+1, bad_index_msg);
-	 return TCL_ERROR;
-  }
-
-  Togl_SetColor(togl, i, r, g, b);
-  return TCL_OK;
-}
-
-// this function sets a fixed scaling between pixels and GL coordinates
-int ObjTogl::setFixedScaleCmd(struct Togl* togl, int argc, char* argv[]) {
-DOTRACE("ObjTogl::setFixedScaleCmd");
-  Tcl_Interp* interp = Togl_Interp(togl);
-  if (argc != 3) {
-    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-                           "wrong # args: should be \"pathname ",
-                           argv[1], " scale\"", (char *) NULL);
-    //    Tcl_WrongNumArgs(interp, 2, objv, "left top right bottom");
-    return TCL_ERROR;
-  }
-
-  double s;
-  if (Tcl_GetDouble(interp, argv[2], &s) != TCL_OK) return TCL_ERROR;
-  if (s <= 0.0) {
-	 err_message(interp, argv+1, bad_scale_msg);
-	 return TCL_ERROR;
-  }
-
-  ToglConfig* config = static_cast<ToglConfig *>(Togl_GetClientData(togl));
-  config->setFixedScale(s);
-  reconfigureGL(togl);
-  return TCL_OK;
-}
-
-// this function sets the minimum Rect that will be requested when
-// OpenGL sets up its projection
-int ObjTogl::setMinRectCmd(struct Togl* togl, int argc, char* argv[]) {
-DOTRACE("ObjTogl::setMinRectCmd");
-  Tcl_Interp* interp = Togl_Interp(togl);
-  if (argc != 6) {
-    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-                           "wrong # args: should be \"pathname ",
-                           argv[1], " left top right bottom\"", (char *) NULL);
-    return TCL_ERROR;
-  }
-
-  double l,t,r,b;
-  if (Tcl_GetDouble(interp, argv[2], &l) != TCL_OK) return TCL_ERROR;
-  if (Tcl_GetDouble(interp, argv[3], &t) != TCL_OK) return TCL_ERROR;
-  if (Tcl_GetDouble(interp, argv[4], &r) != TCL_OK) return TCL_ERROR;
-  if (Tcl_GetDouble(interp, argv[5], &b) != TCL_OK) return TCL_ERROR;
-
-  // Test for valid rect: right > left && top > bottom. In particular,
-  // we must not have right == left or top == bottom since this
-  // collapses the space onto one dimension.
-  if (r <= l || t <= b) {
-	 err_message(interp, argv+1, "invalid rect");
-	 return TCL_ERROR;
-  }
-
-  ToglConfig* config = static_cast<ToglConfig *>(Togl_GetClientData(togl));
-  config->setMinRectLTRB(l,t,r,b);
-  reconfigureGL(togl);
-  return TCL_OK;
-}
-
-// this function sets the angle that is subtended by one unit in GL coords
-int ObjTogl::setUnitAngleCmd(struct Togl* togl, int argc, char* argv[]) {
-DOTRACE("ObjTogl::setUnitAngleCmd");
-  Tcl_Interp* interp = Togl_Interp(togl);
-  if (argc != 3) {
-    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-                           "wrong # args: should be \"pathname ",
-                           argv[1], " angle_in_degrees\"", (char *) NULL);
-    return TCL_ERROR;
-  }
-
-  double deg;
-  if (Tcl_GetDouble(interp, argv[2], &deg) != TCL_OK) return TCL_ERROR;
-  if (deg <= 0) {
-	 err_message(interp, argv+1, "invalid value of unit angle");
-	 return TCL_ERROR;
-  }
-
-  ToglConfig* config = static_cast<ToglConfig *>(Togl_GetClientData(togl));
-  config->setUnitAngle(deg);
-  reconfigureGL(togl);
-  return TCL_OK;
-}
-
-class ObjTogl::SetViewingDistanceCmd : public ObjTogl::ToglCmd {
-public:
-  SetViewingDistanceCmd(Tcl_Interp* interp, const char* cmd_name) :
-	 ToglCmd(interp, cmd_name, "distance_in_inches", 2, 2) {}
-protected:
-  virtual void invoke() {
-	 ToglConfig* config = getToglConfig();
-
-	 double dist = getDoubleFromArg(1);
-	 if (dist <= 0.0) {
-		throw TclError("look out! you'll hurt your nose trying to view "
-							"the screen from that distance! try another value");
-	 }
-	 if (dist > 1000.0) {
-		throw TclError("if you really insist on trying to view the screen "
-							"from so far away, you should really invest "
-							"in a good telescope! try another value");
-	 }
-
-	 config->setViewingDistIn(dist);
-	 reconfigureGL(getTogl());
-	 returnVoid();
-  }
-};
-
-// this function sets the viewing distance
-int ObjTogl::setViewingDistanceCmd(struct Togl* togl, int argc, char* argv[]) {
-DOTRACE("ObjTogl::setViewingDistanceCmd");
-  Tcl_Interp* interp = Togl_Interp(togl);
-  if (argc != 3) {
-    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-                           "wrong # args: should be \"pathname ",
-                           argv[1], " distance_in_inches\"", (char *) NULL);
-    return TCL_ERROR;
-  }
-
-  double d;
-  if (Tcl_GetDouble(interp, argv[2], &d) != TCL_OK) return TCL_ERROR;
-
-  if (d <= 0.0) {
-	 const char* const bad_distance_msg = 
-		"look out! you'll hurt your nose trying to view "
-		"the screen from that distance! try another value";
-	 err_message(interp, argv+1, bad_distance_msg);
-    return TCL_ERROR;
-  }
-  if (d > 1000.0) {
-	 const char* const too_far_msg =
-		"if you really insist on trying to view the screen from so far away, "
-		"you should really invest in a good telescope! try another value";
-	 err_message(interp, argv+1, too_far_msg);
-	 return TCL_ERROR;
-  }
-
-  ToglConfig* config = static_cast<ToglConfig *>(Togl_GetClientData(togl));
-  config->setViewingDistIn(d);
-  reconfigureGL(togl);
-  return TCL_OK;
-}
-
-// this function scales the minimum Rect
-int ObjTogl::scaleRectCmd(struct Togl* togl, int argc, char* argv[]) {
-DOTRACE("ObjTogl::scaleRectCmd");
-  Tcl_Interp* interp = Togl_Interp(togl);
-  if (argc != 3) {
-    Tcl_AppendStringsToObj(Tcl_GetObjResult(interp), 
-                           "wrong # args: should be \"pathname ",
-                           argv[1], " scale\"", (char *) NULL);
-    //    Tcl_WrongNumArgs(interp, 2, objv, "left top right bottom");
-    return TCL_ERROR;
-  }
-
-  double s;
-  if (Tcl_GetDouble(interp, argv[2], &s) != TCL_OK) return TCL_ERROR;
-  if (s <= 0.0) {
-	 err_message(interp, argv+1, bad_scale_msg);
-	 return TCL_ERROR;
-  }
-
-  ToglConfig* config = static_cast<ToglConfig *>(Togl_GetClientData(togl));
-  Rect<double> rct = config->getMinRect();
-
-  config->setMinRectLTRB(s*rct.l,s*rct.t,s*rct.r,s*rct.b);
-  reconfigureGL(togl);
-  return TCL_OK;
 }
 
 void ObjTogl::toglCreateCallback(struct Togl* togl) {
@@ -566,6 +301,258 @@ DOTRACE("ObjTogl::toglReshapeCallback");
 
 //---------------------------------------------------------------------
 //
+// ToglCmd base class definition --
+//
+//---------------------------------------------------------------------
+
+class ObjTogl::ToglCmd : public TclCmd {
+public:
+  ToglCmd(Tcl_Interp* interp, const char* cmd_name, const char* usage,
+			 int objc_min, int objc_max, bool exact_objc=false) :
+	 TclCmd(interp, cmd_name, usage, objc_min, objc_max, exact_objc) {}
+protected:
+  virtual void invoke() = 0;
+  Togl* getTogl() {
+	 if (ObjTogl::widget == 0) { throw TclError("Togl not yet initialized"); }
+	 else return ObjTogl::widget;
+  }
+  ToglConfig* getToglConfig() {
+	 if (ObjTogl::widget == 0) { throw TclError("Togl not yet initialized"); }
+	 else return static_cast<ToglConfig *>(Togl_GetClientData(ObjTogl::widget));
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// ObjTogl::DumpCmapCmd --
+//
+//---------------------------------------------------------------------
+
+class ObjTogl::DumpCmapCmd : public ObjTogl::ToglCmd {
+public:
+  DumpCmapCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 ToglCmd(interp, cmd_name, "?start_index=0? ?end_index=255?", 1, 3, false) {}
+protected:
+  virtual void invoke() {
+	 int start = (objc() < 2) ? 0   : getIntFromArg(1);
+	 int end   = (objc() < 3) ? 255 : getIntFromArg(2);
+
+	 if (start < 0 || end < 0 || start > 255 || end > 255) {
+		throw TclError(bad_index_msg);
+	 }
+
+	 Togl* togl = getTogl();
+	 Tk_Window tkwin = Togl_TkWin(togl);
+	 Display* display = Tk_Display(reinterpret_cast<Tk_FakeWin *>(tkwin));
+	 Colormap cmap = Togl_Colormap(togl);
+	 XColor col;
+	 
+	 const int BUF_SIZE = 40;
+	 char buf[BUF_SIZE];
+	 int i;
+	 for (i = start; i <= end; ++i) {
+		buf[0] = '\0';
+		ostrstream ost(buf, BUF_SIZE);
+		col.pixel = i;
+		XQueryColor(display, cmap, &col);
+		ost << dec << i << '\t' 
+			 << hex << (col.red / 256) << '\t' 
+			 << hex << (col.green / 256) << '\t' 
+			 << hex << (col.blue / 256) << '\n' << '\0';
+		appendVal(buf);
+	 }
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// ObjTogl::DumpEpsCmd --
+//
+//---------------------------------------------------------------------
+
+class ObjTogl::DumpEpsCmd : public ObjTogl::ToglCmd {
+public:
+  DumpEpsCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 ToglCmd(interp, cmd_name, "filename", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 const char* dest_file = getCstringFromArg(1);
+
+	 Togl* togl = getTogl();
+
+	 const int rgbFlag = 0;
+	 Togl_DumpToEpsFile(togl, dest_file, rgbFlag, toglEpsCallback);
+	 toglDisplayCallback(togl);
+
+	 returnVoid();
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// ObjTogl::ScaleRectCmd --
+//
+//---------------------------------------------------------------------
+
+class ObjTogl::ScaleRectCmd : public ObjTogl::ToglCmd {
+public:
+  ScaleRectCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 ToglCmd(interp, cmd_name, "scale", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 double s = getDoubleFromArg(1);
+
+	 if (s <= 0.0) { throw TclError(bad_scale_msg); }
+
+	 Togl* togl = getTogl();
+	 ToglConfig* config = getToglConfig();
+	 Rect<double> rct = config->getMinRect();
+
+	 config->setMinRectLTRB(s*rct.l,s*rct.t,s*rct.r,s*rct.b);
+	 reconfigureGL(togl);
+
+	 returnVoid();
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// ObjTogl::SetColorCmd --
+//
+//---------------------------------------------------------------------
+
+class ObjTogl::SetColorCmd : public ObjTogl::ToglCmd {
+public:
+  SetColorCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 ToglCmd(interp, cmd_name, "index r g b", 5, 5) {}
+protected:
+  virtual void invoke() {
+	 int i = getIntFromArg(1);
+	 double r = getDoubleFromArg(2);
+	 double g = getDoubleFromArg(3);
+	 double b = getDoubleFromArg(4);
+
+	 if (i<0 || i>255) { throw TclError(bad_index_msg); }
+
+	 Togl* togl = getTogl();
+	 Togl_SetColor(togl, i, r, g, b);
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// ObjTogl::SetFixedScaleCmd --
+//
+//---------------------------------------------------------------------
+
+class ObjTogl::SetFixedScaleCmd : public ObjTogl::ToglCmd {
+public:
+  SetFixedScaleCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 ToglCmd(interp, cmd_name, "scale", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 double s = getDoubleFromArg(1);
+
+	 if (s <= 0.0) { throw TclError(bad_scale_msg); }
+
+	 Togl* togl = getTogl();
+	 ToglConfig* config = getToglConfig();
+	 config->setFixedScale(s);
+	 reconfigureGL(togl);
+	 
+	 returnVoid();
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// ObjTogl::SetMinRectCmd --
+//
+//---------------------------------------------------------------------
+
+class ObjTogl::SetMinRectCmd : public ObjTogl::ToglCmd {
+public:
+  SetMinRectCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 ToglCmd(interp, cmd_name, "left top right bottom", 5, 5) {}
+protected:
+  virtual void invoke() {
+	 double l = getDoubleFromArg(1);
+	 double t = getDoubleFromArg(2);
+	 double r = getDoubleFromArg(3);
+	 double b = getDoubleFromArg(4);
+
+	 // Test for valid rect: right > left && top > bottom. In
+	 // particular, we must not have right == left or top == bottom
+	 // since this collapses the space onto one dimension.
+	 if (r <= l || t <= b) { throw TclError("invalid rect"); }
+	 
+	 Togl* togl = getTogl();
+	 ToglConfig* config = getToglConfig();
+	 config->setMinRectLTRB(l,t,r,b);
+	 reconfigureGL(togl);
+
+	 returnVoid();
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// ObjTogl::SetUnitAngleCmd --
+//
+//---------------------------------------------------------------------
+
+class ObjTogl::SetUnitAngleCmd : public ObjTogl::ToglCmd {
+public:
+  SetUnitAngleCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 ToglCmd(interp, cmd_name, "angle_in_degrees", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 double deg = getDoubleFromArg(1);
+
+	 if (deg <= 0) { throw TclError("unit angle must be positive"); }
+
+	 Togl* togl = getTogl();
+	 ToglConfig* config = getToglConfig();
+	 config->setUnitAngle(deg);
+	 reconfigureGL(togl);
+
+	 returnVoid();
+  }
+};
+
+//---------------------------------------------------------------------
+//
+// ObjTogl::SetViewingDistanceCmd --
+//
+//---------------------------------------------------------------------
+
+class ObjTogl::SetViewingDistanceCmd : public ObjTogl::ToglCmd {
+public:
+  SetViewingDistanceCmd(Tcl_Interp* interp, const char* cmd_name) :
+	 ToglCmd(interp, cmd_name, "distance_in_inches", 2, 2) {}
+protected:
+  virtual void invoke() {
+	 ToglConfig* config = getToglConfig();
+
+	 double dist = getDoubleFromArg(1);
+	 if (dist <= 0.0) {
+		throw TclError("look out! you'll hurt your nose trying to view "
+							"the screen from that distance! try another value");
+	 }
+	 if (dist > 1000.0) {
+		throw TclError("if you really insist on trying to view the screen "
+							"from so far away, you should really invest "
+							"in a good telescope! try another value");
+	 }
+
+	 config->setViewingDistIn(dist);
+	 reconfigureGL(getTogl());
+	 returnVoid();
+  }
+};
+
+//---------------------------------------------------------------------
+//
 // InitCmd --
 //
 //---------------------------------------------------------------------
@@ -611,34 +598,36 @@ private:
 class ObjTogl::ObjToglPkg : public TclPkg {
 public:
   ObjToglPkg(Tcl_Interp* interp) :
-	 TclPkg(interp, "ObjTogl", "2.4")
+	 TclPkg(interp, "ObjTogl", "3.0")
   {
 	 addCommand( new InitCmd(interp, "Togl::init") );
+
+	 addCommand( new DumpCmapCmd(interp, "Togl::dumpCmap") );
+	 addCommand( new DumpEpsCmd(interp, "Togl::dumpEps") );
+	 addCommand( new ScaleRectCmd(interp, "Togl::scaleRect") );
+	 addCommand( new SetColorCmd(interp, "Togl::setColor") );
+	 addCommand( new SetFixedScaleCmd(interp, "Togl::setFixedScale") );
+	 addCommand( new SetMinRectCmd(interp, "Togl::setMinRect") );
+	 addCommand( new SetUnitAngleCmd(interp, "Togl::setUnitAngle") );
 	 addCommand( new SetViewingDistanceCmd(interp, "Togl::setViewingDistance") );
+
+	 Togl_CreateFunc(toglCreateCallback);
+	 Togl_DestroyFunc(toglDestroyCallback);
+	 Togl_DisplayFunc(toglDisplayCallback);
+	 Togl_ReshapeFunc(toglReshapeCallback);
   }
 };
 
-// package initialization procedure
+//---------------------------------------------------------------------
+//
+// Objtogl_Init
+//
+//---------------------------------------------------------------------
+
 int Objtogl_Init(Tcl_Interp* interp) {
 DOTRACE("Objtogl_Init");
 
   new ObjTogl::ObjToglPkg(interp); 
-
-  using namespace ObjTogl;
-
-  Togl_CreateFunc(toglCreateCallback);
-  Togl_DestroyFunc(toglDestroyCallback);
-  Togl_DisplayFunc(toglDisplayCallback);
-  Togl_ReshapeFunc(toglReshapeCallback);
-
-  Togl_CreateCommand("dumpCmap", dumpCmapCmd);
-  Togl_CreateCommand("dumpEps", dumpEpsCmd);
-  Togl_CreateCommand("scaleRect", scaleRectCmd);
-  Togl_CreateCommand("setColor", setColorCmd);
-  Togl_CreateCommand("setFixedScale", setFixedScaleCmd);
-  Togl_CreateCommand("setMinRect", setMinRectCmd);
-  Togl_CreateCommand("setUnitAngle", setUnitAngleCmd);
-  Togl_CreateCommand("setViewingDistance", setViewingDistanceCmd);
 
   return TCL_OK;
 }
