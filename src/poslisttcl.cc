@@ -1,9 +1,11 @@
 ///////////////////////////////////////////////////////////////////////
+//
 // poslisttcl.cc
 // Rob Peters
 // created: Sat Mar 13 12:46:09 1999
-// written: Sun Apr 25 13:13:28 1999
+// written: Mon Jun  7 11:41:53 1999
 // $Id$
+//
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef POSLISTTCL_CC_DEFINED
@@ -16,14 +18,18 @@
 #include <strstream.h>
 
 #include "errmsg.h"
+#include "position.h"
 #include "poslist.h"
 
 #define NO_TRACE
 #include "trace.h"
+#define LOCAL_TRACE
 #include "debug.h"
 
 ///////////////////////////////////////////////////////////////////////
-// Poslist Tcl package
+//
+// Poslist Tcl package declarations
+//
 ///////////////////////////////////////////////////////////////////////
 
 namespace PoslistTcl {
@@ -34,86 +40,89 @@ namespace PoslistTcl {
   Tcl_ObjCmdProc destringifyCmd;
 }
 
-PosList& PoslistTcl::getPosList() {
-  static const int DEFAULT_SIZE = 10;
-  static PosList thePosList(DEFAULT_SIZE);
-  return thePosList;
-}
+///////////////////////////////////////////////////////////////////////
+//
+// Poslist Tcl package definitions
+//
+///////////////////////////////////////////////////////////////////////
 
-Position* PoslistTcl::getPosFromArg(Tcl_Interp *interp, Tcl_Obj *const objv[], 
-                                    const PosList& plist, int argn) {
+Position* PoslistTcl::getPosFromArg(Tcl_Interp* interp, Tcl_Obj* const objv[], 
+                                    const PosList&, int argn) {
 DOTRACE("PoslistTcl::getPosFromArg");
+// XXX get rid of PosList argument
+
   // Make sure we have a valid posid
   int id;
   if ( Tcl_GetIntFromObj(interp, objv[argn], &id) != TCL_OK ) return NULL;
 
-  if ( !plist.isValidPosid(id) ) {
+  PosId posid(id);
+
+  if ( !posid ) {
     err_message(interp, objv, bad_posid_msg);
     return NULL;
   }
 
   // Get the position
-  return plist.getPos(id);
+  return posid.get();
 }
 
 // return the number of objects in thePosList
-int PoslistTcl::posCountCmd(ClientData, Tcl_Interp *interp,
-                           int objc, Tcl_Obj *const objv[]) {
+int PoslistTcl::posCountCmd(ClientData, Tcl_Interp* interp,
+                           int objc, Tcl_Obj* const objv[]) {
 DOTRACE("PoslistTcl::posCountCmd");
   if (objc > 1) {
     Tcl_WrongNumArgs(interp, 1, objv, NULL);
     return TCL_ERROR;
   }
 
-  const PosList& plist = getPosList();
+  const PosList& plist = PosList::thePosList();
   Tcl_SetObjResult(interp, Tcl_NewIntObj(plist.posCount()));
   return TCL_OK;
 }
 
 // clear the ObjList of all GrObj's by calling ObjList::clearObjs()
-int PoslistTcl::resetPosListCmd(ClientData, Tcl_Interp *interp,
-                                int objc, Tcl_Obj *const objv[]) {
+int PoslistTcl::resetPosListCmd(ClientData, Tcl_Interp* interp,
+                                int objc, Tcl_Obj* const objv[]) {
 DOTRACE("PoslistTcl::resetPosListCmd");
   if (objc > 1) {
     Tcl_WrongNumArgs(interp, 1, objv, NULL);
     return TCL_ERROR;
   }
 
-  PosList& plist = getPosList();
-  plist.clearPos();
+  PosList::thePosList().clearPos();
 
   return TCL_OK;
 }
 
 // return an object's name
-int PoslistTcl::posTypeCmd(ClientData, Tcl_Interp *interp,
-                           int objc, Tcl_Obj *const objv[]) {
+int PoslistTcl::posTypeCmd(ClientData, Tcl_Interp* interp,
+                           int objc, Tcl_Obj* const objv[]) {
 DOTRACE("PoslistTcl::posTypeCmd");
   if (objc != 2)  {
     Tcl_WrongNumArgs(interp, 1, objv, "posid");
     return TCL_ERROR;
   }
 
-  const PosList& plist = getPosList();
-  Position *p = getPosFromArg(interp, objv, plist, 1);
+  const PosList& plist = PosList::thePosList();
+  Position* p = getPosFromArg(interp, objv, plist, 1);
   if ( p == NULL ) return TCL_ERROR;
 
-  const char *name = typeid(*p).name();
+  const char* name = typeid(*p).name();
   if ( name != NULL ) {
     Tcl_SetObjResult(interp, Tcl_NewStringObj(name,-1));
   }
   return TCL_OK;
 }
 
-int PoslistTcl::stringifyCmd(ClientData, Tcl_Interp *interp,
-                                     int objc, Tcl_Obj *const objv[]) {
+int PoslistTcl::stringifyCmd(ClientData, Tcl_Interp* interp,
+                                     int objc, Tcl_Obj* const objv[]) {
 DOTRACE("PoslistTcl::stringifyCmd");
   if (objc != 1)  {
     Tcl_WrongNumArgs(interp, 1, objv, NULL);
     return TCL_ERROR;
   }
 
-  const PosList& plist = getPosList();
+  const PosList& plist = PosList::thePosList();
 
   const int BUF_SIZE = 200;
   char buf[BUF_SIZE];
@@ -131,18 +140,18 @@ DOTRACE("PoslistTcl::stringifyCmd");
   return TCL_OK;
 }
 
-int PoslistTcl::destringifyCmd(ClientData, Tcl_Interp *interp,
-                                     int objc, Tcl_Obj *const objv[]) {
+int PoslistTcl::destringifyCmd(ClientData, Tcl_Interp* interp,
+                                     int objc, Tcl_Obj* const objv[]) {
 DOTRACE("PoslistTcl::destringifyCmd");
   if (objc != 2)  {
     Tcl_WrongNumArgs(interp, 1, objv, "string");
     return TCL_ERROR;
   }
 
-  PosList& plist = getPosList();
+  PosList& plist = PosList::thePosList();
 
   const char* buf = Tcl_GetString(objv[1]);
-  if (buf == NULL) return TCL_ERROR;
+  Assert(buf);
 
   istrstream ist(buf);
 
@@ -156,7 +165,7 @@ DOTRACE("PoslistTcl::destringifyCmd");
   return TCL_OK;
 }
 
-int PoslistTcl::Poslist_Init(Tcl_Interp *interp) {
+int PoslistTcl::Poslist_Init(Tcl_Interp* interp) {
 DOTRACE("PoslistTcl::Poslist_Init");
   // Add all commands to the ::PosList namespace
   Tcl_CreateObjCommand(interp, "PosList::posCount", posCountCmd,
