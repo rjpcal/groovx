@@ -3,7 +3,7 @@
 // masterptr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Oct  9 08:18:28 2000
-// written: Mon Oct  9 11:52:20 2000
+// written: Mon Oct  9 13:01:11 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,13 +29,21 @@ private:
   MasterPtrBase(const MasterPtrBase& other);
   MasterPtrBase& operator=(const MasterPtrBase& other);
 
+protected:
+  /** Virtual destructor is protected, so that we can prevent clients
+		from instantiating MasterPtr's on the stack and from destroying
+		them explicitly. Instead, MasterPtr's will only be destroyed by
+		a 'delete this' call inside decrRefCount() if the reference
+		count falls to zero or below. Clients are forced to create
+		MasterPtr's dynamically using \c new, which is what we need in
+		order for 'delete this' to be valid later on. */
+  virtual ~MasterPtrBase();
+
 public:
   /// Utility function to throw an \c ErrorWithMsg exception.
   static void throwErrorWithMsg(const char* msg);
 
   MasterPtrBase();
-
-  virtual ~MasterPtrBase();
 
   void incrRefCount();
   void decrRefCount();
@@ -57,12 +65,13 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 class NullMasterPtr : public MasterPtrBase {
+protected:
+  /// Virtual destructor.
+  virtual ~NullMasterPtr();
+
 public:
   /// Default constructor.
   NullMasterPtr();
-
-  /// Virtual destructor.
-  virtual ~NullMasterPtr();
 
   /// Overridden from \c MasterPtrBase to always returns false.
   virtual bool isValid() const;
@@ -83,9 +92,11 @@ public:
 namespace IO { class IoObject; }
 
 class MasterIoPtr : public MasterPtrBase {
+protected:
+  virtual ~MasterIoPtr();
+
 public:
   MasterIoPtr();
-  virtual ~MasterIoPtr();
 
   virtual IO::IoObject* ioPtr() const = 0;
 
@@ -108,9 +119,11 @@ class MasterPtr : public MasterIoPtr {
 private:
   T* itsPtr;
 
+protected:
+  virtual ~MasterPtr();
+
 public:
   explicit MasterPtr(T* ptr);
-  virtual ~MasterPtr();
 
         T* getPtr()       { return itsPtr; }
   const T* getPtr() const { return itsPtr; }
