@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Fri Aug 31 10:23:44 2001
+// written: Wed Sep  5 16:03:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,8 @@
 
 #include "gfx/canvas.h"
 #include "gfx/gxnode.h"
+
+#include "tcl/tcltimer.h"
 
 #include "util/dlink_list.h"
 #include "util/ref.h"
@@ -67,14 +69,17 @@ public:
     isItHolding(false),
     isItRefreshing(true),
     isItRefreshed(false),
+    itsTimer(100, true),
     itsButtonListeners(),
     itsKeyListeners(),
     slotNodeChanged(Util::Slot::make(this, &Impl::onNodeChange))
-  {}
+  {
+    itsTimer.sigTimeOut.connect(this, &Impl::display);
+  }
 
   static Impl* make(GWT::Widget* owner) { return new Impl(owner); }
 
-  void display(Gfx::Canvas& canvas);
+  void display();
 
   void clearscreen(Gfx::Canvas& canvas);
 
@@ -105,7 +110,7 @@ public:
   void flushChanges()
   {
     if (isItRefreshing && !isItRefreshed)
-      display(itsOwner->getCanvas());
+      display();
   }
 
   void onNodeChange()
@@ -142,7 +147,7 @@ public:
   bool isItRefreshing;
   bool isItRefreshed;
 
-public:
+  Tcl::Timer itsTimer;
 
   typedef dlink_list<Util::Ref<GWT::ButtonListener> > Buttons;
   typedef dlink_list<Util::Ref<GWT::KeyListener> >    Keys;
@@ -160,9 +165,11 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-void GWT::Widget::Impl::display(Gfx::Canvas& canvas)
+void GWT::Widget::Impl::display()
 {
 DOTRACE("GWT::Widget::Impl::display");
+
+  Gfx::Canvas& canvas = itsOwner->getCanvas();
 
   // Only erase the previous trial if hold is off
   if( !isItHolding )
@@ -258,7 +265,7 @@ void GWT::Widget::removeKeyListeners()
 
 void GWT::Widget::display()
 {
-  itsImpl->display(getCanvas());
+  itsImpl->display();
 }
 
 void GWT::Widget::clearscreen()
@@ -294,6 +301,20 @@ void GWT::Widget::setDrawable(const Ref<GxNode>& node)
 {
 DOTRACE("GWT::Widget::setDrawable");
   itsImpl->setDrawable(node);
+}
+
+void GWT::Widget::animate(unsigned int framesPerSecond)
+{
+DOTRACE("GWT::Widget::animate");
+  if (framesPerSecond == 0)
+    {
+      itsImpl->itsTimer.cancel();
+    }
+  else
+    {
+      itsImpl->itsTimer.setDelayMsec(1000/framesPerSecond);
+      itsImpl->itsTimer.schedule();
+    }
 }
 
 void GWT::Widget::dispatchButtonEvent(unsigned int button, int x, int y)
