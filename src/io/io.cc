@@ -16,7 +16,6 @@
 #include "io/io.h"
 
 #include "io/iodb.h"
-#include "io/iomap.h"
 #include "io/writer.h"
 
 #include "system/demangle.h"
@@ -71,8 +70,6 @@ IO::IoObject::IoObject(bool doInsert) : itsId(++idCounter) {
 DOTRACE("IO::IoObject::IoObject");
   DebugEval(itsId); DebugEvalNL(this);
 
-  IoMap::theIoMap().insertObject(this);
-
   if (doInsert)
 	 IoDb::theDb().insertPtrBase(this);
 }
@@ -80,8 +77,6 @@ DOTRACE("IO::IoObject::IoObject");
 // Must be defined out of line to avoid duplication of IO's vtable
 IO::IoObject::~IoObject() {
 DOTRACE("IO::IoObject::~IoObject");
-
-  IoMap::theIoMap().removeObject(this);
 }
 
 unsigned int IO::IoObject::ioAttribCount() const {
