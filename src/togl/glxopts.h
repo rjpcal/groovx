@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Aug  4 16:28:37 2002
-// written: Sun Aug  4 16:32:19 2002
+// written: Mon Aug  5 11:21:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,37 +19,38 @@ template <class T> class shared_ptr;
 
 struct GlxOpts
 {
-  GlxOpts() :
+  void toDefaults()
+  {
 #ifndef NO_RGBA
-    rgbaFlag(1),
+    rgbaFlag = 1;
 #else
-    rgbaFlag(0),
+    rgbaFlag = 0;
 #endif
-    rgbaRed(1),
-    rgbaGreen(1),
-    rgbaBlue(1),
-    colorIndexSize(8),
+    rgbaRed = 1;
+    rgbaGreen = 1;
+    rgbaBlue = 1;
+    colorIndexSize = 8;
 #ifndef NO_DOUBLE_BUFFER
-    doubleFlag(1),
+    doubleFlag = 1;
 #else
-    doubleFlag(0),
+    doubleFlag = 0;
 #endif
-    depthFlag(0),
-    depthSize(1),
-    accumFlag(0),
-    accumRed(1),
-    accumGreen(1),
-    accumBlue(1),
-    accumAlpha(1),
-    alphaFlag(0),
-    alphaSize(1),
-    stencilFlag(0),
-    stencilSize(1),
-    auxNumber(0),
-    indirect(0)
-  {}
+    depthFlag = 0;
+    depthSize = 1;
+    accumFlag = 0;
+    accumRed = 1;
+    accumGreen = 1;
+    accumBlue = 1;
+    accumAlpha = 1;
+    alphaFlag = 0;
+    alphaSize = 1;
+    stencilFlag = 0;
+    stencilSize = 1;
+    auxNumber = 0;
+    indirect = 0;
+  }
 
-  int rgbaFlag;           /* configuration flags (ala GLX parameters) */
+  int rgbaFlag;
   int rgbaRed;
   int rgbaGreen;
   int rgbaBlue;
