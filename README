@@ -8,52 +8,78 @@
 #
 ######################################################################
 
-1. Overview
+NOTE: If you're reading this file as a flat text file, you'll notice
+that there is some additional markup, which is used to generate an
+HTML version of this file with the doxygen tool. Nevertheless, this
+file should remain readable as plain text.
+
+/** \page README GroovX readme file
+
+See also the \ref TUTORIAL file for more getting-started help.
+
+Table of contents:
+
+- \ref overview
+- \ref files
+- \ref dependencies
+- \ref configuration
+- \ref building
+- \ref portability
+- \ref contactinfo
+
+<!--############################################################--><hr>
+
+\section overview 1. Overview
 
    This is a C++ toolkit for writing visual psychophysics
    experiments. Various abstractions relating to experiments (visual
    objects, trials, observer responses, etc.) are implemented in C++,
    and are exposed through a Tcl interface as scriptable objects.
 
-   Note that sitting beside this README file is a TUTORIAL file which
-   should contain some useful examples of how to get started actually
-   using the program.
+   Note that sitting beside this \ref README file is a \ref TUTORIAL
+   file which should contain some useful examples of how to get
+   started actually using the program.
 
-2. Organization of the files
+<!--############################################################--><hr>
+
+\section files 2. Organization of the files
 
    The src/ directory contains subdirectories for each of the various
    components of the system. Packages that are configured to be
    loadable at run-time are found in src/pkgs/.
 
    When the system is built, the object files go into a hierarchy
-   within obj/$ARCH/ that parallels src/. That is, a source file
-   src/foo/bar.cc will be compiled to obj/i686/foo/bar.o if your
-   system architecture is i686.
+   within build/obj/ that parallels src/. That is, a source file
+   src/foo/bar.cc will be compiled to build/obj/foo/bar.o.
 
-3. Dependencies
+<!--############################################################--><hr>
 
-   (Assume /path/to/install is where you will install local packages)
-   (Assume /path/to/source is where you unpack and build these packages)
+\section dependencies 3. Dependencies
+
+   - Assume /path/to/install is where you will install local packages
+   - Assume /path/to/source is where you unpack and build these packages
 
    This software requires these development packages:
 
-     * Tcl/Tk (version 8.5 or later)
-     * X11 windowing system
-     * OpenGL
-     * libz (gzip library)
+     - Tcl/Tk (version 8.5 or later)
+     - X11 windowing system
+     - OpenGL
+     - libz (gzip library)
 
    The following additional packages are optional. The configure
    script should generally be able to detect whether you have them
    installed or not and set up the Makefile appropriately.
 
-     * libpng (portable network graphics library)
-     * libjpeg (jpeg image handling library)
-     * matlab (allows running a matlab engine inside the groovx shell)
+     - libpng (portable network graphics library)
+     - libjpeg (jpeg image handling library)
+     - matlab (allows running a matlab engine inside the groovx shell)
 
    The following packages are optional, but are used in some of the
    scripts that use the groovx software.
 
-     * itcl and itk (itcl3.2.1_src.tgz)
+     - itcl and itk (itcl3.2.1_src.tgz)
+
+       \code
 
        # note that the itcl+itk configure script expects to find the
          tcl+tk sources sitting in the location where you built
@@ -73,7 +99,11 @@
        make
        make install
 
-     * iwidgets (iwidgets4.0.1.tar.gz)
+       \endcode
+
+     - iwidgets (iwidgets4.0.1.tar.gz)
+
+       \code
 
        # again, note that iwidgets expects to still be able to find
          the source code from the itcl/itk build, so don't remove the
@@ -89,92 +119,123 @@
        # no need to do "make", just do "make install"
        make install
 
-     * Mac OS X Tcl/Tk build notes
+       \endcode
+
+     - Mac OS X Tcl/Tk build notes
 
        Used the following Makefile fragment for Tcl (in
        pathtosrc/tcl/macosx/Makefile)
 
-	DESTDIR			?= 
-	INSTALL_ROOT		?= ${DESTDIR}
+       \code
 
-	BUILD_DIR		?= ${CURDIR}/../../build
-	SYMROOT			?= ${BUILD_DIR}/${PROJECT}
-	OBJROOT			?= ${SYMROOT}
+        DESTDIR                 ?= 
+        INSTALL_ROOT            ?= ${DESTDIR}
 
-	EXTRA_CONFIGURE_ARGS 	?= 
-	EXTRA_MAKE_ARGS		?= 
+        BUILD_DIR               ?= ${CURDIR}/../../build
+        SYMROOT                 ?= ${BUILD_DIR}/${PROJECT}
+        OBJROOT                 ?= ${SYMROOT}
 
-	INSTALL_PATH		?= ${HOME}/Library/Frameworks
-	PREFIX			?= ${HOME}/local/tcl8.5a1-aqua
-	BINDIR			?= ${PREFIX}/bin
-	MANDIR			?= ${PREFIX}/man
+        EXTRA_CONFIGURE_ARGS    ?= 
+        EXTRA_MAKE_ARGS         ?= 
+
+        INSTALL_PATH            ?= ${HOME}/Library/Frameworks
+        PREFIX                  ?= ${HOME}/local/tcl8.5a1-aqua
+        BINDIR                  ?= ${PREFIX}/bin
+        MANDIR                  ?= ${PREFIX}/man
+
+       \endcode
 
        Used the following Makefile fragment for Tk (in
        pathtosrc/tk/macosx/Makefile)
 
-	DESTDIR			?=
-	INSTALL_ROOT		?= ${DESTDIR}
+       \code
 
-	BUILD_DIR		?= ${CURDIR}/../../build
-	SYMROOT			?= ${BUILD_DIR}/${PROJECT}
-	OBJROOT			?= ${SYMROOT}
+        DESTDIR                 ?=
+        INSTALL_ROOT            ?= ${DESTDIR}
 
-	EXTRA_MAKE_ARGS		?= 
+        BUILD_DIR               ?= ${CURDIR}/../../build
+        SYMROOT                 ?= ${BUILD_DIR}/${PROJECT}
+        OBJROOT                 ?= ${SYMROOT}
 
-	INSTALL_PATH		?= ${HOME}/Library/Frameworks
-	APPLICATION_INSTALL_PATH ?= ${HOME}/Applications/Utilities
+        EXTRA_MAKE_ARGS         ?= 
 
-	PREFIX			?= ${HOME}/local/tcl8.5a1-aqua
-	BINDIR			?= ${PREFIX}/bin
+        INSTALL_PATH            ?= ${HOME}/Library/Frameworks
+        APPLICATION_INSTALL_PATH ?= ${HOME}/Applications/Utilities
 
-	TCL_FRAMEWORK_DIR	?= ${BUILD_DIR}/tcl
-	TCLSH_DIR		?= ${TCL_FRAMEWORK_DIR}
+        PREFIX                  ?= ${HOME}/local/tcl8.5a1-aqua
+        BINDIR                  ?= ${PREFIX}/bin
+
+        TCL_FRAMEWORK_DIR       ?= ${BUILD_DIR}/tcl
+        TCLSH_DIR               ?= ${TCL_FRAMEWORK_DIR}
+
+       \endcode
 
        Problems:
 
-        Tk install requires 'chmod' with '-RH' options. But, the Fink
-        version of chmod in /sw/bin/chmod doesn't recognize the '-H'
-        option. So, need to point the installation to /bin/chmod
-        instead. For now, just put a link from /bin/chmod to
-        ~/local/bin/chmod, since ~/local/bin is higher in $PATH than
-        is /sw/bin.
+        - Tk install requires 'chmod' with '-RH' options. But, the
+          Fink version of chmod in /sw/bin/chmod doesn't recognize the
+          '-H' option. So, need to point the installation to
+          /bin/chmod instead. For now, just put a link from /bin/chmod
+          to ~/local/bin/chmod, since ~/local/bin is higher in $PATH
+          than is /sw/bin.
 
-	Tk install expects to find 'Wish Shell.app' in
-	~/Library/Frameworks/Tk.Frame/Versions/8.5/Resources/. But, my
-	Makefile fragment puts 'Wish Shell.app' in
-	~/Applications/Utilities instead. So, for now just do:
+        - Tk install expects to find 'Wish Shell.app' in
+          ~/Library/Frameworks/Tk.Frame/Versions/8.5/Resources/. But,
+          my Makefile fragment puts 'Wish Shell.app' in
+          ~/Applications/Utilities instead. So, for now just do:
 
-	  ln -s ~/Applications/Utilities/Wish\ Shell.app \
-	     ~/Library/Frameworks/Tk.framework/Versions/8.5/Resources/
+          \code
 
-4. Configuration
+          ln -s ~/Applications/Utilities/Wish\ Shell.app \
+             ~/Library/Frameworks/Tk.framework/Versions/8.5/Resources/
+
+          \endcode
+
+<!--############################################################--><hr>
+
+\section configuration 4. Configuration
 
    Configuration is done with a standard autoconf-generated configure
    script. To run the script with the default options, just do:
 
+   \code
+
        ./configure
+
+   \endcode
 
    To see a description of available configuration options, do:
 
+   \code
+
        ./configure --help
+
+   \endcode
 
    Some important options:
 
-       --enable-debug={no|yes}
+       - --enable-debug={no|yes} [default is yes]
 
            determines whether to include runtime debuggability into
            the executable. If 'yes' (the default), then certain
            commands will be available in the shell to control debug
            verbosity and stack tracing.
 
-5. Building
+       - --enable-aqua={no|yes} [default is no]
+
+           determines whether to use Aqua windows or X11 windows on a
+           Mac OS X build; default is X11
+
+<!--############################################################--><hr>
+
+\section building 5. Building
 
    Once you have all package dependencies installed, and run the
    configure script, just type "make" and everything should build and
    install. A short test suite (takes ~10 seconds on a 1GHz Pentium
    III Linux machine) is run at the end of every "make" invocation.
 
-   * environment variables
+   - environment variables
 
      LD_LIBRARY_PATH
 
@@ -182,21 +243,29 @@
      environment variable includes the paths to wherever you have
      installed the libraries associated with this package.
 
-6. Portability
+<!--############################################################--><hr>
+
+\section portability 6. Portability
 
    This software has been built and run successfully under:
 
-     RedHat Linux 7.x (i686)
-     RedHat Linux 8.x (i686)
-     RedHat Linux 9.x (i686)
-     Fedore Core 1 (i686)
-     Fedore Core 2 (i686)
+     - RedHat Linux 7.x (i686)
+     - RedHat Linux 8.x (i686)
+     - RedHat Linux 9.x (i686)
+     - Fedore Core 1 (i686)
+     - Fedore Core 2 (i686)
 
-     YellowDog Linux 3.0.1 (ppc)
+     - YellowDog Linux 3.0.1 (ppc)
 
-     Mac OS X 10.1.x
-     Mac OS X 10.2.x
-     Mac OS X 10.3.x
+     - Mac OS X 10.1.x
+     - Mac OS X 10.2.x
+     - Mac OS X 10.3.x
+
+   Note that for Mac OS X, you can build either for X11 (if you are
+   running an X server such as OroborosX on your OSX box) or for Aqua
+   (OSX's native windowing system). By default the configure script
+   will setup for X11, but you can pass the --enable-aqua option to
+   tell it to set up for Aqua instead.
 
    Earlier versions of the software have been built successfully under
    SGI's IRIX6 and HP's HPUX 10.x, but these configurations have not
@@ -206,27 +275,34 @@
    compiler. Compilers that have worked successfully in the past
    include:
 
-     g++ 2.95.x (linux, Mac OS X)
-     g++ 3.0.x (linux)
-     g++ 3.1.x (linux, Mac OS X)
-     g++ 3.2.x (linux)
-     g++ 3.3.x (linux, Mac OS X)
-     g++ 3.4.x (linux)
-     g++ 4.0-prerelease
-     HP's aCC (hpux)
-     Intel's icc 6.x/7.x/8.x (linux)
-     SGI's MIPSpro (irix6)
+     - g++ 2.95.x (linux, Mac OS X)
+     - g++ 3.0.x (linux)
+     - g++ 3.1.x (linux, Mac OS X)
+     - g++ 3.2.x (linux)
+     - g++ 3.3.x (linux, Mac OS X)
+     - g++ 3.4.x (linux)
+     - g++ 4.0-prerelease
+     - HP's aCC (hpux)
+     - Intel's icc 6.x/7.x/8.x (linux)
+     - SGI's MIPSpro (irix6)
 
-7. Contact information
+   but note that the older compilers (especially g++ 2.95.x, HP aCC,
+   and SGI MIPSpro) haven't been tested lately so it's likely that a
+   few things will not work out-of-the-box with those compilers.
+
+<!--############################################################--><hr>
+
+\section contactinfo 7. Contact information
 
    Any questions about the software should be directed to its author:
 
+   \code
+
      Rob Peters
-     California Institute of Technology
-     Mail Code 139-74
-     Pasadena, CA 91125
-     (626) 395-2882
      rjpeters at klab dot caltech dot edu
      www.klab.caltech.edu/rjpeters/
      www.klab.caltech.edu/rjpeters/groovx/
 
+   \endcode
+
+**/
