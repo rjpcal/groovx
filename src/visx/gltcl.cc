@@ -47,20 +47,26 @@ public:
   GLError(const char* msg = "") : ErrorWithMsg(msg) {}
 };
 
-namespace GLTcl {
+namespace GLTcl
+{
   class GLPkg;
 
-  class glFrustumCmd;
-  class glGetCmd;
-  class glLoadMatrixCmd;
-  class glOrthoCmd;
-  class gluLookAtCmd;
+  void loadMatrix(Tcl::List entries);
+  void lookAt(Tcl::List args);
+  void antialias(bool on_off);
+  void drawOneLine(GLdouble x1, GLdouble y1, GLdouble x2, GLdouble y2);
+  void drawThickLine(GLdouble x1, GLdouble y1,
+							GLdouble x2, GLdouble y2, GLdouble thickness);
+  Tcl::List lineInfo();
+  GLdouble pixelCheckSum(int x, int y, int w, int h);
+  GLdouble pixelCheckSumAll()
+  {
+	 GLint viewport[4];
+	 glGetIntegerv(GL_VIEWPORT, viewport);
+	 return pixelCheckSum(viewport[0], viewport[1], viewport[2], viewport[3]);
+  }
 
-  class AntialiasCmd;
-  class DrawOneLineCmd;
-  class DrawThickLineCmd;
-  class LineInfoCmd;
-  class PixelCheckSumCmd;
+  class glGetCmd;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -80,31 +86,6 @@ void GLTcl::checkGL() {
     throw GLError(msg);
   }
 }
-
-//---------------------------------------------------------------------
-//
-// GLTcl::glFrustumCmd --
-//
-//---------------------------------------------------------------------
-
-class GLTcl::glFrustumCmd : public Tcl::TclCmd {
-public:
-  glFrustumCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "left right bottom top zNear zFar", 7, 7) {}
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-  {
-    GLdouble left   = ctx.getDoubleFromArg(1);
-    GLdouble right  = ctx.getDoubleFromArg(2);
-    GLdouble bottom = ctx.getDoubleFromArg(3);
-    GLdouble top    = ctx.getDoubleFromArg(4);
-    GLdouble zNear  = ctx.getDoubleFromArg(5);
-    GLdouble zFar   = ctx.getDoubleFromArg(6);
-
-    glFrustum(left, right, bottom, top, zNear, zFar);
-    checkGL();
-  }
-};
 
 //---------------------------------------------------------------------
 //
@@ -387,7 +368,10 @@ protected:
     GLenum param_tag = ctx.getIntFromArg(1);
 
     const AttribInfo* theInfo = theirAttribs[param_tag];
-    if ( theInfo == 0 ) { throw Tcl::TclError("invalid or unsupported enumerant"); }
+    if ( theInfo == 0 )
+      {
+        throw Tcl::TclError("invalid or unsupported enumerant");
+      }
 
     getValues(theInfo, ctx);
   }
@@ -442,93 +426,46 @@ void GLTcl::glGetTypeCmd<GLint>::extractValues(GLenum tag, GLint* vals_out)
 
 //---------------------------------------------------------------------
 //
-// GLTcl::glLoadMatrixCmd --
+// GLTcl::loadMatrix --
 //
 //---------------------------------------------------------------------
 
-class GLTcl::glLoadMatrixCmd : public Tcl::TclCmd {
-public:
-  glLoadMatrixCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "4x4_column_major_matrix", 2, 2) {}
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-  {
-    fixed_block<GLdouble> matrix(16);
+void GLTcl::loadMatrix(Tcl::List entries)
+{
+  fixed_block<GLdouble> matrix(entries.begin<GLdouble>(),
+										 entries.end<GLdouble>());
 
-    unsigned int i = 0;
-    for (Tcl::List::Iterator<GLdouble>
-           itr = ctx.beginOfArg(2, (GLdouble*)0),
-           end = ctx.endOfArg(2, (GLdouble*)0);
-         itr != end && i < matrix.size();
-         ++itr, ++i)
-      {
-        matrix[i] = *itr;
-      }
+  if (matrix.size() != 16)
+	 {
+		throw Tcl::TclError("matrix must have 16 entries in column-major order");
+	 }
 
-    if (matrix.size() != i) {
-      throw Tcl::TclError("matrix must have 16 entries in column-major order");
-    }
-
-    glLoadMatrixd(&matrix[0]);
-    checkGL();
-  }
-};
+  glLoadMatrixd(&matrix[0]);
+  checkGL();
+}
 
 //---------------------------------------------------------------------
 //
-// GLTcl::glOrthoCmd --
+// GLTcl::lookAt --
 //
 //---------------------------------------------------------------------
 
-class GLTcl::glOrthoCmd : public Tcl::TclCmd {
-public:
-  glOrthoCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "left right bottom top zNear zFar", 7, 7) {}
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-  {
-    GLdouble left   = ctx.getDoubleFromArg(1);
-    GLdouble right  = ctx.getDoubleFromArg(2);
-    GLdouble bottom = ctx.getDoubleFromArg(3);
-    GLdouble top    = ctx.getDoubleFromArg(4);
-    GLdouble zNear  = ctx.getDoubleFromArg(5);
-    GLdouble zFar   = ctx.getDoubleFromArg(6);
-
-    glOrtho(left, right, bottom, top, zNear, zFar);
-    checkGL();
-  }
-};
-
-//---------------------------------------------------------------------
-//
-// GLTcl::gluLookAtCmd --
-//
-//---------------------------------------------------------------------
-
-class GLTcl::gluLookAtCmd : public Tcl::TclCmd {
-public:
-  gluLookAtCmd(Tcl::TclPkg* pkg, const char* cmd_name) :
-    Tcl::TclCmd(pkg->interp(), cmd_name, "eyeX eyeY eyeZ targX targY targZ upX upY upZ", 10, 10)
-    {}
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-  {
-    GLdouble eyeX = ctx.getDoubleFromArg(1);
-    GLdouble eyeY = ctx.getDoubleFromArg(2);
-    GLdouble eyeZ = ctx.getDoubleFromArg(3);
-    GLdouble targX = ctx.getDoubleFromArg(4);
-    GLdouble targY = ctx.getDoubleFromArg(5);
-    GLdouble targZ = ctx.getDoubleFromArg(6);
-    GLdouble upX = ctx.getDoubleFromArg(7);
-    GLdouble upY = ctx.getDoubleFromArg(8);
-    GLdouble upZ = ctx.getDoubleFromArg(9);
-    gluLookAt(eyeX, eyeY, eyeZ, targX, targY, targZ, upX, upY, upZ);
-  }
-};
+void GLTcl::lookAt(Tcl::List args)
+{
+  gluLookAt(args.get<GLdouble>(0),
+				args.get<GLdouble>(1),
+				args.get<GLdouble>(2),
+				args.get<GLdouble>(3),
+				args.get<GLdouble>(4),
+				args.get<GLdouble>(5),
+				args.get<GLdouble>(6),
+				args.get<GLdouble>(7),
+				args.get<GLdouble>(8));
+}
 
 //--------------------------------------------------------------------
 //
-// GLTcl::AntialiasCmd --
+// GLTcl::antialias --
 //
 // Turns on or off the OpenGL modes required for antialiasing lines
 // and polygons. Antialiasing works best with RGBA mode, and not so
@@ -536,143 +473,102 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class GLTcl::AntialiasCmd : public Tcl::TclCmd {
-public:
-  AntialiasCmd(Tcl_Interp* interp, const char* cmd_name) :
-    Tcl::TclCmd(interp, cmd_name, "on_off", 2)
-  {}
-
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-    {
-      bool on_off = ctx.getBoolFromArg(1);
-
-      if (on_off) {            // turn antialiasing on
-        glEnable(GL_BLEND);
-        glEnable(GL_POLYGON_SMOOTH);
-        glEnable(GL_LINE_SMOOTH);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      }
-      else {                        // turn antialiasing off
-        glDisable(GL_BLEND);
-        glDisable(GL_LINE_SMOOTH);
-        glDisable(GL_POLYGON_SMOOTH);
-      }
-    }
-};
+void GLTcl::antialias(bool on_off)
+{
+DOTRACE("GLTcl::antialias");
+  if (on_off) // turn antialiasing on
+	 {
+		glEnable(GL_BLEND);
+		glEnable(GL_POLYGON_SMOOTH);
+		glEnable(GL_LINE_SMOOTH);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	 }
+  else // turn antialiasing off
+	 {
+		glDisable(GL_BLEND);
+		glDisable(GL_LINE_SMOOTH);
+		glDisable(GL_POLYGON_SMOOTH);
+	 }
+}
 
 //--------------------------------------------------------------------
 //
-// GLTcl::DrawOneLineCmd --
+// GLTcl::drawOneLine --
 //
 // This command takes four arguments specifying the x and y
 // coordinates of two points between which a line will be drawn.
 //
 //--------------------------------------------------------------------
 
-class GLTcl::DrawOneLineCmd : public Tcl::TclCmd {
-public:
-  DrawOneLineCmd(Tcl_Interp* interp, const char* cmd_name) :
-    Tcl::TclCmd(interp, cmd_name, "x1 y1 x2 y2", 5)
-  {}
-
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-    {
-      fixed_block<double> coord(4);
-
-      for (int i = 0; i < 3; ++i)
-        coord.at(i) = ctx.getDoubleFromArg(i+1);
-
-      glBegin(GL_LINES);
-      glVertex3d( coord[0], coord[1], 0.0);
-      glVertex3d( coord[2], coord[3], 0.0);
-      glEnd();
-      glFlush();
-    }
-};
+void GLTcl::drawOneLine(GLdouble x1, GLdouble y1, GLdouble x2, GLdouble y2)
+{
+  glBegin(GL_LINES);
+  glVertex3d(x1, y1, 0.0);
+  glVertex3d(x2, y2, 0.0);
+  glEnd();
+  glFlush();
+}
 
 //--------------------------------------------------------------------
 //
-// GLTcl::DrawThickLineCmd --
+// GLTcl::drawThickLine --
 //
 // This command takes five arguments specifying two points and a
 // thickness. A thick "line" is drawn by drawing a filled rectangle.
 //
 //--------------------------------------------------------------------
 
-class GLTcl::DrawThickLineCmd : public Tcl::TclCmd {
-public:
-  DrawThickLineCmd(Tcl_Interp* interp, const char* cmd_name) :
-    Tcl::TclCmd(interp, cmd_name, "x1 y1 x2 y2 thickness", 6)
-  {}
+void GLTcl::drawThickLine(GLdouble x1, GLdouble y1,
+								  GLdouble x2, GLdouble y2, GLdouble thickness)
+{
+  // construct the normal vector
+  double a, b, c, d, norm;
+  a = x2 - x1;      // (a, b) is the given vector
+  b = y2 - y1;
 
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-    {
-      fixed_block<double> coord(5); // fill with x1 y1 x2 y2 thickness
+  norm = sqrt(a*a + b*b);       // (c, d) is the normal
+  c = -b/norm*thickness/2;
+  d = a/norm*thickness/2;
 
-      for (int i = 0; i < 4; ++i)
-        coord.at(i) = ctx.getDoubleFromArg(i+1);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glBegin(GL_POLYGON);
+  glVertex3d( x1+c, y1+d, 0.0);
+  glVertex3d( x1-c, y1-d, 0.0);
 
-      // construct the normal vector
-      double a, b, c, d, norm;
-      a = coord[2] - coord[0];      // (a, b) is the given vector
-      b = coord[3] - coord[1];
-
-      norm = sqrt(a*a + b*b);       // (c, d) is the normal
-      c = -b/norm*coord[4]/2;
-      d = a/norm*coord[4]/2;
-
-      glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-      glBegin(GL_POLYGON);
-      glVertex3d( coord[0]+c, coord[1]+d, 0.0);
-      glVertex3d( coord[0]-c, coord[1]-d, 0.0);
-
-      glVertex3d( coord[2]-c, coord[3]-d, 0.0);
-      glVertex3d( coord[2]+c, coord[3]+d, 0.0);
-      glEnd();
-      glFlush();
-    }
-};
+  glVertex3d( x2-c, y2-d, 0.0);
+  glVertex3d( x2+c, y2+d, 0.0);
+  glEnd();
+  glFlush();
+}
 
 //--------------------------------------------------------------------
 //
-// GLTcl::LineInfoCmd --
+// GLTcl::lineInfo --
 //
 // Returns a string describing the LINE_WIDTH_RANGE and
 // LINE_WIDTH_GRANULARITY for the current OpenGL implementation.
 //
 //--------------------------------------------------------------------
 
-class GLTcl::LineInfoCmd : public Tcl::TclCmd {
-public:
-  LineInfoCmd(Tcl_Interp* interp, const char* cmd_name) :
-    Tcl::TclCmd(interp, cmd_name, 0, 1)
-  {}
+Tcl::List GLTcl::lineInfo()
+{
+  GLdouble range[2] = {-1.0,-1.0};
+  GLdouble gran=-1.0;
+  glGetDoublev(GL_LINE_WIDTH_RANGE, &range[0]);
+  glGetDoublev(GL_LINE_WIDTH_GRANULARITY, &gran);
 
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-    {
-      GLdouble range[2] = {-1.0,-1.0};
-      GLdouble gran=-1.0;
-      glGetDoublev(GL_LINE_WIDTH_RANGE, &range[0]);
-      glGetDoublev(GL_LINE_WIDTH_GRANULARITY, &gran);
-
-      Tcl::List result;
-      result.append("range");
-      result.append(range[0]);
-      result.append(range[1]);
-      result.append("granularity");
-      result.append(gran);
-
-      ctx.setResult(result);
-    }
-};
+  Tcl::List result;
+  result.append("range");
+  result.append(range[0]);
+  result.append(range[1]);
+  result.append("granularity");
+  result.append(gran);
+  return result;
+}
 
 //--------------------------------------------------------------------
 //
-// GLTcl::PixelCheckSumCmd --
+// GLTcl::pixelCheckSum --
 //
 // This command returns the sum of the color indices of all the pixels
 // in a specified rectangle. It can be used as an easy way to see if
@@ -684,68 +580,46 @@ protected:
 //
 //--------------------------------------------------------------------
 
-class GLTcl::PixelCheckSumCmd : public Tcl::TclCmd {
-public:
-  PixelCheckSumCmd(Tcl_Interp* interp, const char* cmd_name) :
-    Tcl::TclCmd(interp, cmd_name, "x y width height", 1, 5, true)
-  {}
+GLdouble GLTcl::pixelCheckSum(int x, int y, int w, int h)
+{
+  GLboolean isRgba;
+  glGetBooleanv(GL_RGBA_MODE, &isRgba);
 
-protected:
-  virtual void invoke(Tcl::Context& ctx)
-    {
-      int x,y,w,h;
-      if (ctx.objc() == 5) {
-        x = ctx.getIntFromArg(1);
-        y = ctx.getIntFromArg(2);
-        w = ctx.getIntFromArg(3);
-        h = ctx.getIntFromArg(4);
-      }
-      else {
-        GLint viewport[4];
-        glGetIntegerv(GL_VIEWPORT, viewport);
-        x = viewport[0];                             DebugEval(x);
-        y = viewport[1];                             DebugEval(y);
-        w = viewport[2];                             DebugEval(w);
-        h = viewport[3];                             DebugEvalNL(h);
-      }
+  if (GL_TRUE == isRgba)
+	 {
+		fixed_block<GLfloat> pixels(w*h*3);
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
-      GLboolean isRgba;
-      glGetBooleanv(GL_RGBA_MODE, &isRgba);
+		glPushAttrib(GL_PIXEL_MODE_BIT);
+		glReadBuffer(GL_FRONT);
+		glReadPixels(x,y,w,h,GL_RGB, GL_FLOAT, &pixels[0]);
+		glPopAttrib();
 
-      if (GL_TRUE == isRgba)
-        {
-          fixed_block<GLfloat> pixels(w*h*3);
-          glPixelStorei(GL_PACK_ALIGNMENT, 1);
+		GLfloat sum = 0;
+		for (unsigned int i = 0; i < pixels.size(); ++i)
+		  {
+			 sum += pixels[i];
+		  }
+		return sum;
+	 }
+  else
+	 {
+		fixed_block<GLubyte> pixels(w*h);
+		glPixelStorei(GL_PACK_ALIGNMENT, 1);
 
-          glPushAttrib(GL_PIXEL_MODE_BIT);
-          glReadBuffer(GL_FRONT);
-          glReadPixels(x,y,w,h,GL_RGB, GL_FLOAT, &pixels[0]);
-          glPopAttrib();
+		glPushAttrib(GL_PIXEL_MODE_BIT);
+		glReadBuffer(GL_FRONT);
+		glReadPixels(x,y,w,h,GL_COLOR_INDEX, GL_UNSIGNED_BYTE, &pixels[0]);
+		glPopAttrib();
 
-          GLfloat sum = 0;
-          for (unsigned int i = 0; i < pixels.size(); ++i) {
-            sum += pixels[i];
-          }
-          ctx.setResult(sum);
-        }
-      else
-        {
-          fixed_block<GLubyte> pixels(w*h);
-          glPixelStorei(GL_PACK_ALIGNMENT, 1);
-
-          glPushAttrib(GL_PIXEL_MODE_BIT);
-          glReadBuffer(GL_FRONT);
-          glReadPixels(x,y,w,h,GL_COLOR_INDEX, GL_UNSIGNED_BYTE, &pixels[0]);
-          glPopAttrib();
-
-          long int sum = 0;
-          for (unsigned int i = 0; i < pixels.size(); ++i) {
-            sum += pixels[i];
-          }
-          ctx.setResult(sum);
-        }
-    }
-};
+		long int sum = 0;
+		for (unsigned int i = 0; i < pixels.size(); ++i)
+		  {
+			 sum += pixels[i];
+		  }
+		return sum;
+	 }
+}
 
 //---------------------------------------------------------------------
 //
@@ -889,54 +763,59 @@ public:
 
     using namespace Tcl;
 
-    addCommand( makeCmd (interp, glBegin, "glBegin", "mode") );
-    addCommand( makeCmd (interp, glBlendFunc, "glBlendFunc", "sfactor dfactor") );
-    addCommand( makeCmd (interp, glCallList, "glCallList", "list") );
-    addCommand( makeCmd (interp, glClear, "glClear", "mask_bits") );
-    addCommand( makeCmd (interp, glClearColor, "glClearColor", "red green blue alpha") );
-    addCommand( makeCmd (interp, glClearIndex, "glClearIndex", "index") );
-    addCommand( makeCmd (interp, glColor4d, "glColor", "red green blue alpha") );
-    addCommand( makeCmd (interp, glDeleteLists, "glDeleteLists", "list_id range") );
-    addCommand( makeCmd (interp, glDisable, "glDisable", "capability") );
-    addCommand( makeCmd (interp, glDrawBuffer, "glDrawBuffer", "mode") );
-    addCommand( makeCmd (interp, glEnable, "glEnable", "capability") );
-    addCommand( makeCmd (interp, glEnd, "glEnd", 0) );
-    addCommand( makeCmd (interp, glEndList, "glEndList", 0) );
-    addCommand( makeCmd (interp, glFlush, "glFlush", 0) );
-    addCommand( makeCmd (interp, glGenLists, "glGenLists", "range") );
-    addCommand( makeCmd (interp, checkGL, "glGetError", 0) );
-    addCommand( makeCmd (interp, glIndexi, "glIndexi", "index") );
-    addCommand( makeCmd (interp, glIsList, "glIsList", "list_id") );
-    addCommand( makeCmd (interp, glLineWidth, "glLineWidth", "width") );
-    addCommand( makeCmd (interp, glListBase, "glListBase", "base") );
-    addCommand( makeCmd (interp, glLoadIdentity, "glLoadIdentity", 0) );
-    addCommand( makeCmd (interp, glMatrixMode, "glMatrixMode", "mode") );
-    addCommand( makeCmd (interp, glNewList, "glNewList", "list_id mode") );
-    addCommand( makeCmd (interp, glPolygonMode, "glPolygonMode", "face mode") );
-    addCommand( makeCmd (interp, glPopMatrix, "glPopMatrix", 0) );
-    addCommand( makeCmd (interp, glPushMatrix, "glPushMatrix", 0) );
-    addCommand( makeCmd (interp, glRotated, "glRotate", "angle_in_degrees x y z") );
-    addCommand( makeCmd (interp, glScaled, "glScale", "x y z") );
-    addCommand( makeCmd (interp, glTranslated, "glTranslate", "x y z") );
-    addCommand( makeCmd (interp, glVertex2d, "glVertex2", "x y") );
-    addCommand( makeCmd (interp, glVertex3d, "glVertex3", "x y z") );
-    addCommand( makeCmd (interp, glVertex4d, "glVertex4", "x y z w") );
-    addCommand( makeCmd (interp, gluPerspective, "gluPerspective",
-                         "field_of_view_y aspect zNear zFar") );
+    Tcl::def( this, glBegin, "glBegin", "mode" );
+    Tcl::def( this, glBlendFunc, "glBlendFunc", "sfactor dfactor" );
+    Tcl::def( this, glCallList, "glCallList", "list" );
+    Tcl::def( this, glClear, "glClear", "mask_bits" );
+    Tcl::def( this, glClearColor, "glClearColor", "red green blue alpha" );
+    Tcl::def( this, glClearIndex, "glClearIndex", "index" );
+    Tcl::def( this, glColor4d, "glColor", "red green blue alpha" );
+    Tcl::def( this, glDeleteLists, "glDeleteLists", "list_id range" );
+    Tcl::def( this, glDisable, "glDisable", "capability" );
+    Tcl::def( this, glDrawBuffer, "glDrawBuffer", "mode" );
+    Tcl::def( this, glEnable, "glEnable", "capability" );
+    Tcl::def( this, glEnd, "glEnd", 0 );
+    Tcl::def( this, glEndList, "glEndList", 0 );
+    Tcl::def( this, glFlush, "glFlush", 0 );
+    Tcl::def( this, glFrustum, "glFrustum", "left right bottom top zNear zFar" );
+    Tcl::def( this, glGenLists, "glGenLists", "range" );
+    Tcl::def( this, checkGL, "glGetError", 0 );
+    Tcl::def( this, glIndexi, "glIndexi", "index" );
+    Tcl::def( this, glIsList, "glIsList", "list_id" );
+    Tcl::def( this, glLineWidth, "glLineWidth", "width" );
+    Tcl::def( this, glListBase, "glListBase", "base" );
+    Tcl::def( this, glLoadIdentity, "glLoadIdentity", 0 );
+	 Tcl::def( this, GLTcl::loadMatrix,
+				  "glLoadMatrix", "4x4_column_major_matrix" );
+    Tcl::def( this, glMatrixMode, "glMatrixMode", "mode" );
+    Tcl::def( this, glNewList, "glNewList", "list_id mode" );
+    Tcl::def( this, glOrtho, "glOrtho",
+				  "left right bottom top zNear zFar" );
+    Tcl::def( this, glPolygonMode, "glPolygonMode", "face mode" );
+    Tcl::def( this, glPopMatrix, "glPopMatrix", 0 );
+    Tcl::def( this, glPushMatrix, "glPushMatrix", 0 );
+    Tcl::def( this, glRotated, "glRotate", "angle_in_degrees x y z" );
+    Tcl::def( this, glScaled, "glScale", "x y z" );
+    Tcl::def( this, glTranslated, "glTranslate", "x y z" );
+    Tcl::def( this, glVertex2d, "glVertex2", "x y" );
+    Tcl::def( this, glVertex3d, "glVertex3", "x y z" );
+    Tcl::def( this, glVertex4d, "glVertex4", "x y z w" );
+    Tcl::def( this, GLTcl::lookAt, "gluLookAt",
+				  "eyeX eyeY eyeZ targX targY targZ upX upY upZ" );
+    Tcl::def( this, gluPerspective,
+				  "gluPerspective", "field_of_view_y aspect zNear zFar" );
 
-    addCommand( new glFrustumCmd      (this, "glFrustum") );
     addCommand( new glGetTypeCmd<GLboolean>(this, "glGetBoolean") );
     addCommand( new glGetTypeCmd<GLdouble>(this, "glGetDouble") );
     addCommand( new glGetTypeCmd<GLint>(this, "glGetInteger") );
-    addCommand( new glLoadMatrixCmd   (this, "glLoadMatrix") );
-    addCommand( new glOrthoCmd        (this, "glOrtho") );
-    addCommand( new gluLookAtCmd      (this, "gluLookAt") );
 
-    addCommand( new AntialiasCmd      (interp, "antialias") );
-    addCommand( new DrawOneLineCmd    (interp, "drawOneLine") );
-    addCommand( new DrawThickLineCmd  (interp, "drawThickLine") );
-    addCommand( new LineInfoCmd       (interp, "lineInfo") );
-    addCommand( new PixelCheckSumCmd  (interp, "pixelCheckSum") );
+	 Tcl::def( this, GLTcl::antialias, "antialias", "on_off" );
+	 Tcl::def( this, GLTcl::drawOneLine, "drawOneLine", "x1 y1 x2 y2" );
+	 Tcl::def( this, GLTcl::drawThickLine,
+				  "drawThickLine", "x1 y1 x2 y2 thickness" );
+	 Tcl::def( this, GLTcl::lineInfo, "lineInfo", 0 );
+	 Tcl::def( this, GLTcl::pixelCheckSum, "pixelCheckSum", "x y w h" );
+	 Tcl::def( this, GLTcl::pixelCheckSumAll, "pixelCheckSum", 0 );
   }
 };
 
