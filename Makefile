@@ -25,11 +25,18 @@ EXTRA_STATISTICS := 0
 #
 #-------------------------------------------------------------------------
 
+ifeq ($(ARCH),hp9000s700)
+	PLATFORM := hp9000s700
+endif
+ifeq ($(ARCH),irix6)
+	PLATFORM := irix6
+endif
+
 PROJECT = $(HOME)/sorcery/grsh
 SRC := src
 DEP := ./dep
-OBJ := ./obj/$(ARCH)
-LIB := $(PROJECT)/lib/$(ARCH)
+OBJ := ./obj/$(PLATFORM)
+LIB := $(PROJECT)/lib/$(PLATFORM)
 LOG := ./logs
 DOC := ./doc
 IDEP := ./idep
@@ -43,22 +50,34 @@ BIN_DIR := $(HOME)/local/$(ARCH)/bin
 #
 #-------------------------------------------------------------------------
 
+
 ARCH_FLAGS := 
 CC := 
 FILTER := 
 MAKEDEP := $(SCRIPTS)/makedep
-ifeq ($(ARCH),hp9000s700)
+ifeq ($(PLATFORM),hp9000s700)
 	CC := time aCC
 #	FILTER := |& sed -e '/Warning.*opt.aCC.include./,/\^\^*/d' \
 #		-e '/Warning.*usr.include./,/\^\^*/d'
 	FILTER := 
-	ARCH_FLAGS := +w +W829,740,8006,818,655,392,495,469,361,749,416 -DACC_COMPILER -DHP9000S700
-	DEPOPTIONS := -DACC_COMPILER -DHP9000S700 \
+	ARCH_FLAGS := +w +W829,740,8006,818,655,392,495,469,361,749,416 \
+		-DACC_COMPILER -DHP9000S700 -DPRESTANDARD_IOSTREAMS -Dstd=
+	DEPOPTIONS := -DACC_COMPILER -DHP9000S700 -DPRESTANDARD_IOSTREAMS \
 		-I/opt/aCC/include -I/usr -I/opt/aCC/include/iostream \
 		-I/opt/graphics/OpenGL/include -I/cit/rjpeters/include -I./src \
 		-I./scripts/spoofdep
 endif
-ifeq ($(ARCH),irix6)
+ifeq ($(PLATFORM),irix6)
+	CC := time /opt/MIPSpro/bin/CC
+	FILTER := 
+	ARCH_FLAGS := -n32 -DMIPSPRO_COMPILER -DIRIX6 -ptused -no_prelink \
+		-DSTD_IO= -DPRESTANDARD_IOSTREAMS \
+		-no_auto_include -LANG:std -LANG:exceptions=ON 
+	DEPOPTIONS := -DMIPSPRO_COMPILER -DIRIX6 -DPRESTANDARD_IOSTREAMS \
+		-I/usr/include/CC -I/cit/rjpeters/include/cppheaders \
+		-I/cit/rjpeters/include -I./src -I./scripts/spoofdep
+endif
+ifeq ($(PLATFORM),irix6-gcc)
 	CC := time /cit/rjpeters/gcc-2.95.1/bin/g++
 # This filter removes warnings that are triggered by standard library files
 	FILTER := |& sed \
@@ -79,14 +98,21 @@ endif
 #
 #-------------------------------------------------------------------------
 
-ifeq ($(ARCH),hp9000s700)
+ifeq ($(PLATFORM),hp9000s700)
 	DEBUG_OPTIONS := +O1 +Z +p
 	DEBUG_LINK_OPTIONS := -Wl,-B,immediate -Wl,+vallcompatwarnings
 
 	PROD_OPTIONS := +O2 +Z +p
 	PROD_LINK_OPTIONS := -Wl,+vallcompatwarnings
 endif
-ifeq ($(ARCH),irix6)
+ifeq ($(PLATFORM),irix6)
+	DEBUG_OPTIONS := -g -O0
+	DEBUG_LINK_OPTIONS :=
+
+	PROD_OPTIONS := -O0
+	PROD_LINK_OPTIONS :=
+endif
+ifeq ($(PLATFORM),irix6-gcc)
 	DEBUG_OPTIONS := -g -O0
 	DEBUG_LINK_OPTIONS :=
 
@@ -100,13 +126,19 @@ endif
 #
 #-------------------------------------------------------------------------
 
-ifeq ($(ARCH),hp9000s700)
+ifeq ($(PLATFORM),hp9000s700)
 	SHLIB_CMD := $(CC) -b -o
 	STATLIB_CMD := ar rus
 	SHLIB_EXT := sl
 	STATLIB_EXT := a
 endif
-ifeq ($(ARCH),irix6)
+ifeq ($(PLATFORM),irix6)
+	SHLIB_CMD := ld -n32 -shared -check_registry /usr/lib32/so_locations
+	STATLIB_CMD := /opt/MIPSpro/bin/CC -ar -o
+	SHLIB_EXT := so
+	STATLIB_EXT := a
+endif
+ifeq ($(PLATFORM),irix6-gcc)
 	SHLIB_CMD := ld -n32 -shared -check_registry /usr/lib32/so_locations
 	STATLIB_CMD := ar rus
 	SHLIB_EXT := so
@@ -120,35 +152,46 @@ endif
 #-------------------------------------------------------------------------
 
 
-ifeq ($(ARCH),irix6)
+ifeq ($(PLATFORM),irix6-gcc)
 	STL_INCLUDE_DIR := -I$(HOME)/gcc/include/g++-3
-else
-	STL_INCLUDE_DIR :=
+endif
+ifeq ($(PLATFORM),irix6)
+	STL_INCLUDE_DIR := -I$(HOME)/include/cppheaders
 endif
 
 INCLUDE_DIRS := -I$(HOME)/include -I$(SRC) $(STL_INCLUDE_DIR)
 
-ifeq ($(ARCH),hp9000s700)
+ifeq ($(PLATFORM),hp9000s700)
 	OPENGL_LIB_DIR := -L/opt/graphics/OpenGL/lib
-	AUDIO_LIB_DIR := -L/opt/audio/lib
+	AUDIO_LIB_DIR := -L/opt/audio</lib
 	AUDIO_LIB := -lAlib
 	RPATH_DIR := 
+	LOCAL_LIB_DIR := $(HOME)/lib/$(ARCH)
 endif
-ifeq ($(ARCH),irix6)
+ifeq ($(PLATFORM),irix6)
 	OPENGL_LIB_DIR :=
 	AUDIO_LIB_DIR :=
 	AUDIO_LIB := -laudio -laudiofile
 	RPATH_DIR := -Wl,-rpath,$(LIB)
+	LOCAL_LIB_DIR := $(HOME)/local/$(ARCH)/lib
+endif
+ifeq ($(PLATFORM),irix6-gcc)
+	OPENGL_LIB_DIR :=
+	AUDIO_LIB_DIR :=
+	AUDIO_LIB := -laudio -laudiofile
+	RPATH_DIR := -Wl,-rpath,$(LIB)
+	LOCAL_LIB_DIR := $(HOME)/lib/$(ARCH)
 endif
 
 LIB_DIRS :=  -L$(LIB) \
-	-L$(HOME)/lib/$(ARCH) \
+	-L$(LOCAL_LIB_DIR) \
 	$(OPENGL_LIB_DIR) \
 	$(AUDIO_LIB_DIR) \
 	$(RPATH_DIR)
 
 LIBRARIES := \
-	-lGLU -lGL \
+	-lGLU \
+	-lGL \
 	-ltk -ltcl -lXmu \
 	-lX11 -lXext \
 	-lm $(AUDIO_LIB)
@@ -186,6 +229,7 @@ GRSH_STATIC_OBJS := \
 	$(OBJ)/xbitmap.do \
 	$(OBJ)/xbmaprenderer.do \
 
+
 GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/application.do \
 	$(OBJ)/bitmaptcl.do \
@@ -201,7 +245,6 @@ GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/expttcl.do \
 	$(OBJ)/expttesttcl.do \
 	$(OBJ)/facetcl.do \
-	$(OBJ)/factory.do \
 	$(OBJ)/fishtcl.do \
 	$(OBJ)/fixpttcl.do \
 	$(OBJ)/gabortcl.do \
@@ -245,6 +288,7 @@ GRSH_DYNAMIC_OBJS := \
 	$(OBJ)/voidptrlist.do \
 
 APPWORKS_OBJS := \
+	$(OBJ)/factory.do \
 	$(OBJ)/gwt/canvas.do \
 	$(OBJ)/gwt/widget.do \
 	$(OBJ)/io/asciistreamreader.do \
@@ -299,7 +343,7 @@ DEBUG_GRSH_DYNAMIC_OBJS := $(GRSH_DYNAMIC_OBJS)
 DEBUG_TCLWORKS_OBJS := $(TCLWORKS_OBJS)
 DEBUG_APPWORKS_OBJS := $(APPWORKS_OBJS)
 
-ifeq ($(ARCH),irix6)
+ifeq ($(PLATFORM),irix6)
 	DEBUG_LIBVISX := $(LIB)/libvisx.d.$(STATLIB_EXT)
 	DEBUG_LIBTCLWORKS := $(LIB)/libtclworks.d.$(STATLIB_EXT)
 	DEBUG_LIBAPPWORKS := $(LIB)/libappworks.d.$(STATLIB_EXT)
@@ -308,7 +352,16 @@ ifeq ($(ARCH),irix6)
 		$(DEBUG_LIBAPPWORKS)
 	ALL_DEBUG_SHLIBS :=
 endif
-ifeq ($(ARCH),hp9000s700)
+ifeq ($(PLATFORM),irix6-gcc)
+	DEBUG_LIBVISX := $(LIB)/libvisx.d.$(STATLIB_EXT)
+	DEBUG_LIBTCLWORKS := $(LIB)/libtclworks.d.$(STATLIB_EXT)
+	DEBUG_LIBAPPWORKS := $(LIB)/libappworks.d.$(STATLIB_EXT)
+	DEBUG_AUX_OBJ :=
+	ALL_DEBUG_STATLIBS := $(DEBUG_LIBVISX) $(DEBUG_LIBTCLWORKS) \
+		$(DEBUG_LIBAPPWORKS)
+	ALL_DEBUG_SHLIBS :=
+endif
+ifeq ($(PLATFORM),hp9000s700)
 	DEBUG_LIBVISX := $(LIB)/libvisx.d.$(SHLIB_EXT)
 	DEBUG_LIBTCLWORKS := $(LIB)/libtclworks.d.$(SHLIB_EXT)
 	DEBUG_LIBAPPWORKS := $(LIB)/libappworks.d.$(SHLIB_EXT)
@@ -332,7 +385,7 @@ PROD_DEFS := -DASSERT -DINVARIANT
 # current version of g++ (2.95.1), so on irix6 we must make the
 # libvisx library as an archive library.
 
-ifeq ($(ARCH),irix6)
+ifeq ($(PLATFORM),irix6)
 	PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(STATLIB_EXT)
 	PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(STATLIB_EXT)
 	PROD_LIBAPPWORKS := $(LIB)/libappworks$(VERSION).$(STATLIB_EXT)
@@ -340,7 +393,15 @@ ifeq ($(ARCH),irix6)
 		$(PROD_LIBAPPWORKS)
 	ALL_PROD_SHLIBS :=
 endif
-ifeq ($(ARCH),hp9000s700)
+ifeq ($(PLATFORM),irix6-gcc)
+	PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(STATLIB_EXT)
+	PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(STATLIB_EXT)
+	PROD_LIBAPPWORKS := $(LIB)/libappworks$(VERSION).$(STATLIB_EXT)
+	ALL_PROD_STATLIBS := $(PROD_LIBVISX) $(PROD_LIBTCLWORKS) \
+		$(PROD_LIBAPPWORKS)
+	ALL_PROD_SHLIBS :=
+endif
+ifeq ($(PLATFORM),hp9000s700)
 	PROD_LIBVISX := $(LIB)/libvisx$(VERSION).$(SHLIB_EXT)
 	PROD_LIBTCLWORKS := $(LIB)/libtclworks$(VERSION).$(SHLIB_EXT)
 	PROD_LIBAPPWORKS := $(LIB)/libappworks$(VERSION).$(SHLIB_EXT)
@@ -394,6 +455,13 @@ $(SRC)/%.preh : $(SRC)/%.h
 #
 #-------------------------------------------------------------------------
 
+ifeq ($(ARCH),hp9000s700)
+default: testsh
+endif
+ifeq ($(ARCH),irix6)
+default: grsh
+endif
+
 testsh: $(SRC)/TAGS $(ALL_DEBUG_SHLIBS) $(DEBUG_TARGET)
 	$(DEBUG_TARGET) ./testing/grshtest.tcl
 
@@ -406,12 +474,15 @@ $(DEBUG_TARGET): $(DEBUG_GRSH_MAIN_OBJ) \
 grsh: $(SRC)/TAGS $(ALL_PROD_SHLIBS) $(PROD_TARGET)
 	$(PROD_TARGET) ./testing/grshtest.tcl
 
+#	echo "exit" | $(PROD_TARGET)
+
+
 $(PROD_TARGET): $(PROD_GRSH_MAIN_OBJ) \
 		$(PROD_GRSH_STATIC_OBJS) $(ALL_PROD_STATLIBS)
 	$(CC) $(PROD_LINK_OPTIONS) -o $@ $(PROD_GRSH_STATIC_OBJS) \
-	$(PROD_GRSH_MAIN_OBJ) \
-	$(LIB_DIRS) -lvisx$(VERSION) -ltclworks$(VERSION) \
-	-lappworks$(VERSION) $(LIBRARIES)
+	$(PROD_GRSH_MAIN_OBJ) $(LIB_DIRS) \
+	-lvisx$(VERSION) -ltclworks$(VERSION) -lappworks$(VERSION) \
+	$(LIBRARIES) \
 
 #-------------------------------------------------------------------------
 #
@@ -499,7 +570,7 @@ clean_do: clean
 
 # Make clean, and also remove all production object files
 clean_o: clean
-	rm $(OBJ)/*.o $(OBJ)/*/*.o
+	rm -f $(OBJ)/*.o $(OBJ)/*/*.o $(OBJ)/ii_files/*.ii $(OBJ)/*/ii_files/*.ii
 
 clean_dep: clean
 	rm $(DEP)/*.d $(DEP)/util/*.d $(DEP)/tcl/*.d
@@ -528,10 +599,10 @@ ncsl:
 	NCSL $(ALL_SOURCES) $(ALL_HEADERS)
 
 do_sizes:
-	ls -lR obj/$(ARCH) | grep \.do | sort -n +5 > do_sizes
+	ls -lR obj/$(PLATFORM) | grep \.do | sort -n +5 > do_sizes
 
 o_sizes:
-	ls -lR obj/$(ARCH) | grep "\.o" | sort -n +5 > o_sizes
+	ls -lR obj/$(PLATFORM) | grep "\.o" | sort -n +5 > o_sizes
 
 # Start emacs and load all source files and Makefile
 edit: clean
