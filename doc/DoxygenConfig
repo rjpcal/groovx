@@ -305,14 +305,18 @@ WARN_LOGFILE           =
 
 INPUT                  = ./doc \
                          ./src/gfx \
+                         ./src/grsh \
                          ./src/gwt \
                          ./src/gx \
                          ./src/io \
+                         ./src/pkgs/dlinktest \
+                         ./src/pkgs/hashtest \
                          ./src/pkgs/matlabengine \
+                         ./src/pkgs/minivectest \
                          ./src/pkgs/mtx \
+                         ./src/pkgs/whitebox \
                          ./src/system \
                          ./src/tcl \
-                         ./src/togl \
                          ./src/util \
                          ./src/visx
 
