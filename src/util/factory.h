@@ -3,7 +3,7 @@
 // factory.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 23:40:55 1999
-// written: Fri Oct 20 16:55:35 2000
+// written: Fri Nov  3 15:00:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,6 +24,8 @@
 #define TYPEINFO_DEFINED
 #endif
 
+class fixed_string;
+
 /**
  *
  * Exception class for \c Factory's.
@@ -37,6 +39,7 @@ public:
   virtual ~FactoryError();
 
   static void throwForType(const char* type);
+  static void throwForType(const fixed_string& type);
 };
 
 
@@ -91,7 +94,7 @@ public:
 
 protected:
   /// Retrieve the object associated with the tag \a name.
-  void* getPtrForName(const char* name) const;
+  void* getPtrForName(const fixed_string& name) const;
 
   /// Associate the object at \a ptr with the tag \a name.
   void setPtrForName(const char* name, void* ptr);
@@ -128,7 +131,7 @@ public:
   typedef CreatorBase<Base> CreatorType;
 
   /// Get the object associated with the tag \a name.
-  CreatorType* getPtrForName(const char* name) const
+  CreatorType* getPtrForName(const fixed_string& name) const
 	 { return static_cast<CreatorType*>(CreatorMapBase::getPtrForName(name)); }
 
   /// Associate the object at \a ptr with the tag \a name.
@@ -188,7 +191,7 @@ public:
 
   /** Returns a new object of a given type. If the given type has not
       been registered with the factory, a null pointer is returned. */
-  Base* newObject(const char* type) {
+  Base* newObject(const fixed_string& type) {
 	 CreatorBase<Base>* creator = itsMap.getPtrForName(type);
 	 if (creator == 0) return 0;
 	 return creator->create();
@@ -196,7 +199,7 @@ public:
  
   /** Returns a new object of a given type. If the given type has not
       been registered with the factory, a FactorError is thrown. */
-  Base* newCheckedObject(const char* type) {
+  Base* newCheckedObject(const fixed_string& type) {
 	 Base* p = newObject(type);
 	 if (p == 0) FactoryError::throwForType(type);
 	 return p;
@@ -208,7 +211,7 @@ public:
       specified Derived class. If the downcast fails, a FactorError is
       thrown. */
   template <class Derived>
-  Derived* newTypedObject(const char* type, Derived* /*dummy*/) {
+  Derived* newTypedObject(const fixed_string& type, Derived* /*dummy*/) {
 	 Base* b = newCheckedObject(type);
 	 Derived* d = dynamic_cast<Derived*>(b);
 	 if (d == 0) { 
