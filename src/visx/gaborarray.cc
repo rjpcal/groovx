@@ -217,7 +217,9 @@ DOTRACE("GaborArray::saveContourOnlyImage");
     {
       int val = int(win[k]*255);
 
-      if      (val < 0)   { val = 0; }
+      // Threshold anything below 128 here, so that we don't get "ghosts"
+      // showing up from the second peaks of the gabor functions.
+      if      (val < 128) { val = 0; }
       else if (val > 255) { val = 255; }
 
       *bytes++ = val;
