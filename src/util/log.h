@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun 20 17:47:13 2001
-// written: Fri Jan 25 10:48:19 2002
+// written: Fri Jan 25 15:17:57 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,14 @@ class fstring;
 
 namespace Util
 {
+  namespace Log
+  {
+    void reset();
+
+    void addScope(const fstring& name);
+    void removeScope(const fstring& name);
+  }
+
   void log(const char* msg);
   void log(const fstring& msg);
 }

@@ -35,7 +35,6 @@
 #include "util/log.h"
 #include "util/minivec.h"
 #include "util/ref.h"
-#include "util/stopwatch.h"
 #include "util/strings.h"
 
 #define DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
@@ -167,8 +166,6 @@ private:
 
   unsigned int itsCurrentBlockIdx;
 
-  mutable StopWatch itsTimer;
-
 public:
   mutable Tcl::BkdErrorHandler itsErrorHandler;
 };
@@ -193,7 +190,6 @@ ExptDriver::Impl::Impl(int argc, char** argv,
   itsAutosavePeriod(10),
   itsBlocks(),
   itsCurrentBlockIdx(0),
-  itsTimer(),
   itsErrorHandler(interp)
 {
 DOTRACE("ExptDriver::Impl::Impl");
@@ -332,7 +328,8 @@ DOTRACE("ExptDriver::Impl::edBeginExpt");
   itsHostname = System::theSystem().getenv("HOST");
   itsSubject = System::theSystem().getcwd();
 
-  itsTimer.restart();
+  Util::Log::reset(); // to clear any existing timer scopes
+  Util::Log::addScope("Expt");
 
   currentBlock()->beginTrial(*itsOwner);
 }
@@ -414,14 +411,14 @@ void ExptDriver::Impl::edEndExpt()
 {
 DOTRACE("ExptDriver::Impl::edEndExpt");
 
-  Util::log( fstring( "expt completed in ",
-		      itsTimer.elapsedMsec(),
-		      " milliseconds") );
+  Util::log( "experiment complete" );
 
   addLogInfo("Experiment complete.");
 
   storeData();
   doUponCompletion();        // Call the user-defined callback
+
+  Util::Log::removeScope("Expt");
 }
 
 

@@ -26,19 +26,23 @@ public:
   void restart()
     { gettimeofday(&itsStartTime, /* timezone */ 0); }
 
-  double elapsedMsec()
+  double elapsedMsec(const timeval& now) const
     {
-      timeval endTime, elapsedTime;
+      timeval elapsedTime;
 
-      // Get ending time from previous trial
-      gettimeofday(&endTime, /* timezone */ 0);
-
-      // Compute elapsed time for previous trial
-      elapsedTime.tv_sec = endTime.tv_sec - itsStartTime.tv_sec;
-      elapsedTime.tv_usec = endTime.tv_usec - itsStartTime.tv_usec;
+      elapsedTime.tv_sec = now.tv_sec - itsStartTime.tv_sec;
+      elapsedTime.tv_usec = now.tv_usec - itsStartTime.tv_usec;
 
       return (double(elapsedTime.tv_sec)*1000.0 +
               double(elapsedTime.tv_usec)/1000.0);
+    }
+
+  double elapsedMsec() const
+    {
+      timeval now;
+      gettimeofday(&now, /* timezone */ 0);
+
+      return elapsedMsec(now);
     }
 
 private:

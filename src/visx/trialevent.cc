@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Fri Jan 25 14:02:21 2002
+// written: Fri Jan 25 15:35:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,8 +36,6 @@
 
 #include "util/trace.h"
 #include "util/debug.h"
-
-#define EVENT_TRACE
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -152,21 +150,17 @@ DOTRACE("TrialEvent::invokeTemplate");
   itsIsPending = false;
   itsToken = 0;
 
+  fstring scopename(demangle_cstr(typeid(*this).name()), " ",
+                    IO::IoObject::id());
+
+  Util::Log::addScope(scopename);
+
+  Util::log( fstring("ideal request  == ", itsRequestedDelay) );
+  Util::log( fstring("estimated err  == ", itsEstimatedOffset) );
+  Util::log( fstring("actual request == ", itsActualRequest) );
+
   double msec = itsTimer.elapsedMsec();
   double error = itsActualRequest - msec;
-
-#ifdef EVENT_TRACE
-  Util::log( fstring(demangle_cstr(typeid(*this).name()), " ",
-                     IO::IoObject::id()) );
-
-  Util::log( fstring("    request delay == ", itsRequestedDelay) );
-  Util::log( fstring("    est offset == ", itsEstimatedOffset) );
-  Util::log( fstring("    actual request == ", itsActualRequest) );
-  Util::log( fstring("    invoke count == ", itsInvokeCount) );
-  Util::log( fstring("    total offset == ", itsTotalOffset) );
-  Util::log( fstring("    before == ", msec) );
-#endif
-
   itsTotalOffset += int(error);
   itsTotalError += (itsRequestedDelay - msec);
 
@@ -196,9 +190,9 @@ DOTRACE("TrialEvent::invokeTemplate");
         }
     }
 
-#ifdef EVENT_TRACE
-  Util::log( fstring("    after == ", itsTimer.elapsedMsec()) );
-#endif
+  Util::log( "event complete" );
+
+  Util::Log::removeScope(scopename);
 }
 
 ///////////////////////////////////////////////////////////////////////

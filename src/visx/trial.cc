@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Fri Jan 25 13:58:20 2002
+// written: Fri Jan 25 15:27:00 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -37,8 +37,6 @@
 #define DYNAMIC_TRACE_EXPR Trial::tracer.status()
 #include "util/trace.h"
 #include "util/debug.h"
-
-#define TIME_TRACE
 
 Util::Tracer Trial::tracer;
 
@@ -116,17 +114,13 @@ public:
   void becomeActive(Block* block, SoftRef<GWT::Widget> widget)
   {
     itsActiveState.reset(new ActiveState(block, widget, itsRh, itsTh));
+    Util::Log::addScope("Trial");
   }
 
-  void becomeInactive() { itsActiveState.reset(0); }
-
-  inline void timeTrace(const char* loc)
+  void becomeInactive()
   {
-#ifdef TIME_TRACE
-    Util::log( fstring("in ", loc,
-                       "@ elapsed time == ",
-                       itsActiveState->itsTh->getElapsedMsec()) );
-#endif
+    Util::Log::removeScope("Trial");
+    itsActiveState.reset(0);
   }
 
 public:
@@ -332,12 +326,12 @@ DOTRACE("Trial::Impl::trDoTrial");
 
   becomeActive(&block, widget);
 
+  Util::log("trDoTrial");
+
   itsCurrentNode = 0;
 
   itsActiveState->itsRh->rhBeginTrial(widget, *self);
   itsActiveState->itsTh->thBeginTrial(*self, errhdlr);
-
-  timeTrace("trDoTrial");
 }
 
 double Trial::Impl::trElapsedMsec()
@@ -355,7 +349,7 @@ DOTRACE("Trial::Impl::trAbortTrial");
 
   Precondition( isActive() );
 
-  timeTrace("trAbortTrial");
+  Util::log("trAbortTrial");
 
   itsActiveState->itsRh->rhAbortTrial();
   itsActiveState->itsTh->thAbortTrial();
@@ -368,7 +362,7 @@ DOTRACE("Trial::Impl::trEndTrial");
 
   Precondition( isActive() );
 
-  timeTrace("trEndTrial");
+  Util::log("trEndTrial");
 
   itsActiveState->itsRh->rhEndTrial();
   itsActiveState->itsBlock->endTrial();
@@ -380,7 +374,7 @@ DOTRACE("Trial::Impl::trNextTrial");
 
   Precondition( isActive() );
 
-  timeTrace("trNextTrial");
+  Util::log("trNextTrial");
 
   Block* block = itsActiveState->itsBlock;
 
@@ -395,7 +389,7 @@ DOTRACE("Trial::Impl::trHaltExpt");
 
   if (isInactive()) return;
 
-  timeTrace("trHaltExpt");
+  Util::log("trHaltExpt");
 
   if (itsActiveState->itsWidget.isValid())
     itsActiveState->itsWidget->undraw();
@@ -412,7 +406,7 @@ DOTRACE("Trial::Impl::trResponseSeen");
 
   Precondition( isActive() );
 
-  timeTrace("trResponseSeen");
+  Util::log("trResponseSeen");
 
   itsActiveState->itsTh->thResponseSeen();
 }
@@ -423,7 +417,7 @@ DOTRACE("Trial::Impl::trRecordResponse");
 
   Precondition( isActive() );
 
-  timeTrace("trRecordResponse");
+  Util::log("trRecordResponse");
   response.setCorrectVal(itsCorrectResponse);
 
   itsResponses.push_back(response);
@@ -437,7 +431,7 @@ DOTRACE("Trial::Impl::trAllowResponses");
 
   Precondition( isActive() );
 
-  timeTrace("trAllowResponses");
+  Util::log("trAllowResponses");
 
   itsActiveState->itsRh->rhAllowResponses(itsActiveState->itsWidget, *self);
 }
@@ -448,7 +442,7 @@ DOTRACE("Trial::Impl::trDenyResponses");
 
   Precondition( isActive() );
 
-  timeTrace("trDenyResponses");
+  Util::log("trDenyResponses");
 
   itsActiveState->itsRh->rhDenyResponses();
 }
