@@ -2,7 +2,7 @@
 // iostl.cc
 // Rob Peters
 // created: Sat Mar 13 15:21:33 1999
-// written: Mon Dec  6 22:03:17 1999
+// written: Mon Dec  6 22:17:43 1999
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -28,8 +28,11 @@ void serializeVecInt(ostream &os, const vector<int>& vec) {
 void deserializeVecInt(istream &is, vector<int>& vec) {
   int size;
   is >> size;
+  if (size < 0) {
+	 throw InputError("VecInt saw negative value for size");
+  }
   vec.resize(size, 0);
-  for (size_t i = 0; i < size; ++i) {
+  for (int i = 0; i < size; ++i) {
     is >> vec[i];
   }
   if (is.fail()) throw InputError("VecInt");
