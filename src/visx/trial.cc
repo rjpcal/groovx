@@ -67,8 +67,10 @@ namespace
 
   struct ActiveState
   {
-    ActiveState(Element* p, SoftRef<Toglet> w,
+    ActiveState(Trial* tr,
+                Element* p, SoftRef<Toglet> w,
                 Ref<ResponseHandler> r, Ref<TimingHdlr> t) :
+      trial(tr),
       parent(p),
       widget(w),
       rh(r),
@@ -76,14 +78,15 @@ namespace
       status(Element::CHILD_OK)
     {
       Precondition(parent != 0);
-      Util::Log::addObjScope(*parent);
+      Util::Log::addObjScope(*trial);
     }
 
     ~ActiveState()
     {
-      Util::Log::removeObjScope(*parent);
+      Util::Log::removeObjScope(*trial);
     }
 
+    Trial* trial;
     Element* parent;
     SoftRef<Toglet> widget;
     Ref<ResponseHandler> rh;
@@ -105,7 +108,8 @@ private:
   Impl& operator=(const Impl&);
 
 public:
-  Impl(Trial*) :
+  Impl(Trial* t) :
+    owner(t),
     correctResponse(Response::ALWAYS_CORRECT),
     gxNodes(),
     currentNode(0),
@@ -115,6 +119,8 @@ public:
     th(),
     activeState(0)
   {}
+
+  Trial* owner;
 
   int correctResponse;
 
@@ -135,7 +141,7 @@ public:
 
   void becomeActive(Element* parent, SoftRef<Toglet> widget)
   {
-    activeState.reset(new ActiveState(parent, widget, rh, th));
+    activeState.reset(new ActiveState(owner, parent, widget, rh, th));
   }
 
   void becomeInactive()
