@@ -50,12 +50,16 @@ namespace geom
   class txform;
 }
 
+namespace media
+{
+  class bmap_data;
+}
+
 class GxRasterFont;
 class GxVectorFont;
 
 namespace Gfx
 {
-  class BmapData;
   class Canvas;
   class RgbaColor;
 
@@ -284,17 +288,17 @@ public:
   ///////////////////////////////////////////////////////////
 
   /// Draw pixmap data at the specified position.
-  virtual void drawPixels(const Gfx::BmapData& data,
+  virtual void drawPixels(const media::bmap_data& data,
                           const geom::vec2<double>& world_pos,
                           const geom::vec2<double>& zoom) = 0;
 
   /// Draw 1-bit bitmap data at the specified position.
-  virtual void drawBitmap(const Gfx::BmapData& data,
+  virtual void drawBitmap(const media::bmap_data& data,
                           const geom::vec2<double>& world_pos) = 0;
 
   /// Read pixel data from the screen rect \a bounds into \a data_out.
   virtual void grabPixels(const geom::rect<int>& bounds,
-                          Gfx::BmapData& data_out) = 0;
+                          media::bmap_data& data_out) = 0;
 
   /// Clear the color buffer to the clear color.
   virtual void clearColorBuffer() = 0;

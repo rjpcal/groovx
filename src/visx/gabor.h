@@ -32,9 +32,9 @@
 #ifndef GABOR_H_DEFINED
 #define GABOR_H_DEFINED
 
-namespace Gfx
+namespace media
 {
-  class BmapData;
+  class bmap_data;
 }
 
 #include "gfx/gbcolor.h"
@@ -100,8 +100,8 @@ public:
   /// Returns \c log10(contrast).
   double getLogContrast() const;
 
-  /// Fill in the Gfx::BmapData object with the Gabor pixmap.
-  void getBmapData(Gfx::BmapData& bmap) const;
+  /// Fill in the media::bmap_data object with the Gabor pixmap.
+  void getBmapData(media::bmap_data& bmap) const;
 
   /// Save the Gabor pixmap as an image file at the given filename.
   void saveImage(const char* filename) const;

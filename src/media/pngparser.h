@@ -32,18 +32,18 @@
 #ifndef PNGPARSER_H_DEFINED
 #define PNGPARSER_H_DEFINED
 
-namespace Gfx
+namespace media
 {
-  class BmapData;
+  class bmap_data;
 }
 
 namespace Png
 {
   /// Load \a data in PNG format from the file \a filename.
-  void load(const char* filename, Gfx::BmapData& data);
+  void load(const char* filename, media::bmap_data& data);
 
   /// Write \a data in PNG format to the file \a filename.
-  void save(const char* filename, const Gfx::BmapData& data);
+  void save(const char* filename, const media::bmap_data& data);
 }
 
 static const char vcid_pngparser_h[] = "$Header$";

@@ -131,15 +131,15 @@ public:
       the viewport. */
   void rasterPos(const geom::vec2<double>& world_pos);
 
-  virtual void drawPixels(const Gfx::BmapData& data,
+  virtual void drawPixels(const media::bmap_data& data,
                           const geom::vec2<double>& world_pos,
                           const geom::vec2<double>& zoom);
 
-  virtual void drawBitmap(const Gfx::BmapData& data,
+  virtual void drawBitmap(const media::bmap_data& data,
                           const geom::vec2<double>& world_pos);
 
   virtual void grabPixels(const geom::rect<int>& bounds,
-                          Gfx::BmapData& data_out);
+                          media::bmap_data& data_out);
 
   virtual void clearColorBuffer();
   virtual void clearColorBuffer(const geom::rect<int>& screen_rect);

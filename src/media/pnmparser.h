@@ -39,25 +39,25 @@ class istream;
 class ostream;
 #endif
 
-namespace Gfx
+namespace media
 {
-  class BmapData;
+  class bmap_data;
 }
 
 
 namespace Pbm
 {
   /// Load \a data in PBM format from the file \a filename.
-  void load(const char* filename, Gfx::BmapData& data);
+  void load(const char* filename, media::bmap_data& data);
 
   /// Load \a data in PBM format from the \c std::ostream \a os.
-  void load(STD_IO::istream& is, Gfx::BmapData& data);
+  void load(STD_IO::istream& is, media::bmap_data& data);
 
   /// Save \a data in PBM format to the file \a filename.
-  void save(const char* filename, const Gfx::BmapData& data);
+  void save(const char* filename, const media::bmap_data& data);
 
   /// Save \a data in PBM format to the \c std::ostream \a os.
-  void save(STD_IO::ostream& os, const Gfx::BmapData& data);
+  void save(STD_IO::ostream& os, const media::bmap_data& data);
 };
 
 static const char vcid_pbm_h[] = "$Header$";

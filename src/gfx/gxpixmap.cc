@@ -72,7 +72,7 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ImageUpdater : public Gfx::BmapData::UpdateFunc
+class ImageUpdater : public media::bmap_data::update_func
 {
 public:
   ImageUpdater(const fstring& filename,
@@ -96,7 +96,7 @@ public:
       }
   }
 
-  virtual void update(Gfx::BmapData& update_me);
+  virtual void update(media::bmap_data& update_me);
 
 private:
   fstring itsFilename;
@@ -105,7 +105,7 @@ private:
   bool itsFlipVertical;
 };
 
-void ImageUpdater::update(Gfx::BmapData& update_me)
+void ImageUpdater::update(media::bmap_data& update_me)
 {
 DOTRACE("ImageUpdater::update");
 
@@ -121,8 +121,8 @@ DOTRACE("ImageUpdater::update");
       throw;
     }
 
-  if (itsFlipContrast) { update_me.flipContrast(); }
-  if (itsFlipVertical) { update_me.flipVertical(); }
+  if (itsFlipContrast) { update_me.flip_contrast(); }
+  if (itsFlipVertical) { update_me.flip_vertical(); }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -147,7 +147,7 @@ public:
 
   fstring itsFilename;
   geom::vec2<double> itsZoom;
-  mutable Gfx::BmapData itsData;
+  mutable media::bmap_data itsData;
   bool itsUsingZoom;
   bool itsContrastFlip;
   bool itsVerticalFlip;
@@ -156,13 +156,13 @@ public:
 
   void queueImage(const char* filename)
   {
-    rutz::shared_ptr<Gfx::BmapData::UpdateFunc> updater
+    rutz::shared_ptr<media::bmap_data::update_func> updater
       (new ImageUpdater(filename,
                         itsFilename,
                         itsContrastFlip,
                         itsVerticalFlip));
 
-    itsData.queueUpdate(updater);
+    itsData.queue_update(updater);
   }
 
   void purge()
@@ -393,7 +393,7 @@ DOTRACE("GxPixmap::flipContrast");
   // Toggle itsContrastFlip so we keep track of whether the number of
   // flips has been even or odd.
   rep->itsContrastFlip = !(rep->itsContrastFlip);
-  rep->itsData.flipContrast();
+  rep->itsData.flip_contrast();
 
   this->sigNodeChanged.emit();
 }
@@ -403,7 +403,7 @@ void GxPixmap::flipVertical()
 DOTRACE("GxPixmap::flipVertical");
 
   rep->itsVerticalFlip = !(rep->itsVerticalFlip);
-  rep->itsData.flipVertical();
+  rep->itsData.flip_vertical();
 
   this->sigNodeChanged.emit();
 }
@@ -414,7 +414,7 @@ DOTRACE("GxPixmap::grRender");
 
   geom::vec2<double> world_pos;
 
-  if (rep->itsData.bitsPerPixel() == 1 && rep->itsAsBitmap)
+  if (rep->itsData.bits_per_pixel() == 1 && rep->itsAsBitmap)
     {
       canvas.drawBitmap(rep->itsData, world_pos);
     }
@@ -472,13 +472,13 @@ DOTRACE("GxPixmap::getAsBitmap");
 }
 
 long int GxPixmap::checkSum() const
-  { return rep->itsData.checkSum(); }
+  { return rep->itsData.bytes_sum(); }
 
 //////////////////
 // manipulators //
 //////////////////
 
-Gfx::BmapData& GxPixmap::data()
+media::bmap_data& GxPixmap::data()
 {
 DOTRACE("GxPixmap::data");
   return rep->itsData;
@@ -537,11 +537,11 @@ void GxPixmap::scramble(int numsubcols, int numsubrows, int seed,
 {
 DOTRACE("GxPixmap::scramble");
 
-  rutz::shared_ptr<Gfx::BmapData> newdata =
-    rep->itsData.makeScrambled(numsubcols, numsubrows, seed,
-                               allowMoveSubparts,
-                               allowFlipLeftRight,
-                               allowFlipTopBottom);
+  rutz::shared_ptr<media::bmap_data> newdata =
+    rep->itsData.make_scrambled(numsubcols, numsubrows, seed,
+                                allowMoveSubparts,
+                                allowFlipLeftRight,
+                                allowFlipTopBottom);
 
   rep->itsData.swap(*newdata);
 

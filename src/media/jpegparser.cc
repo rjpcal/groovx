@@ -38,7 +38,7 @@
 
 #include "util/error.h"
 
-void Jpeg::load(const char* /*filename*/, Gfx::BmapData& /*data*/)
+void Jpeg::load(const char* /*filename*/, media::bmap_data& /*data*/)
 {
   throw rutz::error("jpeg image files are not supported in this build",
                     SRC_POS);
@@ -102,7 +102,7 @@ do {                                                     \
     }                                                    \
 } while (0)
 
-void Jpeg::load(const char* filename, Gfx::BmapData& data)
+void Jpeg::load(const char* filename, media::bmap_data& data)
 {
 DOTRACE("Jpeg::load");
 
@@ -154,14 +154,14 @@ DOTRACE("Jpeg::load");
   // cinfo.output_components
 
   // 6. Read scanlines
-  Gfx::BmapData new_data(geom::vec2<int>(cinfo.output_width,
-                                        cinfo.output_height),
-                         cinfo.output_components*BITS_IN_JSAMPLE,
-                         1);
+  media::bmap_data new_data(geom::vec2<int>(cinfo.output_width,
+                                            cinfo.output_height),
+                            cinfo.output_components*BITS_IN_JSAMPLE,
+                            1);
 
   while (cinfo.output_scanline < cinfo.output_height)
     {
-      JSAMPLE* dest = new_data.rowPtr(cinfo.output_scanline);
+      JSAMPLE* dest = new_data.row_ptr(cinfo.output_scanline);
 
       SETJMP_TRY(jpeg_read_scanlines(&cinfo,
                                      &dest,

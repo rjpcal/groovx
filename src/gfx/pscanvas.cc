@@ -894,7 +894,7 @@ DOTRACE("Gfx::PSCanvas::transform");
 }
 
 
-void Gfx::PSCanvas::drawPixels(const BmapData& /*data*/,
+void Gfx::PSCanvas::drawPixels(const media::bmap_data& /*data*/,
                                const vec2d& /*world_pos*/,
                                const vec2d& /*zoom*/)
 {
@@ -902,14 +902,15 @@ DOTRACE("Gfx::PSCanvas::drawPixels");
 // FIXME
 }
 
-void Gfx::PSCanvas::drawBitmap(const BmapData& /*data*/,
+void Gfx::PSCanvas::drawBitmap(const media::bmap_data& /*data*/,
                                const vec2d& /*world_pos*/)
 {
 DOTRACE("Gfx::PSCanvas::drawBitmap");
 // FIXME
 }
 
-void Gfx::PSCanvas::grabPixels(const geom::rect<int>&, BmapData&)
+void Gfx::PSCanvas::grabPixels(const geom::rect<int>&,
+                               media::bmap_data&)
 {
 DOTRACE("Gfx::PSCanvas::grabPixels");
   rep->raiseError("grabPixels not possible in PostScript canvas",

@@ -42,9 +42,9 @@
 class GaborArrayElement;
 class Snake;
 
-namespace Gfx
+namespace media
 {
-  class BmapData;
+  class bmap_data;
 }
 
 namespace rutz
@@ -111,7 +111,7 @@ private:
   GaborArray(const GaborArray&);
   GaborArray& operator=(const GaborArray&);
 
-  rutz::shared_ptr<Gfx::BmapData> generateBmap(bool doTagLast = false) const;
+  rutz::shared_ptr<media::bmap_data> generateBmap(bool doTagLast = false) const;
 
   void updateForeg() const;
   void updateBackg() const;
@@ -146,7 +146,7 @@ private:
 
   mutable int itsTotalNumber;
   mutable rutz::fixed_block<GaborArrayElement> itsArray;
-  mutable rutz::shared_ptr<Gfx::BmapData> itsBmap;
+  mutable rutz::shared_ptr<media::bmap_data> itsBmap;
 
   bool itsDumpingFrames;
   unsigned int itsFrameDumpPeriod;

@@ -38,13 +38,13 @@
 
 #include "util/error.h"
 
-void Png::load(const char* /*filename*/, Gfx::BmapData& /*data*/)
+void Png::load(const char* /*filename*/, media::bmap_data& /*data*/)
 {
   throw rutz::error("png image files are not supported in this build",
                     SRC_POS);
 }
 
-void Png::save(const char* /*filename*/, const Gfx::BmapData& /*data*/)
+void Png::save(const char* /*filename*/, const media::bmap_data& /*data*/)
 {
   throw rutz::error("png image files are not supported in this build",
                     SRC_POS);
@@ -89,7 +89,7 @@ public:
 
   void close();
 
-  void parse(const char* filename, Gfx::BmapData& data);
+  void parse(const char* filename, media::bmap_data& data);
 
 private:
   PngParser(const PngParser&);
@@ -118,7 +118,7 @@ DOTRACE("PngParser::close");
     }
 }
 
-void PngParser::parse(const char* filename, Gfx::BmapData& data)
+void PngParser::parse(const char* filename, media::bmap_data& data)
 {
 DOTRACE("PngParser::parse");
   itsFile = fopen(filename, "rb");
@@ -220,15 +220,15 @@ DOTRACE("PngParser::parse");
 
   ASSERT(row_bytes == width*nchannels);
 
-  Gfx::BmapData new_data(geom::vec2<int>(width, height),
-                         nchannels*8, // bits_per_pixel
-                         1); // byte_alignment
+  media::bmap_data new_data(geom::vec2<int>(width, height),
+                            nchannels*8, // bits_per_pixel
+                            1); // byte_alignment
 
   rutz::fixed_block<png_bytep> row_pointers(height);
 
   for (int i = 0; i < height; ++i)
     {
-      row_pointers[i] = (png_bytep) (new_data.rowPtr(i));
+      row_pointers[i] = (png_bytep) (new_data.row_ptr(i));
     }
 
   png_read_image(itsPngPtr, &row_pointers[0]);
@@ -253,7 +253,7 @@ public:
 
   void close();
 
-  void write(const char* filename, const Gfx::BmapData& data);
+  void write(const char* filename, const media::bmap_data& data);
 
 private:
   PngWriter(const PngWriter&);
@@ -280,22 +280,23 @@ DOTRACE("PngWriter::close");
     }
 }
 
-int getColorType(const Gfx::BmapData& data)
+int getColorType(const media::bmap_data& data)
 {
-  switch (data.bitsPerPixel())
+  switch (data.bits_per_pixel())
     {
     case 1: return PNG_COLOR_TYPE_GRAY;
     case 8: return PNG_COLOR_TYPE_GRAY;
     case 24: return PNG_COLOR_TYPE_RGB;
     case 32: return PNG_COLOR_TYPE_RGB_ALPHA;
     default:
-      throw rutz::error(rutz::fstring("unknown bitsPerPixel value: ",
-                                      data.bitsPerPixel()), SRC_POS);
+      throw rutz::error(rutz::fstring("invalid bits_per_pixel value: ",
+                                      data.bits_per_pixel()), SRC_POS);
     }
   return 0; // can't happen, but placate compiler
 }
 
-void PngWriter::write(const char* filename, const Gfx::BmapData& data)
+void PngWriter::write(const char* filename,
+                      const media::bmap_data& data)
 {
 DOTRACE("PngWriter::write");
 
@@ -324,7 +325,7 @@ DOTRACE("PngWriter::write");
 
   png_set_IHDR(itsPngPtr, itsInfoPtr,
                data.width(), data.height(),
-               data.bitsPerComponent(),
+               data.bits_per_component(),
                getColorType(data),
                PNG_INTERLACE_NONE,
                PNG_COMPRESSION_TYPE_DEFAULT,
@@ -338,7 +339,7 @@ DOTRACE("PngWriter::write");
 
   for (int i = 0; i < height; ++i)
     {
-      row_pointers[i] = static_cast<png_bytep>(data.rowPtr(i));
+      row_pointers[i] = static_cast<png_bytep>(data.row_ptr(i));
     }
 
   png_write_image(itsPngPtr, &row_pointers[0]);
@@ -349,7 +350,7 @@ DOTRACE("PngWriter::write");
 
 } // end anonymous namespace
 
-void Png::load(const char* filename, Gfx::BmapData& data)
+void Png::load(const char* filename, media::bmap_data& data)
 {
 DOTRACE("Png::load");
   PngParser parser;
@@ -357,7 +358,7 @@ DOTRACE("Png::load");
   parser.parse(filename, data);
 }
 
-void Png::save(const char* filename, const Gfx::BmapData& data)
+void Png::save(const char* filename, const media::bmap_data& data)
 {
 DOTRACE("Png::save");
   PngWriter writer;

@@ -39,9 +39,13 @@ namespace geom
   template <class V> class vec2;
 }
 
+namespace media
+{
+  class bmap_data;
+}
+
 namespace Gfx
 {
-  class BmapData;
   class Canvas;
 }
 
@@ -52,7 +56,7 @@ namespace XBmapRenderer
                  Window win,
                  int screen,
                  Gfx::Canvas& canvas,
-                 const Gfx::BmapData& data,
+                 const media::bmap_data& data,
                  const geom::vec2<double>& world_pos,
                  const geom::vec2<double>& zoom);
 };
@@ -81,7 +85,7 @@ void XBmapRenderer::doRender(Display* display,
                              Window win,
                              int screen,
                              Gfx::Canvas& canvas,
-                             const Gfx::BmapData& data,
+                             const media::bmap_data& data,
                              const geom::vec2<double>& world_pos,
                              const geom::vec2<double>& /* zoom */)
 {
@@ -95,9 +99,9 @@ DOTRACE("XBmapRenderer::doRender");
     }
   Visual* visual = xwa.visual;
 
-  int format = (data.bitsPerPixel() == 1) ? XYBitmap : ZPixmap;
+  int format = (data.bits_per_pixel() == 1) ? XYBitmap : ZPixmap;
 
-  data.setRowOrder(Gfx::BmapData::TOP_FIRST);
+  data.set_row_order(media::bmap_data::TOP_FIRST);
 
   // Calculate GL window coordinates of lower left corner of image
   geom::vec2<int> screen_pos = canvas.screenFromWorld(world_pos);
@@ -115,12 +119,12 @@ DOTRACE("XBmapRenderer::doRender");
 
   // Create the XImage
   XImage* image = XCreateImage(display, visual,
-                               data.bitsPerPixel(), /* bit depth */
+                               data.bits_per_pixel(), /* bit depth */
                                format, /* format = XYBitmap, XYPixmap, ZPixmap */
                                0, /* offset */
-                               reinterpret_cast<char*>(data.bytesPtr()),
+                               reinterpret_cast<char*>(data.bytes_ptr()),
                                data.width(), data.height(),
-                               data.byteAlignment()*8, /* bitmap_pad */
+                               data.byte_alignment()*8, /* bitmap_pad */
                                0); /* bytes_per_line */
 
   if (image == NULL)

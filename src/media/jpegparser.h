@@ -32,15 +32,15 @@
 #ifndef JPEGPARSER_H_DEFINED
 #define JPEGPARSER_H_DEFINED
 
-namespace Gfx
+namespace media
 {
-  class BmapData;
+  class bmap_data;
 }
 
 namespace Jpeg
 {
   /// Load \a data in JPEG format from the file \a filename.
-  void load(const char* filename, Gfx::BmapData& data);
+  void load(const char* filename, media::bmap_data& data);
 }
 
 static const char vcid_jpegparser_h[] = "$Header$";

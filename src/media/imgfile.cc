@@ -106,7 +106,7 @@ namespace
   // A fallback function to try to read an image by filtering it
   // through a pipe that will convert it to PNM format.
   void pipeLoad(const char* progname,
-                const char* filename, Gfx::BmapData& data)
+                const char* filename, media::bmap_data& data)
   {
   DOTRACE("<imgfile.cc>::pipeLoad");
 
@@ -127,7 +127,7 @@ namespace
   }
 }
 
-void ImgFile::load(const char* filename, Gfx::BmapData& data)
+void ImgFile::load(const char* filename, media::bmap_data& data)
 {
 DOTRACE("ImgFile::load");
 
@@ -155,7 +155,7 @@ DOTRACE("ImgFile::load");
   Nub::log(fstring("loaded image file ", filename));
 }
 
-void ImgFile::save(const char* filename, const Gfx::BmapData& data)
+void ImgFile::save(const char* filename, const media::bmap_data& data)
 {
   switch (getImageType(filename))
     {

@@ -63,17 +63,18 @@ DBG_REGISTER
 using geom::vec2i;
 using geom::vec2d;
 
+using media::bmap_data;
+
 using rutz::shared_ptr;
 
 using Gfx::Bbox;
-using Gfx::BmapData;
 using Gfx::Canvas;
 
 namespace
 {
   const int MAX_GABOR_NUMBER = 1800;
 
-  void dumpFrame(shared_ptr<Gfx::BmapData> bmap)
+  void dumpFrame(shared_ptr<media::bmap_data> bmap)
   {
     DOTRACE("<gaborarray.cc>::dumpFrame");
 
@@ -237,10 +238,10 @@ DOTRACE("GaborArray::saveContourOnlyImage");
           }
     }
 
-  shared_ptr<BmapData> result(new BmapData(vec2i(itsSizeX, itsSizeY),
-                                           8, 1));
+  shared_ptr<media::bmap_data> result
+    (new media::bmap_data(vec2i(itsSizeX, itsSizeY), 8, 1));
 
-  unsigned char* bytes = result->bytesPtr();
+  unsigned char* bytes = result->bytes_ptr();
 
   for (int k = 0; k < npix; ++k)
     {
@@ -402,7 +403,7 @@ DOTRACE("GaborArray::updateBackg");
   itsThetaSeed.touch(); // to force a redo in updateBmap()
 }
 
-shared_ptr<Gfx::BmapData> GaborArray::generateBmap(bool doTagLast) const
+shared_ptr<media::bmap_data> GaborArray::generateBmap(bool doTagLast) const
 {
 DOTRACE("GaborArray::generateBmap");
 
@@ -475,10 +476,10 @@ DOTRACE("GaborArray::generateBmap");
         }
     }
 
-  shared_ptr<BmapData> result(new BmapData(vec2i(itsSizeX, itsSizeY),
-                                           8, 1));
+  shared_ptr<media::bmap_data> result
+    (new media::bmap_data(vec2i(itsSizeX, itsSizeY), 8, 1));
 
-  unsigned char* bytes = result->bytesPtr();
+  unsigned char* bytes = result->bytes_ptr();
 
   bool clip = false;
 
@@ -552,7 +553,7 @@ bool GaborArray::tryPush(const GaborArrayElement& e) const
   // quite so quickly in the resulting movie
   if (itsDumpingFrames)
     {
-      shared_ptr<Gfx::BmapData> bmap = generateBmap(true);
+      shared_ptr<media::bmap_data> bmap = generateBmap(true);
 
       dumpFrame(bmap);
       dumpFrame(bmap);
@@ -661,7 +662,7 @@ DOTRACE("GaborArray::backgJitter");
       if (itsDumpingFrames &&
           niter % itsFrameDumpPeriod == 0)
         {
-          shared_ptr<Gfx::BmapData> bmap = generateBmap(true);
+          shared_ptr<media::bmap_data> bmap = generateBmap(true);
           dumpFrame(bmap);
         }
     }

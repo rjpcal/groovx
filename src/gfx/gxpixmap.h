@@ -42,9 +42,9 @@ namespace geom
   template <class V> class vec2;
 }
 
-namespace Gfx
+namespace media
 {
-  class BmapData;
+  class bmap_data;
 }
 
 class GxPixmapImpl;
@@ -159,7 +159,7 @@ public:
   //////////////////
 
   /// Mutable access to internal bitmap data representation.
-  Gfx::BmapData& data();
+  media::bmap_data& data();
 
   /// Change the (x,y) factor by which the bitmap will be scaled.
   void setZoom(geom::vec2<double> zoom);

@@ -502,46 +502,46 @@ DOTRACE("GLCanvas::rasterPos");
     }
 }
 
-void GLCanvas::drawPixels(const Gfx::BmapData& data,
+void GLCanvas::drawPixels(const media::bmap_data& data,
                           const vec2d& world_pos,
                           const vec2d& zoom)
 {
 DOTRACE("GLCanvas::drawPixels");
 
-  data.setRowOrder(Gfx::BmapData::BOTTOM_FIRST);
+  data.set_row_order(media::bmap_data::BOTTOM_FIRST);
 
   rasterPos(world_pos);
 
   glPixelZoom(zoom.x(), zoom.y());
 
-  glPixelStorei(GL_UNPACK_ALIGNMENT, data.byteAlignment());
+  glPixelStorei(GL_UNPACK_ALIGNMENT, data.byte_alignment());
 
-  if (data.bitsPerPixel() == 32)
+  if (data.bits_per_pixel() == 32)
     {
       glDrawPixels(data.width(), data.height(), GL_RGBA, GL_UNSIGNED_BYTE,
-                   static_cast<GLvoid*>(data.bytesPtr()));
+                   static_cast<GLvoid*>(data.bytes_ptr()));
     }
-  else if (data.bitsPerPixel() == 24)
+  else if (data.bits_per_pixel() == 24)
     {
       glDrawPixels(data.width(), data.height(), GL_RGB, GL_UNSIGNED_BYTE,
-                   static_cast<GLvoid*>(data.bytesPtr()));
+                   static_cast<GLvoid*>(data.bytes_ptr()));
     }
-  else if (data.bitsPerPixel() == 8)
+  else if (data.bits_per_pixel() == 8)
     {
       if (isRgba())
         {
           glDrawPixels(data.width(), data.height(),
                        GL_LUMINANCE, GL_UNSIGNED_BYTE,
-                       static_cast<GLvoid*>(data.bytesPtr()));
+                       static_cast<GLvoid*>(data.bytes_ptr()));
         }
       else
         {
           glDrawPixels(data.width(), data.height(),
                        GL_COLOR_INDEX, GL_UNSIGNED_BYTE,
-                       static_cast<GLvoid*>(data.bytesPtr()));
+                       static_cast<GLvoid*>(data.bytes_ptr()));
         }
     }
-  else if (data.bitsPerPixel() == 1)
+  else if (data.bits_per_pixel() == 1)
     {
       if (isRgba())
         {
@@ -554,25 +554,25 @@ DOTRACE("GLCanvas::drawPixels");
         }
 
       glDrawPixels(data.width(), data.height(), GL_COLOR_INDEX,
-                   GL_BITMAP, static_cast<GLvoid*>(data.bytesPtr()));
+                   GL_BITMAP, static_cast<GLvoid*>(data.bytes_ptr()));
     }
 }
 
-void GLCanvas::drawBitmap(const Gfx::BmapData& data,
+void GLCanvas::drawBitmap(const media::bmap_data& data,
                           const vec2d& world_pos)
 {
 DOTRACE("GLCanvas::drawBitmap");
 
-  data.setRowOrder(Gfx::BmapData::BOTTOM_FIRST);
+  data.set_row_order(media::bmap_data::BOTTOM_FIRST);
 
   rasterPos(world_pos);
 
   glBitmap(data.width(), data.height(), 0.0, 0.0, 0.0, 0.0,
-           static_cast<GLubyte*>(data.bytesPtr()));
+           static_cast<GLubyte*>(data.bytes_ptr()));
 }
 
 void GLCanvas::grabPixels(const geom::rect<int>& bounds,
-                          Gfx::BmapData& data_out)
+                          media::bmap_data& data_out)
 {
 DOTRACE("GLCanvas::grabPixels");
 
@@ -585,8 +585,8 @@ DOTRACE("GLCanvas::grabPixels");
   // actual color buffer depth.
   const int bmap_bits_per_pixel = isRgba() ? 24 : 8;
 
-  Gfx::BmapData new_data(bounds.size(),
-                         bmap_bits_per_pixel, pixel_alignment);
+  media::bmap_data new_data(bounds.size(),
+                            bmap_bits_per_pixel, pixel_alignment);
 
   glPixelStorei(GL_PACK_ALIGNMENT, pixel_alignment);
 
@@ -596,11 +596,11 @@ DOTRACE("GLCanvas::grabPixels");
     glReadPixels(bounds.left(), bounds.bottom(),
                  bounds.width(), bounds.height(),
                  (isRgba() ? GL_RGB : GL_COLOR_INDEX),
-                 GL_UNSIGNED_BYTE, new_data.bytesPtr());
+                 GL_UNSIGNED_BYTE, new_data.bytes_ptr());
   }
   glPopAttrib();
 
-  new_data.specifyRowOrder(Gfx::BmapData::BOTTOM_FIRST);
+  new_data.specify_row_order(media::bmap_data::BOTTOM_FIRST);
 
   data_out.swap(new_data);
 }

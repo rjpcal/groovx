@@ -200,7 +200,7 @@ DOTRACE("Gabor::grGetBoundingBox");
   bbox.drawRect(world_rect);
 }
 
-void Gabor::getBmapData(Gfx::BmapData& dest) const
+void Gabor::getBmapData(media::bmap_data& dest) const
 {
 DOTRACE("Gabor::getBmapData");
   const double xsigma2 = itsSigma*itsAspectRatio * itsSigma*itsAspectRatio;
@@ -235,11 +235,11 @@ DOTRACE("Gabor::getBmapData");
 
   int bits_per_pixel = (itsColorMode == GRAYSCALE) ? 32 : 8;
 
-  Gfx::BmapData data(size, bits_per_pixel, 1);
+  media::bmap_data data(size, bits_per_pixel, 1);
 
-  unsigned char* bytes = data.bytesPtr();
+  unsigned char* bytes = data.bytes_ptr();
 
-  unsigned char* bytes_end = bytes + data.byteCount();
+  unsigned char* bytes_end = bytes + data.byte_count();
 
   for (int y_pos = 0; y_pos < itsResolution; ++y_pos)
     {
@@ -299,7 +299,7 @@ void Gabor::saveImage(const char* filename) const
 {
 DOTRACE("Gabor::saveImage");
 
-  Gfx::BmapData data;
+  media::bmap_data data;
   getBmapData(data);
 
   ImgFile::save(filename, data);
@@ -309,7 +309,7 @@ void Gabor::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("Gabor::grRender");
 
-  Gfx::BmapData data;
+  media::bmap_data data;
   getBmapData(data);
 
   canvas.drawPixels(data, vec2d(0.0, 0.0),

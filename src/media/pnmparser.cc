@@ -86,27 +86,28 @@ namespace
     ASSERT(0); return 0; // can't happen
   }
 
-  void parsePbmMode1(STD_IO::istream& is, Gfx::BmapData& data)
+  void parsePbmMode1(STD_IO::istream& is, media::bmap_data& data)
   {
     DOTRACE("parsePbmMode1");
 
     int position = 0;
     int val = 0;
 
-    const int byte_count = data.byteCount();
+    const int byte_count = data.byte_count();
 
     while (is.peek() != EOF && position < byte_count)
       {
         dbg_eval(3, position);
 
         is >> val;
-        data.bytesPtr()[position] = (val == 0) ? 0 : 255;
+        data.bytes_ptr()[position] = (val == 0) ? 0 : 255;
 
         ++position;
       }
   }
 
-  void parsePbmMode23(STD_IO::istream& is, Gfx::BmapData& data, int max_grey)
+  void parsePbmMode23(STD_IO::istream& is, media::bmap_data& data,
+                      int max_grey)
   {
   DOTRACE("parsePbmMode23");
 
@@ -115,26 +116,26 @@ namespace
     int position = 0;
     int val = 0;
 
-    const int byte_count = data.byteCount();
+    const int byte_count = data.byte_count();
 
     while (is.peek() != EOF && position < byte_count)
       {
         dbg_eval(3, position);
 
         is >> val;
-        data.bytesPtr()[position] = static_cast<unsigned char>(val * scale);
+        data.bytes_ptr()[position] = static_cast<unsigned char>(val * scale);
 
         ++position;
       }
   }
 
-  void parsePbmMode456(STD_IO::istream& is, Gfx::BmapData& data)
+  void parsePbmMode456(STD_IO::istream& is, media::bmap_data& data)
   {
   DOTRACE("parsePbmMode456");
-    dbg_eval_nl(3, data.byteCount());
-    is.read(reinterpret_cast<char*>(data.bytesPtr()), data.byteCount());
+    dbg_eval_nl(3, data.byte_count());
+    is.read(reinterpret_cast<char*>(data.bytes_ptr()), data.byte_count());
     unsigned int numread = is.gcount();
-    if (numread < data.byteCount())
+    if (numread < data.byte_count())
       throw rutz::error("stream underflow in parsePbmMode456", SRC_POS);
     if (is.fail() && !is.eof())
       throw rutz::error("input stream failed in parsePbmMode456", SRC_POS);
@@ -147,7 +148,7 @@ namespace
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Pbm::save(const char* filename, const Gfx::BmapData& data)
+void Pbm::save(const char* filename, const media::bmap_data& data)
 {
   rutz::shared_ptr<STD_IO::ostream> os
     (rutz::ogzopen(filename, std::ios::binary));
@@ -155,11 +156,11 @@ void Pbm::save(const char* filename, const Gfx::BmapData& data)
   save(*os, data);
 }
 
-void Pbm::save(STD_IO::ostream& os, const Gfx::BmapData& data)
+void Pbm::save(STD_IO::ostream& os, const media::bmap_data& data)
 {
 DOTRACE("Pbm::save");
 
-  int mode = modeForBitDepth(data.bitsPerPixel());
+  int mode = modeForBitDepth(data.bits_per_pixel());
 
   os << 'P' << mode
      << ' ' << data.size().x()
@@ -174,11 +175,11 @@ DOTRACE("Pbm::save");
   os << '\n';
 
   for (int row = 0; row < data.height(); ++row)
-    os.write(reinterpret_cast<const char*>(data.rowPtr(row)),
-             data.bytesPerRow());
+    os.write(reinterpret_cast<const char*>(data.row_ptr(row)),
+             data.bytes_per_row());
 }
 
-void Pbm::load(const char* filename, Gfx::BmapData& data)
+void Pbm::load(const char* filename, media::bmap_data& data)
 {
   rutz::shared_ptr<STD_IO::istream> is
     (rutz::igzopen(filename, std::ios::binary));
@@ -186,7 +187,7 @@ void Pbm::load(const char* filename, Gfx::BmapData& data)
   load(*is, data);
 }
 
-void Pbm::load(STD_IO::istream& is, Gfx::BmapData& data)
+void Pbm::load(STD_IO::istream& is, media::bmap_data& data)
 {
 DOTRACE("Pbm::load");
   if (is.fail())
@@ -246,7 +247,7 @@ DOTRACE("Pbm::load");
                         SRC_POS);
     }
 
-  Gfx::BmapData new_data(extent, bit_depth, 1);
+  media::bmap_data new_data(extent, bit_depth, 1);
 
   switch (mode)
     {

@@ -53,212 +53,212 @@ using rutz::shared_ptr;
 
 ///////////////////////////////////////////////////////////////////////
 //
-// Gfx::BmapData::Impl definition
+// media::bmap_data::impl definition
 //
 ///////////////////////////////////////////////////////////////////////
 
-class Gfx::BmapData::Impl
+class media::bmap_data::impl
 {
 public:
-  Impl(const geom::vec2<int>& ex, int bits_per_pixel, int byte_alignment) :
-    extent(ex),
-    bitsPerPixel(bits_per_pixel),
-    byteAlignment(byte_alignment),
-    bytes(),
-    rowOrder(TOP_FIRST),
-    updater()
+  impl(const geom::vec2<int>& ex, int bits_per_pixel, int byte_alignment) :
+    m_size(ex),
+    m_bits_per_pixel(bits_per_pixel),
+    m_byte_alignment(byte_alignment),
+    m_bytes(),
+    m_row_order(TOP_FIRST),
+    m_updater()
   {
-    PRECONDITION(extent.x() >= 0);
-    PRECONDITION(extent.y() >= 0);
+    PRECONDITION(m_size.x() >= 0);
+    PRECONDITION(m_size.y() >= 0);
 
-    // If extent.x() is 0, this is still OK, since -1/8 --> -1, so the
+    // If m_size.x() is 0, this is still OK, since -1/8 --> -1, so the
     // whole thing goes to 0
-    int bytes_per_row = (extent.x()*bits_per_pixel - 1)/8 + 1;
+    int bytes_per_row = (m_size.x()*bits_per_pixel - 1)/8 + 1;
 
     ASSERT(bytes_per_row >= 0);
 
-    unsigned int num_bytes = bytes_per_row * extent.y();
+    unsigned int num_bytes = bytes_per_row * m_size.y();
 
-    bytes.resize( num_bytes );
+    m_bytes.resize( num_bytes );
   }
 
   // default copy-ctor and assn-oper OK
 
   // These are "fast" versions of the public interface that don't call
-  // updateIfNeeded() before returning data. Therefore it is the caller's
-  // responsibility to make sure updateIfNeeded() has been called at least
-  // once per public API call.
-  unsigned char* bytesPtr() { return &(bytes[0]); }
+  // update_if_needed() before returning data. Therefore it is the
+  // caller's responsibility to make sure update_if_needed() has been
+  // called at least once per public API call.
+  unsigned char* bytes_ptr() { return &(m_bytes[0]); }
 
-  unsigned int bytesPerRow() const
-  { return ( (extent.x()*bitsPerPixel - 1)/8 + 1 ); }
+  unsigned int bytes_per_row() const
+  { return ( (m_size.x()*m_bits_per_pixel - 1)/8 + 1 ); }
 
-  unsigned char* rowPtr(unsigned int row)
+  unsigned char* row_ptr(unsigned int row)
   {
     const unsigned int offset =
-      (rowOrder == TOP_FIRST)
+      (m_row_order == TOP_FIRST)
       ?
       row
       :
-      extent.y() - row - 1;
+      m_size.y() - row - 1;
 
-    return bytesPtr() + offset * bytesPerRow();
+    return bytes_ptr() + offset * bytes_per_row();
   }
 
-  unsigned int byteCount() const { return bytes.size(); }
+  unsigned int byte_count() const { return m_bytes.size(); }
 
-  geom::vec2<int> extent;
-  int bitsPerPixel;
-  int byteAlignment;
-  rutz::dynamic_block<unsigned char> bytes;
-  RowOrder rowOrder;
-
-  mutable shared_ptr<UpdateFunc> updater;
+  geom::vec2<int>                    m_size;
+  int                                m_bits_per_pixel;
+  int                                m_byte_alignment;
+  rutz::dynamic_block<unsigned char> m_bytes;
+  row_order                          m_row_order;
+  mutable shared_ptr<update_func>    m_updater;
 };
 
 ///////////////////////////////////////////////////////////////////////
 //
-// BmapData member definitions
+// media::bmap_data member definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-Gfx::BmapData::UpdateFunc::~UpdateFunc() {}
+media::bmap_data::update_func::~update_func() {}
 
-Gfx::BmapData::BmapData() :
-  rep(new Impl(geom::vec2<int>(0, 0), 1, 1))
+media::bmap_data::bmap_data() :
+  rep(new impl(geom::vec2<int>(0, 0), 1, 1))
 {
-DOTRACE("Gfx::BmapData::BmapData");
+DOTRACE("media::bmap_data::bmap_data");
 }
 
-Gfx::BmapData::BmapData(const geom::vec2<int>& extent,
-                        int bits_per_pixel, int byte_alignment) :
-  rep(new Impl(extent, bits_per_pixel, byte_alignment))
+media::bmap_data::bmap_data(const geom::vec2<int>& m_size,
+                            int bits_per_pixel, int byte_alignment) :
+  rep(new impl(m_size, bits_per_pixel, byte_alignment))
 {
-DOTRACE("Gfx::BmapData::BmapData");
+DOTRACE("media::bmap_data::bmap_data");
 }
 
-Gfx::BmapData::BmapData(const Gfx::BmapData& other) :
-  rep(new Impl(*(other.rep)))
+media::bmap_data::bmap_data(const media::bmap_data& other) :
+  rep(new impl(*(other.rep)))
 {
-DOTRACE("Gfx::BmapData::BmapData(copy)");
+DOTRACE("media::bmap_data::bmap_data(copy)");
 }
 
-Gfx::BmapData::~BmapData()
+media::bmap_data::~bmap_data()
 {
   delete rep;
 }
 
-unsigned char* Gfx::BmapData::bytesPtr() const
+unsigned char* media::bmap_data::bytes_ptr() const
 {
-DOTRACE("Gfx::BmapData::bytesPtr");
-  updateIfNeeded();
-  return rep->bytesPtr();
+DOTRACE("media::bmap_data::bytes_ptr");
+  update_if_needed();
+  return rep->bytes_ptr();
 }
 
-unsigned char* Gfx::BmapData::rowPtr(unsigned int row) const
+unsigned char* media::bmap_data::row_ptr(unsigned int row) const
 {
-DOTRACE("Gfx::BmapData::rowPtr");
+DOTRACE("media::bmap_data::row_ptr");
 
-  updateIfNeeded();
+  update_if_needed();
 
-  return rep->rowPtr(row);
+  return rep->row_ptr(row);
 }
 
-long int Gfx::BmapData::checkSum() const
+long int media::bmap_data::bytes_sum() const
 {
-DOTRACE("Gfx::BmapData::checkSum");
+DOTRACE("media::bmap_data::bytes_sum");
 
-  updateIfNeeded();
+  update_if_needed();
   long int sum = 0;
-  unsigned int byte_count = byteCount();
-  unsigned char* bytes = rep->bytesPtr();
-  while (byte_count > 0)
+  unsigned int c = byte_count();
+  unsigned char* m_bytes = rep->bytes_ptr();
+  while (c > 0)
     {
-      sum += bytes[--byte_count];
+      sum += m_bytes[--c];
     }
   return sum;
 }
 
-int Gfx::BmapData::width() const
+int media::bmap_data::width() const
 {
-DOTRACE("Gfx::BmapData::width");
-  updateIfNeeded();
-  return rep->extent.x();
+DOTRACE("media::bmap_data::width");
+  update_if_needed();
+  return rep->m_size.x();
 }
 
-int Gfx::BmapData::height() const
+int media::bmap_data::height() const
 {
-DOTRACE("Gfx::BmapData::height");
-  updateIfNeeded();
-  return rep->extent.y();
+DOTRACE("media::bmap_data::height");
+  update_if_needed();
+  return rep->m_size.y();
 }
 
-geom::vec2<int> Gfx::BmapData::size() const
+geom::vec2<int> media::bmap_data::size() const
 {
-DOTRACE("Gfx::BmapData::size");
-  updateIfNeeded();
-  return rep->extent;
+DOTRACE("media::bmap_data::size");
+  update_if_needed();
+  return rep->m_size;
 }
 
-int Gfx::BmapData::bitsPerPixel() const
+int media::bmap_data::bits_per_pixel() const
 {
-DOTRACE("Gfx::BmapData::bitsPerPixel");
-  updateIfNeeded();
-  return rep->bitsPerPixel;
+DOTRACE("media::bmap_data::bits_per_pixel");
+  update_if_needed();
+  return rep->m_bits_per_pixel;
 }
 
-int Gfx::BmapData::bitsPerComponent() const
+int media::bmap_data::bits_per_component() const
 {
-DOTRACE("Gfx::BmapData::bitsPerComponent");
-  updateIfNeeded();
-  return rep->bitsPerPixel > 1
+DOTRACE("media::bmap_data::bits_per_component");
+  update_if_needed();
+  return rep->m_bits_per_pixel > 1
     ? 8
     : 1;
 }
 
-int Gfx::BmapData::byteAlignment() const
+int media::bmap_data::byte_alignment() const
 {
-DOTRACE("Gfx::BmapData::byteAlignment");
-  updateIfNeeded();
-  return rep->byteAlignment;
+DOTRACE("media::bmap_data::byte_alignment");
+  update_if_needed();
+  return rep->m_byte_alignment;
 }
 
-unsigned int Gfx::BmapData::byteCount() const
+unsigned int media::bmap_data::byte_count() const
 {
-DOTRACE("Gfx::BmapData::byteCount");
-  updateIfNeeded();
+DOTRACE("media::bmap_data::byte_count");
+  update_if_needed();
 
-  ASSERT(rep->bytes.size() == rep->bytesPerRow() * rep->extent.y());
+  ASSERT(rep->m_bytes.size() == rep->bytes_per_row() * rep->m_size.y());
 
-  return rep->byteCount();
+  return rep->byte_count();
 }
 
-unsigned int Gfx::BmapData::bytesPerRow() const
+unsigned int media::bmap_data::bytes_per_row() const
 {
-DOTRACE("Gfx::BmapData::bytesPerRow");
-  updateIfNeeded();
-  return rep->bytesPerRow();
+DOTRACE("media::bmap_data::bytes_per_row");
+  update_if_needed();
+  return rep->bytes_per_row();
 }
 
-Gfx::BmapData::RowOrder
-Gfx::BmapData::rowOrder() const
+media::bmap_data::row_order
+media::bmap_data::get_row_order() const
 {
-  return rep->rowOrder;
+  return rep->m_row_order;
 }
 
-void Gfx::BmapData::flipContrast()
+void media::bmap_data::flip_contrast()
 {
-DOTRACE("Gfx::BmapData::flipContrast");
-  updateIfNeeded();
+DOTRACE("media::bmap_data::flip_contrast");
+  update_if_needed();
 
-  unsigned int num_bytes = rep->bytes.size();
+  unsigned int num_bytes = rep->m_bytes.size();
 
   // In this case we want to flip each bit
-  if (rep->bitsPerPixel == 1)
+  if (rep->m_bits_per_pixel == 1)
     {
       for (unsigned int i = 0; i < num_bytes; ++i)
         {
-          rep->bytes[i] = static_cast<unsigned char>(0xff ^ rep->bytes[i]);
+          rep->m_bytes[i] =
+            static_cast<unsigned char>(0xff ^ rep->m_bytes[i]);
         }
     }
   // In this case we want to reflect the value of each byte around the
@@ -267,98 +267,99 @@ DOTRACE("Gfx::BmapData::flipContrast");
     {
       for (unsigned int i = 0; i < num_bytes; ++i)
         {
-          rep->bytes[i] = static_cast<unsigned char>(0xff - rep->bytes[i]);
+          rep->m_bytes[i] =
+            static_cast<unsigned char>(0xff - rep->m_bytes[i]);
         }
     }
 }
 
-void Gfx::BmapData::flipVertical()
+void media::bmap_data::flip_vertical()
 {
-DOTRACE("Gfx::BmapData::flipVertical");
-  updateIfNeeded();
+DOTRACE("media::bmap_data::flip_vertical");
+  update_if_needed();
 
-  int bytes_per_row = rep->bytesPerRow();
-  int num_bytes = rep->byteCount();
+  int bytes_per_row = rep->bytes_per_row();
+  int num_bytes = rep->byte_count();
 
   rutz::dynamic_block<unsigned char> new_bytes(num_bytes);
 
-  for (int row = 0; row < rep->extent.y(); ++row)
+  for (int row = 0; row < rep->m_size.y(); ++row)
     {
-      int new_row = (rep->extent.y()-1)-row;
-      memcpy(static_cast<void*> (&(new_bytes [new_row * bytes_per_row])),
-             static_cast<void*> (&(rep->bytes[row     * bytes_per_row])),
+      int new_row = (rep->m_size.y()-1)-row;
+      memcpy(static_cast<void*> (&(new_bytes   [new_row * bytes_per_row])),
+             static_cast<void*> (&(rep->m_bytes[row     * bytes_per_row])),
              bytes_per_row);
     }
 
-  rep->bytes.swap(new_bytes);
+  rep->m_bytes.swap(new_bytes);
 }
 
-void Gfx::BmapData::clear()
+void media::bmap_data::clear()
 {
-DOTRACE("Gfx::BmapData::clear");
+DOTRACE("media::bmap_data::clear");
 
-  Gfx::BmapData empty;
+  media::bmap_data empty;
   swap(empty);
 }
 
-void Gfx::BmapData::swap(Gfx::BmapData& other)
+void media::bmap_data::swap(media::bmap_data& other)
 {
-DOTRACE("Gfx::BmapData::swap");
+DOTRACE("media::bmap_data::swap");
 
   rutz::swap2(rep, other.rep);
 }
 
-void Gfx::BmapData::queueUpdate(shared_ptr<UpdateFunc> updater) const
+void media::bmap_data::queue_update(shared_ptr<update_func> updater) const
 {
-DOTRACE("Gfx::BmapData::queueUpdate");
-  rep->updater = updater;
+DOTRACE("media::bmap_data::queue_update");
+  rep->m_updater = updater;
 }
 
-void Gfx::BmapData::updateIfNeeded() const
+void media::bmap_data::update_if_needed() const
 {
-DOTRACE("Gfx::BmapData::updateIfNeeded");
-  if (rep->updater.get() != 0)
+DOTRACE("media::bmap_data::update_if_needed");
+  if (rep->m_updater.get() != 0)
     {
-      shared_ptr<UpdateFunc> tempUpdater(rep->updater);
+      shared_ptr<update_func> tmp_updater(rep->m_updater);
 
-      // We release rep->updater before doing the update, so
-      // that we avoid endless recursion if updateIfNeeded is called
-      // again during the updating.
-      rep->updater.reset();
+      // We release rep->m_updater before doing the update, so that we
+      // avoid endless recursion if update_if_needed is called again
+      // during the updating.
+      rep->m_updater.reset();
 
-      tempUpdater->update(const_cast<Gfx::BmapData&>(*this));
+      tmp_updater->update(const_cast<media::bmap_data&>(*this));
     }
 }
 
-void Gfx::BmapData::clearQueuedUpdate() const
+void media::bmap_data::clear_queued_update() const
 {
-DOTRACE("Gfx::BmapData::clearQueuedUpdate");
-  rep->updater.reset();
+DOTRACE("media::bmap_data::clear_queued_update");
+  rep->m_updater.reset();
 }
 
-void Gfx::BmapData::setRowOrder(Gfx::BmapData::RowOrder order) const
+void media::bmap_data::set_row_order(row_order order) const
 {
-  if (order != rep->rowOrder)
+  if (order != rep->m_row_order)
     {
-      const_cast<BmapData*>(this)->flipVertical();
-      rep->rowOrder = order;
+      const_cast<bmap_data*>(this)->flip_vertical();
+      rep->m_row_order = order;
     }
 }
 
-void Gfx::BmapData::specifyRowOrder(Gfx::BmapData::RowOrder order) const
+void media::bmap_data::specify_row_order(row_order order) const
 {
-  rep->rowOrder = order;
+  rep->m_row_order = order;
 }
 
-shared_ptr<Gfx::BmapData>
-Gfx::BmapData::makeScrambled(int nsubimg_x, int nsubimg_y, int seed,
-                             bool allowMoveSubparts,
-                             bool allowFlipLeftRight,
-                             bool allowFlipTopBottom) const
+shared_ptr<media::bmap_data>
+media::bmap_data::make_scrambled(int nsubimg_x, int nsubimg_y, int seed,
+                                 bool allow_move_subparts,
+                                 bool allow_flip_left_right,
+                                 bool allow_flip_top_bottom) const
 {
-DOTRACE("Gfx::BmapData::makeScrambled");
+DOTRACE("media::bmap_data::make_scrambled");
 
-  updateIfNeeded();
+  update_if_needed();
 
   if ( width() % nsubimg_x != 0 )
     {
@@ -370,10 +371,10 @@ DOTRACE("Gfx::BmapData::makeScrambled");
       throw rutz::error("not an evenly divisible width", SRC_POS);
     }
 
-  shared_ptr<Gfx::BmapData> result
-    (new Gfx::BmapData(this->size(),
-                       this->bitsPerPixel(),
-                       this->byteAlignment()));
+  shared_ptr<media::bmap_data> result
+    (new media::bmap_data(this->size(),
+                          this->bits_per_pixel(),
+                          this->byte_alignment()));
 
   const int npos = nsubimg_x * nsubimg_y;
 
@@ -385,26 +386,26 @@ DOTRACE("Gfx::BmapData::makeScrambled");
 
   rutz::urand generator(seed);
 
-  if (allowMoveSubparts)
+  if (allow_move_subparts)
     {
       std::random_shuffle(newpos.begin(), newpos.end(), generator);
     }
 
-  if (rep->bitsPerPixel != 8 && rep->bitsPerPixel != 24)
+  if (rep->m_bits_per_pixel != 8 && rep->m_bits_per_pixel != 24)
     {
       throw rutz::error(rutz::fstring("unknown bits-per-pixel value: ",
-                                      rep->bitsPerPixel), SRC_POS);
+                                      rep->m_bits_per_pixel), SRC_POS);
     }
 
-  const int bytes_per_pixel = rep->bitsPerPixel/8;
+  const int bytes_per_pixel = rep->m_bits_per_pixel/8;
 
   const int size_subimg_x = result->width() / nsubimg_x * bytes_per_pixel;
   const int size_subimg_y = result->height() / nsubimg_y;
 
   for (int i = 0; i < npos; ++i)
     {
-      const bool fliplr = allowFlipLeftRight && generator.booldraw();
-      const bool fliptb = allowFlipTopBottom && generator.booldraw();
+      const bool fliplr = allow_flip_left_right && generator.booldraw();
+      const bool fliptb = allow_flip_top_bottom && generator.booldraw();
 
       const int src_subimg_y = i / nsubimg_x;
       const int src_subimg_x = i % nsubimg_x;
@@ -420,20 +421,20 @@ DOTRACE("Gfx::BmapData::makeScrambled");
 
       for (int y = 0; y < size_subimg_y; ++y)
         {
-          // NOTE: I tried hand-optimizing all this stuff to avoid calls to
-          // rowPtr()... basically optimizing all the math so that we just
-          // increment pointers in each loop iteration rather than
-          // re-compute positions afresh. But, it made no helpful
-          // difference in runtimes. So, better to keep the clean
-          // easier-to-read code here. My guess is that the best way to
-          // speed this algorithm up, if needed, would be by improving
-          // cache performance. Right now we jump around in both the src
-          // and dst images. We could speed things up by designing the
-          // algorithm so that one of src/dst gets read straight through
-          // from beginning to end.
+          // NOTE: I tried hand-optimizing all this stuff to avoid
+          // calls to row_ptr()... basically optimizing all the math
+          // so that we just increment pointers in each loop iteration
+          // rather than re-compute positions afresh. But, it made no
+          // helpful difference in runtimes. So, better to keep the
+          // clean easier-to-read code here. My guess is that the best
+          // way to speed this algorithm up, if needed, would be by
+          // improving cache performance. Right now we jump around in
+          // both the src and dst images. We could speed things up by
+          // designing the algorithm so that one of src/dst gets read
+          // straight through from beginning to end.
 
           const unsigned char* src =
-            rep->rowPtr(src_fullimg_y+y) + src_fullimg_x;
+            rep->row_ptr(src_fullimg_y+y) + src_fullimg_x;
 
           const unsigned int dst_row =
             fliptb
@@ -441,7 +442,7 @@ DOTRACE("Gfx::BmapData::makeScrambled");
             : dst_fullimg_y+y;
 
           unsigned char* dst =
-            result->rep->rowPtr(dst_row) + dst_fullimg_x;
+            result->rep->row_ptr(dst_row) + dst_fullimg_x;
 
           unsigned char* dst_end = dst + size_subimg_x;
 

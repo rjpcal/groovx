@@ -32,18 +32,18 @@
 #ifndef IMGFILE_H_DEFINED
 #define IMGFILE_H_DEFINED
 
-namespace Gfx
+namespace media
 {
-  class BmapData;
+  class bmap_data;
 }
 
 namespace ImgFile
 {
   /// Load \a data from \a filename, which must be in a supported format.
-  void load(const char* filename, Gfx::BmapData& data);
+  void load(const char* filename, media::bmap_data& data);
 
   /// Save \a data to \a filename (file format is inferred from the filename).
-  void save(const char* filename, const Gfx::BmapData& data);
+  void save(const char* filename, const media::bmap_data& data);
 }
 
 static const char vcid_imgfile_h[] = "$Header$";

@@ -118,8 +118,8 @@ namespace GxTcl
 
   // This is gone for now because the bitmap cache node is gone from
   // GxShapeKit, but we can resurrect a cleaner saveBitmap() function
-  // pretty easily, just by captuing the screen bounds into a BmapData
-  // object and then saving that.
+  // pretty easily, just by captuing the screen bounds into a
+  // meida::bmap_data object and then saving that.
 #if 0
   void saveBitmap(Nub::Ref<GxNode> obj, const char* filename)
   {
