@@ -86,59 +86,18 @@ public:
   virtual void writeTo(Writer* writer) const;
 
 
-  ///////////////
-  // accessors //
-  ///////////////
-
+  /////////////
+  // scaling //
+  /////////////
 private:
-  const Rect<double>& getRawBB() const;
+  GrObj::ScalingMode itsScalingMode;
+  double itsWidthFactor;
+  double itsHeightFactor;
 
-  int getBBPixelBorder() const;
-
-  bool hasBB() const;
-
-  double nativeWidth() const;
-  double nativeHeight() const;
-
-  double nativeCenterX() const;
-  double nativeCenterY() const;
+  void doScaling() const;
 
 public:
-  double aspectRatio() const;
-
-  double finalWidth() const;
-  double finalHeight() const;
-
-  bool getBoundingBox(double& left, double& top,
-							 double& right, double& bottom) const;
-
-  int getDisplayList() const { return itsDisplayList; }
-
-  bool isCurrent() const { return itsIsCurrent; }
-
-  bool getBBVisibility() const { return itsBBIsVisible; }
-
-  double getMaxDimension() const
-	 { return max(finalWidth(), finalHeight()); }
-
   GrObj::ScalingMode getScalingMode() const { return itsScalingMode; }
-
-  GrObj::AlignmentMode getAlignmentMode() const { return itsAlignmentMode; }
-
-  double getCenterX() const { return itsCenterX; }
-  double getCenterY() const { return itsCenterY; }
-
-  int getCategory() const { return itsCategory; }
-
-  GrObj::GrObjRenderMode getRenderMode() const { return itsRenderMode; }
-  GrObj::GrObjRenderMode getUnRenderMode() const { return itsUnRenderMode; }
-
-
-  //////////////////
-  // manipulators //
-  //////////////////
-
-  void setBBVisibility(bool visibility);
 
   void setScalingMode(GrObj::ScalingMode new_mode);
 
@@ -146,103 +105,37 @@ public:
   void setHeight(double new_height);
   void setAspectRatio(double new_aspect_ratio);
   void setMaxDimension(double new_max_dimension);
+
+  double aspectRatio() const;
+
+  ///////////////
+  // alignment //
+  ///////////////
+private:
+  GrObj::AlignmentMode itsAlignmentMode;
+  double itsCenterX;
+  double itsCenterY;
+
+  double nativeCenterX() const;
+  double nativeCenterY() const;
+
+  void doAlignment() const;
+
+public:
   void setAlignmentMode(GrObj::AlignmentMode new_mode);
+  GrObj::AlignmentMode getAlignmentMode() const { return itsAlignmentMode; }
+
+  double getCenterX() const { return itsCenterX; }
+  double getCenterY() const { return itsCenterY; }
 
   void setCenterX(double val) { itsCenterX = val; }
   void setCenterY(double val) { itsCenterY = val; }
 
-  void setCategory(int val) { itsCategory = val; }
-
-  void setRenderMode(GrObj::GrObjRenderMode new_mode);
-  void setUnRenderMode(GrObj::GrObjRenderMode new_mode);
-
-  void postUpdated() const { itsIsCurrent = true; }
-
-
-  /////////////
-  // actions //
-  /////////////
-
-  void update() const;
-  void draw() const;
-  void undraw() const;
-  void grDrawBoundingBox() const;
-
-  void invalidateCaches();
-
-  // This function deletes any previous display list, allocates a new
-  // display list, and checks that the allocation actually succeeded.
-  void newList() const;
-
-private:
-  void updateBB() const;
-
-  // This function updates the cached OpenGL display list.
-  void recompile() const;
-
-  // This function updates the cached bitmap.
-  void recacheBitmap() const;
-
-  void doAlignment() const;
-  void doScaling() const;
-
-  void updateCachedFinalBB() const;
-
-  void drawDirectRender() const;
-  void drawGLCompile() const;
-  void drawBitmapCache() const;
-
-  void undrawDirectRender() const;
-  void undrawSwapForeBack() const;
-  void undrawClearBoundingBox() const;
-
-  void undrawBoundingBox() const;
 
   //////////////////
-  // Nested types //
-  //////////////////
-
-#if 0
-  class Scaler {
-	 static auto_ptr<Scaler> createScaler(GrObj::SCALING_MODE mode);
-
-	 virtual void doScaling() const = 0;
-	 
-  };
-
-  class Aligner {
-	 static auto_ptr<Aligner> createAligner(GrObj::ALIGNMENT_MODE mode);
-
-	 virtual void doAlignment() const = 0;
-  };
-
-  class Renderer {
-	 static auto_ptr<Renderer> createRenderer(GrObj::GROBJ_RENDER_MODE mode);
-
-	 virtual void doRender() const = 0;
-  };
-
-  class Unrenderer {
-	 static auto_ptr<Unrenderer> createUnrenderer(GrObj::GROBJ_UNRENDER_MODE mode);
-
-	 virtual void doUnrender() const = 0;
-  };
-#endif
-
-  //////////////////
-  // Data members //
+  // bounding box //
   //////////////////
 private:
-  GrObj* self;
-
-  int itsCategory;
-
-  mutable bool itsIsCurrent;    // true if displaylist is current
-  mutable int itsDisplayList;   // OpenGL display list that draws the object
-
-  GrObj::GrObjRenderMode itsRenderMode;
-  GrObj::GrObjRenderMode itsUnRenderMode;
-  
   mutable bool itsRawBBIsCurrent;
 
   mutable bool itsHasBB;
@@ -254,15 +147,114 @@ private:
 
   bool itsBBIsVisible;
 
+  const Rect<double>& getRawBB() const;
+
+  int getBBPixelBorder() const;
+
+  bool hasBB() const;
+
+  void updateBB() const;
+
+  void updateCachedFinalBB() const;
+
+  double nativeWidth() const;
+  double nativeHeight() const;
+
+public:
+
+  bool getBoundingBox(double& left, double& top,
+							 double& right, double& bottom) const;
+
+  bool getBBVisibility() const { return itsBBIsVisible; }
+
+  void setBBVisibility(bool visibility);
+
+
+  ///////////////
+  // rendering //
+  ///////////////
+private:
+  mutable int itsDisplayList;   // OpenGL display list that draws the object
+
   Bitmap* itsBitmapCache;
 
-  GrObj::ScalingMode itsScalingMode;
-  double itsWidthFactor;
-  double itsHeightFactor;
+  GrObj::GrObjRenderMode itsRenderMode;
 
-  GrObj::AlignmentMode itsAlignmentMode;
-  double itsCenterX;
-  double itsCenterY;
+  // This function updates the cached OpenGL display list.
+  void recompile() const;
+
+  // This function updates the cached bitmap.
+  void recacheBitmap() const;
+
+  void drawDirectRender() const;
+  void drawGLCompile() const;
+  void drawBitmapCache() const;
+
+public:
+
+  int getDisplayList() const { return itsDisplayList; }
+
+  GrObj::GrObjRenderMode getRenderMode() const { return itsRenderMode; }
+  void setRenderMode(GrObj::GrObjRenderMode new_mode);
+
+  void update() const;
+  void draw() const;
+
+  void grDrawBoundingBox() const;
+
+  // This function deletes any previous display list, allocates a new
+  // display list, and checks that the allocation actually succeeded.
+  void newList() const;
+
+  /////////////////
+  // unrendering //
+  /////////////////
+private:
+  GrObj::GrObjRenderMode itsUnRenderMode;
+  
+  void undrawDirectRender() const;
+  void undrawSwapForeBack() const;
+  void undrawClearBoundingBox() const;
+
+  void undrawBoundingBox() const;
+
+public:
+
+  GrObj::GrObjRenderMode getUnRenderMode() const { return itsUnRenderMode; }
+
+  void setUnRenderMode(GrObj::GrObjRenderMode new_mode);
+
+  void undraw() const;
+
+  ///////////////
+  // ? other ? //
+  ///////////////
+private:
+  int itsCategory;
+
+  mutable bool itsIsCurrent;    // true if displaylist is current
+
+public:
+  double finalWidth() const;
+  double finalHeight() const;
+
+  bool isCurrent() const { return itsIsCurrent; }
+
+  double getMaxDimension() const
+	 { return max(finalWidth(), finalHeight()); }
+
+  int getCategory() const { return itsCategory; }
+  void setCategory(int val) { itsCategory = val; }
+
+  void postUpdated() const { itsIsCurrent = true; }
+
+  void invalidateCaches();
+
+  //////////////////
+  // Data members //
+  //////////////////
+private:
+  GrObj* self;
 };
 
 ///////////////////////////////////////////////////////////////////////
