@@ -115,6 +115,7 @@ itcl::class Playlist {
     private variable itsMode
     private variable itsDelCount
     private variable itsShowCount
+    private variable itsLastSpin
 
     constructor { argv widget } {
 	set fname [lindex $argv end]
@@ -191,6 +192,7 @@ itcl::class Playlist {
 	set itsMode spinning
 	set itsDelCount 0
 	set itsShowCount 0
+	set itsLastSpin 1
     }
 
     public method save {} {
@@ -209,12 +211,14 @@ itcl::class Playlist {
     public method spin { step } {
 	set itsIdx [expr ($itsIdx + $step) % [llength $itsList]]
 
+	set itsLastSpin $step
+
 	set guesstep $step
 	if { $guesstep == 0 } { set guesstep 1 }
 
 	set itsGuessNext [expr ($itsIdx + $guesstep) % [llength $itsList]]
 
-	set itsMode "stepping"
+	set itsMode "spinning"
     }
 
     public method jump {} {
@@ -243,10 +247,18 @@ itcl::class Playlist {
 		$this jump
 	    }
 	    spinning {
-		$this spin 0
+		if { $itsLastSpin == -1 } {
+		    $this spin -1
+		} else {
+		    $this spin 0
+		}
 	    }
 	    default {
-		$this spin 0
+		if { $itsLastSpin == -1 } {
+		    $this spin -1
+		} else {
+		    $this spin 0
+		}
 	    }
 	}
     }
