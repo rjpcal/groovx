@@ -68,7 +68,6 @@ public:
 
 private:
   const int itsLength;
-  const double itsSpacing;
   fixed_block<Gfx::Vec2<double> > itsElem;
 
   Gfx::Vec2<double>& elem(int i)
