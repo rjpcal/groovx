@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Wed Oct 20 18:02:31 1999
+// written: Tue Nov 16 14:42:23 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,10 @@
 #include "poslist.h"
 #include "grobj.h"
 #include "position.h"
+#include "reader.h"
+#include "readutils.h"
+#include "writer.h"
+#include "writeutils.h"
 
 #define NO_TRACE
 #include "trace.h"
@@ -36,6 +40,68 @@
 
 namespace {
   const string ioTag = "Trial";
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// Trial::Response member functions
+//
+///////////////////////////////////////////////////////////////////////
+
+Value* Trial::Response::clone() const {
+DOTRACE("Trial::Response::clone");
+  return new Response(*this); 
+}
+
+Value::Type Trial::Response::getNativeType() const {
+DOTRACE("Trial::Response::getNativeType");
+  return Value::UNKNOWN;
+}
+
+const char* Trial::Response::getNativeTypeName() const {
+DOTRACE("Trial::Response::getNativeTypeName");
+  return "Trial::Response";
+}
+
+void Trial::Response::printTo(ostream& os) const {
+DOTRACE("Trial::Response::printTo");
+  os << itsVal << " " << itsMsec; 
+}
+
+void Trial::Response::scanFrom(istream& is) {
+DOTRACE("Trial::Response::scanFrom");
+  is >> itsVal >> itsMsec;
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// Trial::IdPair member functions
+//
+///////////////////////////////////////////////////////////////////////
+
+Value* Trial::IdPair::clone() const {
+DOTRACE("Trial::IdPair::clone");
+  return new IdPair(*this); 
+}
+
+Value::Type Trial::IdPair::getNativeType() const {
+DOTRACE("Trial::IdPair::getNativeType");
+  return Value::UNKNOWN;
+}
+
+const char* Trial::IdPair::getNativeTypeName() const {
+DOTRACE("Trial::IdPair::getNativeTypeName");
+  return "Trial::IdPair";
+}
+
+void Trial::IdPair::printTo(ostream& os) const {
+DOTRACE("Trial::IdPair::printTo");
+  os << objid << " " << posid;
+}
+
+void Trial::IdPair::scanFrom(istream& is) {
+DOTRACE("Trial::IdPair::scanFrom");
+  is >> objid >> posid;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -157,6 +223,33 @@ int Trial::charCount() const {
 	 + gCharCount<int>(itsThId) + 1;
   return (count + 1);// fudge factor (1)
 }					
+
+void Trial::readFrom(Reader* reader) {
+DOTRACE("Trial::readFrom");
+  reader->readValue("type", itsType);
+  reader->readValue("rhId", itsRhId);
+  reader->readValue("thId", itsThId);
+
+  itsResponses.clear();
+  ReadUtils::readValueObjSeq(reader, "responses",
+									  back_inserter(itsResponses), (Response*) 0);
+
+  itsIdPairs.clear();
+  ReadUtils::readValueObjSeq(reader, "idPairs",
+									  back_inserter(itsIdPairs), (IdPair*) 0);
+}
+
+void Trial::writeTo(Writer* writer) const {
+DOTRACE("Trial::writeTo");
+  writer->writeValue("type", itsType);
+  writer->writeValue("rhId", itsRhId);
+  writer->writeValue("thId", itsThId);
+
+  WriteUtils::writeValueObjSeq(writer, "responses",
+										 itsResponses.begin(), itsResponses.end());
+  WriteUtils::writeValueObjSeq(writer, "idPairs",
+										 itsIdPairs.begin(), itsIdPairs.end());
+}
 
 int Trial::readFromObjidsOnly(istream &is, int offset) {
 DOTRACE("Trial::readFromObjidsOnly");
