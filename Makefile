@@ -131,119 +131,121 @@ LIBRARIES = \
 #
 #-------------------------------------------------------------------------
 
-GRSH_STATIC_OBJS = \
-	$(ARCH)/bitmap.do \
-	$(ARCH)/bitmaprep.do \
-	$(ARCH)/face.do \
-	$(ARCH)/fish.do \
-	$(ARCH)/fixpt.do \
-	$(ARCH)/gabor.do \
-	$(ARCH)/glbitmap.do \
-	$(ARCH)/glcanvas.do \
-	$(ARCH)/glbmaprenderer.do \
-	$(ARCH)/grobj.do \
-	$(ARCH)/grshAppInit.do \
-	$(ARCH)/gtext.do \
-	$(ARCH)/house.do \
-	$(ARCH)/jitter.do \
-	$(ARCH)/maskhatch.do \
-	$(ARCH)/morphyface.do \
-	$(ARCH)/objtogl.do \
-	$(ARCH)/position.do \
-	$(ARCH)/tclgl.do \
-	$(ARCH)/tlistwidget.do \
-	$(ARCH)/toglconfig.do \
-	$(ARCH)/xbitmap.do \
-	$(ARCH)/xbmaprenderer.do \
-
+# directories for object files
+GRSH = $(ARCH)
 UTIL = util/$(ARCH)
 
+GRSH_STATIC_OBJS = \
+	$(GRSH)/bitmap.do \
+	$(GRSH)/bitmaprep.do \
+	$(GRSH)/face.do \
+	$(GRSH)/fish.do \
+	$(GRSH)/fixpt.do \
+	$(GRSH)/gabor.do \
+	$(GRSH)/glbitmap.do \
+	$(GRSH)/glcanvas.do \
+	$(GRSH)/glbmaprenderer.do \
+	$(GRSH)/grobj.do \
+	$(GRSH)/grshAppInit.do \
+	$(GRSH)/gtext.do \
+	$(GRSH)/house.do \
+	$(GRSH)/jitter.do \
+	$(GRSH)/maskhatch.do \
+	$(GRSH)/morphyface.do \
+	$(GRSH)/objtogl.do \
+	$(GRSH)/position.do \
+	$(GRSH)/tclgl.do \
+	$(GRSH)/tlistwidget.do \
+	$(GRSH)/toglconfig.do \
+	$(GRSH)/xbitmap.do \
+	$(GRSH)/xbmaprenderer.do \
+
 GRSH_DYNAMIC_OBJS = \
-	$(ARCH)/application.do \
-	$(ARCH)/asciistreamreader.do \
-	$(ARCH)/asciistreamwriter.do \
-	$(ARCH)/bitmaptcl.do \
-	$(ARCH)/block.do \
-	$(ARCH)/blocklist.do \
-	$(ARCH)/blocktcl.do \
-	$(ARCH)/bmaprenderer.do \
-	$(ARCH)/canvas.do \
-	$(ARCH)/cloneface.do \
-	$(ARCH)/demangle.do \
+	$(GRSH)/application.do \
+	$(GRSH)/asciistreamreader.do \
+	$(GRSH)/asciistreamwriter.do \
+	$(GRSH)/bitmaptcl.do \
+	$(GRSH)/block.do \
+	$(GRSH)/blocklist.do \
+	$(GRSH)/blocktcl.do \
+	$(GRSH)/bmaprenderer.do \
+	$(GRSH)/canvas.do \
+	$(GRSH)/cloneface.do \
+	$(GRSH)/demangle.do \
 	$(UTIL)/error.do \
-	$(ARCH)/eventresponsehdlr.do \
-	$(ARCH)/experiment.do \
-	$(ARCH)/exptdriver.do \
-	$(ARCH)/expttcl.do \
-	$(ARCH)/expttesttcl.do \
-	$(ARCH)/facetcl.do \
-	$(ARCH)/factory.do \
-	$(ARCH)/fishtcl.do \
-	$(ARCH)/fixpttcl.do \
-	$(ARCH)/gabortcl.do \
-	$(ARCH)/grobjtcl.do \
-	$(ARCH)/grshapp.do \
-	$(ARCH)/gtexttcl.do \
-	$(ARCH)/housetcl.do \
-	$(ARCH)/io.do \
-	$(ARCH)/iofactory.do \
-	$(ARCH)/iomgr.do \
-	$(ARCH)/ioptrlist.do \
-	$(ARCH)/iostl.do \
-	$(ARCH)/ioutils.do \
-	$(ARCH)/jittertcl.do \
-	$(ARCH)/kbdresponsehdlr.do \
-	$(ARCH)/masktcl.do \
-	$(ARCH)/morphyfacetcl.do \
-	$(ARCH)/nullresponsehdlr.do \
-	$(ARCH)/objlist.do \
-	$(ARCH)/objlisttcl.do \
-	$(ARCH)/observable.do \
-	$(ARCH)/observer.do \
-	$(ARCH)/pbm.do \
-	$(ARCH)/positiontcl.do \
-	$(ARCH)/poslist.do \
-	$(ARCH)/poslisttcl.do \
-	$(ARCH)/property.do \
-	$(ARCH)/reader.do \
-	$(ARCH)/readutils.do \
-	$(ARCH)/responsehandler.do \
-	$(ARCH)/rhlist.do \
-	$(ARCH)/rhtcl.do \
-	$(ARCH)/sound.do \
-	$(ARCH)/soundlist.do \
-	$(ARCH)/soundtcl.do \
-	$(ARCH)/subject.do \
-	$(ARCH)/subjecttcl.do \
-	$(ARCH)/system.do \
-	$(ARCH)/thlist.do \
-	$(ARCH)/thtcl.do \
-	$(ARCH)/timinghandler.do \
-	$(ARCH)/timinghdlr.do \
-	$(ARCH)/tlist.do \
-	$(ARCH)/tlisttcl.do \
-	$(ARCH)/tlistutils.do \
+	$(GRSH)/eventresponsehdlr.do \
+	$(GRSH)/experiment.do \
+	$(GRSH)/exptdriver.do \
+	$(GRSH)/expttcl.do \
+	$(GRSH)/expttesttcl.do \
+	$(GRSH)/facetcl.do \
+	$(GRSH)/factory.do \
+	$(GRSH)/fishtcl.do \
+	$(GRSH)/fixpttcl.do \
+	$(GRSH)/gabortcl.do \
+	$(GRSH)/grobjtcl.do \
+	$(GRSH)/grshapp.do \
+	$(GRSH)/gtexttcl.do \
+	$(GRSH)/housetcl.do \
+	$(GRSH)/io.do \
+	$(GRSH)/iofactory.do \
+	$(GRSH)/iomgr.do \
+	$(GRSH)/ioptrlist.do \
+	$(GRSH)/iostl.do \
+	$(GRSH)/ioutils.do \
+	$(GRSH)/jittertcl.do \
+	$(GRSH)/kbdresponsehdlr.do \
+	$(GRSH)/masktcl.do \
+	$(GRSH)/morphyfacetcl.do \
+	$(GRSH)/nullresponsehdlr.do \
+	$(GRSH)/objlist.do \
+	$(GRSH)/objlisttcl.do \
+	$(GRSH)/observable.do \
+	$(GRSH)/observer.do \
+	$(GRSH)/pbm.do \
+	$(GRSH)/positiontcl.do \
+	$(GRSH)/poslist.do \
+	$(GRSH)/poslisttcl.do \
+	$(GRSH)/property.do \
+	$(GRSH)/reader.do \
+	$(GRSH)/readutils.do \
+	$(GRSH)/responsehandler.do \
+	$(GRSH)/rhlist.do \
+	$(GRSH)/rhtcl.do \
+	$(GRSH)/sound.do \
+	$(GRSH)/soundlist.do \
+	$(GRSH)/soundtcl.do \
+	$(GRSH)/subject.do \
+	$(GRSH)/subjecttcl.do \
+	$(GRSH)/system.do \
+	$(GRSH)/thlist.do \
+	$(GRSH)/thtcl.do \
+	$(GRSH)/timinghandler.do \
+	$(GRSH)/timinghdlr.do \
+	$(GRSH)/tlist.do \
+	$(GRSH)/tlisttcl.do \
+	$(GRSH)/tlistutils.do \
 	$(UTIL)/trace.do \
-	$(ARCH)/trial.do \
-	$(ARCH)/trialevent.do \
-	$(ARCH)/trialtcl.do \
-	$(ARCH)/value.do \
-	$(ARCH)/voidptrlist.do \
-	$(ARCH)/widget.do \
-	$(ARCH)/writer.do \
-	$(ARCH)/writeutils.do \
+	$(GRSH)/trial.do \
+	$(GRSH)/trialevent.do \
+	$(GRSH)/trialtcl.do \
+	$(GRSH)/value.do \
+	$(GRSH)/voidptrlist.do \
+	$(GRSH)/widget.do \
+	$(GRSH)/writer.do \
+	$(GRSH)/writeutils.do \
 
 TCLWORKS_OBJS = \
-	$(ARCH)/listpkg.do \
-	$(ARCH)/misctcl.do \
-	$(ARCH)/stringifycmd.do \
-	$(ARCH)/tclcmd.do \
-	$(ARCH)/tcldlist.do \
-	$(ARCH)/tclerror.do \
-	$(ARCH)/tclitempkg.do \
-	$(ARCH)/tclpkg.do \
-	$(ARCH)/tclvalue.do \
-	$(ARCH)/tclveccmds.do \
+	$(GRSH)/listpkg.do \
+	$(GRSH)/misctcl.do \
+	$(GRSH)/stringifycmd.do \
+	$(GRSH)/tclcmd.do \
+	$(GRSH)/tcldlist.do \
+	$(GRSH)/tclerror.do \
+	$(GRSH)/tclitempkg.do \
+	$(GRSH)/tclpkg.do \
+	$(GRSH)/tclvalue.do \
+	$(GRSH)/tclveccmds.do \
 
 
 #-------------------------------------------------------------------------
@@ -257,10 +259,10 @@ COMMON_OPTIONS = $(ARCH_FLAGS) $(INCLUDE_DIRS)
 ALL_PROD_OPTIONS = $(COMMON_OPTIONS) $(PROD_OPTIM) $(PROD_OPTIONS) 
 ALL_DEBUG_OPTIONS = $(COMMON_OPTIONS) $(DEBUG_OPTIM) $(DEBUG_OPTIONS) $(DEBUG_FLAGS)
 
-$(ARCH)/%.o : %.cc
+$(GRSH)/%.o : %.cc
 	$(CC) -c $< -o $@ $(ALL_PROD_OPTIONS)
 
-$(ARCH)/%.do : %.cc;
+$(GRSH)/%.do : %.cc;
 	$(CC) -c $< -o $@ $(ALL_DEBUG_OPTIONS)
 
 #-------------------------------------------------------------------------
@@ -271,8 +273,8 @@ $(ARCH)/%.do : %.cc;
 
 DEBUG_TARGET = testsh
 
-DEBUG_LIBVISX = $(ARCH)/libvisx.d.$(SHLIB_EXT)
-DEBUG_LIBTCLWORKS = $(ARCH)/libtclworks.d.$(SHLIB_EXT)
+DEBUG_LIBVISX = $(GRSH)/libvisx.d.$(SHLIB_EXT)
+DEBUG_LIBTCLWORKS = $(GRSH)/libtclworks.d.$(SHLIB_EXT)
 
 DEBUG_FLAGS = -DPROF -DASSERT -DINVARIANT -DTEST
 
@@ -288,15 +290,15 @@ DEBUG_TCLWORKS_OBJS = $(TCLWORKS_OBJS)
 
 PROD_TARGET = grsh0.7a2
 
-PROD_LIBVISX = $(ARCH)/libvisx.$(SHLIB_EXT)
-PROD_LIBTCLWORKS = $(ARCH)/libtclworks.$(SHLIB_EXT)
+PROD_LIBVISX = $(GRSH)/libvisx.$(SHLIB_EXT)
+PROD_LIBTCLWORKS = $(GRSH)/libtclworks.$(SHLIB_EXT)
 
 # Note: exception handling does not work with shared libraries in the
 # current version of g++ (2.95.1), so on irix6 we must make the
 # libvisx library as an archive library.
 ifeq ($(ARCH),irix6)
-	PROD_LIBVISX = $(ARCH)/libvisx.$(STATLIB_EXT)
-	PROD_LIBTCLWORKS = $(ARCH)/libtclworks.$(STATLIB_EXT)
+	PROD_LIBVISX = $(GRSH)/libvisx.$(STATLIB_EXT)
+	PROD_LIBTCLWORKS = $(GRSH)/libtclworks.$(STATLIB_EXT)
 endif
 
 PROD_GRSH_STATIC_OBJS = $(DEBUG_GRSH_STATIC_OBJS:.do=.o)
@@ -811,112 +813,112 @@ XBMAPRENDERER_CC = $(XBMAPRENDERER_H) $(CANVAS_H) $(ERROR_H) $(POINT_H) \
 #
 #-------------------------------------------------------------------------
 
-$(ARCH)/application.*[ol]:       $(APPLICATION_CC)
-$(ARCH)/asciistreamreader.*[ol]: $(ASCIISTREAMREADER_CC)
-$(ARCH)/asciistreamwriter.*[ol]: $(ASCIISTREAMWRITER_CC)
-$(ARCH)/bitmap.*[ol]:            $(BITMAP_CC)
-$(ARCH)/bitmaprep.*[ol]:         $(BITMAPREP_CC)
-$(ARCH)/bitmaptcl.*[ol]:         $(BITMAPTCL_CC)
-$(ARCH)/block.*[ol]:             $(BLOCK_CC)
-$(ARCH)/blocklist.*[ol]:         $(BLOCKLIST_CC)
-$(ARCH)/blocktcl.*[ol]:          $(BLOCKTCL_CC)
-$(ARCH)/bmaprenderer.*[ol]:      $(BMAPRENDERER_CC)
-$(ARCH)/canvas.*[ol]:            $(CANVAS_CC)
-$(ARCH)/cloneface.*[ol]:         $(CLONEFACE_CC)
-$(ARCH)/demangle.*[ol]:          $(DEMANGLE_CC)
+$(GRSH)/application.*[ol]:       $(APPLICATION_CC)
+$(GRSH)/asciistreamreader.*[ol]: $(ASCIISTREAMREADER_CC)
+$(GRSH)/asciistreamwriter.*[ol]: $(ASCIISTREAMWRITER_CC)
+$(GRSH)/bitmap.*[ol]:            $(BITMAP_CC)
+$(GRSH)/bitmaprep.*[ol]:         $(BITMAPREP_CC)
+$(GRSH)/bitmaptcl.*[ol]:         $(BITMAPTCL_CC)
+$(GRSH)/block.*[ol]:             $(BLOCK_CC)
+$(GRSH)/blocklist.*[ol]:         $(BLOCKLIST_CC)
+$(GRSH)/blocktcl.*[ol]:          $(BLOCKTCL_CC)
+$(GRSH)/bmaprenderer.*[ol]:      $(BMAPRENDERER_CC)
+$(GRSH)/canvas.*[ol]:            $(CANVAS_CC)
+$(GRSH)/cloneface.*[ol]:         $(CLONEFACE_CC)
+$(GRSH)/demangle.*[ol]:          $(DEMANGLE_CC)
 $(UTIL)/error.*[ol]:             $(ERROR_CC)
-$(ARCH)/eventresponsehdlr.*[ol]: $(EVENTRESPONSEHDLR_CC)
-$(ARCH)/experiment.*[ol]:        $(EXPERIMENT_CC)
-$(ARCH)/exptdriver.*[ol]:        $(EXPTDRIVER_CC)
-$(ARCH)/expttcl.*[ol]:           $(EXPTTCL_CC)
-$(ARCH)/expttesttcl.*[ol]:       $(EXPTTESTTCL_CC)
-$(ARCH)/face.*[ol]:              $(FACE_CC)
-$(ARCH)/facetcl.*[ol]:           $(FACETCL_CC)
-$(ARCH)/factory.*[ol]:           $(FACTORY_CC)
-$(ARCH)/fish.*[ol]:              $(FISH_CC)
-$(ARCH)/fishtcl.*[ol]:           $(FISHTCL_CC)
-$(ARCH)/fixpt.*[ol]:             $(FIXPT_CC)
-$(ARCH)/fixpttcl.*[ol]:          $(FIXPTTCL_CC)
-$(ARCH)/gabor.*[ol]:             $(GABOR_CC)
-$(ARCH)/gabortcl.*[ol]:          $(GABORTCL_CC)
-$(ARCH)/glbitmap.*[ol]:          $(GLBITMAP_CC)
-$(ARCH)/glbmaprenderer.*[ol]:    $(GLBMAPRENDERER_CC)
-$(ARCH)/glcanvas.*[ol]:          $(GLCANVAS_CC)
-$(ARCH)/grobj.*[ol]:             $(GROBJ_CC)
-$(ARCH)/grobjtcl.*[ol]:          $(GROBJTCL_CC)
-$(ARCH)/grshapp.*[ol]:           $(GRSHAPP_CC)
-$(ARCH)/grshAppInit.*[ol]:       $(GRSHAPPINIT_CC)
-$(ARCH)/gtext.*[ol]:             $(GTEXT_CC)
-$(ARCH)/gtexttcl.*[ol]:          $(GTEXTTCL_CC)
-$(ARCH)/house.*[ol]:             $(HOUSE_CC)
-$(ARCH)/housetcl.*[ol]:          $(HOUSETCL_CC)
-$(ARCH)/io.*[ol]:                $(IO_CC)
-$(ARCH)/iofactory.*[ol]:         $(IOFACTORY_CC)
-$(ARCH)/iomgr.*[ol]:             $(IOMGR_CC)
-$(ARCH)/ioptrlist.*[ol]:         $(IOPTRLIST_CC)
-$(ARCH)/iostl.*[ol]:             $(IOSTL_CC)
-$(ARCH)/ioutils.*[ol]:           $(IOUTILS_CC)
-$(ARCH)/jitter.*[ol]:            $(JITTER_CC)
-$(ARCH)/jittertcl.*[ol]:         $(JITTERTCL_CC)
-$(ARCH)/kbdresponsehdlr.*[ol]:   $(KBDRESPONSEHDLR_CC)
-$(ARCH)/listpkg.*[ol]:           $(LISTPKG_CC)
-$(ARCH)/maskhatch.*[ol]:         $(MASKHATCH_CC)
-$(ARCH)/masktcl.*[ol]:           $(MASKTCL_CC)
-$(ARCH)/misctcl.*[ol]:           $(MISCTCL_CC)
-$(ARCH)/morphyface.*[ol]:        $(MORPHYFACE_CC)
-$(ARCH)/morphyfacetcl.*[ol]:     $(MORPHYFACETCL_CC)
-$(ARCH)/nullresponsehdlr.*[ol]:  $(NULLRESPONSEHDLR_CC)
-$(ARCH)/objlist.*[ol]:           $(OBJLIST_CC)
-$(ARCH)/objlisttcl.*[ol]:        $(OBJLISTTCL_CC)
-$(ARCH)/objtogl.*[ol]:           $(OBJTOGL_CC)
-$(ARCH)/observable.*[ol]:        $(OBSERVABLE_CC)
-$(ARCH)/observer.*[ol]:          $(OBSERVER_CC)
-$(ARCH)/pbm.*[ol]:               $(PBM_CC)
-$(ARCH)/position.*[ol]:          $(POSITION_CC)
-$(ARCH)/positiontcl.*[ol]:       $(POSITIONTCL_CC)
-$(ARCH)/poslist.*[ol]:           $(POSLIST_CC)
-$(ARCH)/poslisttcl.*[ol]:        $(POSLISTTCL_CC)
-$(ARCH)/property.*[ol]:          $(PROPERTY_CC)
-$(ARCH)/reader.*[ol]:            $(READER_CC)
-$(ARCH)/readutils.*[ol]:         $(READUTILS_CC)
-$(ARCH)/responsehandler.*[ol]:   $(RESPONSEHANDLER_CC)
-$(ARCH)/rhlist.*[ol]:            $(RHLIST_CC)
-$(ARCH)/rhtcl.*[ol]:             $(RHTCL_CC)
-$(ARCH)/sound.*[ol]:             $(SOUND_CC)
-$(ARCH)/soundlist.*[ol]:         $(SOUNDLIST_CC)
-$(ARCH)/soundtcl.*[ol]:          $(SOUNDTCL_CC)
-$(ARCH)/stringifycmd.*[ol]:      $(STRINGIFYCMD_CC)
-$(ARCH)/subject.*[ol]:           $(SUBJECT_CC)
-$(ARCH)/subjecttcl.*[ol]:        $(SUBJECTTCL_CC)
-$(ARCH)/system.*[ol]:            $(SYSTEM_CC)
-$(ARCH)/tcldlist.*[ol]:          $(TCLDLIST_CC)
-$(ARCH)/tclcmd.*[ol]:            $(TCLCMD_CC)
-$(ARCH)/tclerror.*[ol]:          $(TCLERROR_CC)
-$(ARCH)/tclgl.*[ol]:             $(TCLGL_CC)
-$(ARCH)/tclitempkg.*[ol]:        $(TCLITEMPKG_CC)
-$(ARCH)/tclpkg.*[ol]:            $(TCLPKG_CC)
-$(ARCH)/tclvalue.*[ol]:          $(TCLVALUE_CC)
-$(ARCH)/tclveccmds.*[ol]:        $(TCLVECCMDS_CC)
-$(ARCH)/thlist.*[ol]:            $(THLIST_CC)
-$(ARCH)/thtcl.*[ol]:             $(THTCL_CC)
-$(ARCH)/timinghdlr.*[ol]:        $(TIMINGHDLR_CC)
-$(ARCH)/timinghandler.*[ol]:     $(TIMINGHANDLER_CC)
-$(ARCH)/tlist.*[ol]:             $(TLIST_CC)
-$(ARCH)/tlisttcl.*[ol]:          $(TLISTTCL_CC)
-$(ARCH)/tlistutils.*[ol]:        $(TLISTUTILS_CC)
-$(ARCH)/tlistwidget.*[ol]:       $(TLISTWIDGET_CC)
-$(ARCH)/toglconfig.*[ol]:        $(TOGLCONFIG_CC)
+$(GRSH)/eventresponsehdlr.*[ol]: $(EVENTRESPONSEHDLR_CC)
+$(GRSH)/experiment.*[ol]:        $(EXPERIMENT_CC)
+$(GRSH)/exptdriver.*[ol]:        $(EXPTDRIVER_CC)
+$(GRSH)/expttcl.*[ol]:           $(EXPTTCL_CC)
+$(GRSH)/expttesttcl.*[ol]:       $(EXPTTESTTCL_CC)
+$(GRSH)/face.*[ol]:              $(FACE_CC)
+$(GRSH)/facetcl.*[ol]:           $(FACETCL_CC)
+$(GRSH)/factory.*[ol]:           $(FACTORY_CC)
+$(GRSH)/fish.*[ol]:              $(FISH_CC)
+$(GRSH)/fishtcl.*[ol]:           $(FISHTCL_CC)
+$(GRSH)/fixpt.*[ol]:             $(FIXPT_CC)
+$(GRSH)/fixpttcl.*[ol]:          $(FIXPTTCL_CC)
+$(GRSH)/gabor.*[ol]:             $(GABOR_CC)
+$(GRSH)/gabortcl.*[ol]:          $(GABORTCL_CC)
+$(GRSH)/glbitmap.*[ol]:          $(GLBITMAP_CC)
+$(GRSH)/glbmaprenderer.*[ol]:    $(GLBMAPRENDERER_CC)
+$(GRSH)/glcanvas.*[ol]:          $(GLCANVAS_CC)
+$(GRSH)/grobj.*[ol]:             $(GROBJ_CC)
+$(GRSH)/grobjtcl.*[ol]:          $(GROBJTCL_CC)
+$(GRSH)/grshapp.*[ol]:           $(GRSHAPP_CC)
+$(GRSH)/grshAppInit.*[ol]:       $(GRSHAPPINIT_CC)
+$(GRSH)/gtext.*[ol]:             $(GTEXT_CC)
+$(GRSH)/gtexttcl.*[ol]:          $(GTEXTTCL_CC)
+$(GRSH)/house.*[ol]:             $(HOUSE_CC)
+$(GRSH)/housetcl.*[ol]:          $(HOUSETCL_CC)
+$(GRSH)/io.*[ol]:                $(IO_CC)
+$(GRSH)/iofactory.*[ol]:         $(IOFACTORY_CC)
+$(GRSH)/iomgr.*[ol]:             $(IOMGR_CC)
+$(GRSH)/ioptrlist.*[ol]:         $(IOPTRLIST_CC)
+$(GRSH)/iostl.*[ol]:             $(IOSTL_CC)
+$(GRSH)/ioutils.*[ol]:           $(IOUTILS_CC)
+$(GRSH)/jitter.*[ol]:            $(JITTER_CC)
+$(GRSH)/jittertcl.*[ol]:         $(JITTERTCL_CC)
+$(GRSH)/kbdresponsehdlr.*[ol]:   $(KBDRESPONSEHDLR_CC)
+$(GRSH)/listpkg.*[ol]:           $(LISTPKG_CC)
+$(GRSH)/maskhatch.*[ol]:         $(MASKHATCH_CC)
+$(GRSH)/masktcl.*[ol]:           $(MASKTCL_CC)
+$(GRSH)/misctcl.*[ol]:           $(MISCTCL_CC)
+$(GRSH)/morphyface.*[ol]:        $(MORPHYFACE_CC)
+$(GRSH)/morphyfacetcl.*[ol]:     $(MORPHYFACETCL_CC)
+$(GRSH)/nullresponsehdlr.*[ol]:  $(NULLRESPONSEHDLR_CC)
+$(GRSH)/objlist.*[ol]:           $(OBJLIST_CC)
+$(GRSH)/objlisttcl.*[ol]:        $(OBJLISTTCL_CC)
+$(GRSH)/objtogl.*[ol]:           $(OBJTOGL_CC)
+$(GRSH)/observable.*[ol]:        $(OBSERVABLE_CC)
+$(GRSH)/observer.*[ol]:          $(OBSERVER_CC)
+$(GRSH)/pbm.*[ol]:               $(PBM_CC)
+$(GRSH)/position.*[ol]:          $(POSITION_CC)
+$(GRSH)/positiontcl.*[ol]:       $(POSITIONTCL_CC)
+$(GRSH)/poslist.*[ol]:           $(POSLIST_CC)
+$(GRSH)/poslisttcl.*[ol]:        $(POSLISTTCL_CC)
+$(GRSH)/property.*[ol]:          $(PROPERTY_CC)
+$(GRSH)/reader.*[ol]:            $(READER_CC)
+$(GRSH)/readutils.*[ol]:         $(READUTILS_CC)
+$(GRSH)/responsehandler.*[ol]:   $(RESPONSEHANDLER_CC)
+$(GRSH)/rhlist.*[ol]:            $(RHLIST_CC)
+$(GRSH)/rhtcl.*[ol]:             $(RHTCL_CC)
+$(GRSH)/sound.*[ol]:             $(SOUND_CC)
+$(GRSH)/soundlist.*[ol]:         $(SOUNDLIST_CC)
+$(GRSH)/soundtcl.*[ol]:          $(SOUNDTCL_CC)
+$(GRSH)/stringifycmd.*[ol]:      $(STRINGIFYCMD_CC)
+$(GRSH)/subject.*[ol]:           $(SUBJECT_CC)
+$(GRSH)/subjecttcl.*[ol]:        $(SUBJECTTCL_CC)
+$(GRSH)/system.*[ol]:            $(SYSTEM_CC)
+$(GRSH)/tcldlist.*[ol]:          $(TCLDLIST_CC)
+$(GRSH)/tclcmd.*[ol]:            $(TCLCMD_CC)
+$(GRSH)/tclerror.*[ol]:          $(TCLERROR_CC)
+$(GRSH)/tclgl.*[ol]:             $(TCLGL_CC)
+$(GRSH)/tclitempkg.*[ol]:        $(TCLITEMPKG_CC)
+$(GRSH)/tclpkg.*[ol]:            $(TCLPKG_CC)
+$(GRSH)/tclvalue.*[ol]:          $(TCLVALUE_CC)
+$(GRSH)/tclveccmds.*[ol]:        $(TCLVECCMDS_CC)
+$(GRSH)/thlist.*[ol]:            $(THLIST_CC)
+$(GRSH)/thtcl.*[ol]:             $(THTCL_CC)
+$(GRSH)/timinghdlr.*[ol]:        $(TIMINGHDLR_CC)
+$(GRSH)/timinghandler.*[ol]:     $(TIMINGHANDLER_CC)
+$(GRSH)/tlist.*[ol]:             $(TLIST_CC)
+$(GRSH)/tlisttcl.*[ol]:          $(TLISTTCL_CC)
+$(GRSH)/tlistutils.*[ol]:        $(TLISTUTILS_CC)
+$(GRSH)/tlistwidget.*[ol]:       $(TLISTWIDGET_CC)
+$(GRSH)/toglconfig.*[ol]:        $(TOGLCONFIG_CC)
 $(UTIL)/trace.*[ol]:             $(TRACE_CC)
-$(ARCH)/trial.*[ol]:             $(TRIAL_CC)
-$(ARCH)/trialevent.*[ol]:        $(TRIALEVENT_CC)
-$(ARCH)/trialtcl.*[ol]:          $(TRIALTCL_CC)
-$(ARCH)/value.*[ol]:             $(VALUE_CC)
-$(ARCH)/voidptrlist.*[ol]:       $(VOIDPTRLIST_CC)
-$(ARCH)/widget.*[ol]:            $(WIDGET_CC)
-$(ARCH)/writer.*[ol]:            $(WRITER_CC)
-$(ARCH)/writeutils.*[ol]:        $(WRITEUTILS_CC)
-$(ARCH)/xbitmap.*[ol]:           $(XBITMAP_CC)
-$(ARCH)/xbmaprenderer.*[ol]:     $(XBMAPRENDERER_CC)
+$(GRSH)/trial.*[ol]:             $(TRIAL_CC)
+$(GRSH)/trialevent.*[ol]:        $(TRIALEVENT_CC)
+$(GRSH)/trialtcl.*[ol]:          $(TRIALTCL_CC)
+$(GRSH)/value.*[ol]:             $(VALUE_CC)
+$(GRSH)/voidptrlist.*[ol]:       $(VOIDPTRLIST_CC)
+$(GRSH)/widget.*[ol]:            $(WIDGET_CC)
+$(GRSH)/writer.*[ol]:            $(WRITER_CC)
+$(GRSH)/writeutils.*[ol]:        $(WRITEUTILS_CC)
+$(GRSH)/xbitmap.*[ol]:           $(XBITMAP_CC)
+$(GRSH)/xbmaprenderer.*[ol]:     $(XBMAPRENDERER_CC)
 
 #-------------------------------------------------------------------------
 #
