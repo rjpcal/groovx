@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Fri Jun 15 06:26:41 2001
+// written: Fri Jun 15 06:55:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -201,10 +201,9 @@ public:
       return *itsWidget;
     }
 
-  void setWidget(Util::UID widg)
-    {
-      itsWidget = WeakRef<GWT::Widget>(widg);
-    }
+  Util::WeakRef<GWT::Widget> widget() const       { return itsWidget; }
+
+  void setWidget(Util::WeakRef<GWT::Widget> widg) { itsWidget = widg; }
 
   GWT::Canvas& getCanvas()
     { return getWidget().getCanvas(); }
@@ -852,7 +851,10 @@ Util::ErrorHandler& ExptDriver::getErrorHandler()
 GWT::Widget& ExptDriver::getWidget()
   { return itsImpl->getWidget(); }
 
-void ExptDriver::setWidget(Util::UID widg)
+Util::WeakRef<GWT::Widget> ExptDriver::widget() const
+  { return itsImpl->widget(); }
+
+void ExptDriver::setWidget(Util::WeakRef<GWT::Widget> widg)
   { itsImpl->setWidget(widg); }
 
 GWT::Canvas& ExptDriver::getCanvas()

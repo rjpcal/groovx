@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Nov-98
-// written: Fri Jun 15 06:31:37 2001
+// written: Fri Jun 15 06:54:39 2001
 // $Id$
 //
 // This package provides functionality that controlling the display,
@@ -429,7 +429,7 @@ public:
 
     setCurrentTogl(WeakRef<Toglet>(Toglet::make(interp)));
 
-    TclPkg::eval("Expt::setWidget [Toglet::currentToglet]");
+    TclPkg::eval("Expt::widget [Toglet::currentToglet]");
   }
 };
 

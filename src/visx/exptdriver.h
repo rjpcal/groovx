@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu Jun 14 14:57:24 2001
+// written: Fri Jun 15 06:52:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,7 +101,8 @@ public:
   virtual Util::ErrorHandler& getErrorHandler();
 
   virtual GWT::Widget& getWidget();
-  void setWidget(Util::UID widg);
+  Util::WeakRef<GWT::Widget> widget() const;
+  void setWidget(Util::WeakRef<GWT::Widget> widg);
 
   virtual GWT::Canvas& getCanvas();
 

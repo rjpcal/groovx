@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Thu Jun 14 15:01:10 2001
+// written: Fri Jun 15 06:54:24 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -251,9 +251,9 @@ ExptTcl::ExptPkg::ExptPkg(Tcl_Interp* interp) :
   declareCAction("clear", &ExptDriver::edClearExpt);
   declareCGetter("currentBlock", &ExptDriver::currentBlock);
   declareCAction("reset", &ExptDriver::edResetExpt);
-  declareCSetter("setWidget", &ExptDriver::setWidget);
   declareCAction("stop", &ExptDriver::edHaltExpt);
   declareCAction("storeData", &ExptDriver::storeData);
+  declareCAttrib("widget", &ExptDriver::widget, &ExptDriver::setWidget);
 }
 
 //---------------------------------------------------------------------
