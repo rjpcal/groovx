@@ -507,7 +507,7 @@ benchmarks: $(EXECUTABLE)
 # Remove all backups, temporaries, and coredumps
 clean:
 	find . -name \*~ -exec rm -f {} \;
-	rm -f ./expt*2001.asw ./resp*2001 ./\#* ./core
+	rm -f ./expt*2002.asw ./resp*2002 ./\#* ./core
 
 # Make clean, and also remove all debug object files
 cleaner: clean
