@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Thu Sep 23 12:26:45 1999
+// written: Wed Sep 29 15:33:07 1999
 // $Id$
 //
 // This is the abstract base class for graphic objects. GrObj*'s may
@@ -128,7 +128,7 @@ public:
   // These functions write the object's state from/to an output/input
   // stream. Both functions are defined, but are no-ops for GrObj.
 
-  virtual int charCount() const = 0;
+  virtual int charCount() const;
 
 
   ///////////////
@@ -163,7 +163,7 @@ public:
   double getCenterX() const;
   double getCenterY() const;
 
-  virtual int getCategory() const = 0;
+  virtual int getCategory() const;
   // getCategory and setCategory are used to manipulate some
   // user-defined categories that can be used to classify different
   // GrObj objects.
@@ -201,7 +201,7 @@ public:
   void setCenterX(double val);
   void setCenterY(double val);
 
-  virtual void setCategory(int val) = 0;
+  virtual void setCategory(int val);
   
   void setRenderMode(GrObjRenderMode mode);
   void setUnRenderMode(GrObjRenderMode mode);
