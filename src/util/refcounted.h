@@ -43,15 +43,14 @@ namespace Util
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Util::RefCounts is a class to hold a strong and weak ref *
- * count. This is mainly a helper class for Util::RefCounted. Its
- * purpose for existence is to allow weak ref-counting; a client who
- * wants to do weak ref-counting can get a hold of the
- * Util::RefCounted object's Util::RefCounts, and then check whether
- * the strongCount() is greater than 0 to see if the Util::RefCounted
- * object is still alive. This technique is implemented by
- * Util::SoftRef. The Util::RefCounts object will delete itself when
- * both its strong and weak counts go to 0.
+ * Util::RefCounts manages strong+weak reference counts for
+ * Util::RefCounted objects. Its main purpose is to allow weak
+ * ref-counting; a client who wants to do weak ref-counting can get a hold
+ * of the Util::RefCounted object's Util::RefCounts, and then check whether
+ * isOwnerAlive() to know whether the Util::RefCounted object is still
+ * valid. This technique is implemented by Util::SoftRef. The
+ * Util::RefCounts object will delete itself when both its strong and weak
+ * counts go to 0.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -99,16 +98,14 @@ private:
  *
  * Util::RefCounted is a reference counting base class that allows both
  * strong and weak reference counting. Util::RefCounted objects use a
- * Util::RefCounts object to keep their reference counts, so clients that
+ * Util::RefCounts object to manage their reference counts, so clients that
  * need to know if a Util::RefCounted object is still around can check the
- * strong count of its Util::RefCounts object. Finally, subclasses of
+ * isOwnerAlive() from its Util::RefCounts object. Finally, subclasses of
  * Util::RefCounted can declare themselves volatile (by calling
- * markAsVolatile()), in which case it is assumed that their lifetime
- * cannot be fully controlled by reference-counting, so clients of volatile
- * objects must use weak reference counts only. A volatile object should
- * keep maintain the lone strong reference to itself; then, when some
- * external signal requires the object to be deleted, it can achieve this
- * by releasing the long strong reference.
+ * markAsVolatile()) if their lifetime cannot be fully controlled by
+ * reference-counting; clients of such volatile objects must use weak
+ * reference counts only. No manipulation of the reference count is allowed
+ * for volatile objects; only the weak reference count may be used.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
@@ -149,32 +146,46 @@ protected:
 
 public:
   /// Increment the object's reference count.
+  /** This operation (on the strong reference count) is not permitted if
+      the object is unshareable. Unshareable objects can only have their
+      weak reference counts manipulated. */
   void incrRefCount() const;
 
-  /** Decrement the object's reference count. If this causes the
-      reference count to fall to zero or below, the pointee and the
-      pointer will be destroyed by a call to 'delete this'. */
+  /// Decrement the object's reference count.
+  /** If this causes the reference count to fall to zero or below, the
+      pointee and the pointer will be destroyed by a call to 'delete
+      this'. This operation (on the strong reference count) is not
+      permitted if the object is unshareable. Unshareable objects can only
+      have their weak reference counts manipulated. */
   void decrRefCount() const;
 
-  /** Decrement the object's reference count. Unlike decrRefCount(),
-      the object will NOT be delete'd if the reference count falls to
-      zero. */
+  /// Decrement the object's reference count, but don't delete it.
+  /** Unlike decrRefCount(), the object will NOT be delete'd if the
+      reference count falls to zero. This operation (on the strong
+      reference count) is not permitted if the object is
+      unshareable. Unshareable objects can only have their weak reference
+      counts manipulated. */
   void decrRefCountNoDelete() const;
 
-  /// Returns true if the reference count is greater than one.
+  /// Returns true if no external client has sole ownership of the object.
+  /** This may occur if either (1) the reference count is greater than one,
+      or (2) the object isNotShareable(), meaning that the object itself is
+      the only "owner". */
   bool isShared() const;
 
-  /// Returns true if the reference count is one or less.
+  /// Returns true if there is a sole external owner of the object.
+  /** This occurs if the reference count is one or less and the object is
+      shareable. */
   bool isUnshared() const;
 
-  /** Returns true if the object is not shareable for any reason.
-      This could be because its lifespan is volatile (such as objects
+  /** Returns true if the object is not shareable for any reason. This
+      could be because its lifespan is volatile (such as objects
       representing on-screen windows that can be dismissed by the
-      user). The default implementation provided by RefCounted returns
-      false. */
+      user). The default is for objects to be shareable; objects can
+      declare themselves as unshareable by calling markAsVolatile(). */
   bool isNotShareable() const;
 
-  /// Returns the object's strong+weak reference counts.
+  /// Returns the object's reference count manager.
   RefCounts* refCounts() const;
 
 
