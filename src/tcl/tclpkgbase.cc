@@ -203,6 +203,7 @@ namespace
 {
   void exportAll(Tcl::Interp& interp, const char* from)
   {
+  DOTRACE("exportAll");
     fstring cmd("namespace eval ", from, " { namespace export * }");
 
     interp.eval(cmd);
@@ -210,6 +211,7 @@ namespace
 
   void exportInto(Tcl::Interp& interp, const char* from, const char* to)
   {
+  DOTRACE("exportInto");
     fstring cmd("namespace eval ", to, " { namespace import ::");
     cmd.append(from, "::* }");
 
