@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Tue May 13 13:05:46 2003
+// written: Tue May 13 15:05:00 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -51,6 +51,31 @@ namespace Util
   class Urand;
 }
 
+template <class T>
+class Cached
+{
+public:
+  Cached(const T& v) throw() : val(v), oldval(v), changed(true) {}
+
+  operator       T&()       throw() { return val; }
+  operator const T&() const throw() { return val; }
+
+  void save()  const throw() { oldval = val; changed = false; }
+  bool ok()    const throw() { return (val == oldval) && !changed; }
+  void touch() const throw() { changed = true; }
+
+  T val;
+  mutable T oldval;
+  mutable bool changed;
+};
+
+namespace Util
+{
+  template <class T>
+  struct TypeTraits<Cached<T> > : public TypeTraits<T>
+  {};
+}
+
 /// GaborArray represents an 2-D spatial array of gabor patches.
 /** The array has manipulable spacing properties. */
 class GaborArray : public GxShapeKit
@@ -83,28 +108,34 @@ private:
 
   void dumpFrame() const;
 
-  void killCache();
+  void updateSnake() const;
+  void updateBackg() const;
+  void updateBmap() const;
   void update() const;
   bool tryPush(const Element& e) const;
   bool tooClose(const Gfx::Vec2<double>& v, int except) const;
   /// Mark inside elements and return how many there were.
   int insideElements() const;
-  void hexGridElements() const;
-  void fillElements() const;
-  void jitterElement(Util::Urand& urand) const;
+  void backgHexGrid() const;
+  void backgFill() const;
+  void backgJitter(Util::Urand& urand) const;
 
-  int itsSnakeSeed;
-  int itsFillSeed;
-  int itsThetaSeed;
-  int itsPhaseSeed;
-  int itsForegNumber;
-  double itsForegSpacing;
-  bool itsForegHidden;
-  GbVec2<int> itsSize;
-  double itsGaborPeriod;
-  double itsGaborSigma;
-  double itsGridSpacing;
-  double itsMinSpacing;
+  Cached<int> itsForegSeed;
+  Cached<int> itsForegNumber;
+  Cached<double> itsForegSpacing;
+
+  Cached<int> itsBackgSeed;
+  Cached<int> itsSizeX;
+  Cached<int> itsSizeY;
+  Cached<double> itsGridSpacing;
+  Cached<double> itsMinSpacing;
+
+  Cached<int> itsThetaSeed;
+  Cached<int> itsPhaseSeed;
+  Cached<bool> itsForegHidden;
+  Cached<double> itsGaborPeriod;
+  Cached<double> itsGaborSigma;
+
   mutable int itsTotalNumber;
   mutable fixed_block<Element> itsArray;
   mutable shared_ptr<Gfx::BmapData> itsBmap;
