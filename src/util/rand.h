@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 14:09:24 1999
-// written: Sun Aug 26 08:38:29 2001
+// written: Sat Sep  8 14:24:40 2001
 // $Id$
 //
 // The random number generator classes here are taken from _The C++
@@ -32,6 +32,11 @@ public:
   int draw() { return randx = randx*1103515245 + 12345; }
 
   double fdraw() { return abs(draw())/max(); }
+
+  double fdrawRange(double min, double max)
+  {
+    return min + fdraw() * (max-min);
+  }
 
   int operator()() { return abs(draw()); }
 };
