@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Apr 17 15:53:53 2002
-// written: Wed Apr 17 16:01:24 2002
+// written: Wed Apr 17 16:36:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -60,20 +60,21 @@ public:
   GbVec3<double> stop;
 
 private:
+  /// If itsWidth is less than zero, then we use the current default width.
   int itsWidth;
 
 public:
+  /// Get GxLine's FieldMap.
   static const FieldMap& classFields();
 
   /////////////
   // actions //
   /////////////
 
-  /// Translate, scale, and rotate.
+  /// Draw the line.
   virtual void draw(Gfx::Canvas&) const;
 
-  /** Redo most recent draw(). (This is useful if the behavior of
-      draw() changes from one call to the next.) */
+  /// Undraw the line.
   virtual void undraw(Gfx::Canvas&) const;
 
 private:
