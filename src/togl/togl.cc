@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed May 24 14:53:00 2000
+// written: Wed May 24 15:07:52 2000
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -102,9 +102,11 @@ public:
   void makeCurrent() const;
 
   static void dummyEventProc(ClientData clientData, XEvent* eventPtr);
+  static void dummyWidgetCmdDeletedProc(ClientData clientData);
 
 private:
   void eventProc(XEvent* eventPtr);
+  void widgetCmdDeletedProc();
 
   int makeWindowExist();
 
@@ -202,7 +204,6 @@ static int get_free_color_cells( Display *display, int screen,
                                  Colormap colormap);
 static void free_default_color_cells( Display *display, Colormap colormap);
 #endif
-static void ToglCmdDeletedProc( ClientData );
 
 
 
@@ -824,68 +825,6 @@ DOTRACE("<togl.cc>::SetupOverlay");
   XSetWMColormapWindows( dpy, togl->itsOverlayWindow, &togl->itsOverlayWindow, 1 );
 
   return TCL_OK;
-}
-
-
-
-/*
- * ToglCmdDeletedProc
- *
- *      This procedure is invoked when a widget command is deleted.  If
- *      the widget isn't already in the process of being destroyed,
- *      this command destroys it.
- *
- * Results:
- *      None.
- *
- * Side effects:
- *      The widget is destroyed.
- *
- *----------------------------------------------------------------------
- */ 
-static void ToglCmdDeletedProc( ClientData clientData )
-{
-DOTRACE("<togl.cc>::ToglCmdDeletedProc");
-  Togl* togl = (Togl*)clientData;
-  Tk_Window tkwin = togl->itsTkWin;
-
-  /*
-	* This procedure could be invoked either because the window was
-	* destroyed and the command was then deleted (in which case tkwin
-	* is NULL) or because the command was deleted, and then this procedure
-	* destroys the widget.
-	*/
-
-  /* NEW in togl 1.5 beta 3 */
-  if (togl && tkwin) {
-	 Tk_DeleteEventHandler(tkwin,
-								  ExposureMask | StructureNotifyMask,
-								  Togl::dummyEventProc,
-								  (ClientData)togl);
-  }
-
-  /* NEW in togl 1.5 beta 3 */
-  if (togl->itsGLXContext) {
-	 /* XXX this might be bad if two or more Togl widgets share a context */
-	 glXDestroyContext( togl->itsDisplay, togl->itsGLXContext );
-	 togl->itsGLXContext = NULL;
-  }
-  if (togl->itsOverlayCtx) {
-	 Tcl_HashEntry *entryPtr;
-	 TkWindow *winPtr = (TkWindow *) togl->itsTkWin;
-	 if (winPtr) {
-		entryPtr = Tcl_FindHashEntry(&winPtr->dispPtr->winTable,
-											  (char *) togl->itsOverlayWindow );
-		Tcl_DeleteHashEntry(entryPtr);
-	 }
-	 glXDestroyContext( togl->itsDisplay, togl->itsOverlayCtx );
-	 togl->itsOverlayCtx = NULL;
-  }
-
-  if (tkwin != NULL) {
-	 togl->itsTkWin = NULL;
-	 Tk_DestroyWindow(tkwin);
-  }
 }
 
 
@@ -2018,7 +1957,7 @@ DOTRACE("Togl::Togl");
   itsWidgetCmd = Tcl_CreateCommand(itsInterp, Tk_PathName(itsTkWin),
 											  Togl_Widget,
 											  static_cast<ClientData>(this),
-											  (Tcl_CmdDeleteProc*) ToglCmdDeletedProc);
+											  Togl::dummyWidgetCmdDeletedProc);
 
   Tk_CreateEventHandler(itsTkWin,
 								ExposureMask | StructureNotifyMask,
@@ -2153,6 +2092,11 @@ void Togl::dummyEventProc(ClientData clientData, XEvent* eventPtr) {
   togl->eventProc(eventPtr);
 }
 
+void Togl::dummyWidgetCmdDeletedProc(ClientData clientData) {
+  Togl* togl = static_cast<Togl*>(clientData);
+  togl->widgetCmdDeletedProc();
+}
+
 void Togl::eventProc(XEvent* eventPtr) {
 DOTRACE("Togl::eventProc");
 
@@ -2215,6 +2159,63 @@ DOTRACE("Togl::eventProc");
   default:
 	 /*nothing*/
 	 ;
+  }
+}
+
+///////////////////////////////////////////////////////////////////////
+//
+// Togl::widgetCmdDeletedProc
+//
+//      This procedure is invoked when a widget command is deleted.  If
+//      the widget isn't already in the process of being destroyed,
+//      this command destroys it.
+//
+// Results:
+//      None.
+//
+// Side effects:
+//      The widget is destroyed.
+//
+///////////////////////////////////////////////////////////////////////
+
+void Togl::widgetCmdDeletedProc() {
+DOTRACE("Togl::widgetCmdDeletedProc");
+  /*
+	* This procedure could be invoked either because the window was
+	* destroyed and the command was then deleted (in which case itsTkWin
+	* is NULL) or because the command was deleted, and then this procedure
+	* destroys the widget.
+	*/
+
+  /* NEW in togl 1.5 beta 3 */
+  if (this && itsTkWin) {
+	 Tk_DeleteEventHandler(itsTkWin,
+								  ExposureMask | StructureNotifyMask,
+								  Togl::dummyEventProc,
+								  (ClientData)this);
+  }
+
+  /* NEW in togl 1.5 beta 3 */
+  if (itsGLXContext) {
+	 /* XXX this might be bad if two or more Togl widgets share a context */
+	 glXDestroyContext( itsDisplay, itsGLXContext );
+	 itsGLXContext = NULL;
+  }
+  if (itsOverlayCtx) {
+	 Tcl_HashEntry *entryPtr;
+	 TkWindow *winPtr = (TkWindow *) itsTkWin;
+	 if (winPtr) {
+		entryPtr = Tcl_FindHashEntry(&winPtr->dispPtr->winTable,
+											  (char *) itsOverlayWindow );
+		Tcl_DeleteHashEntry(entryPtr);
+	 }
+	 glXDestroyContext( itsDisplay, itsOverlayCtx );
+	 itsOverlayCtx = NULL;
+  }
+
+  if (itsTkWin != NULL) {
+	 Tk_DestroyWindow(itsTkWin);
+	 itsTkWin = NULL;
   }
 }
 
