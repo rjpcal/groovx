@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Aug  5 20:00:26 2001
-// written: Mon Aug 20 13:27:14 2001
+// written: Mon Aug 20 15:21:14 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,6 +39,12 @@ namespace Util
   struct Convert
   {
     static CharData toString(const T& x) { return CharData(num2str(x)); }
+  };
+
+  template <>
+  struct Convert<CharData>
+  {
+    static CharData toString(const CharData& x) { return x; }
   };
 
   template <>
