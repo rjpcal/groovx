@@ -3,7 +3,7 @@
 // tclcmd.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Mar 15 10:55:16 2000
+// written: Wed Mar 15 18:36:45 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -159,43 +159,73 @@ DOTRACE("Tcl::TclCmd::getCstringFromArg");
 
 template <>
 void Tcl::TclCmd::getValFromObj<int>(Tcl_Obj* obj, int& val) {
-  if ( Tcl_GetIntFromObj(itsInterp, obj, &val) != TCL_OK ) throw TclError();
+  if ( Tcl_GetIntFromObj(0, obj, &val) != TCL_OK )
+	 {
+		TclError err("expected int value but got ");
+		err.appendMsg("\"", Tcl_GetString(obj), "\"");
+		throw err;
+	 }
+}
+
+template <>
+void Tcl::TclCmd::getValFromObj<long>(Tcl_Obj* obj, long& val) {
+  if ( Tcl_GetLongFromObj(0, obj, &val) != TCL_OK )
+	 {
+		TclError err("expected long value but got ");
+		err.appendMsg("\"", Tcl_GetString(obj), "\"");
+		throw err;
+	 }
 }
 
 template <>
 void Tcl::TclCmd::getValFromObj<bool>(Tcl_Obj* obj, bool& val) {
   int int_val;
-  if ( Tcl_GetBooleanFromObj(itsInterp, obj, &int_val) != TCL_OK )
-	 throw TclError();
+  if ( Tcl_GetBooleanFromObj(0, obj, &int_val) != TCL_OK )
+	 {
+		TclError err("expected boolean value but got ");
+		err.appendMsg("\"", Tcl_GetString(obj), "\"");
+		throw err;
+	 }
   val = bool(int_val);
 }
 
 template <>
-void Tcl::TclCmd::getValFromObj<double>(Tcl_Obj* obj,
-															  double& val) {
-  if ( Tcl_GetDoubleFromObj(itsInterp, obj, &val) != TCL_OK )
-	 throw TclError();
+void Tcl::TclCmd::getValFromObj<double>(Tcl_Obj* obj, double& val) {
+  if ( Tcl_GetDoubleFromObj(0, obj, &val) != TCL_OK )
+	 {
+		TclError err("expected double value but got ");
+		err.appendMsg("\"", Tcl_GetString(obj), "\"");
+		throw err;
+	 }
 }
 
 template <>
-void Tcl::TclCmd::getValFromObj<const char*>(Tcl_Obj* obj,
-																	 const char*& val) {
+void Tcl::TclCmd::getValFromObj<const char*>(Tcl_Obj* obj, const char*& val) {
   val = Tcl_GetString(obj);
 }
 
 template <>
-void Tcl::TclCmd::getValFromObj<string>(Tcl_Obj* obj,
-													 string& val) {
+void Tcl::TclCmd::getValFromObj<string>(Tcl_Obj* obj, string& val) {
   val = Tcl_GetString(obj);
 }
 
 void Tcl::TclCmd::safeSplitList(Tcl_Obj* obj, int* count_return,
 										  Tcl_Obj*** elements_return) {
-  if ( Tcl_ListObjGetElements(itsInterp, obj, count_return, elements_return)
+  if ( Tcl_ListObjGetElements(0, obj, count_return, elements_return)
 		 != TCL_OK)
 	 {
-		throw TclError();
+		throw TclError("couldn't split Tcl list");
 	 }
+}
+
+unsigned int Tcl::TclCmd::safeListLength(Tcl_Obj* obj) {
+  int length;
+  if ( Tcl_ListObjLength(0, obj, &length) != TCL_OK)
+	 {
+		throw TclError("couldn't get length of Tcl list");
+	 }
+  Assert(length >= 0);
+  return (unsigned int) length;
 }
 
 void Tcl::TclCmd::returnVoid() {
@@ -380,6 +410,98 @@ DOTRACE("Tcl::TclCmd::dummyInvoke");
 
   DebugEvalNL(theCmd->itsResult == TCL_OK);
   return theCmd->itsResult;
+}
+
+
+///////////////////////////////////////////////////////////////////////
+//
+// Tcl::ListIterator member definitions
+//
+///////////////////////////////////////////////////////////////////////
+
+
+template <class T>
+Tcl::ListIterator<T>::ListIterator(Tcl_Obj* aList, Pos pos) :
+  itsList(aList),
+  itsListElements(0),
+  itsElementCount(0),
+  itsIndex(0)
+{
+  if (itsList == 0)
+	 throw TclError("attempted to construct ListIterator with null Tcl_Obj*");
+
+  Tcl_IncrRefCount(itsList);
+  int count;
+  TclCmd::safeSplitList(itsList, &count, &itsListElements);
+
+  Assert(count >= 0);
+  itsElementCount = (unsigned int) count;
+
+  if (pos == END)
+	 itsIndex = itsElementCount;
+}
+
+template <class T>
+Tcl::ListIterator<T>::ListIterator(const ListIterator& other) :
+  itsList(other.itsList),
+  itsListElements(other.itsListElements),
+  itsElementCount(other.itsElementCount),
+  itsIndex(other.itsIndex)
+{
+  Tcl_IncrRefCount(itsList);
+}
+
+template <class T>
+Tcl::ListIterator<T>::~ListIterator()
+{
+  Tcl_DecrRefCount(itsList);
+}
+
+
+template <class T>
+Tcl::ListIterator<T>& Tcl::ListIterator<T>::operator=(const ListIterator& other)
+{
+  ListIterator other_copy(other);
+  this->swap(other_copy);
+  return *this;
+}
+
+template <class T>
+T Tcl::ListIterator<T>::operator*() const
+{
+  if (itsIndex >= itsElementCount)
+	 throw TclError("index is too larg");
+  T result;
+  TclCmd::getValFromObj(itsListElements[itsIndex], result);
+  return result;
+}
+
+namespace {
+  template <class T>
+	 inline void local_swap(T& a, T& b)
+	 {
+		T b_copy = b;
+		b = a;
+		a = b_copy;
+	 }
+}
+
+template <class T>
+void Tcl::ListIterator<T>::swap(ListIterator<T>& other)
+{
+  local_swap(itsList, other.itsList);
+  local_swap(itsListElements, other.itsListElements);
+  local_swap(itsElementCount, other.itsElementCount);
+  local_swap(itsIndex, other.itsIndex);
+}
+
+// Explicit instantiation requests
+namespace Tcl {
+  template class ListIterator<bool>;
+  template class ListIterator<int>;
+  template class ListIterator<long>;
+  template class ListIterator<double>;
+  template class ListIterator<const char*>;
 }
 
 static const char vcid_tclcmd_cc[] = "$Header$";
