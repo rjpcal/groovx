@@ -147,7 +147,9 @@ const FieldMap& Fish::classFields()
     Field("showControlPoints", &Fish::showControlPoints,
           false, false, true, true, Field::BOOLEAN | Field::TRANSIENT),
     Field("partsMask", &Fish::partsMask,
-          0, 0, 15, 1, Field::TRANSIENT)
+          0, 0, 15, 1, Field::TRANSIENT),
+    Field("swimStroke", &Fish::swimStroke,
+          0.0, -1.0, 1.0, 0.1, Field::TRANSIENT)
   };
 
   static FieldMap FISH_FIELDS(FIELD_ARRAY, &GxShapeKit::classFields());
@@ -179,7 +181,8 @@ Fish::Fish(const char* splinefile, const char* coordfile, int index) :
   itsCurrentPartBkpt(&dummy_int),
   inColor(false),
   showControlPoints(false),
-  partsMask(0)
+  partsMask(0),
+  swimStroke(0.0)
 {
 DOTRACE("Fish::Fish");
 
@@ -221,54 +224,54 @@ DOTRACE("Fish::restoreToDefault");
 
   static const Pt3 DF_coefs[] =
   {
-    Pt3(-0.2856,  0.2915, 0.0),
-    Pt3(-0.2140,  0.2866, 0.0),
-    Pt3(-0.2176,  0.2863, 0.0),
-    Pt3(-0.0735,  0.4670, 0.0),
-    Pt3( 0.0168,  0.3913, 0.0),
-    Pt3( 0.1101,  0.3071, 0.0),
-    Pt3( 0.3049,  0.1048, 0.0),
-    Pt3( 0.0953,  0.1800, 0.0),
-    Pt3( 0.1597,  0.1538, 0.0),
+    Pt3(-0.2856,  0.2915,  0.2856),
+    Pt3(-0.2140,  0.2866,  0.2140),
+    Pt3(-0.2176,  0.2863,  0.2176),
+    Pt3(-0.0735,  0.4670,  0.0735),
+    Pt3( 0.0168,  0.3913,  0.0168),
+    Pt3( 0.1101,  0.3071,  0.1101),
+    Pt3( 0.3049,  0.1048,  0.3049),
+    Pt3( 0.0953,  0.1800,  0.0953),
+    Pt3( 0.1597,  0.1538,  0.1597),
   };
 
   static const Pt3 TF_coefs[] =
   {
-    Pt3( 0.1597,  0.1538, 0.0),
-    Pt3( 0.2992,  0.1016, 0.0),
-    Pt3( 0.2864,  0.1044, 0.0),
-    Pt3( 0.7837,  0.1590, 0.0),
-    Pt3( 0.4247,  0.0155, 0.0),
-    Pt3( 0.6362, -0.3203, 0.0),
-    Pt3( 0.3379, -0.0706, 0.0),
-    Pt3( 0.3137,  0.0049, 0.0),
-    Pt3( 0.1573, -0.0401, 0.0),
+    Pt3( 0.1597,  0.1538,  0.1597),
+    Pt3( 0.2992,  0.1016,  0.2992),
+    Pt3( 0.2864,  0.1044,  0.2864),
+    Pt3( 0.7837,  0.1590,  0.7837),
+    Pt3( 0.4247,  0.0155,  0.4247),
+    Pt3( 0.6362, -0.3203,  0.6362),
+    Pt3( 0.3379, -0.0706,  0.3379),
+    Pt3( 0.3137,  0.0049,  0.3137),
+    Pt3( 0.1573, -0.0401,  0.1573),
   };
 
   static const Pt3 LF_coefs[] =
   {
-    Pt3( 0.1573, -0.0401, 0.0),
-    Pt3( 0.2494, -0.0294, 0.0),
-    Pt3( 0.1822, -0.0877, 0.0),
-    Pt3(-0.0208, -0.3236, 0.0),
-    Pt3(-0.0632, -0.3412, 0.0),
-    Pt3(-0.1749, -0.1120, 0.0),
-    Pt3(-0.1260, -0.4172, 0.0),
-    Pt3(-0.3242, -0.1818, 0.0),
-    Pt3(-0.2844, -0.1840, 0.0),
+    Pt3( 0.1573, -0.0401,  0.1573),
+    Pt3( 0.2494, -0.0294,  0.2494),
+    Pt3( 0.1822, -0.0877,  0.1822),
+    Pt3(-0.0208, -0.3236,  0.0208),
+    Pt3(-0.0632, -0.3412,  0.0632),
+    Pt3(-0.1749, -0.1120,  0.1749),
+    Pt3(-0.1260, -0.4172,  0.1260),
+    Pt3(-0.3242, -0.1818,  0.3242),
+    Pt3(-0.2844, -0.1840,  0.2844),
   };
 
   static const Pt3 MA_coefs[] =
   {
-    Pt3(-0.2844, -0.1840, 0.0),
-    Pt3(-0.3492, -0.1834, 0.0),
-    Pt3(-0.4554, -0.1489, 0.0),
-    Pt3(-0.6135, -0.0410, 0.0),
-    Pt3(-0.7018,  0.0346, 0.0),
-    Pt3(-0.5693,  0.1147, 0.0),
-    Pt3(-0.4507,  0.2227, 0.0),
-    Pt3(-0.3393,  0.2737, 0.0),
-    Pt3(-0.2856,  0.2915, 0.0),
+    Pt3(-0.2844, -0.1840,  0.2844),
+    Pt3(-0.3492, -0.1834,  0.3492),
+    Pt3(-0.4554, -0.1489,  0.4554),
+    Pt3(-0.6135, -0.0410,  0.6135),
+    Pt3(-0.7018,  0.0346,  0.7018),
+    Pt3(-0.5693,  0.1147,  0.5693),
+    Pt3(-0.4507,  0.2227,  0.4507),
+    Pt3(-0.3393,  0.2737,  0.3393),
+    Pt3(-0.2856,  0.2915,  0.2856),
   };
 
   itsParts[DF_0].reset(knots, DF_coefs);
@@ -277,20 +280,20 @@ DOTRACE("Fish::restoreToDefault");
   itsParts[MA_3].reset(knots, MA_coefs);
 
   itsParts[DF_0].itsBkpt = 6;
-  itsParts[DF_0].itsPt0.set(0.2380, 0.3416, 0.0);
-  itsParts[DF_0].itsPt1.set(-0.0236, 0.2711, 0.0);
+  itsParts[DF_0].itsPt0.set(0.2380, 0.3416, 0.2380);
+  itsParts[DF_0].itsPt1.set(-0.0236, 0.2711, 0.0236);
 
   itsParts[TF_1].itsBkpt = 5;
-  itsParts[TF_1].itsPt0.set(0.6514, -0.0305, 0.0);
-  itsParts[TF_1].itsPt1.set(0.2433, 0.0523, 0.0);
+  itsParts[TF_1].itsPt0.set(0.6514, -0.0305, 0.6514);
+  itsParts[TF_1].itsPt1.set(0.2433, 0.0523, 0.2433);
 
   itsParts[LF_2].itsBkpt = 6;
-  itsParts[LF_2].itsPt0.set(-0.2121, 0.0083, 0.0);
-  itsParts[LF_2].itsPt1.set(-0.1192, -0.2925, 0.0);
+  itsParts[LF_2].itsPt0.set(-0.2121, 0.0083, 0.2121);
+  itsParts[LF_2].itsPt1.set(-0.1192, -0.2925, 0.1192);
 
   itsParts[MA_3].itsBkpt = 5;
-  itsParts[MA_3].itsPt0.set(-0.7015, 0.1584, 0.0);
-  itsParts[MA_3].itsPt1.set(-0.7022, -0.1054, 0.0);
+  itsParts[MA_3].itsPt0.set(-0.7015, 0.1584, 0.7015);
+  itsParts[MA_3].itsPt1.set(-0.7022, -0.1054, 0.7022);
 }
 
 IO::VersionId Fish::serialVersionId() const
@@ -499,6 +502,12 @@ DOTRACE("Fish::grRender");
 
       if (bkpt < ctrlpnts.size())
         ctrlpnts[bkpt] = pt;
+
+      for (unsigned int j = 0; j < ctrlpnts.size(); ++j)
+        {
+          ctrlpnts[j].z() =
+            ctrlpnts[j].z() * ctrlpnts[j].z() * swimStroke;
+        }
 
       canvas.drawNurbsCurve(itsParts[i].itsKnots, ctrlpnts);
 

@@ -133,6 +133,9 @@ private:
   /// Selective masks the rendering of the different parts.
   int partsMask;
 
+  /// Controls the degree of the current swimming stroke.
+  double swimStroke;
+
   /////////////
   // actions //
   /////////////
