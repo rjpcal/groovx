@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sun Oct 22 14:40:19 2000
-// written: Wed Mar 19 17:58:52 2003
+// written: Fri May 16 13:48:50 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -72,6 +72,8 @@ public:
 
   typedef unsigned short Count;
 
+  bool isOwnerAlive() const { return itsOwnerAlive; }
+
   void acquireWeak();
   Count releaseWeak();
 
@@ -90,6 +92,7 @@ private:
 
   Count itsStrong;
   Count itsWeak;
+  bool itsOwnerAlive;
 };
 
 

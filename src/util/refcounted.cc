@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Sun Oct 22 14:40:28 2000
-// written: Thu May 15 16:32:56 2003
+// written: Fri May 16 13:51:32 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -62,7 +62,7 @@ void Util::RefCounts::operator delete(void* space, size_t /*bytes*/)
   ::operator delete(space);
 }
 
-Util::RefCounts::RefCounts() : itsStrong(0), itsWeak(0)
+Util::RefCounts::RefCounts() : itsStrong(0), itsWeak(0), itsOwnerAlive(true)
 {
 DOTRACE("Util::RefCounts::RefCounts");
 }
@@ -181,6 +181,7 @@ DOTRACE("Util::RefCounted::~RefCounted");
   // > 0) when it actually is already destroyed.
   Assert(itsRefCounts->strongCount() == 0);
 
+  itsRefCounts->itsOwnerAlive = false;
   itsRefCounts->releaseWeak();
 }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2000-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Thu Oct 26 17:50:59 2000
-// written: Wed Mar 19 17:58:52 2003
+// written: Fri May 16 13:34:11 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -330,14 +330,7 @@ private:
 
       // else... (itsCounts != 0) implies we are using weak ref's
 
-      return (itsCounts->strongCount() > 0);
-
-      // NOTE: We used to release() before returning if the strongCount()
-      // was == 0. But that could cause us to prematurely drop our pointee,
-      // since in fact we can't interpret strongCount()==0 to necessarily
-      // mean that the pointee is dead -- it could be instead that nobody
-      // has yet acquired a strong reference count (e.g., this could happen
-      // in the constructor sequence).
+      return itsCounts->isOwnerAlive();
     }
 
     T* get()     const         { ensureValid(); return itsMaster; }
