@@ -16,9 +16,6 @@ itcl::class Editor {
 	 private variable itsVisible true
 	 private variable itsFieldPanes
 	 private variable itsFieldControls
-	 private variable itsViewObjList {}
-	 private variable itsEditObjs {}
-	 private variable itsViewObj 0
 	 private variable itsObjType Face
 	 private variable itsFieldNames {}
 	 private variable itsUpdateInProgress 0
@@ -39,32 +36,96 @@ itcl::class Editor {
 		  standardSettings $obj
 
 		  $itsControls.editobjlist insert end $obj
+		  setEditSelection $obj
 
-		  lappend itsViewObjList $obj
-		  selectEditObjs $obj
-		  selectViewObj $obj
+		  addViewObj $obj
+		  setViewSelection $obj
+	 }
+
+	 private method addViewObj {obj} {
+		  $itsControls.viewobjlist insert end $obj
 	 }
 
 	 private method makePreviewObj {} {
-		  set obj [Tlist::createPreview \
-					 [$itsControls.editobjlist getcurselection]]
-		  lappend itsViewObjList $obj
-		  selectViewObj $obj
+		  set obj [Tlist::createPreview [getEditSelection]]
+
+		  addViewObj $obj
+		  setViewSelection $obj
 	 }
 
-	 private method selectViewObj {obj} {
-		  set itsViewObj $obj
+	 private method getEditAll {} {
+		  return [$itsControls.editobjlist get 0 end]
+	 }
 
-		  $itsControls.viewobjspinner delete 0 end
-		  $itsControls.viewobjspinner insert 0 $itsViewObj
+	 private method getViewAll {} {
+		  return [$itsControls.viewobjlist get 0 end]
+	 }
 
+	 private method getEditSelection {} {
+		  return [$itsControls.editobjlist getcurselection]
+	 }
+
+	 private method getViewSelection {} {
+		  set sel [$itsControls.viewobjlist getcurselection]
+		  if { [llength $sel] > 0 } {
+				return [lindex $sel 0]
+		  } else {
+				return 0
+		  }
+	 }
+
+	 private method setEditSelection {objs} {
+		  $itsControls.editobjlist selection clear 0 end
+		  set all [getEditAll]
+		  foreach obj $objs {
+				set index [lsearch $all $obj]
+				if { $index >= 0 } {
+					 $itsControls.editobjlist selection set $index
+					 onEditObjSelect
+				}
+		  }
+	 }
+
+	 private method setViewSelection {objs} {
+		  $itsControls.viewobjlist selection clear 0 end
+		  set all [getViewAll]
+		  foreach obj $objs {
+				set index [lsearch $all $obj]
+				if { $index >= 0 } {
+					 $itsControls.viewobjlist selection set $index
+					 onViewObjSelect
+					 requestDraw
+					 return
+				}
+		  }
+	 }
+
+	 private method onEditObjSelect {} {
+		  set objs [getEditSelection]
+		  if { [llength $objs] > 0 } {
+				updateControls [lindex $objs 0]
+		  }
+	 }
+
+	 private method onViewObjSelect {} {
 		  requestDraw
+	 }
+
+	 private method requestDraw {} {
+		  set viewobj [getViewSelection]
+		  if { $itsVisible && $viewobj != 0 } {
+				Toglet::clearscreen $itsToglet
+				Toglet::see $itsToglet $viewobj
+				Toglet::swapBuffers $itsToglet
+		  }
 	 }
 
 	 private method updateControls {obj} {
 		  set itsUpdateInProgress 1
 
-		  if { $obj == $itsViewObj } {
+		  set viewobj [getViewSelection]
+
+		  if { $obj == $viewobj } {
 				Toglet::setVisible $itsToglet false
 		  }
 
@@ -77,7 +138,7 @@ itcl::class Editor {
 		  # need to force the controls to update before we draw the object
 		  update
 
-		  if { $obj == $itsViewObj } {
+		  if { $obj == $viewobj } {
 				Toglet::setVisible $itsToglet true
 
 				requestDraw
@@ -86,52 +147,17 @@ itcl::class Editor {
 		  set itsUpdateInProgress 0
 	 }
 
-	 private method selectEditObjs {objs} {
-		  set itsEditObjs $objs
-
-		  if { [llength $objs] > 0 } {
-				updateControls [lindex $itsEditObjs 0]
-		  }
-	 }
-
-	 private method onEditObjSelect {} {
-		  selectEditObjs [$itsControls.editobjlist getcurselection]
-	 }
-
-	 private method requestDraw {} {
-		  if { $itsVisible && $itsViewObj != 0 } {
-				Toglet::clearscreen $itsToglet
-				Toglet::see $itsToglet $itsViewObj
-				Toglet::swapBuffers $itsToglet
-		  }
-	 }
-
-	 private method findNextObj {step objlist current} {
-		  set current [lsearch $objlist $current]
-		  incr current $step
-		  set overflow [expr $current - [llength $objlist]]
-		  if { $overflow >= 0 } {
-				set current $overflow
-		  } elseif { $current < 0 } {
-				set current [expr [llength $objlist] + $current]
-		  }
-
-		  return [lindex $objlist $current]
-	 }
-
-	 private method nextViewObj {step} {
-		  selectViewObj [findNextObj $step $itsViewObjList $itsViewObj]
-	 }
-
 	 private method viewingDist {val} {
 		  Toglet::setViewingDistance $itsToglet $val
 	 }
 
 	 private method setAttrib {name val} {
-		  if { !$itsUpdateInProgress && [llength $itsEditObjs] > 0 } {
+		  set editobjs [getEditSelection]
+
+		  if { !$itsUpdateInProgress && [llength $editobjs] > 0 } {
 				if { $itsAttribValues($name) != $val } {
-					 #puts "setting $itsEditObjs $name to $val"
-					 ${itsObjType}::$name $itsEditObjs $val
+					 #puts "setting $editobjs $name to $val"
+					 ${itsObjType}::$name $editobjs $val
 					 set itsAttribValues($name) $val
 				}
 		  }
@@ -220,16 +246,16 @@ itcl::class Editor {
 		  pack $itsControls.redraw -side left -anchor nw
 
 		  iwidgets::scrolledlistbox $itsControls.editobjlist \
-					 -labeltext "Edit objects:" -selectmode extended \
-					 -hscrollmode dynamic \
+					 -labeltext "Edit objects:" -hscrollmode dynamic \
+					 -selectmode extended -exportselection false \
 					 -selectioncommand [itcl::code $this onEditObjSelect]
 		  pack $itsControls.editobjlist -side left -anchor nw
 
-		  iwidgets::spinner $itsControls.viewobjspinner \
-					 -labeltext "View object: " -fixed 5 \
-					 -increment [itcl::code $this nextViewObj 1] \
-					 -decrement [itcl::code $this nextViewObj -1]
-		  pack $itsControls.viewobjspinner -side left -anchor nw
+		  iwidgets::scrolledlistbox $itsControls.viewobjlist \
+					 -labeltext "View object: " -hscrollmode dynamic \
+					 -selectmode browse -exportselection false \
+					 -selectioncommand [itcl::code $this onViewObjSelect]
+		  pack $itsControls.viewobjlist -side left -anchor nw
 
 		  #
 		  # Set up attribs
@@ -260,7 +286,8 @@ itcl::class Editor {
 		  eval $itsControls.editobjlist insert end [${itsObjType}::findAll]
 		  standardSettings [$itsControls.editobjlist get 0 end]
 
-		  set itsViewObjList [GxNode::findAll]
+		  $itsControls.viewobjlist clear
+		  eval $itsControls.viewobjlist insert end [GxNode::findAll]
 
 		  return [llength $ids]
 	 }
@@ -272,7 +299,8 @@ itcl::class Editor {
 		  eval $itsControls.editobjlist insert end [${itsObjType}::findAll]
 		  standardSettings [$itsControls.editobjlist get 0 end]
 
-		  set itsViewObjList [GxNode::findAll]
+		  $itsControls.viewobjlist clear
+		  eval $itsControls.viewobjlist insert end [GxNode::findAll]
 	 }
 
 	 public method saveObjects {filename} {
