@@ -42,9 +42,9 @@
 #include "util/log.h"
 #include "util/rand.h"
 #include "util/ref.h"
-#include "util/minivec.h"
 
 #include <algorithm>
+#include <vector>
 
 #include "util/debug.h"
 DBG_REGISTER;
@@ -57,7 +57,7 @@ class ElementContainer::Impl
 public:
   Impl() : elements(), randSeed(0), sequencePos(0) {}
 
-  minivec<Ref<Element> > elements;
+  std::vector<Ref<Element> > elements;
 
   int randSeed;                 // Random seed used to create element sequence
   unsigned int sequencePos;     // Index of the current element
@@ -365,7 +365,7 @@ void ElementContainer::legacyReadElements(IO::Reader& reader,
 {
 DOTRACE("ElementContainer::legacyReadElements");
 
-  minivec<Ref<Element> > new_elements;
+  std::vector<Ref<Element> > new_elements;
 
   IO::ReadUtils::readObjectSeq<Element>
     (reader, name, std::back_inserter(new_elements));
