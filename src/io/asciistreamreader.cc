@@ -3,7 +3,7 @@
 // asciistreamreader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:55 1999
-// written: Thu Mar  9 17:00:35 2000
+// written: Fri Mar 10 19:45:44 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -260,12 +260,18 @@ DOTRACE("AsciiStreamReader::Impl::initAttributes");
 
   DebugEvalNL(attrib_count);
 
+  if ( itsBuf.fail() )
+	 throw ReadError("input failed while reading attribute count");
+
   char type[64], name[64], equal[16];
 
   for (int i = 0; i < attrib_count; ++i) {
 
 	 itsBuf >> type >> name >> equal;
 	 DebugEval(type); DebugEval(name); 
+
+	 if ( itsBuf.fail() )
+		throw ReadError("input failed while reading attribute type and name");
 
 	 Attrib& attrib = itsAttribs[name];
 	 attrib.type = type;
@@ -300,6 +306,9 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 	 itsBuf >> type >> id >> equal >> bracket;
 	 DebugEval(type); DebugEvalNL(id);
 
+	 if ( itsBuf.fail() )
+		throw ReadError("input failed while reading typename and object id");
+
 	 if ( !haveReadRoot ) {
 		rootid = id;
 		
@@ -320,6 +329,9 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 
 	 itsBuf >> bracket;
 	 eatWhitespace();
+
+	 if ( itsBuf.fail() )
+		throw ReadError("input failed while parsing ending bracket");
   }
 
   return itsCreatedObjects[rootid];
