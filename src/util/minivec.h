@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Oct 31 11:01:16 2000
-// written: Tue Feb 19 14:50:43 2002
+// written: Tue May 14 20:50:38 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -190,8 +190,7 @@ public:
   template<class InputIterator>
   minivec (InputIterator first, InputIterator last)
     {
-      size_type n = size_type(0);
-      std::distance(first, last, n);
+      size_type n = std::distance(first, last);
       start = mv_allocate(n,(pointer)0);
       finish = MVUtils::uninitialized_copy(first, last, start);
       end_of_storage = finish;
