@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:45:05 1999
-// written: Wed Jan 23 10:52:25 2002
+// written: Fri Jan 25 17:14:51 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -112,9 +112,9 @@ private:
 
   // Diagnostic stuff
   mutable StopWatch itsTimer;
-  mutable int itsEstimatedOffset;
+  mutable double itsEstimatedOffset;
   mutable int itsActualRequest;
-  mutable int itsTotalOffset;
+  mutable double itsTotalOffset;
   mutable int itsTotalError;
   mutable int itsInvokeCount;
 };

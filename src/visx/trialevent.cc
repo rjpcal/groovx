@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Fri Jan 25 15:35:56 2002
+// written: Fri Jan 25 17:26:01 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,7 @@
 
 #include "system/demangle.h"
 
+#include "util/algo.h"
 #include "util/error.h"
 #include "util/errorhandler.h"
 #include "util/log.h"
@@ -50,9 +51,9 @@ TrialEvent::TrialEvent(int msec) :
   itsTrial(0),
   itsIsPending(false),
   itsTimer(),
-  itsEstimatedOffset(0),
+  itsEstimatedOffset(0.0),
   itsActualRequest(msec),
-  itsTotalOffset(0),
+  itsTotalOffset(0.0),
   itsTotalError(0),
   itsInvokeCount(0)
 {
@@ -115,7 +116,8 @@ DOTRACE("TrialEvent::schedule");
   // specified amount of time.
   else
     {
-      itsActualRequest = itsRequestedDelay + itsEstimatedOffset;
+      itsActualRequest =
+        Util::max(itsRequestedDelay + (int)itsEstimatedOffset, 0);
       itsToken = Tcl_CreateTimerHandler(itsActualRequest,
                                         dummyInvoke,
                                         static_cast<ClientData>(this));
@@ -150,18 +152,17 @@ DOTRACE("TrialEvent::invokeTemplate");
   itsIsPending = false;
   itsToken = 0;
 
+  const double msec = itsTimer.elapsedMsec();
+  const double error = itsActualRequest - msec;
+
   fstring scopename(demangle_cstr(typeid(*this).name()), " ",
                     IO::IoObject::id());
 
   Util::Log::addScope(scopename);
 
-  Util::log( fstring("ideal request  == ", itsRequestedDelay) );
-  Util::log( fstring("estimated err  == ", itsEstimatedOffset) );
-  Util::log( fstring("actual request == ", itsActualRequest) );
+  Util::log( fstring("req ", itsRequestedDelay, " - ", -itsEstimatedOffset) );
 
-  double msec = itsTimer.elapsedMsec();
-  double error = itsActualRequest - msec;
-  itsTotalOffset += int(error);
+  itsTotalOffset += error;
   itsTotalError += (itsRequestedDelay - msec);
 
   ++itsInvokeCount;
@@ -169,8 +170,10 @@ DOTRACE("TrialEvent::invokeTemplate");
   // Positive error means we expect the event to occur sooner than expected
   // Negative error means we expect the event to occur later than expected
   // (round towards negative infinity)
+  const double moving_average_ratio = 1.0 / Util::min(10, itsInvokeCount);
   itsEstimatedOffset =
-    int(double(itsTotalOffset)/itsInvokeCount - 0.5);
+    (1.0 - moving_average_ratio) * itsEstimatedOffset +
+           moving_average_ratio  * error;
 
   // Do the actual event callback.
   if ( itsErrorHandler != 0 && itsTrial != 0 )
