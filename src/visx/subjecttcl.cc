@@ -2,7 +2,7 @@
 // subjecttcl.cc
 // Rob Peters 
 // created: Jan-99
-// written: Wed Mar 15 11:07:59 2000
+// written: Wed Oct 25 13:41:26 2000
 // $Id$
 ///////////////////////////////////////////////////////////////////////
 
@@ -126,8 +126,8 @@ DOTRACE("SubjectTcl::newSubjectCmd");
 
   const char* subjectKey = Tcl_GetString(objv[2]);
   Assert(subjectKey);
-  const char* subjectName = (objc > 2) ? Tcl_GetString(objv[3]) : subjectKey;
-  const char* subjectDir =  (objc > 3) ? Tcl_GetString(objv[4]) : default_dir;
+  const char* subjectName = (objc > 3) ? Tcl_GetString(objv[3]) : subjectKey;
+  const char* subjectDir =  (objc > 4) ? Tcl_GetString(objv[4]) : default_dir;
 
   DebugEval(tblPtr);
   DebugEvalNL(subjectKey);
