@@ -25,8 +25,6 @@ package require Iwidgets
 
 set ::statusInfo "VisEdit started."
 
-set ::COUNTER 0
-
 set ::SCREENWIDTH [winfo screenwidth .]
 set ::SCREENHEIGHT [winfo screenheight .]
 
@@ -45,7 +43,8 @@ set ::MAINPANE_HEIGHT [expr int(0.93 * $::SCREENHEIGHT)]
 
 set ::TOGLET_WIDTH [expr $::SCREENWIDTH - $::MAINPANE_WIDTH - 50]
 
-proc AUTO {} { return "::object[incr ::COUNTER]" }
+set ::AUTO_COUNTER 0
+proc AUTO {} { return "::object[incr ::AUTO_COUNTER]" }
 
 proc debug {msg} {
     if {0} { puts $msg }
@@ -263,7 +262,9 @@ itcl::class FieldControlSet {
 
     private method init { panes objtype setCallback }
 
-    constructor {panes objtype setCallback} { init $panes $objtype $setCallback }
+    constructor {panes objtype setCallback} {
+	init $panes $objtype $setCallback
+    }
 
     public method update {obj}
 
