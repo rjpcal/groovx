@@ -3,7 +3,7 @@
 // asciistreamreader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:54 1999
-// written: Wed Mar  8 17:13:40 2000
+// written: Sat Mar 11 22:23:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -57,13 +57,6 @@ public:
   virtual void readOwnedObject(const char* name, IO* obj);
 
   virtual IO* readRoot(IO* root=0);
-
-protected:
-  /** This function removes all whitespace characters from the istream
-		buffer, until the first non-whitespace character is seen. It
-		returns the number of whitespace characters that were removed
-		from the stream. */
-  int eatWhitespace();
 
 private:
   class Impl;
