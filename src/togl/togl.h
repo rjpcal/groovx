@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Wed Jun 12 14:10:44 2002
+// written: Tue Jun 18 09:53:18 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -108,7 +108,6 @@ public:
   void swapBuffers() const;
 
   // Query functions
-  char* ident() const;
   int width() const;
   int height() const;
   bool isRgba() const;
