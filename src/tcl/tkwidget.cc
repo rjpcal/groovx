@@ -97,7 +97,7 @@ public:
   void dbgKeyPress(const GWT::KeyPressEvent& ev)
   {
     std::cerr << "KeyPress: "
-              << "keys " << ev.keys
+              << "keys '" << ev.keys << "'"
               << " control " << ev.controlPressed
               << " x " << ev.x << " y " << ev.y << std::endl;
   }
@@ -185,14 +185,23 @@ void TkWidgImpl::keyEventProc(XKeyEvent* eventPtr)
 {
 DOTRACE("TkWidgImpl::keyEventProc");
 
-  char buf[32];
-
   const bool controlPressed = eventPtr->state & ControlMask;
+
+  // Need to save and later restore the event "state" in order that
+  // subsequent processing of this event (e.g. processing by Tk "bind"
+  // tables") proceeds correctly.
+  const unsigned int saveState = eventPtr->state;
+
+  // Turn off (temporarily) any ControlMask so that we get a more sensible
+  // output from XLookupString().
   eventPtr->state &= ~ControlMask;
 
+  char buf[32];
   const int len = XLookupString(eventPtr, &buf[0], 30, 0, 0);
-
   buf[len] = '\0';
+
+  // Restore the state
+  eventPtr->state = saveState;
 
   GWT::KeyPressEvent ev = {&buf[0], eventPtr->x, eventPtr->y, controlPressed};
   owner->sigKeyPressed.emit(ev);
