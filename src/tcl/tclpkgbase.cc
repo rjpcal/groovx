@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 14 12:55:27 1999
-// written: Mon Jul 16 15:18:01 2001
+// written: Wed Jul 18 09:47:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -162,14 +162,25 @@ DOTRACE("Tcl::TclPkg::initStatus");
   return itsImpl->itsInitStatus;
 }
 
-int Tcl::TclPkg::combineStatus(int other_status) const {
-DOTRACE("Tcl::TclPkg::initStatus");
-  if (TCL_ERROR == itsImpl->itsInitStatus || TCL_ERROR == other_status)
+int Tcl::TclPkg::okStatus()
+{
+  return TCL_OK;
+}
+
+int Tcl::TclPkg::errStatus()
+{
+  return TCL_ERROR;
+}
+
+int Tcl::TclPkg::combineStatus(int status1, int status2)
+{
+DOTRACE("Tcl::TclPkg::combineStatus");
+  if (TCL_ERROR == status1 || TCL_ERROR == status2)
     return TCL_ERROR;
-  else if (TCL_OK != itsImpl->itsInitStatus)
-    return itsImpl->itsInitStatus;
-  else if (TCL_OK != other_status)
-    return other_status;
+  else if (TCL_OK != status1)
+    return status1;
+  else if (TCL_OK != status2)
+    return status2;
 
   return TCL_OK;
 }
