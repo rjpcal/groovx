@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Fri May 18 18:53:30 2001
+// written: Sat Jun  2 17:03:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,8 +62,8 @@ protected:
 	 if (result != 1)
 		throw ErrorWithMsg("no such command");
 
-	 Tcl::TclCmd* cmd =
-		dynamic_cast<TclCmd*>(static_cast<TclCmd*>(cmd_info.objClientData));
+	 Tcl::TclCmd* cmd = dynamic_cast<Tcl::TclCmd*>(
+                        static_cast<Tcl::TclCmd*>(cmd_info.objClientData));
 
 	 if (!cmd)
 		throw ErrorWithMsg("no such TclCmd");
