@@ -3,7 +3,7 @@
 // ptrlistbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Sun Oct 22 14:56:13 2000
+// written: Tue Oct 24 13:42:48 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -107,12 +107,6 @@ protected:
 		to make room for the ptr. The PtrList now assumes control of the
 		memory management for the object *ptr. */
   int insertPtrBase(RefCounted* ptr);
-
-  /** Add obj at index 'id', destroying any the object was previously
-		pointed to from that that location. The list will be expanded if
-		'id' exceeds the size of the list. If id is < 0, the function
-		returns without effect. */
-  void insertPtrBaseAt(int id, RefCounted* ptr);
 
   /** This function will be called after every insertion into the
       PtrListBase. The default implementation is a no-op. */
