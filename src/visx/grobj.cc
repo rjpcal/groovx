@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Thu Nov 14 17:24:03 2002
+// written: Thu Nov 14 17:29:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -238,13 +238,13 @@ DOTRACE("GrObj::getScalingMode");
 double GrObj::getWidth() const
 {
 DOTRACE("GrObj::getWidth");
-  return itsImpl->itsScaler->scaledWidth(Gfx::Canvas::current());
+  return itsImpl->itsScaler->scaledWidth();
 }
 
 double GrObj::getHeight() const
 {
 DOTRACE("GrObj::getHeight");
-  return itsImpl->itsScaler->scaledHeight(Gfx::Canvas::current());
+  return itsImpl->itsScaler->scaledHeight();
 }
 
 double GrObj::getAspectRatio() const
@@ -256,7 +256,7 @@ DOTRACE("GrObj::getAspectRatio");
 double GrObj::getMaxDimension() const
 {
 DOTRACE("GrObj::getMaxDimension");
-  return itsImpl->itsScaler->scaledMaxDim(Gfx::Canvas::current());
+  return itsImpl->itsScaler->scaledMaxDim();
 }
 
 int GrObj::getAlignmentMode() const
@@ -316,7 +316,7 @@ void GrObj::setWidth(double val)
 {
 DOTRACE("GrObj::setWidth");
 
-  itsImpl->itsScaler->setWidth(Gfx::Canvas::current(), val);
+  itsImpl->itsScaler->setWidth(val);
   this->sigNodeChanged.emit();
 }
 
@@ -324,7 +324,7 @@ void GrObj::setHeight(double val)
 {
 DOTRACE("GrObj::setHeight");
 
-  itsImpl->itsScaler->setHeight(Gfx::Canvas::current(), val);
+  itsImpl->itsScaler->setHeight(val);
   this->sigNodeChanged.emit();
 }
 
@@ -340,7 +340,7 @@ void GrObj::setMaxDimension(double val)
 {
 DOTRACE("GrObj::setMaxDimension");
 
-  itsImpl->itsScaler->setMaxDim(Gfx::Canvas::current(), val);
+  itsImpl->itsScaler->setMaxDim(val);
   this->sigNodeChanged.emit();
 }
 
