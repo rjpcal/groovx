@@ -341,15 +341,8 @@ public:
   struct ValueType {};
 
   template <class C, class T>
-  static shared_ptr<FieldImpl> makeImpl(T C::* member_ptr)
-  {
-    return shared_ptr<FieldImpl>(new DataMemberFieldImpl<C,T>(member_ptr));
-  }
-
-  template <class C, class T>
-  static shared_ptr<FieldImpl> makeImpl(T C::* member_ptr,
-                                        const T& min, const T& max,
-                                        bool check)
+  static shared_ptr<FieldImpl>
+  makeImpl(T C::* member_ptr, const T& min, const T& max, bool check)
   {
     return shared_ptr<FieldImpl>
       (new DataMemberFieldImpl<C,T>
@@ -358,7 +351,8 @@ public:
 
   template <class C, class T>
   static shared_ptr<FieldImpl>
-  makeImpl(std::pair<T (C::*)() const, void (C::*)(T)> funcs)
+  makeImpl(std::pair<T (C::*)() const, void (C::*)(T)> funcs,
+			  const T& /* min */, const T& /* max */, bool /* check */)
   {
     return shared_ptr<FieldImpl>
       (new FuncMemberFieldImpl<C,T>(funcs.first, funcs.second));
