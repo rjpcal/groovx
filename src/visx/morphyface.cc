@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Tue Nov 16 14:43:38 1999
+// written: Wed Dec  1 11:53:12 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -308,7 +308,7 @@ DOTRACE("MorphyFace::charCount");
 void MorphyFace::readFrom(Reader* reader) {
 DOTRACE("MorphyFace::readFrom");
   const vector<PInfo>& infos = getPropertyInfos();
-  for (int i = 0; i < infos.size(); ++i) {
+  for (size_t i = 0; i < infos.size(); ++i) {
 	 reader->readValueObj(infos[i].name, const_cast<Value&>(get(infos[i].property)));
   }
 
@@ -318,7 +318,7 @@ DOTRACE("MorphyFace::readFrom");
 void MorphyFace::writeTo(Writer* writer) const {
 DOTRACE("MorphyFace::writeTo");
   const vector<PInfo>& infos = getPropertyInfos();
-  for (int i = 0; i < infos.size(); ++i) {
+  for (size_t i = 0; i < infos.size(); ++i) {
 	 writer->writeValueObj(infos[i].name, get(infos[i].property));
   }
 

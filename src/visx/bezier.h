@@ -3,7 +3,7 @@
 // bezier.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep 21 09:51:40 1999
-// written: Sat Nov 20 19:25:53 1999
+// written: Wed Dec  1 11:52:37 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -132,7 +132,7 @@ void Bezier::setCtrlPnts(const vector<double>& RR, int extrema_res) {
 	 c0[i] *= Bezier::choose(n,i);
   }}
 
-  {for (int i = 0; i < c1.size(); ++i) {
+  {for (size_t i = 0; i < c1.size(); ++i) {
 	 c1[i] = (i+1) * c0[i+1];
   }}
 
@@ -158,7 +158,7 @@ void Bezier::setCtrlPnts(const vector<double>& RR, int extrema_res) {
   uMin_ = uMax_ = 0.0;
   valMin_ = valMax_ = eval(0.0);
 
-  {for (int i = 0; i < extrema.size(); ++i) {
+  {for (size_t i = 0; i < extrema.size(); ++i) {
 	 double current = eval(extrema[i]);
 	 if (current < valMin_) {
 		valMin_ = current;
@@ -173,7 +173,7 @@ void Bezier::setCtrlPnts(const vector<double>& RR, int extrema_res) {
 
 double Bezier::eval(double u) {
   double result = 0.0;
-  for (int i = 0; i < c0.size(); ++i) {
+  for (size_t i = 0; i < c0.size(); ++i) {
 	 result += c0[i] * pow(u,i);
   }
   return result;
@@ -181,7 +181,7 @@ double Bezier::eval(double u) {
 
 double Bezier::evalDeriv(double u) {
   double result = 0.0;
-  for (int i = 0; i < c1.size(); ++i) {
+  for (size_t i = 0; i < c1.size(); ++i) {
 	 result += c1[i] * pow(u,i);
   }
   return result;
@@ -254,7 +254,7 @@ void Bezier4::setCtrlPnts(double R0, double R1, double R2, double R3) {
   c0[2] =  3*R[0] - 6*R[1] + 3*R[2];
   c0[3] =   -R[0] + 3*R[1] - 3*R[2] + R[3];
 
-  for (int i = 0; i < c1.size(); ++i) {
+  for (size_t i = 0; i < c1.size(); ++i) {
 	 c1[i] = (i+1) * c0[i+1];
   }
 
