@@ -85,8 +85,6 @@ proc setup_package { pkgname ccfiles libdir } {
 
 	set contents [getFileContents $initfile]
 
-	puts "initfile is $initfile"
-
 	set revision [extractPkgRevision $contents]
 
 	set pkgreqs [extractPkgReqs $contents]
