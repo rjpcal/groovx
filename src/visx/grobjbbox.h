@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 09:06:14 2001
-// written: Fri Aug 31 09:00:52 2001
+// written: Tue Sep  4 08:20:45 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,7 @@
 
 #include "tcl/tcltimer.h"
 
-//  #define ANIMATE_BBOX
+#define ANIMATE_BBOX
 
 class GrObjBBox : public Gnode
 {
@@ -30,7 +30,7 @@ private:
 public:
   GrObjBBox(Util::SoftRef<Gnode> child, Util::Signal& sig);
 
-  virtual ~GrObjBBox() {}
+  virtual ~GrObjBBox();
 
   bool isVisible() const { return isItVisible; }
   void setVisible(bool val)
@@ -63,6 +63,8 @@ public:
   virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const;
 
 private:
+  Util::Signal& itsTargetSignal;
+
   bool isItVisible;
 
   mutable int itsPixelBorder;

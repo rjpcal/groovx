@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Fri Aug 31 09:02:45 2001
+// written: Tue Sep  4 08:21:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,12 +44,18 @@ namespace
 
 GrObjBBox::GrObjBBox(Util::SoftRef<Gnode> child, Util::Signal& sig) :
   Gnode(child),
+  itsTargetSignal(sig),
   isItVisible(false),
   itsPixelBorder(4),
   itsStipple(0x0F0F), // 0000111100001111
   itsMask(0x3333)     // 0011001100110011
 {
-  theirTimer.sigTimeOut.connect(sig.slot());
+  theirTimer.sigTimeOut.connect(itsTargetSignal.slot());
+}
+
+GrObjBBox::~GrObjBBox()
+{
+  theirTimer.sigTimeOut.disconnect(itsTargetSignal.slot());
 }
 
 Gfx::Rect<double> GrObjBBox::gnodeBoundingBox(Gfx::Canvas& canvas) const
