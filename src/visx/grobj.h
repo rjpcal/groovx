@@ -3,7 +3,7 @@
 // grobj.h
 // Rob Peters 
 // created: Dec-98
-// written: Fri Sep 17 09:29:51 1999
+// written: Mon Sep 20 17:01:05 1999
 // $Id$
 //
 // This is the abstract base class for graphic objects. GrObj*'s may
@@ -55,7 +55,8 @@ public:
 
   static const GrObjRenderMode GROBJ_DIRECT_RENDER = 1;
   // In this mode, grRender() will be called every time the object is
-  // drawn.
+  // drawn, and grUnRender() will be called every time the object is
+  // undrawn.
 
   static const GrObjRenderMode GROBJ_GL_COMPILE = 2;
   static const GrObjRenderMode GROBJ_GL_BITMAP_CACHE = 3;
@@ -76,19 +77,28 @@ public:
   // front buffer, regardless of whether OpenGL double-buffering is
   // being used.
 
+  static const GrObjRenderMode GROBJ_SWAP_FORE_BACK = 5;
+  // This mode may be used only as an unrendering mode. If selected,
+  // unrendering will be done by performing a normal render except
+  // with the foreground and background colors swapped.
 
+  static const GrObjRenderMode GROBJ_CLEAR_BOUNDING_BOX = 6;
+  // This mode may be used only as an unrendering mode. If selected,
+  // unrendering will be done by clearing to the background color the
+  // region enclosed by the object's bounding box.
 
   //////////////
   // creators //
   //////////////
 
-  GrObj ();
+  GrObj(GrObjRenderMode render_mode = GROBJ_GL_COMPILE,
+		  GrObjRenderMode unrender_mode = GROBJ_SWAP_FORE_BACK);
   // Default constructor.
 
-  GrObj (istream &is, IOFlag flag);
+  GrObj(istream &is, IOFlag flag);
   // Construct from an istream by using deserialize.
 
-  virtual ~GrObj ();
+  virtual ~GrObj();
   // Frees the OpenGL display list.
 
   virtual void serialize(ostream &os, IOFlag flag) const;
@@ -103,34 +113,53 @@ public:
   // accessors //
   ///////////////
 
-  GrObjRenderMode getRenderMode() const;
-
-  bool getUsingCompile() const;
-
-  virtual int getCategory() const = 0;
-  // getCategory and setCategory are used to manipulate some
-  // user-defined categories that can be used to classify different
-  // GrObj objects.
+  bool getBBVisibility() const;
 
   virtual bool getBoundingBox(double& left, double& top,
-										double& right, double& bottom);
+										double& right, double& bottom) const;
   // Subclasses may override this function to fill in the parameters
   // with the bounding box in GL coordinates for the object's onscreen
   // image. The function returns true if a bounding box has provided,
   // or false if no bounding box is available. The default
   // implementation provided by GrObj returns false.
 
+  virtual int getCategory() const = 0;
+  // getCategory and setCategory are used to manipulate some
+  // user-defined categories that can be used to classify different
+  // GrObj objects.
+
+  GrObjRenderMode getRenderMode() const;
+  GrObjRenderMode getUnRenderMode() const;
+
+  bool getUsingCompile() const;
+
+  static void getScreenFromWorld(double world_x, double world_y,
+											int& screen_x, int& screen_y,
+											bool recalculate_state = true);
+  static void getWorldFromScreen(int screen_x, int screen_y,
+											double& world_x, double& world_y,
+											bool recalculate_state = true);
+  // These two functions convert between world coordinates (OpenGL
+  // object coordinates) and screen/window coordinates. Normally the
+  // OpenGL state (modelview matrix, projection matrix, and viewport)
+  // is re-queried each time, but if it is known that the OpenGL state
+  // has not changed between calls to these functions, then some speed
+  // can be gained by passing recalculate_state as false.
+
 
   //////////////////
   // manipulators //
   //////////////////
 
-  void setRenderMode(GrObjRenderMode mode);
-
-  void setUsingCompile(bool val);
+  void setBBVisibility(bool visibility);
 
   virtual void setCategory(int val) = 0;
   
+  void setRenderMode(GrObjRenderMode mode);
+  void setUnRenderMode(GrObjRenderMode mode);
+
+  void setUsingCompile(bool val);
+
   virtual void receiveStateChangeMsg(const Observable* obj);
   virtual void receiveDestroyMsg(const Observable* obj);
 
@@ -139,26 +168,29 @@ public:
   // actions //
   /////////////
 
-  virtual void update() const;
-  // Recompiles the OpenGL display list, if necessary, otherwise does
-  // nothing.
+  void update() const;
+  // Recompiles the OpenGL display list or bitmap cache, if there are
+  // changes pending, otherwise does nothing.
 
-  virtual void draw() const;
-  // This function may be overridden, but a default version is
-  // provided in GrObj that simply calls the display list that was
-  // compiled in grRecompile. If overridden, this function should
-  // render the object that is represented by the GrObj.
+  void draw() const;
+  // This function draws the object according to the GrRenderMode
+  // selected with setRenderMode().
 
-  virtual void undraw() const;
-  // This function should arrange for the GrObj to undraw itself from
-  // the screen. The default implementation is to do the same thing as
-  // draw(), with the requirement that the caller swap the foreground
-  // and background colors first.
+  void undraw() const;
+  // This function undraws the object according to the GrRenderMode
+  // selected with setUnRenderMode().
 
 protected:
+  void grDrawBoundingBox() const;
+
   virtual void grRender() const = 0;
   // This function must be overridden in derived classes to execute
   // the actual OpenGL commands that render the object.
+
+  virtual void grUnRender() const;
+  // This function will be called if the unrendering mode is set to
+  // GROBJ_DIRECT_RENDER or to any of the compile or cache modes. The
+  // default implementation provided by GrObj does nothing.
 
   virtual void grRecompile() const;
   // This function should arrange for an up-to-date GL display list to
