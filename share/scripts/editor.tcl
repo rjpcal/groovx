@@ -329,7 +329,7 @@ itcl::class Editor {
 	 private method curObjType {} { return [$itsButtons.objtypes get] }
 
 	 private method standardSettings {objs} {
-		  set grobjs [dlist_select $objs [GrObj::is $objs]]
+		  set grobjs [dlist::select $objs [GrObj::is $objs]]
 
 		  GrObj::alignmentMode $grobjs $GrObj::CENTER_ON_CENTER
 		  GrObj::scalingMode $grobjs $GrObj::MAINTAIN_ASPECT_SCALING
@@ -509,7 +509,7 @@ itcl::class Editor {
 
 		  debug "selection $selection"
 
-		  set editobjs [dlist_select $selection [${objtype}::is $selection]]
+		  set editobjs [dlist::select $selection [${objtype}::is $selection]]
 
 		  debug "editobjs $editobjs"
 
@@ -669,7 +669,7 @@ itcl::class Editor {
 
 	 public method saveBitmaps {basename} {
 		  set objs [getEditAll]
-		  set grobjs [dlist_select $objs [GrObj::is $objs]]
+		  set grobjs [dlist::select $objs [GrObj::is $objs]]
 		  foreach obj $grobjs {
 				GrObj::renderMode $obj $GrObj::GL_BITMAP_CACHE
 				GrObj::saveBitmapCache $obj "${basename}${obj}.pbm"
