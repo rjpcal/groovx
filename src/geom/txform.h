@@ -61,6 +61,10 @@ namespace geom
     /** This is mainly intended for use in testing contexts. */
     static txform random();
 
+    /// Factory function to copy an existing array in column-major order.
+    static txform copy_of(const double* data)
+    { txform r(true); r.set_col_major_data(data); return r; }
+
     /// Factory function to make a matrix with uninitialized entries.
     static txform no_init() { return txform(true); }
 
