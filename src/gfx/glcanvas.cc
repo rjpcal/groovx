@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Wed Nov 20 20:42:27 2002
+// written: Wed Nov 20 21:16:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,14 +46,14 @@ public:
   shared_ptr<GlxWrapper> glx;
 };
 
-GLCanvas::GLCanvas(Display* dpy, GlxWrapper* share) :
-  rep(new Impl(dpy, share))
+GLCanvas::GLCanvas(Display* dpy) :
+  rep(new Impl(dpy, (GlxWrapper*) 0))
 {}
 
-GLCanvas* GLCanvas::make(Display* dpy, GlxWrapper* share)
+GLCanvas* GLCanvas::make(Display* dpy)
 {
 DOTRACE("GLCanvas::make");
-  return new GLCanvas(dpy, share);
+  return new GLCanvas(dpy);
 }
 
 GLCanvas::~GLCanvas()
