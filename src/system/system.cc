@@ -3,7 +3,7 @@
 // system.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Nov 17 15:05:41 1999
-// written: Mon Mar  6 19:34:14 2000
+// written: Mon Mar  6 19:44:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,10 +68,10 @@ DOTRACE("System::remove");
   return ::remove(pathname);
 }
 
-string System::getcwd() {
+const char* System::getcwd() {
 DOTRACE("System::getcwd");
-  int size = 256;
-  dynamic_block<char> buf(size);
+  const int INIT_SIZE = 256;
+  static dynamic_block<char> buf(INIT_SIZE);
 
   while ( !::getcwd(&buf[0], buf.size()) ) {
 	 buf.resize(buf.size() * 2);

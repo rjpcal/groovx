@@ -3,17 +3,13 @@
 // system.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Nov 17 15:05:41 1999
-// written: Fri Mar  3 15:10:53 2000
+// written: Mon Mar  6 19:43:17 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef SYSTEM_H_DEFINED
 #define SYSTEM_H_DEFINED
-
-#ifndef STRINGFWD_H_DEFINED
-#include "stringfwd.h"
-#endif
 
 ///
 class System {
@@ -134,8 +130,10 @@ public:
        and errno is set appropriately. */
   int remove(const char* pathname);
 
-  /// Get the absolute pathname of the current working directory
-  string getcwd();
+  /** Get the absolute pathname of the current working
+      directory. Warning: the result of this function is only valid
+      until the next call to the function. */
+  const char* getcwd();
 };
 
 static const char vcid_system_h[] = "$Header$";
