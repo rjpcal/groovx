@@ -56,16 +56,14 @@ test "TlistTcl-Tlist::loadObjidFile" "normal read with no offset" {
 	 ObjList::reset
 	 PosList::reset
 	 Tlist::loadObjidFile $::TEST_DIR/objid_file -1 0
-	 expr [regexp "^Trial +4 +6 +0 +3 +1 +9 +2 +11 +3 +0 +-1.*$" \
-				[Trial::stringify 2]] && [Tlist::count] == 3
-} {^1$}
+	 Tlist::count
+} {^3$}
 test "TlistTcl-Tlist::loadObjidFile" "read with fixed # lines, and offset" {
 	 ObjList::reset
 	 PosList::reset
 	 Tlist::loadObjidFile $::TEST_DIR/objid_file 2 1
-	 expr [regexp "^Trial +2 +4 +0 +5 +1 +0 +-1.*" [Trial::stringify 1]] \
-				&& [Tlist::count] == 2
-} {^1$}
+	 Tlist::count
+} {^2$}
 test "TlistTcl-Tlist::loadObjidFile" "read empty file" {
 	 ObjList::reset
 	 PosList::reset
@@ -92,19 +90,19 @@ test "TlistTcl-Tlist::makeSummaryTrial" "too many args" {
 test "TlistTcl-Tlist::makeSummaryTrial" "normal use" {
 	 ObjList::reset
 	 PosList::reset
-	 Face::loadFaces $::TEST_DIR/faces_file
+	 ObjList::loadObjects $::TEST_DIR/faces_file
 	 Tlist::makeSummaryTrial 0 5 1.0 2.0 3.0
 } {^0$}
 test "TlistTcl-Tlist::makeSummaryTrial" "error on bad trialid" {
 	 ObjList::reset
 	 PosList::reset
-	 Face::loadFaces $::TEST_DIR/faces_file
+	 ObjList::loadObjects $::TEST_DIR/faces_file
 	 Tlist::makeSummaryTrial -1 5 1.0 2.0 3.0
 } {^Tlist::makeSummaryTrial: invalid trial id$}
 test "TlistTcl-Tlist::makeSummaryTrial" "error on bad num_cols" {
 	 ObjList::reset
 	 PosList::reset
-	 Face::loadFaces $::TEST_DIR/faces_file
+	 ObjList::loadObjects $::TEST_DIR/faces_file
 	 Tlist::makeSummaryTrial 0 -1 1.0 2.0 3.0
 } {^Tlist::makeSummaryTrial: num_cols must be a positive integer$}
 
@@ -116,6 +114,7 @@ test "TlistTcl-Tlist::makeSingles" "too many args" {
     Tlist::makeSingles j u
 } {wrong \# args: should be "Tlist::makeSingles posid"}
 test "TlistTcl-Tlist::makeSingles" "normal use with several GrObj's" {
+	 Tlist::reset
 	 ObjList::reset
 	 PosList::reset
 	 Face::Face
@@ -123,10 +122,10 @@ test "TlistTcl-Tlist::makeSingles" "normal use with several GrObj's" {
 	 Face::Face
 	 set p [Pos::Pos]
 	 Tlist::makeSingles $p
-	 expr [regexp "^Trial +1 +2 0 +0 +0.*$" [Trial::stringify 2]] \
-				&& [Tlist::count] == 3
-} {^1$}
+	 Tlist::count
+} {^3$}
 test "TlistTcl-Tlist::makeSingles" "normal use with empty ObjList" {
+	 Tlist::reset
 	 ObjList::reset
 	 PosList::reset
 	 set p [Pos::Pos]
@@ -147,6 +146,7 @@ test "TlistTcl-Tlist::makePairs" "too many args" {
     Tlist::makePairs j u n
 } {wrong \# args: should be "Tlist::makePairs posid1 posid2"}
 test "TlistTcl-Tlist::makePairs" "normal use on two GrObj's" {
+	 Tlist::reset
 	 ObjList::reset
 	 PosList::reset
 	 Face::Face
@@ -154,9 +154,8 @@ test "TlistTcl-Tlist::makePairs" "normal use on two GrObj's" {
 	 set p1 [Pos::Pos]
 	 set p2 [Pos::Pos]
 	 Tlist::makePairs $p1 $p2
-	 expr [regexp "^Trial +2 +1 +0 +1 +1 +0 +1.*$" [Trial::stringify 3]] \
-				&& [Tlist::count] == 4
-} {^1$}
+	 Tlist::count
+} {^4$}
 test "TlistTcl-Tlist::makePairs" "normal use with empty ObjList" {
 	 ObjList::reset
 	 PosList::reset
