@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 17:25:48 2002
-// written: Sat Aug  3 17:28:39 2002
+// written: Sun Aug  4 15:24:48 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -80,6 +80,8 @@ DOTRACE("GLUtil::grabPixels");
   glPixelStorei(GL_PACK_SKIP_ROWS, 0);
   glPixelStorei(GL_PACK_SKIP_PIXELS, 0);
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
+
+  glReadBuffer(GL_FRONT); // by default it read GL_BACK in double buffer mode
 
   /* Actually read the pixels. */
   glReadPixels(0, 0, width, height, format,

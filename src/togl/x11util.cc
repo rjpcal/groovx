@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:32:56 2002
-// written: Sat Aug  3 17:24:20 2002
+// written: Sun Aug  4 15:58:53 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -176,7 +176,7 @@ DOTRACE("X11Util::noFaultXAllocColor");
 
   /* Retrieve color table entries. */
   /* XXX alloca candidate. */
-  XColor* ctable = (XColor *) malloc(cmapSize * sizeof(XColor));
+  XColor* const ctable = new XColor[cmapSize];
   {
     for (int i = 0; i < cmapSize; ++i)
       {
@@ -210,7 +210,7 @@ DOTRACE("X11Util::noFaultXAllocColor");
   subColor.green = ctable[bestmatch].green;
   subColor.blue = ctable[bestmatch].blue;
 
-  free(ctable);
+  delete [] ctable;
 
   /* Try to allocate the closest match color.  This should only
    * fail if the cell is read/write.  Otherwise, we're incrementing

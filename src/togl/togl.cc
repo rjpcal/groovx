@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Sat Aug  3 17:29:06 2002
+// written: Sun Aug  4 16:00:27 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -29,10 +29,8 @@
 #include "togl/glutil.h"
 #include "togl/glxattribs.h"
 #include "togl/glxwrapper.h"
+#include "togl/tkutil.h"
 #include "togl/x11util.h"
-
-// Currently support only X11
-#define X11
 
 // Standard C headers
 #include <cstdio>
@@ -161,21 +159,16 @@ public:
   static void dummyRenderCallback(ClientData clientData);
   static void dummyOverlayRenderCallback(ClientData clientData);
 
-  void setDisplayFunc(Togl_Callback* proc)
-  { itsDisplayProc = proc; }
-
-  void setReshapeFunc(Togl_Callback* proc)
-  { itsReshapeProc = proc; }
-
-  void setDestroyFunc(Togl_Callback* proc)
-  { itsDestroyProc = proc; }
+  void setDisplayFunc(Togl_Callback* proc) { itsDisplayProc = proc; }
+  void setReshapeFunc(Togl_Callback* proc) { itsReshapeProc = proc; }
+  void setDestroyFunc(Togl_Callback* proc) { itsDestroyProc = proc; }
 
   void postRedisplay()
   {
     if (!itsUpdatePending)
       {
         Tk_DoWhenIdle( dummyRenderCallback, static_cast<ClientData>(this) );
-        itsUpdatePending = GL_TRUE;
+        itsUpdatePending = true;
       }
   }
 
@@ -241,16 +234,12 @@ private:
 
   int makeWindowExist();
 
-  void destroyCurrentWindow();
-  int checkForGLX();
+  bool checkForGLX();
   void setupVisInfoAndContext();
   shared_ptr<GlxAttribs> buildAttribList();
   void createWindow();
-  Window findParent();
-  void setupStackingOrder();
   void setupOverlayIfNeeded();
   int setupOverlay();
-  void issueConfigureNotify();
   void checkDblBufferSnafu();
 
 public:
@@ -259,7 +248,7 @@ public:
 
   GlxWrapper* itsGlx;           /* Normal planes GLX context */
   Display* itsDisplay;          /* X's token for the window's display. */
-  Tk_Window  itsTkWin;          /* Tk window structure */
+  Tk_Window itsTkWin;           /* Tk window structure */
   Tcl_Interp* itsInterp;        /* Tcl interpreter */
   Tcl_Command itsWidgetCmd;     /* Token for togl's widget command */
 #ifndef NO_TK_CURSOR
@@ -278,7 +267,7 @@ public:
 
   ClientData itsClientData;     /* Pointer to user data */
 
-  GLboolean itsUpdatePending;   /* Should normal planes be redrawn? */
+  bool itsUpdatePending;        /* Should normal planes be redrawn? */
 
   Togl_Callback* itsDisplayProc; /* Callback when widget is rendered */
   Togl_Callback* itsReshapeProc; /* Callback when window size changes */
@@ -289,7 +278,7 @@ public:
   GlxWrapper* itsOverlayGlx;    /* Overlay planes OpenGL context */
   Window itsOverlayWindow;      /* The overlay window, or 0 */
   Togl_Callback* itsOverlayDisplayProc; /* Overlay redraw proc */
-  GLboolean itsOverlayUpdatePending; /* Should overlay be redrawn? */
+  bool itsOverlayUpdatePending; /* Should overlay be redrawn? */
   Colormap itsOverlayCmap;      /* colormap for overlay is created */
   int itsOverlayTransparentPixel; /* transparent pixel */
   int itsOverlayIsMapped;
@@ -761,7 +750,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsOverlayFlag(0),
   itsStereoFlag(0),
   itsClientData(DefaultClientData),
-  itsUpdatePending(GL_FALSE),
+  itsUpdatePending(false),
   itsDisplayProc(DefaultDisplayProc),
   itsReshapeProc(DefaultReshapeProc),
   itsDestroyProc(DefaultDestroyProc),
@@ -769,7 +758,7 @@ Togl::Impl::Impl(Togl* owner, Tcl_Interp* interp,
   itsOverlayGlx(0),
   itsOverlayWindow(0),
   itsOverlayDisplayProc(DefaultOverlayDisplayProc),
-  itsOverlayUpdatePending(GL_FALSE),
+  itsOverlayUpdatePending(false),
   itsOverlayCmap(),
   itsOverlayTransparentPixel(),
   itsOverlayIsMapped(0),
@@ -1011,7 +1000,7 @@ DOTRACE("Togl::Impl::dummyRenderCallback");
       impl->makeCurrent();
       impl->itsDisplayProc(impl->itsOwner);
     }
-  impl->itsUpdatePending = GL_FALSE;
+  impl->itsUpdatePending = false;
 }
 
 void Togl::Impl::dummyOverlayRenderCallback(ClientData clientData)
@@ -1024,7 +1013,7 @@ DOTRACE("Togl::Impl::dummyOverlayRenderCallback");
       impl->itsOverlayGlx->makeCurrent(impl->itsOverlayWindow);
       impl->itsOverlayDisplayProc(impl->itsOwner);
     }
-  impl->itsOverlayUpdatePending = GL_FALSE;
+  impl->itsOverlayUpdatePending = false;
 }
 
 
@@ -1309,7 +1298,7 @@ DOTRACE("Togl::Impl::postOverlayRedisplay");
     {
       Tk_DoWhenIdle( Togl::Impl::dummyOverlayRenderCallback,
                      static_cast<ClientData>(this) );
-      itsOverlayUpdatePending = 1;
+      itsOverlayUpdatePending = true;
     }
 }
 
@@ -1350,8 +1339,6 @@ int Togl::Impl::dumpToEpsFile(const char* filename, int inColor,
 DOTRACE("Togl::Impl::dumpToEpsFile");
 
   user_redraw(itsOwner);
-
-  glReadBuffer(GL_FRONT); // by default it read GL_BACK in double buffer mode
 
   glFlush();
 
@@ -1490,10 +1477,10 @@ int Togl::Impl::makeWindowExist()
 {
 DOTRACE("Togl::Impl::makeWindowExist");
 
-  destroyCurrentWindow();
+  TkUtil::destroyWindow(itsTkWin);
 
-  int status = checkForGLX();
-  if ( status != TCL_OK ) return status;
+  if ( !checkForGLX() )
+    return TCL_ERROR;
 
   try
     {
@@ -1506,17 +1493,16 @@ DOTRACE("Togl::Impl::makeWindowExist");
 
   createWindow();
 
-  setupStackingOrder();
+  TkUtil::setupStackingOrder(itsTkWin);
 
   setupOverlayIfNeeded();
 
   // Issue a ConfigureNotify event if there were deferred changes
-  issueConfigureNotify();
+  TkUtil::issueConfigureNotify(itsTkWin);
 
-  XSelectInput(itsDisplay, windowId(), ALL_EVENTS_MASK);
+  TkUtil::selectAllInput(itsTkWin);
 
-  // Request the X window to be displayed
-  XMapWindow(itsDisplay, windowId());
+  TkUtil::mapWindow(itsTkWin);
 
   // Bind the context to the window and make it the current context
   makeCurrent();
@@ -1527,19 +1513,7 @@ DOTRACE("Togl::Impl::makeWindowExist");
   return TCL_OK;
 }
 
-void Togl::Impl::destroyCurrentWindow()
-{
-DOTRACE("Togl::Impl::destroyCurrentWindow");
-  TkWindow *winPtr = (TkWindow *) itsTkWin;
-
-  if (winPtr->window != None)
-    {
-      XDestroyWindow(itsDisplay, winPtr->window);
-      winPtr->window = 0;
-    }
-}
-
-int Togl::Impl::checkForGLX()
+bool Togl::Impl::checkForGLX()
 {
 DOTRACE("Togl::Impl::checkForGLX");
 
@@ -1547,10 +1521,11 @@ DOTRACE("Togl::Impl::checkForGLX");
   int dummy;
   if (!glXQueryExtension(itsDisplay, &dummy, &dummy))
     {
-      return TCL_ERR(itsInterp, "Togl: X server has no OpenGL GLX extension");
+      TCL_ERR(itsInterp, "Togl: X server has no OpenGL GLX extension");
+      return false;
     }
 
-  return TCL_OK;
+  return true;
 }
 
 void Togl::Impl::setupVisInfoAndContext()
@@ -1608,22 +1583,22 @@ DOTRACE("Togl::Impl::buildAttribList");
   return attribs;
 }
 
+// FIXME should be a helper func in TkUtil
 void Togl::Impl::createWindow()
 {
 DOTRACE("Togl::Impl::createWindow");
 
-  TkWindow *winPtr = (TkWindow *) itsTkWin;
+  TkWindow* winPtr = reinterpret_cast<TkWindow*>(itsTkWin);
 
   Colormap cmap = X11Util::findColormap(itsDisplay, itsVisInfo,
                                         itsGlxOpts.rgbaFlag, itsPrivateCmapFlag);
 
-  /* Make sure Tk knows to switch to the new colormap when the cursor
-   * is over this window when running in color index mode.
-   */
+  // Make sure Tk knows to switch to the new colormap when the cursor is over
+  // this window when running in color index mode.
   Tk_SetWindowVisual(itsTkWin, itsVisInfo->visual, itsVisInfo->depth, cmap);
 
   // Find parent of window (necessary for creation)
-  Window parent = findParent();
+  Window parent = TkUtil::findParent(itsTkWin);
 
   DebugEvalNL(parent);
 
@@ -1655,68 +1630,6 @@ DOTRACE("Togl::Impl::createWindow");
 #ifdef TK_USE_INPUT_METHODS
   winPtr->inputContext = NULL;
 #endif /* TK_USE_INPUT_METHODS */
-}
-
-Window Togl::Impl::findParent()
-{
-DOTRACE("Togl::Impl::findParent");
-
-  TkWindow *winPtr = (TkWindow *) itsTkWin;
-
-  if ((winPtr->parentPtr == NULL) || (winPtr->flags & TK_TOP_LEVEL))
-    {
-      return XRootWindow(winPtr->display, winPtr->screenNum);
-    }
-  // else...
-  if (winPtr->parentPtr->window == None)
-    {
-      Tk_MakeWindowExist((Tk_Window) winPtr->parentPtr);
-    }
-  return winPtr->parentPtr->window;
-}
-
-void Togl::Impl::setupStackingOrder()
-{
-DOTRACE("Togl::Impl::setupStackingOrder");
-  TkWindow *winPtr = (TkWindow *) itsTkWin;
-
-  if (!(winPtr->flags & TK_TOP_LEVEL))
-    {
-      /*
-       * If any siblings higher up in the stacking order have already
-       * been created then move this window to its rightful position
-       * in the stacking order.
-       *
-       * NOTE: this code ignores any changes anyone might have made
-       * to the sibling and stack_mode field of the window's attributes,
-       * so it really isn't safe for these to be manipulated except
-       * by calling Tk_RestackWindow.
-       */
-
-      for (TkWindow* winPtr2 = winPtr->nextPtr; winPtr2 != NULL;
-           winPtr2 = winPtr2->nextPtr)
-        {
-          if ((winPtr2->window != None) && !(winPtr2->flags & TK_TOP_LEVEL)) {
-            XWindowChanges changes;
-            changes.sibling = winPtr2->window;
-            changes.stack_mode = Below;
-            XConfigureWindow(winPtr->display, winPtr->window,
-                             CWSibling|CWStackMode, &changes);
-            break;
-          }
-        }
-
-      /*
-       * If this window has a different colormap than its parent, add
-       * the window to the WM_COLORMAP_WINDOWS property for its top-level.
-       */
-
-      if ((winPtr->parentPtr != NULL) &&
-          (winPtr->atts.colormap != winPtr->parentPtr->atts.colormap))
-        {
-          TkWmAddToColormapWindows(winPtr);
-        }
-    }
 }
 
 void Togl::Impl::setupOverlayIfNeeded()
@@ -1824,49 +1737,6 @@ DOTRACE("Togl::Impl::setupOverlay");
   XSetWMColormapWindows( itsDisplay, itsOverlayWindow, &itsOverlayWindow, 1 );
 
   return TCL_OK;
-}
-
-void Togl::Impl::issueConfigureNotify()
-{
-DOTRACE("Togl::Impl::issueConfigureNotify");
-
-  /*
-   * Issue a ConfigureNotify event if there were deferred configuration
-   * changes (but skip it if the window is being deleted;  the
-   * ConfigureNotify event could cause problems if we're being called
-   * from Tk_DestroyWindow under some conditions).
-   */
-  TkWindow *winPtr = (TkWindow *) itsTkWin;
-
-  if ((winPtr->flags & TK_NEED_CONFIG_NOTIFY)
-      && !(winPtr->flags & TK_ALREADY_DEAD))
-    {
-      winPtr->flags &= ~TK_NEED_CONFIG_NOTIFY;
-
-      XEvent event;
-
-      event.type = ConfigureNotify;
-      event.xconfigure.serial = LastKnownRequestProcessed(winPtr->display);
-      event.xconfigure.send_event = False;
-      event.xconfigure.display = winPtr->display;
-      event.xconfigure.event = winPtr->window;
-      event.xconfigure.window = winPtr->window;
-      event.xconfigure.x = winPtr->changes.x;
-      event.xconfigure.y = winPtr->changes.y;
-      event.xconfigure.width = winPtr->changes.width;
-      event.xconfigure.height = winPtr->changes.height;
-      event.xconfigure.border_width = winPtr->changes.border_width;
-      if (winPtr->changes.stack_mode == Above)
-        {
-          event.xconfigure.above = winPtr->changes.sibling;
-        }
-      else
-        {
-          event.xconfigure.above = None;
-        }
-      event.xconfigure.override_redirect = winPtr->atts.override_redirect;
-      Tk_HandleEvent(&event);
-    }
 }
 
 void Togl::Impl::checkDblBufferSnafu()
