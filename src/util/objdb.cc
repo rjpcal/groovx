@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Nov 21 00:26:29 1999
-// written: Mon Aug 20 08:26:08 2001
+// written: Mon Aug 20 08:56:29 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,6 +15,7 @@
 
 #include "util/objdb.h"
 
+#include "util/iter.h"
 #include "util/object.h"
 #include "util/ref.h"
 
@@ -158,83 +159,61 @@ public:
 
 ///////////////////////////////////////////////////////////////////////
 //
-// ObjDb::ItrImpl definition
+// ObjDb::Iterator definitions
 //
 ///////////////////////////////////////////////////////////////////////
 
-class ObjDb::ItrImpl {
-public:
-  typedef ObjDb::Impl::MapType MapType;
-
-  ItrImpl(ObjDb::Impl::MapType& m, MapType::iterator itr) :
-    itsMap(m), itsIter(itr) {}
-
-  MapType& itsMap;
-  MapType::iterator itsIter;
-};
-
-///////////////////////////////////////////////////////////////////////
-//
-// ObjDb::Iterator member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-ObjDb::Iterator::Iterator(ObjDb::ItrImpl* impl) :
-  itsImpl(impl)
+namespace
 {
-DOTRACE("ObjDb::Iterator::Iterator()");
-}
+  class ObjDbIter :
+    public Util::FwdIterIfx<const Util::WeakRef<Util::Object> >
+  {
+  public:
+    typedef ObjDb::Impl::MapType MapType;
 
-ObjDb::Iterator::~Iterator()
-{
-DOTRACE("ObjDb::Iterator::~Iterator");
-  delete itsImpl;
-}
-
-ObjDb::Iterator::Iterator(const ObjDb::Iterator& other) :
-  itsImpl(new ItrImpl(*(other.itsImpl)))
-{
-DOTRACE("ObjDb::Iterator::Iterator(copy)");
-}
-
-ObjDb::Iterator&
-ObjDb::Iterator::operator=(const ObjDb::Iterator& other)
-{
-DOTRACE("ObjDb::Iterator::operator=");
-  ItrImpl* old_impl = itsImpl;
-  itsImpl = new ItrImpl(*(other.itsImpl));
-  delete old_impl;
-  return *this;
-}
-
-bool ObjDb::Iterator::operator==(const ObjDb::Iterator& other) const
-{
-  return itsImpl->itsIter == other.itsImpl->itsIter;
-}
-
-ObjDb::Iterator&
-ObjDb::Iterator::operator++()
-{
-  ++(itsImpl->itsIter);
-
-  while (true)
+    void advanceToValid()
     {
-      if (itsImpl->itsIter == itsImpl->itsMap.end()) break;
+      while (true)
+        {
+          if (itsIter == itsEnd) break;
 
-      if ((*(itsImpl->itsIter)).second.isValid()) break;
+          if ((*itsIter).second.isValid()) break;
 
-      ItrImpl::MapType::iterator bad = itsImpl->itsIter;
-      ++(itsImpl->itsIter);
+          MapType::iterator bad = itsIter;
+          ++itsIter;
 
-      itsImpl->itsMap.erase(bad);
+          itsMap.erase(bad);
+        }
     }
 
-  return *this;
-}
+    ObjDbIter(MapType& m, MapType::iterator itr) :
+      itsMap(m), itsIter(itr), itsEnd(m.end())
+    {
+      advanceToValid();
+    }
 
-const Util::WeakRef<Util::Object>& ObjDb::Iterator::operator*() const
-{
-  return (*(itsImpl->itsIter)).second;
+    MapType& itsMap;
+    MapType::iterator itsIter;
+    const MapType::iterator itsEnd;
+
+    virtual Interface* clone() const
+    {
+      return new ObjDbIter(itsMap, itsIter);
+    }
+
+    virtual void next()
+    {
+      if (!atEnd())
+        {
+          ++itsIter;
+          advanceToValid();
+        }
+    }
+
+    virtual ValueType& get() const { return (*itsIter).second; }
+
+    virtual bool     atEnd() const { return (itsIter == itsEnd); }
+  };
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -250,16 +229,12 @@ ObjDb& ObjDb::theDb()
   return theInstance;
 }
 
-ObjDb::Iterator ObjDb::begin() const
+ObjDb::Iterator ObjDb::objects() const
 {
-DOTRACE("ObjDb::begin");
-  return Iterator(new ItrImpl(itsImpl->itsPtrMap, itsImpl->itsPtrMap.begin()));
-}
+DOTRACE("ObjDb::children");
 
-ObjDb::Iterator ObjDb::end() const
-{
-DOTRACE("ObjDb::end");
-  return Iterator(new ItrImpl(itsImpl->itsPtrMap, itsImpl->itsPtrMap.end()));
+ return shared_ptr<ObjDb::Iterator::Interface>
+   (new ObjDbIter(itsImpl->itsPtrMap, itsImpl->itsPtrMap.begin()));
 }
 
 ObjDb::ObjDb() :
