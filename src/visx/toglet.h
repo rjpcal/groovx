@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Mon Sep 16 19:04:18 2002
+// written: Mon Sep 16 19:26:39 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@
 struct Tcl_Interp;
 struct Tcl_Obj;
 
-class TogletImpl;
+class TogletSizer;
 
 // ####################################################################
 
@@ -67,9 +67,6 @@ public:
   virtual void takeFocus();
 
   // actions
-  void loadDefaultFont();
-  void loadFont(const char* fontname);
-  void loadFonti(int fontnumber);
   void writeEpsFile(const char* filename);
 
   virtual void displayCallback();
@@ -79,9 +76,7 @@ private:
   Toglet(const Toglet&); // no copy constructor
   Toglet& operator=(const Toglet&); // no assignment operator
 
-  friend class TogletImpl;
-
-  TogletImpl* rep;
+  TogletSizer* itsSizer;
 };
 
 static const char vcid_toglet_h[] = "$Header$";

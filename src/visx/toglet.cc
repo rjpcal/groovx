@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Mon Sep 16 19:09:54 2002
+// written: Mon Sep 16 19:28:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -266,69 +266,6 @@ DOTRACE("TogletSizer::reconfigure");
 
 ///////////////////////////////////////////////////////////////////////
 //
-// TogletImpl definition
-//
-///////////////////////////////////////////////////////////////////////
-
-class TogletImpl
-{
-public:
-  Toglet* const owner;
-  scoped_ptr<TogletSizer> sizer;
-  unsigned int fontListBase;
-
-  TogletImpl(Toglet* p);
-
-  ~TogletImpl();
-
-  void loadFontList(GLuint newListBase);
-
-  void reconfigure();
-};
-
-TogletImpl::TogletImpl(Toglet* p)
-  :
-  owner(p),
-  sizer(new TogletSizer),
-  fontListBase(0)
-{}
-
-TogletImpl::~TogletImpl()
-{
-DOTRACE("TogletImpl::~TogletImpl");
-}
-
-void TogletImpl::loadFontList(GLuint newListBase)
-{
-  // Check if font loading succeeded...
-  if (newListBase == 0)
-    {
-      throw Util::Error("unable to load font");
-    }
-
-  // ... otherwise unload the current font
-  if (fontListBase > 0)
-    {
-      owner->unloadBitmapFont(fontListBase);
-    }
-
-  // ... and point to the new font
-  fontListBase = newListBase;
-}
-
-void TogletImpl::reconfigure()
-{
-DOTRACE("TogletImpl::reconfigure");
-
-  owner->makeCurrent();
-
-  sizer->reconfigure(owner->width(), owner->height());
-
-  owner->requestRedisplay();
-}
-
-///////////////////////////////////////////////////////////////////////
-//
 // Toglet member definitions
 //
 ///////////////////////////////////////////////////////////////////////
@@ -336,7 +273,7 @@ DOTRACE("TogletImpl::reconfigure");
 Toglet::Toglet(bool pack) :
   Togl(Tcl::Main::interp(), widgetName(id())),
   Tcl::TkWidget(),
-  rep(new TogletImpl(this))
+  itsSizer(new TogletSizer)
 {
 DOTRACE("Toglet::Toglet");
   DebugEvalNL((void*) this);
@@ -367,9 +304,9 @@ Toglet::~Toglet()
 DOTRACE("Toglet::~Toglet");
 
   DebugEvalNL((void*)this);
-  DebugEvalNL((void*)rep);
+  DebugEvalNL((void*)itsSizer);
 
-  delete rep;
+  delete itsSizer;
 }
 
 ///////////////
@@ -379,7 +316,7 @@ DOTRACE("Toglet::~Toglet");
 bool Toglet::usingFixedScale() const
 {
 DOTRACE("Toglet::usingFixedScale");
-  return rep->sizer->usingFixedScale();
+  return itsSizer->usingFixedScale();
 }
 
 Gfx::Canvas& Toglet::getCanvas()
@@ -419,9 +356,9 @@ void Toglet::scaleRect(double factor)
 {
 DOTRACE("Toglet::scaleRect");
 
-  rep->sizer->scaleRect(factor);
+  itsSizer->scaleRect(factor);
 
-  rep->reconfigure();
+  reshapeCallback();
 }
 
 void Toglet::setColor(const Color& color)
@@ -442,43 +379,43 @@ DOTRACE("Toglet::setColor");
 void Toglet::setPixelsPerUnit(double s)
 {
 DOTRACE("Toglet::setPixelsPerUnit");
-  rep->sizer->setPixelsPerUnit(s);
-  rep->reconfigure();
+  itsSizer->setPixelsPerUnit(s);
+  reshapeCallback();
 }
 
 void Toglet::setUnitAngle(double deg)
 {
 DOTRACE("Toglet::setUnitAngle");
-  rep->sizer->setUnitAngle(deg, pixelsPerInch());
-  rep->reconfigure();
+  itsSizer->setUnitAngle(deg, pixelsPerInch());
+  reshapeCallback();
 }
 
 void Toglet::setViewingDistIn(double inches)
 {
 DOTRACE("Toglet::setViewingDistIn");
-  rep->sizer->setViewingDistIn(inches);
-  rep->reconfigure();
+  itsSizer->setViewingDistIn(inches);
+  reshapeCallback();
 }
 
 void Toglet::setPerspective(double fovy, double zNear, double zFar)
 {
 DOTRACE("Toglet::setPerspective");
-  rep->sizer->setPerspective(fovy, zNear, zFar);
-  rep->reconfigure();
+  itsSizer->setPerspective(fovy, zNear, zFar);
+  reshapeCallback();
 }
 
 void Toglet::setFixedRectLTRB(double L, double T, double R, double B)
 {
 DOTRACE("Toglet::setFixedRectLTRB");
-  rep->sizer->setFixedRectLTRB(L,T,R,B);
-  rep->reconfigure();
+  itsSizer->setFixedRectLTRB(L,T,R,B);
+  reshapeCallback();
 }
 
 void Toglet::setMinRectLTRB(double L, double T, double R, double B)
 {
 DOTRACE("Toglet::setMinRectLTRB");
-  rep->sizer->setMinRectLTRB(L,T,R,B);
-  rep->reconfigure();
+  itsSizer->setMinRectLTRB(L,T,R,B);
+  reshapeCallback();
 }
 
 /////////////
@@ -499,22 +436,6 @@ DOTRACE("Toglet::bind");
 }
 
 void Toglet::swapBuffers() { Togl::swapBuffers(); }
-
-void Toglet::loadDefaultFont() { loadFont(0); }
-
-void Toglet::loadFont(const char* fontname)
-{
-DOTRACE("Toglet::loadFont");
-
-  rep->loadFontList(Togl::loadBitmapFont(fontname));
-}
-
-void Toglet::loadFonti(int fontnumber)
-{
-DOTRACE("Toglet::loadFonti");
-
-  rep->loadFontList(Togl::loadBitmapFonti(fontnumber));
-}
 
 void Toglet::takeFocus()
 {
@@ -576,7 +497,11 @@ void Toglet::reshapeCallback()
 {
 DOTRACE("Toglet::reshapeCallback");
 
-  rep->reconfigure();
+  makeCurrent();
+
+  itsSizer->reconfigure(width(), height());
+
+  requestRedisplay();
 }
 
 static const char vcid_toglet_cc[] = "$Header$";
