@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu Oct 19 11:04:05 2000
+// written: Thu Oct 19 15:18:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -194,9 +194,6 @@ public:
   void setUsingZoom(bool val);
 
 private:
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
-
   Bitmap(const Bitmap&);
   Bitmap& operator=(const Bitmap&);
 

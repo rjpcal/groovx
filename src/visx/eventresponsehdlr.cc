@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Mon Oct 16 13:35:35 2000
+// written: Thu Oct 19 15:27:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,7 +20,6 @@
 #include "response.h"
 #include "trialbase.h"
 
-#include "io/iolegacy.h"
 #include "io/reader.h"
 #include "io/writer.h"
 
@@ -67,9 +66,6 @@ class EventResponseHdlr::Impl {
 private:
   Impl(const Impl&);
   Impl& operator=(const Impl&);
-
-  void legacySrlz(IO::LegacyWriter* writer) const;
-  void legacyDesrlz(IO::LegacyReader* reader);
 
 public:
   Impl(EventResponseHdlr* owner, const char* input_response_map);
@@ -175,9 +171,6 @@ public:
   { itsState = new_state; }
 
   // Delegand functions
-
-  void oldLegacySrlz(IO::Writer* writer) const;
-  void oldLegacyDesrlz(IO::Reader* reader);
 
   void readFrom(IO::Reader* reader);
   void writeTo(IO::Writer* writer) const;
@@ -567,76 +560,10 @@ DOTRACE("EventResponseHdlr::Impl::~Impl");
   }
 }
 
-void EventResponseHdlr::Impl::legacySrlz(IO::LegacyWriter* lwriter) const {
-DOTRACE("EventResponseHdlr::Impl::legacySrlz");
-
-  oldLegacySrlz(lwriter);
-
-  lwriter->writeValue("eventSequence", itsEventSequence);
-  lwriter->writeValue("bindingSubstitution", itsBindingSubstitution);
-}
-
-void EventResponseHdlr::Impl::legacyDesrlz(IO::LegacyReader* lreader) {
-DOTRACE("EventResponseHdlr::Impl::legacyDesrlz");
-
-  oldLegacyDesrlz(lreader);
-
-  lreader->readValue("eventSequence", itsEventSequence);
-  lreader->readValue("bindingSubstitution", itsBindingSubstitution);
-}
-
-void EventResponseHdlr::Impl::oldLegacySrlz(IO::Writer* writer) const {
-DOTRACE("EventResponseHdlr::Impl::oldLegacySrlz");
-
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 lwriter->setStringMode(IO::GETLINE_NEWLINE);
-
-	 writer->writeValue("inputResponseMap", itsInputResponseMap);
-	 writer->writeValue("feedbackMap", itsFeedbackMap);
-
-	 lwriter->setFieldSeparator('\n');
-	 writer->writeValue("useFeedback", itsUseFeedback);
-  }
-}
-
-void EventResponseHdlr::Impl::oldLegacyDesrlz(IO::Reader* reader) {
-DOTRACE("EventResponseHdlr::Impl::oldLegacyDesrlz");
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 lreader->setStringMode(IO::GETLINE_NEWLINE);
-	 reader->readValue("inputResponseMap", itsInputResponseMap);
-	 reader->readValue("feedbackMap", itsFeedbackMap);
-	 reader->readValue("useFeedback", itsUseFeedback);
-
-	 itsRegexpsAreDirty = true;
-	 itsFeedbacksAreDirty = true;
-
-#ifdef MIPSPRO_COMPILER
-	 // The next character after itsUseFeedback had better be a
-	 // newline, and we need to remove it from the stream. ... OK, now
-	 // I've commented out the code that does this, since I believe
-	 // it's no longer necessary.
-
-//    	 int cc = lreader->getChar();
-//    	 if ( cc != '\n' ) {
-//    		DebugEvalNL(cc);
-//    		throw IO::LogicError(ioTag.c_str());
-//    	 }
-#endif
-  }
-}
-
 void EventResponseHdlr::Impl::readFrom(IO::Reader* reader) {
 DOTRACE("EventResponseHdlr::Impl::readFrom");
 
   itsState = ERHState::inactiveState(); 
-
-  IO::LegacyReader* lreader = dynamic_cast<IO::LegacyReader*>(reader); 
-  if (lreader != 0) {
-	 legacyDesrlz(lreader);
-	 return;
-  }
 
   reader->readValue("inputResponseMap", itsInputResponseMap);
   reader->readValue("feedbackMap", itsFeedbackMap);
@@ -652,12 +579,6 @@ DOTRACE("EventResponseHdlr::Impl::readFrom");
 
 void EventResponseHdlr::Impl::writeTo(IO::Writer* writer) const {
 DOTRACE("EventResponseHdlr::Impl::writeTo");
-
-  IO::LegacyWriter* lwriter = dynamic_cast<IO::LegacyWriter*>(writer);
-  if (lwriter != 0) {
-	 legacySrlz(lwriter);
-	 return;
-  }
 
   writer->writeValue("inputResponseMap", itsInputResponseMap);
   writer->writeValue("feedbackMap", itsFeedbackMap);
@@ -957,12 +878,6 @@ void EventResponseHdlr::rhEndTrial() const
 
 void EventResponseHdlr::rhHaltExpt() const
   { itsImpl->rhHaltExpt(); }
-
-void EventResponseHdlr::oldLegacySrlz(IO::Writer* writer) const
-  { itsImpl->oldLegacySrlz(writer); }
-
-void EventResponseHdlr::oldLegacyDesrlz(IO::Reader* reader)
-  { itsImpl->oldLegacyDesrlz(reader); }
 
 static const char vcid_eventresponsehdlr_cc[] = "$Header$";
 #endif // !EVENTRESPONSEHDLR_CC_DEFINED

@@ -3,7 +3,7 @@
 // eventresponsehdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:30:54 1999
-// written: Wed Oct 11 14:39:26 2000
+// written: Thu Oct 19 15:22:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -149,17 +149,6 @@ public:
   virtual void rhAbortTrial() const;
   virtual void rhEndTrial() const;
   virtual void rhHaltExpt() const;
-
-protected:
-  /** This deprecated function is provided for compatibility with old
-      \c KbdResponseHdlr interface, since the eventSequence and
-      bindingSubstitution fields are ignored. */
-  void oldLegacySrlz(IO::Writer* writer) const;
-
-  /** This deprecated function is provided for compatibility with old
-      \c KbdResponseHdlr interface, since the eventSequence and
-      bindingSubstitution fields are ignored. */
-  void oldLegacyDesrlz(IO::Reader* reader);
 
 private:
   EventResponseHdlr(const EventResponseHdlr&);
