@@ -3,7 +3,7 @@
 // xbitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Sep  7 14:37:04 1999
-// written: Wed Sep  8 13:08:41 1999
+// written: Tue Sep 21 12:36:58 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,11 +18,10 @@
 #include <GL/glx.h>
 #include <GL/glu.h>
 
-#include "pbm.h"
 #include "toglconfig.h"
 #include "objtogl.h"
 
-#define LOCAL_TRACE
+#define NO_TRACE
 #include "trace.h"
 #define LOCAL_ASSERT
 #include "debug.h"
@@ -98,7 +97,8 @@ DOTRACE("XBitmap::init");
 
   if (!class_inited) init_class();
 
-  GrObj::setUsingCompile(false);
+  GrObj::setRenderMode(GROBJ_DIRECT_RENDER);
+  GrObj::setUnRenderMode(GROBJ_CLEAR_BOUNDING_BOX);
   Bitmap::setUsingZoom(false);
 
   itsImage = NULL;
@@ -116,7 +116,7 @@ DOTRACE("XBitmap::serialize");
 
   if (os.fail()) throw OutputError(ioTag);
 
-  if (flag & BASES) { GrObj::serialize(os, flag); }
+  if (flag & BASES) { Bitmap::serialize(os, flag); }
 }
 
 void XBitmap::deserialize(istream& is, IOFlag flag) {
@@ -125,7 +125,7 @@ DOTRACE("XBitmap::deserialize");
 
   if (is.fail()) throw InputError(ioTag);
 
-  if (flag & BASES) { GrObj::deserialize(is, flag); }
+  if (flag & BASES) { Bitmap::deserialize(is, flag); }
 }
 
 int XBitmap::charCount() const {
@@ -137,7 +137,8 @@ DOTRACE("XBitmap::charCount");
 // actions //
 /////////////
 
-void XBitmap::bytesChangeHook(unsigned char* theBytes, int width, int height) {
+void XBitmap::bytesChangeHook(unsigned char* theBytes, int width, int height,
+										int bits_per_pixel, int byte_alignment) {
 DOTRACE("XBitmap::bytesChangeHook");
   if (itsImage) {
 	 XFree(itsImage);
@@ -145,9 +146,22 @@ DOTRACE("XBitmap::bytesChangeHook");
   }
 
   if (theBytes != 0) {
-	 itsImage = XCreateImage(display, visual, 1, XYBitmap, 0,
-									 reinterpret_cast<char*>(theBytes),
-									 width, height, 8, 0);
+	 int format;
+	 if (bits_per_pixel == 1) {
+		format = XYBitmap;
+	 }
+	 else {
+		format = ZPixmap;
+	 }
+	 itsImage =
+		XCreateImage(display, visual,
+						 bits_per_pixel, /* bit depth */
+						 format, /* format = XYBitmap, XYPixmap, ZPixmap */
+						 0, /* offset */
+						 reinterpret_cast<char*>(theBytes),
+						 width, height,
+						 byte_alignment*8, /* bitmap_pad */
+						 0); /* bytes_per_line */
   }
 }
 
@@ -168,6 +182,7 @@ void XBitmap::doRender(unsigned char* /* bytes */,
 							  int width,
 							  int height,
 							  int /* bits_per_pixel */,
+							  int /* byte_alignment */,
 							  double /* zoom_x */,
 							  double /* zoom_y */) const {
 DOTRACE("XBitmap::doRender");
@@ -175,33 +190,26 @@ DOTRACE("XBitmap::doRender");
   // Check if we have an image to display 
   if (itsImage == NULL) return; 
 
-  // Calculate the correct window coordinates for the location of
-  // (itsRasterX, itsRasterY) in GL coordinates
-  GLdouble mv_matrix[16];
-  glGetDoublev(GL_MODELVIEW_MATRIX, mv_matrix);
+  // Calculate GL window coordinates of lower left corner of image
+  int screenX, screenY;
+  getScreenFromWorld(x_pos, y_pos, screenX, screenY);
 
-  GLdouble proj_matrix[16];
-  glGetDoublev(GL_PROJECTION_MATRIX, proj_matrix);
+  // Calculate GL window coordinates for upper left corner of image
+  screenY += height;
 
-  GLint viewport[4];
-  glGetIntegerv(GL_VIEWPORT, viewport);
-
-  GLdouble winX, winY, winZ;
-  GLint status = gluProject(x_pos, y_pos, 0.0,
-									 mv_matrix, proj_matrix, viewport,
-									 &winX, &winY, &winZ);
-
-  if (status == GL_FALSE)
-	 throw ErrorWithMsg("XBitmap::grRender(): gluProject error");
+  // Calculate X11 window coordinates for upper left corner of image
+  // (X11 coordinates put 0 at the top of the window, while GL
+  // coordinates put 0 at the bottom of the window)
+  XWindowAttributes xwa;
+  XGetWindowAttributes(display, win, &xwa);
+  screenY = xwa.height - screenY;
 
   // Draw the image
-  if (itsImage != NULL) {
-	 glXWaitGL();
-	 XPutImage(display, win, gfx_context_black, itsImage,
-				  0, 0, int(winX), int(winY),
-				  width, height);
-	 glXWaitX();
-  }
+  glXWaitGL();
+  XPutImage(display, win, gfx_context_black, itsImage,
+				0, 0, screenX, screenY,
+				width, height);
+  glXWaitX();
 }
 
 static const char vcid_xbitmap_cc[] = "$Header$";
