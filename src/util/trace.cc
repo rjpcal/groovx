@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Wed Aug  7 16:12:38 2002
+// written: Thu Aug  8 12:25:33 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -178,7 +178,7 @@ void Util::BackTrace::print() const throw()
 
 void Util::BackTrace::print(STD_IO::ostream& os) const throw()
 {
-  os.exceptions(0);
+  os.exceptions(std::ios_base::goodbit);
 
   os << "stack trace:\n";
 
@@ -345,7 +345,7 @@ double Util::Prof::avgTime() const throw()
 
 void Util::Prof::printProfData(std::ostream& os) const throw()
 {
-  os.exceptions(0);
+  os.exceptions(std::ios_base::goodbit);
 
   os << std::setw(14) << long(avgTime()) << '\t'
      << std::setw(5) << count() << '\t'
@@ -374,7 +374,7 @@ namespace
 
 void Util::Prof::printAllProfData(STD_IO::ostream& os) throw()
 {
-  os.exceptions(0);
+  os.exceptions(std::ios_base::goodbit);
 
   std::stable_sort(allProfs().begin(), allProfs().end(), compareTotalTime);
 
