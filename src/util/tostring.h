@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Aug  5 20:00:26 2001
-// written: Sun Aug  5 20:13:57 2001
+// written: Sun Aug  5 20:21:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,6 +35,13 @@ namespace Util
   struct Convert<const char*>
   {
     static const char* toString(const char* const& x) { return x; }
+  };
+
+  template <unsigned int N>
+  struct Convert<char[N]>
+  {
+    typedef char CharBlock[N];
+    static const char* toString(const CharBlock& x) { return x; }
   };
 }
 
