@@ -2,8 +2,8 @@
 // fixpttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Mon Mar 15 15:47:28 1999
-static const char vcid_fixpttcl_cc[] = "$Id$";
+// written: Mon Mar 15 16:00:02 1999
+// $Id$
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef FIXPTTCL_CC_DEFINED
@@ -151,7 +151,9 @@ int FixptTcl::Fixpt_Init(Tcl_Interp *interp) {
 DOTRACE("FixptTcl::Fixpt_Init");
   Tcl_CreateObjCommand(interp, "fixpt", fixptCmd,
                        (ClientData) NULL, (Tcl_CmdDeleteProc *) NULL);
+  Tcl_PkgProvide(interp, "Fixpt", "2.1");
   return TCL_OK;
 }
 
+static const char vcid_fixpttcl_cc[] = "$Header$";
 #endif // !FIXPTTCL_CC_DEFINED
