@@ -178,7 +178,7 @@ namespace
     // that we get the same thing back after an encoding-decoding
     // roundtrip.
 
-    Util::Urand generator(Util::globalRandSeed);
+    rutz::urand generator(rutz::default_rand_seed);
 
     const unsigned int SZ = 65530 + generator.idraw(5);
 

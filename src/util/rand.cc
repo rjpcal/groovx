@@ -34,7 +34,7 @@
 
 #include "rand.h"
 
-unsigned long Util::globalRandSeed = 0;
+unsigned long rutz::default_rand_seed = 0;
 
 static const char vcid_rand_cc[] = "$Header$";
 #endif // !RAND_CC_DEFINED

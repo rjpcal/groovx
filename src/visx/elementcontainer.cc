@@ -296,7 +296,7 @@ DOTRACE("ElementContainer::shuffle");
 
   setRandSeed(seed);
 
-  Util::Urand generator(rep->randSeed);
+  rutz::urand generator(rep->randSeed);
 
   std::random_shuffle(rep->elements.begin(),
                       rep->elements.end(),

@@ -122,9 +122,9 @@ DOTRACE("Jitter::writeTo");
 void Jitter::rejitter() const
 {
 DOTRACE("Jitter::rejitter");
-  itsXShift = Util::randRange(-itsXJitter, itsXJitter);
-  itsYShift = Util::randRange(-itsYJitter, itsYJitter);
-  itsRShift = Util::randRange(-itsRJitter, itsRJitter);
+  itsXShift = rutz::rand_range(-itsXJitter, itsXJitter);
+  itsYShift = rutz::rand_range(-itsYJitter, itsYJitter);
+  itsRShift = rutz::rand_range(-itsRJitter, itsRJitter);
 }
 
 void Jitter::draw(Gfx::Canvas& canvas) const

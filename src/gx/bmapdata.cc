@@ -380,7 +380,7 @@ DOTRACE("Gfx::BmapData::makeScrambled");
       newpos[i] = i;
     }
 
-  Util::Urand generator(seed);
+  rutz::urand generator(seed);
 
   if (allowMoveSubparts)
     {

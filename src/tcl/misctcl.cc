@@ -52,7 +52,7 @@
 
 namespace
 {
-  Util::Urand generator;
+  rutz::urand generator;
 
   void usleepr(unsigned int usecs, unsigned int reps)
   {
@@ -102,8 +102,8 @@ namespace
     return result;
   }
 
-  unsigned long getGlobalSeed() { return Util::globalRandSeed; }
-  void setGlobalSeed(unsigned long x) { Util::globalRandSeed = x; }
+  unsigned long get_default_seed() { return rutz::default_rand_seed; }
+  void set_default_seed(unsigned long x) { rutz::default_rand_seed = x; }
 }
 
 extern "C"
@@ -116,10 +116,10 @@ DOTRACE("Misc_Init");
   PKG_CREATE(interp, "Misc", "$Revision$");
 
   pkg->def( "::rand", "min max",
-            bindFirst(memFunc(&Urand::fdrawRange), &generator),
+            bindFirst(memFunc(&rutz::urand::fdraw_range), &generator),
             SRC_POS );
   pkg->def( "::srand", "seed",
-            bindFirst(memFunc(&Urand::seed), &generator),
+            bindFirst(memFunc(&rutz::urand::seed), &generator),
             SRC_POS );
 
   // use the standard library sleep() to sleep a specified # of seconds
@@ -148,8 +148,8 @@ DOTRACE("Misc_Init");
 
   pkg->def( "::bt", "", &backTrace, SRC_POS );
 
-  pkg->def( "::globalRandSeed", "", &getGlobalSeed, SRC_POS );
-  pkg->def( "::globalRandSeed", "seed", &setGlobalSeed, SRC_POS );
+  pkg->def( "::default_rand_seed", "", &get_default_seed, SRC_POS );
+  pkg->def( "::default_rand_seed", "seed", &set_default_seed, SRC_POS );
 
   pkg->defRaw( "::?", 1, "cmd_name", &cmdUsage, SRC_POS );
 

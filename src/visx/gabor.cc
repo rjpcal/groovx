@@ -284,7 +284,7 @@ DOTRACE("Gabor::getBmapData");
           else if ( itsColorMode == BW_DITHER_POINT ||
                     itsColorMode == BW_DITHER_RECT )
             {
-              *bytes++ = (Util::randRange(0.0, 1.0) < gabor) ? 255 : 0;
+              *bytes++ = (rutz::rand_range(0.0, 1.0) < gabor) ? 255 : 0;
             }
         }
     }

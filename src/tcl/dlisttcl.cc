@@ -229,7 +229,7 @@ namespace Dlist
         throw Util::Error("source_list is empty", SRC_POS);
       }
 
-    return source_list.at(Util::randRange(0u, source_list.length()));
+    return source_list.at(rutz::rand_range(0u, source_list.length()));
   }
 
   //--------------------------------------------------------------------
@@ -352,11 +352,11 @@ namespace Dlist
 
     for (int c = 0; c < 100000; ++c)
       {
-        unsigned int i = Util::randRange(0u, N);
+        unsigned int i = rutz::rand_range(0u, N);
         unsigned int j = i;
         while (j == i)
           {
-            j = Util::randRange(0u, N);
+            j = rutz::rand_range(0u, N);
           }
 
         if (slots[j] != i && slots[i] != j)
@@ -424,7 +424,7 @@ namespace Dlist
       {
         unsigned int v = i;
         while (v == i || used[v])
-          v = Util::randRange(0u, N);
+          v = rutz::rand_range(0u, N);
 
         Assert(v < N);
 
@@ -474,11 +474,11 @@ namespace Dlist
   {
     Tcl::List result;
 
-    static Util::Urand generator;
+    static rutz::urand generator;
 
     for (unsigned int i = 0; i < N; ++i)
       {
-        result.append(generator.fdrawRange(min, max));
+        result.append(generator.fdraw_range(min, max));
       }
 
     return result;
@@ -576,7 +576,7 @@ namespace Dlist
     fixed_block<Tcl::ObjPtr> objs(src.begin<Tcl::ObjPtr>(),
                                   src.end<Tcl::ObjPtr>());
 
-    Util::Urand generator(seed);
+    rutz::urand generator(seed);
 
     std::random_shuffle(objs.begin(), objs.end(), generator);
 

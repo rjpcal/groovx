@@ -290,7 +290,7 @@ DOTRACE("GaborArray::updateForeg");
 
   itsTotalNumber = 0;
 
-  Util::Urand urand(itsForegSeed);
+  rutz::urand urand(itsForegSeed);
 
   Snake snake(itsForegNumber, itsForegSpacing, urand);
 
@@ -336,7 +336,7 @@ DOTRACE("GaborArray::updateBackg");
 
   const int diffusionCycles = 10;
 
-  Util::Urand urand(itsBackgSeed);
+  rutz::urand urand(itsBackgSeed);
 
   for (int i = 0; i < diffusionCycles; ++i)
     {
@@ -405,9 +405,9 @@ DOTRACE("GaborArray::generateBmap");
   for (int i = 0; i < npix; ++i)
     win[i] = 0.0;
 
-  Util::Urand thetas(itsThetaSeed);
-  Util::Urand phases(itsPhaseSeed);
-  Util::Urand contrasts(itsContrastSeed);
+  rutz::urand thetas(itsThetaSeed);
+  rutz::urand phases(itsPhaseSeed);
+  rutz::urand contrasts(itsContrastSeed);
 
   for (int i = 0; i < itsTotalNumber; ++i)
     {
@@ -617,7 +617,7 @@ DOTRACE("GaborArray::backgFill");
   printf(" %d elements, ave spacing %f\n", itsTotalNumber, spacing);
 }
 
-void GaborArray::backgJitter(Util::Urand& urand) const
+void GaborArray::backgJitter(rutz::urand& urand) const
 {
 DOTRACE("GaborArray::backgJitter");
 
@@ -636,8 +636,8 @@ DOTRACE("GaborArray::backgJitter");
             continue;
 
           Vec2d v;
-          v.x() = itsArray[n].pos.x() + jitter*(urand.fdrawRange(-1.0, 1.0));
-          v.y() = itsArray[n].pos.y() + jitter*(urand.fdrawRange(-1.0, 1.0));
+          v.x() = itsArray[n].pos.x() + jitter*(urand.fdraw_range(-1.0, 1.0));
+          v.y() = itsArray[n].pos.y() + jitter*(urand.fdraw_range(-1.0, 1.0));
 
           if (v.x() < -halfX) v.x() += itsSizeX;
           if (v.x() >  halfX) v.x() -= itsSizeX;

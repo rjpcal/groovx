@@ -36,9 +36,9 @@
 
 #include "util/arrays.h"
 
-namespace Util
+namespace rutz
 {
-  class Urand;
+  class urand;
 }
 
 struct GaborArrayElement
@@ -63,7 +63,7 @@ struct GaborArrayElement
 class Snake
 {
 public:
-  Snake(int l, double spacing, Util::Urand& urand);
+  Snake(int l, double spacing, rutz::urand& urand);
   ~Snake();
 
   GaborArrayElement getElement(int n) const;
@@ -87,7 +87,7 @@ private:
   }
 
   // Returns true if jiggling converged
-  bool jiggle(Util::Urand& urand);
+  bool jiggle(rutz::urand& urand);
   void transformPath(int i1, const Gfx::Vec2<double>& new1,
                      int i2, const Gfx::Vec2<double>& new2);
 };

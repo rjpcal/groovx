@@ -37,12 +37,12 @@
 
 #include <cstdlib> // for rand()
 
-namespace Util
+namespace rutz
 {
-  class Urand;
+  class urand;
 
   template <class T>
-  inline T randRange(const T& min, const T& max)
+  inline T rand_range(const T& min, const T& max)
   {
     return T( (double(rand()) / (double(RAND_MAX)+1.0)) * (max-min) + min );
   }
@@ -54,11 +54,11 @@ namespace Util
       context. Initial value is 0. The most sensible use case involves
       setting this value just once, at or near the beginning of
       program execution. */
-  extern unsigned long globalRandSeed;
+  extern unsigned long default_rand_seed;
 }
 
 /// Uniform random distribution
-class Util::Urand
+class rutz::urand
 {
 private:
   unsigned long randx;
@@ -69,7 +69,7 @@ private:
   int idraw() { return randx = randx * 0x41c64e6d + 0x3039; }
 
 public:
-  Urand(long s = 0) : randx(s) {}
+  urand(long s = 0) : randx(s) {}
   void seed(long s) { randx = s; }
 
   /// Uniform random distribution in the interval [0.0:1.0[
@@ -79,7 +79,7 @@ public:
   }
 
   /// Uniform random distribution in the interval [min:max[
-  double fdrawRange(double min, double max)
+  double fdraw_range(double min, double max)
   {
     return min + fdraw() * (max-min);
   }

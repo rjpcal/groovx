@@ -47,9 +47,9 @@ namespace Gfx
   class BmapData;
 }
 
-namespace Util
+namespace rutz
 {
-  class Urand;
+  class urand;
 }
 
 template <class T>
@@ -121,7 +121,7 @@ private:
   bool tooClose(const Gfx::Vec2<double>& v, int except) const;
   void backgHexGrid() const;
   void backgFill() const;
-  void backgJitter(Util::Urand& urand) const;
+  void backgJitter(rutz::urand& urand) const;
 
   Cached<int> itsForegSeed;
   Cached<int> itsForegNumber;

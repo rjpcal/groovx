@@ -68,7 +68,7 @@ namespace
     double arr[4];
   };
 
-  void pickRandom4(int length, int i[], Util::Urand& urand)
+  void pickRandom4(int length, int i[], rutz::urand& urand)
   {
     i[0] = i[1] = i[2] = i[3] = urand.idraw(length);
 
@@ -247,7 +247,7 @@ namespace
   }
 
   bool acceptNewDelta(const Tuple4& newdelta, const Tuple4& olddelta,
-                      Util::Urand& urand)
+                      rutz::urand& urand)
   {
     const double energy_diff =
       newdelta[0]*newdelta[0] - olddelta[0]*olddelta[0]
@@ -262,7 +262,7 @@ namespace
   }
 }
 
-Snake::Snake(int l, double spacing, Util::Urand& urand) :
+Snake::Snake(int l, double spacing, rutz::urand& urand) :
   itsLength(l),
   itsElem(itsLength)
 {
@@ -357,7 +357,7 @@ DOTRACE("Snake::getElement");
 /*               \    _,-~   theta[2]                                     */
 /*              no[2]~_________                                           */
 
-bool Snake::jiggle(Util::Urand& urand)
+bool Snake::jiggle(rutz::urand& urand)
 {
 DOTRACE("Snake::jiggle");
 
