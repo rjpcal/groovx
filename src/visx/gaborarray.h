@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Tue May 13 12:35:55 2003
+// written: Tue May 13 12:57:34 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -56,11 +56,11 @@ namespace Util
 class GaborArray : public GxShapeKit
 {
 public:
-  GaborArray(double gaborPeriod_ = 15.0, double gaborSigma_ = 7.5,
+  GaborArray(double gaborPeriod = 15.0, double gaborSigma = 7.5,
              int foregNumber = 24, double foregSpacing = 45.0,
              int sizeX = 512, int sizeY = 512,
-             double backgIniSpacing_ = 48.0,
-             double backgMinSpacing_ = 36.0);
+             double gridSpacing = 48.0,
+             double minSpacing = 36.0);
 
   static GaborArray* make() { return new GaborArray; }
 
@@ -100,12 +100,12 @@ private:
   int itsForegNumber;
   double itsForegSpacing;
   GbVec2<int> itsSize;
-  double gaborPeriod;
-  double gaborSigma;
-  double backgIniSpacing;
-  double backgMinSpacing;
-  mutable int totalNumber;
-  mutable fixed_block<Element> array;
+  double itsGaborPeriod;
+  double itsGaborSigma;
+  double itsGridSpacing;
+  double itsMinSpacing;
+  mutable int itsTotalNumber;
+  mutable fixed_block<Element> itsArray;
   mutable shared_ptr<Gfx::BmapData> itsBmap;
 };
 

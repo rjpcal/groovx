@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:58 2003
-// written: Tue May 13 12:37:06 2003
+// written: Tue May 13 12:57:52 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -68,11 +68,11 @@ namespace
   const int MAX_GABOR_NUMBER = 1800;
 }
 
-GaborArray::GaborArray(double gaborPeriod_, double gaborSigma_,
+GaborArray::GaborArray(double gaborPeriod, double gaborSigma,
                        int foregNumber, double foregSpacing,
                        int sizeX, int sizeY,
-                       double backgIniSpacing_,
-                       double backgMinSpacing_)
+                       double gridSpacing,
+                       double minSpacing)
   :
   itsSnakeSeed(0),
   itsFillSeed(0),
@@ -81,12 +81,12 @@ GaborArray::GaborArray(double gaborPeriod_, double gaborSigma_,
   itsForegNumber(foregNumber),
   itsForegSpacing(foregSpacing),
   itsSize(sizeX, sizeY),
-  gaborPeriod(gaborPeriod_),
-  gaborSigma(gaborSigma_),
-  backgIniSpacing(backgIniSpacing_),
-  backgMinSpacing(backgMinSpacing_),
-  totalNumber(0),
-  array(MAX_GABOR_NUMBER)
+  itsGaborPeriod(gaborPeriod),
+  itsGaborSigma(gaborSigma),
+  itsGridSpacing(gridSpacing),
+  itsMinSpacing(minSpacing),
+  itsTotalNumber(0),
+  itsArray(MAX_GABOR_NUMBER)
 {
 DOTRACE("GaborArray::GaborArray");
 
@@ -109,12 +109,10 @@ const FieldMap& GaborArray::classFields()
           45.0, 1.0, 100.0, 1.0),
     Field("size", Field::ValueType(), &GaborArray::itsSize,
           "512 512", "16 16", "2048 2048", "16 16", Field::MULTI),
-    Field("gaborPeriod", &GaborArray::gaborPeriod, 15.0, 1.0, 50.0, 1.0),
-    Field("gaborSigma", &GaborArray::gaborSigma, 7.5, 0.5, 25.0, 0.5),
-    Field("backgIniSpacing", &GaborArray::backgIniSpacing,
-          48.0, 1.0, 200.0, 1.0),
-    Field("backgMinSpacing", &GaborArray::backgMinSpacing,
-          36.0, 1.0, 200.0, 1.0),
+    Field("gaborPeriod", &GaborArray::itsGaborPeriod, 15.0, 1.0, 50.0, 1.0),
+    Field("gaborSigma", &GaborArray::itsGaborSigma, 7.5, 0.5, 25.0, 0.5),
+    Field("gridSpacing", &GaborArray::itsGridSpacing, 48., 1., 200., 1.),
+    Field("minSpacing", &GaborArray::itsMinSpacing, 36., 1., 200., 1.),
   };
 
   static FieldMap GABORARRAY_FIELDS(FIELD_ARRAY, &GxShapeKit::classFields());
@@ -188,7 +186,7 @@ DOTRACE("GaborArray::update");
 
   if (itsBmap.get() != 0) return;
 
-  totalNumber = 0;
+  itsTotalNumber = 0;
 
   Util::Urand snakerand(itsSnakeSeed);
 
@@ -218,7 +216,7 @@ DOTRACE("GaborArray::update");
   const int insideNumber = insideElements(snake);
 
   printf(" FOREG_NUMBER %d    PATCH_NUMBER %d    TOTAL_NUMBER %d\n",
-          snake.getLength(), insideNumber, totalNumber);
+          snake.getLength(), insideNumber, itsTotalNumber);
 
   fixed_block<double> win(itsSize.x()*itsSize.y());
 
@@ -228,21 +226,22 @@ DOTRACE("GaborArray::update");
   Util::Urand thetas(itsThetaSeed);
   Util::Urand phases(itsPhaseSeed);
 
-  for (int i = 0; i < totalNumber; ++i)
+  for (int i = 0; i < itsTotalNumber; ++i)
     {
       const double phi   = 2 * M_PI * phases.fdraw();
 //       const double phi = 0.0;
 
       const double theta =
-        (array[i].type == Element::CONTOUR)
-        ? rad_0_2pi(array[i].theta + M_PI_2)
+        (itsArray[i].type == Element::CONTOUR)
+        ? rad_0_2pi(itsArray[i].theta + M_PI_2)
         : 2*M_PI * thetas.fdraw();
 
-      const int xcenter = int(array[i].pos.x() + itsSize.x() / 2.0 + 0.5);
-      const int ycenter = int(array[i].pos.y() + itsSize.y() / 2.0 + 0.5);
+      const int xcenter = int(itsArray[i].pos.x() + itsSize.x() / 2.0 + 0.5);
+      const int ycenter = int(itsArray[i].pos.y() + itsSize.y() / 2.0 + 0.5);
 
       const GaborPatch& p =
-        GaborPatch::lookup(gaborSigma, 2*M_PI/gaborPeriod, theta, phi, 1.0);
+        GaborPatch::lookup(itsGaborSigma, 2*M_PI/itsGaborPeriod,
+                           theta, phi, 1.0);
 
       // bottom left:
       const int x0 = xcenter - p.size() / 2;
@@ -278,13 +277,13 @@ bool GaborArray::tryPush(const Element& e) const
 {
   if (tooClose(e.pos, -1)) return false;
 
-  if (totalNumber >= MAX_GABOR_NUMBER)
+  if (itsTotalNumber >= MAX_GABOR_NUMBER)
     {
       throw Util::Error(fstring(" More than ", MAX_GABOR_NUMBER,
                                 " elements!\n"));
     }
 
-  array[totalNumber++] = e;
+  itsArray[itsTotalNumber++] = e;
 
   dumpFrame();
   dumpFrame();
@@ -294,14 +293,14 @@ bool GaborArray::tryPush(const Element& e) const
 
 bool GaborArray::tooClose(const Vec2d& v, int except) const
 {
-  double backgMinSpacingSqr = backgMinSpacing*backgMinSpacing;
+  double minSpacingSqr = itsMinSpacing*itsMinSpacing;
 
-  for (int n = 0; n < totalNumber; ++n)
+  for (int n = 0; n < itsTotalNumber; ++n)
     {
-      const double dx = array[n].pos.x() - v.x();
-      const double dy = array[n].pos.y() - v.y();
+      const double dx = itsArray[n].pos.x() - v.x();
+      const double dy = itsArray[n].pos.y() - v.y();
 
-      if (dx*dx+dy*dy <= backgMinSpacingSqr && n != except)
+      if (dx*dx+dy*dy <= minSpacingSqr && n != except)
         return true;
     }
 
@@ -314,9 +313,9 @@ DOTRACE("GaborArray::insideElements");
 
   int count = snake.getLength();
 
-  for (int n = 0; n < totalNumber; ++n)
+  for (int n = 0; n < itsTotalNumber; ++n)
     {
-      if (array[n].type == Element::CONTOUR)
+      if (itsArray[n].type == Element::CONTOUR)
         continue;
 
       bool inside = true;
@@ -325,11 +324,11 @@ DOTRACE("GaborArray::insideElements");
         {
           const int j = (i+1) % snake.getLength();
 
-          const double Yij = array[i].pos.x() - array[j].pos.x();
-          const double Xij = array[j].pos.y() - array[i].pos.y();
+          const double Yij = itsArray[i].pos.x() - itsArray[j].pos.x();
+          const double Xij = itsArray[j].pos.y() - itsArray[i].pos.y();
 
-          const double Xin = array[n].pos.x() - array[i].pos.x();
-          const double Yin = array[n].pos.y() - array[i].pos.y();
+          const double Xin = itsArray[n].pos.x() - itsArray[i].pos.x();
+          const double Yin = itsArray[n].pos.y() - itsArray[i].pos.y();
 
           const double vp = Xij*Xin + Yij*Yin;
 
@@ -342,7 +341,7 @@ DOTRACE("GaborArray::insideElements");
 
       if (inside)
         {
-          array[n].type = Element::INSIDE;
+          itsArray[n].type = Element::INSIDE;
           ++count;
         }
     }
@@ -356,11 +355,11 @@ DOTRACE("GaborArray::hexGridElements");
 
   // lay down a hexagonal grid of elements
 
-  const double dx = backgIniSpacing;
-  const double dy = SQRT3 * backgIniSpacing / 2.0;
+  const double dx = itsGridSpacing;
+  const double dy = SQRT3 * itsGridSpacing / 2.0;
 
-  const int nx = int((itsSize.x() - backgMinSpacing) / dx - 0.5);
-  const int ny = int((itsSize.y() - backgMinSpacing) / dy);
+  const int nx = int((itsSize.x() - itsMinSpacing) / dx - 0.5);
+  const int ny = int((itsSize.y() - itsMinSpacing) / dy);
 
   double y = -0.5 * (ny-1) * dy;
 
@@ -396,15 +395,15 @@ DOTRACE("GaborArray::fillElements");
         tryPush(Element(x, y, 0.0, Element::OUTSIDE));
       }
 
-  const double backgAveSpacing = sqrt(2.0*itsSize.x()*itsSize.y()/(SQRT3*totalNumber));
-  printf(" %d elements, ave spacing %f\n", totalNumber, backgAveSpacing);
+  const double backgAveSpacing = sqrt(2.0*itsSize.x()*itsSize.y()/(SQRT3*itsTotalNumber));
+  printf(" %d elements, ave spacing %f\n", itsTotalNumber, backgAveSpacing);
 }
 
 void GaborArray::jitterElement(Util::Urand& urand) const
 {
 DOTRACE("GaborArray::jitterElement");
 
-  const double jitter = (backgMinSpacing/16.0);
+  const double jitter = (itsMinSpacing/16.0);
 
   const int backgroundIters = 1000;
 
@@ -413,14 +412,14 @@ DOTRACE("GaborArray::jitterElement");
 
   for (int niter = 0; niter < backgroundIters; ++niter)
     {
-      for (int n = 0; n < totalNumber; ++n)
+      for (int n = 0; n < itsTotalNumber; ++n)
         {
-          if (array[n].type == Element::CONTOUR)
+          if (itsArray[n].type == Element::CONTOUR)
             continue;
 
           Vec2d v;
-          v.x() = array[n].pos.x() + jitter*(urand.fdrawRange(-1.0, 1.0));
-          v.y() = array[n].pos.y() + jitter*(urand.fdrawRange(-1.0, 1.0));
+          v.x() = itsArray[n].pos.x() + jitter*(urand.fdrawRange(-1.0, 1.0));
+          v.y() = itsArray[n].pos.y() + jitter*(urand.fdrawRange(-1.0, 1.0));
 
           if (v.x() < -halfX) v.x() += itsSize.x();
           if (v.x() >  halfX) v.x() -= itsSize.x();
@@ -429,7 +428,7 @@ DOTRACE("GaborArray::jitterElement");
 
           if (!tooClose(v, n))
             {
-              array[n].pos = v;
+              itsArray[n].pos = v;
             }
         }
 
