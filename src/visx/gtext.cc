@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Mon Sep 27 14:33:58 1999
+// written: Tue Oct  5 12:43:25 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,8 +21,6 @@
 
 #define NO_TRACE
 #include "trace.h"
-#define LOCAL_DEBUG
-
 #define LOCAL_ASSERT
 #include "debug.h"
 
