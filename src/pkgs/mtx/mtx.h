@@ -18,25 +18,26 @@
 
 namespace RC // Range checking
 {
-  void less(const void* x, const void* lim);
-  void leq(const void* x, const void* lim);
-  void inHalfOpen(const void* x, const void* llim, const void* ulim);
+  void less(const void* x, const void* lim, const char* f, int ln);
+  void leq(const void* x, const void* lim, const char* f, int ln);
+  void inHalfOpen(const void* x, const void* llim, const void* ulim,
+						const char* f, int ln);
 
-  void less(int x, int lim);
-  void leq(int x, int lim);
-  void inHalfOpen(int x, int llim, int ulim);
+  void less(int x, int lim, const char* f, int ln);
+  void leq(int x, int lim, const char* f, int ln);
+  void inHalfOpen(int x, int llim, int ulim, const char* f, int ln);
 }
 
 #ifdef RANGE_CHECK
 // Range check
-#  define RC_less(x,lim) RC::less((x),(lim))
-#  define RC_leq(x,lim) RC::leq((x),(lim))
-#  define RC_inHalfOpen(x,llim,ulim) RC::inHalfOpen((x),(llim),(ulim))
+#  define RC_less(x,lim) RC::less((x),(lim),__FILE__,__LINE__)
+#  define RC_leq(x,lim) RC::leq((x),(lim),__FILE__,__LINE__)
+#  define RC_inHalfOpen(x,llim,ulim) RC::inHalfOpen((x),(llim),(ulim),__FILE__,__LINE__)
 
 // Range check, and return the checked value
-#  define RCR_less(x,lim) (RC::less((x),(lim)), x)
-#  define RCR_leq(x,lim) (RC::leq((x),(lim)), x)
-#  define RCR_inHalfOpen(x,llim,ulim) (RC::inHalfOpen((x),(llim),(ulim)), x)
+#  define RCR_less(x,lim) (RC::less((x),(lim),__FILE__,__LINE__), x)
+#  define RCR_leq(x,lim) (RC::leq((x),(lim),__FILE__,__LINE__), x)
+#  define RCR_inHalfOpen(x,llim,ulim) (RC::inHalfOpen((x),(llim),(ulim),__FILE__,__LINE__), x)
 
 #else // !RANGE_CHECK
 
