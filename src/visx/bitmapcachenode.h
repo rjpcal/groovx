@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:19:59 2001
-// written: Thu Aug 16 10:50:45 2001
+// written: Mon Aug 20 12:22:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -54,8 +54,8 @@ private:
   fstring fullCacheFilename() const
     {
       fstring result = BITMAP_CACHE_DIR;
-      result += "/";
-      result += itsCacheFilename;
+      result.append( "/" );
+      result.append( itsCacheFilename );
       return result;
     }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Fri Aug 10 10:46:48 2001
+// written: Mon Aug 20 12:20:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -444,14 +444,14 @@ DOTRACE("ExptDriver::Impl::storeData");
 
       // Write the main experiment file
       fstring expt_filename = "expt";
-      expt_filename += unique_file_extension;
-      expt_filename += ".asw";
+      expt_filename.append(unique_file_extension);
+      expt_filename.append(".asw");
       IO::saveASW(Util::Ref<IO::IoObject>(itsOwner), expt_filename.c_str());
       Util::log() << "wrote file " << expt_filename.c_str() << '\n';
 
       // Write the responses file
       fstring resp_filename = "resp";
-      resp_filename += unique_file_extension;
+      resp_filename.append(unique_file_extension);
       TlistUtils::writeResponses(resp_filename.c_str());
       Util::log() << "wrote file " << resp_filename.c_str() << '\n';
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Thu Aug  9 11:50:49 2001
+// written: Mon Aug 20 12:25:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,12 +59,12 @@ namespace
                          const std::type_info& exc_type, const char* what=0)
     {
       fstring msg = "an error of type ";
-      msg += demangle_cstr(exc_type.name());
-      msg += " occurred";
+      msg.append( demangle_cstr(exc_type.name()) );
+      msg.append( " occurred" );
       if (what)
         {
-          msg += ": ";
-          msg += what;
+          msg.append( ": " );
+          msg.append( what );
         }
       errMessage(interp, cmd_name, msg.c_str());
     }
@@ -398,12 +398,6 @@ DOTRACE("Tcl::TclCmd::Impl::invokeCallback");
   catch (std::exception& err)
     {
       errMessage(interp, theImpl->cmdName(), typeid(err), err.what());
-    }
-  catch (const char* text)
-    {
-      fstring msg = "an error occurred: ";
-      msg += text;
-      errMessage(interp, theImpl->cmdName(), msg.c_str());
     }
   catch (...)
     {
