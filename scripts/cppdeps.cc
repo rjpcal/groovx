@@ -95,6 +95,73 @@ namespace
     return fname.substr(0, pos);
   }
 
+  // make a normalized pathname from the given input, by making the
+  // following transformations:
+  //   (1) "/./"          --> "/"
+  //   (2) "somedir/../"  --> "/"
+  //   (3) "//"           --> "/"
+  string make_normpath(const string& path)
+  {
+    vector<string> result;
+
+    string::size_type p = 0;
+
+    for (string::size_type i = 0; i < path.size(); ++i)
+      {
+        if (path[i] == '/' || i+1 == path.size())
+          {
+            if (i == 0) result.push_back("");
+            else
+              {
+                string::size_type i2 = i;
+                if (path[i] != '/' && i+1 == path.size())
+                  i2 = path.size();
+                string part(path.begin()+p, path.begin()+i2);
+                if (part == "")
+                  {
+                    // do nothing
+                  }
+                else if (part == ".")
+                  {
+                    // do nothing
+                  }
+                else if (part == "..")
+                  {
+                    if (result.size() == 0)
+                      {
+                        cerr << "ERROR: used '../' at beginning of path\n";
+                        exit(1);
+                      }
+                    else if (result.size() == 1 && result.back() == "")
+                      {
+                        // do nothing, here we have '/../' at beginning of path
+                      }
+                    else
+                      {
+                        result.pop_back();
+                      }
+                  }
+                else
+                  {
+                    result.push_back(part);
+                  }
+              }
+            p = i+1;
+          }
+      }
+
+    string newpath;
+
+    for (unsigned int i = 0; i < result.size(); ++i)
+      {
+        newpath += result[i];
+        if (i+1 < result.size())
+          newpath += '/';
+      }
+
+    return newpath;
+  }
+
   class mapped_file
   {
   public:
@@ -157,12 +224,14 @@ namespace
 
 struct include_spec
 {
-  include_spec(const string& t, const string& s = string())
-    : target(t), source(s)
+  include_spec(const string& t, const string& s = string(),
+               bool l = false)
+    : target(make_normpath(t)), source(s), literal(l)
   {}
 
   string target;
   string source;
+  bool literal; // if true, then we don't try to look up nested includes
 };
 
 bool operator<(const include_spec& i1, const include_spec& i2)
@@ -179,7 +248,7 @@ class cppdeps
 {
   vector<string> m_user_ipath;
   vector<string> m_sys_ipath;
-
+  vector<string> m_literal_exts;
   vector<string> m_src_files;
   string m_objdir;
 
@@ -228,6 +297,7 @@ public:
                           const string& src_fname,
                           const string& dirname,
                           const vector<string>& ipath,
+                          const vector<string>& literal,
                           include_list_t& vec);
 
   const include_list_t& get_direct_includes(const string& src_fname);
@@ -258,6 +328,7 @@ cppdeps::cppdeps(int argc, char** argv) :
          "    --checksys            force tracking of dependencies in #include <...>\n"
          "                          directives (default is to not record <...> files\n"
          "                          as dependencies)\n"
+         "    --literal [.ext]      treat files ending in \".ext\" as literal #include\'s\n"
          "    --quiet               suppress warnings\n"
          "\n"
          "any unrecognized command-line arguments are treated as source directories,\n"
@@ -311,13 +382,17 @@ cppdeps::cppdeps(int argc, char** argv) :
         {
           m_output_mode = NESTED_INCLUDE_TREE;
         }
+      else if (strcmp(*argv, "--literal") == 0)
+        {
+          m_literal_exts.push_back(*++argv);
+        }
       // treat any unrecognized arguments as src files
       else
         {
           const string fname = trim_filename(*argv);
           if (!file_exists(fname.c_str()))
             {
-              cerr << "ERROR: no such source file: " << fname << '\n';
+              cerr << "ERROR: no such source file: '" << fname << "'\n";
               exit(1);
             }
           m_src_files.push_back(fname);
@@ -410,6 +485,7 @@ bool cppdeps::resolve_one(const char* include_name,
                           const string& src_fname,
                           const string& dirname_without_slash,
                           const vector<string>& ipath,
+                          const vector<string>& literal,
                           cppdeps::include_list_t& vec)
 {
   for (unsigned int i = 0; i < ipath.size(); ++i)
@@ -451,6 +527,21 @@ bool cppdeps::resolve_one(const char* include_name,
       return true;
     }
 
+  // If all else fails, try to see if we can consider the included file as
+  // a literal file:
+  for (unsigned int i = 0; i < literal.size(); ++i)
+    {
+      const char* extension =
+        include_name + include_length - literal[i].length();
+
+      if (strncmp(extension, literal[i].c_str(),
+                  literal[i].length()) == 0)
+        {
+          vec.push_back(include_spec(include_string, "(literal)", true));
+          return true;
+        }
+    }
+
   return false;
 }
 
@@ -472,25 +563,27 @@ cppdeps::get_direct_includes(const string& src_fname)
   const char* fptr = static_cast<const char*>(f.memory());
   const char* const stop = fptr + f.length();
 
-  // need to keep track of a separate location where we can backup in case
-  // we see a partial but eventually failed match
-  const char* mark = fptr;
+  bool firsttime = true;
 
-  for ( ; fptr < stop; ++fptr)
+  while (fptr < stop)
     {
-      fptr = mark; // backup to site of previously failed match
+      if (!firsttime)
+        {
+          while (fptr < stop && *fptr != '\n')
+            ++fptr;
+          assert(*fptr == '\n');
+          ++fptr;
+        }
 
-      while (fptr < stop && *fptr != '#')
-        ++fptr;
+      firsttime = false;
 
       if (fptr >= stop)
         break;
 
-      // assert(*fptr == '#');
+      if (*fptr != '#')
+        continue;
 
       ++fptr;
-
-      mark = fptr; // note point of current match for backup purposes
 
       while (isspace(*fptr) && fptr < stop)
         ++fptr;
@@ -548,12 +641,14 @@ cppdeps::get_direct_includes(const string& src_fname)
       // mmap'ed file
 
       if (resolve_one(include_name, include_length, src_fname,
-                      dirname_without_slash, m_user_ipath, vec))
+                      dirname_without_slash, m_user_ipath,
+                      m_literal_exts, vec))
         continue;
 
       if (m_check_sys_includes &&
           resolve_one(include_name, include_length, src_fname,
-                      dirname_without_slash, m_sys_ipath, vec))
+                      dirname_without_slash, m_sys_ipath,
+                      m_literal_exts, vec))
         continue;
 
       const string include_string(include_name, include_length);
@@ -607,18 +702,27 @@ cppdeps::get_nested_includes(const string& src_fname)
       if ((*i).target == src_fname)
         continue;
 
+      // Check if the included file is to be treated as a 'literal' file,
+      // meaning that we don't look for nested includes, and thus don't
+      // require the file to currently exist. This is useful for handling
+      // files that are generated by an intermediate rule in some makefile.
+      if ((*i).literal == true)
+        {
+          includes_set.insert((*i).target);
+          continue;
+        }
+
       // Check for other recursion cycles
       if (m_parse_states[(*i).target] == IN_PROGRESS)
         {
           if (!m_quiet)
             cerr << "WARNING: in " << src_fname
                  << ": recursive #include cycle with " << (*i).target << "\n";
+          continue;
         }
-      else
-        {
-          const include_list_t& indirect = get_nested_includes((*i).target);
-          includes_set.insert(indirect.begin(), indirect.end());
-        }
+
+      const include_list_t& indirect = get_nested_includes((*i).target);
+      includes_set.insert(indirect.begin(), indirect.end());
     }
 
   include_list_t& result = m_nested_includes[src_fname];
