@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Wed Jun 13 17:36:50 2001
+// written: Fri Jun 15 14:19:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,10 @@
 #include "util/objdb.h"
 #include "util/objmgr.h"
 
+#ifdef FUNCTIONAL_OK
+#  include <algorithm>
+#  include <functional>
+#endif
 #include <fstream.h>
 #include <typeinfo>
 
@@ -194,6 +198,7 @@ public:
 
 protected:
   virtual void invoke() {
+#ifndef FUNCTIONAL_OK
     Tcl::ListIterator<int>
       itr = beginOfArg(1, (int*)0),
       stop = endOfArg(1, (int*)0);
@@ -202,6 +207,11 @@ protected:
         ObjDb::theDb().remove(*itr);
         ++itr;
       }
+
+#else
+    std::for_each(beginOfArg<int>(1), endOfArg<int>(1),
+                  std::bind1st(std::mem_fun(&ObjDb::remove), &ObjDb::theDb()));
+#endif
   }
 };
 
