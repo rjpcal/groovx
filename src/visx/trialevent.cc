@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Fri Mar  3 23:24:17 2000
+// written: Mon Mar  6 18:45:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,8 +15,8 @@
 
 #include <cmath>
 #include <cstring>
+#include <iostream.h>
 #include <typeinfo>
-#include <string>
 
 #include "canvas.h"
 #include "demangle.h"
@@ -75,7 +75,10 @@ DOTRACE("TrialEvent::~TrialEvent");
 void TrialEvent::serialize(ostream& os, IOFlag flag) const {
 DOTRACE("TrialEvent::serialize");
 
-  if (flag&TYPENAME) { os << demangle(typeid(*this).name()) << ' '; }
+  if (flag&TYPENAME)
+	 {
+		os << demangle_cstr(typeid(*this).name()) << ' ';
+	 }
   os << itsRequestedDelay << endl;
   if (os.fail()) throw InputError(typeid(*this));
 }
@@ -85,14 +88,17 @@ DOTRACE("TrialEvent::deserialize");
 
   cancel(); // cancel since the event is changing state
 
-  if (flag&TYPENAME) { IO::readTypename(is, demangle(typeid(*this).name())); }
+  if (flag&TYPENAME)
+	 {
+		IO::readTypename(is, demangle_cstr(typeid(*this).name()));
+	 }
   is >> itsRequestedDelay;
   if (is.fail()) throw InputError(typeid(*this));
 }
 
 int TrialEvent::charCount() const {
 DOTRACE("TrialEvent::charCount");
-  return ( demangle(typeid(*this).name()).length() + 1
+  return ( strlen(demangle_cstr(typeid(*this).name())) + 1
 			 + gCharCount<int>(itsRequestedDelay) + 1
 			 + 1); // fudge factor
 }
@@ -163,7 +169,7 @@ DOTRACE("TrialEvent::dummyInvoke");
   event->itsIsPending = false;
   event->itsToken = 0;
 
-  EventTraceNL(demangle(typeid(*event).name()));
+  EventTraceNL(demangle_cstr(typeid(*event).name()));
 
 #ifdef EVENT_TRACE
   cerr << "    before == " << event->itsTimer.elapsedMsec() << endl;
