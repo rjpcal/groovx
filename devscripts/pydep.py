@@ -12,7 +12,7 @@ import profile
 
 paths = [os.path.normpath(sys.argv[1])]
 
-objdir = 'obj/' + os.getenv('ARCH') + '/';
+objdir = '';
 
 for i in range(2, len(sys.argv)):
     if sys.argv[i].startswith("-I"):
