@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 12:16:22 1999
-// written: Fri Jul 13 11:34:32 2001
+// written: Fri Jul 13 12:17:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -124,6 +124,7 @@ namespace Tcl
   template class TVecSetterCmd<bool>;
   template class TVecSetterCmd<double>;
   template class TVecSetterCmd<const char*>;
+  template class TVecSetterCmd<fixed_string>;
   template class TVecSetterCmd<const fixed_string&>;
   template class TVecSetterCmd<TclValue>;
 }
