@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Mon Oct 23 11:42:33 2000
+// written: Tue Oct 24 13:08:19 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -74,27 +74,13 @@ public:
   /// Insert \a ptr into the list, and return its id.
   SharedPtr insert(T* master);
 
-  /** Insert \a ptr into the list at index \a id. An exception will be
-      thrown if an object already exists at index \a id. */
-  void insertAt(int id, T* master);
-
   /// Insert \a handle into the list, and return its id.
   SharedPtr insert(PtrHandle<T> handle)
 	 { return insert(handle.get()); }
 
-  /** Insert \a handle into the list at index \a id. An exception will be
-      thrown if an object already exists at index \a id. */
-  void insertAt(int id, PtrHandle<T> handle)
-	 { PtrListBase::insertPtrBaseAt(id, handle.get()); }
-
   /// Insert \a item into the list, and return its id.
   SharedPtr insert(ItemWithId<T> item)
 	 { return insert(item.handle().get()); }
-
-  /** Insert \a ptr into the list at index \a id. An exception will be
-      thrown if an object already exists at index \a id. */
-  void insertAt(int id, ItemWithId<T> item)
-	 { PtrListBase::insertPtrBaseAt(id, item.handle().get()); }
 };
 
 static const char vcid_ptrlist_h[] = "$Header$";

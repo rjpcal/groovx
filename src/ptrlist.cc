@@ -3,7 +3,7 @@
 // ptrlist.cc
 // Rob Peters
 // created: Fri Apr 23 00:35:32 1999
-// written: Sun Oct 22 15:15:28 2000
+// written: Tue Oct 24 13:08:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -42,10 +42,6 @@ PtrList<T>::SharedPtr PtrList<T>::getCheckedPtr(int id) const
 template <class T>
 PtrList<T>::SharedPtr PtrList<T>::insert(T* master)
 	 { return SharedPtr(master, PtrListBase::insertPtrBase(master)); }
-
-template <class T>
-void PtrList<T>::insertAt(int id, T* master)
-	 { PtrListBase::insertPtrBaseAt(id, master); }
 
 static const char vcid_ptrlist_cc[] = "$Header$";
 #endif // !PTRLIST_CC_DEFINED
