@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:21:32 1999
-// written: Mon Sep  3 13:41:06 2001
+// written: Mon Sep  3 14:11:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "util/strings.h"
 
 #include <iostream.h>
+#include <strstream.h>
 
 #include "util/trace.h"
 
@@ -59,7 +60,12 @@ void Value::set(int) { raiseValueError("set(int)"); }
 void Value::set(long) { raiseValueError("set(long)"); }
 void Value::set(bool) { raiseValueError("set(bool)"); }
 void Value::set(double) { raiseValueError("set(double)"); }
-void Value::set(const char*) { raiseValueError("set(const char*)"); }
+
+void Value::set(const char* str)
+{
+  istrstream ist(str);
+  scanFrom(ist);
+}
 
 void Value::set(fstring val)
 {
