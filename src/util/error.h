@@ -5,13 +5,17 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 22 14:59:47 1999
-// written: Sat May 12 09:24:56 2001
+// written: Sun Aug  5 20:11:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef ERROR_H_DEFINED
 #define ERROR_H_DEFINED
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TOSTRING_H_DEFINED)
+#include "util/tostring.h"
+#endif
 
 class dynamic_string;
 
@@ -75,9 +79,9 @@ public:
 
   /// Append a number to the error message.
   template <class T>
-  ErrorWithMsg& appendNumber(T x)
+  ErrorWithMsg& appendNumber(const T& x)
   {
-	 return appendMsg(num2str(x));
+    return appendMsg(Util::Convert<T>::toString(x));
   }
 
 protected:
@@ -85,9 +89,6 @@ protected:
   virtual void setMsg(const char* newMessage);
 
 private:
-  template <class T>
-  static const char* num2str(T x);
-
   class Impl;
   friend class Impl;
 
