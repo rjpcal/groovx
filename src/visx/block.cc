@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Tue Aug  3 13:24:28 1999
+// written: Tue Aug  3 15:17:31 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -450,7 +450,7 @@ DOTRACE("Block::undoPrevTrial");
 
 void Block::resetBlock() {
 DOTRACE("Block::resetBlock");
-  while (itsCurTrialSeqIdx >= 0) {
+  while (itsCurTrialSeqIdx > 0) {
 	 undoPrevTrial();
   }
 }
