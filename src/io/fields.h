@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Nov 11 15:25:00 2000
-// written: Tue Aug 14 18:53:40 2001
+// written: Tue Aug 14 18:57:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,6 +34,7 @@
 #endif
 
 class Field;
+class FieldInfo;
 class FieldContainer;
 
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +50,11 @@ class FieldContainer;
 class FieldMemberPtr {
 public:
   virtual ~FieldMemberPtr();
+
+private:
   virtual Field& dereference(FieldContainer* obj) const = 0;
+
+  friend class FieldInfo;
 };
 
 /** CFieldMemberPtr  */
@@ -58,6 +63,8 @@ class CFieldMemberPtr : public FieldMemberPtr {
 private:
   T C::* itsPtr;
 
+  virtual Field& dereference(FieldContainer* obj) const;
+
 public:
   CFieldMemberPtr(T C::* ptr) : itsPtr(ptr) {}
 
@@ -65,8 +72,6 @@ public:
 
   CFieldMemberPtr& operator=(const CFieldMemberPtr& other)
     { itsPtr = other.itsPtr; return *this; }
-
-  virtual Field& dereference(FieldContainer* obj) const;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -110,6 +115,9 @@ public:
   const Value& res() const { return *itsRes; }
 
   bool startsNewGroup() const { return itsStartsNewGroup; }
+
+private:
+  friend class FieldContainer;
 
   Field& dereference(FieldContainer* obj) const
     { return itsMemberPtr->dereference(obj); }
