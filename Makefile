@@ -26,7 +26,7 @@
 INSTALL_DIR := $(HOME)/local/$(ARCH)
 
 # Path to the top-level directory where Tcl+Tk are installed
-TCLTK_DIR := $(HOME)/local/$(ARCH)
+TCLTK_DIR := $(HOME)/local/$(ARCH)/tcl8.4b2
 
 ###
 ### SHOULDN'T NEED TO MODIFY ANYTHING BELOW THIS POINT
@@ -111,6 +111,8 @@ ifeq ($(PLATFORM),i686)
 	DEFAULT_MODE := debug
 
 	AUDIO_LIB := -lesd -laudiofile
+
+	LIB_PATH += -Wl,-rpath,$(TCLTK_DIR)/lib
 endif
 
 ifeq ($(PLATFORM),ppc)
