@@ -3,7 +3,7 @@
 # editor.tcl
 #
 # Copyright (c) 1999-2003 Rob Peters <rjpeters at klab dot caltech dot edu>
-# 
+#
 # $Id$
 #
 ##############################################################################
@@ -53,15 +53,15 @@ proc debug {msg} {
 
 proc buildScale {path label min max step callback} {
     scale $path -label $label \
-	    -from $min -to $max \
-	    -resolution $step \
-	    -bigincrement $step \
-	    -digits [string length $step] \
-	    -repeatdelay 500 -repeatinterval 250 \
-	    -orient horizontal \
-	    -command $callback \
-	    -width $::SCALE_WIDTH \
-	    -font $::FONT
+            -from $min -to $max \
+            -resolution $step \
+            -bigincrement $step \
+            -digits [string length $step] \
+            -repeatdelay 500 -repeatinterval 250 \
+            -orient horizontal \
+            -command $callback \
+            -width $::SCALE_WIDTH \
+            -font $::FONT
 }
 
 itcl::class FieldInfo {
@@ -79,21 +79,21 @@ itcl::class FieldInfo {
     private variable isItPrivate
 
     constructor {finfo} {
-	set itsName [namespace tail [lindex $finfo 0]]
-	set itsMin  [lindex $finfo 1]
-	set itsMax  [lindex $finfo 2]
-	set itsRes  [lindex $finfo 3]
+        set itsName [namespace tail [lindex $finfo 0]]
+        set itsMin  [lindex $finfo 1]
+        set itsMax  [lindex $finfo 2]
+        set itsRes  [lindex $finfo 3]
 
-	set flags [lindex $finfo 4]
+        set flags [lindex $finfo 4]
 
-	set itsStartsNewGroup [expr [lsearch $flags NEW_GROUP] != -1]
-	set isItTransient [expr [lsearch $flags TRANSIENT] != -1]
-	set isItString    [expr [lsearch $flags STRING] != -1]
-	set isItMulti     [expr [lsearch $flags MULTI] != -1]
-	set isItGettable  [expr [lsearch $flags NO_GET] == -1]
-	set isItSettable  [expr [lsearch $flags NO_SET] == -1]
-	set isItBoolean   [expr [lsearch $flags BOOLEAN] != -1]
-	set isItPrivate   [expr [lsearch $flags PRIVATE] != -1]
+        set itsStartsNewGroup [expr [lsearch $flags NEW_GROUP] != -1]
+        set isItTransient [expr [lsearch $flags TRANSIENT] != -1]
+        set isItString    [expr [lsearch $flags STRING] != -1]
+        set isItMulti     [expr [lsearch $flags MULTI] != -1]
+        set isItGettable  [expr [lsearch $flags NO_GET] == -1]
+        set isItSettable  [expr [lsearch $flags NO_SET] == -1]
+        set isItBoolean   [expr [lsearch $flags BOOLEAN] != -1]
+        set isItPrivate   [expr [lsearch $flags PRIVATE] != -1]
     }
 
     public method name {} { return $itsName }
@@ -117,28 +117,28 @@ itcl::class StringController {
     private common toBeAligned [list]
 
     constructor {finfo parent command} {
-	set fname [$finfo name]
+        set fname [$finfo name]
 
-	set itsWidget [iwidgets::entryfield $parent.$fname \
-		-labeltext $fname -labelpos n \
-		-width 15 \
-		-command $command \
-		-labelfont $::FONT]
+        set itsWidget [iwidgets::entryfield $parent.$fname \
+                -labeltext $fname -labelpos n \
+                -width 15 \
+                -command $command \
+                -labelfont $::FONT]
 
-	lappend toBeAligned $parent.$fname
+        lappend toBeAligned $parent.$fname
     }
 
     public method setVal {val} {
-	$itsWidget delete 0 end
-	$itsWidget insert 0 $val
+        $itsWidget delete 0 end
+        $itsWidget insert 0 $val
     }
 
     public method getVal {} {
-	return [$itsWidget get]
+        return [$itsWidget get]
     }
 
     public proc alignAll {} {
-	eval iwidgets::Labeledwidget::alignlabels $toBeAligned
+        eval iwidgets::Labeledwidget::alignlabels $toBeAligned
     }
 }
 
@@ -146,46 +146,46 @@ itcl::class MultiController {
     private variable itsWidgets
 
     constructor {finfo parent command} {
-	set itsWidgets [list]
+        set itsWidgets [list]
 
-	set fname [$finfo name]
+        set fname [$finfo name]
 
-	set theFrame [frame $parent.$fname -relief ridge -borderwidth 2]
+        set theFrame [frame $parent.$fname -relief ridge -borderwidth 2]
 
-	label $theFrame.label \
-		-text "$fname" \
-		-foreground darkgreen \
-		-font $::FONT
+        label $theFrame.label \
+                -text "$fname" \
+                -foreground darkgreen \
+                -font $::FONT
 
-	pack $theFrame.label -side top -anchor nw
+        pack $theFrame.label -side top -anchor nw
 
-	set i 0
+        set i 0
 
-	foreach min [$finfo min] max [$finfo max] res [$finfo res] {
-	    set path $theFrame.multi$i
-	    incr i
+        foreach min [$finfo min] max [$finfo max] res [$finfo res] {
+            set path $theFrame.multi$i
+            incr i
 
-	    buildScale $path "" $min $max $res $command
+            buildScale $path "" $min $max $res $command
 
-	    pack $path -side top
+            pack $path -side top
 
-	    lappend itsWidgets $path
-	}
+            lappend itsWidgets $path
+        }
 
     }
 
     public method setVal {val} {
-	foreach widg $itsWidgets v $val {
-	    $widg set $v
-	}
+        foreach widg $itsWidgets v $val {
+            $widg set $v
+        }
     }
 
     public method getVal {} {
-	set val [list]
-	foreach widg $itsWidgets {
-	    lappend val [$widg get]
-	}
-	return $val
+        set val [list]
+        foreach widg $itsWidgets {
+            lappend val [$widg get]
+        }
+        return $val
     }
 }
 
@@ -194,27 +194,27 @@ itcl::class BooleanController {
     private variable itsFname
 
     constructor {finfo parent command} {
-	set itsFname [$finfo name]
+        set itsFname [$finfo name]
 
-	set itsWidget [iwidgets::checkbox $parent.$itsFname \
-		-borderwidth 0 \
-		-labelfont $::FONT]
+        set itsWidget [iwidgets::checkbox $parent.$itsFname \
+                -borderwidth 0 \
+                -labelfont $::FONT]
 
-	$itsWidget add $itsFname -text $itsFname -command $command
+        $itsWidget add $itsFname -text $itsFname -command $command
 
-	$itsWidget configure -foreground brown
+        $itsWidget configure -foreground brown
     }
 
     public method setVal {val} {
-	if { $val } {
-	    $itsWidget select $itsFname
-	} else {
-	    $itsWidget deselect $itsFname
-	}
+        if { $val } {
+            $itsWidget select $itsFname
+        } else {
+            $itsWidget deselect $itsFname
+        }
     }
 
     public method getVal {} {
-	return [$itsWidget get $itsFname]
+        return [$itsWidget get $itsFname]
     }
 }
 
@@ -222,18 +222,18 @@ itcl::class ScaleController {
     private variable itsWidget
 
     constructor {finfo parent command} {
-	set fname [$finfo name]
-	set itsWidget [buildScale $parent.$fname $fname \
-		[$finfo min] [$finfo max] [$finfo res] \
-		$command]
+        set fname [$finfo name]
+        set itsWidget [buildScale $parent.$fname $fname \
+                [$finfo min] [$finfo max] [$finfo res] \
+                $command]
     }
 
     public method setVal {val} {
-	$itsWidget set $val
+        $itsWidget set $val
     }
 
     public method getVal {} {
-	return [$itsWidget get]
+        return [$itsWidget get]
     }
 }
 
@@ -250,15 +250,15 @@ itcl::class FieldControlSet {
     private variable itsCallback
 
     private method setControl {fname val} {
-	$itsControllers($fname) setVal $val
+        $itsControllers($fname) setVal $val
 
-	set itsCachedValues($fname) $val
+        set itsCachedValues($fname) $val
     }
 
     private method onControl {fname {val {}}} {
-	set val [$itsControllers($fname) getVal]
+        set val [$itsControllers($fname) getVal]
 
-	$itsCallback $fname $val
+        $itsCallback $fname $val
     }
 
     private method init { panes objtype setCallback }
@@ -290,62 +290,62 @@ itcl::body FieldControlSet::init { panes objtype setCallback } {
     set column 0
 
     foreach fdata [${objtype}::allFields] {
-	set finfo [FieldInfo [::AUTO] $fdata]
+        set finfo [FieldInfo [::AUTO] $fdata]
 
-	if { [$finfo isPrivate] } { itcl::delete object $finfo; continue }
+        if { [$finfo isPrivate] } { itcl::delete object $finfo; continue }
 
-	set fname [$finfo name]
+        set fname [$finfo name]
 
-	set itsCachedValues($fname) 0
+        set itsCachedValues($fname) 0
 
-	set itsFieldInfos($fname) $finfo
+        set itsFieldInfos($fname) $finfo
 
-	if { [$finfo startsNewGroup] } {
-	    set subframe [frame $itsFrame.column$column]
-	    incr column
-	    pack $subframe -side left -fill y -expand yes
-	}
+        if { [$finfo startsNewGroup] } {
+            set subframe [frame $itsFrame.column$column]
+            incr column
+            pack $subframe -side left -fill y -expand yes
+        }
 
-	set type ScaleController
+        set type ScaleController
 
-	if { [$finfo isString] } { set type StringController }
-	if { [$finfo isMulti] }  { set type MultiController }
-	if { [$finfo isBoolean] } { set type BooleanController }
+        if { [$finfo isString] } { set type StringController }
+        if { [$finfo isMulti] }  { set type MultiController }
+        if { [$finfo isBoolean] } { set type BooleanController }
 
-	set itsControllers($fname) [$type [::AUTO] \
-					$finfo $subframe \
-					[itcl::code $this onControl $fname]]
+        set itsControllers($fname) [$type [::AUTO] \
+                                        $finfo $subframe \
+                                        [itcl::code $this onControl $fname]]
 
-	if { [$finfo isTransient] } {
-	    $subframe.$fname configure -foreground blue
-	}
+        if { [$finfo isTransient] } {
+            $subframe.$fname configure -foreground blue
+        }
 
-	pack $subframe.$fname -side top
+        pack $subframe.$fname -side top
     }
 
     StringController::alignAll
 
-    pack $itsFrame -fill y -side left		  
+    pack $itsFrame -fill y -side left
 }
 
 itcl::body FieldControlSet::update {obj} {
     foreach fname [array names itsFieldInfos] {
-	set val ""
-	if { [$itsFieldInfos($fname) isGettable] } {
-	    set val [${itsObjType}::$fname $obj]
-	}
-	setControl $fname $val
+        set val ""
+        if { [$itsFieldInfos($fname) isGettable] } {
+            set val [${itsObjType}::$fname $obj]
+        }
+        setControl $fname $val
     }
 }
 
 itcl::body FieldControlSet::setAttribForObjs {objs fname val} {
     debug "setting $objs $fname to $val"
     if { [$itsFieldInfos($fname) isSettable] } {
-	set val [subst $val]
-	if { $itsCachedValues($fname) != $val } {
-	    ${itsObjType}::$fname $objs $val
-	    set itsCachedValues($fname) $val
-	}
+        set val [subst $val]
+        if { $itsCachedValues($fname) != $val } {
+            ${itsObjType}::$fname $objs $val
+            set itsCachedValues($fname) $val
+        }
     }
 }
 
@@ -434,7 +434,7 @@ itcl::body Editor::getEditAll {} {
     set objs [list]
 
     foreach pair [$itsControls.editobjlist get 0 end] {
-	lappend objs [lindex $pair 0]
+        lappend objs [lindex $pair 0]
     }
 
     return $objs
@@ -444,7 +444,7 @@ itcl::body Editor::getEditSelection {} {
     set objs [list]
 
     foreach pair [$itsControls.editobjlist getcurselection] {
-	lappend objs [lindex $pair 0]
+        lappend objs [lindex $pair 0]
     }
 
     return $objs
@@ -454,19 +454,19 @@ itcl::body Editor::setEditSelection {objs} {
     $itsControls.editobjlist selection clear 0 end
     set all [getEditAll]
     foreach obj $objs {
-	set index [lsearch $all $obj]
-	if { $index >= 0 } {
-	    $itsControls.editobjlist selection set $index
-	    onEditObjSelect
-	}
+        set index [lsearch $all $obj]
+        if { $index >= 0 } {
+            $itsControls.editobjlist selection set $index
+            onEditObjSelect
+        }
     }
 }
 
 itcl::body Editor::onEditObjSelect {} {
     set objs [getEditSelection]
     if { [llength $objs] > 0 } {
-	setObjType [IO::type [lindex $objs 0]]
-	updateControls [lindex $objs 0]
+        setObjType [IO::type [lindex $objs 0]]
+        updateControls [lindex $objs 0]
     }
 }
 
@@ -474,7 +474,7 @@ itcl::body Editor::getViewAll {} {
     set objs [list]
 
     foreach pair [$itsControls.viewobjlist get 0 end] {
-	lappend objs [lindex $pair 0]
+        lappend objs [lindex $pair 0]
     }
 
     return $objs
@@ -483,9 +483,9 @@ itcl::body Editor::getViewAll {} {
 itcl::body Editor::getViewSelection {} {
     set sel [$itsControls.viewobjlist getcurselection]
     if { [llength $sel] > 0 } {
-	return [lindex [lindex $sel 0] 0]
+        return [lindex [lindex $sel 0] 0]
     } else {
-	return 0
+        return 0
     }
 }
 
@@ -493,13 +493,13 @@ itcl::body Editor::setViewSelection {objs} {
     $itsControls.viewobjlist selection clear 0 end
     set all [getViewAll]
     foreach obj $objs {
-	set index [lsearch $all $obj]
-	if { $index >= 0 } {
-	    $itsControls.viewobjlist selection set $index
-	    onViewObjSelect
-	    requestDraw
-	    return
-	}
+        set index [lsearch $all $obj]
+        if { $index >= 0 } {
+            $itsControls.viewobjlist selection set $index
+            onViewObjSelect
+            requestDraw
+            return
+        }
     }
 }
 
@@ -508,7 +508,7 @@ itcl::body Editor::onViewObjSelect {} {
 }
 
 itcl::body Editor::addListObj {obj} {
-    $itsControls.editobjlist insert end "$obj [IO::type $obj]"	
+    $itsControls.editobjlist insert end "$obj [IO::type $obj]"
     $itsControls.viewobjlist insert end "$obj [IO::type $obj]"
 }
 
@@ -519,7 +519,7 @@ itcl::body Editor::setListAll {objs} {
     set objs [lsort -integer $objs]
 
     foreach obj $objs {
-	addListObj $obj
+        addListObj $obj
     }
 }
 
@@ -545,7 +545,7 @@ itcl::body Editor::makePreviewObj {} {
 itcl::body Editor::requestDraw {} {
     set viewobj [getViewSelection]
     if { $viewobj != 0 } {
-	-> $itsToglet see $viewobj
+        -> $itsToglet see $viewobj
     }
 }
 
@@ -586,11 +586,11 @@ itcl::body Editor::setAttrib {fname val} {
     debug "fname $fname val $val"
 
     if { !$itsUpdateInProgress && [llength $editobjs] > 0 } {
-	-> $itsToglet allowRefresh 0
-	$controls setAttribForObjs $editobjs $fname $val
-	-> $itsToglet allowRefresh 1
+        -> $itsToglet allowRefresh 0
+        $controls setAttribForObjs $editobjs $fname $val
+        -> $itsToglet allowRefresh 1
 
-	updateControls [lindex $editobjs 0]
+        updateControls [lindex $editobjs 0]
     }
 }
 
@@ -601,18 +601,18 @@ itcl::body Editor::showFieldControls {} {
     set alltypes [$itsButtons.objtypes get 0 end]
 
     foreach type $alltypes {
-	if { ![string equal $objtype $type] } {
-	    if { [info exists itsControlSets($type)] } {
-		$itsPanes hide $type
-	    }
-	}
+        if { ![string equal $objtype $type] } {
+            if { [info exists itsControlSets($type)] } {
+                $itsPanes hide $type
+            }
+        }
     }
 
     if { ![info exists itsControlSets($objtype)] } {
 
-	set itsControlSets($objtype) \
-	    [FieldControlSet [::AUTO] $itsPanes $objtype \
-		 [itcl::code $this setAttrib]]
+        set itsControlSets($objtype) \
+            [FieldControlSet [::AUTO] $itsPanes $objtype \
+                 [itcl::code $this setAttrib]]
 
     }
 
@@ -630,7 +630,7 @@ itcl::body Editor::runCmd {} {
 
 itcl::body Editor::init {parent objtype } {
     set itsPanes [iwidgets::panedwindow $parent.panes \
-		      -width $::MAINPANE_WIDTH -height $::MAINPANE_HEIGHT]
+                      -width $::MAINPANE_WIDTH -height $::MAINPANE_HEIGHT]
 
     $itsPanes add controls
 
@@ -643,77 +643,77 @@ itcl::body Editor::init {parent objtype } {
     set itsButtons [frame $itsControls.buttons]
 
     iwidgets::optionmenu $itsButtons.objtypes -labeltext "Object type:" \
-	-command [itcl::code $this showFieldControls] \
-	-font $::FONT
+        -command [itcl::code $this showFieldControls] \
+        -font $::FONT
     $itsButtons.objtypes insert 0 \
-	Face \
-	Fish \
-	Gabor \
-	GaborArray \
-	GxCylinder \
-	GxDisk \
-	GxDrawStyle \
-	GxColor \
-	GxFixedScaleCamera \
-	GxLighting \
-	GxLine \
-	GxMaterial \
-	GxPerspectiveCamera \
-	GxPointSet \
-	GxPsyphyCamera \
-	GxSeparator \
-	GxSphere \
-	GxText \
-	GxTransform \
-	House \
-	MaskHatch \
-	MorphyFace
+        Face \
+        Fish \
+        Gabor \
+        GaborArray \
+        GxCylinder \
+        GxDisk \
+        GxDrawStyle \
+        GxColor \
+        GxFixedScaleCamera \
+        GxLighting \
+        GxLine \
+        GxMaterial \
+        GxPerspectiveCamera \
+        GxPointSet \
+        GxPsyphyCamera \
+        GxSeparator \
+        GxSphere \
+        GxText \
+        GxTransform \
+        House \
+        MaskHatch \
+        MorphyFace
     $itsButtons.objtypes sort ascending
     setObjType $objtype
     pack $itsButtons.objtypes -side top -anchor nw
 
     button $itsButtons.new -text "New Object" -relief raised \
-	-command [itcl::code $this addNewObject] \
-	-font $::FONT
+        -command [itcl::code $this addNewObject] \
+        -font $::FONT
     pack $itsButtons.new -side top -anchor nw
 
     button $itsButtons.preview -text "Make Preview" -relief raised \
-	-command [itcl::code $this makePreviewObj] \
-	-font $::FONT
+        -command [itcl::code $this makePreviewObj] \
+        -font $::FONT
     pack $itsButtons.preview -side top -anchor nw
 
     button $itsButtons.redraw -text "Redraw" -relief raised \
-	-command [itcl::code $this requestDraw] \
-	-font $::FONT
+        -command [itcl::code $this requestDraw] \
+        -font $::FONT
     pack $itsButtons.redraw -side top -anchor nw
 
     button $itsButtons.refreshlist -text "Refresh list" -relief raised \
-	-command [itcl::code $this refreshLists] \
-	-font $::FONT
+        -command [itcl::code $this refreshLists] \
+        -font $::FONT
     pack $itsButtons.refreshlist -side top -anchor nw
 
     iwidgets::entryfield $itsButtons.runcmd \
-	-labeltext "Run command" -labelpos n \
-	-command [itcl::code $this runCmd] \
-	-labelfont $::FONT
+        -labeltext "Run command" -labelpos n \
+        -command [itcl::code $this runCmd] \
+        -labelfont $::FONT
     pack $itsButtons.runcmd -side top -anchor nw
 
     pack $itsButtons -side left -anchor nw
 
     iwidgets::scrolledlistbox $itsControls.editobjlist \
-	-labeltext "Edit objects:" -hscrollmode dynamic \
-	-selectmode extended -exportselection false \
-	-selectioncommand [itcl::code $this onEditObjSelect] \
-	-labelfont $::FONT \
-	-textfont $::FONT
+        -labeltext "Edit objects:" -hscrollmode dynamic \
+        -selectmode extended -exportselection false \
+        -selectioncommand [itcl::code $this onEditObjSelect] \
+        -labelfont $::FONT \
+        -textfont $::FONT
     pack $itsControls.editobjlist -side left -anchor nw
 
     iwidgets::scrolledlistbox $itsControls.viewobjlist \
-	-labeltext "View object: " -hscrollmode dynamic \
-	-selectmode browse -exportselection false \
-	-selectioncommand [itcl::code $this onViewObjSelect] \
-	-labelfont $::FONT \
-	-textfont $::FONT
+        -labeltext "View object: " -hscrollmode dynamic \
+        -selectmode browse -exportselection false \
+        -selectioncommand [itcl::code $this onViewObjSelect] \
+        -labelfont $::FONT \
+        -textfont $::FONT
     pack $itsControls.viewobjlist -side left -anchor nw
 
     #
@@ -752,7 +752,7 @@ itcl::body Editor::loadExpt {filename} {
 }
 
 itcl::body Editor::saveObjects {filename} {
-    set objs [getEditSelection] 
+    set objs [getEditSelection]
     ObjDb::saveObjects $objs $filename no
     return [llength $objs]
 }
@@ -761,9 +761,9 @@ itcl::body Editor::saveBitmaps {basename} {
     set objs [getEditSelection]
     set grobjs [dlist::select $objs [GxShapeKit::is $objs]]
     foreach obj $grobjs {
-	GxShapeKit::renderMode $obj $GxShapeKit::GL_BITMAP_CACHE
-	GxShapeKit::saveBitmapCache $obj "${basename}${obj}.pbm"
-	GxShapeKit::renderMode $obj $GxShapeKit::DIRECT_RENDER
+        GxShapeKit::renderMode $obj $GxShapeKit::GL_BITMAP_CACHE
+        GxShapeKit::saveBitmapCache $obj "${basename}${obj}.pbm"
+        GxShapeKit::renderMode $obj $GxShapeKit::DIRECT_RENDER
     }
     return [llength $objs]
 }
@@ -783,137 +783,137 @@ itcl::class Menuapp {
     private variable itsSaveBitmapsDialog ""
 
     public method loadExpt {} {
-	if { [string length $itsLoadExptDialog] == 0 } {
-	    set itsLoadExptDialog [iwidgets::fileselectiondialog \
-		    ${itsFrame}.lexd -title "Load experiment" \
-		    -mask "*.asw" \
-		    -modality application]
+        if { [string length $itsLoadExptDialog] == 0 } {
+            set itsLoadExptDialog [iwidgets::fileselectiondialog \
+                    ${itsFrame}.lexd -title "Load experiment" \
+                    -mask "*.asw" \
+                    -modality application]
 
-	    loadExpt
-	} else {
-	    if {[$itsLoadExptDialog activate]} {
-		set fname [$itsLoadExptDialog get]
-		$itsEditor loadExpt $fname
-		set ::statusInfo "Experiment loaded from '$fname'."
-	    } else {
-		set ::statusInfo "Load cancelled."
-	    }
-	}
+            loadExpt
+        } else {
+            if {[$itsLoadExptDialog activate]} {
+                set fname [$itsLoadExptDialog get]
+                $itsEditor loadExpt $fname
+                set ::statusInfo "Experiment loaded from '$fname'."
+            } else {
+                set ::statusInfo "Load cancelled."
+            }
+        }
     }
 
     public method loadObjects {} {
-	if { [string length $itsLoadObjDialog] == 0 } {
-	    set itsLoadObjDialog [iwidgets::fileselectiondialog \
-		    ${itsFrame}.lobjd -title "Load objects" \
-		    -mask "*.obj" \
-		    -modality application]
+        if { [string length $itsLoadObjDialog] == 0 } {
+            set itsLoadObjDialog [iwidgets::fileselectiondialog \
+                    ${itsFrame}.lobjd -title "Load objects" \
+                    -mask "*.obj" \
+                    -modality application]
 
-	    loadObjects
-	} else {
-	    if {[$itsLoadObjDialog activate]} {
-		set fname [$itsLoadObjDialog get]
-		set num [$itsEditor loadObjects $fname]
-		set ::statusInfo "Loaded $num objects from '$fname'."
-	    } else {
-		set ::statusInfo "Load cancelled."
-	    }
-	}
+            loadObjects
+        } else {
+            if {[$itsLoadObjDialog activate]} {
+                set fname [$itsLoadObjDialog get]
+                set num [$itsEditor loadObjects $fname]
+                set ::statusInfo "Loaded $num objects from '$fname'."
+            } else {
+                set ::statusInfo "Load cancelled."
+            }
+        }
     }
 
     public method saveObjects {} {
-	if { [string length $itsSaveObjDialog] == 0 } {
-	    set itsSaveObjDialog [iwidgets::fileselectiondialog \
-		    ${itsFrame}.sobjd -title "Save objects" \
-		    -fileson no \
-		    -modality application]
+        if { [string length $itsSaveObjDialog] == 0 } {
+            set itsSaveObjDialog [iwidgets::fileselectiondialog \
+                    ${itsFrame}.sobjd -title "Save objects" \
+                    -fileson no \
+                    -modality application]
 
-	    saveObjects
-	} else {
-	    if {[$itsSaveObjDialog activate]} {
-		set fname [$itsSaveObjDialog get]
-		set num [$itsEditor saveObjects $fname]
-		set ::statusInfo "Saved $num objects to '$fname'."
-	    } else {
-		set ::statusInfo "Save cancelled."
-	    }
-	}
+            saveObjects
+        } else {
+            if {[$itsSaveObjDialog activate]} {
+                set fname [$itsSaveObjDialog get]
+                set num [$itsEditor saveObjects $fname]
+                set ::statusInfo "Saved $num objects to '$fname'."
+            } else {
+                set ::statusInfo "Save cancelled."
+            }
+        }
     }
 
     public method saveBitmaps {} {
-	if { [string length $itsSaveBitmapsDialog] == 0 } {
-	    set itsSaveBitmapsDialog [iwidgets::fileselectiondialog \
-		    ${itsFrame}.sbmapd -title "Save bitmaps" \
-		    -fileson no \
-		    -modality application]
+        if { [string length $itsSaveBitmapsDialog] == 0 } {
+            set itsSaveBitmapsDialog [iwidgets::fileselectiondialog \
+                    ${itsFrame}.sbmapd -title "Save bitmaps" \
+                    -fileson no \
+                    -modality application]
 
-	    saveBitmaps
-	} else {
-	    if {[$itsSaveBitmapsDialog activate]} {
-		set fname [$itsSaveBitmapsDialog get]
-		set num [$itsEditor saveBitmaps $fname]
-		set ::statusInfo "Saved $num bitmaps to '$fname*'."
-	    } else {
-		set ::statusInfo "Save cancelled."
-	    }
-	}
+            saveBitmaps
+        } else {
+            if {[$itsSaveBitmapsDialog activate]} {
+                set fname [$itsSaveBitmapsDialog get]
+                set num [$itsEditor saveBitmaps $fname]
+                set ::statusInfo "Saved $num bitmaps to '$fname*'."
+            } else {
+                set ::statusInfo "Save cancelled."
+            }
+        }
     }
 
     constructor {} {
-	set itsFrame [frame .fr]
+        set itsFrame [frame .fr]
 
-	set itsHelpEntry [label .ef -textvariable statusInfo \
-		-relief sunken -anchor w -foreground darkgreen \
-		-font $::FONT]
+        set itsHelpEntry [label .ef -textvariable statusInfo \
+                -relief sunken -anchor w -foreground darkgreen \
+                -font $::FONT]
 
-	iwidgets::menubar .mb -helpvariable statusInfo -menubuttons {
-	    menubutton file -text File -menu {
-		options -tearoff true
-		command loadExpt -label {Load expt...} \
-			-helpstr {Load an experiment} \
-			-command {[itcl::code $this loadExpt]}
-		command loadObjects -label {Load objects...} \
-			-helpstr {Load a set of objects} \
-			-command {[itcl::code $this loadObjects]}
-		command saveObjects -label {Save objects...} \
-			-helpstr {Save a set of objects} \
-			-command {[itcl::code $this saveObjects]}
-		command saveBitmaps -label {Save bitmaps...} \
-			-helpstr {Save a set of objects as bitmaps...} \
-			-command {[itcl::code $this saveBitmaps]}
-		separator sep1
-		command exit -label Exit -command {exit} \
-			-helpstr {Quit application}
-	    }
-	    menubutton edit -text Edit -menu {
-		options -tearoff true
-		if 0 {
-		    command undo -label Undo -underline 0 -helpstr {Undo last command} -command {puts UNDO}
-		    separator sep2
-		    command cut -label Cut -underline 1 -helpstr {Cut selection to clipboard} -command {puts CUT}
-		    command copy -label Copy -underline 1 -helpstr {Copy selection to clipboard} -command {puts COPY}
-		    command paste -label Paste -underline 0 -helpstr {Paste clipboard contents} -command {puts PASTE}
-		}
-	    }
-	    menubutton options -text Options -menu {
-		options -tearoff true -selectcolor blue
-		if 0 {
-		    radiobutton byName -variable viewMode -value NAME -label "by Name" -helpstr "View files by name order" -command {puts NAME}
-		    radiobutton byDate -variable viewMode -value DATE -label "by Date" -helpstr "View files by date order" -command {puts DATE}
-		    cascade prefs -label Preferences -menu {
-			command colors -label Colors... -helpstr "Change text colors" -command {puts COLORS}
-			command fonts -label Fonts... -helpstr "Change text font" -command {puts FONT}
-		    }
-		}
-	    }
-	}
+        iwidgets::menubar .mb -helpvariable statusInfo -menubuttons {
+            menubutton file -text File -menu {
+                options -tearoff true
+                command loadExpt -label {Load expt...} \
+                        -helpstr {Load an experiment} \
+                        -command {[itcl::code $this loadExpt]}
+                command loadObjects -label {Load objects...} \
+                        -helpstr {Load a set of objects} \
+                        -command {[itcl::code $this loadObjects]}
+                command saveObjects -label {Save objects...} \
+                        -helpstr {Save a set of objects} \
+                        -command {[itcl::code $this saveObjects]}
+                command saveBitmaps -label {Save bitmaps...} \
+                        -helpstr {Save a set of objects as bitmaps...} \
+                        -command {[itcl::code $this saveBitmaps]}
+                separator sep1
+                command exit -label Exit -command {exit} \
+                        -helpstr {Quit application}
+            }
+            menubutton edit -text Edit -menu {
+                options -tearoff true
+                if 0 {
+                    command undo -label Undo -underline 0 -helpstr {Undo last command} -command {puts UNDO}
+                    separator sep2
+                    command cut -label Cut -underline 1 -helpstr {Cut selection to clipboard} -command {puts CUT}
+                    command copy -label Copy -underline 1 -helpstr {Copy selection to clipboard} -command {puts COPY}
+                    command paste -label Paste -underline 0 -helpstr {Paste clipboard contents} -command {puts PASTE}
+                }
+            }
+            menubutton options -text Options -menu {
+                options -tearoff true -selectcolor blue
+                if 0 {
+                    radiobutton byName -variable viewMode -value NAME -label "by Name" -helpstr "View files by name order" -command {puts NAME}
+                    radiobutton byDate -variable viewMode -value DATE -label "by Date" -helpstr "View files by date order" -command {puts DATE}
+                    cascade prefs -label Preferences -menu {
+                        command colors -label Colors... -helpstr "Change text colors" -command {puts COLORS}
+                        command fonts -label Fonts... -helpstr "Change text font" -command {puts FONT}
+                    }
+                }
+            }
+        }
 
-	set itsMenuBar .mb
+        set itsMenuBar .mb
 
-	pack $itsMenuBar -anchor nw -fill x -expand yes
-	pack $itsFrame -fill both -expand yes
-	pack $itsHelpEntry -anchor sw -fill x -expand yes
+        pack $itsMenuBar -anchor nw -fill x -expand yes
+        pack $itsFrame -fill both -expand yes
+        pack $itsHelpEntry -anchor sw -fill x -expand yes
 
-	set itsEditor [Editor [::AUTO] $itsFrame]
+        set itsEditor [Editor [::AUTO] $itsFrame]
     }
 }
 
