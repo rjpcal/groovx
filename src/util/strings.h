@@ -84,11 +84,13 @@ public:
 
   void add_terminator();
 
+  void set_length(std::size_t length);
+
   void append(std::size_t length, const char* text);
 
-  void realloc(std::size_t bufsize);
+  void realloc(std::size_t capacity);
 
-  void make_space(std::size_t len);
+  void reserve(std::size_t capacity);
 
 private:
   unsigned int itsRefCount;
@@ -149,11 +151,6 @@ public:
 
   fstring& operator=(const char* text);
   fstring& operator=(const fstring& other);
-
-  void make_space(std::size_t len)
-  {
-    string_rep::makeUnique(itsRep); itsRep->make_space(len);
-  }
 
   char* data()
   {
@@ -240,6 +237,9 @@ public:
   //
 
   void read(STD_IO::istream& is);
+
+  /// Read exactly count characters from the stream
+  void readsome(STD_IO::istream& is, unsigned int count);
 
   void write(STD_IO::ostream& os) const;
 
