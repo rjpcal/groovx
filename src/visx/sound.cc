@@ -21,7 +21,7 @@
 #  include "visx/hpsound.h"
 #elif defined(IRIX6)
 #  include "visx/irixsound.h"
-#elif defined(I686)
+#elif defined(I686) || defined(PPC)
 #  include "visx/esdsound.h"
 #else
 #  include "visx/dummysound.h"
