@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon May 12 11:15:51 2003
-// written: Tue May 13 08:21:12 2003
+// written: Tue May 13 08:32:13 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -33,11 +33,7 @@
 
 #include "gfx/gxshapekit.h"
 
-#include "gx/bmapdata.h"
-
 #include "util/arrays.h"
-
-#include "visx/gaborpatch.h"
 
 class Element;
 class Snake;
@@ -71,24 +67,27 @@ protected:
   virtual void grRender(Gfx::Canvas& canvas) const;
 
 private:
-  const double gaborPeriod;
-  const double gaborSigma;
-  const int sizeX;
-  const int sizeY;
-  const double halfX;
-  const double halfY;
-  const double backgIniSpacing;
-  const double backgMinSpacing;
-  const double backgMinSpacingSqr;
-  int insideNumber;
+  int itsForegNumber;
+  double itsForegSpacing;
+  double gaborPeriod;
+  double gaborSigma;
+  int sizeX;
+  int sizeY;
+  double halfX;
+  double halfY;
+  double backgIniSpacing;
+  double backgMinSpacing;
+  double backgMinSpacingSqr;
   int totalNumber;
   fixed_block<Element> array;
 
   void dumpFrame() const;
 
+  void rebuild();
   bool tryPush(const Element& e);
   bool tooClose(const Gfx::Vec2<double>& v, int except);
-  void insideElements(const Snake& snake);
+  /// Mark inside elements and return how many there were.
+  int insideElements(const Snake& snake);
   void hexGridElements();
   void fillElements();
   void jitterElement();
