@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Mon Jan 13 11:04:47 2003
+// written: Wed Feb 26 15:51:18 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -234,16 +234,28 @@ DOTRACE("GLCanvas::throwIfError");
 }
 
 
+namespace
+{
+  int attribStackDepth()
+  {
+    int d = -1;
+    glGetIntegerv(GL_ATTRIB_STACK_DEPTH, &d);
+    return d;
+  }
+}
+
 void GLCanvas::pushAttribs()
 {
 DOTRACE("GLCanvas::pushAttribs");
   glPushAttrib(GL_ALL_ATTRIB_BITS);
+  dbgEvalNL(3, attribStackDepth());
 }
 
 void GLCanvas::popAttribs()
 {
 DOTRACE("GLCanvas::popAttribs");
   glPopAttrib();
+  dbgEvalNL(3, attribStackDepth());
 }
 
 void GLCanvas::drawOnFrontBuffer()
