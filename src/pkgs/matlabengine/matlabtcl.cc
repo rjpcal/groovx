@@ -90,7 +90,7 @@ public:
         throw Util::Error(fstring("no such MATLAB variable: '", name, "'"));
       }
 
-    Util::Ref<MtxObj> mtx(new MtxObj(arr, Mtx::COPY));
+    Util::Ref<MtxObj> mtx(new MtxObj(arr, mtx::COPY));
 
     mxDestroyArray(arr);
 
