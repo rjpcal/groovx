@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Thu Nov 21 16:36:27 2002
+// written: Thu Nov 21 18:16:03 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -316,15 +316,33 @@ DOTRACE("Gx_Init");
 
   status = pkg16->combineStatus(status);
 
+  //
+  // Cameras
+  //
+
   Tcl::Pkg* pkg17 = new Tcl::Pkg(interp, "GxFixedScaleCamera", "$Revision$");
   pkg17->inherit("GxNode");
   Tcl::defCreator<GxFixedScaleCamera>(pkg17);
-  Tcl::defGenericObjCmds<GxText>(pkg16);
-  pkg17->defSetter( "pixelsPerUnit", &GxFixedScaleCamera::setPixelsPerUnit );
-  pkg17->defSetter( "unitAngle", &GxFixedScaleCamera::setUnitAngle );
-  pkg17->defSetter( "viewingDistIn", &GxFixedScaleCamera::setViewingDistIn );
+  Tcl::defGenericObjCmds<GxFixedScaleCamera>(pkg17);
+  Tcl::defFieldContainer<GxFixedScaleCamera>(pkg17);
 
   status = pkg17->combineStatus(status);
+
+  Tcl::Pkg* pkg18 = new Tcl::Pkg(interp, "GxPsyphyCamera", "$Revision$");
+  pkg18->inherit("GxNode");
+  Tcl::defCreator<GxPsyphyCamera>(pkg18);
+  Tcl::defGenericObjCmds<GxPsyphyCamera>(pkg18);
+  Tcl::defFieldContainer<GxPsyphyCamera>(pkg18);
+
+  status = pkg18->combineStatus(status);
+
+  Tcl::Pkg* pkg19 = new Tcl::Pkg(interp, "GxPerspectiveCamera", "$Revision$");
+  pkg19->inherit("GxNode");
+  Tcl::defCreator<GxPerspectiveCamera>(pkg19);
+  Tcl::defGenericObjCmds<GxPerspectiveCamera>(pkg19);
+  Tcl::defFieldContainer<GxPerspectiveCamera>(pkg19);
+
+  status = pkg19->combineStatus(status);
 
   return status;
 }

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 21 15:22:25 2002
-// written: Thu Nov 21 16:31:16 2002
+// written: Thu Nov 21 18:18:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,9 @@
 
 #include "gfx/canvas.h"
 
+#include "io/reader.h"
+#include "io/writer.h"
+
 #include "util/error.h"
 
 #include <cmath>
@@ -24,13 +27,40 @@
 #include "util/debug.h"
 #include "util/trace.h"
 
-void GxPerspectiveCamera::setPerspective(double fovy, double zNear, double zFar)
-{
-DOTRACE("GxPerspectiveCamera::setPerspective");
+GxPerspectiveCamera::GxPerspectiveCamera() :
+  GxCamera(),
+  FieldContainer(&sigNodeChanged),
+  itsFovY(30),
+  itsNearZ(1),
+  itsFarZ(30)
+{}
 
-  itsFovY = fovy;
-  itsNearZ = zNear;
-  itsFarZ = zFar;
+const FieldMap& GxPerspectiveCamera::classFields()
+{
+DOTRACE("GxPerspectiveCamera::classFields");
+  static const Field FIELD_ARRAY[] =
+  {
+    Field("fovY", &GxPerspectiveCamera::itsFovY, 30.0, 1.0, 180.0, 1.0,
+          Field::NEW_GROUP),
+    Field("nearZ", &GxPerspectiveCamera::itsNearZ, 1.0, 1.0, 50.0, 0.1),
+    Field("farZ", &GxPerspectiveCamera::itsFarZ, 30.0, 1.0, 50.0, 0.1)
+  };
+
+  static FieldMap FIELD_MAP(FIELD_ARRAY);
+
+  return FIELD_MAP;
+}
+
+void GxPerspectiveCamera::readFrom(IO::Reader* reader)
+{
+DOTRACE("GxPerspectiveCamera::readFrom");
+  readFieldsFrom(reader, classFields());
+}
+
+void GxPerspectiveCamera::writeTo(IO::Writer* writer) const
+{
+DOTRACE("GxPerspectiveCamera::writeTo");
+  writeFieldsTo(writer, classFields());
 }
 
 void GxPerspectiveCamera::draw(Gfx::Canvas& canvas) const
@@ -83,6 +113,54 @@ DOTRACE("GxMinRectCamera::draw");
   canvas.orthographic(port, -10.0, 10.0);
 }
 
+namespace
+{
+  void orthoFixed(Gfx::Canvas& canvas, int w, int h, double ppu)
+  {
+    const double l = -1 * (w / 2.0) / ppu;
+    const double r =      (w / 2.0) / ppu;
+    const double b = -1 * (h / 2.0) / ppu;
+    const double t =      (h / 2.0) / ppu;
+
+    canvas.orthographic(Gfx::RectLTRB<double>(l, t, r, b), -10.0, 10.0);
+  }
+}
+
+GxFixedScaleCamera::GxFixedScaleCamera() :
+  GxCamera(),
+  FieldContainer(&sigNodeChanged),
+  itsPixelsPerUnit(100.0)
+{}
+
+const FieldMap& GxFixedScaleCamera::classFields()
+{
+DOTRACE("GxFixedScaleCamera::classFields");
+  static const Field FIELD_ARRAY[] =
+  {
+    Field("pixelsPerUnit",
+          make_mypair(&GxFixedScaleCamera::getPixelsPerUnit,
+                      &GxFixedScaleCamera::setPixelsPerUnit),
+          2.05, 0.1, 100.0, 0.1,
+          Field::NEW_GROUP)
+  };
+
+  static FieldMap FIELD_MAP(FIELD_ARRAY);
+
+  return FIELD_MAP;
+}
+
+void GxFixedScaleCamera::readFrom(IO::Reader* reader)
+{
+DOTRACE("GxFixedScaleCamera::readFrom");
+  readFieldsFrom(reader, classFields());
+}
+
+void GxFixedScaleCamera::writeTo(IO::Writer* writer) const
+{
+DOTRACE("GxFixedScaleCamera::writeTo");
+  writeFieldsTo(writer, classFields());
+}
+
 void GxFixedScaleCamera::setPixelsPerUnit(double s)
 {
   if (s <= 0.0)
@@ -91,44 +169,89 @@ void GxFixedScaleCamera::setPixelsPerUnit(double s)
   itsPixelsPerUnit = s;
 }
 
-void GxFixedScaleCamera::setUnitAngle(double deg_per_unit)
-{
-  if (deg_per_unit <= 0.0)
-    throw Util::Error("unit angle must be positive");
-
-  static const double deg_to_rad = 3.141593/180.0;
-
-  // tan(deg_per_unit) == screen_inches_per_unit/viewing_dist;
-  // screen_inches_per_unit == 1.0 * itsPixelsPerUnit / screepPpi;
-  const double screen_inches_per_unit =
-    tan(deg_per_unit*deg_to_rad) * itsViewingDistance;
-
-  itsPixelsPerUnit = int(screen_inches_per_unit * itsScreenPixelsPerInch);
-}
-
-void GxFixedScaleCamera::setViewingDistIn(double inches)
-{
-  if (inches <= 0.0)
-    throw Util::Error("viewing distance must be positive (duh)");
-
-  // according to similar triangles,
-  //   new_dist / old_dist == new_scale / old_scale;
-  const double factor = inches / itsViewingDistance;
-  itsPixelsPerUnit *= factor;
-  itsViewingDistance = inches;
-}
-
 void GxFixedScaleCamera::draw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GxFixedScaleCamera::draw");
 
   canvas.viewport(0, 0, width(), height());
 
-  const double l = -1 * (width()  / 2.0) / itsPixelsPerUnit;
-  const double r =      (width()  / 2.0) / itsPixelsPerUnit;
-  const double b = -1 * (height() / 2.0) / itsPixelsPerUnit;
-  const double t =      (height() / 2.0) / itsPixelsPerUnit;
-  canvas.orthographic(Gfx::RectLTRB<double>(l, t, r, b), -10.0, 10.0);
+  orthoFixed(canvas, width(), height(), itsPixelsPerUnit);
+}
+
+GxPsyphyCamera::GxPsyphyCamera() :
+  GxCamera(),
+  FieldContainer(&sigNodeChanged),
+  itsDegreesPerUnit(2.05),
+  itsViewingDistance(30.0)
+{}
+
+const FieldMap& GxPsyphyCamera::classFields()
+{
+DOTRACE("GxPsyphyCamera::classFields");
+  static const Field FIELD_ARRAY[] =
+  {
+    Field("unitAngle",
+          make_mypair(&GxPsyphyCamera::getUnitAngle,
+                      &GxPsyphyCamera::setUnitAngle),
+          2.05, 0.1, 100.0, 0.1,
+          Field::NEW_GROUP),
+    Field("viewingDistIn",
+          make_mypair(&GxPsyphyCamera::getViewingDistIn,
+                      &GxPsyphyCamera::setViewingDistIn),
+          30.0, 1.0, 500.0, 1.0),
+  };
+
+  static FieldMap FIELD_MAP(FIELD_ARRAY);
+
+  return FIELD_MAP;
+}
+
+void GxPsyphyCamera::readFrom(IO::Reader* reader)
+{
+DOTRACE("GxPsyphyCamera::readFrom");
+  readFieldsFrom(reader, classFields());
+}
+
+void GxPsyphyCamera::writeTo(IO::Writer* writer) const
+{
+DOTRACE("GxPsyphyCamera::writeTo");
+  writeFieldsTo(writer, classFields());
+}
+
+void GxPsyphyCamera::setUnitAngle(double deg_per_unit)
+{
+  if (deg_per_unit <= 0.0)
+    throw Util::Error("unit angle must be positive");
+
+  itsDegreesPerUnit = deg_per_unit;
+}
+
+void GxPsyphyCamera::setViewingDistIn(double inches)
+{
+  if (inches <= 0.0)
+    throw Util::Error("viewing distance must be positive (duh)");
+
+  itsViewingDistance = inches;
+}
+
+void GxPsyphyCamera::draw(Gfx::Canvas& canvas) const
+{
+DOTRACE("GxPsyphyCamera::draw");
+
+  canvas.viewport(0, 0, width(), height());
+
+  static const double deg_to_rad = M_PI/180.0;
+
+  const double pixels_per_inch = 72.0; // FIXME should get this from Canvas
+
+  // geometry 101:
+  //                   tan(angle_per_unit) == inches_per_unit/viewing_dist;
+  const double inches_per_unit =
+    tan(itsDegreesPerUnit*deg_to_rad) * itsViewingDistance;
+
+  const double pixels_per_unit = pixels_per_inch * inches_per_unit;
+
+  orthoFixed(canvas, width(), height(), pixels_per_unit);
 }
 
 static const char vcid_gxcamera_cc[] = "$Header$";

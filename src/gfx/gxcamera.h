@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 21 15:18:58 2002
-// written: Thu Nov 21 16:40:47 2002
+// written: Thu Nov 21 18:18:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,8 @@
 #include "gx/rect.h"
 
 #include "gfx/gxnode.h"
+
+#include "io/fields.h"
 
 namespace Gfx
 {
@@ -29,28 +31,32 @@ namespace Gfx
 class GxCamera : public GxNode
 {
 public:
+  GxCamera() : GxNode(), itsWidth(0), itsHeight(0) {}
+
   void reshape(int w, int h) { itsWidth = w; itsHeight = h; }
 
   int width() const { return itsWidth; }
   int height() const { return itsHeight; }
 
   /// Overridden from GxNode.
-  virtual void getBoundingCube(Gfx::Bbox& bbox) const {}
+  virtual void getBoundingCube(Gfx::Bbox& /*bbox*/) const {}
 
 private:
   int itsWidth;
   int itsHeight;
 };
 
-class GxPerspectiveCamera : public GxCamera
+class GxPerspectiveCamera : public GxCamera, public FieldContainer
 {
 public:
-  GxPerspectiveCamera() : GxCamera() {}
+  GxPerspectiveCamera();
 
-  virtual void readFrom(IO::Reader* reader) {}
-  virtual void writeTo(IO::Writer* writer) const {}
+  static GxPerspectiveCamera* make() { return new GxPerspectiveCamera; }
 
-  void setPerspective(double fovy, double zNear, double zFar);
+  static const FieldMap& classFields();
+
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
 
   virtual void draw(Gfx::Canvas& canvas) const;
 
@@ -68,8 +74,8 @@ public:
     itsRect(Gfx::RectLTRB<double>(-1.0, 1.0, 1.0, -1.0))
   {}
 
-  virtual void readFrom(IO::Reader* reader) {}
-  virtual void writeTo(IO::Writer* writer) const {}
+  virtual void readFrom(IO::Reader* /*reader*/) {}
+  virtual void writeTo(IO::Writer* /*writer*/) const {}
 
   void setRect(const Gfx::Rect<double>& rect) { itsRect = rect; }
 
@@ -89,8 +95,8 @@ public:
     itsRect(Gfx::RectLTRB<double>(-1.0, 1.0, 1.0, -1.0))
   {}
 
-  virtual void readFrom(IO::Reader* reader) {}
-  virtual void writeTo(IO::Writer* writer) const {}
+  virtual void readFrom(IO::Reader* /*reader*/) {}
+  virtual void writeTo(IO::Writer* /*writer*/) const {}
 
   void setRect(const Gfx::Rect<double>& rect) { itsRect = rect; }
 
@@ -102,34 +108,49 @@ private:
   Gfx::Rect<double> itsRect;
 };
 
-class GxFixedScaleCamera : public GxCamera
+class GxFixedScaleCamera : public GxCamera, public FieldContainer
 {
 public:
-  // FIXME pixels per inch should come from the Canvas
-
-  GxFixedScaleCamera(double screen_ppi = 72.0, double unit_angle = 2.05) :
-    GxCamera(),
-    itsScreenPixelsPerInch(screen_ppi),
-    itsPixelsPerUnit(1.0),
-    itsViewingDistance(30.0)
-  {
-    setUnitAngle(unit_angle);
-  }
+  GxFixedScaleCamera();
 
   static GxFixedScaleCamera* make() { return new GxFixedScaleCamera; }
 
-  virtual void readFrom(IO::Reader* reader) {}
-  virtual void writeTo(IO::Writer* writer) const {}
+  static const FieldMap& classFields();
 
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
+
+  double getPixelsPerUnit() const { return itsPixelsPerUnit; }
   void setPixelsPerUnit(double s);
-  void setUnitAngle(double deg);
+
+  virtual void draw(Gfx::Canvas& canvas) const;
+
+private:
+  double itsPixelsPerUnit;
+};
+
+class GxPsyphyCamera : public GxCamera, public FieldContainer
+{
+public:
+  GxPsyphyCamera();
+
+  static GxPsyphyCamera* make() { return new GxPsyphyCamera; }
+
+  static const FieldMap& classFields();
+
+  virtual void readFrom(IO::Reader* reader);
+  virtual void writeTo(IO::Writer* writer) const;
+
+  double getUnitAngle() const { return itsDegreesPerUnit; }
+  double getViewingDistIn() const { return itsViewingDistance; }
+
+  void setUnitAngle(double deg_per_unit);
   void setViewingDistIn(double inches);
 
   virtual void draw(Gfx::Canvas& canvas) const;
 
 private:
-  const double itsScreenPixelsPerInch;
-  double itsPixelsPerUnit;
+  double itsDegreesPerUnit;
   double itsViewingDistance;    // inches
 };
 
