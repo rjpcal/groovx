@@ -3,7 +3,7 @@
 // ptrlistbase.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Tue Oct 24 13:44:54 2000
+// written: Tue Oct 24 16:14:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -368,25 +368,6 @@ DOTRACE("PtrListBase::Impl::insertPtrBaseAt");
 	 { ++itsFirstVacant; }
 
   DebugEvalNL(itsFirstVacant);
-}
-
-int& PtrListBase::firstVacant() {
-  return itsImpl->itsFirstVacant;
-}
-
-const int& PtrListBase::firstVacant() const {
-  return itsImpl->itsFirstVacant;
-}
-
-unsigned int PtrListBase::baseVecSize() const {
-DOTRACE("PtrListBase::baseVecSize");
-  return itsImpl->itsPtrVec.size();
-}
-
-void PtrListBase::baseVecResize(unsigned int new_size) {
-DOTRACE("PtrListBase::baseVecResize");
-  if ( new_size > itsImpl->itsPtrVec.size() )
-	 itsImpl->itsPtrVec.resize(new_size, VoidPtrHandle());
 }
 
 static const char vcid_ptrlistbase_cc[] = "$Header$";

@@ -3,7 +3,7 @@
 // ptrlistbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Tue Oct 24 13:44:41 2000
+// written: Tue Oct 24 16:13:43 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -70,7 +70,7 @@ public:
       iterator \a itr. **/
   template <class Iterator>
   void insertValidIds(Iterator itr) const {
-	 for (unsigned int i = 0, end = baseVecSize();
+	 for (unsigned int i = 0, end = capacity();
 			i < end;
 			++i) {
 		if (isValidId(i)) 
@@ -93,7 +93,7 @@ public:
   void clear();
 
 protected:
-  /** Return the \c void* at the index given by \a id.  There is no
+  /** Return the \c RefCounted* at the index given by \a id.  There is no
 		range-check performed; this must be done by the client with
 		\c isValidId(). */
   RefCounted* getPtrBase(int id) const throw ();
@@ -107,14 +107,6 @@ protected:
 		to make room for the ptr. The PtrList now assumes control of the
 		memory management for the object *ptr. */
   int insertPtrBase(RefCounted* ptr);
-
-protected:
-  int& firstVacant();
-  const int& firstVacant() const;
-
-  unsigned int baseVecSize() const;
-
-  void baseVecResize(unsigned int new_size);
 
 private:
   PtrListBase(const PtrListBase&);
