@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Fri Nov 22 17:13:01 2002
+// written: Tue Nov 26 18:50:24 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "gfx/gxcamera.h"
 #include "gfx/gxcolor.h"
 #include "gfx/gxcylinder.h"
+#include "gfx/gxdisk.h"
 #include "gfx/gxdrawstyle.h"
 #include "gfx/gxemptynode.h"
 #include "gfx/gxlighting.h"
@@ -344,6 +345,18 @@ DOTRACE("Gx_Init");
   Tcl::defFieldContainer<GxPerspectiveCamera>(pkg19);
 
   status = pkg19->combineStatus(status);
+
+  //
+  // Disk
+  //
+
+  Tcl::Pkg* pkg20 = new Tcl::Pkg(interp, "GxDisk", "$Revision$");
+  pkg20->inherit("GxNode");
+  Tcl::defCreator<GxDisk>(pkg20);
+  Tcl::defGenericObjCmds<GxDisk>(pkg20);
+  Tcl::defFieldContainer<GxDisk>(pkg20);
+
+  status = pkg20->combineStatus(status);
 
   return status;
 }
