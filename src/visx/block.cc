@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Mon Oct 23 23:01:25 2000
+// written: Tue Oct 24 10:44:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -168,28 +168,22 @@ void Block::readFrom(IO::Reader* reader) {
 DOTRACE("Block::readFrom");
 
   IO::VersionId svid = reader->readSerialVersionId(); 
-  if (svid == 0)
-	 {
-		vector<int> ids;
-		IO::ReadUtils::template readValueSeq<int>(
-		                            reader, "trialSeq", std::back_inserter(ids));
 
-		itsImpl->itsTrialSequence.clear();
-		for(int i = 0; i < ids.size(); ++i)
-		  itsImpl->itsTrialSequence.push_back(
-                           NullableItemWithId<TrialBase>(ids[i]));
-	 }
-  else if (svid == 1)
+  if (svid < 1)
 	 {
-		vector<TrialBase*> trials;
-		IO::ReadUtils::template readObjectSeq<TrialBase>(
+		throw IO::ReadVersionError("Block", svid, 1, "Try grsh0.8a3");
+	 }
+
+  Assert(svid >= 1);
+
+  vector<TrialBase*> trials;
+  IO::ReadUtils::template readObjectSeq<TrialBase>(
 								reader, "trialSeq", std::back_inserter(trials));
 
-		itsImpl->itsTrialSequence.clear();
-		for(int i = 0; i < trials.size(); ++i)
-		  itsImpl->itsTrialSequence.push_back(
+  itsImpl->itsTrialSequence.clear();
+  for(int i = 0; i < trials.size(); ++i)
+	 itsImpl->itsTrialSequence.push_back(
                             NullableItemWithId<TrialBase>(trials[i]));
-	 }
 
   reader->readValue("randSeed", itsImpl->itsRandSeed);
   reader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
@@ -204,22 +198,20 @@ DOTRACE("Block::readFrom");
 void Block::writeTo(IO::Writer* writer) const {
 DOTRACE("Block::writeTo");
 
-  if (BLOCK_SERIAL_VERSION_ID == 0)
+  if (BLOCK_SERIAL_VERSION_ID < 1)
 	 {
-		vector<int> ids; 
-		for (int i = 0; i < itsImpl->itsTrialSequence.size(); ++i)
-		  ids.push_back(itsImpl->itsTrialSequence[i].id());
-		IO::WriteUtils::writeValueSeq(writer, "trialSeq", ids.begin(), ids.end());
-	 }
-  else if (BLOCK_SERIAL_VERSION_ID == 1)
-	 {
-		vector<TrialBase*> trials;
-		for (int i = 0; i < itsImpl->itsTrialSequence.size(); ++i)
-		  trials.push_back(itsImpl->itsTrialSequence[i].isValid() ?
-								 itsImpl->itsTrialSequence[i].get() : 0);
-		IO::WriteUtils::writeObjectSeq(writer, "trialSeq",
-												 trials.begin(), trials.end());
-	 }
+		throw IO::WriteVersionError("Block", BLOCK_SERIAL_VERSION_ID, 1,
+											 "Try grsh0.8a3");
+	 } 
+
+  Assert(BLOCK_SERIAL_VERSION_ID >= 1);
+
+  vector<TrialBase*> trials;
+  for (int i = 0; i < itsImpl->itsTrialSequence.size(); ++i)
+	 trials.push_back(itsImpl->itsTrialSequence[i].isValid() ?
+							itsImpl->itsTrialSequence[i].get() : 0);
+  IO::WriteUtils::writeObjectSeq(writer, "trialSeq",
+											trials.begin(), trials.end());
 
   writer->writeValue("randSeed", itsImpl->itsRandSeed);
   writer->writeValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
