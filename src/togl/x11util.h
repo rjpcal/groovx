@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:32:51 2002
-// written: Sat Aug  3 17:23:39 2002
+// written: Sun Aug  4 19:37:16 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,9 +26,9 @@ namespace X11Util
 
   void hackInstallColormap(Display* dpy, Window win, Colormap cmap);
 
-  // Returns true if an exact match was found
-  bool noFaultXAllocColor(Display* dpy, Colormap cmap, int cmapSize,
-                          XColor* color);
+  // Returns the index number of the allocated color
+  unsigned long noFaultXAllocColor(Display* dpy, Colormap cmap, int cmapSize,
+                                   float red, float green, float blue);
 }
 
 static const char vcid_x11util_h[] = "$Header$";

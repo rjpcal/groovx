@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Sun Aug  4 16:46:40 2002
+// written: Sun Aug  4 19:39:17 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -996,22 +996,16 @@ DOTRACE("Togl::Impl::allocColor");
       fprintf(stderr,"Error: Togl::allocColor illegal in RGBA mode.\n");
       return 0;
     }
-  /* TODO: maybe not... */
+
   if (itsPrivateCmapFlag)
     {
       fprintf(stderr,"Error: Togl::allocColor illegal with private colormap\n");
       return 0;
     }
 
-  XColor xcol;
-  xcol.red   = (short) (red   * 65535.0);
-  xcol.green = (short) (green * 65535.0);
-  xcol.blue  = (short) (blue  * 65535.0);
-
-  X11Util::noFaultXAllocColor(itsDisplay, colormap(),
-                              Tk_Visual(itsTkWin)->map_entries, &xcol);
-
-  return xcol.pixel;
+  return X11Util::noFaultXAllocColor(itsDisplay, colormap(),
+                                     Tk_Visual(itsTkWin)->map_entries,
+                                     red, green, blue);
 }
 
 void Togl::Impl::freeColor(unsigned long pixel) const
@@ -1022,15 +1016,14 @@ DOTRACE("Togl::Impl::freeColor");
       fprintf(stderr,"Error: Togl::freeColor illegal in RGBA mode.\n");
       return;
     }
-  /* TODO: maybe not... */
+
   if (itsPrivateCmapFlag)
     {
       fprintf(stderr,"Error: Togl::freeColor illegal with private colormap\n");
       return;
     }
 
-  XFreeColors( itsDisplay, colormap(),
-               &pixel, 1, 0 );
+  XFreeColors(itsDisplay, colormap(), &pixel, 1, 0);
 }
 
 void Togl::Impl::setColor(unsigned long index,
