@@ -3,7 +3,7 @@
 // canvas.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Nov 15 18:00:27 1999
-// written: Mon Dec  6 19:53:50 1999
+// written: Mon Dec  6 20:34:52 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,8 +17,6 @@ template <class V> class Rect;
 class Canvas {
 public:
   virtual ~Canvas();
-
-  static Canvas& theCanvas();
 
   virtual Point<int> getScreenFromWorld(const Point<double>& world_pos) const = 0;
   virtual Point<double> getWorldFromScreen(const Point<int>& screen_pos) const = 0;
