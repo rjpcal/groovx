@@ -29,6 +29,8 @@ proc testList { packagename listname baseclass subclass1 subclass2 } {
 
     testStringifyCmd testObj
 	 testDestringifyCmd testObj
+	 testWriteCmd testObj
+	 testReadCmd testObj
 }
 
 proc testResetCmd { objname } {
@@ -208,6 +210,69 @@ proc testDestringifyCmd { objname } {
     eval ::test $testname {"error on bad input"} {"
         $destringify {this is a bunch of bs}
     "} {"${destringify}: InputError: couldn't read typename for ${this(listname)}"}
+}
+
+
+proc testWriteCmd { objname } {
+    upvar $objname this
+
+    set writecmd "${this(listname)}::write"
+    set readcmd "${this(listname)}::read"
+    set usage "wrong \# args: should be \"$writecmd\""
+    set testname "${this(packagename)}-${writecmd}"
+
+    eval ::test $testname {"too many args"} {"
+        $writecmd junk
+    "} {$usage}
+    eval ::test $testname {"use on empty list"} {"
+        ${this(listname)}::reset
+        set str \[$writecmd\]
+        ${this(subclass1)}::${this(subclass1)}
+        ${this(subclass2)}::${this(subclass2)}
+        $readcmd \$str
+        ${this(listname)}::count
+    "} {"^0$"}
+    eval ::test $testname {"use on filled list"} {"
+        ${this(listname)}::reset
+        set id1 \[${this(subclass1)}::${this(subclass1)}\]
+        set id2 \[${this(subclass2)}::${this(subclass2)}\]
+        set type1_before \[${this(baseclass)}::type \$id1\]
+        set type2_before \[${this(baseclass)}::type \$id2\]
+        set str \[$writecmd\]
+        ${this(listname)}::reset
+        $readcmd \$str
+        set type1_after \[${this(baseclass)}::type \$id1\]
+        set type2_after \[${this(baseclass)}::type \$id2\]
+	     set equal1 \[string equal \$type1_before \$type1_after\]
+	     set equal2 \[string equal \$type2_before \$type2_after\]
+        return \"\[${this(listname)}::count\] \$equal1 \$equal2\"
+    "} {"^2 1 1$"}
+
+}
+
+proc testReadCmd { objname } {
+    upvar $objname this
+
+    set writecmd "${this(listname)}::write"
+    set readcmd "${this(listname)}::read"
+    set usage "wrong \# args: should be \"$readcmd string\""
+    set testname "${this(packagename)}-${readcmd}"
+
+    eval ::test $testname {"too few args"} {"
+        $readcmd
+    "} {$usage}
+
+    eval ::test $testname {"too many args"} {"
+        $readcmd junk junk
+    "} {$usage}
+
+    eval ::test $testname {"error on incomplete input"} {"
+        $readcmd ${this(listname)}
+    "} {"${readcmd}: ReadError: input failed"}
+
+    eval ::test $testname {"error on bad input"} {"
+        $readcmd {this is a bunch of bs}
+    "} {"${readcmd}: ReadError: input failed"}
 }
 
 namespace export testList
