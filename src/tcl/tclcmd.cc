@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2003 Rob Peters rjpeters at klab dot caltech dot edu
 //
 // created: Fri Jun 11 14:50:58 1999
-// written: Wed Mar 19 17:58:07 2003
+// written: Fri May 16 12:15:08 2003
 // $Id$
 //
 // --------------------------------------------------------------------
@@ -318,6 +318,17 @@ DOTRACE("Tcl::Command::rawInvoke");
 
   Assert(s_objc >= 0);
 
+  if (Debug::level > 1)
+    {
+      for (int argi = 0; argi < s_objc; ++argi)
+        {
+          const char* arg = Tcl_GetString(objv[argi]);
+          dbgPrint(1, argi);
+          dbgPrint(1, " argv = ");
+          dbgPrintNL(1, arg);
+        }
+    }
+
   unsigned int objc = (unsigned int) s_objc;
 
   Tcl::Interp& interp = rep->interp;
@@ -338,6 +349,12 @@ DOTRACE("Tcl::Command::rawInvoke");
 
           // Found a matching overload, so try it:
           (*itr)->getDispatcher()->dispatch(interp, objc, objv, **itr);
+
+          if (Debug::level > 1)
+            {
+              const char* result = interp.getResult<const char*>();
+              dbgEvalNL(1, result);
+            }
           return TCL_OK;
         }
 
