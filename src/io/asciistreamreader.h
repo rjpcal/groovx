@@ -3,7 +3,7 @@
 // asciistreamreader.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:54:54 1999
-// written: Fri Nov  3 12:16:24 2000
+// written: Fri Nov  3 14:59:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,20 +56,22 @@ public:
 
   virtual IO::VersionId readSerialVersionId();
 
-  virtual char readChar(const char* name);
-  virtual int readInt(const char* name);
-  virtual bool readBool(const char* name);
-  virtual double readDouble(const char* name);
-  virtual void readValueObj(const char* name, Value& value);
+  virtual char readChar(const fixed_string& name);
+  virtual int readInt(const fixed_string& name);
+  virtual bool readBool(const fixed_string& name);
+  virtual double readDouble(const fixed_string& name);
+  virtual void readValueObj(const fixed_string& name, Value& value);
 
-  virtual IO::IoObject* readObject(const char* name);
-  virtual void readOwnedObject(const char* name, IO::IoObject* obj);
-  virtual void readBaseClass(const char* baseClassName, IO::IoObject* basePart);
+  virtual IO::IoObject* readObject(const fixed_string& name);
+  virtual void readOwnedObject(const fixed_string& name,
+										 IO::IoObject* obj);
+  virtual void readBaseClass(const fixed_string& baseClassName,
+									  IO::IoObject* basePart);
 
   virtual IO::IoObject* readRoot(IO::IoObject* root=0);
 
 protected:
-  virtual fixed_string readStringImpl(const char* name);
+  virtual fixed_string readStringImpl(const fixed_string& name);
 
 private:
   class Impl;
