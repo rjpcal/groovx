@@ -3,7 +3,7 @@
 // togl.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 15:36:01 2000
-// written: Mon Aug  5 13:31:59 2002
+// written: Mon Aug  5 14:02:05 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -87,8 +87,8 @@ public:
   // Miscellaneous
   int configure(int objc, Tcl_Obj* const objv[]);
   void makeCurrent() const;
-  void postRedisplay();
-  void postReconfigure();
+  void requestRedisplay();
+  void requestReconfigure();
   void swapBuffers() const;
 
   // Query functions
@@ -118,7 +118,7 @@ public:
   void useLayer( int layer );
   void showOverlay();
   void hideOverlay();
-  void postOverlayRedisplay();
+  void requestOverlayRedisplay();
   int existsOverlay() const;
   int getOverlayTransparentValue() const;
   int isMappedOverlay() const;
