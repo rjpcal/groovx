@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:27:48 1999
-// written: Thu May 10 12:04:40 2001
+// written: Thu Jul 19 11:15:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,6 +45,7 @@ public:
   virtual void flushOutput() const;
 
   virtual void clearColorBuffer() const;
+  virtual void clearColorBuffer(const Rect<int>& screen_rect) const;
 
   virtual void drawOnFrontBuffer() const;
   virtual void drawOnBackBuffer() const;

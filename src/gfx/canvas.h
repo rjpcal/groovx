@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 15 18:00:27 1999
-// written: Thu May 10 12:04:39 2001
+// written: Thu Jul 19 11:15:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,6 +73,9 @@ public:
   /// Clear the color buffer to the clear color.
   virtual void clearColorBuffer() const = 0;
 
+  /// Clear a region of the color buffer to the clear color.
+  virtual void clearColorBuffer(const Rect<int>& screen_rect) const = 0;
+
   /// Select the front buffer for future drawing operations.
   virtual void drawOnFrontBuffer() const = 0;
 
@@ -89,20 +92,20 @@ public:
       lexical scope. */
   class StateSaver {
   public:
-	 /** Save the state of \a canvas. Its state will be restored to the
+    /** Save the state of \a canvas. Its state will be restored to the
         saved state when the \c StateSaver is destroyed. */
-	 StateSaver(const Canvas& canvas) : itsCanvas(canvas)
-		{ itsCanvas.pushState(); }
+    StateSaver(const Canvas& canvas) : itsCanvas(canvas)
+      { itsCanvas.pushState(); }
 
-	 /// Destroy the \c StateSaver and restore the state of the \c Canvas.
-	 ~StateSaver()
-		{ itsCanvas.popState(); }
+    /// Destroy the \c StateSaver and restore the state of the \c Canvas.
+    ~StateSaver()
+      { itsCanvas.popState(); }
 
   private:
-	 StateSaver(const StateSaver&);
-	 StateSaver& operator=(const StateSaver&);
+    StateSaver(const StateSaver&);
+    StateSaver& operator=(const StateSaver&);
 
-	 const Canvas& itsCanvas;
+    const Canvas& itsCanvas;
   };
 
   virtual void translate(const Vec3<double>& v) const = 0;
