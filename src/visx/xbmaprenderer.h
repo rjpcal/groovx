@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:19:23 1999
-// written: Fri Aug 10 11:05:57 2001
+// written: Fri Aug 10 13:01:16 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,17 +49,12 @@ public:
                         const Point<double>& world_pos,
                         const Point<double>& zoom) const;
 
-  /** Reimplemented from \c BmapRenderer to keep the \c XImage
-      up-to-date when the bitmap data change. */
-  virtual void notifyBytesChanged() const;
-
 private:
   void update(const Gfx::BmapData& data) const;
 
   XBmapRenderer(const XBmapRenderer&);
   XBmapRenderer& operator=(const XBmapRenderer&);
 
-  mutable bool itsIsCurrent;
   mutable XImage* itsImage;
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 17:22:34 1999
-// written: Fri Aug 10 11:05:57 2001
+// written: Fri Aug 10 13:01:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -91,7 +91,6 @@ DOTRACE("XBmapRenderer::initClass");
 }
 
 XBmapRenderer::XBmapRenderer() :
-  itsIsCurrent(false),
   itsImage(0)
 {
 DOTRACE("XBmapRenderer::XBmapRenderer");
@@ -113,7 +112,7 @@ DOTRACE("XBmapRenderer::doRender");
   setupX11Stuff();
 
   // Update the cached image if necessary
-  if (!itsIsCurrent) update(data);
+  update(data);
 
   // Check if we have an image to display
   if (itsImage == NULL) return;
@@ -142,17 +141,9 @@ DOTRACE("XBmapRenderer::doRender");
   glXWaitX();
 }
 
-void XBmapRenderer::notifyBytesChanged() const
-{
-DOTRACE("XBmapRenderer::notifyBytesChanged");
-  itsIsCurrent = false;
-}
-
 void XBmapRenderer::update(const Gfx::BmapData& data) const
 {
 DOTRACE("XBmapRenderer::update");
-
-  if (itsIsCurrent) return;
 
   setupX11Stuff();
 
@@ -172,8 +163,6 @@ DOTRACE("XBmapRenderer::update");
                           data.width(), data.height(),
                           data.byteAlignment()*8, /* bitmap_pad */
                           0); /* bytes_per_line */
-
-  itsIsCurrent = true;
 }
 
 static const char vcid_xbmaprenderer_cc[] = "$Header$";
