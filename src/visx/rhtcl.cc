@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jun  9 20:39:46 1999
-// written: Wed Jan 30 10:20:35 2002
+// written: Wed Jan 30 11:37:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -156,8 +156,7 @@ int Rh_Init(Tcl_Interp* interp)
   pkg2->defAttrib("useFeedback",
                   &EventResponseHdlr::getUseFeedback,
                   &EventResponseHdlr::setUseFeedback);
-  pkg2->defAttrib("inputResponseMap",
-                  &EventResponseHdlr::getInputResponseMap,
+  pkg2->defSetter("inputResponseMap",
                   &EventResponseHdlr::setInputResponseMap);
   pkg2->defAttrib("feedbackMap",
                   &EventResponseHdlr::getFeedbackMap,
