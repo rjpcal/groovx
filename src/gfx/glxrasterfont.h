@@ -298,8 +298,17 @@ DOTRACE("GlxRasterFont::bboxOf");
 
   const int l = 0;
   const int r = maxwid;
-  const int b = -desc + (lines - 1) * (asc+desc);
+  const int b = -(desc + (lines - 1) * (asc+desc));
   const int t = asc;
+
+  dbg_eval(2, l);
+  dbg_eval(2, r);
+  dbg_eval(2, b);
+  dbg_eval_nl(2, t);
+
+  ASSERT(r >= 0);
+  ASSERT(b <= 0);
+  ASSERT(t >= 0);
 
   bbox.drawScreenRect(geom::vec3d::zeros(),
                       geom::rect<int>::ltrb(l,t,r,b));
