@@ -3,7 +3,7 @@
 // property.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:57:34 1999
-// written: Tue May 30 18:02:18 2000
+// written: Tue May 30 18:22:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -130,10 +130,20 @@ public:
   bool startNewGroup;
 };
 
+template <class T>
 PropertyInfoBase::PropertyInfoBase(
-  const char* name, Value* min, Value* max, Value* res, bool new_group) :
-  itsImpl(new Impl(name, min, max, res, new_group))
+  const char* name, T min, T max, T res, bool new_group) :
+  itsImpl(new Impl(name, new TValue<T>(min), new TValue<T>(max),
+						 new TValue<T>(res), new_group))
 {}
+
+namespace {
+  static void dummy() {
+	 PropertyInfoBase int_("", int(0), int(0), int(0), false);
+	 PropertyInfoBase bool_("", bool(0), bool(0), bool(0), false);
+	 PropertyInfoBase double_("", double(0), double(0), double(0), false);
+  }
+}
 
 PropertyInfoBase::PropertyInfoBase(const PropertyInfoBase& other) :
   itsImpl(new Impl(*(other.itsImpl)))

@@ -3,7 +3,7 @@
 // property.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 10:24:22 1999
-// written: Tue May 30 18:02:23 2000
+// written: Tue May 30 18:21:09 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -320,9 +320,10 @@ public:
 ///////////////////////////////////////////////////////////////////////
 
 class PropertyInfoBase {
-protected:
+public:
+  template <class T>
   PropertyInfoBase(
-    const char* name, Value* min, Value* max, Value* res, bool new_group);
+    const char* name, T min, T max, T res, bool new_group);
 
   PropertyInfoBase(const PropertyInfoBase& other);
 
@@ -330,7 +331,6 @@ protected:
 
   PropertyInfoBase& operator=(const PropertyInfoBase& other);
 
-public:
   /// Returns a user-friendly name of the property
   const char* name_cstr() const;
 
@@ -372,11 +372,10 @@ public:
 
   ///
   template <class T>
-  PropertyInfo(const char* name_, PropPtr property_,
-					T min_, T max_, T res_, bool new_group = false) :
-	 PropertyInfoBase( name_, new TValue<T>(min_), new TValue<T>(max_),
-							 new TValue<T>(res_), new_group),
-	 itsProperty(property_)
+  PropertyInfo(const char* name, PropPtr property,
+					T min, T max, T res, bool new_group = false) :
+	 PropertyInfoBase( name, min, max, res, new_group),
+	 itsProperty(property)
 	 {}
 
   PropertyInfo(const PropertyInfo& other) :
