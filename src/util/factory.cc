@@ -3,7 +3,7 @@
 // factory.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 22:37:31 1999
-// written: Thu Jun  1 11:43:45 2000
+// written: Fri Sep 22 18:18:58 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,7 @@ void FactoryError::throwForType(const char* type) {
 struct CreatorMapBase::Impl {
   Impl() : itsMap() {}
 
-  map<string, void*> itsMap;
+  std::map<std::string, void*> itsMap;
 };
 
 CreatorMapBase::CreatorMapBase() :
@@ -43,7 +43,7 @@ CreatorMapBase::CreatorMapBase() :
 CreatorMapBase::~CreatorMapBase() {}
 
 void CreatorMapBase::clear() {
-  for (map<string, void*>::iterator ii = itsImpl->itsMap.begin();
+  for (std::map<std::string, void*>::iterator ii = itsImpl->itsMap.begin();
 		 ii != itsImpl->itsMap.end();
 		 ++ii) {
 	 killPtr(ii->second);
@@ -54,11 +54,11 @@ void CreatorMapBase::clear() {
 }
 
 void* CreatorMapBase::getPtrForName(const char* name) const {
-  return itsImpl->itsMap[string(name)];
+  return itsImpl->itsMap[std::string(name)];
 }
 
 void CreatorMapBase::setPtrForName(const char* name, void* ptr) {
-  string sname(name);
+  std::string sname(name);
   killPtr(itsImpl->itsMap[sname]);
   itsImpl->itsMap[sname] = ptr;
 }
