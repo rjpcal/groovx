@@ -40,7 +40,8 @@ Tcl::ObjCaster::ObjCaster() {}
 
 Tcl::ObjCaster::~ObjCaster() {}
 
-bool Tcl::ObjCaster::isIdMyType(Util::UID uid) {
+bool Tcl::ObjCaster::isIdMyType(Util::UID uid)
+{
   WeakRef<Util::Object> item(uid);
   return (item.isValid() && isMyType(item.get()));
 }
@@ -48,190 +49,98 @@ bool Tcl::ObjCaster::isIdMyType(Util::UID uid) {
 namespace Tcl
 {
 
-/** CountAllCmd **/
+  struct CountAllFunc
+  {
+    shared_ptr<ObjCaster> itsCaster;
 
-class CountAllCmd : public TclCmd {
-public:
-  CountAllCmd(Tcl_Interp* interp, shared_ptr<ObjCaster> caster,
-              const char* cmd_name);
-  virtual ~CountAllCmd();
+    CountAllFunc(shared_ptr<ObjCaster> caster) : itsCaster(caster) {}
 
-protected:
-  virtual void invoke(Tcl::Context& ctx);
+	 void operator()(Tcl::Context& ctx)
+	 {
+		ObjDb& theDb = ObjDb::theDb();
+		int count = 0;
+		for (ObjDb::PtrIterator
+				 itr = theDb.beginPtrs(),
+				 end = theDb.endPtrs();
+			  itr != end;
+			  ++itr)
+		  {
+			 if (itsCaster->isMyType(*itr))
+				++count;
+		  }
+		ctx.setResult(count);
+	 }
+  };
 
-private:
-  shared_ptr<ObjCaster> itsCaster;
-};
+  struct FindAllFunc
+  {
+    shared_ptr<ObjCaster> itsCaster;
 
-/** FindAllCmd **/
+    FindAllFunc(shared_ptr<ObjCaster> caster) : itsCaster(caster) {}
 
-class FindAllCmd : public TclCmd {
-public:
-  FindAllCmd(Tcl_Interp* interp, shared_ptr<ObjCaster> caster,
-             const char* cmd_name);
-  virtual ~FindAllCmd();
+	 void operator()(Tcl::Context& ctx)
+	 {
+		ObjDb& theDb = ObjDb::theDb();
 
-protected:
-  virtual void invoke(Tcl::Context& ctx);
+		Tcl::List result;
 
-private:
-  shared_ptr<ObjCaster> itsCaster;
-};
+		for (ObjDb::PtrIterator
+				 itr = theDb.beginPtrs(),
+				 end = theDb.endPtrs();
+			  itr != end;
+			  ++itr)
+		  {
+			 if (itsCaster->isMyType(*itr))
+				result.append(itr.getId());
+		  }
 
-/** RemoveAllCmd **/
+		ctx.setResult(result);
+	 }
+  };
 
-class RemoveAllCmd : public TclCmd {
-public:
-  RemoveAllCmd(Tcl_Interp* interp, shared_ptr<ObjCaster> caster,
-               const char* cmd_name);
-  virtual ~RemoveAllCmd();
+  struct RemoveAllFunc
+  {
+    shared_ptr<ObjCaster> itsCaster;
 
-protected:
-  virtual void invoke(Tcl::Context& ctx);
+    RemoveAllFunc(shared_ptr<ObjCaster> caster) : itsCaster(caster) {}
 
-private:
-  shared_ptr<ObjCaster> itsCaster;
-};
+	 void operator()(Tcl::Context& ctx)
+	 {
+		ObjDb& theDb = ObjDb::theDb();
+		for (ObjDb::IdIterator
+				 itr = theDb.beginIds(),
+				 end = theDb.endIds();
+			  itr != end;
+			  /* increment done in loop body */)
+		  {
+			 if (itsCaster->isMyType(itr.getObject()) &&
+				  itr.getObject()->isUnshared())
+				{
+				  int remove_me = *itr;
+				  ++itr;
+				  theDb.remove(remove_me);
+				}
+			 else
+				{
+				  ++itr;
+				}
+		  }
+	 }
+  };
 
-/** IsCmd **/
+  struct IsFunc
+  {
+    shared_ptr<ObjCaster> itsCaster;
 
-class IsCmd : public TclCmd {
-public:
-  IsCmd(Tcl_Interp* interp, shared_ptr<ObjCaster> caster,
-        const char* cmd_name);
-  virtual ~IsCmd();
+    IsFunc(shared_ptr<ObjCaster> caster) : itsCaster(caster) {}
 
-protected:
-  virtual void invoke(Tcl::Context& ctx);
+	 void operator()(Tcl::Context& ctx)
+	 {
+		Util::UID id = ctx.getValFromArg(1, TypeCue<Util::UID>());
+		ctx.setResult(itsCaster->isIdMyType(id));
+	 }
+  };
 
-private:
-  shared_ptr<ObjCaster> itsCaster;
-};
-
-}
-
-//---------------------------------------------------------------------
-//
-// IsCmd
-//
-//---------------------------------------------------------------------
-
-Tcl::IsCmd::IsCmd(Tcl_Interp* interp,
-                  shared_ptr<ObjCaster> caster,
-                  const char* cmd_name) :
-  Tcl::TclCmd(interp, cmd_name, "item_id", 2, 2),
-  itsCaster(caster)
-{}
-
-Tcl::IsCmd::~IsCmd() {}
-
-void Tcl::IsCmd::invoke(Tcl::Context& ctx)
-{
-  Util::UID id = ctx.getValFromArg(1, TypeCue<Util::UID>());
-  ctx.setResult(itsCaster->isIdMyType(id));
-}
-
-//---------------------------------------------------------------------
-//
-// CountAllCmd
-//
-//---------------------------------------------------------------------
-
-Tcl::CountAllCmd::CountAllCmd(Tcl_Interp* interp,
-                              shared_ptr<ObjCaster> caster,
-                              const char* cmd_name) :
-  Tcl::TclCmd(interp, cmd_name, (char*) 0, 1, 1),
-  itsCaster(caster)
-{}
-
-Tcl::CountAllCmd::~CountAllCmd() {}
-
-void Tcl::CountAllCmd::invoke(Tcl::Context& ctx)
-{
-  ObjDb& theDb = ObjDb::theDb();
-  int count = 0;
-  for (ObjDb::PtrIterator
-         itr = theDb.beginPtrs(),
-         end = theDb.endPtrs();
-       itr != end;
-       ++itr)
-    {
-      if (itsCaster->isMyType(*itr))
-        ++count;
-    }
-  ctx.setResult(count);
-}
-
-//---------------------------------------------------------------------
-//
-// FindAllCmd
-//
-//---------------------------------------------------------------------
-
-Tcl::FindAllCmd::FindAllCmd(Tcl_Interp* interp,
-                            shared_ptr<ObjCaster> caster,
-                            const char* cmd_name) :
-  Tcl::TclCmd(interp, cmd_name, (char*) 0, 1, 1),
-  itsCaster(caster)
-{}
-
-Tcl::FindAllCmd::~FindAllCmd() {}
-
-void Tcl::FindAllCmd::invoke(Tcl::Context& ctx)
-{
-  ObjDb& theDb = ObjDb::theDb();
-
-  Tcl::List result;
-
-  for (ObjDb::PtrIterator
-         itr = theDb.beginPtrs(),
-         end = theDb.endPtrs();
-       itr != end;
-       ++itr)
-    {
-      if (itsCaster->isMyType(*itr))
-        result.append(itr.getId());
-    }
-
-  ctx.setResult(result);
-}
-
-//---------------------------------------------------------------------
-//
-// RemoveAllCmd
-//
-//---------------------------------------------------------------------
-
-Tcl::RemoveAllCmd::RemoveAllCmd(Tcl_Interp* interp,
-                                shared_ptr<ObjCaster> caster,
-                                const char* cmd_name) :
-  Tcl::TclCmd(interp, cmd_name, (char*) 0, 1, 1),
-  itsCaster(caster)
-{}
-
-Tcl::RemoveAllCmd::~RemoveAllCmd() {}
-
-void Tcl::RemoveAllCmd::invoke(Tcl::Context& ctx)
-{
-  ObjDb& theDb = ObjDb::theDb();
-  for (ObjDb::IdIterator
-         itr = theDb.beginIds(),
-         end = theDb.endIds();
-       itr != end;
-       /* increment done in loop body */)
-    {
-      if (itsCaster->isMyType(itr.getObject()) &&
-          itr.getObject()->isUnshared())
-        {
-          int remove_me = *itr;
-          ++itr;
-          theDb.remove(remove_me);
-        }
-      else
-        {
-          ++itr;
-        }
-    }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -276,10 +185,10 @@ DOTRACE("Tcl::Pkg::addIoCommands");
 
 void Tcl::Pkg::addGenericObjCmds(shared_ptr<Tcl::ObjCaster> caster)
 {
-  addCommand( new IsCmd(interp(), caster, makePkgCmdName("is")));
-  addCommand( new CountAllCmd(interp(), caster, makePkgCmdName("countAll")));
-  addCommand( new FindAllCmd(interp(), caster, makePkgCmdName("findAll")));
-  addCommand( new RemoveAllCmd(interp(), caster, makePkgCmdName("removeAll")));
+  defVecRaw( IsFunc(caster), "is", "item_id(s)", 1 );
+  defRaw( CountAllFunc(caster), "countAll", 0, 0 );
+  defRaw( FindAllFunc(caster), "findAll", 0, 0 );
+  defRaw( RemoveAllFunc(caster), "removeAll", 0, 0 );
 }
 
 static const char vcid_tclpkg_cc[] = "$Header$";
