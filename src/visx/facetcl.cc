@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Fri Jan 18 16:07:02 2002
+// written: Sat Feb  9 12:21:56 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -20,6 +20,17 @@
 
 #include "util/trace.h"
 
+class InnerFace : public Face
+{
+public:
+  static InnerFace* make()
+  {
+    InnerFace* p = new InnerFace;
+    p->setField("partsMask", 1);
+    return p;
+  }
+};
+
 extern "C"
 int Face_Init(Tcl_Interp* interp)
 {
@@ -31,9 +42,13 @@ DOTRACE("Face_Init");
 
   Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "CloneFace", "$Revision$");
   Tcl::defFieldContainer<CloneFace>(pkg2);
-  Tcl::defCreator<CloneFace>(pkg);
+  Tcl::defCreator<CloneFace>(pkg2);
 
-  return Tcl::Pkg::initStatus(pkg, pkg2);
+  Tcl::Pkg* pkg3 = new Tcl::Pkg(interp, "InnerFace", "$Revision$");
+  Tcl::defFieldContainer<InnerFace>(pkg3);
+  Tcl::defCreator<InnerFace>(pkg3);
+
+  return Tcl::Pkg::initStatus(pkg, pkg2, pkg3);
 }
 
 static const char vcid_facetcl_cc[] = "$Header$";
