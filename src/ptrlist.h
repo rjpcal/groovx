@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Mon Oct  9 11:42:57 2000
+// written: Mon Oct 16 15:14:13 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,13 +40,13 @@ public:
 
   // Default destructor, copy constructor, operator=() are fine
 
-        T* operator->()       { return (itsHandle.masterPtr()->getPtr()); }
-  const T* operator->() const { return (itsHandle.masterPtr()->getPtr()); }
-        T& operator*()        { return *(itsHandle.masterPtr()->getPtr()); }
-  const T& operator*()  const { return *(itsHandle.masterPtr()->getPtr()); }
+        T* operator->()       { return itsHandle.get(); }
+  const T* operator->() const { return itsHandle.get(); }
+        T& operator*()        { return *(itsHandle.get()); }
+  const T& operator*()  const { return *(itsHandle.get()); }
 
-        T* get()              { return (itsHandle.masterPtr()->getPtr()); }
-  const T* get()        const { return (itsHandle.masterPtr()->getPtr()); }
+        T* get()              { return itsHandle.get(); }
+  const T* get()        const { return itsHandle.get(); }
 
   PtrHandle<T> handle() const { return itsHandle; }
   int id() const { return itsId; }
@@ -160,6 +160,61 @@ protected:
   /** Reimplemented from \c IoPtrList to return an MasterPtr<T>* that
       points to \a obj. */
   virtual MasterIoPtr* makeMasterIoPtr(IO::IoObject* obj) const;
+};
+
+///////////////////////////////////////////////////////////////////////
+/**
+ *
+ * NullableItemWithId<T> is a wrapper of a NullablePtrHandle<T> along
+ * with an integer index from a PtrList<T>.
+ *
+ **/
+///////////////////////////////////////////////////////////////////////
+
+template <class T>
+class NullableItemWithId {
+private:
+  static PtrList<T>& theirPtrList;
+
+  mutable NullablePtrHandle<T> itsHandle;
+  const int itsId;
+
+  void refreshPtr()
+    {
+		if ( !itsHandle.isValid() )
+		  {
+			 PtrList<T>::SharedPtr p = theirPtrList.getCheckedPtr(itsId);
+			 itsHandle = p.handle();
+		  }
+	 }
+
+public:
+  explicit NullableItemWithId(int id_) :
+	 itsHandle(0), itsId(id_) {}
+
+  NullableItemWithId(MasterPtr<T>* master, int id_) :
+	 itsHandle(master), itsId(id_) {}
+
+  NullableItemWithId(PtrHandle<T> item_, int id_) :
+	 itsHandle(item_), itsId(id_) {}
+
+  NullableItemWithId(NullablePtrHandle<T> item_, int id_) :
+	 itsHandle(item_), itsId(id_) {}
+
+  // Default destructor, copy constructor, operator=() are fine
+
+        T* operator->()       { refreshPtr(); return itsHandle.get(); }
+  const T* operator->() const { refreshPtr(); return itsHandle.get(); }
+        T& operator*()        { refreshPtr(); return *(itsHandle.get()); }
+  const T& operator*()  const { refreshPtr(); return *(itsHandle.get()); }
+
+        T* get()              { refreshPtr(); return itsHandle.get(); }
+  const T* get()        const { refreshPtr(); return itsHandle.get(); }
+
+  bool isValid() const { return itsHandle.isValid(); }
+
+  NullablePtrHandle<T> handle() const { return itsHandle; }
+  int id() const { return itsId; }
 };
 
 static const char vcid_ptrlist_h[] = "$Header$";
