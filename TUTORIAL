@@ -1,0 +1,316 @@
+########################## -*- text -*- ##############################
+#
+# Ad-hoc tutorial information
+#
+# Copyright (c) 1998-2004 Rob Peters rjpeters at klab dot caltech dot edu
+#
+# $Id$
+#
+######################################################################
+
+This tutorial began with excerpts from emails that I've written to
+help people get up and running with the groovx software; its content
+may overlap somewhat with the information in the toplevel README.
+
+Table of contents:
+1. Getting the source
+2. Building and installing the software and its dependencies
+3. Running a sample visual experiment
+
+
+######################################################################
+1. Getting the source
+
+   You can find a daily tarball of groovx here (substitute today's date
+   in YYYYMMDD format for "20041004"):
+
+     http://www.klab.caltech.edu/rjpeters/code/groovx_20041004.tar.gz
+
+   Also, you'll need the latest alpha versions of tcl+tk in order to
+   build groovx, so I've put those tarballs on my website as well:
+
+     http://www.klab.caltech.edu/rjpeters/code/tcl8.5a1-src.tar.gz
+     http://www.klab.caltech.edu/rjpeters/code/tk8.5a1-src.tar.gz
+
+   Optionally, if you're interested in playing around with the editor
+   program that I showed you, you can also build itcl (incr tcl) and
+   iwidgets (incr widgets), for which I also have tarballs:
+
+     http://www.klab.caltech.edu/rjpeters/code/itcl3.2.1_src.tgz
+     http://www.klab.caltech.edu/rjpeters/code/iwidgets4.0.1.tar.gz
+
+
+
+######################################################################
+2. Building and installing the software and its dependencies
+
+   Here's a quick rundown on how I would configure+install all this
+   stuff.
+
+   Assuming you have all the tarballs sitting in a "$BUILD" directory
+   somewhere (e.g. perhaps ~/build/), and that you'd like to install
+   everything to $INSTALL (e.g. perhaps ~/local or /usr/local), then
+
+     ### unpack all the tarballs
+
+     cd $BUILD
+     tar xfz tcl8.5a1-src.tar.gz
+     tar xfz tk8.5a1-src.tar.gz
+     tar xfz itcl3.2.1_src.tgz         # optional
+     tar xfz iwidgets4.0.1.tar.gz      # optional
+     tar xfz groovx_20041004.tar.gz
+
+     ### configure+build tcl
+
+     cd $BUILD/tcl8.5a1/unix
+     ./configure --prefix=$INSTALL/tcl8.5a1
+     make
+     make install
+
+     ### configure+build tk
+
+     cd $BUILD/tk8.5a1/unix
+     ./configure --prefix=$INSTALL/tcl8.5a1
+     make
+     make install
+
+     ### optional: configure+build itcl
+
+     cd $BUILD/itcl3.2.1
+     ./configure  --prefix=$INSTALL/tcl8.5a1
+     make
+     make install
+
+     ### optional: configure+build iwidgets (this requires itcl)
+
+     cd $BUILD/iwidgets4.0.1
+     ./configure  --prefix=$INSTALL/tcl8.5a1 \
+       --with-itcl=$BUILD/itcl3.2.1 \
+       --with-itk=$BUILD/itcl3.2.1
+     # no need to do "make", just do "make install"
+     make install
+
+     ### now configure+build groovx itself
+
+     cd $BUILD/groovx_20041004
+     ./configure \
+       --prefix=$HOME/groovx \
+       --with-tcltk=$INSTALL/tcl8.5a1 \
+       --disable-matlab
+     # this will make+install everything, plus run a test suite:
+     make
+
+   Note that any of the configure scripts will recognize a --help
+   option (i.e. do "./configure --help"), causing the script to print
+   a list of all the configure-time options that it accepts.
+
+
+
+######################################################################
+3. Running a sample visual experiment
+
+   Once you've built+installed groovx, you can run some of the sample
+   scripts that will now be located in $HOME/groovx/bin ... in
+   particular, you can run this script
+
+     $HOME/groovx/bin/sample_expt.tcl
+
+   to get a sample version of my free-viewing psychophysics
+   experiment. The original source for that script would be found in
+   $BUILD/groovx/share/scripts/sample_expt.tcl if you want to
+   read the source and experiment with changing it.
+
+   When you run sample_expt.tcl, it will go through 10 free-viewing
+   trials with some sample images I've included with groovx (you have
+   to actually respond on the response screens by pressing '1' or '2'
+   to keep the experiment moving along, thought). Once the experiment
+   quits, you'll be left with three files like the following:
+
+     expt_2004Oct04_192709.gvx
+     expt_2004Oct04_192709.resp
+     expt_2004Oct04_192709.log
+
+   The .gvx file is an XML file that contains the entire object tree
+   of your experiment, and should begin something like the following:
+
+     <?xml version="1.0"?>
+     <!-- GroovX XML 1 -->
+     <object type="ExptDriver" id="1" name="root" version="6">
+             <string name="hostname">hume.klab.caltech.edu</string>
+             <string name="subject">/home/rjpeters/tmp/groovx_20041004</string>
+             <string name="beginDate">Mon Oct 04 19:27:10 PDT 2004</string>
+             <string name="endDate">Mon Oct 04 19:28:11 PDT 2004</string>
+             <string name="autosaveFile">__autosave_file</string>
+             <int name="autosavePeriod" value="10"/>
+             <string name="infoLog">@Mon Oct 04 19:27:09 PDT 2004 groovx /home/rjpeters/local/groovx_20041004/bin/sample_expt.tcl
+     @Mon Oct 04 19:27:10 PDT 2004 Beginning experiment.
+     @Mon Oct 04 19:27:46 PDT 2004 Experiment saved.
+     @Mon Oct 04 19:28:11 PDT 2004 Experiment complete.
+     </string>
+             <ownedobj type="Tcl::ProcWrapper" id="2" name="doWhenComplete" version="0">
+                     <string name="args"/>
+                     <string name="body">exit</string>
+             </ownedobj>
+
+     ...
+
+
+   The .log file contains a verbose log of everything that happened
+   during the experiment, and may be useful for debugging as well as
+   for checking how the exact timing of things played out during the
+   experiment. Each line of the log file shows the current time (in
+   milliseconds) relative to various reference points; e.g. the
+   following line
+
+     ExptDriver(19) @ 3549.279 | Trial(286) @ 44.388 | RenderBackEvent(462) @ 0.362 | entering RenderBackEvent(462)
+
+   was written at 3549ms after the start of the experiment (which was
+   object number 19), and at 44ms after the start of Trial (object
+   number 286), and 0.36ms after the start of the RenderBackEvent.
+
+   Lines that may be of particular interest:
+
+     * lines containing 'loaded image', showing which image files were
+       loaded and when
+
+     * lines containing 'event_info', showing the raw information that
+       was gleaned from the user response:
+
+       ExptDriver(19) @ 8057.190 | Trial(286) @ 4552.299 | event_info: 1
+
+     * lines containing 'response val', showing how the event_info was
+       mapped into a response value (which will ultimately be dumped out
+       to the .resp file):
+
+       ExptDriver(19) @ 8057.439 | Trial(286) @ 4552.548 | response val: 1
+
+   Here's what an excerpt of the log file contents showing a single
+   trial.
+
+     ExptDriver(19) @ 3517.003 | EndTrialEvent(599) @ 13.400 | Trial(286) @ 12.112 | entering Trial(286)
+     ExptDriver(19) @ 3517.237 | EndTrialEvent(599) @ 13.634 | Trial(286) @ 12.346 | image /home/rjpeters/local/groovx_20041004/bin/../share/images/nga02.jpg
+     ExptDriver(19) @ 3517.398 | EndTrialEvent(599) @ 13.795 | Trial(286) @ 12.507 | binding to ::__ERHPrivate::handler1
+     ExptDriver(19) @ 3517.709 | EndTrialEvent(599) @ 14.106 | Trial(286) @ 12.818 | scheduled @ 1: DenyResponsesEvent(458)
+     ExptDriver(19) @ 3517.876 | EndTrialEvent(599) @ 14.273 | Trial(286) @ 12.985 | scheduled @ 25: RenderBackEvent(462)
+     ExptDriver(19) @ 3518.013 | EndTrialEvent(599) @ 14.410 | Trial(286) @ 13.122 | scheduled @ 50: RenderEvent(466)
+     ExptDriver(19) @ 3518.168 | EndTrialEvent(599) @ 14.565 | Trial(286) @ 13.277 | scheduled @ 100: MultiEvent(470)
+     ExptDriver(19) @ 3518.307 | EndTrialEvent(599) @ 14.704 | Trial(286) @ 13.416 | scheduled @ 300: NextNodeEvent(482)
+     ExptDriver(19) @ 3518.448 | EndTrialEvent(599) @ 14.845 | Trial(286) @ 13.557 | scheduled @ 500: ClearBufferEvent(486)
+     ExptDriver(19) @ 3518.586 | EndTrialEvent(599) @ 14.983 | Trial(286) @ 13.695 | scheduled @ 600: RenderEvent(490)
+     ExptDriver(19) @ 3518.730 | EndTrialEvent(599) @ 15.127 | Trial(286) @ 13.839 | scheduled @ 1000: MultiEvent(494)
+     ExptDriver(19) @ 3518.868 | EndTrialEvent(599) @ 15.265 | Trial(286) @ 13.977 | scheduled @ 1100: NextNodeEvent(506)
+     ExptDriver(19) @ 3519.009 | EndTrialEvent(599) @ 15.406 | Trial(286) @ 14.118 | scheduled @ 1200: ClearBufferEvent(510)
+     ExptDriver(19) @ 3519.147 | EndTrialEvent(599) @ 15.544 | Trial(286) @ 14.256 | scheduled @ 1300: RenderEvent(514)
+     ExptDriver(19) @ 3519.291 | EndTrialEvent(599) @ 15.688 | Trial(286) @ 14.400 | scheduled @ 4000: MultiEvent(518)
+     ExptDriver(19) @ 3519.426 | EndTrialEvent(599) @ 15.823 | Trial(286) @ 14.535 | leaving EndTrialEvent(599)
+     ExptDriver(19) @ 3519.596 | Trial(286) @ 14.705 | DenyResponsesEvent(458) @ 0.095 | entering DenyResponsesEvent(458)
+     ExptDriver(19) @ 3519.716 | Trial(286) @ 14.825 | DenyResponsesEvent(458) @ 0.215 | req 1 - -0
+     ExptDriver(19) @ 3519.835 | Trial(286) @ 14.944 | DenyResponsesEvent(458) @ 0.334 | trDenyResponses
+     ExptDriver(19) @ 3520.016 | Trial(286) @ 15.125 | DenyResponsesEvent(458) @ 0.515 | leaving DenyResponsesEvent(458)
+     ExptDriver(19) @ 3549.279 | Trial(286) @ 44.388 | RenderBackEvent(462) @ 0.362 | entering RenderBackEvent(462)
+     ExptDriver(19) @ 3549.480 | Trial(286) @ 44.589 | RenderBackEvent(462) @ 0.563 | req 25 - -0
+     ExptDriver(19) @ 3549.681 | Trial(286) @ 44.790 | RenderBackEvent(462) @ 0.764 | leaving RenderBackEvent(462)
+     ExptDriver(19) @ 3574.454 | Trial(286) @ 69.563 | RenderEvent(466) @ 0.161 | entering RenderEvent(466)
+     ExptDriver(19) @ 3574.588 | Trial(286) @ 69.697 | RenderEvent(466) @ 0.295 | req 50 - -0
+     ExptDriver(19) @ 3574.757 | Trial(286) @ 69.866 | RenderEvent(466) @ 0.464 | current node is GxSeparator(241)
+     ExptDriver(19) @ 3576.642 | Trial(286) @ 71.751 | RenderEvent(466) @ 2.349 | leaving RenderEvent(466)
+     ExptDriver(19) @ 3623.771 | Trial(286) @ 118.880 | MultiEvent(470) @ 0.160 | entering MultiEvent(470)
+     ExptDriver(19) @ 3623.906 | Trial(286) @ 119.015 | MultiEvent(470) @ 0.295 | req 100 - -0
+     ExptDriver(19) @ 3624.069 | Trial(286) @ 119.178 | MultiEvent(470) @ 0.458 | SwapBuffersEvent(474) @ 0.111 | entering SwapBuffersEvent(474)
+     ExptDriver(19) @ 3624.214 | Trial(286) @ 119.323 | MultiEvent(470) @ 0.603 | SwapBuffersEvent(474) @ 0.256 | req 0 - -0
+     ExptDriver(19) @ 3624.410 | Trial(286) @ 119.519 | MultiEvent(470) @ 0.799 | SwapBuffersEvent(474) @ 0.452 | leaving SwapBuffersEvent(474)
+     ExptDriver(19) @ 3624.585 | Trial(286) @ 119.694 | MultiEvent(470) @ 0.974 | FinishDrawingEvent(478) @ 0.111 | entering FinishDrawingEvent(478)
+     ExptDriver(19) @ 3624.731 | Trial(286) @ 119.840 | MultiEvent(470) @ 1.120 | FinishDrawingEvent(478) @ 0.257 | req 0 - -0
+     ExptDriver(19) @ 3637.045 | Trial(286) @ 132.154 | MultiEvent(470) @ 13.434 | FinishDrawingEvent(478) @ 12.571 | leaving FinishDrawingEvent(478)
+     ExptDriver(19) @ 3637.210 | Trial(286) @ 132.319 | MultiEvent(470) @ 13.599 | leaving MultiEvent(470)
+     ExptDriver(19) @ 3823.634 | Trial(286) @ 318.743 | NextNodeEvent(482) @ 0.165 | entering NextNodeEvent(482)
+     ExptDriver(19) @ 3823.769 | Trial(286) @ 318.878 | NextNodeEvent(482) @ 0.300 | req 300 - -0
+     ExptDriver(19) @ 3823.904 | Trial(286) @ 319.013 | NextNodeEvent(482) @ 0.435 | leaving NextNodeEvent(482)
+     ExptDriver(19) @ 4023.610 | Trial(286) @ 518.719 | ClearBufferEvent(486) @ 0.168 | entering ClearBufferEvent(486)
+     ExptDriver(19) @ 4023.774 | Trial(286) @ 518.883 | ClearBufferEvent(486) @ 0.332 | req 500 - -0
+     ExptDriver(19) @ 4023.986 | Trial(286) @ 519.095 | ClearBufferEvent(486) @ 0.544 | leaving ClearBufferEvent(486)
+     ExptDriver(19) @ 4123.581 | Trial(286) @ 618.690 | RenderEvent(490) @ 0.162 | entering RenderEvent(490)
+     ExptDriver(19) @ 4123.715 | Trial(286) @ 618.824 | RenderEvent(490) @ 0.296 | req 600 - -0
+     ExptDriver(19) @ 4123.881 | Trial(286) @ 618.990 | RenderEvent(490) @ 0.462 | current node is GxPixmap(266)
+     ExptDriver(19) @ 4135.669 | Trial(286) @ 630.778 | RenderEvent(490) @ 12.250 | loaded image file /home/rjpeters/local/groovx_20041004/bin/../share/images/nga02.jpg
+     ExptDriver(19) @ 4154.162 | Trial(286) @ 649.271 | RenderEvent(490) @ 30.743 | leaving RenderEvent(490)
+     ExptDriver(19) @ 4523.635 | Trial(286) @ 1018.744 | MultiEvent(494) @ 0.162 | entering MultiEvent(494)
+     ExptDriver(19) @ 4523.771 | Trial(286) @ 1018.880 | MultiEvent(494) @ 0.298 | req 1000 - -0
+     ExptDriver(19) @ 4523.935 | Trial(286) @ 1019.044 | MultiEvent(494) @ 0.462 | SwapBuffersEvent(498) @ 0.111 | entering SwapBuffersEvent(498)
+     ExptDriver(19) @ 4524.081 | Trial(286) @ 1019.190 | MultiEvent(494) @ 0.608 | SwapBuffersEvent(498) @ 0.257 | req 0 - -0
+     ExptDriver(19) @ 4524.280 | Trial(286) @ 1019.389 | MultiEvent(494) @ 0.807 | SwapBuffersEvent(498) @ 0.456 | leaving SwapBuffersEvent(498)
+     ExptDriver(19) @ 4524.456 | Trial(286) @ 1019.565 | MultiEvent(494) @ 0.983 | FinishDrawingEvent(502) @ 0.112 | entering FinishDrawingEvent(502)
+     ExptDriver(19) @ 4524.602 | Trial(286) @ 1019.711 | MultiEvent(494) @ 1.129 | FinishDrawingEvent(502) @ 0.258 | req 0 - -0
+     ExptDriver(19) @ 4536.783 | Trial(286) @ 1031.892 | MultiEvent(494) @ 13.310 | FinishDrawingEvent(502) @ 12.439 | leaving FinishDrawingEvent(502)
+     ExptDriver(19) @ 4536.938 | Trial(286) @ 1032.047 | MultiEvent(494) @ 13.465 | leaving MultiEvent(494)
+     ExptDriver(19) @ 4623.734 | Trial(286) @ 1118.843 | NextNodeEvent(506) @ 0.162 | entering NextNodeEvent(506)
+     ExptDriver(19) @ 4623.870 | Trial(286) @ 1118.979 | NextNodeEvent(506) @ 0.298 | req 1100 - -0
+     ExptDriver(19) @ 4624.003 | Trial(286) @ 1119.112 | NextNodeEvent(506) @ 0.431 | leaving NextNodeEvent(506)
+     ExptDriver(19) @ 4721.174 | Trial(286) @ 1216.283 | ClearBufferEvent(510) @ 0.167 | entering ClearBufferEvent(510)
+     ExptDriver(19) @ 4721.312 | Trial(286) @ 1216.421 | ClearBufferEvent(510) @ 0.305 | req 1200 - -0
+     ExptDriver(19) @ 4721.526 | Trial(286) @ 1216.635 | ClearBufferEvent(510) @ 0.519 | leaving ClearBufferEvent(510)
+     ExptDriver(19) @ 4823.696 | Trial(286) @ 1318.805 | RenderEvent(514) @ 0.158 | entering RenderEvent(514)
+     ExptDriver(19) @ 4823.832 | Trial(286) @ 1318.941 | RenderEvent(514) @ 0.294 | req 1300 - -0
+     ExptDriver(19) @ 4824.001 | Trial(286) @ 1319.110 | RenderEvent(514) @ 0.463 | current node is GxSeparator(101)
+     ExptDriver(19) @ 4828.685 | Trial(286) @ 1323.794 | RenderEvent(514) @ 5.147 | leaving RenderEvent(514)
+     ExptDriver(19) @ 7523.559 | Trial(286) @ 4018.668 | MultiEvent(518) @ 0.300 | entering MultiEvent(518)
+     ExptDriver(19) @ 7523.743 | Trial(286) @ 4018.852 | MultiEvent(518) @ 0.484 | req 4000 - -0
+     ExptDriver(19) @ 7523.956 | Trial(286) @ 4019.065 | MultiEvent(518) @ 0.697 | SwapBuffersEvent(522) @ 0.157 | entering SwapBuffersEvent(522)
+     ExptDriver(19) @ 7524.149 | Trial(286) @ 4019.258 | MultiEvent(518) @ 0.890 | SwapBuffersEvent(522) @ 0.350 | req 0 - -0
+     ExptDriver(19) @ 7524.399 | Trial(286) @ 4019.508 | MultiEvent(518) @ 1.140 | SwapBuffersEvent(522) @ 0.600 | leaving SwapBuffersEvent(522)
+     ExptDriver(19) @ 7542.130 | Trial(286) @ 4037.239 | MultiEvent(518) @ 18.871 | FinishDrawingEvent(526) @ 17.662 | entering FinishDrawingEvent(526)
+     ExptDriver(19) @ 7542.390 | Trial(286) @ 4037.499 | MultiEvent(518) @ 19.131 | FinishDrawingEvent(526) @ 17.922 | req 0 - -0
+     ExptDriver(19) @ 7542.593 | Trial(286) @ 4037.702 | MultiEvent(518) @ 19.334 | FinishDrawingEvent(526) @ 18.125 | leaving FinishDrawingEvent(526)
+     ExptDriver(19) @ 7542.787 | Trial(286) @ 4037.896 | MultiEvent(518) @ 19.528 | AllowResponsesEvent(530) @ 0.117 | entering AllowResponsesEvent(530)
+     ExptDriver(19) @ 7543.574 | Trial(286) @ 4038.683 | MultiEvent(518) @ 20.315 | AllowResponsesEvent(530) @ 0.904 | req 0 - -0
+     ExptDriver(19) @ 7543.778 | Trial(286) @ 4038.887 | MultiEvent(518) @ 20.519 | AllowResponsesEvent(530) @ 1.108 | trAllowResponses
+     ExptDriver(19) @ 7543.983 | Trial(286) @ 4039.092 | MultiEvent(518) @ 20.724 | AllowResponsesEvent(530) @ 1.313 | binding to ::__ERHPrivate::handler1
+     ExptDriver(19) @ 7544.337 | Trial(286) @ 4039.446 | MultiEvent(518) @ 21.078 | AllowResponsesEvent(530) @ 1.667 | leaving AllowResponsesEvent(530)
+     ExptDriver(19) @ 7546.764 | Trial(286) @ 4041.873 | MultiEvent(518) @ 23.505 | leaving MultiEvent(518)
+     ExptDriver(19) @ 8057.190 | Trial(286) @ 4552.299 | event_info: 1
+     ExptDriver(19) @ 8057.439 | Trial(286) @ 4552.548 | response val: 1
+     ExptDriver(19) @ 8057.578 | Trial(286) @ 4552.687 | trProcessResponse
+     ExptDriver(19) @ 8057.781 | Trial(286) @ 4552.890 | MultiEvent(534) @ 0.090 | entering MultiEvent(534)
+     ExptDriver(19) @ 8057.900 | Trial(286) @ 4553.009 | MultiEvent(534) @ 0.209 | req 0 - -0
+     ExptDriver(19) @ 8058.060 | Trial(286) @ 4553.169 | MultiEvent(534) @ 0.369 | ClearBufferEvent(538) @ 0.111 | entering ClearBufferEvent(538)
+     ExptDriver(19) @ 8058.206 | Trial(286) @ 4553.315 | MultiEvent(534) @ 0.515 | ClearBufferEvent(538) @ 0.257 | req 0 - -0
+     ExptDriver(19) @ 8058.437 | Trial(286) @ 4553.546 | MultiEvent(534) @ 0.746 | ClearBufferEvent(538) @ 0.488 | leaving ClearBufferEvent(538)
+     ExptDriver(19) @ 8058.610 | Trial(286) @ 4553.719 | MultiEvent(534) @ 0.919 | SwapBuffersEvent(542) @ 0.110 | entering SwapBuffersEvent(542)
+     ExptDriver(19) @ 8058.756 | Trial(286) @ 4553.865 | MultiEvent(534) @ 1.065 | SwapBuffersEvent(542) @ 0.256 | req 0 - -0
+     ExptDriver(19) @ 8069.660 | Trial(286) @ 4564.769 | MultiEvent(534) @ 11.969 | SwapBuffersEvent(542) @ 11.160 | leaving SwapBuffersEvent(542)
+     ExptDriver(19) @ 8069.847 | Trial(286) @ 4564.956 | MultiEvent(534) @ 12.156 | FinishDrawingEvent(546) @ 0.115 | entering FinishDrawingEvent(546)
+     ExptDriver(19) @ 8069.998 | Trial(286) @ 4565.107 | MultiEvent(534) @ 12.307 | FinishDrawingEvent(546) @ 0.266 | req 0 - -0
+     ExptDriver(19) @ 8094.967 | Trial(286) @ 4590.076 | MultiEvent(534) @ 37.276 | FinishDrawingEvent(546) @ 25.235 | leaving FinishDrawingEvent(546)
+     ExptDriver(19) @ 8095.148 | Trial(286) @ 4590.257 | MultiEvent(534) @ 37.457 | leaving MultiEvent(534)
+     ExptDriver(19) @ 8095.274 | Trial(286) @ 4590.383 | scheduled @ 0: MultiEvent(534)
+     ExptDriver(19) @ 8095.394 | Trial(286) @ 4590.503 | scheduled @ 500: EndTrialEvent(550)
+     ExptDriver(19) @ 8603.020 | Trial(286) @ 5098.129 | EndTrialEvent(550) @ 0.163 | entering EndTrialEvent(550)
+     ExptDriver(19) @ 8603.157 | Trial(286) @ 5098.266 | EndTrialEvent(550) @ 0.300 | req 500 - -0
+     ExptDriver(19) @ 8603.275 | Trial(286) @ 5098.384 | EndTrialEvent(550) @ 0.418 | Trial::trEndTrial
+     ExptDriver(19) @ 8603.604 | Trial(286) @ 5098.713 | EndTrialEvent(550) @ 0.747 | leaving Trial(286)
+     ExptDriver(19) @ 8603.752 | EndTrialEvent(550) @ 0.895 | current element Trial(370), completed 2 of 11
+
+   Finally, the .resp file gives a summary of the responses across all
+   trials, like this:
+
+     %  Trial        N  Average     msec   description
+          265        1     2.00  4719.00 % image /home/rjpeters/local/groovx_20041004/bin/../share/images/nga01.jpg
+          286        1     1.00  4539.00 % image /home/rjpeters/local/groovx_20041004/bin/../share/images/nga02.jpg
+          307        1     1.00  6726.00 % image /home/rjpeters/local/groovx_20041004/bin/../share/images/nga03.jpg
+          328        1     1.00  4420.00 % image /home/rjpeters/local/groovx_20041004/bin/../share/images/nga04.jpg
+          349        1     2.00  6858.00 % image /home/rjpeters/local/groovx_20041004/bin/../share/images/nga05.jpg
+          370        1     2.00  4558.00 % image /home/rjpeters/local/groovx_20041004/bin/../share/images/nga06.jpg
+          391        1     2.00  4468.00 % image /home/rjpeters/local/groovx_20041004/bin/../share/images/nga07.jpg
+          412        1     1.00  5305.00 % image /home/rjpeters/local/groovx_20041004/bin/../share/images/nga08.jpg
+          433        1     1.00  5082.00 % image /home/rjpeters/local/groovx_20041004/bin/../share/images/nga09.jpg
+          454        1     1.00  5114.00 % image /home/rjpeters/local/groovx_20041004/bin/../share/images/nga10.jpg
+          603        1     0.00  2496.00 % text message 'FREE-VIEWING SEQUENCE\n\nafter each image:\n  press '1' if the region labeled '1' contained the most interesting feature\n  press '2' if the region labeled '2' contained the most interesting feature\n\n[press the spacebar to continue]'
+
+   It's in a format that is suitable for importing into matlab using
+   matlab's "load", since all of the non-numeric stuff is commented
+   out with the % characters. The "Trial" column shows the object
+   number of each trial; "N" shows how many times each trial was run;
+   "Average" gives the average response value across those trials;
+   "msec" gives the average response time of each response (in
+   milliseconds, relative to the start of the corresponding trial);
+   "description" just gives a textual description of the trial.
