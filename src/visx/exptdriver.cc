@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed May 17 16:29:10 2000
+// written: Wed May 17 17:33:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@
 #include "tlistwidget.h"
 
 #include "io/reader.h"
-#include "io/writer.h"
+#include "io/asciistreamwriter.h"
 
 #include "system/system.h"
 
@@ -182,6 +182,8 @@ public:
 
   void read(const char* filename);
   void write(const char* filename) const;
+
+  void writeASW(const char* filename) const;
 
   void storeData();
 
@@ -349,7 +351,7 @@ void ExptDriver::Impl::doAutosave() {
 DOTRACE("ExptDriver::Impl::doAutosave");
   try {
 	 DebugEvalNL(getAutosaveFile().c_str());
-	 write(getAutosaveFile().c_str());
+	 writeASW(getAutosaveFile().c_str());
   }
   catch (Tcl::TclError& err) {
 	 edRaiseBackgroundError(err.msg_cstr());
@@ -837,9 +839,26 @@ DOTRACE("ExptDriver::Impl::read");
 
 void ExptDriver::Impl::write(const char* filename) const {
 DOTRACE("ExptDriver::Impl::write");
+  cerr << "warning: this file format is deprecated, "
+		 << "and may not properly store all attributes\n";
+
   ofstream ofs(filename);
   if (ofs.fail()) throw IO::FilenameError(filename);
   serialize(ofs, IO::BASES|IO::TYPENAME);
+}
+
+//--------------------------------------------------------------------
+//
+// ExptDriver::writeASW --
+//
+//--------------------------------------------------------------------
+
+void ExptDriver::Impl::writeASW(const char* filename) const {
+DOTRACE("ExptDriver::Impl::write");
+  ofstream ofs(filename);
+  if (ofs.fail()) throw IO::FilenameError(filename);
+  AsciiStreamWriter writer(ofs);
+  writer.writeRoot(itsOwner);
 }
 
 //--------------------------------------------------------------------
@@ -865,7 +884,8 @@ DOTRACE("ExptDriver::Impl::storeData");
 	 // Write the main experiment file
 	 dynamic_string expt_filename = "expt";
 	 expt_filename += unique_file_extension;
-	 write(expt_filename.c_str());
+	 expt_filename += ".asw";
+	 writeASW(expt_filename.c_str());
 	 cout << "wrote file " << expt_filename << endl;
 
 	 // Write the responses file
