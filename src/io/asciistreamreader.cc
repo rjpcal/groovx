@@ -88,60 +88,57 @@ public:
 
   class ObjectMap {
   private:
-	 std::map<unsigned long, IO::IoObject*> itsMap;
+	 typedef std::map<unsigned long, IdItem<IO::IoObject> > MapType;
+	 MapType itsMap;
 
   public:
 	 ObjectMap() : itsMap() {}
 
 	 // This returns the object for the given id; the object must
 	 // already have been created, otherwise an exception will be thrown.
-	 IO::IoObject* getObject(unsigned long id)
+	 IdItem<IO::IoObject> getObject(unsigned long id)
 		{
-		  IO::IoObject* obj = itsMap[id];
-		  if ( obj == 0 ) {
+		  MapType::const_iterator itr = itsMap.find(id);
+		  if ( itr == itsMap.end() ) {
 			 IO::ReadError err("no object was found for the given id\n");
 			 err.appendMsg("\tid: ").appendNumber(int(id));
 			 throw err;
 		  }
 
-		  return obj;
+		  return (*itr).second;
 		}
 
 	 // This will create an object for the id if one has not yet been
 	 // created, then return the object for that id.
-	 IO::IoObject* fetchObject(const fixed_string& type, unsigned long id) {
-		IO::IoObject*& itsMap_at_id = itsMap[id];
+	 IdItem<IO::IoObject> fetchObject(const fixed_string& type, unsigned long id)
+	   {
+		  MapType::const_iterator itr = itsMap.find(id);
 
-		if ( itsMap_at_id == 0 )
-		  {
-			 IO::IoObject* obj = IO::IoMgr::newIO(type);
+		  if ( itr == itsMap.end() )
+			 {
+				IdItem<IO::IoObject> obj(IO::IoMgr::newIO(type));
 
-			 // If there was a problem within IO::IoMgr::newIO(), it will throw
-			 // an exception, so we should never pass this point with a
-			 // NULL obj.
-			 DebugEvalNL((void*) obj);
-			 Assert(obj != 0);
+				itsMap.insert(MapType::value_type(id, obj));
 
-			 itsMap_at_id = obj;
-		  }
+				return obj;
+			 }
 
-		Postcondition(itsMap_at_id != 0);
-		return itsMap_at_id;
-	 }
+		  return (*itr).second;
+		}
 
 	 void assignObjectForId(unsigned long id, IO::IoObject* object)
 		{
-		  IO::IoObject*& itsMap_at_id = itsMap[id];
+		  MapType::const_iterator itr = itsMap.find(id);
 
 		  // See if an object has already been created for this id
-		  if ( itsMap_at_id != 0 ) {
+		  if ( itr != itsMap.end() ) {
 			 IO::ReadError err("object has already been created\n");
 			 err.appendMsg("\ttype: ", object->ioTypename().c_str(), "\n");
 			 err.appendMsg("\tid: ").appendNumber(int(id));
 			 throw err;
 		  }
 
-		  itsMap_at_id = object;
+		  itsMap.insert(MapType::value_type(id, IdItem<IO::IoObject>(object)));
 		}
 
 	 void clear() { itsMap.clear(); }
@@ -254,7 +251,7 @@ public:
   // Returns a new dynamically allocated char array
   fixed_string readStringType(const fixed_string& name);
 
-  IO::IoObject* readObjectImpl(const fixed_string& attrib_name);
+  MaybeIdItem<IO::IoObject> readMaybeObject(const fixed_string& attrib_name);
 
   void readValueObj(const fixed_string& name, Value& value);
 
@@ -449,8 +446,9 @@ DOTRACE("AsciiStreamReader::Impl::readStringType");
   return new_string;
 }
 
-IO::IoObject* AsciiStreamReader::Impl::readObjectImpl(const fixed_string& attrib_name) {
-DOTRACE("AsciiStreamReader::Impl::readObjectImpl");
+MaybeIdItem<IO::IoObject>
+AsciiStreamReader::Impl::readMaybeObject(const fixed_string& attrib_name) {
+DOTRACE("AsciiStreamReader::Impl::readMaybeObject");
 
   Attrib attrib = currentAttribs().get(attrib_name);
 
@@ -461,7 +459,7 @@ DOTRACE("AsciiStreamReader::Impl::readObjectImpl");
   if (ist.fail())
 	 throw AttributeReadError(attrib_name);
 
-  if (id == 0) { return 0; }
+  if (id == 0) { return MaybeIdItem<IO::IoObject>(); }
 
   // Return the object for this id, creating a new object if necessary:
   return itsObjects.fetchObject(attrib.type, id);
@@ -528,7 +526,6 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
   unsigned long rootid = 0;
 
   while ( itsBuf.peek() != EOF ) {
-	 IO::IoObject* obj = NULL;
 	 char type[64], equal[16], bracket[16];
 	 unsigned long id;
 
@@ -553,9 +550,9 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 		haveReadRoot = true;
 	 }
 
-	 obj = itsObjects.fetchObject(type, id);
+	 IdItem<IO::IoObject> obj = itsObjects.fetchObject(type, id);
 
-	 inflateObject(reader, itsBuf, type, obj);
+	 inflateObject(reader, itsBuf, type, obj.get());
 
 	 itsBuf >> bracket >> ws;
 
@@ -566,7 +563,7 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 	 }
   }
 
-  return IdItem<IO::IoObject>(itsObjects.getObject(rootid));
+  return itsObjects.getObject(rootid);
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -606,7 +603,7 @@ DOTRACE("AsciiStreamReader::readInt");
 
 bool AsciiStreamReader::readBool(const fixed_string& name) {
 DOTRACE("AsciiStreamReader::readBool");
-  DebugEvalNL(name); 
+  DebugEvalNL(name);
   return bool(itsImpl.template readBasicType<int>(name));
 }
 
@@ -626,16 +623,18 @@ void AsciiStreamReader::readValueObj(const fixed_string& name, Value& value) {
   itsImpl.readValueObj(name, value); 
 }
 
-IdItem<IO::IoObject> AsciiStreamReader::readObject(const fixed_string& name)
+IdItem<IO::IoObject>
+AsciiStreamReader::readObject(const fixed_string& name)
 {
   DebugEvalNL(attrib_name);
-  return IdItem<IO::IoObject>(itsImpl.readObjectImpl(name));
+  return IdItem<IO::IoObject>(itsImpl.readMaybeObject(name));
 }
 
-MaybeIdItem<IO::IoObject> AsciiStreamReader::readMaybeObject(const fixed_string& name)
+MaybeIdItem<IO::IoObject>
+AsciiStreamReader::readMaybeObject(const fixed_string& name)
 {
   DebugEvalNL(attrib_name);
-  return MaybeIdItem<IO::IoObject>(itsImpl.readObjectImpl(name));
+  return itsImpl.readMaybeObject(name);
 }
 
 void AsciiStreamReader::readOwnedObject(const fixed_string& name,
