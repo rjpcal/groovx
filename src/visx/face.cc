@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Tue Aug 28 11:38:25 2001
+// written: Wed Aug 29 16:45:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ const FieldMap& Face::classFields()
 {
   static const Field FIELD_ARRAY[] =
   {
-    Field("category", &Face::itsFaceCategory, 0, 0, 10, 1, true),
+    Field("category", &Face::itsFaceCategory, 0, 0, 10, 1, Field::NEW_GROUP),
     Field("eyeHeight", &Face::itsEyeHeight, 0.6, -1.2, 1.2, 0.01),
     Field("eyeDistance", &Face::itsEyeDistance, 0.4, 0.0, 1.8, 0.01),
     Field("noseLength", &Face::itsNoseLength, 0.4, -0.0, 3.0, 0.01),

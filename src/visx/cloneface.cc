@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Apr 29 09:19:26 1999
-// written: Sat Aug 18 08:12:16 2001
+// written: Wed Aug 29 16:45:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -35,7 +35,8 @@ const FieldMap& CloneFace::classFields()
 {
   static const Field FIELD_ARRAY[] =
   {
-    Field("eyeAspect", &CloneFace::itsEyeAspect, 0.0, 0.0, 1.0, 0.05, true),
+    Field("eyeAspect", &CloneFace::itsEyeAspect, 0.0, 0.0, 1.0, 0.05,
+          Field::NEW_GROUP),
     Field("vertOffset", &CloneFace::itsVertOffset, 0.0, -0.1, 0.1, 0.01)
   };
 

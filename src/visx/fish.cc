@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Wed Aug 29 13:43:53 2001
+// written: Wed Aug 29 16:46:04 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -114,7 +114,7 @@ const FieldMap& Fish::classFields()
 {
   static const Field FIELD_ARRAY[] =
   {
-    Field("category", &Fish::itsFishCategory, 0, 0, 10, 1, true),
+    Field("category", &Fish::itsFishCategory, 0, 0, 10, 1, Field::NEW_GROUP),
     Field("dorsalFinCoord", &Fish::itsDorsalFinCoord, 0.0, -2.0, 2.0, 0.1),
     Field("tailFinCoord", &Fish::itsTailFinCoord, 0.0, -2.0, 2.0, 0.1),
     Field("lowerFinCoord", &Fish::itsLowerFinCoord, 0.0, -2.0, 2.0, 0.1),
