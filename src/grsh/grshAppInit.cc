@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Fri Jan 25 10:23:13 2002
+// written: Thu Jan 31 13:08:57 2002
 // $Id$
 //
 // This is the main application file for a Tcl/Tk application that
@@ -82,37 +82,37 @@ struct PackageInfo
 
 PackageInfo IMMEDIATE_PKGS[] =
 {
-  { "Tcl",      Tcl_Init       }
-  , { "Tk",       Tk_Init        }
-  , { "Togl",     Togl_Init      }
-  , { "Bitmap",   Bitmap_Init    }
-  , { "Block",    Block_Init     }
-  , { "Dlist",    Dlist_Init     }
-  , { "Expt",     Expt_Init      }
-  , { "Face",     Face_Init      }
-  , { "Fish",     Fish_Init      }
-  , { "Fixpt",    Fixpt_Init     }
-  , { "Gabor",    Gabor_Init     }
-  , { "Gltcl",    Gltcl_Init     }
-  , { "Grobj",    Grobj_Init     }
-  , { "Gtext",    Gtext_Init     }
-  , { "Gtrace",   Gtrace_Init    }
-  , { "Gx",       Gx_Init        }
-  , { "Hook",     Hook_Init      }
-  , { "House",    House_Init     }
-  , { "Io",       Io_Init        }
-  , { "Jitter",   Jitter_Init    }
-  , { "Mask",     Mask_Init      }
-  , { "Misc",     Misc_Init      }
-  , { "Morphyface",Morphyface_Init}
-  , { "Objtogl",  Objtogl_Init   }
-  , { "Position", Position_Init  }
-  , { "Rh",       Rh_Init        }
-  , { "Sound",    Sound_Init     }
-  , { "Subject",  Subject_Init   }
-  , { "Th",       Th_Init        }
-  , { "Tlist",    Tlist_Init     }
-  , { "Trial",    Trial_Init     }
+  { "Tcl",      Tcl_Init       },
+  { "Tk",       Tk_Init        },
+  { "Togl",     Togl_Init      },
+  { "Bitmap",   Bitmap_Init    },
+  { "Block",    Block_Init     },
+  { "Dlist",    Dlist_Init     },
+  { "Expt",     Expt_Init      },
+  { "Face",     Face_Init      },
+  { "Fish",     Fish_Init      },
+  { "Fixpt",    Fixpt_Init     },
+  { "Gabor",    Gabor_Init     },
+  { "Gltcl",    Gltcl_Init     },
+  { "Grobj",    Grobj_Init     },
+  { "Gtext",    Gtext_Init     },
+  { "Gtrace",   Gtrace_Init    },
+  { "Gx",       Gx_Init        },
+  { "Hook",     Hook_Init      },
+  { "House",    House_Init     },
+  { "Io",       Io_Init        },
+  { "Jitter",   Jitter_Init    },
+  { "Mask",     Mask_Init      },
+  { "Misc",     Misc_Init      },
+  { "Morphyface",Morphyface_Init},
+  { "Objtogl",  Objtogl_Init   },
+  { "Position", Position_Init  },
+  { "Rh",       Rh_Init        },
+  { "Sound",    Sound_Init     },
+  { "Subject",  Subject_Init   },
+  { "Th",       Th_Init        },
+  { "Tlist",    Tlist_Init     },
+  { "Trial",    Trial_Init     },
 };
 
 #if 0
@@ -153,17 +153,6 @@ DOTRACE("TclApp::TclApp(Tcl_Interp*)");
       if (result != TCL_OK) { itsStatus = result; }
     }
   }
-
-#if 0
-  {for (size_t i = 0; i < sizeof(DELAYED_PKGS)/sizeof(PackageInfo); ++i)
-    {
-      Tcl_StaticPackage((Tcl_Interp*) 0,
-                        const_cast<char*>(DELAYED_PKGS[i].pkgName),
-                        DELAYED_PKGS[i].pkgInitProc,
-                        0);
-    }
-  }
-#endif
 
   // set prompt to "cmd[n]% " where cmd is the name of the program,
   // and n is the history event number
