@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Wed Jun  6 18:09:54 2001
+// written: Sat Jun  9 14:44:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -305,8 +305,15 @@ DebugPrintNL("Toglet::destroyWidget");
 
 void Toglet::scaleRect(double factor) {
 DOTRACE("Toglet::scaleRect");
-  try { if (factor <= 0.0) { throw ToglError("invalid scaling factor"); } }
+#ifdef ACC_COMPILER
+  try {
+#endif
+	 if (factor <= 0.0)
+		throw ToglError("invalid scaling factor");
+#ifdef ACC_COMPILER
+  }
   catch (ToglError&) { throw; }
+#endif
 
   itsMinRect.widenByFactor(factor);
   itsMinRect.heightenByFactor(factor);
@@ -322,21 +329,32 @@ DOTRACE("Toglet::setColor");
   static const char* const bad_val_msg = "RGB values must be in [0.0, 1.0]";
   static const char* const bad_index_msg = "color index must be in [0, 255]";
 
+#ifdef ACC_COMPILER
   try {
+#endif
 	 if (                     color.pixel > 255) { throw ToglError(bad_index_msg); }
 	 if (color.red   < 0.0 || color.red   > 1.0) { throw ToglError(bad_val_msg); }
 	 if (color.green < 0.0 || color.green > 1.0) { throw ToglError(bad_val_msg); }
 	 if (color.blue  < 0.0 || color.blue  > 1.0) { throw ToglError(bad_val_msg); }
+#ifdef ACC_COMPILER
   }
   catch (ToglError&) { throw; }
+#endif
 
   itsTogl->setColor(color.pixel, color.red, color.green, color.blue);
 }
 
 void Toglet::setFixedScale(double s) {
 DOTRACE("Toglet::setFixedScale"); 
-  try { if (s <= 0.0) { throw ToglError("invalid scaling factor"); } }
+#ifdef ACC_COMPILER
+  try {
+#endif
+	 if (s <= 0.0)
+		throw ToglError("invalid scaling factor");
+#ifdef ACC_COMPILER
+  }
   catch (ToglError&) { throw; }
+#endif
 
   itsFixedScaleFlag = true;
   itsFixedScale = s;
@@ -349,8 +367,15 @@ DOTRACE("Toglet::setUnitAngle");
 
   if (!itsTogl) return;
 
-  try { if (deg <= 0.0) { throw ToglError("unit angle must be positive"); } }
+#ifdef ACC_COMPILER
+  try {
+#endif
+	 if (deg <= 0.0)
+		throw ToglError("unit angle must be positive");
+#ifdef ACC_COMPILER
+  }
   catch (ToglError&) { throw; }
+#endif
 
   static const double deg_to_rad = 3.141593/180.0;
   itsFixedScaleFlag = true;
@@ -372,11 +397,15 @@ DOTRACE("Toglet::setUnitAngle");
 
 void Toglet::setViewingDistIn(double in) {
 DOTRACE("Toglet::setViewingDistIn"); 
+#ifdef ACC_COMPILER
   try {
-	 if (in <= 0.0) 
+#endif
+	 if (in <= 0.0)
 		{ throw ToglError("viewing distance must be positive (duh)"); }
+#ifdef ACC_COMPILER
   }
   catch (ToglError&) { throw; }
+#endif
 
 
   // according to similar triangles,
@@ -439,8 +468,14 @@ DOTRACE("Toglet::bind");
 
   Tcl::TclEvalCmd cmd(cmd_str.c_str(),
 							 Tcl::TclEvalCmd::THROW_EXCEPTION);
-  try { cmd.invoke(itsTogl->interp()); }
+#ifdef ACC_COMPILER
+  try {
+#endif
+	 cmd.invoke(itsTogl->interp());
+#ifdef ACC_COMPILER
+  }
   catch (Tcl::TclError&) { throw; }
+#endif
 }
 
 void Toglet::loadDefaultFont() { loadFont(0); }
@@ -579,8 +614,14 @@ DOTRACE("Toglet::takeFocus");
 
   Tcl::TclEvalCmd cmd(cmd_str.c_str(),
 							 Tcl::TclEvalCmd::THROW_EXCEPTION);
-  try { cmd.invoke(itsTogl->interp()); }
+#ifdef ACC_COMPILER
+  try {
+#endif
+	 cmd.invoke(itsTogl->interp());
+#ifdef ACC_COMPILER
+  }
   catch (Tcl::TclError&) { throw; }
+#endif
 }
 
 void Toglet::makeCurrent() {
