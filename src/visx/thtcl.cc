@@ -3,7 +3,7 @@
 // thtcl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jun  9 20:39:46 1999
-// written: Mon Oct 23 23:14:34 2000
+// written: Tue Oct 24 13:07:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,10 +30,6 @@
 namespace ThTcl {
   class AddEventCmd;
   class ThPkg;
-}
-
-namespace ThlistTcl {
-  class ThListPkg;
 }
 
 //---------------------------------------------------------------------
@@ -125,22 +121,6 @@ public:
   }
 };
 
-///////////////////////////////////////////////////////////////////////
-//
-// ThListPkg class definition
-//
-///////////////////////////////////////////////////////////////////////
-
-class ThlistTcl::ThListPkg : public Tcl::IoPtrListPkg {
-public:
-  ThListPkg(Tcl_Interp* interp) :
-	 Tcl::IoPtrListPkg(interp, ThList::theThList(), "ThList", "$Revision$")
-  {
-	 // FIXME
-// 	 ThList::theThList().insertAt(0, ThList::Ptr(TimingHandler::make()));
-  }
-};
-
 //---------------------------------------------------------------------
 //
 // ThTcl::Th_Init
@@ -165,7 +145,9 @@ DOTRACE("Th_Init");
 
   Tcl::TclPkg* pkg1 = new ThTcl::ThPkg(interp);
   Tcl::TclPkg* pkg2 = new SimpleThTcl::SimpleThPkg(interp);
-  Tcl::TclPkg* pkg3 = new ThlistTcl::ThListPkg(interp);
+  Tcl::TclPkg* pkg3 =
+	 new Tcl::IoPtrListPkg(interp, ThList::theThList(),
+								  "ThList", "$Revision$");
 
   return pkg1->combineStatus(pkg2->combineStatus(pkg3->initStatus()));
 }
