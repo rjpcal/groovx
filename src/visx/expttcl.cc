@@ -3,7 +3,7 @@
 // expttcl.cc
 // Rob Peters
 // created: Mon Mar  8 03:18:40 1999
-// written: Tue Jan 11 15:38:18 2000
+// written: Sat Jan 15 10:07:44 2000
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -93,6 +93,9 @@ DOTRACE("BeginCmd::beginCmd");
 
   // Create the save key binding
   widget->bind("<Control-KeyPress-s>", "{ Expt::storeData }");
+
+  // Create the reset key binding
+  widget->bind("<Control-KeyPress-r>", "{ Expt::reset }");
 
   // Create the pause key binding
   widget->bind("<KeyPress-p>", "{ Expt::pause }");
