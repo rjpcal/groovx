@@ -82,15 +82,15 @@ DOTRACE("Gfx::Canvas::screenBoundsFromWorldRect");
 
   // In order to get an accurate bounding box in screen coords, we need
   // to consider all four corners in world coordinates.
-  const recti screen_rect
-    ( vec2i(screenFromWorld2(world_pos.bottom_left())),
-      vec2i(screenFromWorld2(world_pos.top_right())) );
+  const vec2i p1(screenFromWorld2(world_pos.bottom_left()));
+  const vec2i p2(screenFromWorld2(world_pos.top_right()));
+  const vec2i p3(screenFromWorld2(world_pos.bottom_right()));
+  const vec2i p4(screenFromWorld2(world_pos.top_left()));
 
-  const recti screen_rect2
-    ( vec2i(screenFromWorld2(world_pos.bottom_right())),
-      vec2i(screenFromWorld2(world_pos.top_left())) );
+  const recti screen_rect1(p1, p2);
+  const recti screen_rect2(p3, p4);
 
-  return screen_rect.union_with(screen_rect2);
+  return screen_rect1.union_with(screen_rect2);
 }
 
 void Gfx::Canvas::drawRect(const rectd& rect, bool filled)
