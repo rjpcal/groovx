@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  6 11:42:44 2000
-// written: Mon Aug 20 14:26:41 2001
+// written: Mon Aug 20 14:43:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -59,11 +59,11 @@ void string_rep::realloc(std::size_t bufsize)
 {
   Precondition(itsRefCount <= 1);
 
-  string_rep new_rep(Util::max(itsAllocSize*2 + 32, bufsize), 0);
+  string_rep new_rep(Util::max(itsCapacity*2 + 32, bufsize), 0);
 
   new_rep.append(this->itsLength, this->itsText);
 
-  Util::swap(itsAllocSize, new_rep.itsAllocSize);
+  Util::swap(itsCapacity, new_rep.itsCapacity);
   Util::swap(itsLength, new_rep.itsLength);
   Util::swap(itsText, new_rep.itsText);
 }
@@ -73,16 +73,34 @@ void string_rep::make_space(std::size_t maxlen)
   realloc(maxlen+1); itsLength = maxlen;
 }
 
+void string_rep::add_terminator()
+{
+  itsText[itsLength] = '\0';
+}
+
+void string_rep::append_no_terminate(char c)
+{
+  if (itsLength + 2 <= itsCapacity)
+    {
+      itsText[itsLength++] = c;
+    }
+  else
+    {
+      realloc(itsLength + 2);
+      itsText[itsLength++] = c;
+    }
+}
+
 void string_rep::append(std::size_t length, const char* text)
 {
   Precondition(itsRefCount <= 1);
   Precondition(text != 0);
 
-  if (itsLength + length + 1 <= itsAllocSize)
+  if (itsLength + length + 1 <= itsCapacity)
     {
       memcpy(itsText+itsLength, text, length);
       itsLength += length;
-      itsText[itsLength] = '\0';
+      add_terminator();
     }
   else
     {
@@ -90,20 +108,20 @@ void string_rep::append(std::size_t length, const char* text)
       append(length, text);
     }
 
-  Postcondition(itsLength+1 <= itsAllocSize);
+  Postcondition(itsLength+1 <= itsCapacity);
 }
 
 string_rep::string_rep(std::size_t length, const char* text,
-                       std::size_t alloc_size) :
+                       std::size_t capacity) :
   itsRefCount(0),
-  itsAllocSize(Util::max(length+1, alloc_size)),
+  itsCapacity(Util::max(length+1, capacity)),
   itsLength(0),
-  itsText(new char[itsAllocSize])
+  itsText(new char[itsCapacity])
 {
   if (text)
     append(length, text);
   else
-    itsText[0] = '\0';
+    add_terminator();
 }
 
 string_rep::~string_rep()
@@ -124,17 +142,17 @@ string_rep* string_rep::getEmptyRep()
 }
 
 string_rep* string_rep::make(std::size_t length, const char* text,
-                             std::size_t alloc_size)
+                             std::size_t capacity)
 {
   if (length == 0)
     return getEmptyRep();
 
-  return new string_rep(length, text, alloc_size);
+  return new string_rep(length, text, capacity);
 }
 
 string_rep* string_rep::clone() const
 {
-  return new string_rep(itsLength, itsText, itsAllocSize);
+  return new string_rep(itsLength, itsText, itsCapacity);
 }
 
 void string_rep::makeUnique(string_rep*& rep)
@@ -163,7 +181,7 @@ void string_rep::clear()
   Precondition(itsRefCount <= 1);
 
   itsLength = 0;
-  itsText[0] = '\0';
+  add_terminator();
 }
 
 //---------------------------------------------------------------------
@@ -299,10 +317,13 @@ DOTRACE("fstring::read");
       if (c == EOF || isspace(c))
         {
           is.unget();
-          return;
+          break;
         }
-      append(char(c));
+//        append(char(c));
+      itsRep->append_no_terminate(char(c));
     }
+
+  itsRep->add_terminator();
 }
 
 void fstring::write(STD_IO::ostream& os) const
@@ -325,8 +346,11 @@ DOTRACE("fstring::readline");
       int c = is.get();
       if (c == EOF || c == eol)
         break;
-      append(char(c));
+//        append(char(c));
+      itsRep->append_no_terminate(char(c));
     }
+
+  itsRep->add_terminator();
 }
 
 static const char vcid_strings_cc[] = "$Header$";
