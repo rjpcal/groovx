@@ -3,7 +3,7 @@
 // reader.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 12:47:00 1999
-// written: Mon Mar  6 12:21:20 2000
+// written: Mon Mar  6 17:35:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -12,6 +12,8 @@
 #define READER_CC_DEFINED
 
 #include "reader.h"
+
+#include "util/strings.h"
 
 #include <string>
 
@@ -45,6 +47,20 @@ void Reader::readValue<double>(const char* name, double& return_value) {
 template <>
 void Reader::readValue<string>(const char* name, string& return_value) {
   return_value = readString(name);
+}
+
+template <>
+void Reader::readValue<fixed_string>(const char* name,
+												 fixed_string& return_value) {
+  string temp = readString(name);
+  return_value = temp.c_str();
+}
+
+template <>
+void Reader::readValue<dynamic_string>(const char* name,
+													dynamic_string& return_value) {
+  string temp = readString(name);
+  return_value = temp.c_str();
 }
 
 template <>
