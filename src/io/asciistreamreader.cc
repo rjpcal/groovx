@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:54:55 1999
-// written: Wed Jun 13 13:15:55 2001
+// written: Tue Jun 19 15:47:39 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -39,10 +39,6 @@
 #define AsciiStreamReader ASR
 #endif
 
-#ifdef PRESTANDARD_IOSTREAMS
-#define NO_IOS_EXCEPTIONS
-#endif
-
 ///////////////////////////////////////////////////////////////////////
 //
 // File scope stuff
@@ -67,21 +63,9 @@ private:
 public:
   Impl(AsciiStreamReader* /*owner*/, STD_IO::istream& is) :
     itsBuf(is), itsObjects(), itsAttribs()
-#ifndef NO_IOS_EXCEPTIONS
-    , itsOriginalExceptionState(itsBuf.exceptions())
-#endif
-  {
-#ifndef NO_IOS_EXCEPTIONS
-    itsBuf.exceptions( ios::badbit | ios::failbit );
-#endif
-  }
+  {}
 
-  ~Impl()
-    {
-#ifndef NO_IOS_EXCEPTIONS
-      itsBuf.exceptions(itsOriginalExceptionState);
-#endif
-    }
+  ~Impl() {}
 
   // Nested types
 public:
@@ -212,10 +196,6 @@ private:
   ObjectMap itsObjects;
   slink_list<shared_ptr<AttribMap> > itsAttribs;
 
-#ifndef NO_IOS_EXCEPTIONS
-  ios::iostate itsOriginalExceptionState;
-#endif
-
   // Helper functions
   AttribMap& currentAttribs()
     {
@@ -344,7 +324,7 @@ void AsciiStreamReader::Impl::AttribMap::readAttributes(STD_IO::istream& buf)
 DOTRACE("AsciiStreamReader::Impl::AttribMap::readAttributes");
 
   // Skip all whitespace
-  buf >> ws;
+  buf >> STD_IO::ws;
 
   // Check if there is a version id in the stream
   if (buf.peek() == 'v')
@@ -518,7 +498,7 @@ DOTRACE("AsciiStreamReader::Impl::readBaseClass");
 
   inflateObject(reader, ist, baseClassName, basePart);
 
-  ist >> bracket >> ws;
+  ist >> bracket >> STD_IO::ws;
 }
 
 Ref<IO::IoObject> AsciiStreamReader::Impl::readRoot(
@@ -561,7 +541,7 @@ DOTRACE("AsciiStreamReader::Impl::readRoot");
 
     inflateObject(reader, itsBuf, type, obj);
 
-    itsBuf >> bracket >> ws;
+    itsBuf >> bracket >> STD_IO::ws;
 
     if ( itsBuf.fail() ) {
       IO::ReadError err("input failed while parsing ending bracket\n");
