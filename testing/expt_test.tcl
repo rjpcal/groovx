@@ -129,11 +129,13 @@ test "ExptDriver::begin" "general sanity test" {
 
     set ::DONE 0
     -> $expt doWhenComplete { set ::DONE 1; set ::STOP 1 }
-    after 2000 set ::STOP 1
+    set id [after 2000 set ::STOP 1]
     Log::copyToStdout 0
     -> $expt begin
 
     vwait ::STOP
+
+    after cancel $id
 
     -> $expt reset
     Log::copyToStdout 1
