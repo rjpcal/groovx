@@ -57,14 +57,14 @@ private:
 
   // Constructor builds a string_rep with ref-count 0. 'length' here
   // does NOT need to "+1" for a null-terminator
-  string_rep(std::size_t length, const char* text, std::size_t alloc_size=0);
+  string_rep(std::size_t length, const char* text, std::size_t capacity=0);
   ~string_rep();
 
   static string_rep* getEmptyRep();
 
 public:
   static string_rep* make(std::size_t length, const char* text,
-                          std::size_t alloc_size=0);
+                          std::size_t capacity=0);
 
   string_rep* clone() const;
 
@@ -74,10 +74,15 @@ public:
   void decrRefCount() { if (--itsRefCount <= 0) delete this; }
 
   std::size_t length() const { return itsLength; }
+  std::size_t capacity() const { return itsCapacity; }
   const char* text() const { return itsText; }
   char* data();
 
   void clear();
+
+  void append_no_terminate(char c);
+
+  void add_terminator();
 
   void append(std::size_t length, const char* text);
 
@@ -88,7 +93,7 @@ public:
 private:
   unsigned int itsRefCount;
 
-  std::size_t itsAllocSize;
+  std::size_t itsCapacity;
   std::size_t itsLength;
   char* itsText;
 };
