@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Jul 18 10:43:58 2001
+// written: Sun Aug  5 08:20:00 2001
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -57,24 +57,22 @@
 #include <tk.h>
 #include <tkInt.h>
 
+#include "util/algo.h"
+
 #define NO_TRACE
 #include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
 
-namespace {
-
+namespace
+{
   // Defaults
   char*  DEFAULT_WIDTH     = "400";
   char*  DEFAULT_HEIGHT    = "400";
   char*  DEFAULT_IDENT     = "";
   char*  DEFAULT_FONTNAME  = "fixed";
   char*  DEFAULT_TIME      = "1";
-
-  template <class T>
-  inline T MAX(const T& a, const T& b)
-    { return (a>b) ? a : b; }
 
   inline int TCL_ERR(Tcl_Interp* interp, const char* msg)
     {
@@ -622,7 +620,7 @@ DOTRACE("<togl.cc>::Togl_WidgetCmd");
 
   Tk_Preserve((ClientData)impl);
 
-  if (!strncmp(argv[1], "configure", MAX((unsigned int)1, strlen(argv[1])))) {
+  if (!strncmp(argv[1], "configure", Util::max((unsigned int)1, strlen(argv[1])))) {
     if (argc == 2) {
       /* Return list of all configuration parameters */
       result = Tk_ConfigureInfo(interp, impl->tkWin(), configSpecs,
@@ -647,15 +645,15 @@ DOTRACE("<togl.cc>::Togl_WidgetCmd");
       result = impl->configure(interp, argc-2, argv+2, TK_CONFIG_ARGV_ONLY);
     }
   }
-  else if (!strncmp(argv[1], "render", MAX((unsigned int)1, strlen(argv[1])))) {
+  else if (!strncmp(argv[1], "render", Util::max((unsigned int)1, strlen(argv[1])))) {
     /* force the widget to be redrawn */
     Togl::Impl::dummyRenderCallback(static_cast<ClientData>(impl));
   }
-  else if (!strncmp(argv[1], "swapbuffers", MAX((unsigned int)1, strlen(argv[1])))) {
+  else if (!strncmp(argv[1], "swapbuffers", Util::max((unsigned int)1, strlen(argv[1])))) {
     /* force the widget to be redrawn */
     impl->swapBuffers();
   }
-  else if (!strncmp(argv[1], "makecurrent", MAX((unsigned int)1, strlen(argv[1])))) {
+  else if (!strncmp(argv[1], "makecurrent", Util::max((unsigned int)1, strlen(argv[1])))) {
     /* force the widget to be redrawn */
     impl->makeCurrent();
   }
