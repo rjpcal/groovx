@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 11:24:04 2000
-// written: Tue Aug 21 14:23:46 2001
+// written: Tue Aug 21 14:52:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,16 +25,19 @@
 #include "util/iter.h"
 #include "util/minivec.h"
 #include "util/ref.h"
-#include "util/slot.h"
 
 #include "util/trace.h"
 
-class GxSeparator::Impl : public Util::Slot {
+class GxSeparator::Impl : public Util::Object {
   Impl(const Impl&);
   Impl& operator=(const Impl&);
 
 public:
-  Impl(GxSeparator* owner) : itsOwner(owner), itsChildren() {}
+  Impl(GxSeparator* owner) :
+    itsOwner(owner),
+    itsChildren(),
+    slotChildChanged(Util::Slot::make(this, &Impl::onChildChange))
+  {}
   ~Impl() {}
 
   static Impl* make(GxSeparator* owner) { return new Impl(owner); }
@@ -63,9 +66,9 @@ public:
         }
     }
 
-  virtual void receiveSignal()
+  void onChildChange()
   {
-    DOTRACE("GxSeparator::Impl::receiveSignal");
+    DOTRACE("GxSeparator::Impl::onChildChange");
     itsOwner->sigNodeChanged.emitSignal();
   }
 
@@ -75,6 +78,8 @@ public:
 
   typedef minivec<Ref<GxNode> > VecType;
   VecType itsChildren;
+
+  Util::Ref<Util::Slot> slotChildChanged;
 };
 
 GxSeparator* GxSeparator::make()
@@ -120,7 +125,7 @@ DOTRACE("GxSeparator::addChild");
 
   itsImpl->itsChildren.push_back(item);
 
-  item->sigNodeChanged.connect(itsImpl);
+  item->sigNodeChanged.connect(itsImpl->slotChildChanged);
 
   this->sigNodeChanged.emitSignal();
 
@@ -139,7 +144,7 @@ DOTRACE("GxSeparator::insertChild");
   itsImpl->itsChildren.insert(itsImpl->itsChildren.begin()+at_index,
                               item);
 
-  item->sigNodeChanged.connect(itsImpl);
+  item->sigNodeChanged.connect(itsImpl->slotChildChanged);
 
   this->sigNodeChanged.emitSignal();
 }
@@ -149,7 +154,8 @@ void GxSeparator::removeChildAt(ChildId index)
 DOTRACE("GxSeparator::removeChildAt");
   if (index < itsImpl->itsChildren.size())
     {
-      itsImpl->itsChildren[index]->sigNodeChanged.disconnect(itsImpl->id());
+      itsImpl->itsChildren[index]->sigNodeChanged
+        .disconnect(itsImpl->slotChildChanged);
       itsImpl->itsChildren.erase(itsImpl->itsChildren.begin()+index);
 
       this->sigNodeChanged.emitSignal();
@@ -170,7 +176,7 @@ DOTRACE("GxSeparator::removeChild");
     {
       if ( (*itr)->id() == target )
         {
-          (*itr)->sigNodeChanged.disconnect(itsImpl->id());
+          (*itr)->sigNodeChanged.disconnect(itsImpl->slotChildChanged);
           itsImpl->itsChildren.erase(itr);
           this->sigNodeChanged.emitSignal();
           break;

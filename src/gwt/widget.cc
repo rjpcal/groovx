@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  4 12:52:59 1999
-// written: Tue Aug 21 14:24:22 2001
+// written: Tue Aug 21 14:52:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,6 @@
 #include "gfx/gxnode.h"
 
 #include "util/dlink_list.h"
-#include "util/slot.h"
 #include "util/ref.h"
 
 #include "util/trace.h"
@@ -56,7 +55,7 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-class GWT::Widget::Impl : public Util::Slot {
+class GWT::Widget::Impl : public Util::Object {
 public:
   Impl(GWT::Widget* owner) :
     itsOwner(owner),
@@ -67,7 +66,8 @@ public:
     isItRefreshing(true),
     isItRefreshed(false),
     itsButtonListeners(),
-    itsKeyListeners()
+    itsKeyListeners(),
+    slotNodeChanged(Util::Slot::make(this, &Impl::onNodeChange))
   {}
 
   virtual bool isVolatile() const { return true; }
@@ -95,11 +95,11 @@ public:
 
   void setDrawable(const Ref<GxNode>& node)
   {
-    itsDrawNode->sigNodeChanged.disconnect(this->id());
+    itsDrawNode->sigNodeChanged.disconnect(slotNodeChanged);
 
     itsDrawNode = node;
 
-    itsDrawNode->sigNodeChanged.connect(this);
+    itsDrawNode->sigNodeChanged.connect(slotNodeChanged);
   }
 
   void flushChanges()
@@ -108,7 +108,7 @@ public:
       display(itsOwner->getCanvas());
   }
 
-  virtual void receiveSignal()
+  void onNodeChange()
   {
     isItRefreshed = false;
     flushChanges();
@@ -147,6 +147,8 @@ public:
 
   Buttons itsButtonListeners;
   Keys itsKeyListeners;
+
+  Util::Ref<Util::Slot> slotNodeChanged;
 };
 
 
