@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  2 14:39:14 2000
-// written: Mon Sep 10 16:57:13 2001
+// written: Tue Nov  6 16:07:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -87,8 +87,8 @@ DOTRACE("Gx_Init");
   pkg2->def( "addChildren", "item_id children_id(s)", &GxTcl::addChildren );
   pkg2->defGetter("children", &GxSeparator::children);
   pkg2->defGetter("numChildren", &GxSeparator::numChildren);
-  pkg2->defSetter("removeChildAt", &GxSeparator::removeChildAt);
-  pkg2->defSetter("removeChild", &GxSeparator::removeChild);
+  pkg2->def("removeChildAt", "sep_id(s) child_indices", &GxSeparator::removeChildAt);
+  pkg2->def("removeChild","sep_id(s) child_id(s)", &GxSeparator::removeChild);
   Util::ObjFactory::theOne().registerCreatorFunc(&GxSeparator::make);
 
   Tcl::Pkg* pkg3 = new Tcl::Pkg(interp, "GxColor", "$Revision$");
