@@ -42,6 +42,7 @@
 #include "util/rand.h"
 #include "util/strings.h"
 
+#include <cstdio>
 #include <unistd.h>
 
 #include "util/trace.h"
@@ -62,9 +63,18 @@ namespace
 
     fstring result;
 
+    const int BUFSIZE = 256;
+    char buf[BUFSIZE];
+
     for (unsigned int i = bt.size(); i > 0; --i)
       {
-        result.append(bt[i-1]->name(), "\n");
+        snprintf(&buf[0], BUFSIZE, "[%2d] %-35s (%s:%d)\n",
+                 bt.size() - i,
+                 bt[i-1]->name(),
+                 bt[i-1]->srcFileName(),
+                 bt[i-1]->srcLineNo());
+
+        result.append(&buf[0]);
       }
 
     return result;
