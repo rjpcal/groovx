@@ -43,15 +43,25 @@ int Gabor_Init(Tcl_Interp* interp)
 DOTRACE("Gabor_Init");
 
   Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Gabor", "$Revision$");
+  pkg->inheritPkg("GxShapeKit");
   Tcl::defFieldContainer<Gabor>(pkg);
   Tcl::defCreator<Gabor>(pkg);
 
-  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "GaborArray", "$Revision$");
-  Tcl::defFieldContainer<GaborArray>(pkg2);
-  Tcl::defCreator<GaborArray>(pkg2);
-  pkg2->def("saveImage", "item_id filename", &GaborArray::saveImage);
+  return pkg->initStatus();
+}
 
-  return pkg->combineStatus(pkg2->initStatus());
+extern "C"
+int Gaborarray_Init(Tcl_Interp* interp)
+{
+DOTRACE("Gaborarray_Init");
+
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "GaborArray", "$Revision$");
+  pkg->inheritPkg("GxShapeKit");
+  Tcl::defFieldContainer<GaborArray>(pkg);
+  Tcl::defCreator<GaborArray>(pkg);
+  pkg->def("saveImage", "item_id filename", &GaborArray::saveImage);
+
+  return pkg->initStatus();
 }
 
 static const char vcid_gabortcl_cc[] = "$Header$";

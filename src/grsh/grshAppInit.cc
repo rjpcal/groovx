@@ -48,8 +48,28 @@ extern "C"
   Tcl_PackageInitProc Fish_Init;
   Tcl_PackageInitProc Fixpt_Init;
   Tcl_PackageInitProc Gabor_Init;
+  Tcl_PackageInitProc Gaborarray_Init;
   Tcl_PackageInitProc Gl_Init;
-  Tcl_PackageInitProc Gx_Init;
+  Tcl_PackageInitProc Gxcolor_Init;
+  Tcl_PackageInitProc Gxcylinder_Init;
+  Tcl_PackageInitProc Gxdisk_Init;
+  Tcl_PackageInitProc Gxdrawstyle_Init;
+  Tcl_PackageInitProc Gxemptynode_Init;
+  Tcl_PackageInitProc Gxfixedscalecamera_Init;
+  Tcl_PackageInitProc Gxlighting_Init;
+  Tcl_PackageInitProc Gxline_Init;
+  Tcl_PackageInitProc Gxmaterial_Init;
+  Tcl_PackageInitProc Gxnode_Init;
+  Tcl_PackageInitProc Gxperspectivecamera_Init;
+  Tcl_PackageInitProc Gxpixmap_Init;
+  Tcl_PackageInitProc Gxpointset_Init;
+  Tcl_PackageInitProc Gxpsyphycamera_Init;
+  Tcl_PackageInitProc Gxscaler_Init;
+  Tcl_PackageInitProc Gxseparator_Init;
+  Tcl_PackageInitProc Gxshapekit_Init;
+  Tcl_PackageInitProc Gxsphere_Init;
+  Tcl_PackageInitProc Gxtext_Init;
+  Tcl_PackageInitProc Gxtransform_Init;
   Tcl_PackageInitProc Gtrace_Init;
   Tcl_PackageInitProc Hook_Init;
   Tcl_PackageInitProc House_Init;
@@ -59,6 +79,7 @@ extern "C"
   Tcl_PackageInitProc Misc_Init;
   Tcl_PackageInitProc Morphyface_Init;
   Tcl_PackageInitProc Obj_Init;
+  Tcl_PackageInitProc Prof_Init;
   Tcl_PackageInitProc Rh_Init;
   Tcl_PackageInitProc Sound_Init;
   Tcl_PackageInitProc Th_Init;
@@ -89,31 +110,52 @@ PackageInfo IMMEDIATE_PKGS[] =
 
 PackageInfo DELAYED_PKGS[] =
   {
-    { "Block",        Block_Init,         "3.0" },
-    { "Cloneface",    Cloneface_Init,     "2.0" },
-    { "Dlist",        Dlist_Init,         "1.0" },
-    { "Exptdriver",   Exptdriver_Init,    "2.0" },
-    { "Face",         Face_Init,          "2.0" },
-    { "Fish",         Fish_Init,          "1.0" },
-    { "Fixpt",        Fixpt_Init,         "2.0" },
-    { "Gabor",        Gabor_Init,         "1.0" },
-    { "Gl",           Gl_Init,            "1.0" },
-    { "Gtrace",       Gtrace_Init,        "1.0" },
-    { "Gx",           Gx_Init,            "1.0" },
-    { "Hook",         Hook_Init,          "1.0" },
-    { "House",        House_Init,         "1.0" },
-    { "Io",           Io_Init,            "1.0" },
-    { "Jitter",       Jitter_Init,        "2.0" },
-    { "Maskhatch",    Maskhatch_Init,     "1.0" },
-    { "Misc",         Misc_Init,          "1.0" },
-    { "Morphyface",   Morphyface_Init,    "1.0" },
-    { "Obj",          Obj_Init,           "1.0" },
-    { "Rh",           Rh_Init,            "3.0" },
-    { "Sound",        Sound_Init,         "1.0" },
-    { "Th",           Th_Init,            "3.0" },
-    { "Tlist",        Tlist_Init,         "3.0" },
-    { "Toglet",       Toglet_Init,        "1.0" },
-    { "Trial",        Trial_Init,         "1.0" },
+    { "Block",               Block_Init,               "3.0" },
+    { "Cloneface",           Cloneface_Init,           "2.0" },
+    { "Dlist",               Dlist_Init,               "1.0" },
+    { "Exptdriver",          Exptdriver_Init,          "2.0" },
+    { "Face",                Face_Init,                "2.0" },
+    { "Fish",                Fish_Init,                "1.0" },
+    { "Fixpt",               Fixpt_Init,               "2.0" },
+    { "Gabor",               Gabor_Init,               "1.0" },
+    { "Gaborarray",          Gaborarray_Init,          "1.0" },
+    { "Gl",                  Gl_Init,                  "1.0" },
+    { "Gtrace",              Gtrace_Init,              "1.0" },
+    { "Gxcolor",             Gxcolor_Init,             "1.0" },
+    { "Gxcylinder",          Gxcylinder_Init,          "1.0" },
+    { "Gxdisk",              Gxdisk_Init,              "1.0" },
+    { "Gxdrawstyle",         Gxdrawstyle_Init,         "1.0" },
+    { "Gxemptynode",         Gxemptynode_Init,         "1.0" },
+    { "Gxfixedscalecamera",  Gxfixedscalecamera_Init,  "1.0" },
+    { "Gxlighting",          Gxlighting_Init,          "1.0" },
+    { "Gxline",              Gxline_Init,              "1.0" },
+    { "Gxmaterial",          Gxmaterial_Init,          "1.0" },
+    { "Gxnode",              Gxnode_Init,              "1.0" },
+    { "Gxperspectivecamera", Gxperspectivecamera_Init, "1.0" },
+    { "Gxpixmap",            Gxpixmap_Init,            "1.0" },
+    { "Gxpointset",          Gxpointset_Init,          "1.0" },
+    { "Gxpsyphycamera",      Gxpsyphycamera_Init,      "1.0" },
+    { "Gxscaler",            Gxscaler_Init,            "1.0" },
+    { "Gxseparator",         Gxseparator_Init,         "1.0" },
+    { "Gxshapekit",          Gxshapekit_Init,          "1.0" },
+    { "Gxsphere",            Gxsphere_Init,            "1.0" },
+    { "Gxtext",              Gxtext_Init,              "1.0" },
+    { "Gxtransform",         Gxtransform_Init,         "1.0" },
+    { "Hook",                Hook_Init,                "1.0" },
+    { "House",               House_Init,               "1.0" },
+    { "Io",                  Io_Init,                  "1.0" },
+    { "Jitter",              Jitter_Init,              "2.0" },
+    { "Maskhatch",           Maskhatch_Init,           "1.0" },
+    { "Misc",                Misc_Init,                "1.0" },
+    { "Morphyface",          Morphyface_Init,          "1.0" },
+    { "Obj",                 Obj_Init,                 "1.0" },
+    { "Prof",                Prof_Init,                "1.0" },
+    { "Rh",                  Rh_Init,                  "3.0" },
+    { "Sound",               Sound_Init,               "1.0" },
+    { "Th",                  Th_Init,                  "3.0" },
+    { "Tlist",               Tlist_Init,               "3.0" },
+    { "Toglet",              Toglet_Init,              "1.0" },
+    { "Trial",               Trial_Init,               "1.0" },
   };
 
 int          appArgc      = 0;

@@ -65,11 +65,19 @@ DOTRACE("Gtrace_Init");
   pkg->def("::dbglevel", "", &getLevel);
   pkg->def("::dbglevel", "level", &setLevel);
 
-  Tcl::Pkg* pkg2 = new Tcl::Pkg(interp, "Prof", "$Revision$");
-  pkg2->def("summary", "", &profSummary);
-  pkg2->def("reset", "", &Util::Prof::resetAllProfData);
+  return pkg->initStatus();
+}
 
-  return pkg2->combineStatus(pkg->initStatus());
+extern "C"
+int Prof_Init(Tcl_Interp* interp)
+{
+DOTRACE("Prof_Init");
+
+  Tcl::Pkg* pkg = new Tcl::Pkg(interp, "Prof", "$Revision$");
+  pkg->def("summary", "", &profSummary);
+  pkg->def("reset", "", &Util::Prof::resetAllProfData);
+
+  return pkg->initStatus();
 }
 
 static const char vcid_gtrace_cc[] = "$Header$";
