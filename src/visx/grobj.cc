@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Mon Oct  4 13:58:50 1999
+// written: Tue Oct 12 15:01:23 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -254,6 +254,7 @@ DOTRACE("GrObj::GrObj(istream&)");
 // GrObj destructor
 GrObj::~GrObj() {
 DOTRACE("GrObj::~GrObj");
+  detach(this); 
   glDeleteLists(itsImpl->itsDisplayList, 1);
   delete itsImpl;
 }
