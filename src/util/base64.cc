@@ -160,6 +160,16 @@ DOTRACE("rutz::base64_encode");
     }
 }
 
+void rutz::base64_encode_string(const char* str,
+                                rutz::byte_array& dst,
+                                unsigned int line_width)
+{
+  rutz::base64_encode(reinterpret_cast<const unsigned char*>(str),
+                      strlen(str),
+                      dst,
+                      line_width);
+}
+
 void rutz::base64_encode_file(const char* filename,
                               rutz::byte_array& dst,
                               unsigned int line_width)
@@ -238,6 +248,14 @@ DOTRACE("rutz::base64_decode");
       dst.vec.push_back(dec3[0]);
       dst.vec.push_back(dec3[1]);
     }
+}
+
+void rutz::base64_decode(const rutz::byte_array& src,
+                         rutz::byte_array& dst)
+{
+  base64_decode(reinterpret_cast<const char*>(&src.vec[0]),
+                src.vec.size(),
+                dst);
 }
 
 static const char vcid_base64_cc[] = "$Header$";
