@@ -3,7 +3,7 @@
 // pbm.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 16:41:07 1999
-// written: Fri Sep 24 19:12:23 1999
+// written: Thu Jan 20 02:12:35 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,9 +18,9 @@
 #include <cctype>
 
 #define NO_TRACE
-#include "trace.h"
+#include "util/trace.h"
 #define LOCAL_ASSERT
-#include "debug.h"
+#include "util/debug.h"
 
 PbmError::PbmError(const string& str) :
   ErrorWithMsg(str)
@@ -43,6 +43,11 @@ Pbm::Pbm(const vector<unsigned char>& bytes,
 			int width, int height, int bits_per_pixel)
 {
   setBytes(bytes, width, height, bits_per_pixel);
+}
+
+Pbm::Pbm(const BmapData& data)
+{
+  setBytes(data);
 }
 
 Pbm::Pbm(istream& is) {
@@ -98,6 +103,20 @@ void Pbm::setBytes(const vector<unsigned char>& bytes,
 	 throw PbmError("invalid bits_per_pixel value");
 	 break;
   }
+}
+
+void Pbm::setBytes(const BmapData& data) {
+DOTRACE("Pbm::setBytes");
+  setBytes(data.bytesVec(), data.width(), data.height(),
+			  data.bitsPerPixel());
+}
+
+void Pbm::swapInto(BmapData& data) {
+DOTRACE("Pbm::swapInto");
+  int dummy_alignment = 1; 
+
+  data.swap(itsBytes, itsImageWidth, itsImageHeight,
+				itsBitsPerPixel, dummy_alignment);
 }
 
 void Pbm::write(const char* filename) const {
