@@ -3,7 +3,7 @@
 // trial.cc
 // Rob Peters
 // created: Fri Mar 12 17:43:21 1999
-// written: Tue Oct 24 22:49:55 2000
+// written: Thu Oct 26 09:27:24 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -221,21 +221,14 @@ DOTRACE("Trial::Impl::readFrom");
   Assert(svid >= 2);
 
   itsGrObjs.clear();
-  itsPositions.clear();
-
-  std::vector<GrObj*> grobjs;
   IO::ReadUtils::readObjectSeq<GrObj>(
-							reader, "grobjs", std::back_inserter(grobjs));
+	       reader, "grobjs",
+			 NullableItemWithId<GrObj>::makeInserter(itsGrObjs));
 
-  for (int i=0; i < grobjs.size(); ++i)
-	 itsGrObjs.push_back(NullableItemWithId<GrObj>(grobjs[i]));
-
-  std::vector<Position*> positions;
+  itsPositions.clear();
   IO::ReadUtils::readObjectSeq<Position>(
-							reader, "positions", std::back_inserter(positions));
-
-  for (int j = 0; j < positions.size(); ++j)
-	 itsPositions.push_back(NullableItemWithId<Position>(positions[j]));
+          reader, "positions",
+			 NullableItemWithId<Position>::makeInserter(itsPositions));
 
   itsResponses.clear();
   IO::ReadUtils::readValueObjSeq<Response>(reader, "responses",
@@ -265,19 +258,11 @@ DOTRACE("Trial::Impl::writeTo");
 
   Assert(TRIAL_SERIAL_VERSION_ID >= 2);
 
-  std::vector<const GrObj*> grobjs;
-  for (int i=0; i < itsGrObjs.size(); ++i)
-	 grobjs.push_back(itsGrObjs[i].get());
+  IO::WriteUtils::writeSmartPtrSeq(writer, "grobjs",
+											  itsGrObjs.begin(), itsGrObjs.end());
 
-  IO::WriteUtils::writeObjectSeq(writer, "grobjs",
-											grobjs.begin(), grobjs.end());
-
-  std::vector<const Position*> positions;
-  for (int j = 0; j < itsPositions.size(); ++j)
-	 positions.push_back(itsPositions[j].get());
-
-  IO::WriteUtils::writeObjectSeq(writer, "positions",
-											positions.begin(), positions.end());
+  IO::WriteUtils::writeSmartPtrSeq(writer, "positions",
+											  itsPositions.begin(), itsPositions.end());
 
   IO::WriteUtils::writeValueObjSeq(writer, "responses",
 										 itsResponses.begin(), itsResponses.end());

@@ -3,7 +3,7 @@
 // exptdriver.cc
 // Rob Peters
 // created: Tue May 11 13:33:50 1999
-// written: Wed Oct 25 13:50:11 2000
+// written: Thu Oct 26 09:28:18 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -527,14 +527,9 @@ DOTRACE("ExptDriver::Impl::readFrom");
 
   reader->readValue("currentBlockIdx", itsCurrentBlockIdx);
 
-  std::vector<Block*> blocks;
-  IO::ReadUtils::readObjectSeq<Block>(
-							  reader, "blocks", std::back_inserter(blocks));
-
   itsBlocks.clear();
-  for (int i = 0; i < blocks.size(); ++i)
-	 itsBlocks.push_back(ItemWithId<Block>(blocks[i],
-														ItemWithId<Block>::INSERT));
+  IO::ReadUtils::readObjectSeq<Block>(
+           reader, "blocks", ItemWithId<Block>::makeInserter(itsBlocks));
 
   reader->readValue("doUponCompletionScript", itsDoUponCompletionBody);
   recreateDoUponCompletionProc();
@@ -562,12 +557,8 @@ DOTRACE("ExptDriver::Impl::writeTo");
 
   writer->writeValue("currentBlockIdx", itsCurrentBlockIdx);
 
-  std::vector<const Block*> blocks;
-  for (int i = 0; i < itsBlocks.size(); ++i)
-	 blocks.push_back(itsBlocks[i].get());
-
-  IO::WriteUtils::writeObjectSeq(writer, "blocks",
-											blocks.begin(), blocks.end());
+  IO::WriteUtils::writeSmartPtrSeq(writer, "blocks",
+											  itsBlocks.begin(), itsBlocks.end());
 
   updateDoUponCompletionBody();
   writer->writeValue("doUponCompletionScript", itsDoUponCompletionBody);
