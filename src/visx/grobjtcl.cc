@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 14:01:18 1999
-// written: Wed Nov 13 13:11:00 2002
+// written: Wed Nov 13 13:51:34 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -38,15 +38,16 @@ namespace
     return obj->getBoundingBox(Grsh::canvas());
   }
 
-  void saveBitmapCache(Util::Ref<GrObj> obj, const char* filename)
+  // This is gone for now because the bitmap cache node is gone from GrObj,
+  // but we can resurrect a cleaner saveBitmap() function pretty easily,
+  // just by captuing the screen bounds into a BmapData object and then
+  // saving that.
+#if 0
+  void saveBitmap(Util::Ref<GrObj> obj, const char* filename)
   {
     obj->saveBitmapCache(Grsh::canvas(), filename);
   }
-
-  void update(Util::Ref<GrObj> obj)
-  {
-    obj->update(Grsh::canvas());
-  }
+#endif
 }
 
 
@@ -61,10 +62,9 @@ DOTRACE("Grobj_Init");
   Tcl::defFieldContainer<GrObj>(pkg);
 
   pkg->defVec( "boundingBox", "item_id(s)", &::boundingBox );
-  pkg->defVec( "saveBitmapCache", "item_id(s) filename(s)", &::saveBitmapCache );
-  pkg->defVec( "update", "item_id(s)", &::update );
-
-  pkg->def( "setBitmapCacheDir", "filename", &GrObj::setBitmapCacheDir );
+#if 0
+  pkg->defVec( "saveBitmap", "item_id(s) filename(s)", &::saveBitmap );
+#endif
 
   pkg->defAttrib("category", &GrObj::category, &GrObj::setCategory);
 

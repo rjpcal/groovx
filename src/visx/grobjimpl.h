@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Wed Nov 13 13:36:10 2002
+// written: Wed Nov 13 13:48:50 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,7 +22,6 @@
 
 #include "visx/grobj.h"
 
-#include "visx/bitmapcachenode.h"
 #include "visx/glcachenode.h"
 
 #include "util/volatileobject.h"
@@ -69,7 +68,6 @@ public:
   Util::Ref<GrObjNode> itsNativeNode;
   Util::Ref<GxBounds> itsBB;
   Util::Ref<GLCacheNode> itsGLCache;
-  Util::Ref<BitmapCacheNode> itsBitmapCache;
   Util::Ref<GxAligner> itsAligner;
   Util::Ref<GxScaler> itsScaler;
 
@@ -86,8 +84,7 @@ public:
     itsNativeNode(new GrObjNode(obj), Util::PRIVATE),
     itsBB(new GxBounds(itsNativeNode), Util::PRIVATE),
     itsGLCache(new GLCacheNode(itsBB), Util::PRIVATE),
-    itsBitmapCache(new BitmapCacheNode(itsGLCache), Util::PRIVATE),
-    itsAligner(new GxAligner(itsBitmapCache), Util::PRIVATE),
+    itsAligner(new GxAligner(itsGLCache), Util::PRIVATE),
     itsScaler(new GxScaler(itsAligner), Util::PRIVATE),
     itsTopNode(itsScaler)
   {
@@ -99,7 +96,6 @@ public:
   void invalidateCaches()
   {
     itsGLCache->invalidate();
-    itsBitmapCache->invalidate();
   }
 };
 
