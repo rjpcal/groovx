@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:26:58 1999
-// written: Tue Jul  2 13:11:25 2002
+// written: Wed Sep 11 14:21:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,21 +17,16 @@
 #include "visx/application.h"
 #endif
 
-struct Tcl_Interp;
-
 
 /// Application class for grsh; holds a reference to the current Gfx::Canvas.
 class GrshApp : public Application
 {
 public:
   /// Construct with the applicaton's Tcl interpreter.
-  GrshApp(int argc, char** argv, Tcl_Interp* interp);
+  GrshApp(int argc, char** argv);
 
   /// Virtual destructor.
   virtual ~GrshApp();
-
-  /// Returns the application's Tcl interpreter.
-  Tcl_Interp* getInterp();
 
   /// Installs \a canavs as the application's \c Canvas.
   void installCanvas(Gfx::Canvas& canvas);
@@ -43,7 +38,6 @@ private:
   GrshApp(const GrshApp&);
   GrshApp& operator=(const GrshApp&);
 
-  Tcl_Interp* itsInterp;
   Gfx::Canvas* itsCanvas;
 };
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  7 11:26:59 1999
-// written: Fri Jan 18 16:07:01 2002
+// written: Wed Sep 11 14:22:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,9 +25,8 @@ namespace
   const char* GRSH_LIB_DIR = "GRSH_LIB_DIR";
 }
 
-GrshApp::GrshApp(int argc, char** argv, Tcl_Interp* interp) :
+GrshApp::GrshApp(int argc, char** argv) :
   Application(argc, argv, GRSH_LIB_DIR),
-  itsInterp(interp),
   itsCanvas(0)
 {
 DOTRACE("GrshApp::GrshApp");
@@ -37,12 +36,6 @@ DOTRACE("GrshApp::GrshApp");
 GrshApp::~GrshApp()
 {
 DOTRACE("GrshApp::~GrshApp");
-}
-
-Tcl_Interp* GrshApp::getInterp()
-{
-DOTRACE("GrshApp::getInterp");
-  return itsInterp;
 }
 
 void GrshApp::installCanvas(Gfx::Canvas& canvas)
