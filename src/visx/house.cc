@@ -3,7 +3,7 @@
 // house.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:16 1999
-// written: Mon Dec  6 21:35:31 1999
+// written: Tue Feb  8 15:33:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -271,7 +271,7 @@ DOTRACE("House::getPropertyInfos");
 //
 ///////////////////////////////////////////////////////////////////////
 
-bool House::grGetBoundingBox(Rect<double>& bbox,
+void House::grGetBoundingBox(Rect<double>& bbox,
 									  int& border_pixels) const {
 DOTRACE("House::grGetBoundingBox");
   GLdouble main_width = storyAspectRatio();
@@ -291,7 +291,10 @@ DOTRACE("House::grGetBoundingBox");
   bbox.top()   /= max_dimension;
 
   border_pixels = 4;
+}
 
+bool House::grHasBoundingBox() const {
+DOTRACE("House::grHasBoundingBox");
   return true;
 }
 

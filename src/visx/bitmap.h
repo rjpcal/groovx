@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Jan 14 17:03:23 2000
+// written: Tue Feb  8 15:26:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -141,8 +141,11 @@ public:
 
   protected:
   ///
-  virtual bool grGetBoundingBox(Rect<double>& bounding_box,
+  virtual void grGetBoundingBox(Rect<double>& bounding_box,
 										  int& border_pixels) const;
+
+  ///
+  virtual bool grHasBoundingBox() const;
 
 public:
   /// Get the number of bytes of image data.

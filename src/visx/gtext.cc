@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Sat Jan 15 11:09:01 2000
+// written: Tue Feb  8 15:32:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -746,7 +746,7 @@ DOTRACE("Gtext::getStrokeWidth");
   return itsStrokeWidth; 
 }
 
-bool Gtext::grGetBoundingBox(Rect<double>& bbox,
+void Gtext::grGetBoundingBox(Rect<double>& bbox,
 									  int& border_pixels) const {
 DOTRACE("Gtext::grGetBoundingBox");
 
@@ -755,7 +755,10 @@ DOTRACE("Gtext::grGetBoundingBox");
   bbox.bottom() = -1.0;
   bbox.top() = 6.0;
   border_pixels = 2 + itsStrokeWidth;
+}
 
+bool Gtext::grHasBoundingBox() const {
+DOTRACE("Gtext::grHasBoundingBox");
   return true;
 }
 

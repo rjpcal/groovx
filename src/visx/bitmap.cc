@@ -3,7 +3,7 @@
 // bitmap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Fri Jan 14 17:53:10 2000
+// written: Tue Feb  8 15:25:40 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -159,9 +159,12 @@ void Bitmap::grUnRender(Canvas& canvas) const
 // accessors //
 ///////////////
 
-bool Bitmap::grGetBoundingBox(Rect<double>& bbox,
+void Bitmap::grGetBoundingBox(Rect<double>& bbox,
 										int& border_pixels) const
-  { return itsImpl->grGetBoundingBox(bbox, border_pixels); }
+  { itsImpl->grGetBoundingBox(bbox, border_pixels); }
+
+bool Bitmap::grHasBoundingBox() const
+  { return itsImpl->grHasBoundingBox(); }
 
 int Bitmap::byteCount() const
   { return itsImpl->byteCount(); }

@@ -3,7 +3,7 @@
 // bitmaprep.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu Jan 20 02:11:32 2000
+// written: Tue Feb  8 15:27:41 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -45,6 +45,8 @@ public:
 
   virtual void update(BmapData& update_me)
 	 {
+	 DOTRACE("PbmUpdater::update");
+
 		// Create a Pbm object by reading pbm data from 'filename'.
 		Pbm pbm(itsFilename.c_str());
 
@@ -347,7 +349,7 @@ DOTRACE("BitmapRep::grUnRender");
 // accessors //
 ///////////////
 
-bool BitmapRep::grGetBoundingBox(Rect<double>& bbox,
+void BitmapRep::grGetBoundingBox(Rect<double>& bbox,
 											int& border_pixels) const {
 DOTRACE("BitmapRep::grGetBoundingBox");
 
@@ -375,7 +377,10 @@ DOTRACE("BitmapRep::grGetBoundingBox");
 										  height()*abs(itsZoomY));
 
   bbox.setTopRight(canvas->getWorldFromScreen(screen_point));
+}
 
+bool BitmapRep::grHasBoundingBox() const {
+DOTRACE("BitmapRep::grHasBoundingBox");
   return true;
 }
 

@@ -3,7 +3,7 @@
 // morphyface.cc
 // Rob Peters
 // created: Wed Sep  8 15:38:42 1999
-// written: Mon Dec  6 21:37:56 1999
+// written: Tue Feb  8 15:34:37 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -653,7 +653,7 @@ DOTRACE("MorphyFace::grRender");
 // Accessors
 ///////////////////////////////////////////////////////////////////////
 
-bool MorphyFace::grGetBoundingBox(Rect<double>& bbox,
+void MorphyFace::grGetBoundingBox(Rect<double>& bbox,
 											 int& border_pixels) const {
 DOTRACE("MorphyFace::grGetBoundingBox");
   Bezier4 xbezier_top(-1.0, -topWidth(), topWidth(), 1.0);
@@ -674,7 +674,10 @@ DOTRACE("MorphyFace::grGetBoundingBox");
   bbox.bottom() =  bottomHeight();
 
   border_pixels = 4;
+}
 
+bool MorphyFace::grHasBoundingBox() const {
+DOTRACE("MorphyFace::grHasBoundingBox");
   return true;
 }
 

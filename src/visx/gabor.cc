@@ -3,7 +3,7 @@
 // gabor.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Mon Dec  6 21:34:43 1999
+// written: Tue Feb  8 15:31:31 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -115,7 +115,7 @@ DOTRACE("Fish::getPropertyInfos");
   return p;
 }
 
-bool Gabor::grGetBoundingBox(Rect<double>& bbox,
+void Gabor::grGetBoundingBox(Rect<double>& bbox,
 									  int& border_pixels) const {
 DOTRACE("Gabor::grGetBoundingBox");
   bbox.left() = -0.5;
@@ -124,7 +124,10 @@ DOTRACE("Gabor::grGetBoundingBox");
   bbox.top() = 0.5;
 
   border_pixels = 2;
+}
 
+bool Gabor::grHasBoundingBox() const {
+DOTRACE("Gabor::grHasBoundingBox");
   return true;
 }
 

@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Mon Dec  6 21:33:58 1999
+// written: Tue Feb  8 15:30:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -397,7 +397,7 @@ DOTRACE("Fish::readCoordFile");
   }
 }
 
-bool Fish::grGetBoundingBox(Rect<double>& bbox,
+void Fish::grGetBoundingBox(Rect<double>& bbox,
 									 int& border_pixels) const {
 DOTRACE("Fish::grGetBoundingBox");
   bbox.left() = -0.75;
@@ -405,7 +405,10 @@ DOTRACE("Fish::grGetBoundingBox");
   bbox.bottom() = -0.5;
   bbox.top() = 0.5;
   border_pixels = 4;
-  
+}
+
+bool Fish::grHasBoundingBox() const {
+DOTRACE("Fish::grHasBoundingBox");  
   return true;
 }
 

@@ -3,7 +3,7 @@
 // gtext.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:47 1999
-// written: Mon Dec  6 21:34:54 1999
+// written: Tue Feb  8 15:32:56 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -77,8 +77,11 @@ public:
 
 protected:
   ///
-  virtual bool grGetBoundingBox(Rect<double>& bbox,
+  virtual void grGetBoundingBox(Rect<double>& bbox,
 										  int& border_pixels) const;
+
+  ///
+  virtual bool grHasBoundingBox() const;
 
   ///
   virtual void grRender(Canvas& canvas) const;

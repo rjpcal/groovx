@@ -3,7 +3,7 @@
 // morphyface.h
 // Rob Peters 
 // created: Wed Sep  8 15:37:45 1999
-// written: Mon Dec  6 21:36:09 1999
+// written: Tue Feb  8 15:35:14 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -101,15 +101,20 @@ public:
   CTProperty<MorphyFace, double> mouthCurvature;
 
 protected:
-  virtual bool grGetBoundingBox(Rect<double>& bbox,
+  ///
+  virtual void grGetBoundingBox(Rect<double>& bbox,
 										  int& border_pixels) const;
+
+  ///
+  virtual bool grHasBoundingBox() const;
+
+  /** This overrides GrObj pure virtual function. It renders a face
+		with the appropriate parameters. */
   virtual void grRender(Canvas& canvas) const; 
-  // This overrides GrObj pure virtual function. It renders a face
-  // with the appropriate parameters.
 
 private:
+  /// Check all invariants and return true if everything is OK.
   bool check() const;
-  // Check all invariants and return true if everything is OK.
 
   MorphyFace(const MorphyFace&);            // copy constructor not to be used
   MorphyFace& operator=(const MorphyFace&); // assignment operator not to be used
