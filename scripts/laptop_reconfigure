@@ -1,5 +1,5 @@
 #!/bin/sh
 
 ./configure --prefix=/home/rjpeters/local/groovx \
-    --with-tcltk=/home/rjpeters/local/tcl8.4.5 \
+    --with-tcltk=/home/rjpeters/local/tcl8.5a1 \
     --without-matlab
