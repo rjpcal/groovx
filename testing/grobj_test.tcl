@@ -96,31 +96,6 @@ proc testStringifyCmd { objname } {
 	 upvar $objname this
 
 	 IO::testStringifyCmd $this(package) $this(subclass) 1 $this(objid)
-
-	 return
-
-	 set stringify "GrObj::stringify"
-	 set destringify "GrObj::destringify"
-	 set usage "wrong \# args: should be \"$stringify item_id\""
-	 set testname "${this(package)}-${stringify}"
-
-	 if { $this(testbase) } {
-		  eval ::test $testname {"too few args"} {"
-		      $stringify
-		  "} {$usage}
-		  eval ::test $testname {"too many args"} {"
-		      $stringify 0 junk
-		  "} {$usage}
-		  eval ::test $testname {"error from bad objid"} {"
-		      $stringify -1
-		  "} {"$stringify: attempt to access invalid id in ObjList"}
-	 }
-
-	 if { $this(testsubclass) } {
-		  eval ::test $testname {"normal use"} {"
-		      catch {$stringify $this(objid)}
-		  "} {^0$}
-	 }
 }
 
 proc testDestringifyCmd { objname } {
@@ -129,12 +104,16 @@ proc testDestringifyCmd { objname } {
 	 IO::testDestringifyCmd $this(package) $this(subclass) 1 $this(objid)
 }
 
-proc testReadCmd { objname } {
-	 upvar $objname this
-}
-
 proc testWriteCmd { objname } {
 	 upvar $objname this
+
+	 IO::testWriteCmd $this(package) $this(subclass) 1 $this(objid)
+}
+
+proc testReadCmd { objname } {
+	 upvar $objname this
+
+	 IO::testReadCmd $this(package) $this(subclass) 1 $this(objid)
 }
 
 proc testCategoryCmd { objname } {
