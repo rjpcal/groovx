@@ -3,7 +3,7 @@
 // refcounted.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sun Oct 22 14:40:19 2000
-// written: Sun Oct 22 15:01:20 2000
+// written: Tue Oct 24 18:49:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,6 +23,7 @@
 class RefCounted {
 private:
   int itsRefCount;
+  int itsRefCount2;
 
   // These are disallowed since RefCounted's should always be in
   // one-to-one correspondence with their pointee's.
@@ -31,7 +32,7 @@ private:
 
 protected:
   /** Virtual destructor is protected, so that we can prevent clients
-		from instantiating MasterPtr's on the stack and from destroying
+		from instantiating RefCounted's on the stack and from destroying
 		them explicitly. Instead, MasterPtr's will only be destroyed by
 		a 'delete this' call inside decrRefCount() if the reference
 		count falls to zero or below. Clients are forced to create
@@ -51,14 +52,25 @@ public:
       pointer will be destroyed by a call to 'delete this'. */
   void decrRefCount();
 
+  /// Increment the second (debugging) reference count.
+  void incrRefCount2();
+  /// Decrement the second (debugging) reference count.
+  void decrRefCount2();
+
   /// Returns true if the reference count is greater than one.
   bool isShared() const;
 
   /// Returns true if the reference count is one or less.
   bool isUnshared() const;
 
-  /// Returns the object's reference count.
+  /// Returns the object's (total=normal+debugging) reference count.
   int refCount() const;
+
+  /// Returns the object's normal reference count.
+  int refCount1() const;
+
+  /// Returns the object's second (debugging) reference count.
+  int refCount2() const;
 
   /** Returns true if this is a valid object (allows an implementation
       to return false if it represents a null object). Default
