@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  8 03:18:40 1999
-// written: Thu May 17 15:24:49 2001
+// written: Sun May 27 16:03:26 2001
 // $Id$
 //
 // This file defines the procedures that provide the Tcl interface to
@@ -17,6 +17,7 @@
 #ifndef EXPTTCL_CC_DEFINED
 #define EXPTTCL_CC_DEFINED
 
+#include "block.h"
 #include "grshapp.h"
 #include "exptdriver.h"
 

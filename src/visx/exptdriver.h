@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Thu May 17 15:24:24 2001
+// written: Sun May 27 15:59:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,6 @@
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IO_H_DEFINED)
 #include "io/io.h"
-#endif
-
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ERROR_H_DEFINED)
-#include "util/error.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(EXPERIMENT_H_DEFINED)
@@ -37,11 +33,7 @@ class TimingHdlr;
 
 class fixed_string;
 
-class ExptError : public ErrorWithMsg {
-public:
-  ExptError() : ErrorWithMsg() {}
-  ExptError(const char* msg) : ErrorWithMsg(msg) {}
-};
+template <class T> class IdItem;
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -99,8 +91,8 @@ public:
 		date/time-stamped. */
   void addLogInfo(const char* message);
 
-  void addBlock(int block_id);
-  int currentBlock() const;
+  void addBlock(IdItem<Block> block);
+  IdItem<Block> currentBlock() const;
 
   virtual Util::ErrorHandler& getErrorHandler();
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Sat May 19 15:52:49 2001
+// written: Sun May 27 16:02:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,6 +32,7 @@
 #include "tcl/tclerror.h"
 #include "tcl/tclevalcmd.h"
 
+#include "util/error.h"
 #include "util/errorhandler.h"
 #include "util/minivec.h"
 #include "util/stopwatch.h"
@@ -183,15 +184,13 @@ public:
 	 itsInfoLog.append("\n");
   }
 
-  void addBlock(int block_id)
-	 {
-		itsBlocks.push_back(IdItem<Block>(block_id));
-	 }
+  void addBlock(IdItem<Block> block)
+	 { itsBlocks.push_back(block); }
 
-  int currentBlock() const
+  IdItem<Block> currentBlock() const
 	 {
-		if ( !haveValidBlock() ) return -1;
-		return itsBlocks.at(itsCurrentBlockIdx).id();
+		if ( !haveValidBlock() ) throw ErrorWithMsg("no current block exists");
+		return itsBlocks.at(itsCurrentBlockIdx);
 	 }
 
   Util::ErrorHandler& getErrorHandler()
@@ -829,10 +828,10 @@ const char* ExptDriver::getInfoLog() const
 void ExptDriver::addLogInfo(const char* message)
   { itsImpl->addLogInfo(message); }
 
-void ExptDriver::addBlock(int block_id)
-  { itsImpl->addBlock(block_id); }
+void ExptDriver::addBlock(IdItem<Block> block)
+  { itsImpl->addBlock(block); }
 
-int ExptDriver::currentBlock() const
+IdItem<Block> ExptDriver::currentBlock() const
   { return itsImpl->currentBlock(); }
 
 Util::ErrorHandler& ExptDriver::getErrorHandler()
