@@ -3,7 +3,7 @@
 // eventresponsehdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov  9 15:32:48 1999
-// written: Mon May 22 17:30:42 2000
+// written: Fri Sep 22 18:32:15 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -288,6 +288,8 @@ private:
 		  default: // "can't happen"
 			 Assert(false);
 		  }
+
+		  return false;
 		}
 
 	 int responseValue() { return itsRespVal; }
