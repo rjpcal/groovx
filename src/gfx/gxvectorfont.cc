@@ -821,15 +821,14 @@ void GxVectorFont::bboxOf(const char* text, Gfx::Bbox& bbox) const
   if (current > longest)
     longest = current;
 
-
-  geom::rect<double> rect;
-  rect.left() = 0.0;
   unsigned int len = longest;
-  rect.right() = len > 0 ? (5*len) - 1 : 1.0;
-  rect.bottom() = -1.0 - (lines - 1) * 8.0;
-  rect.top() = 6.0;
 
-  bbox.drawRect(rect);
+  const double l = 0.0;
+  const double r = len > 0 ? (5*len) - 1 : 1.0;
+  const double b = -1.0 - (lines - 1) * 8.0;
+  const double t = 6.0;
+
+  bbox.drawRect(geom::rect_ltrb<double>(l,t,r,b));
 }
 
 void GxVectorFont::drawText(const char* text, Gfx::Canvas& canvas) const

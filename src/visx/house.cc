@@ -304,8 +304,6 @@ void House::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("House::grGetBoundingBox");
 
-  geom::rect<double> rect;
-
   const double main_width = itsStoryAspectRatio;
   const double main_height = itsNumStories + itsRoofHeight;
 
@@ -313,16 +311,15 @@ DOTRACE("House::grGetBoundingBox");
 
   const double max_dim = max(main_height, main_width);
 
-  rect.left()   = -main_width/2.0 * (1 + max(itsRoofOverhang, 0.0)) / max_dim;
-  rect.right()  =  main_width/2.0 * (1 + max(itsRoofOverhang, 0.0)) / max_dim;
-  rect.bottom() = -main_height/2.0 / max_dim;
-
   const double extra_chimney_height =
     max(0.0, itsChimneyYPosition + itsChimneyHeight - itsRoofHeight);
 
-  rect.top()    =  (main_height/2.0 + extra_chimney_height) / max_dim;
+  const double l = -main_width/2.0 * (1 + max(itsRoofOverhang, 0.0)) / max_dim;
+  const double r =  main_width/2.0 * (1 + max(itsRoofOverhang, 0.0)) / max_dim;
+  const double b = -main_height/2.0 / max_dim;
+  const double t =  (main_height/2.0 + extra_chimney_height) / max_dim;
 
-  bbox.drawRect(rect);
+  bbox.drawRect(geom::rect_ltrb<double>(l,t,r,b));
 }
 
 void House::grRender(Gfx::Canvas& canvas) const

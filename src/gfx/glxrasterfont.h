@@ -293,11 +293,12 @@ DOTRACE("GlxRasterFont::bboxOf");
 
   geom::rect<int> screen = bbox.screenFromWorld(geom::rect<double>());
 
-  screen.right() += maxwid;
-  screen.bottom() -= desc + (lines - 1) * (asc+desc);
-  screen.top() += asc;
+  const int l = screen.left();
+  const int r = screen.right() + maxwid;
+  const int b = screen.bottom() - (desc + (lines - 1) * (asc+desc));
+  const int t = screen.top() + asc;
 
-  bbox.drawRect(bbox.worldFromScreen(screen));
+  bbox.drawRect(bbox.worldFromScreen(geom::rect_ltrb<int>(l,t,r,b)));
 }
 
 void GlxRasterFont::drawText(const char* text, Gfx::Canvas& canvas) const

@@ -86,11 +86,6 @@ namespace geom
     V center_x() const { return (rr+ll)/V(2); }
     V center_y() const { return (tt+bb)/V(2); }
 
-    V& left() { return ll; }
-    V& right() { return rr; }
-    V& bottom() { return bb; }
-    V& top() { return tt; }
-
     const V& left() const { return ll; }
     const V& right() const { return rr; }
     const V& bottom() const { return bb; }

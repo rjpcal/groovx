@@ -509,8 +509,6 @@ void MorphyFace::grGetBoundingBox(Gfx::Bbox& bbox) const
 {
 DOTRACE("MorphyFace::grGetBoundingBox");
 
-  geom::rect<double> rect;
-
   geom::bezier4 xbezier_top(-1.0, -itsTopWidth, itsTopWidth, 1.0);
   geom::bezier4 xbezier_bottom(1.0, itsBottomWidth, -itsBottomWidth, -1.0);
 
@@ -523,12 +521,12 @@ DOTRACE("MorphyFace::grGetBoundingBox");
 
   dbg_eval_nl(3, max_width);
 
-  rect.left()   = -max_width      * itsFaceWidth * (1 + itsHairWidth);
-  rect.right()  =  max_width      * itsFaceWidth * (1 + itsHairWidth);
-  rect.top()    =  itsTopHeight * (1 + itsHairWidth);
-  rect.bottom() =  itsBottomHeight;
+  const double l = -max_width      * itsFaceWidth * (1 + itsHairWidth);
+  const double r =  max_width      * itsFaceWidth * (1 + itsHairWidth);
+  const double t =  itsTopHeight * (1 + itsHairWidth);
+  const double b =  itsBottomHeight;
 
-  bbox.drawRect(rect);
+  bbox.drawRect(geom::rect_ltrb<double>(l,t,r,b));
 }
 
 static const char vcid_morphyface_cc[] = "$Header$";
