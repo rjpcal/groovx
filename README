@@ -272,7 +272,7 @@ Table of contents:
    SGI's IRIX6 and HP's HPUX 10.x, but these configurations have not
    been tested recently.
 
-   The software requires a reasonable C++ std-compliant
+   The software requires a reasonably C++ std-compliant
    compiler. Compilers that have worked successfully in the past
    include:
 
