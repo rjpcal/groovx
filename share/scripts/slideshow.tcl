@@ -25,14 +25,40 @@ proc build_scaled_pixmap { fname size } {
     return $px
 }
 
+itcl::class RandSeq {
+    private variable current
+    private variable next
+
+    constructor {} {
+	::srand [clock clicks]
+
+	set current [::rand 0.0 1.0]
+	set next [::rand 0.0 1.0]
+    }
+
+    public method inext { min max } {
+	set current $next
+	while { $next == $current } {
+	    set next [::rand 0.0 1.0]
+	}
+	return [expr int(floor(($current * ($max - $min)) + $min))]
+    }
+
+    public method ipeek { min max } {
+	return [expr int(floor(($next * ($max - $min)) + $min))]
+    }
+}
+
 itcl::class Playlist {
     private variable itsListFile
     private variable itsList
     private variable itsIdx
+    private variable itsGuessNext
     private variable itsWidget
     private variable itsPixmap
     private variable itsPixmapCache
     private variable itsMatch
+    private variable itsRandSeq
 
     constructor { argv widget } {
 	set fname [lindex $argv end]
@@ -85,9 +111,13 @@ itcl::class Playlist {
 	}
 
 	set itsIdx 0
+	set itsGuessNext 1
 	set itsWidget $widget
 	set itsPixmap [new GxPixmap]
 	-> $itsPixmap purgeable 1
+
+	set itsRandSeq [RandSeq \#auto]
+	::srand [clock clicks]
     }
 
     public method save {} {
@@ -99,6 +129,13 @@ itcl::class Playlist {
 
     public method spin { step } {
 	set itsIdx [expr ($itsIdx + $step) % [llength $itsList]]
+
+	set itsGuessNext [expr ($itsIdx + $step) % [llength $itsList]]
+    }
+
+    public method jump {} {
+	set itsIdx [$itsRandSeq inext 0 [llength $itsList]]
+	set itsGuessNext [$itsRandSeq ipeek 0 [llength $itsList]]
     }
 
     public method filename {} {
@@ -125,7 +162,7 @@ itcl::class Playlist {
 
     public method cachenext {} {
 
-	set i [expr ($itsIdx + 1) % [llength $itsList]]
+	set i $itsGuessNext
 	set f [lindex $itsList $i]
 	set itsPixmapCache($f) \
 	    [build_scaled_pixmap $f [-> $itsWidget size]]
@@ -153,6 +190,10 @@ itcl::class Playlist {
 	delete $old
 
 	update idletasks
+
+	ObjDb::clear
+
+	puts [GxPixmap::findAll]
 
 	after idle [itcl::code $this cachenext]
     }
@@ -209,6 +250,11 @@ proc spinPic {step} {
     updateText
 }
 
+proc jumpPic {} {
+    $::PLAYLIST jump
+    updateText
+}
+
 proc updateText {} {
     set ::FILENAME [$::PLAYLIST status]
 }
@@ -252,6 +298,15 @@ set PLAYLIST [Playlist PLAYLIST $argv $t]
 
 -> $t bind <ButtonPress-1> {spinPic -1; PLAYLIST show}
 -> $t bind <ButtonPress-3> {spinPic 1; PLAYLIST show}
+-> $t bind <ButtonPress-2> {jumpPic; PLAYLIST show}
+
+-> $t bind <ButtonPress-1> {spinPic -1; PLAYLIST show}
+-> $t bind <ButtonPress-3> {spinPic 1; PLAYLIST show}
+-> $t bind <ButtonPress-2> {jumpPic; PLAYLIST show}
+
+-> $t bind <Key-Left> {spinPic -1; PLAYLIST show}
+-> $t bind <Key-Right> {spinPic 1; PLAYLIST show}
+-> $t bind <Key-Up> {jumpPic; PLAYLIST show}
 
 -> $t height 975
 -> $t width 1400
