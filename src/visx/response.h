@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 13 18:30:04 2000
-// written: Mon Sep  3 14:23:24 2001
+// written: Mon Sep  3 14:47:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,13 +28,10 @@ public:
 
   virtual ~Response();
 
-  virtual Value* clone() const;
   virtual fstring getNativeTypeName() const;
 
   virtual void printTo(STD_IO::ostream& os) const;
   virtual void scanFrom(STD_IO::istream& is);
-
-  virtual const char* get(Util::TypeCue<const char*>) const;
 
   bool isValid() const { return (itsVal >= 0); }
 

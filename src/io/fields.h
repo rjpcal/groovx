@@ -215,7 +215,7 @@ public:
 
     fstring sval = new_val.as(Util::TypeCue<fstring>());
 
-    dereference(cobj, itsValueMember).Value::set(sval);
+    dereference(cobj, itsValueMember).setFstring(sval);
   }
 
   virtual Tcl::ObjPtr get(const FieldContainer* obj) const

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:21:32 1999
-// written: Mon Sep  3 14:22:55 2001
+// written: Mon Sep  3 14:53:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,19 +17,9 @@
 
 #include "util/strings.h"
 
-#include <iostream.h>
 #include <strstream.h>
 
 #include "util/trace.h"
-
-namespace VALUE_CC_LOCAL
-{
-  void raiseValueError(const char* msg ="") { throw ValueError(msg); }
-}
-
-using namespace VALUE_CC_LOCAL;
-
-ValueError::~ValueError() {}
 
 Value::Value()
 {
@@ -42,34 +32,29 @@ DOTRACE("Value::~Value");
 }
 
 
-void Value::printTo(STD_IO::ostream&) const { raiseValueError("printTo"); }
-void Value::scanFrom(STD_IO::istream&) { raiseValueError("scanFrom"); }
-
-int Value::get(Util::TypeCue<int>) const { raiseValueError("getInt"); return 0; }
-long Value::get(Util::TypeCue<long>) const { raiseValueError("getLong"); return 0; }
-bool Value::get(Util::TypeCue<bool>) const { raiseValueError("getBool"); return false; }
-double Value::get(Util::TypeCue<double>) const { raiseValueError("getDouble"); return 0.0; }
-const char* Value::get(Util::TypeCue<const char*>) const { raiseValueError("getCstring"); return ""; }
-
-fstring Value::get(Util::TypeCue<fstring>) const
+const char* Value::getCstring() const
 {
-  return fstring(get(Util::TypeCue<const char*>()));
+  static char buf[512];
+  ostrstream ost(buf, 256);
+  printTo(ost);
+  ost << '\0';
+  return buf;
 }
 
-void Value::set(int) { raiseValueError("set(int)"); }
-void Value::set(long) { raiseValueError("set(long)"); }
-void Value::set(bool) { raiseValueError("set(bool)"); }
-void Value::set(double) { raiseValueError("set(double)"); }
+fstring Value::getFstring() const
+{
+  return fstring(getCstring());
+}
 
-void Value::set(const char* str)
+void Value::setCstring(const char* str)
 {
   istrstream ist(str);
   scanFrom(ist);
 }
 
-void Value::set(fstring val)
+void Value::setFstring(fstring val)
 {
-  set(val.c_str());
+  setCstring(val.c_str());
 }
 
 static const char vcid_value_cc[] = "$Header$";

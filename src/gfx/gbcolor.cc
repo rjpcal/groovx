@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:10:25 2000
-// written: Wed Aug 22 18:35:31 2001
+// written: Mon Sep  3 14:49:24 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,11 +27,6 @@ GbColor::~GbColor() {}
 //
 // Value interface
 //
-
-Value* GbColor::clone() const
-{
-  return new GbColor(*this);
-}
 
 fstring GbColor::getNativeTypeName() const
 {

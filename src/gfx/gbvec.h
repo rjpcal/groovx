@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:10:45 2000
-// written: Wed Aug 22 17:19:40 2001
+// written: Mon Sep  3 14:47:55 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,7 +33,6 @@ public:
         Gfx::Vec3<T>& vec()       { return *this; }
   const Gfx::Vec3<T>& vec() const { return *this; }
 
-  virtual Value* clone() const;
   virtual fstring getNativeTypeName() const;
 
   virtual unsigned int numValues() const;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 16:58:56 2001
-// written: Mon Sep  3 14:23:11 2001
+// written: Mon Sep  3 14:53:44 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,9 @@
 
 #include "util/multivalue.h"
 
-#include <strstream.h>
+#include "util/error.h"
+
+#include <iostream.h>
 
 #include "util/debug.h"
 
@@ -45,24 +47,14 @@ void TMultiValue<T>::scanFrom(STD_IO::istream& is)
       if (dat < end)
         {
           if (is.fail() || is.eof())
-            throw ValueError("error while scanning a multi-value");
+            throw Util::Error("error while scanning a multi-value");
         }
       else
         {
           if (is.fail() && !is.eof())
-            throw ValueError("error while scanning a multi-value");
+            throw Util::Error("error while scanning a multi-value");
         }
     }
-}
-
-template <class T>
-const char* TMultiValue<T>::get(Util::TypeCue<const char*>) const
-{
-  static char buf[256];
-  ostrstream ost(buf, 256);
-  printTo(ost);
-  ost << '\0';
-  return buf;
 }
 
 template class TMultiValue<int>;

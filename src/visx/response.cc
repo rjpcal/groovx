@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 13 18:33:17 2000
-// written: Mon Sep  3 14:23:08 2001
+// written: Mon Sep  3 14:49:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,12 +33,6 @@ const int Response::ALWAYS_CORRECT;
 
 Response::~Response() {}
 
-Value* Response::clone() const
-{
-DOTRACE("Response::clone");
-  return new Response(*this);
-}
-
 fstring Response::getNativeTypeName() const
 {
 DOTRACE("Response::getNativeTypeName");
@@ -55,15 +49,6 @@ void Response::scanFrom(STD_IO::istream& is)
 {
 DOTRACE("Response::scanFrom");
   is >> itsVal >> itsMsec;
-}
-
-const char* Response::get(Util::TypeCue<const char*>) const
-{
-DOTRACE("Response::get(const char*)");
-  static fstring str;
-  str = "";
-  str.append(itsVal).append(" ").append(itsMsec);
-  return str.c_str();
 }
 
 static const char vcid_response_cc[] = "$Header$";

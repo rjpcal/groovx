@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 16:45:38 2001
-// written: Mon Sep  3 14:23:27 2001
+// written: Mon Sep  3 14:47:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,13 +21,10 @@ template <class T>
 class TMultiValue : public Value
 {
 public:
-  virtual Value* clone() const = 0;
   virtual fstring getNativeTypeName() const = 0;
 
   virtual void printTo(STD_IO::ostream& os) const;
   virtual void scanFrom(STD_IO::istream& is);
-
-  virtual const char* get(Util::TypeCue<const char*>) const;
 
 protected:
   virtual unsigned int numValues() const = 0;

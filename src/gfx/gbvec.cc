@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:11:19 2000
-// written: Wed Aug 22 17:20:17 2001
+// written: Mon Sep  3 14:49:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -24,12 +24,6 @@ GbVec3<T>::GbVec3(T x_, T y_, T z_) :
 
 template <class T>
 GbVec3<T>::~GbVec3() {}
-
-template <class T>
-Value* GbVec3<T>::clone() const
-{
-  return new GbVec3(*this);
-}
 
 template <class T>
 fstring GbVec3<T>::getNativeTypeName() const

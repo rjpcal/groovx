@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:09:31 2000
-// written: Wed Aug 22 18:36:01 2001
+// written: Mon Sep  3 14:47:46 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,7 +32,6 @@ public:
         Gfx::RgbaColor& color()       { return *this; }
   const Gfx::RgbaColor& color() const { return *this; }
 
-  virtual Value* clone() const;
   virtual fstring getNativeTypeName() const;
 
   virtual unsigned int numValues() const;

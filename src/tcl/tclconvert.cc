@@ -352,13 +352,13 @@ Tcl::ObjPtr Tcl::Convert<const Value&>::toTcl(const Value& val)
 {
 DOTRACE("Tcl::Convert<const Value&>::toTcl");
 
-  return Tcl::ObjPtr(val.get(Util::TypeCue<const char*>()));
+  return Tcl::ObjPtr(val.getCstring());
 }
 
 template <>
 Tcl::ObjPtr Tcl::Convert<Tcl::List>::toTcl(Tcl::List listObj)
 {
-DOTRACE("Tcl::Convert<const Value&>::toTcl");
+DOTRACE("Tcl::Convert<Tcl::List>::toTcl");
 
   return listObj.asObj();
 }
