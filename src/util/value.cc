@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:21:32 1999
-// written: Tue Aug  7 10:43:20 2001
+// written: Tue Aug  7 11:39:28 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -81,18 +81,6 @@ template <>
 void TValue<bool>::scanFrom(STD_IO::istream& is)
 { int temp; is >> temp; itsVal = bool(temp); }
 
-template <>
-Value::Type TValue<int>::getNativeType() const { return Value::INT; }
-
-template <>
-Value::Type TValue<long>::getNativeType() const { return Value::LONG; }
-
-template <>
-Value::Type TValue<bool>::getNativeType() const { return Value::BOOL; }
-
-template <>
-Value::Type TValue<double>::getNativeType() const { return Value::DOUBLE; }
-
 
 template <>
 const char* TValue<int>::getNativeTypeName() const { return "int"; }
@@ -135,6 +123,11 @@ template <> void TValue<long>::set(long val) { itsVal = val; }
 template <> void TValue<bool>::set(bool val) { itsVal = val; }
 template <> void TValue<double>::set(double val) { itsVal = val; }
 
+template <class T> void TValue<T>::assignTo(Value& other) const
+{
+  other.set(itsVal);
+}
+
 // Explicit instantiations
 template class TValue<int>;
 template class TValue<long>;
@@ -162,18 +155,6 @@ void TValuePtr<T>::scanFrom(STD_IO::istream& is) { is >> *itsValPtr; }
 template <>
 void TValuePtr<bool>::scanFrom(STD_IO::istream& is)
 { int temp; is >> temp; *itsValPtr = bool(temp); }
-
-template <>
-Value::Type TValuePtr<int>::getNativeType() const { return Value::INT; }
-
-template <>
-Value::Type TValuePtr<long>::getNativeType() const { return Value::LONG; }
-
-template <>
-Value::Type TValuePtr<bool>::getNativeType() const { return Value::BOOL; }
-
-template <>
-Value::Type TValuePtr<double>::getNativeType() const { return Value::DOUBLE; }
 
 
 template <>
@@ -217,6 +198,10 @@ template <> void TValuePtr<long>::set(long val) { *itsValPtr = val; }
 template <> void TValuePtr<bool>::set(bool val) { *itsValPtr = val; }
 template <> void TValuePtr<double>::set(double val) { *itsValPtr = val; }
 
+template <class T> void TValuePtr<T>::assignTo(Value& other) const
+{
+  other.set(*itsValPtr);
+}
 
 // Explicit instantiations
 template class TValuePtr<int>;

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov 16 00:11:19 2000
-// written: Tue Aug  7 10:23:59 2001
+// written: Tue Aug  7 11:32:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -48,10 +48,6 @@ Value* GbVec3<T>::clone() const
 { return new GbVec3(*this);}
 
 template <class T>
-Value::Type GbVec3<T>::getNativeType() const
-{ return Value::UNKNOWN; }
-
-template <class T>
 const char* GbVec3<T>::getNativeTypeName() const
 { return "GbVec3"; }
 
@@ -80,6 +76,10 @@ const char* GbVec3<T>::get(Util::TypeCue<const char*>) const
   printTo(ost);
   return buf;
 }
+
+template <class T>
+void GbVec3<T>::assignTo(Value& other) const
+{ other.set(this->get(Util::TypeCue<const char*>())); }
 
 //
 // Field interface

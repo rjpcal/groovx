@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:23:55 1999
-// written: Tue Aug  7 11:11:44 2001
+// written: Tue Aug  7 11:51:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -51,22 +51,17 @@ public:
   virtual ~TclValue();
 
   /// Get the \c Tcl_Obj used as the internal representation.
-  Tcl_Obj* getObj() const;
-
-  /// Change the \c Tcl_Obj used as the internal representation to \a obj.
-  void setObj(Tcl_Obj* obj);
+  Tcl_Obj* getObj() const { return itsObjPtr.obj(); }
 
   /// Assignment operator.
   TclValue& operator=(const TclValue& other)
-    { setObj(other.itsObjPtr); return *this; }
+    { itsObjPtr = other.itsObjPtr; return *this; }
 
   /// Assignment from raw \c Tcl_Obj*.
   TclValue& operator=(Tcl_Obj* obj)
-    { setObj(obj); return *this; }
+    { itsObjPtr = obj; return *this; }
 
   virtual Value* clone() const;
-
-  virtual Type getNativeType() const;
 
   virtual const char* getNativeTypeName() const;
 
@@ -78,6 +73,14 @@ public:
   virtual bool get(Util::TypeCue<bool>) const;
   virtual double get(Util::TypeCue<double>) const;
   virtual const char* get(Util::TypeCue<const char*>) const;
+
+  virtual void set(int val);
+  virtual void set(long val);
+  virtual void set(bool val);
+  virtual void set(double val);
+  virtual void set(const char* val);
+
+  virtual void assignTo(Value& other) const;
 
 private:
   mutable Tcl::ObjPtr itsObjPtr;

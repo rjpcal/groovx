@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 13 18:30:04 2000
-// written: Thu May 10 12:04:39 2001
+// written: Tue Aug  7 11:36:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -23,16 +23,19 @@ public:
   static const int ALWAYS_CORRECT = -2;
 
   Response(int v = INVALID_VALUE, int m = -1, int c = ALWAYS_CORRECT) :
-	 itsVal(v), itsMsec(m), itsCorrectVal(c) {}
+    itsVal(v), itsMsec(m), itsCorrectVal(c) {}
 
   virtual ~Response();
 
   virtual Value* clone() const;
-  virtual Type getNativeType() const;
   virtual const char* getNativeTypeName() const;
 
   virtual void printTo(STD_IO::ostream& os) const;
   virtual void scanFrom(STD_IO::istream& is);
+
+  virtual const char* get(Util::TypeCue<const char*>) const;
+
+  virtual void assignTo(Value& other) const;
 
   bool isValid() const { return (itsVal >= 0); }
 

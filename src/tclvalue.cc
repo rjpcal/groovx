@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:23:55 1999
-// written: Tue Aug  7 11:18:33 2001
+// written: Tue Aug  7 11:52:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -30,35 +30,12 @@
 //---------------------------------------------------------------------
 
 Tcl::TclValue::TclValue(const Value& rhs) :
+  Value(rhs),
   itsObjPtr()
 {
 DOTRACE("Tcl::TclValue::TclValue(const Value&)");
 
-  Value::Type rhs_type = rhs.getNativeType();
-  DebugEvalNL(rhs_type);
-
-  switch (rhs_type)
-    {
-    case Value::INT:
-      itsObjPtr = Tcl::Convert<int>::toTcl(rhs.get(Util::TypeCue<int>()));
-      break;
-    case Value::LONG:
-      itsObjPtr = Tcl::Convert<long>::toTcl(rhs.get(Util::TypeCue<long>()));
-      break;
-    case Value::BOOL:
-      itsObjPtr = Tcl::Convert<bool>::toTcl(rhs.get(Util::TypeCue<bool>()));
-      break;
-    case Value::DOUBLE:
-      itsObjPtr = Tcl::Convert<double>::toTcl(rhs.get(Util::TypeCue<double>()));
-      break;
-
-    case Value::CSTRING:
-    case Value::NONE:
-    case Value::UNKNOWN:
-    default:
-      itsObjPtr = Tcl::Convert<const char*>::toTcl(rhs.get(Util::TypeCue<const char*>()));
-      break;
-    }
+  rhs.assignTo(*this);
 }
 
 Tcl::TclValue::TclValue(const TclValue& rhs) :
@@ -68,46 +45,15 @@ Tcl::TclValue::TclValue(const TclValue& rhs) :
 DOTRACE("Tcl::TclValue::TclValue");
 }
 
-//---------------------------------------------------------------------
-//
-// Destructor
-//
-//---------------------------------------------------------------------
-
 Tcl::TclValue::~TclValue()
 {
 DOTRACE("Tcl::TclValue::~TclValue");
-}
-
-Tcl_Obj* Tcl::TclValue::getObj() const
-{
-DOTRACE("Tcl::TclValue::getObj");
-  return itsObjPtr;
-}
-
-void Tcl::TclValue::setObj(Tcl_Obj* obj)
-{
-DOTRACE("Tcl::TclValue::setObj");
-  itsObjPtr = obj;
 }
 
 Value* Tcl::TclValue::clone() const
 {
 DOTRACE("Tcl::TclValue::clone");
   return new TclValue(itsObjPtr);
-}
-
-Value::Type Tcl::TclValue::getNativeType() const
-{
-DOTRACE("Tcl::TclValue::getNativeType");
-
-  string_literal type_name(getNativeTypeName());
-
-  if (type_name.equals("int")) { return Value::INT; }
-  else if (type_name.equals("double")) { return Value::DOUBLE; }
-  else if (type_name.equals("boolean")) { return Value::BOOL; }
-  else if (type_name.equals("string")) { return Value::CSTRING; }
-  else return Value::UNKNOWN;
 }
 
 const char* Tcl::TclValue::getNativeTypeName() const
@@ -137,34 +83,59 @@ DOTRACE("Tcl::TclValue::scanFrom");
 //
 //---------------------------------------------------------------------
 
-int Tcl::TclValue::get(Util::TypeCue<int>) const
+int Tcl::TclValue::get(Util::TypeCue<int> cue) const
 {
-DOTRACE("Tcl::TclValue::get(Util::TypeCue<int>)");
-  return Tcl::Convert<int>::fromTcl(itsObjPtr);
+  return itsObjPtr.as(cue);
 }
 
-long Tcl::TclValue::get(Util::TypeCue<long>) const
+long Tcl::TclValue::get(Util::TypeCue<long> cue) const
 {
-DOTRACE("Tcl::TclValue::get(Util::TypeCue<long>)");
-  return Tcl::Convert<long>::fromTcl(itsObjPtr);
+  return itsObjPtr.as(cue);
 }
 
-bool Tcl::TclValue::get(Util::TypeCue<bool>) const
+bool Tcl::TclValue::get(Util::TypeCue<bool> cue) const
 {
-DOTRACE("Tcl::TclValue::get(Util::TypeCue<bool>)");
-  return Tcl::Convert<bool>::fromTcl(itsObjPtr);
+  return itsObjPtr.as(cue);
 }
 
-double Tcl::TclValue::get(Util::TypeCue<double>) const
+double Tcl::TclValue::get(Util::TypeCue<double> cue) const
 {
-DOTRACE("Tcl::TclValue::get(Util::TypeCue<double>)");
-  return Tcl::Convert<double>::fromTcl(itsObjPtr);
+  return itsObjPtr.as(cue);
 }
 
-const char* Tcl::TclValue::get(Util::TypeCue<const char*>) const
+const char* Tcl::TclValue::get(Util::TypeCue<const char*> cue) const
 {
-DOTRACE("Tcl::TclValue::get(Util::TypeCue<const char*>)");
-  return Tcl::Convert<const char*>::fromTcl(itsObjPtr);
+  return itsObjPtr.as(cue);
+}
+
+void Tcl::TclValue::set(int val)         { itsObjPtr = Tcl::ObjPtr(val); }
+void Tcl::TclValue::set(long val)        { itsObjPtr = Tcl::ObjPtr(val); }
+void Tcl::TclValue::set(bool val)        { itsObjPtr = Tcl::ObjPtr(val); }
+void Tcl::TclValue::set(double val)      { itsObjPtr = Tcl::ObjPtr(val); }
+void Tcl::TclValue::set(const char* val) { itsObjPtr = Tcl::ObjPtr(val); }
+
+void Tcl::TclValue::assignTo(Value& other) const
+{
+DOTRACE("Tcl::TclValue::assignTo");
+
+  string_literal type_name(getNativeTypeName());
+
+  if (type_name.equals("int"))
+    {
+      other.set(this->get(Util::TypeCue<int>()));
+    }
+  else if (type_name.equals("double"))
+    {
+      other.set(this->get(Util::TypeCue<double>()));
+    }
+  else if (type_name.equals("boolean"))
+    {
+      other.set(this->get(Util::TypeCue<bool>()));
+    }
+  else
+    {
+      other.set(this->get(Util::TypeCue<const char*>()));
+    }
 }
 
 static const char vcid_tclvalue_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:09:31 2000
-// written: Tue Aug  7 10:24:56 2001
+// written: Tue Aug  7 11:37:08 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -32,12 +32,13 @@ public:
 
 public:
   virtual Value* clone() const;
-  virtual Type getNativeType() const;
   virtual const char* getNativeTypeName() const;
   virtual void printTo(STD_IO::ostream& os) const;
   virtual void scanFrom(STD_IO::istream& is);
 
   virtual const char* get(Util::TypeCue<const char*>) const;
+
+  virtual void assignTo(Value& other) const;
 
   //
   // Field interface

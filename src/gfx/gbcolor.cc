@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Dec  2 13:10:25 2000
-// written: Tue Aug  7 10:24:04 2001
+// written: Tue Aug  7 11:31:51 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,9 +46,6 @@ GbColor::~GbColor() {}
 Value* GbColor::clone() const
 { return new GbColor(*this);}
 
-Value::Type GbColor::getNativeType() const
-{ return Value::UNKNOWN; }
-
 const char* GbColor::getNativeTypeName() const
 { return "GbColor"; }
 
@@ -77,6 +74,9 @@ const char* GbColor::get(Util::TypeCue<const char*>) const
   printTo(ost);
   return buf;
 }
+
+void GbColor::assignTo(Value& other) const
+{ other.set(this->get(Util::TypeCue<const char*>())); }
 
 //
 // Field interface

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 28 11:19:17 1999
-// written: Tue Aug  7 10:43:32 2001
+// written: Tue Aug  7 11:38:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,14 +78,6 @@ public:
   /// Returns a new dynamically allocated copy of the calling object.
   virtual Value* clone() const = 0;
 
-  /** The symbolic constants of type \c Type can be used by subclasses
-      to indicate the native type of their underlying representation. */
-  enum Type { NONE, INT, LONG, BOOL, DOUBLE, CSTRING, UNKNOWN };
-
-  /** Return the \c Type constant indicating the native type used in
-      the implementation. */
-  virtual Type getNativeType() const = 0;
-
   /// Return a string giving the name of the native type.
   virtual const char* getNativeTypeName() const = 0;
 
@@ -119,6 +111,9 @@ public:
   virtual void set(double val);
   /// Attempt to set the value from a C-style string (\c char*) representation.
   virtual void set(const char* val);
+
+  /// Assign \a this's value to \a other, using the native type of \a this.
+  virtual void assignTo(Value& other) const = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -169,8 +164,6 @@ public:
 
   virtual Value* clone() const;
 
-  virtual Type getNativeType() const;
-
   virtual const char* getNativeTypeName() const;
 
   virtual void printTo(STD_IO::ostream& os) const;
@@ -187,6 +180,8 @@ public:
   virtual void set(bool val);
   virtual void set(double val);
   virtual void set(const char* val);
+
+  virtual void assignTo(Value& other) const;
 
   /** Publicly accessible lone data member allows efficient access to
       those who know the true type of the object. */
@@ -229,8 +224,6 @@ public:
 
   virtual Value* clone() const;
 
-  virtual Type getNativeType() const;
-
   virtual const char* getNativeTypeName() const;
 
   virtual void printTo(STD_IO::ostream& os) const;
@@ -247,6 +240,8 @@ public:
   virtual void set(bool val);
   virtual void set(double val);
   virtual void set(const char* val);
+
+  virtual void assignTo(Value& other) const;
 
   /// Return a reference to the currently pointed-to \c T object.
   T& operator()() { return *itsValPtr; }
