@@ -3,7 +3,7 @@
 // asciistreamwriter.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun  7 13:05:56 1999
-// written: Mon Nov  8 11:05:38 1999
+// written: Thu Nov 11 12:01:30 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,29 +26,50 @@ class ostream;
 #define AsciiStreamWriter ASW
 #endif
 
-
 ///////////////////////////////////////////////////////////////////////
-//
-// AsciiStreamWriter class definition
-//
+/**
+ *
+ * AsciiStreamWriter implements the Writer interface, serializing
+ * objects to an output stream in a human-readable ascii format. With
+ * this data format, objects may read and write their attributes in
+ * any order.
+ *
+ * @memo Implementation of Writer that uses nice human-readable ascii
+ * formatting.
+ **/
 ///////////////////////////////////////////////////////////////////////
 
 class AsciiStreamWriter : public Writer {
 public:
+  ///
   AsciiStreamWriter(ostream& os);
+  ///
   virtual ~AsciiStreamWriter();
 
+  ///
   virtual void writeChar(const string& name, char val);
+  ///
   virtual void writeInt(const string& name, int val);
+  ///
   virtual void writeBool(const string& name, bool val);
+  ///
   virtual void writeDouble(const string& name, double val);
 
+  ///
   virtual void writeString(const string& name, const string& val);
+  ///
   virtual void writeCstring(const string& name, const char* val);
 
+  ///
   virtual void writeValueObj(const string& name, const Value& value);
 
+  ///
   virtual void writeObject(const string& name, const IO* obj);
+
+  ///
+  virtual void writeOwnedObject(const string& name, const IO* obj);
+
+  ///
   virtual void writeRoot(const IO* root);
 
 private:
