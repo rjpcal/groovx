@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov 13 09:58:16 2000
-// written: Wed Jul 11 12:54:00 2001
+// written: Wed Jul 11 13:33:47 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -113,10 +113,7 @@ DOTRACE("Tcl::FieldVecCmd::invoke");
   dynamic_block<int> ids(1);
 
   if (itsItemArgn) {
-    unsigned int num_ids = getSequenceLengthOfArg(itsItemArgn);
-    DebugEvalNL(num_ids);
-    ids.resize(num_ids);
-    getSequenceFromArg(itsItemArgn, &ids[0], (int*) 0);
+    ids.assign(beginOfArg(itsItemArgn, (int*)0), endOfArg(itsItemArgn, (int*)0));
   }
   else {
     // -1 is the cue to use the default item

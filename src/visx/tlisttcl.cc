@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Mar 13 12:38:37 1999
-// written: Wed Jul 11 12:54:00 2001
+// written: Wed Jul 11 13:33:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -76,10 +76,7 @@ public:
            4, 4, false) {}
 protected:
   virtual void invoke() {
-    unsigned int num_ids = getSequenceLengthOfArg(1);
-    fixed_block<int> objids(num_ids);
-
-    getSequenceFromArg(1, &objids[0], (int*) 0);
+    fixed_block<int> objids(beginOfArg(1, (int*)0), endOfArg(1, (int*)0));
 
     int pixel_width = getIntFromArg(2);
     int pixel_height = getIntFromArg(3);
@@ -265,13 +262,9 @@ protected:
     // whether we will read only num_lines lines from the stream.
     bool read_to_eof = (num_lines < 0);
 
-    int num_objids = getSequenceLengthOfArg(2);
-    fixed_block<int> objids(num_objids);
-    getSequenceFromArg(2, objids.begin(), (int*)0);
+    fixed_block<int> objids(beginOfArg(2, (int*)0), endOfArg(2, (int*)0));
 
-    int num_posids = getSequenceLengthOfArg(3);
-    fixed_block<int> posids(num_posids);
-    getSequenceFromArg(3, posids.begin(), (int*)0);
+    fixed_block<int> posids(beginOfArg(3, (int*)0), endOfArg(3, (int*)0));
 
     STD_IO::ifstream ifs(objid_file);
 
