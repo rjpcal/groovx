@@ -34,8 +34,6 @@
 
 #include "mtx.h"
 
-#include "mtx/matlabinterface.h"
-
 #include "util/error.h"
 #include "util/fstring.h"
 
