@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:59 1999
-// written: Mon Jul 16 11:41:10 2001
+// written: Mon Jul 16 17:49:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -149,16 +149,12 @@ public:
       defSetter( cmd_name, setterFunc, usage );
     }
 
-protected:
-
   void addIoCommands();
 
+protected:
   static const char* actionUsage(const char* usage);
   static const char* getterUsage(const char* usage);
   static const char* setterUsage(const char* usage);
-
-private:
-  void instantiate();
 };
 
 }
