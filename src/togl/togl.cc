@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Mon Aug  5 08:07:35 2002
+// written: Mon Aug  5 10:57:32 2002
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -142,6 +142,21 @@ public:
   Tk_Window tkWin() const { return itsTkWin; }
   const char* pathname() const
   { return Tk_PathName(reinterpret_cast<Tk_FakeWin*>(itsTkWin)); }
+
+  bool ensureSharedColormap(const char* where) const
+  {
+    if (itsGlxOpts.rgbaFlag)
+      {
+        fprintf(stderr, "Error: %s illegal in RGBA mode.\n", where);
+        return false;
+      }
+
+    if (itsPrivateCmapFlag)
+      {
+        fprintf(stderr, "Error: %s illegal with private colormap\n", where);
+        return false;
+      }
+  }
 
   unsigned long allocColor(float red, float green, float blue) const;
   void freeColor(unsigned long pixel) const;
@@ -988,16 +1003,9 @@ DOTRACE("Togl::Impl::postReconfigure");
 unsigned long Togl::Impl::allocColor(float red, float green, float blue) const
 {
 DOTRACE("Togl::Impl::allocColor");
-  // FIXME move this duplicated error-handling to a separate function
-  if (itsGlxOpts.rgbaFlag)
-    {
-      fprintf(stderr,"Error: Togl::allocColor illegal in RGBA mode.\n");
-      return 0;
-    }
 
-  if (itsPrivateCmapFlag)
+  if (!ensureSharedColormap("Togl::allocColor"))
     {
-      fprintf(stderr,"Error: Togl::allocColor illegal with private colormap\n");
       return 0;
     }
 
@@ -1009,45 +1017,30 @@ DOTRACE("Togl::Impl::allocColor");
 void Togl::Impl::freeColor(unsigned long pixel) const
 {
 DOTRACE("Togl::Impl::freeColor");
-  if (itsGlxOpts.rgbaFlag)
-    {
-      fprintf(stderr,"Error: Togl::freeColor illegal in RGBA mode.\n");
-      return;
-    }
 
-  if (itsPrivateCmapFlag)
+  if (ensureSharedColormap("Togl::freeColor"))
     {
-      fprintf(stderr,"Error: Togl::freeColor illegal with private colormap\n");
-      return;
+      XFreeColors(itsDisplay, colormap(), &pixel, 1, 0);
     }
-
-  XFreeColors(itsDisplay, colormap(), &pixel, 1, 0);
 }
 
 void Togl::Impl::setColor(unsigned long index,
                           float red, float green, float blue) const
 {
 DOTRACE("Togl::Impl::setColor");
-  if (itsGlxOpts.rgbaFlag)
+
+  if (ensureSharedColormap("Togl::allocColor"))
     {
-      fprintf(stderr,"Error: Togl::setColor illegal in RGBA mode.\n");
-      return;
+      XColor xcol;
+
+      xcol.pixel = index;
+      xcol.red   = (short) (red   * 65535.0);
+      xcol.green = (short) (green * 65535.0);
+      xcol.blue  = (short) (blue  * 65535.0);
+      xcol.flags = DoRed | DoGreen | DoBlue;
+
+      XStoreColor( itsDisplay, colormap(), &xcol );
     }
-  if (!itsPrivateCmapFlag)
-    {
-      fprintf(stderr,"Error: Togl::setColor requires a private colormap\n");
-      return;
-    }
-
-  XColor xcol;
-
-  xcol.pixel = index;
-  xcol.red   = (short) (red   * 65535.0);
-  xcol.green = (short) (green * 65535.0);
-  xcol.blue  = (short) (blue  * 65535.0);
-  xcol.flags = DoRed | DoGreen | DoBlue;
-
-  XStoreColor( itsDisplay, colormap(), &xcol );
 }
 
 /*
