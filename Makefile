@@ -68,9 +68,6 @@ SCRIPTS := ./scripts
 
 CPPFLAGS += -I$(SRC)
 
-TMP_DIR := ./tmp/$(ARCH)
-TMP_FILE := $(TMP_DIR)/tmpfile
-
 #-------------------------------------------------------------------------
 #
 # Platform selection
@@ -264,7 +261,7 @@ $(SRC)/%.preh : $(SRC)/%.h
 
 ifneq ($(ARCH),ppc)
 %.$(SHLIB_EXT):
-	$(SHLIB_CMD) $(TMP_DIR)/$(notdir $@) $(LDFLAGS) $^ && mv $(TMP_DIR)/$(notdir $@) $@
+	$(SHLIB_CMD) $@ $(LDFLAGS) $^
 endif
 
 ifeq ($(ARCH),ppc)
@@ -273,7 +270,7 @@ ifeq ($(ARCH),ppc)
 endif
 
 %.$(STATLIB_EXT):
-	$(STATLIB_CMD) $(TMP_DIR)/$(notdir $@) $^ && mv $(TMP_DIR)/$(notdir $@) $@
+	$(STATLIB_CMD) $@ $^
 
 # this is just a convenience target so that we don't have to specify
 # the entire pathnames of the different library targets
@@ -290,7 +287,7 @@ ALL_SOURCES := $(wildcard $(SRC)/[a-z]*/*.cc $(SRC)/[a-z]*/[a-z]*/*.cc)
 ALL_HEADERS := $(wildcard $(SRC)/[a-z]*/*.h  $(SRC)/[a-z]*/[a-z]*/*.h)
 
 SRCDIRS := $(sort $(dir $(ALL_SOURCES)))
-ALLDIRS := $(subst $(SRC), $(OBJ), $(SRCDIRS)) $(TMP_DIR) $(DEP)
+ALLDIRS := $(subst $(SRC), $(OBJ), $(SRCDIRS)) $(DEP)
 
 .PHONY: dir_structure
 dir_structure:
@@ -423,7 +420,7 @@ GRSH_STATIC_OBJS := $(subst .cc,.$(OBJEXT),\
 CMDLINE := $(GRSH_STATIC_OBJS) $(LDFLAGS) $(PROJECT_LIBS) $(LIBS)
 
 $(EXECUTABLE): $(exec_prefix)/bin/.timestamp $(GRSH_STATIC_OBJS) $(ALL_STATLIBS)
-	$(CXX) -o $(TMP_FILE) $(CMDLINE) && mv $(TMP_FILE) $@
+	$(CXX) -o $@ $(CMDLINE)
 
 check:
 	$(EXECUTABLE) ./testing/grshtest.tcl
