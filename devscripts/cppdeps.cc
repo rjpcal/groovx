@@ -307,7 +307,6 @@ public:
   const string                rootname; // filename without trailing .extension
   const string                extension; // trailing .extension, including the "."
   const string                dirname_without_slash;
-  const file_info*            source;
   bool                        literal; // if true, then don't try to look up nested includes
   parse_state                 cdep_parse_state;
   bool                        direct_cdeps_done;
@@ -327,7 +326,6 @@ private:
     rootname(fname.substr(0,dotpos)),
     extension(fname.substr(dotpos, string::npos)),
     dirname_without_slash(get_dirname_of(t)),
-    source(0),
     literal(false),
     cdep_parse_state(NOT_STARTED),
     direct_cdeps_done(false),
@@ -472,9 +470,7 @@ class cppdeps
 private:
 
   static const int MAKEFILE_CDEPS      = (1 << 0);
-  static const int DIRECT_INCLUDE_TREE = (1 << 1);
-  static const int NESTED_INCLUDE_TREE = (1 << 2);
-  static const int MAKEFILE_LDEPS      = (1 << 3);
+  static const int MAKEFILE_LDEPS      = (1 << 1);
 
   // Member variables
   vector<string>           m_cfg_user_ipath;
@@ -533,7 +529,6 @@ public:
   const dep_list_t& get_nested_ldeps(file_info* finfo);
 
   void print_makefile_dep(file_info* finfo);
-  void print_include_tree(file_info* finfo);
   void print_link_deps(file_info* finfo);
 
   void traverse_sources();
@@ -653,14 +648,6 @@ cppdeps::cppdeps(const int argc, char** const argv) :
       else if (strcmp(*arg, "--quiet") == 0)
         {
           m_cfg_quiet = true;
-        }
-      else if (strcmp(*arg, "--output-direct-includes") == 0)
-        {
-          m_cfg_output_mode |= DIRECT_INCLUDE_TREE;
-        }
-      else if (strcmp(*arg, "--output-nested-includes") == 0)
-        {
-          m_cfg_output_mode |= NESTED_INCLUDE_TREE;
         }
       else if (strcmp(*arg, "--output-compile-deps") == 0)
         {
@@ -854,7 +841,6 @@ bool cppdeps::resolve_one(const string& include_name,
       if (file_exists(fullpath.c_str()))
         {
           vec.push_back(file_info::get(fullpath));
-          vec.back()->source = finfo;
           return true;
         }
     }
@@ -870,7 +856,6 @@ bool cppdeps::resolve_one(const string& include_name,
   if (file_exists(fullpath.c_str()))
     {
       vec.push_back(file_info::get(fullpath));
-      vec.back()->source = finfo;
       return true;
     }
 
@@ -890,7 +875,6 @@ bool cppdeps::resolve_one(const string& include_name,
       if (file_exists(fullpath.c_str()))
         {
           vec.push_back(file_info::get(fullpath));
-          vec.back()->source = finfo;
           return true;
         }
     }
@@ -902,7 +886,6 @@ bool cppdeps::resolve_one(const string& include_name,
       if (finfo->fname != include_name)
         {
           vec.push_back(file_info::get(include_name));
-          vec.back()->source = finfo;
         }
       return true;
     }
@@ -1297,32 +1280,6 @@ void cppdeps::print_makefile_dep(file_info* finfo)
   printf("\n");
 }
 
-void cppdeps::print_include_tree(file_info* finfo)
-{
-  if (!is_cc_or_h_fname(finfo))
-    return;
-
-  const dep_list_t& cdeps =
-    (m_cfg_output_mode & DIRECT_INCLUDE_TREE)
-    ? get_direct_cdeps(finfo)
-    : get_nested_cdeps(finfo);
-
-  printf("%s:: ", finfo->fname.c_str());
-
-  for (dep_list_t::const_iterator
-         itr = cdeps.begin(),
-         stop = cdeps.end();
-       itr != stop;
-       ++itr)
-    {
-      printf(" %s:%s",
-             (*itr)->fname.c_str(),
-             (*itr)->source ? (*itr)->source->fname.c_str() : "(nil)");
-    }
-
-  printf("\n");
-}
-
 void cppdeps::print_link_deps(file_info* finfo)
 {
   if (!is_cc_fname(finfo))
@@ -1403,12 +1360,6 @@ void cppdeps::traverse_sources()
           if (m_cfg_output_mode & MAKEFILE_CDEPS)
             {
               print_makefile_dep(finfo);
-            }
-
-          if ((m_cfg_output_mode & DIRECT_INCLUDE_TREE) ||
-              (m_cfg_output_mode & NESTED_INCLUDE_TREE) )
-            {
-              print_include_tree(finfo);
             }
 
           if (m_cfg_output_mode & MAKEFILE_LDEPS)
