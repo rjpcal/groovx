@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  5 16:43:50 2002
-// written: Fri Dec  6 14:22:02 2002
+// written: Sun Dec  8 14:22:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -56,7 +56,7 @@ public:
   virtual void vxHalt() const;
 
   /// Delegates partially on to vxAllChildrenFinished().
-  virtual void vxChildFinished(ChildStatus s);
+  virtual void vxReturn(ChildStatus s);
 
   /// Undo the previous element.
   /** The state of the experiment is restored to what it was just prior to

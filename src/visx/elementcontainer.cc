@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  5 16:43:54 2002
-// written: Fri Dec  6 14:22:11 2002
+// written: Sun Dec  8 14:22:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -142,9 +142,9 @@ DOTRACE("ElementContainer::vxHalt");
     currentElement()->vxHalt();
 }
 
-void ElementContainer::vxChildFinished(ChildStatus s)
+void ElementContainer::vxReturn(ChildStatus s)
 {
-DOTRACE("ExptDriver::vxChildFinished");
+DOTRACE("ExptDriver::vxReturn");
 
   Precondition( !isComplete() );
 

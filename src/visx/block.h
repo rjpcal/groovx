@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:33 1999
-// written: Thu Dec  5 18:00:41 2002
+// written: Sun Dec  8 14:22:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@ public:
   virtual const Util::SoftRef<Toglet>& getWidget() const;
 
   /// Starts the current element.
-  /** This will be called by vxChildFinished() as needed. */
+  /** This will be called by vxReturn() as needed. */
   virtual void vxRun(Element& parent);
 
   /// Prepares the Block to start the next element. */

@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  4 15:35:37 2002
-// written: Thu Dec  5 15:52:54 2002
+// written: Sun Dec  8 14:22:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ public:
   virtual void vxEndTrialHook();
 
   /// Called when an element's child finishes running.
-  virtual void vxChildFinished(ChildStatus s) = 0;
+  virtual void vxReturn(ChildStatus s) = 0;
 
   virtual void vxUndo() = 0;
 

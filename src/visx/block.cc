@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Dec  5 18:03:31 2002
+// written: Sun Dec  8 14:22:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -158,7 +158,7 @@ DOTRACE("Block::vxAllChildrenFinished");
   Element* p = itsParent;
   itsParent = 0;
   Assert( p != 0 );
-  p->vxChildFinished(CHILD_OK);
+  p->vxReturn(CHILD_OK);
 }
 
 static const char vcid_block_cc[] = "$Header$";

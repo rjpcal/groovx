@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Mar 12 17:43:21 1999
-// written: Thu Dec  5 15:53:41 2002
+// written: Sun Dec  8 14:22:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -373,7 +373,7 @@ DOTRACE("Trial::Impl::trEndTrial");
 
   becomeInactive();
 
-  parent->vxChildFinished(status);
+  parent->vxReturn(status);
 }
 
 void Trial::Impl::vxHalt()
@@ -621,7 +621,7 @@ double Trial::trElapsedMsec()
 void Trial::trAbort()
   { rep->trAbort(); }
 
-void Trial::vxChildFinished(ChildStatus /*s*/)
+void Trial::vxReturn(ChildStatus /*s*/)
   { Assert(false); }
 
 void Trial::trEndTrial()

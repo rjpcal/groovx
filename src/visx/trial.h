@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Thu Dec  5 15:55:33 2002
+// written: Sun Dec  8 14:22:45 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -111,7 +111,7 @@ public:
 
   virtual void vxHalt() const;
 
-  virtual void vxChildFinished(ChildStatus s);
+  virtual void vxReturn(ChildStatus s);
 
   virtual void vxUndo();
 
