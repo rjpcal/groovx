@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 12:00:17 2001
-// written: Wed Jul 11 13:05:52 2001
+// written: Wed Jul 11 14:02:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,6 +36,9 @@ namespace Tcl
 
 class Tcl::List {
 public:
+  /// Default constructor makes an empty list
+  List();
+
   List(Tcl_Obj* listObj);
 
   List(const List& other) :
@@ -52,18 +55,22 @@ public:
     return *this;
   }
 
+  Tcl::ObjPtr asObj() const { return itsList; }
+
   /// Checked access to element at \a index.
   Tcl_Obj* at(unsigned int index) const;
 
   /// Unchecked access to element at \a index.
   Tcl_Obj* operator[](unsigned int index) const
     {
-      return itsElements[index];
+      update(); return itsElements[index];
     }
 
-  unsigned int size() const { return itsLength; }
-  unsigned int length() const { return itsLength; }
+  unsigned int size() const { update(); return itsLength; }
+  unsigned int length() const { update(); return itsLength; }
 
+  template <class T>
+  void append(T t) { doAppend(Tcl::toTcl<T>(t)); }
 
   class IteratorBase;
   template <class T> class Iterator;
@@ -75,9 +82,21 @@ public:
   Iterator<T> end(T* /*dummy*/=0);
 
 private:
+  void doAppend(Tcl_Obj* obj);
+
+  void update() const
+    {
+      if (itsElements==0)
+        split();
+    }
+
+  void split() const;
+
+  void invalidate() { itsElements = 0; itsLength = 0; }
+
   Tcl::ObjPtr itsList;
-  Tcl_Obj** itsElements;
-  unsigned int itsLength;
+  mutable Tcl_Obj** itsElements;
+  mutable unsigned int itsLength;
 };
 
 
