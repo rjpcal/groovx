@@ -3,7 +3,7 @@
 // ptrlistbase.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Nov 20 23:58:42 1999
-// written: Wed Oct 25 14:21:16 2000
+// written: Wed Oct 25 15:59:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,31 +25,11 @@
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
-
 InvalidIdError::InvalidIdError() : ErrorWithMsg() {}
 
 InvalidIdError::InvalidIdError(const char* msg) : ErrorWithMsg(msg) {}
 
 InvalidIdError::~InvalidIdError() {}
-
-///////////////////////////////////////////////////////////////////////
-//
-// File scope declarations
-//
-///////////////////////////////////////////////////////////////////////
-
-namespace {
-  static const int GROW_CHUNK = 20;
-  static const double GROW_FACTOR = 1.2;
-
-  size_t calculateGrowSize(size_t oldsize) {
-
-	 double oldsize_d = double(oldsize);
-	 double newsize_d = (oldsize_d * GROW_FACTOR) + GROW_CHUNK;
-
-	 return size_t(newsize_d);
-  }
-}
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -119,15 +99,15 @@ private:
   Impl& operator=(const Impl&);
 
   PtrListBase* itsOwner;
+#ifdef USE_OLD_ID_SYSTEM
   int itsFirstVacant;
+#endif
 
 public:
   typedef std::map<int, IoPtrHandle> MapType;
   MapType itsPtrMap;
 
 private:
-  void ensureNotDuplicate(IO::IoObject* ptr);
-
   int findPtr(IO::IoObject* ptr)
 	 {
 		for (MapType::const_iterator
@@ -142,16 +122,44 @@ private:
 		return -1;
 	 }
 
-  // Add obj at index 'id', destroying any the object was previously
-  // pointed to from that that location. The list will be expanded if
-  // 'id' exceeds the size of the list. If id is < 0, the function
-  // returns without effect.
-  void insertPtrBaseAt(int id, IO::IoObject* ptr);
+#ifdef USE_OLD_ID_SYSTEM
+  void updateFirstVacantOnErase(int id)
+	 {
+		// reset itsFirstVacant in case i would now be the first vacant
+		if (itsFirstVacant > id) itsFirstVacant = id;		
+	 }
+#else
+  void updateFirstVacantOnErase(int /* id */) {}
+#endif
+
+#ifdef USE_OLD_ID_SYSTEM
+  int getIdForInsertion(IO::IoObject* ptr)
+	 {
+		DebugEval(itsFirstVacant);
+
+		Assert(itsFirstVacant >= 0);
+		Assert(itsPtrMap.find(itsFirstVacant) == itsPtrMap.end());
+
+		const int new_id = itsFirstVacant;
+
+		// make sure itsFirstVacant is up-to-date
+		while ( itsPtrMap.find(++itsFirstVacant) != itsPtrMap.end() )
+		  { ; }
+
+		DebugEvalNL(itsFirstVacant);
+
+		return new_id;
+	 }
+#else
+  int getIdForInsertion(IO::IoObject* ptr) { return ptr->id(); }
+#endif
 
 public:
   Impl(PtrListBase* owner, int size) :
 	 itsOwner(owner),
+#ifdef USE_OLD_ID_SYSTEM
 	 itsFirstVacant(0),
+#endif
 	 itsPtrMap()
 	 {}
 
@@ -195,8 +203,7 @@ public:
 
 		itsPtrMap.erase(itr);
 
-		// reset itsFirstVacant in case i would now be the first vacant
-		if (itsFirstVacant > id) itsFirstVacant = id;		
+		updateFirstVacantOnErase(id);
 	 }
 
   void remove(int id)
@@ -209,8 +216,7 @@ public:
 
 		itsPtrMap.erase(itr);
 
-		// reset itsFirstVacant in case i would now be the first vacant
-		if (itsFirstVacant > id) itsFirstVacant = id;		
+		updateFirstVacantOnErase(id);
 	 }
 
   void clear()
@@ -227,7 +233,7 @@ public:
 			 // update itsFirstVacant accordingly
 			 if ( (*itr).second.ioObject()->isUnshared() )
 				{
-				  if (itsFirstVacant > (*itr).first) itsFirstVacant = (*itr).first;
+				  updateFirstVacantOnErase((*itr).first);
 				}
 			 // ...otherwise, we'll be saving the object, so copy it into
 			 // the new_map,
@@ -256,15 +262,17 @@ public:
 
   int insertPtrBase(IO::IoObject* ptr)
 	 {
+	 DOTRACE("PtrListBase::Impl::insertPtrBase");
 		Precondition(ptr != 0);
 		int existing_site = findPtr(ptr);
 
 		if (existing_site != -1)
 		  return existing_site;
 
-		int new_site = itsFirstVacant;
-		insertPtrBaseAt(new_site, ptr);
-		return new_site;              // return the id of the inserted void*
+		const int new_id = getIdForInsertion(ptr);
+		itsPtrMap.insert(MapType::value_type(new_id, IoPtrHandle(ptr)));
+
+		return new_id;
 	 }
 };
 
@@ -338,52 +346,6 @@ int PtrListBase::Iterator::getId() const
 IO::IoObject* PtrListBase::Iterator::getObject() const
 {
   return (*(itsImpl->itsIter)).second.ioObject();
-}
-
-///////////////////////////////////////////////////////////////////////
-//
-// PtrListBase::Impl member definitions
-//
-///////////////////////////////////////////////////////////////////////
-
-// Asserts that there are no duplicate IO::IoObject's in the list, as
-// well as no duplicate pointees.
-void PtrListBase::Impl::ensureNotDuplicate(IO::IoObject* ptr) {
-DOTRACE("PtrListBase::Impl::ensureNotDuplicate");
-
-  Assert(findPtr(ptr) == -1); 
-}
-
-void PtrListBase::Impl::insertPtrBaseAt(int id, IO::IoObject* ptr) {
-DOTRACE("PtrListBase::Impl::insertPtrBaseAt");
-
-  Precondition(ptr != 0);
-
-  DebugEval(id);
-  if (id < 0) return;
-
-  MapType::iterator itr = itsPtrMap.find(id);
-
-  if (itr != itsPtrMap.end())
-	 {
-		InvalidIdError err("object already exists at id '");
-		err.appendNumber(id);
-		err.appendMsg("' in ", demangle_cstr(typeid(*this).name()));
-		throw err;
-	 }
-
-  ensureNotDuplicate(ptr);
-
-  //
-  // The actual insertion
-  //
-  itsPtrMap.insert(MapType::value_type(id, IoPtrHandle(ptr)));
-
-  // make sure itsFirstVacant is up-to-date
-  while ( itsPtrMap.find(itsFirstVacant) != itsPtrMap.end() )
-	 { ++itsFirstVacant; }
-
-  DebugEvalNL(itsFirstVacant);
 }
 
 ///////////////////////////////////////////////////////////////////////
