@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:57 2000
-// written: Thu May 10 12:04:47 2001
+// written: Fri May 18 16:53:59 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -312,11 +312,11 @@ DOTRACE("GrObj::Impl::Renderer::setMode");
 
 	 if (GrObj::GROBJ_GL_BITMAP_CACHE == new_mode) {
 		itsBmapRenderer.reset(new GLBmapRenderer());
-		itsBitmapCache.reset(new BitmapRep(itsBmapRenderer.get()));
+		itsBitmapCache.reset(new BitmapRep(itsBmapRenderer));
 	 }
 	 if (GrObj::GROBJ_X11_BITMAP_CACHE == new_mode) {
 		itsBmapRenderer.reset(new XBmapRenderer());
-		itsBitmapCache.reset(new BitmapRep(itsBmapRenderer.get()));
+		itsBitmapCache.reset(new BitmapRep(itsBmapRenderer));
 	 }
 
 	 queueBitmapLoad();

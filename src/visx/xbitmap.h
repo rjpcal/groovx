@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:39:09 1999
-// written: Thu May 10 12:04:39 2001
+// written: Fri May 18 17:04:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,20 @@
 #include "bitmap.h"
 #endif
 
-class XBmapRenderer;
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(XBMAPRENDERER_H_DEFINED)
+#include "xbmaprenderer.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
+#include "util/pointers.h"
+#endif
+
+// Used to allow a shared_ptr to be initialized before we pass it to
+// the Bitmap constructor
+struct XRHolder {
+  XRHolder(shared_ptr<XBmapRenderer> p) : itsRenderer(p) {}
+  shared_ptr<XBmapRenderer> itsRenderer;
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -28,7 +41,7 @@ class XBmapRenderer;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class XBitmap : public Bitmap {
+class XBitmap : private XRHolder, public Bitmap {
 protected:
   /// Construct an empty bitmap.
   XBitmap();
@@ -50,12 +63,6 @@ public:
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
   virtual void writeTo(IO::Writer* writer) const;
-
-private:
-  XBitmap(const XBitmap&);
-  XBitmap& operator=(const XBitmap&);
-
-  XBmapRenderer* itsRenderer;
 };
 
 static const char vcid_xbitmap_h[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:37:04 1999
-// written: Thu May 10 12:04:44 2001
+// written: Fri May 18 17:01:56 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,6 @@
 #define XBITMAP_CC_DEFINED
 
 #include "xbitmap.h"
-
-#include "xbmaprenderer.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -29,8 +27,6 @@
 #include "util/debug.h"
 
 namespace {
-  XBmapRenderer* tempRenderer = 0;
-
   const IO::VersionId XBITMAP_SERIAL_VERSION_ID = 2;
 }
 
@@ -44,17 +40,16 @@ DOTRACE("XBitmap::make");
 }
 
 XBitmap::XBitmap() :
-  Bitmap(tempRenderer = new XBmapRenderer()),
-  itsRenderer(tempRenderer)
+  XRHolder(make_shared(new XBmapRenderer())),
+  Bitmap(itsRenderer)
 {
 DOTRACE("XBitmap::XBitmap");
   init();
 }
 
 XBitmap::XBitmap(const char* filename) :
-  Bitmap(tempRenderer = new XBmapRenderer(), filename),
-  itsRenderer(tempRenderer)
-
+  XRHolder(make_shared(new XBmapRenderer())),
+  Bitmap(itsRenderer, filename)
 {
 DOTRACE("XBitmap::XBitmap");
   init();
@@ -70,7 +65,6 @@ DOTRACE("XBitmap::init");
 
 XBitmap::~XBitmap() {
 DOTRACE("XBitmap::~XBitmap");
-  delete itsRenderer; 
 }
 
 IO::VersionId XBitmap::serialVersionId() const {

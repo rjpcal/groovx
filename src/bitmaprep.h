@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu May 10 12:04:41 2001
+// written: Fri May 18 16:51:43 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -22,6 +22,8 @@ class ostream;
 #    define IOSFWD_DEFINED
 #  endif
 #endif
+
+template <class T> class shared_ptr;
 
 class BmapRenderer;
 template <class V> class Rect;
@@ -50,10 +52,10 @@ namespace IO {
 class BitmapRep {
 public:
   /// Construct with empty bitmap data.
-  BitmapRep(BmapRenderer* renderer);
+  BitmapRep(shared_ptr<BmapRenderer> renderer);
 
   /// Construct and load bitmap data from \a filename.
-  BitmapRep(BmapRenderer* renderer, const char* filename);
+  BitmapRep(shared_ptr<BmapRenderer> renderer, const char* filename);
 
   /// Non-virtual destructor implies this class is not polymorphic.
   ~BitmapRep();

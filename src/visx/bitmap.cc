@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu May 10 12:04:49 2001
+// written: Fri May 18 17:05:01 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,10 +15,14 @@
 
 #include "bitmap.h"
 
+#include "bmaprenderer.h"
 #include "bitmaprep.h"
+
 #include "io/ioproxy.h"
 #include "io/reader.h"
 #include "io/writer.h"
+
+#include "util/pointers.h"
 
 #define NO_TRACE
 #include "util/trace.h"
@@ -35,14 +39,14 @@ namespace {
 //
 ///////////////////////////////////////////////////////////////////////
 
-Bitmap::Bitmap(BmapRenderer* renderer) :
+Bitmap::Bitmap(shared_ptr<BmapRenderer> renderer) :
   GrObj(GROBJ_GL_COMPILE, GROBJ_DIRECT_RENDER),
   itsImpl(new BitmapRep(renderer))
 {
 DOTRACE("Bitmap::Bitmap");
 }
 
-Bitmap::Bitmap(BmapRenderer* renderer, const char* filename) :
+Bitmap::Bitmap(shared_ptr<BmapRenderer> renderer, const char* filename) :
   GrObj(GROBJ_GL_COMPILE, GROBJ_DIRECT_RENDER),
   itsImpl(new BitmapRep(renderer, filename))
 {

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Thu May 10 12:04:41 2001
+// written: Fri May 18 16:53:10 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,8 @@ class istream;
 #    define IOSFWD_DEFINED
 #  endif
 #endif
+
+template <class T> class shared_ptr;
 
 template <class V> class Rect;
 
@@ -48,11 +50,11 @@ class Bitmap : public GrObj {
   // Creators
 public:
   /// Create an empty bitmap.
-  Bitmap(BmapRenderer* renderer);
+  Bitmap(shared_ptr<BmapRenderer> renderer);
 
   /** Create a bitmap from a graphics file. Currently the only
 		supported file format is PBM (Portable BitMap). */
-  Bitmap(BmapRenderer* renderer, const char* filename);
+  Bitmap(shared_ptr<BmapRenderer> renderer, const char* filename);
 
 public:
   /// Virtual destructor ensures proper destruction of subclasses.

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:30 1999
-// written: Thu May 10 12:04:41 2001
+// written: Fri May 18 17:04:03 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,20 @@
 #include "bitmap.h"
 #endif
 
-class GLBmapRenderer;
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(GLBMAPRENDERER_H_DEFINED)
+#include "glbmaprenderer.h"
+#endif
+
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(POINTERS_H_DEFINED)
+#include "util/pointers.h"
+#endif
+
+// Used to allow a shared_ptr to be initialized before we pass it to
+// the Bitmap constructor
+struct GLRHolder {
+  GLRHolder(shared_ptr<GLBmapRenderer> p) : itsRenderer(p) {}
+  shared_ptr<GLBmapRenderer> itsRenderer;
+};
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -28,7 +41,7 @@ class GLBmapRenderer;
  **/
 ///////////////////////////////////////////////////////////////////////
 
-class GLBitmap : public Bitmap {
+class GLBitmap : private GLRHolder, public Bitmap {
 protected:
   /// Construct an empty bitmap.
   GLBitmap();
@@ -58,12 +71,6 @@ public:
 
   /// Change whether the bitmap will be rendered using \c glBitmap().
   void setUsingGlBitmap(bool val);
-
-private:
-  GLBitmap(const GLBitmap&);
-  GLBitmap& operator=(const GLBitmap&);
-
-  GLBmapRenderer* itsRenderer;
 };
 
 static const char vcid_glbitmap_h[] = "$Header$";

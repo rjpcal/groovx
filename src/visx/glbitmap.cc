@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:17 1999
-// written: Thu May 10 12:04:47 2001
+// written: Fri May 18 17:02:37 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,6 @@
 #define GLBITMAP_CC_DEFINED
 
 #include "glbitmap.h"
-
-#include "glbmaprenderer.h"
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
@@ -30,8 +28,6 @@
 #include "util/debug.h"
 
 namespace {
-  GLBmapRenderer* tempRenderer = 0;
-
   const IO::VersionId GLBITMAP_SERIAL_VERSION_ID = 2;
 }
 
@@ -41,16 +37,16 @@ DOTRACE("GLBitmap::make");
 }
 
 GLBitmap::GLBitmap() :
-  Bitmap(tempRenderer = new GLBmapRenderer()),
-  itsRenderer(tempRenderer)
+  GLRHolder(make_shared(new GLBmapRenderer())),
+  Bitmap(itsRenderer)
 {
 DOTRACE("GLBitmap::GLBitmap");
   init();
 }
 
 GLBitmap::GLBitmap(const char* filename) :
-  Bitmap(tempRenderer = new GLBmapRenderer(), filename),
-  itsRenderer(tempRenderer)
+  GLRHolder(make_shared(new GLBmapRenderer())),
+  Bitmap(itsRenderer, filename)
 {
 DOTRACE("GLBitmap::GLBitmap");
   init(); 
@@ -65,7 +61,6 @@ DOTRACE("GLBitmap::init");
 
 GLBitmap::~GLBitmap() {
 DOTRACE("GLBitmap::~GLBitmap");
-  delete itsRenderer; 
 }
 
 IO::VersionId GLBitmap::serialVersionId() const {

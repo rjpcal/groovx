@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Thu May 10 12:04:49 2001
+// written: Fri May 18 16:52:30 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,6 +28,7 @@
 
 #include "gwt/canvas.h"
 
+#include "util/pointers.h"
 #include "util/strings.h"
 
 #include <GL/gl.h>
@@ -63,7 +64,7 @@ private:
   Impl& operator=(const Impl&);
 
 public:
-  Impl(BmapRenderer* renderer, const char* filename="") :
+  Impl(shared_ptr<BmapRenderer> renderer, const char* filename="") :
 	 itsRenderer(renderer),
 	 itsFilename(filename),
 	 itsRasterX(0.0), itsRasterY(0.0),
@@ -74,7 +75,7 @@ public:
 	 itsData()
 	 {}
 
-  BmapRenderer* itsRenderer;
+  shared_ptr<BmapRenderer> itsRenderer;
 
   fixed_string itsFilename;
   double itsRasterX;
@@ -130,14 +131,14 @@ DOTRACE("PbmUpdater::update");
 //
 ///////////////////////////////////////////////////////////////////////
 
-BitmapRep::BitmapRep(BmapRenderer* renderer) :
+BitmapRep::BitmapRep(shared_ptr<BmapRenderer> renderer) :
   itsImpl(new Impl(renderer))
 {
 DOTRACE("BitmapRep::BitmapRep");
   init();
 }
 
-BitmapRep::BitmapRep(BmapRenderer* renderer, const char* filename) :
+BitmapRep::BitmapRep(shared_ptr<BmapRenderer> renderer, const char* filename) :
   itsImpl(new Impl(renderer, filename))
 {
 DOTRACE("BitmapRep::BitmapRep");
