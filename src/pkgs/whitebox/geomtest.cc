@@ -62,18 +62,18 @@ namespace
 
   void testInvert()
   {
+    const txform I = txform::identity();
+
     for (int i = 0; i < 1000; ++i)
       {
-        txform T = txform::random();
-        txform TI = T.inverted();
+        const txform T = txform::random();
+        const txform TI = T.inverted();
 
-        txform M1 = T;  M1.transform(TI); // compute T * inv(T)
-        txform M2 = TI; M2.transform(T);  // compute inv(T) * T
+        const txform M1 = T.mtx_mul(TI); // compute T * inv(T)
+        const txform M2 = TI.mtx_mul(T);  // compute inv(T) * T
 
         dbg_dump(3, M1);
         dbg_dump(3, M2);
-
-        txform I = txform::identity();
 
         TEST_REQUIRE_APPROX(sum_square(M1 - I), 0.0, 1e-20);
         TEST_REQUIRE_APPROX(sum_square(M2 - I), 0.0, 1e-20);

@@ -396,6 +396,17 @@ DOTRACE("geom::txform::rotate");
   this->transform(rotation);
 }
 
+geom::txform geom::txform::mtx_mul(const txform& other) const
+{
+DOTRACE("geom::txform::mtx_mul");
+
+  txform result(true);
+
+  mul_mtx_4x4(this->m_mtx, other.m_mtx, result.m_mtx);
+
+  return result;
+}
+
 void geom::txform::transform(const geom::txform& other)
 {
 DOTRACE("geom::txform::transform");

@@ -75,7 +75,10 @@ namespace geom
     void scale(const vec3<double>& s);
     void rotate(const vec3<double>& rotation_axis, double rotation_angle);
 
-    /// Equivalent to this = this x other, where 'x' is matrix multiplication.
+    /// Result = this x other, where 'x' is matrix multiplication.
+    txform mtx_mul(const txform& other) const;
+
+    /// Equivalent to this = this->mtx_mul(other).
     void transform(const geom::txform& other);
 
     vec2<double> apply_to(const vec2<double>& input) const;

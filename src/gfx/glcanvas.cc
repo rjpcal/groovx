@@ -204,7 +204,7 @@ namespace
   {
     DOTRACE("unproject2");
 
-    txform pm = projection; pm.transform(modelview);
+    const txform pm = projection.mtx_mul(modelview);
     const txform pmi = pm.inverted();
 
     const vec3d screen2(2*(screen_pos.x() - viewport[0])/viewport[2] - 1,
