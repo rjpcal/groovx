@@ -134,7 +134,7 @@ public:
 
   virtual C* getCItemFromId(int id)
     {
-      Util::Ref<C> item(id);
+      Util::WeakRef<C> item(id);
       return item.get();
     }
 
