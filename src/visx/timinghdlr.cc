@@ -3,7 +3,7 @@
 // timinghdlr.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:57 1999
-// written: Fri Jul  7 15:14:23 2000
+// written: Sat Sep 23 15:07:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -64,10 +64,10 @@ public:
 	 itsTrial(0)
 	 {}
 
-  vector<TrialEvent*> itsImmediateEvents;
-  vector<TrialEvent*> itsStartEvents;
-  vector<TrialEvent*> itsResponseEvents;
-  vector<TrialEvent*> itsAbortEvents;
+  std::vector<TrialEvent*> itsImmediateEvents;
+  std::vector<TrialEvent*> itsStartEvents;
+  std::vector<TrialEvent*> itsResponseEvents;
+  std::vector<TrialEvent*> itsAbortEvents;
 
   int itsDummyAutosavePeriod;
   
@@ -78,17 +78,17 @@ private:
   Util::ErrorHandler* itsErrorHandler;
   TrialBase* itsTrial;
 
-  void scheduleAll(vector<TrialEvent*>& events);
-  void cancelAll(vector<TrialEvent*>& events);
+  void scheduleAll(std::vector<TrialEvent*>& events);
+  void cancelAll(std::vector<TrialEvent*>& events);
 
 public:
-  void deleteAll(vector<TrialEvent*>& events);
+  void deleteAll(std::vector<TrialEvent*>& events);
 
-  void serializeVec(ostream& os, IO::IOFlag flag,
-						  const vector<TrialEvent*>& vec);
+  void serializeVec(std::ostream& os, IO::IOFlag flag,
+						  const std::vector<TrialEvent*>& vec);
 
-  void deserializeVec(istream& is, IO::IOFlag flag,
-							 vector<TrialEvent*>& vec);
+  void deserializeVec(std::istream& is, IO::IOFlag flag,
+							 std::vector<TrialEvent*>& vec);
 
   // Delegand functions
   void thHaltExpt();
@@ -130,7 +130,7 @@ DOTRACE("TimingHdlr::~TimingHdlr");
   delete itsImpl;
 }
 
-void TimingHdlr::serialize(ostream &os, IO::IOFlag flag) const {
+void TimingHdlr::serialize(std::ostream &os, IO::IOFlag flag) const {
 DOTRACE("TimingHdlr::serialize");
   if (flag & IO::BASES) { /* no bases to serialize */ }
 
@@ -146,7 +146,7 @@ DOTRACE("TimingHdlr::serialize");
   if (os.fail()) throw IO::OutputError(ioTag);
 }
 
-void TimingHdlr::deserialize(istream &is, IO::IOFlag flag) {
+void TimingHdlr::deserialize(std::istream &is, IO::IOFlag flag) {
 DOTRACE("TimingHdlr::deserialize");
   if (flag & IO::BASES) { /* no bases to deserialize */ }
   if (flag & IO::TYPENAME) { IO::IoObject::readTypename(is, ioTag); }
@@ -301,16 +301,16 @@ DOTRACE("TimingHdlr::addEventByName");
 ///////////////////////////////////////////////////////////////////////
 
 
-void TimingHdlr::Impl::serializeVec(ostream& os, IO::IOFlag flag,
-												const vector<TrialEvent*>& vec) {
+void TimingHdlr::Impl::serializeVec(std::ostream& os, IO::IOFlag flag,
+												const std::vector<TrialEvent*>& vec) {
   os << vec.size() << IO::SEP;
   for (size_t i = 0; i < vec.size(); ++i) {
 	 vec[i]->serialize(os, flag);
   }
 }
 
-void TimingHdlr::Impl::deserializeVec(istream& is, IO::IOFlag flag,
-												  vector<TrialEvent*>& vec) {
+void TimingHdlr::Impl::deserializeVec(std::istream& is, IO::IOFlag flag,
+												  std::vector<TrialEvent*>& vec) {
   deleteAll(vec);
 
   size_t size; is >> size; DebugEvalNL(size);
@@ -328,7 +328,7 @@ void TimingHdlr::Impl::deserializeVec(istream& is, IO::IOFlag flag,
   }
 }
 
-void TimingHdlr::Impl::scheduleAll(vector<TrialEvent*>& events) {
+void TimingHdlr::Impl::scheduleAll(std::vector<TrialEvent*>& events) {
 DOTRACE("TimingHdlr::Impl::scheduleAll");
   Assert(itsTrial != 0);
   Assert(itsWidget != 0);
@@ -339,14 +339,14 @@ DOTRACE("TimingHdlr::Impl::scheduleAll");
   }
 }
 
-void TimingHdlr::Impl::cancelAll(vector<TrialEvent*>& events) {
+void TimingHdlr::Impl::cancelAll(std::vector<TrialEvent*>& events) {
 DOTRACE("TimingHdlr::Impl::cancelAll");
   for (size_t i = 0; i < events.size(); ++i) {
 	 events[i]->cancel();
   }
 }
 
-void TimingHdlr::Impl::deleteAll(vector<TrialEvent*>& events) {
+void TimingHdlr::Impl::deleteAll(std::vector<TrialEvent*>& events) {
 DOTRACE("TimingHdlr::Impl::deleteAll");
   for (size_t i = 0; i < events.size(); ++i) {
 	 delete events[i];
