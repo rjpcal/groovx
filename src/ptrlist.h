@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Thu Mar 30 08:29:18 2000
+// written: Thu Oct  5 18:23:32 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -11,8 +11,8 @@
 #ifndef PTRLIST_H_DEFINED
 #define PTRLIST_H_DEFINED
 
-#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(DUMBPTR_H_DEFINED)
-#include "dumbptr.h"
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(LISTITEM_H_DEFINED)
+#include "listitem.h"
 #endif
 
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOPTRLIST_H_DEFINED)
@@ -49,7 +49,9 @@ public:
   // pointers //
   //////////////
 
-  typedef DumbPtr<T> Ptr;
+  typedef T* Ptr;
+
+  typedef ListItem<T> SharedPtr;
 
   ///////////////
   // accessors //
@@ -61,14 +63,18 @@ public:
       index into the list. If \a id is out of range, a segmentation
       fault may occur. If \a is in range, but is not an index for a
       valid object, the pointer returned may be null. */
-  Ptr getPtr(int id) const throw () 
-	 { return DumbPtr<T>(castToT(VoidPtrList::getVoidPtr(id))); }
+  SharedPtr getPtr(int id) const throw () 
+    {
+		return SharedPtr(castToT(VoidPtrList::getVoidPtr(id)), *this, id);
+	 }
 
   /** Returns the object at index \a id, after a check is performed to
       ensure that \a id is in range, and refers to a valid object. If
       the check fails, an \c InvalidIdError exception is thrown. */
-  Ptr getCheckedPtr(int id) const throw (InvalidIdError)
-	 { return DumbPtr<T>(castToT(VoidPtrList::getCheckedVoidPtr(id))); }
+  SharedPtr getCheckedPtr(int id) const throw (InvalidIdError)
+	 {
+		return SharedPtr(castToT(VoidPtrList::getCheckedVoidPtr(id)), *this, id);
+	 }
 
   //////////////////
   // manipulators //
@@ -78,17 +84,17 @@ public:
       object is transferred to the caller, and the list site at \a id
       becomes vacant. */
   Ptr release(int id) throw (InvalidIdError)
-	 { return DumbPtr<T>(castToT(VoidPtrList::releaseVoidPtr(id))); }
+	 { return Ptr(castToT(VoidPtrList::releaseVoidPtr(id))); }
 
   /// Insert \a ptr into the list, and return its id.
-  int insert(Ptr ptr)
-	 { return VoidPtrList::insertVoidPtr(castFromT(ptr.get())); }
+  int insert(T* ptr)
+	 { return VoidPtrList::insertVoidPtr(castFromT(ptr)); }
 
   /** Insert \a ptr into the list at index \a id. If an object
       previously existed at index \a id, that object will be properly
       destroyed. */
-  void insertAt(int id, Ptr ptr)
-	 { VoidPtrList::insertVoidPtrAt(id, castFromT(ptr.get())); }
+  void insertAt(int id, T* ptr)
+	 { VoidPtrList::insertVoidPtrAt(id, castFromT(ptr)); }
 
 protected:
   /// Safely cast \a ptr to the correct type for this list.
