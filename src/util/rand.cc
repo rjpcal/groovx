@@ -32,7 +32,9 @@
 #ifndef RAND_CC_DEFINED
 #define RAND_CC_DEFINED
 
-unsigned long globalRandSeed = 0;
+#include "rand.h"
+
+unsigned long Util::globalRandSeed = 0;
 
 static const char vcid_rand_cc[] = "$Header$";
 #endif // !RAND_CC_DEFINED
