@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep 21 09:51:40 1999
-// written: Thu Jul 19 21:03:04 2001
+// written: Sun Jul 22 23:33:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,10 @@
 #define CMATH_DEFINED
 #endif
 
+#if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ALGO_H_DEFINED)
+#include "util/algo.h"
+#endif
+
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(ARRAYS_H_DEFINED)
 #include "util/arrays.h"
 #endif
@@ -25,16 +29,6 @@
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(SLINK_LIST_H_DEFINED)
 #include "util/slink_list.h"
 #endif
-
-namespace {
-  template <class T>
-  inline T max(const T& a, const T& b)
-    { return (a > b) ? a : b; }
-
-  template <class T>
-  inline T min(const T& a, const T& b)
-    { return (a < b) ? a : b; }
-}
 
 ///////////////////////////////////////////////////////////////////////
 /**

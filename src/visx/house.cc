@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Thu Jul 19 09:34:11 2001
+// written: Sun Jul 22 23:34:22 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -25,6 +25,8 @@
 #include "io/reader.h"
 #include "io/writer.h"
 
+#include "util/algo.h"
+
 #include <GL/gl.h>
 
 #define NO_TRACE
@@ -38,11 +40,9 @@
 //
 ///////////////////////////////////////////////////////////////////////
 
-namespace {
+namespace
+{
   const IO::VersionId HOUSE_SERIAL_VERSION_ID = 2;
-
-  template <class T>
-  inline T max(const T& t1, const T& t2) { return (t1 > t2) ? t1 : t2; }
 
   const FieldInfo FINFOS[] = {
     FieldInfo("storyAspectRatio",

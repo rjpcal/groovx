@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:00:57 2001
-// written: Thu Jul 19 10:31:35 2001
+// written: Sun Jul 22 23:35:07 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,14 +16,7 @@
 #include "grobj.h"
 #include "rect.h"
 
-namespace
-{
-  template <class T>
-  inline T max(const T& t1, const T& t2)
-    {
-      return (t2 > t1) ? t2 : t1;
-    }
-}
+#include "util/algo.h"
 
 class GrObjScaler {
 public:
