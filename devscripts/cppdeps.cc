@@ -498,8 +498,7 @@ cppdeps::cppdeps(const int argc, char** const argv) :
   m_cfg_header_exts.push_back(".hh");
   m_cfg_header_exts.push_back(".hpp");
 
-  m_cfg_exe_formats.add_format(":*.exe");
-  m_cfg_link_formats.add_format(":*.link");
+  m_cfg_exe_formats.add_format(":");
 
   char** arg = argv+1; // skip to first command-line arg
 
@@ -1127,13 +1126,12 @@ void cppdeps::print_include_tree(const string& fname)
 
 void cppdeps::print_link_deps(const string& fname)
 {
-  string fname_stem;
-  if (!get_cc_fname_stem(fname, fname_stem))
+  const string exe = m_cfg_exe_formats.transform(fname);
+
+  if (exe.empty())
     return;
 
   const dep_list_t& ldeps = get_nested_ldeps(fname);
-
-  const string exe = m_cfg_exe_formats.transform(fname);
 
   std::set<string> links;
 
