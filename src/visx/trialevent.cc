@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Tue May 14 19:50:30 2002
+// written: Wed Sep 11 14:13:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,7 +15,6 @@
 
 #include "visx/trialevent.h"
 
-#include "visx/grshapp.h"
 #include "visx/trialbase.h"
 
 #include "gfx/canvas.h"
@@ -27,6 +26,8 @@
 #include "io/writer.h"
 
 #include "system/demangle.h"
+
+#include "tcl/tclmain.h"
 
 #include "util/algo.h"
 #include "util/error.h"
@@ -358,8 +359,7 @@ DOTRACE("ClearBufferEvent::invoke");
 
 GenericEvent::GenericEvent(int msec) :
   TrialEvent(msec),
-  itsCallback(new Tcl::ProcWrapper
-              (dynamic_cast<GrshApp&>(Application::theApp()).getInterp()))
+  itsCallback(new Tcl::ProcWrapper(Tcl::Main::safeInterp()))
 {}
 
 GenericEvent::~GenericEvent() {}

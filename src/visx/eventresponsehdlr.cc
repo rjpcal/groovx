@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov  9 15:32:48 1999
-// written: Wed Jan 30 16:00:01 2002
+// written: Wed Sep 11 14:07:25 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,7 +16,6 @@
 #include "visx/eventresponsehdlr.h"
 
 #include "visx/feedbackmap.h"
-#include "visx/grshapp.h"
 #include "visx/sound.h"
 #include "visx/response.h"
 #include "visx/trialbase.h"
@@ -27,6 +26,7 @@
 #include "gwt/widget.h"
 
 #include "tcl/tclfunctor.h"
+#include "tcl/tclmain.h"
 #include "tcl/tclprocwrapper.h"
 #include "tcl/tclsafeinterp.h"
 
@@ -234,7 +234,7 @@ Util::Tracer EventResponseHdlr::tracer;
 EventResponseHdlr::Impl::Impl(EventResponseHdlr* owner) :
   itsOwner(owner),
   itsState(0),
-  itsInterp(dynamic_cast<GrshApp&>(Application::theApp()).getInterp()),
+  itsInterp(Tcl::Main::safeInterp()),
   itsCmdCallback(Tcl::makeCmd(itsInterp.intp(), &handleResponseCallback,
                               uniqCmdName("handler").c_str(), "<private>")),
   itsFeedbackMap(),
