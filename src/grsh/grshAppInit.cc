@@ -110,11 +110,12 @@ extern "C"
   Tcl_PackageInitProc Responsehandler_Init;
   Tcl_PackageInitProc Serialrh_Init;
   Tcl_PackageInitProc Sound_Init;
+  Tcl_PackageInitProc Timinghandler_Init;
+  Tcl_PackageInitProc Timinghdlr_Init;
+  Tcl_PackageInitProc Tkwidget_Init;
   Tcl_PackageInitProc Tlist_Init;
   Tcl_PackageInitProc Toglet_Init;
   Tcl_PackageInitProc Trial_Init;
-  Tcl_PackageInitProc Timinghdlr_Init;
-  Tcl_PackageInitProc Timinghandler_Init;
   Tcl_PackageInitProc Trialevent_Init;
   Tcl_PackageInitProc Genericevent_Init;
 }
@@ -196,6 +197,7 @@ PackageInfo DELAYED_PKGS[] =
     { "Sound",               Sound_Init,               "1.0" },
     { "Timinghandler",       Timinghandler_Init,       "3.0" },
     { "Timinghdlr",          Timinghdlr_Init,          "3.0" },
+    { "Tkwidget",            Tkwidget_Init,            "1.0" },
     { "Tlist",               Tlist_Init,               "3.0" },
     { "Toglet",              Toglet_Init,              "1.0" },
     { "Trial",               Trial_Init,               "1.0" },

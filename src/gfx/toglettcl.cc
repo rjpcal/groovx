@@ -112,10 +112,9 @@ public:
   TogletPkg(Tcl_Interp* interp) :
     Tcl::Pkg(interp, "Toglet", "$Revision$")
   {
-    this->inheritPkg("Obj");
+    this->inheritPkg("TkWidget");
     Tcl::defGenericObjCmds<Toglet>(this);
 
-    def( "bind", "event_sequence binding_script", &Toglet::bind );
     def( "current", "toglet_id", &Toglet::setCurrent );
     def( "current", 0, &Toglet::getCurrent );
     def( "defaultParent", "parent", &Toglet::defaultParent );
@@ -128,24 +127,12 @@ public:
     defSetter("animate", "item_id(s) frames_per_second", &Toglet::animate);
     defAttrib("camera", &Toglet::getCamera, &Toglet::setCamera);
     defAction("clearscreen", &Toglet::fullClearscreen);
-    defAttrib("cursor", &Tcl::TkWidget::getCursor, &Tcl::TkWidget::setCursor);
-    defAction("destroy", &Tcl::TkWidget::destroyWidget);
-    defAction("grabKeyboard", &Tcl::TkWidget::grabKeyboard);
-    defAttrib("height", &Tcl::TkWidget::height, &Tcl::TkWidget::setHeight);
     defSetter("hold", "item_id(s) hold_on?", &Toglet::setHold);
-    defAction("maximize", &Tcl::TkWidget::maximize);
-    defAction("minimize", &Tcl::TkWidget::minimize);
-    defGetter("pathname", &Tcl::TkWidget::pathname);
-    defGetter("pixelsPerInch", &Tcl::TkWidget::pixelsPerInch);
     defSetter("setVisible", "item_id(s) visibility", &Toglet::setVisibility);
     defAttrib("size", &Toglet::size, &Toglet::setSize);
     defAction("swapBuffers", &Toglet::swapBuffers);
     defAction("takeFocus", &Toglet::takeFocus);
     defAction("undraw", &Toglet::undraw);
-    def("warpPointer", "item_id x y", &Tcl::TkWidget::warpPointer);
-    defAttrib("width", &Tcl::TkWidget::width, &Tcl::TkWidget::setWidth);
-
-    defAction("hook", &Tcl::TkWidget::hook);
 
     Toglet::make();
 
