@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct 30 10:00:39 2000
-// written: Fri Jun 15 14:19:32 2001
+// written: Tue Jun 19 15:11:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ namespace IoTcl {
 
       int num_read = 0;
 
-      is >> ws;
+      is >> STD_IO::ws;
 
       while ( (num_to_read == ALL || num_read < num_to_read)
               && (is.peek() != EOF) ) {
@@ -70,7 +70,7 @@ namespace IoTcl {
 
         ++num_read;
 
-        is >> ws;
+        is >> STD_IO::ws;
       }
     }
 
