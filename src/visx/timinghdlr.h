@@ -3,7 +3,7 @@
 // timinghdlr.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Jun 21 13:09:55 1999
-// written: Wed Dec  1 14:14:53 1999
+// written: Wed Dec  1 14:18:06 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -84,12 +84,6 @@ public:
   virtual void thHaltExpt(Experiment* expt);
 
 private:
-  void scheduleAll(vector<TrialEvent*>& events);
-  void cancelAll(vector<TrialEvent*>& events);
-  void deleteAll(vector<TrialEvent*>& events);
-
-  void cancelAll();
-
   vector<TrialEvent*> itsImmediateEvents;
   vector<TrialEvent*> itsStartEvents;
   vector<TrialEvent*> itsResponseEvents;
