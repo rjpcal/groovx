@@ -19,16 +19,6 @@
 #include "io/iodecls.h"
 #endif
 
-#ifdef PRESTANDARD_IOSTREAMS
-class istream;
-class ostream;
-#else
-#  if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(IOSFWD_DEFINED)
-#    include <iosfwd>
-#    define IOSFWD_DEFINED
-#  endif
-#endif
-
 #if defined(NO_EXTERNAL_INCLUDE_GUARDS) || !defined(TYPEINFO_DEFINED)
 #include <typeinfo>
 #define TYPEINFO_DEFINED
@@ -104,10 +94,6 @@ public:
 private:
   unsigned long itsId;
 };
-
-
-
-
 
 
 
