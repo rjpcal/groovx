@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:33:50 1999
-// written: Wed Jun 20 17:45:53 2001
+// written: Wed Jun 20 18:06:48 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -33,13 +33,13 @@
 
 #include "util/error.h"
 #include "util/errorhandler.h"
+#include "util/log.h"
 #include "util/minivec.h"
 #include "util/ref.h"
 #include "util/stopwatch.h"
 #include "util/strings.h"
 
 #include <tcl.h>
-#include <iostream.h>
 #include <sys/time.h>
 
 #define DYNAMIC_TRACE_EXPR ExptDriver::tracer.status()
@@ -63,7 +63,7 @@ namespace {
 
 #ifdef TIME_TRACE
   inline void TimeTraceNL(const char* loc, int msec) {
-    cerr << "in " << loc << ", elapsed time == " << msec << endl;
+    Util::log() << "in " << loc << ", elapsed time == " << msec << '\n';
   }
 #else
   inline void TimeTraceNL(const char*, int) {}
@@ -453,9 +453,9 @@ DOTRACE("ExptDriver::Impl::doUponCompletion");
 
 void ExptDriver::Impl::noteElapsedTime() const {
 DOTRACE("ExptDriver::Impl::noteElapsedTime");
-  cout << "expt completed in "
-       << itsTimer.elapsedMsec()
-       << " milliseconds\n";
+  Util::log() << "expt completed in "
+              << itsTimer.elapsedMsec()
+              << " milliseconds\n";
 }
 
 void ExptDriver::Impl::getCurrentTimeDateString(fixed_string& date_out) const {
@@ -750,13 +750,13 @@ DOTRACE("ExptDriver::Impl::storeData");
     expt_filename += unique_file_extension;
     expt_filename += ".asw";
     writeASW(expt_filename.c_str());
-    cout << "wrote file " << expt_filename << endl;
+    Util::log() << "wrote file " << expt_filename.c_str() << '\n';
 
     // Write the responses file
     dynamic_string resp_filename = "resp";
     resp_filename += unique_file_extension;
     TlistUtils::writeResponses(resp_filename.c_str());
-    cout << "wrote file " << resp_filename << endl;
+    Util::log() << "wrote file " << resp_filename.c_str() << '\n';
 
     // Change file access modes to allow read-only by all
     System::mode_t datafile_mode = System::IRUSR | System::IRGRP | System::IROTH;
