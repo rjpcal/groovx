@@ -3,7 +3,7 @@
 // gtext.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jul  1 11:54:48 1999
-// written: Tue Oct  5 12:43:25 1999
+// written: Thu Oct  7 13:38:46 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,11 +27,23 @@
 namespace {
   const string ioTag = "Gtext";
 
+//---------------------------------------------------------------------
+//
+// pointtype struct
+//
+//---------------------------------------------------------------------
+
   enum pointtype {PT, STROKE, END};
   struct CP {
-	 GLint x,y;
+	 GLfloat x,y;
 	 pointtype type;
   };
+
+//---------------------------------------------------------------------
+//
+// uppercase stroke data
+//
+//---------------------------------------------------------------------
 
   CP Adata[] = {
 	 {0, 0, PT}, {0, 3, PT}, {2, 6, PT}, {4, 3, PT}, {4, 0, STROKE},
@@ -152,6 +164,12 @@ namespace {
 	 {1, 3, PT}, {3, 3, END}
   };
 
+//---------------------------------------------------------------------
+//
+// lowercase stroke data
+//
+//---------------------------------------------------------------------
+
   CP adata[] = {
 	 {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 0, STROKE},
 	 {4, 3, PT}, {1, 3, PT}, {0, 2, PT}, {0, 1, PT}, {1, 0, PT}, {3, 0, PT}, {4, 1, END}
@@ -175,10 +193,326 @@ namespace {
 	 {3, 0, PT}, {1, 0, PT}, {0, 1, PT}, {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 2, PT}, {0, 2, END}
   };
 
+  CP fdata[] = {
+	 {1, 0, PT}, {1, 5, PT}, {2, 6, PT}, {3, 6, PT}, {4, 5, STROKE},
+	 {0, 3, PT}, {3, 3, END}
+  };
+
+  CP gdata[] = {
+	 {4, 2, PT}, {3, 1, PT}, {1, 1, PT}, {0, 2, PT}, {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 0, PT}, {3, -1, PT}, {1, -1, PT}, {0, 0, END}
+  };
+
+  CP hdata[] = {
+	 {0, 0, PT}, {0, 6, STROKE},
+	 {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 0, END}
+  };
+
+  CP idata[] = {
+	 {0, 0, PT}, {4, 0, STROKE},
+	 {1, 4, PT}, {2, 4, PT}, {2, 0, STROKE},
+	 {2, 6, PT}, {2.25, 5.75, PT}, {2, 5.5, PT}, {1.75, 5.75, PT}, {2, 6, END}
+  };
+
+  CP jdata[] = { 
+	 {3, 4, PT}, {4, 4, PT}, {4, 0, PT}, {3, -1, PT}, {1, -1, PT}, {0, 0, STROKE},
+	 {4, 6, PT}, {4.25, 5.75, PT}, {4, 5.5, PT}, {3.75, 5.75, PT}, {4, 6, END}
+  };
+
+  CP kdata[] = {
+	 {0, 0, PT}, {0, 6, STROKE},
+	 {0, 2, PT}, {1, 2, PT}, {4, 4, STROKE},
+	 {1, 2, PT}, {4, 0, END}
+  };
+
+  CP ldata[] = {
+	 {0, 0, PT}, {4, 0, STROKE},
+	 {1, 6, PT}, {2, 6, PT}, {2, 0, END}
+  };
+
+  CP mdata[] = {
+	 {0, 0, PT}, {0, 4, PT}, {2, 4, PT}, {2, 1, STROKE},
+	 {2, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 0, END}
+  };
+
+  CP ndata[] = {
+	 {0, 0, PT}, {0, 4, STROKE},
+	 {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 0, END}
+  };
+
+  CP odata[] = {
+	 {1, 0, PT}, {0, 1, PT}, {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 1, PT}, {3, 0, PT}, {1, 0, END}
+  };
+
+  CP pdata[] = {
+	 {0, -1, PT}, {0, 4, STROKE},
+	 {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 2, PT}, {3, 1, PT}, {1, 1, PT}, {0, 2, END}
+  };
+
+  CP qdata[] = {
+	 {4, -1, PT}, {4, 4, STROKE},
+	 {4, 3, PT}, {3, 4, PT}, {1, 4, PT}, {0, 3, PT}, {0, 2, PT}, {1, 1, PT}, {3, 1, PT}, {4, 2, END}
+  };
+
+  CP rdata[] = {
+	 {0, 0, PT}, {0, 4, STROKE},
+	 {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, END}
+  };
+
+  CP sdata[] = {
+	 {0, 1, PT}, {1, 0, PT}, {3, 0, PT}, {4, 1, PT}, {4, 2, PT}, {0, 2, PT}, {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, END}
+  };
+
+  CP tdata[] = {
+	 {0, 4, PT}, {3, 4, STROKE},
+	 {1, 5, PT}, {1, 1, PT}, {2, 0, PT}, {3, 0, PT}, {4, 1, END}
+  };
+
+  CP udata[] = {
+	 {0, 4, PT}, {0, 1, PT}, {1, 0, PT}, {3, 0, PT}, {4, 1, STROKE},
+	 {4, 0, PT}, {4, 4, END}
+  };
+
+  CP vdata[] = {
+	 {0, 4, PT}, {2, 0, PT}, {4, 4, END}
+  };
+
+  CP wdata[] = {
+	 {0, 4, PT}, {0, 1, PT}, {1, 0, PT}, {2, 1, STROKE},
+	 {2, 3, PT}, {2, 1, PT}, {3, 0, PT}, {4, 1, PT}, {4, 4, END}
+  };
+
+  CP xdata[] = {
+	 {0, 4, PT}, {4, 0, STROKE},
+	 {0, 0, PT}, {4, 4, END}
+  };
+
+  CP ydata[] = {
+	 {0, 4, PT}, {0, 2, PT}, {1, 1, PT}, {3, 1, PT}, {4, 2, STROKE},
+	 {4, 4, PT}, {4, 0, PT}, {3, -1, PT}, {1, -1, PT}, {0, 0, END}
+  };
+
+  CP zdata[] = {
+	 {0, 4, PT}, {4, 4, PT}, {0, 0, PT}, {4, 0, STROKE},
+	 {1, 2, PT}, {3, 2, END}
+  };
+
+//---------------------------------------------------------------------
+//
+// numeric stroke data
+//
+//---------------------------------------------------------------------
+
+  CP n0data[] = {
+	 {1, 0, PT}, {0, 1, PT}, {0, 5, PT}, {1, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 1, PT}, {3, 0, PT}, {1, 0, STROKE},
+	 {0, 0, PT}, {4, 6, END}
+  };
+
+  CP n1data[] = {
+	 {0, 0, PT}, {4, 0, STROKE},
+	 {0, 4, PT}, {2, 6, PT}, {2, 0, END}
+  };
+
+  CP n2data[] = {
+	 {0, 5, PT}, {1, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 4, PT}, {0, 1, PT}, {0, 0, PT}, {4, 0, END}
+  };
+
+  CP n3data[] = {
+	 {0, 6, PT}, {4, 6, PT}, {2, 3, PT}, {3, 3, PT}, {4, 2, PT}, {4, 1, PT}, {3, 0, PT}, {1, 0, PT}, {0, 1, END}
+  };
+
+  CP n4data[] = {
+	 {3, 0, PT}, {3, 6, PT}, {0, 3, PT}, {0, 2, PT}, {4, 2, END}
+  };
+
+  CP n5data[] = {
+	 {4, 6, PT}, {0, 6, PT}, {0, 3, PT}, {1, 4, PT}, {3, 4, PT}, {4, 3, PT}, {4, 1, PT}, {3, 0, PT}, {1, 0, PT}, {0, 1, END}
+  };
+
+  CP n6data[] = {
+	 {3, 6, PT}, {2, 6, PT}, {0, 4, PT}, {0, 1, PT}, {1, 0, PT}, {3, 0, PT}, {4, 1, PT}, {4, 2, PT}, {3, 3, PT}, {1, 3, PT}, {0, 2, END}
+  };
+
+  CP n7data[] = {
+	 {0, 6, PT}, {4, 6, PT}, {1, 0, STROKE},
+	 {1.5, 3, PT}, {3.5, 3, END}
+  };
+
+  CP n8data[] = {
+	 {1, 3, PT}, {0, 4, PT}, {0, 5, PT}, {1, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 4, PT}, {3, 3, PT}, {1, 3, PT},
+                {0, 2, PT}, {0, 1, PT}, {1, 0, PT}, {3, 0, PT}, {4, 1, PT}, {4, 2, PT}, {3, 3, END}
+  };
+
+  CP n9data[] = {
+	 {1, 0, PT}, {2, 0, PT}, {4, 2, PT}, {4, 5, PT}, {3, 6, PT}, {1, 6, PT}, {0, 5, PT}, {0, 4, PT}, {1, 3, PT}, {3, 3, PT}, {4, 4, END}
+  };
+
+
+//---------------------------------------------------------------------
+//
+// punctuation data
+//
+// !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+//
+//---------------------------------------------------------------------
+
+  CP space_data[] = { {0, 0, END} };
+  
+  CP exclamation_data[] = {
+	 {2, 6, PT}, {2, 2, STROKE},
+	 {2, 0, PT}, {2.25, 0.25, PT}, {2, 0.5, PT}, {1.75, 0.25, PT}, {2, 0, END}
+  };
+
+  CP double_quote_data[] = {
+	 {1, 6, PT}, {1, 4, STROKE},
+	 {3, 6, PT}, {3, 4, END}
+  };
+
+  CP pound_sign_data[] = {
+	 {0.5, 1, PT}, {1.5, 5, STROKE},
+	 {2.5, 1, PT}, {3.5, 5, STROKE},
+	 {0, 2, PT}, {4, 2, STROKE},
+	 {0, 4, PT}, {4, 4, END}
+  };
+
+  CP dollar_sign_data[] = {
+	 {4, 5, PT}, {1, 5, PT}, {0, 4, PT}, {1, 3, PT}, {3, 3, PT}, {4, 2, PT}, {3, 1, PT}, {0, 1, STROKE},
+	 {2, 6, PT}, {2, 0, END}
+  };
+
+  CP percent_data[] = {
+	 {0, 0, PT}, {4, 6, STROKE},
+	 {1, 5.5, PT}, {1.5, 5, PT}, {1, 4.5, PT}, {0.5, 5, PT}, {1, 5.5, STROKE},
+	 {3, 1.5, PT}, {3.5, 1, PT}, {3, 0.5, PT}, {2.5, 1, PT}, {3, 1.5, END}
+  };
+
+  CP ampersand_data[] = {
+	 {4, 2, PT}, {2, 0, PT}, {1, 0, PT}, {0, 1, PT}, {0, 2, PT}, {3, 4, PT}, {3, 5, PT}, {2, 6, PT}, {1, 6, PT}, {0, 5, PT}, {0, 4, PT}, {4, 0, END}
+  };
+
+  CP apostrophe_data[] = {
+	 {2, 6, PT}, {2, 5, PT}, {1, 4, END}
+  };
+
+  CP left_paren_data[] = {
+	 {3, 6, PT}, {1, 4, PT}, {1, 2, PT}, {3, 0, END}
+  };
+
+  CP right_paren_data[] = {
+	 {1, 6, PT}, {3, 4, PT}, {3, 2, PT}, {1, 0, END}
+  };
+
+  CP asterisk_data[] = {
+	 {0, 3, PT}, {4, 3, STROKE},
+	 {0.5, 1.5, PT}, {3.5, 4.5, STROKE},
+	 {0.5, 4.5, PT}, {3.5, 1.5, END}
+  };
+
+  CP plus_data[] = {
+	 {0, 3, PT}, {4, 3, STROKE},
+	 {2, 5, PT}, {2, 1, END}
+  };
+
+  CP comma_data[] = {
+	 {2, 1, PT}, {2, 0, PT}, {1, -1, END}
+  };
+
+  CP hyphen_data[] = {
+	 {0, 3, PT}, {4, 3, END}
+  };
+
+  CP period_data[] = {
+	 {2, 0.25, PT}, {2.25, 0, PT}, {2, -0.25, PT}, {1.75, 0, PT}, {2, 0.25, END}
+  };
+
+  CP slash_data[] = {
+	 {0, 0, PT}, {4, 6, END}
+  };
+
+  CP colon_data[] = {
+	 {2, 0.25, PT}, {2.25, 0, PT}, {2, -0.25, PT}, {1.75, 0, PT}, {2, 0.25, STROKE},
+	 {2, 4.25, PT}, {2.25, 4, PT}, {2, 3.75, PT}, {1.75, 4, PT}, {2, 4.25, END}
+  };
+
+  CP semicolon_data[] = {
+	 {2, 4.25, PT}, {2.25, 4, PT}, {2, 3.75, PT}, {1.75, 4, PT}, {2, 4.25, STROKE},
+	 {2, 1, PT}, {2, 0, PT}, {1, -1, END}
+  };
+
+  CP left_angle_data[] = {
+	 {4, 6, PT}, {0, 3, PT}, {4, 0, END}
+  };
+
+  CP equal_data_data[] = {
+	 {0, 2, PT}, {4, 2, STROKE},
+	 {0, 4, PT}, {4, 4, END}
+  };
+
+  CP right_angle_data[] = {
+	 {0, 6, PT}, {4, 3, PT}, {0, 0, END}
+  };
+
+  CP question_data[] = {
+	 {0, 5, PT}, {1, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 4, PT}, {2, 3, PT}, {2, 2, STROKE},
+	 {2, 0.25, PT}, {2.25, 0, PT}, {2, -0.25, PT}, {1.75, 0, PT}, {2, 0.25, END}
+  };
+  
+  CP at_data[] = {
+	 {3, 0, PT}, {1, 0, PT}, {0, 1, PT}, {0, 5, PT}, {1, 6, PT}, {3, 6, PT}, {4, 5, PT}, {4, 2, PT}, {1.5, 2, PT}, {1, 2.5, PT}, {1, 3.5, PT},
+                {1.5, 4, PT}, {3, 4, PT}, {3, 2, END}
+  };
+
+  CP left_square_data[] = {
+	 {4, 0, PT}, {1, 0, PT}, {1, 6, PT}, {4, 6, END}
+  };
+
+  CP backslash_data[] = {
+	 {0, 6, PT}, {4, 0, END}
+  };
+
+  CP right_square_data[] = {
+	 {0, 0, PT}, {3, 0, PT}, {3, 6, PT}, {0, 6, END}
+  };
+
+  CP caret_data[] = {
+	 {0.5, 4.5, PT}, {2, 6, PT}, {3.5, 4.5, END}
+  };
+
+  CP underscore_data[] = {
+	 {0, 0, PT}, {4, 0, END}
+  };
+
+  CP backquote_data[] = {
+	 {2, 6, PT}, {2, 5, PT}, {3, 4, END}
+  };
+  
+  CP left_curly_data[] = {
+	 {4, 6, PT}, {3, 6, PT}, {2, 5, PT}, {2, 3.5, PT}, {2.5, 3, PT}, {1.5, 3, STROKE},
+	 {2.5, 3, PT}, {2, 2.5, PT}, {2, 1, PT}, {3, 0, PT}, {4, 0, END}
+  };
+
+  CP vertical_bar_data[] = {
+	 {2, 0, PT}, {2, 6, END}
+  };
+
+  CP right_curly_data[] = {
+	 {0, 6, PT}, {1, 6, PT}, {2, 5, PT}, {2, 3.5, PT}, {1.5, 3, PT}, {2.5, 3, STROKE},
+	 {1.5, 3, PT}, {2, 2.5, PT}, {2, 1, PT}, {1, 0, PT}, {0, 0, END}
+  };
+
+  CP tilde_data[] = {
+	 {0.5, 5, PT}, {1.5, 6, PT}, {2.5, 5, PT}, {3.5, 6, END}
+  };
+
+//---------------------------------------------------------------------
+//
+// drawLetter -- parses stroke data into OpenGL code
+//
+//---------------------------------------------------------------------
+
   void drawLetter(CP* cp) {
 	 glBegin(GL_LINE_STRIP);
 	 while (1) {
-		glVertex2iv(&cp->x);
+		glVertex2fv(&cp->x);
 
 		switch (cp->type) {
 		case PT:
@@ -189,7 +523,7 @@ namespace {
 		  break;
 		case END:
 		  glEnd();
-		  glTranslatef(6.0, 0.0, 0.0);
+		  glTranslatef(5.0, 0.0, 0.0);
 		  return;
 		}
 		
@@ -233,12 +567,88 @@ namespace {
 	 glNewList(listBase + 'Y', GL_COMPILE); drawLetter(Ydata); glEndList();
 	 glNewList(listBase + 'Z', GL_COMPILE); drawLetter(Zdata); glEndList();
 
-	 glNewList(listBase + ' ', GL_COMPILE); glTranslatef(6.0, 0.0, 0.0); glEndList();
+	 glNewList(listBase + 'a', GL_COMPILE); drawLetter(adata); glEndList();
+	 glNewList(listBase + 'b', GL_COMPILE); drawLetter(bdata); glEndList();
+	 glNewList(listBase + 'c', GL_COMPILE); drawLetter(cdata); glEndList();
+	 glNewList(listBase + 'd', GL_COMPILE); drawLetter(ddata); glEndList();
+	 glNewList(listBase + 'e', GL_COMPILE); drawLetter(edata); glEndList();
+	 glNewList(listBase + 'f', GL_COMPILE); drawLetter(fdata); glEndList();
+	 glNewList(listBase + 'g', GL_COMPILE); drawLetter(gdata); glEndList();
+	 glNewList(listBase + 'h', GL_COMPILE); drawLetter(hdata); glEndList();
+	 glNewList(listBase + 'i', GL_COMPILE); drawLetter(idata); glEndList();
+	 glNewList(listBase + 'j', GL_COMPILE); drawLetter(jdata); glEndList();
+	 glNewList(listBase + 'k', GL_COMPILE); drawLetter(kdata); glEndList();
+	 glNewList(listBase + 'l', GL_COMPILE); drawLetter(ldata); glEndList();
+	 glNewList(listBase + 'm', GL_COMPILE); drawLetter(mdata); glEndList();
+	 glNewList(listBase + 'n', GL_COMPILE); drawLetter(ndata); glEndList();
+	 glNewList(listBase + 'o', GL_COMPILE); drawLetter(odata); glEndList();
+	 glNewList(listBase + 'p', GL_COMPILE); drawLetter(pdata); glEndList();
+	 glNewList(listBase + 'q', GL_COMPILE); drawLetter(qdata); glEndList();
+	 glNewList(listBase + 'r', GL_COMPILE); drawLetter(rdata); glEndList();
+	 glNewList(listBase + 's', GL_COMPILE); drawLetter(sdata); glEndList();
+	 glNewList(listBase + 't', GL_COMPILE); drawLetter(tdata); glEndList();
+	 glNewList(listBase + 'u', GL_COMPILE); drawLetter(udata); glEndList();
+	 glNewList(listBase + 'v', GL_COMPILE); drawLetter(vdata); glEndList();
+	 glNewList(listBase + 'w', GL_COMPILE); drawLetter(wdata); glEndList();
+	 glNewList(listBase + 'x', GL_COMPILE); drawLetter(xdata); glEndList();
+	 glNewList(listBase + 'y', GL_COMPILE); drawLetter(ydata); glEndList();
+	 glNewList(listBase + 'z', GL_COMPILE); drawLetter(zdata); glEndList();
+
+	 glNewList(listBase + '0', GL_COMPILE); drawLetter(n0data); glEndList();
+	 glNewList(listBase + '1', GL_COMPILE); drawLetter(n1data); glEndList();
+	 glNewList(listBase + '2', GL_COMPILE); drawLetter(n2data); glEndList();
+	 glNewList(listBase + '3', GL_COMPILE); drawLetter(n3data); glEndList();
+	 glNewList(listBase + '4', GL_COMPILE); drawLetter(n4data); glEndList();
+	 glNewList(listBase + '5', GL_COMPILE); drawLetter(n5data); glEndList();
+	 glNewList(listBase + '6', GL_COMPILE); drawLetter(n6data); glEndList();
+	 glNewList(listBase + '7', GL_COMPILE); drawLetter(n7data); glEndList();
+	 glNewList(listBase + '8', GL_COMPILE); drawLetter(n8data); glEndList();
+	 glNewList(listBase + '9', GL_COMPILE); drawLetter(n9data); glEndList();
+
+	 glNewList(listBase + ' ', GL_COMPILE); drawLetter(space_data); glEndList();
+	 glNewList(listBase + '!', GL_COMPILE); drawLetter(exclamation_data); glEndList();
+	 glNewList(listBase + '"', GL_COMPILE); drawLetter(double_quote_data); glEndList();
+	 glNewList(listBase + '#', GL_COMPILE); drawLetter(pound_sign_data); glEndList();
+	 glNewList(listBase + '$', GL_COMPILE); drawLetter(dollar_sign_data); glEndList();
+	 glNewList(listBase + '%', GL_COMPILE); drawLetter(percent_data); glEndList();
+	 glNewList(listBase + '&', GL_COMPILE); drawLetter(ampersand_data); glEndList();
+	 glNewList(listBase + '\'', GL_COMPILE); drawLetter(apostrophe_data); glEndList();
+	 glNewList(listBase + '(', GL_COMPILE); drawLetter(left_paren_data); glEndList();
+	 glNewList(listBase + ')', GL_COMPILE); drawLetter(right_paren_data); glEndList();
+	 glNewList(listBase + '*', GL_COMPILE); drawLetter(asterisk_data); glEndList();
+	 glNewList(listBase + '+', GL_COMPILE); drawLetter(plus_data); glEndList();
+	 glNewList(listBase + ',', GL_COMPILE); drawLetter(comma_data); glEndList();
+	 glNewList(listBase + '-', GL_COMPILE); drawLetter(hyphen_data); glEndList();
+	 glNewList(listBase + '.', GL_COMPILE); drawLetter(period_data); glEndList();
+	 glNewList(listBase + '/', GL_COMPILE); drawLetter(slash_data); glEndList();
+	 glNewList(listBase + ':', GL_COMPILE); drawLetter(colon_data); glEndList();
+	 glNewList(listBase + ';', GL_COMPILE); drawLetter(semicolon_data); glEndList();
+	 glNewList(listBase + '<', GL_COMPILE); drawLetter(left_angle_data); glEndList();
+	 glNewList(listBase + '=', GL_COMPILE); drawLetter(equal_data_data); glEndList();
+	 glNewList(listBase + '>', GL_COMPILE); drawLetter(right_angle_data); glEndList();
+	 glNewList(listBase + '?', GL_COMPILE); drawLetter(question_data); glEndList();
+	 glNewList(listBase + '@', GL_COMPILE); drawLetter(at_data); glEndList();
+	 glNewList(listBase + '[', GL_COMPILE); drawLetter(left_square_data); glEndList();
+	 glNewList(listBase + '\\', GL_COMPILE); drawLetter(backslash_data); glEndList();
+	 glNewList(listBase + ']', GL_COMPILE); drawLetter(right_square_data); glEndList();
+	 glNewList(listBase + '^', GL_COMPILE); drawLetter(caret_data); glEndList();
+	 glNewList(listBase + '_', GL_COMPILE); drawLetter(underscore_data); glEndList();
+	 glNewList(listBase + '`', GL_COMPILE); drawLetter(backquote_data); glEndList();
+	 glNewList(listBase + '{', GL_COMPILE); drawLetter(left_curly_data); glEndList();
+	 glNewList(listBase + '|', GL_COMPILE); drawLetter(vertical_bar_data); glEndList();
+	 glNewList(listBase + '}', GL_COMPILE); drawLetter(right_curly_data); glEndList();
+	 glNewList(listBase + '~', GL_COMPILE); drawLetter(tilde_data); glEndList();
 
 	 return listBase;
   }
 
 }
+
+///////////////////////////////////////////////////////////////////////
+//
+// Gtext member definitions
+//
+///////////////////////////////////////////////////////////////////////
 
 Gtext::Gtext(const char* text) :
   GrObj(GROBJ_GL_COMPILE, GROBJ_SWAP_FORE_BACK),
@@ -248,6 +658,10 @@ Gtext::Gtext(const char* text) :
 {
 DOTRACE("Gtext::Gtext(const char*)");
   itsListBase = getStrokeFontListBase();
+
+  GrObj::setAlignmentMode(GrObj::CENTER_ON_CENTER);
+  GrObj::setScalingMode(GrObj::MAINTAIN_ASPECT_SCALING);
+  GrObj::setHeight(1.0);
 }
 
 Gtext::Gtext(istream& is, IOFlag flag) :
@@ -319,10 +733,10 @@ bool Gtext::grGetBoundingBox(double& left, double& top,
 DOTRACE("Gtext::grGetBoundingBox");
 
   left = 0.0;
-  right = (6*itsText.length()) - 2;
+  right = (5*itsText.length()) - 1;
   bottom = -1.0;
   top = 6.0;
-  border_pixels = 4;
+  border_pixels = 2 + itsStrokeWidth;
 
   return true;
 }
