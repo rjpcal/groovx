@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Oct 26 17:52:56 2000
+// written: Fri Oct 27 14:32:36 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -66,31 +66,19 @@ public:
 	 itsRandSeed(0),
 	 itsCurTrialSeqIdx(0),
 	 itsVerbose(false),
-	 itsCurrentTrial(-1),
 	 itsHasBegun(false),
 	 itsExperiment(0)
 	 {}
 
   // Ordered sequence of indexes into the Tlist
-  std::vector<MaybeIdItem<TrialBase> > itsTrialSequence;
+  std::vector<IdItem<TrialBase> > itsTrialSequence;
 
   int itsRandSeed;				  // Random seed used to create itsTrialSequence
   int itsCurTrialSeqIdx;		  // Index of the current trial
 										  // Also functions as # of completed trials
   bool itsVerbose;
 
-  MaybeIdItem<TrialBase> itsCurrentTrial;
-
   mutable bool itsHasBegun;
-
-  void updateCurrentTrial()
-	 {
-		if ( itsCurTrialSeqIdx < 0 || 
-			  (unsigned int) itsCurTrialSeqIdx >= itsTrialSequence.size() )
-		  itsCurrentTrial = MaybeIdItem<TrialBase>(-1);
-		else
-		  itsCurrentTrial = itsTrialSequence.at(itsCurTrialSeqIdx);
-	 }
 
   void setExpt(Experiment& expt)
 	 {
@@ -102,6 +90,22 @@ public:
 	 {
 		Precondition( itsExperiment != 0 );
 		return *itsExperiment;
+	 }
+
+  IdItem<TrialBase> currentTrialItem()
+    {
+		Precondition(hasCurrentTrial());
+
+		return itsTrialSequence.at(itsCurTrialSeqIdx);
+	 }
+
+  bool hasCurrentTrial()
+    {
+		if ( itsCurTrialSeqIdx < 0 || 
+			  (unsigned int) itsCurTrialSeqIdx >= itsTrialSequence.size() )
+		  return false;
+		else
+		  return true;
 	 }
 
 private:
@@ -134,12 +138,11 @@ Block::~Block()
   delete itsImpl;
 }
 
-void Block::addTrial(MaybeIdItem<TrialBase> trial, int repeat) {
+void Block::addTrial(IdItem<TrialBase> trial, int repeat) {
 DOTRACE("Block::addTrial");
   for (int i = 0; i < repeat; ++i) {
 	 itsImpl->itsTrialSequence.push_back(trial);
   }
-  itsImpl->updateCurrentTrial();
 };
 
 void Block::shuffle(int seed) {
@@ -151,14 +154,12 @@ DOTRACE("Block::shuffle");
   std::random_shuffle(itsImpl->itsTrialSequence.begin(),
 							 itsImpl->itsTrialSequence.end(),
 							 generator);
-  itsImpl->updateCurrentTrial();
 }
 
 void Block::removeAllTrials() {
 DOTRACE("Block::removeAllTrials");
   itsImpl->itsTrialSequence.clear();
   itsImpl->itsCurTrialSeqIdx = 0;
-  itsImpl->itsCurrentTrial = MaybeIdItem<TrialBase>(-1);
 }
 
 IO::VersionId Block::serialVersionId() const {
@@ -181,7 +182,7 @@ DOTRACE("Block::readFrom");
   itsImpl->itsTrialSequence.clear();
   IO::ReadUtils::readObjectSeq<TrialBase>(
         reader, "trialSeq",
-		  MaybeIdItem<TrialBase>::makeInserter(itsImpl->itsTrialSequence));
+		  IdItem<TrialBase>::makeInserter(itsImpl->itsTrialSequence));
 
   reader->readValue("randSeed", itsImpl->itsRandSeed);
   reader->readValue("curTrialSeqdx", itsImpl->itsCurTrialSeqIdx);
@@ -189,7 +190,7 @@ DOTRACE("Block::readFrom");
 		size_t(itsImpl->itsCurTrialSeqIdx) > itsImpl->itsTrialSequence.size()) {
 	 throw IO::ValueError(ioTag.c_str());
   }
-  itsImpl->updateCurrentTrial();
+
   reader->readValue("verbose", itsImpl->itsVerbose);
 }
 
@@ -231,8 +232,7 @@ int Block::currentTrial() const {
 DOTRACE("Block::currentTrial");
   if (isComplete()) return -1;
 
-  DebugEvalNL(itsImpl->itsCurrentTrial.id());
-  return itsImpl->itsCurrentTrial.id();
+  return itsImpl->currentTrialItem().id();
 }
 
 int Block::currentTrialType() const {
@@ -240,9 +240,9 @@ DOTRACE("Block::currentTrialType");
   if (isComplete()) return -1;
 
   DebugEval(currentTrial());
-  DebugEvalNL(itsImpl->itsCurrentTrial->trialType());
+  DebugEvalNL(itsImpl->currentTrialItem()->trialType());
 
-  return itsImpl->itsCurrentTrial->trialType();
+  return itsImpl->currentTrialItem()->trialType();
 }
 
 int Block::prevResponse() const {
@@ -256,7 +256,7 @@ DOTRACE("Block::prevResponse");
   if (itsImpl->itsCurTrialSeqIdx == 0 ||
 		itsImpl->itsTrialSequence.size() == 0) return -1;
 
-  MaybeIdItem<TrialBase> prev_trial = 
+  IdItem<TrialBase> prev_trial = 
 	 itsImpl->itsTrialSequence.at(itsImpl->itsCurTrialSeqIdx-1);
   return prev_trial->lastResponse();
 }
@@ -291,7 +291,7 @@ DOTRACE("Block::trialDescription");
 
   ostrstream ost(buf, BUF_SIZE);
   ost << "trial id == " << currentTrial() << ", ";
-  ost << itsImpl->itsCurrentTrial->description();
+  ost << itsImpl->currentTrialItem()->description();
   ost << ", completed " << numCompleted()
 		<< " of " << numTrials();
   ost << '\0';
@@ -328,7 +328,7 @@ DOTRACE("Block::beginTrial");
 
   itsImpl->setExpt(expt);
 
-  itsImpl->itsCurrentTrial->
+  itsImpl->currentTrialItem()->
              trDoTrial(*(expt.getWidget()), expt.getErrorHandler(), *this);
 }
 
@@ -345,7 +345,7 @@ DOTRACE("Block::abortTrial");
 
   // Remember the trial that we are about to abort so we can store it
   // at the end of the sequence.
-  int aborted_trial = currentTrial();
+  IdItem<TrialBase> aborted_trial = itsImpl->currentTrialItem();
 
   // Erase the aborted trial from the sequence. Subsequent trials will
   // slide up to fill in the gap.
@@ -353,8 +353,7 @@ DOTRACE("Block::abortTrial");
 				  itsImpl->itsTrialSequence.begin()+itsImpl->itsCurTrialSeqIdx);
 
   // Add the aborted trial to the back of the sequence.
-  itsImpl->itsTrialSequence.push_back(
-                     MaybeIdItem<TrialBase>(aborted_trial));
+  itsImpl->itsTrialSequence.push_back(aborted_trial);
 
   // We must decrement itsImpl->itsCurTrialSeqIdx, so that when it is
   // incremented by endTrial, the next trial has slid into the
@@ -376,7 +375,7 @@ DOTRACE("Block::processResponse");
   if (!response.isCorrect()) {
 	 // If the response was incorrect, add a repeat of the current
 	 // trial to the block and reshuffle
-	 addTrial(MaybeIdItem<TrialBase>(currentTrial()), 1);
+	 addTrial(itsImpl->currentTrialItem(), 1);
 	 std::random_shuffle(
 		itsImpl->itsTrialSequence.begin()+itsImpl->itsCurTrialSeqIdx+1,
 		itsImpl->itsTrialSequence.end());
@@ -389,7 +388,6 @@ DOTRACE("Block::endTrial");
 
   // Prepare to start next trial.
   ++itsImpl->itsCurTrialSeqIdx;
-  itsImpl->updateCurrentTrial();
 
   DebugEval(numCompleted());
   DebugEval(numTrials());
@@ -413,7 +411,7 @@ void Block::haltExpt() {
 DOTRACE("Block::haltExpt");
 
   if ( itsImpl->itsHasBegun && !isComplete() )
-	 itsImpl->itsCurrentTrial->trHaltExpt();
+	 itsImpl->currentTrialItem()->trHaltExpt();
 }
 
 void Block::undoPrevTrial() {
@@ -426,11 +424,10 @@ DOTRACE("Block::undoPrevTrial");
   
   // Move the counter back to the previous trial...
   --itsImpl->itsCurTrialSeqIdx;
-  itsImpl->updateCurrentTrial();
 
   // ...and erase the last response given to that trial
-  if ( itsImpl->itsCurrentTrial.isValid() ) {
-	 itsImpl->itsCurrentTrial->undoLastResponse();
+  if ( itsImpl->hasCurrentTrial() ) {
+	 itsImpl->currentTrialItem()->undoLastResponse();
   }
 }
 
