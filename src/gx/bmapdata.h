@@ -3,13 +3,23 @@
 // bmapdata.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Jan 19 17:25:51 2000
-// written: Sun Mar  5 18:51:07 2000
+// written: Sun Mar  5 20:18:06 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef BMAPDATA_H_DEFINED
 #define BMAPDATA_H_DEFINED
+
+#ifndef VECTOR_DEFINED
+#include <vector>
+#define VECTOR_DEFINED
+#endif
+
+#ifndef MEMORY_DEFINED
+#include <memory>
+#define MEMORY_DEFINED
+#endif
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -80,11 +90,11 @@ public:
   int height() const;
 
   /// Returns the number of bits used per pixel in the bitmap.
-  int bitsPerPixel() const { return itsBitsPerPixel; }
+  int bitsPerPixel() const;
 
   /** Returns the byte alignment of the bitmap data. Each image row in
       the data will begin on a multiple of this number of bytes. */
-  int byteAlignment() const { return itsByteAlignment; }
+  int byteAlignment() const;
 
   /** Returns the number of bytes used by the bitmap data. Some of
       these bytes may be 'filler bytes' needed to meet the storage
@@ -119,27 +129,14 @@ public:
 
   /** Queues the update given by \a updater. The \c update() function
       will be called only when the bitmap data must be accessed. */
-  void queueUpdate(auto_ptr<UpdateFunc> updater) const
-	 { itsUpdater = updater; }
+  void queueUpdate(auto_ptr<UpdateFunc> updater) const;
 
   
   /// Forces any pending update to be called.
-  void updateIfNeeded() const
-	 {
-		if (itsUpdater.get() != 0)
-		  {
-			 // This steals the updater from itsUpdater, so that we can
-			 // avoid endless recursion if updateIfNeeded is called again
-			 // as part of the updating.
-			 auto_ptr<UpdateFunc> tempUpdater(itsUpdater);
-
-			 tempUpdater->update(const_cast<BmapData&>(*this));
-		  }
-	 }
+  void updateIfNeeded() const;
 
   /// Cancels any pending update.
-  void clearQueuedUpdate() const
-	 { itsUpdater.reset(0); }
+  void clearQueuedUpdate() const;
 
 
 private:

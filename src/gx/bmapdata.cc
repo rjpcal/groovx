@@ -3,7 +3,7 @@
 // bmapdata.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Thu Jan 20 00:37:03 2000
-// written: Sun Mar  5 18:53:23 2000
+// written: Sun Mar  5 20:31:38 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -46,7 +46,7 @@ public:
   vector<unsigned char> itsBytes;
 
   mutable auto_ptr<UpdateFunc> itsUpdater;
-}
+};
 
 ///////////////////////////////////////////////////////////////////////
 //
@@ -57,7 +57,7 @@ public:
 BmapData::UpdateFunc::~UpdateFunc() {}
 
 BmapData::BmapData() :
-  itsImpl(new Impl(0, 0, 1, 1,))
+  itsImpl(new Impl(0, 0, 1, 1))
 {
 DOTRACE("BmapData::BmapData");
   clear();
@@ -70,7 +70,7 @@ BmapData::BmapData(int width, int height,
 DOTRACE("BmapData::BmapData");
   int num_bytes = (width/8 + 1) * height  + 1;
   Assert(num_bytes > 0);
-  itsBytes.resize( num_bytes );
+  itsImpl->itsBytes.resize( num_bytes );
 }
 
 BmapData::~BmapData() {
@@ -103,6 +103,16 @@ int BmapData::height() const {
 DOTRACE("BmapData::height");
   updateIfNeeded(); 
   return itsImpl->itsHeight; 
+}
+
+int BmapData::bitsPerPixel() const {
+DOTRACE("BmapData::bitsPerPixel");
+  return itsImpl->itsBitsPerPixel;
+}
+
+int BmapData::byteAlignment() const {
+DOTRACE("BmapData::byteAlignment");
+  return itsImpl->itsByteAlignment;
 }
 
 int BmapData::byteCount() const {
@@ -203,6 +213,29 @@ DOTRACE("BmapData::swap");
 #ifdef ACC_COMPILER
 #undef std
 #endif
+}
+
+void BmapData::queueUpdate(auto_ptr<UpdateFunc> updater) const {
+DOTRACE("BmapData::queueUpdate");
+  itsImpl->itsUpdater = updater;
+}
+
+void BmapData::updateIfNeeded() const {
+DOTRACE("BmapData::updateIfNeeded");
+  if (itsImpl->itsUpdater.get() != 0)
+	 {
+		// This steals the updater from itsImpl->itsUpdater, so that we can
+		// avoid endless recursion if updateIfNeeded is called again
+		// as part of the updating.
+		auto_ptr<UpdateFunc> tempUpdater(itsImpl->itsUpdater);
+
+		tempUpdater->update(const_cast<BmapData&>(*this));
+	 }
+}
+
+void BmapData::clearQueuedUpdate() const {
+DOTRACE("BmapData::clearQueuedUpdate");
+  itsImpl->itsUpdater.reset(0);
 }
 
 static const char vcid_bmapdata_cc[] = "$Header$";
