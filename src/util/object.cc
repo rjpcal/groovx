@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun  5 10:26:14 2001
-// written: Tue Jun  5 10:32:42 2001
+// written: Tue Sep  4 07:31:50 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,14 +15,22 @@
 
 #include "util/object.h"
 
+#include "util/trace.h"
+
 namespace
 {
   Util::UID idCounter = 0;
 }
 
-Util::Object::Object() : itsId(++idCounter) {}
+Util::Object::Object() : itsId(++idCounter)
+{
+DOTRACE("Util::Object::Object");
+}
 
-Util::Object::~Object() {}
+Util::Object::~Object()
+{
+DOTRACE("Util::Object::~Object");
+}
 
 Util::UID Util::Object::id() const { return itsId; }
 

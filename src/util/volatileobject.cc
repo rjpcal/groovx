@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Aug 21 17:17:51 2001
-// written: Fri Aug 31 17:02:42 2001
+// written: Tue Sep  4 07:32:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,19 +15,24 @@
 
 #include "util/volatileobject.h"
 
+#include "util/trace.h"
 #define LOCAL_ASSERT
 #include "util/debug.h"
 
 Util::VolatileObject::VolatileObject()
 {
+DOTRACE("Util::VolatileObject::VolatileObject");
   this->incrRefCount();
 }
 
 Util::VolatileObject::~VolatileObject()
-{}
+{
+DOTRACE("Util::VolatileObject::~VolatileObject");
+}
 
 void Util::VolatileObject::destroy()
 {
+DOTRACE("Util::VolatileObject::destroy");
   Assert(refCount() == 1);
 
   this->decrRefCount();
