@@ -18,13 +18,9 @@
 #include "io/io.h"
 #include "io/iolegacy.h"
 
-#include "system/demangle.h"
-
 #include "tcl/objfunctor.h"
-#include "tcl/stringifycmd.h"
 #include "tcl/tclerror.h"
 #include "tcl/tclpkg.h"
-#include "tcl/tclvalue.h"
 
 #include "util/objdb.h"
 #include "util/objmgr.h"
@@ -34,7 +30,6 @@
 #  include <functional>
 #endif
 #include <fstream.h>
-#include <typeinfo>
 
 #define NO_TRACE
 #include "util/trace.h"
