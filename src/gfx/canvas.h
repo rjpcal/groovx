@@ -3,7 +3,7 @@
 // canvas.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Nov 15 18:00:27 1999
-// written: Wed Dec  1 17:33:24 1999
+// written: Wed Dec  1 17:33:57 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -31,27 +31,27 @@ public:
   virtual Rect<double> getWorldViewport() const = 0;
 
 
-  virtual void pushState() const = 0;
-  virtual void popState() const = 0;
+//    virtual void pushState() const = 0;
+//    virtual void popState() const = 0;
 
-  virtual void translate(const Vector3<double>& v) const = 0;
-  virtual void scale(const Vector3<double>& v) const = 0;
-  virtual void rotate(const Vector3<double>& v, double angle_in_degrees) const = 0;
+//    virtual void translate(const Vector3<double>& v) const = 0;
+//    virtual void scale(const Vector3<double>& v) const = 0;
+//    virtual void rotate(const Vector3<double>& v, double angle_in_degrees) const = 0;
 
-  virtual void beginPoints() const = 0;
-  virtual void beginLines() const = 0;
-  virtual void beginLineStrip() const = 0;
-  virtual void beginLineLoop() const = 0;
-  virtual void beginTriangles() const = 0;
-  virtual void beginTriangleStrip() const = 0;
-  virtual void beginTriangleFan() const = 0;
-  virtual void beginQuads() const = 0;
-  virtual void beginQuadStrip() const = 0;
-  virtual void beginPolygon() const = 0;
+//    virtual void beginPoints() const = 0;
+//    virtual void beginLines() const = 0;
+//    virtual void beginLineStrip() const = 0;
+//    virtual void beginLineLoop() const = 0;
+//    virtual void beginTriangles() const = 0;
+//    virtual void beginTriangleStrip() const = 0;
+//    virtual void beginTriangleFan() const = 0;
+//    virtual void beginQuads() const = 0;
+//    virtual void beginQuadStrip() const = 0;
+//    virtual void beginPolygon() const = 0;
 
-  virtual void end() const = 0;
+//    virtual void end() const = 0;
 
-  virtual void vertex(const Vector3<double>& v) const = 0;
+//    virtual void vertex(const Vector3<double>& v) const = 0;
 };
 
 static const char vcid_canvas_h[] = "$Header$";

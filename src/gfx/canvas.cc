@@ -3,7 +3,7 @@
 // canvas.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Nov 15 18:00:38 1999
-// written: Mon Nov 15 18:22:52 1999
+// written: Wed Dec  1 17:41:32 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,13 @@
 #include "canvas.h"
 
 #include <GL/gl.h>
+#include <GL/glu.h>
 
 #include "error.h"
+#include "point.h"
+#include "rect.h"
+
+#include "debug.h"
 
 Canvas::~Canvas() {}
 
@@ -36,9 +41,9 @@ public:
   virtual void pushState() const;
   virtual void popState() const;
 
-  virtual void translate(const Vector3<double>& v) const;
-  virtual void scale(const Vector3<double>& v) const;
-  virtual void rotate(const Vector3<double>& v, double angle_in_degrees) const;
+//    virtual void translate(const Vector3<double>& v) const;
+//    virtual void scale(const Vector3<double>& v) const;
+//    virtual void rotate(const Vector3<double>& v, double angle_in_degrees) const;
 
   virtual void beginPoints() const;
   virtual void beginLines() const;
@@ -53,7 +58,7 @@ public:
 
   virtual void end() const;
 
-  virtual void vertex(const Vector3<double>& v) const;
+//    virtual void vertex(const Vector3<double>& v) const;
 };
 
 namespace {
@@ -114,26 +119,28 @@ Point<double> GLCanvas::getWorldFromScreen(const Point<int>& screen_pos) const {
 
   if (status == GL_FALSE)
 	 throw ErrorWithMsg("GrObj::getWorldFromScreen(): gluUnProject error");
+
+  return world_pos;
 }
 
 
 Rect<int> GLCanvas::getScreenFromWorld(const Rect<double>& world_pos) const {
   Rect<int> screen_rect;
-  screen_rect.setBottomLeft( getScreenFromWorld(world_pos.bottomLeft())      );
-  screen_rect.setTopRight  ( getScreenFromWorld(world_pos.topRight(), false) );
+  screen_rect.setBottomLeft( getScreenFromWorld(world_pos.bottomLeft()) );
+  screen_rect.setTopRight  ( getScreenFromWorld(world_pos.topRight())   );
   return screen_rect;
 }
 
 Rect<double> GLCanvas::getWorldFromScreen(const Rect<int>& screen_pos) const {
   Rect<double> world_rect;
-  world_rect.setBottomLeft( getWorldFromScreen(screen_pos.bottomLeft())      );
-  world_rect.setTopRight  ( getWorldFromScreen(screen_pos.topRight(), false) );
+  world_rect.setBottomLeft( getWorldFromScreen(screen_pos.bottomLeft()) );
+  world_rect.setTopRight  ( getWorldFromScreen(screen_pos.topRight())   );
   return world_rect;
 }
 
 Rect<int> GLCanvas::getScreenViewport() const {
-  GLint current_viewport[4];
-  glGetIntegerv(GL_VIEWPORT, current_viewport);
+  GLint viewport[4];
+  glGetIntegerv(GL_VIEWPORT, viewport);
 
   Rect<int> screen_rect;
   screen_rect.setBottomLeft(Point<int>(viewport[0], viewport[1]));
@@ -160,17 +167,17 @@ void GLCanvas::popState() const {
 }
 
 
-void GLCanvas::translate(const Vector3<double>& v) const {
-  glTranslate3d(v.x(), v.y(), v.z());
-}
+//  void GLCanvas::translate(const Vector3<double>& v) const {
+//    glTranslate3d(v.x(), v.y(), v.z());
+//  }
 
-void GLCanvas::scale(const Vector3<double>& v) const {
-  glScale3d(v.x(), v.y(), v.z());
-}
+//  void GLCanvas::scale(const Vector3<double>& v) const {
+//    glScale3d(v.x(), v.y(), v.z());
+//  }
 
-void GLCanvas::rotate(const Vector3<double>& v, double angle_in_degrees) const {
-  glRotate(angle_in_degrees, v.x(), v.y(), v.z());
-}
+//  void GLCanvas::rotate(const Vector3<double>& v, double angle_in_degrees) const {
+//    glRotate(angle_in_degrees, v.x(), v.y(), v.z());
+//  }
 
 
 void GLCanvas::beginPoints() const {
@@ -219,9 +226,9 @@ void GLCanvas::end() const {
 }
 
 
-void GLCanvas::vertex(const Vector3<double>& v) const {
-  glVertex3d(v.x(), v.y(), v.z());
-}
+//  void GLCanvas::vertex(const Vector3<double>& v) const {
+//    glVertex3d(v.x(), v.y(), v.z());
+//  }
 
 
 const char vcid_canvas_cc[] = "$Header$";
