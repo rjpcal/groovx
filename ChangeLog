@@ -142,3 +142,30 @@ the start events and schedule the response events, otherwise we do nothing.
 
 * (14-Dec-1999, ok 26-Sep-2002) Need Canvas& argument to GrObj::grGetBoundingBox
 OK, this stuff has been in place for a while now.
+
+* (1-Nov-2002, done 4-Nov-2002) Get all Value-subclasses to be Tcl::Convert'ed
+
+Maybe need to use function overloading instead of partial specialization?
+Function overloading is more flexible, allowing subclasses to be passed via
+reference-to-base-class.
+
+Strategy: First add a set of template functions that just forward to the
+current Tcl::Convert functions. Then, hid the old template functions to
+force all clients to use the new interface. Then, gradually add overloads
+of the new template functions. Eventually, none of the old specializations
+will be needed, and then they can be phased out.
+
+** Best names for functions?
+
+   fromTcl()/toTcl() ?
+   toNative()/fromNative() ?
+   export()/import() ?
+
+** How to specialize fromTcl() for Value types?
+
+   The problem is that we can't return by value (no pun), but need to
+   return through a reference, since we don't know in advance what type of
+   Value object we're going to be dealing with. Would like to specify
+   somehow that "all Value objects should be gotten from Tcl by assigning
+   to them through an fstring". Aha... just needed a bit of template
+   metaprogramming a la "Loki" here.
