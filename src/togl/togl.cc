@@ -3,7 +3,7 @@
 // togl.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue May 23 13:11:59 2000
-// written: Wed Aug  8 15:29:29 2001
+// written: Fri Aug 24 17:37:23 2001
 // $Id$
 //
 // This is a modified version of the Togl widget by Brian Paul and Ben
@@ -80,6 +80,8 @@ namespace
       Tcl_AppendResult(interp, msg, NULL);
       return TCL_ERROR;
     }
+
+  const Togl::Impl* currentImpl = 0;
 }
 
 #define ALL_EVENTS_MASK \
@@ -1542,16 +1544,23 @@ DOTRACE("Togl::Impl::configure");
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Togl::Impl::makeCurrent() const {
+void Togl::Impl::makeCurrent() const
+{
 DOTRACE("Togl::Impl::makeCurrent");
-  glXMakeCurrent( itsDisplay,
-                  windowId(),
-                  itsGLXContext );
+
+  if ( this != currentImpl )
+    {
+      DOTRACE("Togl::Impl::makeCurrent-change context");
+      glXMakeCurrent( itsDisplay,
+                      windowId(),
+                      itsGLXContext );
 #if defined(__sgi) && defined(STEREO)
-  stereoMakeCurrent( itsDisplay,
-                     windowId(),
-                     itsGLXContext );
+      stereoMakeCurrent( itsDisplay,
+                         windowId(),
+                         itsGLXContext );
 #endif /*__sgi STEREO */
+      currentImpl = this;
+    }
 }
 
 
