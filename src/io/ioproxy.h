@@ -3,7 +3,7 @@
 // ioproxy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Mar 22 21:41:38 2000
-// written: Tue Oct 24 16:29:13 2000
+// written: Mon Oct 30 14:07:42 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,15 +34,13 @@ template <class C>
 class IoProxy : public IO::IoObject {
 public:
   IoProxy(C* ref) : itsReferand(ref) {}
+  virtual ~IoProxy() {}
 
   virtual void readFrom(IO::Reader* reader)
 	 { itsReferand->C::readFrom(reader); }
 
   virtual void writeTo(IO::Writer* writer) const
 	 { itsReferand->C::writeTo(writer); }
-
-  virtual IO::UID id() const
-	 { return itsReferand->C::id(); }
 
   virtual IO::VersionId serialVersionId() const
 	 { return itsReferand->C::serialVersionId(); }
@@ -61,15 +59,13 @@ template <class C>
 class ConstIoProxy : public IO::IoObject {
 public:
   ConstIoProxy(const C* ref) : itsReferand(ref) {}
+  virtual ~ConstIoProxy() {}
 
   virtual void readFrom(IO::Reader* reader)
 	 { const_cast<C*>(itsReferand)->C::readFrom(reader); }
 
   virtual void writeTo(IO::Writer* writer) const
 	 { itsReferand->C::writeTo(writer); }
-
-  virtual IO::UID id() const
-	 { return itsReferand->C::id(); }
 
   virtual IO::VersionId serialVersionId() const
 	 { return itsReferand->C::serialVersionId(); }
