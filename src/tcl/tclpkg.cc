@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Tue May 15 18:00:39 2001
+// written: Fri May 18 17:18:58 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -96,6 +96,7 @@ void Tcl::TclItemPkg::instantiate() {
   declareGetter(0, (Getter<bool>*) 0, 0);
   declareGetter(0, (Getter<double>*) 0, 0);
   declareGetter(0, (Getter<const char*>*) 0, 0);
+  declareGetter(0, (Getter<fixed_string>*) 0, 0);
   declareGetter(0, (Getter<const fixed_string&>*) 0, 0);
 
   declareSetter(0, (Setter<int>*) 0, 0);
