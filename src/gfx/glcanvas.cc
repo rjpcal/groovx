@@ -122,8 +122,8 @@ namespace
   {
     DOTRACE("<glcanvas.cc>::unproject1");
 
-    const int v[4] = { viewport.left(), viewport.bottom(),
-                       viewport.width(), viewport.height() };
+    const GLint v[4] = { viewport.left(), viewport.bottom(),
+                         viewport.width(), viewport.height() };
 
     vec3d world_pos;
 
@@ -149,8 +149,8 @@ namespace
   {
     DOTRACE("<glcanvas.cc>::project1");
 
-    const int v[4] = { viewport.left(), viewport.bottom(),
-                       viewport.width(), viewport.height() };
+    const GLint v[4] = { viewport.left(), viewport.bottom(),
+                         viewport.width(), viewport.height() };
 
     vec3d screen_pos;
 
