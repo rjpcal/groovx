@@ -456,7 +456,7 @@ route:
          the data files that matlab needs, and also **generating a
          Matlab script file (.m file)** that we can run to process the
          data.
-         
+
       3) Run the .m file to finish the data processing.
 
 What input does this process need? We need to know the location of the
@@ -527,4 +527,4 @@ the new value was the same as the current value, or was out of bounds).
 and other operations that can affect pixel rendering... should these be
 placed in a separate Position subclass?
 
-* (May-1999) extract experiment+trial statistics 
+* (May-1999) extract experiment+trial statistics
