@@ -409,7 +409,7 @@ PKG_DEP_FILE := $(DEP)/pkgdepends.$(MODE)
 
 $(PKG_DEP_FILE): $(DEP) $(ALL_SOURCES) $(ALL_HEADERS) \
 	Makefile src/pkgs/buildPkgDeps.tcl
-	src/pkgs/buildPkgDeps.tcl
+	src/pkgs/buildPkgDeps.tcl $@
 
 include $(PKG_DEP_FILE)
 
