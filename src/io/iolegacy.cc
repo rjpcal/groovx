@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Wed Nov 15 11:46:44 2000
+// written: Wed Nov 15 23:23:49 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -298,7 +298,8 @@ public:
 	 itsWriteBases(write_bases),
 	 itsFSep(' '),
 	 itsIndentLevel(0),
-	 itsNeedsNewline(false)
+	 itsNeedsNewline(false),
+	 itsIsBeginning(true)
   {}
 
   void throwIfError(const char* type) {
@@ -316,6 +317,7 @@ public:
   const char itsFSep;				  // field separator
   int itsIndentLevel;
   bool itsNeedsNewline;
+  bool itsIsBeginning;
 
   STD_IO::ostream& stream()
 	 {
@@ -324,6 +326,7 @@ public:
 			 doNewline();
 			 itsNeedsNewline = false;
 		  }
+		itsIsBeginning = false;
 		return itsOutStream;
 	 }
 
@@ -343,12 +346,14 @@ private:
 		  itsOutStream << '\t';
 	 }
 
-  void requestNewline() { itsNeedsNewline = true; }
+  void requestNewline() { if (!itsIsBeginning) itsNeedsNewline = true; }
 
 public:
   void flattenObject(const char* obj_name, const IO::IoObject* obj,
 							bool stub_out = false)
   {
+	 requestNewline();
+
 	 if (obj == 0)
 		{
 		  stream() << "NULL" << itsFSep;
@@ -357,8 +362,6 @@ public:
 		}
 
 	 Assert(obj != 0);
-
-	 requestNewline();
 
 	 stream() << obj->ioTypename() << itsFSep;
 	 throwIfError(obj->ioTypename().c_str());
