@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 12:33:54 1999
-// written: Thu Aug  9 13:13:01 2001
+// written: Thu Aug 16 15:14:31 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -62,9 +62,9 @@ namespace Tcl
     {
       ObjDb& theDb = ObjDb::theDb();
       int count = 0;
-      for (ObjDb::PtrIterator
-             itr = theDb.beginPtrs(),
-             end = theDb.endPtrs();
+      for (ObjDb::Iterator
+             itr = theDb.begin(),
+             end = theDb.end();
            itr != end;
            ++itr)
         {
@@ -87,14 +87,14 @@ namespace Tcl
 
       Tcl::List result;
 
-      for (ObjDb::PtrIterator
-             itr = theDb.beginPtrs(),
-             end = theDb.endPtrs();
+      for (ObjDb::Iterator
+             itr = theDb.begin(),
+             end = theDb.end();
            itr != end;
            ++itr)
         {
           if (itsCaster->isMyType(*itr))
-            result.append(itr.getId());
+            result.append((*itr)->id());
         }
 
       ctx.setResult(result);
@@ -110,16 +110,15 @@ namespace Tcl
     void operator()(Tcl::Context&)
     {
       ObjDb& theDb = ObjDb::theDb();
-      for (ObjDb::IdIterator
-             itr = theDb.beginIds(),
-             end = theDb.endIds();
+      for (ObjDb::Iterator
+             itr = theDb.begin(),
+             end = theDb.end();
            itr != end;
            /* increment done in loop body */)
         {
-          if (itsCaster->isMyType(itr.getObject()) &&
-              itr.getObject()->isUnshared())
+          if (itsCaster->isMyType(*itr) && (*itr)->isUnshared())
             {
-              int remove_me = *itr;
+              int remove_me = (*itr)->id();
               ++itr;
               theDb.remove(remove_me);
             }
