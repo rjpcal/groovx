@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 25 12:44:55 1999
-// written: Wed May 23 18:51:25 2001
+// written: Thu May 24 17:15:25 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -290,9 +290,7 @@ ClearBufferEvent::~ClearBufferEvent() {}
 
 void ClearBufferEvent::invoke(GWT::Widget& widget, TrialBase&) {
 DOTRACE("ClearBufferEvent::invoke");
-  GWT::Canvas* canvas = widget.getCanvas();
-  canvas->clearColorBuffer();
-  canvas->flushOutput();
+  widget.clearscreen(); 
 }
 
 static const char vcid_trialevent_cc[] = "$Header$";
