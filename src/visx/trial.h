@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar  1 08:00:00 1999
-// written: Wed Dec  4 18:09:23 2002
+// written: Wed Dec  4 18:35:55 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,14 +68,7 @@ public:
   Util::Ref<TimingHdlr> getTimingHdlr() const;
   void setTimingHdlr(Util::Ref<TimingHdlr> th);
 
-  // returns some info about relationship between objects in trial
-  virtual int trialType() const;
   void setType(int t);
-
-  /// Overridden from Element.
-  virtual fstring status() const;
-
-  virtual int lastResponse() const;
 
   unsigned int numResponses() const;
 
@@ -104,6 +97,14 @@ public:
   virtual Util::ErrorHandler& getErrorHandler() const;
 
   virtual const Util::SoftRef<Toglet>& getWidget() const;
+
+  /// returns some user-defined info about relationship between objects in trial
+  virtual int trialType() const;
+
+  virtual int lastResponse() const;
+
+  /// Overridden from Element.
+  virtual fstring status() const;
 
   virtual void vxRun(Element& parent);
 

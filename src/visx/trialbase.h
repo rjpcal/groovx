@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jan 25 18:41:19 2000
-// written: Wed Dec  4 18:04:14 2002
+// written: Wed Dec  4 18:36:28 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,19 +15,6 @@
 
 #include "visx/element.h"
 
-namespace Gfx
-{
-  class Canvas;
-}
-
-namespace Util
-{
-  class ErrorHandler;
-  template <class T> class SoftRef;
-};
-
-class Block;
-class Response;
 class Toglet;
 
 ///////////////////////////////////////////////////////////////////////
@@ -40,9 +27,6 @@ class TrialBase : public Element
 {
 public:
   virtual ~TrialBase();
-
-  // accessors
-  virtual int lastResponse() const = 0;
 
   // actions
   virtual double trElapsedMsec() = 0;
