@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Fri Aug 10 10:50:05 2001
+// written: Fri Aug 10 12:19:09 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -55,9 +55,6 @@ public:
 
   /// Non-virtual destructor implies this class is not polymorphic.
   ~BitmapRep();
-
-private:
-  void init();
 
 public:
 
@@ -140,8 +137,6 @@ public:
   void setUsingZoom(bool val);
 
 private:
-  void clearBytes();
-
   BitmapRep(const BitmapRep&);
   BitmapRep& operator=(const BitmapRep&);
 
