@@ -44,6 +44,7 @@
 #include "util/iter.h"
 #include "util/log.h"
 #include "util/ref.h"
+#include "util/scopedptr.h"
 #include "util/strings.h"
 
 #include "visx/response.h"
@@ -145,7 +146,7 @@ public:
 
   fstring info;
 
-  scoped_ptr<ActiveState> activeState;
+  rutz::scoped_ptr<ActiveState> activeState;
 
   bool isActive() const { return activeState.get() != 0; }
 

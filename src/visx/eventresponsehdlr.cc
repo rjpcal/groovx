@@ -48,6 +48,7 @@
 #include "util/log.h"
 #include "util/pointers.h"
 #include "util/ref.h"
+#include "util/scopedptr.h"
 #include "util/strings.h"
 
 #include "visx/feedbackmap.h"
@@ -215,7 +216,7 @@ public:
 
   EventResponseHdlr* itsOwner;
 
-  mutable scoped_ptr<ActiveState> itsState;
+  mutable rutz::scoped_ptr<ActiveState> itsState;
 
   Tcl::Interp itsInterp;
 
