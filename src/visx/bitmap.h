@@ -3,7 +3,7 @@
 // bitmap.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jun 15 11:30:24 1999
-// written: Wed Feb 16 07:30:37 2000
+// written: Fri Feb 18 08:52:07 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -34,11 +34,11 @@ class BmapRenderer;
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Bitmap is an abstract subclass of GrObj that manages bitmap data,
- * but does not implement a method for rendering the bitmap data to
- * the screen, since there is typically more than one way to do
- * this. Subclasses of Bitmap can implement a particular rendering
- * method by overriding doRender() and doUndraw() appropriately.
+ * \c Bitmap is an subclass of \c GrObj that manages bitmap data, but
+ * does not implement a method for rendering the bitmap data to the
+ * screen, since there is typically more than one way to do this. A
+ * rendering method must be provided by passing a suitable \c
+ * BmapRenderer to a \c Bitmap constructor.
  *
  **/
 ///////////////////////////////////////////////////////////////////////
