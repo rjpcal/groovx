@@ -123,6 +123,63 @@ namespace
             strcmp(dirname, "RCS") == 0 ||
             strcmp(dirname, "CVS") == 0);
   }
+
+  class mapped_file
+  {
+  public:
+    mapped_file(const char* filename)
+      :
+      itsFd(0),
+      itsMem(0)
+    {
+      errno = 0;
+
+      struct stat statbuf;
+      if (stat(filename, &statbuf) == -1)
+        {
+          cerr << "stat() failed for file " << filename << ":\n";
+          cerr << strerror(errno) << "\n";
+          exit(1);
+        }
+
+      itsLength = statbuf.st_size;
+
+      itsFd = open(filename, O_RDONLY);
+      if (itsFd == -1)
+        {
+          cerr << "open() failed for file " << filename << ":\n";
+          cerr << strerror(errno) << "\n";
+          exit(1);
+        }
+
+      itsMem = mmap(0, itsLength, PROT_READ, MAP_PRIVATE, itsFd, 0);
+
+      if (itsMem == (void*)-1)
+        {
+          cerr << "mmap() failed for file " << filename << ":\n";
+          cerr << strerror(errno) << "\n";
+          exit(1);
+        }
+    }
+
+    ~mapped_file()
+    {
+      munmap(itsMem, itsLength);
+      close(itsFd);
+    }
+
+    const void* memory() const { return itsMem; }
+
+    const off_t length() const { return itsLength; }
+
+  private:
+    mapped_file(const mapped_file&);
+    mapped_file& operator=(const mapped_file&);
+
+    off_t itsLength;
+    int   itsFd;
+    void* itsMem;
+  };
 }
 
 cppdeps::cppdeps(char** argv)
@@ -257,34 +314,10 @@ cppdeps::get_direct_includes(const string& filename)
 
   include_list_t& vec = direct_includes[filename];
 
-  struct stat statbuf;
-  if (stat(filename.c_str(), &statbuf) == -1)
-    {
-      cerr << "couldn't stat file " << filename << "\n";
-      exit(1);
-    }
+  mapped_file f(filename.c_str());
 
-  const off_t nbytes = statbuf.st_size;
-
-  const int fd = open(filename.c_str(), O_RDONLY);
-  if (fd == -1)
-    {
-      cerr << "couldn't open file " << filename << "\n";
-      exit(1);
-    }
-
-  errno = 0;
-  void* const mem = mmap(0, nbytes, PROT_READ, MAP_PRIVATE, fd, 0);
-
-  if (mem == (void*)-1)
-    {
-      cerr << strerror(errno) << "\n";
-      cerr << "mmap failed " << filename << "\n";
-      exit(1);
-    }
-
-  const char* fptr = static_cast<char*>(mem);
-  const char* const stop = fptr + nbytes;
+  const char* fptr = static_cast<const char*>(f.memory());
+  const char* const stop = fptr + f.length();
 
   for ( ; fptr < stop; ++fptr)
     {
@@ -329,8 +362,8 @@ cppdeps::get_direct_includes(const string& filename)
                   dirname_with_slash, vec);
     }
 
-  munmap(mem, nbytes);
-  close(fd);
+//   munmap(mem, nbytes);
+//   close(fd);
 
   return vec;
 }
