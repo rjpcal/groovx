@@ -216,6 +216,7 @@ GRSH_DYNAMIC_OBJS := \
 	$(GRSH)/sound.do \
 	$(GRSH)/soundlist.do \
 	$(GRSH)/soundtcl.do \
+	$(UTIL)/strings.do \
 	$(GRSH)/subject.do \
 	$(GRSH)/subjecttcl.do \
 	$(GRSH)/system.do \
@@ -381,6 +382,7 @@ STRINGFWD_H :=
 # level 0 headers
 #
 BEZIER_H := bezier.h
+BITMAPREP_H := bitmaprep.h
 BMAPDATA_H := bmapdata.h
 BMAPRENDERER_H := bmaprenderer.h
 CANVAS_H := canvas.h
@@ -402,6 +404,7 @@ POSLISTTCL_H := poslisttcl.h
 RAND_H := rand.h
 RANDUTILS_H := randutils.h
 STOPWATCH_H := stopwatch.h
+STRINGS_H := util/strings.h
 SYSTEM_H := $(STRINGFWD_H) system.h
 TCLDLIST_H := tcldlist.h
 TCLLINK_H := tcllink.h
@@ -417,12 +420,11 @@ WIDGET_H := widget.h
 # level 1 headers
 #
 APPLICATION_H := $(ERROR_H) application.h
-BITMAPREP_H := $(BMAPDATA_H) bitmaprep.h
 FACTORY_H := $(STRINGFWD_H) $(ERROR_H) $(DEMANGLE_H) factory.h
 GLBMAPRENDERER_H := $(BMAPRENDERER_H) glbmaprenderer.h
 GLCANVAS_H := $(CANVAS_H) glcanvas.h
 IO_H := $(STRINGFWD_H) $(ERROR_H) io.h
-PBM_H := $(STRINGFWD_H) $(ERROR_H) $(BMAPDATA_H) pbm.h
+PBM_H := $(ERROR_H) pbm.h
 READER_H := $(STRINGFWD_H) $(ERROR_H) reader.h
 RECT_H := $(POINT_H) rect.h
 TCLERROR_H := $(STRINGFWD_H) $(ERROR_H) tclerror.h
@@ -524,16 +526,16 @@ ASCIISTREAMREADER_CC := $(ASCIISTREAMREADER_H) $(IO_H) $(IOMGR_H) $(VALUE_H) \
 ASCIISTREAMWRITER_CC := $(ASCIISTREAMWRITER_H) $(IO_H) $(VALUE_H) \
 	$(TRACE_H) $(DEBUG_H) $(DEMANGLE_H) asciistreamwriter.cc
 
-BITMAP_CC := $(BITMAP_H) $(BITMAPREP_H) $(PIPE_H) $(TRACE_H) $(DEBUG_H) bitmap.cc
+BITMAP_CC := $(BITMAP_H) $(BITMAPREP_H) $(PIPE_H) $(STRINGS_H) \
+	$(TRACE_H) $(DEBUG_H) bitmap.cc
 
-BITMAPREP_CC := $(BITMAPREP_H) $(APPLICATION_H) \
-	$(EXPERIMENT_H) $(BMAPRENDERER_H) $(CANVAS_H) \
-	$(ERROR_H) $(IO_H) $(PBM_H) \
+BITMAPREP_CC := $(BITMAPREP_H) $(APPLICATION_H) $(BMAPDATA_H) \
+	$(EXPERIMENT_H) $(BMAPRENDERER_H) $(CANVAS_H) $(IO_H) $(PBM_H) \
 	$(READER_H) $(RECT_H) $(WRITER_H) $(TRACE_H) $(DEBUG_H) bitmaprep.cc
 
 BITMAPTCL_CC := $(BITMAP_H) $(GLBITMAP_H) $(XBITMAP_H) \
 	$(IOFACTORY_H) $(OBJLIST_H) \
-	$(OBJTOGL_H) $(LISTITEMPKG_H) $(SYSTEM_H) $(TCLCMD_H) \
+	$(OBJTOGL_H) $(LISTITEMPKG_H) $(STRINGS_H) $(SYSTEM_H) $(TCLCMD_H) \
 	$(TCLOBJLOCK_H) $(TRACE_H) $(DEBUG_H) bitmaptcl.cc
 
 BLOCK_CC := $(BLOCK_H) $(EXPERIMENT_H) $(RAND_H) $(IOSTL_H) \
@@ -575,7 +577,7 @@ EXPTDRIVER_CC := $(EXPTDRIVER_H) $(BLOCK_H) $(TCLERROR_H) $(READER_H) \
 
 EXPTTCL_CC := $(ASCIISTREAMREADER_H) $(ASCIISTREAMWRITER_H) \
 	$(GRSHAPP_H) $(TCLEVALCMD_H) $(EXPTDRIVER_H) \
-	$(TCLITEMPKG_H) $(TCLCMD_H) $(WIDGET_H) \
+	$(STRINGS_H) $(TCLITEMPKG_H) $(TCLCMD_H) $(WIDGET_H) \
 	$(TRACE_H) $(DEBUG_H) expttcl.cc
 
 EXPTTESTTCL_CC := $(TCLLINK_H) expttesttcl.cc
@@ -686,7 +688,7 @@ OBJLIST_CC := $(OBJLIST_H) $(TRACE_H) $(DEBUG_H) \
 OBJLISTTCL_CC := $(GROBJ_H) $(IOMGR_H) $(OBJLIST_H) $(LISTPKG_H) \
 	$(TRACE_H) $(DEBUG_H) objlisttcl.cc
 
-OBJTOGL_CC := $(OBJTOGL_H) $(TCLCMD_H) \
+OBJTOGL_CC := $(OBJTOGL_H) $(STRINGS_H) $(TCLCMD_H) \
 	$(TCLEVALCMD_H) $(TCLITEMPKG_H) $(TLISTWIDGET_H) \
 	$(TOGLCONFIG_H) $(XBMAPRENDERER_H)\
 	$(TRACE_H) $(DEBUG_H) objtogl.cc
@@ -696,7 +698,7 @@ OBSERVABLE_CC := $(OBSERVABLE_H) $(OBSERVER_H) \
 
 OBSERVER_CC := $(OBSERVER_H) $(TRACE_H) observer.cc
 
-PBM_CC := $(PBM_H) $(TRACE_H) $(DEBUG_H) pbm.cc
+PBM_CC := $(PBM_H) $(BMAPDATA_H) $(TRACE_H) $(DEBUG_H) pbm.cc
 
 POSITION_CC := $(POSITION_H) $(READER_H) $(WRITER_H) \
 	$(TRACE_H) $(DEBUG_H) position.cc
@@ -713,7 +715,7 @@ PROPERTY_CC := $(PROPERTY_H) $(READER_H) $(WRITER_H) property.cc
 
 READER_CC := $(READER_H) reader.cc
 
-READUTILS_CC := $(READUTILS_H) readutils.cc
+READUTILS_CC := $(READUTILS_H) $(STRINGS_H) readutils.cc
 
 RESPONSEHANDLER_CC := $(RESPONSEHANDLER_H) $(TRACE_H) responsehandler.cc
 
@@ -742,6 +744,8 @@ SOUNDTCL_CC := $(SOUNDLIST_H) $(SOUND_H) $(LISTPKG_H) $(LISTITEMPKG_H) \
 STRINGIFYCMD_CC := $(STRINGIFYCMD_H) $(IO_H) \
 	$(ASCIISTREAMREADER_H) $(ASCIISTREAMWRITER_H) \
 	$(TRACE_H) $(DEBUG_H) stringifycmd.cc
+
+STRINGS_CC := $(STRINGS_H) strings.cc
 
 SUBJECT_CC := $(SUBJECT_H) $(IOUTILS_H) $(READER_H) $(WRITER_H) \
 	$(TRACE_H) $(DEBUG_H) subject.cc
@@ -799,7 +803,7 @@ TLISTUTILS_CC := $(TLISTUTILS_H) $(CANVAS_H) $(ERROR_H) \
 TLISTWIDGET_CC := $(TLISTWIDGET_H) $(CANVAS_H) $(TLIST_H) $(TRIAL_H) \
 	$(TRACE_H) $(DEBUG_H) tlistwidget.cc
 
-TOGLCONFIG_CC := $(TOGLCONFIG_H) $(ERROR_H) $(GLCANVAS_H) \
+TOGLCONFIG_CC := $(TOGLCONFIG_H) $(ERROR_H) $(GLCANVAS_H) $(STRINGS_H) \
 	$(TCLEVALCMD_H) $(TRACE_H) $(DEBUG_H) toglconfig.cc
 
 TRACE_CC := $(TRACE_H) util/trace.cc
@@ -828,7 +832,7 @@ WIDGET_CC := $(WIDGET_H) widget.cc
 
 WRITER_CC := $(WRITER_H) writer.cc
 
-WRITEUTILS_CC := $(WRITEUTILS_H) writeutils.cc
+WRITEUTILS_CC := $(WRITEUTILS_H) $(STRINGS_H) writeutils.cc
 
 XBITMAP_CC := $(XBITMAP_H) $(XBMAPRENDERER_H) \
 	$(TRACE_H) $(DEBUG_H) xbitmap.cc
@@ -918,6 +922,7 @@ $(GRSH)/sound.*[ol]:             $(SOUND_CC)
 $(GRSH)/soundlist.*[ol]:         $(SOUNDLIST_CC)
 $(GRSH)/soundtcl.*[ol]:          $(SOUNDTCL_CC)
 $(GRSH)/stringifycmd.*[ol]:      $(STRINGIFYCMD_CC)
+$(UTIL)/strings.[ol]:            $(STRINGS_CC)
 $(GRSH)/subject.*[ol]:           $(SUBJECT_CC)
 $(GRSH)/subjecttcl.*[ol]:        $(SUBJECTTCL_CC)
 $(GRSH)/system.*[ol]:            $(SYSTEM_CC)
@@ -1005,5 +1010,6 @@ backup:
 	tclsh Backup.tcl
 
 depend:
-	makedepend -DACC_COMPILER -fDepends -I/opt/aCC/include -I/usr \
+	makedepend -fDepends \
+	-DACC_COMPILER -DLOCAL_PROF -I/opt/aCC/include -I/usr \
 	 -I/opt/aCC/include/iostream -I/cit/rjpeters/include -I./util *.cc
