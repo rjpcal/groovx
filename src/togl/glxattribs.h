@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 16:36:13 2002
-// written: Sat Aug  3 16:37:18 2002
+// written: Sat Aug 10 15:16:12 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,6 +58,12 @@ public:
       }
   }
 
+  void level(int lev)
+  {
+    push( GLX_LEVEL );
+    push( lev );
+  }
+
   void colorIndex(int bits)
   {
     push( GLX_BUFFER_SIZE );
@@ -100,6 +106,14 @@ public:
   {
     push( GLX_AUX_BUFFERS );
     push( n );
+  }
+
+  void transparent()
+  {
+#ifdef GLX_TRANSPARENT_TYPE_EXT
+    push( GLX_TRANSPARENT_TYPE_EXT );
+    push( GLX_TRANSPARENT_INDEX_EXT );
+#endif
   }
 };
 
