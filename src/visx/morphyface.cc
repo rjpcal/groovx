@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 15:38:42 1999
-// written: Thu Aug 30 10:08:54 2001
+// written: Wed Sep  5 17:32:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -439,7 +439,7 @@ DOTRACE("MorphyFace::grRender");
 // Accessors
 ///////////////////////////////////////////////////////////////////////
 
-Gfx::Rect<double> MorphyFace::grGetBoundingBox() const
+Gfx::Rect<double> MorphyFace::grGetBoundingBox(Gfx::Canvas&) const
 {
 DOTRACE("MorphyFace::grGetBoundingBox");
 
@@ -453,7 +453,7 @@ DOTRACE("MorphyFace::grGetBoundingBox");
 
   DebugEval(top_width);   DebugEvalNL(bottom_width);
 
-  double max_width = max(1.0, max(top_width, bottom_width));
+  double max_width = Util::max(1.0, Util::max(top_width, bottom_width));
 
   DebugEvalNL(max_width);
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Mon Sep  3 18:01:25 2001
+// written: Wed Sep  5 17:24:53 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -233,7 +233,6 @@ DOTRACE("BitmapRep::savePbmFile");
 void BitmapRep::grabScreenRect(const Gfx::Rect<int>& rect)
 {
 DOTRACE("BitmapRep::grabScreenRect");
-
   Gfx::Canvas& canvas = Application::theApp().getCanvas();
 
   canvas.grabPixels(rect, itsImpl->itsData);
@@ -289,16 +288,13 @@ DOTRACE("BitmapRep::render");
 // accessors //
 ///////////////
 
-Gfx::Rect<double> BitmapRep::grGetBoundingBox() const
+Gfx::Rect<double> BitmapRep::grGetBoundingBox(Gfx::Canvas& canvas) const
 {
 DOTRACE("BitmapRep::grGetBoundingBox");
 
-  // Get screen coordinates for the lower left corner
-  Gfx::Canvas& canvas = Application::theApp().getCanvas();
+  // Get the corners in screen coordinates
 
   Gfx::Vec2<int> bottom_left = canvas.screenFromWorld(Gfx::Vec2<double>());
-
-  // Move the point to the upper right corner
   Gfx::Vec2<int> top_right = bottom_left + (size() * itsImpl->getZoom());
 
   Gfx::Rect<double> bbox;

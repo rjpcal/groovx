@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  1 20:18:32 1999
-// written: Sun Aug 26 08:35:14 2001
+// written: Wed Sep  5 17:23:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -107,7 +107,7 @@ public:
   ///////////////
 
   /// Conforms to the \c GrObj interface.
-  Gfx::Rect<double> grGetBoundingBox() const;
+  Gfx::Rect<double> grGetBoundingBox(Gfx::Canvas& canvas) const;
 
   /// Get the image's size (x-width, y-height) in pixels.
   Gfx::Vec2<int> size() const;

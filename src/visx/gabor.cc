@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Oct  6 10:45:58 1999
-// written: Wed Sep  5 17:21:00 2001
+// written: Wed Sep  5 17:26:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -14,8 +14,6 @@
 #define GABOR_CC_DEFINED
 
 #include "gabor.h"
-
-#include "application.h"
 
 #include "gfx/bmapdata.h"
 #include "gfx/canvas.h"
@@ -145,11 +143,10 @@ DOTRACE("getLogContrast");
   return std::log10(itsContrast);
 }
 
-Gfx::Rect<double> Gabor::grGetBoundingBox() const
+Gfx::Rect<double> Gabor::grGetBoundingBox(Gfx::Canvas& canvas) const
 {
 DOTRACE("Gabor::grGetBoundingBox");
 
-  Gfx::Canvas& canvas = Application::theApp().getCanvas();
   Gfx::Vec2<double> world_origin;
 
   Gfx::Vec2<int> screen_origin = canvas.screenFromWorld(world_origin);
@@ -167,7 +164,7 @@ DOTRACE("Gabor::grGetBoundingBox");
 void Gabor::grRender(Gfx::Canvas& canvas) const
 {
 DOTRACE("Gabor::grRender");
-  const double xsigma2 = itsSigma*itsAspectRatio * itsSigma*itsAspectRatio ;
+  const double xsigma2 = itsSigma*itsAspectRatio * itsSigma*itsAspectRatio;
   const double ysigma2 = itsSigma * itsSigma;
 
   const Gfx::Vec2<double> center(0.0, 0.0);

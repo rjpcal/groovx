@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999
-// written: Tue Aug 21 16:09:26 2001
+// written: Wed Sep  5 17:23:42 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -120,8 +120,8 @@ void Bitmap::grRender(Gfx::Canvas& canvas) const
 // accessors //
 ///////////////
 
-Gfx::Rect<double> Bitmap::grGetBoundingBox() const
-  { return itsImpl->grGetBoundingBox(); }
+Gfx::Rect<double> Bitmap::grGetBoundingBox(Gfx::Canvas& canvas) const
+  { return itsImpl->grGetBoundingBox(canvas); }
 
 Gfx::Vec2<int> Bitmap::size() const
   { return itsImpl->size(); }

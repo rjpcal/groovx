@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Aug 30 10:26:27 2001
+// written: Wed Sep  5 17:31:12 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -98,15 +98,12 @@ DOTRACE("FixPt::writeTo");
   writer->writeBaseClass("GrObj", IO::makeConstProxy<GrObj>(this));
 }
 
-Gfx::Rect<double> FixPt::grGetBoundingBox() const
+Gfx::Rect<double> FixPt::grGetBoundingBox(Gfx::Canvas&) const
 {
 DOTRACE("FixPt::grGetBoundingBox");
 
-  Gfx::Rect<double> bbox;
-  bbox.left()  = bbox.bottom() = -itsLength/2.0;
-  bbox.right() = bbox.top()    =  itsLength/2.0;
-
-  return bbox;
+  return Gfx::RectLBWH<double>(-itsLength/2.0, -itsLength/2.0,
+                               itsLength, itsLength);
 }
 
 void FixPt::grRender(Gfx::Canvas& canvas) const

@@ -5,15 +5,13 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar 23 16:27:54 2000
-// written: Wed Sep  5 16:11:07 2001
+// written: Wed Sep  5 17:27:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
 
 #ifndef GROBJIMPL_H_DEFINED
 #define GROBJIMPL_H_DEFINED
-
-#include "application.h"
 
 #include "gnode.h"
 
@@ -39,8 +37,8 @@ public:
   virtual void gnodeDraw(Gfx::Canvas& canvas) const
   { itsObj->grRender(canvas); }
 
-  virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& /*canvas*/) const
-  { return itsObj->grGetBoundingBox(); }
+  virtual Gfx::Rect<double> gnodeBoundingBox(Gfx::Canvas& canvas) const
+  { return itsObj->grGetBoundingBox(canvas); }
 };
 
 ///////////////////////////////////////////////////////////////////////

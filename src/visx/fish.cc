@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 29 11:44:57 1999
-// written: Mon Sep  3 18:01:45 2001
+// written: Wed Sep  5 17:30:35 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -121,7 +121,7 @@ const FieldMap& Fish::classFields()
           Field::NEW_GROUP | Field::CHECKED | Field::TRANSIENT),
 
     Field("currentPartBkpt", &Fish::itsCurrentPartBkpt, 1, 1, 10, 1,
-			 Field::TRANSIENT),
+          Field::TRANSIENT),
 
     Field("inColor", &Fish::inColor,
           false, false, true, true, Field::TRANSIENT),
@@ -429,17 +429,11 @@ DOTRACE("Fish::readCoordFile");
     }
 }
 
-Gfx::Rect<double> Fish::grGetBoundingBox() const
+Gfx::Rect<double> Fish::grGetBoundingBox(Gfx::Canvas&) const
 {
 DOTRACE("Fish::grGetBoundingBox");
 
-  Gfx::Rect<double> bbox;
-  bbox.left() = -0.75;
-  bbox.right() = 0.75;
-  bbox.bottom() = -0.5;
-  bbox.top() = 0.5;
-
-  return bbox;
+  return Gfx::RectLBWH<double>(-0.75, -0.5, 1.5, 1.0);
 }
 
 void Fish::grRender(Gfx::Canvas& canvas) const

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:48 1999
-// written: Tue Sep  4 14:40:35 2001
+// written: Wed Sep  5 17:28:34 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -859,7 +859,7 @@ DOTRACE("Gtext::getStrokeWidth");
   return itsStrokeWidth;
 }
 
-Gfx::Rect<double> Gtext::grGetBoundingBox() const
+Gfx::Rect<double> Gtext::grGetBoundingBox(Gfx::Canvas&) const
 {
 DOTRACE("Gtext::grGetBoundingBox");
 

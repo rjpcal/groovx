@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 11:22:10 2001
-// written: Fri Aug 24 16:31:13 2001
+// written: Wed Sep  5 17:23:40 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -165,7 +165,7 @@ DOTRACE("BitmapCacheNode::gnodeBoundingBox");
   // else
   recacheBitmap(canvas);
   Assert(itsBitmapRep.get() != 0);
-  return itsBitmapRep->grGetBoundingBox();
+  return itsBitmapRep->grGetBoundingBox(canvas);
 }
 
 static const char vcid_bitmapcachenode_cc[] = "$Header$";

@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Sep 13 12:43:16 1999
-// written: Tue Aug 28 11:26:42 2001
+// written: Wed Sep  5 17:28:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -268,7 +268,7 @@ DOTRACE("House::writeTo");
 //
 ///////////////////////////////////////////////////////////////////////
 
-Gfx::Rect<double> House::grGetBoundingBox() const
+Gfx::Rect<double> House::grGetBoundingBox(Gfx::Canvas&) const
 {
 DOTRACE("House::grGetBoundingBox");
 

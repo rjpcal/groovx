@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Tue Sep  4 10:47:27 2001
+// written: Wed Sep  5 17:23:32 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -95,7 +95,7 @@ public:
 
   /** Subclasses must override this function to return the bounding
       box in GL coordinates for the object's onscreen image. */
-  virtual Gfx::Rect<double> grGetBoundingBox() const = 0;
+  virtual Gfx::Rect<double> grGetBoundingBox(Gfx::Canvas& canvas) const = 0;
 
   /// Returns the current scaling mode.
   Gmodes::ScalingMode getScalingMode() const;

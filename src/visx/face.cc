@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Aug 29 16:45:54 2001
+// written: Wed Sep  5 17:28:21 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -240,7 +240,7 @@ DOTRACE("Face::grRender");
 // Accessors
 ///////////////////////////////////////////////////////////////////////
 
-Gfx::Rect<double> Face::grGetBoundingBox() const
+Gfx::Rect<double> Face::grGetBoundingBox(Gfx::Canvas&) const
 {
 DOTRACE("Face::grGetBoundingBox");
 
