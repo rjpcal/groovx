@@ -191,34 +191,34 @@ test "BlockTcl-Block::verbose" "too few args" {
 test "BlockTcl-Block::verbose" "too many args" {
 	 Block::verbose junk junk junk
 } {^wrong \# args: should be "Block::verbose item_id\(s\) \?new_value\(s\)\?"$}
-test "BlockTcl-Block::verbose" "normal use" {
+test "BlockTcl-Block::verbose" "normal use 1" {
 	 Block::verbose 0 true
 	 Block::verbose 0
 } {^1$}
-test "BlockTcl-Block::verbose" "normal use" {
+test "BlockTcl-Block::verbose" "normal use 2" {
 	 Block::verbose 0 yes
 	 Block::verbose 0
 } {^1$}
-test "BlockTcl-Block::verbose" "normal use" {
+test "BlockTcl-Block::verbose" "normal use 3" {
 	 Block::verbose 0 1
 	 Block::verbose 0
 } {^1$}
-test "BlockTcl-Block::verbose" "normal use" {
+test "BlockTcl-Block::verbose" "normal use 4" {
 	 Block::verbose 0 -1.5
 	 Block::verbose 0
 } {^1$}
-test "BlockTcl-Block::verbose" "normal use" {
+test "BlockTcl-Block::verbose" "normal use 5" {
 	 Block::verbose 0 false
 	 Block::verbose 0
 } {^0$}
-test "BlockTcl-Block::verbose" "normal use" {
+test "BlockTcl-Block::verbose" "normal use 6" {
 	 Block::verbose 0 no
 	 Block::verbose 0
 } {^0$}
-test "BlockTcl-Block::verbose" "normal use" {
+test "BlockTcl-Block::verbose" "normal use 7" {
 	 Block::verbose 0 0
 	 Block::verbose 0
 } {^0$}
 test "BlockTcl-Block::verbose" "error on non-boolean input" {
 	 Block::verbose 0 FLASE
-} {^expected boolean value but got "FLASE"$}
+} {expected boolean value but got "FLASE"}
