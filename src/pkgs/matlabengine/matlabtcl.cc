@@ -32,6 +32,7 @@
 #ifndef MATLABTCL_CC_DEFINED
 #define MATLABTCL_CC_DEFINED
 
+#include "pkgs/mtx/matlabinterface.h"
 #include "pkgs/mtx/mtxobj.h"
 
 #include "nub/object.h"
@@ -94,11 +95,11 @@ public:
                                         name, "'"), SRC_POS);
       }
 
-    Nub::Ref<MtxObj> mtx(new MtxObj(arr, mtx::COPY));
+    Nub::Ref<MtxObj> m(new MtxObj(make_mtx(arr, mtx::COPY)));
 
     mxDestroyArray(arr);
 
-    return mtx;
+    return m;
   }
 
   void putArray(const mxArray* arr, const char* name)
