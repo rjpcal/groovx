@@ -77,7 +77,7 @@ class DepBuilder:
         parts = file.split('/')
 
         assert parts[0] == self.itsPath
-        stem = '.'.join(parts[1:])
+        stem = '/'.join(parts[1:])
 
         (stem, ext) = os.path.splitext(stem)
         assert ext == '.cc'
