@@ -365,7 +365,7 @@ DOTRACE("ExptDriver::edBeginExpt");
   addLogInfo("Beginning experiment.");
 
   rep->beginDate = Util::Time::wallClockNow().format();
-  rep->hostname = System::theSystem().getenv("HOST");
+  rep->hostname = System::theSystem().getenv("HOSTNAME");
   rep->subject = System::theSystem().getcwd();
   rep->numTrialsCompleted = 0;
 
@@ -373,6 +373,10 @@ DOTRACE("ExptDriver::edBeginExpt");
   Util::Log::addObjScope(*this);
 
   Util::Log::setLogFilename(fstring(rep->filePrefix, ".log"));
+
+  Util::log(fstring("expt begin ", rep->beginDate));
+  Util::log(fstring("hostname ", rep->hostname));
+  Util::log(fstring("cwd ", System::theSystem().getcwd()));
 
   currentElement()->vxRun(*this);
 }
