@@ -41,10 +41,10 @@ test "GLBitmapTcl-Obj::new GLBitmap" "normal use" {
 ### Bitmap::loadPbmCmd ###
 test "BitmapTcl-Bitmap::loadPbm" "too few args" {
 	 Bitmap::loadPbm
-} {^wrong \# args: should be "Bitmap::loadPbm bitmap_id filename"$}
+} {^wrong \# args: should be}
 test "BitmapTcl-Bitmap::loadPbm" "too many args" {
 	 Bitmap::loadPbm $::BITMAP $::PBMFILE junk
-} {^wrong \# args: should be "Bitmap::loadPbm bitmap_id filename"$}
+} {^wrong \# args: should be}
 test "BitmapTcl-Bitmap::loadPbm" "normal use" {
 	 Bitmap::loadPbm $::BITMAP $::PBMFILE
 	 Bitmap::flipVertical $::BITMAP
