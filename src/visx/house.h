@@ -3,7 +3,7 @@
 // house.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Mon Sep 13 12:43:15 1999
-// written: Tue Feb  8 15:33:35 2000
+// written: Fri Feb 18 09:08:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,42 +27,38 @@
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * House is a subclass of GrObj that is able to draw simple line-drawn
- * houses that are parameterized in many ways, such as the number of
- * stories in the building, the number of windows per story, the
- * height of the roof, the shape of the roof, etc.
+ * \c House is a subclass of \c GrObj that is able to draw simple
+ * line-drawn houses. The appearance of the houses is controlled by
+ * many parameters, such as the number of stories in the building, the
+ * number of windows per story, the height of the roof, the shape of
+ * the roof, etc.
  *
- * @short A subclass of GrObj for drawing simple line-drawn houses.
  **/
 ///////////////////////////////////////////////////////////////////////
 
 class House : public GrObj, public PropFriend<House> {
 public:
-  ///
+  /// Default constructor.
   House();
-  ///
+
+  /// Virtual destructor.
   virtual ~House();
 
-  ///
   virtual void serialize(ostream &os, IOFlag flag) const;
-  ///
   virtual void deserialize(istream &is, IOFlag flag);
-  
-  ///
   virtual int charCount() const;
 
-  ///
   virtual void readFrom(Reader* reader);
-  ///
   virtual void writeTo(Writer* writer) const;
 
   ////////////////
   // properties //
   ////////////////
 
-  ///
+  /// Info about a \c House property.
   typedef PropertyInfo<House> PInfo;
-  ///
+
+  /// Return a collection of info about all \c House properties.
   static const vector<PInfo>& getPropertyInfos();
 
   /// Width/height ratio of each story.
@@ -71,13 +67,13 @@ public:
   /// Number of stories in the building.
   CTProperty<House, int> numStories;
 
-  /// Position of the door in range [0, numWindows)
+  /// Position of the door in range [0, numWindows).
   CTProperty<House, int> doorPosition;
 
-  /// Width of door as fraction of available parcel
+  /// Width of door as fraction of available parcel.
   CTProperty<House, double> doorWidth;
 
-  /// Height of door as fraction of one story
+  /// Height of door as fraction of one story.
   CTProperty<House, double> doorHeight;
 
   /// Whether door handle is on left or right.
@@ -86,7 +82,7 @@ public:
   /// Number of windows per story.
   CTProperty<House, int> numWindows;
 
-  /// Width of windows as fraction of available parcel
+  /// Width of windows as fraction of available parcel.
   CTProperty<House, double> windowWidth;
 
   /// Height of windows as fraction of one story.
@@ -123,12 +119,11 @@ public:
   CTProperty<House, double> chimneyHeight;
 
 protected:
-  ///
   virtual void grGetBoundingBox(Rect<double>& bbox,
 										  int& border_pixels) const;
-  ///
+
   virtual bool grHasBoundingBox() const;
-  ///
+
   virtual void grRender(Canvas& canvas) const; 
 
 private:

@@ -3,7 +3,7 @@
 // gabor.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Oct  6 10:45:58 1999
-// written: Tue Feb  8 15:31:51 2000
+// written: Fri Feb 18 09:04:22 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -27,92 +27,88 @@
 ///////////////////////////////////////////////////////////////////////
 /**
  *
- * Gabor implements a psychophysical Gabor patch. There are several
- * rendering modes, for rendering in grayscale or in black-and-white.
+ * \c Gabor is a subclass of \c GrObj for rendering psychophysical
+ * Gabor patches. There are several rendering modes, for rendering in
+ * grayscale or in black-and-white.
  *
- * @short Subclass of GrObj for drawing psychophysical Gabor patches.
  **/
 ///////////////////////////////////////////////////////////////////////
 
 class Gabor : public GrObj, public PropFriend<Gabor> {
 public:
-  ///
+  /// Default constructor.
   Gabor();
-  ///
+
+  /// Virtual destructor.
   virtual ~Gabor();
 
-  ///
   virtual void serialize(ostream &os, IOFlag flag) const;
-  ///
   virtual void deserialize(istream &is, IOFlag flag);
-
-  ///
   virtual int charCount() const;
 
-  ///
   virtual void readFrom(Reader* reader);
-  ///
   virtual void writeTo(Writer* writer) const;
 
-  /** @name    Color modes   */
-  //@{
-  ///
+  /** The symbolic constants of type \c ColorMode can be used to
+      determine exactly how the Gabor function is translated into
+      pixel values. */
   typedef int ColorMode;
-  /** Each point in the patch is rendered with a gray color whose
-      luminance is proportional to the value of the Gabor function. */
-  static const ColorMode GRAYSCALE = 1;
-  /** Each point in the patch is rendered black with a probability
-      proportional to the value of the Gabor function. */
-  static const ColorMode BW_DITHER_POINT = 2;
-  /** The patch is subdivided into rectangles, and each rectangle in
-      the patch is rendered black with a probability proportional to
-      the value of the Gabor function. */
-  static const ColorMode BW_DITHER_RECT = 3;
-  //@}
 
-  ///
+  /** In this mode, each point in the patch is rendered with a gray
+      color whose luminance is proportional to the value of the Gabor
+      function. */
+  static const ColorMode GRAYSCALE = 1;
+
+  /** In this mode, each point in the patch is rendered black with a
+      probability proportional to the value of the Gabor function. */
+  static const ColorMode BW_DITHER_POINT = 2;
+
+  /** In this mode, the patch is subdivided into rectangles, and each
+      rectangle in the patch is rendered black with a probability
+      proportional to the value of the Gabor function. */
+  static const ColorMode BW_DITHER_RECT = 3;
+
+  /// Info about a \c Gabor property.
   typedef PropertyInfo<Gabor> PInfo;
-  ///
+
+  /// Return a collection of info about all \c Gabor properties.
   static const vector<PInfo>& getPropertyInfos();
 
-  ///
+  /// The current \c ColorMode used for rendering.
   CTProperty<Gabor, ColorMode> colorMode;
 
-  /// Contrast of the sine grating
+  /// Contrast of the sine grating.
   CTProperty<Gabor, double> contrast;
 
-  /// The spatial frequency of the sine grating, in cycles per OpenGL unit
+  /// The spatial frequency of the sine grating, in cycles per OpenGL unit.
   CTProperty<Gabor, double> spatialFreq;
 
-  /// Phase of the sine grating, in degrees
+  /// Phase of the sine grating, in degrees.
   CTProperty<Gabor, int> phase;
 
-  /// The base standard deviation for the Gaussian
+  /// The base standard deviation for the Gaussian.
   CTProperty<Gabor, double> sigma;
 
-  /// The ratio of standard deviations width/height
+  /// The ratio of standard deviations width/height.
   CTProperty<Gabor, double> aspectRatio;
 
-  /// Orientation of the sine grating, in degrees
+  /// Orientation of the sine grating, in degrees.
   CTProperty<Gabor, int> orientation;
 
   /** Number of rectangle subdivisions per OpenGL unit (note that this
-		applies only when the colorMode is BW_DITHER_RECT */
+		applies only when the colorMode is \a BW_DITHER_RECT). */
   CTProperty<Gabor, int> resolution;
 
-  /** The size of the points used when colorMode is either GRAYSCALE
-      or BW_DITHER_POINT */
+  /** The size of the points used when \a colorMode is either \a
+      GRAYSCALE or \a BW_DITHER_POINT. */
   CTProperty<Gabor, int> pointSize;
 
 protected:
-  ///
   virtual void grGetBoundingBox(Rect<double>& bbox,
 										  int& border_pixels) const;
 
-  ///
   virtual bool grHasBoundingBox() const;
 
-  ///
   virtual void grRender(Canvas& canvas) const;
 };
 
