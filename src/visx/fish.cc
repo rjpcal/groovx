@@ -3,7 +3,7 @@
 // fish.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Sep 29 11:44:57 1999
-// written: Thu Oct 19 13:34:41 2000
+// written: Thu Nov  2 14:55:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ namespace {
 
   const Fish::PInfo PINFOS[] = {
 	 Fish::PInfo("category",
-					 SGI_IDIOT_CAST(Property Fish::*, &Fish::category), 0, 10, 1, true),
+					 SGI_IDIOT_CAST(Property Fish::*, &Fish::fishCategory), 0, 10, 1, true),
 	 Fish::PInfo("dorsalFinCoord",
 					 SGI_IDIOT_CAST(Property Fish::*, &Fish::dorsalFinCoord),
 					 -2.0, 2.0, 0.1),
@@ -144,7 +144,7 @@ DOTRACE("Fish::makeFromFiles");
 }
 
 Fish::Fish(const char* splinefile, const char* coordfile, int index) :
-  category(-1),
+  fishCategory(-1),
   dorsalFinCoord(itsCoords[0]),
   tailFinCoord(itsCoords[1]),
   lowerFinCoord(itsCoords[2]),
@@ -434,7 +434,7 @@ DOTRACE("Fish::readCoordFile");
 	 getline(ifs, dummy, '\n');
   }
 
-  ifs >> category();
+  ifs >> fishCategory();
 
   for (int i = 0; i < 4; ++i) {
 	 ifs >> itsCoords[i];
