@@ -3,7 +3,7 @@
 // cloneface.cc
 // Rob Peters
 // created: Thu Apr 29 09:19:26 1999
-// written: Thu Jun 17 20:22:11 1999
+// written: Tue Oct  5 14:10:23 1999
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -104,6 +104,16 @@ DOTRACE("CloneFace::deserialize");
   // Always deserialize Face, regardless of (flag & BASES)
   // Always use the typename in the base class, regardless of flag
   Face::deserialize(is, (flag | TYPENAME));
+}
+
+int CloneFace::charCount() const {
+DOTRACE("CloneFace::charCount");
+  return ( ioTag.length() + 1  
+			  + 24*6 + 1
+			  + gCharCount(itsEyeAspect) + 1
+			  + gCharCount(itsVertOffset) + 1
+			  + Face::charCount()
+			  + 5 ); 
 }
 
 const double* CloneFace::getCtrlPnts() const {
