@@ -90,14 +90,6 @@ namespace
     return S_ISDIR(statbuf.st_mode);
   }
 
-  bool should_ignore_file(const char* fname)
-  {
-    return (strcmp(fname, ".") == 0 ||
-            strcmp(fname, "..") == 0 ||
-            strcmp(fname, "RCS") == 0 ||
-            strcmp(fname, "CVS") == 0);
-  }
-
   // get the name of the directory containing fname -- the result will NOT
   // have a trailing slash!
   string get_dirname_of(const string& fname)
@@ -372,19 +364,35 @@ private:
   string            m_prefix;
   string            m_link_pattern;
   string::size_type m_wildcard_pos;
+  mutable bool      m_ever_matched;
 
 public:
   formatter(const string& src, const string& link) :
     m_prefix(src),
     m_link_pattern(link),
-    m_wildcard_pos(link.find_first_of('*'))
+    m_wildcard_pos(link.find_first_of('*')),
+    m_ever_matched(false)
   {}
+
+  void warn_if_never_matched(const char* setname) const
+  {
+    if (!m_ever_matched)
+      {
+        cerr << "WARNING: " << setname << " pattern was never matched: "
+             << m_prefix << ':' << m_link_pattern << '\n';
+      }
+  }
 
   bool matches(const string& srcfile) const
   {
-    return strncmp(srcfile.c_str(),
-                   m_prefix.c_str(),
-                   m_prefix.length()) == 0;
+    const bool result = strncmp(srcfile.c_str(),
+                                m_prefix.c_str(),
+                                m_prefix.length()) == 0;
+
+    if (result == true)
+      m_ever_matched = true;
+
+    return result;
   }
 
   string transform(const string& srcfile) const
@@ -406,9 +414,10 @@ public:
 class format_set
 {
   vector<formatter> m_links;
+  string            m_setname;
 
 public:
-  format_set() : m_links() {}
+  format_set(const char* name) : m_links(), m_setname(name) {}
 
   void add_format(const string& src_colon_pattern)
   {
@@ -424,33 +433,23 @@ public:
     m_links.push_back(formatter(src, pattern));
   }
 
-  void load_file(const char* filename)
+  /// Try to find a pattern that matches srcfile, and return its transformation.
+  /** If no pattern matches, it is considered a fatal error. */
+  string transform_strict(const string& srcfile) const
   {
-    if (!file_exists(filename))
+    for (unsigned int i = m_links.size(); i > 0; --i)
       {
-        cerr << "ERROR: couldn't open format file: " << filename << '\n';
-        exit(1);
+        if (m_links[i-1].matches(srcfile))
+          return m_links[i-1].transform(srcfile);
       }
-
-    std::ifstream in(filename);
-
-    if (!in.is_open())
-      {
-        cerr << "ERROR: couldn't open format file for reading: " << filename << '\n';
-        exit(1);
-      }
-
-    string line;
-    while (in)
-      {
-        std::getline(in, line);
-        if (line.length() > 0 && line[0] != '#')
-          {
-            add_format(line);
-          }
-      }
+    cerr << "ERROR: no " << m_setname
+         << " patterns matched source file: " << srcfile << '\n';
+    exit(1);
+    return string(); // can't happen, but placate compiler
   }
 
+  /// Try to find a pattern that matches srcfile, and return its transformation.
+  /** If no pattern matches, return an empty string. */
   string transform(const string& srcfile) const
   {
     for (unsigned int i = m_links.size(); i > 0; --i)
@@ -458,9 +457,15 @@ public:
         if (m_links[i-1].matches(srcfile))
           return m_links[i-1].transform(srcfile);
       }
-    cerr << "ERROR: no patterns matched source file: " << srcfile << '\n';
-    exit(1);
     return string(); // can't happen, but placate compiler
+  }
+
+  void give_warnings() const
+  {
+    for (unsigned int i = 0; i < m_links.size(); ++i)
+    {
+      m_links[i].warn_if_never_matched(m_setname.c_str());
+    }
   }
 };
 
@@ -484,6 +489,7 @@ private:
   vector<string>           m_cfg_source_exts;
   vector<string>           m_cfg_header_exts;
   vector<string>           m_cfg_obj_exts;
+  vector<string>           m_cfg_prune_dirs;
   string                   m_cfg_obj_prefix;
   format_set               m_cfg_exe_formats;
   format_set               m_cfg_link_formats;
@@ -531,6 +537,8 @@ public:
   // Find the source file that corresponds to the given header file
   file_info* find_source_for_header(file_info* header) const;
 
+  bool should_prune_directory(const char* fname);
+
   static bool resolve_one(const string& include_name,
                           file_info* finfo,
                           const vector<string>& ipath,
@@ -564,6 +572,9 @@ std::ostream& cppdeps::info()
 }
 
 cppdeps::cppdeps(const int argc, char** const argv) :
+  m_cfg_exe_formats("--exeformat"),
+  m_cfg_link_formats("--linkformat"),
+  m_cfg_phantom_link_formats("--phantomlinkformat"),
   m_cfg_check_sys_deps(false),
   m_cfg_phantom_sys_deps(true),
   m_cfg_quiet(false),
@@ -596,8 +607,12 @@ cppdeps::cppdeps(const int argc, char** const argv) :
          "                          will have more than one target; the default is for\n"
          "                          the list of extensions to include just '.o'\n"
          "    --exeformat\n"
-         "    --exeformat-file\n"
+         "    --options-file\n"
          "    --linkformat\n"
+         "    --prune-dir <dirname> don't look for source files in the named directory;\n"
+         "                          the <dirname> should not contain any slashes, since\n"
+         "                          it refers to simple directory entry (default pruned\n"
+         "                          directories are \".\", \"..\", \"RCS\", \"CVS\"\n"
          "    --checksys            force tracking of dependencies in #include <...>\n"
          "                          directives (default is to not record <...> files\n"
          "                          as dependencies)\n"
@@ -634,6 +649,11 @@ cppdeps::cppdeps(const int argc, char** const argv) :
   m_cfg_header_exts.push_back(".H");
   m_cfg_header_exts.push_back(".hh");
   m_cfg_header_exts.push_back(".hpp");
+
+  m_cfg_prune_dirs.push_back(".");
+  m_cfg_prune_dirs.push_back("..");
+  m_cfg_prune_dirs.push_back("RCS");
+  m_cfg_prune_dirs.push_back("CVS");
 
   m_cfg_exe_formats.add_format(":");
 
@@ -727,11 +747,6 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
       m_cfg_exe_formats.add_format(optarg);
       return true;
     }
-  else if (strcmp(option, "--exeformat-file") == 0)
-    {
-      m_cfg_exe_formats.load_file(optarg);
-      return true;
-    }
   else if (strcmp(option, "--options-file") == 0)
     {
       load_options_file(optarg);
@@ -740,6 +755,11 @@ bool cppdeps::handle_option(const char* option, const char* optarg)
   else if (strcmp(option, "--linkformat") == 0)
     {
       m_cfg_link_formats.add_format(optarg);
+      return true;
+    }
+  else if (strcmp(option, "--prune-dir") == 0)
+    {
+      m_cfg_prune_dirs.push_back(optarg);
       return true;
     }
   else if (strcmp(option, "--phantomlinkformat") == 0)
@@ -909,6 +929,15 @@ file_info* cppdeps::find_source_for_header(file_info* header) const
     }
 
   return 0;
+}
+
+bool cppdeps::should_prune_directory(const char* fname)
+{
+  for (unsigned int i = 0; i < m_cfg_prune_dirs.size(); ++i)
+    if (m_cfg_prune_dirs[i] == fname)
+      return true;
+
+  return false;
 }
 
 bool cppdeps::resolve_one(const string& include_name,
@@ -1406,7 +1435,7 @@ void cppdeps::print_link_deps(file_info* finfo)
   if (!is_cc_fname(finfo))
     return;
 
-  const string exe = m_cfg_exe_formats.transform(finfo->fname);
+  const string exe = m_cfg_exe_formats.transform_strict(finfo->fname);
 
   if (exe.empty())
     return;
@@ -1424,7 +1453,7 @@ void cppdeps::print_link_deps(file_info* finfo)
     {
       if (!(*itr)->phantom)
         {
-          const string t = m_cfg_link_formats.transform((*itr)->fname);
+          const string t = m_cfg_link_formats.transform_strict((*itr)->fname);
           if (!t.empty())
             links.insert(t);
         }
@@ -1494,7 +1523,7 @@ void cppdeps::traverse_sources()
 
           for (dirent* e = readdir(d); e != 0; e = readdir(d))
             {
-              if (should_ignore_file(e->d_name))
+              if (should_prune_directory(e->d_name))
                 continue;
 
               files.push_back(join_filename(current_file, e->d_name));
@@ -1517,6 +1546,8 @@ void cppdeps::traverse_sources()
             }
         }
     }
+
+  m_cfg_exe_formats.give_warnings();
 }
 
 int main(int argc, char** argv)
