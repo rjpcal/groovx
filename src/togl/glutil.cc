@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Aug  3 17:25:48 2002
-// written: Tue Nov 12 18:17:38 2002
+// written: Tue Nov 12 18:24:08 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -28,70 +28,80 @@
 class GxFont
 {
 public:
-  GxFont(Display* dpy, const char* fontname) :
-    itsFontInfo(0),
-    itsListBase(0),
-    itsListCount(0)
-  {
-    if (fontname == 0)
-      fontname = "fixed";
+  GxFont(Display* dpy, const char* fontname);
 
-    Assert( fontname != 0 );
-
-    itsFontInfo = XLoadQueryFont( dpy, fontname );
-    dbgEval(2, itsFontInfo); dbgEvalNL(2, itsFontInfo->fid);
-
-    if (itsFontInfo == 0)
-      {
-        throw Util::Error(fstring("couldn't load X font '", fontname, "'"));
-      }
-
-    const int first = itsFontInfo->min_char_or_byte2;
-    dbgEval(2, first);
-    const int last = itsFontInfo->max_char_or_byte2;
-    dbgEval(2, last);
-
-    itsListCount = last-first+1;
-    dbgEvalNL(2, itsListCount);
-
-    itsListBase = glGenLists( last+1 );
-    dbgEvalNL(2, itsListBase);
-
-    if (itsListBase==0)
-      {
-        throw Util::Error(fstring("couldn't allocate GL display lists"));
-      }
-
-    glXUseXFont(itsFontInfo->fid,
-                first,
-                itsListCount,
-                (int) itsListBase+first);
-
-#if 0
-    // for debugging
-    for (int l = first; l < first+itsListCount; ++l)
-      {
-        double p = 4*double((l-first-1)-48)/42.0 - 2.0;
-        glRasterPos2d(-1.0, p);
-        glCallList(l);
-      }
-    glFlush();
-#endif
-  }
-
-  ~GxFont()
-  {
-    glDeleteLists(itsListBase, itsListCount);
-    XFreeFontInfo(NULL, itsFontInfo, 1);
-  }
+  ~GxFont();
 
   GLuint listBase() const { return itsListBase; }
 
 private:
+  GxFont(const GxFont&);
+  GxFont& operator=(const GxFont&);
+
   XFontStruct* itsFontInfo;
   GLuint itsListBase;
   GLuint itsListCount;
 };
+
+GxFont::GxFont(Display* dpy, const char* fontname) :
+  itsFontInfo(0),
+  itsListBase(0),
+  itsListCount(0)
+{
+DOTRACE("GxFont::GxFont");
+
+  if (fontname == 0)
+    fontname = "fixed";
+
+  Assert( fontname != 0 );
+
+  itsFontInfo = XLoadQueryFont( dpy, fontname );
+  dbgEval(2, itsFontInfo); dbgEvalNL(2, itsFontInfo->fid);
+
+  if (itsFontInfo == 0)
+    {
+      throw Util::Error(fstring("couldn't load X font '", fontname, "'"));
+    }
+
+  const int first = itsFontInfo->min_char_or_byte2;
+  dbgEval(2, first);
+  const int last = itsFontInfo->max_char_or_byte2;
+  dbgEval(2, last);
+
+  itsListCount = last-first+1;
+  dbgEvalNL(2, itsListCount);
+
+  itsListBase = glGenLists( last+1 );
+  dbgEvalNL(2, itsListBase);
+
+  if (itsListBase==0)
+    {
+      throw Util::Error(fstring("couldn't allocate GL display lists"));
+    }
+
+  glXUseXFont(itsFontInfo->fid,
+              first,
+              itsListCount,
+              (int) itsListBase+first);
+
+#if 0
+  // for debugging
+  for (int l = first; l < first+itsListCount; ++l)
+    {
+      double p = 4*double((l-first-1)-48)/42.0 - 2.0;
+      glRasterPos2d(-1.0, p);
+      glCallList(l);
+    }
+  glFlush();
+#endif
+}
+
+GxFont::~GxFont()
+{
+DOTRACE("GxFont::~GxFont");
+  glDeleteLists(itsListBase, itsListCount);
+  XFreeFontInfo(NULL, itsFontInfo, 1);
+}
 
 namespace
 {
