@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:37:04 1999
-// written: Wed Nov 20 17:00:36 2002
+// written: Thu Nov 21 11:49:19 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,8 @@
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
-#include "io/writer.h"
+
+#include "util/strings.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -26,10 +27,6 @@ namespace
 {
   const IO::VersionId XBITMAP_SERIAL_VERSION_ID = 2;
 }
-
-//////////////
-// creators //
-//////////////
 
 XBitmap* XBitmap::make()
 {
@@ -49,6 +46,13 @@ XBitmap::~XBitmap()
 DOTRACE("XBitmap::~XBitmap");
 }
 
+fstring XBitmap::ioTypename() const
+{
+DOTRACE("XBitmap::ioTypename");
+
+  return fstring("Bitmap");
+}
+
 IO::VersionId XBitmap::serialVersionId() const
 {
 DOTRACE("XBitmap::serialVersionId");
@@ -62,16 +66,6 @@ DOTRACE("XBitmap::readFrom");
   reader->ensureReadVersionId("XBitmap", 2, "Try grsh0.8a4");
 
   reader->readBaseClass("Bitmap", IO::makeProxy<Bitmap>(this));
-}
-
-void XBitmap::writeTo(IO::Writer* writer) const
-{
-DOTRACE("XBitmap::writeTo");
-
-  writer->ensureWriteVersionId("XBitmap", XBITMAP_SERIAL_VERSION_ID, 2,
-                               "Try grsh0.8a4");
-
-  writer->writeBaseClass("Bitmap", IO::makeConstProxy<Bitmap>(this));
 }
 
 static const char vcid_xbitmap_cc[] = "$Header$";

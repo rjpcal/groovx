@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep  8 11:02:17 1999
-// written: Wed Nov 20 17:02:48 2002
+// written: Thu Nov 21 11:49:40 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,7 +17,8 @@
 
 #include "io/ioproxy.h"
 #include "io/reader.h"
-#include "io/writer.h"
+
+#include "util/strings.h"
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -45,6 +46,13 @@ GLBitmap::~GLBitmap()
 DOTRACE("GLBitmap::~GLBitmap");
 }
 
+fstring GLBitmap::ioTypename() const
+{
+DOTRACE("GLBitmap::ioTypename");
+
+  return fstring("Bitmap");
+}
+
 IO::VersionId GLBitmap::serialVersionId() const
 {
 DOTRACE("GLBitmap::serialVersionId");
@@ -64,16 +72,6 @@ DOTRACE("GLBitmap::readFrom");
     }
 
   reader->readBaseClass("Bitmap", IO::makeProxy<Bitmap>(this));
-}
-
-void GLBitmap::writeTo(IO::Writer* writer) const
-{
-DOTRACE("GLBitmap::writeTo");
-
-  writer->ensureWriteVersionId("GLBitmap", GLBITMAP_SERIAL_VERSION_ID, 3,
-                               "Try grsh0.8a4");
-
-  writer->writeBaseClass("Bitmap", IO::makeConstProxy<Bitmap>(this));
 }
 
 static const char vcid_glbitmap_cc[] = "$Header$";

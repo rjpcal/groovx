@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Sep  7 14:39:09 1999
-// written: Wed Nov 20 17:00:23 2002
+// written: Thu Nov 21 11:48:02 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -29,9 +29,11 @@ public:
   /// Virtual destructor.
   virtual ~XBitmap();
 
+  virtual fstring ioTypename() const;
+
   virtual IO::VersionId serialVersionId() const;
   virtual void readFrom(IO::Reader* reader);
-  virtual void writeTo(IO::Writer* writer) const;
+  // no writeTo() override since we just want Bitmap's writeTo()
 };
 
 static const char vcid_xbitmap_h[] = "$Header$";
