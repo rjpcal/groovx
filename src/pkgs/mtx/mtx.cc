@@ -5,7 +5,7 @@
 // Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:39:12 2001
-// written: Thu Aug  1 10:03:43 2002
+// written: Thu Aug  1 10:38:58 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -539,6 +539,7 @@ template class MtxBase<DataHolderRef>;
 
 SubMtxRef& SubMtxRef::operator=(const SubMtxRef& other)
 {
+DOTRACE("SubMtxRef::operator=(const SubMtxRef&)");
   if (this->nelems() != other.nelems())
     throw Util::Error("SubMtxRef::operator=(): dimension mismatch");
 
@@ -550,6 +551,7 @@ SubMtxRef& SubMtxRef::operator=(const SubMtxRef& other)
 
 SubMtxRef& SubMtxRef::operator=(const Mtx& other)
 {
+DOTRACE("SubMtxRef::operator=(const Mtx&)");
   if (this->nelems() != other.nelems())
     throw Util::Error("SubMtxRef::operator=(): dimension mismatch");
 
