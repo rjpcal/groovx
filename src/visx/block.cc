@@ -3,7 +3,7 @@
 // block.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Sat Jun 26 12:29:34 1999
-// written: Thu Mar  9 17:10:06 2000
+// written: Mon Mar 13 19:04:59 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -18,6 +18,7 @@
 #include "iostl.h"
 #include "reader.h"
 #include "readutils.h"
+#include "response.h"
 #include "util/strings.h"
 #include "tlist.h"
 #include "trial.h"
@@ -60,8 +61,7 @@ public:
 	 itsTrialSequence(),
 	 itsRandSeed(0),
 	 itsCurTrialSeqIdx(0),
-	 itsVerbose(false),
-	 itsTimer()
+	 itsVerbose(false)
 	 {}
 
   vector<int> itsTrialSequence; // Ordered sequence of indexes into the Tlist
@@ -70,8 +70,6 @@ public:
   int itsRandSeed;				  // Random seed used to create itsTrialSequence
   int itsCurTrialSeqIdx;		  // Index of the current trial
   bool itsVerbose;
-
-  mutable StopWatch itsTimer;	  // Used to record the start time of each Trial
 };
 
 ///////////////////////////////////////////////////////////////////////
@@ -336,12 +334,6 @@ DOTRACE("Block::beginTrial");
   if (itsImpl->itsVerbose) {
 	 cerr << trialDescription() << endl;
   }
-
-  // Record when the trial began so we can later note the response
-  // time.  We record the time *after* the drawTrial call since
-  // rendering the trial can possibly take considerable time (order of
-  // 100 - 1000ms).
-  itsImpl->itsTimer.restart();
 }
 
 void Block::drawTrial(Experiment* expt) {
@@ -381,14 +373,14 @@ DOTRACE("Block::abortTrial");
   --itsImpl->itsCurTrialSeqIdx;
 }
 
-void Block::processResponse(int response, Experiment*) {
+void Block::processResponse(const Response& response, Experiment*) {
 DOTRACE("Block::processResponse");
   if (isComplete()) return;
 
-  getCurTrial().recordResponse(response, itsImpl->itsTimer.elapsedMsec());
+  getCurTrial().recordResponse(response);
 
   if (itsImpl->itsVerbose) {
-    cerr << "response " << response << endl;
+    cerr << "response: " << response << '\n';
   }
 }
 
