@@ -3,7 +3,7 @@
 // iomap.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Oct 24 16:27:13 2000
-// written: Wed Oct 25 07:28:09 2000
+// written: Wed Oct 25 11:50:28 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -117,6 +117,8 @@ IO::IoMap::Iterator::operator=(const IO::IoMap::Iterator& other) {
   itsImpl = new ItrImpl(*(other.itsImpl));
 
   delete prev_impl;
+
+  return *this;
 }
 
 IO::IoObject* IO::IoMap::Iterator::getObject() const {
