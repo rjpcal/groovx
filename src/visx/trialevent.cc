@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Mon Mar  6 18:45:24 2000
+// written: Wed Mar  8 16:14:50 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,17 +13,18 @@
 
 #include "trialevent.h"
 
-#include <cmath>
-#include <cstring>
-#include <iostream.h>
-#include <typeinfo>
-
 #include "canvas.h"
 #include "demangle.h"
 #include "error.h"
 #include "experiment.h"
 #include "reader.h"
 #include "writer.h"
+
+#include <tcl.h>
+#include <cmath>
+#include <cstring>
+#include <iostream.h>
+#include <typeinfo>
 
 #define NO_TRACE
 #include "trace.h"
