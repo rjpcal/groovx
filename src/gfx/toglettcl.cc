@@ -35,8 +35,8 @@
 #include "gfx/canvas.h"
 #include "gfx/gxcamera.h"
 #include "gfx/gxnode.h"
-#include "gfx/pointtcl.h"
 #include "gfx/toglet.h"
+#include "gfx/vectcl.h"
 
 #include "nub/objfactory.h"
 #include "nub/ref.h"

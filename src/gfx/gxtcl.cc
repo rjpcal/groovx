@@ -55,8 +55,8 @@
 #include "gfx/gxtext.h"
 #include "gfx/gxtransform.h"
 #include "gfx/pscanvas.h"
-#include "gfx/pointtcl.h"
 #include "gfx/recttcl.h"
+#include "gfx/vectcl.h"
 
 #include "io/fieldpkg.h"
 
