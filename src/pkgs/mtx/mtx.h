@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 12:23:11 2001
-// written: Tue Apr 17 11:04:33 2001
+// written: Wed Apr 18 09:54:17 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -497,9 +497,34 @@ public:
 
   void swapColumns(int c1, int c2);
 
+
   //
   // Functions
   //
+
+  Mtx meanRow() const
+  {
+	 Mtx res(1, ncols());
+
+	 MtxIter resiter = res.row(0).beginNC();
+
+	 for (int c = 0; c < ncols(); ++c, ++resiter)
+		*resiter = column(c).mean();
+
+	 return res;
+  }
+
+  Mtx meanColumn() const
+  {
+	 Mtx res(mrows(), 1);
+
+	 MtxIter resiter = res.column(0).beginNC();
+
+	 for (int r = 0; r < mrows(); ++r, ++resiter)
+		*resiter = row(r).mean();
+
+	 return res;
+  }
 
   void apply(double func(double))
   {
