@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 11 18:30:47 2001
-// written: Wed Jul 11 18:34:35 2001
+// written: Mon Jul 16 13:20:20 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -16,6 +16,13 @@
 #include "tcl/tclobjptr.h"
 
 #include <tcl.h>
+
+namespace
+{
+  Tcl::ObjPtr theNullObject("");
+}
+
+Tcl::ObjPtr::ObjPtr() : itsObj(theNullObject.itsObj) { incrRef(itsObj); }
 
 bool Tcl::ObjPtr::isShared() const
 {

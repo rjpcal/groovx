@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue May 11 13:44:19 1999
-// written: Fri Jul 13 10:26:32 2001
+// written: Mon Jul 16 13:19:13 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -19,7 +19,8 @@
 
 struct Tcl_Obj;
 
-namespace Tcl {
+namespace Tcl
+{
 
 ///////////////////////////////////////////////////////////////////////
 /**
@@ -34,7 +35,10 @@ namespace Tcl {
 
 class ObjPtr {
 public:
-  /// Default constructor.
+  /// Default constructor with a shared and empty Tcl_Obj*.
+  ObjPtr();
+
+  /// Construct with automatic conversion from a C++ type.
   template <class T>
   ObjPtr(T t) : itsObj(Tcl::Convert<T>::toTcl(t)) { incrRef(itsObj); }
 
