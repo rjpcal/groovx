@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sat Jun 26 12:29:34 1999
-// written: Wed Jan 30 17:17:57 2002
+// written: Wed Apr  3 17:23:13 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,7 @@
 #include "io/writer.h"
 #include "io/writeutils.h"
 
+#include "util/iter.h"
 #include "util/log.h"
 #include "util/minivec.h"
 #include "util/rand.h"
@@ -223,6 +224,13 @@ int Block::numTrials() const
 {
 DOTRACE("Block::numTrials");
   return itsImpl->itsTrialSequence.size();
+}
+
+Util::FwdIter<Util::Ref<TrialBase> > Block::trials() const
+{
+  return Util::FwdIter<Util::Ref<TrialBase> >
+    (itsImpl->itsTrialSequence.begin(),
+     itsImpl->itsTrialSequence.end());
 }
 
 int Block::numCompleted() const
