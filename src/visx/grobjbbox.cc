@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul 19 10:45:53 2001
-// written: Wed Aug 29 09:37:20 2001
+// written: Thu Aug 30 15:38:41 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -17,6 +17,7 @@
 
 #include "gfx/canvas.h"
 #include "gfx/rect.h"
+#include "gfx/rgbacolor.h"
 
 #include "util/trace.h"
 #define LOCAL_ASSERT
@@ -69,6 +70,8 @@ void GrObjBBox::gnodeDraw(Gfx::Canvas& canvas) const
 {
 DOTRACE("GrObjBBox::gnodeDraw");
 
+  child()->gnodeDraw(canvas);
+
   if (isItVisible)
     {
       Gfx::Rect<double> bounds =
@@ -82,13 +85,25 @@ DOTRACE("GrObjBBox::gnodeDraw");
 
       Gfx::Canvas::AttribSaver saver(canvas);
 
+      canvas.setColor(Gfx::RgbaColor(0.0, 0.0, 1.0, 1.0));
+
       canvas.setLineWidth(1.0);
       canvas.setLineStipple(itsStipple);
 
       canvas.drawRect(bounds);
-    }
 
-  child()->gnodeDraw(canvas);
+      canvas.setPointSize(4.0);
+
+      {
+        Gfx::Canvas::PointsBlock block(canvas);
+
+        canvas.vertex2(bounds.bottomLeft());
+        canvas.vertex2(bounds.bottomRight());
+        canvas.vertex2(bounds.topRight());
+        canvas.vertex2(bounds.topLeft());
+        canvas.vertex2(bounds.center());
+      }
+    }
 }
 
 static const char vcid_grobjbbox_cc[] = "$Header$";
