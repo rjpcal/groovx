@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 16:59:35 2001
-// written: Sat Nov 23 14:29:21 2002
+// written: Sat Nov 23 14:49:36 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -61,6 +61,8 @@ public:
 
   virtual void displayCallback() = 0;
 
+  virtual void reshapeCallback(int width, int height) = 0;
+
   /// Default version is a no-op.
   virtual void timerCallback();
 
@@ -71,7 +73,6 @@ public:
   virtual void takeFocus();
 
   void requestRedisplay();
-  void requestReconfigure();
 
   void hook();
 

@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Sat Nov 23 14:47:36 2002
+// written: Sat Nov 23 14:53:49 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@
 class Scene : public Util::VolatileObject
 {
 public:
-  Scene(Toglet* owner, Util::SoftRef<Gfx::Canvas> canvas) :
+  Scene(Util::SoftRef<Gfx::Canvas> canvas) :
     itsCanvas(canvas),
     itsDrawNode(GxEmptyNode::make()),
     itsUndrawNode(GxEmptyNode::make()),
@@ -54,17 +54,17 @@ public:
     isItRefreshing(true),
     isItRefreshed(false),
     itsTimer(100, true),
-    slotNodeChanged(Util::Slot::make(owner, &Toglet::onNodeChange))
+    slotNodeChanged(Util::Slot::make(this, &Scene::onNodeChange))
   {
-    itsTimer.sigTimeOut.connect(owner, &Toglet::fullRender);
+    itsTimer.sigTimeOut.connect(this, &Scene::fullRender);
     itsCamera->sigNodeChanged.connect(slotNodeChanged);
   }
 
   void undraw();
 
-  void render(int width, int height);
+  void render();
 
-  void fullRender(int width, int height);
+  void fullRender();
 
   void clearscreen()
   {
@@ -107,16 +107,21 @@ public:
     itsDrawNode->sigNodeChanged.connect(slotNodeChanged);
   }
 
-  void flushChanges(int width, int height)
+  void flushChanges()
   {
     if (isItRefreshing && !isItRefreshed)
-      fullRender(width, height);
+      fullRender();
   }
 
-  void onNodeChange(int width, int height)
+  void onNodeChange()
   {
     isItRefreshed = false;
-    flushChanges(width, height);
+    flushChanges();
+  }
+
+  void reshape(int width, int height)
+  {
+    itsCamera->reshape(width, height);
   }
 
 private:
@@ -145,7 +150,7 @@ public:
 //
 ///////////////////////////////////////////////////////////////////////
 
-void Scene::render(int width, int height)
+void Scene::render()
 {
 DOTRACE("Scene::render");
 
@@ -154,7 +159,6 @@ DOTRACE("Scene::render");
       Gfx::MatrixSaver msaver(*itsCanvas);
       Gfx::AttribSaver asaver(*itsCanvas);
 
-      itsCamera->reshape(width, height);
       itsCamera->draw(*itsCanvas);
       itsDrawNode->draw(*itsCanvas);
       itsUndrawNode = itsDrawNode;
@@ -168,7 +172,7 @@ DOTRACE("Scene::render");
     }
 }
 
-void Scene::fullRender(int width, int height)
+void Scene::fullRender()
 {
 DOTRACE("Scene::fullRender");
 
@@ -181,7 +185,7 @@ DOTRACE("Scene::fullRender");
   // (2) Render the current object
   if ( isItVisible )
     {
-      render(width, height);
+      render();
     }
 
   // (3) Flush the graphics stream
@@ -352,7 +356,7 @@ namespace
 Toglet::Toglet(bool pack) :
   Tcl::TkWidget(Tcl::Main::interp(), "Toglet", widgetName(id())),
   rep(new Impl(this)),
-  itsScene(new Scene(this, rep->canvas))
+  itsScene(new Scene(rep->canvas))
 {
 DOTRACE("Toglet::Toglet");
 
@@ -405,12 +409,12 @@ DOTRACE("Toglet::swapBuffers");
 
 void Toglet::render()
 {
-  itsScene->render(width(), height());
+  itsScene->render();
 }
 
 void Toglet::fullRender()
 {
-  itsScene->fullRender(width(), height());
+  itsScene->fullRender();
 }
 
 void Toglet::clearscreen()
@@ -421,6 +425,11 @@ void Toglet::clearscreen()
 void Toglet::fullClearscreen()
 {
   itsScene->fullClearscreen();
+}
+
+void Toglet::reshapeCallback(int width, int height)
+{
+  itsScene->reshape(width, height);
 }
 
 void Toglet::undraw()
@@ -444,7 +453,7 @@ void Toglet::allowRefresh(bool allow)
 {
 DOTRACE("Toglet::allowRefresh");
   itsScene->isItRefreshing = allow;
-  itsScene->flushChanges(width(), height());
+  itsScene->flushChanges();
 }
 
 const Util::Ref<GxCamera>& Toglet::getCamera() const
@@ -480,11 +489,6 @@ DOTRACE("Toglet::animate");
       itsScene->itsTimer.setDelayMsec(1000/framesPerSecond);
       itsScene->itsTimer.schedule();
     }
-}
-
-void Toglet::onNodeChange()
-{
-  itsScene->onNodeChange(width(), height());
 }
 
 Toglet::Color Toglet::queryColor(unsigned int color_index) const

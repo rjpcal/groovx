@@ -5,7 +5,7 @@
 // Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Sat Nov 23 14:30:18 2002
+// written: Sat Nov 23 14:53:27 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -73,6 +73,9 @@ public:
   Color queryColor(unsigned int color_index) const;
 
 
+  /// Overridden from Tcl::TkWidget.
+  virtual void reshapeCallback(int width, int height);
+
 
   virtual void undraw();
 
@@ -109,8 +112,6 @@ public:
   void setDrawable(const Util::Ref<GxNode>& node);
 
   void animate(unsigned int framesPerSecond);
-
-  void onNodeChange();
 
 
 

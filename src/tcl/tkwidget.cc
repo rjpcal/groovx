@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 15 17:05:12 2001
-// written: Thu Nov 21 18:03:05 2002
+// written: Sat Nov 23 14:51:20 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -186,6 +186,7 @@ void TkWidgImpl::cEventCallback(ClientData clientData, XEvent* rawEvent)
 DOTRACE("TkWidgImpl::cEventCallback");
 
   Tcl::TkWidget* widg = static_cast<Tcl::TkWidget*>(clientData);
+  TkWidgImpl* rep = widg->rep;
 
   try
     {
@@ -203,7 +204,18 @@ DOTRACE("TkWidgImpl::cEventCallback");
         case ConfigureNotify:
           {
             DOTRACE("TkWidgImpl::cEventCallback-ConfigureNotify");
-            widg->requestReconfigure();
+
+            if (rep->width != Tk_Width(rep->tkWin) ||
+                rep->height != Tk_Height(rep->tkWin))
+              {
+                rep->width = Tk_Width(rep->tkWin);
+                rep->height = Tk_Height(rep->tkWin);
+                XResizeWindow(Tk_Display(rep->tkWin), Tk_WindowId(rep->tkWin),
+                              rep->width, rep->height);
+              }
+
+            widg->reshapeCallback(rep->width, rep->height);
+            widg->requestRedisplay();
           }
        break;
         case KeyPress:
@@ -429,22 +441,6 @@ DOTRACE("Tcl::TkWidget::requestRedisplay");
       Tk_DoWhenIdle(TkWidgImpl::cRenderCallback, static_cast<ClientData>(this));
       rep->updatePending = true;
     }
-}
-
-void Tcl::TkWidget::requestReconfigure()
-{
-DOTRACE("Tcl::TkWidget::requestReconfigure");
-
-  if (rep->width != Tk_Width(rep->tkWin) ||
-      rep->height != Tk_Height(rep->tkWin))
-    {
-      rep->width = Tk_Width(rep->tkWin);
-      rep->height = Tk_Height(rep->tkWin);
-      XResizeWindow(Tk_Display(rep->tkWin), Tk_WindowId(rep->tkWin),
-                    rep->width, rep->height);
-    }
-
-  requestRedisplay();
 }
 
 void Tcl::TkWidget::hook()
