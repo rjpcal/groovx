@@ -3,7 +3,7 @@
 // trialevent.cc
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Fri Jun 25 12:44:55 1999
-// written: Mon Dec  6 22:44:22 1999
+// written: Thu Jan 27 16:21:34 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -121,7 +121,7 @@ DOTRACE("TrialEvent::schedule");
   // don't bother creating a timer handler. Instead, generate a direct
   // invocation.
   if (itsRequestedDelay <= 0) {
-	 invoke();
+	 dummyInvoke(static_cast<ClientData>(this));
   }
   // Otherwise, set up a timer that will call the invocation after the
   // specified amount of time.
