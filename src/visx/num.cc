@@ -2,10 +2,10 @@
 //
 // num.cc
 //
-// Copyright (c) 1998-2000 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Mar  8 16:28:26 2001
-// written: Wed Mar 21 13:08:14 2001
+// written: Fri Apr  6 10:27:19 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
