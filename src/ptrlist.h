@@ -3,7 +3,7 @@
 // ptrlist.h
 // Rob Peters
 // created: Fri Apr 23 00:35:31 1999
-// written: Tue Oct 24 15:27:29 2000
+// written: Tue Oct 24 15:53:33 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -41,39 +41,19 @@ public:
   /// Virtual destructor.
   virtual ~PtrList();
 
-  //////////////
-  // pointers //
-  //////////////
-
-  typedef T* Ptr;
-
   /// A reference-counted handle to type T.
   typedef ItemWithId<T> SharedPtr;
 
-  ///////////////
-  // accessors //
-  ///////////////
+  friend class ItemWithId<T>;
+  friend class NullableItemWithId<T>;
 
-  /** Return the object at index \a id. No range check is performed on
-      \a id, so the behavior is undefined if \a id is not a valid
-      index into the list. If \a id is out of range, a segmentation
-      fault may occur. If \a is in range, but is not an index for a
-      valid object, the pointer returned may be null. */
-  SharedPtr getPtr(int id) const;
+private:
 
   /** Returns the object at index \a id, after a check is performed to
       ensure that \a id is in range, and refers to a valid object. If
       the check fails, an \c InvalidIdError exception is thrown. */
   SharedPtr getCheckedPtr(int id) const;
 
-  //////////////////
-  // manipulators //
-  //////////////////
-
-  friend class ItemWithId<T>;
-  friend class NullableItemWithId<T>;
-
-private:
   /// Insert \a ptr into the list, and return its id.
   SharedPtr insert(T* master);
 
