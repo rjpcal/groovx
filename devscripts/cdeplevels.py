@@ -12,15 +12,19 @@ import profile
 
 paths = [os.path.normpath(sys.argv[1])]
 
-for arg in sys.argv[2:]:
-    if arg.startswith("-I"):
-        paths.append(arg[2:])
+maxlevel = 1000
+
+for i in range(2, len(sys.argv)):
+    if sys.argv[i].startswith("-I"):
+        paths.append(sys.argv[i][2:])
+    if sys.argv[i].startswith("-L"):
+        maxlevel = int(sys.argv[i+1])
 
 def go(n):
     for i in range(n):
         b = cppdeps.DepBuilder(paths)
         b.buildDepTree()
-        b.printCdepLevels(sys.stdout)
+        b.printCdepLevels(sys.stdout, maxlevel)
 
 #profile.run("go(10)")
 go(1)

@@ -191,7 +191,7 @@ class DepBuilder:
             for dep in sort(self.itsDirectIncludes.get(file)):
                 self.printOneCdepLevel(dep, stream, indentlevel+1, maxindent)
 
-    def printCdepLevels(self, stream):
+    def printCdepLevels(self, stream, maxlevel):
         backmap = {}
 
         for file in sort(self.itsFullIncludes.keys()):
@@ -203,7 +203,7 @@ class DepBuilder:
         for level in sort(backmap.keys()):
             for file in backmap[level]:
                 stream.write('\n\n')
-                self.printOneCdepLevel(file, stream, 0, 100)
+                self.printOneCdepLevel(file, stream, 0, maxlevel)
 
         stream.write('\n')
 
