@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Mon Jul 22 18:48:34 2002
+// written: Thu Sep  5 16:17:22 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -21,18 +21,36 @@
 #include <tk.h>
 #include <unistd.h>
 
-struct Tcl::Main::Impl
+namespace Tcl
 {
-  Impl() :
+  class MainImpl;
+}
+
+// Singleton implementation class for Tcl::Main
+class Tcl::MainImpl
+{
+private:
+  static MainImpl* theMainImpl;
+
+  MainImpl() :
     safeInterp(Tcl_CreateInterp()),
     startupFileName(0),
     inChannel(0)
   {}
 
+public:
+  static MainImpl* get()
+  {
+    if (theMainImpl == 0)
+      theMainImpl = new MainImpl;
+
+    return theMainImpl;
+  }
+
   void defaultPrompt(bool partial);
   void prompt(bool partial);
 
-  static void stdinProc(ClientData clientData, // void* cast to/from Impl*
+  static void stdinProc(ClientData clientData, // void* cast to/from MainImpl*
                         int /*mask*/);
 
   Tcl_Interp* interp() const { return safeInterp.intp(); }
@@ -41,6 +59,8 @@ struct Tcl::Main::Impl
   const char* startupFileName;
   Tcl_Channel inChannel;
 };
+
+Tcl::MainImpl* Tcl::MainImpl::theMainImpl = 0;
 
 namespace
 {
@@ -60,11 +80,11 @@ namespace
 
 //---------------------------------------------------------------------
 //
-// Tcl::Main::Impl::defaultPrompt()
+// Tcl::MainImpl::defaultPrompt()
 //
 //---------------------------------------------------------------------
 
-void Tcl::Main::Impl::defaultPrompt(bool partial)
+void Tcl::MainImpl::defaultPrompt(bool partial)
 {
   if (!partial)
     {
@@ -85,11 +105,11 @@ void Tcl::Main::Impl::defaultPrompt(bool partial)
 
 //---------------------------------------------------------------------
 //
-// Tcl::Main::Impl::prompt()
+// Tcl::MainImpl::prompt()
 //
 //---------------------------------------------------------------------
 
-void Tcl::Main::Impl::prompt(bool partial)
+void Tcl::MainImpl::prompt(bool partial)
 {
   Tcl_Obj* promptCmd =
     Tcl_GetVar2Ex(interp(),
@@ -142,11 +162,11 @@ void Tcl::Main::Impl::prompt(bool partial)
 //
 //---------------------------------------------------------------------
 
-void Tcl::Main::Impl::stdinProc(ClientData clientData, int /*mask*/)
+void Tcl::MainImpl::stdinProc(ClientData clientData, int /*mask*/)
 {
   static int gotPartial = 0;
 
-  Tcl::Main::Impl* rep = static_cast<Tcl::Main::Impl*>(clientData);
+  Tcl::MainImpl* rep = Tcl::MainImpl::get();
 
   ThreadSpecificData* tsdPtr = (ThreadSpecificData *)
     Tcl_GetThreadData(&dataKey, sizeof(ThreadSpecificData));
@@ -234,9 +254,10 @@ void Tcl::Main::Impl::stdinProc(ClientData clientData, int /*mask*/)
 //
 //---------------------------------------------------------------------
 
-Tcl::Main::Main(int argc, char** argv) :
-  rep(new Impl)
+Tcl::Main::Main(int argc, char** argv)
 {
+  Tcl::MainImpl* rep = Tcl::MainImpl::get();
+
   Tcl_FindExecutable(argv[0]);
 
   // Set up thread-specific data
@@ -288,9 +309,7 @@ Tcl::Main::Main(int argc, char** argv) :
 //---------------------------------------------------------------------
 
 Tcl::Main::~Main()
-{
-  delete rep;
-}
+{}
 
 //---------------------------------------------------------------------
 //
@@ -300,7 +319,7 @@ Tcl::Main::~Main()
 
 Tcl_Interp* Tcl::Main::interp() const
 {
-  return rep->interp();
+  return Tcl::MainImpl::get()->interp();
 }
 
 //---------------------------------------------------------------------
@@ -311,7 +330,7 @@ Tcl_Interp* Tcl::Main::interp() const
 
 Tcl::Interp& Tcl::Main::safeInterp() const
 {
-  return rep->safeInterp;
+  return Tcl::MainImpl::get()->safeInterp;
 }
 
 //---------------------------------------------------------------------
@@ -324,6 +343,8 @@ void Tcl::Main::run()
 {
   ThreadSpecificData* tsdPtr = (ThreadSpecificData *)
     Tcl_GetThreadData(&dataKey, sizeof(ThreadSpecificData));
+
+  Tcl::MainImpl* rep = Tcl::MainImpl::get();
 
   /*
    * Invoke the script specified on the command line, if any.
@@ -355,7 +376,7 @@ void Tcl::Main::run()
       if (rep->inChannel)
         {
           Tcl_CreateChannelHandler(rep->inChannel, TCL_READABLE,
-                                   &Impl::stdinProc, (ClientData) rep);
+                                   &MainImpl::stdinProc, (ClientData) rep);
         }
       if (tsdPtr->tty)
         {

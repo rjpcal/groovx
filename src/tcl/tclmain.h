@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:32:01 2002
-// written: Mon Jul 22 18:33:27 2002
+// written: Thu Sep  5 16:13:42 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -36,10 +36,6 @@ public:
 private:
   Main(const Main&);
   Main& operator=(const Main&);
-
-  struct Impl;
-  friend struct Impl;
-  Impl* const rep;
 };
 
 static const char vcid_tclmain_h[] = "$Header$";
