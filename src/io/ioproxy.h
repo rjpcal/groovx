@@ -3,7 +3,7 @@
 // ioproxy.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Wed Mar 22 21:41:38 2000
-// written: Thu Sep 28 11:11:34 2000
+// written: Thu Sep 28 11:32:16 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -85,6 +85,12 @@ public:
 
   virtual fixed_string ioTypename() const
 	 { return itsReferand->C::ioTypename(); }
+
+  virtual fixed_string legacyIoTypename() const
+	 { return itsReferand->C::legacyIoTypename(); }
+
+  virtual fixed_string legacyValidTypenames() const
+	 { return itsReferand->C::legacyValidTypenames(); }
 
 private:
   ConstIoProxy(const ConstIoProxy&);
