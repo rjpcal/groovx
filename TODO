@@ -7,6 +7,10 @@
 
 * "Make it run, make it run correctly, make it run fast"
 
+* (25-Oct-2004) fix testing with seed 1259994090
+
+  seed 1384024797
+
 * (20-Oct-2004) make media/imgfile not depend on Nub::log
 
 * (15-Oct-2004) make a DebugScheduler that can be used in TimingHdlr
@@ -25,23 +29,24 @@
    --> used in ExptDriver::Impl::Impl (saved as member variable)
    --> used in GenericEvent::GenericEvent (passed to Tcl::ProcWrapper)
 
-** Gfx::Canvas  (from Gfx::Canvas::current())
-   --> used in GxPixmap::grabScreenRect (passed to grabPixels())
-   --> used in GxPixmap::grabScreen (passed to getScreenViewport())
-   --> used in GxPixmap::grabWorldRect (passed to screenFromWorld())
-   --> used in GxScaler::setWidth (passed to getBoundingBox())
-   --> used in GxScaler::setHeight (passed to getBoundingBox())
-   --> used in GxScaler::scaledWidth (passed to getBoundingBox())
-   --> used in GxScaler::scaledHeight (passed to getBoundingBox())
-   --> used in gxtcl.cc::boundingBox (passed to GxNode::getBoundingBox())
-   --> used in gltcl.cc::checkGL (passed to throwIfError())
-   --> used in gltcl.cc::loadMatrix (passed to throwIfError())
-   --> used in gltcl.cc::pixelCheckSum (passed to grabPixels())
-
-   [x] used in TlistUtils::createPreview (passed to doCreatePreview())
-       called from pkg->def (tlisttcl.cc)
-
 ** Toglet::getCurrent()
+   Most of this stuff has to do with the fact that we sometimes need a
+   canvas to compute a bounding-box, in particular when we have a
+   graphic object whose native size is in pixels rather than in world
+   coordinates -- this would be GxPixmap, Gabor, GaborArray,
+   AglRasterFont, GlxRasterFont.
+
+   However, this creates a cumbersome burden for objects that don't
+   need a world/screen mapping in order to determine their bbox; in
+   particular it makes a pain for GxScaler.
+
+   Better name for "world" coordinates would be "model" coordinates.
+   Better name for "screen" coordinates would be "device" coordinates.
+
+   [x] used in GxScaler::setWidth (passed to getBoundingBox())
+   [x] used in GxScaler::setHeight (passed to getBoundingBox())
+   [x] used in GxScaler::scaledWidth (passed to getBoundingBox())
+   [x] used in GxScaler::scaledHeight (passed to getBoundingBox())
 
 ** ObjFactory::theOne()
 

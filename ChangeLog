@@ -4628,3 +4628,25 @@
   doCreatePreview(), causing us to try glScale()'ing with a singular
   scale factor. Fixed that problem with arg-checking; now trying to
   robustify geom::rect.
+
+* (13-Oct-2004) try to minimize global data masquerading as singletons
+
+** (done 25-Oct-2004) Gfx::Canvas  (from Gfx::Canvas::current())
+   OK, fixed most of the cases, and in the others, passed the buck on
+   to Toglet::getCurrent().
+
+   [x] used in GxScaler::setWidth (passed to getBoundingBox())
+   [x] used in GxScaler::setHeight (passed to getBoundingBox())
+   [x] used in GxScaler::scaledWidth (passed to getBoundingBox())
+   [x] used in GxScaler::scaledHeight (passed to getBoundingBox())
+
+   [x] used in GxPixmap::grabScreenRect (passed to grabPixels())
+   [x] used in GxPixmap::grabScreen (passed to getScreenViewport())
+   [x] used in GxPixmap::grabWorldRect (passed to screenFromWorld())
+
+   [x] used in gxtcl.cc::boundingBox (passed to GxNode::getBoundingBox())
+   [x] used in gltcl.cc::checkGL (passed to throwIfError())
+   [x] used in gltcl.cc::loadMatrix (passed to throwIfError())
+   [x] used in gltcl.cc::pixelCheckSum (passed to grabPixels())
+   [x] used in TlistUtils::createPreview (passed to doCreatePreview())
+       called from pkg->def (tlisttcl.cc)
