@@ -3,7 +3,7 @@
 // trialbase.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Jan 25 18:41:19 2000
-// written: Thu May 11 20:18:39 2000
+// written: Fri Jul  7 15:47:08 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ public:
   virtual void trNextTrial() = 0;
   virtual void trHaltExpt() = 0;
   virtual void trResponseSeen() = 0;
-  virtual void trRecordResponse(const Response& response) = 0;
+  virtual void trRecordResponse(Response& response) = 0;
   virtual void trDrawTrial() const = 0;
   virtual void trUndrawTrial() const = 0;
 
