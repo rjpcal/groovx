@@ -3,7 +3,7 @@
 // grobj.cc
 // Rob Peters 
 // created: Dec-98
-// written: Thu Mar 30 09:50:04 2000
+// written: Sat Sep 23 14:22:51 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -219,7 +219,7 @@ DOTRACE("GrObj::getUnRenderMode");
 									
 void GrObj::setBitmapCacheDir(const char* dirname) {
 DOTRACE("GrObj::setBitmapCacheDir");
-  Impl::Renderer::BITMAP_CACHE_DIR = dirname;
+  Impl::setBitmapCacheDir(dirname); 
 }
 
 void GrObj::setBBVisibility(bool visibility) {
