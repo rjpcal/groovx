@@ -1,7 +1,0 @@
-#!/bin/csh 
-# \
-exec tclsh $0 $argv
-
-cd ~/sorcery/grsh
-
-source scripts/Backup.tcl
