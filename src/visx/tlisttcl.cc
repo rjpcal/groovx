@@ -36,7 +36,11 @@
 
 #include <cmath>
 #include <fstream>
+#ifndef PRESTANDARD_IOSTREAMS
 #include <sstream>
+#else
+#include <strstream>
+#endif
 
 #include "util/trace.h"
 
@@ -367,7 +371,11 @@ Tcl::List TlistTcl::loadObjidFile(const char* objid_file,
       if (ifs.fail())
         throw Util::Error("error reading objid file");
 
+#ifndef PRESTANDARD_IOSTREAMS
       std::istringstream ist(line);
+#else
+      istrstream ist(line);
+#endif
 
       Ref<Trial> trial(Trial::make());
       Ref<GxSeparator> sep(GxSeparator::make());
