@@ -34,7 +34,17 @@
 
 #include <cstddef>
 
-typedef struct mxArray_tag mxArray;
+
+//  #######################################################
+//  =======================================================
+/// Aggregation of initialization and storage policy enums.
+
+struct mtx_policies
+{
+  enum init_policy { ZEROS, NO_INIT };
+  enum storage_policy { COPY, BORROW, REFER };
+};
+
 
 /// Base class for holding ref-counted arrays of floating-point data.
 /** Serves as the implementation for higher-level matrix classes, etc. */
@@ -90,6 +100,13 @@ public:
       possible to write to the data through the data_block. */
   static data_block* make_referred(double* data, int data_length);
 
+  static data_block* make(double* data,
+                          int mrows, int ncols,
+                          mtx_policies::storage_policy s);
+
+  static data_block* make(int mrows, int ncols,
+                          mtx_policies::init_policy p);
+
   /// Make the given data_block have a unique copy of its data, copying if needed.
   static void make_unique(data_block*& rep);
 
@@ -116,17 +133,6 @@ public:
 
 //  #######################################################
 //  =======================================================
-/// Aggregation of initialization and storage policy enums.
-
-struct mtx_policies
-{
-  enum init_policy { ZEROS, NO_INIT };
-  enum storage_policy { COPY, BORROW, REFER };
-};
-
-
-//  #######################################################
-//  =======================================================
 /// data_holder enforces the ref-counting semantics of data_block
 
 class data_holder : public mtx_policies
@@ -138,12 +144,15 @@ public:
   /// Construct empty with dimensions and an init policy.
   data_holder(int mrows, int ncols, init_policy p);
 
-  /// Construct from a matlab array and a storage policy.
-  data_holder(mxArray* a, storage_policy s);
+  /// Generic construction from a data_block.
+  data_holder(data_block* d);
 
-  /** With a const mxArray*, only BORROW or COPY are allowed as
-      storage policies, in order to preserve const-correctness. */
-  data_holder(const mxArray* a, storage_policy s);
+//   /// Construct from a matlab array and a storage policy.
+//   data_holder(mxArray* a, storage_policy s);
+
+//   /** With a const mxArray*, only BORROW or COPY are allowed as
+//       storage policies, in order to preserve const-correctness. */
+//   data_holder(const mxArray* a, storage_policy s);
 
   /// Copy constructor.
   data_holder(const data_holder& other);

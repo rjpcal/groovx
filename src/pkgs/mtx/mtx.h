@@ -38,8 +38,6 @@
 
 #include <iterator>
 
-typedef struct mxArray_tag mxArray;
-
 //  #######################################################
 //  =======================================================
 /// range-checking infrastructure
@@ -805,12 +803,6 @@ public:
     Base(specs, data)
   {}
 
-  mtx(mxArray* a, storage_policy s = COPY);
-
-  /** With a const mxArray*, only BORROW or COPY are allowed as storage
-      policies, in order to preserve const-correctness. */
-  mtx(const mxArray* a, storage_policy s = COPY);
-
   mtx(double* data, int mrows, int ncols, storage_policy s = COPY);
 
   mtx(const mtx_shape& s, init_policy p = ZEROS);
@@ -841,8 +833,6 @@ public:
       the elements there; otherwise, it will just return the current
       matrix. */
   mtx contig() const;
-
-  mxArray* make_mxarray() const;
 
   data_holder& get_data_holder() { return m_data; }
 

@@ -34,6 +34,8 @@
 
 #include "mtx.h"
 
+#include "mtx/matlabinterface.h"
+
 #include "util/error.h"
 #include "util/fstring.h"
 
@@ -42,10 +44,6 @@
 #include <iomanip>
 #include <numeric>
 #include <vector>
-
-#ifdef WITH_MATLAB
-#include <matrix.h>
-#endif
 
 #include "util/trace.h"
 #include "util/debug.h"
@@ -497,20 +495,6 @@ DOTRACE("sub_mtx_ref::operator=(const mtx&)");
 //
 ///////////////////////////////////////////////////////////////////////
 
-#ifdef WITH_MATLAB
-mtx::mtx(mxArray* a, storage_policy s) :
-  Base(mtx_specs(mxGetM(a), mxGetN(a)), data_holder(a, s))
-{
-DOTRACE("mtx::mtx(mxArray*, storage_policy)");
-}
-
-mtx::mtx(const mxArray* a, storage_policy s) :
-  Base(mtx_specs(mxGetM(a), mxGetN(a)), data_holder(a, s))
-{
-DOTRACE("mtx::mtx(const mxArray*, storage_policy)");
-}
-#endif
-
 mtx::mtx(double* data, int mrows, int ncols, storage_policy s) :
   Base(mrows, ncols, data_holder(data, mrows, ncols, s))
 {
@@ -548,18 +532,6 @@ DOTRACE("mtx::mtx");
 }
 
 mtx::~mtx() {}
-
-#ifdef WITH_MATLAB
-mxArray* mtx::make_mxarray() const
-{
-DOTRACE("mtx::make_mxarray");
-  mxArray* result_mx = mxCreateDoubleMatrix(mrows(), ncols(), mxREAL);
-
-  std::copy(colmaj_begin(), colmaj_end(), mxGetPr(result_mx));
-
-  return result_mx;
-}
-#endif
 
 void mtx::resize(int mrows_new, int ncols_new)
 {
