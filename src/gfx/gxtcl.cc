@@ -423,8 +423,7 @@ DOTRACE("Gxtext_Init");
   PKG_CREATE(interp, "GxText", "$Revision$");
   pkg->inheritPkg("GxShapeKit");
   Tcl::defCreator<GxText>(pkg, "Gtext");
-  Tcl::defGenericObjCmds<GxText>(pkg);
-  Tcl::defAllFields(pkg, GxText::classFields());
+  Tcl::defFieldContainer<GxText>(pkg);
 
   PKG_RETURN;
 }
@@ -442,7 +441,6 @@ DOTRACE("Gxfixedscalecamera_Init");
   PKG_CREATE(interp, "GxFixedScaleCamera", "$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defCreator<GxFixedScaleCamera>(pkg);
-  Tcl::defGenericObjCmds<GxFixedScaleCamera>(pkg);
   Tcl::defFieldContainer<GxFixedScaleCamera>(pkg);
 
   PKG_RETURN;
@@ -456,7 +454,6 @@ DOTRACE("Gxpsyphycamera_Init");
   PKG_CREATE(interp, "GxPsyphyCamera", "$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defCreator<GxPsyphyCamera>(pkg);
-  Tcl::defGenericObjCmds<GxPsyphyCamera>(pkg);
   Tcl::defFieldContainer<GxPsyphyCamera>(pkg);
 
   PKG_RETURN;
@@ -470,7 +467,6 @@ DOTRACE("Gxperspectivecamera_Init");
   PKG_CREATE(interp, "GxPerspectiveCamera", "$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defCreator<GxPerspectiveCamera>(pkg);
-  Tcl::defGenericObjCmds<GxPerspectiveCamera>(pkg);
   Tcl::defFieldContainer<GxPerspectiveCamera>(pkg);
 
   PKG_RETURN;
@@ -484,7 +480,6 @@ DOTRACE("Gxdisk_Init");
   PKG_CREATE(interp, "GxDisk", "$Revision$");
   pkg->inheritPkg("GxNode");
   Tcl::defCreator<GxDisk>(pkg);
-  Tcl::defGenericObjCmds<GxDisk>(pkg);
   Tcl::defFieldContainer<GxDisk>(pkg);
 
   PKG_RETURN;
