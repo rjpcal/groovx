@@ -5,7 +5,7 @@
 // Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jul 22 16:34:05 2002
-// written: Fri Nov 22 15:48:16 2002
+// written: Fri Nov 22 15:53:18 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -40,7 +40,7 @@ namespace Tcl
 
 namespace
 {
-  void exitHandler(ClientData clientData)
+  void exitHandler(ClientData /*clientData*/)
   {
 #ifdef WITH_READLINE
     rl_callback_handler_remove();
