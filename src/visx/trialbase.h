@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jan 25 18:41:19 2000
-// written: Wed May 23 18:48:20 2001
+// written: Wed Jun  6 09:38:00 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -58,6 +58,8 @@ public:
   virtual void trHaltExpt() = 0;
   virtual void trResponseSeen() = 0;
   virtual void trRecordResponse(Response& response) = 0;
+  virtual void trAllowResponses() = 0;
+  virtual void trDenyResponses() = 0;
 
   virtual void installSelf(GWT::Widget& widget) const = 0;
 };
