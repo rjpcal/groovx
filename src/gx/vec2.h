@@ -201,6 +201,7 @@ private:
 };
 
 typedef Vec2<int> Vec2i;
+typedef Vec2<float> Vec2f;
 typedef Vec2<double> Vec2d;
 
 } // end namespace Gfx
