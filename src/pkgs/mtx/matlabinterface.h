@@ -13,7 +13,7 @@
 #ifndef MATLABINTERFACE_H_DEFINED
 #define MATLABINTERFACE_H_DEFINED
 
-#ifdef HAVE_MATLAB
+#ifdef WITH_MATLAB
 
 #include <matrix.h>
 
