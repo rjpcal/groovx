@@ -2,7 +2,7 @@
 // fixpttcl.cc
 // Rob Peters
 // created: Jan-99
-// written: Fri Mar 12 17:10:45 1999
+// written: Mon Mar 15 15:08:22 1999
 static const char vcid_fixpttcl_cc[] = "$Id$";
 ///////////////////////////////////////////////////////////////////////
 
@@ -28,7 +28,7 @@ static const char vcid_fixpttcl_cc[] = "$Id$";
 
 namespace FixptTcl {
   FixPt* getFixptFromArg(Tcl_Interp *interp, Tcl_Obj *const objv[],
-								 ObjList *olist, int argn);
+								 const ObjList& olist, int argn);
 
   Tcl_ObjCmdProc fixptCmd;
   using ObjlistTcl::ObjlistTcl_SubcmdProc;
@@ -48,7 +48,7 @@ namespace FixptTcl {
 ///////////////////////////////////////////////////////////////////////
 
 FixPt* FixptTcl::getFixptFromArg(Tcl_Interp *interp, Tcl_Obj *const objv[],
-											ObjList *olist, int argn) {
+											const ObjList& olist, int argn) {
 DOTRACE("FixptTcl::getFixptFromArg");
   // Get the object
   GrObj *g = ObjlistTcl::getObjFromArg(interp, objv, olist, argn);
@@ -65,7 +65,7 @@ DOTRACE("FixptTcl::getFixptFromArg");
 int FixptTcl::fixptCmd(ClientData, Tcl_Interp *interp,
                        int objc, Tcl_Obj *const objv[]) {
 DOTRACE("FixptTcl::fixptCmd");
-  ObjList *olist = ObjlistTcl::getObjList();
+  ObjList& olist = ObjlistTcl::getObjList();
   int id;
 
   float len=0.1;
@@ -73,7 +73,7 @@ DOTRACE("FixptTcl::fixptCmd");
   if (objc == 1) {              // make new object
     FixPt *p = new FixPt(len, wid);
 
-    if ( (id = olist->addObj(p)) < 0) {
+    if ( (id = olist.addObj(p)) < 0) {
       err_message(interp, objv, cant_make_obj);
       delete p;
       return TCL_ERROR;
@@ -99,7 +99,7 @@ DOTRACE("FixptTcl::fixptCmd");
   return TCL_OK;
 }
 
-int FixptTcl::lengthCmd(ObjList *olist, Tcl_Interp *interp,
+int FixptTcl::lengthCmd(const ObjList& olist, Tcl_Interp *interp,
                         int objc, Tcl_Obj *const objv[]) {
 DOTRACE("FixptTcl::lengthCmd");
   FixPt *p = NULL;
@@ -123,7 +123,7 @@ DOTRACE("FixptTcl::lengthCmd");
   return TCL_OK;
 }
 
-int FixptTcl::widthCmd(ObjList *olist, Tcl_Interp *interp,
+int FixptTcl::widthCmd(const ObjList& olist, Tcl_Interp *interp,
                        int objc, Tcl_Obj *const objv[]) {
 DOTRACE("FixptTcl::widthCmd");
   FixPt *p = NULL;
