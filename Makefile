@@ -28,6 +28,12 @@ INSTALL_DIR := $(HOME)/local/$(ARCH)
 # Path to the top-level directory where Tcl+Tk are installed
 TCLTK_DIR := $(HOME)/local/$(ARCH)/tcl8.4b2
 
+# Whether to include a matlab interface
+WITH_MATLAB := 1
+
+# Whether to use GNU readline library in shell interface
+WITH_READLINE := 1
+
 ###
 ### SHOULDN'T NEED TO MODIFY ANYTHING BELOW THIS POINT
 ###
@@ -242,13 +248,18 @@ EXTERNAL_LIBS := \
 	$(AUDIO_LIB) \
 	-lm
 
-ifneq ($(PLATFORM),ppc)
+ifneq ($(WITH_READLINE), 0)
+	EXTERNAL_LIBS += -lreadline -ltermcap
+	CPP_DEFINES += -DWITH_READLINE
+endif
+
+ifneq ($(WITH_MATLAB), 0)
 	LIB_PATH += -Wl,-rpath,$(INSTALL_DIR)/lib
 
 	INCLUDE_PATH += -I/usr/local/matlab/extern/include
 	LIB_PATH += -L/usr/local/matlab/extern/lib/glnx86
 	LIB_PATH += -Wl,-rpath,/usr/local/matlab/extern/lib/glnx86
-	CPP_DEFINES += -DHAVE_MATLAB
+	CPP_DEFINES += -DWITH_MATLAB
 endif
 
 ifeq ($(PLATFORM),ppc)
