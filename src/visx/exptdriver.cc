@@ -257,14 +257,15 @@ void ExptDriver::vxAllChildrenFinished()
 {
 DOTRACE("ExptDriver::vxAllChildrenFinished");
 
-  Util::log( "experiment complete" );
+  Util::log( "ExptDriver::vxAllChildrenFinished" );
 
   addLogInfo("Experiment complete.");
 
   storeData();
 
-  Util::log( fstring("Expt::doWhenComplete") );
+  Util::Log::addObjScope(*rep->doWhenComplete);
   rep->doWhenComplete->invoke(""); // Call the user-defined callback
+  Util::Log::removeObjScope(*rep->doWhenComplete);
 
   Util::Log::removeObjScope(*this);
 }

@@ -165,8 +165,6 @@ DOTRACE("TrialEvent::invokeTemplate");
       invoke(*itsTrial);
     }
 
-  Util::log( "event complete" );
-
   Util::Log::removeObjScope(*this);
 }
 

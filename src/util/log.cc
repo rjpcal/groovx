@@ -56,11 +56,11 @@ namespace
     void print(const timeval* now) const
     {
       DOTRACE("ScopeInfo::print");
-      std::cerr << itsName << " @ ";
+      std::cout << itsName << " @ ";
 
-      std::cerr.setf(std::ios::showpoint | std::ios::fixed);
+      std::cout.setf(std::ios::showpoint | std::ios::fixed);
 
-      std::cerr << std::setprecision(3)
+      std::cout << std::setprecision(3)
                 << itsTimer.elapsedMsec(*now) << " | ";
     }
   };
@@ -75,7 +75,7 @@ namespace
     std::for_each(scopes.begin(), scopes.end(),
                   std::bind2nd(std::mem_fun_ref(&ScopeInfo::print), &now));
 
-    std::cerr << msg << std::endl;
+    std::cout << msg << std::endl;
   }
 }
 
@@ -110,13 +110,17 @@ DOTRACE("Util::Log::addObjScope");
   const fstring scopename(obj.uniqueName());
 
   addScope(scopename);
+
+  log(fstring("entering ", scopename));
 }
 
 void Util::Log::removeObjScope(const Util::Object& obj)
 {
 DOTRACE("Util::Log::removeObjScope");
 
-  const fstring scopename(obj.uniqueName());
+  const fstring scopename = obj.uniqueName();
+
+  log(fstring("leaving ", scopename));
 
   removeScope(scopename);
 }
