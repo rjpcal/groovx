@@ -3,7 +3,7 @@
 // trace.cc
 // Rob Peters 
 // created: Jan-99
-// written: Wed Mar 15 10:23:23 2000
+// written: Thu Sep 21 19:26:39 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -26,6 +26,25 @@ namespace {
   const char* PDATA_FILE = "prof.out";
 
   ofstream* PDATA_STREAM = new ofstream(PDATA_FILE);
+
+  Util::Trace::Mode theTraceMode = Util::Trace::RUN;
+
+  void waitOnStep() {
+	 static char dummyBuffer[256];
+
+	 cerr << "?" << flush;
+	 cin >> dummyBuffer;
+
+	 switch (dummyBuffer[0]) {
+	 case 'r':
+	 case 'R':
+		Util::Trace::setMode(Util::Trace::RUN);
+		break;
+	 default:
+		break;
+	 }
+  }
+
 }
 
 Util::Prof::~Prof() {
@@ -41,11 +60,27 @@ Util::Prof::~Prof() {
   }
 }
 
+void Util::Trace::setMode(Mode new_mode) {
+  theTraceMode = new_mode;
+}
+
+Util::Trace::Mode Util::Trace::getMode() {
+  return theTraceMode;
+}
+
 void Util::Trace::printIn() {
+
   if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
 	 for (int i=0; i < TRACE_LEVEL; ++i)
 		cerr << TRACE_TAB;
-	 cerr << "entering " << prof.name() << "...\n" << flush;
+	 cerr << "entering " << prof.name() << "...";
+
+	 if (Util::Trace::getMode() == STEP) {
+		waitOnStep();
+	 }
+	 else {
+		cerr << endl;
+	 }
   }
   ++TRACE_LEVEL;
 }
@@ -55,7 +90,15 @@ void Util::Trace::printOut() {
   if (TRACE_LEVEL < MAX_TRACE_LEVEL) {
 	 for (int i=0; i < TRACE_LEVEL; ++i)
 		cerr << TRACE_TAB;
-	 cerr << "leaving " << prof.name() << ".\n" << flush;
+	 cerr << "leaving " << prof.name() << ".";
+
+	 if (Util::Trace::getMode() == STEP) {
+		waitOnStep();
+	 }
+	 else {
+		cerr << endl;
+	 }
+
   }
   if (TRACE_LEVEL == 0) cerr << endl;
 }
