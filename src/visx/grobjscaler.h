@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Jul 18 18:00:57 2001
-// written: Fri Aug 10 10:46:48 2001
+// written: Fri Aug 10 14:53:18 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,8 @@
 #ifndef GROBJSCALER_H_DEFINED
 #define GROBJSCALER_H_DEFINED
 
-#include "grobj.h"
+#include "gmodes.h"
+
 #include "rect.h"
 
 #include "util/algo.h"
@@ -21,21 +22,21 @@
 class GrObjScaler {
 public:
   GrObjScaler() :
-    itsMode(GrObj::NATIVE_SCALING),
+    itsMode(Gmodes::NATIVE_SCALING),
     itsWidthFactor(1.0),
     itsHeightFactor(1.0)
   {}
 
   void doScaling(Gfx::Canvas& canvas) const;
-  GrObj::ScalingMode getMode() const { return itsMode; }
-  void setMode(GrObj::ScalingMode new_mode);
+  Gmodes::ScalingMode getMode() const { return itsMode; }
+  void setMode(Gmodes::ScalingMode new_mode);
 
   void setWidth(double new_width, const Rect<double>& native_bbox)
   {
     double current_width = native_bbox.width() * itsWidthFactor;
 
     if (new_width == 0.0 || new_width == current_width) return;
-    if (itsMode == GrObj::NATIVE_SCALING) return;
+    if (itsMode == Gmodes::NATIVE_SCALING) return;
 
     double new_width_factor = new_width / native_bbox.width();
 
@@ -43,7 +44,7 @@ public:
 
     itsWidthFactor = new_width_factor;
 
-    if (itsMode == GrObj::MAINTAIN_ASPECT_SCALING)
+    if (itsMode == Gmodes::MAINTAIN_ASPECT_SCALING)
       {
         itsHeightFactor *= change_factor;
       }
@@ -54,7 +55,7 @@ public:
     double current_height = native_bbox.height() * itsHeightFactor;
 
     if (new_height == 0.0 || new_height == current_height) return;
-    if (itsMode == GrObj::NATIVE_SCALING) return;
+    if (itsMode == Gmodes::NATIVE_SCALING) return;
 
     double new_height_factor = new_height / native_bbox.height();
 
@@ -62,7 +63,7 @@ public:
 
     itsHeightFactor = new_height_factor;
 
-    if (itsMode == GrObj::MAINTAIN_ASPECT_SCALING)
+    if (itsMode == Gmodes::MAINTAIN_ASPECT_SCALING)
       {
         itsWidthFactor *= change_factor;
       }
@@ -73,7 +74,7 @@ public:
     double current = aspectRatio();
 
     if (new_aspect_ratio == 0.0 || new_aspect_ratio == current) return;
-    if (itsMode == GrObj::NATIVE_SCALING) return;
+    if (itsMode == Gmodes::NATIVE_SCALING) return;
 
     double change_factor = new_aspect_ratio / current;
 
@@ -85,7 +86,7 @@ public:
 
   void setMaxDim(double new_max_dimension, const Rect<double>& native_bbox)
   {
-    if (itsMode == GrObj::NATIVE_SCALING) return;
+    if (itsMode == Gmodes::NATIVE_SCALING) return;
 
     double scaling_factor = new_max_dimension / scaledMaxDim(native_bbox);
 
@@ -120,7 +121,7 @@ public:
   }
 
 private:
-  GrObj::ScalingMode itsMode;
+  Gmodes::ScalingMode itsMode;
 
 public:
   double itsWidthFactor;

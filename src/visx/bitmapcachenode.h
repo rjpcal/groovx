@@ -13,7 +13,7 @@
 #ifndef GROBJRENDERER_H_DEFINED
 #define GROBJRENDERER_H_DEFINED
 
-#include "grobj.h"
+#include "gmodes.h"
 
 #include "util/strings.h"
 #include "util/pointers.h"
@@ -32,9 +32,9 @@ public:
 
   void callList() const;
 
-  void setMode(GrObj::RenderMode new_mode);
+  void setMode(Gmodes::RenderMode new_mode);
 
-  GrObj::RenderMode getMode() const { return itsMode; }
+  Gmodes::RenderMode getMode() const { return itsMode; }
 
   const fstring& getCacheFilename() const { return itsCacheFilename; }
 
@@ -53,12 +53,12 @@ public:
   void saveBitmapCache(const GrObjImpl* obj, Gfx::Canvas& canvas,
                        const char* filename) const;
 
-  GrObj::RenderMode getUnMode() const { return itsUnMode; }
-  void setUnMode(GrObj::RenderMode new_val) { itsUnMode = new_val; }
+  Gmodes::RenderMode getUnMode() const { return itsUnMode; }
+  void setUnMode(Gmodes::RenderMode new_val) { itsUnMode = new_val; }
 
 private:
-  GrObj::RenderMode itsMode;
-  GrObj::RenderMode itsUnMode;
+  Gmodes::RenderMode itsMode;
+  Gmodes::RenderMode itsUnMode;
 
   mutable fstring itsCacheFilename;
 

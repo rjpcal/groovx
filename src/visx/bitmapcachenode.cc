@@ -26,18 +26,17 @@
 #include <GL/gl.h>
 
 #include "util/debug.h"
-#define DYNAMIC_TRACE_EXPR GrObj::tracer.status()
 #include "util/trace.h"
 
 fstring GrObjRenderer::BITMAP_CACHE_DIR(".");
 
 GrObjRenderer::GrObjRenderer() :
 #ifndef I686
-  itsMode(GrObj::GLCOMPILE),
+  itsMode(Gmodes::GLCOMPILE),
 #else
-  itsMode(GrObj::DIRECT_RENDER),
+  itsMode(Gmodes::DIRECT_RENDER),
 #endif
-  itsUnMode(GrObj::SWAP_FORE_BACK),
+  itsUnMode(Gmodes::SWAP_FORE_BACK),
   itsCacheFilename(""),
   itsDisplayList(0),
   itsBitmapCache(0)
@@ -95,12 +94,12 @@ DOTRACE("GrObjRenderer::recacheBitmapIfNeeded");
 
   switch (itsMode)
     {
-    case GrObj::GL_BITMAP_CACHE:
+    case Gmodes::GL_BITMAP_CACHE:
       itsBitmapCache.reset(
          new BitmapRep(shared_ptr<BmapRenderer>(new GLBmapRenderer())));
       break;
 
-    case GrObj::X11_BITMAP_CACHE:
+    case Gmodes::X11_BITMAP_CACHE:
       itsBitmapCache.reset(
          new BitmapRep(shared_ptr<BmapRenderer>(new XBmapRenderer())));
       break;
@@ -137,7 +136,7 @@ DOTRACE("GrObjRenderer::recacheBitmapIfNeeded");
 
   DebugEvalNL(itsMode);
 
-  if (GrObj::X11_BITMAP_CACHE == itsMode)
+  if (Gmodes::X11_BITMAP_CACHE == itsMode)
     {
       itsBitmapCache->flipVertical();
       itsBitmapCache->flipContrast();
@@ -159,13 +158,13 @@ DOTRACE("GrObjRenderer::callList");
     }
 }
 
-void GrObjRenderer::setMode(GrObj::RenderMode new_mode)
+void GrObjRenderer::setMode(Gmodes::RenderMode new_mode)
 {
 DOTRACE("GrObjRenderer::setMode");
 
 #ifdef I686
   // display lists don't work at present with i686/linux/mesa
-  if (new_mode == GrObj::GLCOMPILE) new_mode = GrObj::DIRECT_RENDER;
+  if (new_mode == Gmodes::GLCOMPILE) new_mode = Gmodes::DIRECT_RENDER;
 #endif
 
   if (new_mode != itsMode)
@@ -180,16 +179,16 @@ DOTRACE("GrObjRenderer::render");
   DebugEvalNL(itsMode);
   switch (itsMode)
     {
-    case GrObj::DIRECT_RENDER:
+    case Gmodes::DIRECT_RENDER:
       node->gnodeDraw(canvas);
       break;
 
-    case GrObj::GLCOMPILE:
+    case Gmodes::GLCOMPILE:
       callList();
       break;
 
-    case GrObj::GL_BITMAP_CACHE:
-    case GrObj::X11_BITMAP_CACHE:
+    case Gmodes::GL_BITMAP_CACHE:
+    case Gmodes::X11_BITMAP_CACHE:
       Assert(itsBitmapCache.get() != 0);
       itsBitmapCache->render(canvas);
       break;
@@ -201,10 +200,10 @@ void GrObjRenderer::unrender(const Gnode* node, Gfx::Canvas& canvas) const
 DOTRACE("GrObjRenderer::unrender");
   glPushAttrib(GL_CURRENT_BIT | GL_COLOR_BUFFER_BIT);
   {
-    if (itsUnMode == GrObj::SWAP_FORE_BACK)
+    if (itsUnMode == Gmodes::SWAP_FORE_BACK)
       canvas.swapForeBack();
 
-    if (itsMode == GrObj::GLCOMPILE)
+    if (itsMode == Gmodes::GLCOMPILE)
       callList();
     else
       node->gnodeUndraw(canvas);
@@ -221,12 +220,12 @@ DOTRACE("GrObjRenderer::update");
 
   switch (itsMode)
     {
-    case GrObj::GLCOMPILE:
+    case Gmodes::GLCOMPILE:
       recompileIfNeeded(obj->itsObjNode.get(), canvas);
       break;
 
-    case GrObj::GL_BITMAP_CACHE:
-    case GrObj::X11_BITMAP_CACHE:
+    case Gmodes::GL_BITMAP_CACHE:
+    case Gmodes::X11_BITMAP_CACHE:
       objectDrawn = recacheBitmapIfNeeded(obj, canvas);
       break;
     }
@@ -241,7 +240,7 @@ void GrObjRenderer::saveBitmapCache(const GrObjImpl* obj, Gfx::Canvas& canvas,
   itsCacheFilename = filename;
 
   GrObjRenderer temp;
-  temp.setMode(GrObj::GL_BITMAP_CACHE);
+  temp.setMode(Gmodes::GL_BITMAP_CACHE);
   temp.recacheBitmapIfNeeded(obj, canvas);
 
   temp.itsBitmapCache->savePbmFile(fullCacheFilename().c_str());
