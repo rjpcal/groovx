@@ -2,10 +2,10 @@
 //
 // esdsound.h
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu May 24 18:13:53 2001
-// written: Sun Nov  3 13:41:11 2002
+// written: Mon Jan 13 11:08:25 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

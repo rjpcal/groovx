@@ -2,10 +2,10 @@
 //
 // tclerror.h
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Jun 20 15:10:26 1999
-// written: Thu Dec 19 18:38:36 2002
+// written: Mon Jan 13 11:04:47 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

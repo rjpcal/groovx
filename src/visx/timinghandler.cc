@@ -2,10 +2,10 @@
 //
 // timinghandler.cc
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 19 21:39:51 1999
-// written: Fri Jan 18 16:06:59 2002
+// written: Mon Jan 13 11:08:25 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

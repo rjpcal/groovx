@@ -2,10 +2,10 @@
 //
 // tclcmd.h
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Fri Jun 11 14:50:43 1999
-// written: Sat Dec 21 11:49:52 2002
+// written: Mon Jan 13 11:04:47 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

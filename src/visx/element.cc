@@ -2,10 +2,10 @@
 //
 // element.cc
 //
-// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Dec  4 15:40:25 2002
-// written: Thu Dec  5 14:35:53 2002
+// written: Mon Jan 13 11:01:37 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // multivalue.h
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Aug 22 16:45:38 2001
-// written: Tue Nov  5 06:39:44 2002
+// written: Mon Jan 13 11:08:25 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

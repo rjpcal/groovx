@@ -2,10 +2,10 @@
 //
 // debug.cc
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Oct  9 18:48:38 2000
-// written: Sun Nov  3 13:48:19 2002
+// written: Mon Jan 13 11:08:26 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

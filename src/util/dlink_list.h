@@ -2,10 +2,10 @@
 //
 // dlink_list.h
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2000-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed May 31 14:24:31 2000
-// written: Wed Sep 25 18:57:53 2002
+// written: Mon Jan 13 11:08:26 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // fstringtest.cc
 //
-// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun 24 17:14:36 2002
-// written: Tue Jun 25 13:29:26 2002
+// written: Mon Jan 13 11:01:38 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

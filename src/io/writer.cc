@@ -2,10 +2,10 @@
 //
 // writer.cc
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:49:50 1999
-// written: Fri Jan 18 16:07:06 2002
+// written: Mon Jan 13 11:04:47 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,14 +65,14 @@ void IO::Writer::writeValue<int>(const char* name, const int& val)
 
 template<>
 void IO::Writer::writeValue<unsigned int>(const char* name,
-					  const unsigned int& val)
+                                          const unsigned int& val)
 {
   writeInt(name, val);
 }
 
 template<>
 void IO::Writer::writeValue<unsigned long>(const char* name,
-					   const unsigned long& val)
+                                           const unsigned long& val)
 {
   writeInt(name, val);
 }

@@ -2,10 +2,10 @@
 //
 // glxopts.h
 //
-// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Sun Aug  4 16:28:37 2002
-// written: Tue Sep 17 22:27:11 2002
+// written: Mon Jan 13 11:01:39 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

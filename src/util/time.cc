@@ -2,10 +2,10 @@
 //
 // time.cc
 //
-// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Nov  7 16:58:26 2002
-// written: Thu Nov  7 17:21:31 2002
+// written: Mon Jan 13 11:01:37 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

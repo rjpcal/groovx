@@ -2,10 +2,10 @@
 //
 // pointtcl.h
 //
-// Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Aug  9 17:47:29 2001
-// written: Thu Nov 21 12:42:55 2002
+// written: Mon Jan 13 11:01:38 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // gtracetcl.cc
 //
-// Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan 21 12:52:51 2002
-// written: Fri Nov 22 17:46:07 2002
+// written: Mon Jan 13 11:04:47 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // bbox.h
 //
-// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Nov 19 12:37:16 2002
-// written: Tue Nov 19 17:58:39 2002
+// written: Mon Jan 13 11:01:38 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // datablock.cc
 //
-// Copyright (c) 2001-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2001-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Mar 12 18:04:40 2001
-// written: Sun Nov  3 13:41:11 2002
+// written: Mon Jan 13 11:01:38 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -4,7 +4,7 @@
 # "Makefile.in", then it is a template for the real Makefile, so to
 # generate the real Makefile, run the "configure" script.
 #
-# Copyright (c) 1998-2002 Rob Peters <rjpeters@klab.caltech.edu>
+# Copyright (c) 1998-2003 Rob Peters <rjpeters@klab.caltech.edu>
 #
 # $Id$
 #

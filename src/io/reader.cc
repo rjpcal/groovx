@@ -2,10 +2,10 @@
 //
 // reader.cc
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jun  7 12:47:00 1999
-// written: Fri Jan 18 16:07:06 2002
+// written: Mon Jan 13 11:04:47 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -67,14 +67,14 @@ void IO::Reader::readValue<int>(const fstring& name, int& return_value)
 
 template <>
 void IO::Reader::readValue<unsigned int>(const fstring& name,
-					 unsigned int& return_value)
+                                         unsigned int& return_value)
 {
   return_value = readInt(name);
 }
 
 template <>
 void IO::Reader::readValue<unsigned long>(const fstring& name,
-					  unsigned long& return_value)
+                                          unsigned long& return_value)
 {
   return_value = readInt(name);
 }

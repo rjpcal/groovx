@@ -2,10 +2,10 @@
 //
 // face.h
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Dec  1 08:00:00 1998
-// written: Wed Nov 20 16:10:45 2002
+// written: Mon Jan 13 11:01:37 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

@@ -2,10 +2,10 @@
 //
 // gxtext.h
 //
-// Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Jul  1 11:54:47 1999 (as gtext.h)
-// written: Thu Nov 21 14:20:26 2002
+// written: Mon Jan 13 11:01:38 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

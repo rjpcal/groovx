@@ -2,10 +2,10 @@
 //
 // gxpixmap.cc
 //
-// Copyright (c) 1999-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Tue Jun 15 11:30:24 1999 (as bitmap.cc)
-// written: Wed Dec 25 12:57:52 2002
+// written: Mon Jan 13 11:01:38 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

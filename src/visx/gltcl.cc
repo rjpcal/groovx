@@ -2,10 +2,10 @@
 //
 // gltcl.cc
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1998-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  2 08:00:00 1998
-// written: Thu Nov 14 17:23:47 2002
+// written: Mon Jan 13 11:08:25 2003
 // $Id$
 //
 // This package provides some simple Tcl functions that are wrappers

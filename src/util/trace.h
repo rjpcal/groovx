@@ -2,10 +2,10 @@
 //
 // trace.h
 //
-// Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 1999-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Jan  4 08:00:00 1999
-// written: Thu Nov  7 17:06:34 2002
+// written: Mon Jan 13 11:08:25 2003
 // $Id$
 //
 // This file defines two classes and several macros that can be used

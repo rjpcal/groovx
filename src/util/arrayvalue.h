@@ -2,10 +2,10 @@
 //
 // arrayvalue.h
 //
-// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Nov  4 15:32:47 2002
-// written: Tue Nov  5 05:23:32 2002
+// written: Mon Jan 13 11:01:38 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////

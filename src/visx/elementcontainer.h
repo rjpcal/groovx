@@ -2,10 +2,10 @@
 //
 // elementcontainer.h
 //
-// Copyright (c) 2002-2002 Rob Peters rjpeters@klab.caltech.edu
+// Copyright (c) 2002-2003 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Thu Dec  5 16:43:50 2002
-// written: Sun Dec  8 14:22:45 2002
+// written: Mon Jan 13 11:01:37 2003
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
