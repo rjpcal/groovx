@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2002 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Sep 27 08:40:04 2000
-// written: Sun Nov  3 13:41:52 2002
+// written: Wed Nov 20 16:26:32 2002
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -68,6 +68,21 @@ public:
     itsInStream >> name;
 
     if (! name.equals(correct_name))
+      {
+        // If we got here, then none of the substrings matched so we must
+        // raise an exception.
+        throw IO::ReadError(fstring("couldn't read typename for ",
+                                    correct_name.c_str()));
+      }
+  }
+
+  // An override for when we have two alternative names
+  void readTypename(const fstring& correct_name, const fstring& alt_name)
+  {
+    fstring name;
+    itsInStream >> name;
+
+    if ( !name.equals(correct_name) && !name.equals(alt_name) )
       {
         // If we got here, then none of the substrings matched so we must
         // raise an exception.
@@ -288,7 +303,10 @@ void IO::LegacyReader::readBaseClass(const fstring& baseClassName,
 {
 DOTRACE("IO::LegacyReader::readBaseClass");
 
-  itsImpl->readTypename(basePart->ioTypename());
+  // For backward-compatibility, we allow the typename to match either the
+  // real typename of the base part, or the descriptive name given to the
+  // base class.
+  itsImpl->readTypename(basePart->ioTypename(), baseClassName);
   itsImpl->inflateObject(baseClassName, basePart);
 }
 
