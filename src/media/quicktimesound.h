@@ -65,7 +65,7 @@ namespace media
   };
 }
 
-bool media::quicktime_sound_rep quicktime_inited = false;
+bool media::quicktime_sound_rep::quicktime_inited = false;
 
 media::quicktime_sound_rep::quicktime_sound_rep(const char* filename)
 {
