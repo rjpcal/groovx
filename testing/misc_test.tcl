@@ -80,7 +80,7 @@ test "MiscTcl-usleep" "normal use" {
     set res [time {usleep 10000} 10]
     set us [lindex $res 0]
     return "[expr $us > 9000 && $us < 25000] $us"
-} {^1 $}
+} {^1 }
 test "MiscTcl-usleep" "error from negative input" {
     # The command should exit with error; thus it should be fast
     set exit_code [catch {usleep -1}]
