@@ -3,7 +3,7 @@
 // readutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:25:40 1999
-// written: Fri Mar  3 23:53:14 2000
+// written: Mon Mar  6 12:38:12 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -78,8 +78,6 @@ public:
 
 	 }
   }
-  
-  static string makeNumberString(int number);
 
 private:
   // Warning: the return value of these functions is only valid up

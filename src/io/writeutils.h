@@ -3,7 +3,7 @@
 // writeutils.h
 // Rob Peters rjpeters@klab.caltech.edu
 // created: Tue Nov 16 14:18:36 1999
-// written: Fri Mar  3 23:42:43 2000
+// written: Mon Mar  6 12:35:01 2000
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -65,8 +65,6 @@ public:
 
 	 writer->writeValue(makeSeqCountString(name), count);
   }
-
-  static string makeNumberString(int number);
 
 private:
   // Warning: the return value of these functions is only valid up
