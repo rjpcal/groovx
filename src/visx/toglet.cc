@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Wed Feb 24 10:18:17 1999
-// written: Fri Aug 24 17:17:46 2001
+// written: Mon Aug 27 16:27:54 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -15,9 +15,9 @@
 
 #include "toglet.h"
 
-#include "glcanvas.h"
 #include "xbmaprenderer.h"
 
+#include "gfx/glcanvas.h"
 #include "gfx/rgbacolor.h"
 
 #include "tcl/tclcode.h"

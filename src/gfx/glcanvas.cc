@@ -5,7 +5,7 @@
 // Copyright (c) 1998-2001 Rob Peters rjpeters@klab.caltech.edu
 //
 // created: Mon Dec  6 20:28:36 1999
-// written: Mon Aug 27 16:25:48 2001
+// written: Mon Aug 27 16:26:26 2001
 // $Id$
 //
 ///////////////////////////////////////////////////////////////////////
@@ -13,7 +13,7 @@
 #ifndef GLCANVAS_CC_DEFINED
 #define GLCANVAS_CC_DEFINED
 
-#include "glcanvas.h"
+#include "gfx/glcanvas.h"
 
 #include "gfx/bmapdata.h"
 #include "gfx/rect.h"
